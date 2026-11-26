@@ -1,21 +1,8 @@
-# Conv one right
+# The counit–unit cochain is a right convolution unit
 
-Convolution right unit, up to the `add_zero` degree transport.
-
-For `f : HomComplex.Cochain C A n`, casting `conv f convOne` along
-`add_zero n` gives `f`, via the one-sided middle interchange
-(`tensor_f_convOne_middle_interchange`), the inner support-collapse of
-`tensor f (ofHom one)` (`tensor_desc_singleton_one` with explicit
-`(0 * r).negOnePow` clearance), the slides `ComonObj.comul_counit`/
-`MonObj.mul_one` in `congr_v` form, the graded expansion
-`HomologicalComplex.rightUnitor'_inv`, and the `ModuleCat` unitor assembly
-(`ιTensorObj_tensorHom`, `ιTensorObj_rightUnitor_hom`, right-unitor
-naturality) with the cast computation `cochain_cast_v`.
-
-Order check: the survivor is `(r, 0)` (not `(0, r)`), since `i₁ + i₂ = r`
-with `i₂ = 0` forces `i₁ = r`; the sign is `(0 * i₁).negOnePow` (second factor
-has degree `0`). Cast check: the public transport is `add_zero n`
-(`n + 0 = n`), matching `conv f convOne : Cochain C A (n + 0)`.
-
-No new associativity beyond the existing `conv_assoc`, no
-bar-cobar/twisting adjunctions, no derived/Koszul, no operads, no KQ.
+Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For every homogeneous degree-n cochain f:C→A, f⋆e=f after identifying n+0 with
+n. Convolution is f⋆g=μ_A(f⊗g)Δ_C; the degree-zero right factor contributes Koszul sign one.

@@ -1,3 +1,8 @@
-# Strict Complement d
+# Zero differentials of the strict source complement
 
-The strict source complement has the original zero differential in every pair of degrees.
+Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K. Assume A preadditive.
+
+Every differential of the strict source complement L is zero.

@@ -1,8 +1,6 @@
-# Conv precomp
+# Comonoid-morphism naturality of convolution
 
-Convolution commutes with precomposition by a comonoid morphism.
+Comonoid-morphism naturality of convolution.
 
-For `f : Cochain C A m`, `g : Cochain C A n`, and `ψ : C' ⟶ C` with
-`IsComonHom ψ`, precomposing `conv f g` equals the convolution of the
-precomposed factors. The proof reuses the heterogeneous tensor precomposition
-coherence and the cochain lift of `IsComonHom.hom_comul`.
+For a comonoid morphism ψ : C' → C and homogeneous f,g : C → A, precomposing f⋆g with ψ equals
+the convolution of ψ followed by f and ψ followed by g.

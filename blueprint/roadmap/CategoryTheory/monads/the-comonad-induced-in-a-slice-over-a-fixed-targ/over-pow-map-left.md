@@ -1,4 +1,6 @@
-# Over Pow map left
+# Underlying map of an iterated slice comonad
 
-Underlying power maps retain their genuine original maps, with their
-source and target object equalities recorded by heterogeneous equality.
+Underlying map of an iterated slice comonad.
+
+For n : ℕ and a slice morphism f : p → q, the underlying map of G_A^n(f) is heterogeneously
+equal to G^n(f.left). The object identifications retain the original source and target types.

@@ -16,68 +16,15 @@ public import MathlibExt.RingTheory.DifferentialGraded.TwistingCochain
 public import MathlibExt.Algebra.Homology.TwistingMaurerCartanFunctoriality
 
 /-!
-# Functorial map between twisted Hom complexes
+# Maps of additive twisting Hom complexes
 
-This file constructs the combined functorial map between two-sided twisted Hom
-cochain complexes defined in `TwistingHomComplex`, with Maurer–Cartan
-functoriality from `TwistingMaurerCartanFunctoriality`. It packages
-the smallest combined functorial map between two-sided twisted Hom cochain
-complexes: postcomposition by a monoid morphism and precomposition by a
-comonoid morphism.
+Let C,C' be dg coalgebras and A,B dg algebras over a commutative ring. Maps ψ:C'→C and φ:A→B
+send a Maurer–Cartan cochain τ to τ'=φτψ and each homogeneous f to Φ(f)=φfψ in the same degree.
 
-For `x : MaurerCartan C A`, `ψ : C' ⟶ C` with `[IsComonHom ψ]`, and
-`φ : A ⟶ B` with `[IsMonHom φ]`, a degree-`n` cochain `f : Cochain C A n` is
-sent by postcomposing with `φ` and then precomposing with `ψ`, targeting the
-twisted complex for `x.map ψ φ`.
-
-## Variance and orientation
-
-Covariant in the algebra morphism `φ` by postcomposition with `add_zero`
-transports, and contravariant in the coalgebra morphism `ψ` by precomposition
-with `zero_add` transports, exactly as in `MaurerCartan.map`. The chain
-orientation is unchanged: a forward cochain `C → A` in degree `n` maps to a
-forward cochain `C' → B` in the same degree `n`; the differential compatibility
-is with `twistedDifferential` landing in `n + 1` on both sides.
-
-## Primary source
-
-No external source beyond the pinned Mathlib `HomComplex` API and the imported
-modules `TwistingHomComplex`, `TwistingCochain`, and
-`TwistingMaurerCartanFunctoriality` is used;
-no Loday–Vallette section match is claimed here.
-
-## Declaration inventory
-
-* `twistedHomComplexMapCochain`: degreewise cochain function.
-* `twistedHomComplexMapCochain_twistedDifferential`: it commutes with
-  `twistedDifferential`, from the pinned `HomComplex.δ_comp_ofHom`,
-  `HomComplex.δ_ofHom_comp`, `conv_postcomp`, and `conv_precomp`.
-* `twistedHomComplexMapHom`: each degree as an `AddMonoidHom`.
-* `twistedHomComplexMap`: bundled cochain-complex morphism from
-  `twistedHomComplex x.tau x.isMC` to the complex for `x.map ψ φ`.
-* `twistedHomComplexMapCochain_id` and `twistedHomComplexMapCochain_comp`:
-  degreewise identity and composition laws for the cochain map.
-* `twistedHomComplexMap_id_f` and `twistedHomComplexMap_comp_f`:
-  degree-component identity and composition laws for the bundled map.
-
-## Nonclaims
-
-Identity and composition laws `twistedHomComplexMapCochain_id`,
-`twistedHomComplexMapCochain_comp`, `twistedHomComplexMap_id_f`, and
-`twistedHomComplexMap_comp_f` are proved here; the dedicated public consumer
-is `MathlibExtTest/Algebra/Homology/TwistingHomComplexMapTests.lean`.
-No separate pre/post APIs, no roots, no totalization, no adjunction,
-no Koszul, no operadic, and no homotopical claim is made here. Only the
-combined map stated above is constructed.
-
-## Import justification
-
-`TwistingHomComplex` supplies `twistedDifferential`, `twistedDifferentialHom`,
-and `twistedHomComplex` with the `add_comm 1 n` cast convention preserved
-exactly. `TwistingCochain` supplies `conv` with the `conv_postcomp`/`conv_precomp`
-compatibility lemmas. `TwistingMaurerCartanFunctoriality` supplies
-`MaurerCartan.map` with its `map_tau` rule. No further MathlibExt import is
-needed.
+The degree maps are additive and satisfy Φ(D_τ f)=D_{τ'}Φ(f). They therefore define a map
+between the additive twisting Hom complexes. Identity maps retain every cochain, and two maps
+compose by ψ₁≫ψ₂ on the coalgebra side and φ₂≫φ₁ on the algebra side; the bundled laws are given
+degreewise.
 -/
 
 @[expose] public section
@@ -106,10 +53,13 @@ variable [MonObj A] [ComonObj C]
 variable {B : CochainComplex (ModuleCat R) ℤ} [MonObj B]
 variable {C' : CochainComplex (ModuleCat R) ℤ} [ComonObj C']
 
-/-- Degreewise cochain function of the combined twisted Hom-complex map:
-postcompose with a monoid morphism `φ` (via `add_zero`), then precompose with
-a comonoid morphism `ψ` (via `zero_add`). Covariant in `φ`, contravariant in
-`ψ`; the degree `n` and forward orientation are unchanged. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. Let ψ:C'→C be a dg coalgebra map and
+φ:A→B a dg algebra map. For a Maurer–Cartan bundle x with τ, put τ'=φτψ and Φ_n(f)=φfψ. For any
+n∈ℤ and f∈Hom^n(C,A), Φ_n(f)=φ∘f∘ψ∈Hom^n(C',B). The supplied MC bundle fixes the twists used by
+the later complex map. -/
 noncomputable def twistedHomComplexMapCochain {n : ℤ}
     (_x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ : C' ⟶ C) [IsComonHom ψ] (φ : A ⟶ B) [IsMonHom φ]
@@ -117,9 +67,15 @@ noncomputable def twistedHomComplexMapCochain {n : ℤ}
   (HomComplex.Cochain.ofHom ψ).comp
     (f.comp (HomComplex.Cochain.ofHom φ) (add_zero n)) (zero_add n)
 
-/-- The degreewise map commutes with the two-sided twisting differential,
-from the pinned differential pre/postcomposition rules and the imported
-convolution pre/postcomposition laws. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. Let ψ:C'→C be a dg coalgebra map and
+φ:A→B a dg algebra map. For a Maurer–Cartan bundle x with τ, put τ'=φτψ and Φ_n(f)=φfψ. For
+f∈Hom^n(C,A), Φ_{n+1}(D_τ f)=D_{τ'}(Φ_n f). The twist τ' is the cochain of the mapped
+Maurer–Cartan bundle. -/
 theorem twistedHomComplexMapCochain_twistedDifferential {n : ℤ}
     (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ : C' ⟶ C) [IsComonHom ψ] (φ : A ⟶ B) [IsMonHom φ]
@@ -181,8 +137,12 @@ theorem twistedHomComplexMapCochain_twistedDifferential {n : ℤ}
   rw [hsub, hadd, hδ, hcast (add_comm 1 n), hsmul, hconv, hconv, htau,
     MaurerCartan.map_tau]
 
-/-- Each degree of the combined twisted Hom-complex map as an additive
-homomorphism, from the pinned cochain additivity and zero laws. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. Let ψ:C'→C be a dg coalgebra map and
+φ:A→B a dg algebra map. For a Maurer–Cartan bundle x with τ, put τ'=φτψ and Φ_n(f)=φfψ. For each
+n∈ℤ, Φ_n:Hom^n(C,A)→Hom^n(C',B) is an additive group homomorphism, given by φfψ. -/
 noncomputable def twistedHomComplexMapHom {n : ℤ}
     (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ : C' ⟶ C) [IsComonHom ψ] (φ : A ⟶ B) [IsMonHom φ] :
@@ -196,10 +156,13 @@ noncomputable def twistedHomComplexMapHom {n : ℤ}
     unfold twistedHomComplexMapCochain
     simp only [HomComplex.Cochain.add_comp, HomComplex.Cochain.comp_add]
 
-/-- The bundled combined map as a cochain-complex morphism from
-`twistedHomComplex x.tau x.isMC` to the twisted complex for `x.map ψ φ`.
-The commutativity is discharged by
-`twistedHomComplexMapCochain_twistedDifferential`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. Let ψ:C'→C be a dg coalgebra map and
+φ:A→B a dg algebra map. For a Maurer–Cartan bundle x with τ, put τ'=φτψ and Φ_n(f)=φfψ. The maps
+Φ_n assemble to a cochain map from the additive complex twisted by τ to the one twisted by τ'.
+Its degree-n component is the additive homomorphism f↦φfψ. -/
 noncomputable def twistedHomComplexMap
     (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ : C' ⟶ C) [IsComonHom ψ] (φ : A ⟶ B) [IsMonHom φ] :
@@ -238,8 +201,11 @@ noncomputable def twistedHomComplexMap
 variable {B' : CochainComplex (ModuleCat R) ℤ} [MonObj B']
 variable {C'' : CochainComplex (ModuleCat R) ℤ} [ComonObj C'']
 
-/-- Identity law for the degreewise twisted Hom-complex map: mapping along both
-identity morphisms is the identity, from the pinned cochain identity laws. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For a Maurer–Cartan bundle x and
+f∈Hom^n(C,A), the degreewise transport using id_C and id_A sends f to f. -/
 theorem twistedHomComplexMapCochain_id
     (x : MaurerCartan (R := R) (C := C) (A := A))
     {n : ℤ} (f : HomComplex.Cochain C A n) :
@@ -247,10 +213,13 @@ theorem twistedHomComplexMapCochain_id
   unfold twistedHomComplexMapCochain
   simp only [HomComplex.Cochain.comp_id, HomComplex.Cochain.id_comp]
 
-/-- Composition law for the degreewise twisted Hom-complex map: coalgebra
-morphisms compose contravariantly as `ψ₁ ≫ ψ₂` while algebra morphisms compose
-covariantly as `φ₂ ≫ φ₁`, from `ofHom_comp` and the degree-zero cochain
-associativity lemmas. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. Let ψ₂:C'→C,ψ₁:C''→C' be coalgebra
+maps and φ₂:A→B,φ₁:B→B' algebra maps. For x and f∈Hom^n(C,A),
+Φ_{ψ₁,φ₁}(Φ_{ψ₂,φ₂}(f))=Φ_{ψ₁≫ψ₂,φ₂≫φ₁}(f), with the second transport based on the mapped MC
+bundle. -/
 theorem twistedHomComplexMapCochain_comp
     (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ₂ : C' ⟶ C) [IsComonHom ψ₂] (φ₂ : A ⟶ B) [IsMonHom φ₂]
@@ -264,9 +233,11 @@ theorem twistedHomComplexMapCochain_comp
     HomComplex.Cochain.comp_assoc_of_first_is_zero_cochain,
     HomComplex.Cochain.comp_assoc_of_second_is_zero_cochain]
 
-/-- Degree-component identity law for the bundled twisted Hom-complex map.
-Stated at degree components because the source/target complexes differ
-propositionally through `MaurerCartan.map_id`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For a Maurer–Cartan x, n∈ℤ, and
+f∈Hom^n(C,A), the n-th component of the additive complex map for id_C,id_A sends f to f. -/
 theorem twistedHomComplexMap_id_f
     (x : MaurerCartan (R := R) (C := C) (A := A))
     (n : ℤ) (f : HomComplex.Cochain C A n) :
@@ -274,9 +245,12 @@ theorem twistedHomComplexMap_id_f
   change twistedHomComplexMapCochain x (𝟙 C) (𝟙 A) f = f
   exact twistedHomComplexMapCochain_id x f
 
-/-- Degree-component composition law for the bundled twisted Hom-complex map.
-Stated at degree components because the source/target complexes differ
-propositionally through `MaurerCartan.map_comp`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For coalgebra maps ψ₂:C'→C,ψ₁:C''→C'
+and algebra maps φ₂:A→B,φ₁:B→B', the composite of the two additive complex maps has the same
+degree-n value on every f as the map for ψ₁≫ψ₂ and φ₂≫φ₁. -/
 theorem twistedHomComplexMap_comp_f
     (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ₂ : C' ⟶ C) [IsComonHom ψ₂] (φ₂ : A ⟶ B) [IsMonHom φ₂]

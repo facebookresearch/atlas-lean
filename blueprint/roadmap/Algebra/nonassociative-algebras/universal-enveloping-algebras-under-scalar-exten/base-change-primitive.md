@@ -1,4 +1,6 @@
-# Base Change Primitive
+# Primitive-valued coefficient extension of the Lie inclusion
 
-The coefficient tensor of the native Lie inclusion takes values in the primitive elements
-of the scalar-extended enveloping bialgebra.
+Primitive-valued coefficient extension of the Lie inclusion.
+
+For U = U_R(L) and B = S ⊗[R] U, the S-linear extension of ι_R sends S ⊗[R] L into the
+primitive Lie subalgebra of B. It gives an S-Lie map with value s ⊗ x ↦ s ⊗ ι_R(x).

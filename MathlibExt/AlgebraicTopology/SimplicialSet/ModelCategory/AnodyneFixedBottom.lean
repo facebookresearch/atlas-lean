@@ -12,12 +12,12 @@ module
 public import Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.Basic
 
 /-!
-# Fixed-bottom lifting for anodyne extensions
+# Fixed-bottom lifting along anodyne extensions
 
-A fixed bottom map is encoded by its pullback.  If every horn lifts over the
-corresponding simplexwise bottom, the pullback projection is a simplicial
-fibration.  The defining left-lifting property of an anodyne extension then
-produces one globally compatible lift.
+Let `i : X ⟶ Y` be an anodyne extension of simplicial sets in universe `u`, let `p : E ⟶ B`,
+and fix `b : Y ⟶ B`. Suppose that for every `σ : Δ[n + 1] ⟶ Y` and every horn index `j`, the
+horn inclusion lifts against `p` with bottom map `σ ≫ b`. Then every `a : X ⟶ E` satisfying `a
+≫ p = i ≫ b` extends to a map `ℓ : Y ⟶ E` with `i ≫ ℓ = a` and `ℓ ≫ p = b`.
 -/
 
 @[expose] public section
@@ -29,8 +29,11 @@ open scoped Simplicial
 
 namespace SSet
 
-/-- Simplexwise horn lifts over a fixed bottom map extend to a fixed-bottom
-lift against every anodyne extension. -/
+/-- Let `X, Y, E, B : SSet.{u}`, let `i : X ⟶ Y` be an anodyne extension, and let `p : E ⟶ B` and
+`b : Y ⟶ B`. Assume that for every `n : ℕ`, `σ : Δ[n + 1] ⟶ Y`, and `j : Fin (n + 2)`, the
+inclusion `(SSet.horn (n + 1) j).ι` has the lifting property against `p` with fixed bottom `σ
+≫ b`. Then `HasLiftingPropertyFixedBot i p b`: each `a : X ⟶ E` with `a ≫ p = i ≫ b` admits `ℓ
+: Y ⟶ E` satisfying `i ≫ ℓ = a` and `ℓ ≫ p = b`. -/
 theorem anodyneExtensions.hasLiftingPropertyFixedBot_of_simplices
     {X Y E B : SSet.{u}} {i : X ⟶ Y}
     (hi : SSet.anodyneExtensions i) (p : E ⟶ B) (b : Y ⟶ B)

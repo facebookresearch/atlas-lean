@@ -1,5 +1,6 @@
-# Reduced Conv Pow precomp
+# Comonoid precomposition of degree-recorded convolution iterates
 
-Reduced iterates commute with source precomposition by a comonoid morphism,
-by induction consuming `conv_precomp` at the successor step. No vanishing,
-reducedness, or coaugmentation hypothesis is needed for the transport itself.
+Comonoid precomposition of degree-recorded convolution iterates.
+
+For a comonoid morphism ψ : C' → C, iterating ψ followed by f gives the recorded degree dₙ and
+cochain ψ followed by fₙ, where (dₙ,fₙ)=reducedConvPow f n.

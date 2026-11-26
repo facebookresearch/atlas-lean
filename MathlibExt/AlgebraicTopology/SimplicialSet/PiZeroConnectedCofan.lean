@@ -13,15 +13,12 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.ConnectedComponents
 public import Mathlib.CategoryTheory.Limits.Types.Coproducts
 
 /-!
-# Connected coproduct cofans and simplicial connected components
+# Connected components of coproducts of connected simplicial sets
 
-The connected-component functor sends a colimiting coproduct cofan of
-connected simplicial sets to a colimit of types.  The proof labels the apex by
-the constant simplicial set on the summand index; this prevents components
-from distinct summands from being identified.
-
-Only this specialized cofan theorem is exposed.  No general coproduct-
-preservation instance or realization/model-category API is introduced.
+Let `J : Type u`, let `K : J → SSet.{u}` be a family of connected simplicial sets, and let `c`
+be a colimiting coproduct cofan for `K`. Applying the connected-component functor
+`SSet.π₀Functor` to `c` gives a colimiting cofan in types. In particular, components belonging
+to different summands remain distinct in the coproduct.
 -/
 
 @[expose] public section
@@ -56,8 +53,10 @@ private lemma mapπ₀_const_discreteSSet
 
 namespace π₀
 
-/-- The connected-component functor preserves a specified colimiting
-coproduct cofan when every summand is connected. -/
+/-- Let `J : Type u`, `K : J → SSet.{u}`, and suppose that every `K j` is connected. If `c : Cofan
+K` is a coproduct cofan with `hc : IsColimit c`, then `SSet.π₀Functor.mapCocone c` is a
+colimit cocone in types. Its legs are the maps on connected components induced by the
+coproduct inclusions. -/
 noncomputable opaque isColimitMapCoconeOfConnected
     {J : Type u} (K : J → SSet.{u})
     [∀ j, SSet.IsConnected (K j)]

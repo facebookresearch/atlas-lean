@@ -1,5 +1,6 @@
-# Precomp
+# Convolution nilpotence preserved by a comonoid morphism
 
-Reduced convolution-nilpotence is preserved by source precomposition with a
-comonoid morphism, by transporting the vanishing witness through
-`reducedConvPow_precomp` and `Cochain.comp_zero`.
+Convolution nilpotence preserved by a comonoid morphism.
+
+If f has a vanishing finite convolution iterate and ψ : C' → C is a comonoid morphism, then ψ
+followed by f has a vanishing iterate at the same index.

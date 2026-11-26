@@ -1,8 +1,7 @@
-# Conv postcomp
+# Monoid-morphism naturality of convolution
 
-Convolution commutes with postcomposition by a monoid morphism.
+Monoid-morphism naturality of convolution.
 
-For `f : Cochain C A m`, `g : Cochain C A n`, and `φ : A ⟶ B` with
-`IsMonHom φ`, postcomposing `conv f g` equals the convolution of the
-postcomposed factors. The proof reuses the heterogeneous tensor postcomposition
-coherence and the cochain lift of `IsMonHom.mul_hom`.
+For a monoid morphism φ : A → B and homogeneous f,g : C → A, postcomposing f⋆g with φ equals
+the convolution of f followed by φ and g followed by φ. All cochain degrees m,n and m+n are
+retained.

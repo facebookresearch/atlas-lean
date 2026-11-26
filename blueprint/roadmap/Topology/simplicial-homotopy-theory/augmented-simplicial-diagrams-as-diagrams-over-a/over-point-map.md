@@ -1,3 +1,7 @@
-# Over Point Map
+# Slice map induced by a point-compatible augmented morphism
 
-An actual augmented map preserving the point map induces the actual slice map.
+Slice map induced by a point-compatible augmented morphism.
+
+Let f : X → Y be augmented, with point maps a : X.right → A and b : Y.right → A satisfying
+f.right ≫ b = a. Its degree maps and point map define overPoint X a → overPoint Y b in the
+augmented slice category.

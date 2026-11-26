@@ -1,6 +1,7 @@
-# Red Comul Pow From split
+# Block-splitting identity for coassociative reduced iterates
 
-Generic finite-iterate splitting for an arbitrary reduced-comultiplication
-candidate: with explicit binary coassociativity, the `(m+1+n)`-th iterate
-deconcatenates through the finite-add coherence into the tensor of the `m`-th
-and `n`-th iterates. No `ComonObj` is assumed.
+Block-splitting identity for coassociative reduced iterates.
+
+Let b : C → C ⊗ C satisfy b ≫ (id ⊗ b) = b ≫ (b ⊗ id) ≫ α. With the stated tensor-power
+coherence, b^{[m+1+n]} followed by P_{m+n+2}(C) ≅ P_{m+1}(C) ⊗ P_{n+1}(C) equals b ≫ (b^{[m]}
+⊗ b^{[n]}), for all natural m,n. This statement uses an arbitrary coassociative map b.

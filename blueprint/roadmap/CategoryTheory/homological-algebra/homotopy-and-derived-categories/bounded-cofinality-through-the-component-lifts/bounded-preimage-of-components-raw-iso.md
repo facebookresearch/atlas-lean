@@ -1,3 +1,7 @@
-# Bounded Preimage Of Components Raw Iso
+# Underlying complex comparison of the bounded lift
 
-The internally lifted bounded source has the whole original raw complex comparison.
+Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The mapped bounded lift, as an underlying cochain complex, is canonically isomorphic to K.

@@ -1,4 +1,5 @@
-# Transition Gauge hom
+# Coordinate formula for the transition gauge
 
-The transition gauge first applies the inverse `h₁` chart and then the
-forward `h₀` chart.
+For two fixed-fiber product presentations `h₀`, `h₁` of `p : E → B`, the
+forward transition gauge is exactly the inverse chart `B × F → E` of `h₁`
+followed by the forward chart `E → B × F` of `h₀`.

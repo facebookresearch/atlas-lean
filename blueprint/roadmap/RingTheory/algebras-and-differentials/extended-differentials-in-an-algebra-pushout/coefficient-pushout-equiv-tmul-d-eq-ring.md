@@ -1,4 +1,6 @@
-# Coefficient Pushout Equiv tmul D eq ring Square
+# Generator agreement with the structural coefficient-square map
 
-On the literal generating tensors, the native equivalence is the existing
-base-change map of the original coefficient ring square.
+Generator agreement with the structural coefficient-square map.
+
+On b⊗\[A\](a⊗[P]d p), the coefficient pushout equivalence equals the scalar-extended map of
+coefficientPushoutRingSquare, aligned with the ambient A-action on B.

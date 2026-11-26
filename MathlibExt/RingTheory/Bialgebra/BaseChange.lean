@@ -16,17 +16,16 @@ public import Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
-# Bialgebra base change along a scalar tower
+# Bialgebra scalar extension along a tower
 
-For a tower of commutative semirings `R → S → T`, successive scalar
-extension of an `R`-bialgebra agrees with direct scalar extension. The
-comparison sends `t ⊗ (s ⊗ a)` to `(s • t) ⊗ a`, and its inverse inserts
-the unit of `S`.
+Let R → S → T be compatible algebras of commutative semirings, and A an R-bialgebra with an
+arbitrary semiring multiplication. Successive scalar extension T ⊗[S] (S ⊗[R] A) is
+canonically isomorphic to T ⊗[R] A as a T-bialgebra.
 
-The right factor is an arbitrary semiring. The bialgebra equivalence uses
-the native linear tower-cancellation equivalence; multiplication and the
-two coalgebra structure maps are preserved without flatness assumptions.
-All four carrier universes are independent.
+The comparison sends t ⊗ (s ⊗ a) to (s • t) ⊗ a, and its inverse sends t ⊗ a to t ⊗ (1_S ⊗ a).
+Its underlying linear equivalence is tensor-tower cancellation. These maps preserve
+multiplication, counit and coproduct and are natural in R-bialgebra maps. The scalar and
+bialgebra carrier universes are independent.
 -/
 
 @[expose] public section
@@ -79,8 +78,10 @@ private theorem insert_comul_tmul (t : T) (a : A) :
     TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
     TensorProduct.AlgebraTensorModule.tensorTensorTensorComm_tmul]
 
-/-- Successive scalar extension along `R → S → T` agrees with direct extension as a
-`T`-bialgebra, including when the original bialgebra is noncommutative. -/
+/-- Bialgebra equivalence for successive scalar extension.
+
+For a commutative semiring tower R → S → T and an R-bialgebra semiring A, tensor-tower
+cancellation gives T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A. No commutativity of A is required. -/
 def cancelBaseChange : T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A :=
   (BialgEquiv.ofAlgEquiv
     (AlgEquiv.ofLinearEquiv
@@ -110,7 +111,10 @@ def cancelBaseChange : T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A :=
             (t ⊗ₜ[R] a))
       exact insert_comul_tmul R S T A t a)).symm
 
-/-- The tower comparison multiplies the two scalar coefficients and leaves the right factor. -/
+/-- Pure-tensor formula for bialgebra tower cancellation.
+
+For t ∈ T, s ∈ S and a ∈ A, the comparison sends t ⊗[S] (s ⊗[R] a) to (s • t) ⊗[R] a, using
+the S-action on T. -/
 @[simp]
 theorem cancelBaseChange_tmul (t : T) (s : S) (a : A) :
     cancelBaseChange R S T A (t ⊗ₜ[S] (s ⊗ₜ[R] a)) = (s • t) ⊗ₜ[R] a := by
@@ -118,7 +122,9 @@ theorem cancelBaseChange_tmul (t : T) (s : S) (a : A) :
     (t ⊗ₜ[S] (s ⊗ₜ[R] a)) = _
   exact TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul R S T t a s
 
-/-- The inverse tower comparison inserts the unit of the intermediate scalar semiring. -/
+/-- Pure-tensor formula for inverse bialgebra tower cancellation.
+
+The inverse comparison sends t ⊗[R] a to t ⊗[S] (1_S ⊗[R] a). -/
 @[simp]
 theorem cancelBaseChange_symm_tmul (t : T) (a : A) :
     (cancelBaseChange R S T A).symm (t ⊗ₜ[R] a) = t ⊗ₜ[S] ((1 : S) ⊗ₜ[R] a) := by
@@ -126,7 +132,11 @@ theorem cancelBaseChange_symm_tmul (t : T) (a : A) :
     (t ⊗ₜ[R] a) = _
   exact TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul R S T t a
 
-/-- The underlying linear equivalence is the native tower-cancellation equivalence. -/
+/-- Underlying linear equivalence of bialgebra tower cancellation.
+
+The linear equivalence underlying cancelBaseChange is
+TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A, with the same coefficient and
+unit-insertion formulas. -/
 @[simp]
 theorem cancelBaseChange_toLinearEquiv :
     (cancelBaseChange R S T A).toCoalgEquiv.toLinearEquiv =
@@ -149,8 +159,11 @@ theorem cancelBaseChange_toLinearEquiv :
   · intro x y hx hy
     simp only [map_add, hx, hy]
 
-/-- Tower cancellation is natural in morphisms of the original bialgebra: direct extension
-after cancellation equals successive extension before cancellation. -/
+/-- Naturality of bialgebra tower cancellation.
+
+For an R-bialgebra map f : A → B, direct scalar extension of f after cancelBaseChange on A
+equals cancelBaseChange on B after extending f successively along R → S → T. The T and S
+coefficient factors are unchanged. -/
 theorem cancelBaseChange_naturality
     {B : Type z'} [Semiring B] [Bialgebra R B] (f : A →ₐc[R] B) :
     (Bialgebra.TensorProduct.map (BialgHom.id T T) f).comp

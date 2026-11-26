@@ -16,15 +16,14 @@ public import Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Mathlib.RingTheory.Bialgebra.Hom
 
 /-!
-# Bialgebra morphisms commute with antipodes
+# Antipode compatibility of bialgebra morphisms
 
-A bialgebra morphism between Hopf algebras carries the source antipode to
-the target antipode. Postcomposition as an algebra morphism and
-precomposition as a coalgebra morphism give two convolution inverses of
-the same underlying linear map. Native inverse uniqueness identifies them.
+Let R be a commutative semiring and A,B Hopf R-algebras with semiring carriers in independent
+universes. Every bialgebra morphism f : A → B satisfies f ∘ S_A = S_B ∘ f.
 
-The ground semiring is commutative; the source and target semirings may
-be noncommutative and have independent carrier universes.
+In the convolution monoid of R-linear maps A → B, f ∘ S_A is a left inverse of f and S_B ∘ f
+is a right inverse. The algebra and coalgebra compatibility of f give these equations, and
+inverse uniqueness identifies the two maps.
 -/
 
 @[expose] public section
@@ -39,7 +38,10 @@ variable {R : Type u} [CommSemiring R]
   {A : Type v} [Semiring A] [HopfAlgebra R A]
   {B : Type w} [Semiring B] [HopfAlgebra R B]
 
-/-- The underlying linear map of a bialgebra morphism commutes with the two native antipodes. -/
+/-- Linear-map equation for antipode compatibility.
+
+For a bialgebra morphism f between Hopf algebras over a commutative semiring R, f.toLinearMap
+∘ S_A = S_B ∘ f.toLinearMap. The source and target semirings may be noncommutative. -/
 theorem comp_antipode (f : A →ₐc[R] B) :
     f.toLinearMap.comp (HopfAlgebra.antipode R (A := A)) =
       (HopfAlgebra.antipode R (A := B)).comp f.toLinearMap := by
@@ -60,7 +62,10 @@ theorem comp_antipode (f : A →ₐc[R] B) :
       WithConv.ofConv_toConv, LinearMap.id_comp] using h
   exact toConv_injective (left_inv_eq_right_inv hleft hright)
 
-/-- A bialgebra morphism carries the antipode of each element to the antipode of its image. -/
+/-- Element formula for a bialgebra morphism and antipodes.
+
+For f : A →ₐc[R] B and a ∈ A, f(S_A(a)) = S_B(f(a)). The ground semiring R is commutative and
+both carriers have Hopf structures. -/
 @[simp]
 theorem map_antipode (f : A →ₐc[R] B) (a : A) :
     f (HopfAlgebra.antipode R a) = HopfAlgebra.antipode R (f a) :=

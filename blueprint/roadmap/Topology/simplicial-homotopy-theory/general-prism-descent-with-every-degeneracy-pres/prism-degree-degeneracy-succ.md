@@ -1,3 +1,6 @@
-# Prism Degree degeneracy succ
+# Degeneracy law with a shifted target degeneracy index
 
-Second native homotopy degeneracy law, earned from the same epi descent.
+Degeneracy law with a shifted target degeneracy index.
+
+For i,j ∈ Fin(n+1) with j ≤ i, P.σ_i ≫ H_{n+1,j} = H_{n,j} ≫ Q.σ_{i+1}. The prism index embeds
+by castSucc and the target degeneracy index by succ, including j = i.

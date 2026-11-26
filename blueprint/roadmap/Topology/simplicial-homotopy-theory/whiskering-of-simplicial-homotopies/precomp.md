@@ -1,3 +1,5 @@
-# Precomp
+# Precomposition of a simplicial homotopy
 
-Precompose an ordinary simplicial homotopy in its source.
+Let `W,X,Y : SSet.{u}`, `f,g : X→Y`, and `H : SSet.Homotopy f g`. For `k : W→X`, `H.precomp k`
+is a homotopy from `k≫f` to `k≫g`, obtained by precomposing the cylinder map with `k ⊗ 𝟙
+Δ[1]`.

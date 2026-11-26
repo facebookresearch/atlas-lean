@@ -15,17 +15,18 @@ public import Mathlib.CategoryTheory.Localization.Equivalence
 public import Mathlib.CategoryTheory.Localization.Opposite
 
 /-!
-# The actual opposite equivalence of derived categories and reflected bounds
+# Opposite derived categories and cohomological bound reflection
 
-The native cochain opposite/degree-reflection equivalence preserves
-quasi-isomorphisms by the existing homology-op and reindexing comparisons.
-Native localization lifts its forward and inverse functors. The original
-cochain equivalence unit and counit give both localization round trips.
+Let C be abelian. Degree-negating cochain reflection gives
+Cochain(C,ℤ)ᵒᵖ ≃ Cochain(Cᵒᵖ,ℤ), with degree-n homology
+canonically op(H^{−n}(K)). It preserves quasi-isomorphisms in both
+directions.
 
-The same actual reflected complexes exchange strict upper and lower
-bounds. Native strictly bounded representatives then prove the exact
-IsLE/IsGE correspondence on derived objects. No desired equivalence,
-resolution, comparison, or bound certificate is caller input.
+For independently chosen derived categories, localization gives
+D(C)ᵒᵖ ≃ D(Cᵒᵖ). The forward and inverse localization comparisons
+retain the reflected cochain representatives. A derived object has
+cohomology vanishing above n exactly when its reflection has
+cohomology vanishing below −n.
 -/
 
 @[expose] public section
@@ -40,23 +41,39 @@ namespace DerivedCategory.OppositeTransport
 
 variable (C : Type u) [Category.{v} C] [Abelian C]
 
-/-- The original native cochain opposite and degree-reflection equivalence. -/
+/-- Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+The equivalence Cochain(C,ℤ)ᵒᵖ ≃ Cochain(Cᵒᵖ,ℤ) given by passage to the opposite category and negation of the degree index. -/
 abbrev cochainEquivalence : (CochainComplex C ℤ)ᵒᵖ ≌ CochainComplex Cᵒᵖ ℤ :=
   CochainComplex.opEquivalence C
 
-/-- Homology of the actual reflected complex is the original opposite homology in degree -n. -/
+/-- Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+For any K and n∈ℤ, the canonical isomorphism H^n(R_op(K)) ≅ op(H^{−n}(K)). -/
 def cochainHomologyIso (K : CochainComplex C ℤ) (n : ℤ) :
     ((cochainEquivalence C).functor.obj (op K)).homology n ≅ op (K.homology (-n)) :=
   HomologicalComplex.chainToCochainHomologyIso K.op n ≪≫ K.homologyOp (-n)
 
-/-- Native homology-op and degree reflection preserve precisely the original quasi-isomorphisms. -/
+/-- Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+A cochain map f is a quasi-isomorphism if and only if its reflected opposite map R_op(f) is a quasi-isomorphism. -/
 theorem cochain_map_quasiIso_iff {X Y : (CochainComplex C ℤ)ᵒᵖ} (f : X ⟶ Y) :
     QuasiIso ((cochainEquivalence C).functor.map f) ↔ QuasiIso f.unop :=
   (HomologicalComplex.quasiIso_cochainComplexEquivalence_map_iff
     ((HomologicalComplex.opFunctor C (ComplexShape.up ℤ)).map f)).trans
       (HomologicalComplex.quasiIso_opFunctor_map_iff f.unop)
 
-/-- The native inverse reflection preserves quasi-isomorphisms by its original counit round trip. -/
+/-- Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+If a map of Cᵒᵖ-cochain complexes is a quasi-isomorphism, its inverse-reflected map of C-cochain complexes is a quasi-isomorphism. -/
 theorem cochain_inverse_map_quasiIso {X Y : CochainComplex Cᵒᵖ ℤ} (f : X ⟶ Y)
     (hf : QuasiIso f) : QuasiIso (((cochainEquivalence C).inverse.map f).unop) := by
   let E := cochainEquivalence C
@@ -90,7 +107,11 @@ private theorem strictLE_inverse (K : CochainComplex Cᵒᵖ ℤ) (n : ℤ) [K.I
 variable [HasDerivedCategory.{w} C] [HasDerivedCategory.{w'} Cᵒᵖ]
 
 omit [HasDerivedCategory.{w} C] in
-/-- The actual reflected cochain functor is inverted by native derived localization. -/
+/-- Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+With a chosen derived category of Cᵒᵖ, its localization sends reflected quasi-isomorphisms of C-complexes to isomorphisms. -/
 theorem forwardInverts :
     (HomologicalComplex.quasiIso C (ComplexShape.up ℤ)).op.IsInvertedBy
       ((cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ)) := by
@@ -100,7 +121,11 @@ theorem forwardInverts :
   infer_instance
 
 omit [HasDerivedCategory.{w'} Cᵒᵖ] in
-/-- The original inverse cochain functor is inverted by native opposite derived localization. -/
+/-- Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+With a chosen derived category of C, opposite localization sends the inverse reflections of quasi-isomorphisms of Cᵒᵖ-complexes to isomorphisms. -/
 theorem inverseInverts :
     (HomologicalComplex.quasiIso Cᵒᵖ (ComplexShape.up ℤ)).IsInvertedBy
       ((cochainEquivalence C).inverse ⋙ (Functor.op (DerivedCategory.Q (C := C)))) := by
@@ -110,43 +135,71 @@ theorem inverseInverts :
   change IsIso ((DerivedCategory.Q.map (((cochainEquivalence C).inverse.map f).unop)).op)
   infer_instance
 
-/-- Native localization of the actual forward cochain reflection. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The forward functor Φ:D(C)ᵒᵖ → D(Cᵒᵖ) obtained by localizing R_op. -/
 def forward : (DerivedCategory C)ᵒᵖ ⥤ DerivedCategory Cᵒᵖ :=
   Localization.lift ((cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ))
     (forwardInverts C) (Functor.op (DerivedCategory.Q (C := C)))
 
-/-- Native localization of the actual inverse cochain reflection. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The backward functor Ψ:D(Cᵒᵖ) → D(C)ᵒᵖ obtained by localizing inverse cochain reflection. -/
 def backward : DerivedCategory Cᵒᵖ ⥤ (DerivedCategory C)ᵒᵖ :=
   Localization.lift ((cochainEquivalence C).inverse ⋙ (Functor.op (DerivedCategory.Q (C := C))))
     (inverseInverts C) (DerivedCategory.Q (C := Cᵒᵖ))
 
-/-- The forward localization comparison retains the actual cochain reflection. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The natural comparison Φ(Q_C(K)ᵒᵖ) ≅ Q_{Cᵒᵖ}(R_op(K)) identifies forward derived reflection with localization of the reflected representative. -/
 def forwardFac : (Functor.op (DerivedCategory.Q (C := C))) ⋙ forward C ≅
     (cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ) :=
   Localization.fac ((cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ))
     (forwardInverts C) (Functor.op (DerivedCategory.Q (C := C)))
 
-/-- The inverse localization comparison retains the actual inverse cochain reflection. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The natural comparison for Ψ identifies Ψ(Q_{Cᵒᵖ}(L)) with the opposite localization of the inverse-reflected C-complex. -/
 def backwardFac : DerivedCategory.Q (C := Cᵒᵖ) ⋙ backward C ≅
     (cochainEquivalence C).inverse ⋙ (Functor.op (DerivedCategory.Q (C := C))) :=
   Localization.fac ((cochainEquivalence C).inverse ⋙ (Functor.op (DerivedCategory.Q (C := C))))
     (inverseInverts C) (DerivedCategory.Q (C := Cᵒᵖ))
 
-/-- The same actual forward localization comes with its native lifting comparison. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The forward functor Φ, together with Φ∘Q_Cᵒᵖ ≅ Q_{Cᵒᵖ}∘R_op, is the localization lift of cochain reflection. -/
 instance forward_lifting :
     Localization.Lifting (Functor.op (DerivedCategory.Q (C := C)))
       (HomologicalComplex.quasiIso C (ComplexShape.up ℤ)).op
       ((cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ)) (forward C) :=
   ⟨forwardFac C⟩
 
-/-- The same actual inverse localization comes with its native lifting comparison. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The backward functor Ψ, with its comparison on localized representatives, is the localization lift of inverse cochain reflection. -/
 instance backward_lifting :
     Localization.Lifting (DerivedCategory.Q (C := Cᵒᵖ))
       (HomologicalComplex.quasiIso Cᵒᵖ (ComplexShape.up ℤ))
       ((cochainEquivalence C).inverse ⋙ (Functor.op (DerivedCategory.Q (C := C)))) (backward C) :=
   ⟨backwardFac C⟩
 
-/-- The actual derived-category opposite equivalence, with both native reflection round trips earned. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The equivalence D(C)ᵒᵖ ≃ D(Cᵒᵖ), with forward and inverse functors the two localization lifts of cochain reflection. -/
 def equivalence : (DerivedCategory C)ᵒᵖ ≌ DerivedCategory Cᵒᵖ := by
   let α : ((cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ)) ⋙ backward C ≅
       (Functor.op (DerivedCategory.Q (C := C))) :=
@@ -168,17 +221,33 @@ def equivalence : (DerivedCategory C)ᵒᵖ ≌ DerivedCategory Cᵒᵖ := by
     ((cochainEquivalence C).functor ⋙ DerivedCategory.Q (C := Cᵒᵖ)) (forward C)
     ((cochainEquivalence C).inverse ⋙ (Functor.op (DerivedCategory.Q (C := C)))) (backward C) α β
 
-/-- Native localization retains precisely the original forward functor. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The forward functor of the derived opposite equivalence is Φ, the localized cochain-reflection functor. -/
 theorem equivalence_functor_eq : (equivalence C).functor = forward C := rfl
 
-/-- Native localization retains precisely the original inverse functor. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The inverse functor of the derived opposite equivalence is Ψ, the localized inverse-reflection functor. -/
 theorem equivalence_inverse_eq : (equivalence C).inverse = backward C := rfl
 
-/-- The actual reflected derived object. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+For X in D(C), its reflected object in D(Cᵒᵖ) is the forward equivalence applied to op(X). -/
 abbrev reflect (X : DerivedCategory C) : DerivedCategory Cᵒᵖ :=
   (equivalence C).functor.obj (op X)
 
-/-- A native lower cohomological bound becomes the corresponding original upper bound under the inverse. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+If Y in D(Cᵒᵖ) has cohomology zero below −n, its inverse-reflected object in D(C) has cohomology zero above n. -/
 theorem inverse_isLE_of_isGE (Y : DerivedCategory Cᵒᵖ) (n : ℤ) (hY : Y.IsGE (-n)) :
     (unop ((equivalence C).inverse.obj Y)).IsLE n := by
   let _ : Y.IsGE (-n) := hY
@@ -194,7 +263,11 @@ theorem inverse_isLE_of_isGE (Y : DerivedCategory Cᵒᵖ) (n : ℤ) (hY : Y.IsG
       simpa only [Functor.comp_obj, Functor.op_obj] using (backwardFac C).app K
   exact DerivedCategory.TStructure.t.isLE_of_iso e.unop n
 
-/-- Native cohomological upper bounds correspond exactly to reflected lower bounds. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+For X in D(C) and n∈ℤ, H^k(X)=0 for k>n if and only if H^k(reflect(X))=0 for k<−n. -/
 theorem isLE_iff_reflect_isGE (X : DerivedCategory C) (n : ℤ) :
     X.IsLE n ↔ (reflect C X).IsGE (-n) := by
   constructor

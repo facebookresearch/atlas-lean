@@ -1,8 +1,7 @@
-# Is Pullback preimage Subspace of is Pullback
+# A pullback square restricts to compatible preimage subspaces
 
-Restriction of a pullback square to canonical preimages.
-   Given `sq : IsPullback e₁ p₁ p b₁` and `⇑b₁ ⁻¹' U = U₁`, the square on
-   `⇑p₁ ⁻¹' U₁` and `⇑p ⁻¹' U` over `e₁` is a pullback.
-   Route: provider `isPullback_preimageSubspace` for canonical squares,
-   `paste_horiz` for the outer square, then `IsPullback.of_right` with the
-   `subspaceMap` composition equalities.
+Let `E₁ → E`, `E₁ → B₁`, `E → B` and `B₁ → B` form a pullback
+square of topological spaces in universe `u`. If `U ⊆ B` and `U₁ ⊆ B₁`
+satisfy `b₁⁻¹(U) = U₁`, the induced map from `p₁⁻¹(U₁)` to `p⁻¹(U)`,
+together with the two subspace inclusions and the original map `E₁ → E`,
+again forms a pullback square.

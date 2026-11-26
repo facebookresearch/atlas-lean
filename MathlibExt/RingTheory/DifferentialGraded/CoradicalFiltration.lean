@@ -16,87 +16,24 @@ public import MathlibExt.RingTheory.DifferentialGraded.TensorPowers
 public import MathlibExt.RingTheory.DifferentialGraded.ReducedKernels
 
 /-!
-# Predicate-only coradical filtration for coaugmented dg coalgebras
+# Reduced coproducts and finite coradical-stage predicates
 
-For explicit `η : 𝟙_ ⟶ C` and a candidate `Δbar : C ⟶ C ⊗ C`, `IsRedComul η Δbar`
-requires `η` to be a comonoid morphism from the canonical tensor-unit comonoid
-(local `ComonObj.instTensorUnit` only), records the honest comultiplication
-decomposition with correctly oriented tensor maps and unitors, plus the three
-required vanishing equations. Existence is supplied only by the canonical
-construction `canonRedComul` / `canonIsRedComul` below, from the explicit
-comonoid-morphism laws of `η`. Finite
-iterates via `redComulPowFrom Δbar`, stage membership `IsInFilt Δbar` over
-those canonical iterates, and exhaustion `IsConilpotent η Δbar` requiring both
-the `IsRedComul` witness and finite-stage vanishing are defined below in
-this file. See the module nonclaims for the explicit scope boundary.
+Let C be a cochain comonoid of modules over a commutative ring R, with the stated graded
+tensor coproduct, empty-colimit preservation and iterated tensor coherence structures. For η :
+I → C, set L_η = λ_C⁻¹ ≫ (η ⊗ id), R_η = ρ_C⁻¹ ≫ (id ⊗ η), and U_η = ε_C ≫ λ_I⁻¹ ≫ (η ⊗ η).
+Reduced data require η to preserve the canonical unit comonoid, Δ_C = b + L_η + R_η − U_η, and
+vanishing of b on η and on both counit legs. The canonical expression b = Δ_C−L_η−R_η+U_η has
+these properties when η preserves counit and coproduct.
 
-## Declaration inventory (this leaf)
+For any b : C → C ⊗ C, define b^{[0]} = λ_C⁻¹ and b^{[n+1]} = b ≫ (b^{[n]} ⊗ id), landing in
+the left-associated power P_{n+1}(C). Stage n in degree i is the kernel condition
+b^{[n+1]}_i(x)=0. Elementwise conilpotence consists of reduced data together with exhaustion
+by these stages, with a bound allowed to depend on the degree and element.
 
-* `IsRedComul`: `IsComonHom η` from the local tensor-unit comonoid, plus
-  decomposition `Δ = Δbar + L η + R η − U η` with exact pinned
-  `tensorHom`/unitor paths, plus `η ≫ Δbar = 0` and both counit-leg vanishings.
-* `redComulPowFrom`: correctly typed finite iterate `∀ n, C ⟶ tensorPowObj C (n+1)`
-  with degree zero the canonical identity-through-degree-one isomorphism and
-  successor via the candidate `Δbar` followed by tensoring the previous iterate
-  with `𝟙 C`, plus exact zero/successor computation lemmas.
-* `IsInFilt`: componentwise stage membership directly over
-  `redComulPowFrom Δbar` via the morphism degree component, with the
-  deliberate `(n+1)` offset so `F₀ = ker Δbar` up to the degree-one iso.
-* `IsConilpotent`: `IsRedComul η Δbar` plus elementwise exhaustion by those
-  canonical finite stages, plus the genuinely derivable zero-membership closure
-  lemma.
-* `redComul`: landing map `coaugCoideal η ⟶ coaugCoideal η ⊗ coaugCoideal η`
-  descending `Δbar ≫ π ⊗ π` through the cokernel, plus computation
-  `redComul_π`, uniqueness `redComul_unique`, binary leg-transfer
-  `redComul_legTransfer` (true comultiplication and candidate agree after
-  `π ⊗ π`), and plain coassociativity `redComul_coassoc` on the same
-  associator path as `ComonObj.comul_assoc`.
-* `redComulPowFrom_split`: generic finite-iterate deconcatenation for an
-  arbitrary candidate `Δbar` with explicit binary coassociativity, via the
-  committed `tensorPowObj_add` coherence, `tensorHom` functoriality,
-  associator naturality, and the triangle coherence; no `ComonObj` assumed.
-* `redComulPowFrom_split_redComul`: the same splitting for
-  `redComul η Δbar h`, discharging binary coassociativity only from
-  `redComul_coassoc`.
-* `redComulCandidate_naturality`: forward naturality
-  `u ≫ ΔbarD = ΔbarC ≫ tensorHom u u` for a comonoid map `u : C ⟶ D`
-  with `ηC ≫ u = ηD`.
-* `canonRedComul` / `canonIsRedComul`: the canonical reduced comultiplication
-  at a general `η` (full comultiplication minus the two coaugmentation legs
-  plus the double-coaugmentation term) and its `IsRedComul` proof from the
-  explicit comonoid-morphism laws of `η`.
-
-## Nonclaims
-
-* No `ComonObj` on the coaugmentation cokernel; no `Δbar` existence beyond
-  the canonical `canonRedComul` construction from the comonoid-morphism laws
-  of `η`; no filtration object, quotient, colimit, or colimit isomorphism
-  beyond the cokernel universal property; no counit laws for `redComul`.
-* No tensor coalgebra, (co)free objects or universal properties, completeness,
-  convolution summability, representability, adjunction, derived or Koszul
-  claims, and no C15/C16/KQ/operad result.
-* The iterate-splitting theorems claim only the stated deconcatenation with
-  exact `m + 1 + n` indexing for an arbitrary candidate; no nilpotence,
-  monotonicity, `ComonObj` in the generic statement, cokernel-coalgebra,
-  completion, or cofree claim.
-* This predicate is not identified with `IsReducedConvNilpotent`: that is a
-  cochain-level convolution-nilpotence condition with different carriers
-  (`TwistingConilpotentPredicates`), while this is a coalgebra-domain
-  reduced-comultiplication condition. Neither direction is claimed here.
-* This remains an explicitly documented thin `CochainComplex (ModuleCat R) ℤ`
-  specialization; it does not discharge FG7.
-
-## Import justification
-
-`TwistingAugmentationFactor` supplies the
-pinned comonoid API (`ComonObj`, `IsComonHom`, `ComonObj.instTensorUnit`;
-direct compilation confirms `TensorPowers` alone does not supply these).
-`TensorPowers` supplies the left-associated `tensorPowObj` interface used by
-`redComulPowFrom`/`IsInFilt` in this file, plus the cochain `tensorHom_zero` /
-`zero_tensorHom` lemmas consumed by the `redComul` leg-transfer. `ReducedKernels`
-supplies the coaugmentation-cokernel universal-property API (`coaugCoideal`,
-`coaugCoidealπ`, `coaugCoideal_desc`, computation, uniqueness, condition); it
-imports no C14 leaf, so this edge is acyclic.
+For reduced data, the map b descends through Q = Coker(η) after projecting both tensor legs,
+giving a coassociative map Q → Q ⊗ Q. Coassociative finite iterates split into blocks of
+lengths m+1 and n+1 through the tensor-power comparison. The reduced maps and their quotient
+descents obey the stated projection and naturality equations.
 -/
 
 @[expose] public section
@@ -122,13 +59,12 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [ComonObj C]
 
-/-- Reduced-comultiplication predicate for an explicit coaugmentation `η` and a
-candidate `Δbar`: `η` is a comonoid morphism from the canonical tensor-unit
-comonoid (local `ComonObj.instTensorUnit` only, no global instance); the actual
-comultiplication decomposes as `Δbar` plus the two `η`-legs minus the
-double-`η` term, with exact pinned unitor/`tensorHom` paths; moreover `η`
-kills `Δbar` and both counit legs kill `Δbar`. Existence of `Δbar` is not
-claimed. -/
+/-- Reduced coproduct data for a coaugmentation.
+
+For a cochain comonoid C with coaugmentation η : I → C, a map b : C → C ⊗ C satisfies
+IsRedComul when η is a comonoid morphism from the canonical unit, Δ_C = b + L_η + R_η − U_η, η
+≫ b = 0, and b vanishes after either counit tensor leg. Here L_η = λ_C⁻¹ ≫ (η ⊗ id), R_η =
+ρ_C⁻¹ ≫ (id ⊗ η), and U_η = ε_C ≫ λ_I⁻¹ ≫ (η ⊗ η). -/
 def IsRedComul (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C) : Prop :=
   (letI := ComonObj.instTensorUnit (CochainComplex (ModuleCat R) ℤ)
@@ -146,11 +82,11 @@ def IsRedComul (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     Δbar ≫ HomologicalComplex.tensorHom (ComonObj.counit (X := C)) (𝟙 C) = 0 ∧
     Δbar ≫ HomologicalComplex.tensorHom (𝟙 C) (ComonObj.counit (X := C)) = 0
 
-/-- Finite iterate of a candidate reduced comultiplication: `0` is the canonical
-identity-through-degree-one isomorphism (not an ill-typed literal identity);
-successor is the candidate `Δbar` followed by tensoring the previous iterate
-with `𝟙 C`. Uses only the committed `TensorPowers` interface; no coherence is
-reproved here. -/
+/-- Finite left-associated iterates of a reduced-coproduct map.
+
+For any cochain map b : C → C ⊗ C, define b^{[0]} = λ_C⁻¹ : C → P₁(C) and b^{[n+1]} = b ≫
+(b^{[n]} ⊗ id_C). Thus b^{[n]} lands in the recursive tensor power P_{n+1}(C). The stated
+graded tensor and unit structures define these finite maps. -/
 noncomputable def redComulPowFrom
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C) :
     ∀ n, C ⟶ tensorPowObj C (n + 1)
@@ -162,9 +98,10 @@ omit [∀ (X : ModuleCat R), PreservesColimit (Functor.empty.{0} (ModuleCat R))
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] [ComonObj C] in
-/-- Endpoint computation for `redComulPowFrom`: degree `0` is the canonical
-identity-through-degree-one isomorphism onto `tensorPowObj C 1`; the index
-`0` means `0 + 1`. -/
+/-- Initial reduced-coproduct iterate.
+
+For b : C → C ⊗ C, redComulPowFrom b 0 is λ_C⁻¹ : C → I ⊗ C = P₁(C), retaining the initial
+unit factor. -/
 @[simp]
 theorem redComulPowFrom_zero
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C) :
@@ -176,9 +113,10 @@ omit [∀ (X : ModuleCat R), PreservesColimit (Functor.empty.{0} (ModuleCat R))
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] [ComonObj C] in
-/-- Recursive computation for `redComulPowFrom`: degree `n + 1` applies the
-candidate `Δbar` then tensors the degree-`n` iterate with `𝟙 C` on the right;
-the target index grows as `(n + 1) + 1`. -/
+/-- Successor reduced-coproduct iterate.
+
+For b : C → C ⊗ C and n : ℕ, redComulPowFrom b (n+1) is b followed by redComulPowFrom b n on
+the left tensor factor and identity on the right. Its target is P_{n+2}(C). -/
 @[simp]
 theorem redComulPowFrom_succ
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C) (n : ℕ) :
@@ -186,21 +124,19 @@ theorem redComulPowFrom_succ
       Δbar ≫ HomologicalComplex.tensorHom (redComulPowFrom Δbar n) (𝟙 C) :=
   rfl
 
-/-- Componentwise stage membership: `x` lies in stage `n` when the degree
-component of the `(n+1)`-st canonical iterate `redComulPowFrom Δbar`
-vanishes on it. The `(n+1)` offset is deliberate: `redComulPowFrom Δbar 0`
-is the degree-one iso, so `F₀` is the kernel of `Δbar` up to that iso. Never
-spelled as ill-typed morphism-applied-to-element. -/
+/-- Finite-stage vanishing in an iterated reduced coproduct.
+
+For b : C → C ⊗ C, n : ℕ, i : ℤ and x ∈ C_i, IsInFilt b n i x means that the degree-i
+component of b^{[n+1]} annihilates x. The iterate has n+2 tensor factors, and stage zero is
+the kernel condition for b up to unit comparison. -/
 def IsInFilt (Δbar : C ⟶ HomologicalComplex.tensorObj C C) (n : ℕ) (i : ℤ)
     (x : C.X i) : Prop :=
   ((redComulPowFrom Δbar (n + 1)).f i) x = 0
 
-/-- Elementwise conilpotence as exhaustion by the finite stages of the actual
-candidate `Δbar`: `IsRedComul η Δbar` holds and every degree component of
-every element vanishes at some finite canonical stage. The `IsRedComul`
-conjunct ties `Δbar` to the true coalgebra comultiplication, so the zero
-candidate and arbitrary families no longer trivialize the notion. No
-completeness, limits, or colimit isomorphism is claimed. -/
+/-- Elementwise exhaustion by reduced-coproduct stages.
+
+For η : I → C and b : C → C ⊗ C, require IsRedComul η b and, for every degree i and element x
+∈ C_i, some natural stage n with b^{[n+1]}_i(x)=0. The bound may depend on both i and x. -/
 def IsConilpotent (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C) : Prop :=
   IsRedComul η Δbar ∧ ∀ (i : ℤ) (x : C.X i), ∃ n, IsInFilt Δbar n i x
@@ -210,17 +146,19 @@ omit [∀ (X : ModuleCat R), PreservesColimit (Functor.empty.{0} (ModuleCat R))
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] [ComonObj C] in
-/-- Zero lies in every stage, via the pinned linear-map `map_zero`. This is the
-only closure fact claimed here; monotonicity, transport, and any identification
-with `IsReducedConvNilpotent` are explicitly not claimed. -/
+/-- Zero element in every reduced-coproduct stage.
+
+For every b : C → C ⊗ C, stage n and integer degree i, the zero element of C_i satisfies
+IsInFilt b n i, since each iterate component is linear. -/
 theorem IsInFilt_zero (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
     (n : ℕ) (i : ℤ) :
     IsInFilt Δbar n i 0 :=
   map_zero _
 
-/-- Reduced comultiplication landing on the coaugmentation coideal: descends
-`Δbar ≫ π ⊗ π` through the cokernel projection. The obligation is
-`η ≫ Δbar = 0` transported past the tensorHom legs. -/
+/-- Reduced coproduct on a coaugmentation quotient.
+
+For IsRedComul η b, let Q = Coker(η) with projection π : C → Q. The map b ≫ (π ⊗ π)
+annihilates η and therefore descends uniquely to ρ : Q → Q ⊗ Q. This defines redComul η b. -/
 noncomputable def redComul
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -232,8 +170,10 @@ noncomputable def redComul
       (coaugCoidealπ η)) ?_
   rw [← Category.assoc, h.2.2.1, zero_comp]
 
-/-- Computation: projecting then applying `redComul` equals `Δbar` followed by
-`π ⊗ π`. -/
+/-- Projection equation for the descended reduced coproduct.
+
+For Q = Coker(η), π : C → Q and reduced data IsRedComul η b, the descended map ρ satisfies π ≫
+ρ = b ≫ (π ⊗ π). -/
 theorem redComul_π
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -244,8 +184,10 @@ theorem redComul_π
   unfold redComul
   exact coaugCoideal_π_desc η _ _
 
-/-- Uniqueness: any map out of the coideal agreeing with `Δbar ≫ π ⊗ π`
-after the projection is `redComul`. -/
+/-- Uniqueness of a descended reduced coproduct.
+
+For reduced data IsRedComul η b, any g : Q → Q ⊗ Q satisfying π ≫ g = b ≫ (π ⊗ π) equals
+redComul η b. This is uniqueness in the cokernel universal property. -/
 theorem redComul_unique
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -258,9 +200,10 @@ theorem redComul_unique
   unfold redComul
   exact coaugCoideal_desc_unique η _ _ g hg
 
-/-- Binary leg-transfer: the true comultiplication and the candidate agree
-after `π ⊗ π`. The `η`-legs die by `coaugCoideal_condition` plus the cochain
-`tensorHom_zero` / `zero_tensorHom` lemmas. -/
+/-- Agreement of full and reduced coproducts after quotienting both legs.
+
+For IsRedComul η b and Q = Coker(η), Δ_C ≫ (π ⊗ π) = b ≫ (π ⊗ π). The two
+single-coaugmentation terms and the double-coaugmentation term vanish because η ≫ π = 0. -/
 theorem redComul_legTransfer
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -290,12 +233,10 @@ theorem redComul_legTransfer
   rw [hdecomp, Preadditive.sub_comp, Preadditive.add_comp,
     Preadditive.add_comp, hL, hR, hU, add_zero, add_zero, sub_zero]
 
-/-- Plain coassociativity of `redComul`: same associator path as
-`ComonObj.comul_assoc`, with `redComul` in place of `comul`. No counit laws
-are claimed. The proof pushes the projection through both sides, replays the
-base coassociativity under the triple projection, then replaces the leading
-`Δ` by `Δbar` via the decomposition (the `η`-legs vanish on both
-triple-tensor targets). -/
+/-- Coassociativity of the descended reduced coproduct.
+
+For reduced data IsRedComul η b, the map ρ : Q → Q ⊗ Q on Q = Coker(η) satisfies ρ ≫ (id_Q ⊗
+ρ) = ρ ≫ (ρ ⊗ id_Q) ≫ α_{Q,Q,Q}. This states coassociativity of the reduced map. -/
 theorem redComul_coassoc
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -535,10 +476,11 @@ private theorem redComulCoassocTensorStep
       rw [MonoidalCategory.tensorHom_comp_tensorHom, Category.id_comp]
 
 omit [ComonObj C] in
-/-- Generic finite-iterate splitting for an arbitrary reduced-comultiplication
-candidate: with explicit binary coassociativity, the `(m+1+n)`-th iterate
-deconcatenates through the finite-add coherence into the tensor of the `m`-th
-and `n`-th iterates. No `ComonObj` is assumed. -/
+/-- Block-splitting identity for coassociative reduced iterates.
+
+Let b : C → C ⊗ C satisfy b ≫ (id ⊗ b) = b ≫ (b ⊗ id) ≫ α. With the stated tensor-power
+coherence, b^{[m+1+n]} followed by P_{m+n+2}(C) ≅ P_{m+1}(C) ⊗ P_{n+1}(C) equals b ≫ (b^{[m]}
+⊗ b^{[n]}), for all natural m,n. This statement uses an arbitrary coassociative map b. -/
 theorem redComulPowFrom_split
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
     (hcoassoc : Δbar ≫ HomologicalComplex.tensorHom (𝟙 C) Δbar =
@@ -632,8 +574,11 @@ theorem redComulPowFrom_split
       (redComulPowFrom Δbar (m + 1 + k))
       (tensorPowObj_add C (m + 1) (k + 1)).hom ih
 
-/-- Splitting for the descended `redComul`: binary coassociativity comes only
-from `redComul_coassoc`, with no extra hypothesis beyond `IsRedComul`. -/
+/-- Block splitting of descended reduced-coproduct iterates.
+
+For ρ = redComul η b on Q = Coker(η), its coassociativity gives ρ^{[m+1+n]} followed by the
+power-splitting comparison equal to ρ ≫ (ρ^{[m]} ⊗ ρ^{[n]}). The factors have lengths m+1 and
+n+1. -/
 theorem redComulPowFrom_split_redComul
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -668,12 +613,11 @@ theorem redComulPowFrom_split_redComul
     exact hbase
   exact redComulPowFrom_split _ hcoassoc m n
 
-/-- reduced-comultiplication candidate naturality for a comonoid morphism preserving the
-coaugmentation: expanding both full comultiplications by the two `IsRedComul`
-decompositions, the two coaugmentation legs and the double leg agree by unitor
-naturality, interchange, `hη`, and `hom_counit`, and additive cancellation
-leaves the reduced parts equal. This builds no category, functor, adjunction,
-or total object, and removes no stored naturality hypothesis elsewhere. -/
+/-- Naturality of compatible reduced coproduct data.
+
+Let C,D be cochain comonoids with IsRedComul η_C b_C and IsRedComul η_D b_D. For a comonoid
+map u : C → D satisfying η_C ≫ u = η_D, u ≫ b_D = b_C ≫ (u ⊗ u). The reduced maps are
+determined by the full coproducts and coaugmentation terms. -/
 theorem redComulCandidate_naturality
     {D : CochainComplex (ModuleCat R) ℤ} [ComonObj D]
     {ηC : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
@@ -775,13 +719,11 @@ theorem redComulCandidate_naturality
   simp only [sub_eq_add_neg] at hcomul
   exact add_right_cancel (add_right_cancel (add_right_cancel hcomul))
 
-/-- Coideal reduced-comultiplication compatibility for a comonoid map,
-general over the backward map and its coideal descent: from the
-projection compatibility `hπ` and the reduced-comultiplication
-compatibility `hΔ`, by the cokernel universal property and the
-`IsRedComul` decomposition. Shared by the cofree-tensor-coalgebra
-reduced-power induction and the Cobar insertion-naturality lane (which
-instantiates it with the roles swapped). -/
+/-- Naturality on coaugmentation quotients from a compatible projection square.
+
+Suppose C,D have reduced data, u : D → C and u_Q : Q_D → Q_C satisfy π_D ≫ u_Q = u ≫ π_C and u
+≫ b_C = b_D ≫ (u ⊗ u). Then u_Q ≫ ρ_C = ρ_D ≫ (u_Q ⊗ u_Q) for the descended reduced
+coproducts. -/
 theorem coideal_redComul_naturality
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (Δbar : C ⟶ HomologicalComplex.tensorObj C C)
@@ -823,10 +765,11 @@ theorem coideal_redComul_naturality
           HomologicalComplex.tensorHom uC uC) := by
         rw [← redComul_π, Category.assoc]
 
-/-- Canonical reduced comultiplication at an explicit coaugmentation `η`: the full
-comultiplication minus the two coaugmentation legs plus the
-double-coaugmentation term. Same formula as the Bar-total
-`barShiftedTotalRedComul`, at the comonoid structure maps of `C`. -/
+/-- Canonical reduced-coproduct expression.
+
+For η : I → C in a cochain comonoid, define b = Δ_C − L_η − R_η + U_η, where L_η = λ_C⁻¹ ≫ (η
+⊗ id), R_η = ρ_C⁻¹ ≫ (id ⊗ η), and U_η = ε_C ≫ λ_I⁻¹ ≫ (η ⊗ η). The signs retain the two
+subtracted single-coaugmentation terms and added double term. -/
 noncomputable def canonRedComul
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C) :
     C ⟶ HomologicalComplex.tensorObj C C :=
@@ -840,10 +783,11 @@ noncomputable def canonRedComul
       HomologicalComplex.tensorHom η η)
 
 set_option linter.style.haveILetI false in
-/-- The canonical reduced comultiplication satisfies `IsRedComul`. The
-comonoid-morphism laws of `η` are explicit hypotheses (stated in
-`HomologicalComplex` spelling) since `IsComonHom η` needs a `ComonObj 𝟙_`
-instance the caller may not have in scope. -/
+/-- Reduced-coproduct laws from the coaugmentation counit and coproduct equations.
+
+If η ≫ ε_C = id_I and η ≫ Δ_C = λ_I⁻¹ ≫ (η ⊗ η), then canonRedComul η satisfies IsRedComul η.
+These two hypotheses make η a comonoid morphism from the canonical tensor-unit comonoid and
+imply all three reduced vanishing equations. -/
 theorem canonIsRedComul
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (hcounit : η ≫ (ComonObj.counit (X := C)) = 𝟙 (𝟙_ (CochainComplex (ModuleCat R) ℤ)))

@@ -1,3 +1,5 @@
-# Gauge transition
+# The transition gauge recovers the target presentation
 
-Adjusting `h₁` by the transition from `h₁` to `h₀` recovers `h₀`.
+For product presentations `h₀`, `h₁` of the same continuous map `p : E → B`
+with fixed fiber `F`, applying their transition gauge to `h₁` gives exactly
+`h₀` as fixed-fiber presentation data.

@@ -1,3 +1,6 @@
-# Whiskered Normalization Inclusion
+# Moore inclusion of a transported simplicial diagram
 
-The actual target inclusion on the mapped simplicial diagram.
+Moore inclusion of a transported simplicial diagram.
+
+For additive F : C ⥤ D, apply the Moore inclusion to Y ⋙ F. This gives a natural chain map N(Y
+⋙ F) → A(Y ⋙ F).

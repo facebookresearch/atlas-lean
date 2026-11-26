@@ -1,9 +1,7 @@
-# Coideal red Comul naturality
+# Naturality on coaugmentation quotients from a compatible projection square
 
-Coideal reduced-comultiplication compatibility for a comonoid map,
-general over the backward map and its coideal descent: from the
-projection compatibility `hπ` and the reduced-comultiplication
-compatibility `hΔ`, by the cokernel universal property and the
-`IsRedComul` decomposition. Shared by the cofree-tensor-coalgebra
-reduced-power induction and the Cobar insertion-naturality lane (which
-instantiates it with the roles swapped).
+Naturality on coaugmentation quotients from a compatible projection square.
+
+Suppose C,D have reduced data, u : D → C and u_Q : Q_D → Q_C satisfy π_D ≫ u_Q = u ≫ π_C and u
+≫ b_C = b_D ≫ (u ⊗ u). Then u_Q ≫ ρ_C = ρ_D ≫ (u_Q ⊗ u_Q) for the descended reduced
+coproducts.

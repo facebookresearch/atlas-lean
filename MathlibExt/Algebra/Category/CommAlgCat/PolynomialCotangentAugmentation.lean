@@ -13,19 +13,21 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.AugmentedOver
 public import MathlibExt.CategoryTheory.Comonad.BarResolutionAsphericity
 
 /-!
-# Polynomial cotangent augmentation and its genuine contraction
+# Polynomial cotangent augmentation and row contraction
 
-The polynomial cotangent simplicial object has its actual augmentation to the
-linearization of the source algebra. For a polynomial algebra the variables
-construct an algebra section of polynomial evaluation. The existing comonad
-right extra degeneracy, its slice lift, linearization and native normalization
-then construct a homotopy equivalence of the actual cotangent row with its point.
+Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. For `P=(B→A)` in
+`Over A`, the polynomial cotangent simplicial module augments to `A ⊗_B Ω_{B/k}`. In each
+degree the augmentation sends `a ⊗ dp` to `a ⊗ d(ε(p))`.
 
-The input polynomial presentation is an ordinary algebra isomorphism. No
-cotangent comparison, exactness or resolution-independence certificate is input.
-All commutative rings and polynomial variable sets have the indicated independent
-universes. Reference: Stacks Project 92.3 and 92.4.7; Weibel Example 8.6.16.
+For a polynomial presentation `Free_k(σ) ≅ B`, the variables define an algebra section of the
+polynomial counit. The associated right extra degeneracy, lifted over `A` and mapped by
+cotangent linearization, contracts the normalized row to its augmentation point. Its
+normalized augmentation is therefore a quasi-isomorphism.
 
+## References
+
+* Stacks Project, Sections 92.3 and 92.4.7.
+* C. Weibel, *An Introduction to Homological Algebra*, Example 8.6.16.
 -/
 
 @[expose] public section
@@ -41,7 +43,10 @@ namespace CommAlgCat
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- Linearize the actual polynomial augmentation in the slice over `A`. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `P=(B→A)` in `Over A`. The augmented
+simplicial `A`-module `polynomialCotangentAugmented k A P` has left object the polynomial
+cotangent simplicial model of `P`, point `cotangent k A P = A ⊗_B Ω_{B/k}`, and augmentation
+induced by the polynomial-resolution evaluation maps. -/
 def polynomialCotangentAugmented (P : Over A) :
     SimplicialObject.Augmented (ModuleCat.{max u v} A) :=
   (SimplicialObject.Augmented.whiskeringObj _ _ (cotangentFunctor.{u, v} k A)).obj
@@ -56,7 +61,10 @@ theorem polynomialCotangentAugmented_left (P : Over A) :
 theorem polynomialCotangentAugmented_point (P : Over A) :
     (polynomialCotangentAugmented.{u, v} k A P).right = cotangent k A P := rfl
 
-/-- The same actual polynomial augmentation is functorial in the algebra over A. -/
+/-- For a commutative ring `k` and fixed `k`-algebra `A`, `polynomialCotangentAugmentedFunctor k A
+: Over A → SimplicialObject.Augmented (ModuleCat A)` sends `P` to its polynomial cotangent
+augmented model. A morphism over `A` acts by the polynomial-resolution map lifted over the
+augmentation target and then by the cotangent functor. -/
 def polynomialCotangentAugmentedFunctor :
     Over A ⥤ SimplicialObject.Augmented (ModuleCat.{max u v} A) where
   obj := polynomialCotangentAugmented.{u, v} k A
@@ -106,7 +114,10 @@ theorem polynomialCotangentAugmentedFunctor_map_left {P Q : Over A} (f : P ⟶ Q
 theorem polynomialCotangentAugmentedFunctor_map_right {P Q : Over A} (f : P ⟶ Q) :
     ((polynomialCotangentAugmentedFunctor.{u, v} k A).map f).right = cotangentMap.{u, v} k A f := rfl
 
-/-- The genuine whole polynomial cotangent augmentation is natural. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `f : P → Q` in `Over A`. For the
+simplicial cotangent functor `C` and augmentation `ε`, `C(f) ≫ ε_Q = ε_P ≫ const(cotangentMap
+k A f)`. Thus the simplicial augmentation commutes with the induced map on source cotangent
+linearizations. -/
 @[reassoc]
 theorem polynomialCotangentAugmentation_naturality {P Q : Over A} (f : P ⟶ Q) :
     (polynomialCotangentSimplicialFunctor.{u, v} k A).map f ≫
@@ -120,14 +131,19 @@ theorem polynomialCotangentAugmentation_naturality {P Q : Over A} (f : P ⟶ Q) 
       (SimplicialObject.const (ModuleCat.{max u v} A)).map (cotangentMap.{u, v} k A f) at h
   exact h
 
-/-- The augmentation is the actual polynomial evaluation-induced differential map. -/
+/-- For a commutative ring `k`, a fixed `k`-algebra `A`, `P∈Over A`, and `n : ℕ`,
+`polynomialCotangentAugmentationAt k A P n` is the degree-`n` component of the simplicial
+augmentation. It maps `A ⊗_{P_n} Ω_{P_n/k}` to `cotangent k A P`, where `P_n` is the
+polynomial resolution degree with its map to `A`. -/
 def polynomialCotangentAugmentationAt (P : Over A) (n : ℕ) :
     ((polynomialCotangentSimplicialFunctor.{u, v} k A).obj P).obj (op ⦋n⦌) ⟶
       cotangent k A P :=
   (polynomialCotangentAugmented.{u, v} k A P).hom.app (op ⦋n⦌)
 
-/-- The augmentation sends every actual differential tensor through the
-actual degreewise polynomial evaluation map. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, `P=(B→A)` in `Over A`, and `ε_n:P_n→B` its
+degree-`n` polynomial-resolution augmentation. For `a∈A` and `p∈P_n`, the cotangent
+augmentation maps `a ⊗ dp` to `a ⊗ d(ε_n(p))` in `A ⊗_B Ω_{B/k}`. This is the equality of
+`cotangentTensor` values. -/
 theorem polynomialCotangentAugmentationAt_tensor (P : Over A) (n : ℕ)
     (a : A) (p : (polynomialResolution.{u, v} k P.left).left.obj (op ⦋n⦌)) :
     (polynomialCotangentAugmentationAt.{u, v} k A P n).hom
@@ -142,7 +158,10 @@ theorem polynomialCotangentAugmentationAt_tensor (P : Over A) (n : ℕ)
     cotangentTensor.{u, v} k A P a (e.hom p)
   exact cotangentMap_tensor.{u, v} k A f a p
 
-/-- The actual normalized augmentation, with the native Moore inclusion. -/
+/-- For a commutative ring `k`, a `k`-algebra `A`, and `P∈Over A`, the chain map
+`polynomialCotangentNormalizedAugmentation k A P` runs from the normalized polynomial
+cotangent complex to `cotangent k A P` concentrated in degree zero. It is the Moore inclusion
+followed by the alternating-face augmentation of `polynomialCotangentAugmented k A P`. -/
 def polynomialCotangentNormalizedAugmentation (P : Over A) :
     (polynomialCotangentChainFunctor k A).obj P ⟶
       (ChainComplex.single₀ (ModuleCat.{max u v} A)).obj (cotangent k A P) :=
@@ -151,7 +170,10 @@ def polynomialCotangentNormalizedAugmentation (P : Over A) :
 
 variable {A}
 
-/-- Formal variables give a genuine algebra section of polynomial evaluation. -/
+/-- Let `k : Type u` be a commutative ring and `σ : Type(max u v)`. The algebra map
+`polynomialCounitSection k σ : Free_k(σ) → T(Free_k(σ))` sends the variable indexed by `x∈σ`
+to the outer polynomial variable indexed by that same variable `X_x` in `Free_k(σ)`. It is the
+free-algebra map of the free/forget adjunction unit. -/
 def polynomialCounitSection (σ : Type (max u v)) :
     (free.{u, v} k).obj σ ⟶
       (polynomialComonad.{u, v} k).obj ((free.{u, v} k).obj σ) :=
@@ -164,7 +186,10 @@ theorem polynomialCounitSection_counit (σ : Type (max u v)) :
       𝟙 ((free.{u, v} k).obj σ) :=
   (freeForgetAdjunction.{u, v} k).left_triangle_components σ
 
-/-- Transport the constructed polynomial section by an actual algebra presentation. -/
+/-- Let `k` be a commutative ring, `P` a `k`-algebra, and `e : Free_k(σ) ≅ P` a polynomial
+presentation. The algebra map `polynomialCounitSectionOfIso k P σ e : P → T(P)` is `e.inv ≫
+polynomialCounitSection k σ ≫ T.map e.hom`. It transports the free-algebra counit section to
+the presented algebra. -/
 def polynomialCounitSectionOfIso (P : CommAlgCat.{max u v} k)
     (σ : Type (max u v)) (e : (free.{u, v} k).obj σ ≅ P) :
     P ⟶ (polynomialComonad.{u, v} k).obj P :=
@@ -183,8 +208,10 @@ theorem polynomialCounitSectionOfIso_counit (P : CommAlgCat.{max u v} k)
 
 variable (A)
 
-/-- The cotangent contraction is constructed from the polynomial variables,
-the native comonad contraction, the slice lift and the actual linearization. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `P∈Over A` with polynomial presentation
+`e : Free_k(σ) ≅ P.left`. The augmented polynomial cotangent simplicial module of `P` has a
+right extra degeneracy. It is obtained from the transported algebra counit section, the
+polynomial-comonad right extra degeneracy, its lift over `P.hom`, and cotangent linearization. -/
 def polynomialCotangentRightExtra (P : Over A) (σ : Type (max u v))
     (e : (free.{u, v} k).obj σ ≅ P.left) :
     SimplicialObject.Augmented.RightExtraDegeneracy
@@ -194,8 +221,10 @@ def polynomialCotangentRightExtra (P : Over A) (σ : Type (max u v))
       (polynomialCounitSectionOfIso_counit.{u, v} k P.left σ e)).overPoint P.hom).map
     (cotangentFunctor.{u, v} k A)
 
-/-- The genuine polynomial cotangent row is homotopy equivalent to its
-linearization point, with the actual normalized augmentation as forward map. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `P∈Over A` with polynomial presentation
+`e : Free_k(σ) ≅ P.left`. There is a chain homotopy equivalence from the normalized polynomial
+cotangent row of `P` to `cotangent k A P` concentrated in degree zero. Its forward map is
+`polynomialCotangentNormalizedAugmentation k A P`. -/
 def polynomialCotangentAugmentationHomotopyEquiv (P : Over A)
     (σ : Type (max u v)) (e : (free.{u, v} k).obj σ ≅ P.left) :
     HomotopyEquiv ((polynomialCotangentChainFunctor k A).obj P)
@@ -209,7 +238,10 @@ theorem polynomialCotangentAugmentationHomotopyEquiv_hom (P : Over A)
     (polynomialCotangentAugmentationHomotopyEquiv k A P σ e).hom =
       polynomialCotangentNormalizedAugmentation.{u, v} k A P := rfl
 
-/-- The actual polynomial cotangent row augmentation is a quasi-isomorphism. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `P∈Over A` with polynomial presentation
+`e : Free_k(σ) ≅ P.left`. Then `polynomialCotangentNormalizedAugmentation k A P` is a
+quasi-isomorphism from the normalized row to its source cotangent linearization in degree
+zero, as the forward map of the constructed homotopy equivalence. -/
 theorem polynomialCotangentNormalizedAugmentation_quasiIso (P : Over A)
     (σ : Type (max u v)) (e : (free.{u, v} k).obj σ ≅ P.left) :
     QuasiIso (polynomialCotangentNormalizedAugmentation.{u, v} k A P) :=

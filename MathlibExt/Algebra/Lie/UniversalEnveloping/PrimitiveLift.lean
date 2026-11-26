@@ -16,20 +16,18 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.HopfAlgebra
 public import MathlibExt.RingTheory.HopfAlgebra.Hom
 
 /-!
-# The primitive universal property of an enveloping bialgebra
+# Primitive-valued maps and enveloping bialgebra morphisms
 
-A Lie morphism to the primitive Lie algebra of a bialgebra extends uniquely
-to a bialgebra morphism from the universal enveloping algebra. The comparison
-uses the native enveloping lift and the original coproduct and counit.
+Let R be commutative, L an R-Lie algebra and A an R-bialgebra whose underlying algebra is a
+ring. A Lie map f : L → P_R(A) into its primitive Lie algebra extends uniquely to a bialgebra
+map U_R(L) → A. The extension sends ι_R(x) to f(x), and restriction of a bialgebra map
+evaluates it on the canonical primitive generators.
 
-The resulting Hom correspondence is natural in both variables. Its counit
-is the canonical map from the enveloping algebra of the primitives to the
-original bialgebra, and the two unit/counit triangles hold. For a Hopf target,
-the same lift commutes with the native antipodes.
-
-The ground ring is any commutative ring. Source Lie and target algebra
-universes are independent; no PBW, projectivity or characteristic hypothesis
-is required.
+This gives a set equivalence between primitive-valued Lie maps and enveloping bialgebra maps,
+natural in both variables. Its counit ε_A : U_R(P_R(A)) → A sends a primitive generator to its
+underlying value. With η_L : L → P_R(U_R(L)), the identities P(ε_A) ∘ η_{P(A)} = id and
+ε_{U(L)} ∘ U(η_L) = id hold. For a Hopf target, every such lift commutes with the antipodes.
+Scalar, Lie and target algebra universes are independent.
 -/
 
 @[expose] public section
@@ -89,7 +87,11 @@ private theorem liftPrimitive_comul
   exact ((Bialgebra.mem_primitiveLieSubalgebra R A).mp
     (f x).property).comul_eq_tmul_add_tmul.symm
 
-/-- Extend a primitive-valued Lie morphism by the native enveloping algebra lift. -/
+/-- Bialgebra extension of a primitive-valued Lie morphism.
+
+For f : L →ₗ⁅R⁆ P_R(A), with R commutative and A an R-bialgebra ring, extend the composite L →
+A by the enveloping algebra universal property. Primitivity makes this algebra lift preserve
+both counit and comultiplication, giving U_R(L) →ₐc[R] A. -/
 def liftPrimitive (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) :
     UniversalEnvelopingAlgebra R L →ₐc[R] A :=
   BialgHom.ofAlgHom
@@ -97,7 +99,10 @@ def liftPrimitive (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) :
     (by exact liftPrimitive_counit R f)
     (by exact liftPrimitive_comul R f)
 
-/-- The bialgebra lift carries each Lie generator to the original primitive element. -/
+/-- Generator value of a primitive bialgebra lift.
+
+For a Lie map f : L → P_R(A), its bialgebra extension satisfies liftPrimitive R f (ι_R(x)) =
+f(x), viewed in A. -/
 @[simp]
 theorem liftPrimitive_ι (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) (x : L) :
     liftPrimitive R f (ι R x) = (f x : A) := by
@@ -105,12 +110,19 @@ theorem liftPrimitive_ι (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R
   rw [lift_ι_apply]
   rfl
 
-/-- Restrict a bialgebra morphism to the canonical primitive-valued Lie generators. -/
+/-- Primitive restriction of an enveloping bialgebra map.
+
+For g : U_R(L) →ₐc[R] A, compose the canonical primitive generator map η_L : L → P_R(U_R(L))
+with the Lie map on primitives induced by g. This gives L →ₗ⁅R⁆ P_R(A). -/
 def restrictPrimitive (g : UniversalEnvelopingAlgebra R L →ₐc[R] A) :
     L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A :=
   g.primitiveLieMap.comp (ιPrimitive R L)
 
-/-- Primitive-valued Lie morphisms and enveloping bialgebra morphisms correspond naturally. -/
+/-- Hom equivalence for primitive-valued enveloping maps.
+
+For an R-Lie algebra L and R-bialgebra ring A, primitive extension and restriction give (L
+→ₗ⁅R⁆ P_R(A)) ≃ (U_R(L) →ₐc[R] A). The equivalence sends f to its enveloping bialgebra lift
+and g to its value on primitive generators. -/
 def liftPrimitiveEquiv (L : Type v) [LieRing L] [LieAlgebra R L]
     (A : Type w) [Ring A] [Bialgebra R A] :
     (L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) ≃
@@ -135,7 +147,10 @@ def liftPrimitiveEquiv (L : Type v) [LieRing L] [LieAlgebra R L]
     intro a
     exact AlgHom.congr_fun h a
 
-/-- Precomposition in the Lie variable uses the canonical enveloping bialgebra map. -/
+/-- Source naturality of primitive enveloping lifts.
+
+For Lie maps g : L → L' and f : L' → P_R(A), the lifts satisfy liftPrimitive(f ∘ g) =
+liftPrimitive(f) ∘ U_R(g), where U_R(g) is the canonical enveloping bialgebra map. -/
 theorem liftPrimitive_comp_map (g : L →ₗ⁅R⁆ L')
     (f : L' →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) :
     liftPrimitive R (f.comp g) = (liftPrimitive R f).comp (mapBialgHom R g) := by
@@ -151,7 +166,10 @@ theorem liftPrimitive_comp_map (g : L →ₗ⁅R⁆ L')
   intro a
   exact AlgHom.congr_fun h a
 
-/-- Postcomposition in the bialgebra variable uses the induced map of primitive Lie algebras. -/
+/-- Target naturality of primitive enveloping lifts.
+
+For a bialgebra map g : A → B and Lie map f : L → P_R(A), g ∘ liftPrimitive(f) =
+liftPrimitive(P_R(g) ∘ f). -/
 theorem comp_liftPrimitive (g : A →ₐc[R] B)
     (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) :
     g.comp (liftPrimitive R f) = liftPrimitive R (g.primitiveLieMap.comp f) := by
@@ -174,20 +192,28 @@ section Counit
 
 variable (A : Type w) [Ring A] [Bialgebra R A]
 
-/-- The canonical bialgebra morphism from the enveloping algebra of the primitives. -/
+/-- Counit map from the enveloping algebra of primitives.
+
+For an R-bialgebra ring A, extend the identity Lie map of P_R(A) to the bialgebra morphism ε_A
+: U_R(P_R(A)) → A. It sends each primitive generator to the underlying element of A. -/
 def primitiveCounit :
     UniversalEnvelopingAlgebra R (Bialgebra.primitiveLieSubalgebra R A) →ₐc[R] A :=
   liftPrimitive R (LieHom.id : Bialgebra.primitiveLieSubalgebra R A →ₗ⁅R⁆
     Bialgebra.primitiveLieSubalgebra R A)
 
-/-- The primitive counit carries each primitive generator to its original value. -/
+/-- Generator value of the primitive counit.
+
+For x ∈ P_R(A), the bialgebra counit map ε_A satisfies ε_A(ι_R(x)) = x, viewed in A. -/
 @[simp]
 theorem primitiveCounit_ι (x : Bialgebra.primitiveLieSubalgebra R A) :
     primitiveCounit R A (ι R x) = (x : A) := by
   exact liftPrimitive_ι R (LieHom.id : Bialgebra.primitiveLieSubalgebra R A →ₗ⁅R⁆
     Bialgebra.primitiveLieSubalgebra R A) x
 
-/-- The primitive counit followed by primitive restriction satisfies the first triangle identity. -/
+/-- Primitive triangle identity for the counit.
+
+For an R-bialgebra ring A, the Lie map on primitives induced by ε_A : U_R(P_R(A)) → A,
+composed with η_{P(A)}, is the identity of P_R(A). -/
 theorem primitiveCounit_primitiveLieMap :
     (primitiveCounit R A).primitiveLieMap.comp
         (ιPrimitive R (Bialgebra.primitiveLieSubalgebra R A)) =
@@ -197,7 +223,10 @@ theorem primitiveCounit_primitiveLieMap :
 
 variable {A} {B : Type w'} [Ring B] [Bialgebra R B]
 
-/-- The canonical primitive counits commute with every actual bialgebra morphism. -/
+/-- Naturality of primitive counit maps.
+
+For a bialgebra homomorphism g : A → B over R, g ∘ ε_A = ε_B ∘ U_R(P_R(g)), where ε is the map
+extending the primitive inclusion. -/
 theorem primitiveCounit_naturality (g : A →ₐc[R] B) :
     g.comp (primitiveCounit R A) =
       (primitiveCounit R B).comp (mapBialgHom R g.primitiveLieMap) := by
@@ -213,7 +242,10 @@ section Triangle
 
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- The enveloping image of the primitive-valued generators satisfies the second triangle identity. -/
+/-- Enveloping triangle identity for primitive generators.
+
+For an R-Lie algebra L, the composite U_R(L) → U_R(P_R(U_R(L))) → U_R(L), using U_R(η_L) and
+ε_{U_R(L)}, is the identity bialgebra map. -/
 theorem primitiveCounit_comp_map_ιPrimitive :
     (primitiveCounit R (UniversalEnvelopingAlgebra R L)).comp
         (mapBialgHom R (ιPrimitive R L)) =
@@ -234,7 +266,10 @@ section Hopf
 variable {L : Type v} [LieRing L] [LieAlgebra R L]
   {A : Type w} [Ring A] [HopfAlgebra R A]
 
-/-- A primitive-valued Lie morphism extends to a morphism commuting with the native antipodes. -/
+/-- Antipode compatibility of a primitive-valued lift.
+
+For a Hopf R-algebra A and Lie map f : L → P_R(A), the bialgebra lift satisfies
+liftPrimitive(f)(S_{U_R(L)}(a)) = S_A(liftPrimitive(f)(a)) for every a ∈ U_R(L). -/
 theorem liftPrimitive_antipode (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A)
     (a : UniversalEnvelopingAlgebra R L) :
     liftPrimitive R f (HopfAlgebra.antipode R a) =

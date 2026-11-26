@@ -1,3 +1,5 @@
-# Aug Ideal lift ι
+# Inclusion equation for an augmentation-kernel factor map
 
-Computation for the augmentation-kernel lift.
+Inclusion equation for an augmentation-kernel factor map.
+
+For f : X → A annihilated by ε, augIdeal_lift ε f followed by augIdealι ε is f.

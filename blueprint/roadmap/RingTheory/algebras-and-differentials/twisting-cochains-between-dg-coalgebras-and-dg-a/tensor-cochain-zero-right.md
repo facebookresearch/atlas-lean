@@ -1,3 +1,5 @@
-# Tensor Cochain zero right
+# Zero right factor in a tensor product of cochains
 
-The graded tensor product vanishes when the right factor vanishes.
+Zero right factor in a tensor product of cochains.
+
+For any degree-m cochain f and integer n, tensorCochain(f,0) is the zero degree-(m+n) cochain.

@@ -15,50 +15,14 @@ public import MathlibExt.Algebra.Homology.TwistingMaurerCartanFunctoriality
 public import MathlibExt.RingTheory.DifferentialGraded.TwistingAugmentationFactor
 
 /-!
-# Reduced Maurer–Cartan bridge
+# Reduced Maurer–Cartan cochains relative to explicit unit maps
 
-This file connects the reduced-cochain predicate in
-`TwistingAugmentationFactor.lean` to the bundled Maurer–Cartan API in
-`TwistingMaurerCartanFunctoriality.lean` with the smallest consumer-driven
-interface.
+Let C be a dg coalgebra and A a dg algebra over a commutative ring in the integer cochain
+category. Fix cochain maps η:I→C and ε:A→I, where I is the tensor unit. A Maurer–Cartan bundle
+is reduced relative to these maps when its underlying τ satisfies τ∘η=0 and ε∘τ=0.
 
-## Reduced cochains recalled
-
-For explicit `η : 𝟙_ ⟶ C` and `ε : A ⟶ 𝟙_`, `IsReducedCochain η ε f` is the
-both-sided vanishing `(ofHom η).comp f = 0 ∧ f.comp (ofHom ε) = 0` for a
-homogeneous cochain `f : Cochain C A m` in arbitrary degree `m`. See
-`MathlibExt/RingTheory/DifferentialGraded/TwistingAugmentationFactor.lean`.
-This bridge specializes it to `x.tau` in degree `1`.
-Every twisting cochain is reduced in its own maps
-(`TwistingCochain.reduced`).
-
-## Declaration inventory
-
-* `IsReducedMaurerCartan`: a bundled `MaurerCartan` cochain is reduced when its
-  underlying `tau` satisfies `IsReducedCochain η ε`.
-* `IsReducedMaurerCartan.zero`: the bundled zero is reduced, from
-  `IsReducedCochain.zero`.
-* `IsReducedMaurerCartan.map`: reducedness is preserved by `MaurerCartan.map`
-  along a comonoid map `ψ` and a monoid map `φ` under the explicit
-  augmentation-compatibility equalities `η' ≫ ψ = η` and `φ ≫ ε' = ε`, from
-  the pinned `ofHom_comp`, degree-zero cochain associativity, and the
-  `comp_zero` / `zero_comp` laws. No new compatibility structure is
-  introduced.
-
-## Nonclaims
-
-No Hom-complex identity/composition law, no free or cofree object, no
-totalization, no bar–cobar adjunction, no conilpotence/completeness, no
-derived or Koszul result, no operadic result, and no model-categorical result
-is claimed. Only the predicate, its zero fact, and the augmentation-compatible
-map preservation above are proved.
-
-## Import justification
-
-`TwistingMaurerCartanFunctoriality` supplies `MaurerCartan` with `map` and its
-`map_tau` computation rule. `TwistingAugmentationFactor` supplies
-`IsReducedCochain` with `IsReducedCochain.zero`. No further MathlibExt import
-is needed.
+The zero bundle is reduced for every such pair of maps. For a coalgebra map ψ:C'→C and algebra
+map φ:A→B, reducedness is retained under τ↦φ∘τ∘ψ when η'≫ψ=η and φ≫ε'=ε.
 -/
 
 @[expose] public section
@@ -87,28 +51,34 @@ variable [MonObj A] [ComonObj C]
 variable {B : CochainComplex (ModuleCat R) ℤ} [MonObj B]
 variable {C' : CochainComplex (ModuleCat R) ℤ} [ComonObj C']
 
-/-- A bundled Maurer–Cartan cochain is reduced in explicit maps `η` and `ε`
-when its underlying degree-`+1` cochain satisfies the existing
-`IsReducedCochain` predicate. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. Let I be the tensor unit. For arbitrary cochain maps η:I→C,
+ε:A→I and a Maurer–Cartan bundle x with cochain τ, reducedness is the conjunction τ∘η=0 and
+ε∘τ=0 as degree-one cochains. -/
 def IsReducedMaurerCartan (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ))
     (x : MaurerCartan (R := R) (C := C) (A := A)) : Prop :=
   IsReducedCochain η ε x.tau
 
-/-- The bundled zero Maurer–Cartan cochain is reduced in any explicit maps,
-from `IsReducedCochain.zero`. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. Let I be the tensor unit. For any cochain maps η:I→C and ε:A→I,
+the zero bundle is reduced relative to them: 0∘η=0 and ε∘0=0. -/
 theorem IsReducedMaurerCartan.zero
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)) :
     IsReducedMaurerCartan η ε (MaurerCartan.zero (R := R) (C := C) (A := A)) :=
   IsReducedCochain.zero η ε
 
-/-- Reducedness is preserved by the bundled Maurer–Cartan map under explicit
-augmentation compatibility: `η' ≫ ψ = η` on the coalgebra side and
-`φ ≫ ε' = ε` on the algebra side. The proof reassociates the degree-zero
-`ofHom` factors with the pinned cochain associativity lemmas, folds them with
-`ofHom_comp`, rewrites with the two compatibility equalities, then closes with
-the two vanishing hypotheses via `comp_zero` / `zero_comp`. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. Let I be the tensor unit and x be reduced in η:I→C,ε:A→I. For
+coalgebra map ψ:C'→C, algebra map φ:A→B, and cochain maps η':I→C',ε':B→I satisfying η'≫ψ=η and
+φ≫ε'=ε, the mapped bundle x.map ψ φ is reduced in η',ε'. -/
 theorem IsReducedMaurerCartan.map {x : MaurerCartan (R := R) (C := C) (A := A)}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}

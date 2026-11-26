@@ -1,3 +1,6 @@
-# Prism Degree distinguished
+# Value of a prism operator on the nondegenerate summand
 
-The new nondegenerate summand retains its actual primitive prism map.
+Value of a prism operator on the nondegenerate summand.
+
+For the distinguished cofan map ι_n : N_n → P_n, the descended prism operator satisfies ι_n ≫
+H_{n,i} = p_{n,i}. This is the identity-epimorphism summand.

@@ -1,3 +1,12 @@
-# Ambient Acyclicι iso is Waldhausen Exact
+# Exact inclusion into the bounded isomorphism model
 
-The original full inclusion is exact into the isomorphism bounded model.
+Let E be preadditive, A abelian and F:E → A additive.
+Let A_F be the full subcategory of bounded integer E-complexes K
+whose ambient complex F(K) is acyclic, and J:A_F → Bounded(E)
+its inclusion. Assume E is Quillen exact with a zero object and binary biproducts.
+On Bounded(E), let V have degreewise admissible cofibrations and
+isomorphism weak maps, and W the same cofibrations with F-detected
+quasi-isomorphisms. Let C_W be the canonical full subcategory of
+objects receiving a W-weak map from zero. Assume F is exact.
+
+The inclusion J is Waldhausen exact into Bounded(E) with its isomorphism weak structure V.

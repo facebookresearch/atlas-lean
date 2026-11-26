@@ -1,3 +1,4 @@
-# Is Zero X of top Cutoff lt
+# Vanishing above the selected upper cutoff
 
-The chosen original support witness kills each actual term above the top cutoff.
+For a bounded complex K with selected upper cutoff t, K^j is zero
+whenever t<j, by its finite-support witness.

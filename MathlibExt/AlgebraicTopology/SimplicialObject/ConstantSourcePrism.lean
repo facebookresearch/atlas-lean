@@ -12,13 +12,16 @@ public import Mathlib.AlgebraicTopology.SimplicialObject.Homotopy
 public import Mathlib.AlgebraicTopology.SimplexCategory.ToMkOne
 
 /-!
-# The complete native prism determined by an actual constant-source edge
+# Simplicial homotopies from a constant-source edge
 
-An actual map B -> X_1 with the prescribed two original faces determines
-every prism operator on the constant simplicial source B. Native cut maps
-to [1] prove all faces and degeneracies. This is an operation on an actual
-primitive edge, not a field carrying a desired full homotopy.
-Source-only successor; UNEXECUTED.
+Let C be any category, B an object and X simplicial. A map z : B → X₀ determines a map
+const(B) → X whose degree-n component is z followed by X applied to the opposite of the
+collapse [n] → [0].
+
+For maps f,g : const(B) → X and an edge e : B → X₁ with e ≫ d₁ = f₀ and e ≫ d₀ = g₀, define
+h_{n,i} = e ≫ X(κ_i.op), where κ_i : [n+1] → [1] is zero on vertices r ≤ i and one on r > i.
+The cut identities give all simplicial homotopy face and degeneracy equations. In particular
+h_{n,0} ≫ d₀ = g_n and h_{n,n} ≫ d_{n+1} = f_n. Object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -36,7 +39,10 @@ variable {C : Type u} [Category.{v} C] {B : C} {X : SimplicialObject C}
 
 private abbrev collapse (n : ℕ) : ⦋n⦌ ⟶ ⦋0⦌ := SimplexCategory.const _ _ 0
 
-/-- The actual native constant-source map determined by its zero-degree component. -/
+/-- Constant-source simplicial map determined in degree zero.
+
+For z : B → X₀ in an arbitrary category C, define const(B) → X with degree-n component z
+followed by X applied contravariantly to the unique simplex map [n] → [0]. -/
 def fromZero (z : B ⟶ X.obj (op ⦋0⦌)) : (SimplicialObject.const C).obj B ⟶ X where
   app Δ := z ≫ X.map (SimplexCategory.isTerminalZero.from Δ.unop).op
   naturality {Δ Δ'} θ := by
@@ -48,6 +54,10 @@ def fromZero (z : B ⟶ X.obj (op ⦋0⦌)) : (SimplicialObject.const C).obj B �
     exact (Category.id_comp _).trans
       (congrArg (fun f => z ≫ X.map f) h).symm
 
+/-- Degree-zero component of a constant-source simplicial map.
+
+For z : B → X₀, the map fromZero z has degree-zero component z itself, since the collapse [0]
+→ [0] is identity. -/
 @[simp]
 theorem fromZero_zero (z : B ⟶ X.obj (op ⦋0⦌)) : (fromZero z).app (op ⦋0⦌) = z := by
   have h : SimplexCategory.isTerminalZero.from ⦋0⦌ = 𝟙 ⦋0⦌ :=
@@ -129,7 +139,12 @@ variable (f g : (SimplicialObject.const C).obj B ⟶ X)
   (hf : e ≫ X.δ (1 : Fin 2) = f.app (op ⦋0⦌))
   (hg : e ≫ X.δ (0 : Fin 2) = g.app (op ⦋0⦌))
 
-/-- All original face and degeneracy laws are earned from the actual primitive edge. -/
+/-- Simplicial homotopy constructed from an edge with specified endpoints.
+
+For f,g : const(B) → X and e : B → X₁ satisfying e ≫ d₁ = f₀ and e ≫ d₀ = g₀, define h_{n,i} =
+e ≫ X(κ_i.op) for i ∈ Fin(n+1), with κ_i the cut at i+1. These components satisfy every face
+and degeneracy law of a homotopy from f to g, including h_{n,0} ≫ d₀ = g_n and h_{n,n} ≫
+d_{n+1} = f_n. -/
 def homotopy : SimplicialObject.Homotopy f g where
   h i := e ≫ X.map (SimplexCategory.toMk₁ i.castSucc.succ).op
   h_zero_comp_δ_zero n := by

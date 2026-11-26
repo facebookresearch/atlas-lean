@@ -1,5 +1,7 @@
-# Is Reduced Conv Nilpotent
+# Vanishing of a finite convolution iterate
 
-Finite reduced convolution-nilpotence of a homogeneous cochain: some
-reduced iterate vanishes. This is the sound conilpotence-side prerequisite;
-comparison with adic completeness is explicitly deferred (see the module documentation).
+Vanishing of a finite convolution iterate.
+
+For any homogeneous f, IsReducedConvNilpotent f means that some cochain component fₙ of
+reducedConvPow f n equals zero. This is a single finite witness for the whole cochain, and the
+predicate itself does not require augmentation reducedness.

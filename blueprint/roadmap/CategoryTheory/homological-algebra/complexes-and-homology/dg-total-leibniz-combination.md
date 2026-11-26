@@ -1,11 +1,9 @@
-# Total-differential Leibniz combination (abstract)
+# Sum of two degree-one Leibniz cochains
 
-Abstract total-differential Leibniz combination: if the internal and
-external degree-one summands each satisfy the carrier Leibniz shape
-`(ofHom μ).comp F = (F ⊗ I).comp μ + (I ⊗ F).comp μ` against a
-concat-shaped chain map `μ`, so does the total differential `Fi + FE`. The
-per-summand hypotheses match the conclusion shape of
-`cobarShiftedInsertionSum_concatLeibniz_of_full` (up to the abstract
-`K`/`μ`/`Fi`/`FE` and the single carrier `μ`); `μ` is a general morphism so
-its chain-map law `HomologicalComplex.Hom.comm μ` is in scope at
-instantiation.
+Let C be preadditive monoidal with bilinear tensor and all
+integer-graded tensor objects available. Let K be an integer-indexed
+cochain complex and 1 its identity cochain.
+Let μ:K⊗K → K be a chain map and F_i,F_e degree-one cochains.
+If F∘μ=μ∘(F⊗1)+μ∘(1⊗F) for each F=F_i,F_e, then
+(F_i+F_e)∘μ=μ∘((F_i+F_e)⊗1)+μ∘(1⊗(F_i+F_e)),
+using the graded tensor signs.

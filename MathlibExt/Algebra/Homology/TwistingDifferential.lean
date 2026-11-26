@@ -15,81 +15,18 @@ public import MathlibExt.Algebra.Homology.TwistingBar
 public import MathlibExt.Algebra.Homology.TwistingCobar
 
 /-!
-# Hom-level two-sided twisting differential
+# The two-sided twisting differential
 
-This file defines the Hom-level two-sided twisting differential on `Hom(C, A)`,
-building on the bar square-zero, cobar square-zero, convolution, and
-Maurer-Cartan results. It defines the cohomological graded-commutator
-perturbation on
-`Hom(C, A)`:
+For a dg coalgebra C and dg algebra A over a commutative ring, the Hom differential is
+δf=d_Af+(-1)^{n+1}fd_C for degree n. The convolution f⋆g=μ(f⊗g)Δ has degree |f|+|g| with its
+Koszul tensor sign.
 
-`twistedDifferential τ f = δ f + τ ⋆ f - (-1) ^ n • (f ⋆ τ)`,
+A degree-one cochain τ defines D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ in degree n+1. The left convolution uses
+the equality 1+n=n+1. If δτ+τ⋆τ=0, then D_τ²=0. In degree one the two perturbation legs add, so
+D_τ(τ)=δτ+2τ⋆τ.
 
-for a degree-`+1` cochain `τ` and `f : Cochain C A n`, landing in degree
-`n + 1`. The left `τ ⋆ f` leg has degree `1 + n` and is transported once by
-an explicit cast; the remaining legs already land in `n + 1`. This combines
-the right-twisted bar differential `twistedBarDifferential` with the left-twisted
-cobar differential `twistedCobarDifferential`, preserving both sign conventions
-exactly.
-
-## Grading and sign conventions
-
-Cohomological grading throughout, following the bar/cobar differentials:
-`τ : Cochain C A 1`, `conv = μ ∘ (f ⊗ g) ∘ Δ` with the Koszul sign
-`Int.negOnePow (n * i₁)`, and `δ` the pinned `HomComplex.δ` (Conrad signs).
-The result degree is `n + 1` so only the left leg needs transport via
-`add_comm 1 n`. The sign follows the graded commutator
-`[τ, f] = τ ⋆ f - (-1) ^ n • (f ⋆ τ)` with `|τ| = 1`.
-
-At `n = 1` the two twist legs add rather than cancel: `δ τ + τ ⋆ τ + τ ⋆ τ`
-up to the shared sign normalization. Hence no self-zero lemma is stated here;
-the bar and cobar differentials separately retain their own self-zero facts.
-
-## Primary source
-
-Standard general reference: J.-L. Loday and B. Vallette, *Algebraic Operads*,
-Grundlehren 346, Springer, 2012,
-<https://doi.org/10.1007/978-3-642-30362-3>. Exact printed-section numbers
-and a sign-level match against the printed text were not verified in this
-environment, so none is claimed here. The signs and degrees follow
-the `TwistingBar`/`TwistingCobar` differentials and `HomComplex.δ`.
-
-## Declaration inventory
-
-* `twistedDifferential`: two-sided perturbation
-  `δ f + cast (τ ⋆ f) - (-1) ^ n • (f ⋆ τ)`.
-* `twistedDifferential_v`: component computation rule.
-* `twistedDifferential_zero`: the perturbation preserves zero.
-* `twistedDifferential_sq_zero`: square-zero from `IsMaurerCartan τ`,
-  with left curvature factoring as `(δτ + τ ⋆ τ) ⋆ f` and right curvature as
-  `f ⋆ (δτ + τ ⋆ τ)`, plus cross cancellation of the mixed
-  `(τ ⋆ f) ⋆ τ` terms by associativity and `(n + 1).negOnePow = -n.negOnePow`.
-
-## Further constructions
-
-The free and cofree extensions, twisting bijection and adjunction,
-totalization, derived and Koszul duality, operadic, model-categorical, and
-realization constructions lie beyond this file.
-
-## Nonclaims
-
-No adjunction, no twisting-cochain bijection, no free or cofree object, no
-conilpotence/completeness hypothesis, no totalization, no derived/Koszul,
-no operadic, no model-categorical, and no realization result is claimed here.
-
-## Import justification
-
-`TwistingBar` supplies the right-leg sign, the `n + 1` degree convention, and
-the right-curvature square-zero route. `TwistingCobar` supplies the left-leg
-perturbation and the left-curvature route. The convolution laws and
-associativity arrive transitively for the combined square-zero proof; no unit
-lemma and no new tensor rebuild is added here.
-
-## Context
-
-This file combines the right-twisted differential in `TwistingBar.lean` and
-the left-twisted differential in `TwistingCobar.lean`, preserving sign and
-composition conventions.
+For twisting morphisms and Maurer–Cartan equations, see Loday and Vallette, Algebraic Operads,
+Springer2012, https://doi.org/10.1007/978-3-642-30362-3.
 -/
 
 @[expose] public section
@@ -115,10 +52,13 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Two-sided twisting perturbation of the convolution differential:
-`δ f + τ ⋆ f - (-1) ^ n • (f ⋆ τ)` for a degree-`+1` cochain `τ`.
-The left leg has degree `1 + n` and is cast once to `n + 1`; see the module
-documentation for the graded-commutator sign. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. The operator D_τ maps Hom^n(C,A) to
+Hom^{n+1}(C,A) for every integer n. -/
 noncomputable def twistedDifferential {n : ℤ}
     (τ : HomComplex.Cochain C A 1) (f : HomComplex.Cochain C A n) :
     HomComplex.Cochain C A (n + 1) :=
@@ -126,7 +66,14 @@ noncomputable def twistedDifferential {n : ℤ}
     cast (congrArg (HomComplex.Cochain C A) (add_comm (1 : ℤ) n)) (conv τ f) -
     n.negOnePow • conv f τ
 
-/-- Component computation rule for the two-sided twisting differential. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For p+(n+1)=q, the map C_p→A_q is
+(δf)_{p,q}+(τ⋆f)_{p,q}-(-1)^n(f⋆τ)_{p,q}, using the canonical identification of the left-product
+degree. -/
 @[simp]
 theorem twistedDifferential_v {n : ℤ}
     (τ : HomComplex.Cochain C A 1) (f : HomComplex.Cochain C A n)
@@ -137,8 +84,13 @@ theorem twistedDifferential_v {n : ℤ}
           (conv τ f)).v p q hpq -
         n.negOnePow • (conv f τ).v p q hpq := rfl
 
-/-- The two-sided twisting differential preserves zero, from the pinned
-`HomComplex.δ_zero` and `conv_zero_left/right`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For every τ of degree one and every
+n∈ℤ, D_τ(0)=0 in Hom^{n+1}(C,A). This needs no Maurer–Cartan hypothesis on τ. -/
 theorem twistedDifferential_zero {n : ℤ}
     (τ : HomComplex.Cochain C A 1) :
     twistedDifferential τ (0 : HomComplex.Cochain C A n) = 0 := by
@@ -157,17 +109,14 @@ theorem twistedDifferential_zero {n : ℤ}
     exact hcast0_general (add_comm (1 : ℤ) n)
   rw [hcast0, smul_zero, add_zero, sub_zero]
 
-/-- Square-zero of the two-sided twisting differential from the Maurer-Cartan
-equation.
-
-For `f : Cochain C A n` and `τ : Cochain C A 1` with `IsMaurerCartan τ`,
-two applications of `twistedDifferential` give degree `(n + 1) + 1`.
-Expanding with `HomComplex.δ_δ`, `conv_leibniz` on both legs,
-additive/scalar convolution laws, and `conv_assoc`, the `δf ⋆ τ` and
-`τ ⋆ δf` pairs cancel by `(n + 1).negOnePow = -n.negOnePow`, the mixed
-`(τ ⋆ f) ⋆ τ` terms cancel by associativity, `n.negOnePow ^ 2 = 1` leaves
-the two curvatures `(δτ + τ ⋆ τ) ⋆ f` and `f ⋆ (δτ + τ ⋆ τ)`, and the
-Maurer-Cartan equation closes both. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. If δτ+τ⋆τ=0, then D_τ(D_τ(f))=0 for
+every f∈Hom^n(C,A), in degree n+2. Associativity and the convolution differential law reduce the
+two curvatures to this equation. -/
 theorem twistedDifferential_sq_zero {n : ℤ}
     (τ : HomComplex.Cochain C A 1) (f : HomComplex.Cochain C A n)
     (h : IsMaurerCartan τ) :

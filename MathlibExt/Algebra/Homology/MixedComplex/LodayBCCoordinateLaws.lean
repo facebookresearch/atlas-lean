@@ -14,13 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.MixedComplex.LodayBCColumnComparison
 
 /-!
-# Literal b and printed degree-signed B arrows of the Loday BC diagram
+# The b and B arrows in supported BC cell coordinates
 
-The full column coordinate change gives the unsigned vertical b and the
-printed horizontal (-1)^(n+1)B. The underlying degree n is the original
-supported mixed degree. Native totalization supplies the remaining column
-sign; the total comparison therefore preserves both actual differential
-components rather than changing B in isolation.
+Let M be a mixed complex in a preadditive category with zero object. For p≤q, the BC cell (p,q)
+identifies with M_{q-p}. Its vertical arrow from underlying degree n+1 to n is unsigned b_n. Its
+horizontal arrow from column p+1 to p, at q=n+p+1, is (-1)^{n+1}B_n.
+
+The horizontal maps are chain maps of these unsigned columns. Finite-diagonal totalization
+supplies the additional vertical factor (-1)^p; the full cell-coordinate comparison intertwines
+the resulting total differential with the Connes total differential.
 -/
 
 @[expose] public section
@@ -58,12 +60,21 @@ private theorem differential_coordinate_transport (i n j p : ℕ)
     Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one, smul_smul,
     ← pow_add, (show Even (p + p) from ⟨p, rfl⟩).neg_one_pow, one_smul]
 
-/-- The printed model retains the same original supported cell coordinates. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Let C_can be its
+Connes bicomplex and C_BC its full column-sign coordinate model. For p,q∈ℕ with p≤q, the
+coefficient object C_BC(p,q) is isomorphic to M_{q-p} through the supported Connes cell
+identification. This cell identification itself uses the same coefficient object. -/
 abbrev lodayBCCellIso (p q : ℕ) (hpq : p ≤ q) :
     (M.lodayBCBicomplex.X p).X q ≅ M.underlying.X (q - p) :=
   M.connesBicomplexCellIso p q hpq
 
-/-- In original source/target cell coordinates, the horizontal printed arrow is (-1)^(n+1)B. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Let C_can be its
+Connes bicomplex and C_BC its full column-sign coordinate model. For p,n∈ℕ put q=n+p+1. Through
+the supported cell isomorphisms C_BC(p+1,q)≅M_n and C_BC(p,q)≅M_{n+1}, the horizontal map is
+(-1)^{n+1}B_n. The equality includes the canonical transports of the indices q-(p+1)=n and
+q-p=n+1. -/
 theorem lodayBC_horizontal_coordinate (p n : ℕ) :
     (M.lodayBCCellIso (p + 1) (n + p + 1) (by omega)).inv ≫
       (M.lodayBCHorizontal p).f (n + p + 1) ≫
@@ -85,7 +96,11 @@ theorem lodayBC_horizontal_coordinate (p n : ℕ) :
     (B_coordinate_transport M (n + p + 1 - (p + 1)) n (n + p + 1 - p)
       (by omega) (by omega) (by omega))
 
-/-- The actual unsigned stored vertical arrow is the original b in supported cell coordinates. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Let C_can be its
+Connes bicomplex and C_BC its full column-sign coordinate model. For p,n∈ℕ, the supported
+vertical map C_BC(p,n+p+1)→C_BC(p,n+p) becomes b_n:M_{n+1}→M_n under the cell identifications.
+The index transports are the equalities n+p+1-p=n+1 and n+p-p=n. -/
 theorem lodayBC_vertical_coordinate (p n : ℕ) :
     (M.lodayBCCellIso p (n + p + 1) (by omega)).inv ≫
       (M.lodayBCColumn p).d (n + p + 1) (n + p) ≫
@@ -107,7 +122,11 @@ theorem lodayBC_vertical_coordinate (p n : ℕ) :
   exact differential_coordinate_transport M (n + p + 1 - p) n (n + p - p) p
     (by omega) (by omega) (by omega)
 
-/-- The printed arrows satisfy the genuine commuting-column chain square, with the original b intact. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Let C_can be its
+Connes bicomplex and C_BC its full column-sign coordinate model. For p,q∈ℕ,
+d^BC_{p+1,p}(q+1)≫b^BC_p(q+1,q)=b^BC_{p+1}(q+1,q)≫d^BC_{p+1,p}(q). This is the chain-map square
+between the two BC columns. -/
 theorem lodayBC_horizontal_comm (p q : ℕ) :
     (M.lodayBCHorizontal p).f (q + 1) ≫ (M.lodayBCColumn p).d (q + 1) q =
       (M.lodayBCColumn (p + 1)).d (q + 1) q ≫ (M.lodayBCHorizontal p).f q :=
@@ -117,7 +136,11 @@ section Total
 
 variable [CategoryTheory.Limits.HasFiniteCoproducts C]
 
-/-- The actual full coordinate comparison is a chain isomorphism on the original total differential. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Let C_can be its
+Connes bicomplex and C_BC its full column-sign coordinate model. Assume finite coproducts and
+let V:Tot(C_BC)≅Tot(C_can). For i,j∈ℕ, V_i≫d^can_{i,j}=d^BC_{i,j}≫V_j. Both horizontal and
+signed vertical total components are included. -/
 theorem lodayBCTotalIso_comm (i j : ℕ) :
     M.lodayBCTotalIso.hom.f i ≫ (M.connesBicomplex.total (ComplexShape.down ℕ)).d i j =
       (M.lodayBCBicomplex.total (ComplexShape.down ℕ)).d i j ≫ M.lodayBCTotalIso.hom.f j :=

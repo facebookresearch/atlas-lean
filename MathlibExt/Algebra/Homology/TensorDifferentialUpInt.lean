@@ -25,16 +25,14 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [MonoidalCategory C]
 namespace HomologicalComplex
 
 /-!
-# Tensor differential for cochain complexes over `ℤ`
+# Tensor differentials of integer cochain complexes
 
-For `K L : CochainComplex C ℤ`, this records the forward component formula for
-`ιTensorObj K L p q n h ≫ (tensorObj K L).d n (n + 1)`: the horizontal term has
-sign `1` and the vertical term carries `p.negOnePow`, from
-`ComplexShape.ε_up_ℤ`. This is the `up ℤ` mirror of the `down ℕ` leaf and a
-shared input to the shifted-Bar/Cobar total-differential consumers.
+Let C be preadditive and monoidal, with tensor additive in both variables. For ℤ-indexed cochain
+complexes K,L whose degreewise tensor coproducts exist, the total differential on a
+(p,q)-summand is d_K⊗id plus (-1)^p id⊗d_L, with p+q=n.
 
-It also records the cochain-level decomposition `CochainComplex.diff_tensorObj`:
-the differential of a tensor product is the sum of the two tensor cochains.
+Equivalently the degree-one differential cochain of K⊗L is the sum of the tensor cochains
+d_K⊗id_L and id_K⊗d_L. The sign on the second summand is part of the graded tensor operation.
 -/
 
 private lemma d₂_eq_up_int (K L : CochainComplex C ℤ) [HasTensor K L]
@@ -46,10 +44,9 @@ private lemma d₂_eq_up_int (K L : CochainComplex C ℤ) [HasTensor K L]
   rw [mapBifunctor.d₂_eq K L (curriedTensor C) (ComplexShape.up ℤ) p hRel n h]
   simp
 
-/-- Source-summand formula for the forward differential `(tensorObj K L).d n (n + 1)`
-from `ιTensorObj K L p q n h`: the horizontal term has sign `1` and the vertical
-term carries `p.negOnePow` (from `ComplexShape.ε_up_ℤ`); shared input to the
-shifted-Bar/Cobar total-differential consumers. -/
+/-- Let C be preadditive and monoidal in object/morphism universes u,v, with tensor additive in both
+variables. For ℤ-indexed K,L with their tensor coproducts, p+q=n, the inclusion ι_{p,q,n}
+satisfies ι≫d_{n,n+1}=(d_K(p,p+1)⊗id)≫ι_{p+1,q,n+1}+(-1)^p(id⊗d_L(q,q+1))≫ι_{p,q+1,n+1}. -/
 public lemma ιTensorObj_comp_d_up_int
     (K L : CochainComplex C ℤ) [HasTensor K L]
     (p q n : ℤ) (h : p + q = n) :
@@ -87,8 +84,10 @@ end HomologicalComplex
 
 namespace CochainComplex
 
-/-- The differential of a tensor product of cochain complexes is the signed
-tensor sum of the factor differentials. -/
+/-- Let C be preadditive and monoidal with tensor additive in both variables, and let integer
+cochain complexes A,B have all tensor degree coproducts. Their degree-one differential cochains
+satisfy d_{A⊗B}=tensor(d_A,id_B)+tensor(id_A,d_B). On left input degree p, the second term
+carries (-1)^p. -/
 public theorem diff_tensorObj (A B : CochainComplex C ℤ)
     [GradedObject.HasTensor A.X B.X] :
     HomComplex.Cochain.diff (HomologicalComplex.tensorObj A B) =

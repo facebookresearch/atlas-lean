@@ -1,3 +1,5 @@
-# Face degeneracy succ
+# Second matching face of a degeneracy
 
-The other original matching face retains the SAME actual degeneracy inverse equation.
+For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 1)`, and `x ∈ (underlying G) _⦋n⦌`,
+`(underlying G).δ i.succ ((underlying G).σ i x) = x`.
+The face immediately after `i` is also a left inverse of the degeneracy at `i`.

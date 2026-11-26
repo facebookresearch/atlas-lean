@@ -1,3 +1,7 @@
-# Resolution Augmentation quasi Iso of counit Section
+# Quasi-isomorphism of a comonad resolution augmentation from a counit section
 
-A counit section supplies a contraction of the actual full augmentation.
+Quasi-isomorphism of a comonad resolution augmentation from a counit section.
+
+Let C be preadditive with zero object and all homology objects of the alternating resolution
+defined. A section s : P → G(P) of ε_P gives a quasi-isomorphism from its alternating chain
+complex to the augmentation point concentrated in degree zero.

@@ -13,19 +13,17 @@ public import MathlibExt.Algebra.Category.CommAlgCat.PolynomialSplitting
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
 
 /-!
-# Actual compatible polynomial splitting of the canonical resolution for every algebra
+# Compatible polynomial splitting of the canonical resolution
 
-Native Eilenberg--Zilber decomposition gives an actual coproduct of the
-canonical generator indices over every original epi. The existing free
-functor preserves that coproduct. Generator computations identify its legs
-with the original canonical algebra degeneracies, so its transported cofan
-is precisely the native splitting cofan of the original polynomial resolution.
+Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. For the
+polynomial-comonad resolution `P`, let `V_n` be the indices in `T^n A` whose generator points
+in `P_n` are nondegenerate. Applying the free-algebra functor to their epimorphism-indexed
+coproduct decomposition gives a simplicial splitting with nondegenerate summands
+`Free_k(V_n)`.
 
-This earns PolynomialSplitting for every original commutative k-algebra A,
-including zero ground rings. It supplies no new resolution model, contraction,
-or desired splitting as input. The weaker printed free predicate and literal
-algebraic BK are not identified with this canonical comonad construction.
-Source proposals only; UNEXECUTED.
+The summand inclusion sends the variable at `x∈V_n` to the canonical generator point at
+`x.val`. Thus `P` has a `PolynomialSplitting`: a simplicial splitting together with polynomial
+coordinates on each nondegenerate summand.
 -/
 
 @[expose] public section
@@ -44,7 +42,10 @@ open CanonicalPolynomialGeneratorPoints CanonicalPolynomialGeneratorDecompositio
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- The original inclusion of the actual nondegenerate polynomial generators. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `V_n` the nondegenerate generator
+indices of its polynomial resolution `P`. The morphism `inclusion k A n : Free_k(V_n) → P_n`
+is the free algebra map on `Subtype.val : V_n → T^n A`, followed by the inverse degree-object
+identification. It sends a variable indexed by `x` to `point_n(x.val)`. -/
 def inclusion (n : ℕ) : (free.{u, v} k).obj (Variables k A n) ⟶ (resolution k A).obj (op ⦋n⦌) :=
   (free.{u, v} k).map (TypeCat.ofHom (Subtype.val : Variables k A n → Index k A n)) ≫
     (polynomialResolutionObjIso.{u, v} k A n).inv
@@ -62,8 +63,10 @@ def algebraCofan (n : ℕ) :
   Cofan.mk ((resolution k A).obj (op ⦋n⦌))
     (fun a => inclusion k A a.1.unop.len ≫ (resolution k A).map a.e.op)
 
-/-- Applying free to the actual index coproduct gives the original algebra
-legs, characterized on their literal polynomial generators. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, `n : ℕ`, and `a : [n] → [m]` an epimorphism
+index. The injection of `Free_k(V_m)` into the degree-`n` algebra cofan, followed by `P_n ≅
+Free_k(T^n A)`, equals the free-algebra map of `generatorCofan k A n`'s index injection. Thus
+the algebra splitting leg is obtained from the nondegenerate index summand map. -/
 @[reassoc]
 theorem algebraCofan_identification (n : ℕ) (a : IndexSet (op ⦋n⦌)) :
     (algebraCofan k A n).inj a ≫ (polynomialResolutionObjIso.{u, v} k A n).hom =
@@ -94,8 +97,11 @@ def algebraCofanIsColimit (n : ℕ) : IsColimit (algebraCofan k A n) := by
 
 end CanonicalPolynomialSplitting
 
-/-- Canonical compatible nondegenerate polynomial generators for every
-original commutative k-algebra, earned from the existing canonical comonad. -/
+/-- Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. The polynomial
+resolution admits a `PolynomialSplitting` whose nondegenerate degree-`n` summand is
+`Free_k(Variables k A n)`, whose inclusion sends each variable to its generator point, and
+whose splitting cofans are colimits over all simplex epimorphisms. The polynomial coordinate
+isomorphism on each summand is the identity of that free algebra. -/
 def canonicalPolynomialSplitting (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k) :
     PolynomialSplitting k (polynomialResolution.{u, v} k A).left where
   splitting := {

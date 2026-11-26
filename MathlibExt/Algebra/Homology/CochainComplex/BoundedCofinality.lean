@@ -12,19 +12,25 @@ module
 public import MathlibExt.Algebra.Homology.CochainComplex.Bounded
 
 /-!
-# Bounded cofinality through the original component lifts
+# Component lifts and bounded object stabilization
 
-The original full faithful functor lifts a complex from chosen source
-objects and component isomorphisms. Its differential is the preimage of
-the conjugated original differential; faithfulness proves its shape and
-square-zero equations.
+A fully faithful zero-preserving functor F:A → B lifts a complex from
+source objects X_i and isomorphisms e_i:F(X_i) ≅ K_i.
+The source differential is the unique preimage of
+e_j⁻¹∘d_K(i,j)∘e_i. These maps form a complex whose F-image is
+isomorphic to K. Finite support of X gives a bounded source lift.
 
-Ordinary cofinality uses target complements. Strict cofinality uses
-source complements and their original functor images. The finite-window
-constructions retain the original zeros, differentials and biproducts.
-These are the object complements used in Weibel, *The K-book*, IV.8.13
-and V.Remark 2.2.1. Approximation and K-space comparisons require their
-separate proofs and ambient conventions.
+For additive fully faithful F between preadditive categories with zero
+objects and binary biproducts in B, ordinary object stabilization
+assumes every X∈B has a target complement Y with X⊞Y in the image.
+It gives, for bounded K, a bounded target complement L and an image
+representative of K⊞L. The strict condition uses a source complement
+Y∈A and gives an image representative of K⊞F(L) with bounded L∈A.
+The constructed complements have zero differentials and use the given
+finite support windows.
+
+References: C. Weibel, The K-book, IV.8.13 and V.Remark 2.2.1.
+Source, target, morphism and complex-index universes are independent.
 -/
 
 @[expose] public section
@@ -47,7 +53,11 @@ variable {B : Type uB} [Category.{vB} B] [HasZeroMorphisms B]
 variable (F : A ⥤ B) [F.PreservesZeroMorphisms] [F.Full] [F.Faithful]
 variable {I : Type uI} {c : ComplexShape I}
 
-/-- The source complex uses the actual preimages of the conjugated original differentials. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+The lifted A-complex has terms X_i and differential the preimage of e_j⁻¹∘d_K(i,j)∘e_i. -/
 @[implicit_reducible]
 def preimageHomologicalComplex (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) : HomologicalComplex A c where
@@ -69,25 +79,41 @@ def preimageHomologicalComplex (K : HomologicalComplex B c) (X : I → A)
         simp only [Category.id_comp, Category.assoc]
       _ = 0 := by rw [K.d_comp_d]; simp
 
-/-- Every lifted term is its original selected source object. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+The degree-i term of the lifted complex is the chosen object X_i. -/
 theorem preimageHomologicalComplex_X (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (i : I) :
     (F.preimageHomologicalComplex K X e).X i = X i := rfl
 
-/-- Every lifted differential is the preimage of the whole original conjugated differential. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+The lifted differential is the preimage under F of e_j⁻¹∘d_K(i,j)∘e_i. -/
 theorem preimageHomologicalComplex_d (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (i j : I) :
     (F.preimageHomologicalComplex K X e).d i j =
       F.preimage ((e i).hom ≫ K.d i j ≫ (e j).inv) := rfl
 
-/-- Mapping the lifted differential returns the same original conjugated differential. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+Mapping the lifted differential by F returns the conjugated map e_j⁻¹∘d_K(i,j)∘e_i. -/
 theorem map_preimageHomologicalComplex_d (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (i j : I) :
     F.map ((F.preimageHomologicalComplex K X e).d i j) =
       (e i).hom ≫ K.d i j ≫ (e j).inv :=
   F.map_preimage _
 
-/-- The component lifts and proved differential squares give the whole original complex iso. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+The component isomorphisms e_i assemble into the canonical complex isomorphism F(lift(K)) ≅ K. -/
 def preimageHomologicalComplexIso (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) :
     (F.mapHomologicalComplex c).obj (F.preimageHomologicalComplex K X e) ≅ K :=
@@ -97,37 +123,61 @@ def preimageHomologicalComplexIso (K : HomologicalComplex B c) (X : I → A)
     rw [Functor.map_preimage]
     simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id])
 
-/-- The entire forward comparison retains the original component chart. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+The forward component of F(lift(K)) ≅ K in degree i is e_i. -/
 theorem preimageHomologicalComplexIso_hom_f (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (i : I) :
     (F.preimageHomologicalComplexIso K X e).hom.f i = (e i).hom := rfl
 
-/-- The entire inverse comparison retains the inverse original component chart. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i.
+
+The inverse component of F(lift(K)) ≅ K in degree i is e_i⁻¹. -/
 theorem preimageHomologicalComplexIso_inv_f (K : HomologicalComplex B c) (X : I → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (i : I) :
     (F.preimageHomologicalComplexIso K X e).inv.f i = (e i).inv := rfl
 
-/-- The component lift retains the original finite support supplied for its source objects. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The component lift is a bounded A-complex with support [a,b]. -/
 @[implicit_reducible]
 def boundedPreimageOfComponents (K : CochainComplex B ℤ) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (a b : ℤ)
     (hX : ∀ j : ℤ, j < a ∨ b < j → IsZero (X j)) : CochainComplex.Bounded A :=
   CochainComplex.Bounded.of A (F.preimageHomologicalComplex K X e) a b hX
 
-/-- The bounded lift keeps each original selected source object. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The degree-i term of the bounded lift is X_i. -/
 theorem boundedPreimageOfComponents_X (K : CochainComplex B ℤ) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (a b : ℤ)
     (hX : ∀ j : ℤ, j < a ∨ b < j → IsZero (X j)) (i : ℤ) :
     (F.boundedPreimageOfComponents K X e a b hX).obj.X i = X i := rfl
 
-/-- The bounded lift keeps the whole original preimage differential. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The bounded lift retains the differential preimage of e_j⁻¹∘d_K(i,j)∘e_i. -/
 theorem boundedPreimageOfComponents_d (K : CochainComplex B ℤ) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (a b : ℤ)
     (hX : ∀ j : ℤ, j < a ∨ b < j → IsZero (X j)) (i j : ℤ) :
     (F.boundedPreimageOfComponents K X e a b hX).obj.d i j =
       F.preimage ((e i).hom ≫ K.d i j ≫ (e j).inv) := rfl
 
-/-- The mapped bounded differential is the same actual conjugated target differential. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The differential of its F-image is e_j⁻¹∘d_K(i,j)∘e_i. -/
 theorem boundedPreimageOfComponents_map_d (K : CochainComplex B ℤ) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (a b : ℤ)
     (hX : ∀ j : ℤ, j < a ∨ b < j → IsZero (X j)) (i j : ℤ) :
@@ -136,14 +186,22 @@ theorem boundedPreimageOfComponents_map_d (K : CochainComplex B ℤ) (X : ℤ �
         (e i).hom ≫ K.d i j ≫ (e j).inv :=
   F.map_preimageHomologicalComplex_d K X e i j
 
-/-- The original finite window remains a support witness for the whole source lift. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The bounded source lift has zero terms for j<a or b<j. -/
 theorem boundedPreimageOfComponents_outside (K : CochainComplex B ℤ) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (a b : ℤ)
     (hX : ∀ j : ℤ, j < a ∨ b < j → IsZero (X j)) (j : ℤ)
     (hj : j < a ∨ b < j) :
     IsZero ((F.boundedPreimageOfComponents K X e a b hX).obj.X j) := hX j hj
 
-/-- The internally lifted bounded source has the whole original raw complex comparison. -/
+/-- Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The mapped bounded lift, as an underlying cochain complex, is canonically isomorphic to K. -/
 def boundedPreimageOfComponentsRawIso (K : CochainComplex B ℤ) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ K.X i) (a b : ℤ)
     (hX : ∀ j : ℤ, j < a ∨ b < j → IsZero (X j)) :
@@ -163,32 +221,64 @@ variable {A : Type uA} [Category.{vA} A]
 variable {B : Type uB} [Category.{vB} B] [HasZeroMorphisms B] [HasBinaryBiproducts B]
 variable (F : A ⥤ B)
 
-/-- Ordinary cofinality supplies a target complement and an actual source image object. -/
+/-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+Target-complement data consist of Y∈B, T∈A and an isomorphism F(T) ≅ X⊞Y. -/
 structure TargetComponent (X : B) where
-  /-- The complement is an original target object. -/
+  /-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+The target complement Y is an object of B in the stabilization F(T) ≅ X⊞Y. -/
   complement : B
-  /-- The stabilized total is an original source object. -/
+  /-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+The source representative T is an object of A whose image realizes X⊞Y. -/
   total : A
-  /-- Its original image is the target object plus the target complement. -/
+  /-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+The component comparison is the isomorphism F(T) ≅ X⊞Y. -/
   comparison : F.obj total ≅ X ⊞ complement
 
-/-- Strict cofinality supplies a source complement and an actual source image object. -/
+/-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+Source-complement data consist of Y,T∈A and an isomorphism F(T) ≅ X⊞F(Y). -/
 structure SourceComponent (X : B) where
-  /-- The complement is an original source object. -/
+  /-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+The complement Y is an object of A, whose image is the second target summand. -/
   complement : A
-  /-- The stabilized total is an original source object. -/
+  /-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+The source total T represents the stabilized target X⊞F(Y). -/
   total : A
-  /-- Its original image uses the same functor image of the source complement. -/
+  /-- Let A be a category, B have zero morphisms and binary biproducts,
+and F:A → B be a functor. Fix a target object X.
+
+The component comparison is the isomorphism F(T) ≅ X⊞F(Y). -/
   comparison : F.obj total ≅ X ⊞ F.obj complement
 
-/-- The ordinary component data is chosen from the actual target complement condition. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F.
+
+For each target X, the object-complement hypothesis supplies chosen target-complement data F(T) ≅ X⊞Y. -/
 def chosenTargetComponent
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y)) (X : B) : TargetComponent F X :=
   Classical.choice (show Nonempty (TargetComponent F X) from by
     obtain ⟨Y, Z, ⟨e⟩⟩ := hcofinal X
     exact ⟨⟨Y, Z, e⟩⟩)
 
-/-- The strict component data is chosen from the actual source complement condition. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F.
+
+For each target X, the source-complement hypothesis supplies chosen strict data F(T) ≅ X⊞F(Y). -/
 def chosenSourceComponent
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y)) (X : B) : SourceComponent F X :=
   Classical.choice (show Nonempty (SourceComponent F X) from by
@@ -201,18 +291,24 @@ section ZeroDifferential
 
 variable {A : Type uA} [Category.{vA} A] [HasZeroMorphisms A]
 
-/-- The original cochain object with a prescribed family and the zero differential in every pair. -/
+/-- Let A be a category with zero morphisms and X:ℤ → A any family.
+
+The cochain complex with term X_i and every differential zero. -/
 def zeroDifferentialComplex (X : ℤ → A) : CochainComplex A ℤ where
   X := X
   d _ _ := 0
   shape _ _ _ := rfl
   d_comp_d' _ _ _ _ _ := by simp
 
-/-- The zero-differential complex retains each prescribed original object. -/
+/-- Let A have zero morphisms and X:ℤ → A be a family.
+
+The degree-i term of its zero-differential complex is X_i. -/
 theorem zeroDifferentialComplex_X (X : ℤ → A) (i : ℤ) :
     (zeroDifferentialComplex X).X i = X i := rfl
 
-/-- The whole original differential of the complement is zero. -/
+/-- Let A have zero morphisms and X:ℤ → A be a family.
+
+Every differential of its zero-differential complex is zero. -/
 theorem zeroDifferentialComplex_d (X : ℤ → A) (i j : ℤ) :
     (zeroDifferentialComplex X).d i j = 0 := rfl
 
@@ -225,7 +321,9 @@ variable {B : Type uB} [Category.{vB} B] [Preadditive B] [HasZeroObject B]
   [HasBinaryBiproducts B]
 variable (F : A ⥤ B)
 
-/-- Original component lifts produce the whole original bounded biproduct comparison. -/
+/-- Let A,B be preadditive with zero objects, B have binary biproducts, and F:A → B be additive fully faithful. For bounded B-complexes K,L, choose source components X_j, isomorphisms F(X_j) ≅ (K⊞L)^j and support [a,b] for X.
+
+The bounded source lift has a canonical mapped comparison F(lift) ≅ K⊞L. -/
 def boundedBiprodComparison [F.Additive] [F.Full] [F.Faithful]
     (K L : CochainComplex.Bounded B) (X : ℤ → A)
     (e : ∀ i, F.obj (X i) ≅ (K.obj ⊞ L.obj).X i) (a b : ℤ)
@@ -239,7 +337,12 @@ def boundedBiprodComparison [F.Additive] [F.Full] [F.Faithful]
       ((CochainComplex.Bounded.ι B).mapBiprod K L).symm)
 
 omit [Preadditive A] [HasZeroObject A] in
-/-- The ordinary complement uses the chosen original target object only inside the same window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume B has a zero object and choose a window [a,b] for the
+complement construction on a bounded B-complex K.
+
+The degree-j target complement is the chosen complement of K^j inside [a,b] and the zero object of B outside. -/
 @[implicit_reducible]
 def ordinaryComplementX
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
@@ -248,7 +351,11 @@ def ordinaryComplementX
     (chosenTargetComponent F hcofinal (K.obj.X j)).complement else 0
 
 omit [Preadditive A] [HasZeroObject B] in
-/-- The ordinary source total uses an original source object, and the original zero outside. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A has a zero object and choose [a,b] for a bounded B-complex K.
+
+The source total in degree j is the chosen representative of K^j plus its target complement inside the window, and zero outside. -/
 @[implicit_reducible]
 def ordinarySourceX
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
@@ -257,7 +364,12 @@ def ordinarySourceX
     (chosenTargetComponent F hcofinal (K.obj.X j)).total else 0
 
 omit [Preadditive A] [HasZeroObject A] in
-/-- The target complement is bounded in the original window and has zero differential. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume B has a zero object and choose a window [a,b] for the
+complement construction on a bounded B-complex K.
+
+The ordinary target complement is the bounded zero-differential complex on these degreewise complement objects. -/
 @[implicit_reducible]
 def ordinaryComplement
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
@@ -271,14 +383,23 @@ def ordinaryComplement
       exact isZero_zero B)
 
 omit [Preadditive A] [HasZeroObject A] in
-/-- The whole original target-complement differential is zero in every pair of degrees. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume B has a zero object and choose a window [a,b] for the
+complement construction on a bounded B-complex K.
+
+Every differential of the ordinary target complement is zero. -/
 theorem ordinaryComplement_d
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
     (K : CochainComplex.Bounded B) (a b i j : ℤ) :
     (ordinaryComplement F hcofinal K a b).obj.d i j = 0 := rfl
 
 omit [Preadditive A] [HasZeroObject B] in
-/-- The ordinary source objects have the same original support, with actual zero objects outside. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A has a zero object and choose [a,b] for a bounded B-complex K.
+
+For j<a or b<j, the selected ordinary source-total object is zero. -/
 theorem ordinarySourceX_outside
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
     (K : CochainComplex.Bounded B) (a b j : ℤ) (hj : j < a ∨ b < j) :
@@ -287,7 +408,12 @@ theorem ordinarySourceX_outside
   simp only [ordinarySourceX, ite_eq_right hn]
   exact isZero_zero A
 
-/-- Actual ordinary complements and original zero charts give every raw target component iso. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume B has a zero object and choose a window [a,b] for the
+complement construction on a bounded B-complex K. Assume A is preadditive with a zero object, F additive and K supported in [a,b].
+
+The chosen source totals X_j have component isomorphisms F(X_j) ≅ (K⊞L)^j, where L is the ordinary zero-differential target complement. -/
 def ordinaryComponentIso [F.Additive]
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -314,7 +440,12 @@ def ordinaryComponentIso [F.Additive]
           (ordinaryComplement F hcofinal K a b).obj j)
     exact F.mapZeroObject.trans hT.isoZero.symm
 
-/-- The whole ordinary stabilized complex is lifted through the original functor and support. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The bounded source complex is lifted from the selected ordinary totals using the component comparisons with K⊞L. -/
 @[implicit_reducible]
 def ordinarySourceLift [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
@@ -324,7 +455,12 @@ def ordinarySourceLift [F.Additive] [F.Full] [F.Faithful]
     (ordinarySourceX F hcofinal K a b) (ordinaryComponentIso F hcofinal K a b hK) a b
     (ordinarySourceX_outside F hcofinal K a b)
 
-/-- The actual mapped source lift is the original bounded target plus its target complement. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The canonical bounded isomorphism F(sourceLift) ≅ K⊞L uses the chosen target complement L. -/
 def ordinaryComparison [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -335,7 +471,12 @@ def ordinaryComparison [F.Additive] [F.Full] [F.Faithful]
     (ordinarySourceX F hcofinal K a b) (ordinaryComponentIso F hcofinal K a b hK) a b
     (ordinarySourceX_outside F hcofinal K a b)
 
-/-- The actual mapped ordinary source differential retains the full original biproduct chart. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+In degree i,j, the mapped source-lift differential is the conjugate of the differential of K⊞L by its component comparison isomorphisms. -/
 theorem ordinarySourceLift_map_d [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -346,7 +487,12 @@ theorem ordinarySourceLift_map_d [F.Additive] [F.Full] [F.Faithful]
           (ordinaryComponentIso F hcofinal K a b hK j).inv :=
   F.boundedPreimageOfComponents_map_d _ _ _ a b _ i j
 
-/-- The whole ordinary source lift remains zero outside the original target window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The ordinary source lift has zero terms outside [a,b]. -/
 theorem ordinarySourceLift_outside [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -354,7 +500,11 @@ theorem ordinarySourceLift_outside [F.Additive] [F.Full] [F.Faithful]
     (hj : j < a ∨ b < j) : IsZero ((ordinarySourceLift F hcofinal K a b hK).obj.X j) :=
   ordinarySourceX_outside F hcofinal K a b j hj
 
-/-- Ordinary object cofinality induces ordinary cofinality of the original bounded functor. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A,B preadditive with zero objects and F additive fully faithful.
+
+Every bounded B-complex K has a bounded target complement L such that K⊞L belongs to the essential image of the bounded complex functor induced by F. -/
 theorem ordinaryCofinal [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : B, F.essImage (X ⊞ Y)) :
     ∀ K : CochainComplex.Bounded B, ∃ L : CochainComplex.Bounded B,
@@ -365,7 +515,12 @@ theorem ordinaryCofinal [F.Additive] [F.Full] [F.Faithful]
     ⟨ordinaryComparison F hcofinal K a b hK⟩⟩
 
 omit [Preadditive A] [HasZeroObject B] in
-/-- The strict complement is an actual source object inside the original finite window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K.
+
+The strict source complement in degree j is the chosen Y_j∈A inside [a,b] and zero outside. -/
 @[implicit_reducible]
 def strictComplementX
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
@@ -374,7 +529,12 @@ def strictComplementX
     (chosenSourceComponent F hcofinal (K.obj.X j)).complement else 0
 
 omit [Preadditive A] [HasZeroObject B] in
-/-- The strict total is an actual source object, with the original source zero outside. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K.
+
+The strict source total in degree j is the chosen representative T_j∈A inside [a,b] and zero outside. -/
 @[implicit_reducible]
 def strictSourceX
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
@@ -383,7 +543,12 @@ def strictSourceX
     (chosenSourceComponent F hcofinal (K.obj.X j)).total else 0
 
 omit [HasZeroObject B] in
-/-- The strict complement is the original source zero-differential complex in the same window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K. Assume A preadditive.
+
+The strict complement L is the bounded zero-differential A-complex on the chosen source complement family. -/
 @[implicit_reducible]
 def strictComplement
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
@@ -396,14 +561,24 @@ def strictComplement
       exact isZero_zero A)
 
 omit [HasZeroObject B] in
-/-- The strict source complement has the original zero differential in every pair of degrees. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K. Assume A preadditive.
+
+Every differential of the strict source complement L is zero. -/
 theorem strictComplement_d
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b i j : ℤ) :
     (strictComplement F hcofinal K a b).obj.d i j = 0 := rfl
 
 omit [HasZeroObject B] in
-/-- The actual source complement remains zero outside the original target window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K. Assume A preadditive.
+
+The strict complement L has zero terms for j<a or b<j. -/
 theorem strictComplement_outside
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b j : ℤ) (hj : j < a ∨ b < j) :
@@ -414,7 +589,12 @@ theorem strictComplement_outside
   exact isZero_zero A
 
 omit [Preadditive A] [HasZeroObject B] in
-/-- The strict source total remains the actual source zero outside the same finite window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K.
+
+The strict source-total object is zero in each degree outside [a,b]. -/
 theorem strictSourceX_outside
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b j : ℤ) (hj : j < a ∨ b < j) :
@@ -423,7 +603,12 @@ theorem strictSourceX_outside
   simp only [strictSourceX, ite_eq_right hn]
   exact isZero_zero A
 
-/-- Original strict component complements retain their source images and actual zero charts. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A has a zero object and choose a window [a,b] for the
+source-complement construction on a bounded B-complex K. Assume A preadditive, F additive and K supported in [a,b].
+
+The strict source totals have component isomorphisms F(T_j) ≅ (K⊞F(L))^j, where L is the zero-differential source complement. -/
 def strictComponentIso [F.Additive]
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -452,7 +637,12 @@ def strictComponentIso [F.Additive]
           ((F.mapCochainComplexBounded).obj (strictComplement F hcofinal K a b)).obj j)
     exact F.mapZeroObject.trans hT.isoZero.symm
 
-/-- The whole strict stabilized complex is lifted through the original functor and same support. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The bounded source complex is lifted from the strict total objects using their comparisons with K⊞F(L). -/
 @[implicit_reducible]
 def strictSourceLift [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
@@ -463,7 +653,12 @@ def strictSourceLift [F.Additive] [F.Full] [F.Faithful]
     (strictSourceX F hcofinal K a b) (strictComponentIso F hcofinal K a b hK) a b
     (strictSourceX_outside F hcofinal K a b)
 
-/-- The original bounded comparison has the actual source-complement image as its second summand. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The canonical bounded isomorphism F(sourceLift) ≅ K⊞F(L) retains the source complement L as an F-image summand. -/
 def strictComparison [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -474,7 +669,12 @@ def strictComparison [F.Additive] [F.Full] [F.Faithful]
     (strictSourceX F hcofinal K a b) (strictComponentIso F hcofinal K a b hK) a b
     (strictSourceX_outside F hcofinal K a b)
 
-/-- The mapped strict source differential retains the whole original raw biproduct differential. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The mapped strict source differential is the conjugate of the differential of K⊞F(L) by the component comparison isomorphisms. -/
 theorem strictSourceLift_map_d [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -485,7 +685,12 @@ theorem strictSourceLift_map_d [F.Additive] [F.Full] [F.Faithful]
           (strictComponentIso F hcofinal K a b hK j).inv :=
   F.boundedPreimageOfComponents_map_d _ _ _ a b _ i j
 
-/-- The whole strict source lift remains zero outside the same original finite window. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The strict source lift has zero terms outside [a,b]. -/
 theorem strictSourceLift_outside [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y))
     (K : CochainComplex.Bounded B) (a b : ℤ)
@@ -493,7 +698,11 @@ theorem strictSourceLift_outside [F.Additive] [F.Full] [F.Faithful]
     (hj : j < a ∨ b < j) : IsZero ((strictSourceLift F hcofinal K a b hK).obj.X j) :=
   strictSourceX_outside F hcofinal K a b j hj
 
-/-- Strict object cofinality induces source-complement cofinality of the original bounded map. -/
+/-- Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈A with
+X⊞F(Y) in the essential image of F. Assume A,B preadditive with zero objects and F additive fully faithful.
+
+Every bounded B-complex K has a bounded source complement L∈Bounded(A) such that K⊞F(L) belongs to the essential image of the bounded functor induced by F. -/
 theorem strictCofinal [F.Additive] [F.Full] [F.Faithful]
     (hcofinal : ∀ X : B, ∃ Y : A, F.essImage (X ⊞ F.obj Y)) :
     ∀ K : CochainComplex.Bounded B, ∃ L : CochainComplex.Bounded A,

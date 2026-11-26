@@ -23,70 +23,24 @@ public import Mathlib.CategoryTheory.Monoidal.Preadditive
 public import MathlibExt.Algebra.Homology.TensorCochainCoherence
 
 /-!
-# Twisting cochains between dg coalgebras and dg algebras
+# Graded convolution and augmented twisting cochains
 
-Let `R` be a commutative ring and `C A : CochainComplex (ModuleCat R) ℤ` with
-`[ComonObj C]` and `[MonObj A]` for the pinned tensor product of cochain
-complexes (`HomologicalComplex.monoidalCategory` at the cohomological
-`ComplexShape.up ℤ` shape).
+Let R be commutative and C,A cochain complexes of R-modules indexed by ℤ. A degree-m cochain
+is a family f_i : C_i → A_{i+m}. Its Hom differential has component f_i ≫ d_A + (−1)^{m+1} d_C
+≫ f_{i+1}. For degree-m and degree-n cochains f,g, their tensor product acts on source degrees
+i,j by (−1)^{ni}(f_i ⊗ g_j), with total degree m+n.
 
-This file defines the graded
-convolution product of homogeneous cochains and the type of twisting cochains:
-degree-`+1` solutions of the Maurer–Cartan equation with explicit
-augmentation/coaugmentation vanishing.
+With C a comonoid and A a monoid in the cochain tensor category, define f⋆g = Δ_C followed by
+f⊗g and then μ_A. The stated graded coproduct, empty-colimit preservation and iterated tensor
+coherence hypotheses provide these maps. Convolution preserves the two zero laws and commutes
+with monoid postcomposition and comonoid precomposition.
 
-## Grading and sign conventions
+An augmented twisting cochain consists of τ of degree one, a comonoid coaugmentation η : I →
+C, a monoid augmentation ε : A → I, the equations τ∘η=0 and ε∘τ=0, and δτ+τ⋆τ=0 in degree 1+1.
+The unit comonoid in the coaugmentation field is the canonical tensor-unit structure.
 
-* Cohomological grading throughout: `HomComplex.Cochain C A n` is a family
-  `C.X p ⟶ A.X q` with `p + n = q`, and `HomComplex.δ` is the pinned
-  differential (Conrad signs).
-* For `f : Cochain C A m` and `g : Cochain C A n`, the graded tensor product
-  `tensorCochain f g : Cochain (C ⊗ C) (A ⊗ A) (m + n)` acts on the
-  `(i₁, i₂)`-summand (`i₁ + i₂ = r`) by the Koszul rule
-  `(f ⊗ g)(x ⊗ y) = (-1) ^ (n * i₁) • (f x ⊗ g y)`,
-  where the sign is `Int.negOnePow (n * i₁)`. This matches the pinned
-  tensor-complex convention, whose vertical sign is `(up ℤ).ε` on the second
-  factor (`ComplexShape.ε_up_ℤ`).
-* The convolution is `f ⋆ g = μ ∘ (f ⊗ g) ∘ Δ`, assembled from
-  `ComonObj.comul`, `tensorCochain`, and `MonObj.mul` via `Cochain.comp`.
-* Convolution commutes with postcomposition by a monoid morphism
-  (`conv_postcomp`) and precomposition by a comonoid morphism
-  (`conv_precomp`), via the pinned tensor coherence.
-* A twisting cochain is `τ : Cochain C A 1` carried together with a comonoid
-  coaugmentation `η : 𝟙_ _ ⟶ C` (see `TwistingCochain.coaug_isComonHom`) and a
-  monoid augmentation `ε : A ⟶ 𝟙_ _` (see `TwistingCochain.aug_isMonHom`) such
-  that `τ ∘ η = 0`, `ε ∘ τ = 0` (as degree-`1` cochains), and the
-  Maurer–Cartan equation `δ 1 (1 + 1) τ + τ ⋆ τ = 0` holds in degree `1 + 1`.
-  The bundled morphisms are `TwistingCochain.coaugHom` and
-  `TwistingCochain.augHom`.
-
-## Primary source and convention map
-
-The standard general reference for convolution products, twisting morphisms as
-Maurer–Cartan elements, and the bar–cobar adjunction is J.-L. Loday and
-B. Vallette, *Algebraic Operads*, Grundlehren 346, Springer, 2012,
-<https://doi.org/10.1007/978-3-642-30362-3>.
-
-Explicit map to this implementation (without a sign-match claim): everything
-here is cohomological (`up ℤ`); a twisting cochain is a degree-`+1` cochain
-with Maurer–Cartan equation `δ 1 (1 + 1) τ + conv τ τ = 0` in degree `1 + 1`;
-the differential is the pinned `HomComplex.δ` (Conrad signs) and the Koszul
-sign is `Int.negOnePow (n * i₁)` as stated above. The classical homological
-degree `-1` translates to cohomological degree `+1` by negation. Exact
-printed-section numbers and a sign-level match against the printed text were
-not verified in this environment, so none is claimed here.
-
-## Nonclaims
-
-* No homological (`down ℤ`) API is provided; everything is cohomological.
-* `MonObj`/`ComonObj` do not supply (co)augmentations; those are explicit
-  comonoid/monoid-morphism fields and are not inferred from the (co)unit.
-* The ungraded `WithConv` convolution ring on `C →ₗ[R] A` is not used here and
-  is not claimed to agree with the graded product.
-* No bar–cobar adjunction, no conilpotence/completeness hypothesis, and no
-  derived, Koszul, operadic, or model-categorical result is claimed.
-* Associativity, unitality, and the Leibniz rule for the graded product are
-  not proved here.
+Reference: J.-L. Loday and B. Vallette, Algebraic Operads, Grundlehren 346, Springer, 2012,
+https://doi.org/10.1007/978-3-642-30362-3.
 -/
 
 @[expose] public section
@@ -100,10 +54,10 @@ variable {C A : CochainComplex (ModuleCat R) ℤ}
 
 variable [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X₁ X₂]
 
-/-- The `(i₁, i₂)`-summand of the graded tensor product of the cochains `f`
-and `g`: the Koszul-signed map
-`(-1) ^ (n * i₁) • (f ⊗ₘ g)` followed by the summand inclusion into
-`(A ⊗ A).X s`. -/
+/-- Koszul sign on a tensor summand of homogeneous cochains.
+
+For f of degree m, g of degree n and source degrees i₁+i₂=r, the map to (A⊗A)_s with s=r+m+n
+is (−1)^{ni₁}(f_{i₁} ⊗ g_{i₂}) followed by the inclusion of output degrees i₁+m and i₂+n. -/
 noncomputable def convSummand {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (m + n) = s)
     (i₁ i₂ : ℤ)
@@ -115,8 +69,10 @@ noncomputable def convSummand {m n : ℤ} (f : HomComplex.Cochain C A m)
       (f.v i₁ (i₁ + m) rfl ⊗ₘ g.v i₂ (i₂ + n) rfl) ≫
     HomologicalComplex.ιTensorObj A A (i₁ + m) (i₂ + n) s (by omega)
 
-/-- The graded tensor product of homogeneous cochains, of degree `m + n`,
-built from the pinned tensor-complex inclusions via `mapBifunctorDesc`. -/
+/-- Tensor product of homogeneous cochains.
+
+For f,g : C → A of integer degrees m,n, use the graded tensor coproduct to assemble the maps
+(−1)^{ni}(f_i⊗g_j). This gives a cochain C⊗C → A⊗A of degree m+n. -/
 noncomputable def tensorCochain {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) :
     HomComplex.Cochain (HomologicalComplex.tensorObj C C)
@@ -126,7 +82,10 @@ noncomputable def tensorCochain {m n : ℤ} (f : HomComplex.Cochain C A m)
       (c := ComplexShape.up ℤ) fun i₁ i₂ hij =>
       convSummand f g r s hrs i₁ i₂ hij
 
-/-- Computation rule for the graded tensor product of cochains. -/
+/-- Degree component of the tensor product of cochains.
+
+At r,s with r+m+n=s, tensorCochain(f,g) is the coproduct descendant of the signed tensor maps
+on every source bidegree i+j=r. -/
 @[simp]
 lemma tensorCochain_v {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (m + n) = s) :
@@ -135,12 +94,11 @@ lemma tensorCochain_v {m n : ℤ} (f : HomComplex.Cochain C A m)
         (c := ComplexShape.up ℤ) fun i₁ i₂ hij =>
         convSummand f g r s hrs i₁ i₂ hij := rfl
 
-/-- Diagonal specialization of the graded tensor product: on the same-source/target
-`ModuleCat R` pair, `tensorCochain` agrees with the heterogeneous
-`HomComplex.Cochain.tensor`. Both sides use the Koszul orientation
-`(f ⊗ g)(x ⊗ y) = (-1) ^ (n * i₁) • (f x ⊗ g y)`. This bridge lets downstream
-convolution reuse the heterogeneous functoriality/associativity API. It does not by
-itself prove convolution associativity. -/
+/-- Agreement with the general tensor product of Hom cochains.
+
+For cochains f,g with the same source C and target A, tensorCochain f g equals
+HomComplex.Cochain.tensor f g. Both use the sign (−1)^{ni} for the right cochain degree n and
+left source degree i. -/
 theorem tensorCochain_eq_tensor {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) :
     tensorCochain f g = HomComplex.Cochain.tensor f g := by
@@ -149,7 +107,9 @@ theorem tensorCochain_eq_tensor {m n : ℤ} (f : HomComplex.Cochain C A m)
   rw [tensorCochain_v, HomComplex.Cochain.tensor_v]
   rfl
 
-/-- The graded tensor product vanishes when the left factor vanishes. -/
+/-- Zero left factor in a tensor product of cochains.
+
+For any degree-n cochain g and integer m, tensorCochain(0,g) is the zero degree-(m+n) cochain. -/
 lemma tensorCochain_zero_left {m n : ℤ} (g : HomComplex.Cochain C A n) :
     tensorCochain (0 : HomComplex.Cochain C A m) g = 0 := by
   apply HomComplex.Cochain.ext
@@ -161,7 +121,9 @@ lemma tensorCochain_zero_left {m n : ℤ} (g : HomComplex.Cochain C A n) :
   simp only [convSummand, HomComplex.Cochain.zero_v,
     MonoidalPreadditive.zero_tensor, smul_zero, zero_comp, comp_zero]
 
-/-- The graded tensor product vanishes when the right factor vanishes. -/
+/-- Zero right factor in a tensor product of cochains.
+
+For any degree-m cochain f and integer n, tensorCochain(f,0) is the zero degree-(m+n) cochain. -/
 lemma tensorCochain_zero_right {m n : ℤ} (f : HomComplex.Cochain C A m) :
     tensorCochain f (0 : HomComplex.Cochain C A n) = 0 := by
   apply HomComplex.Cochain.ext
@@ -189,34 +151,40 @@ variable [MonObj A] [ComonObj C]
 variable {B : CochainComplex (ModuleCat R) ℤ} [MonObj B]
 variable {C' : CochainComplex (ModuleCat R) ℤ} [ComonObj C']
 
-/-- The graded convolution product `f ⋆ g = μ ∘ (f ⊗ g) ∘ Δ` of homogeneous
-cochains, of degree `m + n`. -/
+/-- Graded convolution of homogeneous cochains.
+
+For a cochain comonoid C and monoid A, define f⋆g as the degree-zero coproduct Δ_C followed by
+tensorCochain(f,g) and the degree-zero multiplication μ_A. Its degree is m+n for f of degree m
+and g of degree n. -/
 noncomputable def conv {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) : HomComplex.Cochain C A (m + n) :=
   ((HomComplex.Cochain.ofHom (ComonObj.comul (X := C))).comp
     (tensorCochain f g) (zero_add (m + n))).comp
     (HomComplex.Cochain.ofHom (MonObj.mul (X := A))) (add_zero (m + n))
 
-/-- The graded convolution product vanishes when the left factor vanishes. -/
+/-- Vanishing convolution with a zero left cochain.
+
+For a cochain comonoid C, monoid A and any homogeneous g, 0⋆g=0 in the sum of the two degrees. -/
 lemma conv_zero_left {m n : ℤ} (g : HomComplex.Cochain C A n) :
     conv (0 : HomComplex.Cochain C A m) g = 0 := by
   unfold conv
   rw [tensorCochain_zero_left, HomComplex.Cochain.comp_zero,
     HomComplex.Cochain.zero_comp]
 
-/-- The graded convolution product vanishes when the right factor vanishes. -/
+/-- Vanishing convolution with a zero right cochain.
+
+For a cochain comonoid C, monoid A and any homogeneous f, f⋆0=0 in the sum of the two degrees. -/
 lemma conv_zero_right {m n : ℤ} (f : HomComplex.Cochain C A m) :
     conv f (0 : HomComplex.Cochain C A n) = 0 := by
   unfold conv
   rw [tensorCochain_zero_right, HomComplex.Cochain.comp_zero,
     HomComplex.Cochain.zero_comp]
 
-/-- Convolution commutes with postcomposition by a monoid morphism.
+/-- Monoid-morphism naturality of convolution.
 
-For `f : Cochain C A m`, `g : Cochain C A n`, and `φ : A ⟶ B` with
-`IsMonHom φ`, postcomposing `conv f g` equals the convolution of the
-postcomposed factors. The proof reuses the heterogeneous tensor postcomposition
-coherence and the cochain lift of `IsMonHom.mul_hom`. -/
+For a monoid morphism φ : A → B and homogeneous f,g : C → A, postcomposing f⋆g with φ equals
+the convolution of f followed by φ and g followed by φ. All cochain degrees m,n and m+n are
+retained. -/
 theorem conv_postcomp {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) (φ : A ⟶ B) [IsMonHom φ] :
     (conv f g).comp (HomComplex.Cochain.ofHom φ) (add_zero (m + n)) =
@@ -242,12 +210,10 @@ theorem conv_postcomp {m n : ℤ} (f : HomComplex.Cochain C A m)
   rw [← HomComplex.Cochain.comp_assoc_of_second_is_zero_cochain]
   rw [HomComplex.Cochain.tensor_comp_ofHom_tensorHom]
 
-/-- Convolution commutes with precomposition by a comonoid morphism.
+/-- Comonoid-morphism naturality of convolution.
 
-For `f : Cochain C A m`, `g : Cochain C A n`, and `ψ : C' ⟶ C` with
-`IsComonHom ψ`, precomposing `conv f g` equals the convolution of the
-precomposed factors. The proof reuses the heterogeneous tensor precomposition
-coherence and the cochain lift of `IsComonHom.hom_comul`. -/
+For a comonoid morphism ψ : C' → C and homogeneous f,g : C → A, precomposing f⋆g with ψ equals
+the convolution of ψ followed by f and ψ followed by g. -/
 theorem conv_precomp {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) (ψ : C' ⟶ C) [IsComonHom ψ] :
     (HomComplex.Cochain.ofHom ψ).comp (conv f g) (zero_add (m + n)) =
@@ -276,53 +242,82 @@ theorem conv_precomp {m n : ℤ} (f : HomComplex.Cochain C A m)
     (HomComplex.Cochain.ofHom (HomologicalComplex.tensorHom ψ ψ))]
   rw [HomComplex.Cochain.ofHom_tensorHom_comp_tensor]
 
-/-- A twisting cochain from the dg coalgebra `C` to the dg algebra `A`: a
-degree-`+1` cochain with comonoid/monoid (co)augmentation morphisms, explicit
-(co)augmentation vanishing, and the Maurer–Cartan equation `δ τ + τ ⋆ τ = 0`
-in degree `1 + 1`. -/
+/-- Augmented twisting cochain in cohomological degree one.
+
+For a cochain comonoid C and monoid A over R, specify a degree-one cochain τ, comonoid
+coaugmentation η : I → C and monoid augmentation ε : A → I. Require τ∘η=0, ε∘τ=0 and δτ+τ⋆τ=0
+in degree 1+1. -/
 structure TwistingCochain where
-  /-- The underlying degree-`+1` cochain. -/
+  /-- Underlying degree-one homogeneous twisting cochain.
+
+The underlying family has components τ_i : C_i → A_{i+1} for every integer i. Its differential
+is constrained by the Maurer–Cartan field. -/
   tau : HomComplex.Cochain C A 1
-  /-- Explicit coaugmentation of the source, as a comonoid morphism from the
-  tensor-unit comonoid (see `coaug_isComonHom` and `coaugHom`). -/
+  /-- Source coaugmentation of a twisting cochain.
+
+The map η : I → C is a degree-zero chain morphism; the coaug_isComonHom field makes it a
+comonoid map from the canonical unit comonoid. -/
   coaug : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C
-  /-- Explicit augmentation of the target, as a monoid morphism to the
-  tensor-unit monoid (see `aug_isMonHom` and `augHom`). -/
+  /-- Target augmentation of a twisting cochain.
+
+The map ε : A → I is a degree-zero chain morphism; the aug_isMonHom field makes it a monoid
+map to the tensor-unit monoid. -/
   aug : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)
-  /-- Coaugmentation is a comonoid morphism from the canonical tensor-unit
-  comonoid `ComonObj.instTensorUnit`. -/
+  /-- Comonoid compatibility of the twisting coaugmentation.
+
+Require η : I → C to preserve counit and coproduct, with the canonical ComonObj.instTensorUnit
+structure on I. -/
   coaug_isComonHom : letI := ComonObj.instTensorUnit (CochainComplex (ModuleCat R) ℤ)
     ; IsComonHom coaug
-  /-- Augmentation is a monoid morphism to the tensor-unit monoid. -/
+  /-- Monoid compatibility of the twisting augmentation.
+
+Require ε : A → I to preserve the monoid unit and multiplication. -/
   aug_isMonHom : IsMonHom aug
-  /-- Vanishing on the coaugmentation: `τ ∘ η = 0`. -/
+  /-- Vanishing of the twisting cochain on the coaugmentation.
+
+The composite of the degree-zero coaugmentation η with the degree-one cochain τ is zero, as a
+cochain of degree 0+1. -/
   coaug_vanish : (HomComplex.Cochain.ofHom coaug).comp tau (zero_add 1) = 0
-  /-- Vanishing on the augmentation: `ε ∘ τ = 0`. -/
+  /-- Vanishing of the augmented twisting cochain.
+
+The degree-one cochain τ followed by the degree-zero augmentation ε is zero, as a cochain of
+degree 1+0. -/
   aug_vanish : tau.comp (HomComplex.Cochain.ofHom aug) (add_zero 1) = 0
-  /-- Maurer–Cartan equation in degree `1 + 1`. -/
+  /-- Maurer–Cartan identity in cohomological degree two.
+
+The degree-one twisting cochain satisfies HomComplex.δ 1 (1+1) τ + conv τ τ = 0. Both terms
+have degree 1+1 with the stated Hom and Koszul sign conventions. -/
   maurer_cartan : HomComplex.δ 1 (1 + 1) tau + conv tau tau = 0
 
-/-- Bundled coaugmentation as a comonoid morphism from the trivial comonoid.
-Uses a local tensor-unit `ComonObj` instance only; no global instance is
-introduced. -/
+/-- Bundled comonoid coaugmentation of a twisting cochain.
+
+The map τ.coaug and its comonoid-preservation field define a morphism from the canonical
+tensor-unit comonoid to the comonoid C. -/
 def TwistingCochain.coaugHom (τ : TwistingCochain (R := R) (C := C) (A := A)) :
     Comon.trivial _ ⟶ Comon.mk C :=
   letI := ComonObj.instTensorUnit (CochainComplex (ModuleCat R) ℤ)
   { hom := τ.coaug, isComonHom_hom := τ.coaug_isComonHom }
 
-/-- Bundled augmentation as a monoid morphism to the trivial monoid. -/
+/-- Bundled monoid augmentation of a twisting cochain.
+
+The map τ.aug and its monoid-preservation field define a morphism from the monoid A to the
+canonical tensor-unit monoid. -/
 def TwistingCochain.augHom (τ : TwistingCochain (R := R) (C := C) (A := A)) :
     Mon.mk A ⟶ Mon.trivial _ :=
   { hom := τ.aug, isMonHom_hom := τ.aug_isMonHom }
 
-/-- Underlying map of the bundled coaugmentation. -/
+/-- Underlying map of the bundled twisting coaugmentation.
+
+The hom of τ.coaugHom is exactly τ.coaug : I → C. -/
 @[simp]
 lemma TwistingCochain.coaugHom_hom (τ : TwistingCochain (R := R) (C := C) (A := A)) :
     (τ.coaugHom).hom = τ.coaug := by
   unfold TwistingCochain.coaugHom
   rfl
 
-/-- Underlying map of the bundled augmentation. -/
+/-- Underlying map of the bundled twisting augmentation.
+
+The hom of τ.augHom is exactly τ.aug : A → I. -/
 @[simp]
 lemma TwistingCochain.augHom_hom (τ : TwistingCochain (R := R) (C := C) (A := A)) :
     (τ.augHom).hom = τ.aug := rfl

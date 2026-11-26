@@ -1,3 +1,5 @@
-# Connecting Right At
+# Right-complex lift to a common carrier height
 
-Lift the actual right complex to a common carrier universe, retaining every map.
+For R in universe u and a right-module chain complex P with carrier
+universe v, the coefficient lift of P to T=max(u,v,w,t), preserving
+its integer degrees and differential maps.

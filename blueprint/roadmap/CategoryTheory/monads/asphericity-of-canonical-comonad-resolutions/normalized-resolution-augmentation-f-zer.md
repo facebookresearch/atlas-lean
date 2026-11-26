@@ -1,3 +1,6 @@
-# Normalized Resolution Augmentation f zero
+# Degree-zero component of the normalized comonad augmentation
 
-Its degree-zero map is induced by the actual counit, with native normalization inclusion.
+Degree-zero component of the normalized comonad augmentation.
+
+For a comonad G on an abelian category, α₀ equals the degree-zero Moore inclusion followed by
+the counit ε_P : G(P) → P.

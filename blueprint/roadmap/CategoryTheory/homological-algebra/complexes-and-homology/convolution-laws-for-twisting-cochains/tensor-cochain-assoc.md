@@ -1,9 +1,6 @@
-# Tensor Cochain assoc
+# Koszul signs commute with the component associator
 
-Reassociation coherence for graded tensor-product summands through the
-`ModuleCat` associator, with the pinned Koszul signs.
-
-The left-hand side exponent `(n + p) * i₁ + p * i₂` is the 23-first total on
-12-associated maps; the right-hand side exponent `n * i₁ + p * (i₁ + i₂)` is
-the 12-first total on 23-associated maps. The exponents agree by `ring`, and
-the unsigned maps agree by naturality of the associator.
+Over a commutative ring R, let C,A be integer cochain complexes and f,g,h:C→A have degrees
+m,n,k. For input degrees i₁,i₂,i₃, the signed map ((f_{i₁}⊗g_{i₂})⊗h_{i₃})≫α_A equals
+α_C≫(f_{i₁}⊗(g_{i₂}⊗h_{i₃})), with exponents (n+k)i₁+ki₂ and ni₁+k(i₁+i₂), respectively. The two
+exponents are equal, and α_C,α_A are the associators at the source and shifted target terms.

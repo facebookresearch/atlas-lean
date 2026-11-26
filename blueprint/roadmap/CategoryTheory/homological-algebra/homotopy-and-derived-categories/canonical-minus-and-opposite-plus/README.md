@@ -1,5 +1,5 @@
 # Canonical Minus and opposite Plus
 
-- [Minus To Opposite Plus](minus-to-opposite-plus.md)
-- [Opposite Plus To Minus](opposite-plus-to-minus.md)
-- [Minus Opposite Equivalence](minus-opposite-equivalence.md)
+- [Reflection from bounded-above to opposite bounded-below objects](minus-to-opposite-plus.md)
+- [Inverse reflection into the bounded-above derived category](opposite-plus-to-minus.md)
+- [Bounded-above derived category as opposite bounded-below](minus-opposite-equivalence.md)

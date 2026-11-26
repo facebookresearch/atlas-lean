@@ -14,38 +14,15 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.TopAdj
 public import Mathlib.Analysis.Convex.StdSimplex
 
 /-!
-# Realized simplex-boundary zero-coordinate lift (reverse direction)
+# A zero barycentric coordinate gives realized-boundary membership
 
-For `n : ℕ` and `p : Convexity.StdSimplex ℝ (Fin (n + 1))`, if some
-coordinate vanishes (`p.weights j = 0`) then the corresponding realized
-point lies in the realized boundary: `(⦋n⦌.toTopHomeo).symm p ∈
-Set.range (SSet.toTop.map (SSet.boundary n).ι)`.
+Identify the realization of Δ[n] with the real standard simplex of nonnegative weights summing
+to one. If a barycentric point p has p.weights(j)=0, it belongs to the face omitting vertex j,
+and its corresponding realized point lies in the image of |∂Δ[n]| → |Δ[n]|.
 
-This is the reverse zero-coordinate-to-boundary-range implication. The forward
-implication is supplied separately by
-`SSet.boundary.mem_zeroCoord_of_mem_realizedBoundaryRange` in `Boundary.lean`:
-membership in the realized boundary range forces a zero barycentric coordinate.
-Together they give the
-iff used by the barycenter-complement radial retraction and
-`TopPair.GoodPairData` for `( |Δ[n]|, |∂Δ[n]| )`; only the reverse is
-proved here to avoid duplicating that public forward theorem.
-
-Reuse map (all pinned, no new abstraction):
-* `Convexity.StdSimplex.mem_range_map_iff` for the coordinate-to-face
-  range step (`p` with `p.weights j = 0` lies in `map (Fin.succAbove j)`);
-* `SSet.face_singleton_compl_le_boundary` for the face-to-boundary
-  inclusion (the `j`-th leg of `SSet.boundary_eq_iSup`, cited here as
-  the SSet presentation rather than re-proved);
-* `SimplexCategory.toTopHomeo_symm_naturality_apply`,
-  `SSet.stdSimplex.faceSingletonComplIso_hom_ι`, and
-  `SSet.Subcomplex.homOfLE_ι` with `Functor.map_comp` for the
-  realization transport (same idiom as `SSet.boundary.singleton_face_coord_zero`).
-The coordinate-to-face consequence is proved directly via
-`Convexity.StdSimplex.mem_range_map_iff`, without importing private
-OpenCell or horn helpers.
-
-Nonclaims: no horn substitution, no subdivision, no Kan filling, and no
-model-category, fibration, or weak-equivalence result is asserted.
+For n>0, the face map inserts the zero coordinate and factors through the simplicial boundary.
+In dimension zero the unique weight is one, so a vanishing-coordinate hypothesis is
+impossible. The statement retains every n : ℕ and every simplicial-set universe.
 -/
 
 @[expose] public section
@@ -56,9 +33,12 @@ open CategoryTheory Simplicial
 
 namespace SSet
 
-/-- Reverse boundary lift: a zero coordinate forces realized-boundary
-membership. Together with `SSet.boundary.mem_zeroCoord_of_mem_realizedBoundaryRange`
-this is the `∃ zero ↔ ∈ range boundary` characterization. -/
+/-- Realized simplex-boundary membership from a vanishing coordinate.
+
+For p in the real standard n-simplex and j ∈ Fin(n+1), if p.weights(j)=0, then the realized
+point corresponding to p under the canonical simplex homeomorphism belongs to the range of
+|∂Δ[n]| → |Δ[n]|. This holds in all natural dimensions, with the dimension-zero hypothesis
+vacuous. -/
 theorem mem_realizedBoundary_of_zeroCoord (n : ℕ)
     (p : Convexity.StdSimplex ℝ (Fin (n + 1)))
     (j : Fin (n + 1)) (hj : p.weights j = 0) :

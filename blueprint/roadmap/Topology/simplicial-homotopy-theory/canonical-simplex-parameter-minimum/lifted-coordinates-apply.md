@@ -1,3 +1,4 @@
-# Lifted Coordinates apply
+# Value of a lifted monotone map
 
-Lifting preserves the exact original value of each coordinate.
+For preorders `X, Y : Type`, `f : X →o Y`, and `x : ULift.{u} X`,
+`liftedCoordinates f x = ULift.up (f x.down)`.

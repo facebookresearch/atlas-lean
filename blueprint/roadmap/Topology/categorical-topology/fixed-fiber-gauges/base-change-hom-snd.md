@@ -1,4 +1,5 @@
-# Base Change hom snd
+# The fiber formula for a pulled-back gauge
 
-The second coordinate of a base-changed gauge is obtained by reindexing
-the base and then applying the original gauge.
+For a continuous map `g : B′ → B` and a gauge `a` on `B × F`, the fiber
+coordinate of its base change on `B′ × F` is the composite `(b′,x) ↦ (g(b′),x)`,
+then `a`, then projection to `F`. All spaces retain their given universe `u`.

@@ -1,9 +1,14 @@
-# Reduced Conv Pow vanish of mem
+# Finite-stage vanishing of reduced convolution powers
 
-Finite-stage reduced convolution vanishing: for arbitrary degree `m`,
-reduced `f`, `n : ℕ`, and `x : C.X r` in filtration stage `n`
-(`redComulPowFrom Δbar (n+1)` vanishes on `x`), evaluation of the
-`(n+1)`-st reduced convolution power (which has `n+2` factors) at `x` is zero,
-uniformly via the factorization above. This finite-stage proof is independent
-of coassociative iterate splitting and follows the matching left recursion of
-reduced convolution and `redComulPowFrom`.
+Let R be commutative and work with integer-indexed R-module cochain
+complexes, with binary graded tensors, coherent threefold and fourfold tensor
+reassociation and extensionality, and tensor functors preserving zero.
+Let C be a comonoid and A a monoid, with coaugmentation η:I → C,
+a map ε:A → I, and reduced comultiplication Δ̄.
+Assume Δ_C=Δ̄+(η⊗1)λ_C⁻¹+(1⊗η)ρ_C⁻¹−(η⊗η)λ_I⁻¹ε_C,
+η is a comonoid map, and Δ̄ is killed by η and both counit legs.
+Assume the unit comonoid structure is chosen, η is a comonoid morphism
+and ε is a monoid morphism. For reduced f of degree m, n∈ℕ and
+x∈C^r killed by the (n+1)-st reduced-comultiplication iterate,
+the n+2-factor left-accumulating convolution power of f takes x to
+zero in degree r+(n+2)m.

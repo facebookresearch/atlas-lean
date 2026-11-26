@@ -1,3 +1,5 @@
-# Tensor Right Algebra
+# Source-algebra action on a tensor pushout
 
-The actual right tensor inclusion gives the original P-action.
+For commutative `k`-algebras `K,P`, the structure `tensorRightAlgebra k K P` is the
+`P`-algebra structure on `K ⊗_k P` defined by `p↦1⊗p`. Multiplication by `p` on a pure tensor
+`b⊗q` gives `b⊗(p q)`.

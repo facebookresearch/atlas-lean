@@ -1,5 +1,7 @@
-# Reduced Conv Pow postcomp
+# Monoid postcomposition of degree-recorded convolution iterates
 
-Reduced iterates commute with target postcomposition by a monoid morphism,
-by induction consuming `conv_postcomp` at the successor step. No vanishing,
-reducedness, or augmentation hypothesis is needed for the transport itself.
+Monoid postcomposition of degree-recorded convolution iterates.
+
+For a monoid morphism φ : A → B, iterating f followed by φ gives the same recorded degree as
+iterating f, and its cochain component is fₙ followed by φ. No reduction or vanishing
+hypothesis on f is used.

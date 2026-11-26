@@ -15,83 +15,19 @@ public import MathlibExt.Algebra.Homology.TwistingMaurerCartan
 public import MathlibExt.Algebra.Homology.TwistingConvolutionMonoid
 
 /-!
-# Twisted cobar differential
+# Left twisting of the convolution differential
 
-This file constructs the left-twisted cobar perturbation over the
-graded-convolution/differential laws and Maurer–Cartan base in the imported
-`TwistingMaurerCartan` and `TwistingConvolutionMonoid` modules. It defines the left-twisted
-perturbation of the convolution differential on `Hom(C, A)`:
+Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps.
 
-`twistedCobarDifferential τ f = δ f + τ ⋆ f`,
+Write f⋆g=μ_A(f⊗g)Δ_C for convolution. For degrees |f|=m, |g|=n, the graded tensor contributes
+(-1)^{np} on left input degree p. The Hom differential of f of degree n has component
+(δf)_p=f_p≫d_A+(-1)^{n+1}d_C≫f_{p+1}.
 
-for a degree-`+1` cochain `τ` and `f : Cochain C A n`, landing in degree
-`1 + n`. This is the Hom-side shadow of the cobar differential: its
-square-zero follows from the Maurer–Cartan equation and is proved below as
-`twistedCobar_sq_zero`. The full free-algebra cobar extension is not built
-here (see Scope below).
-
-## Why the cobar side first
-
-The twisted bar side needs the cofree conilpotent coalgebra on the underlying
-complex, for which no pinned API was verified. The perturbation defined here
-needs only the graded convolution `conv` and the pinned differential
-`δ`, so its underlying graded object (plain cochains) and differential are
-statable without adding any coalgebra foundations. The full cobar (tensor
-algebra on the desuspended reduced coalgebra with derivation extension) is not
-built here.
-
-## Grading and sign conventions
-
-Cohomological grading throughout, following the graded convolution base: `τ : Cochain C A 1`,
-`conv = μ ∘ (f ⊗ g) ∘ Δ` with the Koszul sign `Int.negOnePow (n * i₁)`, and
-`δ` the pinned `HomComplex.δ` (Conrad signs). The result degree is stated as
-`1 + n` rather than `n + 1` so the perturbation sum typechecks without
-transport; `n + 1 = 1 + n` by `add_comm`, and `HomComplex.δ_v` computes
-`δ n (1 + n)` as the genuine differential. Only the left twist `τ ⋆ -` is
-defined here: its square produces the Maurer–Cartan left factor
-`(δτ + τ ⋆ τ) ⋆ -`, matching `IsMaurerCartan` definitionally. The right twist
-and graded commutator are not defined here.
-
-## Primary source
-
-Standard reference: J.-L. Loday and B. Vallette, *Algebraic Operads*,
-Grundlehren 346, Springer, 2012,
-<https://doi.org/10.1007/978-3-642-30362-3>. Exact printed-section numbers
-and a sign-level match against the printed text were not verified in this
-environment, so none is claimed here.
-
-## Declaration inventory
-
-* `twistedCobarDifferential`: left-twisted perturbation `δ f + conv τ f`.
-* `twistedCobarDifferential_v`: component computation rule.
-* `twistedCobarDifferential_zero`: the perturbation preserves zero.
-* `twistedCobarDifferential_self_eq_zero`: a Maurer–Cartan cochain annihilates
-  its own self-application (the curvature bridge used by the adjunction).
-* `twistedCobar_sq_zero`: square-zero of the left-twisted differential from
-  `IsMaurerCartan τ`, via `HomComplex.δ_δ`, `conv_leibniz` at degree one,
-  additive convolution, `conv_assoc`, and the Maurer–Cartan equation.
-
-## Scope
-
-Square-zero of `twistedCobarDifferential τ` from `IsMaurerCartan τ` is proved
-below as `twistedCobar_sq_zero`. The free-algebra derivation extension, the
-right-twist pair, and the twisting bijection/adjunction are not built here.
-
-## Nonclaims
-
-No bar–cobar adjunction, no twisting-cochain bijection, no bar side, no free
-or cofree (co)algebra object, no conilpotence/completeness hypothesis, and no
-derived, Koszul, operadic, homological (`down ℤ`), realization, or
-model-categorical result is claimed. No augmentation/coaugmentation vanishing
-is recorded here.
-
-## Import justification
-
-`TwistingMaurerCartan` supplies `IsMaurerCartan` and, transitively through
-`TwistingCochain`, the graded convolution `conv` with its zero laws.
-`TwistingConvolutionMonoid` supplies `conv_assoc` and, transitively through
-`TwistingConvolutionLaws`, `conv_leibniz` with the additive/scalar convolution
-laws consumed by the square-zero proof.
+For τ of degree one, the left-twisted operator on f of degree n is Dₗ_τf=δf+τ⋆f, of degree 1+n.
+The Maurer–Cartan equation δτ+τ⋆τ=0 implies Dₗ_ττ=0 and (Dₗ_τ)²f=0 in degree 1+(1+n).
 -/
 
 @[expose] public section
@@ -117,15 +53,22 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Left-twisted perturbation of the convolution differential: `δ f + τ ⋆ f`
-for a degree-`+1` cochain `τ`. The target degree is `1 + n` so the sum needs
-no transport; see the module documentation. -/
+/-- Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For a degree-one τ:C→A and a degree-n cochain f:C→A, define Dₗ_τf=δf+τ⋆f in
+degree 1+n, where ⋆=μ_A(-⊗-)Δ_C and (δf)_p=f_p≫d_A+(-1)^{n+1}d_C≫f_{p+1}. -/
 noncomputable def twistedCobarDifferential {n : ℤ}
     (τ : HomComplex.Cochain C A 1) (f : HomComplex.Cochain C A n) :
     HomComplex.Cochain C A (1 + n) :=
   HomComplex.δ n (1 + n) f + conv τ f
 
-/-- Component computation rule for the twisted cobar differential. -/
+/-- Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For |τ|=1, |f|=n and integers p,q with p+1+n=q, the C_p→A_q component of Dₗ_τf
+is (δf)_{p,q}+(τ⋆f)_{p,q}. Here (δf)_{p,q}=f_p≫d_A+(-1)^{n+1}d_C≫f_{p+1} and the tensor in τ⋆f
+contributes (-1)^{np₁} on a coproduct summand C_{p₁}⊗C_{p₂}. -/
 @[simp]
 theorem twistedCobarDifferential_v {n : ℤ}
     (τ : HomComplex.Cochain C A 1) (f : HomComplex.Cochain C A n)
@@ -133,28 +76,32 @@ theorem twistedCobarDifferential_v {n : ℤ}
     (twistedCobarDifferential τ f).v p q hpq =
       (HomComplex.δ n (1 + n) f).v p q hpq + (conv τ f).v p q hpq := rfl
 
-/-- The twisted cobar differential preserves zero, from the pinned
-`HomComplex.δ_zero` and `conv_zero_right`. -/
+/-- Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For any degree-one τ:C→A and integer n, Dₗ_τ(0)=0 as a degree-(1+n) cochain,
+where Dₗ_τf=δf+μ_A(τ⊗f)Δ_C. -/
 theorem twistedCobarDifferential_zero {n : ℤ}
     (τ : HomComplex.Cochain C A 1) :
     twistedCobarDifferential τ (0 : HomComplex.Cochain C A n) = 0 := by
   unfold twistedCobarDifferential
   rw [HomComplex.δ_zero, conv_zero_right, add_zero]
 
-/-- A Maurer–Cartan cochain annihilates its own twisted cobar
-self-application: `twistedCobarDifferential τ τ` is definitionally the
-Maurer–Cartan left-hand side `δ 1 (1 + 1) τ + conv τ τ`. -/
+/-- Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. If τ:C→A has degree one and satisfies δτ+τ⋆τ=0, then Dₗ_ττ=0 in degree two. Its
+left twist is Dₗ_ττ=δτ+τ⋆τ, where ⋆=μ_A(-⊗-)Δ_C. -/
 theorem twistedCobarDifferential_self_eq_zero
     {τ : HomComplex.Cochain C A 1} (h : IsMaurerCartan τ) :
     twistedCobarDifferential τ τ = 0 := h
 
-/-- Square-zero of the left-twisted cobar differential from the Maurer–Cartan
-equation: two applications of `twistedCobarDifferential τ` annihilate any
-cochain. The middle terms cancel by `conv_leibniz` at degree one (the sign
-`(1 : ℤ).negOnePow = -1`), and the curvature factors on the left by
-`conv_assoc` and `conv_add_left` before `IsMaurerCartan` and `conv_zero_left`
-close the proof. Degree transports are all `by omega` at components, so no
-tensor-level descent is needed. -/
+/-- Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. If a degree-one τ satisfies δτ+τ⋆τ=0, then Dₗ_τ(Dₗ_τf)=0 for every
+integer-degree cochain f:C→A. Here Dₗ_τf=δf+τ⋆f for |f|=n, and the second application has degree
+1+(1+n). -/
 theorem twistedCobar_sq_zero {n : ℤ}
     {τ : HomComplex.Cochain C A 1} (hMC : IsMaurerCartan τ)
     (f : HomComplex.Cochain C A n) :

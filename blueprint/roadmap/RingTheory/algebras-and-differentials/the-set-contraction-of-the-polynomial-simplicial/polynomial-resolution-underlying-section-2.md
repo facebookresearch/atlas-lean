@@ -1,3 +1,5 @@
-# Polynomial Resolution Underlying Section augmentation
+# Underlying simplicial section retracts the augmentation
 
-The constructed section is a right inverse of the actual augmentation.
+For a commutative ring `k` and `k`-algebra `A`, `polynomialResolutionUnderlyingSection k A ≫
+polynomialResolutionUnderlying.hom = 𝟙 (const A)`. Thus the simplicial section is a right
+inverse of the underlying augmentation.

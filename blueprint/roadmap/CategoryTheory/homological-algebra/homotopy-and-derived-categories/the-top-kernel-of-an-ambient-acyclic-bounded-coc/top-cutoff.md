@@ -1,3 +1,4 @@
-# Top Cutoff
+# Selected upper cutoff of a bounded complex
 
-The upper endpoint of the actual finite-support witness of the original cochain.
+For a bounded cochain complex K in a preadditive category, the selected
+upper cutoff t is the upper endpoint of its finite term-support witness.

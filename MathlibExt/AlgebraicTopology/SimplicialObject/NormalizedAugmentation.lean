@@ -14,18 +14,22 @@ public import Mathlib.AlgebraicTopology.ExtraDegeneracy
 public import Mathlib.CategoryTheory.Functor.Const
 
 /-!
-# Actual normalized augmentations under exact additive functors
+# Normalized augmentations and additive transport
 
-The augmentation is the original Moore inclusion followed by the original
-alternating augmentation.  Its full naturality and factorization through
-the normalized constant point are proved from native natural transformations.
-The constant point has the native constant extra degeneracy.
+Let P be an augmented simplicial object in an abelian category C, with point A and simplicial
+augmentation P.left → const(A). Its normalized complex is N(P.left), and the chain
+augmentation ε_P : N(P.left) → A[0] is Moore inclusion followed by the alternating-complex
+augmentation.
 
-An actually homology-preserving additive functor therefore preserves the
-quasi-isomorphism of a GIVEN original normalized augmentation.  Only that
-source resolution property is input; no desired mapped augmentation,
-exactness, contraction, or resolution comparison certificate is supplied.
-Native verification is unexecuted for this source proposal.
+This map is natural in augmented morphisms and factors through N(const(A)) by normalization of
+the simplicial augmentation. The constant-point augmentation is a quasi-isomorphism, using its
+extra degeneracy. Hence a quasi-isomorphism ε_P implies that the normalized map to const(A) is
+a quasi-isomorphism as well.
+
+For additive F : C ⥤ D between abelian categories, applying F to the augmented diagram uses
+the canonical constant comparison const(A) ⋙ F ≅ const(F(A)). If F preserves homology, a
+quasi-isomorphism of the given normalized augmentation is preserved. Source and target
+category worlds are independent.
 -/
 
 @[expose] public section
@@ -40,16 +44,26 @@ namespace AlgebraicTopology.NormalizedAugmentation
 
 variable {C : Type uC} [Category.{vC} C] [Abelian C]
 
-/-- The actual native normalized complex of the original augmented object. -/
+/-- Normalized complex of an augmented simplicial object.
+
+For augmented P in an abelian category, complex P is the normalized Moore chain complex
+N(P.left), indexed by ℕ. -/
 abbrev complex (P : SimplicialObject.Augmented C) : ChainComplex C ℕ :=
   (normalizedMooreComplex C).obj P.left
 
-/-- The original chain augmentation, without a replacement model. -/
+/-- Chain augmentation of a normalized simplicial complex.
+
+For augmented P with point A, define ε_P : N(P.left) → A[0] as the Moore inclusion N(P.left) →
+A(P.left) followed by the alternating face-map augmentation to the chain complex concentrated
+in degree zero at A. -/
 def augmentation (P : SimplicialObject.Augmented C) :
     complex P ⟶ (ChainComplex.single₀ C).obj P.right :=
   inclusionOfMooreComplexMap P.left ≫ AlternatingFaceMapComplex.ε.app P
 
-/-- The original whole augmentation induces its actual map to the constant point. -/
+/-- Augmented map to the constant augmentation point.
+
+For augmented P, its simplicial augmentation P.hom and identity on P.right define a morphism P
+→ const(P.right) of augmented simplicial objects. -/
 def toConstant (P : SimplicialObject.Augmented C) :
     P ⟶ (SimplicialObject.Augmented.const (C := C)).obj P.right where
   left := P.hom
@@ -59,12 +73,18 @@ def toConstant (P : SimplicialObject.Augmented C) :
       P.hom ≫ (SimplicialObject.const C).map (𝟙 P.right)
     exact (congrArg (fun a => P.hom ≫ a) ((SimplicialObject.const C).map_id P.right)).symm
 
-/-- Native normalization of the original simplicial augmentation. -/
+/-- Normalized chain map of a simplicial augmentation.
+
+For augmented P with point A, apply the Moore normalization functor to P.hom : P.left →
+const(A). This gives N(P.left) → N(const(A)). -/
 def normalizationMap (P : SimplicialObject.Augmented C) :
     complex P ⟶ complex ((SimplicialObject.Augmented.const (C := C)).obj P.right) :=
   (normalizedMooreComplex C).map P.hom
 
-/-- Full naturality of the actual normalized augmentation. -/
+/-- Naturality of normalized chain augmentations.
+
+For an augmented morphism f : P → Q in an abelian category, N(f.left) ≫ ε_Q = ε_P ≫ (single₀
+C).map(f.right). This retains the full simplicial and point components of f. -/
 @[reassoc]
 theorem augmentation_naturality {P Q : SimplicialObject.Augmented C} (f : P ⟶ Q) :
     (normalizedMooreComplex C).map f.left ≫ augmentation Q =
@@ -92,7 +112,11 @@ theorem augmentation_naturality {P Q : SimplicialObject.Augmented C} (f : P ⟶ 
       congrArg (fun a => inclusionOfMooreComplexMap P.left ≫ a) hE
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The original augmentation factors through its actual normalized constant point. -/
+/-- Factorization through the normalized constant point.
+
+For augmented P with point A, normalizationMap P followed by the normalized augmentation of
+const(A) equals ε_P. This follows by naturality for the augmented map P → const(A) with
+identity point map. -/
 theorem factorization (P : SimplicialObject.Augmented C) :
     normalizationMap P ≫ augmentation ((SimplicialObject.Augmented.const (C := C)).obj P.right) =
       augmentation P := by
@@ -104,14 +128,22 @@ theorem factorization (P : SimplicialObject.Augmented C) :
     ((congrArg (fun a => augmentation P ≫ a) ((ChainComplex.single₀ C).map_id P.right)).trans
       (Category.comp_id _))
 
-/-- Native constant extra degeneracy supplies this specific constant augmentation's contraction. -/
+/-- Quasi-isomorphism of a normalized constant augmentation.
+
+For an object M of an abelian category, the augmentation N(const(M)) → M[0] is a
+quasi-isomorphism. The constant extra degeneracy supplies its homotopy equivalence through the
+alternating complex. -/
 theorem constant_quasiIso (M : C) :
     QuasiIso (augmentation ((SimplicialObject.Augmented.const (C := C)).obj M)) :=
   ((DoldKan.homotopyEquivNormalizedMooreComplexAlternatingFaceMapComplex
     (Y := (SimplicialObject.const C).obj M)).trans
       (SimplicialObject.Augmented.ExtraDegeneracy.const M).homotopyEquiv).quasiIso_hom
 
-/-- The given original augmentation quasi-isomorphism earns its normalized map to the point. -/
+/-- Quasi-isomorphism of normalization to the point from an augmentation quasi-isomorphism.
+
+If ε_P : N(P.left) → P.right[0] is a quasi-isomorphism, then normalizationMap P : N(P.left) →
+N(const(P.right)) is a quasi-isomorphism. Its composite with the constant augmentation is ε_P,
+and the constant augmentation is itself a quasi-isomorphism. -/
 theorem normalizationMap_quasiIso (P : SimplicialObject.Augmented C)
     (hP : QuasiIso (augmentation P)) : QuasiIso (normalizationMap P) := by
   let _ : QuasiIso (augmentation ((SimplicialObject.Augmented.const (C := C)).obj P.right)) :=
@@ -123,7 +155,11 @@ theorem normalizationMap_quasiIso (P : SimplicialObject.Augmented C)
   exact quasiIso_of_comp_right (normalizationMap P)
     (augmentation ((SimplicialObject.Augmented.const (C := C)).obj P.right))
 
-/-- An actual isomorphism of augmented objects transports the original augmentation property. -/
+/-- Augmentation quasi-isomorphism transported by an augmented isomorphism.
+
+For an isomorphism P ≅ Q of augmented simplicial objects in an abelian category, a
+quasi-isomorphism ε_P implies a quasi-isomorphism ε_Q. The normalized diagram map and the
+degree-zero point map induced by the isomorphism are invertible. -/
 theorem augmentation_quasiIso_of_iso {P Q : SimplicialObject.Augmented C}
     (e : P ≅ Q) (hP : QuasiIso (augmentation P)) : QuasiIso (augmentation Q) := by
   let _ : QuasiIso (augmentation P) := hP
@@ -136,23 +172,39 @@ theorem augmentation_quasiIso_of_iso {P Q : SimplicialObject.Augmented C}
 
 variable {D : Type uD} [Category.{vD} D] [Abelian D] (F : C ⥤ D) [F.Additive]
 
-/-- Actual native application of the functor to the entire original augmentation. -/
+/-- Augmented simplicial diagram after applying a functor.
+
+For a functor F : C ⥤ D and augmented P in C, apply F to its diagram and point, using the
+canonical comparison of a transported constant diagram with the constant diagram on
+F(P.right). -/
 abbrev mapped (P : SimplicialObject.Augmented C) : SimplicialObject.Augmented D :=
   ((SimplicialObject.Augmented.whiskering C D).obj F).obj P
 
-/-- The exact constant-point comparison, with actual identity components. -/
+/-- Constant-diagram comparison for a functor.
+
+For F : C ⥤ D and M : C, the constant diagram const_C(M) followed by F is canonically
+isomorphic to const_D(F(M)). Its components are identity maps. -/
 def constantMapIso (M : C) :
     (SimplicialObject.const C).obj M ⋙ F ≅
       (SimplicialObject.const D).obj (F.obj M) :=
   Functor.constComp (J := SimplexCategoryᵒᵖ) M F
 
 omit [Abelian C] [Abelian D] [F.Additive] in
-/-- The mapped augmentation is the literal original map, followed only by the constant comparison. -/
+/-- Augmentation map after functorial transport.
+
+For any functor F : C ⥤ D and augmented P, the augmentation of mapped F P is the whiskered map
+P.hom ⋙ F followed by the hom of constantMapIso F P.right. This equation requires only the
+category and functor structures. -/
 theorem mapped_hom (P : SimplicialObject.Augmented C) :
     (mapped F P).hom = Functor.whiskerRight P.hom F ≫ (constantMapIso F P.right).hom := by
   rfl
 
-/-- Exact additive transport earns the actual mapped normalized augmentation quasi-isomorphism. -/
+/-- Preservation of normalized augmentation quasi-isomorphisms.
+
+Let F be additive and homology preserving between abelian categories. If ε_P is a
+quasi-isomorphism for an augmented P, then the normalized augmentation ε_{mapped F P} is a
+quasi-isomorphism. Transport the normalized map to the point, then use the constant-diagram
+comparison and the constant-point augmentation. -/
 theorem mapped_augmentation_quasiIso [F.PreservesHomology]
     (P : SimplicialObject.Augmented C) (hP : QuasiIso (augmentation P)) :
     QuasiIso (augmentation (mapped F P)) := by

@@ -1,3 +1,6 @@
-# Comp lift Base Change
+# Covariant naturality of a Lie scalar-extension lift
 
-Extension is covariantly natural in compatible `S`-Lie target morphisms.
+Covariant naturality of a Lie scalar-extension lift.
+
+For f : L →ₗ⁅R⁆ N and an S-Lie map g : N → N' between compatible scalar towers, g ∘
+liftBaseChange(f) equals liftBaseChange((restrictScalars g) ∘ f).

@@ -1,5 +1,8 @@
-# Conv of left
+# Reduction of convolution from a reduced left factor
 
-Convolution with a reduced left factor is reduced: the outer maps push
-through via `conv_precomp` / `conv_postcomp`, then the left vanishing
-annihilates by `conv_zero_left`.
+Reduction of convolution from a reduced left factor.
+
+Assume a comonoid structure on I, η : I → C a comonoid morphism and ε : A → I a monoid
+morphism. If f of degree m is reduced, then f⋆g of degree m+n is reduced for every degree-n
+cochain g. The outer morphisms commute with convolution and the zero left factor annihilates
+it.

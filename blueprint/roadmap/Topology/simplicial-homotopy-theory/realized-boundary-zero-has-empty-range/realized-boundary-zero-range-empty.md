@@ -1,4 +1,6 @@
-# Realized Boundary Zero range empty
+# Empty range of the realized zero-simplex boundary inclusion
 
-The realized `∂Δ[0]` inclusion has empty range, via the initial-object
-comparison.
+Empty range of the realized zero-simplex boundary inclusion.
+
+The map |∂Δ[0]| → |Δ[0]| has range ∅. Realization sends the initial simplicial boundary to an
+initial, hence empty, topological space.

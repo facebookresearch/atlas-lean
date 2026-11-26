@@ -1,3 +1,6 @@
-# Term Equiv map value
+# Component formula for a normalized simplicial module map
 
-Original simplicial module maps retain their actual values under native normalization.
+Component formula for a normalized simplicial module map.
+
+For f : X → Y, n : ℕ and x ∈ N(X)_n, the coordinates of N(f)_n(x) are f_n applied to the
+coordinates of x. Both equivalences use the corresponding Moore inclusions.

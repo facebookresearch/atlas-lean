@@ -1,3 +1,3 @@
-# Loday Column Sign succ mul
+# Adjacent triangular column signs have ratio (-1)^p
 
-Adjacent column signs differ by the native outer epsilon factor.
+For p∈ℕ, c_{p+1}c_p=(-1)^p as integer units, where c₀=1 and c_{p+1}=c_p(-1)^p.

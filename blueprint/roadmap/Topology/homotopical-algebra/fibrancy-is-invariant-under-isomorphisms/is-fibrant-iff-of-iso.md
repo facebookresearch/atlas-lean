@@ -1,4 +1,7 @@
-# Is Fibrant iff of iso
+# Fibrancy equivalence along an object isomorphism
 
-Fibrancy is invariant under an object isomorphism when fibrations respect
-isomorphisms.
+Fibrancy equivalence along an object isomorphism.
+
+In a category with terminal object and fibrations respecting isomorphisms, an isomorphism e :
+X ≅ Y gives IsFibrant X ↔ IsFibrant Y. The terminal arrows are isomorphic as objects of the
+arrow category.

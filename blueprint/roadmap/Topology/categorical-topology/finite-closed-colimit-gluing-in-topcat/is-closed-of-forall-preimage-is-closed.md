@@ -1,6 +1,7 @@
-# Is Closed of forall preimage is Closed
+# Closed-set gluing along finitely many closed cocone embeddings
 
-If each leg is a closed embedding and each preimage is closed, the set
-itself is closed. Write `S` as the finite union of closed images via the
-cover equality, using `IsClosedEmbedding.isClosedMap` and
-`isClosed_iUnion_of_finite` for the finite index.
+Closed-set gluing along finitely many closed cocone embeddings.
+
+Assume J has finitely many objects, the underlying set cocone is colimiting and every leg is a
+closed embedding. If every leg preimage of S is closed, then S is closed in c.pt, as the
+finite union of the corresponding closed images.

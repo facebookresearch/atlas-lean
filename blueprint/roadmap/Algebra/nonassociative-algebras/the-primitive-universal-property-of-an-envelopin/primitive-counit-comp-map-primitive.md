@@ -1,3 +1,6 @@
-# Primitive Counit comp map ιPrimitive
+# Enveloping triangle identity for primitive generators
 
-The enveloping image of the primitive-valued generators satisfies the second triangle identity.
+Enveloping triangle identity for primitive generators.
+
+For an R-Lie algebra L, the composite U_R(L) → U_R(P_R(U_R(L))) → U_R(L), using U_R(η_L) and
+ε_{U_R(L)}, is the identity bialgebra map.

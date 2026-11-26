@@ -18,17 +18,23 @@ public import MathlibExt.RingTheory.DifferentialGraded.CoradicalFiltration
 public import MathlibExt.RingTheory.DifferentialGraded.TwistingConilpotentPredicates
 
 /-!
-# Convolution vanishing on coradical filtration stages
+# Convolution vanishing on finite coradical stages
 
-For integer-indexed cochain complexes of modules, reduced cochains have
-pointwise convolution bounds supplied by the coradical filtration.
-On a stage-zero element, the convolution of two reduced cochains vanishes.
-If the reduced comultiplication is zero, their whole convolution is zero.
+For integer-indexed R-module cochain complexes over a commutative ring,
+let C be a comonoid, A a monoid and Δ̄ the reduced comultiplication
+relative to η:I → C. A homogeneous cochain f:C → A is reduced when
+f∘η=0 and ε∘f=0 for the chosen map ε:A → I.
 
-For a reduced cochain `f`, an element in filtration stage `n` is killed by
-`reducedConvPow f (n + 1)`, which has `n + 2` convolution factors. The proof
-uses the matching left recursions of the convolution power and reduced
-comultiplication iterate. The filtration stage is carried by the input element.
+Filtration stage n consists of homogeneous elements killed by the
+(n+1)-st reduced-comultiplication iterate into n+2 tensor factors.
+The convolution of two reduced cochains vanishes on stage zero.
+If Δ̄=0, the convolution itself is zero.
+
+For a reduced cochain of degree m, with η a comonoid map and ε a monoid
+map, the left-accumulating convolution power with n+2 factors has degree
+(n+2)m and vanishes on every stage-n element. The statements use the
+given graded tensor reassociation/extensionality structures and tensor
+preservation of zero objects.
 -/
 
 @[expose] public section
@@ -54,8 +60,17 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Pointwise stage-0 finite evaluation: a stage-0 element kills binary reduced
-convolution at every cochain component. Finite truncation, not convergence. -/
+/-- Let R be commutative and work with integer-indexed R-module cochain
+complexes, with binary graded tensors, coherent threefold and fourfold tensor
+reassociation and extensionality, and tensor functors preserving zero.
+Let C be a comonoid and A a monoid, with coaugmentation η:I → C,
+a map ε:A → I, and reduced comultiplication Δ̄.
+Assume Δ_C=Δ̄+(η⊗1)λ_C⁻¹+(1⊗η)ρ_C⁻¹−(η⊗η)λ_I⁻¹ε_C,
+η is a comonoid map, and Δ̄ is killed by η and both counit legs.
+Let f,g be homogeneous cochains of degrees m,n with
+f∘η=g∘η=0 and ε∘f=ε∘g=0.
+For x∈C^r in filtration stage zero and s=r+m+n, the component
+(f⋆g):C^r → A^s takes x to zero. -/
 theorem conv_vanish_of_stageZero {m n : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -92,9 +107,15 @@ theorem conv_vanish_of_stageZero {m n : ℤ}
     HomComplex.Cochain.zero_cochain_comp_v, HomComplex.Cochain.ofHom_v,
     ModuleCat.comp_apply, hΔ, map_zero]
 
-/-- Uniform stage-0 two-factor bridge: trivial `Δbar` kills `conv f g` for
-distinct reduced factors (honest `f ⋆ g` generalization of
-`IsReducedConvNilpotent.of_trivial_redComul`'s `f ⋆ f`). -/
+/-- Let R be commutative and work with integer-indexed R-module cochain
+complexes, with binary graded tensors, coherent threefold and fourfold tensor
+reassociation and extensionality, and tensor functors preserving zero.
+Let C be a comonoid and A a monoid, with coaugmentation η:I → C,
+a map ε:A → I, and reduced comultiplication Δ̄.
+Assume Δ_C=Δ̄+(η⊗1)λ_C⁻¹+(1⊗η)ρ_C⁻¹−(η⊗η)λ_I⁻¹ε_C,
+η is a comonoid map, and Δ̄ is killed by η and both counit legs.
+If Δ̄=0 and f,g of any integer degrees satisfy
+f∘η=g∘η=0 and ε∘f=ε∘g=0, then their convolution f⋆g is zero. -/
 theorem conv_eq_zero_of_trivial_redComul {m n : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -107,17 +128,18 @@ theorem conv_eq_zero_of_trivial_redComul {m n : ℤ}
     HomComplex.Cochain.ofHom_zero, HomComplex.Cochain.zero_comp,
     HomComplex.Cochain.zero_comp]
 
-/-- Finite-iterate factorization of reduced convolution powers through the
-canonical reduced-comultiplication iterates: `(reducedConvPow f (n+1)).2`
-equals `G` precomposed with `redComulPowFrom Δbar (n+1)`. The base uses
-`conv_eq_redComul_of_reduced` plus the degree-one unitor isomorphism (cancelled
-via the existing `Cochain.id_comp`); the step uses `conv_eq_redComul_of_reduced`
-again plus `ofHom_tensorHom_comp_tensor` to push the iterate through the tensor.
-Each case first restates the goal with the computed degree (definitionally the
-`reducedConvPow` degree) via `change`, keeping all degree proofs syntactically
-uniform so `rw` motives stay well-typed; association then closes by repeated
-single-instantiation `comp_assoc_of_first_is_zero_cochain` passes. No
-`Nat`-motive `rw` is used. -/
+/-- Let R be commutative and work with integer-indexed R-module cochain
+complexes, with binary graded tensors, coherent threefold and fourfold tensor
+reassociation and extensionality, and tensor functors preserving zero.
+Let C be a comonoid and A a monoid, with coaugmentation η:I → C,
+a map ε:A → I, and reduced comultiplication Δ̄.
+Assume Δ_C=Δ̄+(η⊗1)λ_C⁻¹+(1⊗η)ρ_C⁻¹−(η⊗η)λ_I⁻¹ε_C,
+η is a comonoid map, and Δ̄ is killed by η and both counit legs.
+Assume the unit comonoid structure is chosen, η is a comonoid morphism
+and ε is a monoid morphism. For reduced f of degree m and n∈ℕ,
+the left-accumulating convolution power with n+2 factors factors through
+the (n+1)-st reduced-comultiplication iterate C → C^{⊗(n+2)} by a
+cochain from that tensor power to A of degree (n+2)m. -/
 private theorem reducedConvPow_factor_aux {m : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -204,13 +226,18 @@ private theorem reducedConvPow_factor_aux {m : ℤ}
         (HomComplex.Cochain.ofHom (HomologicalComplex.tensorHom
           (redComulPowFrom Δbar (n + 1)) (𝟙 C))) _ _ _]
 
-/-- Finite-stage reduced convolution vanishing: for arbitrary degree `m`,
-reduced `f`, `n : ℕ`, and `x : C.X r` in filtration stage `n`
-(`redComulPowFrom Δbar (n+1)` vanishes on `x`), evaluation of the
-`(n+1)`-st reduced convolution power (which has `n+2` factors) at `x` is zero,
-uniformly via the factorization above. This finite-stage proof is independent
-of coassociative iterate splitting and follows the matching left recursion of
-reduced convolution and `redComulPowFrom`. -/
+/-- Let R be commutative and work with integer-indexed R-module cochain
+complexes, with binary graded tensors, coherent threefold and fourfold tensor
+reassociation and extensionality, and tensor functors preserving zero.
+Let C be a comonoid and A a monoid, with coaugmentation η:I → C,
+a map ε:A → I, and reduced comultiplication Δ̄.
+Assume Δ_C=Δ̄+(η⊗1)λ_C⁻¹+(1⊗η)ρ_C⁻¹−(η⊗η)λ_I⁻¹ε_C,
+η is a comonoid map, and Δ̄ is killed by η and both counit legs.
+Assume the unit comonoid structure is chosen, η is a comonoid morphism
+and ε is a monoid morphism. For reduced f of degree m, n∈ℕ and
+x∈C^r killed by the (n+1)-st reduced-comultiplication iterate,
+the n+2-factor left-accumulating convolution power of f takes x to
+zero in degree r+(n+2)m. -/
 theorem reducedConvPow_vanish_of_mem {m : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}

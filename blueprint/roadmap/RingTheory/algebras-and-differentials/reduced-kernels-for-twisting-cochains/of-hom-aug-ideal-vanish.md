@@ -1,4 +1,6 @@
-# Of Hom aug Ideal vanish
+# Augmentation-kernel vanishing in degree-zero Hom cochains
 
-Degree-zero augmentation vanishing from the generic kernel condition and
-the pinned `ofHom` composition API, at exactly `(add_zero 0)`.
+Augmentation-kernel vanishing in degree-zero Hom cochains.
+
+The degree-zero cochain of the kernel inclusion i : Ker(ε) → A followed by the degree-zero
+cochain of ε is zero, with total degree 0+0=0.

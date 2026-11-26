@@ -1,3 +1,6 @@
-# Native Localization Iso
+# Localization model compared with the original derived object
 
-The canonical localization model is identified with the actual native derived image of K.
+Let C be abelian with chosen derived categories for C,Cᵒᵖ and let
+K be zero in degrees above d. The canonical isomorphism between
+Q_C applied to K's bounded-above complex model and its original
+derived object [K] in D⁻(C).

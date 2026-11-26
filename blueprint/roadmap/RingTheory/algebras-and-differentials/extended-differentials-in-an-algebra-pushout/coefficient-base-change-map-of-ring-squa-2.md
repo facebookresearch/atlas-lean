@@ -1,3 +1,6 @@
-# Coefficient Base Change Map Of Ring Square Of Algebra tmul D
+# Generator formula after coefficient-action alignment
 
-Source alignment preserves the actual native coefficient and differential formula.
+Generator formula after coefficient-action alignment.
+
+If s.coefficient = algebraMap(A,B), the aligned B-linear map sends b⊗\[A\](a⊗[P]d p) to
+(b·s.coefficient(a))⊗[Q]d(s.algebra(p)).

@@ -1,3 +1,5 @@
-# Degree to Nat
+# Descent reaches every degree below the endpoint
 
-The original explicit descent reaches every original degree at or below its upper endpoint.
+Let b,j∈ℤ with j≤b and degree(b,n)=b−n.
+
+At the natural step count (b−j).toNat, the degree is j.

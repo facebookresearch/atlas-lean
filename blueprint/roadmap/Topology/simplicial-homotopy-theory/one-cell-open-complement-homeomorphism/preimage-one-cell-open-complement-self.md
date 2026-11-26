@@ -1,3 +1,4 @@
-# Preimage one Cell Open Complement self
+# An image misses its own complement
 
-The old leg misses its open complement.
+For any morphism `r : X₂ ⟶ X₄` in `TopCat.{u}`, the inverse image of the complement of its image is empty:
+`r ⁻¹' ((Set.range r.hom)ᶜ) = ∅`.

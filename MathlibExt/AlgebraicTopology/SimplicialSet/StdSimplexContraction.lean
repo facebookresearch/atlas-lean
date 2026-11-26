@@ -12,21 +12,20 @@ module
 public import MathlibExt.CategoryTheory.NerveHomotopy
 
 /-!
-# Contraction of the standard simplex onto its last vertex
+# Contraction of a standard simplex to its last vertex
 
-The standard `n`-simplex is the nerve of the ordinal `ULift (Fin (n + 1))`
-(`SSet.stdSimplex.isoNerve`). The unique natural transformation from the identity
-functor to the constant functor at the top element `ULift.up (Fin.last n)`
-induces a cylinder homotopy on the nerve via
-`CategoryTheory.NatTrans.nerveHomotopy`; conjugating by `isoNerve` gives a
-cylinder homotopy from the identity of `Δ[n]` to the constant map at its last
-vertex.
+For every `n : ℕ` and universe `u`, the standard simplex `Δ[n] : SSet.{u}` admits a cylinder
+homotopy from its identity to the constant map at `Fin.last n`. The homotopy is induced by the
+natural transformation from the identity of the ordinal `ULift (Fin (n + 1))` to the constant
+functor at its top element, through the isomorphism between `Δ[n]` and the nerve of that
+ordinal.
 
-Mathematical source: Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I
-(the standard simplex is the nerve of a finite ordinal and contracts along the
-unique map to its terminal object).
+For a simplex `α`, an interval simplex `t`, and each coordinate `i`, the homotopy takes the
+value of `α` at `i` when `t(i) = 0`, and the last vertex when `t(i) = 1`. Its value is
+therefore pointwise greater than or equal to `α`.
 
-Nonclaims: no fibrancy, Kan, fibration, lifting, or model-category content.
+See Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I, for the standard simplex as the
+nerve of a finite ordinal and its contraction to a terminal object.
 -/
 
 @[expose] public section
@@ -38,8 +37,8 @@ universe u
 
 namespace SSet.stdSimplex
 
-/-- Conjugating the constant nerve map at the top vertex by `isoNerve` gives
-the constant map at the last vertex. -/
+/-- For `n : ℕ`, transport the nerve of the constant functor on `ULift.{u} (Fin (n + 1))` with value `ULift.up (Fin.last n)` through `isoNerve.{u} n`. The resulting endomorphism of `Δ[n] : SSet.{u}` is the constant map at the last vertex:
+`(isoNerve n).hom ≫ nerveMap ((Functor.const _).obj (ULift.up (Fin.last n))) ≫ (isoNerve n).inv = SSet.const (obj₀Equiv.symm (Fin.last n))`. -/
 private lemma constEndpoint (n : ℕ) :
     (isoNerve.{u} n).hom ≫
         nerveMap
@@ -50,11 +49,10 @@ private lemma constEndpoint (n : ℕ) :
   refine SSet.stdSimplex.ext _ _ (fun i => ?_)
   rfl
 
-/-- Cylinder homotopy from the identity of the standard simplex to the constant
-map at its last vertex.
-
-The cylinder map is the nerve cylinder of the unique natural transformation to
-the top vertex, transported across `SSet.stdSimplex.isoNerve`. -/
+/-- For `n : ℕ`, a cylinder homotopy in `SSet.{u}` from `𝟙 Δ[n]` to the constant map at
+`obj₀Equiv.symm (Fin.last n)`. Its cylinder map `Δ[n] ⊗ Δ[1] ⟶ Δ[n]` is induced, through
+`isoNerve`, by the natural transformation from the identity of the finite ordinal to the
+constant functor at its last element. -/
 noncomputable def homotopyIdConstLast (n : ℕ) :
     SSet.Homotopy (𝟙 (Δ[n] : SSet.{u}))
       (SSet.const (SSet.stdSimplex.obj₀Equiv.symm (Fin.last n))) := by
@@ -89,9 +87,9 @@ noncomputable def homotopyIdConstLast (n : ℕ) :
   · ext m ⟨⟨x, hx⟩, t⟩
     cases hx
 
-/-- Arbitrary-time pointwise formula for the contraction cylinder.  At a
-vertex where the interval simplex has value `0`, the original simplex is
-retained; at value `1`, it has reached the last vertex. -/
+/-- Let `n : ℕ`, `a : SimplexCategoryᵒᵖ`, `α ∈ (Δ[n] : SSet.{u}).obj a`, and `t ∈ (Δ[1] : SSet.{u}).obj a`. For every `i : Fin (a.unop.len + 1)`, the `i`-th coordinate of the contraction cylinder is
+`asOrderHom ((homotopyIdConstLast n).h.app a ⟨α, t⟩) i = if asOrderHom t i = 0 then asOrderHom α i else Fin.last n`.
+Thus the formula applies to every interval simplex `t`. -/
 theorem homotopyIdConstLast_h_app_apply (n : ℕ)
     (a : SimplexCategoryᵒᵖ)
     (α : (Δ[n] : SSet.{u}).obj a)
@@ -130,8 +128,9 @@ theorem homotopyIdConstLast_h_app_apply (n : ℕ)
     rw [hT, NatTrans.nerveCylinderFunctor_obj_one]
     rfl
 
-/-- The contraction only moves simplex vertices upward toward the last
-vertex, pointwise at every interval time. -/
+/-- For `n : ℕ`, `a : SimplexCategoryᵒᵖ`, simplices `α ∈ (Δ[n] : SSet.{u}).obj a` and `t ∈ (Δ[1] : SSet.{u}).obj a`, and every `i : Fin (a.unop.len + 1)`,
+`asOrderHom α i ≤ asOrderHom ((homotopyIdConstLast n).h.app a ⟨α, t⟩) i`.
+The contraction fixes a coordinate when the corresponding interval coordinate is zero and otherwise sends it to the last vertex. -/
 theorem le_homotopyIdConstLast_h_app_apply (n : ℕ)
     (a : SimplexCategoryᵒᵖ)
     (α : (Δ[n] : SSet.{u}).obj a)

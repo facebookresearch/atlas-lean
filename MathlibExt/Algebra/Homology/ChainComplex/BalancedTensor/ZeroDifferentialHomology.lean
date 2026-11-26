@@ -20,18 +20,24 @@ public import Mathlib.Algebra.Category.ModuleCat.Ulift
 public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 
 /-!
-# Balanced tensor homology with a zero-differential first factor
+# Balanced tensor homology with a zero-differential factor
 
-For a graded family of right modules A and an integer-graded left-module
-complex Q, the native balanced tensor total of A with zero differential and Q
-is the coproduct of its signed columns. If every coefficient tensor functor
-is exact, its homology is the full direct sum of Aₚ ⊗ᵣ Hq(Q) over p + q = n.
+Let R be an arbitrary ring, A a graded right-module family and Q an
+integer-indexed left-module chain complex. Put the zero differential on A.
+The balanced tensor total is the coproduct of columns with terms
+A_p⊗_R Q_{n−p} in total degree n and differential
+(−1)^p·(1⊗d_Q), using the integer sign also for negative p.
 
-The comparison sends the tensor of a coefficient and a cycle class to the
-class of the same native total-complex tensor. The second differential keeps
-the integer unit p.negOnePow, including in negative degrees. No boundedness
-or flatness of Q is needed. Independent carrier universes are transported by
-the native module lift to any specified common lift height.
+If each coefficient tensor functor A_p⊗_R− preserves homology, the
+canonical comparison is
+⊕_{p+q=n} A_p⊗_R H_q(Q) ≅ H_n(Tot(A_0,Q)).
+It sends a coefficient tensored with a cycle class to the class of
+the same tensor in the total complex. The antidiagonal is the full
+integer antidiagonal.
+
+For independent carrier universes, the comparison uses coefficient lifts
+to T=max(u,v,w,t), assuming homology preservation by the lifted
+coefficient functors at that height.
 -/
 
 @[expose] public section
@@ -56,7 +62,9 @@ private noncomputable instance hasMapBifunctor
   intro n
   infer_instance
 
-/-- The native zero-differential complex on the original right-module family. -/
+/-- For an arbitrary ring R and an integer-graded family A of right
+R-modules, the integer chain complex A_0 with term A_p in degree p
+and all differentials zero. -/
 abbrev zeroDifferentialComplex (A : ℤ → ModuleCat.{v} Rᵐᵒᵖ) :
     ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ :=
   (HomologicalComplex.zeroDifferentialFunctor c).obj A
@@ -67,7 +75,11 @@ variable (A : ℤ → ModuleCat.{v} Rᵐᵒᵖ)
 private abbrev coefficientComplex (p : ℤ) : ChainComplex AddCommGrpCat.{v} ℤ :=
   (((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).mapHomologicalComplex c).obj Q
 
-/-- The native coefficient complex shifted into its original total degree. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential.
+
+The signed p-th column has term A_p⊗_R Q_{n−p} in degree n and differential (−1)^p·(1⊗d_Q). It is the coefficient complex shifted by p. -/
 def zeroDifferentialTensorColumn (p : ℤ) : ChainComplex AddCommGrpCat.{v} ℤ :=
   (ChainComplex.nativeShift AddCommGrpCat.{v} p).obj
     ((((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).mapHomologicalComplex c).obj Q)
@@ -103,7 +115,11 @@ private lemma tensorι_d (p q n : ℤ) (h : p + q = n) :
   simp only [Functor.map_zero, NatTrans.app_zero, zero_comp, smul_zero, zero_add]
   rfl
 
-/-- Include a signed native column into the original full balanced tensor total. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential.
+
+The canonical chain map from the p-th signed column to T(A,Q), given in degree n by the (p,n−p) tensor-summand inclusion. -/
 def zeroDifferentialTensorColumnι (p : ℤ) :
     zeroDifferentialTensorColumn R A Q p ⟶ complex R (zeroDifferentialComplex R A) Q :=
   ChainComplex.ofHom
@@ -133,7 +149,11 @@ def zeroDifferentialTensorColumnι (p : ℤ) :
               tensorι_d R A Q p (n + 1 - p) (n + 1) (by omega)
       _ = _ := by simpa only [Category.assoc] using hs.symm)
 
-/-- All signed columns, indexed by the entire integer axis. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential.
+
+The diagram of signed columns indexed by Discrete(ℤ), containing every column p. -/
 def zeroDifferentialTensorColumns : Discrete ℤ ⥤ ChainComplex AddCommGrpCat.{v} ℤ :=
   Discrete.functor (zeroDifferentialTensorColumn R A Q)
 
@@ -172,14 +192,22 @@ private def columnsCoconeIsColimit : IsColimit (columnsCocone R A Q) := by
       Functor.mapCocone_ι_app, HomologicalComplex.eval_map, Discrete.natTrans_app,
       Category.assoc, Iso.inv_hom_id_assoc] using hp
 
-/-- The native full tensor total is the colimit of all its signed columns. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential.
+
+The canonical isomorphism from the coproduct of all signed columns to the full balanced tensor total T(A,Q). -/
 @[no_expose]
 def zeroDifferentialTensorColumnsIso :
     colimit (zeroDifferentialTensorColumns R A Q) ≅
       complex R (zeroDifferentialComplex R A) Q :=
   colimit.isoColimitCocone ⟨columnsCocone R A Q, columnsCoconeIsColimit R A Q⟩
 
-/-- The colimit comparison keeps the original column inclusion. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential.
+
+The coproduct injection of column p followed by the column-total isomorphism equals its canonical inclusion into T(A,Q). -/
 @[reassoc]
 theorem ι_zeroDifferentialTensorColumnsIso_hom (p : ℤ) :
     colimit.ι (zeroDifferentialTensorColumns R A Q) ⟨p⟩ ≫
@@ -286,7 +314,11 @@ private lemma columnHomologyIso_inv_quotient (p n q : ℤ) (h : n - p = q) :
   rw [columnHomologyIso_hom_quotient]
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
 
-/-- The original balanced homology tensors on the entire integer antidiagonal. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential.
+
+For total degree n, the homology tensor family has term A_p⊗_R H_q(Q) for every integer pair p+q=n. -/
 abbrev zeroDifferentialTensorHomologyFamily (n : ℤ) (pq : {pq : ℤ × ℤ // pq.1 + pq.2 = n}) :
     AddCommGrpCat.{v} :=
   ((ModuleCat.BalancedTensor.groupBifunctor R).obj (A pq.val.1)).obj
@@ -329,7 +361,12 @@ private lemma homologyAntidiagonalToColumnsIso_ι (p q n : ℤ) (h : p + q = n) 
             have h := pq.as.property
             omega))) ⟨⟨(p, q), h⟩⟩
 
-/-- Exact coefficient tensor functors give the canonical full homology-tensor isomorphism. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential. Assume each coefficient functor A_p⊗_R− into abelian groups
+preserves homology.
+
+The canonical isomorphism ⊕_{p+q=n} A_p⊗_R H_q(Q) ≅ H_n(T(A,Q)). -/
 @[no_expose]
 def zeroDifferentialTensorHomologyIso (n : ℤ) :
     (∐ zeroDifferentialTensorHomologyFamily R A Q n) ≅
@@ -369,7 +406,12 @@ private lemma zeroDifferentialTensorHomologyIso_ι (p q n : ℤ) (h : p + q = n)
           rw [HomologicalComplex.ι_comp_homologyColimitIso_inv]
     _ = _ := congrArg (fun f => (columnHomologyIso R A Q p n q (by omega)).inv ≫ f) hcol
 
-/-- The original coefficient tensor and cycle determine an actual cycle in the tensor total. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential. Assume each coefficient functor A_p⊗_R− into abelian groups
+preserves homology.
+
+For p+q=n, the map A_p⊗_R Z_q(Q) → Z_n(T(A,Q)) whose cycle inclusion is the (p,q) total tensor-summand map applied to Q's cycle inclusion. -/
 @[no_expose]
 def zeroDifferentialTensorCyclesMap (p q n : ℤ) (h : p + q = n) :
     ((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).obj (Q.cycles q) ⟶
@@ -377,7 +419,12 @@ def zeroDifferentialTensorCyclesMap (p q n : ℤ) (h : p + q = n) :
   (columnCyclesIso R A Q p n q (by omega)).inv ≫
     HomologicalComplex.cyclesMap (zeroDifferentialTensorColumnι R A Q p) n
 
-/-- The cycle inclusion keeps the original balanced tensor in its original total degree. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential. Assume each coefficient functor A_p⊗_R− into abelian groups
+preserves homology.
+
+For p+q=n, including the image of A_p⊗_R Z_q(Q) into T(A,Q)_n equals the tensor of Q's cycle inclusion followed by the (p,q) total summand injection. -/
 @[reassoc]
 theorem zeroDifferentialTensorCyclesMap_iCycles (p q n : ℤ) (h : p + q = n) :
     zeroDifferentialTensorCyclesMap R A Q p q n h ≫
@@ -404,7 +451,12 @@ theorem zeroDifferentialTensorCyclesMap_iCycles (p q n : ℤ) (h : p + q = n) :
         tensorι R A Q p (n - p) n (by omega)
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
 
-/-- Taking the cycle class commutes with the canonical homology-tensor comparison. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential. Assume each coefficient functor A_p⊗_R− into abelian groups
+preserves homology.
+
+For p+q=n, passing from A_p⊗_R Z_q(Q) through the homology projection of Q and the antidiagonal comparison equals its map to Z_n(T(A,Q)) followed by the total homology projection. -/
 @[reassoc]
 theorem zeroDifferentialTensorHomologyIso_cycle_class (p q n : ℤ) (h : p + q = n) :
     ((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).map (Q.homologyπ q) ≫
@@ -417,7 +469,12 @@ theorem zeroDifferentialTensorHomologyIso_cycle_class (p q n : ℤ) (h : p + q =
   rw [Category.assoc, HomologicalComplex.homologyπ_naturality]
   rfl
 
-/-- A coefficient tensored with a cycle class is the class of the same native total tensor. -/
+/-- Let R be an arbitrary ring, A=(A_p)_{p∈ℤ} a family of right R-modules
+and Q an integer-indexed left-R-module chain complex.
+Let T(A,Q)=Tot(A_0,Q), where A_0 has zero differential. Assume each coefficient functor A_p⊗_R− into abelian groups
+preserves homology.
+
+For p+q=n, x∈A_p and y∈Z_q(Q), there is a total cycle z whose underlying element is the (p,q) tensor x⊗y, and the homology comparison sends x⊗[y] to [z]. -/
 theorem zeroDifferentialTensorHomologyIso_mk (p q n : ℤ) (h : p + q = n)
     (x : A p) (y : Q.cycles q) :
     letI : Module ℤ (Q.cycles q) := Module.compHom (Q.cycles q) (algebraMap ℤ R)
@@ -462,8 +519,10 @@ theorem zeroDifferentialTensorHomologyIso_mk (p q n : ℤ) (h : p + q = n)
 
 end Exact
 
-/-- The full homology-tensor antidiagonal in a common carrier universe, retaining
-the original homology of Q through the native module lift. -/
+/-- Let R have universe u, A right-module carriers v and Q left-module
+carriers w. At T=max(u,v,w,t), the full degree-n antidiagonal family
+has term A_p^T⊗_R(H_q(Q))^T for p+q=n, lifting the original homology
+object of Q. -/
 def zeroDifferentialTensorHomologyFamilyAt
     (A : ℤ → ModuleCat.{v} Rᵐᵒᵖ) (Q : ChainComplex (ModuleCat.{w} R) ℤ)
     (n : ℤ) (pq : {pq : ℤ × ℤ // pq.1 + pq.2 = n}) :
@@ -474,7 +533,9 @@ def zeroDifferentialTensorHomologyFamilyAt
       ((ModuleCat.uliftFunctor.{max u v w t, v} Rᵐᵒᵖ).obj (A pq.val.1))).obj
     ((ModuleCat.uliftFunctor.{max u v w t, w} R).obj (Q.homology pq.val.2))
 
-/-- The original tensor total after native independent-world lifts of its two inputs. -/
+/-- For an arbitrary ring R, a graded right-module family A and left-module
+chain complex Q in independent worlds, the balanced tensor total at
+T=max(u,v,w,t) of the lifted zero-differential family A^T and Q^T. -/
 def zeroDifferentialTensorComplexAt
     (A : ℤ → ModuleCat.{v} Rᵐᵒᵖ) (Q : ChainComplex (ModuleCat.{w} R) ℤ) :
     ChainComplex AddCommGrpCat.{max u v w t} ℤ :=
@@ -483,8 +544,11 @@ def zeroDifferentialTensorComplexAt
       (fun p => (ModuleCat.uliftFunctor.{max u v w t, v} Rᵐᵒᵖ).obj (A p)))
     (((ModuleCat.uliftFunctor.{max u v w t, w} R).mapHomologicalComplex c).obj Q)
 
-/-- Exactness of the actual lifted coefficient tensor functors earns the full
-comparison with independent input worlds and arbitrary common lift height. -/
+/-- Let R be arbitrary, A and Q have independent carrier universes, and
+T=max(u,v,w,t). If each lifted coefficient functor A_p^T⊗_R− preserves
+homology at T, the canonical comparison
+⊕_{p+q=n} A_p^T⊗_R(H_q(Q))^T ≅ H_n(Tot(A_0^T,Q^T))
+holds for every integer n. -/
 def zeroDifferentialTensorHomologyIsoAt
     (A : ℤ → ModuleCat.{v} Rᵐᵒᵖ) (Q : ChainComplex (ModuleCat.{w} R) ℤ)
     [∀ p : ℤ, ((ModuleCat.BalancedTensor.groupBifunctor R :

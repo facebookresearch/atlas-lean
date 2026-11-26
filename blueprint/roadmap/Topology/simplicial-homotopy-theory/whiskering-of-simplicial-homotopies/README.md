@@ -1,6 +1,6 @@
 # Whiskering of simplicial homotopies
 
-- [Precomp](precomp.md)
-- [Precomp h](precomp-h.md)
-- [Postcomp](postcomp.md)
-- [Postcomp h](postcomp-h.md)
+- [Precomposition of a simplicial homotopy](precomp.md)
+- [Cylinder map of a precomposed homotopy](precomp-h.md)
+- [Postcomposition of a simplicial homotopy](postcomp.md)
+- [Cylinder map of a postcomposed homotopy](postcomp-h.md)

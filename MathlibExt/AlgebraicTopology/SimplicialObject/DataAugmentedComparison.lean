@@ -13,11 +13,14 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialObject.ToAugmented
 
 /-!
-# Agreement of the two augmented data conversions
+# Equality of augmented simplicial data conversions
 
-The functorial conversion and the direct augmented-object conversion have the
-same diagram and point. Their augmentation maps agree by the native computation
-lemma, including the identity introduced by the comma-category map.
+For augmented simplicial data X in a category C, both the functorial conversion and the direct
+conversion give an augmented simplicial object with diagram X.left.toSimplicialObject and
+augmentation point X.right. Their augmentation transformations agree as well.
+
+Consequently, the two conversions yield equal augmented objects, with the same diagram, point
+and map. The object and morphism universes of C are independent.
 -/
 
 @[expose] public section
@@ -30,7 +33,11 @@ namespace CategoryTheory.SimplicialObject.Data.Augmented
 
 variable {C : Type u} [Category.{v} C]
 
-/-- The functorial and direct conversions give the same actual augmented object. -/
+/-- Equality of functorial and direct augmented-data conversions.
+
+For augmented simplicial data X, applying toSimplicialFunctor to X yields
+X.toSimplicialAugmented. The equality preserves the converted simplicial diagram, augmentation
+point and entire augmentation transformation. -/
 @[simp] theorem toSimplicialFunctor_obj_eq (X : Augmented C) :
     (toSimplicialFunctor (C := C)).obj X = X.toSimplicialAugmented := by
   have hhom : ((toSimplicialFunctor (C := C)).obj X).hom =

@@ -56,4 +56,4 @@ Algebras over commutative rings: étale algebras and the trace form, norm and tr
 - [Surjectivity after localization at corresponding primes](local-ring-hom-surjective.md)
 - [A finitely generated commutative algebra over a Noetherian commutative ring is Noetherian](finitely-generated-algebra-noetherian.md)
 - [Discriminants under a change of basis](discriminant-change-of-basis.md)
-- [The generic scalar-extension and restriction adjunction](extend-restrict-scalars-adj.md)
+- [Tensor scalar extension is adjoint to algebra scalar restriction](extend-restrict-scalars-adj.md)

@@ -1,12 +1,9 @@
-# Conv leibniz
+# The graded Leibniz rule for convolution
 
-Leibniz rule for the graded convolution product: differentiating
-`f ⋆ g` differentiates the left factor first, then the right factor with
-the Koszul sign `(-1) ^ m`.
-
-The two right-hand summands are stated as explicit `Cochain.comp`
-composites landing in degree `m + n + 1` (via explicit degree proofs),
-i.e. as `conv (δ f) g` and `conv f (δ g)` up to degree transport. The
-proof pushes `δ` inward with the pinned `δ_comp` (the `ofHom` comultiplication
-and multiplication are cycles by `δ_ofHom`), then closes at components with
-`tensorCochain_δ_v`.
+Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For |f|=m and |g|=n, convolution f⋆g=μ_A(f⊗g)Δ_C satisfies δ(f⋆g)=(δf)⋆g+(-1)^m
+f⋆(δg). Both convolution terms on the right are composites through Δ_C and μ_A, identified in
+degree m+n+1 from degrees (m+1)+n and m+(n+1). The tensor sign is (-1)^{np} on left input degree
+p.

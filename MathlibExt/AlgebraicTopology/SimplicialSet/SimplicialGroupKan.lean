@@ -12,7 +12,15 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SimplicialGroupUpperHornCorrection
 public import Mathlib.Tactic.FinCases
 
-/-! # Genuine Kan horn filling for the SAME original simplicial group -/
+/-!
+# Kan horn filling for simplicial groups
+
+For every simplicial group `G : SimplicialObject GrpCat.{u}`, the underlying simplicial set
+`underlying G` is a Kan complex. A compatible family of horn-face maps determines elements of
+the degree groups through Yoneda evaluation. In dimension `n + 2`, these elements satisfy the
+face equations needed for the lower and upper group corrections, which yield a simplex having
+all the prescribed nonmissing faces.
+-/
 
 @[expose] public section
 
@@ -27,18 +35,28 @@ attribute [local instance] underlyingGroup
 
 variable (G : SimplicialObject GrpCat.{u})
 
-/-- The whole original horn maps retain their actual face coefficients, with unit only at the missing face. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, and `i : Fin (n + 3)`. Given maps `f j hj :
+Δ[n + 1] ⟶ underlying G` for every `j ≠ i`, the family `groupFaces G i f : Fin (n + 3) →
+(underlying G) _⦋n + 1⦌` assigns `yonedaEquiv (f j hj)` to a nonmissing face `j`, and assigns
+the group identity to the missing index `i`. -/
 def groupFaces {n : ℕ} (i : Fin (n + 3))
     (f : ∀ (j : Fin (n + 3)) (_ : j ≠ i), (Δ[n + 1] : SSet.{u}) ⟶ underlying G)
     (j : Fin (n + 3)) : (underlying G) _⦋n + 1⦌ :=
   if hj : j ≠ i then SSet.yonedaEquiv (f j hj) else 1
 
-/-- Every prescribed original face remains exactly its whole original Yoneda coefficient. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and a family of maps `f j hj : Δ[n + 1] ⟶ underlying G` indexed by `j ≠ i`,
+`groupFaces G i f j = yonedaEquiv (f j hj)`
+whenever `hj : j ≠ i`. Thus every prescribed face retains its Yoneda value. -/
 theorem groupFaces_at {n : ℕ} (i : Fin (n + 3))
     (f : ∀ (j : Fin (n + 3)) (_ : j ≠ i), (Δ[n + 1] : SSet.{u}) ⟶ underlying G)
     (j : Fin (n + 3)) (hj : j ≠ i) : groupFaces G i f j = SSet.yonedaEquiv (f j hj) := dite_eq_left hj
 
-/-- Actual whole horn compatibility gives the original full group-face equations, without a lifting outcome premise. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, and `i : Fin (n + 3)`. Suppose the maps `f j
+hj : Δ[n + 1] ⟶ underlying G`, for `j ≠ i`, form a compatible horn family
+(`SSet.horn.IsCompatible f`). Then `FaceCompatible G i (groupFaces G i f)` holds: for `k : Fin
+(n + 2)` and `j : Fin (n + 3)` with `Fin.castSucc k < j` and both indices different from `i`,
+the `k`-th face of the value at `j` equals the `(j - 1)`-st face of the value at `Fin.castSucc
+k`. -/
 theorem groupFaces_compatible {n : ℕ} (i : Fin (n + 3))
     (f : ∀ (j : Fin (n + 3)) (_ : j ≠ i), (Δ[n + 1] : SSet.{u}) ⟶ underlying G)
     (hf : SSet.horn.IsCompatible f) : FaceCompatible G i (groupFaces G i f) := by
@@ -50,7 +68,10 @@ theorem groupFaces_compatible {n : ℕ} (i : Fin (n + 3))
   exact (congrArg ((underlying G).δ k) (groupFaces_at G i f j hj)).trans
     (hh.trans (congrArg ((underlying G).δ (j.pred hkj.ne_zero)) (groupFaces_at G i f (Fin.castSucc k) hk)).symm)
 
-/-- The SAME original simplicial group is Kan by its actual finite noncommutative horn corrections. -/
+/-- For any `G : SimplicialObject GrpCat.{u}`, the underlying simplicial set `underlying G` is a
+Kan complex. Equivalently, for every `n : ℕ` and `i : Fin (n + 2)`, every simplicial map from
+the horn `Λ_i[n + 1]` to `underlying G` extends to `Δ[n + 1]`. The groups of `G` need not be
+commutative. -/
 theorem underlying_isKan : SSet.KanComplex (underlying G) := by
   apply SSet.KanComplex.iff.mpr
   intro q i f hf

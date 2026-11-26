@@ -1,3 +1,6 @@
-# Normalized Resolution Augmentation
+# Normalized chain augmentation of a comonad resolution
 
-The actual Moore inclusion and native augmentation, with the actual point transport.
+Normalized chain augmentation of a comonad resolution.
+
+In an abelian category, define α : N(Res_G(P).left) → P[0] by Moore inclusion, the alternating
+augmentation and the canonical identification of the resolution's augmentation point with P.

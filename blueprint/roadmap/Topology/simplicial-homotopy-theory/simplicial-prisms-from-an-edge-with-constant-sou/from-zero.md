@@ -1,3 +1,6 @@
-# From Zero
+# Constant-source simplicial map determined in degree zero
 
-The actual native constant-source map determined by its zero-degree component.
+Constant-source simplicial map determined in degree zero.
+
+For z : B → X₀ in an arbitrary category C, define const(B) → X with degree-n component z
+followed by X applied contravariantly to the unique simplex map [n] → [0].

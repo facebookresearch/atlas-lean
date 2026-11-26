@@ -1,3 +1,5 @@
-# Aug Ideal condition
+# Zero composite of the augmentation-kernel inclusion
 
-Kernel condition: the inclusion followed by the augmentation is zero.
+Zero composite of the augmentation-kernel inclusion.
+
+For i : Ker(ε) → A, the equation i ≫ ε = 0 is the kernel condition.

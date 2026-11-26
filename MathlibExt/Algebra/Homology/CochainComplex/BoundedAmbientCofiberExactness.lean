@@ -16,17 +16,19 @@ public import MathlibExt.Algebra.Homology.ShortComplex.CokernelSequence
 public import MathlibExt.CategoryTheory.Waldhausen.Fibration.TrivialCofibration
 
 /-!
-# Exact rows of the original bounded ambient cofiber sequences
+# Ambient exactness of bounded cofiber rows
 
-The original source cofibration and its actual chosen zero pushout retain
-both original legs. The pointwise source pushouts earn the actual cokernel
-UP and source admissible exact row. The specified exact ambient functor
-therefore maps the same original raw row to a short exact row.
+Let E be preadditive Quillen exact with a zero object and binary biproducts,
+and F:E → A additive with A abelian.
+A cofiber sequence X —i→ Y —p→ Z of bounded complexes has a cokernel
+projection p_j in every degree and an admissible exact component row.
 
-The extension comparisons use the same whole original row maps and ambient
-raw quasi-isomorphisms. Source homology, global source limits, weak
-idempotent completeness and row/extension outcomes are absent. All four
-source and ambient object and Hom universes remain independent.
+When F is exact, the underlying cochain row maps to a short exact sequence
+of ambient complexes. Thus maps of cofiber sequences satisfy the extension
+axiom for F-detected quasi-isomorphisms, and i is an ambient weak equivalence
+exactly when F(Z) is acyclic. With full faithfulness, reflection and
+essential-image kernel closure, this is also equivalent to all-degree
+admissible cycle data on Z. The source and ambient universes are independent.
 -/
 
 @[expose] public section
@@ -46,7 +48,12 @@ variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable (F : E ⥤ A) [F.Additive] [F.IsExact]
 
 omit [F.IsExact] in
-/-- The same actual chosen source quotient is the cokernel on every original component. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences.
+
+For a cofiber sequence X —i→ Y —p→ Z, each component p_j:Y^j → Z^j is a cokernel of i_j:X^j → Y^j. -/
 def ambientCofiberTermIsColimit {X Y Z : Bounded E} (i : X ⟶ Y) (p : Y ⟶ Z)
     (hSeq : letI := ambientWaldhausenCategory F; IsCofiberSequence i p) (j : ℤ) :
     letI := ambientWaldhausenCategory F
@@ -73,7 +80,12 @@ def ambientCofiberTermIsColimit {X Y Z : Bounded E} (i : X ⟶ Y) (p : Y ⟶ Z)
     · rw [hm, hTerm.inr_desc]
 
 omit [F.IsExact] in
-/-- Each actual original cofiber row is an admissible exact row in the original source. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences.
+
+Every component row X^j → Y^j → Z^j of a cofiber sequence is admissible exact in E. -/
 theorem ambientCofiberTerm_isAdmissibleExact {X Y Z : Bounded E}
     (i : X ⟶ Y) (p : Y ⟶ Z)
     (hSeq : letI := ambientWaldhausenCategory F; IsCofiberSequence i p) (j : ℤ) :
@@ -85,7 +97,12 @@ theorem ambientCofiberTerm_isAdmissibleExact {X Y Z : Bounded E}
     ((ambient_isCofibration_iff F i).mp hSeq.1 j) (ambientCofiberTermIsColimit F i p hSeq j)
 
 omit [F.IsExact] in
-/-- The same original bounded row is projected through the literal original bounded inclusion. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences.
+
+The underlying short complex of integer cochains associated to a bounded cofiber sequence has its original maps i and p. -/
 abbrev ambientCofiberRawRow {X Y Z : Bounded E} (i : X ⟶ Y) (p : Y ⟶ Z)
     (hSeq : letI := ambientWaldhausenCategory F; IsCofiberSequence i p) :
     letI := ambientWaldhausenCategory F
@@ -94,7 +111,12 @@ abbrev ambientCofiberRawRow {X Y Z : Bounded E} (i : X ⟶ Y) (p : Y ⟶ Z)
   exact ShortComplex.mk i.hom p.hom
     (congrArg (fun t : X ⟶ Z => t.hom) hSeq.comp_eq_zero)
 
-/-- The specified exact functor maps the same actual original cofiber row to a short exact row. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+The underlying row of any bounded cofiber sequence becomes short exact after termwise application of F. -/
 theorem ambientCofiberRawRow_map_shortExact {X Y Z : Bounded E}
     (i : X ⟶ Y) (p : Y ⟶ Z)
     (hSeq : letI := ambientWaldhausenCategory F; IsCofiberSequence i p) :
@@ -106,13 +128,23 @@ theorem ambientCofiberRawRow_map_shortExact {X Y Z : Bounded E}
     (congrArg (fun t : X ⟶ Z => t.hom.f j) hSeq.comp_eq_zero)).map F).ShortExact
   exact F.map_admissibleExact _ (ambientCofiberTerm_isAdmissibleExact F i p hSeq j)
 
-/-- Any original bounded row identified as a cofiber sequence maps to the same actual short exact row. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+A short complex of bounded objects whose two maps form a cofiber sequence becomes a short exact sequence of ambient cochain complexes under F. -/
 theorem ambientShortComplex_map_shortExact (S : ShortComplex (Bounded E))
     (hS : letI := ambientWaldhausenCategory F; IsCofiberSequence S.f S.g) :
     (S.map (ι E ⋙ F.mapHomologicalComplex (.up ℤ))).ShortExact :=
   ambientCofiberRawRow_map_shortExact F S.f S.g hS
 
-/-- The same whole original cofiber-row comparison has extension for the actual ambient weak model. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+For a commuting map (a,b,c) between two bounded cofiber sequences, if F(a) and F(c) are quasi-isomorphisms then F(b) is a quasi-isomorphism. -/
 theorem ambientCofiber_extension {S T : ShortComplex (Bounded E)} (φ : S ⟶ T)
     (hS : letI := ambientWaldhausenCategory F; IsCofiberSequence S.f S.g)
     (hT : letI := ambientWaldhausenCategory F; IsCofiberSequence T.f T.g) :
@@ -129,7 +161,12 @@ theorem ambientCofiber_extension {S T : ShortComplex (Bounded E)} (φ : S ⟶ T)
     (ambientShortComplex_map_shortExact F S hS)
     (ambientShortComplex_map_shortExact F T hT) hLeftRaw hRightRaw
 
-/-- The original trivial cofibration is exactly one whose same chosen quotient is ambient-acyclic. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+In a cofiber sequence X —i→ Y —p→ Z, i is an F-detected weak equivalence if and only if F(Z) is acyclic. -/
 theorem ambientCofiber_isWeakEquivalence_iff_quotient_acyclic {X Y Z : Bounded E}
     (i : X ⟶ Y) (p : Y ⟶ Z)
     (hSeq : letI := ambientWaldhausenCategory F; IsCofiberSequence i p) :
@@ -139,7 +176,12 @@ theorem ambientCofiber_isWeakEquivalence_iff_quotient_acyclic {X Y Z : Bounded E
   exact (ambient_isWeakEquivalence_iff F i).trans
     ((ambientCofiberRawRow_map_shortExact F i p hSeq).quasiIso_f_iff)
 
-/-- The actual bounded ambient exact rows instantiate the original generic extension axiom. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+The bounded ambient Waldhausen structure satisfies the extension axiom for maps of cofiber sequences. -/
 theorem ambientWaldhausen_extension :
     letI := ambientWaldhausenCategory F
     WaldhausenExtensionAxiom (C := Bounded E) := by
@@ -151,7 +193,12 @@ theorem ambientWaldhausen_extension :
   let φ : S ⟶ T := ShortComplex.homMk a b c wi.symm wq.symm
   exact ambientCofiber_extension F φ hS hT ha hc
 
-/-- The canonical generic quotient theorem retains the same actual bounded cofiber quotient. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+For a cofiber sequence X → Y → Q, its cofibration is weak exactly when Q belongs to the canonical class of objects with a weak map from zero. -/
 theorem ambientCofiber_isWeakEquivalence_iff_canonical_acyclic {X Y Q : Bounded E}
     (i : X ⟶ Y) (q : Y ⟶ Q)
     (hS : letI := ambientWaldhausenCategory F; IsCofiberSequence i q) :
@@ -166,7 +213,14 @@ variable (hKernelClosure : ∀ {U V : A} (f : U ⟶ V) [Epi f],
   F.essImage U → F.essImage V → F.essImage (kernel f))
 
 include hKernelClosure in
-/-- The same original quotient belongs to the actual all-degree source acyclic-cycle category. -/
+/-- Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+Assume F is fully faithful, reflects admissible exactness and has essential
+image closed under kernels of epimorphisms between image objects.
+For X —i→ Y —p→ Z a cofiber sequence, i is weak exactly when Z
+admits all-degree source-cycle conflations and differential factorizations. -/
 theorem ambientCofiber_isWeakEquivalence_iff_quotient_admissibleData {X Y Z : Bounded E}
     (i : X ⟶ Y) (p : Y ⟶ Z)
     (hSeq : letI := ambientWaldhausenCategory F; IsCofiberSequence i p) :

@@ -1,3 +1,5 @@
-# Of Bounded Above
+# Bounded-above model object of a given cochain complex
 
-The original cochain complex in the native bounded-above opposite-plus model.
+Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+A complex K zero above d gives the object of C_- opposite to its bounded-below Cᵒᵖ-reflection.

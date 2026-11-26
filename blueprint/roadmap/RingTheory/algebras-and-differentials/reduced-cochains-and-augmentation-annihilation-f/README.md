@@ -1,9 +1,9 @@
 # Reduced cochains and augmentation annihilation for twisting cochains
 
-- [Is Reduced Cochain](is-reduced-cochain.md)
-- [Zero](zero.md)
-- [Conv reduced left](conv-reduced-left.md)
-- [Conv reduced right](conv-reduced-right.md)
-- [Reduced](reduced.md)
-- [Conv of left](conv-of-left.md)
-- [Conv of right](conv-of-right.md)
+- [Two-sided reduction of a homogeneous cochain](is-reduced-cochain.md)
+- [Reduction of the zero homogeneous cochain](zero.md)
+- [Convolution vanishing from a twisting coaugmentation composite](conv-reduced-left.md)
+- [Convolution vanishing from a twisting augmentation composite](conv-reduced-right.md)
+- [Reduction of a twisting cochain in its own maps](reduced.md)
+- [Reduction of convolution from a reduced left factor](conv-of-left.md)
+- [Reduction of convolution from a reduced right factor](conv-of-right.md)

@@ -1,3 +1,4 @@
-# Hom To Constant ext of face
+# A face determines a simplex map to a constant set
 
-Into a constant set, one original face determines the whole standard-simplex map.
+Let `A : Type u`, `n : ℕ`, and `i : Fin(n+2)`. For `f,g : Δ[n+1] → const A`, if their
+restrictions along the face inclusion `stdSimplex.δ i : Δ[n] → Δ[n+1]` are equal, then `f=g`.

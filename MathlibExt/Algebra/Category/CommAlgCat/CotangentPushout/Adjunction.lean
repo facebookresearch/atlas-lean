@@ -14,14 +14,14 @@ public import MathlibExt.Algebra.Category.CommAlgCat.ScalarExtensionAdjunction
 public import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-# Cotangent pushout as the original-algebra specialization of the generic adjunction.{u, v, w}
+# Tensor-pushout adjunction for commutative algebras
 
-All actual tensor and scalar-restriction maps come from the generic
-CommAlgCat scalar API. Native equality of the original algebra with the
-algebra induced by its structural map supplies the left-functor transport.
-The hom correspondence and its naturality are the native adjunction's
-correspondence. No second tensor functor, hom-equivalence implementation,
-or supplied adjunction.{u, v, w} is introduced. The old public client names remain.
+Let `k : Type u` and `K : Type w` be commutative rings with `Algebra k K`. On algebra carriers
+of universe `max u v w`, the tensor-pushout functor `P ↦ K ⊗_k P` is left adjoint to
+restriction along `algebraMap k K`.
+
+Its Hom correspondence is `Hom_K(K ⊗_k P,Q) ≅ Hom_k(P,Res Q)`. Precomposition in `P` and
+postcomposition in `Q` satisfy the adjunction naturality equations.
 -/
 
 @[expose] public section
@@ -36,22 +36,30 @@ namespace CommAlgCat.CotangentPushout
 
 variable (k : Type u) (K : Type w) [CommRing k] [CommRing K] [Algebra k K]
 
-/-- Actual ground restriction is the original structural-map specialization. -/
+/-- For commutative rings `k : Type u`, `K : Type w` with `Algebra k K`, `restrictionFunctor k K :
+CommAlgCat.{max u v w} K → CommAlgCat.{max u v w} k` restricts scalars along `algebraMap k K`.
+Each algebra retains its carrier and underlying ring. -/
 abbrev restrictionFunctor :
     CommAlgCat.{max u v w} K ⥤ CommAlgCat.{max u v w} k :=
   CommAlgCat.restrictScalars (algebraMap k K)
 
-/-- The generic adjunction.{u, v, w} transported through the earned original-algebra equality. -/
+/-- Let `k,K` be commutative rings with `Algebra k K`. At carrier height `max u v w`,
+`algebraFunctor k K ⊣ restrictionFunctor k K`. This is the scalar-extension adjunction
+specialized to the structural map `algebraMap k K`. -/
 abbrev adjunction : algebraFunctor.{u, v, w} k K ⊣ restrictionFunctor.{u, v, w} k K :=
   (CommAlgCat.extendRestrictScalarsAdj.{u, w, v} (algebraMap k K)).ofNatIsoLeft
     (eqToIso (CommAlgCat.extendScalars_algebraMap.{u, w, v} (R := k) (S := K)))
 
-/-- The original hom correspondence is the one supplied by the generic native adjunction. -/
+/-- For commutative `k`-algebra `K`, a `k`-algebra `P`, and a `K`-algebra `Q` at height `max u v
+w`, `homEquiv k K P Q` identifies `Hom_K(K ⊗_k P,Q)` with `Hom_k(P,Res Q)`. It is the Hom
+equivalence of the tensor-pushout/restriction adjunction. -/
 abbrev homEquiv (P : CommAlgCat.{max u v w} k) (Q : CommAlgCat.{max u v w} K) :
     ((algebraFunctor.{u, v, w} k K).obj P ⟶ Q) ≃ (P ⟶ (restrictionFunctor.{u, v, w} k K).obj Q) :=
   (adjunction.{u, v, w} k K).homEquiv P Q
 
-/-- Source naturality is the existing native adjunction law. -/
+/-- Let `k,K` be commutative rings with `Algebra k K`, `f : P' → P` a `k`-algebra morphism, and `g
+: P → Res Q` for a `K`-algebra `Q`. If `α` is the tensor-pushout Hom equivalence and `E(P)=K
+⊗_k P`, then `α_{P',Q}⁻¹(f ≫ g) = E(f) ≫ α_{P,Q}⁻¹(g)`. -/
 theorem homEquiv_left_symm
     {P P' : CommAlgCat.{max u v w} k} {Q : CommAlgCat.{max u v w} K}
     (f : P' ⟶ P) (g : P ⟶ (restrictionFunctor.{u, v, w} k K).obj Q) :
@@ -59,7 +67,9 @@ theorem homEquiv_left_symm
       (algebraFunctor.{u, v, w} k K).map f ≫ (homEquiv.{u, v, w} k K P Q).symm g :=
   (adjunction.{u, v, w} k K).homEquiv_naturality_left_symm f g
 
-/-- Target naturality is the existing native adjunction law. -/
+/-- Let `k,K` be commutative rings with `Algebra k K`, `f : K ⊗_k P → Q` a `K`-algebra morphism,
+and `g : Q → Q'`. For the adjunction Hom equivalence `α`, `α_{P,Q'}(f ≫ g) = α_{P,Q}(f) ≫
+restrictionFunctor(g)`. -/
 theorem homEquiv_right
     {P : CommAlgCat.{max u v w} k} {Q Q' : CommAlgCat.{max u v w} K}
     (f : (algebraFunctor.{u, v, w} k K).obj P ⟶ Q) (g : Q ⟶ Q') :

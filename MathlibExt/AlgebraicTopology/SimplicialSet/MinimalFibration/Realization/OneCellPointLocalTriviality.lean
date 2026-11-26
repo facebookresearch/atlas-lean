@@ -16,25 +16,19 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.MinimalFibration.Realiz
 public import MathlibExt.AlgebraicTopology.SimplicialSet.MinimalFibration.Realization.OneCellOpenComplement
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
-/-! # Point-local triviality for one-cell induction
+/-!
+# Local trivializations near points of a topological pushout
 
-Purpose: predicate for finite-base local induction plus old-range/complement
-restriction and canonical-fiber adapters around a one-cell pushout.
-Given old-range data over `range r` and new-cell data over `(range l)ᶜ`,
-produce open neighborhoods with fixed-fiber data, without assembling
-boundary points or global charts.
+For `p : E ⟶ X₄` and a fixed fiber `F` in `TopCat.{u}`, point-local triviality means that a
+point lies in an open subset `U` over which a pullback presentation of `p` is a product with
+`F`. Trivializations restrict to subsets by pullback. A trivialization over the image of `r :
+X₂ ⟶ X₄` therefore gives this property on any open neighborhood contained in that image.
 
-Route: predicate as open neighborhood with `Nonempty` over-presentation;
-old-range restriction by `baseChange` with `subspaceInclOfSubset_comp`;
-complement restriction by `trivialBundleWithFiberOver_oneCellComplement`
-then base change; complement constructor with `isOpen_oneCellOpenComplement`;
-conditional old-range constructor as thin wrapper; canonical fiber by
-`toCanonical` then `pullback`.
-
-Nonclaims: no boundary-point assembler, no binary gluing, no global or
-finite-base chart, no collar or descent data, no varying-fiber or monodromy
-claim, no fibration, weak-equivalence, realization, or model-instance result,
-and no KQ3 content.
+For a pushout `IsPushout t l r b`, with `r` a closed embedding and `IsPullback e p₃ p b`, a
+trivialization of `p₃` over `(Set.range l.hom)ᶜ` transports to the open complement `(Set.range
+r.hom)ᶜ`. Every point of that complement is then point-locally trivial, with the restriction
+pullbacks specified in the statements. A trivial pullback presentation over `U` also gives a
+product presentation for any further pullback of the canonical projection over `U`.
 -/
 
 @[expose] public section
@@ -51,13 +45,20 @@ variable {X₁ X₂ X₃ X₄ : TopCat.{u}} {t : X₁ ⟶ X₂} {l : X₁ ⟶ X�
   {r : X₂ ⟶ X₄} {b : X₃ ⟶ X₄}
 variable {E E₃ : TopCat.{u}} {p : E ⟶ X₄} {p₃ : E₃ ⟶ X₃} {e : E₃ ⟶ E}
 
-/-- Point-local fixed-fiber neighborhood predicate. -/
+/-- For `p : E ⟶ X₄`, `F : TopCat.{u}`, and `pt : X₄`, point-local triviality is the existence of
+a subset `U ⊆ X₄` such that `IsOpen U`, `pt ∈ U`, and `TrivialBundleWithFiberOver F p
+(AlgebraicTopology.subspaceIncl U)` is nonempty. Such a presentation is a pullback of `p` over
+`U` whose total space, with its projection, is a product of `U` and `F`. -/
 def OneCellPointLocalTriviality (p : E ⟶ X₄) (F : TopCat.{u}) (pt : X₄) : Prop :=
   ∃ U : Set X₄, IsOpen U ∧ pt ∈ U ∧
     Nonempty (CategoryTheory.MorphismProperty.TrivialBundleWithFiberOver F p
       (AlgebraicTopology.subspaceIncl U))
 
-/-- Old-range restriction to `U` by base change. -/
+/-- In `TopCat.{u}`, let `p : E ⟶ X₄`, `r : X₂ ⟶ X₄`, and `F : TopCat.{u}`. Suppose `h_old` is a
+trivial pullback presentation of `p` with fiber `F` over `Set.range r.hom`. For `U : Set X₄`
+and `h_sub : U ⊆ Set.range r.hom`, assume the pullback of `h_old.p'` along
+`subspaceInclOfSubset h_sub` exists. Restricting along this inclusion gives a trivial pullback
+presentation of `p` with fiber `F` over `U`. -/
 noncomputable def oneCellPointLocal_oldRange_of_subset
     (F : TopCat.{u})
     (h_old : CategoryTheory.MorphismProperty.TrivialBundleWithFiberOver F p
@@ -72,7 +73,12 @@ noncomputable def oneCellPointLocal_oldRange_of_subset
       (IsPullback.of_hasPullback h_old.p'
         (AlgebraicTopology.subspaceInclOfSubset h_sub))
 
-/-- Complement restriction to `U` by transport then base change. -/
+/-- Let `t : X₁ ⟶ X₂`, `l : X₁ ⟶ X₃`, `r : X₂ ⟶ X₄`, and `b : X₃ ⟶ X₄` form a pushout in
+`TopCat.{u}`, with `r` a closed embedding, and let `IsPullback e p₃ p b` relate `p₃ : E₃ ⟶ X₃`
+to `p : E ⟶ X₄`. Suppose `h_new` trivializes `p₃` with fiber `F` over `(Set.range l.hom)ᶜ`.
+For `h_sub : U ⊆ (Set.range r.hom)ᶜ`, assume the pullback of the transported presentation's
+projection along `subspaceInclOfSubset h_sub` exists. Transport followed by restriction gives
+a trivial pullback presentation of `p` with fiber `F` over `U`. -/
 noncomputable def oneCellPointLocal_complement_of_subset
     (F : TopCat.{u})
     (sqBase : IsPushout t l r b)
@@ -92,7 +98,12 @@ noncomputable def oneCellPointLocal_complement_of_subset
         (trivialBundleWithFiberOver_oneCellComplement sqBase hr sqQ F h_new).p'
         (AlgebraicTopology.subspaceInclOfSubset h_sub))
 
-/-- Complement points satisfy the predicate. -/
+/-- In `TopCat.{u}`, let `IsPushout t l r b` have legs `t : X₁ ⟶ X₂`, `l : X₁ ⟶ X₃`, `r : X₂ ⟶
+X₄`, and `b : X₃ ⟶ X₄`, with `r` a closed embedding. Suppose `IsPullback e p₃ p b` and a
+presentation `h_new` trivializes `p₃` with fiber `F` over `(Set.range l.hom)ᶜ`. Let `pt ∈
+(Set.range r.hom)ᶜ`, and assume the pullback of the transported projection along the inclusion
+of this complement into itself exists. Then `OneCellPointLocalTriviality p F pt` holds,
+witnessed by the open complement `(Set.range r.hom)ᶜ`. -/
 theorem oneCellPointLocal_of_complement
     (F : TopCat.{u})
     (sqBase : IsPushout t l r b)
@@ -109,7 +120,11 @@ theorem oneCellPointLocal_of_complement
     ⟨oneCellPointLocal_complement_of_subset F sqBase hr sqQ h_new
       ((Set.range r.hom)ᶜ) (fun _x hx => hx)⟩⟩
 
-/-- Conditional old-range points satisfy the predicate. -/
+/-- Let `p : E ⟶ X₄` and `r : X₂ ⟶ X₄` be morphisms in `TopCat.{u}`, and let `h_old` trivialize
+the pullback of `p` over `Set.range r.hom` with fiber `F`. Suppose `U : Set X₄` is open, `pt ∈
+U`, and `h_sub : U ⊆ Set.range r.hom`. If the pullback of `h_old.p'` along
+`subspaceInclOfSubset h_sub` exists, then `OneCellPointLocalTriviality p F pt` holds,
+witnessed by the restriction to `U`. -/
 theorem oneCellPointLocal_of_oldRange_subset
     (F : TopCat.{u})
     (h_old : CategoryTheory.MorphismProperty.TrivialBundleWithFiberOver F p
@@ -121,7 +136,12 @@ theorem oneCellPointLocal_of_oldRange_subset
     OneCellPointLocalTriviality p F pt :=
   ⟨U, h_open, hpt, ⟨oneCellPointLocal_oldRange_of_subset F h_old U h_sub⟩⟩
 
-/-- Canonical fiber then local restriction. -/
+/-- In `TopCat.{u}`, let `p : E ⟶ X₄`, `U : Set X₄`, and let `h_over` trivialize a pullback
+presentation of `p` over `U` with fixed fiber `F`. Assume the canonical pullback `Q = pullback
+p (subspaceIncl U)` exists, with projection `Q ⟶ TopCat.of U`. For objects `P, B'`, maps `s :
+P ⟶ Q`, `q : P ⟶ B'`, and `f : B' ⟶ TopCat.of U`, suppose their square with that projection is
+a pullback. The induced datum `TrivialBundleWithFiber F q` exhibits `P`, with projections to
+`B'` and `F`, as their product. -/
 noncomputable def oneCellPointLocal_toCanonical_fiber
     (F : TopCat.{u})
     (U : Set X₄)

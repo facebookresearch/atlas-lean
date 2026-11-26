@@ -1,4 +1,6 @@
-# Prism Degree epi
+# Compatibility of descended prism operators with every simplex epimorphism
 
-All epi degeneracies commute with the actual prism prescription, in every
-source degree and at every duplicated vertex.
+Compatibility of descended prism operators with every simplex epimorphism.
+
+For an epimorphism e : [n] → [m] and i ∈ Fin(n+1), P(e.op) ≫ H_{n,i} = H_{m,e(i)} ≫
+Q(Φ(e,i).op). The equality holds for the splitting descent of any prescribed family p.

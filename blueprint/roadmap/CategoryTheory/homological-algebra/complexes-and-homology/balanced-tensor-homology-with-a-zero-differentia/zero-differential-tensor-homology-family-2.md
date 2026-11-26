@@ -1,4 +1,6 @@
-# Zero Differential Tensor Homology Family At
+# Antidiagonal homology family at a common carrier height
 
-The full homology-tensor antidiagonal in a common carrier universe, retaining
-the original homology of Q through the native module lift.
+Let R have universe u, A right-module carriers v and Q left-module
+carriers w. At T=max(u,v,w,t), the full degree-n antidiagonal family
+has term A_p^T⊗_R(H_q(Q))^T for p+q=n, lifting the original homology
+object of Q.

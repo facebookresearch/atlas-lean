@@ -1,3 +1,5 @@
-# Base Change Unit apply
+# Value of the Lie scalar-extension unit
 
-The scalar-extension unit has the native pure-tensor value.
+Value of the Lie scalar-extension unit.
+
+For x ∈ L, the map baseChangeUnit R S L takes x to 1 ⊗[R] x in the Lie algebra S ⊗[R] L.

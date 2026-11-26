@@ -1,6 +1,6 @@
-# Conv reduced right
+# Convolution vanishing from a twisting augmentation composite
 
-Annihilation on the right: convolving the augmentation-side vanish
-composite of a twisting cochain on the right gives zero. This is
-`TwistingCochain.aug_vanish` followed by `conv_zero_right`
-(the pinned `MonObj` unit instance needs no extra hypothesis).
+Convolution vanishing from a twisting augmentation composite.
+
+For τ, the degree-one composite τ.tau.comp(ofHom τ.aug) is zero. Convolution of any degree-n
+cochain C → I with this zero right factor is zero, using the tensor-unit monoid.

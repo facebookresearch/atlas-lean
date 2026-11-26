@@ -12,13 +12,21 @@ public import MathlibExt.Algebra.Homology.DerivedCategory.MinusOppositeEquivalen
 public import MathlibExt.Algebra.Homology.DerivedCategory.LeftDerivedMinusDual
 
 /-!
-# The genuine left derived functor on canonical native Minus
+# Left derivation on the bounded-above derived category
 
-The earned Minus/opposite-Plus equivalences transport the already proved
-left-derived functor and its counit. Native derived-functor equivalence
-transport proves the universal property for the canonical localization.
-The projective computation is then expressed on the original native
-Minus object of the actual original cochain complex.
+Let C,D be abelian with chosen derived categories for both categories and
+their opposites. The opposite of bounded-below cochain complexes over Cᵒᵖ
+is a bounded-above complex model, with localization Q_C into D⁻(C).
+
+For additive F:C → D and enough projectives in C, opposite right derivation
+and the bounded-above/opposite-bounded-below equivalences give
+LF:D⁻(C) → D⁻(D), with counit Q_C∘LF → U_F, where U_F is the mapped
+complex followed by localization. This counit has the left-derived
+universal property.
+
+For a complex K zero above d and projective in every degree,
+LF([K]) is canonically the derived object of the termwise mapped
+complex F(K). Category and derived-category universes remain independent.
 -/
 
 @[expose] public section
@@ -34,11 +42,16 @@ namespace DerivedCategory.CanonicalLeft
 variable (C : Type uC) [Category.{vC} C] [Abelian C]
   [HasDerivedCategory.{wC} C] [HasDerivedCategory.{wCo} Cᵒᵖ]
 
-/-- The actual bounded-above complex localization into canonical native Minus. -/
+/-- Let C be abelian with chosen derived categories for C and Cᵒᵖ.
+The localization from C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ to D⁻(C),
+obtained from opposite bounded-below localization and the inverse
+bounded-above/opposite-plus equivalence. -/
 def Q : BoundedAboveDual.Complex C ⥤ DerivedCategory.Minus C :=
   BoundedAboveDual.Q C ⋙ (DerivedCategory.minusOppositeEquivalence C).inverse
 
-/-- The earned target equivalence preserves the original localization property. -/
+/-- For an abelian category C with chosen derived categories for C and Cᵒᵖ,
+Q_C:C_- → D⁻(C) is a localization at the quasi-isomorphisms of the
+bounded-above complex model. -/
 instance localization : (Q C).IsLocalization (BoundedAboveDual.quasiIso C) :=
   Functor.IsLocalization.of_equivalence_target (BoundedAboveDual.Q C)
     (BoundedAboveDual.quasiIso C) (Q C) (DerivedCategory.minusOppositeEquivalence C).symm (Iso.refl _)
@@ -47,34 +60,64 @@ variable {C} {D : Type uD} [Category.{vD} D] [Abelian D]
   [HasDerivedCategory.{wD} D] [HasDerivedCategory.{wDo} Dᵒᵖ]
   [EnoughProjectives C] (F : C ⥤ D) [F.Additive]
 
-/-- The actual additive cochain functor followed by canonical Minus localization. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization.
+
+The underived functor U_F:C_- → D⁻(D) maps the bounded-above complex model by F and then applies Q_D. -/
 def underived : BoundedAboveDual.Complex C ⥤ DerivedCategory.Minus D :=
   BoundedAboveDual.mapComplex F ⋙ Q D
 
-/-- Native opposite derivation transported through the earned canonical Minus equivalences. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization. Assume C has enough projectives.
+
+The left-derived functor LF:D⁻(C) → D⁻(D), obtained from opposite right derivation through the bounded-above/opposite-plus equivalences. -/
 def leftDerived : DerivedCategory.Minus C ⥤ DerivedCategory.Minus D :=
   (DerivedCategory.minusOppositeEquivalence C).functor ⋙
     (BoundedAboveDual.leftDerived F ⋙ (DerivedCategory.minusOppositeEquivalence D).inverse)
 
-/-- The proved opposite-Plus derivation with its target returned to canonical native Minus. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization. Assume C has enough projectives.
+
+The opposite-plus left-derived functor followed by the target equivalence into D⁻(D), with domain D⁺(Cᵒᵖ)ᵒᵖ. -/
 abbrev postDerived : BoundedAboveDual.Derived C ⥤ DerivedCategory.Minus D :=
   BoundedAboveDual.leftDerived F ⋙ (DerivedCategory.minusOppositeEquivalence D).inverse
 
-/-- Canonical localization followed by the derived functor computes the original opposite-Plus derivation. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization. Assume C has enough projectives.
+
+Precomposing LF by the inverse equivalence D⁺(Cᵒᵖ)ᵒᵖ → D⁻(C) is naturally isomorphic to the opposite-plus derived functor followed by the target equivalence. -/
 def localizationComputationIso :
     (DerivedCategory.minusOppositeEquivalence C).inverse ⋙ leftDerived F ≅ postDerived F :=
   (Functor.associator _ _ _).symm ≪≫
     Functor.isoWhiskerRight (DerivedCategory.minusOppositeEquivalence C).counitIso (postDerived F) ≪≫
     Functor.leftUnitor _
 
-/-- The genuine left-derived counit on the canonical native bounded-above localization. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization. Assume C has enough projectives.
+
+The canonical counit Q_C∘LF → U_F, induced by the opposite right-derived unit and the model equivalences. -/
 def counit : Q C ⋙ leftDerived F ⟶ underived F :=
   (Functor.associator _ _ _).hom ≫
     (Functor.isoWhiskerLeft (BoundedAboveDual.Q C) (localizationComputationIso F)).hom ≫
     (Functor.associator _ _ _).inv ≫
     Functor.whiskerRight (BoundedAboveDual.counit F) (DerivedCategory.minusOppositeEquivalence D).inverse
 
-/-- Equivalence transport gives the genuine left-derived universal property on canonical Minus. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization. Assume C has enough projectives.
+
+LF with its counit Q_C∘LF → U_F is a left-derived functor of U_F relative to the quasi-isomorphisms of C_-. -/
 theorem leftDerived_isLeftDerived :
     (leftDerived F).IsLeftDerivedFunctor (counit F) (BoundedAboveDual.quasiIso C) := by
   let _ : Functor.IsLeftDerivedFunctor (L := BoundedAboveDual.Q C)
@@ -119,13 +162,19 @@ theorem leftDerived_isLeftDerived :
       simp only [Category.id_comp, Category.comp_id, Category.assoc,
         Iso.inv_hom_id_app_assoc])).2 h
 
-/-- The original bounded-above cochain complex as its canonical native Minus object. -/
+/-- Let C be abelian with a chosen derived category and K an integer
+cochain complex whose terms are zero in degrees above d∈ℤ.
+Its localization [K] is an object of the cohomologically bounded-above
+subcategory D⁻(C). -/
 def objectOfBoundedAbove (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] :
     DerivedCategory.Minus C :=
   { obj := DerivedCategory.Q.obj K
     property := ⟨d, inferInstance⟩ }
 
-/-- The canonical localization model is identified with the actual native derived image of K. -/
+/-- Let C be abelian with chosen derived categories for C,Cᵒᵖ and let
+K be zero in degrees above d. The canonical isomorphism between
+Q_C applied to K's bounded-above complex model and its original
+derived object [K] in D⁻(C). -/
 def nativeLocalizationIso (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] :
     (Q C).obj (BoundedAboveDual.ofBoundedAbove K d) ≅ objectOfBoundedAbove (C := C) K d := by
   let E := DerivedCategory.minusOppositeEquivalence C
@@ -145,14 +194,22 @@ def nativeLocalizationIso (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d
     (ObjectProperty.isoMk (DerivedCategory.TStructure.t (C := Cᵒᵖ)).plus (hRaw ≪≫ hPlus.symm)).op.symm
   exact E.inverse.mapIso e.symm ≪≫ (E.unitIso.app (objectOfBoundedAbove (C := C) K d)).symm
 
-/-- The actual original mapped complex as a canonical native Minus object. -/
+/-- Let C,D be abelian, F:C → D additive and D have a chosen derived
+category. If K is zero above d, the derived object of the termwise
+mapped complex F(K) lies in D⁻(D), with the same upper term bound. -/
 def actualMappedObject (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] :
     DerivedCategory.Minus D := by
   let _ : CochainComplex.IsStrictlyLE
       ((F.mapHomologicalComplex (ComplexShape.up ℤ)).obj K) d := by infer_instance
   exact objectOfBoundedAbove (C := D) ((F.mapHomologicalComplex (ComplexShape.up ℤ)).obj K) d
 
-/-- The actual projective computation is now on native Minus objects, not an unproved alternate category. -/
+/-- Let C,D be abelian with independently chosen derived categories
+for C,Cᵒᵖ,D,Dᵒᵖ, and F:C → D additive.
+Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ for the bounded-above
+complex model, and Q_C:C_- → D⁻(C) for its localization. Assume C has enough projectives.
+For K zero above d and with every K^n projective, the canonical
+isomorphism LF([K]) ≅ [F(K)] in D⁻(D), retaining the original
+termwise mapped complex. -/
 def projectiveNativeComputationIso (K : CochainComplex C ℤ) (d : ℤ)
     [K.IsStrictlyLE d] [∀ n : ℤ, Projective (K.X n)] :
     (leftDerived F).obj (objectOfBoundedAbove (C := C) K d) ≅ actualMappedObject F K d := by

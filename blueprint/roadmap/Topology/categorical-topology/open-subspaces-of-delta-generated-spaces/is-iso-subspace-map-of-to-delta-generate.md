@@ -1,5 +1,8 @@
-# Is Iso subspace Map of to Delta Generated map is Iso
+# Isomorphism of restrictions detected by delta-generated coreflection
 
-Restricting a map which becomes an isomorphism after delta-generated
-coreflection gives an isomorphism when both restricted spaces are
-delta-generated.
+Isomorphism of restrictions detected by delta-generated coreflection.
+
+For f : X → Y in TopCat and U ⊆ Y, assume f⁻¹(U) and U are delta-generated and
+TopCat.toDeltaGenerated.map f is an isomorphism. Then the canonical restricted map f⁻¹(U) → U
+is an isomorphism. These are hypotheses on the restricted spaces, without requiring X or Y
+globally delta-generated.

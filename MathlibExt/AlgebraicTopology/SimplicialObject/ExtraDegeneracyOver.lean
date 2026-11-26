@@ -13,18 +13,16 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.ExtraDegeneracyPoint
 public import Mathlib.AlgebraicTopology.ExtraDegeneracy
 
 /-!
-# Original left extra degeneracies in the augmentation slice
+# Left extra degeneracies in an augmentation slice
 
-The existing native left extra degeneracy preserves the actual augmentation
-by its original distinguished zeroth face. It therefore lifts through the
-existing Augmented.overPoint functor. All face, degeneracy and actual prism
-operators are preserved, including the original point map.
+Let X be augmented in a category C, with ε : X.left → const(B), a left extra degeneracy ed and
+a : B → A. Its arrows s' : B → X₀ and s_n : X_n → X_{n+1} preserve augmentation: s' ≫ ε₀ =
+id_B and s_n ≫ ε_{n+1} = ε_n.
 
-This is a general transport of actual native operator data, not an assertion
-that arbitrary free resolutions have a contraction. The polynomial-model
-application constructs its extra degeneracy from the native standard simplex.
-No desired cotangent comparison, exactness or IsIso certificate is input.
-Source UNEXECUTED; all frozen V12/V13 source and metadata bytes kept.
+They therefore define the same extra-degeneracy data on the augmented object in Over A whose
+structural maps are ε_n ≫ a. All face and degeneracy identities remain true there. The
+associated homotopy components have the same underlying arrows and commute with the structural
+maps to A in every degree. The category worlds remain independent.
 -/
 
 @[expose] public section
@@ -41,7 +39,12 @@ namespace CategoryTheory.SimplicialObject.Augmented.ExtraDegeneracy
 variable {C : Type u} [Category.{v} C] {X : SimplicialObject.Augmented C}
   (ed : ExtraDegeneracy X) {A : C}
 
-/-- The original native left operators are actual morphisms over the original target. -/
+/-- Left extra degeneracy lifted to a slice over the augmentation target.
+
+For a left extra degeneracy ed on X and a : X.right → A, use its arrows s',s_n as morphisms in
+Over A for Augmented.overPoint X a. Their augmentation equations provide the slice
+compatibility, and the given face and degeneracy identities define the lifted extra
+degeneracy. -/
 def overPoint (a : X.right ⟶ A) : ExtraDegeneracy (Augmented.overPoint X a) where
   s' := Over.homMk ed.s' (by
     change ed.s' ≫ (X.hom.app (op ⦋0⦌) ≫ a) = a
@@ -65,14 +68,21 @@ def overPoint (a : X.right ⟶ A) : ExtraDegeneracy (Augmented.overPoint X a) wh
     apply Over.OverMorphism.ext
     exact ed.s_comp_σ n i
 
-/-- The slice prism is the original algebra prism on its original carriers. -/
+/-- Underlying homotopy components of a lifted extra degeneracy.
+
+For a : X.right → A and i ∈ Fin(n+1), the underlying arrow of the i-th homotopy component
+associated to ed.overPoint a equals ed.homotopy.h i. -/
 theorem overPoint_homotopy_h_left (a : X.right ⟶ A) {n : ℕ} (i : Fin (n + 1)) :
     ((ed.overPoint a).homotopy.h i).left = ed.homotopy.h i := by
   dsimp only [ExtraDegeneracy.homotopy, ExtraDegeneracy.homotopy.h, overPoint,
     Augmented.overPoint, SimplicialObject.δ₀Iter, SimplicialObject.σ₀Iter]
   rfl
 
-/-- Every actual original prism operator retains the complete point map. -/
+/-- Augmentation compatibility of lifted extra-degeneracy homotopies.
+
+For each homotopy component h_{n,i} of ed lifted to Over A, its underlying map satisfies
+h_{n,i} ≫ (ε_{n+1} ≫ a) = ε_n ≫ a. Thus every component remains a morphism over the same
+target A. -/
 @[reassoc]
 theorem overPoint_homotopy_augmentation (a : X.right ⟶ A) {n : ℕ} (i : Fin (n + 1)) :
     ((ed.overPoint a).homotopy.h i).left ≫ (X.hom.app (op ⦋n + 1⦌) ≫ a) =

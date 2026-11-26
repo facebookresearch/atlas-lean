@@ -1,3 +1,6 @@
-# Comp antipode
+# Linear-map equation for antipode compatibility
 
-The underlying linear map of a bialgebra morphism commutes with the two native antipodes.
+Linear-map equation for antipode compatibility.
+
+For a bialgebra morphism f between Hopf algebras over a commutative semiring R, f.toLinearMap
+∘ S_A = S_B ∘ f.toLinearMap. The source and target semirings may be noncommutative.

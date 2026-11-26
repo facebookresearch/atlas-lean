@@ -1,3 +1,10 @@
-# Computation naturality
+# Parameter naturality of the projective computation
 
-Every original parameter map commutes with the earned computation isomorphism.
+Let C,D be abelian with independently chosen derived categories for
+C,Cᵒᵖ,D,Dᵒᵖ, and C have enough projectives.
+Let I be any parameter category and F:I → (C ⥤ D) a family with
+each F_i additive. Write L_i:D⁻(C) → D⁻(D) for its canonical
+left-derived functor, U_i:C_- → D⁻(D) for mapped-complex localization,
+Q_C:C_- → D⁻(C), and ε_i:Q_C∘L_i → U_i for the counit.
+
+For K zero above d and termwise projective, a parameter map g:i → j commutes with the forward computation isomorphisms: c_j∘L(F(g))_{[K]}=U(F(g))_K∘c_i.

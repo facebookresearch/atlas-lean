@@ -1,3 +1,5 @@
-# Coaug Coidealπ
+# Projection to the coaugmentation quotient
 
-Projection onto the coaugmentation cokernel.
+Projection to the coaugmentation quotient.
+
+For η : I → C, coaugCoidealπ η is the canonical cokernel projection C → Coker(η).

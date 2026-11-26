@@ -1,3 +1,6 @@
-# Lift Base Change tmul
+# Coefficient formula for a Lie scalar-extension lift
 
-The Lie extension has the actual native coefficient value on a pure tensor.
+Coefficient formula for a Lie scalar-extension lift.
+
+For f : L →ₗ⁅R⁆ N with N carrying compatible S-Lie scalars, liftBaseChange R S f sends s ⊗[R]
+x to s • f(x).

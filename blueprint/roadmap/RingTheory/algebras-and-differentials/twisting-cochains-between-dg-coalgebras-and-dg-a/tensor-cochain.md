@@ -1,4 +1,6 @@
-# Tensor Cochain
+# Tensor product of homogeneous cochains
 
-The graded tensor product of homogeneous cochains, of degree `m + n`,
-built from the pinned tensor-complex inclusions via `mapBifunctorDesc`.
+Tensor product of homogeneous cochains.
+
+For f,g : C → A of integer degrees m,n, use the graded tensor coproduct to assemble the maps
+(−1)^{ni}(f_i⊗g_j). This gives a cochain C⊗C → A⊗A of degree m+n.

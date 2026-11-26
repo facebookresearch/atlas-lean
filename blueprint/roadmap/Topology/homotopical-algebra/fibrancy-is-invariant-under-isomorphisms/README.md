@@ -1,4 +1,4 @@
 # Fibrancy is invariant under isomorphisms
 
-- [Is Fibrant iff of iso](is-fibrant-iff-of-iso.md)
-- [Is Fibrant of iso](is-fibrant-of-iso.md)
+- [Fibrancy equivalence along an object isomorphism](is-fibrant-iff-of-iso.md)
+- [Transport of fibrancy along an isomorphism](is-fibrant-of-iso.md)

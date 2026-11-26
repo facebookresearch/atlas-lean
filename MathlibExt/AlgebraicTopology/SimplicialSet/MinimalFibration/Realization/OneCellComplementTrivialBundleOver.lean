@@ -13,27 +13,19 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.MinimalFibration.Realiz
 public import MathlibExt.CategoryTheory.TrivialBundleWithFiberOver
 public import MathlibExt.Topology.Category.TopCat.Subspace
 
-/-! # One-cell complement trivial-over transport
+/-!
+# Trivial bundles over complements in a pushout
 
-Purpose: transport a fixed-fiber over-presentation from the new-cell complement
-to the ambient complement across a one-cell pushout. Given a base pushout with
-closed old leg, a total pullback along the new leg, and an over-presentation
-over the new-cell complement, produce an over-presentation over the ambient
-complement.
+In `TopCat.{u}`, let `t : X₁ ⟶ X₂`, `l : X₁ ⟶ X₃`, `r : X₂ ⟶ X₄`, and `b : X₃ ⟶ X₄` form a
+pushout, with `r` a closed embedding. Let `p : E ⟶ X₄` and `p₃ : E₃ ⟶ X₃` be related by the
+pullback square `IsPullback e p₃ p b`. A trivialization of `p₃` with fixed fiber `F` over
+`(Set.range l.hom)ᶜ` induces a trivialization of `p` with the same fiber over `(Set.range
+r.hom)ᶜ`.
 
-Hypotheses: a `TopCat` pushout `sqBase`, closed-embedding `hr` on the old leg,
-a total pullback `sqQ` along the new leg, a fixed fiber `F`, and an
-over-presentation `h_new` over the new-cell complement.
-
-Route: rewrite the new-side base along the preimage equality, turn the
-preimage homeomorphism into a base iso via the iso-homeomorph equivalence,
-pull the presentation back along the iso inverse, paste twice with the given
-squares, and identify the pasted bottom with the ambient inclusion by iso
-cancellation and the subspace-map equation. No extra squares are assumed.
-
-Nonclaims: no global chart, no cover assembly, no local-Serre step, no
-model-category instance, and no claim about weak equivalences or realization
-geometry.
+Here `TrivialBundleWithFiberOver F p f` specifies a pullback presentation of `p` along `f`
+whose total space is a product of the new base and `F`. Restriction also gives the reverse
+construction whenever `b` maps the new-side complement into the ambient complement; this
+direction only requires the specified pullback square and the subset condition.
 -/
 
 @[expose] public section
@@ -50,8 +42,12 @@ variable {X₁ X₂ X₃ X₄ : TopCat.{u}} {t : X₁ ⟶ X₂} {l : X₁ ⟶ X�
   {r : X₂ ⟶ X₄} {b : X₃ ⟶ X₄}
 variable {E E₃ : TopCat.{u}} {p : E ⟶ X₄} {p₃ : E₃ ⟶ X₃} {e : E₃ ⟶ E}
 
-/-- Transport a fixed-fiber over-presentation from the new-cell complement
-    to the ambient complement. -/
+/-- In `TopCat.{u}`, suppose `t : X₁ ⟶ X₂`, `l : X₁ ⟶ X₃`, `r : X₂ ⟶ X₄`, and `b : X₃ ⟶ X₄` form a
+pushout and `r.hom` is a closed embedding. Let `p : E ⟶ X₄`, `p₃ : E₃ ⟶ X₃`, and `e : E₃ ⟶ E`
+form the pullback `IsPullback e p₃ p b`. For a fixed fiber `F : TopCat.{u}`, a presentation
+`h_new` trivializing `p₃` over `(Set.range l.hom)ᶜ` induces a presentation trivializing `p`
+over `(Set.range r.hom)ᶜ`. Both presentations are pullbacks along the corresponding subspace
+inclusions with total spaces products of their bases and `F`. -/
 noncomputable def trivialBundleWithFiberOver_oneCellComplement
     (sqBase : IsPushout t l r b)
     (hr : IsClosedEmbedding r.hom)
@@ -115,8 +111,11 @@ noncomputable def trivialBundleWithFiberOver_oneCellComplement
     (Limits.pullback.fst h_new.p' baseIso0.inv ≫ h_new.t) ≫ e,
     sq_pasted, h_triv⟩
 
-/-- Forward supplier for the one-cell datum: restrict an ambient-complement
-    over-presentation to the old-side complement along the attachment map. -/
+/-- Let `p : E ⟶ X₄`, `p₃ : E₃ ⟶ X₃`, `b : X₃ ⟶ X₄`, and `e : E₃ ⟶ E` form a pullback square in
+`TopCat.{u}`. Let `l : X₁ ⟶ X₃`, `r : X₂ ⟶ X₄`, and `F : TopCat.{u}`. If `p` has a trivial
+pullback presentation with fiber `F` over `(Set.range r.hom)ᶜ`, and `b` maps `(Set.range
+l.hom)ᶜ` into that complement, then restriction yields a trivial pullback presentation of `p₃`
+with fiber `F` over `(Set.range l.hom)ᶜ`. -/
 noncomputable def trivialBundleWithFiberOver_oneCellComplementForward
     (sqQ : IsPullback e p₃ p b)
     (F : TopCat.{u})

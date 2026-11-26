@@ -1,4 +1,6 @@
-# Aug Ideal lift unique
+# Uniqueness of an augmentation-kernel factor map
 
-Uniqueness for the augmentation-kernel lift via the pinned generic kernel
-universal property.
+Uniqueness of an augmentation-kernel factor map.
+
+If f ≫ ε = 0 and g : X → Ker(ε) satisfies g ≫ augIdealι ε = f, then g equals augIdeal_lift ε
+f.

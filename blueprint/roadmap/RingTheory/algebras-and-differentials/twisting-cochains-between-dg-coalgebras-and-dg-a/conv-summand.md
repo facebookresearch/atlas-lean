@@ -1,6 +1,6 @@
-# Conv Summand
+# Koszul sign on a tensor summand of homogeneous cochains
 
-The `(i₁, i₂)`-summand of the graded tensor product of the cochains `f`
-and `g`: the Koszul-signed map
-`(-1) ^ (n * i₁) • (f ⊗ₘ g)` followed by the summand inclusion into
-`(A ⊗ A).X s`.
+Koszul sign on a tensor summand of homogeneous cochains.
+
+For f of degree m, g of degree n and source degrees i₁+i₂=r, the map to (A⊗A)_s with s=r+m+n
+is (−1)^\{ni₁\}(f_\{i₁\} ⊗ g_\{i₂\}) followed by the inclusion of output degrees i₁+m and i₂+n.

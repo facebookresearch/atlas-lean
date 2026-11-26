@@ -1,3 +1,9 @@
-# Boundary
+# Recursive source cycles below the upper endpoint
 
-Earn source cycle data throughout descent from the same original explicit support endpoint.
+Let E be preadditive, A abelian and F:E → A additive.
+Let K be a bounded integer cochain complex in E. Assume F is fully faithful and its essential image is closed under
+kernels of epimorphisms between objects in that image. Fix a term-support interval [a,b] for K and assume F(K) is acyclic.
+Write D_j=(Z_j,ι_j,q_in,j) for the constructed source-cycle data,
+where ι_j:Z_j → K^j and q_in,j:K^{j−1} → Z_j.
+
+The recursive cycle datum at step n has degree b−n, begins with the top datum and is obtained by repeated predecessor construction.

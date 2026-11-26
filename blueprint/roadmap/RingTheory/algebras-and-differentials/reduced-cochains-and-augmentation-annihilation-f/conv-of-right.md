@@ -1,5 +1,6 @@
-# Conv of right
+# Reduction of convolution from a reduced right factor
 
-Convolution with a reduced right factor is reduced: the outer maps push
-through via `conv_precomp` / `conv_postcomp`, then the right vanishing
-annihilates by `conv_zero_right`.
+Reduction of convolution from a reduced right factor.
+
+Assume a comonoid structure on I, η a comonoid morphism and ε a monoid morphism. For any
+degree-m cochain f, if g of degree n is reduced, then f⋆g is reduced in degree m+n.

@@ -1,6 +1,7 @@
-# Twisted Bar Differential self eq zero
+# A Maurer–Cartan cochain is closed for its right twist
 
-A Maurer–Cartan cochain annihilates its own twisted bar
-self-application: at `n = 1` the sign `-(-1) ^ 1` is `+1`, so
-`twistedBarDifferential τ τ` is the Maurer–Cartan left-hand side
-`δ 1 (1 + 1) τ + conv τ τ`.
+Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. If τ:C→A has degree one and satisfies δτ+τ⋆τ=0, then Dᵣ_ττ=0 in degree two. The
+identity uses Dᵣ_ττ=δτ-(-1)^1τ⋆τ=δτ+τ⋆τ, with ⋆=μ_A(-⊗-)Δ_C.

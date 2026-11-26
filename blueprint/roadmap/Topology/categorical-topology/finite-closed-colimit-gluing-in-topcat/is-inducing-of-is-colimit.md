@@ -1,12 +1,7 @@
-# Is Inducing of is Colimit
+# Inducing topology from a finite-object colimit and composite closed embeddings
 
-Inducing part of descent: `f` is inducing when `c` is colimiting,
-`f` is globally injective, and each `f∘ι` is a closed embedding.
-Proved by `TopologicalSpace.ext_isClosed` comparing `c.pt.str` with
-`induced f`: the colimit side is `∀ j, IsClosed (ι⁻¹' S)` via
-`nonempty_isColimit_iff_eq_coinduced` / `isClosed_sup_coinduced_iff`
-(`isClosed_iff_of_isColimit`), the induced side is
-`∃ T closed, S = f⁻¹' T` via `isClosed_induced_iff`; the bridge is
-`S = f⁻¹' (f '' S)` (injectivity) and
-`f '' S = ⋃ (f∘ι) '' (ι⁻¹' S)` (joint surjectivity + cover) which is
-closed as a finite union of `IsClosedEmbedding.isClosedMap` images.
+Inducing topology from a finite-object colimit and composite closed embeddings.
+
+For a topological colimit c over J with finitely many objects, if f is injective and every
+c.ι_j ≫ f is a closed embedding, then f is inducing. Closed sets are detected on the legs and
+reconstructed as preimages of their closed images under f.

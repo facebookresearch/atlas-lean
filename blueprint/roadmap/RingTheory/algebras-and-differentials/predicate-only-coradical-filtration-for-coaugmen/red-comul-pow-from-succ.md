@@ -1,5 +1,6 @@
-# Red Comul Pow From succ
+# Successor reduced-coproduct iterate
 
-Recursive computation for `redComulPowFrom`: degree `n + 1` applies the
-candidate `Δbar` then tensors the degree-`n` iterate with `𝟙 C` on the right;
-the target index grows as `(n + 1) + 1`.
+Successor reduced-coproduct iterate.
+
+For b : C → C ⊗ C and n : ℕ, redComulPowFrom b (n+1) is b followed by redComulPowFrom b n on
+the left tensor factor and identity on the right. Its target is P_{n+2}(C).

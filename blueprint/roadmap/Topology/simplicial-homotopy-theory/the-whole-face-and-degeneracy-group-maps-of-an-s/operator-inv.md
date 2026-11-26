@@ -1,3 +1,4 @@
-# Operator inv
+# Simplicial operators preserve group inverses
 
-Every original operator preserves the actual inverse, before any Kan assertion.
+For `G : SimplicialObject GrpCat.{u}`, `α : n ⟶ m` in `SimplexCategoryᵒᵖ`, and `x ∈ (underlying G).obj n`,
+`(underlying G).map α x⁻¹ = ((underlying G).map α x)⁻¹`.

@@ -12,17 +12,15 @@ public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 /-!
-# Native Kähler transport for an actual square of ground-ring maps
+# Kähler differential maps from commuting ring squares
 
-The input is an actual pair of ring homomorphisms k→K and P→Q together with
-their commuting algebra square. The induced dictionaries are constructed
-from those maps and that equation. Native `KaehlerDifferential.map` then
-gives the genuine semilinear differential map, retaining its actual
-generator formula. All four carrier universes are independent.
+Let k,P and K,Q be commutative rings with k-algebra P and K-algebra Q. Ring maps f_k : k → K
+and f_P : P → Q satisfying f_P ∘ algebraMap(k,P) = algebraMap(K,Q) ∘ f_k induce an
+f_P-semilinear map Ω_{P/k} → Ω_{Q/K}.
 
-The auxiliary subtype is an output of the native construction, with its
-native generator proof; callers supply no differential map or comparison
-certificate. Source: Stacks Project 92.6--92.7. Candidate source; UNEXECUTED.
+Its generator formula is d_{P/k}(p) ↦ d_{Q/K}(f_P(p)). The construction records both the map
+and this equation, then exposes the underlying semilinear map. All four ring universes are
+independent.
 -/
 
 @[expose] public section
@@ -37,8 +35,10 @@ variable (k : Type u) (K : Type v) (P : Type w) (Q : Type t)
   [CommRing k] [CommRing K] [CommRing P] [CommRing Q]
   [Algebra k P] [Algebra K Q]
 
-/-- The native semilinear differential map together with its generator equation,
-constructed from the original commuting square of ground and algebra ring maps. -/
+/-- Semilinear Kähler map with its differential-generator equation.
+
+For a commuting square of ring maps f_k : k → K and f_P : P → Q, construct an f_P-semilinear
+map Ω_{P/k} → Ω_{Q/K} together with the equation f(d p)=d(f_P(p)) for every p ∈ P. -/
 def mapOfRingSquareData (fk : k →+* K) (fP : P →+* Q)
     (hs : fP.comp (algebraMap k P) = (algebraMap K Q).comp fk) :
     { f : KaehlerDifferential k P →ₛₗ[fP] KaehlerDifferential K Q //
@@ -75,12 +75,19 @@ def mapOfRingSquareData (fk : k →+* K) (fP : P →+* Q)
   · intro p
     exact KaehlerDifferential.map_D k K P Q p
 
-/-- The actual semilinear map of native differentials for the original ground-ring square. -/
+/-- Semilinear Kähler map of a commuting ring square.
+
+For commutative rings and maps f_k,f_P commuting with the given algebra maps, mapOfRingSquare
+is the induced f_P-semilinear differential map Ω_{P/k} → Ω_{Q/K}. -/
 def mapOfRingSquare (fk : k →+* K) (fP : P →+* Q)
     (hs : fP.comp (algebraMap k P) = (algebraMap K Q).comp fk) :
     KaehlerDifferential k P →ₛₗ[fP] KaehlerDifferential K Q :=
   (mapOfRingSquareData k K P Q fk fP hs).val
 
+/-- Differential-generator value of a ring-square map.
+
+For p ∈ P, the induced map of Kähler differentials satisfies mapOfRingSquare(d_{P/k}p) =
+d_{Q/K}(f_P(p)). -/
 @[simp]
 theorem mapOfRingSquare_D (fk : k →+* K) (fP : P →+* Q)
     (hs : fP.comp (algebraMap k P) = (algebraMap K Q).comp fk) (p : P) :

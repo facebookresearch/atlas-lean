@@ -1,5 +1,5 @@
 # Contraction of the standard simplex onto its last vertex
 
-- [Homotopy Id Const Last](homotopy-id-const-last.md)
-- [Homotopy Id Const Last h app apply](homotopy-id-const-last-h-app-apply.md)
-- [Le homotopy Id Const Last h app apply](le-homotopy-id-const-last-h-app-apply.md)
+- [Contraction of a standard simplex to its last vertex](homotopy-id-const-last.md)
+- [Coordinates of the last-vertex contraction](homotopy-id-const-last-h-app-apply.md)
+- [The last-vertex contraction increases simplex coordinates](le-homotopy-id-const-last-h-app-apply.md)

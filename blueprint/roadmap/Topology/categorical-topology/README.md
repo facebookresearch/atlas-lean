@@ -8,4 +8,4 @@ Categories of topological spaces and their limits and colimits, compact Hausdorf
 - [Open subspaces of delta-generated spaces](open-subspaces-of-delta-generated-spaces/README.md)
 - [PushoutOpenComplement](pushoutopencomplement/README.md)
 - [Subspace inclusions and maps in TopCat](subspace-inclusions-and-maps-in-topcat/README.md)
-- [Fixed-right product-pushout symmetry adapter](is-pushout-prod-map-fixed-right-of-fixed.md)
+- [Product symmetry converts a fixed-left pushout to a fixed-right pushout](is-pushout-prod-map-fixed-right-of-fixed.md)

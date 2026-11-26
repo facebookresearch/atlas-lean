@@ -1,4 +1,6 @@
-# Is Reduced Conv Nilpotent
+# Finite convolution nilpotence of a twisting cochain
 
-A twisting cochain is reduced convolution-nilpotent when its underlying
-degree-`+1` cochain is.
+Finite convolution nilpotence of a twisting cochain.
+
+A twisting cochain τ satisfies this predicate when its underlying degree-one cochain τ.tau has
+a vanishing finite convolution iterate.

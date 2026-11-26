@@ -1,4 +1,5 @@
-# Zero
+# Finite convolution nilpotence of the zero cochain
 
-The zero cochain is reduced convolution-nilpotent in one step, via the
-accepted `conv_zero_left`.
+Finite convolution nilpotence of the zero cochain.
+
+The zero cochain in any integer degree is convolution nilpotent: its iterate at n=1 is 0⋆0=0.

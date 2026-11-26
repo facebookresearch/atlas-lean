@@ -1,6 +1,6 @@
 # Kan horn filling for the SAME simplicial group
 
-- [Group Faces](group-faces.md)
-- [Group Faces at](group-faces-at.md)
-- [Group Faces compatible](group-faces-compatible.md)
-- [Underlying is Kan](underlying-is-kan.md)
+- [Degree-group elements associated to horn faces](group-faces.md)
+- [Yoneda value of a prescribed horn face](group-faces-at.md)
+- [Horn compatibility gives degree-group face equations](group-faces-compatible.md)
+- [Every simplicial group has a Kan underlying simplicial set](underlying-is-kan.md)

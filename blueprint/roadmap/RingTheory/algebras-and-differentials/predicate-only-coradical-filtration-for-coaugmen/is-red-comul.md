@@ -1,9 +1,8 @@
-# Is Red Comul
+# Reduced coproduct data for a coaugmentation
 
-Reduced-comultiplication predicate for an explicit coaugmentation `η` and a
-candidate `Δbar`: `η` is a comonoid morphism from the canonical tensor-unit
-comonoid (local `ComonObj.instTensorUnit` only, no global instance); the actual
-comultiplication decomposes as `Δbar` plus the two `η`-legs minus the
-double-`η` term, with exact pinned unitor/`tensorHom` paths; moreover `η`
-kills `Δbar` and both counit legs kill `Δbar`. Existence of `Δbar` is not
-claimed.
+Reduced coproduct data for a coaugmentation.
+
+For a cochain comonoid C with coaugmentation η : I → C, a map b : C → C ⊗ C satisfies
+IsRedComul when η is a comonoid morphism from the canonical unit, Δ_C = b + L_η + R_η − U_η, η
+≫ b = 0, and b vanishes after either counit tensor leg. Here L_η = λ_C⁻¹ ≫ (η ⊗ id), R_η =
+ρ_C⁻¹ ≫ (id ⊗ η), and U_η = ε_C ≫ λ_I⁻¹ ≫ (η ⊗ η).

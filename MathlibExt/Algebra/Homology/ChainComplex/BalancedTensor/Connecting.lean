@@ -23,18 +23,25 @@ public import Mathlib.Algebra.Category.Grp.EpiMono
 public import Mathlib.Basic.UnivLE
 
 /-!
-# Connecting maps for balanced tensor cycles and images
+# Connecting maps for cycles and outgoing-image tensor totals
 
-The short exact cycles, term and outgoing-image tensor sequence has its native
-homology connecting map. In the zero-differential homology coordinates, it sends
-an image coefficient in degree p to its boundary inclusion in cycles degree p - 1.
-The horizontal differential has positive sign; the signed vertical term vanishes
-on an actual cycle of the second complex.
+Let R be an arbitrary ring and P,Q integer-indexed right- and left-module
+chain complexes. The degreewise sequence
+0 → Z_p(P) → P_p → I_p=Im(P_p → P_{p−1}) → 0 gives
+a sequence of balanced tensor totals with Q.
+Assume the module-category projective-resolution dictionaries and
+homology preservation by every coefficient functor I_p⊗_R−.
+This sequence is short exact, with connecting map
+H_n(Tot(I_0,Q)) → H_{n−1}(Tot(Z_0,Q)), where I_0 and Z_0 have
+zero differentials.
 
-Exactness is required only of the first complex's coefficient tensor functors
-and its outgoing images. The second complex may have nonzero differentials and
-nonflat terms. Native lifts give the same comparison for independent input worlds
-and any common lift height.
+If the functors P_p⊗_R− also preserve homology, the image and cycles
+totals have the full antidiagonal homology coordinates. In those
+coordinates the connecting map sends x⊗[y] to β_p(x)⊗[y] in degrees
+(p−1,q), with positive sign and β_p:I_p → Z_{p−1}(P).
+The signed vertical differential vanishes on the chosen cycle y of Q.
+Independent input carrier universes are handled at any common height
+T=max(u,v,w,t), retaining the same scalar ring and maps.
 -/
 
 @[expose] public section
@@ -155,12 +162,22 @@ private theorem mk_zero_right
   dsimp only [mk]
   simp only [TensorProduct.Balanced.mk_apply, TensorProduct.tmul_zero, map_zero]
 
-/-- The actual outgoing image family, retaining its native degrees. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q).
+
+The outgoing image family has term I_p=Im(d_P:P_p → P_{p−1}) in degree p. -/
 abbrev connectingImages (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ) :
     ℤ → ModuleCat.{v} Rᵐᵒᵖ :=
   fun p => (HomologicalComplex.outgoingImageZeroComplex P).X p
 
-/-- The actual cycles family of the original right complex. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q).
+
+The cycles family has term Z_p(P)=Ker(d_P:P_p → P_{p−1}) in degree p. -/
 abbrev connectingCycles (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ) :
     ℤ → ModuleCat.{v} Rᵐᵒᵖ :=
   P.cycles
@@ -177,7 +194,14 @@ section ImageExact
 variable [∀ p : ℤ,
   ((ModuleCat.BalancedTensor.groupBifunctor R).obj (connectingImages R P p)).PreservesHomology]
 
-/-- Exact image coefficient functors earn the short exact sequence of tensor totals. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q). At their common carrier universe assume the left and right module
+categories have projective resolutions and every functor I_p⊗_R−
+preserves homology.
+
+The sequence 0 → Tot(Z_0,Q) → Tot(P,Q) → Tot(I_0,Q) → 0 is short exact, where Z_0 and I_0 are the cycles and outgoing-image families with zero differentials. -/
 theorem cyclesTensorSequence_shortExact_of_exactImages :
     (cyclesTensorSequence R P Q).ShortExact := by
   apply cyclesTensorSequence_shortExact R P Q
@@ -187,18 +211,35 @@ theorem cyclesTensorSequence_shortExact_of_exactImages :
       (Functor.preservesFiniteLimits_of_preservesHomology
         ((ModuleCat.BalancedTensor.groupBifunctor R).obj (connectingImages R P i))) B
 
-/-- The native homology connecting map of the earned cycles/image tensor sequence. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q). At their common carrier universe assume the left and right module
+categories have projective resolutions and every functor I_p⊗_R−
+preserves homology.
+
+The homology connecting map H_n(Tot(I_0,Q)) → H_{n−1}(Tot(Z_0,Q)) of the cycles/term/image tensor-total sequence. -/
 def cyclesTensorConnecting (n : ℤ) :
     (cyclesTensorSequence R P Q).X₃.homology n ⟶
       (cyclesTensorSequence R P Q).X₁.homology (n - 1) :=
   (cyclesTensorSequence_shortExact_of_exactImages R P Q).δ n (n - 1)
     (by change n - 1 + 1 = n; exact sub_add_cancel n 1)
 
-/-- Image coefficients tensored with homology of the unchanged second complex. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q).
+
+In total degree n, the image homology family consists of I_p⊗_R H_q(Q) over all integer pairs p+q=n. -/
 abbrev connectingImageHomologyFamily (n : ℤ) :=
   zeroDifferentialTensorHomologyFamily R (connectingImages R P) Q n
 
-/-- The canonical full image-tensor homology comparison. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q).
+
+If every I_p⊗_R− preserves homology, the canonical comparison ⊕_{p+q=n} I_p⊗_R H_q(Q) ≅ H_n(Tot(I_0,Q)), with zero differential on I_0. -/
 def connectingImageHomologyIso (n : ℤ) :
     (∐ connectingImageHomologyFamily R P Q n) ≅
       (cyclesTensorSequence R P Q).X₃.homology n := by
@@ -210,7 +251,14 @@ section TermExact
 
 variable [∀ p : ℤ, ((ModuleCat.BalancedTensor.groupBifunctor R).obj (P.X p)).PreservesHomology]
 
-/-- Exact terms and images give exact coefficient functors on actual cycles. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q). At their common carrier universe assume the left and right module
+categories have projective resolutions and every functor I_p⊗_R−
+preserves homology. Assume also every coefficient functor P_p⊗_R− preserves homology.
+
+For every integer i, the cycles coefficient functor Z_i(P)⊗_R− preserves homology. -/
 theorem connectingCycles_preservesHomology (i : ℤ) :
     ((ModuleCat.BalancedTensor.groupBifunctor R).obj (P.cycles i)).PreservesHomology := by
   let hP : ∀ j B, IsZero (((ModuleCat.BalancedTensor.torFirst R 1).obj (P.X j)).obj B) :=
@@ -229,11 +277,23 @@ theorem connectingCycles_preservesHomology (i : ℤ) :
   let : PreservesFiniteColimits F := inferInstance
   exact ((Functor.exact_tfae F).out 4 3).1 ⟨inferInstance, inferInstance⟩
 
-/-- The full cycles-tensor homology family. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q).
+
+In total degree n, the cycles homology family consists of Z_p(P)⊗_R H_q(Q) over every integer pair p+q=n. -/
 abbrev connectingCyclesHomologyFamily (n : ℤ) :=
   zeroDifferentialTensorHomologyFamily R (connectingCycles R P) Q n
 
-/-- The canonical full cycles-tensor homology comparison. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q). At their common carrier universe assume the left and right module
+categories have projective resolutions and every functor I_p⊗_R−
+preserves homology. Assume also every coefficient functor P_p⊗_R− preserves homology.
+
+The canonical comparison ⊕_{p+q=n} Z_p(P)⊗_R H_q(Q) ≅ H_n(Tot(Z_0,Q)). -/
 def connectingCyclesHomologyIso (n : ℤ) :
     (∐ connectingCyclesHomologyFamily R P Q n) ≅
       (cyclesTensorSequence R P Q).X₁.homology n := by
@@ -244,7 +304,14 @@ def connectingCyclesHomologyIso (n : ℤ) :
     (complex R (zeroDifferentialComplex R (connectingCycles R P)) Q).homology n
   exact zeroDifferentialTensorHomologyIso R (connectingCycles R P) Q n
 
-/-- The positive connecting formula on the original image coefficient and actual cycle. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q). At their common carrier universe assume the left and right module
+categories have projective resolutions and every functor I_p⊗_R−
+preserves homology. Assume also every coefficient functor P_p⊗_R− preserves homology.
+
+For p+q=n, x∈I_p and y∈Z_q(Q), the connecting map in the antidiagonal coordinates sends x⊗[y] to β_p(x)⊗[y] in the (p−1,q) summand, where β_p:I_p → Z_{p−1}(P) is the boundary inclusion. The coefficient is positive. -/
 theorem cyclesTensorConnecting_mk (p q n : ℤ) (h : p + q = n)
     (x : connectingImages R P p) (y : Q.cycles q) :
     letI : Module ℤ (Q.cycles q) := Module.compHom (Q.cycles q) (algebraMap ℤ R)
@@ -332,7 +399,14 @@ theorem cyclesTensorConnecting_mk (p q n : ℤ) (h : p + q = n)
   rw [hc₃]
   exact hδ.trans hc₁.symm
 
-/-- The connecting map is the boundary inclusion in the full homology-tensor coordinates. -/
+/-- Let R be an arbitrary ring, P an integer-indexed right-R-module
+chain complex and Q an integer-indexed left-R-module chain complex.
+Write I_p=Im(P_p → P_{p−1}), Z_p=Z_p(P), and Tot for the balanced
+tensor total, whose differential is d_P⊗1+(−1)^p·(1⊗d_Q). At their common carrier universe assume the left and right module
+categories have projective resolutions and every functor I_p⊗_R−
+preserves homology. Assume also every coefficient functor P_p⊗_R− preserves homology.
+
+For p+q=n, conjugating the connecting map by the image and cycles homology comparisons sends the (p,q) summand by β_p⊗1_{H_q(Q)} to the (p−1,q) summand. -/
 theorem cyclesTensorConnecting_square (p q n : ℤ) (h : p + q = n) :
     Sigma.ι (connectingImageHomologyFamily R P Q n) ⟨(p, q), h⟩ ≫
         (connectingImageHomologyIso R P Q n).hom ≫ cyclesTensorConnecting R P Q n =
@@ -384,13 +458,17 @@ end TermExact
 end ImageExact
 end Resolutions
 
-/-- Lift the actual right complex to a common carrier universe, retaining every map. -/
+/-- For R in universe u and a right-module chain complex P with carrier
+universe v, the coefficient lift of P to T=max(u,v,w,t), preserving
+its integer degrees and differential maps. -/
 abbrev connectingRightAt
     (P : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ) :
     ChainComplex (ModuleCat.{max u v w t} Rᵐᵒᵖ) ℤ :=
   ((ModuleCat.uliftFunctor.{max u v w t, v} Rᵐᵒᵖ).mapHomologicalComplex c).obj P
 
-/-- Lift the independent left complex by the same native functor. -/
+/-- For R in universe u and a left-module chain complex Q with carrier
+universe w, the coefficient lift of Q to T=max(u,v,w,t), preserving
+its integer degrees and differential maps. -/
 abbrev connectingLeftAt
     (Q : ChainComplex (ModuleCat.{w} R) ℤ) :
     ChainComplex (ModuleCat.{max u v w t} R) ℤ :=
@@ -404,7 +482,11 @@ variable [∀ p : ℤ,
   ((ModuleCat.BalancedTensor.groupBifunctor R).obj
     (connectingImages R (connectingRightAt.{u, v, w, t} R P) p)).PreservesHomology]
 
-/-- The native connecting map with independent input worlds and arbitrary lift height. -/
+/-- Let R be an arbitrary ring with independent right- and left-complex
+carrier universes v,w, and fix T=max(u,v,w,t).
+If the outgoing-image coefficient tensor functors of the lifted right
+complex P^T preserve homology at T, the canonical connecting map
+H_n(Tot(I(P^T)_0,Q^T)) → H_{n−1}(Tot(Z(P^T)_0,Q^T)). -/
 def cyclesTensorConnectingAt (n : ℤ) :
     (cyclesTensorSequence R (connectingRightAt.{u, v, w, t} R P)
       (connectingLeftAt.{u, v, w, t} R Q)).X₃.homology n ⟶
@@ -417,7 +499,12 @@ variable [∀ p : ℤ,
   ((ModuleCat.BalancedTensor.groupBifunctor R).obj
     ((connectingRightAt.{u, v, w, t} R P).X p)).PreservesHomology]
 
-/-- The full connecting square in the actual common universe of both native lifts. -/
+/-- Let R be an arbitrary ring, P,Q have independent carrier universes,
+and T=max(u,v,w,t). Assume the term and outgoing-image coefficient
+tensor functors of P^T preserve homology at T.
+For p+q=n, the full homology-coordinate connecting square sends
+I_p(P^T)⊗_R H_q(Q^T) to Z_{p−1}(P^T)⊗_R H_q(Q^T)
+by the boundary inclusion β_p⊗1, with positive sign. -/
 theorem cyclesTensorConnecting_squareAt (p q n : ℤ) (h : p + q = n) :
     Sigma.ι (connectingImageHomologyFamily R (connectingRightAt.{u, v, w, t} R P)
       (connectingLeftAt.{u, v, w, t} R Q) n) ⟨(p, q), h⟩ ≫

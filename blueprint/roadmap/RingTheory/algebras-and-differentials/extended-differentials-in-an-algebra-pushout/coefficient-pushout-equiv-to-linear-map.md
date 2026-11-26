@@ -1,3 +1,7 @@
-# Coefficient Pushout Equiv to Linear Map eq ring Square
+# Linear-map agreement of the coefficient pushout comparison
 
-Equality with the existing actual ring-square map, earned by its universal generators.
+Linear-map agreement of the coefficient pushout comparison.
+
+The B-linear map underlying coefficientPushoutEquiv equals
+coefficientBaseChangeMapOfRingSquareOfAlgebra for the structural coefficient square. Equality
+is determined by the differential tensor generators.

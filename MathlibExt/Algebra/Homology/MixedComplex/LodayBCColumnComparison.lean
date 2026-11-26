@@ -14,14 +14,19 @@ module
 public import MathlibExt.Algebra.Homology.MixedComplex.LodayBCColumnSigns
 
 /-!
-# The full printed BC coordinate comparison
+# BC coordinates for a mixed Connes bicomplex
 
-The printed column is the native signed row of the canonical mixed Connes
-bicomplex: its internal vertical differential is the unsigned original b.
-The explicit triangular column sign times the native signed-row iso determines
-the actual horizontal arrows by conjugation. Native component isomorphisms
-then give the full bicomplex and finite-diagonal total comparison. No desired
-map, invertibility or quasi-isomorphism certificate is an input.
+Let C be preadditive with a zero object and M a mixed complex. Its p-th Connes column has stored
+vertical differential (-1)^p b in supported cells. The signed row removes that column factor,
+giving a column with unsigned b.
+
+Multiplying the signed-row isomorphism by the constant triangular unit c_p gives U_p with cell
+sign s_{p,q}=c_p(-1)^{pq}. Define horizontal arrows by U_{p+1} followed by the Connes horizontal
+map and U_p⁻¹. These arrows form a bicomplex, and the U_p give its isomorphism to the Connes
+bicomplex.
+
+If C has finite coproducts, totalization on the finite diagonals p+q=n carries this isomorphism
+to a total-complex isomorphism. Every cell injection is transported by the same cell sign.
 -/
 
 @[expose] public section
@@ -36,11 +41,19 @@ namespace MixedComplex
 variable {C : Type u} [Category.{v} C] [Preadditive C] [CategoryTheory.Limits.HasZeroObject C]
   (M : MixedComplex C)
 
-/-- The actual printed BC column has the native unsigned row differential. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. For p∈ℕ, the BC column is the signed row of C_can at p. In each
+supported cell it has the same coefficient M_{q-p}, and its vertical differential is b because
+the extra (-1)^p cancels the stored Connes column sign. -/
 abbrev lodayBCColumn (p : ℕ) : ChainComplex C ℕ := M.connesBicomplex.signedRow p
 
 
-/-- The full actual column coordinate map, including its triangular constant sign. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. The isomorphism U_p from the signed row to C_can(p) is c_p times the signed-row
+comparison. Its forward and inverse degree-q entries are both s_{p,q}•id. -/
 def lodayBCColumnIso (p : ℕ) : M.lodayBCColumn p ≅ M.connesBicomplex.X p where
   hom := lodayColumnSign p • (M.connesBicomplex.signedRowIso p).hom
   inv := (lodayColumnSign p)⁻¹ • (M.connesBicomplex.signedRowIso p).inv
@@ -51,7 +64,13 @@ def lodayBCColumnIso (p : ℕ) : M.lodayBCColumn p ≅ M.connesBicomplex.X p whe
     rw [Linear.units_smul_comp, Linear.comp_units_smul, smul_smul, inv_mul_cancel,
       one_smul, Iso.inv_hom_id]
 
-/-- Every forward entry coordinate has the exact original cell sign. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. For
+every p,q∈ℕ, (U_p.hom)_q=s_{p,q}•id_{C_can(p,q)}. This includes both the triangular and
+row-parity factors. -/
 @[simp]
 theorem lodayBCColumnIso_hom_f (p q : ℕ) :
     (M.lodayBCColumnIso p).hom.f q = lodayCellSign p q • 𝟙 ((M.connesBicomplex.X p).X q) := by
@@ -60,7 +79,12 @@ theorem lodayBCColumnIso_hom_f (p q : ℕ) :
   rw [smul_smul]
   rfl
 
-/-- Every inverse entry coordinate is the same involutive cell sign. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. For
+every p,q∈ℕ, (U_p.inv)_q=s_{p,q}•id_{C_can(p,q)}, using s_{p,q}²=1. -/
 @[simp]
 theorem lodayBCColumnIso_inv_f (p q : ℕ) :
     (M.lodayBCColumnIso p).inv.f q = lodayCellSign p q • 𝟙 ((M.connesBicomplex.X p).X q) := by
@@ -75,12 +99,23 @@ theorem lodayBCColumnIso_inv_f (p q : ℕ) :
   rw [lodayColumnSign_inv, he, smul_smul]
   rfl
 
-/-- The printed horizontal map is the original canonical map in the full entry coordinates. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. For
+p∈ℕ, d^BC_{p+1,p}=U_{p+1}.hom≫d^can_{p+1,p}≫U_p.inv is a column chain map C_BC(p+1)→C_BC(p). -/
 def lodayBCHorizontal (p : ℕ) : M.lodayBCColumn (p + 1) ⟶ M.lodayBCColumn p :=
   (M.lodayBCColumnIso (p + 1)).hom ≫ M.connesBicomplex.d (p + 1) p ≫
     (M.lodayBCColumnIso p).inv
 
-/-- Original consecutive maps still compose to zero after the actual coordinate changes. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. For
+p∈ℕ, d^BC_{p+2,p+1}≫d^BC_{p+1,p}=0. The intermediate U_{p+1} inverse and forward maps cancel,
+leaving the Connes bicomplex zero-composite equation. -/
 theorem lodayBCHorizontal_squared (p : ℕ) :
     M.lodayBCHorizontal (p + 1) ≫ M.lodayBCHorizontal p = 0 := by
   simp only [lodayBCHorizontal, Category.assoc]
@@ -89,12 +124,23 @@ theorem lodayBCHorizontal_squared (p : ℕ) :
     (M.connesBicomplex.d (p + 1) p)]
   rw [HomologicalComplex.d_comp_d, CategoryTheory.Limits.zero_comp, CategoryTheory.Limits.comp_zero]
 
-/-- The actual full BC bicomplex in the printed unsigned-column coordinates. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. The down–down bicomplex C_BC has p-th column equal to the signed Connes row and
+horizontal differential U_{p+1}.hom≫d^can≫U_p.inv. Its coefficients and both nonnegative indices
+are retained. -/
 def lodayBCBicomplex : HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   ChainComplex.of M.lodayBCColumn M.lodayBCHorizontal M.lodayBCHorizontal_squared
 
 
-/-- The explicit full column maps construct the actual original bicomplex comparison. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. The
+column isomorphisms U_p assemble to C_BC≅C_can. Their definition of the horizontal maps ensures
+the horizontal chain squares commute. -/
 def lodayBCBicomplexIso : M.lodayBCBicomplex ≅ M.connesBicomplex :=
   HomologicalComplex.Hom.isoOfComponents M.lodayBCColumnIso (by
     intro i j hij
@@ -104,7 +150,12 @@ def lodayBCBicomplexIso : M.lodayBCBicomplex ≅ M.connesBicomplex :=
     rw [ChainComplex.of_d]
     simp only [lodayBCHorizontal, Category.assoc, Iso.inv_hom_id, Category.comp_id])
 
-/-- The whole bicomplex comparison has the original full entry sign in every cell. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. The
+forward bicomplex isomorphism has (p,q)-entry s_{p,q}•id_{C_can(p,q)} for all p,q∈ℕ. -/
 @[simp]
 theorem lodayBCBicomplexIso_hom_f_f (p q : ℕ) :
     ((M.lodayBCBicomplexIso.hom).f p).f q =
@@ -115,12 +166,24 @@ section Total
 
 variable [CategoryTheory.Limits.HasFiniteCoproducts C]
 
-/-- Native finite-diagonal totalization carries the actual full bicomplex coordinate comparison. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id.
+Assume C has finite coproducts. Totalization gives V:Tot(C_BC)≅Tot(C_can) as nonnegative chain
+complexes, using the finite fibre p+q=n in degree n. -/
 def lodayBCTotalIso : M.lodayBCBicomplex.total (ComplexShape.down ℕ) ≅
     M.connesBicomplex.total (ComplexShape.down ℕ) :=
   HomologicalComplex₂.total.mapIso M.lodayBCBicomplexIso (ComplexShape.down ℕ)
 
-/-- Every original printed BC coprojection is transported by its full cell sign. -/
+/-- Let C be preadditive with a zero object, in object/morphism universes u,v, and M a mixed complex
+with underlying nonnegative chain differential b and degree-raising operator B. Write C_can for
+the Connes bicomplex of M. Put c₀=1, c_{p+1}=c_p(-1)^p, and s_{p,q}=c_p(-1)^{pq}, as integer
+units. Write C_can for the Connes bicomplex, and C_BC for the bicomplex whose p-th column is its
+signed row. The column isomorphism U_p:C_BC(p)≅C_can(p) has degree-q component s_{p,q}•id. With
+finite coproducts, for p,q,n∈ℕ and p+q=n, ι^BC_{p,q,n}≫V_n=s_{p,q}•id≫ι^can_{p,q,n}. Thus the
+total isomorphism retains the full sign on each summand. -/
 @[reassoc]
 theorem lodayBCTotalIso_ι (p q n : ℕ) (h : p + q = n) :
     M.lodayBCBicomplex.ιTotal (ComplexShape.down ℕ) p q n h ≫ M.lodayBCTotalIso.hom.f n =

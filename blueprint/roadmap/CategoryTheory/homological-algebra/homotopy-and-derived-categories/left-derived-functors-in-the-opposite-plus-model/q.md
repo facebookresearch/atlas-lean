@@ -1,3 +1,5 @@
-# Q
+# Opposite bounded-below localization
 
-The opposite of the native Plus localization, with its actual quasi-isomorphism property.
+Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+With a chosen derived category of Cᵒᵖ, Q_- is the opposite of the bounded-below localization Q_+:CochainComplex.Plus(Cᵒᵖ) → D⁺(Cᵒᵖ).

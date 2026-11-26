@@ -15,18 +15,19 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
 public import Mathlib.CategoryTheory.Limits.Types.Coproducts
 
 /-!
-# Decomposition of a simplicial set into connected components
+# Connected-component subcomplexes of a simplicial set
 
-Every simplex is assigned the connected component of its canonical zeroth
-vertex. This label is independent of the chosen vertex and defines a
-subcomplex for each element of `π₀`. The resulting component subcomplexes are
-connected and their inclusions exhibit the original simplicial set as their
-coproduct.
+For a simplicial set X, the component label of a simplex is the element of π₀(X) represented
+by its zeroth vertex. All vertices of that simplex have the same label, so the simplices with
+a fixed label c form a subcomplex X_c.
+
+Each X_c is nonempty and connected in the edge-generated sense: its π₀ is a singleton. The
+inclusions X_c → X form a coproduct cocone, since in every degree the disjoint union of these
+label fibers is bijective to the simplices of X. Thus X is the coproduct of its
+connected-component subcomplexes.
 
 The mathematical decomposition follows Joël Riou's
-`topcat-model-category` development. The proof here is an independent
-current-API construction: components are fibers of a canonical vertex label,
-and the coproduct is proved pointwise by a bijection of types.
+`topcat-model-category` development.
 -/
 
 @[expose] public section
@@ -90,8 +91,11 @@ private lemma congr_mk_map {n : SimplexCategoryᵒᵖ} (s : X.obj n)
         fin_cases j
         rfl)
 
-/-- The subcomplex consisting of the simplices in a fixed connected
-component. -/
+/-- Subcomplex of simplices in one connected component.
+
+For c ∈ π₀(X), define X_c in degree n by the simplices whose zeroth vertex represents c.
+Independence of the chosen vertex makes this family stable under all simplex operators, hence
+a subcomplex of X. -/
 def component (c : π₀ X) : X.Subcomplex where
   obj n := {s | π₀.mk (X.map (⦋0⦌.const n.unop 0).op s) = c}
   map {n m} f s hs := by
@@ -152,18 +156,27 @@ private instance component_preconnected (c : π₀ X) :
     exact ((mem_component_zero c x).mp hx).trans
       ((mem_component_zero c y).mp hy).symm
 
-/-- Every component subcomplex is connected. -/
+/-- Connectedness of a component subcomplex.
+
+For c ∈ π₀(X), the simplicial set X_c is nonempty and has singleton π₀. Any two vertices in it
+are related by the edge-generated equivalence relation inside the same subcomplex. -/
 instance component_isConnected (c : π₀ X) : SSet.IsConnected (component c : SSet) where
   nonempty := inferInstance
 
 variable (X)
 
-/-- The cofan of component inclusions into a simplicial set. -/
+/-- Coproduct cocone of connected-component inclusions.
+
+For a simplicial set X, form the cofan indexed by c ∈ π₀(X) with summands X_c, vertex X and
+legs the subcomplex inclusions X_c → X. -/
 abbrev cofan : Cofan (fun c : π₀ X ↦ (component c : SSet)) :=
   Cofan.mk X (fun c ↦ (component c).ι)
 
-/-- A simplicial set is the coproduct of its connected-component
-subcomplexes. -/
+/-- Coproduct universal property of connected components.
+
+The cofan of inclusions X_c → X is a colimit. Degreewise, every simplex has exactly one
+component label, so the disjoint union of the component fibers maps bijectively onto X_n. The
+pointwise colimit criterion then gives the simplicial coproduct. -/
 noncomputable def isColimitCofan : IsColimit (cofan X) :=
   evaluationJointlyReflectsColimits _ (fun n ↦
     (isColimitMapCoconeCofanMkEquiv

@@ -1,6 +1,5 @@
-# ΙTensor Obj comp d up int
+# The integer tensor differential has horizontal sign one and vertical sign (-1)^p
 
-Source-summand formula for the forward differential `(tensorObj K L).d n (n + 1)`
-from `ιTensorObj K L p q n h`: the horizontal term has sign `1` and the vertical
-term carries `p.negOnePow` (from `ComplexShape.ε_up_ℤ`); shared input to the
-shifted-Bar/Cobar total-differential consumers.
+Let C be preadditive and monoidal in object/morphism universes u,v, with tensor additive in both
+variables. For ℤ-indexed K,L with their tensor coproducts, p+q=n, the inclusion ι_{p,q,n}
+satisfies ι≫d_{n,n+1}=(d_K(p,p+1)⊗id)≫ι_{p+1,q,n+1}+(-1)^p(id⊗d_L(q,q+1))≫ι_{p,q+1,n+1}.

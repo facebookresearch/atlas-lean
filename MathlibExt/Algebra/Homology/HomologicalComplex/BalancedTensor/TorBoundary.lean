@@ -20,16 +20,22 @@ public import Mathlib.Algebra.Homology.ShortComplex.Exact
 public import Mathlib.Basic.UnivLE
 
 /-!
-# Tor boundaries for cycles and homology
+# Tor boundaries of the boundary–cycle–homology sequence
 
-The incoming-boundary, cycles and homology short exact sequence gives a map from
-first Tor of homology to the boundary module tensored with an arbitrary left
-coefficient. Its degree-zero comparison is the native left-derived comparison.
+Let R be an arbitrary ring, P a homological complex of right R-modules, and N a left R-module.
+For i=c.prev(j), write B_j=image(d_P(i,j)), Z_j for cycles, and H_j for homology. The short
+exact row 0→B_j→Z_j→H_j→0 gives the positive connecting map Tor₁^R(H_j,N)→B_j⊗_R N, followed by
+the degree-zero derived-to-tensor comparison.
 
-Exact tensor functors on the term and its outgoing image make the cycles module
-flat. The Tor boundary then identifies first Tor with the kernel of the tensor
-boundary inclusion. The complex shape and coefficient module are arbitrary.
-Native lifts retain independent carrier worlds and any common lift height.
+This map is killed by β_N:B_j⊗_R N→Z_j⊗_R N, and the Tor–tensor row is exact at B_j⊗_R N. If
+tensoring with P_j and its outgoing differential image preserves homology, the cycle Tor₁
+vanishes and the connecting map is mono. It then identifies Tor₁^R(H_j,N) with ker(β_N),
+retaining the connecting map as the kernel-inclusion composite.
+
+The core construction uses projective resolutions in both module categories at a common
+coefficient universe. Lifting a right complex in v and a left coefficient in w to W=max(u,v,w,t)
+gives independent-world factories at any further height t. The kernel factory tests the
+tensor-exactness conditions on the lifted term and lifted outgoing image.
 -/
 
 @[expose] public section
@@ -52,7 +58,13 @@ variable [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
 variable (P : HomologicalComplex (ModuleCat.{v} Rᵐᵒᵖ) c) (N : ModuleCat.{v} R)
   (i j : ι) (hi : c.prev j = i)
 
-/-- The native Tor boundary, followed by the canonical degree-zero comparison. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. The map
+δ:Tor₁^R(H_j,N)→B_j⊗_R N is the left-derived connecting morphism for the fixed-coefficient
+tensor functor, followed by its canonical degree-zero tensor comparison. It is a morphism of
+abelian groups. -/
 def torBoundary :
     ((ModuleCat.BalancedTensor.torFirst R 1).obj (P.homology j)).obj N ⟶
       ((ModuleCat.BalancedTensor.groupBifunctor R).obj (Abelian.image (P.d i j))).obj N := by
@@ -66,7 +78,11 @@ def torBoundary :
   change (F.leftDerived 1).obj S.X₃ ⟶ F.obj S.X₁
   exact LeftDerivedDelta.LDdelta F 0 S hS ≫ (F.leftDerivedZeroIsoSelf.app S.X₁).hom
 
-/-- The Tor boundary is killed by the actual tensor boundary inclusion. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. The positive boundary
+δ satisfies δ≫β_N=0 as a map Tor₁^R(H_j,N)→Z_j⊗_R N. -/
 @[reassoc]
 theorem torBoundary_comp_boundaryTensor :
     torBoundary R P N i j hi ≫
@@ -96,14 +112,24 @@ theorem torBoundary_comp_boundaryTensor :
     _ = 0 ≫ a₂ := congrArg (fun z => z ≫ a₂) hz
     _ = 0 := by simp only [zero_comp]
 
-/-- The Tor boundary and the tensor inclusion form an exact short complex. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. The short complex is
+Tor₁^R(H_j,N) --δ→ B_j⊗_R N --β_N→ Z_j⊗_R N, with zero composite supplied by the connecting-map
+relation. -/
 def torBoundaryTensorSequence : ShortComplex AddCommGrpCat.{v} :=
   ShortComplex.mk (torBoundary R P N i j hi)
     (((ModuleCat.BalancedTensor.groupBifunctor R).map
       (HomologicalComplex.boundaryCyclesMap P i j)).app N)
     (torBoundary_comp_boundaryTensor R P N i j hi)
 
-/-- The native degree-zero comparisons transport exactness to the tensor inclusion. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. The short complex δ
+followed by β_N is exact at B_j⊗_R N: image(δ)=ker(β_N). The statement does not require tensor
+exactness of P_j or the outgoing image. -/
 theorem torBoundaryTensorSequence_exact :
     (torBoundaryTensorSequence R P N i j hi).Exact := by
   let F : ModuleCat.{v} Rᵐᵒᵖ ⥤ AddCommGrpCat.{v} :=
@@ -127,7 +153,10 @@ theorem torBoundaryTensorSequence_exact :
         exact (e.hom.naturality S.f).symm)
   exact ShortComplex.exact_of_iso eT hExact
 
-/-- Every original complex map commutes with the Tor boundary and differential-image map. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, K,L right-module complexes of shape c and N a
+left module in v, with projective resolutions in both module categories. For i=c.prev(j) and
+φ:K→L, let B(φ):image(d_K(i,j))→image(d_L(i,j)) be its incoming-image map. Then
+Tor₁^R(H_jφ,N)≫δ_L=δ_K≫(B(φ)⊗id_N). -/
 theorem torBoundary_naturality
     {K L : HomologicalComplex (ModuleCat.{v} Rᵐᵒᵖ) c} (φ : K ⟶ L) :
     ((ModuleCat.BalancedTensor.torFirst R 1).map (HomologicalComplex.homologyMap φ j)).app N ≫
@@ -195,7 +224,13 @@ private theorem cyclesTorOneIsZero :
         ((ModuleCat.BalancedTensor.groupBifunctor R).obj
           (Abelian.image (P.d j (c.next j))))) B) N
 
-/-- Flatness earned on cycles makes the canonical Tor boundary injective. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. Assume the functors
+P_j⊗_R(-) and image(d_P(j,c.next(j)))⊗_R(-), from left R-modules in v to abelian groups in v,
+preserve homology. The cycle row 0→Z_j→P_j→image(d_P(j,c.next(j)))→0 gives Tor₁^R(Z_j,N)=0. The
+long exact sequence then makes δ:Tor₁^R(H_j,N)→B_j⊗_R N mono. -/
 theorem torBoundary_mono : Mono (torBoundary R P N i j hi) := by
   let F : ModuleCat.{v} Rᵐᵒᵖ ⥤ AddCommGrpCat.{v} :=
     (ModuleCat.BalancedTensor.groupBifunctor R).flip.obj N
@@ -214,7 +249,13 @@ theorem torBoundary_mono : Mono (torBoundary R P N i j hi) := by
   change Mono (LeftDerivedDelta.LDdelta F 0 S hS ≫ (F.leftDerivedZeroIsoSelf.app S.X₁).hom)
   infer_instance
 
-/-- First Tor of the actual homology module is the tensor boundary-inclusion kernel. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. Assume the functors
+P_j⊗_R(-) and image(d_P(j,c.next(j)))⊗_R(-), from left R-modules in v to abelian groups in v,
+preserve homology. The exact and monic connecting map gives E:Tor₁^R(H_j,N)≅ker(β_N). Its
+forward morphism is the kernel lift of δ, with E.hom≫kernel.ι=δ. -/
 def torBoundaryKernelIso :
     ((ModuleCat.BalancedTensor.torFirst R 1).obj (P.homology j)).obj N ≅
       kernel (((ModuleCat.BalancedTensor.groupBifunctor R).map
@@ -229,7 +270,13 @@ def torBoundaryKernelIso :
   let : IsIso k := isIso_of_mono_of_epi k
   exact asIso k
 
-/-- The forward kernel comparison recovers the original positive Tor boundary. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. Assume the functors
+P_j⊗_R(-) and image(d_P(j,c.next(j)))⊗_R(-), from left R-modules in v to abelian groups in v,
+preserve homology. For E:Tor₁^R(H_j,N)≅ker(β_N), one has E.hom≫kernel.ι(β_N)=δ. The canonical
+inclusion into B_j⊗_R N retains the chosen connecting map. -/
 @[reassoc]
 theorem torBoundaryKernelIso_hom_ι :
     (torBoundaryKernelIso R P N i j hi).hom ≫
@@ -243,7 +290,13 @@ theorem torBoundaryKernelIso_hom_ι :
       kernel.ι _ = _
   exact kernel.lift_ι _ _ _
 
-/-- The inverse comparison followed by the boundary is the native kernel inclusion. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a complex of right R-modules in v, and N a
+left R-module in v. Assume both module categories in v have projective resolutions. Let
+i=c.prev(j), B_j=image(d_P(i,j)), Z_j=Z_j(P), and H_j=H_j(P). The boundary/cycle/homology row
+0→B_j --β→ Z_j→H_j→0 is short exact. Put β_N=β⊗_R id_N:B_j⊗_R N→Z_j⊗_R N. Assume the functors
+P_j⊗_R(-) and image(d_P(j,c.next(j)))⊗_R(-), from left R-modules in v to abelian groups in v,
+preserve homology. For E:Tor₁^R(H_j,N)≅ker(β_N), E.inv≫δ=kernel.ι(β_N) as maps ker(β_N)→B_j⊗_R
+N. -/
 @[reassoc]
 theorem torBoundaryKernelIso_inv_boundary :
     (torBoundaryKernelIso R P N i j hi).inv ≫ torBoundary R P N i j hi =
@@ -255,7 +308,10 @@ theorem torBoundaryKernelIso_inv_boundary :
 end Flat
 end Resolutions
 
-/-- The same native Tor boundary after independent module lifts to a common world. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a right-module complex in v, and N a left
+module in w. At any height t put W=max(u,v,w,t), and lift P termwise and N to W. For
+i=c.prev(j), the factory gives δ:Tor₁^R(H_j(P̃),Ñ)→image(d_{P̃}(i,j))⊗_R Ñ. The complex shape
+is unchanged. -/
 def torBoundaryAt
     (P : HomologicalComplex (ModuleCat.{v} Rᵐᵒᵖ) c) (N : ModuleCat.{w} R)
     (i j : ι) (hi : c.prev j = i) :
@@ -273,7 +329,11 @@ def torBoundaryAt
   let : HasProjectiveResolutions (ModuleCat.{max u v w t} R) := inferInstance
   exact torBoundary R PL NL i j hi
 
-/-- The kernel comparison in the actual common world needs only its lifted term and image. -/
+/-- Let R be a ring in u, c a complex shape on I in κ, P a right-module complex in v, and N a left
+module in w. At any height t, put W=max(u,v,w,t) and lift P,N termwise to P̃,Ñ in W. For
+i=c.prev(j), assume tensoring with P̃_j and image(d_{P̃}(j,c.next(j))) preserves homology on
+left modules in W. Then Tor₁^R(H_j(P̃),Ñ)≅ker(β_{Ñ}), where β is the incoming-boundary
+inclusion into cycles of the lifted complex. -/
 def torBoundaryKernelIsoAt
     (P : HomologicalComplex (ModuleCat.{v} Rᵐᵒᵖ) c) (N : ModuleCat.{w} R)
     (i j : ι) (hi : c.prev j = i)

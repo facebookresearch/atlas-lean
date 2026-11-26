@@ -15,12 +15,15 @@ module
 public import Mathlib.Algebra.Lie.BaseChange
 
 /-!
-# Scalar extension of Lie morphisms
+# Scalar extension of Lie algebra morphisms
 
-For a commutative ring algebra `R → S`, the native Lie bracket on
-`S ⊗[R] L` extends the original bracket on `L`. The unit sends `x` to
-`1 ⊗ x`. An `R`-Lie morphism extends to an `S`-Lie morphism through the
-native tensor linear map, preserving identity and composition.
+Let R,S be commutative rings with an R-algebra structure on S and L an R-Lie algebra. On S
+⊗[R] L the extended bracket satisfies [s ⊗ x,t ⊗ y] = st ⊗ [x,y]. The map x ↦ 1 ⊗ x is an
+R-Lie morphism from L to this scalar extension.
+
+For an R-Lie morphism f : L → L', its scalar extension is the S-Lie morphism s ⊗ x ↦ s ⊗ f(x).
+These maps preserve identities and composition. The two scalar and all Lie-carrier universes
+are independent.
 -/
 
 @[expose] public section
@@ -35,7 +38,10 @@ universe u v w w' w''
 
 variable (R : Type u) [CommRing R] (S : Type v) [CommRing S] [Algebra R S]
 
-/-- The original Lie algebra maps into its scalar extension by `x ↦ 1 ⊗ x`. -/
+/-- Lie morphism into scalar extension by the unit tensor.
+
+For a commutative R-algebra S and an R-Lie algebra L, define the R-Lie map L → S ⊗[R] L by x ↦
+1 ⊗ x. The extended bracket [s ⊗ x,t ⊗ y] = st ⊗ [x,y] makes this map bracket preserving. -/
 def baseChangeUnit (L : Type w) [LieRing L] [LieAlgebra R L] :
     L →ₗ⁅R⁆ S ⊗[R] L where
   toLinearMap := TensorProduct.mk R S L 1
@@ -44,7 +50,9 @@ def baseChangeUnit (L : Type w) [LieRing L] [LieAlgebra R L] :
     change (1 : S) ⊗ₜ[R] ⁅x, y⁆ = ⁅(1 : S) ⊗ₜ[R] x, (1 : S) ⊗ₜ[R] y⁆
     rw [LieAlgebra.ExtendScalars.bracket_tmul, one_mul]
 
-/-- The scalar-extension unit has the native pure-tensor value. -/
+/-- Value of the Lie scalar-extension unit.
+
+For x ∈ L, the map baseChangeUnit R S L takes x to 1 ⊗[R] x in the Lie algebra S ⊗[R] L. -/
 @[simp]
 theorem baseChangeUnit_apply (L : Type w) [LieRing L] [LieAlgebra R L] (x : L) :
     baseChangeUnit R S L x = (1 : S) ⊗ₜ[R] x := rfl
@@ -53,7 +61,10 @@ variable {L : Type w} [LieRing L] [LieAlgebra R L]
   {L' : Type w'} [LieRing L'] [LieAlgebra R L']
   {L'' : Type w''} [LieRing L''] [LieAlgebra R L'']
 
-/-- Extend an `R`-Lie morphism to an `S`-linear Lie morphism on the native scalar extensions. -/
+/-- Scalar extension of a Lie morphism.
+
+For f : L →ₗ⁅R⁆ L' and a commutative R-algebra S, extend its linear map to S ⊗[R] L → S ⊗[R]
+L'. The resulting S-Lie morphism sends s ⊗ x to s ⊗ f(x). -/
 def baseChange (f : L →ₗ⁅R⁆ L') : S ⊗[R] L →ₗ⁅S⁆ S ⊗[R] L' where
   toLinearMap := TensorProduct.AlgebraTensorModule.lTensor S S f.toLinearMap
   map_lie' := by
@@ -63,12 +74,17 @@ def baseChange (f : L →ₗ⁅R⁆ L') : S ⊗[R] L →ₗ⁅S⁆ S ⊗[R] L' w
         (LieAlgebra.ExtendScalars.map (AlgHom.id R S) f) y⁆
     exact (LieAlgebra.ExtendScalars.map (AlgHom.id R S) f).map_lie x y
 
-/-- Scalar extension leaves the scalar coefficient and applies the original Lie morphism. -/
+/-- Pure-tensor formula for a scalar-extended Lie morphism.
+
+For an R-Lie map f : L → L', scalar s ∈ S and x ∈ L, baseChange R S f takes s ⊗[R] x to s ⊗[R]
+f(x). The coefficient remains in the left tensor factor. -/
 @[simp]
 theorem baseChange_tmul (f : L →ₗ⁅R⁆ L') (s : S) (x : L) :
     baseChange R S f (s ⊗ₜ[R] x) = s ⊗ₜ[R] f x := rfl
 
-/-- Scalar extension carries the identity Lie morphism to the identity. -/
+/-- Identity law for Lie scalar extension.
+
+Scalar extension of the identity R-Lie map on L is the identity S-Lie map on S ⊗[R] L. -/
 @[simp]
 theorem baseChange_id :
     baseChange R S (LieHom.id : L →ₗ⁅R⁆ L) = LieHom.id := by
@@ -77,7 +93,10 @@ theorem baseChange_id :
   exact LinearMap.congr_fun
     (TensorProduct.AlgebraTensorModule.lTensor_id (R := R) (A := S) (M := S) (N := L)) x
 
-/-- Scalar extension preserves composition across independent Lie-carrier universes. -/
+/-- Composition law for Lie scalar extension.
+
+For R-Lie maps f : L → L' and g : L' → L'', baseChange(g ∘ f) = baseChange(g) ∘ baseChange(f)
+as S-Lie maps. The three Lie-carrier universes may be independent. -/
 @[simp]
 theorem baseChange_comp (f : L →ₗ⁅R⁆ L') (g : L' →ₗ⁅R⁆ L'') :
     baseChange R S (g.comp f) = (baseChange R S g).comp (baseChange R S f) := by

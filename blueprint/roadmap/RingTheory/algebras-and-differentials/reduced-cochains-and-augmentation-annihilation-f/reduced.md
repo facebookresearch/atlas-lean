@@ -1,4 +1,6 @@
-# Reduced
+# Reduction of a twisting cochain in its own maps
 
-Every twisting cochain is reduced in its own explicit coaugmentation and
-augmentation maps.
+Reduction of a twisting cochain in its own maps.
+
+For τ, the coaugmentation and augmentation vanishing fields give IsReducedCochain τ.coaug
+τ.aug τ.tau.

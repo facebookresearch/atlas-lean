@@ -1,4 +1,7 @@
-# Is Reduced Conv Nilpotent of trivial red Comul
+# Twisting-cochain nilpotence from a zero reduced coproduct
 
-Twisting-level wrapper: a twisting cochain over a trivial reduced
-comultiplication is reduced convolution-nilpotent.
+Twisting-cochain nilpotence from a zero reduced coproduct.
+
+For a twisting cochain τ, if IsRedComul τ.coaug b holds and b=0, then
+τ.IsReducedConvNilpotent. Its underlying cochain is reduced by the twisting fields, so its
+two-factor convolution vanishes.

@@ -1,6 +1,6 @@
-# Of trivial red Comul
+# Convolution nilpotence from a zero reduced coproduct
 
-Uniform stage-0 conilpotence-to-convolution bridge: when the reduced
-comultiplication itself vanishes, every reduced cochain is convolution
-nilpotent in one step. This is the strongest implication the public
-API supports; higher uniform stages need absent iterated multiplication.
+Convolution nilpotence from a zero reduced coproduct.
+
+If IsRedComul η b holds, b=0 and f is reduced for η,ε, then f⋆f=0. Consequently reducedConvPow
+f 1 vanishes and f is finite convolution nilpotent.

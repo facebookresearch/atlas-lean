@@ -1,3 +1,6 @@
-# Aug Hom
+# Bundled monoid augmentation of a twisting cochain
 
-Bundled augmentation as a monoid morphism to the trivial monoid.
+Bundled monoid augmentation of a twisting cochain.
+
+The map τ.aug and its monoid-preservation field define a morphism from the monoid A to the
+canonical tensor-unit monoid.

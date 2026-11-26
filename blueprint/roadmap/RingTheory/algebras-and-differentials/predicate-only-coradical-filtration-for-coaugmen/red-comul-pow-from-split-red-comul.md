@@ -1,4 +1,7 @@
-# Red Comul Pow From split red Comul
+# Block splitting of descended reduced-coproduct iterates
 
-Splitting for the descended `redComul`: binary coassociativity comes only
-from `redComul_coassoc`, with no extra hypothesis beyond `IsRedComul`.
+Block splitting of descended reduced-coproduct iterates.
+
+For ρ = redComul η b on Q = Coker(η), its coassociativity gives ρ^{[m+1+n]} followed by the
+power-splitting comparison equal to ρ ≫ (ρ^{[m]} ⊗ ρ^{[n]}). The factors have lengths m+1 and
+n+1.

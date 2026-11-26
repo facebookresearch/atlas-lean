@@ -13,17 +13,17 @@ public import MathlibExt.Algebra.Category.CommAlgCat.CotangentHigherForms
 public import MathlibExt.Algebra.Category.ModuleCat.ExteriorPower
 
 /-!
-# Canonical pushout of actual coefficient forms in every weight
+# Tensor pushout of coefficient forms in every weight
 
-Positive weights use the existing cotangent pushout map and the native
-exterior-power base-change isomorphism.  Weight zero is constructed separately
-from the original regular tensor unitors.  Its coefficient and operator are
-the literal ones from A ⊗[P] P, not a zero object or a higher-degree truncation.
+Let `k : Type u` and `K : Type w` be commutative rings with `Algebra k K`, `A :
+CommAlgCat.{max u v w} k`, and `B=K ⊗_k A`. For `P→A`, every coefficient-form weight has a
+natural comparison after pushout to `P_K=K ⊗_k P` over `B`.
 
-Every natural comparison is earned from these native maps.  No flatness or
-desired form/coherence isomorphism is an input.  This is a model comparison;
-the canonical derived base-change and higher Jacobi–Zariski theorems remain
-separate obligations.  Native validation is unexecuted.
+Weight zero is the regular tensor module `A ⊗_P P`. Its comparison uses the regular-module
+tensor unitors. Positive weights are identified with exterior powers of cotangent
+linearization; exterior-power base change and the cotangent pushout isomorphism give their
+comparisons. On differential words the coefficient becomes `b·j_A(a)` and each argument `p_i`
+becomes `j_P(p_i)`.
 -/
 
 @[expose] public section
@@ -44,7 +44,10 @@ attribute [local instance] Algebra.TensorProduct.rightAlgebra
 attribute [local instance] tensorGroundAlgebra tensorRightAlgebra
 attribute [local instance] overGroundAlgebra overRightAlgebra
 
-/-- Actual regular-module pushout in weight zero, with its original unit dictionary. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, `P∈Over A`, and `P_K=K ⊗_k P.left`. The
+isomorphism `zeroIso k K A P` identifies `B ⊗_A (A ⊗_{P.left} P.left)` with `B ⊗_{P_K} P_K`.
+It composes the two regular-module unitors with the coefficient-extension unitor `B ⊗_A A ≅
+B`. -/
 def zeroIso (P : Over A) :
     (moduleFunctor.{u, v, w} k K A).obj (cotangentHigherLevel.{u, max v w} k A 0 P) ≅
       cotangentHigherLevel.{w, max u v} K (target.{u, v, w} k K A) 0 ((overFunctor.{u, v, w} k K A).obj P) :=
@@ -53,7 +56,10 @@ def zeroIso (P : Over A) :
         (cotangentWeightZeroLevelIso.{w, max u v} K (target.{u, v, w} k K A)
           ((overFunctor.{u, v, w} k K A).obj P)).symm
 
-/-- The original weight-zero operators commute with the actual tensor pushout. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, and `f : P → Q` in `Over A`. For
+coefficient extension `E`, pushed-out source functor `F`, and weight-zero form maps `F⁰`,
+`E(F⁰(f)) ≫ zeroIso_Q.hom = zeroIso_P.hom ≫ F⁰_K(F.map f)`. These maps use the regular
+coefficient modules `A ⊗_P P` and `B ⊗_{P_K} P_K`. -/
 @[reassoc]
 theorem zeroIso_naturality {P Q : Over A} (f : P ⟶ Q) :
     (moduleFunctor.{u, v, w} k K A).map (cotangentHigherMap.{u, max v w} k A 0 f) ≫
@@ -94,13 +100,17 @@ theorem zeroIso_naturality {P Q : Over A} (f : P ⟶ Q) :
       exact (congrArg (fun m => F.map rP.hom ≫ e.hom ≫ m) h₁).trans
         ((congrArg (fun m => F.map rP.hom ≫ m) h₂.symm).trans h₃.symm)
 
-/-- The whole original weight-zero functor has its actual natural pushout comparison. -/
+/-- For commutative `k`-algebras `K,A` and `B=K ⊗_k A`, the weight-zero coefficient-form functor
+followed by extension `A→B` is naturally isomorphic to tensor pushout on `Over A` followed by
+the weight-zero functor over `K,B`. Its component is `zeroIso k K A P`. -/
 def zeroNatIso :
     cotangentHigherFunctor.{u, max v w} k A 0 ⋙ moduleFunctor.{u, v, w} k K A ≅
       overFunctor.{u, v, w} k K A ⋙ cotangentHigherFunctor.{w, max u v} K (target.{u, v, w} k K A) 0 :=
   NatIso.ofComponents (zeroIso.{u, v, w} k K A) (zeroIso_naturality.{u, v, w} k K A)
 
-/-- The weight-zero forward map is the original tensor/augmentation map. -/
+/-- Let `K,A` be commutative `k`-algebras, `P∈Over A`, `B=K ⊗_k A`, `b∈B`, `a∈A`, and `p∈P.left`.
+The forward weight-zero comparison sends `b ⊗_A (a ⊗_{P.left} p)` to `b·j_A(a) ⊗_{P_K}
+j_P(p)`, where `P_K=K ⊗_k P.left` and `j_A,j_P` are the right tensor inclusions. -/
 @[simp]
 theorem zeroIso_tmul (P : Over A) (b : target.{u, v, w} k K A) (a : A) (p : P.left) :
     letI : Algebra P.left A := CommAlgCat.cotangentAlgebra.{u, max v w} k A P
@@ -154,7 +164,9 @@ theorem zeroIso_tmul (P : Over A) (b : target.{u, v, w} k K A) (a : A) (p : P.le
     ((ModuleCat.hom_inv_apply rQ (e.hom (l x))).trans
       ((congrArg e.hom.hom hMap).trans (hRid.trans (hProducts.trans hQ.symm))))
 
-/-- The inverse retains the original weight-zero tensor representative. -/
+/-- Let `K,A` be commutative `k`-algebras, `P∈Over A`, and `B=K ⊗_k A`. For `b∈B` and `p∈P.left`,
+the inverse weight-zero comparison sends `b ⊗_{P_K} j_P(p)` to `b ⊗_A (1 ⊗_{P.left} p)`, using
+the induced source actions through the augmentations. -/
 @[simp]
 theorem zeroIso_inv_tmul (P : Over A) (b : target.{u, v, w} k K A) (p : P.left) :
     letI : Algebra P.left A := CommAlgCat.cotangentAlgebra.{u, max v w} k A P
@@ -181,7 +193,11 @@ theorem zeroIso_inv_tmul (P : Over A) (b : target.{u, v, w} k K A) (p : P.left) 
     simpa only [map_one, mul_one] using h
   exact (congrArg e.inv.hom hx).symm.trans (ModuleCat.inv_hom_apply e x)
 
-/-- Positive-weight pushout, obtained by whiskering only actual native equivalences. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, and `n : ℕ`. The weight-`n+1`
+coefficient-form functor followed by coefficient extension `A→B` is naturally isomorphic to
+source tensor pushout followed by the weight-`n+1` functor over `K,B`. The comparison
+identifies positive forms with exterior powers, applies exterior-power base change and the
+cotangent pushout isomorphism, then returns to the higher-form model. -/
 def positiveNatIso (n : ℕ) :
     cotangentHigherFunctor.{u, max v w} k A (n + 1) ⋙ moduleFunctor.{u, v, w} k K A ≅
       overFunctor.{u, v, w} k K A ⋙
@@ -199,7 +215,11 @@ def positiveNatIso (n : ℕ) :
     isoWhiskerLeft (overFunctor.{u, v, w} k K A)
       (cotangentHigherExteriorNatIso.{w, max u v} K (target.{u, v, w} k K A) (n + 1)).symm
 
-/-- Every original coefficient weight has its genuine natural pushout comparison. -/
+/-- Let `K,A` be commutative `k`-algebras and `B=K ⊗_k A`. For every `p : ℕ`, the coefficient-form
+functor of weight `p` over `k,A`, followed by extension `A→B`, is naturally isomorphic to
+source tensor pushout followed by the weight-`p` functor over `K,B`. Weight zero uses the
+regular tensor unitors; positive weights use exterior-power base change and the cotangent
+comparison. -/
 def higherNatIso (n : ℕ) :
     cotangentHigherFunctor.{u, max v w} k A n ⋙ moduleFunctor.{u, v, w} k K A ≅
       overFunctor.{u, v, w} k K A ⋙ cotangentHigherFunctor.{w, max u v} K (target.{u, v, w} k K A) n :=
@@ -207,13 +227,19 @@ def higherNatIso (n : ℕ) :
   | 0 => zeroNatIso.{u, v, w} k K A
   | n + 1 => positiveNatIso.{u, v, w} k K A n
 
-/-- The actual level isomorphism at each original algebra and coefficient weight. -/
+/-- For commutative `k`-algebras `K,A`, `B=K ⊗_k A`, `P∈Over A`, and `p : ℕ`, `higherIso k K A p
+P` identifies `B ⊗_A cotangentHigherLevel k A p P` with `cotangentHigherLevel K B p (P_K→B)`,
+where `P_K=K ⊗_k P.left`. It is the component of the all-weight natural comparison. -/
 def higherIso (n : ℕ) (P : Over A) :
     (moduleFunctor.{u, v, w} k K A).obj (cotangentHigherLevel.{u, max v w} k A n P) ≅
       cotangentHigherLevel.{w, max u v} K (target.{u, v, w} k K A) n ((overFunctor.{u, v, w} k K A).obj P) :=
   (higherNatIso.{u, v, w} k K A n).app P
 
-/-- Explicit positive component, with the original cotangent comparison in the middle. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, `P∈Over A`, and `p=n+1`. Write `φ_A,φ_B`
+for the positive-form/exterior-power identifications, `β` for exterior-power base change `B
+⊗_A ∧_A^p C ≅ ∧_B^p(B ⊗_A C)`, and `γ_P` for cotangent pushout. The forward weight-`p`
+comparison is `E(φ_A.hom) ≫ β.hom ≫ (∧_B^p γ_P.hom) ≫ φ_B.inv`, where `E=B ⊗_A -` and
+`C=cotangent k A P`. -/
 theorem higherIso_hom_succ (n : ℕ) (P : Over A) :
     (higherIso.{u, v, w} k K A (n + 1) P).hom =
       (moduleFunctor.{u, v, w} k K A).map (cotangentHigherExteriorIso.{u, max v w} k A (n + 1) P).hom ≫
@@ -305,7 +331,10 @@ theorem higherIso_hom_succ (n : ℕ) (P : Over A) :
   exact hChain.trans hMaps
 
 
-/-- Every positive-weight comparison retains the original exterior differential word. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, `P∈Over A`, `n : ℕ`, `b∈B`, `a∈A`, and `p
+: Fin(n+1) → P.left`. The forward weight-`n+1` map sends `b ⊗ (a ⊗ dp₀∧⋯∧dp_n)` to `b·j_A(a) ⊗
+d(j_P p₀)∧⋯∧d(j_P p_n)`, where `j_A,j_P` are the right tensor inclusions. The displayed order
+of differential factors is preserved. -/
 @[simp]
 theorem higherIso_tensor (n : ℕ) (P : Over A)
     (b : target.{u, v, w} k K A) (a : A) (p : Fin (n + 1) → P.left) :
@@ -382,7 +411,10 @@ theorem higherIso_tensor (n : ℕ) (P : Over A)
       ((congrArg (fun z => l₁ (eBase.hom z)) h₀).trans
         ((congrArg l₁.hom hBase).trans (h₁.trans hQ.symm))))
 
-/-- The inverse sends the actual unscaled pushout word back to its original representative. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, `P∈Over A`, `n : ℕ`, and `p : Fin(n+1) →
+P.left`. For `b∈B`, the inverse weight-`n+1` comparison sends the word with coefficient `b`
+and factors `d(j_P p_i)` to `b ⊗_A cotangentHigherTensor k A n P 1 p`. Thus the source word
+has coefficient one inside the outer coefficient tensor. -/
 @[simp]
 theorem higherIso_inv_tensor (n : ℕ) (P : Over A)
     (b : target.{u, v, w} k K A) (p : Fin (n + 1) → P.left) :
@@ -402,7 +434,10 @@ theorem higherIso_inv_tensor (n : ℕ) (P : Over A)
     simpa only [map_one, mul_one] using h
   exact (congrArg e.inv.hom hx).symm.trans (ModuleCat.inv_hom_apply e x)
 
-/-- The isomorphism is natural in each actual augmented algebra operator. -/
+/-- Let `K,A` be commutative `k`-algebras, `B=K ⊗_k A`, `p : ℕ`, and `f : P → Q` in `Over A`. For
+coefficient extension `E`, pushed-out algebra functor `F`, and form comparisons `η`,
+`E(cotangentHigherMap k A p f) ≫ η_Q.hom = η_P.hom ≫ cotangentHigherMap K B p (F.map f)`. This
+holds in weight zero and every positive weight. -/
 @[reassoc]
 theorem higherIso_naturality (n : ℕ) {P Q : Over A} (f : P ⟶ Q) :
     (moduleFunctor.{u, v, w} k K A).map (cotangentHigherMap.{u, max v w} k A n f) ≫

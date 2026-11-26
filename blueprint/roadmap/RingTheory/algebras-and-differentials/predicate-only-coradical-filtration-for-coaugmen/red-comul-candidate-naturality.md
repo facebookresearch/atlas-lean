@@ -1,8 +1,7 @@
-# Red Comul Candidate naturality
+# Naturality of compatible reduced coproduct data
 
-reduced-comultiplication candidate naturality for a comonoid morphism preserving the
-coaugmentation: expanding both full comultiplications by the two `IsRedComul`
-decompositions, the two coaugmentation legs and the double leg agree by unitor
-naturality, interchange, `hη`, and `hom_counit`, and additive cancellation
-leaves the reduced parts equal. This builds no category, functor, adjunction,
-or total object, and removes no stored naturality hypothesis elsewhere.
+Naturality of compatible reduced coproduct data.
+
+Let C,D be cochain comonoids with IsRedComul η_C b_C and IsRedComul η_D b_D. For a comonoid
+map u : C → D satisfying η_C ≫ u = η_D, u ≫ b_D = b_C ≫ (u ⊗ u). The reduced maps are
+determined by the full coproducts and coaugmentation terms.

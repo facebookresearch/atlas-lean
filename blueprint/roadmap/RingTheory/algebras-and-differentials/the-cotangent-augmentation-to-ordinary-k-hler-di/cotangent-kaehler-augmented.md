@@ -1,3 +1,6 @@
-# Cotangent Kaehler Augmented
+# Augmented simplicial cotangent model
 
-Its point and every simplicial component are the actual source constructions.
+Let `k` be a commutative ring and `A` a `k`-algebra. The augmented simplicial `A`-module
+`cotangentKaehlerAugmented k A` has left object the polynomial cotangent simplicial model at
+`A→A`, augmentation point `Ω_{A/k}`, and augmentation morphism `cotangentKaehlerAugmentation k
+A`.

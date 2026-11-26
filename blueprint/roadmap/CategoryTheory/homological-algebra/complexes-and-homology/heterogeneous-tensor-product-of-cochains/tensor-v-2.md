@@ -1,12 +1,8 @@
-# Tensor δ v
+# The component Leibniz rule for tensor cochains
 
-Component-level Leibniz rule for the heterogeneous tensor product of
-cochains: `δ` of `tensor f g` is `tensor (δ f) g` plus
-`(-1) ^ m • tensor f (δ g)`, as maps out of `(tensorObj C₁ C₂).X r`.
-
-Orientation follows the pinned `HomComplex.δ` (Conrad signs,
-`HomComplex.δ_comp`): differentiating a composite differentiates the right
-factor first, so the right/second-factor differential term carries `(-1) ^ m`
-where `m` is the left degree. The tensor Koszul sign stays `(-1) ^ (n * i₁)` on the
-`(i₁, i₂)`-summand, matching the pinned tensor-complex vertical sign
-`(up ℤ).ε` on the second factor (`ComplexShape.ε_up_ℤ`).
+Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. Let C₁,C₂,A₁,A₂ be integer cochain complexes and f:C₁→A₁, g:C₂→A₂
+homogeneous cochains of degrees m,n. Assume the tensor degree coproducts exist for the source
+pair C₁,C₂ and target pair A₁,A₂. For r+m+n+1=s, δ(f⊗g)_\{r,s\}=((δf)⊗g)_\{r,s\}+(-1)^m(f⊗δg)_\{r,s\},
+identifying (m+1)+n and m+(n+1) with m+n+1. The Hom differential on a degree-k cochain z has
+component z_p≫d_target+(-1)^\{k+1\}d_source≫z_\{p+1\}; the tensor sign is (-1)^\{np\}.

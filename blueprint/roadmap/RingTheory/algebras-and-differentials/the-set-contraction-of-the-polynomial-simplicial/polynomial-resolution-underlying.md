@@ -1,4 +1,6 @@
-# Polynomial Resolution Underlying
+# Underlying augmented simplicial set of the polynomial resolution
 
-The actual augmented simplicial set obtained by forgetting the polynomial
-augmented simplicial algebra.
+For a commutative ring `k : Type u` and `A : CommAlgCat.{max u v} k`,
+`polynomialResolutionUnderlying k A` is the augmented simplicial object in `Type(max u v)`
+obtained by applying the forgetful functor to `polynomialResolution k A`. Its augmentation
+point is the carrier of `A`.

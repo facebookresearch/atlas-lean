@@ -1,3 +1,6 @@
-# Normalized Resolution Augmentation quasi Iso of counit Section
+# Normalized comonad augmentation for an object with split counit
 
-A cotriple-projective object's actual normalized augmentation is a quasi-isomorphism.
+Normalized comonad augmentation for an object with split counit.
+
+In an abelian category, if s : P → G(P) satisfies s ≫ ε_P = id_P, the normalized augmentation
+α : N(Res_G(P)) → P[0] is a quasi-isomorphism.

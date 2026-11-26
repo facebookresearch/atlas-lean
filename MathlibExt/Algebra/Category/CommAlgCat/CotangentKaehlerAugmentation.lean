@@ -12,17 +12,21 @@ public import MathlibExt.Algebra.Category.CommAlgCat.PolynomialCotangentAugmenta
 public import Mathlib.Algebra.Homology.SingleHomology
 
 /-!
-# The actual cotangent augmentation to ordinary Kähler differentials
+# Cotangent augmentation to Kähler differentials
 
-The terminal object over `A` linearizes to `A ⊗[A] Ω[A/k]`. Its native
-scalar-extension unitor identifies this actual point with `Ω[A/k]`. Compose
-the actual polynomial cotangent augmentation with that unitor, then use the
-native Moore inclusion to obtain the genuine chain map to ordinary differentials.
+Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. Linearization of the
+terminal algebra over `A` is `A ⊗_A Ω_{A/k}`, identified with `Ω_{A/k}` by the
+scalar-extension unitor. The polynomial cotangent simplicial model augments to the constant
+simplicial module of ordinary differentials.
 
-Every component sends `a ⊗ dp` to `a · d(ε(p))`. No degree-zero identification
-or desired quasi-isomorphism is supplied by a caller.
+In degree `n`, the augmentation sends `a ⊗ d p` to `a·d(ε_n(p))`, where `ε_n` is the
+polynomial-resolution augmentation to `A`. Moore normalization gives a chain map to `Ω_{A/k}`
+concentrated in degree zero.
 
-Reference: Stacks Project 92.4.5; Loday 3.5.3–3.5.4.
+## References
+
+* Stacks Project, 92.4.5.
+* J.-L. Loday, *Cyclic Homology*, 3.5.3–3.5.4.
 -/
 
 @[expose] public section
@@ -38,7 +42,9 @@ namespace CommAlgCat
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- The terminal linearization is identified by the actual native unitor. -/
+/-- Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. The isomorphism
+`cotangentTerminalIso k A : cotangent k A (Over.mk (𝟙 A)) ≅ ModuleCat.of A
+(KaehlerDifferential k A)` is the scalar-extension unitor `A ⊗_A Ω_{A/k} ≅ Ω_{A/k}`. -/
 def cotangentTerminalIso :
     cotangent.{u, v} k A (Over.mk (𝟙 A)) ≅ ModuleCat.of A (KaehlerDifferential k A) :=
   by
@@ -54,7 +60,9 @@ theorem cotangentTerminalIso_unit (a : A) :
       (cotangentTensor.{u, v} k A (Over.mk (𝟙 A)) 1 a) = KaehlerDifferential.D k A a :=
   ModuleCat.extendScalarsId_hom_app_one_tmul _ _
 
-/-- The unitor preserves the original coefficient on the differential tensor. -/
+/-- For a commutative ring `k`, a `k`-algebra `A`, and `a,b∈A`, the terminal cotangent unitor
+sends `cotangentTensor k A (Over.mk (𝟙 A)) a b` to `a • KaehlerDifferential.D k A b`. Thus `a
+⊗ d b` maps to `a·d b`. -/
 theorem cotangentTerminalIso_tensor (a b : A) :
     (cotangentTerminalIso.{u, v} k A).hom.hom
       (cotangentTensor.{u, v} k A (Over.mk (𝟙 A)) a b) = a • KaehlerDifferential.D k A b := by
@@ -67,7 +75,10 @@ theorem cotangentTerminalIso_tensor (a b : A) :
       (TensorProduct.smul_tmul' a (1 : A) (KaehlerDifferential.D k A b)).symm
   rw [h, map_smul, cotangentTerminalIso_unit]
 
-/-- The actual simplicial cotangent augmentation to ordinary differentials. -/
+/-- Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. The morphism
+`cotangentKaehlerAugmentation k A` runs from the polynomial cotangent simplicial module at
+`Over.mk (𝟙 A)` to the constant simplicial `A`-module `Ω_{A/k}`. It composes the polynomial
+cotangent augmentation with the terminal cotangent unitor. -/
 def cotangentKaehlerAugmentation :
     (polynomialCotangentSimplicialFunctor.{u, v} k A).obj (Over.mk (𝟙 A)) ⟶
       (SimplicialObject.const (ModuleCat.{max u v} A)).obj
@@ -75,13 +86,19 @@ def cotangentKaehlerAugmentation :
   (polynomialCotangentAugmented.{u, v} k A (Over.mk (𝟙 A))).hom ≫
     (SimplicialObject.const (ModuleCat.{max u v} A)).map (cotangentTerminalIso.{u, v} k A).hom
 
-/-- Its point and every simplicial component are the actual source constructions. -/
+/-- Let `k` be a commutative ring and `A` a `k`-algebra. The augmented simplicial `A`-module
+`cotangentKaehlerAugmented k A` has left object the polynomial cotangent simplicial model at
+`A→A`, augmentation point `Ω_{A/k}`, and augmentation morphism `cotangentKaehlerAugmentation k
+A`. -/
 def cotangentKaehlerAugmented : SimplicialObject.Augmented (ModuleCat.{max u v} A) where
   left := (polynomialCotangentSimplicialFunctor.{u, v} k A).obj (Over.mk (𝟙 A))
   right := ModuleCat.of A (KaehlerDifferential k A)
   hom := cotangentKaehlerAugmentation.{u, v} k A
 
-/-- The literal normalized cotangent chain map to ordinary differentials. -/
+/-- For a commutative ring `k : Type u` and `A : CommAlgCat.{max u v} k`,
+`cotangentKaehlerNormalizedAugmentation k A` is a chain map from `cotangentComplex k A` to
+`Ω_{A/k}` concentrated in degree zero. It is the Moore-complex inclusion followed by the
+alternating-face augmentation of `cotangentKaehlerAugmented k A`. -/
 def cotangentKaehlerNormalizedAugmentation :
     cotangentComplex k A ⟶
       (ChainComplex.single₀ (ModuleCat.{max u v} A)).obj
@@ -90,7 +107,10 @@ def cotangentKaehlerNormalizedAugmentation :
       ((polynomialCotangentSimplicialFunctor.{u, v} k A).obj (Over.mk (𝟙 A))) ≫
     AlternatingFaceMapComplex.ε.app (cotangentKaehlerAugmented k A)
 
-/-- Every actual simplicial differential tensor follows the original evaluation map. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, `n : ℕ`, `a∈A`, and `p∈P_n` in its
+polynomial resolution. Writing `ε_n:P_n→A` for the resolution augmentation, the degree-`n`
+cotangent augmentation sends `a ⊗ d p` to `a • KaehlerDifferential.D k A (ε_n(p))` in
+`Ω_{A/k}`. -/
 theorem cotangentKaehlerAugmentation_tensor (n : ℕ) (a : A)
     (p : (polynomialResolution.{u, v} k A).left.obj (op ⦋n⦌)) :
     ((cotangentKaehlerAugmentation.{u, v} k A).app (op ⦋n⦌)).hom

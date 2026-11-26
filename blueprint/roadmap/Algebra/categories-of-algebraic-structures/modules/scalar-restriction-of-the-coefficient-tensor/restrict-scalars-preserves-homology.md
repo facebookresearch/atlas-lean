@@ -1,3 +1,5 @@
-# Restrict Scalars preserves Homology
+# Scalar restriction preserves homology
 
-The native scalar restriction functor is homology-preserving with no flatness premise.
+For commutative rings `R : Type u`, `S : Type w` with `Algebra R S`, the functor
+`ModuleCat.restrictScalars (algebraMap R S) : ModuleCat.{v} S → ModuleCat.{v} R` preserves
+homology. The ring and module-carrier universes are independent.

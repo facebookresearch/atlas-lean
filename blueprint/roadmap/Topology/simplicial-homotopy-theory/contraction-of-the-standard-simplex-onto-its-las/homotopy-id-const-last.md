@@ -1,7 +1,6 @@
-# Homotopy Id Const Last
+# Contraction of a standard simplex to its last vertex
 
-Cylinder homotopy from the identity of the standard simplex to the constant
-map at its last vertex.
-
-The cylinder map is the nerve cylinder of the unique natural transformation to
-the top vertex, transported across `SSet.stdSimplex.isoNerve`.
+For `n : ℕ`, a cylinder homotopy in `SSet.{u}` from `𝟙 Δ[n]` to the constant map at
+`obj₀Equiv.symm (Fin.last n)`. Its cylinder map `Δ[n] ⊗ Δ[1] ⟶ Δ[n]` is induced, through
+`isoNerve`, by the natural transformation from the identity of the finite ordinal to the
+constant functor at its last element.

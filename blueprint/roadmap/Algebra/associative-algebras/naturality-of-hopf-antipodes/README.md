@@ -1,4 +1,4 @@
 # Naturality of Hopf antipodes
 
-- [Comp antipode](comp-antipode.md)
-- [Map antipode](map-antipode.md)
+- [Linear-map equation for antipode compatibility](comp-antipode.md)
+- [Element formula for a bialgebra morphism and antipodes](map-antipode.md)

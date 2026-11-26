@@ -1,5 +1,7 @@
-# Exists is Pushout of lt
+# One boundary attachment inside a larger subcomplex
 
-A bounded one-cell attachment step: for `A < J`, attach one minimal missing
-nondegenerate simplex of `J` via a pushout from `∂Δ[n]`, yielding `A < B` with
-`B ≤ J` and the standard bicartesian square.
+One boundary attachment inside a larger subcomplex.
+
+For subcomplexes A < J of X, there exist B with A < B ≤ J, a natural dimension n and maps t :
+∂Δ[n] → A, b : Δ[n] → B such that the square (t,boundary inclusion,A → B,b) is a pushout. The
+construction attaches a minimal-dimensional nondegenerate simplex of J missing from A.

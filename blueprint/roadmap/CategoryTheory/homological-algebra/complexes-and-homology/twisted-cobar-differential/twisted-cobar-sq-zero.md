@@ -1,9 +1,8 @@
-# Twisted Cobar sq zero
+# The left-twisted differential squares to zero
 
-Square-zero of the left-twisted cobar differential from the Maurer–Cartan
-equation: two applications of `twistedCobarDifferential τ` annihilate any
-cochain. The middle terms cancel by `conv_leibniz` at degree one (the sign
-`(1 : ℤ).negOnePow = -1`), and the curvature factors on the left by
-`conv_assoc` and `conv_add_left` before `IsMaurerCartan` and `conv_zero_left`
-close the proof. Degree transports are all `by omega` at components, so no
-tensor-level descent is needed.
+Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. If a degree-one τ satisfies δτ+τ⋆τ=0, then Dₗ_τ(Dₗ_τf)=0 for every
+integer-degree cochain f:C→A. Here Dₗ_τf=δf+τ⋆f for |f|=n, and the second application has degree
+1+(1+n).

@@ -1,5 +1,6 @@
-# Red Comul
+# Reduced coproduct on a coaugmentation quotient
 
-Reduced comultiplication landing on the coaugmentation coideal: descends
-`Δbar ≫ π ⊗ π` through the cokernel projection. The obligation is
-`η ≫ Δbar = 0` transported past the tensorHom legs.
+Reduced coproduct on a coaugmentation quotient.
+
+For IsRedComul η b, let Q = Coker(η) with projection π : C → Q. The map b ≫ (π ⊗ π)
+annihilates η and therefore descends uniquely to ρ : Q → Q ⊗ Q. This defines redComul η b.

@@ -13,19 +13,15 @@ public import MathlibExt.Algebra.Category.CommAlgCat.ExtendScalars
 public import Mathlib.CategoryTheory.Adjunction.Basic
 
 /-!
-# The generic scalar-extension and restriction adjunction
+# Scalar extension and restriction of commutative algebras
 
-The left functor is the existing native tensor functor. The right functor
-is the existing scalar restriction. Their existing unit and counit satisfy
-the triangle identities on the actual tensor generators and original
-algebra elements. The native Adjunction structure then supplies the one
-hom correspondence used by all clients.
+Let `R : Type u` and `S : Type v` be commutative rings and `f : R →+* S`. On algebra carriers
+of universe `max u v w`, tensor scalar extension `A ↦ S ⊗_{R,f} A` is left adjoint to
+restriction of scalars.
 
-R and S have independent worlds, and the algebra carrier height is
-max u v w. No field, flatness, Small, or supplied adjunction is assumed.
-Native AlgCat readback has scalar restriction but no scalar-extension
-adjunction in its current Basic/Monoidal/Limits/TensorAlgebra owners.
-The proof uses the existing generic maps and native tensor universal map.
+The unit sends `a` to `1 ⊗ a`, and the counit sends `s ⊗ b` to `s·b` in an `S`-algebra `B`.
+Their triangle identities give the adjunction correspondence `Hom_S(S ⊗_R A,B) ≅ Hom_R(A,Res_f
+B)`.
 -/
 
 @[expose] public section
@@ -41,7 +37,9 @@ namespace CommAlgCat
 
 variable {R : Type u} {S : Type v} [CommRing R] [CommRing S] (f : R →+* S)
 
-/-- Native tensor extension is left adjoint to original scalar restriction. -/
+/-- Let `R : Type u` and `S : Type v` be commutative rings and `f : R →+* S`. On commutative
+algebras of carrier universe `max u v w`, `extendScalars f ⊣ restrictScalars f`. The unit is
+`a ↦ 1 ⊗ a`, and the counit is `s ⊗ b ↦ s·b`, giving `Hom_S(S ⊗_R A,B) ≅ Hom_R(A,Res_f B)`. -/
 def extendRestrictScalarsAdj :
     extendScalars.{u, v, w} f ⊣ restrictScalars f where
   unit := extendScalarsUnit f
@@ -88,11 +86,15 @@ def extendRestrictScalarsAdj :
       (extendScalarsUnit_app f ((restrictScalars f).obj B) b)).trans
         (extendRestrictScalarsCounit_one_tmul f B b)
 
-/-- The generic tensor functor has its earned native left-adjoint structure. -/
+/-- For commutative rings `R : Type u`, `S : Type v`, and `f : R →+* S`, the functor
+`extendScalars.{u,v,w} f` is a left adjoint on carriers of universe `max u v w`. Its right
+adjoint is `CommAlgCat.restrictScalars f`. -/
 instance extendScalars_isLeftAdjoint : (extendScalars.{u, v, w} f).IsLeftAdjoint :=
   (extendRestrictScalarsAdj f).isLeftAdjoint
 
-/-- Original scalar restriction has its earned native right-adjoint structure. -/
+/-- For commutative rings `R : Type u`, `S : Type v`, and `f : R →+* S`, `restrictScalars f :
+CommAlgCat.{max u v w} S → CommAlgCat.{max u v w} R` is a right adjoint. Its left adjoint is
+tensor scalar extension `extendScalars.{u,v,w} f`. -/
 instance restrictScalars_isRightAdjoint :
     (restrictScalars f : CommAlgCat.{max u v w} S ⥤ CommAlgCat.{max u v w} R).IsRightAdjoint :=
   (extendRestrictScalarsAdj.{u, v, w} f).isRightAdjoint

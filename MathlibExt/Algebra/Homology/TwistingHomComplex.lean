@@ -14,57 +14,14 @@ module
 public import MathlibExt.Algebra.Homology.TwistingDifferential
 
 /-!
-# Two-sided twisting Hom complex
+# The additive twisting Hom complex
 
-This file packages the two-sided twisting differential
-`twistedDifferential` and its square-zero theorem as a
-`CochainComplex AddCommGrpCat ℤ` on the pinned `HomComplex C A` graded
-carrier, under exactly a Maurer--Cartan hypothesis.
+Let C be a dg coalgebra and A a dg algebra over a commutative ring R. For a Maurer–Cartan
+cochain τ of degree one, D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ is additive in degree n and squares to zero.
 
-For `τ : Cochain C A 1` with `IsMaurerCartan τ` and `f : Cochain C A n`,
-the differential is `twistedDifferential τ f` in degree `n + 1`, with the
-single inherited cast via `add_comm 1 n`. No new graded carrier is built,
-and no ModuleCat linearity is claimed: each differential is an
-`AddMonoidHom` assembled from the existing additivity and zero laws.
-
-## Grading and sign conventions
-
-Cohomological grading throughout, following the two-sided twisting differential:
-`τ : Cochain C A 1`, `twistedDifferential τ f = δ f + cast (τ ⋆ f) -
-(-1) ^ n • (f ⋆ τ)` landing in `n + 1`. The sign is the graded commutator
-with `|τ| = 1`, exactly as in `TwistingDifferential.lean`. The bundled
-complex reuses `ComplexShape.up ℤ`, so `d n m` vanishes unless `n + 1 = m`
-and `d` composes to zero by `twistedDifferential_sq_zero`.
-
-## Declaration inventory
-
-* `twistedDifferential_add`: additivity of the two-sided perturbation,
-  from pinned `HomComplex.δ_add`, `conv_add_left/right`, cast
-  distribution by cases, and scalar addition.
-* `twistedDifferentialHom`: each differential as an `AddMonoidHom`,
-  `if h : n + 1 = m` then the cast perturbation else `0`.
-* `twistedHomComplex`: bundled `CochainComplex AddCommGrpCat ℤ` under
-  `IsMaurerCartan τ`, with `shape` from the `ite_eq_right` branch and
-  `d_comp_d'` from `twistedDifferential_sq_zero`.
-* `twistedHomComplex_X`: object computation lemma.
-* `twistedHomComplex_d_apply`: differential-application computation lemma
-  with the explicit `if` and single cast.
-
-## Nonclaims
-
-No adjunction, no twisting-cochain bijection, no free or cofree object, no
-conilpotence or completeness hypothesis, no totalization, no derived or
-Koszul result, no operadic result, no model-categorical result, no
-realization result, and no KQ-dependent consequence is claimed here. No
-ModuleCat linearity is claimed; differentials are additive homomorphisms
-only.
-
-## Import justification
-
-`TwistingDifferential` supplies `twistedDifferential`,
-`twistedDifferential_zero`, `twistedDifferential_sq_zero`, and transitively
-the pinned `HomComplex` API, `conv` with its additivity and zero laws, and
-`IsMaurerCartan`. No further import is needed for the packaging.
+The twisting Hom complex has degree-n abelian group Hom^n(C,A), differential D_τ from n to n+1,
+and zero differential to every other degree. The underlying cochains and their integer grading
+are retained.
 -/
 
 @[expose] public section
@@ -90,9 +47,13 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Additivity of the two-sided twisting differential, from the pinned
-differential additivity, convolution additivity, cast distribution,
-and scalar addition. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For f,g∈Hom^n(C,A),
+D_τ(f+g)=D_τ(f)+D_τ(g). The identity holds for any degree-one τ. -/
 theorem twistedDifferential_add {n : ℤ}
     (τ : HomComplex.Cochain C A 1)
     (f g : HomComplex.Cochain C A n) :
@@ -111,10 +72,14 @@ theorem twistedDifferential_add {n : ℤ}
   rw [hcast_add (add_comm 1 n), smul_add]
   abel
 
-/-- Each two-sided twisting differential as an additive homomorphism:
-when `n + 1 = m` the cast perturbation, otherwise `0`. The inner cast
-orientation `add_comm 1 n` is inherited unchanged from
-`twistedDifferential`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For n,m∈ℤ, the additive map
+Hom^n(C,A)→Hom^m(C,A) is D_τ transported through n+1=m when that equality holds, and is zero
+otherwise. -/
 noncomputable def twistedDifferentialHom
     (τ : HomComplex.Cochain C A 1) (n m : ℤ) :
     HomComplex.Cochain C A n →+ HomComplex.Cochain C A m where
@@ -136,9 +101,14 @@ noncomputable def twistedDifferentialHom
       rfl
     · simp only [dite_eq_right h, add_zero]
 
-/-- The bundled two-sided twisting Hom complex under exactly a
-Maurer--Cartan hypothesis, on the pinned `HomComplex` carrier. The complex
-relation is discharged by `twistedDifferential_sq_zero`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. If δτ+τ⋆τ=0, the ℤ-cochain complex
+has abelian-group term Hom^n(C,A), differential D_τ:n→n+1, and zero outside that relation. The
+MC equation gives the complex square-zero law. -/
 noncomputable def twistedHomComplex
     (τ : HomComplex.Cochain C A 1) (hMC : IsMaurerCartan τ) :
     CochainComplex AddCommGrpCat ℤ where
@@ -163,7 +133,11 @@ noncomputable def twistedHomComplex
         ModuleCat.Hom.hom (g.v p q hpq) x) hSq
     exact hW
 
-/-- Object computation lemma for the twisting Hom complex. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For Maurer–Cartan τ and n∈ℤ, the
+degree-n object of the additive twisting Hom complex is the abelian group Hom^n(C,A). -/
 @[simp]
 theorem twistedHomComplex_X (τ : HomComplex.Cochain C A 1)
     (hMC : IsMaurerCartan τ) (n : ℤ) :
@@ -171,8 +145,13 @@ theorem twistedHomComplex_X (τ : HomComplex.Cochain C A 1)
       AddCommGrpCat.of (HomComplex.Cochain C A n) :=
   rfl
 
-/-- Differential-application computation lemma for the twisting Hom complex,
-with the explicit `if` and single cast. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For Maurer–Cartan τ, n,m∈ℤ, and
+f∈Hom^n(C,A), d_{n,m}(f) is D_τ(f) transported to m if n+1=m, and zero if n+1≠m. -/
 @[simp]
 theorem twistedHomComplex_d_apply (τ : HomComplex.Cochain C A 1)
     (hMC : IsMaurerCartan τ) (n m : ℤ)

@@ -1,8 +1,8 @@
-# Map
+# Compatible coalgebra and algebra maps preserve reduced Maurer–Cartan bundles
 
-Reducedness is preserved by the bundled Maurer–Cartan map under explicit
-augmentation compatibility: `η' ≫ ψ = η` on the coalgebra side and
-`φ ≫ ε' = ε` on the algebra side. The proof reassociates the degree-zero
-`ofHom` factors with the pinned cochain associativity lemmas, folds them with
-`ofHom_comp`, rewrites with the two compatibility equalities, then closes with
-the two vanishing hypotheses via `comp_zero` / `zero_comp`.
+Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. Let I be the tensor unit and x be reduced in η:I→C,ε:A→I. For
+coalgebra map ψ:C'→C, algebra map φ:A→B, and cochain maps η':I→C',ε':B→I satisfying η'≫ψ=η and
+φ≫ε'=ε, the mapped bundle x.map ψ φ is reduced in η',ε'.

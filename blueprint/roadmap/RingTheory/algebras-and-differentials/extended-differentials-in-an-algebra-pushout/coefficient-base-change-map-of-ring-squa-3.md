@@ -1,3 +1,7 @@
-# Coefficient Base Change Map Of Ring Square bijective of pushout
+# Bijectivity of structural coefficient differential base change
 
-The original ring-square map is bijective when its algebra square is a pushout.
+Bijectivity of structural coefficient differential base change.
+
+Under the algebra pushout k,K,P,Q and compatible coefficient towers, the scalar-extended
+differential map of coefficientPushoutRingSquare is bijective. Its value agrees with
+coefficientPushoutEquiv.

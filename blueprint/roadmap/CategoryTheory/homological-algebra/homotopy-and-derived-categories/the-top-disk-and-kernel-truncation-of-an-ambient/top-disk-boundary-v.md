@@ -1,3 +1,8 @@
-# Top Disk Boundary v
+# Positive differential formula for the negative boundary
 
-The boundary coordinate has the positive original differential sign.
+Let E be preadditive with a zero object and binary biproducts,
+and K a bounded integer cochain complex. t is the selected upper endpoint of K’s support witness.
+Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
+
+For p+1=q, the negative boundary has component h_{p,q}=f₀,q∘d_K(p,q), with positive differential sign.

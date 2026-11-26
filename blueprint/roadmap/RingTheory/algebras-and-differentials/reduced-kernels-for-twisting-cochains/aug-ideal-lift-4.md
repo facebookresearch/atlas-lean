@@ -1,3 +1,5 @@
-# Aug Ideal lift ι
+# Inclusion equation for a twisting augmentation factor map
 
-Computation for the twisting-cochain augmentation lift.
+Inclusion equation for a twisting augmentation factor map.
+
+For f annihilated by τ.aug, τ.augIdeal_lift f followed by the inclusion Ker(τ.aug) → A is f.

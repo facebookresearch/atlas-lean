@@ -1,3 +1,7 @@
-# Agreement of the two augmented data conversions
+# Equality of functorial and direct augmented-data conversions
 
-The functorial and direct conversions give the same actual augmented object.
+Equality of functorial and direct augmented-data conversions.
+
+For augmented simplicial data X, applying toSimplicialFunctor to X yields
+X.toSimplicialAugmented. The equality preserves the converted simplicial diagram, augmentation
+point and entire augmentation transformation.

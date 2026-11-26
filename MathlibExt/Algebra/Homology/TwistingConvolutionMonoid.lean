@@ -15,71 +15,24 @@ public import MathlibExt.Algebra.Homology.TwistingConvolutionLaws
 public import MathlibExt.Algebra.Homology.TensorUnitor
 
 /-!
-# Convolution monoid laws
+# Associativity and units of graded convolution
 
-Built on `TwistingConvolutionLaws.lean`. This file proves the
-dependency-closed infrastructure plus the three public laws
-`CochainComplex.conv_assoc`, `CochainComplex.conv_one_left`, and
-`CochainComplex.conv_one_right`. No `conv`/`convOne` redefinition, no `Monoid`
-instance, and no
-bar/cobar/totalization/EZ-AW/Koszul/operad/model-category material.
+Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps.
 
-## Sources and conventions
+For homogeneous cochains f,g:C→A of degrees m,n, convolution is f⋆g=μ_A(f⊗g)Δ_C. On a source
+summand of degrees p,q, the tensor has Koszul factor (-1)^{np}. Convolution satisfies
+(f⋆g)⋆h=f⋆(g⋆h) after identifying the two associations of the integer total degree.
 
-Standard reference: Loday–Vallette, *Algebraic Operads*, Grundlehren 346
-(2012), convolution `μ ∘ (f ⊗ g) ∘ Δ`; signs via pinned `up ℤ`
-(`ComplexShape.ε_up_ℤ`) and `HomComplex.δ_comp` as implemented in
-`TwistingCochain.lean`. Exact printed
-section/sign match not verified; none claimed. See
-`MathlibExt/RingTheory/DifferentialGraded/TwistingCochain.lean` for the full
-convention map and `TwistingConvolutionLaws.lean` for `tensorCochain_assoc`,
-`conv_leibniz`, and `convOne`.
+The degree-zero unit is e=ε_C≫η_A, using the coalgebra counit C→I and algebra unit I→A. The
+complex I is concentrated in degree zero, hence e_i=0 for i≠0. The tensors e⊗f and f⊗e are
+determined by their (0,r) and (r,0) summands. The counit and algebra unit equations reduce these
+summands through the corresponding complex unitors, giving e⋆f=f and f⋆e=f after identifying
+0+n=n and n+0=n.
 
-## Declaration inventory
-
-* `conv_eq` (private): `conv` unfolded to heterogeneous `Cochain.tensor`
-  via `tensorCochain_eq_tensor`, for reuse by the associativity and unit
-  proofs below.
-* `convOne_vanish` (private): `convOne` vanishes in nonzero degree (factors
-  through the tensor-unit graded object, `isZero_single_obj_X`).
-* `tensor_comp_tensor_three` (private): triple interchange through
-  heterogeneous tensors by double `tensor_comp_tensor`, with combined Koszul
-  sign; reusable in the associativity proof below.
-* `conv_one_left_transport` (private): verified cochain-level left-unit
-  ingredients (slide components, unit-degree interchange, graded unitor,
-  cast computation) for the surviving degree-zero summand, consumed by
-  `conv_one_left` below.
-* `conv_one_left` (public): convolution left unit up to `zero_add` transport,
-  via the one-sided middle interchange plus inner support-collapse of
-  `tensor (ofHom one) f` and the `ModuleCat` unitor assembly
-  (`ιTensorObj_tensorHom`, `ιTensorObj_leftUnitor_hom`, unitor naturality).
-* `conv_one_right` (public): mirror right unit up to `add_zero` transport.
-
-## Unit-law proof path (both sides closed)
-
-Each side factors `tensor convOne f` / `tensor f convOne` through the
-one-sided middle interchange (`ofHom_tensorHom_comp_tensor` at unit degrees),
-collapses the inner `tensor (ofHom one)` to its degree-zero survivor
-(`one_vanish_general` kills every nonzero summand), and closes the surviving
-`ModuleCat` composite with the generator formulas from `TensorUnitor`
-(`ιTensorObj_tensorHom`, `ιTensorObj_leftUnitor_hom` /
-`ιTensorObj_rightUnitor_hom`) plus unitor naturality. No new associativity
-beyond the existing `conv_assoc`, no bar-cobar/twisting adjunctions.
-
-## Nonclaims
-
-No homological (`down ℤ`) API, bar–cobar
-adjunction, twisting bijection, totalization, EZ/AW, derived/Koszul,
-operadic, or model-categorical result; no public unitor/cast bridge beyond the
-two unit transports above.
-
-## Import justification
-
-`TwistingConvolutionLaws` supplies `conv`/`convOne`/`tensorCochain_eq_tensor`
-and the graded tensor/chain-map API transitively; `TensorUnitor` supplies the
-generator formulas (`ιTensorObj_tensorHom`, `ιTensorObj_leftUnitor_hom`,
-`ιTensorObj_rightUnitor_hom`) consumed by the unit bridges; no bar/cobar
-imports.
+Reference: J.-L. Loday and B. Vallette, Algebraic Operads, Grundlehren 346 (2012).
 -/
 
 @[expose] public section
@@ -105,8 +58,11 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- `conv` unfolded to heterogeneous `Cochain.tensor` via
-`tensorCochain_eq_tensor`, for reuse by the associativity and unit proofs below. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For cochains f:C→A and g:C→A of integer degrees m,n, f⋆g is Δ_C≫(f⊗g)≫μ_A as a
+degree-(m+n) cochain C→A. The tensor on input degrees p,q contributes (-1)^{np}. -/
 private theorem conv_eq {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) :
     conv f g =
@@ -116,9 +72,12 @@ private theorem conv_eq {m n : ℤ} (f : HomComplex.Cochain C A m)
   unfold conv
   rw [tensorCochain_eq_tensor]
 
-/-- `convOne` vanishes in nonzero degree: it factors as counit followed by
-unit through the tensor-unit graded object, which is zero away from `0`
-(`isZero_single_obj_X`). Used by the unit support-collapse lemmas below. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For every integer i≠0, its component e_i:C_i→A_i is zero, since e factors
+through the tensor-unit complex concentrated in degree zero. -/
 private theorem convOne_vanish (i : ℤ) (hi : i ≠ 0) :
     (convOne (R := R) (C := C) (A := A)).v i i (by omega) = 0 := by
   unfold convOne
@@ -130,19 +89,11 @@ private theorem convOne_vanish (i : ℤ) (hi : i ≠ 0) :
   have hf0 : (ComonObj.counit (X := C)).f i = 0 := h0.eq_of_tgt _ _
   rw [hf0, zero_comp]
 
-/-- General support-collapse form of `convOne_vanish` for arbitrary target degree.
-
-For `convOne : Cochain C A 0`, the component at `(i, j)` with `i + 0 = j`
-vanishes whenever `i ≠ 0`. This is the smallest reusable bridge after
-`convOne_vanish`: heterogeneous tensor sums for `tensor convOne f` present
-general `(i₁, j)` indices, not just the diagonal `(i, i)`, so each summand
-with `i₁ ≠ 0` closes by this lemma before the one-sided interchange
-(`ofHom_tensorHom_comp_tensor` / `tensor_comp_ofHom_tensorHom`), the
-`counit_comul_hom` / `one_mul_hom` slides (`ofHom_counit_slide` /
-`ofHom_one_slide`), the cochain-level unitor transport lifting
-`leftUnitor'_inv`, and the degree cast `cochain_cast_v`.
-
-Consumed by `conv_one_left` and `conv_one_right` below via the APIs above. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For integers i,j with i+0=j and i≠0, the C_i→A_j component e_{i,j} is zero. -/
 private theorem convOne_vanish_general (i j : ℤ) (hij : i + (0 : ℤ) = j)
     (hi : i ≠ 0) :
     (convOne (R := R) (C := C) (A := A)).v i j hij = 0 := by
@@ -150,16 +101,12 @@ private theorem convOne_vanish_general (i j : ℤ) (hij : i + (0 : ℤ) = j)
   subst hj
   exact convOne_vanish i hi
 
-/-- Vanishing of non-degree-zero summands in `tensor convOne f`.
-
-For `f : HomComplex.Cochain C A n`, the `(i₁, i₂)`-summand of
-`HomComplex.Cochain.tensor convOne f` carries `convOne.v i₁ _ _`, which is
-`0` when `i₁ ≠ 0` by `convOne_vanish_general`. Hence the signed tensor factor
-vanishes. This is the descent half of reducing `tensor convOne f` to its
-`i₁ = 0` summand; the `mapBifunctorDesc`-to-singleton identification, the
-one-sided composition interchange, and the final unitor-around-`f`
-identification are consumed by `conv_one_left` below. No
-`IsComonHom`/`IsMonHom` hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. If f:C→A has integer degree n and p≠0, then (-1)^{np}(e_p⊗f_q)=0 as a map
+C_p⊗C_q→A_p⊗A_{q+n}, for every q. -/
 private theorem tensor_convOne_summand_vanish {n : ℤ}
     (f : HomComplex.Cochain C A n) (i₁ i₂ : ℤ) (hi₁ : i₁ ≠ 0) :
     (n * i₁).negOnePow •
@@ -170,18 +117,12 @@ private theorem tensor_convOne_summand_vanish {n : ℤ}
   rw [h0, MonoidalPreadditive.zero_tensor]
   simp
 
-/-- Support collapse of `tensor convOne f` to its surviving `i₁ = 0` summand.
-
-For `f : HomComplex.Cochain C A n`, precomposing
-`(HomComplex.Cochain.tensor convOne f).v r s hrs` with the `(i₁, i₂)`-inclusion
-vanishes whenever `i₁ ≠ 0`: `ι_mapBifunctorDesc` identifies the component with
-the signed summand, which is `0` by `tensor_convOne_summand_vanish`. Hence the
-desc is determined by its `i₁ = 0` (`i₂ = r`) summand; the singleton
-identification of the desc itself, the one-sided composition interchange
-(pinned `ofHom_tensorHom_comp_tensor`, instantiated in
-`conv_one_left_transport`), and the final unitor-around-`f` identification
-are consumed by `conv_one_left` below. No `IsComonHom`/`IsMonHom`
-hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n, r+0+n=s, p+q=r and p≠0, ι^C_{p,q,r}≫(e⊗f)_{r,s}=0. Here ι^C
+includes C_p⊗C_q in (C⊗C)_r, and (e⊗f)_{r,s} maps to (A⊗A)_s. -/
 private theorem tensor_convOne_support_collapse {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (0 + n) = s)
     (i₁ i₂ : ℤ) (hij : i₁ + i₂ = r) (hi₁ : i₁ ≠ 0) :
@@ -196,18 +137,13 @@ private theorem tensor_convOne_support_collapse {n : ℤ}
   rw [h0, MonoidalPreadditive.zero_tensor]
   simp
 
-/-- Singleton-desc identification for `tensor convOne f`.
-
-For `f : HomComplex.Cochain C A n`, every `(i₁, i₂)`-component of
-`(HomComplex.Cochain.tensor convOne f).v r s hrs` is determined by the
-surviving `i₁ = 0` summand: it vanishes when `i₁ ≠ 0` by
-`tensor_convOne_support_collapse`, and at `(0, r)` it equals the explicit
-signed summand (whose sign is `(n * 0).negOnePow`). This packages the descent
-half of the left-unit reduction; the one-sided composition interchange
-(instantiated in `conv_one_left_transport`), the `counit_comul_hom` /
-`one_mul_hom` slides (`ofHom_counit_slide` / `ofHom_one_slide`), and the final
-unitor-around-`f` identification are consumed by `conv_one_left` below. No
-`IsComonHom`/`IsMonHom` hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n and r+0+n=s, ι^C_{0,r,r}≫(e⊗f)_{r,s}=(e_0⊗f_r)≫ι^A_{0,r+n,s}; its
+sign is (-1)^{n·0}=1. For every p+q=r with p≠0, ι^C_{p,q,r}≫(e⊗f)_{r,s}=0. The inclusions belong
+to the respective source C⊗C and target A⊗A degree coproducts. -/
 private theorem tensor_convOne_desc_singleton {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (0 + n) = s) :
     (HomologicalComplex.ιMapBifunctor C C (curriedTensor (ModuleCat R))
@@ -226,23 +162,12 @@ private theorem tensor_convOne_desc_singleton {n : ℤ}
   exact ⟨by rw [HomComplex.Cochain.tensor_v, HomologicalComplex.ι_mapBifunctorDesc],
     fun i₁ i₂ hij hi₁ => tensor_convOne_support_collapse f r s hrs i₁ i₂ hij hi₁⟩
 
-/-- Vanishing of non-degree-zero summands in `tensor f convOne` (right-unit mirror).
-
-For `f : HomComplex.Cochain C A n`, the `(i₁, i₂)`-summand of
-`HomComplex.Cochain.tensor f convOne` carries `convOne.v i₂ _ _`, which is
-`0` when `i₂ ≠ 0` by `convOne_vanish_general`. The Koszul sign is
-`(0 * i₁).negOnePow` (second factor has degree `0`), hence trivially `1`;
-no braiding hypothesis is needed. This is the first descent step toward
-reducing `tensor f convOne` to its `i₂ = 0` summand.
-
-Reuses the left-unit architecture only where the degree-zero sign is valid.
-Consumed by `conv_one_right` below together with the support collapse to the
-`i₂ = 0` summand, the desc-to-singleton identification, the one-sided
-composition interchange, the cochain-level `comul_counit` / `mul_one` slides
-lifting `(ρ_ C).inv` / `(ρ_ A).hom`, and the right-unitor transport lifting
-`rightUnitor'_inv` with degree cast `cochain_cast_v` at `add_zero n`. No
-`IsComonHom`/`IsMonHom` or stronger monoid/comonoid hypothesis is
-introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. If f:C→A has integer degree n and q≠0, then (-1)^{0·p}(f_p⊗e_q)=0 as a map
+C_p⊗C_q→A_{p+n}⊗A_q, for every p. -/
 private theorem tensor_f_convOne_summand_vanish {n : ℤ}
     (f : HomComplex.Cochain C A n) (i₁ i₂ : ℤ) (hi₂ : i₂ ≠ 0) :
     (0 * i₁).negOnePow •
@@ -253,24 +178,12 @@ private theorem tensor_f_convOne_summand_vanish {n : ℤ}
   rw [h0, MonoidalPreadditive.tensor_zero]
   simp
 
-/-- Support collapse of `tensor f convOne` to its surviving `i₂ = 0` summand.
-
-For `f : HomComplex.Cochain C A n`, precomposing
-`(HomComplex.Cochain.tensor f convOne).v r s hrs` with the `(i₁, i₂)`-inclusion
-vanishes whenever `i₂ ≠ 0`: `ι_mapBifunctorDesc` identifies the component with
-the signed summand, which is `0` by `tensor_f_convOne_summand_vanish`. Hence the
-desc is determined by its `i₂ = 0` (`i₁ = r`) summand; the singleton
-identification of the desc itself, the one-sided composition interchange, and
-the final right-unitor-around-`f` identification are consumed by
-`conv_one_right` below.
-
-Index/order check: the surviving inclusion is `(r, 0)` via `add_zero r` (not
-`(0, r)`), since `i₁ + i₂ = r` with `i₂ = 0` forces `i₁ = r`. Sign check: the
-summand sign is `(0 * i₁).negOnePow` (second factor has degree `0`), hence
-trivially `1` on the survivor; no braiding hypothesis is needed. Reuses only
-pinned `tensor_v` and `ι_mapBifunctorDesc`, mirroring
-`tensor_convOne_support_collapse`. No `IsComonHom`/`IsMonHom` hypothesis is
-introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n, r+n+0=s, p+q=r and q≠0, ι^C_{p,q,r}≫(f⊗e)_{r,s}=0. Here ι^C
+includes C_p⊗C_q in (C⊗C)_r, and (f⊗e)_{r,s} maps to (A⊗A)_s. -/
 private theorem tensor_f_convOne_support_collapse {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (n + 0) = s)
     (i₁ i₂ : ℤ) (hij : i₁ + i₂ = r) (hi₂ : i₂ ≠ 0) :
@@ -285,17 +198,13 @@ private theorem tensor_f_convOne_support_collapse {n : ℤ}
   rw [h0, MonoidalPreadditive.tensor_zero]
   simp
 
-/-- Singleton-desc identification for `tensor f convOne`.
-
-For `f : HomComplex.Cochain C A n`, every `(i₁, i₂)`-component of
-`(HomComplex.Cochain.tensor f convOne).v r s hrs` is determined by the
-surviving `i₂ = 0` summand: it vanishes when `i₂ ≠ 0` by
-`tensor_f_convOne_support_collapse`, and at `(r, 0)` it equals the explicit
-signed summand (whose sign is `(0 * r).negOnePow`). This packages the descent
-half of the right-unit reduction; the one-sided composition interchange, the
-`comul_counit` / `mul_one` slides, and the final right-unitor-around-`f`
-identification are consumed by `conv_one_right` below. No
-`IsComonHom`/`IsMonHom` hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n and r+n+0=s, ι^C_{r,0,r}≫(f⊗e)_{r,s}=(f_r⊗e_0)≫ι^A_{r+n,0,s}; its
+sign is (-1)^{0·r}=1. For every p+q=r with q≠0, ι^C_{p,q,r}≫(f⊗e)_{r,s}=0. The inclusions belong
+to the respective source C⊗C and target A⊗A degree coproducts. -/
 private theorem tensor_f_convOne_desc_singleton {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (n + 0) = s) :
     (HomologicalComplex.ιMapBifunctor C C (curriedTensor (ModuleCat R))
@@ -322,18 +231,9 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] [MonObj A] [ComonObj C] in
-/-- Degree-cast computation for cochains: transporting a cochain along a degree
-equality computes at components by reusing the original component with the
-transported degree proof.
-
-Searched pinned `HomComplex.lean` (`Cochain`, `Triplet`, `mk`, `v`, `congr_v`,
-`ext`, `comp`, `ofHom`, `XIsoOfEq`), `HomComplexShift.lean` (`rightShift`,
-`leftShift`, `rightUnshift`, `leftUnshift`, `shift`), nearby
-`TwistingCochain.lean` (`conv`, `tensorCochain`, `convSummand`) and
-`TensorCochainCoherence.lean` (`tensor`, `tensor_v`,
-`ofHom_tensorHom_comp_tensor`, `tensor_comp_ofHom_tensorHom`, `tensor_assoc`):
-no pinned cochain degree-cast computation exists, so this smallest reusable
-bridge is added locally. -/
+/-- Over a commutative ring R, let C,A be integer cochain complexes and z:C→A a cochain of degree a.
+If a=b and r+b=s, the component of z regarded as a degree-b cochain is its C_r→A_s component
+with r+a=s. This is the canonical transport along the equality of integer degrees. -/
 private theorem cochain_cast_v {a b : ℤ} (hab : a = b)
     (z : HomComplex.Cochain C A a) (r s : ℤ) (hrs : r + b = s) :
     (cast (congrArg (HomComplex.Cochain C A) hab) z).v r s hrs =
@@ -341,33 +241,15 @@ private theorem cochain_cast_v {a b : ℤ} (hab : a = b)
   subst hab
   rfl
 
-/-- Right-unit transport ingredients for the surviving degree-zero summand.
-
-For `f : HomComplex.Cochain C A n`, the five components below are the
-verified cochain-level pieces that turn the surviving `i₂ = 0` summand of
-`conv f convOne` into `f`:
-* the `congr_v` component forms of the two right-unit slides (comultiplication/
-  counit side via pinned `ComonObj.comul_counit`, unit/multiplication side via
-  pinned `MonObj.mul_one`);
-* the one-sided interchange `ofHom_tensorHom_comp_tensor` at unit degrees
-  `(𝟙 C, 𝟙 C, f, convOne)`, pinning the exact rewrite shape consumed by the
-  `tensor f convOne` factorization;
-* the graded right-unitor expansion `HomologicalComplex.rightUnitor'_inv` at
-  `C`, identifying the surviving summand's
-  `(ρ_ _).inv ≫ ... ≫ ιTensorObj` pattern with `(rightUnitor' C).inv`;
-* the degree-cast computation `cochain_cast_v` at `add_zero n`, moving the
-  `cast (congrArg _ (add_zero n))` past `.v` (`n + 0` is not definitionally
-  `n`, so the cast proof is supplied by `omega` explicitly).
-
-Exact typed equality closed by `conv_one_right` below:
-`cast (congrArg (HomComplex.Cochain C A) (add_zero n)) (conv f convOne) = f`
-for `f : HomComplex.Cochain C A n`. It factors `tensor f convOne` through the
-one-sided middle interchange (`tensor_f_convOne_middle_interchange`),
-collapses the inner `tensor f (ofHom one)` to its `i₂ = 0` summand
-(`tensor_desc_singleton_one` with explicit `(0 * r).negOnePow` clearance),
-and closes the surviving `ModuleCat` composite with the `TensorUnitor`
-generator formulas plus right-unitor naturality. No `IsComonHom`/`IsMonHom`
-hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n and r+n+0=s, the following identities hold:
+(Δ_C≫(id_C⊗ε_C))_r=(ρ_C⁻¹)_r and ((id_A⊗η_A)≫μ_A)_s=(ρ_A)_s; (id_C⊗id_C)≫(f⊗e)=(id_C≫f)⊗(id_C≫e)
+as cochains. With I the tensor-unit complex and σ:I_0≅R,
+(ρ_C⁻¹)_r=ρ_{C_r}⁻¹≫(id_{C_r}⊗σ⁻¹)≫ι^{C,I}_{r,0,r}. Identifying n+0 with n leaves the C_r→A_s
+component of f⋆e unchanged. The unitors have directions ρ_X:X⊗I→X. -/
 private theorem conv_one_right_transport {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (n + 0) = s) :
     ((((HomComplex.Cochain.ofHom (ComonObj.comul (X := C))).comp
@@ -412,8 +294,12 @@ private theorem conv_one_right_transport {n : ℤ}
     cochain_cast_v (add_zero n) (conv f (convOne (R := R) (C := C) (A := A)))
       r s (by omega : r + n = s)⟩
 
-/-- `conv` at components via heterogeneous `Cochain.tensor`, for reuse by the
-associativity proof (triple-sum `hmid` with transports). -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For cochains f:C→A and g:C→A of degrees m,n, and r+m+n=s,
+(f⋆g)_{r,s}=(Δ_C)_r≫(f⊗g)_{r,s}≫(μ_A)_s. The middle tensor component has sign (-1)^{np} on the
+source summand of degrees p,q with p+q=r. -/
 private theorem conv_tensor_v {m n : ℤ} (f : HomComplex.Cochain C A m)
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (m + n) = s) :
     (conv f g).v r s hrs =
@@ -426,12 +312,8 @@ private theorem conv_tensor_v {m n : ℤ} (f : HomComplex.Cochain C A m)
     HomComplex.Cochain.ofHom_v, HomComplex.Cochain.ofHom_v,
     Category.assoc]
 
-/-- Degree transport for nested convolution: the outer `v`-degree of
-`conv (conv f g) h` rewrites to that of `conv f (conv g h)`.
-The `hmid` step assembles `tensorCochain_assoc`,
-`HomComplex.Cochain.tensor_assoc`, `ComonObj.comul_assoc`, and
-`MonObj.mul_assoc` through heterogeneous triple descs on top of this
-transport. -/
+/-- For arbitrary integers m,n,k,r,s, the equality r+((m+n)+k)=s implies r+(m+(n+k))=s. Thus the two
+associations of three homogeneous cochain degrees have the same source and target indices. -/
 private theorem conv_assoc_v_degree {m n p r s : ℤ}
     (hrs : r + ((m + n) + p) = s) : r + (m + (n + p)) = s := by
   omega
@@ -444,7 +326,8 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] in
-/-- Negation pushes through the left factor of `⊗ₘ`, from additivity. -/
+/-- Over a commutative ring R, let f:X₁→Y₁ and g:X₂→Y₂ be R-linear maps. Tensoring respects negation
+in the left factor: (-f)⊗g=-(f⊗g) as maps X₁⊗X₂→Y₁⊗Y₂. -/
 private lemma neg_tensorHom_left {X₁ Y₁ X₂ Y₂ : ModuleCat R}
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) : ((-f) ⊗ₘ g) = -((f ⊗ₘ g)) := by
   have h : ((-f) ⊗ₘ g) + ((f ⊗ₘ g)) = 0 := by
@@ -460,7 +343,8 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] in
-/-- Negation pushes through the right factor of `⊗ₘ`, from additivity. -/
+/-- Over a commutative ring R, let f:X₁→Y₁ and g:X₂→Y₂ be R-linear maps. Tensoring respects negation
+in the right factor: f⊗(-g)=-(f⊗g) as maps X₁⊗X₂→Y₁⊗Y₂. -/
 private lemma neg_tensorHom_right {X₁ Y₁ X₂ Y₂ : ModuleCat R}
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) : ((f ⊗ₘ (-g))) = -((f ⊗ₘ g)) := by
   have h : ((f ⊗ₘ (-g))) + ((f ⊗ₘ g)) = 0 := by
@@ -476,7 +360,8 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] in
-/-- A unit scalar pushes through the left factor of `⊗ₘ`. -/
+/-- Over a commutative ring R, let f:X₁→Y₁ and g:X₂→Y₂ be R-linear maps. For any k∈ℤˣ,
+(k•f)⊗g=k•(f⊗g) as maps X₁⊗X₂→Y₁⊗Y₂. -/
 private lemma tensorHom_units_smul_left {X₁ Y₁ X₂ Y₂ : ModuleCat R} (k : ℤˣ)
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) : ((k • f) ⊗ₘ g) = k • (f ⊗ₘ g) := by
   rcases Int.units_eq_one_or k with rfl | rfl
@@ -491,7 +376,8 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] in
-/-- A unit scalar pushes through the right factor of `⊗ₘ`. -/
+/-- Over a commutative ring R, let f:X₁→Y₁ and g:X₂→Y₂ be R-linear maps. For any k∈ℤˣ,
+f⊗(k•g)=k•(f⊗g) as maps X₁⊗X₂→Y₁⊗Y₂. -/
 private lemma tensorHom_units_smul_right {X₁ Y₁ X₂ Y₂ : ModuleCat R} (k : ℤˣ)
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) : ((f ⊗ₘ (k • g))) = k • (f ⊗ₘ g) := by
   rcases Int.units_eq_one_or k with rfl | rfl
@@ -506,23 +392,9 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] in
-/-- Heterogeneous tensor-of-composites interchange with the Koszul sign
-`(n₂ * m₁).negOnePow`.
-
-For `a₁ : Cochain C₁ A₁ m₁`, `b₁ : Cochain A₁ B₁ n₁`,
-`a₂ : Cochain C₂ A₂ m₂`, `b₂ : Cochain A₂ B₂ n₂`, composing the tensor
-products equals the signed tensor product of the composites: the left side
-carries the separate signs `(m₂ * i₁)` and `(n₂ * (i₁ + m₁))`, whose total is
-the right side outer sign `((m₂ + n₂) * i₁)` plus the interchange excess
-`(n₂ * m₁)`. Proved by descending with pinned `tensor_v`, `comp_v`,
-`mapBifunctor` descent/inclusion, `tensorHom_comp_tensorHom`, and the
-tensor-hom smul bridges above.
-
-Consumed by the triple-sum `hmid` step of `conv_assoc` below:
-`((conv f g).tensor h).v = (f.tensor (conv g h)).v` with transports, via
-`tensorCochain_assoc`, `HomComplex.Cochain.tensor_assoc`,
-`ComonObj.comul_assoc`, and `MonObj.mul_assoc` through heterogeneous triple
-descs (`mapBifunctor₁₂.hom_ext`, `ι_eq`, associator naturality). -/
+/-- Over a commutative ring R, let integer cochain complexes C₁,C₂,A₁,A₂,B₁,B₂ have tensor degree
+coproducts for each corresponding pair. For a₁:C₁→A₁, b₁:A₁→B₁, a₂:C₂→A₂ and b₂:A₂→B₂ of degrees
+m₁,n₁,m₂,n₂, (a₁⊗a₂)≫(b₁⊗b₂)=(-1)^{n₂m₁}((a₁≫b₁)⊗(a₂≫b₂)), identified in degree (m₁+n₁)+(m₂+n₂). -/
 private theorem tensor_comp_tensor {C₁ C₂ A₁ A₂ B₁ B₂ : CochainComplex (ModuleCat R) ℤ}
     {m₁ n₁ m₂ n₂ : ℤ}
     (a₁ : HomComplex.Cochain C₁ A₁ m₁) (b₁ : HomComplex.Cochain A₁ B₁ n₁)
@@ -575,28 +447,10 @@ omit [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensor₁₂Tensor X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   X₁.HasGoodTensorTensor₂₃ X₂ X₃] in
-/-- Triple interchange through heterogeneous tensors, by double `tensor_comp_tensor`.
-
-For three layers of tensor products, composing vertically equals the signed
-tensor product of the triple composites, with combined Koszul sign
-`(n₂ * m₁ + p₂ * (m₁ + n₁)).negOnePow`. Proved by rewriting the inner
-interchange with `tensor_comp_tensor`, pushing the unit scalar through
-composition (`units_smul_comp`), rewriting the outer interchange, then
-combining signs (`smul_smul`, `Int.negOnePow_add`).
-
-Reusable in the convolution associativity proof: after unfolding outer
-`conv` via `conv_tensor_v`, the middle `tensor (conv f g) h` is factored
-into triple-tensor comps before `tensorCochain_assoc`, `Cochain.tensor_assoc`,
-`ComonObj.comul_assoc`, `MonObj.mul_assoc`, associator naturality, and triple
-`mapBifunctor₁₂.hom_ext`/`ι_eq` close the `hmid` triple sum consumed by
-`conv_assoc` below.
-
-Heterogeneous factorization note: `tensor (conv f g) h` has outer `ofHom`
-(comul/mul, degree `0`) factors rather than tensors, so this triple-tensor
-interchange does not directly apply there; `Cochain.tensor_assoc`
-reassociation of `(tensor f g).tensor h` vs `tensor f (tensor g h)` through
-complex associators, plus `comul_assoc`/`mul_assoc` slides and triple-desc
-peeling, complete that step in `conv_assoc`. -/
+/-- Over a commutative ring R, let Cᵢ,Aᵢ,Bᵢ,Dᵢ for i=1,2 be integer cochain complexes, with tensor
+degree coproducts for each corresponding pair. For composable aᵢ:Cᵢ→Aᵢ, bᵢ:Aᵢ→Bᵢ, cᵢ:Bᵢ→Dᵢ of
+degrees mᵢ,nᵢ,kᵢ, the composite (a₁⊗a₂)≫(b₁⊗b₂)≫(c₁⊗c₂) equals
+(-1)^{n₂m₁+k₂(m₁+n₁)}((a₁≫b₁≫c₁)⊗(a₂≫b₂≫c₂)), after identifying the total degrees. -/
 private theorem tensor_comp_tensor_three {C₁ C₂ A₁ A₂ B₁ B₂ D₁ D₂ : CochainComplex (ModuleCat R) ℤ}
     {m₁ n₁ p₁ m₂ n₂ p₂ : ℤ}
     (a₁ : HomComplex.Cochain C₁ A₁ m₁) (b₁ : HomComplex.Cochain A₁ B₁ n₁)
@@ -618,19 +472,12 @@ private theorem tensor_comp_tensor_three {C₁ C₂ A₁ A₂ B₁ B₂ D₁ D�
   have h2 := tensor_comp_tensor (a₁.comp b₁ rfl) c₁ (a₂.comp b₂ rfl) c₂
   rw [h2, smul_smul, ← Int.negOnePow_add]
 
-/-- Heterogeneous left factorization of `tensor (conv f g) h`.
-
-The tensor of a convolution with a cochain factors through the triple tensor
-`tensor (tensor f g) h`, with degree-`0` `ofHom` outer factors
-`tensorHom comul 𝟙` and `tensorHom mul 𝟙`. Proved from `conv_eq` and the
-pinned pre/postcomposition factorizations
-`ofHom_tensorHom_comp_tensor` / `tensor_comp_ofHom_tensorHom`, closing the
-identity sides by `Cochain.id_comp` / `Cochain.comp_id`. Signs are trivial
-because the outer factors have degree `0`; the pure triple-tensor
-interchange (`tensor_comp_tensor_three`) is consumed by the subsequent
-`hmid` triple sum of `conv_assoc` below, together with the
-`Cochain.tensor_assoc` reassociation and the `comul_assoc` / `mul_assoc`
-slides. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For |f|=m, |g|=n and |h|=k, (f⋆g)⊗h=(Δ_C⊗id_C)≫((f⊗g)⊗h)≫(μ_A⊗id_A) in degree
+(m+n)+k. The degree-zero outer maps and the homogeneous tensor components carry the same Koszul
+signs as the convolution tensor. -/
 private theorem tensor_conv_factor_left {m n p : ℤ}
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n)
     (h : HomComplex.Cochain C A p) :
@@ -654,13 +501,12 @@ private theorem tensor_conv_factor_left {m n p : ℤ}
   have e_conv := (conv_eq f g).symm
   rw [e_pre, e_post, e_conv]
 
-/-- Heterogeneous right factorization of `tensor f (conv g h)`.
-
-Symmetric to `tensor_conv_factor_left`, with degree-`0` `ofHom` outer factors
-`tensorHom 𝟙 comul` and `tensorHom 𝟙 mul` around the triple tensor
-`tensor f (tensor g h)`. Same proof shape; `Cochain.tensor_assoc` and the
-`comul_assoc` / `mul_assoc` slides are consumed in the `hmid` step of
-`conv_assoc` below. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For |f|=m, |g|=n and |h|=k, f⊗(g⋆h)=(id_C⊗Δ_C)≫(f⊗(g⊗h))≫(id_A⊗μ_A) in degree
+m+(n+k). The degree-zero outer maps and the homogeneous tensor components carry the same Koszul
+signs as the convolution tensor. -/
 private theorem tensor_conv_factor_right {m n p : ℤ}
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n)
     (h : HomComplex.Cochain C A p) :
@@ -684,14 +530,11 @@ private theorem tensor_conv_factor_right {m n p : ℤ}
   have e_conv := (conv_eq g h).symm
   rw [e_pre, e_post, e_conv]
 
-/-- Cochain-level comultiplication slide for convolution associativity.
-
-Lifting `ComonObj.comul_assoc` through `Cochain.ofHom`: the right-associated
-outer comultiplication equals the left-associated outer comultiplication
-followed by the complex associator. All factors have degree `0`, so transports
-are `zero_add`. Proved from `ofHom_comp` and `comul_assoc`; the heterogeneous
-triple-descent combining this slide with `Cochain.tensor_assoc` is consumed
-by `conv_assoc` below. -/
+/-- Let R be a commutative ring and C a dg R-coalgebra, with integer grading. Assume all graded
+tensor coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the
+coproducts used for reassociation, and fourfold summand inclusions determine maps. The
+degree-zero cochains of the structure maps satisfy Δ_C≫(id_C⊗Δ_C)=Δ_C≫(Δ_C⊗id_C)≫α_C. Here
+α_C:(C⊗C)⊗C→C⊗(C⊗C) is the complex associator. -/
 private theorem ofHom_comul_slide :
     (HomComplex.Cochain.ofHom (ComonObj.comul (X := C))).comp
       (HomComplex.Cochain.ofHom (C ◁ ComonObj.comul (X := C))) (zero_add 0) =
@@ -708,13 +551,11 @@ private theorem ofHom_comul_slide :
   rw [HomComplex.Cochain.ofHom_comp] at hOf
   exact hOf
 
-/-- Cochain-level multiplication slide for convolution associativity.
-
-Lifting `MonObj.mul_assoc` through `Cochain.ofHom`: the left-associated outer
-multiplication equals the complex associator followed by the right-associated
-outer multiplication. All factors have degree `0`. Proved from `ofHom_comp`
-and `mul_assoc`; the heterogeneous triple-descent combining this slide with
-`Cochain.tensor_assoc` is consumed by `conv_assoc` below. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. The degree-zero cochains
+of the structure maps satisfy (μ_A⊗id_A)≫μ_A=α_A≫(id_A⊗μ_A)≫μ_A. Here α_A:(A⊗A)⊗A→A⊗(A⊗A) is the
+complex associator. -/
 private theorem ofHom_mul_slide :
     (HomComplex.Cochain.ofHom (MonObj.mul (X := A) ▷ A)).comp
       (HomComplex.Cochain.ofHom (MonObj.mul (X := A))) (zero_add 0) =
@@ -731,14 +572,11 @@ private theorem ofHom_mul_slide :
   rw [HomComplex.Cochain.ofHom_comp] at hOf
   exact hOf
 
-/-- Cochain-level counit slide for the convolution left unit.
-
-Lifting `ComonObj.counit_comul` through `Cochain.ofHom`: comultiplication
-followed by the counit whiskering equals the complex left unitor inverse.
-All factors have degree `0`. Proved from `ofHom_comp` and `counit_comul`;
-consumed by `conv_one_left` and `conv_one_right` below together with the
-heterogeneous support-collapse (`convOne_vanish`), one-sided interchange,
-and unitor transport lifting `leftUnitor'_inv`. -/
+/-- Let R be a commutative ring and C a dg R-coalgebra, with integer grading. Assume all graded
+tensor coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the
+coproducts used for reassociation, and fourfold summand inclusions determine maps. The
+degree-zero cochains satisfy Δ_C≫(ε_C⊗id_C)=λ_C⁻¹:C→I⊗C, where ε_C:C→I is the counit, I the
+tensor-unit complex concentrated in degree zero, and λ_C:I⊗C→C the left unitor. -/
 private theorem ofHom_counit_slide :
     (HomComplex.Cochain.ofHom (ComonObj.comul (X := C))).comp
       (HomComplex.Cochain.ofHom (ComonObj.counit (X := C) ▷ C)) (zero_add 0) =
@@ -749,14 +587,11 @@ private theorem ofHom_counit_slide :
   rw [HomComplex.Cochain.ofHom_comp] at hOf
   exact hOf
 
-/-- Cochain-level unit slide for the convolution left unit.
-
-Lifting `MonObj.one_mul` through `Cochain.ofHom`: the unit whiskering
-followed by multiplication equals the complex left unitor. All factors have
-degree `0`. Proved from `ofHom_comp` and `one_mul`; consumed by
-`conv_one_left` below via `conv_eq`, `convOne`, `counit_comul_hom` /
-`one_mul_hom`, and the cochain-level unitor transport lifting
-`leftUnitor'_inv` with degree cast `cochain_cast_v`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. The degree-zero cochains
+satisfy (η_A⊗id_A)≫μ_A=λ_A:I⊗A→A, where η_A:I→A is the algebra unit, I the tensor-unit complex
+concentrated in degree zero, and λ_A the left unitor. -/
 private theorem ofHom_one_slide :
     (HomComplex.Cochain.ofHom (MonObj.one (X := A) ▷ A)).comp
       (HomComplex.Cochain.ofHom (MonObj.mul (X := A))) (zero_add 0) =
@@ -773,16 +608,11 @@ omit [∀ (X : ModuleCat R),
   PreservesColimit (Functor.empty.{0} (ModuleCat R))
     ((curriedTensor (ModuleCat R)).flip.obj X)] [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [MonObj A] [ComonObj C] in
-/-- Triple-tensor reassociation for the convolution `hmid` step.
-
-This is `HomComplex.Cochain.tensor_assoc` specialized to the convolution
-triple (`C₁=C₂=C₃=C`, `A₁=A₂=A₃=A`). It relates the two triple tensors
-appearing after `tensor_conv_factor_left`/`tensor_conv_factor_right` through
-the complex associators; its `.v` form (via `Cochain.congr_v`) is the middle
-piece of the `hmid` triple sum consumed by `conv_assoc` below, together with
-the triple-descent peeling this reassociation with the outer
-`ofHom_comul_slide`/`ofHom_mul_slide` through heterogeneous triple descs
-(`mapBifunctor₁₂.hom_ext`, `ι_eq`) and associator naturality. -/
+/-- Let R be a commutative ring and C,A integer cochain complexes of R-modules. Assume all graded
+tensor coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the
+coproducts used for reassociation, and fourfold summand inclusions determine maps. For f,g,h:C→A
+of integer degrees m,n,k, ((f⊗g)⊗h)≫α_A=α_C≫(f⊗(g⊗h)), identifying (m+n)+k with m+(n+k). The
+complex associators go from (X⊗X)⊗X to X⊗(X⊗X), with X=C or A. -/
 private theorem tensor_assoc_hmid {m n p : ℤ}
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n)
     (h : HomComplex.Cochain C A p) :
@@ -795,27 +625,12 @@ private theorem tensor_assoc_hmid {m n p : ℤ}
       (by omega) := by
   exact HomComplex.Cochain.tensor_assoc f g h
 
-/-- Heterogeneous triple-descent middle equality for convolution associativity.
-
-The left-associated five-fold composite (outer `comul`/`comul ▷ C`, triple
-tensor `(tensor f g).tensor h`, outer `mul ▷ A`/`mul`) agrees at components
-with the right-associated five-fold composite (outer `comul`/`C ◁ comul`,
-triple tensor `tensor f (tensor g h)`, outer `A ◁ mul`/`mul`), up to the
-graded degree transport `conv_assoc_v_degree`.
-
-Proved by descending the outer degree-`0` composites with pinned `comp_v` /
-`zero_cochain_comp_v` / `comp_zero_cochain_v` / `ofHom_v`, peeling the middle
-triple tensor with `HomologicalComplex.mapBifunctor₁₂.hom_ext`,
-`HomologicalComplex.mapBifunctor₁₂.ι_eq`,
-`HomologicalComplex.mapBifunctor₂₃.ι_eq`, and closing the triple summands with
-`ofHom_comul_slide` / `ofHom_mul_slide` at `.f` level, `tensor_assoc_hmid`
-at triple-summand level, `MonoidalCategory.associator_naturality`, and the
-Koszul sign identity as in `tensor_assoc_sign`. No surrogate axiom, stronger
-hypothesis, or alternate convolution definition.
-
-Consumed by public graded `conv_assoc` below: the outer `conv` degrees
-`(m + n) + p` vs `m + (n + p)` differ by `add_assoc`; the `.v` transport is
-`conv_assoc_v_degree` and the cochain-level degree cast is `cochain_cast_v`. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For |f|=m, |g|=n, |h|=k and r+((m+n)+k)=s, the C_r→A_s components of
+Δ_C≫(Δ_C⊗id_C)≫((f⊗g)⊗h)≫(μ_A⊗id_A)≫μ_A and Δ_C≫(id_C⊗Δ_C)≫(f⊗(g⊗h))≫(id_A⊗μ_A)≫μ_A are equal.
+Their integer degrees are identified by associativity of addition. -/
 private theorem conv_assoc_hmid_middle_v {m n p r s : ℤ}
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n)
     (h : HomComplex.Cochain C A p)
@@ -869,15 +684,12 @@ private theorem conv_assoc_hmid_middle_v {m n p r s : ℤ}
     simp only [HomComplex.Cochain.ofHom_v]
     rw [Category.assoc]
 
-/-- Graded convolution associativity, up to the `add_assoc` degree transport.
-
-The transport uses only stdlib `cast`/`congrArg`; its computation is the local
-`cochain_cast_v` bridge above. After `Cochain.ext`, both sides unfold via
-`conv_tensor_v` and the `congr_v` forms of `tensor_conv_factor_left`/
-`tensor_conv_factor_right` to the five-fold composites of
-`conv_assoc_hmid_middle_v`, which closes the components (outer `tensorHom`
-factors are definitionally the `▷`/`◁` whiskerings by the pinned monoidal
-structure). No new convolution definition and no stronger hypotheses. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For homogeneous f,g,h:C→A of integer degrees m,n,k, (f⋆g)⋆h=f⋆(g⋆h) after
+transporting degree (m+n)+k to m+(n+k) by associativity of addition. Here f⋆g=μ_A(f⊗g)Δ_C, with
+tensor sign (-1)^{np} on left input degree p for |g|=n. -/
 theorem conv_assoc {m n p : ℤ}
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n)
     (h : HomComplex.Cochain C A p) :
@@ -922,31 +734,15 @@ theorem conv_assoc {m n p : ℤ}
   rw [eL, eR]
   exact conv_assoc_hmid_middle_v f g h (by omega : r + ((m + n) + p) = s)
 
-/-- Left-unit transport ingredients for the surviving degree-zero summand.
-
-For `f : HomComplex.Cochain C A n`, the five components below are the
-verified cochain-level pieces that turn the surviving `i₁ = 0` summand of
-`conv convOne f` into `f`:
-* the `congr_v` component forms of the two unit slides `ofHom_counit_slide`
-  (comultiplication/counit side) and `ofHom_one_slide`
-  (unit/multiplication side);
-* the one-sided interchange `ofHom_tensorHom_comp_tensor` at unit degrees
-  `(𝟙 C, 𝟙 C, convOne, f)`, pinning the exact rewrite shape consumed by the
-  `tensor convOne f` factorization;
-* the graded left-unitor expansion `HomologicalComplex.leftUnitor'_inv` at
-  `C`, identifying the surviving summand's
-  `(λ_ _).inv ≫ ... ≫ ιTensorObj` pattern with `(leftUnitor' C).inv`;
-* the degree-cast computation `cochain_cast_v` at `zero_add n`, moving the
-  `cast (congrArg _ (zero_add n))` past `.v`.
-
-Exact typed equality closed by `conv_one_left` below:
-`cast (congrArg (HomComplex.Cochain C A) (zero_add n)) (conv convOne f) = f`.
-It factors `tensor convOne f` through the one-sided middle interchange
-(`tensor_convOne_middle_interchange`), collapses the inner
-`tensor (ofHom one) f` to its `i₁ = 0` summand (`tensor_one_desc_singleton`),
-and closes the surviving `ModuleCat` composite with the `TensorUnitor`
-generator formulas plus unitor naturality. No `IsComonHom`/`IsMonHom`
-hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n and r+0+n=s, the following identities hold:
+(Δ_C≫(ε_C⊗id_C))_r=(λ_C⁻¹)_r and ((η_A⊗id_A)≫μ_A)_s=(λ_A)_s; (id_C⊗id_C)≫(e⊗f)=(id_C≫e)⊗(id_C≫f)
+as cochains. With I the tensor-unit complex and σ:I_0≅R,
+(λ_C⁻¹)_r=λ_{C_r}⁻¹≫(σ⁻¹⊗id_{C_r})≫ι^{I,C}_{0,r,r}. Identifying 0+n with n leaves the C_r→A_s
+component of e⋆f unchanged. The unitors have directions λ_X:I⊗X→X. -/
 private theorem conv_one_left_transport {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (0 + n) = s) :
     ((((HomComplex.Cochain.ofHom (ComonObj.comul (X := C))).comp
@@ -983,17 +779,13 @@ private theorem conv_one_left_transport {n : ℤ}
     cochain_cast_v (zero_add n) (conv (convOne (R := R) (C := C) (A := A)) f)
       r s (by omega : r + n = s)⟩
 
-/-- Unitor-assembly sign clearance for the surviving `i₁ = 0` summand.
-
-For `f : HomComplex.Cochain C A n`, the surviving component isolated by
-`tensor_convOne_desc_singleton` carries the Koszul sign `(n * 0).negOnePow`,
-which is `1`. Clearing it exposes the unsigned composite that the final
-unitor-around-`f` identification consumed through the existing one-sided
-interchange (`ofHom_tensorHom_comp_tensor` at unit degrees, as pinned in
-`conv_one_left_transport`), the slides `ofHom_counit_slide`/`ofHom_one_slide`,
-the graded expansion `HomologicalComplex.leftUnitor'_inv`, and the cast
-computation `cochain_cast_v`. Consumed by `conv_one_left` below; no
-`IsComonHom`/`IsMonHom` hypothesis is introduced. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For |f|=n and r+0+n=s,
+(-1)^{n·0}(e_0⊗f_r)≫ι^A_{0,r+n,s}=(e_0⊗f_r)≫ι^A_{0,r+n,s}. Here ι^A is the inclusion into
+(A⊗A)_s; the equality removes the Koszul sign on the zero first-index summand. -/
 private theorem tensor_convOne_surviving_sign {n : ℤ}
     (f : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (0 + n) = s) :
     (n * 0).negOnePow •
@@ -1005,10 +797,12 @@ private theorem tensor_convOne_surviving_sign {n : ℤ}
     HomologicalComplex.ιTensorObj A A (0 + 0) (r + n) s (by omega) := by
   simp
 
-/-- `ofHom one` vanishes in nonzero degree: it factors through the tensor-unit
-graded object, which is zero away from `0` (`isZero_single_obj_X`), via the
-source-zero side. Inner-collapse counterpart of `convOne_vanish` for the
-middle-interchange survivor `tensor (ofHom one) f`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. For every
+integer i≠0, the degree-zero cochain induced by η_A has zero I_i→A_i component, because I_i is
+zero. -/
 private theorem one_vanish (i : ℤ) (hi : i ≠ 0) :
     (HomComplex.Cochain.ofHom (MonObj.one (X := A))).v i i (by omega) = 0 := by
   rw [HomComplex.Cochain.ofHom_v]
@@ -1018,8 +812,11 @@ private theorem one_vanish (i : ℤ) (hi : i ≠ 0) :
       (𝟙_ (ModuleCat R)) i hi
   exact h0.eq_of_src _ _
 
-/-- General support-collapse form of `one_vanish` for arbitrary target degree,
-mirroring `convOne_vanish_general`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. For integers
+i,j with i+0=j and i≠0, the I_i→A_j component of the degree-zero unit cochain is zero. -/
 private theorem one_vanish_general (i j : ℤ) (hij : i + (0 : ℤ) = j)
     (hi : i ≠ 0) :
     (HomComplex.Cochain.ofHom (MonObj.one (X := A))).v i j hij = 0 := by
@@ -1028,9 +825,12 @@ private theorem one_vanish_general (i j : ℤ) (hij : i + (0 : ℤ) = j)
   exact one_vanish i hi
 
 omit [ComonObj C] in
-/-- Vanishing of non-degree-zero summands in `tensor (ofHom one) g`,
-mirroring `tensor_convOne_summand_vanish` for the inner middle-interchange
-tensor. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. Let C be any
+integer cochain complex and g:C→A have degree n. For p≠0 and any q, (-1)^{np}((η_A)_p⊗g_q)=0 as
+a map I_p⊗C_q→A_p⊗A_{q+n}. -/
 private theorem tensor_one_summand_vanish {n : ℤ}
     (g : HomComplex.Cochain C A n) (i₁ i₂ : ℤ) (hi₁ : i₁ ≠ 0) :
     (n * i₁).negOnePow •
@@ -1042,8 +842,13 @@ private theorem tensor_one_summand_vanish {n : ℤ}
   simp
 
 omit [ComonObj C] in
-/-- Support collapse of `tensor (ofHom one) g` to its surviving `i₁ = 0`
-summand, mirroring `tensor_convOne_support_collapse`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. Let C be any
+integer cochain complex and g:C→A have degree n. If r+0+n=s, p+q=r and p≠0, then
+ι^{I,C}_{p,q,r}≫(η_A⊗g)_{r,s}=0. The inclusion is into (I⊗C)_r, and the tensor component maps to
+(A⊗A)_s. -/
 private theorem tensor_one_support_collapse {n : ℤ}
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (0 + n) = s)
     (i₁ i₂ : ℤ) (hij : i₁ + i₂ = r) (hi₁ : i₁ ≠ 0) :
@@ -1061,8 +866,13 @@ private theorem tensor_one_support_collapse {n : ℤ}
   simp
 
 omit [ComonObj C] in
-/-- Singleton-desc identification for `tensor (ofHom one) g`, mirroring
-`tensor_convOne_desc_singleton`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. Let C be any
+integer cochain complex and g:C→A have degree n. For r+0+n=s,
+ι^{I,C}_{0,r,r}≫(η_A⊗g)_{r,s}=((η_A)_0⊗g_r)≫ι^A_{0,r+n,s}, with sign (-1)^{n·0}=1. For every
+p+q=r with p≠0, ι^{I,C}_{p,q,r}≫(η_A⊗g)_{r,s}=0. The target inclusions belong to (A⊗A)_s. -/
 private theorem tensor_one_desc_singleton {n : ℤ}
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (0 + n) = s) :
     (HomologicalComplex.ιMapBifunctor (𝟙_ (CochainComplex (ModuleCat R) ℤ)) C
@@ -1085,15 +895,13 @@ private theorem tensor_one_desc_singleton {n : ℤ}
   exact ⟨by rw [HomComplex.Cochain.tensor_v, HomologicalComplex.ι_mapBifunctorDesc],
     fun i₁ i₂ hij hi₁ => tensor_one_support_collapse g r s hrs i₁ i₂ hij hi₁⟩
 
-/-- One-sided middle interchange for `tensor convOne f` (left).
-
-Unfolds `convOne = (ofHom counit).comp (ofHom one)` then factors the tensor
-through the pinned `ofHom_tensorHom_comp_tensor` at `(counit, 𝟙)`. The Koszul
-excess is `(n * 0)` hence `1` by the same `simp` as
-`tensor_convOne_surviving_sign` (pinned `tensor_comp_tensor` sign with
-`m₁ = 0`); identity sides close by `Cochain.id_comp`. This exposes the exact
-`hC_v`/`hA_v` patterns (`ofHom_counit_slide`/`ofHom_one_slide` in `congr_v`
-form) after `conv_tensor_v`. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For a degree-n cochain f:C→A, e⊗f=(ε_C⊗id_C)≫(η_A⊗(id_C≫f)) as degree-(0+n)
+cochains C⊗C→A⊗A. The intermediate source is I⊗C, with I the tensor-unit complex concentrated in
+degree zero. -/
 private theorem tensor_convOne_middle_interchange {n : ℤ}
     (f : HomComplex.Cochain C A n) :
     HomComplex.Cochain.tensor (convOne (R := R) (C := C) (A := A)) f =
@@ -1115,19 +923,13 @@ private theorem tensor_convOne_middle_interchange {n : ℤ}
   rw [hid] at e_pre ⊢
   exact e_pre.symm
 
-/-- Convolution left unit, up to the `zero_add` degree transport.
-
-For `f : HomComplex.Cochain C A n`, casting `conv convOne f` along
-`zero_add n` gives `f`, via the one-sided middle interchange
-(`tensor_convOne_middle_interchange`), the inner support-collapse of
-`tensor (ofHom one) f` (`tensor_one_desc_singleton`), the slides
-`ofHom_counit_slide`/`ofHom_one_slide` in `congr_v` form, the graded
-expansion `HomologicalComplex.leftUnitor'_inv`, and the `ModuleCat` unitor
-assembly (`ιTensorObj_tensorHom`, `ιTensorObj_leftUnitor_hom`, unitor
-naturality) with the cast computation `cochain_cast_v`.
-
-No new associativity beyond the existing `conv_assoc`, no
-bar-cobar/twisting adjunctions, no derived/Koszul, no operads, no KQ. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For every homogeneous degree-n cochain f:C→A, e⋆f=f after identifying 0+n with
+n. Convolution is f⋆g=μ_A(f⊗g)Δ_C; in e⊗f the only surviving first input index is zero, so its
+Koszul sign is one. -/
 theorem conv_one_left {n : ℤ} (f : HomComplex.Cochain C A n) :
     cast (congrArg (HomComplex.Cochain C A) (zero_add n))
       (conv (convOne (R := R) (C := C) (A := A)) f) = f := by
@@ -1259,9 +1061,12 @@ theorem conv_one_left {n : ℤ} (f : HomComplex.Cochain C A n) :
   simp at ⊢
 
 omit [ComonObj C] in
-/-- Vanishing of non-degree-zero summands in `tensor g (ofHom one)`,
-right-mirror of `tensor_one_summand_vanish` for the inner middle-interchange
-tensor. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. Let C be any
+integer cochain complex and g:C→A have degree n. For q≠0 and any p, (-1)^{0·p}(g_p⊗(η_A)_q)=0 as
+a map C_p⊗I_q→A_{p+n}⊗A_q. -/
 private theorem tensor_summand_vanish_one {n : ℤ}
     (g : HomComplex.Cochain C A n) (i₁ i₂ : ℤ) (hi₂ : i₂ ≠ 0) :
     (0 * i₁).negOnePow •
@@ -1273,8 +1078,13 @@ private theorem tensor_summand_vanish_one {n : ℤ}
   simp
 
 omit [ComonObj C] in
-/-- Support collapse of `tensor g (ofHom one)` to its surviving `i₂ = 0`
-summand, right-mirror of `tensor_one_support_collapse`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. Let C be any
+integer cochain complex and g:C→A have degree n. If r+n+0=s, p+q=r and q≠0, then
+ι^{C,I}_{p,q,r}≫(g⊗η_A)_{r,s}=0. The inclusion is into (C⊗I)_r, and the tensor component maps to
+(A⊗A)_s. -/
 private theorem tensor_support_collapse_one {n : ℤ}
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (n + 0) = s)
     (i₁ i₂ : ℤ) (hij : i₁ + i₂ = r) (hi₂ : i₂ ≠ 0) :
@@ -1292,8 +1102,13 @@ private theorem tensor_support_collapse_one {n : ℤ}
   simp
 
 omit [ComonObj C] in
-/-- Singleton-desc identification for `tensor g (ofHom one)`, right-mirror of
-`tensor_one_desc_singleton`. -/
+/-- Let R be a commutative ring and A a dg R-algebra, with integer grading. Assume all graded tensor
+coproducts exist, tensoring preserves zero on both sides, tensoring commutes with the coproducts
+used for reassociation, and fourfold summand inclusions determine maps. Write I for the
+tensor-unit complex concentrated in degree zero and η_A:I→A for the algebra unit. Let C be any
+integer cochain complex and g:C→A have degree n. For r+n+0=s,
+ι^{C,I}_{r,0,r}≫(g⊗η_A)_{r,s}=(g_r⊗(η_A)_0)≫ι^A_{r+n,0,s}, with sign (-1)^{0·r}=1. For every
+p+q=r with q≠0, ι^{C,I}_{p,q,r}≫(g⊗η_A)_{r,s}=0. The target inclusions belong to (A⊗A)_s. -/
 private theorem tensor_desc_singleton_one {n : ℤ}
     (g : HomComplex.Cochain C A n) (r s : ℤ) (hrs : r + (n + 0) = s) :
     (HomologicalComplex.ιMapBifunctor C (𝟙_ (CochainComplex (ModuleCat R) ℤ))
@@ -1316,12 +1131,13 @@ private theorem tensor_desc_singleton_one {n : ℤ}
   exact ⟨by rw [HomComplex.Cochain.tensor_v, HomologicalComplex.ι_mapBifunctorDesc],
     fun i₁ i₂ hij hi₂ => tensor_support_collapse_one g r s hrs i₁ i₂ hij hi₂⟩
 
-/-- One-sided middle interchange for `tensor f convOne` (right mirror).
-
-Unfolds `convOne = (ofHom counit).comp (ofHom one)` then factors through the
-pinned `ofHom_tensorHom_comp_tensor` at `(𝟙, counit)`. Koszul excess `(0 * r)`
-is `1` by `simp`; identity sides by `Cochain.id_comp`/`comp_id`. Exposes the
-`comul_counit`/`mul_one` slides in `congr_v` form after `conv_tensor_v`. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For a degree-n cochain f:C→A, f⊗e=(id_C⊗ε_C)≫((id_C≫f)⊗η_A) as degree-(n+0)
+cochains C⊗C→A⊗A. The intermediate source is C⊗I, with I the tensor-unit complex concentrated in
+degree zero. -/
 private theorem tensor_f_convOne_middle_interchange {n : ℤ}
     (f : HomComplex.Cochain C A n) :
     HomComplex.Cochain.tensor f (convOne (R := R) (C := C) (A := A)) =
@@ -1343,25 +1159,12 @@ private theorem tensor_f_convOne_middle_interchange {n : ℤ}
   rw [hid] at e_pre ⊢
   exact e_pre.symm
 
-/-- Convolution right unit, up to the `add_zero` degree transport.
-
-For `f : HomComplex.Cochain C A n`, casting `conv f convOne` along
-`add_zero n` gives `f`, via the one-sided middle interchange
-(`tensor_f_convOne_middle_interchange`), the inner support-collapse of
-`tensor f (ofHom one)` (`tensor_desc_singleton_one` with explicit
-`(0 * r).negOnePow` clearance), the slides `ComonObj.comul_counit`/
-`MonObj.mul_one` in `congr_v` form, the graded expansion
-`HomologicalComplex.rightUnitor'_inv`, and the `ModuleCat` unitor assembly
-(`ιTensorObj_tensorHom`, `ιTensorObj_rightUnitor_hom`, right-unitor
-naturality) with the cast computation `cochain_cast_v`.
-
-Order check: the survivor is `(r, 0)` (not `(0, r)`), since `i₁ + i₂ = r`
-with `i₂ = 0` forces `i₁ = r`; the sign is `(0 * i₁).negOnePow` (second factor
-has degree `0`). Cast check: the public transport is `add_zero n`
-(`n + 0 = n`), matching `conv f convOne : Cochain C A (n + 0)`.
-
-No new associativity beyond the existing `conv_assoc`, no
-bar-cobar/twisting adjunctions, no derived/Koszul, no operads, no KQ. -/
+/-- Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For every homogeneous degree-n cochain f:C→A, f⋆e=f after identifying n+0 with
+n. Convolution is f⋆g=μ_A(f⊗g)Δ_C; the degree-zero right factor contributes Koszul sign one. -/
 theorem conv_one_right {n : ℤ} (f : HomComplex.Cochain C A n) :
     cast (congrArg (HomComplex.Cochain C A) (add_zero n))
       (conv f (convOne (R := R) (C := C) (A := A))) = f := by

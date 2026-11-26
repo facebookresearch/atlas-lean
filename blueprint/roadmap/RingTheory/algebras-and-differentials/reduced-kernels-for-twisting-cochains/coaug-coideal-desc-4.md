@@ -1,3 +1,6 @@
-# Coaug Coideal desc π
+# Projection equation for a twisting coaugmentation descendant
 
-Computation for the twisting-cochain coaugmentation desc.
+Projection equation for a twisting coaugmentation descendant.
+
+For k annihilating τ.coaug, the projection C → Coker(τ.coaug) followed by τ.coaugCoideal_desc
+k equals k.

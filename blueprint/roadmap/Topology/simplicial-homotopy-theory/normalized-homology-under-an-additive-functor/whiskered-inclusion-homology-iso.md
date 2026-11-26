@@ -1,3 +1,6 @@
-# Whiskered Inclusion Homology Iso
+# Homology isomorphism of the whiskered Moore inclusion
 
-Native target normalization gives the actual natural homology comparison.
+Homology isomorphism of the whiskered Moore inclusion.
+
+For a simplicial object Y and additive F between abelian categories, Moore inclusion on Y ⋙ F
+gives H_i(N(Y ⋙ F)) ≅ H_i(A(Y ⋙ F)), naturally in Y for every natural degree i.

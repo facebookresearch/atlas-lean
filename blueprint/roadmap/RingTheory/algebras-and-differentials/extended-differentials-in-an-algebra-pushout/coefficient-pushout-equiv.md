@@ -1,4 +1,6 @@
-# Coefficient Pushout Equiv
+# Coefficient Kähler equivalence from a structural algebra pushout
 
-An actual pushout earns the full coefficient linear equivalence.
-Only the structural algebra pushout is assumed; no desired comparison is input.
+Coefficient Kähler equivalence from a structural algebra pushout.
+
+For the pushout square k,K,P,Q and compatible coefficient towers through A,B, tensor
+cancellation and Ω_\{Q/K\} ≃ Q⊗[P]Ω_\{P/k\} give B⊗\[A\](A⊗[P]Ω_\{P/k\}) ≃ₗ[B] B⊗[Q]Ω_\{Q/K\}.

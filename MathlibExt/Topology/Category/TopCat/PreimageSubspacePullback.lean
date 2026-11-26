@@ -12,19 +12,14 @@ module
 public import MathlibExt.Topology.Category.TopCat.Subspace
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
-/-! # Canonical preimage-subspace pullback in `TopCat`
+/-! # Preimage subspaces and pullback squares
 
-Purpose: the preimage subspace with its restriction map and inclusions forms
-the categorical pullback of a subspace inclusion along an arbitrary map.
-
-Orientation: top edge is `subspaceMap` into `TopCat.of U`, left edge is the
-inclusion of `TopCat.of (f ⁻¹' U)` into `X`, right edge is the inclusion of
-`TopCat.of U` into `Y`, bottom edge is `f`. Commutativity is
-`subspaceMap_comp_subspaceIncl`.
-
-Nonclaims: no bundle, no chart, no descent, no varying-fiber comparison, no
-realization, no model-category instance, and no weak-equivalence result. No
-one-cell restriction theorem.
+For a continuous map `f : X → Y` and a subset `U ⊆ Y`, the subspace
+`f⁻¹(U)` is the pullback of the inclusion `U → Y` along `f`. Its maps
+are restriction to `U` and the inclusion into `X`. A pullback square
+can itself be restricted to the corresponding preimage subspaces, with
+the same continuous map between the ambient total spaces. All spaces
+here lie in the given universe `u`.
 -/
 
 @[expose] public section
@@ -37,8 +32,10 @@ namespace AlgebraicTopology
 
 variable {X Y : TopCat.{u}} (f : X ⟶ Y) (U : Set Y)
 
-/-- Top `subspaceMap`, left/right inclusions, bottom `f`: the preimage subspace is
-    the categorical pullback. -/
+/-- For topological spaces `X`, `Y` in universe `u`, a continuous map
+`f : X → Y` and any subset `U ⊆ Y`, the square with top map
+`f⁻¹(U) → U`, left and right subspace inclusions, and bottom map `f`
+is a categorical pullback in `TopCat`. -/
 theorem isPullback_preimageSubspace :
     IsPullback (subspaceMap f (fun _x hx => hx : Set.MapsTo f (f ⁻¹' U) U))
       (subspaceIncl (f ⁻¹' U)) (subspaceIncl U) f := by
@@ -80,12 +77,11 @@ theorem isPullback_preimageSubspace :
       ConcreteCategory.congr_hom h₂ w
     exact h2w
 
-/-- Restriction of a pullback square to canonical preimages.
-    Given `sq : IsPullback e₁ p₁ p b₁` and `⇑b₁ ⁻¹' U = U₁`, the square on
-    `⇑p₁ ⁻¹' U₁` and `⇑p ⁻¹' U` over `e₁` is a pullback.
-    Route: provider `isPullback_preimageSubspace` for canonical squares,
-    `paste_horiz` for the outer square, then `IsPullback.of_right` with the
-    `subspaceMap` composition equalities. -/
+/-- Let `E₁ → E`, `E₁ → B₁`, `E → B` and `B₁ → B` form a pullback
+square of topological spaces in universe `u`. If `U ⊆ B` and `U₁ ⊆ B₁`
+satisfy `b₁⁻¹(U) = U₁`, the induced map from `p₁⁻¹(U₁)` to `p⁻¹(U)`,
+together with the two subspace inclusions and the original map `E₁ → E`,
+again forms a pullback square. -/
 theorem isPullback_preimageSubspace_of_isPullback
     {E E₁ B B₁ : TopCat.{u}}
     {p : E ⟶ B} {p₁ : E₁ ⟶ B₁} {e₁ : E₁ ⟶ E} {b₁ : B₁ ⟶ B}

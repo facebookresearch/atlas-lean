@@ -1,4 +1,6 @@
-# Is Pullback preimage Subspace
+# Preimage subspaces are pullbacks of subspace inclusions
 
-Top `subspaceMap`, left/right inclusions, bottom `f`: the preimage subspace is
-   the categorical pullback.
+For topological spaces `X`, `Y` in universe `u`, a continuous map
+`f : X → Y` and any subset `U ⊆ Y`, the square with top map
+`f⁻¹(U) → U`, left and right subspace inclusions, and bottom map `f`
+is a categorical pullback in `TopCat`.

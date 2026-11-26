@@ -16,100 +16,21 @@ public import MathlibExt.RingTheory.DifferentialGraded.TwistingAugmentationFacto
 public import MathlibExt.RingTheory.DifferentialGraded.TwistingCochain
 
 /-!
-# Reduced convolution-nilpotence as the conilpotence-side prerequisite
+# Finite convolution nilpotence of homogeneous cochains
 
-This file packages finite reduced convolution-nilpotence of homogeneous
-cochains, the conilpotence-side prerequisite for twisting morphisms. It uses
-only the accepted `TwistingCochain`, `conv`, `Cochain.ofHom` /
-`Cochain.comp`, `TwistingAugmentationFactor` (`IsReducedCochain`,
-`conv_of_left`), `CoradicalFiltration` (`IsRedComul`), and the existing
-`(co)monoid` APIs.
+For a degree-m cochain f from a cochain comonoid C to a monoid A, define the degree/cochain
+pair P₀=(m,f) and Pₙ₊₁=(dₙ+m,fₙ⋆f) when Pₙ=(dₙ,fₙ). Thus the iteration starts at f and has n+1
+factors, accumulated on the left. Finite convolution nilpotence means fₙ=0 as a whole
+homogeneous cochain for some n.
 
-For `f : HomComplex.Cochain C A m`, `reducedConvPow f n` iterates the graded
-convolution `conv` (`f ⋆ g = μ ∘ (f ⊗ g) ∘ Δ`, assembled from
-`ComonObj.comul`, `tensorCochain`, and `MonObj.mul` via `Cochain.comp`).
-`IsReducedConvNilpotent f` holds when some reduced iterate vanishes. Every
-twisting cochain carries its underlying degree-`+1` cochain, so
-`TwistingCochain.IsReducedConvNilpotent` is the twisting-level wrapper. The
-zero cochain is nilpotent (`IsReducedConvNilpotent.zero`, via the accepted
-`conv_zero_left`).
+These degree-recorded iterates commute with monoid postcomposition and comonoid
+precomposition, and nilpotence is preserved by both. For compatible augmentation maps,
+reducedness of f implies reducedness of every iterate at its recorded degree.
 
-Reduced iterates are base-at-`f` and left-accumulating: `pow 0 = f` and
-`pow (n+1) = conv (pow n) f`. They are distinct from a unital monoid power
-(the degree-`0` unit `convOne` is non-reduced, so a unital tower belongs to a
-later convolution-monoid power API, not here), from `IsReducedCochain`
-(augmentation/coaugmentation vanishing, not iterate vanishing), from
-coalgebra-domain conilpotence (a coalgebra-side coradical condition, not a
-cochain iterate condition), and from adic completeness (augmentation-ideal
-powers, quotient tower, adic completion/comparison, and nilpotent completeness
-live in `AugIdealPowers`, `AugIdealQuotientTower`, `AugIdealAdicCompletion`,
-`AugIdealAdicComparison`, and `AugIdealNilpotentComplete`, not here).
-
-Primary source: no external source beyond pinned Mathlib and the explicit
-`TwistingCochain` API is used here; no match to a printed Loday–Vallette
-section or sign convention is claimed.
-
-## Declaration inventory
-
-* `reducedConvPow`: reduced iterated convolution powers as a degree-hiding
-  sigma (`0 ↦ f`, `n+1 ↦ conv (pow n) f`).
-* `IsReducedConvNilpotent`: finite reduced convolution-nilpotence
-  (`∃ n, pow n = 0`).
-* `TwistingCochain.IsReducedConvNilpotent`: wrapper for `τ.tau`.
-* `IsReducedConvNilpotent.zero`: the zero cochain is nilpotent.
-* `reducedConvPow_zero` / `reducedConvPow_succ`: unfolding lemmas.
-* `IsReducedCochain.reducedConvPow`: every sigma-valued reduced iterate of a
-  reduced cochain is reduced at its actual hidden degree, by induction through
-  `IsReducedCochain.conv_of_left`. Preservation only; not nilpotence/support.
-* `conv_eq_redComul_of_reduced`: one-step compatibility between full
-  convolution and reduced-bar convolution via the `IsRedComul` decomposition:
-  for reduced factors, `conv f g` equals `μ ∘ (f ⊗ g) ∘ Δbar`.
-* `IsReducedConvNilpotent.of_trivial_redComul`: uniform stage-0 bridge: when
-  the reduced comultiplication itself vanishes (`Δbar = 0`), every reduced
-  cochain is convolution-nilpotent in one step.
-* `TwistingCochain.isReducedConvNilpotent_of_trivial_redComul`: twisting-level
-  wrapper, via `TwistingCochain.reduced`.
-
-## Completeness lives elsewhere; comparison is deferred here
-
-Augmentation-ideal powers, quotient tower, adic completion, adic comparison,
-and nilpotent completeness are supplied by `AugIdealPowers`,
-`AugIdealQuotientTower`, `AugIdealAdicCompletion`, `AugIdealAdicComparison`,
-and `AugIdealNilpotentComplete`, not by this leaf. This leaf proves no
-completeness. Deferred here are only the convolution-nilpotence versus
-adic-completeness comparison and coideal-side completeness; no ideal/coideal
-monoid/comonoid structure is claimed. In particular, completeness is not
-encoded as nilpotence and not encoded as a retraction.
-
-## Nonclaims
-
-* No free/cofree (co)algebra objects, no universal-property fields, no
-  representability equivalence, no adjunction, no totalization, and no
-  derived/Koszul claim.
-* No `conv_assoc`, `conv_one_left` / `conv_one_right`: those are proved in
-  `TwistingConvolutionMonoid`, not here.
-* No conilpotence/completeness equivalence: that needs the deferred
-  infrastructure above.
-* Reducedness preservation along `reducedConvPow` is not nilpotence and not
-  support: it states every iterate is reduced, never that an iterate vanishes
-  or that convolution support is finite.
-* The bridge above is uniform stage-0 only (`Δbar = 0` as a morphism).
-  Pointwise `IsConilpotent` exhaustion alone does not imply a uniform bound,
-  so it does not imply `IsReducedConvNilpotent` without a finiteness hypothesis;
-  higher uniform stages need iterated multiplication and tensor-power coherence
-  that are absent here, and are deferred rather than stubbed.
-* No homological (`down ℤ`) API; everything is cohomological.
-
-## Import justification
-
-`TwistingCochain` supplies `conv`, the zero laws `conv_zero_left` and
-`conv_zero_right`, `tensorCochain_eq_tensor`, and the `TwistingCochain`
-structure. `TwistingAugmentationFactor` supplies `IsReducedCochain` and
-`IsReducedCochain.conv_of_left`. `CoradicalFiltration` supplies `IsRedComul`
-(and hence the honest comultiplication decomposition); it imports only
-`TwistingAugmentationFactor`, `TensorPowers`, and `ReducedKernels`, so this
-import is acyclic.
-All three direct imports are used below.
+If IsRedComul η b holds, reduced f,g satisfy f⋆g = μ_A∘(f⊗g)∘b. In particular, b=0 makes f⋆f
+zero for every reduced f and hence gives finite convolution nilpotence. This applies to the
+underlying cochain of a twisting cochain. The setting retains all integer degrees and the
+stated cochain tensor hypotheses.
 -/
 
 @[expose] public section
@@ -135,27 +56,36 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Reduced iterated convolution powers of a homogeneous cochain, with the
-degree hidden in a sigma: `0 ↦ f` and `n+1 ↦ conv (pow n) f`.
-Base-at-`f`, left-accumulating; not a unital monoid power. -/
+/-- Finite convolution iterates with their homogeneous degrees.
+
+For f of degree m, define P₀=(m,f). If Pₙ=(dₙ,fₙ), define Pₙ₊₁=(dₙ+m,fₙ⋆f). Each value is a
+pair of an integer degree and a cochain in that degree. -/
 noncomputable def reducedConvPow {m : ℤ} (f : HomComplex.Cochain C A m) :
     ℕ → Σ d : ℤ, HomComplex.Cochain C A d
   | 0 => ⟨m, f⟩
   | n + 1 => ⟨(reducedConvPow f n).1 + m, conv (reducedConvPow f n).2 f⟩
 
+/-- Initial degree-recorded convolution iterate.
+
+For a degree-m cochain f, reducedConvPow f 0 is the pair (m,f). -/
 @[simp] theorem reducedConvPow_zero {m : ℤ} (f : HomComplex.Cochain C A m) :
     reducedConvPow f 0 = ⟨m, f⟩ :=
   rfl
 
+/-- Successor degree-recorded convolution iterate.
+
+If reducedConvPow f n is (dₙ,fₙ), its successor is (dₙ+m,fₙ⋆f), with f of degree m on the
+right. -/
 @[simp] theorem reducedConvPow_succ {m : ℤ} (f : HomComplex.Cochain C A m) (n : ℕ) :
     reducedConvPow f (n + 1) =
       ⟨(reducedConvPow f n).1 + m, conv (reducedConvPow f n).2 f⟩ :=
   rfl
 
-/-- Every sigma-valued reduced-convolution iterate of a reduced cochain is
-reduced at its actual hidden degree, by induction consuming the induction
-hypothesis through `IsReducedCochain.conv_of_left` with arbitrary right
-factor `f`. Preservation only; not nilpotence and not support. -/
+/-- Reduction preserved by finite convolution iteration.
+
+Assume a comonoid structure on I, η : I → C a comonoid morphism and ε : A → I a monoid
+morphism. If f is reduced for η,ε, then every cochain component of reducedConvPow f n is
+reduced at its recorded integer degree. -/
 theorem IsReducedCochain.reducedConvPow {m : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -170,9 +100,11 @@ theorem IsReducedCochain.reducedConvPow {m : ℤ}
     rw [reducedConvPow_succ]
     exact IsReducedCochain.conv_of_left _ ih
 
-/-- Reduced iterates commute with target postcomposition by a monoid morphism,
-by induction consuming `conv_postcomp` at the successor step. No vanishing,
-reducedness, or augmentation hypothesis is needed for the transport itself. -/
+/-- Monoid postcomposition of degree-recorded convolution iterates.
+
+For a monoid morphism φ : A → B, iterating f followed by φ gives the same recorded degree as
+iterating f, and its cochain component is fₙ followed by φ. No reduction or vanishing
+hypothesis on f is used. -/
 theorem reducedConvPow_postcomp {B : CochainComplex (ModuleCat R) ℤ} [MonObj B]
     {m : ℤ} (f : HomComplex.Cochain C A m) (φ : A ⟶ B) [IsMonHom φ] (n : ℕ) :
     reducedConvPow (f.comp (HomComplex.Cochain.ofHom φ) (add_zero m)) n =
@@ -185,9 +117,10 @@ theorem reducedConvPow_postcomp {B : CochainComplex (ModuleCat R) ℤ} [MonObj B
     rw [reducedConvPow_succ, reducedConvPow_succ, ih]
     simp only [conv_postcomp]
 
-/-- Reduced iterates commute with source precomposition by a comonoid morphism,
-by induction consuming `conv_precomp` at the successor step. No vanishing,
-reducedness, or coaugmentation hypothesis is needed for the transport itself. -/
+/-- Comonoid precomposition of degree-recorded convolution iterates.
+
+For a comonoid morphism ψ : C' → C, iterating ψ followed by f gives the recorded degree dₙ and
+cochain ψ followed by fₙ, where (dₙ,fₙ)=reducedConvPow f n. -/
 theorem reducedConvPow_precomp {C' : CochainComplex (ModuleCat R) ℤ} [ComonObj C']
     {m : ℤ} (f : HomComplex.Cochain C A m) (ψ : C' ⟶ C) [IsComonHom ψ] (n : ℕ) :
     reducedConvPow ((HomComplex.Cochain.ofHom ψ).comp f (zero_add m)) n =
@@ -200,27 +133,33 @@ theorem reducedConvPow_precomp {C' : CochainComplex (ModuleCat R) ℤ} [ComonObj
     rw [reducedConvPow_succ, reducedConvPow_succ, ih]
     simp only [conv_precomp]
 
-/-- Finite reduced convolution-nilpotence of a homogeneous cochain: some
-reduced iterate vanishes. This is the sound conilpotence-side prerequisite;
-comparison with adic completeness is explicitly deferred (see the module documentation). -/
+/-- Vanishing of a finite convolution iterate.
+
+For any homogeneous f, IsReducedConvNilpotent f means that some cochain component fₙ of
+reducedConvPow f n equals zero. This is a single finite witness for the whole cochain, and the
+predicate itself does not require augmentation reducedness. -/
 def IsReducedConvNilpotent {m : ℤ} (f : HomComplex.Cochain C A m) : Prop :=
   ∃ n : ℕ, (reducedConvPow f n).2 = 0
 
-/-- A twisting cochain is reduced convolution-nilpotent when its underlying
-degree-`+1` cochain is. -/
+/-- Finite convolution nilpotence of a twisting cochain.
+
+A twisting cochain τ satisfies this predicate when its underlying degree-one cochain τ.tau has
+a vanishing finite convolution iterate. -/
 def TwistingCochain.IsReducedConvNilpotent
     (τ : TwistingCochain (R := R) (C := C) (A := A)) : Prop :=
   CochainComplex.IsReducedConvNilpotent τ.tau
 
-/-- The zero cochain is reduced convolution-nilpotent in one step, via the
-accepted `conv_zero_left`. -/
+/-- Finite convolution nilpotence of the zero cochain.
+
+The zero cochain in any integer degree is convolution nilpotent: its iterate at n=1 is 0⋆0=0. -/
 theorem IsReducedConvNilpotent.zero {m : ℤ} :
     IsReducedConvNilpotent (0 : HomComplex.Cochain C A m) :=
   ⟨1, conv_zero_left _⟩
 
-/-- Reduced convolution-nilpotence is preserved by target postcomposition with a
-monoid morphism, by transporting the vanishing witness through
-`reducedConvPow_postcomp` and `Cochain.zero_comp`. -/
+/-- Convolution nilpotence preserved by a monoid morphism.
+
+If a homogeneous f has a vanishing finite convolution iterate and φ : A → B is a monoid
+morphism, then f followed by φ has a vanishing iterate at the same index. -/
 theorem IsReducedConvNilpotent.postcomp {B : CochainComplex (ModuleCat R) ℤ}
     [MonObj B] {m : ℤ} {f : HomComplex.Cochain C A m}
     (hf : IsReducedConvNilpotent f) (φ : A ⟶ B) [IsMonHom φ] :
@@ -232,9 +171,10 @@ theorem IsReducedConvNilpotent.postcomp {B : CochainComplex (ModuleCat R) ℤ}
   rw [hPow]
   simp only [hn, HomComplex.Cochain.zero_comp]
 
-/-- Reduced convolution-nilpotence is preserved by source precomposition with a
-comonoid morphism, by transporting the vanishing witness through
-`reducedConvPow_precomp` and `Cochain.comp_zero`. -/
+/-- Convolution nilpotence preserved by a comonoid morphism.
+
+If f has a vanishing finite convolution iterate and ψ : C' → C is a comonoid morphism, then ψ
+followed by f has a vanishing iterate at the same index. -/
 theorem IsReducedConvNilpotent.precomp {C' : CochainComplex (ModuleCat R) ℤ}
     [ComonObj C'] {m : ℤ} {f : HomComplex.Cochain C A m}
     (hf : IsReducedConvNilpotent f) (ψ : C' ⟶ C) [IsComonHom ψ] :
@@ -268,11 +208,11 @@ private theorem het_tensor_zero_right
   simp only [HomComplex.Cochain.zero_v,
     MonoidalPreadditive.tensor_zero, smul_zero, zero_comp, comp_zero]
 
-/-- One-step compatibility between full convolution and reduced-bar
-convolution: for reduced factors, `conv f g` equals `μ ∘ (f ⊗ g) ∘ Δbar`,
-using the `IsRedComul` decomposition with correctly oriented tensor maps.
-Each `η`-leg vanishes because the reduced factors kill the coaugmentation;
-only the augmentation-side statement is unused. -/
+/-- Convolution of reduced factors through a reduced coproduct.
+
+For IsRedComul η b and homogeneous f,g reduced with respect to η,ε, f⋆g equals the degree-zero
+map b followed by their tensor cochain and μ_A. All coaugmentation terms in Δ_C vanish on the
+reduced factors. -/
 theorem conv_eq_redComul_of_reduced {m n : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -326,10 +266,10 @@ theorem conv_eq_redComul_of_reduced {m n : ℤ}
   unfold conv
   rw [tensorCochain_eq_tensor, hMain]
 
-/-- Uniform stage-0 conilpotence-to-convolution bridge: when the reduced
-comultiplication itself vanishes, every reduced cochain is convolution
-nilpotent in one step. This is the strongest implication the public
-API supports; higher uniform stages need absent iterated multiplication. -/
+/-- Convolution nilpotence from a zero reduced coproduct.
+
+If IsRedComul η b holds, b=0 and f is reduced for η,ε, then f⋆f=0. Consequently reducedConvPow
+f 1 vanishes and f is finite convolution nilpotent. -/
 theorem IsReducedConvNilpotent.of_trivial_redComul {m : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -345,8 +285,11 @@ theorem IsReducedConvNilpotent.of_trivial_redComul {m : ℤ}
     HomComplex.Cochain.ofHom_zero, HomComplex.Cochain.zero_comp,
     HomComplex.Cochain.zero_comp]
 
-/-- Twisting-level wrapper: a twisting cochain over a trivial reduced
-comultiplication is reduced convolution-nilpotent. -/
+/-- Twisting-cochain nilpotence from a zero reduced coproduct.
+
+For a twisting cochain τ, if IsRedComul τ.coaug b holds and b=0, then
+τ.IsReducedConvNilpotent. Its underlying cochain is reduced by the twisting fields, so its
+two-factor convolution vanishes. -/
 theorem TwistingCochain.isReducedConvNilpotent_of_trivial_redComul
     (τ : TwistingCochain (R := R) (C := C) (A := A))
     {Δbar : C ⟶ HomologicalComplex.tensorObj C C}

@@ -1,4 +1,6 @@
-# Polynomial Cotangent Derived Functor
+# Derived polynomial cotangent functor over a fixed algebra
 
-The native derived image of the constructed polynomial cotangent model,
-functorial in the source algebra over the fixed coefficient target.
+Let `k : Type u` be a commutative ring, `A : CommAlgCat.{max u v} k`, and assume
+`HasDerivedCategory.{w} (ModuleCat.{max u v} A)`. The functor `Over A → DerivedCategory
+(ModuleCat A)` is `polynomialCotangentCochainFunctor k A ⋙ DerivedCategory.Q`. The source
+algebra varies over `A`, while the coefficient algebra `A` stays fixed.

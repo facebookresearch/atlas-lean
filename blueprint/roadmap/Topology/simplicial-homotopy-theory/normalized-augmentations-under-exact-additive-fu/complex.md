@@ -1,3 +1,6 @@
-# Complex
+# Normalized complex of an augmented simplicial object
 
-The actual native normalized complex of the original augmented object.
+Normalized complex of an augmented simplicial object.
+
+For augmented P in an abelian category, complex P is the normalized Moore chain complex
+N(P.left), indexed by ℕ.

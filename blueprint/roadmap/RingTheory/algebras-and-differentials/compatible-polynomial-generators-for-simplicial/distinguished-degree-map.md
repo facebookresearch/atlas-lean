@@ -1,3 +1,5 @@
-# Distinguished degree Map
+# Degree map on the distinguished nondegenerate summand
 
-The distinguished summand uses exactly its chosen original polynomial generator images.
+For `s : PolynomialSplitting k P`, a target simplicial algebra `Q`, variable assignments
+`y_n`, and `n : ℕ`, `s.splitting.ι n ≫ s.degreeMap y (op [n]) = s.generatorMap y n`. The
+degree map uses the prescribed generator images on the distinguished nondegenerate summand.

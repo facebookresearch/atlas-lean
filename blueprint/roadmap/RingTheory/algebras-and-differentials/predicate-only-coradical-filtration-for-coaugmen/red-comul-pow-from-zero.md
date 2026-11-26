@@ -1,5 +1,6 @@
-# Red Comul Pow From zero
+# Initial reduced-coproduct iterate
 
-Endpoint computation for `redComulPowFrom`: degree `0` is the canonical
-identity-through-degree-one isomorphism onto `tensorPowObj C 1`; the index
-`0` means `0 + 1`.
+Initial reduced-coproduct iterate.
+
+For b : C → C ⊗ C, redComulPowFrom b 0 is λ_C⁻¹ : C → I ⊗ C = P₁(C), retaining the initial
+unit factor.

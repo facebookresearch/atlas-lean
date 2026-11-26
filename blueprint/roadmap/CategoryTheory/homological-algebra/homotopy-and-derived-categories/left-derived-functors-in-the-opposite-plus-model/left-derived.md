@@ -1,3 +1,7 @@
-# Left Derived
+# Opposite right derivation as a left-derived functor
 
-The genuine left derived functor, obtained from native right derivation on the opposite category.
+Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+The left-derived functor D_-^op(C) → D_-^op(D) is the opposite of the right-derived functor of Fᵒᵖ on bounded-below objects.

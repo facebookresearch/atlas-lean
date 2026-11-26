@@ -14,78 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.TwistingHomComplex
 
 /-!
-# R-linear twisting Hom complex
+# The R-linear twisting Hom complex
 
-This file packages the two-sided twisting differential as an `R`-linear map
-and bundles the resulting `CochainComplex (ModuleCat R) ℤ`, under exactly a
-Maurer--Cartan hypothesis. It is a thin linear layer over
-`MathlibExt/Algebra/Homology/TwistingHomComplex.lean` and preserves its
-carrier, degrees, casts, and signs exactly.
+For a dg coalgebra C and dg algebra A over a commutative ring R, tensoring morphisms and
+tensoring homogeneous cochains are R-bilinear. Hence graded convolution is R-bilinear, and
+D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ is R-linear.
 
-For `τ : Cochain C A 1` with `IsMaurerCartan τ` and `f : Cochain C A n`,
-the differential is `twistedDifferential τ f` in degree `n + 1`, with the
-single inherited cast via `add_comm 1 n`. The carrier objectwise is the pinned
-`HomComplex.Cochain C A n` with its canonical `Module R` instance (pointwise
-from `ModuleCat R` morphisms); no new global instance is introduced.
-
-## Grading and sign conventions
-
-Cohomological grading throughout, following `TwistingHomComplex.lean`:
-`τ : Cochain C A 1`, `twistedDifferential τ f = δ f + cast (τ ⋆ f) -
-(-1) ^ n • (f ⋆ τ)` landing in `n + 1`. The sign is the graded commutator
-with `|τ| = 1`. The bundled complex reuses `ComplexShape.up ℤ`.
-
-## Relation to the additive complex
-
-`TwistingHomComplex.twistedHomComplex τ hMC : CochainComplex AddCommGrpCat ℤ`
-uses the same carrier family and the same differential as an `AddMonoidHom`
-(`twistedDifferentialHom`). This file reuses that additivity
-(`twistedDifferential_add`) and adds `R`-linearity (`twistedDifferential_smul`)
-to bundle the same differential as a linear map (`twistedDifferentialLinear`)
-and the same family as `ModuleCat R` objects (`twistedHomComplexModule`).
-No new graded carrier is built, no differential formula is changed, and no
-additional completeness, filtration, representability, adjunction, derived,
-Koszul, operadic, model-categorical, or realization claim is made.
-
-## Declaration inventory
-
-* `tensorHom_smul_left/right` (private): `⊗ₘ` of `ModuleCat R` morphisms is
-  `R`-linear in each factor, by rewriting through `ModuleCat.hom_tensorHom`
-  (and `ModuleCat.hom_smul`) with pinned `TensorProduct.map_smul_left/right`.
-* `tensorCochain_smul_left/right` (private): the graded tensor product is
-  `R`-linear in each factor, via pinned `smul_comm` for Koszul-sign/scalar
-  commutation and the pinned `Cochain.smul_v`,
-  `Linear.smul_comp`, and `Linear.comp_smul`.
-* `conv_smul_left_R/right_R` (private): convolution is `R`-bilinear, from the
-  tensor laws with the pinned `Cochain.smul_comp`/`Cochain.comp_smul`.
-* `twistedDifferential_smul`: the two-sided perturbation is `R`-linear,
-  from pinned `HomComplex.δ_smul`, the convolution laws, cast distribution
-  by equality elimination, and sign commutation via `smul_comm`.
-* `twistedDifferentialLinear`: each differential as a linear map,
-  `if h : n + 1 = m` then the cast perturbation else `0`.
-* `twistedHomComplexModule`: bundled `CochainComplex (ModuleCat R) ℤ` under
-  `IsMaurerCartan τ`, with `shape` from the `ite_eq_right` branch and
-  `d_comp_d'` from `twistedDifferential_sq_zero`.
-* `twistedHomComplexModule_X`: object computation lemma.
-* `twistedHomComplexModule_d_apply`: differential-application computation
-  lemma with the explicit `if` and single cast.
-
-## Nonclaims
-
-No adjunction, no twisting-cochain bijection, no free or cofree object, no
-conilpotence or completeness hypothesis, no totalization, no derived or
-Koszul result, no operadic result, no model-categorical result, no
-realization result, and no KQ-dependent consequence is claimed here. No new
-global instance is introduced; the `Module R` structure on cochains is the
-pinned deriving instance.
-
-## Import justification
-
-`TwistingHomComplex` supplies `twistedDifferential`, `twistedDifferential_add`,
-`twistedDifferential_zero`, `twistedDifferential_sq_zero`, and transitively
-the pinned `HomComplex` API, `conv` with its definitions, and `IsMaurerCartan`.
-`TensorProduct` lemmas arrive transitively for the `⊗ₘ` linearity helpers; no
-bar/cobar, totalization, or new tensor rebuild is added here.
+For Maurer–Cartan τ, these maps give an integer cochain complex of R-modules with degree-n term
+Hom^n(C,A), next-degree differential D_τ, and zero outside n+1=m. Its coefficient groups and
+differential values are those of the additive twisting Hom complex.
 -/
 
 @[expose] public section
@@ -120,7 +57,8 @@ omit [MonObj A] [ComonObj C] [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] in
-/-- `⊗ₘ` of `ModuleCat R` morphisms is `R`-linear in the left factor. -/
+/-- Let R be commutative and f:X₁→Y₁,g:X₂→Y₂ be R-module morphisms. For λ∈R, (λ•f)⊗g=λ•(f⊗g) as maps
+X₁⊗X₂→Y₁⊗Y₂. -/
 private theorem tensorHom_smul_left {X₁ Y₁ X₂ Y₂ : ModuleCat R} (k : R)
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) : ((k • f) ⊗ₘ g) = k • (f ⊗ₘ g) := by
   apply ModuleCat.hom_ext
@@ -136,7 +74,7 @@ omit [MonObj A] [ComonObj C] [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] in
-/-- `⊗ₘ` of `ModuleCat R` morphisms is `R`-linear in the right factor. -/
+/-- Let R be commutative and f:X₁→Y₁,g:X₂→Y₂ be R-module morphisms. For λ∈R, f⊗(λ•g)=λ•(f⊗g). -/
 private theorem tensorHom_smul_right {X₁ Y₁ X₂ Y₂ : ModuleCat R} (k : R)
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) : (f ⊗ₘ (k • g)) = k • (f ⊗ₘ g) := by
   apply ModuleCat.hom_ext
@@ -151,7 +89,8 @@ omit [MonObj A] [ComonObj C] [∀ (X : ModuleCat R),
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] in
-/-- The graded tensor product is `R`-linear in the left factor. -/
+/-- Let R be commutative, C,A integer cochain R-module complexes with their tensor products, and
+f:C→A,g:C→A homogeneous of degrees m,n. For λ∈R, tensor(λ•f,g)=λ•tensor(f,g) in degree m+n. -/
 private theorem tensorCochain_smul_left {m n : ℤ} (k : R)
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n) :
     tensorCochain (k • f) g = k • tensorCochain f g := by
@@ -176,7 +115,8 @@ omit [MonObj A] [ComonObj C] [∀ (X : ModuleCat R),
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃] [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] in
-/-- The graded tensor product is `R`-linear in the right factor. -/
+/-- Let R be commutative and f,g homogeneous cochains C→A in degrees m,n of integer R-module
+complexes with tensor products. Then tensor(f,λ•g)=λ•tensor(f,g) for every λ∈R. -/
 private theorem tensorCochain_smul_right {m n : ℤ} (k : R)
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n) :
     tensorCochain f (k • g) = k • tensorCochain f g := by
@@ -193,7 +133,11 @@ private theorem tensorCochain_smul_right {m n : ℤ} (k : R)
     HomComplex.Cochain.smul_v, tensorHom_smul_right,
     Linear.smul_comp, Linear.comp_smul, hcomm]
 
-/-- Convolution is `R`-linear in the left factor. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For f,g of degrees m,n and λ∈R,
+(λ•f)⋆g=λ•(f⋆g) in degree m+n. -/
 private theorem conv_smul_left_R {m n : ℤ} (k : R)
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n) :
     conv (k • f) g = k • conv f g := by
@@ -201,7 +145,11 @@ private theorem conv_smul_left_R {m n : ℤ} (k : R)
   rw [tensorCochain_smul_left, HomComplex.Cochain.comp_smul,
     HomComplex.Cochain.smul_comp]
 
-/-- Convolution is `R`-linear in the right factor. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For f,g of degrees m,n and λ∈R,
+f⋆(λ•g)=λ•(f⋆g). -/
 private theorem conv_smul_right_R {m n : ℤ} (k : R)
     (f : HomComplex.Cochain C A m) (g : HomComplex.Cochain C A n) :
     conv f (k • g) = k • conv f g := by
@@ -209,9 +157,13 @@ private theorem conv_smul_right_R {m n : ℤ} (k : R)
   rw [tensorCochain_smul_right, HomComplex.Cochain.comp_smul,
     HomComplex.Cochain.smul_comp]
 
-/-- `R`-linearity of the two-sided twisting differential, from the pinned
-differential linearity, the convolution bilinearity, cast distribution,
-and sign commutation. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For λ∈R and f∈Hom^n(C,A),
+D_τ(λ•f)=λ•D_τ(f), for any degree-one τ. -/
 theorem twistedDifferential_smul {n : ℤ} (k : R)
     (τ : HomComplex.Cochain C A 1) (f : HomComplex.Cochain C A n) :
     twistedDifferential τ (k • f) = k • twistedDifferential τ f := by
@@ -230,10 +182,13 @@ theorem twistedDifferential_smul {n : ℤ} (k : R)
     exact smul_comm _ _ _
   rw [hcast_smul (add_comm (1 : ℤ) n) (conv τ f), smul_sub, smul_add, hcommC]
 
-/-- Each two-sided twisting differential as a linear map:
-when `n + 1 = m` the cast perturbation, otherwise `0`. The inner cast
-orientation `add_comm 1 n` is inherited unchanged from
-`twistedDifferential`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. The map Hom^n(C,A)→_R Hom^m(C,A) is
+D_τ transported through n+1=m when this equality holds, and zero otherwise. -/
 noncomputable def twistedDifferentialLinear
     (τ : HomComplex.Cochain C A 1) (n m : ℤ) :
     HomComplex.Cochain C A n →ₗ[R] HomComplex.Cochain C A m where
@@ -256,9 +211,14 @@ noncomputable def twistedDifferentialLinear
       rfl
     · simp only [dite_eq_right h, smul_zero]
 
-/-- The bundled `R`-linear two-sided twisting Hom complex under exactly a
-Maurer--Cartan hypothesis, on the pinned `HomComplex` carrier. The complex
-relation is discharged by `twistedDifferential_sq_zero`. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For δτ+τ⋆τ=0, the integer cochain
+complex in R-modules has term Hom^n(C,A), differential D_τ at n→n+1, and zero elsewhere. Its
+differentials square to zero. -/
 noncomputable def twistedHomComplexModule
     (τ : HomComplex.Cochain C A 1) (hMC : IsMaurerCartan τ) :
     CochainComplex (ModuleCat R) ℤ where
@@ -283,7 +243,12 @@ noncomputable def twistedHomComplexModule
         ModuleCat.Hom.hom (g.v p q hpq) x) hSq
     exact hW
 
-/-- Object computation lemma for the `R`-linear twisting Hom complex. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For Maurer–Cartan τ and n∈ℤ, its
+degree-n object is the R-module Hom^n(C,A), with the pointwise scalar action on cochain
+components. -/
 @[simp]
 theorem twistedHomComplexModule_X (τ : HomComplex.Cochain C A 1)
     (hMC : IsMaurerCartan τ) (n : ℤ) :
@@ -291,8 +256,13 @@ theorem twistedHomComplexModule_X (τ : HomComplex.Cochain C A 1)
       ModuleCat.of R (HomComplex.Cochain C A n) :=
   rfl
 
-/-- Differential-application computation lemma for the `R`-linear twisting Hom
-complex, with the explicit `if` and single cast. -/
+/-- Let R be commutative, C a dg coalgebra and A a dg algebra in a common integer cochain R-module
+category. Use all required graded tensor coproducts, zero-object preservation in both variables,
+the two triple-coproduct conditions, and fourfold tensor extensionality. Write Hom^n(C,A) for
+the degree-n cochains and f⋆g=μ_A(f⊗g)Δ_C for convolution. For τ of degree one and f of degree
+n, put D_τ(f)=δf+τ⋆f-(-1)^n f⋆τ, with the left product transported from 1+n to n+1. Here
+δf=d_Af+(-1)^{n+1}fd_C and ⋆ has Koszul factor (-1)^{|g|p}. For Maurer–Cartan τ and
+f∈Hom^n(C,A), its differential to m equals D_τ(f) under n+1=m, and is zero for n+1≠m. -/
 @[simp]
 theorem twistedHomComplexModule_d_apply (τ : HomComplex.Cochain C A 1)
     (hMC : IsMaurerCartan τ) (n m : ℤ)

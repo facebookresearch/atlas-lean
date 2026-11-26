@@ -1,8 +1,8 @@
 # Scalar extension of Lie algebra morphisms
 
-- [Base Change Unit](base-change-unit.md)
-- [Base Change Unit apply](base-change-unit-apply.md)
-- [Base Change](base-change.md)
-- [Base Change tmul](base-change-tmul.md)
-- [Base Change id](base-change-id.md)
-- [Base Change comp](base-change-comp.md)
+- [Lie morphism into scalar extension by the unit tensor](base-change-unit.md)
+- [Value of the Lie scalar-extension unit](base-change-unit-apply.md)
+- [Scalar extension of a Lie morphism](base-change.md)
+- [Pure-tensor formula for a scalar-extended Lie morphism](base-change-tmul.md)
+- [Identity law for Lie scalar extension](base-change-id.md)
+- [Composition law for Lie scalar extension](base-change-comp.md)

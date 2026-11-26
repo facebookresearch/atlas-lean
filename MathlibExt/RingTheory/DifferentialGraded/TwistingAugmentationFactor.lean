@@ -14,73 +14,16 @@ module
 public import MathlibExt.RingTheory.DifferentialGraded.TwistingCochain
 
 /-!
-# Reduced cochains and augmentation annihilation for twisting cochains
+# Reduced cochains and convolution vanishing
 
-This file packages the augmentation/coaugmentation
-vanishing carried by twisting cochains as a reusable predicate and records how
-that vanishing annihilates graded convolutions.
+Let C be a cochain comonoid and A a cochain monoid over a commutative ring, with the stated
+graded tensor structures. For maps η : I → C and ε : A → I, a degree-m cochain f is reduced
+when η followed by f and f followed by ε are zero as degree-m cochains.
 
-Primary source: no external source beyond pinned Mathlib and the
-`TwistingCochain` API is used here; no match to a printed Loday–Vallette
-section or sign convention is claimed.
-
-## Reduced cochains
-
-For explicit maps `η : 𝟙_ ⟶ C` and `ε : A ⟶ 𝟙_`, a homogeneous cochain
-`f : Cochain C A m` is reduced (`IsReducedCochain η ε f`) when both outer
-composites vanish: `(ofHom η).comp f = 0` and `f.comp (ofHom ε) = 0`.
-Informally, `f` factors through the augmentation ideal on the right and the
-coaugmentation coideal on the left; no kernel/cokernel lift is constructed
-here. Degree-`+1` is the `m := 1` instantiation. Every twisting cochain is
-reduced in its own maps (`TwistingCochain.reduced`), and the zero cochain is
-reduced (`IsReducedCochain.zero`). Convolution preserves reducedness from
-either factor alone (`IsReducedCochain.conv_of_left`,
-`IsReducedCochain.conv_of_right`), via the generic `conv_precomp` /
-`conv_postcomp` transport and the `conv_zero_left` / `conv_zero_right` laws.
-
-## Declaration inventory
-
-* `IsReducedCochain`: both-sided augmentation/coaugmentation vanishing for a
-  homogeneous cochain.
-* `IsReducedCochain.zero`: the zero cochain is reduced.
-* `IsReducedCochain.conv_of_left`: convolution with a reduced left factor is
-  reduced, from `conv_precomp`, `conv_postcomp`, and `conv_zero_left`.
-* `IsReducedCochain.conv_of_right`: convolution with a reduced right factor
-  is reduced, from `conv_precomp`, `conv_postcomp`, and `conv_zero_right`.
-* `conv_reduced_left`: convolving the coaugmentation-side vanish composite
-  `(ofHom η).comp τ` on the left gives `0`, from
-  `TwistingCochain.coaug_vanish` and `conv_zero_left`.
-* `conv_reduced_right`: convolving the augmentation-side vanish composite
-  `τ.comp (ofHom ε)` on the right gives `0`, from
-  `TwistingCochain.aug_vanish` and `conv_zero_right`.
-* `TwistingCochain.reduced`: every twisting cochain is reduced in its own
-  explicit coaugmentation and augmentation maps.
-
-## Why ideal absorption holds here
-
-Reducedness of `conv f g` follows from reducedness of either factor alone:
-the outer `(ofHom η)` pushes past `ComonObj.comul` via `conv_precomp` and the
-outer `(ofHom ε)` pushes past `MonObj.mul` via `conv_postcomp`, after which
-the vanishing factor annihilates the convolution by `conv_zero_left` or
-`conv_zero_right`. These ideal-absorption lemmas record that transport. The
-annihilation lemmas below record the complementary local fact: once a vanish
-composite is formed, convolution against it is zero.
-
-## Nonclaims
-
-* No `conv_assoc`, `conv_one_left` / `conv_one_right`, and no cochain-level
-  unitor transport: those are not proved here.
-* No total-level (co)augmentation map and no total-bar augmentation API.
-* No twisting-cochain bijection, bar--cobar adjunction, Eilenberg--Zilber /
-  Alexander--Whitney, conilpotence/completeness, derived, Koszul, operadic, or
-  model-categorical result.
-* No homological (`down ℤ`) API; everything is cohomological.
-
-## Import justification
-
-`TwistingCochain` supplies `conv`, the zero laws `conv_zero_left` and
-`conv_zero_right`, and the `TwistingCochain` structure with its
-`coaug_vanish` / `aug_vanish` fields. No other import is needed.
+When I has a comonoid structure making η a comonoid morphism and ε is a monoid morphism,
+convolution of degree-m and degree-n cochains is reduced if either factor is reduced. The
+total degree is m+n. Each twisting cochain is reduced for its own maps, and convolution
+against either of its zero outer composites vanishes.
 -/
 
 @[expose] public section
@@ -106,9 +49,10 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Both-sided augmentation/coaugmentation vanishing for a homogeneous
-cochain: precomposing the cochain with the explicit coaugmentation `η` and
-postcomposing it with the explicit augmentation `ε` both give zero. -/
+/-- Two-sided reduction of a homogeneous cochain.
+
+For η : I → C, ε : A → I and f of degree m, require (ofHom η).comp f = 0 in degree 0+m and
+f.comp(ofHom ε) = 0 in degree m+0. These equations define IsReducedCochain η ε f. -/
 def IsReducedCochain {m : ℤ} (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ))
     (f : HomComplex.Cochain C A m) : Prop :=
@@ -117,43 +61,50 @@ def IsReducedCochain {m : ℤ} (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) �
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [MonObj A] [ComonObj C] in
-/-- The zero homogeneous cochain is reduced in any explicit maps. -/
+/-- Reduction of the zero homogeneous cochain.
+
+For any η,ε and integer m, the zero degree-m cochain is reduced because both outer composites
+with it vanish. -/
 theorem IsReducedCochain.zero {m : ℤ}
     (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)) :
     IsReducedCochain (m := m) η ε 0 :=
   ⟨HomComplex.Cochain.comp_zero _ _, HomComplex.Cochain.zero_comp _ _⟩
 
-/-- Annihilation on the left: convolving the coaugmentation-side vanish
-composite of a twisting cochain on the left gives zero. This is
-`TwistingCochain.coaug_vanish` followed by `conv_zero_left`.
-The unit comonoid is an explicit hypothesis because pinned Mathlib supplies
-`ComonObj.instTensorUnit` only as a definition, deliberately not as a global
-instance. -/
+/-- Convolution vanishing from a twisting coaugmentation composite.
+
+For a twisting cochain τ, its composite (ofHom τ.coaug).comp τ.tau is zero in degree one.
+Convolving this on the left with any degree-n cochain I → A gives zero. A comonoid structure
+on I is assumed to define this convolution source. -/
 theorem conv_reduced_left (τ : TwistingCochain (R := R) (C := C) (A := A))
     [ComonObj (𝟙_ (CochainComplex (ModuleCat R) ℤ))]
     {n : ℤ} (g : HomComplex.Cochain (𝟙_ (CochainComplex (ModuleCat R) ℤ)) A n) :
     conv ((HomComplex.Cochain.ofHom τ.coaug).comp τ.tau (zero_add 1)) g = 0 := by
   rw [τ.coaug_vanish, conv_zero_left]
 
-/-- Annihilation on the right: convolving the augmentation-side vanish
-composite of a twisting cochain on the right gives zero. This is
-`TwistingCochain.aug_vanish` followed by `conv_zero_right`
-(the pinned `MonObj` unit instance needs no extra hypothesis). -/
+/-- Convolution vanishing from a twisting augmentation composite.
+
+For τ, the degree-one composite τ.tau.comp(ofHom τ.aug) is zero. Convolution of any degree-n
+cochain C → I with this zero right factor is zero, using the tensor-unit monoid. -/
 theorem conv_reduced_right (τ : TwistingCochain (R := R) (C := C) (A := A))
     {n : ℤ} (g : HomComplex.Cochain C (𝟙_ (CochainComplex (ModuleCat R) ℤ)) n) :
     conv g (τ.tau.comp (HomComplex.Cochain.ofHom τ.aug) (add_zero 1)) = 0 := by
   rw [τ.aug_vanish, conv_zero_right]
 
-/-- Every twisting cochain is reduced in its own explicit coaugmentation and
-augmentation maps. -/
+/-- Reduction of a twisting cochain in its own maps.
+
+For τ, the coaugmentation and augmentation vanishing fields give IsReducedCochain τ.coaug
+τ.aug τ.tau. -/
 theorem TwistingCochain.reduced (τ : TwistingCochain (R := R) (C := C) (A := A)) :
     IsReducedCochain τ.coaug τ.aug τ.tau :=
   ⟨τ.coaug_vanish, τ.aug_vanish⟩
 
-/-- Convolution with a reduced left factor is reduced: the outer maps push
-through via `conv_precomp` / `conv_postcomp`, then the left vanishing
-annihilates by `conv_zero_left`. -/
+/-- Reduction of convolution from a reduced left factor.
+
+Assume a comonoid structure on I, η : I → C a comonoid morphism and ε : A → I a monoid
+morphism. If f of degree m is reduced, then f⋆g of degree m+n is reduced for every degree-n
+cochain g. The outer morphisms commute with convolution and the zero left factor annihilates
+it. -/
 theorem IsReducedCochain.conv_of_left {m n : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}
@@ -166,9 +117,10 @@ theorem IsReducedCochain.conv_of_left {m n : ℤ}
   · rw [conv_precomp f g η, hf.1, conv_zero_left]
   · rw [conv_postcomp f g ε, hf.2, conv_zero_left]
 
-/-- Convolution with a reduced right factor is reduced: the outer maps push
-through via `conv_precomp` / `conv_postcomp`, then the right vanishing
-annihilates by `conv_zero_right`. -/
+/-- Reduction of convolution from a reduced right factor.
+
+Assume a comonoid structure on I, η a comonoid morphism and ε a monoid morphism. For any
+degree-m cochain f, if g of degree n is reduced, then f⋆g is reduced in degree m+n. -/
 theorem IsReducedCochain.conv_of_right {m n : ℤ}
     {η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C}
     {ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)}

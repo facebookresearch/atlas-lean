@@ -13,21 +13,17 @@ public import Mathlib.RingTheory.Kaehler.TensorProduct
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 
 /-!
-# Extended differentials in an actual algebra pushout
+# Extended differentials in an algebra pushout
 
-The square k → K, P → Q is an actual native algebra pushout.  The coefficient
-square P → A, Q → B is any compatible original square.  Cancelling the actual
-coefficient tensor twice and using the native Kähler pushout equivalence gives
-the B-linear equivalence
+Let k → K and P → Q form a pushout square of commutative algebras, with the two k-actions on Q
+compatible. Let P → A → B and P → Q → B be compatible coefficient towers. Then tensor-tower
+cancellation and the Kähler pushout equivalence give a B-linear isomorphism
+B⊗[A](A⊗[P]Ω_{P/k}) ≃ B⊗[Q]Ω_{Q/K}.
 
-  B ⊗[A] (A ⊗[P] Ω[P/k]) ≃ B ⊗[Q] Ω[Q/K].
-
-The coefficient square need not be a pushout, and no coefficient flatness,
-polynomial structure, finite generation, or module projectivity is used.  All
-six ring universes are independent.  The forward map agrees with the existing
-original CoefficientRingSquare map, rather than taking that agreement as data.
-
-Native elaboration and kernel checks are unexecuted for this source proposal.
+The map sends b⊗(a⊗d p) to (b·algebraMap(A,B)(a))⊗d(algebraMap(P,Q)(p)). Its inverse sends
+b⊗d(algebraMap(P,Q)(p)) to b⊗(1_A⊗d p). The forward map equals the scalar extension of the
+structural coefficient ring-square map. Only the structural k,K,P,Q square is required to be a
+pushout; all six ring universes are independent.
 -/
 
 @[expose] public section
@@ -50,7 +46,11 @@ variable (k : Type uk) (K : Type uK) (P : Type uP) (Q : Type uQ)
 
 attribute [local instance] SMulCommClass.of_commMonoid
 
-/-- The original coefficient ring square supplied by the actual structural maps. -/
+/-- Structural coefficient ring square from compatible algebra maps.
+
+For the given compatible algebra towers, use algebraMap(k,K), algebraMap(P,Q) and
+algebraMap(A,B) as the three row maps. The scalar-tower equations give the two commuting
+squares. -/
 def coefficientPushoutRingSquare : CoefficientRingSquare k K P Q A B where
   ground := algebraMap k K
   algebra := algebraMap P Q
@@ -64,8 +64,11 @@ def coefficientPushoutRingSquare : CoefficientRingSquare k K P Q A B where
 
 variable [Algebra.IsPushout k K P Q]
 
-/-- The existing ring-square map in the original coefficient-module action.
-The native algebra-instance equality supplies the source alignment. -/
+/-- Coefficient differential map aligned with an ambient algebra action.
+
+For a coefficient square s with s.coefficient = algebraMap(A,B), its scalar-extended map can
+be viewed using the given A-algebra structure on B. The equality identifies the induced and
+ambient coefficient actions. -/
 def coefficientBaseChangeMapOfRingSquareOfAlgebra
     (s : CoefficientRingSquare k K P Q A B) (hs : s.coefficient = algebraMap A B) :
     B ⊗[A] Coefficient k P A →ₗ[B] Coefficient K Q B := by
@@ -73,7 +76,10 @@ def coefficientBaseChangeMapOfRingSquareOfAlgebra
     (congrArg RingHom.toAlgebra hs).trans toAlgebra_algebraMap
   exact hAlg ▸ coefficientBaseChangeMapOfRingSquare s
 
-/-- Source alignment preserves the actual native coefficient and differential formula. -/
+/-- Generator formula after coefficient-action alignment.
+
+If s.coefficient = algebraMap(A,B), the aligned B-linear map sends b⊗[A](a⊗[P]d p) to
+(b·s.coefficient(a))⊗[Q]d(s.algebra(p)). -/
 theorem coefficientBaseChangeMapOfRingSquareOfAlgebra_tmul_D
     (s : CoefficientRingSquare k K P Q A B) (hs : s.coefficient = algebraMap A B)
     (b : B) (a : A) (p : P) :
@@ -84,8 +90,10 @@ theorem coefficientBaseChangeMapOfRingSquareOfAlgebra_tmul_D
     (congrArg RingHom.toAlgebra hs).trans toAlgebra_algebraMap
   exact hAlg ▸ coefficientBaseChangeMapOfRingSquare_tmul_D s b a p
 
-/-- An actual pushout earns the full coefficient linear equivalence.
-Only the structural algebra pushout is assumed; no desired comparison is input. -/
+/-- Coefficient Kähler equivalence from a structural algebra pushout.
+
+For the pushout square k,K,P,Q and compatible coefficient towers through A,B, tensor
+cancellation and Ω_{Q/K} ≃ Q⊗[P]Ω_{P/k} give B⊗[A](A⊗[P]Ω_{P/k}) ≃ₗ[B] B⊗[Q]Ω_{Q/K}. -/
 def coefficientPushoutEquiv :
     B ⊗[A] Coefficient k P A ≃ₗ[B] Coefficient K Q B :=
   (TensorProduct.AlgebraTensorModule.cancelBaseChange
@@ -95,7 +103,10 @@ def coefficientPushoutEquiv :
       (TensorProduct.AlgebraTensorModule.congr (LinearEquiv.refl B B)
         (KaehlerDifferential.tensorKaehlerEquiv k K P Q)))
 
-/-- Its literal map on original differential tensors, with both coefficient factors. -/
+/-- Forward generator value of the coefficient pushout equivalence.
+
+The equivalence sends b⊗[A](a⊗[P]d_{P/k}p) to
+(b·algebraMap(A,B)(a))⊗[Q]d_{Q/K}(algebraMap(P,Q)(p)). -/
 @[simp]
 theorem coefficientPushoutEquiv_tmul_D (b : B) (a : A) (p : P) :
     coefficientPushoutEquiv k K P Q A B
@@ -110,7 +121,9 @@ theorem coefficientPushoutEquiv_tmul_D (b : B) (a : A) (p : P) :
     one_smul]
   rw [Algebra.smul_def, mul_comm]
 
-/-- The actual inverse retains the original differential class. -/
+/-- Inverse generator value of the coefficient pushout equivalence.
+
+For p ∈ P, the inverse sends b⊗[Q]d_{Q/K}(algebraMap(P,Q)(p)) to b⊗[A](1_A⊗[P]d_{P/k}p). -/
 @[simp]
 theorem coefficientPushoutEquiv_symm_tmul_D (b : B) (p : P) :
     (coefficientPushoutEquiv k K P Q A B).symm
@@ -120,8 +133,10 @@ theorem coefficientPushoutEquiv_symm_tmul_D (b : B) (p : P) :
     (b ⊗ₜ[A] ((1 : A) ⊗ₜ[P] KaehlerDifferential.D k P p))
   simpa only [coefficientPushoutEquiv_tmul_D, map_one, mul_one] using h
 
-/-- On the literal generating tensors, the native equivalence is the existing
-base-change map of the original coefficient ring square. -/
+/-- Generator agreement with the structural coefficient-square map.
+
+On b⊗[A](a⊗[P]d p), the coefficient pushout equivalence equals the scalar-extended map of
+coefficientPushoutRingSquare, aligned with the ambient A-action on B. -/
 theorem coefficientPushoutEquiv_tmul_D_eq_ringSquare (b : B) (a : A) (p : P) :
     coefficientPushoutEquiv k K P Q A B
         (b ⊗ₜ[A] (a ⊗ₜ[P] KaehlerDifferential.D k P p)) =
@@ -132,7 +147,11 @@ theorem coefficientPushoutEquiv_tmul_D_eq_ringSquare (b : B) (a : A) (p : P) :
     (coefficientBaseChangeMapOfRingSquareOfAlgebra_tmul_D k K P Q A B
       (coefficientPushoutRingSquare k K P Q A B) rfl b a p).symm
 
-/-- Equality with the existing actual ring-square map, earned by its universal generators. -/
+/-- Linear-map agreement of the coefficient pushout comparison.
+
+The B-linear map underlying coefficientPushoutEquiv equals
+coefficientBaseChangeMapOfRingSquareOfAlgebra for the structural coefficient square. Equality
+is determined by the differential tensor generators. -/
 theorem coefficientPushoutEquiv_toLinearMap_eq_ringSquare :
     (coefficientPushoutEquiv k K P Q A B).toLinearMap =
       coefficientBaseChangeMapOfRingSquareOfAlgebra k K P Q A B
@@ -155,7 +174,11 @@ theorem coefficientPushoutEquiv_toLinearMap_eq_ringSquare :
     exact coefficientPushoutEquiv_tmul_D_eq_ringSquare k K P Q A B b 1 p
   exact LinearMap.congr_fun hfg x
 
-/-- The original ring-square map is bijective when its algebra square is a pushout. -/
+/-- Bijectivity of structural coefficient differential base change.
+
+Under the algebra pushout k,K,P,Q and compatible coefficient towers, the scalar-extended
+differential map of coefficientPushoutRingSquare is bijective. Its value agrees with
+coefficientPushoutEquiv. -/
 theorem coefficientBaseChangeMapOfRingSquare_bijective_of_pushout :
     Function.Bijective (coefficientBaseChangeMapOfRingSquare
       (coefficientPushoutRingSquare k K P Q A B)) := by

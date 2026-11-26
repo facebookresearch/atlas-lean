@@ -1,3 +1,5 @@
-# Zero Differential Complex X
+# Terms of the prescribed zero-differential complex
 
-The zero-differential complex retains each prescribed original object.
+Let A have zero morphisms and X:ℤ → A be a family.
+
+The degree-i term of its zero-differential complex is X_i.

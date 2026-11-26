@@ -13,17 +13,16 @@ public import Mathlib.CategoryTheory.Comma.Over.Basic
 public import MathlibExt.CategoryTheory.Comonad.Cobar
 
 /-!
-# The actual comonad induced in a slice over a fixed target
+# Comonads on slices over a fixed object
 
-An object `P → A` is sent to `G(P) → P → A`, using the original counit.
-The original counit and comultiplication are actual slice morphisms by their
-native laws. This constructs a genuine comonad in the slice. Its underlying
-functor, counit, comultiplication and powers retain the original maps after
-forgetting the point map.
+Let G be a comonad on C and A : C. On Over A, send p : P → A to G(P) →^{ε_P} P →^p A, and a
+slice morphism to G of its underlying map. The original counit and comultiplication are slice
+morphisms and define a comonad G_A.
 
-This is the missing categorical provider for polynomial resolution comparison
-over the fixed augmentation target. It supplies no resolution-independence or
-desired cotangent comparison certificate. Candidate source; UNEXECUTED.
+Forgetting to C identifies G_A with G on the underlying objects and maps. Its n-th power has
+underlying object G^n(P), and its power maps agree heterogeneously with G^n applied to the
+original slice map. A section of ε_P lifts to a counit section in Over A. Object and morphism
+universes are independent.
 -/
 
 @[expose] public section
@@ -36,7 +35,10 @@ namespace CategoryTheory.Comonad
 
 variable {C : Type u} [Category.{v} C] (G : Comonad C) (A : C)
 
-/-- The actual original comonad functor with augmentation composed to A. -/
+/-- Endofunctor of a slice induced by a comonad counit.
+
+For G on C and fixed A, send p : P → A to ε_P ≫ p : G(P) → A. A morphism in Over A is sent to
+G of its underlying arrow; counit naturality supplies its slice equation. -/
 def overFunctor : Over A ⥤ Over A where
   obj P := Over.mk (G.ε.app P.left ≫ P.hom)
   map {P Q} f := Over.homMk (G.map f.left) (by
@@ -53,14 +55,20 @@ def overFunctor : Over A ⥤ Over A where
     change G.map (f.left ≫ g.left) = G.map f.left ≫ G.map g.left
     exact G.map_comp f.left g.left
 
-/-- The original counit as an actual natural transformation in the slice. -/
+/-- Counit natural transformation in the slice.
+
+The counit G_A(p) → p in Over A has underlying map ε_P : G(P) → P. Its compatibility with the
+structural arrows to A is the definition of G_A(p). -/
 def overCounit : overFunctor G A ⟶ 𝟭 (Over A) where
   app P := Over.homMk (G.ε.app P.left) rfl
   naturality {P Q} f := by
     apply Over.OverMorphism.ext
     exact G.ε.naturality f.left
 
-/-- The original comultiplication as an actual slice morphism. -/
+/-- Comultiplication natural transformation in the slice.
+
+For p : P → A, the underlying map of G_A(p) → G_A²(p) is δ_P : G(P) → G²(P). The comonad
+counit law makes this map commute with both structural arrows to A. -/
 def overComultiplication : overFunctor G A ⟶ overFunctor G A ⋙ overFunctor G A where
   app P := Over.homMk (G.δ.app P.left) (by
     change G.δ.app P.left ≫ (G.ε.app (G.obj P.left) ≫ (G.ε.app P.left ≫ P.hom)) =
@@ -70,7 +78,11 @@ def overComultiplication : overFunctor G A ⟶ overFunctor G A ⋙ overFunctor G
     apply Over.OverMorphism.ext
     exact G.δ.naturality f.left
 
-/-- The genuine native comonad in the slice over the prescribed target. -/
+/-- Comonad induced on a slice category.
+
+For a comonad G on C and any A : C, its counit-composed endofunctor on Over A, together with
+the underlying ε and δ, satisfies coassociativity and both counit laws. This defines G_A
+without a coalgebra structure on A. -/
 def overComonad : Comonad (Over A) where
   toFunctor := overFunctor G A
   ε := overCounit G A
@@ -85,28 +97,42 @@ def overComonad : Comonad (Over A) where
     apply Over.OverMorphism.ext
     exact G.right_counit P.left
 
-/-- Forgetting the point map retains the same original functor. -/
+/-- Forgetful comparison for a slice comonad.
+
+For G_A on Over A and the forgetful functor U : Over A → C, the functors G_A ⋙ U and U ⋙ G are
+canonically isomorphic, with the same underlying object and morphism assignments. -/
 def overForgetFunctorIso :
     (overComonad G A).toFunctor ⋙ Over.forget A ≅ Over.forget A ⋙ G.toFunctor :=
   Iso.refl _
 
+/-- Underlying slice-comonad counit component.
+
+For p : P → A, forgetting the component ε^{G_A}_p yields ε^G_P : G(P) → P. -/
 @[simp]
 theorem overCounit_app_left (P : Over A) :
     ((overComonad G A).ε.app P).left = G.ε.app P.left := rfl
 
+/-- Underlying slice-comonad comultiplication component.
+
+For p : P → A, forgetting δ^{G_A}_p yields δ^G_P : G(P) → G²(P). -/
 @[simp]
 theorem overComultiplication_app_left (P : Over A) :
     ((overComonad G A).δ.app P).left = G.δ.app P.left := rfl
 
-/-- The actual slice power has the same original underlying power object. -/
+/-- Underlying object of an iterated slice comonad.
+
+For n : ℕ and p : P → A, the underlying object of G_A^n(p) equals G^n(P), including the
+identity power at n = 0. -/
 theorem overPow_obj_left (n : ℕ) (P : Over A) :
     ((comonadPow (overComonad G A) n).obj P).left = (comonadPow G n).obj P.left := by
   induction n generalizing P with
   | zero => rfl
   | succ n ih => exact ih ((overComonad G A).obj P)
 
-/-- Underlying power maps retain their genuine original maps, with their
-source and target object equalities recorded by heterogeneous equality. -/
+/-- Underlying map of an iterated slice comonad.
+
+For n : ℕ and a slice morphism f : p → q, the underlying map of G_A^n(f) is heterogeneously
+equal to G^n(f.left). The object identifications retain the original source and target types. -/
 theorem overPow_map_left (n : ℕ) {P Q : Over A} (f : P ⟶ Q) :
     HEq (((comonadPow (overComonad G A) n).map f).left)
       ((comonadPow G n).map f.left) := by
@@ -114,7 +140,10 @@ theorem overPow_map_left (n : ℕ) {P Q : Over A} (f : P ⟶ Q) :
   | zero => rfl
   | succ n ih => exact ih ((overComonad G A).map f)
 
-/-- A genuine original counit section is an actual section in the slice. -/
+/-- Counit section lifted to a slice category.
+
+For p : P → A and s : P → G(P) with s ≫ ε_P = id_P, the same s defines p → G_A(p) in Over A,
+because s ≫ ε_P ≫ p = p. -/
 def overCounitSection (P : Over A) (s : P.left ⟶ G.obj P.left)
     (hs : s ≫ G.ε.app P.left = 𝟙 P.left) : P ⟶ (overComonad G A).obj P :=
   Over.homMk s (by
@@ -122,6 +151,10 @@ def overCounitSection (P : Over A) (s : P.left ⟶ G.obj P.left)
     exact (Category.assoc _ _ _).symm.trans
       ((congrArg (fun f => f ≫ P.hom) hs).trans (Category.id_comp _)))
 
+/-- Counit-section identity in the slice.
+
+For a counit section s : P → G(P), its lifted slice map p → G_A(p) followed by the slice
+counit equals id_p as a morphism in Over A. -/
 @[reassoc]
 theorem overCounitSection_counit (P : Over A) (s : P.left ⟶ G.obj P.left)
     (hs : s ≫ G.ε.app P.left = 𝟙 P.left) :

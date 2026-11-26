@@ -13,18 +13,15 @@ public import MathlibExt.Algebra.Category.CommAlgCat.RestrictScalars
 public import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
-# Native scalar extension of commutative algebras in independent universes
+# Tensor scalar extension of commutative algebras
 
-For the original ring homomorphism R to S, use the original action on S
-and the native algebra tensor product S tensor_R P. Native tensor maps
-are S-linear in the left factor, so their functor laws require no new
-carrier model, flatness or universe-equality premise.
+Let `R : Type u` and `S : Type v` be commutative rings. An `R`-algebra structure on `S` gives
+the functor `P ↦ S ⊗_R P`, from commutative `R`-algebras to commutative `S`-algebras at
+carrier universe `max u v w`. A ring map `f : R →+* S` defines the same construction with its
+induced scalar action.
 
-The native right tensor inclusion gives the actual unit. The native
-algebra tensor universal map gives the actual counit over every original
-S-algebra. Their pure-tensor formula retains the original scalar and
-algebra element and earns the original one-tensor point identity.
-Every proposed declaration is UNEXECUTED.
+The unit of scalar extension/restriction sends `p` to `1 ⊗ p`. For an `S`-algebra `B`, the
+counit sends `s ⊗ b` to `s·b`. These maps are natural algebra morphisms.
 -/
 
 @[expose] public section
@@ -44,7 +41,10 @@ section OfAlgebra
 
 variable (R S) [Algebra R S]
 
-/-- The native tensor functor for an actual structural algebra, with all carrier worlds explicit. -/
+/-- Let `R : Type u` and `S : Type v` be commutative rings with `Algebra R S`. The functor
+`CommAlgCat.{max u v w} R → CommAlgCat.{max u v w} S` sends `P` to `S ⊗[R] P` and a morphism
+`g` to `Algebra.TensorProduct.map (AlgHom.id S S) g.hom`. The left tensor factor supplies the
+`S`-algebra action. -/
 def extendScalarsOfAlgebra :
     CommAlgCat.{max u v w} R ⥤ CommAlgCat.{max u v w} S :=
   { obj P := CommAlgCat.of S (S ⊗[R] P)
@@ -62,13 +62,17 @@ def extendScalarsOfAlgebra :
 
 end OfAlgebra
 
-/-- Scalar extension along a ring map uses the single native tensor functor. -/
+/-- For commutative rings `R : Type u`, `S : Type v`, and `f : R →+* S`, `extendScalars.{u,v,w} f`
+sends a commutative `R`-algebra `P` to `S ⊗_{R,f} P`. Both source and target algebra carriers
+have universe `max u v w`, and the `R`-action on `S` is induced by `f`. -/
 def extendScalars (f : R →+* S) :
     CommAlgCat.{max u v w} R ⥤ CommAlgCat.{max u v w} S := by
   letI : Algebra R S := f.toAlgebra
   exact extendScalarsOfAlgebra.{u, v, w} R S
 
-/-- The original algebra action and its structural map give the same generic tensor functor. -/
+/-- Let `R,S` be commutative rings with `Algebra R S`. Then `extendScalars.{u,v,w} (algebraMap R
+S) = extendScalarsOfAlgebra.{u,v,w} R S` as functors on commutative algebras of carrier
+universe `max u v w`. -/
 theorem extendScalars_algebraMap [Algebra R S] :
     extendScalars.{u, v, w} (algebraMap R S) = extendScalarsOfAlgebra.{u, v, w} R S := by
   unfold extendScalars
@@ -81,7 +85,9 @@ theorem extendScalars_map_tmul (f : R →+* S)
   letI : Algebra R S := f.toAlgebra
   rfl
 
-/-- The native right tensor inclusion, on the original augmented algebra carrier. -/
+/-- Let `R : Type u`, `S : Type v` be commutative rings and `f : R →+* S`. The natural
+transformation `extendScalarsUnit f : 𝟭 CommAlgCat R → extendScalars f ⋙ restrictScalars f`,
+at carrier universe `max u v w`, has component `P → Res_f(S ⊗_R P)` sending `p` to `1 ⊗ p`. -/
 def extendScalarsUnit (f : R →+* S) :
     𝟭 (CommAlgCat.{max u v w} R) ⟶
       extendScalars.{u, v, w} f ⋙ restrictScalars f := by
@@ -107,7 +113,10 @@ theorem extendScalarsUnit_app (f : R →+* S)
   letI : Algebra R S := f.toAlgebra
   rfl
 
-/-- Native multiplication of the scalar and original algebra element gives the actual counit. -/
+/-- Let `R : Type u`, `S : Type v` be commutative rings and `f : R →+* S`. The natural
+transformation `restrictScalars f ⋙ extendScalars f → 𝟭 CommAlgCat S`, at carrier universe
+`max u v w`, has component `S ⊗_R Res_f B → B` sending `s ⊗ b` to `s·b` for each commutative
+`S`-algebra `B`. -/
 def extendRestrictScalarsCounit (f : R →+* S) :
     restrictScalars f ⋙ extendScalars.{u, v, w} f ⟶ 𝟭 (CommAlgCat.{max u v w} S) := by
   letI : Algebra R S := f.toAlgebra

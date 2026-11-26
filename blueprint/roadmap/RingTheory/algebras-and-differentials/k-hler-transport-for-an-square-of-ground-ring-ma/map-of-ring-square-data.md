@@ -1,4 +1,6 @@
-# Map Of Ring Square Data
+# Semilinear Kähler map with its differential-generator equation
 
-The native semilinear differential map together with its generator equation,
-constructed from the original commuting square of ground and algebra ring maps.
+Semilinear Kähler map with its differential-generator equation.
+
+For a commuting square of ring maps f_k : k → K and f_P : P → Q, construct an f_P-semilinear
+map Ω_{P/k} → Ω_{Q/K} together with the equation f(d p)=d(f_P(p)) for every p ∈ P.

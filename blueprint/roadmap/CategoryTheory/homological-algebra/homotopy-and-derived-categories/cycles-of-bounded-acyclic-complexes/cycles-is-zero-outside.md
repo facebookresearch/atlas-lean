@@ -1,3 +1,9 @@
-# Cycles is Zero outside
+# Support bounds of the represented source cycles
 
-The source cycle objects are zero outside the same original geometric support window.
+Let E be preadditive, A abelian and F:E → A additive.
+Let K be a bounded integer cochain complex in E. Assume F is fully faithful and its essential image is closed under
+kernels of epimorphisms between objects in that image. Fix a term-support interval [a,b] for K and assume F(K) is acyclic.
+Write D_j=(Z_j,ι_j,q_in,j) for the constructed source-cycle data,
+where ι_j:Z_j → K^j and q_in,j:K^{j−1} → Z_j.
+
+The source-cycle object Z_j is zero when j<a or b<j.

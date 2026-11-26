@@ -1,3 +1,10 @@
-# Top Kernel Lift Is Colimit
+# Source cokernel universal property at the top differential
 
-The same original top differential is a source cokernel of that represented inclusion.
+Let E be preadditive, A abelian, F:E → A additive and K a bounded
+integer cochain complex. Let t be the upper endpoint selected from
+K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero object and binary biproducts,
+and F reflects admissible exactness.
+
+The original differential d:K^{t−1} → K^t is a cokernel of ι in E.

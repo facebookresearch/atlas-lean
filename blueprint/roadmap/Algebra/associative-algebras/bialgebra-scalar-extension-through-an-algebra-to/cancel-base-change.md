@@ -1,4 +1,6 @@
-# Cancel Base Change
+# Bialgebra equivalence for successive scalar extension
 
-Successive scalar extension along `R → S → T` agrees with direct extension as a
-`T`-bialgebra, including when the original bialgebra is noncommutative.
+Bialgebra equivalence for successive scalar extension.
+
+For a commutative semiring tower R → S → T and an R-bialgebra semiring A, tensor-tower
+cancellation gives T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A. No commutativity of A is required.

@@ -1,3 +1,6 @@
-# Over Counit Section
+# Counit section lifted to a slice category
 
-A genuine original counit section is an actual section in the slice.
+Counit section lifted to a slice category.
+
+For p : P → A and s : P → G(P) with s ≫ ε_P = id_P, the same s defines p → G_A(p) in Over A,
+because s ≫ ε_P ≫ p = p.

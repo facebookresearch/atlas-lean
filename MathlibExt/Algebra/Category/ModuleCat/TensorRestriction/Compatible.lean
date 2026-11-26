@@ -17,17 +17,16 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Original scalar restriction of the native coefficient tensor
+# Scalar restriction of coefficient-first tensor products
 
-The S-linear coefficient-first tensor refines the original R-linear tensor
-of the SAME original M with its restricted R-action.  The existing compatible
-restriction identity earns this natural isomorphism.  No coefficient
-replacement, flatness, Small, or carrier-size equality is assumed.
+Let `R : Type u` and `S : Type w` be commutative rings with `Algebra R S`, and let `M :
+ModuleCat.{t} S`. The `S`-linear functor `L ↦ M ⊗_R L`, with `S` acting on the first factor,
+restricts naturally to the `R`-linear tensor functor using the restricted `R`-module `M`. The
+input carrier universe `v` and coefficient carrier universe `t` are independent.
 
-Actual scalar restriction is exact, so native homology comparison also
-retains the original R-valued homology object.  These bridges let a stronger
-S-linear base-change API specialize to the literal original R-AQ functor.
-Native verification remains unexecuted for this source proposal.
+Restriction of scalars preserves homology. For an `S`-module chain complex, the homology of
+its restricted complex is naturally isomorphic to the restriction of its homology, with the
+inverse comparison compatible with chain maps.
 -/
 
 @[expose] public section
@@ -44,7 +43,11 @@ namespace ModuleCat.TensorRestriction
 variable (R : Type u) (S : Type w) [CommRing R] [CommRing S] [Algebra R S]
   (M : ModuleCat.{t} S)
 
-/-- Original R-valued tensoring is recovered by the actual compatible scalar restriction. -/
+/-- Let `R : Type u`, `S : Type w` be commutative rings with `Algebra R S`, and `M : ModuleCat.{t}
+S`. The `S`-linear coefficient-first tensor functor `functorAt R S M : ModuleCat.{v} R →
+ModuleCat.{max t v} S`, followed by restriction along `algebraMap R S`, is naturally
+isomorphic to `L ↦ (Res_R M) ⊗_R L` in `ModuleCat R`. Its components preserve the tensor
+entries `m,l`. -/
 def compatibleNativeNatIso :
     (functorAt R S M : ModuleCat.{v} R ⥤ ModuleCat.{max t v} S) ⋙
         ModuleCat.restrictScalars (algebraMap R S) ≅
@@ -74,7 +77,9 @@ def compatibleNativeNatIso :
       intro m l
       rfl)
 
-/-- The native scalar restriction functor is homology-preserving with no flatness premise. -/
+/-- For commutative rings `R : Type u`, `S : Type w` with `Algebra R S`, the functor
+`ModuleCat.restrictScalars (algebraMap R S) : ModuleCat.{v} S → ModuleCat.{v} R` preserves
+homology. The ring and module-carrier universes are independent. -/
 theorem restrictScalars_preservesHomology :
     (ModuleCat.restrictScalars (algebraMap R S) :
       ModuleCat.{v} S ⥤ ModuleCat.{v} R).PreservesHomology := by
@@ -82,7 +87,9 @@ theorem restrictScalars_preservesHomology :
   intro T hT
   exact ModuleCat.restrictScalars_map_exact (algebraMap R S) T hT
 
-/-- Exact scalar restriction transports the actual homology object by the native short-complex API. -/
+/-- Let `R,S` be commutative rings with `Algebra R S`, `L : ChainComplex (ModuleCat.{v} S) ℕ`, and
+`n : ℕ`. The canonical comparison has direction `H_n(Res_R L) ≅ Res_R(H_n L)`. Here scalar
+restriction is applied to every term and differential of the chain complex. -/
 def restrictHomologyIso (L : ChainComplex (ModuleCat.{v} S) ℕ) (n : ℕ) :
     (((ModuleCat.restrictScalars (algebraMap R S)).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj L).homology n ≅
@@ -92,7 +99,9 @@ def restrictHomologyIso (L : ChainComplex (ModuleCat.{v} S) ℕ) (n : ℕ) :
   letI : F.PreservesHomology := restrictScalars_preservesHomology R S
   exact (L.sc n).mapHomologyIso F
 
-/-- The actual exact-restriction homology comparison retains native chain-map naturality. -/
+/-- Let `R,S` be commutative rings with `Algebra R S`, `f : L → L'` a map of `ℕ`-chain complexes
+of `S`-modules, and `n : ℕ`. For `e_L : H_n(Res_R L) ≅ Res_R(H_n L)`, the inverse comparisons
+satisfy `Res_R(H_n f) ≫ e_{L'}⁻¹ = e_L⁻¹ ≫ H_n(Res_R f)`. -/
 @[reassoc]
 theorem restrictHomologyIso_inv_naturality
     {L L' : ChainComplex (ModuleCat.{v} S) ℕ} (f : L ⟶ L') (n : ℕ) :

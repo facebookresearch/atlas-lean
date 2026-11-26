@@ -1,3 +1,6 @@
-# Coefficient Map Of Ring Square comp
+# Composition law for semilinear coefficient differential maps
 
-The map of the actual composite diagram is the composite of the actual semilinear maps.
+Composition law for semilinear coefficient differential maps.
+
+For composable squares s,t, coefficientMapOfRingSquare(s.comp t) is the composite of their
+semilinear maps, with scalar homomorphism t.coefficient ∘ s.coefficient.

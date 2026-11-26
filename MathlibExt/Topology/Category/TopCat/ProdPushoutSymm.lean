@@ -23,11 +23,16 @@ namespace TopCat
 /-!
 # Fixed-right product-pushout symmetry adapter
 
-Transports a supplied fixed-left product pushout square to the fixed-right
-orientation via the four corner braidings. States no preservation result.
+For a fixed space `Z`, a pushout square obtained by taking products `Z × X`
+at all four corners gives the corresponding pushout square with products
+`X × Z`, through the four product symmetry isomorphisms. The assertion
+starts with the given fixed-left product pushout square.
 -/
 
-/-- Fixed-right pushout square from a fixed-left pushout square. -/
+/-- Let `Z`, `X`, `Y`, `X′`, `Y′` be spaces in universe `u`, with maps
+forming a square. If their products with `Z` on the left form a pushout
+square, the corresponding products with `Z` on the right also form a
+pushout square, using the product symmetries at the four corners. -/
 theorem isPushout_prod_map_fixedRight_of_fixedLeft
     {Z X Y X' Y' : TopCat.{u}}
     {f : X ⟶ Y} {g : X ⟶ X'} {inl : Y ⟶ Y'} {inr : X' ⟶ Y'}

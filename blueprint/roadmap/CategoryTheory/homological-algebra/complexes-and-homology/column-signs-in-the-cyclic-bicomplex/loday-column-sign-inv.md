@@ -1,3 +1,3 @@
-# Loday Column Sign inv
+# The inverse triangular column sign is the same sign
 
-Inverse column coordinates are the same original signs.
+For p∈ℕ and the triangular unit c_p, c_p⁻¹=c_p. This follows from c_p²=1.

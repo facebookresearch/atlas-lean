@@ -15,23 +15,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
-# Original module elements of the native normalized Moore complex
+# Moore terms as intersections of positive-face kernels
 
-The existing normalized Moore functor uses categorical finite intersections
-of kernels. Native ModuleCat.subobjectModule identifies those actual
-subobjects with the original submodules. This gives a canonical linear
-equivalence from each native Moore term to the original intersection of
-positive-face kernels. Its value, differential and map equations retain the
-actual native inclusion and original simplicial operators.
+Let R be a ring and X a simplicial R-module, with the ring and module carrier universes
+independent. Set N₀ = X₀ and Nₙ = ⋂_{i=1}ⁿ Ker(d_i : X_n → X_{n−1}) for n > 0. The categorical
+Moore inclusion has exactly Nₙ as its range, giving an R-linear equivalence between the chosen
+Moore term and this concrete submodule.
 
-This is a carrier interface to the existing normalized complex. It does
-not choose a new complex or accept a normalization/comparison certificate.
-The ring and module universes are independent, including module carriers
-below the ring universe. No smallness or monoidal-unit object is needed.
-It supplies the element interface for actual boundary lifts and additive
-resolution asphericity. Reference: Stacks Project, simplicial modules,
-Tag0194; the native Mathlib Moore complex and module subobject constructions.
-Candidate source; UNEXECUTED. Frozen AQ24/V4/V5/V6/V7 bytes are unchanged.
+In these coordinates the normalized differential N_{n+1} → N_n is the zeroth face d₀. A
+simplicial module map acts by its degree-n component restricted to N_n. The equivalence and
+its inverse retain the values of the Moore inclusion and the given simplicial operators.
 -/
 
 @[expose] public section
@@ -47,7 +40,11 @@ namespace AlgebraicTopology.ModuleMooreComplex
 
 variable {R : Type u} [Ring R]
 
-/-- The native kernel subobject has exactly the original linear kernel as its range. -/
+/-- Module subobject of a categorical kernel.
+
+For a morphism f : M → N in ModuleCat R, the submodule associated to the categorical kernel
+subobject of f is LinearMap.ker f.hom. It consists exactly of the elements of M annihilated by
+f. -/
 theorem subobjectModule_kernel {M N : ModuleCat.{v} R} (f : M ⟶ N) :
     ModuleCat.subobjectModule M (kernelSubobject f) = LinearMap.ker f.hom := by
   ext x
@@ -62,12 +59,18 @@ theorem subobjectModule_kernel {M N : ModuleCat.{v} R} (f : M ⟶ N) :
 
 variable (X : SimplicialObject (ModuleCat.{v} R))
 
-/-- The original positive-face kernel intersection, with the original degree-zero module. -/
+/-- Intersection of positive-face kernels in a simplicial module.
+
+For a simplicial R-module X, normalizedSubmodule X 0 is all of X₀. In degree n+1 it is the
+intersection of Ker(d_{j+1}) for j ∈ Fin(n+1), hence of all positive faces X_{n+1} → X_n. -/
 def normalizedSubmodule : (n : ℕ) → Submodule R (X.obj (op ⦋n⦌))
   | 0 => ⊤
   | n + 1 => Finset.univ.inf fun j : Fin (n + 1) => LinearMap.ker (X.δ j.succ).hom
 
-/-- The actual native Moore inclusion has this original kernel intersection as its range. -/
+/-- Range of the Moore inclusion in module coordinates.
+
+For every n, the range of the degree-n Moore inclusion N(X)_n → X_n is normalizedSubmodule X
+n, the intersection of positive-face kernels, with the full module at degree zero. -/
 theorem inclusion_range (n : ℕ) :
     LinearMap.range ((inclusionOfMooreComplexMap X).f n).hom = normalizedSubmodule X n := by
   rw [inclusionOfMooreComplexMap_f]
@@ -86,7 +89,11 @@ theorem inclusion_range (n : ℕ) :
     funext j
     exact subobjectModule_kernel (X.δ j.succ)
 
-/-- Canonical original-element coordinates for each term of the actual native Moore complex. -/
+/-- Linear coordinates for a normalized Moore term.
+
+For a simplicial module X over a ring R and n : ℕ, restrict the Moore inclusion to its range.
+This gives N(X)_n ≃ₗ[R] normalizedSubmodule X n, with independent ring and module carrier
+universes. -/
 def termEquiv (n : ℕ) :
     ((normalizedMooreComplex (ModuleCat.{v} R)).obj X).X n ≃ₗ[R] normalizedSubmodule X n := by
   let l := ((inclusionOfMooreComplexMap X).f n).hom.codRestrict (normalizedSubmodule X n)
@@ -106,19 +113,28 @@ def termEquiv (n : ℕ) :
     obtain ⟨x, hx⟩ := hy'
     exact ⟨x, Subtype.ext hx⟩
 
-/-- The canonical coordinates are the actual native Moore inclusion. -/
+/-- Value of the Moore-term coordinate equivalence.
+
+For x ∈ N(X)_n, the underlying element of X_n obtained by termEquiv is the value of the
+degree-n Moore inclusion on x. -/
 @[simp]
 theorem termEquiv_value (n : ℕ)
     (x : ((normalizedMooreComplex (ModuleCat.{v} R)).obj X).X n) :
     (termEquiv X n x).val = ((inclusionOfMooreComplexMap X).f n).hom x := rfl
 
-/-- Every original normalized element has its earned native preimage. -/
+/-- Value of the inverse Moore-term coordinate equivalence.
+
+For x in the intersection of the positive-face kernels at degree n, applying termEquiv⁻¹ and
+then the Moore inclusion returns the underlying element x in X_n. -/
 @[simp]
 theorem termEquiv_symm_value (n : ℕ) (x : normalizedSubmodule X n) :
     ((inclusionOfMooreComplexMap X).f n).hom ((termEquiv X n).symm x) = x.val :=
   congrArg Subtype.val ((termEquiv X n).apply_symm_apply x)
 
-/-- Membership means precisely that the original positive faces vanish. -/
+/-- Positive-face vanishing criterion for Moore coordinates.
+
+An element x ∈ X_{n+1} belongs to normalizedSubmodule X (n+1) exactly when d_{j+1}(x) = 0 for
+every j ∈ Fin(n+1). -/
 theorem mem_normalizedSubmodule (n : ℕ) (x : X.obj (op ⦋n + 1⦌)) :
     x ∈ normalizedSubmodule X (n + 1) ↔
       ∀ j : Fin (n + 1), (X.δ j.succ).hom x = 0 := by
@@ -133,7 +149,11 @@ theorem mem_normalizedSubmodule (n : ℕ) (x : X.obj (op ⦋n + 1⦌)) :
   simpa only [normalizedSubmodule, Finset.mem_univ, forall_const, LinearMap.mem_ker] using
     h Finset.univ
 
-/-- The actual normalized differential is the original zeroth face in these coordinates. -/
+/-- Zeroth-face formula for the normalized Moore differential.
+
+For x ∈ N(X)_{n+1}, the normalized differential followed by degree-n coordinates equals d₀
+applied to the degree-(n+1) coordinates of x. Thus the Moore differential is the zeroth face
+on the positive-face kernel intersection. -/
 theorem termEquiv_d_value (n : ℕ)
     (x : ((normalizedMooreComplex (ModuleCat.{v} R)).obj X).X (n + 1)) :
     (termEquiv X n
@@ -160,7 +180,10 @@ theorem termEquiv_d_value (n : ℕ)
       exact Subobject.factorThru_arrow _ _ _
   exact congrArg (fun h => h.hom x) h
 
-/-- Original simplicial module maps retain their actual values under native normalization. -/
+/-- Component formula for a normalized simplicial module map.
+
+For f : X → Y, n : ℕ and x ∈ N(X)_n, the coordinates of N(f)_n(x) are f_n applied to the
+coordinates of x. Both equivalences use the corresponding Moore inclusions. -/
 theorem termEquiv_map_value {Y : SimplicialObject (ModuleCat.{v} R)} (f : X ⟶ Y)
     (n : ℕ) (x : ((normalizedMooreComplex (ModuleCat.{v} R)).obj X).X n) :
     (termEquiv Y n

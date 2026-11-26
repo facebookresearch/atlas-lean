@@ -1,3 +1,6 @@
-# Polynomial Counit Section Of Iso
+# Counit section transported through a polynomial presentation
 
-Transport the constructed polynomial section by an actual algebra presentation.
+Let `k` be a commutative ring, `P` a `k`-algebra, and `e : Free_k(σ) ≅ P` a polynomial
+presentation. The algebra map `polynomialCounitSectionOfIso k P σ e : P → T(P)` is `e.inv ≫
+polynomialCounitSection k σ ≫ T.map e.hom`. It transports the free-algebra counit section to
+the presented algebra.

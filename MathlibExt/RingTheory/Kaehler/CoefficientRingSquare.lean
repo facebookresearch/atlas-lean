@@ -13,24 +13,19 @@ public import MathlibExt.RingTheory.Kaehler.RingSquare
 public import Mathlib.LinearAlgebra.TensorProduct.Lift
 
 /-!
-# Actual ground-ring squares for extended differentials
+# Coefficient transport for Kähler differentials
 
-An input square consists only of the original ring homomorphisms and the two
-commuting squares k→P→A and K→Q→B. The native semilinear differential map
-and the native semilinear tensor map construct the actual coefficient map
-`a ⊗ dp ↦ fA(a) ⊗ d(fP(p))`. Its coefficient semilinearity is proved from
-the native tensor formula, and the native extension adjunction constructs
-the corresponding B-linear map after actual extension along A→B.
+Let k → P → A and K → Q → B be algebra towers of commutative rings. A CoefficientRingSquare
+consists of ring maps f_k : k → K, f_P : P → Q and f_A : A → B commuting with both structural
+squares.
 
-The coefficient map preserves identities and composites by the actual
-differential generators. All six ring universes, and the extensionality
-target module universe, are independent. No exactness, independence,
-flatness or desired cotangent comparison is supplied by a caller.
+For the extended differential modules Ω^A_{P/k}=A⊗[P]Ω_{P/k} and Ω^B_{Q/K}=B⊗[Q]Ω_{Q/K}, these
+maps give an f_A-semilinear map a⊗d p ↦ f_A(a)⊗d(f_P(p)). It respects identity and composition
+of squares. The generators 1_A⊗d p determine every semilinear map from the source module.
 
-This is the genuine degreewise transport provider. Canonical polynomial
-ground-change maps, their full simplicial coherence and flat derived base
-change remain separate obligations. Source: Stacks Project 92.6--92.7;
-Loday 3.5.4, 3.5.6--3.5.8.
+Giving B the A-action through f_A and extending scalars produces a B-linear map B⊗[A]Ω^A_{P/k}
+→ Ω^B_{Q/K}, with b⊗(a⊗d p) ↦ (b·f_A(a))⊗d(f_P(p)). The six ring universes and the
+extensionality target-module universe are independent.
 -/
 
 @[expose] public section
@@ -48,18 +43,39 @@ variable (k : Type uk) (K : Type uK) (P : Type uP) (Q : Type uQ)
   [CommRing k] [CommRing K] [CommRing P] [CommRing Q] [CommRing A] [CommRing B]
   [Algebra k P] [Algebra K Q] [Algebra P A] [Algebra Q B]
 
-/-- Only the original maps and actual commuting squares form the transport input. -/
+/-- Commuting ring maps for extended differential transport.
+
+For towers k → P → A and K → Q → B, specify ring maps on the ground, algebra and coefficient
+rows and require the two structural squares to commute. -/
 structure CoefficientRingSquare where
+/-- Ring map on the ground row of a coefficient square.
+
+The map f_k : k → K relates the two base rings of the differential modules. -/
   ground : k →+* K
+/-- Ring map on the algebra row of a coefficient square.
+
+The map f_P : P → Q relates the two algebras and is compatible with f_k by ground_commutes. -/
   algebra : P →+* Q
+/-- Ring map on the coefficient row of a differential square.
+
+The map f_A : A → B determines semilinearity of the coefficient differential map. -/
   coefficient : A →+* B
+/-- Compatibility of the ground and algebra rows.
+
+Require f_P ∘ algebraMap(k,P) = algebraMap(K,Q) ∘ f_k as ring maps k → Q. -/
   ground_commutes : algebra.comp (algebraMap k P) = (algebraMap K Q).comp ground
+/-- Compatibility of the algebra and coefficient rows.
+
+Require f_A ∘ algebraMap(P,A) = algebraMap(Q,B) ∘ f_P as ring maps P → B. -/
   augmentation_commutes : coefficient.comp (algebraMap P A) =
     (algebraMap Q B).comp algebra
 
 variable {k K P Q A B}
 
-/-- The actual identity diagram of the original ring tower. -/
+/-- Identity square of an algebra-coefficient tower.
+
+For k → P → A, use identity ring maps on all three rows to obtain the identity
+CoefficientRingSquare. -/
 def CoefficientRingSquare.id : CoefficientRingSquare k k P P A A where
   ground := RingHom.id k
   algebra := RingHom.id P
@@ -67,7 +83,10 @@ def CoefficientRingSquare.id : CoefficientRingSquare k k P P A A where
   ground_commutes := by ext r; rfl
   augmentation_commutes := by ext p; rfl
 
-/-- Compose the actual maps and their original commuting equations. -/
+/-- Composition of coefficient ring squares.
+
+For compatible squares s : (k,P,A) → (K,Q,B) and t : (K,Q,B) → (K',Q',B'), compose each row in
+the order t ∘ s. Their two commutative-square equations compose as well. -/
 def CoefficientRingSquare.comp
     {K' : Type*} {Q' : Type*} {B' : Type*}
     [CommRing K'] [CommRing Q'] [CommRing B'] [Algebra K' Q'] [Algebra Q' B']
@@ -98,7 +117,11 @@ def CoefficientRingSquare.comp
       algebraMap Q' B' (t.algebra (s.algebra p)) at ht
     exact (congrArg t.coefficient hs).trans ht
 
-/-- Native semilinear tensor map, with coefficient semilinearity earned on its actual tensors. -/
+/-- Semilinear map of extended Kähler differentials.
+
+For a coefficient square s, construct Ω^A_{P/k} →ₛₗ[s.coefficient] Ω^B_{Q/K} by the
+coefficient ring map and the semilinear Kähler map. Its tensor value is a⊗d p ↦
+s.coefficient(a)⊗d(s.algebra(p)). -/
 def coefficientMapOfRingSquare (s : CoefficientRingSquare k K P Q A B) :
     Coefficient k P A →ₛₗ[s.coefficient] Coefficient K Q B := by
   let f : A →ₛₗ[s.algebra] B :=
@@ -128,6 +151,10 @@ def coefficientMapOfRingSquare (s : CoefficientRingSquare k K P Q A B) :
           rfl
         | add x y hx hy => simp only [smul_add, map_add, hx, hy] }
 
+/-- Generator formula for a coefficient ring-square map.
+
+For a ∈ A and p ∈ P, coefficientMapOfRingSquare s sends a⊗[P]d p to
+s.coefficient(a)⊗[Q]d(s.algebra(p)). -/
 @[simp]
 theorem coefficientMapOfRingSquare_tmul_D
     (s : CoefficientRingSquare k K P Q A B) (a : A) (p : P) :
@@ -138,7 +165,11 @@ theorem coefficientMapOfRingSquare_tmul_D
       (KaehlerDifferential.D k P p) = _
   rw [mapOfRingSquare_D]
 
-/-- Differential tensors determine every actual semilinear coefficient map. -/
+/-- Semilinear extensionality on differential generators.
+
+Let σ : A → C be a ring map into a commutative ring and M a C-module in an independent
+universe. Two σ-semilinear maps Ω^A_{P/k} → M are equal if they agree on 1_A⊗d p for every p ∈
+P. -/
 theorem coefficientSemilinear_hom_ext
     {C : Type*} [CommRing C] {M : Type uM} [AddCommGroup M] [Module C M]
     {σ : A →+* C} {f g : Coefficient k P A →ₛₗ[σ] M}
@@ -160,6 +191,10 @@ theorem coefficientSemilinear_hom_ext
   ext x
   exact LinearMap.congr_fun he x
 
+/-- Identity map on extended Kähler differentials.
+
+The semilinear coefficient map of the identity ring square is the identity A-linear map on
+A⊗[P]Ω_{P/k}. -/
 @[simp]
 theorem coefficientMapOfRingSquare_id :
     coefficientMapOfRingSquare (CoefficientRingSquare.id (k := k) (P := P) (A := A)) =
@@ -169,7 +204,10 @@ theorem coefficientMapOfRingSquare_id :
   rw [coefficientMapOfRingSquare_tmul_D]
   rfl
 
-/-- The map of the actual composite diagram is the composite of the actual semilinear maps. -/
+/-- Composition law for semilinear coefficient differential maps.
+
+For composable squares s,t, coefficientMapOfRingSquare(s.comp t) is the composite of their
+semilinear maps, with scalar homomorphism t.coefficient ∘ s.coefficient. -/
 theorem coefficientMapOfRingSquare_comp
     {K' : Type*} {Q' : Type*} {B' : Type*}
     [CommRing K'] [CommRing Q'] [CommRing B'] [Algebra K' Q'] [Algebra Q' B']
@@ -196,7 +234,10 @@ theorem coefficientMapOfRingSquare_comp
     (congrArg (fun a : B' => a ⊗ₜ[Q'] KaehlerDifferential.D K' Q' (t.algebra (s.algebra p))) hOne)
   exact hL'.trans hR'.symm
 
-/-- Native extension of scalars turns the actual semilinear map into the genuine B-linear map. -/
+/-- Linear scalar extension of a coefficient differential map.
+
+Give B its A-algebra structure through s.coefficient. The semilinear coefficient map extends
+to the B-linear map B⊗[A]Ω^A_{P/k} → Ω^B_{Q/K}. -/
 def coefficientBaseChangeMapOfRingSquare (s : CoefficientRingSquare k K P Q A B) :
     letI : Algebra A B := s.coefficient.toAlgebra
     (B ⊗[A] Coefficient k P A) →ₗ[B] Coefficient K Q B := by
@@ -210,6 +251,10 @@ def coefficientBaseChangeMapOfRingSquare (s : CoefficientRingSquare k K P Q A B)
   exact @LinearMap.liftBaseChange A (Coefficient k P A) (Coefficient K Q B) B
     _ _ _ _ _ _ _ _ hTower l
 
+/-- Two-coefficient tensor formula for extended differential transport.
+
+With B viewed as an A-algebra through s.coefficient, b⊗[A](a⊗[P]d p) maps to
+(b·s.coefficient(a))⊗[Q]d(s.algebra(p)). -/
 theorem coefficientBaseChangeMapOfRingSquare_tmul_D
     (s : CoefficientRingSquare k K P Q A B) (b : B) (a : A) (p : P) :
     letI : Algebra A B := s.coefficient.toAlgebra

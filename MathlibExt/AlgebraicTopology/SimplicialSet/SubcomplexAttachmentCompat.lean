@@ -15,21 +15,17 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Monotone.Basic
 
 /-!
-# Boundary attachments of simplicial subcomplexes
+# Boundary attachments between simplicial subcomplexes
 
-For subcomplexes `A < J` of a simplicial set `X`, choose a nondegenerate simplex
-`x` of `J` outside `A` with minimal dimension `n`. Every proper face lies in `A`.
-The join `B = A ⊔ Subcomplex.ofSimplex x` satisfies `A < B ≤ J`, and attaching
-`Δ[n]` along its boundary gives a pushout square with maps
-`∂Δ[n] → A`, `Δ[n] → B` and the subcomplex inclusion `A → B`.
+Let A < J be subcomplexes of a simplicial set X. Choose a nondegenerate simplex x of J outside
+A of minimal dimension n. Every lower-dimensional nondegenerate simplex of J lies in A, so the
+boundary of x maps into A. The subcomplex B = A ⊔ ofSimplex(x) satisfies A < B ≤ J.
 
-The witness form records the simplex, its minimality, its membership in `J`
-and the join description of `B`. Taking `J = ⊤` gives an attachment to any
-proper subcomplex. If `A ≤ J` and `J` is a finite simplicial set, iteration
-produces a monotone `Fin (k + 1)` chain from `A` to `J`; each successive step
-is a strict inclusion carrying its boundary pushout data.
-
-All statements hold for simplicial sets in every universe.
+There is a pushout square with edges ∂Δ[n] → A, ∂Δ[n] → Δ[n], A → B and Δ[n] → B. The witness
+version retains x, its membership and minimality, and the join description of B. If A ≤ J and
+J is finite, these attachments give a finite monotone chain from A to J, each successive step
+strict and carrying its boundary pushout data. The ambient simplicial-set universe is
+arbitrary.
 -/
 
 @[expose] public section
@@ -314,9 +310,11 @@ private lemma pushout_of_minimal_relMissing {X : SSet.{u}} {A J : X.Subcomplex}
   }
   exact ⟨B, hlt, hBJ, rfl, t, b, hIsPushout⟩
 
-/-- A bounded one-cell attachment step: for `A < J`, attach one minimal missing
-nondegenerate simplex of `J` via a pushout from `∂Δ[n]`, yielding `A < B` with
-`B ≤ J` and the standard bicartesian square. -/
+/-- One boundary attachment inside a larger subcomplex.
+
+For subcomplexes A < J of X, there exist B with A < B ≤ J, a natural dimension n and maps t :
+∂Δ[n] → A, b : Δ[n] → B such that the square (t,boundary inclusion,A → B,b) is a pushout. The
+construction attaches a minimal-dimensional nondegenerate simplex of J missing from A. -/
 theorem exists_isPushout_of_lt {X : SSet.{u}} (A J : X.Subcomplex) (h : A < J) :
     ∃ (B : X.Subcomplex) (hAB : A < B) (_ : B ≤ J) (n : ℕ)
       (t : (SSet.boundary n : SSet.{u}) ⟶ (A : SSet.{u}))
@@ -337,18 +335,12 @@ theorem exists_isPushout_of_lt {X : SSet.{u}} (A J : X.Subcomplex) (h : A < J) :
     pushout_of_minimal_relMissing hAJ hxJ hx₀ hMin
   exact ⟨B, hAB, hBJ, n₀, t, b, hPush⟩
 
-/-- Bounded one-cell attachment with explicit minimal witness.
+/-- Boundary attachment with a minimal nondegenerate witness.
 
-Same orientation as `exists_isPushout_of_lt`: `IsPushout t (boundary n).ι
-(homOfLE hAB.le) b` with `n` the `Nat.find` minimal missing dimension, `x` the
-witnessing nondegenerate cell, `hJoin : B = A ⊔ ofSimplex x.1`, and `hMin` its
-minimality. For `X := Δ[N]`, `A := boundary N`, `J := ⊤`, dimension bounds
-(`dim_le_of_nonDegenerate`, `boundary_obj_eq_univ`) force `n = N`, and
-`nonDegenerate_top_dim` identifies `x`; compose with
-`sup_ofSimplex_top_eq_top`/`attachment_apex_eq_top` where the import layer
-permits. No realized-boundary-range/complement equality, openness,
-collar/shrink/chart/Serre/fibration/model, arbitrary product preservation, or
-KQ3 claim. -/
+For A < J, choose x ∈ J_n nondegenerate and outside A, with every nondegenerate simplex of J
+in smaller dimension lying in A. Then B = A ⊔ ofSimplex(x) satisfies A < B ≤ J and is the
+pushout of ∂Δ[n] → A along ∂Δ[n] → Δ[n]. The result retains x, both membership conditions,
+minimality and the join equality. -/
 theorem exists_isPushout_of_lt_with_witness {X : SSet.{u}} (A J : X.Subcomplex)
     (h : A < J) :
     ∃ (B : X.Subcomplex) (hAB : A < B) (_ : B ≤ J) (n : ℕ)
@@ -376,8 +368,10 @@ theorem exists_isPushout_of_lt_with_witness {X : SSet.{u}} (A J : X.Subcomplex)
     pushout_of_minimal_relMissing hAJ hxJ hx₀ hMin
   exact ⟨B, hAB, hBJ, n₀, x₀, hxJ, hx₀, hMin, hJoin, t, b, hPush⟩
 
-/-- A proper subcomplex `A ≠ ⊤` of `X` attaches one minimal missing nondegenerate
-`n`-simplex via a pushout from `∂Δ[n]`, yielding `A < B` with the standard bicartesian square. -/
+/-- Boundary attachment to a proper simplicial subcomplex.
+
+For A ≠ ⊤ in X, there exist B with A < B, a dimension n and a pushout square ∂Δ[n] → A, ∂Δ[n]
+→ Δ[n], A → B and Δ[n] → B. This is the attachment inside J = ⊤. -/
 theorem exists_isPushout_of_ne_top {X : SSet.{u}} (A : X.Subcomplex) (hA : A ≠ ⊤) :
     ∃ (B : X.Subcomplex) (lt : A < B) (n : ℕ)
       (t : (SSet.boundary n : SSet.{u}) ⟶ (A : SSet.{u}))
@@ -387,9 +381,11 @@ theorem exists_isPushout_of_ne_top {X : SSet.{u}} (A : X.Subcomplex) (hA : A ≠
   obtain ⟨B, hAB, _, n, t, b, hPush⟩ := exists_isPushout_of_lt A ⊤ hLT
   exact ⟨B, hAB, n, t, b, hPush⟩
 
-/-- Finite iteration of the bounded one-cell step: for `A ≤ J` with `J` finite,
-there is a `Fin`-indexed chain from `A` to `J` whose successive steps carry the
-explicit boundary pushout data of `exists_isPushout_of_lt`. -/
+/-- Finite boundary-attachment chain inside a finite subcomplex.
+
+If A ≤ J and J is finite as a simplicial set, there exist k : ℕ and a monotone family C₀,…,C_k
+with C₀=A and C_k=J. For every i<k, C_i<C_{i+1}≤J and the inclusion C_i→C_{i+1} is obtained by
+a pushout of one standard simplex boundary. The case A=J allows k=0. -/
 theorem exists_finite_attachment_chain_of_le_of_finite {X : SSet.{u}}
     (A J : X.Subcomplex) (hAJ : A ≤ J) [SSet.Finite (J : SSet.{u})] :
     ∃ (k : ℕ) (C : Fin (k + 1) → X.Subcomplex),

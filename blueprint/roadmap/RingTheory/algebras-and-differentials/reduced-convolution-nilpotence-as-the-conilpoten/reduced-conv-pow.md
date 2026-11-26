@@ -1,5 +1,6 @@
-# Reduced Conv Pow
+# Finite convolution iterates with their homogeneous degrees
 
-Reduced iterated convolution powers of a homogeneous cochain, with the
-degree hidden in a sigma: `0 ↦ f` and `n+1 ↦ conv (pow n) f`.
-Base-at-`f`, left-accumulating; not a unital monoid power.
+Finite convolution iterates with their homogeneous degrees.
+
+For f of degree m, define P₀=(m,f). If Pₙ=(dₙ,fₙ), define Pₙ₊₁=(dₙ+m,fₙ⋆f). Each value is a
+pair of an integer degree and a cochain in that degree.

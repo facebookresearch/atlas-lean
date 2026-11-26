@@ -1,3 +1,6 @@
-# Mapped Normalized Homology Nat Iso app
+# Component of the additive normalized-homology comparison
 
-The natural comparison is the homology map of the constructed native homotopy equivalence.
+Component of the additive normalized-homology comparison.
+
+At Y, the component of mappedNormalizedHomologyNatIso F i is precisely the degree-i homology
+isomorphism induced by mappedNormalizedHomotopyEquiv F Y.

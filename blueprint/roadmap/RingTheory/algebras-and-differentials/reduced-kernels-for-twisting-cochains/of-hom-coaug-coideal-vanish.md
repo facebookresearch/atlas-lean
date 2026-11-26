@@ -1,4 +1,6 @@
-# Of Hom coaug Coideal vanish
+# Coaugmentation-quotient vanishing in degree-zero Hom cochains
 
-Degree-zero coaugmentation vanishing from the generic cokernel condition
-and the pinned `ofHom` composition API, at exactly `(zero_add 0)`.
+Coaugmentation-quotient vanishing in degree-zero Hom cochains.
+
+The degree-zero cochain of η : I → C followed by the degree-zero cochain of π : C → Coker(η)
+is zero, with total degree 0+0=0.

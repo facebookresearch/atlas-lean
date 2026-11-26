@@ -12,15 +12,23 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.SplittingPrismDegene
 public import Mathlib.AlgebraicTopology.SimplicialObject.Homotopy
 
 /-!
-# Whole-source prism faces from actual nondegenerate prescriptions
+# Face identities from nondegenerate prism restrictions
 
-A proper epi summand factors through an elementary degeneracy. Native
-splitting extensionality therefore reduces each whole-source equation to
-the new summand and the images of the elementary degeneracies. The latter
-equations follow from the unconditional all-epi prism descent, the native
-face-degeneracy identities, and the already established previous degree.
-No global homotopy or new-degree whole-source equation is input.
-Source proposals only; UNEXECUTED.
+Let P,Q be simplicial objects in a category C, s a splitting of P and p_{n,i} : N_n → Q_{n+1}
+prescribed maps. Write H_{n,i} for their degeneracy-compatible coproduct descent. Maps out of
+P_{n+1} are determined by their restriction to N_{n+1} and to each elementary degeneracy image
+from P_n.
+
+For n = d+1, Faces(d) records H_{n,0} ≫ d₀^Q = g_n, H_{n,n} ≫ d_{n+1}^Q = f_n, the early
+equations H_{n,r} ≫ d_j^Q = d_j^P ≫ H_{n−1,r−1} for j < r, the late equations H_{n,r} ≫ d_j^Q
+= d_{j−1}^P ≫ H_{n−1,r} for r+1 < j, and the common-middle equations H_{n,r+1} ≫ d_{r+1}^Q =
+H_{n,r} ≫ d_{r+1}^Q. FacesOnGenerators(d) records the same equations after precomposition by
+ι_n : N_n → P_n.
+
+Faces(d), together with FacesOnGenerators(d+1), gives Faces(d+1). Degenerate restrictions
+reduce to degree d+1 using the simplex face-degeneracy identities. The analogous argument
+extends an augmentation equation from degree d+1 and its restrictions on N_{d+2} to all of
+P_{d+2}. The category worlds are independent.
 -/
 
 @[expose] public section
@@ -36,8 +44,11 @@ namespace CategoryTheory.SimplicialObject.Splitting
 
 variable {C : Type u} [Category.{v} C] {P : SimplicialObject C} (s : Splitting P)
 
-/-- The actual new summand and all elementary degeneracy images determine
-a map from the whole next source degree. -/
+/-- Extensionality on the nondegenerate summand and degeneracy images.
+
+For a splitting s of P and maps a,b : P_{n+1} → Z, equality on ι_{n+1} : N_{n+1} → P_{n+1} and
+after each σ_i : P_n → P_{n+1} implies a = b. Every proper epimorphism summand factors through
+an elementary degeneracy. -/
 theorem hom_ext_new_degenerate {n : ℕ} {Z : C} {a b : P.obj (op ⦋n + 1⦌) ⟶ Z}
     (hnew : s.ι (n + 1) ≫ a = s.ι (n + 1) ≫ b)
     (hdeg : ∀ i : Fin (n + 1), P.σ i ≫ a = P.σ i ≫ b) : a = b := by
@@ -67,15 +78,24 @@ variable {C : Type u} [Category.{v} C] {P Q : SimplicialObject C}
   (p : ∀ n : ℕ, Fin (n + 1) → (s.N n ⟶ Q.obj (op ⦋n + 1⦌)))
   (f g : P ⟶ Q)
 
-/-- The original native face at the supplied finite ordinal index. -/
+/-- Face map at a bounded natural-number index.
+
+For a simplicial object X, n : ℕ and j ≤ n+1, face X n j is d_j : X_{n+1} → X_n, indexed by
+the corresponding element of Fin(n+2). -/
 abbrev face (X : SimplicialObject C) (n j : ℕ) (hj : j ≤ n + 1) :=
   X.δ (⟨j, Nat.lt_succ_iff.mpr hj⟩ : Fin (n + 2))
 
-/-- The original native degeneracy at the supplied finite ordinal index. -/
+/-- Degeneracy map at a bounded natural-number index.
+
+For a simplicial object X, n : ℕ and a ≤ n, degeneracy X n a is σ_a : X_n → X_{n+1}, indexed
+by the corresponding element of Fin(n+1). -/
 abbrev degeneracy (X : SimplicialObject C) (n a : ℕ) (ha : a ≤ n) :=
   X.σ (⟨a, Nat.lt_succ_iff.mpr ha⟩ : Fin (n + 1))
 
-/-- These operators are always derived by native all-epi coproduct descent. -/
+/-- Prism operator at a bounded natural-number index.
+
+For a splitting of P and a family p on its nondegenerate summands, operator n r with r ≤ n is
+H_{n,r} : P_n → Q_{n+1}, defined by the all-epimorphism coproduct prescription. -/
 abbrev operator (n r : ℕ) (hr : r ≤ n) :
     P.obj (op ⦋n⦌) ⟶ Q.obj (op ⦋n + 1⦌) :=
   s.prismDegree p (⟨r, Nat.lt_succ_iff.mpr hr⟩ : Fin (n + 1))
@@ -167,33 +187,76 @@ private theorem degeneracy_naturality (q : P ⟶ Q) (n a : ℕ) (ha : a ≤ n) :
       q.app (op ⦋n⦌) ≫ degeneracy Q n a ha :=
   q.naturality (SimplexCategory.σ (⟨a, by omega⟩ : Fin (n + 1))).op
 
-/-- Established whole-source faces in degree `d + 1`. -/
+/-- Five prism face identities in a successor degree.
+
+For n = d+1 and simplicial maps f,g : P → Q, require the two endpoint equations for H_{n,0}
+and H_{n,n}, the early and late face-commutation equations for H_{n,r}, and equality of
+adjacent prism operators after their common middle face. These equations hold on all of P_n
+and use the preceding-degree operators H_{n−1}. -/
 structure Faces (d : ℕ) : Prop where
+/-- First endpoint face equation on the full simplicial term.
+
+For n = d+1, require H_{n,0} ≫ d₀^Q = g_n as maps P_n → Q_n. -/
   zero : operator s p (d + 1) 0 (by omega) ≫ face Q (d + 1) 0 (by omega) = g.app (op ⦋d + 1⦌)
+/-- Last endpoint face equation on the full simplicial term.
+
+For n = d+1, require H_{n,n} ≫ d_{n+1}^Q = f_n as maps P_n → Q_n. -/
   last : operator s p (d + 1) (d + 1) (by omega) ≫ face Q (d + 1) (d + 2) (by omega) =
     f.app (op ⦋d + 1⦌)
+/-- Early face equation on the full simplicial term.
+
+For n = d+1, r ≤ n and j < r, require H_{n,r} ≫ d_j^Q = d_j^P ≫ H_{n−1,r−1}. The right-hand
+side first takes the source face and then the preceding-degree prism operator. -/
   early : ∀ (r : ℕ) (hr : r ≤ d + 1) (j : ℕ) (hj : j < r),
     operator s p (d + 1) r hr ≫ face Q (d + 1) j (by omega) =
       face P d j (by omega) ≫ operator s p d (r - 1) (by omega)
+/-- Late face equation on the full simplicial term.
+
+For n = d+1, r ≤ n and r+1 < j ≤ n+1, require H_{n,r} ≫ d_j^Q = d_{j−1}^P ≫ H_{n−1,r}. The
+source face index decreases by one. -/
   late : ∀ (r : ℕ) (hr : r ≤ d + 1) (j : ℕ) (hj : r + 1 < j) (hj' : j ≤ d + 2),
     operator s p (d + 1) r hr ≫ face Q (d + 1) j hj' =
       face P d (j - 1) (by omega) ≫ operator s p d r (by omega)
+/-- Common-middle face equation on the full simplicial term.
+
+For n = d+1 and r < n, require H_{n,r+1} ≫ d_{r+1}^Q = H_{n,r} ≫ d_{r+1}^Q. The two adjacent
+prism operators agree after the same middle face. -/
   middle : ∀ (r : ℕ) (hr : r < d + 1),
     operator s p (d + 1) (r + 1) (by omega) ≫ face Q (d + 1) (r + 1) (by omega) =
       operator s p (d + 1) r (by omega) ≫ face Q (d + 1) (r + 1) (by omega)
 
-/-- The new degree's equations on its actual nondegenerate summand only. -/
+/-- Prism face identities restricted to nondegenerate generators.
+
+For n = d+1, require the five equations of Faces(d) only after precomposing each side by ι_n :
+N_n → P_n. These are endpoint, early, late and common-middle conditions on the nondegenerate
+summand. -/
 structure FacesOnGenerators (d : ℕ) : Prop where
+/-- First endpoint equation on nondegenerate generators.
+
+For n = d+1, require ι_n ≫ H_{n,0} ≫ d₀^Q = ι_n ≫ g_n as maps N_n → Q_n. -/
   zero : s.ι (d + 1) ≫ (operator s p (d + 1) 0 (by omega) ≫ face Q (d + 1) 0 (by omega)) =
     s.ι (d + 1) ≫ g.app (op ⦋d + 1⦌)
+/-- Last endpoint equation on nondegenerate generators.
+
+For n = d+1, require ι_n ≫ H_{n,n} ≫ d_{n+1}^Q = ι_n ≫ f_n as maps N_n → Q_n. -/
   last : s.ι (d + 1) ≫ (operator s p (d + 1) (d + 1) (by omega) ≫
     face Q (d + 1) (d + 2) (by omega)) = s.ι (d + 1) ≫ f.app (op ⦋d + 1⦌)
+/-- Early face equation on nondegenerate generators.
+
+For n = d+1, r ≤ n and j < r, require ι_n ≫ H_{n,r} ≫ d_j^Q = ι_n ≫ d_j^P ≫ H_{n−1,r−1}. -/
   early : ∀ (r : ℕ) (hr : r ≤ d + 1) (j : ℕ) (hj : j < r),
     s.ι (d + 1) ≫ (operator s p (d + 1) r hr ≫ face Q (d + 1) j (by omega)) =
       s.ι (d + 1) ≫ (face P d j (by omega) ≫ operator s p d (r - 1) (by omega))
+/-- Late face equation on nondegenerate generators.
+
+For n = d+1, r ≤ n and r+1 < j ≤ n+1, require ι_n ≫ H_{n,r} ≫ d_j^Q = ι_n ≫ d_{j−1}^P ≫
+H_{n−1,r}. -/
   late : ∀ (r : ℕ) (hr : r ≤ d + 1) (j : ℕ) (hj : r + 1 < j) (hj' : j ≤ d + 2),
     s.ι (d + 1) ≫ (operator s p (d + 1) r hr ≫ face Q (d + 1) j hj') =
       s.ι (d + 1) ≫ (face P d (j - 1) (by omega) ≫ operator s p d r (by omega))
+/-- Common-middle face equation on nondegenerate generators.
+
+For n = d+1 and r < n, require ι_n ≫ H_{n,r+1} ≫ d_{r+1}^Q = ι_n ≫ H_{n,r} ≫ d_{r+1}^Q. -/
   middle : ∀ (r : ℕ) (hr : r < d + 1),
     s.ι (d + 1) ≫ (operator s p (d + 1) (r + 1) (by omega) ≫
       face Q (d + 1) (r + 1) (by omega)) =
@@ -373,8 +436,11 @@ private theorem middle_descend (old : Faces s p f g d) (new : FacesOnGenerators 
       simpa only [Category.assoc] using congrArg
         (fun z => z ≫ degeneracy Q (d + 1) a.val (by omega)) (old.middle r (by omega))
 
-/-- Every new-degree face and common middle is earned on the whole source.
-The proper epi summands require only the already proved preceding faces. -/
+/-- Descent of prism face laws to the next simplicial degree.
+
+For the splitting-descended operators H, Faces(d) and FacesOnGenerators(d+1) imply Faces(d+1).
+Restriction to N_{d+2} is the given generator equation, while restriction along each
+degeneracy reduces to the face laws in degree d+1. -/
 theorem descend (old : Faces s p f g d) (new : FacesOnGenerators s p f g (d + 1)) :
     Faces s p f g (d + 1) where
   zero := zero_descend s p f g old new
@@ -383,9 +449,12 @@ theorem descend (old : Faces s p f g d) (new : FacesOnGenerators s p f g (d + 1)
   late := late_descend s p f g old new
   middle := middle_descend s p f g old new
 
-/-- The original augmentation descends by the same new/degenerate source
-extensionality. The previous augmentation is an established lower-degree
-equation, and the new equation is supplied only on the actual new summand. -/
+/-- Descent of a prism augmentation equation.
+
+Let ε_P : P → const(A) and ε_Q : Q → const(A) be augmentations. Suppose H_{d+1,r} ≫ ε_Q,d+2 =
+ε_P,d+1 for every r ≤ d+1, and the equation H_{d+2,r} ≫ ε_Q,d+3 = ε_P,d+2 holds after ι_{d+2}
+for every r ≤ d+2. Then the latter equation holds on all of P_{d+2}, by splitting
+extensionality and degeneracy compatibility. -/
 theorem augmentation_descend {A : C}
     (εP : P ⟶ (SimplicialObject.const C).obj A)
     (εQ : Q ⟶ (SimplicialObject.const C).obj A)

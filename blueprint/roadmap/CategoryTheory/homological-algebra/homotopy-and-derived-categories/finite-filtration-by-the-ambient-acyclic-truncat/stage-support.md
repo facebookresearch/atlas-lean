@@ -1,3 +1,9 @@
-# Stage support
+# Support of every truncation-filtration stage
 
-All original terms retain the explicitly carried original interval at every stage.
+Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive, fully faithful, exact and
+reflecting admissible exactness. Assume its essential image is closed under
+kernels of epimorphisms between image objects.
+Let K be supported in [a,b] and F(K) acyclic.
+
+Each stage K_n has zero terms for j<a or b−n<j.

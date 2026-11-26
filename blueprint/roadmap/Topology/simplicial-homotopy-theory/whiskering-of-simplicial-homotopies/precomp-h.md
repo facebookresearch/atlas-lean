@@ -1,4 +1,4 @@
-# Precomp h
+# Cylinder map of a precomposed homotopy
 
-The cylinder of a precomposed ordinary homotopy is obtained by
-whiskering the source map with the simplicial interval.
+For `H : SSet.Homotopy f g` between maps `X→Y` and `k : W→X`, `(H.precomp k).h = (k ▷ Δ[1]) ≫
+H.h`. Here `k ▷ Δ[1]` is `k ⊗ 𝟙 Δ[1] : W ⊗ Δ[1] → X ⊗ Δ[1]`.

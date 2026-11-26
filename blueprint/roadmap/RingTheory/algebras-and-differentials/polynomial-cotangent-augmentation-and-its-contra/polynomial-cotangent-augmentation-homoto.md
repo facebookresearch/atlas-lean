@@ -1,4 +1,6 @@
-# Polynomial Cotangent Augmentation Homotopy Equiv
+# Polynomial cotangent row is equivalent to its augmentation point
 
-The genuine polynomial cotangent row is homotopy equivalent to its
-linearization point, with the actual normalized augmentation as forward map.
+Let `k` be a commutative ring, `A` a `k`-algebra, and `P∈Over A` with polynomial presentation
+`e : Free_k(σ) ≅ P.left`. There is a chain homotopy equivalence from the normalized polynomial
+cotangent row of `P` to `cotangent k A P` concentrated in degree zero. Its forward map is
+`polynomialCotangentNormalizedAugmentation k A P`.

@@ -1,3 +1,5 @@
-# Fibration to constant
+# Every map from a Kan complex to a constant set is a fibration
 
-Every actual map from a Kan simplicial set to constant A is a native fibration.
+For a Kan simplicial set `E : SSet.{u}`, a type `A : Type u`, and any simplicial map `p : E →
+const A`, `Fibration p` holds. This is the Kan horn-lifting property in all positive
+dimensions.

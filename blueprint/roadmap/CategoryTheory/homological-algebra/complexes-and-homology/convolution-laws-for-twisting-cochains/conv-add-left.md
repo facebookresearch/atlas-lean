@@ -1,5 +1,7 @@
-# Conv add left
+# Convolution is additive in the left cochain
 
-Convolution distributes over addition on the left, reusing
-`tensorCochain_add_left` and the pinned `Cochain.comp_add`/`Cochain.add_comp`.
-Degrees stay `m + n` with the same `zero_add`/`add_zero` transports as `conv`.
+Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For f₁,f₂:C→A of degree m and g:C→A of degree n, (f₁+f₂)⋆g=f₁⋆g+f₂⋆g in degree
+m+n, where f⋆g=μ_A(f⊗g)Δ_C and the tensor has sign (-1)^{np} on left input degree p.

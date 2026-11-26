@@ -1,7 +1,7 @@
 # Twisted bar differential
 
-- [Twisted Bar Differential](twisted-bar-differential.md)
-- [Twisted Bar Differential v](twisted-bar-differential-v.md)
-- [Twisted Bar Differential zero](twisted-bar-differential-zero.md)
-- [Twisted Bar Differential self eq zero](twisted-bar-differential-self-eq-zero.md)
-- [Twisted Bar sq zero](twisted-bar-sq-zero.md)
+- [The right-twisted convolution differential](twisted-bar-differential.md)
+- [Components of the right-twisted differential](twisted-bar-differential-v.md)
+- [The right-twisted differential sends zero to zero](twisted-bar-differential-zero.md)
+- [A Maurer–Cartan cochain is closed for its right twist](twisted-bar-differential-self-eq-zero.md)
+- [The right-twisted differential squares to zero](twisted-bar-sq-zero.md)

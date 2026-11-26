@@ -12,12 +12,19 @@ public import MathlibExt.Algebra.Homology.DerivedCategory.LeftDerivedMinus
 public import Mathlib.Algebra.Homology.DerivedCategory.RightDerivedFunctorPlus
 
 /-!
-# Natural transformations of canonical left derived functors on Minus
+# Natural transformations of bounded-above left-derived functors
 
-Use the native right-derived transformation of the opposite original
-transformation, then return through the earned opposite/Minus equivalences.
-The actual native counit square, identity, and composition laws transport
-with the same maps. No naturality or derived-map certificate is input.
+For abelian C,D with chosen derived categories of both categories and
+their opposites, and enough projectives in C, a transformation τ:F₁ → F₂
+of additive functors induces a canonical transformation
+L(τ):L(F₁) → L(F₂) on D⁻(C).
+
+The transformations of mapped complex models and opposite-plus derived
+models transport through the bounded-above equivalences.
+They commute with the localization-model comparisons and the counits
+Q_C∘L(F_i) → U_{F_i}. A natural isomorphism of additive functors
+therefore gives a natural isomorphism of their canonical left-derived
+functors.
 -/
 
 @[expose] public section
@@ -37,20 +44,48 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   [EnoughProjectives C]
   {F₁ F₂ F₃ : C ⥤ D} [F₁.Additive] [F₂.Additive] [F₃.Additive]
 
-/-- The original cochain transformation in the native bounded-above opposite model. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂, the natural transformation on the opposite bounded-below complex models is obtained from the original termwise cochain transformation. -/
 def dualMapComplex (τ : F₁ ⟶ F₂) : BoundedAboveDual.mapComplex F₁ ⟶ BoundedAboveDual.mapComplex F₂ :=
   NatTrans.op (NatTrans.mapCochainComplexPlus (NatTrans.op τ))
 
-/-- The actual right-derived opposite transformation gives the left-derived map. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂, opposite right derivation induces the transformation L_d(τ):L_d(F₁) → L_d(F₂). -/
 def dualLeftDerived (τ : F₁ ⟶ F₂) : BoundedAboveDual.leftDerived F₁ ⟶ BoundedAboveDual.leftDerived F₂ :=
   NatTrans.op (NatTrans.rightDerivedFunctorPlus (NatTrans.op τ))
 
-/-- Return the same actual transformation to canonical native Minus. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂, transporting L_d(τ) through E_C and E_D gives L(τ):L(F₁) → L(F₂). -/
 def lift (τ : F₁ ⟶ F₂) : CanonicalLeft.leftDerived F₁ ⟶ CanonicalLeft.leftDerived F₂ :=
   Functor.whiskerLeft (DerivedCategory.minusOppositeEquivalence C).functor
     (Functor.whiskerRight (dualLeftDerived τ) (DerivedCategory.minusOppositeEquivalence D).inverse)
 
-/-- The original cochain map followed by canonical localization. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂, the underived transformation U_{F₁} → U_{F₂} is the mapped cochain transformation followed by canonical localization. -/
 def underivedMap (τ : F₁ ⟶ F₂) : CanonicalLeft.underived F₁ ⟶ CanonicalLeft.underived F₂ :=
   Functor.whiskerRight (dualMapComplex τ) (CanonicalLeft.Q D)
 
@@ -99,7 +134,14 @@ theorem underivedMap_comp (τ : F₁ ⟶ F₂) (σ : F₂ ⟶ F₃) :
   simp only [dualMapComplex, NatTrans.op_comp, NatTrans.mapCochainComplexPlus_comp]
   exact (CanonicalLeft.Q D).map_comp _ _
 
-/-- The native right-derived counit square is reflected with its exact original cochain transformation. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+In the opposite-plus models the derived transformation of τ commutes with the dual counits and the localized complex-model transformation. -/
 theorem dualCounit_square (τ : F₁ ⟶ F₂) :
     Functor.whiskerLeft (BoundedAboveDual.Q C) (dualLeftDerived τ) ≫ BoundedAboveDual.counit F₂ =
       BoundedAboveDual.counit F₁ ≫ Functor.whiskerRight (dualMapComplex τ) (BoundedAboveDual.Q D) := by
@@ -108,7 +150,14 @@ theorem dualCounit_square (τ : F₁ ⟶ F₂) :
   apply Quiver.Hom.unop_inj
   exact NatTrans.rightDerivedFunctorPlus_fac_app (NatTrans.op τ) (unop X)
 
-/-- The source-equivalence comparison has exactly its native counit-map component. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For additive F and Y∈D⁺(Cᵒᵖ)ᵒᵖ, the comparison α_F between L(F)∘E_C⁻¹ and E_D⁻¹∘L_d(F) is the latter functor applied to the counit E_C(E_C⁻¹Y) → Y. -/
 theorem localization_hom_app (F : C ⥤ D) [F.Additive] (Y : BoundedAboveDual.Derived C) :
     (CanonicalLeft.localizationComputationIso F).hom.app Y =
       (CanonicalLeft.postDerived F).map ((DerivedCategory.minusOppositeEquivalence C).counitIso.hom.app Y) := by
@@ -116,7 +165,14 @@ theorem localization_hom_app (F : C ⥤ D) [F.Additive] (Y : BoundedAboveDual.De
     ((DerivedCategory.minusOppositeEquivalence C).counitIso.hom.app Y) ≫ 𝟙 _ = _
   simp only [Category.id_comp, Category.comp_id]
 
-/-- The actual source-equivalence comparison is natural in the original additive-functor transformation. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂, the model comparisons α_F satisfy α_{F₂}∘(L(τ)∘E_C⁻¹)=E_D⁻¹(L_d(τ))∘α_{F₁}. -/
 theorem localization_lift (τ : F₁ ⟶ F₂) :
     Functor.whiskerLeft (DerivedCategory.minusOppositeEquivalence C).inverse (lift τ) ≫
         (CanonicalLeft.localizationComputationIso F₂).hom =
@@ -132,7 +188,14 @@ theorem localization_lift (τ : F₁ ⟶ F₂) :
   exact ((Functor.whiskerRight (dualLeftDerived τ) (DerivedCategory.minusOppositeEquivalence D).inverse).naturality
     ((DerivedCategory.minusOppositeEquivalence C).counitIso.hom.app Y)).symm
 
-/-- Canonical counit evaluation retains the same original opposite-derived component. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+At a bounded-above complex model X, the canonical counit ε_F,X is the model comparison α_F at its dual localization followed by E_D⁻¹ applied to the opposite-plus counit. -/
 theorem counit_app (F : C ⥤ D) [F.Additive] (X : BoundedAboveDual.Complex C) :
     (CanonicalLeft.counit F).app X =
       (CanonicalLeft.localizationComputationIso F).hom.app ((BoundedAboveDual.Q C).obj X) ≫
@@ -142,7 +205,14 @@ theorem counit_app (F : C ⥤ D) [F.Additive] (X : BoundedAboveDual.Complex C) :
       (DerivedCategory.minusOppositeEquivalence D).inverse.map ((BoundedAboveDual.counit F).app X) = _
   simp only [Category.id_comp]
 
-/-- The actual canonical left-derived counit square on each original bounded-above complex. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂ and X∈C_-, the component counit equation is ε_{F₂,X}∘L(τ)_{Q_CX}=U(τ)_X∘ε_{F₁,X}. -/
 theorem counit_square_app (τ : F₁ ⟶ F₂) (X : BoundedAboveDual.Complex C) :
     (lift τ).app ((CanonicalLeft.Q C).obj X) ≫ (CanonicalLeft.counit F₂).app X =
       (CanonicalLeft.counit F₁).app X ≫ (underivedMap τ).app X := by
@@ -169,7 +239,14 @@ theorem counit_square_app (τ : F₁ ⟶ F₂) (X : BoundedAboveDual.Complex C) 
   rw [← Category.assoc, hχ, Category.assoc, ← G.map_comp, hδ, G.map_comp]
   exact (Category.assoc _ _ _).symm
 
-/-- The canonical counit square is a conclusion for every original additive natural transformation. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+For τ:F₁ → F₂, the natural transformations satisfy ε_{F₂}∘(Q_C⋆L(τ))=U(τ)∘ε_{F₁}. -/
 theorem counit_square (τ : F₁ ⟶ F₂) :
     Functor.whiskerLeft (CanonicalLeft.Q C) (lift τ) ≫ CanonicalLeft.counit F₂ =
       CanonicalLeft.counit F₁ ≫ underivedMap τ := by
@@ -177,7 +254,14 @@ theorem counit_square (τ : F₁ ⟶ F₂) :
   funext X
   exact counit_square_app τ X
 
-/-- An original natural isomorphism induces the actual canonical derived natural isomorphism. -/
+/-- Let C,D be abelian with chosen derived categories for C,Cᵒᵖ,D,Dᵒᵖ,
+and C have enough projectives. Let F₁,F₂ be additive.
+Write E_C:D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ and E_D similarly,
+L_d(F) for the opposite-plus derivation and L(F) for its canonical
+bounded-above transport. Let Q_C be bounded-above localization and
+ε_F:Q_C∘L(F) → U_F the canonical counit.
+
+A natural isomorphism F₁ ≅ F₂ induces the canonical natural isomorphism L(F₁) ≅ L(F₂). -/
 def liftIso (e : F₁ ≅ F₂) : CanonicalLeft.leftDerived F₁ ≅ CanonicalLeft.leftDerived F₂ where
   hom := lift e.hom
   inv := lift e.inv

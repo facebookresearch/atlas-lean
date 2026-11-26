@@ -14,57 +14,14 @@ module
 public import MathlibExt.Algebra.Homology.TwistingMaurerCartan
 
 /-!
-# Maurer–Cartan functoriality
+# Functoriality of the Maurer–Cartan equation
 
-This file packages the zero-locus functoriality for the graded convolution
-product: postcomposition by a monoid morphism and precomposition by a
-comonoid morphism preserve the Maurer–Cartan equation, with a bundled
-combined map.
+Let R be commutative, C,C' dg coalgebras and A,B dg algebras in the same integer cochain module
+category. A coalgebra map ψ:C'→C and algebra map φ:A→B send a Maurer–Cartan cochain τ to φ∘τ∘ψ.
 
-## Grading and sign conventions
-
-Cohomological grading throughout, following the Maurer–Cartan base: a twisting
-cochain is `τ : Cochain C A 1` with `δ 1 (1 + 1) τ + conv τ τ = 0` in degree
-`1 + 1`, where `δ` is the pinned `HomComplex.δ` and `conv` is the graded
-convolution `μ ∘ (f ⊗ g) ∘ Δ`. Postcomposition uses `add_zero` transports and
-precomposition uses `zero_add` transports, exactly as in the base convolution
-definition. No new signs are introduced here.
-
-## Primary source
-
-Standard reference: J.-L. Loday and B. Vallette, *Algebraic Operads*,
-Grundlehren 346, Springer, 2012,
-<https://doi.org/10.1007/978-3-642-30362-3>. Exact printed-section numbers
-and a sign-level match against the printed text were not verified in this
-environment, so none is claimed here.
-
-## Declaration inventory
-
-* `CochainComplex.conv_postcomp` and `CochainComplex.conv_precomp` are
-  consumed from `TwistingCochain`, where the generic convolution transport
-  laws now live; they are not re-proved here.
-* `IsMaurerCartan.postcomp`: the Maurer–Cartan predicate is preserved by
-  monoid-morphism postcomposition, from the pinned `δ_comp_ofHom` and
-  `conv_postcomp`.
-* `IsMaurerCartan.precomp`: the Maurer–Cartan predicate is preserved by
-  comonoid-morphism precomposition, from the pinned `δ_ofHom_comp` and
-  `conv_precomp`.
-* `MaurerCartan.map`: bundled combined pre/postcomposition map for bundled
-  Maurer–Cartan cochains, with its `map_tau` computation rule.
-
-## Nonclaims
-
-No augmentation vanishing transport, no twisted-differential map, no Hom-complex
-map, no free or cofree object, no adjunction, no totalization, no derived or
-Koszul result, no operadic result, and no model-categorical result is claimed
-here. Only the zero-locus functoriality stated above is proved.
-
-## Import justification
-
-`TwistingMaurerCartan` supplies `IsMaurerCartan` and `MaurerCartan` with the
-`add_zero`/`zero_add` degree conventions preserved exactly, and transitively
-supplies `conv` with its `conv_postcomp`/`conv_precomp` transport laws from
-`TwistingCochain`. No further MathlibExt import is needed.
+The maps are degree zero, commute with the Hom differential, and preserve convolution. Thus
+δτ+τ⋆τ=0 is carried to the same equation for the mapped cochain. The bundled map is
+contravariant in the coalgebra and covariant in the algebra.
 -/
 
 @[expose] public section
@@ -93,9 +50,12 @@ variable [MonObj A] [ComonObj C]
 variable {B : CochainComplex (ModuleCat R) ℤ} [MonObj B]
 variable {C' : CochainComplex (ModuleCat R) ℤ} [ComonObj C']
 
-/-- The Maurer–Cartan predicate is preserved by monoid-morphism
-postcomposition, from the pinned differential postcomposition rule and
-`conv_postcomp`. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. A degree-one τ is Maurer–Cartan when δτ+τ⋆τ=0 in degree two. Let
+B be a dg algebra and φ:A→B an algebra cochain map. If τ is Maurer–Cartan, φ∘τ is Maurer–Cartan
+in Hom¹(C,B). Postcomposition preserves δ and the convolution product. -/
 theorem IsMaurerCartan.postcomp {τ : HomComplex.Cochain C A 1}
     (h : IsMaurerCartan τ) (φ : A ⟶ B) [IsMonHom φ] :
     IsMaurerCartan (τ.comp (HomComplex.Cochain.ofHom φ) (add_zero 1)) := by
@@ -104,9 +64,12 @@ theorem IsMaurerCartan.postcomp {τ : HomComplex.Cochain C A 1}
   rw [← HomComplex.Cochain.add_comp]
   rw [h, HomComplex.Cochain.zero_comp]
 
-/-- The Maurer–Cartan predicate is preserved by comonoid-morphism
-precomposition, from the pinned differential precomposition rule and
-`conv_precomp`. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. A degree-one τ is Maurer–Cartan when δτ+τ⋆τ=0 in degree two. For
+a dg coalgebra C' and coalgebra cochain map ψ:C'→C, a Maurer–Cartan τ gives τ∘ψ in Hom¹(C',A)
+with the same equation. Precomposition preserves δ and convolution. -/
 theorem IsMaurerCartan.precomp {τ : HomComplex.Cochain C A 1}
     (h : IsMaurerCartan τ) (ψ : C' ⟶ C) [IsComonHom ψ] :
     IsMaurerCartan ((HomComplex.Cochain.ofHom ψ).comp τ (zero_add 1)) := by
@@ -115,9 +78,12 @@ theorem IsMaurerCartan.precomp {τ : HomComplex.Cochain C A 1}
   rw [← HomComplex.Cochain.comp_add]
   rw [h, HomComplex.Cochain.comp_zero]
 
-/-- Bundled combined pre/postcomposition map for Maurer–Cartan cochains:
-first postcompose by a monoid morphism, then precompose by a comonoid
-morphism. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. For coalgebra cochain map ψ:C'→C, algebra cochain map φ:A→B, and
+a bundle x with cochain τ, the mapped bundle in MaurerCartan(C',B) has cochain φ∘τ∘ψ and the
+transported equation. -/
 def MaurerCartan.map (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ : C' ⟶ C) [IsComonHom ψ] (φ : A ⟶ B) [IsMonHom φ] :
     MaurerCartan (R := R) (C := C') (A := B) where
@@ -125,7 +91,12 @@ def MaurerCartan.map (x : MaurerCartan (R := R) (C := C) (A := A))
     (x.tau.comp (HomComplex.Cochain.ofHom φ) (add_zero 1)) (zero_add 1)
   isMC := IsMaurerCartan.precomp (IsMaurerCartan.postcomp x.isMC φ) ψ
 
-/-- Underlying cochain of the bundled functoriality map. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. For x with τ, ψ:C'→C a coalgebra map and φ:A→B an algebra map,
+(x.map ψ φ).tau=φ∘τ∘ψ. The two degree-zero maps retain the cochain degree one and introduce no
+degree sign. -/
 @[simp]
 theorem MaurerCartan.map_tau (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ : C' ⟶ C) [IsComonHom ψ] (φ : A ⟶ B) [IsMonHom φ] :

@@ -12,32 +12,15 @@ module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Homotopy
 
-/-! # Whiskering of simplicial homotopies
+/-!
+# Precomposition and postcomposition of simplicial homotopies
 
-The canonical precomposition and postcomposition (whiskering) operations
-for ordinary simplicial homotopies `SSet.Homotopy`, obtained from the
-relative whiskering operations `SSet.RelativeMorphism.Homotopy.precomp`
-and `SSet.RelativeMorphism.Homotopy.postcomp` over the bottom
-subcomplexes:
+Let `H` be a simplicial homotopy from `f : X→Y` to `g : X→Y`, with cylinder map `H.h : X ⊗
+Δ[1] → Y`. Precomposing by `k : W→X` gives a homotopy from `k≫f` to `k≫g`, with cylinder `(k ⊗
+𝟙 Δ[1])≫H.h`.
 
-* `SSet.Homotopy.precomp` and `SSet.Homotopy.precomp_h`: precompose a
-  homotopy in its source; the cylinder map is whiskering of the source
-  map with the simplicial interval followed by the original cylinder.
-* `SSet.Homotopy.postcomp` and `SSet.Homotopy.postcomp_h`: postcompose a
-  homotopy with a map of its target; the cylinder map is the original
-  cylinder followed by the map.
-
-Both cylinder formulas hold definitionally (`rfl`).
-
-This module is the neutral low-level home of this API (audit-3 H1): it
-imports only upstream `Mathlib.AlgebraicTopology.SimplicialSet.Homotopy`
-basics, so that both the simplicial-realization theory
-(the `SSetRealizeHomotopyMapPrecomp` module of
-`MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.PointSet`,
-where `SSet.Homotopy.precomp` used to be defined) and the Joyal theory
-(`MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.Joyal.HoPreNatIso`,
-which used to carry the duplicates `SSet.Homotopy.precompMk` and
-`SSet.Homotopy.postcompMk`) share the single canonical definitions.
+Postcomposing by `q : Y→Z` gives a homotopy from `f≫q` to `g≫q`, with cylinder `H.h≫q`. These
+operations apply to arbitrary simplicial sets at a common universe.
 -/
 
 @[expose] public section
@@ -53,7 +36,9 @@ namespace SSet
 
 variable {W X Y Z : SSet.{u}} {f g : X ⟶ Y}
 
-/-- Precompose an ordinary simplicial homotopy in its source. -/
+/-- Let `W,X,Y : SSet.{u}`, `f,g : X→Y`, and `H : SSet.Homotopy f g`. For `k : W→X`, `H.precomp k`
+is a homotopy from `k≫f` to `k≫g`, obtained by precomposing the cylinder map with `k ⊗ 𝟙
+Δ[1]`. -/
 noncomputable def Homotopy.precomp (H : SSet.Homotopy f g)
     (k : W ⟶ X) : SSet.Homotopy (k ≫ f) (k ≫ g) := by
   let R := SSet.RelativeMorphism.Homotopy.precomp H
@@ -65,16 +50,16 @@ noncomputable def Homotopy.precomp (H : SSet.Homotopy f g)
       h₁ := R.h₁
       rel := R.rel }
 
-/-- The cylinder of a precomposed ordinary homotopy is obtained by
-whiskering the source map with the simplicial interval. -/
+/-- For `H : SSet.Homotopy f g` between maps `X→Y` and `k : W→X`, `(H.precomp k).h = (k ▷ Δ[1]) ≫
+H.h`. Here `k ▷ Δ[1]` is `k ⊗ 𝟙 Δ[1] : W ⊗ Δ[1] → X ⊗ Δ[1]`. -/
 @[simp]
 theorem Homotopy.precomp_h (H : SSet.Homotopy f g)
     (k : W ⟶ X) :
     (H.precomp k).h = (k ▷ (Δ[1] : SSet.{u})) ≫ H.h :=
   rfl
 
-/-- Postcompose an ordinary simplicial homotopy with a map of its
-target. -/
+/-- Let `X,Y,Z : SSet.{u}`, `f,g : X→Y`, and `H : SSet.Homotopy f g`. For `q : Y→Z`, `H.postcomp
+q` is a homotopy from `f≫q` to `g≫q`, obtained by postcomposing its cylinder with `q`. -/
 noncomputable def Homotopy.postcomp (H : SSet.Homotopy f g)
     (q : Y ⟶ Z) : SSet.Homotopy (f ≫ q) (g ≫ q) := by
   let R := SSet.RelativeMorphism.Homotopy.postcomp H
@@ -86,8 +71,8 @@ noncomputable def Homotopy.postcomp (H : SSet.Homotopy f g)
       h₁ := R.h₁
       rel := R.rel }
 
-/-- The cylinder of a postcomposed ordinary homotopy is the original
-cylinder followed by the map. -/
+/-- For `H : SSet.Homotopy f g` between maps `X→Y` and `q : Y→Z`, `(H.postcomp q).h = H.h ≫ q` as
+maps `X ⊗ Δ[1] → Z`. -/
 @[simp]
 theorem Homotopy.postcomp_h (H : SSet.Homotopy f g)
     (q : Y ⟶ Z) :

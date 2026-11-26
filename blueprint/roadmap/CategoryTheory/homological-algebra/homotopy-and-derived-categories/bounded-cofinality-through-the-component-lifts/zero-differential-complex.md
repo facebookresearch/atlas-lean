@@ -1,3 +1,5 @@
-# Zero Differential Complex
+# Zero-differential complex on a prescribed family
 
-The original cochain object with a prescribed family and the zero differential in every pair.
+Let A be a category with zero morphisms and X:ℤ → A any family.
+
+The cochain complex with term X_i and every differential zero.

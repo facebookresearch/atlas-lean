@@ -1,4 +1,4 @@
 # Canonical preimage-subspace pullback in TopCat
 
-- [Is Pullback preimage Subspace](is-pullback-preimage-subspace.md)
-- [Is Pullback preimage Subspace of is Pullback](is-pullback-preimage-subspace-of-is-pull.md)
+- [Preimage subspaces are pullbacks of subspace inclusions](is-pullback-preimage-subspace.md)
+- [A pullback square restricts to compatible preimage subspaces](is-pullback-preimage-subspace-of-is-pull.md)

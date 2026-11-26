@@ -1,8 +1,7 @@
-# Tensor Cochain eq tensor
+# Agreement with the general tensor product of Hom cochains
 
-Diagonal specialization of the graded tensor product: on the same-source/target
-`ModuleCat R` pair, `tensorCochain` agrees with the heterogeneous
-`HomComplex.Cochain.tensor`. Both sides use the Koszul orientation
-`(f ⊗ g)(x ⊗ y) = (-1) ^ (n * i₁) • (f x ⊗ g y)`. This bridge lets downstream
-convolution reuse the heterogeneous functoriality/associativity API. It does not by
-itself prove convolution associativity.
+Agreement with the general tensor product of Hom cochains.
+
+For cochains f,g with the same source C and target A, tensorCochain f g equals
+HomComplex.Cochain.tensor f g. Both use the sign (−1)^{ni} for the right cochain degree n and
+left source degree i.

@@ -1,3 +1,7 @@
-# Cochain inverse map quasi Iso
+# Inverse reflection preserves quasi-isomorphisms
 
-The native inverse reflection preserves quasi-isomorphisms by its original counit round trip.
+Let C be abelian and R_op the contravariant cochain reflection from
+integer-indexed C-complexes to Cᵒᵖ-complexes, with term op(K^{−n})
+in degree n.
+
+If a map of Cᵒᵖ-cochain complexes is a quasi-isomorphism, its inverse-reflected map of C-cochain complexes is a quasi-isomorphism.

@@ -1,3 +1,5 @@
-# Underlying
+# Underlying simplicial set of a simplicial group
 
-The SAME original simplicial group has its actual underlying scalar simplicial set.
+For `G : SimplicialObject GrpCat.{u}`, the simplicial set `underlying G : SSet.{u}` is `G ⋙
+forget GrpCat`. At each `n : SimplexCategoryᵒᵖ`, its simplices are the elements of the group
+`G.obj n`, and its simplicial operators are the underlying functions of `G.map`.

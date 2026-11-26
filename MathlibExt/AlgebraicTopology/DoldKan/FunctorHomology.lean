@@ -12,18 +12,17 @@ public import Mathlib.AlgebraicTopology.DoldKan.HomotopyEquivalence
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Actual normalized homology under an additive functor
+# Normalized homology under an additive functor
 
-Native Dold–Kan and native alternating-functor transport compare
-F(N(Y)) with N(Y⋙F) by a homotopy equivalence.  The resulting homology
-isomorphism is natural in the original simplicial map.  No kernel
-preservation is used for that comparison.
+Let F : C ⥤ D be additive between abelian categories, with independent object and morphism
+universes. Write N(Y) for the normalized Moore complex and A(Y) for the alternating face-map
+complex of a simplicial object. The Moore inclusion and projection give N(Y) ≃ A(Y) by chain
+homotopy equivalence, while additivity gives F(A(Y)) ≅ A(Y ⋙ F).
 
-When F actually preserves homology, a given original normalized
-quasi-isomorphism remains a quasi-isomorphism after applying F to its
-simplicial diagram.  This is the generic native transport needed before
-flat scalar extension of an actual polynomial resolution can be claimed.
-Native verification is unexecuted for this source proposal.
+Combining these comparisons yields F(N(Y)) ≃ N(Y ⋙ F) by chain homotopy equivalence. Its
+induced isomorphisms H_i(F(N(Y))) ≅ H_i(N(Y ⋙ F)) are natural in simplicial maps, for every i
+: ℕ. When F preserves homology, a quasi-isomorphism of normalized simplicial maps remains a
+quasi-isomorphism after whiskering by F.
 -/
 
 @[expose] public section
@@ -39,14 +38,27 @@ namespace AlgebraicTopology.DoldKan
 variable {C : Type uC} {D : Type uD} [Category.{vC} C] [Category.{vD} D]
   [Abelian C] [Abelian D] (F : C ⥤ D) [F.Additive]
 
-/-- Native normalization is functorial after mapping the actual simplicial diagram. -/
+/-- Normalize a simplicial object and then apply an additive functor.
+
+For additive F : C ⥤ D between abelian categories, mappedNormalizedFunctor sends Y to the
+chain complex F(N(Y)) and a simplicial map to its normalized chain map followed by degreewise
+F. -/
 abbrev mappedNormalizedFunctor : SimplicialObject C ⥤ ChainComplex D ℕ :=
   normalizedMooreComplex C ⋙ F.mapHomologicalComplex (ComplexShape.down ℕ)
 
+/-- Normalize a simplicial object after applying its coefficient functor.
+
+For additive F : C ⥤ D between abelian categories, whiskeredNormalizedFunctor sends Y to N(Y ⋙
+F), the Moore complex of the simplicial diagram obtained by applying F degreewise. -/
 abbrev whiskeredNormalizedFunctor : SimplicialObject C ⥤ ChainComplex D ℕ :=
   (SimplicialObject.whiskering C D).obj F ⋙ normalizedMooreComplex D
 
-/-- Actual native Dold–Kan and alternating transport, requiring only additivity. -/
+/-- Homotopy equivalence for additive normalization transport.
+
+For a simplicial object Y and additive F between abelian categories, compose F applied to the
+Moore-to-alternating homotopy equivalence, the alternating-complex functor comparison, and the
+inverse Moore-to-alternating comparison for Y ⋙ F. This gives F(N(Y)) ≃ N(Y ⋙ F) by chain
+homotopy equivalence. -/
 def mappedNormalizedHomotopyEquiv (Y : SimplicialObject C) :
     HomotopyEquiv ((mappedNormalizedFunctor F).obj Y)
       ((whiskeredNormalizedFunctor F).obj Y) :=
@@ -56,19 +68,29 @@ def mappedNormalizedHomotopyEquiv (Y : SimplicialObject C) :
       ((alternatingFaceMapComplexCompMapHomologicalComplexIso F).app Y)).trans
       (homotopyEquivNormalizedMooreComplexAlternatingFaceMapComplex (Y := Y ⋙ F)).symm)
 
-/-- The actual source inclusion after applying the additive functor. -/
+/-- Moore inclusion after degreewise additive transport.
+
+For additive F : C ⥤ D, the natural Moore inclusion N(Y) → A(Y) induces a natural chain map
+F(N(Y)) → F(A(Y)) by applying F degreewise. -/
 def mappedNormalizationInclusion :
     mappedNormalizedFunctor F ⟶
       alternatingFaceMapComplex C ⋙ F.mapHomologicalComplex (ComplexShape.down ℕ) :=
   whiskerRight (inclusionOfMooreComplex C) (F.mapHomologicalComplex (ComplexShape.down ℕ))
 
-/-- The actual target inclusion on the mapped simplicial diagram. -/
+/-- Moore inclusion of a transported simplicial diagram.
+
+For additive F : C ⥤ D, apply the Moore inclusion to Y ⋙ F. This gives a natural chain map N(Y
+⋙ F) → A(Y ⋙ F). -/
 def whiskeredNormalizationInclusion :
     whiskeredNormalizedFunctor F ⟶
       (SimplicialObject.whiskering C D).obj F ⋙ alternatingFaceMapComplex D :=
   whiskerLeft ((SimplicialObject.whiskering C D).obj F) (inclusionOfMooreComplex D)
 
-/-- Mapped native normalization gives the natural actual homology comparison. -/
+/-- Homology isomorphism of the transported Moore inclusion.
+
+For additive F between abelian categories and i : ℕ, the chain map F(N(Y)) → F(A(Y)) induced
+by Moore inclusion gives a natural isomorphism H_i(F(N(Y))) ≅ H_i(F(A(Y))). It comes from the
+transported chain homotopy equivalence. -/
 def mappedInclusionHomologyIso (i : ℕ) :
     mappedNormalizedFunctor F ⋙ HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) i ≅
       (alternatingFaceMapComplex C ⋙ F.mapHomologicalComplex (ComplexShape.down ℕ)) ⋙
@@ -81,7 +103,10 @@ def mappedInclusionHomologyIso (i : ℕ) :
       exact (whiskerRight (mappedNormalizationInclusion F)
         (HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) i)).naturality φ)
 
-/-- Native target normalization gives the actual natural homology comparison. -/
+/-- Homology isomorphism of the whiskered Moore inclusion.
+
+For a simplicial object Y and additive F between abelian categories, Moore inclusion on Y ⋙ F
+gives H_i(N(Y ⋙ F)) ≅ H_i(A(Y ⋙ F)), naturally in Y for every natural degree i. -/
 def whiskeredInclusionHomologyIso (i : ℕ) :
     whiskeredNormalizedFunctor F ⋙ HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) i ≅
       ((SimplicialObject.whiskering C D).obj F ⋙ alternatingFaceMapComplex D) ⋙
@@ -94,7 +119,10 @@ def whiskeredInclusionHomologyIso (i : ℕ) :
       exact (whiskerRight (whiskeredNormalizationInclusion F)
         (HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) i)).naturality φ)
 
-/-- H(F(NY)) and H(N(Y⋙F)) are naturally isomorphic, without an exactness assumption. -/
+/-- Natural homology comparison for additive normalization.
+
+For additive F : C ⥤ D between abelian categories, the two Moore inclusion comparisons and
+F(A(Y)) ≅ A(Y ⋙ F) yield a natural isomorphism H_i(F(N(Y))) ≅ H_i(N(Y ⋙ F)) for every i : ℕ. -/
 def mappedNormalizedHomologyNatIso (i : ℕ) :
     mappedNormalizedFunctor F ⋙ HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) i ≅
       whiskeredNormalizedFunctor F ⋙
@@ -104,7 +132,10 @@ def mappedNormalizedHomologyNatIso (i : ℕ) :
       (HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) i) ≪≫
     (whiskeredInclusionHomologyIso F i).symm
 
-/-- The natural comparison is the homology map of the constructed native homotopy equivalence. -/
+/-- Component of the additive normalized-homology comparison.
+
+At Y, the component of mappedNormalizedHomologyNatIso F i is precisely the degree-i homology
+isomorphism induced by mappedNormalizedHomotopyEquiv F Y. -/
 theorem mappedNormalizedHomologyNatIso_app (i : ℕ) (Y : SimplicialObject C) :
     (mappedNormalizedHomologyNatIso F i).app Y =
       (mappedNormalizedHomotopyEquiv F Y).toHomologyIso i := by
@@ -133,7 +164,11 @@ private def mappedNormalizedComparison :
     (alternatingFaceMapComplexCompMapHomologicalComplexIso F).hom ≫
       whiskeredNormalizationProjection F
 
-/-- The actual normalized homology square is natural in the original simplicial operator. -/
+/-- Naturality square for normalized homology after additive transport.
+
+For a simplicial map φ : Y → Z and additive F between abelian categories, let χ_W :
+H_i(F(N(W))) ≅ H_i(N(W ⋙ F)) be the comparison for W = Y,Z. Then H_i(F(N(φ))) ≫ χ_Z.hom =
+χ_Y.hom ≫ H_i(N(φ ⋙ F)). -/
 @[reassoc]
 theorem mappedNormalizedHomology_naturality {Y Z : SimplicialObject C} (φ : Y ⟶ Z) (i : ℕ) :
     HomologicalComplex.homologyMap ((mappedNormalizedFunctor F).map φ) i ≫
@@ -153,8 +188,11 @@ theorem mappedNormalizedHomology_naturality {Y Z : SimplicialObject C} (φ : Y �
         (HomologicalComplex.homologyMap_comp (mappedNormalizedHomotopyEquiv F Y).hom
           ((whiskeredNormalizedFunctor F).map φ) i))
 
-/-- A normalized simplicial map stays a quasi-isomorphism under an actually exact functor.
-The hypothesis is the original source map's quasi-isomorphism, not a desired mapped result. -/
+/-- Quasi-isomorphism of normalized maps preserved by a homology-preserving functor.
+
+Let F : C ⥤ D be additive between abelian categories and preserve homology. If N(φ) is a
+quasi-isomorphism for a simplicial map φ : Y → Z in C, then N(φ ⋙ F) is a quasi-isomorphism in
+D. -/
 theorem quasiIso_normalizedMap_of_preservesHomology [F.PreservesHomology]
     {Y Z : SimplicialObject C} (φ : Y ⟶ Z)
     (hφ : QuasiIso ((normalizedMooreComplex C).map φ)) :

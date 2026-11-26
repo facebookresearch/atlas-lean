@@ -1,9 +1,9 @@
 # Convolution laws for twisting cochains
 
-- [Tensor Cochain assoc](tensor-cochain-assoc.md)
-- [Conv One](conv-one.md)
-- [Conv leibniz](conv-leibniz.md)
-- [Conv add left](conv-add-left.md)
-- [Conv add right](conv-add-right.md)
-- [Conv smul left](conv-smul-left.md)
-- [Conv smul right](conv-smul-right.md)
+- [Koszul signs commute with the component associator](tensor-cochain-assoc.md)
+- [The counit–unit cochain of degree zero](conv-one.md)
+- [The graded Leibniz rule for convolution](conv-leibniz.md)
+- [Convolution is additive in the left cochain](conv-add-left.md)
+- [Convolution is additive in the right cochain](conv-add-right.md)
+- [Convolution commutes with a left integer unit scalar](conv-smul-left.md)
+- [Convolution commutes with a right integer unit scalar](conv-smul-right.md)

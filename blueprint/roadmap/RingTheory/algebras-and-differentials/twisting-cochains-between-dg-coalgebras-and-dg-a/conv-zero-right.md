@@ -1,3 +1,5 @@
-# Conv zero right
+# Vanishing convolution with a zero right cochain
 
-The graded convolution product vanishes when the right factor vanishes.
+Vanishing convolution with a zero right cochain.
+
+For a cochain comonoid C, monoid A and any homogeneous f, f⋆0=0 in the sum of the two degrees.

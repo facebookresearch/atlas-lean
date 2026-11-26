@@ -1,3 +1,7 @@
-# Bounded Preimage Of Components X
+# Terms of the bounded component lift
 
-The bounded lift keeps each original selected source object.
+Let A,B be categories with zero morphisms and F:A → B fully faithful
+and preserving zero morphisms. For a B-complex K of any shape c on I,
+choose X_i∈A and e_i:F(X_i) ≅ K_i. Take I=ℤ and assume X_j=0 outside a supplied interval [a,b].
+
+The degree-i term of the bounded lift is X_i.

@@ -1,3 +1,6 @@
-# Mapped Normalized Homology Nat Iso
+# Natural homology comparison for additive normalization
 
-H(F(NY)) and H(N(Y⋙F)) are naturally isomorphic, without an exactness assumption.
+Natural homology comparison for additive normalization.
+
+For additive F : C ⥤ D between abelian categories, the two Moore inclusion comparisons and
+F(A(Y)) ≅ A(Y ⋙ F) yield a natural isomorphism H_i(F(N(Y))) ≅ H_i(N(Y ⋙ F)) for every i : ℕ.

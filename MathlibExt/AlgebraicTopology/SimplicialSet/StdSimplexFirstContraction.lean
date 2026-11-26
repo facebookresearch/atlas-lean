@@ -12,16 +12,14 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexContraction
 
 /-!
-# Contraction of the standard simplex from its first vertex
+# First-vertex contraction of the standard simplex
 
-The standard `n`-simplex is the nerve of the ordinal
-`ULift (Fin (n + 1))`. The natural transformation from the constant functor
-at its bottom element to the identity induces a cylinder homotopy from the
-constant map at the first vertex to the identity of `Δ[n]`.
+View Δ[n] as the nerve of the finite ordinal with bottom vertex 0. The natural transformation
+from the constant functor at 0 to the identity gives a simplicial cylinder homotopy H : Δ[n] ×
+Δ[1] → Δ[n], directed from the first-vertex constant map to identity.
 
-This is the directed companion to `SSet.stdSimplex.homotopyIdConstLast`.
-It does not assert symmetry of simplicial homotopy or construct a deformation
-retract.
+For simplices x,t in degree d and a vertex i, H(x,t)(i) is 0 when t(i)=0 and x(i) when t(i)=1.
+The construction and coordinate formula apply to standard simplices in every universe.
 -/
 
 @[expose] public section
@@ -46,8 +44,11 @@ private lemma constFirstEndpoint (n : ℕ) :
   refine SSet.stdSimplex.ext _ _ (fun i => ?_)
   rfl
 
-/-- Cylinder homotopy from the constant map at the first vertex of the
-standard simplex to its identity map. -/
+/-- Cylinder homotopy from the first vertex to identity.
+
+For n : ℕ, the natural transformation const(0) → id of the ordinal Fin(n+1) induces a
+simplicial homotopy from the constant map at the first vertex of Δ[n] to id_{Δ[n]}. Its
+cylinder uses the interval factor on the right. -/
 noncomputable def homotopyConstFirstId (n : ℕ) :
     SSet.Homotopy
       (SSet.const (SSet.stdSimplex.obj₀Equiv.symm 0))
@@ -88,7 +89,10 @@ noncomputable def homotopyConstFirstId (n : ℕ) :
   · ext m ⟨⟨x, hx⟩, t⟩
     cases hx
 
-/-- The whole contraction retains its original monotone coordinate formula at every scalar degree. -/
+/-- Vertex-coordinate formula for the first-vertex contraction.
+
+For degree-d simplices x of Δ[n] and t of Δ[1], and i ∈ Fin(d+1), the contraction has
+coordinate H(x,t)(i) = 0 if t(i)=0 and H(x,t)(i)=x(i) otherwise. The formula includes n = 0. -/
 theorem homotopyConstFirstId_coordinate (n : ℕ) (d : SimplexCategoryᵒᵖ)
     (x : (Δ[n] : SSet.{u}).obj d) (t : (Δ[1] : SSet.{u}).obj d)
     (i : Fin (d.unop.len + 1)) :
@@ -123,8 +127,11 @@ theorem homotopyConstFirstId_coordinate (n : ℕ) (d : SimplexCategoryᵒᵖ)
     rw [hT, NatTrans.nerveCylinderFunctor_obj_one]
     exact hK
 
-/-- The endpoint-zero formula after moving the interval factor to the left.
-This is the orientation used by minimal-fibration pullback comparison. -/
+/-- Zero-endpoint formula for the braided one-simplex cylinder.
+
+For the contraction H of Δ[1], the composite of the zero endpoint inclusion, the indicated
+braiding and H is the constant map at its first vertex: ι₀ ≫ β ≫ H = const(0). This is the
+equation with the interval factor moved to the left. -/
 @[reassoc]
 lemma ι₀_β_hom_homotopyConstFirstId_h :
     SSet.ι₀ ≫ (β_ _ _).hom ≫

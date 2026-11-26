@@ -1,3 +1,7 @@
-# Resolution Augmented Data Right Extra Of Counit Section
+# Right extra degeneracy from a comonad counit section
 
-A genuine counit section supplies the terminal-face extra degeneracy on the data.
+Right extra degeneracy from a comonad counit section.
+
+For G, P and s : P → G(P) with s ≫ ε_P = id, define the extra degree-minus-one map as s and
+the degree-n map as G^{n+1}(s). These satisfy the right extra-degeneracy identities for the
+canonical augmented resolution data.

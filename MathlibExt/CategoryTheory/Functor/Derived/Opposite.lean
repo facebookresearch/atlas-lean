@@ -13,13 +13,16 @@ public import Mathlib.CategoryTheory.Functor.Derived.RightDerived
 public import Mathlib.CategoryTheory.Localization.Opposite
 
 /-!
-# Opposite transport of a genuine derived-functor universal property
+# Opposite categories and derived-functor universal properties
 
-The native left Kan extension has actual universal morphisms and their
-uniqueness theorem. Taking their opposites constructs a terminal right
-extension. Together with native opposite localization, this turns a right
-derived functor into a left derived functor. No new resolution or derived
-functor construction is introduced.
+Let L : C ⥤ D, F : C ⥤ H and RF : D ⥤ H, with α : F → L ⋙ RF. If RF is a left Kan extension
+along α, taking opposites gives β : L.op ⋙ RF.op → F.op, using the inverse composition
+comparison followed by α.op. The initial left-extension universal property becomes a terminal
+right-extension universal property.
+
+Thus RF.op is a right Kan extension along β. When L localizes a morphism property W and RF is
+a right derived functor of F, opposite localization makes RF.op a left derived functor of F.op
+along W.op. All three category object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -36,7 +39,11 @@ variable {C : Type uC} [Category.{vC} C]
   {D : Type uD} [Category.{vD} D] {H : Type uH} [Category.{vH} H]
   {L : C ⥤ D} {F : C ⥤ H} (RF : D ⥤ H) (α : F ⟶ L ⋙ RF)
 
-/-- The actual opposite universal morphisms turn a native initial extension into a terminal extension. -/
+/-- Terminal opposite extension of an initial left Kan extension.
+
+For α : F → L ⋙ RF with RF a left Kan extension, the right extension with functor RF.op and
+map β = (Functor.opComp L RF).inv ≫ NatTrans.op α is universal. Opposites turn its original
+unique extension morphisms into unique maps to this terminal right extension. -/
 def leftKanUniversalOp [RF.IsLeftKanExtension α] :
     (RightExtension.mk RF.op ((Functor.opComp L RF).inv ≫ NatTrans.op α)).IsUniversal := by
   let original (E : RightExtension L.op F.op) : F ⟶ L ⋙ E.left.unop :=
@@ -87,12 +94,21 @@ def leftKanUniversalOp [RF.IsLeftKanExtension α] :
   apply Quiver.Hom.unop_inj
   exact NatTrans.congr_app h (unop X)
 
-/-- A genuine left Kan extension becomes a right Kan extension in the opposite categories. -/
+/-- Right Kan extension obtained by taking opposites.
+
+If RF is a left Kan extension of F along α : F → L ⋙ RF, then RF.op is a right Kan extension
+of F.op along β : L.op ⋙ RF.op → F.op, with β the opposite of α after the composition
+identification. -/
 theorem isRightKanExtension_op [RF.IsLeftKanExtension α] :
     RF.op.IsRightKanExtension ((Functor.opComp L RF).inv ≫ NatTrans.op α) :=
   ⟨⟨leftKanUniversalOp RF α⟩⟩
 
-/-- Native opposite localization carries a right derived functor to a left derived functor. -/
+/-- Opposite transport from a right derived functor to a left derived functor.
+
+Let L : C ⥤ D localize W and RF : D ⥤ H be a right derived functor with α : F → L ⋙ RF. Then
+RF.op is a left derived functor along W.op, with comparison (Functor.opComp L RF).inv ≫
+NatTrans.op α. The result uses opposite localization and the dual Kan-extension universal
+property. -/
 theorem isLeftDerivedFunctor_op_of_isRightDerived (W : MorphismProperty C)
     [L.IsLocalization W] [RF.IsRightDerivedFunctor α W] :
     RF.op.IsLeftDerivedFunctor ((Functor.opComp L RF).inv ≫ NatTrans.op α) W.op := by

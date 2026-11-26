@@ -1,4 +1,6 @@
-# Tensor Right Id one
+# Degree-one extension is tensoring with an identity cochain
 
-In degree one, `tensorRightId` is the heterogeneous tensor with the
-identity zero-cochain, with the displayed degree normalized.
+Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. For a:P→Q of degree one and integer cochain complex T, with
+tensor degree coproducts for P,T and Q,T, extension across T equals a⊗id_T as a degree-one
+cochain P⊗T→Q⊗T.

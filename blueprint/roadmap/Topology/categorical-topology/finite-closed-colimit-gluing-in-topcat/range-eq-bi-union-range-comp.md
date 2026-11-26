@@ -1,4 +1,6 @@
-# Range eq bi Union range comp
+# Range cover by composites with set-colimit legs
 
-Range of `f` is the finite union of the ranges of the composites
-`c.ι ≫ f`, via `Types.jointly_surjective_of_isColimit`.
+Range cover by composites with set-colimit legs.
+
+For a map f : c.pt → Y and an underlying set colimit, range(f) = ⋃_j range(c.ι_j ≫ f). The
+identity does not require a finite object set.

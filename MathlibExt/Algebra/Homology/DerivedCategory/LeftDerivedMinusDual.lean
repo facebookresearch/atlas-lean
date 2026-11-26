@@ -15,17 +15,20 @@ public import Mathlib.Algebra.Homology.FullSubcategory
 public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
 
 /-!
-# Left derived functors in the native opposite-plus model of bounded-above categories
+# Left derivation in the opposite bounded-below model
 
-Opposite categories and the native degree-negating cochain equivalence
-turn bounded-above projective complexes into bounded-below injective
-complexes. The existing right derived functor on Plus then gives a genuine
-left derived functor, with its universal property transported by the
-native opposite localization and the proved Kan-extension duality.
+For an abelian category C, the opposite of bounded-below cochain complexes
+over Cᵒᵖ is a bounded-above complex model.
+With a chosen derived category of Cᵒᵖ, its localization is
+D⁺(Cᵒᵖ)ᵒᵖ.
 
-This file uses the opposite of native Plus as its bounded-above model.
-It does not assert an unproved equivalence with the existing full
-subcategory DerivedCategory.Minus. No resolution engine is added.
+For additive F:C → D and enough projectives in C, the opposite
+right-derived functor of Fᵒᵖ gives a left-derived functor on these
+models. Its counit has the left-derived universal property.
+Degree-negating reflection places a complex K zero above d in the
+bounded-below opposite category, and termwise projectivity of K
+makes the reflected terms injective. The counit is then invertible
+and computes the derived value by the original mapped complex F(K).
 -/
 
 @[expose] public section
@@ -40,21 +43,31 @@ namespace CategoryTheory.DerivedCategory.BoundedAboveDual
 
 variable (C : Type uC) [Category.{vC} C] [Abelian C]
 
-/-- The actual bounded-above complex model obtained from native bounded-below opposite complexes. -/
+/-- Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+The bounded-above complex model C_-, whose objects are opposite bounded-below cochain complexes over Cᵒᵖ. -/
 abbrev Complex := (CochainComplex.Plus Cᵒᵖ)ᵒᵖ
 
 variable [HasDerivedCategory Cᵒᵖ]
 
-/-- The native opposite-plus localization model of the bounded-above derived category. -/
+/-- Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+With a chosen derived category of Cᵒᵖ, the bounded-above derived model is D⁺(Cᵒᵖ)ᵒᵖ. -/
 abbrev Derived := (DerivedCategory.Plus Cᵒᵖ)ᵒᵖ
 
-/-- The opposite of the native Plus localization, with its actual quasi-isomorphism property. -/
+/-- Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+With a chosen derived category of Cᵒᵖ, Q_- is the opposite of the bounded-below localization Q_+:CochainComplex.Plus(Cᵒᵖ) → D⁺(Cᵒᵖ). -/
 def Q : Complex C ⥤ Derived C := (DerivedCategory.Plus.Q (C := Cᵒᵖ)).op
 
-/-- The original class of quasi-isomorphisms transported through the opposite category. -/
+/-- Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+The quasi-isomorphism class in C_- is the opposite of the quasi-isomorphism class on bounded-below Cᵒᵖ-complexes. -/
 abbrev quasiIso : MorphismProperty (Complex C) := (CochainComplex.Plus.quasiIso Cᵒᵖ).op
 
-/-- The native opposite of Plus localization inverts precisely the transported quasi-isomorphisms. -/
+/-- Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+With a chosen derived category of Cᵒᵖ, Q_-:C_- → D⁺(Cᵒᵖ)ᵒᵖ localizes at the transported quasi-isomorphisms. -/
 instance localization : (Q C).IsLocalization (quasiIso C) := by
   dsimp only [Q, quasiIso]
   infer_instance
@@ -62,19 +75,33 @@ instance localization : (Q C).IsLocalization (quasiIso C) := by
 variable {C} {D : Type uD} [Category.{vD} D] [Abelian D]
   [HasDerivedCategory Dᵒᵖ] (F : C ⥤ D) [F.Additive]
 
-/-- The native original additive functor on the opposite-plus cochain model. -/
+/-- For abelian C,D and additive F:C → D, the functor between their
+bounded-above complex models is the opposite of termwise application
+of Fᵒᵖ to bounded-below Cᵒᵖ-complexes. -/
 def mapComplex : Complex C ⥤ Complex D := Functor.op ((Functor.op F).mapCochainComplexPlus)
 
 variable [EnoughProjectives C]
 
-/-- The genuine left derived functor, obtained from native right derivation on the opposite category. -/
+/-- Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+The left-derived functor D_-^op(C) → D_-^op(D) is the opposite of the right-derived functor of Fᵒᵖ on bounded-below objects. -/
 def leftDerived : Derived C ⥤ Derived D := Functor.op ((Functor.op F).rightDerivedFunctorPlus)
 
-/-- The original right-derived unit becomes the actual left-derived counit. -/
+/-- Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+The opposite right-derived unit gives the counit Q_-∘LF → mapComplex(F)∘Q_-, on the bounded-above complex model. -/
 def counit : Q C ⋙ leftDerived F ⟶ mapComplex F ⋙ Q D :=
   NatTrans.op ((Functor.op F).rightDerivedFunctorPlusUnit)
 
-/-- The constructed counit has the genuine native left-derived universal property. -/
+/-- Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+The constructed LF and counit satisfy the left-derived universal property relative to quasi-isomorphisms of the bounded-above model. -/
 theorem leftDerived_isLeftDerived :
     (leftDerived F).IsLeftDerivedFunctor (counit F) (quasiIso C) := by
   let L := DerivedCategory.Plus.Q (C := Cᵒᵖ)
@@ -99,7 +126,9 @@ namespace CochainComplex
 
 variable {C : Type uC} [Category.{vC} C] [Abelian C]
 
-/-- The actual degree-negating opposite complex, placed in native Plus using its original bound. -/
+/-- Let C be abelian and K a cochain complex zero above d∈ℤ.
+Degree-negating opposite reflection gives a bounded-below Cᵒᵖ-complex,
+with degree-n term op(K^{−n}) and lower term bound −d. -/
 def opPlusOfBoundedAbove (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] :
     CochainComplex.Plus Cᵒᵖ := by
   let L := (opEquivalence C).functor.obj (op K)
@@ -112,7 +141,8 @@ def opPlusOfBoundedAbove (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d]
     exact (K.isZero_of_isStrictlyLE d (-n) hd).op
   exact ⟨L, -d, hL⟩
 
-/-- The opposite of an actual bounded-above projective term is injective in its native reflected degree. -/
+/-- Let C be abelian, K zero above d and every K^n projective.
+Every term of its degree-negating Cᵒᵖ-reflection is injective. -/
 theorem opPlusOfBoundedAbove_term_injective (K : CochainComplex C ℤ) (d : ℤ)
     [K.IsStrictlyLE d] [∀ n : ℤ, Projective (K.X n)] (n : ℤ) :
     Injective ((opPlusOfBoundedAbove K d).obj.X n) := by
@@ -128,11 +158,17 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   [HasDerivedCategory Cᵒᵖ] [HasDerivedCategory Dᵒᵖ]
   [EnoughProjectives C] (F : C ⥤ D) [F.Additive]
 
-/-- The original cochain complex in the native bounded-above opposite-plus model. -/
+/-- Let C be abelian. Write C_-=(CochainComplex.Plus(Cᵒᵖ))ᵒᵖ.
+
+A complex K zero above d gives the object of C_- opposite to its bounded-below Cᵒᵖ-reflection. -/
 def ofBoundedAbove (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] : Complex C :=
   op (CochainComplex.opPlusOfBoundedAbove K d)
 
-/-- Native injective computation on the opposite side earns invertibility on original projective complexes. -/
+/-- Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+For K zero above d and projective in every degree, the left-derived counit at its bounded-above model object is an isomorphism. -/
 theorem counit_isIso_of_projective (K : CochainComplex C ℤ) (d : ℤ)
     [K.IsStrictlyLE d] [∀ n : ℤ, Projective (K.X n)] :
     IsIso ((counit F).app (ofBoundedAbove K d)) := by
@@ -163,7 +199,11 @@ theorem counit_isIso_of_projective (K : CochainComplex C ℤ) (d : ℤ)
   change IsIso ((U.app P).op)
   infer_instance
 
-/-- The genuine derived computation isomorphism on an original bounded-above projective model. -/
+/-- Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+For K zero above d and termwise projective, the canonical isomorphism from LF(Q_-(K)) to Q_- applied to its mapped bounded-above model. -/
 def projectiveComputationIso (K : CochainComplex C ℤ) (d : ℤ)
     [K.IsStrictlyLE d] [∀ n : ℤ, Projective (K.X n)] :
     (leftDerived F).obj ((Q C).obj (ofBoundedAbove K d)) ≅
@@ -171,7 +211,9 @@ def projectiveComputationIso (K : CochainComplex C ℤ) (d : ℤ)
   letI := counit_isIso_of_projective F K d
   exact asIso ((counit F).app (ofBoundedAbove K d))
 
-/-- Mapping the actual reflected cochain complex agrees with reflecting the original mapped complex. -/
+/-- For abelian C,D and additive F:C → D, termwise application of Fᵒᵖ
+to the degree-negating reflection of K is canonically isomorphic to
+the degree-negating reflection of the original mapped complex F(K). -/
 def cochainOpMapIso (K : CochainComplex C ℤ) :
     (F.op.mapHomologicalComplex (ComplexShape.up ℤ)).obj
         ((CochainComplex.opEquivalence C).functor.obj (op K)) ≅
@@ -179,7 +221,9 @@ def cochainOpMapIso (K : CochainComplex C ℤ) :
         (op ((F.mapHomologicalComplex (ComplexShape.up ℤ)).obj K)) :=
   eqToIso (by rfl)
 
-/-- The actual original mapped complex, placed in the bounded-above model by native opposite transport. -/
+/-- For abelian C,D and additive F:C → D, if K is zero above d,
+the reflected mapped complex F(K), viewed oppositely, is an object
+of the bounded-above complex model for D. -/
 def actualMappedComplex (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] : Complex D := by
   let P := F.op.mapCochainComplexPlus.obj (CochainComplex.opPlusOfBoundedAbove K d)
   refine op ⟨(CochainComplex.opEquivalence D).functor.obj
@@ -195,7 +239,9 @@ def actualMappedComplex (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] 
         ((CochainComplex.opEquivalence C).functor.obj (op K))) n := hSource
   exact ⟨n, CochainComplex.isStrictlyGE_of_iso (cochainOpMapIso F K) n⟩
 
-/-- The original additive map on bounded-above complexes has its actual componentwise reflected comparison. -/
+/-- For abelian C,D and additive F:C → D, a complex K zero above d has
+a canonical isomorphism between its image in the bounded-above model
+under F and the model of the actual termwise mapped complex F(K). -/
 def mappedComplexIso (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] :
     (mapComplex F).obj (ofBoundedAbove K d) ≅ actualMappedComplex F K d := by
   let e : F.op.mapCochainComplexPlus.obj (CochainComplex.opPlusOfBoundedAbove K d) ≅
@@ -203,7 +249,11 @@ def mappedComplexIso (K : CochainComplex C ℤ) (d : ℤ) [K.IsStrictlyLE d] :
     ObjectProperty.isoMk (CochainComplex.plus Dᵒᵖ) (cochainOpMapIso F K)
   exact e.op.symm
 
-/-- On a genuine projective source, the left derived value is the image of the actual original mapped complex. -/
+/-- Let C,D be abelian with chosen derived categories for Cᵒᵖ,Dᵒᵖ,
+F:C → D additive and C having enough projectives.
+Set D_-^op(C)=D⁺(Cᵒᵖ)ᵒᵖ and similarly for D.
+
+For K zero above d and projective in every degree, LF(Q_-(K)) is canonically isomorphic to Q_- of the bounded-above model of the actual complex F(K). -/
 def projectiveActualComplexIso (K : CochainComplex C ℤ) (d : ℤ)
     [K.IsStrictlyLE d] [∀ n : ℤ, Projective (K.X n)] :
     (leftDerived F).obj ((Q C).obj (ofBoundedAbove K d)) ≅

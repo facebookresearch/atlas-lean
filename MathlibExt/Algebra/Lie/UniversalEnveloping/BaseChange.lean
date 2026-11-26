@@ -19,18 +19,16 @@ public import Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
-# Scalar extension of universal enveloping bialgebras
+# Scalar extension of enveloping bialgebras
 
-For a commutative ring algebra `R → S` and an arbitrary `R`-Lie algebra
-`L`, scalar extension commutes with the universal enveloping algebra as
-an `S`-bialgebra. The comparison sends `s ⊗ ι_R(x)` to `ι_S(s ⊗ x)`.
-Its inverse is the primitive-valued enveloping lift of the coefficient
-tensor map of `ι_R`.
+Let S be a commutative R-algebra and L any R-Lie algebra. Put U = U_R(L), SL = S ⊗[R] L, B = S
+⊗[R] U and V = U_S(SL). The coefficient tensor of the Lie inclusion sends s ⊗ x to s ⊗ ι_R(x),
+which is primitive in the S-bialgebra B.
 
-The two algebra maps are inverse by the native universal properties of
-scalar extension and the enveloping algebra. No PBW, flatness, or
-projectivity hypothesis is needed, and `L` carries only its original
-`R`-module structure. The ring and Lie-carrier universes are independent.
+The forward algebra comparison Φ : B → V sends s ⊗ ι_R(x) to ι_S(s ⊗ x). Its inverse Ψ : V → B
+is the bialgebra lift of the primitive-valued coefficient map. Their generator formulas give
+inverse maps and an S-bialgebra equivalence B ≃ V. This equivalence is natural in R-Lie maps
+and retains the original R-action on L. The scalar and Lie-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -98,8 +96,10 @@ private theorem tensor_ι_lie (z z' : SL) :
     ψ.toLinearMap z * ψ.toLinearMap z' - ψ.toLinearMap z' * ψ.toLinearMap z at h
   simpa only [hψ] using h
 
-/-- The coefficient tensor of the native Lie inclusion takes values in the primitive elements
-of the scalar-extended enveloping bialgebra. -/
+/-- Primitive-valued coefficient extension of the Lie inclusion.
+
+For U = U_R(L) and B = S ⊗[R] U, the S-linear extension of ι_R sends S ⊗[R] L into the
+primitive Lie subalgebra of B. It gives an S-Lie map with value s ⊗ x ↦ s ⊗ ι_R(x). -/
 def baseChangePrimitive : SL →ₗ⁅S⁆ P where
   toLinearMap :=
     (TensorProduct.AlgebraTensorModule.lTensor S S (ι R : L →ₗ⁅R⁆ U).toLinearMap).codRestrict
@@ -114,20 +114,28 @@ def baseChangePrimitive : SL →ₗ⁅S⁆ P where
           TensorProduct.AlgebraTensorModule.lTensor S S (ι R : L →ₗ⁅R⁆ U).toLinearMap z
     exact tensor_ι_lie R S L z z'
 
-/-- The primitive-valued coefficient tensor has value `s ⊗ ι_R(x)` on a pure tensor. -/
+/-- Value of the primitive coefficient map on a pure tensor.
+
+For s ∈ S and x ∈ L, baseChangePrimitive R S L applied to s ⊗[R] x, viewed in S ⊗[R] U_R(L),
+is s ⊗[R] ι_R(x). -/
 @[simp]
 theorem baseChangePrimitive_tmul (s : S) (x : L) :
     (baseChangePrimitive R S L (s ⊗ₜ[R] x) : B) = s ⊗ₜ[R] ι R x := rfl
 
-/-- Extend the Lie generators and then use the native algebra base-change universal property. -/
+/-- Forward algebra comparison for enveloping scalar extension.
+
+For a commutative R-algebra S and R-Lie algebra L, the Lie scalar-extension and enveloping
+universal properties define Φ : S ⊗[R] U_R(L) →ₐ[S] U_S(S ⊗[R] L). It takes coefficient
+tensors of generators to the corresponding S-Lie generators. -/
 def baseChangeTo : B →ₐ[S] V :=
   letI : Algebra R V := Algebra.restrictScalars R S V
   letI : IsScalarTower R S V := IsScalarTower.restrictScalars R S V
   AlgHom.liftEquiv R S U V
     (lift R ((LieHom.liftBaseChangeEquiv R S L V).symm (ι S : SL →ₗ⁅S⁆ V)))
 
-/-- The forward scalar-extension map sends each coefficient tensor of a Lie generator to
-the corresponding Lie generator over `S`. -/
+/-- Generator formula for the forward enveloping comparison.
+
+The forward algebra map Φ satisfies Φ(s ⊗[R] ι_R(x)) = ι_S(s ⊗[R] x) for s ∈ S and x ∈ L. -/
 @[simp]
 theorem baseChangeTo_tmul_ι (s : S) (x : L) :
     baseChangeTo R S L (s ⊗ₜ[R] ι R x) = ι S (s ⊗ₜ[R] x) := by
@@ -138,10 +146,15 @@ theorem baseChangeTo_tmul_ι (s : S) (x : L) :
   simpa only [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     using (map_smul (ι S : SL →ₗ⁅S⁆ V) s ((1 : S) ⊗ₜ[R] x)).symm
 
-/-- The inverse scalar-extension map is the existing primitive-valued enveloping lift. -/
+/-- Inverse bialgebra comparison for enveloping scalar extension.
+
+Lift the primitive S-Lie map S ⊗[R] L → P_S(S ⊗[R] U_R(L)) to a bialgebra map Ψ : U_S(S ⊗[R]
+L) →ₐc[S] S ⊗[R] U_R(L). Its generator values are the coefficient tensors s ⊗ ι_R(x). -/
 def baseChangeFrom : V →ₐc[S] B := liftPrimitive S (baseChangePrimitive R S L)
 
-/-- The inverse map sends the generator of `s ⊗ x` to `s ⊗ ι_R(x)`. -/
+/-- Generator formula for the inverse enveloping comparison.
+
+The bialgebra map Ψ satisfies Ψ(ι_S(s ⊗[R] x)) = s ⊗[R] ι_R(x) for s ∈ S and x ∈ L. -/
 @[simp]
 theorem baseChangeFrom_ι_tmul (s : S) (x : L) :
     baseChangeFrom R S L (ι S (s ⊗ₜ[R] x)) = s ⊗ₜ[R] ι R x := by
@@ -169,8 +182,11 @@ private theorem baseChangeTo_comp_from :
   · intro z z' hz hz'
     simpa only [map_add] using congrArg₂ (· + ·) hz hz'
 
-/-- Universal enveloping algebras commute with scalar extension as bialgebras. The original
-Lie algebra is arbitrary and retains only its `R`-module structure. -/
+/-- Bialgebra equivalence between two enveloping scalar extensions.
+
+For arbitrary R-Lie algebra L and commutative R-algebra S, the inverse comparisons Φ and Ψ
+define S ⊗[R] U_R(L) ≃ₐc[S] U_S(S ⊗[R] L). Their inverse laws follow from the two universal
+properties and the generator formulas. -/
 def baseChangeEquiv : B ≃ₐc[S] V :=
   (BialgEquiv.ofAlgEquiv
     (AlgEquiv.ofAlgHom (baseChangeFrom R S L).toAlgHom (baseChangeTo R S L)
@@ -178,20 +194,28 @@ def baseChangeEquiv : B ≃ₐc[S] V :=
     (by exact (baseChangeFrom R S L).counitAlgHom_comp)
     (by exact (baseChangeFrom R S L).map_comp_comulAlgHom)).symm
 
-/-- The bialgebra comparison sends `s ⊗ ι_R(x)` to `ι_S(s ⊗ x)`. -/
+/-- Forward generator value of the enveloping bialgebra equivalence.
+
+The equivalence S ⊗[R] U_R(L) ≃ₐc[S] U_S(S ⊗[R] L) sends s ⊗[R] ι_R(x) to ι_S(s ⊗[R] x). -/
 @[simp]
 theorem baseChangeEquiv_tmul_ι (s : S) (x : L) :
     baseChangeEquiv R S L (s ⊗ₜ[R] ι R x) = ι S (s ⊗ₜ[R] x) :=
   baseChangeTo_tmul_ι R S L s x
 
-/-- The inverse bialgebra comparison sends `ι_S(s ⊗ x)` to `s ⊗ ι_R(x)`. -/
+/-- Inverse generator value of the enveloping bialgebra equivalence.
+
+The inverse equivalence sends ι_S(s ⊗[R] x) to s ⊗[R] ι_R(x), preserving the left coefficient
+factor. -/
 @[simp]
 theorem baseChangeEquiv_symm_ι_tmul (s : S) (x : L) :
     (baseChangeEquiv R S L).symm (ι S (s ⊗ₜ[R] x)) = s ⊗ₜ[R] ι R x :=
   baseChangeFrom_ι_tmul R S L s x
 
-/-- Scalar extension of the enveloping bialgebra is natural in Lie morphisms, with the
-original Lie map extended by the shared `S`-linear tensor map. -/
+/-- Naturality of the enveloping bialgebra base-change equivalence.
+
+For an R-Lie map f : L → L', the S-bialgebra maps satisfy U_S(baseChange f) ∘ Φ_L = Φ_{L'} ∘
+(id_S ⊗ U_R(f)). The coefficient algebra is unchanged and the Lie map is extended by the
+S-linear tensor map. -/
 theorem baseChangeEquiv_naturality
     {L' : Type w'} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L') :
     (mapBialgHom S (LieHom.baseChange R S f)).comp (baseChangeEquiv R S L).toBialgHom =

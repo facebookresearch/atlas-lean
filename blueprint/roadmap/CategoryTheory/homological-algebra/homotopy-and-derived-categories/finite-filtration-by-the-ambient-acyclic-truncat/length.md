@@ -1,3 +1,5 @@
-# Length
+# Length of the explicit support interval
 
-The number of steps is the local length of the original geometric support interval.
+For integers a,b, consider the finite term interval [a,b].
+
+The number of truncation steps is L=(b−a+1).toNat, the nonnegative interval length.

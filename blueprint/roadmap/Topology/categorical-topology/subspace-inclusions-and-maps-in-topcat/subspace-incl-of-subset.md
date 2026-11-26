@@ -1,3 +1,4 @@
-# Subspace Incl Of Subset
+# Continuous inclusion between nested subspaces
 
-Inclusion of subspace `S` into subspace `T` when `S ⊆ T`.
+For subsets `S ⊆ T` of a topological space `X`, inclusion defines a
+continuous morphism between their induced subspaces.

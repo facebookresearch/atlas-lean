@@ -1,5 +1,6 @@
-# Postcomp
+# Convolution nilpotence preserved by a monoid morphism
 
-Reduced convolution-nilpotence is preserved by target postcomposition with a
-monoid morphism, by transporting the vanishing witness through
-`reducedConvPow_postcomp` and `Cochain.zero_comp`.
+Convolution nilpotence preserved by a monoid morphism.
+
+If a homogeneous f has a vanishing finite convolution iterate and φ : A → B is a monoid
+morphism, then f followed by φ has a vanishing iterate at the same index.

@@ -1,4 +1,7 @@
-# Base Change Equiv naturality
+# Naturality of the enveloping bialgebra base-change equivalence
 
-Scalar extension of the enveloping bialgebra is natural in Lie morphisms, with the
-original Lie map extended by the shared `S`-linear tensor map.
+Naturality of the enveloping bialgebra base-change equivalence.
+
+For an R-Lie map f : L → L', the S-bialgebra maps satisfy U_S(baseChange f) ∘ Φ_L = Φ_{L'} ∘
+(id_S ⊗ U_R(f)). The coefficient algebra is unchanged and the Lie map is extended by the
+S-linear tensor map.

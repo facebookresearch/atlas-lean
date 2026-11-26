@@ -1,7 +1,7 @@
-# Is In Filt
+# Finite-stage vanishing in an iterated reduced coproduct
 
-Componentwise stage membership: `x` lies in stage `n` when the degree
-component of the `(n+1)`-st canonical iterate `redComulPowFrom Δbar`
-vanishes on it. The `(n+1)` offset is deliberate: `redComulPowFrom Δbar 0`
-is the degree-one iso, so `F₀` is the kernel of `Δbar` up to that iso. Never
-spelled as ill-typed morphism-applied-to-element.
+Finite-stage vanishing in an iterated reduced coproduct.
+
+For b : C → C ⊗ C, n : ℕ, i : ℤ and x ∈ C_i, IsInFilt b n i x means that the degree-i
+component of b^{[n+1]} annihilates x. The iterate has n+2 tensor factors, and stage zero is
+the kernel condition for b up to unit comparison.

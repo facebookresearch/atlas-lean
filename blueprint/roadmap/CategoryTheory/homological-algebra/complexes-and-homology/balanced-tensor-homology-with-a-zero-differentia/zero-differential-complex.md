@@ -1,3 +1,5 @@
-# Zero Differential Complex
+# Zero-differential complex on a graded right-module family
 
-The native zero-differential complex on the original right-module family.
+For an arbitrary ring R and an integer-graded family A of right
+R-modules, the integer chain complex A_0 with term A_p in degree p
+and all differentials zero.

@@ -1,5 +1,6 @@
-# Coaug Hom
+# Bundled comonoid coaugmentation of a twisting cochain
 
-Bundled coaugmentation as a comonoid morphism from the trivial comonoid.
-Uses a local tensor-unit `ComonObj` instance only; no global instance is
-introduced.
+Bundled comonoid coaugmentation of a twisting cochain.
+
+The map τ.coaug and its comonoid-preservation field define a morphism from the canonical
+tensor-unit comonoid to the comonoid C.

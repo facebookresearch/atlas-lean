@@ -1,6 +1,6 @@
 # Both total components in the printed BC coordinates
 
-- [Loday BCTotal Iso D₁](loday-bctotal-iso-d.md)
-- [Loday BCTotal Iso D₂](loday-bctotal-iso-d-2.md)
-- [Loday BCTotal D₁ D₂](loday-bctotal-d-d.md)
-- [Loday BCTotal Homology Iso](loday-bctotal-homology-iso.md)
+- [The full BC coordinate map transports the horizontal total component](loday-bctotal-iso-d.md)
+- [The full BC coordinate map transports the signed vertical total component](loday-bctotal-iso-d-2.md)
+- [The BC horizontal and vertical total components anticommute](loday-bctotal-d-d.md)
+- [The full BC coordinate comparison identifies total homology](loday-bctotal-homology-iso.md)

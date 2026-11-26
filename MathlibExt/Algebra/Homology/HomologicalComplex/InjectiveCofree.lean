@@ -13,16 +13,21 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
 
 /-!
-# Finite cofree complexes
+# Cofree complexes with two coefficient objects in each degree
 
-For a complex shape `c` and a coefficient family `I`, the cofree complex
-has terms `I i ⊞ I (c.next i)`. Its differential carries the second
-coefficient to the first coefficient of the next term.
+Let A be abelian and c a complex shape on an arbitrary index type. For a family J_i, define
+D(J)_i=J_i⊕J_{c.next(i)}. Along c.Rel(i,j), its differential is second projection, transport
+c.next(i)=j, then first injection. Other differentials are zero, and consecutive maps vanish.
 
-When every index has an outgoing arrow, a map to the cofree complex is
-determined by its first coefficients. Injective coefficient objects give
-an injective complex. Degreewise injective covers therefore supply enough
-injectives in the category of complexes, using only binary biproducts.
+A family a_i:K_i→J_i defines a complex map K→D(J) with components
+(a_i,d_K(i,c.next(i))≫a_{c.next(i)}). If every index has an outgoing arrow, every map to D(J) is
+uniquely determined by these first coefficients. This gives the coefficient-family bijection and
+its precomposition/naturality laws.
+
+Under the outgoing-arrow condition, injective J_i make D(J) injective. Degreewise injective
+covers give a monic map into such a cofree complex, so enough injectives in A give enough
+injectives in HomologicalComplex(A,c). Only two coefficient objects are used per degree, with no
+finite-index restriction.
 -/
 
 @[expose] public section
@@ -40,7 +45,10 @@ namespace HomologicalComplex
 variable {A : Type u} [Category.{v} A] [Abelian A]
 variable {ι : Type w} {c : ComplexShape ι}
 
-/-- The finite cofree complex on a coefficient family. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For c.Rel(i,j),
+d_D(i,j)=pr₂≫tr_{c.next(i)=j}≫in₁:J_i⊕J_{next(i)}→J_j⊕J_{next(j)}. Outside the relation it is
+zero. The middle in₁≫pr₂=0 makes d_D²=0. -/
 def injectiveCofree (I : ι → A) : HomologicalComplex A c where
   X i := I i ⊞ I (c.next i)
   d i j := if hij : c.Rel i j then
@@ -52,7 +60,10 @@ def injectiveCofree (I : ι → A) : HomologicalComplex A c where
     simp only [dif_pos hij, dif_pos hjk, Category.assoc,
       biprod.inl_snd_assoc, comp_zero, zero_comp]
 
-/-- The cofree differential includes the canonical transport of the next index. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For a relation
+c.Rel(i,j), d_D(i,j) is second projection to J_{next(i)}, the canonical equality transport to
+J_j, then first injection into D(J)_j. -/
 theorem injectiveCofree_d (I : ι → A) {i j : ι} (hij : c.Rel i j) :
     (injectiveCofree (c := c) I).d i j =
       (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) ≫
@@ -60,7 +71,10 @@ theorem injectiveCofree_d (I : ι → A) {i j : ι} (hij : c.Rel i j) :
           (biprod.inl : I j ⟶ I j ⊞ I (c.next j)) := by
   exact dif_pos hij
 
-/-- At the native next index, the cofree differential is second projection then insertion. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For any i with
+c.Rel(i,c.next(i)), d_D(i,c.next(i))=pr₂≫in₁, from J_i⊕J_{next(i)} to
+J_{next(i)}⊕J_{next(next(i))}. -/
 theorem injectiveCofree_d_next (I : ι → A) (i : ι) (hi : c.Rel i (c.next i)) :
     (injectiveCofree (c := c) I).d i (c.next i) =
       (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) ≫
@@ -74,7 +88,10 @@ theorem injectiveCofree_d_next (I : ι → A) (i : ι) (hi : c.Rel i (c.next i))
     _ = p ≫ 𝟙 _ ≫ q := congrArg (fun t => p ≫ t ≫ q) ht
     _ = p ≫ q := congrArg (fun t => p ≫ t) (Category.id_comp q)
 
-/-- A coefficient family determines its cofree complex map. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For a c-shaped K and
+a_i:K_i→J_i, define a map η_a:K→D(J) by (η_a)_i=(a_i,d_K(i,next(i))≫a_{next(i)}). Its two
+coefficients satisfy the complex-map squares. -/
 def injectiveCofreeHom (K : HomologicalComplex A c) (I : ι → A)
     (a : ∀ i, K.X i ⟶ I i) : K ⟶ injectiveCofree (c := c) I where
   f i := biprod.lift (a i) (K.d i (c.next i) ≫ a (c.next i))
@@ -101,7 +118,9 @@ def injectiveCofreeHom (K : HomologicalComplex A c) (I : ι → A)
         (a i) (a (c.next i)) (a (c.next (c.next i)))
         (K.d_comp_d i (c.next i) (c.next (c.next i)))
 
-/-- The first coefficient of the cofree map is the prescribed coefficient. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For K and
+a_i:K_i→J_i, the map η_a:K→D(J) satisfies (η_a)_i≫pr₁=a_i for every i. -/
 @[reassoc]
 theorem injectiveCofreeHom_fst (K : HomologicalComplex A c) (I : ι → A)
     (a : ∀ i, K.X i ⟶ I i) (i : ι) :
@@ -109,7 +128,9 @@ theorem injectiveCofreeHom_fst (K : HomologicalComplex A c) (I : ι → A)
       (biprod.fst : I i ⊞ I (c.next i) ⟶ I i) = a i :=
   biprod.lift_fst _ _
 
-/-- The second coefficient of the cofree map is obtained from the source differential. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For K and
+a_i:K_i→J_i, (η_a)_i≫pr₂=d_K(i,next(i))≫a_{next(i)}. The equality is a map K_i→J_{next(i)}. -/
 @[reassoc]
 theorem injectiveCofreeHom_snd (K : HomologicalComplex A c) (I : ι → A)
     (a : ∀ i, K.X i ⟶ I i) (i : ι) :
@@ -118,7 +139,10 @@ theorem injectiveCofreeHom_snd (K : HomologicalComplex A c) (I : ι → A)
         K.d i (c.next i) ≫ a (c.next i) :=
   biprod.lift_snd _ _
 
-/-- Every cofree map has its second coefficient forced at an outgoing index. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For g:K→D(J) and i
+with c.Rel(i,next(i)), g_i≫pr₂=d_K(i,next(i))≫g_{next(i)}≫pr₁. Thus the next first coefficient
+determines the current second coefficient. -/
 @[reassoc]
 theorem injectiveCofree_snd (K : HomologicalComplex A c) (I : ι → A)
     (g : K ⟶ injectiveCofree (c := c) I) (i : ι) (hi : c.Rel i (c.next i)) :
@@ -143,7 +167,10 @@ theorem injectiveCofree_snd (K : HomologicalComplex A c) (I : ι → A)
       congrArg (fun t => t ≫ r) (g.comm i (c.next i))
     _ = _ := Category.assoc (K.d i (c.next i)) (g.f (c.next i)) r
 
-/-- First coefficients determine maps to a cofree complex when every index is outgoing. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. Assume
+c.Rel(i,c.next(i)) for every i. For f,g:K→D(J), if f_i≫pr₁=g_i≫pr₁ for every i, then f=g as
+complex maps. -/
 theorem injectiveCofree_hom_ext (I : ι → A) (hc : ∀ i, c.Rel i (c.next i))
     {K : HomologicalComplex A c} {f g : K ⟶ injectiveCofree (c := c) I}
     (h : ∀ i, f.f i ≫ biprod.fst = g.f i ≫ biprod.fst) : f = g := by
@@ -161,7 +188,10 @@ theorem injectiveCofree_hom_ext (I : ι → A) (hc : ∀ i, c.Rel i (c.next i))
           (h (c.next i))
       _ = _ := (injectiveCofree_snd K I g i (hc i)).symm
 
-/-- The universal coefficient equivalence for the finite cofree complex. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. Assume
+c.Rel(i,c.next(i)) for every i. For any K, there is a bijection Hom(K,D(J))≃∏_i Hom(K_i,J_i). It
+sends g to (g_i≫pr₁), with inverse the map η_a having coefficients (a_i,d_K≫a_next). -/
 def injectiveCofreeHomEquiv (K : HomologicalComplex A c) (I : ι → A)
     (hc : ∀ i, c.Rel i (c.next i)) :
     (K ⟶ injectiveCofree (c := c) I) ≃ (∀ i, K.X i ⟶ I i) where
@@ -173,7 +203,10 @@ def injectiveCofreeHomEquiv (K : HomologicalComplex A c) (I : ι → A)
     exact injectiveCofreeHom_fst K I _ i
   right_inv a := funext fun i => injectiveCofreeHom_fst K I a i
 
-/-- Cofree maps commute with precomposition by a complex map. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For g:K→L and
+a_i:L_i→J_i, g≫η_a^L=η_{(g_i≫a_i)}^K. This law holds for the prescribed cofree maps on any shape
+c. -/
 @[reassoc]
 theorem injectiveCofreeHom_precomp {K L : HomologicalComplex A c} (g : K ⟶ L)
     (I : ι → A) (a : ∀ i, L.X i ⟶ I i) :
@@ -210,12 +243,19 @@ theorem injectiveCofreeHom_precomp {K L : HomologicalComplex A c} (g : K ⟶ L)
         g.comm_assoc i (c.next i) (a (c.next i))
       _ = _ := hψq.symm
 
-/-- A family of coefficient morphisms induces its cofree map. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For another
+coefficient family L_i and maps b_i:J_i→L_i, D(J)→D(L) is the prescribed cofree map whose first
+coefficient is pr₁≫b_i. Its second coefficient is determined by the cofree source differential. -/
 def injectiveCofreeMap {I J : ι → A} (a : ∀ i, I i ⟶ J i) :
     injectiveCofree (c := c) I ⟶ injectiveCofree (c := c) J :=
   injectiveCofreeHom (injectiveCofree (c := c) I) J (fun i => biprod.fst ≫ a i)
 
-/-- Cofree coefficient maps commute with a prescribed coefficient family. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. Assume
+c.Rel(i,c.next(i)) for every i. For a_i:K_i→J_i and b_i:J_i→L_i, η_a≫D(b)=η_{(a_i≫b_i)}. The
+target is D(L), and the outgoing condition gives the first-coefficient uniqueness used in this
+law. -/
 @[reassoc]
 theorem injectiveCofreeHom_naturality (K : HomologicalComplex A c) {I J : ι → A}
     (hc : ∀ i, c.Rel i (c.next i)) (a : ∀ i, K.X i ⟶ I i) (b : ∀ i, I i ⟶ J i) :
@@ -244,7 +284,11 @@ theorem injectiveCofreeHom_naturality (K : HomologicalComplex A c) {I J : ι →
     _ = a i ≫ b i := congrArg (fun t => t ≫ b i) hφ
     _ = _ := hψ.symm
 
-/-- A finite cofree complex of injective coefficient objects is injective. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. Assume
+c.Rel(i,c.next(i)) for every i. If every J_i is injective in A, then D(J) is injective in
+HomologicalComplex(A,c). A map into it extends over a monomorphism by extending each first
+coefficient into J_i. -/
 theorem injectiveCofree_injective (I : ι → A) (hc : ∀ i, c.Rel i (c.next i))
     [∀ i, Injective (I i)] : Injective (injectiveCofree (c := c) I) where
   factors {X Y} g m hm := by
@@ -265,14 +309,20 @@ theorem injectiveCofree_injective (I : ι → A) (hc : ∀ i, c.Rel i (c.next i)
       _ = m.f i ≫ a i := congrArg (fun t => m.f i ≫ t) hφ
       _ = g.f i ≫ p := Injective.comp_factorThru (g.f i ≫ p) (m.f i)
 
-/-- Monic first coefficients give a monic cofree complex map. -/
+/-- Let A be an abelian category in object/morphism universes u,v, c a complex shape on an index
+type I in w, and J_i∈A a coefficient family. Put D(J)_i=J_i⊕J_{c.next(i)}. For a_i:K_i→J_i that
+are mono for every i, η_a:K→D(J) is mono. Each component is monic because its first projection
+is a_i. -/
 theorem injectiveCofreeHom_mono (K : HomologicalComplex A c) (I : ι → A)
     (a : ∀ i, K.X i ⟶ I i) [∀ i, Mono (a i)] : Mono (injectiveCofreeHom K I a) := by
   apply HomologicalComplex.mono_of_mono_f
   intro i
   exact mono_of_mono_fac (injectiveCofreeHom_fst K I a i)
 
-/-- Injective covers give enough injectives for a shape with an outgoing arrow at every index. -/
+/-- Let A be an abelian category in object/morphism universes u,v and c a complex shape on an index
+type I in w. Assume c.Rel(i,c.next(i)) for every i. If A has enough injectives,
+HomologicalComplex(A,c) has enough injectives. For K, choose coefficient covers a_i:K_i↪J_i with
+J_i injective; η_a embeds K into the injective cofree complex D(J). -/
 theorem enoughInjectives_of_rel_next (hc : ∀ i, c.Rel i (c.next i))
     [EnoughInjectives A] : EnoughInjectives (HomologicalComplex A c) where
   presentation K := by

@@ -12,20 +12,18 @@ public import Mathlib.AlgebraicTopology.SimplicialObject.Split
 public import MathlibExt.AlgebraicTopology.SimplexCategory.PrismMapDegeneracies
 
 /-!
-# General prism descent with every original degeneracy prescribed
+# Prism operators assembled from a simplicial splitting
 
-Arbitrary maps on the nondegenerate summands of a native splitting determine
-prism operators on the whole source in every degree. An original summand epi
-acts through the existing canonical prism lift at the actual image of the
-duplicated vertex. Native coproduct descent and composition of prism lifts
-prove compatibility with every original epi, hence both native homotopy
-degeneracy laws.
+Let s be a splitting of P in a category C, with nondegenerate summands N_n, and let Q be
+simplicial. Specify maps p_{n,i} : N_n → Q_{n+1} for every i ∈ Fin(n+1). For an epimorphism
+summand a : [n] → [m], prescribe the restriction of H_{n,i} : P_n → Q_{n+1} as p_{m,a(i)} ≫
+Q(Φ(a,i).op), where Φ is the duplicated-vertex simplex map. The splitting coproduct defines H
+uniquely from these restrictions.
 
-No face equation, endpoint equation, augmentation, or desired homotopy is
-assumed. This is the degeneracy-preserving assembly component: the separate
-ordered horn and final boundary construction must earn the primitive maps
-and their face equations before these operators can form a homotopy.
-Source proposals only; UNEXECUTED.
+For every epimorphism e : [n] → [m], P(e.op) ≫ H_{n,i} = H_{m,e(i)} ≫ Q(Φ(e,i).op). The two
+elementary degeneracy formulas follow, including their equality cases. These operators provide
+degeneracy-compatible data; their face equations are expressed separately. Object and morphism
+universes are independent.
 -/
 
 @[expose] public section
@@ -43,14 +41,21 @@ variable {C : Type u} [Category.{v} C] {P Q : SimplicialObject C}
   (s : Splitting P)
   (p : ∀ n : ℕ, Fin (n + 1) → (s.N n ⟶ Q.obj (op ⦋n + 1⦌)))
 
-/-- The actual prism operator obtained from all original summand epis. -/
+/-- Prism operator defined on all splitting summands.
+
+For a splitting s of P and maps p_{m,j} : N_m → Q_{m+1}, define H_{n,i} : P_n → Q_{n+1} by
+coproduct descent. On the summand indexed by a : [n] → [m], its value is p_{m,a(i)} ≫
+Q(Φ(a,i).op). -/
 def prismDegree {n : ℕ} (i : Fin (n + 1)) :
     P.obj (op ⦋n⦌) ⟶ Q.obj (op ⦋n + 1⦌) :=
   s.desc (op ⦋n⦌) (fun a =>
     p a.1.unop.len (a.e.toOrderHom i) ≫
       Q.map (SimplexCategory.PrismMap.map a.e i).op)
 
-/-- Every original degenerate summand uses its prescribed lower-degree prism. -/
+/-- Summand formula for a descended prism operator.
+
+For the cofan map ι_a : N_m → P_n indexed by an epimorphism a : [n] → [m], the operator
+H_{n,i} satisfies ι_a ≫ H_{n,i} = p_{m,a(i)} ≫ Q(Φ(a,i).op). -/
 @[reassoc]
 theorem prismDegree_summand {n : ℕ} (i : Fin (n + 1)) (a : IndexSet (op ⦋n⦌)) :
     (s.cofan (op ⦋n⦌)).inj a ≫ s.prismDegree p i =
@@ -58,7 +63,10 @@ theorem prismDegree_summand {n : ℕ} (i : Fin (n + 1)) (a : IndexSet (op ⦋n�
         Q.map (SimplexCategory.PrismMap.map a.e i).op :=
   s.ι_desc (op ⦋n⦌) _ a
 
-/-- The new nondegenerate summand retains its actual primitive prism map. -/
+/-- Value of a prism operator on the nondegenerate summand.
+
+For the distinguished cofan map ι_n : N_n → P_n, the descended prism operator satisfies ι_n ≫
+H_{n,i} = p_{n,i}. This is the identity-epimorphism summand. -/
 @[reassoc]
 theorem prismDegree_distinguished {n : ℕ} (i : Fin (n + 1)) :
     s.ι n ≫ s.prismDegree p i = p n i := by
@@ -71,8 +79,10 @@ theorem prismDegree_distinguished {n : ℕ} (i : Fin (n + 1)) :
     ((congrArg (fun e => p n i ≫ e) (Q.map_id (op ⦋n + 1⦌))).trans
       (Category.comp_id _)))
 
-/-- All epi degeneracies commute with the actual prism prescription, in every
-source degree and at every duplicated vertex. -/
+/-- Compatibility of descended prism operators with every simplex epimorphism.
+
+For an epimorphism e : [n] → [m] and i ∈ Fin(n+1), P(e.op) ≫ H_{n,i} = H_{m,e(i)} ≫
+Q(Φ(e,i).op). The equality holds for the splitting descent of any prescribed family p. -/
 @[reassoc]
 theorem prismDegree_epi {n m : ℕ} (e : ⦋n⦌ ⟶ ⦋m⦌) [Epi e] (i : Fin (n + 1)) :
     P.map e.op ≫ s.prismDegree p i =
@@ -98,7 +108,10 @@ theorem prismDegree_epi {n m : ℕ} (e : ⦋n⦌ ⟶ ⦋m⦌) [Epi e] (i : Fin (
             ((congrArg (fun f => f ≫ Q.map (SimplexCategory.PrismMap.map e i).op) hOld.symm).trans
               (Category.assoc _ _ _))))))
 
-/-- First native homotopy degeneracy law, earned without a face certificate. -/
+/-- Degeneracy law with a right-shifted prism index.
+
+For i,j ∈ Fin(n+1) with i ≤ j, the descended operators satisfy P.σ_i ≫ H_{n+1,j+1} = H_{n,j} ≫
+Q.σ_i. The target degeneracy uses the unchanged index embedded by castSucc. -/
 @[reassoc]
 theorem prismDegree_degeneracy_castSucc {n : ℕ} (i j : Fin (n + 1)) (hij : i ≤ j) :
     P.σ i ≫ s.prismDegree p j.succ = s.prismDegree p j ≫ Q.σ i.castSucc := by
@@ -107,7 +120,10 @@ theorem prismDegree_degeneracy_castSucc {n : ℕ} (i j : Fin (n + 1)) (hij : i �
     SimplexCategory.PrismMap.map_sigma_of_le i j hij] at h
   exact h
 
-/-- Second native homotopy degeneracy law, earned from the same epi descent. -/
+/-- Degeneracy law with a shifted target degeneracy index.
+
+For i,j ∈ Fin(n+1) with j ≤ i, P.σ_i ≫ H_{n+1,j} = H_{n,j} ≫ Q.σ_{i+1}. The prism index embeds
+by castSucc and the target degeneracy index by succ, including j = i. -/
 @[reassoc]
 theorem prismDegree_degeneracy_succ {n : ℕ} (i j : Fin (n + 1)) (hji : j ≤ i) :
     P.σ i ≫ s.prismDegree p j.castSucc = s.prismDegree p j ≫ Q.σ i.succ := by

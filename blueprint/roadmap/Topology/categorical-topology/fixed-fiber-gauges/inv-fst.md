@@ -1,3 +1,4 @@
-# Inv fst
+# Inverse gauges preserve the base coordinate
 
-The inverse of a fixed-fiber gauge also fixes the base projection.
+For topological spaces `B`, `F` and a fixed-fiber gauge `a` on `B × F`,
+the inverse isomorphism also fixes the projection to `B`.

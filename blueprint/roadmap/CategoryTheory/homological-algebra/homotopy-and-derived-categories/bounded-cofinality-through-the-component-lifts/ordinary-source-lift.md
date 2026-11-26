@@ -1,3 +1,8 @@
-# Ordinary Source Lift
+# Source complex of an ordinary bounded stabilization
 
-The whole ordinary stabilized complex is lifted through the original functor and support.
+Let A be a category, B preadditive with binary biproducts, and
+F:A → B a functor. Assume for every X∈B there is Y∈B with
+X⊞Y in the essential image of F. Assume A and B are preadditive with zero objects, F is additive
+fully faithful, and K is supported in [a,b].
+
+The bounded source complex is lifted from the selected ordinary totals using the component comparisons with K⊞L.

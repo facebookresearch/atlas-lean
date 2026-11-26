@@ -1,3 +1,7 @@
-# Term Equiv
+# Linear coordinates for a normalized Moore term
 
-Canonical original-element coordinates for each term of the actual native Moore complex.
+Linear coordinates for a normalized Moore term.
+
+For a simplicial module X over a ring R and n : ℕ, restrict the Moore inclusion to its range.
+This gives N(X)_n ≃ₗ[R] normalizedSubmodule X n, with independent ring and module carrier
+universes.

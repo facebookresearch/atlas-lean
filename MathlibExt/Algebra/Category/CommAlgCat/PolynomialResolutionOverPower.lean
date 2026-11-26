@@ -13,16 +13,15 @@ public import MathlibExt.Algebra.Category.CommAlgCat.CotangentProjective
 public import MathlibExt.CategoryTheory.Comonad.CobarCosimplicial
 
 /-!
-# Actual polynomial resolution powers over the augmentation target
+# Polynomial-comonad powers over a coefficient algebra
 
-The slice-comonad powers retain the original polynomial power objects and maps.
-The actual polynomial augmentation satisfies the successor identity obtained
-from its last face and native augmented functoriality. This identifies the
-slice power's point map with the actual degreewise polynomial augmentation.
-It supplies the natural comparison needed by the horizontal replacement proof,
-with every point map constructed from the native counit.
+Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. The polynomial
+comonad lifts to `Over A`, sending `P→A` to `T(P)→P→A`. Its powers have underlying algebras
+`T^n(P)` and the corresponding iterated counit maps to `A`.
 
-Candidate source; UNEXECUTED. This file extends the frozen V3 owners.
+The `(n+1)`st slice-comonad power is naturally isomorphic to the degree-`n` polynomial
+resolution algebra over `A`. The comparison identifies their underlying algebra maps and their
+augmentations; the augmentation successor formula is `ε_{n+1}(P)=ε_n(TP) ≫ ε_T(P)`.
 -/
 
 @[expose] public section
@@ -38,11 +37,15 @@ namespace CommAlgCat
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- The actual polynomial comonad in the slice over A. -/
+/-- For a commutative ring `k` and `k`-algebra `A`, `polynomialOverComonad k A` is the polynomial
+comonad lifted to `Over A`. On `P=(B→A)`, its underlying object is `T(B)` and its structure
+map to `A` is the polynomial counit `T(B)→B` followed by `P.hom`. -/
 abbrev polynomialOverComonad : Comonad (Over A) :=
   Comonad.overComonad (polynomialComonad.{u, v} k) A
 
-/-- The native augmentation successor is the same original counit word. -/
+/-- Let `k` be a commutative ring, `P` a `k`-algebra, and `n : ℕ`. Writing `T` for the polynomial
+comonad and `ε_n(P)` for the degree-`n` resolution augmentation, `ε_{n+1}(P) = ε_n(TP) ≫
+ε_T(P)`. Both sides are algebra morphisms `T^{n+2}P → P`. -/
 @[reassoc]
 theorem polynomialResolution_augmentation_shift (P : CommAlgCat.{max u v} k) (n : ℕ) :
     (polynomialResolution.{u, v} k P).hom.app (op ⦋n + 1⦌) =
@@ -60,8 +63,10 @@ theorem polynomialResolution_augmentation_shift (P : CommAlgCat.{max u v} k) (n 
     (polynomialResolutionMap_augmentation.{u, v} k
       ((polynomialComonad.{u, v} k).ε.app P) n)
 
-/-- Forgetting a slice power map retains its actual original power map,
-with both object transports displayed. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, `P,Q∈Over A`, and `f : P → Q`. For `n : ℕ`,
+let `q_P,q_Q` be the canonical equality transports from the underlying slice-power objects to
+`T^n(P.left),T^n(Q.left)`. Then `((T_{/A}^n).map f).left ≫ q_Q = q_P ≫ T^n(f.left)`, where
+`T_{/A}=polynomialOverComonad k A`. -/
 theorem polynomialOverPower_map_naturality (n : ℕ) {P Q : Over A} (f : P ⟶ Q) :
     ((Comonad.comonadPow (polynomialOverComonad k A) n).map f).left ≫
         eqToHom (Comonad.overPow_obj_left (polynomialComonad.{u, v} k) A n Q) =
@@ -73,7 +78,10 @@ theorem polynomialOverPower_map_naturality (n : ℕ) {P Q : Over A} (f : P ⟶ Q
     rw [Category.comp_id, Category.id_comp]
   | succ n ih => exact ih ((polynomialOverComonad k A).map f)
 
-/-- The actual slice power point map equals the actual native polynomial augmentation. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, `P∈Over A`, and `n : ℕ`. Under the canonical
+identification of `(T_{/A}^{n+1}P).left` with `T^{n+1}(P.left)`, its map to `A` is the
+degree-`n` polynomial-resolution augmentation `ε_n(P.left)` followed by `P.hom`. Equivalently,
+`(T_{/A}^{n+1}P).hom = q_P ≫ ε_n(P.left) ≫ P.hom`. -/
 theorem polynomialOverPower_hom (n : ℕ) (P : Over A) :
     ((Comonad.comonadPow (polynomialOverComonad k A) (n + 1)).obj P).hom =
       eqToHom (Comonad.overPow_obj_left (polynomialComonad.{u, v} k) A (n + 1) P) ≫
@@ -98,7 +106,10 @@ theorem polynomialOverPower_hom (n : ℕ) (P : Over A) :
         (polynomialComonad.{u, v} k) A (n + 1) ((polynomialOverComonad k A).obj P)) ≫
           f ≫ P.hom) h.symm)
 
-/-- Every actual polynomial degree over A is functorial in the source algebra over A. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `n : ℕ`. The functor
+`polynomialResolutionDegreeOverFunctor k A n : Over A → Over A` sends `P` to its degree-`n`
+polynomial resolution algebra with the composed augmentation to `A`. A morphism `f : P → Q`
+acts by the degree-`n` component of `polynomialResolutionMap k f.left`. -/
 def polynomialResolutionDegreeOverFunctor (n : ℕ) : Over A ⥤ Over A where
   obj P := polynomialResolutionDegreeOver k A P n
   map {P Q} f := Over.homMk
@@ -120,7 +131,10 @@ def polynomialResolutionDegreeOverFunctor (n : ℕ) : Over A ⥤ Over A where
     exact congrArg (fun f => f.left.app (op ⦋n⦌))
       ((polynomialResolutionFunctor.{u, v} k).map_comp f.left g.left)
 
-/-- The actual slice power and original polynomial degree have the same augmentation map. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, `P∈Over A`, and `n : ℕ`. The isomorphism
+`polynomialOverPowerIso k A n P : T_{/A}^{n+1}(P) ≅ polynomialResolutionDegreeOver k A P n`
+uses the canonical equality of underlying algebras with `T^{n+1}(P.left)` and the equality of
+their augmentation maps to `A`. -/
 def polynomialOverPowerIso (n : ℕ) (P : Over A) :
     (Comonad.comonadPow (polynomialOverComonad k A) (n + 1)).obj P ≅
       polynomialResolutionDegreeOver k A P n :=
@@ -128,7 +142,10 @@ def polynomialOverPowerIso (n : ℕ) (P : Over A) :
     (eqToIso (Comonad.overPow_obj_left (polynomialComonad.{u, v} k) A (n + 1) P))
     (polynomialOverPower_hom k A n P).symm
 
-/-- The full degreewise comparison is the actual natural power comparison in the slice. -/
+/-- Let `k` be a commutative ring, `A` a `k`-algebra, and `n : ℕ`. There is a natural isomorphism
+of endofunctors of `Over A`, `T_{/A}^{n+1} ≅ polynomialResolutionDegreeOverFunctor k A n`. Its
+component at `P` is `polynomialOverPowerIso k A n P`, and naturality identifies the underlying
+slice-power map with the polynomial-power map. -/
 def polynomialOverPowerNatIso (n : ℕ) :
     Comonad.comonadPow (polynomialOverComonad k A) (n + 1) ≅
       polynomialResolutionDegreeOverFunctor k A n :=

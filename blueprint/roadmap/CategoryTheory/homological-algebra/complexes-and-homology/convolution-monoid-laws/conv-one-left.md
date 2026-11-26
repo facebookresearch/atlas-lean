@@ -1,15 +1,9 @@
-# Conv one left
+# The counit–unit cochain is a left convolution unit
 
-Convolution left unit, up to the `zero_add` degree transport.
-
-For `f : HomComplex.Cochain C A n`, casting `conv convOne f` along
-`zero_add n` gives `f`, via the one-sided middle interchange
-(`tensor_convOne_middle_interchange`), the inner support-collapse of
-`tensor (ofHom one) f` (`tensor_one_desc_singleton`), the slides
-`ofHom_counit_slide`/`ofHom_one_slide` in `congr_v` form, the graded
-expansion `HomologicalComplex.leftUnitor'_inv`, and the `ModuleCat` unitor
-assembly (`ιTensorObj_tensorHom`, `ιTensorObj_leftUnitor_hom`, unitor
-naturality) with the cast computation `cochain_cast_v`.
-
-No new associativity beyond the existing `conv_assoc`, no
-bar-cobar/twisting adjunctions, no derived/Koszul, no operads, no KQ.
+Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. Write e=ε_C≫η_A:C→A for the degree-zero cochain formed from the coalgebra counit
+and algebra unit. For every homogeneous degree-n cochain f:C→A, e⋆f=f after identifying 0+n with
+n. Convolution is f⋆g=μ_A(f⊗g)Δ_C; in e⊗f the only surviving first input index is zero, so its
+Koszul sign is one.

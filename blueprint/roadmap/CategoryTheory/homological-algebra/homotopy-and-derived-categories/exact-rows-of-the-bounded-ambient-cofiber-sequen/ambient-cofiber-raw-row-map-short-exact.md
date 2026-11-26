@@ -1,3 +1,8 @@
-# Ambient Cofiber Raw Row map short Exact
+# Ambient short exactness of the underlying cofiber row
 
-The specified exact functor maps the same actual original cofiber row to a short exact row.
+Let E be preadditive Quillen exact with a zero object and binary
+biproducts, A abelian and F:E → A additive.
+On bounded complexes use degreewise admissible monomorphisms as
+cofibrations and F-detected quasi-isomorphisms as weak equivalences. Assume F is exact.
+
+The underlying row of any bounded cofiber sequence becomes short exact after termwise application of F.

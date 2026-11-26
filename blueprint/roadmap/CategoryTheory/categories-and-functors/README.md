@@ -21,4 +21,4 @@ The basic language of category theory: categories, functors, natural transformat
 - [Transport of actual functor comparisons through source refinements](transport-of-actual-functor-comparisons-through/README.md)
 - [Edges in functorial strings of composable arrows](edge-nat-trans.md)
 - [Opposite functors and natural isomorphisms](right-op.md)
-- [Transport of commutative squares by vertex isomorphisms](hom-congr.md)
+- [Commutative-square transport by four vertex isomorphisms](hom-congr.md)

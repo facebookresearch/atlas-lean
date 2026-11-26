@@ -2,16 +2,16 @@
 
 ## Comm Alg Cat
 
-- [Polynomial Splitting](polynomial-splitting.md)
+- [Polynomial coordinates on a simplicial splitting](polynomial-splitting.md)
 
 ## Polynomial Splitting
 
-- [Generator Map](generator-map.md)
-- [Degree Map](degree-map.md)
-- [Summand degree Map](summand-degree-map.md)
-- [Distinguished degree Map](distinguished-degree-map.md)
-- [Degree Map epi naturality](degree-map-epi-naturality.md)
+- [Algebra map determined by nondegenerate generator images](generator-map.md)
+- [Degree map extended from the epimorphism summands](degree-map.md)
+- [Restriction of the degree map to an epimorphism summand](summand-degree-map.md)
+- [Degree map on the distinguished nondegenerate summand](distinguished-degree-map.md)
+- [Degree maps commute with simplex epimorphisms](degree-map-epi-naturality.md)
 
 ## Comm Alg Cat
 
-- [Polynomial Splitting Of SSet](polynomial-splitting-of-sset.md)
+- [Polynomial splitting of the free algebra on a simplicial set](polynomial-splitting-of-sset.md)

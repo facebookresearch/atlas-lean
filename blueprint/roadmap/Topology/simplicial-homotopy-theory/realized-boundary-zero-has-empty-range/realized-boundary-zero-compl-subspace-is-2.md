@@ -1,3 +1,6 @@
-# Realized Boundary Zero Compl Subspace Iso hom inv
+# Section-inclusion identity for the zero-boundary complement
 
-The section followed by the inclusion is the identity on the ambient.
+Section-inclusion identity for the zero-boundary complement.
+
+For the isomorphism |Δ[0]| ≅ complement, its section followed by the subspace inclusion is
+id_{|Δ[0]|}.

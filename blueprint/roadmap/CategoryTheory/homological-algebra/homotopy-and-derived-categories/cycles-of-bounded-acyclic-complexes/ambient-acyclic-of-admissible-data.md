@@ -1,3 +1,9 @@
-# Ambient acyclic of admissible Data
+# Exact functors carry admissible cycle data to acyclicity
 
-Exact preservation sends the original admissible cycle rows to ambient acyclicity.
+Let E be a preadditive Quillen exact category with a zero object and
+binary biproducts, and K a bounded integer cochain complex.
+Admissible acyclic data consist of Z_j, inclusions ι_j:Z_j → K^j
+and quotients q_j:K^j → Z_{j+1}, with admissible exact rows
+Z_j → K^j → Z_{j+1} and ι_{j+1}∘q_j=d_K^j. Let G:E → A be additive exact with A abelian.
+
+Applying G to K gives an acyclic cochain complex.

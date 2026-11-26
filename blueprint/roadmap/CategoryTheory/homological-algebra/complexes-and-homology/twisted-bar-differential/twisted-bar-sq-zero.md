@@ -1,12 +1,8 @@
-# Twisted Bar sq zero
+# The right-twisted differential squares to zero
 
-Square-zero of the right-twisted bar differential from the Maurer–Cartan
-equation, with curvature factoring on the right as `f ⋆ (δτ + τ ⋆ τ)`.
-
-For `f : Cochain C A n` and `τ : Cochain C A 1` with `IsMaurerCartan τ`,
-two applications of `twistedBarDifferential` give the exact degree
-`(n + 1) + 1` forced by the definition. Expanding with `HomComplex.δ_δ`,
-`conv_leibniz`, additive/scalar convolution laws, and `conv_assoc`, the
-`(δf ⋆ τ)` terms cancel by `(n + 1).negOnePow = -n.negOnePow`, the
-`n.negOnePow ^ 2 = 1` normalization leaves `-f ⋆ (δτ) - f ⋆ (τ ⋆ τ)`,
-and the Maurer–Cartan equation closes the curvature factor.
+Let R be a commutative ring, C an integer-graded dg R-coalgebra and A an integer-graded dg
+R-algebra. Assume graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. If a degree-one τ satisfies δτ+τ⋆τ=0, then Dᵣ_τ(Dᵣ_τf)=0 for every
+integer-degree cochain f:C→A. Here Dᵣ_τf=δf-(-1)^n f⋆τ for |f|=n, and the second application has
+degree (n+1)+1.

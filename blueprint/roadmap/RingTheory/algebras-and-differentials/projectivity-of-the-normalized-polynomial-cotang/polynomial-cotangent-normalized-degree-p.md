@@ -1,4 +1,5 @@
-# Polynomial Cotangent Normalized Degree projective
+# Projectivity of every normalized polynomial cotangent term
 
-Every normalized polynomial cotangent term is projective, by its actual
-degreewise retract from a free polynomial differential module.
+Let `k` be a commutative ring, `A` a `k`-algebra, `P∈Over A`, and `n : ℕ`. The term
+`((polynomialCotangentChainFunctor k A).obj P).X n` is a projective `A`-module. It is a
+retract of the degree-`n` simplicial polynomial cotangent module, which is projective.

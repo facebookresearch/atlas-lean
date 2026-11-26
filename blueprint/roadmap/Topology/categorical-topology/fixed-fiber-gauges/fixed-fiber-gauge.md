@@ -1,3 +1,5 @@
-# Fixed Fiber Gauge
+# Gauges of a fixed-fiber product preserving its base coordinate
 
-A self-isomorphism of `B ⊗ F` which fixes the projection to `B`.
+For topological spaces `B`, `F` in universe `u`, a fixed-fiber gauge is
+an isomorphism `a : B × F ≅ B × F` whose composite with the projection
+to `B` is that same projection. It therefore changes only the fiber coordinate.

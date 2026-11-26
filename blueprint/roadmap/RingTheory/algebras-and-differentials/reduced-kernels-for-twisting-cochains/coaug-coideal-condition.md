@@ -1,3 +1,5 @@
-# Coaug Coideal condition
+# Zero composite of a coaugmentation quotient projection
 
-Cokernel condition: the coaugmentation followed by the projection is zero.
+Zero composite of a coaugmentation quotient projection.
+
+For η : I → C and π : C → Coker(η), η ≫ π = 0.

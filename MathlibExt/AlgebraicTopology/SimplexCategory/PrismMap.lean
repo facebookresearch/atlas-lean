@@ -11,13 +11,15 @@ module
 public import Mathlib.AlgebraicTopology.SimplexCategory.ToMkOne
 
 /-!
-# Functorial simplex maps across a duplicated prism vertex
+# Simplex maps with a duplicated prism vertex
 
-Given an original monotone simplex map e and a vertex i, the prism lift
-duplicates i in the source and e(i) in the target. Its piecewise formula
-prescribes all arbitrary-epi degeneracy actions required by a relative
-prism induction. This is a canonical general simplex-category component,
-not a field carrying a desired algebra homotopy. Source UNEXECUTED.
+Let e : [n] → [m] be monotone and i a vertex of [n]. Define Φ(e,i) : [n+1] → [m+1] by Φ(r) =
+e(r) for r ≤ i and Φ(r) = e(r−1)+1 for r > i. Thus the two copies of i map to the two copies
+of e(i), with the left and right ordinal embeddings respected.
+
+These maps satisfy Φ(id,i) = id and Φ(e,i) ≫ Φ(f,e(i)) = Φ(e ≫ f,i). They preserve
+epimorphisms. If κ_i : [n+1] → [1] is zero on vertices r ≤ i and one on vertices r > i, then
+Φ(e,i) ≫ κ_{e(i)} = κ_i.
 -/
 
 @[expose] public section
@@ -31,7 +33,10 @@ namespace SimplexCategory.PrismMap
 
 variable {n m l : ℕ}
 
-/-- The actual monotone map of source and target prisms at the original vertex. -/
+/-- Monotone simplex map across a duplicated vertex.
+
+For e : [n] → [m] and i ∈ Fin(n+1), define Φ(e,i) : [n+1] → [m+1] with value e(r) when r ≤ i
+and e(r−1)+1 when r > i. The source vertex i and target vertex e(i) are each duplicated. -/
 def map (e : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) : ⦋n + 1⦌ ⟶ ⦋m + 1⦌ := by
   let value (r : Fin (n + 2)) : Fin (m + 2) :=
     if h : r ≤ i.castSucc then
@@ -83,6 +88,10 @@ def map (e : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) : ⦋n + 1⦌ ⟶ ⦋m + 1�
       exact Nat.sub_le_sub_right (Fin.le_iff_val_le_val.mp hrs) 1
   exact SimplexCategory.Hom.mk { toFun := value, monotone' := hvalue }
 
+/-- Left-embedding formula for a simplex prism map.
+
+For r,i ∈ Fin(n+1) with r ≤ i, Φ(e,i) sends r.castSucc to e(r).castSucc. These embeddings keep
+the vertex values unchanged in the enlarged ordinals. -/
 @[simp]
 theorem map_left (e : ⦋n⦌ ⟶ ⦋m⦌) (i r : Fin (n + 1)) (hr : r ≤ i) :
     (map e i).toOrderHom r.castSucc = (e.toOrderHom r).castSucc := by
@@ -100,6 +109,10 @@ theorem map_left (e : ⦋n⦌ ⟶ ⦋m⦌) (i r : Fin (n + 1)) (hr : r ≤ i) :
   have hr' : r' = r := Fin.ext rfl
   exact hv.trans (congrArg (fun a => (e.toOrderHom a).castSucc) hr')
 
+/-- Right-embedding formula for a simplex prism map.
+
+For i,r ∈ Fin(n+1) with i ≤ r, Φ(e,i) sends r.succ to e(r).succ. Both vertex values are
+increased by one in the enlarged ordinals. -/
 @[simp]
 theorem map_right (e : ⦋n⦌ ⟶ ⦋m⦌) (i r : Fin (n + 1)) (hr : i ≤ r) :
     (map e i).toOrderHom r.succ = (e.toOrderHom r).succ := by
@@ -116,6 +129,10 @@ theorem map_right (e : ⦋n⦌ ⟶ ⦋m⦌) (i r : Fin (n + 1)) (hr : i ≤ r) :
       exact Fin.pred_succ _
   exact hv
 
+/-- Identity law for the duplicated-vertex simplex map.
+
+For any vertex i of [n], duplicating i under the identity simplex map gives the identity map
+of [n+1]. -/
 theorem map_id (i : Fin (n + 1)) : map (𝟙 ⦋n⦌) i = 𝟙 ⦋n + 1⦌ := by
   ext r : 3
   by_cases hr : r ≤ i.castSucc
@@ -132,7 +149,10 @@ theorem map_id (i : Fin (n + 1)) : map (𝟙 ⦋n⦌) i = 𝟙 ⦋n + 1⦌ := by
     rw [map_right _ _ _ (by simp only [Fin.le_def, Fin.val_succ, Fin.val_castSucc] at hr; omega)]
     rfl
 
-/-- Composition uses the actual image of the duplicated original vertex. -/
+/-- Composition law for duplicated-vertex simplex maps.
+
+For e : [n] → [m], f : [m] → [l] and i a vertex of [n], Φ(e,i) ≫ Φ(f,e(i)) = Φ(e ≫ f,i). The
+second duplicated vertex is the image e(i). -/
 theorem map_comp (e : ⦋n⦌ ⟶ ⦋m⦌) (f : ⦋m⦌ ⟶ ⦋l⦌) (i : Fin (n + 1)) :
     map e i ≫ map f (e.toOrderHom i) = map (e ≫ f) i := by
   ext r : 3
@@ -156,7 +176,10 @@ theorem map_comp (e : ⦋n⦌ ⟶ ⦋m⦌) (f : ⦋m⦌ ⟶ ⦋l⦌) (i : Fin (n
     rw [map_right e i r hir, map_right f _ _ hei, map_right (e ≫ f) i r hir]
     rfl
 
-/-- The lift of an original source epi is itself a native epi. -/
+/-- Epimorphism preserved by duplicating a simplex vertex.
+
+If e : [n] → [m] is an epimorphism, then Φ(e,i) : [n+1] → [m+1] is an epimorphism for every i.
+Surjectivity on each side of the duplicated vertex supplies all target vertices. -/
 theorem map_epi (e : ⦋n⦌ ⟶ ⦋m⦌) [Epi e] (i : Fin (n + 1)) : Epi (map e i) := by
   rw [SimplexCategory.epi_iff_surjective]
   have he : Function.Surjective e.toOrderHom := SimplexCategory.epi_iff_surjective.mp inferInstance
@@ -203,7 +226,10 @@ theorem map_epi (e : ⦋n⦌ ⟶ ⦋m⦌) [Epi e] (i : Fin (n + 1)) : Epi (map e
       rw [map_right e i r hir, hr]
       exact Fin.succ_pred z hzero
 
-/-- The lift retains the actual interval cut of the original prism vertex. -/
+/-- Cut compatibility of a duplicated-vertex simplex map.
+
+For e : [n] → [m] and vertex i, let κ_i : [n+1] → [1] be the cut with values zero for r ≤ i
+and one for r > i. Then Φ(e,i) ≫ κ_{e(i)} = κ_i, preserving the chosen prism interval cut. -/
 theorem map_cut (e : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) :
     map e i ≫ SimplexCategory.toMk₁ (e.toOrderHom i).castSucc.succ =
       SimplexCategory.toMk₁ i.castSucc.succ := by

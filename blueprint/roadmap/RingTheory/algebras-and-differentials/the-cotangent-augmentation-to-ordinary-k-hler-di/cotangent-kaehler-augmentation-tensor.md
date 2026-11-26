@@ -1,3 +1,6 @@
-# Cotangent Kaehler Augmentation tensor
+# Cotangent augmentation evaluates differential tensors
 
-Every actual simplicial differential tensor follows the original evaluation map.
+Let `k` be a commutative ring, `A` a `k`-algebra, `n : ℕ`, `a∈A`, and `p∈P_n` in its
+polynomial resolution. Writing `ε_n:P_n→A` for the resolution augmentation, the degree-`n`
+cotangent augmentation sends `a ⊗ d p` to `a • KaehlerDifferential.D k A (ε_n(p))` in
+`Ω_{A/k}`.

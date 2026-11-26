@@ -1,3 +1,6 @@
-# Base Change comp
+# Composition law for Lie scalar extension
 
-Scalar extension preserves composition across independent Lie-carrier universes.
+Composition law for Lie scalar extension.
+
+For R-Lie maps f : L → L' and g : L' → L'', baseChange(g ∘ f) = baseChange(g) ∘ baseChange(f)
+as S-Lie maps. The three Lie-carrier universes may be independent.

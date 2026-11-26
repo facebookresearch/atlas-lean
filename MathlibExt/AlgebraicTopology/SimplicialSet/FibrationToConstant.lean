@@ -12,19 +12,14 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.KanComplex
 public import Mathlib.AlgebraicTopology.SimplicialSet.CategoryWithFibrations
 
 /-!
-# Actual Kan fibrations to constant simplicial sets
+# Kan fibrations to constant simplicial sets
 
-A map from a Kan simplicial set to a constant simplicial set is a Kan
-fibration. Native horn filling first constructs the original filler. Its
-base map is determined by any prescribed face, because maps from a standard
-simplex into a constant set are determined by their single Yoneda value.
-The original commuting lifting square therefore forces the filler over the
-given base map. No filler, base-compatible homotopy or fibration certificate
-is input.
+Let `E : SSet.{u}` be a Kan complex and `A : Type u`. Every simplicial map `E → const A` is a
+Kan fibration. For each positive-dimensional horn lifting square, a Kan filler of the source
+lies over the given map to the constant target.
 
-This general native horn-lifting provider is needed to identify the actual
-canonical polynomial augmentation as a trivial fibration.
-Candidate source; UNEXECUTED.
+A map `Δ[n+1] → const A` is determined by its restriction to any face. This gives the base-map
+equality required for each horn filler.
 -/
 
 @[expose] public section
@@ -38,7 +33,8 @@ universe u
 
 namespace SSet
 
-/-- Into a constant set, one original face determines the whole standard-simplex map. -/
+/-- Let `A : Type u`, `n : ℕ`, and `i : Fin(n+2)`. For `f,g : Δ[n+1] → const A`, if their
+restrictions along the face inclusion `stdSimplex.δ i : Δ[n] → Δ[n+1]` are equal, then `f=g`. -/
 theorem homToConstant_ext_of_face {A : Type u} {n : ℕ} (i : Fin (n + 2))
     {f g : (Δ[n + 1] : SSet.{u}) ⟶ (SimplicialObject.const (Type u)).obj A}
     (h : (SSet.stdSimplex.δ i) ≫ f = (SSet.stdSimplex.δ i) ≫ g) : f = g := by
@@ -47,7 +43,10 @@ theorem homToConstant_ext_of_face {A : Type u} {n : ℕ} (i : Fin (n + 2))
   rw [SSet.stdSimplex.yonedaEquiv_δ_comp, SSet.stdSimplex.yonedaEquiv_δ_comp] at h'
   exact h'
 
-/-- The original Kan horn filler automatically lies over the actual constant base map. -/
+/-- Let `E : SSet.{u}` be a Kan complex, `A : Type u`, and `p : E → const A`. For every `n : ℕ`
+and `i : Fin(n+2)`, the horn inclusion `Λ_i[n+1] → Δ[n+1]` has the left lifting property
+against `p`. Thus every such commuting square has a filler over its prescribed constant-target
+simplex. -/
 theorem hasLiftingProperty_horn_to_constant {A : Type u} {E : SSet.{u}} [KanComplex E]
     (p : E ⟶ (SimplicialObject.const (Type u)).obj A) (n : ℕ) (i : Fin (n + 2)) :
     HasLiftingProperty (SSet.horn (n + 1) i).ι p := by
@@ -73,7 +72,9 @@ theorem hasLiftingProperty_horn_to_constant {A : Type u} {E : SSet.{u}} [KanComp
     _ = SSet.horn.ι i j hji ≫ ((SSet.horn (n + 1) i).ι ≫ g) := by rw [sq.w]
     _ = SSet.stdSimplex.δ j ≫ g := by rw [← Category.assoc, SSet.horn.ι_ι]
 
-/-- Every actual map from a Kan simplicial set to constant A is a native fibration. -/
+/-- For a Kan simplicial set `E : SSet.{u}`, a type `A : Type u`, and any simplicial map `p : E →
+const A`, `Fibration p` holds. This is the Kan horn-lifting property in all positive
+dimensions. -/
 theorem fibration_to_constant {A : Type u} {E : SSet.{u}} [KanComplex E]
     (p : E ⟶ (SimplicialObject.const (Type u)).obj A) : Fibration p := by
   rw [SSet.modelCategoryQuillen.fibration_iff]

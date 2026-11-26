@@ -1,3 +1,6 @@
-# Lift Primitive antipode
+# Antipode compatibility of a primitive-valued lift
 
-A primitive-valued Lie morphism extends to a morphism commuting with the native antipodes.
+Antipode compatibility of a primitive-valued lift.
+
+For a Hopf R-algebra A and Lie map f : L → P_R(A), the bialgebra lift satisfies
+liftPrimitive(f)(S_{U_R(L)}(a)) = S_A(liftPrimitive(f)(a)) for every a ∈ U_R(L).

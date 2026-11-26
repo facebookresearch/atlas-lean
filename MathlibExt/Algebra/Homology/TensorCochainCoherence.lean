@@ -21,58 +21,23 @@ import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 import MathlibExt.Algebra.Homology.TensorUnitor
 
 /-!
-# Heterogeneous tensor product of cochains
+# Tensor products of homogeneous cochains
 
-For cochain complexes in a preadditive monoidal category, this module supplies
-the canonical heterogeneous tensor product of homogeneous cochains on distinct
-factors, with the Koszul sign, both functoriality directions, and associator
-coherence.
+Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. For integer cochain complexes C₁,C₂,A₁,A₂, assume the tensor
+degree coproducts exist for the source and target pairs. A degree-m cochain f:C₁→A₁ and degree-n
+cochain g:C₂→A₂ have a tensor f⊗g:C₁⊗C₂→A₁⊗A₂ of degree m+n. Its restriction to a source summand
+of degrees p,q has sign (-1)^{np}.
 
-For `f : Cochain C₁ A₁ m` and `g : Cochain C₂ A₂ n`, the canonical product
-`Cochain.tensor f g : Cochain (C₁ ⊗ C₂) (A₁ ⊗ A₂) (m + n)` acts on the
-`(i₁, i₂)`-summand (`i₁ + i₂ = r`) by the Koszul rule
-`(f ⊗ g)(x ⊗ y) = (-1) ^ (n * i₁) • (f x ⊗ g y)`,
-where the sign is `Int.negOnePow (n * i₁)` viewed in `ℤˣ` acting through the
-ambient `ℤ`-linear structure on morphisms. Binary tensors require
-`GradedObject.HasTensor` on the exact source/target graded pairs involved;
-associativity additionally requires `HasGoodTensor₁₂Tensor` and
-`HasGoodTensorTensor₂₃` on the exact source/target graded triples involved.
-Complex-level tensor and associator instances follow from these graded
-assumptions through the pinned `HomologicalComplex` monoidal API.
+The tensor respects complex-map precomposition and postcomposition, addition, and zero. For
+composable a₁,b₁ and a₂,b₂, signed interchange has factor (-1)^{|b₂||a₁|}. Reassociation agrees
+through the source and target associators when the corresponding binary and iterated tensor
+coproducts exist and tensoring commutes with their triple coproducts.
 
-The public surface includes
-`HomComplex.Cochain.tensor` with computation rule `Cochain.tensor_v`,
-precomposition `Cochain.ofHom_tensorHom_comp_tensor`,
-postcomposition `Cochain.tensor_comp_ofHom_tensorHom`, signed interchange
-`Cochain.tensor_comp_tensor`, degree-zero functoriality `Cochain.tensor_ofHom`,
-left additivity and zero, degree-preserving right-identity extension
-`Cochain.tensorRightId`, associativity `Cochain.tensor_assoc` on six
-independently named complexes, component Leibniz `Cochain.tensor_δ_v` for
-`δ (tensor f g)`, and unitor transport
-`Cochain.leftUnitor_inv_comp_tensor_ofHom_id_comp_leftUnitor` /
-`Cochain.rightUnitor_inv_comp_tensor_ofHom_id_comp_rightUnitor`.
-The same-source/target
-specialization is `tensorCochain_eq_tensor` in
-`MathlibExt/RingTheory/DifferentialGraded/TwistingCochain.lean`, not here.
-
-## Primary source
-
-Summand assembly, summand induction, and associator transport are the
-pinned `HomologicalComplex` API: `mapBifunctorDesc`,
-`mapBifunctor.hom_ext`, `mapBifunctor₁₂.ι_eq`, `mapBifunctor₂₃.ι_eq`, and
-`ι_mapBifunctorAssociatorX_hom`, closed by
-`MonoidalCategory.associator_naturality`. The Koszul sign follows the
-pinned tensor-complex vertical sign `(up ℤ).ε`
-(`ComplexShape.ε_up_ℤ`); see the grading record in
-`MathlibExt/RingTheory/DifferentialGraded/TwistingCochain.lean`. The
-same-source/target specialization is bridged downstream by
-`tensorCochain_eq_tensor` there.
-
-## Nonclaims
-
-* No convolution product or unit law is defined or proved here.
-* No totalization, twisting bijection, Eilenberg--Zilber/Alexander--Whitney,
-  adjunction, or derived/Koszul/model claim.
+The component differential obeys δ(f⊗g)=(δf)⊗g+(-1)^m f⊗δg. Tensoring with an identity on a
+fixed right factor preserves the cochain degree and composition. Tensoring with the degree-zero
+tensor unit and conjugating by the left or right unitors recovers the cochain; the respective
+unitors use preservation of zero on the left or right.
 -/
 
 @[expose] public section
@@ -92,8 +57,12 @@ namespace HomComplex.Cochain
 variable [MonoidalCategory C]
   [(curriedTensor C).Additive] [∀ X₁, ((curriedTensor C).obj X₁).Additive]
 
-/-- Canonical heterogeneous tensor product of homogeneous cochains, of degree
-`m + n`. This is the single public tensor constructor in this module. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let C₁,C₂,A₁,A₂ be integer cochain complexes and f:C₁→A₁,
+g:C₂→A₂ homogeneous cochains of degrees m,n. Assume the tensor degree coproducts exist for the
+source pair C₁,C₂ and target pair A₁,A₂. Define f⊗g:C₁⊗C₂→A₁⊗A₂ in degree m+n. On input degrees
+p,q with p+q=r, its component is (-1)^{np}(f_p⊗g_q), followed by the target summand inclusion in
+degrees p+m,q+n. -/
 noncomputable def tensor {m n : ℤ}
     (f : Cochain C₁ A₁ m) (g : Cochain C₂ A₂ n)
     [GradedObject.HasTensor C₁.X C₂.X] [GradedObject.HasTensor A₁.X A₂.X] :
@@ -107,8 +76,12 @@ noncomputable def tensor {m n : ℤ}
         (f.v i₁ (i₁ + m) rfl ⊗ₘ g.v i₂ (i₂ + n) rfl) ≫
       HomologicalComplex.ιTensorObj A₁ A₂ (i₁ + m) (i₂ + n) s (by omega)
 
-/-- Computation rule for the heterogeneous tensor product of cochains. This is
-the intentional new simp rule of this module. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let C₁,C₂,A₁,A₂ be integer cochain complexes and f:C₁→A₁,
+g:C₂→A₂ homogeneous cochains of degrees m,n. Assume the tensor degree coproducts exist for the
+source pair C₁,C₂ and target pair A₁,A₂. For r+m+n=s, the component (f⊗g)_{r,s} is determined by
+ι_{p,q,r}≫(f⊗g)_{r,s}=(-1)^{np}(f_p⊗g_q)≫ι_{p+m,q+n,s} for every p+q=r. Here the source and
+target inclusions belong to the tensor degree coproducts. -/
 @[simp]
 theorem tensor_v {m n : ℤ} (f : Cochain C₁ A₁ m)
     (g : Cochain C₂ A₂ n) (r s : ℤ) (hrs : r + (m + n) = s)
@@ -123,8 +96,11 @@ theorem tensor_v {m n : ℤ} (f : Cochain C₁ A₁ m)
 
 variable {B₁ B₂ : CochainComplex C ℤ}
 
-/-- Precomposing a tensor product of cochains with a tensor product of complex
-morphisms factors through the precomposed cochains. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let φ₁:B₁→C₁ and φ₂:B₂→C₂ be complex maps, and let f:C₁→A₁
+and g:C₂→A₂ have degrees m,n. Assume tensor degree coproducts exist for B₁,B₂, C₁,C₂ and A₁,A₂.
+Then (φ₁⊗φ₂)≫(f⊗g)=(φ₁≫f)⊗(φ₂≫g) as degree-(m+n) cochains B₁⊗B₂→A₁⊗A₂, using degree-zero
+cochains for the complex maps. -/
 theorem ofHom_tensorHom_comp_tensor {m n : ℤ}
     (φ₁ : B₁ ⟶ C₁) (φ₂ : B₂ ⟶ C₂)
     (f : Cochain C₁ A₁ m) (g : Cochain C₂ A₂ n)
@@ -147,8 +123,10 @@ theorem ofHom_tensorHom_comp_tensor {m n : ℤ}
   simp only [← Category.assoc, ← MonoidalCategory.tensorHom_def,
     MonoidalCategory.tensorHom_comp_tensorHom]
 
-/-- Postcomposing a tensor product of cochains with a tensor product of
-complex morphisms factors through the postcomposed cochains. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let f:C₁→A₁ and g:C₂→A₂ have degrees m,n, and let φ₁:A₁→B₁
+and φ₂:A₂→B₂ be complex maps. Assume tensor degree coproducts exist for C₁,C₂, A₁,A₂ and B₁,B₂.
+Then (f⊗g)≫(φ₁⊗φ₂)=(f≫φ₁)⊗(g≫φ₂) in degree m+n, using degree-zero cochains for the complex maps. -/
 theorem tensor_comp_ofHom_tensorHom {m n : ℤ}
     (f : Cochain C₁ A₁ m) (g : Cochain C₂ A₂ n)
     (φ₁ : A₁ ⟶ B₁) (φ₂ : A₂ ⟶ B₂)
@@ -187,8 +165,11 @@ private theorem eqToHom_tensor_comp_ιTensorObj
   simp only [eqToHom_refl, MonoidalCategory.id_tensorHom_id,
     Category.id_comp]
 
-/-- Tensoring degree-zero cochains induced by complex morphisms agrees with
-the degree-zero cochain induced by their tensor product. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. For complex maps f:X₁→Y₁ and g:X₂→Y₂, with tensor degree
+coproducts for both pairs, the tensor of their degree-zero cochains is the degree-zero cochain
+of the complex map f⊗g:X₁⊗X₂→Y₁⊗Y₂. The Koszul sign is one because the right cochain has degree
+zero. -/
 theorem tensor_ofHom
     {X₁ X₂ Y₁ Y₂ : CochainComplex C ℤ}
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂)
@@ -211,7 +192,9 @@ theorem tensor_ofHom
     (add_zero i₁).symm (add_zero i₂).symm hij (by omega)]
   rw [MonoidalCategory.tensorHom_def, Category.assoc]
 
-/-- Tensoring identity zero-cochains gives the identity zero-cochain. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. If integer cochain complexes X,Y have their tensor degree
+coproducts, then id_X⊗id_Y=id_{X⊗Y} as degree-zero cochains. -/
 @[simp]
 theorem tensor_ofHom_id_id
     (X Y : CochainComplex C ℤ)
@@ -220,8 +203,10 @@ theorem tensor_ofHom_id_id
       ofHom (𝟙 (HomologicalComplex.tensorObj X Y)) := by
   rw [tensor_ofHom, HomologicalComplex.tensorHom_id_id]
 
-/-- Heterogeneous tensor-of-composites interchange with Koszul sign
-`(n₂ * m₁).negOnePow`. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let a₁:C₁→A₁, b₁:A₁→B₁, a₂:C₂→A₂ and b₂:A₂→B₂ have degrees
+m₁,n₁,m₂,n₂. With tensor degree coproducts for all three pairs,
+(a₁⊗a₂)≫(b₁⊗b₂)=(-1)^{n₂m₁}((a₁≫b₁)⊗(a₂≫b₂)), identified in degree (m₁+n₁)+(m₂+n₂). -/
 theorem tensor_comp_tensor {m₁ n₁ m₂ n₂ : ℤ}
     (a₁ : Cochain C₁ A₁ m₁) (b₁ : Cochain A₁ B₁ n₁)
     (a₂ : Cochain C₂ A₂ m₂) (b₂ : Cochain A₂ B₂ n₂)
@@ -264,7 +249,10 @@ theorem tensor_comp_tensor {m₁ n₁ m₂ n₂ : ℤ}
     rfl
   rw [key _ _ (add_assoc i₁ m₁ n₁) (add_assoc i₂ m₂ n₂) (by omega)]
 
-/-- The heterogeneous tensor product is additive in its left cochain. -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. For integer cochain complexes C₁,C₂,A₁,A₂, assume tensor degree
+coproducts for the source and target pairs. If f₁,f₂:C₁→A₁ have degree m and g:C₂→A₂ has degree
+n, then (f₁+f₂)⊗g=f₁⊗g+f₂⊗g in degree m+n. -/
 theorem tensor_add_left [MonoidalPreadditive C] {m n : ℤ}
     (f₁ f₂ : Cochain C₁ A₁ m) (g : Cochain C₂ A₂ n)
     [GradedObject.HasTensor C₁.X C₂.X]
@@ -279,7 +267,10 @@ theorem tensor_add_left [MonoidalPreadditive C] {m n : ℤ}
     HomComplex.Cochain.add_v, MonoidalPreadditive.add_tensor,
     smul_add, Preadditive.add_comp, Preadditive.comp_add]
 
-/-- Tensoring with zero on the left gives the zero cochain. -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. For integer cochain complexes C₁,C₂,A₁,A₂ with tensor degree
+coproducts for both pairs, every degree-n g:C₂→A₂ satisfies 0⊗g=0 in degree m+n, where the left
+zero cochain has any integer degree m. -/
 @[simp]
 theorem tensor_zero_left [MonoidalPreadditive C] {m n : ℤ}
     (g : Cochain C₂ A₂ n)
@@ -295,7 +286,10 @@ theorem tensor_zero_left [MonoidalPreadditive C] {m n : ℤ}
     HomComplex.Cochain.zero_v, MonoidalPreadditive.zero_tensor,
     smul_zero, zero_comp, comp_zero]
 
-/-- Tensoring with zero on the right gives the zero cochain. -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. For integer cochain complexes C₁,C₂,A₁,A₂ with tensor degree
+coproducts for both pairs, every degree-m f:C₁→A₁ satisfies f⊗0=0 in degree m+n, where the right
+zero cochain has any integer degree n. -/
 @[simp]
 theorem tensor_zero_right [MonoidalPreadditive C] {m n : ℤ}
     (f : Cochain C₁ A₁ m)
@@ -311,7 +305,10 @@ theorem tensor_zero_right [MonoidalPreadditive C] {m n : ℤ}
     HomComplex.Cochain.zero_v, MonoidalPreadditive.tensor_zero,
     smul_zero, zero_comp, comp_zero]
 
-/-- The heterogeneous tensor product is additive in its right cochain. -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. For integer cochain complexes C₁,C₂,A₁,A₂, assume tensor degree
+coproducts for the source and target pairs. If f:C₁→A₁ has degree m and g₁,g₂:C₂→A₂ have degree
+n, then f⊗(g₁+g₂)=f⊗g₁+f⊗g₂ in degree m+n. -/
 theorem tensor_add_right [MonoidalPreadditive C] {m n : ℤ}
     (f : Cochain C₁ A₁ m) (g₁ g₂ : Cochain C₂ A₂ n)
     [GradedObject.HasTensor C₁.X C₂.X] [GradedObject.HasTensor A₁.X A₂.X] :
@@ -325,8 +322,11 @@ theorem tensor_add_right [MonoidalPreadditive C] {m n : ℤ}
     MonoidalPreadditive.tensor_add, smul_add, Preadditive.add_comp,
     Preadditive.comp_add]
 
-/-- Tensor a cochain with the identity on an unchanged right factor, retaining
-the original displayed degree rather than `m + 0`. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let a:P→Q be a cochain of integer degree m and T another
+integer cochain complex. Assume tensor degree coproducts for P,T and Q,T. The extension a⊗id_T
+is a degree-m cochain P⊗T→Q⊗T, using the identification m+0=m; its component on P_p⊗T_q is
+a_p⊗id_{T_q} with no Koszul sign. -/
 noncomputable def tensorRightId
     {P Q : CochainComplex C ℤ} {m : ℤ}
     (a : Cochain P Q m) (T : CochainComplex C ℤ)
@@ -337,7 +337,11 @@ noncomputable def tensorRightId
   Cochain.mk fun r s hrs =>
     (tensor a (ofHom (𝟙 T))).v r s (by omega)
 
-/-- Component formula for `tensorRightId`. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let a:P→Q have integer degree m, and assume tensor degree
+coproducts for P,T and Q,T. For r+m=s, the component of the extension a⊗id_T equals the
+component of the tensor with the degree-zero identity cochain, after identifying m+0=m. On
+P_p⊗T_q, p+q=r, it is (a_p⊗id_{T_q})≫ι_{p+m,q,s}. -/
 @[simp]
 theorem tensorRightId_v
     {P Q T : CochainComplex C ℤ} {m : ℤ}
@@ -349,8 +353,10 @@ theorem tensorRightId_v
       (tensor a (ofHom (𝟙 T))).v r s (by omega) :=
   rfl
 
-/-- In degree one, `tensorRightId` is the heterogeneous tensor with the
-identity zero-cochain, with the displayed degree normalized. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. For a:P→Q of degree one and integer cochain complex T, with
+tensor degree coproducts for P,T and Q,T, extension across T equals a⊗id_T as a degree-one
+cochain P⊗T→Q⊗T. -/
 theorem tensorRightId_one
     {P Q T : CochainComplex C ℤ}
     (a : Cochain P Q 1)
@@ -361,7 +367,10 @@ theorem tensorRightId_one
   intro r s hrs
   rfl
 
-/-- Composition commutes with extension across an unchanged tensor factor. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let a:P→Q and b:Q→S have integer degrees m,n, and let m+n=k.
+Assume tensor degree coproducts for P,T, Q,T and S,T. Then (a⊗id_T)≫(b⊗id_T)=(a≫b)⊗id_T as
+degree-k cochains P⊗T→S⊗T. -/
 @[simp]
 theorem tensorRightId_comp
     {P Q S T : CochainComplex C ℤ} {m n mn : ℤ}
@@ -387,7 +396,9 @@ theorem tensorRightId_comp
   rw [HomComplex.Cochain.comp_v _ _ _ r (r + m) s (by omega) (by omega)] at hv
   exact hv
 
-/-- Addition commutes with extension across an unchanged tensor factor. -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. For integer degree-m cochains a,b:P→Q and integer cochain complex T,
+with tensor degree coproducts for P,T and Q,T, (a+b)⊗id_T=a⊗id_T+b⊗id_T in degree m. -/
 @[simp]
 theorem tensorRightId_add [MonoidalPreadditive C]
     {P Q T : CochainComplex C ℤ} {m : ℤ}
@@ -401,7 +412,10 @@ theorem tensorRightId_add [MonoidalPreadditive C]
     (tensor_add_left a b (ofHom (𝟙 T)))
   simpa only [tensorRightId_v, HomComplex.Cochain.add_v] using hv
 
-/-- Zero commutes with extension across an unchanged tensor factor. -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. For integer cochain complexes P,Q,T with tensor degree coproducts
+for P,T and Q,T, extension of the degree-m zero cochain across T is zero as a degree-m cochain
+P⊗T→Q⊗T. -/
 @[simp]
 theorem tensorRightId_zero [MonoidalPreadditive C]
     {P Q T : CochainComplex C ℤ} {m : ℤ}
@@ -414,9 +428,9 @@ theorem tensorRightId_zero [MonoidalPreadditive C]
     (tensor_zero_left (C₁ := P) (A₁ := Q) (m := m) (ofHom (𝟙 T)))
   simpa only [tensorRightId_v, HomComplex.Cochain.zero_v] using hv
 
-/-- Koszul exponent identity for reassociating iterated tensors: the 23-first
-total on 12-associated maps agrees with the 12-first total on 23-associated
-maps. -/
+/-- For arbitrary integers n,k,i₁,i₂, (-1)^{k(i₁+i₂)}(-1)^{ni₁}=(-1)^{(n+k)i₁}(-1)^{ki₂}. This
+identifies the signs from first tensoring factors one and two, or first tensoring factors two
+and three. -/
 private lemma tensor_assoc_sign (n p i₁ i₂ : ℤ) :
     (p * (i₁ + i₂)).negOnePow * (n * i₁).negOnePow =
       ((n + p) * i₁).negOnePow * (p * i₂).negOnePow := by
@@ -427,11 +441,12 @@ private lemma tensor_assoc_sign (n p i₁ i₂ : ℤ) :
 
 variable {C₃ A₃ : CochainComplex C ℤ}
 
-/-- Associativity coherence for heterogeneous tensor products of cochains,
-transported along the low-level complex associators. Binary and ternary
-tensor assumptions are the exact source/target graded pairs/triples involved;
-complex-level tensor and associator instances follow from them through the
-pinned monoidal API. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Let f:C₁→A₁, g:C₂→A₂ and h:C₃→A₃ have integer degrees m,n,k.
+Assume all binary and iterated tensor degree coproducts used in both associations exist, and
+tensoring commutes with the triple coproducts for each source and target triple. Then
+((f⊗g)⊗h)≫α_A=α_C≫(f⊗(g⊗h)), after identifying (m+n)+k with m+(n+k). The associators go from
+(X₁⊗X₂)⊗X₃ to X₁⊗(X₂⊗X₃), for X=C and X=A. -/
 theorem tensor_assoc {m n p : ℤ}
     (f : Cochain C₁ A₁ m) (g : Cochain C₂ A₂ n) (h : Cochain C₃ A₃ p)
     [GradedObject.HasTensor C₁.X C₂.X] [GradedObject.HasTensor A₁.X A₂.X]
@@ -736,16 +751,12 @@ theorem tensor_assoc {m n p : ℤ}
   rw [mul_comm ((p * i₂).negOnePow) (((n + p) * i₁).negOnePow)]
   rw [tensor_assoc_sign]
 
-/-- Component-level Leibniz rule for the heterogeneous tensor product of
-cochains: `δ` of `tensor f g` is `tensor (δ f) g` plus
-`(-1) ^ m • tensor f (δ g)`, as maps out of `(tensorObj C₁ C₂).X r`.
-
-Orientation follows the pinned `HomComplex.δ` (Conrad signs,
-`HomComplex.δ_comp`): differentiating a composite differentiates the right
-factor first, so the right/second-factor differential term carries `(-1) ^ m`
-where `m` is the left degree. The tensor Koszul sign stays `(-1) ^ (n * i₁)` on the
-`(i₁, i₂)`-summand, matching the pinned tensor-complex vertical sign
-`(up ℤ).ε` on the second factor (`ComplexShape.ε_up_ℤ`). -/
+/-- Let 𝒞 be a monoidal preadditive category in arbitrary object and morphism universes, with tensor
+additive in both variables. Let C₁,C₂,A₁,A₂ be integer cochain complexes and f:C₁→A₁, g:C₂→A₂
+homogeneous cochains of degrees m,n. Assume the tensor degree coproducts exist for the source
+pair C₁,C₂ and target pair A₁,A₂. For r+m+n+1=s, δ(f⊗g)_{r,s}=((δf)⊗g)_{r,s}+(-1)^m(f⊗δg)_{r,s},
+identifying (m+1)+n and m+(n+1) with m+n+1. The Hom differential on a degree-k cochain z has
+component z_p≫d_target+(-1)^{k+1}d_source≫z_{p+1}; the tensor sign is (-1)^{np}. -/
 theorem tensor_δ_v {m n : ℤ} (f : Cochain C₁ A₁ m) (g : Cochain C₂ A₂ n)
     (r s : ℤ) (hrs : r + (m + n + 1) = s)
     [GradedObject.HasTensor C₁.X C₂.X] [GradedObject.HasTensor A₁.X A₂.X]
@@ -907,8 +918,11 @@ variable [∀ X₂, PreservesColimit (Functor.empty.{0} C)
 
 variable {K L : CochainComplex C ℤ}
 
-/-- Component calculation for conjugating `tensor (ofHom 𝟙) f` by the
-left unitors. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Assume 𝒞 has a zero object and 0⊗X is zero for every X. Let I
+be the tensor-unit cochain complex concentrated in degree zero, K,L integer cochain complexes
+and f:K→L a degree-n cochain. For r+n=s, the K_r→L_s component of λ_K⁻¹≫(id_I⊗f)≫λ_L equals
+f_{r,s}, where λ_X:I⊗X→X. -/
 private theorem tensor_ofHom_id_comp_leftUnitor_v {n : ℤ}
     (f : Cochain K L n) (r s : ℤ) (hrs : r + n = s) :
     (((ofHom (HomologicalComplex.leftUnitor K).inv).comp
@@ -1023,8 +1037,11 @@ private theorem tensor_ofHom_id_comp_leftUnitor_v {n : ℤ}
   rw [hInner, hWhisker]
   exact hNaturalityFinal
 
-/-- Tensoring a cochain on the left with the identity of the tensor unit,
-then conjugating by the complex left unitors, recovers the cochain. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Assume 𝒞 has a zero object and 0⊗X is zero for every X. For
+integer cochain complexes K,L and a degree-n cochain f:K→L, λ_K⁻¹≫(id_I⊗f)≫λ_L=f in degree n.
+Here I is the tensor-unit complex concentrated in degree zero, and λ_X:I⊗X→X is the complex left
+unitor. -/
 theorem leftUnitor_inv_comp_tensor_ofHom_id_comp_leftUnitor {n : ℤ}
     (f : Cochain K L n) :
     ((ofHom (HomologicalComplex.leftUnitor K).inv).comp
@@ -1046,8 +1063,11 @@ variable [∀ X₁, PreservesColimit (Functor.empty.{0} C)
 
 variable {K L : CochainComplex C ℤ}
 
-/-- Component calculation for conjugating `tensor f (ofHom 𝟙)` by the
-right unitors. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Assume 𝒞 has a zero object and X⊗0 is zero for every X. Let I
+be the tensor-unit cochain complex concentrated in degree zero, K,L integer cochain complexes
+and f:K→L a degree-n cochain. For r+n=s, the K_r→L_s component of ρ_K⁻¹≫(f⊗id_I)≫ρ_L equals
+f_{r,s}, where ρ_X:X⊗I→X. -/
 private theorem rightUnitor_inv_comp_tensor_ofHom_id_v {n : ℤ}
     (f : Cochain K L n) (r s : ℤ) (hrs : r + n = s) :
     (((ofHom (HomologicalComplex.rightUnitor K).inv).comp
@@ -1164,8 +1184,11 @@ private theorem rightUnitor_inv_comp_tensor_ofHom_id_v {n : ℤ}
   rw [hInner, hWhisker]
   exact hNaturalityFinal
 
-/-- Tensoring a cochain on the right with the identity of the tensor unit,
-then conjugating by the complex right unitors, recovers the cochain. -/
+/-- Let 𝒞 be a preadditive monoidal category, in arbitrary object and morphism universes, with
+tensor additive in both variables. Assume 𝒞 has a zero object and X⊗0 is zero for every X. For
+integer cochain complexes K,L and a degree-n cochain f:K→L, ρ_K⁻¹≫(f⊗id_I)≫ρ_L=f in degree n.
+Here I is the tensor-unit complex concentrated in degree zero, and ρ_X:X⊗I→X is the complex
+right unitor. -/
 theorem rightUnitor_inv_comp_tensor_ofHom_id_comp_rightUnitor {n : ℤ}
     (f : Cochain K L n) :
     ((ofHom (HomologicalComplex.rightUnitor K).inv).comp

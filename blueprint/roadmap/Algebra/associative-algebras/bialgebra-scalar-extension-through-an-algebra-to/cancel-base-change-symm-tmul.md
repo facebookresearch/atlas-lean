@@ -1,3 +1,5 @@
-# Cancel Base Change symm tmul
+# Pure-tensor formula for inverse bialgebra tower cancellation
 
-The inverse tower comparison inserts the unit of the intermediate scalar semiring.
+Pure-tensor formula for inverse bialgebra tower cancellation.
+
+The inverse comparison sends t ⊗[R] a to t ⊗[S] (1_S ⊗[R] a).

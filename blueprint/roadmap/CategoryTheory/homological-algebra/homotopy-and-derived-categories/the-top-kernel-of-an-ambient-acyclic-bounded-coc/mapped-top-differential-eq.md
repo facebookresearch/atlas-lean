@@ -1,3 +1,7 @@
-# Mapped Top Differential eq
+# Top differential of the mapped complex
 
-The mapped original top differential is the literal differential of the mapped raw cochain.
+Let E be preadditive, A abelian, F:E → A additive and K a bounded
+integer cochain complex. Let t be the upper endpoint selected from
+K's finite-support witness.
+
+The component of the differential of the termwise mapped complex F(K) at t−1,t is exactly F(d_K^{t−1}).

@@ -1,3 +1,6 @@
-# Lift Base Change Equiv symm apply
+# Unit-tensor value of the inverse Lie Hom equivalence
 
-The inverse Hom equivalence evaluates the extended morphism on the unit tensor.
+Unit-tensor value of the inverse Lie Hom equivalence.
+
+For an S-Lie map f : S ⊗[R] L → N, the inverse of liftBaseChangeEquiv evaluates it on unit
+tensors: the corresponding R-Lie map takes x to f(1 ⊗[R] x).

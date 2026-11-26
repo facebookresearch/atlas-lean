@@ -1,6 +1,6 @@
 # Finite ambient cells contained in a finite subcomplex
 
-- [Ambient Cells](ambient-cells.md)
-- [Mem ambient Cells iff](mem-ambient-cells-iff.md)
-- [Ambient Cells Fun](ambient-cells-fun.md)
-- [Ambient Cells Embedding](ambient-cells-embedding.md)
+- [Ambient nondegenerate cells contained in a subcomplex](ambient-cells.md)
+- [Cell containment is membership of its representative simplex](mem-ambient-cells-iff.md)
+- [Ambient cell as a nondegenerate cell of its subcomplex](ambient-cells-fun.md)
+- [Embedding of contained ambient cells into the subcomplex cells](ambient-cells-embedding.md)

@@ -1,14 +1,8 @@
-# Dg Internal leibniz carrier
+# Internal differential satisfies the Leibniz rule
 
-Abstract carrier internal Leibniz adapter: the internal differential
-`Fi := HomComplex.Cochain.diff K` satisfies the carrier Leibniz shape
-`(ofHom μ).comp Fi = (Fi ⊗ I).comp μ + (I ⊗ Fi).comp μ` against any
-concat-shaped chain map `μ`, with the exact degree witnesses of hypothesis
-`hFi` of `dgTotal_leibniz_combination` (`zero_add 1` on the multiply-first
-side, `add_zero 1` on each differentiate-first leg).
+Let C be preadditive monoidal, with tensor additive in both variables
+and all integer-graded tensor objects available. Let K be an
+integer-indexed cochain complex, d its degree-one differential, and
+1 its identity cochain. Tensor products of cochains use Koszul signs.
 
-Multiplication-shaped dual of `dgInternal_coLeibniz_carrier` (same proof
-architecture, `comp` arguments dualized: the chain-map law runs `μ` before
-`diff` instead of `D` after `diff`, and the additivity step is
-`Cochain.add_comp` instead of `Cochain.comp_add`). The Cobar packager
-instantiates `K := <cobar carrier>`, `μ := <carrier concat>`.
+For any chain map μ:K⊗K → K, the Leibniz equation is d∘μ=μ∘(d⊗1)+μ∘(1⊗d).

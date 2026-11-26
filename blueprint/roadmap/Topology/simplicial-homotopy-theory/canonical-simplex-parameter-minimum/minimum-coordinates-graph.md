@@ -1,3 +1,5 @@
-# Minimum Coordinates graph
+# The minimum agrees with pullback coordinates on a split graph
 
-A real split scalar graph makes the entire common family equal to the pulled family there.
+Let `L, m, q : SimplexCategory`, `τ : L ⟶ m`, `ρ : L ⟶ q`, and `κ : q ⟶ L` satisfy `κ ≫ ρ = 𝟙 q`. For every `k : Fin (q.len + 1)`,
+`minimumCoordinates τ ρ (κ.toOrderHom k, k) = pullbackCoordinates τ (κ.toOrderHom k, k)`.
+On this graph, `ρ(κ(k)) = k`, so the minimum parameter equals `k`.

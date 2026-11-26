@@ -1,3 +1,7 @@
-# Is Zero normalized Resolution homology succ
+# Vanishing of positive homology of a split-counit resolution
 
-Actual positive normalized homology vanishes for a counit-section object.
+Vanishing of positive homology of a split-counit resolution.
+
+For G on an abelian category and s : P → G(P) splitting ε_P, H_{n+1}(N(Res_G(P))) is a zero
+object for every n : ℕ. The normalized augmentation identifies it with the positive homology
+of P[0].

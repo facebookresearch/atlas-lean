@@ -1,3 +1,7 @@
-# Resolution Right Extra Of Counit Section
+# Right extra degeneracy on the canonical comonad resolution
 
-Transport the data contraction to the actual canonical resolution functor.
+Right extra degeneracy on the canonical comonad resolution.
+
+For a counit section s : P → G(P), convert the extra-degeneracy data to the augmented
+simplicial resolution Res_G(P). Its component maps are the same section and iterated comonad
+images.

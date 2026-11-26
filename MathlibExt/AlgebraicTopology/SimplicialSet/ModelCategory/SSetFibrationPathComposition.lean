@@ -13,14 +13,16 @@ import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat
 public import Mathlib.AlgebraicTopology.SimplicialSet.CategoryWithFibrations
 
 /-!
-# Path composition above simplicial fibrations
+# Composition and completion of edges above a simplicial fibration
 
-Dimension-two horn lifting composes two edges above a prescribed two-simplex.  This module provides
-the three possible missing-edge orientations and the constant-base specializations needed by the
-minimal-fibration construction.
+Let `p : X ⟶ Y` be a simplicial fibration in universe `u`. Two edges of `X` that agree at
+their shared vertex and project to two faces of a specified `2`-simplex of `Y` extend to its
+remaining edge. The three cases fill edges `02`, `12`, and `01`; the equations use `δ 1` for
+the initial vertex and `δ 0` for the terminal vertex of an edge.
 
-The resulting edges are chosen fillers.  No uniqueness, associativity, or extra path structure is
-asserted.
+If edge `01` is constant over the base, the chosen composite `02` projects to the image of
+edge `12`. If edges `01` and `02`, or edges `02` and `12`, have equal base images, the missing
+edge can be chosen constant over the base.
 -/
 
 @[expose] public section
@@ -34,10 +36,11 @@ namespace SSet
 
 variable {X Y : SSet.{u}}
 
-/-- Lift a map out of an arbitrary pushout through a map with the right lifting property.
-
-The result records the two restrictions of the filler to the pushout legs, so dimension-specific
-callers only have to identify their horn faces and then restrict along the missing face. -/
+/-- In `SSet.{u}`, let `H` be the pushout of `a : V ⟶ L` and `b : V ⟶ R`, with legs `inl : L ⟶ H`
+and `inr : R ⟶ H`. Let `j : H ⟶ D` have the left lifting property against `p : X ⟶ Y`. Suppose
+`left : L ⟶ X` and `right : R ⟶ X` agree on `V`, and for `base : D ⟶ Y` satisfy `left ≫ p =
+inl ≫ j ≫ base` and `right ≫ p = inr ≫ j ≫ base`. There is `filler : D ⟶ X` with `inl ≫ j ≫
+filler = left`, `inr ≫ j ≫ filler = right`, and `filler ≫ p = base`. -/
 private lemma exists_pushout_filler
     {V L R H D X Y : SSet.{u}}
     {a : V ⟶ L} {b : V ⟶ R} {inl : L ⟶ H} {inr : R ⟶ H}
@@ -68,13 +71,17 @@ private lemma exists_pushout_filler
   · rw [sq.fac_left, hHornLeft]
   · rw [sq.fac_left, hHornRight]
 
-/-- The unique degeneracy `Δ[1] ⟶ Δ[0]` followed by a zero-simplex is constant. -/
+/-- For `X : SSet.{u}` and a vertex map `f : Δ[0] ⟶ X`, the degeneracy `stdSimplex.σ 0 : Δ[1] ⟶
+Δ[0]` satisfies `stdSimplex.σ 0 ≫ f = const (yonedaEquiv f)`. -/
 private lemma sigmaZero_comp (f : Δ[0] ⟶ X) :
     stdSimplex.σ 0 ≫ f = const (yonedaEquiv f) := by
   apply yonedaEquiv.injective
   rw [stdSimplex.yonedaEquiv_σ_comp, σ_zero_eq_yonedaEquiv_const]
 
-/-- Compose the edges `01` and `12` above a two-simplex, producing the missing edge `02`. -/
+/-- Let `p : X ⟶ Y` be a simplicial fibration in universe `u`. Suppose edges `x₀₁, x₁₂ : Δ[1] ⟶ X`
+satisfy `δ 0 ≫ x₀₁ = δ 1 ≫ x₁₂`, and `s : Δ[2] ⟶ Y` satisfies `δ 2 ≫ s = x₀₁ ≫ p` and `δ 0 ≫ s
+= x₁₂ ≫ p`, where `δ` denotes `stdSimplex.δ`. There is `x₀₂ : Δ[1] ⟶ X` with `δ 1 ≫ x₀₂ = δ 1
+≫ x₀₁`, `δ 0 ≫ x₀₂ = δ 0 ≫ x₁₂`, and `x₀₂ ≫ p = δ 1 ≫ s`. -/
 lemma exists_path_composition_above_of_fibration
     (p : X ⟶ Y) [Fibration p] (x₀₁ x₁₂ : Δ[1] ⟶ X)
     (h : stdSimplex.δ 0 ≫ x₀₁ = stdSimplex.δ 1 ≫ x₁₂)
@@ -101,7 +108,10 @@ lemma exists_path_composition_above_of_fibration
     symm
     apply stdSimplex.δ_comp_δ_self_assoc (n := 0) (i := 0)
 
-/-- Compose an edge constant over the base with a following edge. -/
+/-- For a simplicial fibration `p : X ⟶ Y` in universe `u`, suppose `x₀₁, x₁₂ : Δ[1] ⟶ X` satisfy
+`δ 0 ≫ x₀₁ = δ 1 ≫ x₁₂`, and `x₀₁ ≫ p = const b` for `b : Y _⦋0⦌`. Then there is `x₀₂ : Δ[1] ⟶
+X` with `δ 1 ≫ x₀₂ = δ 1 ≫ x₀₁`, `δ 0 ≫ x₀₂ = δ 0 ≫ x₁₂`, and `x₀₂ ≫ p = x₁₂ ≫ p`. Here `δ`
+denotes `stdSimplex.δ`. -/
 lemma exists_path_composition_above_of_fibration'
     (p : X ⟶ Y) [Fibration p] (x₀₁ x₁₂ : Δ[1] ⟶ X) (b : Y _⦋0⦌)
     (h : stdSimplex.δ 0 ≫ x₀₁ = stdSimplex.δ 1 ≫ x₁₂)
@@ -131,7 +141,10 @@ lemma exists_path_composition_above_of_fibration'
       dsimp [base]
       exact stdSimplex.δ_comp_σ_succ_assoc (n := 1) (i := 0) _
 
-/-- Fill the missing edge `12` above a two-simplex from the edges `01` and `02`. -/
+/-- Let `p : X ⟶ Y` be a simplicial fibration in universe `u`. Suppose `x₀₁, x₀₂ : Δ[1] ⟶ X` have
+the same initial vertex, `δ 1 ≫ x₀₁ = δ 1 ≫ x₀₂`, and lie above the faces `δ 2 ≫ s` and `δ 1 ≫
+s` of `s : Δ[2] ⟶ Y`. There is `x₁₂ : Δ[1] ⟶ X` with `δ 1 ≫ x₁₂ = δ 0 ≫ x₀₁`, `δ 0 ≫ x₁₂ = δ 0
+≫ x₀₂`, and `x₁₂ ≫ p = δ 0 ≫ s`. Here `δ` denotes `stdSimplex.δ`. -/
 lemma exists_path_composition₀_above_of_fibration
     (p : X ⟶ Y) [Fibration p] (x₀₁ x₀₂ : Δ[1] ⟶ X)
     (h : stdSimplex.δ 1 ≫ x₀₁ = stdSimplex.δ 1 ≫ x₀₂)
@@ -158,7 +171,10 @@ lemma exists_path_composition₀_above_of_fibration
     symm
     apply stdSimplex.δ_comp_δ_self_assoc (n := 0) (i := 0)
 
-/-- Fill the missing edge `12` when the two given edges have equal base image. -/
+/-- For a simplicial fibration `p : X ⟶ Y` in universe `u`, let `x₀₁, x₀₂ : Δ[1] ⟶ X` satisfy `δ 1
+≫ x₀₁ = δ 1 ≫ x₀₂` and `x₀₁ ≫ p = x₀₂ ≫ p`. There are an edge `x₁₂ : Δ[1] ⟶ X` and `b : Y
+_⦋0⦌` such that `δ 1 ≫ x₁₂ = δ 0 ≫ x₀₁`, `δ 0 ≫ x₁₂ = δ 0 ≫ x₀₂`, and `x₁₂ ≫ p = const b`.
+Here `δ` denotes `stdSimplex.δ`. -/
 lemma exists_path_composition₀_above_of_fibration'
     (p : X ⟶ Y) [Fibration p] (x₀₁ x₀₂ : Δ[1] ⟶ X)
     (h : stdSimplex.δ 1 ≫ x₀₁ = stdSimplex.δ 1 ≫ x₀₂)
@@ -189,7 +205,10 @@ lemma exists_path_composition₀_above_of_fibration'
       rw [reassoc_of% hDegeneracy]
     _ = const vertex := sigmaZero_comp _
 
-/-- Fill the missing edge `01` above a two-simplex from the edges `02` and `12`. -/
+/-- Let `p : X ⟶ Y` be a simplicial fibration in universe `u`. Suppose `x₀₂, x₁₂ : Δ[1] ⟶ X` have
+the same terminal vertex, `δ 0 ≫ x₀₂ = δ 0 ≫ x₁₂`, and lie above the faces `δ 1 ≫ s` and `δ 0
+≫ s` of `s : Δ[2] ⟶ Y`. There is `x₀₁ : Δ[1] ⟶ X` with `δ 1 ≫ x₀₁ = δ 1 ≫ x₀₂`, `δ 0 ≫ x₀₁ = δ
+1 ≫ x₁₂`, and `x₀₁ ≫ p = δ 2 ≫ s`. Here `δ` denotes `stdSimplex.δ`. -/
 lemma exists_path_composition₂_above_of_fibration
     (p : X ⟶ Y) [Fibration p] (x₀₂ x₁₂ : Δ[1] ⟶ X)
     (h : stdSimplex.δ 0 ≫ x₀₂ = stdSimplex.δ 0 ≫ x₁₂)
@@ -215,7 +234,10 @@ lemma exists_path_composition₂_above_of_fibration
   · rw [← hFace₁₂']
     apply stdSimplex.δ_comp_δ_assoc (n := 0) (i := 0) (j := 1) (by simp)
 
-/-- Fill the missing edge `01` when the two given edges have equal base image. -/
+/-- For a simplicial fibration `p : X ⟶ Y` in universe `u`, let `x₀₂, x₁₂ : Δ[1] ⟶ X` satisfy `δ 0
+≫ x₀₂ = δ 0 ≫ x₁₂` and `x₀₂ ≫ p = x₁₂ ≫ p`. There are an edge `x₀₁ : Δ[1] ⟶ X` and `b : Y
+_⦋0⦌` such that `δ 1 ≫ x₀₁ = δ 1 ≫ x₀₂`, `δ 0 ≫ x₀₁ = δ 1 ≫ x₁₂`, and `x₀₁ ≫ p = const b`.
+Here `δ` denotes `stdSimplex.δ`. -/
 lemma exists_path_composition₂_above_of_fibration'
     (p : X ⟶ Y) [Fibration p] (x₀₂ x₁₂ : Δ[1] ⟶ X)
     (h : stdSimplex.δ 0 ≫ x₀₂ = stdSimplex.δ 0 ≫ x₁₂)

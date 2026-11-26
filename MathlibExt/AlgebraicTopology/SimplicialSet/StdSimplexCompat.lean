@@ -54,20 +54,16 @@ module
 public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 
 /-!
-# Standard simplices and their generated subcomplexes
+# Standard-simplex coordinates and representable subcomplexes
 
-The standard-simplex equivalence identifies coface and codegeneracy maps
-with `succAbove` and `predAbove`. Yoneda evaluation at the identity gives
-its corresponding simplex, and simplicial maps act by precomposition with
-`stdSimplex.map`. The degeneracy of a vertex is represented by its constant map.
+For simplicial sets in universe `u`, the standard-simplex equivalence identifies cofaces and codegeneracies with the maps `succAbove` and `predAbove` on finite ordinals. Yoneda evaluation of a representing isomorphism at the identity gives its distinguished simplex. For an ordinal map `f : n ⟶ m` and `x : X.obj (op m)`,
+`yonedaEquiv.symm (X.map f.op x) = stdSimplex.map f ≫ yonedaEquiv.symm x`.
+The degeneracy of a vertex is the Yoneda image of its constant simplicial map.
 
-For `x : X _⦋n⦌`, if `yonedaEquiv.symm x : Δ[n] ⟶ X` is a monomorphism,
-the generated subcomplex `Subcomplex.ofSimplex x` is representable by `⦋n⦌`.
-Its representation uses the canonical isomorphism `Subcomplex.toOfSimplex x`.
-The identity represents `x`; the induced standard-simplex isomorphism followed
-by the subcomplex inclusion equals `yonedaEquiv.symm x`.
-
-These statements hold for simplicial sets in every universe.
+If `x : X _⦋n⦌` defines a monomorphism `yonedaEquiv.symm x : Δ[n] ⟶ X`, the generated
+subcomplex `Subcomplex.ofSimplex x` is representable by `⦋n⦌`. Its representing isomorphism is
+induced by `Subcomplex.toOfSimplex x`; the identity represents `x`, and the isomorphism
+followed by the subcomplex inclusion is `yonedaEquiv.symm x`.
 -/
 
 @[expose] public section
@@ -115,8 +111,10 @@ variable {X : SSet.{u}} {n : ℕ} (x : X _⦋n⦌)
 
 variable [Mono (yonedaEquiv.symm x)]
 
-/-- If a simplex `x : X _⦋n⦌` is such that `yonedaEquiv.symm x : Δ[n] ⟶ X` is a
-monomorphism, then `Subcomplex.ofSimplex x` is representable by `⦋n⦌`. -/
+/-- Let `X : SSet.{u}`, `n : ℕ`, and `x : X _⦋n⦌`. If the Yoneda map `yonedaEquiv.symm x : Δ[n] ⟶
+X` is a monomorphism, then `Subcomplex.ofSimplex x` is represented by `⦋n⦌`. The
+representation identifies its simplices naturally with ordinal maps into `⦋n⦌`, using the
+isomorphism `Subcomplex.toOfSimplex x : Δ[n] ⟶ Subcomplex.ofSimplex x`. -/
 noncomputable def ofSimplexRepresentableBy :
     (Subcomplex.ofSimplex x : SSet).RepresentableBy ⦋n⦌ :=
   letI := (isIso_toOfSimplex_iff x).2 inferInstance

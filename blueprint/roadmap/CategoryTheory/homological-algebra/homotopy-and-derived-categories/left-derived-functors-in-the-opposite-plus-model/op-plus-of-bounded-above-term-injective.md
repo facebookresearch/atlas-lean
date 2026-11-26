@@ -1,3 +1,4 @@
-# Op Plus Of Bounded Above term injective
+# Projective terms reflect to injective opposite terms
 
-The opposite of an actual bounded-above projective term is injective in its native reflected degree.
+Let C be abelian, K zero above d and every K^n projective.
+Every term of its degree-negating Cᵒᵖ-reflection is injective.

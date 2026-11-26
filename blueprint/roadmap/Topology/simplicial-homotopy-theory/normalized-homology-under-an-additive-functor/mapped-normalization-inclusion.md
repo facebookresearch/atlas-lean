@@ -1,3 +1,6 @@
-# Mapped Normalization Inclusion
+# Moore inclusion after degreewise additive transport
 
-The actual source inclusion after applying the additive functor.
+Moore inclusion after degreewise additive transport.
+
+For additive F : C ⥤ D, the natural Moore inclusion N(Y) → A(Y) induces a natural chain map
+F(N(Y)) → F(A(Y)) by applying F degreewise.

@@ -1,4 +1,7 @@
-# Coaug Coideal Map
+# Map of coaugmentation quotients from a point-compatible morphism
 
-Canonical map between coaugmentation coideals induced by a
-coaugmentation-preserving morphism, via the existing cokernel descendant.
+Map of coaugmentation quotients from a point-compatible morphism.
+
+For f : C → D with η_C ≫ f = η_D, the composite f ≫ π_D annihilates η_C and descends to a map
+Coker(η_C) → Coker(η_D). No coproduct-preservation condition on f is required for this
+cokernel map.

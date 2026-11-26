@@ -16,49 +16,20 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 
 /-!
-# Reduced kernels for twisting cochains
+# Kernels, cokernels and reduced twisting maps
 
-This file packages only kernel/cokernel objects and universal-property maps
-for explicit augmentation/coaugmentation morphisms of cochain complexes. It is
-the smallest generic-first C14 kernel/cokernel specialization.
+In the cochain tensor setting over a commutative ring R, let ε : A → I and η : I → C be chain
+maps. The augmentation kernel K = Ker(ε) has inclusion i : K → A, and the coaugmentation
+quotient Q = Coker(η) has projection π : C → Q.
 
-For explicit `ε : A ⟶ 𝟙_` and `η : 𝟙_ ⟶ C`, `augIdeal ε := kernel ε` with its
-inclusion, condition, lift, computation, and uniqueness, and dually
-`coaugCoideal η := cokernel η` with its projection, condition, desc,
-computation, and uniqueness. Degree-zero `ofHom` vanishing lemmas and thin
-`TwistingCochain` wrappers reuse the public reducedness/vanishing fields.
+Every map f : X → A with f ≫ ε = 0 lifts uniquely to K, with lift(f) ≫ i = f. Every map k : C
+→ W with η ≫ k = 0 descends uniquely from Q, with π ≫ desc(k) = k. Point-compatible morphisms
+induce quotient maps that preserve identities and composition.
 
-## Declaration inventory
-
-* `augIdeal`, `augIdealι`, `augIdeal_condition`, `augIdeal_lift`,
-  `augIdeal_lift_ι`, `augIdeal_lift_unique`.
-* `coaugCoideal`, `coaugCoidealπ`, `coaugCoideal_condition`, `coaugCoideal_desc`,
-  `coaugCoideal_π_desc`, `coaugCoideal_desc_unique`.
-* `coaugCoidealMap`, `coaugCoideal_π_map`, `coaugCoidealMap_id`,
-  `coaugCoidealMap_comp`.
-* `ofHom_augIdeal_vanish` at exactly `(add_zero 0)`, `ofHom_coaugCoideal_vanish`
-  at exactly `(zero_add 0)`.
-* `TwistingCochain.augIdeal_lift`, `TwistingCochain.augIdeal_lift_ι`,
-  `TwistingCochain.coaugCoideal_desc`, `TwistingCochain.coaugCoideal_desc_π`.
-
-## Nonclaims
-
-These are only kernel/cokernel objects and universal-property maps: no `MonObj`
-on the augmentation kernel, no `ComonObj` on the coaugmentation cokernel, no
-reduced multiplication/comultiplication, no tensor-preservation claim, no
-powers/filtrations/completeness/summability, no free/cofree universal property,
-no representability/adjunction, and no C15/C16/KQ/operad result. No
-unconditional non-factorization lemma is proved here; such a lemma would be
-false over the trivial ring without extra nontriviality and morphism
-hypotheses.
-
-## Import justification
-
-`TwistingAugmentationFactor` supplies the carrier/hypothesis block, `conv`,
-and the `TwistingCochain` structure with its reducedness fields.
-`HomologicalComplexAbelian` supplies `Abelian (HomologicalComplex …)`, hence
-kernels/cokernels for `CochainComplex (ModuleCat R) ℤ`.
-`ModuleCat.Abelian` supplies `Abelian (ModuleCat R)`. No other import is used.
+The corresponding degree-zero Hom cochains have vanishing outer composites. For a twisting
+cochain, these constructions use its specified augmentation and coaugmentation and give the
+same universal factor maps. The kernel and cokernel are cochain-complex objects;
+multiplication and coproduct structures are not part of these definitions.
 -/
 
 @[expose] public section
@@ -84,35 +55,48 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 
 variable [MonObj A] [ComonObj C]
 
-/-- Augmentation ideal as a kernel object only; no ideal monoid structure. -/
+/-- Augmentation kernel as a cochain complex.
+
+For a chain map ε : A → I in the stated cochain tensor category, augIdeal ε is the kernel
+complex Ker(ε). -/
 noncomputable def augIdeal (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)) :
     CochainComplex (ModuleCat R) ℤ :=
   kernel ε
 
-/-- Inclusion of the augmentation kernel. -/
+/-- Inclusion of the augmentation kernel.
+
+For ε : A → I, augIdealι ε is the canonical kernel inclusion Ker(ε) → A. -/
 noncomputable def augIdealι (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)) :
     augIdeal ε ⟶ A :=
   kernel.ι ε
 
-/-- Coaugmentation coideal as a cokernel object only; no coideal comonoid
-structure. -/
+/-- Coaugmentation quotient as a cochain complex.
+
+For η : I → C, coaugCoideal η is the cokernel complex Coker(η). -/
 noncomputable def coaugCoideal (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C) :
     CochainComplex (ModuleCat R) ℤ :=
   cokernel η
 
-/-- Projection onto the coaugmentation cokernel. -/
+/-- Projection to the coaugmentation quotient.
+
+For η : I → C, coaugCoidealπ η is the canonical cokernel projection C → Coker(η). -/
 noncomputable def coaugCoidealπ (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C) :
     C ⟶ coaugCoideal η :=
   cokernel.π η
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [MonObj A] in
-/-- Kernel condition: the inclusion followed by the augmentation is zero. -/
+/-- Zero composite of the augmentation-kernel inclusion.
+
+For i : Ker(ε) → A, the equation i ≫ ε = 0 is the kernel condition. -/
 theorem augIdeal_condition (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)) :
     augIdealι ε ≫ ε = 0 :=
   kernel.condition ε
 
-/-- Generic lift through the augmentation kernel. -/
+/-- Universal factor map through an augmentation kernel.
+
+For f : X → A with f ≫ ε = 0, the kernel universal property defines augIdeal_lift ε f : X →
+Ker(ε). -/
 noncomputable def augIdeal_lift (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ))
     {X : CochainComplex (ModuleCat R) ℤ} (f : X ⟶ A) (h : f ≫ ε = 0) :
     X ⟶ augIdeal ε :=
@@ -120,7 +104,9 @@ noncomputable def augIdeal_lift (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) 
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [MonObj A] in
-/-- Computation for the augmentation-kernel lift. -/
+/-- Inclusion equation for an augmentation-kernel factor map.
+
+For f : X → A annihilated by ε, augIdeal_lift ε f followed by augIdealι ε is f. -/
 theorem augIdeal_lift_ι (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ))
     {X : CochainComplex (ModuleCat R) ℤ} (f : X ⟶ A) (h : f ≫ ε = 0) :
     augIdeal_lift ε f h ≫ augIdealι ε = f :=
@@ -128,8 +114,10 @@ theorem augIdeal_lift_ι (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ))
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [MonObj A] in
-/-- Uniqueness for the augmentation-kernel lift via the pinned generic kernel
-universal property. -/
+/-- Uniqueness of an augmentation-kernel factor map.
+
+If f ≫ ε = 0 and g : X → Ker(ε) satisfies g ≫ augIdealι ε = f, then g equals augIdeal_lift ε
+f. -/
 theorem augIdeal_lift_unique (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ))
     {X : CochainComplex (ModuleCat R) ℤ} (f : X ⟶ A) (h : f ≫ ε = 0)
     (g : X ⟶ augIdeal ε) (hg : g ≫ augIdealι ε = f) :
@@ -141,12 +129,17 @@ theorem augIdeal_lift_unique (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Cokernel condition: the coaugmentation followed by the projection is zero. -/
+/-- Zero composite of a coaugmentation quotient projection.
+
+For η : I → C and π : C → Coker(η), η ≫ π = 0. -/
 theorem coaugCoideal_condition (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C) :
     η ≫ coaugCoidealπ η = 0 :=
   cokernel.condition η
 
-/-- Generic desc through the coaugmentation cokernel. -/
+/-- Universal descendant from a coaugmentation quotient.
+
+For k : C → W with η ≫ k = 0, the cokernel universal property gives coaugCoideal_desc η k :
+Coker(η) → W. -/
 noncomputable def coaugCoideal_desc (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     {W : CochainComplex (ModuleCat R) ℤ} (k : C ⟶ W) (h : η ≫ k = 0) :
     coaugCoideal η ⟶ W :=
@@ -154,7 +147,9 @@ noncomputable def coaugCoideal_desc (η : 𝟙_ (CochainComplex (ModuleCat R) �
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Computation for the coaugmentation-cokernel desc. -/
+/-- Projection equation for a coaugmentation quotient descendant.
+
+For k annihilating η, coaugCoidealπ η followed by coaugCoideal_desc η k equals k. -/
 theorem coaugCoideal_π_desc (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     {W : CochainComplex (ModuleCat R) ℤ} (k : C ⟶ W) (h : η ≫ k = 0) :
     coaugCoidealπ η ≫ coaugCoideal_desc η k h = k :=
@@ -162,8 +157,10 @@ theorem coaugCoideal_π_desc (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ 
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Uniqueness for the coaugmentation-cokernel desc via the pinned generic
-cokernel universal property. -/
+/-- Uniqueness of a coaugmentation quotient descendant.
+
+If η ≫ k = 0 and g : Coker(η) → W satisfies coaugCoidealπ η ≫ g = k, then g equals
+coaugCoideal_desc η k. -/
 theorem coaugCoideal_desc_unique (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     {W : CochainComplex (ModuleCat R) ℤ} (k : C ⟶ W) (h : η ≫ k = 0)
     (g : coaugCoideal η ⟶ W) (hg : coaugCoidealπ η ≫ g = k) :
@@ -177,8 +174,11 @@ variable {D E : CochainComplex (ModuleCat R) ℤ}
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Canonical map between coaugmentation coideals induced by a
-coaugmentation-preserving morphism, via the existing cokernel descendant. -/
+/-- Map of coaugmentation quotients from a point-compatible morphism.
+
+For f : C → D with η_C ≫ f = η_D, the composite f ≫ π_D annihilates η_C and descends to a map
+Coker(η_C) → Coker(η_D). No coproduct-preservation condition on f is required for this
+cokernel map. -/
 noncomputable def coaugCoidealMap
     (ηC : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ηD : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ D) (f : C ⟶ D)
@@ -189,7 +189,10 @@ noncomputable def coaugCoidealMap
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Projection square for the canonical coaugmentation-coideal map. -/
+/-- Projection square for a coaugmentation quotient map.
+
+For f : C → D with η_C ≫ f = η_D, the induced quotient map satisfies π_C ≫ coaugCoidealMap(f)
+= f ≫ π_D. -/
 theorem coaugCoideal_π_map
     (ηC : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ηD : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ D) (f : C ⟶ D)
@@ -199,7 +202,9 @@ theorem coaugCoideal_π_map
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Identity coherence for the canonical coaugmentation-coideal map. -/
+/-- Identity law for coaugmentation quotient maps.
+
+The quotient map induced by id_C with point η_C is the identity of Coker(η_C). -/
 theorem coaugCoidealMap_id
     (ηC : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C) :
     coaugCoidealMap ηC ηC (𝟙 C) (Category.comp_id ηC) = 𝟙 _ := by
@@ -214,7 +219,10 @@ theorem coaugCoidealMap_id
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Composition coherence for the canonical coaugmentation-coideal maps. -/
+/-- Composition law for coaugmentation quotient maps.
+
+For f : C → D and g : D → E satisfying η_C ≫ f = η_D and η_D ≫ g = η_E, the quotient map of f
+≫ g equals the quotient map of f followed by that of g. -/
 theorem coaugCoidealMap_comp
     (ηC : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C)
     (ηD : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ D)
@@ -238,8 +246,10 @@ theorem coaugCoidealMap_comp
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [MonObj A] in
-/-- Degree-zero augmentation vanishing from the generic kernel condition and
-the pinned `ofHom` composition API, at exactly `(add_zero 0)`. -/
+/-- Augmentation-kernel vanishing in degree-zero Hom cochains.
+
+The degree-zero cochain of the kernel inclusion i : Ker(ε) → A followed by the degree-zero
+cochain of ε is zero, with total degree 0+0=0. -/
 theorem ofHom_augIdeal_vanish (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) ℤ)) :
     (HomComplex.Cochain.ofHom (augIdealι ε)).comp
       (HomComplex.Cochain.ofHom ε) (add_zero 0) = 0 := by
@@ -253,8 +263,10 @@ theorem ofHom_augIdeal_vanish (ε : A ⟶ 𝟙_ (CochainComplex (ModuleCat R) �
 
 omit [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   X₁.HasTensor₄ObjExt X₂ X₃ X₄] [ComonObj C] in
-/-- Degree-zero coaugmentation vanishing from the generic cokernel condition
-and the pinned `ofHom` composition API, at exactly `(zero_add 0)`. -/
+/-- Coaugmentation-quotient vanishing in degree-zero Hom cochains.
+
+The degree-zero cochain of η : I → C followed by the degree-zero cochain of π : C → Coker(η)
+is zero, with total degree 0+0=0. -/
 theorem ofHom_coaugCoideal_vanish (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ) ⟶ C) :
     (HomComplex.Cochain.ofHom η).comp
       (HomComplex.Cochain.ofHom (coaugCoidealπ η)) (zero_add 0) = 0 := by
@@ -266,30 +278,39 @@ theorem ofHom_coaugCoideal_vanish (η : 𝟙_ (CochainComplex (ModuleCat R) ℤ)
   rw [h, HomComplex.Cochain.ofHom_zero] at h2
   exact h2.symm
 
-/-- Thin wrapper: lift through a twisting cochain's own augmentation kernel,
-reusing the generic lift. -/
+/-- Factor map through a twisting cochain's augmentation kernel.
+
+For a twisting cochain τ and f : X → A with f ≫ τ.aug = 0, use the kernel universal property
+to define X → Ker(τ.aug). -/
 noncomputable def TwistingCochain.augIdeal_lift
     (τ : TwistingCochain (R := R) (C := C) (A := A))
     {X : CochainComplex (ModuleCat R) ℤ} (f : X ⟶ A) (h : f ≫ τ.aug = 0) :
     X ⟶ _root_.CochainComplex.augIdeal τ.aug :=
   _root_.CochainComplex.augIdeal_lift τ.aug f h
 
-/-- Computation for the twisting-cochain augmentation lift. -/
+/-- Inclusion equation for a twisting augmentation factor map.
+
+For f annihilated by τ.aug, τ.augIdeal_lift f followed by the inclusion Ker(τ.aug) → A is f. -/
 theorem TwistingCochain.augIdeal_lift_ι
     (τ : TwistingCochain (R := R) (C := C) (A := A))
     {X : CochainComplex (ModuleCat R) ℤ} (f : X ⟶ A) (h : f ≫ τ.aug = 0) :
     τ.augIdeal_lift f h ≫ _root_.CochainComplex.augIdealι τ.aug = f :=
   _root_.CochainComplex.augIdeal_lift_ι τ.aug f h
 
-/-- Thin wrapper: desc through a twisting cochain's own coaugmentation
-cokernel, reusing the generic desc. -/
+/-- Descendant from a twisting cochain's coaugmentation quotient.
+
+For τ and k : C → W with τ.coaug ≫ k = 0, use the cokernel universal property to define
+Coker(τ.coaug) → W. -/
 noncomputable def TwistingCochain.coaugCoideal_desc
     (τ : TwistingCochain (R := R) (C := C) (A := A))
     {W : CochainComplex (ModuleCat R) ℤ} (k : C ⟶ W) (h : τ.coaug ≫ k = 0) :
     _root_.CochainComplex.coaugCoideal τ.coaug ⟶ W :=
   _root_.CochainComplex.coaugCoideal_desc τ.coaug k h
 
-/-- Computation for the twisting-cochain coaugmentation desc. -/
+/-- Projection equation for a twisting coaugmentation descendant.
+
+For k annihilating τ.coaug, the projection C → Coker(τ.coaug) followed by τ.coaugCoideal_desc
+k equals k. -/
 theorem TwistingCochain.coaugCoideal_desc_π
     (τ : TwistingCochain (R := R) (C := C) (A := A))
     {W : CochainComplex (ModuleCat R) ℤ} (k : C ⟶ W) (h : τ.coaug ≫ k = 0) :

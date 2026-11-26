@@ -1,11 +1,8 @@
-# Conv assoc
+# Convolution is associative after identifying the total degrees
 
-Graded convolution associativity, up to the `add_assoc` degree transport.
-
-The transport uses only stdlib `cast`/`congrArg`; its computation is the local
-`cochain_cast_v` bridge above. After `Cochain.ext`, both sides unfold via
-`conv_tensor_v` and the `congr_v` forms of `tensor_conv_factor_left`/
-`tensor_conv_factor_right` to the five-fold composites of
-`conv_assoc_hmid_middle_v`, which closes the components (outer `tensorHom`
-factors are definitionally the `▷`/`◁` whiskerings by the pinned monoidal
-structure). No new convolution definition and no stronger hypotheses.
+Let R be a commutative ring, C a dg R-coalgebra and A a dg R-algebra, both integer cochain
+complexes. Assume all graded tensor coproducts exist, tensoring preserves zero on both sides,
+tensoring commutes with the coproducts used for reassociation, and fourfold summand inclusions
+determine maps. For homogeneous f,g,h:C→A of integer degrees m,n,k, (f⋆g)⋆h=f⋆(g⋆h) after
+transporting degree (m+n)+k to m+(n+k) by associativity of addition. Here f⋆g=μ_A(f⊗g)Δ_C, with
+tensor sign (-1)^{np} on left input degree p for |g|=n.

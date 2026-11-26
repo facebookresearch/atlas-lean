@@ -1,6 +1,6 @@
 # Realization of a standard simplex
 
-- [To Top Iso](to-top-iso.md)
-- [To Top Map](to-top-map.md)
-- [To Top Iso naturality](to-top-iso-naturality.md)
-- [To Top Iso barycenter Compl preimage is Open](to-top-iso-barycenter-compl-preimage-is.md)
+- [Realization of a standard simplex](to-top-iso.md)
+- [Map of realized standard simplices](to-top-map.md)
+- [Naturality of the standard-simplex realization](to-top-iso-naturality.md)
+- [Openness of the realized barycenter complement](to-top-iso-barycenter-compl-preimage-is.md)

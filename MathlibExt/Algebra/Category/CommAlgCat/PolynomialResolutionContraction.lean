@@ -12,21 +12,21 @@ public import MathlibExt.Algebra.Category.CommAlgCat.PolynomialResolution
 public import Mathlib.AlgebraicTopology.ExtraDegeneracy
 
 /-!
-# The actual set contraction of the polynomial simplicial object
+# Contraction of the underlying polynomial simplicial set
 
-After forgetting commutative algebras to sets, the section of the augmentation
-is `a ↦ X_a`, and the extra degeneracy in degree `n` inserts the whole element
-of degree `n` as a variable in degree `n+1`. The existing generator formulas
-for every face and degeneracy prove all the extra degeneracy identities.
+Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k`. After forgetting the
+polynomial-comonad resolution to types, the augmentation admits a section induced by `a ↦
+X_a`. An extra degeneracy inserts each entire degree-`n` element as a variable in degree
+`n+1`.
 
-These are functions of sets. Their additivity, linearity or multiplicativity
-is neither assumed nor asserted. Thus this construction applies to arbitrary
-commutative algebras, including algebras for which the polynomial evaluation
-counit has no algebra section.
+The induced simplicial section is a right inverse of the augmentation, and augmentation
+followed by section is simplicially homotopic to the identity. All these maps are in the
+category of types.
 
-References: Stacks Project, Definition 92.3.1 and Simplicial Methods, the
-standard construction from an adjunction; Weibel, Example 8.6.16.
+## References
 
+* Stacks Project, Definition 92.3.1 and *Simplicial Methods*.
+* C. Weibel, *An Introduction to Homological Algebra*, Example 8.6.16.
 -/
 
 @[expose] public section
@@ -42,14 +42,18 @@ namespace CommAlgCat
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- The actual augmented simplicial set obtained by forgetting the polynomial
-augmented simplicial algebra. -/
+/-- For a commutative ring `k : Type u` and `A : CommAlgCat.{max u v} k`,
+`polynomialResolutionUnderlying k A` is the augmented simplicial object in `Type(max u v)`
+obtained by applying the forgetful functor to `polynomialResolution k A`. Its augmentation
+point is the carrier of `A`. -/
 def polynomialResolutionUnderlying : SimplicialObject.Augmented (Type (max u v)) :=
   ((SimplicialObject.Augmented.whiskering _ _).obj
     (forget (CommAlgCat.{max u v} k))).obj (polynomialResolution.{u, v} k A)
 
-/-- The generator insertion is a genuine extra degeneracy on the underlying
-augmented simplicial set. -/
+/-- Let `k` be a commutative ring and `A` a `k`-algebra. The underlying augmented polynomial
+resolution has an extra degeneracy whose point section is `a ↦ X_a` and whose map from degree
+`n` to degree `n+1` inserts the whole degree-`n` element as a new polynomial variable. These
+are maps of types satisfying the augmented extra-degeneracy identities. -/
 def polynomialResolutionExtraDegeneracy :
     SimplicialObject.Augmented.ExtraDegeneracy (polynomialResolutionUnderlying.{u, v} k A) where
   s' := TypeCat.ofHom (polynomialResolutionGenerator.{u, v} k A 0)
@@ -104,14 +108,19 @@ def polynomialResolutionExtraDegeneracy :
       (polynomialResolution_map_σ.{u, v} k A (n := n) i)
     exact h.trans (congrArg (polynomialResolutionGenerator.{u, v} k A (n + 2)) hd.symm)
 
-/-- The actual simplicial section induced by the constructed extra degeneracy. -/
+/-- For a commutative ring `k` and `k`-algebra `A`, the extra degeneracy of the underlying
+polynomial resolution induces `polynomialResolutionUnderlyingSection k A : const A →
+polynomialResolutionUnderlying.left`. This is a simplicial map of types from the constant
+carrier of `A` to the resolution. -/
 def polynomialResolutionUnderlyingSection :
     (SimplicialObject.const (Type (max u v))).obj A ⟶
       (polynomialResolutionUnderlying.{u, v} k A).left :=
   (polynomialResolutionExtraDegeneracy.{u, v} k A).section_
 
-/-- The augmentation followed by the constructed section is simplicially
-homotopic to the identity, by the native extra degeneracy theorem. -/
+/-- For a commutative ring `k` and `k`-algebra `A`, let `P` be the underlying augmented polynomial
+simplicial set, `ε:P.left→const A` its augmentation, and `s:const A→P.left` the section from
+its extra degeneracy. There is a simplicial homotopy `ε ≫ s ∼ 𝟙 P.left` in the category of
+types. -/
 def polynomialResolutionUnderlyingHomotopy :
     SimplicialObject.Homotopy
       ((polynomialResolutionUnderlying.{u, v} k A).hom ≫
@@ -119,7 +128,9 @@ def polynomialResolutionUnderlyingHomotopy :
       (𝟙 (polynomialResolutionUnderlying.{u, v} k A).left) :=
   (polynomialResolutionExtraDegeneracy.{u, v} k A).homotopy
 
-/-- The constructed section is a right inverse of the actual augmentation. -/
+/-- For a commutative ring `k` and `k`-algebra `A`, `polynomialResolutionUnderlyingSection k A ≫
+polynomialResolutionUnderlying.hom = 𝟙 (const A)`. Thus the simplicial section is a right
+inverse of the underlying augmentation. -/
 @[reassoc]
 theorem polynomialResolutionUnderlyingSection_augmentation :
     polynomialResolutionUnderlyingSection.{u, v} k A ≫

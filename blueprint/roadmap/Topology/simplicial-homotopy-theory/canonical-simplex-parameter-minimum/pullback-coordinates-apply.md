@@ -1,3 +1,4 @@
-# Pullback Coordinates apply
+# Coordinate formula with an unchanged parameter
 
-Both complete coordinates of the pulled family are read literally.
+For `L, m, q : SimplexCategory`, `τ : L ⟶ m`, and `p : Fin (L.len + 1) × Fin (q.len + 1)`,
+`pullbackCoordinates τ p = (τ.toOrderHom p.1, p.2)`.

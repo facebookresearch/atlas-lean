@@ -13,16 +13,15 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.CategoryTheory.Preadditive.Projective.Basic
 
 /-!
-# Native normalization transports actual simplicial quasi-isomorphisms
+# Quasi-isomorphisms and projective objects under Moore normalization
 
-The natural inclusion from normalized Moore chains to alternating chains is
-a homotopy equivalence. Its naturality therefore transports an actual
-alternating-chain quasi-isomorphism to normalized chains. Its native
-retraction also transfers degreewise projectivity to normalized chains.
+Let C be abelian, N the normalized Moore complex and A the alternating face-map complex. Their
+natural inclusion N(X) → A(X) is a chain homotopy equivalence. Its naturality shows that N(f)
+is a quasi-isomorphism exactly when A(f) is, for each simplicial morphism f.
 
-These are general providers needed to apply the actual polynomial resolution
-comparison to native normalized and derived cotangent models.
-
+The normalization projection makes N(X) a retract of A(X). At degree n, A(X)_n = X_n, so
+projectivity of X_n implies projectivity of N(X)_n. The category's object and morphism
+universes are independent.
 -/
 
 @[expose] public section
@@ -38,6 +37,11 @@ namespace CategoryTheory.SimplicialObject
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
+/-- Normalized quasi-isomorphism from an alternating-chain quasi-isomorphism.
+
+For a simplicial morphism f : X → Y in an abelian category, if the alternating face-map chain
+map A(f) is a quasi-isomorphism, then the normalized Moore map N(f) is one. The natural Moore
+inclusions are themselves quasi-isomorphisms. -/
 theorem quasiIso_normalizedMap_of_alternatingMap
     {X Y : SimplicialObject C} (f : X ⟶ Y)
     (hf : QuasiIso ((alternatingFaceMapComplex C).map f)) :
@@ -57,7 +61,10 @@ theorem quasiIso_normalizedMap_of_alternatingMap
   exact quasiIso_of_comp_right ((normalizedMooreComplex C).map f)
     (inclusionOfMooreComplexMap Y)
 
-/-- An actual normalized quasi-isomorphism is also an alternating-chain quasi-isomorphism. -/
+/-- Alternating-chain quasi-isomorphism from a normalized quasi-isomorphism.
+
+For a simplicial morphism f in an abelian category, if N(f) is a quasi-isomorphism, then A(f)
+is a quasi-isomorphism. Naturality of the Moore inclusions compares the two chain maps. -/
 theorem quasiIso_alternatingMap_of_normalizedMap
     {X Y : SimplicialObject C} (f : X ⟶ Y)
     (hf : QuasiIso ((normalizedMooreComplex C).map f)) :
@@ -76,12 +83,20 @@ theorem quasiIso_alternatingMap_of_normalizedMap
   let _ := hComp
   exact quasiIso_of_comp_left (inclusionOfMooreComplexMap X) ((alternatingFaceMapComplex C).map f)
 
-/-- The two native chain models detect the same original simplicial quasi-isomorphisms. -/
+/-- Equivalence of quasi-isomorphism criteria for two simplicial chain models.
+
+For a simplicial morphism f : X → Y in an abelian category, N(f) is a quasi-isomorphism if and
+only if A(f) is a quasi-isomorphism. Here N is the normalized Moore complex and A the
+alternating face-map complex. -/
 theorem quasiIso_normalizedMap_iff_alternatingMap {X Y : SimplicialObject C} (f : X ⟶ Y) :
     QuasiIso ((normalizedMooreComplex C).map f) ↔ QuasiIso ((alternatingFaceMapComplex C).map f) :=
   ⟨quasiIso_alternatingMap_of_normalizedMap f, quasiIso_normalizedMap_of_alternatingMap f⟩
 
-/-- The native normalization retraction transfers actual degree projectivity. -/
+/-- Projectivity of a normalized Moore term from its ambient term.
+
+For a simplicial object X in an abelian category and n : ℕ, if X_n is a projective object,
+then N(X)_n is projective. Moore inclusion and normalization projection exhibit N(X)_n as a
+retract of X_n. -/
 theorem normalizedDegree_projective (X : SimplicialObject C) (n : ℕ)
     [Projective (X.obj (op ⦋n⦌))] :
     Projective (((normalizedMooreComplex C).obj X).X n) := by

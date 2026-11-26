@@ -1,3 +1,8 @@
-# Top Disk Lower Iso hom
+# Lower chart as the shifted-source cofiber inclusion
 
-The canonical lower chart is the original cofiber left inclusion.
+Let E be preadditive with a zero object and binary biproducts,
+and K a bounded integer cochain complex. t is the selected upper endpoint of K’s support witness.
+Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
+
+The lower chart is the single-term identification followed by the shifted-source cofiber inclusion.

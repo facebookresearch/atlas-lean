@@ -1,3 +1,7 @@
-# Minus To Opposite Plus
+# Reflection from bounded-above to opposite bounded-below objects
 
-The actual reflected native bounded-above derived object, in opposite native Plus.
+Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+Reflection restricts to the functor D⁻(C) → D⁺(Cᵒᵖ)ᵒᵖ, sending a cohomologically bounded-above object to its reflected bounded-below object, viewed oppositely.

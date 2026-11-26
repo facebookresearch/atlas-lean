@@ -1,5 +1,6 @@
-# Red Comul leg Transfer
+# Agreement of full and reduced coproducts after quotienting both legs
 
-Binary leg-transfer: the true comultiplication and the candidate agree
-after `π ⊗ π`. The `η`-legs die by `coaugCoideal_condition` plus the cochain
-`tensorHom_zero` / `zero_tensorHom` lemmas.
+Agreement of full and reduced coproducts after quotienting both legs.
+
+For IsRedComul η b and Q = Coker(η), Δ_C ≫ (π ⊗ π) = b ≫ (π ⊗ π). The two
+single-coaugmentation terms and the double-coaugmentation term vanish because η ≫ π = 0.

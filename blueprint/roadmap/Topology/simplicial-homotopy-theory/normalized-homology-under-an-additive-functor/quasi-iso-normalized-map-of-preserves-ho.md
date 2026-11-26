@@ -1,4 +1,7 @@
-# Quasi Iso normalized Map of preserves Homology
+# Quasi-isomorphism of normalized maps preserved by a homology-preserving functor
 
-A normalized simplicial map stays a quasi-isomorphism under an actually exact functor.
-The hypothesis is the original source map's quasi-isomorphism, not a desired mapped result.
+Quasi-isomorphism of normalized maps preserved by a homology-preserving functor.
+
+Let F : C ⥤ D be additive between abelian categories and preserve homology. If N(φ) is a
+quasi-isomorphism for a simplicial map φ : Y → Z in C, then N(φ ⋙ F) is a quasi-isomorphism in
+D.

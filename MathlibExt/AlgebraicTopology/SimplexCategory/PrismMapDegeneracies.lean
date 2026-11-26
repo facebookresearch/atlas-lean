@@ -11,13 +11,15 @@ module
 public import MathlibExt.AlgebraicTopology.SimplexCategory.PrismMap
 
 /-!
-# Original degeneracies of the functorial simplex prism
+# Degeneracy formulas for duplicated-vertex simplex maps
 
-The canonical prism lift of an original elementary epi is an elementary epi
-at its actual shifted index. These identities identify the arbitrary-epi
-prescription with both degeneracy laws of native `SimplicialObject.Homotopy`.
-They supplement the existing functorial prism map, without replacing it.
-Source proposals only; UNEXECUTED.
+The elementary degeneracy σ_i : [n+1] → [n] collapses vertices i and i+1. For i ≤ j it sends
+j+1 to j, while for j ≤ i it sends j to j.
+
+Its prism lift at the source vertex j+1, with i ≤ j, is the elementary degeneracy with the
+same collapsed-edge index i in the enlarged ordinals. Its lift at the source vertex j, with j
+≤ i, is the elementary degeneracy with index i+1. These two formulas give the two degeneracy
+cases for prism operators, including the equality cases.
 -/
 
 @[expose] public section
@@ -29,18 +31,26 @@ namespace SimplexCategory.PrismMap
 
 variable {n : ℕ}
 
+/-- Degeneracy value on a vertex to the right of its collapsed edge.
+
+For i,j ∈ Fin(n+1) with i ≤ j, the map σ_i : [n+1] → [n] sends j.succ to j. -/
 theorem sigma_vertex_of_le (i j : Fin (n + 1)) (hij : i ≤ j) :
     (SimplexCategory.σ i).toOrderHom j.succ = j := by
   change i.predAbove j.succ = j
   exact Fin.predAbove_succ_of_le i j hij
 
+/-- Degeneracy value on a vertex to the left of its collapsed edge.
+
+For i,j ∈ Fin(n+1) with j ≤ i, the map σ_i : [n+1] → [n] sends j.castSucc to j. -/
 theorem sigma_vertex_of_ge (i j : Fin (n + 1)) (hji : j ≤ i) :
     (SimplexCategory.σ i).toOrderHom j.castSucc = j := by
   change i.predAbove j.castSucc = j
   exact Fin.predAbove_castSucc_of_le i j hji
 
-/-- Duplicating a vertex to the right of the original collapsed edge shifts
-the prism vertex, retaining the original collapsed-edge index. -/
+/-- Prism lift of a degeneracy at a right-hand duplicated vertex.
+
+For i ≤ j, the prism map Φ(σ_i,j.succ) : [n+2] → [n+1] is σ_{i.castSucc}. The duplicated
+vertex lies to the right of the collapsed edge, so the edge retains index i. -/
 theorem map_sigma_of_le (i j : Fin (n + 1)) (hij : i ≤ j) :
     map (SimplexCategory.σ i) j.succ = SimplexCategory.σ i.castSucc := by
   ext r : 3
@@ -67,8 +77,10 @@ theorem map_sigma_of_le (i j : Fin (n + 1)) (hij : i ≤ j) :
     rw [Fin.predAbove_of_castSucc_lt i r hir,
       Fin.predAbove_succ_of_le i.castSucc r (le_of_lt hir), Fin.succ_pred]
 
-/-- Duplicating a vertex to the left of the original collapsed edge shifts
-the collapsed-edge index, retaining the original prism vertex. -/
+/-- Prism lift of a degeneracy at a left-hand duplicated vertex.
+
+For j ≤ i, the prism map Φ(σ_i,j.castSucc) : [n+2] → [n+1] is σ_{i.succ}. Duplicating on this
+side shifts the collapsed-edge index from i to i+1. -/
 theorem map_sigma_of_ge (i j : Fin (n + 1)) (hji : j ≤ i) :
     map (SimplexCategory.σ i) j.castSucc = SimplexCategory.σ i.succ := by
   ext r : 3

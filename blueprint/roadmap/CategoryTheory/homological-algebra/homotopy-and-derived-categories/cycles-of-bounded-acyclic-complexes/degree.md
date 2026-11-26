@@ -1,3 +1,5 @@
-# Degree
+# Descending integer degree sequence
 
-The original explicit endpoint is decreased by one at every successor.
+For an integer b, define a descending degree sequence indexed by n∈ℕ.
+
+The sequence starts at b and decreases by one at each step.

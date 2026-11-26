@@ -1,3 +1,6 @@
-# Coefficient Ring Square
+# Commuting ring maps for extended differential transport
 
-Only the original maps and actual commuting squares form the transport input.
+Commuting ring maps for extended differential transport.
+
+For towers k → P → A and K → Q → B, specify ring maps on the ground, algebra and coefficient
+rows and require the two structural squares to commute.

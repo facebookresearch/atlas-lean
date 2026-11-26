@@ -1,3 +1,6 @@
-# Aug Ideal
+# Augmentation kernel as a cochain complex
 
-Augmentation ideal as a kernel object only; no ideal monoid structure.
+Augmentation kernel as a cochain complex.
+
+For a chain map ε : A → I in the stated cochain tensor category, augIdeal ε is the kernel
+complex Ker(ε).

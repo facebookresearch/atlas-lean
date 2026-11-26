@@ -11,7 +11,20 @@ module
 -- Author: @toskua
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SimplicialGroupLowerHornCorrection
 
-/-! # Actual upper-face corrections preserving the SAME lower and later group faces -/
+/-!
+# Upper-face corrections and horn fillers in simplicial groups
+
+Let `G : SimplicialObject GrpCat.{u}`. The correction `x * σ j ((δ (j + 1) x)⁻¹ * h)` makes
+face `j + 1` equal to the prescribed simplex `h`. Pairwise face equations ensure that it
+preserves earlier fixed faces at indices less than `j` and later fixed faces at indices
+greater than `j + 1`.
+
+For a compatible family of faces of an `(n + 2)`-simplex with missing index `i`, the upper
+pass starts with the lower pass at `i` and corrects the remaining faces in decreasing order.
+At stage `i`, its simplex has every prescribed face at an index different from `i`. The
+construction uses multiplication and degeneracies in the degree groups and applies to
+noncommutative simplicial groups.
+-/
 
 @[expose] public section
 
@@ -26,22 +39,30 @@ attribute [local instance] underlyingGroup
 
 variable (G : SimplicialObject GrpCat.{u})
 
-/-- The actual upper-face error preserves the original noncommutative coefficient order. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `j : Fin (n + 1)`, `x ∈ (underlying G) _⦋n + 1⦌`, and `h ∈ (underlying G) _⦋n⦌`,
+`upperError G j x h = ((underlying G).δ j.succ x)⁻¹ * h`.
+The inverse of the current face at `j + 1` multiplies the prescribed face on the left. -/
 def upperError {n : ℕ} (j : Fin (n + 1)) (x : (underlying G) _⦋n + 1⦌)
     (h : (underlying G) _⦋n⦌) : (underlying G) _⦋n⦌ := ((underlying G).δ j.succ x)⁻¹ * h
 
-/-- Correct the SAME original upper face by its matching degeneracy and original group error. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `j : Fin (n + 1)`, `x ∈ (underlying G) _⦋n + 1⦌`, and prescribed face `h ∈ (underlying G) _⦋n⦌`,
+`correctUpper G j x h = x * (underlying G).σ j (upperError G j x h)`.
+The error for face `j + 1` is lifted by degeneracy `j` and multiplied on the right of `x`. -/
 def correctUpper {n : ℕ} (j : Fin (n + 1)) (x : (underlying G) _⦋n + 1⦌)
     (h : (underlying G) _⦋n⦌) : (underlying G) _⦋n + 1⦌ := x * (underlying G).σ j (upperError G j x h)
 
-/-- The complete original matching upper face is exactly the prescribed face after correction. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `j : Fin (n + 1)`, `x ∈ (underlying G) _⦋n + 1⦌`, and `h ∈ (underlying G) _⦋n⦌`,
+`(underlying G).δ j.succ (correctUpper G j x h) = h`.
+The correction therefore prescribes the face at index `j + 1`. -/
 theorem correctUpper_face {n : ℕ} (j : Fin (n + 1)) (x : (underlying G) _⦋n + 1⦌)
     (h : (underlying G) _⦋n⦌) : (underlying G).δ j.succ (correctUpper G j x h) = h := by
   have hm := operator_mul G (SimplexCategory.δ j.succ).op x ((underlying G).σ j (upperError G j x h))
   have hd := face_degeneracy_succ G j (upperError G j x h)
   exact hm.trans ((congrArg (fun y => (underlying G).δ j.succ x * y) hd).trans (mul_inv_cancel_left _ h))
 
-/-- Every previously fixed lower face has trivial actual upper correction error by original face compatibility. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `k, j : Fin (n + 2)`, and `hkj : k < j`. For `x ∈ (underlying G) _⦋n + 2⦌` and `a, b ∈ (underlying G) _⦋n + 1⦌`, suppose `δ (Fin.castSucc k) x = b` and `δ k a = δ j b`. Then
+`δ k (upperError G j x a) = 1`,
+where `δ` denotes the face maps of `underlying G`. -/
 theorem upperError_lower_face_one {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
     (x : (underlying G) _⦋n + 2⦌) (a b : (underlying G) _⦋n + 1⦌)
     (hx : (underlying G).δ (Fin.castSucc k) x = b)
@@ -57,7 +78,9 @@ theorem upperError_lower_face_one {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
   have hi := operator_inv G (SimplexCategory.δ k).op ((underlying G).δ j.succ x)
   exact hm.trans ((congrArg₂ (fun y z => y * z) (hi.trans (congrArg Inv.inv hd)) hc).trans (inv_mul_cancel _))
 
-/-- The actual upper correction preserves every already fixed lower face strictly before its degeneracy. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `k, j : Fin (n + 2)`, and `hkj : k < j`. For `x ∈ (underlying G) _⦋n + 2⦌` and `a, b ∈ (underlying G) _⦋n + 1⦌`, suppose `δ (Fin.castSucc k) x = b` and `δ k a = δ j b`. Then
+`δ (Fin.castSucc k) (correctUpper G j x a) = b`.
+Thus correcting face `j + 1` preserves face `k`; `δ` denotes the face maps of `underlying G`. -/
 theorem correctUpper_preserves_lower {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
     (x : (underlying G) _⦋n + 2⦌) (a b : (underlying G) _⦋n + 1⦌)
     (hx : (underlying G).δ (Fin.castSucc k) x = b)
@@ -74,11 +97,15 @@ theorem correctUpper_preserves_lower {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
   have hm := operator_mul G (SimplexCategory.δ (Fin.castSucc k)).op x ((underlying G).σ j (upperError G j x a))
   exact hm.trans ((congrArg₂ (fun y z => y * z) hx hz).trans (mul_one b))
 
-/-- The actual upper-tail degeneracy retains the original finite scalar index. -/
+/-- For `n : ℕ`, `j : Fin (n + 2)`, `k : Fin (n + 3)`, and `hjk : j.succ < k`, the index
+`upperTailDeg hjk : Fin (n + 1)` is `j` with its bound tightened. The inequality implies `j <
+n + 1`, so its successor is an admissible face index for a degree-`n + 1` simplex. -/
 def upperTailDeg {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3)} (hjk : j.succ < k) : Fin (n + 1) :=
   j.castLT ((add_lt_add_iff_right 1).mp (lt_of_lt_of_le hjk k.is_le))
 
-/-- The original compatible later face makes the SAME upper correction error trivial at its preceding face. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `j : Fin (n + 2)`, `k : Fin (n + 3)`, and `hjk : j.succ < k`. For `x ∈ (underlying G) _⦋n + 2⦌` and `a, b ∈ (underlying G) _⦋n + 1⦌`, suppose `δ k x = b` and `δ (upperTailDeg hjk).succ b = δ (k.pred hjk.ne_zero) a`. Then
+`δ (k.pred hjk.ne_zero) (upperError G j x a) = 1`,
+where `δ` denotes the face maps of `underlying G` and the predecessor has value `k - 1`. -/
 theorem upperError_later_face_one {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3)} (hjk : j.succ < k)
     (x : (underlying G) _⦋n + 2⦌) (a b : (underlying G) _⦋n + 1⦌)
     (hx : (underlying G).δ k x = b)
@@ -95,7 +122,9 @@ theorem upperError_later_face_one {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3)} 
   have hi := operator_inv G (SimplexCategory.δ (k.pred hjk.ne_zero)).op ((underlying G).δ j.succ x)
   exact hm.trans ((congrArg₂ (fun y z => y * z) (hi.trans (congrArg Inv.inv hd)) hc.symm).trans (inv_mul_cancel _))
 
-/-- The actual upper correction preserves EVERY already fixed later original face. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `j : Fin (n + 2)`, `k : Fin (n + 3)`, and `hjk : j.succ < k`. For `x ∈ (underlying G) _⦋n + 2⦌` and `a, b ∈ (underlying G) _⦋n + 1⦌`, suppose `δ k x = b` and `δ (upperTailDeg hjk).succ b = δ (k.pred hjk.ne_zero) a`. Then
+`δ k (correctUpper G j x a) = b`,
+where `δ` denotes the face maps of `underlying G`. The compatibility equation ensures that correcting face `j + 1` preserves the later face `k`. -/
 theorem correctUpper_preserves_later {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3)} (hjk : j.succ < k)
     (x : (underlying G) _⦋n + 2⦌) (a b : (underlying G) _⦋n + 1⦌)
     (hx : (underlying G).δ k x = b)
@@ -108,23 +137,34 @@ theorem correctUpper_preserves_later {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3
   have hm := operator_mul G (SimplexCategory.δ k).op x ((underlying G).σ j (upperError G j x a))
   exact hm.trans ((congrArg₂ (fun y z => y * z) hx hz).trans (mul_one b))
 
-/-- The actual finite upper pass starts at the SAME original lower filler and retains all prescribed coefficients. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, missing index `i : Fin (n + 3)`, and `h : Fin
+(n + 3) → (underlying G) _⦋n + 1⦌`, `upperPass G i h r` is an `(n + 2)`-simplex at stage `r :
+Fin (n + 3)`. At the last stage it is `lowerPass G h i`. The descending step from `j.succ` to
+`Fin.castSucc j` applies `correctUpper G j` with prescribed face `h j.succ`. -/
 def upperPass {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underlying G) _⦋n + 1⦌) (r : Fin (n + 3)) :
     (underlying G) _⦋n + 2⦌ :=
   Fin.reverseInduction (lowerPass G h i) (fun j x => correctUpper G j x (h j.succ)) r
 
-/-- The original last upper stage is exactly the proved original lower pass. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and `h : Fin (n + 3) → (underlying G) _⦋n + 1⦌`,
+`upperPass G i h (Fin.last (n + 2)) = lowerPass G h i`.
+The descending pass begins with the lower-pass simplex at the missing-face index. -/
 theorem upperPass_last {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underlying G) _⦋n + 1⦌) :
     upperPass G i h (Fin.last (n + 2)) = lowerPass G h i := by
   simp only [upperPass, Fin.reverseInduction_last]
 
-/-- Every actual descending stage corrects the SAME original next face through the actual group degeneracy. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, `h : Fin (n + 3) → (underlying G) _⦋n + 1⦌`, and `j : Fin (n + 2)`,
+`upperPass G i h (Fin.castSucc j) = correctUpper G j (upperPass G i h j.succ) (h j.succ)`.
+The step prescribes face `j + 1` by the corresponding degeneracy correction. -/
 theorem upperPass_castSucc {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underlying G) _⦋n + 1⦌)
     (j : Fin (n + 2)) : upperPass G i h (Fin.castSucc j) =
       correctUpper G j (upperPass G i h j.succ) (h j.succ) := by
   simp only [upperPass, Fin.reverseInduction_castSucc]
 
-/-- The entire upper pass preserves ALL original lower faces and fills EVERY original later face. -/
+/-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and `h : Fin (n + 3) →
+(underlying G) _⦋n + 1⦌` satisfy `FaceCompatible G i h`, the pairwise simplicial face
+equations away from `i`. For a stage `r : Fin (n + 3)` with `i ≤ r`, the `(n + 2)`-simplex
+`upperPass G i h r` has face `h k` at every index `k < i` and every index `r < k`. Thus the
+pass preserves all prescribed lower faces and fills the faces strictly above its stage. -/
 theorem upperPass_faces {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underlying G) _⦋n + 1⦌)
     (hc : FaceCompatible G i h) (r : Fin (n + 3)) (hr : i ≤ r) :
     (∀ (k : Fin (n + 3)), k < i → (underlying G).δ k (upperPass G i h r) = h k) ∧
@@ -174,11 +214,17 @@ theorem upperPass_faces {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underl
           simpa only [hp] using hh
         exact correctUpper_preserves_later G hjk' (upperPass G i h j.succ) (h j.succ) (h k) hx hh'
 
-/-- The SAME actual finite passes give the complete original horn filler without a Kan premise. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, missing index `i : Fin (n + 3)`, and face
+family `h : Fin (n + 3) → (underlying G) _⦋n + 1⦌`, the `(n + 2)`-simplex `hornFiller G i h`
+is `upperPass G i h i`. It is obtained by the increasing lower-face pass followed by the
+decreasing upper-face pass. When the prescribed faces are compatible away from `i`, it has
+each of those faces. -/
 def hornFiller {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underlying G) _⦋n + 1⦌) :
     (underlying G) _⦋n + 2⦌ := upperPass G i h i
 
-/-- Every originally prescribed nonmissing face is retained by the WHOLE actual group horn filler. -/
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and `h : Fin (n + 3) → (underlying G) _⦋n + 1⦌` satisfying `FaceCompatible G i h`, the pairwise face equations away from `i`, every `k : Fin (n + 3)` with `k ≠ i` satisfies
+`(underlying G).δ k (hornFiller G i h) = h k`.
+Thus the constructed `(n + 2)`-simplex fills the compatible horn at index `i`. -/
 theorem hornFiller_face {n : ℕ} (i : Fin (n + 3)) (h : Fin (n + 3) → (underlying G) _⦋n + 1⦌)
     (hc : FaceCompatible G i h) (k : Fin (n + 3)) (hki : k ≠ i) :
     (underlying G).δ k (hornFiller G i h) = h k := by

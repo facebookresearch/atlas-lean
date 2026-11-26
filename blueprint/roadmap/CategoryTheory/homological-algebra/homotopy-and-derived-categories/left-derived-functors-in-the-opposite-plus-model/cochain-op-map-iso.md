@@ -1,3 +1,5 @@
-# Cochain Op Map Iso
+# Mapping a reflected complex agrees with reflecting its image
 
-Mapping the actual reflected cochain complex agrees with reflecting the original mapped complex.
+For abelian C,D and additive F:C → D, termwise application of Fᵒᵖ
+to the degree-negating reflection of K is canonically isomorphic to
+the degree-negating reflection of the original mapped complex F(K).

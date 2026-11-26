@@ -14,41 +14,13 @@ module
 public import MathlibExt.Algebra.Homology.TwistingMaurerCartanFunctoriality
 
 /-!
-# Maurer–Cartan map laws
+# Identity and composition of Maurer–Cartan transport
 
-This file proves the two functor laws for the bundled `CochainComplex.MaurerCartan.map`,
-built on `TwistingMaurerCartanFunctoriality`.
-Only the identity and composition laws are proved here.
+For dg coalgebras C and dg algebras A over a commutative ring, a pair ψ:C'→C, φ:A→B transports a
+Maurer–Cartan cochain by φ∘τ∘ψ. Identity maps retain the same bundle.
 
-## Grading and sign conventions
-
-Cohomological grading throughout, following the Maurer–Cartan base: the bundled
-map first postcomposes by a monoid morphism with `add_zero` transports, then
-precomposes by a comonoid morphism with `zero_add` transports, exactly as in
-`MaurerCartan.map_tau`. No new signs or transports are introduced here.
-
-## Declaration inventory
-
-* `MaurerCartan.map_id`: mapping along both identity morphisms is the identity,
-  from the pinned `Cochain.comp_id` and `Cochain.id_comp`.
-* `MaurerCartan.map_comp`: successive maps compose with contravariant
-  coalgebra composition `ψ₁ ≫ ψ₂` and covariant algebra composition
-  `φ₂ ≫ φ₁`, from the pinned `Cochain.ofHom_comp` and the two
-  degree-zero cochain associativity lemmas.
-
-## Nonclaims
-
-No twisted-differential map, no Hom-complex map, no free or cofree object, no
-totalization, no adjunction, no derived or Koszul result, no operadic result,
-and no model-categorical result is proved here. Only the two functor laws
-stated above are proved.
-
-## Import justification
-
-`TwistingMaurerCartanFunctoriality` supplies `MaurerCartan.map` with its
-`map_tau` computation rule, `MaurerCartan.ext`, and the preserved-predicate
-lemmas that fix the orientation used here. No further MathlibExt import is
-needed.
+Two transports along C''→C'→C and A→B→B' combine into the coalgebra composite ψ₁≫ψ₂ and algebra
+composite φ₂≫φ₁. The degree-zero compositions preserve the same Maurer–Cartan equation.
 -/
 
 @[expose] public section
@@ -77,20 +49,23 @@ variable [MonObj A] [ComonObj C]
 variable {B B' : CochainComplex (ModuleCat R) ℤ} [MonObj B] [MonObj B']
 variable {C' C'' : CochainComplex (ModuleCat R) ℤ} [ComonObj C'] [ComonObj C'']
 
-/-- Mapping a Maurer–Cartan cochain along both identity morphisms is the
-identity, from the pinned cochain identity laws. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. For a Maurer–Cartan bundle x in Hom¹(C,A), x.map(id_C,id_A)=x,
+with the same underlying cochain and equation. -/
 theorem MaurerCartan.map_id (x : MaurerCartan (R := R) (C := C) (A := A)) :
     x.map (𝟙 C) (𝟙 A) = x := by
   apply MaurerCartan.ext
   simp only [MaurerCartan.map_tau, HomComplex.Cochain.comp_id,
     HomComplex.Cochain.id_comp]
 
-/-- Successive bundled maps compose into one map: coalgebra morphisms compose
-contravariantly as `ψ₁ ≫ ψ₂` while algebra morphisms compose covariantly as
-`φ₂ ≫ φ₁`, exactly matching the `map_tau` orientation. The proof unfolds both
-sides with `map_tau`, splits the morphism cochains with `ofHom_comp`, and
-reassociates the degree-zero factors with the pinned cochain associativity
-lemmas. -/
+/-- Let R be a commutative ring and C,A ℤ-indexed cochain complexes in a common R-module carrier
+category, with C a dg coalgebra and A a dg algebra. Use the monoidal cochain tensor with all
+total-degree coproducts, both zero-object and triple-coproduct compatibility conditions, and
+fourfold tensor extensionality. Let ψ₂:C'→C, ψ₁:C''→C' be coalgebra cochain maps and φ₂:A→B,
+φ₁:B→B' algebra cochain maps. Then (x.map ψ₂ φ₂).map ψ₁ φ₁=x.map(ψ₁≫ψ₂)(φ₂≫φ₁). Both bundles
+have cochain φ₁∘φ₂∘τ∘ψ₂∘ψ₁. -/
 theorem MaurerCartan.map_comp (x : MaurerCartan (R := R) (C := C) (A := A))
     (ψ₂ : C' ⟶ C) [IsComonHom ψ₂] (φ₂ : A ⟶ B) [IsMonHom φ₂]
     (ψ₁ : C'' ⟶ C') [IsComonHom ψ₁] (φ₁ : B ⟶ B') [IsMonHom φ₁] :

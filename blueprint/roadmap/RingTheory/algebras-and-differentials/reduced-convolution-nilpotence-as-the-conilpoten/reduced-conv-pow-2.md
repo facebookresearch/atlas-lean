@@ -1,6 +1,7 @@
-# Reduced Conv Pow
+# Reduction preserved by finite convolution iteration
 
-Every sigma-valued reduced-convolution iterate of a reduced cochain is
-reduced at its actual hidden degree, by induction consuming the induction
-hypothesis through `IsReducedCochain.conv_of_left` with arbitrary right
-factor `f`. Preservation only; not nilpotence and not support.
+Reduction preserved by finite convolution iteration.
+
+Assume a comonoid structure on I, η : I → C a comonoid morphism and ε : A → I a monoid
+morphism. If f is reduced for η,ε, then every cochain component of reducedConvPow f n is
+reduced at its recorded integer degree.

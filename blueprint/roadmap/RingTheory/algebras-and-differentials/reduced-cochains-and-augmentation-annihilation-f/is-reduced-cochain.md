@@ -1,5 +1,6 @@
-# Is Reduced Cochain
+# Two-sided reduction of a homogeneous cochain
 
-Both-sided augmentation/coaugmentation vanishing for a homogeneous
-cochain: precomposing the cochain with the explicit coaugmentation `η` and
-postcomposing it with the explicit augmentation `ε` both give zero.
+Two-sided reduction of a homogeneous cochain.
+
+For η : I → C, ε : A → I and f of degree m, require (ofHom η).comp f = 0 in degree 0+m and
+f.comp(ofHom ε) = 0 in degree m+0. These equations define IsReducedCochain η ε f.

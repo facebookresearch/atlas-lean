@@ -1,4 +1,7 @@
-# Is Closed range of is Colimit
+# Closed range from finitely many closed composite embeddings
 
-Closed range: `range f` is a finite union of the closed ranges of the
-`f∘ι`. Uses `range_eq_biUnion_range_comp` and `isClosed_iUnion_of_finite`.
+Closed range from finitely many closed composite embeddings.
+
+Assume J has finitely many objects, the underlying set cocone is colimiting and each c.ι_j ≫ f
+is a closed embedding. Then range(f) is closed, as the finite union of the closed composite
+ranges.

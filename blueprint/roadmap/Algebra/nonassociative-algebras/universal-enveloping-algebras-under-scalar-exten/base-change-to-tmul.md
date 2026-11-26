@@ -1,4 +1,5 @@
-# Base Change To tmul ι
+# Generator formula for the forward enveloping comparison
 
-The forward scalar-extension map sends each coefficient tensor of a Lie generator to
-the corresponding Lie generator over `S`.
+Generator formula for the forward enveloping comparison.
+
+The forward algebra map Φ satisfies Φ(s ⊗[R] ι_R(x)) = ι_S(s ⊗[R] x) for s ∈ S and x ∈ L.

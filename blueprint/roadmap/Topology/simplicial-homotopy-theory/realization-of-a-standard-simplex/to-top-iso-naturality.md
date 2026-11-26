@@ -1,10 +1,5 @@
-# To Top Iso naturality
+# Naturality of the standard-simplex realization
 
-Naturality of `toTopIso` with respect to `f : n ⟶ m`:
-
-`SSet.toTop.map (SSet.stdSimplex.map f)` followed by `toTopIso m`
-equals `toTopIso n` followed by the induced topological simplex map
-`StdSimplex.map f` (packaged as `toTopMap f`).
-
-This is the categorical form of `SimplexCategory.toTopHomeo_naturality`,
-proved by concrete extensionality in `TopCat`.
+For `n, m : SimplexCategory` and `f : n ⟶ m`, the canonical realization isomorphisms commute with the induced simplex maps:
+`SSet.toTop.map (stdSimplex.map f) ≫ (toTopIso m).hom = (toTopIso n).hom ≫ toTopMap f`.
+Both sides are morphisms from the realization of `stdSimplex.obj n` to the real standard simplex on `Fin (m.len + 1)`.

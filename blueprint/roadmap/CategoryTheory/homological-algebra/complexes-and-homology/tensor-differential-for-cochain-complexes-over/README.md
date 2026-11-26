@@ -2,8 +2,8 @@
 
 ## Homological Complex
 
-- [ΙTensor Obj comp d up int](tensor-obj-comp-d-up-int.md)
+- [The integer tensor differential has horizontal sign one and vertical sign (-1)^p](tensor-obj-comp-d-up-int.md)
 
 ## Cochain Complex
 
-- [Diff tensor Obj](diff-tensor-obj.md)
+- [The differential cochain of a tensor is the sum of the two graded tensor differentials](diff-tensor-obj.md)

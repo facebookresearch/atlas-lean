@@ -11,12 +11,17 @@ module
 public import MathlibExt.Algebra.Homology.DerivedCategory.Opposite
 
 /-!
-# Canonical native Minus and opposite Plus
+# Bounded-above derived objects and opposite bounded-below objects
 
-Restrict the earned derived opposite equivalence using the exact native
-cohomological bound reflection. The functors retain the original derived
-objects and maps, and their round trips are the native unit and counit.
-No equivalence or bound certificate is supplied by a caller.
+For an abelian category C with chosen derived categories for C and Cᵒᵖ,
+degree-negating cochain reflection induces a derived equivalence
+D(C)ᵒᵖ ≃ D(Cᵒᵖ). A cohomological upper bound n corresponds to a
+lower bound −n after reflection.
+
+Restricting this equivalence gives
+D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ,
+with the reflected derived objects and their inverse reflections as
+the two functors. The chosen derived-category universes are independent.
 -/
 
 @[expose] public section
@@ -32,7 +37,11 @@ namespace DerivedCategory
 variable (C : Type u) [Category.{v} C] [Abelian C]
   [HasDerivedCategory.{w} C] [HasDerivedCategory.{w'} Cᵒᵖ]
 
-/-- The actual reflected native bounded-above derived object, in opposite native Plus. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+Reflection restricts to the functor D⁻(C) → D⁺(Cᵒᵖ)ᵒᵖ, sending a cohomologically bounded-above object to its reflected bounded-below object, viewed oppositely. -/
 def minusToOppositePlus : Minus C ⥤ (Plus Cᵒᵖ)ᵒᵖ where
   obj X := op
     { obj := OppositeTransport.reflect C X.obj
@@ -50,7 +59,11 @@ def minusToOppositePlus : Minus C ⥤ (Plus Cᵒᵖ)ᵒᵖ where
     apply ObjectProperty.hom_ext
     exact (OppositeTransport.equivalence C).functor.map_comp g.hom.op f.hom.op
 
-/-- The actual inverse reflection of a native Plus object is in canonical Minus. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+Inverse reflection gives the functor D⁺(Cᵒᵖ)ᵒᵖ → D⁻(C), sending a bounded-below object with bound n to an upper-bounded object with bound −n. -/
 def oppositePlusToMinus : (Plus Cᵒᵖ)ᵒᵖ ⥤ Minus C where
   obj X :=
     { obj := unop ((OppositeTransport.equivalence C).inverse.obj (unop X).obj)
@@ -68,7 +81,11 @@ def oppositePlusToMinus : (Plus Cᵒᵖ)ᵒᵖ ⥤ Minus C where
     exact congrArg Quiver.Hom.unop
       ((OppositeTransport.equivalence C).inverse.map_comp g.unop.hom f.unop.hom)
 
-/-- The canonical bounded-above derived category is the earned opposite native bounded-below category. -/
+/-- Let C be abelian with chosen derived categories D(C) and D(Cᵒᵖ).
+Their category object, morphism and derived-category universes are
+independent. Write R_op for degree-negating cochain reflection.
+
+The canonical equivalence D⁻(C) ≃ D⁺(Cᵒᵖ)ᵒᵖ obtained by restricting derived reflection and its inverse. -/
 def minusOppositeEquivalence : Minus C ≌ (Plus Cᵒᵖ)ᵒᵖ := by
   let unit : 𝟭 (Minus C) ≅ minusToOppositePlus C ⋙ oppositePlusToMinus C :=
     NatIso.ofComponents

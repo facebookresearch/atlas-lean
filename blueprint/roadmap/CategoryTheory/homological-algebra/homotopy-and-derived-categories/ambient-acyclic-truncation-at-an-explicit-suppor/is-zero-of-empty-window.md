@@ -1,3 +1,5 @@
-# Is Zero of empty window
+# Empty support interval gives a zero complex
 
-An empty original support window makes the unchanged original raw complex zero.
+Let E be preadditive and K a bounded integer cochain complex.
+If K^j is zero for j<a or b<j and b<a, then the underlying cochain
+complex K is a zero object.

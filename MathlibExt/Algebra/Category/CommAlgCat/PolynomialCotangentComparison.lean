@@ -14,15 +14,16 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Homology.SingleHomology
 
 /-!
-# The genuine polynomial cotangent comparison with ordinary differentials
+# Cotangent comparison for polynomial algebras
 
-The actual polynomial row contraction is composed with the native terminal
-unitor. Its forward chain map is the actual cotangent augmentation to Ω(A/k).
-Tensoring this homotopy equivalence with arbitrary coefficients gives the
-polynomial vanishing statement without coefficient flatness or projectivity.
+Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k` have a polynomial
+presentation `Free_k(σ) ≅ A`. The polynomial cotangent row contraction, followed by the
+terminal cotangent unitor, gives a chain homotopy equivalence `cotangentComplex k A ≃
+Ω_{A/k}[0]` with the Kähler augmentation as forward map.
 
-The presentation input is an ordinary polynomial algebra presentation; no
-cotangent or homology comparison is supplied. Candidate source; UNEXECUTED.
+For every coefficient module `M : ModuleCat.{t} A`, tensoring gives a homotopy equivalence to
+`(M ⊗_A Ω_{A/k})[0]`. Consequently André–Quillen homology vanishes in every positive degree
+for these polynomial algebras and arbitrary coefficient modules.
 -/
 
 @[expose] public section
@@ -38,7 +39,10 @@ namespace CommAlgCat
 
 variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
-/-- The actual point change from terminal linearization to ordinary differentials. -/
+/-- For a commutative ring `k` and `k`-algebra `A`, `cotangentKaehlerAugmentedIso k A` identifies
+the polynomial cotangent augmented object at `A→A` with the Kähler augmented object. Its left
+simplicial isomorphism is the identity, and its point isomorphism is `A ⊗_A Ω_{A/k} ≅ Ω_{A/k}`
+from `cotangentTerminalIso`. -/
 def cotangentKaehlerAugmentedIso :
     polynomialCotangentAugmented k A (Over.mk (𝟙 A)) ≅ cotangentKaehlerAugmented k A :=
   Comma.isoMk (Iso.refl _) (cotangentTerminalIso k A) (by
@@ -46,7 +50,11 @@ def cotangentKaehlerAugmentedIso :
     rw [Category.id_comp]
     rfl)
 
-/-- Native augmentation naturality identifies the actual chain map after point change. -/
+/-- Let `k` be a commutative ring and `A` a `k`-algebra. The chain map
+`cotangentKaehlerNormalizedAugmentation k A` equals `polynomialCotangentNormalizedAugmentation
+k A (Over.mk (𝟙 A))` followed by the degree-zero chain map of `(cotangentTerminalIso k
+A).hom`. Thus the ordinary differential augmentation factors through the terminal
+linearization `A ⊗_A Ω_{A/k}`. -/
 theorem cotangentKaehlerNormalizedAugmentation_factorization :
     cotangentKaehlerNormalizedAugmentation k A =
       polynomialCotangentNormalizedAugmentation k A (Over.mk (𝟙 A)) ≫
@@ -70,7 +78,10 @@ theorem cotangentKaehlerNormalizedAugmentation_factorization :
     ((polynomialCotangentSimplicialFunctor k A).obj (Over.mk (𝟙 A))) ≫ f) h).trans
       (Category.assoc _ _ _).symm
 
-/-- The actual canonical polynomial cotangent model is homotopy equivalent to Ω(A/k)[0]. -/
+/-- Let `k : Type u` be a commutative ring and `A : CommAlgCat.{max u v} k` with polynomial
+presentation `e : Free_k(σ) ≅ A`. There is a chain homotopy equivalence `cotangentComplex k A
+≃ Ω_{A/k}[0]`, obtained from the polynomial row contraction and the terminal cotangent unitor.
+Its forward map is the normalized Kähler augmentation. -/
 def polynomialCotangentHomotopyEquivKaehler (σ : Type (max u v))
     (e : (free.{u, v} k).obj σ ≅ A) :
     HomotopyEquiv (cotangentComplex k A)
@@ -93,7 +104,10 @@ theorem polynomialCotangentKaehlerAugmentation_quasiIso (σ : Type (max u v))
     (ChainComplex.single₀ (ModuleCat.{max u v} A)).map (cotangentTerminalIso k A).hom) at h
   exact (cotangentKaehlerNormalizedAugmentation_factorization k A).symm ▸ h
 
-/-- The same actual polynomial homotopy equivalence with arbitrary coefficients. -/
+/-- Let `k : Type u` be a commutative ring, `A : CommAlgCat.{max u v} k` have presentation `e :
+Free_k(σ) ≅ A`, and `M : ModuleCat.{t} A` be arbitrary. The coefficient cotangent chain
+complex `M ⊗_A cotangentComplex k A` is homotopy equivalent to `M ⊗_A Ω_{A/k}` concentrated in
+degree zero, at carrier universe `max u v t`. -/
 def polynomialCotangentCoefficientHomotopyEquiv (σ : Type (max u v))
     (e : (free.{u, v} k).obj σ ≅ A) (M : ModuleCat.{t} A) :
     HomotopyEquiv ((cotangentCoefficientComplexFunctor k A).obj M)
@@ -104,8 +118,10 @@ def polynomialCotangentCoefficientHomotopyEquiv (σ : Type (max u v))
     (HomotopyEquiv.ofIso ((HomologicalComplex.singleMapHomologicalComplex F
       (ComplexShape.down ℕ) 0).app (ModuleCat.of A (KaehlerDifferential k A))))
 
-/-- Positive polynomial AQ homology vanishes for arbitrary coefficients by the
-actual homotopy equivalence, including coefficients with torsion. -/
+/-- Let `k : Type u` be a commutative ring, `A : CommAlgCat.{max u v} k` have a polynomial
+presentation `e : Free_k(σ) ≅ A`, and `M : ModuleCat.{t} A` be any coefficient module. For
+every `n : ℕ`, `IsZero (andreQuillenHomology k A M (n+1))`. The coefficient cotangent complex
+contracts to degree zero. -/
 theorem andreQuillenHomology_isZero_of_polynomial (σ : Type (max u v))
     (e : (free.{u, v} k).obj σ ≅ A) (M : ModuleCat.{t} A) (n : ℕ) :
     IsZero (andreQuillenHomology k A M (n + 1)) := by

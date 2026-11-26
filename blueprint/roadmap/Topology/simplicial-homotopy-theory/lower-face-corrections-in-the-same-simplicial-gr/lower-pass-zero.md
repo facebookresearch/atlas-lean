@@ -1,3 +1,5 @@
-# Lower Pass zero
+# Initial simplex of the lower-face pass
 
-The actual zero-stage lower pass is the SAME original group unit.
+For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, and `h : Fin (n + 3) → (underlying G) _⦋n + 1⦌`,
+`lowerPass G h 0 = 1`,
+where the right side is the identity of the degree-`n + 2` group.

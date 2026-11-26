@@ -1,3 +1,6 @@
-# Zero
+# Reduction of the zero homogeneous cochain
 
-The zero homogeneous cochain is reduced in any explicit maps.
+Reduction of the zero homogeneous cochain.
+
+For any η,ε and integer m, the zero degree-m cochain is reduced because both outer composites
+with it vanish.

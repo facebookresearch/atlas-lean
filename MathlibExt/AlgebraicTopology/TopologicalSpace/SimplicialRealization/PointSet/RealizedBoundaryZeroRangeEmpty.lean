@@ -16,19 +16,15 @@ public import Mathlib.Topology.Category.TopCat.Basic
 public import Mathlib.Topology.Homeomorph.Lemmas
 
 /-!
-# Realized boundary-zero has empty range
+# Empty realized boundary of the zero-simplex
 
-The realized inclusion of `∂Δ[0]` has empty range: `SSet.boundary_zero`
-identifies the zero boundary with `⊥`, `SSet.Subcomplex.isInitialBot` makes
-it initial in `SSet`, realization preserves the initial object, and the
-TopCat initial-object comparison (`uniqueUpToIso` with
-`TopCat.isInitialPEmpty` transported by `TopCat.homeoOfIso`) supplies an
-honest empty-domain elimination. The range emptiness follows by exhibiting
-no domain inhabitant, not by assuming one impossible.
+The simplicial boundary ∂Δ[0] is the empty subcomplex. Geometric realization preserves this
+initial object, so the inclusion |∂Δ[0]| → |Δ[0]| has empty range.
 
-Nonclaims: no chart, cover, gluing, local-Serre, finite-base, or model
-result. Direct consumer: zero-cell range/complement steps over the realized
-boundary-zero inclusion.
+Its range complement is the whole realized zero-simplex. The complement subspace is therefore
+homeomorphic to the ambient space, and the inverse direction gives a TopCat isomorphism from
+the ambient space to that subspace. Its hom is the section into the full subspace and its inv
+is inclusion.
 -/
 
 @[expose] public section
@@ -37,8 +33,10 @@ universe u
 
 open CategoryTheory Limits Simplicial SSet
 
-/-- The realized `∂Δ[0]` inclusion has empty range, via the initial-object
-comparison. -/
+/-- Empty range of the realized zero-simplex boundary inclusion.
+
+The map |∂Δ[0]| → |Δ[0]| has range ∅. Realization sends the initial simplicial boundary to an
+initial, hence empty, topological space. -/
 theorem realizedBoundaryZero_range_empty :
     Set.range (SSet.toTop.map (SSet.boundary.{u} (0 : ℕ)).ι).hom = ∅ := by
   have : PreservesColimits SSet.toTop.{u} :=
@@ -60,28 +58,39 @@ theorem realizedBoundaryZero_range_empty :
   rintro ⟨x, _⟩
   exact hElim x
 
-/-- Complement corollary: the complement of the empty realized range is `univ`. -/
+/-- Full complement of the realized zero-boundary range.
+
+Since the range of |∂Δ[0]| → |Δ[0]| is empty, its complement is the whole ambient realized
+zero-simplex. -/
 theorem realizedBoundaryZero_compl_range_univ :
     (Set.range (SSet.toTop.map (SSet.boundary.{u} (0 : ℕ)).ι).hom)ᶜ =
       Set.univ := by
   rw [realizedBoundaryZero_range_empty, Set.compl_empty]
 
-/-- Homeomorphism from the complement-subspace to the ambient realized zero-simplex,
-via the univ identification. -/
+/-- Homeomorphism from the zero-boundary complement to the ambient realization.
+
+The complement of the range of |∂Δ[0]| → |Δ[0]| is the whole space. Its subspace is
+homeomorphic to |Δ[0]| by the full-subspace homeomorphism. -/
 noncomputable def realizedBoundaryZeroComplSubspaceHomeo :
     (TopCat.of ↥((Set.range (SSet.toTop.map (SSet.boundary.{u} (0 : ℕ)).ι).hom)ᶜ)) ≃ₜ
       SSet.toTop.obj (Δ[0] : SSet.{u}) := by
   rw [realizedBoundaryZero_compl_range_univ]
   exact Homeomorph.Set.univ _
 
-/-- TopCat isomorphism identifying the complement-subspace with the ambient
-realized zero-simplex. Its hom is the section; its inv is the subspace inclusion. -/
+/-- Isomorphism from the ambient zero-simplex to its boundary complement.
+
+The homeomorphism of the complement subspace with |Δ[0]| gives, in the inverse direction, a
+TopCat isomorphism |Δ[0]| ≅ complement. The hom is the full-subspace section and the inv is
+inclusion. -/
 noncomputable def realizedBoundaryZeroComplSubspaceIso :
     SSet.toTop.obj (Δ[0] : SSet.{u}) ≅
       TopCat.of ↥((Set.range (SSet.toTop.map (SSet.boundary.{u} (0 : ℕ)).ι).hom)ᶜ) :=
   (TopCat.isoOfHomeo realizedBoundaryZeroComplSubspaceHomeo).symm
 
-/-- The section followed by the inclusion is the identity on the ambient. -/
+/-- Section-inclusion identity for the zero-boundary complement.
+
+For the isomorphism |Δ[0]| ≅ complement, its section followed by the subspace inclusion is
+id_{|Δ[0]|}. -/
 theorem realizedBoundaryZeroComplSubspaceIso_hom_inv :
     realizedBoundaryZeroComplSubspaceIso.hom ≫
       realizedBoundaryZeroComplSubspaceIso.inv = 𝟙 _ :=

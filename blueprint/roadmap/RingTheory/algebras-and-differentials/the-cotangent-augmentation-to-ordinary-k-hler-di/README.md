@@ -1,8 +1,8 @@
 # The cotangent augmentation to ordinary Kähler differentials
 
-- [Cotangent Terminal Iso](cotangent-terminal-iso.md)
-- [Cotangent Terminal Iso tensor](cotangent-terminal-iso-tensor.md)
-- [Cotangent Kaehler Augmentation](cotangent-kaehler-augmentation.md)
-- [Cotangent Kaehler Augmented](cotangent-kaehler-augmented.md)
-- [Cotangent Kaehler Normalized Augmentation](cotangent-kaehler-normalized-augmentatio.md)
-- [Cotangent Kaehler Augmentation tensor](cotangent-kaehler-augmentation-tensor.md)
+- [Terminal cotangent linearization as ordinary differentials](cotangent-terminal-iso.md)
+- [Terminal cotangent unitor on a differential tensor](cotangent-terminal-iso-tensor.md)
+- [Simplicial cotangent augmentation to ordinary differentials](cotangent-kaehler-augmentation.md)
+- [Augmented simplicial cotangent model](cotangent-kaehler-augmented.md)
+- [Normalized cotangent augmentation in degree zero](cotangent-kaehler-normalized-augmentatio.md)
+- [Cotangent augmentation evaluates differential tensors](cotangent-kaehler-augmentation-tensor.md)

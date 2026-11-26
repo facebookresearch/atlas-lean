@@ -1,3 +1,5 @@
-# Conv zero left
+# Vanishing convolution with a zero left cochain
 
-The graded convolution product vanishes when the left factor vanishes.
+Vanishing convolution with a zero left cochain.
+
+For a cochain comonoid C, monoid A and any homogeneous g, 0⋆g=0 in the sum of the two degrees.

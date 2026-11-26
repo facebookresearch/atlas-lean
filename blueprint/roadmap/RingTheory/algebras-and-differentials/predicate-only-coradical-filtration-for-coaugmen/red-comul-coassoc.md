@@ -1,8 +1,6 @@
-# Red Comul coassoc
+# Coassociativity of the descended reduced coproduct
 
-Plain coassociativity of `redComul`: same associator path as
-`ComonObj.comul_assoc`, with `redComul` in place of `comul`. No counit laws
-are claimed. The proof pushes the projection through both sides, replays the
-base coassociativity under the triple projection, then replaces the leading
-`Δ` by `Δbar` via the decomposition (the `η`-legs vanish on both
-triple-tensor targets).
+Coassociativity of the descended reduced coproduct.
+
+For reduced data IsRedComul η b, the map ρ : Q → Q ⊗ Q on Q = Coker(η) satisfies ρ ≫ (id_Q ⊗
+ρ) = ρ ≫ (ρ ⊗ id_Q) ≫ α_{Q,Q,Q}. This states coassociativity of the reduced map.

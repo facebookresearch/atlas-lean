@@ -1,3 +1,5 @@
-# Minimum le pullback
+# The minimum comparison lies below the external parameter
 
-The common family lies below the pulled family in the actual product order.
+For `L, m, q : SimplexCategory`, `τ : L ⟶ m`, and `ρ : L ⟶ q`,
+`minimumCoordinates τ ρ ≤ pullbackCoordinates τ`
+in the pointwise order on maps between the finite product ordinals. At `(x, k)`, the first coordinates are equal and `min (ρ(x), k) ≤ k`.

@@ -16,18 +16,16 @@ public import MathlibExt.Algebra.Lie.BaseChange
 public import Mathlib.LinearAlgebra.TensorProduct.Lift
 
 /-!
-# Universal property of Lie scalar extension
+# Lie morphisms out of scalar extension
 
-For a commutative ring algebra `R → S`, let `L` be an `R`-Lie algebra
-and let `N` carry compatible `R`- and `S`-Lie algebra actions. Lie maps
-`L → N` over `R` correspond to Lie maps `S ⊗[R] L → N` over `S`.
-The extension sends `s ⊗ x` to `s • f x`; restriction composes with
-`x ↦ 1 ⊗ x`.
+Let S be a commutative R-algebra, L an R-Lie algebra and N an S-Lie algebra with a compatible
+R-Lie algebra action and scalar tower. An R-Lie map f : L → N extends uniquely to an S-Lie map
+S ⊗[R] L → N by s ⊗ x ↦ s • f(x).
 
-The correspondence uses the native linear scalar-extension equivalence.
-It is a plain equivalence, since general Lie morphism spaces need not
-be additive. All carrier universes are independent, and no flatness or
-projectivity hypothesis is required.
+Restriction of an S-Lie map along R → S leaves its underlying function unchanged. Composing
+such a map on S ⊗[R] L with x ↦ 1 ⊗ x is inverse to extension, giving a set equivalence of the
+two Lie-morphism spaces. It is natural contravariantly in L and covariantly in compatible
+S-Lie target maps. All scalar and Lie-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -49,14 +47,21 @@ variable {M : Type w} [LieRing M] [LieAlgebra R M] [LieAlgebra S M]
   {N : Type z} [LieRing N] [LieAlgebra R N] [LieAlgebra S N]
   [IsScalarTower R S N]
 
-/-- Restrict an `S`-Lie morphism along the actual compatible scalar tower. -/
+/-- Restriction of a Lie morphism along a scalar tower.
+
+For Lie algebras M,N with compatible R- and S-actions and scalar towers R → S → M,N, an S-Lie
+morphism M → N is also an R-Lie morphism. Restriction keeps its underlying function and
+bracket equation. -/
 def restrictScalars (f : M →ₗ⁅S⁆ N) : M →ₗ⁅R⁆ N where
   toLinearMap := f.toLinearMap.restrictScalars R
   map_lie' := by
     intro x y
     exact f.map_lie x y
 
-/-- Restriction leaves the underlying map unchanged. -/
+/-- Underlying value of a scalar-restricted Lie morphism.
+
+For an S-Lie map f between Lie algebras with compatible R-actions, restrictScalars R S f takes
+each x to the same value f(x). -/
 @[simp]
 theorem restrictScalars_apply (f : M →ₗ⁅S⁆ N) (x : M) :
     restrictScalars R S f x = f x := rfl
@@ -83,19 +88,30 @@ private theorem liftBaseChange_map_lie (f : L →ₗ⁅R⁆ N) (x y : S ⊗[R] L
   · intro x x' hx hx'
     simpa only [add_lie, map_add] using congrArg₂ (· + ·) hx hx'
 
-/-- Extend an `R`-Lie morphism using the native `S`-linear scalar-extension map. -/
+/-- Extension of a Lie morphism from the original scalar algebra.
+
+Let L be an R-Lie algebra and N an S-Lie algebra with compatible R-action, for a commutative
+R-algebra S. An R-Lie map f : L → N extends to the S-Lie map S ⊗[R] L → N whose value on s ⊗ x
+is s • f(x). -/
 def liftBaseChange (f : L →ₗ⁅R⁆ N) : S ⊗[R] L →ₗ⁅S⁆ N where
   toLinearMap := LinearMap.liftBaseChangeEquiv S f.toLinearMap
   map_lie' := by
     intro x y
     exact liftBaseChange_map_lie R S f x y
 
-/-- The Lie extension has the actual native coefficient value on a pure tensor. -/
+/-- Coefficient formula for a Lie scalar-extension lift.
+
+For f : L →ₗ⁅R⁆ N with N carrying compatible S-Lie scalars, liftBaseChange R S f sends s ⊗[R]
+x to s • f(x). -/
 @[simp]
 theorem liftBaseChange_tmul (f : L →ₗ⁅R⁆ N) (s : S) (x : L) :
     liftBaseChange R S f (s ⊗ₜ[R] x) = s • f x := rfl
 
-/-- Lie scalar extension and restriction form a plain Hom equivalence. -/
+/-- Hom equivalence for Lie scalar extension.
+
+For an R-Lie algebra L and an S-Lie algebra N with compatible R-action, extension gives (L
+→ₗ⁅R⁆ N) ≃ (S ⊗[R] L →ₗ⁅S⁆ N). Its inverse restricts scalars and precomposes with x ↦ 1 ⊗ x.
+This is an equivalence of Lie-morphism sets. -/
 def liftBaseChangeEquiv (L : Type w) [LieRing L] [LieAlgebra R L]
     (N : Type z) [LieRing N] [LieAlgebra R N] [LieAlgebra S N]
     [IsScalarTower R S N] :
@@ -120,17 +136,26 @@ def liftBaseChangeEquiv (L : Type w) [LieRing L] [LieAlgebra R L]
     exact LinearMap.congr_fun
       ((LinearMap.liftBaseChangeEquiv S).apply_symm_apply f.toLinearMap) x
 
-/-- The Hom equivalence extends each morphism by the coefficient tensor formula. -/
+/-- Pure-tensor value of the Lie Hom equivalence.
+
+The extension corresponding to f : L →ₗ⁅R⁆ N under liftBaseChangeEquiv sends s ⊗[R] x to s •
+f(x), using the S-action on N. -/
 @[simp]
 theorem liftBaseChangeEquiv_tmul (f : L →ₗ⁅R⁆ N) (s : S) (x : L) :
     liftBaseChangeEquiv R S L N f (s ⊗ₜ[R] x) = s • f x := rfl
 
-/-- The inverse Hom equivalence evaluates the extended morphism on the unit tensor. -/
+/-- Unit-tensor value of the inverse Lie Hom equivalence.
+
+For an S-Lie map f : S ⊗[R] L → N, the inverse of liftBaseChangeEquiv evaluates it on unit
+tensors: the corresponding R-Lie map takes x to f(1 ⊗[R] x). -/
 @[simp]
 theorem liftBaseChangeEquiv_symm_apply (f : S ⊗[R] L →ₗ⁅S⁆ N) (x : L) :
     (liftBaseChangeEquiv R S L N).symm f x = f ((1 : S) ⊗ₜ[R] x) := rfl
 
-/-- Extension is contravariantly natural in the original Lie source. -/
+/-- Contravariant naturality of a Lie scalar-extension lift.
+
+For R-Lie maps g : L' → L and f : L → N, with N carrying compatible S-scalars,
+liftBaseChange(f ∘ g) = liftBaseChange(f) ∘ baseChange(g). -/
 theorem liftBaseChange_comp {L' : Type w'} [LieRing L'] [LieAlgebra R L']
     (f : L →ₗ⁅R⁆ N) (g : L' →ₗ⁅R⁆ L) :
     liftBaseChange R S (f.comp g) =
@@ -140,7 +165,10 @@ theorem liftBaseChange_comp {L' : Type w'} [LieRing L'] [LieAlgebra R L']
   exact LinearMap.congr_fun
     (LinearMap.liftBaseChange_comp (R := R) (A := S) f.toLinearMap g.toLinearMap) x
 
-/-- Extension is covariantly natural in compatible `S`-Lie target morphisms. -/
+/-- Covariant naturality of a Lie scalar-extension lift.
+
+For f : L →ₗ⁅R⁆ N and an S-Lie map g : N → N' between compatible scalar towers, g ∘
+liftBaseChange(f) equals liftBaseChange((restrictScalars g) ∘ f). -/
 theorem comp_liftBaseChange {N' : Type z'} [LieRing N']
     [LieAlgebra R N'] [LieAlgebra S N'] [IsScalarTower R S N']
     (f : L →ₗ⁅R⁆ N) (g : N →ₗ⁅S⁆ N') :

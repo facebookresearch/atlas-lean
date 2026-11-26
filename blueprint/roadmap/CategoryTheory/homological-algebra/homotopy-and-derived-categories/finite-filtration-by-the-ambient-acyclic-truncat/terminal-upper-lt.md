@@ -1,3 +1,5 @@
-# Terminal upper lt
+# The terminal upper bound is below the lower bound
 
-The explicit upper endpoint lies below the original lower endpoint after this many steps.
+For a,b∈ℤ, put L=(b−a+1).toNat.
+
+The terminal upper bound satisfies b−L<a.

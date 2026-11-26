@@ -1,5 +1,5 @@
 # Convolution vanishing on coradical filtration stages
 
-- [Conv vanish of stage Zero](conv-vanish-of-stage-zero.md)
-- [Conv eq zero of trivial red Comul](conv-eq-zero-of-trivial-red-comul.md)
-- [Reduced Conv Pow vanish of mem](reduced-conv-pow-vanish-of-mem.md)
+- [Reduced convolution vanishes on stage-zero elements](conv-vanish-of-stage-zero.md)
+- [Zero reduced comultiplication gives zero reduced convolution](conv-eq-zero-of-trivial-red-comul.md)
+- [Finite-stage vanishing of reduced convolution powers](reduced-conv-pow-vanish-of-mem.md)

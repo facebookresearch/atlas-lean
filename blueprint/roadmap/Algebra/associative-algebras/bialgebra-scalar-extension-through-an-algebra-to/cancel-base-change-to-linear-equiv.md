@@ -1,3 +1,7 @@
-# Cancel Base Change to Linear Equiv
+# Underlying linear equivalence of bialgebra tower cancellation
 
-The underlying linear equivalence is the native tower-cancellation equivalence.
+Underlying linear equivalence of bialgebra tower cancellation.
+
+The linear equivalence underlying cancelBaseChange is
+TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A, with the same coefficient and
+unit-insertion formulas.

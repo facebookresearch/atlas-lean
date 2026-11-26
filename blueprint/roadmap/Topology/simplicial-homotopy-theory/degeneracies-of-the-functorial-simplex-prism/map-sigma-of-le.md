@@ -1,4 +1,6 @@
-# Map sigma of le
+# Prism lift of a degeneracy at a right-hand duplicated vertex
 
-Duplicating a vertex to the right of the original collapsed edge shifts
-the prism vertex, retaining the original collapsed-edge index.
+Prism lift of a degeneracy at a right-hand duplicated vertex.
+
+For i ≤ j, the prism map Φ(σ_i,j.succ) : [n+2] → [n+1] is σ_{i.castSucc}. The duplicated
+vertex lies to the right of the collapsed edge, so the edge retains index i.

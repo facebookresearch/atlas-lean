@@ -1,7 +1,7 @@
 # Original-carrier scalar restriction for commutative algebras
 
-- [Restricted Algebra](restricted-algebra.md)
-- [Restrict Scalars](restrict-scalars.md)
-- [Restrict Scalars forget](restrict-scalars-forget.md)
-- [Restrict Scalars Id Iso](restrict-scalars-id-iso.md)
-- [Restrict Scalars Comp Iso](restrict-scalars-comp-iso.md)
+- [Composite algebra action for scalar restriction](restricted-algebra.md)
+- [Scalar restriction functor for commutative algebras](restrict-scalars.md)
+- [Scalar restriction commutes with forgetting commutativity](restrict-scalars-forget.md)
+- [Restriction along the identity ring map](restrict-scalars-id-iso.md)
+- [Composition of scalar restriction functors](restrict-scalars-comp-iso.md)

@@ -2,24 +2,24 @@
 
 ## Lift
 
-- [Lift Primitive](lift-primitive.md)
-- [Lift Primitive ι](lift-primitive-2.md)
-- [Restrict Primitive](restrict-primitive.md)
-- [Lift Primitive Equiv](lift-primitive-equiv.md)
-- [Lift Primitive comp map](lift-primitive-comp-map.md)
-- [Comp lift Primitive](comp-lift-primitive.md)
+- [Bialgebra extension of a primitive-valued Lie morphism](lift-primitive.md)
+- [Generator value of a primitive bialgebra lift](lift-primitive-2.md)
+- [Primitive restriction of an enveloping bialgebra map](restrict-primitive.md)
+- [Hom equivalence for primitive-valued enveloping maps](lift-primitive-equiv.md)
+- [Source naturality of primitive enveloping lifts](lift-primitive-comp-map.md)
+- [Target naturality of primitive enveloping lifts](comp-lift-primitive.md)
 
 ## Counit
 
-- [Primitive Counit](primitive-counit.md)
-- [Primitive Counit ι](primitive-counit-2.md)
-- [Primitive Counit primitive Lie Map](primitive-counit-primitive-lie-map.md)
-- [Primitive Counit naturality](primitive-counit-naturality.md)
+- [Counit map from the enveloping algebra of primitives](primitive-counit.md)
+- [Generator value of the primitive counit](primitive-counit-2.md)
+- [Primitive triangle identity for the counit](primitive-counit-primitive-lie-map.md)
+- [Naturality of primitive counit maps](primitive-counit-naturality.md)
 
 ## Triangle
 
-- [Primitive Counit comp map ιPrimitive](primitive-counit-comp-map-primitive.md)
+- [Enveloping triangle identity for primitive generators](primitive-counit-comp-map-primitive.md)
 
 ## Hopf
 
-- [Lift Primitive antipode](lift-primitive-antipode.md)
+- [Antipode compatibility of a primitive-valued lift](lift-primitive-antipode.md)
