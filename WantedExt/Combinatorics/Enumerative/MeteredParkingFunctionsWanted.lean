@@ -44,23 +44,6 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
 
-/-- **Displacement bound in the metered scheme.** Let $t$, $m$, $n$ be natural numbers, let
-$f : \{0, \dots, m - 1\} \to \{0, \dots, n - 1\}$ be a preference function and let $i < m$ be a
-car. Under the $t$-metered parking scheme on $n$ spots, if car $i$ parks in spot $s$ then
-$s \le f(i) + t$, that is, its displacement is at most $t$; and if car $i$ fails to park then
-$f(i) + t \ge n$.
-
-In the source's one-based numbering, with preference $a_i = f(i) + 1$, a car that fails to park
-has $a_i \ge n - t + 1$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 5 (`integers-2025-A73-prop-5`). -/
-public theorem_wanted meteredOutcome_displacement_le {m n t : ℕ} (f : Fin m → Fin n) (i : Fin m) :
-    (∀ s, (meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some (some s) →
-        s ≤ (f i : ℕ) + t) ∧
-      ((meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some none →
-        n ≤ (f i : ℕ) + t)
-
 /-- **Metered parking functions with two cars.** For every natural number $t \ge 1$ and every
 natural number $n$, the number of $t$-metered $(2, n)$-parking functions is
 $\mathrm{mpf}_{2,n}(t) = \max(n^2 - 1, 0)$, that is, $n^2 - 1$ for $n \ge 1$ and $0$ for $n = 0$.
