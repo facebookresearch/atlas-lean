@@ -13,6 +13,19 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Bilateral trade impossibility (dominant-strategy form)](bilateral-trade-impossibility.md)
 - [Characterization of proper scoring rules](characterization-of-proper-scoring-rules.md)
 - [Scoring rules and properness for finite outcomes](remaining-clauses-of-scoring-rules-and-properness.md)
+- [Combinatorial Agency and Rational Cryptography](contracts-and-rational-cryptography/README.md)
+- [Reputation Systems and Peer-to-Peer Incentives](reputation-and-peer-to-peer-incentives/README.md)
+- [Characterizations of Dominant-Strategy Incentive Compatibility](dsic-characterizations/README.md)
+- [Combinatorial Auctions](combinatorial-auctions/README.md)
+- [Divisible Resource Allocation Mechanisms](divisible-resource-allocation/README.md)
+- [Facility Location without Money](facility-location-without-money/README.md)
+- [Indirect Mechanisms and Ex-Post Implementation](indirect-mechanisms-and-ex-post-implementation/README.md)
+- [Ironing and Optimal Auctions for Irregular Distributions](ironing-and-irregular-distributions/README.md)
+- [Online Mechanism Design](online-mechanism-design/README.md)
+- [Prior-Free Digital Goods and Position Auctions](prior-free-and-position-auctions/README.md)
+- [Single-Parameter Auctions](single-parameter-auctions/README.md)
+- [Standard Proper Scoring Rules](standard-scoring-rules/README.md)
+- [Truthful Scheduling and Budget-Constrained Auctions](truthful-scheduling-and-budgets/README.md)
 
 ## Related topics
 
