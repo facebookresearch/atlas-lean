@@ -51,3 +51,28 @@ example : E 5 4 / E 4 4 ≤ E 5 3 / E 4 3 * (E 2 1 / E 1 1) ∧
     H 3 3 / H 2 3 * (H 2 1 / H 1 1) ≤ H 2 4 / H 1 4 :=
   symm_triple_ratio_of_logConcave (fun k => (k : ℝ)) pos lc
     (n := 3) (p := 1) (j := 1) (by decide) (by decide) (by decide) (Or.inr (Or.inr ⟨rfl, rfl⟩))
+
+-- Both bounds are strict when n = 4, p = 2 and j = 2.
+example :
+    (Nat.stirlingFirst 4 2 : ℚ) * Nat.stirlingFirst 6 4 / Nat.stirlingFirst 6 2 <
+        (Nat.choose 4 2 : ℚ) ∧
+      (Nat.choose 4 2 : ℚ) <
+        (Nat.stirlingSecond 4 2 : ℚ) * Nat.stirlingSecond 6 4 / Nat.stirlingSecond 6 2 := by
+  constructor <;> norm_num [Nat.stirlingFirst, Nat.stirlingSecond, Nat.choose]
+
+-- At p = n = 3 the positive denominators cancel and both bounds are equalities.
+example :
+    (Nat.stirlingFirst 5 2 : ℚ) * Nat.stirlingFirst 5 5 / Nat.stirlingFirst 5 2 =
+        (Nat.choose 3 3 : ℚ) ∧
+      (Nat.choose 3 3 : ℚ) =
+        (Nat.stirlingSecond 5 2 : ℚ) * Nat.stirlingSecond 5 5 / Nat.stirlingSecond 5 2 := by
+  constructor <;> norm_num [Nat.stirlingFirst, Nat.stirlingSecond, Nat.choose]
+
+-- Apply the public theorem at the minimum p and j, with p < n.
+example :
+    (Nat.choose 2 1 : ℚ) ≤
+        (Nat.stirlingSecond 2 1 : ℚ) * Nat.stirlingSecond 3 2 / Nat.stirlingSecond 3 1 ∧
+      (Nat.stirlingFirst 2 1 : ℚ) * Nat.stirlingFirst 3 2 / Nat.stirlingFirst 3 1 ≤
+        (Nat.choose 2 1 : ℚ) :=
+  stirling_triple_ratio_bounds_choose (n := 2) (p := 1) (j := 1)
+    (hp := by decide) (hj := by decide) (hpn := by decide)
