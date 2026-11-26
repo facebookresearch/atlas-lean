@@ -32318,6 +32318,7 @@
 "Engineering.Process.BatchReactor.remaining_nonneg": "3b2fba31d0a2bc9d",
 "Engineering.Process.CSTR.abs_sub_steady_eq": "ad18bca8ddceffc3",
 "Engineering.Process.CSTR.eq_solution_of_hasDerivAt": "191f854fd9b825d5",
+"Engineering.Process.CSTR.second_order_linearization": "f7b181aaae0f6e90",
 "Engineering.Process.CSTR.solution": "81529c20d41b1d62",
 "Engineering.Process.CSTR.solution_eq": "ffb0d88fb4379f1b",
 "Engineering.Process.CSTR.solution_hasDerivAt": "3b5bd1fdce5be942",
