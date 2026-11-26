@@ -34097,6 +34097,7 @@
 "HopfAlgebra.HopfKerHopf.ι₃": "469158f9f6e8e054",
 "HopfAlgebra.IsHopfGalois": "3ff93a716fc771d9",
 "HopfAlgebra.antipode_antipode": "62cd52ceeb0f9cc1",
+"HopfAlgebra.antipode_finitePartIdempotent": "6ad6a0f25c0f71d2",
 "HopfAlgebra.balancingRelations": "418ca7de43d3dda3",
 "HopfAlgebra.canAlgHom": "a81e4bbeeeb91c3d",
 "HopfAlgebra.canMap": "6c33a0c8b4d1d847",
