@@ -31,7 +31,10 @@ then every $w_\sigma$ is $n$; the cyclotomic character, $K = \mathbb{Q}_p$, has 
 
 ## Proof depends on
 
-- [Hodge–Tate sequence of a p-divisible group](../hodge-tate-sequence-of-p-divisible-groups.md), for the Hodge–Tate weights of the Lubin–Tate characters of a finite Galois extension of $\mathbb{Q}_p$ containing $K$ and $L$, to which the proof reduces
+- [Hodge–Tate weights of a locally algebraic character given by one embedding](hodge-tate-weights-of-a-character-given-by-one-embedding.md), for the characters of a finite Galois extension of $\mathbb{Q}_p$ containing $K$ and $L$ to which Conrad's proof reduces
+- [Sen's theorem on C-admissible representations](sen-theorem-on-c-admissible-representations.md), for a character trivial near $1$ through $r_L$, such as $(\prod_i \psi_i^{n_i})/\psi$ in Conrad's proof, which has finite image on inertia and so all Hodge–Tate weights $0$
+- [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for $C_L(i)^{G_L} = 0$ when $i \ne 0$, which makes the weights $w_\sigma$ well defined and additive in products, and for $H^1(G_L, C_L(1)) = 0$, which splits the Hodge–Tate decompositions the reduction uses
+- [Local class field theory: functoriality and explicit reciprocity](../../../../p-adic-numbers/local-class-field-theory-functoriality.md), for the norm functoriality of the local Artin map (its item 1), through which Conrad computes $\psi \circ \mathrm{res}_{F'/L} \circ r_{F'}$ as $\psi \circ r_L \circ N_{F'/L}$
 
 ## Sources
 

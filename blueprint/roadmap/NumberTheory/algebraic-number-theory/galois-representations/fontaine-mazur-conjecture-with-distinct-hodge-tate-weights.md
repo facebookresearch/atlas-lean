@@ -49,6 +49,7 @@ the deduction of this theorem from them.
 - [de Rham representations](p-adic-hodge-theory/de-rham-representations.md), for Hodge–Tate weights of representations on $\overline{\mathbb{Q}}_p$-vector spaces
 - [Hodge–Tate representations](p-adic-hodge-theory/hodge-tate-representations.md), for the Hodge–Tate weights
 - [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md), for the mod $p$ cyclotomic character $\omega$
+- [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for the inertia groups, unramifiedness and the Frobenius elements $\mathrm{Frob}_\ell$
 - [Hecke eigenforms and newforms for Γ₁(N)](../../modular-forms-q-series/modular-forms/hecke-eigenforms-and-newforms-for-gamma1-n.md), for cuspidal eigenforms and their Hecke eigenvalues
 
 ## Proof depends on
@@ -67,7 +68,7 @@ Its proof uses the inputs listed in the expansion note.
   $\rho$ be as in conjecture 1.0.1. Assume that $\rho|_{\mathrm{Gal}(\overline{\mathbb{Q}_p}/\mathbb{Q}_p)}$ has
   distinct Hodge–Tate weights; if $p = 3$, the semi-simplification of
   $\bar\rho|_{\mathrm{Gal}(\overline{\mathbb{Q}_p}/\mathbb{Q}_p)}$ is not of the form $\eta \oplus \eta\omega$ for some
-  character $\eta$. Then $\rho$ comes from a cuspidal eigenform up to twist"); p. 6, Notation (the isomorphism
+  character $\eta$. Then $\rho$ comes from a cuspidal eigenform up to twist"); pp. 6–7, Notation (the isomorphism
   $\iota_p$, geometric Frobenius elements $\mathrm{Frob}_v$, $\omega$ the mod $p$ cyclotomic character, and the
   Hodge–Tate weight of the cyclotomic character $-1$). The journal text was not compared.
 - J.-M. Fontaine and B. Mazur, "Geometric Galois representations", in *Elliptic curves, modular forms, and

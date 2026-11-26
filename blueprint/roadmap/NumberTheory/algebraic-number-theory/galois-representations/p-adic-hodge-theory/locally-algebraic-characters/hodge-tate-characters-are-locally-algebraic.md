@@ -16,9 +16,11 @@ $K$ is semisimple, as one sees after extending scalars to $\overline{\mathbb{Q}}
 
 ## Proof depends on
 
-- [Hodge–Tate sequence of a p-divisible group](../hodge-tate-sequence-of-p-divisible-groups.md), for the Hodge–Tate decomposition of the Tate module of a Lubin–Tate formal group, which makes the characters of the form above Hodge–Tate
-- [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for the converse: a character whose Hodge–Tate weights all vanish has finite image on inertia
-- [Local class field theory: the local Artin map](../../../../p-adic-numbers/local-class-field-theory.md), for the description of a Lubin–Tate character through $r_L$
+- [Hodge–Tate weights of a locally algebraic character given by one embedding](hodge-tate-weights-of-a-character-given-by-one-embedding.md), for characters $\rho$ with $\rho \circ r_F$ equal to $x \mapsto \tau(x)^{-1}$ near $1$, which are Hodge–Tate; a locally algebraic $\psi$ differs, after restriction to $G_F$ for a finite Galois extension $F$ of $\mathbb{Q}_p$ containing $K$ and $L$, from a product of their powers by a character trivial near $1$ through $r_F$
+- [Sen's theorem on C-admissible representations](sen-theorem-on-c-admissible-representations.md), for the characters trivial near $1$ through the local Artin map, whose image on inertia is finite, so that they are $C$-admissible, with all Hodge–Tate weights $0$; and conversely, for a Hodge–Tate character divided by such a product so that all its weights vanish, which is then $C$-admissible and has finite image on inertia
+- [Local class field theory: the local Artin map](../../../../p-adic-numbers/local-class-field-theory.md), for $r_L$: it is continuous, the units act trivially on $L^{\mathrm{ur}}$, and its reciprocity isomorphisms map the units onto the inertia subgroup of each finite abelian quotient, so that a character is trivial near $1$ through $r_L$ exactly when its image on inertia is finite
+- [Local class field theory: functoriality and explicit reciprocity](../../../../p-adic-numbers/local-class-field-theory-functoriality.md), for the norm functoriality of the local Artin map (its item 1), which describes $\psi|_{G_F} \circ r_F$ as $\psi \circ r_L \circ N_{F/L}$
+- [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for $C(i)^{G} = 0$ when $i \ne 0$, which makes the Hodge–Tate weights of a product the sums of the weights
 
 ## Sources
 
