@@ -19,7 +19,9 @@ import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 # Distributional differentiation of currents
 
 The exterior derivative satisfies a bound for the chart derivative seminorms.
-This bound gives `currentDifferentialTheory` on compact complex manifolds.
+This bound gives `currentDifferentialTheory`: on a compact complex manifold
+modelled on `Coordinates n` and carrying an `ExteriorTheory`, the differential
+of a current is again a current.
 
 Reference: J.-P. Demailly and M. Păun, *Numerical characterization of the
 Kähler cone of a compact Kähler manifold*, Ann. of Math. 159 (2004),
