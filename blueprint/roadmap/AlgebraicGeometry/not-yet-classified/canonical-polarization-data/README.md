@@ -19,4 +19,3 @@
 - [Geom Fibre H0 Finrank](geom-fibre-h0-finrank.md)
 - [Canonical Polarization Data](canonical-polarization-data.md)
 - [Exists base Change canonical Form](exists-base-change-canonical-form.md)
-- [Mul one one](mul-one-one.md)
