@@ -1,4 +1,6 @@
-# Horizontal Filtered Total Complex Map Of Bicomplex to Total
+# A filtered bicomplex chain map commutes with inclusion into the total
 
-The stagewise chain map commutes with the chain-map inclusion into the
-full total complex.
+For a bicomplex map f : K → L in a preadditive category
+with finite coproducts, the chain maps satisfy
+i_(L,k) ∘ F_k(f) = Tot(f) ∘ i_(K,k).
+Both paths go from the stage-k K-subcomplex to Tot(L).

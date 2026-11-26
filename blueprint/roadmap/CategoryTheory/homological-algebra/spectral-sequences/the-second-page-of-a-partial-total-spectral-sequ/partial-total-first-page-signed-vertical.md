@@ -1,4 +1,7 @@
-# Partial Total First Page Signed Vertical Homology Iso
+# First-page row as signed vertical homology
 
-A fixed row of the first page is the signed horizontal complex of
-vertical homology objects.
+First-page row as signed vertical homology.
+
+At fixed vertical degree `q`, the first-page complex restricted to `p ↦ (p, q)` is isomorphic
+to `B.signedVerticalHomologyComplex q`. The component at `p` is the first-page total-row
+homology coordinate followed by the signed-row comparison with `H_q(B.X p)`.

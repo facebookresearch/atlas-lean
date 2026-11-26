@@ -1,3 +1,5 @@
-# Homology Coaug Is Comon Hom
+# Comonoid compatibility of field CE homology coaugmentation
 
-The canonical coaugmentation is a homology comonoid map.
+Comonoid compatibility of field CE homology coaugmentation.
+
+The graded homology coaugmentation preserves the tensor-unit counit and comultiplication.

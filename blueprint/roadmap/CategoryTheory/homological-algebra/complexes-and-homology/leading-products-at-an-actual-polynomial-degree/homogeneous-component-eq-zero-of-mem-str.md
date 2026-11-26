@@ -1,3 +1,6 @@
-# Homogeneous Component eq zero of mem strict
+# Component at a strict support bound vanishes
 
-A strict upper bound annihilates the component at that bound.
+Component at a strict support bound vanishes.
+
+If `p` lies in `restrictStrictTotalDegree I R n`, then its degree-`n` homogeneous component is
+zero.

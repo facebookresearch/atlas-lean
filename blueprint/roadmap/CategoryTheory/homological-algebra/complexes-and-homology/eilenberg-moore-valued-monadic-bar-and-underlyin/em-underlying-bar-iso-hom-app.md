@@ -1,7 +1,6 @@
-# Em Underlying Bar Iso hom app
+# Forward components of the regular-right bar comparison
 
-The forward underlying comparison component in degree `n` is the whiskered
-`barMap` at the module isomorphisms. This removes the `isoWhiskerRight` and
-`twoSidedBarIso` unfolding: downstream `simp` with `barMap_app`,
-`emModuleIso_hom_f_app`, and `emModRefl_f_app` collapses both reflexive
-components to identities. Mirrors `twoSidedBarIso_hom_app_op_mk`.
+For a monad T on C, T-algebra alg, and n ∈ ℕ, the forward degree-n component of
+emUnderlyingBarIso(alg) is evaluation at the unique point of barMap(emModuleIso.hom,id_L,n),
+where L is the algebra left module. This specifies the component induced by the
+forgotten-free-to-regular module isomorphism.

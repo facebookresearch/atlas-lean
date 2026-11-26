@@ -1,4 +1,6 @@
-# Horizontal Complete Filtration Spectral Object H is Zero of obj is Zero
+# Zero endpoint complexes give zero relative homology
 
-A mapping-cone homology object is zero when both endpoint complexes are
-zero.
+For a nonnegative homological bicomplex K in an abelian
+category and i≤j in EInt, if both extended filtration stages
+F_i and F_j are zero complexes, then
+H^n(Cone(F_i → F_j)) is zero for every n∈ℤ.

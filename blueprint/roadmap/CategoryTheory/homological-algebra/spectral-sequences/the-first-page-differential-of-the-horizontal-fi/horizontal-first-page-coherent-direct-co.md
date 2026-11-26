@@ -1,4 +1,5 @@
-# Horizontal First Page Coherent Direct Column Iso
+# The coherent direct-column coordinate of a first-page object
 
-Coherent identification of a first-page object with direct-column
-homology.
+The coherent direct-column coordinate of a first-page object.
+
+Compose the relative-window comparison with the cone-to-column homology comparison.

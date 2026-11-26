@@ -1,4 +1,6 @@
-# Partial Total E₁Connecting eq horizontal Row At
+# The adjacent-row comparison with explicit total-degree coordinates
 
-The connecting morphism of a successor partial-total step agrees with
-the horizontal row map at arbitrary supported total degrees.
+The adjacent-row comparison with explicit total-degree coordinates.
+
+For `nPlus=(m+1)+q` and `nZero=m+q`, the transported successor connecting morphism equals the
+homology shift map of the horizontal row map at cochain degrees `-nPlus` and `-nZero`.

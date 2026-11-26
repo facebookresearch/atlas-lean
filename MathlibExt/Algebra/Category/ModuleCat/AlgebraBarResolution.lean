@@ -18,15 +18,25 @@ public import Mathlib.AlgebraicTopology.ExtraDegeneracy
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
 /-!
-# The original canonical algebra Bar projective resolution
+# The adjunction Bar resolution over an associative algebra
 
-The simplicial object is the existing adjunction Bar of scalar tensor and
-native restriction, evaluated at the original acting-algebra module. Its
-augmentation is the original counit. Applying native restriction gives the
-existing genuine forgotten extra degeneracy; exact conservative restriction
-then reflects the augmentation quasi-isomorphism. Original ground freeness
-of the acting algebra and coefficient earns degreewise projectivity of the
-original Bar terms. No Bar differential or resolution certificate is supplied.
+Let R be a commutative ring, A an associative unital R-algebra, and
+H = max(u,v,w) a common module height. Scalar extension
+F(X) = A ⊗[R] X is left adjoint to restriction G along R → A.
+For an A-module Y at height H, its augmented simplicial Bar has degree-n
+object F((GF)^n(GY)), with faces induced by algebra multiplication
+and the module action. Its degree-zero augmentation is
+a ⊗ y ↦ a • y.
+
+The alternating-face complex has the full signed sum of these faces
+as differential. After restriction to R, the adjunction unit supplies
+an extra degeneracy, with augmentation section y ↦ 1 ⊗ y.
+Thus the Bar augmentation is a quasi-isomorphism for every Y.
+
+If A and the restricted module GY are free over R, every Bar term is
+projective over A. The complex and its augmentation then give a
+projective resolution of Y. The worlds u and v of R and A and the
+additional module height w are independent, and A may be noncommutative.
 -/
 
 @[expose] public section
@@ -43,7 +53,11 @@ namespace ModuleCat.AlgebraBar
 variable (R : Type u) [CommRing R] (A : Type v) [Ring A] [Algebra R A]
 
 
-/-- The original canonical adjunction Bar, evaluated at the original module. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and Y ∈ ModuleCat^H(A), with H = max(u,v,w), the adjunction
+F = A ⊗[R] − ⊣ G = restriction gives an augmented simplicial
+A-module with degree-n term F((GF)^n(GY)) and augmentation target Y.
+The augmentation in degree zero is the adjunction counit. -/
 def augmented (Y : (ModuleCat.{max u v w} A)) : SimplicialObject.Augmented (ModuleCat.{max u v w} A) :=
   (SimplicialObject.Augmented.whiskeringObj
     (ModuleCat.{max u v w} A ⥤ ModuleCat.{max u v w} A) (ModuleCat.{max u v w} A)
@@ -53,11 +67,19 @@ def augmented (Y : (ModuleCat.{max u v w} A)) : SimplicialObject.Augmented (Modu
 @[simp]
 theorem augmented_point (Y : (ModuleCat.{max u v w} A)) : (augmented R A Y).right = Y := rfl
 
-/-- The original native alternating-face complex of the canonical Bar. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an A-module Y at height H = max(u,v,w), the Bar chain complex
+is the alternating-face complex of its augmented simplicial object.
+Its differential from degree n+1 to n is
+∑_(i=0)^(n+1) (−1)^i δ_i, with the algebra and module-action faces. -/
 def complex (Y : (ModuleCat.{max u v w} A)) : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   AlternatingFaceMapComplex.obj (augmented R A Y).left
 
-/-- The original native Bar augmentation. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an A-module Y, the Bar augmentation is the chain map from the
+alternating-face complex to Y concentrated in degree zero.
+Its degree-zero component is a ⊗ y ↦ a • y, and its positive
+degree components have zero target. -/
 def augmentation (Y : ModuleCat.{max u v w} A) :
     complex R A Y ⟶ (ChainComplex.single₀ (ModuleCat.{max u v w} A)).obj Y :=
   AlternatingFaceMapComplex.ε.app (augmented R A Y)
@@ -71,25 +93,39 @@ theorem augmentation_f_zero (Y : (ModuleCat.{max u v w} A)) :
     Monad.adjAugmented_hom_zero]
   rfl
 
-/-- Original degree n is the original free module on the n-fold native
-scalar tensor monad applied to the restricted original module. -/
+/-- For a commutative ring R, an associative unital R-algebra A,
+Y ∈ ModuleCat^H(A) and n ≥ 0, the degree-n Bar object is
+F((GF)^n(GY)), where F(X) = A ⊗[R] X and G restricts scalars.
+This description holds for arbitrary Y, without a freeness
+assumption on its ground module. -/
 theorem complex_X (Y : (ModuleCat.{max u v w} A)) (n : ℕ) :
     (complex R A Y).X n = (AlgebraTensor.functor.{u, v, w} R A).obj
       ((Monad.monadPow (AlgebraTensor.adjunction.{u, v, w} R A).toMonad n).obj
         ((ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).obj Y)) := rfl
 
-/-- Native restriction of this original augmented Bar. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an A-module Y, restricting its augmented simplicial Bar along
+R → A gives an augmented R-module simplicial object.
+Its target is GY and its degree-n object is G(F((GF)^n(GY))). -/
 def forgotten (Y : (ModuleCat.{max u v w} A)) : SimplicialObject.Augmented (ModuleCat.{max u v w} R) :=
   (SimplicialObject.Augmented.whiskeringObj (ModuleCat.{max u v w} A) (ModuleCat.{max u v w} R)
     (ModuleCat.restrictScalars.{max u v w} (algebraMap R A))).obj (augmented R A Y)
 
-/-- The existing adjunction Bar contraction is on this actual forgotten
-canonical Bar, with no supplied extra-degeneracy data. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an A-module Y, the restricted augmented Bar has the extra
+degeneracy of the adjunction unit. Its augmentation section is
+GY → GFGY, y ↦ 1 ⊗ y.
+The extra-degeneracy identities give a homotopy equivalence from
+the restricted alternating-face complex to GY in degree zero. -/
 def forgottenExtra (Y : (ModuleCat.{max u v w} A)) : (forgotten R A Y).ExtraDegeneracy := by
   change (Monad.AdjunctionBarContraction.forgotten (AlgebraTensor.adjunction.{u, v, w} R A) Y).ExtraDegeneracy
   exact Monad.AdjunctionBarContraction.extra (AlgebraTensor.adjunction.{u, v, w} R A) Y
 
-/-- Native alternating faces commute with exact scalar restriction. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an A-module Y, restriction of its Bar chain complex is
+isomorphic to the alternating-face complex of the restricted
+simplicial Bar. Both complexes have terms G(F((GF)^n(GY))) and
+differentials given by restriction of the signed face sums. -/
 def forgottenComplexIso (Y : (ModuleCat.{max u v w} A)) :
     ((ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj (complex R A Y) ≅
@@ -97,7 +133,11 @@ def forgottenComplexIso (Y : (ModuleCat.{max u v w} A)) :
   (alternatingFaceMapComplexCompMapHomologicalComplexIso
     (ModuleCat.restrictScalars.{max u v w} (algebraMap R A))).app (augmented R A Y).left
 
-/-- The comparison uses the original augmentation under native restriction. -/
+/-- For an R-algebra A and an A-module Y, let G restrict
+scalars, α identify G(Bar_*(Y)) with the restricted Bar's
+alternating-face complex, and χ identify G(Y[0]) with (GY)[0].
+The augmentations satisfy χ ∘ G(ε) = ε_forgot ∘ α.
+This is a square of R-module chain complexes at height max(u,v,w). -/
 theorem forgottenAugmentation_square (Y : (ModuleCat.{max u v w} A)) :
     ((ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).mapHomologicalComplex
       (ComplexShape.down ℕ)).map (augmentation R A Y) ≫
@@ -124,8 +164,11 @@ local instance restriction_preservesHomology :
     (ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).PreservesHomology :=
   Functor.preservesHomologyOfExact (ModuleCat.restrictScalars.{max u v w} (algebraMap R A))
 
-/-- The actual canonical Bar augmentation is a quasi-isomorphism. Its proof
-uses the genuine forgotten extra degeneracy and conservative exact restriction. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and any A-module Y at height max(u,v,w), the augmentation
+Bar_*(Y) → Y[0] is a quasi-isomorphism.
+It identifies degree-zero homology with Y and has zero homology
+in every positive degree. -/
 theorem augmentation_quasiIso (Y : (ModuleCat.{max u v w} A)) : QuasiIso (augmentation R A Y) := by
   have hε : QuasiIso (AlternatingFaceMapComplex.ε.app (forgotten R A Y)) :=
     (forgottenExtra R A Y).homotopyEquiv.quasiIso_hom
@@ -144,8 +187,10 @@ theorem augmentation_quasiIso (Y : (ModuleCat.{max u v w} A)) : QuasiIso (augmen
   exact (HomologicalComplex.quasiIso_map_iff_of_preservesHomology
     (augmentation R A Y) (ModuleCat.restrictScalars.{max u v w} (algebraMap R A))).mp hmap
 
-/-- Actual native powers of scalar tensor preserve ground freeness when the
-original algebra is ground-free. -/
+/-- For a commutative ring R and an associative unital
+R-algebra A free as an R-module, let F = A ⊗[R] − and G be
+restriction. If X is an R-free module, then (GF)^n(X) is R-free
+for every n ≥ 0. The modules lie at height max(u,v,w). -/
 theorem monadPow_moduleFree [Module.Free R A] (X : (ModuleCat.{max u v w} R)) [Module.Free R X] (n : ℕ) :
     Module.Free R ((Monad.monadPow (AlgebraTensor.adjunction.{u, v, w} R A).toMonad n).obj X) := by
   induction n with
@@ -158,7 +203,10 @@ theorem monadPow_moduleFree [Module.Free R A] (X : (ModuleCat.{max u v w} R)) [M
       exact AlgebraTensor.groundObj_moduleFree R A
         ((Monad.monadPow (AlgebraTensor.adjunction.{u, v, w} R A).toMonad n).obj X)
 
-/-- Ground freeness earns projectivity of every original native Bar term. -/
+/-- For a commutative ring R and an associative unital
+R-algebra A, assume A and GY are free over R, where Y is an
+A-module and G restricts scalars. Then the degree-n Bar object
+F((GF)^n(GY)) is a projective A-module for every n ≥ 0. -/
 instance complex_projective [Module.Free R A] (Y : ModuleCat.{max u v w} A)
     [Module.Free R ((ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).obj Y)] (n : ℕ) :
     Projective ((complex R A Y).X n) := by
@@ -168,8 +216,11 @@ instance complex_projective [Module.Free R A] (Y : ModuleCat.{max u v w} A)
     monadPow_moduleFree R A ((ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).obj Y) n
   exact AlgebraTensor.obj_projective R A _
 
-/-- The actual original canonical Bar projective resolution, with exactness
-and projectivity constructed from its original providers. -/
+/-- For a commutative ring R and an associative unital
+R-algebra A, if A and the restricted A-module GY are free over R,
+the alternating-face Bar complex with its counit augmentation
+is a projective resolution of Y in ModuleCat^max(u,v,w)(A).
+The augmentation and projectivity are those of the stated Bar terms. -/
 def projectiveResolution [Module.Free R A] (Y : ModuleCat.{max u v w} A)
     [Module.Free R ((ModuleCat.restrictScalars.{max u v w} (algebraMap R A)).obj Y)] :
     ProjectiveResolution Y where

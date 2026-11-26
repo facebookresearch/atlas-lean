@@ -39,8 +39,11 @@ namespace FirstQuadrantTail
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- Outer cutoff bicomplex over a general abelian target, seen over
-`ComplexShape.up ℕ`. -/
+/-- For a bicomplex K in an abelian category C with both
+differentials raising nonnegative degrees, the cutoff at r is
+B^(r)_(p,q)=K_(p,r) when q=r and zero otherwise.
+Its inner differential is zero, and its outer differential is
+the restriction of the outer differential of K to inner degree r. -/
 noncomputable abbrev outerCutoffTotalBicomplexFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r : ℕ) :
@@ -53,18 +56,27 @@ lemma outerCutoffTotalBicomplexFinite_eq_outerCutoff
     (r : ℕ) : outerCutoffTotalBicomplexFinite K r = outerCutoff K r :=
   rfl
 
-/-- Outer column over a general abelian target: `r`-th row of the flip. -/
+/-- For a bicomplex K with both cohomological indices in ℕ
+in an abelian category C, the slice D_r has degree-p object
+K_(p,r) and differential (K.d_(p,p+1))_r.
+It is the rth outer complex of the flipped bicomplex. -/
 noncomputable abbrev outerCutoffColumnFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r : ℕ) : HomologicalComplex C (ComplexShape.up ℕ) :=
   K.flip.X r
 
-/-- Tail embedding, seen over `ComplexShape.up ℕ`. -/
+/-- For r ∈ ℕ, the cochain-shape embedding t_r : ℕ → ℕ
+is p ↦ p+r. It places outer degree p of a fixed inner-degree-r
+slice in total degree p+r and preserves degree-raising differentials. -/
 noncomputable abbrev outerCutoffColumnEmbeddingFinite (r : ℕ) :
     (ComplexShape.up ℕ).Embedding (ComplexShape.up ℕ) :=
   tailEmbedding r
 
-/-- Extension of the outer column along the tail embedding. -/
+/-- For a bicomplex K in an abelian category C with both
+differentials raising nonnegative degrees, extend the slice
+D_r=(p ↦ K_(p,r)) along p ↦ p+r.
+The resulting complex has term K_(n−r,r) for n≥r and a zero
+object for n<r, with the inherited outer differential. -/
 noncomputable abbrev outerCutoffColumnExtFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r : ℕ) : HomologicalComplex C (ComplexShape.up ℕ) :=
@@ -117,20 +129,27 @@ lemma outerCutoffTotalFinite_pi (p q : ℕ) :
       (ComplexShape.up ℕ) (p, q) = p + q :=
   rfl
 
-/-- Single-branch identification of an outer-cutoff summand. -/
+/-- For a cohomological bicomplex K in an abelian category,
+q=r identifies the cutoff object B^(r)_(p,q) with K_(p,r).
+This is the single nonzero inner-degree branch at outer degree p. -/
 noncomputable def outerCutoffTotalSingleBranchFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r p q : ℕ) (hqr : q = r) :
     ((outerCutoffTotalBicomplexFinite K r).X p).X q ≅ (K.X p).X r :=
   HomologicalComplex.singleObjXIsoOfEq (ComplexShape.up ℕ) r ((K.X p).X r) q hqr
 
-/-- Diagonal single identification via `singleObjXSelf`. -/
+/-- For a cohomological bicomplex K in an abelian category and
+r,p ≥ 0, the retained object B^(r)_(p,r) is canonically isomorphic
+to K_(p,r). It is the diagonal branch of the inner-degree-r cutoff. -/
 noncomputable def outerCutoffTotalSingleSelfFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r p : ℕ) : ((outerCutoffTotalBicomplexFinite K r).X p).X r ≅ (K.X p).X r :=
   HomologicalComplex.singleObjXSelf (ComplexShape.up ℕ) r ((K.X p).X r)
 
-/-- The general branch agrees with `singleObjXSelf` on the diagonal. -/
+/-- For a cohomological bicomplex K in an abelian category,
+specializing the branch identification B^(r)_(p,q) ≅ K_(p,r)
+to q=r gives the diagonal identification B^(r)_(p,r) ≅ K_(p,r).
+The two canonical maps agree. -/
 lemma outerCutoffTotalSingleBranchFinite_rfl
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r p : ℕ) :
@@ -138,14 +157,22 @@ lemma outerCutoffTotalSingleBranchFinite_rfl
       outerCutoffTotalSingleSelfFinite K r p :=
   rfl
 
-/-- Extension-branch identification at total degree `n = p + r`. -/
+/-- For a cohomological bicomplex K in an abelian category and
+n=p+r, the extended slice satisfies
+(extend_(t_r) D_r)_n ≅ (D_r)_p = K_(p,r).
+This is the supported-degree identification for the translation
+t_r(p)=p+r. -/
 noncomputable def outerCutoffColumnExtBranchFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r p n : ℕ) (h : p + r = n) :
     (outerCutoffColumnExtFinite K r).X n ≅ (outerCutoffColumnFinite K r).X p :=
   HomologicalComplex.extendXIso _ _ (by rw [outerCutoffColumnEmbeddingFinite_f]; exact h)
 
-/-- Forward summand map: kill off-row summands, identify the `(p, r)` one. -/
+/-- For a cohomological bicomplex K in an abelian category and
+p+q=n, the comparison B^(r)_(p,q) → (extend_(t_r)D_r)_n
+is zero if q≠r. If q=r, it identifies the source with K_(p,r)
+and uses the inverse supported-degree identification n=p+r
+to enter the extended slice. -/
 noncomputable def outerCutoffTotalSummandMapFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n p q : ℕ)
@@ -159,7 +186,11 @@ noncomputable def outerCutoffTotalSummandMapFinite
         (by subst hqr; simpa [outerCutoffTotalFinite_pi] using h)).inv
   else 0
 
-/-- Forward comparison out of the total complex. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the forward comparison F_n : Tot(B^(r))_n → (extend_(t_r)D_r)_n
+is the coproduct map whose only retained summand has q=r.
+It identifies the (p,r) branch in total degree p+r with the
+translated slice term. -/
 noncomputable def outerCutoffTotalFwdFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) :
@@ -181,7 +212,11 @@ lemma outerCutoffTotalIotaFwdFinite
     (outerCutoffTotalSummandMapFinite K r n) p q h
 
 open Classical in
-/-- Backward comparison into the total complex. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the backward comparison B_n : (extend_(t_r)D_r)_n → Tot(B^(r))_n
+uses the unique p with n=p+r when n≥r, identifies the term with
+K_(p,r), and includes its retained total summand.
+For n<r it is the zero map from a zero extension object. -/
 noncomputable def outerCutoffTotalBwdFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) :
@@ -199,7 +234,9 @@ noncomputable def outerCutoffTotalBwdFinite
         simpa [outerCutoffTotalFinite_pi] using hc)
   else 0
 
-/-- Off-row total summands vanish (their source is a zero single-branch object). -/
+/-- For a cohomological bicomplex K in an abelian category and
+p+q=n, if q≠r then the inclusion B^(r)_(p,q) → Tot(B^(r))_n
+is zero. Its source is the zero object of the off-slice branch. -/
 lemma outerCutoffTotalIotaOffRowFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n p q : ℕ)
@@ -210,7 +247,12 @@ lemma outerCutoffTotalIotaOffRowFinite
     HomologicalComplex.isZero_single_obj_X _ _ _ _ hqr
   exact hz.eq_of_src _ _
 
-/-- Forward summand formula at `(p, r, p + r)`, via `singleObjXSelf`. -/
+/-- For a cohomological bicomplex K in an abelian category and
+n=p+r, the forward summand map identifies B^(r)_(p,r) with
+K_(p,r), then uses the inverse identification
+(extend_(t_r)D_r)_n ≅ K_(p,r).
+Thus it retains the single supported slice branch without an
+additional scalar sign. -/
 lemma outerCutoffTotalSummandOnRowFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n p : ℕ)
@@ -231,7 +273,9 @@ lemma outerCutoffTotalSummandOffRowFinite
     outerCutoffTotalSummandMapFinite K r n p q h = 0 := by
   simp only [outerCutoffTotalSummandMapFinite, dite_eq_right hqr]
 
-/-- Off-image extension objects vanish. -/
+/-- For a cohomological bicomplex K in an abelian category,
+if no p ∈ ℕ satisfies p+r=n, then (extend_(t_r)D_r)_n is a zero
+object. Equivalently, the extended slice is zero for n<r. -/
 lemma outerCutoffColumnExtOffImageFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) (h : ¬ ∃ p, (outerCutoffColumnEmbeddingFinite r).f p = n) :
@@ -242,7 +286,11 @@ lemma outerCutoffColumnExtOffImageFinite
 
 set_option backward.isDefEq.respectTransparency false in
 open Classical in
-/-- Object-level forward-backward identity. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the degreewise comparisons F_n : Tot(B^(r))_n → (extend D_r)_n
+and B_n in the reverse direction satisfy
+B_n ∘ F_n = id_(Tot(B^(r))_n).
+Only the retained q=r branch contributes. -/
 theorem outerCutoffTotalFwdBwdIdFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) :
@@ -285,7 +333,11 @@ theorem outerCutoffTotalFwdBwdIdFinite
 
 set_option backward.isDefEq.respectTransparency false in
 open Classical in
-/-- Object-level backward-forward identity. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the degreewise cutoff-total and extension comparisons satisfy
+F_n ∘ B_n = id_((extend_(t_r)D_r)_n).
+In unsupported degrees n<r both extension and total terms are
+zero objects. -/
 theorem outerCutoffTotalBwdFwdIdFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) :
@@ -321,7 +373,11 @@ theorem outerCutoffTotalBwdFwdIdFinite
     rw [hbwd, zero_comp]
     exact (outerCutoffColumnExtOffImageFinite K r n hex).eq_of_src _ _
 
-/-- Objectwise iso between the outer-cutoff total and the extended column. -/
+/-- For a cohomological bicomplex K in an abelian category and
+r,n ≥ 0, there is an isomorphism
+Tot(B^(r))_n ≅ (extend_(t_r)D_r)_n.
+Its forward map retains the inner-degree-r total branch, and
+its inverse includes that branch at the unique degree n=p+r. -/
 noncomputable def outerCutoffTotalXIsoFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) :
@@ -332,7 +388,11 @@ noncomputable def outerCutoffTotalXIsoFinite
   hom_inv_id := outerCutoffTotalFwdBwdIdFinite K r n
   inv_hom_id := outerCutoffTotalBwdFwdIdFinite K r n
 
-/-- Component formula for the objectwise cutoff-total comparison. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the forward degree-(p+r) isomorphism composed with the
+(p,r) total inclusion is the canonical map
+B^(r)_(p,r) ≅ K_(p,r) ≅ (extend_(t_r)D_r)_(p+r).
+This is its retained-summand formula. -/
 lemma outerCutoffTotalXIsoHomIotaFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r p : ℕ)
@@ -346,7 +406,11 @@ lemma outerCutoffTotalXIsoHomIotaFinite
   rw [outerCutoffTotalIotaFwdFinite, outerCutoffTotalSummandOnRowFinite]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- `ιTotal` followed by `D₂` vanishes: outer-cutoff inner complexes are singles. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the composition of any cutoff total summand inclusion with the
+inner total-differential component D₂ is zero.
+The cutoff B^(r) has zero inner differential, so this holds in
+every pair of total degrees. -/
 theorem outerCutoffIotaD2Finite_eq_zero
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r i j p q : ℕ)
@@ -360,7 +424,11 @@ theorem outerCutoffIotaD2Finite_eq_zero
   simp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Row case of forward naturality: `ιTotal p r` through `D₁` then `Fwd`. -/
+/-- For a cohomological bicomplex K in an abelian category,
+on the retained branch (p,r) with i=p+r and j=i+1, the outer
+total-differential component followed by F_j equals F_i followed
+by the differential of extend_(t_r)D_r.
+The latter is the translated outer slice differential. -/
 theorem outerCutoffIotaD1FwdOnRowFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r i j p : ℕ)
@@ -448,7 +516,10 @@ theorem outerCutoffIotaD1FwdOnRowFinite
     Iso.inv_hom_id, Category.id_comp]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Forward maps commute with the differentials. -/
+/-- For a cohomological bicomplex K in an abelian category
+and j=i+1, the forward comparisons satisfy
+d_(extend D_r)^(i,j) ∘ F_i = F_j ∘ d_(Tot B^(r))^(i,j).
+Thus the retained-branch degree maps form a cochain map. -/
 theorem outerCutoffTotalFwdCommFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r i j : ℕ) (hij : (ComplexShape.up ℕ).Rel i j) :
@@ -480,8 +551,12 @@ theorem outerCutoffTotalFwdCommFinite
       HomologicalComplex.isZero_single_obj_X _ _ _ _ hqr
     exact hz.eq_of_src _ _
 
-/-- Chain-level isomorphism between the outer-cutoff total and the extended
-column, over a general abelian target. -/
+/-- For a bicomplex K in an abelian category C with both
+differentials raising nonnegative degrees, there is a cochain
+isomorphism Tot(B^(r)) ≅ extend_(p↦p+r)(K.flip_r).
+It identifies the sole inner-degree-r branch in each total
+antidiagonal and retains the outer differential.
+The category object and morphism universes are independent. -/
 noncomputable def outerCutoffTotalIsoFinite
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r : ℕ) :
@@ -490,7 +565,10 @@ noncomputable def outerCutoffTotalIsoFinite
   HomologicalComplex.Hom.isoOfComponents (outerCutoffTotalXIsoFinite K r)
     (fun i j hij => outerCutoffTotalFwdCommFinite K r i j hij)
 
-/-- Application of the chain-level cutoff-total isomorphism. -/
+/-- For a cohomological bicomplex K in an abelian category,
+the degree-n component isomorphism of
+Tot(B^(r)) ≅ extend_(t_r)D_r is the cutoff-total object comparison
+whose forward map retains the q=r branch and whose inverse includes it. -/
 lemma outerCutoffTotalIsoFinite_app
     (K : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (r n : ℕ) :
@@ -500,7 +578,11 @@ lemma outerCutoffTotalIsoFinite_app
 
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of the generic outer-cutoff total comparison. -/
+/-- For a cohomological bicomplex map φ : K → L in an abelian
+category, let φ_r : K.flip_r → L.flip_r be its inner-degree-r
+slice map. The cutoff-total comparisons satisfy
+F_L ∘ Tot(B^(r)(φ)) = extend_(t_r)(φ_r) ∘ F_K.
+This is a square of nonnegative cochain complexes. -/
 theorem outerCutoffTotalIsoFinite_hom_naturality
     {K L : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ)}
     (phi : K ⟶ L) (r : ℕ) :
@@ -624,9 +706,12 @@ theorem outerCutoffTotalIsoFinite_hom_naturality
     rw [hOffL, hOffK]
     simp
 
-/-- Totalizing the outer-cutoff map is a quasi-isomorphism iff the `r`-th column
-map is: transport across the naturality square `outerCutoffTotalIsoFinite_hom_naturality`
-and cancel the two chain isomorphisms, then use `quasiIso_extendMap_iff`. -/
+/-- For a cohomological bicomplex map φ : K → L in an abelian
+category and r ≥ 0, the total map of the inner-degree-r cutoffs
+is a quasi-isomorphism if and only if the slice map
+φ_r : K.flip_r → L.flip_r is a quasi-isomorphism.
+The natural cutoff-total isomorphisms identify the total map
+with extension of φ_r along p ↦ p+r. -/
 theorem totalOuterCutoffMap_quasiIso_iff_finite
     (K L : HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ))
     (phi : K ⟶ L) (r : ℕ) :

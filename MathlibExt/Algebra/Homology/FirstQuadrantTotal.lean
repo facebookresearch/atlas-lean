@@ -14,15 +14,18 @@ public import MathlibExt.Algebra.Homology.TotalComplexDownNat
 public import Mathlib.CategoryTheory.Limits.Shapes.FiniteProducts
 
 /-!
-# Finite first-quadrant total complexes
+# Finite antidiagonal presentations of first-quadrant totals
 
-In total degree `n`, a first-quadrant chain bicomplex has exactly the
-bidegrees `(p,n-p)` for `0 ≤ p ≤ n`.  This file identifies that indexing
-fiber with `Fin (n+1)`, obtains totalization from finite coproducts, and
-records the finite horizontal filtration's degreewise exhaustiveness.
+For a nonnegative homological bicomplex, total degree n consists of
+the bidegrees (p,q) with p+q=n. They are canonically indexed by
+p∈Fin(n+1), with q=n−p.
 
-These are boundedness ingredients only; no spectral object or convergence
-theorem is asserted here.
+Horizontal stage k retains p≤k. Once n≤k every total-degree n
+coordinate is retained, so the filtered and full indexing fibers
+are equivalent. In a preadditive category with finite coproducts,
+these finite antidiagonals define the total complex and give
+Tot(K)_n ≅ ⨁_(p=0)^n K_(p,n−p).
+The object and morphism worlds of the target category are independent.
 -/
 
 @[expose] public section
@@ -35,8 +38,10 @@ universe v u
 
 namespace HomologicalComplex₂
 
-/-- Bidegrees contributing to total degree `n` in a first-quadrant chain
-bicomplex. -/
+/-- For n∈ℕ, the total-degree fiber is the set of pairs
+(p,q)∈ℕ² satisfying p+q=n.
+These are the bidegrees contributing to degree n of a first-quadrant
+homological total complex. -/
 abbrev DownNatTotalFiber (n : ℕ) :=
   (ComplexShape.π (ComplexShape.down ℕ) (ComplexShape.down ℕ)
     (ComplexShape.down ℕ)) ⁻¹' {n}
@@ -46,7 +51,9 @@ theorem downNatTotalFiber_mem (n : ℕ) (x : DownNatTotalFiber n) :
     x.val.1 + x.val.2 = n :=
   x.property
 
-/-- First horizontal coordinate of a total bidegree. -/
+/-- For a pair (p,q) of nonnegative integers with p+q=n,
+the horizontal coordinate p belongs to Fin(n+1), since p≤n.
+This defines the map from the total-degree fiber to Fin(n+1). -/
 def downNatTotalFiberToFin (n : ℕ) : DownNatTotalFiber n → Fin (n + 1) :=
   fun x => ⟨x.val.1, by
     have hx := x.property
@@ -70,14 +77,18 @@ theorem downNatTotalFiber_finite (n : ℕ) :
     Finite (DownNatTotalFiber n) :=
   inferInstance
 
-/-- Every `p ≤ n` gives the unique bidegree `(p,n-p)` in total degree
-`n`. -/
+/-- For p∈Fin(n+1), the pair (p,n−p) belongs to the
+nonnegative total-degree fiber at n.
+The subtraction is justified by p≤n and recovers its unique
+vertical coordinate. -/
 def finToDownNatTotalFiber (n : ℕ) : Fin (n + 1) → DownNatTotalFiber n :=
   fun p => ⟨(p.val, n - p.val), by
     change p.val + (n - p.val) = n
     omega⟩
 
-/-- The bidegrees in total degree `n` are canonically `Fin (n+1)`. -/
+/-- For n∈ℕ, the antidiagonal pairs (p,q) with p+q=n are
+equivalent to Fin(n+1). The forward map takes p, and the inverse
+sends p to (p,n−p). -/
 def downNatTotalFiberEquivFin (n : ℕ) :
     DownNatTotalFiber n ≃ Fin (n + 1) where
   toFun := downNatTotalFiberToFin n
@@ -92,8 +103,9 @@ def downNatTotalFiberEquivFin (n : ℕ) :
       omega
   right_inv _ := rfl
 
-/-- Bidegrees in total degree `n` whose horizontal coordinate is at most
-`k`. -/
+/-- For n,k∈ℕ, the horizontal filtered fiber consists of
+pairs (p,q)∈ℕ² with p+q=n and p≤k.
+It indexes the retained finite summands in stage k of total degree n. -/
 abbrev DownNatHorizontalFilteredFiber (n k : ℕ) :=
   {pq : DownNatTotalFiber n // pq.val.1 ≤ k}
 
@@ -101,16 +113,19 @@ instance downNatHorizontalFilteredFiber_finite (n k : ℕ) :
     Finite (DownNatHorizontalFilteredFiber n k) :=
   inferInstance
 
-/-- Every bidegree in total degree `n` has horizontal coordinate at most
-`n`. -/
+/-- For a pair (p,q)∈ℕ² with p+q=n, the inequality p≤n holds.
+It supplies the degreewise horizontal support bound for the
+first-quadrant total. -/
 theorem downNatTotalFiber_fst_le (n : ℕ) (pq : DownNatTotalFiber n) :
     pq.val.1 ≤ n := by
   have hpq := pq.property
   change pq.val.1 + pq.val.2 = n at hpq
   omega
 
-/-- The horizontal filtration is exhaustive in total degree `n` by stage
-`n` (and hence by every later stage). -/
+/-- For n,k∈ℕ with n≤k, forgetting the horizontal-bound
+proof gives an equivalence from the filtered fiber
+{(p,q) | p+q=n, p≤k} to the full total fiber.
+Every total-degree coordinate already satisfies p≤n≤k. -/
 def downNatHorizontalFilteredFiberEquiv (n k : ℕ) (h : n ≤ k) :
     DownNatHorizontalFilteredFiber n k ≃ DownNatTotalFiber n where
   toFun pq := pq.1
@@ -121,8 +136,10 @@ def downNatHorizontalFilteredFiberEquiv (n k : ℕ) (h : n ≤ k) :
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasFiniteCoproducts C]
 
-/-- A first-quadrant chain bicomplex has a direct-sum total complex using
-only finite coproducts. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, its direct-sum total exists.
+Each degree n uses only the finite antidiagonal p+q=n,
+so no infinite coproduct assumption is required. -/
 theorem firstQuadrantHasTotal
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) :
@@ -132,7 +149,10 @@ theorem firstQuadrantHasTotal
     (K.X pq.val.1).X pq.val.2)
   infer_instance
 
-/-- Explicit finite-coproduct presentation of total degree `n`. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, there is an isomorphism
+Tot(K)_n ≅ ⨁_(p=0)^n K_(p,n−p).
+It is the reindexing of the total-degree fiber by Fin(n+1). -/
 noncomputable def firstQuadrantTotalXIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :

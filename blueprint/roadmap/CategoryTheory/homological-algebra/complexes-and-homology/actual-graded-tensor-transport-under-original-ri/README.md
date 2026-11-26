@@ -1,6 +1,6 @@
 # Actual graded tensor transport under original-ring scalar restriction
 
-- [Graded Functor](graded-functor.md)
-- [Graded Tensor Iso Component](graded-tensor-iso-component.md)
-- [Graded Tensor Iso](graded-tensor-iso.md)
-- [Graded Tensor Iso naturality](graded-tensor-iso-naturality.md)
+- [Scalar restriction acts pointwise on natural-number graded modules](graded-functor.md)
+- [Finite antidiagonals give each scalar graded-tensor comparison component](graded-tensor-iso-component.md)
+- [Scalar restriction commutes canonically with natural-number graded tensor products](graded-tensor-iso.md)
+- [Scalar graded-tensor comparisons commute with both graded morphisms](graded-tensor-iso-naturality.md)

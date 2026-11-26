@@ -1,6 +1,7 @@
-# Functor Mapping Cone Comp Triangle
+# A cochain filtration gives mapping-cone composition triangles
 
-Mapping-cone composition triangle for the images under a functor.  Its
-middle object uses `F.map (f ≫ g)` literally, matching the functor on
-composable arrows; it is canonically isomorphic to the usual triangle whose
-middle map is `F.map f ≫ F.map g`.
+Let C be preadditive with a zero object and finite coproducts, F:ℤ∪{⊥,⊤}→CochainComplex(C,ℤ),
+and f:X→Y, g:Y→Z composable index arrows. This triangle has objects Cone(Ff), Cone(F(f≫g)) and
+Cone(Fg). Its first two arrows are the cone maps induced by (id_{FX},Fg) and (Ff,id_{FZ}). Its
+third arrow is Cone(Fg)→FY[1] from the cone triangle of Fg, followed by the shifted inclusion
+FY[1]→Cone(Ff)[1]. Functoriality identifies F(f≫g) with Ff≫Fg.

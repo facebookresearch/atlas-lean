@@ -13,13 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPiece
 
 /-!
-# The projection onto a horizontal graded piece
+# Projection maps to directly reindexed horizontal columns
 
-This file assembles the degreewise top-column projections into a cochain map.
-For a transparent differential calculation, the target is presented directly
-as the extension along `q ↦ -p-q`, with differential multiplied by the same
-`(-1)^p` sign supplied by the standard cochain shift.  A later comparison
-identifies this direct presentation with `horizontalColumnCochain`.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. Reindex vertical column `p` along `q ↦ -p-q` and multiply its differential by
+`(-1)^p` to obtain the direct-column cochain complex.
+
+The top-column projections from complete filtration stage `p` commute with this signed
+differential. They are zero above cochain degree `-p`; in supported degrees they use vertical
+coordinate `(-p-i).toNat`. Together the projections form a cochain map in every integer
+degree.
 -/
 
 @[expose] public section
@@ -40,13 +43,19 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
+/-- The vertical coordinate of a supported column degree.
+
+At cochain degree `-p-q`, the column-degree function returns `q`. -/
 @[simp]
 theorem horizontalColumnDegree_eq (p q : ℕ) :
     horizontalColumnDegree p (-(p : ℤ) - q) = q := by
   unfold horizontalColumnDegree
   omega
 
-/-- Direct presentation of the shifted `p`th vertical column. -/
+/-- The directly reindexed signed vertical column complex.
+
+Extend column `p` along `q ↦ -p-q` and multiply its cochain differential by the sign unit
+`(-1)^p`. -/
 noncomputable def horizontalDirectColumnCochain (p : ℕ) :
     CochainComplex C ℤ where
   X := ((K.X p).extend (ComplexShape.embeddingUpIntLE (-(p : ℤ)))).X
@@ -59,7 +68,9 @@ noncomputable def horizontalDirectColumnCochain (p : ℕ) :
     simp only [Linear.units_smul_comp, Linear.comp_units_smul, smul_smul]
     rw [HomologicalComplex.d_comp_d, smul_zero]
 
-/-- Canonical degree identification for the direct column presentation. -/
+/-- The degree-object isomorphism of a direct signed column.
+
+The direct-column object at degree `-p-q` is isomorphic to bidegree `K_(p,q)`. -/
 noncomputable def horizontalDirectColumnCochainXIso (p q : ℕ) :
     (horizontalDirectColumnCochain K p).X (-(p : ℤ) - q) ≅
       (K.X p).X q :=
@@ -67,6 +78,9 @@ noncomputable def horizontalDirectColumnCochainXIso (p q : ℕ) :
     simp only [ComplexShape.embeddingUpIntLE_f])
 
 omit [HasFiniteCoproducts C] in
+/-- The support bound of a direct-column cochain complex.
+
+The direct column is zero in cochain degrees strictly above `-p`. -/
 theorem horizontalDirectColumnCochain_isZero_X_of_lt
     (p : ℕ) (i : ℤ) (hi : -(p : ℤ) < i) :
     IsZero ((horizontalDirectColumnCochain K p).X i) :=
@@ -74,6 +88,10 @@ theorem horizontalDirectColumnCochain_isZero_X_of_lt
     (by simpa only [ComplexShape.notMem_range_embeddingUpIntLE_iff] using hi)
 
 omit [HasFiniteCoproducts C] in
+/-- The vertical differential in direct-column degree coordinates.
+
+The direct differential from `-p-(q+1)` to `-p-q`, transported to vertical column objects, is
+`ε₂(p,q+1)` times the vertical boundary, with standard sign `(-1)^p`. -/
 @[reassoc]
 theorem horizontalDirectColumnCochainXIso_inv_d_hom (p q : ℕ) :
     (horizontalDirectColumnCochainXIso K p (q + 1)).inv ≫
@@ -90,8 +108,10 @@ theorem horizontalDirectColumnCochainXIso_inv_d_hom (p q : ℕ) :
   simp
   congr 1
 
-/-- Canonical projection component in bidegree `(p,q)` for the direct column
-presentation. -/
+/-- The complete-stage projection in one direct-column degree.
+
+At cochain degree `-p-q`, project the complete upper stage through its finite-stage
+presentation to the direct column. -/
 noncomputable def horizontalDirectColumnProjectionComponent (p q : ℕ) :
     ((horizontalCompleteFiltrationCochainDiagram K).obj
       (horizontalFirstPageUpperIndex p)).X (-(p : ℤ) - q) ⟶
@@ -103,7 +123,10 @@ noncomputable def horizontalDirectColumnProjectionComponent (p q : ℕ) :
     horizontalFilteredTopProjection K p q ≫
     (horizontalDirectColumnCochainXIso K p q).inv
 
-/-- Degreewise projection from filtration stage `p` to the direct column. -/
+/-- The direct-column projection in an arbitrary cochain degree.
+
+For `i ≤ -p`, use the component at vertical degree `(-p-i).toNat`; for `i>-p`, use the zero
+map. -/
 noncomputable def horizontalDirectColumnProjection (p : ℕ) (i : ℤ) :
     ((horizontalCompleteFiltrationCochainDiagram K).obj
       (horizontalFirstPageUpperIndex p)).X i ⟶
@@ -119,6 +142,10 @@ noncomputable def horizontalDirectColumnProjection (p : ℕ) (i : ℤ) :
           (horizontalColumnDegree_spec p i hi).symm)
   · exact 0
 
+/-- The supported formula for direct-column projection.
+
+If `i ≤ -p`, the arbitrary-degree projection is its supported component transported through
+the column-degree equalities. -/
 theorem horizontalDirectColumnProjection_eq_of_le (p : ℕ) (i : ℤ)
     (hi : i ≤ -(p : ℤ)) :
     horizontalDirectColumnProjection K p i =
@@ -133,12 +160,18 @@ theorem horizontalDirectColumnProjection_eq_of_le (p : ℕ) (i : ℤ)
   unfold horizontalDirectColumnProjection
   rw [dite_eq_left hi]
 
+/-- The zero direct-column projection above support.
+
+If `i>-p`, the direct-column projection in degree `i` is zero. -/
 theorem horizontalDirectColumnProjection_eq_zero_of_lt (p : ℕ) (i : ℤ)
     (hi : -(p : ℤ) < i) :
     horizontalDirectColumnProjection K p i = 0 := by
   unfold horizontalDirectColumnProjection
   rw [dite_eq_right (by lia)]
 
+/-- The direct-column projection at a displayed supported bidegree.
+
+At degree `-p-q`, the arbitrary-degree projection is the component indexed by `(p,q)`. -/
 theorem horizontalDirectColumnProjection_eq_component (p q : ℕ) :
     horizontalDirectColumnProjection K p (-(p : ℤ) - q) =
       horizontalDirectColumnProjectionComponent K p q := by
@@ -146,6 +179,10 @@ theorem horizontalDirectColumnProjection_eq_component (p q : ℕ) :
   rw [dite_eq_left (show -(p : ℤ) - q ≤ -(p : ℤ) by omega)]
   simp [horizontalColumnDegree]
 
+/-- Differential compatibility of supported direct-column projections.
+
+The projection components in consecutive supported degrees commute with the complete-stage
+differential and signed direct-column differential. -/
 theorem horizontalDirectColumnProjectionComponent_comm (p q : ℕ) :
     horizontalDirectColumnProjectionComponent K p (q + 1) ≫
         (horizontalDirectColumnCochain K p).d (-(p : ℤ) - (q + 1))
@@ -183,8 +220,10 @@ theorem horizontalDirectColumnProjectionComponent_comm (p q : ℕ) :
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
   rw [horizontalFilteredTotalD_topProjection]
 
-/-- The top-column projections form a cochain map to the direct graded-piece
-presentation. -/
+/-- The complete-stage cochain map onto a direct column.
+
+The supported projection components and zero unsupported components assemble into a cochain
+map from the complete upper stage. -/
 noncomputable def horizontalDirectColumnProjectionMap (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageUpperIndex p) ⟶

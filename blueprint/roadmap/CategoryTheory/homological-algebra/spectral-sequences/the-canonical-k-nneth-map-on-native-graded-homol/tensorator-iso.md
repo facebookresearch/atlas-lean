@@ -1,4 +1,6 @@
-# Tensorator Iso
+# The graded isomorphism of invertible Künneth tensorator components
 
-Objectwise invertibility of the canonical Künneth maps packages their
-actual inverses into a graded isomorphism.
+The graded isomorphism of invertible Künneth tensorator components.
+
+If all canonical homology tensor maps for `K,L` are isomorphisms, their component inverses
+give a graded isomorphism with forward map the tensorator.

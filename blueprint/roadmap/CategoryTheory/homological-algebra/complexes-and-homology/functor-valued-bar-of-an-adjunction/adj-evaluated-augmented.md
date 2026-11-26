@@ -1,8 +1,6 @@
-# Adj Evaluated Augmented
+# The evaluated restricted free-forgetful bar
 
-Evaluated/forgotten adjunction augmentation over `C`, mirroring
-`emUnderlyingAugmented`: whisker the adjunction pairing with
-`resolutionEvalPoint`. Its formal relation to the literal
-forgetful/evaluated image of `adjAugmented T.adj` is recorded in
-`adjLiteralAugmented` and `adjLiteralIso` below: the literal image is the
-whiskered `adjAugmented T.adj`, naturally isomorphic to this surrogate model.
+Let T be a monad on C, S its induced free-forgetful monad, and alg=(A,a) a T-algebra. Evaluate
+the balanced bar of the forgotten free right S-module and the constant left S-module of the
+restricted algebra at the unique discrete point. This gives an augmented simplicial object of
+C with target A and zero-degree term T(A); its augmentation comes from the algebra action.

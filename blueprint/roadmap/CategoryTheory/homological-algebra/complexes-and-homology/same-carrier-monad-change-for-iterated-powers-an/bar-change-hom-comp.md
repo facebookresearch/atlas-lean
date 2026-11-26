@@ -1,7 +1,6 @@
-# Bar Change Hom comp
+# Simplicial bar changes preserve composition through restriction
 
-Genuine composition law: composite-restriction iso hom followed by two genuine
-bar-change maps for `h` and `k` equals the genuine bar-change map for `h ≫ k`.
-
-Derived functorially from `barChangeDataHom_comp` via `Data.toSimplicialFunctor`
-and `Functor.map_comp`.
+Let h : T → S, k : S → U be monad morphisms on C, and R,L be right and left U-modules. If e is
+the simplicial comparison from composite restriction to iterated restriction, then e.hom ≫
+c_h(k*R,k*L) ≫ c_k(R,L) = c_{h≫k}(R,L). The maps are simplicial two-sided bar maps with values
+in A ⥤ D, where L : A → C and R : C → D.

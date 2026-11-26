@@ -1,3 +1,5 @@
-# Horizontal First Page Row Map Of Bicomplex
+# The fixed-row first-page map of a bicomplex morphism
 
-The map between fixed first-page rows induced by a bicomplex map.
+The fixed-row first-page map of a bicomplex morphism.
+
+Restrict the first-page map along the embedding `p ↦ (p,q)` for a fixed vertical degree `q`.

@@ -1,3 +1,4 @@
-# Em Target Hom app f
+# The constant target map has underlying morphism φ
 
-The underlying map of the target map is the algebra morphism.
+For a monad T on C, an algebra morphism φ : alg → alg′, and X ∈ Discrete PUnit, the underlying
+C-map of emTargetHom(φ)_X equals φ.f : alg.A → alg′.A.

@@ -1,6 +1,6 @@
 # Comparing complete and finite horizontal-filtration stages
 
-- [Horizontal Complete Filtered Total Complex Finite Iso](horizontal-complete-filtered-total-compl.md)
-- [Horizontal Complete Filtered Total Complex Finite Iso hom to Total](horizontal-complete-filtered-total-compl-2.md)
-- [Horizontal Complete Filtered Total Complex Finite Iso naturality](horizontal-complete-filtered-total-compl-3.md)
-- [Horizontal Complete Filtered Total Complex Finite Iso transition](horizontal-complete-filtered-total-compl-4.md)
+- [Nonnegative complete stages are canonically isomorphic to finite horizontal stages](horizontal-complete-filtered-total-compl.md)
+- [Complete-to-finite comparisons preserve inclusions into the total complex](horizontal-complete-filtered-total-compl-2.md)
+- [Complete-to-finite stage comparisons are natural in the bicomplex](horizontal-complete-filtered-total-compl-3.md)
+- [Complete-to-finite comparisons commute with increasing filtration cuts](horizontal-complete-filtered-total-compl-4.md)

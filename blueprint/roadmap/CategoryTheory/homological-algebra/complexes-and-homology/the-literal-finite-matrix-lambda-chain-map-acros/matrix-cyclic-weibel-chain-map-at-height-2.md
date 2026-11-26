@@ -1,4 +1,6 @@
-# Matrix Cyclic Weibel Chain Map At Height f up
+# The component formula for a lifted signed matrix cyclic trace
 
-Each component is the lifted signed normalized exterior representative followed by
-generalized trace.
+The component formula for a lifted signed matrix cyclic trace.
+
+The degree-`n` map sends a lifted wedge to its lifted degree-signed exterior representative
+followed by generalized matrix trace.

@@ -1,4 +1,6 @@
-# Partial Total Zero Column Edge representation
+# The zero-row homology formula for the zero-column edge
 
-The chosen page-two zero-column representative is homology of the
-literal zeroth-row inclusion into the total complex.
+The zero-row homology formula for the zero-column edge.
+
+The vertical-homology class map, inverse chosen second-page comparison, and zero-column edge
+compose to homology of the zero-row inclusion into the full total.

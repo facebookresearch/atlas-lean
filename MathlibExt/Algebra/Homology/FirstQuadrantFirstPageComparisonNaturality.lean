@@ -20,16 +20,15 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantFirstPageRowNaturality
 
 /-!
-# Naturality of first-page vertical-homology comparisons
+# Naturality of first-page comparisons with vertical homology
 
-The coherent first-page comparison is natural under bicomplex maps.  Its
-normalized form is natural because the same sign unit occurs at source and
-target.  The normalized component squares assemble into naturality of the
-fixed-row complex isomorphism, and therefore into the corresponding homology
-square.
+Let `K → L` be a morphism of first-quadrant bicomplexes in an abelian category. At bidegree
+`(p,q)`, the coherent comparison from the horizontal-filtration first page to `H_q(K_p)`
+commutes with the induced page map and column homology map.
 
-This file makes no successor-page, second-page, S⁻¹S, or
-Bousfield--Kan claim.
+The sign-normalized comparison is also natural, since its sign unit depends only on `(p,q)`.
+For fixed `q`, these component equations give naturality of the isomorphism from the first-
+page row complex to the vertical-homology complex and of its induced homology comparison.
 -/
 
 @[expose] public section
@@ -50,8 +49,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The coherent first-page comparison with vertical homology is natural in
-the bicomplex. -/
+/-- Naturality of the coherent first-page vertical-homology comparison.
+
+For a bicomplex map `f : K → L`, the first-page map at `(p,q)` followed by the target
+comparison equals the source comparison followed by `H_q(f_p)`. -/
 @[reassoc]
 theorem horizontalFirstPageCoherentVerticalHomologyIso_hom_naturality
     (f : K ⟶ L) (p q : ℕ) :
@@ -100,8 +101,10 @@ theorem horizontalFirstPageCoherentVerticalHomologyIso_hom_naturality
             K p q).hom) ≫= hColumn
     _ = _ := by simp only [Category.assoc]
 
-/-- The sign-normalized first-page comparison with vertical homology is
-natural in the bicomplex. -/
+/-- Naturality of the sign-normalized first-page comparison.
+
+The normalized isomorphisms from first-page objects to column vertical homology commute with
+every bicomplex map at the fixed bidegree. -/
 @[reassoc]
 theorem horizontalFirstPageNormalizedVerticalHomologyIso_hom_naturality
     (f : K ⟶ L) (p q : ℕ) :
@@ -114,8 +117,10 @@ theorem horizontalFirstPageNormalizedVerticalHomologyIso_hom_naturality
     Linear.comp_units_smul, Linear.units_smul_comp,
     horizontalFirstPageCoherentVerticalHomologyIso_hom_naturality]
 
-/-- The normalized isomorphism from a fixed first-page row to the
-vertical-homology complex is natural in the bicomplex. -/
+/-- Naturality of the first-page row-complex comparison.
+
+For fixed vertical degree `q`, the restricted first-page row map commutes with the normalized
+isomorphism to the vertical-homology chain complex. -/
 @[reassoc]
 theorem
     horizontalFirstPageRowComplexIsoVerticalHomologyComplex_hom_naturality
@@ -133,7 +138,10 @@ theorem
       horizontalFirstPageNormalizedVerticalHomologyIso_hom_naturality
         f p q
 
-/-- Degreewise homology of the normalized row-complex naturality square. -/
+/-- Naturality on homology of the first-page row comparison.
+
+Taking degree-`p` homology of the row-complex naturality square gives the corresponding
+naturality square for row and vertical-homology-complex homology. -/
 @[reassoc]
 theorem
     horizontalFirstPageRowComplexIsoVerticalHomologyComplex_homology_naturality

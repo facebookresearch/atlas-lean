@@ -1,4 +1,6 @@
-# Page Two Coordinate
+# Common homology object for the chosen first two pages
 
-The common coordinate underlying page two and the homology of page one at
-`(p,q)`, taken from the package-owned HomologyData.
+Common homology object for the chosen first two pages.
+
+For natural `p` and `q`, this is the homology object `(χ.pageOneHomologyData p q).left.H`. It
+is the common coordinate for first-page homology and the second-page object at `(p, q)`.

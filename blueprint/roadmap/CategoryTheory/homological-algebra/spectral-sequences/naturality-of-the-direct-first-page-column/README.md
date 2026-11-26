@@ -2,10 +2,10 @@
 
 ## Direct Map
 
-- [Horizontal Direct Column Cochain Map](horizontal-direct-column-cochain-map.md)
-- [Horizontal Direct Column Cochain Map f](horizontal-direct-column-cochain-map-f.md)
+- [A bicomplex map induces a signed direct-column chain map](horizontal-direct-column-cochain-map.md)
+- [The supported component of a direct-column map](horizontal-direct-column-cochain-map-f.md)
 
 ## Homology
 
-- [Horizontal Direct Column Untwist Iso hom naturality](horizontal-direct-column-untwist-iso-hom.md)
-- [Horizontal Direct Column Homology Iso hom naturality](horizontal-direct-column-homology-iso-ho.md)
+- [Removing the column sign is natural under bicomplex maps](horizontal-direct-column-untwist-iso-hom.md)
+- [The direct-column homology comparison is bicomplex-natural](horizontal-direct-column-homology-iso-ho.md)

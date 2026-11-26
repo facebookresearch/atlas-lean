@@ -23,17 +23,26 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Finite
 public import Mathlib.CategoryTheory.Limits.Constructions.EpiMono
 
 /-!
-# Canonical graded homology: native tensor, unit and coherence
+# Graded homology as a lax monoidal functor
 
-The object and Hom universes of the coefficient category are independent.
-The tensorator is the native graded descent of the actual identity-chain-map
-cycle pairing, and the unit is the native single-unit homology comparison.
-Actual finite colimits and their preservation by the two tensor functors
-supply all coproduct/cokernel/epi uses. No coherence data is a caller input.
+Let V be a preadditive monoidal category with chosen homology, a zero object
+and finite colimits. Assume tensor is additive and that tensoring by any
+object on either side preserves finite colimits. The object and morphism
+worlds of V are independent.
 
-This common owner extracts only the demonstrated cycle/unit/associator blocks
-from the frozen base14 and larger-world17 banks. No ring, Field, Free, Small,
-abelian or closed hypothesis is imposed on this structural category API.
+For nonnegative chain complexes, graded homology is
+H(K)_n=H_n(K). The tensorator μ_(K,L):H(K)⊗H(L)→H(K⊗L) is determined
+on each summand by the cycle pairing
+H_p(K)⊗H_q(L)→H_(p+q)(K⊗L).
+It is obtained from the tensor inclusion of cycles and their homology
+quotients. The unit map ε:𝟙_Gr→H(𝟙_Ch) is the homology comparison
+for the tensor unit concentrated in degree zero.
+
+These maps are natural, compatible with the associators and with both
+unitors. They therefore give H its lax monoidal structure.
+The associativity formula retains the degree identification
+(p+q)+r=p+(q+r), and the unit formulas retain the single-unit homology
+isomorphism.
 -/
 
 @[expose] public section
@@ -82,16 +91,27 @@ local notation "MC" => V
 local notation "Ch" => ChainComplex MC ℕ
 local notation "Gr" => GradedObject ℕ MC
 
-/-- Native homology in every original degree. -/
+/-- For a preadditive category V with chosen homology, the
+graded homology functor sends a nonnegative chain complex K
+to the graded object n↦H_n(K), and a chain map f to its
+degreewise homology maps H_n(f). -/
 abbrev homologyFunctor : Ch ⥤ Gr := gradedHomologyFunctor MC (ComplexShape.down ℕ)
 
-/-- The canonical bidegree map descended from the actual cycle pairing. -/
+/-- In a preadditive monoidal category with homology and finite
+colimits preserved by tensoring on both sides, the canonical map
+H_p(K)⊗H_q(L)→H_(p+q)(K⊗L) is the descent of the cycle pairing
+Z_p(K)⊗Z_q(L)→Z_(p+q)(K⊗L).
+The chain complexes are nonnegatively graded. -/
 abbrev pair (K L : Ch) (p q : ℕ) :
     K.homology p ⊗ L.homology q ⟶ (K ⊗ L).homology (p + q) :=
   ChainGradedPairing.pairHomology (𝟙 (K ⊗ L))
     (ChainGradedPairing.homologyDescentData (𝟙 (K ⊗ L))) p q
 
-/-- The native categorical canonical cycle tensorator in the coefficient category. -/
+/-- For a preadditive monoidal category V with homology, a zero
+object and finite colimits preserved by additive tensoring on both
+sides, μ_(K,L):H(K)⊗H(L)→H(K⊗L) has degree-n restriction on
+the summand H_p(K)⊗H_q(L), p+q=n, equal to the canonical
+cycle homology pairing followed by the degree identification. -/
 def tensorator (K L : Ch) :
     homologyFunctor.obj K ⊗ homologyFunctor.obj L ⟶ homologyFunctor.obj (K ⊗ L) :=
   fun n => GradedObject.Monoidal.tensorObjDesc fun p q h =>
@@ -104,7 +124,12 @@ theorem ι_tensorator (K L : Ch) (p q n : ℕ) (h : p + q = n) :
       pair K L p q ≫ (homologyIsoOfEq (K ⊗ L) h).hom :=
   GradedObject.Monoidal.ι_tensorObjDesc _ p q h
 
-/-- Actual bidegree cycle pairings are natural under both original chain maps. -/
+/-- For a preadditive monoidal category V with chosen homology, a
+zero object and finite colimits preserved by additive tensoring on
+both sides, maps f:K→K′ and g:L→L′ satisfy
+pair_(K′,L′) ∘ (H_p(f)⊗H_q(g)) =
+H_(p+q)(f⊗g) ∘ pair_(K,L).
+Both pairings are the canonical descents from cycle tensors. -/
 @[reassoc]
 theorem pair_naturality {K L K' L' : Ch} (f : K ⟶ K') (g : L ⟶ L') (p q : ℕ) :
     (homologyMap f p ⊗ₘ homologyMap g q) ≫ pair K' L' p q =
@@ -117,7 +142,11 @@ theorem pair_naturality {K L K' L' : Ch} (f : K ⟶ K') (g : L ⟶ L') (p q : �
     (fun i j => (ChainGradedPairing.pair_naturality P Q f g (f ⊗ₘ g)
       (by simp only [P, Q, Category.id_comp, Category.comp_id]; rfl) i j).symm) p q
 
-/-- The native categorical tensorator is natural in both complex variables. -/
+/-- For a preadditive monoidal category with chosen homology,
+a zero object and finite colimits preserved by additive tensoring,
+chain maps f:K→K′ and g:L→L′ satisfy
+μ_(K′,L′) ∘ (H(f)⊗H(g)) = H(f⊗g) ∘ μ_(K,L)
+as maps of nonnegative graded objects. -/
 @[reassoc]
 theorem tensorator_naturality {K L K' L' : Ch} (f : K ⟶ K') (g : L ⟶ L') :
     (homologyFunctor.map f ⊗ₘ homologyFunctor.map g) ≫ tensorator K' L' =
@@ -147,7 +176,11 @@ theorem tensorator_naturality {K L K' L' : Ch} (f : K ⟶ K') (g : L ⟶ L') :
         (Category.assoc _ _ _))
 
 
-/-- The native tensor-unit homology comparison in the coefficient category. -/
+/-- For a preadditive monoidal category V with chosen homology,
+a zero object and finite colimits preserved by tensoring,
+the graded unit is isomorphic to H(𝟙_Ch).
+The chain unit is 𝟙_V concentrated in degree zero, so its
+degree-zero homology is 𝟙_V and its higher homology is zero. -/
 def unitIso : 𝟙_ Gr ≅ homologyFunctor.obj (𝟙_ Ch) :=
   GradedObject.isoMk _ _ fun n => by
     by_cases h : n = 0
@@ -157,7 +190,11 @@ def unitIso : 𝟙_ Gr ≅ homologyFunctor.obj (𝟙_ Ch) :=
     · exact ((GradedObject.Monoidal.isInitialTensorUnitApply n h).isZero.isoZero) ≪≫
         (isZero_single_obj_homology (ComplexShape.down ℕ) 0 (𝟙_ MC) n h).isoZero.symm
 
-/-- The canonical map from the graded unit into homology of the chain unit. -/
+/-- For a preadditive monoidal category V with chosen homology
+and a zero object and finite colimits preserved by additive tensoring
+on both sides, the unit map
+ε:𝟙_Gr→H(𝟙_Ch) is the forward map of the single-unit homology
+isomorphism. It is supported in degree zero. -/
 def unitMap : 𝟙_ Gr ⟶ homologyFunctor.obj (𝟙_ Ch) := unitIso.hom
 
 @[simp]
@@ -172,7 +209,12 @@ instance unitMap_isIso : IsIso (unitMap (V := V)) := by
   unfold unitMap
   infer_instance
 
-/-- The canonical tensor pairing of cycles in a specified total degree. -/
+/-- For nonnegative chain complexes K,L in a preadditive
+monoidal category with homology and finite colimits preserved
+by tensoring, p+q=n gives
+Z_p(K)⊗Z_q(L)→Z_n(K⊗L).
+After cycle inclusion it is the tensor of the two cycle
+inclusions followed by the (p,q) total tensor inclusion. -/
 def cyclesPair (K L : Ch) (p q n : ℕ) (h : p + q = n) :
     K.cycles p ⊗ L.cycles q ⟶ ((K ⊗ L)).cycles n :=
   ChainGradedPairing.pairCycles (𝟙 ((K ⊗ L)))
@@ -241,7 +283,11 @@ theorem homologyDegreeTransport (K : Ch) (i j : ℕ) (h : i = j) :
   cases h
   simp
 
-/-- The actual bidegree pairing on cycle objects before homology descent. -/
+/-- For nonnegative chain complexes K,L in a preadditive
+monoidal category with homology and the finite-colimit tensor
+hypotheses, the cycle pairing
+Z_p(K)⊗Z_q(L)→Z_(p+q)(K⊗L) is the restricted tensor inclusion.
+Its homology descent is the canonical bidegree pairing. -/
 abbrev cyclePair (K L : Ch) (p q : ℕ) :
     K.cycles p ⊗ L.cycles q ⟶ ((K ⊗ L)).cycles (p + q) :=
   ChainGradedPairing.pairCycles (𝟙 ((K ⊗ L)))
@@ -385,8 +431,12 @@ theorem cyclePair_assoc (A B C : Ch) (p q r : ℕ) :
       ιTensorObj A ((B ⊗ C)) p (q + r) (p + (q + r)) rfl)
     (associator_naturality (A.iCycles p) (B.iCycles q) (C.iCycles r))
 
-/-- Associativity of the actual bidegree Künneth pairings, including the
-literal equality-induced map between the two parenthesized total degrees. -/
+/-- For a preadditive monoidal category with chosen homology
+and finite colimits preserved by additive tensoring, the two
+iterated pairings on H_p(A),H_q(B),H_r(C) agree after applying
+the chain associator (A⊗B)⊗C→A⊗(B⊗C).
+The target degrees are identified by (p+q)+r=p+(q+r), and the
+source comparison is the associator of the three homology objects. -/
 theorem pair_assoc (A B C : Ch) (p q r : ℕ) :
     (pair A B p q ⊗ₘ 𝟙 (C.homology r)) ≫
       pair ((A ⊗ B)) C (p + q) r ≫
@@ -538,7 +588,11 @@ theorem tripleTensorator_right (A B C : Ch) (p q r : ℕ) :
     _ = _ := congrArg₂ (fun f g => (α_ (X p) (Y q) (Z r)).hom ≫
       (𝟙 (X p) ⊗ₘ f) ≫ g) hInner hOuter
 
-/-- Associator coherence for the canonical graded Künneth tensorator. -/
+/-- For a preadditive monoidal category with chosen homology,
+a zero object and finite colimits preserved by additive tensoring,
+H(α) ∘ μ_(A⊗B,C) ∘ (μ_(A,B)⊗id) =
+μ_(A,B⊗C) ∘ (id⊗μ_(B,C)) ∘ α_H.
+The maps μ are the canonical graded cycle tensorators. -/
 @[reassoc]
 theorem tensorator_associativity (A B C : Ch) :
     tensorator A B ▷ homologyFunctor.obj C ≫ tensorator (A ⊗ B) C ≫
@@ -730,7 +784,10 @@ theorem unitHomologyInverseCycles :
       ((congrArg (fun z => z ≫ eH.inv) eC.inv_hom_id).trans
         (Category.id_comp eH.inv)))).symm
 
-/-- The native tensor unit paired with a homology class gives its left unitor. -/
+/-- For a preadditive monoidal category with homology and finite colimits preserved by tensoring on both sides, let e:H_0(𝟙_Ch)≅𝟙_V.
+Pairing e⁻¹ with H_n(K), then applying H_n of the chain left
+unitor, gives the left unitor 𝟙_V⊗H_n(K)→H_n(K).
+This is the degree-(0,n) unit formula for the tensorator. -/
 theorem unit_left_pair (K : Ch) (n : ℕ) :
     ((singleObjHomologySelfIso (ComplexShape.down ℕ) 0 (𝟙_ MC)).inv ⊗ₘ
       𝟙 (K.homology n)) ≫
@@ -778,7 +835,10 @@ theorem unit_left_pair (K : Ch) (n : ℕ) :
       (congrArg (fun z => z ≫ (λ_ (K.homology n)).hom)
         (id_tensorHom (𝟙_ MC) (K.homologyπ n)).symm)
 
-/-- The native tensor unit paired on the right gives its right unitor. -/
+/-- For a preadditive monoidal category with homology and finite colimits preserved by tensoring on both sides, let e:H_0(𝟙_Ch)≅𝟙_V.
+Pairing H_n(K) with e⁻¹, then applying H_n of the chain right
+unitor, gives the right unitor H_n(K)⊗𝟙_V→H_n(K).
+This is the degree-(n,0) unit formula for the tensorator. -/
 theorem unit_right_pair (K : Ch) (n : ℕ) :
     (𝟙 (K.homology n) ⊗ₘ (singleObjHomologySelfIso (ComplexShape.down ℕ) 0 (𝟙_ MC)).inv) ≫
       GradedObject.Monoidal.ιTensorObj (homologyFunctor.obj K)
@@ -825,7 +885,11 @@ theorem unit_right_pair (K : Ch) (n : ℕ) :
       (congrArg (fun z => z ≫ (ρ_ (K.homology n)).hom)
         (tensorHom_id (K.homologyπ n) (𝟙_ MC)).symm)
 
-/-- Left unit coherence for the canonical cycle Künneth tensorator. -/
+/-- For a preadditive monoidal category with chosen homology,
+a zero object and finite colimits preserved by additive tensoring,
+the left unit equation is
+λ_(H(K)) = H(λ_K) ∘ μ_(𝟙_Ch,K) ∘ (ε⊗id).
+Here ε is the single-unit homology map. -/
 theorem tensorator_left_unitality (K : Ch) :
     (λ_ (homologyFunctor.obj K)).hom = unitMap ▷ homologyFunctor.obj K ≫
       tensorator (𝟙_ Ch) K ≫ homologyFunctor.map (λ_ K).hom := by
@@ -866,7 +930,11 @@ theorem tensorator_left_unitality (K : Ch) :
   have hResult := hResult.trans (congrArg (fun z => l.inv ≫ z) hPair)
   exact (hResult.trans l.inv_hom_id).symm
 
-/-- Right unit coherence for the canonical cycle Künneth tensorator. -/
+/-- For a preadditive monoidal category with chosen homology,
+a zero object and finite colimits preserved by additive tensoring,
+the right unit equation is
+ρ_(H(K)) = H(ρ_K) ∘ μ_(K,𝟙_Ch) ∘ (id⊗ε).
+Here ε is the single-unit homology map. -/
 theorem tensorator_right_unitality (K : Ch) :
     (ρ_ (homologyFunctor.obj K)).hom = homologyFunctor.obj K ◁ unitMap ≫
       tensorator K (𝟙_ Ch) ≫ homologyFunctor.map (ρ_ K).hom := by
@@ -907,8 +975,11 @@ theorem tensorator_right_unitality (K : Ch) :
   have hResult := hResult.trans (congrArg (fun z => l.inv ≫ z) hPair)
   exact (hResult.trans l.inv_hom_id).symm
 
-/-- The earned lax monoidal structure on native graded homology
-for the structural coefficient category. -/
+/-- For a preadditive monoidal category V with chosen homology,
+a zero object and finite colimits preserved by additive tensoring
+on both sides, graded homology has a lax monoidal structure.
+Its structure maps are the cycle tensorator μ_(K,L) and the
+single-unit homology map ε, with the stated associator and unitor laws. -/
 def laxMonoidal : (homologyFunctor (V := V)).LaxMonoidal where
   ε := unitMap
   μ := tensorator

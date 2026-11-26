@@ -30,7 +30,9 @@ namespace FirstQuadrantTail
 
 variable {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
 
-/-- The tail embedding shifting `ComplexShape.up' (1 : ℕ)` degrees up by `r`. -/
+/-- For r∈ℕ, the cochain-shape embedding e_r : ℕ → ℕ is
+i ↦ i+r. It preserves the relation q′=q+1 and has image
+the degrees q≥r. -/
 noncomputable def tailEmbedding (r : ℕ) :
     (ComplexShape.up' (1 : ℕ)).Embedding (ComplexShape.up' (1 : ℕ)) :=
   ComplexShape.embeddingUp'Add 1 r
@@ -40,11 +42,15 @@ lemma tailEmbedding_f (r i : ℕ) : (tailEmbedding r).f i = i + r := rfl
 instance tailEmbedding_isRelIff (r : ℕ) : (tailEmbedding r).IsRelIff :=
   inferInstanceAs (ComplexShape.embeddingUp'Add 1 r).IsRelIff
 
-/-- `tailEmbedding` is `IsTruncGE`, by unfolding to `embeddingUp'Add`. -/
+/-- For r∈ℕ, the embedding e_r(i)=i+r identifies the
+nonnegative cochain shape with the full tail of degrees q≥r.
+Thus it is an embedding defining truncation at and above r. -/
 instance tailEmbedding_isTruncGE (r : ℕ) : (tailEmbedding r).IsTruncGE :=
   inferInstanceAs (ComplexShape.embeddingUp'Add 1 r).IsTruncGE
 
-/-- The target index shift: `q = i + (r + 1)` is also `(i + 1) + r`. -/
+/-- For r,i,q∈ℕ, if e_(r+1)(i)=q, then e_r(i+1)=q.
+Both expressions equal i+r+1, so the adjacent tail comparison
+preserves the absolute cochain degree. -/
 lemma tailEmbedding_shift (r i q : ℕ)
     (hi : (tailEmbedding (r + 1)).f i = q) :
     (tailEmbedding r).f (i + 1) = q := by
@@ -52,7 +58,11 @@ lemma tailEmbedding_shift (r i q : ℕ)
   have h2 : (tailEmbedding r).f (i + 1) = (i + 1) + r := rfl
   omega
 
-/-- Stupid truncation at the tail starting at `r`, as a functor. -/
+/-- In a category C with zero morphisms and a zero object,
+the tail functor T_r sends a nonnegative cochain complex K to
+its stupid truncation supported in absolute degrees q≥r.
+It retains K_q and its differential within the tail and is zero
+below r; it does not shift the retained degrees. -/
 noncomputable def innerTail (r : ℕ) :
     HomologicalComplex C (ComplexShape.up' (1 : ℕ)) ⥤
       HomologicalComplex C (ComplexShape.up' (1 : ℕ)) :=
@@ -73,9 +83,11 @@ instance innerTail_preservesZeroMorphisms (r : ℕ) :
         (fun i hi => hq ⟨i, hi⟩)]
 
 open Classical in
-/-- Components of the adjacent-tail comparison. On the image of
-`tailEmbedding (r + 1)`, go through `K` via the source iso hom followed by
-the target iso inv at `i + 1`; off the image, vanish. -/
+/-- For a nonnegative cochain complex K in a category with
+zero morphisms and a zero object, the component
+(T_(r+1)K)_q → (T_r K)_q is the identity through their
+identifications with K_q when q≥r+1, and zero otherwise.
+The target tail uses the same absolute degree q. -/
 noncomputable def tailCompareF
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r q : ℕ) :
     (K.stupidTrunc (tailEmbedding (r + 1))).X q ⟶
@@ -105,7 +117,11 @@ lemma tailCompareF_eq_zero
   unfold tailCompareF
   rw [dite_eq_right (by simpa using hq)]
 
-/-- The comparison `K.stupidTrunc e(r+1) ⟶ K.stupidTrunc e r`. -/
+/-- For a nonnegative cochain complex K in a category with
+zero morphisms and a zero object, the adjacent-tail inclusion
+T_(r+1)K → T_r K retains every degree q≥r+1 and is zero on
+the remaining source degrees. These components commute with
+the degree-raising differentials. -/
 noncomputable def tailCompare
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     K.stupidTrunc (tailEmbedding (r + 1)) ⟶
@@ -157,7 +173,10 @@ lemma tailCompare_f_eq_zero
     (tailCompare K r).f q = 0 :=
   tailCompareF_eq_zero hq
 
-/-- Naturality of `tailCompare` in `K`, componentwise. -/
+/-- For a nonnegative cochain map φ : K → L in a category
+with zero morphisms and a zero object, the tail inclusions η
+satisfy η_L ∘ T_(r+1)(φ) = T_r(φ) ∘ η_K in every degree q.
+They compare the same absolute degrees of K and L. -/
 lemma tailCompare_naturality
     {K L : HomologicalComplex C (ComplexShape.up' (1 : ℕ))}
     (φ : K ⟶ L) (r q : ℕ) :
@@ -180,14 +199,21 @@ lemma tailCompare_naturality
       tailCompare_f_eq_zero (K := K) (fun i hi => hq ⟨i, hi⟩)]
     simp
 
-/-- The adjacent-tail comparison as a natural transformation. -/
+/-- In a category with zero morphisms and a zero object,
+the inclusions T_(r+1)K → T_r K form a natural transformation
+between the corresponding nonnegative cochain tail functors,
+for every r∈ℕ. -/
 noncomputable def tailNatTrans (r : ℕ) :
     innerTail (C := C) (r + 1) ⟶ innerTail (C := C) r where
   app K := tailCompare K r
   naturality := fun _ _ φ =>
     HomologicalComplex.hom_ext _ _ fun q => tailCompare_naturality φ r q
 
-/-- The bicomplex-level adjacent-tail comparison. -/
+/-- In a category with zero morphisms and a zero object,
+applying the tail inclusions to each inner complex gives the
+natural transformation between inner-tail functors on bicomplexes
+whose two differentials raise nonnegative degrees.
+It changes the inner cutoff from r+1 to r. -/
 noncomputable def bicomplexTail (r : ℕ) :
     (innerTail (C := C) (r + 1)).mapHomologicalComplex
         (ComplexShape.up' (1 : ℕ)) ⟶
@@ -195,7 +221,11 @@ noncomputable def bicomplexTail (r : ℕ) :
         (ComplexShape.up' (1 : ℕ)) :=
   NatTrans.mapHomologicalComplex (tailNatTrans (C := C) r) _
 
-/-- The tail inclusion out of a bicomplex. -/
+/-- For a bicomplex K with both differentials raising
+nonnegative degrees in a category with zero morphisms and
+a zero object, the inner-tail inclusion T_(r+1)K → T_r K
+has component η_(K_p) on each outer degree p.
+It is the identity on the retained inner degrees q≥r+1. -/
 noncomputable def tailInclusion
     (K : HomologicalComplex₂ C (ComplexShape.up' (1 : ℕ))
       (ComplexShape.up' (1 : ℕ))) (r : ℕ) :

@@ -15,14 +15,16 @@ public import
 public import MathlibExt.Algebra.Homology.FirstQuadrantConvergence
 
 /-!
-# Bicomplex naturality of the bottom-relative-to-total comparison
+# Naturality of the finite bottom-relative-to-total comparison
 
-The bottom-relative homology comparison at the finite upper abutment stage
-is natural with respect to bicomplex maps.  The proof combines naturality at
-that complete-filtration stage with compatibility of stage maps and the map
-of total complexes.
+For a morphism f:K→L of first-quadrant bicomplexes in an abelian category, put m=p+q and
+u=p+q+1. The finite upper stage G_u contains the three-term window computing H_m of the total
+complex. The bottom-relative stage comparison followed by the upper-stage-to-total comparison
+gives e_K:H^{-m}_K(⊥,u)≅H_m(Tot K).
 
-This file does not pass to image quotients or stable associated-graded terms.
+The relative spectral map induced by f, evaluated at ⊥→u in degree -m, commutes with e_K,e_L and
+H_m(Tot f). This naturality combines the complete-stage map with the map of the total
+complexes, with arbitrary object and morphism universes.
 -/
 
 @[expose] public section
@@ -39,8 +41,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The bottom-relative-to-total comparison is natural under bicomplex
-morphisms. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ),
+f:K→L and p,q : ℕ. Put m=p+q, ℓ=(p:ℤ)−1 and u=m+1; Hᵃ(s,t) denotes relative cochain homology of
+the complete horizontal filtration. Let h_f:H^{-m}_K(⊥,u)→H^{-m}_L(⊥,u) be the complete
+spectral-object map and e_K,e_L the bottom-relative-to-total isomorphisms. Then
+h_f≫e_L.hom=e_K.hom≫H_m(total.map(f)), where the total shape is down ℕ and the target degree is
+m. -/
 theorem horizontalBottomRelativeHomologyToTotalIso_naturality_of_bicomplex
     (f : K ⟶ L) (p q : ℕ) :
     ((horizontalCompleteFiltrationSpectralObjectMap f).hom

@@ -1,3 +1,5 @@
-# Horizontal Total Top Projection
+# The full-total projection onto a fixed bidegree
 
-Projection of the full total degree `p+q` onto bidegree `(p,q)`.
+The full-total projection onto a fixed bidegree.
+
+Project total degree `p+q` onto bidegree `(p,q)`, killing all other total summands.

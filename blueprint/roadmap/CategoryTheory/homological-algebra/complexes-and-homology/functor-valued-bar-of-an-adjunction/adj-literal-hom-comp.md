@@ -1,3 +1,5 @@
-# Adj Literal Hom comp
+# Forgotten adjunction-bar maps preserve composition
 
-Composition of algebra morphisms induces composition of literal maps.
+Let T be a monad on C and φ : alg₁ → alg₂, ψ : alg₂ → alg₃ algebra morphisms. Then
+adjLiteralHom(φ) ≫ adjLiteralHom(ψ) = adjLiteralHom(φ ≫ ψ) as maps of augmented simplicial
+objects of C. The statement includes their underlying simplicial maps and target components.

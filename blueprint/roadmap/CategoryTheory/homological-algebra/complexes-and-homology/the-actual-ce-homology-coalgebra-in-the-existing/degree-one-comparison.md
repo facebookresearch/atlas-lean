@@ -1,4 +1,6 @@
-# Degree One Comparison
+# The Lie-element map into field CE homology degree one
 
-The degree-one comparison starts from the Lie vector space and takes its CE homology class.
-Field freeness is inferred internally.
+The Lie-element map into field CE homology degree one.
+
+Use the primitive-chain degree-one coordinate and its homology comparison to send a Lie
+element to its degree-one CE homology class.

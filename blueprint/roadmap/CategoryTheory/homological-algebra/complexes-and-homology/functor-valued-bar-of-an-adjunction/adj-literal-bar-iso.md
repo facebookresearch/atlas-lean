@@ -1,5 +1,6 @@
-# Adj Literal Bar Iso
+# The two forgotten adjunction-bar descriptions are simplicially isomorphic
 
-The honest simplicial comparison: the literal whiskered bar is isomorphic
-to the surrogate model, by composing the stepwise postcomposition comparison
-with the precomposition-factorization bridge.
+For a monad T on C and a T-algebra alg, the underlying simplicial objects of
+adjLiteralAugmented(alg) and adjEvaluatedAugmented(alg) are isomorphic. The comparison first
+commutes forgetting with evaluation of the bar and then identifies constant-index
+precomposition with the restricted algebra left module.

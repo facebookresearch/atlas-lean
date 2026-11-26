@@ -1,4 +1,6 @@
-# Partial Total Horizontal Row Cochain v of r eq none
+# Horizontal cochain vanishes outside the chain-degree embedding
 
-The horizontal cochain is zero when its source degree lies outside the
-regrading embedding.
+Horizontal cochain vanishes outside the chain-degree embedding.
+
+If the inverse index of an integer source degree `p` under `n ↦ -n` is absent, every degree-
+one horizontal cochain component from `p` to `q = p + 1` is zero.

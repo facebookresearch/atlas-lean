@@ -1,3 +1,5 @@
-# Partial Total E₁Adjacent Step Diagram
+# The adjacent filtration diagram in partial-total step coordinates
 
-The same adjacent pair in the canonical step coordinates.
+The adjacent filtration diagram in partial-total step coordinates.
+
+Use the step short-complex inclusion followed by the transported adjacent cochain map.

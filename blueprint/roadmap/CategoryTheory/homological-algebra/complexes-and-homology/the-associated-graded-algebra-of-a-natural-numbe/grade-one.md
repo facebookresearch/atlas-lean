@@ -1,3 +1,6 @@
-# Grade One
+# Unit class in the degree-zero quotient layer
 
-The quotient class of the original algebra unit in degree zero.
+Unit class in the degree-zero quotient layer.
+
+The element `gradeOne F : Grade F 0` is the quotient class of `1 : A`, regarded as an element
+of `F 0`.

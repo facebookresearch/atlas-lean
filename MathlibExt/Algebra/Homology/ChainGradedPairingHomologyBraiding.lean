@@ -17,10 +17,27 @@ public import Mathlib.CategoryTheory.Monoidal.Braided.Basic
 public import MathlibExt.Algebra.Homology.ChainGradedPairingHomology
 
 /-!
-# Braiding compatibility for homology pairings
+# Braiding squares descend from chain pairings to cycles and homology
 
-This file descends a bidegree braiding formula for chain pairings to the
-corresponding pairing on homology.
+Let C be a preadditive braided monoidal category with tensor additive
+in both variables. Let P pair K₁,K₂ into K₃ and Q pair K₂,K₁ into L₃,
+for ℕ-indexed chain complexes whose indicated tensor products exist.
+Give P and Q descent data: they send pairs of cycles to cycles,
+and a boundary in either variable factors through a target boundary.
+
+Fix p,q ≥ 0, an integer z and a chain map f : K₃ → L₃. Assume the
+bidegree square
+f_(p+q) ∘ P_(p,q) = z · (η_X ∘ Q_(q,p) ∘ β_X),
+where β swaps the inputs and η reindexes L₃ from q+p to p+q.
+When the indicated homologies exist, the same square holds for the
+cycle pairings.
+
+For homology pairings, also assume the two binary coproducts of the
+boundary–cycle tensor objects exist, and that the six specified
+tensor functors preserve the cycle-valued boundary cokernels.
+Then H_(p+q)(f) ∘ P_H = z · (η_H ∘ Q_H ∘ β_H).
+In particular the coefficient z, including a Koszul sign when chosen,
+is preserved by descent.
 -/
 
 @[expose] public section
@@ -48,8 +65,16 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [K₁.HasTensor K₂] [K₂.HasTensor K₁]
 
 omit [MonoidalPreadditive C] in
-/-- A bidegree braiding formula for chain pairings descends to their cycle
-pairings. -/
+/-- In a preadditive braided monoidal category with tensor
+additive in both variables, let P : K₁,K₂ → K₃ and
+Q : K₂,K₁ → L₃ be chain pairings with descent data, and assume
+the two input tensor complexes exist. Fix p,q ≥ 0, z ∈ ℤ and
+f : K₃ → L₃. Assume H_p(K₁), H_q(K₂), H_(p+q)(K₃) and
+H_(q+p)(L₃), H_(p+q)(L₃) exist.
+If f_(p+q) ∘ P_(p,q) = z·(η_X ∘ Q_(q,p) ∘ β_X), then
+Z_(p+q)(f) ∘ P_Z = z·(η_Z ∘ Q_Z ∘ β_Z).
+The maps η transport the equality q+p = p+q; the input square
+is the premise and the cycle square is the conclusion. -/
 lemma pairCycles_braiding
     (P : ChainGradedPairing K₁ K₂ K₃) (D : HomologyDescentData P)
     (Q : ChainGradedPairing K₂ K₁ L₃) (E : HomologyDescentData Q)
@@ -75,8 +100,21 @@ lemma pairCycles_braiding
   rw [pairCycles_i_assoc]
   rw [← BraidedCategory.braiding_naturality_assoc]
 
-/-- A bidegree braiding formula for chain pairings descends to their homology
-pairings. -/
+/-- In a preadditive braided monoidal category with additive
+tensor, let P : K₁,K₂ → K₃ and Q : K₂,K₁ → L₃ be chain pairings
+with cycle and boundary descent data, and suppose both input tensor
+complexes exist. Fix p,q ≥ 0, z ∈ ℤ and f : K₃ → L₃. Assume
+the homologies of K₁ at p, K₂ at q, K₃ at p+q and L₃ at q+p,p+q
+exist. Write Z₁ = Z_p(K₁), Z₂ = Z_q(K₂), H₁ = H_p(K₁), H₂ = H_q(K₂).
+
+Assume the coproducts (K₁_(p+1)⊗Z₂) ⨁ (Z₁⊗K₂_(q+1)) and
+(K₂_(q+1)⊗Z₁) ⨁ (Z₂⊗K₁_(p+1)) exist. Require the cokernel of
+K₁_(p+1) → Z₁ to be preserved by −⊗Z₂, −⊗K₂_(q+1), H₂⊗−,
+and the cokernel of K₂_(q+1) → Z₂ by −⊗Z₁, −⊗K₁_(p+1), H₁⊗−.
+If f_(p+q) ∘ P_(p,q) = z·(η_X ∘ Q_(q,p) ∘ β_X), then
+H_(p+q)(f) ∘ P_H = z·(η_H ∘ Q_H ∘ β_H).
+Each η transports q+p = p+q, and β is the braiding at the
+corresponding chain or homology objects. -/
 lemma pairHomology_braiding
     (P : ChainGradedPairing K₁ K₂ K₃) (D : HomologyDescentData P)
     (Q : ChainGradedPairing K₂ K₁ L₃) (E : HomologyDescentData Q)

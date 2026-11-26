@@ -11,13 +11,15 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.MatrixCyclicStabilization
 
 /-!
-# Coefficient naturality of stabilized matrix trace maps
+# Coefficient naturality of matrix-colimit cyclic traces
 
-Algebra homomorphisms act on the directed colimit of finite matrix Chevalley–Eilenberg
-complexes. Over a commutative rational algebra, the stabilized trace chain maps commute with
-these coefficient maps.
+Let `k` be a commutative ring and `f : A → B` a homomorphism of unital `k`-algebras. The
+entrywise matrix maps induce a map between the directed colimits of finite matrix CE
+complexes, agreeing with the coefficient map at every finite stage.
 
-The resulting Connes and cyclic homology maps inherit the same naturality.
+Over rational ground scalars, this colimit coefficient map commutes with both cyclic trace
+chain maps, for the canonical positive tail and its negated-differential convention. The
+degree-shifted quotient and cyclic homology trace maps inherit the same naturality.
 -/
 
 @[expose] public section
@@ -35,12 +37,18 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   {B : Type v} [Ring B] [Algebra k B]
 
-/-- The coefficient map on the colimit of finite matrix CE complexes. -/
+/-- The coefficient map of directed matrix CE colimits.
+
+Take the colimit map of the natural entrywise coefficient maps on the finite matrix size
+diagrams. -/
 def stableMatrixCoefficientMap (f : A →ₐ[k] B) :
     stableMatrixCEComplex k A ⟶ stableMatrixCEComplex k B :=
   colimMap (matrixCoefficientNatTrans k A f)
 
-/-- The colimit coefficient map retains the coefficient map at every finite matrix stage. -/
+/-- The finite-stage formula for a matrix-colimit coefficient map.
+
+A finite-stage inclusion followed by the colimit coefficient map equals the finite coefficient
+map followed by the target inclusion. -/
 @[reassoc]
 theorem stableMatrixCoefficientMap_ι (f : A →ₐ[k] B) (m : ℕ) :
     colimit.ι (matrixComplexFunctor k A) m ≫ stableMatrixCoefficientMap k A f =
@@ -51,7 +59,10 @@ section Rational
 
 variable [Algebra ℚ k]
 
-/-- The stabilized cyclic trace chain map is natural in algebra homomorphisms of coefficients. -/
+/-- Coefficient naturality of canonical-tail matrix-colimit cyclic trace.
+
+The positive-tail map of the colimit coefficient homomorphism commutes with the degree-signed
+cyclic trace and the induced cyclic quotient map. -/
 theorem stableMatrixCyclicWeibelChainMap_naturality (f : A →ₐ[k] B) :
     ChainComplex.positiveTailMap (stableMatrixCoefficientMap k A f) ≫
         stableMatrixCyclicWeibelChainMap k B =
@@ -90,7 +101,10 @@ theorem stableMatrixCyclicWeibelChainMap_naturality (f : A →ₐ[k] B) :
     _ = lA ≫ c := hN
     _ = _ := (congrArg (fun g => g ≫ c) hA.symm).trans (Category.assoc _ _ _)
 
-/-- Printed-positive colimit theta traces preserve the same coefficient square. -/
+/-- Coefficient naturality of positive-bracket matrix-colimit cyclic trace.
+
+After differential negation and positive-index restriction, the colimit coefficient map
+commutes with the tail-alternating cyclic trace. -/
 theorem stableMatrixCyclicChainMap_naturality (f : A →ₐ[k] B) :
     ChainComplex.positiveTailMap (HomologicalComplex.negateMap (stableMatrixCoefficientMap k A f)) ≫
         stableMatrixCyclicChainMap k B =
@@ -129,7 +143,10 @@ theorem stableMatrixCyclicChainMap_naturality (f : A →ₐ[k] B) :
     _ = lA ≫ c := hN
     _ = _ := (congrArg (fun g => g ≫ c) hA.symm).trans (Category.assoc _ _ _)
 
-/-- The shifted colimit CE homology-to-Connes map retains coefficient naturality. -/
+/-- Coefficient naturality of matrix-colimit quotient homology trace.
+
+The colimit CE homology coefficient map in degree `n+1` commutes with the trace to cyclic
+quotient homology in degree `n`. -/
 theorem stableMatrixCyclicConnesHomologyMap_naturality (f : A →ₐ[k] B) (n : ℕ) :
     HomologicalComplex.homologyMap (stableMatrixCoefficientMap k A f) (n + 1) ≫
         stableMatrixCyclicConnesHomologyMap k B n =
@@ -169,7 +186,10 @@ theorem stableMatrixCyclicConnesHomologyMap_naturality (f : A →ₐ[k] B) (n : 
     _ = eA.inv ≫ (fA ≫ c) := congrArg (fun h => eA.inv ≫ h) hm
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The descended rational HC map preserves the coefficient algebra maps. -/
+/-- Coefficient naturality of matrix-colimit cyclic homology trace.
+
+The colimit CE homology coefficient map in degree `n+1` commutes with the trace to `HC_n` and
+the cyclic homology coefficient map. -/
 theorem stableMatrixCyclicHomologyMap_naturality (f : A →ₐ[k] B) (n : ℕ) :
     HomologicalComplex.homologyMap (stableMatrixCoefficientMap k A f) (n + 1) ≫
         stableMatrixCyclicHomologyMap k B n =

@@ -14,15 +14,18 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantCanonicalAbutmentGradedNaturality
 
 /-!
-# Naturality of the stable-page associated-graded comparison
+# Naturality of the bounded stable-page associated-graded comparison
 
-For ℕ-indexed downward bicomplexes in an abelian category, at the first page
-satisfying the two first-quadrant stability bounds, the page map induced by a
-bicomplex morphism commutes with the canonical identification of the stable
-term with the associated graded of total homology. The comparison composes
-the stable-to-canonical and canonical-to-graded commutative squares.
+Let f : K → L be a map of nonnegative homological bicomplexes in an
+abelian category C. At bidegree (p,q), put n=p+q and
+r₀=max(p+1,q+2).
 
-The stable map is the fixed `pageXIso`-conjugated `EMap`.
+The comparison E^(r₀)_(p,q) ≅ gr_p H_n(Tot(K)) is natural:
+χ_L ∘ m_(r₀)(f) = gr_p H_n(Tot(f)) ∘ χ_K.
+The graded piece is the cokernel of the preceding-to-current
+induced homology filtration inclusion. The comparison passes
+through the bottom-indexed canonical abutment term and preserves
+the actual fixed stable-page map.
 -/
 
 @[expose] public section
@@ -42,8 +45,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The stable-page/associated-graded comparison at the canonical stable
-index is natural under bicomplex morphisms. -/
+/-- For a map f : K → L of nonnegative homological bicomplexes
+in an abelian category, p,q∈ℕ and r₀=max(p+1,q+2), the maps
+χ_K : E^(r₀)_K(p,q) ≅ gr_p H_(p+q)(Tot(K)) and χ_L satisfy
+χ_L ∘ m_(r₀)(f) = gr_p H_(p+q)(Tot(f)) ∘ χ_K.
+The map on the right is induced on the homology filtration quotient. -/
 theorem horizontalStablePageGradedIsoAtIndex_naturality
     (f : K ⟶ L) (p q : ℕ) :
     horizontalStablePageMapOfBicomplex f p q ≫

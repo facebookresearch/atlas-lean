@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Adjacent Short Complex Iso endpoint coherence
+# Coherence of the shared endpoint in adjacent first-page windows
 
-Consecutive coherent adjacent-column comparisons use literally the same
-map at their common endpoint.
+Coherence of the shared endpoint in adjacent first-page windows.
+
+The right endpoint of one coherent adjacent comparison is the same map as the left endpoint of
+the next.

@@ -1,3 +1,6 @@
-# Native Primitive Map
+# The primitive-equation map of the CE coalgebra complex
 
-The Chevalley–Eilenberg coproduct minus the two coaugmentation terms.
+The primitive-equation map of the CE coalgebra complex.
+
+Subtract the two coaugmentation tensor maps `x ↦ x ⊗ 1` and `x ↦ 1 ⊗ x` from the CE
+comultiplication chain map.

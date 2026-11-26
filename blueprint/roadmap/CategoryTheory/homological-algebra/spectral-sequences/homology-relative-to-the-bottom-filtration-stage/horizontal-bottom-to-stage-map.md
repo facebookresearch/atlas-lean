@@ -1,3 +1,3 @@
-# Horizontal Bottom To Stage Map
+# The order map from bottom to a filtration stage
 
-Unique map from the bottom filtration index to `i`.
+For any EInt filtration cut i, horizontalBottomToStageMap i is the unique order morphism ⊥→i.

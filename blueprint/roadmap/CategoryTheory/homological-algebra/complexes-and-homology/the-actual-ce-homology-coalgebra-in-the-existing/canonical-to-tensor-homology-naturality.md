@@ -1,3 +1,6 @@
-# Canonical To Tensor Homology naturality
+# Naturality of the common-universe CE homology diagonal
 
-The unconditional CE homology diagonal is natural under Lie maps.
+Naturality of the common-universe CE homology diagonal.
+
+Lie-induced homology maps commute with the diagonal and with homology of the tensor square of
+the induced chain map.

@@ -1,4 +1,6 @@
-# Unit Iso
+# Scalar up and down identify the two chain units
 
-The actual scalar-unit comparison is the single-complex image of the
-native module up/down equivalence.
+For a commutative ring R in world u, scalar up/down give
+the chain isomorphism U:R[0]≅T((ULift^u R)[0]).
+Its degree-zero forward value is r↦up(r), its inverse is down,
+and both complexes vanish outside degree zero.

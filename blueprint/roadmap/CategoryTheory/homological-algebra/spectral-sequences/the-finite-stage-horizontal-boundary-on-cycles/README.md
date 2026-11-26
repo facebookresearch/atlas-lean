@@ -1,5 +1,5 @@
 # The finite-stage horizontal boundary on cycles
 
-- [Horizontal Filtered Previous Column Inclusion](horizontal-filtered-previous-column-incl.md)
-- [Horizontal Filtered Top Inclusion d eq previous](horizontal-filtered-top-inclusion-d-eq-p.md)
-- [Horizontal Direct Column Top Inclusion d eq previous](horizontal-direct-column-top-inclusion-d.md)
+- [The preceding-column inclusion in a finite filtration stage](horizontal-filtered-previous-column-incl.md)
+- [The filtered total boundary of a top-column vertical cycle](horizontal-filtered-top-inclusion-d-eq-p.md)
+- [The finite top-column boundary in direct-column cycle coordinates](horizontal-direct-column-top-inclusion-d.md)

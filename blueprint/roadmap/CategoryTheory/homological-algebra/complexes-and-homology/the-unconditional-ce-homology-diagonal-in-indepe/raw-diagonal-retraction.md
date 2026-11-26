@@ -1,4 +1,6 @@
-# Raw Diagonal Retraction
+# The counit retraction of the carrier-universe CE homology diagonal
 
-The counit/unitor composite retracts the carrier-universe homology diagonal. No tensor of
-homologies is used.
+The counit retraction of the carrier-universe CE homology diagonal.
+
+The counit and tensor unitor induce a graded map from tensor-square homology back to CE
+homology.

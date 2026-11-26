@@ -1,4 +1,6 @@
-# Matrix Cyclic Degree Map
+# The finite matrix exterior-to-cyclic quotient degree map
 
-The exterior-to-Connes map on finite matrices, obtained by normalized tail antisymmetrization
-followed by generalized trace.
+The finite matrix exterior-to-cyclic quotient degree map.
+
+Apply the rational tail-alternating exterior map and then the generalized matrix trace in
+degree `n`.

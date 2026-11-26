@@ -17,53 +17,22 @@ public import MathlibExt.CategoryTheory.Monad.BarEilenbergMoore
 public import Mathlib.CategoryTheory.Monad.Adjunction
 
 /-!
-# Functor-valued bar of an adjunction
+# The two-sided bar of an adjunction
 
-For an adjunction `adj : F ⊣ U` with `F : C ⥤ D` and `U : D ⥤ C`, write
-`T := adj.toMonad : Monad C` for the pinned induced monad on the source. Its
-underlying functor is `F ⋙ U`, its unit is `adj.unit`, and its multiplication
-acts pointwise by `U.map (adj.counit.app _)`.
+Let F : C → D and U : D → C form an adjunction F ⊣ U, with unit η, counit ε, and induced monad
+T=UF. The left adjoint is a right T-module with action ε_{F(X)}, and the right adjoint is a
+left T-module with action U(ε_Y).
 
-The left adjoint carries a canonical right `T`-module (`adjRightModule`) whose
-action at `X` is the counit at `F.obj X`; the unit law is the left triangle
-identity and associativity is naturality of the counit. Dually, the right
-adjoint carries a canonical left `T`-module (`adjLeftModule`) whose action at
-`Y` is `U.map (adj.counit.app Y)`; the unit law is the right triangle identity
-while naturality and associativity follow from naturality of the counit.
+Their two-sided bar is a simplicial endofunctor of D with B_n(Y)=F(T^n(UY)). Its first and
+last faces use the right and left module actions; the inner faces use monad multiplication,
+and degeneracies insert the unit, indexed from the right-module end. The counit gives an
+augmentation to the identity endofunctor of D. Free-forgetful adjunction comparisons also give
+augmented morphisms to the underlying Eilenberg–Moore bar.
 
-Instantiating the accepted Cat-valued two-sided bar at these modules gives the
-strict functor-valued resolution `adjBar adj : SimplicialObject (D ⥤ D)`, i.e.
-`B(F, F ⋙ U, U)`. In degree `n` at `Y : D` this is `F (Tⁿ (U Y))`; faces and
-degeneracies are inherited, with computation lemmas below. The counit
-`U ⋙ F ⟶ 𝟭 D` equalizes the two degree-zero faces (again by counit
-naturality), so it induces a balanced pairing (`adjBalancedPairing`) and hence
-a genuine augmentation `adjAugmented adj` of the bar over the identity
-endofunctor of `D`.
-
-All computation lemmas are thin specializations of the accepted `twoSidedBar`
-and `BalancedPairing` APIs; no simplicial identity is reproved. Functoriality
-in module morphisms is inherited from `twoSidedBarHom` (recorded as the
-identity law); no product-category bifunctor is bundled.
-
-The evaluated/forgotten adjunction augmentation is compared with the
-Eilenberg--Moore underlying augmentation (`emUnderlyingAugmented`) by a
-canonical one-way augmented morphism (`adjToEMComparison`), assembled from
-`Adjunction.adjToMonadIso`, restriction of scalars, `barChangeHom`, and the
-accepted outer-whiskering/evaluation isomorphisms. The comparison is not
-asserted to be an isomorphism.
-
-Explicit nonclaims: no contraction in `T.Algebra`; no monadicity, equivalence,
-realization, derived, operadic, or enriched statement; and no naturality in a
-morphism of adjunctions (change-of-adjunction). Endpoint-face comparison via
-`BarChange` is available and used here.
-
-Mathematical source: J. P. May, *The Geometry of Iterated Loop Spaces*,
-Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
-Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
-This file is the functor-valued form `B(F,UF,U)` of May's two-sided bar for
-the monad induced by the adjunction, augmented over the identity endofunctor
-by the counit; it is the functor-valued form behind the usual monadic
-resolution. Degree and face/degeneracy conventions are inherited from `Bar`.
+The two-sided bar convention follows J. P. May, *The Geometry of Iterated Loop Spaces*,
+Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9, Construction 9.6 and Remark 9.12,
+<https://doi.org/10.1007/BFb0067491>. The category object and morphism universes are
+independent.
 -/
 
 @[expose] public section
@@ -79,9 +48,10 @@ variable {F : C ⥤ D} {U : D ⥤ C}
 
 section AdjModules
 
-/-- Canonical right `adj.toMonad`-module carried by the left adjoint: the
-action at `X` is the counit at `F.obj X`. The unit law is the left triangle
-identity and associativity is naturality of the counit. -/
+/-- Let F : C ⥤ D and U : D ⥤ C form an adjunction with counit ε and monad T=UF on C. The functor
+F is a right T-module, with action F(TX)=F(U(FX)) → F(X) given by ε_{F(X)}. The unit law is
+the left triangle identity and associativity is counit naturality. The categories C,D may have
+independent object and morphism universes. -/
 def adjRightModule (adj : F ⊣ U) : RightModule adj.toMonad D :=
   RightModule.mk F
     { app := fun X => adj.counit.app (F.obj X)
@@ -89,22 +59,25 @@ def adjRightModule (adj : F ⊣ U) : RightModule adj.toMonad D :=
     (fun X => adj.left_triangle_components X)
     (fun X => adj.counit.naturality (adj.counit.app (F.obj X)))
 
-/-- The underlying functor of the right module is the left adjoint. -/
+/-- For an adjunction F : C ⥤ D, U : D ⥤ C with F ⊣ U, the underlying functor of the canonical
+right module over T=UF is F. Its action is the counit at F(X), so the module retains the left
+adjoint as its carrier functor. -/
 @[simp]
 theorem adjRightModule_functor (adj : F ⊣ U) :
     (adjRightModule adj).functor = F :=
   rfl
 
-/-- The right-module action is pointwise the counit at `F.obj X`. -/
+/-- Let F ⊣ U be an adjunction, T=UF its monad, and X ∈ C. The action component of the canonical
+right T-module F is ε_{F(X)} : F(U(FX)) → F(X). This is the counit at the object F(X). -/
 @[simp]
 theorem adjRightModule_action_app (adj : F ⊣ U) (X : C) :
     (adjRightModule adj).action.app X = adj.counit.app (F.obj X) :=
   rfl
 
-/-- Canonical left `adj.toMonad`-module carried by the right adjoint: the
-action at `Y` is `U.map` of the counit at `Y`. The unit law is the right
-triangle identity; naturality and associativity follow from naturality of the
-counit after splitting `U.map` over composition. -/
+/-- Let F : C ⥤ D and U : D ⥤ C form an adjunction with monad T=UF. The functor U is a left
+T-module, with action T(UY)=U(F(UY)) → UY given by U(ε_Y). The unit law is the right triangle
+identity, and the left-module associativity equation follows from naturality of the counit. No
+monadicity assumption is needed. -/
 def adjLeftModule (adj : F ⊣ U) : LeftModule D adj.toMonad :=
   LeftModule.mk U
     { app := fun Y => U.map (adj.counit.app Y)
@@ -119,13 +92,16 @@ def adjLeftModule (adj : F ⊣ U) : LeftModule D adj.toMonad :=
       simp only [Functor.map_comp, Functor.id_map] at h
       exact h.symm)
 
-/-- The underlying functor of the left module is the right adjoint. -/
+/-- For an adjunction F : C ⥤ D, U : D ⥤ C with F ⊣ U, the canonical left module over the monad
+T=UF has underlying functor U. Its action on an object Y ∈ D is U applied to the adjunction
+counit ε_Y. -/
 @[simp]
 theorem adjLeftModule_functor (adj : F ⊣ U) :
     (adjLeftModule adj).functor = U :=
   rfl
 
-/-- The left-module action is `U.map` of the counit. -/
+/-- Let F ⊣ U be an adjunction, T=UF its monad, and Y ∈ D. The action component of the canonical
+left T-module U equals U(ε_Y) : T(UY) → UY. The counit is that of the given adjunction. -/
 @[simp]
 theorem adjLeftModule_action_app (adj : F ⊣ U) (Y : D) :
     (adjLeftModule adj).action.app Y = U.map (adj.counit.app Y) :=
@@ -135,38 +111,51 @@ end AdjModules
 
 section AdjBar
 
-/-- Functor-valued bar of an adjunction: the accepted two-sided bar at the
-canonical modules, a simplicial endofunctor on the target `D`. -/
+/-- Let F : C ⥤ D and U : D ⥤ C form an adjunction and put T=UF. The two-sided bar of the right
+T-module F and left T-module U is a simplicial object in D ⥤ D. Its degree-n endofunctor sends
+Y to F(T^n(UY)), its endpoint faces use ε_F and Uε, its middle faces use multiplication of T,
+and its degeneracies insert the monad unit. -/
 noncomputable def adjBar (adj : F ⊣ U) : SimplicialObject (D ⥤ D) :=
   twoSidedBar adj.toMonad (adjRightModule adj) (adjLeftModule adj)
 
-/-- Degree `n` is the levelwise bar object. -/
+/-- For an adjunction F ⊣ U and n ∈ ℕ, the value of its simplicial bar at the opposite simplex [n]
+is the two-sided bar functor B(F,UF,U)_n. Its value at Y ∈ D is F((UF)^n(UY)). This identifies
+the simplicial degree with the corresponding levelwise bar endofunctor. -/
 @[simp]
 theorem adjBar_obj (adj : F ⊣ U) (n : ℕ) :
     (adjBar adj).obj (Opposite.op (SimplexCategory.mk n)) =
       barObj adj.toMonad (adjRightModule adj) (adjLeftModule adj) n :=
   rfl
 
-/-- Degree `n` at `Y : D` is `F` applied to `Tⁿ (U.obj Y)`. -/
+/-- Let F ⊣ U be an adjunction, T=UF, n ∈ ℕ, and Y ∈ D. The degree-n object of the evaluated
+adjunction bar is exactly F(T^n(UY)), with T^n=monadPow(T,n). Thus degree zero is F(UY), and
+each higher degree inserts another induced-monad factor. -/
 @[simp]
 theorem adjBar_obj_obj (adj : F ⊣ U) (n : ℕ) (Y : D) :
     ((adjBar adj).obj (Opposite.op (SimplexCategory.mk n))).obj Y =
       F.obj ((monadPow adj.toMonad n).obj (U.obj Y)) :=
   rfl
 
-/-- Functoriality on morphisms in `D` passes through `F`, `Tⁿ`, and `U`. -/
+/-- For an adjunction F ⊣ U, T=UF, n ∈ ℕ, and g : Y → Z in D, the degree-n bar endofunctor acts by
+F(T^n(U(g))) : F(T^n(UY)) → F(T^n(UZ)). This is the map on the object variable of D, distinct
+from the simplicial faces and degeneracies. -/
 @[simp]
 theorem adjBar_obj_map (adj : F ⊣ U) {n : ℕ} {Y Z : D} (g : Y ⟶ Z) :
     ((adjBar adj).obj (Opposite.op (SimplexCategory.mk n))).map g =
       F.map ((monadPow adj.toMonad n).map (U.map g)) :=
   rfl
 
-/-- Degree zero is the comonad functor `U ⋙ F` on `D`. -/
+/-- Let F : C ⥤ D and U : D ⥤ C form an adjunction. Its bar in simplicial degree zero is U ⋙ F,
+the endofunctor Y ↦ F(UY) on D. This is the underlying functor of the comonad induced by the
+adjunction. -/
 theorem adjBar_obj_zero (adj : F ⊣ U) :
     (adjBar adj).obj (Opposite.op (SimplexCategory.mk 0)) = U ⋙ F :=
   barObj_zero adj.toMonad (adjRightModule adj) (adjLeftModule adj)
 
-/-- Faces are the two-sided faces at the adjunction modules. -/
+/-- Let F ⊣ U be an adjunction, T=UF, n ∈ ℕ, and i ∈ Fin(n+2). The simplicial face d_i : B_{n+1} →
+B_n equals barFace(T,adjRightModule,adjLeftModule,n,i). The first face is the right action
+ε_F, the last is F(T^n(Uε)), and interior faces apply F to monad multiplication at reversed
+index Fin.rev(i−1). -/
 @[simp]
 theorem adjBar_map_δ_op (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 2)) :
     (adjBar adj).map (SimplexCategory.δ i).op =
@@ -174,7 +163,9 @@ theorem adjBar_map_δ_op (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 2)) :
         (L := adjLeftModule adj) n i :=
   twoSidedBar_map_δ_op _ _ _ _
 
-/-- Degeneracies are the two-sided degeneracies at the adjunction modules. -/
+/-- For an adjunction F ⊣ U, T=UF, n ∈ ℕ, and i ∈ Fin(n+1), the simplicial degeneracy B_n →
+B_{n+1} equals the two-sided bar degeneracy of the canonical modules F and U. At Y it is F
+applied to the unit insertion barEtaAtPos(T,n,i,UY), whose raw position is Fin.rev(i). -/
 @[simp]
 theorem adjBar_map_σ_op (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 1)) :
     (adjBar adj).map (SimplexCategory.σ i).op =
@@ -182,7 +173,11 @@ theorem adjBar_map_σ_op (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 1)) :
         (L := adjLeftModule adj) n i :=
   twoSidedBar_map_σ_op _ _ _ _
 
-/-- Face components are the elementary `barFaceApp` operators. -/
+/-- Let F ⊣ U be an adjunction, T=UF, n ∈ ℕ, i ∈ Fin(n+2), and Y ∈ D. The face component
+F(T^{n+1}(UY)) → F(T^n(UY)) is the elementary two-sided bar face. At i=0 it is the iterated
+right action, equivalently the counit at F(T^n(UY)) with the canonical power identification.
+At i=n+1 it is F(T^n(U(ε_Y))); otherwise it is F applied to the multiplication insertion with
+raw reversed index Fin.rev(i−1). -/
 @[simp]
 theorem adjBar_map_δ_op_app (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 2))
     (Y : D) :
@@ -192,7 +187,10 @@ theorem adjBar_map_δ_op_app (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 2))
   rw [adjBar_map_δ_op]
   rfl
 
-/-- Degeneracy components insert the unit via `barEtaAtPos`. -/
+/-- Let F ⊣ U be an adjunction, T=UF, n ∈ ℕ, i ∈ Fin(n+1), and Y ∈ D. The degree-n degeneracy
+component is F(barEtaAtPos(T,n,i,UY)) : F(T^n(UY)) → F(T^{n+1}(UY)). The insertion is etaAtPos
+with the reversed finite position Fin.rev(i), so the simplicial index counts from the
+right-module end. -/
 @[simp]
 theorem adjBar_map_σ_op_app (adj : F ⊣ U) {n : ℕ} (i : Fin (n + 1))
     (Y : D) :
@@ -205,69 +203,85 @@ end AdjBar
 
 section AdjAugmentation
 
-/-- Degree-zero pairing for the adjunction bar: the counit `U ⋙ F ⟶ 𝟭 D`,
-well typed since `barObj _ _ _ 0` is definitionally `U ⋙ F`. -/
+/-- For an adjunction F ⊣ U, the natural transformation ε : F∘U → Id_D is the degree-zero pairing
+of B(F,UF,U). Its domain is the zero-degree bar endofunctor Y ↦ F(UY) and its target is the
+identity endofunctor of D. -/
 def adjPairing (adj : F ⊣ U) :
     barObj adj.toMonad (adjRightModule adj) (adjLeftModule adj) 0 ⟶ 𝟭 D :=
   adj.counit
 
-/-- The pairing acts as the counit at every `Y : D`. -/
+/-- Let F ⊣ U be an adjunction and Y ∈ D. The component at Y of the degree-zero bar pairing is ε_Y
+: F(UY) → Y. Thus the pairing used for the bar augmentation is the specified adjunction
+counit. -/
 @[simp]
 theorem adjPairing_app (adj : F ⊣ U) (Y : D) :
     (adjPairing adj).app Y = adj.counit.app Y :=
   rfl
 
-/-- Balanced pairing for the adjunction bar, from the pointwise action
-equation: both composites are `ε ≫ ε` versus `F.map (U.map ε) ≫ ε`, equal by
-naturality of the counit. -/
+/-- For an adjunction F ⊣ U with T=UF, the counit pairing B(F,T,U)_0 → Id_D is balanced. At Y ∈ D
+its two degree-one face composites satisfy ε_{F(UY)} ≫ ε_Y = F(U(ε_Y)) ≫ ε_Y by counit
+naturality. Hence the canonical right action on F and left action on U give a balanced pairing
+to the identity endofunctor. -/
 noncomputable def adjBalancedPairing (adj : F ⊣ U) :
     BalancedPairing adj.toMonad (adjRightModule adj) (adjLeftModule adj) :=
   BalancedPairing.mkOfActionEq (adjPairing adj) (fun Y =>
     (adj.counit.naturality (adj.counit.app Y)).symm)
 
-/-- The balanced-pairing target is the identity endofunctor. -/
+/-- Let F ⊣ U be an adjunction. The target functor of its balanced two-sided bar pairing is Id_D.
+Thus its component at Y pairs the degree-zero term F(UY) with Y. -/
 @[simp]
 theorem adjBalancedPairing_target (adj : F ⊣ U) :
     (adjBalancedPairing adj).target = 𝟭 D :=
   rfl
 
-/-- The balanced-pairing map is the counit pairing. -/
+/-- For an adjunction F ⊣ U, the map of its balanced bar pairing equals adjPairing, the counit F∘U
+→ Id_D. The balancing data therefore retain the given counit morphism at every object of D. -/
 @[simp]
 theorem adjBalancedPairing_pairing (adj : F ⊣ U) :
     (adjBalancedPairing adj).pairing = adjPairing adj :=
   rfl
 
-/-- Augmented adjunction bar over the identity endofunctor, via the genuine
-transport of the balanced pairing. -/
+/-- Let F ⊣ U be an adjunction and T=UF. The counit balanced pairing gives an augmented simplicial
+object of D ⥤ D with underlying bar B(F,T,U) and augmentation target Id_D. Its degree-zero
+augmentation is ε : F∘U → Id_D; the higher components are the balanced extension compatible
+with all simplicial faces and degeneracies. -/
 noncomputable def adjAugmented (adj : F ⊣ U) :
     SimplicialObject.Augmented (D ⥤ D) :=
   BalancedPairing.toSimplicialAugmented (adjBalancedPairing adj)
 
-/-- The underlying simplicial object is the adjunction bar. -/
+/-- For an adjunction F ⊣ U, the underlying simplicial object of adjAugmented equals adjBar. In
+degree n it is the endofunctor Y ↦ F((UF)^n(UY)), with the canonical two-sided bar faces and
+degeneracies. -/
 @[simp]
 theorem adjAugmented_left (adj : F ⊣ U) :
     (adjAugmented adj).left = adjBar adj :=
   rfl
 
-/-- The augmentation target is the identity endofunctor. -/
+/-- Let F ⊣ U be an adjunction. The target object of its augmented bar in D ⥤ D is exactly Id_D.
+Thus evaluating the augmentation at Y ∈ D gives an augmented simplicial object with target Y. -/
 @[simp]
 theorem adjAugmented_right (adj : F ⊣ U) :
     (adjAugmented adj).right = 𝟭 D :=
   rfl
 
-/-- The augmentation point is the identity endofunctor. -/
+/-- For an adjunction F ⊣ U, applying the augmentation-point functor to adjAugmented gives Id_D.
+This is the categorical target of the bar augmentation B(F,UF,U) → const(Id_D). -/
 @[simp]
 theorem adjAugmented_point_obj (adj : F ⊣ U) :
     (SimplicialObject.Augmented.point.obj (adjAugmented adj)) = 𝟭 D :=
   rfl
 
-/-- The augmentation at an arbitrary simplex is the data-level extension. -/
+/-- Let F ⊣ U be an adjunction, T=UF, and n ∈ ℕ. The augmentation natural transformation at the
+opposite simplex [n] equals the degree-n map of the counit balanced-pairing augmentation. Its
+component at Y has source F(T^n(UY)) and target Y, and is the simplicial extension of ε_Y
+compatible with the bar faces and degeneracies. -/
 theorem adjAugmented_hom_app_mk (adj : F ⊣ U) (n : ℕ) :
     (adjAugmented adj).hom.app (Opposite.op (SimplexCategory.mk n)) =
       (adjBalancedPairing adj).toDataHom.app n :=
   BalancedPairing.toSimplicialAugmented_hom_app_mk _ _
 
-/-- The degree-zero augmentation component is the counit pairing. -/
+/-- For an adjunction F ⊣ U, the degree-zero component of the augmented bar B(F,UF,U) →
+const(Id_D) equals adjPairing, the counit F∘U → Id_D. At Y ∈ D it is ε_Y : F(UY) → Y. -/
 @[simp]
 theorem adjAugmented_hom_zero (adj : F ⊣ U) :
     (adjAugmented adj).hom.app (Opposite.op (SimplexCategory.mk 0)) =
@@ -283,21 +297,25 @@ section AdjEMComparison
 
 variable {T : Monad C}
 
-/-- Monad morphism from the free–forgetful monad to `T` (components are identities). -/
+/-- Let T be a monad on C and S the monad induced by its free-forgetful adjunction T.free ⊣
+T.forget. The forward map of the canonical monad isomorphism S≅T is a monad morphism S → T.
+Its components are identities on the common underlying T-object carriers. -/
 private def adjMonadHom : T.adj.toMonad ⟶ T :=
   (Adjunction.adjToMonadIso T).hom
 
 private theorem adjMonadHom_app (X : C) :
     (adjMonadHom (T := T)).app X = 𝟙 _ := rfl
 
-/-- Algebra for the free–forgetful monad induced by `alg`, via restriction. -/
+/-- Let T be a monad on C, S the monad of T.free ⊣ T.forget, h : S → T the canonical monad
+morphism, and alg=(A,a) a T-algebra. Restricting scalars along h makes A an S-algebra with
+action h_A ≫ a. This is the algebra used to compare the two bar constructions. -/
 private def adjAlg (alg : T.Algebra) : T.adj.toMonad.Algebra :=
   (algebraFunctorOfMonadHom (adjMonadHom (T := T))).obj alg
 
-/-- Right-module comparison over the free–forgetful monad: the adjunction
-right module postcomposed with forget agrees with the restricted forgotten
-free module. Both carry `T.free ⋙ T.forget`; the actions agree by counit
-naturality with identity comparisons via `(Adjunction.adjToMonadIso T).hom`. -/
+/-- Let T be a monad on C, S the monad induced by T.free ⊣ T.forget, and h : S → T its canonical
+map. The right S-module obtained by postcomposing the adjunction right module T.free with
+T.forget is isomorphic to the restriction along h of the forgotten free-algebra right
+T-module. Both underlying functors are T; the comparison preserves the multiplication actions. -/
 private def adjRightIso :
     (adjRightModule T.adj).postcomp T.forget ≅
       (rightModuleRestrictAlongHom (D := C) adjMonadHom).obj
@@ -319,10 +337,10 @@ private def adjRightIso :
   simp only [adjRightModule_action_app]
   simp
 
-/-- Left-module comparison over the free–forgetful monad: the terminal-index
-module of `adjAlg alg` agrees with the restricted terminal-index module of
-`alg`. Both carry the constant functor at `alg.A` with action from `alg.a`
-up to identity comparisons via `(Adjunction.adjToMonadIso T).hom`. -/
+/-- For a monad T on C, its induced free-forgetful monad S, canonical map h : S → T, and T-algebra
+alg=(A,a), the constant left S-module of the restricted algebra is isomorphic to h* of the
+constant left T-module of alg. The indexing category is Discrete PUnit, the carrier functor is
+constant at A, and the action is h_A ≫ a. -/
 private def adjLeftIso (alg : T.Algebra) :
     algebraLeftModule (adjAlg alg) ≅
       (leftModuleRestrictAlongHom (A := Discrete PUnit.{1}) adjMonadHom).obj
@@ -347,9 +365,10 @@ private def adjLeftIso (alg : T.Algebra) :
   have hR : (𝟙 _ ≫ alg.a) ≫ 𝟙 _ = alg.a := by simp
   exact hL.trans hR.symm
 
-/-- Underlying balanced pairing for the adjunction side, mirroring
-`emUnderlyingPairing`: target the regular target and pair by `alg.a` via
-`adjAlg`. -/
+/-- Let T be a monad on C, S its induced free-forgetful monad, and alg=(A,a) a T-algebra
+restricted to S. The forgotten adjunction right S-module and the constant left S-module of
+this restricted algebra have a balanced pairing to the constant functor at A. Its component is
+the restricted action S(A) → A, and balancing is the algebra associativity equation. -/
 private noncomputable def adjUnderlyingPairing (alg : T.Algebra) :
     BalancedPairing T.adj.toMonad ((adjRightModule T.adj).postcomp T.forget)
       (algebraLeftModule (adjAlg alg)) where
@@ -363,61 +382,68 @@ private noncomputable def adjUnderlyingPairing (alg : T.Algebra) :
     (isBalancedPairing_iff_action_eq (T := T.adj.toMonad)).mpr
       (fun a => (adjAlg alg).assoc)
 
-/-- Evaluated/forgotten adjunction augmentation over `C`, mirroring
-`emUnderlyingAugmented`: whisker the adjunction pairing with
-`resolutionEvalPoint`. Its formal relation to the literal
-forgetful/evaluated image of `adjAugmented T.adj` is recorded in
-`adjLiteralAugmented` and `adjLiteralIso` below: the literal image is the
-whiskered `adjAugmented T.adj`, naturally isomorphic to this surrogate model. -/
+/-- Let T be a monad on C, S its induced free-forgetful monad, and alg=(A,a) a T-algebra. Evaluate
+the balanced bar of the forgotten free right S-module and the constant left S-module of the
+restricted algebra at the unique discrete point. This gives an augmented simplicial object of
+C with target A and zero-degree term T(A); its augmentation comes from the algebra action. -/
 @[no_expose]
 noncomputable def adjEvaluatedAugmented (alg : T.Algebra) :
     SimplicialObject.Augmented C :=
   (SimplicialObject.Augmented.whiskeringObj _ _ resolutionEvalPoint).obj
     (BalancedPairing.toSimplicialAugmented (adjUnderlyingPairing alg))
 
-/-- Auxiliary point identity, proved by unfolding the opaque surrogate
-(private so the unfolding is permitted). -/
+/-- For a monad T on C and a T-algebra alg=(A,a), the augmentation target of the evaluated bar
+formed from the restricted algebra over the induced free-forgetful monad equals A. This is the
+right object of adjEvaluatedAugmented(alg). -/
 private theorem adjEvaluatedAugmented_point_aux (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).right = alg.A :=
   rfl
 
-/-- The augmentation target is the algebra carrier. -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. The augmented simplicial object
+adjEvaluatedAugmented(alg), obtained from the forgotten free-forgetful adjunction module and
+the restricted algebra module, has augmentation target exactly A. -/
 @[simp]
 theorem adjEvaluatedAugmented_point (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).right = alg.A :=
   adjEvaluatedAugmented_point_aux alg
 
-/-- Auxiliary degree-zero object identity, proved by unfolding the opaque surrogate
-(private so the unfolding is permitted). -/
+/-- For a monad T on C and a T-algebra alg=(A,a), the degree-zero term of
+adjEvaluatedAugmented(alg) equals T(A). This is the free-algebra term after forgetting, before
+applying its augmentation to A. -/
 private theorem adjEvaluatedAugmented_obj_zero_aux (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).left.obj
       (Opposite.op (SimplexCategory.mk 0)) = T.obj alg.A :=
   rfl
 
-/-- Degree-zero object law for the evaluated augmentation, private-name-free:
-the degree-zero bar object is the monad applied to the carrier. -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. The underlying simplicial object of its
+evaluated adjunction augmentation has term T(A) at the opposite simplex [0]. The target of the
+augmentation is A. -/
 @[simp]
 theorem adjEvaluatedAugmented_obj_zero (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).left.obj
       (Opposite.op (SimplexCategory.mk 0)) = T.obj alg.A :=
   adjEvaluatedAugmented_obj_zero_aux alg
 
-/-- Evaluation at an algebra, mirroring `emEvalAlgebra`: applying an
-`Algebra`-valued endofunctor diagram to `alg`. -/
+/-- For a monad T on C and a T-algebra alg, define the functor (T.Algebra ⥤ T.Algebra) → T.Algebra
+by evaluating an endofunctor H at alg. It sends a natural transformation η : H → H′ to its
+component η_alg. -/
 noncomputable def adjEvalAlgebra (alg : T.Algebra) :
     (T.Algebra ⥤ T.Algebra) ⥤ T.Algebra :=
   (evaluation _ _).obj alg
 
-/-- The literal forgetful image in `C`: `adjAugmented T.adj` evaluated at `alg`
-then whiskered with `T.forget`. This is the honest evaluated/forgotten object;
-`adjEvaluatedAugmented` above is the reusable surrogate model. -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. Evaluate the augmented adjunction bar of
+T.free ⊣ T.forget at alg and then apply T.forget. The result is an augmented simplicial object
+of C with target A. If S is the induced adjunction monad, its degree-n term is T(S^n(A)), and
+its zero-degree augmentation is the algebra action a. -/
 noncomputable def adjLiteralAugmented (alg : T.Algebra) :
     SimplicialObject.Augmented C :=
   (SimplicialObject.Augmented.whiskeringObj _ _
     (adjEvalAlgebra alg ⋙ T.forget)).obj (adjAugmented T.adj)
 
-/-- The underlying simplicial object of the literal image is the evaluated bar
-postcomposed with the forgetful functor. -/
+/-- For a monad T on C and a T-algebra alg, the underlying simplicial object of
+adjLiteralAugmented(alg) equals the underlying augmented free-forgetful adjunction bar
+followed by evaluation at alg and T.forget. Thus its object at a simplex Δ is the forgotten
+value of the adjunction bar endofunctor at alg. -/
 @[simp]
 theorem adjLiteralAugmented_left (alg : T.Algebra) :
     (adjLiteralAugmented alg).left =
@@ -426,52 +452,61 @@ theorem adjLiteralAugmented_left (alg : T.Algebra) :
   rw [SimplicialObject.Augmented.whiskeringObj_obj_left]
   rfl
 
-/-- The augmentation point of the literal image is the algebra carrier. -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. The target of adjLiteralAugmented(alg),
+formed by evaluating the augmented free-forgetful adjunction bar at alg and applying T.forget,
+is exactly the carrier A. -/
 @[simp]
 theorem adjLiteralAugmented_point (alg : T.Algebra) :
     (adjLiteralAugmented alg).right = alg.A :=
   rfl
 
-/-- Degree-zero object law for the literal image. -/
+/-- For a monad T on C and a T-algebra alg=(A,a), the zero-degree term of adjLiteralAugmented(alg)
+equals T(A). The construction evaluates the free-forgetful adjunction bar in T.Algebra and
+then forgets its algebra structure. -/
 @[simp]
 theorem adjLiteralAugmented_obj_zero (alg : T.Algebra) :
     (adjLiteralAugmented alg).left.obj
       (Opposite.op (SimplexCategory.mk 0)) = T.obj alg.A :=
   rfl
 
-/-- Evaluation at algebras, forgotten to `C`, is natural in the algebra
-morphism: at an `Algebra`-valued endofunctor `F`, act by `F.map φ` then
-forget. Genuine evaluation naturality, no surrogate involved. Public because
-the headline literal maps whisker along it. -/
+/-- Let T be a monad on C and φ : alg → alg′ a T-algebra morphism. There is a natural
+transformation from evaluation at alg followed by T.forget to evaluation at alg′ followed by
+T.forget. At an endofunctor H of T.Algebra, its component is T.forget(H(φ)) : U(H(alg)) →
+U(H(alg′)), where U=T.forget. -/
 noncomputable def adjEvalForgetNatTrans {alg alg' : T.Algebra}
     (φ : alg ⟶ alg') :
     (adjEvalAlgebra alg ⋙ T.forget) ⟶ (adjEvalAlgebra alg' ⋙ T.forget) :=
   Functor.whiskerRight ((evaluation T.Algebra T.Algebra).map φ) T.forget
 
-/-- Maps induced by algebra morphisms on the literal forgetful image: whisker
-the genuine functor-valued adjunction augmentation along evaluation
-naturality. No surrogate reconstruction. -/
+/-- For a monad T on C and an algebra morphism φ : alg → alg′, forgotten evaluation naturality
+gives an augmented simplicial map adjLiteralAugmented(alg) → adjLiteralAugmented(alg′). It
+acts by the forgotten adjunction bar endofunctor map at each simplex and by the underlying
+morphism φ.f on the augmentation targets. -/
 noncomputable def adjLiteralHom {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     adjLiteralAugmented alg ⟶ adjLiteralAugmented alg' :=
   ((SimplicialObject.Augmented.whiskering (T.Algebra ⥤ T.Algebra) C).map
     (adjEvalForgetNatTrans φ)).app (adjAugmented T.adj)
 
-/-- The target component of a literal map is the algebra morphism itself:
-evaluating the identity endofunctor at `φ` then forgetting is `φ.f`. -/
+/-- Let T be a monad on C and φ : alg → alg′ a T-algebra morphism. The right, augmentation-target
+component of adjLiteralHom(φ) equals the underlying morphism φ.f : alg.A → alg′.A. This is
+evaluation of the identity algebra endofunctor followed by the forgetful functor. -/
 theorem adjLiteralHom_right {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (adjLiteralHom φ).right = φ.f :=
   rfl
 
-/-- The simplicial component of a literal map acts by the forgotten
-endofunctor map: at `Δ`, apply `(adjBar T.adj).obj Δ` to `φ` then forget.
-Private-name-free: only the public bar, forgetful functor, and `φ`. -/
+/-- Let T be a monad on C, φ : alg → alg′ a T-algebra morphism, and Δ ∈ SimplexCategoryᵒᵖ. The
+Δ-component of adjLiteralHom(φ) is T.forget applied to the map of φ under the Δ-endofunctor of
+adjBar(T.adj). This gives the morphism between the corresponding evaluated-and-forgotten
+simplicial terms. -/
 theorem adjLiteralHom_left_app {alg alg' : T.Algebra} (φ : alg ⟶ alg')
     (Δ : SimplexCategoryᵒᵖ) :
     ((adjLiteralHom φ).left).app Δ =
       T.forget.map (((adjBar T.adj).obj Δ).map φ) :=
   rfl
 
-/-- Identity algebra morphisms induce identity literal maps. -/
+/-- For a monad T on C and a T-algebra alg, adjLiteralHom(𝟙_alg) = 𝟙_adjLiteralAugmented(alg).
+Thus the augmented bar map induced by identity evaluation is the identity on both its
+simplicial object and augmentation target. -/
 theorem adjLiteralHom_id (alg : T.Algebra) :
     adjLiteralHom (𝟙 alg) = 𝟙 (adjLiteralAugmented alg) := by
   refine SimplicialObject.Augmented.hom_ext _ _ ?_ ?_
@@ -489,7 +524,9 @@ theorem adjLiteralHom_id (alg : T.Algebra) :
     have e3r : (𝟙 alg.A) = 𝟙 (adjLiteralAugmented alg).right := rfl
     exact e1.trans e3r
 
-/-- Composition of algebra morphisms induces composition of literal maps. -/
+/-- Let T be a monad on C and φ : alg₁ → alg₂, ψ : alg₂ → alg₃ algebra morphisms. Then
+adjLiteralHom(φ) ≫ adjLiteralHom(ψ) = adjLiteralHom(φ ≫ ψ) as maps of augmented simplicial
+objects of C. The statement includes their underlying simplicial maps and target components. -/
 theorem adjLiteralHom_comp {alg₁ alg₂ alg₃ : T.Algebra} (φ : alg₁ ⟶ alg₂)
     (ψ : alg₂ ⟶ alg₃) :
     adjLiteralHom φ ≫ adjLiteralHom ψ = adjLiteralHom (φ ≫ ψ) := by
@@ -507,30 +544,33 @@ theorem adjLiteralHom_comp {alg₁ alg₂ alg₃ : T.Algebra} (φ : alg₁ ⟶ a
     change φ.f ≫ ψ.f = (φ ≫ ψ).f
     exact (Algebra.comp_f φ ψ).symm
 
-/-- Evaluation at an algebra for `Algebra`-indexed `C`-valued diagrams,
-for the postcomposition commutation below. Assembly-only scaffolding. -/
+/-- For a monad T on C and a T-algebra alg, define evaluation (T.Algebra ⥤ C) → C at alg. It sends
+a diagram H to H(alg) and a natural transformation to its component at alg. -/
 private noncomputable def adjEvalC (alg : T.Algebra) : (T.Algebra ⥤ C) ⥤ C :=
   (evaluation _ _).obj alg
 
-/-- Evaluation/postcomposition commutation as an explicit isomorphism, so the
-literal comparison chain below is well-typed at every transparency.
-Assembly-only scaffolding. -/
+/-- Let T be a monad on C and alg a T-algebra. Evaluating an algebra-valued endofunctor at alg and
+then forgetting is naturally isomorphic to first postcomposing the endofunctor with T.forget
+and then evaluating at alg. Both have value U(H(alg)), and the chosen comparison has identity
+components. -/
 private noncomputable def adjEvalForgetIso (alg : T.Algebra) :
     (adjEvalAlgebra alg ⋙ T.forget) ≅
       (functorPostcompOuter T.forget ⋙ adjEvalC alg) :=
   Iso.refl _
 
-/-- Postcomposed adjunction bar, still `Algebra`-indexed: the adjunction bar
-with the right module postcomposed by `forget`. Assembly-only scaffolding. -/
+/-- For a monad T on C, let S be the monad induced by T.free ⊣ T.forget. Postcompose the
+adjunction right S-module by T.forget and keep the adjunction left S-module. Their two-sided
+bar is a simplicial object in T.Algebra ⥤ C. Its degree-n value at an algebra Y is the
+forgotten free carrier T(S^n(UY)), with U=T.forget. -/
 private noncomputable def adjPostcompBar :
     SimplicialObject (T.Algebra ⥤ C) :=
   twoSidedBar T.adj.toMonad ((adjRightModule T.adj).postcomp T.forget)
     (adjLeftModule T.adj)
 
-/-- Stepwise simplicial comparison to the postcomposed evaluated bar, via the
-functor associators, the explicit evaluation/postcomposition commutation iso,
-and the whiskered genuine `twoSidedBarPostcompWhiskerIso`.
-Assembly-only scaffolding. -/
+/-- Let T be a monad on C and alg a T-algebra. The simplicial object obtained by evaluating the
+free-forgetful adjunction bar at alg and forgetting is isomorphic to evaluation at alg of the
+bar whose right adjunction module is postcomposed with T.forget. This comparison uses
+evaluation–postcomposition commutation and the canonical bar postcomposition isomorphism. -/
 private noncomputable def adjLiteralBarIsoStep (alg : T.Algebra) :
     (adjLiteralAugmented alg).left ≅ (adjPostcompBar ⋙ adjEvalC alg) :=
   (Functor.isoWhiskerLeft (adjBar T.adj) (adjEvalForgetIso alg)) ≪≫
@@ -541,9 +581,10 @@ private noncomputable def adjLiteralBarIsoStep (alg : T.Algebra) :
         (adjLeftModule T.adj))
       (adjEvalC alg))
 
-/-- Degreewise objects of the postcomposed evaluated bar agree with the
-surrogate model, by unfolding to the same forgotten bar object at each
-simplex length. Assembly-only scaffolding. -/
+/-- For a monad T on C, a T-algebra alg, and a simplex Δ ∈ SimplexCategoryᵒᵖ, evaluation of
+adjPostcompBar at alg has the same Δ-object as the underlying simplicial object of
+adjEvaluatedAugmented(alg). The left module restriction preserves the algebra carrier and the
+right-module postcomposition is the forgotten free functor. -/
 private theorem adjPostcompEval_obj_eq (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (adjPostcompBar ⋙ adjEvalC alg).obj Δ =
@@ -554,16 +595,16 @@ private theorem adjPostcompEval_obj_eq (alg : T.Algebra)
   rw [hΔ]
   rfl
 
-/-- Evaluation acts by application, by definition. -/
+/-- Let T be a monad on C, H,H′ endofunctors of T.Algebra, η : H → H′ a natural transformation,
+and alg a T-algebra. The evaluation functor at alg sends η to η_alg : H(alg) → H′(alg). -/
 private theorem adjEvalAlgebra_map_app {F G : T.Algebra ⥤ T.Algebra}
     (η : F ⟶ G) (alg : T.Algebra) :
     (adjEvalAlgebra alg).map η = η.app alg :=
   rfl
 
-/-- Forgotten counit is the algebra structure map, standalone so prior
-unfolding cannot pollute transparency. Term-mode only: `rfl` bridges the
-free/forget carrier gap at default transparency; no `rw` motive is built over
-the bridged composite. -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. Applying T.forget to the counit of T.free ⊣
+T.forget at alg gives exactly a : T(A) → A. Thus the free-forgetful counit has the algebra
+structure morphism as its underlying map. -/
 private theorem adjCounitForget_app (alg : T.Algebra) :
     T.forget.map ((T.adj).counit.app alg) = alg.a := by
   have hForget : T.forget.map ((T.adj).counit.app alg) =
@@ -576,34 +617,33 @@ private theorem adjCounitForget_app (alg : T.Algebra) :
     (congrArg (· ≫ alg.a) hMap).trans (Category.id_comp _)
   exact hForget.trans (hDef.trans hComp)
 
-/-- Evaluation at the discrete point acts by application, by definition
-(mirrors `emEvalPoint_map_app`). Placed early so the literal bridge below can
-use it. -/
+/-- Let T be a monad on C, F,G : Discrete PUnit ⥤ C functors, and η : F → G a natural
+transformation. The evaluation functor at the unique discrete point sends η to η at that
+point. This is the component used when evaluating the constant-index bar. -/
 private theorem adjEvalPoint_map_app {F G : Discrete PUnit.{1} ⥤ C}
     (η : F ⟶ G) :
     resolutionEvalPoint.map η = η.app (Discrete.mk PUnit.unit) :=
   rfl
 
-/-- Constant `T.Algebra`-valued index functor at `alg`: every discrete point
-goes to `alg`. Precomposing with it then evaluating at the discrete point is
-evaluation at `alg`. Assembly-only scaffolding. -/
+/-- For a monad T on C and a T-algebra alg, define Discrete PUnit → T.Algebra to be the constant
+functor at alg. Its unique object is sent to alg and its morphisms to identity morphisms. -/
 private noncomputable def adjConstAlg (alg : T.Algebra) :
     Discrete PUnit.{1} ⥤ T.Algebra :=
   (Functor.const (Discrete PUnit.{1})).obj alg
 
-/-- Evaluation at `alg` factors through precomposition with the constant index
-functor followed by evaluation at the discrete point. Both sides act by
-application, so the reflexive iso is well-typed and keeps the bridge below
-well-typed at every transparency. Assembly-only scaffolding. -/
+/-- Let T be a monad on C and alg a T-algebra. Evaluation of a C-valued algebra diagram at alg is
+naturally isomorphic to precomposition with the constant functor Discrete PUnit → T.Algebra at
+alg followed by evaluation at the unique point. Both functors send H to H(alg), and the
+comparison has identity components. -/
 private noncomputable def adjEvalFactorIso (alg : T.Algebra) :
     adjEvalC alg ≅
       (functorPrecompOuter (adjConstAlg alg) ⋙ resolutionEvalPoint) :=
   Iso.refl _
 
-/-- The precomposed adjunction left module agrees with the restricted
-terminal-index module: both carry the constant functor at the carrier, and
-both actions are the algebra structure map (forgotten counit versus
-restriction). Assembled with a reflexive functor iso, mirroring `adjLeftIso`. -/
+/-- Let T be a monad on C, S its free-forgetful induced monad, and alg=(A,a) a T-algebra.
+Precomposing the adjunction left S-module by the constant algebra functor at alg is isomorphic
+to the constant left S-module of the restricted algebra. Both are functors Discrete PUnit → C
+with value A and action the forgotten counit, equivalently the restricted algebra action. -/
 private noncomputable def adjPrecompLeftIso (alg : T.Algebra) :
     (adjLeftModule T.adj).precomp (adjConstAlg alg) ≅
       algebraLeftModule (adjAlg alg) := by
@@ -642,24 +682,25 @@ private noncomputable def adjPrecompLeftIso (alg : T.Algebra) :
     (Category.comp_id _).trans (hL.trans hLa)
   exact hLHS.trans hRHS.symm
 
-/-- The precomp comparison is the identity on underlying functors. -/
+/-- For a monad T on C and T-algebra alg=(A,a), the forward underlying natural transformation of
+adjPrecompLeftIso(alg) is the identity of the constant functor at A. It compares the
+precomposed adjunction left module with the left module of the restricted algebra. -/
 @[simp]
 private theorem adjPrecompLeftIso_hom_f (alg : T.Algebra) :
     (adjPrecompLeftIso (T := T) alg).hom.f = 𝟙 _ := rfl
 
-/-- Reflexive right-module comparison is the identity on components,
-by definition. -/
+/-- Let T be a monad on C and X ∈ C. The underlying component at X of the reflexive isomorphism of
+the adjunction right module postcomposed with T.forget is the identity. Its object is the
+forgotten free carrier T(X). -/
 private theorem adjRightRefl_f_app (X : C) :
     (((Iso.refl ((adjRightModule T.adj).postcomp T.forget)).hom).f.app X) =
       𝟙 _ :=
   rfl
 
-/-- The third bridge link acts by `𝟙` at each simplex length: evaluation acts
-by application, then the precomposition bridge and the module comparison are
-both identities. The two links are closed separately (each by syntactic
-rewrites only) and combined through the definitional unfolding of the
-whiskered comparison, so no `simp` set ever needs to split the mixed
-`(X ≫ barMap ..).app b` composite. -/
+/-- For a monad T on C, T-algebra alg, and n ∈ ℕ, combine the bar precomposition isomorphism for
+the constant index at alg with the left-module comparison to the restricted algebra. After
+evaluation at the unique discrete point, its forward degree-n component is the identity. The
+right-module comparison in this composite is reflexive. -/
 private theorem adjBridgeThird_hom_app (alg : T.Algebra) (n : ℕ) :
     (Functor.isoWhiskerRight
       ((twoSidedBarPrecompWhiskerIso (adjConstAlg alg)
@@ -710,11 +751,10 @@ private theorem adjBridgeThird_hom_app (alg : T.Algebra) (n : ℕ) :
   rw [hsplit, h1, h2]
   exact Category.id_comp _
 
-/-- Simplicial bridge from the postcomposed evaluated bar to the surrogate
-model: factor evaluation through the constant index functor, reassociate,
-then cross the genuine precomposition whisker iso and the precomp
-left-module iso. All naturality is inherited from the genuine combinators;
-no manual `eqToHom` naturality is needed. Assembly-only scaffolding. -/
+/-- Let T be a monad on C and alg a T-algebra. The forgotten-right-module adjunction bar evaluated
+at alg is isomorphic to the underlying simplicial object of adjEvaluatedAugmented(alg). The
+comparison factors evaluation through the constant algebra index, then uses the bar
+precomposition isomorphism and the left-module comparison with the restricted algebra. -/
 private noncomputable def adjPostcompEvalBridge (alg : T.Algebra) :
     (adjPostcompBar ⋙ adjEvalC alg) ≅ (adjEvaluatedAugmented alg).left :=
   (Functor.isoWhiskerLeft adjPostcompBar (adjEvalFactorIso alg)) ≪≫
@@ -726,9 +766,9 @@ private noncomputable def adjPostcompEvalBridge (alg : T.Algebra) :
         (twoSidedBarIso (Iso.refl _) (adjPrecompLeftIso alg)))
       resolutionEvalPoint)
 
-/-- Functor associator symmetric components on the stepwise chain are
-identities, by definition. Stated with the explicit `twoSidedBar` functor so
-consecutive comparison links agree syntactically. -/
+/-- Let T be a monad on C, alg a T-algebra, and Δ a simplex. In the composite of the adjunction
+bar, postcomposition by T.forget, and evaluation at alg, the inverse functor associator has
+identity component at Δ. Both parenthesizations give the same forgotten evaluated bar object. -/
 private theorem adjStepAssocSymm_hom_app (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (Functor.associator (twoSidedBar T.adj.toMonad (adjRightModule T.adj)
@@ -737,9 +777,9 @@ private theorem adjStepAssocSymm_hom_app (alg : T.Algebra)
       𝟙 _ :=
   rfl
 
-/-- The evaluation-commutation whisker on the stepwise chain acts by `𝟙`,
-by definition. Stated with the explicit `twoSidedBar` functor so consecutive
-comparison links agree syntactically. -/
+/-- For a monad T on C, T-algebra alg, and simplex Δ, whisker the isomorphism between evaluation
+followed by forgetting and postcomposition followed by evaluation by the adjunction bar. Its
+forward component at Δ is the identity of the forgotten evaluated bar term. -/
 private theorem adjStepWhiskerComm_app (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (Functor.isoWhiskerLeft (twoSidedBar T.adj.toMonad (adjRightModule T.adj)
@@ -747,15 +787,17 @@ private theorem adjStepWhiskerComm_app (alg : T.Algebra)
       𝟙 _ :=
   rfl
 
-/-- Evaluation in `C` at `alg` acts by application, by definition. -/
+/-- Let T be a monad on C, F,G : T.Algebra ⥤ C, η : F → G, and alg a T-algebra. Evaluation at alg
+sends η to its component η_alg : F(alg) → G(alg). -/
 private theorem adjEvalC_map_app {F G : T.Algebra ⥤ C} (η : F ⟶ G)
     (alg : T.Algebra) :
     (adjEvalC alg).map η = η.app alg :=
   rfl
 
-/-- Degreewise objects of the literal whiskered bar agree with the
-postcomposed evaluated bar, by unfolding to the same forgotten bar object.
-Assembly-only scaffolding. -/
+/-- For a monad T on C, a T-algebra alg, and simplex Δ, the Δ-object of the
+evaluated-and-forgotten adjunction bar equals the Δ-object of the forgotten-right-module bar
+evaluated at alg. This is the object equality between (adjLiteralAugmented alg).left and
+adjPostcompBar followed by adjEvalC alg. -/
 private theorem adjLiteralStep_obj_eq (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (adjLiteralAugmented alg).left.obj Δ =
@@ -766,11 +808,10 @@ private theorem adjLiteralStep_obj_eq (alg : T.Algebra)
   rw [hΔ]
   rfl
 
-/-- The stepwise comparison has identity components: the commutation whisker,
-the associator, and the postcomposition bridge all act by `𝟙`. Stated with
-`eqToHom` over the object identification, since the target composite
-is only propositionally (not syntactically) the literal-bar object at
-`rw`-motive transparency. Assembly-only scaffolding. -/
+/-- Let T be a monad on C, alg a T-algebra, and Δ a simplex. If h_Δ identifies the term of the
+evaluated-and-forgotten bar with the evaluated postcomposed-right-module bar term, then the
+forward Δ-component of adjLiteralBarIsoStep is eqToHom(h_Δ). The equality h_Δ is
+adjLiteralStep_obj_eq(alg,Δ). -/
 private theorem adjLiteralBarIsoStep_hom_app (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (adjLiteralBarIsoStep alg).hom.app Δ =
@@ -793,9 +834,10 @@ private theorem adjLiteralBarIsoStep_hom_app (alg : T.Algebra)
   have hE : eqToHom (adjLiteralStep_obj_eq alg Δ) = 𝟙 _ := rfl
   exact ((Category.id_comp _).trans (Category.id_comp _)).trans hE.symm
 
-/-- Functor associator symmetric components on the bridge chain are
-identities, by definition. Stated with the explicit `twoSidedBar` functor so
-consecutive comparison links agree syntactically. -/
+/-- For a monad T on C, T-algebra alg, and simplex Δ, reassociate the forgotten-right-module
+adjunction bar, precomposition by the constant index at alg, and evaluation at the unique
+point. The inverse functor associator has identity component at Δ, since both
+parenthesizations evaluate the same bar term at alg. -/
 private theorem adjBridgeAssocSymm_hom_app (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (Functor.associator (twoSidedBar T.adj.toMonad
@@ -805,9 +847,9 @@ private theorem adjBridgeAssocSymm_hom_app (alg : T.Algebra)
       𝟙 _ :=
   rfl
 
-/-- The evaluation-factorization whisker on the bridge chain acts by `𝟙`,
-by definition. Stated with the explicit `twoSidedBar` functor so consecutive
-comparison links agree syntactically. -/
+/-- Let T be a monad on C, alg a T-algebra, and Δ a simplex. Whiskering the evaluation
+factorization through the constant algebra index by the forgotten-right-module bar gives an
+isomorphism with identity forward component at Δ. -/
 private theorem adjBridgeWhiskerComm_app (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (Functor.isoWhiskerLeft (twoSidedBar T.adj.toMonad
@@ -816,12 +858,10 @@ private theorem adjBridgeWhiskerComm_app (alg : T.Algebra)
       𝟙 _ :=
   rfl
 
-/-- The bridge comparison has identity components at each simplex length:
-the factorization whisker, the associator, the precomposition bridge, and
-the module comparison all act by `𝟙` once evaluated at the discrete point.
-Stated with `eqToHom` over the object identification, since a `𝟙`
-ascription would force the kernel to unfold the opaque surrogate model at
-statement elaboration. Assembly-only scaffolding. -/
+/-- For a monad T on C, T-algebra alg, and n ∈ ℕ, the forward degree-n component of
+adjPostcompEvalBridge is eqToHom of the equality between the evaluated postcomposed bar term
+and the term of adjEvaluatedAugmented(alg). This object equality is adjPostcompEval_obj_eq at
+the opposite simplex [n]. -/
 private theorem adjPostcompEvalBridge_hom_app (alg : T.Algebra) (n : ℕ) :
     (adjPostcompEvalBridge alg).hom.app
       (Opposite.op (SimplexCategory.mk n)) =
@@ -856,9 +896,10 @@ private theorem adjPostcompEvalBridge_hom_app (alg : T.Algebra) (n : ℕ) :
   exact ((congrArg (fun c => 𝟙 _ ≫ 𝟙 _ ≫ c) l3).trans
     (((Category.id_comp _).trans (Category.id_comp _)).trans hE.symm))
 
-/-- Degreewise objects of the literal whiskered bar agree with the
-surrogate model, by unfolding to the same forgotten bar object at each
-simplex length. -/
+/-- Let T be a monad on C, alg a T-algebra, and Δ ∈ SimplexCategoryᵒᵖ. The Δ-term of
+adjLiteralAugmented(alg), obtained by evaluating and forgetting the adjunction bar, equals the
+Δ-term of adjEvaluatedAugmented(alg), obtained from the restricted algebra module and
+forgotten right module. -/
 theorem adjLiteralBar_obj_eq (alg : T.Algebra)
     (Δ : SimplexCategoryᵒᵖ) :
     (adjLiteralAugmented alg).left.obj Δ =
@@ -869,17 +910,18 @@ theorem adjLiteralBar_obj_eq (alg : T.Algebra)
   rw [hΔ]
   rfl
 
-/-- The honest simplicial comparison: the literal whiskered bar is isomorphic
-to the surrogate model, by composing the stepwise postcomposition comparison
-with the precomposition-factorization bridge. -/
+/-- For a monad T on C and a T-algebra alg, the underlying simplicial objects of
+adjLiteralAugmented(alg) and adjEvaluatedAugmented(alg) are isomorphic. The comparison first
+commutes forgetting with evaluation of the bar and then identifies constant-index
+precomposition with the restricted algebra left module. -/
 @[no_expose]
 noncomputable def adjLiteralBarIso (alg : T.Algebra) :
     (adjLiteralAugmented alg).left ≅ (adjEvaluatedAugmented alg).left :=
   adjLiteralBarIsoStep alg ≪≫ adjPostcompEvalBridge alg
 
-/-- The full simplicial comparison has identity components at each simplex
-length, stated with `eqToHom` over the public object identification for the
-same opacity reason as the bridge law. -/
+/-- Let T be a monad on C, alg a T-algebra, and n ∈ ℕ. The forward degree-n component of
+adjLiteralBarIso(alg) is eqToHom of adjLiteralBar_obj_eq at the opposite simplex [n]. Thus the
+simplicial comparison uses the specified equality between the two degree objects. -/
 theorem adjLiteralBarIso_hom_app (alg : T.Algebra) (n : ℕ) :
     (adjLiteralBarIso alg).hom.app
       (Opposite.op (SimplexCategory.mk n)) =
@@ -893,9 +935,9 @@ theorem adjLiteralBarIso_hom_app (alg : T.Algebra) (n : ℕ) :
   simp only [hcomp, adjLiteralBarIsoStep_hom_app, adjPostcompEvalBridge_hom_app,
     eqToHom_trans]
 
-/-- Auxiliary degree-zero augmentation identity for the surrogate model,
-proved by unfolding the opaque surrogate (private so the unfolding is
-permitted): the degree-zero component is the bundled algebra map. -/
+/-- For a monad T on C and a T-algebra alg, the zero-degree augmentation of
+adjEvaluatedAugmented(alg) equals the action of alg restricted to the induced free-forgetful
+monad. Its source is the restricted free carrier and its target is alg.A. -/
 private theorem adjEvaluatedAugmented_hom_zero_aux (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).hom.app
       (Opposite.op (SimplexCategory.mk 0)) = (adjAlg alg).a := by
@@ -905,10 +947,11 @@ private theorem adjEvaluatedAugmented_hom_zero_aux (alg : T.Algebra) :
     BalancedPairing.toDataHom_app_zero]
   rfl
 
-/-- Degree-zero augmentation component of the evaluated augmentation is the
-algebra structure map, up to the public object/point identifications.
-Transport-normalized: a plain `= alg.a` is ill-typed without unfolding the
-opaque surrogate model at statement elaboration. -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. Identify the zero-degree term of
+adjEvaluatedAugmented(alg) with T(A) and its augmentation target with A using the stated
+object equalities e_0 and e_A. Then eqToHom(e_0.symm) ≫ ε_0 ≫ eqToHom(e_A) = a, where ε_0 is
+its zero-degree augmentation. This specifies the source and target transports of the action
+equation. -/
 theorem adjEvaluatedAugmented_hom_zero (alg : T.Algebra) :
     eqToHom (adjEvaluatedAugmented_obj_zero alg).symm ≫
       (adjEvaluatedAugmented alg).hom.app
@@ -937,9 +980,10 @@ theorem adjEvaluatedAugmented_hom_zero (alg : T.Algebra) :
       eqToHom (adjEvaluatedAugmented_point (T := T) alg)) hE1).trans
       (congrArg (fun e => 𝟙 _ ≫ alg.a ≫ e) hE2)).trans hclose)
 
-/-- Forgotten iterated right actions agree with postcomposed ones, by
-induction on the power: the base case is the postcomposition action law and
-the step is definitional unfolding. -/
+/-- Let T be a monad on C, S its free-forgetful induced monad, n ∈ ℕ, and X ∈ C. Applying T.forget
+to the iterated right S-action of the adjunction right module equals the iterated action of
+that module postcomposed with T.forget. Both maps go from the forgotten degree-(n+1) power
+object to its degree-n object. -/
 private theorem adjRightPowForget_agree (n : ℕ) (X : C) :
     T.forget.map (rightActionPow T.adj.toMonad (adjRightModule T.adj) n X) =
       rightActionPow T.adj.toMonad
@@ -948,8 +992,10 @@ private theorem adjRightPowForget_agree (n : ℕ) (X : C) :
   | zero => rfl
   | succ n ih => exact ih _
 
-/-- Degree-zero faces agree after forgetting: both sides are the iterated
-right action at the carrier, once the `d₀` branch is exposed. -/
+/-- Let T be a monad on C, alg a T-algebra, and n ∈ ℕ. Apply T.forget to the first face d_0 of the
+free-forgetful adjunction bar evaluated at alg. It equals the first face of the bar with
+forgotten right module and restricted constant algebra left module, evaluated at the unique
+discrete point. Both maps go from degree n+1 to degree n. -/
 private theorem adjDataFace_agree (alg : T.Algebra) (n : ℕ) :
     T.forget.map (((((barData T.adj.toMonad (adjRightModule T.adj)
         (adjLeftModule T.adj)).δ (0 : Fin (n + 2))).app alg))) =
@@ -962,9 +1008,10 @@ private theorem adjDataFace_agree (alg : T.Algebra) (n : ℕ) :
   rw [dite_eq_left h0]
   exact adjRightPowForget_agree n _
 
-/-- Forgetting the adjunction augmentation data agrees with the surrogate
-model data, by induction on degree: base case is `alg.a` on both sides; the
-step uses face agreement under the data face laws. -/
+/-- Let T be a monad on C, alg a T-algebra, and n ∈ ℕ. The forgotten degree-n component of the
+counit balanced augmentation of the free-forgetful adjunction bar at alg equals the degree-n
+component of adjUnderlyingPairing(alg), evaluated at the unique discrete point. Both have the
+same bar term as source and alg.A as target. -/
 private theorem adjDataForget_agree (alg : T.Algebra) (n : ℕ) :
     T.forget.map ((((adjBalancedPairing T.adj).toDataHom.app n).app alg)) =
       ((((adjUnderlyingPairing alg).toDataHom.app n).app
@@ -1001,10 +1048,10 @@ private theorem adjDataForget_agree (alg : T.Algebra) (n : ℕ) :
     exact eL.trans ((congrArg (· ≫ _) (adjDataFace_agree alg n)).trans
       ((congrArg (_ ≫ ·) ih).trans eR.symm))
 
-/-- The literal and surrogate augmentations agree componentwise: forgetting
-the evaluated adjunction augmentation is the surrogate augmentation. Unfolds
-the double whiskering; kept separate so the `Comma` square below never
-rewrites with the `𝟙`-valued comparison component. -/
+/-- For a monad T on C, T-algebra alg, and n ∈ ℕ, the augmentation component of
+adjLiteralAugmented(alg) at the opposite simplex [n] equals that of
+adjEvaluatedAugmented(alg). This compares evaluation-and-forgetting with the augmentation from
+the restricted algebra module and forgotten right module. -/
 private theorem adjLiteralHomAgree_app (alg : T.Algebra) (n : ℕ) :
     (adjLiteralAugmented alg).hom.app (Opposite.op (SimplexCategory.mk n)) =
       (adjEvaluatedAugmented alg).hom.app
@@ -1018,8 +1065,10 @@ private theorem adjLiteralHomAgree_app (alg : T.Algebra) (n : ℕ) :
   rw [adjEvalAlgebra_map_app, adjEvalPoint_map_app]
   exact adjDataForget_agree alg n
 
-/-- The honest augmented comparison: the literal forgetful image is naturally
-isomorphic to the reusable surrogate model. -/
+/-- Let T be a monad on C and alg a T-algebra. The simplicial comparison adjLiteralBarIso(alg),
+together with the identity on the augmentation target alg.A, defines an isomorphism
+adjLiteralAugmented(alg) ≅ adjEvaluatedAugmented(alg). The componentwise augmentation
+agreement makes it an isomorphism of augmented simplicial objects. -/
 @[no_expose]
 noncomputable def adjLiteralIso (alg : T.Algebra) :
     adjLiteralAugmented alg ≅ adjEvaluatedAugmented alg :=
@@ -1048,8 +1097,9 @@ noncomputable def adjLiteralIso (alg : T.Algebra) :
         (Opposite.op (SimplexCategory.mk (Opposite.unop Δ).len)) ≫ e) hR).trans
         (Category.comp_id _)).symm))
 
-/-- Degree-zero augmentation component of the literal image is the algebra
-structure map: evaluation/forgotten counit is the structure map. -/
+/-- For a monad T on C and a T-algebra alg=(A,a), the zero-degree augmentation of
+adjLiteralAugmented(alg) is exactly a : T(A) → A. It is the forgotten counit of the
+free-forgetful adjunction evaluated at alg. -/
 @[simp]
 theorem adjLiteralAugmented_hom_zero (alg : T.Algebra) :
     (adjLiteralAugmented alg).hom.app
@@ -1081,17 +1131,18 @@ theorem adjLiteralAugmented_hom_zero (alg : T.Algebra) :
     hComp.trans hForgetEval
   exact hWhisk.trans ((congrArg _ hAug).trans hKPair)
 
-/-- The left-module comparison is the identity on underlying functors. -/
+/-- For a monad T on C and a T-algebra alg=(A,a), the forward map of adjLeftIso(alg) has identity
+underlying natural transformation on the constant functor at A. This compares the left module
+of the restricted algebra over the induced monad with the restriction of its left T-module. -/
 @[simp]
 private theorem adjLeftIso_hom_f (alg : T.Algebra) :
     (adjLeftIso (T := T) alg).hom.f = 𝟙 _ := rfl
 
-/-- Data-level comparison square for the adjunction side: the module-isomorphism
-bar map followed by the monad-change map, then the EM pairing, equals the
-adjunction pairing followed by the identity. By `hom_eq_of_app_zero_eq` this
-reduces to degree zero, where both sides are `alg.a` after normalizing the
-identity components. The right-hand side uses `constDataHom` (definitionally
-the constant functor's action) so that middle objects match syntactically. -/
+/-- Let T be a monad on C, S its induced free-forgetful monad, h : S → T the canonical map, and
+alg a T-algebra. Compose the right and left module isomorphism bar map with the bar change
+along h to obtain c on the corresponding simplicial data. Then c followed by the
+Eilenberg–Moore underlying augmentation equals the restricted-adjunction augmentation followed
+by the constant identity target map. Thus the comparison preserves the action pairing. -/
 private theorem adjDataAug_w (alg : T.Algebra) :
     (barDataHom (adjRightIso (T := T)).hom (adjLeftIso alg).hom ≫
           barChangeDataHom (adjMonadHom (T := T))
@@ -1149,8 +1200,10 @@ private theorem adjDataAug_w (alg : T.Algebra) :
     (congrArg (· ≫ 𝟙 _) qA).trans (Category.comp_id _)
   exact eL.trans (nL.trans (nR.symm.trans eR.symm))
 
-/-- Data-level comparison morphism for the adjunction side, via the module
-isomorphisms and the monad-change map. -/
+/-- For a monad T on C and T-algebra alg, the module-comparison bar map followed by bar change
+along the canonical induced-monad morphism defines a map of augmented simplicial data from
+adjUnderlyingPairing(alg) to emUnderlyingPairing(alg). Its map on augmentation targets is the
+identity of the constant algebra carrier. -/
 private noncomputable def adjDataAugHom (alg : T.Algebra) :
     (adjUnderlyingPairing alg).toAugmented ⟶
       (emUnderlyingPairing alg).toAugmented where
@@ -1161,16 +1214,20 @@ private noncomputable def adjDataAugHom (alg : T.Algebra) :
   right := 𝟙 _
   w := adjDataAug_w alg
 
-/-- Canonical one-way augmented morphism to the Eilenberg--Moore underlying
-augmentation, via `barChangeHom` along `(Adjunction.adjToMonadIso T).hom`
-and the module isomorphisms above. Not asserted to be an isomorphism. -/
+/-- Let T be a monad on C and alg a T-algebra. The canonical induced-monad map, together with the
+right and left module comparisons, gives an augmented simplicial morphism
+adjEvaluatedAugmented(alg) → emUnderlyingAugmented(alg). It is the evaluated map of augmented
+bar data, and its target component preserves the algebra carrier. -/
 @[no_expose]
 noncomputable def adjToEMComparison (alg : T.Algebra) :
     adjEvaluatedAugmented alg ⟶ emUnderlyingAugmented alg :=
   (SimplicialObject.Augmented.whiskeringObj _ _ resolutionEvalPoint).map
     (SimplicialObject.Data.Augmented.toSimplicialFunctor.map (adjDataAugHom alg))
 
-/-- Left computation: the simplicial component is the whiskered change-map. -/
+/-- For a monad T on C and a T-algebra alg, the simplicial component of adjToEMComparison(alg) is
+obtained by evaluating the composite of the two-sided bar isomorphism of the canonical right
+and left module comparisons and the bar-change morphism along the induced-monad map.
+Evaluation is at the unique discrete point. -/
 @[simp]
 private theorem adjToEMComparison_left (alg : T.Algebra) :
     (adjToEMComparison alg).left =
@@ -1180,13 +1237,9 @@ private theorem adjToEMComparison_left (alg : T.Algebra) :
   simp only [adjToEMComparison, adjDataAugHom, twoSidedBarIso_hom]
   rfl
 
-/-- Right computation (private): the target component is the whiskered
-Data-identity. The statement mentions the private `adjDataAugHom`, which is
-fine for a private lemma. A public `(adjToEMComparison alg).right = 𝟙 _` is
-not statable: checking `𝟙 _` forces the kernel to identify the two hidden
-`Augmented`-object `.right` projections through the `Comma.map` object
-machinery (depth limit). Right-component naturality therefore closes at the
-concrete level (`dL`/`dR`/`uEq` below). -/
+/-- Let T be a monad on C and alg a T-algebra. The augmentation-target component of
+adjToEMComparison(alg) equals evaluation at the unique discrete point of the target map of
+adjDataAugHom(alg). That target map is the identity of the constant algebra carrier. -/
 @[simp]
 private theorem adjToEMComparison_right (alg : T.Algebra) :
     (adjToEMComparison alg).right =
@@ -1196,8 +1249,10 @@ private theorem adjToEMComparison_right (alg : T.Algebra) :
     (congrArg resolutionEvalPoint.map
       (SimplicialObject.Data.Augmented.toSimplicialFunctor_map_right _))
 
-/-- Transport-normalized right-component law for the comparison: the comparison
-acts as the identity up to the public point identifications. -/
+/-- For a monad T on C and a T-algebra alg, let γ be adjToEMComparison(alg). Let e_adj and e_em
+identify its source and target augmentation objects with alg.A. Then γ.right ≫ eqToHom(e_em) =
+eqToHom(e_adj). Thus the target map is the identity of the algebra carrier after these
+specified object transports. -/
 theorem adjToEMComparison_right_eqToHom (alg : T.Algebra) :
     (adjToEMComparison alg).right ≫
       eqToHom (emUnderlyingAugmented_point alg) =
@@ -1223,8 +1278,9 @@ theorem adjToEMComparison_right_eqToHom (alg : T.Algebra) :
     Category.id_comp _ |>.trans (by rfl)
   exact hStep1.trans hStep2
 
-/-- Auxiliary degree-zero object identity, proved by unfolding the opaque
-surrogate (private so the unfolding is permitted). -/
+/-- Let T be a monad on C and alg=(A,a) a T-algebra. The zero-degree object of
+adjEvaluatedAugmented(alg) equals the zero-degree object of emUnderlyingAugmented(alg). Both
+are the forgotten free carrier T(A). -/
 private theorem adjToEMComparison_obj_zero_aux (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).left.obj
       (Opposite.op (SimplexCategory.mk 0)) =
@@ -1232,7 +1288,10 @@ private theorem adjToEMComparison_obj_zero_aux (alg : T.Algebra) :
         (Opposite.op (SimplexCategory.mk 0)) :=
   rfl
 
-/-- Degree-zero objects of the evaluated and underlying augmentations agree. -/
+/-- For a monad T on C and a T-algebra alg, the simplicial objects underlying
+adjEvaluatedAugmented(alg) and emUnderlyingAugmented(alg) have equal terms at the opposite
+simplex [0]. This is the source–target object identification used for the zero-degree
+comparison map. -/
 theorem adjToEMComparison_obj_zero (alg : T.Algebra) :
     (adjEvaluatedAugmented alg).left.obj
       (Opposite.op (SimplexCategory.mk 0)) =
@@ -1240,8 +1299,9 @@ theorem adjToEMComparison_obj_zero (alg : T.Algebra) :
         (Opposite.op (SimplexCategory.mk 0)) :=
   adjToEMComparison_obj_zero_aux alg
 
-/-- Auxiliary degree-zero left app identity, proved by unfolding the opaque
-comparison (private so the unfolding is permitted). -/
+/-- Let T be a monad on C and alg a T-algebra. The zero-degree simplicial component of
+adjToEMComparison(alg) equals eqToHom of the equality between its source and target
+zero-degree terms. This equality is adjToEMComparison_obj_zero(alg). -/
 private theorem adjToEMComparison_left_zero_aux (alg : T.Algebra) :
     ((adjToEMComparison alg).left).app
       (Opposite.op (SimplexCategory.mk 0)) =
@@ -1349,17 +1409,18 @@ private theorem adjToEMComparison_left_zero_aux (alg : T.Algebra) :
     exact e1.trans (eEval.trans hPoint)
   exact hApp.trans hEq.symm
 
-/-- Transport-normalized degree-zero left formula for the comparison: the
-degree-zero simplicial component is the identity up to the public object
-identification. -/
+/-- For a monad T on C and a T-algebra alg, the degree-zero component of the simplicial map
+adjToEMComparison(alg) is eqToHom(adjToEMComparison_obj_zero(alg)). Hence the comparison is
+the specified identity transport between the two zero-degree free carriers. -/
 theorem adjToEMComparison_left_zero (alg : T.Algebra) :
     ((adjToEMComparison alg).left).app
       (Opposite.op (SimplexCategory.mk 0)) =
       eqToHom (adjToEMComparison_obj_zero alg) :=
   adjToEMComparison_left_zero_aux alg
 
-/-- Pointwise target map for the adjunction side, mirroring
-`emUnderlyingTargetHom`: the component at every discrete point is `φ.f`. -/
+/-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The constant augmentation target
+diagrams of adjUnderlyingPairing(alg) and adjUnderlyingPairing(alg′) have a natural
+transformation whose component at every discrete point is φ.f : alg.A → alg′.A. -/
 private noncomputable def adjUnderlyingTargetHom {alg alg' : T.Algebra}
     (φ : alg ⟶ alg') :
     (adjUnderlyingPairing alg).target ⟶ (adjUnderlyingPairing alg').target where
@@ -1368,15 +1429,19 @@ private noncomputable def adjUnderlyingTargetHom {alg alg' : T.Algebra}
     change (𝟙 alg.A) ≫ φ.f = φ.f ≫ (𝟙 alg'.A)
     simp
 
-/-- The adjunction-side target map is pointwise the algebra morphism. -/
+/-- For a monad T on C, an algebra morphism φ : alg → alg′, and a point X ∈ Discrete PUnit,
+adjUnderlyingTargetHom(φ)_X = φ.f. This identifies the component of the natural map between
+the constant algebra-carrier targets. -/
 @[simp]
 private theorem adjUnderlyingTargetHom_app {alg alg' : T.Algebra} (φ : alg ⟶ alg')
     (X : Discrete PUnit.{1}) :
     ((adjUnderlyingTargetHom (T := T) φ).app X) = φ.f :=
   rfl
 
-/-- Degree-zero naturality square for the adjunction side, mirroring
-`emUnderlying_hq`: after normalization both sides are `φ.h`. -/
+/-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The degree-zero bar map with
+identity on the forgotten right module and the restricted algebra left-module map satisfies
+b_0(φ) ≫ pairing_alg′ = pairing_alg ≫ target(φ). The target map is constant at φ.f, and the
+equality is the algebra-morphism compatibility with the action. -/
 private theorem adjUnderlying_hq {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     barMap (𝟙 ((adjRightModule T.adj).postcomp T.forget))
         (algebraLeftModuleHom ((algebraFunctorOfMonadHom (adjMonadHom (T := T))).map φ)) 0 ≫
@@ -1422,8 +1487,10 @@ private theorem adjUnderlying_hq {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (congrArg (· ≫ alg'.a) hRT).trans φ.h
   exact eL.trans (eM.trans (eN.trans eR.symm))
 
-/-- Evaluated map induced by an algebra morphism, mirroring `emUnderlyingHom`:
-whisker the pairing-level map with `resolutionEvalPoint`. -/
+/-- For a monad T on C and an algebra morphism φ : alg → alg′, the pairing-preserving bar map with
+identity right-module component and restricted algebra left-module component gives
+adjEvaluatedAugmented(alg) → adjEvaluatedAugmented(alg′). It is obtained by evaluating the
+corresponding augmented two-sided bar map at the unique discrete point. -/
 @[no_expose]
 noncomputable def adjEvaluatedHom {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     adjEvaluatedAugmented alg ⟶ adjEvaluatedAugmented alg' :=
@@ -1435,8 +1502,10 @@ noncomputable def adjEvaluatedHom {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
       (adjUnderlyingTargetHom φ)
       (adjUnderlying_hq φ))
 
-/-- The simplicial component of an adjunction-side evaluated map. Mirrors
-`resolutionHom_left` (`BarResolution`) and `emUnderlyingHom_left`. -/
+/-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The simplicial component of
+adjEvaluatedHom(φ) is the augmented balanced-pairing map, with identity forgotten right-module
+map and restricted algebra left-module map, followed by evaluation at the unique point. This
+specifies its action on every bar degree. -/
 private theorem adjEvaluatedHom_left {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (adjEvaluatedHom φ).left =
       Functor.whiskerRight
@@ -1448,18 +1517,17 @@ private theorem adjEvaluatedHom_left {alg alg' : T.Algebra} (φ : alg ⟶ alg') 
           (adjUnderlyingTargetHom φ)
           (adjUnderlying_hq φ)).left resolutionEvalPoint := rfl
 
-/-- The target component of an adjunction-side evaluated map, as the whiskered
-target map (private form of `resolutionHom_right` in `BarResolution`). A public `= φ.f`
-statement is not statable for the same reason as above (hidden `.right`
-projections); the `φ.f` identification happens at the concrete level via
-`adjEvalPoint_map_app` + `adjUnderlyingTargetHom_app` in the naturality
-proof. -/
+/-- For a monad T on C and algebra morphism φ : alg → alg′, the target component of
+adjEvaluatedHom(φ) equals evaluation of adjUnderlyingTargetHom(φ) at the unique discrete
+point. It therefore represents φ.f after the augmentation-target identifications. -/
 private theorem adjEvaluatedHom_right {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (adjEvaluatedHom φ).right =
       resolutionEvalPoint.map (adjUnderlyingTargetHom (T := T) φ) := rfl
 
-/-- Full naturality in algebra morphisms, by augmented `hom_ext` from the left
-`barChangeHom` naturality and the right identity. -/
+/-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The canonical comparison γ from
+the evaluated adjunction bar to the underlying Eilenberg–Moore bar satisfies γ_alg ≫
+emUnderlyingHom(φ) = adjEvaluatedHom(φ) ≫ γ_alg′. This is an equality of augmented simplicial
+maps, including the augmentation-target components. -/
 theorem adjToEMComparison_naturality {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     adjToEMComparison alg ≫ emUnderlyingHom φ =
       adjEvaluatedHom φ ≫ adjToEMComparison alg' := by
@@ -1666,8 +1734,10 @@ theorem adjToEMComparison_naturality {alg alg' : T.Algebra} (φ : alg ⟶ alg') 
       step1.trans (step2.trans uEq).symm
     exact eR12.trans (h2map.trans eR45.symm)
 
-/-- Transport-normalized target law for evaluated maps: the whiskered target
-acts as `φ.f` up to the public point identifications. -/
+/-- For a monad T on C and an algebra morphism φ : alg → alg′, let e_alg and e_alg′ identify the
+augmentation targets of the evaluated adjunction bars with their algebra carriers. Then
+adjEvaluatedHom(φ).right ≫ eqToHom(e_alg′) = eqToHom(e_alg) ≫ φ.f. The equation fixes the
+source and target transports of the carrier map. -/
 theorem adjEvaluatedHom_right_eqToHom {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (adjEvaluatedHom φ).right ≫ eqToHom (adjEvaluatedAugmented_point alg') =
       eqToHom (adjEvaluatedAugmented_point alg) ≫ φ.f := by
@@ -1692,7 +1762,9 @@ theorem adjEvaluatedHom_right_eqToHom {alg alg' : T.Algebra} (φ : alg ⟶ alg')
     exact hL.trans hRr.symm
   exact hStep1.trans hStep2
 
-/-- Identity evaluated maps are identities. -/
+/-- Let T be a monad on C and alg a T-algebra. The evaluated restricted-adjunction bar map induced
+by 𝟙_alg equals the identity of adjEvaluatedAugmented(alg), on both its simplicial object and
+its augmentation target. -/
 theorem adjEvaluatedHom_id (alg : T.Algebra) :
     adjEvaluatedHom (𝟙 alg) = 𝟙 (adjEvaluatedAugmented alg) := by
   refine SimplicialObject.Augmented.hom_ext _ _ ?_ ?_
@@ -1735,7 +1807,9 @@ theorem adjEvaluatedHom_id (alg : T.Algebra) :
       exact Functor.map_id _ _
     exact e1r.trans e2r
 
-/-- Composition of evaluated maps is the evaluated composite. -/
+/-- For a monad T on C and algebra morphisms φ : alg₁ → alg₂, ψ : alg₂ → alg₃, adjEvaluatedHom(φ)
+≫ adjEvaluatedHom(ψ) = adjEvaluatedHom(φ ≫ ψ). The equality is of augmented simplicial maps of
+C. -/
 theorem adjEvaluatedHom_comp {alg₁ alg₂ alg₃ : T.Algebra} (φ : alg₁ ⟶ alg₂)
     (ψ : alg₂ ⟶ alg₃) :
     adjEvaluatedHom φ ≫ adjEvaluatedHom ψ = adjEvaluatedHom (φ ≫ ψ) := by
@@ -1804,27 +1878,32 @@ theorem adjEvaluatedHom_comp {alg₁ alg₂ alg₃ : T.Algebra} (φ : alg₁ ⟶
       rw [adjEvaluatedHom_right]
     exact g1.trans (g2.trans g3)
 
-/-- Auxiliary left projection, proved by unfolding the opaque comparison
-(private so the unfolding is permitted). -/
+/-- For a monad T on C and a T-algebra alg, the simplicial projection of the forward augmented
+isomorphism adjLiteralIso(alg) equals the forward map of adjLiteralBarIso(alg). Thus its left
+component is the already specified comparison of the two simplicial bar descriptions. -/
 private theorem adjLiteralIso_hom_left_aux (alg : T.Algebra) :
     ((adjLiteralIso alg).hom).left = (adjLiteralBarIso alg).hom :=
   rfl
 
-/-- Left projection of the honest augmented comparison: the simplicial
-isomorphism. -/
+/-- Let T be a monad on C and alg a T-algebra. The forward morphism of adjLiteralIso(alg) has
+underlying simplicial map adjLiteralBarIso(alg).hom, from the evaluated-and-forgotten bar to
+the restricted-module bar description. -/
 theorem adjLiteralIso_hom_left (alg : T.Algebra) :
     ((adjLiteralIso alg).hom).left = (adjLiteralBarIso alg).hom :=
   adjLiteralIso_hom_left_aux alg
 
-/-- Auxiliary right projection, proved by unfolding the opaque comparison
-(private so the unfolding is permitted): the target component is the identity. -/
+/-- For a monad T on C and a T-algebra alg, the target projection of adjLiteralIso(alg).hom is the
+identity of the augmentation target of adjLiteralAugmented(alg). This is the
+carrier-preserving right component of the augmented isomorphism. -/
 private theorem adjLiteralIso_hom_right_aux (alg : T.Algebra) :
     ((adjLiteralIso alg).hom).right =
       𝟙 (adjLiteralAugmented alg).right :=
   rfl
 
-/-- Transport-normalized right projection of the honest comparison: identity
-up to the public point identifications. -/
+/-- Let T be a monad on C and alg a T-algebra. If e_lit and e_eval identify the augmentation
+targets of adjLiteralAugmented(alg) and adjEvaluatedAugmented(alg) with alg.A, then
+adjLiteralIso(alg).hom.right ≫ eqToHom(e_eval) = eqToHom(e_lit). The target component is
+therefore the identity after the specified object identifications. -/
 theorem adjLiteralIso_hom_right_eqToHom (alg : T.Algebra) :
     ((adjLiteralIso alg).hom).right ≫
       eqToHom (adjEvaluatedAugmented_point alg) =
@@ -1848,15 +1927,17 @@ theorem adjLiteralIso_hom_right_eqToHom (alg : T.Algebra) :
     exact hL.trans hRr.symm
   exact hStep1.trans hStep2
 
-/-- Literal-to-EM comparison: the honest literal image compared with the
-Eilenberg--Moore underlying augmentation, via the literal iso and the
-surrogate comparison. -/
+/-- For a monad T on C and a T-algebra alg, compose adjLiteralIso(alg).hom with
+adjToEMComparison(alg) to define an augmented map adjLiteralAugmented(alg) →
+emUnderlyingAugmented(alg). This compares the evaluated-and-forgotten adjunction bar with the
+underlying Eilenberg–Moore bar through its restricted-module description. -/
 noncomputable def adjLiteralToEMComparison (alg : T.Algebra) :
     adjLiteralAugmented alg ⟶ emUnderlyingAugmented alg :=
   (adjLiteralIso alg).hom ≫ adjToEMComparison alg
 
-/-- Naturality of the honest comparison: literal maps correspond to surrogate
-maps under the iso. -/
+/-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The augmented comparison
+e=adjLiteralIso satisfies adjLiteralHom(φ) ≫ e_alg′.hom = e_alg.hom ≫ adjEvaluatedHom(φ). Thus
+the comparison respects the maps induced by every algebra morphism. -/
 theorem adjLiteralIso_naturality {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     adjLiteralHom φ ≫ (adjLiteralIso alg').hom =
       (adjLiteralIso alg).hom ≫ adjEvaluatedHom φ := by
@@ -1992,9 +2073,10 @@ theorem adjLiteralIso_naturality {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
       exact Category.id_comp _
     exact eR12.trans (hLhs.trans (hRhs.symm.trans eR45.symm))
 
-/-- Naturality of the literal-to-EM comparison: literal maps correspond to
-EM maps. Follows from literal-iso naturality and the accepted surrogate
-naturality, without touching the 210-line proof. -/
+/-- For a monad T on C and an algebra morphism φ : alg → alg′, let δ be adjLiteralToEMComparison.
+Then adjLiteralHom(φ) ≫ δ_alg′ = δ_alg ≫ emUnderlyingHom(φ). This is the naturality equation
+of the augmented map from the evaluated-and-forgotten adjunction bar to the underlying
+Eilenberg–Moore bar. -/
 theorem adjLiteralToEMComparison_naturality {alg alg' : T.Algebra}
     (φ : alg ⟶ alg') :
     adjLiteralHom φ ≫ adjLiteralToEMComparison alg' =

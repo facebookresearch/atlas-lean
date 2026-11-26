@@ -1,3 +1,6 @@
-# Restrict Strict Total Degree
+# Submodule of polynomials with strict total-degree support bound
 
-Polynomials supported strictly below the indicated degree.
+Submodule of polynomials with strict total-degree support bound.
+
+For natural `n`, `restrictStrictTotalDegree I R n` is the submodule of `MvPolynomial I R`
+supported on exponent vectors `e` satisfying `e.degree < n`.

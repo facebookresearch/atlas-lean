@@ -1,5 +1,5 @@
 # Naturality of the canonical-abutment nested-image quotient
 
-- [Horizontal Canonical Abutment Image Quotient Map Of Bicomplex](horizontal-canonical-abutment-image-quot.md)
-- [Horizontal Canonical Abutment Image Quotient Map Of Bicomplex π](horizontal-canonical-abutment-image-quot-2.md)
-- [Horizontal Canonical Abutment Image Quotient Iso naturality](horizontal-canonical-abutment-image-quot-3.md)
+- [A bicomplex morphism maps canonical abutment nested-image quotients](horizontal-canonical-abutment-image-quot.md)
+- [Canonical abutment quotient maps commute with current-image projection](horizontal-canonical-abutment-image-quot-2.md)
+- [Canonical abutment comparisons with nested-image quotients are natural](horizontal-canonical-abutment-image-quot-3.md)

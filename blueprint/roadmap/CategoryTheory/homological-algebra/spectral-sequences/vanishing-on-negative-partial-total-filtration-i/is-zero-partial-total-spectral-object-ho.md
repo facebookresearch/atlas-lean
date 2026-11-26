@@ -1,4 +1,6 @@
-# Is Zero partial Total Spectral Object HObj of neg
+# Spectral-object homology between negative finite stages vanishes
 
-The `H`-object of the mapped partial-total spectral object on an interval
-between negative finite filtration indices is zero in every degree.
+Spectral-object homology between negative finite stages vanishes.
+
+Let `a ≤ b` be negative integers. For every integer degree `n`, the spectral-object homology
+of the interval `a ⟶ b` is zero, because both partial-total filtration stages are zero.

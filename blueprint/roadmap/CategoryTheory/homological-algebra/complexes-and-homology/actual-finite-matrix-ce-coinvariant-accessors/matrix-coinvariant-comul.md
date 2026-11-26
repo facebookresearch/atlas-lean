@@ -1,3 +1,5 @@
-# Matrix Coinvariant Comul
+# The coproduct of matrix adjoint coinvariants
 
-The descended coproduct on finite-matrix coinvariants.
+The coproduct of matrix adjoint coinvariants.
+
+The CE exterior coproduct descends to the tensor total of the coinvariant complex.

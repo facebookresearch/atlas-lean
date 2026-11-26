@@ -1,6 +1,6 @@
 # Actual exterior coalgebra maps and primitive transport
 
-- [Coalg Map](coalg-map.md)
-- [Coalg Map comp](coalg-map-comp.md)
-- [Primitive Equation map](primitive-equation-map.md)
-- [Map is Primitive](map-is-primitive.md)
+- [The exterior map is a coalgebra homomorphism](coalg-map.md)
+- [Exterior coalgebra maps preserve composition](coalg-map-comp.md)
+- [The exterior primitive equation is natural for linear maps](primitive-equation-map.md)
+- [Exterior maps carry primitive elements to primitive elements](map-is-primitive.md)

@@ -11,14 +11,25 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CanonicalStableMatrixCyclic
 
 /-!
-# Coefficient maps of stable matrix Lie algebras
+# Algebra maps on stable matrix Lie algebras and their CE models
 
-An algebra homomorphism acts entrywise on finite matrix stages and induces a homomorphism of
-stable nonunital matrix algebras. Its commutator Lie map induces the corresponding
-Chevalley–Eilenberg chain map.
+Let k be a commutative ring and f : A → B a unital map of associative
+k-algebras. Entrywise finite matrix maps descend to the nonunital
+algebra map Mat_∞(f), hence to a commutator Lie map. They preserve
+identities and composition and commute with all finite inclusions.
+These algebra and Lie maps allow independent coefficient-algebra worlds.
 
-The finite-stage inclusions and colimit comparisons are natural. When the ground ring is a
-rational algebra, the stable cyclic-homology maps retain this naturality.
+For A and B in a common carrier world v, applying CE gives a chain map
+C(f) between C_*(Mat_∞(A)) and C_*(Mat_∞(B)) in
+ModuleCat^max(u,v)(k). Let S(f) be the map of finite CE colimits and
+E_A,E_B the finite-to-stable isomorphisms. Then
+C(f)E_A = E_B S(f) and E_B⁻¹ C(f) = S(f)E_A⁻¹.
+
+If k is a ℚ-algebra, the stable trace maps
+Θ_(A,n) : H_(n+1)(Mat_∞(A)) → HC_n(A)
+satisfy Θ_(B,n) ∘ H_(n+1)(C(f)) = HC_n(f) ∘ Θ_(A,n).
+The chain and homology statements retain the indicated common
+coefficient-carrier world.
 -/
 
 @[expose] public section
@@ -41,7 +52,10 @@ variable (A : Type v) [Ring A] [Algebra k A]
   {B : Type w} [Ring B] [Algebra k B]
   {C : Type z} [Ring C] [Algebra k C]
 
-/-- Direct-limit descent of the entrywise matrix coefficient maps. -/
+/-- For a commutative ring k and a unital k-algebra map
+f : A → B, applying f entrywise in every finite matrix stage
+induces Mat_∞(f) : Mat_∞(A) →ₙₐ[k] Mat_∞(B).
+The algebra carrier worlds may be independent. -/
 def canonicalStableMatrixCoefficientAlgHom (f : A →ₐ[k] B) :
     canonicalStableMatrixAlgebra k A →ₙₐ[k] canonicalStableMatrixAlgebra k B :=
   DirectLimit.NonUnitalAlgebra.lift (R := k)
@@ -63,7 +77,11 @@ def canonicalStableMatrixCoefficientAlgHom (f : A →ₐ[k] B) :
           (f := fun _ _ h => Matrix.zeroExtendAlgHom (k := k) (A := B) h)
           (i := m) (j := n) h ((f.mapMatrix (m := Fin m)) x))
 
-/-- Every finite stage keeps the entrywise coefficient map. -/
+/-- For a unital k-algebra map f : A → B and a matrix
+X ∈ Mat_m(A), the induced stable algebra map satisfies
+Mat_∞(f)(i_(A,m)(X)) = i_(B,m)(Mat_m(f)(X)).
+Here Mat_m(f) applies f entrywise and i_m is the finite-stage
+stable inclusion. -/
 @[simp]
 theorem canonicalStableMatrixCoefficientAlgHom_inclusion (f : A →ₐ[k] B)
     (m : ℕ) (x : Matrix (Fin m) (Fin m) A) :
@@ -74,7 +92,9 @@ theorem canonicalStableMatrixCoefficientAlgHom_inclusion (f : A →ₐ[k] B)
     (f := fun _ _ h => Matrix.zeroExtendAlgHom (k := k) (A := A) h)
     (P := canonicalStableMatrixAlgebra k B) _ _ m x
 
-/-- Uniqueness of the direct-limit lift retains the identity coefficient map. -/
+/-- For a commutative ring k and an associative unital
+k-algebra A, the stable nonunital algebra map induced by
+id_A is id_(Mat_∞(A)). -/
 theorem canonicalStableMatrixCoefficientAlgHom_id :
     canonicalStableMatrixCoefficientAlgHom k A (AlgHom.id k A) =
       NonUnitalAlgHom.id k (canonicalStableMatrixAlgebra k A) := by
@@ -84,7 +104,10 @@ theorem canonicalStableMatrixCoefficientAlgHom_id :
   simp only [NonUnitalAlgHom.comp_apply]
   rfl
 
-/-- Uniqueness retains composition across the independent coefficient universes. -/
+/-- For a commutative ring k and unital k-algebra maps
+f : A → B and g : B → C, the stable nonunital maps satisfy
+Mat_∞(g) ∘ Mat_∞(f) = Mat_∞(g ∘ f).
+The carrier worlds of all three coefficient algebras may be independent. -/
 theorem canonicalStableMatrixCoefficientAlgHom_comp (f : A →ₐ[k] B) (g : B →ₐ[k] C) :
     (canonicalStableMatrixCoefficientAlgHom k B g).comp
         (canonicalStableMatrixCoefficientAlgHom k A f) =
@@ -95,12 +118,19 @@ theorem canonicalStableMatrixCoefficientAlgHom_comp (f : A →ₐ[k] B) (g : B �
   simp only [NonUnitalAlgHom.comp_apply]
   rfl
 
-/-- The coefficient map preserves the multiplication-commutator Lie bracket. -/
+/-- For a commutative ring k and a unital k-algebra map
+f : A → B, the stable nonunital algebra map Mat_∞(f) preserves
+[X,Y] = XY−YX and is a k-Lie homomorphism
+Mat_∞(A) → Mat_∞(B), across independent algebra worlds. -/
 def canonicalStableMatrixCoefficientLieHom (f : A →ₐ[k] B) :
     canonicalStableMatrixAlgebra k A →ₗ⁅k⁆ canonicalStableMatrixAlgebra k B :=
   (canonicalStableMatrixCoefficientAlgHom k A f).toLieHom
 
-/-- The stable coefficient Lie map retains every finite Lie coefficient map. -/
+/-- For a unital k-algebra map f : A → B and m ≥ 0, the
+stable Lie coefficient map satisfies
+Mat_∞(f) ∘ i_(A,m) = i_(B,m) ∘ Mat_m(f)
+as Lie homomorphisms. The finite and stable brackets are
+multiplication commutators. -/
 theorem canonicalStableMatrixCoefficientLieHom_inclusion (f : A →ₐ[k] B) (m : ℕ) :
     (canonicalStableMatrixCoefficientLieHom k A f).comp (canonicalStableMatrixLieInclusion k A m) =
       (canonicalStableMatrixLieInclusion k B m).comp (Matrix.coefficientLieHom k A f m) := by
@@ -115,13 +145,20 @@ section Complex
 variable (A : Type v) [Ring A] [Algebra k A]
   {B : Type v} [Ring B] [Algebra k B]
 
-/-- The CE functor applied to the canonical stable coefficient Lie map. -/
+/-- For a commutative ring k and a unital k-algebra map
+f : A → B with A,B in the same carrier world v, applying CE
+to Mat_∞(f) gives C_*(Mat_∞(A)) → C_*(Mat_∞(B)).
+Its degree-n map is ⋀^n Mat_∞(f), in ModuleCat^max(u,v)(k). -/
 def canonicalStableMatrixCoefficientCEMap (f : A →ₐ[k] B) :
     canonicalStableMatrixCEComplex k A ⟶ canonicalStableMatrixCEComplex k B :=
   nativeComplexMap k (canonicalStableMatrixAlgebra k A)
     (canonicalStableMatrixCoefficientLieHom k A f)
 
-/-- Finite CE coefficient maps commute with the canonical stable Lie inclusions. -/
+/-- For a commutative ring k, a unital k-algebra map f : A → B
+in a common carrier world and m ≥ 0, the chain maps satisfy
+C(f) ∘ C(i_(A,m)) = C(i_(B,m)) ∘ C(Mat_m(f)).
+Thus the stable CE coefficient map restricts to the finite
+entrywise coefficient map at every matrix stage. -/
 @[reassoc]
 theorem canonicalStableMatrixCoefficientCEMap_inclusion (f : A →ₐ[k] B) (m : ℕ) :
     canonicalStableMatrixCEInclusion k A m ≫ canonicalStableMatrixCoefficientCEMap k A f =
@@ -131,7 +168,11 @@ theorem canonicalStableMatrixCoefficientCEMap_inclusion (f : A →ₐ[k] B) (m :
     nativeComplexMap_comp, nativeComplexMap_comp,
     canonicalStableMatrixCoefficientLieHom_inclusion]
 
-/-- The canonical CE model isomorphism preserves the coefficient maps. -/
+/-- For a commutative ring k and a unital k-algebra map
+f : A → B in a common carrier world, let E_A,E_B be the
+finite-to-stable CE isomorphisms, S(f) the finite-colimit map and
+C(f) the stable Lie CE map. Then C(f) ∘ E_A = E_B ∘ S(f)
+as chain maps from the A-colimit to the stable B-complex. -/
 @[reassoc]
 theorem canonicalStableMatrixCEIso_naturality (f : A →ₐ[k] B) :
     (canonicalStableMatrixCEIso k A).hom ≫ canonicalStableMatrixCoefficientCEMap k A f =
@@ -166,7 +207,11 @@ theorem canonicalStableMatrixCEIso_naturality (f : A →ₐ[k] B) :
       congrArg (fun q : matrixComplex k A m ⟶ stableMatrixCEComplex k B => q ≫ eB.hom) ht.symm
     _ = _ := Category.assoc a s eB.hom
 
-/-- The inverse of the model isomorphism preserves the same coefficient square. -/
+/-- For a commutative ring k and a unital k-algebra map
+f : A → B in a common carrier world, the inverse model maps satisfy
+E_B⁻¹ ∘ C(f) = S(f) ∘ E_A⁻¹.
+The source is the CE complex of Mat_∞(A) and the target is the
+finite matrix CE colimit for B. -/
 @[reassoc]
 theorem canonicalStableMatrixCEIso_inv_naturality (f : A →ₐ[k] B) :
     canonicalStableMatrixCoefficientCEMap k A f ≫ (canonicalStableMatrixCEIso k B).inv =
@@ -179,7 +224,11 @@ section Rational
 
 variable [Algebra ℚ k]
 
-/-- The HC map on canonical stable matrix CE homology retains coefficient naturality. -/
+/-- For a commutative ℚ-algebra k and a unital k-algebra map
+f : A → B in a common carrier world, the stable trace maps satisfy
+Θ_(B,n) ∘ H_(n+1)(C(f)) = HC_n(f) ∘ Θ_(A,n) for every n ≥ 0.
+The source is stable matrix Lie homology for A in degree n+1,
+and the target is cyclic homology of B in degree n. -/
 theorem canonicalStableMatrixCyclicHomologyMap_naturality (f : A →ₐ[k] B) (n : ℕ) :
     HomologicalComplex.homologyMap (canonicalStableMatrixCoefficientCEMap k A f) (n + 1) ≫
         canonicalStableMatrixCyclicHomologyMap k B n =

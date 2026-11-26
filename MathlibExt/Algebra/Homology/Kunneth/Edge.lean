@@ -16,21 +16,19 @@ public import MathlibExt.Algebra.Homology.Kunneth.SpectralSequence
 public import MathlibExt.Algebra.Homology.PartialTotalEdgeMaps
 
 /-!
-# The canonical zero-column edge of the Künneth spectral sequence
+# The homology tensor pairing and its Künneth zero-column edge
 
-This file defines the canonical finite sum of homology tensor pairings.  When
-the first complex is termwise flat, it identifies that map with the
-zero-column edge for every explicitly supplied Cartan--Eilenberg resolution.
+Let `R : Type u` be a commutative ring and let `K,L` be nonnegative chain complexes in
+`ModuleCat.{u} R`. In total degree `n`, the finite sum of cycle pairings gives the canonical
+map `⊕_(i+j=n) H_i(K) ⊗[R] H_j(L) → H_n(K ⊗[R] L)`.
 
-## Mathematical reference and scope
+For a supplied Cartan–Eilenberg resolution of `L` and termwise-flat `K`, this map is the zero-
+column edge of the associated Künneth spectral sequence after identifying `Tor_0` with
+ordinary tensor and transporting through the tensor abutment comparison. Tor is derived in the
+second tensor factor.
 
-See Weibel, *An Introduction to Homological Algebra*, Theorem 5.6.4 and
-Künneth Formula 5.6.5 for the Künneth spectral sequence and its edge map.
-The complexes here are nonnegatively graded, and each comparison with the
-edge is objectwise for a supplied Cartan--Eilenberg resolution.  The left map
-itself is canonical, but this file does not package functoriality, prove
-resolution independence of the spectral right edge, or construct either a
-natural splitting or the classical noncanonical splitting.
+Reference: Weibel, *An Introduction to Homological Algebra*, Theorem 5.6.4 and Künneth Formula
+5.6.5.
 -/
 
 @[expose] public section
@@ -58,18 +56,24 @@ local instance :
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- The finite antidiagonal indexing tensor products in total degree `n`. -/
+/-- The finite tensor antidiagonal of a total homology degree.
+
+The indices are pairs `(i,j)` of natural numbers with `i+j=n`. -/
 abbrev KunnethTensorIndex (n : ℕ) := KunnethAntidiagonal n
 
-/-- The canonical identification of Tor zero with the underived tensor
-product, with Tor derived in the second factor. -/
+/-- The degree-zero Tor comparison with ordinary tensor.
+
+For modules `A,D`, the zeroth left-derived tensor functor in its second factor is canonically
+isomorphic to `A ⊗ D`. -/
 noncomputable def torZeroIso (A D : ModuleCat.{u} R) :
     ((CategoryTheory.Tor (ModuleCat.{u} R) 0).obj A).obj D ≅ A ⊗ D :=
   (Functor.leftDerivedZeroIsoSelf
     ((tensoringLeft (ModuleCat.{u} R)).obj A)).app D
 
-/-- The canonical finite sum of homology tensor pairings in total degree
-`n`. -/
+/-- The finite-sum Künneth homology tensor map.
+
+Sum the cycle-induced pairings `H_i(K) ⊗ H_j(L) → H_(i+j)(K ⊗ L)` over the antidiagonal
+`i+j=n`. -/
 noncomputable def kunnethHomologyTensorMap
     (K L : ChainComplex (ModuleCat.{u} R) ℕ) (n : ℕ) :
     (⨁ fun ij : KunnethTensorIndex n =>
@@ -84,7 +88,10 @@ noncomputable def kunnethHomologyTensorMap
       (homologyIsoOfEq (tensorObj K L)
         (Finset.mem_antidiagonal.mp ij.property)).hom
 
-/-- The selected component of the canonical Künneth homology tensor map. -/
+/-- The antidiagonal component of the Künneth tensor map.
+
+The inclusion of summand `(i,j)` followed by the finite-sum map is its cycle-induced homology
+pairing, transported along `i+j=n`. -/
 theorem kunnethHomologyTensorMap_ι
     (K L : ChainComplex (ModuleCat.{u} R) ℕ) (n : ℕ)
     (ij : KunnethTensorIndex n) :
@@ -193,9 +200,11 @@ private theorem termColumnZeroHomologyAugmentation_comp_torZeroIso_inv
       hAugInv
   simpa only [Category.assoc] using hAugInvTail
 
-/-- If the first complex is termwise flat, the canonical homology tensor map
-is the literal chosen zero-column edge of the Künneth spectral sequence for
-every supplied Cartan--Eilenberg resolution. -/
+/-- The canonical pairing as the zero-column Künneth edge.
+
+For a Cartan–Eilenberg resolution `P` of `L` and flat terms of `K`, the finite homology tensor
+pairing equals Tor-zero comparison followed by the second-page coordinate, zero-column edge,
+and ordinary tensor abutment isomorphism. -/
 theorem kunnethHomologyTensorMap_eq_p_zero_edge
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}

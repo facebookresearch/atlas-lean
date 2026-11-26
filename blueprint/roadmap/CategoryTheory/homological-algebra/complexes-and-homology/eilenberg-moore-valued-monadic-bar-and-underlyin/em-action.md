@@ -1,5 +1,5 @@
-# Em Action
+# The free-algebra action induced by monad multiplication
 
-Action of the free-algebra right module: at `X` the algebra morphism
-with underlying map `T.μ.app X`, from the free algebra on `T.obj X` to the
-free algebra on `X`. The compatibility law is `T.assoc`.
+Let T be a monad on C. There is a natural transformation T ⋙ T.free → T.free whose component
+at X is the algebra morphism from the free algebra on T(X) to the free algebra on X with
+underlying map μ_X : T²(X) → T(X). Monad associativity makes this an algebra morphism.

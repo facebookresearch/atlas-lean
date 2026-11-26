@@ -1,3 +1,6 @@
-# Zero Coefficient Iso
+# The lifted scalar coordinate of CE exterior degree zero
 
-Exterior degree zero is canonically the coefficient ring.
+The lifted scalar coordinate of CE exterior degree zero.
+
+The degree-zero chain module is isomorphic to the regular coefficient ring lifted into the
+model's joint carrier universe.

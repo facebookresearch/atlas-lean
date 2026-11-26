@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Mapping Cone To Direct Column naturality of bicomplex
+# Naturality of coherent cone descent to a direct column
 
-The coherent mapping-cone-to-direct-column comparison commutes with a
-bicomplex map.
+Naturality of coherent cone descent to a direct column.
+
+The mapping-cone map of a bicomplex morphism followed by target cone-to-column descent equals
+source descent followed by the direct-column map.

@@ -1,3 +1,6 @@
-# Matrix Coefficient Nat Trans At Height
+# The lifted coefficient natural transformation of matrix CE systems
 
-The full-height coefficient natural transformation retains independent universes.
+The lifted coefficient natural transformation of matrix CE systems.
+
+The chosen-height coefficient maps form a natural transformation between the lifted size
+functors.

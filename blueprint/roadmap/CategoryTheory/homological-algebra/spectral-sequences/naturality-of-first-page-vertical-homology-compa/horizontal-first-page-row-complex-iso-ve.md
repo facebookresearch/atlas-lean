@@ -1,4 +1,6 @@
-# Horizontal First Page Row Complex Iso Vertical Homology Complex hom naturality
+# Naturality of the first-page row-complex comparison
 
-The normalized isomorphism from a fixed first-page row to the
-vertical-homology complex is natural in the bicomplex.
+Naturality of the first-page row-complex comparison.
+
+For fixed vertical degree `q`, the restricted first-page row map commutes with the normalized
+isomorphism to the vertical-homology chain complex.

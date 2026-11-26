@@ -18,11 +18,16 @@ public import Mathlib.CategoryTheory.Monoidal.Tor
 public import Mathlib.RingTheory.Flat.CategoryTheory
 
 /-!
-# Higher Tor with a flat left factor
+# A flat first factor makes positive Tor vanish
 
-Mathlib's `Tor` derives tensor product in its second factor.  Tensoring on
-the left by a flat module preserves the exact successor stages of a chosen
-projective resolution, so every positive derived object vanishes.
+Let R be a commutative ring and A,D R-modules in ModuleCat^u(R).
+Here Tor_n(A,D) is the nth left derived object of the functor
+A ⊗[R] − evaluated at D, so derivation is in the second factor.
+
+If A is flat over R, tensoring a projective resolution of D by A
+preserves its exact positive-degree stages. Therefore Tor_(p+1)(A,D)
+is a zero object for every p ≥ 0, with no condition on D beyond its
+R-module structure.
 -/
 
 @[expose] public section
@@ -38,8 +43,10 @@ universe u
 
 namespace CategoryTheory
 
-/-- Higher Tor vanishes when the first tensor factor is flat; `Tor` is
-derived in its second factor. -/
+/-- For a commutative ring R and modules A,D in
+ModuleCat^u(R), if A is flat over R, then Tor_(p+1)(A,D) is
+a zero object for every p ≥ 0.
+The Tor convention is derivation of A ⊗[R] − in its second factor D. -/
 theorem isZero_Tor_succ_of_flat_left
     {R : Type u} [CommRing R]
     (A D : ModuleCat.{u} R) [Module.Flat R A] (p : ℕ) :

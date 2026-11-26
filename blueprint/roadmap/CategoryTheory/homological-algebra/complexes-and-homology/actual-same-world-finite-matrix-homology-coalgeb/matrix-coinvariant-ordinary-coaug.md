@@ -1,3 +1,5 @@
-# Matrix Coinvariant Ordinary Coaug
+# The compared chain coaugmentation of matrix coinvariants
 
-The converted coaugmentation of the matrix coinvariant chain coalgebra.
+The compared chain coaugmentation of matrix coinvariants.
+
+Transport the descended matrix coinvariant coaugmentation through the scalar-unit comparison.

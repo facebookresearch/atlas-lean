@@ -1,4 +1,7 @@
-# Partial Total Stage Zero Source Coordinate stage Iso heq
+# Stage-zero homology coordinate is induced by the filtration-stage isomorphism
 
-The bundled StageZero stage coordinate is the homology isomorphism
-induced by the canonical finite-stage coordinate.
+Stage-zero homology coordinate is induced by the filtration-stage isomorphism.
+
+The stage isomorphism in `B.partialTotalStageZeroSourceCoordinate q` is heterogeneously equal
+to the homology isomorphism induced by `B.partialTotalCochainFiltrationStageIso 0` in the core
+degree of `(0, q)`.

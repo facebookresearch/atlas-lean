@@ -1,4 +1,6 @@
-# Horizontal First Page Homology Vertical Horizontal Homology Iso hom naturality of bicomplex
+# Naturality of the horizontal-of-vertical first-page homology comparison
 
-The first-page homology tail comparison is natural under bicomplex
-maps, in map-first orientation.
+Naturality of the horizontal-of-vertical first-page homology comparison.
+
+The homology map of a bicomplex-induced first-page map commutes with the comparison and with
+homology of the induced vertical-homology row map.

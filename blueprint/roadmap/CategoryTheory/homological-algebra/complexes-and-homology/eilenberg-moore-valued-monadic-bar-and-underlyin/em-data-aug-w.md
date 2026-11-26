@@ -1,6 +1,6 @@
-# Em Data Aug w
+# The regular-module comparison preserves the augmented bar data
 
-The data-level comparison square: the module-isomorphism bar map followed
-by the regular extension equals the postcomposed extension. By
-`hom_eq_of_app_zero_eq` this reduces to degree zero, where both sides are
-`alg.a` after normalizing the identity components.
+For a monad T on C and T-algebra alg, the bar-data map induced by emModuleIso and the identity
+left-module map, followed by the regular-right action augmentation, equals the forgotten-free
+pairing augmentation followed by the constant identity target map. Thus the data comparison
+preserves the augmentation to alg.A.

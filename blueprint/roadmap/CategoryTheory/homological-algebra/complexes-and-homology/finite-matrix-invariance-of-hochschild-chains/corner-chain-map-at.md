@@ -1,3 +1,7 @@
-# Corner Chain Map At
+# The diagonal corner chain map at any common coefficient height
 
-The corner chain map at an arbitrary common coefficient lift height.
+For a commutative ring k, a k-algebra A, a compatible
+A-bimodule M, finite ι and b∈ι, the corner at
+H=max(u,v,w,z,t) is the chain map
+C_*(A,ULift^H M) → C_*(Mat_ι(A),ULift^H Mat_ι(M)).
+It applies E_bb to the coefficient and all algebra factors.

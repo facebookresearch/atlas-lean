@@ -1,6 +1,6 @@
 # Naturality of the canonical-abutment associated-graded comparison
 
-- [Horizontal Canonical Abutment Image Comp Square Of Bicomplex](horizontal-canonical-abutment-image-comp.md)
-- [Horizontal Canonical Abutment Image Quotient Map Of Bicomplex eq coker map](horizontal-canonical-abutment-image-quot.md)
-- [Horizontal Canonical Abutment Image Quotient Graded Iso naturality](horizontal-canonical-abutment-image-quot-2.md)
-- [Horizontal Canonical Abutment Graded Iso naturality](horizontal-canonical-abutment-graded-iso.md)
+- [Nested abutment image inclusions form a bicomplex-natural square](horizontal-canonical-abutment-image-comp.md)
+- [The abutment image-quotient map is the cokernel map of its image square](horizontal-canonical-abutment-image-quot.md)
+- [Nested-image quotient comparisons with associated-graded homology are natural](horizontal-canonical-abutment-image-quot-2.md)
+- [Canonical abutment comparisons with associated-graded homology are natural](horizontal-canonical-abutment-graded-iso.md)

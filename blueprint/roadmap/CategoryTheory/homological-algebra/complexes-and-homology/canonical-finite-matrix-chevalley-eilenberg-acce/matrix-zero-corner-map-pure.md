@@ -1,3 +1,5 @@
-# Matrix Zero Corner Map pure
+# The exterior formula for a matrix zero-extension chain map
 
-Every pure wedge is mapped by entrywise application of the zero corner.
+The exterior formula for a matrix zero-extension chain map.
+
+A pure wedge maps to the wedge of the matrices extended by zeros in the top-left corner.

@@ -14,15 +14,15 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationRestric
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyFiltration
 
 /-!
-# Naturality of the image filtration on total homology
+# Naturality and finite-stage comparison of homology image filtrations
 
-Maps of first-quadrant bicomplexes induce canonical maps between the images
-of finite-stage homology in total homology.  These maps are obtained from the
-canonical image map of the corresponding commutative square.  The finite
-image filtration is also canonically identified with the natural-index
-restriction of the existing complete total-homology filtration.
+Let C be an abelian category, f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ),
+and G_i the horizontal stage at i ∈ ℕ. The square between H_n(G_i(K)) → H_n(Tot(K)) and
+H_n(G_i(L)) → H_n(Tot(L)) gives a canonical map of their images.
 
-Associated-graded and cokernel maps are deliberately deferred.
+The finite image filtration is isomorphic to the restriction of the complete EInt-indexed
+image filtration along i ↦ (i : ℤ). These comparisons are defined both in the overcategory of
+total homology and in its category of monic subobjects, and preserve the image inclusions.
 -/
 
 @[expose] public section
@@ -42,8 +42,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The commutative square between finite-stage homology-to-total maps
-induced by a bicomplex map. -/
+/-- Let C be an abelian category, f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ),
+and n,i ∈ ℕ. Write h_i^K : H_n(G_i(K)) → H_n(Tot(K)) and h_i^L for the horizontal-stage maps.
+The arrows H_n(G_i(f)) and H_n(Tot(f)) define a morphism h_i^K → h_i^L in Arrow(C), since
+H_n(G_i(f)) ≫ h_i^L = h_i^K ≫ H_n(Tot(f)). This is the specified commutative square from which
+the filtration image map is formed. -/
 noncomputable def horizontalFiniteHomologyToTotalSquareOfBicomplex
     (f : K ⟶ L) (n i : ℕ) :
     Arrow.mk (HomologicalComplex.homologyMap
@@ -58,8 +61,11 @@ noncomputable def horizontalFiniteHomologyToTotalSquareOfBicomplex
     (NatTrans.congr_app
       ((horizontalTotalFiltrationHomologyDiagramToTotal n).naturality f) i)
 
-/-- The map between finite-stage homology images induced by a bicomplex
-map. -/
+/-- Let C be an abelian category, f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ),
+and n,i ∈ ℕ. Applying the categorical image-map construction to the stage-to-total homology
+square defines im(H_n(G_i(K)) → H_n(Tot(K))) → im(H_n(G_i(L)) → H_n(Tot(L))). Its source and
+target are the stage-i subobjects of the total-homology image filtrations; its defining square
+uses H_n(G_i(f)) on the stage and H_n(Tot(f)) on the total. -/
 noncomputable def horizontalFiniteHomologyImageMapOfBicomplex
     (f : K ⟶ L) (n i : ℕ) :
     image (HomologicalComplex.homologyMap
@@ -68,7 +74,10 @@ noncomputable def horizontalFiniteHomologyImageMapOfBicomplex
         (horizontalFilteredTotalComplexToTotal L i) n) :=
   image.map (horizontalFiniteHomologyToTotalSquareOfBicomplex f n i)
 
-/-- The image map commutes with the monic inclusions into total homology. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and n,i ∈ ℕ.
+Let a_i be the induced map between the images of H_n(G_i) → H_n(Tot), and let ι_i^K and ι_i^L
+be their canonical image inclusions. Then a_i ≫ ι_i^L = ι_i^K ≫ H_n(Tot(f)). Thus the map on
+filtration images is compatible with the underlying map on total homology. -/
 @[reassoc (attr := simp)]
 theorem horizontalFiniteHomologyImageMapOfBicomplex_ι
     (f : K ⟶ L) (n i : ℕ) :
@@ -81,7 +90,10 @@ theorem horizontalFiniteHomologyImageMapOfBicomplex_ι
           (total.map f (ComplexShape.down ℕ)) n :=
   image.map_ι (horizontalFiniteHomologyToTotalSquareOfBicomplex f n i)
 
-/-- Finite-stage homology maps, as a diagram over total homology. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n ∈ ℕ. The arrows
+H_n(G_i(K)) → H_n(Tot(K)) for finite horizontal stages i ∈ ℕ define a diagram ℕ →
+Over(H_n(Tot(K))). For i ≤ j the morphism in the overcategory is H_n(G_i → G_j), with its
+commutativity equation given by the compatibility of stage inclusions into the total complex. -/
 noncomputable def horizontalFiniteHomologyOverDiagram
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :
@@ -101,7 +113,10 @@ noncomputable def horizontalFiniteHomologyOverDiagram
       rw [hmap, Category.comp_id] at h
       exact h)
 
-/-- The finite image filtration on total homology. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n ∈ ℕ. For i ∈ ℕ
+define F_iH_n(Tot(K)) = im(H_n(G_i(K)) → H_n(Tot(K))), where G_i retains horizontal columns at
+most i. Applying the image functor to the finite stage-homology diagram over H_n(Tot(K)) gives
+an ℕ-indexed filtration, with the canonical monic image inclusion at each stage. -/
 noncomputable def horizontalFiniteTotalHomologyFiltration
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :
@@ -127,7 +142,10 @@ theorem horizontalFiniteTotalHomologyFiltration_ι_app
         (horizontalFilteredTotalComplexToTotal K i) n) :=
   rfl
 
-/-- Restriction of the complete homology-over diagram to natural indices. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n ∈ ℕ. Restrict the
+complete stage-homology diagram EInt → Over(H_n(Tot(K))) along the functor ℕ → EInt sending i
+to the finite integer (i : ℤ). The resulting ℕ-indexed overcategory diagram has stage
+H_n(G_{(i:ℤ)}(K)) → H_n(Tot(K)) and the complete-filtration transition maps. -/
 noncomputable def horizontalCompleteHomologyNatRestrictionOverDiagram
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :
@@ -135,8 +153,12 @@ noncomputable def horizontalCompleteHomologyNatRestrictionOverDiagram
   horizontalFiltrationNatToEIntFunctor ⋙
     horizontalCompleteHomologyOverDiagram K n
 
-/-- Before taking images, the restricted complete homology arrows are
-naturally isomorphic over total homology to the finite homology arrows. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n ∈ ℕ. The
+restriction of the complete stage-homology overcategory diagram to i ∈ ℕ is naturally
+isomorphic to the finite stage-homology diagram over H_n(Tot(K)). At i the isomorphism is
+induced on H_n by the canonical identification of the complete stage at the finite integer i
+with the horizontal stage G_i. Its component commutes with the arrows to total homology, so
+the comparison is an isomorphism in Over(H_n(Tot(K))). -/
 noncomputable def horizontalCompleteFiniteHomologyOverNatIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :
@@ -157,9 +179,11 @@ noncomputable def horizontalCompleteFiniteHomologyOverNatIso
       exact ((horizontalCompleteTotalFiltrationNatRestrictionHomologyNatIso
         (C := C) n).hom.app K).naturality f)
 
-/-- After taking canonical images, the restricted complete homology
-filtration and the finite homology filtration are naturally isomorphic as
-`MonoOver`-valued diagrams. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n ∈ ℕ. Taking images
+of the complete-to-finite stage-homology comparison gives a natural isomorphism between the
+natural-index restriction of the complete image-filtration diagram and the finite
+image-filtration diagram in MonoOver(H_n(Tot(K))). Each component identifies the two chosen
+image objects and commutes with their monomorphisms into the fixed total-homology object. -/
 noncomputable def horizontalCompleteFiniteHomologyImageMonoOverNatIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :
@@ -173,9 +197,11 @@ noncomputable def horizontalCompleteFiniteHomologyImageMonoOverNatIso
       (horizontalCompleteFiniteHomologyOverNatIso K n)
       MonoOver.image
 
-/-- The natural-index restriction of the existing complete total-homology
-filtration diagram is naturally isomorphic to the finite homology-image
-filtration diagram. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n ∈ ℕ. Restrict the
+complete total-homology image filtration along i ∈ ℕ ↦ (i : ℤ) ∈ EInt and forget the
+overcategory structure. Its C-valued diagram is naturally isomorphic to the finite
+image-filtration diagram. At each i this is the image comparison induced by H_n(G_{(i:ℤ)}(K))
+≅ H_n(G_i(K)), with both stages mapped to H_n(Tot(K)). -/
 noncomputable def horizontalCompleteFiniteHomologyFiltrationDiagramIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (n : ℕ) :
@@ -197,8 +223,11 @@ theorem horizontalCompleteFiniteHomologyFiltrationDiagramIso_hom_app
       ((horizontalCompleteFiniteHomologyImageMonoOverNatIso K n).hom.app i).hom.left := by
   simp [horizontalCompleteFiniteHomologyFiltrationDiagramIso]
 
-/-- The complete/finite image comparison preserves the monic inclusions
-into total homology. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and n,i ∈ ℕ. Let e_i :
+F_{(i:ℤ)}^complete H_n(Tot(K)) ≅ F_i^finite H_n(Tot(K)) be the complete-to-finite filtration
+comparison. Then e_i.hom ≫ ι_i^finite = ι_{(i:ℤ)}^complete, where both ι maps are the
+canonical monomorphisms into H_n(Tot(K)). This fixes the orientation of the comparison as a
+map from the restricted complete image to the finite image. -/
 @[reassoc (attr := simp)]
 theorem horizontalCompleteFiniteHomologyFiltrationDiagramIso_hom_ι
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)

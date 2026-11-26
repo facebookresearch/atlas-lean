@@ -1,5 +1,5 @@
 # Bicomplex naturality of bottom-relative homology
 
-- [Horizontal Bottom Stage Short Complex Map Of Bicomplex](horizontal-bottom-stage-short-complex-ma.md)
-- [Horizontal Bottom Mapping Cone To Stage naturality of bicomplex](horizontal-bottom-mapping-cone-to-stage.md)
-- [Horizontal Bottom Relative Homology Stage Iso naturality of bicomplex](horizontal-bottom-relative-homology-stag.md)
+- [A bicomplex morphism maps the bottom-stage short complexes](horizontal-bottom-stage-short-complex-ma.md)
+- [The bottom cone-to-stage maps commute with bicomplex morphisms](horizontal-bottom-mapping-cone-to-stage.md)
+- [Bottom-relative stage homology comparison is bicomplex-natural](horizontal-bottom-relative-homology-stag.md)

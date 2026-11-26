@@ -18,12 +18,24 @@ public import MathlibExt.Algebra.Homology.GradedTensorTower
 public import MathlibExt.Algebra.Homology.GradedHomology.Monoidal
 
 /-!
-# Coherence of the canonical cycle Künneth maps
+# Associator and unit coherence of the canonical module Künneth maps
 
-Associativity is checked on three original cycle objects and then descends
-through the actual epimorphic homology quotient maps. Unit coherence uses
-the canonical homology of the single tensor unit. These are proofs for
-the already defined tensorator, not inputs to its monoidal structure.
+Let R be a commutative ring and K,L nonnegative R-module chain complexes
+in ModuleCat^u(R). The canonical graded Künneth tensorator
+μ_(K,L):H(K)⊗H(L)→H(K⊗L) is the module-category specialization
+of graded cycle descent.
+
+The associator equation compares the two iterated cycle pairings;
+in bidegrees p,q,r it retains (p+q)+r=p+(q+r).
+The unit map identifies the scalar graded unit with homology of R[0].
+It satisfies
+λ_(H(K))=H(λ_K) μ_(𝟙,K)(ε⊗id)
+and ρ_(H(K))=H(ρ_K) μ_(K,𝟙)(id⊗ε).
+
+Naturality, associativity and these unit equations give graded
+homology its lax monoidal structure over every commutative R.
+The structure maps are the canonical cycle tensorator and scalar-unit
+homology map.
 -/
 
 @[expose] public section
@@ -39,8 +51,11 @@ namespace HomologicalComplex.Kunneth
 variable {R : Type u} [CommRing R]
 
 
-/-- The literal existing tensorator equals the canonical shared cycle descent.
-This is proved by its actual graded source injections, not supplied as data. -/
+/-- For nonnegative R-module chain complexes K,L over a
+commutative ring R, the Künneth graded tensorator equals
+the graded-homology cycle tensorator specialized to
+V=ModuleCat^u(R).
+Both maps are determined by their bidegree cycle descents. -/
 theorem tensorator_eq_gradedHomology (K L : (ChainComplex (ModuleCat.{u} R) ℕ)) :
     tensorator K L = HomologicalComplex.GradedHomology.tensorator (V := (ModuleCat.{u} R)) K L := by
   funext n
@@ -50,7 +65,11 @@ theorem tensorator_eq_gradedHomology (K L : (ChainComplex (ModuleCat.{u} R) ℕ)
   rfl
 
 
-/-- The canonical tensor pairing of cycles in a specified total degree. -/
+/-- For nonnegative R-module chain complexes K,L and p+q=n,
+the cycle tensor inclusion gives
+Z_p(K)⊗[R]Z_q(L)→Z_n(K⊗L).
+It includes the homogeneous tensor summand and factors through
+cycles because both input differentials vanish. -/
 def cyclesPair (K L : (ChainComplex (ModuleCat.{u} R) ℕ)) (p q n : ℕ) (h : p + q = n) :
     K.cycles p ⊗ L.cycles q ⟶ (tensorObj K L).cycles n :=
   HomologicalComplex.GradedHomology.cyclesPair K L p q n h
@@ -71,8 +90,12 @@ theorem quotient_tensorator (K L : (ChainComplex (ModuleCat.{u} R) ℕ)) (p q n 
   exact
     (HomologicalComplex.GradedHomology.quotient_tensorator K L p q n h)
 
-/-- Associativity of the actual bidegree Künneth pairings, including the
-literal equality-induced map between the two parenthesized total degrees. -/
+/-- For nonnegative R-module chain complexes A,B,C over a
+commutative ring R, the two iterated pairings on
+H_p(A),H_q(B),H_r(C) agree after applying the chain associator.
+The target homology degrees (p+q)+r and p+(q+r) are identified
+by associativity of addition, and the source uses the module
+tensor associator. -/
 theorem pair_assoc (A B C : (ChainComplex (ModuleCat.{u} R) ℕ)) (p q r : ℕ) :
     (pair A B p q ⊗ₘ 𝟙 (C.homology r)) ≫
       pair (tensorObj A B) C (p + q) r ≫
@@ -83,7 +106,11 @@ theorem pair_assoc (A B C : (ChainComplex (ModuleCat.{u} R) ℕ)) (p q r : ℕ) 
       (𝟙 (A.homology p) ⊗ₘ pair B C q r) ≫ pair A (tensorObj B C) p (q + r) := by
   exact HomologicalComplex.GradedHomology.pair_assoc A B C p q r
 
-/-- Associator coherence for the canonical graded Künneth tensorator. -/
+/-- For nonnegative R-module chain complexes A,B,C, the
+canonical tensorators satisfy
+H(α) μ_(A⊗B,C)(μ_(A,B)⊗id) =
+μ_(A,B⊗C)(id⊗μ_(B,C)) α_H.
+The coefficient ring R is commutative. -/
 @[reassoc]
 theorem tensorator_associativity (A B C : (ChainComplex (ModuleCat.{u} R) ℕ)) :
     tensorator A B ▷ homologyFunctor.obj C ≫ tensorator (A ⊗ B) C ≫
@@ -94,7 +121,10 @@ theorem tensorator_associativity (A B C : (ChainComplex (ModuleCat.{u} R) ℕ)) 
   exact
     (HomologicalComplex.GradedHomology.tensorator_associativity A B C)
 
-/-- The scalar unit paired with a homology class gives its native left unitor. -/
+/-- For a nonnegative R-module chain complex K, let
+e:H_0(R[0])≅R be the scalar-unit homology isomorphism.
+Pairing e⁻¹ with H_n(K), then applying H_n of the chain left
+unitor, gives R⊗[R]H_n(K)→H_n(K), the ordinary left unitor. -/
 theorem unit_left_pair (K : (ChainComplex (ModuleCat.{u} R) ℕ)) (n : ℕ) :
     ((singleObjHomologySelfIso (ComplexShape.down ℕ) 0 (𝟙_ (ModuleCat.{u} R))).inv ⊗ₘ
       𝟙 (K.homology n)) ≫
@@ -105,7 +135,10 @@ theorem unit_left_pair (K : (ChainComplex (ModuleCat.{u} R) ℕ)) (n : ℕ) :
   exact
     (HomologicalComplex.GradedHomology.unit_left_pair K n)
 
-/-- The scalar unit paired on the right gives the native right unitor. -/
+/-- For a nonnegative R-module chain complex K, pairing
+H_n(K) with the inverse scalar-unit homology identification
+R≅H_0(R[0]), then applying the chain right unitor on homology,
+gives the right unitor H_n(K)⊗[R]R→H_n(K). -/
 theorem unit_right_pair (K : (ChainComplex (ModuleCat.{u} R) ℕ)) (n : ℕ) :
     (𝟙 (K.homology n) ⊗ₘ (singleObjHomologySelfIso (ComplexShape.down ℕ) 0 (𝟙_ (ModuleCat.{u} R))).inv) ≫
       GradedObject.Monoidal.ιTensorObj (homologyFunctor.obj K)
@@ -116,7 +149,10 @@ theorem unit_right_pair (K : (ChainComplex (ModuleCat.{u} R) ℕ)) (n : ℕ) :
   exact
     (HomologicalComplex.GradedHomology.unit_right_pair K n)
 
-/-- Left unit coherence for the canonical cycle Künneth tensorator. -/
+/-- For a nonnegative R-module chain complex K over a
+commutative ring R, the canonical maps satisfy
+λ_(H(K))=H(λ_K) ∘ μ_(𝟙,K) ∘ (ε⊗id).
+The map ε identifies the scalar graded unit with H(R[0]). -/
 theorem tensorator_left_unitality (K : (ChainComplex (ModuleCat.{u} R) ℕ)) :
     (λ_ (homologyFunctor.obj K)).hom = unitMap ▷ homologyFunctor.obj K ≫
       tensorator (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K ≫ homologyFunctor.map (λ_ K).hom := by
@@ -124,7 +160,10 @@ theorem tensorator_left_unitality (K : (ChainComplex (ModuleCat.{u} R) ℕ)) :
   exact
     (HomologicalComplex.GradedHomology.tensorator_left_unitality K)
 
-/-- Right unit coherence for the canonical cycle Künneth tensorator. -/
+/-- For a nonnegative R-module chain complex K over a
+commutative ring R, the canonical maps satisfy
+ρ_(H(K))=H(ρ_K) ∘ μ_(K,𝟙) ∘ (id⊗ε).
+The map ε is the canonical scalar-unit homology map. -/
 theorem tensorator_right_unitality (K : (ChainComplex (ModuleCat.{u} R) ℕ)) :
     (ρ_ (homologyFunctor.obj K)).hom = homologyFunctor.obj K ◁ unitMap ≫
       tensorator K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) ≫ homologyFunctor.map (ρ_ K).hom := by
@@ -132,8 +171,11 @@ theorem tensorator_right_unitality (K : (ChainComplex (ModuleCat.{u} R) ℕ)) :
   exact
     (HomologicalComplex.GradedHomology.tensorator_right_unitality K)
 
-/-- The earned lax monoidal structure on the existing native graded
-homology functor, over every commutative ring in its actual coefficient world. -/
+/-- For a commutative ring R, graded homology of nonnegative
+R-module chain complexes is lax monoidal.
+Its unit map is the scalar-unit homology comparison, and its
+tensorator is the finite sum of canonical cycle homology pairings,
+with the stated associator and unit laws. -/
 def laxMonoidal : (homologyFunctor (R := R)).LaxMonoidal where
   ε := unitMap
   μ := tensorator

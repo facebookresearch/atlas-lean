@@ -1,3 +1,7 @@
-# Entries
+# Natural-number entry coordinates of stable matrix ring elements
 
-The entries of a stable matrix, indexed by pairs of natural numbers.
+Natural-number entry coordinates of stable matrix ring elements.
+
+For `x : Matrix.Stable k A`, its entry function on `ℕ × ℕ` is obtained through the linear
+equivalence with the stable matrix module. A finite representative is extended by zero outside
+its square.

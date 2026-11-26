@@ -1,4 +1,4 @@
-# Em Postcomp functor map
+# The forgotten free right-module functor acts by T
 
-Postcomposing with the forgetful functor lands definitionally on the
-underlying endofunctor: morphisms go to `T.map`.
+For a monad T on C and g : X → Y, postcomposing the free-algebra right module with T.forget
+gives the map T(g). Its underlying endofunctor of C is T.

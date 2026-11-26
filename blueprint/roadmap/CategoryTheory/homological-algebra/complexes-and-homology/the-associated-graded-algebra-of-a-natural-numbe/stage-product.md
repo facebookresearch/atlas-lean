@@ -1,3 +1,6 @@
-# Stage Product
+# Bilinear multiplication between filtered stages
 
-Multiplication of actual representatives, with its earned filtration bound.
+Bilinear multiplication between filtered stages.
+
+For a ring filtration, multiplication in `A` gives an `R`-bilinear map `F n →ₗ[R] F m →ₗ[R] F
+(n + m)` with value the product of the underlying representatives.

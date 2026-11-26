@@ -1,3 +1,6 @@
-# Canonical Stable Matrix Positive Tail Homology Iso At Height
+# The positive-tail homology shift at a chosen height
 
-The shifted-homology comparison on the common-height canonical stable CE model.
+For a commutative ring k, an associative unital k-algebra A,
+H = max(u,v,z) and n ≥ 0, there is an isomorphism
+H_n(positiveTail(C_*^H(Mat_∞(A)))) ≅ H_(n+1)(C_*^H(Mat_∞(A))).
+It uses the zero degree-one differential of the lifted CE complex.

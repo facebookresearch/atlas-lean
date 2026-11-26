@@ -1,3 +1,4 @@
-# Raw Tensor Height Output Lift
+# The ground output category lifts to the larger shared height
 
-The output lift, requiring only its exactness.
+For a commutative R, H = max u v v' w w' z and H' = max H t, rawTensorHeightOutputLift is the
+module ULift functor ModuleCat.{H} R ⥤ ModuleCat.{H'} R, which preserves homology.

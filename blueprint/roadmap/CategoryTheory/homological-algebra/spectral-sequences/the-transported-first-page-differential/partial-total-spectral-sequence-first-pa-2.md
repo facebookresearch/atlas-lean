@@ -1,3 +1,6 @@
-# Partial Total Spectral Sequence First Page d zero
+# Every first-page differential out of column zero vanishes
 
-There is no outgoing page-one differential from filtration degree zero.
+Every first-page differential out of column zero vanishes.
+
+For any natural `q` and any target bidegree `pq'`, the first-page differential from `(0, q)`
+to `pq'` is zero. The differential shape would require a predecessor column of zero.

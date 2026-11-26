@@ -1,3 +1,5 @@
-# Native Primitive Inclusion
+# The chain inclusion of primitive CE chains
 
-The canonical primitive inclusion is a chain map.
+The chain inclusion of primitive CE chains.
+
+The kernel inclusion maps the primitive subcomplex into the canonical CE complex.

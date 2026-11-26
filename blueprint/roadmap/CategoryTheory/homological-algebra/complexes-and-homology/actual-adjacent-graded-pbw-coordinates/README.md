@@ -1,6 +1,6 @@
 # Actual adjacent graded PBW coordinates
 
-- [Graded Projection](graded-projection.md)
-- [Graded Projection ker](graded-projection-ker.md)
-- [Graded Projection surjective](graded-projection-surjective.md)
-- [Graded Equiv](graded-equiv.md)
+- [The highest PBW coordinate on a positive filtration stage](graded-projection.md)
+- [The preceding stage is the highest-coordinate kernel](graded-projection-ker.md)
+- [Positive homogeneous polynomial coordinates are all attained](graded-projection-surjective.md)
+- [Adjacent positive enveloping quotients are homogeneous polynomial modules](graded-equiv.md)

@@ -15,11 +15,15 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyFiltrationNatural
 public import MathlibExt.CategoryTheory.NatTrans.PointwiseImage
 
 /-!
-# The finite total-homology filtration diagram functor
+# Functorial image diagrams for total homology
 
-The finite-stage inclusions into total homology form a natural transformation
-of natural-index diagrams.  Taking its pointwise images packages the induced
-homology filtration as a functor of the first-quadrant bicomplex.
+Let C be an abelian category and n ∈ ℕ. For a bicomplex K of shape (down ℕ,down ℕ), the images
+of the horizontal-stage maps H_n(G_i(K)) → H_n(Tot(K)) form a diagram ℕ → C. A bicomplex
+morphism induces a map between these diagrams by the corresponding commutative squares on
+homology.
+
+This gives a functor from first-quadrant bicomplexes to ℕ-indexed C-diagrams. Each stage map
+commutes with the inclusion of its image into total homology.
 -/
 
 @[expose] public section
@@ -36,8 +40,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The finite total-homology filtration diagram, functorial in the
-first-quadrant bicomplex. -/
+/-- Let C be an abelian category and n ∈ ℕ. Assign to a bicomplex K of shape (down ℕ,down ℕ) the
+diagram i ↦ im(H_n(G_i(K)) → H_n(Tot(K))), for i ∈ ℕ, where G_i retains horizontal columns at
+most i. This assignment is a functor to ℕ ⥤ C. A bicomplex map f induces the pointwise image
+map of the square with horizontal arrows the stage-homology inclusions and vertical arrows
+H_n(G_i(f)) and H_n(Tot(f)). The transition maps arise from the stage inclusions G_i → G_j for
+i ≤ j. -/
 noncomputable def horizontalFiniteTotalHomologyFiltrationDiagramFunctor
     (n : ℕ) :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -60,8 +68,11 @@ theorem horizontalFiniteTotalHomologyFiltrationDiagramFunctor_map_app
       horizontalFiniteHomologyImageMapOfBicomplex f n i :=
   rfl
 
-/-- The functorial map between finite homology-filtration stages commutes
-with their canonical inclusions into total homology. -/
+/-- Let C be an abelian category, f : K → L a map of bicomplexes of shape (down ℕ,down ℕ), and n,i
+∈ ℕ. Let F_i(K) and F_i(L) be the images of the stage-homology maps into total homology, and
+let a_i : F_i(K) → F_i(L) be the component of the image-diagram functor applied to f. If ι_i^K
+and ι_i^L are the image inclusions, then a_i ≫ ι_i^L = ι_i^K ≫ H_n(Tot(f)). This is the
+compatibility needed for a map of filtered homology objects. -/
 @[reassoc (attr := simp)]
 theorem horizontalFiniteTotalHomologyFiltrationDiagramFunctor_map_app_ι
     (n : ℕ) (f : K ⟶ L) (i : ℕ) :

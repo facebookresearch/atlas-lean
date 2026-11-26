@@ -1,4 +1,7 @@
-# Comon Obj Of Flat Homology
+# Flat terms and flat homology give the canonical homology comonoid
 
-Flat terms and flat homology supply both necessary comparisons through
-the existing first-factor collapse theorem.
+For a nonnegative R-module chain comonoid C, suppose
+every term C_n and every homology module H_n(C) is flat over R.
+The canonical Künneth maps for C⊗C and C⊗(C⊗C) are then
+invertible, so the canonical diagonal and counit define a
+graded homology comonoid.

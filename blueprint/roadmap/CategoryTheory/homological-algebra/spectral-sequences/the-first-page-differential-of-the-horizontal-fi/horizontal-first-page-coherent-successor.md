@@ -1,4 +1,5 @@
-# Horizontal First Page Coherent Successor Map
+# The map between successive first-page upper stages
 
-The canonical map from the upper stage for column `p` to that for
-column `p+1`.
+The map between successive first-page upper stages.
+
+The complete filtration diagram maps the upper stage of column `p` to that of column `p+1`.

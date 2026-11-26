@@ -1,3 +1,3 @@
-# Horizontal Canonical Abutment Upper Map
+# Include a column cut in the finite upper abutment cut
 
-Inclusion of stage `p` into the finite upper abutment stage.
+For p,q : ℕ, horizontalCanonicalAbutmentUpperMap is the EInt inclusion p→u with u=(p+q+1:ℤ).

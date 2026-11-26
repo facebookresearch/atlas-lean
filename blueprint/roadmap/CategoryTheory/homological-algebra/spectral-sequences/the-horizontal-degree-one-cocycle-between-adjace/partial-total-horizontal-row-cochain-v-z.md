@@ -1,3 +1,6 @@
-# Partial Total Horizontal Row Cochain v zero
+# Horizontal degree-one cochain has zero component from zero to one
 
-The boundary component at natural source degree zero vanishes.
+Horizontal degree-one cochain has zero component from zero to one.
+
+For every row index `m`, the component of `B.partialTotalHorizontalRowCochain m` from cochain
+degree zero to degree one is zero.

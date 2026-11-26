@@ -14,14 +14,14 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedMap
 public import Mathlib.CategoryTheory.HomCongr
 
 /-!
-# Functoriality of the current total-homology filtration-stage map
+# Functorial maps on current homology-filtration stages
 
-The current-stage map transported through the complete/finite filtration
-comparison preserves identities and composition.  Both laws follow by
-projecting the corresponding laws of the finite filtered-object functor to
-the selected stage and cancelling the comparison isomorphisms.
+Let C be an abelian category, p,q ∈ ℕ, and F_p(K) the complete image-filtration stage in
+H_{p+q}(Tot(K)). A bicomplex map f induces F_p(K) → F_p(L) by transporting its finite
+image-stage map through the complete-to-finite comparisons at p.
 
-This file proves no predecessor-map, arrow-functor, or cokernel-functor law.
+These maps preserve identity morphisms and composition. The current-stage construction is
+defined for every p, including p=0.
 -/
 
 @[expose] public section
@@ -38,8 +38,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The transported current-stage map of an identity bicomplex morphism is
-the identity. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and p,q ∈ ℕ. In total
+degree n=p+q, let c(f) : F_p(K) → F_p(L) be the current complete image-stage map obtained by
+conjugating the finite stage-p map with the complete-to-finite comparisons. Then c(𝟙_K) =
+𝟙_{F_p(K)}. The formula holds for every p, including column zero. -/
 @[simp 1100]
 theorem
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_id
@@ -67,8 +69,11 @@ theorem
           congrArg (fun h => eK.hom ≫ h) (Category.id_comp eK.inv)
         _ = 𝟙 _ := eK.hom_inv_id
 
-/-- Transported current-stage maps preserve composition of bicomplex
-morphisms. -/
+/-- Let C be an abelian category and f : K → L, g : L → M composable maps of bicomplexes of shape
+(down ℕ,down ℕ). For p,q ∈ ℕ and n=p+q, let c(f) : F_pH_n(Tot(K)) → F_pH_n(Tot(L)) be the
+current-stage map transported from the finite image filtration. Then c(f ≫ g) = c(f) ≫ c(g).
+Each intermediate complete-to-finite stage comparison is an isomorphism, and the equality uses
+the same column p and total degree n throughout. -/
 @[simp 1100]
 theorem
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_comp

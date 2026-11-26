@@ -1,4 +1,7 @@
-# Tensorator eq graded Homology
+# The module tensorator is the general graded cycle tensorator
 
-The literal existing tensorator equals the canonical shared cycle descent.
-This is proved by its actual graded source injections, not supplied as data.
+For nonnegative R-module chain complexes K,L over a
+commutative ring R, the Künneth graded tensorator equals
+the graded-homology cycle tensorator specialized to
+V=ModuleCat^u(R).
+Both maps are determined by their bidegree cycle descents.

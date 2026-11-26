@@ -1,3 +1,6 @@
-# Cyclic Exterior Weibel Chain Map naturality
+# Naturality of the canonical-tail signed cyclic exterior map
 
-The signed cyclic chain map is natural under nonunital coefficient algebra homomorphisms.
+Naturality of the canonical-tail signed cyclic exterior map.
+
+The canonical positive-tail map and the cyclic quotient map induced by a nonunital algebra
+homomorphism commute with the degree-signed exterior chain map.

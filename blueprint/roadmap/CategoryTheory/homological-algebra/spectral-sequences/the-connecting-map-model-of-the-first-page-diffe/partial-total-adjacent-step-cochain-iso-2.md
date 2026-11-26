@@ -1,4 +1,6 @@
-# Partial Total Adjacent Step Cochain Iso hom f heq
+# The supported component identity of adjacent-step coordinates
 
-At a supported cochain degree, the adjacent-step comparison is
-heterogeneously the identity of the common partial-total component.
+The supported component identity of adjacent-step coordinates.
+
+At the cochain degree corresponding to total degree `n`, the adjacent-step comparison is
+heterogeneously equal to the identity of the common partial-total component.

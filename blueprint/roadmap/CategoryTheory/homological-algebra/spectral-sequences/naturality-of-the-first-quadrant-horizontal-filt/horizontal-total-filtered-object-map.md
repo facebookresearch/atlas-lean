@@ -1,4 +1,7 @@
-# Horizontal Total Filtered Object Map
+# A bicomplex morphism gives a filtered-total morphism
 
-A bicomplex map induces a morphism of horizontally filtered total
-complexes.
+For f : K → L between nonnegative homological bicomplexes,
+the induced filtered morphism has underlying chain map Tot(f)
+and stage-k chain map F_k(f).
+Their commuting squares with the stage inclusions make a morphism
+of ℕ-filtered chain complexes.

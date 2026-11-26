@@ -14,13 +14,17 @@ module
 public import MathlibExt.RingTheory.MvPolynomial.HomogeneousVariable
 
 /-!
-# Leading products at an actual polynomial degree bound
+# Highest homogeneous components under degree bounds
 
-The strict degree submodule includes degree zero without a truncated
-predecessor. Multiplication by a monomial raises its bound by the monomial
-degree. On two actual degree cutoffs, the component in the sum degree is
-the product of the two highest components. All proofs use native monomial
-spans and allow an arbitrary commutative coefficient ring.
+Let `R` be any commutative ring and `I` a variable type in an independent universe. The strict
+total-degree submodule consists of multivariate polynomials supported on exponent vectors of
+degree less than `n`. It is zero at `n = 0` and equals the usual degree-at-most-`n` submodule
+at strict bound `n + 1`.
+
+Multiplication by a monomial of degree `d` raises a strict bound `n` to `n + d`. If `p` and
+`q` have total-degree bounds `n` and `m`, respectively, then `homogeneousComponent (n + m) (p
+* q) = homogeneousComponent n p * homogeneousComponent m q`. The statement permits zero
+highest components and arbitrary commutative coefficient rings.
 -/
 
 @[expose] public section
@@ -33,16 +37,26 @@ namespace MvPolynomial
 
 variable {R : Type u} [CommRing R] {I : Type v}
 
-/-- Polynomials supported strictly below the indicated degree. -/
+/-- Submodule of polynomials with strict total-degree support bound.
+
+For natural `n`, `restrictStrictTotalDegree I R n` is the submodule of `MvPolynomial I R`
+supported on exponent vectors `e` satisfying `e.degree < n`. -/
 def restrictStrictTotalDegree (I : Type v) (R : Type u) [CommRing R] (n : ℕ) :
     Submodule R (MvPolynomial I R) :=
   restrictSupport R {e | e.degree < n}
 
+/-- Strict total-degree support submodules are monotone.
+
+If `n ≤ m`, every polynomial supported in total degrees less than `n` is supported in total
+degrees less than `m`. -/
 theorem restrictStrictTotalDegree_mono :
     Monotone (restrictStrictTotalDegree I R) := by
   intro n m hnm
   exact restrictSupport_mono R fun e he => he.trans_le hnm
 
+/-- Strict degree-zero submodule is zero.
+
+The submodule of polynomials supported in total degrees less than zero is `⊥`. -/
 @[simp]
 theorem restrictStrictTotalDegree_zero : restrictStrictTotalDegree I R 0 = ⊥ := by
   rw [restrictStrictTotalDegree, show {e : I →₀ ℕ | e.degree < 0} = ∅ by
@@ -51,6 +65,10 @@ theorem restrictStrictTotalDegree_zero : restrictStrictTotalDegree I R 0 = ⊥ :
   rw [restrictSupport_eq_span]
   simp only [Set.image_empty, Submodule.span_empty]
 
+/-- Strict successor bound equals a weak degree bound.
+
+For natural `n`, `restrictStrictTotalDegree I R (n + 1) = restrictTotalDegree I R n`, since
+natural exponent degrees satisfy `d < n + 1` exactly when `d ≤ n`. -/
 @[simp]
 theorem restrictStrictTotalDegree_succ (n : ℕ) :
     restrictStrictTotalDegree I R (n + 1) = restrictTotalDegree I R n := by
@@ -59,7 +77,10 @@ theorem restrictStrictTotalDegree_succ (n : ℕ) :
   change e.degree < n + 1 ↔ e.degree ≤ n
   exact Nat.lt_succ_iff
 
-/-- A strict upper bound annihilates the component at that bound. -/
+/-- Component at a strict support bound vanishes.
+
+If `p` lies in `restrictStrictTotalDegree I R n`, then its degree-`n` homogeneous component is
+zero. -/
 theorem homogeneousComponent_eq_zero_of_mem_strict {n : ℕ} {p : MvPolynomial I R}
     (hp : p ∈ restrictStrictTotalDegree I R n) : homogeneousComponent n p = 0 := by
   apply homogeneousComponent_eq_zero' n p
@@ -67,13 +88,18 @@ theorem homogeneousComponent_eq_zero_of_mem_strict {n : ℕ} {p : MvPolynomial I
   rw [restrictStrictTotalDegree, mem_restrictSupport_iff] at hp
   exact ne_of_lt (hp he)
 
-/-- An actual degree cutoff lies strictly below its successor. -/
+/-- Weak degree bound gives the next strict bound.
+
+If `p` lies in `restrictTotalDegree I R n`, then `p` lies in `restrictStrictTotalDegree I R (n
++ 1)`. -/
 theorem mem_strict_succ_of_mem_degree {n : ℕ} {p : MvPolynomial I R}
     (hp : p ∈ restrictTotalDegree I R n) :
     p ∈ restrictStrictTotalDegree I R (n + 1) := by
   simpa only [restrictStrictTotalDegree_succ] using hp
 
-/-- The degree-zero cutoff consists of its own homogeneous component. -/
+/-- Degree-zero bounded polynomial equals its constant component.
+
+If `p` is supported in total degree at most zero, then `homogeneousComponent 0 p = p`. -/
 theorem homogeneousComponent_zero_eq_self_of_mem_degree_zero {p : MvPolynomial I R}
     (hp : p ∈ restrictTotalDegree I R 0) : homogeneousComponent 0 p = p := by
   ext e
@@ -84,7 +110,11 @@ theorem homogeneousComponent_zero_eq_self_of_mem_degree_zero {p : MvPolynomial I
     have hdegree : e.degree = 0 := Nat.le_zero.mp (hp (mem_support_iff.mpr he))
     rw [if_pos hdegree]
 
-/-- Multiplication by a monomial raises a strict degree bound by its degree. -/
+/-- Monomial multiplication raises a strict support bound by its degree.
+
+If `p` has support in total degrees less than `n`, then for an exponent vector `e : I →₀ ℕ`
+and coefficient `r : R`, the product `p * monomial e r` has support in degrees less than `n +
+e.degree`. -/
 theorem mul_monomial_mem_strict {n : ℕ} {p : MvPolynomial I R}
     (hp : p ∈ restrictStrictTotalDegree I R n) (e : I →₀ ℕ) (r : R) :
     p * monomial e r ∈ restrictStrictTotalDegree I R (n + e.degree) := by
@@ -153,8 +183,11 @@ private theorem highestProductDefect_monomial (n m : ℕ) (e f : I →₀ ℕ)
     · rw [if_neg (by omega), if_neg hen, if_pos hfm, zero_mul, sub_self]
     · rw [if_neg (by omega), if_neg hen, if_neg hfm, zero_mul, sub_self]
 
-/-- Multiplication in the sum degree is the product of the original highest
-components, provided each original polynomial satisfies its degree bound. -/
+/-- Highest allowed component of a product is the product of highest components.
+
+If `p` is supported in total degrees at most `n` and `q` in degrees at most `m`, then the
+degree-`n + m` component of `p * q` equals the product of the degree-`n` component of `p` and
+the degree-`m` component of `q`. -/
 theorem homogeneousComponent_mul_of_degreeBounds (n m : ℕ)
     (p q : MvPolynomial I R)
     (hp : p ∈ restrictTotalDegree I R n) (hq : q ∈ restrictTotalDegree I R m) :

@@ -15,15 +15,19 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.RightCoefficients
 
 /-!
-# Right Lie coefficients and enveloping Tor
+# Right Lie coefficient homology and enveloping Tor in separate carriers
 
-A right Lie module over a commutative ground ring extends to a right enveloping module whose
-generator action is the given right Lie action. Its coefficient-first Chevalley–Eilenberg
-chains are `M ⊗[R] (⋀[R]^n L)`.
+For a right Lie module A, convert to the left action [x,m] = −m·x and lift that coefficient to
+a common height H. Its right enveloping representation then has generator action m·ι(x) equal
+to the given right Lie action, because the two negations cancel.
 
-For a free underlying Lie module, coefficient homology identifies with enveloping Tor against
-the trivial module. The comparisons, degree-zero tensor classes, and compatible
-Lie/coefficient maps retain the ground-ring action and allow independent carrier universes.
+Tensor flipping identifies coefficient-first right CE homology with the exterior-first
+converted-left homology. Under freeness of L, the transported resolution comparison gives an
+R-linear equivalence from the exact unlifted right homology carrier to enveloping Tor at H.
+Degree-zero classes retain their coefficient and scalar unit under the balanced tensor map.
+
+The comparisons commute with further height lifts and jointly with Lie and right coefficient
+maps. Input/output up/down maps preserve the independent unlifted carrier universes.
 -/
 
 @[expose] public section
@@ -52,8 +56,10 @@ local instance rawRightTensor_additive {A : Type a} [Ring A] [Algebra R A]
     (N : ModuleCat.{b} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, a, b, c} R A N).Additive :=
   ModuleCat.BalancedTensor.additive R A N
 
-/-- The coefficient-carrier lift, expressed as a right Lie module on the lift of the raw right
-coefficient. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. rawRightLieCoefficientLiftAt is fromLeft(rawLieCoefficientLiftAt M), a right Lie module
+on the lift of A in height H. -/
 def rawRightLieCoefficientLiftAt : RightLieModuleCat.{max u v v' w w' z} R L :=
   RightLieModuleCat.fromLeft (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)
 
@@ -64,8 +70,10 @@ theorem rawRightLieCoefficientLiftAt_act_up (m : A) (x : L) :
   change ULift.up (-(-(A.action x m))) = ULift.up (A.action x m)
   rw [neg_neg]
 
-/-- The enveloping algebra coefficient object on the lifted right Lie carrier, with the
-representation constructed from its negative-left structure. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. rawRightEnvelopingCoefficientsAt represents the lifted M as a right U_R(L)-module. Its
+generator action on the lifted A-carrier is the given right action A.action. -/
 abbrev rawRightEnvelopingCoefficientsAt : ModuleCat.{max u v v' w w' z} Uᵐᵒᵖ :=
   LieModuleCat.RightUniversalEnveloping.representObj R L
     (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)
@@ -81,33 +89,46 @@ theorem rawRightEnvelopingCoefficientsAt_op_ι_up (m : A) (x : L) :
   change ULift.up (-(-(A.action x m))) = ULift.up (A.action x m)
   rw [neg_neg]
 
-/-- Tor of the lifted right enveloping algebra coefficient at the trivial left module, derived in
-the sufficient working universe. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. For n : ℕ, rawRightLieCoefficientTorAt is rawLieCoefficientTorAt M n: the left-derived
+fixed-right balanced tensor functor at the lifted trivial left enveloping module. -/
 abbrev rawRightLieCoefficientTorAt (n : ℕ) : ModuleCat.{max u v v' w w' z} R :=
   rawLieCoefficientTorAt.{u, v, v', w, w', z} R L M n
 
-/-- The coefficient-first homology and the exterior-first negative-left homology have their tensor
-comparison. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. For n : ℕ, rawRightCoefficientHomologyToLeftIso identifies H_n(rightCoefficientComplex
+A) with H_n(coefficientComplex M), by the degreewise tensor-flip complex isomorphism. -/
 def rawRightCoefficientHomologyToLeftIso (n : ℕ) :
     (rightCoefficientComplex R L A).homology n ≅ (coefficientComplex R L M).homology n :=
   (HomologicalComplex.homologyFunctor (ModuleCat.{max u v w} R) (ComplexShape.down ℕ) n).mapIso
     (rightCoefficientComplexIso R L A)
 
-/-- Full coefficient-first right CE/Tor comparison on the exact raw homology carrier, with
-input/output up/down. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Assume Module.Free R L. For n : ℕ, the tensor-flip homology comparison followed by
+rawCoefficientHomologyEquivTorAt M gives H_n(CE_right(L,A)) ≃ₗ[R] rawRightLieCoefficientTorAt
+A n. -/
 def rawRightCoefficientHomologyEquivTorAt [Module.Free R L] (n : ℕ) :
     (rightCoefficientComplex R L A).homology n ≃ₗ[R]
       rawRightLieCoefficientTorAt.{u, v, v', w, w', z} R L A n :=
   (rawRightCoefficientHomologyToLeftIso R L A n).toLinearEquiv.trans
     (rawCoefficientHomologyEquivTorAt.{u, v, v', w, w', z} R L M n)
 
-/-- Explicit output transport to the raw coefficient-first right CE homology carrier. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Assume Module.Free R L. For n : ℕ, rawRightCoefficientTorEquivHomologyAt is the inverse
+of rawRightCoefficientHomologyEquivTorAt. -/
 def rawRightCoefficientTorEquivHomologyAt [Module.Free R L] (n : ℕ) :
     rawRightLieCoefficientTorAt.{u, v, v', w, w', z} R L A n ≃ₗ[R]
       (rightCoefficientComplex R L A).homology n :=
   (rawRightCoefficientHomologyEquivTorAt.{u, v, v', w, w', z} R L A n).symm
 
-/-- The tensor-coordinate comparison preserves the coefficient-first empty-exterior class. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. The H₀ class of m ⊗ empty in CE_right(L,A) maps to the class of empty ⊗ m in
+CE_left(L,M) under rawRightCoefficientHomologyToLeftIso. -/
 theorem rawRightCoefficientHomologyToLeftIso_zero_class (m : A) :
     (rawRightCoefficientHomologyToLeftIso R L A 0).hom
       ((rightCoefficientComplex R L A).isoHomologyι₀.inv
@@ -129,8 +150,11 @@ theorem rawRightCoefficientHomologyToLeftIso_zero_class (m : A) :
   exact hι.trans (congrArg (fun b : K'.opcycles 0 => K'.isoHomologyι₀.inv.hom b)
     (hp.trans (congrArg (fun b => (K'.pOpcycles 0).hom b) hx)))
 
-/-- Canonical H₀ comparison to the exact raw right-representation tensor with the trivial left
-module. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. rawRightCoefficientHomologyZeroTensorEquivAt identifies H₀(CE_right(L,A)) with
+Balanced(R,U,N_raw,T₀), where N_raw represents M on its unlifted carrier and T₀ is the trivial
+lifted scalar module. -/
 def rawRightCoefficientHomologyZeroTensorEquivAt :
     (rightCoefficientComplex R L A).homology 0 ≃ₗ[R]
       (ModuleCat.BalancedTensor.functor R U
@@ -138,7 +162,9 @@ def rawRightCoefficientHomologyZeroTensorEquivAt :
   (rawRightCoefficientHomologyToLeftIso R L A 0).toLinearEquiv.trans
     (rawCoefficientHomologyZeroTensorEquivAt.{u, v, v', w, w', z} R L M)
 
-/-- The coefficient-first class keeps the raw right coefficient and scalar unit. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. The H₀ class of m ⊗ empty maps to Balanced.mk R U N_raw T₀ m (ULift.up 1). -/
 theorem rawRightCoefficientHomologyZeroTensorEquivAt_class (m : A) :
     rawRightCoefficientHomologyZeroTensorEquivAt.{u, v, v', w, w', z} R L A
       ((rightCoefficientComplex R L A).isoHomologyι₀.inv
@@ -154,8 +180,11 @@ theorem rawRightCoefficientHomologyZeroTensorEquivAt_class (m : A) :
           (m ⊗ₜ[R] exteriorPower.ιMulti R 0 (Fin.elim0 : Fin 0 → L))))) = _
   rw [rawRightCoefficientHomologyToLeftIso_zero_class, rawCoefficientHomologyZeroTensorEquivAt_class]
 
-/-- The derived-zero map agrees with the canonical coefficient-first H₀ comparison, after input
-and output transport. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Assume Module.Free R L. The right CE/Tor equivalence in degree zero, followed by
+fromLeftDerivedZero, trivial-input lift cancellation and the raw coefficient tensor
+equivalence, equals rawRightCoefficientHomologyZeroTensorEquivAt. -/
 theorem rawRightCoefficientHomologyEquivTorAt_zero_original [Module.Free R L]
     (a : (rightCoefficientComplex R L A).homology 0) :
     let N := rawRightEnvelopingCoefficientsAt.{u, v, v', w, w', z} R L A
@@ -170,8 +199,11 @@ theorem rawRightCoefficientHomologyEquivTorAt_zero_original [Module.Free R L]
   rawCoefficientHomologyEquivTorAt_zero_original.{u, v, v', w, w', z} R L M
     ((rawRightCoefficientHomologyToLeftIso R L A 0).toLinearEquiv a)
 
-/-- The raw coefficient-first comparison commutes with the canonical Tor height map, retaining the
-same homology value. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Assume Module.Free R L. For n : ℕ and a : H_n(CE_right(L,A)), the inverse Tor height
+comparison applied to the higher-height right CE/Tor image equals ULift.up of its lower-height
+image. -/
 theorem rawRightCoefficientHomologyEquivTorAt_height [Module.Free R L] (n : ℕ)
     (a : (rightCoefficientComplex R L A).homology n) :
     (rawLieCoefficientTorHeightIsoAt.{u, v, v', w, w', z, t} R L M n).inv
@@ -188,8 +220,11 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L')
 local notation "M'" => RightLieModuleCat.toLeft A'
 local notation "h" => rightCoefficientLieMapToLeft R L f A A' g
 
-/-- The joint map on the two lifted right coefficient carriers, with its right-action
-compatibility from the map. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', A' : RightLieModuleCat.{w'} R
+L' and g : HomOver f A A'. rawRightLieCoefficientMapAt is a HomOver f map between the two
+lifted right Lie coefficients, with value ULift.up m ↦ ULift.up(g(m)). -/
 def rawRightLieCoefficientMapAt : RightLieModuleCat.HomOver f
     (rawRightLieCoefficientLiftAt.{u, v, v', w, w', z} R L A)
     (rawRightLieCoefficientLiftAt.{u, v', v, w', w, z} R L' A') :=
@@ -211,8 +246,11 @@ theorem rawRightLieCoefficientMapAt_up (m : A) :
     (rawRightLieCoefficientMapAt.{u, v, v', w, w', z} R L A f A' g).toLinearMap (ULift.up m) =
       ULift.up (g.toLinearMap m) := rfl
 
-/-- The coefficient-first right CE map at the true maximum working universe, through the right and
-left CE lift adapters. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', A' : RightLieModuleCat.{w'} R
+L' and g : HomOver f A A'. At height H, rawRightCoefficientLieComplexMapULiftAt is the lifted
+left joint chain map conjugated by the two lifted right/left tensor isomorphisms. -/
 def rawRightCoefficientLieComplexMapULiftAt :
     rightCoefficientComplexULift.{u, v, w, max u v v' w w' z} R L A ⟶
       rightCoefficientComplexULift.{u, v', w', max u v v' w w' z} R L' A' :=
@@ -237,8 +275,11 @@ theorem rawRightCoefficientLieComplexMapULiftAt_up_tmul (n : ℕ) (m : A) (a : �
   exact (congrArg (fun q => e'.hom (c.hom q)) h₀).trans
     ((congrArg e'.hom h₁).trans h₂)
 
-/-- Homology map of the coefficient-first right CE variance map, with homology-lift input/output
-comparisons. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', A' : RightLieModuleCat.{w'} R
+L' and g : HomOver f A A'. For n : ℕ, rawRightCoefficientHomologyMapAt maps the module lift of
+H_n(CE_right(L,A)) to that of H_n(CE_right(L',A')), using the homology-lift comparisons. -/
 def rawRightCoefficientHomologyMapAt (n : ℕ) :
     (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
       ((rightCoefficientComplex R L A).homology n) ⟶
@@ -311,8 +352,12 @@ private theorem rawRightCoefficientHomologyMapAt_tensor_coordinates (n : ℕ) :
           V'.map (rawRightCoefficientHomologyToLeftIso R L' A' n).inv) hRaw.symm))
   exact hMap.trans (hLeft.trans hCalc)
 
-/-- Ground-linear right CE homology map with independently sized coefficient-first carriers,
-carried through up/down. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', A' : RightLieModuleCat.{w'} R
+L' and g : HomOver f A A'. rawOriginalRightCoefficientHomologyMapAt is the R-linear map
+between the two unlifted right CE homology carriers obtained by input up,
+rawRightCoefficientHomologyMapAt and output down. -/
 def rawOriginalRightCoefficientHomologyMapAt (n : ℕ) :
     (rightCoefficientComplex R L A).homology n →ₗ[R] (rightCoefficientComplex R L' A').homology n :=
   (ULift.moduleEquiv : ULift.{max u v v' w w' z} ((rightCoefficientComplex R L' A').homology n) ≃ₗ[R]
@@ -321,15 +366,23 @@ def rawOriginalRightCoefficientHomologyMapAt (n : ℕ) :
         (ULift.moduleEquiv : ULift.{max u v v' w w' z} ((rightCoefficientComplex R L A).homology n) ≃ₗ[R]
           (rightCoefficientComplex R L A).homology n).symm.toLinearMap)
 
-/-- The canonical joint right-coefficient Tor map is the derived square on the right enveloping
-algebra representations, independently of CE. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', A' : RightLieModuleCat.{w'} R
+L' and g : HomOver f A A'. For n : ℕ, rawRightLieCoefficientTorMapAt is the derived
+scalar-change map of the two represented right coefficients, obtained from the converted-left
+coefficient map along UEA.map f. -/
 def rawRightLieCoefficientTorMapAt (n : ℕ) :
     rawRightLieCoefficientTorAt.{u, v, v', w, w', z} R L A n ⟶
       rawRightLieCoefficientTorAt.{u, v', v, w', w, z} R L' A' n :=
   rawLieCoefficientTorMapAt.{u, v, v', w, w', z} R L f M M' h n
 
-/-- Full joint naturality of the coefficient-first right CE/Tor comparison on its exact raw
-homology carriers. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra and A :
+RightLieModuleCat.{w} R L. Put M = toLeft A, with ⁅x,m⁆ = −A.action x m, and H = max u v v' w
+w' z. Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', A' : RightLieModuleCat.{w'} R
+L' and g : HomOver f A A'. If L and L' are free over R, Φ_target ∘
+rawOriginalRightCoefficientHomologyMapAt = rawRightLieCoefficientTorMapAt ∘ Φ_source for every
+n, with Φ = rawRightCoefficientHomologyEquivTorAt. -/
 theorem rawRightCoefficientHomologyEquivTorAt_naturality
     [Module.Free R L] [Module.Free R L'] (n : ℕ) :
     (rawRightCoefficientHomologyEquivTorAt.{u, v', v, w', w, z} R L' A' n).toLinearMap.comp

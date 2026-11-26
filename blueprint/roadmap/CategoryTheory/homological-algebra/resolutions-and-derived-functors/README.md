@@ -230,5 +230,5 @@ Projective and injective objects, resolutions and dimensions, left and right der
 - [The forced degree sign in the bilinear cup comparison](bilinear-cup-normalization-sign.md)
 - [Comparison maps from exact augmented complexes](exists-augmented-exact-comparison.md)
 - [Triangular normalization for the additive pairing of an linear cup](linear-cup-normalization-sign.md)
-- [Higher Tor with a flat left factor](is-zero-tor-succ-of-flat-left.md)
-- [Exterior powers preserve native colimits of directed module diagrams](exterior-power-direct-limit-is-colimit.md)
+- [Positive Tor vanishes for a flat first tensor factor](is-zero-tor-succ-of-flat-left.md)
+- [The exterior power of a direct-limit cocone is a colimit](exterior-power-direct-limit-is-colimit.md)

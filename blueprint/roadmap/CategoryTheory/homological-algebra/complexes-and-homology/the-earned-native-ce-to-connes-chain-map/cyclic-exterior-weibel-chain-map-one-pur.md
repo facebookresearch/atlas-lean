@@ -1,3 +1,5 @@
-# Cyclic Exterior Weibel Chain Map one pure
+# The negative degree-one representative for the canonical-tail map
 
-The component in degree one is the negative of the ordered tensor representative.
+The negative degree-one representative for the canonical-tail map.
+
+The canonical-tail map sends `x ∧ y` to the negative cyclic class of `x ⊗ y`.

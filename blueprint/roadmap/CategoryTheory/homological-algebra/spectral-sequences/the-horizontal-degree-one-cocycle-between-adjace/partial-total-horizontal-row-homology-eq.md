@@ -1,4 +1,7 @@
-# Partial Total Horizontal Row Homology eq
+# Regrading formula for the horizontal row homology map
 
-Expansion of the horizontal row homology map into its regrading,
-shift-map, and inverse-regrading legs.
+Regrading formula for the horizontal row homology map.
+
+The horizontal row homology map is the inverse source extension-homology isomorphism, followed
+by the shift map in cochain degrees `-(m + 1 + q)` and `-(m + q)`, followed by the target
+extension-homology isomorphism.

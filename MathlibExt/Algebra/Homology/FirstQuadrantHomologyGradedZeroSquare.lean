@@ -15,12 +15,15 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedPositiveSquare
 
 /-!
-# The zero-column total-homology filtration square
+# The column-zero homology-filtration square
 
-At column zero, the preceding complete total-homology filtration stage has
-integer index `-1` and is a zero object.  Consequently the predecessor map
-of a bicomplex morphism is the zero morphism, and the consecutive-stage
-square commutes by uniqueness of maps from that zero object.
+Let C be an abelian category, f : K → L a map of first-quadrant bicomplexes, and q ∈ ℕ. In
+total degree q, the predecessor stage for column zero is F_{−1}H_q(Tot), indexed by the finite
+integer −1, and is a zero object.
+
+The predecessor map is zero. Together with the current-stage map at column zero, it commutes
+with the inclusion F_{−1} → F_0 and supplies the column-zero case of the consecutive-stage
+naturality square.
 -/
 
 @[expose] public section
@@ -37,8 +40,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- At column zero, the map on preceding complete homology-filtration stages
-is the zero morphism between the stages at integer index `-1`. -/
+/-- Let C be an abelian category, f : K → L a morphism of bicomplexes of shape (down ℕ,down ℕ),
+and q ∈ ℕ. Define the map F_{−1}H_q(Tot(K)) → F_{−1}H_q(Tot(L)) to be zero. These are the
+complete image-filtration stages at the finite integer (0:ℤ)−1 = −1, and both are zero
+objects. This is the predecessor map assigned to column p=0. -/
 noncomputable def horizontalZeroPrevTotalHomologyFiltrationMapOfBicomplex
     (_f : K ⟶ L) (q : ℕ) :
     (horizontalTotalHomologyFiltration K (0 + q)).obj
@@ -53,8 +58,10 @@ theorem horizontalZeroPrevTotalHomologyFiltrationMapOfBicomplex_eq
     horizontalZeroPrevTotalHomologyFiltrationMapOfBicomplex f q = 0 :=
   rfl
 
-/-- In column zero, a bicomplex map commutes with the consecutive complete
-total-homology filtration step. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and q ∈ ℕ.
+Let s_K : F_{−1}H_q(Tot(K)) → F_0H_q(Tot(K)) and s_L be the column-zero filtration steps. If
+c(f) is the transported current-stage map at p=0 and a_0(f) is the zero predecessor map, then
+s_K ≫ c(f) = a_0(f) ≫ s_L. Both composites have source the zero stage at index −1. -/
 theorem horizontalTotalHomologyFiltrationStepMap_naturality_zero
     (f : K ⟶ L) (q : ℕ) :
     horizontalTotalHomologyFiltrationStepMap K 0 q ≫

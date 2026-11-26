@@ -1,3 +1,5 @@
-# Matrix Lifted Unit Coalgebra
+# The finite matrix CE coalgebra with a lifted scalar unit
 
-The matrix CE comonoid in the fixed canonical lifted-unit source category.
+The finite matrix CE coalgebra with a lifted scalar unit.
+
+Take the canonical matrix CE coalgebra in the lifted-unit source chain category.

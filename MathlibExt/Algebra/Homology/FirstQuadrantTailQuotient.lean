@@ -31,19 +31,25 @@ namespace FirstQuadrantTail
 
 variable {C : Type*} [Category C] [Abelian C]
 
-/-- Cutoff-layer complex supported only in absolute degree `r`,
-identified there with `K.X r`. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the cutoff layer at r is the complex K_r[r] concentrated in
+absolute degree r, with value K_r there and zero differential. -/
 noncomputable abbrev cutoffLayer (r : ℕ)
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) :
     HomologicalComplex C (ComplexShape.up' (1 : ℕ)) :=
   (HomologicalComplex.single C (ComplexShape.up' (1 : ℕ)) r).obj (K.X r)
 
-/-- `(innerTail r).obj K` is `K.stupidTrunc (tailEmbedding r)` by definition. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+T_r K is the stupid truncation supported in absolute degrees
+q≥r. It is the tail defined by the embedding e_r(i)=i+r,
+with the original degrees retained. -/
 lemma innerTail_obj_eq
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     (innerTail (C := C) r).obj K = K.stupidTrunc (tailEmbedding r) := rfl
 
-/-- On-degree identification of the tail with the cutoff layer. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the tail term (T_r K)_r and cutoff term (K_r[r])_r are
+canonically isomorphic through their common identification with K_r. -/
 noncomputable def quotientIso
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     (K.stupidTrunc (tailEmbedding r)).X r ≅ (cutoffLayer (C := C) r K).X r :=
@@ -52,29 +58,36 @@ noncomputable def quotientIso
     (HomologicalComplex.singleObjXSelf (ComplexShape.up' (1 : ℕ)) r (K.X r)).symm
 
 open Classical in
-/-- Components of the quotient map onto the cutoff layer:
-identity through `stupidTruncXIso` and `singleObjXSelf` at `q = r`,
-zero otherwise. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the quotient components (T_r K)_q → (K_r[r])_q are the
+canonical identification with K_r when q=r and zero when q≠r. -/
 noncomputable def quotientF
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r q : ℕ) :
     (K.stupidTrunc (tailEmbedding r)).X q ⟶ (cutoffLayer (C := C) r K).X q :=
   if hq : r = q then hq ▸ (quotientIso (C := C) K r).hom else 0
 
-/-- Off-degree components of the quotient vanish. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the projection (T_r K)_q → (K_r[r])_q is zero for q≠r.
+Its target is the zero cutoff-layer object. -/
 lemma quotientF_eq_zero
     {K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))} {r q : ℕ} (hq : q ≠ r) :
     quotientF (C := C) K r q = 0 := by
   unfold quotientF
   rw [dite_eq_right (Ne.symm hq)]
 
-/-- On-degree component of the quotient is the canonical identification. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the degree-r component of T_r K → K_r[r] is the canonical
+isomorphism between the two retained copies of K_r. -/
 lemma quotientF_self
     {K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))} {r : ℕ} :
     quotientF (C := C) K r r = (quotientIso (C := C) K r).hom := by
   unfold quotientF
   simp
 
-/-- The quotient chain map from the tail onto the cutoff layer. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the projection T_r K → K_r[r] is a cochain map.
+It is the identity through the retained degree-r identifications
+and zero in every other degree. -/
 noncomputable def tailQuotient
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     K.stupidTrunc (tailEmbedding r) ⟶ cutoffLayer (C := C) r K where
@@ -93,7 +106,10 @@ noncomputable def tailQuotient
       rw [h0, zero_comp]
     · rw [quotientF_eq_zero (Ne.symm hq'), comp_zero]
 
-/-- Naturality of the quotient map in `K`, componentwise. -/
+/-- For a nonnegative cochain map φ : K → L in an abelian
+category, the quotient maps π satisfy
+π_L ∘ T_r(φ) = (φ_r[r]) ∘ π_K in every degree.
+The right-hand map is the single-degree map induced by φ_r. -/
 lemma tailQuotient_naturality
     {K L : HomologicalComplex C (ComplexShape.up' (1 : ℕ))}
     (φ : K ⟶ L) (r q : ℕ) :
@@ -121,7 +137,10 @@ lemma tailQuotient_naturality
     rw [hL, hK]
     exact comp_zero.trans zero_comp.symm
 
-/-- The adjacent-tail comparison followed by the quotient is zero. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the composite T_(r+1)K → T_r K → K_r[r] is zero.
+The source tail has no term in the only degree retained by the
+cutoff target. -/
 lemma tailCut_zero
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     tailCompare K r ≫ tailQuotient (C := C) K r = 0 := by
@@ -134,14 +153,22 @@ lemma tailCut_zero
     rw [hz, zero_comp]
   · rw [quotientF_eq_zero (Ne.symm hq), comp_zero]
 
-/-- The short complex `tail (r+1) ⟶ tail r ⟶ cutoff r`. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the tail inclusion and cutoff projection form the short complex
+T_(r+1)K → T_r K → K_r[r].
+Their composite is zero, and the degrees are the original
+absolute cochain degrees. -/
 noncomputable def tailCutShort
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     ShortComplex (HomologicalComplex C (ComplexShape.up' (1 : ℕ))) :=
   ShortComplex.mk (tailCompare K r) (tailQuotient (C := C) K r)
     (tailCut_zero K r)
 
-/-- The tail-cutoff short complex is short exact, by degreewise splitting. -/
+/-- For a nonnegative cochain complex K in an abelian category,
+the sequence 0 → T_(r+1)K → T_r K → K_r[r] → 0 is short exact.
+It splits degreewise: below r all terms vanish, at r only the
+middle and quotient terms survive, and above r the tail inclusion
+is an isomorphism. -/
 theorem tailCut_shortExact
     (K : HomologicalComplex C (ComplexShape.up' (1 : ℕ))) (r : ℕ) :
     (tailCutShort (C := C) K r).ShortExact := by

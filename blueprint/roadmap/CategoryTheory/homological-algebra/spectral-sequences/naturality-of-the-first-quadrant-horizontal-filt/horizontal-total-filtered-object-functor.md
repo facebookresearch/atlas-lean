@@ -1,4 +1,7 @@
-# Horizontal Total Filtered Object Functor
+# The horizontal filtered total is a functor of bicomplexes
 
-First-quadrant bicomplexes map functorially to horizontally filtered
-total complexes.
+For a preadditive category C with a zero object and finite
+coproducts, the assignment K ↦ (Tot(K),F_• Tot(K)) defines
+a functor from nonnegative homological bicomplexes to
+FilteredObject(ChainComplex(C,ℕ),ℕ).
+On maps it uses Tot(f) and all finite-stage maps F_k(f).

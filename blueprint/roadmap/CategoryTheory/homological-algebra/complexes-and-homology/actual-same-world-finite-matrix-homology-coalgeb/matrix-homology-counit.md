@@ -1,3 +1,5 @@
-# Matrix Homology Counit
+# The graded counit of finite matrix CE homology
 
-Matrix homology counit.
+The graded counit of finite matrix CE homology.
+
+The field homology comonoid counit maps matrix homology to the graded tensor unit.

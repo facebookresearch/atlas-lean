@@ -1,4 +1,6 @@
-# Tensorator eq
+# The finite-antidiagonal formula for the Künneth tensorator
 
-The canonical Künneth tensorator is the literal existing map under the
-earned antidiagonal comparison.
+The finite-antidiagonal formula for the Künneth tensorator.
+
+The tensorator component equals the forward antidiagonal isomorphism followed by the canonical
+finite-sum homology tensor map.

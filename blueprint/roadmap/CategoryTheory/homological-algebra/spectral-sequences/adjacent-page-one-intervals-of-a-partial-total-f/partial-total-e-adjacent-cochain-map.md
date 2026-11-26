@@ -1,4 +1,6 @@
-# Partial Total E₁Adjacent Cochain Map
+# The adjacent upper-stage map in partial-total step coordinates
 
-The consecutive filtration map in the canonical coordinates of the
-`m`th and `(m+1)`st partial-total steps.
+The adjacent upper-stage map in partial-total step coordinates.
+
+Transport the successor filtration map through the middle components of the two interval-to-
+step isomorphisms.

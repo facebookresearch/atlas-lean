@@ -1,4 +1,6 @@
-# Coefficient Homology Coefficient Lift Iso
+# The homology comparison with CE of lifted coefficients
 
-Explicit input/output homology transport to CE of the coefficient lift, with no equality
-between carrier universes.
+The homology comparison with CE of lifted coefficients.
+
+The lifted homology object of the coefficient complex is isomorphic to homology of the CE
+complex whose coefficient carrier is lifted.

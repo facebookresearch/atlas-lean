@@ -1,3 +1,6 @@
-# Canonical Stable Matrix CEInclusion At Height
+# The lifted finite-matrix inclusion into stable CE chains
 
-Every finite matrix Lie inclusion induces its prolonged CE map.
+The lifted finite-matrix inclusion into stable CE chains.
+
+For every size `m`, the finite matrix Lie inclusion induces a lifted chain map to the stable
+matrix CE complex.

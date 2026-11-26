@@ -14,15 +14,15 @@ public import MathlibExt.Algebra.Homology.Hochschild.Matrix.ConnesTraceWorkingHe
 public import MathlibExt.Algebra.Homology.ChainComplex.PositiveTailMapFunctor
 
 /-!
-# Finite matrix trace maps in independent universes
+# Lifted finite matrix cyclic trace chain maps
 
-For a unital algebra over a commutative rational algebra, the cyclic trace chain map from the
-positive tail of a finite matrix Chevalley–Eilenberg complex transports to any common carrier
-universe.
+Let `k` be a commutative `ℚ`-algebra and `A` a unital `k`-algebra. The degree-signed cyclic
+trace map from the positive tail of a finite matrix CE complex lifts to a common carrier
+universe, with its cyclic quotient target lifted as well.
 
-Its components are the lifted normalized exterior representatives followed by generalized
-trace. The chain maps commute with algebra homomorphisms between independent coefficient
-carrier universes.
+On a lifted wedge, the component is the lifted signed exterior representative followed by the
+lifted generalized trace. Entry-algebra homomorphisms between independent carrier universes
+commute with these chain maps.
 -/
 
 @[expose] public section
@@ -39,8 +39,10 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable (k : Type u) [CommRing k] [Algebra ℚ k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- The cyclic trace chain map on the universe-lifted finite matrix Chevalley–Eilenberg positive
-tail. -/
+/-- The lifted cyclic trace of a canonical positive matrix CE tail.
+
+Use the positive-tail lift comparison, the module-functor image of the finite trace, and the
+lifted cyclic quotient comparison to obtain the chosen-height chain map. -/
 def matrixCyclicWeibelChainMapAtHeight (r : ℕ) :
     ChainComplex.positiveTail (matrixComplexAtHeight.{u,v,z} k A r) ⟶
       ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A :=
@@ -50,8 +52,10 @@ def matrixCyclicWeibelChainMapAtHeight (r : ℕ) :
         (ComplexShape.down ℕ)).map (matrixCyclicWeibelChainMap k A r) ≫
           (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom
 
-/-- Each component is the lifted signed normalized exterior representative followed by
-generalized trace. -/
+/-- The component formula for a lifted signed matrix cyclic trace.
+
+The degree-`n` map sends a lifted wedge to its lifted degree-signed exterior representative
+followed by generalized matrix trace. -/
 theorem matrixCyclicWeibelChainMapAtHeight_f_up (r n : ℕ)
     (x : ⋀[k]^(n + 1) (Matrix (Fin r) (Fin r) A)) :
     ((matrixCyclicWeibelChainMapAtHeight.{u,v,z} k A r).f n).hom (ULift.up x) =
@@ -99,8 +103,10 @@ theorem matrixCyclicWeibelChainMapAtHeight_f_up (r n : ℕ)
 
 variable {B : Type w} [Ring B] [Algebra k B]
 
-/-- The finite matrix cyclic trace chain map is natural under algebra homomorphisms between
-independent coefficient universes. -/
+/-- Coefficient naturality of lifted signed matrix cyclic traces.
+
+The lifted positive-tail matrix coefficient map and lifted cyclic quotient map commute with
+the trace, with independent source and target entry-algebra universes. -/
 theorem matrixCyclicWeibelChainMapAtHeight_naturality (f : A →ₐ[k] B) (r : ℕ) :
     ChainComplex.positiveTailMap (matrixCoefficientMapAtHeight.{u,v,w,z} k A f r) ≫
         matrixCyclicWeibelChainMapAtHeight.{u,w,max u v w z} k B r =

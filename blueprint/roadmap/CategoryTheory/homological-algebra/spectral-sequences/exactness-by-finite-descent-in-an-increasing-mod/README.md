@@ -2,12 +2,12 @@
 
 ## Submodule
 
-- [Filtration Lower](filtration-lower.md)
-- [Filtration Layer](filtration-layer.md)
+- [The lower intersection inside an adjacent upper stage](filtration-lower.md)
+- [The adjacent quotient of a submodule family](filtration-layer.md)
 
 ## Linear Map
 
-- [Filtration Stage](filtration-stage.md)
-- [Filtration Layer Map](filtration-layer-map.md)
-- [Exists boundary mod filtration](exists-boundary-mod-filtration.md)
-- [Range eq ker of exact filtration Layers](range-eq-ker-of-exact-filtration-layers.md)
+- [Restricting a family-preserving linear map to a stage](filtration-stage.md)
+- [The induced map on adjacent submodule quotients](filtration-layer-map.md)
+- [Exactness of an adjacent quotient gives a lower-stage remainder](exists-boundary-mod-filtration.md)
+- [Adjacent quotient exactness implies exactness by finite descent](range-eq-ker-of-exact-filtration-layers.md)

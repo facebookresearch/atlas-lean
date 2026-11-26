@@ -14,12 +14,16 @@ public import MathlibExt.CategoryTheory.Monad.BarAdjunction
 public import MathlibExt.CategoryTheory.Monad.BarRegularContraction
 
 /-!
-# The actual forgetful extra degeneracy of an adjunction bar
+# Extra degeneracy after applying the right adjoint to a bar construction
 
-For an arbitrary adjunction, applying the original right adjoint to its
-augmented bar gives the regular-right bar of the induced monad. The actual
-regular contraction therefore supplies every extra-degeneracy equation for
-that same forgotten bar. No monadicity or homotopical outcome is supplied.
+Let F : C → D and U : D → C be an adjunction F ⊣ U, with monad T=UF, and let Y ∈ D. Applying U
+to its augmented adjunction bar gives an augmented simplicial object of C with term
+U(F(T^n(UY))) in degree n and augmentation U(ε_Y) to UY.
+
+This object has a left extra degeneracy. Its augmentation section is η_{UY}, and the higher
+maps insert the outer monad unit, with the canonical successor-iterate identification. The
+unit followed by the forgotten counit is the identity by the adjunction triangle equation. No
+monadicity or additive-category hypothesis is required.
 -/
 
 @[expose] public section
@@ -35,7 +39,10 @@ namespace CategoryTheory.Monad.AdjunctionBarContraction
 variable {C : Type uC} [Category.{vC} C] {D : Type uD} [Category.{vD} D]
   {F : C ⥤ D} {U : D ⥤ C} (adj : F ⊣ U) (Y : D)
 
-/-- Evaluate the actual adjunction bar at the supplied original target and then forget. -/
+/-- Let F : C ⥤ D, U : D ⥤ C, adj : F ⊣ U, and Y ∈ D, with arbitrary independent category
+universes. Evaluate the augmented adjunction bar at Y and apply U to obtain an augmented
+simplicial object of C. For T=adj.toMonad=UF, its degree-n term is U(F(T^n(UY))) and its
+augmentation target is UY. Its degree-zero augmentation is U(ε_Y). -/
 def forgotten : SimplicialObject.Augmented C :=
   (SimplicialObject.Augmented.whiskeringObj (D ⥤ D) C
     ((evaluation D D).obj Y ⋙ U)).obj (adjAugmented adj)
@@ -50,14 +57,20 @@ private def regularExtra : (regular adj Y).ExtraDegeneracy :=
   (BarRegularContraction.extraDegeneracySimplicial (adjLeftModule adj)).map
     ((evaluation D C).obj Y)
 
-/-- The original augmentation target is literally the forgotten original object. -/
+/-- For an adjunction F : C ⥤ D, U : D ⥤ C with F ⊣ U and Y ∈ D, the augmentation target of the
+bar evaluated at Y and then acted on by U is exactly U(Y). This is the right object of the
+resulting augmented simplicial object of C. -/
 theorem forgotten_point : (forgotten adj Y).right = U.obj Y := rfl
 
-/-- Degree n retains the actual whole free/forget iterated object. -/
+/-- Let F ⊣ U be an adjunction between categories C and D, T=UF its monad, Y ∈ D, and n ∈ ℕ. The
+degree-n simplicial term of the evaluated bar after applying U equals U(F(T^n(UY))). Here T^n
+is monadPow(adj.toMonad,n), with the zero power equal to the identity functor. -/
 theorem forgotten_obj (n : ℕ) : (forgotten adj Y).left.obj (op ⦋n⦌) =
     U.obj (F.obj ((monadPow adj.toMonad n).obj (U.obj Y))) := rfl
 
-/-- The zero-degree augmentation is the original right-adjoint image of the whole counit. -/
+/-- For an adjunction F : C ⥤ D, U : D ⥤ C and Y ∈ D, the degree-zero augmentation of the
+forgotten bar is U(ε_Y) : U(F(UY)) → UY. The counit ε_Y is that of the given adjunction, and
+the simplicial degree is zero. -/
 theorem forgotten_augmentation : (forgotten adj Y).hom.app (op ⦋0⦌) =
     U.map (adj.counit.app Y) := by
   unfold forgotten
@@ -103,7 +116,11 @@ private theorem augmentation_agreement :
     BalancedPairing.toSimplicialAugmented_hom_app_mk]
   rfl
 
-/-- The full genuine extra degeneracy on the actual forgotten adjunction bar. -/
+/-- Let F ⊣ U be an adjunction, T=UF its monad, Y ∈ D, and B the evaluated adjunction bar after
+applying U. There is a left extra degeneracy on B. Its augmentation section B_{−1}=UY → B_0 is
+η_{UY}; its map B_n → B_{n+1} is η_{B_n} followed by the canonical identification
+T(B_n)≅B_{n+1}. These maps satisfy the extra-degeneracy augmentation, face, and degeneracy
+equations, with distinguished face d_0. -/
 def extra : (forgotten adj Y).ExtraDegeneracy where
   s' := adj.unit.app (U.obj Y)
   s n := (BarRegularContraction.extraDegeneracySimplicial (adjLeftModule adj)).s n |>.app Y
@@ -123,10 +140,14 @@ def extra : (forgotten adj Y).ExtraDegeneracy where
     rw [degeneracy_agreement, degeneracy_agreement]
     exact (regularExtra adj Y).s_comp_σ n i
 
-/-- The augmentation section is the original adjunction unit, not a supplied inverse. -/
+/-- For an adjunction F ⊣ U and Y ∈ D, the section of the forgotten augmented bar supplied by its
+outer-unit extra degeneracy is exactly η_{UY} : UY → U(F(UY)). The target is its degree-zero
+term and the source is its augmentation target. -/
 theorem extra_section : (extra adj Y).s' = adj.unit.app (U.obj Y) := rfl
 
-/-- The actual original whole unit followed by the forgotten counit is identity. -/
+/-- Let F ⊣ U be an adjunction and Y ∈ D. The unit at UY followed by the degree-zero forgotten bar
+augmentation satisfies η_{UY} ≫ U(ε_Y) = 𝟙_{UY}. Thus the augmentation U(F(UY)) → UY is split
+by the unit, as prescribed by the adjunction triangle identity. -/
 theorem extra_section_augmentation :
     adj.unit.app (U.obj Y) ≫ (forgotten adj Y).hom.app (op ⦋0⦌) = 𝟙 (U.obj Y) :=
   (extra adj Y).s'_comp_ε

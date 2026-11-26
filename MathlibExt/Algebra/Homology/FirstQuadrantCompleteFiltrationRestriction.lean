@@ -13,13 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationFiniteComparison
 
 /-!
-# Restricting the complete filtration to natural indices
+# Restriction of a complete horizontal filtration to natural cuts
 
-The natural numbers embed monotonically in the extended integers by
-`n ↦ ((n : ℤ) : EInt)`.  Restricting the complete horizontal-filtration
-diagram along this embedding recovers the original finite horizontal
-filtration diagram, naturally in the filtration index.  The comparison also
-intertwines the two natural transformations into the total complex.
+The increasing inclusion e:ℕ→ℤ∪{⊥,⊤} sends n to the finite integer cut n and sends an inequality
+n≤m to the same inequality between complete cuts. Let K be a first-quadrant bicomplex in a
+preadditive category with a zero object and finite coproducts. Its complete horizontal diagram,
+restricted along e, is naturally isomorphic to the finite horizontal filtration diagram.
+
+At n∈ℕ, the comparison is the canonical isomorphism ε_{K,n}:G_{e(n)}(K)≅G^fin_n(K). It commutes
+with all transitions n≤m and preserves inclusion into Tot K: ε_{K,n}.hom≫ι^fin_n=ι_{e(n)}. Thus
+the diagrams agree as diagrams of subcomplexes of the same total complex, with arbitrary
+category universes.
 -/
 
 @[expose] public section
@@ -38,8 +42,9 @@ namespace HomologicalComplex₂
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasFiniteCoproducts C]
 
-/-- The monotone embedding of natural filtration indices into the extended
-integers. -/
+/-- The order-preserving map e:ℕ→ℤ∪{⊥,⊤} sends n to its finite integer cut n. For n≤m, the
+corresponding finite cuts satisfy e(n)≤e(m). The image contains only nonnegative finite cuts and
+contains neither endpoint ⊥ or ⊤. -/
 def horizontalFiltrationNatToEIntOrderHom : ℕ →o EInt where
   toFun n := ((n : ℤ) : EInt)
   monotone' _ _ h := WithBotTop.coe_monotone (Int.ofNat_le.mpr h)
@@ -49,7 +54,9 @@ theorem horizontalFiltrationNatToEIntOrderHom_apply (n : ℕ) :
     horizontalFiltrationNatToEIntOrderHom n = ((n : ℤ) : EInt) :=
   rfl
 
-/-- The thin-category functor underlying the natural-index embedding. -/
+/-- View ℕ and ℤ∪{⊥,⊤} as thin categories with a unique arrow a→b when a≤b. This functor e sends a
+natural number n to its finite integer cut and sends the arrow n→m to the unique arrow e(n)→e(m)
+given by the same inequality. -/
 abbrev horizontalFiltrationNatToEIntFunctor : ℕ ⥤ EInt :=
   horizontalFiltrationNatToEIntOrderHom.toFunctor
 
@@ -65,8 +72,11 @@ theorem horizontalFiltrationNatToEIntFunctor_map
       homOfLE (WithBotTop.coe_monotone (Int.ofNat_le.mpr f.le)) :=
   rfl
 
-/-- Restriction of the complete horizontal-filtration diagram to natural
-indices is naturally isomorphic to the original finite diagram. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a bicomplex K of shape (down
+ℕ,down ℕ), let G(K) be its complete horizontal filtration diagram, G^fin(K) its finite
+horizontal diagram, and e:ℕ→ℤ∪{⊥,⊤} the inclusion as nonnegative finite cuts. This natural
+isomorphism e*G(K)≅G^fin(K) has component ε_{K,n}:G_{e(n)}(K)≅G^fin_n(K) at n∈ℕ. Its components
+commute with the transition maps for every n≤m. -/
 noncomputable def horizontalCompleteTotalFiltrationNatRestrictionIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) :
@@ -99,8 +109,10 @@ theorem horizontalCompleteTotalFiltrationNatRestrictionIso_hom_app
         (n : ℤ) (Int.natCast_nonneg n)).hom :=
   rfl
 
-/-- The restriction isomorphism identifies the finite filtration inclusion
-with the restriction of the complete filtration inclusion. -/
+/-- Let C be preadditive with a zero object and finite coproducts. Let K be a first-quadrant
+bicomplex, e:ℕ→ℤ∪{⊥,⊤} the finite-cut inclusion, and ε_K:e*G(K)≅G^fin(K) the complete-to-finite
+diagram comparison. With ι^fin:G^fin(K)→const(Tot K) and ι:G(K)→const(Tot K) the stage-inclusion
+transformations, ε_K.hom≫ι^fin=e*ι. Its component at n is ε_{K,n}.hom≫ι^fin_n=ι_{e(n)}. -/
 theorem horizontalCompleteTotalFiltrationNatRestrictionIso_hom_comp_ι
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) :

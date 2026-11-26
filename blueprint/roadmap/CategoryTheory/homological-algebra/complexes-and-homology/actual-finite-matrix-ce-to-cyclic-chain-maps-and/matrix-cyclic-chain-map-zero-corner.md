@@ -1,3 +1,6 @@
-# Matrix Cyclic Chain Map zero Corner
+# Size stability of the positive-bracket matrix cyclic chain map
 
-Positive-convention chain maps are stable under every finite zero corner.
+Size stability of the positive-bracket matrix cyclic chain map.
+
+The positive-bracket source size map followed by the larger matrix trace equals the smaller
+matrix trace.

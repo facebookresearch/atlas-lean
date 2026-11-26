@@ -1,4 +1,6 @@
-# Homology Pointed Comon
+# The coaugmented graded CE homology coalgebra over a field
 
-The field CE homology coalgebra as a pointed comonoid, using `Under (Comon.trivial _)` rather
-than extra point/coherence inputs.
+The coaugmented graded CE homology coalgebra over a field.
+
+The field homology comonoid with its coaugmentation defines an object under the trivial graded
+comonoid.

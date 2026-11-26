@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Vertical Homology Iso
+# The coherent vertical-homology coordinate of a first-page object
 
-Coherent identification of a first-page object with ordinary vertical
-homology in its column.
+The coherent vertical-homology coordinate of a first-page object.
+
+Compose the coherent direct-column isomorphism with the direct-column comparison to
+`H_q(K_p)`.

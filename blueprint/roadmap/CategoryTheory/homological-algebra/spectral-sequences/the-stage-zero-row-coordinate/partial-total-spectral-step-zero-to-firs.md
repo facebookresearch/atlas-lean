@@ -1,4 +1,7 @@
-# Partial Total Spectral Step Zero To First Page
+# Bottom-to-zero homology maps to the first-page zero column
 
-The canonical morphism from the bottom-to-stage-zero spectral homology
-object to the package-chosen first-page object in bidegree `(0,q)`.
+Bottom-to-zero homology maps to the first-page zero column.
+
+Identify the spectral homology object `H^(-q)(⊥ ⟶ 0)` with the first core interval at `(0,
+q)`, then apply the inverse first-page core coordinate. The target is the first-page object
+specified by `B.partialTotalFirstPageChoice`.

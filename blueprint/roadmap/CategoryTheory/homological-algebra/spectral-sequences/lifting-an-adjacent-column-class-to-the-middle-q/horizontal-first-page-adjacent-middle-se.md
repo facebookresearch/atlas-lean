@@ -1,4 +1,6 @@
-# Horizontal First Page Adjacent Middle Section
+# The degreewise lift of a direct-column element to the middle quotient
 
-Degreewise lift of a class in column `p+1` to the middle two-column
-quotient.
+The degreewise lift of a direct-column element to the middle quotient.
+
+At degree `-(p+1)-q`, the complete column section followed by the composite-map cokernel
+projection lifts column `p+1` into the adjacent middle term.

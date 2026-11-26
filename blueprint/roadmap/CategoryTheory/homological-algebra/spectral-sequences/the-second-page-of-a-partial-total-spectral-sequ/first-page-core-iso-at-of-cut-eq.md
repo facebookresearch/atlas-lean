@@ -1,4 +1,7 @@
-# First Page Core Iso At Of Cut eq
+# Specified-cut core coordinate factors through spectral homology
 
-The explicit-cut first-page core coordinate is the lower page coordinate
-followed by the spectral-object homology coordinate.
+Specified-cut core coordinate factors through spectral homology.
+
+With the lower cut and neighboring cochain degrees specified, `χ.firstPageCoreIsoAtOfCut` is
+the page interval-coordinate isomorphism followed by the spectral object's `EIsoH` for the
+coincident outer and middle cuts on page one.

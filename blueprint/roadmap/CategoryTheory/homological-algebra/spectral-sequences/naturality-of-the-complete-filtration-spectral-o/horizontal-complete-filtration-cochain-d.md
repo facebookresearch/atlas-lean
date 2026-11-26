@@ -1,4 +1,7 @@
-# Horizontal Complete Filtration Cochain Diagram Nat Trans
+# A bicomplex map acts on the integer cochain filtration diagram
 
-A bicomplex map induces a natural transformation between the complete
-filtration diagrams reindexed as integer cochain complexes.
+For a preadditive category C with a zero object and finite
+coproducts, a map f : K → L of nonnegative homological bicomplexes
+gives a natural transformation of their complete EInt-indexed
+filtration diagrams after chain degree n is placed in cochain
+degree −n. At stage a it is the extended filtered total map F_a(f).

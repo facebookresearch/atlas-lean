@@ -17,13 +17,20 @@ public import MathlibExt.CategoryTheory.GradedObject.Kernels
 public import Mathlib.CategoryTheory.Comma.Over.Basic
 
 /-!
-# Actual field homology coalgebras over the original larger-world field
+# Field homology coalgebras and primitive comparison maps
 
-The earned canonical larger-world cycle tensorator is monoidal over a
-field. Native comonoid transport gives the homology coalgebra. Its unit,
-counit, coaugmentation and primitive comparison use the original field
-and exact offset-v dictionary. The primitive comparison is an actual
-kernel lift and is not asserted to be an isomorphism.
+Let k be a field in universe u and W=max(u,v) an independently chosen common coefficient
+universe. The cycle Künneth tensorator μ:H(C)⊗H(D)≅H(C⊗D) and the unit comparison e:𝟙≅H(𝟙) make
+graded homology monoidal on chain complexes of shape down ℕ. A chain coalgebra C therefore gives
+a graded homology coalgebra with Δ_H=H(Δ_C)≫μ^{-1} and ε_H=H(ε_C)≫e^{-1}. A coalgebra
+coaugmentation η induces e≫H(η), and chain Koszul cocommutativity implies graded Koszul
+cocommutativity.
+
+For any unit-to-C chain map η, define the reduced coproduct
+d_η=Δ_C−((id⊗η)ρ_C^{-1}+(η⊗id)λ_C^{-1}). Its kernel is the corresponding primitive subcomplex.
+The Künneth comparison carries H(d_η) to the same reduced-coproduct equation on H(C), using the
+induced unit map. This yields a canonical kernel-lift map H(ker d_η)→ker d_{Hη}, characterized
+by its composite with the primitive-kernel inclusion.
 -/
 
 @[expose] public section
@@ -49,20 +56,30 @@ private theorem monoidal_μ (A B : ChainComplex
       (monoidalOfField (k := k)).toLaxMonoidal A B = tensorator A B := rfl
 
 
-/-- The monoidal homology structure earned by the original-field Künneth theorem. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). On k-linear chain complexes of shape down ℕ, graded homology has the monoidal
+structure with unit map e:𝟙≅H(𝟙) and tensorator μ_{C,D}:H(C)⊗H(D)≅H(C⊗D) given by the canonical
+cycle Künneth map. The field Künneth theorem makes each tensorator invertible. -/
 local instance canonicalHomologyMonoidal : (homologyFunctor (R := k)).Monoidal := monoidalOfField
 local instance canonicalTensoratorIsIso (K L : (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ))
   : IsIso (tensorator K L) :=
   isIso_tensorator_of_field K L
 
-/-- Native comonoid transport under the earned original-field monoidal
-homology functor, in the actual larger coefficient world. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). The monoidal graded-homology functor H on chain complexes of shape down ℕ induces
+this functor from chain coalgebras to ℕ-graded coalgebras. It sends C to H(C), with
+comultiplication H(Δ_C)≫μ_{C,C}^{-1} and counit H(ε_C)≫e^{-1}, and sends a coalgebra morphism f
+to H(f). -/
 def comonFunctor : Comon (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⥤ Comon (GradedObject
   ℕ (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k)) := by
   letI : (homologyFunctor (R := k)).Monoidal := monoidalOfField
   exact (homologyFunctor (R := k)).mapComon
 
-/-- The actual native homology comonoid for an actual input chain comonoid. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain complex C of shape down ℕ equipped with a coalgebra structure, this is
+the transported coalgebra structure on H(C). Its comultiplication and counit are
+H(Δ_C)≫μ_{C,C}^{-1} and H(ε_C)≫e^{-1}, where μ is the cycle Künneth tensorator and e:𝟙≅H(𝟙) is
+the unit comparison. Coassociativity and both counit laws follow from monoidal transport. -/
 def comonObj (C : (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ)) [ComonObj C] : ComonObj
   ((homologyFunctor (R := k)).obj C) := by
   letI : (homologyFunctor (R := k)).Monoidal := monoidalOfField
@@ -70,8 +87,11 @@ def comonObj (C : (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,
 
 variable (C : (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ)) [ComonObj C]
 
-/-- The native transported comultiplication is pinned by the canonical
-original-field cycle Künneth tensorator. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ, let Δ_H:H(C)→H(C)⊗H(C) be its transported
+comultiplication and μ_{C,C} the canonical cycle Künneth tensorator. Then
+Δ_H≫μ_{C,C}=H(Δ_C):H(C)→H(C⊗C). This determines the homology coproduct through the Künneth
+comparison. -/
 @[reassoc]
 theorem comul_tensorator :
     letI : ComonObj ((homologyFunctor (R := k)).obj C) := comonObj C
@@ -82,7 +102,10 @@ theorem comul_tensorator :
     Functor.LaxMonoidal.μ (homologyFunctor (R := k)) C C = (homologyFunctor (R := k)).map Δ[C]
   rw [Category.assoc, Functor.Monoidal.δ_μ, Category.comp_id]
 
-/-- The native transported counit uses the inverse canonical single-unit map. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). Let C be a chain coalgebra of shape down ℕ, ε_H:H(C)→𝟙 its transported homology
+counit and e:𝟙→H(𝟙) the canonical unit map. Then ε_H≫e=H(ε_C). Thus the counit agrees with the
+chain counit's homology map after the tensor-unit identification. -/
 @[reassoc]
 theorem counit_unitMap :
     letI : ComonObj ((homologyFunctor (R := k)).obj C) := comonObj C
@@ -120,7 +143,10 @@ private theorem unitMap_comul :
         (𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ)))
     (whisker_exchange (unitMap.{u,v} (R := k)) (unitMap.{u,v} (R := k)))
 
-/-- The canonical original-field homology coaugmentation. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and a chain map η:𝟙→C, this map 𝟙→H(C) is
+e≫H(η), where e:𝟙≅H(𝟙) is the homology unit comparison. If η is a coalgebra morphism, this is
+the induced homology coaugmentation. -/
 def coaug (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶ C) : 𝟙_ (GradedObject ℕ
   (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k)) ⟶ (homologyFunctor (R := k)).obj C := unitMap ≫
     (homologyFunctor (R := k)).map η
@@ -151,8 +177,11 @@ theorem coaugIsComonHom (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestr
         simpa only [Category.assoc, ← MonoidalCategory.tensorHom_comp_tensorHom] using hT
         }
 
-/-- The actual coaugmented field homology coalgebra is a native pointed
-comonoid object, rather than a caller-supplied record of desired laws. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and a coalgebra morphism η:𝟙→C, this is the
+graded homology coalgebra with coaugmentation e≫H(η). It is an object under the trivial graded
+tensor-unit coalgebra, with underlying coalgebra H(C) and its transported comultiplication and
+counit. -/
 def coaugmented (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶ C) [IsComonHom η] :
   Under (Comon.trivial (GradedObject ℕ (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k))) := by
   letI : ComonObj ((homologyFunctor (R := k)).obj C) := comonObj C
@@ -163,7 +192,11 @@ def coaugmented (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.M
         Comon (GradedObject ℕ (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k))) from
       Comon.Hom.mk (coaug C η) (isComonHom_hom := coaugIsComonHom C η))
 
-/-- Signed cocommutativity is the actual original-field Koszul equation. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). Let C be a chain coalgebra of shape down ℕ and assume Δ_C≫b_{C,C}.hom=Δ_C for the
+chain Koszul braiding b. Its homology coproduct satisfies Δ_H≫σ_{H(C),H(C)}.hom=Δ_H, where σ is
+the graded Koszul interchange with bidegree sign (-1)^{pq}. The equality follows by transporting
+the given chain equation through the canonical tensorator. -/
 theorem comul_cocommutative (h : Δ[C] ≫ (koszulTensorBraidingIso C C).hom = Δ[C]) :
     letI : ComonObj ((homologyFunctor (R := k)).obj C) := comonObj C
     Δ[(homologyFunctor (R := k)).obj C] ≫ (koszulSwap ((homologyFunctor (R := k)).obj C) ((homologyFunctor (R :=
@@ -176,15 +209,25 @@ theorem comul_cocommutative (h : Δ[C] ≫ (koszulTensorBraidingIso C C).hom = �
     HomologyCoalgebra.canonicalToTensorHomology C
   simp only [HomologyCoalgebra.canonicalToTensorHomology, ← Functor.map_comp, h]
 
-/-- The actual chain coproduct minus the two coaugmentation terms. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and any chain map η:𝟙→C, the primitive
+equation is the map d_η:C→C⊗C given by Δ_C−(ρ_C^{-1}≫(id_C⊗η)+λ_C^{-1}≫(η⊗id_C)). Its kernel
+consists of the elements whose coproduct is the sum of these two η-unit terms. -/
 def primitiveEquation (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶ C) : C ⟶ C ⊗ C :=
   Δ[C] - ((ρ_ C).inv ≫ (𝟙 C ⊗ₘ η) + (λ_ C).inv ≫ (η ⊗ₘ 𝟙 C))
 
-/-- The native kernel of the actual original-field primitive equation. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and a chain map η:𝟙→C, this chain complex is
+ker(d_η), with d_η=Δ_C−(ρ_C^{-1}≫(id⊗η)+λ_C^{-1}≫(η⊗id)). Its canonical inclusion into C is
+killed by the reduced coproduct, so it defines the primitive subcomplex relative to η. -/
 def primitiveComplex (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶ C) :
   (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) := kernel (primitiveEquation C η)
 
-/-- The actual primitive equation in the earned homology comonoid. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and a chain map η:𝟙→C, let a=e≫H(η):𝟙→H(C)
+and Δ_H be the transported homology coproduct. This graded map d_a:H(C)→H(C)⊗H(C) is
+Δ_H−(ρ_{H(C)}^{-1}≫(id⊗a)+λ_{H(C)}^{-1}≫(a⊗id)). It is the primitive equation relative to the
+induced homology unit map. -/
 def homologyPrimitiveEquation (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶ C) :
   (homologyFunctor (R := k)).obj C ⟶ (homologyFunctor (R := k)).obj C ⊗ (homologyFunctor (R := k)).obj C := by
   letI : ComonObj ((homologyFunctor (R := k)).obj C) := comonObj C
@@ -219,8 +262,11 @@ private theorem unitTerms_transport (η : 𝟙_ (ChainComplex (ModuleCat.Univers
     Category.id_comp, tensorHom_def, tensorHom_def', Category.assoc,
     id_whiskerRight, whiskerLeft_id, whiskerLeft_comp, comp_whiskerRight]
 
-/-- The actual primitive equation is transported under the actual canonical
-original-field Künneth tensorator. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and a chain map η:𝟙→C, write d_η for the
+reduced chain coproduct and d_a for the homology primitive equation with a=e≫H(η). Then
+H(d_η)≫μ_{C,C}^{-1}=d_a, where μ_{C,C}:H(C)⊗H(C)≅H(C⊗C) is the canonical cycle Künneth
+tensorator. -/
 theorem primitiveEquation_transport (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶
   C) :
     (homologyFunctor (R := k)).map (primitiveEquation C η) ≫ inv (tensorator C C) = homologyPrimitiveEquation C η := by
@@ -239,8 +285,11 @@ theorem primitiveEquation_transport (η : 𝟙_ (ChainComplex (ModuleCat.Univers
   rw [hs, Preadditive.sub_comp, hd, unitTerms_transport]
   rfl
 
-/-- The genuine comparison to the actual graded primitive kernel. It is
-not asserted to be injective, surjective or an isomorphism. -/
+/-- Let k be a field in universe u, v an independent lift height, and all coefficient modules lie in
+W=max(u,v). For a chain coalgebra C of shape down ℕ and a chain map η:𝟙→C, let i:ker(d_η)→C and
+j:ker(d_a)→H(C) be the chain and homology primitive-kernel inclusions. The canonical comparison
+κ:H(ker d_η)→ker d_a is the kernel lift of H(i), characterized by κ≫j=H(i). The
+primitive-equation transport proves that H(i) is killed by d_a. -/
 def primitiveComparison (η : 𝟙_ (ChainComplex (ModuleCat.UniverseScalarRestriction.Modules.{u,v} k) ℕ) ⟶ C) :
     (homologyFunctor (R := k)).obj (primitiveComplex C η) ⟶ kernel (homologyPrimitiveEquation C η) := by
   letI : IsIso (tensorator C C) := isIso_tensorator_of_field C C

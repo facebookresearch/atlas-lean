@@ -1,3 +1,6 @@
-# Horizontal First Page Row Complex Iso Vertical Homology Complex homology naturality
+# Naturality on homology of the first-page row comparison
 
-Degreewise homology of the normalized row-complex naturality square.
+Naturality on homology of the first-page row comparison.
+
+Taking degree-`p` homology of the row-complex naturality square gives the corresponding
+naturality square for row and vertical-homology-complex homology.

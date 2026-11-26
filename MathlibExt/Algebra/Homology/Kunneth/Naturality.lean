@@ -15,12 +15,14 @@ module
 public import MathlibExt.Algebra.Homology.Kunneth.Edge
 
 /-!
-# Naturality maps for the Künneth tensor source
+# Naturality of Künneth homology tensor sources
 
-This module packages the finite antidiagonal map induced by homology maps in
-both complex variables.  It establishes the identity and composition laws
-needed by the later naturality theorem for the canonical Künneth homology
-tensor map.
+Let `R` be a commutative ring and work with nonnegative complexes in the common module
+universe. A pair of chain maps `f : K → K'`, `g : L → L'` induces the antidiagonal source map
+whose `(i,j)` component is `H_i(f) ⊗ H_j(g)`.
+
+These maps preserve identities and composition. They commute with the finite-sum Künneth
+pairing and the homology map of `f ⊗ g` in every total degree.
 -/
 
 @[expose] public section
@@ -43,8 +45,9 @@ variable {K K' K₁ K₂ K₃ L L' L₁ L₂ L₃ :
 local instance : HasFiniteBiproducts (ModuleCat.{u} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- The finite antidiagonal map induced by homology maps in both complex
-variables. -/
+/-- The homology-map tensor on a finite Künneth antidiagonal.
+
+For chain maps `f,g`, take the biproduct of `H_i(f) ⊗ H_j(g)` over `i+j=n`. -/
 noncomputable def kunnethTensorSourceMap
     (f : K ⟶ K') (g : L ⟶ L') (n : ℕ) :
     (⨁ fun ij : KunnethTensorIndex n =>
@@ -55,8 +58,10 @@ noncomputable def kunnethTensorSourceMap
     HomologicalComplex.homologyMap f ij.val.1 ⊗ₘ
       HomologicalComplex.homologyMap g ij.val.2
 
-/-- The selected component of the Künneth tensor-source map is the tensor of
-the corresponding homology maps. -/
+/-- The inclusion formula for a Künneth antidiagonal source map.
+
+On summand `(i,j)`, the source map is the tensor of the two homology maps followed by the
+target inclusion. -/
 theorem kunnethTensorSourceMap_ι
     (f : K ⟶ K') (g : L ⟶ L') (n : ℕ)
     (ij : KunnethTensorIndex n) :
@@ -75,7 +80,9 @@ theorem kunnethTensorSourceMap_ι
         HomologicalComplex.homologyMap f kl.val.1 ⊗ₘ
           HomologicalComplex.homologyMap g kl.val.2) ij)
 
-/-- Identity maps induce the identity Künneth tensor-source map. -/
+/-- The identity Künneth antidiagonal source map.
+
+Identity maps of both complexes induce the identity on the finite tensor source. -/
 @[simp]
 theorem kunnethTensorSourceMap_id
     (K L : ChainComplex (ModuleCat.{u} R) ℕ) (n : ℕ) :
@@ -87,8 +94,10 @@ theorem kunnethTensorSourceMap_id
   simp only [HomologicalComplex.homologyMap_id,
     MonoidalCategory.id_tensorHom_id, Category.id_comp, Category.comp_id]
 
-/-- Composition in both variables induces composition of Künneth
-tensor-source maps. -/
+/-- Composition of Künneth antidiagonal source maps.
+
+Composing the two complex maps in each variable gives the composite of their finite source
+maps. -/
 @[simp]
 theorem kunnethTensorSourceMap_comp
     (f₁ : K₁ ⟶ K₂) (f₂ : K₂ ⟶ K₃)
@@ -105,8 +114,10 @@ theorem kunnethTensorSourceMap_comp
     ← HomologicalComplex.homologyMap_comp,
     ← HomologicalComplex.homologyMap_comp]
 
-/-- The canonical Künneth homology tensor map is natural in both complex
-variables. -/
+/-- Naturality of the finite-sum Künneth homology pairing.
+
+The antidiagonal source map followed by the target pairing equals the source pairing followed
+by homology of the tensor chain map. -/
 @[reassoc]
 theorem kunnethHomologyTensorMap_naturality
     (f : K ⟶ K') (g : L ⟶ L') (n : ℕ) :

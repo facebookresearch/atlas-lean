@@ -1,4 +1,6 @@
-# Horizontal Column Cochain
+# The shifted cochain presentation of a vertical column
 
-The `p`th vertical column, reindexed as a cochain complex and shifted so
-that column degree `q` lies in cochain degree `-(p+q)`.
+The shifted cochain presentation of a vertical column.
+
+Extend vertical column `p` to integer cochain degrees and shift by `p`, so vertical degree `q`
+lies at `-p-q` with differential sign `(-1)^p`.

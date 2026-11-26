@@ -22,16 +22,23 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 
 /-!
-# The actual same-world chain unit comparison
+# Lifted and unlifted scalar units of nonnegative module chains
 
-The canonical UniverseTensor dictionary at offset `u` uses `ULift.{u} R`
-as unit even when every coefficient carrier has world `u`. The native
-same-world ModuleCat dictionary uses `R`. A type synonym fixes the former
-dictionary, and the identity carrier functor to the latter has the actual
-single-complex up/down unit isomorphism and identity tensor comparisons.
+Let R be a commutative ring in world u, and consider nonnegative chains
+of R-modules whose carriers also have world u. Two monoidal structures
+use the same chain tensor products but scalar unit complexes
+I_L=(ULift^u R)[0] and I_N=R[0].
 
-This earns a comparison of these two dictionaries. It does not enlarge
-the coefficient-world signature of the existing Künneth collapse theorem.
+The identity comparison functor T from the lifted-unit structure to
+the unlifted-unit structure has unit isomorphism
+U:I_N≅T(I_L), given by scalar up/down, and tensor comparisons
+τ_(C,D):T(C)⊗T(D)≅T(C⊗D) with identity components.
+These satisfy both unit laws and give T a strong monoidal structure.
+
+The comparisons preserve the Koszul chain interchange with coefficient
+(−1)^(pq). They transport comonoids and unit-to-comonoid maps: a map
+η:I_L→C becomes T(η)∘U:I_N→T(C), and a comonoid map η remains
+a comonoid map. All constructions here stay at the same carrier world u.
 -/
 
 @[expose] public section
@@ -45,8 +52,10 @@ open scoped TensorProduct ComonObj
 
 namespace HomologicalComplex.HomologyCoalgebra
 
-/-- The existing same-world chain category with the fixed lifted-unit
-UniverseTensor dictionary. This is an identity carrier type synonym. -/
+/-- For a commutative ring R in world u, the lifted-unit
+chain category consists of ChainComplex(ModuleCat^u(R),ℕ)
+with tensor unit (ULift^u R)[0].
+Its underlying complexes and morphisms are the usual R-module chains. -/
 def LiftedUnitChain (R : Type u) [CommRing R] := ChainComplex (ModuleCat.{u} R) ℕ
 
 namespace LiftedUnitChain
@@ -69,8 +78,10 @@ instance monoidalCategory : MonoidalCategory (LiftedUnitChain R) := by
 instance tensorStructure : MonoidalCategoryStruct (LiftedUnitChain R) :=
   (monoidalCategory (R := R)).toMonoidalCategoryStruct
 
-/-- The identity carrier functor to the ordinary native same-world chain
-category. Its monoidal dictionaries are distinguished by the source synonym. -/
+/-- For a commutative ring R, the comparison functor T sends
+the lifted-unit chain category to the same R-module chain category
+with unit R[0]. It fixes every complex and every chain-map
+component, at carrier world u. -/
 def toNative : LiftedUnitChain R ⥤ (ChainComplex (ModuleCat.{u} R) ℕ) where
   obj C := C
   map f := f
@@ -78,14 +89,18 @@ def toNative : LiftedUnitChain R ⥤ (ChainComplex (ModuleCat.{u} R) ℕ) where
 instance toNative_additive : (toNative (R := R)).Additive where
   map_add := by intros; rfl
 
-/-- The actual scalar-unit comparison is the single-complex image of the
-native module up/down equivalence. -/
+/-- For a commutative ring R in world u, scalar up/down give
+the chain isomorphism U:R[0]≅T((ULift^u R)[0]).
+Its degree-zero forward value is r↦up(r), its inverse is down,
+and both complexes vanish outside degree zero. -/
 def unitIso : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ≅ toNative.obj (𝟙_ (LiftedUnitChain R)) :=
   (HomologicalComplex.single (ModuleCat.{u} R) (ComplexShape.down ℕ) 0).mapIso
     ((ULift.moduleEquiv : ULift.{u} R ≃ₗ[R] R).symm.toModuleIso)
 
-/-- The tensor comparison has identity components on the actual ordinary
-ring tensor modules, and its differential equation is literal. -/
+/-- For a commutative ring R and lifted-unit chains C,D,
+the comparison τ_(C,D):T(C)⊗T(D)≅T(C⊗D) has identity
+components on their finite R-tensor total degrees.
+The two tensor differentials agree. -/
 def tensorIso (C D : LiftedUnitChain R) :
     toNative.obj C ⊗ toNative.obj D ≅ toNative.obj (C ⊗ D) :=
   Iso.refl _
@@ -141,8 +156,10 @@ private theorem source_right_inv (C : LiftedUnitChain R) (n : ℕ) (x : (show Ch
   rw [ModuleCat.UniverseTensor.rightUnitor_inv_apply.{u,u} R ((show ChainComplex (ModuleCat.{u} R) ℕ from C).X n) x]
   rfl
 
-/-- The actual up/down chain unit comparison preserves the native left
-unit insertion; the source insertion is `ULift.up 1`. -/
+/-- For a commutative ring R and a lifted-unit chain C, the
+inverse left unitor of T(C) equals the composite
+T(C)→T(I_L⊗C)→T(I_L)⊗T(C)→I_N⊗T(C).
+The maps are T(λ_C⁻¹), τ_(I_L,C)⁻¹ and U⁻¹⊗id, respectively. -/
 theorem left_unitality_inv (C : LiftedUnitChain R) :
     (λ_ (toNative.obj C)).inv = toNative.map (λ_ C).inv ≫ (tensorIso (𝟙_ _) C).inv ≫
       (unitIso (R := R)).inv ▷ toNative.obj C := by
@@ -180,7 +197,10 @@ theorem left_unitality_inv (C : LiftedUnitChain R) :
       0 n n (zero_add n)).hom z) hzv
   exact hLeft.trans (hι.symm.trans (hs.trans ht).symm)
 
-/-- The same actual unit comparison preserves the native right insertion. -/
+/-- For a commutative ring R and a lifted-unit chain C, the
+inverse right unitor of T(C) equals the composite
+T(C)→T(C⊗I_L)→T(C)⊗T(I_L)→T(C)⊗I_N.
+The maps are T(ρ_C⁻¹), τ_(C,I_L)⁻¹ and id⊗U⁻¹. -/
 theorem right_unitality_inv (C : LiftedUnitChain R) :
     (ρ_ (toNative.obj C)).inv = toNative.map (ρ_ C).inv ≫ (tensorIso C (𝟙_ _)).inv ≫
       toNative.obj C ◁ (unitIso (R := R)).inv := by
@@ -230,8 +250,10 @@ private theorem cleanupRight {A : Type*} [Category A] [MonoidalCategory A]
     f ≫ 𝟙 (X ⊗ (Y ⊗ Z)) ≫ X ◁ 𝟙 (Y ⊗ Z) = f := by
   simp only [whiskerLeft_id, Category.id_comp, Category.comp_id]
 
-/-- The identity carrier functor earns its native monoidal structure from
-the actual unit comparison and identity tensor components. -/
+/-- For a commutative ring R, the identity comparison functor
+T from lifted-unit chains to unlifted-unit chains is strong
+monoidal. Its unit map is U:R[0]≅T((ULift^u R)[0]), and its
+tensor comparison is τ_(C,D) with identity chain components. -/
 def monoidal : (toNative (R := R)).Monoidal :=
   (Functor.CoreMonoidal.mk' unitIso tensorIso
     (μIso_inv_natural_left := by
@@ -264,8 +286,10 @@ def monoidal : (toNative (R := R)).Monoidal :=
     (oplax_left_unitality := left_unitality_inv)
     (oplax_right_unitality := right_unitality_inv)).toMonoidal
 
-/-- The actual source Koszul chain interchange under the fixed lifted-unit
-module dictionary. -/
+/-- For a commutative ring R and lifted-unit chains C,D,
+the source interchange C⊗D≅D⊗C is the chain Koszul symmetry.
+On a homogeneous bidegree (p,q) it swaps the R-tensor factors
+and multiplies by (−1)^(pq). -/
 def sourceBraiding (C D : LiftedUnitChain R) : C ⊗ D ≅ D ⊗ C := by
   letI : MonoidalCategoryStruct (ModuleCat.{u} R) := ModuleCat.UniverseTensor.tensorStructure.{u,u} (R := R)
   letI : MonoidalCategory (ModuleCat.{u} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,u} (R := R)
@@ -276,8 +300,11 @@ def sourceBraiding (C D : LiftedUnitChain R) : C ⊗ D ≅ D ⊗ C := by
     (show ChainComplex (ModuleCat.{u} R) ℕ from C)
     (show ChainComplex (ModuleCat.{u} R) ℕ from D)
 
-/-- Identity tensor components preserve the actual source and target
-Koszul signs; both module interchanges are the original tensor commutation. -/
+/-- For a commutative ring R and lifted-unit chains C,D,
+the chain symmetries satisfy
+T(β_L) ∘ τ_(C,D)=τ_(D,C) ∘ β_N.
+Both interchanges use the coefficient (−1)^(pq) and the same
+R-module tensor commutation on each homogeneous summand. -/
 @[reassoc]
 theorem tensorIso_braiding (C D : LiftedUnitChain R) :
     (tensorIso C D).hom ≫ toNative.map (sourceBraiding C D).hom =
@@ -291,16 +318,20 @@ theorem tensorIso_braiding (C D : LiftedUnitChain R) :
     rfl
   exact (Category.id_comp _).trans (hb.trans (Category.comp_id _).symm)
 
-/-- Native comonoid transport converts a fixed lifted-unit chain comonoid
-to the native same-world dictionary. -/
+/-- For a commutative ring R, the strong monoidal comparison
+T induces a functor from comonoids in the lifted-unit chain
+category to comonoids in the unlifted-unit chain category.
+Their underlying R-module complexes remain the same. -/
 def nativeComonFunctor : Comon (LiftedUnitChain R) ⥤ Comon (ChainComplex (ModuleCat.{u} R) ℕ) := by
   letI : (toNative (R := R)).Monoidal := monoidal
   exact toNative.mapComon
 
 attribute [local instance] ComonObj.instTensorUnit
 
-/-- The actual up unit comparison is a native comonoid isomorphism from
-the native scalar unit to the transported lifted scalar unit. -/
+/-- For a commutative ring R, equip T with its unit and tensor
+comparisons. The forward scalar up map U:I_N→T(I_L) is a
+comonoid morphism from the trivial unlifted-unit comonoid to
+the transported lifted-unit comonoid. -/
 theorem unitIsoIsComonHom :
     letI : (toNative (R := R)).Monoidal := monoidal
     letI : ComonObj (toNative.obj (𝟙_ (LiftedUnitChain R))) :=
@@ -330,13 +361,17 @@ theorem unitIsoIsComonHom :
         exact congrArg (fun z => (λ_ (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))).inv ≫ z)
           (whisker_exchange (unitIso (R := R)).hom (unitIso (R := R)).hom) }
 
-/-- An actual lifted-unit chain coaugmentation becomes an actual native
-same-world coaugmentation through the earned up map. -/
+/-- For a commutative ring R, a lifted-unit chain C and a
+chain map η:I_L→C, the converted map I_N→T(C) is
+T(η)∘U. It first applies scalar up on the degree-zero unit,
+then the underlying chain map η. -/
 def nativeCoaug (C : LiftedUnitChain R) (η : 𝟙_ (LiftedUnitChain R) ⟶ C) :
     𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ toNative.obj C := unitIso.hom ≫ toNative.map η
 
-/-- The converted coaugmentation preserves the actual converted comonoid
-structure, without additional coaugmentation-law inputs. -/
+/-- For a commutative ring R, a lifted-unit chain comonoid C
+and a comonoid morphism η:I_L→C, the map T(η)∘U:I_N→T(C)
+is a comonoid morphism for the transported structure.
+No further point equations are required beyond those of η. -/
 theorem nativeCoaugIsComonHom (C : LiftedUnitChain R) [ComonObj C]
     (η : 𝟙_ (LiftedUnitChain R) ⟶ C) [IsComonHom η] :
     letI : (toNative (R := R)).Monoidal := monoidal
@@ -351,8 +386,11 @@ theorem nativeCoaugIsComonHom (C : LiftedUnitChain R) [ComonObj C]
   unfold nativeCoaug
   infer_instance
 
-/-- The native same-world scalar unit is explicitly up/down, including on
-the original degree-zero scalar coordinate. -/
+/-- For a commutative ring R in world u, the inverse unit
+comparison T(I_L)→I_N in degree zero identifies the single
+lifted scalar coordinate, applies ULift^u R→R by down, and
+returns the single unlifted coordinate.
+Its value on up(r) is r. -/
 theorem unitIso_inv_zero_coordinate :
     (unitIso (R := R)).inv.f 0 =
       (singleObjXSelf (ComplexShape.down ℕ) 0 (ModuleCat.of R (ULift.{u} R))).hom ≫

@@ -1,4 +1,6 @@
-# Is Zero partial Total Spectral Object HObj bot to neg
+# Spectral-object homology from bottom to a negative stage vanishes
 
-A bottom-to-negative interval of the partial-total spectral object
-vanishes.
+Spectral-object homology from bottom to a negative stage vanishes.
+
+For an integer `z < 0` and any integer degree `k`, the homology object of the interval `⊥ ⟶ z`
+in the partial-total spectral object is zero.

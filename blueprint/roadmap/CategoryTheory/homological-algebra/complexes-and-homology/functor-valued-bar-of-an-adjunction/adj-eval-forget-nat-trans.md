@@ -1,6 +1,6 @@
-# Adj Eval Forget Nat Trans
+# Forgotten evaluation is natural in algebra morphisms
 
-Evaluation at algebras, forgotten to `C`, is natural in the algebra
-morphism: at an `Algebra`-valued endofunctor `F`, act by `F.map φ` then
-forget. Genuine evaluation naturality, no surrogate involved. Public because
-the headline literal maps whisker along it.
+Let T be a monad on C and φ : alg → alg′ a T-algebra morphism. There is a natural
+transformation from evaluation at alg followed by T.forget to evaluation at alg′ followed by
+T.forget. At an endofunctor H of T.Algebra, its component is T.forget(H(φ)) : U(H(alg)) →
+U(H(alg′)), where U=T.forget.

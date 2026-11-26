@@ -1,3 +1,6 @@
-# Symbol induction
+# Additive induction on homogeneous symbols
 
-Symbols of original representatives generate the entire original direct sum.
+Additive induction on homogeneous symbols.
+
+A property of associated-graded elements holds everywhere if it holds at zero and at every
+symbol of a filtered representative, and is preserved by addition.

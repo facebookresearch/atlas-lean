@@ -15,14 +15,15 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalCoreInterval
 
 /-!
-# Adjacent page-one intervals of a partial-total filtration
+# Adjacent first-page intervals of a partial-total filtration
 
-This file packages the two adjacent intervals selected by the increasing
-page-one core as one composable diagram.  The diagram is identified with the
-corresponding pair of partial-total steps, before any spectral differential
-or homology calculation.
+Let `B` be a first-quadrant bicomplex in an abelian category. Consecutive intervals of the
+increasing first-page filtration have upper stages `m` and `m+1`, giving a composable pair of
+cochain filtration maps.
 
-No page-two, Tor, abutment, or convergence statement is made.
+The interval-to-step isomorphisms identify this pair with the corresponding partial-total step
+map and adjacent upper-stage map. All source, middle, and target coordinates are included in
+the diagram isomorphism.
 -/
 
 @[expose] public section
@@ -46,8 +47,10 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- The filtration map between the two consecutive upper endpoints selected
-by the increasing page-one core. -/
+/-- The map of consecutive first-page upper filtration stages.
+
+Map the complete cochain filtration upper endpoint selected at `(m,q)` to the upper endpoint
+selected at `(m+1,q)`. -/
 noncomputable def partialTotalE₁CoreSuccessorMap (m q : ℕ) :
     B.partialTotalCochainFiltration.obj ((core).i₂ (m, q)) ⟶
       B.partialTotalCochainFiltration.obj ((core).i₂ (m + 1, q)) :=
@@ -56,8 +59,10 @@ noncomputable def partialTotalE₁CoreSuccessorMap (m q : ℕ) :
       change (((m : ℤ) : EInt) ≤ (((m + 1 : ℕ) : ℤ) : EInt))
       simp))
 
-/-- The consecutive filtration map in the canonical coordinates of the
-`m`th and `(m+1)`st partial-total steps. -/
+/-- The adjacent upper-stage map in partial-total step coordinates.
+
+Transport the successor filtration map through the middle components of the two interval-to-
+step isomorphisms. -/
 noncomputable def partialTotalE₁AdjacentCochainMap (m q : ℕ) :
     (B.partialTotalStepCochainShortComplex m).X₂ ⟶
       (B.partialTotalStepCochainShortComplex (m + 1)).X₂ :=
@@ -66,7 +71,9 @@ noncomputable def partialTotalE₁AdjacentCochainMap (m q : ℕ) :
   (e₀.app 1).inv ≫ B.partialTotalE₁CoreSuccessorMap m q ≫
     (e₁.app 1).hom
 
-/-- The composable pair of adjacent core-interval maps. -/
+/-- The composable diagram of adjacent first-page core intervals.
+
+Use the lower-to-upper map for column `m` followed by the upper-stage successor map. -/
 noncomputable def partialTotalE₁AdjacentCoreDiagram (m q : ℕ) :
     ComposableArrows (CochainComplex C ℤ) 2 :=
   ComposableArrows.mk₂
@@ -74,15 +81,19 @@ noncomputable def partialTotalE₁AdjacentCoreDiagram (m q : ℕ) :
       (homOfLE ((core).le₁₂ (m, q))))
     (B.partialTotalE₁CoreSuccessorMap m q)
 
-/-- The same adjacent pair in the canonical step coordinates. -/
+/-- The adjacent filtration diagram in partial-total step coordinates.
+
+Use the step short-complex inclusion followed by the transported adjacent cochain map. -/
 noncomputable def partialTotalE₁AdjacentStepDiagram (m q : ℕ) :
     ComposableArrows (CochainComplex C ℤ) 2 :=
   ComposableArrows.mk₂
     (B.partialTotalStepCochainShortComplex m).f
     (B.partialTotalE₁AdjacentCochainMap m q)
 
-/-- Coordinate isomorphism from the adjacent core intervals to the adjacent
-partial-total steps. -/
+/-- The coordinate isomorphism of adjacent core and step diagrams.
+
+The two interval-to-step comparisons identify the adjacent first-page composable diagram with
+its partial-total step presentation. -/
 noncomputable def partialTotalE₁AdjacentDiagramIso (m q : ℕ) :
     B.partialTotalE₁AdjacentCoreDiagram m q ≅
       B.partialTotalE₁AdjacentStepDiagram m q := by

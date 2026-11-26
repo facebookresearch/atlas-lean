@@ -1,5 +1,5 @@
 # Bicomplex naturality of complete-filtration restriction
 
-- [Horizontal Complete Total Filtration Nat Restriction Diagram Functor](horizontal-complete-total-filtration-nat.md)
-- [Horizontal Total Filtration Diagram Functor](horizontal-total-filtration-diagram-func.md)
-- [Horizontal Complete Total Filtration Nat Restriction Nat Iso](horizontal-complete-total-filtration-nat-2.md)
+- [Restricted complete-filtration diagrams are functorial in first-quadrant bicomplexes](horizontal-complete-total-filtration-nat.md)
+- [Finite horizontal-filtration diagrams are functorial in bicomplexes](horizontal-total-filtration-diagram-func.md)
+- [Complete-to-finite restriction comparisons are natural in both indices and bicomplexes](horizontal-complete-total-filtration-nat-2.md)

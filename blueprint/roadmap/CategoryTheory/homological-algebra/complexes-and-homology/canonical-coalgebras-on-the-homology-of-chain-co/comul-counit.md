@@ -1,3 +1,5 @@
-# Comul counit
+# The transported diagonal satisfies the right counit equation
 
-The transported diagonal satisfies the actual right counit law.
+For a chain comonoid C over a commutative ring R with
+invertible square Künneth tensorator, its homology diagonal
+satisfies (id⊗ε_H) ∘ Δ_H=ρ_(H(C))⁻¹.

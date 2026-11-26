@@ -1,4 +1,7 @@
-# Horizontal Complete Filtration Mapping Cone Functor
+# Complete-filtration arrows map functorially to relative cochain cones
 
-Mapping-cone functor on arrows of the complete filtration, normalized so
-its object is definitionally the cone of the mapped filtration morphism.
+For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts, let F be its complete horizontal cochain filtration. The arrow i→j is sent to
+Cone(F_i→F_j). A commutative square between i→j and i′→j′ is sent to the cone map induced by
+F_i→F_{i′} and F_j→F_{j′}. These assignments define a functor from arrows of ℤ∪{⊥,⊤} to
+integer-indexed cochain complexes.

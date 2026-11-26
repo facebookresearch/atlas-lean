@@ -1,3 +1,6 @@
-# Stable Matrix CEComplex d one zero
+# Vanishing of the degree-one differential in the matrix CE colimit
 
-The degree-one vanishing differential remains zero in the colimit.
+Vanishing of the degree-one differential in the matrix CE colimit.
+
+The finite-stage zero degree-one differentials induce a zero differential from degree one to
+zero in the colimit.

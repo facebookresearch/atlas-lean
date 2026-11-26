@@ -14,15 +14,15 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedCurrentFunctoriality
 
 /-!
-# Functoriality of the positive predecessor homology-filtration map
+# Functorial maps on positive predecessor homology stages
 
-At a positive column, the map on the preceding complete-filtration stage is
-transported from finite stage `p - 1`.  These transported maps preserve
-identities and composition by the finite filtered-object functor laws and
-cancellation of the positive predecessor comparison isomorphisms.
+Let C be an abelian category, p>0, and n=p+q. The complete image stage F_{(p:ℤ)−1}H_n(Tot(K))
+is identified with the finite image stage at the natural predecessor p−1. Transporting the
+finite-stage map of a bicomplex morphism through this comparison gives the complete
+predecessor-stage map.
 
-This file proves no law for the unified predecessor map at `p = 0` and does
-not package the predecessor maps as a functor.
+For a fixed p,q and positivity proof, these transported maps preserve identity morphisms and
+composition.
 -/
 
 @[expose] public section
@@ -39,8 +39,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The transported positive predecessor-stage map of an identity bicomplex
-morphism is the identity. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), p,q ∈ ℕ, and hp : 0 < p.
+In degree n=p+q, transport the finite predecessor-stage map at p−1 through the
+complete-to-finite stage comparisons to obtain a map on F_{(p:ℤ)−1}H_n(Tot(K)). For the
+identity bicomplex morphism this map is the identity of that complete predecessor stage. -/
 @[simp 1100]
 theorem horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex_id
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -73,8 +75,10 @@ theorem horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex_id
           congrArg (fun h => eK.hom ≫ h) (Category.id_comp eK.inv)
         _ = 𝟙 _ := eK.hom_inv_id
 
-/-- Transported positive predecessor-stage maps preserve composition of
-bicomplex morphisms. -/
+/-- Let C be an abelian category, f : K → L and g : L → M maps of bicomplexes of shape (down
+ℕ,down ℕ), p,q ∈ ℕ, and hp : 0 < p. Let a(f) be the map on F_{(p:ℤ)−1}H_{p+q}(Tot) obtained by
+transporting the finite stage-(p−1) map. Then a(f ≫ g) = a(f) ≫ a(g). All three maps use the
+same positive column p, total degree p+q, and complete-to-finite predecessor comparisons. -/
 @[simp 1100]
 theorem horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex_comp
     (f : K ⟶ L) (g : L ⟶ M) (p q : ℕ) (hp : 0 < p) :

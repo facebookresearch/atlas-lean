@@ -1,3 +1,6 @@
-# Homology Functor
+# The fixed-degree homology functor on CE models
 
-Fixed-degree CE homology as a functor on lawful models.
+The fixed-degree homology functor on CE models.
+
+Send each model to homology of its chain complex in degree `n` and each model morphism to the
+induced homology map.

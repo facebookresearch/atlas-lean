@@ -1,4 +1,7 @@
-# Lax Monoidal
+# Canonical cycle maps make module graded homology lax monoidal
 
-The earned lax monoidal structure on the existing native graded
-homology functor, over every commutative ring in its actual coefficient world.
+For a commutative ring R, graded homology of nonnegative
+R-module chain complexes is lax monoidal.
+Its unit map is the scalar-unit homology comparison, and its
+tensorator is the finite sum of canonical cycle homology pairings,
+with the stated associator and unit laws.

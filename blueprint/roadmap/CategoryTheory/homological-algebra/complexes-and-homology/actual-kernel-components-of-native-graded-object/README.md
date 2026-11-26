@@ -1,4 +1,4 @@
 # Actual kernel components of native graded objects
 
-- [Kernel Component Iso](kernel-component-iso.md)
-- [Is Iso kernel component of eq zero](is-iso-kernel-component-of-eq-zero.md)
+- [A graded kernel component is the component kernel](kernel-component-iso.md)
+- [A zero component has an invertible kernel inclusion](is-iso-kernel-component-of-eq-zero.md)

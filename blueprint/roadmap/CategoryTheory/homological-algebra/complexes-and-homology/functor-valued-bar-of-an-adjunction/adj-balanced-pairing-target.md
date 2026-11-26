@@ -1,3 +1,4 @@
-# Adj Balanced Pairing target
+# The balanced adjunction pairing targets the identity functor
 
-The balanced-pairing target is the identity endofunctor.
+Let F ⊣ U be an adjunction. The target functor of its balanced two-sided bar pairing is Id_D.
+Thus its component at Y pairs the degree-zero term F(UY) with Y.

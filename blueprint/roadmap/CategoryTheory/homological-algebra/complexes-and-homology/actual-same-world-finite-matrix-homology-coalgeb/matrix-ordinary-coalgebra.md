@@ -1,3 +1,6 @@
-# Matrix Ordinary Coalgebra
+# The finite matrix CE coalgebra after scalar-unit comparison
 
-The unit/tensor comparison gives the common-universe chain comonoid.
+The finite matrix CE coalgebra after scalar-unit comparison.
+
+The lifted-unit comparison gives its comonoid structure in the common-universe module chain
+category.

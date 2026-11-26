@@ -1,4 +1,6 @@
-# Matrix Cyclic Weibel Chain Map At Height
+# The lifted cyclic trace of a canonical positive matrix CE tail
 
-The cyclic trace chain map on the universe-lifted finite matrix Chevalley–Eilenberg positive
-tail.
+The lifted cyclic trace of a canonical positive matrix CE tail.
+
+Use the positive-tail lift comparison, the module-functor image of the finite trace, and the
+lifted cyclic quotient comparison to obtain the chosen-height chain map.

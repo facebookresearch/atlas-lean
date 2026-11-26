@@ -13,12 +13,18 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantAbutmentImage
 
 /-!
-# Homology relative to the bottom filtration stage
+# Homology relative to the zero bottom filtration stage
 
-For every complete filtration stage `i`, the mapping cone of `F_⊥ → F_i`
-is compared quasi-isomorphically with `F_i`.  After chain-to-cochain
-reindexing, this identifies bottom-relative spectral-object homology with
-ordinary stage homology.  The comparison is proved natural in `i`.
+Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). At each complete
+filtration cut i∈EInt, let G_i be the filtered total chain stage and F_i its cochain extension
+with degree n placed at -n. The bottom stage F_⊥ is zero, and F_⊥→F_i→F_i is a split short exact
+complex with identity second arrow.
+
+The induced mapping-cone map g_i:Cone(F_⊥→F_i)→F_i is a quasi-isomorphism. It is natural under
+every stage inclusion i≤j. Combining its cochain homology map with the homotopy-category
+homology factorization and the chain/cochain reindexing identifies H^{-n}(⊥,i) with H_n(G_i) for
+all n : ℕ. The comparison is natural in i, and the category's object and morphism universes are
+arbitrary.
 -/
 
 @[expose] public section
@@ -37,12 +43,14 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Unique map from the bottom filtration index to `i`. -/
+/-- For any EInt filtration cut i, horizontalBottomToStageMap i is the unique order morphism ⊥→i. -/
 noncomputable abbrev horizontalBottomToStageMap (i : EInt) :
     (⊥ : EInt) ⟶ i := homOfLE bot_le
 
-/-- Split short complex from the bottom stage to stage `i`, followed by the
-identity of stage `i`. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i∈EInt, horizontalBottomStageShortComplex is F_⊥→F_i→F_i, with first arrow
+F(⊥→i) and second arrow id_{F_i}. The first arrow is zero because F_⊥=0. -/
 noncomputable def horizontalBottomStageShortComplex (i : EInt) :
     ShortComplex (CochainComplex C ℤ) :=
   ShortComplex.mk
@@ -54,7 +62,10 @@ noncomputable def horizontalBottomStageShortComplex (i : EInt) :
         ((horizontalCompleteFiltrationCochainDiagram K).map
           (horizontalBottomToStageMap i)) 0)
 
-/-- Canonical splitting of the bottom-stage short complex. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For every i∈EInt, the short complex F_⊥→F_i→F_i has a canonical splitting, using
+the zero first object and the identity second arrow. -/
 noncomputable def horizontalBottomStageShortComplexSplitting (i : EInt) :
     (horizontalBottomStageShortComplex K i).Splitting := by
   have hg : IsIso (horizontalBottomStageShortComplex K i).g := by
@@ -64,12 +75,18 @@ noncomputable def horizontalBottomStageShortComplexSplitting (i : EInt) :
     (horizontalCompleteFiltrationCochainDiagram_obj_isZero_bot K)
     hg
 
-/-- The bottom-stage short complex is short exact. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For each i∈EInt, the complex F_⊥→F_i→F_i is short exact in the category of
+cochain complexes C^ℤ, by its zero-object splitting. -/
 theorem horizontalBottomStageShortComplex_shortExact (i : EInt) :
     (horizontalBottomStageShortComplex K i).ShortExact :=
   (horizontalBottomStageShortComplexSplitting K i).shortExact
 
-/-- Canonical map from the mapping cone of `F_⊥ → F_i` to `F_i`. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i∈EInt, the split short complex defines g_i:Cone(F_⊥→F_i)→F_i, the canonical
+mapping-cone descent to the stage. -/
 noncomputable def horizontalBottomMappingConeToStage (i : EInt) :
     CochainComplex.mappingCone
         ((horizontalCompleteFiltrationCochainDiagram K).map
@@ -78,14 +95,19 @@ noncomputable def horizontalBottomMappingConeToStage (i : EInt) :
   CochainComplex.mappingCone.descShortComplex
     (horizontalBottomStageShortComplex K i)
 
-/-- The bottom mapping-cone-to-stage map is a quasi-isomorphism. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For every i∈EInt, g_i:Cone(F_⊥→F_i)→F_i is a quasi-isomorphism. The corresponding
+short complex F_⊥→F_i→F_i is split short exact. -/
 theorem horizontalBottomMappingConeToStage_quasiIso (i : EInt) :
     QuasiIso (horizontalBottomMappingConeToStage K i) := by
   exact CochainComplex.mappingCone.quasiIso_descShortComplex
     (horizontalBottomStageShortComplex_shortExact K i)
 
-/-- Morphism between bottom-stage short complexes induced by a filtration
-inequality. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i≤j in EInt, the map between F_⊥→F_i→F_i and F_⊥→F_j→F_j has components
+F(id_⊥), F(i→j) and F(i→j), respectively. -/
 noncomputable def horizontalBottomStageShortComplexMap
     {i j : EInt} (h : i ≤ j) :
     horizontalBottomStageShortComplex K i ⟶
@@ -101,7 +123,10 @@ noncomputable def horizontalBottomStageShortComplexMap
     apply Subsingleton.elim
   comm₂₃ := by simp [horizontalBottomStageShortComplex]
 
-/-- Naturality of the bottom mapping-cone-to-stage maps. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i≤j, let M_{ij}:Cone(F_⊥→F_i)→Cone(F_⊥→F_j) be the induced cone map. Then
+M_{ij}≫g_j=g_i≫F(i→j). -/
 theorem horizontalBottomMappingConeToStage_naturality
     {i j : EInt} (h : i ≤ j) :
     (horizontalCompleteFiltrationMappingConeFunctor K).map
@@ -118,8 +143,11 @@ theorem horizontalBottomMappingConeToStage_naturality
     (horizontalBottomStageShortComplex K j)
     (horizontalBottomStageShortComplexMap K h)
 
-/-- Bottom-relative spectral-object homology is ordinary homology of the
-corresponding chain-complex stage. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i∈EInt and n : ℕ, the spectral-object relative cochain homology H^{-n}(⊥,i)
+is canonically isomorphic to H_n(G_i). The map first identifies homotopy-category and cone
+homology, then applies H^{-n}(g_i), and finally reindexes cochain degree -n to chain degree n. -/
 noncomputable def horizontalBottomRelativeHomologyStageIso
     (i : EInt) (n : ℕ) :
     ((horizontalCompleteFiltrationSpectralObject K).H (-(n : ℤ))).obj
@@ -149,7 +177,11 @@ noncomputable def horizontalBottomRelativeHomologyStageIso
       ComplexShape.embeddingDownNat (by simp)
   exact eCone ≪≫ eStage ≪≫ eExtend
 
-/-- Forward map of the bottom-relative/stage-homology isomorphism. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i∈EInt and n : ℕ, the forward map H^{-n}(⊥,i)→H_n(G_i) is the canonical
+homotopy-homology factor isomorphism to H^{-n}(Cone(F_⊥→F_i)), followed by H^{-n}(g_i), then the
+extension homology isomorphism H^{-n}(F_i)≅H_n(G_i). -/
 theorem horizontalBottomRelativeHomologyStageIso_hom
     (i : EInt) (n : ℕ) :
     (horizontalBottomRelativeHomologyStageIso K i n).hom =
@@ -164,8 +196,11 @@ theorem horizontalBottomRelativeHomologyStageIso_hom
           ComplexShape.embeddingDownNat (by simp)).hom := by
   simp [horizontalBottomRelativeHomologyStageIso]
 
-/-- Naturality of the bottom-relative/stage-homology isomorphism under every
-filtration-stage map. -/
+/-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
+Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
+i∈EInt; F_⊥=0. For i≤j and n : ℕ, let H_{ij} be the relative spectral homology map and e_i,e_j
+the bottom-relative/stage isomorphisms. Then H_{ij}≫e_j.hom=e_i.hom≫H_n(G_i→G_j), with relative
+degree -n and chain degree n. -/
 theorem horizontalBottomRelativeHomologyStageIso_naturality
     {i j : EInt} (h : i ≤ j) (n : ℕ) :
     ((horizontalCompleteFiltrationSpectralObject K).H (-(n : ℤ))).map

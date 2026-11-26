@@ -1,3 +1,5 @@
-# Matrix Cyclic Weibel Degree Map zero Corner
+# Stability of the degree-signed cyclic trace under zero extension
 
-Top-left zero extension commutes with the signed exterior trace degree maps.
+Stability of the degree-signed cyclic trace under zero extension.
+
+The exterior zero-extension map commutes with the degree-signed matrix trace map.

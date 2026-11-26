@@ -14,12 +14,19 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantStablePage
 public import MathlibExt.CategoryTheory.Abelian.DiagramLemmas.ImageQuotient
 
 /-!
-# The finite abutment as a nested-image quotient
+# Finite abutment as a quotient of nested stage images
 
-The fixed lower stage `-1` in the stable-page comparison is replaced by the
-literal bottom stage.  The resulting canonical abutment term is then computed
-from the exact long-homology sequence as a quotient of the image of stage `p`
-by the image of stage `p-1`, both taken in stage `p+q+1` homology.
+Let C be an abelian category and K a bicomplex indexed by two down ℕ shapes. Its complete
+horizontal filtration gives a cochain spectral object indexed by EInt. For p,q : ℕ put m=p+q,
+ℓ=(p:ℤ)−1 and u=m+1. Denote relative cochain homology from cut s to cut t by Hᵃ(s,t).
+
+The stages at bottom ⊥ and finite cut -1 are zero, so the finite abutment with lower cut -1 is
+canonically identified with the bottom-indexed E-object for ⊥≤ℓ≤p≤u, in degrees -m-1,-m,-m+1.
+For r≥1, r≥p+1 and r≥q+2, the page-r term at (p,q) is this canonical abutment term.
+
+The two incoming maps are a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and δ:H^{-m-1}(p,u)→H^{-m}(⊥,p). Exactness
+of δ followed by the upper-stage map b identifies coker[a,δ] with image b modulo image(a≫b),
+both images inside H^{-m}(⊥,u). The object and morphism universes of C are arbitrary.
 -/
 
 @[expose] public section
@@ -37,15 +44,20 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The middle filtration window lies between bottom and the finite upper
+/-- For p,q : ℕ, let ℓ=(p:ℤ)−1 and u=(p+q+1:ℤ), viewed as finite EInt cuts. Then ⊥≤ℓ and the finite
+cut p≤u. These inequalities locate the consecutive column cuts ℓ≤p between bottom and the upper
 abutment stage. -/
 theorem horizontalCanonicalAbutmentIndices_le (p q : ℕ) :
     (⊥ : EInt) ≤ horizontalFirstPageLowerIndex p ∧
       horizontalFirstPageUpperIndex p ≤ horizontalAbutmentUpperIndex p q :=
   ⟨bot_le, (horizontalAbutmentIndices_le p q).2⟩
 
-/-- Canonical finite abutment term whose lower index is the literal bottom
-stage. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. horizontalFirstQuadrantCanonicalAbutmentTerm is the spectral E-object for
+the cuts ⊥≤ℓ≤p≤u with consecutive cochain degrees -m-1,-m,-m+1. Its lower stage is the
+bottom cut ⊥. -/
 noncomputable abbrev horizontalFirstQuadrantCanonicalAbutmentTerm
     (p q : ℕ) : C :=
   let X := horizontalCompleteFiltrationSpectralObject K
@@ -56,7 +68,10 @@ noncomputable abbrev horizontalFirstQuadrantCanonicalAbutmentTerm
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
       (-((p + q : ℕ) : ℤ) + 1)
 
-/-- The cochain complex at the bottom filtration stage is zero. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. The cochain
+diagram object F_⊥ is a zero complex, since the bottom complete filtered total complex is zero
+and extension along the chain-to-cochain degree embedding preserves it. -/
 theorem horizontalCompleteFiltrationCochainDiagram_obj_isZero_bot :
     IsZero ((horizontalCompleteFiltrationCochainDiagram K).obj (⊥ : EInt)) := by
   change IsZero ((ComplexShape.embeddingDownNat.extendFunctor C).obj
@@ -65,7 +80,11 @@ theorem horizontalCompleteFiltrationCochainDiagram_obj_isZero_bot :
   exact (ComplexShape.embeddingDownNat.extendFunctor C).map_isZero
     HomologicalComplex.isZero_zero
 
-/-- Relative homology from bottom to the finite stage `-1` is zero. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The object H^{-m+1}(⊥,-1) is zero: both the bottom stage and the finite
+negative stage -1 of the complete cochain filtration are zero. -/
 theorem horizontalBottomToNegativeRelativeHomologyIsZero (p q : ℕ) :
     IsZero (((horizontalCompleteFiltrationSpectralObject K).H
       (-((p + q : ℕ) : ℤ) + 1)).obj
@@ -76,7 +95,12 @@ theorem horizontalBottomToNegativeRelativeHomologyIsZero (p q : ℕ) :
   · exact horizontalCompleteFiltrationCochainDiagram_obj_isZero_of_neg K
       (-1) (by omega)
 
-/-- Replace the finite zero lower stage of the abutment term by bottom. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The finite abutment term with lower cut -1 is canonically isomorphic to the
+bottom-indexed canonical abutment term. The spectral transport uses H^{-m+1}(⊥,-1)=0 and the
+consecutive degrees -m-1,-m,-m+1. -/
 noncomputable def horizontalFiniteToCanonicalAbutmentIso (p q : ℕ) :
     horizontalFirstQuadrantAbutmentTerm K p q ≅
       horizontalFirstQuadrantCanonicalAbutmentTerm K p q := by
@@ -102,7 +126,11 @@ noncomputable def horizontalFiniteToCanonicalAbutmentIso (p q : ℕ) :
     n₀ n₁ n₂
     (horizontalBottomToNegativeRelativeHomologyIsZero K p q) hn₁ hn₂).symm
 
-/-- Every sufficiently late page is canonically isomorphic to the
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. For r : ℤ satisfying 1≤r, p+1≤r and q+2≤r, the page-r object in bidegree
+(p,q) of the horizontal first-quadrant spectral sequence is canonically isomorphic to the
 bottom-indexed finite abutment term. -/
 noncomputable def horizontalStablePageCanonicalAbutmentIso
     (r : ℤ) (hr : 1 ≤ r) (p q : ℕ)
@@ -112,39 +140,46 @@ noncomputable def horizontalStablePageCanonicalAbutmentIso
   horizontalStablePageAbutmentIso K r hr p q hlower hupper ≪≫
     horizontalFiniteToCanonicalAbutmentIso K p q
 
-/-- Map from bottom to the filtration stage preceding column `p`. -/
+/-- For p : ℕ, horizontalCanonicalAbutmentLowerMap is the unique EInt order morphism ⊥→ℓ, with
+ℓ=(p:ℤ)−1. -/
 noncomputable abbrev horizontalCanonicalAbutmentLowerMap (p : ℕ) :
     (⊥ : EInt) ⟶ horizontalFirstPageLowerIndex p :=
   homOfLE bot_le
 
-/-- Inclusion of the two consecutive filtration stages around column `p`. -/
+/-- For p : ℕ, horizontalCanonicalAbutmentMiddleMap is the EInt inclusion ℓ→p for ℓ=(p:ℤ)−1. In
+particular the lower cut at p=0 is the integer -1. -/
 noncomputable abbrev horizontalCanonicalAbutmentMiddleMap (p : ℕ) :
     horizontalFirstPageLowerIndex p ⟶ horizontalFirstPageUpperIndex p :=
   homOfLE (horizontalFirstPageIndex_le p)
 
-/-- Inclusion of stage `p` into the finite upper abutment stage. -/
+/-- For p,q : ℕ, horizontalCanonicalAbutmentUpperMap is the EInt inclusion p→u with u=(p+q+1:ℤ). -/
 noncomputable abbrev horizontalCanonicalAbutmentUpperMap (p q : ℕ) :
     horizontalFirstPageUpperIndex p ⟶ horizontalAbutmentUpperIndex p q :=
   homOfLE (horizontalAbutmentIndices_le p q).2
 
-/-- Composite map from bottom to stage `p`. -/
+/-- For p : ℕ, horizontalCanonicalAbutmentLowerCompositeMap is the EInt order morphism ⊥→p, the
+composite of ⊥→(p−1) and (p−1)→p. -/
 noncomputable abbrev horizontalCanonicalAbutmentLowerCompositeMap (p : ℕ) :
     (⊥ : EInt) ⟶ horizontalFirstPageUpperIndex p :=
   homOfLE bot_le
 
-/-- Composite map from bottom to the finite upper abutment stage. -/
+/-- For p,q : ℕ, horizontalCanonicalAbutmentTotalMap is the EInt order morphism ⊥→u, with
+u=(p+q+1:ℤ). -/
 noncomputable abbrev horizontalCanonicalAbutmentTotalMap (p q : ℕ) :
     (⊥ : EInt) ⟶ horizontalAbutmentUpperIndex p q :=
   homOfLE bot_le
 
-/-- Composition formula for the lower two filtration maps. -/
+/-- For p : ℕ, composing horizontalCanonicalAbutmentLowerMap:⊥→p−1 with
+horizontalCanonicalAbutmentMiddleMap:p−1→p gives
+horizontalCanonicalAbutmentLowerCompositeMap:⊥→p. -/
 theorem horizontalCanonicalAbutmentLower_comp_middle (p : ℕ) :
     horizontalCanonicalAbutmentLowerMap p ≫
         horizontalCanonicalAbutmentMiddleMap p =
       horizontalCanonicalAbutmentLowerCompositeMap p :=
   Subsingleton.elim _ _
 
-/-- Composition formula from bottom through stage `p` to the upper stage. -/
+/-- For p,q : ℕ, the composite ⊥→p→p+q+1 equals the EInt order map ⊥→p+q+1, using the canonical
+abutment lower-composite and upper inclusions. -/
 theorem horizontalCanonicalAbutmentLowerComposite_comp_upper
     (p q : ℕ) :
     horizontalCanonicalAbutmentLowerCompositeMap p ≫
@@ -152,8 +187,11 @@ theorem horizontalCanonicalAbutmentLowerComposite_comp_upper
       horizontalCanonicalAbutmentTotalMap p q :=
   Subsingleton.elim _ _
 
-/-- Map on relative homology induced by the inclusion of stage `p-1` into
-stage `p`. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The cut inclusion ℓ→p induces a map a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p), named
+horizontalCanonicalAbutmentPreviousHomologyMap. -/
 noncomputable abbrev horizontalCanonicalAbutmentPreviousHomologyMap
     (p q : ℕ) :
     ((horizontalCompleteFiltrationSpectralObject K).H
@@ -170,8 +208,11 @@ noncomputable abbrev horizontalCanonicalAbutmentPreviousHomologyMap
         (horizontalCanonicalAbutmentLowerCompositeMap p)
         (horizontalCanonicalAbutmentLower_comp_middle p))
 
-/-- Connecting morphism from upper relative homology into stage-`p`
-homology. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The composition ⊥→p→u gives the connecting map δ:H^{-m-1}(p,u)→H^{-m}(⊥,p).
+Thus the connecting map raises the cochain degree by one. -/
 noncomputable abbrev horizontalCanonicalAbutmentBoundaryMap
     (p q : ℕ) :
     ((horizontalCompleteFiltrationSpectralObject K).H
@@ -185,7 +226,11 @@ noncomputable abbrev horizontalCanonicalAbutmentBoundaryMap
     (horizontalCanonicalAbutmentUpperMap p q)
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ)) (by omega)
 
-/-- Map from stage-`p` homology into homology of the finite upper stage. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The inclusion p→u induces b:H^{-m}(⊥,p)→H^{-m}(⊥,u), named
+horizontalCanonicalAbutmentToUpperHomologyMap. -/
 noncomputable abbrev horizontalCanonicalAbutmentToUpperHomologyMap
     (p q : ℕ) :
     ((horizontalCompleteFiltrationSpectralObject K).H
@@ -202,8 +247,11 @@ noncomputable abbrev horizontalCanonicalAbutmentToUpperHomologyMap
         (horizontalCanonicalAbutmentTotalMap p q)
         (horizontalCanonicalAbutmentLowerComposite_comp_upper p q))
 
-/-- The connecting morphism followed by the upper-stage homology map is
-zero. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. For δ:H^{-m-1}(p,u)→H^{-m}(⊥,p) and b:H^{-m}(⊥,p)→H^{-m}(⊥,u), the
+composite δ≫b is zero. -/
 theorem horizontalCanonicalAbutmentBoundary_comp_toUpper (p q : ℕ) :
     horizontalCanonicalAbutmentBoundaryMap K p q ≫
       horizontalCanonicalAbutmentToUpperHomologyMap K p q = 0 :=
@@ -214,7 +262,11 @@ theorem horizontalCanonicalAbutmentBoundary_comp_toUpper (p q : ℕ) :
     (horizontalCanonicalAbutmentLowerComposite_comp_upper p q)
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ)) (by omega)
 
-/-- Exactness at stage-`p` homology in the long homology sequence. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The sequence H^{-m-1}(p,u) —δ→ H^{-m}(⊥,p) —b→ H^{-m}(⊥,u) is exact at its
+middle object, so image δ equals kernel b. -/
 theorem horizontalCanonicalAbutmentBoundaryToUpper_exact (p q : ℕ) :
     (ShortComplex.mk
       (horizontalCanonicalAbutmentBoundaryMap K p q)
@@ -227,7 +279,12 @@ theorem horizontalCanonicalAbutmentBoundaryToUpper_exact (p q : ℕ) :
     (horizontalCanonicalAbutmentLowerComposite_comp_upper p q)
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ)) (by omega)
 
-/-- Cokernel presentation of the canonical finite abutment term. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The spectral cokernel sequence has incoming arrow [a,δ] from
+H^{-m}(⊥,ℓ)⊕H^{-m-1}(p,u) to H^{-m}(⊥,p), followed by the quotient map to the canonical abutment
+E-object. -/
 noncomputable abbrev horizontalCanonicalAbutmentCokernelSequence
     (p q : ℕ) : ShortComplex C :=
   (horizontalCompleteFiltrationSpectralObject K).cokernelSequenceE
@@ -239,7 +296,12 @@ noncomputable abbrev horizontalCanonicalAbutmentCokernelSequence
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
       (-((p + q : ℕ) : ℤ) + 1)
 
-/-- Exactness of the canonical abutment cokernel presentation. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The cokernel short complex with arrows [a,δ] and the canonical E-object
+quotient map is exact at H^{-m}(⊥,p). Its incoming images impose the preceding-stage and
+connecting-boundary relations. -/
 theorem horizontalCanonicalAbutmentCokernelSequence_exact (p q : ℕ) :
     (horizontalCanonicalAbutmentCokernelSequence K p q).Exact :=
   (horizontalCompleteFiltrationSpectralObject K).cokernelSequenceE_exact
@@ -251,8 +313,11 @@ theorem horizontalCanonicalAbutmentCokernelSequence_exact (p q : ℕ) :
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
       (-((p + q : ℕ) : ℤ) + 1)
 
-/-- The cokernel of the two incoming maps is the canonical finite abutment
-term. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and δ:H^{-m-1}(p,u)→H^{-m}(⊥,p). Then
+coker[a,δ] is canonically isomorphic to horizontalFirstQuadrantCanonicalAbutmentTerm K p q. -/
 noncomputable def horizontalCanonicalAbutmentCokernelIso (p q : ℕ) :
     cokernel (biprod.desc
       (horizontalCanonicalAbutmentPreviousHomologyMap K p q)
@@ -279,16 +344,24 @@ noncomputable def horizontalCanonicalAbutmentCokernelIso (p q : ℕ) :
   exact IsColimit.coconePointUniqueUpToIso
     hStandard hCanonical
 
-/-- Quotient of the stage-`p` image by the stage-`p-1` image inside finite
-upper-stage homology. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. For a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and b:H^{-m}(⊥,p)→H^{-m}(⊥,u),
+horizontalCanonicalAbutmentImageQuotient is coker(image(a≫b)→image b). Both images are taken in
+H^{-m}(⊥,u). -/
 noncomputable abbrev horizontalCanonicalAbutmentImageQuotient
     (p q : ℕ) : C :=
   cokernel (CategoryTheory.imageCompMap
     (horizontalCanonicalAbutmentPreviousHomologyMap K p q)
     (horizontalCanonicalAbutmentToUpperHomologyMap K p q))
 
-/-- The canonical finite abutment term is the quotient of the two nested
-images in finite upper-stage homology. -/
+/-- Let C be an abelian category in arbitrary object and morphism universes, K a bicomplex of shape
+(down ℕ,down ℕ), and F its complete horizontal cochain filtration indexed by EInt. For p,q : ℕ
+put m=p+q, ℓ=(p:ℤ)−1 and u=m+1. Write Hᵃ(s,t) for the spectral object's relative cochain
+homology of F_s→F_t. The canonical abutment term is isomorphic to image(H^{-m}(⊥,p)→H^{-m}(⊥,u))
+modulo image(H^{-m}(⊥,ℓ)→H^{-m}(⊥,u)). The long homology sequence identifies the connecting
+image with the upper-map kernel. -/
 noncomputable def horizontalCanonicalAbutmentImageQuotientIso
     (p q : ℕ) :
     horizontalFirstQuadrantCanonicalAbutmentTerm K p q ≅

@@ -1,4 +1,6 @@
-# Partial Total Stable Previous Image Filtration Iso
+# The preceding-image coordinate of the partial-total filtration
 
-The generic previous selected image is the predecessor partial-total
-homology filtration step.
+The preceding-image coordinate of the partial-total filtration.
+
+The preceding stable-step image identifies with the preceding filtration object, including the
+zero object at index `-1`.

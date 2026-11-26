@@ -1,4 +1,6 @@
-# Primitive Homology Comparison inclusion
+# The inclusion equation of the primitive homology comparison
 
-The CE primitive comparison followed by the kernel inclusion is precisely homology of the
-primitive inclusion.
+The inclusion equation of the primitive homology comparison.
+
+The comparison followed by the primitive-kernel inclusion equals homology of the CE primitive
+chain inclusion.

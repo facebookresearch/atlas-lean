@@ -1,4 +1,6 @@
-# Matrix Cyclic Homology Map comp connes
+# The cyclic quotient factorization of a matrix cyclic homology map
 
-Composing the finite matrix cyclic-homology map with the cyclic-to-Connes comparison gives the
-trace map on Connes homology.
+The cyclic quotient factorization of a matrix cyclic homology map.
+
+The map to cyclic homology followed by the cyclic-to-quotient comparison equals the trace map
+to cyclic quotient homology.

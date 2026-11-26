@@ -15,10 +15,16 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationRestric
 /-!
 # Bicomplex naturality of complete-filtration restriction
 
-The natural-index restriction of the complete horizontal-filtration diagram
-and the original finite filtration diagram are functorial in a first-quadrant
-bicomplex.  The objectwise complete/finite comparison isomorphisms assemble
-into a natural isomorphism between these diagram-valued functors.
+Let C be preadditive with a zero object and finite coproducts. For a bicomplex K of shape (down
+ℕ,down ℕ), write R_K(n)=G_{e(n)}(K) for the complete horizontal filtration restricted along the
+finite-cut embedding e:ℕ→ℤ∪{⊥,⊤}, and S_K(n)=G^fin_n(K) for the finite horizontal diagram. Both
+assignments are functors from first-quadrant bicomplexes to natural-index diagrams of chain
+complexes.
+
+The canonical stage isomorphisms ε_{K,n}:R_K(n)≅S_K(n) form a natural isomorphism R≅S of
+diagram-valued functors. Besides commuting with transitions in n, they satisfy
+R(f)_n≫ε_{L,n}.hom=ε_{K,n}.hom≫S(f)_n for every bicomplex morphism f:K→L. Category universes are
+arbitrary.
 -/
 
 @[expose] public section
@@ -39,8 +45,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- First-quadrant bicomplexes mapped to the natural-index restriction of
-their complete horizontal-filtration diagrams. -/
+/-- Let C be preadditive with a zero object and finite coproducts. This functor sends bicomplexes K
+of shape (down ℕ,down ℕ) to natural-index chain diagrams R_K(n)=G_{e(n)}(K), where e(n) is the
+finite integer cut n of the complete horizontal filtration. Diagram arrows are the
+complete-stage transitions, and a bicomplex morphism f:K→L is sent to the transformation with
+component G_{e(n)}(f) at n. -/
 noncomputable def horizontalCompleteTotalFiltrationNatRestrictionDiagramFunctor :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
         (ComplexShape.down ℕ) ⥤
@@ -75,8 +84,11 @@ noncomputable def horizontalCompleteTotalFiltrationNatRestrictionDiagramFunctor 
     rw [h]
     rfl
 
-/-- First-quadrant bicomplexes mapped to their original finite horizontal-
-filtration diagrams. -/
+/-- Let C be preadditive with a zero object and finite coproducts. This functor sends a bicomplex K
+of shape (down ℕ,down ℕ) to its finite horizontal filtration diagram S_K:ℕ→ChainComplex(C,ℕ),
+with S_K(n)=G^fin_n(K). An inequality n≤m gives the finite-stage transition, and a bicomplex map
+f:K→L gives the transformation with component G^fin_n(f). The assignments preserve identities
+and composition. -/
 noncomputable def horizontalTotalFiltrationDiagramFunctor :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
         (ComplexShape.down ℕ) ⥤
@@ -122,8 +134,11 @@ theorem horizontalTotalFiltrationDiagramFunctor_map_app
       horizontalFilteredTotalComplexMapOfBicomplex f n :=
   rfl
 
-/-- The complete/finite restriction comparison is natural in the
-bicomplex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. Let R_K(n)=G_{e(n)}(K) and
+S_K(n)=G^fin_n(K) for first-quadrant bicomplexes K, with e the embedding as finite integer cuts.
+The stage comparisons ε_{K,n}:R_K(n)≅S_K(n) define this natural isomorphism between the
+bicomplex-to-chain-diagram functors R and S. They commute with every index transition and
+satisfy R(f)_n≫ε_{L,n}.hom=ε_{K,n}.hom≫S(f)_n for every f:K→L. -/
 noncomputable def horizontalCompleteTotalFiltrationNatRestrictionNatIso :
     horizontalCompleteTotalFiltrationNatRestrictionDiagramFunctor (C := C) ≅
       horizontalTotalFiltrationDiagramFunctor (C := C) :=

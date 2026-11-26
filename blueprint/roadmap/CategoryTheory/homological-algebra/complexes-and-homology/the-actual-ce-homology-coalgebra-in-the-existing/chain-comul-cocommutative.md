@@ -1,3 +1,5 @@
-# Chain Comul cocommutative
+# Koszul cocommutativity after CE scalar-unit comparison
 
-The common-universe structure comparison preserves the Koszul cocommutativity equation.
+Koszul cocommutativity after CE scalar-unit comparison.
+
+The compared chain coproduct is unchanged by the tensor braiding with its graded Koszul signs.

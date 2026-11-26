@@ -15,14 +15,14 @@ module
 public import MathlibExt.Algebra.Homology.PartialTotalSpectralObject
 
 /-!
-# Vanishing on negative partial-total filtration intervals
+# Negative stages of the partial-total filtration
 
-The partial-total filtration is zero at every negative finite index.  Hence
-the mapping cone of a map between two such stages has zero homology, as does
-the corresponding `H`-object of the mapped spectral object.
+For a first-quadrant bicomplex `B` in an abelian category, the integer-indexed partial-total
+cochain filtration is zero at every negative finite index. A map between two such stages has a
+zero mapping cone, so its spectral-object homology vanishes in every integer degree.
 
-Only these filtration and spectral-object vanishing statements are asserted;
-no page or convergence theorem is stated here.
+The same vanishing holds for the interval from the bottom index to a negative finite stage,
+since the bottom filtration object is zero.
 -/
 
 @[expose] public section
@@ -43,8 +43,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- A negative finite stage of the cochain partial-total filtration is a zero
-object. -/
+/-- Negative finite partial-total cochain stage is zero.
+
+For an integer `z < 0`, the filtration object `B.partialTotalCochainFiltration.obj z` is a
+zero object. -/
 theorem isZero_partialTotalCochainFiltration_obj_of_neg
     (z : ℤ) (hz : z < 0) :
     IsZero (B.partialTotalCochainFiltration.obj (z : EInt)) := by
@@ -54,8 +56,10 @@ theorem isZero_partialTotalCochainFiltration_obj_of_neg
   exact CategoryTheory.Functor.isZero_nonnegativeIntObj_of_neg
     B.partialTotalFunctor z hz
 
-/-- The `H`-object of the mapped partial-total spectral object on an interval
-between negative finite filtration indices is zero in every degree. -/
+/-- Spectral-object homology between negative finite stages vanishes.
+
+Let `a ≤ b` be negative integers. For every integer degree `n`, the spectral-object homology
+of the interval `a ⟶ b` is zero, because both partial-total filtration stages are zero. -/
 theorem isZero_partialTotalSpectralObjectHObj_of_neg
     (n a b : ℤ) (hab : a ≤ b) (ha : a < 0) (hb : b < 0) :
     IsZero ((B.partialTotalSpectralObject.H n).obj
@@ -73,8 +77,10 @@ theorem isZero_partialTotalSpectralObjectHObj_of_neg
     ((CochainComplex.mappingCone f).sc n).isZero_homology_of_isZero_X₂ hConeX
   exact IsZero.of_iso hConeHom
     (B.partialTotalSpectralObjectHObjIso n hE)
-/-- A bottom-to-negative interval of the partial-total spectral object
-vanishes. -/
+/-- Spectral-object homology from bottom to a negative stage vanishes.
+
+For an integer `z < 0` and any integer degree `k`, the homology object of the interval `⊥ ⟶ z`
+in the partial-total spectral object is zero. -/
 theorem isZero_partialTotalSpectralObjectHObj_bot_to_neg
     (k z : ℤ) (hz : z < 0) :
     IsZero ((B.partialTotalSpectralObject.H k).obj

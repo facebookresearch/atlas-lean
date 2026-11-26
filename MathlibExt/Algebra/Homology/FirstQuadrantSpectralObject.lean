@@ -17,18 +17,16 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.SpectralObject
 public import MathlibExt.Algebra.Homology.FirstQuadrantFiltrationDiagram
 
 /-!
-# The spectral object of a first-quadrant total filtration
+# The mapping-cone spectral object of a horizontal filtration
 
-The canonical horizontal filtration of a first-quadrant total complex gives
-a spectral object through Mathlib's mapping-cone construction.  First, the
-filtered chain complexes are extended by zero to integer-indexed cochain
-complexes.  Precomposing the universal mapping-cone spectral object with this
-diagram gives a spectral object in the homotopy category.  In an abelian
-category, applying homology gives the corresponding abelian spectral object.
+Let C be a preadditive category with a zero object and finite coproducts, and K a bicomplex of
+shape (down ℕ,down ℕ). Reindex each horizontal chain stage G_i as an integer cochain complex
+F_i by placing degree n in degree −n and setting positive cochain degrees to zero.
 
-This file constructs the spectral object but makes no page-identification or
-convergence claim.  Those require a bounded-complete extension of the
-filtration index and separate comparison theorems.
+The cones Cone(F_i → F_j), for i≤j in ℕ, define a triangulated spectral object in the homotopy
+category. Its triangles are the cone composition triangles for i≤j≤k. When C is abelian,
+applying cochain homology gives an abelian spectral object whose relative terms are the
+homologies of these cones. Object and morphism universes remain independent.
 -/
 
 @[expose] public section
@@ -49,8 +47,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The horizontal filtration diagram, reindexed as integer cochain
-complexes by placing chain degree `n` in cochain degree `-n`. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts, and K a bicomplex of
+shape (down ℕ,down ℕ). Its horizontal filtration diagram G : ℕ → ChainComplex(C,ℕ) gives a
+diagram F : ℕ → CochainComplex(C,ℤ) by extension along n ↦ −n. Thus F_i has the term (G_i)_n
+in cochain degree −n and zero in positive cochain degrees. The maps F_i → F_j are the extended
+horizontal-stage inclusions for i≤j. -/
 noncomputable def horizontalFiltrationCochainDiagram :
     ℕ ⥤ CochainComplex C ℤ :=
   (horizontalTotalFiltration K).diagram ⋙
@@ -71,16 +72,23 @@ theorem horizontalFiltrationCochainDiagram_map
         ComplexShape.embeddingDownNat :=
   rfl
 
-/-- The mapping-cone spectral object of the horizontal filtration in the
-homotopy category of integer cochain complexes. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts, and K a bicomplex of
+shape (down ℕ,down ℕ). Let F_i be the horizontal stage G_i extended to an integer cochain
+complex by chain degree n ↦ cochain degree −n. Precomposing the mapping-cone spectral object
+with F gives a triangulated spectral object indexed by ℕ in HomotopyCategory(C,up ℤ). Its
+relative object for i≤j is the homotopy-category image of Cone(F_i → F_j), and its triangles
+come from composing two stage inclusions. -/
 noncomputable def horizontalFiltrationTriangulatedSpectralObject :
     CategoryTheory.Triangulated.SpectralObject
       (HomotopyCategory C (ComplexShape.up ℤ)) ℕ :=
   (HomotopyCategory.spectralObjectMappingCone C).precomp
     (horizontalFiltrationCochainDiagram K)
 
-/-- On a stage inequality, the triangulated spectral object is represented by
-the mapping cone of the corresponding extended filtration map. -/
+/-- Let C be a preadditive category with a zero object and finite coproducts, K a bicomplex of
+shape (down ℕ,down ℕ), and k,l ∈ ℕ with k≤l. The relative object of the horizontal
+triangulated spectral object at the arrow k→l is exactly the image of Cone(F_k → F_l) under
+the quotient functor to HomotopyCategory(C,up ℤ). Here F_i is the horizontal chain stage G_i
+extended to cochain degree −n from chain degree n. -/
 theorem horizontalFiltrationTriangulatedSpectralObject_ω₁_obj
     {k l : ℕ} (h : k ≤ l) :
     (horizontalFiltrationTriangulatedSpectralObject K).ω₁.obj
@@ -98,8 +106,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The abelian spectral object obtained by applying homology to the
-mapping-cone spectral object of the horizontal filtration. -/
+/-- Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). Applying the
+degree-zero homological functor on HomotopyCategory(C,up ℤ) to the horizontal mapping-cone
+triangulated spectral object gives an abelian spectral object indexed by ℕ. Its relative terms
+in degree s are given by cochain homology of Cone(F_i → F_j), where F_i is the integer cochain
+extension of horizontal stage G_i. The connecting maps are induced by the cone composition
+triangles. -/
 noncomputable def horizontalFiltrationSpectralObject :
     CategoryTheory.Abelian.SpectralObject C ℕ :=
   (horizontalFiltrationTriangulatedSpectralObject K).mapHomologicalFunctor

@@ -1,4 +1,6 @@
-# Horizontal Natural Succ Cochain Eval Iso
+# The finite splitting coordinates of a supported cochain degree
 
-In every supported degree, the natural consecutive-stage cochain
-sequence is the previously constructed split degreewise sequence.
+The finite splitting coordinates of a supported cochain degree.
+
+Evaluation of the natural cochain sequence at degree `-(p+1)-q` is isomorphic to the finite
+total-degree sequence at `p+1+q`.

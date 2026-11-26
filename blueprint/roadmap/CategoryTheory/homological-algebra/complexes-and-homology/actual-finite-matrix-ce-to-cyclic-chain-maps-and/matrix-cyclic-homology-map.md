@@ -1,3 +1,6 @@
-# Matrix Cyclic Homology Map
+# The finite matrix CE map into cyclic homology
 
-The HC lift through the rational first-column comparison.
+The finite matrix CE map into cyclic homology.
+
+Follow the cyclic quotient homology map by the inverse rational comparison `HC_n(A) ≅
+H_n(Cλ(A))`.

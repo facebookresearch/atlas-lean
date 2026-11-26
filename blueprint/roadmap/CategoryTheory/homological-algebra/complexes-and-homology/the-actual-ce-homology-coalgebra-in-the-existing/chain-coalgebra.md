@@ -1,4 +1,6 @@
-# Chain Coalgebra
+# The CE chain coalgebra in the module tensor category
 
-The CE coalgebra under the common-universe tensor structure. Its carrier is the unchanged
-canonical CE chain complex.
+The CE chain coalgebra in the module tensor category.
+
+The scalar-unit comparison carries the lifted-unit coalgebra to the module chain category,
+retaining its canonical CE carrier.

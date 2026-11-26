@@ -12,12 +12,18 @@ public import MathlibExt.Algebra.Category.ModuleCat.DirectLimit
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CanonicalStableMatrix
 
 /-!
-# The stable matrix module as a colimit
+# The stable matrix module is the directed finite-matrix colimit
 
-For a commutative ring `k` and a unital `k`-algebra `A`, finite square matrix
-modules form a diagram indexed by `ℕ` under top-left zero extension. Their
-colimit is the underlying `k`-module of the stable matrix algebra, with
-cocone legs given by the finite-stage inclusions.
+Let k be a commutative ring and A an associative unital k-algebra.
+The k-modules Mat_m(A), m ∈ ℕ, form a diagram with top-left zero-extension
+transitions. The underlying k-module of Mat_∞(A), with finite-stage
+inclusions i_m, is their colimit.
+
+Every compatible family of k-linear maps f_m : Mat_m(A) → T factors
+through a unique k-linear map Mat_∞(A) → T sending i_m(X) to f_m(X).
+The diagram and its colimit lie in ModuleCat^v(k), the world of the
+algebra carrier, independently of the ring world u. Matrix size zero
+is included in the diagram.
 -/
 
 @[expose] public section
@@ -32,7 +38,10 @@ namespace ChevalleyEilenberg
 
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- Finite matrix modules and their top-left zero-extension maps. -/
+/-- For a commutative ring k and an associative unital
+k-algebra A, the functor ℕ → ModuleCat^v(k) sends m to Mat_m(A).
+The morphism m ≤ n is the k-linear top-left zero extension
+Mat_m(A) → Mat_n(A). -/
 def matrixModuleFunctor : ℕ ⥤ ModuleCat.{v} k where
   obj m := ModuleCat.of k (Matrix (Fin m) (Fin m) A)
   map h := ModuleCat.ofHom (Matrix.zeroExtendLinear (k := k) (A := A) (leOfHom h))
@@ -50,7 +59,10 @@ def matrixModuleFunctor : ℕ ⥤ ModuleCat.{v} k where
       Matrix.zeroExtend (leOfHom h') (Matrix.zeroExtend (leOfHom h) x)
     exact (Matrix.zeroExtend_comp (leOfHom h) (leOfHom h') x).symm
 
-/-- The cocone on the stable matrix module given by the finite-stage inclusions. -/
+/-- For a commutative ring k and an associative unital
+k-algebra A, the maps i_m : Mat_m(A) → Mat_∞(A), viewed as
+k-linear maps, form a cocone on the finite matrix module diagram.
+Its point is the underlying module of the stable nonunital algebra. -/
 def canonicalStableMatrixModuleCocone : Cocone (matrixModuleFunctor k A) where
   pt := ModuleCat.of k (canonicalStableMatrixAlgebra k A)
   ι :=
@@ -67,7 +79,11 @@ def canonicalStableMatrixModuleCocone : Cocone (matrixModuleFunctor k A) where
           (f := fun m n h => Matrix.zeroExtendAlgHom (k := k) (A := A) h)
           (i := m) (j := n) (leOfHom h) x }
 
-/-- The finite-stage cocone on the stable matrix module is colimiting. -/
+/-- For a commutative ring k and an associative unital
+k-algebra A, the finite-stage cocone on Mat_∞(A) is colimiting
+in ModuleCat^v(k). A compatible family of maps Mat_m(A) → T
+therefore extends uniquely to Mat_∞(A) → T, with value f_m(X)
+on the finite-stage element i_m(X). -/
 def canonicalStableMatrixModuleIsColimit : IsColimit (canonicalStableMatrixModuleCocone k A) := by
   let hg (s : Cocone (matrixModuleFunctor k A)) :
       ∀ (m n : ℕ) (h : m ≤ n) (x : Matrix (Fin m) (Fin m) A),

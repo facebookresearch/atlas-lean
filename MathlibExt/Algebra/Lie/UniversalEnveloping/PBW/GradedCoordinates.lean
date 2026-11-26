@@ -17,13 +17,15 @@ public import MathlibExt.LinearAlgebra.Filtration.Exactness
 public import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
-# Coordinates on adjacent PBW filtration quotients
+# Coordinates on positive adjacent enveloping quotients
 
-For a chosen ordered basis, the highest homogeneous PBW coordinate projection on filtration
-degree q + 1 has the preceding filtration stage as its kernel.
+For an R-Lie algebra L over a commutative ring R and an ordered basis b : Basis I R L, the
+highest homogeneous PBW projection on D_{q+1} has kernel D_q inside that stage and is
+surjective onto homogeneous polynomials of degree q+1.
 
-The induced linear equivalence identifies the adjacent filtration quotient with homogeneous
-polynomials of degree q + 1.
+It therefore induces an R-linear equivalence D_{q+1}/D_q ≃ MvPolynomial_homogeneous(q+1) for
+every q ∈ ℕ. The quotient is the positive adjacent filtration layer, with the degree index q+1
+retained explicitly.
 -/
 
 @[expose] public section
@@ -41,7 +43,10 @@ variable {R : Type u} [CommRing R]
 local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "P" => MvPolynomial I R
 
-/-- The highest homogeneous polynomial projection on a enveloping algebra stage. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, b : Basis I R L with LinearOrder I, and q ∈
+ℕ. Define the R-linear map D_{q+1} → MvPolynomial.homogeneousSubmodule I R (q+1) by taking the
+degree-(q+1) homogeneous component of the PBW polynomial coordinate. This is the top-degree
+projection on that positive filtration stage. -/
 def gradedProjection (b : Module.Basis I R L) (q : ℕ) :
     UniversalEnvelopingAlgebra.degreeFiltration R L (q + 1) →ₗ[R]
       MvPolynomial.homogeneousSubmodule I R (q + 1) where
@@ -60,8 +65,10 @@ def gradedProjection (b : Module.Basis I R L) (q : ℕ) :
       (RingHom.id R) r • MvPolynomial.homogeneousComponent (q + 1) (polynomialCoordinates b u.val)
     simp only [map_smul, RingHom.id_apply]
 
-/-- The highest component kernel is exactly the previous filtration stage, inside the upper-stage
-carrier. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R and q ∈ ℕ,
+the kernel of the degree-(q+1) PBW projection on D_{q+1} is {u ∈ D_{q+1} | u ∈ D_q}. It is the
+inverse image of D_q under the subtype inclusion D_{q+1} → U_R(L), so the kernel is expressed
+in the upper-stage carrier. -/
 theorem gradedProjection_ker (b : Module.Basis I R L) (q : ℕ) :
     LinearMap.ker (gradedProjection b q) =
       (UniversalEnvelopingAlgebra.degreeFiltration R L q).comap
@@ -82,7 +89,10 @@ theorem gradedProjection_ker (b : Module.Basis I R L) (q : ℕ) :
     exact (MvPolynomial.mem_restrictTotalDegree_iff_highestComponent_zero q _ hupper).mp
       ((polynomialCoordinates_mem_degree_iff b q u.val).mpr hu)
 
-/-- Every homogeneous polynomial has an enveloping algebra preimage in the degree stage. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, b : Basis I R L with LinearOrder I, and q ∈
+ℕ. Every homogeneous polynomial of degree q+1 in MvPolynomial I R is the degree-(q+1)
+homogeneous PBW coordinate of some u ∈ D_{q+1}. Thus the highest-coordinate projection on this
+positive stage is surjective. -/
 theorem gradedProjection_surjective (b : Module.Basis I R L) (q : ℕ) :
     Function.Surjective (gradedProjection b q) := by
   intro p
@@ -97,8 +107,10 @@ theorem gradedProjection_surjective (b : Module.Basis I R L) (q : ℕ) :
   rw [show polynomialCoordinates b u = p.val from (polynomialCoordinates b).apply_symm_apply p.val]
   exact MvPolynomial.homogeneousComponent_eq_self p.property
 
-/-- The linear equivalence from the adjacent enveloping filtration quotient to homogeneous
-polynomials of degree q + 1. -/
+/-- For an ordered basis b : Basis I R L over a commutative ring R and q ∈ ℕ, the top PBW
+projection induces D_{q+1}/D_q ≃ₗ[R] MvPolynomial.homogeneousSubmodule I R (q+1). The
+denominator is considered inside D_{q+1}, as in Submodule.FiltrationLayer. The equivalence
+sends a representative to its degree-(q+1) homogeneous polynomial coordinate. -/
 def gradedEquiv (b : Module.Basis I R L) (q : ℕ) :
     Submodule.FiltrationLayer (UniversalEnvelopingAlgebra.degreeFiltration R L) q ≃ₗ[R]
       MvPolynomial.homogeneousSubmodule I R (q + 1) :=

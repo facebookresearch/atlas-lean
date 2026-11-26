@@ -1,5 +1,6 @@
-# Em Augmented Nat Iso
+# Forgotten free bars and regular monadic bars are naturally isomorphic
 
-Packaged natural isomorphism between the postcomposed-module underlying
-augmented functor and the resolution augmented functor, via
-`NatIso.ofComponents`. Postcomposed-module model, not the literal forgetful image.
+For a monad T on C, the functor emUnderlyingAugmentedFunctor is naturally isomorphic to
+resolutionAugmentedFunctor as functors T.Algebra → SimplicialObject.Augmented C. At alg the
+component is emAugmentedIso(alg), induced by the forgotten-free-to-regular right-module
+isomorphism and identity left-module comparison.

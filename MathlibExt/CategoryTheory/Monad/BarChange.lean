@@ -15,30 +15,17 @@ module
 public import MathlibExt.CategoryTheory.Monad.BarFunctorial
 
 /-!
-# Same-carrier monad-change for iterated powers and the two-sided bar
+# Changing the monad in a two-sided bar
 
-For `h : T ⟶ S` in `Monad C` define `monadPowHom h n : monadPow T n ⟶ monadPow S n`
-recursively, with zero/successor component formulas and identity/composition laws.
+Let T,S be monads on a category C and h : T → S a monad morphism. The natural maps h^n : T^n →
+S^n commute with unit insertions and multiplication of adjacent factors. For a right S-module
+R : C → D and a left S-module L : A → C, restricting both actions along h gives a simplicial
+map B(h*R,T,h*L) → B(R,S,L). In degree n at a ∈ A it is R(h^n_{L(a)}).
 
-Compatibility: `ηᵀ(n,i) ≫ hⁿ⁺¹ = hⁿ ≫ ηˢ(n,i)` and `μᵀ(n,i) ≫ hⁿ = hⁿ⁺¹ ≫ μˢ(n,i)`
-via `monadPowHom_etaAtPos_app` / `monadPowHom_muAtPos_app`, plus reversed
-wrappers `monadPowHom_barEtaAtPos_app` and `monadPowHom_barMuAtPos_app`.
-
-Then, for `h : T ⟶ S` and `S`-modules `R` and `L`, define the degreewise
-`barChangeMap h R L n` from
-`barObj T (rightModuleRestrictAlongHom h R) (leftModuleRestrictAlongHom h L) n`
-to `barObj S R L n`, with component `R.map ((monadPowHom h n).app (L.obj a))`.
-Prove component formula, compatibility with every `barDegeneracy`, middle,
-right-endpoint, and left-endpoint `barFace`s, and the unified face theorem
-`barChangeMap_barFace`. Package the data-level `barChangeDataHom` and genuine
-`barChangeHom`, with identity/composition via the restriction isos
-`barDataRestrictIdIso` / `barDataRestrictCompIso` and
-`twoSidedBarRestrictIdIso` / `twoSidedBarRestrictCompIso`.
-Fixed-`h` naturality is packaged as `barChangeNatTrans`, with simp coherence
-`barChangeNatTrans_id_app` / `barChangeNatTrans_comp_app` reusing the
-`barChangeHom` laws.
-Same-carrier only: no carrier change, outer whiskering, or objectwise
-evaluation comparison.
+The bar maps preserve identity and composition through the canonical isomorphisms for identity
+and composite module restriction. They are natural, covariantly in both module variables. The
+three categories may have independent object and morphism universes; T and S act on the same
+base category C.
 -/
 
 @[expose] public section
@@ -50,7 +37,10 @@ universe v₁ u₁
 
 variable {C : Type u₁} [Category.{v₁} C]
 
-/-- Iterated power comparison along a monad morphism. -/
+/-- Let C be a category and h : T → S a monad morphism on C. Define natural transformations h^n :
+T^n → S^n recursively by h^0=id and h^{n+1}=h horizontally composed with h^n. Here T^n and S^n
+are monadPow at n. This is the comparison obtained by applying h to every one of the n monad
+factors. -/
 noncomputable def monadPowHom {T S : Monad C} (h : T ⟶ S) :
     (n : ℕ) → monadPow T n ⟶ monadPow S n
   | 0 => 𝟙 _
@@ -68,7 +58,9 @@ lemma monadPowHom_succ {T S : Monad C} (h : T ⟶ S) (n : ℕ) :
 lemma monadPowHom_zero_app {T S : Monad C} (h : T ⟶ S) (X : C) :
     (monadPowHom h 0).app X = 𝟙 X := rfl
 
-/-- Successor component formula (definitional `hcomp` form). -/
+/-- Let h : T → S be a monad morphism on a category C, n ∈ ℕ, and X ∈ C. The power comparison
+satisfies h^{n+1}_X = h^n_{T(X)} ≫ S^n(h_X). The first map compares the n inner powers at
+T(X), and the second applies S^n to the remaining component h_X. -/
 @[simp]
 lemma monadPowHom_succ_app {T S : Monad C} (h : T ⟶ S) (n : ℕ) (X : C) :
     (monadPowHom h (n + 1)).app X =
@@ -77,7 +69,9 @@ lemma monadPowHom_succ_app {T S : Monad C} (h : T ⟶ S) (n : ℕ) (X : C) :
       (h.toNatTrans ◫ monadPowHom h n).app X := rfl
   rw [hdef, NatTrans.hcomp_app]
 
-/-- Alternative successor formula via naturality of the recursive comparison. -/
+/-- For a monad morphism h : T → S on C, n ∈ ℕ, and X ∈ C, h^{n+1}_X = T^n(h_X) ≫ h^n_{S(X)}. This
+is the naturality form of the successor comparison, applying the source power to h_X before
+comparing the n remaining powers. -/
 lemma monadPowHom_succ_app' {T S : Monad C} (h : T ⟶ S) (n : ℕ) (X : C) :
     (monadPowHom h (n + 1)).app X =
       (monadPow T n).map (h.app X) ≫ (monadPowHom h n).app (S.obj X) := by
@@ -103,7 +97,9 @@ lemma monadPowHom_naturality_assoc {T S : Monad C} (h : T ⟶ S) (n : ℕ)
       (monadPowHom h n).app X ≫ (monadPow S n).map f ≫ g := by
   rw [← Category.assoc, monadPowHom_app_naturality, Category.assoc]
 
-/-- Identity law: comparison along `𝟙 T` is identity. -/
+/-- For a monad T on a category C and n ∈ ℕ, the power comparison induced by the identity monad
+morphism equals id_{T^n}. Thus monadPowHom(𝟙_T,n) is the identity natural transformation of
+monadPow T n. -/
 @[simp]
 theorem monadPowHom_id (T : Monad C) (n : ℕ) :
     monadPowHom (𝟙 T : T ⟶ T) n = 𝟙 (monadPow T n) := by
@@ -119,7 +115,9 @@ theorem monadPowHom_id (T : Monad C) (n : ℕ) :
     rw [h_succ, ih]
     simp
 
-/-- Composition law: comparison along `h ≫ k` composes. -/
+/-- Let h : T → S and k : S → U be monad morphisms on the same category C. For every n ∈ ℕ, (h ≫
+k)^n = h^n ≫ k^n as natural transformations T^n → U^n. The equality compares the n-fold power
+map of the composite with the composite of the two power comparisons. -/
 @[simp]
 theorem monadPowHom_comp {T S U : Monad C} (h : T ⟶ S) (k : S ⟶ U) (n : ℕ) :
     monadPowHom (h ≫ k) n = monadPowHom h n ≫ monadPowHom k n := by
@@ -473,7 +471,12 @@ lemma barChangeMap_app {T S : Monad C} {D : Type u₂} [Category.{v₂} D] {A : 
     (barChangeMap (D := D) (A := A) h R L n).app a =
       R.functor.map ((monadPowHom h n).app (L.functor.obj a)) := rfl
 
-/-! Degeneracy compatibility – uses `monadPowHom_barEtaAtPos_app` and `rfl` restriction lemmas -/
+/-!
+For a monad morphism h : T → S on C, a right S-module R : C → D, and a left S-module L : A →
+C, the maps c_n=R(h^n_{L(-)}) commute with every bar degeneracy. Thus c_n ≫ s_i^S = s_i^T ≫
+c_{n+1} for i ∈ Fin(n+1), where the source actions are restricted along h and s_i inserts a
+monad unit.
+-/
 
 theorem barChangeMap_barDegeneracy (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) (i : Fin (n + 1)) :
@@ -500,8 +503,11 @@ theorem barChangeMap_barDegeneracy (h : T ⟶ S) (R : RightModule S D)
             R.functor.map ((monadPowHom h (n + 1)).app (L.functor.obj a)) := by
           rw [R.functor.map_comp]
 
-/-! Middle faces (inner multiplications) – uses `monadPowHom_barMuAtPos_app`
-and `rfl` restriction lemmas -/
+/-!
+For h : T → S and S-modules R,L, the degreewise bar-change maps commute with each middle face.
+These faces multiply two adjacent monad factors, and the identity is the compatibility of h^n
+with the multiplication insertions of T and S.
+-/
 
 theorem barChangeMap_barFace_middle (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) (k : Fin n) :
@@ -565,7 +571,12 @@ theorem barChangeMap_barFace_middle (h : T ⟶ S) (R : RightModule S D)
             R.functor.map ((monadPowHom h n).app (L.functor.obj a)) := by
           rw [R.functor.map_comp]
 
-/-! Right endpoint `d₀` – reusable `rightActionPow` after restriction -/
+/-!
+Let h : T → S be a monad morphism and R : C → D a right S-module. For n ∈ ℕ and X ∈ C,
+R(h^{n+1}_X) followed by the iterated S-action equals the iterated action of the restricted
+T-module followed by R(h^n_X). This is the right-action compatibility used at the first bar
+face.
+-/
 
 theorem rightActionPow_restrictAlongHom {T S : Monad C} {D : Type u₂} [Category.{v₂} D]
     (h : T ⟶ S) (R : RightModule S D) (n : ℕ) (X : C) :
@@ -656,7 +667,11 @@ theorem rightActionPow_restrictAlongHom {T S : Monad C} {D : Type u₂} [Categor
     exact step1.trans (step2.trans (step3.trans (step4.trans
       (step5.trans (step6.trans step7')))))
 
-/-! Right endpoint compatibility `d₀` -/
+/-!
+The bar-change map commutes with the right endpoint face d_0. For every n, c_{n+1} ≫ d_0^S =
+d_0^T ≫ c_n, where the source right-module action is restricted along the monad morphism and c
+is the degreewise map induced by h^n.
+-/
 
 theorem barChangeMap_barFace_zero (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) :
@@ -670,7 +685,11 @@ theorem barChangeMap_barFace_zero (h : T ⟶ S) (R : RightModule S D)
   simp only [barChangeMap_app, NatTrans.comp_app, barFace_right]
   exact rightActionPow_restrictAlongHom (D := D) h R n (L.functor.obj a)
 
-/-! Left endpoint compatibility `d_{n+1}` -/
+/-!
+The bar-change map commutes with the left endpoint face d_{n+1}. For every n, c_{n+1} ≫
+d_{n+1}^S = d_{n+1}^T ≫ c_n, using the left S-module action and its restriction along h : T →
+S.
+-/
 
 theorem barChangeMap_barFace_last (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) :
@@ -713,7 +732,11 @@ theorem barChangeMap_barFace_last (h : T ⟶ S) (R : RightModule S D)
     _ = R.functor.map ((monadPow T n).map (h.app (L.functor.obj a) ≫ L.action.app a)) ≫
           R.functor.map ((monadPowHom h n).app (L.functor.obj a)) := by rw [R.functor.map_comp]
 
-/-! Unified face compatibility for arbitrary `j : Fin (n+2)` -/
+/-!
+For a monad morphism h : T → S and right and left S-modules R,L, the degreewise change maps
+satisfy c_{n+1} ≫ d_j^S = d_j^T ≫ c_n for every n ∈ ℕ and j ∈ Fin(n+2). This includes the two
+endpoint faces and every middle multiplication face.
+-/
 
 theorem barChangeMap_barFace (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) (j : Fin (n + 2)) :
@@ -744,7 +767,11 @@ theorem barChangeMap_barFace (h : T ⟶ S) (R : RightModule S D)
       rw [hj_eq]
       exact barChangeMap_barFace_middle h R L n k
 
-/-! Packaged data-level morphism -/
+/-!
+The degree maps c_n=R(h^n_{L(-)}) and their face and degeneracy equations define a morphism of
+two-sided bar simplicial data from the T-bar of the restricted modules to the S-bar of R,L.
+Passing to simplicial objects gives the same degreewise maps.
+-/
 
 noncomputable def barChangeDataHom {T S : Monad C} (h : T ⟶ S)
     (R : RightModule S D) (L : LeftModule A S) :
@@ -778,8 +805,11 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S : Monad C}
 
-/-- Genuine simplicial morphism induced by a same-carrier monad change,
-via the generic `Data.toSimplicialObject` transport. -/
+/-- Let C,A,D be categories, h : T → S a monad morphism on C, R : C → D a right S-module, and L :
+A → C a left S-module. Restrict their actions along h to obtain T-modules h*R,h*L. There is a
+simplicial morphism B(h*R,T,h*L) → B(R,S,L) in A ⥤ D, with degree-n component at a given by
+R(h^n_{L(a)}). It commutes with all unit-insertion degeneracies and with the right-action,
+middle-multiplication, and left-action faces. -/
 noncomputable def barChangeHom (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) :
     twoSidedBar T ((rightModuleRestrictAlongHom (D := D) h).obj R)
@@ -888,8 +918,10 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S U : Monad C}
 
-/-- Canonical identity restriction iso for bar data, induced by `barDataIso`
-and the module `restrictAlongHomIdIso` components whose underlying maps are identities. -/
+/-- Let T be a monad on C, R : C → D a right T-module, and L : A → C a left T-module. The bar data
+of their restrictions along id_T are canonically isomorphic to B(R,T,L). The comparison uses
+the module identity-restriction isomorphisms and is the identity on each degree object
+R(T^n(L(a))), preserving faces and degeneracies. -/
 noncomputable def barDataRestrictIdIso (R : RightModule T D) (L : LeftModule A T) :
     barData T ((rightModuleRestrictAlongHom (D := D) (𝟙 T)).obj R)
       ((leftModuleRestrictAlongHom (A := A) (𝟙 T)).obj L) ≅ barData T R L :=
@@ -926,11 +958,11 @@ theorem barDataRestrictIdIso_inv_app_app (R : RightModule T D) (L : LeftModule A
     ((barDataRestrictIdIso (D := D) (A := A) (T := T) R L).inv.app n).app a = 𝟙 _ := by
   simp
 
-/-- Canonical composition restriction iso for bar data, induced by `barDataIso`
-and the accepted `restrictAlongHomCompIso` components.
-We respect the accepted orientation
-`restrictAlongHomCompIso h k : restrict (h ≫ k) ≅ restrict k ⋙ restrict h`,
-so the iso goes from the composite restriction to the iterated restriction. -/
+/-- Let h : T → S and k : S → U be monad morphisms on C, and R : C → D and L : A → C be U-modules.
+The T-bar data of the restrictions along h≫k are canonically isomorphic to the T-bar data
+obtained by restricting first along k and then along h. The isomorphism is oriented from
+composite restriction to iterated restriction and uses identity maps on the degree carriers
+R(T^n(L(a))). -/
 noncomputable def barDataRestrictCompIso (h : T ⟶ S) (k : S ⟶ U)
     (R : RightModule U D) (L : LeftModule A U) :
     barData T ((rightModuleRestrictAlongHom (D := D) (h ≫ k)).obj R)
@@ -985,9 +1017,9 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S U : Monad C}
 
-/-- Data-level identity law: `barChangeDataHom (𝟙 T)` coincides with the
-canonical restriction identity iso. No equality of differently restricted module
-objects is asserted; we compare via `barDataRestrictIdIso`. -/
+/-- For a monad T on C, a right T-module R : C → D, and a left T-module L : A → C, the bar-data
+map induced by id_T equals the forward map of barDataRestrictIdIso(R,L). Its source is the
+T-bar of the identity-restricted modules and its target is the T-bar of R,L. -/
 theorem barChangeDataHom_id (R : RightModule T D) (L : LeftModule A T) :
     barChangeDataHom (D := D) (A := A) (𝟙 T) R L =
       (barDataRestrictIdIso (D := D) (A := A) (T := T) R L).hom := by
@@ -997,18 +1029,10 @@ theorem barChangeDataHom_id (R : RightModule T D) (L : LeftModule A T) :
     barDataRestrictIdIso_hom_app, barData_obj_n]
   rfl
 
-/-- Data-level composition law for same-carrier monad change.
-
-For `h : T ⟶ S`, `k : S ⟶ U`, the composite
-
-`(barDataRestrictCompIso h k R L).hom ≫ barChangeDataHom h (restrict k R) (restrict k L) ≫
-  barChangeDataHom k R L`
-
-coincides with `barChangeDataHom (h ≫ k) R L`.
-
-The proof is extensional degreewise and reduces to
-`barDataRestrictCompIso_hom_app` (the restriction iso is identity degreewise)
-and `barChangeMap_comp`. -/
+/-- Let h : T → S, k : S → U be monad morphisms on C and R,L be right and left U-modules with
+functors C → D and A → C. Let e identify the T-bar of the composite restrictions with the
+T-bar of h*(k*R),h*(k*L). Then e.hom ≫ c_h(k*R,k*L) ≫ c_k(R,L) = c_{h≫k}(R,L) as bar-data
+morphisms. Each c is the power-induced bar-change map. -/
 theorem barChangeDataHom_comp (h : T ⟶ S) (k : S ⟶ U)
     (R : RightModule U D) (L : LeftModule A U) :
     (barDataRestrictCompIso (D := D) (A := A) h k R L).hom ≫
@@ -1047,8 +1071,10 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S U : Monad C}
 
-/-- Genuine identity restriction iso, obtained functorially from `barDataRestrictIdIso`
-via `Data.toSimplicialFunctor`. -/
+/-- For a monad T on C and T-modules R : C → D and L : A → C, the two-sided bar of the modules
+restricted along id_T is canonically isomorphic to B(R,T,L) as a simplicial object of A ⥤ D.
+The isomorphism is induced by the identity-restriction module comparisons and has identity
+degree components. -/
 noncomputable def twoSidedBarRestrictIdIso (R : RightModule T D) (L : LeftModule A T) :
     twoSidedBar T ((rightModuleRestrictAlongHom (D := D) (𝟙 T)).obj R)
       ((leftModuleRestrictAlongHom (A := A) (𝟙 T)).obj L) ≅
@@ -1056,9 +1082,10 @@ noncomputable def twoSidedBarRestrictIdIso (R : RightModule T D) (L : LeftModule
   (SimplicialObject.Data.toSimplicialFunctor (C := A ⥤ D)).mapIso
     (barDataRestrictIdIso (D := D) (A := A) (T := T) R L)
 
-/-- Genuine composite-restriction iso, obtained functorially from `barDataRestrictCompIso`.
-It preserves the composite-to-iterated orientation:
-`restrict (h ≫ k) ≅ restrict k ⋙ restrict h` at the bar level. -/
+/-- Let h : T → S and k : S → U be monad morphisms on C, and R : C → D and L : A → C be U-modules.
+There is a simplicial isomorphism from the T-bar of the modules restricted along h≫k to the
+T-bar of the modules restricted first along k and then along h. It retains the
+composite-to-iterated direction and has identity components on the common degree objects. -/
 noncomputable def twoSidedBarRestrictCompIso {S U : Monad C} (h : T ⟶ S) (k : S ⟶ U)
     (R : RightModule U D) (L : LeftModule A U) :
     twoSidedBar T ((rightModuleRestrictAlongHom (D := D) (h ≫ k)).obj R)
@@ -1161,9 +1188,9 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S U : Monad C}
 
-/-- Genuine identity law: `barChangeHom (𝟙 T)` equals the identity-restriction iso hom.
-
-Derived functorially from `barChangeDataHom_id` via `Data.toSimplicialFunctor`. -/
+/-- Let T be a monad on C, R : C → D a right T-module, and L : A → C a left T-module. The
+simplicial bar-change map induced by id_T equals the forward identity-restriction isomorphism
+from B(id_T*R,T,id_T*L) to B(R,T,L). This is an equality of simplicial morphisms. -/
 theorem barChangeHom_id (R : RightModule T D) (L : LeftModule A T) :
     barChangeHom (D := D) (A := A) (𝟙 T) R L =
       (twoSidedBarRestrictIdIso (D := D) (A := A) (T := T) R L).hom := by
@@ -1178,11 +1205,10 @@ theorem barChangeHom_id (R : RightModule T D) (L : LeftModule A T) :
         (barDataRestrictIdIso (D := D) (A := A) (T := T) R L).hom := rfl
   rw [h_functor_hom, barChangeDataHom_id]
 
-/-- Genuine composition law: composite-restriction iso hom followed by two genuine
-bar-change maps for `h` and `k` equals the genuine bar-change map for `h ≫ k`.
-
-Derived functorially from `barChangeDataHom_comp` via `Data.toSimplicialFunctor`
-and `Functor.map_comp`. -/
+/-- Let h : T → S, k : S → U be monad morphisms on C, and R,L be right and left U-modules. If e is
+the simplicial comparison from composite restriction to iterated restriction, then e.hom ≫
+c_h(k*R,k*L) ≫ c_k(R,L) = c_{h≫k}(R,L). The maps are simplicial two-sided bar maps with values
+in A ⥤ D, where L : A → C and R : C → D. -/
 theorem barChangeHom_comp (h : T ⟶ S) (k : S ⟶ U)
     (R : RightModule U D) (L : LeftModule A U) :
     (twoSidedBarRestrictCompIso (D := D) (A := A) h k R L).hom ≫
@@ -1242,11 +1268,10 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S : Monad C}
 
-/-- Degreewise mixed naturality between restricted `barMap` and `barChangeMap`.
-
-For `h : T ⟶ S`, `fR : R ⟶ R'`, `fL : L ⟶ L'`, the restricted bar map followed
-by the monad-change map equals the monad-change map followed by the bar map.
-Both module variables are covariant. Same carrier only. -/
+/-- Let h : T → S be a monad morphism on C, R,R′ right S-modules in C → D, and L,L′ left S-modules
+in A → C. For module maps f_R : R → R′ and f_L : L → L′ and n ∈ ℕ, the T-bar map of their
+restrictions followed by c_h(R′,L′)_n equals c_h(R,L)_n followed by the S-bar map of f_R,f_L.
+Thus the power-induced degree map is covariantly natural in both module variables. -/
 theorem barChangeMap_naturality (h : T ⟶ S)
     {R R' : RightModule S D} {L L' : LeftModule A S}
     (fR : R ⟶ R') (fL : L ⟶ L') (n : ℕ) :
@@ -1306,8 +1331,10 @@ theorem barChangeMap_naturality (h : T ⟶ S)
             fR.f.app ((monadPow S n).obj (L'.functor.obj a))) := by
           rw [Category.assoc]
 
-/-- Genuine mixed naturality for `barChangeHom`. Follows degreewise from
-`barChangeMap_naturality`. Same carrier only. -/
+/-- Let h : T → S be a monad morphism on C, f_R : R → R′ a right S-module map, and f_L : L → L′ a
+left S-module map, with underlying functors C → D and A → C. The simplicial equation is
+B_T(h*f_R,h*f_L) ≫ c_h(R′,L′) = c_h(R,L) ≫ B_S(f_R,f_L). Both module variables are covariant
+and the monads share the base category C. -/
 theorem barChangeHom_naturality (h : T ⟶ S)
     {R R' : RightModule S D} {L L' : LeftModule A S}
     (fR : R ⟶ R') (fL : L ⟶ L') :
@@ -1320,12 +1347,11 @@ theorem barChangeHom_naturality (h : T ⟶ S)
   exact NatTrans.congr_app
     (barChangeMap_naturality (D := D) (A := A) h fR fL (Opposite.unop Δ).len) a
 
-/-- Fixed-monad-hom natural transformation packaging `barChangeHom`.
-
-For fixed `h : T ⟶ S`, the family `barChangeHom h R L` is natural in `(R, L)`
-via Mathlib's `Functor.prod` restriction. Both module variables are covariant.
-Same carrier only; no carrier-change, outer-whiskering, evaluation,
-balanced-tensor, or operadic API. -/
+/-- Let h : T → S be a monad morphism on C and let A,D be categories. Restricting right S-modules
+C → D and left S-modules A → C along h, then taking the T-bar, defines a functor on their
+product category. The maps c_h(R,L) form a natural transformation from this functor to the
+S-bar functor. Its component at (R,L) is the simplicial bar-change map with degree formula
+R(h^n_{L(-)}). -/
 noncomputable def barChangeNatTrans (h : T ⟶ S) :
     (rightModuleRestrictAlongHom (D := D) h).prod
       (leftModuleRestrictAlongHom (A := A) h) ⋙
@@ -1352,22 +1378,20 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S U : Monad C}
 
-/-- NatTrans-level identity coherence for `barChangeNatTrans`.
-
-At `𝟙 T`, the packaged natural transformation acts as the identity-restriction
-iso. This is `barChangeHom_id` at each component; unfolding the `app` field of
-`barChangeNatTrans` is definitional, so no new naturality argument is needed. -/
+/-- Let T be a monad on C and p=(R,L), with R : C → D a right T-module and L : A → C a left
+T-module. The component at p of the bar-change natural transformation for id_T equals the
+forward map of the simplicial identity-restriction isomorphism. This identifies the component
+from the bar of id_T-restricted modules to B(R,T,L). -/
 @[simp]
 theorem barChangeNatTrans_id_app (p : RightModule T D × LeftModule A T) :
     (barChangeNatTrans (D := D) (A := A) (𝟙 T)).app p =
       (twoSidedBarRestrictIdIso (D := D) (A := A) p.1 p.2).hom :=
   barChangeHom_id p.1 p.2
 
-/-- NatTrans-level composition coherence for `barChangeNatTrans`.
-
-At `h ≫ k`, the packaged natural transformation factors through the
-composite-restriction iso followed by the two packaged maps. This is
-`barChangeHom_comp` at each component; no category of monads is introduced. -/
+/-- Let h : T → S, k : S → U be monad morphisms on C and p=(R,L) a pair of right and left
+U-modules with functors C → D and A → C. The component θ_{h≫k}(p) equals e_p.hom ≫
+θ_h(k*R,k*L) ≫ θ_k(p), where e_p is the simplicial isomorphism from composite restriction to
+iterated restriction. Here θ denotes the bar-change natural transformation. -/
 @[simp]
 theorem barChangeNatTrans_comp_app (h : T ⟶ S) (k : S ⟶ U)
     (p : RightModule U D × LeftModule A U) :

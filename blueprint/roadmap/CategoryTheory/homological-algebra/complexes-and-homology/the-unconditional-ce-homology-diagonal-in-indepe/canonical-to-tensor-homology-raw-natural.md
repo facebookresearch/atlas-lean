@@ -1,4 +1,6 @@
-# Canonical To Tensor Homology Raw naturality
+# Naturality of the carrier-universe CE homology diagonal
 
-Naturality is the homology image of the CE coproduct equation, in the unchanged scalar ring
-and working coefficient universe.
+Naturality of the carrier-universe CE homology diagonal.
+
+For a Lie homomorphism, its CE homology map commutes with the diagonal and the homology map of
+the tensor square of its chain map.

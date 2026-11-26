@@ -15,12 +15,18 @@ public import MathlibExt.Algebra.Homology.SpectralObjectMap
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
 /-!
-# Naturality of maps between spectral-object E-objects
+# Interchange of spectral-object maps and interval-diagram maps
 
-The same-object map on an `E` object induced by a morphism of indexing
-three-arrows commutes with the cross-object map induced by a morphism of
-spectral objects.  We first prove the corresponding interchange law for the
-defining short complexes and then pass to homology.
+Let X,Y be spectral objects in an abelian category C indexed by an arbitrary category ι, and
+φ:X→Y a morphism of spectral objects. A morphism α between composable three-arrow diagrams f and
+g induces maps between their defining spectral short complexes. For degrees n₀+1=n₁ and n₁+1=n₂,
+the short complex has terms H^{n₀}(f₃)→H^{n₁}(f₂)→H^{n₂}(f₁), with the connecting arrows of the
+spectral object.
+
+The interval-diagram map and the map induced by φ commute on these short complexes:
+S_X(α)≫S_φ(g)=S_φ(f)≫S_Y(α). Passing to short-complex homology gives the same interchange
+equation for the E-objects, E_X(α)≫E_φ(g)=E_φ(f)≫E_Y(α). The category, morphism and
+index-category universes are independent.
 -/
 
 @[expose] public section
@@ -39,8 +45,12 @@ variable {X Y : SpectralObject C ι}
 
 namespace Hom
 
-/-- Mapping a defining short complex in its indexing three-arrow and mapping
-it along a morphism of spectral objects commute. -/
+/-- Let C be abelian, ι any category, X,Y spectral objects in C indexed by ι, and φ:X→Y. Let
+f=(f₁,f₂,f₃) and g=(g₁,g₂,g₃) be composable three-arrow diagrams in ι and α:f→g a morphism of
+those diagrams. Choose integers n₀,n₁,n₂ with n₀+1=n₁ and n₁+1=n₂. Write S_X(f) for
+H^{n₀}_X(f₃)→H^{n₁}_X(f₂)→H^{n₂}_X(f₁), with its connecting arrows, and similarly for Y and g.
+Let S_X(α),S_Y(α) be the diagram-induced short-complex maps and S_φ(f),S_φ(g) the maps with
+components φ in the three respective degrees. Then S_X(α)≫S_φ(g)=S_φ(f)≫S_Y(α). -/
 @[reassoc]
 theorem shortComplexMap_naturality
     (phi : X ⟶ Y)
@@ -59,8 +69,12 @@ theorem shortComplexMap_naturality
   · exact (phi.hom n₁).naturality _
   · exact (phi.hom n₂).naturality _
 
-/-- The same-object map on an `E` object commutes with the map induced by a
-morphism of spectral objects. -/
+/-- Let C be abelian, ι any category, X,Y spectral objects in C indexed by ι, and φ:X→Y. Let
+f=(f₁,f₂,f₃) and g=(g₁,g₂,g₃) be composable three-arrow diagrams in ι and α:f→g a morphism of
+those diagrams. Choose integers n₀,n₁,n₂ with n₀+1=n₁ and n₁+1=n₂. For the associated E-objects,
+let E_X(α):E_X(f)→E_X(g) and E_Y(α) be induced by α, while E_φ(f):E_X(f)→E_Y(f) and E_φ(g) are
+induced by φ. Then E_X(α)≫E_φ(g)=E_φ(f)≫E_Y(α). All four maps are the homology maps of the
+corresponding defining short-complex maps in degrees n₀,n₁,n₂. -/
 @[reassoc]
 theorem map_EMap
     (phi : X ⟶ Y)

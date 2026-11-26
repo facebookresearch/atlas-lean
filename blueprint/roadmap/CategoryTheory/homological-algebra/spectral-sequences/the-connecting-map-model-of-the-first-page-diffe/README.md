@@ -1,6 +1,6 @@
 # The connecting-map model of the first-page differential
 
-- [Partial Total Adjacent Step Cochain Iso](partial-total-adjacent-step-cochain-iso.md)
-- [Partial Total Adjacent Step Cochain Iso hom f heq](partial-total-adjacent-step-cochain-iso-2.md)
-- [Partial Total Adjacent Target Map f comp shift Iso heq](partial-total-adjacent-target-map-f-comp.md)
-- [Partial Total E₁Connecting Differential](partial-total-e-connecting-differential.md)
+- [The common filtered-stage isomorphism of adjacent cochain steps](partial-total-adjacent-step-cochain-iso.md)
+- [The supported component identity of adjacent-step coordinates](partial-total-adjacent-step-cochain-iso-2.md)
+- [The row-quotient coordinate of an adjacent-step target map](partial-total-adjacent-target-map-f-comp.md)
+- [The connecting-map model between adjacent first-page rows](partial-total-e-connecting-differential.md)

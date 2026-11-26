@@ -1,4 +1,6 @@
-# Horizontal First Page Filtration Map zero projection
+# The zero-column filtration map followed by direct-column projection
 
-In column zero, the consecutive-stage map starts at the zero complex, so
-its composite with the graded-piece projection is zero.
+The zero-column filtration map followed by direct-column projection.
+
+The lower zero-column stage is zero, so its filtration map followed by the direct-column
+projection is the zero chain map.

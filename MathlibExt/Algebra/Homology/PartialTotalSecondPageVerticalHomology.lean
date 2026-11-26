@@ -21,19 +21,20 @@ public import MathlibExt.Algebra.Homology.HomotopyCategory.MappingConeCompHomolo
 public import MathlibExt.Algebra.Homology.Embedding.RestrictionHomology
 
 /-!
-# The second page of a partial-total spectral sequence
+# The second page as horizontal homology of vertical homology
 
-This file identifies the fixed-row part of the first page with the signed
-horizontal complex of vertical homology objects, and consequently identifies
-the second page with horizontal homology of vertical homology.
+Let `B` be a first-quadrant bicomplex in an abelian category. At fixed vertical degree `q`,
+the first page of its partial-total spectral sequence is the horizontal complex with term
+`H_q(B.X p)` and differential `ε(q) • H_q(B.d p p')`, where `ε(q) = (-1 : ℤˣ)^q`.
 
-The sign in the first-page horizontal differential is retained explicitly:
-in vertical degree `q` it is multiplication by `ε(q)`.  A canonical complex
-isomorphism removes this constant sign only after the signed complex has been
-constructed.
+Multiplication by `ε(q)^p` in horizontal degree `p` identifies this signed complex with the
+ordinary vertical-homology complex. Taking horizontal homology gives `E²_(p,q) ≅
+H_p(B.verticalHomologyComplex q)` for every natural bidegree.
 
-No Tor, Cartan--Eilenberg, convergence, abutment, or boundedness statement is
-made.
+The first-page homology and second-page objects use the common spectral coordinate with
+integer cuts `p - 2 ≤ p - 1 ≤ p ≤ p + 1` and middle cochain degree `-p - q`. The page-bound
+data and neighboring-index identities specify the restriction maps, the cycle and homology
+projections, and the degree-zero representative formula.
 -/
 
 @[expose] public section
@@ -409,8 +410,11 @@ private theorem partialTotalUnfoldMiddleThreeEq
     f₀ ≫ f₁ ≫ f₂ ≫ f₃ ≫ f₄ ≫ f₅ = k := by
   simpa only [Category.assoc] using h
 
-/-- The embedding of the fixed vertical-degree row into the increasing
-homological first-page shape. -/
+/-- Fixed vertical degree as a first-page chain shape.
+
+For a natural vertical degree `q`, the map `p ↦ (p, q)` embeds the natural homological chain
+shape in the first-page shape `(-1, 0)`. It identifies the horizontal arrows at fixed `q` with
+the first-page differential arrows. -/
 def partialTotalFirstPageRowEmbedding (q : ℕ) :
     (ComplexShape.down ℕ).Embedding
       (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩) :=
@@ -429,6 +433,9 @@ def partialTotalFirstPageRowEmbedding (q : ℕ) :
         change p' + 1 = p
         omega)
 
+/-- Index formula for the first-page row embedding.
+
+The row embedding at vertical degree `q` sends horizontal degree `p` to the bidegree `(p, q)`. -/
 @[simp]
 theorem partialTotalFirstPageRowEmbedding_f (p q : ℕ) :
     (partialTotalFirstPageRowEmbedding q).f p = (p, q) :=
@@ -595,8 +602,11 @@ private theorem partialTotalE₁CoreSuccessorMap_eq (m q : ℕ) :
   apply F.congr_map
   subsingleton
 
-/-- In adjacent step coordinates, the actual filtration map is the source
-coordinate isomorphism followed by the successor-step inclusion. -/
+/-- Adjacent first-page map through the partial-total short complex.
+
+For natural `m` and `q`, the adjacent cochain map used for the first-page differential is the
+inverse adjacent-step cochain isomorphism followed by the first map of the step short complex
+at stage `m + 1`. -/
 theorem partialTotalE₁AdjacentCochainMap_eq (m q : ℕ) :
     B.partialTotalE₁AdjacentCochainMap m q =
       (B.partialTotalAdjacentStepCochainIso m).inv ≫
@@ -1622,8 +1632,10 @@ private theorem partialTotalE₁_mappingConeDifferential_eq_connectingAt
     B.partialTotalE₁ConnectingDifferential m q at h
   exact h
 
-/-- The actual first-page row differential is the connecting-map model of the
-adjacent filtration steps. -/
+/-- First-page row differential equals the step connecting morphism.
+
+For natural `m` and `q`, the first-page differential transported from `(m + 1, q)` to `(m, q)`
+in total-row homology equals `B.partialTotalE₁ConnectingDifferential m q`. -/
 @[reassoc]
 theorem partialTotalE₁RowDifferential_eq_connecting (m q : ℕ) :
     B.partialTotalE₁RowDifferential m q =
@@ -1711,8 +1723,10 @@ theorem partialTotalE₁RowDifferential_eq_connecting (m q : ℕ) :
   exact partialTotalFourMiddleEq
     (B.partialTotalE₁_mappingConeDifferential_eq_connecting m q hnn')
 
-/-- The actual first-page row differential is the signed horizontal homology
-map. -/
+/-- First-page differential equals horizontal row homology.
+
+For natural `m` and `q`, `B.partialTotalE₁RowDifferential m q` equals the homology map induced
+by the horizontal degree-one cocycle between the extended signed rows `m + 1` and `m`. -/
 @[reassoc]
 theorem partialTotalE₁RowDifferential_eq_horizontalRowHomology
     (m q : ℕ) :
@@ -1721,8 +1735,11 @@ theorem partialTotalE₁RowDifferential_eq_horizontalRowHomology
   (B.partialTotalE₁RowDifferential_eq_connecting m q).trans
     (B.partialTotalE₁ConnectingDifferential_eq_horizontalRowHomology m q)
 
-/-- The sign-correct complex occurring in the first-page row coordinate.
-Its differential is `ε(q)` times the ordinary horizontal differential. -/
+/-- Vertical homology with the first-page horizontal sign.
+
+For fixed natural `q`, this horizontal chain complex has term `H_q(B.X p)` in degree `p` and
+differential `ε(q) • H_q(B.d p p')`, where `ε(q) = (ComplexShape.down ℕ).ε q = (-1 : ℤˣ)^q`.
+The sign acts on morphisms in the preadditive structure of the abelian category. -/
 noncomputable def signedVerticalHomologyComplex (q : ℕ) :
     ChainComplex C ℕ where
   X p := (B.verticalHomologyComplex q).X p
@@ -1734,14 +1751,18 @@ noncomputable def signedVerticalHomologyComplex (q : ℕ) :
     simp only [Linear.units_smul_comp, Linear.comp_units_smul,
       HomologicalComplex.d_comp_d, smul_zero]
 
-/-- The signed and ordinary vertical-homology complexes have the same
-objects. -/
+/-- Terms of the signed vertical-homology complex.
+
+The degree-`p` object of `B.signedVerticalHomologyComplex q` is `H_q(B.X p)`. -/
 @[simp]
 theorem signedVerticalHomologyComplex_X (p q : ℕ) :
     (B.signedVerticalHomologyComplex q).X p = (B.X p).homology q :=
   rfl
 
-/-- Literal differential formula for the signed vertical-homology complex. -/
+/-- Differential of the signed vertical-homology complex.
+
+For natural `p`, `p'`, and `q`, the differential from degree `p` to `p'` is `ε(q) •
+HomologicalComplex.homologyMap (B.d p p') q`, with `ε(q) = (-1 : ℤˣ)^q`. -/
 @[simp]
 theorem signedVerticalHomologyComplex_d (p p' q : ℕ) :
     (B.signedVerticalHomologyComplex q).d p p' =
@@ -1749,8 +1770,11 @@ theorem signedVerticalHomologyComplex_d (p p' q : ℕ) :
         HomologicalComplex.homologyMap (B.d p p') q :=
   rfl
 
-/-- Multiplication by `ε(q)^p` in horizontal degree `p` removes the constant
-sign from the horizontal differential. -/
+/-- Removing the constant first-page horizontal sign.
+
+The signed vertical-homology complex at `q` is isomorphic to the ordinary horizontal complex
+`B.verticalHomologyComplex q`. Its component in horizontal degree `p` multiplies by `ε(q)^p =
+(-1 : ℤˣ)^(q*p)`. -/
 noncomputable def signedVerticalHomologyIso (q : ℕ) :
     B.signedVerticalHomologyComplex q ≅ B.verticalHomologyComplex q :=
   HomologicalComplex.Hom.isoOfComponents
@@ -1767,7 +1791,10 @@ noncomputable def signedVerticalHomologyIso (q : ℕ) :
       simp only [Linear.units_smul_comp, Linear.comp_units_smul,
         Category.id_comp, Category.comp_id, smul_smul, pow_succ])
 
-/-- Forward component of the constant-sign-removal isomorphism. -/
+/-- Forward component of the horizontal sign-removal isomorphism.
+
+In horizontal degree `p`, the forward component of `B.signedVerticalHomologyIso q` is `ε(q)^p
+• 𝟙 (H_q(B.X p))`. -/
 @[simp]
 theorem signedVerticalHomologyIso_hom_f (p q : ℕ) :
     (B.signedVerticalHomologyIso q).hom.f p =
@@ -1775,7 +1802,10 @@ theorem signedVerticalHomologyIso_hom_f (p q : ℕ) :
         𝟙 ((B.X p).homology q) := by
   rfl
 
-/-- Inverse component of the constant-sign-removal isomorphism. -/
+/-- Inverse component of the horizontal sign-removal isomorphism.
+
+In horizontal degree `p`, the inverse component of `B.signedVerticalHomologyIso q` is
+`(ε(q)^p)⁻¹ • 𝟙 (H_q(B.X p))`. -/
 @[simp]
 theorem signedVerticalHomologyIso_inv_f (p q : ℕ) :
     (B.signedVerticalHomologyIso q).inv.f p =
@@ -1799,8 +1829,11 @@ private theorem epsilon_down_succ_pow (p q : ℕ) :
   simp only [ComplexShape.ε_down_ℕ, pow_add, pow_one, mul_pow]
   rw [mul_comm]
 
-/-- The horizontal bicomplex map between adjacent signed rows. Its component
-in vertical degree `q` necessarily carries the sign `ε(q)`. -/
+/-- Horizontal chain map between signed vertical rows.
+
+The horizontal map from `B.signedRow (p + 1)` to `B.signedRow p` has vertical-degree-`q`
+component `ε(q) • (B.d (p + 1) p).f q`. This degree-dependent sign makes the map commute with
+the different vertical signs in the two signed rows. -/
 noncomputable def partialTotalHorizontalSignedRowMap (p : ℕ) :
     B.signedRow (p + 1) ⟶ B.signedRow p where
   f q := (ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q
@@ -1829,14 +1862,20 @@ noncomputable def partialTotalHorizontalSignedRowMap (p : ℕ) :
       rw [mul_neg, mul_neg, mul_comm]
     rw [hscalar]
 
+/-- Component of the signed horizontal row map.
+
+For natural `p` and `q`, the degree-`q` component of `B.partialTotalHorizontalSignedRowMap p`
+is `ε(q) • (B.d (p + 1) p).f q`. -/
 @[simp]
 theorem partialTotalHorizontalSignedRowMap_f (p q : ℕ) :
     (B.partialTotalHorizontalSignedRowMap p).f q =
       (ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q :=
   rfl
 
-/-- Removing the signed-row coordinates conjugates the signed horizontal map
-to the original horizontal bicomplex map. -/
+/-- Signed horizontal row map agrees with the bicomplex map.
+
+Compose the signed horizontal map with the isomorphism from signed row `p` to `B.X p`. This
+equals the signed-row isomorphism at `p + 1` followed by `B.d (p + 1) p`. -/
 @[reassoc]
 theorem partialTotalHorizontalSignedRowMap_comp_signedRowIso (p : ℕ) :
     B.partialTotalHorizontalSignedRowMap p ≫
@@ -2290,8 +2329,11 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
   simp only [ComplexShape.ε_down_ℕ, Linear.units_smul_comp,
     Category.assoc]
 
-/-- In the signed-row homology coordinates, the horizontal-row homology map
-is the signed differential on the horizontal complex of vertical homology. -/
+/-- Horizontal row homology yields the signed vertical-homology differential.
+
+Transport the horizontal row homology map from total degrees `p + 1 + q` and `p + q` to
+vertical homology through `B.totalRowHomologyIso`. The resulting map is the differential from
+`p + 1` to `p` in `B.signedVerticalHomologyComplex q`, including its factor `ε(q)`. -/
 @[reassoc]
 theorem partialTotalHorizontalRowHomology_totalRowHomologyIso
     (p q : ℕ) :
@@ -2462,8 +2504,10 @@ private theorem partialTotalHorizontalRowHomology_totalRowHomologyIsoAt
   exact B.partialTotalHorizontalRowHomology_totalRowHomologyIsoAtAux
     p q (q + p + 1) (q + p) hPlus hZero hShift
 
-/-- Restricting the first-page complex to a fixed vertical degree preserves
-homology in horizontal degree `p`. -/
+/-- Homology of a fixed first-page row in bidegree coordinates.
+
+Restrict the first page along `p ↦ (p, q)`. Its homology in horizontal degree `p` is
+isomorphic to the homology of the full first-page complex at `(p, q)`. -/
 noncomputable def partialTotalFirstPageRowRestrictionHomologyIso (p q : ℕ) :
     ((((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
         (partialTotalFirstPageRowEmbedding q)).homology p) ≅
@@ -2537,8 +2581,11 @@ private theorem partialTotalFirstPageCoordinateComm
     ((P.restriction (partialTotalFirstPageRowEmbedding q)).d (j + 1) j)
     (hrow j) hd
 
-/-- A fixed row of the first page is the signed horizontal complex of
-vertical homology objects. -/
+/-- First-page row as signed vertical homology.
+
+At fixed vertical degree `q`, the first-page complex restricted to `p ↦ (p, q)` is isomorphic
+to `B.signedVerticalHomologyComplex q`. The component at `p` is the first-page total-row
+homology coordinate followed by the signed-row comparison with `H_q(B.X p)`. -/
 noncomputable def partialTotalFirstPageSignedVerticalHomologyIso (q : ℕ) :
     @CategoryTheory.Iso (ChainComplex C ℕ) inferInstance
       (((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
@@ -2568,7 +2615,11 @@ noncomputable def partialTotalFirstPageSignedVerticalHomologyIso (q : ℕ) :
     (C₁ := P₁.restriction (partialTotalFirstPageRowEmbedding q)) (C₂ := L)
     (fun p => e p ≪≫ r p) hcomm
 
-/-- Forward components of the signed first-page row isomorphism. -/
+/-- Forward component of the signed first-page row comparison.
+
+The degree-`p` forward component of the signed first-page row isomorphism is
+`(B.partialTotalSpectralSequenceFirstPageRowIso p q).hom` followed by `(B.totalRowHomologyIso
+p q).hom`. -/
 @[simp]
 theorem partialTotalFirstPageSignedVerticalHomologyIso_hom_f (p q : ℕ) :
     (B.partialTotalFirstPageSignedVerticalHomologyIso q).hom.f p =
@@ -2576,7 +2627,11 @@ theorem partialTotalFirstPageSignedVerticalHomologyIso_hom_f (p q : ℕ) :
         (B.totalRowHomologyIso p q).hom := by
   rfl
 
-/-- Inverse components of the signed first-page row isomorphism. -/
+/-- Inverse component of the signed first-page row comparison.
+
+The degree-`p` inverse component of the signed first-page row isomorphism is
+`(B.totalRowHomologyIso p q).inv` followed by `(B.partialTotalSpectralSequenceFirstPageRowIso
+p q).inv`. -/
 @[simp]
 theorem partialTotalFirstPageSignedVerticalHomologyIso_inv_f (p q : ℕ) :
     (B.partialTotalFirstPageSignedVerticalHomologyIso q).inv.f p =
@@ -2584,8 +2639,11 @@ theorem partialTotalFirstPageSignedVerticalHomologyIso_inv_f (p q : ℕ) :
         (B.partialTotalSpectralSequenceFirstPageRowIso p q).inv := by
   rfl
 
-/-- Removing the constant row sign identifies a fixed first-page row with
-the ordinary horizontal complex of vertical homology. -/
+/-- First-page row as ordinary vertical homology.
+
+At fixed vertical degree `q`, identify the restricted first page with signed vertical homology
+and then remove the horizontal sign by `ε(q)^p` in degree `p`. The resulting complex
+isomorphism has target `B.verticalHomologyComplex q`. -/
 noncomputable def partialTotalFirstPageVerticalHomologyIso (q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
         (partialTotalFirstPageRowEmbedding q) ≅
@@ -2593,8 +2651,11 @@ noncomputable def partialTotalFirstPageVerticalHomologyIso (q : ℕ) :
   B.partialTotalFirstPageSignedVerticalHomologyIso q ≪≫
     B.signedVerticalHomologyIso q
 
-/-- The explicit `Y.E` coordinate underlying the `(p, q)` object on page two
-of the partial-total spectral sequence. -/
+/-- Spectral interval coordinate for the second page.
+
+For natural `p` and `q`, let the integer filtration cuts be `p - 2 ≤ p - 1 ≤ p ≤ p + 1`,
+interpreted in `EInt`. With consecutive cochain degrees `-p-q-1`, `-p-q`, and `-p-q+1`, the
+spectral object's `E` construction on these three arrows is the second-page coordinate. -/
 noncomputable def partialTotalSpectralSequencePageTwoCoordinate
     (p q : ℕ) : C := by
   let Y := B.partialTotalSpectralObject
@@ -2622,8 +2683,11 @@ noncomputable def partialTotalSpectralSequencePageTwoCoordinate
   exact Y.E (homOfLE hi₀₁) (homOfLE hi₁₂) (homOfLE hi₂₃)
     n₀ n₁ n₂ hn₁ hn₂
 
-/-- Page two in bidegree `(p, q)` is the explicit literal partial-total
-coordinate. -/
+/-- Second-page object as its four-cut spectral coordinate.
+
+The second-page object at `(p, q)` is isomorphic to
+`B.partialTotalSpectralSequencePageTwoCoordinate p q`, using cuts `p - 2`, `p - 1`, `p`, and
+`p + 1` and middle cochain degree `-p - q`. -/
 noncomputable def partialTotalSpectralSequencePageTwoIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page (2 : ℤ)).X
         (p, q) ≅
@@ -2658,8 +2722,11 @@ noncomputable def partialTotalSpectralSequencePageTwoIso (p q : ℕ) :
     i₀ i₁ i₂ i₃ h₀ h₁ h₂ h₃ n₀ n₁ n₂ hn
       (hn₁ := hn₁) (hn₂ := hn₂)
 
-/-- Page-one homology in bidegree `(p, q)` identifies with the same explicit
-coordinate used for page two. -/
+/-- First-page homology as the second-page interval coordinate.
+
+The homology of the first page at `(p, q)` is isomorphic to the same four-cut spectral object
+that defines `B.partialTotalSpectralSequencePageTwoCoordinate p q`. The isomorphism comes from
+homology data for the transition from page one to page two. -/
 noncomputable def partialTotalSpectralSequencePageOneHomologyCoordinateIso
     (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page (1 : ℤ)).homology
@@ -2728,8 +2795,10 @@ noncomputable def partialTotalSpectralSequencePageOneHomologyCoordinateIso
     (E.page r).homologyIsoSc' pqPrev pq pqNext hpq hpq' ≪≫
       D.left.homologyIso
 
-/-- The page-one-to-page-two isomorphism in bidegree `(p, q)`, with the bound
-witnesses fixed by the displayed source and target pages. -/
+/-- First-page homology identifies with the second-page object.
+
+For natural `p` and `q`, identify first-page homology at `(p, q)` and the second-page object
+there through their common spectral interval coordinate. This gives `H(E¹)_(p,q) ≅ E²_(p,q)`. -/
 noncomputable def partialTotalSpectralSequencePageOneTwoIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page 1).homology
         (p, q) ≅
@@ -2738,8 +2807,10 @@ noncomputable def partialTotalSpectralSequencePageOneTwoIso (p q : ℕ) :
   B.partialTotalSpectralSequencePageOneHomologyCoordinateIso p q ≪≫
     (B.partialTotalSpectralSequencePageTwoIso p q).symm
 
-/-- In the zero column, the page-one-to-page-two map followed by the shared
-page-two coordinate is the page-one homology coordinate. -/
+/-- Zero-column page transition respects the common interval coordinate.
+
+At `(0, q)`, the first-page-to-second-page isomorphism followed by the second-page interval
+coordinate equals the first-page homology coordinate into that same interval object. -/
 theorem
     partialTotalSpectralSequencePageOneTwoIso_zero_hom_comp_pageTwoIso_hom
     (q : ℕ) :
@@ -2752,8 +2823,11 @@ theorem
           (B.partialTotalSpectralSequencePageTwoIso 0 q).hom = _
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- Page two of the partial-total spectral sequence is horizontal homology
-of the vertical-homology complex. -/
+/-- Second page as horizontal homology of vertical homology.
+
+For natural `p` and `q`, `E²_(p,q)` is isomorphic to `H_p(B.verticalHomologyComplex q)`. The
+isomorphism passes through first-page homology, restricts to fixed vertical degree `q`, and
+applies the complex isomorphism that removes the first-page horizontal sign. -/
 noncomputable def partialTotalSecondPageVerticalHomologyIso (p q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page 2).X
         (p, q) ≅
@@ -2763,8 +2837,11 @@ noncomputable def partialTotalSecondPageVerticalHomologyIso (p q : ℕ) :
     HomologicalComplex.homologyMapIso
       (B.partialTotalFirstPageVerticalHomologyIso q) p
 
-/-- The page-two vertical-homology coordinate is the page transition followed
-by restriction homology and the fixed-row homology comparison. -/
+/-- Factorization of the second-page iterated-homology coordinate.
+
+The forward map from `E²_(p,q)` to `H_p(B.verticalHomologyComplex q)` is the inverse page
+transition, followed by the inverse fixed-row restriction homology coordinate, followed by the
+homology map of `B.partialTotalFirstPageVerticalHomologyIso q`. -/
 @[reassoc]
 theorem partialTotalSecondPageVerticalHomologyIso_hom (p q : ℕ) :
     (B.partialTotalSecondPageVerticalHomologyIso p q).hom =
@@ -2774,13 +2851,23 @@ theorem partialTotalSecondPageVerticalHomologyIso_hom (p q : ℕ) :
           (B.partialTotalFirstPageVerticalHomologyIso q).hom p :=
   rfl
 
-/-- The page-one bound witness shared by the page-one and page-two coordinates. -/
+/-- Lower-bound data for the first two spectral pages.
+
+For a first-quadrant bicomplex `B`, this proposition records the integer bound `1 ≤ 1` used to
+define its first page. The bound for page two and the transition equality `1 + 1 = 2` are
+derived from this data. -/
 structure PartialTotalFirstPageChoice
     (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) : Prop where
+/-- Integer lower bound for page one.
+
+The first-page choice contains the inequality `(1 : ℤ) ≤ 1`, which supplies the lower bound in
+the spectral-sequence page construction. -/
   pageOneBound : (1 : ℤ) ≤ 1
 
-/-- The canonical page-one bound witness. -/
+/-- Canonical lower-bound data for page one.
+
+Every first-quadrant bicomplex has a first-page choice, since `(1 : ℤ) ≤ 1`. -/
 theorem partialTotalFirstPageChoice :
     PartialTotalFirstPageChoice B :=
   { pageOneBound := by omega }
@@ -2789,38 +2876,55 @@ namespace PartialTotalFirstPageChoice
 
 variable {B}
 
-/-- The exact successor proof used by the package's HomologyData. -/
+/-- Successor equality for the first two pages.
+
+For a first-page choice `χ`, the page indices satisfy `(1 : ℤ) + 1 = 2`. This equality is used
+in the homology data for the transition. -/
 theorem pageOneToTwo (χ : PartialTotalFirstPageChoice B) :
     (1 : ℤ) + 1 = 2 := by
   have hχ := χ.pageOneBound
   omega
 
-/-- The page-two bound derived from the chosen page-one bound. -/
+/-- Integer lower bound for page two.
+
+The first-page lower-bound data gives `(1 : ℤ) ≤ 2`, the bound used to define the second page. -/
 theorem pageTwoBound (χ : PartialTotalFirstPageChoice B) : (1 : ℤ) ≤ 2 :=
   χ.pageOneBound.trans (by omega)
 
-/-- The page-one object using the package's literal bound proof. -/
+/-- First page with differential of bidegree minus one zero.
+
+For a first-page choice `χ`, this is the page-one complex of the partial-total spectral
+sequence, with shape `(-1, 0)` and lower bound `χ.pageOneBound`. -/
 noncomputable abbrev pageOne (χ : PartialTotalFirstPageChoice B) :
     HomologicalComplex C
       (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩) :=
   (B.partialTotalSpectralObject.spectralSequence core).page
     1 χ.pageOneBound
 
-/-- The page-two object using the bound proof derived from the same package. -/
+/-- Second page with differential of bidegree minus two one.
+
+For a first-page choice `χ`, this is the page-two complex of the partial-total spectral
+sequence, with shape `(-2, 1)` and lower bound `χ.pageTwoBound`. -/
 noncomputable abbrev pageTwo (χ : PartialTotalFirstPageChoice B) :
     HomologicalComplex C
       (ComplexShape.spectralSequenceNat ⟨(-2 : ℤ), 1⟩) :=
   (B.partialTotalSpectralObject.spectralSequence core).page
     2 χ.pageTwoBound
 
-/-- The fixed vertical-degree row of the package's literal page one. -/
+/-- Horizontal chain complex at fixed first-page vertical degree.
+
+Restrict `χ.pageOne` along the embedding `p ↦ (p, q)`. This gives a natural-index chain
+complex containing the first-page objects and horizontal differentials at vertical degree `q`. -/
 noncomputable abbrev rowRestriction
     (χ : PartialTotalFirstPageChoice B) (q : ℕ) : ChainComplex C ℕ :=
   χ.pageOne.restriction (partialTotalFirstPageRowEmbedding q)
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The package-bound first-page core coordinate at an explicit presentation
-of the lower middle cut and adjacent degrees. -/
+/-- First-page core coordinate with a specified lower cut.
+
+Let `k = core.i₁ (p, q)` and let `n₀ + 1 = core.deg (p, q)` and `core.deg (p, q) + 1 = n₂`.
+These indices give an isomorphism from `χ.pageOne.X (p, q)` to the spectral homology of `k ⟶
+core.i₂ (p, q)` in the core degree. -/
 noncomputable def firstPageCoreIsoAtOfCut
     (χ : PartialTotalFirstPageChoice B)
     (p q : ℕ) (k : EInt)
@@ -2844,8 +2948,11 @@ noncomputable def firstPageCoreIsoAtOfCut
       n₀ ((core).deg (p, q)) n₂ hn₀ hn₂
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The explicit-cut first-page core coordinate is the lower page coordinate
-followed by the spectral-object homology coordinate. -/
+/-- Specified-cut core coordinate factors through spectral homology.
+
+With the lower cut and neighboring cochain degrees specified, `χ.firstPageCoreIsoAtOfCut` is
+the page interval-coordinate isomorphism followed by the spectral object's `EIsoH` for the
+coincident outer and middle cuts on page one. -/
 theorem firstPageCoreIsoAtOfCut_eq
     (χ : PartialTotalFirstPageChoice B)
     (p q : ℕ) (k : EInt)
@@ -2866,7 +2973,11 @@ theorem firstPageCoreIsoAtOfCut_eq
           n₀ ((core).deg (p, q)) n₂ hn₀ hn₂) :=
   rfl
 
-/-- The package-bound explicit first-page core factor. -/
+/-- First-page coordinate in its adjacent core interval.
+
+For natural `p` and `q`, the first-page object `χ.pageOne.X (p, q)` is isomorphic to spectral
+homology of `core.i₁ (p, q) ⟶ core.i₂ (p, q)` in degree `core.deg (p, q) = -p - q`. The
+neighboring degrees are chosen as this degree minus and plus one. -/
 noncomputable def firstPageCoreIsoAt
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.pageOne.X (p, q) ≅
@@ -2878,8 +2989,11 @@ noncomputable def firstPageCoreIsoAt
     ((core).deg (p, q) + 1)
     (by omega) rfl
 
-/-- The package-bound first-page coordinate at an explicitly chosen total
-degree. -/
+/-- Chosen first-page object in a specified total-row homology degree.
+
+For `p + q = n`, the first-page object `χ.pageOne.X (p, q)` is isomorphic to `H_n(B.totalRow
+p)`. This is the core interval-coordinate isomorphism followed by the partial-total step and
+signed-row homology isomorphisms. -/
 noncomputable def firstPageRowIsoAt
     (χ : PartialTotalFirstPageChoice B)
     (p q n : ℕ) (h : p + q = n) :
@@ -2888,21 +3002,40 @@ noncomputable def firstPageRowIsoAt
     B.partialTotalSpectralObjectHStepIso p q ≪≫
     B.partialTotalStepE₁HomologyIsoAt p q n h
 
-/-- The proof-sensitive embedding indices shared by all restriction
-coordinates at `(p,q)`. -/
+/-- Neighbor identities for restriction of the first page.
+
+At `(p, q)`, this proposition records the equality of the restricted middle index with `(p,
+q)` and the compatibility of predecessor and successor indices under the row embedding. These
+identities determine restriction coordinates for objects, cycles, and homology. -/
 structure RestrictionIndex
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) : Prop where
+/-- Middle-index identity for first-page row restriction.
+
+For natural `p` and `q`, the row embedding in vertical degree `q` sends `p` to `(p, q)`. -/
   hMid : (partialTotalFirstPageRowEmbedding q).f p = (p, q)
+/-- Incoming-neighbor identity for first-page row restriction.
+
+The predecessor of `(p, q)` in the first-page shape `(-1, 0)` equals the row embedding of the
+predecessor of `p` in the natural homological chain shape. Both represent the incoming
+horizontal degree `p + 1`. -/
   hPrev :
     (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩).prev (p, q) =
       (partialTotalFirstPageRowEmbedding q).f
         ((ComplexShape.down ℕ).prev p)
+/-- Outgoing-neighbor identity for first-page row restriction.
+
+The successor of `(p, q)` in the first-page shape `(-1, 0)` equals the row embedding of the
+successor of `p` in the natural homological chain shape. At `p = 0`, both successor indices
+stay at the same index because there is no outgoing horizontal arrow. -/
   hNext :
     (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩).next (p, q) =
       (partialTotalFirstPageRowEmbedding q).f
         ((ComplexShape.down ℕ).next p)
 
-/-- The canonical row-restriction index data at `(p, q)`. -/
+/-- Canonical neighbor identities for first-page row restriction.
+
+The fixed-row embedding satisfies the middle, predecessor, and successor identities at every
+natural bidegree `(p, q)`. These give `χ.RestrictionIndex p q`. -/
 theorem restrictionIndex
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.RestrictionIndex p q := by
@@ -2927,7 +3060,10 @@ theorem restrictionIndex
             simp only [ChainComplex.next_nat_succ]
             rfl))
 
-/-- The object coordinate of the package's named row restriction. -/
+/-- Object coordinate of the chosen first-page row restriction.
+
+For restriction-index data `ρ` at `(p, q)`, the degree-`p` object of `χ.rowRestriction q` is
+isomorphic to `χ.pageOne.X (p, q)`, using the middle-index equality. -/
 noncomputable def restrictionXIso
     (χ : PartialTotalFirstPageChoice B) {p q : ℕ}
     (ρ : χ.RestrictionIndex p q) :
@@ -2935,7 +3071,10 @@ noncomputable def restrictionXIso
   χ.pageOne.restrictionXIso
     (partialTotalFirstPageRowEmbedding q) ρ.hMid
 
-/-- The cycles coordinate of the package's named row restriction. -/
+/-- Cycles coordinate of the chosen first-page row restriction.
+
+For restriction-index data `ρ` at `(p, q)`, the degree-`p` cycles of `χ.rowRestriction q` are
+isomorphic to the first-page cycles at `(p, q)`, using the successor-index equality. -/
 noncomputable def restrictionCyclesIso
     (χ : PartialTotalFirstPageChoice B) {p q : ℕ}
     (ρ : χ.RestrictionIndex p q) :
@@ -2943,7 +3082,10 @@ noncomputable def restrictionCyclesIso
   χ.pageOne.restrictionCyclesIsoAt
     (partialTotalFirstPageRowEmbedding q) p ρ.hNext
 
-/-- The homology coordinate of the package's named row restriction. -/
+/-- Homology coordinate of the chosen first-page row restriction.
+
+For restriction-index data `ρ` at `(p, q)`, `H_p(χ.rowRestriction q)` is isomorphic to
+`χ.pageOne.homology (p, q)`. The coordinate uses both neighboring-index identities. -/
 noncomputable def restrictionHomologyIso
     (χ : PartialTotalFirstPageChoice B) {p q : ℕ}
     (ρ : χ.RestrictionIndex p q) :
@@ -2952,7 +3094,10 @@ noncomputable def restrictionHomologyIso
   χ.pageOne.restrictionHomologyIsoAt
     (partialTotalFirstPageRowEmbedding q) p ρ.hPrev ρ.hNext
 
-/-- The restriction cycles coordinate commutes with inclusion into objects. -/
+/-- Chosen restriction cycles coordinate respects cycle inclusion.
+
+The forward cycles coordinate followed by the first-page cycle inclusion equals the row-
+restriction cycle inclusion followed by its object coordinate at `(p, q)`. -/
 @[reassoc]
 theorem restrictionCyclesIso_hom_iCycles
     (χ : PartialTotalFirstPageChoice B) {p q : ℕ}
@@ -2964,8 +3109,11 @@ theorem restrictionCyclesIso_hom_iCycles
   exact HomologicalComplex.restrictionCyclesIsoAt_hom_iCycles
     χ.pageOne (partialTotalFirstPageRowEmbedding q) p ρ.hNext
 
-/-- The restriction homology coordinate commutes with projection from
-cycles. -/
+/-- Chosen restriction homology coordinate respects projection from cycles.
+
+Project the cycles of `χ.rowRestriction q` to its degree-`p` homology and apply the
+restriction homology coordinate. This equals the cycles coordinate followed by the first-page
+projection to homology at `(p, q)`. -/
 @[reassoc]
 theorem homologyπ_restrictionHomologyIso_hom
     (χ : PartialTotalFirstPageChoice B) {p q : ℕ}
@@ -2977,8 +3125,11 @@ theorem homologyπ_restrictionHomologyIso_hom
   exact HomologicalComplex.homologyπ_restrictionHomologyIsoAt_hom
     χ.pageOne (partialTotalFirstPageRowEmbedding q) p ρ.hPrev ρ.hNext
 
-/-- The objectwise coordinate from the package's fixed row to vertical
-homology. -/
+/-- Chosen first-page row term as vertical homology.
+
+For natural `q` and `p`, the degree-`p` object of `χ.rowRestriction q` is isomorphic to
+`H_q(B.X p)`. The isomorphism combines the restriction object coordinate, the first-page row
+homology coordinate in total degree `q + p`, and the signed-row homology comparison. -/
 noncomputable def componentIso
     (χ : PartialTotalFirstPageChoice B) (q p : ℕ) :
     (χ.rowRestriction q).X p ≅ (B.X p).homology q :=
@@ -2989,6 +3140,11 @@ noncomputable def componentIso
 /- Compatibility of the fixed-row comparison with differentials -/
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
+/-- Chosen first-page row components respect the signed horizontal differential.
+
+For a horizontal chain-shape arrow `i ⟶ j`, the component at `i` followed by the differential
+of `B.signedVerticalHomologyComplex q` equals the row-restriction differential followed by the
+component at `j`. The target differential contains the factor `ε(q)`. -/
 theorem component_comm
     (χ : PartialTotalFirstPageChoice B)
     (q i j : ℕ) (hij : (ComplexShape.down ℕ).Rel i j) :
@@ -3368,8 +3524,11 @@ theorem component_comm
 /- Comparison with ordinary vertical homology -/
 
 
-/-- The package-bound fixed first-page row is canonically the ordinary
-horizontal complex of vertical homology. -/
+/-- Chosen first-page row as the ordinary vertical-homology complex.
+
+The component isomorphisms identify `χ.rowRestriction q` with signed vertical homology.
+Composing with multiplication by `ε(q)^p` in horizontal degree `p` gives an isomorphism to
+`B.verticalHomologyComplex q`. -/
 noncomputable def verticalHomologyIso
     (χ : PartialTotalFirstPageChoice B) (q : ℕ) :
     χ.rowRestriction q ≅ B.verticalHomologyComplex q :=
@@ -3378,8 +3537,10 @@ noncomputable def verticalHomologyIso
       (fun i j hij => χ.component_comm q i j hij) ≪≫
     B.signedVerticalHomologyIso q
 
-/-- In horizontal degree zero, the inverse package-bound row comparison is
-the inverse of its exact shared component. -/
+/-- Chosen vertical-homology comparison has its component inverse at zero.
+
+In horizontal degree zero, the inverse of `χ.verticalHomologyIso q` is `(χ.componentIso q
+0).inv`. The sign-removal factor is `ε(q)^0 = 1`. -/
 theorem verticalHomologyIso_inv_f_zero
     (χ : PartialTotalFirstPageChoice B) (q : ℕ) :
     (χ.verticalHomologyIso q).inv.f 0 =
@@ -3413,57 +3574,163 @@ theorem verticalHomologyIso_inv_f_zero
 /- Page-one transition HomologyData -/
 
 
-/-- The proof-sensitive cuts and degree witnesses shared by the package's
-page-one HomologyData and page-two coordinates. -/
+/-- Filtration cuts and degrees for the first-page homology transition.
+
+At natural `(p, q)`, this data specifies the neighboring first-page bidegrees, six filtration
+cuts for pages one and two, and three consecutive cochain degrees. The identities identify the
+cuts with `p - 2`, `p - 1`, `p - 1`, `p`, `p`, and `p + 1`, and the middle degree with `-p -
+q`, retaining integer indices at column zero. -/
 structure PageTransitionIndex
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) : Type where
-  /-- The predecessor bidegree at `(p, q)` on page one. -/
+  /-- Incoming bidegree for the first-page transition.
+
+A bidegree identified by `hpq` with the predecessor of `(p, q)` for the shape `(-1, 0)`,
+namely the source of the incoming horizontal arrow. -/
   pqPrev : ℕ × ℕ
-  /-- The successor bidegree at `(p, q)` on page one. -/
+  /-- Outgoing bidegree for the first-page transition.
+
+A bidegree identified by `hpq'` with the successor of `(p, q)` for the shape `(-1, 0)`. At
+column zero this successor index stays at `(0, q)`. -/
   pqNext : ℕ × ℕ
+/-- Incoming-index equality for the first-page transition.
+
+The stored incoming bidegree equals `(ComplexShape.spectralSequenceNat ⟨-1, 0⟩).prev (p, q)`. -/
   hpq :
     (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩).prev (p, q) = pqPrev
+/-- Outgoing-index equality for the first-page transition.
+
+The stored outgoing bidegree equals `(ComplexShape.spectralSequenceNat ⟨-1, 0⟩).next (p, q)`. -/
   hpq' :
     (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩).next (p, q) = pqNext
-  /-- The outer lower cut for the page-two coordinate. -/
+  /-- Outer lower cut on page two.
+
+The lower outer filtration cut, identified by `hi₀'` with `core.i₀ 2 (p, q)`. It is the
+integer `p - 2`, interpreted in `EInt`. -/
   i₀' : EInt
-  /-- The lower page-one cut. -/
+  /-- Outer lower cut on page one.
+
+The lower outer filtration cut, identified by `hi₀` with `core.i₀ 1 (p, q)`. It is the integer
+`p - 1`, interpreted in `EInt`. -/
   i₀ : EInt
-  /-- The lower middle cut shared by both pages. -/
+  /-- Lower middle cut shared by the first two pages.
+
+The middle cut identified by `hi₁` with `core.i₁ (p, q)`, namely the integer `p - 1` in
+`EInt`. -/
   i₁ : EInt
-  /-- The upper middle cut shared by both pages. -/
+  /-- Upper middle cut shared by the first two pages.
+
+The middle cut identified by `hi₂` with `core.i₂ (p, q)`, namely the integer `p` in `EInt`. -/
   i₂ : EInt
-  /-- The upper page-one cut. -/
+  /-- Outer upper cut on page one.
+
+The upper outer filtration cut, identified by `hi₃` with `core.i₃ 1 (p, q)`, namely the
+integer `p` in `EInt`. -/
   i₃ : EInt
-  /-- The outer upper cut for the page-two coordinate. -/
+  /-- Outer upper cut on page two.
+
+The upper outer filtration cut, identified by `hi₃'` with `core.i₃ 2 (p, q)`, namely the
+integer `p + 1` in `EInt`. -/
   i₃' : EInt
-  /-- The predecessor total degree. -/
+  /-- Lower neighboring cochain degree for the page transition.
+
+The cochain degree satisfying `n₀ + 1 = n₁`. Since the middle degree is `-p - q`, this degree
+is `-p - q - 1`. -/
   n₀ : ℤ
-  /-- The total degree at `(p, q)`. -/
+  /-- Middle cochain degree for the page transition.
+
+The degree identified by `hn` with `core.deg (p, q)`, namely `-p - q`. -/
   n₁ : ℤ
-  /-- The successor total degree. -/
+  /-- Upper neighboring cochain degree for the page transition.
+
+The cochain degree satisfying `n₁ + 1 = n₂`, hence `-p - q + 1`. -/
   n₂ : ℤ
+/-- Identification of the page-two lower outer cut.
+
+The cut `i₀'` equals `core.i₀ 2 (p, q) χ.pageTwoBound`, so it is the integer `p - 2` in
+`EInt`. -/
   hi₀' : i₀' = (core).i₀ 2 (p, q) χ.pageTwoBound
+/-- Identification of the page-one lower outer cut.
+
+The cut `i₀` equals `core.i₀ 1 (p, q) χ.pageOneBound`, so it is the integer `p - 1` in `EInt`. -/
   hi₀ : i₀ = (core).i₀ 1 (p, q) χ.pageOneBound
+/-- Identification of the lower middle cut.
+
+The cut `i₁` equals `core.i₁ (p, q)`, which is the integer `p - 1` in `EInt`. -/
   hi₁ : i₁ = (core).i₁ (p, q)
+/-- Identification of the upper middle cut.
+
+The cut `i₂` equals `core.i₂ (p, q)`, which is the integer `p` in `EInt`. -/
   hi₂ : i₂ = (core).i₂ (p, q)
+/-- Identification of the page-one upper outer cut.
+
+The cut `i₃` equals `core.i₃ 1 (p, q) χ.pageOneBound`, which is the integer `p` in `EInt`. -/
   hi₃ : i₃ = (core).i₃ 1 (p, q) χ.pageOneBound
+/-- Identification of the page-two upper outer cut.
+
+The cut `i₃'` equals `core.i₃ 2 (p, q) χ.pageTwoBound`, which is the integer `p + 1` in
+`EInt`. -/
   hi₃' : i₃' = (core).i₃ 2 (p, q) χ.pageTwoBound
+/-- Identification of the page-transition middle degree.
+
+The stored middle degree satisfies `n₁ = core.deg (p, q) = -p - q`. -/
   hn : n₁ = (core).deg (p, q)
+/-- Consecutiveness of the lower and middle transition degrees.
+
+The lower and middle cochain degrees satisfy `n₀ + 1 = n₁`. -/
   hn₁ : n₀ + 1 = n₁
+/-- Consecutiveness of the middle and upper transition degrees.
+
+The middle and upper cochain degrees satisfy `n₁ + 1 = n₂`. -/
   hn₂ : n₁ + 1 = n₂
+/-- Bottom bound for the page-two lower outer cut.
+
+The bottom extended-integer index satisfies `⊥ ≤ i₀'`. -/
   hiBot₀' : (⊥ : EInt) ≤ i₀'
+/-- Page-two lower outer cut precedes the lower middle cut.
+
+The page-transition cuts satisfy `i₀' ≤ i₁`, giving the interval from integer `p - 2` to `p -
+1`. -/
   hi₀'₁ : i₀' ≤ i₁
+/-- Lower outer cut expands from page one to page two.
+
+The lower outer cuts satisfy `i₀' ≤ i₀`, comparing the page-two cut `p - 2` with the page-one
+cut `p - 1`. -/
   hi₀'₀ : i₀' ≤ i₀
+/-- Page-one lower outer cut precedes its middle cut.
+
+The page-transition cuts satisfy `i₀ ≤ i₁`; both are identified with integer `p - 1`. -/
   hi₀₁ : i₀ ≤ i₁
+/-- Ordering of the shared middle cuts.
+
+The shared middle cuts satisfy `i₁ ≤ i₂`, giving the interval from integer `p - 1` to `p`. -/
   hi₁₂ : i₁ ≤ i₂
+/-- Page-one upper middle cut precedes its outer cut.
+
+The page-transition cuts satisfy `i₂ ≤ i₃`; both are identified with integer `p`. -/
   hi₂₃ : i₂ ≤ i₃
+/-- Upper middle cut precedes the page-two outer cut.
+
+The page-transition cuts satisfy `i₂ ≤ i₃'`, giving the interval from integer `p` to `p + 1`. -/
   hi₂₃' : i₂ ≤ i₃'
+/-- Upper outer cut expands from page one to page two.
+
+The upper outer cuts satisfy `i₃ ≤ i₃'`, comparing the page-one cut `p` with the page-two cut
+`p + 1`. -/
   hi₃₃' : i₃ ≤ i₃'
+/-- Bottom bound for the lower middle cut.
+
+The bottom extended-integer index satisfies `⊥ ≤ i₁`. -/
   hiBot₁ : (⊥ : EInt) ≤ i₁
+/-- Top bound for the page-two upper outer cut.
+
+The page-two upper outer cut satisfies `i₃' ≤ ⊤`. -/
   hi₃'Top : i₃' ≤ (⊤ : EInt)
 
-/-- The canonical page-transition index data derived from the same choice. -/
+/-- Canonical integer cuts for the first-page transition.
+
+For natural `p` and `q`, choose the neighboring bidegrees from the first-page shape, the six
+cuts `p - 2`, `p - 1`, `p - 1`, `p`, `p`, `p + 1` in `EInt`, and degrees `-p - q - 1`, `-p -
+q`, `-p - q + 1`. Their ordering and core identities give `χ.PageTransitionIndex p q`. -/
 noncomputable def pageTransitionIndex
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.PageTransitionIndex p q := by
@@ -3546,8 +3813,11 @@ noncomputable def pageTransitionIndex
       hiBot₁ := bot_le
       hi₃'Top := le_top }
 
-/-- The package-owned HomologyData for the transition from page one to page
-two at `(p,q)`. -/
+/-- Homology data for the chosen first-page differential.
+
+Using the neighboring bidegrees and integer cuts in `χ.pageTransitionIndex p q`, the spectral
+object supplies homology data for the short complex of first-page objects around `(p, q)`. Its
+homology coordinate is shared with page two. -/
 noncomputable def pageOneHomologyData
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     let η := χ.pageTransitionIndex p q
@@ -3562,8 +3832,11 @@ noncomputable def pageOneHomologyData
     η.n₀ η.n₁ η.n₂ η.hn η.hn₁ η.hn₂
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The left inclusion of the package HomologyData is the literal lower
-map-four factor followed by the inverse explicit-bound page coordinate. -/
+/-- Cycle inclusion in the chosen page-transition homology data.
+
+For `η = χ.pageTransitionIndex p q`, the left inclusion in the homology data is the spectral
+object's `mapFourδ₁Toδ₀'` on the lower five cuts, followed by the inverse page-one interval
+coordinate. The three degrees are `η.n₀`, `η.n₁`, and `η.n₂`. -/
 @[reassoc]
 theorem pageOneHomologyData_left_i
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
@@ -3589,8 +3862,11 @@ theorem pageOneHomologyData_left_i
       η.n₀ η.n₁ η.n₂ η.hn η.hn₁ η.hn₂
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The left projection of the package HomologyData is the literal upper
-map-four factor. -/
+/-- Homology projection in the chosen page-transition data.
+
+For `η = χ.pageTransitionIndex p q`, the left projection in the homology data is the spectral
+object's `mapFourδ₄Toδ₃'` on cuts `η.i₀'`, `η.i₁`, `η.i₂`, `η.i₃`, and `η.i₃'`, in the three
+consecutive cochain degrees. -/
 @[reassoc]
 theorem pageOneHomologyData_left_π
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
@@ -3613,15 +3889,20 @@ theorem pageOneHomologyData_left_π
 /- Common page-one and page-two coordinates -/
 
 
-/-- The common coordinate underlying page two and the homology of page one at
-`(p,q)`, taken from the package-owned HomologyData. -/
+/-- Common homology object for the chosen first two pages.
+
+For natural `p` and `q`, this is the homology object `(χ.pageOneHomologyData p q).left.H`. It
+is the common coordinate for first-page homology and the second-page object at `(p, q)`. -/
 noncomputable abbrev pageTwoCoordinate
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) : C :=
   (χ.pageOneHomologyData p q).left.H
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The package page-two object in bidegree `(p,q)` is the common
-HomologyData coordinate. -/
+/-- Chosen second-page object as the common homology coordinate.
+
+The second-page object `χ.pageTwo.X (p, q)` is isomorphic to `χ.pageTwoCoordinate p q`. Its
+spectral interval uses the lower outer cut `i₀'`, middle cuts `i₁` and `i₂`, and upper outer
+cut `i₃'` from the transition data. -/
 noncomputable def pageTwoCoordinateIso
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.pageTwo.X (p, q) ≅ χ.pageTwoCoordinate p q := by
@@ -3634,8 +3915,10 @@ noncomputable def pageTwoCoordinateIso
       η.n₀ η.n₁ η.n₂ η.hn η.hn₁ η.hn₂
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The exact-bound raw page-two coordinate identifies with the package-owned
-common page-two coordinate. -/
+/-- Four-cut second-page interval as the chosen homology coordinate.
+
+With `η = χ.pageTransitionIndex p q`, the spectral object's `E` on intervals `η.i₀' ⟶ η.i₁ ⟶
+η.i₂ ⟶ η.i₃'` and degrees `η.n₀`, `η.n₁`, `η.n₂` is isomorphic to `χ.pageTwoCoordinate p q`. -/
 noncomputable def pageTwoRawCoordinateIso
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     let η := χ.pageTransitionIndex p q
@@ -3656,8 +3939,11 @@ noncomputable def pageTwoRawCoordinateIso
       η.n₀ η.n₁ η.n₂ η.hn η.hn₁ η.hn₂
   exact ePage₂.symm ≪≫ χ.pageTwoCoordinateIso p q
 
-/-- Page-one homology in bidegree `(p,q)` identifies with the same common
-coordinate used for page two. -/
+/-- Chosen first-page homology as the common coordinate.
+
+The homology of `χ.pageOne` at `(p, q)` is isomorphic to `χ.pageTwoCoordinate p q`. First
+identify it with homology of the neighboring short complex, then use the spectral-object
+homology data. -/
 noncomputable def pageOneHomologyCoordinateIso
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.pageOne.homology (p, q) ≅ χ.pageTwoCoordinate p q := by
@@ -3667,16 +3953,21 @@ noncomputable def pageOneHomologyCoordinateIso
         η.pqPrev (p, q) η.pqNext η.hpq η.hpq' ≪≫
       (χ.pageOneHomologyData p q).left.homologyIso
 
-/-- The selected transition from page-one homology to the package page-two
-object. -/
+/-- Chosen first-page homology identifies with page two.
+
+For natural `p` and `q`, the isomorphism `χ.pageOne.homology (p, q) ≅ χ.pageTwo.X (p, q)` is
+obtained by composing the first-page homology coordinate with the inverse second-page
+coordinate. -/
 noncomputable def pageOneTwoIso
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.pageOne.homology (p, q) ≅ χ.pageTwo.X (p, q) :=
   χ.pageOneHomologyCoordinateIso p q ≪≫
     (χ.pageTwoCoordinateIso p q).symm
 
-/-- In horizontal degree zero, P12 followed by the page-two coordinate is
-the page-one homology coordinate. -/
+/-- Chosen zero-column transition respects its common homology object.
+
+At `(0, q)`, the chosen first-page-to-second-page map followed by `χ.pageTwoCoordinateIso 0 q`
+equals `χ.pageOneHomologyCoordinateIso 0 q` on forward morphisms. -/
 @[reassoc]
 theorem pageOneTwoIso_zero_hom_comp_pageTwoCoordinateIso_hom
     (χ : PartialTotalFirstPageChoice B) (q : ℕ) :
@@ -3692,8 +3983,11 @@ theorem pageOneTwoIso_zero_hom_comp_pageTwoCoordinateIso_hom
 /- Page-two vertical-homology identification and representative -/
 
 
-/-- Page two in the package-owned coordinates is horizontal homology of the
-vertical-homology complex. -/
+/-- Chosen second page as iterated vertical and horizontal homology.
+
+For natural `p` and `q`, the chosen second-page object `χ.pageTwo.X (p, q)` is isomorphic to
+`H_p(B.verticalHomologyComplex q)`. The isomorphism uses the inverse page transition, inverse
+row-restriction homology coordinate, and the homology map of `χ.verticalHomologyIso q`. -/
 noncomputable def secondPageVerticalHomologyIso
     (χ : PartialTotalFirstPageChoice B) (p q : ℕ) :
     χ.pageTwo.X (p, q) ≅
@@ -3702,8 +3996,12 @@ noncomputable def secondPageVerticalHomologyIso
     (χ.restrictionHomologyIso (χ.restrictionIndex p q)).symm ≪≫
     HomologicalComplex.homologyMapIso (χ.verticalHomologyIso q) p
 
-/-- The inverse package-owned page-two coordinate is represented at
-horizontal degree zero by the exact shared first-page component. -/
+/-- Zero-column representative of the inverse iterated-homology coordinate.
+
+In horizontal degree zero, project `B.verticalHomologyComplex q` to its zeroth homology
+through opcycles, then apply the inverse second-page coordinate. The same map is obtained by
+the inverse component `χ.componentIso q 0`, the corresponding row-restriction projection to
+zeroth homology, its homology coordinate in the first page, and the page-one-to-page-two map. -/
 theorem secondPageVerticalHomologyIso_inv_representation_zero
     (χ : PartialTotalFirstPageChoice B) (q : ℕ) :
     (B.verticalHomologyComplex q).pOpcycles 0 ≫

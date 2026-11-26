@@ -1,4 +1,6 @@
-# Horizontal First Page Middle Stage Iso
+# The common adjacent stage after cochain reindexing
 
-Identification of the common middle filtration stage in two consecutive
-graded pieces after forgetting to cochain complexes.
+For a nonnegative homological bicomplex K in an abelian
+category, reindexing chain degree n as cochain degree −n identifies
+the complete cochain stages at upper(p) and lower(p+1).
+Both represent F_p, the common stage of two consecutive intervals.
