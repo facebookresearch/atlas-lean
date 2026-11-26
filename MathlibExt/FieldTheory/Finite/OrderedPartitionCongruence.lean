@@ -21,6 +21,15 @@ ordered partitions with total divisible by `p - 1` vanishes modulo `p` in the st
 Grouping terms into blocks of length `p` shows that the generating polynomial takes the value
 `x` at every unit `x`. Summing its `s`-th power over the units selects the tuples whose total
 is a multiple of `p - 1`.
+
+## References
+
+* C. K. Vishwakarma and R. P. Singh, *A Congruence Identity on Ordered Partitions Using Permutation
+  Polynomials*, INTEGERS 24 (2024), Article A12, Theorem 1 and Corollary 2 (the linear case).
+* R. P. Singh and M. K. Singh, *Two Congruence Identities on Ordered Partitions*, INTEGERS 18
+  (2018), Article A73, Theorem 1, cited by Vishwakarma and Singh for the linear congruence.
+* R. Lidl and H. Niederreiter, *Finite Fields*, 2nd ed., Cambridge University Press (1997),
+  Theorem 7.6, the source for Hermite's criterion in the paper's proof.
 -/
 
 namespace MetaMathlibExt
@@ -156,5 +165,38 @@ public theorem prime_dvd_sum_compositions_prod_pow {p : ℕ} (hp : p.Prime) (hp2
     _ = _ := by simp [Nat.mul_comm]
   rw [sum_multiples hpos (by omega) hle]
   split <;> simp
+
+/-- **Vishwakarma–Singh congruence for ordered partitions, linear case.** Let $p$ be an odd
+prime and let $k, s$ be positive integers with $s \le p - 2$ and $k \equiv 1 \pmod{p(p-1)}$.
+Let $\mu = \lfloor ks/(p - 1) \rfloor$. Then
+
+$$\sum_{j=1}^{\mu} \sum_{\omega} \omega_1 \cdots \omega_s \equiv 0 \pmod{p},$$
+
+where for each $j$ the inner sum runs over all $s$-tuples $\omega = (\omega_1, \dots, \omega_s)$
+with entries in $\{1, \dots, k\}$ and $\omega_1 + \cdots + \omega_s = j(p - 1)$.
+
+This is the case $t = 1$ of the source's Theorem 1. The source states the hypothesis
+$s \not\equiv 0 \pmod{p}$ in place of $s \le p - 2$; with that hypothesis the claim fails, e.g.
+for $p = 3$, $k = 7$, $s = 2$ the sum is $400 \equiv 1 \pmod{3}$.
+
+Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
+Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Corollary 2
+(`integers-2024-A12-cor-2`). -/
+public theorem prime_dvd_sum_compositions_prod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
+    {k s : ℕ} (hk : 0 < k) (hs : 0 < s) (hsp : s ≤ p - 2) (hkcong : k ≡ 1 [MOD p * (p - 1)]) :
+    p ∣ ∑ j ∈ Finset.Icc 1 (k * s / (p - 1)),
+      ∑ ω ∈ (Fintype.piFinset fun _ : Fin s => Finset.Icc 1 k).filter
+          (fun ω => ∑ i, ω i = j * (p - 1)),
+        ∏ i, ω i := by
+  have hp₁ : 2 ≤ p - 1 := by
+    have := hp.two_le
+    omega
+  have hnot : ¬ (p - 1) ∣ (1 : ℕ) := by
+    intro hdiv
+    have := Nat.dvd_one.mp hdiv
+    omega
+  simpa only [pow_one] using
+    prime_dvd_sum_compositions_prod_pow (t := 1) hp hp2 hk hs hsp Nat.zero_lt_one hkcong
+      (fun hdiv => (hnot hdiv).elim)
 
 end MetaMathlibExt
