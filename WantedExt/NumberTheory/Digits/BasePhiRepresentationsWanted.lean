@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
 public import MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
+public import MathlibExt.NumberTheory.Digits.BergmanWordFib
 public import MathlibExt.NumberTheory.Digits.FibMemLucasIntervals
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -65,24 +66,6 @@ public theorem_wanted knottExpansionCount_eq_of_recursion (N : ℕ) (hN : 2 ≤ 
       (Even (s k) → 2 * r k = (s k + 2) * r (k - 1)) ∧
       (Odd (s k) → 2 * r k = (s k + 3) * r (k - 1) - 2 * r (k - 2))) :
     (knottExpansionCount N : ℤ) = r n
-
-/-- **Bergman expansions of the Fibonacci numbers.** Let $n \ge 1$ and write $F_m$ for the $m$-th
-Fibonacci number, with $F_1 = F_2 = 1$. Let $S$ be a finite set of integers with no two
-consecutive elements (a Bergman expansion). If the base phi value of $S$ is $F_{2n}$, then
-$S = \{t + 4j : 0 \le j < n\}$ for some integer $t$. If the base phi value of $S$ is
-$F_{2n+1}$, then $S = \{t\} \cup \{t + 3 + 4j : 0 \le j < n\}$ for some integer $t$.
-
-Read from the highest to the lowest position, these are the digit words $(1000)^{n-1}1$ and
-$(1000)^{n-1}1001$; the position of the radix point is not determined.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Proposition 3.1
-(`fq-2024-dekking11102023-prop-3.1`). -/
-public theorem_wanted bergmanWord_fib (n : ℕ) (hn : 1 ≤ n) :
-    (∀ S : Finset ℤ, IsBergmanExpansion S → basePhiValue S = Nat.fib (2 * n) →
-      ∃ t : ℤ, S = (Finset.range n).image fun j : ℕ => 4 * (j : ℤ) + t) ∧
-    (∀ S : Finset ℤ, IsBergmanExpansion S → basePhiValue S = Nat.fib (2 * n + 1) →
-      ∃ t : ℤ, S = insert t ((Finset.range n).image fun j : ℕ => 4 * (j : ℤ) + 3 + t))
 
 /-- **Knott expansions of Fibonacci numbers.** Let $F_n$ be the Fibonacci numbers ($F_0 = 0$,
 $F_1 = 1$). For every $n \ge 1$, the number of Knott expansions of $F_n$ is $F_n$.
