@@ -275,7 +275,10 @@ private lemma chernoff_exponent_eq {t M V D lam : ℝ} (hV : 0 < V) (hD0 : 0 < D
   field_simp
   ring
 
-private lemma bernstein_one_sided {Ω : Type*} [MeasurableSpace Ω]
+/-- One-sided Bernstein bound for a finite sum of independent centered variables.
+The variables are almost surely bounded in absolute value by `M`, and `V` bounds the sum
+of their second moments. -/
+lemma bernstein_one_sided {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P]
     {n : ℕ} {M V t : ℝ} (hM : 0 < M) (hV : 0 < V) (ht : 0 < t)
     {X : Fin n → Ω → ℝ} (hX : iIndepFun X P) (hXm : ∀ i, Measurable (X i))
