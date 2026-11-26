@@ -8,9 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Convex.Hull
 public import MathlibExt.NumberTheory.GobelBSequence
-public import MathlibExt.NumberTheory.OddMultiplePrimeHalfSets
 import Mathlib.Algebra.Ring.Periodic
 import Mathlib.Data.Int.GCD
 import Mathlib.Data.Int.ModEq
