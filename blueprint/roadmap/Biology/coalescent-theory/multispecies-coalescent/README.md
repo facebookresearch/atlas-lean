@@ -118,6 +118,8 @@
 - [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
 - [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
+- [Gene tree density under the multispecies coalescent with branch population functions](gene-tree-density-under-the-multispecies-coalescent-with-branch-population-functions.md)
+- [Hierarchical Bayesian posterior for species trees from multilocus data](hierarchical-bayesian-posterior-for-species-trees-from-multilocus-data.md)
 - [Hard and soft anomalous networks under the network multispecies coalescent](anomalous-networks-under-correlated-inheritance.md)
 - [Concordance-factor signatures of cycles in level-1 quartet networks](big-cycle-property-detects-4-cycles.md)
 - [Identifiability of level-1 networks from orderings of quartet concordance factors](level-1-network-identifiability-from-quartet-concordance-factor-orderings.md)
