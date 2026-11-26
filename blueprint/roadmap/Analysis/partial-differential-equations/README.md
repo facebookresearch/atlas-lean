@@ -6,6 +6,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Bifurcation of Turing pattern branches](bifurcation-of-turing-pattern-branches/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
 - [Heat equation](heat-equation/README.md)
+- [Heat-kernel Duhamel derivatives](heat-kernel-duhamel-derivatives/README.md)
 - [Heat-kernel Duhamel integral](heat-kernel-duhamel-integral/README.md)
 - [Hessian estimates for the σ₂ equation](hessian-estimates-for-the-equation/README.md)
 - [Lyapunov–Schmidt reduction for Turing pattern branches](lyapunov-schmidt-reduction-for-turing-pattern-br/README.md)

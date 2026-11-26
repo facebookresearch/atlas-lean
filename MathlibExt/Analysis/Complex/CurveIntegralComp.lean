@@ -47,7 +47,8 @@ every time (this covers piecewise differentiable curves, which may have corners)
 $$\int_{\varphi(\gamma)} f(w)\,dw = \int_\gamma f(\varphi(z))\,\varphi'(z)\,dz.$$
 The image curve `φ(γ)` is the path `γ.map' _`, and the 1-form `f(w) dw` is
 `f w • ContinuousLinearMap.id ℂ ℂ`. A region in the source is a connected open set; the formula
-does not use connectedness. -/
+does not use connectedness. A curve integral is read as `0` when the pulled-back integrand is not
+integrable, so both sides may be this `0` rather than a convergent classical integral. -/
 public theorem curveIntegral_map'_eq_comp_mul_deriv {Ω : Set ℂ} {φ : ℂ → ℂ} {z₀ z₁ : ℂ}
     (f : ℂ → ℂ) (γ : Path z₀ z₁) (hΩ : IsOpen Ω) (hφ : DifferentiableOn ℂ φ Ω)
     (hγΩ : range γ ⊆ Ω) (hγ : ∀ᵐ t, t ∈ I → DifferentiableAt ℝ γ.extend t) :
