@@ -55,22 +55,28 @@ open MathlibExt.GameTheory.Regret (IsSimplex isSimplex_iff)
 /-- P1: a scoring rule maps a reported distribution and an outcome to a score. -/
 abbrev ScoringRule (X : Type*) : Type _ := (X → ℝ) → X → ℝ
 
-/-- P1: expected score under belief `p` of reporting `q`. -/
+/-- P1: the score `∑ i, p i * S q i` of reporting `q` under the weights `p`; when `p` is a
+probability distribution on `X` (the belief), it is the expected score of reporting `q`. -/
 noncomputable def expectedScore (X : Type*) [Fintype X]
     (S : ScoringRule X) (p q : X → ℝ) : ℝ :=
   ∑ i, p i * S q i
 
-/-- P1: properness; truthful reporting maximizes the expected score. -/
+/-- P1: properness. For all probability distributions `p` (the belief) and `q` (the report) on
+`X`, reporting `q` scores at most truthful reporting:
+`expectedScore X S p q ≤ expectedScore X S p p`. -/
 def IsProper (X : Type*) [Fintype X] (S : ScoringRule X) : Prop :=
   ∀ p q, IsSimplex p → IsSimplex q →
     expectedScore X S p q ≤ expectedScore X S p p
 
-/-- P1: strict properness; truthful reporting is the unique maximizer. -/
+/-- P1: strict properness. `S` is proper, and for probability distributions `p` and `q` on `X`,
+`expectedScore X S p q = expectedScore X S p p` forces `q = p`: truthful reporting is the unique
+maximizer. -/
 def IsStrictlyProper (X : Type*) [Fintype X] (S : ScoringRule X) : Prop :=
   IsProper X S ∧ ∀ p q, IsSimplex p → IsSimplex q →
     expectedScore X S p q = expectedScore X S p p → q = p
 
-/-- P2: the quadratic scoring rule in form (2) of the source. -/
+/-- P2: the quadratic scoring rule, `quadraticRule X q i = q i - (1 / 2) * ∑ j, q j ^ 2`
+(form (2) of the source). -/
 noncomputable def quadraticRule (X : Type*) [Fintype X] : ScoringRule X :=
   fun q i => q i - (1 / 2) * ∑ j, q j ^ 2
 
@@ -130,7 +136,10 @@ theorem quadraticRule_isStrictlyProper (X : Type*) [Fintype X] :
       exact sub_eq_zero.mp h0
     exact (funext hPt).symm
 
-/-- P3: log-score disjunction; support violation or strict log-score gap. -/
+/-- P3: log-score disjunction. For probability distributions `p` and `q` on the same finite
+outcome set with `q ≠ p`, either `q` misses part of the support of `p`, that is `0 < p i` and
+`q i = 0` for some outcome `i`, or the expected log score of reporting `q` is strictly below
+that of truthful reporting: `∑ i, p i * Real.log (q i) < ∑ i, p i * Real.log (p i)`. -/
 theorem logScore_disjunction (X : Type*) [Fintype X]
     (p q : X → ℝ) (hp : IsSimplex p) (hq : IsSimplex q)
     (hne : q ≠ p) :
@@ -279,7 +288,9 @@ theorem logScore_disjunction (X : Type*) [Fintype X]
     rw [div_lt_div_iff_of_pos_right hlog2] at hToReal
     exact neg_lt_neg_iff.mp hToReal
 
-/-- P3 corollary: with full support on `q`, the log-score gap is strict. -/
+/-- P3 corollary. For probability distributions `p` and `q` on the same finite outcome set with
+`q ≠ p` and `0 < q i` for every outcome `i`, the expected log score of reporting `q` is strictly
+below that of truthful reporting: `∑ i, p i * Real.log (q i) < ∑ i, p i * Real.log (p i)`. -/
 theorem logScore_lt_of_fullSupport (X : Type*) [Fintype X]
     (p q : X → ℝ) (hp : IsSimplex p)
     (hq : IsSimplex q) (hne : q ≠ p)
@@ -289,7 +300,8 @@ theorem logScore_lt_of_fullSupport (X : Type*) [Fintype X]
   · exact absurd hqi (ne_of_gt (hsupp i))
   · exact hgap
 
-/-- P3n: the real log rule, with `Real.log 0 = 0` at zero mass. -/
+/-- P3n: the real log rule, `logRule X q i = Real.log (q i)`, with `Real.log 0 = 0` at zero
+mass. -/
 noncomputable def logRule (X : Type*) : ScoringRule X :=
   fun q i => Real.log (q i)
 
@@ -340,7 +352,7 @@ theorem logRule_notStrictlyProper :
     linarith [hle, hgap]
   · exact hgap
 
-/-- P4: the linear scoring rule. -/
+/-- P4: the linear scoring rule, `linearRule X q i = q i`. -/
 noncomputable def linearRule (X : Type*) : ScoringRule X :=
   fun q i => q i
 
