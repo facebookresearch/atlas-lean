@@ -36,4 +36,3 @@ The pages below give the definitions, the Lie algebra rank condition and the fai
 - [Maximal solutions and global existence](../../ordinary-differential-equations/maximal-solutions-and-global-existence/README.md) and [Cauchy–Peano existence theorem](../../ordinary-differential-equations/cauchy-peano-exists.md): a continuous feedback gives a closed loop with solutions that need not be unique, which is why stability is imposed on every solution.
 - [Picard iteration](../../ordinary-differential-equations/picard-iteration/README.md): for a Lipschitz closed-loop vector field, solutions are unique and given by successive approximation; continuous feedback laws only guarantee existence.
 - [Viscosity solutions of Hamilton–Jacobi equations](../../partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/README.md): value functions of nonlinear optimal control problems solve Hamilton–Jacobi–Bellman equations in the viscosity sense.
-
