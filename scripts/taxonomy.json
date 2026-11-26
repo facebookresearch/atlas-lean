@@ -14390,6 +14390,7 @@
   "MathlibExt/Probability/WaldSecondEquation": {"to": "Probability/martingales", "title": "Wald's equations"},
   "MathlibExt/Probability/WignerMatrix": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
   "MathlibExt/Probability/WignerOperatorNorm": {"to": "Probability/high-dimensional-probability", "title": "Operator norm of random matrices"},
+  "MathlibExt/Probability/WignerOperatorNormOpNormConcentrationMedian": {"to": "Probability/high-dimensional-probability", "title": "Operator norm of random matrices"},
   "MathlibExt/QuantumInformation/Finite/KnillLaflamme": {"to": "QuantumInformation/quantum-error-correction", "title": "Knill–Laflamme conditions"},
   "MathlibExt/QuantumInformation/Finite/KochenSpecker": {"to": "QuantumInformation/quantum-foundations", "title": "Kochen–Specker theorem"},
   "MathlibExt/QuantumInformation/Finite/NoCloning": {"to": "QuantumInformation/quantum-operations", "title": "No-cloning theorem"},
