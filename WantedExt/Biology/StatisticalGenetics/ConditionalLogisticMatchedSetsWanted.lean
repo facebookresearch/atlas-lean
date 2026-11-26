@@ -12,18 +12,21 @@ LICENSE file in the root directory of this source tree.
 In a matched set of `M + 1` subjects with exposures `x_0, …, x_M ∈ ℝ^K`, suppose the outcomes are
 independent with `P(y_j = 1) = σ(α + β · x_j)`, where the intercept `α` is specific to the
 set. Given that the set contains exactly one case, the probability that the case is subject `j`
-is `exp(β · x_j) / ∑_i exp(β · x_i)`, free of `α`. With the case listed first, the conditional
-likelihood of `n` sets is `∏ exp(β · x_0) / ∑_j exp(β · x_j)`, equivalently
-`∏ 1 / (1 + ∑_{j ≥ 1} exp(β · (x_j - x_0)))` (Breslow and Day 1980, (7.2), (7.3)); a variable
-taking the same value within each set (a matching variable) drops out.
+is `exp(β · x_j) / ∑_i exp(β · x_i)`, free of `α`. If the outcomes are also independent across
+sets, the conditional likelihood of `n` sets, each with its case listed first, is the product
+`∏ exp(β · x_0) / ∑_j exp(β · x_j)`, equivalently `∏ 1 / (1 + ∑_{j ≥ 1} exp(β · (x_j - x_0)))`
+(Breslow and Day 1980, (7.2), (7.3)). The two products agree as an algebraic identity; reading
+them as a joint likelihood needs that independence across sets, which independence within each
+set does not give. A variable taking the same value within each set (a matching variable) drops
+out.
 
 For 1:1 matching on a binary exposure, let `n₁₀` pairs have the case exposed and the control not,
-and `n₀₁` the reverse. The conditional likelihood is maximized at `ψ = exp β = n₁₀ / n₀₁`. By
-contrast, maximizing the likelihood jointly over `β` and a separate intercept for every pair (the
-incidental-parameter likelihood) yields `β̂ = 2 log (n₁₀ / n₀₁)`, i.e. `ψ̂ = (n₁₀ / n₀₁)²` — the
-square of the conditional estimate (for any positive estimate `≠ 1`, squaring moves it farther
-from `1`, e.g. `1/2 ↦ 1/4` and `2 ↦ 4`; Breslow and Day 1980, p. 250). Concordant pairs carry no
-information about `β`.
+and `n₀₁` the reverse, with the pairs independent of one another. The conditional likelihood is
+maximized at `ψ = exp β = n₁₀ / n₀₁`. By contrast, maximizing the likelihood jointly over `β` and
+a separate intercept for every pair (the incidental-parameter likelihood) yields
+`β̂ = 2 log (n₁₀ / n₀₁)`, i.e. `ψ̂ = (n₁₀ / n₀₁)²` — the square of the conditional estimate (for
+any positive estimate `≠ 1`, squaring moves it farther from `1`, e.g. `1/2 ↦ 1/4` and `2 ↦ 4`;
+Breslow and Day 1980, p. 250). Concordant pairs carry no information about `β`.
 
 Here `σ t = 1 / (1 + exp (-t))` is the logistic function, Mathlib's `Real.sigmoid`.
 
@@ -64,16 +67,35 @@ probability that subject `j` is the case given exactly one case is
 Here `σ` is the logistic function `Real.sigmoid`.
 
 Source: Breslow and Day (1980), p. 251. -/
-public theorem_wanted conditionalCaseProb_eq {M K : ℕ} (α : ℝ) (β : Fin K → ℝ)
+public theorem conditionalCaseProb_eq {M K : ℕ} (α : ℝ) (β : Fin K → ℝ)
     (x : Fin (M + 1) → Fin K → ℝ) (j : Fin (M + 1)) :
-    conditionalCaseProb α β x j = Real.exp (β ⬝ᵥ x j) / ∑ i, Real.exp (β ⬝ᵥ x i)
+    conditionalCaseProb α β x j = Real.exp (β ⬝ᵥ x j) / ∑ i, Real.exp (β ⬝ᵥ x i) := by
+  -- `σ t = e^t (1 - σ t)`, so each `onlyCaseProb` is `e^(β · x_i)` times one positive constant.
+  have hσ (t : ℝ) : Real.sigmoid t = Real.exp t * (1 - Real.sigmoid t) := by
+    have h := Real.sigmoid_mul_rexp_neg (-t)
+    rw [neg_neg, Real.sigmoid_neg] at h
+    rw [mul_comm]
+    exact h.symm
+  set c := Real.exp α * ∏ k, (1 - Real.sigmoid (α + β ⬝ᵥ x k)) with hc
+  have hc0 : 0 < c :=
+    mul_pos (Real.exp_pos _) (Finset.prod_pos fun k _ => sub_pos.mpr (Real.sigmoid_lt_one _))
+  have honly (i : Fin (M + 1)) : onlyCaseProb α β x i = Real.exp (β ⬝ᵥ x i) * c := by
+    rw [onlyCaseProb, hσ (α + β ⬝ᵥ x i), mul_assoc,
+      Finset.mul_prod_erase Finset.univ (fun k => 1 - Real.sigmoid (α + β ⬝ᵥ x k))
+        (Finset.mem_univ i), Real.exp_add, hc]
+    ring
+  simp_rw [conditionalCaseProb, honly, ← Finset.sum_mul]
+  exact mul_div_mul_right _ _ hc0.ne'
 
-/-- **The two forms of the conditional likelihood** (Breslow and Day 1980, (7.2), (7.3)). For `n`
-matched sets, set `s` having `M_s + 1` subjects with exposures `x_{s,j} ∈ ℝ^K` and its case
-listed first (`j = 0`), and every coefficient vector `β`,
-`∏_s exp(β · x_{s,0}) / ∑_j exp(β · x_{s,j})` equals
-`∏_s 1 / (1 + ∑_{j ≥ 1} exp(β · (x_{s,j} - x_{s,0})))`.
-For `M_s = 1` this is (7.3).
+/-- **Two forms of the conditional likelihood of independent matched sets.** For `n` matched
+sets, set `s` having `M_s + 1` subjects with exposures `x_{s,j} ∈ ℝ^K` and its case listed first
+(`j = 0`), and every coefficient vector `β`, `∏_s exp(β · x_{s,0}) / ∑_j exp(β · x_{s,j})` equals
+`∏_s 1 / (1 + ∑_{j ≥ 1} exp(β · (x_{s,j} - x_{s,0})))` (Breslow and Day 1980, (7.2), (7.3)); for
+`M_s = 1` this is (7.3). The identity is algebraic. Each factor of the first product is the
+conditional probability that the case of set `s` is subject `0` (`conditionalCaseProb_eq`), and the
+product is the joint conditional likelihood of the `n` sets only when the outcomes are independent
+across sets as well as within each set: independence within each set does not justify
+multiplying probabilities across sets.
 
 Source: Breslow and Day (1980), p. 251, (7.2), and p. 253, (7.3). -/
 public theorem_wanted prod_conditionalLikelihood_eq {n K : ℕ} (M : Fin n → ℕ) (β : Fin K → ℝ)
@@ -93,10 +115,12 @@ public theorem_wanted conditionalCaseProb_add_const {M K : ℕ} (α : ℝ) (β :
     (x : Fin (M + 1) → Fin K → ℝ) (z : Fin K → ℝ) (j : Fin (M + 1)) :
     conditionalCaseProb α β (fun i => x i + z) j = conditionalCaseProb α β x j
 
-/-- The 1:1 binary-exposure conditional log-likelihood
-`n₁₀ log (e^β / (1 + e^β)) + n₀₁ log (1 / (1 + e^β))`, from `n₁₀` pairs with the case exposed and
-the control unexposed and `n₀₁` pairs with the reverse. The denominators `1 + e^β` are always
-positive, so no division by zero occurs. -/
+/-- **Conditional log-likelihood of independent 1:1 pairs.** For `n₁₀` pairs with the case
+exposed and the control unexposed and `n₀₁` pairs with the reverse, the binary-exposure conditional
+log-likelihood `n₁₀ log (e^β / (1 + e^β)) + n₀₁ log (1 / (1 + e^β))`. Each pair contributes the log
+of its conditional probability given one case in the pair, and the sum is the joint conditional
+log-likelihood when the pairs are independent of one another. The denominators `1 + e^β` are
+always positive, so no division by zero occurs. -/
 noncomputable def pairedConditionalLogLik (n₁₀ n₀₁ : ℕ) (β : ℝ) : ℝ :=
   n₁₀ * Real.log (Real.exp β / (1 + Real.exp β)) + n₀₁ * Real.log (1 / (1 + Real.exp β))
 
@@ -114,12 +138,13 @@ public theorem_wanted pairedConditionalLogLik_max {n₁₀ n₀₁ : ℕ} (h₁�
           pairedConditionalLogLik n₁₀ n₀₁ (Real.log (n₁₀ / n₀₁)) ↔
         β = Real.log (n₁₀ / n₀₁))
 
-/-- The incidental-parameter log-likelihood of the discordant pairs, with a separate nuisance
-intercept for every pair (not a valid estimating likelihood for `β`): a pair
-with the case exposed and the control unexposed contributes
-`log (σ(α + β) (1 - σ α))`, and a pair with the reverse contributes
-`log (σ α (1 - σ(α + β)))`. Here `σ` is the logistic
-function `Real.sigmoid`. -/
+/-- **Incidental-parameter log-likelihood of independent pairs.** The log-likelihood of the
+discordant pairs, with a separate nuisance intercept for every pair (not a valid estimating
+likelihood for `β`): a pair with the case exposed and the control unexposed contributes
+`log (σ(α + β) (1 - σ α))`, and a pair with the reverse contributes `log (σ α (1 - σ(α + β)))`.
+Each term takes the two subjects of a pair to be independent, and the sum is the joint
+log-likelihood when the pairs are independent of one another. Here `σ` is the logistic function
+`Real.sigmoid`. -/
 noncomputable def perPairInterceptLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin n₁₀ → ℝ)
     (α₀₁ : Fin n₀₁ → ℝ) (β : ℝ) : ℝ :=
   (∑ i, Real.log (Real.sigmoid (α₁₀ i + β) * (1 - Real.sigmoid (α₁₀ i)))) +

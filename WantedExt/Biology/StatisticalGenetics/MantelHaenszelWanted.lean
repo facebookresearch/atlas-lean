@@ -37,6 +37,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.AbsoluteValue.Basic
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Tactic.Ring
 
 @[expose] public section
 
@@ -75,8 +76,10 @@ with real cells `A, B, C, D` and positive total `T = A + B + C + D`,
 `A - (A + B)(A + C) / T = (A D - B C) / T`.
 
 Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted sub_expectedCount {A B C D : ℝ} (hT : 0 < A + B + C + D) :
-    A - expectedCount A B C D = (A * D - B * C) / (A + B + C + D)
+public theorem sub_expectedCount {A B C D : ℝ} (hT : 0 < A + B + C + D) :
+    A - expectedCount A B C D = (A * D - B * C) / (A + B + C + D) := by
+  rw [expectedCount, eq_div_iff hT.ne', sub_mul, div_mul_cancel₀ _ hT.ne']
+  ring
 
 /-- **Single-table corrected chi-square** (Mantel and Haenszel 1959, p. 734). For a 2 × 2 table
 with real cells `A, B, C, D`, positive margins `A + B`, `C + D`, `A + C`, `B + D` and total
@@ -116,11 +119,18 @@ strata with real cells, positive totals `T_k` and `∑_k B_k C_k / T_k > 0`, `R 
 if `∑_k A_k = ∑_k E(A_k)`.
 
 Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted summaryOddsRatio_eq_one_iff {K : ℕ} (A B C D : Fin K → ℝ)
+public theorem summaryOddsRatio_eq_one_iff {K : ℕ} (A B C D : Fin K → ℝ)
     (hT : ∀ k, 0 < A k + B k + C k + D k)
     (hpos : 0 < ∑ k, B k * C k / (A k + B k + C k + D k)) :
     summaryOddsRatio A B C D = 1 ↔
-      ∑ k, A k = ∑ k, expectedCount (A k) (B k) (C k) (D k)
+      ∑ k, A k = ∑ k, expectedCount (A k) (B k) (C k) (D k) := by
+  -- By `sub_expectedCount`, `∑ A - ∑ E(A) = ∑ A D / T - ∑ B C / T`.
+  have hdiff : ∑ k, A k - ∑ k, expectedCount (A k) (B k) (C k) (D k) =
+      ∑ k, A k * D k / (A k + B k + C k + D k) -
+        ∑ k, B k * C k / (A k + B k + C k + D k) := by
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl fun k _ => by rw [sub_expectedCount (hT k), sub_div]
+  rw [summaryOddsRatio, div_eq_one_iff_eq hpos.ne', ← sub_eq_zero, ← hdiff, sub_eq_zero]
 
 /-- **The summary chi-square vanishes exactly when `R = 1`** (Mantel and Haenszel 1959,
 pp. 735–736). For `K` strata with real cells, positive totals `T_k`, `∑_k B_k C_k / T_k > 0` and

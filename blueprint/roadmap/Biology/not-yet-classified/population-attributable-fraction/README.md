@@ -14,4 +14,4 @@
 - [Levin's formula without confounding](levin-crude-rr-eq-causal-paf.md)
 - [Levin equals Miettinen for the crude risk ratio](levin-eq-miettinen.md)
 - [Miettinen's formula under confounding](miettinen-exposed-rr-eq-causal-paf.md)
-- [Levin's formula is biased under confounding, even with an adjusted risk ratio](exists-levin-total-rr-ne-causal-paf.md)
+- [Levin's formula with an adjusted risk ratio can disagree with the PAF](exists-levin-total-rr-ne-causal-paf.md)

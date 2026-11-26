@@ -18,8 +18,8 @@ covariance blocks are `Cov*(X, Y) = Cov*(X) Bᵀ` and `Cov*(Y) = B Cov*(X) Bᵀ 
 `Σ*_XY = Σ*_XX Σ_XX⁻¹ Σ_XY` and `Σ*_YY = Σ_YY - Σ_YX (Σ_XX⁻¹ - Σ_XX⁻¹ Σ*_XX Σ_XX⁻¹) Σ_XY`.
 
 This module records the residual-preservation prerequisite (`indepFun_and_map_residual_selected`)
-and the algebraic block identity (`aitken_blocks`) as `theorem_wanted`; the downstream selected
-mean and covariance theorems are tracked as planned roadmap pages depending on residual
+and the algebraic block identity (`aitken_block_identity`) as `theorem_wanted`; the downstream
+selected mean and covariance theorems are tracked as planned roadmap pages depending on residual
 preservation. A jointly Gaussian `(X, Y)` with nonsingular `Σ_XX` has such a representation; that
 is the conditioning theorem of `MathlibExt.Probability.Distributions.GaussianConditioning` and is
 not restated here. Pearson's scalar formulas (1903) are the one-variable case.

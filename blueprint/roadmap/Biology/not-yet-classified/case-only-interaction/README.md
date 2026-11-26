@@ -6,4 +6,4 @@
 - [Case-only odds ratio under non-case independence](odds-ratio-interaction-eq-case-only.md)
 - [Case-only odds ratio under population independence](risk-ratio-interaction-eq-case-only.md)
 - [Rare-disease limit](tendsto-odds-ratio-interaction-rare.md)
-- [Dependence breaks the case-only design](exists-case-only-ne-one.md)
+- [Under dependence, the case-only odds ratio can differ from `1` without interaction](exists-case-only-ne-one.md)

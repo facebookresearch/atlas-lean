@@ -2,10 +2,10 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Berkson Bias](berkson-bias/README.md)
-- [Case Only Interaction](case-only-interaction/README.md)
 - [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
+- [Berkson Bias](berkson-bias/README.md)
+- [Case Only Interaction](case-only-interaction/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
 - [Conditional Logistic Matched Sets](conditional-logistic-matched-sets/README.md)

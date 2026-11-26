@@ -23,8 +23,8 @@ Levin's formula `Pe (RR - 1) / (1 + Pe (RR - 1))`, with the population exposure 
 gives the PAF from the crude risk ratio when there is no confounding. Miettinen's formula
 `Pc (RR - 1) / RR`, with the exposure prevalence `Pc` among cases, agrees with Levin's for the
 crude risk ratio through `Pc = Pe RR / (Pe RR + 1 - Pe)`. Under confounding, Miettinen's formula
-with the risk ratio standardized to the exposed gives the PAF, while Levin's formula can be
-biased even with an adjusted risk ratio.
+with the risk ratio standardized to the exposed gives the PAF, while Levin's formula with an
+adjusted risk ratio can disagree with it: there is a confounded model in which the two differ.
 
 Sources: M. L. Levin, "The occurrence of lung cancer in man", Acta Unio Int. Contra Cancrum 9
 (1953) 531–541; O. S. Miettinen, "Proportion of disease caused or prevented by a given exposure,
@@ -152,15 +152,17 @@ public theorem_wanted miettinen_exposedRR_eq_causalPAF (pz e r₀ r₁ : 𝒵 �
     miettinen (casePrevalence pz e r₀ r₁) (exposedStandardizedRR pz e r₀ r₁) =
       causalPAF pz e r₀ r₁
 
-/-- **Levin's formula is biased under confounding, even with an adjusted risk ratio** (Khosravi
-et al. 2021). There is a nondegenerate confounded finite strata model with two strata, `P(z) > 0`,
-`∑_z P(z) = 1`, `0 < e(z) < 1`, strictly positive risks `0 < r₀(z), r₁(z) ≤ 1` (hence positive
-observed and counterfactual risks), and confounding (`e 0 ≠ e 1` and `r₀ 0 ≠ r₀ 1`), in which
-Levin's formula with `Pe` and the risk ratio standardized to the total population differs from the
-causal attributable fraction.
+/-- **Levin's formula with an adjusted risk ratio can disagree with the PAF.** There is a
+nondegenerate confounded finite strata model with two strata, `P(z) > 0`, `∑_z P(z) = 1`,
+`0 < e(z) < 1`, strictly positive risks `0 < r₀(z), r₁(z) ≤ 1` (hence positive observed and
+counterfactual risks), and confounding (`e 0 ≠ e 1` and `r₀ 0 ≠ r₀ 1`), in which Levin's formula
+with `Pe` and the risk ratio standardized to the total population differs from the causal
+attributable fraction (Khosravi et al. 2021). This is a counterexample: it shows that the two can
+disagree in one confounded model, not that they disagree in every confounded model, and it is not
+a statement about the bias of an estimator.
 
-Source: Khosravi et al. (2021), on Levin's formula being "biased in the presence of confounding
-even if the adjusted RR is used"; the example is derived. -/
+Source: Khosravi et al. (2021), who call Levin's formula "biased in the presence of confounding
+even if the adjusted RR is used"; the counterexample is derived. -/
 public theorem_wanted exists_levin_totalRR_ne_causalPAF :
     ∃ pz e r₀ r₁ : Fin 2 → ℝ, (∀ z, 0 < pz z) ∧ ∑ z, pz z = 1 ∧ (∀ z, 0 < e z) ∧
       (∀ z, e z < 1) ∧ (∀ z, 0 < r₀ z) ∧ (∀ z, r₀ z ≤ 1) ∧ (∀ z, 0 < r₁ z) ∧ (∀ z, r₁ z ≤ 1) ∧
