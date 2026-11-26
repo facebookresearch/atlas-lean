@@ -28,9 +28,9 @@ move (`Step`). A configuration is legitimate when exactly one machine is privile
 Dijkstra's protocol is the case `K ≠ 0`, with the states `0, …, K - 1` added modulo `K`. For
 `K = 0`, Mathlib's `ZMod 0` is `ℤ`, so the same definitions describe a variant with unbounded
 integer states rather than a `K`-state protocol. Both theorems hold for every `n` and every `K`,
-including the one-machine ring `n = 0` and the integer variant `K = 0`. Convergence, that every
-execution from an arbitrary configuration reaches a legitimate one, is not formalized here; in
-Dijkstra's protocol it needs a lower bound on `K` in terms of the ring size.
+including the one-machine ring `n = 0` and the integer variant `K = 0`. Convergence in the
+finite-state protocol does not follow for arbitrary `K` from these properties.
+`CSLibExt.Computability.Distributed.TokenRingConvergence` treats the case `K = n + 2`.
 -/
 
 @[expose] public section
@@ -163,9 +163,8 @@ theorem exists_privileged {n K : ℕ} (x : ZMod (n + 1) → ZMod K) :
   have hcon : x (-1) = x 0 := key _ _ (ZMod.natCast_zmod_val (-1)).symm
   exact h0' hcon.symm
 
-/-- Closure: legitimate configurations are closed under
-steps. (Convergence to legitimacy, the other half of roadmap
-package DPA-15, remains open.) -/
+/-- Legitimate configurations, those with exactly one privileged machine, are closed under
+central-daemon steps. -/
 theorem legit_closed {n K : ℕ} {x y : ZMod (n + 1) → ZMod K}
     (hx : Legit x) (hstep : Step x y) : Legit y := by
   obtain ⟨i, hpriv_i, rfl⟩ := hstep
