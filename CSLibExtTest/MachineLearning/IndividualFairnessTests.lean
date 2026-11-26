@@ -36,6 +36,15 @@ private theorem t2_const_fair :
   · refine ⟨fun _ => by norm_num, ?_⟩
     norm_num [Fin.sum_univ_two]
 
+/-- T3: the rows of a fair classifier must be probability distributions: the constant
+classifier with entries `-1` has total variation distance `0` between any two rows, yet it is
+not individually fair. -/
+private theorem t3_not_fair_of_negative_rows :
+    ¬ IsLipschitzFair d2 (fun _ _ : Fin 2 => (-1 : ℝ)) := by
+  intro h
+  have h0 := (h.1 0).1 0
+  norm_num at h0
+
 /-- The `0` point mass on `Fin 2`, as a probability-distribution subtype
 element. -/
 private def delta0D : {p : Fin 2 → ℝ // IsDist p} :=

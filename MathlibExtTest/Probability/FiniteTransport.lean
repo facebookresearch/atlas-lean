@@ -126,6 +126,12 @@ theorem g4_bias_le_earthmover_example :
   intro x y
   fin_cases x <;> fin_cases y <;> norm_num [d2]
 
+/-- G4b: `bias` is an absolute value: with the point masses swapped, the weighted score sums
+differ by `-1`, and the gap is `1`. -/
+theorem g4b_bias_swapped_point_masses :
+    bias delta1D.1 delta0D.1 (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) = 1 := by
+  norm_num [bias, delta0D, delta1D, Fin.sum_univ_two]
+
 /-- G5: the earthmover value is at most the cost of the exhibited
 coupling, by direct application of `earthmover_le_transportCost`. -/
 theorem g5_earthmover_le_transportCost_example :
