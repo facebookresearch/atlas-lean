@@ -1,12 +1,14 @@
 # Equilibria of a multidrug sensitive–resistant–immune model
 
 **Model.** Let $s, r$ be the densities of antibiotic-sensitive and antibiotic-resistant bacteria (scaled by the carrying capacity), $b$ the immune-cell density (scaled by its maximal recruitment per bacterium), and $a_i$ the scaled concentration of antibiotic $i = 1,\dots,n$. With positive parameters,
+
 $$\begin{aligned}
 \dot s &= \beta_S\, s\,(1 - s - r) - \eta\, s\, b - s \sum_{i=1}^n (\alpha_i + d_i)\, a_i,\\
 \dot r &= \beta_R\, r\,(1 - s - r) - \eta\, r\, b + s \sum_{i=1}^n \alpha_i\, a_i,\\
 \dot b &= k\, b\,\Big(1 - \frac{b}{s + r}\Big),\\
 \dot a_i &= \mu_i (1 - a_i), \qquad i = 1,\dots,n,
 \end{aligned}$$
+
 where $\beta_R = (1-c)\beta_S$ with fitness cost $0 < c < 1$, $\eta$ is the immune killing rate, $\alpha_i$ the rate at which antibiotic $i$ induces resistance, $d_i$ its killing rate of sensitive bacteria, $k$ the immune recruitment rate and $\mu_i$ the drug uptake rate. The region $\Omega = \{0 \le s, r;\ 0 \le b \le s + r \le 1;\ 0 \le a_i \le 1\}$ is positively invariant.
 
 Set
