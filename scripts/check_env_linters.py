@@ -1,0 +1,410 @@
+#!/usr/bin/env python3
+"""Report Mathlib's environment-linter findings on the declarations a change adds.
+
+The environment linters of Batteries' `#lint`, with the ones Mathlib adds
+(`docBlame`, `simpNF`, `unusedArguments`, `defsWithUnderscore`, ...), check
+declarations after they are built. This script builds the Lean files that
+`BASE...HEAD` adds or modifies (through one temporary aggregator module per
+library), runs `lake exe runLinter` on each aggregator, and keeps the findings
+on the declarations that the change adds.
+
+A declaration counts as added when the change adds the line that declares it
+(the line with its keyword and name, below any docstring, attribute or
+modifier; for a structure field or a constructor, its own line), and no
+declaration of that name is in the files the change modifies, renames or
+deletes, as they are at the base. So a change that only documents, tags or
+edits an existing declaration does not report it, nor does one that moves it
+between those files. A finding that `runLinter` prints without a position (a
+declaration without a source range, such as a structure's `mk.injEq`) is placed
+on the nearest enclosing declaration of the changed files that has one, under
+the same rule. As in Mathlib, `runLinter` sees what modules export, so in a
+`module` file it lints the public declarations only.
+
+    python3 scripts/check_env_linters.py --base origin/main [--report-only]
+
+Exit 1 if a finding is kept (0 with --report-only), 0 if none, 2 if the files do
+not build or the linter does not run. In GitHub Actions each kept finding also
+annotates its line and the job summary counts them.
+"""
+
+from __future__ import annotations
+
+import argparse
+import bisect
+import re
+import subprocess
+import sys
+import tempfile
+from collections import Counter
+from collections.abc import Iterable
+from dataclasses import dataclass, field
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from bump.pinned_bump import _strip_lean_comments_and_strings
+from lean_changes import (ROOT, AggregatorError, ChangedFile, add_common_arguments, aggregators,
+                          annotation, base_text, changed_files, deleted_files, in_actions,
+                          relative, write_summary)
+
+ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (?P<text>.*)$")
+UNPLACED = re.compile(r"^#check (?P<text>.*)$")
+HEADER = re.compile(r"^/- The `(?P<linter>[^`]+)` linter reports:")
+MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")
+# `runLinter` prints one of these when it has linted its module.
+FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
+
+
+@dataclass(frozen=True)
+class Finding:
+    """A finding on `declaration`, at a 1-based line and column, or with no position."""
+
+    declaration: str
+    linter: str
+    message: str
+    module: str | None = None
+    path: str | None = None
+    line: int | None = None
+    col: int | None = None
+
+
+DECLARATION = re.compile(r"@?(?P<name>(?:«[^«»\n]*»|[^\s«])+)\s*(?P<rest>.*)", re.DOTALL)
+
+
+def declaration_name(text: str) -> tuple[str, str]:
+    """Split `@Name.of.decl✝ the warning` into the user-facing name and the warning."""
+    match = DECLARATION.match(text)
+    if match is None:
+        return "", text
+    name = re.sub(r"✝[⁰¹²³⁴⁵⁶⁷⁸⁹]*", "", match.group("name"))
+    return name.replace("«", "").replace("»", ""), match.group("rest")
+
+
+def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
+    """The findings that `runLinter` prints, with their linter and module."""
+    findings: list[Finding] = []
+    linter = "environment linter"
+    module: str | None = None
+    current: tuple[re.Match[str], list[str], bool] | None = None
+
+    def finish() -> None:
+        if current is None:
+            return
+        match, body, placed = current
+        text = "\n".join([match.group("text"), *body]).strip()
+        if not placed:
+            text = text.removesuffix("-/").strip()
+        name, message = declaration_name(text)
+        message = message.removeprefix("/-").strip() if not placed else message
+        if placed:
+            findings.append(Finding(name, linter, message, module,
+                                    relative(match.group("file"), cwd),
+                                    int(match.group("line")), int(match.group("col"))))
+        else:
+            findings.append(Finding(name, linter, message, module))
+
+    for line in text.splitlines():
+        if header := HEADER.match(line):
+            finish()
+            current = None
+            linter = header.group("linter")
+        elif match := ENTRY.match(line):
+            finish()
+            current = (match, [], True)
+        elif match := UNPLACED.match(line):
+            finish()
+            current = (match, [], False)
+        elif module_line := MODULE.match(line):
+            finish()
+            current = None
+            module = module_line.group("module")
+        elif not line.strip() or line.startswith(("-- ", "/-")):
+            finish()
+            current = None
+        elif current is not None:
+            current[1].append(line)
+    finish()
+    return list(dict.fromkeys(findings))
+
+
+# Lean source scanning: enough to name the declarations of a file, not a parser.
+COMPONENT = r"(?:«[^«»\n]+»|[^\W\d][\w'!?]*)"
+NAME = rf"{COMPONENT}(?:\.{COMPONENT})*"
+MODIFIERS = r"(?:private|protected|public|noncomputable|nonrec|partial|unsafe|scoped|local|meta)"
+DECLARATION_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "structure", "class",
+                     "inductive", "opaque", "axiom", "example", "theorem_wanted", "def_wanted",
+                     "irreducible_def", "alias")
+COMMAND = re.compile(
+    r"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?:@\[[^\]]*\]\s*)*"
+    rf"(?:{MODIFIERS}\s+)*"
+    rf"(?P<kind>namespace|section|end|mutual|{'|'.join(DECLARATION_KINDS)})\b",
+    re.MULTILINE)
+# What may stand between the start of a declaration's range and its keyword.
+PREFIX = re.compile(rf"\s+|@\[[^\]]*\]|{MODIFIERS}\b|set_option\s+\S+\s+\S+\s+in\b")
+NAME_AT = re.compile(rf"\s*(?P<name>{NAME})")
+# An instance's name, after an optional priority; an anonymous instance has none.
+INSTANCE_NAME = re.compile(r"\s*(?:\(priority\s*:=[^)]*\)\s*)?(?P<name>" + NAME
+                           + r")(?=[\s:(\[{⦃]|\.\{)")
+FIELD = re.compile(rf"^[ \t]+(?:(?:private|protected)[ \t]+)?(?P<names>{NAME}(?:[ \t]+{NAME})*)"
+                   r"[ \t]*(?:::|[:({\[⦃])", re.MULTILINE)
+CONSTRUCTOR = re.compile(rf"^[ \t]*\|[ \t]*(?P<name>{NAME})", re.MULTILINE)
+
+
+def clean(text: str) -> str | None:
+    """`text` with comments and strings blanked (offsets kept), or `None` if it does not lex."""
+    sentinel = "\nLEAN_CHANGES_SENTINEL"
+    code = _strip_lean_comments_and_strings(text + sentinel)
+    return code[: -len(sentinel)] if code.endswith(sentinel) else None
+
+
+def unquote_name(name: str) -> str:
+    return name.replace("«", "").replace("»", "")
+
+
+@dataclass
+class SourceIndex:
+    """The declarations of one Lean file: full names and the lines that declare them."""
+
+    code: str | None
+    line_starts: list[int] = field(default_factory=list)
+    names_at: dict[int, set[str]] = field(default_factory=dict)
+    line_of: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def names(self) -> set[str]:
+        return set(self.line_of)
+
+    def add(self, name: str, line: int) -> None:
+        self.names_at.setdefault(line, set()).add(name)
+        self.line_of.setdefault(name, line)
+
+    def line_at(self, offset: int) -> int:
+        return bisect.bisect_right(self.line_starts, offset)
+
+    def declaration_line(self, line: int) -> int:
+        """The line that declares the declaration whose range starts on `line`."""
+        if self.code is None or not 1 <= line <= len(self.line_starts):
+            return line
+        pos = self.line_starts[line - 1]
+        while (match := PREFIX.match(self.code, pos)) and match.end() > pos:
+            pos = match.end()
+        return self.line_at(pos)
+
+
+def index_source(text: str) -> SourceIndex:
+    """Scan `text` for its declarations, tracking `namespace`, `section` and `end`."""
+    code = clean(text)
+    index = SourceIndex(code)
+    if code is None:
+        return index
+    index.line_starts = [0] + [i + 1 for i, char in enumerate(code) if char == "\n"]
+    scopes: list[list[str]] = []
+    commands = list(COMMAND.finditer(code))
+    for number, command in enumerate(commands):
+        kind = command.group("kind")
+        rest = command.end()
+        stop = commands[number + 1].start() if number + 1 < len(commands) else len(code)
+        name_match = NAME_AT.match(code, rest, stop)
+        name = name_match.group("name") if name_match else None
+        if kind == "namespace":
+            scopes.append([unquote_name(part) for part in name.split(".")] if name else [])
+            continue
+        if kind in ("section", "mutual"):
+            scopes.append([])
+            continue
+        if kind == "end":
+            if scopes:
+                scopes.pop()
+            continue
+        prefix = [part for scope in scopes for part in scope]
+        line = index.line_at(command.start("kind"))
+
+        def full(declared: str) -> str:
+            declared = unquote_name(declared)
+            if declared.startswith("_root_."):
+                return declared.removeprefix("_root_.")
+            return ".".join([*prefix, declared])
+
+        if kind == "class" and name == "inductive":
+            name_match = NAME_AT.match(code, name_match.end(), stop)
+            name = name_match.group("name") if name_match else None
+            kind = "inductive"
+        if kind == "alias":
+            names = re.findall(NAME, code[rest:stop].split(":=", 1)[0])
+            for declared in names:
+                if declared != "_":
+                    index.add(full(declared), line)
+            continue
+        if kind == "instance":
+            name_match = INSTANCE_NAME.match(code, rest, stop)
+            name = name_match.group("name") if name_match else None
+        if kind == "example" or name is None:
+            continue
+        declared = full(name)
+        index.add(declared, line)
+        body = code[name_match.end():stop] if name_match else ""
+        if kind in ("structure", "class"):
+            index.add(f"{declared}.mk", line)
+            where = re.search(r"\bwhere\b", body)
+            if where:
+                offset = name_match.end() + where.end()
+                for fields in FIELD.finditer(code, offset, stop):
+                    for part in fields.group("names").split():
+                        if code[fields.end() - 2: fields.end()] == "::":
+                            index.add(f"{declared}.{unquote_name(part)}", line)
+                        else:
+                            index.add(f"{declared}.{unquote_name(part)}",
+                                      index.line_at(fields.start("names")))
+        elif kind == "inductive":
+            for constructor in CONSTRUCTOR.finditer(code, name_match.end(), stop):
+                index.add(f"{declared}.{unquote_name(constructor.group('name'))}",
+                          index.line_at(constructor.start("name")))
+    return index
+
+
+def enclosing(name: str) -> Iterable[str]:
+    """`name` and its prefixes, longest first."""
+    parts = name.split(".")
+    for end in range(len(parts), 0, -1):
+        yield ".".join(parts[:end])
+
+
+@dataclass
+class Placement:
+    """Where a finding is reported, and whether its declaration is one the change adds."""
+
+    path: str
+    line: int
+    col: int | None
+    added: bool
+
+
+def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, SourceIndex],
+          base_names: set[str]) -> Placement | None:
+    """Where `finding` belongs among the changed files, or `None` if it is elsewhere."""
+    if finding.path is not None:
+        file = files.get(finding.path)
+        if file is None:
+            return None
+        index = indexes[file.path]
+        line = index.declaration_line(finding.line)
+        names = {finding.declaration, *index.names_at.get(line, ())}
+        new = line in file.added_lines and not names & base_names
+        return Placement(file.path, finding.line, finding.col, new)
+    # No position: the nearest enclosing declaration that a changed file declares.
+    for path, file in files.items():
+        if finding.module is not None and file.module != finding.module:
+            continue
+        index = indexes[path]
+        for candidate in enclosing(finding.declaration):
+            line = index.line_of.get(candidate)
+            if line is None:
+                continue
+            names = {finding.declaration, candidate}
+            new = line in file.added_lines and not names & base_names
+            return Placement(path, line, None, new)
+    return None
+
+
+def read_source(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    add_common_arguments(parser)
+    args = parser.parse_args()
+
+    changed = changed_files(args.base)
+    if not changed:
+        print("No Lean file of the production libraries is added or modified.")
+        return 0
+    files = {file.path: file for file in changed}
+    print(f"Checking the declarations of {len(changed)} changed Lean file(s) with runLinter.")
+    outputs = []
+    try:
+        with aggregators(changed) as targets, tempfile.TemporaryDirectory() as tmp:
+            build = subprocess.run(["lake", "build", *targets], cwd=ROOT, capture_output=True,
+                                   text=True)
+            if build.returncode != 0:
+                print(build.stdout + build.stderr, file=sys.stderr)
+                print("The changed files do not build.", file=sys.stderr)
+                return 2
+            for target in targets:
+                library = target.split(".", 1)[0]
+                # Batteries' local linters then lint only the changed modules. The others,
+                # docBlame and simpNF among them, lint every module of the package that the
+                # aggregator imports; their findings elsewhere are dropped below.
+                only = Path(tmp, f"{library}.txt")
+                only.write_text("".join(f"{file.module}\n" for file in changed
+                                        if file.library == library))
+                result = subprocess.run(
+                    ["lake", "exe", "runLinter", "--no-build", f"--only-modules={only}", target],
+                    cwd=ROOT, capture_output=True, text=True)
+                output = result.stdout + result.stderr
+                if result.returncode not in (0, 1) or not any(
+                        FINISHED.match(line) for line in output.splitlines()):
+                    print(output, file=sys.stderr)
+                    print(f"runLinter did not run on {target}.", file=sys.stderr)
+                    return 2
+                outputs.append(output)
+    except AggregatorError as error:
+        print(error, file=sys.stderr)
+        return 2
+
+    indexes = {path: index_source(read_source(path)) for path in files}
+    base_names: set[str] = set()
+    for path in [file.base_path for file in changed if file.base_path] + deleted_files(args.base):
+        text = base_text(args.base, path)
+        if text is not None:
+            base_names |= index_source(text).names
+
+    findings = list(dict.fromkeys(f for output in outputs for f in parse_run_linter(output)))
+    kept: list[tuple[Finding, Placement]] = []
+    existing = elsewhere = 0
+    unplaced: list[Finding] = []
+    changed_modules = {file.module for file in changed}
+    for finding in findings:
+        placement = place(finding, files, indexes, base_names)
+        if placement is None:
+            if finding.path is None and finding.module in changed_modules:
+                unplaced.append(finding)
+            else:
+                elsewhere += 1
+        elif placement.added:
+            kept.append((finding, placement))
+        else:
+            existing += 1
+    print(f"runLinter reported {len(findings)} finding(s): {len(kept)} on declarations the "
+          f"change adds, {existing} on declarations it keeps, {elsewhere} in modules it does "
+          f"not change, {len(unplaced)} without a position in a changed module that could not "
+          "be placed.")
+    for finding in unplaced:
+        print(f"  not placed: {finding.linter}: {finding.declaration} {finding.message}")
+    level = "warning" if args.report_only else "error"
+    for finding, placement in kept:
+        message = finding.message if finding.path is not None else (
+            f"{finding.declaration} {finding.message}")
+        if in_actions():
+            print(annotation(level, placement.path, placement.line, finding.linter, message,
+                             placement.col))
+        print(f"{placement.path}:{placement.line}:{placement.col or 1}: {finding.linter}: "
+              f"{finding.declaration} {finding.message}")
+    if kept or unplaced:
+        counts = Counter(finding.linter for finding, _ in kept)
+        rows = "".join(f"| `{linter}` | {count} |\n" for linter, count in counts.most_common())
+        note = (f"\n{len(unplaced)} finding(s) without a position in a changed module could not "
+                "be placed on a declaration; see the job log.\n" if unplaced else "")
+        write_summary(f"### Environment-linter findings on added declarations\n\n"
+                      f"| Linter | Findings |\n|---|---:|\n{rows}{note}\n")
+    if kept:
+        print(f"{len(kept)} finding(s) on added declarations. Fix them, or where a finding is "
+              "wrong, mark the declaration `@[nolint <linter>]`.")
+        return 0 if args.report_only else 1
+    print("No environment-linter finding on the added declarations.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
