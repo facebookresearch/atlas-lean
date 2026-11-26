@@ -141,10 +141,6 @@ private theorem eulerIterate_projection (k : Type) [CommRing k] [Algebra ℚ k]
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U)
-      AddCommGrpCat.{0}]
-    [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective
-      AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V)
     (a : ℚ) (U : Opens M) (t : (V.term a).toSheafOfModules.val.obj (op U))
@@ -171,10 +167,6 @@ private theorem projection_of_termAbove_eq_zero (k : Type) [CommRing k]
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U)
-      AddCommGrpCat.{0}]
-    [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective
-      AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (a : ℚ) (U : Opens M)
     (u₀ : N.val.obj (op U)) (hterm : u₀ ∈ (V.term a).toSubmodule.obj (op U))
@@ -201,10 +193,6 @@ theorem actual_graded_euler_local_nilpotence (k : Type) [CommRing k] [Algebra �
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U)
-      AddCommGrpCat.{0}]
-    [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective
-      AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V)
     (a : ℚ) (x : M) :

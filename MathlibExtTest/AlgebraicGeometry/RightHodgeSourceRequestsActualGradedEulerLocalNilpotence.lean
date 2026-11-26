@@ -33,10 +33,6 @@ theorem eulerIterate_eq_zero (k : Type) [CommRing k] [Algebra ℚ k]
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U)
-      AddCommGrpCat.{0}]
-    [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective
-      AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V)
     (a : ℚ) (x : M) :
@@ -52,10 +48,6 @@ theorem eulerIterate_succ_eq_zero (k : Type) [CommRing k] [Algebra ℚ k]
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
     [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
     [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U)
-      AddCommGrpCat.{0}]
-    [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective
-      AddCommGrpCat.{0}]
     (C : CoordinateDerivation k M O) (N : RightModule k M O)
     (V : RationalVFiltration k M O C N) (A : GradedVOperators k M O C N V)
     (a : ℚ) (x : M) :
