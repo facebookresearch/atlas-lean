@@ -16,6 +16,8 @@ public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 public import MathlibExt.Combinatorics.GDifferenceBases
 public import MathlibExt.Combinatorics.GDifferenceBasesGroupDiffBasisNumberLeHundredSqrt
+public import MathlibExt.Combinatorics.GDifferenceBasesTendstoGroupDiffBasisNumberEvenOdd
+public import MathlibExt.Combinatorics.GDifferenceBasesExistsBoundedDiffSetCardDivSqrtTendsto
 
 namespace MetaMathlibExt
 
@@ -65,27 +67,6 @@ public theorem_wanted tendsto_groupDiffBasisNumber_galoisField_prod (p : ℕ) [F
         (groupDiffBasisNumber 1 (GaloisField p t × GaloisField p t) : ℝ) / (p : ℝ) ^ t)
       atTop (𝓝 1)
 
-/-- **Even and odd limits for difference bases of $\mathbb{F}_p^n$.** Let $p$ be an odd prime and
-$g \ge 1$ an integer. For a finite abelian group $G$, a set $A \subseteq G$ and $x \in G$, write
-$r_{A-A}(x)$ for the number of ordered pairs $(a, a') \in A \times A$ with $a - a' = x$, and let
-$\eta_g(G)$ be the least size of a set $A \subseteq G$ with $r_{A-A}(x) \ge g$ for every $x \in G$.
-Then there are real numbers $L_e > 0$ and $L_o > 0$ such that, as $k \to \infty$,
-$\eta_g(\mathbb{F}_p^{2k}) / \sqrt{p^{2k}} \to L_e$ and
-$\eta_g(\mathbb{F}_p^{2k+1}) / \sqrt{p^{2k+1}} \to L_o$, where $\mathbb{F}_p^n$ is the additive
-group of $n$-tuples over the field $\mathbb{F}_p$ with $p$ elements.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Theorem 2 (`integers-2025-A77-thm-2`). -/
-public theorem_wanted tendsto_groupDiffBasisNumber_even_odd (p g : ℕ) [Fact p.Prime]
-    (hp : p ≠ 2) (hg : 0 < g) :
-    (∃ Le : ℝ, 0 < Le ∧ Tendsto (fun k : ℕ =>
-        (groupDiffBasisNumber g (Fin (2 * k) → ZMod p) : ℝ) / Real.sqrt ((p : ℝ) ^ (2 * k)))
-      atTop (𝓝 Le)) ∧
-    (∃ Lo : ℝ, 0 < Lo ∧ Tendsto (fun k : ℕ =>
-        (groupDiffBasisNumber g (Fin (2 * k + 1) → ZMod p) : ℝ) /
-          Real.sqrt ((p : ℝ) ^ (2 * k + 1)))
-      atTop (𝓝 Lo))
-
 /-- **Upper bound for sets with bounded difference multiplicities.** For natural numbers $g$ and
 $n$, let $\alpha_g(n)$ be the largest size of a set $A \subseteq \{1, \dots, n\}$ such that every
 nonzero integer $x$ is the difference $a - a'$ of at most $g$ ordered pairs
@@ -98,18 +79,6 @@ Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INT
 public theorem_wanted boundedDiffSetNumber_le_one_add_mul_sqrt (g : ℕ) (hg : 0 < g) (ε : ℝ)
     (hε : 0 < ε) :
     ∀ᶠ n : ℕ in atTop, (boundedDiffSetNumber g n : ℝ) ≤ (1 + ε) * Real.sqrt (g * n)
-
-/-- **Lower-bound construction for sets with bounded difference multiplicities.** For every
-integer $g \ge 1$ there are finite sets $A_n \subseteq \{1, \dots, n\}$ of integers, one for each
-$n \in \mathbb{N}$, such that for every $n$ each nonzero integer $x$ equals $a - a'$ for at most
-$g$ ordered pairs $(a, a') \in A_n \times A_n$, and $|A_n| / \sqrt{gn} \to 1$ as $n \to \infty$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Proposition 2 (`integers-2025-A77-prop-2`). -/
-public theorem_wanted exists_boundedDiffSet_card_div_sqrt_tendsto (g : ℕ) (hg : 0 < g) :
-    ∃ A : ℕ → Finset ℤ,
-      (∀ n, A n ⊆ Finset.Icc (1 : ℤ) n ∧ ∀ x : ℤ, x ≠ 0 → subRepCount (A n) x ≤ g) ∧
-      Tendsto (fun n : ℕ => ((A n).card : ℝ) / Real.sqrt (g * n)) atTop (𝓝 1)
 
 /-- **Asymptotics of the largest sets with bounded difference counts.** For a finite set $A$ of
 integers and an integer $x$, write $r_{A-A}(x)$ for the number of ordered pairs
