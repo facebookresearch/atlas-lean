@@ -3,7 +3,9 @@
 Let $G = (N, E, n_0)$ be a finite control-flow graph with entry node $n_0$ in which every node is reachable from $n_0$, and let $\mathrm{Dom}(n)$ be the set of nodes that [dominate](../dominance-and-static-single-assignment-form.md) $n$, so that $n \in \mathrm{Dom}(n)$.
 
 1. **Equations.** The sets $\mathrm{Dom}(n)$ satisfy
-   $$\mathrm{Dom}(n_0) = \{n_0\}, \qquad \mathrm{Dom}(n) = \{n\} \cup \bigcap_{p \in \mathrm{preds}(n)} \mathrm{Dom}(p) \quad (n \ne n_0).$$
+
+    $$\mathrm{Dom}(n_0) = \{n_0\}, \qquad \mathrm{Dom}(n) = \{n\} \cup \bigcap_{p \in \mathrm{preds}(n)} \mathrm{Dom}(p) \quad (n \ne n_0).$$
+
 2. **Greatest solution.** Among all families of sets $D(n) \subseteq N$ satisfying these equations, $(\mathrm{Dom}(n))_n$ is the greatest under pointwise inclusion. If moreover $n_0$ has no predecessors, it is also the meet-over-all-paths solution, in the sense of [the comparison of the two solutions](../../static-analysis/meet-over-all-paths-versus-the-fixed-point.md), of this forward analysis over $(\mathcal{P}(N), \supseteq)$, whose transfer functions $S \mapsto \{n\} \cup S$ are distributive.
 3. **Iteration.** Starting from $D(n) = N$ for every $n \ne n_0$ and repeatedly replacing each $D(n)$ by the right-hand side of its equation, in any order, reaches $(\mathrm{Dom}(n))_n$ after finitely many changes.
 

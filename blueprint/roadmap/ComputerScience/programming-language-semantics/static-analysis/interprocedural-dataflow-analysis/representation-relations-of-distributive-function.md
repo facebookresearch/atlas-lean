@@ -1,9 +1,13 @@
 # Representation relations of distributive functions
 
 Let $D$ be a finite set and $0 \notin D$ a new element. For a function $f : 2^D \to 2^D$, its *representation relation* is
+
 $$R_f = \{(0, 0)\} \cup \{(0, y) \mid y \in f(\emptyset)\} \cup \{(x, y) \mid y \in f(\{x\}),\ y \notin f(\emptyset)\} \subseteq (D \cup \{0\}) \times (D \cup \{0\}),$$
+
 a bipartite graph with at most $(|D| + 1)^2$ edges. A relation $R$ on $D \cup \{0\}$ is *interpreted* as the function
+
 $$[\![R]\!](X) = \bigl(\{y \mid \exists x \in X.\ (x, y) \in R\} \cup \{y \mid (0, y) \in R\}\bigr) \setminus \{0\}.$$
+
 Write $R_f ; R_g$ for relational composition.
 
 1. If $f$ is distributive, $[\![R_f]\!] = f$.
