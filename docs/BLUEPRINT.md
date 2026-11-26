@@ -687,8 +687,9 @@ request recorded its digest. Push the commit to a branch of its own and open
 the pull request with that description.
 
 `python3 scripts/graph_batch.py verify <commit>`, run from an up-to-date
-checkout of `main`, checks that the commit is a batch and exactly what `make`
-writes:
+checkout of `main` (it refuses to run from the batch itself, whose checkout's
+scripts and history are the pull request's), checks that the commit is a batch
+and exactly what `make` writes:
 
 - one commit, with `make`'s message, on its `Graph-sync-through:` commit, that
   changes only the taxonomy, pages and folder pages, links files and the
@@ -706,15 +707,22 @@ merge breaks, such as a second page for one declaration. Then it runs the sync
 as `make` does and prints the description it recomputes (`--body FILE` writes
 it too).
 
-The batch's reviewer runs `verify` on the exact head and reads what it prints,
-not the pull request's description, which whoever opens the pull request can
-edit: the placements and where each comes from, the placements dropped, the
-notes, the sync's items for an editor and the pages to check. The pages are the
-sync's, made from docstrings that the Lean pull requests' reviews covered. For
-each page under "Pages to check", the reviewer compares the page with its
-declaration's new docstring, and opens a page-problem issue for one that no
-longer matches: once the batch writes the new digest, no sync reports that page
-again.
+The batch's reviewer runs `verify` on the exact head, from `main`:
+
+```sh
+git fetch https://github.com/facebookresearch/atlas-lean.git main refs/pull/<number>/head
+git switch --detach FETCH_HEAD
+python3 scripts/graph_batch.py verify <head commit>
+```
+
+and reads what it prints, not the pull request's description, which whoever
+opens the pull request can edit: the placements and where each comes from, the
+placements dropped, the notes, the sync's items for an editor and the pages to
+check. The pages are the sync's, made from docstrings that the Lean pull
+requests' reviews covered. For each page under "Pages to check", the reviewer
+compares the page with its declaration's new docstring, and opens a
+page-problem issue for one that no longer matches: once the batch writes the
+new digest, no sync reports that page again.
 
 A batch is never updated. When `verify`, run from an up-to-date `main`, fails,
 or when the merge queue removes the batch, close it and make the next one from

@@ -370,7 +370,8 @@ A graph-sync batch, which `scripts/graph_batch.py verify` shows to be exactly
 what the tools write for what `main` merged
 ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)), needs no issue,
 or a code owner's approval unless GitHub requires one; Codex still reviews it,
-and its reviewer runs `verify` on its exact head.
+and its reviewer runs `verify` on its exact head from an up-to-date checkout of
+`main`, never from the batch's own branch.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`); a pull request whose only wiki changes are the sync's, as

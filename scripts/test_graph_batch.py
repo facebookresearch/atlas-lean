@@ -55,7 +55,14 @@ class PlaceLines(unittest.TestCase):
                        "Example:\n\n    Place: MathlibExt/A/C -> Algebra/groups\n",
                        "Example:\n\n\tPlace: MathlibExt/A/C -> Algebra/groups\n",
                        "text <!--\nPlace: MathlibExt/A/D -> Algebra/groups\n-->\n",
-                       "~~~~\n~~~ not a close\nPlace: MathlibExt/A/E -> Algebra/groups\n~~~~\n"):
+                       "~~~~\n~~~ not a close\nPlace: MathlibExt/A/E -> Algebra/groups\n~~~~\n",
+                       # A tab is four columns, a no-break space is no indentation and may not follow a closing fence,
+                       # and Markdown ends a line only at a line feed or a carriage return.
+                       "```\n\t```\nPlace: MathlibExt/A/B -> Algebra/groups\n```\n",
+                       "```\n\u00a0```\nPlace: MathlibExt/A/B -> Algebra/groups\n```\n",
+                       "```\n```\u00a0\nPlace: MathlibExt/A/B -> Algebra/groups\n```\n",
+                       "Text\u2028Place: MathlibExt/A/B -> Algebra/groups\n",
+                       "Text\x0cPlace: MathlibExt/A/B -> Algebra/groups\n"):
             with self.subTest(hidden=hidden):
                 self.assertEqual(batch.place_lines(hidden + "Place: MathlibExt/A/G -> Algebra/rings\n"),
                                  ["MathlibExt/A/G -> Algebra/rings"])
@@ -278,13 +285,28 @@ class Batches(unittest.TestCase):
         self.bodies[str(number)] = body
         return self.git("rev-parse", "HEAD")
 
-    def tool(self, *args: str, env: dict | None = None) -> subprocess.CompletedProcess:
+    def tool(self, *args: str, env: dict | None = None, from_batch: bool = False) -> subprocess.CompletedProcess:
+        """Run the tool. verify runs from main, as a batch's reviewer runs it: with the batch at HEAD, from the commit
+        it was made on, and back after (unless *from_batch*)."""
         bodies = self.root.parent / f"{self.root.name}-bodies.json"
         bodies.write_text(json.dumps(self.bodies))
         self.addCleanup(bodies.unlink, True)
         extra = ["--bodies", str(bodies)] if args[0] in ("make", "verify") else []
-        return subprocess.run([sys.executable, str(self.root / "scripts" / "graph_batch.py"), *args, *extra],
-                              cwd=self.root, capture_output=True, text=True, env=env)
+        command = [sys.executable, str(self.root / "scripts" / "graph_batch.py"), *args, *extra]
+        if args[0] == "verify" and not from_batch:
+            named = [arg for arg in args[1:] if not arg.startswith("-") and not arg.startswith(str(self.root.parent))]
+            target = self.git("rev-parse", named[0] if named else "HEAD")
+            if target == self.git("rev-parse", "HEAD"):
+                branch = self.git("rev-parse", "--abbrev-ref", "HEAD")
+                self.git("switch", "-q", "--detach", "HEAD^")
+                try:
+                    command = [sys.executable, str(self.root / "scripts" / "graph_batch.py"), "verify", target,
+                               *[arg for arg in args[1:] if arg not in named], *extra]
+                    return subprocess.run(command, cwd=self.root, capture_output=True, text=True, env=env)
+                finally:
+                    self.git("switch", "-q", branch) if branch != "HEAD" else self.git("switch", "-q", "--detach",
+                                                                                         target)
+        return subprocess.run(command, cwd=self.root, capture_output=True, text=True, env=env)
 
     def land(self, number: int, branch: str) -> None:
         """Land the batch at HEAD as pull request *number*, as the merge queue does, and go back to main."""
@@ -381,9 +403,13 @@ class Batches(unittest.TestCase):
         self.assertIn("- `MathlibExt/Algebra/Fields`: in `Algebra/not-yet-classified/`", text)
         # make shows the sync's own report.
         self.assertIn(dict(sync.REPORT)["added"], result.stdout)
-        # verify agrees, and base names the batch once it has merged.
+        # verify agrees, run from main; run from the batch itself, it refuses.
         result = self.tool("verify", commit)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        result = self.tool("verify", commit, from_batch=True)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("run verify from an up-to-date checkout of main, not from the batch itself", result.stderr)
+        # base names the batch once it has merged.
         self.assertEqual(self.tool("base").returncode, 1)
         self.land(5, "batch-1")
         result = self.tool("base")

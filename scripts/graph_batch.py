@@ -262,18 +262,18 @@ def read_bodies(path: Path) -> dict[int, Body]:
 
 
 def place_lines(text: str) -> list[str]:
-    """The values of a description's `Place:` lines, as written: lines of their own, indented by at most three
-    spaces, outside fenced code blocks and HTML comments, which the rendered description does not show as text. A
-    fence closes only on a run of its own character at least as long, with nothing after it; a line holding `<!--`
-    anywhere opens a comment that runs to the next `-->`."""
+    """The values of a description's `Place:` lines, as written: lines of their own, as Markdown ends lines (at a line
+    feed or a carriage return only), indented by less than four columns, outside fenced code blocks and HTML comments,
+    which the rendered description does not show as text. A fence closes only on a line of at most three spaces, a run
+    of its own character at least as long, and nothing after it but spaces and tabs; a line holding `<!--` anywhere
+    opens a comment that runs to the next `-->`."""
     found, fence, comment = [], None, False
-    for line in text.splitlines():
+    for line in re.split(r"\r\n|\r|\n", text):
         if comment:
             comment = "-->" not in line
             continue
         if fence:
-            if (len(line) - len(line.lstrip(" ")) <= 3 and (closing := line.strip()) and set(closing) == {fence[0]}
-                    and len(closing) >= len(fence)):
+            if re.fullmatch(rf" {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}[ \t]*", line):
                 fence = None
             continue
         if match := FENCE.match(line):
@@ -282,9 +282,9 @@ def place_lines(text: str) -> list[str]:
         if "<!--" in line:
             comment = "-->" not in line[line.index("<!--") + 4:]
             continue
-        if line[:4] == "    " or "\t" in line[:4]:
+        if line.expandtabs(4)[:4] == "    ":
             continue  # An indented code block, or a line too deep to be one of its own.
-        if match := PLACE.fullmatch(line.strip()):
+        if match := PLACE.fullmatch(line.strip(" \t")):
             found.append(match.group(1))
     return found
 
@@ -934,6 +934,9 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
 def run_verify(options) -> int:
     commit = commit_of(options.commit)
     head = commit_of("HEAD")
+    if head == commit:
+        raise BatchError("run verify from an up-to-date checkout of main, not from the batch itself: its checks are "
+                         "against main's history, and they run this checkout's copy of the scripts")
     found = batch_of(commit, head)
     if found is None:
         raise BatchError(f"{commit} is not a batch of this checkout's main: one commit, with make's message and its "
