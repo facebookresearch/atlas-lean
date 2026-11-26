@@ -35,8 +35,9 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 
 namespace LinearMap
 
-/-- Dual maps reverse exactness over a field: if `f` followed by `g` is
-exact, then the dual of `g` followed by the dual of `f` is exact. -/
+/-- **Exactness of dual maps.** Dual maps reverse exactness over a field: if `f` followed by
+`g` is exact, then the dual of `g` followed by the dual of `f` is exact. The spaces need not be
+finite-dimensional. -/
 public theorem exact_dualMap_of_exact {K V₁ V₂ V₃ : Type*} [Field K]
     [AddCommGroup V₁] [Module K V₁] [AddCommGroup V₂] [Module K V₂]
     [AddCommGroup V₃] [Module K V₃]
