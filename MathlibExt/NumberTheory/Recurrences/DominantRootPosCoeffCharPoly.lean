@@ -15,16 +15,13 @@ import Mathlib.Algebra.Polynomial.Derivative
 import Mathlib.Topology.Algebra.Polynomial
 import Mathlib.Topology.Order.IntermediateValue
 
-/-! # Root lemmas for reciprocal sums of `m`th-order linear recursive sequences
+/-! # Dominant root of a characteristic polynomial with positive recurrence parameters
 
-The main result is `MetaMathlibExt.exists_dominant_root_of_pos_coeff_charPoly`: the
-polynomial $x^m - a_1 x^{m-1} - \cdots - a_m$ with positive integer coefficients has a
-unique positive real root, greater than one, which dominates all of its complex roots.
-
-The self-contained lemmas of Du's paper on reciprocal sums and products of `m`th-order
-linear recursive sequences. The Eneström–Kakeya bound
-`norm_le_one_of_aeval_eq_zero_of_monotone_coeff` is proved in
-`MathlibExt.Analysis.Complex.EnestromKakeya`.
+Let $m \ge 2$ and let $a_1, \ldots, a_m$ be positive integers. The characteristic polynomial
+$x^m - a_1 x^{m-1} - \cdots - a_m$ has leading coefficient $1$ and lower coefficients
+$-a_1, \ldots, -a_m$. The theorem `MetaMathlibExt.exists_dominant_root_of_pos_coeff_charPoly`
+shows that its unique positive real root $\rho$ is simple and greater than one. Every other
+complex root has modulus strictly less than $\rho$.
 -/
 
 @[expose] public section
