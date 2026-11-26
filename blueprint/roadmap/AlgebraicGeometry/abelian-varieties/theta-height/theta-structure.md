@@ -29,7 +29,7 @@ $K$-rational points of order dividing $n$ and $t_x$ for translation by $x$. The 
    \varphi_x(s_x)$, is an isomorphism of $K$-vector spaces of dimension $r^{2g}$ (Proposition 2.5).
 4. A bijection $\Gamma \cong \{1, \dots, r^{2g}\}$ then gives an isomorphism
    $\mathbb{P}(\Gamma(A, L^{\otimes r^2})) \cong \mathbb{P}_K^{r^{2g} - 1}$, and, as
-   $L^{\otimes r^2}$ is very ample ($r^2 \ge 4 > 3$), a closed embedding
+   $L^{\otimes r^2}$ is very ample by Lefschetz's theorem ($r^2 \ge 4 > 3$), a closed embedding
    $\Theta \colon A \to \mathbb{P}_K^{r^{2g} - 1}$, the *theta embedding*. Its formation commutes
    with extension of $K$. The isomorphisms obtained for the various choices (of the rigidification,
    the good choice, $\Gamma$ and the bijection) differ by an element of the finite group
@@ -48,7 +48,12 @@ A good expansion has pages for: the isomorphism $j$ and the $i_x$ for $x \in A_r
 theorem of the cube (Birkenhake–Lange, Corollary 3.6, p. 34); Mumford's theta group of
 $L^{\otimes r^2}$, theta structures and good choices (Birkenhake–Lange, Lemma 4.7 (c), p. 38;
 Mumford, *On the equations defining abelian varieties* I and II, Invent. Math. 1 (1966) and 3
-(1967)); the basis of Proposition 2.5; the theta
+(1967)); the basis of Proposition 2.5; Lefschetz's theorem that $M^{\otimes n}$ is very ample for
+every ample line bundle $M$ on an abelian variety and every $n \ge 3$, which item 4 uses with
+$n = r^2$ and which Pazuki uses without a reference (§2.3.3, p. 29) (Robert, Proposition 2.3.14,
+p. 16, the item "Lefschetz", for a relatively ample line bundle on an abelian scheme, citing
+Mumford–Fogarty–Kirwan, *Geometric Invariant Theory*, 3rd ed., Proposition 6.13; Milne states the
+case $n = 3$ without proof, Chapter I, §6, p. 30); the theta
 embedding with its ambiguity group $G$ (Birkenhake–Lange, p. 168; David–Philippon, Comment. Math. Helv. 77 (2002), p. 654); and the
 analytic description through the Riemann theta function with characteristics (Birkenhake–Lange,
 p. 213; Igusa, *Theta functions*, Grundlehren 194, 1972, pp. 168–170), with pages for the Siegel upper half space.
@@ -68,8 +73,9 @@ p. 213; Igusa, *Theta functions*, Grundlehren 194, 1972, pp. 168–170), with pa
   for the isomorphisms $j$ and $i_x$
 - [Line bundles on abelian varieties](../line-bundles-on-abelian-varieties.md), for the
   Riemann–Roch count $h^0(A, L^{\otimes r^2}) = r^{2g}$ behind Proposition 2.5
-- [Abelian varieties are projective](../abelian-varieties-are-projective.md), for the very
-  ampleness of $L^{\otimes r^2}$
+- [Abelian varieties are projective](../abelian-varieties-are-projective.md), for a closed
+  immersion of $A$ into a projective space; the very ampleness of $L^{\otimes r^2}$ is Lefschetz's
+  theorem, one of the expansion targets above
 
 ## Sources
 
@@ -78,3 +84,10 @@ p. 213; Igusa, *Theta functions*, Grundlehren 194, 1972, pp. 168–170), with pa
   the theta embedding (3)), and §2.3.4, p. 30 (the theta constants); arXiv:0907.1458.
 - C. Birkenhake and H. Lange, *Complex Abelian Varieties*, 2nd ed., Grundlehren 302, Springer,
   2004, as cited by Pazuki.
+- D. Robert, *Theory of abelian varieties and their moduli spaces*, draft book (version of 7 March
+  2023), <https://www.math.u-bordeaux.fr/~damienrobert/pro/publications/books/avtheory.pdf>:
+  Proposition 2.3.14, p. 16 (Lefschetz's theorem for $n \ge 3$), and Theorem 2.2.11, p. 10 (the case
+  $n = 3$, citing Mumford's *Abelian Varieties*, §17).
+- J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
+  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, §6, p. 30 (if $D$ is ample on $A$,
+  then $3D$ is very ample, stated without proof).
