@@ -33,6 +33,7 @@ public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
 public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfect
+public import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseThree
 
 namespace MetaMathlibExt
 
@@ -87,20 +88,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (hak : a ≤ k)
     (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
     k = 1 ∧ a = 1
-
-/-- **$2$-near perfect $2^k p^2$ with omitted divisors $1$ and $2^b p^2$.** Let $p$ be an odd
-prime and let $b, k$ be integers with $1 \le b \le k$. If $n = 2^k p^2$ satisfies
-$\sigma(n) = 2n + 1 + 2^b p^2$, where $\sigma$ is the sum-of-divisors function (that is, $n$ is
-$2$-near perfect with omitted divisors $1$ and $2^b p^2$), then $n = 36$ and $2^b p^2 = 18$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 3
-(`integers-2024-A61-prop-3`). -/
-public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_three {k p b : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hb : 1 ≤ b) (hbk : b ≤ k)
-    (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) =
-      2 * (2 ^ k * p ^ 2) + 1 + 2 ^ b * p ^ 2) :
-    2 ^ k * p ^ 2 = 36 ∧ 2 ^ b * p ^ 2 = 18
 
 /-- **$2$-near perfect $2^k p^2$ with omitted divisors $p^m$ and $2^b p^j$.** Let $p$ be an odd
 prime, let each of $m$ and $j$ be $1$ or $2$, and let $b, k$ be integers with $1 \le b \le k$.
