@@ -478,7 +478,8 @@ private theorem fundInterval_ratio_eq (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) (
 private theorem integral_gkDensity_fundInterval_of_lt (α β : ℝ)
     (hα0 : 0 ≤ α) (hα2 : α ≤ 2) (hβ0 : 0 ≤ β) (hβ2 : β ≤ 2) (hlt : α < β) :
     ∫ x in fundInterval α β, gkDensity x = gkAntideriv β - gkAntideriv α := by
-  rw [fundInterval_of_lt hlt, integral_Ico_eq_integral_Ioc, ← intervalIntegral.integral_of_le hlt.le]
+  rw [fundInterval_of_lt hlt, integral_Ico_eq_integral_Ioc,
+    ← intervalIntegral.integral_of_le hlt.le]
   exact integral_gkDensity_uIcc α β hα0 hβ2 hβ0 hα2
 
 /-- The Gauss–Kuzmin integral over a decreasing endpoint interval. -/
@@ -606,7 +607,7 @@ private theorem bump_support_subset (u v m ε : ℝ) :
 private theorem bump_integrable (u v m ε : ℝ) (huv : u < v) :
     Integrable (fun x => ε * bump u v m x) volume := by
   have hcs : HasCompactSupport (fun x => ε * bump u v m x) := by
-    show IsCompact (tsupport _)
+    change IsCompact (tsupport _)
     exact IsCompact.of_isClosed_subset isCompact_Icc isClosed_closure
       (closure_minimal (bump_support_subset u v m ε) isClosed_Icc)
   exact (bump_continuous u v m huv).const_mul ε |>.integrable_of_hasCompactSupport hcs
@@ -774,11 +775,11 @@ public theorem exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) (hN : 1
     obtain ⟨hxu, hxv⟩ := hx
     exact ⟨lt_of_lt_of_le hu0' hxu, (lt_of_le_of_lt hxv hv1').le⟩
   set M : ℝ := (v - u) ^ 3 with hM
-  have hM0 : 0 < M := by simp [hM]; positivity
+  have hM0 : 0 < M := by rw [hM]; exact pow_pos (sub_pos.mpr huv) 3
   have hlog : (0 : ℝ) < log 2 := Real.log_pos one_lt_two
   have hlog0 : (log 2 : ℝ) ≠ 0 := ne_of_gt hlog
   set ε : ℝ := 1 / (4 * log 2 * M) with hε
-  have hε0 : 0 < ε := by simp [hε]; positivity
+  have hε0 : 0 < ε := by rw [hε]; positivity
   have hMε : ε * M = 1 / (4 * log 2) := by
     have ne1 : (4 : ℝ) * log 2 * M ≠ 0 := ne_of_gt (by positivity)
     have ne2 : (4 : ℝ) * log 2 ≠ 0 := ne_of_gt (by positivity)
@@ -829,7 +830,7 @@ public theorem exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) (hN : 1
     have heq : (1 : ℝ) / (2 * log 2) - 1 / (4 * log 2) = 1 / (4 * log 2) := by
       field_simp
       ring
-    show (0 : ℝ) ≤ gkDensity x + ε * bump u v m₀ x
+    change (0 : ℝ) ≤ gkDensity x + ε * bump u v m₀ x
     linarith [hgk, hεb, heq, hpos]
   · have hsub01 : Set.uIcc (0 : ℝ) 1 ⊆ Set.Icc 0 2 := by
       intro x hx
@@ -868,7 +869,7 @@ public theorem exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) (hN : 1
         rw [h1, h2]
         exact integral_bump_Icc u v m₀ r₀ huv hu hv
       rw [hb0, mul_zero]
-    show ∫ x in (0 : ℝ)..1, (gkDensity x + ε * bump u v m₀ x) = 1
+    change ∫ x in (0 : ℝ)..1, (gkDensity x + ε * bump u v m₀ x) = 1
     rw [hsplit, hgk1, hbump0, add_zero]
   · intro a ha hlen
     have ha_rev : ∀ x ∈ a.reverse, 0 < x := fun x hx => ha x (List.mem_reverse.mp hx)
@@ -956,7 +957,7 @@ public theorem exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) (hN : 1
         rw [integral_bump_cylinder (List.replicate (N + 1) 1) N hc_len u v m₀ r₀ hIcc_cyl
           a.reverse hlen_rev huv hu hv]
         exact mul_zero ε
-      show ∫ x in cfCylinder a, (gkDensity x + ε * bump u v m₀ x) =
+      change ∫ x in cfCylinder a, (gkDensity x + ε * bump u v m₀ x) =
         ∫ x in cfCylinder a.reverse, (gkDensity x + ε * bump u v m₀ x)
       rw [splitA, splitR, bumpA, bumpR, add_zero, add_zero]
       exact integral_gkDensity_reverse a ha
@@ -987,7 +988,7 @@ public theorem exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) (hN : 1
         simp [bump, hxI]
       rw [hbv]
       exact mul_ne_zero (mul_ne_zero h1 h2) h3
-    show gkDensity ((u + m₀) / 2) + ε * bump u v m₀ ((u + m₀) / 2) ≠
+    change gkDensity ((u + m₀) / 2) + ε * bump u v m₀ ((u + m₀) / 2) ≠
       1 / (log 2 * (1 + (u + m₀) / 2))
     have hgkeq : gkDensity ((u + m₀) / 2) = 1 / (log 2 * (1 + (u + m₀) / 2)) := rfl
     rw [hgkeq]
