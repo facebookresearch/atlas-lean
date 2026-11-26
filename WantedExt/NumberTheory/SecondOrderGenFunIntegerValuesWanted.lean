@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.SecondOrderGenValueFamily
 public import MathlibExt.NumberTheory.SecondOrderGenValueNeighbors
 public import MathlibExt.NumberTheory.SecondOrderGenValueTrivialFamilies
 public import MathlibExt.NumberTheory.SecondOrderMValue
@@ -30,24 +31,6 @@ For `p ≠ 0` the denominator `1 - p x - x²` has no rational root, so `A(x)` is
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Integer values propagate along a family.** Let $a, b, p$ be integers with $p \ne 0$, let
-$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $r, s$ let
-$A^{(r,s)}$ be the two-sided integer sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
-$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for all integers $n$. If $r$ and $s$ are
-coprime integers with $s \ne 0$ and $A(r/s)$ is an integer, then
-$A(A^{(r,s)}_n / A^{(r,s)}_{n+1})$ is an integer for every integer $n$ with
-$A^{(r,s)}_{n+1} \ne 0$.
-
-Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
-Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
-Article 25.8.3, Theorem 1 (`jis-2025-25.8.3-thm-1`). -/
-public theorem_wanted secondOrderGenValue_family_integer (a b p : ℤ) (hp : p ≠ 0) (r s : ℤ)
-    (hs : s ≠ 0)
-    (hrs : Int.gcd r s = 1) (hint : ∃ z : ℤ, secondOrderGenValue a b p ((r : ℚ) / s) = z)
-    (n : ℤ) (hn : secondOrderBiSeq p r s (n + 1) ≠ 0) :
-    ∃ z : ℤ, secondOrderGenValue a b p
-      ((secondOrderBiSeq p r s n : ℚ) / secondOrderBiSeq p r s (n + 1)) = z
 
 /-- **A small value of $M$ in the family of $r/s$ when $abp + a^2 - b^2 < 0$.** Let $a, b, p$ be
 integers with $p \ne 0$ and $abp + a^2 - b^2 < 0$. Let $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$
