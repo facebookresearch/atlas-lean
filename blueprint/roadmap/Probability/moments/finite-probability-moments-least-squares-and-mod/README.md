@@ -43,9 +43,7 @@
 
 ## F. Sample statistics and i.i.d. samples
 
-- [Sample mean](sample-mean.md)
 - [Divide-by-n sample variance](sample-var.md)
-- [Divide-by-(n − 1) sample variance](sample-var-unbiased.md)
 - [Deviations from the sample mean sum to zero](sum-sub-sample-mean.md)
 - [The sample mean as an expectation under the empirical weight](sample-mean-eq-expectation.md)
 - [The divide-by-n sample variance as a variance under the empirical weight](sample-var-eq-variance.md)

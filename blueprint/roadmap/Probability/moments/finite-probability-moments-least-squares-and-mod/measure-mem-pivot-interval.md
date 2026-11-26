@@ -1,3 +1,3 @@
 # Coverage under a sampling model
 
-Let $s > 0$, and suppose that under the measure $\mu$ the pivot $(T - \theta)/s$ of a statistic $T$ has law $\nu$. Then the interval obtained by inverting the pivot over the acceptance region $[l, h]$, the set of $\vartheta$ with $(T - \vartheta)/s \in [l, h]$, contains $\theta$ with $\mu$-probability $\nu([l, h])$.
+Let $s > 0$, let $\mu$ be a measure, and suppose that under $\mu$ the pivot $(T - \theta)/s$ of a statistic $T$ has law $\nu$ (the image of $\mu$ under the pivot is $\nu$). Then the event that the interval obtained by inverting the pivot over the acceptance region $[l, h]$, the set of $\vartheta$ with $(T - \vartheta)/s \in [l, h]$, contains $\theta$ has $\mu$-measure $\nu([l, h])$. When $\mu$ is a probability measure this is the coverage probability of the interval.

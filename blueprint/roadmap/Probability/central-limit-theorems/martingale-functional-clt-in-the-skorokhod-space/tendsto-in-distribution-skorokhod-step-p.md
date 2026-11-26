@@ -6,4 +6,4 @@ The proof combines Donsker's theorem in $C([0, 1])$ for the polygonal process, t
 
 ## Sources
 
-- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999), Theorem 16.1; proof route through Theorem 8.2 (Donsker in $C$) and Theorem 3.1 (converging together).
+- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999), §14 ("Donsker's Theorem Again", p. 146), Donsker's theorem in $D[0,1]$; proof route through Theorem 8.2 (Donsker in $C$) and Theorem 3.1 (converging together).

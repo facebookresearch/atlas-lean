@@ -339,7 +339,7 @@ Then `X n → Z` in distribution in the Skorokhod J1 topology on `D([0,T])`.
 
 Source: Billingsley (1999), Theorem 7.5 (tightness + fdd in `C`), Theorem 3.1 (converging
 together), and the J1-vs-uniform comparison of §12; this is the route used for Donsker's
-theorem in `D` (Billingsley, Theorem 14.1/16.1). The tightness and fdd hypotheses together
+theorem in `D` (Billingsley, §14). The tightness and fdd hypotheses together
 amount to `Y n → Z` in distribution in `C`, so this is converging together (Theorem 3.1) plus
 the `C → D` inclusion. It has no quadratic-variation hypothesis and no martingale structure:
 the martingale CLT that would produce finite-dimensional convergence and the tightness estimate
@@ -672,9 +672,9 @@ Mathematically the step process is a martingale in `k = ⌊n t⌋` with determin
 quadratic variation `⌊n t⌋ / n → t`; those facts are formalized only for the Bernoulli
 example (`martingale_compensatedBernoulli`, `condExp_sq_increment_compensatedBernoulli`).
 
-Source: Billingsley (1999), Theorem 16.1 (Donsker in `D`); proof route: Donsker in `C`
-(Theorem 8.2, here `donsker_invariance_principle`), sup-distance comparison of the step and
-polygonal processes, and converging together (Theorem 3.1). -/
+Source: Billingsley (1999), §14 ("Donsker's Theorem Again", Donsker in `D[0,1]`); proof route:
+Donsker in `C` (Theorem 8.2, here `donsker_invariance_principle`), sup-distance comparison of the
+step and polygonal processes, and converging together (Theorem 3.1). -/
 theorem tendstoInDistribution_skorokhodStepProcess
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
@@ -805,8 +805,9 @@ The hypotheses Rebolledo's theorem would need for this example are checked separ
 and are not used by this proof: `condExp_sq_increment_compensatedBernoulli` (conditional
 variances; informally the predictable quadratic variation is the deterministic
 `p (1-p) ⌊n t⌋ / n`) and `lindebergConditionTriangular_compensatedBernoulli` (jump control).
-Source: Billingsley (1999), Theorem 16.1 (Donsker in `D`), specialized to Bernoulli
-increments; Andersen–Borgan–Gill–Keiding (1993), §II.5 for the counting-process reading. -/
+Source: Billingsley (1999), §14 ("Donsker's Theorem Again", Donsker in `D[0,1]`), specialized
+to Bernoulli increments; Andersen–Borgan–Gill–Keiding (1993), §II.5 for the counting-process
+reading. -/
 theorem tendstoInDistribution_compensatedBernoulliStep
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']

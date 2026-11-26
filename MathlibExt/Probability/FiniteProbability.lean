@@ -1024,8 +1024,8 @@ lemma mem_pivotInterval_iff {t s lo hi θ : ℝ} (hs : 0 < s) :
 
 open MeasureTheory ProbabilityTheory in
 /-- **Coverage under a sampling model.** If, under `μ`, the pivot `(T - θ) / s` of the statistic
-`T` has law `ν`, then the interval obtained by inverting it contains `θ` with probability
-`ν [lo, hi]`. -/
+`T` has law `ν`, then the event that the interval obtained by inverting it contains `θ` has
+`μ`-measure `ν [lo, hi]`; for a probability measure `μ` this is the coverage probability. -/
 lemma measure_mem_pivotInterval {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {ν : Measure ℝ} {T : Ω → ℝ} {s lo hi θ : ℝ} (hs : 0 < s)
     (hpivot : HasLaw (fun ω => (T ω - θ) / s) ν μ) :

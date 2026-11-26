@@ -8,7 +8,6 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Expected risk](risk.md)
 - [Empirical risk](empirical-risk.md)
 - [Learning a discrete distribution in total variation](learning-a-discrete-distribution-in-total-variat/README.md)
-- [Massart's finite-class lemma](massart-finite-class.md)
 - [Measurability of the empirical risk](measurable-empirical-risk.md)
 - [Empirical risk minimization under a uniform deviation bound](risk-le-add-two-mul-of-forall-abs-sub-le.md)
 - [Rademacher averages of a finite class](rademacher-finite-class.md)

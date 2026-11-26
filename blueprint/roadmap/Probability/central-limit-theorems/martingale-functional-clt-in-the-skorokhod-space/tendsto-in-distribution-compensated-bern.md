@@ -7,4 +7,4 @@ motion.
 
 ## Sources
 
-- Billingsley (1999), Theorem 16.1 (Donsker in $D$), specialized to Bernoulli increments; Andersen–Borgan–Gill–Keiding (1993), §II.5 for the counting-process reading.
+- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999), §14 ("Donsker's Theorem Again", p. 146), Donsker's theorem in $D[0,1]$,, specialized to Bernoulli increments; Andersen–Borgan–Gill–Keiding (1993), §II.5 for the counting-process reading.

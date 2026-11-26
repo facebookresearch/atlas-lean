@@ -4,4 +4,4 @@
 
 ## Relation to the HC0 sandwich of `HeteroskedasticityRobust`
 
-- [Population score covariance equals the population HC0 meat](pop-score-cov-eq-hc0-pop-meat.md)
+- [Uncentred score second-moment matrix equals the population HC0 meat](pop-score-cov-eq-hc0-pop-meat.md)
