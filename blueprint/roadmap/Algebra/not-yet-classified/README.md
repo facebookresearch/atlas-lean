@@ -55,7 +55,6 @@ Topics added since this subject's fields were last revised.
 - [Monoid Action](monoid-action/README.md)
 - [Monoid Action Page Scalars](monoid-action-page-scalars/README.md)
 - [Monoid Action Pages](monoid-action-pages/README.md)
-- [Monoidal](monoidal/README.md)
 - [Nat Tail](nat-tail/README.md)
 - [Negative Tensor Normalizations](negative-tensor-normalizations/README.md)
 - [Of Functor Homology](of-functor-homology/README.md)
