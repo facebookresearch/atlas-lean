@@ -45,6 +45,7 @@ public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.SuperMZumkeller
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff
 
 set_option autoImplicit false
 
@@ -63,16 +64,6 @@ theorem_wanted isSuperMZumkeller_iff (n : ℕ) (hn : 2 ≤ n) :
       ∀ p ∈ n.primeFactors,
         8 ∣ (n.factorization p) * n.divisors.card *
           (divisorProd n).divisors.card
-
-/-- **Super-m-Zumkeller prime powers.** Let $p$ be a prime and $\alpha \ge 1$ an integer. Then
-$p^\alpha$ is super-m-Zumkeller if and only if
-$\alpha \equiv 0, 2, 5, 7, 8, 10, 13$ or $15 \pmod{16}$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 3. -/
-theorem_wanted isSuperMZumkeller_prime_pow_iff (p : ℕ)
-    (hp : p.Prime) (a : ℕ) (ha : 1 ≤ a) :
-    IsSuperMZumkeller (p ^ a) ↔
-      a % 16 ∈ ({0, 2, 5, 7, 8, 10, 13, 15} : Finset ℕ)
 
 /-- **Products of at least three distinct primes are super-m-Zumkeller.** For every finite set
 $S$ of at least three primes, the product $\prod_{p \in S} p$ is super-m-Zumkeller.
