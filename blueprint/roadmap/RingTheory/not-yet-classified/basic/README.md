@@ -43,15 +43,8 @@
 ## Hopf orders: Hopf algebra structure on an integral subalgebra
 
 - [Square of the inclusion of a subalgebra](tensor-sq-hom.md)
-- [Base change of a subalgebra to the field](base-change-hom.md)
-- [Base-changed comparison map for `S ⊗(R) S`](double-eval.md)
-- [Comparison of `S ⊗(R) S` with `A ⊗(K) A`](double-cmp.md)
-- [Base-changed comparison map for `S ⊗(R) (S ⊗(R) S)`](triple-eval.md)
-- [Comparison of `S ⊗(R) (S ⊗(R) S)` with `A ⊗(K) (A ⊗(K) A)`](triple-cmp-r.md)
-- [Base-changed comparison map for `(S ⊗(R) S) ⊗(R) S`](triple-eval-l.md)
-- [Comparison of `(S ⊗(R) S) ⊗(R) S` with `(A ⊗(K) A) ⊗(K) A`](triple-cmp-l.md)
 - [Restricted antipode](antipode-s.md)
-- [The comultiplication of an order comes from `S ⊗(R) S`](exists-double-cmp-eq-comul.md)
+- [The comultiplication of an order comes from `S ⊗(R) S`](exists-tensor-sq-hom-eq-comul.md)
 - [The counit of an order comes from `R`](exists-algebra-map-eq-counit.md)
 - [Restricted counit](counit-s.md)
 - [Restricted comultiplication](comul-s.md)
