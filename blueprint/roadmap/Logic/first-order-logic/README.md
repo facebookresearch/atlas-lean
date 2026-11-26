@@ -14,5 +14,8 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Kripke completeness of intuitionistic first-order logic](kripke-completeness-of-intuitionistic-first-order-logic.md)
 
 - [Automated deduction](automated-deduction/README.md)
+- [Term rewriting](term-rewriting/README.md)
+- [Equational logic](equational-logic/README.md)
+- [Superposition](superposition/README.md)
 - [Decidability of Presburger arithmetic](decidability-of-presburger-arithmetic/README.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic/README.md)

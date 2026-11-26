@@ -5,12 +5,11 @@ A term rewriting system $R$ is locally confluent if and only if all its critical
 ## Depends on
 
 - [Critical pairs of a term rewriting system](critical-pairs-of-a-term-rewriting-system.md)
+- [Confluence of a relation](../term-rewriting/confluence-of-a-relation.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once these prerequisites are stated:
-
-- Newman's lemma: a terminating relation is confluent if it is locally confluent (proof prerequisite)
+- [Newman's lemma](../term-rewriting/newman-s-lemma.md)
 
 ## Sources
 
