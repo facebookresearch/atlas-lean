@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`
+`Definitions/Def_WeierstrassCurve_EDSEngine.lean`,
+`Definitions/Def_Compat_Mathlib430.lean`,
+`P2M/Sol/S_WeierstrassCurve_Affine_evalEval_psi_sq.lean`
 and
 `P2M/Sol/S_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`
 (https://github.com/anthropics/fermats-last-theorem):
@@ -64,10 +66,12 @@ the theory of elliptic divisibility sequences; that machinery is private to this
 
 ## Main results
 
-* `WeierstrassCurve.zsmul_eq_smulEval`: the Jacobian coordinates of `n • (x, y)`.
+* `WeierstrassCurve.zsmul_eq_smulEval`: for a nonsingular point `(x, y)` over a field, `n • (x, y)`
+  is the class of the triple `smulEval W x y n`.
 * `WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ`: `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`.
-* `WeierstrassCurve.evalEval_ψ_sq` and `WeierstrassCurve.evalEval_φ`: at a point of the curve,
-  `ψₙ ^ 2` and `φₙ` agree with the univariate polynomials `ΨSqₙ` and `Φₙ`.
+* `WeierstrassCurve.evalEval_ψ_sq` and `WeierstrassCurve.evalEval_φ`: at any pair `(x, y)` that
+  satisfies the curve equation, `ψₙ ^ 2` and `φₙ` agree with the univariate polynomials `ΨSqₙ` and
+  `Φₙ`.
 * `WeierstrassCurve.isCoprime_Φ_ΨSq`: over an algebraically closed field, `Φₙ` and `ΨSqₙ` are
   coprime for an elliptic curve and `n > 0`.
 -/
@@ -1141,8 +1145,11 @@ lemma preΨ₄_add_ψ₂_pow_four : C W.preΨ₄ + W.ψ₂ ^ 4 =
 lemma φ_mul_ψ (n : ℤ) : W.φ n * W.ψ n = C X * W.ψ n ^ 3 - invarDenom W.ψ 1 n := by
   rw [WeierstrassCurve.φ, invarDenom]; ring
 
-/-- **The division polynomial `ωₙ`.** The polynomial whose value at a point `(x, y)` of `W` is
-the `Y`-coordinate, in Jacobian coordinates, of `n` times that point; see `zsmul_eq_smulEval`. -/
+/-- **The division polynomial `ωₙ`.** A bivariate polynomial over the commutative ring `R`,
+defined for every Weierstrass curve `W` and every `n`, which can be evaluated at any pair
+`(x, y)`. It is the second entry of the triple `smulEval W x y n`: when `R` is a field and `(x, y)`
+is a nonsingular point of `W`, that triple represents `n • (x, y)` in Jacobian coordinates
+(`zsmul_eq_smulEval`). -/
 public protected def ωe (n : ℤ) : R[X][Y] :=
   redInvarDenom W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) n *
     ((CC W.a₁ * polynomialY W - polynomialX W) * C W.Ψ₃
@@ -1649,7 +1656,10 @@ end Jacobian
 end Univ
 
 variable (x y) in
-/-- **Jacobian coordinates of `n • (x, y)`.** The triple `(φₙ(x, y), ωₙ(x, y), ψₙ(x, y))`. -/
+/-- **The division-polynomial triple at `(x, y)`.** The triple `(φₙ(x, y), ωₙ(x, y), ψₙ(x, y))`
+of values of the division polynomials at any pair `(x, y)` over the commutative ring `R`. When `R`
+is a field and `(x, y)` is a nonsingular point of `W`, its class is the Jacobian point
+`n • (x, y)` (`zsmul_eq_smulEval`); at other pairs it has no such meaning. -/
 public abbrev smulEval (n : ℤ) : Fin 3 → R := evalEval x y ∘ ![W.φ n, W.ωe n, W.ψ n]
 
 variable {W} (eqn : W.toAffine.Equation x y)
@@ -1688,8 +1698,8 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 open Univ
 
 /-- **Multiplication by `n` through division polynomials.** For a nonsingular point `(x, y)`
-of a Weierstrass curve `W` over a field, the Jacobian point `n • (x, y)` has coordinates
-`(φₙ(x, y), ωₙ(x, y), ψₙ(x, y))`. -/
+of a Weierstrass curve `W` over a field, the Jacobian point `n • (x, y)` is the class of the
+triple `(φₙ(x, y), ωₙ(x, y), ψₙ(x, y))`. -/
 public theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
     (n • Point.fromAffine (Affine.Point.some x y h)).point = ⟦smulEval W x y n⟧ := by
   have add_point_eq : ∀ (P Q : Jacobian.Point W) (P' Q' : Fin 3 → F),
@@ -1744,8 +1754,8 @@ section Ring
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
-/-- **`ψₙ` squared at a point.** For a Weierstrass curve `W` over a commutative ring and a point
-`(x, y)` of `W`, `ψₙ(x, y) ^ 2 = ΨSqₙ(x)`. -/
+/-- **`ψₙ` squared on the curve.** For a Weierstrass curve `W` over a commutative ring and any pair
+`(x, y)` that satisfies the equation of `W`, singular or not, `ψₙ(x, y) ^ 2 = ΨSqₙ(x)`. -/
 public theorem evalEval_ψ_sq {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.ψ n).evalEval x y ^ 2 = (W.ΨSq n).eval x := by
   have hmk : Affine.CoordinateRing.mk W (W.ψ n ^ 2) = Affine.CoordinateRing.mk W (C (W.ΨSq n)) := by
@@ -1756,8 +1766,8 @@ public theorem evalEval_ψ_sq {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) 
   rw [evalEval_sub, evalEval_mul, h0, zero_mul, sub_eq_zero, evalEval_pow, evalEval_C] at h1
   exact h1
 
-/-- **`φₙ` at a point.** For a Weierstrass curve `W` over a commutative ring and a point `(x, y)`
-of `W`, `φₙ(x, y) = Φₙ(x)`. -/
+/-- **`φₙ` on the curve.** For a Weierstrass curve `W` over a commutative ring and any pair
+`(x, y)` that satisfies the equation of `W`, singular or not, `φₙ(x, y) = Φₙ(x)`. -/
 public theorem evalEval_φ {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.φ n).evalEval x y = (W.Φ n).eval x := by
   obtain ⟨p, hp⟩ := AdjoinRoot.mk_eq_mk.mp (Affine.CoordinateRing.mk_φ W n)

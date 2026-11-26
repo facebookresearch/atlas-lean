@@ -107,6 +107,22 @@ example {F K : Type*} [Field F] [Field K] [Algebra F K] (W : WeierstrassCurve F)
   rw [mem_placeOf_iff, map_one]
   exact one_ne_zero
 
+/-- Congruence is strict: for a valuation on a field, `1` is not congruent to `0`, since
+`v (1 - 0) = 1`. A non-strict bound `≤ 1` would make them congruent. -/
+example {L Γ : Type*} [Field L] [LinearOrderedCommGroupWithZero Γ] (v : Valuation L Γ) :
+    ¬ v.Cong 1 0 := by
+  rw [Valuation.cong_iff, sub_zero, map_one]
+  exact lt_irrefl 1
+
+/-- Bounded multiplication of congruent elements: if `v t < 1`, then `1 + t` is congruent to `1`,
+and so is `(1 + t) * (1 + t)`. -/
+example {L Γ : Type*} [Field L] [LinearOrderedCommGroupWithZero Γ] (v : Valuation L Γ) {t : L}
+    (ht : v t < 1) : v.Cong ((1 + t) * (1 + t)) 1 := by
+  have h : v.Cong (1 + t) 1 := by
+    rw [Valuation.cong_iff, add_sub_cancel_left]
+    exact ht
+  simpa only [mul_one] using h.mul h (map_one v).le (map_one v).le
+
 end FunctionFieldPullbackTest
 
 end
