@@ -1510,6 +1510,7 @@
   "CSLibExt/Computability/Distributed/TwoPhaseCommit": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Two-phase commit"},
   "CSLibExt/Computability/Distributed/VectorClock": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Vector clocks"},
   "CSLibExt/Computability/Distributed/WindowIndistinguishability": {"to": "ComputerScience/parallel-algorithms", "title": "Locality lower bounds for ring coloring"},
+  "CSLibExt/Computability/Distributed/X86TSO/Axiomatic": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Weak memory models"},
   "CSLibExt/Computability/Games/Attractor": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Parity games"},
   "CSLibExt/Computability/Games/Encoded": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Parity games"},
   "CSLibExt/Computability/Games/Parity": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Parity games"},
