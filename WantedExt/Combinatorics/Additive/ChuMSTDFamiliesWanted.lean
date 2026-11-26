@@ -27,6 +27,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyDifferenceDominated
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyMstdIncreasing
+public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyKLTCardAdd
 
 namespace MetaMathlibExt
 
@@ -79,18 +80,6 @@ Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. 
 Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 6 (`integers-2024-A32-thm-6`). -/
 public theorem_wanted chuFamilyKLT_card_sub {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
     (chuFamilyKLT k l t - chuFamilyKLT k l t).card = 11 + 6 * k * l * t + 8 * l * t + 8 * t
-
-/-- **Lower bound for the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers
-and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
-$|A + A| \ge 11 + 6klt + 10lt + 8t$.
-
-Together with $|A - A| = 11 + 6klt + 8lt + 8t$ (Theorem 6), this shows that $A$ is sum-dominated
-(MSTD): $|A + A| > |A - A|$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 7 (`integers-2024-A32-thm-7`). -/
-public theorem_wanted chuFamilyKLT_card_add {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
-    11 + 6 * k * l * t + 10 * l * t + 8 * t ≤ (chuFamilyKLT k l t + chuFamilyKLT k l t).card
 
 /-- **Six disjoint families in the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive
 integers, let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and
