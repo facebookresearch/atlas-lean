@@ -18,7 +18,14 @@ with $\Delta F = F_{\lambda_B} - F_{\lambda_A}$ and $F_\lambda = -\beta^{-1}\ln\
 
 $$\frac{P_F(W)}{P_R(-W)} = e^{\beta (W - \Delta F)},$$
 
-in the sense that $P_F$ and the reflected law of $-W$ under $P_R$ are mutually absolutely continuous with this Radon–Nikodym derivative (point probabilities when $W$ takes finitely many values). Integrating gives $E_F[e^{-\beta W}] = e^{-\beta\Delta F}$ (Crooks 1999, Eq. (3) and Sec. III).
+in the sense that $P_F$ and the reflected law of $-W$ under $P_R$ are mutually absolutely continuous with this Radon–Nikodym derivative (point probabilities when $W$ takes finitely many values; Crooks 1999, Sec. III, Eq. (11)). Integrating gives $E_F[e^{-\beta W}] = e^{-\beta\Delta F}$ (Crooks 1999, Eq. (3)).
+
+## Depends on
+
+- [Boltzmann probability of a state](../../../Chemistry/chemical-thermodynamics/canonical-ensemble-of-a-finite-system/boltzmann-prob.md)
+- [Partition function of a finite system](../../../Chemistry/chemical-thermodynamics/canonical-ensemble-of-a-finite-system/partition-function.md)
+- [Helmholtz free energy from the partition function](../../../Chemistry/chemical-thermodynamics/canonical-ensemble-of-a-finite-system/helmholtz-free-energy.md)
+- [Detailed balance](../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/detailed-balance.md)
 
 ## Expansion
 
@@ -30,4 +37,4 @@ in the sense that $P_F$ and the reflected law of $-W$ under $P_R$ are mutually a
 
 ## Sources
 
-- G. E. Crooks, Entropy production fluctuation theorem and the nonequilibrium work relation for free energy differences, Phys. Rev. E 60 (1999), 2721–2726, Eqs. (2), (3), (5) and Sec. III. <https://arxiv.org/abs/cond-mat/9901352>
+- G. E. Crooks, Entropy production fluctuation theorem and the nonequilibrium work relation for free energy differences, Phys. Rev. E 60 (1999), 2721–2726, Eqs. (2), (3), (5) and Sec. III, Eq. (11). <https://arxiv.org/abs/cond-mat/9901352>
