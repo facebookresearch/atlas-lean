@@ -24,3 +24,7 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Process quality and monitoring](process-quality-and-monitoring/README.md)
 - [Data assimilation](data-assimilation/README.md)
 - [Item response models](item-response-models/README.md)
+
+## Chebyshev confidence interval for the sample mean
+
+- [Chebyshev confidence interval for the sample mean](chebyshev-sample-mean-interval-failure-b.md)

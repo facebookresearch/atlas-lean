@@ -13,12 +13,9 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 2 of 17](part-02/README.md)
 
-- [Binary](part-02/binary/README.md)
-- [Binary Cost Adapter](part-02/binary-cost-adapter/README.md)
 - [Bootstrap](part-02/bootstrap/README.md)
 - [Bootstrap Mean CLT](part-02/bootstrap-mean-clt/README.md)
 - [Canonical](part-02/canonical/README.md)
-- [Common Covariance Likelihood](part-02/common-covariance-likelihood/README.md)
 - [Component Observations](part-02/component-observations/README.md)
 
 ## [Part 3 of 17](part-03/README.md)
@@ -26,24 +23,19 @@ Topics added since this subject's fields were last revised.
 - [Confidence Sequence](part-03/confidence-sequence/README.md)
 - [Confidence Set](part-03/confidence-set/README.md)
 - [Contagion](part-03/contagion/README.md)
-- [Continuous Tightness](part-03/continuous-tightness/README.md)
 
 ## [Part 4 of 17](part-04/README.md)
 
 - [De Groot](part-04/de-groot/README.md)
 - [Difference In Differences](part-04/difference-in-differences/README.md)
-- [Double Robustness](part-04/double-robustness/README.md)
 - [Estimating Equations](part-04/estimating-equations/README.md)
 
 ## [Part 5 of 17](part-05/README.md)
 
 - [Expected Consequence](part-05/expected-consequence/README.md)
 - [Expected Duration](part-05/expected-duration/README.md)
-- [Exposure Mapping](part-05/exposure-mapping/README.md)
 - [Factorial](part-05/factorial/README.md)
 - [Failure Bracket](part-05/failure-bracket/README.md)
-- [Finite Argmin](part-05/finite-argmin/README.md)
-- [Finite Conditioning](part-05/finite-conditioning/README.md)
 - [Finite Consistency](part-05/finite-consistency/README.md)
 - [Finite Covariance PSD](part-05/finite-covariance-psd/README.md)
 
@@ -51,9 +43,6 @@ Topics added since this subject's fields were last revised.
 
 - [Finite Linking](part-06/finite-linking/README.md)
 - [Finite Posterior](part-06/finite-posterior/README.md)
-- [Finite Prefix](part-06/finite-prefix/README.md)
-- [Finite Prefix Geometric](part-06/finite-prefix-geometric/README.md)
-- [Finite Prefix Stopping](part-06/finite-prefix-stopping/README.md)
 - [Finite Probability](part-06/finite-probability/README.md)
 - [Finite Risk](part-06/finite-risk/README.md)
 - [Fisher Randomization](part-06/fisher-randomization/README.md)
@@ -72,7 +61,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 8 of 17](part-08/README.md)
 
-- [Identification](part-08/identification/README.md)
 - [Information Inequality Identification](part-08/information-inequality-identification/README.md)
 - [Item Information](part-08/item-information/README.md)
 - [Item Response](part-08/item-response/README.md)
@@ -88,14 +76,12 @@ Topics added since this subject's fields were last revised.
 - [Mc Leish CLT](part-10/mc-leish-clt/README.md)
 - [Misspecified MLE](part-10/misspecified-mle/README.md)
 - [MLEConsistency](part-10/mleconsistency/README.md)
-- [MNARCounterexample](part-10/mnarcounterexample/README.md)
 - [Multinomial Totals](part-10/multinomial-totals/README.md)
 - [No Regret Equilibrium](part-10/no-regret-equilibrium/README.md)
 
 ## [Part 11 of 17](part-11/README.md)
 
 - [Normal Theory](part-11/normal-theory/README.md)
-- [Observed Likelihood](part-11/observed-likelihood/README.md)
 - [Omitted Variable Bias](part-11/omitted-variable-bias/README.md)
 - [One Step](part-11/one-step/README.md)
 - [One Way](part-11/one-way/README.md)
@@ -114,13 +100,11 @@ Topics added since this subject's fields were last revised.
 - [Sample Moments](part-13/sample-moments/README.md)
 - [Saturated Two By Two Regression](part-13/saturated-two-by-two-regression/README.md)
 - [Scales](part-13/scales/README.md)
-- [Selection Bias](part-13/selection-bias/README.md)
 
 ## [Part 14 of 17](part-14/README.md)
 
 - [Shortfall Consequence](part-14/shortfall-consequence/README.md)
 - [Spatial Predictor](part-14/spatial-predictor/README.md)
-- [Standardization](part-14/standardization/README.md)
 - [Structural Equation](part-14/structural-equation/README.md)
 - [Symmetrization](part-14/symmetrization/README.md)
 - [System Lifetime](part-14/system-lifetime/README.md)
@@ -130,7 +114,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 15 of 17](part-15/README.md)
 
 - [True Score](part-15/true-score/README.md)
-- [Value Of Information](part-15/value-of-information/README.md)
 - [Ville](part-15/ville/README.md)
 - [Wald Envelope](part-15/wald-envelope/README.md)
 

@@ -5,4 +5,3 @@
 - [Sample Moments](sample-moments/README.md)
 - [Saturated Two By Two Regression](saturated-two-by-two-regression/README.md)
 - [Scales](scales/README.md)
-- [Selection Bias](selection-bias/README.md)

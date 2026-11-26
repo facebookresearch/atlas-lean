@@ -21,3 +21,11 @@ Probability measures and laws of random variables, expected value and the change
 - [Exchangeable random partitions](exchangeable-random-partitions/README.md)
 - [Extension of consistent measures on the canonical filtration of continuous paths](consistent-measures-on-continuous-path-space.md)
 - [Almost-everywhere uniqueness of the MMSE predictor](ae-eq-cond-exp-of-integral-sq-sub-le.md)
+- [Densities under a change of variables (normalizing flows)](densities-under-a-change-of-variables-normalizin/README.md)
+- [Prefix-dependent finite-horizon probability law](prefix-dependent-finite-horizon-probability-law/README.md)
+- [Uniform EOS: geometric tail and certain termination](uniform-eos-geometric-tail-and-certain-terminati/README.md)
+- [EOS finite-string mass conservation](eos-finite-string-mass-conservation/README.md)
+
+## Prescribed adjacency patterns
+
+- [Prescribed adjacency patterns](card-adj-pattern.md)

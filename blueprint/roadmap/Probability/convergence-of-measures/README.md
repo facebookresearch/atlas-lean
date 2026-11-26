@@ -20,3 +20,10 @@ Weak convergence and convergence in probability, tightness and Prokhorov's theor
 - [Skorokhod space](skorokhod-space/README.md)
 - [Prokhorov's theorem: tight sets of probability measures are relatively compact](prokhorov-theorem-on-a-polish-space.md)
 - [Kolmogorov–Chentsov tightness criterion in $C([0,T])$](kolmogorov-chentsov-tightness-criterion.md)
+- [Chebyshev consistency](tendsto-in-measure-of-integral-eq-of-eva.md)
+- [Convergence in distribution implies boundedness in probability](exists-forall-measure-lt-norm-le-of-tend.md)
+- [Tightness in `C(\[0,1\])` from a modulus of continuity](tightness-in-c-0-1-from-a-modulus-of-continuity/README.md)
+
+## The Bhattacharyya coefficient
+
+- [The Bhattacharyya coefficient](bhattacharyya-coeff.md)

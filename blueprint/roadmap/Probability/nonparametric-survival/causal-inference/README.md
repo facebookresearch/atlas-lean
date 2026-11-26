@@ -1,0 +1,26 @@
+# Causal inference and missing data
+
+Identification and estimation of causal effects and of means with missing outcomes: randomized experiments, standardization and inverse probability weighting under conditional exchangeability, instrumental variables, exposure mappings under interference, selection bias and Gaussian sample selection, missing-at-random and missing-not-at-random mechanisms with shadow variables and likelihood ignorability, and augmented inverse probability weighting with double robustness, Neyman orthogonality, cross-fitting and variance estimation.
+
+- [AIPW score and identifying assumptions](aipw-score-and-identifying-assumptions/README.md)
+- [Augmented inverse probability weighting with missing outcomes](augmented-inverse-probability-weighting-with-mis/README.md)
+- [Cross-fitted AIPW: double robustness and asymptotic normality](cross-fitted-aipw-double-robustness-and-asymptot/README.md)
+- [Double machine learning: rate conditions for cross-fitted AIPW](double-machine-learning-rate-conditions-for-cros/README.md)
+- [Double robustness of the augmented inverse probability weighted (AIPW) score](double-robustness-of-the-augmented-inverse-proba/README.md)
+- [Exposure mappings and the Horvitz-Thompson exposure-total estimator](exposure-mappings-and-the-horvitz-thompson-expos/README.md)
+- [Finite-covariate Neyman orthogonality and sample-split AIPW identities](finite-covariate-neyman-orthogonality-and-sample/README.md)
+- [Gaussian sample selection: the inverse Mills ratio correction](gaussian-sample-selection-the-inverse-mills-rati/README.md)
+- [Hahn variance](hahn-variance/README.md)
+- [Identification of a mean with a missing outcome](identification-of-a-mean-with-a-missing-outcome/README.md)
+- [Ignorability of the missingness mechanism for likelihood inference](ignorability-of-the-missingness-mechanism-for-li/README.md)
+- [Instrumental variables: identification of the local average treatment effect](instrumental-variables-identification-of-the-loc/README.md)
+- [Inverse-response weighting under MAR with a general covariate σ-algebra](inverse-response-weighting-under-mar-with-a-gene/README.md)
+- [MAR as conditional independence: the product rule and the converse of mean MAR](mar-as-conditional-independence-the-product-rule/README.md)
+- [Missing not at random: identification with a shadow variable](missing-not-at-random-identification-with-a-shad/README.md)
+- [Missing not at random: the full-data mean is not identified](missing-not-at-random-the-full-data-mean-is-not/README.md)
+- [Missing outcomes: the observed-data map, MCAR and MAR](missing-outcomes-the-observed-data-map-mcar-and/README.md)
+- [Missing-at-random and response-positivity predicates](missing-at-random-and-response-positivity-predic/README.md)
+- [Random assignment identifies the average treatment effect](random-assignment-identifies-the-average-treatme/README.md)
+- [Selection bias](selection-bias/README.md)
+- [Standardization: identification under conditional exchangeability](standardization-identification-under-conditional/README.md)
+- [Variance estimation and Wald intervals for AIPW](variance-estimation-and-wald-intervals-for-aipw/README.md)

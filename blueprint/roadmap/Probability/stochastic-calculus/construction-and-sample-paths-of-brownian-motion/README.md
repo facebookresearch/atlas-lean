@@ -9,6 +9,7 @@ by their quadratic variation, of unbounded variation. Linear Brownian motion is 
 reaches arbitrarily high and low levels and hits every real number.
 
 - [Existence of Brownian motion](exists-is-brownian-real.md)
+- [Brownian motion with an independent Gaussian start](exists-is-brownian-real-indep-fun-gaussi.md)
 - [Brownian motion as a continuous modification of pre-Brownian motion](exists-is-brownian-real-modification.md)
 - [Kolmogorov's condition for pre-Brownian motion](is-kolmogorov-process.md)
 - [Fourth moment of a centered Gaussian](integral-pow-four-gaussian-real.md)

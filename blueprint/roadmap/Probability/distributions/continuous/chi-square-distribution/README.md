@@ -18,6 +18,8 @@ For $p \ge 1$, the chi-square law is the law of $Z_1^2 + \dots + Z_p^2$ for inde
 - [Moment generating function of the law of the square of a standard normal](mgf-id-map-sq-std-gaussian.md): lemma used for the characterisation by squares of normal variables
 - [Exponential moments of the square of a standard normal](integrable-exp-mul-sq-std-gaussian.md): lemma used for the characterisation by squares of normal variables
 - [Exponential moments of the law of the square of a standard normal](iio-subset-integrable-exp-set-map-sq-std.md): lemma used for the characterisation by squares of normal variables
+- [Survival function of the chi-square distribution](chi-square-survival.md): definition: the upper tail
+- [A chi-square law has no atoms](chi-square-measure-singleton.md): basic property: no atoms
 
 ## Background
 
