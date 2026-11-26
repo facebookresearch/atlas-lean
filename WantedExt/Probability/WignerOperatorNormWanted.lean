@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Probability.IdentDistrib
 public import MathlibExt.Probability.WignerOperatorNorm
+public import MathlibExt.Probability.WignerOperatorNormOpNormConcentrationMedian
 
 /-!
 # The operator norm of a random matrix
@@ -24,7 +25,8 @@ independent entries, in the setting of Tao's *Topics in Random Matrix Theory*, �
 * **Concentration** (Proposition 2.3.10): for an `n × n` matrix with independent, mean-zero
   entries bounded by `1`, the operator norm concentrates around a median with `O(1)` Gaussian
   fluctuations, uniformly in `n`; it follows from Talagrand's inequality because `‖·‖` is convex
-  and `1`-Lipschitz for the Frobenius norm.
+  and `1`-Lipschitz for the Frobenius norm. This statement, `opNorm_concentration_median`, is in
+  `MathlibExt.Probability.WignerOperatorNormOpNormConcentrationMedian`.
 * **Bai–Yin** (Theorem 2.3.24): for a Wigner matrix with i.i.d. entries of mean `0`, variance
   `1` and finite fourth moment, almost surely `limsup ‖M_n‖ / √n ≤ 2`. Combined with the lower
   bound that the semicircle law supplies (the semicircle distribution charges every
@@ -52,23 +54,6 @@ namespace MathlibExt.Probability.WignerOperatorNormWanted
 open MeasureTheory ProbabilityTheory Filter Real
 open scoped Topology
 open MathlibExt.Analysis.WignerSemicircleWanted.Analysis.WignerSemicircleProblem (wignerMatrix)
-
-/-- **Concentration of the operator norm** (Tao, *Topics in Random Matrix Theory*,
-Proposition 2.3.10, real case). There are absolute constants `C, c > 0` such that, if the
-entries of a random `n × n` real matrix `M` are independent, have mean zero and are bounded by
-`1`, and `m` is a median of `‖M‖`, then `P(|‖M‖ - m| ≥ λ) ≤ C exp(-cλ²)` for every `λ > 0`.
-The constants do not depend on `n`. -/
-public theorem_wanted opNorm_concentration_median :
-    ∃ C > 0, ∃ c > 0, ∀ (Ω : Type*) (_ : MeasurableSpace Ω) (P : Measure Ω),
-      IsProbabilityMeasure P → ∀ (n : ℕ) (M : Ω → Matrix (Fin n) (Fin n) ℝ),
-      (∀ i j, Measurable fun ω => M ω i j) →
-      iIndepFun (fun ij : Fin n × Fin n => fun ω => M ω ij.1 ij.2) P →
-      (∀ i j, ∫ ω, M ω i j ∂P = 0) → (∀ i j ω, |M ω i j| ≤ 1) →
-      ∀ m : ℝ, 1 / 2 ≤ P.real {ω | ‖Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℝ) (M ω)‖ ≤ m} →
-        1 / 2 ≤ P.real {ω | m ≤ ‖Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℝ) (M ω)‖} →
-      ∀ t : ℝ, 0 < t →
-        P.real {ω | t ≤ |‖Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℝ) (M ω)‖ - m|} ≤
-          C * exp (-c * t ^ 2)
 
 /-- **Strong Bai–Yin theorem, upper bound** (Tao, *Topics in Random Matrix Theory*,
 Theorem 2.3.24; Bai and Yin 1988). Let the entries `X i j` (`i ≤ j`) of a real symmetric array
