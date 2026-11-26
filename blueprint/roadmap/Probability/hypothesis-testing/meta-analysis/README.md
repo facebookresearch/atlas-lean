@@ -13,5 +13,3 @@
 - [Cochran's heterogeneity statistic Q](cochran-q.md)
 - [Cochran's Q as a squared projection norm](cochran-q-eq-norm-sq.md)
 - [Cochran's Q is chi-square under homogeneity](has-law-cochran-q.md)
-- [DerSimonian–Laird estimator of the between-study variance](dersimonian-laird-random-effects-moment-estimator.md)
-- [Mantel–Haenszel summary odds ratio and test](mantel-haenszel-summary-odds-ratio-and-test.md)

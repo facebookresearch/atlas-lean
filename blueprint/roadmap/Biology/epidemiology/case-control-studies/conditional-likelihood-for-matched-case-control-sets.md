@@ -12,7 +12,7 @@ where $\mathcal C_k^m$ is the set of $k$-element subsets of $\{1, \dots, m\}$, a
 2. The conditional probability of the observed case configuration given the number of cases, and the cancellation of $\alpha_i$.
 3. The 1:1 binary case: the binomial conditional likelihood of the discordant pairs and the estimator $n_{10}/n_{01}$.
 4. The equivalence with a stratified Cox partial likelihood.
-5. The inconsistency of the unconditional estimator with one intercept per pair, whose odds-ratio estimate tends to the square of the true one, in the spirit of the [Neyman–Scott problem](../../../Probability/statistical-estimation/likelihood-and-maximum-likelihood-estimators/neyman-scott-incidental-parameter-inconsistency.md), as a separate statement.
+5. The inconsistency of the unconditional estimator with one intercept per pair, whose odds-ratio estimate tends to the square of the true one, in the spirit of the Neyman–Scott incidental-parameter inconsistency of maximum likelihood, as a separate statement.
 
 ## Sources
 
