@@ -13,3 +13,4 @@
 - [Stationary identity by descent in the circular stepping-stone model](circular-stepping-stone-model-exact-stationary-i.md)
 
 - [Parent-independent finite-alleles mutation on the coalescent genealogy](parent-independent-finite-alleles-mutation-on-th.md)
+- [Shannon entropy bounds from ranked abundances](shannon-entropy-bounds-from-ranked-abundances/README.md)

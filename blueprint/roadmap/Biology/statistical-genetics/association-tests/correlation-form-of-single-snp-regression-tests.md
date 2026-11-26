@@ -20,6 +20,10 @@ The dominant cost of a full scan is the matrix product, about $2\times(\#\text{g
 
 - [The Cochran–Armitage statistic is N r²](cochran-armitage-trend-test/ca-stat-eq-mul-sample-corr-sq.md)
 
+## Proof depends on
+
+- [Frisch–Waugh–Lovell theorem, existence](../principal-component-correction-for-stratificatio/exists-frisch-waugh-lovell.md)
+
 ## Expansion
 
 In simple regression $\hat\beta = r\,s_g/s_s$ and the residual sum of squares is $(1-r^2)\sum(g_i - \bar g)^2$, which gives the $t$ formula; $F$, $R^2$ and the Gaussian LR are functions of $t^2$. Part 3 is the Frisch–Waugh–Lovell theorem: the coefficient of $s$ and its residual-based standard error in the full regression coincide with those of the regression of residualized $g$ on residualized $s$, except that the residual degrees of freedom account for the $k+1$ projected regressors. Part 4 is generalized least squares by whitening. Part 5 uses that the projection onto orthogonal regressors is the sum of the one-dimensional projections. Because centring, covariate projection and scaling are done once per gene and once per SNP, adding covariates leaves the cost of the scan essentially unchanged.

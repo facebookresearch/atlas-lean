@@ -28,7 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Evolutionary rescue by multiple mutations](evolutionary-rescue-by-multiple-mutations/README.md)
-- [Evolutionary rescue in a deteriorating environment](evolutionary-rescue-in-a-deteriorating-environment/README.md)
-- [Multilocus barriers to gene flow](multilocus-barriers-to-gene-flow/README.md)
-- [Shannon entropy bounds from ranked abundances](shannon-entropy-bounds-from-ranked-abundances/README.md)

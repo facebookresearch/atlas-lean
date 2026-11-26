@@ -16,3 +16,5 @@ Probability.
 - [Invariance of GLM association tests under block-triangular reparametrization of the design](invariance-of-glm-tests-under-block-triangular-reparametrization.md)
 - [Logistic mixed-model score test with multiple variance components](logistic-mixed-model-score-test-with-multiple-variance-components.md)
 - [Robust three-degree-of-freedom association test for an X-chromosomal SNP](x-chromosome-three-degree-of-freedom-association-test.md)
+- [Multivariate mixed-model association](multivariate-mixed-model-association/README.md)
+- [Variance QTLs and deviation regression](variance-qtl-and-deviation-regression/README.md)

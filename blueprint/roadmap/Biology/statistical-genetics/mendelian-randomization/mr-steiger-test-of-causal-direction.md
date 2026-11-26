@@ -6,9 +6,9 @@
 
 $$\rho_{gy} = \rho_{gx}\,\rho_{xy}, \qquad\text{hence}\qquad |\rho_{gy}| \le |\rho_{gx}|,$$
 
-with strict inequality whenever $|\rho_{xy}| < 1$. So the trait that the instrument explains more variance of ($\rho_{g\cdot}^2$ larger) is the upstream trait.
+with strict inequality whenever $\rho_{gx} \ne 0$ and $|\rho_{xy}| < 1$. So the trait that the instrument explains more variance of ($\rho_{g\cdot}^2$ larger) is the upstream trait.
 
-**Test.** The MR Steiger method infers the direction by testing $H_0: \rho_{gx} = \rho_{gy}$ with Steiger's test, using Fisher's transformation $Z_{g\cdot} = \tfrac12\ln\frac{1+\rho_{g\cdot}}{1-\rho_{g\cdot}}$:
+**Test.** The MR Steiger method infers the direction by testing $H_0: |\rho_{gx}| = |\rho_{gy}|$ with Steiger's test, using Fisher's transformation of the absolute correlations, $Z_{g\cdot} = \tfrac12\ln\frac{1+|\rho_{g\cdot}|}{1-|\rho_{g\cdot}|}$:
 
 - *One sample of size $N$ (correlated correlations):*
 
@@ -22,8 +22,11 @@ $Z > 0$ supports $x \to y$, $Z < 0$ supports $y \to x$, with $p_{\mathrm{Steiger
 
 ## Depends on
 
-- [Wald ratio identity](covariance-div-covariance.md)
 - [Linear moment model for instrumental variables](linear-moment-model.md)
+
+## Proof depends on
+
+- [Wald ratio identity](covariance-div-covariance.md)
 
 ## Expansion
 

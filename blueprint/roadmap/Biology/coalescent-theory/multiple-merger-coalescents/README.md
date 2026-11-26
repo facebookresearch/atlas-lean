@@ -12,3 +12,4 @@ frequency spectrum under multiple mergers.
 - [Site frequency spectrum under Λ-coalescents](site-frequency-spectrum-under-coalescents/README.md)
 - [Speed of coming down from infinity](speed-of-coming-down-from-infinity/README.md)
 - [Λ-coalescent limits of Cannings models](coalescent-limits-of-cannings-models/README.md)
+- [Time-changed Λ-coalescents under population size change](time-changed-lambda-coalescents/README.md)

@@ -25,12 +25,4 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Poisson mutation on the Kingman genealogy](poisson-mutation-on-the-kingman-genealogy/README.md)
 - [Site frequency spectrum under a population bottleneck](site-frequency-spectrum-under-a-population-bottl/README.md)
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
-
-- [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Divergence times from paired genomes](divergence-times-from-paired-genomes/README.md)
-- [Genome-wide genealogy inference](genome-wide-genealogy-inference/README.md)
-- [Identity-by-descent segment lengths](identity-by-descent-segment-lengths/README.md)
-- [Multiple sequentially Markovian coalescent](multiple-sequentially-markovian-coalescent/README.md)
-- [Sequentially Markov conditional sampling distribution](sequentially-markov-conditional-sampling-distribution/README.md)
-- [Time-changed Λ-coalescents under population size change](time-changed-lambda-coalescents/README.md)
-- [Tree sequence recording and simplification](tree-sequence-recording-and-simplification/README.md)
+- [Genomic inference of genealogies and demography](genomic-inference-of-genealogies-and-demography/README.md)

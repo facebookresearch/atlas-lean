@@ -8,6 +8,8 @@ Large values of $\omega_{\max}$, calibrated against neutral coalescent simulatio
 
 ## Depends on
 
+- [Linkage disequilibrium of a two-locus gamete law](../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/linkage-diseq.md)
+
 ## Expansion
 
 During a sweep, a neutral lineage linked to the beneficial allele escapes onto the ancestral background only by recombining between itself and the selected site. Lineages on one side of the selected site share the same recombination history with respect to that side, so haplotypes that escaped on the left are carried together, producing strong LD among sites on the same side. Escape events on the left and right are independent recombinations, so sites on opposite sides are nearly uncorrelated. The expected pattern is two blocks of high LD flanking the selected site with low LD between them, which is exactly what a large ratio $\omega_\ell$ at the split near the selected site captures. Neutral regions with uniform recombination give $\omega_\ell \approx 1$. Kim and Nielsen derive the expected LD pattern genealogically, show it by simulation, and fold LD into a composite-likelihood sweep test; including LD improves power only modestly over tests using the spatial distribution and frequencies of polymorphisms alone.

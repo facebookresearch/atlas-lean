@@ -10,3 +10,4 @@
 - [Beneficial probability depends only on the distance to the optimum](beneficial-prob-eq-of-norm-eq.md)
 - [Beneficial probability with a single trait](beneficial-prob-one-dim.md)
 - [Large-dimension limit of the beneficial probability](tendsto-beneficial-prob.md)
+- [Evolutionary rescue by multiple mutations](evolutionary-rescue-by-multiple-mutations/README.md)

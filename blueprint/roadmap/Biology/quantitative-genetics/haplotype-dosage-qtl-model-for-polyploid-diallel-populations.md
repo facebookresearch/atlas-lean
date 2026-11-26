@@ -16,9 +16,9 @@ $$A_{ii'} = \frac{1}{\phi m} \sum_{j=1}^{m} \sum_{k=1}^{\phi p} W_{ijk} W_{i'jk}
 
 which supply covariances of polygenic random effects (computed leaving out the chromosome under test).
 
-## Depends on
+## Related topics
 
-- [Genomic relationship matrices](genomic-relationship-matrices/README.md)
+- [Genomic relationship matrices](genomic-relationship-matrices/README.md): the diploid, biallelic relationship matrices that the haplotype-based IBD relationship matrices generalize.
 
 ## Expansion
 

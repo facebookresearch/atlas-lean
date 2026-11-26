@@ -8,3 +8,4 @@
 - [Survival probability is less than one](survival-prob-lt-one.md)
 - [Nonnegativity of the survival probability](survival-prob-nonneg.md)
 - [Haldane's approximation $\pi(s) \approx 2s$](tendsto-survival-prob-div.md)
+- [Evolutionary rescue in a deteriorating environment](evolutionary-rescue-in-a-deteriorating-environment/README.md)
