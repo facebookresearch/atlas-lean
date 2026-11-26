@@ -13967,6 +13967,7 @@
   "MathlibExt/Order/InverseLimitDomain": {"to": "Order/fixed-points-domain-theory", "title": "Scott's inverse-limit theorem"},
   "MathlibExt/Order/Monotone/Nat": {"to": "Order/ordered-sets", "title": "Monotone sequences"},
   "MathlibExt/Order/OmegaCompletePartialOrder/ContinuousHom": {"to": "Order/fixed-points-domain-theory", "title": "Scott-continuous maps and least fixed points"},
+  "MathlibExt/Order/OmegaCompletePartialOrder/FixedPointInduction": {"to": "Order/fixed-points-domain-theory", "title": "Scott fixed-point induction"},
   "MathlibExt/Order/PosetMatrix": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
   "MathlibExt/Order/PosetMatrix/BlockDecomposition": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
   "MathlibExt/Order/PosetMatrix/BlockLengths": {"to": "Combinatorics/partially-ordered-sets", "title": "Poset matrices and quasi-full rooted trees"},
