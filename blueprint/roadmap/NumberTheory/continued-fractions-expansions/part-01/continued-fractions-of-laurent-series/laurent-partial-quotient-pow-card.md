@@ -2,9 +2,12 @@
 
 Let $K$ be a finite field with
 $q$ elements and let $\alpha \in K((x^{-1}))$, with partial quotients $b_0, b_1, \dots$ and
-convergent numerators and denominators $P_n, Q_n$, where $P_{-1} = 1$ and $Q_{-1} = 0$. Then for
-every $n \ge 0$ the $n$-th partial quotient of $\alpha^q$ is $b_n^q$, and for every $n \ge -1$
-the convergent numerator and denominator of $\alpha^q$ of index $n$ are $P_n^q$ and $Q_n^q$.
+convergent numerators $P_n$ and denominators $Q_n$. For every $n \ge 0$, the $n$-th partial
+quotient of $\alpha^q$ is $b_n^q$, and its $n$-th convergent has numerator $P_n^q$ and
+denominator $Q_n^q$.
+
+The convergent recurrences use the fixed initial values $P_{-1} = 1$ and $Q_{-1} = 0$.
+The numerator and denominator sequences store these at index $0$ and $P_n, Q_n$ at index $n+1$.
 
 ## Sources
 
