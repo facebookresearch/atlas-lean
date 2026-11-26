@@ -2,7 +2,6 @@
 
 - [Simplex](simplex.md)
 - [Replicator Field](replicator-field.md)
-- [Is Replicator Solution](is-replicator-solution.md)
 - [Is Locally Superior](is-locally-superior.md)
 - [Is Asymptotically Stable](is-asymptotically-stable.md)
 - [Is Regular ESS](is-regular-ess.md)
