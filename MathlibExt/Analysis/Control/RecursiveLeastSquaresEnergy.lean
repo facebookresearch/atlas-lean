@@ -34,8 +34,9 @@ import MathlibExt.Probability.MartingaleOrthogonality
 /-!
 # Shared stochastic energy estimate for recursive least squares
 
-This intermediate estimate is derived from the single-sensor analysis in Xie, Zhang and Guo,
-*Convergence of a Distributed Least Squares*. The information-weighted error drops by the weighted
+This is the single-sensor case of Theorem 3.1 of Xie, Zhang and Guo, *Convergence of a Distributed
+Least Squares*, in the combined form of their Lemma 4.4, whose extra term vanishes for one sensor;
+their Theorems 3.2 and 3.3 are derived from it. The information-weighted error drops by the weighted
 prediction error at each step, up to a martingale cross term and a squared-noise term. Predictable
 normalization lets half the weighted prediction error absorb the cross term; the log-determinant
 bound controls the accumulated gains in the squared-noise term. Neither bounded leverage nor
@@ -549,9 +550,14 @@ V_{t+1} + \tfrac12 \sum_{k=0}^t \frac{(\varphi_k^\top e_k)^2}{1+q_k}
 \le C_0 + C_1 \log\!\left(1+\sum_{k=0}^t \|\varphi_k\|_2^2\right).
 $$
 
-This is an intermediate estimate derived from the single-sensor regret and parameter-error
-arguments of Xie, Zhang and Guo, *Convergence of a Distributed Least Squares*,
-[doi:10.1109/TAC.2020.3047989](https://doi.org/10.1109/TAC.2020.3047989).
+This is the single-sensor case of Theorem 3.1 of Xie, Zhang and Guo, *Convergence of a
+Distributed Least Squares*,
+[doi:10.1109/TAC.2020.3047989](https://doi.org/10.1109/TAC.2020.3047989), which bounds the
+weighted prediction-error sum and the information-weighted error each by $O(\log r_t)$, where
+$r_t = \lambda_{\max}(P_0^{-1}) + \sum_{k=0}^t \|\varphi_k\|_2^2$, combined as in their
+Lemma 4.4, whose extra term vanishes for one sensor. Unlike the source, this statement also
+assumes $\mathbb E|w_{k+1}|^\beta < \infty$, combines the two parts with coefficient $\tfrac12$
+on the sum, and writes $O(\log r_t)$ as $C_0 + C_1 \log(1 + \sum_{k=0}^t \|\varphi_k\|_2^2)$.
 It requires neither bounded leverage nor divergence of the regressor energy. -/
 theorem rls_energy_add_half_sum_le_log {Ω : Type*} {m₀ : MeasurableSpace Ω}
     (μ : Measure Ω) [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m₀) {d : ℕ}
