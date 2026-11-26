@@ -50,7 +50,6 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Nat.GCD.Basic
 public import MathlibExt.NumberTheory.ModInverseSwitching
-public import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsLeastAbsInverse
 
 set_option autoImplicit false
 

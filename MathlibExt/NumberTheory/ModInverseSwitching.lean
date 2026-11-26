@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Int.ModEq
+public import Mathlib.Data.Nat.GCD.Basic
 import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.Linarith
@@ -154,6 +155,69 @@ private theorem switching_bounds {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
     have hp := hpos (i + 1) (by omega)
     have hr := hdesc i hi.le
     exact isLeastAbsInverse_succ_imp.switchingBounds (by omega) (by exact_mod_cast hp) h hlo hhi
+
+set_option linter.unusedVariables false in
+/-- **The Euclidean Bézout coefficients are least absolute inverses.** Let $m > n > 1$ be
+integers, write $g = \gcd(m, n)$, and let $(r_i)$, $(s_i)$ and $N$ be Euclidean switching data
+with $r_0 = m/g$ and $r_1 = n/g$. Then $s_2 m + s_1 n = g$, $s_2$ is the least absolute inverse
+of $m/g$ modulo $n/g$, and $s_1$ is the least absolute inverse of $n/g$ modulo $m/g$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 4. -/
+theorem euclid_bezout_coeffs_leastAbsInverse
+    (m n : ℕ) (h : n < m) (hn : 1 < n)
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (hr0 : r 0 = m / Nat.gcd m n) (hr1 : r 1 = n / Nat.gcd m n) :
+    s 2 * (m : ℤ) + s 1 * (n : ℤ) = (Nat.gcd m n : ℤ) ∧
+      IsLeastAbsInverse (s 2) ((m / Nat.gcd m n : ℕ) : ℤ)
+        (n / Nat.gcd m n) ∧
+      IsLeastAbsInverse (s 1) ((n / Nat.gcd m n : ℕ) : ℤ)
+        (m / Nat.gcd m n) := by
+  obtain ⟨hN, hpos, hdesc, hlast, hdiv, hs, hbez⟩ := hseq
+  have hsw1 : s 2 * (r 0 : ℤ) + s 1 * (r 1 : ℤ) = 1 := by
+    have h := hbez 1 le_rfl hN
+    simpa using h
+  rw [hr0, hr1] at hsw1
+  have hm : (m : ℤ) = (Nat.gcd m n : ℤ) * ((m / Nat.gcd m n : ℕ) : ℤ) := by
+    have hnat : Nat.gcd m n * (m / Nat.gcd m n) = m :=
+      Nat.mul_div_cancel' (Nat.gcd_dvd_left m n)
+    have hcast : ((Nat.gcd m n * (m / Nat.gcd m n) : ℕ) : ℤ) = (m : ℤ) := by
+      rw [hnat]
+    simpa [Nat.cast_mul] using hcast.symm
+  have hncast : (n : ℤ) = (Nat.gcd m n : ℤ) * ((n / Nat.gcd m n : ℕ) : ℤ) := by
+    have hnat : Nat.gcd m n * (n / Nat.gcd m n) = n :=
+      Nat.mul_div_cancel' (Nat.gcd_dvd_right m n)
+    have hcast : ((Nat.gcd m n * (n / Nat.gcd m n) : ℕ) : ℤ) = (n : ℤ) := by
+      rw [hnat]
+    simpa [Nat.cast_mul] using hcast.symm
+  have hBez : s 2 * (m : ℤ) + s 1 * (n : ℤ) = (Nat.gcd m n : ℤ) := by
+    have hmul : (Nat.gcd m n : ℤ) *
+        (s 2 * ((m / Nat.gcd m n : ℕ) : ℤ) + s 1 * ((n / Nat.gcd m n : ℕ) : ℤ)) =
+        (Nat.gcd m n : ℤ) := by
+      rw [hsw1, mul_one]
+    rw [hm, hncast]
+    linarith [hmul]
+  have hb2 : -((n / Nat.gcd m n : ℕ) : ℤ) < 2 * s 2 ∧
+      2 * s 2 ≤ ((n / Nat.gcd m n : ℕ) : ℤ) := by
+    have h := switching_bounds
+      (r := r) (s := s) (N := N) ⟨hN, hpos, hdesc, hlast, hdiv, hs, hbez⟩
+      (i := 1) hN
+    rw [hr1] at h
+    exact h
+  have hb1 : -((m / Nat.gcd m n : ℕ) : ℤ) < 2 * s 1 ∧
+      2 * s 1 ≤ ((m / Nat.gcd m n : ℕ) : ℤ) := by
+    have h := switching_bounds
+      (r := r) (s := s) (N := N) ⟨hN, hpos, hdesc, hlast, hdiv, hs, hbez⟩
+      (i := 0) (Nat.zero_le N)
+    rw [hr0] at h
+    exact h
+  have hmod2 : s 2 * ((m / Nat.gcd m n : ℕ) : ℤ) ≡
+      1 [ZMOD ((n / Nat.gcd m n : ℕ) : ℤ)] := by
+    simp [← hsw1]
+  have hmod1 : s 1 * ((n / Nat.gcd m n : ℕ) : ℤ) ≡
+      1 [ZMOD ((m / Nat.gcd m n : ℕ) : ℤ)] := by
+    simp [← hsw1]
+  exact ⟨hBez, ⟨hmod2, hb2.1, hb2.2⟩, ⟨hmod1, hb1.1, hb1.2⟩⟩
 
 /-- **First inverses not both extremal, even–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be
 Euclidean switching data with $r_0$ even and $r_1$ odd. Then $2|s_1| < r_0$ or
