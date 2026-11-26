@@ -14,7 +14,7 @@ open MvPolynomial Finset
 
 @[expose] public section
 
-local instance : Fact ((1 : NNReal) ≤ 1) := ⟨le_rfl⟩
+private local instance : Fact ((1 : NNReal) ≤ 1) := ⟨le_rfl⟩
 
 private theorem norm_two_monomials {σ : Type*} (m n : σ →₀ ℕ) (hmn : m ≠ n)
     (a b : ℚ) :

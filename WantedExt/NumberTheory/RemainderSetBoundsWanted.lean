@@ -12,7 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.NumberTheory.IteratedRemainderSet
+public import MathlibExt.NumberTheory.PrimeSquareTail
 public import MathlibExt.NumberTheory.RemainderSet
+public import MathlibExt.NumberTheory.RemainderSetBoundsCardLeastPrimeFactorIntervalError
 
 /-!
 # Bounds for sets of remainders (statements)
@@ -26,9 +28,12 @@ structural lemmas, its `O(log log n)` drop bound, and its iterated-set bounds ar
 `WantedExt` and `MathlibExt` may not import `FormalizedPapers`, so the set is restated in
 `MathlibExt.NumberTheory.RemainderSet`, which also proves the unbounded drops. This file states
 the remaining results that `FormalizedPapers` does not prove: the asymptotic
-`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and the three
-auxiliary analytic lemmas. The iterated remainder sets `S_j(n)` are defined, and Lemma 19
-(`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is proved, in
+`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and one
+auxiliary analytic lemma; the other auxiliary analytic lemma, `card_leastPrimeFactor_interval_error`,
+is proved in `MathlibExt.NumberTheory.RemainderSetBoundsCardLeastPrimeFactorIntervalError`.
+The inverse-prime-square tail bound is proved in
+`MathlibExt.NumberTheory.PrimeSquareTail`. The iterated remainder sets `S_j(n)` are defined, and
+Lemma 19 (`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is proved, in
 `MathlibExt.NumberTheory.IteratedRemainderSet`.
 -/
 
@@ -95,24 +100,6 @@ public theorem_wanted remainderCount_consecutive_differences :
         (remainderCount n : ℝ) - C * Real.log (Real.log n) ≤ remainderCount (n + 1)) ∧
       ∀ M : ℕ, ∃ᶠ n in Filter.atTop, remainderCount (n + 1) + M ≤ remainderCount n
 
-/-- **Counting integers with a given least prime factor in an interval.** Let $a$ and $t$ be
-positive integers and let $p$ be a prime. Let $N$ be the number of integers $m$ with
-$a + 1 \le m \le a + t$ that are divisible by $p$ and by no prime $q < p$. Then
-
-$$\left| N - \frac{t}{p} \prod_{q < p,\ q \text{ prime}} \left(1 - \frac{1}{q}\right) \right|
-\le 2^{\pi(p-1)}$$
-
-where $\pi$ is the prime-counting function.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 6 (`lem:Dp`). -/
-public theorem_wanted card_leastPrimeFactor_interval_error {a t p : ℕ} (ha : 0 < a)
-    (ht : 0 < t) (hp : p.Prime) :
-    |((((Finset.Icc (a + 1) (a + t)).filter
-          (fun m => p ∣ m ∧ ∀ q < p, q.Prime → ¬ q ∣ m)).card : ℕ) : ℝ) -
-        t * (1 / (p : ℝ)) * ∏ q ∈ (Finset.range p).filter Nat.Prime, (1 - 1 / (q : ℝ))| ≤
-      2 ^ Nat.primeCounting (p - 1)
-
 /-- **Upper bound $1.3\, n / \log n$ for the prime-counting function.** For every natural
 number $n \ge 2$, the number $\pi(n)$ of primes at most $n$ satisfies
 $\pi(n) \le 1.3\, n / \log n$, where $\log$ is the natural logarithm.
@@ -121,16 +108,6 @@ Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Jour
 Integer Sequences 29 (2026), Article 26.1.4, Lemma 7 (`lem:primecounting_ub`). -/
 public theorem_wanted primeCounting_le_thirteen_tenths {n : ℕ} (hn : 2 ≤ n) :
     (Nat.primeCounting n : ℝ) ≤ 13 / 10 * n / Real.log n
-
-/-- **Tail of the sum of inverse prime squares.** As the natural number $n$ tends to infinity,
-the sum $\sum_{p > n,\ p \text{ prime}} 1/p^2$ of the inverse squares of the primes greater
-than $n$ is $O(1/(n \log n))$.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 8 (`lem:psquared_sum_est`). -/
-public theorem_wanted tsum_inv_sq_primes_gt_isBigO :
-    (fun n : ℕ => ∑' p : {p : ℕ // p.Prime ∧ n < p}, (1 : ℝ) / ((p : ℕ) : ℝ) ^ 2)
-      =O[Filter.atTop] (fun n : ℕ => 1 / ((n : ℝ) * Real.log n))
 
 /-- **The first iterated remainder set is the remainder set.** For every natural number $n$, the
 iterated remainder set $S_1(n)$ equals the remainder set
