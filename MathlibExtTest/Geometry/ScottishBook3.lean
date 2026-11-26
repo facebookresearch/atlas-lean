@@ -14,6 +14,14 @@ import Mathlib.Topology.MetricSpace.Isometry
 
 open MathlibExt.Geometry.ScottishBook3Wanted Set
 
+universe u
+
+-- An isometric self-map of a compact metric space is surjective in every universe.
+example {X : Type u} [MetricSpace X] [CompactSpace X] {f : X → X} (hf : Isometry f) :
+    Function.Surjective f := by
+  simpa only [image_univ, range_eq_univ] using
+    image_eq_of_isometry_mapsTo isCompact_univ hf (mapsTo_univ f univ)
+
 -- A closed interval may sit in a noncompact ambient space, and its endpoints can be unordered.
 example (a b : ℝ) (f : ℝ → ℝ) (hf : Isometry f) (hmaps : MapsTo f (Icc a b) (Icc a b)) :
     f '' Icc a b = Icc a b := by
