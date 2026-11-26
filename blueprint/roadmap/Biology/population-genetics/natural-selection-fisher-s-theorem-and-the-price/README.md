@@ -46,3 +46,13 @@
 
 - [Quasi-linkage equilibrium dynamics of allele frequencies under weak selection](quasi-linkage-equilibrium-under-weak-selection.md)
 - [Two-locus quasi-linkage equilibrium approximation](two-locus-quasi-linkage-equilibrium-approximatio.md)
+
+## Fisher's fundamental theorem with the additive genetic variance (diploid, one locus)
+
+- [Domain of the diploid viability-selection model](is-diploid-model.md)
+- [Mean genotypic value in fitness](mean-value-eq-diploid-mean-fitness.md)
+- [Marginal fitness as mean fitness plus average effect](marginal-fitness-eq-add-avg-effect.md)
+- [Allele-frequency change under diploid selection](diploid-select-sub-eq.md)
+- [Fisher's fundamental theorem with the additive genetic variance](two-mul-sum-avg-effect-mul-diploid-selec.md)
+- [Total change in mean fitness under diploid selection](diploid-mean-fitness-diploid-select-sub.md)
+- [Total change in mean fitness without dominance](diploid-mean-fitness-diploid-select-sub-2.md)
