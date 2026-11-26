@@ -1,4 +1,4 @@
-# Blum's compression theorem
+# Lower bound of the compression theorem for Blum measures
 
 Statement: for every Blum complexity measure $\Phi$ and every total computable function $g : \mathbb{N} \to \mathbb{N}$, there is a total computable function $f : \mathbb{N} \to \mathbb{N}$ such that every program $c$ computing $f$ satisfies
 
@@ -8,4 +8,4 @@ Here programs are codes $c$ of partial recursive functions $\varphi_c : \mathbb{
 
 ## Sources
 
-- Blum, A machine-independent theory of the complexity of recursive functions, Journal of the ACM 14 (1967), 322–336, Theorem 4.
+- Blum, A machine-independent theory of the complexity of recursive functions, Journal of the ACM 14 (1967), 322–336, Theorem 7 (1), p. 331, the lower-bound part of the lemma for the compression theorem (Theorem 8).

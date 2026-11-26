@@ -9,4 +9,3 @@ The automaton works within the cells of its input, sees whether its head is at t
 ## Sources
 
 - M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013, §5.1.
-- J. E. Hopcroft, R. Motwani, and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Pearson, 2007, §11.1.

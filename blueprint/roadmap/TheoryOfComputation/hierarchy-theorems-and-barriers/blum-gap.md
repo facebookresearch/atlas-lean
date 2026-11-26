@@ -1,4 +1,4 @@
-# Blum's gap theorem
+# The Borodin–Trakhtenbrot gap theorem
 
 Statement: for every Blum complexity measure $\Phi$ and every total computable function $r : \mathbb{N} \to \mathbb{N}$ with $r(n) \ge n$ for all $n$, there is a total computable function $g : \mathbb{N} \to \mathbb{N}$ such that
 
@@ -8,4 +8,5 @@ So there is a gap in cost between $g$ and the larger bound $n \mapsto r(g(n))$ i
 
 ## Sources
 
-- Blum, A machine-independent theory of the complexity of recursive functions, Journal of the ACM 14 (1967), 322–336, Theorem 2 (Borodin–Trakhtenbrot gap theorem).
+- A. Borodin, Computational complexity and the existence of complexity gaps, Journal of the ACM 19 (1972), 158–174; found independently by B. A. Trakhtenbrot.
+- Blum, A machine-independent theory of the complexity of recursive functions, Journal of the ACM 14 (1967), 322–336, for the axioms of a complexity measure.

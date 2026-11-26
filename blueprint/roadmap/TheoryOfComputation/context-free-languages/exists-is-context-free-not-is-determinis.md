@@ -7,4 +7,3 @@ The following holds: there is a language $L$ over the two-letter alphabet $\{0, 
 ## Sources
 
 - S. Ginsburg and S. Greibach, "Deterministic context free languages", *Information and Control* 9 (1966), 620-648.
-- J. E. Hopcroft, R. Motwani, and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Section 10.3.

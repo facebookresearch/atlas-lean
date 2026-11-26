@@ -1,4 +1,4 @@
-# Blum's union theorem
+# The McCreight–Meyer union theorem
 
 Statement: let $\Phi$ be a Blum complexity measure and let $t : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$, $(i, n) \mapsto t_i(n)$, be computable as a function of the pair $(i, n)$ with $t_i(n) \le t_{i+1}(n)$ for all $i, n$. Then there is a total computable $g : \mathbb{N} \to \mathbb{N}$ with
 
@@ -8,5 +8,5 @@ Here programs are codes $c$ of partial recursive functions $\varphi_c : \mathbb{
 
 ## Sources
 
-- Blum, A machine-independent theory of the complexity of recursive functions, Journal of the ACM 14 (1967), 322–336, Theorem 3.
 - McCreight and Meyer, Classes of computable functions defined by bounds on computation, Proceedings of the ACM Symposium on Theory of Computing (1969), 79–88.
+- Blum, A machine-independent theory of the complexity of recursive functions, Journal of the ACM 14 (1967), 322–336, for the axioms of a complexity measure.

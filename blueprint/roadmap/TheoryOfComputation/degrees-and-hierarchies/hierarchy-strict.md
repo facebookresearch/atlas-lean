@@ -4,7 +4,7 @@ The classes $\Sigma_n$ and $\Pi_n$ of subsets of $\mathbb{N}$ are defined by: $\
 
 $$x \in A \iff \exists y\; \langle x, y \rangle \in B \quad \text{for all } x \in \mathbb{N},$$
 
-where $\langle \cdot, \cdot \rangle$ is a pairing bijection $\mathbb{N}^2 \to \mathbb{N}$; and $\Pi_n$ is defined dually, starting with a universal quantifier.
+where $\langle \cdot, \cdot \rangle$ is a fixed computable pairing bijection $\mathbb{N}^2 \to \mathbb{N}$, the standard one in the formalization (the classes depend on the pairing being computable); and $\Pi_n$ is defined dually, starting with a universal quantifier.
 
 The following holds: for every $n \in \mathbb{N}$ there is a set $A \subseteq \mathbb{N}$ with $A \in \Sigma_{n+1}$ and $A \notin \Sigma_n$.
 
