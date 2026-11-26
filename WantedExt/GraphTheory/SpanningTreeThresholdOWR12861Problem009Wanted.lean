@@ -39,7 +39,8 @@ parts is the connectivity bound noted in the source.
 
 open Filter Topology unitInterval
 
-/-- The edge probability `c log n / n`, clamped to `[0, 1]` (only large `n` matter). -/
+/-- The edge probability `p_c(n) = c log n / n`, clamped to `[0, 1]` (only large `n` matter); at
+`n = 0` it is `0`, since `Real.log 0 = 0` and division by zero gives `0`. -/
 noncomputable def logEdgeProb (c : ℝ) (n : ℕ) : I :=
   Set.projIcc 0 1 zero_le_one (c * Real.log n / n)
 

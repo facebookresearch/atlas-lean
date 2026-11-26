@@ -24,7 +24,13 @@ import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 We prove Stanley's identity for ordinary partitions. We also enumerate partitions in which
 each size has as many colors as its value and prove the generating function for the total
 number of even-sized parts, counted with multiplicity, and for the number of distinct colored
-parts occurring at least a given number of times.
+parts occurring at least a given number of times. We also count the latter by deleting copies
+of a marked colored part.
+
+## References
+
+* Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
+  INTEGERS **25** (2025), Article A94, pp. 1–11; Theorem 6 and Corollary 5, p. 6.
 -/
 
 open PowerSeries
@@ -515,6 +521,54 @@ open Finset
 private def markedCount (t : ℕ) (s : Multiset (ℕ × ℕ)) : ℚ :=
   (s.toFinset.filter fun p => t ≤ s.count p).card
 
+/-- Insert `t` copies of a fixed colored part. -/
+private def addCopies (t : ℕ) (c : ℕ × ℕ) : Multiset (ℕ × ℕ) ↪ Multiset (ℕ × ℕ) :=
+  ⟨(Multiset.replicate t c + ·), fun _ _ => add_left_cancel⟩
+
+private lemma sizeSum_addCopies (t : ℕ) (c : ℕ × ℕ) (r : Multiset (ℕ × ℕ)) :
+    (((addCopies t c) r).map Prod.fst).sum = c.1 * t + (r.map Prod.fst).sum := by
+  change ((Multiset.replicate t c + r).map Prod.fst).sum = _
+  simp [Multiset.map_replicate, Multiset.sum_replicate, Nat.mul_comm]
+
+private lemma count_ge_iff_exists_addCopies (t : ℕ) (c : ℕ × ℕ) (s : Multiset (ℕ × ℕ)) :
+    t ≤ s.count c ↔ ∃ r, addCopies t c r = s := by
+  rw [Multiset.le_count_iff_replicate_le, Multiset.le_iff_exists_add]
+  exact exists_congr fun _ => eq_comm
+
+/-- The partitions having `t` copies of `c` are obtained by inserting those copies into
+partitions of the smaller total. -/
+private lemma bounded_filter_count_ge {S : Finset (ℕ × ℕ)} (hS : ∀ p ∈ S, 0 < p.1)
+    {c : ℕ × ℕ} (hc : c ∈ S) (t n : ℕ) :
+    (bounded S n).filter (fun s => t ≤ s.count c) =
+      if c.1 * t ≤ n then (bounded S (n - c.1 * t)).map (addCopies t c) else ∅ := by
+  have allowed (r : Multiset (ℕ × ℕ)) :
+      (∀ p ∈ addCopies t c r, p ∈ S) ↔ ∀ p ∈ r, p ∈ S := by
+    change (∀ p ∈ Multiset.replicate t c + r, p ∈ S) ↔ _
+    constructor
+    · exact fun h p hp => h p (Multiset.mem_add.mpr (.inr hp))
+    · intro h p hp
+      obtain hrep | hr := Multiset.mem_add.mp hp
+      · exact (Multiset.eq_of_mem_replicate hrep) ▸ hc
+      · exact h p hr
+  by_cases hn : c.1 * t ≤ n
+  · rw [ite_eq_left hn]
+    ext s
+    simp only [mem_filter, Finset.mem_map, mem_bounded hS, count_ge_iff_exists_addCopies]
+    constructor
+    · rintro ⟨⟨hall, hsum⟩, r, rfl⟩
+      rw [sizeSum_addCopies] at hsum
+      exact ⟨r, ⟨(allowed r).mp hall, by omega⟩, rfl⟩
+    · rintro ⟨r, ⟨hall, hsum⟩, rfl⟩
+      exact ⟨⟨(allowed r).mpr hall, by rw [sizeSum_addCopies, hsum]; omega⟩, r, rfl⟩
+  · rw [ite_eq_right hn]
+    apply eq_empty_iff_forall_notMem.mpr
+    intro s hs
+    obtain ⟨hs, hcount⟩ := mem_filter.mp hs
+    obtain ⟨r, rfl⟩ := (count_ge_iff_exists_addCopies t c s).mp hcount
+    have hsum := ((mem_bounded hS n _).mp hs).2
+    rw [sizeSum_addCopies] at hsum
+    omega
+
 /-- Removing the marked copies of a fixed color shifts its series by their total size. -/
 private lemma series_mark_color (S : Finset (ℕ × ℕ)) (hS : ∀ p ∈ S, 0 < p.1)
     {c : ℕ × ℕ} (hc : c ∈ S) (t : ℕ) :
@@ -523,47 +577,8 @@ private lemma series_mark_color (S : Finset (ℕ × ℕ)) (hS : ∀ p ∈ S, 0 <
   classical
   ext n
   rw [coeff_X_pow_mul']
-  simp only [series, coeff_mk, sum_boole, sum_const, nsmul_one]
-  let addCopies : Multiset (ℕ × ℕ) ↪ Multiset (ℕ × ℕ) :=
-    ⟨(Multiset.replicate t c + ·), fun _ _ => add_left_cancel⟩
-  have weight (r : Multiset (ℕ × ℕ)) :
-      ((addCopies r).map Prod.fst).sum = c.1 * t + (r.map Prod.fst).sum := by
-    change ((Multiset.replicate t c + r).map Prod.fst).sum = _
-    simp [Multiset.map_replicate, Multiset.sum_replicate, Nat.mul_comm]
-  have allowed (r : Multiset (ℕ × ℕ)) :
-      (∀ p ∈ addCopies r, p ∈ S) ↔ ∀ p ∈ r, p ∈ S := by
-    change (∀ p ∈ Multiset.replicate t c + r, p ∈ S) ↔ _
-    constructor
-    · exact fun h p hp => h p (Multiset.mem_add.mpr (.inr hp))
-    · intro h p hp
-      obtain hrep | hr := Multiset.mem_add.mp hp
-      · exact (Multiset.eq_of_mem_replicate hrep) ▸ hc
-      · exact h p hr
-  have decompose (s : Multiset (ℕ × ℕ)) :
-      t ≤ s.count c ↔ ∃ r, addCopies r = s := by
-    rw [Multiset.le_count_iff_replicate_le, Multiset.le_iff_exists_add]
-    exact exists_congr fun _ => eq_comm
-  by_cases hn : c.1 * t ≤ n
-  · have heq : (bounded S n).filter (fun s => t ≤ s.count c) =
-        (bounded S (n - c.1 * t)).map addCopies := by
-      ext s
-      simp only [mem_filter, Finset.mem_map, mem_bounded hS, decompose]
-      constructor
-      · rintro ⟨⟨hall, hsum⟩, r, rfl⟩
-        rw [weight] at hsum
-        exact ⟨r, ⟨(allowed r).mp hall, by omega⟩, rfl⟩
-      · rintro ⟨r, ⟨hall, hsum⟩, rfl⟩
-        exact ⟨⟨(allowed r).mpr hall, by rw [weight, hsum]; omega⟩, r, rfl⟩
-    simp [hn, heq]
-  · have heq : (bounded S n).filter (fun s => t ≤ s.count c) = ∅ := by
-      apply eq_empty_iff_forall_notMem.mpr
-      intro s hs
-      obtain ⟨hs, hcount⟩ := mem_filter.mp hs
-      obtain ⟨r, rfl⟩ := (decompose s).mp hcount
-      have hsum := ((mem_bounded hS n _).mp hs).2
-      rw [weight] at hsum
-      omega
-    simp [hn, heq]
+  simp only [series, coeff_mk, sum_boole, sum_const, nsmul_one, bounded_filter_count_ge hS hc]
+  split_ifs <;> simp
 
 /-- Sum over the possible marked colors, then cancel the ordinary partition series. -/
 private lemma marked_identity (S : Finset (ℕ × ℕ)) (hS : ∀ p ∈ S, 0 < p.1)
@@ -638,5 +653,65 @@ public theorem nColor_partsMultiplicityGe_generatingFunction (t : ℕ) (ht : 1 �
   have sums := (summable_contribution t ht).hasSum.tendsto_sum_nat
   have heq := tendsto_nhds_unique sums (limit.congr fun N => palette_identity t ht N)
   simpa [contribution, factor, markedCount] using heq
+
+open Finset in
+/-- **Parts of multiplicity at least t in n-color partitions.** Let $t \ge 1$. For $i \ge 0$ let
+$N^t(i)$ be the number of distinct colored parts occurring at least $t$ times in an $n$-color
+partition of $i$, summed over all $n$-color partitions of $i$, and let $C(i)$ be the number of
+$n$-color partitions of $i$. Then for every $m \ge t$,
+$$
+N^t(m) = \sum_{k=1}^{\lfloor m/t \rfloor} k\, C(m - tk).
+$$
+
+Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
+INTEGERS 25 (2025), Article A94, Corollary 5 (`integers-2025-A94-cor-5`). -/
+public theorem nColor_partsMultiplicityGe_eq_sum (m t : ℕ) (ht : 1 ≤ t) (htm : t ≤ m) :
+    ∑ s ∈ nColorPartitions m, (s.toFinset.filter fun p => t ≤ s.count p).card =
+      ∑ k ∈ Finset.Icc 1 (m / t), k * (nColorPartitions (m - t * k)).card := by
+  classical
+  have marked (s : Multiset (ℕ × ℕ)) (hs : s ∈ nColorPartitions m) :
+      s.toFinset.filter (fun p => t ≤ s.count p) =
+        (palette (m / t)).filter (fun p => t ≤ s.count p) := by
+    ext p
+    simp only [mem_filter, Multiset.mem_toFinset, mem_palette]
+    constructor
+    · rintro ⟨hp, hcount⟩
+      obtain ⟨hall, hsum⟩ := (mem_nColorPartitions m s).mp hs
+      obtain ⟨r, hr⟩ := (count_ge_iff_exists_addCopies t p s).mp hcount
+      rw [← hr, sizeSum_addCopies] at hsum
+      have hsize : p.1 * t ≤ m := by omega
+      exact ⟨⟨(hall p hp).1, (hall p hp).2, (Nat.le_div_iff_mul_le ht).mpr hsize⟩, hcount⟩
+    · exact fun h => ⟨Multiset.count_pos.mp (ht.trans h.2), h.2⟩
+  have countForColor (p : ℕ × ℕ) (hp : p ∈ palette (m / t)) :
+      ((nColorPartitions m).filter fun s => t ≤ s.count p).card =
+        (nColorPartitions (m - t * p.1)).card := by
+    obtain ⟨hc₁, hc₂, hk⟩ := mem_palette.mp hp
+    have hsize : p.1 * t ≤ m := (Nat.le_div_iff_mul_le ht).mp hk
+    have hp' : p ∈ palette m := mem_palette.mpr ⟨hc₁, hc₂, hk.trans (Nat.div_le_self ..)⟩
+    have hpos : ∀ q ∈ palette m, 0 < q.1 := fun q hq =>
+      (mem_palette.mp hq).1.trans (mem_palette.mp hq).2.1
+    -- The smaller total bounds every remaining size, so restricting its palette loses nothing.
+    rw [← bounded_stable (Nat.le_refl m), bounded_filter_count_ge hpos hp', ite_eq_left hsize,
+      card_map, bounded_stable (Nat.sub_le ..), Nat.mul_comm p.1 t]
+  calc
+    _ = ∑ s ∈ nColorPartitions m, ((palette (m / t)).filter fun p => t ≤ s.count p).card :=
+      sum_congr rfl fun s hs => congrArg Finset.card (marked s hs)
+    _ = ∑ p ∈ palette (m / t), ((nColorPartitions m).filter fun s => t ≤ s.count p).card := by
+      simp only [card_eq_sum_ones, sum_filter]
+      exact sum_comm
+    _ = ∑ p ∈ palette (m / t), (nColorPartitions (m - t * p.1)).card :=
+      sum_congr rfl countForColor
+    _ = ∑ i ∈ range (m / t), (i + 1) * (nColorPartitions (m - t * (i + 1))).card := by
+      have hd : (range (m / t) : Set ℕ).PairwiseDisjoint colors :=
+        fun _ _ _ _ hij => disjoint_colors hij
+      simp only [palette, sum_biUnion hd, colors, sum_map, color_apply, sum_const, card_range,
+        nsmul_eq_mul, Nat.cast_id]
+    _ = _ := by
+      have hquot : 0 < m / t := Nat.div_pos htm ht
+      have shifted : (range (m / t)).map (addRightEmbedding (1 : ℕ)) = Icc 1 (m / t) := by
+        rw [Nat.range_eq_Icc_zero_sub_one _ hquot.ne', map_add_right_Icc, zero_add,
+          Nat.sub_add_cancel hquot]
+      rw [← shifted, sum_map]
+      rfl
 
 end MetaMathlibExt
