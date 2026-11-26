@@ -4,7 +4,7 @@ Let $t_1 < t_2 < \dots$ be infection (or case) times. In the self-exciting branc
 
 $$\lambda(t) = \mu + \sum_{t_i < t} R(t_i)\, w(t - t_i), \tag{1}$$
 
-where $\mu \ge 0$ is the rate of exogenous cases, $R(t) \ge 0$ is the dynamic reproduction number, and $w$ is a probability density on $(0, \infty)$ (gamma or Weibull) for the time between an infection and the infections it causes. Equivalently, each event $j$ independently generates a Poisson number of direct offspring with mean $R(t_j)$, placed at times $t_j + $ independent draws from $w$, and exogenous events form a Poisson process of rate $\mu$.
+where $\mu \ge 0$ is the rate of exogenous cases, $R(t) \ge 0$ is the dynamic reproduction number, and $w$ is a probability density on $(0, \infty)$ (gamma or Weibull) for the time between an infection and the infections it causes. Equivalently, each event $j$ independently generates a Poisson number of direct offspring with mean $R(t_j)$, placed at times $t_j$ plus independent draws from $w$, and exogenous events form a Poisson process of rate $\mu$.
 
 Given events $t_1, \dots, t_n$, the probability that event $i$ was caused by event $j < i$ is
 
