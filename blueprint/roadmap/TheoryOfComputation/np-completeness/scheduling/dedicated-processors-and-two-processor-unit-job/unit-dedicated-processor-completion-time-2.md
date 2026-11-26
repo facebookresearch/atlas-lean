@@ -1,0 +1,3 @@
+# UNIT-TIME SCHEDULING WITH DEDICATED PROCESSOR SETS, TOTAL COMPLETION TIME as a decision problem
+
+The decision problem UNIT-TIME SCHEDULING WITH DEDICATED PROCESSOR SETS, TOTAL COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(m, F, K)$ (a natural number, a list of lists of natural numbers and a natural number), to an instance that is well-formed ($m > 0$, every task has a nonempty repetition-free processor list with processors below $m$, and $K > 0$) and feasible for UNIT-TIME SCHEDULING WITH DEDICATED PROCESSOR SETS, TOTAL COMPLETION TIME. It rejects every bitstring that does not decode to such an instance.
