@@ -17,6 +17,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Constructions
 public import MathlibExt.Combinatorics.Additive.SidonIdeal
 public import MathlibExt.Combinatorics.Additive.SidonIdealExistsMemVanDerWaerdenLacunaryDFinNotMemSidonIdeal
+public import MathlibExt.Combinatorics.Additive.SidonIdealSidonIdealIsFSigma
 public import MathlibExt.Combinatorics.Additive.SidonIdealNotSidonBlockSubsetIUnionIsSidon
 
 /-!
@@ -39,17 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter
-
-/-- **The Sidon ideal is $F_\sigma$.** Give the Cantor space $\{0, 1\}^{\mathbb{N}}$ the product
-topology and identify each set $A \subseteq \mathbb{N}$ with its indicator function. Then the set
-of indicator functions of the members of the Sidon ideal is a countable union of closed subsets
-of $\{0, 1\}^{\mathbb{N}}$.
-
-Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
-Corollary 2 (`integers-2025-A91-cor-2`). -/
-public theorem_wanted sidonIdeal_isFSigma :
-    ∃ F : ℕ → Set (ℕ → Bool), (∀ k, IsClosed (F k)) ∧
-      {f : ℕ → Bool | {n | f n = true} ∈ sidonIdeal} = ⋃ k, F k
 
 /-- **Mian–Chowla lower bound for an infinite Sidon set.** There exist a Sidon set
 $A \subseteq \mathbb{N}$ and a real constant $c > 0$ such that
