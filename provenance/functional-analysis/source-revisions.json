@@ -3,8 +3,8 @@
     {
       "directory": "provenance/functional-analysis/residual-analysis",
       "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
-      "file_count": 56,
-      "source_content_binding": "Original SHA-256 and literal snapshot rows. Six changes to noncomment export text record canonical cutoff reuse, grid import normalization and four native compatibility repairs. Later documentation wrapping preserves kernel-checked noncomment code, words and formulas; original archives and source revision are unchanged."
+      "file_count": 51,
+      "source_content_binding": "51 active residual-analysis exports remain. The whole original 56-row snapshot manifest and four chunks remain byte-exact historical source custody; five contour/grid/Riesz/holomorphic-calculus exports transferred to their source-coherent slice with exact original and current bindings."
     },
     {
       "directory": "provenance/functional-analysis/kernel-spectral-tensor-apis",
