@@ -1,0 +1,3 @@
+# Operations of an instance of TWO-MACHINE UNIT-TIME NO-WAIT JOB SHOP WITH RELEASE DATES, MAXIMUM LATENESS
+
+An instance of TWO-MACHINE UNIT-TIME NO-WAIT JOB SHOP WITH RELEASE DATES, MAXIMUM LATENESS is a pair of a list of jobs, job $j$ given as a tuple $(\mu_{j1}, n_j, r_j, (d^+, d^-))$ of the machine of its first operation, its number $n_j$ of operations, its release date and its due date $d_j = d^+ - d^-$, and a bound given as a pair of natural numbers. An operation of the instance is a pair $(j, k)$ of a job $j$, a position of the list, and a position $k \in \{0, \dots, n_j - 1\}$ among its operations, numbered from $0$.
