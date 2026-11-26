@@ -1443,6 +1443,7 @@
   "CSLibExt/Computability/Complexity/PolynomialEncoding": {"to": "TheoryOfComputation/np-completeness/cook-levin", "title": "Conversions between bit-string encodings"},
   "CSLibExt/Computability/Complexity/Preimage": {"to": "TheoryOfComputation/complexity-classes", "title": "Time and space complexity classes"},
   "CSLibExt/Computability/Complexity/QuantumGates/CircuitMatrix": {"to": "TheoryOfComputation/complexity-classes", "title": "Circuit matrices and register-pair layouts"},
+  "CSLibExt/Computability/Complexity/QuantumGates/PathSumGap": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error quantum polynomial time (BQP)"},
   "CSLibExt/Computability/Complexity/RazborovMonotoneClique": {"to": "TheoryOfComputation/circuit-complexity", "title": "Monotone circuit lower bound for clique"},
   "CSLibExt/Computability/Complexity/RPSubsetBPP": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error probabilistic classes RP and BPP"},
   "CSLibExt/Computability/Complexity/RPSubsetNP": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error probabilistic classes RP and BPP"},
