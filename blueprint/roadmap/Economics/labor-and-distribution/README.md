@@ -10,3 +10,5 @@ Labor supply and human capital, wage decompositions, flows between employment an
 - [Oaxaca–Blinder decomposition](oaxaca-blinder-decomposition/README.md)
 - [Pigou–Dalton principle of transfers](pigou-dalton-principle-of-transfers/README.md)
 - [Steady-state unemployment](steady-state-unemployment/README.md)
+
+- [The dissimilarity index is a total-variation distance](dissimilarity-index-is-a-total-variation-distance.md)

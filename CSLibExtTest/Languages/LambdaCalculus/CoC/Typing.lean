@@ -24,3 +24,8 @@ example :
     Typing [] (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
       (.pi (.srt .prop) (.pi (.var 0) (.var 1))) :=
   typing_polyId
+
+example :
+    let bot := Tm.pi (.srt .prop) (.var 0)
+    Typing [] (.app (.lam (.srt .prop) (.lam (.var 0) (.var 0))) bot) (.pi bot bot) :=
+  typing_polyId_app
