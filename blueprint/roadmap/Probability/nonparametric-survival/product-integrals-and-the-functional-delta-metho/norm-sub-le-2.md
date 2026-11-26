@@ -1,0 +1,3 @@
+# Quantitative continuity of the Duhamel operator
+
+Let $\Psi$ be Duhamel operators on $\ell^\infty([0, \tau])$ satisfying, on a domain $D$ of integrators of bounded variation, the bound $\|\Psi(A, B)\| \le C$ and agreement of $\Psi(A, B)h(t)$ with the limit of the two-tag sums $\sum P(A)(0, u](h(x) - h(u))P(B)(x, t]$ at $h = B - A$ and on a class $S$; let $P$ be the product integral on $\ell^\infty([0, \tau])$. If $\tau \ge 0$, $D$ is closed under freezing, $A, B \in D$, $A$ is controlled by $V$ and $h \in S$ by $U$, then $\|\Psi(A, B)h - \Psi(A, A)h\| \le e^{V(\tau)-V(0)}C\|B - A\|(U(\tau) - U(0))$.

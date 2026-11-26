@@ -161,7 +161,10 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   PR,** or the next sync and the next generated layout follow the old place.
   See [Moving a page](#moving-a-page). Moving pages into a card inside their
   topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
-  ([Cards](#cards)).
+  ([Cards](#cards)). A Lean pull request that moves a module's declarations to
+  a new module leaves this to the next
+  [graph-sync batch](#graph-sync-batches), which gives the new module their
+  place when they keep their names.
 
 ### Library navigation
 
@@ -442,9 +445,15 @@ python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 
 ## Maintaining articles
 
-A pull request that changes the Lean runs the sync scoped to its own changes,
-from the commit its branch starts at on the branch it targets (here `main`,
-with `origin` this repository), and commits what it writes:
+A Lean pull request runs no sync: the next
+[graph-sync batch](#graph-sync-batches) runs it over all the Lean merged since
+the last batch, and so writes what each Lean pull request's own run would
+([Lean pull requests and graph pull requests](../CONTRIBUTING.md#lean-pull-requests-and-graph-pull-requests)).
+It makes only the edits the errors below ask for. A graph pull request that
+changes the Lean, such as an expansion that adds wanted statements, runs the
+sync scoped to its own changes, from the commit its branch starts at on the
+branch it targets (here `main`, with `origin` this repository), and commits
+what it writes:
 
 ```sh
 python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
@@ -469,9 +478,11 @@ over the whole project.
 
 A link the changes leave naming a declaration the Lean no longer has, and a
 held marker they leave unusable, are errors, and the run then writes nothing:
-relink the row to the declaration's successor and keep its article id, or
-remove the link and keep the page as a planned page ([Writing
-pages](#writing-pages)). So is a row the build refuses ([Mathlib-credited
+relink the row to the declaration's successor and keep its article id, or, in
+a graph pull request, remove the link and keep the page as a planned page
+([Writing pages](#writing-pages)); a Lean pull request leaves a page whose own
+declaration goes with no successor to a graph pull request
+([Say how a pull request touches the graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph)). So is a row the build refuses ([Mathlib-credited
 pages](#mathlib-credited-pages)) that the changes add, as is a symbolic link
 among the files the run reads (the wiki, the Lean libraries, the baseline and
 the other graph files, the site configuration), since a read or write through
@@ -493,7 +504,12 @@ otherwise than the working tree, staged by hand, it asks for the two to agree
 first, since a commit may take either. `--report FILE` also writes the findings
 as JSON. The `graph
 sync` check runs it on every pull request and merge group, and only reports for
-now ([GitHub Actions and publication](#github-actions-and-publication)).
+now ([GitHub Actions and publication](#github-actions-and-publication)). Of a
+Lean pull request, whose wiki changes are at most edits to links files, and of
+a merge group, it asks only for what the errors above name: their missing
+pages, digests and part lists are the next batch's. It still lists the pages
+whose declaration's docstring changed, for the pull request's reviewer to
+check.
 
 After an upstream merge, a maintainer runs the sync over the whole project:
 
@@ -956,7 +972,12 @@ commit's first parent, or the queue's base on a merge group. It reads the Lean
 sources only, with no Lean build, and takes a few minutes. It only reports for
 now: the check's step cannot fail the job, which is not a required check. The
 verdict, the command that fixes it and whether the PR's wiki changes are only
-the sync's go to the job summary and the `graph-sync` artifact.
+the sync's go to the job summary and the `graph-sync` artifact. A PR that
+changes Lean and no graph file but links files, and a merge group, are held only to the
+check's errors: the links and markers their Lean leaves behind, which the
+summary lists alone. With none, the job says that the next graph-sync batch
+writes their pages, asks for no sync, and lists the pages whose declaration's
+docstring changed, to check.
 
 Publication is disabled until a repository maintainer:
 
