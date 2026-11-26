@@ -10376,6 +10376,7 @@
   "Domains/Chemistry/MineralProcessing/BondEnergy": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Mineral-processing balances"},
   "Domains/Chemistry/MineralProcessing/TwoProductFormula": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Mineral-processing balances"},
   "Domains/Chemistry/ParticleBalances/AggregationBreakage": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
+  "Domains/Chemistry/ParticleBalances/SizeIndependentGrowth": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
   "Domains/Chemistry/ProcessBalances/ProductionSequence": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Process material balances"},
   "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
   "Domains/Chemistry/ThermalBalances/FreezingTime": {"to": "Chemistry/chemical-kinetics", "title": "Thermal inactivation kinetics"},
