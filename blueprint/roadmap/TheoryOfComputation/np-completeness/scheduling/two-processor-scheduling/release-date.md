@@ -1,0 +1,3 @@
+# Release date of a task in TWO-PROCESSOR UET CONCURRENT TASK SCHEDULING WITH CHAINS AND RELEASE DATES
+
+An instance of TWO-PROCESSOR UET CONCURRENT TASK SCHEDULING WITH CHAINS AND RELEASE DATES is a pair of an instance of RESOURCE CONSTRAINED SCHEDULING with a partial order, whose tasks are the rows $0, \dots, n-1$ of its requirement table, and a list $r$ of natural numbers. The release date $r_i$ of task $i$ is the entry of $r$ at position $i$, and $0$ when $r$ has no entry at that position. That $r$ has exactly one entry per task is a condition of a well-formed instance, not of this definition.
