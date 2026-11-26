@@ -65,7 +65,8 @@ structure CtxObs {J : Type u} (A : CtxAlgebra J) where
   /-- Outcome relation on configurations. -/
   outcome : ∀ {k : J}, A.Tm k → Outcome → Prop
 
-/-- A program yields an outcome through a final reachable configuration. -/
+/-- A program yields an outcome `o` when some configuration reachable from it is final and
+is related to `o` by the outcome relation. -/
 def Yields {J : Type u} {A : CtxAlgebra J} (O : CtxObs A) {k : J}
     (hk : O.Prog k) (p : A.Tm k) (o : O.Outcome) : Prop :=
   ∃ q : A.Tm k, (O.sem hk).Steps p q ∧ (O.sem hk).Final q ∧ O.outcome q o
