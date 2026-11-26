@@ -43,3 +43,27 @@ example : centralBinomPowSum harmonic 2 2 = 11 / 4 := by
   norm_num [Icc_self, sum_range_succ, centralBinomPowSum_succ, centralBinomPowSum_zero,
     harmonic_succ, Nat.centralBinom, Nat.choose] at h
   linear_combination h / 5
+
+example : centralBinomPowSum oddHarmonic 0 0 = 0 := by
+  simpa using (centralBinomPowSum_oddHarmonic_recursion 0).1
+
+example : centralBinomPowSum oddHarmonic 0 2 = 1 := by
+  have h := (centralBinomPowSum_oddHarmonic_recursion 2).1
+  norm_num [oddHarmonic_succ, Nat.centralBinom, Nat.choose] at h
+  exact h
+
+-- At r = 1, only the boundary and plain-sum subtraction remain.
+example : centralBinomPowSum oddHarmonic 1 2 = 3 / 2 := by
+  have h := (centralBinomPowSum_oddHarmonic_recursion 2).2 1 (by decide)
+  generalize centralBinomPowSum oddHarmonic 1 2 = s at h ⊢
+  norm_num [Icc_eq_empty_of_lt (by decide : (0 : ℕ) < 1), centralBinomPowSum_succ,
+    centralBinomPowSum_zero, oddHarmonic_succ, Nat.centralBinom, Nat.choose] at h
+  linear_combination h / 3
+
+-- At r = 2 the tail has one term, `2 * S₁ᴼ(2)`.
+example : centralBinomPowSum oddHarmonic 2 2 = 5 / 2 := by
+  have h := (centralBinomPowSum_oddHarmonic_recursion 2).2 2 (by decide)
+  generalize centralBinomPowSum oddHarmonic 2 2 = s at h ⊢
+  norm_num [Icc_self, centralBinomPowSum_succ, centralBinomPowSum_zero, oddHarmonic_succ,
+    Nat.centralBinom, Nat.choose] at h
+  linear_combination h / 5

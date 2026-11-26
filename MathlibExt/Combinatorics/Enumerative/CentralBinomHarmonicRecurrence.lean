@@ -184,4 +184,77 @@ public theorem centralBinomPowSum_harmonic_recursion (n : ℕ) :
   dsimp only [boundary, weight, b, d] at ht
   linear_combination ht
 
+-- Include one copy of the weight so the boundary at k uses the next odd harmonic number.
+private def oddBoundary (s : ℚ) (k : ℕ) : ℚ :=
+  weight k * ((2 * (k : ℚ) + 1) * (oddHarmonic k + s) + 1)
+
+private theorem oddBoundary_eq_succ (s : ℚ) (k : ℕ) :
+    oddBoundary s k = 2 * ((k + 1 : ℕ) : ℚ) * weight (k + 1) * (oddHarmonic (k + 1) + s) := by
+  rw [← weight_succ_mul k, oddHarmonic_succ, oddBoundary]
+  have hk : 2 * (k : ℚ) + 1 ≠ 0 := by positivity
+  field_simp
+  ring
+
+-- Subtract the two expressions for the weighted boundary at consecutive indices.
+private theorem oddHarmonic_telescope (s : ℚ) (n r : ℕ) :
+    (∑ k ∈ range (n + 1), weight k *
+      (((k : ℚ) ^ r + 2 * k * ((k : ℚ) ^ r - ((k : ℚ) - 1) ^ r)) * (oddHarmonic k + s) +
+        (k : ℚ) ^ r)) = (n : ℚ) ^ r * oddBoundary s n := by
+  induction n with
+  | zero => simp [oddBoundary, weight, mul_add]
+  | succ n ih =>
+    rw [sum_range_succ, ih, oddBoundary_eq_succ s n,
+      show ((n + 1 : ℕ) : ℚ) - 1 = (n : ℚ) by push_cast; ring, oddBoundary]
+    ring
+
+/-- **Recurrence for central binomial sums with odd harmonic numbers.** For a natural number $n$,
+let $O_m = \sum_{i=1}^{m} 1/(2i-1)$ be the odd harmonic numbers, $c_n = \binom{2n}{n}/4^n$, and
+for natural $r$ let $S_r(n) = \sum_{k=0}^{n} \binom{2k}{k} 4^{-k} k^r$ and
+$S_r^O(n) = \sum_{k=0}^{n} \binom{2k}{k} 4^{-k} k^r O_k$, with $0^0 = 1$. Then
+$$S_0^O(n) = c_n \big((2n+1) O_n - 2n\big),$$
+and for every $r \ge 1$
+$$(2r+1) S_r^O(n) = n^r c_n \big((2n+1) O_n + 1\big) - S_r(n) +
+2 \sum_{j=1}^{r-1} \binom{r}{j+1} (-1)^{j+1} S_{r-j}^O(n).$$
+
+Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
+Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
+Theorem 1 (`integers-2026-A109-thm-1`). -/
+public theorem centralBinomPowSum_oddHarmonic_recursion (n : ℕ) :
+    centralBinomPowSum oddHarmonic 0 n =
+        (n.centralBinom : ℚ) / 4 ^ n * ((2 * n + 1) * oddHarmonic n - 2 * n) ∧
+      ∀ r : ℕ, 1 ≤ r →
+        (2 * r + 1) * centralBinomPowSum oddHarmonic r n =
+          (n : ℚ) ^ r * ((n.centralBinom : ℚ) / 4 ^ n) * ((2 * n + 1) * oddHarmonic n + 1) -
+            centralBinomPowSum 1 r n +
+            2 * ∑ j ∈ Icc 1 (r - 1),
+              ((r.choose (j + 1) : ℕ) : ℚ) * (-1) ^ (j + 1) *
+                centralBinomPowSum oddHarmonic (r - j) n := by
+  constructor
+  · have ht : (∑ k ∈ range (n + 1), weight k * oddHarmonic k) = oddBoundary (-1) n := by
+      simpa only [pow_zero, sub_self, mul_zero, add_zero, one_mul, add_assoc, neg_add_cancel]
+        using oddHarmonic_telescope (-1) n 0
+    simp only [centralBinomPowSum, pow_zero, mul_one]
+    change (∑ k ∈ range (n + 1), weight k * oddHarmonic k) = _
+    rw [ht, oddBoundary, weight]
+    ring
+  · intro r hr
+    let b : ℕ → ℚ := fun j => (r.choose (j + 1) : ℚ) * (-1) ^ (j + 1)
+    have he (k : ℕ) :
+        weight k *
+          (((k : ℚ) ^ r + 2 * k * ((k : ℚ) ^ r - ((k : ℚ) - 1) ^ r)) * (oddHarmonic k + 0) +
+            (k : ℚ) ^ r) =
+        (2 * (r : ℚ) + 1) * (weight k * (k : ℚ) ^ r * oddHarmonic k) -
+          2 * (weight k * ((∑ j ∈ Icc 1 (r - 1), b j * (k : ℚ) ^ (r - j)) * oddHarmonic k)) +
+          weight k * (k : ℚ) ^ r * (1 : ℕ → ℚ) k := by
+      rw [harmonicKernel _ r hr]
+      simp only [b, Pi.one_apply, add_zero]
+      ring
+    have ht := oddHarmonic_telescope 0 n r
+    simp_rw [he, sum_add_distrib, sum_sub_distrib, ← mul_sum, sum_weighted_pow] at ht
+    change (2 * (r : ℚ) + 1) * centralBinomPowSum oddHarmonic r n -
+        2 * (∑ j ∈ Icc 1 (r - 1), b j * centralBinomPowSum oddHarmonic (r - j) n) +
+        centralBinomPowSum 1 r n = (n : ℚ) ^ r * oddBoundary 0 n at ht
+    simp only [oddBoundary, weight, b, add_zero] at ht
+    linear_combination ht
+
 end MetaMathlibExt
