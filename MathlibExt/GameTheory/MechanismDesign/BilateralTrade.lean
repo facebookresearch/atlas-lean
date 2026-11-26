@@ -51,7 +51,9 @@ namespace MathlibExt.GameTheory.MechanismDesign.BilateralTrade
 `alloc s b ∈ {0, 1}` is the trade decision when the seller reports cost `s` and the buyer
 reports value `b`, `payBuyer s b` is the price charged to the buyer and `paySeller s b` the
 amount paid to the seller when trade occurs. No money changes hands without trade: `buyerUtil`
-and `sellerUtil` are `0` when `alloc s b = 0`, whatever the two prices are there. -/
+and `sellerUtil` are `0` when `alloc s b = 0`, whatever the two prices are there. The mechanism
+is defined at all real reports; DSIC, efficiency, individual rationality and weak budget balance
+constrain it only at reports in `[0, 1]`. -/
 structure BilateralMechanism where
   alloc : ℝ → ℝ → ℝ
   payBuyer : ℝ → ℝ → ℝ
@@ -99,14 +101,14 @@ def ExPostIR (M : BilateralMechanism) : Prop :=
   ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1,
     0 ≤ buyerUtil M s b b ∧ 0 ≤ sellerUtil M s b s
 
-/-- **Weak budget balance.** Whenever trade occurs, the buyer's payment covers the seller's
-receipt. -/
+/-- **Weak budget balance.** For reports in `[0, 1]`, whenever trade occurs, the buyer's payment
+covers the seller's receipt. -/
 def WeaklyBudgetBalanced (M : BilateralMechanism) : Prop :=
   ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1,
     M.alloc s b = 1 → M.paySeller s b ≤ M.payBuyer s b
 
 /-- **Threshold price for the buyer.** In an efficient, buyer-DSIC, ex-post IR
-mechanism, whenever trade occurs at reports `(s, b)` with `0 < s < b`, the buyer
+mechanism, whenever trade occurs at reports `(s, b)` with `0 < s < b ≤ 1`, the buyer
 pays exactly `s`. The interior hypothesis `0 < s` is essential: with tie-neutral
 efficiency, DSIC and IR do not pin the price at the boundary `s = 0`. -/
 theorem payBuyer_eq_of_lt (M : BilateralMechanism) (hE : Efficient M)
@@ -154,7 +156,7 @@ theorem payBuyer_eq_of_lt (M : BilateralMechanism) (hE : Efficient M)
     linarith
 
 /-- **Threshold receipt for the seller.** In an efficient, seller-DSIC, ex-post IR
-mechanism, whenever trade occurs at reports `(s, b)` with `s < b < 1`, the seller
+mechanism, whenever trade occurs at reports `(s, b)` with `0 ≤ s < b < 1`, the seller
 receives exactly `b`. The interior hypothesis `b < 1` is essential: with tie-neutral
 efficiency, DSIC and IR do not pin the receipt at the boundary `b = 1`. -/
 theorem paySeller_eq_of_lt (M : BilateralMechanism) (hE : Efficient M)
