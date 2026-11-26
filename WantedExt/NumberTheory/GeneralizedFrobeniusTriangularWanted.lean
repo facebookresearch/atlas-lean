@@ -60,20 +60,6 @@ public theorem_wanted frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb
     frobeniusRepCount ![a, b] (G s + j * c) = i ↔
       (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i
 
-/-- **Representation counts above a shifted two-generator Frobenius number.** Let $a < b$ be
-coprime positive integers, let $s$ and $k$ be natural numbers, let $g$ be the generalized Frobenius
-number $g(a, b; s)$, and for an integer $m$ let $d(m; a, b)$ be the number of representations of
-$m$ by $(a, b)$. If $m$ is an integer with $m > g + ka$, then for every natural number $j$,
-$d(m - ja; a, b) \ge d(g + (k - j)a; a, b)$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 4 (`integers-2026-A63-lem-4`), quoted from
-Subwattanachai, *Generalized Frobenius number of three variables*. -/
-public theorem_wanted frobeniusRepCount_pair_sub_ge (a b : ℕ) (ha : 0 < a) (hab' : a < b)
-    (hab : Nat.Coprime a b) (s k : ℕ) (g : ℤ) (hg : IsGenFrobeniusNumber ![a, b] s g) (m : ℤ)
-    (hm : g + k * a < m) (j : ℕ) :
-    frobeniusRepCount ![a, b] (g + ((k : ℤ) - j) * a) ≤ frobeniusRepCount ![a, b] (m - j * a)
-
 /-- **Representation count of the reduced triangular triple at a shifted Frobenius number.** For a
 natural number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$
 and put $s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
