@@ -14,11 +14,11 @@ nonnegative (Leslie-type) matrices `A_0, A_1, …` forgets its initial age struc
 two nonzero nonnegative initial vectors, the normalized structures of
 `A_{t-1} ⋯ A_0 y_0` and `A_{t-1} ⋯ A_0 y_0'` approach each other, although each may keep
 changing in time. The uniform positivity condition is Hajnal's ergodic set, as defined by
-Cohen (1982): a set of `n × n` nonnegative matrices such that every product of `q` of them is
-strictly positive (a primitive set of order `q`) and, for every matrix in the set, the ratio of
-its smallest positive entry to its largest entry is at least `R > 0`. For such sets the Hilbert
-projective distance between the two projected vectors decays geometrically with constants that
-do not depend on the initial vectors (Cohen 1982, p. 482, after Golubitsky, Keeler and
+Cohen (1982): for `n > 0`, a set of `n × n` nonnegative matrices such that every product of `q`
+of them is strictly positive (a primitive set of order `q`) and, for every matrix in the set, the
+ratio of its smallest positive entry to its largest entry is at least `R > 0`. For such sets the
+Hilbert projective distance between the two projected vectors decays geometrically with constants
+that do not depend on the initial vectors (Cohen 1982, p. 482, after Golubitsky, Keeler and
 Rothschild 1975).
 
 `Domains.Biology.Demography.Leslie` proves the strong ergodic theorem for a single primitive
@@ -61,11 +61,13 @@ positive vectors. -/
 noncomputable def hilbertMetric (u v : Fin n → ℝ) : ℝ :=
   Real.log (⨆ i, u i / v i) + Real.log (⨆ i, v i / u i)
 
-/-- An **ergodic set** with parameters `q > 0` and `R > 0` (Hajnal 1976; Cohen 1982, p. 481): a
-set of nonnegative matrices such that every product of `q` matrices from the set is strictly
-positive, and every matrix `M` in the set satisfies the entrywise ratio bound
-`0 < M i j → R * M k l ≤ M i j` for all indices `i, j, k, l` (equivalently `min⁺(M) ≥ R · max(M)`
-whenever `M` has a positive entry, which is guaranteed by `primitive` when `q > 0`). -/
+/-- **Ergodic set.** An ergodic set with parameters `q > 0` and `R > 0` (Hajnal 1976; Cohen 1982,
+p. 481) is a set of nonnegative matrices such that every product of `q` matrices from the set is
+strictly positive, and every matrix `M` in the set satisfies the entrywise ratio bound
+`0 < M i j → R * M k l ≤ M i j` for all indices `i, j, k, l`. For `n > 0` this bound is
+`min⁺(M) ≥ R · max(M)`: `primitive` with `q > 0` gives `M` a positive entry, since a nonnegative
+`M` with none is `0` and the product of `q` copies of `0` is not positive. For `n = 0` the empty
+matrix has no positive entry and every entrywise condition holds vacuously. -/
 structure IsErgodicSet (X : Set (Matrix (Fin n) (Fin n) ℝ)) (q : ℕ) (R : ℝ) : Prop where
   pos_q : 0 < q
   pos_R : 0 < R
