@@ -34,9 +34,11 @@ possible residues give the palindromic numerator `(1, 1, 2, 1, 2, 1, 1)`.
   Combinatorics, and Geometry*, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2.
 * M. Mustaţă and S. Payne, *Ehrhart polynomials and stringy Betti numbers*, Math. Ann. 333 (2005),
   787–795, Example 1.1 (a different six-dimensional counterexample).
+* S. Payne, *Ehrhart series and lattice triangulations*, Discrete Comput. Geom. 40 (2008), 365–376,
+  Example 4.2 and the proof of Theorem 1.4 (the case `b = 3`, `k = 2`, `r = 0`).
 * B. Braun, R. Davis, and L. Solus, *Detecting the integer decomposition property and Ehrhart
-  unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, Theorem 2.2
-  (the fundamental-parallelepiped argument) and Remark 3.5 (the counterexample weights).
+  unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, equation (2)
+  (Payne's family in weight notation) and Theorem 2.2 (the fundamental-parallelepiped argument).
 * B. Braun, R. Davis, D. Hanely, M. Lane, and L. Solus, *The Integer Decomposition Property and
   Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5 (the formula).
 -/
@@ -379,7 +381,8 @@ private theorem numerator_eq :
   ring
 
 /-- **Full dimension of the counterexample simplex.** The weighted simplex with weights
-$(1,1,1,1,1,3)$ has nonempty interior in $\mathbb{R}^6$. -/
+$(1,1,1,1,1,3)$ is the convex hull of the standard basis vectors $e_1,\ldots,e_6$ and
+$-(1,1,1,1,1,3)$ in $\mathbb{R}^6$. It has nonempty interior. -/
 public theorem hibiWeightedSimplex_interior_nonempty :
     (interior (weightedSimplex ![1, 1, 1, 1, 1, 3])).Nonempty :=
   ⟨0, zero_mem_interior⟩
@@ -388,9 +391,11 @@ public theorem hibiWeightedSimplex_interior_nonempty :
 weighted simplex with weights $(1,1,1,1,1,3)$ has Ehrhart numerator
 $1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$.
 
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
+Source: S. Payne, *Ehrhart series and lattice triangulations*, Discrete Comput. Geom. 40 (2008),
+365–376, Example 4.2 with $b = 3$, $k = 2$, $r = 0$ (the simplex and its numerator);
+Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60,
-Theorem 5. -/
+Theorem 5 (the general weighted-simplex formula). -/
 public theorem hibiWeightedSimplex_hStar :
     PowerSeries.mk (fun n => (LatticePointEnumerator.latticeEnumerator 6
       (weightedSimplex ![1, 1, 1, 1, 1, 3]) n : ℤ)) * (1 - PowerSeries.X) ^ 7 =
@@ -456,13 +461,17 @@ unimodal.
 Mustaţă and Payne (Example 1.1) give a reflexive $6$-dimensional lattice polytope with
 $h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal.
 
-The weighted simplex with weights $(1,1,1,1,1,3)$ is another counterexample, with
-$h^*$-vector $(1,1,2,1,2,1,1)$ by `MathlibExt.Combinatorics.hibiWeightedSimplex_hStar`.
+Payne's Example 4.2 with $b = 3$, $k = 2$, and $r = 0$ gives another counterexample. In the
+lattice basis $e_1,\ldots,e_5,-f$, where $f = (e_1 + \cdots + e_6)/3$, it is the weighted simplex
+with weights $(1,1,1,1,1,3)$ and $h^*$-vector $(1,1,2,1,2,1,1)$; see
+`MathlibExt.Combinatorics.hibiWeightedSimplex_hStar`.
 
-Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
-Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI
-10.4171/OWR/2004/39; resolution: M. Mustaţă and S. Payne, Ehrhart polynomials and stringy Betti
-numbers, Math. Ann. 333 (2005), 787-795, DOI 10.1007/s00208-005-0691-x, arXiv:math/0504486, Example
+Source: S. Payne, *Ehrhart series and lattice triangulations*, Discrete Comput. Geom. 40 (2008),
+365–376, Example 4.2 and the proof of Theorem 1.4; C. A. Athanasiadis, On the unimodality of
+h*-vectors, in Ehrhart Quasipolynomials: Algebra, Combinatorics, and Geometry, Oberwolfach Reports 1
+(2004), no. 39, p. 2078, Conjecture 2, DOI 10.4171/OWR/2004/39; resolution: M. Mustaţă and S. Payne,
+Ehrhart polynomials and stringy Betti numbers, Math. Ann. 333 (2005), 787-795, DOI
+10.1007/s00208-005-0691-x, arXiv:math/0504486, Example
 1.1: for f = (e1 + ... + e6)/3, N = ℤ⁶ + ℤ f and P the polytope with vertices e1, ..., e6, e1 - f,
 ..., e6 - f, P is reflexive with δ_P = (1, 6, 8, 6, 8, 6, 1), a counterexample to Hibi's conjecture
 for d = 6 (abstract: 'counterexamples to Hibi's conjecture on the unimodality of delta-vectors of

@@ -22,7 +22,7 @@ $h^*$-polynomial independently of any formula for weighted simplices.
 
 * Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
   Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60,
-  Theorems 2 and 5.
+  p. 3 (unimodality) and Section 2.3 (Ehrhart theory).
 -/
 
 namespace MetaMathlibExt
@@ -39,7 +39,7 @@ lattice-point enumerator of $P$ at the real dilate $t$.
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
+A60, Section 2.3. -/
 public noncomputable def ehrhart {ι : Type*} [Fintype ι]
     (P : Set (ι → ℝ)) (t : ℕ) : ℕ :=
   Set.ncard {x : ι → ℤ | IsLatticePoint (polytopeDilate t P) x}
@@ -52,7 +52,7 @@ $tP \cap \mathbb{Z}^d$. Both counts are taken to be $0$ when the set counted is 
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
+A60, Section 2.3. -/
 public theorem ehrhart_eq_latticeEnumerator {d : ℕ} (P : Set (Fin d → ℝ)) (t : ℕ) :
     ehrhart P t = LatticePointEnumerator.latticeEnumerator d P t := by
   have hinj : Function.Injective (fun x : Fin d → ℤ => fun i => (x i : ℝ)) := by
@@ -91,7 +91,7 @@ $h^*$ is characterised by this identity rather than by the explicit formula for 
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
+A60, Section 2.3. -/
 public def IsHStarPolynomial {ι : Type*} [Fintype ι]
     (P : Set (ι → ℝ)) (h : Polynomial ℤ) : Prop :=
   PowerSeries.mk (fun t => (ehrhart P t : ℤ)) *
@@ -106,7 +106,7 @@ stated over $\mathbb{Z}$.
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 2. -/
+A60, p. 3. -/
 public def IsUnimodal (p : Polynomial ℤ) : Prop :=
   ∃ t : ℕ, t ≤ p.natDegree ∧
     (∀ i j : ℕ, i ≤ j → j ≤ t → p.coeff i ≤ p.coeff j) ∧
