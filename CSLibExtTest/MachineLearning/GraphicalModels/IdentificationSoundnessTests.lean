@@ -54,10 +54,7 @@ end Empty
 /-- Soundness through line 1, for every network: the observed marginal is the effect of the
 empty intervention (the base case `x = ∅` of Shpitser and Pearl, AAAI 2006, Theorem 5). -/
 theorem observed_marginal_eq_doMarginal_empty {α : Type*} [Fintype α] [DecidableEq α]
-    [Nonempty α] {n : ℕ} (b : BayesNet α n) (L : Finset (Fin n))
-    {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
-    (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
-    (hpos : ∀ v, 0 < b.observedLaw L v) (Y : Finset {i : Fin n // i ∉ L})
+    [Nonempty α] {n : ℕ} (b : BayesNet α n) (L : Finset (Fin n)) (Y : Finset {i : Fin n // i ∉ L})
     (v : {i : Fin n // i ∉ L} → α) :
     marginal (b.observedLaw L) (↑(univ \ Y))ᶜ v = b.doMarginal L ∅ Y v := by
   rw [BayesNet.doMarginal_eq_marginal_qFactor, Finset.sdiff_empty, BayesNet.qFactor_univ]
@@ -152,7 +149,8 @@ theorem chainNet_cpt_pos (k : Fin 2) (z : chainNet.pa k → Bool) (b : Bool) :
   · have hk0 : k = 0 := Fin.ext hk
     subst hk0
     rw [chainNet_cpt_zero]
-    cases b <;> simp [bern] <;> norm_num
+    cases b <;> simp [bern]
+    norm_num
   · have hk1 : k = 1 := Fin.ext hk
     subst hk1
     rw [chainNet_cpt_one]

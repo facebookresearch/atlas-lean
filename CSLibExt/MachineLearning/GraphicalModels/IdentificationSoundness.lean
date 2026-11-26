@@ -37,9 +37,9 @@ assignment.
 * `BayesNet.ID_sound`: soundness of `ADMG.ID` for every finite network with latent set `L`.
 * `BayesNet.ID_sound_of_mem_tianClass`: the same on `BayesNet.tianClass L G`, the networks
   whose latent projection is `G`, whose observed law is strictly positive, and in which no
-  latent node is a descendant of an observed node. That class is broader than the
-  semi-Markovian normal form of Shpitser and Pearl (each latent a root with exactly two
-  observed children); `BayesNet.ID_sound` needs no such hypothesis at all.
+  latent node is a descendant of an observed node (Tian and Pearl's 2002 semi-Markovian
+  hypothesis, which the exogenous background variables of the AAAI 2006 source satisfy);
+  `BayesNet.ID_sound` needs no such hypothesis at all.
 * `BayesNet.identifiedOn_doMarginal_of_ID_eq_ok`: a successful run of `ADMG.ID` identifies
   `P_x(y)` from the observed law on that class (`IdentifiedOn`).
 * `BayesNet.idRec_sound`: the invariant behind these results: a call of `ADMG.idRec` on a vertex
@@ -49,6 +49,8 @@ assignment.
   `BayesNet.qFactor_eq_prod_cComponentsIn` (line 4) and `BayesNet.condChain_eval_qFactor`
   (lines 6 and 7), and `BayesNet.doMarginal_eq_marginal_qFactor`, which writes `P_x(y)` as
   `Σ_{(V ∖ X) ∖ Y} Q[V ∖ X]`.
+* `IdExpr.eval_prodList` and `ADMG.condChain_eval`: how the products and conditional chains
+  that ID returns evaluate.
 
 ## Hypotheses and scope
 
@@ -66,9 +68,11 @@ assignment.
 * `BayesNet.ID_sound` holds for every finite network with latent set `L` whose latent projection
   is the input graph, with no semi-Markovian hypothesis. `BayesNet.ID_sound_of_mem_tianClass`
   specializes it to `tianClass`, whose extra condition (no latent node a descendant of an
-  observed node) is Tian and Pearl's 2002 hypothesis; it is weaker than the semi-Markovian
-  normal form of the AAAI 2006 source, so the specialization is to a broader class than the
-  source's, not to the source's class itself.
+  observed node) is Tian and Pearl's 2002 semi-Markovian hypothesis (AAAI-02, p. 568). The
+  models of the AAAI 2006 source satisfy it, since their background variables are exogenous
+  (Definition 1). The stronger normal form in which each latent node is a root with exactly two
+  observed children is the convention of Tian and Pearl's technical report R-290-L (p. 6), not
+  of the AAAI 2006 source.
 * Failure outputs carry no claim. When `ADMG.ID` returns `.error (F, F')` (line 5), nothing is
   stated: neither that `(F, F')` is a hedge nor that `P_x(y)` is not identified. Completeness
   (Theorem 6 and Corollary 2 of the source) is not formalized; the test file shows a run that
@@ -110,13 +114,16 @@ namespace IdExpr
 
 variable {V α : Type*} [Fintype V] [DecidableEq V] [Fintype α]
 
-/-- A product of expressions evaluates to the product of their evaluations. -/
+/-- **Evaluating a product of ID expressions.** For finite types `V` and `α` and a real-valued
+weight `p` on the assignments `x : V → α`, the product `IdExpr.prodList l` of a list `l` of
+expressions evaluates at `x` to the product of the evaluations at `x` of the members of `l` (the
+empty product being `1`). -/
 theorem eval_prodList (p : (V → α) → ℝ) (l : List (IdExpr V)) (x : V → α) :
     (IdExpr.prodList l).eval p x = (l.map fun e => e.eval p x).prod := by
   induction l with
   | nil => rfl
   | cons e l ih =>
-      show e.eval p x * (prodList l).eval p x = _
+      change e.eval p x * (prodList l).eval p x = _
       rw [ih, List.map_cons, List.prod_cons]
 
 end IdExpr
@@ -132,10 +139,14 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : ADMG V)
 
 /-! ### Evaluating the outputs of lines 4, 6 and 7 -/
 
-/-- The conditional chain of lines 6 and 7 of ID (Shpitser and Pearl, AAAI 2006, Fig. 3)
-evaluates to the product over `i ∈ S` of the conditional ratios `P(v_i, v_{<i}) / P(v_{<i})` of
-the current law `P`, read as a law over `D`: the predecessors `v_{<i}` of `i` are taken inside
-`D` along `σ`, and the variables outside `D` stay fixed at the evaluation point. -/
+/-- **Evaluating the conditional chain of lines 6 and 7 of ID.** Let `V` and `α` be finite
+types, `p` a real-valued weight on the assignments `x : V → α`, `σ` an order of `V`, `D` and `S`
+vertex sets and `P` an expression, and write `q` for the evaluation of `P` against `p`. The
+conditional chain `condChain σ D S P` of lines 6 and 7 of ID (Shpitser and Pearl, AAAI 2006,
+Fig. 3) evaluates at `x` to the product over `i ∈ S` of the ratios `q(v_i, v_{<i}) / q(v_{<i})`,
+where `v_{<i}` are the vertices of `D` before `i` in `σ` and each term is the marginal of `q` that
+fixes those vertices, and every vertex outside `D`, at their values in `x`. A ratio with
+denominator `0` is `0` (real division). -/
 theorem condChain_eval {α : Type*} [Fintype α] (D S : Finset V) (P : IdExpr V)
     (p : (V → α) → ℝ) (x : V → α) :
     (condChain σ D S P).eval p x = ∏ i ∈ S,
@@ -148,8 +159,8 @@ theorem condChain_eval {α : Type*} [Fintype α] (D S : Finset V) (P : IdExpr V)
 
 /-- The `do` block of line 4 of ID returns an expression only through a successful first step:
 if `m >>= fun b => pure (g b)` is `.ok e`, then `m` is `.ok b` for some `b` with `e = g b`. -/
-theorem exists_of_bind_pure_eq_ok {ε : Type*} {β γ : Type u} {m : Except ε β} {g : β → γ} {e : γ}
-    (h : (m >>= fun b => pure (g b)) = Except.ok e) : ∃ b, m = .ok b ∧ e = g b := by
+private theorem exists_of_bind_pure_eq_ok {ε : Type*} {β γ : Type u} {m : Except ε β} {g : β → γ}
+    {e : γ} (h : (m >>= fun b => pure (g b)) = Except.ok e) : ∃ b, m = .ok b ∧ e = g b := by
   cases m with
   | error err => simp at h
   | ok b => exact ⟨b, rfl, by simpa using h.symm⟩
@@ -158,7 +169,7 @@ theorem exists_of_bind_pure_eq_ok {ε : Type*} {β γ : Type u} {m : Except ε �
 
 omit [Fintype V] [DecidableEq V] in
 /-- The ancestral set `An(Y)` of `G[D]` used by line 2 of ID lies in `D`. -/
-theorem ancIn_subset (D Y : Finset V) : G.ancIn D Y ⊆ D := by
+private theorem ancIn_subset (D Y : Finset V) : G.ancIn D Y ⊆ D := by
   classical
   unfold ancIn
   exact Finset.filter_subset _ _
@@ -166,7 +177,7 @@ theorem ancIn_subset (D Y : Finset V) : G.ancIn D Y ⊆ D := by
 omit [Fintype V] [DecidableEq V] in
 /-- The ancestral set `An(Y)` of `G[D]` (line 2 of ID) is closed under the parents in `D` of its
 vertices. -/
-theorem ancIn_closed {D Y : Finset V} {u w : V} (huw : G.dir u w) (hu : u ∈ D)
+private theorem ancIn_closed {D Y : Finset V} {u w : V} (huw : G.dir u w) (hu : u ∈ D)
     (hw : w ∈ G.ancIn D Y) : u ∈ G.ancIn D Y := by
   classical
   unfold ancIn at hw ⊢
@@ -177,7 +188,7 @@ theorem ancIn_closed {D Y : Finset V} {u w : V} (huw : G.dir u w) (hu : u ∈ D)
 omit [Fintype V] [DecidableEq V] in
 /-- The ancestral set `An(Y)` of `G[D]` with the arrows into `X` deleted (line 3 of ID) is
 closed under the parents in `D` of its vertices outside `X`. -/
-theorem ancCut_closed {D X Y : Finset V} {u w : V} (huw : G.dir u w) (hu : u ∈ D)
+private theorem ancCut_closed {D X Y : Finset V} {u w : V} (huw : G.dir u w) (hu : u ∈ D)
     (hw : w ∈ G.ancCut D X Y) (hwX : w ∉ X) : u ∈ G.ancCut D X Y := by
   classical
   unfold ancCut at hw ⊢
@@ -188,8 +199,8 @@ theorem ancCut_closed {D X Y : Finset V} {u w : V} (huw : G.dir u w) (hu : u ∈
 omit [Fintype V] in
 /-- No bidirected edge joins a c-component of `G[H]` (Shpitser and Pearl, AAAI 2006,
 Definition 4) to the rest of `H`. -/
-theorem not_adj_of_mem_cComponentsIn {H S : Finset V} (hS : S ∈ G.cComponentsIn H) {u w : V}
-    (hu : u ∈ S) (hw : w ∈ H \ S) : ¬ G.bidir.Adj u w := by
+private theorem not_adj_of_mem_cComponentsIn {H S : Finset V} (hS : S ∈ G.cComponentsIn H)
+    {u w : V} (hu : u ∈ S) (hw : w ∈ H \ S) : ¬ G.bidir.Adj u w := by
   classical
   rw [cComponentsIn, Finset.mem_image] at hS
   obtain ⟨v, hvH, hSv⟩ := hS
@@ -224,21 +235,6 @@ theorem not_adj_of_mem_cComponentsIn {H S : Finset V} (hS : S ∈ G.cComponentsI
   rw [hSv] at hwv
   exact hwS hwv
 
-/-- Under a topological order `σ`, a parent in `D` of `i`, or of a vertex of `D` before `i`,
-lies in `D` before `i`: the prefix sets of the conditional chain are closed under parents in
-`D`. -/
-theorem mem_filter_pred_of_dir (hσ : ∀ ⦃u w⦄, G.dir u w → σ u < σ w) {D : Finset V}
-    {i u w : V} (huw : G.dir u w) (hu : u ∈ D)
-    (hw : w ∈ ({i} ∪ D.filter fun t => σ t < σ i)) :
-    u ∈ D.filter fun t => σ t < σ i := by
-  rw [Finset.mem_union, Finset.mem_singleton, Finset.mem_filter] at hw
-  rw [Finset.mem_filter]
-  refine ⟨hu, ?_⟩
-  have hlt : σ u < σ w := hσ huw
-  rcases hw with rfl | ⟨_, hwi⟩
-  · exact hlt
-  · exact lt_trans hlt hwi
-
 end ADMG
 
 namespace BayesNet
@@ -250,11 +246,15 @@ variable {α : Type*} [Fintype α] [Nonempty α] {n : ℕ}
 
 /-! ### The lines of ID as Q-factor identities -/
 
-/-- **Ancestral restriction of an effect** (lines 2 and 3 of ID; Shpitser and Pearl, AAAI 2006,
-Lemmas 4 and 5, through Lemma 3 of Tian and Pearl's technical report R-290-L): if `A ⊆ H` is
-closed under the parents in `H` of its vertices and contains `H ∩ Y`, then summing `Q[H]` over
-`H ∖ Y` equals summing `Q[A]` over `A ∖ Y`. There is no semi-Markovian hypothesis, and the
-statement covers line 3, which the source proves by rule 3 of the do-calculus. -/
+/-- **Ancestral restriction of an effect.** Let a Bayesian network whose nodes take values in a
+finite nonempty type have latent node set `L`, and let `A ⊆ H` and `Y` be sets of observed nodes
+such that every parent in `H` of a node of `A`, in the latent projection, lies in `A`, and
+`H ∩ Y ⊆ A`. Then at every observed assignment `v`, the sum of the Q-factor `Q[H]` over the
+values of the nodes of `H ∖ Y` equals the sum of `Q[A]` over the values of the nodes of
+`A ∖ Y`, the other nodes fixed at their values in `v`. This justifies lines 2 and 3 of ID
+(Shpitser and Pearl, AAAI 2006, Lemmas 4 and 5) through Lemma 3 of Tian and Pearl's technical
+report R-290-L, with no semi-Markovian hypothesis; the source proves line 3 by rule 3 of the
+do-calculus instead. -/
 theorem marginal_qFactor_restrict {H A Y : Finset {i : Fin n // i ∉ L}} (hAH : A ⊆ H)
     (hanc : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → u ∈ H → w ∈ A → u ∈ A)
     (hYA : H ∩ Y ⊆ A) (v : {i : Fin n // i ∉ L} → α) :
@@ -300,9 +300,11 @@ theorem marginal_qFactor_restrict {H A Y : Finset {i : Fin n // i ∉ L}} (hAH :
           (marginal_marginal_of_union_eq_univ (b.qFactor L H) hunion v).symm
       _ = marginal (b.qFactor L A) (↑(A \ Y) : Set {i : Fin n // i ∉ L})ᶜ v := by rw [hfun]
 
-/-- **C-component factorization inside `H`** (line 4 of ID; Shpitser and Pearl, AAAI 2006,
-Lemma 3): `Q[H]` is the product of the Q-factors of the c-components of `G[H]`, at every
-observed assignment. -/
+/-- **C-component factorization inside a vertex set.** For a Bayesian network whose nodes take
+values in a finite nonempty type, with latent node set `L`, a set `H` of observed nodes and an
+observed assignment `v`, the Q-factor `Q[H](v)` is the product of the Q-factors `Q[S](v)` over
+the c-components `S` of the subgraph of the latent projection induced on `H`. This is line 4 of
+ID (Shpitser and Pearl, AAAI 2006, Lemma 3), with no semi-Markovian hypothesis. -/
 theorem qFactor_eq_prod_cComponentsIn (H : Finset {i : Fin n // i ∉ L})
     (v : {i : Fin n // i ∉ L} → α) :
     b.qFactor L H v = ∏ S ∈ (b.latentProjection L).cComponentsIn H, b.qFactor L S v := by
@@ -319,11 +321,14 @@ theorem qFactor_eq_prod_cComponentsIn (H : Finset {i : Fin n // i ∉ L})
     have hwHS : w ∈ H \ T := Finset.mem_sdiff.mpr ⟨hsub hw, hwT⟩
     exact ADMG.not_adj_of_mem_cComponentsIn _ hT hu hwHS
 
-/-- **The conditional chain of a c-component** (lines 6 and 7 of ID; Shpitser and Pearl,
-AAAI 2006, Lemma 6 and the base case of Theorem 5; Tian and Pearl 2002, Lemma 1, applied in
-`G[D]`): if the current law `P` evaluates to `Q[D]`, `S` is a c-component of `G[D]` and `σ` is a
-topological order, then the chain of conditionals of `P` over `S` evaluates to `Q[S]` at every
-observed assignment of positive probability. -/
+/-- **The conditional chain of a c-component.** Let a Bayesian network whose nodes take values in
+a finite nonempty type have latent node set `L`, let `σ` be a topological order of its latent
+projection, let `S` be a c-component of the subgraph of the projection induced on a set `D` of
+observed nodes, and let `P` be an expression that evaluates, against the observed law, to the
+Q-factor `Q[D]` at every observed assignment. Then at every observed assignment `v` of positive
+observed probability, the conditional chain of `P` over `S` along `σ` inside `D` (lines 6 and 7
+of ID) evaluates to `Q[S](v)`. This is Lemma 6 and the base case of Theorem 5 of Shpitser and
+Pearl (AAAI 2006), through Lemma 1 of Tian and Pearl (2002) applied in the subgraph on `D`. -/
 theorem condChain_eval_qFactor
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -399,7 +404,7 @@ private theorem ids_aux_sum_eval
     (hP : ∀ w, P.eval (b.observedLaw L) w = b.qFactor L H w)
     (w : {i : Fin n // i ∉ L} → α) :
     (IdExpr.sum (H \ A) P).eval (b.observedLaw L) w = b.qFactor L A w := by
-  haveI : DecidableEq α := fun a b => Classical.propDecidable (a = b)
+  have : DecidableEq α := fun a b => Classical.propDecidable (a = b)
   simp only [IdExpr.eval]
   have hPfun : P.eval (b.observedLaw L) = b.qFactor L H := funext hP
   rw [hPfun]
@@ -416,11 +421,16 @@ private theorem ids_aux_line4_elem
 
 /-! ### The recursion invariant -/
 
-/-- **The recursion invariant** (the induction behind Shpitser and Pearl, AAAI 2006, Theorem 5,
-with Lemmas 3–6 for the recursive calls): if the current law `P` evaluates to `Q[D]`, the query
-sets lie in `D` and are disjoint, `σ` is topological and the observed law is strictly positive,
-then every expression returned by `idRec` evaluates to the effect of `do(X)` on `Y` in the
-sub-model on `D`, `Σ_{(D ∖ X) ∖ Y} Q[D ∖ X]`. Nothing is claimed when `idRec` fails. -/
+/-- **The recursion invariant of ID.** Let a Bayesian network whose nodes take values in a finite
+nonempty type have latent node set `L`, let `σ` be a topological order of its latent projection,
+and suppose the observed law is strictly positive at every observed assignment. Let `D` be a set
+of observed nodes, `X` and `Y` disjoint subsets of `D`, and `P` an expression that evaluates,
+against the observed law, to the Q-factor `Q[D]` at every observed assignment. If the recursion
+`idRec` of ID, called on `Y`, `X`, `D` and `P`, returns an expression `e`, then at every observed
+assignment `v`, `e` evaluates to the sum of `Q[D ∖ X]` over the values of the nodes of
+`(D ∖ X) ∖ Y`: the effect of `do(X)` on `Y` in the sub-model on `D`. Nothing is claimed when
+`idRec` fails. This is the induction behind Theorem 5 of Shpitser and Pearl (AAAI 2006), with
+their Lemmas 3–6 for the recursive calls. -/
 theorem idRec_sound
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -633,38 +643,18 @@ theorem idRec_sound
 
 /-! ### Soundness of ID -/
 
-
+omit [Fintype α] in
 private theorem ids_aux_extendObs_apply (w : {i : Fin n // i ∉ L} → α)
     (u : {i : Fin n // i ∉ L}) : extendObs L w (u : Fin n) = w u := by
-  simp only [extendObs, dif_neg u.2]
+  unfold extendObs
+  rw [dite_eq_right u.2]
 
-private theorem ids_aux_mem_map_subtype (T : Finset {i : Fin n // i ∉ L})
-    (u : {i : Fin n // i ∉ L}) :
-    (u : Fin n) ∈ T.map (Function.Embedding.subtype _) ↔ u ∈ T := by
-  rw [Finset.mem_map]
-  constructor
-  · rintro ⟨a, ha, heq⟩
-    have hau : a = u := Subtype.ext heq
-    subst hau
-    exact ha
-  · intro h
-    exact ⟨u, h, rfl⟩
-
-private theorem ids_aux_mem_map_obtain (T : Finset {i : Fin n // i ∉ L}) (i : Fin n)
-    (hi : i ∈ T.map (Function.Embedding.subtype _)) :
-    ∃ u : {i : Fin n // i ∉ L}, u ∈ T ∧ (u : Fin n) = i := by
-  rw [Finset.mem_map] at hi
-  obtain ⟨u, hu, heq⟩ := hi
-  exact ⟨u, hu, heq⟩
-
-private theorem ids_aux_filter_irrelevant {V : Type*} (PRED : (V → α) → Prop)
-    (s : Finset (V → α)) (inst1 : DecidablePred PRED) [inst2 : DecidablePred PRED] :
-    @Finset.filter (V → α) PRED inst1 s = @Finset.filter (V → α) PRED inst2 s := by
-  ext z
-  simp only [Finset.mem_filter]
-
-/-- The effect `P_x(y)` is the marginal on `Y` of the Q-factor of the observed nodes outside `X`:
-`P_x(y) = Σ_{(V ∖ X) ∖ Y} Q[V ∖ X]`, read at `v`. No disjointness of `X` and `Y` is assumed. -/
+/-- **The effect as a marginal of a Q-factor.** For a Bayesian network whose nodes take values in
+a finite nonempty type, with latent node set `L`, sets `X` and `Y` of observed nodes and an
+observed assignment `v`, the effect `P_x(y)` read at `v` equals the sum of the Q-factor
+`Q[O ∖ X]` over the values of the nodes of `(O ∖ X) ∖ Y`, the other observed nodes fixed at
+their values in `v`, where `O` is the set of all observed nodes. No disjointness of `X` and `Y`
+is assumed. -/
 theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
     (v : {i : Fin n // i ∉ L} → α) :
     b.doMarginal L X Y v = marginal (b.qFactor L (univ \ X)) (↑((univ \ X) \ Y))ᶜ v := by
@@ -680,17 +670,17 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
           (b.mutilateSet (X.map (Function.Embedding.subtype _)) (extendObs L o)).joint z) := by
     intro o
     simp only [qFactor, marginal, hSX]
-    rw [ids_aux_filter_irrelevant (fun z : Fin n → α =>
+    rw [Finset.filter_congr_decidable _ (fun z : Fin n → α =>
       ∀ i ∈ (↑((univ \ X).map (Function.Embedding.subtype _)) : Set (Fin n)),
-      z i = extendObs L o i) _ _]
+      z i = extendObs L o i) _]
   simp only [doMarginal, marginal]
   simp only [hqfactor_eq]
-  rw [ids_aux_filter_irrelevant (fun z : Fin n → α =>
+  rw [Finset.filter_congr_decidable _ (fun z : Fin n → α =>
     ∀ i ∈ (↑(Y.map (Function.Embedding.subtype _)) : Set (Fin n)),
-    z i = extendObs L v i) _ _]
-  rw [ids_aux_filter_irrelevant (fun o : {i : Fin n // i ∉ L} → α =>
-    ∀ w ∈ ((↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L}))ᶜ, o w = v w) _ _]
-  show (∑ z ∈ univ.filter (fun z : Fin n → α =>
+    z i = extendObs L v i) _]
+  rw [Finset.filter_congr_decidable _ (fun o : {i : Fin n // i ∉ L} → α =>
+    ∀ w ∈ ((↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L}))ᶜ, o w = v w) _]
+  change (∑ z ∈ univ.filter (fun z : Fin n → α =>
       ∀ i ∈ (↑(Y.map (Function.Embedding.subtype _)) : Set (Fin n)),
       z i = extendObs L v i),
       (b.mutilateSet (X.map (Function.Embedding.subtype _)) (extendObs L v)).joint z) =
@@ -721,16 +711,15 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
       swap
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         intro i hi
-        simp only [Finset.mem_coe] at hi
-        obtain ⟨w, hw, heq'⟩ := ids_aux_mem_map_obtain L _ _ hi
-        subst heq'
+        simp only [Finset.mem_coe, Finset.mem_map, Function.Embedding.subtype_apply] at hi
+        obtain ⟨w, hw, rfl⟩ := hi
         have hwY : w ∈ Y := (Finset.mem_sdiff.mp hw).1
         have hwX : w ∉ X := (Finset.mem_sdiff.mp hw).2
         have hwS : w ∈ univ \ X := Finset.mem_sdiff.mpr ⟨Finset.mem_univ w, hwX⟩
         have h1 : z (w : Fin n) = extendObs L o (w : Fin n) :=
-          hz _ (Finset.mem_coe.mpr ((ids_aux_mem_map_subtype L _ _).mpr hwS))
+          hz _ (Finset.mem_coe.mpr ((Finset.mem_map' (Function.Embedding.subtype _)).mpr hwS))
         have hwC : w ∈ ((↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L}))ᶜ := by
-          show w ∉ (↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L})
+          change w ∉ (↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L})
           simp only [Finset.mem_coe, Finset.mem_sdiff]
           intro hcon
           exact absurd hwY hcon.2
@@ -740,20 +729,20 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
         funext u
         by_cases huX : u ∈ X
         · have huC : u ∈ ((↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L}))ᶜ := by
-            show u ∉ (↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L})
+            change u ∉ (↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L})
             simp only [Finset.mem_coe, Finset.mem_sdiff]
             intro hcon
             exact absurd huX hcon.1.2
           have h2 : o u = v u := ho u huC
           rw [h2]
-          show v u = (if u ∈ X then v u else z (u : Fin n))
-          rw [if_pos huX]
+          change v u = (if u ∈ X then v u else z (u : Fin n))
+          rw [ite_eq_left huX]
         · have huS : u ∈ univ \ X := Finset.mem_sdiff.mpr ⟨Finset.mem_univ u, huX⟩
           have h1 : z (u : Fin n) = extendObs L o (u : Fin n) :=
-            hz _ (Finset.mem_coe.mpr ((ids_aux_mem_map_subtype L _ _).mpr huS))
+            hz _ (Finset.mem_coe.mpr ((Finset.mem_map' (Function.Embedding.subtype _)).mpr huS))
           have h3 : extendObs L o (u : Fin n) = o u := ids_aux_extendObs_apply L o u
-          show o u = (if u ∈ X then v u else z (u : Fin n))
-          rw [if_neg huX, h1, h3]
+          change o u = (if u ∈ X then v u else z (u : Fin n))
+          rw [ite_eq_right huX, h1, h3]
     · rintro ⟨hoEq, hzS⟩
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hzS
       simp only [Finset.mem_singleton] at hoEq
@@ -764,25 +753,24 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
         have hwN : w ∉ (↑((univ \ X) \ Y) : Set {i : Fin n // i ∉ L}) := hw
         simp only [Finset.mem_coe, Finset.mem_sdiff] at hwN
         by_cases hwX : w ∈ X
-        · show (if w ∈ X then v w else z (w : Fin n)) = v w
-          rw [if_pos hwX]
+        · change (if w ∈ X then v w else z (w : Fin n)) = v w
+          rw [ite_eq_left hwX]
         · have hwY : w ∈ Y := by
             by_contra hwY
             exact hwN ⟨⟨Finset.mem_univ w, hwX⟩, hwY⟩
           have hwYX : w ∈ Y \ X := Finset.mem_sdiff.mpr ⟨hwY, hwX⟩
           have h1 : z (w : Fin n) = extendObs L v (w : Fin n) :=
-            hzS _ (Finset.mem_coe.mpr ((ids_aux_mem_map_subtype L _ _).mpr hwYX))
-          show (if w ∈ X then v w else z (w : Fin n)) = v w
-          rw [if_neg hwX, h1, ids_aux_extendObs_apply L v w]
+            hzS _ (Finset.mem_coe.mpr ((Finset.mem_map' (Function.Embedding.subtype _)).mpr hwYX))
+          change (if w ∈ X then v w else z (w : Fin n)) = v w
+          rw [ite_eq_right hwX, h1, ids_aux_extendObs_apply L v w]
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         intro i hi
-        simp only [Finset.mem_coe] at hi
-        obtain ⟨u, hu, heq'⟩ := ids_aux_mem_map_obtain L _ _ hi
-        subst heq'
+        simp only [Finset.mem_coe, Finset.mem_map, Function.Embedding.subtype_apply] at hi
+        obtain ⟨u, hu, rfl⟩ := hi
         have huX : u ∉ X := (Finset.mem_sdiff.mp hu).2
         rw [ids_aux_extendObs_apply]
-        show z (u : Fin n) = (if u ∈ X then v u else z (u : Fin n))
-        rw [if_neg huX]
+        change z (u : Fin n) = (if u ∈ X then v u else z (u : Fin n))
+        rw [ite_eq_right huX]
   have hsub : univ.filter (fun z : Fin n → α =>
         ∀ i ∈ (↑(Y.map (Function.Embedding.subtype _)) : Set (Fin n)),
         z i = extendObs L v i) ⊆
@@ -792,11 +780,10 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
     intro z hz
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz ⊢
     intro i hi
-    simp only [Finset.mem_coe] at hi
-    obtain ⟨w, hw, heq'⟩ := ids_aux_mem_map_obtain L _ _ hi
-    subst heq'
+    simp only [Finset.mem_coe, Finset.mem_map, Function.Embedding.subtype_apply] at hi
+    obtain ⟨w, hw, rfl⟩ := hi
     have hwY : w ∈ Y := (Finset.mem_sdiff.mp hw).1
-    exact hz _ (Finset.mem_coe.mpr ((ids_aux_mem_map_subtype L _ _).mpr hwY))
+    exact hz _ (Finset.mem_coe.mpr ((Finset.mem_map' (Function.Embedding.subtype _)).mpr hwY))
   have hvan : ∀ z ∈ univ.filter (fun z : Fin n → α =>
         ∀ i ∈ (↑((Y \ X).map (Function.Embedding.subtype _)) : Set (Fin n)),
         z i = extendObs L v i),
@@ -812,29 +799,27 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
     obtain ⟨i, hi⟩ := hznL
     rw [not_imp] at hi
     obtain ⟨hiY, hne⟩ := hi
-    rw [Finset.mem_coe] at hiY
-    obtain ⟨w, hwY, heq'⟩ := ids_aux_mem_map_obtain L _ _ hiY
-    subst heq'
+    simp only [Finset.mem_coe, Finset.mem_map, Function.Embedding.subtype_apply] at hiY
+    obtain ⟨w, hwY, rfl⟩ := hiY
     have hwX : w ∈ X := by
       by_contra hwX
       have hwYX : w ∈ Y \ X := Finset.mem_sdiff.mpr ⟨hwY, hwX⟩
       have hmem : (w : Fin n) ∈ (Y \ X).map (Function.Embedding.subtype _) :=
-        (ids_aux_mem_map_subtype L _ _).mpr hwYX
+        (Finset.mem_map' (Function.Embedding.subtype _)).mpr hwYX
       exact hne (hzS _ (Finset.mem_coe.mpr hmem))
     have hwXhat : (w : Fin n) ∈ X.map (Function.Embedding.subtype _) :=
-      (ids_aux_mem_map_subtype L _ _).mpr hwX
+      (Finset.mem_map' (Function.Embedding.subtype _)).mpr hwX
     have hval : extendObs L (fun u : {i : Fin n // i ∉ L} =>
         if u ∈ X then v u else z (u : Fin n)) (w : Fin n) = extendObs L v (w : Fin n) := by
       simp only [ids_aux_extendObs_apply]
-      show (if w ∈ X then v w else z (w : Fin n)) = v w
-      rw [if_pos hwX]
+      rw [ite_eq_left hwX]
     have hnc : z (w : Fin n) ≠ extendObs L (fun u : {i : Fin n // i ∉ L} =>
         if u ∈ X then v u else z (u : Fin n)) (w : Fin n) := by
       rw [hval]
       exact hne
     rw [BayesNet.joint_mutilateSet]
     refine Finset.prod_eq_zero (Finset.mem_univ (w : Fin n)) ?_
-    rw [if_pos hwXhat, if_neg hnc]
+    rw [ite_eq_left hwXhat, ite_eq_right hnc]
   have hsumm : ∀ z : Fin n → α,
       (b.mutilateSet (X.map (Function.Embedding.subtype _)) (extendObs L v)).joint z =
         (b.mutilateSet (X.map (Function.Embedding.subtype _))
@@ -845,7 +830,7 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
     apply Finset.prod_congr rfl
     intro j _
     by_cases hj : j ∈ X.map (Function.Embedding.subtype _)
-    · rw [if_pos hj, if_pos hj]
+    · rw [ite_eq_left hj, ite_eq_left hj]
       have hval : extendObs L (fun u : {i : Fin n // i ∉ L} =>
         if u ∈ X then v u else z (u : Fin n)) j = extendObs L v j := by
         rw [Finset.mem_map] at hj
@@ -853,20 +838,20 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
         have heq' : (u : Fin n) = j := heq
         subst heq'
         simp only [ids_aux_extendObs_apply]
-        show (if u ∈ X then v u else z (u : Fin n)) = v u
-        rw [if_pos huX]
+        change (if u ∈ X then v u else z (u : Fin n)) = v u
+        rw [ite_eq_left huX]
       by_cases hc : z j = extendObs L v j
       · have hcL : z j = extendObs L (fun u : {i : Fin n // i ∉ L} =>
         if u ∈ X then v u else z (u : Fin n)) j := by
           rw [hval]
           exact hc
-        rw [if_pos hcL, if_pos hc]
+        rw [ite_eq_left hcL, ite_eq_left hc]
       · have hcL : ¬ z j = extendObs L (fun u : {i : Fin n // i ∉ L} =>
         if u ∈ X then v u else z (u : Fin n)) j := by
           rw [hval]
           exact hc
-        rw [if_neg hcL, if_neg hc]
-    · rw [if_neg hj, if_neg hj]
+        rw [ite_eq_right hcL, ite_eq_right hc]
+    · rw [ite_eq_right hj, ite_eq_right hj]
   rw [Finset.sum_comm' (t' := univ.filter (fun z : Fin n → α =>
       ∀ i ∈ (↑((Y \ X).map (Function.Embedding.subtype _)) : Set (Fin n)),
       z i = extendObs L v i))
@@ -877,12 +862,23 @@ theorem doMarginal_eq_marginal_qFactor (X Y : Finset {i : Fin n // i ∉ L})
   rw [← Finset.sum_subset hsub hvan]
   exact Finset.sum_congr rfl (fun z _ => hsumm z)
 
-/-- **Soundness of ID** (Shpitser and Pearl, AAAI 2006, Theorem 5; restated in Shpitser and
-Pearl, UAI 2006, Section 4): for a topological order `σ` of the latent projection and a strictly
-positive observed law, every expression that `ID` returns for disjoint `X`, `Y` evaluates, at
-every observed assignment, to `P_x(y)`. This holds for every finite network with latent set `L`;
-no semi-Markovian hypothesis is needed. When `ID` returns `.error (F, F')`, nothing is claimed:
-neither that `(F, F')` is a hedge nor that `P_x(y)` is not identified. -/
+/-- **Soundness of the ID algorithm.** Let a Bayesian network whose nodes take values in a finite
+nonempty type have latent node set `L`, let `σ` be a topological order of its latent projection
+onto the observed nodes, and suppose the observed law is strictly positive at every observed
+assignment. Let `X` and `Y` be disjoint sets of observed nodes. If the ID algorithm (Shpitser and
+Pearl, AAAI 2006, Fig. 3), run on the latent projection with the order `σ`, returns an expression
+`e` for the effect of `do(X)` on `Y`, then `e`, evaluated against the observed law, equals the
+effect `P_x(y)` at every observed assignment `v`, with `x` and `y` the values of `v` on `X` and
+`Y`. No semi-Markovian hypothesis is needed. When ID returns a failure pair `(F, F')` instead,
+nothing is claimed: neither that `(F, F')` is a hedge nor that `P_x(y)` is not identified.
+
+Source: I. Shpitser and J. Pearl, *Identification of Joint Interventional Distributions in
+Recursive Semi-Markovian Causal Models*, AAAI 2006 (technical report R-327), Theorem 5.
+<https://ftp.cs.ucla.edu/pub/stat_ser/r327.pdf>
+
+Source: I. Shpitser and J. Pearl, *Identification of Conditional Interventional Distributions*,
+UAI 2006 (technical report R-329), Section 4, where the result is restated.
+<https://ftp.cs.ucla.edu/pub/stat_ser/r329-uai.pdf> -/
 theorem ID_sound
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -900,14 +896,16 @@ theorem ID_sound
   have h2 := doMarginal_eq_marginal_qFactor b L X Y v
   exact h1.trans h2.symm
 
-/-- **Soundness of ID on `tianClass`** (a specialization of `ID_sound`): for a graph `G` on the
-observed nodes and a topological order `σ` of `G`, an expression that `ID` returns for
-disjoint `X`, `Y` evaluates to `P_x(y)` in every network of `tianClass L G`, in which no latent
-node is a descendant of an observed node, the latent projection is `G`, and the observed law
-is strictly positive. The descendant condition is Tian and Pearl's 2002 hypothesis; the
-semi-Markovian normal form of Shpitser and Pearl (AAAI 2006), each latent a root with exactly
-two observed children, is stronger, so `tianClass` is broader than the source's model class
-and `ID_sound` above is the more general statement. -/
+/-- **Soundness of the ID algorithm for a fixed causal diagram.** Let `G` be an acyclic directed
+mixed graph on the observed nodes of a latent set `L`, with a topological order `σ`, and let `X`
+and `Y` be disjoint sets of observed nodes. If the ID algorithm, run on `G` with the order `σ`,
+returns an expression `e` for the effect of `do(X)` on `Y`, then for every Bayesian network of
+`tianClass L G` (node values in one finite nonempty type, no latent node a descendant of an
+observed node, latent projection `G`, observed law strictly positive at every observed
+assignment), `e` evaluated against that network's observed law equals its effect `P_x(y)` at
+every observed assignment. The descendant condition is Tian and Pearl's 2002 semi-Markovian
+hypothesis (AAAI-02, p. 568), which `ID_sound` shows is not needed. Nothing is claimed when ID
+returns a failure pair. -/
 theorem ID_sound_of_mem_tianClass {G : ADMG {i : Fin n // i ∉ L}}
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, G.dir u w → σ u < σ w)
@@ -919,9 +917,12 @@ theorem ID_sound_of_mem_tianClass {G : ADMG {i : Fin n // i ∉ L}}
   subst hproj
   exact ID_sound c L hσ hpos hXY h v
 
-/-- **Identification form** (Shpitser and Pearl, AAAI 2006, Definition 3, as `IdentifiedOn`): a
-successful run of `ID` for disjoint `X`, `Y` and a topological order `σ` of `G` identifies
-`P_x(y)` from the observed law on `tianClass L G`. -/
+/-- **A successful run of ID identifies the effect.** Let `G` be an acyclic directed mixed graph on
+the observed nodes of a latent set `L`, with a topological order `σ`, and let `X` and `Y` be
+disjoint sets of observed nodes. If the ID algorithm, run on `G` with the order `σ`, returns an
+expression, then the effect `P_x(y)` is identified from the observed law on `tianClass L G`: any
+two networks of that class with the same observed law have the same effect at every observed
+assignment (the identifiability of Shpitser and Pearl, AAAI 2006, Definition 3). -/
 theorem identifiedOn_doMarginal_of_ID_eq_ok {G : ADMG {i : Fin n // i ∉ L}}
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, G.dir u w → σ u < σ w)

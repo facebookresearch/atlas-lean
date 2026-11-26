@@ -86,7 +86,10 @@ theorem marginal_anti {p : (V → α) → ℝ} (hp : ∀ x, 0 ≤ p x) {U U' : S
   simp only [mem_filter, mem_univ, true_and] at hy ⊢
   exact fun v hv => hy v (h hv)
 
-/-- The marginal of a weight on all variables is the weight itself: no variable is summed out. -/
+/-- **Marginal on all variables.** Let $V$ and $\alpha$ be finite types and let $p$ be a
+real-valued weight on the configurations $x : V \to \alpha$. The marginal of $p$ on all of $V$
+at a configuration $x$, the total weight of the configurations that agree with $x$ on every
+variable, is $p(x)$. -/
 theorem marginal_univ (p : (V → α) → ℝ) (x : V → α) : marginal p Set.univ x = p x := by
   unfold marginal
   simp only [Finset.sum_filter]
@@ -322,9 +325,13 @@ theorem marginal_marginal (p : (V → α) → ℝ) {U W : Set V} (h : U ⊆ W) (
     · rintro ⟨hy, hz⟩
       exact ⟨fun v hv => (hy v (h hv)).trans (hz v hv), fun v hv => (hy v hv).symm⟩
 
-/-- **Marginalizing in two steps, no variable summed twice.** If every variable is fixed by `U`
-or by `W`, the `U`-marginal of the `W`-marginal of `p` is the `U ∩ W`-marginal of `p`. Compare
-`marginal_marginal`, which covers `U ⊆ W` and picks up a counting factor. -/
+/-- **Marginalizing in two steps, no variable summed twice.** Let $V$ and $\alpha$ be finite
+types, let $p$ be a real-valued weight on the configurations $x : V \to \alpha$, let
+$U, W \subseteq V$ with $U \cup W = V$, and let $p_W$ be the $W$-marginal of $p$, the weight
+sending $x$ to the total weight of the configurations that agree with $x$ on $W$. Then for every
+configuration $x$, the $U$-marginal of $p_W$ at $x$ equals the $(U \cap W)$-marginal of $p$ at
+$x$. When instead $U \subseteq W$, the two-step marginal picks up a counting factor
+(`marginal_marginal`). -/
 theorem marginal_marginal_of_union_eq_univ (p : (V → α) → ℝ) {U W : Set V}
     (h : U ∪ W = Set.univ) (x : V → α) :
     marginal (marginal p W) U x = marginal p (U ∩ W) x := by
