@@ -5,12 +5,16 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 - [Bellman–Ford algorithm](bellman-ford-algorithm/README.md)
 - [Dijkstra's algorithm](dijkstra-s-algorithm/README.md)
 - [Floyd–Warshall algorithm](floyd-warshall-algorithm/README.md)
+- [Longest walk duration](longest-duration.md)
+- [Earliest start of an event](earliest-start.md)
+- [Latest start of an event](latest-start.md)
+- [Total float of an activity](total-float.md)
+- [Slack and the critical path of a project network](slack-and-the-critical-path.md)
+- [Zero slack at both endpoints does not make an activity critical](slack-eq-zero-total-float-eq-one.md)
 - [All-pairs shortest paths by min-plus products](all-pairs-shortest-paths-by-min-plus-products/README.md)
 - [Johnson's algorithm](johnson-s-algorithm/README.md)
 - [Minimum cycle mean](minimum-cycle-mean/README.md)
 - [Shortest paths in directed acyclic graphs](shortest-paths-in-directed-acyclic-graphs/README.md)
-
-- [Slack and the critical path of a project network](slack-and-the-critical-path.md)
 
 ## Related topics
 

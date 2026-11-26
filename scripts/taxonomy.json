@@ -1994,6 +1994,7 @@
   "CSLibExt/MachineLearning/Variational/MeanField": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Mean-field variational inference"},
   "CSLibExt/MachineLearning/Variational/MeanFieldFixedPoint": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Mean-field variational inference"},
   "CSLibExt/MachineLearning/WeightedMajority": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Weighted majority algorithm"},
+  "CSLibExt/Scheduling/ProjectNetwork/Slack": {"to": "ComputerScience/graph-algorithms/shortest-paths", "title": "Shortest paths"},
   "Mathlib/Algebra/AddConstMap": {"to": "Algebra/algebraic-identities", "title": "Maps intertwining translations"},
   "Mathlib/Algebra/AffineMonoid": {"to": "GroupTheory/semigroups-and-monoids", "title": "Affine monoids"},
   "Mathlib/Algebra/Algebra/Basic": {"to": "Algebra/associative-algebras", "title": "Algebras over commutative semirings"},
