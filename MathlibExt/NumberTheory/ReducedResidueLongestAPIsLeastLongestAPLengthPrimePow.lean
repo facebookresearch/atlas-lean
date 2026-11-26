@@ -22,6 +22,9 @@ residue system `R_m (p ^ r)` is `p ^ (r - 1)`.
 
 Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
 Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6.
+
+The two bounds adapt the `lower_bound` and `upper_bound` proofs in
+`MathlibExt/NumberTheory/ReducedResidueAverage.lean`, with the radical of `p ^ r` equal to `p`.
 -/
 
 namespace MetaMathlibExt
