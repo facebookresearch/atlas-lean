@@ -483,7 +483,14 @@ its PR checks; a fork PR may also need a maintainer to approve the workflow run.
 `scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
 checks their pull-request and merge-group triggers, filters and concurrency
 groups, and that each required check comes from exactly one job, with no
-job-level `if` or `strategy`.
+job-level `strategy` and no job-level `if` but the one that skips `build` on
+some PRs. CI's `decide which checks to run` job (`scripts/ci_scope.py`) skips
+`build` on a PR whose every changed path is graph data (`blueprint/`,
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
+`scripts/mathgraph-map.jsonl`) or documentation (Markdown outside `scripts/`
+and `.github/`, and `.agents/` and `.claude/`), and a skipped required check
+counts as passed. Merge groups and pushes to `main` always run every required
+check.
 
 The other checks are advisory. Codex does not run on merge groups, but a formal
 Codex change request can cancel the PR's CI run while it is still queued or
