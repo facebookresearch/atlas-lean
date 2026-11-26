@@ -148,10 +148,11 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 10 of 10](part-10/README.md)
 
+- [Porous Storage](part-10/porous-storage/README.md)
 - [Zone Quadratic Dissipation](part-10/zone-quadratic-dissipation/README.md)
 - [Zone Thermal Plant](part-10/zone-thermal-plant/README.md)
 - [Capped Triangular Secant](part-10/capped-triangular-secant-bounds.md)
-- [Cell Transmission Invariant](part-10/update-mem-icc.md)
-- [Front Speed](part-10/greenshields-shock-speed.md)
-- [Signal Queue Area](part-10/queue-len-integral-cycle.md)
-- [Water Hammer Energy](part-10/energy-has-deriv-at.md)
+- [Cell-transmission update preserves admissible densities](part-10/update-mem-icc.md)
+- [Greenshields shock speed](part-10/greenshields-shock-speed.md)
+- [Area under the queue-length curve over one signal cycle](part-10/queue-len-integral-cycle.md)
+- [Energy flux identity for water hammer](part-10/energy-has-deriv-at.md)
