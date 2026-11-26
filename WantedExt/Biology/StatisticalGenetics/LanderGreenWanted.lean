@@ -23,7 +23,10 @@ pedigree likelihood is computed by the forward recursion of this hidden Markov c
 (pp. 2365–2366).
 
 Recorded here: the Hamming/Kronecker form of the transition, its stochasticity, symmetry and
-uniform stationarity, and the equality of the path-sum likelihood with the forward recursion.
+uniform stationarity. The inheritance vectors, the transition, the uniform prior, the path
+weight, the path-sum likelihood, the forward recursion and the equality of the path-sum
+likelihood with the forward recursion are proved in
+`Domains.Biology.StatisticalGenetics.LanderGreenLikelihoodEqForward`.
 The expectation-maximization search, complexity claims, the phenotype emission computation and
 interference are not formalized.
 
@@ -37,47 +40,13 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.InformationTheory.Hamming
+public import Domains.Biology.StatisticalGenetics.LanderGreenLikelihoodEqForward
 
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.LanderGreenWanted
 
 open Finset
-
-/-- An inheritance vector for `n` meioses. -/
-abbrev InheritanceVector (n : ℕ) := Fin n → Bool
-
-/-- The Lander–Green transition probability between inheritance vectors at adjacent loci with
-recombination fraction `θ` and no interference: `θᵈ (1 - θ)ⁿ⁻ᵈ`, where `d = hammingDist v w` is
-the number of meioses whose transmitted grandparental origin differs (Mathlib's Hamming
-distance). As a function of `θ` this is the bit-flip kernel; it models recombination for
-`0 ≤ θ ≤ 1/2`. -/
-noncomputable def transition {n : ℕ} (θ : ℝ) (v w : InheritanceVector n) : ℝ :=
-  θ ^ hammingDist v w * (1 - θ) ^ (n - hammingDist v w)
-
-/-- The uniform law of the inheritance vector at the first locus. -/
-noncomputable def uniformPrior (n : ℕ) : ℝ := ((2 : ℝ) ^ n)⁻¹
-
-/-- The joint weight of a path `v₀, …, vₘ` of inheritance vectors at `m + 1` ordered loci and of
-the marker data: the uniform prior of `v₀`, the transitions with recombination fractions `θ i`
-between loci `i` and `i + 1`, and the likelihoods `q i (v i)` of the data at each locus. -/
-noncomputable def pathWeight {n m : ℕ} (θ : ℕ → ℝ) (q : ℕ → InheritanceVector n → ℝ)
-    (v : Fin (m + 1) → InheritanceVector n) : ℝ :=
-  uniformPrior n * (∏ i : Fin (m + 1), q i (v i)) *
-    ∏ i : Fin m, transition (θ i) (v i.castSucc) (v i.succ)
-
-/-- The pedigree likelihood of the marker data at `m + 1` loci: the sum of `pathWeight` over all
-paths of inheritance vectors. -/
-noncomputable def likelihood {n : ℕ} (m : ℕ) (θ : ℕ → ℝ) (q : ℕ → InheritanceVector n → ℝ) :
-    ℝ :=
-  ∑ v : Fin (m + 1) → InheritanceVector n, pathWeight θ q v
-
-/-- The forward vectors of the hidden Markov chain: `α₀(w) = 2⁻ⁿ q₀(w)` and
-`αᵢ₊₁(w) = qᵢ₊₁(w) ∑ᵥ αᵢ(v) T(θᵢ)_{vw}`. -/
-noncomputable def forward {n : ℕ} (θ : ℕ → ℝ) (q : ℕ → InheritanceVector n → ℝ) :
-    ℕ → InheritanceVector n → ℝ
-  | 0, w => uniformPrior n * q 0 w
-  | i + 1, w => q (i + 1) w * ∑ v, forward θ q i v * transition (θ i) v w
 
 /-- **The Kronecker form and stochasticity of the transition** (Lander and Green 1987, p. 2365):
 for a recombination fraction `θ` with `0 ≤ θ ≤ 1/2` and any number `n` of meioses, the
@@ -92,18 +61,5 @@ public theorem_wanted transition_kronecker_stochastic (n : ℕ) (θ : ℝ) (hθ�
       (∀ v : InheritanceVector n, ∑ w, transition θ v w = 1) ∧
       (∀ v w : InheritanceVector n, transition θ v w = transition θ w v) ∧
       (∀ w : InheritanceVector n, ∑ v, uniformPrior n * transition θ v w = uniformPrior n)
-
-/-- **The Lander–Green forward recursion** (Lander and Green 1987, pp. 2365–2366): for any
-number `n` of meioses and `m + 1` ordered loci, recombination fractions `θ i` with
-`0 ≤ θ i ≤ 1/2` between loci `i` and `i + 1`, and data likelihood vectors `q i` satisfying
-`0 ≤ q i w ≤ 1` for every locus `i ≤ m` and inheritance vector `w`, the pedigree likelihood of
-the data, a sum over all `2^(n(m + 1))` paths of inheritance vectors, equals the sum of the last
-forward vector, which the recursion computes one locus at a time.
-
-Source: Lander and Green (1987), pp. 2365–2366. -/
-public theorem_wanted likelihood_eq_forward (n m : ℕ) (θ : ℕ → ℝ)
-    (hθ : ∀ i, 0 ≤ θ i ∧ θ i ≤ 1 / 2) (q : ℕ → InheritanceVector n → ℝ)
-    (hq : ∀ i ≤ m, ∀ w, 0 ≤ q i w ∧ q i w ≤ 1) :
-    likelihood m θ q = ∑ w, forward θ q m w
 
 end WantedExt.Biology.StatisticalGenetics.LanderGreenWanted
