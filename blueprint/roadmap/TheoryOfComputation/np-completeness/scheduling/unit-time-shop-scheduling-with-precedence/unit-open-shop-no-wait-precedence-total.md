@@ -1,0 +1,3 @@
+# Feasible instances of UNIT-TIME NO-WAIT OPEN SHOP WITH PRECEDENCE, TOTAL COMPLETION TIME
+
+An instance $(m, P, A, K)$ is feasible when there is a unit-time open-shop schedule respecting the arcs (start times $\sigma_k(j)$ for job $j$ on machine $k$, pairwise different on each machine and within each job, and every operation of $j$ starting at or after every operation of $i$ completes when $(i, j)$ is an arc) in which each job's operations fill $m$ consecutive unit slots (some $s$ has $s \le \sigma_k(j) < s + m$ for all $k$) and $\sum_j \max_k (\sigma_k(j) + 1) \le K$. A maximum over no machines is $0$, so with $m = 0$ every term of the sum is $0$. Every operation takes one unit of time, whatever processing times $P$ lists.
