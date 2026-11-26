@@ -7,4 +7,4 @@ This resolves [AimPL one-bounded question on Elliott's conjecture along a subseq
 ## Sources
 
 - AimPL: Sarnak's conjecture, Section 7, Problem 7.4, https://aimpl.org/sarnakconjecture/7/.
-- O. Klurman, A. P. Mangerel and J. Teräväinen, On Elliott's conjecture and applications, arXiv:2304.05344v2 (2023), Theorem 1.2, https://arxiv.org/pdf/2304.05344v2.
+- O. Klurman, A. P. Mangerel and J. Teräväinen, On Elliott's conjecture and applications, arXiv:2304.05344v2 (2023), Theorem 1.2, https://arxiv.org/pdf/2304.05344v2; published in Proceedings of the London Mathematical Society 133 (2026), https://doi.org/10.1112/plms.70205.

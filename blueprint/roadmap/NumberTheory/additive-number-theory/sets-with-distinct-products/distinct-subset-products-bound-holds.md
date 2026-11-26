@@ -9,4 +9,4 @@ This resolves [Erdős Problem 795 (sets with distinct subset products)](distinct
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #795, https://www.erdosproblems.com/795.
-- R. Raghavan, Sharp bounds for sets with distinct subset products, arXiv:2501.02695 (2025), Theorem 1.3, https://arxiv.org/abs/2501.02695.
+- R. Raghavan, Sharp bounds for sets with distinct subset products, arXiv:2501.02695 (2025), Theorem 1.3, https://arxiv.org/abs/2501.02695; published in Acta Mathematica Hungarica 177 (2025), 363–377, https://doi.org/10.1007/s10474-025-01578-4.

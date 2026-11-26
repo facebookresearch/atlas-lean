@@ -7,4 +7,4 @@ This resolves [Cambie's monotonicity of the density for n = 1, as a statement](e
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #692, https://www.erdosproblems.com/692.
-- S. Cambie, Resolution of Erdős' problems about unimodularity, arXiv:2501.10333 (2025), https://arxiv.org/abs/2501.10333.
+- S. Cambie, Resolution of Erdős' problems about unimodularity, arXiv:2501.10333 (2025), https://arxiv.org/abs/2501.10333; published in Journal of Number Theory 280 (2026), 271–277, https://doi.org/10.1016/j.jnt.2025.08.014.

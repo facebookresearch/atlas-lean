@@ -7,4 +7,4 @@ This refutes [Erdős Problem 121, first question](five-product-free-almost-full.
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #121, https://www.erdosproblems.com/121.
-- T. Tao, On product representations of squares, arXiv:2405.11610 (2024), Theorem 1.2, https://arxiv.org/abs/2405.11610.
+- T. Tao, On product representations of squares, arXiv:2405.11610 (2024), Theorem 1.2, https://arxiv.org/abs/2405.11610; published in Acta Mathematica Hungarica 175 (2025), 142–157, https://doi.org/10.1007/s10474-025-01505-7.

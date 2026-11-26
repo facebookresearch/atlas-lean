@@ -10,4 +10,4 @@ This resolves [Erdős Problem 980 restricted to the primes p ≡ 1 (mod k) (sums
 
 - T. F. Bloom, Erdős Problems, Problem #980, https://www.erdosproblems.com/980.
 - P. D. T. A. Elliott, A problem of Erdős concerning power residue sums, Acta Arith. 13 (1967/68), 131–149.
-- K. Martin and P. Pollack, The average least character non-residue and further variations on a theme of Erdős, arXiv:1112.1175, Section 1, https://arxiv.org/abs/1112.1175.
+- K. Martin and P. Pollack, The average least character non-residue and further variations on a theme of Erdős, arXiv:1112.1175, Section 1, https://arxiv.org/abs/1112.1175; published in Journal of the London Mathematical Society 87 (2013), 22–42, https://doi.org/10.1112/jlms/jds036.

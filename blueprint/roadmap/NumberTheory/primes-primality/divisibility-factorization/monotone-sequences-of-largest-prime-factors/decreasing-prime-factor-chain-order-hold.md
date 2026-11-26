@@ -7,4 +7,4 @@ This resolves [Erdős Problem 648 (increasing integers with decreasing largest p
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #648, https://www.erdosproblems.com/648.
-- S. Cambie, On Erdős problem #648, arXiv:2503.22691 (2025), https://arxiv.org/abs/2503.22691.
+- S. Cambie, On Erdős problem #648, arXiv:2503.22691 (2025), https://arxiv.org/abs/2503.22691; published in Proceedings of the American Mathematical Society 153 (2025), 3315–3317, https://doi.org/10.1090/proc/17279.

@@ -7,4 +7,4 @@ This resolves [Erdős Problem 310 (unit sums with bounded denominators in dense 
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #310, https://www.erdosproblems.com/310.
-- Y. P. Liu and M. Sawhney, On further questions regarding unit fractions, arXiv:2404.07113 (2024), https://arxiv.org/abs/2404.07113.
+- Y. P. Liu and M. Sawhney, On further questions regarding unit fractions, arXiv:2404.07113 (2024), https://arxiv.org/abs/2404.07113; published in International Mathematics Research Notices 2026 (2026), https://doi.org/10.1093/imrn/rnaf382.

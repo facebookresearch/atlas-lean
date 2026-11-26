@@ -7,4 +7,4 @@ This resolves [Sequences with property Q have upper density at most 6/π², as a
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #1102, https://www.erdosproblems.com/1102.
-- W. van Doorn and T. Tao, Growth rates of sequences governed by the squarefree properties of its translates, arXiv:2512.01087 (2025), https://arxiv.org/abs/2512.01087.
+- W. van Doorn and T. Tao, Growth rates of sequences governed by the squarefree properties of its translates, arXiv:2512.01087 (2025), https://arxiv.org/abs/2512.01087; published in Acta Arithmetica (2026), https://doi.org/10.4064/aa251207-28-5.

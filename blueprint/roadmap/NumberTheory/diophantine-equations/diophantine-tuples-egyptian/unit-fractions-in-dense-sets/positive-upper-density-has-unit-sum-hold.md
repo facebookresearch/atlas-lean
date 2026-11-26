@@ -7,4 +7,4 @@ This resolves [Erdős Problem 298 (unit sums in sets of positive density)](posit
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #298, https://www.erdosproblems.com/298.
-- T. F. Bloom, On a density conjecture about unit fractions, arXiv:2112.03726 (2021), https://arxiv.org/abs/2112.03726.
+- T. F. Bloom, On a density conjecture about unit fractions, arXiv:2112.03726 (2021), https://arxiv.org/abs/2112.03726; published in Journal of the European Mathematical Society 27 (2024), 4563–4589, https://doi.org/10.4171/jems/1456.

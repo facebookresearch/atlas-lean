@@ -7,4 +7,4 @@ This resolves [Erdős Problem 355 (lacunary sequences whose reciprocal sums cont
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #355, https://www.erdosproblems.com/355.
-- W. van Doorn and V. Kovač, Lacunary sequences whose reciprocal sums represent all rationals in an interval, arXiv:2509.24971 (2025), https://arxiv.org/abs/2509.24971.
+- W. van Doorn and V. Kovač, Lacunary sequences whose reciprocal sums represent all rationals in an interval, arXiv:2509.24971 (2025), https://arxiv.org/abs/2509.24971; published in Acta Arithmetica (2026), https://doi.org/10.4064/aa251001-13-1.

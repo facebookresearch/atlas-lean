@@ -8,4 +8,4 @@ This refutes [Erdős Problem 34 (distinct consecutive sums of permutations)](con
 
 - T. F. Bloom, Erdős Problems, Problem #34, https://www.erdosproblems.com/34.
 - N. Hegyvári, On consecutive sums in sequences, Acta Math. Hungar. (1986), 193–200.
-- J. Konieczny, On consecutive sums in permutations, arXiv:1504.07156 (2015), https://arxiv.org/abs/1504.07156.
+- J. Konieczny, On consecutive sums in permutations, arXiv:1504.07156 (2015), https://arxiv.org/abs/1504.07156; published in Journal of Combinatorics 12 (2021), 413–477, https://doi.org/10.4310/joc.2021.v12.n3.a3.

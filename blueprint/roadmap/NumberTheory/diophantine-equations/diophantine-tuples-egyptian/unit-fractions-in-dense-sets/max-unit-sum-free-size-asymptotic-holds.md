@@ -7,4 +7,4 @@ This resolves [Erdős Problem 300 (largest unit-sum-free subsets)](max-unit-sum-
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #300, https://www.erdosproblems.com/300.
-- Y. P. Liu and M. Sawhney, On further questions regarding unit fractions, arXiv:2404.07113 (2024), Theorem 1.3.
+- Y. P. Liu and M. Sawhney, On further questions regarding unit fractions, arXiv:2404.07113 (2024), Theorem 1.3; published in International Mathematics Research Notices 2026 (2026), https://doi.org/10.1093/imrn/rnaf382.

@@ -7,4 +7,4 @@ This resolves [Erdős Problem 314 (small overshoots of harmonic blocks over one)
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #314, https://www.erdosproblems.com/314.
-- J. Lim and S. Steinerberger, On differences of two harmonic numbers, arXiv:2405.11354 (2024), Theorem 1, https://arxiv.org/abs/2405.11354.
+- J. Lim and S. Steinerberger, On differences of two harmonic numbers, arXiv:2405.11354 (2024), Theorem 1, https://arxiv.org/abs/2405.11354; published in Mathematika 71 (2025), https://doi.org/10.1112/mtk.70009.

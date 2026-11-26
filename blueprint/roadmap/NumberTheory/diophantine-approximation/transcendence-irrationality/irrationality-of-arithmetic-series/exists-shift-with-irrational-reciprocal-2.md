@@ -7,4 +7,4 @@ This refutes [Erdős Problem 266 (Stolarsky's conjecture on shifted reciprocal s
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #266, https://www.erdosproblems.com/266.
-- V. Kovač and T. Tao, On several irrationality problems for Ahmes series, arXiv:2406.17593 (2024), https://arxiv.org/abs/2406.17593.
+- V. Kovač and T. Tao, On several irrationality problems for Ahmes series, arXiv:2406.17593 (2024), https://arxiv.org/abs/2406.17593; published in Acta Mathematica Hungarica 175 (2025), 572–608, https://doi.org/10.1007/s10474-025-01528-0.

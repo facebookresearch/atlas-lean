@@ -1,4 +1,4 @@
-# The only perfect powers among Fibonacci numbers are 8 and 144
+# The only Fibonacci perfect powers greater than one are 8 and 144
 
 For all natural numbers $n$, $a > 1$ and $b > 1$ with $F_n = a^b$, either $F_n = 8$ or $F_n = 144$, where $F_n$ is the $n$-th Fibonacci number: the only Fibonacci numbers that are perfect powers $a^b$ with $a, b > 1$ are $8$ and $144$.
 

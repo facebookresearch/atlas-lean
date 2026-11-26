@@ -7,4 +7,4 @@ This resolves [Erdős Problem 268 (open sets of harmonic subseries triples)](har
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #268, https://www.erdosproblems.com/268.
-- V. Kovač, On the set of points represented by harmonic subseries, arXiv:2405.07681 (2024), https://arxiv.org/abs/2405.07681.
+- V. Kovač, On the set of points represented by harmonic subseries, arXiv:2405.07681 (2024), https://arxiv.org/abs/2405.07681; published in The American Mathematical Monthly 132 (2025), 895–911, https://doi.org/10.1080/00029890.2025.2540753.

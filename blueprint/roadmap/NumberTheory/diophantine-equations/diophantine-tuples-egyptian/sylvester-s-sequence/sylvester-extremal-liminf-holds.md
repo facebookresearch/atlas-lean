@@ -7,5 +7,5 @@ This resolves [Erdős Problem 315 (growth of Egyptian expansions of one)](sylves
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #315, https://www.erdosproblems.com/315.
-- Z. Li and Q. Tang, On a conjecture of Erdős and Graham about the Sylvester's sequence, arXiv:2503.12277 (2025).
+- Z. Li and Q. Tang, On a conjecture of Erdős and Graham about the Sylvester's sequence, arXiv:2503.12277 (2025); published in Acta Mathematica Hungarica 177 (2025), 41–63, https://doi.org/10.1007/s10474-025-01566-8.
 - Y. Kamio, Asymptotic analysis of infinite decompositions of a unit fraction into unit fractions, arXiv:2503.02317 (2025).

@@ -7,4 +7,4 @@ This resolves [Erdős Problem 164 (primes maximize the Erdős sum of primitive s
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #164, https://www.erdosproblems.com/164.
-- J. D. Lichtman, A proof of the Erdős primitive set conjecture, arXiv:2202.02384 (2022), https://arxiv.org/abs/2202.02384.
+- J. D. Lichtman, A proof of the Erdős primitive set conjecture, arXiv:2202.02384 (2022), https://arxiv.org/abs/2202.02384; published in Forum of Mathematics, Pi 11 (2023), https://doi.org/10.1017/fmp.2023.16.

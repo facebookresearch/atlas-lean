@@ -7,4 +7,4 @@ This refutes [Erdős Problem 270 (irrationality of rising-product series)](risin
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #270, https://www.erdosproblems.com/270.
-- T. Crmarić and V. Kovač, On the irrationality of certain super-polynomially decaying series, arXiv:2504.18712 (2025), https://arxiv.org/abs/2504.18712.
+- T. Crmarić and V. Kovač, On the irrationality of certain super-polynomially decaying series, arXiv:2504.18712 (2025), https://arxiv.org/abs/2504.18712; published in Colloquium Mathematicum (2025), https://doi.org/10.4064/cm9628-5-2025.

@@ -7,4 +7,4 @@ This resolves [Erdős Problem 47 (unit fractions in sets with large reciprocal s
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #47, https://www.erdosproblems.com/47.
-- T. F. Bloom, On a density conjecture about unit fractions, arXiv:2112.03726 (2021), https://arxiv.org/abs/2112.03726, Theorem 3.
+- T. F. Bloom, On a density conjecture about unit fractions, arXiv:2112.03726 (2021), https://arxiv.org/abs/2112.03726, Theorem 3; published in Journal of the European Mathematical Society 27 (2024), 4563–4589, https://doi.org/10.4171/jems/1456.

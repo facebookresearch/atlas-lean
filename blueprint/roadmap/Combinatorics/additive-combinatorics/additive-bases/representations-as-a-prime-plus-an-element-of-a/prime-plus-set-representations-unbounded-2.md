@@ -7,4 +7,4 @@ This resolves [Erdős Problem 237 (representations as a prime plus an element of
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #237, https://www.erdosproblems.com/237.
-- Y.-G. Chen and Y. Ding, On a conjecture of Erdős, arXiv:2201.10727 (2022), Corollary 1.3, https://arxiv.org/abs/2201.10727.
+- Y.-G. Chen and Y. Ding, On a conjecture of Erdős, arXiv:2201.10727 (2022), Corollary 1.3, https://arxiv.org/abs/2201.10727; published in Comptes Rendus. Mathématique 360 (2022), 971–974, https://doi.org/10.5802/crmath.345.
