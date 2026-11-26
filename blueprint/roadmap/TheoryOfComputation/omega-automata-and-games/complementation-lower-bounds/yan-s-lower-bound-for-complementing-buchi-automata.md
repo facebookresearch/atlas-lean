@@ -10,10 +10,6 @@ then reduces the alphabet by substitutions.
 
 - [Büchi acceptance condition](../emptiness-of-b-chi-automata/mem-language-iff.md)
 
-## Proof depends on
-
-- [Michel's lower bound for complementing Büchi automata](michel-s-lower-bound-for-complementing-buchi-automata.md)
-
 ## Sources
 
 - Q. Yan, "Lower bounds for complementation of $\omega$-automata via the full automata technique", *Logical Methods in Computer Science* 4(1), 2008, arXiv:0802.1226: the abstract, Theorem 3.5 (reduction to full automata), Theorem 4.7 and Theorem 4.9.

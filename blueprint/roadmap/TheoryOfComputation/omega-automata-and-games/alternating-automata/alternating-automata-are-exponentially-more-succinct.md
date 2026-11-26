@@ -12,7 +12,6 @@ into nondeterministic ones cannot be avoided.
 ## Proof depends on
 
 - [Complementing alternating automata by dualization](complementing-alternating-automata-by-dualization.md)
-- [Alternating automata recognize exactly the regular languages](alternating-automata-recognize-exactly-the-regular.md)
 
 ## Sources
 

@@ -2,8 +2,8 @@
 
 For every [alternating Büchi automaton](alternating-buchi-automata.md) $\mathcal{A}$ with state set $S$ there is a nondeterministic
 [Büchi automaton](../emptiness-of-b-chi-automata/mem-language-iff.md) with state set $2^S \times 2^S$ accepting the same infinite words (Miyano and Hayashi). It guesses a run of $\mathcal{A}$ level by
-level and splits each level into the states whose branches have visited $F$ recently and those that still owe a visit, accepting when the
-second set becomes empty. Hence alternating Büchi automata recognize exactly the languages of Büchi automata, with an exponential translation, and
+level; a state $(U, V)$ records in $U$ the states of the current level whose branches still owe a visit to $F$ and in $V$ the others, and the
+accepting states are those with $U = \emptyset$, the set $\{\emptyset\} \times 2^S$. Hence alternating Büchi automata recognize exactly the languages of Büchi automata, with an exponential translation, and
 they are closed under complementation.
 
 ## Depends on
