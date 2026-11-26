@@ -16,3 +16,4 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [Infinitesimal inheritance kernels in hermaphroditic populations](infinitesimal-inheritance-kernels-in-hermaphroditic-populations/README.md)
