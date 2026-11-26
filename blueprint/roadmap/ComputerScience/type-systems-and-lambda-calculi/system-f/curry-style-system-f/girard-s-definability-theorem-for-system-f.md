@@ -12,13 +12,13 @@ second-order arithmetic and System F.
 
 ## Depends on
 
-- [Extrinsic typing of pure System F terms](../system-f/the-five-typing-rules-of-pure-system-f/typing.md)
-- [One-step full reduction of System F terms](../system-f/scoped-pure-system-f/full-step.md)
+- [Extrinsic typing of pure System F terms](../the-five-typing-rules-of-pure-system-f/typing.md)
+- [One-step full reduction of System F terms](../scoped-pure-system-f/full-step.md)
 
 ## Proof depends on
 
-- [Strong normalization of System F](../normalization-and-logical-relations/strong-normalization-of-system-f.md): its reducibility argument, restricted to the finitely many types involved
-- [Gödel's Dialectica interpretation of Heyting arithmetic](../system-t/dialectica-interpretation-of-heyting-arithmetic.md)
+- [Strong normalization of System F](../../normalization-and-logical-relations/strong-normalization-of-system-f.md): its reducibility argument, restricted to the finitely many types involved
+- [Gödel's Dialectica interpretation of Heyting arithmetic](../../system-t/dialectica-interpretation-of-heyting-arithmetic.md)
 
 ## Expansion
 

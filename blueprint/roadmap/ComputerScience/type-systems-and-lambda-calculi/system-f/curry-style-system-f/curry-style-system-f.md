@@ -11,16 +11,16 @@ $x : \sigma$ of distinct term variables, and $\mathrm{var}(\Gamma)$ is the set o
 - (Inst) if $\Gamma \vdash M : \forall a.\, \sigma$ then $\Gamma \vdash M : \sigma[a := \tau]$ for every type $\tau$.
 
 Quantifier rules leave the term unchanged, so polymorphism is implicit. A pure term $M$ has type $\tau$ in $\Gamma$ exactly when $M$ is the
-[type erasure](../system-f/system-f-erasure-and-closing-environments/erase.md) $|M_0|$ of a [Church-style System F](../system-f/the-five-typing-rules-of-pure-system-f/typing.md) term $M_0$ with $\Gamma \vdash M_0 : \tau$, the erasure deleting type annotations,
+[type erasure](../system-f-erasure-and-closing-environments/erase.md) $|M_0|$ of a [Church-style System F](../the-five-typing-rules-of-pure-system-f/typing.md) term $M_0$ with $\Gamma \vdash M_0 : \tau$, the erasure deleting type annotations,
 type abstractions and type applications. For example $\lambda x.\, x\, x$ has type $(\forall a.\, a \to a) \to (\forall a.\, a \to a)$.
 
 *Typability* asks, given $M$, whether $\Gamma \vdash M : \tau$ for some $\Gamma$ and $\tau$; *type checking* asks, given $\Gamma$, $M$ and $\tau$, whether $\Gamma \vdash M : \tau$.
 
 ## Depends on
 
-- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
-- [Extrinsic typing of pure System F terms](../system-f/the-five-typing-rules-of-pure-system-f/typing.md)
-- [Type erasure of System F terms to untyped terms](../system-f/system-f-erasure-and-closing-environments/erase.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [Extrinsic typing of pure System F terms](../the-five-typing-rules-of-pure-system-f/typing.md)
+- [Type erasure of System F terms to untyped terms](../system-f-erasure-and-closing-environments/erase.md)
 
 ## Sources
 

@@ -8,7 +8,7 @@ $x : a \to \forall b.\, (b \to b) \vdash x : a \to b \to b$ does not hold. The C
 ## Depends on
 
 - [Curry-style System F](curry-style-system-f.md)
-- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Sources
 
