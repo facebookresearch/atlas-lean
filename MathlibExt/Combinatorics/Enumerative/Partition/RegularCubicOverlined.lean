@@ -18,8 +18,8 @@ import Mathlib.RingTheory.PowerSeries.Expand
 /-!
 # Regular cubic partitions with overlined odd parts
 
-The number $a_4(n)$ of 4-regular cubic partitions of $n$ with odd parts overlined satisfies
-two congruences modulo four on prime-power progressions. A dissection of the reciprocal
+For $\ell=4$, the coefficients $a_4(n)$ of Buragohain and Saikia's Euler quotient in Eq. (2)
+satisfy two congruences modulo four on prime-power progressions. A dissection of the reciprocal
 fourth power of the Euler product identifies the coefficients at indices (4n+1) modulo four.
 Euler's pentagonal number theorem then expresses the remaining coefficient modulo two as the
 parity of a representation count for (x^2 + 8y^2).
@@ -33,32 +33,30 @@ namespace MetaMathlibExt
 
 local notation "𝔣" => qEulerProduct
 
-/-- **Generating function of ℓ-regular cubic partitions with odd parts overlined.** For a natural
-number $\ell$, this is the integer power series
+/-- **Euler quotient for regular cubic partitions with odd parts overlined.** For a natural
+number $\ell$, Buragohain and Saikia's Eq. (2) gives the integer power series
 $$\frac{f_2 f_\ell^2 f_{4\ell}}{f_1^2 f_4 f_{2\ell}}, \qquad f_k = \prod_{m \ge 1} (1 - q^{km}).$$
-It is meaningful for $\ell \ge 1$, where the denominator has constant term $1$ and so is
-invertible. For $\ell > 2$, the range the paper considers, its coefficient of $q^n$ is the number
-of $\ell$-regular cubic partitions of $n$ with odd parts overlined.
+For $\ell \ge 1$, the denominator has constant term $1$ and is invertible. At $\ell=4$, the
+quotient equals the generating function obtained by forbidding all parts divisible by four
+in cubic partitions with odd parts overlined, multiplied by
+$f_{16}/f_8=\prod_{m\ge1}(1+q^{8m})$.
 
 Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
 Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
 public noncomputable def regularCubicOverlinedSeries (l : ℕ) : ℤ⟦X⟧ :=
   𝔣 2 * 𝔣 l ^ 2 * 𝔣 (4 * l) * invOfUnit (𝔣 1 ^ 2 * 𝔣 4 * 𝔣 (2 * l)) 1
 
-/-- **ℓ-regular cubic partitions with odd parts overlined.** For natural numbers $\ell$ and $n$,
-$a_\ell(n)$ is the coefficient of $q^n$ in the integer power series
+/-- **Coefficients of the regular cubic Euler quotient.** For natural numbers $\ell$ and $n$,
+$a_\ell(n)$ is the coefficient of $q^n$ in Buragohain and Saikia's Eq. (2),
 $$\frac{f_2 f_\ell^2 f_{4\ell}}{f_1^2 f_4 f_{2\ell}}, \qquad f_k = \prod_{m \ge 1} (1 - q^{km}).$$
-The quotient is meaningful for $\ell \ge 1$, where the denominator has constant term $1$. For
-$\ell > 2$, the range the paper considers, $a_\ell(n)$ is the number of $\ell$-regular cubic
-partitions of $n$ in which the first occurrence of each distinct odd part may be overlined; for
-example, $a_3(5) = 18$.
+For $\ell \ge 1$ the denominator has constant term $1$. For example, $a_3(5)=18$ and $a_4(9)=130$.
 
 Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
 Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
 public noncomputable def regularCubicOverlinedCount (l n : ℕ) : ℤ :=
   coeff n (regularCubicOverlinedSeries l)
 
-/-- **Generating function for $\ell$-regular cubic partitions with odd parts overlined.** Let
+/-- **Generating function for the coefficients of the regular cubic Euler quotient.** Let
 $\ell \ge 1$, write $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of
 integer power series in $q$, and let $a_\ell(n)$ be the $n$th coefficient of
 $f_2 f_\ell^2 f_{4\ell} / (f_1^2 f_4 f_{2\ell})$ (the denominator has constant term $1$, so it
@@ -66,9 +64,6 @@ is invertible). Then
 $$
 f_1^2 f_4 f_{2\ell} \sum_{n \ge 0} a_\ell(n) q^n = f_2 f_\ell^2 f_{4\ell}.
 $$
-
-For $\ell > 2$ the paper identifies $a_\ell(n)$ with the number of $\ell$-regular cubic
-partitions of $n$ with odd parts overlined.
 
 Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
 Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
@@ -84,9 +79,8 @@ public theorem regularCubicOverlinedCount_generatingFunction {l : ℕ} (hl : 1 �
       constantCoeff_qEulerProduct (by omega : 1 ≤ 2 * l)]
   rw [hmk, regularCubicOverlinedSeries, mul_comm, mul_assoc, invOfUnit_mul _ _ hc, mul_one]
 
-/-- **Constant term of the overlined ℓ-regular cubic partition numbers.** For every natural number
-$\ell \ge 1$, the coefficient $a_\ell(0)$ of $q^0$ in the generating function of $\ell$-regular
-cubic partitions with odd parts overlined equals $1$.
+/-- **Constant term of the regular cubic Euler quotient.** For every natural number $\ell \ge 1$,
+the constant coefficient $a_\ell(0)$ of the Euler quotient in Eq. (2) equals $1$.
 
 Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
 Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
@@ -489,10 +483,10 @@ private lemma vanishing_progression (p : ℕ) [Fact p.Prime] (hp : 5 ≤ p)
 
 end regularCubicOverlinedCount_four_prime_mod_four
 
-/-- **Congruences modulo 4 for 4-regular cubic partitions with odd parts overlined.** Write
+/-- **Prime congruences modulo 4 for the regular cubic Euler quotient at $\ell=4$.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
-in $q$, and $a_4(n)$ for the $n$th coefficient of $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$, the
-number of $4$-regular cubic partitions of $n$ with odd parts overlined. Let $p \ge 5$ be a prime
+in $q$, and let $a_4(n)$ be the coefficient of $q^n$ in Buragohain and Saikia's Eq. (2)
+at $\ell=4$, namely $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$. Let $p \ge 5$ be a prime
 with Legendre symbol $\left(\frac{-2}{p}\right) = -1$ and let $\delta \ge 0$. Then for every
 $n \ge 0$, $a_4(4p^{2\delta} n + (3p^{2\delta} - 1)/2)$ is congruent modulo $4$ to twice the
 coefficient of $q^n$ in $f_1 f_8$, and for all $n \ge 0$ and $1 \le t \le p - 1$,
@@ -501,7 +495,9 @@ a_4\left(4p^{2\delta+2} n + 4p^{2\delta+1} t + \frac{3p^{2\delta+2} - 1}{2}\righ
 \pmod{4}.
 $$
 
-The divisions by $2$ are exact.
+The divisions by $2$ are exact. At $\delta=0$ and $n=2$, the first congruence reads
+$a_4(9)\equiv 2\pmod 4$. The coefficient is $130$. Forbidding all parts divisible by four
+in cubic partitions with odd parts overlined gives $128$ partitions of $9$.
 
 Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
 Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Theorem 8, eq. (49)

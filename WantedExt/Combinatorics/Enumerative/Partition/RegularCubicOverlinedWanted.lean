@@ -19,11 +19,9 @@ public import MathlibExt.Combinatorics.Enumerative.Partition.RegularCubicOverlin
 Statements from Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular
 Cubic Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101.
 
-Naika and Harishkumar's `a_ℓ(n)` counts the `ℓ`-regular cubic partitions of `n` in which the
-first occurrence of each distinct odd part may be overlined; for `ℓ > 2` its generating
-function is `∑ a_ℓ(n) qⁿ = f_2 f_ℓ² f_{4ℓ} / (f_1² f_4 f_{2ℓ})` (paper, eq. (2)), where
-`f_k = (q^k; q^k)_∞` is `qEulerProduct k`, written `𝔣 k` below. The imported `a_ℓ(n)` is the
-`n`th coefficient of that quotient in `ℤ⟦X⟧` (the denominator has constant coefficient `1`).
+Here `a_ℓ(n)` is the coefficient of `qⁿ` in the Euler quotient
+`f_2 f_ℓ² f_{4ℓ} / (f_1² f_4 f_{2ℓ})` of Eq. (2), where `f_k = (q^k; q^k)_∞` is
+`qEulerProduct k`, written `𝔣 k` below. For `ℓ ≥ 1` the denominator has constant term one.
 Ramanujan's `ψ(q^k) = f_{2k}² / f_k` (paper, eq. (3)); congruences between power series are
 stated coefficientwise, with a unit denominator `f_k` cleared by multiplying both sides
 (this preserves congruences, since `f_k` and its inverse have integer coefficients).
@@ -83,11 +81,10 @@ public theorem_wanted f3_f5_quotients_two_dissection :
       𝔣 1 * 𝔣 4 * 𝔣 8 * 𝔣 10 ^ 3 * 𝔣 40 =
         𝔣 5 * (𝔣 2 * 𝔣 8 ^ 2 * 𝔣 20 ^ 3 - X * 𝔣 4 ^ 3 * 𝔣 10 * 𝔣 40 ^ 2)
 
-/-- **Congruences modulo 4 for regular cubic partitions with odd parts overlined.** Write
+/-- **Congruences modulo 4 for coefficients of the regular cubic Euler quotient.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
 in $q$. For $\ell \ge 1$ let $a_\ell(n)$ be the $n$th coefficient of
-$f_2 f_\ell^2 f_{4\ell} / (f_1^2 f_4 f_{2\ell})$; for $\ell > 2$ this is the number of
-$\ell$-regular cubic partitions of $n$ with odd parts overlined. Then for all natural numbers
+$f_2 f_\ell^2 f_{4\ell} / (f_1^2 f_4 f_{2\ell})$ in Eq. (2). Then for all natural numbers
 $k$ and $n$: (i) if $k > 1$, then $4$ divides $a_{2k}(4n + 3)$; (ii) if $k \ge 1$, then $4$
 divides $a_{2k+1}(4n + 2)$; (iii) if $k > 0$, then $4$ divides $a_{4k}(4n + 2)$; (iv) if
 $k > 0$, then $4$ divides $a_{4k+1}(4n + 3)$.
@@ -158,9 +155,8 @@ public theorem_wanted regularCubicOverlinedCount_three_prime_mod_six (p : ℕ) [
         regularCubicOverlinedCount 3 (8 * p ^ (2 * δ + 2) * n + 8 * p ^ (2 * δ + 1) * t +
           (4 * p ^ (2 * δ + 2) - 1) / 3) ≡ 0 [ZMOD 6]
 
-/-- **Congruences modulo 8, 56 and 24 for 4-regular cubic partitions with odd parts overlined.**
-Let $a_4(n)$ be the number of $4$-regular cubic partitions of $n$ with odd parts overlined, that
-is, the $n$th coefficient of $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$, where
+/-- **Congruences modulo 8, 56 and 24 for the regular cubic Euler quotient at $\ell=4$.**
+Let $a_4(n)$ be the $n$th coefficient of $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$, where
 $f_k = \prod_{m \ge 1} (1 - q^{km})$. Then for every $n \ge 0$, $8$ divides $a_4(4n + 3)$, $56$
 divides $a_4(28n + 4j + 3)$ for each $j = 1, \ldots, 6$, and $24$ divides $a_4(36n + 19)$.
 
@@ -268,10 +264,10 @@ public theorem_wanted regularCubicOverlinedCount_five_prime_mod_four (p : ℕ) [
         regularCubicOverlinedCount 5 (16 * p ^ (2 * δ + 2) * n + 16 * p ^ (2 * δ + 1) * t +
           (122 * p ^ (2 * δ + 2) - 2) / 3) ≡ 0 [ZMOD 4]
 
-/-- **Congruences modulo 4 and 8 for 8-regular cubic partitions with odd parts overlined.** Write
+/-- **Congruences modulo 4 and 8 for the regular cubic Euler quotient at $\ell=8$.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
-in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$, the
-number of $8$-regular cubic partitions of $n$ with odd parts overlined. Let $p \ge 5$ be a prime
+in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$
+in Eq. (2). Let $p \ge 5$ be a prime
 with Legendre symbol $\left(\frac{-3}{p}\right) = -1$, let $s = (p - 1)/6$ if $p \equiv 1 \pmod 6$
 and $s = (-p - 1)/6$ otherwise, and let $\delta \ge 0$. Then, comparing coefficients of power
 series in $q$,
@@ -317,10 +313,10 @@ public theorem_wanted regularCubicOverlinedCount_eight_prime_mod_four_eight (p :
         regularCubicOverlinedCount 8 (4 * p ^ (2 * δ + 2) * n + 4 * p ^ (2 * δ + 1) * t +
           (19 * p ^ (2 * δ + 2) - 7) / 6) ≡ 0 [ZMOD 8]
 
-/-- **Congruences modulo 16 for 8-regular cubic partitions with odd parts overlined.** Write
+/-- **Congruences modulo 16 for the regular cubic Euler quotient at $\ell=8$.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
-in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$, the
-number of $8$-regular cubic partitions of $n$ with odd parts overlined. Let $p \ge 5$ be a prime
+in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$
+in Eq. (2). Let $p \ge 5$ be a prime
 with Legendre symbol $\left(\frac{-6}{p}\right) = -1$, let $s = (p - 1)/6$ if $p \equiv 1 \pmod 6$
 and $s = (-p - 1)/6$ otherwise, and let $\delta \ge 0$. Then, comparing coefficients of power
 series in $q$,
@@ -383,9 +379,9 @@ eq. (118) (`integers-2024-A101-cor-4`). -/
 public theorem_wanted regularCubicOverlinedCount_nine_four_mul_add_three (n : ℕ) :
     (8 : ℤ) ∣ regularCubicOverlinedCount 9 (4 * n + 3)
 
-/-- **Congruences modulo 16 for 16-regular cubic partitions with odd parts overlined.** Let
-$a_{16}(n)$ be the number of $16$-regular cubic partitions of $n$ with odd parts overlined, and
-let $f_k = \prod_{m \ge 1} (1 - q^{km})$. Let $p \ge 5$ be a prime with Legendre symbol
+/-- **Congruences modulo 16 for the regular cubic Euler quotient at $\ell=16$.** Let
+$a_{16}(n)$ be the $n$th coefficient of $f_2 f_{16}^2 f_{64} / (f_1^2 f_4 f_{32})$ in Eq. (2),
+where $f_k = \prod_{m \ge 1} (1 - q^{km})$. Let $p \ge 5$ be a prime with Legendre symbol
 $\left(\frac{-2}{p}\right) = -1$, and let $\delta \ge 0$. Then for every $n \ge 0$,
 $$a_{16}\left(4p^{2\delta} n + \frac{11p^{2\delta} - 5}{2}\right) \equiv 8c_n \pmod{16},$$
 where $c_n$ is the coefficient of $q^n$ in $f_1 f_{32}$, and for all $n \ge 0$ and all $t$ with

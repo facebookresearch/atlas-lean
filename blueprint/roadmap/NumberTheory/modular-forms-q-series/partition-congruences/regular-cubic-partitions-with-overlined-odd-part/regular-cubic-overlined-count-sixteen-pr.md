@@ -1,8 +1,8 @@
-# Congruences modulo 16 for 16-regular cubic partitions with odd parts overlined
+# Congruences modulo 16 for the regular cubic Euler quotient at $\ell=16$
 
 Let
-$a_{16}(n)$ be the number of $16$-regular cubic partitions of $n$ with odd parts overlined, and
-let $f_k = \prod_{m \ge 1} (1 - q^{km})$. Let $p \ge 5$ be a prime with Legendre symbol
+$a_{16}(n)$ be the $n$th coefficient of $f_2 f_{16}^2 f_{64} / (f_1^2 f_4 f_{32})$ in Eq. (2),
+where $f_k = \prod_{m \ge 1} (1 - q^{km})$. Let $p \ge 5$ be a prime with Legendre symbol
 $\left(\frac{-2}{p}\right) = -1$, and let $\delta \ge 0$. Then for every $n \ge 0$,
 
 $$a_{16}\left(4p^{2\delta} n + \frac{11p^{2\delta} - 5}{2}\right) \equiv 8c_n \pmod{16},$$

@@ -34,90 +34,6 @@ namespace arndtCompositionCount_eq_sum_prod
 
 open Finset
 
--- `valid`, `count_eq`, `valid_cons` and `count_pair` repeat the private declarations of the same
--- names in `MathlibExt/Combinatorics/Enumerative/ArndtCompositions.lean`, which are not exported.
-private abbrev valid {k : ℕ} (c : Fin k → ℕ) :=
-  (∀ i, 0 < c i) ∧ ∀ i j : Fin k, (i : ℕ) % 2 = 0 → (j : ℕ) = i + 1 → c j < c i
-
-private lemma count_eq (n k : ℕ) :
-    arndtCompositionCount (fun _ => True) n k =
-      ((Nat.antidiagonalTuple k n).filter valid).card := by
-  unfold arndtCompositionCount
-  congr 1
-  exact filter_congr fun c _ => by simp [valid]
-
-private lemma valid_cons {k a b : ℕ} {c : Fin k → ℕ} :
-    valid (Fin.cons a (Fin.cons b c)) ↔ 0 < b ∧ b < a ∧ valid c := by
-  constructor
-  · rintro ⟨hp, hd⟩
-    refine ⟨hp (Fin.succ 0), hd 0 (Fin.succ 0) rfl rfl, fun i ↦ hp i.succ.succ, ?_⟩
-    intro i j hi hj
-    apply hd i.succ.succ j.succ.succ <;> simp only [Fin.val_succ] <;> omega
-  · rintro ⟨hb, hba, hp, hd⟩
-    constructor
-    · intro i
-      refine Fin.cases (by simpa using hb.trans hba) (fun i ↦ ?_) i
-      exact Fin.cases hb hp i
-    · intro i
-      refine Fin.cases ?_ (fun i ↦ Fin.cases ?_ (fun i ↦ ?_) i) i
-      · intro j _ hj
-        have : j = Fin.succ 0 := Fin.ext (by simpa using hj)
-        simpa [this] using hba
-      · simp
-      · intro j
-        refine Fin.cases (by simp) (fun j ↦ Fin.cases (by simp) (fun j ↦ ?_) j) j
-        intro hi hj
-        exact hd i j (by simp only [Fin.val_succ] at hi; omega)
-          (by simp only [Fin.val_succ] at hj; omega)
-
--- Removing the leading descending pair `(s - j - 1, j + 1)`, `j < ⌊(s - 1)/2⌋`, of weight `s`.
-private lemma count_pair (n k : ℕ) :
-    arndtCompositionCount (fun _ => True) n (k + 2) =
-      ∑ p ∈ antidiagonal n, (p.1 - 1) / 2 * arndtCompositionCount (fun _ => True) p.2 k := by
-  let tails (t : ℕ) := (Nat.antidiagonalTuple k t).filter valid
-  let pieces := (antidiagonal n).sigma fun p ↦ range ((p.1 - 1) / 2) ×ˢ tails p.2
-  let join (z : Σ _ : ℕ × ℕ, ℕ × (Fin k → ℕ)) : Fin (k + 2) → ℕ :=
-    Fin.cons (z.1.1 - (z.2.1 + 1)) (Fin.cons (z.2.1 + 1) z.2.2)
-  let split (c : Fin (k + 2) → ℕ) : Σ _ : ℕ × ℕ, ℕ × (Fin k → ℕ) :=
-    ⟨(c 0 + c (Fin.succ 0), ∑ i : Fin k, c i.succ.succ),
-      c (Fin.succ 0) - 1, fun i ↦ c i.succ.succ⟩
-  have mem_pieces (p : ℕ × ℕ) (j : ℕ) (c : Fin k → ℕ) :
-      (⟨p, j, c⟩ : Σ _ : ℕ × ℕ, ℕ × (Fin k → ℕ)) ∈ pieces ↔
-        p.1 + p.2 = n ∧ j < (p.1 - 1) / 2 ∧ (∑ i, c i) = p.2 ∧ valid c := by
-    simp [pieces, tails, Nat.mem_antidiagonalTuple]
-  have hcard : pieces.card =
-      ∑ p ∈ antidiagonal n, (p.1 - 1) / 2 * arndtCompositionCount (fun _ => True) p.2 k := by
-    simp only [pieces, card_sigma, card_product, card_range, count_eq, tails]
-  rw [← hcard, count_eq]
-  symm
-  apply card_nbij' join split
-  · rintro ⟨⟨s, t⟩, j, c⟩ hz
-    obtain ⟨hst, hj, ht, hc⟩ := (mem_pieces _ _ _).mp hz
-    simp only [mem_coe, mem_filter, Nat.mem_antidiagonalTuple, join, Fin.sum_cons, valid_cons]
-    dsimp at *
-    exact ⟨by omega, by omega, by omega, hc⟩
-  · intro c hc
-    obtain ⟨hs, hv⟩ := mem_filter.mp hc
-    rw [Nat.mem_antidiagonalTuple, Fin.sum_univ_succ, Fin.sum_univ_succ] at hs
-    have hb := hv.1 (Fin.succ 0)
-    have hba := hv.2 0 (Fin.succ 0) rfl rfl
-    change 0 < c 1 at hb
-    change c 1 < c 0 at hba
-    change c 0 + (c 1 + ∑ i : Fin k, c i.succ.succ) = n at hs
-    apply (mem_pieces _ _ _).mpr
-    refine ⟨by dsimp; omega, by dsimp; omega, rfl, ?_⟩
-    exact ⟨fun i ↦ hv.1 i.succ.succ, fun i j hi hj ↦
-      hv.2 i.succ.succ j.succ.succ (by simp; omega) (by simp; omega)⟩
-  · rintro ⟨⟨s, t⟩, j, c⟩ hz
-    obtain ⟨_, hj, ht, _⟩ := (mem_pieces _ _ _).mp hz
-    simp [split, join, ht, show j + 1 ≤ s by dsimp at hj; omega]
-  · intro c hc
-    have hb := (mem_filter.mp hc).2.1 (Fin.succ 0)
-    change 0 < c 1 at hb
-    funext i
-    refine Fin.cases ?_ (fun i ↦ Fin.cases ?_ (fun _ ↦ rfl) i) i <;>
-      simp [join, split] <;> omega
-
 -- A tuple of weight `n` splits into its first entry `s` and a tail of weight `t`, `s + t = n`.
 private lemma sum_antidiagonalTuple_succ {M : Type*} [AddCommMonoid M] (k n : ℕ)
     (f : (Fin (k + 1) → ℕ) → M) :
@@ -148,8 +64,8 @@ private lemma count_two_mul (ℓ n : ℕ) :
   induction ℓ generalizing n with
   | zero => cases n <;> simp [arndtCompositionCount]
   | succ ℓ ih =>
-    rw [show 2 * (ℓ + 1) = 2 * ℓ + 2 by ring, count_pair, sum_filter,
-      sum_antidiagonalTuple_succ]
+    rw [show 2 * (ℓ + 1) = 2 * ℓ + 2 by ring, arndtCompositionCount.add_two,
+      sum_filter, sum_antidiagonalTuple_succ]
     refine sum_congr rfl fun p _ ↦ ?_
     rw [ih, sum_filter, mul_sum]
     refine sum_congr rfl fun a _ ↦ ?_
@@ -171,8 +87,8 @@ private lemma count_two_mul_add_one (ℓ n : ℕ) :
       simp [arndtCompositionCount, Nat.antidiagonalTuple_one, Fin.forall_fin_one,
         filter_singleton]
   | succ ℓ ih =>
-    rw [show 2 * (ℓ + 1) + 1 = 2 * ℓ + 1 + 2 by ring, count_pair, sum_filter,
-      sum_antidiagonalTuple_succ]
+    rw [show 2 * (ℓ + 1) + 1 = 2 * ℓ + 1 + 2 by ring, arndtCompositionCount.add_two,
+      sum_filter, sum_antidiagonalTuple_succ]
     refine sum_congr rfl fun p _ ↦ ?_
     rw [ih, sum_filter, mul_sum]
     refine sum_congr rfl fun a _ ↦ ?_
