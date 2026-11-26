@@ -10,6 +10,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
@@ -19,8 +20,9 @@ import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 /-!
 # Children of generalized Cohn triples
 
-This module defines generalized Markov numbers, the matrix `S` of the generalized Cohn
-triple relation, generalized Cohn matrices and generalized Cohn triples. Its main result is
+Using the generalized Markov numbers and Cohn matrices of
+`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`, this module defines the matrix `S`
+of the generalized Cohn triple relation and generalized Cohn triples. Its main result is
 that both children of a generalized Cohn triple are generalized Cohn triples over the Vieta
 jumpings of its generalized Markov triple.
 
@@ -61,18 +63,6 @@ private theorem cyc {k a b c : ℕ} (h : IsGenMarkovTriple k a b c) :
 
 @[expose] public section
 
-/-- **Generalized Markov number.** Let $k$ be a natural number. A natural number $b$ is a
-$k$-generalized Markov number when there are natural numbers $a$ and $c$ such that
-$(a, b, c)$ is a $k$-generalized Markov triple.
-
-Since the $k$-generalized Markov equation is symmetric in its three variables, this is the same
-as $b$ being an entry, in any position, of some $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.2. -/
-public def IsGenMarkovNumber (k b : ℕ) : Prop :=
-  ∃ a c, IsGenMarkovTriple k a b c
-
 /-- **The matrix $S$ of the generalized Cohn triple relation.** For a natural number $k$, $S$
 is the $2 \times 2$ integer matrix
 
@@ -84,15 +74,6 @@ Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numb
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
 public def genCohnS (k : ℕ) : Matrix (Fin 2) (Fin 2) ℤ :=
   !![(k : ℤ), 0; 3 * (k : ℤ) ^ 2 + 3 * k, k]
-
-/-- **Generalized Cohn matrices.** Let $k$ be a natural number. An integer $2 \times 2$ matrix
-$P = (p_{ij})$ is a $k$-generalized Cohn matrix if $\det P = 1$, its entry $p_{12}$ is a
-$k$-generalized Markov number, and its trace equals $(3 + 3k) p_{12} - k$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.1. -/
-public def IsGenCohnMatrix (k : ℕ) (P : Matrix (Fin 2) (Fin 2) ℤ) : Prop :=
-  P.det = 1 ∧ ∃ n : ℕ, P 0 1 = n ∧ IsGenMarkovNumber k n ∧ P.trace = (3 + 3 * k) * n - k
 
 /-- **Generalized Cohn triple.** Let $k$ be a natural number and let $S$ be the integer matrix
 with rows $(k, 0)$ and $(3k^2 + 3k, k)$. A triple $(P, Q, R)$ of integer $2 \times 2$ matrices is
