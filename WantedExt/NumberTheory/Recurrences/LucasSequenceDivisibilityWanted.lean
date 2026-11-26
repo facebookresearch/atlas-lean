@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.Recurrences.LucasDiscriminantGcd
 public import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceFirstKind
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceModThree
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceNegation
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
@@ -63,18 +64,6 @@ INTEGERS 25 (2025), Article A107, Proposition 2.3 (iii), (iv)
 public theorem_wanted lucasU_dvd_and_lucasV_dvd_of_dvd
     (L : LucasSequenceParams) (m n : ℕ) (h : m ∣ n) :
     lucasU L m ∣ lucasU L n ∧ (Odd (n / m) → lucasV L m ∣ lucasV L n)
-
-/-- **Lucas sequences under negation of the first parameter.** For integers $P$ and $Q \ne 0$ and
-every natural number $n$, the Lucas sequences $U$ and $V$ satisfy
-$U_n(-P, Q) = (-1)^{n+1} U_n(P, Q)$ and $V_n(-P, Q) = (-1)^n V_n(P, Q)$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Proposition 2.3 (vii), (viii)
-(`integers-2025-A107-prop-2-3`). -/
-public theorem_wanted lucasU_lucasV_neg_p
-    (L : LucasSequenceParams) (n : ℕ) :
-    lucasU ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ (n + 1) * lucasU L n ∧
-      lucasV ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ n * lucasV L n
 
 /-- **Shift congruence for the Lucas recurrence.** Let $U = U(P, Q)$ be the Lucas sequence with
 integer parameters $P$ and $Q \ne 0$, and let $(W_n)_{n \ge 0}$ be a sequence of integers with
