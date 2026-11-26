@@ -14,8 +14,8 @@ import Mathlib.Tactic.NormNum
 
 namespace MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
--- The matrices come from family (5.1) with `(u₁, u₂, v₁, v₂) = (4, 3, 2, 1)`, divided by a common
--- factor. Some linked roots have opposite signs, and `h` has a different row sum from `e` and `g`.
+-- The matrices come from family (5.1) with `(u₁, u₂, v₁, v₂) = (4, 3, 2, 1)`. Some linked roots
+-- have opposite signs, and `h` has a different row sum from `e` and `g`.
 -- The four entries are distinct, and so are the four offsets.
 example : PairwiseSumsSquares
     ![275625, 60025, 3164841, 8003241] ![0, 429975, 5835159, (996759 : ℤ)] := by
