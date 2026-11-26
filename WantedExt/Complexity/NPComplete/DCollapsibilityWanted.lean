@@ -16,12 +16,12 @@ Computer Science 2010, Article 3, doi:10.4086/cjtcs.2010.003 (Theorem 1.1(ii)).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Logic.Relation
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Combinatorics.RationalSimplicialHomologyShared
+public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ maximal face `τ(σ)` of `K` containing `σ` (`τ(σ) = σ` is allowed), and `d`
 of faces of `K`.
 
 Complexes are the repository's finite abstract simplicial complexes on the vertex set `ℕ`
-(`WantedExt.Combinatorics.RationalSimplicialHomologyShared`): finite families of finite sets
+(`MathlibExt.Combinatorics.RationalSimplicialHomologyShared`): finite families of finite sets
 closed under taking subsets (`IsSimplicialComplex`), so a nonempty complex contains the empty
 face; maximal faces are `IsFacet`. The instance is the list of all faces of `K`, each a list of
 distinct vertices, every face listed once, as in Tancer's input; `complex` reads it as a

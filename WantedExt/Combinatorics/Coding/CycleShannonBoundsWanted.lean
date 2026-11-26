@@ -10,7 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import MathlibExt.Combinatorics.Coding.CycleCode
+public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
+public import MathlibExt.Combinatorics.Coding.PolakSchrijver
 
 /-!
 # Known cycle-capacity construction and rate requests
@@ -32,21 +33,6 @@ namespace MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
 
-/-- **Polak–Schrijver code of size 367 for the 7-cycle.** There is a finite set $A$ of words of
-length $5$ over $\mathbb{Z}/7\mathbb{Z}$ that is an independent code for the $7$-cycle and has
-exactly $367$ elements.
-
-Source: Polak--Schrijver, arXiv:1808.07438, the fifth-power 367-word construction. -/
-theorem_wanted polakSchrijverLowerBound :
-  ∃ A : Finset (Fin 5 → ZMod 7), IsCycleCode 7 A ∧ A.card = 367
-
-/-- **Shannon's upper bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at most $7/2$.
-
-Source: Shannon (1956), the fractional-clique-cover upper bound. -/
-theorem_wanted shannon1956UpperBound :
-  shannonCapacityCycle 7 ≤ (7 : ENNReal) / 2
-
 /-- **Lovász's theta value for the 7-cycle.** This is the real number
 $\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, Lovász's closed form for the theta number of the
 $7$-cycle, viewed as an element of $[0, \infty]$.
@@ -64,13 +50,6 @@ Source: Lovász (1979); the closed form is also printed in the retained BPZ prim
 theorem_wanted lovasz1979UpperBound :
   shannonCapacityCycle 7 ≤ lovaszThetaCycleSeven
 
-/-- **Baumert et al. lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $343^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Baumert--McEliece--Rodemich--Rumsey--Stanley--Taylor (1971), exact rate row. -/
-theorem_wanted bmrrst1971LowerBound :
-  ENNReal.rpow 343 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
 /-- **Vesel–Žerovnik lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
 $7$-cycle is at least $108^{1/4}$.
 
@@ -84,13 +63,6 @@ $7$-cycle is at least $350^{1/5}$, as an inequality in $[0, \infty]$.
 Source: Mathew--Östergård (2017), exact rate row; no unprinted code is supplied. -/
 theorem_wanted mathewOstergard2017LowerBound :
   ENNReal.rpow 350 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
-/-- **Polak–Schrijver lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $367^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Polak--Schrijver, arXiv:1808.07438, exact fifth-root rate. -/
-theorem_wanted polakSchrijverRateLowerBound :
-  ENNReal.rpow 367 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
 
 /-- **Itty–Rosin–Carstensen–Reichman lower bound for the capacity of the 7-cycle.** The Shannon
 capacity of the $7$-cycle is at least $134753^{1/10}$, as an inequality in $[0, \infty]$.

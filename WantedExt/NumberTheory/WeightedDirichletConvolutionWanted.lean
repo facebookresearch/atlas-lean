@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Algebra.BigOperators.HomogeneousGeomSum
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
+public import MathlibExt.NumberTheory.ArithmeticFunction.WeightedDirichletConvolution
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -94,28 +96,6 @@ public theorem bFreeIndicator_prime_pow {κ : ℕ → ℕ} {p : ℕ} (hp : p.Pri
   intro hc
   exact absurd hc this
 
-/-- **Product formula for homogeneous sums of powers.** Let $R$ be a commutative ring, let
-$a, b \in R$ and let $\tau, \xi$ be natural numbers. Then
-$$
-\sum_{j=0}^{\tau+\xi} a^j b^{\tau+\xi-j} =
-\left(\sum_{j=0}^{\tau} a^j b^{\tau-j}\right) \left(\sum_{i=0}^{\xi} a^i b^{\xi-i}\right) -
-ab \left(\sum_{j=0}^{\tau-1} a^j b^{\tau-1-j}\right)
-\left(\sum_{i=0}^{\xi-1} a^i b^{\xi-1-i}\right),
-$$
-where a sum with upper limit $-1$ is zero.
-
-In the source, $a$ and $b$ are the values $u(n)$ and $v(n)$ of complex arithmetic functions.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 1, Equation (16) (`integers-2024-A75-lem-1`). -/
-public theorem_wanted sum_pow_mul_pow_add_eq {R : Type*} [CommRing R] (a b : R) (τ ξ : ℕ) :
-    ∑ j ∈ Finset.range (τ + ξ + 1), a ^ j * b ^ (τ + ξ - j) =
-      (∑ j ∈ Finset.range (τ + 1), a ^ j * b ^ (τ - j)) *
-          (∑ i ∈ Finset.range (ξ + 1), a ^ i * b ^ (ξ - i)) -
-        a * b * (∑ j ∈ Finset.range τ, a ^ j * b ^ (τ - 1 - j)) *
-          (∑ i ∈ Finset.range ξ, a ^ i * b ^ (ξ - 1 - i))
-
 /-- **Gcd expansion of a convolution of completely multiplicative functions at a product.** Let
 $u$ and $v$ be complex-valued completely multiplicative arithmetic functions, meaning
 $u(mn) = u(m) u(n)$ and $v(mn) = v(m) v(n)$ for all natural numbers $m$ and $n$. Let $u * v$ be
@@ -157,26 +137,6 @@ public theorem_wanted sum_dirichletConvolution_mul_eq {u v : ArithmeticFunction 
     ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j) =
       ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
         ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
-
-/-- **Möbius expansion of weighted sums of a Dirichlet convolution.** Let $w$, $u$ and $v$ be
-arithmetic functions with complex values, let $*$ denote Dirichlet convolution, let $\mu$ be the
-Möbius function and put $g = w * \mu$. Then for every real $x$,
-$$
-\sum_{1 \le j \le x} w(j)\, (u * v)(j) =
-\sum_{1 \le r \le x} g(r) \sum_{1 \le j \le x/r} (u * v)(rj),
-$$
-where $j$ and $r$ run over positive integers.
-
-Both sides vanish for $x < 1$; the source assumes $x \ge 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 4 (`integers-2024-A75-lem-4`). -/
-public theorem_wanted sum_mul_dirichletConvolution_eq_sum_moebius (w u v : ArithmeticFunction ℂ)
-    (x : ℝ) :
-    ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, w j * (u * v) j =
-      ∑ r ∈ Finset.Icc 1 ⌊x⌋₊, (w * (μ : ArithmeticFunction ℂ)) r *
-        ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j)
 
 /-- **Weighted summation of Dirichlet convolutions.** Let $u$ and $v$ be completely
 multiplicative arithmetic functions with complex values, let $w$ be any arithmetic function with

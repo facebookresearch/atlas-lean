@@ -10,6 +10,10 @@ Weak convergence is a statement about laws only; the theorem realises it as almo
 
 - [Skorokhod representation theorem](skorokhod-representation.md)
 
+## Background
+
+- [Skorokhod representation on the real line](../skorokhod-representation-on-the-real-line/README.md): the real-line form, built from quantile functions
+
 ## Sources
 
 - A. V. Skorokhod, *Limit theorems for stochastic processes*, Theory of Probability and Its Applications (1956).

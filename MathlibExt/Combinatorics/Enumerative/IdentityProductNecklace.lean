@@ -218,7 +218,7 @@ private lemma orbSet_congr (G : Type*) [Group G]
   exact orbSet_shift_eq G n g y
 
 /-- The quotient-to-orbit-set map. -/
-private def neckQuot (G : Type*) [Group G] (n : ℕ) [NeZero n] :
+private noncomputable def neckQuot (G : Type*) [Group G] (n : ℕ) [NeZero n] :
     Quotient (AddAction.orbitRel (ZMod n)
       {x : Fin n → G // (List.ofFn x).prod = 1}) → Set (Fin n → G) :=
   fun q => orbSet G n q.out.val
@@ -711,7 +711,7 @@ private lemma fiber_count (G : Type*) [Group G] [Fintype G] [DecidableEq G]
     have hce : Fintype.card {a : Fin d → G // (List.ofFn a).prod = g}
         = (Finset.univ.filter
           (fun a : Fin d → G => (List.ofFn a).prod = g)).card :=
-      Fintype.card_ofFinset _ (fun a => by
+      Fintype.card_ofFinset (p := {a : Fin d → G | (List.ofFn a).prod = g}) _ (fun a => by
         constructor
         · intro h
           exact (Finset.mem_filter.mp h).2
@@ -728,7 +728,7 @@ private lemma fiber_count (G : Type*) [Group G] [Fintype G] [DecidableEq G]
   have hLHS : Fintype.card {a : Fin d → G // ((List.ofFn a).prod) ^ e = 1}
       = (Finset.univ.filter
         (fun a : Fin d → G => ((List.ofFn a).prod) ^ e = 1)).card :=
-    Fintype.card_ofFinset _ (fun a => by
+    Fintype.card_ofFinset (p := {a : Fin d → G | (List.ofFn a).prod ^ e = 1}) _ (fun a => by
       constructor
       · intro h
         exact (Finset.mem_filter.mp h).2
@@ -828,8 +828,15 @@ private lemma card_fixedBy (G : Type*) [Group G] [Fintype G] [DecidableEq G]
   rw [hde, he, Fintype.card_congr (fixedBy_equiv_gcd G n k)]
   exact fiber_count G _ _ (Nat.gcd_pos_of_pos_left _ (NeZero.pos n))
 
-/-- The number of identity-product necklaces over a finite group equals Burnside's average over
-rotations. Source: Darij Grinberg and Peter Mao, "Necklaces over a Group with Identity Product,"
+/-- **Counting necklaces with identity product.** Let $G$ be a finite group and $n \ge 1$. For an
+$n$-tuple $x = (x_0, \dots, x_{n-1}) \in G^n$ let its necklace be the set of its $n$ cyclic
+rotations $(x_m, x_{m+1}, \dots, x_{m+n-1})$, $0 \le m < n$, with indices taken mod $n$. Then the
+number of necklaces of tuples $x$ with $x_0 x_1 \cdots x_{n-1} = 1$ is
+$$\frac{1}{n} \sum_{d \mid n} \varphi(n/d) \, r_{n/d}(G) \, |G|^{d-1},$$
+where $\varphi$ is Euler's totient function and $r_k(G)$ is the number of $g \in G$ with
+$g^k = 1$.
+
+Source: Darij Grinberg and Peter Mao, "Necklaces over a Group with Identity Product,"
 Journal of Integer Sequences 29 (2026), Article 26.4.6, Theorem 1 (`thm.main`), lines 186–195,
 <https://cs.uwaterloo.ca/journals/JIS/VOL29/Grinberg/grinberg2.tex>. Identity-product tuples,
 divisor-count notation, and necklaces defined at lines 140–180.

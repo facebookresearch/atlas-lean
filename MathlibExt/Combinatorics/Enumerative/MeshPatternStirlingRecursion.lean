@@ -21,10 +21,11 @@ namespace MetaMathlibExt
 
 /-! # Stirling-type recursion for mesh-pattern counts -/
 
-/-- Canonical mesh-match predicate: position `i` is a left-to-right maximum of `σ` with at
-least `r - 1` larger entries strictly between `i` and a global maximizer. Shared by the
-recursion (`meshPatternCount_stirlingRecursion`) and the coefficient theorem
-(`meshPatternCount_eq_factorial_mul_rStirlingNumber`). -/
+/-- **Mesh-pattern match.** Let $\sigma$ be a permutation of $m$ elements, with positions numbered
+$1, \dots, m$, let $p$ be the position of the largest value of $\sigma$, and let $r$ be a natural
+number. A position $i$ is a mesh-pattern match of $\sigma$ with parameter $r$ when
+$\sigma(t) < \sigma(i)$ for every position $t < i$ and at least $r - 1$ positions $t$ with
+$i < t < p$ have $\sigma(t) > \sigma(i)$. -/
 def MatchPred {m : ℕ} (r : ℕ) (σ : Equiv.Perm (Fin m)) (i : Fin m) : Prop :=
   ∃ maxIndex : Fin m,
     (∀ t : Fin m, σ t ≤ σ maxIndex) ∧
@@ -32,8 +33,9 @@ def MatchPred {m : ℕ} (r : ℕ) (σ : Equiv.Perm (Fin m)) (i : Fin m) : Prop :
       i < t ∧ t < maxIndex ∧ σ i < σ t).card ∧
     ∀ t : Fin m, t < i → σ t < σ i
 
-/-- Canonical zero-match predicate: some global maximizer of `σ` sits at position `≥ r`.
-Shared by the recursion and the coefficient theorem. -/
+/-- **Mesh-pattern zero condition.** Let $\sigma$ be a permutation of $m$ elements, with positions
+numbered $1, \dots, m$, and let $r$ be a natural number. The zero condition holds for $\sigma$
+with parameter $r$ when some position $p \ge r$ holds the largest value of $\sigma$. -/
 def ZeroPred {m : ℕ} (r : ℕ) (σ : Equiv.Perm (Fin m)) : Prop :=
   ∃ maxIndex : Fin m,
     (∀ t : Fin m, σ t ≤ σ maxIndex) ∧ r ≤ maxIndex.val + 1
@@ -49,13 +51,16 @@ instance decZeroPred (m : ℕ) (r : ℕ) (σ : Equiv.Perm (Fin m)) :
   unfold ZeroPred
   infer_instance
 
-/-- Canonical mesh-pattern count statistic: number of `MatchPred` positions plus one when
-`ZeroPred` holds. Shared by the recursion and the coefficient theorem. -/
+/-- **Canonical mesh-pattern statistic.** Let $\sigma$ be a permutation of $m$ elements, with
+positions numbered $1, \dots, m$, and let $r$ be a natural number. The statistic $N_r(\sigma)$ is
+the number of mesh-pattern matches of $\sigma$ with parameter $r$, plus $1$ if the mesh-pattern
+zero condition holds, that is, if the largest value of $\sigma$ sits at a position $p \ge r$. -/
 def meshN {m : ℕ} (r : ℕ) (σ : Equiv.Perm (Fin m)) : ℕ :=
   (Finset.univ.filter (MatchPred r σ)).card + if ZeroPred r σ then 1 else 0
 
-/-- Canonical mesh-pattern counting polynomial: `∑ σ, X ^ meshN r σ`. Shared by the
-recursion and the coefficient theorem. -/
+/-- **Mesh-pattern counting polynomial.** For natural numbers $m$ and $r$, the polynomial
+$P_{m,r}(X) \in \mathbb{N}[X]$ is the sum of $X^{N_r(\sigma)}$ over all permutations $\sigma$ of
+$m$ elements, where $N_r(\sigma)$ is the canonical mesh-pattern statistic with parameter $r$. -/
 noncomputable def PolyN : ℕ → ℕ → Polynomial ℕ := fun m r =>
   ∑ σ : Equiv.Perm (Fin m), (Polynomial.X : Polynomial ℕ) ^ meshN r σ
 
@@ -955,8 +960,16 @@ private lemma poly_rec (t a : ℕ) (h : a ≤ t) : PolyN (t.succ.succ) (a + 2)
       (filter_card_add t a h)
 
 /--
-The counting polynomial for the quadrant marked mesh pattern satisfies a Stirling-type recursion,
-together with its coefficient recurrence and initial value.
+**Stirling-type recursion for the mesh-pattern counting polynomial.** Let $1 < k \le n$ and
+$j > 0$. For a permutation $\sigma$ of $m$ elements, with positions numbered $1, \dots, m$, let
+$p$ be the position of its largest value and let $N_r(\sigma)$ be the number of positions $i$
+such that $\sigma(t) < \sigma(i)$ for all $t < i$ and at least $r - 1$ positions $t$ with
+$i < t < p$ have $\sigma(t) > \sigma(i)$, plus $1$ if $p \ge r$. Let $P_{m,r}(X) \in \mathbb{N}[X]$
+be the sum of $X^{N_r(\sigma)}$ over all permutations $\sigma$ of $m$ elements, and let
+$c_{m,r}(s)$ be its coefficient of $X^s$. Then
+$c_{n,k}(j) = (n-1)\,c_{n-1,k}(j) + c_{n-1,k}(j-1)$,
+$P_{n,k}(X) = (X + n - 1)\,P_{n-1,k}(X)$, $c_{n,k}(0) = (n-1)\,c_{n-1,k}(0)$, and
+$P_{k-1,k}(X) = (k-1)!$.
 
 Source: Matt Davis, "Quadrant Marked Mesh Patterns and the r-Stirling Numbers," Journal
 of Integer Sequences 18 (2015), Article 15.10.1, Theorem (label `thm:main`), line 175,

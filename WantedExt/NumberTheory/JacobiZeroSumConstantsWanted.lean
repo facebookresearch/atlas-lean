@@ -14,7 +14,10 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
-public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import MathlibExt.NumberTheory.JacobiAgreementChineseRemainder
+public import MathlibExt.NumberTheory.JacobiAgreementUnitsLift
+public import MathlibExt.NumberTheory.JacobiKernelLift
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumPrimePower
 
 /-!
 # Zero-sum constants related to the Jacobi symbol: wishlist
@@ -169,19 +172,6 @@ public theorem_wanted jacobi_kernel_index_two (n : ℕ) (hn : Odd n) :
         H.index = 2) ∧
     (IsSquare n → ∀ u : (ZMod n)ˣ, jacobiSym (((u : ZMod n).val : ℕ) : ℤ) n = 1)
 
-/-- **Units lift to the kernel of the Jacobi symbol across a non-square coprime factor.** Let $d$
-and $n'$ be coprime natural numbers such that $d n'$ is odd and $d$ is not a perfect square, and
-put $n = d n'$. Then every unit $y$ of $\mathbb{Z}/n'\mathbb{Z}$ is the reduction modulo $n'$ of a
-unit $x$ of $\mathbb{Z}/n\mathbb{Z}$ whose least nonnegative representative $v$ has Jacobi symbol
-$\left(\frac{v}{n}\right) = 1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 14
-(`jis-2024-24.1.7-lem-14`). -/
-public theorem_wanted units_subset_image_jacobi_kernel (d n' : ℕ) (hn : Odd (d * n'))
-    (hd : ¬ IsSquare d) (hcop : Nat.Coprime d n') (y : ZMod n') (hy : IsUnit y) :
-    ∃ x ∈ jacobiOneSet (d * n'), ZMod.castHom (dvd_mul_left n' d) (ZMod n') x = y
-
 /-- **Lifting weighted zero sums along a coprime factor.** Let $d$ and $n'$ be coprime natural
 numbers, put $n = d n'$, and let $f : \mathbb{Z}/n\mathbb{Z} \to \mathbb{Z}/n'\mathbb{Z}$ be
 reduction modulo $n'$. Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and
@@ -199,20 +189,6 @@ public theorem_wanted weighted_zero_sum_of_image (d n' k : ℕ) (hcop : Nat.Copr
     (hA : A' ⊆ ZMod.castHom (dvd_mul_left n' d) (ZMod n') '' A)
     (h : IsWeightedZeroSum n' k A' (fun i => ZMod.castHom (dvd_mul_left n' d) (ZMod n') (x i))) :
     IsWeightedZeroSum (d * n') k A x
-
-/-- **Unit-weighted zero sums modulo an odd prime power.** Let $p$ be an odd prime, let $r$ and
-$k$ be natural numbers, and let $x_1, \dots, x_k \in \mathbb{Z}/p^r\mathbb{Z}$. Suppose that for
-at least two indices $i$ the least nonnegative representative of $x_i$ is coprime to $p$. Then
-there are units $a_1, \dots, a_k$ of $\mathbb{Z}/p^r\mathbb{Z}$ with
-$a_1 x_1 + \dots + a_k x_k = 0$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 16
-(`jis-2024-24.1.7-lem-16`). -/
-public theorem_wanted unit_weighted_zero_sum_prime_power (p r k : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) (x : Fin k → ZMod (p ^ r))
-    (h : 2 ≤ (Finset.univ.filter fun i => Nat.Coprime (x i).val p).card) :
-    IsWeightedZeroSum (p ^ r) k (unitSet (p ^ r)) x
 
 /-- **Three-term sums of square-weighted units cover $\mathbb{Z}_{p^r}$.** Let $p \ge 7$ be a
 prime, $r$ a natural number and $n = p^r$; write $\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$ and
@@ -335,26 +311,6 @@ public theorem_wanted jacobi_consecutive_constant (n : ℕ) (hn : Odd n) (hsf : 
     (¬ n.Prime → (∀ p ∈ n.primeFactors, 7 ≤ p) →
       IsLeast (consecutiveSet n (jacobiOneSet n)) (2 ^ Ω n))
 
-/-- **Units with equal Jacobi and Legendre symbols form a subgroup of index two.** Let $n$ be an
-odd natural number and $p$ a prime divisor of $n$, and suppose that $p$ is not the unique prime
-divisor of $n$ with odd exponent in $n$; that is, it is not the case that the exponent of $p$ in
-$n$ is odd and every prime divisor of $n$ with odd exponent in $n$ equals $p$. Then the set of
-units $u$ of $\mathbb{Z}/n\mathbb{Z}$ whose Jacobi symbol $\left(\frac{u}{n}\right)$ equals the
-Legendre symbol $\left(\frac{u}{p}\right)$ is a subgroup of index two in the unit group of
-$\mathbb{Z}/n\mathbb{Z}$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7,
-Proposition 26 (`jis-2024-24.1.7-prop-26`). -/
-public theorem_wanted jacobi_eq_legendre_index_two (n p : ℕ) (hn : Odd n) (hp : p.Prime)
-    (hpn : p ∣ n)
-    (hnot : ¬ (Odd (n.factorization p) ∧
-      ∀ q ∈ n.primeFactors, Odd (n.factorization q) → q = p)) :
-    ∃ H : Subgroup (ZMod n)ˣ,
-      (∀ u : (ZMod n)ˣ, u ∈ H ↔
-        jacobiSym (((u : ZMod n).val : ℕ) : ℤ) n = jacobiSym (((u : ZMod n).val : ℕ) : ℤ) p) ∧
-      H.index = 2
-
 /-- **Lifting the Jacobi kernel into the Jacobi agreement set.** Let $n$ be an odd natural number
 and let $p$, $p'$ be prime divisors of $n$ with $p$ coprime to $n' = n/p$. For a residue $x$ modulo
 $N$ and an odd $m$, write $(x/m)$ for the Jacobi symbol $(a/m)$ of the representative
@@ -371,41 +327,6 @@ public theorem_wanted jacobi_kernel_subset_image_jacobi_eq_legendre (n p p' : �
     (hp : p.Prime) (hp' : p'.Prime) (hpn : p ∣ n) (hp'n : p' ∣ n)
     (hcop : Nat.Coprime p (n / p)) (y : ZMod (n / p)) (hy : y ∈ jacobiOneSet (n / p)) :
     ∃ x ∈ jacobiEqSet n p', ZMod.castHom (Nat.div_dvd_of_dvd hpn) (ZMod (n / p)) x = y
-
-/-- **Units modulo a prime divisor lift to units where the Jacobi and Legendre symbols agree.**
-Let $n$ be odd and let $p'$ be a prime dividing $n$ such that $p'$ is coprime to $n/p'$. Write
-$L(n;p')$ for the set of units $x$ of $\mathbb{Z}/n\mathbb{Z}$ whose least nonnegative
-representative $v$ satisfies $\left(\frac{v}{n}\right) = \left(\frac{v}{p'}\right)$, where both
-are Jacobi symbols. Then every unit $z$ of $\mathbb{Z}/p'\mathbb{Z}$ is the reduction modulo $p'$
-of some element of $L(n;p')$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 29
-(`jis-2024-24.1.7-lem-29`). -/
-public theorem_wanted units_prime_subset_image_jacobi_eq_legendre (n p' : ℕ) (hn : Odd n)
-    (hp' : p'.Prime) (hp'n : p' ∣ n) (hcop : Nat.Coprime p' (n / p')) (z : ZMod p')
-    (hz : IsUnit z) :
-    ∃ x ∈ jacobiEqSet n p', ZMod.castHom hp'n (ZMod p') x = z
-
-/-- **Chinese remainder lifts into the Jacobi agreement set.** Let $n$ be an odd squarefree natural
-number, $p'$ a prime divisor of $n$ and $n' = n/p'$. For a residue $x$ modulo $N$ and an odd $m$,
-write $(x/m)$ for the Jacobi symbol $(a/m)$ of the representative $0 \le a < N$ of $x$. Let $U(m)$
-be the group of units of $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$, let
-$S(n') = \{y \in U(n') : (y/n') = 1\}$ and $L(n;p') = \{x \in U(n) : (x/n) = (x/p')\}$, and for
-$m \mid n$ let $f_{n,m} : \mathbb{Z}_n \to \mathbb{Z}_m$ be reduction modulo $m$. Then for every
-$y \in S(n')$ and every $z \in U(p')$ there is $x \in L(n;p')$ with $f_{n,n'}(x) = y$ and
-$f_{n,p'}(x) = z$. That is, the Chinese remainder isomorphism
-$\psi = (f_{n,n'}, f_{n,p'}) : U(n) \to U(n') \times U(p')$ satisfies
-$S(n') \times U(p') \subseteq \psi(L(n;p'))$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 31
-(`jis-2024-24.1.7-lem-31`). -/
-public theorem_wanted jacobi_kernel_prod_units_subset_crt_image (n p' : ℕ) (hn : Odd n)
-    (hsf : Squarefree n) (hp' : p'.Prime) (hp'n : p' ∣ n) (y : ZMod (n / p'))
-    (hy : y ∈ jacobiOneSet (n / p')) (z : ZMod p') (hz : IsUnit z) :
-    ∃ x ∈ jacobiEqSet n p', ZMod.castHom (Nat.div_dvd_of_dvd hp'n) (ZMod (n / p')) x = y ∧
-      ZMod.castHom hp'n (ZMod p') x = z
 
 open Classical in
 /-- **Weighted zero-sum criterion for the Jacobi–Legendre weights.** Let $n$ be a squarefree

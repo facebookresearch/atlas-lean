@@ -1,0 +1,3 @@
+# The distinct branch is physical only above the pressure-positivity threshold
+
+Let $\gamma > 1$, $R > 0$, and an upstream state with $\rho_1 > 0$, $T_1 > 0$, $u_1 > 0$, $p_1 = \rho_1 R T_1$, sound speed $a_1$ with $a_1^2 = \gamma R T_1$, and Mach number $M_1 = |u_1|/a_1$. Write $m = M_1^2$, $r(m) = \dfrac{(\gamma + 1) m}{(\gamma - 1) m + 2}$ and $P(m) = \dfrac{2\gamma m - (\gamma - 1)}{\gamma + 1}$. On the distinct normal-shock branch the downstream density $\rho_1 r(m)$ is positive, and the downstream pressure $p_1 P(m)$ and temperature $T_1 P(m)/r(m)$ are both positive if and only if $M_1^2 > (\gamma - 1)/(2\gamma)$.

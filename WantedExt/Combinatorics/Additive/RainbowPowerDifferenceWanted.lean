@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
 
 /-! # Rainbow-free colorings for `x - y = z ^ k`
 
@@ -52,39 +53,6 @@ public theorem_wanted eq_zero_of_color_eq_color_zero_of_rainbowFree_powDiff
     (p k : ℕ) [Fact p.Prime] (c : ZMod p → Fin 3) (hc : Function.Surjective c)
     (hrf : ∀ x y z : ZMod p, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
     (a : ZMod p) (ha : c a = c 0) : a = 0
-
-/-- **Rainbow-free colorings of $\mathbb{Z}/n\mathbb{Z}$ lift to the positive integers.** Let $n$
-and $k$ be natural numbers and let $c$ be a coloring of $\mathbb{Z}/n\mathbb{Z}$ with three colors
-that is rainbow-free for $x - y = z^k$: there are no $x, y, z \in \mathbb{Z}/n\mathbb{Z}$ with
-$x - y = z^k$ whose colors $c(x)$, $c(y)$, $c(z)$ are pairwise distinct. Then the coloring
-$i \mapsto c(i \bmod n)$ of the positive integers is rainbow-free for $x - y = z^k$: for all
-positive integers $x, y, z$ with $x = y + z^k$, the colors $c(x \bmod n)$, $c(y \bmod n)$ and
-$c(z \bmod n)$ are not pairwise distinct. (For $n = 0$, $\mathbb{Z}/0\mathbb{Z}$ is $\mathbb{Z}$
-and $i \bmod 0 = i$.)
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 7
-(`integers-2024-A105-lem-7`). -/
-public theorem_wanted rainbowFree_powDiff_lift_of_zmod
-    (n k : ℕ) (c : ZMod n → Fin 3)
-    (hrf : ∀ x y z : ZMod n, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (x y z : ℕ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) (h : x = y + z ^ k) :
-    ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z)
-
-/-- **Coprime representatives at a coprime distance.** Let $n$ be a natural number and let $c$ be a
-coloring of $\mathbb{Z}/n\mathbb{Z}$ with three colors, used to color every positive integer by its
-residue modulo $n$. If $i_1, i_2$ are positive integers with $\gcd(|i_1 - i_2|, n) = 1$, then there
-are coprime positive integers $j_1, j_2$ with $|j_1 - j_2| = |i_1 - i_2|$ such that $j_1$ has the
-color of $i_1$ and $j_2$ has the color of $i_2$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 8
-(`integers-2024-A105-lem-8`). -/
-public theorem_wanted exists_coprime_same_colors_of_coprime_dist
-    (n : ℕ) (c : ZMod n → Fin 3) (i₁ i₂ : ℕ) (hi₁ : 0 < i₁) (hi₂ : 0 < i₂)
-    (hd : Nat.Coprime ((i₁ : ℤ) - i₂).natAbs n) :
-    ∃ j₁ j₂ : ℕ, 0 < j₁ ∧ 0 < j₂ ∧ Nat.Coprime j₁ j₂ ∧ c j₁ = c i₁ ∧ c j₂ = c i₂ ∧
-      ((j₁ : ℤ) - j₂).natAbs = ((i₁ : ℤ) - i₂).natAbs
 
 /-- **Rainbow-free colorings modulo a prime are symmetric under negation.** Let $p$ be a prime and
 $k$ a natural number, and let $c$ be a coloring of $\mathbb{Z}/p\mathbb{Z}$ with three colors that
@@ -149,16 +117,6 @@ public theorem_wanted card_powMap_components_eq_three_iff_of_odd
     (p k : ℕ) [Fact p.Prime] (hk : Odd k) (hk3 : 3 ≤ k) :
     Nat.card (Quot fun a b : ZMod p => ∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) = 3 ↔
       ∃ m : ℕ, p - 1 = 2 * m ∧ ∀ q : ℕ, q.Prime → q ∣ m → q ∣ k
-
-/-- **Large multiples of the gcd are nonnegative combinations.** Let $i$ and $j$ be positive
-integers. There is an $n_0$ such that every integer $m > n_0$ divisible by $\gcd(i, j)$ can be
-written as $m = ui + vj$ with nonnegative integers $u$ and $v$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 2
-(`integers-2024-A105-thm-2`). -/
-public theorem_wanted exists_forall_gcd_dvd_eq_add_mul (i j : ℕ) (hi : 0 < i) (hj : 0 < j) :
-    ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → Nat.gcd i j ∣ m → ∃ u v : ℕ, m = u * i + v * j
 
 /-- **Upper density threshold for rainbow solutions of $x - y = z^k$.** Let $k \ge 2$ be an
 integer, let $s = \lfloor k / 2 \rfloor$ and $\delta = (4^s - 1) / (3 \cdot 4^s)$, and let $c$ be
@@ -254,24 +212,6 @@ public theorem_wanted rainbowNumber_powDiff_of_odd (p k : ℕ) [Fact p.Prime] (h
       sInf {r : ℕ | 3 ≤ r ∧ ∀ c : ZMod p → Fin r, Function.Surjective c →
         ∃ x y z : ZMod p, x - y = z ^ k ∧ c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z} = 4)
 
-
-/-- **The color of one dominates bichromatic strings.** Let $r$ and $k$ be natural numbers and let
-$c$ be a coloring of the positive integers with $r$ colors that uses every color on some positive
-integer and is rainbow-free for $x - y = z^k$: no positive integers $x, y, z$ with $x = y + z^k$
-have $c(x), c(y), c(z)$ pairwise distinct. Then for every positive integer $i$ and every natural
-number $\ell$, if $c$ takes exactly two colors on $i, i + 1, \dots, i + \ell - 1$, one of these
-integers has the color $c(1)$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 1
-(`integers-2024-A105-lem-1`). -/
-public theorem_wanted color_one_dominant_of_rainbowFree_powDiff (r k : ℕ) (c : ℕ → Fin r)
-    (hc : ∀ j : Fin r, ∃ i : ℕ, 0 < i ∧ c i = j)
-    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
-      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (i ℓ : ℕ) (hi : 0 < i) (hbi : ((Finset.Ico i (i + ℓ)).image c).card = 2) :
-    c 1 ∈ (Finset.Ico i (i + ℓ)).image c
-
 /-- **Shifting monochromatic strings by $k$-th powers.** Let $k$ be a natural number and let $c$
 be a coloring of the positive integers by three distinct colors $R$, $B$, $G$ with no rainbow
 solution of $x - y = z^k$: there are no positive integers $x, y, z$ with $x = y + z^k$ and
@@ -295,46 +235,6 @@ public theorem_wanted monochromatic_shift_of_rainbowFree_powDiff (k : ℕ) (c : 
     (hG : ∀ t < ℓ, c (i + t) = G) :
     (∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i + j ^ k + t) = e) ∧
       (j ^ k < i → ∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i - j ^ k + t) = e)
-
-/-- **Zhan's small-gap lemma.** Let $S$ be a set of natural numbers, let $n_0 \ge 2$ be an
-integer, and write $S(n)$ for the number of elements of $S \cap \{1, \dots, n\}$. If
-$\limsup_{n \to \infty} (S(n) - n / n_0) = \infty$, that is, for every real $M$ there are
-arbitrarily large $n$ with $S(n) - n / n_0 > M$, then there is an integer $d$ with
-$1 \le d \le n_0 - 1$ such that $j$ and $j + d$ both lie in $S$ for arbitrarily large $j$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 3
-(`integers-2024-A105-lem-3`). -/
-public theorem_wanted exists_small_gap_of_limsup_count (S : Set ℕ) [DecidablePred (· ∈ S)]
-    (n₀ : ℕ) (hn₀ : 2 ≤ n₀)
-    (hS : ∀ M : ℝ, ∀ N₀ : ℕ, ∃ n : ℕ, N₀ ≤ n ∧
-      M < (((Finset.Icc 1 n).filter (· ∈ S)).card : ℝ) - n / n₀) :
-    ∃ d : ℕ, 1 ≤ d ∧ d ≤ n₀ - 1 ∧ ∀ i : ℕ, ∃ j : ℕ, i < j ∧ j ∈ S ∧ j + d ∈ S
-
-/-- **Non-dominant monochromatic strings have bounded length.** Let $k$ be a natural number, let
-$n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive integers by three colors
-with no rainbow solution of $x - y = z^k$: there are no positive integers $x, y, z$ with
-$x = y + z^k$ and $c(x)$, $c(y)$, $c(z)$ pairwise distinct. For a color $e$ write $N_e(n)$ for
-the number of $x \in \{1, \dots, n\}$ with $c(x) = e$, and assume that for every real $M$ there
-are arbitrarily large $n$ with $N_e(n) - n / n_0 > M$ for all three colors $e$, that is,
-$\limsup_{n \to \infty} \bigl(\min_e N_e(n) - n / n_0\bigr) = \infty$. Let $d$ be a dominant
-color: for all positive integers $i$ and all $\ell \ge 0$, if $c$ takes exactly two colors on
-$\{i, i + 1, \dots, i + \ell - 1\}$, then one of them is $d$. Then there is an $L$ such that for
-all positive integers $i$ and all $\ell \ge 0$, if $c(i) \ne d$ and $c(i + t) = c(i)$ for all
-$0 \le t < \ell$, then $\ell \le L$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 4
-(`integers-2024-A105-lem-4`). -/
-public theorem_wanted nondominant_string_length_bounded (k : ℕ) (c : ℕ → Fin 3)
-    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
-      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (n₀ : ℕ) (hn₀ : 2 ≤ n₀)
-    (hdens : ∀ M : ℝ, ∀ N₀ : ℕ, ∃ n : ℕ, N₀ ≤ n ∧ ∀ e : Fin 3,
-      M < (((Finset.Icc 1 n).filter fun x => c x = e).card : ℝ) - n / n₀)
-    (d : Fin 3) (hdom : ∀ i ℓ : ℕ, 0 < i → ((Finset.Ico i (i + ℓ)).image c).card = 2 →
-      d ∈ (Finset.Ico i (i + ℓ)).image c) :
-    ∃ L : ℕ, ∀ i ℓ : ℕ, 0 < i → c i ≠ d → (∀ t < ℓ, c (i + t) = c i) → ℓ ≤ L
 
 /-- **Coprime numbers of a non-dominant color cannot both have the $A$-property.** Let $k$ be a
 natural number, let $n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive
@@ -396,23 +296,6 @@ public theorem_wanted exists_rainbow_powDiff_of_coprime_pairs (k : ℕ) (hk : 2 
     ∃ x y z : ℕ, 0 < x ∧ 0 < y ∧ 0 < z ∧ x = y + z ^ k ∧
       c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z
 
-/-- **Dominant colors on power-step strings modulo a prime.** Let $p$ be a prime and $k$ a natural
-number, and let $c$ be a coloring of $\mathbb{Z}/p\mathbb{Z}$ with three colors that uses every
-color and is rainbow-free for $x - y = z^k$: no $x, y, z \in \mathbb{Z}/p\mathbb{Z}$ with
-$x - y = z^k$ have $c(x), c(y), c(z)$ pairwise distinct. Let $a \ne 0$ and $i$ be elements of
-$\mathbb{Z}/p\mathbb{Z}$ and let $\ell$ be a natural number. If the elements $(i + t)a^k$ for
-$0 \le t < \ell$ take exactly two colors, then one of these elements has the color $c(a)$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 9
-(`integers-2024-A105-lem-9`). -/
-public theorem_wanted color_dominant_powStrings_of_rainbowFree_zmod (p k : ℕ) [Fact p.Prime]
-    (c : ZMod p → Fin 3) (hc : Function.Surjective c)
-    (hrf : ∀ x y z : ZMod p, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (a : ZMod p) (ha : a ≠ 0) (i : ZMod p) (ℓ : ℕ)
-    (hbi : ((Finset.range ℓ).image fun t : ℕ => c ((i + t) * a ^ k)).card = 2) :
-    c a ∈ (Finset.range ℓ).image fun t : ℕ => c ((i + t) * a ^ k)
-
 /-- **Components avoiding the color of zero are monochromatic.** Let $n$ and $t$ be natural
 numbers, let $f$ be a map from $\mathbb{Z}/n\mathbb{Z}$ to itself, and let $c$ be a coloring of
 $\mathbb{Z}/n\mathbb{Z}$ with $t$ colors that uses every color and is rainbow-free for
@@ -436,23 +319,6 @@ public theorem_wanted component_monochromatic_of_rainbowFree (n t : ℕ) (f : ZM
     (a b : ZMod n) (ha : ∃ m m' : ℕ, f^[m] a = f^[m'] v)
     (hb : ∃ m m' : ℕ, f^[m] b = f^[m'] v) :
     c a = c b
-
-/-- **Cycle vertices of the $k$-th power map modulo $p$.** Let $p$ be an odd prime, $k$ a natural
-number, and $t$ the largest divisor of $p - 1$ that is coprime to $k$. A nonzero
-$a \in \mathbb{Z}/p\mathbb{Z}$ lies on a cycle of the map $x \mapsto x^k$, that is,
-$a^{k^m} = a$ for some $m \ge 1$, if and only if the multiplicative order of $a$ divides $t$.
-
-Only this characterization is stated; the source's further claims (there are $t + 1$ cycle
-vertices, and two components exactly when $t = 1$) are not.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after
-Lucheta, Miller and Reiter)
-(`integers-2024-A105-thm-6`). -/
-public theorem_wanted isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
-    (hp : p ≠ 2) (t : ℕ) (ht : t ∣ p - 1) (htk : Nat.Coprime t k)
-    (htmax : ∀ s : ℕ, s ∣ p - 1 → Nat.Coprime s k → s ≤ t) (a : ZMod p) (ha : a ≠ 0) :
-    (∃ m : ℕ, 1 ≤ m ∧ a ^ (k ^ m) = a) ↔ orderOf a ∣ t
 
 end
 

@@ -18,7 +18,7 @@ technical report version: Computing Science Note 94/12, Eindhoven University of 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

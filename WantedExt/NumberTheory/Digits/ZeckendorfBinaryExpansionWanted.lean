@@ -23,6 +23,9 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.Digits.BinaryFundamentalSequence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
 
 /-!
 # Fundamental sequences and the duality formula for Zeckendorf binary expansions
@@ -47,17 +50,6 @@ note before `IsPeriodicZeckendorfPair`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Powers of two are the only binary fundamental sequence.** Let
-$H \colon \mathbb{N} \to \mathbb{N}$ be a strictly increasing sequence of positive integers. Then
-every natural number (including $0$) equals $\sum_{k \in s} H_k$ for exactly one finite set
-$s \subseteq \mathbb{N}$ if and only if $H_k = 2^k$ for all $k$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 1 (`integers-2025-A25-lem-1`). -/
-public theorem_wanted bijective_finset_sum_iff_eq_two_pow {H : ℕ → ℕ} (hpos : ∀ k, 0 < H k)
-    (hmono : StrictMono H) :
-    Function.Bijective (fun s : Finset ℕ => ∑ k ∈ s, H k) ↔ ∀ k, H k = 2 ^ k
 
 /-- **The Fibonacci numbers are the only Zeckendorf fundamental sequence.** Let
 $H \colon \mathbb{N} \to \mathbb{N}$ be a strictly increasing sequence of positive integers, and
@@ -470,17 +462,6 @@ Section 2 (arXiv:2308.12872v1, Section 2.3). -/
 public def DescLexLT (ε ε' : ℕ → ℕ) : Prop :=
   ∃ k, ε k < ε' k ∧ ∀ j, j < k → ε j = ε' j
 
-/-- **The maximal $L^*$-block.** Let $L = (e_1, \dots, e_N)$ be a list of natural numbers and $s$
-an index, with indices starting at $0$. The maximal $L^*$-block starting at $s$ is the
-coefficient function whose entry at index $i$ is $0$ for $i < s$, and $e_j$ for $i \ge s$, where
-$j - 1 = (i - s) \bmod N$ (every entry is $0$ when $L$ is empty). It is the paper's
-$\bar\beta^{s+1}$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def maxLStarBlock (L : List ℕ) (s i : ℕ) : ℕ :=
-  if i < s then 0 else L.getD ((i - s) % L.length) 0
-
 /-- **The maximal block $\bar\beta^2$ for $L = (2, 3, 0)$.** For $L = (2, 3, 0)$, the maximal
 $L^*$-block starting at index $1$ (indices start at $0$; the paper's $\bar\beta^2$) has entries
 $0, 2, 3, 0, 2$ at the indices $0, 1, 2, 3, 4$.
@@ -502,35 +483,6 @@ Section 2 (arXiv:2308.12872v1, Section 2.3). -/
 public def IsProperLStarBlock (L : List ℕ) (ζ : ℕ → ℕ) (s k : ℕ) : Prop :=
   s ≤ k ∧ (∀ i, i < k → ζ i = maxLStarBlock L s i) ∧ ζ k < maxLStarBlock L s k ∧
     ∀ i, k < i → ζ i = 0
-
-/-- **Sums of disjoint proper $L^\ast$-blocks.** Let $L$ be a list of natural numbers, and for
-each $s$ let $\bar\beta^{s+1}$ be the maximal $L^*$-block starting at (zero-based) index $s$. Let
-$I$ be a finite or infinite set of pairs $(s, k)$ of natural numbers. A coefficient function
-$\varepsilon : \mathbb N \to \mathbb N$ is the sum of the disjoint proper $L^*$-blocks with
-support intervals $[s, k]$, $(s, k) \in I$, if $s \le k$ for every $(s, k) \in I$, the intervals
-$[s, k]$ of distinct pairs in $I$ are pairwise disjoint, for every $(s, k) \in I$ we have
-$\varepsilon_i = \bar\beta^{s+1}_i$ whenever $s \le i < k$ and
-$\varepsilon_k < \bar\beta^{s+1}_k$, and $\varepsilon_i = 0$ for every index $i$ that lies in
-none of the intervals.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def IsLStarBlockSum (L : List ℕ) (I : Set (ℕ × ℕ)) (ε : ℕ → ℕ) : Prop :=
-  (∀ p ∈ I, p.1 ≤ p.2) ∧ I.PairwiseDisjoint (fun p => Set.Icc p.1 p.2) ∧
-    (∀ p ∈ I, (∀ i, p.1 ≤ i → i < p.2 → ε i = maxLStarBlock L p.1 i) ∧
-      ε p.2 < maxLStarBlock L p.1 p.2) ∧
-    ∀ i, (∀ p ∈ I, i ∉ Set.Icc p.1 p.2) → ε i = 0
-
-/-- **The periodic collection $E^*$.** For a list $L$ of natural numbers, $E^*$ is the set of
-nonzero coefficient functions $\varepsilon : \mathbb{N} \to \mathbb{N}$ that are sums of finitely
-or infinitely many disjoint proper $L^*$-blocks, that is, the $\varepsilon \ne 0$ that are
-$L^*$-block sums over some set of support intervals. It is the collection $E^*$ for the interval
-$(0, 1)$ determined by $L$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def lStarCollection (L : List ℕ) : Set (ℕ → ℕ) :=
-  {ε | ε ≠ 0 ∧ ∃ I, IsLStarBlockSum L I ε}
 
 /-- **The zero function is not in the periodic Zeckendorf collection for $(0, 1)$.** For every
 list $L$ of natural numbers, the zero coefficient function $\mathbb{N} \to \mathbb{N}$ does not
@@ -705,28 +657,6 @@ public theorem_wanted mem_lStarCollection_of_lStarBar_decomposition (L L' : List
       DescLexLT (maxLStarBlock L b) (fun i => if i < b then 0 else ε i)) :
     (fun i => if i < b then 0 else ε i) ∈ lStarCollection L'
 
-/-- **Shifted maximal blocks scale geometrically.** Let $L = (e_1, \dots, e_N)$ and $\tilde L$ be
-lists of natural numbers of length at least $2$ with nonzero first entries, and let $\tilde Q$ be
-a strictly decreasing sequence with values in $(0, 1)$ such that
-$\varepsilon \mapsto \sum_k \varepsilon_k \tilde Q_k$ is a bijection from $\tilde E^*$, the
-periodic Zeckendorf collection for $(0, 1)$ determined by $\tilde L$, onto $(0, 1)$. For
-$s \in \mathbb{N}$ let $\bar\beta_s$ be the maximal $L^*$-block starting at index $s$: it is $0$
-at indices $i < s$ and $e_j$ at indices $i \ge s$ with $j - 1 \equiv i - s \pmod N$. Then
-$\sum_k (\bar\beta_s)_k \tilde Q_k = \tilde Q_0^{\,s} \sum_k (\bar\beta_0)_k \tilde Q_k$ for every
-$s \in \mathbb{N}$.
-
-Indices are zero-based: $\bar\beta_s$ is the paper's $\bar\beta^{s+1}$ and $\tilde Q_0$ is its
-$\tilde Q_1 = \tilde\omega$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 16 (`integers-2025-A25-lem-16`; arXiv:2308.12872v1, Section 4.1). -/
-public theorem_wanted tsum_maxLStarBlock_mul_eq (L L' : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) (hL' : 2 ≤ L'.length) (he' : L'.getD 0 0 ≠ 0) {Q' : ℕ → ℝ}
-    (hQ' : StrictAnti Q') (hQ'01 : ∀ n, 0 < Q' n ∧ Q' n < 1)
-    (hbij' : Set.BijOn (fun ε : ℕ → ℕ => ∑' k, (ε k : ℝ) * Q' k) (lStarCollection L')
-      (Set.Ioo 0 1)) (s : ℕ) :
-    ∑' k, (maxLStarBlock L s k : ℝ) * Q' k = Q' 0 ^ s * ∑' k, (maxLStarBlock L 0 k : ℝ) * Q' k
-
 /-- **Number of proper $L^*$-blocks with a given support interval.** Let
 $L = (e_1, \dots, e_N)$ be a list of natural numbers with $N \ge 2$ and $e_1 \ne 0$, let $s \le k$
 be natural numbers, and let $j$ be the integer with $1 \le j \le N$ and
@@ -738,16 +668,6 @@ Lemma 15 (`integers-2025-A25-lem-15`; arXiv:2308.12872v1, Section 4.1). -/
 public theorem_wanted ncard_properLStarBlock (L : List ℕ) (hL : 2 ≤ L.length)
     (he : L.getD 0 0 ≠ 0) {s k : ℕ} (hsk : s ≤ k) :
     {ζ : ℕ → ℕ | IsProperLStarBlock L ζ s k}.ncard = L.getD ((k - s) % L.length) 0
-
-/-- **Number of $L^*$-block sums of length $n$.** For a list $L$ of natural numbers and $n \ge 0$,
-with coefficient functions indexed from $1$, $C_n$ is the number of functions
-$\varepsilon : \mathbb N \to \mathbb N$ that are sums of disjoint proper $L^*$-blocks with
-support intervals inside $[1, n]$. The zero function (the empty sum) is counted, so $C_0 = 1$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Proposition 4 (arXiv:2308.12872v1, Section 4.1). -/
-public noncomputable def lStarBlockSumCount (L : List ℕ) (n : ℕ) : ℕ :=
-  {ε : ℕ → ℕ | ∃ I, IsLStarBlockSum L I ε ∧ ∀ p ∈ I, p.2 < n}.ncard
 
 /-- **The empty block-sum count.** For every list $L$ of natural numbers, $C_0 = 1$, where $C_n$
 is the number of sums of disjoint proper $L^*$-blocks with support intervals inside $[1, n]$:
@@ -766,22 +686,6 @@ public theorem lStarBlockSumCount_zero (L : List ℕ) : lStarBlockSumCount L 0 =
     · rintro rfl
       exact ⟨∅, ⟨by simp, by simp, by simp, fun _ _ => rfl⟩, by simp⟩
   rw [lStarBlockSumCount, h, Set.ncard_singleton]
-
-/-- **Recurrence for the number of $L^*$-block sums.** Let $L = (e_1, \dots, e_N)$ be a list of
-natural numbers with $N \ge 2$ and $e_1 \ne 0$, index coefficient functions from $1$, and let
-$C_n$ be the number of functions $\mathbb N \to \mathbb N$ that are sums of disjoint proper
-$L^*$-blocks with support intervals inside $[1, n]$. Then $C_k = \sum_{j=1}^{k} e_j C_{k-j}$ for
-$1 \le k \le N$, and $C_n = \sum_{k=1}^{N-1} e_k C_{n-k} + (1 + e_N) C_{n-N}$ for $n \ge N + 1$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Proposition 4 (`integers-2025-A25-prop-4`; arXiv:2308.12872v1, Section 4.1). -/
-public theorem_wanted lStarBlockSumCount_recurrence (L : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) :
-    (∀ k, 1 ≤ k → k ≤ L.length → lStarBlockSumCount L k =
-      ∑ j ∈ Finset.Icc 1 k, L.getD (j - 1) 0 * lStarBlockSumCount L (k - j)) ∧
-    ∀ n, L.length + 1 ≤ n → lStarBlockSumCount L n =
-      ∑ k ∈ Finset.Ico 1 L.length, L.getD (k - 1) 0 * lStarBlockSumCount L (n - k) +
-        (1 + L.getD (L.length - 1) 0) * lStarBlockSumCount L (n - L.length)
 
 /-- **Generating function of the $L^\ast$-block-sum counts.** Let $L = (e_1, \dots, e_N)$ be a
 list of natural numbers with $N \ge 2$ and $e_1 \ne 0$. For each $k$ let $C_k$ be the number of
@@ -1077,7 +981,7 @@ public theorem zeckendorfGenericExponent_spec {Q Q' : ℕ → ℝ}
     0 < zeckendorfGenericExponent Q Q' ∧
       Real.logb (Q' 0) (Q 0) * Q' 0 ^ (zeckendorfGenericExponent Q Q' - 1) <
         Q 0 ^ zeckendorfGenericExponent Q Q' :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := .ofPred _) h
 
 /-- **The set $U$ of evaluations of $\tilde E^* \setminus \bar E^*$.** For lists $L$ and
 $\tilde L$ and a real sequence $\tilde Q$, let $\tilde E^*$ be the $\tilde L^*$-collection and

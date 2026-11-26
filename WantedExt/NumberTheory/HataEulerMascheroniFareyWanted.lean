@@ -11,44 +11,11 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import MathlibExt.NumberTheory.HataEulerMascheroniFarey
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Mediant telescoping identity for Farey intervals.** For an interval $[x/y, z/w]$ write
-$f([x/y, z/w]) = (xw + yz)/(xyzw)$. Let $a, b, c, d$ be natural numbers with $a > 0$, $d > 0$
-and $bc = ad + 1$. Then, computing in the real numbers, the value of $f$ on $[a/b, c/d]$ minus
-its values on the two halves $[a/b, (a + c)/(b + d)]$ and $[(a + c)/(b + d), c/d]$ cut at the
-mediant equals
-$$
-\frac{(bc - ad)^2}{abcd(a + c)(b + d)} = \frac{1}{abcd(a + c)(b + d)}.
-$$
-
-Source: Nikita Kalinin, *A Short Telescoping Proof of Hata's Formula for the
-Euler-Mascheroni Constant*, INTEGERS 25 (2025), Article A90, Lemma 1. -/
-public theorem_wanted farey_interval_mediant_telescoping {a b c d : ℕ} (ha : 0 < a) (hd : 0 < d)
-    (hF : b * c = a * d + 1) :
-    ((a * d + b * c : ℝ) / (a * b * c * d) -
-          (a * (b + d) + b * (a + c)) / (a * b * (a + c) * (b + d)) -
-          ((a + c) * d + (b + d) * c) / ((a + c) * (b + d) * c * d) =
-        ((b * c : ℝ) - a * d) ^ 2 / (a * b * c * d * (a + c) * (b + d))) ∧
-      ((b * c : ℝ) - a * d) ^ 2 / (a * b * c * d * (a + c) * (b + d)) =
-        1 / (a * b * c * d * (a + c) * (b + d))
-
-/-- **Farey intervals lie in reciprocal intervals.** Let $a, b, c, d$ be natural numbers with
-$a > 0$, $c \le d$ and $bc = ad + 1$, so that $[a/b, c/d] \subseteq [0, 1]$ is a Farey interval
-with positive left endpoint. Then there is a natural number $n \ge 1$ with $1/(n + 1) \le a/b$
-and $c/d \le 1/n$, that is, $[a/b, c/d] \subseteq [1/(n + 1), 1/n]$.
-
-The source's set $F \setminus F^*$ is rendered as these intervals: $F^*$ consists of the
-intervals $[0/1, 1/n]$, the ones excluded in the source's proof of this corollary.
-
-Source: Nikita Kalinin, *A Short Telescoping Proof of Hata's Formula for the
-Euler-Mascheroni Constant*, INTEGERS 25 (2025), Article A90, Corollary 2. -/
-public theorem_wanted farey_interval_subset_reciprocal_interval {a b c d : ℕ} (ha : 0 < a)
-    (hcd : c ≤ d) (hF : b * c = a * d + 1) :
-    ∃ n : ℕ, 0 < n ∧ (1 : ℚ) / (n + 1) ≤ a / b ∧ (c : ℚ) / d ≤ 1 / n
 
 /-- **Sum over the Farey intervals inside a reciprocal interval.** Let $n \ge 1$ and
 $J_n = [1/(n + 1), 1/n]$. The family $1/(abcd(a + c)(b + d))$, indexed by the quadruples
@@ -91,54 +58,6 @@ public theorem_wanted euler_mascheroni_eq_hata_farey_sum :
         1 / 2 + 1 / 2 * ∑' q : {(a, b, c, d) : ℕ × ℕ × ℕ × ℕ | b * c = a * d + 1 ∧ 0 < a ∧ c ≤ d},
           match q.1 with
           | (a, b, c, d) => (1 : ℝ) / (a * b * c * d * (a + c) * (b + d))
-
-/-- **Stern-Brocot generations.** The $n$-th Stern-Brocot generation $F_n$ is a finite set of
-intervals $[a/b, c/d]$, each stored as the quadruple $(a, b, c, d)$ of natural numbers. It is
-defined by $F_0 = \{[0/1, 1/1]\}$, and $F_{n+1}$ is obtained by replacing each
-$[a/b, c/d] \in F_n$ with its two mediant halves $[a/b, (a + c)/(b + d)]$ and
-$[(a + c)/(b + d), c/d]$.
-
-Source: Nikita Kalinin, *A Short Telescoping Proof of Hata's Formula for the
-Euler-Mascheroni Constant*, INTEGERS 25 (2025), Article A90, Section 2 (before Corollary 1). -/
-public def fareyGeneration : ℕ → Finset (ℕ × ℕ × ℕ × ℕ)
-  | 0 => {(0, 1, 1, 1)}
-  | n + 1 => (fareyGeneration n).biUnion fun q =>
-      {(q.1, q.2.1, q.1 + q.2.2.1, q.2.1 + q.2.2.2),
-        (q.1 + q.2.2.1, q.2.1 + q.2.2.2, q.2.2.1, q.2.2.2)}
-
-/-- **The first two Stern-Brocot generations.** Writing $[a/b, c/d]$ for the quadruple
-$(a, b, c, d)$, the first two Stern-Brocot generations are $F_1 = \{[0/1, 1/2], [1/2, 1/1]\}$
-and $F_2 = \{[0/1, 1/3], [1/3, 1/2], [1/2, 2/3], [2/3, 1/1]\}$.
-
-Source: Nikita Kalinin, *A Short Telescoping Proof of Hata's Formula for the
-Euler-Mascheroni Constant*, INTEGERS 25 (2025), Article A90, Section 2 (before Corollary 1). -/
-public theorem fareyGeneration_one_two :
-    fareyGeneration 1 = {(0, 1, 1, 2), (1, 2, 1, 1)} ∧
-      fareyGeneration 2 = {(0, 1, 1, 3), (1, 3, 1, 2), (1, 2, 2, 3), (2, 3, 1, 1)} := by
-  decide
-
-/-- **Recurrence for the Stern-Brocot generations.** For every natural number $n$, the
-generation $F_{n+1}$ is the union, over all intervals $[a/b, c/d] \in F_n$, of the two mediant
-halves $[a/b, (a + c)/(b + d)]$ and $[(a + c)/(b + d), c/d]$, where each interval $[x/y, z/w]$
-is stored as the quadruple $(x, y, z, w)$.
-
-Source: Nikita Kalinin, *A Short Telescoping Proof of Hata's Formula for the
-Euler-Mascheroni Constant*, INTEGERS 25 (2025), Article A90, Section 2 (before Corollary 1). -/
-public theorem fareyGeneration_succ (n : ℕ) :
-    fareyGeneration (n + 1) = (fareyGeneration n).biUnion fun q =>
-      {(q.1, q.2.1, q.1 + q.2.2.1, q.2.1 + q.2.2.2),
-        (q.1 + q.2.2.1, q.2.1 + q.2.2.2, q.2.2.1, q.2.2.2)} :=
-  rfl
-
-/-- **Length bound for the Stern-Brocot generations.** For every natural number $n$, every
-interval $[a/b, c/d]$ of the $n$-th Stern-Brocot generation $F_n$, that is, every quadruple
-$(a, b, c, d) \in F_n$, satisfies $c/d - a/b \le 1/(n + 1)$.
-
-Source: Nikita Kalinin, *A Short Telescoping Proof of Hata's Formula for the
-Euler-Mascheroni Constant*, INTEGERS 25 (2025), Article A90, Corollary 1. -/
-public theorem_wanted fareyGeneration_length_le {n : ℕ} {q : ℕ × ℕ × ℕ × ℕ}
-    (hq : q ∈ fareyGeneration n) :
-    (q.2.2.1 : ℚ) / q.2.2.2 - q.1 / q.2.1 ≤ 1 / (n + 1)
 
 /-- **Riemann-sum bound for Farey partitions.** Let $a, b, c, d, m$ be natural numbers with
 $a > 0$, $bc = ad + 1$, $c \le d$ and $m \ge 2$. Let $A, B : \mathbb{N} \to \mathbb{N}$ satisfy

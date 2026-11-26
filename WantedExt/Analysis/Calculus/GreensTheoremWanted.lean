@@ -8,53 +8,5 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Calculus.ContDiff.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Batteries.Util.ProofWanted
-
-open MeasureTheory
-
-@[expose] public section
-
-namespace MetaMathlibExt
-
-/-- Green's theorem (`greens-theorem-s1`), stable source
-https://en.wikipedia.org/wiki/Green%27s_theorem: let `C` be a positively
-oriented, piecewise smooth, simple closed curve bounding `D`, with `L`, `M`
-`C^1` on an open region containing `D`; then the counterclockwise line
-integral of `L dx + M dy` around `C` equals the double integral over `D`
-of `∂M/∂x - ∂L/∂y`, with positive orientation fixing the interior to the
-left of the curve. -/
-theorem_wanted greens_theorem
-    (U D : Set (ℝ × ℝ))
-    (a b : ℝ)
-    (γ : ℝ → ℝ × ℝ)
-    (L M : ℝ × ℝ → ℝ)
-    (hU : IsOpen U)
-    (hDU : D ⊆ U)
-    (hD_bdd : Bornology.IsBounded D)
-    (hD_meas : MeasurableSet D)
-    (hL : ContDiffOn ℝ 1 L U)
-    (hM : ContDiffOn ℝ 1 M U)
-    (hab : a < b)
-    (hγcont : ContinuousOn γ (Set.Icc a b))
-    (hγclosed : γ a = γ b)
-    (hγinj : Set.InjOn γ (Set.Ico a b))
-    (hγsimple : ∀ t ∈ Set.Ioo a b, γ t ≠ γ a)
-    (hγtrace : γ '' Set.Icc a b = frontier D)
-    (hγU : ∀ t ∈ Set.Icc a b, γ t ∈ U)
-    (hγpw : ∃ S : Finset ℝ, a ∈ S ∧ b ∈ S ∧ ↑S ⊆ Set.Icc a b ∧
-      ContDiffOn ℝ 1 γ (Set.Icc a b \ ↑S) ∧
-      (∀ u v : ℝ, u ∈ S → v ∈ S → u < v → Set.Ioo u v ∩ ↑S = ∅ →
-        ContDiffOn ℝ 1 γ (Set.Icc u v)) ∧
-      ∀ t ∈ Set.Ioo a b \ ↑S, deriv γ t ≠ 0 ∧
-        ∃ δ > 0, ∀ ε : ℝ, 0 < ε → ε < δ →
-          γ t + ε • (-(deriv γ t).2, (deriv γ t).1) ∈ D) :
-    (∫ t in a..b,
-      (L (γ t) * deriv (fun t => (γ t).1) t +
-        M (γ t) * deriv (fun t => (γ t).2) t)) =
-    ∫ p in D,
-      (deriv (fun x => M (x, p.2)) p.1 -
-        deriv (fun y => L (p.1, y)) p.2) ∂volume
-
-end MetaMathlibExt
+public import MathlibExt.Analysis.Calculus.GreensTheorem

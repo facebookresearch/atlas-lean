@@ -18,6 +18,10 @@ Every linear map between finite-dimensional inner-product spaces sends some orth
 - [The spectral norm is the largest singular value](op-norm-eq-singular-values-zero.md): the spectral norm is the largest singular value
 - [Squared Frobenius norm as the sum of squared singular values](sum-sq-singular-values-eq-sum-sq-norm-of.md): the squared Frobenius norm is the sum of squared singular values
 
+## Background
+
+- [Singular values](../../singular-values/README.md): this card numbers the singular values of $A$ from $1$, as the diagonal entries $\sigma_1, \dots, \sigma_{\min(m, n)}$ of $\Sigma$ together with $\sigma_j = 0$ for $j > m$; that card lists them from $0$ in decreasing order, so the $k$-th largest of $\sigma_1, \dots, \sigma_n$ here is $\sigma_{k-1}$ there
+
 ## Related topics
 
 - [Eckart–Young theorem in operator norm](../../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md)
@@ -26,3 +30,4 @@ Every linear map between finite-dimensional inner-product spaces sends some orth
 - [Minimum condition number of sign matrices](../../condition-numbers-of-sign-matrices/minimum-condition-number.md): an application: the smallest ratio $\sigma_{\max}/\sigma_{\min}$ over sign matrices.
 - [Existence of the reduced QR factorization](../../qr-factorization/exists-qr.md): another orthogonal factorization, with one orthogonal and one triangular factor.
 - [Average Frobenius error of the randomized range finder](../../randomized-range-finder/frobenius-error/integral-residual-frobenius-le.md): a randomized method for approximating the dominant part of an SVD, with error bounds in terms of the singular values.
+- [Pseudoinverse of a linear map](../../pseudoinverse/moore-penrose-pseudoinverse.md): an application: an SVD $A = U\Sigma V^*$ gives the pseudoinverse $A^\dagger = V\Sigma^\dagger U^*$, where $\Sigma^\dagger$ is the $n \times m$ matrix with $1/\sigma_j$ in place of each nonzero $\sigma_j$ and zeros elsewhere.

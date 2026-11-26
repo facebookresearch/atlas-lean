@@ -25,9 +25,9 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 The finite-type construction uses the public `PMF.ofFintype` constructor.
 
-These are `PMF`-valued samplers. Pinned Mathlib (v4.35) has no `PMF`-valued finite
-uniform sampler: in `Mathlib.Probability.Distributions.Uniform`, the former `PMF` API was
-retired in favour of the measure-valued
+These are `PMF`-valued samplers. Pinned Mathlib (v4.36, as v4.35 before it) has no
+`PMF`-valued finite uniform sampler: in `Mathlib.Probability.Distributions.Uniform`, the former
+`PMF` API was retired in favour of the measure-valued
 `MeasureTheory.Measure.uniformOfFinset : Finset α → Measure α`, and
 `PMF.uniformOfFintype` survives only as a deprecated alias (since `2026-10-04`) for that
 `Measure` construction — `#check @PMF.uniformOfFintype` gives

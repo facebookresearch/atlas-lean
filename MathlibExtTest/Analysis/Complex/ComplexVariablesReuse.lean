@@ -18,7 +18,7 @@ import Mathlib.NumberTheory.EulerProduct.DirichletLSeries
 import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 import Mathlib.NumberTheory.LSeries.Nonvanishing
 import Mathlib.RingTheory.RootsOfUnity.Complex
-import MathlibExt.Analysis.Complex.ArgumentPrinciple
+import MathlibExt.Analysis.Complex.ArgumentPrincipleCurve
 import MathlibExt.Analysis.Complex.CasoratiWeierstrass
 import MathlibExt.Analysis.Complex.MittagLefflerPolynomial
 import MathlibExt.Analysis.Complex.NormalFamilies
@@ -34,10 +34,8 @@ ordinal in `v1/Atlas/ComplexVariables/targets.yaml`. These are canonical-use che
 where and in which form the library proves each target, not a new verification of the printed
 notes.
 
-Targets 23 (Rouché's theorem for a simple closed curve) and 37 (Newman's analytic theorem) replace
-archived proofs that rest on `sorry`. Target 22, the argument principle for a simple closed curve,
-is covered only partially: the library proves it for the circle bounding a disc, and the general
-curve form is deferred to a separate port.
+Targets 22 (the argument principle for a simple closed curve), 23 (Rouché's theorem for a simple
+closed curve) and 37 (Newman's analytic theorem) replace archived proofs that rest on `sorry`.
 -/
 
 set_option autoImplicit false
@@ -79,15 +77,19 @@ example {c : ℂ} {r : ℝ} {f : ℂ → ℂ} (hr : 0 < r)
     Dense (f '' (Metric.ball c r \ {c})) :=
   MathlibExt.Analysis.Complex.CasoratiWeierstrass.casoratiWeierstrass hr hf hess
 
--- Target 22, partial coverage: the argument principle for the circle bounding a disc. The target
--- is stated for a simple closed curve; that form is deferred to a separate port.
-example {c : ℂ} {R : ℝ} (hR : 0 < R) {f : ℂ → ℂ} (hf : MeromorphicOn f (Metric.closedBall c R))
-    (hf_top : ∀ z ∈ Metric.closedBall c R, meromorphicOrderAt f z ≠ ⊤)
-    (hbd : ∀ z ∈ Metric.sphere c R, MeromorphicOn.divisor f (Metric.closedBall c R) z = 0) :
-    (∮ z in C(c, R), logDeriv f z) =
-      2 * π * I * ↑(∑ᶠ z, MeromorphicOn.divisor f (Metric.ball c R) z) :=
-  MathlibExt.Analysis.Complex.ArgumentPrinciple.argumentPrinciple_closedBall_general hR hf hf_top
-    hbd
+-- Target 22: the argument principle for a simple closed curve. `γ` is a closed piecewise `C¹`
+-- path, injective on `[0, 1)`, positively oriented (winding number `1` at every point inside it),
+-- with `γ` and its inside in `Ω` and no zero or pole of `f` on `γ`. `N - P` is the sum over the
+-- inside of `γ` of the positive minus the negative part of the divisor of `f`, a finite sum.
+example {Ω : Set ℂ} (hΩ : IsOpen Ω) {f : ℂ → ℂ} (hf : MeromorphicOn f Ω) {x : ℂ}
+    {γ : Path x x} (hγ : γ.IsPiecewiseC1) (hγs : Set.InjOn γ (Set.Iio 1))
+    (hγ_pos : ∀ w ∈ (Set.range γ).inside, windingNumber γ w = 1) (hγΩ : Set.range γ ⊆ Ω)
+    (hinsΩ : (Set.range γ).inside ⊆ Ω) (hγf : ∀ z ∈ Set.range γ, meromorphicOrderAt f z = 0) :
+    ((MeromorphicOn.divisor f Ω).support ∩ (Set.range γ).inside).Finite ∧
+      (2 * π * I)⁻¹ * ∫ᶜ z in γ, logDeriv f z • ContinuousLinearMap.id ℂ ℂ =
+        (((∑ᶠ z ∈ (Set.range γ).inside, (MeromorphicOn.divisor f Ω)⁺ z) -
+          ∑ᶠ z ∈ (Set.range γ).inside, (MeromorphicOn.divisor f Ω)⁻ z : ℤ) : ℂ) :=
+  MeromorphicOn.argument_principle hΩ hf hγ hγs hγ_pos hγΩ hinsΩ hγf
 
 -- Target 23: Rouché's theorem for a simple closed curve `γ : Circle → ℂ` whose interior
 -- `Set.inside (range γ)` lies in the region `Ω`. If `‖f - g‖ < ‖f‖` on `γ`, then `f` and `g` have

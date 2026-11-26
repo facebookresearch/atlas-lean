@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
-public import WantedExt.NumberTheory.SierpinskiRieselRepdigitsWanted
+public import MathlibExt.NumberTheory.NarayanaSierpinski
 
 namespace MetaMathlibExt
 
@@ -34,16 +33,6 @@ public theorem_wanted isRieselNumber_narayanaCowsSequence {t : ℕ}
       384169572, 402464772, 425638692, 467107812, 476865252, 495160452, 564682212, 587856132,
       592734852, 611030052, 629325252, 652499172, 703725732} : Finset ℕ)) :
     IsRieselNumber (narayanaCowsSequence t)
-
-/-- **Infinitely many Narayana numbers are Sierpiński numbers.** There are infinitely many
-natural numbers $k$ that are Sierpiński numbers and terms of Narayana's cows sequence $(N_t)$,
-that is, $k = N_t$ for some $t$; here a Sierpiński number is an odd $k$ such that
-$k \cdot 2^n + 1$ is not prime for every $n \ge 1$.
-
-Source: Katherine Franzone and Joshua Harrington, *Sierpiński and Riesel Numbers in Narayana's
-Cow Sequence*, INTEGERS 24 (2024), Article A10, Theorem 3 (`integers-2024-A10-thm-3`). -/
-public theorem_wanted infinite_setOf_isSierpinskiNumber_narayanaCowsSequence :
-    {k : ℕ | IsSierpinskiNumber k ∧ ∃ t, narayanaCowsSequence t = k}.Infinite
 
 end
 

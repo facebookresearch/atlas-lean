@@ -18,7 +18,7 @@ Research Letters 33(4) (2005), 382-384, doi:10.1016/j.orl.2004.07.006.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.PNat.Basic

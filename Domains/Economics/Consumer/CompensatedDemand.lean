@@ -62,8 +62,8 @@ theorem dotLCLM_apply {ι : Type*} [Fintype ι] (x : ι → ℝ) :
     Real.dotL_apply]
 
 /-- **Symmetry of compensated price effects.** Under Shephard's lemma on an open
-set of prices, the derivative of compensated demand is a symmetric bilinear
-form. -/
+set of prices, the derivative `Dh` of compensated demand at a price `p` of that set is a symmetric
+bilinear form. -/
 theorem dotProduct_compensated_symm {ι : Type*} [Fintype ι] {U : Set (ι → ℝ)}
     (hU : IsOpen U) {e : (ι → ℝ) → ℝ} {h : (ι → ℝ) → ι → ℝ} {p : ι → ℝ}
     {Dh : (ι → ℝ) →L[ℝ] (ι → ℝ)} (hp : p ∈ U)
@@ -84,7 +84,8 @@ theorem dotProduct_compensated_symm {ι : Type*} [Fintype ι] {U : Set (ι → �
   simpa [ContinuousLinearMap.comp_apply, dotLCLM_apply] using hsym
 
 /-- **Negative semidefiniteness of compensated price effects.** Under Shephard's
-lemma on an open set of prices where expenditure is concave, `v ⬝ᵥ Dh v ≤ 0`. -/
+lemma on an open set of prices where expenditure is concave, if `h` has derivative `Dh` at a price
+`p` of that set, `v ⬝ᵥ Dh v ≤ 0`. -/
 theorem dotProduct_compensated_self_nonpos {ι : Type*} [Fintype ι] {U : Set (ι → ℝ)}
     (hU : IsOpen U) {e : (ι → ℝ) → ℝ} {h : (ι → ℝ) → ι → ℝ} {p : ι → ℝ}
     {Dh : (ι → ℝ) →L[ℝ] (ι → ℝ)} (hp : p ∈ U) (hconc : ConcaveOn ℝ U e)
@@ -179,7 +180,9 @@ theorem dotProduct_compensated_self_nonpos {ι : Type*} [Fintype ι] {U : Set (�
       _ ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hpos hneg
   exact le_of_tendsto htend hevle
 
-/-- The compensated-demand Jacobian matrix is symmetric. -/
+/-- Under Shephard's lemma on an open set `U` of prices containing `p` (`e` has gradient `h q` at
+every `q ∈ U`), if `h` has derivative `Dh` at `p`, the compensated-demand Jacobian matrix is
+symmetric. -/
 theorem compensatedJacobian_isSymm {ι : Type*} [Fintype ι] [DecidableEq ι]
     {U : Set (ι → ℝ)} (hU : IsOpen U) {e : (ι → ℝ) → ℝ} {h : (ι → ℝ) → ι → ℝ}
     {p : ι → ℝ} {Dh : (ι → ℝ) →L[ℝ] (ι → ℝ)} (hp : p ∈ U)
@@ -195,7 +198,9 @@ theorem compensatedJacobian_isSymm {ι : Type*} [Fintype ι] [DecidableEq ι]
   simp only [single_one_dotProduct] at h
   exact h.symm
 
-/-- The compensated-demand Jacobian matrix is negative semidefinite. -/
+/-- Under Shephard's lemma on an open set `U` of prices containing `p` (`e` has gradient `h q` at
+every `q ∈ U`), if `e` is concave on `U` and `h` has derivative `Dh` at `p`, the compensated-demand
+Jacobian matrix is negative semidefinite. -/
 theorem dotProduct_compensatedJacobian_mulVec_nonpos {ι : Type*} [Fintype ι]
     [DecidableEq ι] {U : Set (ι → ℝ)} (hU : IsOpen U) {e : (ι → ℝ) → ℝ}
     {h : (ι → ℝ) → ι → ℝ} {p : ι → ℝ} {Dh : (ι → ℝ) →L[ℝ] (ι → ℝ)} (hp : p ∈ U)
