@@ -16,10 +16,6 @@ so to first order the variance depends only on total map length; for $L = 35$ Mo
 
 For IBD2 sharing (both alleles IBD; mean $\tfrac14$, single-locus variance $\tfrac3{16}$), $P(\text{IBD2 at } j \mid \text{IBD2 at } i) = [(1-r)^2 + r^2]^2$, giving $\operatorname{Cov} = \tfrac1{16}(2e^{-4d} + e^{-8d})$. The genome-wide variance of mean IBD2 sharing is about $\tfrac{5}{64L}$ to first order, roughly 30% larger than that of $\pi_g$ when $L = 35$, and the correlation between genome-wide IBD and IBD2 sharing is the ratio of their standard deviations, about $0.89$.
 
-## Depends on
-
-- [Haseman–Elston estimator](he-estimate.md)
-
 ## Expansion
 
 Given that the sibs share the transmitted grandparental allele at locus $i$, they share it at locus $j$ exactly when both meioses recombine or neither does, with probability $(1-r)^2 + r^2$; subtracting $\tfrac14$ gives the covariance, and Haldane's map gives $1 - 2r = e^{-2d}$. Averaging $\tfrac14 e^{-4|x-y|}$ over $[0,l]^2$ gives $\tfrac{1}{8l} - \tfrac{1 - e^{-4l}}{32 l^2}$ for one parent, and the two parents are independent, which halves it for $\pi_l$. The IBD2 case squares the one-parent probability because the two parental transmissions are independent.

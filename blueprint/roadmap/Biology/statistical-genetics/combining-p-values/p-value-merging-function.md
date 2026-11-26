@@ -1,6 +1,6 @@
 # p-value merging functions
 
-A **p-variable** is a random variable $P$ with $\mathbb P(P \le \epsilon) \le \epsilon$ for all $\epsilon \in (0, 1)$ (Eq. (4) of the source). A **merging function** is an increasing Borel function $F : [0, 1]^K \to [0, \infty)$ such that $F(U_1, \dots, U_K)$ is a p-variable for every family $U_1, \dots, U_K$ of uniform random variables on $[0, 1]$ on a common probability space, with arbitrary dependence; equivalently, for each $\epsilon \in (0, 1)$,
+A **p-variable** is a random variable $P$ that is a [valid p-value](../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md) under the underlying probability measure, $\mathbb P(P \le \epsilon) \le \epsilon$ for all $\epsilon \in (0, 1)$ (Eq. (4) of the source). A **merging function** is an increasing Borel function $F : [0, 1]^K \to [0, \infty)$ such that $F(U_1, \dots, U_K)$ is a p-variable for every family $U_1, \dots, U_K$ of uniform random variables on $[0, 1]$ on a common probability space, with arbitrary dependence; equivalently, for each $\epsilon \in (0, 1)$,
 
 $$\sup\{\mathbb P(F(U_1, \dots, U_K) \le \epsilon) : U_1, \dots, U_K \text{ uniform}\} \le \epsilon. \tag{5}$$
 
@@ -10,7 +10,7 @@ If $F$ is a merging function and $P_1, \dots, P_K$ are p-variables on one probab
 
 ## Depends on
 
-- [Genomic-control p-values are valid in the common-inflation model](../association-tests/genomic-control/is-valid-pvalue-gc-pvalue.md)
+- [Valid p-value](../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md)
 
 ## Expansion
 

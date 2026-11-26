@@ -13,11 +13,12 @@ with $\mu\sim N(0,1)$, $s_X^2\sim N^+(0,1)$, $\theta\sim N(0,1)$, local and glob
 Properties of the prior:
 
 - Marginally $\alpha_j\mid\phi_j,\tau\sim N(0,\phi_j^2\tau^2)$ with half-Cauchy $\phi_j$ and $\tau$, so the $\alpha_j$ have a horseshoe prior: valid instruments ($\alpha_j=0$) are shrunk strongly toward $0$ while large pleiotropic effects escape shrinkage.
-- The model covers valid instruments ($\alpha_j=0$), uncorrelated pleiotropy ($\alpha_j\ne0$, $\rho_j=0$, the InSIDE case) and correlated pleiotropy ($\alpha_j\ne0$, $\rho_j\ne0$, InSIDE violated). Conditioning the bivariate normal prior gives
+- The model covers valid instruments ($\alpha_j=0$), uncorrelated pleiotropy ($\alpha_j\ne0$, $\rho_j=0$, the InSIDE case) and correlated pleiotropy ($\alpha_j\ne0$, $\rho_j\ne0$, InSIDE violated). Conditioning the bivariate normal prior gives the moments displayed below.
 
-  $$\mathbb E[\alpha_j\mid\beta_{Xj}]=\frac{\rho_j\phi_j\tau}{s_X}(\beta_{Xj}-\mu),\qquad \operatorname{Var}(\alpha_j\mid\beta_{Xj})=(1-\rho_j^2)\phi_j^2\tau^2,$$
+$$\mathbb E[\alpha_j\mid\beta_{Xj}]=\frac{\rho_j\phi_j\tau}{s_X}(\beta_{Xj}-\mu),\qquad \operatorname{Var}(\alpha_j\mid\beta_{Xj})=(1-\rho_j^2)\phi_j^2\tau^2$$
 
-  so with $\rho_j\ne0$ the pleiotropic effect co-varies with instrument strength.
+So with $\rho_j\ne0$ the pleiotropic effect co-varies with instrument strength. Further:
+
 - The model uses $\sigma_{Xj}$, so it accounts for uncertainty in the variant–exposure associations (weak instruments), unlike the inverse-variance-weighted model $\hat\beta_{Yj}\sim N(\theta\hat\beta_{Xj},\sigma_{Yj}^2)$.
 
 **Multivariable model (MVMR-Horse).** For $K$ exposures, let $\beta_{Xj\cdot}\in\mathbb R^K$ with estimate $\hat\beta_{Xj\cdot}$ of known covariance $\Sigma_{Xj}$, and $\theta\in\mathbb R^K$ the direct causal effects:

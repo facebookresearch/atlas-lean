@@ -12,14 +12,18 @@ $$\xi = \frac{\int \operatorname{var}[\mathbb E\{\mathbf 1(X^{(2)} \ge x)\mid X^
 
 which vanishes iff $X^{(1)} \perp\!\!\!\perp X^{(2)}$ (for continuous $F$) and equals $1$ iff $X^{(2)}$ is a measurable function of $X^{(1)}$. Comparators are Hoeffding's $D = \int\{F - F_1F_2\}^2\,dF$, the Blum–Kiefer–Rosenblatt $R$ and the Bergsma–Dassios–Yanagimoto $\tau^*$, with rank estimators $D_n, R_n, \tau^*_n$.
 
-**Local alternatives.** (A) *Rotation:* $X = A_\Delta Y$ with $A_\Delta = \begin{pmatrix}1 & \Delta\\ \Delta & 1\end{pmatrix}$ and independent mean-zero $Y^{(1)},Y^{(2)}$ with absolutely continuous densities, finite second moments and finite Fisher information in the log-derivatives (e.g. Gaussian or $t_\nu$, $\nu > 2$). (B) *Mixture:* $F_X = (1-\Delta)F_1F_2 + \Delta G$ with a fixed dependent, compactly supported $G \ll F_1F_2$. In both, $H_{1,n}(\Delta_0)$ takes $\Delta = \Delta_0 n^{-1/2}$.
+**Local alternatives.** (A) *Rotation:* $X = A_\Delta Y$ for $\Delta \in (-1, 1)$, with $A_\Delta = \begin{pmatrix}1 & \Delta\\ \Delta & 1\end{pmatrix}$ and independent mean-zero real $Y^{(1)}, Y^{(2)}$ with Lebesgue densities $f_1, f_2$; let $f_X(\cdot\,; \Delta)$ be the density of $X$ and $I_X(0)$ the Fisher information of $X$ relative to $\Delta$ at $\Delta = 0$. *Assumption 1:* (i) the support $\{x : f_X(x; \Delta) > 0\}$ is the same for all $\Delta \in (-1, 1)$; (ii) each $f_k$ is absolutely continuous with non-constant logarithmic derivative $\rho_k = f_k'/f_k$; (iii) $I_X(0) > 0$, and $\mathbb E\{(Y^{(k)})^2\} < \infty$ and $\mathbb E[\{\rho_k(Y^{(k)})\}^2] < \infty$ for $k = 1, 2$. It holds, for example, for centred Gaussian or $t_\nu$ ($\nu > 2$) components.
 
-**Theorem (power analysis).** Let $T_\alpha^{\mu_n}$ be the size-$\alpha$ test rejecting for large $\mu_n$. Under the regularity assumptions for (A) or (B):
+(B) *Mixture:* $F_X = (1-\Delta)F_0 + \Delta G$ for $\Delta \in [0, 1]$, where $F_0(x^{(1)}, x^{(2)}) = F_1(x^{(1)})F_2(x^{(2)})$ for absolutely continuous $F_1, F_2$, and $G \ne F_0$ is a fixed absolutely continuous bivariate law under which the coordinates are dependent; the densities $f_0$ of $F_0$ and $g$ of $G$ are continuous with compact supports. *Assumption 2:* (i) $G \ll F_0$ and $s(x) = g(x)/f_0(x) - 1$ is continuous; (ii) $\mathbb E\{s(Y) \mid Y^{(1)}\} = 0$ almost surely for $Y \sim F_0$; (iii) $s$ is not additively separable, that is $s(x) \ne h_1(x^{(1)}) + h_2(x^{(2)})$ for all univariate $h_1, h_2$; (iv) $I_X(0) > 0$. It holds, for example, for the Farlie alternative $G = F_1F_2\{1 + (1 - F_1)(1 - F_2)\}$.
+
+In both families, $H_{1,n}(\Delta_0)$ takes $\Delta = \Delta_0 n^{-1/2}$ with $\Delta_0 > 0$.
+
+**Theorem (power analysis).** Let $T_\alpha^{\mu_n}$ be the size-$\alpha$ test rejecting for large $\mu_n$. Under Assumption 1 for (A), or Assumption 2 for (B):
 
 1. for every fixed $\Delta_0 > 0$, $\lim_{n\to\infty}\mathrm{pr}\{T_\alpha^{\xi_n} = 1 \mid H_{1,n}(\Delta_0)\} = \alpha$;
 2. for each $\beta > 0$ there is $C_\beta$ such that for $\Delta_0 > C_\beta$ and $\mu_n \in \{D_n, R_n, \tau_n^*\}$, $\lim_{n\to\infty}\mathrm{pr}\{T_\alpha^{\mu_n} = 1 \mid H_{1,n}(\Delta_0)\} \ge 1-\beta$.
 
-**Proposition (detection boundary).** For each $\beta$ with $\alpha + \beta < 1$ there is $c_\beta > 0$ such that every size-$\alpha$ test has type-II error at least $1 - \alpha - \beta$ under $H_{1,n}(c_\beta)$ for all large $n$.
+**Proposition (detection boundary).** Under the same assumptions, for each $\beta$ with $\alpha + \beta < 1$ there is $c_\beta > 0$ such that every size-$\alpha$ test has type-II error at least $1 - \alpha - \beta$ under $H_{1,n}(c_\beta)$ for all large $n$.
 
 Hence the tests based on $D_n$, $R_n$, $\tau_n^*$ are rate-optimal (they detect at the $n^{-1/2}$ boundary), while the test based on $\xi_n$ has trivial power at that scale and is rate sub-optimal.
 

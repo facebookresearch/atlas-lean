@@ -1,6 +1,6 @@
 # TreeBH controls the selective false discovery rate at every level
 
-Use the setting and notation of [the selective false discovery rate and TreeBH](selective-fdr-and-the-treebh-procedure.md). Consider the assumptions:
+Use the setting and notation of [the selective false discovery rate and TreeBH](selective-fdr-and-the-treebh-procedure.md), which runs the [Benjamini–Hochberg procedure](../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md) in each selected family. Consider the assumptions:
 
 - (A1) the vector of $p$-values at the finest level $L$ is positive regression dependent on the subset of true null hypotheses;
 - (A3) each parent $p$-value is $P_i = f_i(P_{\mathcal{F}_i})$ for a coordinatewise nondecreasing combination function $f_i$ of the $p$-values of the family it indexes;
@@ -18,6 +18,7 @@ A hierarchical procedure is **consonant** if whenever a parent hypothesis is rej
 ## Depends on
 
 - [Selective false discovery rate and the TreeBH procedure](selective-fdr-and-the-treebh-procedure.md)
+- [Benjamini–Hochberg rejection set](../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
 
 ## Expansion
 

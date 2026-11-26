@@ -16,10 +16,6 @@ where $\alpha$ and $\phi$ are replaced by estimates $\hat\alpha(\beta), \hat\phi
 
 When $R_i = I$ the equation is the independence (quasi-likelihood) score of an ordinary generalized linear model; when $n_i = 1$ for all $i$ it reduces to the usual quasi-likelihood equation.
 
-## Depends on
-
-- [Asymptotic normality and robust variance of the GEE estimator](gee-sandwich-asymptotics.md)
-
 ## Expansion
 
 $U$ is unbiased, $\mathbb{E}\,U(\beta) = 0$ at the true $\beta$, using only the mean model; the working correlation enters only as a weight. A common iteration is Fisher scoring, $\beta \leftarrow \beta + \bigl(\sum_i D_i^\top V_i^{-1} D_i\bigr)^{-1} \sum_i D_i^\top V_i^{-1}(Y_i - \mu_i)$, alternated with moment updates of $\alpha$ and $\phi$. Common choices of $R(\alpha)$ are independence, exchangeable, first-order autoregressive and unstructured.

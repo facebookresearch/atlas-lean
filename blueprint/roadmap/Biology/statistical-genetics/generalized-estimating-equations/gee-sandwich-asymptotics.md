@@ -10,9 +10,18 @@ $$V_G = \lim_{K \to \infty} K \Bigl(\sum_{i=1}^K D_i^\top V_i^{-1} D_i\Bigr)^{-1
 
 $V_G$ is estimated consistently by the "sandwich" estimator obtained by evaluating $D_i, V_i$ at $\hat\beta, \hat\alpha, \hat\phi$ and replacing $\operatorname{Cov}(Y_i)$ by $(Y_i - \hat\mu_i)(Y_i - \hat\mu_i)^\top$. If the working covariance is correct, $V_i = \operatorname{Cov}(Y_i)$, the middle factor cancels one outer factor and $V_G$ reduces to the model-based variance $\lim K \bigl(\sum_i D_i^\top V_i^{-1} D_i\bigr)^{-1}$.
 
+## Depends on
+
+- [Generalized estimating equations for clustered data](gee-estimator.md)
+
+## Proof depends on
+
+- [Lindeberg–Feller central limit theorem](../../../Probability/central-limit-theorems/lindeberg-feller-central-limit-theorem/lindeberg-feller-clt-triangular.md)
+- [Slutsky's theorem for a random matrix times a random vector](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/slutsky-s-theorem-for-a-random-matrix-times-a-random-vector.md)
+
 ## Expansion
 
-Expand $U(\hat\beta) = 0$ around the true $\beta$: $0 = U(\beta) - \bigl(\sum_i D_i^\top V_i^{-1} D_i\bigr)(\hat\beta - \beta) + o_p(K^{1/2})$. The nuisance conditions make the effect of plugging in $\hat\alpha, \hat\phi$ asymptotically negligible, because $\partial U / \partial \alpha$ has mean zero (it multiplies the mean-zero residual $Y_i - \mu_i$). $K^{-1/2} U(\beta)$ is a normalized sum of independent mean-zero terms with covariance $K^{-1} \sum_i D_i^\top V_i^{-1} \operatorname{Cov}(Y_i) V_i^{-1} D_i$, so the multivariate central limit theorem and Slutsky's lemma give the sandwich limit. Consistency of the empirical middle factor follows from the law of large numbers applied to independent clusters. Efficiency is lost when $R_i$ is misspecified, but validity of inference on $\beta$ is not.
+Expand $U(\hat\beta) = 0$ around the true $\beta$: $0 = U(\beta) - \bigl(\sum_i D_i^\top V_i^{-1} D_i\bigr)(\hat\beta - \beta) + o_p(K^{1/2})$. The nuisance conditions make the effect of plugging in $\hat\alpha, \hat\phi$ asymptotically negligible, because $\partial U / \partial \alpha$ has mean zero (it multiplies the mean-zero residual $Y_i - \mu_i$). $K^{-1/2} U(\beta)$ is a normalized sum of independent mean-zero terms with covariance $K^{-1} \sum_i D_i^\top V_i^{-1} \operatorname{Cov}(Y_i) V_i^{-1} D_i$, so the Lindeberg–Feller central limit theorem (applied to each linear combination, by the Cramér–Wold device) and Slutsky's theorem give the sandwich limit. Consistency of the empirical middle factor follows from the law of large numbers applied to independent clusters. Efficiency is lost when $R_i$ is misspecified, but validity of inference on $\beta$ is not.
 
 ## Sources
 

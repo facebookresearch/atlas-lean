@@ -10,7 +10,7 @@ Equivalently $\mathcal{E}_0(\ell) = \sum_{i \in \mathcal{S}^{\ell-1}} w_i^{\ell}
 
 **TreeBH procedure.** Given targets $q^{(1)}, \dots, q^{(L)}$:
 
-1. Apply the Benjamini–Hochberg procedure at level $q^{(1)}$ to the family $\mathcal{F}_0^{1}$; stop if nothing is rejected.
+1. Apply the [Benjamini–Hochberg procedure](../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md) at level $q^{(1)}$ to the family $\mathcal{F}_0^{1}$; stop if nothing is rejected.
 2. For $\ell = 2, \dots, L$: for every family $\mathcal{F}_i^{\ell}$ whose parent $H_i$ was rejected, apply the Benjamini–Hochberg procedure with working level
 
 $$q_i = \Bigg\{\prod_{j \in A(i)}\frac{|\mathcal{S}_j|}{|\mathcal{F}_j|}\Bigg\}\,q^{(\ell)},$$
@@ -18,6 +18,10 @@ $$q_i = \Bigg\{\prod_{j \in A(i)}\frac{|\mathcal{S}_j|}{|\mathcal{F}_j|}\Bigg\}\
 where $\mathcal{F}_j$ is the family containing the children of $H_j$; stop when no rejections are made or $\ell = L$.
 
 Parent $p$-values are typically obtained by Simes' rule from their children, $p_i = \min_j p_{(j)}\,k/j$ over the $k$ sorted $p$-values of the family.
+
+## Depends on
+
+- [Benjamini–Hochberg rejection set](../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
 
 ## Expansion
 

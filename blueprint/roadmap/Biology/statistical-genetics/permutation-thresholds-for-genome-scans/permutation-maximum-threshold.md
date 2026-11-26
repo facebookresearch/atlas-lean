@@ -8,10 +8,6 @@ For a permutation $\pi$ of $\{1, \dots, n\}$ write $y_\pi = (y_{\pi(1)}, \dots, 
 
 Draw permutations $\pi_1, \dots, \pi_M$ independently and uniformly at random and record $T^{\max}_m = T^{\max}(y_{\pi_m}, G)$. The empirical genome-wide threshold at level $\alpha \in (0, 1)$ is the $100(1 - \alpha)$ percentile of $T^{\max}_1, \dots, T^{\max}_M$; a position $\ell$ is declared significant when $T_\ell(y, G)$ exceeds it. A single threshold applies to every position, so the procedure controls the experiment-wise (genome-wide) rather than the per-position error rate.
 
-## Depends on
-
-- [Genome-wide error control of the permutation maximum test](permutation-maximum-familywise-error.md)
-
 ## Expansion
 
 The statistic $T^{\max}$ automatically accounts for the number of positions tested, the correlation between nearby positions, marker density, missing genotypes and the actual (possibly non-normal) trait distribution, because each permuted data set is analyzed by exactly the same scan as the observed one. No analytic null distribution for correlated test statistics is needed.
