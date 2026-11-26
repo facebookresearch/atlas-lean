@@ -115,6 +115,16 @@ example : cylinderShiftSum 1 2 id (1 : Equiv.Perm (Fin 3)) = 9 := by
 example : torusShiftSum 2 2 id (1 : Equiv.Perm (Fin 2)) = 28 := by
   decide +kernel
 
+-- On the 1 × 1 torus only the zero shift occurs, and each design gives one tiling.
+example : torusShiftSum 1 1 id (1 : Equiv.Perm (Fin 2)) = 2 := by
+  rw [squareTorus_identity 1 1 (one_pow 1)]
+  decide +kernel
+
+-- The square-torus divisor formula agrees with the direct 2 × 2 count above.
+example : torusShiftSum 2 2 id (1 : Equiv.Perm (Fin 2)) = 28 := by
+  rw [squareTorus_identity 2 1 (one_pow 1)]
+  decide +kernel
+
 -- On the 2 × 3 torus the two shifts of order six each fix the two constant tilings.
 example : torusShiftSum 2 3 id (1 : Equiv.Perm (Fin 2)) = 84 := by
   rw [rectangularTorus_identity 2 3 1 (one_pow 1)]
