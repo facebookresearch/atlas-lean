@@ -5,7 +5,7 @@ Let $c\in[1,2)$ be a constant. If there are explicit PRGs for width-$6$, length-
 1. explicit low-error PRGs for width-$6$ permutation ROBPs with seed $\widetilde{O}(\log^c n)$ imply explicit low-error PRGs for width-$3$ ROBPs with seed $\widetilde{O}(\log^c n)$;
 2. for all $w,n,s,\varepsilon$, an explicit PRG for width-$w$ ROBPs with error $0.01/n$ and seed length $s$ implies an explicit $\varepsilon$-HSG for width-$(w+1)$ ROBPs with seed length $O(s+\log n\cdot\log(1/\varepsilon))$.
 
-For context, width-$4$ ROBPs currently have no explicit PRGs, WPRGs or HSGs with seed $o(\log^2 n)$, whereas WPRGs with seed $\widetilde{O}(\log^{3/2}n)$ and error $1/n$ exist for polynomial-width permutation ROBPs.
+For context, when the reduction was published no explicit PRGs, WPRGs or HSGs with seed $o(\log^2 n)$ were known for width-$4$ ROBPs, whereas WPRGs with seed $\widetilde{O}(\log^{3/2}n)$ and error $1/n$ exist for polynomial-width permutation ROBPs.
 
 ## Proof sketch
 

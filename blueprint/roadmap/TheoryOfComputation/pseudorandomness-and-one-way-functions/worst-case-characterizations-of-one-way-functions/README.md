@@ -4,7 +4,6 @@
 - [Hitting set generators and algorithms that avoid them](hitting-set-generators-and-avoidance.md)
 - [Computational knowledge complexity k(n) of an interactive proof](computational-knowledge-complexity.md)
 - [Locally samplable distributions on truth tables](locally-samplable-distributions.md)
-- [Witness encryption for an NP relation](witness-encryption-for-np.md)
 - [GapMCSP[s,c], GapK[s,c] and weak versus strong average-case hardness on a distribution](gap-meta-complexity-and-weak-strong-average-case-hardness.md)
 - [Distributional Kolmogorov complexity dK^t_λ(x|D) and its probabilistic variant](distributional-kolmogorov-complexity.md)
 - [Ilango–Ren–Santhanam: a coding theorem plus average-case hardness of additive approximation yields one-way functions](irs-coding-theorem-plus-hardness-gives-owf.md)

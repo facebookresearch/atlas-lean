@@ -1,6 +1,6 @@
 # Khot–Tulsiani–Worah characterization of strong approximation resistance
 
-Assume the Unique Games Conjecture. A predicate $P \subseteq \{-1,1\}^k$ is **strongly approximation resistant** (no efficient algorithm can find an assignment whose value deviates from $\rho(P)$ by more than $\varepsilon$ in either direction on almost-satisfiable instances) if and only if there is no ``vanishing'' measure on the polytope of first and second moments of distributions supported on $P$: precisely, $P$ is strongly approximation resistant iff for every probability measure $\Lambda$ on the moment vectors $(\mathbb{E}x_i, \mathbb{E}x_ix_j)$ of distributions on $P$, some symmetric polynomial combination of the Fourier coefficients $\hat{P}(S)$ with $\Lambda$ fails to vanish identically. This criterion is decidable for each fixed $k$.
+Assume the Unique Games Conjecture. A predicate $P \subseteq \{-1,1\}^k$ is **strongly approximation resistant** (no efficient algorithm can find an assignment whose value deviates from $\rho(P)$ by more than $\varepsilon$ in either direction on almost-satisfiable instances) if and only if there is a probability measure $\Lambda$ on the polytope $C(P)$ of first and second moment vectors $(\mathbb{E}x_i, \mathbb{E}x_ix_j)$ of distributions supported on $P$ that vanishes: for every $1 \le t \le k$ the signed measure $\Lambda^{(t)} = \mathbb{E}_{|S|=t}\,\mathbb{E}_{\pi}\,\mathbb{E}_{b \in \{-1,1\}^t}\bigl[\bigl(\prod_{i} b_i\bigr)\hat{P}(S)\,\Lambda_{S,\pi,b}\bigr]$ is identically zero. Otherwise $P$ is approximable.
 
 ## Proof sketch
 

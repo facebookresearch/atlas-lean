@@ -9,7 +9,7 @@ In item 1, a formula $\varphi$ is mapped to $x$ a random string and $y$ a list o
 
 ## Depends on
 
-- [Witness encryption for an NP relation](witness-encryption-for-np.md)
+- [Witness encryption for NP languages](../../../ComputerScience/cryptography/public-key/obfuscation-and-witness-encryption/witness-encryption-and-evasive-lwe/witness-encryption.md)
 - [Distributional Kolmogorov complexity dK^t_λ(x|D) and its probabilistic variant](distributional-kolmogorov-complexity.md)
 
 ## Proof depends on

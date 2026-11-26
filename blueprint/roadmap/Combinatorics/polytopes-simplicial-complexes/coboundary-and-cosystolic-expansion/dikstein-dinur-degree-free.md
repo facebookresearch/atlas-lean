@@ -1,12 +1,12 @@
 # Dikstein–Dinur: cosystolic expansion without dependence on dimension or degree
 
-There are absolute constants $c, \lambda_0 > 0$ such that the following holds for every $d \ge 3$, every $1 \le i \le d-2$ and every coefficient group (abelian or not, for $i = 1$). If $X$ is a $d$-dimensional $\lambda$-local spectral expander with $\lambda \le \lambda_0$ and all links of $(i-1)$-faces are $\beta$-coboundary expanders in dimension $i$, then $X$ is an $(\varepsilon, \mu)$-cosystolic expander in dimension $i$ with
+Let $\beta, \lambda > 0$ and $k \ge 1$, let $X$ be a $d$-dimensional $\lambda$-one-sided local spectral expander with $d \ge k + 2$, and let $\Gamma$ be a group (abelian if $k > 1$). If for every non-empty face $r$ of $X$ the link $X_r$ satisfies $h^{k+1-|r|}(X_r, \Gamma) \ge \beta$, then the cosystolic expansion constant of $X$ in dimension $k$ satisfies
 
 $$
-\varepsilon \ge c \cdot \beta, \qquad \mu \ge c \cdot \beta,
+h^k(X, \Gamma) \ge \frac{\beta^{k+1}}{4\,(k+2)!} - e\lambda,
 $$
 
-independently of $d$ and of the maximal vertex degree.
+a bound that depends on neither $d$ nor the degree of $X$.
 
 ## Proof sketch
 

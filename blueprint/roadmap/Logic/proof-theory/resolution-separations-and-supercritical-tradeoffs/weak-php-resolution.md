@@ -1,12 +1,12 @@
 # Raz–Razborov: resolution lower bounds for the weak pigeonhole principle
 
-For every $m > n$ (possibly $m = \infty$ in the functional sense, or $m$ exponential in $n$), every resolution refutation of the pigeonhole formula $\mathrm{PHP}^{m}_{n}$, asserting an injection from $m$ pigeons into $n$ holes, has size at least
+For every $m > n$, every resolution refutation of the pigeonhole formula $\mathrm{PHP}^{m}_{n}$, asserting an injection from $m$ pigeons into $n$ holes, has size at least
 
 $$
 2^{\Omega(n/\log^2 m)}.
 $$
 
-In particular even the very weak pigeonhole principle with $m = 2^{\sqrt{n}}$ pigeons requires superpolynomial resolution refutations.
+For every $m > n$, however large, every resolution refutation of $\mathrm{PHP}^{m}_{n}$ also has size $2^{\Omega(n^{1/3})}$ (Razborov, ECCC TR01-055); in particular even $m = 2^{\sqrt{n}}$ pigeons need refutations of size $2^{\Omega(n^{1/3})}$.
 
 ## Proof sketch
 

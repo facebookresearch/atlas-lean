@@ -1,6 +1,6 @@
 # Matroid independence complexes are 0-local spectral expanders
 
-Let $M$ be a matroid of rank $r$ on a finite ground set and let $X_M$ be its independence complex, the pure $(r-1)$-dimensional complex whose top faces are the bases of $M$, weighted uniformly on bases. Then every link of every face of dimension at most $r-3$ in $X_M$ has nonpositive second eigenvalue, that is, $X_M$ is a one-sided $0$-local spectral expander. Consequently, the down-up walk on bases (the bases-exchange walk) has spectral gap at least $1/r$ and mixes in time $O(r \log(r\, |B(M)|))$ from any start, which yields a fully polynomial randomized approximation scheme for the number of bases of any matroid given by an independence oracle.
+Let $M$ be a matroid of rank $r$ on a finite ground set and let $X_M$ be its independence complex, the pure $(r-1)$-dimensional complex whose top faces are the bases of $M$, weighted uniformly on bases. Then every link of every face of dimension at most $r-3$ in $X_M$ has nonpositive second eigenvalue, that is, $X_M$ is a one-sided $0$-local spectral expander. Consequently, the down-up walk on bases (the bases-exchange walk) has spectral gap at least $1/r$ and mixes in time $O(r \log(r\, |B(M)|))$ from any start, which yields a fully polynomial randomized approximation scheme for the number of bases of any matroid given by an independence oracle and proves the Mihail–Vazirani conjecture that the graph of the bases polytope of every matroid has edge expansion at least $1$.
 
 ## Proof sketch
 

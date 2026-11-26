@@ -8,7 +8,7 @@ $$
 \langle f, f' \rangle = \tfrac12\, \mathbb{E}_{e \in X^A(1)}\bigl[f(e) f'(e)\bigr] + \tfrac12\, \mathbb{E}_{e \in X^B(1)}\bigl[f(e) f'(e)\bigr],
 $$
 
-with uniform $e$ over the $A$-edges and over the $B$-edges. If $R \subseteq X(1)$ and $f = \mathbf{1}_R$ satisfies $\langle f, M^{\parallel} f \rangle \ge c\, \langle f, f \rangle$, then some label $\sigma$ has
+with uniform $e$ over the $A$-edges and over the $B$-edges. If $R \subseteq X(1)$ is non-empty and $f = \mathbf{1}_R$ satisfies $\langle f, M^{\parallel} f \rangle \ge c\, \langle f, f \rangle$, then some label $\sigma$ has
 
 $$
 |R \cap X^{\sigma}(1)| \ge \Bigl(c - \frac{\lambda}{\Delta}\Bigr) \frac{|G|}{2}.

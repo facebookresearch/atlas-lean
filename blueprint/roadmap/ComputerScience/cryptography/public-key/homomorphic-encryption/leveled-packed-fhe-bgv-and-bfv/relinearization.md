@@ -4,7 +4,7 @@ Let $T\ge 2$ and $\ell=\lceil\log_Tq\rceil$. A relinearization key consists of r
 
 ## Proof sketch
 
-The added terms decrypt to $\sum_id_{2,i}(T^{i}s^{2}+te_i)=d_2s^{2}+t\sum_id_{2,i}e_i$, so the new two-component ciphertext decrypts to $d_0+d_1s+d_2s^{2}$ plus $t\sum_id_{2,i}e_i$, whose norm is bounded by $\ell\delta_RT\max\|e_i\|$.
+The added terms decrypt to $\sum_id_{2,i}(T^{i}s^{2}+te_i)=d_2s^{2}+t\sum_id_{2,i}e_i$, so the new two-component ciphertext decrypts to $d_0+d_1s+d_2s^{2}$ plus $t\sum_id_{2,i}e_i$, whose norm is bounded by $t\,\ell\,\delta_R\,T\max_i\|e_i\|_\infty$.
 
 ## Depends on
 

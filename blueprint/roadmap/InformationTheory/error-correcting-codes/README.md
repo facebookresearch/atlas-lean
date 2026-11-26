@@ -22,4 +22,4 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [Folded Reed-Solomon and Multiplicity Codes up to List-Decoding Capacity](folded-reed-solomon-and-multiplicity-codes/README.md)
 - [Higher-Order MDS Codes and List-Decoding Capacity of Reed-Solomon Codes](generic-reed-solomon-list-decoding-capacity/README.md)
 - [Left-Right Cayley Complex Codes and c3-LTCs](left-right-cayley-complex-codes/README.md)
-- [Lifted Product and Quantum Tanner Codes](lifted-product-and-quantum-tanner-codes/README.md)
+- [Lifted Product Codes](lifted-product-and-quantum-tanner-codes/README.md)
