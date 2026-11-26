@@ -6,7 +6,5 @@
 - [Weighted interval scheduling recurrence](wis-value.md)
 - [Traceback of the weighted interval scheduling recurrence](wis-trace.md)
 - [Optimal schedule of weighted intervals](is-optimal-schedule.md)
-- [Binary search for the last index whose key is at most a value](pred-search.md)
-- [Bottom-up table of the weighted interval scheduling recurrence](wis-table.md)
-- [Traceback through a weighted interval scheduling table](wis-traceback.md)
+- [The value of an optimal schedule is the brute-force optimum](eq-wis-opt.md)
 - [Weighted interval scheduling algorithm](wis-schedule.md)
