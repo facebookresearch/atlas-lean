@@ -9,4 +9,5 @@ Let $F$ be a collection of $n$ continuous real functions, each defined on a clos
 
 ## Sources
 
+- D. Halperin and M. Sharir, "Arrangements", Chapter 28 of *Handbook of Discrete and Computational Geometry*, 3rd ed., J. E. Goodman, J. O'Rourke and C. D. Tóth (eds.), CRC Press, 2017, <https://doi.org/10.1201/9781315119601>: Section 28.10, for partially defined functions the envelope has complexity at most $\lambda_{s+2}(n)$, so at most $\lambda_3(n)$ pieces for $n$ segments; also Theorem 28.2.1
 - *Computational Geometry*, lecture notes, ETH Zürich, autumn 2013, Chapter 12 (Davenport–Schinzel sequences), <https://ti.inf.ethz.ch/ew/courses/CG13/lecture/Chapter%2012.pdf>: Proposition 12.4. Its proof extends each function by nearly vertical rays, which works for segments but not for arbitrary continuous functions (a function oscillating like $\sqrt t \sin(1/t)$ near the endpoint of another meets every such ray infinitely often); the direct alternation count above avoids this

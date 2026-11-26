@@ -14,4 +14,5 @@ Fix $d \ge 1$. In the *convex hull size verification* problem the input is a lis
 
 ## Sources
 
+- D. G. Kirkpatrick and R. Seidel, "The ultimate planar convex hull algorithm?", *SIAM Journal on Computing* 15(1) (1986), 287–299, <https://doi.org/10.1137/0215021>: Section 5, Theorem 5.2 (convex hull size verification needs $\Omega(n \log H)$ steps on $d$-th order algebraic decision trees), by the reduction $p_i = (z_i, z_i^2)$ from Corollary 5.1
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 3, the theorem that the CHSV problem requires $\Omega(n \log h)$ time, by lifting a multiset size verification instance to the parabola

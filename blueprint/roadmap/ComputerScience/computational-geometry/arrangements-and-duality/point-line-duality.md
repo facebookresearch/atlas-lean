@@ -4,4 +4,5 @@
 
 ## Sources
 
+- D. Halperin and M. Sharir, "Arrangements", Chapter 28 of *Handbook of Discrete and Computational Geometry*, 3rd ed., J. E. Goodman, J. O'Rourke and C. D. Tóth (eds.), CRC Press, 2017, <https://doi.org/10.1201/9781315119601>: Section 28.7, the duality transform mapping $(a, b)$ to the line $y = ax - b$ and the line $y = cx + d$ to the point $(c, -d)$
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 6, "Point-Line Duality"

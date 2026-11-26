@@ -9,4 +9,5 @@ Let $\alpha$ be the [inverse Ackermann function](inverse-ackermann-function.md).
 
 ## Sources
 
+- D. Halperin and M. Sharir, "Arrangements", Chapter 28 of *Handbook of Discrete and Computational Geometry*, 3rd ed., J. E. Goodman, J. O'Rourke and C. D. Tóth (eds.), CRC Press, 2017, <https://doi.org/10.1201/9781315119601>: Section 28.10, $\lambda_3(n) = 2n\alpha(n) + O(n)$, after S. Pettie, *J. ACM* 62 (2015)
 - *Computational Geometry*, lecture notes, ETH Zürich, autumn 2013, Chapter 12 (Davenport–Schinzel sequences), <https://ti.inf.ethz.ch/ew/courses/CG13/lecture/Chapter%2012.pdf>: the paragraph "Bounds for higher-order Davenport-Schinzel sequences" before Section 12.1: the inverse Ackermann hierarchy $\alpha_k$ and the bound $\lambda_3(n) = \Theta(n\alpha(n))$, the finer bound $\lambda_3(n) = 2n\alpha(n) \pm O(n\sqrt{\alpha(n)})$, and the paragraph "Realizing DS sequences as lower envelopes" ($n$ segments whose lower envelope has length $n\alpha(n) - O(n)$)
