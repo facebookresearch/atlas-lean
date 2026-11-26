@@ -12941,6 +12941,7 @@
   "MathlibExt/NumberTheory/Digits/ZeckendorfBlockCountRecurrence": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Distribution of Zeckendorf expressions"},
   "MathlibExt/NumberTheory/Digits/ZeckendorfMaxBlockScaling": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Distribution of Zeckendorf expressions"},
   "MathlibExt/NumberTheory/DilcherFiniteMultipleHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Multiple harmonic sums"},
+  "MathlibExt/NumberTheory/Diophantine/BisectorEquationIntZero": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Negative Pell equation and angle bisectors"},
   "MathlibExt/NumberTheory/Diophantine/Linear": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Triangular recurrence arrays at negative indices"},
   "MathlibExt/NumberTheory/Diophantine/NegativePellGcd": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Negative Pell equation and angle bisectors"},
   "MathlibExt/NumberTheory/Diophantine/NegativePellRational": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Negative Pell equation and angle bisectors"},
