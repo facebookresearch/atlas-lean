@@ -4,7 +4,7 @@ Let a library of barcoded protein variants be split into an antibody-selected sa
 
 $$E(X) = F \cdot \frac{n_{X,\mathrm{ab}} / N_{\mathrm{ab}}}{n_{X,\mathrm{ref}} / N_{\mathrm{ref}}},$$
 
-with $F > 0$ a scaling constant chosen from the first and 99th percentiles of the raw ratios so that scores fall in $[0,1]$, values outside that range being truncated to $0$ or $1$. Variants with reference counts below a fixed minimum, or failing independent filters on folding and receptor binding, are discarded before scoring. Site-level escape at residue $m$ is the sum of the single-mutation escape scores at that site, and a site is retained as informative only when its total escape exceeds both an absolute floor and a fixed multiple of the median site score.
+with $F > 0$ a scaling constant chosen from the first and 99th percentiles of the raw ratios so that scores fall in $[0,1]$, values outside that range being truncated to $0$ or $1$. Variants with reference counts below a fixed minimum, or failing independent filters on folding and receptor binding, are discarded before scoring. Site-level escape at residue $m$ is the sum of the single-mutation escape scores at that site (estimated in the source by fitting global epistasis models to the variant escape scores). To reduce experimental noise in per-antibody analysis, a site is retained by the noise filter only when its total escape score is at least $0.01$ and at least $3$ times the median score of all sites.
 
 ## Expansion
 

@@ -6,7 +6,7 @@
 2. $s$ is continuous and strictly increasing on $[0, \mathrm{MIC}_{\mathrm{susc}}]$;
 3. $s(\mathrm{MIC}_{\mathrm{susc}}) > 0$.
 
-**Definition and proposition.** There is a unique $c^\ast \in (0, \mathrm{MIC}_{\mathrm{susc}})$ with $s(c^\ast) = 0$, the *minimal selective concentration* (MSC). For $0 \le c < \mathrm{MSC}$ the resistant strain declines in frequency, and for $\mathrm{MSC} < c \le \mathrm{MIC}_{\mathrm{susc}}$ it is enriched. The selective window for resistance is therefore $(\mathrm{MSC}, \mathrm{MIC}_{\mathrm{res}})$, which strictly contains the classical mutant selection window $(\mathrm{MIC}_{\mathrm{susc}}, \mathrm{MIC}_{\mathrm{res}})$.
+**Definition and proposition.** There is a unique $c^\ast \in (0, \mathrm{MIC}_{\mathrm{susc}})$ with $s(c^\ast) = 0$, the *minimal selective concentration* (MSC). For $0 \le c < \mathrm{MSC}$ the resistant strain declines in frequency, and for $\mathrm{MSC} < c \le \mathrm{MIC}_{\mathrm{susc}}$ it is enriched. Together with the source's experimental regime where the resistant strain also outcompetes the susceptible strain on $(\mathrm{MIC}_{\mathrm{susc}}, \mathrm{MIC}_{\mathrm{res}})$, this gives the selective window $(\mathrm{MSC}, \mathrm{MIC}_{\mathrm{res}})$, strictly containing the classical mutant selection window $(\mathrm{MIC}_{\mathrm{susc}}, \mathrm{MIC}_{\mathrm{res}})$.
 
 If near the threshold $s(c) \approx -\delta + \beta c$ with $\beta > 0$, then $\mathrm{MSC} \approx \delta/\beta$: lowering the cost $\delta$ (for example by compensatory mutation) lowers the MSC proportionally.
 

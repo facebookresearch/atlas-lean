@@ -1,6 +1,6 @@
 # Epitope grouping by escape-profile dissimilarity
 
-Let $A \in \mathbb{R}_{\ge 0}^{N \times M}$ be the matrix whose entry $A_{nm}$ is the total escape score of antibody $n$ at antigen site $m$, restricted to the informative sites. Writing $A_n$ for row $n$ and $x_n = A_n - \overline{A_n}\mathbf{1}$ for its centred version, the dissimilarity between antibodies is
+Let $A \in \mathbb{R}_{\ge 0}^{N \times M}$ be the matrix whose entry $A_{nm}$ is the total escape score of antibody $n$ at antigen site $m$, restricted to the $M$ *informative sites*: sites escaped by at least six antibodies (each with site escape score greater than $1$, per the source's "Antibody clustering" criterion, distinct from the per-antibody noise filter). Writing $A_n$ for row $n$ and $x_n = A_n - \overline{A_n}\mathbf{1}$ for its centred version, the dissimilarity between antibodies is
 
 $$D_{ij} = 1 - \operatorname{corr}(A_i, A_j), \qquad \operatorname{corr}(A_i,A_j) = \frac{\langle x_i, x_j \rangle}{\lVert x_i\rVert\,\lVert x_j\rVert} \in [-1,1],$$
 
