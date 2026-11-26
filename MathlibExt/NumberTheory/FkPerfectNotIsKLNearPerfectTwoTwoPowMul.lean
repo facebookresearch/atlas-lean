@@ -17,11 +17,11 @@ public import MathlibExt.NumberTheory.FkPerfect
 
 /-! # No `[2,ℓ]`-near-perfect number of the form `2 ^ a * p`
 
-This module defines `[k,ℓ]`-near-perfect numbers and proves that `2 ^ a * p`
-is not `[2,ℓ]`-near-perfect when `ℓ ≥ 1` and `p` is an odd prime. At `a = 0`
-the only proper divisor is `1`, at `a = 1` parity forces the divisor `2` and
-`p` divides `1`, and at `a ≥ 2` the divisor sum is `2` modulo `4` while every
-term of the equation is `0`.
+This module proves that `2 ^ a * p` is not `[2,ℓ]`-near-perfect (`IsKLNearPerfect`, defined in
+`MathlibExt.NumberTheory.FkPerfect`) when `ℓ ≥ 1` and `p` is an odd prime. At `a = 0` the
+only proper divisor is `1`, at `a = 1` parity forces the divisor `2` and `p` divides `1`, and
+at `a ≥ 2` the divisor sum is `2` modulo `4` while every term of `n ^ 2 + d ^ 2 + ℓ * n` is
+`0` modulo `4`.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
