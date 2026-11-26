@@ -22,7 +22,7 @@ A position with total `6 * k - 1` and with every pile at most `4 * k` is an N-po
 
 * Kayla Barker, Mia DeStefano, Eugene Fiorini, Michael Gohn, Joe Miller, Jacob Roeder,
   and Tony W. H. Wong, *Generalized Impartial Two-player Pebbling Games on `K_3` and `C_4`*,
-  Journal of Integer Sequences 27 (2024), Article 24.5.8, pp. 1–15, Section 1, Lemmas 4 and 7,
+  Journal of Integer Sequences 27 (2024), Article 24.5.8, pp. 1–15, Section 2, Lemmas 4 and 7,
   and Corollary 10. <https://cs.uwaterloo.ca/journals/JIS/VOL27/Wong/wong43.html>
 -/
 
