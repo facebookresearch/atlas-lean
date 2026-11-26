@@ -50,13 +50,13 @@ structure RealVariety (n : ℕ) where
   closedIdeal : Ideal (MvPolynomial (Fin n) ℝ)
   excludedIdeal : Ideal (MvPolynomial (Fin n) ℝ)
 
-/-- The real points of the variety: the zeros of the closed ideal minus those of the excluded
-ideal (Mathlib's `MvPolynomial.zeroLocus`). -/
+/-- The real points of the variety: the points of $\mathbb{R}^n$ at which every polynomial of the
+closed ideal vanishes, minus those at which every polynomial of the excluded ideal vanishes. -/
 def RealVariety.locus {n : ℕ} (X : RealVariety n) : Set (Ambient n) :=
   zeroLocus ℝ X.closedIdeal \ zeroLocus ℝ X.excludedIdeal
 
-/-- The coordinate ring of the Zariski closure of `S`: polynomials modulo Mathlib's vanishing
-ideal of `S`. -/
+/-- The coordinate ring of the Zariski closure of a set $S \subseteq \mathbb{R}^n$: real
+polynomials in $n$ variables modulo the ideal of polynomials vanishing on $S$. -/
 abbrev CoordinateRing {n : ℕ} (S : Set (Ambient n)) :=
   MvPolynomial (Fin n) ℝ ⧸ vanishingIdeal ℝ S
 

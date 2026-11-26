@@ -18,3 +18,6 @@ Point-set topology of topological and metric spaces: connectedness, separation a
 - [Non-strictly separated sets](is-separated.md)
 - [Normal space: points are closed and disjoint closed sets have disjoint open neighbourhoods](normal-space.md)
 - [Path component of a point](path-component.md)
+- [Baire category theorem for completely pseudometrizable spaces](baire-category-theorem.md)
+- [Urysohn's lemma](urysohn-lemma.md)
+- [Tietze extension theorem for functions into a closed interval](tietze-extension.md)

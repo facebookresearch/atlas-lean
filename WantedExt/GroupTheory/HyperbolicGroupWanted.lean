@@ -9,10 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.GroupTheory.FinitelyPresentedGroup
 public import MathlibExt.GroupTheory.FreeGroupHyperbolic
-public import MathlibExt.GroupTheory.HyperbolicGroup
-public import WantedExt.GroupTheory.WordProblemSolvableShared
+public import MathlibExt.GroupTheory.HyperbolicGroupFinitelyPresented
+public import MathlibExt.GroupTheory.WordProblemSolvableShared
 
 /-!
 # Basic theorems on word-hyperbolic groups
@@ -27,11 +26,6 @@ Math. Sci. Res. Inst. Publ. 8, Springer (1987), 75-263, §1.1.D, §1.4 and §2.1
 namespace MathlibExt.GroupTheory.HyperbolicGroupWanted
 
 open MathlibExt.GroupTheory.WordProblemSolvableShared
-
-/-- **Hyperbolic groups are finitely presented** (Gromov, *Hyperbolic groups*, 1987,
-Corollary 2.2.A of Rips's theorem 2.2). -/
-theorem_wanted isFinitelyPresented_of_isHyperbolic {G : Type*} [Group G]
-    (h : Group.IsHyperbolic G) : Group.IsFinitelyPresented G
 
 /-- **Hyperbolicity does not depend on the finite generating set** (Gromov, *Hyperbolic groups*,
 1987, Corollary 2.3.E). If `G` is word-hyperbolic, then the word metric of every finite generating

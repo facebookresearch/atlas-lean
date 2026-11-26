@@ -34,10 +34,35 @@ example : Even (2 : ℤ) ∧ Even (-2 : ℤ) :=
 example (x y : ℤ) (h : x ^ 2 = 5 * y ^ 2) : Even x ∧ Even y :=
   even_of_abs_sq_sub_mul_sq_zero_mod_eight 5 0 rfl rfl x y (by rw [h, sub_self, abs_zero])
 
+-- A negative coefficient in the residue class d ≡ 1 gives a positive difference of 116.
+example : Even (2 : ℤ) ∧ Even (-4 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight (-7) 116 rfl rfl 2 (-4) (by decide)
+
+-- The difference is −20 before taking its absolute value.
+example : Even (-4 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight 9 20 rfl rfl (-4) 2 (by decide)
+
+-- The smallest possible z is 4, and a coordinate may be zero.
+example : Even (0 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight 1 4 rfl rfl 0 2 (by decide)
+
+#print axioms even_of_abs_sq_sub_mul_sq_four_mod_eight
+
 -- The horizontal line and the line of slope 3/4 have an external bisector of slope -3.
 example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
     (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
   apply bisector_slope_equation 0 (3 / 4) (-3) <;> norm_num
+
+-- The Pell points (1, 1) and (1/7, 5/7) admit both the slope 1/2 and its negative reciprocal.
+example (c : ℚ) (hc : c ∈ ({1 / 2, -2} : Set ℚ)) :
+    ∃ u v : ℚ, 1 ^ 2 - 2 * u ^ 2 = -1 ∧ (1 / 7) ^ 2 - 2 * v ^ 2 = -1 ∧
+      ((u + v ≠ 0 ∧ c = (1 * v + u * (1 / 7)) / (u + v)) ∨
+        (1 * v + u * (1 / 7) ≠ 0 ∧ c = -(u + v) / (1 * v + u * (1 / 7)))) := by
+  apply bisector_equation_rat_solution_negPell 2 (by decide) Int.prime_two.squarefree
+      1 (1 / 7) c (by norm_num) _ ⟨1, by norm_num⟩ ⟨5 / 7, by norm_num⟩
+  rcases hc with rfl | rfl <;> norm_num
+
+#print axioms bisector_equation_rat_solution_negPell
 
 -- The Pell solutions (1, 1) and (7, 5) give bisector slopes 2 and -1/2.
 example : ∀ c ∈ ({2, -1 / 2} : Set ℚ),
@@ -97,5 +122,26 @@ example (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (a : Fin 0 → ℤ√d) :
     Fin.elim0 a (fun i ↦ i.elim0) (fun i ↦ i.elim0)
 
 #print axioms strictlyPrimitive_prod
+
+-- The comparison of the negative Pell sequences holds for every index, for
+-- `d = 2` with fundamental solution `(1, 1)`.
+example (n : ℕ) : negPellG 2 n ≤ negPellF 2 n :=
+  (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ n).1
+
+-- At `n = 0` the inequality is strict: `g_0 = 0` while `f_0 = 1`.
+example : ¬(negPellF 2 0 = negPellG 2 0) := by
+  intro h
+  have hiff := (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ 0).2.mp h
+  omega
+
+-- The equality case `d = 2`, `n = 1`: both coordinates are `1`.
+example : negPellF 2 1 = negPellG 2 1 :=
+  (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ 1).2.mpr ⟨rfl, rfl⟩
+
+-- Another value of `d`: `x^2 - 5 y^2 = -1` has solution `(2, 1)`.
+example (n : ℕ) : negPellG 5 n ≤ negPellF 5 n :=
+  (negPellG_le_negPellF 5 (by norm_num) ⟨2, 1, by norm_num⟩ n).1
+
+#print axioms negPellG_le_negPellF
 
 end MetaMathlibExt

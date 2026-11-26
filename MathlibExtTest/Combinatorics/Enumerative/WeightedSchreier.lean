@@ -35,6 +35,18 @@ example : weightedSchreierCount 4 4 = 6 := by decide
 example : seededPartialSums (fun j => j + 3) (fun _ => 2) 2 3 = 19 := by decide
 example : iteratedPartialSum 2 (fun _ => (2 : ℕ)) 3 = 6 := by decide
 
+-- At index one, only the two most recent seeds contribute.
+example {R : Type*} [CommRing R] (b a : ℕ → R) :
+    seededPartialSums b a 4 1 - seededPartialSums 0 a 4 1 = b 3 + b 2 := by
+  rw [seededPartialSums_sub_zero]
+  simp [Finset.sum_range_succ, Nat.choose]
+
+-- A signed seed can lower the sum, independently of the input sequence.
+example (a : ℕ → ℤ) :
+    seededPartialSums (fun j => (j : ℤ) - 1) a 3 4 - seededPartialSums 0 a 3 4 = -5 := by
+  rw [seededPartialSums_sub_zero]
+  decide
+
 -- At depth two, the first nonzero shifted sum occurs at index two.
 example : iteratedPartialSum 2 (fun n => Nat.fib (n + 2)) 2 = 1 := by
   rw [iteratedPartialSum_fib_add_two]

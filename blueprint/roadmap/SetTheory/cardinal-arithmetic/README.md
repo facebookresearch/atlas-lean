@@ -9,3 +9,4 @@ The arithmetic of infinite cardinals, including the continuum hypothesis and the
 - [Singular cardinals hypothesis](singular-cardinals-hypothesis.md)
 - [Well-ordering theorem: every set admits a well-ordering](well-ordering-theorem.md)
 - [Strongly inaccessible cardinal: an uncountable regular strong limit cardinal](strongly-inaccessible-cardinal.md)
+- [Equinumerous sets](equinumerosity.md)

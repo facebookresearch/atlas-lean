@@ -34,7 +34,7 @@ private def mayImport (source target : Lean.Name) : Bool :=
     (source == `DomainsTest &&
       (target == `Domains || target == `PhyslibExt || target == `CSLibExt || target == `MathlibExt)) ||
     (source == `WantedExt &&
-      (target == `CSLibExt || target == `MathlibExt))
+      (target == `Domains || target == `PhyslibExt || target == `CSLibExt || target == `MathlibExt))
 
 /-- `value` with exactly `n` leading `fun` binders removed, if it has that many. -/
 private def lambdaBody? (value : Lean.Expr) : Nat → Option Lean.Expr

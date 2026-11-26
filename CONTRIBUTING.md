@@ -71,6 +71,17 @@ one, and people and agents follow the same steps:
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
 
+Proving a task needs a built checkout. `lake exe cache get` fetches only
+Mathlib's build, and ATLAS's own modules take hours to build from source, so
+start from CI's build of `main` instead. It needs a `gh` login, `zstd` and
+about 15 GB free:
+
+```sh
+lake exe cache get    # Mathlib
+scripts/get_build.sh  # ATLAS, from CI's build of the nearest commit of main
+lake build            # what changed since
+```
+
 ### Which areas come first
 
 [`blueprint/priorities.json`](blueprint/priorities.json) weighs the areas of
@@ -146,7 +157,8 @@ the [graph](docs/BLUEPRINT.md#graph-rules). It lists the article ids (`af_…`)
 of the pages the pull request proves, fixes or extends, such as the ready tasks
 it takes, and adds `new` when it adds declarations that get pages under
 [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
-`Graph: none` only when the pull request changes nothing the graph shows.
+`Graph: none` only when the pull request changes nothing the graph shows, and
+`Graph: batch` on a graph-sync batch.
 
 - **A new declaration gets its page in the same pull request.** Run the sync
   scoped to the pull request ([Maintaining
@@ -354,6 +366,12 @@ and they need no code owner's approval unless GitHub requires one; Codex still
 reviews them. Any other code-owned file the pull request changes, the sync's
 own code included, still needs a code owner's approval. Any other wiki change,
 a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
+A graph-sync batch, which `scripts/graph_batch.py verify` shows to be exactly
+what the tools write for what `main` merged
+([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)), needs no issue,
+or a code owner's approval unless GitHub requires one; Codex still reviews it,
+and its reviewer runs `verify` on its exact head from an up-to-date checkout of
+`main`, never from the batch's own branch.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`); a pull request whose only wiki changes are the sync's, as
@@ -397,6 +415,18 @@ To queue a standalone PR, use one of:
 - The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
   now, and otherwise returns an error that says why; it never merges directly.
+
+Before you queue a PR, run `python3 -I scripts/queue/preflight.py <number>` from
+an up-to-date checkout of `main`, never from the PR's branch. It prints READY or
+NOT READY and what to do next. It checks Codex's approval of the exact head and
+the required checks. It checks that CI tested the head on a `main` that has the
+current pins, less than 6 hours ago. It checks conflicts with `main` and the
+queued PRs, and declarations that a queued PR also adds. With `--enqueue` it
+queues a READY PR with `enqueuePullRequest`, pinned to the head it checked. The
+[atlas-merge-queue](.agents/skills/atlas-merge-queue/SKILL.md) skill gives the
+rules that no check enforces. Never push to a queued PR. Take a PR out of the
+middle of the queue only when it is known to be bad. After a bump, check PRs
+again before you queue them.
 
 To queue a stack of pull requests (its branches must be in this repository), use
 the merge box of the highest PR you want to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
@@ -460,7 +490,17 @@ its PR checks; a fork PR may also need a maintainer to approve the workflow run.
 `scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
 checks their pull-request and merge-group triggers, filters and concurrency
 groups, and that each required check comes from exactly one job, with no
-job-level `if` or `strategy`.
+job-level `strategy` and no job-level `if` but the one that skips `build` on
+some PRs. CI's `decide which checks to run` job (`scripts/ci_scope.py`) skips
+`build` on a PR whose every changed path is graph data (`blueprint/`,
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
+`scripts/mathgraph-map.jsonl`) or documentation (Markdown outside `scripts/`
+and `.github/`, and `.agents/` and `.claude/`), and a skipped required check
+counts as passed. On a PR whose every changed path is graph data, documentation,
+a Lean file of the nine libraries or under `provenance/`, `repository integrity`
+skips the nine tool test suites of `scripts/test_scripts.sh`, whose tests read
+only scripts, workflows and the pins (`ATLAS_TOOL_TESTS`). Merge groups and
+pushes to `main` always run every required check, and all of its tests.
 
 The other checks are advisory. Codex does not run on merge groups, but a formal
 Codex change request can cancel the PR's CI run while it is still queued or
@@ -478,7 +518,8 @@ map, the card move ledger, the tooling that builds and checks the site, the
 toolchain pins, a path where the build writes or fetches its outputs, Git
 attributes, or a file named like an Autoform output marker; PRs that change
 only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
-run only its unit tests, in a few minutes
+run only its unit tests, in a few minutes, and PRs that change only Lean library
+files those tests do not read, provenance and documentation run neither
 ([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
 With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
 and checks a branch on demand; only `main` publishes.

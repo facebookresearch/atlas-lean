@@ -23,6 +23,10 @@ example : IsGenMarkovCharNumber 13 217 3 67 := by
 example (u : ℕ) (hu : IsGenMarkovCharNumber 13 217 3 u) : (217 : ℤ) ∣ 13 * u - 3 :=
   genMarkovCharNumber_dvd_sub 1 [false, true] (by decide) (by decide) u hu
 
+-- At the Farey fraction 1/2 with k = 0, the characteristic number 2 gives 2² + 1 = 5.
+example : 5 ∣ (2 : ℕ) ^ 2 + 0 * 2 + 1 :=
+  genMarkovCharNumber_sq_add 0 [false] (by decide) (by decide) 2 isGenMarkovCharNumber_one_five_two
+
 -- Across 1/1 the reflected triple admits a characteristic number with only the opposite sign.
 example : genMarkovTree 1 [true, false] = (3, 217, 13) ∧
     IsGenMarkovCharNumber 3 217 13 68 ∧ ¬ (217 : ℤ) ∣ 3 * 68 - 13 := by

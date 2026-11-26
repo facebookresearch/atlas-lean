@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Fin.VecNotation
 import MathlibExt.Combinatorics.PiecewiseSyndetic
 
 open MetaMathlibExt
@@ -82,3 +83,25 @@ example : cubeGapSize (∅ : Set (Fin 0 → ℕ)) = 0 := by
     mem_latticeCube.mpr fun i => i.elim0
   obtain ⟨x, _, hx⟩ := hd a hsub
   exact hx
+
+-- Partition regularity in Ramsey form: when the points of a piecewise syndetic set get `r`
+-- colors, some color class is piecewise syndetic.
+example (t r : ℕ) (A : Set (Fin t → ℕ)) (hA : IsPiecewiseSyndetic A)
+    (c : (Fin t → ℕ) → Fin r) : ∃ j, IsPiecewiseSyndetic {x ∈ A | c x = j} :=
+  hA.exists_of_eq_iUnion (fun j => {x ∈ A | c x = j}) (by ext x; simp)
+
+-- For a red/blue coloring of `ℕ^t`, the red set or its complement is piecewise syndetic.
+example (t : ℕ) (red : Set (Fin t → ℕ)) :
+    IsPiecewiseSyndetic red ∨ IsPiecewiseSyndetic redᶜ := by
+  simpa using isPiecewiseSyndetic_univ.exists_of_eq_iUnion ![red, redᶜ]
+    (by ext x; by_cases hx : x ∈ red <;> simp [hx])
+
+-- The sets that are not piecewise syndetic are closed under binary unions.
+example (t : ℕ) (B C : Set (Fin t → ℕ)) (hB : ¬ IsPiecewiseSyndetic B)
+    (hC : ¬ IsPiecewiseSyndetic C) : ¬ IsPiecewiseSyndetic (B ∪ C) := fun h => by
+  simpa [hB, hC] using h.exists_of_eq_iUnion ![B, C] (by ext x; simp)
+
+-- With no pieces the union is empty, so it is never a piecewise syndetic set.
+example (t : ℕ) (A : Set (Fin t → ℕ)) (hA : IsPiecewiseSyndetic A)
+    (B : Fin 0 → Set (Fin t → ℕ)) : A ≠ ⋃ i, B i := fun hAB =>
+  (hA.exists_of_eq_iUnion B hAB).elim fun i _ => i.elim0

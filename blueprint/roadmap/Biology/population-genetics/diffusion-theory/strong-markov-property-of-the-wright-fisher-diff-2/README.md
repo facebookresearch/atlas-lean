@@ -32,3 +32,6 @@
 - [Strong Markov property with selection for multi-time functionals](cond-exp-indicator-finite-stopped-value.md)
 - [Strong Markov property with selection for whole-path functionals](cond-exp-indicator-path-stopped-value-ad.md)
 - [The neutral realization satisfies the selection hypotheses at σ = 0](is-selection-markov-zero-modified-proces.md)
+
+- [Markov property of a continuous canonical process with Chapman–Kolmogorov kernels](markov-property-of-the-continuous-canonical-proc.md)
+- [Feller semigroup and transition kernels of the Wright–Fisher diffusion with selection](selection-feller-semigroup-and-transition-kernel.md)

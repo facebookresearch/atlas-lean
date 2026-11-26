@@ -45,4 +45,9 @@ example {L : X.scheme.left.Modules} (V : LineTotalModel X L) (C : LineChowCompar
     (d : ℤ) (x : Chow X d) : firstChernPower V C 0 d x = chowCast X (by simp) x := by
   simp [firstChernPower]
 
+/-- The cycle coordinates accept Noetherian schemes in any universe. -/
+example (Y : AlgebraicGeometry.Scheme.{1}) [AlgebraicGeometry.IsNoetherian Y] :
+    AlgebraicGeometry.AlgebraicCycle Y ℤ →ₗ[ℤ] (Y →₀ ℤ) :=
+  AlgebraicGeometry.IntegralOperationalChow.cycleCoordinates Y
+
 end IntegralChowChernModelsTest

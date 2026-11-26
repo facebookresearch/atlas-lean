@@ -20,6 +20,7 @@ import Mathlib.RingTheory.Localization.FractionRing
 import Mathlib.RingTheory.Localization.Integer
 import Mathlib.Tactic.Choose
 import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Ring
 
 /-!
 # Triples with square elementary symmetric functions
@@ -27,7 +28,8 @@ import Mathlib.Tactic.LinearCombination
 Quotients of nonzero sums of two rational squares are sums of two rational squares.
 Applying this to the roots of a cubic gives two-square representations for each entry of a
 rational triple with square elementary symmetric functions. A common square factor scales
-the triple to an integer solution.
+the triple to an integer solution. Choudhry's family (3.3) gives an explicit integer triple
+with this square property for every pair of integer parameters.
 -/
 
 @[expose] public section
@@ -62,6 +64,23 @@ def HasSquareElementarySymmetricFunctions (a b c : ℤ) : Prop :=
   IsSquare (a + b + c) ∧
     IsSquare (a * b + b * c + c * a) ∧
     IsSquare (a * b * c)
+
+/-- **Pairwise products preserve square symmetric functions.** If $a$, $b$, $c$ are integers
+such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the
+same holds for the triple $ab$, $bc$, $ca$.
+
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
+theorem hasSquareElementarySymmetricFunctions_pairwise_products
+    {a b c : ℤ}
+    (h : HasSquareElementarySymmetricFunctions a b c) :
+    HasSquareElementarySymmetricFunctions (a * b) (b * c) (c * a) := by
+  obtain ⟨⟨x, hx⟩, ⟨y, hy⟩, ⟨z, hz⟩⟩ := h
+  refine ⟨⟨y, hy⟩, ⟨z * x, ?_⟩, ⟨a * b * c, by ring⟩⟩
+  calc (a * b) * (b * c) + (b * c) * (c * a) + (c * a) * (a * b)
+      = (a * b * c) * (a + b + c) := by ring
+    _ = (z * z) * (x * x) := by rw [hz, hx]
+    _ = (z * x) * (z * x) := by ring
 
 /-- **Rationals with square elementary symmetric functions.** Rational numbers $a$, $b$, $c$
 have square elementary symmetric functions when each of $a + b + c$, $ab + bc + ca$ and $abc$
@@ -149,5 +168,22 @@ theorem isSumTwoSquaresℚ_of_hasSquareElementarySymmetricFunctionsℚ_and_scali
   · linear_combination d ^ 2 * hf
   · linear_combination d ^ 4 * hg
   · linear_combination d ^ 6 * ht
+
+/-- **Choudhry's family (3.3) of integer triples with square symmetric functions.** For all
+integers $s$ and $t$, put $a = t^2 (s^2 - t^2)^2 (s^2 + t^2)$, $b = s^2 (s^2 - t^2)^2 (s^2 + t^2)$
+and $c = 4 s^4 t^4$. Then each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an
+integer.
+
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.3). -/
+theorem hasSquareElementarySymmetricFunctions_family33
+    (s t : ℤ) :
+    HasSquareElementarySymmetricFunctions
+      (t ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2))
+      (s ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2))
+      (4 * s ^ 4 * t ^ 4) := by
+  refine ⟨⟨s ^ 4 + t ^ 4, ?_⟩,
+    ⟨s * t * (s ^ 2 - t ^ 2) * (s ^ 2 + t ^ 2) ^ 2, ?_⟩,
+    ⟨2 * s ^ 3 * t ^ 3 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2), ?_⟩⟩ <;> ring
 
 end MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresWanted

@@ -18,8 +18,14 @@ import MathlibExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptotic
 /-!
 # Almost primes of almost prime index
 
-The reciprocal sums over iterated almost prime index sets tend to zero when the last
-factor count grows and at least two positive factor counts are fixed.
+The reciprocal sum over an iterated almost prime index set with at least two positive factor
+counts converges (`summable_inv_almostPrimeIndexSet`), and these sums tend to zero when the last
+factor count grows and at least two positive factor counts are fixed
+(`tendsto_tsum_inv_almostPrimeIndexSet_append_zero`).
+
+Both rest on Landau's asymptotic for the number of `k`-almost primes up to `x`: the `n`th
+`k`-almost prime is eventually at least `n (log n)^(3/4)`, so the composition of two one-based
+enumerations is eventually at least `n (log n)^(3/2)`, and Cauchy condensation applies.
 -/
 
 namespace MetaMathlibExt
@@ -227,9 +233,54 @@ private lemma append_eq_image (k r : ℕ) (ks : List ℕ) (h : ∀ i ∈ ks, 1 �
       obtain ⟨n, hn, rfl⟩ := hi
       exact (Nat.pos_of_ne_zero hn.1).trans_le ((enumerate_strictMono h).id_le _)
 
+/-- Every member of an almost prime index set with outer factor count `j` is a value of the
+one-based enumeration of the `j`-almost primes. -/
+private lemma subset_range_enum (j : ℕ) (js : List ℕ) :
+    almostPrimeIndexSet j js ⊆ Set.range (enum j) := by
+  cases js with
+  | nil =>
+    intro i hi
+    exact ⟨Nat.count (Nat.IsAlmostPrime j) i + 1, Nat.nth_count hi⟩
+  | cons j' js' =>
+    rintro i ⟨i', -, hi', rfl⟩
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hi'
+    exact ⟨m + 1, rfl⟩
+
 end AlmostPrimeIndex
 
 open AlmostPrimeIndex
+
+/-- **Convergence of reciprocal sums over almost primes of almost prime index.** A $k$-almost
+prime is a positive integer with exactly $k$ prime factors counted with multiplicity. For positive
+integers $k_1, \dots, k_m$ let $N_{k_1}$ be the set of $k_1$-almost primes and, for $m \ge 2$, let
+$N_{k_1 k_2 \cdots k_m}$ be the set of $k_1$-almost primes whose index in the increasing
+enumeration of the $k_1$-almost primes (starting at $1$) lies in $N_{k_2 \cdots k_m}$. Then for
+every $m \ge 2$ and all positive integers $k_1, \dots, k_m$ the series
+$\sum_{n \in N_{k_1 k_2 \cdots k_m}} 1/n$ converges.
+
+In particular (the case $m = 2$), for all positive integers $j$ and $k$ the sum of the reciprocals
+of the $j$-almost primes of $k$-almost prime index converges.
+
+Source: Paul Kinlaw, Megan Triplett, and William Tripp, *Almost Primes of Almost Prime Index*,
+INTEGERS 24 (2024), Article A99, Theorem 5 (`integers-2024-A99-thm-5`). -/
+public theorem summable_inv_almostPrimeIndexSet {k : ℕ} {L : List ℕ} (hk : 1 ≤ k)
+    (hL : L ≠ []) (hpos : ∀ j ∈ L, 1 ≤ j) :
+    Summable fun n : almostPrimeIndexSet k L => (1 : ℝ) / n := by
+  obtain ⟨j, js, rfl⟩ := List.exists_cons_of_ne_nil hL
+  have hj : 1 ≤ j := hpos j List.mem_cons_self
+  -- Only the two outer enumerations matter: `N_{k j ⋯}` lies in the range of `enum k ∘ enum j`.
+  have hsub : almostPrimeIndexSet k (j :: js) ⊆ Set.range (enum k ∘ enum j) := by
+    rintro n ⟨i, hi, hi1, rfl⟩
+    obtain ⟨m, rfl⟩ := subset_range_enum j js hi
+    obtain ⟨i', hi'⟩ := Nat.exists_eq_add_of_le' hi1
+    refine ⟨m, ?_⟩
+    simp only [Function.comp_apply, hi', Nat.add_sub_cancel]
+    rfl
+  have hrange : Summable fun n : Set.range (enum k ∘ enum j) => (1 : ℝ) / n :=
+    (Equiv.ofInjective _ ((enum_strictMono hk).comp (enum_strictMono hj)).injective).summable_iff.mp
+      (summable_pair hk hj)
+  -- Elaborating without the expected type first keeps unification cheap.
+  exact (hrange.comp_injective (Set.inclusion_injective hsub) :)
 
 /-- **Reciprocal sums over iterated almost prime index sets tend to zero.** A $k$-almost prime is
 a positive integer with exactly $k$ prime factors counted with multiplicity. For positive integers
