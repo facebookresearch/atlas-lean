@@ -1,0 +1,3 @@
+# Heavy Tail Reconstruction not mem distortion Feasible
+
+Let $\mu$ be the heavy-tailed reconstruction, the image of $\mathcal{N}(0, 1)$ under $x \mapsto \left(x, x - e^{x^2/4}\right)$. For every $D \in \mathbb{R}$, $\mu$ is not distortion-feasible at level $D$ for the source variance $1$, because $\int (x - y)^2 \, d\mu = \infty$. A probability measure $\mu$ on $\mathbb{R}^2$ is distortion-feasible at level $D$ for the source variance $\sigma^2$ if $D \ge 0$, the first marginal of $\mu$ is $\mathcal{N}(0, \sigma^2)$, and $\int (x - y)^2 \, d\mu(x, y) \le D$, the integral of a nonnegative function, possibly infinite.
