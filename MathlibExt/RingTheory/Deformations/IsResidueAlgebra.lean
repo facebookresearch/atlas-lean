@@ -62,8 +62,8 @@ variable (𝓞 : Type*) [CommRing 𝓞]
 
 variable (A : Type*) [CommRing A] [Algebra 𝓞 A] [IsLocalRing A]
 
-/-- A local `𝓞`-algebra `A` is a *residue algebra* if `𝓞` surjects onto the residue field of
-`A`. -/
+/-- **Residue algebras.** A local `𝓞`-algebra `A` is a *residue algebra* if `𝓞` surjects onto the
+residue field of `A`. -/
 class IsResidueAlgebra : Prop where
   isSurjective' : Surjective (algebraMap 𝓞 (ResidueField A))
 
@@ -74,7 +74,8 @@ variable [IsResidueAlgebra 𝓞 A]
 theorem algebraMap_surjective : Surjective (algebraMap 𝓞 (ResidueField A)) := isSurjective'
 
 variable [IsLocalRing 𝓞] [IsLocalHom (algebraMap 𝓞 A)] in
-/-- For a local residue algebra, the induced map of residue fields is bijective. -/
+/-- **Residue fields of a residue algebra.** If `𝓞` is local and `A` is a residue algebra over
+`𝓞` whose structure map is local, the induced map of residue fields is bijective. -/
 theorem algebraMap_bijective : Bijective (algebraMap (ResidueField 𝓞) (ResidueField A)) := by
   have hsurj1 := IsLocalRing.residue_surjective (R := 𝓞)
   have hsurj2 := IsResidueAlgebra.algebraMap_surjective 𝓞 A
@@ -83,7 +84,9 @@ theorem algebraMap_bijective : Bijective (algebraMap (ResidueField 𝓞) (Residu
       hsurj2⟩
 
 variable [IsLocalRing 𝓞] [IsLocalHom (algebraMap 𝓞 A)] in
-/-- The isomorphism of residue fields of a local residue algebra. -/
+/-- **Residue field isomorphism.** If `𝓞` is local and `A` is a residue algebra over `𝓞` whose
+structure map is local, the residue fields of `𝓞` and `A` are isomorphic, through the map
+induced by `algebraMap 𝓞 A`. -/
 noncomputable def algEquiv : ResidueField 𝓞 ≃ₐ[𝓞] ResidueField A :=
   .ofBijective (IsScalarTower.toAlgHom _ _ _) (algebraMap_bijective _ _)
 
@@ -103,7 +106,8 @@ theorem exists_sub_mem_maximalIdeal (r : A) : ∃ a, r - algebraMap 𝓞 A a ∈
   rw [← Ideal.Quotient.eq]
   exact ha.symm
 
-/-- A chosen element of `𝓞` congruent to `r` modulo the maximal ideal of `A`. -/
+/-- **Chosen residue preimage.** For a residue algebra `A` over `𝓞`, a chosen element of `𝓞`
+congruent to `r` modulo the maximal ideal of `A`. -/
 noncomputable def preimage (r : A) : 𝓞 := (exists_sub_mem_maximalIdeal 𝓞 r).choose
 
 theorem preimage_spec (r : A) : r - algebraMap 𝓞 A (preimage 𝓞 r) ∈ maximalIdeal _ :=

@@ -75,9 +75,142 @@ example : IsLocalHom (ZMod.castHom (show 2 ∣ 2 ^ 2 by norm_num) (ZMod 2)) :=
 private instance isLocalProartinianAlgebra_zmod_four :
     IsLocalProartinianAlgebra (ZMod (2 ^ 2)) (ZMod (2 ^ 2)) := {}
 
-example : (toResidueField (ProartinianCat.of (ZMod (2 ^ 2)) (ZMod (2 ^ 2)))).hom 2 = 0 := by
+-- `ZMod 4` as an object of `ProartinianCat (ZMod 4)`, and its residue field.
+private abbrev R₄ : ProartinianCat (ZMod (2 ^ 2)) := ProartinianCat.of (ZMod (2 ^ 2)) (ZMod (2 ^ 2))
+
+private abbrev K₂ : Type := (residueField (𝓞 := ZMod (2 ^ 2))).carrier
+
+private theorem reduce_two : (toResidueField R₄).hom 2 = 0 := by
   rw [← RingHom.mem_ker, ker_toResidueField]
   exact two_mem_maximalIdeal_zmod_four
+
+private theorem two_eq_zero_residue : (2 : K₂) = 0 := by
+  have h := reduce_two
+  rwa [map_ofNat] at h
+
+/-! ### Strict equivalence over `ZMod 4`
+
+Strict equivalence is conjugation by a matrix that reduces to the identity. The representations
+below are of `Multiplicative ℤ`, sending its generator to a given matrix over `ZMod 4`:
+* `S = !![0, 1; 1, 0]` and `U * S * U⁻¹ = !![2, 1; 1, 2]`, with `U = !![1, 2; 0, 1]` reducing to
+  the identity, are distinct order-two matrices that give the same strict equivalence class;
+* the trivial and the sign character in rank one have the same reduction, but are not strictly
+  equivalent;
+* `S` and `V * S * V⁻¹ = !![3, 1; 0, 1]`, with `V = !![1, 0; 1, 1]`, are conjugate in `GL₂`, but
+  their reductions differ, so they are not strictly equivalent either. -/
+
+private def glS : GL (Fin 2) R₄ := ⟨!![0, 1; 1, 0], !![0, 1; 1, 0], by decide, by decide⟩
+
+private def glU : GL (Fin 2) R₄ := ⟨!![1, 2; 0, 1], !![1, 2; 0, 1], by decide, by decide⟩
+
+private def glUSU : GL (Fin 2) R₄ := ⟨!![2, 1; 1, 2], !![2, 1; 1, 2], by decide, by decide⟩
+
+private def glV : GL (Fin 2) R₄ := ⟨!![1, 0; 1, 1], !![1, 0; 3, 1], by decide, by decide⟩
+
+private def glVSV : GL (Fin 2) R₄ := ⟨!![3, 1; 0, 1], !![3, 1; 0, 1], by decide, by decide⟩
+
+private def rep₂ (M : GL (Fin 2) R₄) : Multiplicative ℤ →ₜ* GL (Fin 2) R₄ :=
+  ⟨zpowersHom _ M, continuous_of_discreteTopology⟩
+
+private theorem rep₂_apply (M : GL (Fin 2) R₄) (x : Multiplicative ℤ) :
+    rep₂ M x = M ^ Multiplicative.toAdd x :=
+  rfl
+
+private theorem conj_rep₂ (γ M M' : GL (Fin 2) R₄) (h : γ * M * γ⁻¹ = M') :
+    ConjAct.toConjAct γ • rep₂ M = rep₂ M' := by
+  ext1 x
+  rw [conjAct_smul_apply, ConjAct.ofConjAct_toConjAct, rep₂_apply, rep₂_apply, ← conj_zpow, h]
+
+example : glS * glS = 1 ∧ glUSU * glUSU = 1 ∧ glS ≠ glUSU := by
+  refine ⟨Units.ext (by decide), Units.ext (by decide), fun h => ?_⟩
+  have := congrArg (fun g : GL (Fin 2) R₄ => (g : Matrix (Fin 2) (Fin 2) R₄) 0 0) h
+  exact absurd this (by decide)
+
+private theorem glU_mem_conjKer : ConjAct.toConjAct glU ∈ conjKer (n := Fin 2) R₄ := by
+  rw [mem_conjKer_iff, ConjAct.ofConjAct_toConjAct]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Matrix.GeneralLinearGroup.map_apply, glU]
+  exact reduce_two
+
+-- Conjugation by `U` identifies the representations given by `S` and `U * S * U⁻¹`.
+example : (Quotient.mk'' (rep₂ glS) :
+      (repnQuotFunctor (Fin 2) (Multiplicative ℤ) (ZMod (2 ^ 2))).obj R₄) =
+    Quotient.mk'' (rep₂ glUSU) := by
+  change (Quotient.mk'' (rep₂ glS) : MulAction.orbitRel.Quotient (conjKer (n := Fin 2) R₄) _) =
+    Quotient.mk'' (rep₂ glUSU)
+  exact Quotient.sound (MulAction.orbitRel_apply.mpr (MulAction.mem_orbit_iff.mpr
+    ⟨⟨_, glU_mem_conjKer⟩, conj_rep₂ glU glUSU glS (Units.ext (by decide))⟩))
+
+private def sign₁ : Multiplicative ℤ →ₜ* GL (Fin 1) R₄ :=
+  ⟨zpowersHom _ (-1), continuous_of_discreteTopology⟩
+
+private theorem map_neg_one :
+    Matrix.GeneralLinearGroup.map (toResidueField R₄).hom.toRingHom (-1 : GL (Fin 1) R₄) = 1 := by
+  ext i j
+  fin_cases i; fin_cases j
+  rw [Matrix.GeneralLinearGroup.map_apply]
+  change (toResidueField R₄).hom (-1) = (1 : K₂)
+  rw [map_neg, map_one, neg_eq_iff_add_eq_zero, one_add_one_eq_two, two_eq_zero_residue]
+
+-- The trivial and the sign character have the same reduction.
+example : (repnFunctor (Fin 1) (Multiplicative ℤ) (ZMod (2 ^ 2))).map (toResidueField R₄) sign₁ =
+    (repnFunctor (Fin 1) (Multiplicative ℤ) (ZMod (2 ^ 2))).map (toResidueField R₄)
+      (1 : Multiplicative ℤ →ₜ* GL (Fin 1) R₄) := by
+  refine ContinuousMonoidHom.ext fun x => ?_
+  rw [repnFunctor_map, repnFunctor_map, ContinuousMonoidHom.coe_one, Pi.one_apply, map_one]
+  change Matrix.GeneralLinearGroup.map _ ((-1 : GL (Fin 1) R₄) ^ Multiplicative.toAdd x) = 1
+  rw [map_zpow, map_neg_one, one_zpow]
+
+-- They are not strictly equivalent: conjugation fixes the trivial character.
+example : (Quotient.mk'' sign₁ :
+      (repnQuotFunctor (Fin 1) (Multiplicative ℤ) (ZMod (2 ^ 2))).obj R₄) ≠
+    Quotient.mk'' 1 := by
+  change (Quotient.mk'' sign₁ : MulAction.orbitRel.Quotient (conjKer (n := Fin 1) R₄) _) ≠
+    Quotient.mk'' 1
+  intro h
+  obtain ⟨γ, hγ⟩ := MulAction.mem_orbit_iff.mp (MulAction.orbitRel_apply.mp (Quotient.exact h))
+  have h1 : ConjAct.ofConjAct (γ : ConjAct (GL (Fin 1) R₄)) *
+      (1 : Multiplicative ℤ →ₜ* GL (Fin 1) R₄) (Multiplicative.ofAdd 1) *
+      (ConjAct.ofConjAct (γ : ConjAct (GL (Fin 1) R₄)))⁻¹ = sign₁ (Multiplicative.ofAdd 1) :=
+    (conjAct_smul_apply (γ : ConjAct (GL (Fin 1) R₄)) 1 _).symm.trans
+      (congrArg (fun ρ => ρ (Multiplicative.ofAdd 1)) hγ)
+  have hs : sign₁ (Multiplicative.ofAdd 1) = -1 := zpow_one _
+  rw [ContinuousMonoidHom.coe_one, Pi.one_apply, mul_one, mul_inv_cancel, hs] at h1
+  have h2 := congrArg (fun g : GL (Fin 1) R₄ => (g : Matrix (Fin 1) (Fin 1) R₄) 0 0) h1
+  change (1 : R₄) = -1 at h2
+  exact absurd h2 (by decide)
+
+-- `V` conjugates `S` to `V * S * V⁻¹`, but does not reduce to the identity.
+example : ConjAct.toConjAct glV • rep₂ glS = rep₂ glVSV :=
+  conj_rep₂ glV glS glVSV (Units.ext (by decide))
+
+example : ConjAct.toConjAct glV ∉ conjKer (n := Fin 2) R₄ := by
+  rw [mem_conjKer_iff, ConjAct.ofConjAct_toConjAct]
+  intro h
+  have h10 := congrArg (fun g : GL (Fin 2) K₂ => (g : Matrix (Fin 2) (Fin 2) K₂) 1 0) h
+  simp [Matrix.GeneralLinearGroup.map_apply, glV] at h10
+
+-- The representations given by `S` and `V * S * V⁻¹` are not strictly equivalent: strict
+-- equivalence preserves the reduction, and their reductions differ in the top left entry.
+example : (Quotient.mk'' (rep₂ glS) :
+      (repnQuotFunctor (Fin 2) (Multiplicative ℤ) (ZMod (2 ^ 2))).obj R₄) ≠
+    Quotient.mk'' (rep₂ glVSV) := by
+  change (Quotient.mk'' (rep₂ glS) : MulAction.orbitRel.Quotient (conjKer (n := Fin 2) R₄) _) ≠
+    Quotient.mk'' (rep₂ glVSV)
+  intro h
+  obtain ⟨⟨γ, hγ⟩, hγρ⟩ :=
+    MulAction.mem_orbit_iff.mp (MulAction.orbitRel_apply.mp (Quotient.exact h))
+  have hx : ConjAct.ofConjAct γ * rep₂ glVSV (Multiplicative.ofAdd 1) * (ConjAct.ofConjAct γ)⁻¹ =
+      rep₂ glS (Multiplicative.ofAdd 1) :=
+    (conjAct_smul_apply γ (rep₂ glVSV) _).symm.trans
+      (congrArg (fun ρ => ρ (Multiplicative.ofAdd 1)) hγρ)
+  have hy := congrArg (Matrix.GeneralLinearGroup.map (toResidueField R₄).hom.toRingHom) hx
+  rw [map_mul, map_mul, map_inv, (mem_conjKer_iff _ _).mp hγ, one_mul, inv_one, mul_one] at hy
+  have h00 := congrArg (fun g : GL (Fin 2) K₂ => (g : Matrix (Fin 2) (Fin 2) K₂) 0 0) hy
+  change (toResidueField R₄).hom 3 = (toResidueField R₄).hom 0 at h00
+  rw [map_ofNat, map_zero, show (3 : K₂) = 2 + 1 by norm_num, two_eq_zero_residue, zero_add] at h00
+  exact one_ne_zero h00
 
 /-! ### Closed subalgebras, with the original binders -/
 
@@ -122,7 +255,16 @@ example {n : Type} [Fintype n] [DecidableEq n] {G : Type u} [Group G] [Topologic
       (TraceAlgebra.ι ρ).hom t = Matrix.trace ((ρ g : GL n A.carrier) : Matrix n n A.carrier) :=
   ⟨⟨_, trace_mem_traceSubalgebra ρ g⟩, rfl⟩
 
-/-! ### Images of lifting conditions, with the original binders -/
+-- A rank-one representation descends to its trace subalgebra, with `γ = 1`: its only matrix
+-- entry is its trace.
+example {𝓞 : Type u} [CommRing 𝓞] [IsLocalRing 𝓞] {G : Type u} [Group G] [TopologicalSpace G]
+    {A : ProartinianCat 𝓞} (ρ : G →ₜ* GL (Fin 1) A) : TraceAlgebra.Descends ρ := by
+  refine ⟨1, one_mem _, fun g i j => ?_⟩
+  fin_cases i; fin_cases j
+  rw [one_smul]
+  simpa [Matrix.trace_fin_one] using trace_mem_traceSubalgebra ρ g
+
+/-! ### Images of representation conditions, with the original binders -/
 
 -- The representation functor pushes the matrix entries along the coefficient map.
 example {n : Type} [Fintype n] [DecidableEq n] {G : Type u} [Group G] [TopologicalSpace G]

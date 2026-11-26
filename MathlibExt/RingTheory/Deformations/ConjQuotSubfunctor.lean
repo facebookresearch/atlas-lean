@@ -31,13 +31,21 @@ public import Mathlib.CategoryTheory.Subfunctor.Image
 public import MathlibExt.RingTheory.Deformations.TraceAlgebra
 
 /-!
-# Images of lifting conditions in strict equivalence classes
+# Images of representation conditions in strict equivalence classes
 
-A *lifting condition* is a subfunctor `F` of the representation functor `repnFunctor n G 𝓞`. Its
-image under the quotient map to strict equivalence classes is a subfunctor
-`conjQuotSubfunctor n F` of `repnQuotFunctor n G 𝓞`, and `F` surjects onto it. We also record
-two properties of lifting conditions: stability under strict equivalence (`ConjStable`) and being
-reflected by injective morphisms of coefficient algebras (`ReflectedByInjective`).
+A *representation condition* is a subfunctor `F` of the representation functor
+`repnFunctor n G 𝓞`. Its image under the quotient map to strict equivalence classes is a
+subfunctor `conjQuotSubfunctor n F` of `repnQuotFunctor n G 𝓞`, and `F` surjects onto it. We also
+record two properties of representation conditions: stability under strict equivalence
+(`ConjStable`) and being reflected by injective morphisms of coefficient algebras
+(`ReflectedByInjective`).
+
+The functor `repnFunctor n G 𝓞` fixes no residual representation, and neither does the image of
+`F`: for `F = ⊤` it contains representations with different reductions. When `F` lies in the
+lifts of a fixed residual representation `ρ̄ : G →ₜ* GL n (ResidueField 𝓞)`, that is, in the
+fibre of reduction over `ρ̄`, the image of `F` consists of strict equivalence classes of lifts
+of `ρ̄`, which are the deformations of `ρ̄` (R. Ramakrishna, *On a variation of Mazur's
+deformation functor*, Compositio Math. 87 (1993), 269–286, introduction).
 
 ## Main definitions
 
@@ -63,8 +71,9 @@ variable {𝓞 : Type u} [CommRing 𝓞] [IsLocalRing 𝓞]
 open ProartinianCat
 
 variable (n) in
-/-- The image of a subfunctor of the representation functor in the functor of strict
-equivalence classes, that is `Subfunctor.image` along `toRepnQuot n G 𝓞`. -/
+/-- **Image of a representation condition in strict equivalence classes.** The image of a
+subfunctor of the representation functor in the functor of strict equivalence classes, that is
+`Subfunctor.image` along `toRepnQuot n G 𝓞`. -/
 noncomputable def conjQuotSubfunctor (F : Subfunctor (repnFunctor n G 𝓞)) :
     Subfunctor (repnQuotFunctor n G 𝓞) :=
   F.image (toRepnQuot n G 𝓞)
@@ -93,8 +102,8 @@ theorem conjQuotSubfunctor_mono {F F' : Subfunctor (repnFunctor n G 𝓞)} (h : 
   exact ⟨ρ', h _ hρ', rfl⟩
 
 variable (n) in
-/-- The natural map from a subfunctor of representations onto its image in strict
-equivalence classes. -/
+/-- **Surjection onto strict equivalence classes.** The natural map from a subfunctor of
+representations onto its image in strict equivalence classes. -/
 noncomputable def condLiftToDeformation (F : Subfunctor (repnFunctor n G 𝓞)) :
     F.toFunctor ⟶ (conjQuotSubfunctor n F).toFunctor where
   app R := TypeCat.ofHom
@@ -122,15 +131,16 @@ variable {𝓞 : Type u} [CommRing 𝓞] [IsLocalRing 𝓞]
 open ProartinianCat
 
 variable (n) in
-/-- A subfunctor of representations is *conjugation stable* if it is stable under strict
-equivalence. -/
+/-- **Conditions stable under strict equivalence.** A subfunctor of representations is
+*conjugation stable* if it is stable under strict equivalence. -/
 def ConjStable (F : Subfunctor (repnFunctor n G 𝓞)) : Prop :=
   ∀ {A : ProartinianCat 𝓞} {ρ' : G →ₜ* GL n A}, ρ' ∈ F.obj A →
     ∀ {γ : ConjAct (GL n A)}, γ ∈ conjKer (n := n) A → γ • ρ' ∈ F.obj A
 
 variable (n) in
-/-- A subfunctor of representations is *reflected by injections* if a representation whose
-pushforward along an injective morphism lies in the subfunctor itself lies in it. -/
+/-- **Conditions reflected by injections.** A subfunctor of representations is *reflected by
+injections* if a representation whose pushforward along an injective morphism lies in the
+subfunctor itself lies in it. -/
 def ReflectedByInjective (F : Subfunctor (repnFunctor n G 𝓞)) : Prop :=
   ∀ {T A : ProartinianCat 𝓞} (ι : T ⟶ A), Function.Injective ι.hom →
     ∀ {σ : G →ₜ* GL n T}, (repnFunctor n G 𝓞).map ι σ ∈ F.obj A → σ ∈ F.obj T

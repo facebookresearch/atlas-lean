@@ -48,10 +48,10 @@ import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 /-!
 # Compactness of proartinian rings with finite residue field
 
-A proartinian local ring with finite residue field is compact: each quotient by an open ideal is
-an artinian local ring with finite residue field, hence finite, so the ring is totally bounded,
-and it is complete by assumption. In particular every object of `ProartinianCat 𝓞` is compact
-when the residue field of `𝓞` is finite.
+A proartinian local ring with finite residue field is compact: each quotient by a proper open
+ideal is an artinian local ring with finite residue field, hence finite (the quotient by the
+whole ring is zero), so the ring is totally bounded, and it is complete by assumption. In
+particular every object of `ProartinianCat 𝓞` is compact when the residue field of `𝓞` is finite.
 
 ## Main results
 
@@ -69,7 +69,8 @@ universe u
 
 open CategoryTheory Function IsLocalRing Filter Topology Set Pointwise
 
-/-- An artinian local ring with finite residue field is finite. -/
+/-- **Finiteness of artinian local rings.** An artinian local ring with finite residue field is
+finite. -/
 theorem IsArtinianRing.finite_of_finite_residueField (R : Type*) [CommRing R] [IsArtinianRing R]
     [IsLocalRing R] [Finite (ResidueField R)] : Finite R := by
   have : Finite (R ⧸ (⊥ : Ideal R)) := IsLocalRing.finite_quotient_iff.mpr
@@ -81,8 +82,8 @@ namespace IsProartinian
 variable {R : Type u} [CommRing R] [TopologicalSpace R] [IsTopologicalRing R]
 variable [IsLocalRing R] [IsProartinian R] [Finite (ResidueField R)]
 
-/-- In a proartinian local ring with finite residue field, every open ideal has finite
-index. -/
+/-- **Open ideals have finite index.** In a proartinian local ring with finite residue field,
+every open ideal has finite index. -/
 theorem finite_quotient_of_isOpen (I : Ideal R) (hI : IsOpen (X := R) I) :
     Finite (R ⧸ I) := by
   by_cases hI' : I = ⊤
@@ -103,7 +104,8 @@ theorem finite_quotient_of_isOpen (I : Ideal R) (hI : IsOpen (X := R) I) :
   have : Finite (ResidueField (R ⧸ I)) := .of_surjective _ hsurj
   exact IsArtinianRing.finite_of_finite_residueField (R ⧸ I)
 
-/-- A proartinian local ring with finite residue field is compact. -/
+/-- **Compactness of proartinian local rings.** A proartinian local ring with finite residue field
+is compact. -/
 theorem compactSpace_of_finite_residueField : CompactSpace R := by
   let : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R
   have : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup

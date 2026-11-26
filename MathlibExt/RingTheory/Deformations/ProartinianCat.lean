@@ -70,9 +70,10 @@ topology is a terminal object.
 
 @[expose] public section
 
-/-- A homomorphism of groups to a discrete group is continuous iff its kernel is open. -/
-@[to_additive /-- A homomorphism of additive groups to a discrete additive group is continuous
-iff its kernel is open. -/]
+/-- **Continuity of homomorphisms to a discrete target.** A monoid homomorphism from a topological
+group to a discrete target is continuous if and only if its kernel is open. -/
+@[to_additive /-- An additive monoid homomorphism from an additive topological group to a
+discrete target is continuous if and only if its kernel is open. -/]
 theorem MonoidHom.continuous_iff_isOpen_ker {α β : Type*} [TopologicalSpace α]
     [TopologicalSpace β] [Group α] [MulOneClass β] {f : α →* β} [DiscreteTopology β]
     [IsTopologicalGroup α] :
@@ -80,7 +81,9 @@ theorem MonoidHom.continuous_iff_isOpen_ker {α β : Type*} [TopologicalSpace α
   refine ⟨fun H ↦ H.1 {1} (isOpen_discrete _), fun H ↦ continuous_of_continuousAt_one _ ?_⟩
   simpa [ContinuousAt] using Filter.eventually_of_mem (H.mem_nhds (by simp)) (by simp)
 
-/-- A ring homomorphism to a discrete ring is continuous iff its kernel is open. -/
+/-- **Continuity of ring homomorphisms to a discrete target.** A ring homomorphism from a ring
+whose additive group is a topological group to a discrete semiring is continuous if and only if
+its kernel is open. -/
 theorem RingHom.continuous_iff_isOpen_ker {α β : Type*} [TopologicalSpace α]
     [TopologicalSpace β] [Ring α] [Semiring β] {f : α →+* β} [DiscreteTopology β]
     [IsTopologicalAddGroup α] :
@@ -111,14 +114,15 @@ namespace Deformation
 
 variable (𝓞 : Type u) [CommRing 𝓞]
 
-/-- A *local proartinian `𝓞`-algebra*: a proartinian topological local ring with a local
-structure map from `𝓞` that surjects onto its residue field. -/
+/-- **Local proartinian algebras.** A *local proartinian `𝓞`-algebra*: a proartinian topological
+local ring with a local structure map from `𝓞` that surjects onto its residue field. -/
 class IsLocalProartinianAlgebra
     (R : Type u) [CommRing R] [TopologicalSpace R] [Algebra 𝓞 R] : Prop extends
   IsTopologicalRing R, IsLocalRing R, IsProartinian R,
   IsLocalHom (algebraMap 𝓞 R), IsResidueAlgebra 𝓞 R
 
-/-- The category of local proartinian `𝓞`-algebras. -/
+/-- **The category of local proartinian algebras.** The category of local proartinian
+`𝓞`-algebras, with continuous `𝓞`-algebra maps as morphisms. -/
 structure ProartinianCat where
   /-- The underlying ring. -/
   carrier : Type u
@@ -137,7 +141,8 @@ instance : CoeSort (ProartinianCat 𝓞) (Type u) := ⟨carrier⟩
 
 attribute [coe] ProartinianCat.carrier
 
-/-- The object of `ProartinianCat 𝓞` with carrier `X`. -/
+/-- **Local proartinian algebras as objects.** The object of `ProartinianCat 𝓞` with carrier
+`X`. -/
 abbrev of (X : Type u) [CommRing X] [Algebra 𝓞 X]
     [TopologicalSpace X] [IsLocalProartinianAlgebra 𝓞 X] :
     ProartinianCat 𝓞 :=
@@ -148,7 +153,8 @@ theorem coe_of (X : Type u) [CommRing X] [Algebra 𝓞 X] [TopologicalSpace X]
     of 𝓞 X = X := rfl
 
 variable {𝓞} in
-/-- Morphisms in `ProartinianCat 𝓞` are continuous `𝓞`-algebra maps. -/
+/-- **Morphisms of local proartinian algebras.** Morphisms in `ProartinianCat 𝓞` are continuous
+`𝓞`-algebra maps. -/
 @[ext]
 structure Hom (A B : ProartinianCat 𝓞) where
   /-- The underlying continuous algebra map. -/
@@ -164,7 +170,8 @@ instance (A B : ProartinianCat 𝓞) (f : A ⟶ B) : IsLocalHom f.hom := by
   exact ⟨fun ⟨H⟩ ↦ ⟨H⟩, fun ⟨H⟩ ↦ ⟨H⟩⟩
 
 variable {𝓞} in
-/-- The morphism of `ProartinianCat 𝓞` given by a continuous algebra map. -/
+/-- **Continuous algebra maps as morphisms.** The morphism of `ProartinianCat 𝓞` given by a
+continuous algebra map. -/
 abbrev ofHom {A B : Type u}
     [CommRing A] [Algebra 𝓞 A] [TopologicalSpace A] [IsLocalProartinianAlgebra 𝓞 A]
     [CommRing B] [Algebra 𝓞 B] [TopologicalSpace B] [IsLocalProartinianAlgebra 𝓞 B]
@@ -212,7 +219,8 @@ section residueField
 variable [IsLocalRing 𝓞]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The residue field of `𝓞` with the discrete topology, as an object of `ProartinianCat 𝓞`. -/
+/-- **The residue field as a local proartinian algebra.** For a local ring `𝓞`, the residue field
+of `𝓞` with the discrete topology, as an object of `ProartinianCat 𝓞`. -/
 def residueField : ProartinianCat 𝓞 where
   carrier := ResidueField 𝓞
   topologicalSpace := ⊥
@@ -227,7 +235,8 @@ noncomputable instance : Field (residueField (𝓞 := 𝓞)) :=
   inferInstanceAs (Field (ResidueField 𝓞))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The reduction map from a local proartinian `𝓞`-algebra to the residue field of `𝓞`. -/
+/-- **Reduction to the residue field.** For a local ring `𝓞`, the reduction map from a local
+proartinian `𝓞`-algebra to the residue field of `𝓞`. -/
 noncomputable def toResidueField (R : ProartinianCat 𝓞) : R ⟶ residueField where
   hom := ⟨(IsResidueAlgebra.algEquiv 𝓞 R).symm.toAlgHom.comp (IsScalarTower.toAlgHom 𝓞 R _), by
     refine (RingHom.continuous_iff_isOpen_ker (β := residueField) (f := AlgHom.toRingHom _)).mpr ?_
@@ -247,7 +256,8 @@ theorem ker_toResidueField (R : ProartinianCat 𝓞) :
   (RingHom.ker_comp_of_injective _ (f := (IsResidueAlgebra.algEquiv 𝓞 R).symm.toRingHom)
     (IsResidueAlgebra.algEquiv 𝓞 R).symm.injective).trans Ideal.mk_ker
 
-/-- Every morphism to the residue field sends `r` to the residue of its chosen preimage. -/
+/-- **Morphisms to the residue field.** Every morphism to the residue field sends `r` to the
+residue of its chosen preimage. -/
 theorem hom_apply_eq_residue_preimage {R : ProartinianCat 𝓞} (f : R ⟶ residueField)
     (r : R.carrier) :
     f.hom r = residue _ (IsResidueAlgebra.preimage 𝓞 r) := by
@@ -264,7 +274,8 @@ noncomputable instance (R : ProartinianCat 𝓞) : Unique (R ⟶ residueField) :
   ext x
   rw [hom_apply_eq_residue_preimage, hom_apply_eq_residue_preimage]
 
-/-- The residue field of `𝓞` is a terminal object of `ProartinianCat 𝓞`. -/
+/-- **The residue field is terminal.** For a local ring `𝓞`, the residue field of `𝓞` is a
+terminal object of `ProartinianCat 𝓞`. -/
 noncomputable def isTerminalResidueField : IsTerminal (residueField (𝓞 := 𝓞)) := .ofUnique _
 
 end residueField

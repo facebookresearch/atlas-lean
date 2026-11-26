@@ -48,7 +48,7 @@ representation `ρ` (when `ResidueField 𝓞` is finite), it gives the trace alg
 * `Deformation.ProartinianCat.closedSubalgebraObj S hS`: `S` as an object of `ProartinianCat 𝓞`.
 * `Deformation.ProartinianCat.closedSubalgebraι S hS`: the inclusion `S ⟶ A`.
 * `Deformation.TraceAlgebra.obj ρ`, `Deformation.TraceAlgebra.ι ρ`: the trace algebra of `ρ` and
-  its inclusion.
+  its inclusion, for a local ring `𝓞` with finite residue field.
 
 ## Main results
 
@@ -160,9 +160,6 @@ variable [CompactSpace A.carrier] (S : Subalgebra 𝓞 A.carrier) (hS : IsClosed
 
 namespace ClosedSubalgebra
 
-instance : Nontrivial S :=
-  ⟨0, 1, fun h => zero_ne_one (α := A.carrier) (congrArg (fun z : S => (z : A.carrier)) h)⟩
-
 include hS in
 theorem isLocalRing : IsLocalRing S := by
   refine .of_nonunits_add fun x y hx hy hxy => ?_
@@ -248,13 +245,14 @@ theorem isLocalProartinianAlgebra : IsLocalProartinianAlgebra 𝓞 S := by
 
 end ClosedSubalgebra
 
-/-- A closed subalgebra of a compact local proartinian `𝓞`-algebra, as an object of
-`ProartinianCat 𝓞`. -/
+/-- **Closed subalgebras as local proartinian algebras.** A closed subalgebra of a compact local
+proartinian `𝓞`-algebra, as an object of `ProartinianCat 𝓞`. -/
 noncomputable def closedSubalgebraObj : ProartinianCat 𝓞 :=
   letI := ClosedSubalgebra.isLocalProartinianAlgebra S hS
   of 𝓞 S
 
-/-- The inclusion of a closed subalgebra. -/
+/-- **Inclusion of a closed subalgebra.** The inclusion of a closed subalgebra of a compact local
+proartinian `𝓞`-algebra `A` into `A`, as a morphism of `ProartinianCat 𝓞`. -/
 noncomputable def closedSubalgebraι : closedSubalgebraObj S hS ⟶ A :=
   letI := ClosedSubalgebra.isLocalProartinianAlgebra S hS
   ofHom ⟨S.val, continuous_subtype_val⟩
@@ -280,11 +278,13 @@ namespace TraceAlgebra
 
 variable [IsLocalRing 𝓞] [Finite (ResidueField 𝓞)] {A : ProartinianCat 𝓞}
 
-/-- The trace algebra of `ρ`: its trace subalgebra as an object of `ProartinianCat 𝓞`. -/
+/-- **Trace algebra.** For a local ring `𝓞` with finite residue field, the trace algebra of `ρ`:
+its trace subalgebra, as an object of `ProartinianCat 𝓞`. -/
 noncomputable def obj (ρ : G →ₜ* GL n A) : ProartinianCat 𝓞 :=
   closedSubalgebraObj (traceSubalgebra 𝓞 ρ) (isClosed_traceSubalgebra ρ)
 
-/-- The inclusion of the trace algebra of `ρ`. -/
+/-- **Inclusion of the trace algebra.** For a local ring `𝓞` with finite residue field, the
+inclusion of the trace algebra of `ρ` into `A`. -/
 noncomputable def ι (ρ : G →ₜ* GL n A) : obj ρ ⟶ A :=
   closedSubalgebraι (traceSubalgebra 𝓞 ρ) (isClosed_traceSubalgebra ρ)
 

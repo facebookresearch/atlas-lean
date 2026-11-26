@@ -68,13 +68,15 @@ relation is the functor `repnQuotFunctor n G 𝓞`.
 
 @[expose] public section
 
-/-- The continuous homomorphism of unit groups induced by a continuous monoid homomorphism. -/
+/-- **Continuous maps of unit groups.** The continuous homomorphism of unit groups induced by a
+continuous monoid homomorphism. -/
 @[simps!]
 def Units.mapₜ {M N : Type*} [Monoid M] [Monoid N] [TopologicalSpace M] [TopologicalSpace N]
     (f : M →ₜ* N) : Mˣ →ₜ* Nˣ :=
   ⟨Units.map f, Continuous.units_map _ f.continuous⟩
 
-/-- The continuous algebra map of matrix rings induced by a continuous algebra map. -/
+/-- **Continuous maps of matrix algebras.** The continuous algebra map of matrix rings induced by
+a continuous algebra map. -/
 @[simps!]
 def ContinuousAlgHom.mapMatrix
     {R A B n : Type*} [CommSemiring R] [Semiring A] [Semiring B] [TopologicalSpace A]
@@ -124,8 +126,8 @@ variable {n : Type v} [Fintype n] [DecidableEq n] (G : Type w) [Group G] [Topolo
 variable (𝓞 : Type u) [CommRing 𝓞] [IsLocalRing 𝓞]
 
 variable (n) in
-/-- The functor sending a local proartinian `𝓞`-algebra `R` to the continuous representations
-`G →ₜ* GL n R`. -/
+/-- **The functor of continuous representations.** The functor sending a local proartinian
+`𝓞`-algebra `R` to the continuous representations `G →ₜ* GL n R`. -/
 def repnFunctor : ProartinianCat 𝓞 ⥤ Type (max u v w) where
   obj R := G →ₜ* GL n R
   map {R S} f := TypeCat.ofHom
@@ -140,8 +142,9 @@ theorem repnFunctor_map {R S : ProartinianCat 𝓞} (f : R ⟶ S) (ρ : G →ₜ
 variable (n)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The functor of continuous representations up to strict equivalence: conjugation by matrices
-reducing to the identity modulo the maximal ideal. -/
+/-- **Representations up to strict equivalence.** For a local ring `𝓞`, the functor of continuous
+representations up to strict equivalence: conjugation by matrices reducing to the identity
+modulo the maximal ideal. -/
 noncomputable def repnQuotFunctor : ProartinianCat 𝓞 ⥤ Type (max u v w) where
   obj R := MulAction.orbitRel.Quotient ((Matrix.GeneralLinearGroup.map (n := n)
     (ProartinianCat.toResidueField R).hom.toRingHom).ker.comap (ConjAct.ofConjAct.toMonoidHom))
@@ -159,7 +162,8 @@ noncomputable def repnQuotFunctor : ProartinianCat 𝓞 ⥤ Type (max u v w) whe
   map_id _ := by ext ⟨_⟩; rfl
   map_comp _ _ := by ext ⟨_⟩; rfl
 
-/-- The quotient map from representations to strict equivalence classes. -/
+/-- **Strict equivalence classes.** The quotient map from representations to strict equivalence
+classes. -/
 noncomputable def toRepnQuot : repnFunctor n G 𝓞 ⟶ repnQuotFunctor n G 𝓞 where
   app _ := TypeCat.ofHom Quotient.mk''
   naturality _ _ _ := rfl

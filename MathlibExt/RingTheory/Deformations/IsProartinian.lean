@@ -78,7 +78,8 @@ neighbourhoods of `0`), it is `T₀` and complete, and `R ⧸ I` is artinian for
 
 @[expose] public section
 
-/-- A nontrivial `T₀` ring with a linear topology has an open maximal ideal. -/
+/-- **Open maximal ideals of linearly topologized rings.** A nontrivial commutative topological
+ring that is `T₀` and linearly topologized has an open maximal ideal. -/
 theorem IsLinearTopology.exists_ideal_isMaximal_and_isOpen
     (R : Type*) [CommRing R] [TopologicalSpace R] [IsTopologicalRing R]
     [IsLinearTopology R R] [Nontrivial R] [T0Space R] :
@@ -103,8 +104,8 @@ variable {R S : Type*} [CommRing R] [TopologicalSpace R] [IsTopologicalRing R]
   [CommRing S] [TopologicalSpace S] [IsTopologicalRing S]
 
 variable (R) in
-/-- A topological ring is *proartinian* if its topology is linear, `T₀` and complete, and the
-quotient by every open ideal is an artinian ring. -/
+/-- **Proartinian rings.** A topological ring is *proartinian* if its topology is linear, `T₀`
+and complete, and the quotient by every open ideal is an artinian ring. -/
 class IsProartinian : Prop extends IsLinearTopology R R, T0Space R,
     letI := IsTopologicalAddGroup.rightUniformSpace R; CompleteSpace R where
   /-- The quotient by an open ideal is artinian. -/
@@ -113,7 +114,8 @@ class IsProartinian : Prop extends IsLinearTopology R R, T0Space R,
 attribute [instance low] IsProartinian.toIsLinearTopology
   IsProartinian.toT0Space IsProartinian.toCompleteSpace
 
-/-- A discrete ring is proartinian if and only if it is artinian. -/
+/-- **Discrete proartinian rings.** A discrete ring is proartinian if and only if it is
+artinian. -/
 theorem isProartinian_iff_isArtinianRing [DiscreteTopology R] :
     IsProartinian R ↔ IsArtinianRing R := by
   constructor <;> intro
@@ -130,20 +132,22 @@ open IsLocalRing
 
 variable [IsLocalRing R] [IsLocalRing S]
 
-/-- The maximal ideal of a proartinian local ring is open. -/
+/-- **The maximal ideal is open.** The maximal ideal of a proartinian local ring is open. -/
 theorem isOpen_maximalIdeal_of_isProartinian [IsProartinian R] :
     IsOpen (X := R) (maximalIdeal R) := by
   obtain ⟨I, hI, hI'⟩ := IsLinearTopology.exists_ideal_isMaximal_and_isOpen R
   exact (isMaximal_iff _).mp hI ▸ hI'
 
-/-- Every open ideal of a proartinian local ring contains a power of the maximal ideal. -/
+/-- **Open ideals contain a power of the maximal ideal.** Every open ideal of a proartinian local
+ring contains a power of the maximal ideal. -/
 theorem exists_maximalIdeal_pow_le_of_isProartinian [IsProartinian R]
     (I : Ideal R) (hI : IsOpen (X := R) I) :
     ∃ n, maximalIdeal R ^ n ≤ I := by
   have := IsProartinian.isArtinianRing_quotient I hI
   exact exists_maximalIdeal_pow_le_of_isArtinianRing_quotient I
 
-/-- A continuous ring map between proartinian local rings is local. -/
+/-- **Continuous maps are local.** A continuous ring map between proartinian local rings is
+local. -/
 theorem isLocalHom_of_isContinuous_of_isProartinian
     [IsProartinian R] (f : R →+* S) [IsProartinian S] (h : Continuous f) : IsLocalHom f := by
   constructor
