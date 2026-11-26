@@ -1,10 +1,5 @@
-# Zero Extend
+# Zero extension of a finite signal to a cyclic group
 
-Zero extension of a finite signal to a cyclic index type: the cyclic
-index `i` reads source entry `i.val` when it lies below `M` and zero
-otherwise. When `M ≤ N` this is a faithful extension
-(`zeroExtend_natCast`, `zeroExtend_injective`). For nonzero `N` the
-converse holds (`zeroExtend_injective_iff`): when `0 < N < M` it keeps
-only the first `N` source entries. At `N = 0`, where `ZMod 0` is `ℤ`,
-every source entry is read back at its natural index and the map is
-injective for every `M`.
+For a natural number $M$, a signal of length $M$ is a function $x : \{0, \ldots, M-1\} \to \mathbb{C}$. For natural numbers $M$ and $N$, the zero extension of $x$ to length $N$ is $x^{(N)} : \mathbb{Z}/N\mathbb{Z} \to \mathbb{C}$, $x^{(N)}(i) = \bar x(\operatorname{val} i)$, where $\operatorname{val} i \in \{0, \ldots, N-1\}$ is the least nonnegative representative of $i$; for $N = 0$, $\mathbb{Z}/0\mathbb{Z}$ is $\mathbb{Z}$ and $\operatorname{val} i = |i|$. Here $\bar x$ is the [zero extension of $x$ to the natural numbers](extend-nat.md).
+
+When $M \le N$ the extension keeps every entry of $x$ and determines $x$ ([entries](zero-extend-nat-cast.md), [injectivity](zero-extend-injective.md)); for $N \ge 1$ the converse holds ([criterion](zero-extend-injective-iff.md)), and when $0 < N < M$ the extension keeps only $x_0, \ldots, x_{N-1}$. For $N = 0$ every entry $x_i$ is read back at the integer $i$, so the extension determines $x$ for every $M$.

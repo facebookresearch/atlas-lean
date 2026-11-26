@@ -1,5 +1,3 @@
-# Zero Extend2 injective iff
+# Injectivity of zero extension of arrays to a cyclic grid
 
-For nonzero cyclic lengths and a nonempty rectangular support, zero
-extension is injective exactly when both cyclic lengths cover the
-support.
+Let $M, K, N_1, N_2 \ge 1$ be natural numbers. The map $x \mapsto x^{(N_1, N_2)}$, sending an $M \times K$ array to its [zero extension](zero-extend2.md), is injective if and only if $M \le N_1$ and $K \le N_2$.

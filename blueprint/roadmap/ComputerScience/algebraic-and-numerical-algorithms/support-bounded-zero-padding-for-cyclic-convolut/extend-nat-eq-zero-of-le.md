@@ -1,3 +1,3 @@
-# Extend Nat eq zero of le
+# Zero extension vanishes beyond the support
 
-Zero extension vanishes at and beyond the support length.
+For a natural number $M$, a signal $x : \{0, \ldots, M-1\} \to \mathbb{C}$ and a natural number $i \ge M$, the [zero extension](extend-nat.md) satisfies $\bar x(i) = 0$.

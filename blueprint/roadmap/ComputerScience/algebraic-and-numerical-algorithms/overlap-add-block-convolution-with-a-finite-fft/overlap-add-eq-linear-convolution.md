@@ -1,3 +1,3 @@
-# Overlap Add eq linear Convolution
+# Overlap-add computes the linear convolution
 
-For block length `L ≥ 1`, kernel length `M ≥ 1` and FFT size `Q ≥ L + M - 1`, overlap-add equals the full linear convolution at every natural index, including the final `M - 1` tail and beyond it.
+Let $L, M \ge 1$ and $Q \ge L + M - 1$ be natural numbers, $N$ a natural number, $x$ a signal of length $N$ and $h$ a kernel of length $M$. Then the [overlap-add](overlap-add.md) output with FFT size $Q$ and hop $L$ equals the [linear convolution](../support-bounded-zero-padding-for-cyclic-convolut/linear-convolution.md) $x * h$ at every $n \in \mathbb{N}$, including the last $M - 1$ coefficients past the end of $x$ and every index beyond them. The [frames](block-frame-eq-linear-convolution.md) and the [block decomposition](linear-convolution-eq-sum-shifted-blocks.md) give the identity; a [shorter FFT size](overlap-add-ne-linear-convolution-of-sho.md) fails.
