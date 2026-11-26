@@ -1,11 +1,13 @@
 # Equilibrium of the birth, death and innovation model
 
 Fix a maximal family size $N \ge 2$. Let $f_i(t) \ge 0$ be the number of gene (or protein-domain) families with exactly $i$ members, $1 \le i \le N$. A family of size $i$ gains a member (duplication, "birth") at rate $\lambda_i > 0$ for $1 \le i \le N-1$ and loses one ("death") at rate $\delta_i > 0$ for $1 \le i \le N$; a family of size $1$ that loses its member disappears, and new singleton families arise ("innovation") at a constant rate $\nu > 0$. The **master birth, death and innovation model (BDIM)** is the linear system
+
 $$\begin{aligned}
 \dot f_1 &= -(\lambda_1 + \delta_1) f_1 + \delta_2 f_2 + \nu,\\
 \dot f_i &= \lambda_{i-1} f_{i-1} - (\lambda_i + \delta_i) f_i + \delta_{i+1} f_{i+1}, \qquad 1 < i < N,\\
 \dot f_N &= \lambda_{N-1} f_{N-1} - \delta_N f_N,
 \end{aligned}$$
+
 and the total number of families $F = \sum_i f_i$ obeys $\dot F = \nu - \delta_1 f_1$. The **simple BDIM** is the special case $\lambda_i = \lambda i$, $\delta_i = \delta i$ (each member duplicates and is lost independently at per-member rates $\lambda, \delta$).
 
 **Proposition (unique equilibrium).** The master BDIM has a unique equilibrium,
