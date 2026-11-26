@@ -13339,6 +13339,7 @@
   "MathlibExt/NumberTheory/QuadraticForms/DifferenceOfTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Differences of two squares"},
   "MathlibExt/NumberTheory/QuadraticForms/FibonacciNormEquation": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Equation x² − xy − y² = ±1"},
   "MathlibExt/NumberTheory/QuadraticForms/GoldenRatioIntegerRingUnits": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Units of the golden ratio ring"},
+  "MathlibExt/NumberTheory/QuadraticForms/HermitianLatticeMass": {"to": "NumberTheory/quadratic-forms-sums-of-squares", "title": "Hermitian lattice definitions"},
   "MathlibExt/NumberTheory/QuadraticForms/IdealClass": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Binary quadratic forms"},
   "MathlibExt/NumberTheory/QuadraticForms/LagrangeQuadraticConvergent": {"to": "NumberTheory/continued-fractions-expansions", "title": "Convergents from binary quadratic forms"},
   "MathlibExt/NumberTheory/QuadraticForms/LegendreThreeSquare": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of three squares"},
