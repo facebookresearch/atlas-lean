@@ -13988,6 +13988,7 @@
   "MathlibExt/NumberTheory/ReducedResidueAverage": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAP": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
+  "MathlibExt/NumberTheory/ReducedResidueLongestAPIsGreatestLongestAPLength": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAPIsLeastLongestAPLengthPrimePow": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAPLongestAPLengthMinOfNotSquarefreeOfNotIsPrimePow": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
