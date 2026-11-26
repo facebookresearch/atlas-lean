@@ -29,8 +29,8 @@ Here a round is run for given priorities `prio : Fin n → ℕ`, with ties broke
 in `lubySelect`. In the probabilistic statements the values of a round are those of a uniformly
 random permutation `σ` of the vertices, vertex `v` getting the value `σ v`, so no two vertices tie;
 independent uniform values in `[0, 1]` are almost surely distinct, and their order is then a
-uniformly random order of the vertices. The rounds use independent permutations: the product
-`Measure.pi` of uniform measures `uniformOn Set.univ` on `Equiv.Perm (Fin n)`.
+uniformly random order of the remaining vertices. The rounds use independent permutations: the
+product `Measure.pi` of uniform measures `uniformOn Set.univ` on `Equiv.Perm (Fin n)`.
 
 ## Main definitions
 
@@ -118,21 +118,21 @@ def remainingEdges (R : Finset (Fin n)) : Finset (Sym2 (Fin n)) :=
 /- The invariant of the algorithm: `s.1` is independent and disjoint from `s.2`, every removed
 vertex is in `s.1` or adjacent to a vertex of `s.1`, and no remaining vertex is adjacent to a
 vertex of `s.1`. -/
-private structure Inv (s : Finset (Fin n) × Finset (Fin n)) : Prop where
+private structure RoundInvariant (s : Finset (Fin n) × Finset (Fin n)) : Prop where
   indep : G.IsIndepSet (s.1 : Set (Fin n))
   disj : Disjoint s.1 s.2
   covered : ∀ v, v ∉ s.2 → v ∈ s.1 ∨ ∃ u ∈ s.1, G.Adj u v
   free : ∀ v ∈ s.2, ∀ u ∈ s.1, ¬ G.Adj u v
 
 omit [DecidableRel G.Adj] in
-private theorem inv_init : Inv G (∅, univ) where
+private theorem inv_init : RoundInvariant G (∅, univ) where
   indep := by simp
   disj := by simp
   covered v hv := absurd (mem_univ v) hv
   free := by simp
 
-private theorem inv_round {s : Finset (Fin n) × Finset (Fin n)} (h : Inv G s)
-    (prio : Fin n → ℕ) : Inv G (lubyRound G s prio) := by
+private theorem inv_round {s : Finset (Fin n) × Finset (Fin n)}
+    (h : RoundInvariant G s) (prio : Fin n → ℕ) : RoundInvariant G (lubyRound G s prio) := by
   obtain ⟨I, R⟩ := s
   have hSR : lubySelect G prio R ⊆ R := lubySelect_subset G prio R
   refine ⟨?_, ?_, ?_, ?_⟩
@@ -164,14 +164,14 @@ private theorem inv_round {s : Finset (Fin n) × Finset (Fin n)} (h : Inv G s)
     · exact hv.2.2 u hu
 
 private theorem inv_foldl (l : List (Fin n → ℕ)) {s : Finset (Fin n) × Finset (Fin n)}
-    (h : Inv G s) : Inv G (l.foldl (lubyRound G) s) := by
+    (h : RoundInvariant G s) : RoundInvariant G (l.foldl (lubyRound G) s) := by
   induction l generalizing s with
   | nil => exact h
   | cons p l ih => exact ih (inv_round G h p)
 
 omit [DecidableRel G.Adj] in
-private theorem maximal_of_inv {s : Finset (Fin n) × Finset (Fin n)} (h : Inv G s)
-    (hR : s.2 = ∅) : Maximal G.IsIndepSet (s.1 : Set (Fin n)) := by
+private theorem maximal_of_inv {s : Finset (Fin n) × Finset (Fin n)}
+    (h : RoundInvariant G s) (hR : s.2 = ∅) : Maximal G.IsIndepSet (s.1 : Set (Fin n)) := by
   refine ⟨h.indep, fun t ht hst x hx => ?_⟩
   by_contra hxI
   rcases h.covered x (by simp [hR]) with h' | ⟨u, hu, hadj⟩
