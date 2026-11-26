@@ -28,6 +28,13 @@ theorem exactSourceType1
     ∃ a b : ℚ, a ≠ 0 ∧ b ≠ 0 ∧ Nonempty (D ≃ₐ[ℚ] ℍ[ℚ, a, b]) :=
   exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four D hdim hdiv hcen
 
+/-- Consumer of the form stated with `DivisionRing` and `Algebra.IsCentral`. -/
+theorem exactSourceCentral
+    (D : Type*) [DivisionRing D] [Algebra ℚ D] [Algebra.IsCentral ℚ D]
+    (hdim : Module.finrank ℚ D = 4) :
+    ∃ a b : ℚ, a ≠ 0 ∧ b ≠ 0 ∧ Nonempty (D ≃ₐ[ℚ] ℍ[ℚ, a, b]) :=
+  Algebra.IsCentral.exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four D hdim
+
 /-- The dimension hypothesis matters: `ℚ` itself is a division algebra
 with centre `ℚ`, but it is not a quaternion algebra. -/
 example : ¬ ∃ a b : ℚ, a ≠ 0 ∧ b ≠ 0 ∧ Nonempty (ℚ ≃ₐ[ℚ] ℍ[ℚ, a, b]) := by

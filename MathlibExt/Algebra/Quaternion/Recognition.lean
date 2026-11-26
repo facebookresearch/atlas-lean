@@ -28,8 +28,10 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Algebra.Central.Defs
 public import Mathlib.Algebra.Quaternion
 public import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.Algebra.Central.Basic
 import Mathlib.Tactic
 import Mathlib.Algebra.QuaternionBasis
 
@@ -51,7 +53,7 @@ private theorem mul_eq_zero_iff_of_units (hdiv : ∀ x : D, x ≠ 0 → IsUnit x
   constructor
   · intro h
     by_contra hne
-    push_neg at hne
+    push Not at hne
     obtain ⟨u, rfl⟩ := hdiv x hne.1
     exact hne.2 (by simpa using congrArg (fun z => (↑u⁻¹ : D) * z) h)
   · rintro (rfl | rfl) <;> simp
@@ -106,7 +108,7 @@ private theorem exists_mul_self_eq_smul_add_smul (hdim : Module.finrank ℚ D = 
   have hS1 : Module.finrank ℚ S ≠ 1 := by
     intro h1
     have hone : (1 : S) ≠ 0 := one_ne_zero
-    obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' (1 : S) hone).mp h1 ⟨i, hiS⟩
+    obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' (1 : S) hone).mp h1 ⟨i, hiS⟩
     apply hi
     refine ⟨c, ?_⟩
     rw [Algebra.algebraMap_eq_smul_one]
@@ -145,8 +147,14 @@ private theorem exists_mul_self_eq_smul_add_smul (hdim : Module.finrank ℚ D = 
   rw [this, neg_add, smul_add, smul_neg, smul_neg, smul_smul, smul_smul]
   module
 
-private theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four'
-    (hdim : Module.finrank ℚ D = 4)
+end QuaternionRecog
+
+open QuaternionRecog in
+/-- **Recognition of quaternion algebras over `ℚ`.** A four-dimensional
+central division algebra over `ℚ` is a quaternion algebra: there are nonzero
+`a, b : ℚ` with `D ≃ₐ[ℚ] ℍ[ℚ, a, b]`. -/
+public theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four
+    (D : Type*) [Ring D] [Algebra ℚ D] (hdim : Module.finrank ℚ D = 4)
     (hdiv : ∀ x : D, x ≠ 0 → IsUnit x)
     (hcen : ∀ z : D, (∀ x : D, z * x = x * z) → z ∈ Set.range (algebraMap ℚ D)) :
     ∃ a b : ℚ, a ≠ 0 ∧ b ≠ 0 ∧ Nonempty (D ≃ₐ[ℚ] ℍ[ℚ, a, b]) := by
@@ -161,7 +169,7 @@ private theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four'
     · rintro ⟨c, rfl⟩; exact ⟨c, Algebra.algebraMap_eq_smul_one c⟩
   obtain ⟨i₀, hi₀⟩ : ∃ i₀ : D, i₀ ∉ Set.range (algebraMap ℚ D) := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hsurj : Function.Surjective (Algebra.linearMap ℚ D) := fun x => hall x
     have h1 : Module.finrank ℚ D ≤ Module.finrank ℚ ℚ := by
       have := LinearMap.finrank_range_le (Algebra.linearMap ℚ D)
@@ -193,7 +201,7 @@ private theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four'
 
   obtain ⟨y, hy⟩ : ∃ y : D, i * y ≠ y * i := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     exact hi (hcen i hall)
   let j : D := i * y - y * i
   have hj0 : j ≠ 0 := fun h => hy (sub_eq_zero.mp h)
@@ -312,14 +320,15 @@ private theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four'
       f.toLinearMap)).mpr hsurj
   exact ⟨a, b, ha, hb0, ⟨(AlgEquiv.ofBijective f hbij).symm⟩⟩
 
-end QuaternionRecog
-
-/-- **Recognition of quaternion algebras over `ℚ`.** A four-dimensional
-central division algebra over `ℚ` is a quaternion algebra: there are nonzero
-`a, b : ℚ` with `D ≃ₐ[ℚ] ℍ[ℚ, a, b]`. -/
-public theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four
-    (D : Type*) [Ring D] [Algebra ℚ D] (hdim : Module.finrank ℚ D = 4)
-    (hdiv : ∀ x : D, x ≠ 0 → IsUnit x)
-    (hcen : ∀ z : D, (∀ x : D, z * x = x * z) → z ∈ Set.range (algebraMap ℚ D)) :
-    ∃ a b : ℚ, a ≠ 0 ∧ b ≠ 0 ∧ Nonempty (D ≃ₐ[ℚ] ℍ[ℚ, a, b]) :=
-  QuaternionRecog.exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four' hdim hdiv hcen
+/-- **Four-dimensional central division algebras over `ℚ` are quaternion algebras.** A division
+ring `D` that is a central `ℚ`-algebra of dimension `4` is isomorphic to `ℍ[ℚ, a, b]` for some
+nonzero `a, b : ℚ`. -/
+public theorem Algebra.IsCentral.exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four
+    (D : Type*) [DivisionRing D] [Algebra ℚ D] [Algebra.IsCentral ℚ D]
+    (hdim : Module.finrank ℚ D = 4) :
+    ∃ a b : ℚ, a ≠ 0 ∧ b ≠ 0 ∧ Nonempty (D ≃ₐ[ℚ] ℍ[ℚ, a, b]) := by
+  refine _root_.exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four D hdim
+    (fun _ hx ↦ hx.isUnit) fun z hz ↦ ?_
+  obtain ⟨c, rfl⟩ := (Algebra.IsCentral.mem_center_iff ℚ).mp
+    (Subalgebra.mem_center_iff.mpr fun x ↦ (hz x).symm)
+  exact ⟨c, rfl⟩

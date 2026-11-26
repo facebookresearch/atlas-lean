@@ -37,7 +37,8 @@ import Mathlib.Tactic.LinearCombination
 # Ternary isotropy over `ℚ_[p]` at odd primes
 
 The form `z ^ 2 - a * x ^ 2 - b * y ^ 2` with `‖a‖ = ‖b‖ = 1` is the case `n = 3` of
-`HilbertSymbol.diagonal_unit_isotropic`, with the unit coefficients `1, -a, -b`.
+`HilbertSymbol.diagonal_unit_isotropic`, with the unit coefficients `1, -a, -b`. Of the upstream
+files named above, only the statement in `Theorems/` is used; the upstream proof is not.
 -/
 
 /-- **Ternary isotropy over `ℚ_[p]` for odd `p`.** If `p` is an odd prime and

@@ -219,52 +219,7 @@ private theorem Padic.exists_ternary_isotropic_prime_mul_iff_isSquare_of_ne_two
 
 namespace HilbertRecipDyadicUnitsPort
 
-open Polynomial
-
-section generic
-
-variable {p : ℕ} [hp : Fact p.Prime]
-
-private theorem exists_primitive_zero {A B : ℚ_[p]} {z x y : ℚ_[p]} (hne : ¬ (z = 0 ∧ x = 0 ∧ y =
-  0))
-    (h : z ^ 2 - A * x ^ 2 - B * y ^ 2 = 0) :
-    ∃ Z X Y : ℤ_[p], (‖Z‖ = 1 ∨ ‖X‖ = 1 ∨ ‖Y‖ = 1) ∧
-      (Z : ℚ_[p]) ^ 2 - A * (X : ℚ_[p]) ^ 2 - B * (Y : ℚ_[p]) ^ 2 = 0 := by
-  set m : ℝ := max ‖z‖ (max ‖x‖ ‖y‖) with hm
-  have hmpos : 0 < m := by
-    by_contra hle
-    push Not at hle
-    have hz : z = 0 := norm_le_zero_iff.mp ((le_max_left _ _).trans hle)
-    have hx : x = 0 :=
-      norm_le_zero_iff.mp (((le_max_left _ _).trans (le_max_right _ _)).trans hle)
-    have hy : y = 0 :=
-      norm_le_zero_iff.mp (((le_max_right _ _).trans (le_max_right _ _)).trans hle)
-    exact hne ⟨hz, hx, hy⟩
-  obtain ⟨c, hc, hcm⟩ : ∃ c : ℚ_[p], (c = z ∨ c = x ∨ c = y) ∧ ‖c‖ = m := by
-    rcases le_total ‖z‖ (max ‖x‖ ‖y‖) with h1 | h1
-    · rcases le_total ‖x‖ ‖y‖ with h2 | h2
-      · exact ⟨y, Or.inr (Or.inr rfl), by rw [hm, max_eq_right h1, max_eq_right h2]⟩
-      · exact ⟨x, Or.inr (Or.inl rfl), by rw [hm, max_eq_right h1, max_eq_left h2]⟩
-    · exact ⟨z, Or.inl rfl, by rw [hm, max_eq_left h1]⟩
-  have hc0 : c ≠ 0 := fun h0 ↦ by
-    rw [h0, norm_zero] at hcm; exact lt_irrefl _ (hcm ▸ hmpos)
-  have hzle : ‖z / c‖ ≤ 1 := by
-    rw [norm_div, hcm, div_le_one hmpos]; exact le_max_left _ _
-  have hxle : ‖x / c‖ ≤ 1 := by
-    rw [norm_div, hcm, div_le_one hmpos]; exact (le_max_left _ _).trans (le_max_right _ _)
-  have hyle : ‖y / c‖ ≤ 1 := by
-    rw [norm_div, hcm, div_le_one hmpos]; exact (le_max_right _ _).trans (le_max_right _ _)
-  refine ⟨⟨z / c, hzle⟩, ⟨x / c, hxle⟩, ⟨y / c, hyle⟩, ?_, ?_⟩
-  · show ‖(z / c : ℚ_[p])‖ = 1 ∨ ‖(x / c : ℚ_[p])‖ = 1 ∨ ‖(y / c : ℚ_[p])‖ = 1
-    rcases hc with rfl | rfl | rfl
-    · exact Or.inl (by rw [div_self hc0, norm_one])
-    · exact Or.inr (Or.inl (by rw [div_self hc0, norm_one]))
-    · exact Or.inr (Or.inr (by rw [div_self hc0, norm_one]))
-  · show (z / c) ^ 2 - A * (x / c) ^ 2 - B * (y / c) ^ 2 = 0
-    field_simp
-    linear_combination h
-
-end generic
+open Polynomial HilbertRecipOddPort
 
 private noncomputable def r : ℤ_[2] →+* ZMod 8 := PadicInt.toZModPow (p := 2) 3
 
@@ -395,107 +350,9 @@ private theorem units_iff (a b : ℚ_[2]) (ha : ‖a‖ = 1) (hb : ‖b‖ = 1) 
 
 end HilbertRecipDyadicUnitsPort
 
-private theorem Padic.exists_ternary_isotropic_iff_of_norm_eq_one_two (a b : ℚ_[2]) (ha : ‖a‖ =
-  1) (hb : ‖b‖ = 1) :
-    (∃ z x y : ℚ_[2], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧ z ^ 2 - a * x ^ 2 - b * y ^ 2 = 0) ↔
-      ‖a - 1‖ ≤ (2 : ℝ) ^ (-2 : ℤ) ∨ ‖b - 1‖ ≤ (2 : ℝ) ^ (-2 : ℤ) :=
-  HilbertRecipDyadicUnitsPort.units_iff a b ha hb
-
 namespace HilbertRecipDyadicTwoMulPort
 
-open Polynomial
-
-section generic
-
-variable {p : ℕ} [hp : Fact p.Prime]
-
-private theorem exists_primitive_zero {A B : ℚ_[p]} {z x y : ℚ_[p]} (hne : ¬ (z = 0 ∧ x = 0 ∧ y =
-  0))
-    (h : z ^ 2 - A * x ^ 2 - B * y ^ 2 = 0) :
-    ∃ Z X Y : ℤ_[p], (‖Z‖ = 1 ∨ ‖X‖ = 1 ∨ ‖Y‖ = 1) ∧
-      (Z : ℚ_[p]) ^ 2 - A * (X : ℚ_[p]) ^ 2 - B * (Y : ℚ_[p]) ^ 2 = 0 := by
-  set m : ℝ := max ‖z‖ (max ‖x‖ ‖y‖) with hm
-  have hmpos : 0 < m := by
-    by_contra hle
-    push Not at hle
-    have hz : z = 0 := norm_le_zero_iff.mp ((le_max_left _ _).trans hle)
-    have hx : x = 0 :=
-      norm_le_zero_iff.mp (((le_max_left _ _).trans (le_max_right _ _)).trans hle)
-    have hy : y = 0 :=
-      norm_le_zero_iff.mp (((le_max_right _ _).trans (le_max_right _ _)).trans hle)
-    exact hne ⟨hz, hx, hy⟩
-  obtain ⟨c, hc, hcm⟩ : ∃ c : ℚ_[p], (c = z ∨ c = x ∨ c = y) ∧ ‖c‖ = m := by
-    rcases le_total ‖z‖ (max ‖x‖ ‖y‖) with h1 | h1
-    · rcases le_total ‖x‖ ‖y‖ with h2 | h2
-      · exact ⟨y, Or.inr (Or.inr rfl), by rw [hm, max_eq_right h1, max_eq_right h2]⟩
-      · exact ⟨x, Or.inr (Or.inl rfl), by rw [hm, max_eq_right h1, max_eq_left h2]⟩
-    · exact ⟨z, Or.inl rfl, by rw [hm, max_eq_left h1]⟩
-  have hc0 : c ≠ 0 := fun h0 ↦ by
-    rw [h0, norm_zero] at hcm; exact lt_irrefl _ (hcm ▸ hmpos)
-  have hzle : ‖z / c‖ ≤ 1 := by
-    rw [norm_div, hcm, div_le_one hmpos]; exact le_max_left _ _
-  have hxle : ‖x / c‖ ≤ 1 := by
-    rw [norm_div, hcm, div_le_one hmpos]; exact (le_max_left _ _).trans (le_max_right _ _)
-  have hyle : ‖y / c‖ ≤ 1 := by
-    rw [norm_div, hcm, div_le_one hmpos]; exact (le_max_right _ _).trans (le_max_right _ _)
-  refine ⟨⟨z / c, hzle⟩, ⟨x / c, hxle⟩, ⟨y / c, hyle⟩, ?_, ?_⟩
-  · show ‖(z / c : ℚ_[p])‖ = 1 ∨ ‖(x / c : ℚ_[p])‖ = 1 ∨ ‖(y / c : ℚ_[p])‖ = 1
-    rcases hc with rfl | rfl | rfl
-    · exact Or.inl (by rw [div_self hc0, norm_one])
-    · exact Or.inr (Or.inl (by rw [div_self hc0, norm_one]))
-    · exact Or.inr (Or.inr (by rw [div_self hc0, norm_one]))
-  · show (z / c) ^ 2 - A * (x / c) ^ 2 - B * (y / c) ^ 2 = 0
-    field_simp
-    linear_combination h
-
-end generic
-
-private noncomputable def r : ℤ_[2] →+* ZMod 8 := PadicInt.toZModPow (p := 2) 3
-
-private theorem r_eq_zero_iff (x : ℤ_[2]) : r x = 0 ↔ ‖x‖ ≤ (2 : ℝ) ^ (-3 : ℤ) := by
-  have h1 : r x = 0 ↔ x ∈ RingHom.ker (PadicInt.toZModPow (p := 2) 3) := Iff.rfl
-  rw [h1, PadicInt.ker_toZModPow, ← PadicInt.norm_le_pow_iff_mem_span_pow]
-  norm_num
-
-private theorem norm_two : ‖(2 : ℤ_[2])‖ = 2⁻¹ := by
-  have := PadicInt.norm_p (p := 2)
-  simpa using this
-
-private theorem r_two_mul_eq_zero_iff (x : ℤ_[2]) : r (2 * x) = 0 ↔ ‖x‖ ≤ (2 : ℝ) ^ (-2 : ℤ) := by
-  rw [r_eq_zero_iff, norm_mul, norm_two]
-  norm_num
-  constructor <;> intro h <;> linarith
-
-private theorem r_mul_self_of_norm_eq_one {x : ℤ_[2]} (hx : ‖x‖ = 1) : r x * r x = 1 := by
-  obtain ⟨y, hy⟩ := IsUnit.exists_right_inv (PadicInt.isUnit_iff.mpr hx)
-  have hr : r x * r y = 1 := by rw [← map_mul, hy, map_one]
-  revert hr
-  generalize r x = s, r y = t
-  decide +revert
-
-private theorem r_sq_mem (x : ℤ_[2]) : r x * r x ∈ ({0, 1, 4} : Finset (ZMod 8)) := by
-  generalize r x = s
-  decide +revert
-
-private theorem exists_sq_eq_of_r_eq_one {c : ℤ_[2]} (hc : r c = 1) : ∃ t : ℤ_[2], t ^ 2 = c := by
-  have hc1 : ‖c - 1‖ ≤ (2 : ℝ) ^ (-3 : ℤ) := by
-    rw [← r_eq_zero_iff, map_sub, hc, map_one, sub_self]
-  set F : ℤ_[2][X] := X ^ 2 - C c with hF
-  have hFeval : aeval (1 : ℤ_[2]) F = 1 - c := by simp [hF]
-  have hF'eval : aeval (1 : ℤ_[2]) (derivative F) = 2 := by
-    simp [hF]; norm_num
-  have hhens : ‖aeval (1 : ℤ_[2]) F‖ < ‖aeval (1 : ℤ_[2]) (derivative F)‖ ^ 2 := by
-    rw [hF'eval, hFeval, norm_two, norm_sub_rev]
-    refine lt_of_le_of_lt hc1 ?_
-    norm_num
-  obtain ⟨t, ht, -⟩ := hensels_lemma hhens
-  refine ⟨t, ?_⟩
-  have : aeval t F = t ^ 2 - c := by simp [hF]
-  rw [this] at ht
-  exact sub_eq_zero.mp ht
-
-private theorem norm_coe_sub_one (B : ℤ_[2]) : ‖B - 1‖ = ‖(B : ℚ_[2]) - 1‖ := by
-  rw [PadicInt.norm_def, PadicInt.coe_sub, PadicInt.coe_one]
+open Polynomial HilbertRecipOddPort HilbertRecipDyadicUnitsPort
 
 private theorem core_two_mul : ∀ u v : ZMod 8, u * u = 1 → v * v = 1 →
     ∀ sz ∈ ({0, 1, 4} : Finset (ZMod 8)), ∀ sx ∈ ({0, 1, 4} : Finset (ZMod 8)),
@@ -561,13 +418,6 @@ private theorem two_mul_iff (a b : ℚ_[2]) (ha : ‖a‖ = 1) (hb : ‖b‖ = 1
 
 end HilbertRecipDyadicTwoMulPort
 
-private theorem Padic.exists_ternary_isotropic_two_mul_iff_of_norm_eq_one (a b : ℚ_[2]) (ha : ‖a‖
-  = 1) (hb : ‖b‖ = 1) :
-    (∃ z x y : ℚ_[2], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧
-        z ^ 2 - (2 * a) * x ^ 2 - b * y ^ 2 = 0) ↔
-      ‖b - 1‖ ≤ (2 : ℝ) ^ (-3 : ℤ) ∨ ‖2 * a + b - 1‖ ≤ (2 : ℝ) ^ (-3 : ℤ) :=
-  HilbertRecipDyadicTwoMulPort.two_mul_iff a b ha hb
-
 open ZMod NumberTheorySymbols
 
 namespace HilbertRecipPort
@@ -609,16 +459,6 @@ private theorem iso_neg_mul {A B : F} (hA : A ≠ 0) : Iso A (-(A * B)) ↔ Iso 
     refine ⟨A * x, z, y, ?_, by linear_combination (-A) * heq⟩
     rintro ⟨hx, hz, hy⟩
     exact hnt ⟨hz, (mul_eq_zero.mp hx).resolve_left hA, hy⟩
-
-private theorem iso_one_left (B : F) : Iso 1 B := ⟨1, 1, 0, by simp, by ring⟩
-
-private theorem iso_map {L : Type*} [Field L] (f : F →+* L) {A B : F} (h : Iso A B) :
-    Iso (f A) (f B) := by
-  obtain ⟨z, x, y, hnt, heq⟩ := h
-  refine ⟨f z, f x, f y, ?_, by simpa [map_sub, map_mul, map_pow] using congrArg f heq⟩
-  rintro ⟨hz, hx, hy⟩
-  exact hnt ⟨(map_eq_zero_iff f f.injective).mp hz, (map_eq_zero_iff f f.injective).mp hx,
-    (map_eq_zero_iff f f.injective).mp hy⟩
 
 end FieldGeneric
 
@@ -668,9 +508,6 @@ private theorem ord_unt_mul {p : ℕ} (hp : p.Prime) {a b : ℤ} (ha : a ≠ 0) 
   · exact hua h
   · exact hub h
 
-private theorem unt_ne_zero {p : ℕ} (hp : p.Prime) {a : ℤ} (ha : a ≠ 0) : unt p a ≠ 0 :=
-  fun h ↦ (decomp hp ha).2 (h ▸ dvd_zero _)
-
 private theorem unt_odd {a : ℤ} (ha : a ≠ 0) : ¬ (2 : ℤ) ∣ unt 2 a := by
   simpa using (decomp Nat.prime_two ha).2
 
@@ -707,13 +544,13 @@ private theorem isSign_one : IsSign 1 := Or.inl rfl
 private theorem χ₄_isSign_of_odd {u : ℤ} (hu : ¬ (2 : ℤ) ∣ u) : IsSign (χ₄ u) := by
   rw [χ₄_int_eq_if_mod_four]
   have : u % 2 ≠ 0 := fun h ↦ hu (Int.dvd_of_emod_eq_zero h)
-  simp only [this, if_false]
+  simp only [this, ite_false]
   split_ifs <;> simp [IsSign]
 
 private theorem χ₈_isSign_of_odd {u : ℤ} (hu : ¬ (2 : ℤ) ∣ u) : IsSign (χ₈ u) := by
   rw [χ₈_int_eq_if_mod_eight]
   have : u % 2 ≠ 0 := fun h ↦ hu (Int.dvd_of_emod_eq_zero h)
-  simp only [this, if_false]
+  simp only [this, ite_false]
   split_ifs <;> simp [IsSign]
 
 private theorem χ₄_nat_isSign_of_ne_two {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) : IsSign (χ₄ (p :
@@ -770,11 +607,6 @@ private theorem sym_comm (p : ℕ) {a b : ℤ} (ha : a ≠ 0) (hb : b ≠ 0) :
   · rw [sgn4_comm (unt_odd ha) (unt_odd hb)]; ring
   · ring
 
-private theorem sym_mul_right {p : ℕ} (hp : p.Prime) (a : ℤ) {b b' : ℤ} (ha : a ≠ 0) (hb : b ≠ 0)
-    (hb' : b' ≠ 0) : sym p a (b * b') = sym p a b * sym p a b' := by
-  rw [sym_comm p ha (mul_ne_zero hb hb'), sym_mul_left hp hb hb', sym_comm p hb ha,
-    sym_comm p hb' ha]
-
 private theorem sym_eq_one_of_not_dvd {p : ℕ} (hp : p.Prime) {a b : ℤ}
     (h : ¬ (p : ℤ) ∣ 2 * a * b) : sym p a b = 1 := by
   have h2 : p ≠ 2 := by rintro rfl; exact h ⟨a * b, by ring⟩
@@ -783,7 +615,7 @@ private theorem sym_eq_one_of_not_dvd {p : ℕ} (hp : p.Prime) {a b : ℤ}
   have hoa : ord p a = 0 := (ord_unt_eq hp ha (by ring : a = (p:ℤ) ^ 0 * a)).1
   have hob : ord p b = 0 := (ord_unt_eq hp hb (by ring : b = (p:ℤ) ^ 0 * b)).1
   unfold sym symOdd
-  rw [if_neg h2, hoa, hob]; simp
+  rw [ite_eq_right h2, hoa, hob]; simp
 
 private theorem sgnInf_mul_left {a a' : ℤ} (ha : a ≠ 0) (ha' : a' ≠ 0) (b : ℤ) :
     sgnInf (a * a') b = sgnInf a b * sgnInf a' b := by
@@ -859,7 +691,6 @@ private theorem ou_other {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ 
     ord p q = 0 ∧ unt p q = q :=
   ord_unt_eq hp (not_natCast_dvd_prime hp hq hpq) (by ring)
 
-private theorem chi4_one : χ₄ ((1 : ℤ) : ZMod 4) = 1 := by simp
 private theorem chi4_neg_one : χ₄ ((-1 : ℤ) : ZMod 4) = -1 := by
   rw [Int.cast_neg, Int.cast_one]; decide
 private theorem chi8_one : χ₈ ((1 : ℤ) : ZMod 8) = 1 := by simp
@@ -879,9 +710,6 @@ private theorem sgn4_self_mul {u : ℤ} (hu : ¬ (2 : ℤ) ∣ u) : sgn4 u u * �
 
 private theorem odd_of_prime_ne_two {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : ¬ (2 : ℤ) ∣ (q : ℤ) :=
   not_natCast_dvd_prime Nat.prime_two hq (Ne.symm hq2)
-
-private theorem natOdd_of_prime_ne_two {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : Odd q :=
-  hq.odd_of_ne_two hq2
 
 private theorem χ₄_nat_isSign {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : IsSign (χ₄ (q : ZMod 4)) := by
   have := χ₄_isSign_of_odd (odd_of_prime_ne_two hq hq2)
@@ -911,7 +739,7 @@ private theorem cover_int {p : ℕ} {x y : ℤ} (h : (p : ℤ) ∣ 2 * x * y) :
 private theorem pf_one_left (b : ℤ) : PF 1 b := by
   intro s hs _
   unfold sgnInf
-  rw [if_neg (by omega), Finset.prod_eq_one]
+  rw [ite_eq_right (by omega), Finset.prod_eq_one]
   intro p hp
   have hp' := hs p hp
   unfold sym symOdd symTwo
@@ -924,7 +752,7 @@ private theorem pf_neg_one_neg_one : PF (-1) (-1) := by
     rcases this with rfl | rfl | rfl <;> first | exact absurd hp Nat.not_prime_one | simp
   · rw [Finset.prod_singleton]
     unfold sym symTwo sgnInf
-    rw [if_pos rfl, (ou_neg_one Nat.prime_two).1, (ou_neg_one Nat.prime_two).2,
+    rw [ite_eq_left rfl, (ou_neg_one Nat.prime_two).1, (ou_neg_one Nat.prime_two).2,
       sgn4_neg_one_neg_one]
     simp
 
@@ -936,7 +764,7 @@ private theorem pf_neg_one_two : PF (-1) 2 := by
     unfold sym symTwo sgnInf
     have h2 := ou_self Nat.prime_two
     push_cast at h2
-    rw [if_pos rfl, (ou_neg_one Nat.prime_two).1, (ou_neg_one Nat.prime_two).2, h2.1, h2.2,
+    rw [ite_eq_left rfl, (ou_neg_one Nat.prime_two).1, (ou_neg_one Nat.prime_two).2, h2.1, h2.2,
       sgn4_one_right, chi8_neg_one]
     simp
 
@@ -948,12 +776,13 @@ private theorem pf_neg_one_prime {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : PF (
     rcases this with rfl | rfl | rfl <;> first | exact absurd hp Nat.not_prime_one | simp
   · rw [Finset.prod_pair (Ne.symm hq2)]
     unfold sym symTwo symOdd sgnInf
-    rw [if_pos rfl, if_neg hq2, (ou_neg_one Nat.prime_two).1, (ou_neg_one Nat.prime_two).2,
-      (ou_other Nat.prime_two hq (Ne.symm hq2)).1, (ou_other Nat.prime_two hq (Ne.symm hq2)).2,
+    rw [ite_eq_left rfl, ite_eq_right hq2, (ou_neg_one Nat.prime_two).1,
+      (ou_neg_one Nat.prime_two).2, (ou_other Nat.prime_two hq (Ne.symm hq2)).1,
+      (ou_other Nat.prime_two hq (Ne.symm hq2)).2,
       (ou_neg_one hq).1, (ou_neg_one hq).2, (ou_self hq).1, (ou_self hq).2,
-      sgn4_neg_one_left hqodd, jacobiSym.at_neg_one (natOdd_of_prime_ne_two hq hq2)]
+      sgn4_neg_one_left hqodd, jacobiSym.at_neg_one (hq.odd_of_ne_two hq2)]
     simp only [pow_zero, mul_one, pow_one, one_mul, jacobiSym.one_left, Int.cast_natCast]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     rcases χ₄_nat_isSign hq hq2 with h | h <;> rw [h] <;> norm_num
 
 private theorem pf_two_two : PF 2 2 := by
@@ -965,7 +794,7 @@ private theorem pf_two_two : PF 2 2 := by
     unfold sym symTwo sgnInf
     have h2 := ou_self Nat.prime_two
     push_cast at h2
-    rw [if_pos rfl, h2.1, h2.2, sgn4_one_right, chi8_one]
+    rw [ite_eq_left rfl, h2.1, h2.2, sgn4_one_right, chi8_one]
     simp
 
 private theorem pf_prime_self {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : PF q q := by
@@ -976,11 +805,11 @@ private theorem pf_prime_self {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : PF q q 
     rcases this with rfl | rfl | rfl <;> first | exact absurd hp Nat.not_prime_one | simp
   · rw [Finset.prod_pair (Ne.symm hq2)]
     unfold sym symTwo symOdd sgnInf
-    rw [if_pos rfl, if_neg hq2,
+    rw [ite_eq_left rfl, ite_eq_right hq2,
       (ou_other Nat.prime_two hq (Ne.symm hq2)).1, (ou_other Nat.prime_two hq (Ne.symm hq2)).2,
       (ou_self hq).1, (ou_self hq).2]
     simp only [pow_zero, mul_one, pow_one, jacobiSym.one_left]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
     have := sgn4_self_mul hqodd
     rwa [Int.cast_natCast] at this
 
@@ -994,14 +823,14 @@ private theorem pf_two_prime {q : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) : PF 2 q :
     unfold sym symTwo symOdd sgnInf
     have h2 := ou_self Nat.prime_two
     push_cast at h2
-    rw [if_pos rfl, if_neg hq2, h2.1, h2.2,
+    rw [ite_eq_left rfl, ite_eq_right hq2, h2.1, h2.2,
       (ou_other Nat.prime_two hq (Ne.symm hq2)).1, (ou_other Nat.prime_two hq (Ne.symm hq2)).2,
       (ou_self hq).1, (ou_self hq).2]
     have h2' := ou_other hq Nat.prime_two hq2
     push_cast at h2'
     rw [h2'.1, h2'.2, sgn4_one_left]
     simp only [pow_zero, mul_one, pow_one, jacobiSym.one_left, one_mul]
-    rw [if_neg (by omega), jacobiSym.at_two (natOdd_of_prime_ne_two hq hq2), Int.cast_natCast]
+    rw [ite_eq_right (by omega), jacobiSym.at_two (hq.odd_of_ne_two hq2), Int.cast_natCast]
     rcases χ₈_nat_isSign hq hq2 with h | h <;> rw [h] <;> norm_num
 
 private theorem pf_prime_prime {q q' : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) (hq' : q'.Prime) (hq2' :
@@ -1015,7 +844,7 @@ private theorem pf_prime_prime {q q' : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) (hq' 
     rcases this with rfl | rfl | rfl <;> first | exact absurd hp Nat.not_prime_one | simp
   · rw [Finset.prod_insert (by simp [Ne.symm hq2, Ne.symm hq2']), Finset.prod_pair hqq]
     unfold sym symTwo symOdd sgnInf
-    rw [if_pos rfl, if_neg hq2, if_neg hq2',
+    rw [ite_eq_left rfl, ite_eq_right hq2, ite_eq_right hq2',
       (ou_other Nat.prime_two hq (Ne.symm hq2)).1, (ou_other Nat.prime_two hq (Ne.symm hq2)).2,
       (ou_other Nat.prime_two hq' (Ne.symm hq2')).1,
       (ou_other Nat.prime_two hq' (Ne.symm hq2')).2,
@@ -1023,10 +852,10 @@ private theorem pf_prime_prime {q q' : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) (hq' 
       (ou_other hq' hq (Ne.symm hqq)).1, (ou_other hq' hq (Ne.symm hqq)).2,
       (ou_self hq').1, (ou_self hq').2]
     simp only [pow_zero, mul_one, pow_one, jacobiSym.one_left, one_mul, mul_zero]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
-    have hQR := jacobiSym.quadratic_reciprocity (natOdd_of_prime_ne_two hq hq2)
-      (natOdd_of_prime_ne_two hq' hq2')
+    have hQR := jacobiSym.quadratic_reciprocity (hq.odd_of_ne_two hq2)
+      (hq'.odd_of_ne_two hq2')
 
     have hJ : IsSign (J((q' : ℤ) | q)) := jacobiSym_isSign hq (not_natCast_dvd_prime hq hq' hqq)
     have hJJ : J((q' : ℤ) | q) * J((q : ℤ) | q') = (-1) ^ (q / 2 * (q' / 2)) := by
@@ -1035,12 +864,12 @@ private theorem pf_prime_prime {q q' : ℕ} (hq : q.Prime) (hq2 : q ≠ 2) (hq' 
     have hsgn : sgn4 q q' = (-1) ^ (q / 2 * (q' / 2)) := by
       unfold sgn4
       rw [Int.cast_natCast, Int.cast_natCast,
-        χ₄_eq_neg_one_pow (Nat.odd_iff.mp (natOdd_of_prime_ne_two hq hq2)),
-        χ₄_eq_neg_one_pow (Nat.odd_iff.mp (natOdd_of_prime_ne_two hq' hq2')), pow_mul]
+        χ₄_eq_neg_one_pow (Nat.odd_iff.mp (hq.odd_of_ne_two hq2)),
+        χ₄_eq_neg_one_pow (Nat.odd_iff.mp (hq'.odd_of_ne_two hq2')), pow_mul]
       rcases Nat.even_or_odd (q' / 2) with he | ho
-      · rw [he.neg_one_pow, if_neg (by norm_num)]
+      · rw [he.neg_one_pow, ite_eq_right (by norm_num)]
         rcases neg_one_pow_eq_or ℤ (q / 2) with h | h <;> rw [h] <;> simp [he.neg_one_pow]
-      · rw [ho.neg_one_pow, if_pos rfl]
+      · rw [ho.neg_one_pow, ite_eq_left rfl]
         rcases neg_one_pow_eq_or ℤ (q / 2) with h | h <;> rw [h] <;> simp [ho.neg_one_pow]
     rw [hJJ, hsgn, ← pow_add, ← two_mul, pow_mul]
     simp
@@ -1124,6 +953,8 @@ namespace HilbertRecipPort
 
 section Padic
 
+open HilbertRecipOddPort
+
 variable {p : ℕ} [hp : Fact p.Prime]
 
 private theorem norm_intCast_eq_one_of_not_dvd {u : ℤ} (hu : ¬ (p : ℤ) ∣ u) : ‖(u : ℚ_[p])‖ = 1 :=
@@ -1131,52 +962,6 @@ private theorem norm_intCast_eq_one_of_not_dvd {u : ℤ} (hu : ¬ (p : ℤ) ∣ 
     (not_lt.mp fun h ↦ hu (Padic.norm_intCast_lt_one_iff.mp h))
 
 private theorem natCast_p_ne_zero : (p : ℚ_[p]) ≠ 0 := by exact_mod_cast hp.out.ne_zero
-
-private theorem norm_lt_one_of_toZMod_eq_zero {c : ℤ_[p]} (h : PadicInt.toZMod c = 0) : ‖c‖ < 1
-  := by
-  have : c ∈ RingHom.ker (PadicInt.toZMod (p := p)) := h
-  rw [PadicInt.ker_toZMod, IsLocalRing.mem_maximalIdeal] at this
-  exact PadicInt.mem_nonunits.mp this
-
-private theorem toZMod_eq_zero_of_norm_lt_one {c : ℤ_[p]} (h : ‖c‖ < 1) : PadicInt.toZMod c = 0
-  := by
-  have : c ∈ RingHom.ker (PadicInt.toZMod (p := p)) := by
-    rw [PadicInt.ker_toZMod, IsLocalRing.mem_maximalIdeal]
-    exact PadicInt.mem_nonunits.mpr h
-  exact this
-
-private theorem norm_eq_one_of_toZMod_ne_zero {c : ℤ_[p]} (h : PadicInt.toZMod c ≠ 0) : ‖c‖ = 1
-  := by
-  refine le_antisymm (PadicInt.norm_le_one c) (not_lt.mp fun hlt ↦ h ?_)
-  exact toZMod_eq_zero_of_norm_lt_one hlt
-
-open Polynomial in
-
-private theorem exists_sq_eq_of_toZMod_eq_sq (hp2 : p ≠ 2) {c : ℤ_[p]} {s : ZMod p} (hs : s ≠ 0)
-    (hcs : PadicInt.toZMod c = s ^ 2) : ∃ t : ℤ_[p], t ^ 2 = c := by
-  obtain ⟨sl, hsl⟩ := ZMod.ringHom_surjective (PadicInt.toZMod (p := p)) s
-  have hslnorm : ‖sl‖ = 1 := norm_eq_one_of_toZMod_ne_zero (by rw [hsl]; exact hs)
-  have htwo : ‖(2 : ℤ_[p])‖ = 1 := by
-    have h := (PadicInt.norm_natCast_eq_one_iff (p := p) (n := 2)).mpr
-      ((Nat.coprime_primes hp.out Nat.prime_two).mpr hp2)
-    simpa using h
-  set F : ℤ_[p][X] := X ^ 2 - C c with hF
-  have hFeval : aeval sl F = sl ^ 2 - c := by simp [hF]
-  have hF'eval : aeval sl (derivative F) = 2 * sl := by
-    simp [hF]; norm_num
-  have hnormF' : ‖aeval sl (derivative F)‖ = 1 := by
-    rw [hF'eval, norm_mul, htwo, hslnorm, one_mul]
-  have hnormF : ‖aeval sl F‖ < 1 := by
-    rw [hFeval]
-    apply norm_lt_one_of_toZMod_eq_zero
-    rw [map_sub, map_pow, hsl, hcs, sub_self]
-  have hhens : ‖aeval sl F‖ < ‖aeval sl (derivative F)‖ ^ 2 := by
-    rw [hnormF', one_pow]; exact hnormF
-  obtain ⟨t, ht, -⟩ := hensels_lemma hhens
-  refine ⟨t, ?_⟩
-  have : aeval t F = t ^ 2 - c := by simp [hF]
-  rw [this] at ht
-  exact sub_eq_zero.mp ht
 
 private theorem isSquare_intCast_iff_jacobiSym (hp2 : p ≠ 2) {v : ℤ} (hv : ¬ (p : ℤ) ∣ v) :
     IsSquare (v : ℚ_[p]) ↔ J(v | p) = 1 := by
@@ -1347,7 +1132,7 @@ private theorem local_two {u v : ℤ} (hu : ¬ (2 : ℤ) ∣ u) (hv : ¬ (2 : �
     simp only [pow_zero, one_mul, mul_one]
     change (∃ z x y : ℚ_[2], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧
       z ^ 2 - (u : ℚ_[2]) * x ^ 2 - v * y ^ 2 = 0) ↔ _
-    rw [Padic.exists_ternary_isotropic_iff_of_norm_eq_one_two _ _ hU hV, L00 hu hv,
+    rw [HilbertRecipDyadicUnitsPort.units_iff _ _ hU hV, L00 hu hv,
       show (u : ℚ_[2]) - 1 = ((u - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       show (v : ℚ_[2]) - 1 = ((v - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       norm_intCast_le_two, norm_intCast_le_two]
@@ -1356,7 +1141,7 @@ private theorem local_two {u v : ℤ} (hu : ¬ (2 : ℤ) ∣ u) (hv : ¬ (2 : �
     rw [iso_comm]
     change (∃ z x y : ℚ_[2], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧
       z ^ 2 - (2 * (v : ℚ_[2])) * x ^ 2 - u * y ^ 2 = 0) ↔ _
-    rw [Padic.exists_ternary_isotropic_two_mul_iff_of_norm_eq_one _ _ hV hU, L01 hu hv,
+    rw [HilbertRecipDyadicTwoMulPort.two_mul_iff _ _ hV hU, L01 hu hv,
       show (u : ℚ_[2]) - 1 = ((u - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       show 2 * (v : ℚ_[2]) + u - 1 = ((2 * v + u - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       norm_intCast_le_three, norm_intCast_le_three]
@@ -1364,7 +1149,7 @@ private theorem local_two {u v : ℤ} (hu : ¬ (2 : ℤ) ∣ u) (hv : ¬ (2 : �
     simp only [pow_zero, pow_one, mul_one, one_mul]
     change (∃ z x y : ℚ_[2], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧
       z ^ 2 - (2 * (u : ℚ_[2])) * x ^ 2 - v * y ^ 2 = 0) ↔ _
-    rw [Padic.exists_ternary_isotropic_two_mul_iff_of_norm_eq_one _ _ hU hV, L10 hu hv,
+    rw [HilbertRecipDyadicTwoMulPort.two_mul_iff _ _ hU hV, L10 hu hv,
       show (v : ℚ_[2]) - 1 = ((v - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       show 2 * (u : ℚ_[2]) + v - 1 = ((2 * u + v - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       norm_intCast_le_three, norm_intCast_le_three]
@@ -1386,7 +1171,7 @@ private theorem local_two {u v : ℤ} (hu : ¬ (2 : ℤ) ∣ u) (hv : ¬ (2 : �
     rw [step1]
     change (∃ z x y : ℚ_[2], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧
       z ^ 2 - (2 * (u : ℚ_[2])) * x ^ 2 - ((-(u * v) : ℤ) : ℚ_[2]) * y ^ 2 = 0) ↔ _
-    rw [Padic.exists_ternary_isotropic_two_mul_iff_of_norm_eq_one _ _ hU hW, L11 hu hv,
+    rw [HilbertRecipDyadicTwoMulPort.two_mul_iff _ _ hU hW, L11 hu hv,
       show ((-(u * v) : ℤ) : ℚ_[2]) - 1 = ((-(u * v) - 1 : ℤ) : ℚ_[2]) by push_cast; ring,
       show 2 * (u : ℚ_[2]) + ((-(u * v) : ℤ) : ℚ_[2]) - 1 = ((2 * u + -(u * v) - 1 : ℤ) : ℚ_[2])
         by push_cast; ring,
@@ -1426,12 +1211,12 @@ private theorem iso_padic_iff_sym {p : ℕ} [hp : Fact p.Prime] {a b : ℤ} (ha 
     push_cast at this ⊢
     rw [this]
     unfold sym symTwo
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     change _ ↔ sgn4 u v * χ₈ u ^ β * χ₈ v ^ α = 1
     rw [(χ₈_isSign_of_odd hu2).pow_eq_pow_mod_two β, (χ₈_isSign_of_odd hv2).pow_eq_pow_mod_two α]
   · rw [local_odd hp2 hua hub hi hj]
     unfold sym symOdd
-    rw [if_neg hp2]
+    rw [ite_eq_right hp2]
     change _ ↔ χ₄ (p : ℤ) ^ (α * β) * J(u | p) ^ β * J(v | p) ^ α = 1
     have h4 := χ₄_nat_isSign_of_ne_two hp.out hp2
     rw [(jacobiSym_isSign hp.out hua).pow_eq_pow_mod_two β,
