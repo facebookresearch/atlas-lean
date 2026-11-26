@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.PracticalPolygonalSums
 public import MathlibExt.NumberTheory.OddSquareTriangular
 public import MathlibExt.NumberTheory.PracticalPolygonalSumsPracticalAddPolygonalExceptions
+public import MathlibExt.NumberTheory.PracticalPolygonalSumsExistsSqAddSqModEqPrimePow
 public import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
 
 /-!
@@ -23,7 +24,9 @@ public import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMul
 
 Statements from Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and
 Polygonal Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1
-(arXiv:2403.13533). In the paper "natural number" means positive integer; practical numbers
+(arXiv:2403.13533). The statement `MetaMathlibExt.exists_sq_add_sq_modEq_prime_pow` is in
+`MathlibExt.NumberTheory.PracticalPolygonalSumsExistsSqAddSqModEqPrimePow`. In the paper
+"natural number" means positive integer; practical numbers
 are `MetaMathlibExt.IsPracticalNumber`. The paper's `s`-gonal number `P_s(n)` is the canonical
 `Nat.polygonalNumber s n`; triangular numbers are `Nat.polygonalNumber 3 k = k (k + 1) / 2`
 with `k ≥ 0` (the paper's Lemma 5, arXiv Lemma 3.3, counts `0`).
@@ -58,17 +61,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 2
 public theorem_wanted eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
     ∃ N : ℕ, ∀ n > N, ∃ q x y : ℕ,
       IsPracticalNumber q ∧ n = q + Nat.polygonalNumber s x + Nat.polygonalNumber s y
-
-/-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
-For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with
-$x^2 + y^2 \equiv n \pmod{p^k}$ and $p \nmid y$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 8
-(arXiv Lemma 4.3; `jis-2024-24.5.1-lem-8`). -/
-public theorem_wanted exists_sq_add_sq_modEq_prime_pow (p n k : ℕ) (hp : p.Prime)
-    (hp4 : p % 4 = 1) (hn : 0 < n) (hk : 0 < k) :
-    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ n [MOD p ^ k] ∧ ¬ p ∣ y
 
 /-- **Sums of two polygonal numbers modulo prime powers.** For a natural number $s > 3$ and a
 natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. There

@@ -10,3 +10,4 @@
 ## Related topics
 
 - [Dirichlet forms](../dirichlet-forms/README.md): the Dirichlet form of a reversible rate matrix, its Markov property and the Beurling–Deny criterion on finite sets.
+- [Jump–hold chains](../jump-hold-chains/README.md): continuous-time chains on general state spaces built step by step from event rates and successors, where a step can leave the state unchanged.
