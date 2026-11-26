@@ -11,4 +11,4 @@ low extremal point in the paper's sense, and none of the subtractions above is t
 
 ## Sources
 
-- Yunier Bello-Cruz and Roy Quintero-Contreras, *Analytical Study and Efficient Evaluation of the Josephus Function*, Journal of Integer Sequences 27 (2024), Article 24.3.8, Lemma 8(a).
+- Yunier Bello-Cruz and Roy Quintero-Contreras, *Analytical Study and Efficient Evaluation of the Josephus Function*, Journal of Integer Sequences 27 (2024), Article 24.3.8, Lemma 8.
