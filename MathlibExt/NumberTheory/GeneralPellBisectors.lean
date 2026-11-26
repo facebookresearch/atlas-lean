@@ -193,6 +193,32 @@ theorem even_of_abs_sq_sub_mul_sq_zero_mod_eight (d z : ℤ) (hd : d % 8 = 5)
   have hy := Int.sq_emod_eight y
   omega
 
+/-- **Solutions of |x² − dy²| = z are even when d ≡ 1 and z ≡ 4 (mod 8).** Let $d$ and $z$ be
+integers with $d \equiv 1 \pmod 8$ and $z \equiv 4 \pmod 8$. If integers $x$ and $y$ satisfy
+$|x^2 - dy^2| = z$, then $x$ and $y$ are both even.
+
+The paper also assumes $z > 1$; this is not needed. The second sentence of part (c) of the
+paper's lemma, on the fundamental unit, is not formalized.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(c), first sentence
+(`integers-2024-A111-lem-1`). -/
+theorem even_of_abs_sq_sub_mul_sq_four_mod_eight (d z : ℤ) (hd : d % 8 = 1)
+    (hz : z % 8 = 4) (x y : ℤ) (h : |x ^ 2 - d * y ^ 2| = z) : Even x ∧ Even y := by
+  -- The two possible signs have the same residue modulo eight.
+  have emod_eq_four (n : ℤ) (hn : |n| = z) : n % 8 = 4 := by
+    rcases abs_cases n with ⟨hs, _⟩ | ⟨hs, _⟩ <;> rw [hs] at hn <;> omega
+  have hmod := emod_eq_four _ h
+  rw [Int.sub_emod, Int.mul_emod d, hd, one_mul, Int.emod_emod] at hmod
+  -- Of the square residues 0, 1 and 4, only 0 and 4 differ by 4 modulo eight.
+  suffices hxy : Even (x ^ 2) ∧ Even (y ^ 2) by simpa [Int.even_pow] using hxy
+  simp only [Int.even_iff]
+  have h₂ : (2 : ℤ) ∣ 8 := by decide
+  rw [← Int.emod_emod_of_dvd (x ^ 2) h₂, ← Int.emod_emod_of_dvd (y ^ 2) h₂]
+  rcases Int.sq_emod_eight x with hx | hx | hx <;>
+    rcases Int.sq_emod_eight y with hy | hy | hy <;> norm_num [hx, hy] at hmod <;>
+    norm_num [hx, hy]
+
 -- The hypotheses `1 < d`, `Squarefree d` and `z ≠ 0` from the source are not needed.
 set_option linter.unusedVariables false in
 /-- **Negating the value of a strictly primitive solution.** Let $d > 1$ be a square-free integer
