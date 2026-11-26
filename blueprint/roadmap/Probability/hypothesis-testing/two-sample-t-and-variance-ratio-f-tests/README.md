@@ -28,4 +28,4 @@
 
 ## Large-sample transfer by Slutsky's theorem
 
-- [Large-sample validity of the pooled two-sample t statistic](tendsto-in-distribution-two-sample-tstat.md)
+- [Slutsky transfer for the pooled two-sample t statistic](tendsto-in-distribution-two-sample-tstat.md)

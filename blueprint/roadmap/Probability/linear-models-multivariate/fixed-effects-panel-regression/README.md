@@ -20,7 +20,7 @@
 - [Within estimator of the stacked panel](within-estimator-eq-stack.md)
 - [The within estimator is the truth plus a noise term](within-estimator-eq-add.md)
 - [Strict exogeneity gives the within estimating equation](integral-within-score-eq-zero-of-uncorre.md)
-- [Conditional strict exogeneity implies uncorrelatedness](integral-mul-eq-zero-of-cond-exp.md)
+- [Conditional strict exogeneity gives a zero cross moment](integral-mul-eq-zero-of-cond-exp.md)
 - [Group-dummy design matrix](group-dummy.md)
 - [Within transformation of a response](within-vec.md)
 - [Within transformation of a regressor matrix](within-mat.md)

@@ -1,6 +1,6 @@
 # Posterior consistency for two Bernoulli hypotheses
 
-Let $p_0 \ne p_1$ be in $(0,1)$ and let $X_0, X_1, \dots$ be measurable, pairwise independent $\{0,1\}$-valued observations on a probability space, each Bernoulli($p_0$). With equal prior weights on the hypotheses $p_0$ and $p_1$, the posterior weight of the truth $p_0$ after $n$ observations tends to $1$ almost surely. This is the two-hypothesis Bernoulli case of posterior consistency in a finite model.
+Let $p_0 \ne p_1$ be in $(0,1)$ and let $X_0, X_1, \dots$ be measurable, pairwise independent $\{0,1\}$-valued observations on a probability space, each Bernoulli($p_0$). With prior weight $1$ on each of the hypotheses $p_0$ and $p_1$, the posterior weight of the truth $p_0$ after $n$ observations tends to $1$ almost surely. This is the two-hypothesis Bernoulli case of posterior consistency in a finite model.
 
 ## Sources
 

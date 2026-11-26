@@ -1,4 +1,4 @@
-# Exact F and single-contrast T ^ 2 inference in the Gaussian linear model
+# Exact F and single-contrast T² inference in the Gaussian linear model
 
 - [F statistic for a linear hypothesis](f-statistic.md)
 - [Measurability of the F statistic](measurable-f-statistic.md)
