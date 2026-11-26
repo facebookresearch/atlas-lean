@@ -29,8 +29,9 @@ at most `φ(π)` reversals.
 A greedy run is any sequence of reversals in which each reversal is a greedy choice at a
 permutation other than the identity; every choice the algorithm may make is covered. Theorem 1
 is stated as: every greedy run has at most `φ(π)` reversals, and some greedy run reaches the
-identity. The `O(n²)` time and
-`O(n)` space bounds, and the paper's exact branch-and-bound algorithm, are not stated.
+identity. Corollary 1 follows from Theorem 1 and `ub_le_two_mul_udist`, so it is not stated
+here. The `O(n²)` time and `O(n)` space bounds, and the paper's exact branch-and-bound algorithm,
+are not stated.
 
 Unsigned permutations, block reversals, the framed breakpoint count `φ` and the reversal distance
 are the canonical `UValid`, `revBlock`, `ubreaks` and `udist` of
@@ -112,14 +113,5 @@ Source: J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Theorem 1.
 theorem_wanted greedyRun_length_le_and_sorts (n : ℕ) {π : List ℤ} (hπ : UValid n π) :
     (∀ rs, GreedyRun n π rs → rs.length ≤ ubreaks n π) ∧
       ∃ rs, GreedyRun n π rs ∧ applyAll π rs = identity n
-
-/-- **The greedy algorithm is a 2-approximation** (Kececioglu–Sankoff 1995, Corollary 1). For
-every unsigned permutation `π` of `1, …, n` (`UValid n π`) and every greedy run `rs` from `π`,
-`|rs| ≤ 2 udist n π`, twice the reversal distance.
-
-Source: J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Corollary 1. -/
-theorem_wanted greedyRun_length_le_two_mul_udist (n : ℕ) {π : List ℤ} (hπ : UValid n π)
-    {rs : List (ℕ × ℕ)} (hrs : GreedyRun n π rs) :
-    rs.length ≤ 2 * udist n π hπ
 
 end WantedExt.Biology.ComputationalBiology.GreedyReversalWanted

@@ -32,11 +32,12 @@ are the class proportions `π` (a probability vector) and, for each `j`, an `r �
 are generically identifiable up to label swapping.
 
 Generically identifiable means: identifiability holds outside the zero set of some polynomial in
-the parameters that does not vanish identically on the parameter space. It is stated with the
-polynomial existentially quantified and a parameter point where it is nonzero. The paper's
-variant with fixed positive class proportions, its hidden Markov model result (Theorem 6, whose
-treatment of the initial distribution is not reproduced here), and its results for random graph
-mixtures and nonparametric mixtures (Theorems 7-9) are not stated.
+the parameters that does not vanish identically on the parameter space. Theorem 4 is proved by
+applying Theorem 1 to three agglomerated variables, so only Theorem 1 is stated here; the module
+defines the latent class model, its coordinates and identifiability up to label swapping. The
+paper's variant with fixed positive class proportions, its hidden Markov model result (Theorem 6,
+whose treatment of the initial distribution is not reproduced here), and its results for random
+graph mixtures and nonparametric mixtures (Theorems 7-9) are not stated.
 
 Sources: E. S. Allman, C. Matias and J. A. Rhodes, "Identifiability of parameters in latent
 structure models with many observed variables", Ann. Statist. 37(6A):3099-3132, 2009,
@@ -47,8 +48,6 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.MvPolynomial.Basic
-public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.Algebra.Order.Group.Nat
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.LinearIndependent.Defs
@@ -124,21 +123,5 @@ def IsIdentifiableAt (P : LatentClassParams r p k) : Prop :=
     ∃ σ : Equiv.Perm (Fin r), ∀ i, P'.π i = P.π (σ i) ∧ ∀ j u, P'.M j i u = P.M j (σ i) u
 
 end LatentClassParams
-
-/-- **Generic identifiability of latent class models** (Allman–Matias–Rhodes 2009, Theorem 4).
-Let `M(r; k_1, …, k_p)` be a latent class model and `S` a tripartition of its observed variables
-into three nonempty parts (`S` surjective onto `Fin 3`), with `κ_t = ∏_{j : S j = t} k_j` and
-`min(r, κ_0) + min(r, κ_1) + min(r, κ_2) ≥ 2r + 2`. Then there is a polynomial `Q` in the
-parameter coordinates that is nonzero at some parameter point and such that the parameters are
-identifiable up to label swapping at every parameter point where `Q` does not vanish.
-
-Source: E. S. Allman, C. Matias and J. A. Rhodes, Ann. Statist. 37 (2009) 3099-3132,
-Theorem 4. -/
-theorem_wanted generic_identifiable {p : ℕ} (k : Fin p → ℕ) (S : Fin p → Fin 3)
-    (hS : Function.Surjective S)
-    (hrank : 2 * r + 2 ≤ ∑ t : Fin 3, min r (∏ j ∈ Finset.univ.filter (S · = t), k j)) :
-    ∃ Q : MvPolynomial (Fin r ⊕ (Σ j : Fin p, Fin r × Fin (k j))) ℝ,
-      (∃ P₀ : LatentClassParams r p k, MvPolynomial.eval P₀.coords Q ≠ 0) ∧
-        ∀ P : LatentClassParams r p k, MvPolynomial.eval P.coords Q ≠ 0 → P.IsIdentifiableAt
 
 end WantedExt.Biology.ComputationalBiology.KruskalIdentifiabilityWanted

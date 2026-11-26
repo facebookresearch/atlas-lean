@@ -29,7 +29,9 @@ diameter of the permutations of `n` elements is at most `3n/4`.
 
 The corollaries are stated as the existence of sorting sequences of those lengths (the sequences
 TransSort produces); the algorithm itself and its `O(n²)` running time are not stated. Bounds
-are cleared of denominators.
+are cleared of denominators. Framed permutations, transpositions and sorting within `m` moves
+are `WellFormed` and `SortingByTranspositionsFeasible` of
+`MetaMathlibExt.Complexity.NPComplete.SortingByTranspositions`, for a list of length `n + 2`.
 
 Sources: V. Bafna and P. A. Pevzner, "Sorting by transpositions", SIAM J. Discrete Math.
 11(2):224-240, 1998, doi:10.1137/S089548019528280X, Theorem 2.4 and Corollaries 6.10-6.11.
@@ -50,24 +52,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 
 namespace WantedExt.Biology.ComputationalBiology.TranspositionWanted
 
-/-- `p` is a framed permutation of `1, …, n`: a permutation of `[0, 1, …, n + 1]` with first
-entry `0` and last entry `n + 1`. -/
-def IsFramedPerm (n : ℕ) (p : List ℕ) : Prop :=
-  p.Perm (List.range (n + 2)) ∧ p.getD 0 0 = 0 ∧ p.getD (n + 1) 0 = n + 1
-
-/-- A valid transposition `(i, j, k)` of a framed permutation of `1, …, n`:
-`1 ≤ i < j < k ≤ n + 1`. -/
-def IsValidTransposition (n : ℕ) (o : ℕ × ℕ × ℕ) : Prop :=
-  1 ≤ o.1 ∧ o.1 < o.2.1 ∧ o.2.1 < o.2.2 ∧ o.2.2 ≤ n + 1
-
-/-- At most `m` valid transpositions, applied in order, turn `p` into the identity
-`[0, 1, …, n + 1]`, so `d(p) ≤ m`. Uses
-`MetaMathlibExt.Complexity.NPComplete.SortingByTranspositions.transposition`. -/
-def SortsWithin (n : ℕ) (p : List ℕ) (m : ℕ) : Prop :=
-  ∃ ops : List (ℕ × ℕ × ℕ), ops.length ≤ m ∧ (∀ o ∈ ops, IsValidTransposition n o) ∧
-    ops.foldl (fun l o =>
-      MetaMathlibExt.Complexity.NPComplete.SortingByTranspositions.transposition
-        l o.1 o.2.1 o.2.2) p = List.range (n + 2)
+open MetaMathlibExt.Complexity.NPComplete.SortingByTranspositions
 
 /-- The successor of black edge `i` in its alternating cycle: the position of `p_{i-1} + 1`. -/
 def cycleSucc (p : List ℕ) (i : ℕ) : ℕ :=
@@ -85,32 +70,38 @@ noncomputable def oddCycles (n : ℕ) (p : List ℕ) : ℕ :=
   ((Finset.Icc 1 (n + 1)).filter fun i =>
     (∀ j ∈ cycleOf n p i, i ≤ j) ∧ Odd (cycleOf n p i).card).card
 
-/-- **Odd-cycle lower bound** (Bafna–Pevzner 1998, Theorem 2.4). For every framed permutation
-`p` of `1, …, n` and every `m` such that at most `m` transpositions sort `p`,
+/-- **Odd-cycle lower bound** (Bafna–Pevzner 1998, Theorem 2.4). Let `p` be a framed
+permutation of `1, …, n`: a list of length `n + 2` that `WellFormed (p, m)` makes a permutation
+of `[0, 1, …, n + 1]` with first entry `0` and last entry `n + 1`. If at most `m`
+transpositions sort `p` (`SortingByTranspositionsFeasible (p, m)`), then
 `n + 1 ≤ 2m + c_odd(p)`; that is, `d(p) ≥ (n + 1 - c_odd(p))/2`.
 
 Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240, Theorem 2.4. -/
-theorem_wanted add_one_le_two_mul_add_oddCycles (n : ℕ) {p : List ℕ} (hp : IsFramedPerm n p)
-    {m : ℕ} (hm : SortsWithin n p m) :
+theorem_wanted add_one_le_two_mul_add_oddCycles (n : ℕ) {p : List ℕ} (hlen : p.length = n + 2)
+    {m : ℕ} (hp : WellFormed (p, m)) (hm : SortingByTranspositionsFeasible (p, m)) :
     n + 1 ≤ 2 * m + oddCycles n p
 
-/-- **The 1.5 guarantee** (Bafna–Pevzner 1998, Corollary 6.10). Every framed permutation `p` of
-`1, …, n` can be sorted by some number `m` of transpositions with
+/-- **The 1.5 guarantee** (Bafna–Pevzner 1998, Corollary 6.10). Let `p` be a framed permutation
+of `1, …, n`: a list of length `n + 2` with `WellFormed (p, 0)` (the bound `0` is not read).
+Then some number `m` of transpositions sorts `p` (`SortingByTranspositionsFeasible (p, m)`) with
 `4m + 3 c_odd(p) ≤ 3(n + 1)`, that is `m ≤ (3/4)(n + 1 - c_odd(p))`; with Theorem 2.4 this is
 within a factor `3/2` of `d(p)`.
 
 Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240,
 Corollary 6.10. -/
 theorem_wanted exists_sortsWithin_three_quarters (n : ℕ) {p : List ℕ}
-    (hp : IsFramedPerm n p) :
-    ∃ m, SortsWithin n p m ∧ 4 * m + 3 * oddCycles n p ≤ 3 * (n + 1)
+    (hlen : p.length = n + 2) (hp : WellFormed (p, 0)) :
+    ∃ m, SortingByTranspositionsFeasible (p, m) ∧ 4 * m + 3 * oddCycles n p ≤ 3 * (n + 1)
 
-/-- **Transposition diameter** (Bafna–Pevzner 1998, Corollary 6.11). Every framed permutation
-`p` of `1, …, n` can be sorted by some number `m` of transpositions with `4m ≤ 3n`.
+/-- **Transposition diameter** (Bafna–Pevzner 1998, Corollary 6.11). Let `p` be a framed
+permutation of `1, …, n`: a list of length `n + 2` with `WellFormed (p, 0)` (the bound `0` is not
+read). Then some number `m` of transpositions sorts `p` (`SortingByTranspositionsFeasible (p, m)`)
+with `4m ≤ 3n`.
 
 Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240,
 Corollary 6.11. -/
-theorem_wanted exists_sortsWithin_diameter (n : ℕ) {p : List ℕ} (hp : IsFramedPerm n p) :
-    ∃ m, SortsWithin n p m ∧ 4 * m ≤ 3 * n
+theorem_wanted exists_sortsWithin_diameter (n : ℕ) {p : List ℕ} (hlen : p.length = n + 2)
+    (hp : WellFormed (p, 0)) :
+    ∃ m, SortingByTranspositionsFeasible (p, m) ∧ 4 * m ≤ 3 * n
 
 end WantedExt.Biology.ComputationalBiology.TranspositionWanted

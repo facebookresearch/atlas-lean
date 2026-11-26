@@ -25,7 +25,8 @@ update them for each text character with a constant number of bitwise operations
 addition, using the match mask `Eq` of that character (bit `i` set exactly when `P_{i+1}` equals
 it). The score `C[m, j]` changes by the top bit of the horizontal deltas, and position `j` is
 reported when the score is at most `k`. The reported positions are exactly the positions
-`1 ≤ j ≤ n` with `C[m, j] ≤ k`.
+`1 ≤ j ≤ n` with `C[m, j] ≤ k`. That correctness statement rests on Lemma 1, so only Lemma 1 is
+stated here, together with the algorithm.
 
 The update below is Myers' column recurrence in the standard formulation (`Xv`, `Xh`, `Ph`, `Mh`
 with the carry-propagating addition). Bit vectors are natural numbers below `2^m`, with the sum
@@ -112,14 +113,5 @@ theorem_wanted delta_mem (P T : List α) :
       ((dp P T (i + 1) j : ℤ) - dp P T i j) ∈ ({-1, 0, 1} : Set ℤ)) ∧
     ∀ i j, i ≤ P.length → j < T.length →
       ((dp P T i (j + 1) : ℤ) - dp P T i j) ∈ ({-1, 0, 1} : Set ℤ)
-
-/-- **Correctness of the bit-vector algorithm** (Myers 1999). For a nonempty pattern `P`, any
-text `T` and any threshold `k`, the positions reported by the bit-vector algorithm are, in
-increasing order, exactly the text positions `1 ≤ j ≤ |T|` with `dp P T |P| j ≤ k`.
-
-Source: G. Myers, J. ACM 46 (1999) 395-415, the bit-vector column-update algorithm. -/
-theorem_wanted myersMatches_eq (P T : List α) (hP : P ≠ []) (k : ℤ) :
-    myersMatches P T k =
-      (List.range' 1 T.length).filter fun j => decide ((dp P T P.length j : ℤ) ≤ k)
 
 end WantedExt.Biology.ComputationalBiology.MyersBitVectorWanted
