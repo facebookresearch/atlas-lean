@@ -1,7 +1,7 @@
 # Filt Alpha
 
-The number of steps of an admissible chain tagged trivial (`tag i = true`), the steps on
-whose quotient the Galois group acts trivially. It is the Galois-module counterpart of Mazur's
-invariant `α`, the number of quotients `ℤ/p` in an admissible filtration. It counts the tags of
-the chain `c`: for `p = 2` a step is trivial exactly when it is cyclotomic, so there the tags,
-and with them `filtAlpha c`, are a free choice.
+The number of steps of an admissible chain whose tag is `true`. Only tags are counted: a step
+tagged `false` is cyclotomic, and for `p = 2` its quotient also has trivial action (the mod-`2`
+cyclotomic character is trivial), but it is not counted. So `filtAlpha c` depends on the tags
+chosen in `c`. It is the Galois-module counterpart of Mazur's invariant `α`, the number of
+quotients `ℤ/p` in an admissible filtration.
