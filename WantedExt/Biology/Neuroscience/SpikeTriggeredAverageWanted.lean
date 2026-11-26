@@ -62,7 +62,10 @@ covariance). -/
 noncomputable def covMatrix (ν : Measure (Fin n → ℝ)) : Matrix (Fin n) (Fin n) ℝ :=
   Matrix.of fun i j => ∫ x, x i * x j ∂ν
 
-/-- The spike-triggered average `(∑_{i<N} y_i)⁻¹ ∑_{i<N} y_i x_i` of the first `N` pairs. -/
+/-- **Spike-triggered average.** The response-weighted average
+`(∑_{i<N} y_i)⁻¹ ∑_{i<N} y_i x_i` of the first `N` stimuli. It is `0` when
+`∑_{i<N} y_i = 0` (for nonnegative responses, when none of the first `N` pairs has a spike), by
+the convention `0⁻¹ = 0`. -/
 noncomputable def spikeTriggeredAverage {Ω : Type*} (Z : ℕ → Ω → (Fin n → ℝ) × ℝ) (N : ℕ)
     (ω : Ω) : Fin n → ℝ :=
   (∑ i ∈ range N, (Z i ω).2)⁻¹ • ∑ i ∈ range N, (Z i ω).2 • (Z i ω).1
