@@ -18,8 +18,11 @@ many trailing zeros, and a differentiable increasing interpolation `f` with `⌊
 Theorem 2 would make `0.h₂(1)h₂(2)…` normal; the paper shows it is not. Normality uses
 `MetaMathlibExt.NormalNumber.IsNormalInBase`.
 
-The definitions and the proved statements are in
-`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample`, which this module imports.
+The definitions and the other proved statements are in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample`, which this module imports;
+`MetaMathlibExt.tendsto_log_campbellF_div_log` is proved in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleTendstoLogCampbellFDivLog`, which this
+module also imports.
 -/
 module
 
