@@ -3,8 +3,9 @@
 The Clifford group is the group of unitaries that map Pauli operators to Pauli operators under conjugation. It is
 generated, up to phases, by the Hadamard, phase and CNOT gates, a Clifford unitary is determined up to phase by its action
 on Pauli operators, and modulo Pauli operators and phases the group is the binary symplectic group. Clifford circuits
-encode and decode stabilizer codes and can be simulated classically, so they are not universal; the $T$ gate lies one
-level higher in the Clifford hierarchy and completes a universal set.
+encode and decode stabilizer codes; they are not universal, because the Clifford group is finite modulo phases, and
+separately they can be simulated classically. The $T$ gate lies one level higher in the Clifford hierarchy and completes
+a universal set.
 
 - [Conjugation of Pauli operators by $H$, $S$ and CNOT](conjugation-of-pauli-operators-by-h-s-and-cnot.md)
 - [A unitary is determined up to phase by its conjugation action on Pauli operators](unitary-determined-up-to-phase-by-conjugation-of-paulis.md)

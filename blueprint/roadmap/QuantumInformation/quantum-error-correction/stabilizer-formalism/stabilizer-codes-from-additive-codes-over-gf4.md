@@ -12,8 +12,11 @@ so $\phi$ carries the [symplectic product](symplectic-product-of-pauli-operators
 
 Let $C \subseteq \mathrm{GF}(4)^n$ be additive (closed under addition) with $2^{n-k}$ elements, $k \ge 1$, such that
 $C \subseteq C^{\perp}$ for the trace inner product and $C^{\perp} \setminus C$ contains no vector of weight at most
-$d - 1$. Let $S$ be a stabilizer group whose vectors $(a, b)$ form $\phi^{-1}(C)$. Then the code space of $S$ has
-dimension $2^k$ and [distance at least $d$](../distance-of-a-quantum-code/has-distance-at-least.md): it is an
+$d - 1$. Then there is a stabilizer group $S$ whose vectors $(a, b)$ form $\phi^{-1}(C)$: take a basis
+$v_1, \dots, v_{n-k}$ of $\phi^{-1}(C)$ over $\mathbb{F}_2$ and the Hermitian Pauli operators
+$g_j = i^{a_j \cdot b_j} X^{a_j} Z^{b_j}$ for $v_j = (a_j, b_j)$; they commute because $C \subseteq C^{\perp}$, and no nonempty
+product of them is a scalar because the $v_j$ are linearly independent, so they generate a stabilizer group $S$ with
+$-I \notin S$. The code space of $S$ has dimension $2^k$ and [distance at least $d$](../distance-of-a-quantum-code/has-distance-at-least.md): it is an
 $[[n, k, d']]$ code with $d' \ge d$.
 
 The condition $C \subseteq C^{\perp}$ is commutativity of $S$, and $C^{\perp}$ corresponds to the normalizer, so this is

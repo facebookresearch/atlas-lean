@@ -5,8 +5,8 @@ basis, gates chosen as functions of earlier measurement outcomes, and copies of 
 $|A\rangle$. Every gate of the [universal gate set](../universal-gate-sets/universal-gate-set.md)
 $\{H, T, \mathrm{CNOT}\}$ is implemented exactly by such a circuit, with one copy of $|A\rangle$ per $T$ gate. Hence for every
 unitary $U$ on $n$ qubits and every $\varepsilon > 0$ some such circuit, using finitely many magic states, implements a
-unitary within $\varepsilon$ of $U$ up to a global phase. Without magic states the same operations are classically
-simulable (the Gottesman–Knill theorem).
+unitary within $\varepsilon$ of $U$ up to a global phase. Without magic states the same operations, with classical control by an
+efficient algorithm, are classically simulable (the Gottesman–Knill theorem).
 
 Proof: [magic-state injection](magic-state-injection.md) implements $T$, and
 [Clifford plus $T$ is universal](../universal-gate-sets/clifford-plus-t-is-universal.md). Bravyi and Kitaev prove the
@@ -22,9 +22,6 @@ Pauli operator.
 
 - [Magic-state injection](magic-state-injection.md)
 - [Clifford plus $T$ is universal](../universal-gate-sets/clifford-plus-t-is-universal.md)
-
-## Background
-
 - [Gottesman–Knill theorem](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/gottesmanknill-theorem.md)
 
 ## Sources

@@ -22,8 +22,9 @@ and the code has dimension $4$ by [the count of generators](toric-code-encodes-t
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md)
 - [The toric code encodes two qubits](toric-code-encodes-two-qubits.md)
 - [Homologically nontrivial cycles on the $L \times L$ torus have length at least $L$](homologically-nontrivial-cycles-on-the-torus-have-length-at-least-l.md)
+- [A code of distance $2t + 1$ corrects $t$ errors](../distance-of-a-quantum-code/is-correctable-of-has-distance-at-least.md)
 
 ## Sources
 
 - E. Dennis, A. Kitaev, A. Landahl and J. Preskill, *Topological quantum memory*, J. Math. Phys. 43 (2002), 4452–4505, arXiv:quant-ph/0110143, Section III.A ("in the case of an $L \times L$ square lattice drawn on the torus, the code distance is $d = L$").
-- A. Yu. Kitaev, *Fault-tolerant quantum computation by anyons*, Ann. Physics 303 (2003), 2–30, arXiv:quant-ph/9707021, Section 1 (the code detects $k - 1$ errors).
+- A. Yu. Kitaev, *Fault-tolerant quantum computation by anyons*, Ann. Physics 303 (2003), 2–30, arXiv:quant-ph/9707021, Section 2 of the published article (Section 1 of the arXiv version) (the code detects $k - 1$ errors).

@@ -12,9 +12,20 @@ has a cyclotomic minimal polynomial, with integer coefficients, so $e^{2\pi i \l
 approximate every rotation about its axis; every element of $SU(2)$ is a product of rotations about $n_1$, $n_2$, $n_1$
 (Euler angles).
 
+## Expansion
+
+The proof uses the density of the orbit of an irrational rotation of the circle, which gives that the powers of a rotation
+by $2\pi\lambda$ with $\lambda$ irrational approximate every rotation about the same axis; that result needs its own page
+before this page is ready. The Euler decomposition is linked below; for two orthogonal axes $n_1$, $n_2$ conjugate its
+$z$–$y$ form by a rotation taking the $z$ and $y$ axes to $n_1$ and $n_2$.
+
 ## Depends on
 
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
+
+## Proof depends on
+
+- [Euler decomposition of single-qubit unitaries](euler-decomposition-of-single-qubit-unitaries.md)
 
 ## Sources
 

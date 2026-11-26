@@ -10,8 +10,10 @@ computation can be simulated efficiently whenever
 
 The protocols consume several copies of $\rho$ and output one copy closer to a [magic state](magic-state.md). The
 $H$-type protocol uses the [fifteen-qubit code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md) and
-its [transversal $T$](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md); for input error
-$\varepsilon$ it succeeds with probability close to $1$ and outputs error $\varepsilon_{\mathrm{out}} \approx 35 \varepsilon^3$.
+its [transversal $T$](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md); after aligning and
+dephasing the input so that it has error $\varepsilon = 1 - F_H(\rho)^2$, one round accepts with probability
+$p_s = (1 + 15(1 - 2\varepsilon)^8)/16$, which tends to $1$ only as $\varepsilon \to 0$ (it is about $0.22$ at $\varepsilon = 0.1$),
+and the accepted output has error $\varepsilon_{\mathrm{out}} = 35 \varepsilon^3 + O(\varepsilon^4)$.
 States inside the stabilizer octahedron give no advantage, and $F_T$ cannot be lowered below
 $F_T^{*} = \big(\tfrac12(1 + \sqrt{1/3})\big)^{1/2} \approx 0.888$.
 

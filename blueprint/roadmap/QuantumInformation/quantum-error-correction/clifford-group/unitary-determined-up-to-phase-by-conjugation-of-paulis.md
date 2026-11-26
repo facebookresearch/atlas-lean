@@ -14,6 +14,10 @@ matrices, so $W$ commutes with every matrix and is a scalar; being unitary, $W =
 - [Pauli operator $X^a Z^b$ on $n$ qubits](../css-codes/pauli.md)
 - [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
 
+## Proof depends on
+
+- [Every matrix is a combination of Pauli operators](../stabilizer-formalism/pauli-expansion-of-a-matrix.md)
+
 ## Sources
 
 - D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 3.5 ("to specify a Clifford group operator $U$, it is sufficient to indicate its action on a generating set for the Pauli group").

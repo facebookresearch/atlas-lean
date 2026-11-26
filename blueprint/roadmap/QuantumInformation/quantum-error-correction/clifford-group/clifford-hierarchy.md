@@ -8,12 +8,13 @@ $$\mathcal{C}^{(1)} = \mathcal{P}_n, \qquad
 
 So $\mathcal{C}^{(2)}$ is the Clifford group. For $k \ge 3$ the set $\mathcal{C}^{(k)}$ is not closed under
 multiplication. The levels organise gate teleportation: teleporting a qubit through the ancilla
-$(I \otimes U)(|00\rangle + |11\rangle)$ applies $U$ up to a correction $U Q U^{*}$ for a Pauli outcome $Q$, which lies in
+$(I \otimes U)(|00\rangle + |11\rangle)/\sqrt 2$, for a one-qubit $U$, applies $U$ up to a correction $U Q U^{*}$ for a Pauli outcome $Q$, which lies in
 $\mathcal{C}^{(k-1)}$ when $U \in \mathcal{C}^{(k)}$; for $U$ in the third level the correction is a Clifford gate.
 
 ## Depends on
 
 - [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
+- [Quantum teleportation](../../quantum-foundations/quantum-teleportation.md)
 
 ## Sources
 

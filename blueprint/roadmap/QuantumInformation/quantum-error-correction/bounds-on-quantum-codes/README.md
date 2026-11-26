@@ -1,9 +1,10 @@
 # Bounds on quantum codes
 
-How many qubits a code of given distance can encode is bounded above by the quantum Hamming bound, which holds for
-nondegenerate codes, and by the quantum Singleton bound, which holds for all codes; the quantum Gilbert–Varshamov bound
+How many qubits a code of given distance can encode is bounded above by the quantum Hamming bound, which the counting
+argument proves for nondegenerate codes, and by the quantum Singleton bound, which holds for all codes; the quantum Gilbert–Varshamov bound
 and Calderbank and Shor's construction show that codes with positive rate and positive relative distance exist. Whether
-degenerate codes can beat the quantum Hamming bound is open. For erasures, four qubits are needed to protect one qubit.
+degenerate codes can beat the quantum Hamming bound was posed as a question in 1997; published work has since excluded
+violations for qubit codes of distance below $127$. For erasures, four qubits are needed to protect one qubit.
 
 - [The quantum Hamming bound](quantum-hamming-bound.md)
 - [The quantum Gilbert–Varshamov bound](quantum-gilbert-varshamov-bound.md)

@@ -2,7 +2,7 @@
 
 There is a quantum code family with fault-tolerant implementations of a universal gate set that use only transversal gates
 and fault-tolerant error correction, with no distilled resource states. Paetznick and Reichardt show that triorthogonal
-stabilizer codes, such as the $[[15, 1, 3]]$ code obtained from the punctured Reed–Muller code, admit a transversal
+stabilizer codes, such as the $[[15, 1, 3]]$ code obtained from the shortened Reed–Muller codes, admit a transversal
 controlled-controlled-$Z$ gate; viewing such a code as a [subsystem code](../subsystem-codes/subsystem-code.md), the
 transversal Hadamard maps it to a code with the roles of $X$ and $Z$ gauge operators exchanged, and fault-tolerant error
 correction that measures and fixes the gauge qubits returns the state to the original code. Together, transversal CCZ,

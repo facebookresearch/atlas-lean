@@ -28,7 +28,7 @@ subroutine drives the error to zero.
 
 ## Proof depends on
 
-- [Weights in the punctured Reed–Muller codes of the fifteen-qubit code](../small-stabilizer-codes/weights-in-the-punctured-reed-muller-codes-of-the-fifteen-qubit-code.md)
+- [Weights in the shortened Reed–Muller codes of the fifteen-qubit code](../small-stabilizer-codes/weights-in-the-shortened-reed-muller-codes-of-the-fifteen-qubit-code.md)
 - [The MacWilliams identity](../../../InformationTheory/error-correcting-codes/macwilliams-identity.md)
 - [Transversal $T$ preserves the fifteen-qubit code](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md)
 

@@ -9,6 +9,7 @@ encoding circuit is read off, and stabilizer codes correspond to self-orthogonal
 (Gottesman's thesis, Chapters 3–4; Preskill, Section 7.9). The correctability criterion, the dimension formula and the
 definitions of the Pauli and Clifford groups are on the pages linked under related topics.
 
+- [Every matrix is a combination of Pauli operators](pauli-expansion-of-a-matrix.md)
 - [Symplectic product of Pauli operators](symplectic-product-of-pauli-operators.md)
 - [Pauli operators commute exactly when their symplectic product vanishes](pauli-operators-commute-iff-symplectic-product-vanishes.md)
 - [The normalizer of a stabilizer group is its centralizer](normalizer-of-a-stabilizer-group-equals-its-centralizer.md)
@@ -36,5 +37,6 @@ definitions of the Pauli and Clifford groups are on the pages linked under relat
 
 ## Sources
 
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Sections 2.3, 3.1 and 3.4.
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Chapters 3–4.
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.9.

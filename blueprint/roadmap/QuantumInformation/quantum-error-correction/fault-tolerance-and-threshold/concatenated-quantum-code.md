@@ -24,5 +24,7 @@ $n^L$ qubits, the basis of the threshold theorem.
 
 ## Sources
 
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 5.2 (concatenated codes: each physical qubit of a code replaced by a block of another).
+- Y.-J. Wang, B. Zeng, M. Grassl and B. C. Sanders, *Stabilizer formalism for generalized concatenated quantum codes*, Proceedings of the 2013 IEEE International Symposium on Information Theory, 529–533, arXiv:1309.5598, Section II.A, equation (1) (the concatenated code $A \circ B$ of an outer $[[N, K, D]]$ and an inner $[[n, k, d]]$ code, obtained by encoding each outer qudit into the inner code, is an $[[nN, kK, D']]$ code with $D' \ge dD$).
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.5 (concatenation, Table 3.7).
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.15.1, equations (7.201)–(7.203).

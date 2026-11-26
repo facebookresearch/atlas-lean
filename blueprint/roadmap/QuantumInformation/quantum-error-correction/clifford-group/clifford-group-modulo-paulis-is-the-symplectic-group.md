@@ -9,8 +9,9 @@ phases, $\{ e^{i\theta} P : P \in \mathcal{P}_n \}$. Hence
 
 $$\mathcal{C}_n / \big(U(1) \cdot \mathcal{P}_n\big) \;\cong\; \mathrm{Sp}(2n, \mathbb{F}_2).$$
 
-Up to phases, a Clifford circuit acts on Pauli operators as a binary symplectic matrix, which is why stabilizer
-circuits can be simulated by $2n \times 2n$ binary matrix arithmetic.
+Up to signs, a Clifford circuit acts on Pauli operators as a binary symplectic matrix. A classical simulation must
+track the signs as well: $I$ and $X$ induce the same binary matrix but give opposite deterministic outcomes when $Z$ is
+measured on $|0\rangle$.
 
 ## Depends on
 

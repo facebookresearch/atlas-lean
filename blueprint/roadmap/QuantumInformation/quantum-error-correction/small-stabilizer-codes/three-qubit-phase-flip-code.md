@@ -15,4 +15,6 @@ nine-qubit code is the concatenation of this code (outside) with the bit-flip co
 
 ## Sources
 
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 2.1 (the outer layer of the nine-qubit code, which corrects phase flips by a majority of three signs).
+- D. G. Cory, M. D. Price, W. Maas, E. Knill, R. Laflamme, W. H. Zurek, T. F. Havel and S. S. Somaroo, *Experimental quantum error correction*, Phys. Rev. Lett. 81 (1998), 2152–2155, arXiv:quant-ph/9802018, the description of the three-bit phase code: $\alpha|000\rangle + \beta|100\rangle$ is encoded as $\alpha|{+}{+}{+}\rangle + \beta|{-}{-}{-}\rangle$, the convention used here, and each single phase error maps the encoded state to an orthogonal subspace, which is detected and undone.
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.15.1, equation (7.202) (the "phase code", the Hadamard-rotated repetition code), and Exercise 7.1(b).

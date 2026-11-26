@@ -20,5 +20,6 @@ read out in error correction.
 
 ## Sources
 
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 2.3 (measuring the generators of $S$ gives a list of eigenvalues, the error syndrome; the syndromes of $E$ and $F$ agree exactly when that of $E^{\dagger} F$ is trivial).
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.2, equation (3.9).
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.9.1, equation (7.123), and Section 7.9.2, equation (7.135).

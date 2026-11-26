@@ -1,11 +1,11 @@
 # Fault-tolerant gates
 
 Gates on encoded data must not spread one fault into several errors in a block. Transversal gates, which act qubit by
-qubit across blocks, have this property: CNOT is transversal exactly for CSS codes, and Steane's code has all Clifford
-gates transversal. The Eastin–Knill theorem shows that no code that detects single-qubit errors has a universal
-transversal gate set, so a non-Clifford gate is added through magic states: one copy of a magic state, Clifford gates
-and a measurement implement $T$, and noisy magic states can be distilled, while mixtures of stabilizer states give no
-advantage.
+qubit across blocks, have this property: among stabilizer codes, bitwise CNOT preserves two identical blocks exactly for
+CSS codes, and Steane's code has all Clifford gates transversal. The Eastin–Knill theorem shows that no code that detects single-qubit errors has a universal
+transversal gate set, so a non-Clifford gate is added through magic states: one copy of the magic state $|A\rangle$, Clifford
+gates and a measurement implement $T$ exactly, and noisy magic states whose fidelity exceeds the distillation thresholds can
+be distilled, while mixtures of stabilizer states give no advantage.
 
 - [Transversal gate](transversal-gate.md)
 - [Transversal CNOT and CSS codes](transversal-cnot-and-css-codes.md)

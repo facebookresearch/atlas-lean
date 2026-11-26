@@ -2,8 +2,8 @@
 
 A universal gate set approximates every unitary up to phase. The Hadamard and $T$ gates approximate every single-qubit
 unitary, so the Clifford gates together with $T$ are universal; this is the gate set of most fault-tolerant schemes. The
-Solovay–Kitaev theorem makes the approximation efficient: accuracy $\varepsilon$ costs only polylogarithmically many gates
-in $1/\varepsilon$, and its key step is the approximation of group commutators.
+Solovay–Kitaev theorem makes the approximation efficient: for gates of a fixed width, accuracy $\varepsilon$ costs only
+polylogarithmically many gates in $1/\varepsilon$, and its key step is the approximation of group commutators.
 
 - [Instruction set for $SU(d)$](instruction-set.md)
 - [Universal gate set](universal-gate-set.md)

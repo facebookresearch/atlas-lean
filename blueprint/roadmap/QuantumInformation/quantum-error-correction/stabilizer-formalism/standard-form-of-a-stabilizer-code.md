@@ -27,4 +27,5 @@ independent generators unless $s = 0$.
 
 ## Sources
 
+- R. Cleve and D. Gottesman, *Efficient computations of encodings for quantum error correction*, Phys. Rev. A 56 (1997), 76–82, arXiv:quant-ph/9607030, Section III (a standard form of the generator matrices by Gaussian elimination and permutation of the qubits, with the column blocks in another order).
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 4.1, equations (4.1)–(4.4).

@@ -14,10 +14,12 @@ componentwise product of $u \in L_1$ and $v \in L_2^{\perp}$ has weight divisibl
 
 - [The fifteen-qubit quantum Reed–Muller code](fifteen-qubit-quantum-reed-muller-code.md)
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
+- [Transversal gate](../fault-tolerant-gates/transversal-gate.md)
 
 ## Proof depends on
 
 - [Conjugation of Pauli operators by $H$, $S$ and CNOT](../clifford-group/conjugation-of-pauli-operators-by-h-s-and-cnot.md)
+- [The $T$ gate is in the third level of the Clifford hierarchy](../clifford-group/t-gate-is-in-the-third-level-of-the-clifford-hierarchy.md)
 
 ## Sources
 
