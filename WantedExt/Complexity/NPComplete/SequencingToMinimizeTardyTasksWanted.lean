@@ -51,7 +51,7 @@ Membership in NP: the schedule is a certificate; its start times can be taken be
 length, so they have polynomially many bits. Binary encoding of all numbers.
 
 The tasks are `Fin n`, one per listed pair `(l(t), d(t))`. A one-processor schedule is Garey and
-Johnson's [SS1] notion, reused from `SequencingToMinimizeWeightedTardinessWanted`
+Johnson's [SS1] notion, reused from `SequencingToMinimizeWeightedTardinessDefs`
 (`IsOneProcessorSchedule`, a one-to-one `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying
 `σ(t) ≥ σ(t') + l(t')`). The partial order is given by the list of its pairs `(t, t')` with
 `t < t'`, required to be a strict order (Mathlib's `IsStrictOrder`), as in

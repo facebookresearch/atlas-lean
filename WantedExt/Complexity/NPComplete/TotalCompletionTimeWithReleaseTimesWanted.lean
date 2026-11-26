@@ -46,7 +46,7 @@ This is SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME ([SS4]) with individual 
 in place of the partial order and every task weight `w(t) = 1` (`1|rⱼ|∑ Cⱼ`), so the weights
 are not part of the instance. A one-processor schedule (Garey and Johnson, [SS1]) is a
 one-to-one function `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying `σ(t) ≥ σ(t') + l(t')`; the
-predicate `IsOneProcessorSchedule` is reused from `SequencingToMinimizeWeightedTardinessWanted`.
+predicate `IsOneProcessorSchedule` is reused from `SequencingToMinimizeWeightedTardinessDefs`.
 The tasks are `Fin n`, one per listed pair `(l(t), r(t))`. Binary encoding of all numbers (the
 problem is NP-complete in the strong sense).
 

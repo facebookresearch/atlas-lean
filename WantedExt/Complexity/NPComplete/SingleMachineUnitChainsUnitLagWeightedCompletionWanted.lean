@@ -59,7 +59,7 @@ immediate predecessor and successor; no job in two chains or twice in a chain), 
 `l`, required here to be `1`, and the bound `K`; that module's `WellFormed` is reused. Jobs are
 not preempted; a schedule gives every job `j` a start time `S j`, two unit jobs never overlap
 (Garey and Johnson's one-processor schedule [SS1] with every length `1`, the predicate
-`IsOneProcessorSchedule` reused from `SequencingToMinimizeWeightedTardinessWanted`), and in a
+`IsOneProcessorSchedule` reused from `SequencingToMinimizeWeightedTardinessDefs`), and in a
 chain `S_j ≥ S_i + 1 + 1`. Start times are natural numbers: with unit jobs and integer lags,
 shifting every job as early as the machine order allows gives an integral schedule with no
 later completion times. Binary encoding of all numbers (the problem is NP-complete in the strong
