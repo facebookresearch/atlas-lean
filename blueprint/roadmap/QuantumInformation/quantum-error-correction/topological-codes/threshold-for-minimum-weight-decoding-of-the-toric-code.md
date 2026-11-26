@@ -18,7 +18,7 @@ events. Decoding fails when the residual chain $E + E'$ has a nonzero total spat
 contained in the larger event that $E + E'$ contains a self-avoiding closed path that is homologically nontrivial in the
 spatial directions, and that larger event is what the counting bounds. If $0 \le p, q < 1/2$ and
 $p(1 - p), q(1 - q) < (4\mu_3^2)^{-1}$, where $\mu_3$ is the connective constant of self-avoiding walks on the cubic lattice,
-its probability is at most $L^2 (T + 2) \cdot e^{o(L)} \cdot (4\mu_3^2\, p(1 - p))^{L/2}$, which for $T$ at most polynomial in
+its probability is at most $L^2 (T + 1) \cdot e^{o(L)} \cdot (4\mu_3^2\, p(1 - p))^{L/2}$, which for $T$ at most polynomial in
 $L$ falls exponentially in $L$. With the estimate $\mu_3 \approx 4.684$ the conditions read $p, q < 0.0114$, again an estimate rather than a certified bound (it would need $\mu_3 < 4.7098$).
 
 Dennis, Kitaev, Landahl and Preskill relate the threshold of the optimal decoder to a phase transition of the
@@ -34,7 +34,7 @@ equations (47)–(52)), and the count of self-avoiding walks of length $\ell$ fr
 (a homologically nontrivial closed path on the torus lifts to an open walk, so walks rather than closed polygons
 are counted, with $L^2$ starting vertices), together with the fact that a failure needs a homologically nontrivial path of
 length at least $L$. With faulty measurements the argument runs in the finite spacetime slab of the record, whose
-$L^2 (T + 2)$ vertices are the starting points; Dennis, Kitaev, Landahl and Preskill state it for the complete history,
+$L^2 (T + 1)$ vertices are the starting points; Dennis, Kitaev, Landahl and Preskill state it for the complete history,
 counting walks between two time slices, and the expansion checks that equations (47)–(55) apply unchanged in the slab.
 
 ## Depends on

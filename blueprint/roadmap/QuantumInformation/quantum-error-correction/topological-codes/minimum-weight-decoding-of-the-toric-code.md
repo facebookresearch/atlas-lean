@@ -11,21 +11,26 @@ together bound a strip and do not cause failure. Phase-flip errors are decoded i
 same way using the vertex operators. When syndrome measurements are themselves faulty, a spatial matching of one round's defects
 no longer works, since a single wrong readout produces an isolated apparent defect. Dennis, Kitaev, Landahl and Preskill
 then work in a three-dimensional spacetime lattice, stated here for a finite record. Start from a code state with no
-errors (the syndrome before round $1$ is trivial); before each of rounds $1, \dots, T$ every edge suffers a bit flip
-independently with probability $p$, and in each of these rounds every face check is read out wrongly independently with
-probability $q$; round $T + 1$ is read out without error, which closes the record at a temporal boundary. On the lattice
-of faces times rounds $0, \dots, T + 1$, space-like edges join neighbouring faces within a round and stand for data
-errors, and time-like edges join a face in consecutive rounds and stand for readout errors. The syndrome chain $S$ is the
-set of time-like edges on which the measured syndrome is nontrivial; its boundary $D = \partial S$ is the set of
-detection events, the vertices $(f, \tau)$ at which the measured syndrome of face $f$ changes between rounds $\tau - 1$
-and $\tau$. For example, two consecutive wrong readouts of one check, with correct readouts around them and no data
-error, give two adjacent edges of $S$ but only their two outer endpoints in $D$. The decoder chooses a chain $E'$ with
+errors; before each of rounds $1, \dots, T$ every edge suffers a bit flip independently with probability $p$, and in each of
+these rounds every face check is read out wrongly independently with probability $q$; round $T + 1$ is read out without
+error, which closes the record at a temporal boundary. Write $m_\tau(f)$ for the measured syndrome of face $f$ in round
+$\tau$, with $m_0 = 0$ for the error-free start. The vertices are the pairs $(f, \tau)$ with $1 \le \tau \le T + 1$, and the
+detection events are the set $D$ of vertices with $m_\tau(f) \ne m_{\tau - 1}(f)$. A space-like edge joins $(f_1, \tau)$ and
+$(f_2, \tau)$ for neighbouring faces and stands for a bit flip on their common edge before round $\tau$ ($\tau \le T$); a
+time-like edge joins $(f, \tau)$ and $(f, \tau + 1)$ and stands for a wrong readout of $f$ in round $\tau$ ($\tau \le T$).
+Then the fault chain $E$ has $\partial E = D$: a bit flip before round $\tau$ changes the syndrome of its two faces in that
+round, and a wrong readout in round $\tau$ makes $m_\tau(f)$ differ from both $m_{\tau - 1}(f)$ and $m_{\tau + 1}(f)$. In Dennis,
+Kitaev, Landahl and Preskill's complete history the syndrome chain $S$ is the set of time-like links on which the measured
+syndrome is nontrivial, and the decoder's input is its boundary $\partial S$, not $S$ itself; $D$ is that boundary for the
+finite record. For example, two consecutive wrong readouts of one check, with correct readouts around them and no data
+error, give two adjacent time-like edges but only their two outer endpoints in $D$. The decoder chooses a chain $E'$ with
 $\partial E' = D$ of least weighted length $H \log((1 - p)/p) + V \log((1 - q)/q)$, for $H$ space-like and $V$ time-like
-edges and $0 < p, q < 1/2$, a finite minimum since the record is finite; when $p = 0$ or $q = 0$ the edges of that type
-are not used. It then applies $X$ on the projection of the space-like edges of $E'$ onto the torus. The actual fault chain
-$E$ also has $\partial E = D$, so $E + E'$ is a cycle, and the residual data error is the projection of its space-like
-edges. Decoding succeeds when that projection is homologically trivial and fails when its total spatial homology class
-is nonzero; a cycle of $E + E'$ that winds around the torus does not by itself cause failure, since two parallel winding
+edges and $0 < p, q < 1/2$, a finite minimum since the record is finite; when $p = 0$ or $q = 0$ the edges of that type are
+not used. It then applies $X$ on the projection of the space-like edges of $E'$ onto the torus; the boundary of that
+projection is the projection of $D$, which telescopes to the final syndrome $m_{T+1}$, so the correction returns the state
+to the code space. Since $\partial(E + E') = 0$, $E + E'$ is a cycle, and the residual data error is the projection of its
+space-like edges, a cycle on the torus. Decoding succeeds when that projection is homologically trivial and fails when
+its total spatial homology class is nonzero; a cycle of $E + E'$ that winds around the torus does not by itself cause failure, since two parallel winding
 loops bound a strip. A decoder that sees a finite record without a final error-free round needs its own rule at the last
 round; Dennis, Kitaev, Landahl and Preskill treat that case separately, with chains closed relative to the final time
 slice.
