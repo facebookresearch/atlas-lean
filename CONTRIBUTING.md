@@ -455,7 +455,8 @@ whose links `check the graph` checks and whose markers and entries
 what `main` merged ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)).
 Neither needs an issue, or a code owner's approval unless GitHub requires one;
 Codex still reviews them, and a batch's reviewer runs `verify` on its exact
-head. Unlinking a page's own declaration with no successor is not one of them.
+head from an up-to-date checkout of `main`, never from the batch's own branch.
+Unlinking a page's own declaration with no successor is not one of them.
 When a graph PR's only wiki changes are what `scripts/sync_wiki.py
 declarations` writes for its own declarations, as the `graph sync` check
 reports, it needs no issue for them, and they need no code owner's approval
