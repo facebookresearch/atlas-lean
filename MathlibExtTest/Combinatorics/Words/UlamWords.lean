@@ -118,3 +118,23 @@ example : ¬ IsUlamWord [false, true, false] := by
     ((isUlamWord_zeros_one_zeros_iff 1 1).1 h)
 
 end MetaMathlibExt.isUlamWord_zeros_one_zeros_iff
+
+namespace MetaMathlibExt.card_ulam_zeros_one_zeros
+
+-- With no padding, the only candidate is the singleton [true].
+example : ((Finset.range 1).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (1 - 1 - a) false)).card = 1 :=
+  card_ulam_zeros_one_zeros (n := 1) (hn := by decide)
+
+-- For 6 letters the Pascal row index is 5 = 101₂, with two nonadjacent set bits.
+example : ((Finset.range 6).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (6 - 1 - a) false)).card = 4 :=
+  card_ulam_zeros_one_zeros (n := 6) (hn := by decide)
+
+-- Check the actual positions independently against the recursive word predicate.
+example : ((Finset.range 6).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (6 - 1 - a) false)) =
+      {0, 1, 4, 5} := by
+  decide
+
+end MetaMathlibExt.card_ulam_zeros_one_zeros
