@@ -48,32 +48,90 @@ private def singletonHash (_ : singletonKeys.Nonempty) (_ : Unit) (_ : Fin 1) :
 -- A singleton always succeeds on the first trial, including the initial draw in the mean.
 example : HasSum
     (fun t => (secondaryAttemptTail singletonKeys {()} singletonHash t : ℝ)) 1 := by
-  have hnear (hk : singletonKeys.Nonempty) : IsNearUniversalOn {()} (singletonHash hk) :=
+  have hnear (hk : singletonKeys.Nonempty) : IsNearUniversalOn singletonKeys {()} (singletonHash hk) :=
     ⟨by decide, Finset.singleton_nonempty _,
-      fun x y hxy => (hxy (Subsingleton.elim x y)).elim⟩
+      fun x _ y _ hxy => (hxy (Subsingleton.elim x y)).elim⟩
   obtain ⟨_, draws, hsum, _, _, _, hone⟩ := secondary_sampling singletonKeys {()} singletonHash hnear
   rwa [hone (by decide)] at hsum
 
 private def primary (_ : Unit) (_ : Fin 1) : Fin singletonKeys.card := ⟨0, by decide⟩
 
-private theorem primaryNear : IsNearUniversalOn {()} primary :=
-  ⟨by decide, Finset.singleton_nonempty _, fun x y hxy => (hxy (Subsingleton.elim x y)).elim⟩
+private theorem primaryNear : IsNearUniversalOn singletonKeys {()} primary :=
+  ⟨by decide, Finset.singleton_nonempty _, fun x _ y _ hxy => (hxy (Subsingleton.elim x y)).elim⟩
 
 -- Instantiate the whole construction, including the ordinary lookup of a stored value.
 example : ∃ table : PerfectHashing (Fin 1) ℕ (fun x => (primary () x).val),
     table.Valid ∧ lookup 0 table = some 42 := by
   have hnear (i : Unit) (j : Fin singletonKeys.card)
       (hk : (bucketKeys singletonKeys (primary i) j).Nonempty) :
-      IsNearUniversalOn {()} (fun (_ : Unit) (_ : Fin 1) =>
+      IsNearUniversalOn (bucketKeys singletonKeys (primary i) j) {()} (fun (_ : Unit) (_ : Fin 1) =>
         (⟨0, by have := hk.card_pos; positivity⟩ :
           Fin (2 * (bucketKeys singletonKeys (primary i) j).card ^ 2))) :=
     ⟨by have := hk.card_pos; positivity, Finset.singleton_nonempty _,
-      fun x y hxy => (hxy (Subsingleton.elim x y)).elim⟩
+      fun x _ y _ hxy => (hxy (Subsingleton.elim x y)).elim⟩
   obtain ⟨g, _, _, _, tables⟩ := two_level_expected_space singletonKeys (fun _ => 42)
     primaryNear (fun _ _ => {()}) (fun i j hk _ _ => ⟨0, by have := hk.card_pos; positivity⟩)
     (fun i _ j hk => hnear i j hk)
   obtain ⟨hvalid, hlookup⟩ := tables () (Finset.mem_singleton_self ())
   exact ⟨ofBucketHashes singletonKeys (fun _ => 42) primaryNear.1 (primary ()) (g ()),
     hvalid, (hlookup 0).1.trans (by decide)⟩
+
+private def natHash (i : Bool) (x : ℕ) : Fin 3 :=
+  if i then ⟨x % 3, Nat.mod_lt _ (by decide)⟩ else 0
+
+-- On these three natural keys, each distinct pair collides for one of the two indices.
+-- This needs the 2/m bound, not 1/m. Outside the set, 0 and 3 collide at both indices.
+example : IsNearUniversalOn ({0, 1, 2} : Finset ℕ) Finset.univ natHash := by
+  refine ⟨by decide, ⟨false, Finset.mem_univ _⟩, ?_⟩
+  simp only [Finset.mem_insert, Finset.mem_singleton]
+  rintro x (rfl | rfl | rfl) y (rfl | rfl | rfl) <;> decide
+
+local instance : Fact (Nat.Prime 11) := ⟨by decide⟩
+
+private def tripleKeys : Finset (ZMod 11) := {0, 1, 3}
+private theorem triplePos : 0 < tripleKeys.card := by decide
+private def primaryModPrime := modPrimeHashes 11 tripleKeys.card triplePos
+private def indices : Finset (ModPrimeIndex 11) := Finset.univ
+
+private def secondaryModPrime (i : ModPrimeIndex 11) (j : Fin tripleKeys.card)
+    (hk : (bucketKeys tripleKeys (primaryModPrime i) j).Nonempty) :=
+  modPrimeHashes 11 (2 * (bucketKeys tripleKeys (primaryModPrime i) j).card ^ 2)
+    (by have := hk.card_pos; positivity)
+
+-- Three keys into three buckets, using the existing 1/m bound for both families.
+example : (∑ i ∈ indices, ∑ j, ((bucketKeys tripleKeys (primaryModPrime i) j).card : ℚ) ^ 2) /
+    indices.card ≤ 7 := by
+  have hnear : IsNearUniversalOn tripleKeys indices primaryModPrime :=
+    (modPrime_isUniversalOn (p := 11) triplePos).isNearUniversalOn tripleKeys
+  obtain ⟨_, _, hmean, _, _⟩ := two_level_expected_space tripleKeys ZMod.val hnear
+    (fun _ _ => indices) secondaryModPrime (fun i _ j hk =>
+      (modPrime_isUniversalOn (p := 11) (by have := hk.card_pos; positivity)).isNearUniversalOn
+        (bucketKeys tripleKeys (primaryModPrime i) j))
+  have hn : tripleKeys.card = 3 := by decide
+  exact hmean.trans (by norm_num [hn])
+
+-- The primary index (1, 0) puts 0 and 3 in the same bucket, giving eight secondary slots.
+private def primaryIndex : ModPrimeIndex 11 := (⟨1, by decide⟩, 0)
+private def zeroBucket : Fin tripleKeys.card := ⟨0, triplePos⟩
+private def pairKeys := bucketKeys tripleKeys (primaryModPrime primaryIndex) zeroBucket
+private theorem pairKeys_eq : pairKeys = ({0, 3} : Finset (ZMod 11)) := by decide
+private theorem pairKeys_nonempty : pairKeys.Nonempty := by
+  rw [pairKeys_eq]
+  exact ⟨0, by decide⟩
+private def pairHash (hk : pairKeys.Nonempty) := secondaryModPrime primaryIndex zeroBucket hk
+
+-- The secondary index (1, 8) really fails on this pair, but the failure fraction is below 1/2.
+private def badIndex : ModPrimeIndex 11 := (⟨1, by decide⟩, 8)
+
+example : (¬ Set.InjOn (pairHash pairKeys_nonempty badIndex) (pairKeys : Set (ZMod 11))) ∧
+    secondaryAttemptTail pairKeys indices pairHash 1 < 1 / 2 := by
+  have hnear (hk : pairKeys.Nonempty) : IsNearUniversalOn pairKeys indices (pairHash hk) :=
+    (modPrime_isUniversalOn (p := 11) (m := 2 * pairKeys.card ^ 2)
+      (by have := hk.card_pos; positivity)).isNearUniversalOn pairKeys
+  refine ⟨?_, ((secondary_sampling pairKeys indices pairHash hnear).1 pairKeys_nonempty).2.1⟩
+  intro hinj
+  have h0 : (0 : ZMod 11) ∈ (pairKeys : Set (ZMod 11)) := by rw [pairKeys_eq]; simp
+  have h3 : (3 : ZMod 11) ∈ (pairKeys : Set (ZMod 11)) := by rw [pairKeys_eq]; simp
+  exact (show (0 : ZMod 11) ≠ 3 by decide) (hinj h0 h3 (by decide))
 
 end Cslib.Algorithms.Lean

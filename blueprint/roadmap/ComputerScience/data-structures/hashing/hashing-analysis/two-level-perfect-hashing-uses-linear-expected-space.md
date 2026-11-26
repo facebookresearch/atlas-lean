@@ -1,17 +1,17 @@
 # Two-level perfect hashing uses linear expected space
 
 Let $S$ be a nonempty finite set of $n$ distinct keys, with a value assigned to each key.
-An [indexed near-universal hash family](is-near-universal-on.md) into $m>0$ slots has a
+An [indexed hash family near-universal on $S$](is-near-universal-on.md) into $m>0$ slots has a
 nonempty finite index set and collision probability at most $2/m$ for every pair of distinct
-keys. A uniform draw chooses an index, not a distinct function: indices that induce the same
+keys in $S$. The ambient key type need not be finite. A uniform draw chooses an index, not a distinct function: indices that induce the same
 function still count separately.
 
 Draw a primary hash $h$ from such a family into $n$ buckets. Write $S_j$ for the
 [keys assigned to bucket $j$](bucket-keys.md) and $k_j=|S_j|$. Use a
 [two-level perfect hash table](../perfect-hashing/perfect-hashing.md) with
 [one descriptor per primary bucket and $2k_j^2$ secondary cells per bucket](of-bucket-hashes.md).
-For each nonempty bucket, suppose a finite indexed near-universal family into $2k_j^2$ slots
-is available, conditional on the primary index. Draw secondary indices independently, uniformly
+For each nonempty bucket, suppose a finite indexed family into $2k_j^2$ slots is available,
+conditional on the primary index. It need only be near-universal on $S_j$. Draw secondary indices independently, uniformly
 and with replacement for that bucket until a hash is injective on $S_j$. Place the keys at
 its selected slots. An empty bucket allocates no secondary cells and does not draw a hash.
 
@@ -53,4 +53,4 @@ $q\le (k-1)/(2k)<1/2$.
 
 - J. Erickson, *Algorithms*, lecture notes, Lecture 5 “Hash Tables” (Spring 2017),
   University of Illinois, <https://jeffe.cs.illinois.edu/teaching/algorithms/notes/05-hashing.pdf>,
-  Sections 5.6–5.7 and Lemma 7.
+  Sections 5.3, 5.6–5.7 and Lemma 7.

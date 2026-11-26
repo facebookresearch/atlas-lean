@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.PerfectHashing
+public import CSLibExt.Algorithms.Lean.DataStructures.UniversalHashing
 public import Mathlib.Analysis.SpecificLimits.Basic
 
 import Mathlib.Data.Finset.Prod
@@ -21,7 +22,8 @@ import Mathlib.Tactic.Ring
 
 A uniformly sampled primary hash sends a static finite key set into as many buckets as there
 are keys. A bucket with `k` keys gets `2 k²` slots and uses independent uniform draws to find
-an injective secondary hash. We count allocated cells and lookup probes, not running time.
+an injective secondary hash. The collision bounds concern only the keys being hashed at each
+level. We count allocated cells and lookup probes, not running time.
 
 ## References
 
@@ -41,15 +43,28 @@ universe u v w
 
 namespace UniversalHashing
 
-/-- **Indexed near-universal hash family.** A finite indexed family into $m > 0$ slots is
-near-universal if its index set is nonempty and, for any distinct keys, at most a $2/m$ fraction
-of its indices give a collision. Each index has equal weight even if several indices induce the
-same function. The bound is written by cross multiplication, without natural-number division. -/
+/-- **Indexed near-universal hash family on a key set.** A finite indexed family into $m > 0$
+slots is near-universal on a finite set of keys if its index set is nonempty and, for any
+pair of distinct keys in the set, at most a $2/m$ fraction of its indices give a collision.
+No bound is required for pairs involving keys outside the set, and the ambient key type
+need not be finite. Each index has equal weight even if several indices induce the same
+function. The bound is written by cross multiplication, without natural-number division. -/
 @[expose]
 def IsNearUniversalOn {α : Type u} {ι : Type v} {m : ℕ}
-    (sample : Finset ι) (h : ι → α → Fin m) : Prop :=
+    (keys : Finset α) (sample : Finset ι) (h : ι → α → Fin m) : Prop :=
   0 < m ∧ sample.Nonempty ∧
-    ∀ x y, x ≠ y → (sample.filter fun a => h a x = h a y).card * m ≤ 2 * sample.card
+    ∀ x ∈ keys, ∀ y ∈ keys, x ≠ y → (sample.filter fun a => h a x = h a y).card * m ≤
+      2 * sample.card
+
+/-- **Universality implies near-universality on any finite key set.** An indexed universal
+family into $m$ slots has positive $m$, a nonempty index set, and collision probability at
+most $1/m$ on distinct keys. With the same indices and hash functions it satisfies the
+$2/m$ bound on distinct members of any finite key set. -/
+theorem IsUniversalOn.isNearUniversalOn {α : Type u} {ι : Type v} {m : ℕ}
+    {sample : Finset ι} {h : ι → α → Fin m} (hu : IsUniversalOn sample h) (keys : Finset α) :
+    IsNearUniversalOn keys sample h := by
+  refine ⟨hu.1, hu.2.1, fun x _ y _ hxy => (hu.2.2 x y hxy).trans ?_⟩
+  omega
 
 end UniversalHashing
 
@@ -99,7 +114,7 @@ private theorem sum_bucketSq_eq [DecidableEq α] (keys : Finset α) (h : α → 
 
 private theorem sum_orderedCollisions_mul_le [DecidableEq α]
     (keys : Finset α) {sample : Finset ι} {h : ι → α → Fin m}
-    (near : IsNearUniversalOn sample h) :
+    (near : IsNearUniversalOn keys sample h) :
     (∑ a ∈ sample, orderedCollisions keys (h a)) * m ≤
       2 * sample.card * (keys.card * (keys.card - 1)) := by
   have hswap : (∑ a ∈ sample, orderedCollisions keys (h a)) =
@@ -109,11 +124,13 @@ private theorem sum_orderedCollisions_mul_le [DecidableEq α]
   rw [hswap, sum_mul]
   calc
     _ ≤ ∑ _xy ∈ keys.offDiag, 2 * sample.card :=
-      sum_le_sum fun xy hxy => near.2.2 xy.1 xy.2 (mem_offDiag.mp hxy).2.2
+      sum_le_sum fun xy hxy => by
+        obtain ⟨hx, hy, hne⟩ := mem_offDiag.mp hxy
+        exact near.2.2 xy.1 hx xy.2 hy hne
     _ = _ := by rw [sum_const, smul_eq_mul, offDiag_card, Nat.mul_sub_one, Nat.mul_comm]
 
 private theorem mean_bucketSq_le (keys : Finset α) {sample : Finset ι}
-    {h : ι → α → Fin keys.card} (near : IsNearUniversalOn sample h) :
+    {h : ι → α → Fin keys.card} (near : IsNearUniversalOn keys sample h) :
     (∑ a ∈ sample, ∑ j, ((bucketKeys keys (h a) j).card : ℚ) ^ 2) / sample.card ≤
       3 * (keys.card : ℚ) - 2 := by
   classical
@@ -155,7 +172,7 @@ private theorem two_le_orderedCollisions [DecidableEq α] (keys : Finset α)
 open scoped Classical in
 private theorem failureFraction_lt_half (keys : Finset α) {sample : Finset ι}
     {h : ι → α → Fin (2 * keys.card ^ 2)} (hk : keys.Nonempty)
-    (near : IsNearUniversalOn sample h) :
+    (near : IsNearUniversalOn keys sample h) :
     ((sample.filter fun a => ¬ Set.InjOn (h a) (keys : Set α)).card : ℚ) / sample.card <
       1 / 2 := by
   classical
@@ -206,16 +223,17 @@ noncomputable def secondaryAttemptTail (keys : Finset α) (sample : Finset ι)
 
 open scoped Classical in
 /-- **Success probability and expected draws for a secondary hash.** Suppose that for a
-nonempty bucket of $k$ distinct keys the finite indexed family into $2k^2$ slots is near-universal.
-There is an injective choice and the failure fraction $q$ is strictly below $1/2$. For every
-$t$, the sampling tail is the fraction of length-$t$ strings of indices all of whose hashes
-fail, out of all length-$t$ strings, as appropriate for independent uniform draws with replacement.
+nonempty bucket of $k$ distinct keys the finite indexed family into $2k^2$ slots is
+near-universal on the keys in that bucket. There is an injective choice and the failure fraction
+$q$ is strictly below $1/2$. For every $t$, the sampling tail is the fraction of length-$t$ strings
+of indices all of whose hashes fail, out of all length-$t$ strings, as appropriate for independent
+uniform draws with replacement.
 The real sum of the tails (expected number of draws, including the first) equals $1/(1-q)$ and
 is strictly below $2$. For an empty bucket the expected number is zero, with no family assumption;
 for a singleton it is one. -/
 theorem secondary_sampling (keys : Finset α) (sample : Finset ι)
     (h : keys.Nonempty → ι → α → Fin (2 * keys.card ^ 2))
-    (near : ∀ hk, IsNearUniversalOn sample (h hk)) :
+    (near : ∀ hk, IsNearUniversalOn keys sample (h hk)) :
     (∀ hk : keys.Nonempty,
       (∃ a ∈ sample, Set.InjOn (h hk a) (keys : Set α)) ∧
       secondaryAttemptTail keys sample h 1 < 1 / 2 ∧
@@ -419,10 +437,12 @@ private theorem ofBucketHashes_lookup [DecidableEq α] (keys : Finset α) (value
     · simp [not_nonempty_iff_eq_empty.mp hk]
 
 /-- **Two-level perfect hashing uses linear expected space.** Fix a nonempty finite set of $n$
-keys with values, and choose a primary index uniformly from a finite near-universal family into
-$n$ buckets. Suppose each nonempty bucket, conditional on the primary index, has a finite
-near-universal secondary family into $2k^2$ slots, where $k$ is its occupancy. One can select an
-injective member of each such family and build valid two-level tables with $n$ primary descriptors
+keys with values, and choose a primary index uniformly from a finite indexed family into $n$
+buckets that is near-universal on the given keys. Suppose each nonempty bucket, conditional on
+the primary index, has a finite indexed secondary family into $2k^2$ slots, where $k$ is its
+occupancy, that is near-universal on the keys in that bucket. No collision bound is required
+outside the bucket. One can select an injective member of each such family and build valid
+two-level tables with $n$ primary descriptors
 and $2k^2$ secondary cells per bucket. The rational mean of the sum of squared occupancies is at
 most $3n-2$, and the rational mean of the actual total allocated cell count is at most $7n-4$.
 For every primary choice and every query, ordinary lookup returns its value if it belongs to the
@@ -430,10 +450,11 @@ key set and nothing otherwise. Lookup with probes gives the same result and coun
 probe and one additional secondary probe exactly when the selected bucket is nonempty. -/
 theorem two_level_expected_space [DecidableEq α] {κ : Type*}
     (keys : Finset α) (values : α → β) {sample : Finset ι} {h : ι → α → Fin keys.card}
-    (near : IsNearUniversalOn sample h) (secondarySample : ι → Fin keys.card → Finset κ)
+    (near : IsNearUniversalOn keys sample h) (secondarySample : ι → Fin keys.card → Finset κ)
     (g : ∀ a j, (bucketKeys keys (h a) j).Nonempty → κ → α →
       Fin (2 * (bucketKeys keys (h a) j).card ^ 2))
-    (secondaryNear : ∀ a ∈ sample, ∀ j hk, IsNearUniversalOn (secondarySample a j) (g a j hk)) :
+    (secondaryNear : ∀ a ∈ sample, ∀ j hk,
+      IsNearUniversalOn (bucketKeys keys (h a) j) (secondarySample a j) (g a j hk)) :
     ∃ selected : ι → Fin keys.card → α → ℕ,
       (∀ a ∈ sample, ∀ j hk, ∃ b ∈ secondarySample a j,
         Set.InjOn (g a j hk b) (bucketKeys keys (h a) j : Set α) ∧
