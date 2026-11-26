@@ -193,10 +193,6 @@ theorem liftConstants_zero_zero_mul (a : ℕ → Fin 2 → B) :
       liftConstants (p := p) (R := R) a 0 1 = p :=
   liftVar_mul_liftVar _ _
 
-theorem zp2_natCast_mul_eq_zero [Fact p.Prime] (r : Zp2 p)
-    (h : (p : Zp2 p) * r = 0) : r = 0 :=
-  WittVector.eq_zero_of_p_mul_eq_zero r (by rwa [mul_comm])
-
 /-- **Multiplication by `p` is injective on the lift ring over `Zp2 p`.** In
 the lift ring with coefficients in `Zp2 p`, `p * x = 0` implies `x = 0`. -/
 theorem natCast_mul_eq_zero_zp2 [Fact p.Prime] (u v : B)
