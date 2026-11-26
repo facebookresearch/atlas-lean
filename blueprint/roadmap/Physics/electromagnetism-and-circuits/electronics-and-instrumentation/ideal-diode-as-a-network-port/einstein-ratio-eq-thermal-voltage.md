@@ -1,7 +1,10 @@
-# Thermal voltage is the Einstein ratio
+# The Einstein ratio $D/\mu$ is the thermal voltage for $\mu \ne 0$ and $q \ne 0$
 
-Let $D = \mu k_B T/|q|$ be the diffusion coefficient given by the Einstein relation. If $\mu \neq 0$ and $q \neq 0$, then
+For real $\mu \ne 0$ and $q \ne 0$ and all real $k_B$ and $T$, the
+[diffusion coefficient](../../fields-and-waves/electrostatics-plane-waves-and-fresnel-coefficie/diffusion-coeff.md)
+$D = \mu k_B T/|q|$ given by the Einstein relation satisfies
 
-$$\frac{D}{\mu} = \frac{k_B T}{|q|} = V_T,$$
+$$\frac{D}{\mu} = V_T,$$
 
-the thermal voltage.
+where $V_T = k_B T/|q|$ is the [thermal voltage](thermal-voltage.md). In terms of $k_B$, $T$ and $q$
+this is the Einstein relation in ratio form, $D/\mu = k_B T/|q|$.

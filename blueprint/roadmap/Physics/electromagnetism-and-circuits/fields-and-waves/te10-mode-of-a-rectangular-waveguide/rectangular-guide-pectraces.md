@@ -9,10 +9,7 @@ any `z`, the [tangential electric field](tangential-electric-on-xwall.md) and th
 [tangential electric field](tangential-electric-on-ywall.md) and the
 [normal magnetic field](normal-magnetic-on-ywall.md) of a `y`-wall vanish.
 
-Written face by face as component equations, the conditions are `a > 0`, `b > 0`,
-`E_y = E_z = B_x = 0` on the walls `x = 0` and `x = a`, and `E_x = E_z = B_y = 0` on the walls
-`y = 0` and `y = b`, over the same ranges ([equivalence](traces-iff-component-conditions.md)). The
-corner lines belong to both adjacent walls. For a nonpositive width the conditions fail for every
-field.
+The corner lines belong to both adjacent walls. For a nonpositive width the conditions fail for
+every field.
 
-The other form has its own page: [PEC wall conditions in components](rectangular-guide-peccomponent-condition.md).
+The other form has its own page: [PEC component conditions on the four side walls of a rectangular guide](rectangular-guide-peccomponent-condition.md).

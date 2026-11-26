@@ -17,8 +17,7 @@
 - [The zero sequence is the normalized DFT at frequency 0](zero-sequence-eq-normalized-dft-zero.md)
 - [The positive sequence is the normalized DFT at frequency 2](positive-sequence-eq-normalized-dft-two.md)
 - [The negative sequence is the normalized DFT at frequency 1](negative-sequence-eq-normalized-dft-one.md)
-- [Symmetrical components as a normalized DFT](sequence-vector-eq-normalized-dft-neg.md)
-- [Sequence components are the inverse DFT of the phases](sequence-vector-eq-inv-dft.md)
+- [Sequence components are the normalized DFT of the phases at the negated frequency](sequence-vector-eq-normalized-dft-neg.md)
 - [The phases are the DFT of the sequence components](phase-vector-eq-dft-sequence-vector.md)
 
 ## Recovering the phases

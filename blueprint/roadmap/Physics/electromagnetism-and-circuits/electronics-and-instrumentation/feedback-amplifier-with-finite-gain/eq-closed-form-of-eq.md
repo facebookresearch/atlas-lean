@@ -10,9 +10,8 @@ in which $v_i - \beta v_o$ is the error between the input and the fed-back outpu
 
 $$v_o = \frac{A\, v_i}{1 + A\beta},$$
 
-that is, $v_o = G(A, \beta)\, v_i$ with the [closed-loop gain](closed-loop-gain.md)
-$G(A, \beta) = A/(1 + A\beta)$, where the denominator $1 + A\beta$ is
-[positive](one-add-mul-pos.md). So for each input the equation has at most one solution; the closed
-form [does solve it](../rail-limited-feedback-amplifier/linear-candidate-satisfies.md).
+where the denominator $1 + A\beta$ is [positive](one-add-mul-pos.md). So for each input the equation
+has at most one solution; the closed form
+[does solve it](../rail-limited-feedback-amplifier/linear-candidate-satisfies.md).
 
-The other form has its own page: [Feedback amplifier output is the closed-loop gain times the input](output-eq-closed-loop-gain-mul.md).
+The other form has its own page: [For $A, \beta > 0$ any amplifier-equation solution is the closed-loop gain times the input](output-eq-closed-loop-gain-mul.md).

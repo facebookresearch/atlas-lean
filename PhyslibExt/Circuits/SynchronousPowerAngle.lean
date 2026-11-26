@@ -152,7 +152,8 @@ lemma totalComplexPower_eq (E V Xs delta : ℝ)
 
 /-- Headline result: for `E, V, Xs > 0`, from the generator current model and
 the RMS complex power convention, the terminal real and reactive three-phase
-powers are the sine and cosine power angle formulas. -/
+powers are the sine and cosine power angle formulas, and the generator current is
+`(E * exp (i * delta) - V) / (i * Xs)`. -/
 theorem synchronousGenerator_powerAngle (E V Xs delta : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs) :
     (totalComplexPower V (synchronousCurrent E V Xs delta)).re =

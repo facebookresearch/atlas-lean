@@ -12,8 +12,7 @@
 
 - [Power–angle relation for the real power](real-power-eq.md)
 - [Power–angle relation for the reactive power](reactive-power-eq.md)
-- [Real and imaginary parts of the generator complex power](total-complex-power-eq.md)
-- [Power-angle formulas of a synchronous generator](synchronous-generator-power-angle.md)
+- [For E, V, X_s > 0, the power–angle formulas of the synchronous generator model](synchronous-generator-power-angle.md)
 
 ## Load angle and current direction
 

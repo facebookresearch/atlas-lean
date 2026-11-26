@@ -35,7 +35,6 @@
 ## Carrier transport
 
 - [Einstein diffusion coefficient](diffusion-coeff.md)
-- [Einstein relation in ratio form for nonzero mobility and charge](einstein-ratio.md)
 - [Conductivity of independent carriers](conductivity.md)
 - [Conductivity of two independent carrier species](conductivity-two-carrier.md)
 - [Two-carrier conductivity is the sum of single-carrier ones](conductivity-two-carrier-eq-sum.md)

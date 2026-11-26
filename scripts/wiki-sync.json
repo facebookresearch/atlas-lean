@@ -100641,7 +100641,7 @@
 "PhyslibExt.Circuits.SynchronousPowerAngle.realPower_pos_of_angle_pos": "c4930613258f647d",
 "PhyslibExt.Circuits.SynchronousPowerAngle.synchronousCurrent": "124fbad62ae49b4f",
 "PhyslibExt.Circuits.SynchronousPowerAngle.synchronousCurrent_eq": "c6f5900b8dcd2571",
-"PhyslibExt.Circuits.SynchronousPowerAngle.synchronousGenerator_powerAngle": "1172750fb9694a9d",
+"PhyslibExt.Circuits.SynchronousPowerAngle.synchronousGenerator_powerAngle": "5a3d84cfc7537e40",
 "PhyslibExt.Circuits.SynchronousPowerAngle.totalComplexPower": "f28a66ecf90c3085",
 "PhyslibExt.Circuits.SynchronousPowerAngle.totalComplexPower_eq": "15bbab36644acd64",
 "PhyslibExt.Circuits.SynchronousPowerAngle.totalComplexPower_neg_current": "78c941ad7d4f853a",
