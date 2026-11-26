@@ -107776,6 +107776,7 @@
 "Submodule.topologicalCoannihilator_top": "bcf8782bf8f5f655",
 "Submonoid.powerRootClosure": "0f27dcd973a21433",
 "Subring.exists_injective_ringHom_closure_padicInt": "bd9d22f873b06a04",
+"Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valuationSubring": "12a1c0aa761a28c7",
 "SumSquares.chiNeg2_one": "d876f26d97f937b7",
 "SumSquares.divChiNeg2Sum": "74b20051dc8494a5",
 "SumSquares.divChiNeg2Sum_mul_of_coprime": "0e5333a39fef5dac",

@@ -51,3 +51,4 @@ Topics added since this subject's fields were last revised.
 - [Is Base Change Span](span-range-eq-top.md)
 - [Freeness from a balanced perfect pairing](free-of-torsion-by-set-eq-annihilator-sm.md)
 - [Jacobian Square Presentation](associated-discr-norm-jacobian-det-of-sq.md)
+- [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
