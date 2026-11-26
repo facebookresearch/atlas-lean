@@ -105115,6 +105115,7 @@
 "SimpleGraph.mean_card_interedges_compl_powersetCard": "282a31903e166350",
 "SimpleGraph.mem_externalNeighborSet": "a6434cd100c510cd",
 "SimpleGraph.mem_of_card_le_of_lt_degree": "65f4a83813291d83",
+"SimpleGraph.multicolorTriangleRamseyNumber": "4ce55084c6790fb2",
 "SimpleGraph.not_hasTreewidthAtMost_zero_of_adj": "594ecfe24fb5d977",
 "SimpleGraph.numSaturatingNonedges": "b2672068f248b60d",
 "SimpleGraph.oddCycleLengths": "55bfbfe326c0a823",
