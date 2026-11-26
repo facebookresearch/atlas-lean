@@ -12,6 +12,7 @@ public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
+import all WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealizationWanted
 
 /-!
 # de Rham comparison for the first cohomology of an abelian variety over a p-adic field
@@ -26,8 +27,10 @@ The period ring is Mathlib's `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`, the `(ker θ
 `Fil^j D_dR(V) = (Fil^j B_dR^+ ⊗ V)^{G_F}`, `j ≥ 0`, are defined in
 `MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison`; de Rham with jumps in `{0, 1}` is then a
 statement about their dimensions. The Galois group acts on `B_dR^+` by continuity because its action
-on `W(𝓞_ℂ_p^♭)[1/p]` preserves `ker θ`, recorded here as a wanted theorem together with the
-`p`-adic completeness of `𝓞_ℂ_p`.
+on `W(𝓞_ℂ_p^♭)[1/p]` preserves `ker θ`, recorded here as a wanted theorem. `B_dR^+` also needs the
+`p`-adic completeness of `𝓞_ℂ_p`: both statements take it from the case `C = ℂ_p` of
+`WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealization.integers_adic_complete`, through
+`isAdicComplete_padicComplexInt`.
 
 Reference: Peter Scholze, *p-adic Hodge theory for rigid-analytic varieties*, Forum Math. Pi 1
 (2013), e1, Corollary 1.8, pp. 5–6, with Theorems 9.1 and 9.3, pp. 74–75.
@@ -41,15 +44,9 @@ namespace WantedExt.AlgebraicGeometry.AbelianDeRhamComparison
 open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.HodgeTateComparison
 open MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
+open WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealization
 
 variable (p : ℕ) [Fact p.Prime]
-
-/- The ring of integers `𝓞_ℂ_p = {x : ‖x‖ ≤ 1}` of `ℂ_p` is `p`-adically separated and complete,
-since `p ^ n 𝓞_ℂ_p = {x : ‖x‖ ≤ p ^ (-n)}` and `ℂ_p` is complete. This is the case `C = ℂ_p` of
-`WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealization.integers_adic_complete`, stated for
-Mathlib's `𝓞_ℂ_[p]`, whose `p`-adic completeness `BDeRhamPlus` takes as an instance. -/
-public instance_wanted padicComplexInt_isAdicComplete :
-    IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p]
 
 set_option linter.concreteInstances false in
 /-- **Galois equivariance of Fontaine's $\theta$.** Let
@@ -67,6 +64,8 @@ J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book dr
 extension to $W(R)[1/p]$ is equivariant), archived at
 <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>. -/
 public theorem_wanted thetaKer_le_comap_preDeRhamGalois (σ : Galois p) :
+    haveI := isAdicComplete_padicComplexInt p
+      (❰integers_adic_complete❱ p (padicComplexFieldTest p))
     thetaKer p ≤ (thetaKer p).comap (preDeRhamGalois p σ)
 
 set_option linter.concreteInstances false in
@@ -114,6 +113,8 @@ public theorem_wanted abelianVariety_h1_deRham
     (F : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] F]
     (A : Over (Spec (CommRingCat.of F))) [GrpObj A] [IsCommMonObj A]
     [IsProper A.hom] [GeometricallyConnected A.hom] (g : ℕ) [SmoothOfRelativeDimension g A.hom] :
+    haveI := isAdicComplete_padicComplexInt p
+      (❰integers_adic_complete❱ p (padicComplexFieldTest p))
     FiniteDimensional ℚ_[p] (H1 p F A) ∧
       Module.finrank ℚ_[p] (filDeRham p F A (❰thetaKer_le_comap_preDeRhamGalois❱ p) 0) =
         Module.finrank ℚ_[p] F * Module.finrank ℚ_[p] (H1 p F A) ∧

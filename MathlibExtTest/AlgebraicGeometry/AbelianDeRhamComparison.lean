@@ -13,13 +13,14 @@ import MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
 # Tests for the Galois action on the de Rham period ring of `ℂ_p`
 
 `p` is not a unit of `𝓞_ℂ_p`, by instance; the action on `𝓞_ℂ_p` is the completed action on `ℂ_p`
-and preserves the norm; the action on `W(𝓞_ℂ_p^♭)[1/p]` fixes `ℚ_p`; the filtration starts at
-`Fil^0 = B_dR^+` and decreases; and the action on `B_dR^+` extends the action on
-`W(𝓞_ℂ_p^♭)[1/p]`.
+and preserves the norm; the action on `W(𝓞_ℂ_p^♭)[1/p]` fixes `ℚ_p`; the completeness of `𝓞_C`
+for `C = ℂ_p` gives the instance that `B_dR^+` needs; the filtration starts at `Fil^0 = B_dR^+` and
+decreases; and the action on `B_dR^+` extends the action on `W(𝓞_ℂ_p^♭)[1/p]`.
 -/
 
 open MathlibExt.AlgebraicGeometry.HodgeTateComparison
 open MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
+open MathlibExt.AlgebraicGeometry.AlgebraicallyClosedPadicTests
 
 variable (p : ℕ) [Fact p.Prime]
 
@@ -45,6 +46,17 @@ example (σ : Galois p) (x : PadicComplex p) : ‖completionGalois p σ x‖ = �
 example (σ : Galois p) (c : ℚ_[p]) :
     preDeRhamGalois p σ (padicToPreDeRham p c) = padicToPreDeRham p c := by
   rw [← RingHom.comp_apply, preDeRhamGalois_comp_padicToPreDeRham]
+
+/-- The ring of integers of `C = ℂ_p` and `𝓞_ℂ_p` have the same elements. -/
+example (x : integers p (padicComplexFieldTest p)) :
+    ((integersEquivPadicComplexInt p x : 𝓞_ℂ_[p]) : PadicComplex p) = x.1 := rfl
+
+/-- The completeness of `𝓞_C` for `C = ℂ_p` gives the instance that `B_dR^+` needs. -/
+example (h : IsAdicComplete (Ideal.span {(p : integers p (padicComplexFieldTest p))})
+    (integers p (padicComplexFieldTest p))) :
+    haveI := isAdicComplete_padicComplexInt p h
+    ofPreDeRham p 1 = 1 :=
+  map_one _
 
 section Completion
 
