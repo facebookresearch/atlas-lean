@@ -34,15 +34,25 @@ public import MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve
 /-!
 # Isogenies, lattice actions and representability for fake elliptic curves
 
-An isogeny pair between fake elliptic curves is a pair of morphisms over
-the base, each respecting the group laws and the quaternion action, whose
-composites are the action of a positive integer `d` from the order. A
-single morphism is level-preserving if it sends level points to level
-points. The family of such pairs over all base changes is representable
-when a point of a scheme `X` over the base determines the pair, uniquely
-and naturally. A lattice action is the action of the order alone, without
-the rest of a fake elliptic curve; the final predicate says that a scheme
-represents the functor of lattice actions.
+For a positive integer `d`, a `d`-isogeny pair between fake elliptic
+curves is a pair of morphisms over the base, each respecting the group laws
+and the action of the subring `Λ`, whose composites are the action of the
+element `d` of `Λ`. A single morphism is level-preserving if it
+sends level points to level points. The family of such pairs over all base
+changes is representable when a point of a scheme `X` over the base
+determines the pair, uniquely and naturally, and isomorphisms of the curves
+that carry both maps of one pair to both maps of another give the same
+point. A lattice action is a unital, multiplicative and additive action of
+`Λ` alone, without the rest of a fake elliptic curve; the final predicate
+says that a scheme represents the functor of lattice actions.
+
+Unlike the source, where `Λ` is a `ℤ`-submodule, `Λ` is a subring, as in
+`FakeEllipticCurve`: every integer lies in `Λ`, so the composites of an
+isogeny pair are stated without a membership hypothesis, and a lattice
+action is unital and multiplicative without membership side conditions.
+The integer `d` of an isogeny pair is required to be positive, and the
+isomorphism invariance of a representing point family relates the reverse
+maps of the two pairs as well as the forward maps.
 -/
 
 @[expose] public noncomputable section
@@ -57,14 +67,16 @@ namespace CerednikDrinfeld.QM
 
 namespace FakeEllipticCurve
 
-variable {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ}
+variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
   {S : Type u} [CommRing S]
 
-/-- A pair of morphisms forming a `d`-isogeny between fake elliptic
-curves. -/
+/-- `φ : E.A ⟶ E'.A` and `ψ : E'.A ⟶ E.A` form a `d`-isogeny pair if `d`
+is positive, both maps are over the base, preserve the group law on
+points and commute with the action of `Λ`, and `φ ≫ ψ` and `ψ ≫ φ` are the
+actions of the element `d` of `Λ`. -/
 def IsIsogenyPair (d : ℕ) (E E' : FakeEllipticCurve Λ N S)
     (φ : E.A ⟶ E'.A) (ψ : E'.A ⟶ E.A) : Prop :=
-  ∃ (hφ : φ ≫ E'.f = E.f) (hψ : ψ ≫ E.f = E'.f),
+  0 < d ∧ ∃ (hφ : φ ≫ E'.f = E.f) (hψ : ψ ≫ E.f = E'.f),
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
       (P Q : SchemeHomOver t E.f), mapPt φ hφ (E.L.mul t P Q) =
         E'.L.mul t (mapPt φ hφ P) (mapPt φ hφ Q)) ∧
@@ -73,14 +85,16 @@ def IsIsogenyPair (d : ℕ) (E E' : FakeEllipticCurve Λ N S)
         E.L.mul t (mapPt ψ hψ P) (mapPt ψ hψ Q)) ∧
     (∀ x : ↥Λ, E.act x ≫ φ = φ ≫ E'.act x) ∧
     (∀ x : ↥Λ, E'.act x ≫ ψ = ψ ≫ E.act x) ∧
-    (∀ hd : ((d : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-      φ ≫ ψ = E.act ⟨((d : ℚ) : ℍ[ℚ, a, b]), hd⟩ ∧
-        ψ ≫ φ = E'.act ⟨((d : ℚ) : ℍ[ℚ, a, b]), hd⟩)
+    (φ ≫ ψ = E.act (d : ↥Λ) ∧ ψ ≫ φ = E'.act (d : ↥Λ))
 
-/-- Characterization of an isogeny pair with named over-base proofs. -/
+/-- The conditions of `IsIsogenyPair` for given proofs `hφ` and `hψ` that
+`φ` and `ψ` are over the base: `d` is positive, both maps preserve the group
+law on points and commute with the action of `Λ`, and `φ ≫ ψ` and `ψ ≫ φ`
+are the actions of the element `d` of `Λ`. -/
 def IsIsogenyPairVia (d : ℕ) (E E' : FakeEllipticCurve Λ N S)
     (φ : E.A ⟶ E'.A) (hφ : φ ≫ E'.f = E.f) (ψ : E'.A ⟶ E.A)
     (hψ : ψ ≫ E.f = E'.f) : Prop :=
+  0 < d ∧
   (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
     (P Q : SchemeHomOver t E.f), mapPt φ hφ (E.L.mul t P Q) =
       E'.L.mul t (mapPt φ hφ P) (mapPt φ hφ Q)) ∧
@@ -89,22 +103,23 @@ def IsIsogenyPairVia (d : ℕ) (E E' : FakeEllipticCurve Λ N S)
       E.L.mul t (mapPt ψ hψ P) (mapPt ψ hψ Q)) ∧
   (∀ x : ↥Λ, E.act x ≫ φ = φ ≫ E'.act x) ∧
   (∀ x : ↥Λ, E'.act x ≫ ψ = ψ ≫ E.act x) ∧
-  (∀ hd : ((d : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-    φ ≫ ψ = E.act ⟨((d : ℚ) : ℍ[ℚ, a, b]), hd⟩ ∧
-      ψ ≫ φ = E'.act ⟨((d : ℚ) : ℍ[ℚ, a, b]), hd⟩)
+  (φ ≫ ψ = E.act (d : ↥Λ) ∧ ψ ≫ φ = E'.act (d : ↥Λ))
 
 theorem isIsogenyPair_iff_exists_via (d : ℕ) (E E' : FakeEllipticCurve Λ N S)
     (φ : E.A ⟶ E'.A) (ψ : E'.A ⟶ E.A) :
     IsIsogenyPair d E E' φ ψ ↔ ∃ (hφ : φ ≫ E'.f = E.f)
-      (hψ : ψ ≫ E.f = E'.f), IsIsogenyPairVia d E E' φ hφ ψ hψ := Iff.rfl
+      (hψ : ψ ≫ E.f = E'.f), IsIsogenyPairVia d E E' φ hφ ψ hψ :=
+  ⟨fun ⟨hd, hφ, hψ, h⟩ => ⟨hφ, hψ, hd, h⟩,
+    fun ⟨hφ, hψ, hd, h⟩ => ⟨hd, hφ, hψ, h⟩⟩
 
 theorem IsIsogenyPair.symm {d : ℕ} {E E' : FakeEllipticCurve Λ N S}
     {φ : E.A ⟶ E'.A} {ψ : E'.A ⟶ E.A}
     (h : IsIsogenyPair d E E' φ ψ) : IsIsogenyPair d E' E ψ φ := by
-  obtain ⟨hφ, hψ, hm, hm', ha, ha', hc⟩ := h
-  exact ⟨hψ, hφ, hm', hm, ha', ha, fun hd => (hc hd).symm⟩
+  obtain ⟨hd, hφ, hψ, hm, hm', ha, ha', hc⟩ := h
+  exact ⟨hd, hψ, hφ, hm', hm, ha', ha, hc.symm⟩
 
-/-- Two fake elliptic curves are `d`-isogenous if an isogeny pair exists. -/
+/-- Two fake elliptic curves are `d`-isogenous if a `d`-isogeny pair
+between them exists. -/
 def IsIsogeny (d : ℕ) (E E' : FakeEllipticCurve Λ N S) : Prop :=
   ∃ (φ : E.A ⟶ E'.A) (ψ : E'.A ⟶ E.A), IsIsogenyPair d E E' φ ψ
 
@@ -121,8 +136,8 @@ theorem IsIsogeny.symm {d : ℕ} {E E' : FakeEllipticCurve Λ N S}
 itself. -/
 theorem isIsogeny_one_refl (E : FakeEllipticCurve Λ N S) :
     IsIsogeny 1 E E := by
-  refine ⟨𝟙 E.A, 𝟙 E.A, Category.comp_id E.f, Category.comp_id E.f,
-    ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨𝟙 E.A, 𝟙 E.A, Nat.one_pos, Category.comp_id E.f,
+    Category.comp_id E.f, ?_, ?_, ?_, ?_, ?_⟩
   · intro T t P Q
     rw [mapPt_id, mapPt_id, mapPt_id]
   · intro T t P Q
@@ -131,14 +146,12 @@ theorem isIsogeny_one_refl (E : FakeEllipticCurve Λ N S) :
     rw [Category.id_comp, Category.comp_id]
   · intro x
     rw [Category.id_comp, Category.comp_id]
-  · intro hd
-    have hd' : (1 : ℍ[ℚ, a, b]) ∈ Λ := by simpa using hd
-    have hact : E.act ⟨(((1 : ℕ) : ℚ) : ℍ[ℚ, a, b]), hd⟩ = 𝟙 E.A :=
-      E.act_one hd'
-    rw [hact]
+  · rw [Nat.cast_one, E.act_one]
     exact ⟨Category.comp_id _, Category.comp_id _⟩
 
-/-- A morphism over the base preserves the level structure. -/
+/-- A morphism `φ : E.A ⟶ E'.A` over the base preserves the level structure
+if, over every test scheme, it maps each level point of `E`, a point that
+factors through `E.lev`, to a level point of `E'`. -/
 def PreservesLevel (E E' : FakeEllipticCurve Λ N S) (φ : E.A ⟶ E'.A)
     (hφ : φ ≫ E'.f = E.f) : Prop :=
   ∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
@@ -161,11 +174,14 @@ end FakeEllipticCurve
 
 variable {a b : ℚ}
 
-/-- An action of the order `Λ` on a scheme with a relative group law. -/
-structure LatticeAction (Λ : Submodule ℤ ℍ[ℚ, a, b]) {S : Type u}
+/-- An action of the subring `Λ` of `ℍ[ℚ, a, b]` on a scheme `A` over
+`Spec S` with a relative group law `L`: a unital, multiplicative and
+additive action of `Λ` by endomorphisms over the base that preserve the
+group law on points. -/
+structure LatticeAction (Λ : Subring ℍ[ℚ, a, b]) {S : Type u}
     [CommRing S] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S))
     (L : RelativeGroupLaw S f) : Type u where
-  /-- The endomorphism given by an element of the order. -/
+  /-- The endomorphism given by an element of `Λ`. -/
   act : ↥Λ → (A ⟶ A)
   /-- Each endomorphism is over the base. -/
   act_over : ∀ x : ↥Λ, act x ≫ f = f
@@ -174,11 +190,10 @@ structure LatticeAction (Λ : Submodule ℤ ℍ[ℚ, a, b]) {S : Type u}
     (P Q : SchemeHomOver t f),
     pushPt (act x) (act_over x) (L.mul t P Q) =
       L.mul t (pushPt (act x) (act_over x) P) (pushPt (act x) (act_over x) Q)
-  /-- The element `1` acts as the identity. -/
-  act_one : ∀ h : (1 : ℍ[ℚ, a, b]) ∈ Λ, act ⟨1, h⟩ = 𝟙 A
-  /-- The action is multiplicative in the order. -/
-  act_mul : ∀ (x y : ↥Λ) (h : (x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]) ∈ Λ),
-    act ⟨(x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]), h⟩ = act y ≫ act x
+  /-- The element `1` of `Λ` acts as the identity. -/
+  act_one : act 1 = 𝟙 A
+  /-- The action is multiplicative in `Λ`. -/
+  act_mul : ∀ x y : ↥Λ, act (x * y) = act y ≫ act x
   /-- The action is additive on points. -/
   act_add : ∀ (x y : ↥Λ) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of S)) (P : SchemeHomOver t f),
@@ -187,7 +202,7 @@ structure LatticeAction (Λ : Submodule ℤ ℍ[ℚ, a, b]) {S : Type u}
 
 namespace LatticeAction
 
-variable {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]}
+variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]}
 
 @[ext]
 theorem ext {S : Type u} [CommRing S] {A : Scheme.{u}}
@@ -200,7 +215,8 @@ theorem eq_iff_act {S : Type u} [CommRing S] {A : Scheme.{u}}
     (X Y : LatticeAction Λ f L) : X = Y ↔ X.act = Y.act :=
   ⟨fun h => by rw [h], fun h => ext h⟩
 
-/-- The lattice action underlying a fake elliptic curve. -/
+/-- The lattice action of `Λ` on the group law of a fake elliptic curve `E`
+given by the action `E.act` of `Λ` on `E`. -/
 def ofFakeEllipticCurve {N : ℕ} {S : Type u} [CommRing S]
     (E : FakeEllipticCurve Λ N S) : LatticeAction Λ E.f E.L where
   act := E.act
@@ -231,8 +247,10 @@ theorem comap_left_comp {S S' : Type u} [CommRing S] [CommRing S']
   have hwP : P.left ≫ f' = t' := Over.w P
   rw [Category.assoc, hg.w, ← Category.assoc, hwP]
 
-/-- A group law is the pullback of another along `g`, compatibly with the
-base map. -/
+/-- The group law `L'` on `A'` over `Spec S'` is the pullback of the group
+law `L` on `A` over `Spec S` along `g : A' ⟶ A` if `g`, the structure
+morphisms and `Spec φ` form a pullback square of schemes and `g` carries the
+product of two points for `L'` to the product of their images for `L`. -/
 def IsGroupPullback {S S' : Type u} [CommRing S] [CommRing S']
     (φ : S →+* S') {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of S)}
     (L : RelativeGroupLaw S f) {A' : Scheme.{u}}
@@ -260,15 +278,18 @@ theorem isGroupPullback_iff {S S' : Type u} [CommRing S] [CommRing S']
         (L'.mul t' P Q).left ≫ g =
           (L.mul (t' ≫ Spec.map (CommRingCat.ofHom φ))
             (Over.homMk (U := Over.mk (t' ≫ Spec.map
-              (CommRingCat.ofHom φ))) (V := Over.mk f) (P.left ≫ g) (comap_left_comp φ g hg P))
+              (CommRingCat.ofHom φ))) (V := Over.mk f) (P.left ≫ g)
+              (comap_left_comp φ g hg P))
             (Over.homMk (U := Over.mk (t' ≫ Spec.map
-              (CommRingCat.ofHom φ))) (V := Over.mk f) (Q.left ≫ g) (comap_left_comp φ g hg Q))).left :=
+              (CommRingCat.ofHom φ))) (V := Over.mk f) (Q.left ≫ g)
+              (comap_left_comp φ g hg Q))).left :=
   Iff.rfl
 
-/-- A scheme `E` over `R` represents the functor of lattice actions: the
-assignment `cl` is natural in the base ring and bijective. This is a
-structure of properties of `cl`, characterized field by field below. -/
-structure RepresentsLatticeActions (Λ : Submodule ℤ ℍ[ℚ, a, b])
+/-- A scheme `E` over `Spec R` represents the functor of lattice actions of
+`Λ` on pullbacks of the group law `L` via `cl`, which sends a lattice action
+on a pullback of `L` along `φ : R →+* R'` to a point of `E` over `Spec R'`,
+if `cl` is natural in the base ring, surjective and injective. -/
+structure RepresentsLatticeActions (Λ : Subring ℍ[ℚ, a, b])
     {R : Type u} [CommRing R] {A : Scheme.{u}}
     {f : A ⟶ Spec (CommRingCat.of R)} (L : RelativeGroupLaw R f)
     (E : Scheme.{u}) (πE : E ⟶ Spec (CommRingCat.of R))
@@ -307,7 +328,7 @@ namespace RepresentsLatticeActions
 
 variable {a b : ℚ}
 
-theorem cl_bijective {Λ : Submodule ℤ ℍ[ℚ, a, b]} {R : Type u} [CommRing R]
+theorem cl_bijective {Λ : Subring ℍ[ℚ, a, b]} {R : Type u} [CommRing R]
     {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     {L : RelativeGroupLaw R f} {E : Scheme.{u}}
     {πE : E ⟶ Spec (CommRingCat.of R)} {cl : ∀ (R' : Type u) [CommRing R']
@@ -327,10 +348,12 @@ end RepresentsLatticeActions
 
 namespace FakeEllipticCurve.IsogenyPair
 
-variable {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ}
+variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
 
-/-- The point-valued functor of isogeny pairs of exponent `r ^ d` between
-two fixed fake elliptic curves, pointed by a morphism `ξ` to the base. -/
+/-- The type of assignments that send each `r ^ d`-isogeny pair `(φ, φ')`
+with level-preserving `φ`, between pullbacks `E'` and `A'` of `E` and `A`
+along `S → T`, to a point of `X` over `Spec T`, where `ξ : X ⟶ Spec S` is
+the structure morphism of `X`. -/
 abbrev PtFamily (r d : ℕ) {S : Type} [CommRing S]
     (E A : FakeEllipticCurve Λ N S) {X : Scheme.{0}}
     (ξ : X ⟶ Spec (CommRingCat.of S)) : Type 1 :=
@@ -344,8 +367,10 @@ abbrev PtFamily (r d : ℕ) {S : Type} [CommRing S]
     FakeEllipticCurve.PreservesLevel E' A' φ hφ →
     SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap S T))) ξ
 
-/-- A point family represents isogeny pairs: it is invariant under
-isomorphism, natural in the base ring, surjective and faithful. -/
+/-- A point family represents isogeny pairs if it is invariant under
+isomorphisms of the curves that carry both maps of one pair to both maps of
+the other, natural in the base ring, surjective, and faithful on both maps
+of a pair. -/
 def RepresentsOn (r d : ℕ) {S : Type} [CommRing S]
     (E A : FakeEllipticCurve Λ N S) {X : Scheme.{0}}
     (ξ : X ⟶ Spec (CommRingCat.of S)) (pt : PtFamily r d E A ξ) : Prop :=
@@ -369,6 +394,7 @@ def RepresentsOn (r d : ℕ) {S : Type} [CommRing S]
     FakeEllipticCurve.IsoVia E' E'' iE hiE →
     FakeEllipticCurve.IsoVia A' A'' iA hiA → iE.hom ≫ gE'' = gE →
     iA.hom ≫ gA'' = gA → iE.hom ≫ ψ = φ ≫ iA.hom →
+    iA.hom ≫ ψ' = φ' ≫ iE.hom →
     pt T E' A' gE hgE gA hgA φ φ' hφ hp hl =
       pt T E'' A'' gE'' hgE'' gA'' hgA'' ψ ψ' hψ hq hm) ∧
   (∀ (T T' : Type) [CommRing T] [Algebra S T] [CommRing T']
@@ -381,9 +407,9 @@ def RepresentsOn (r d : ℕ) {S : Type} [CommRing S]
     (hp : FakeEllipticCurve.IsIsogenyPair (r ^ d) E' A' φ φ')
     (hl : FakeEllipticCurve.PreservesLevel E' A' φ hφ)
     (E'' A'' : FakeEllipticCurve Λ N T') (hE : E''.A ⟶ E'.A)
-    (hhE : FakeEllipticCurve.IsPullbackVia (f : T →+* T') E' E'' hE)
+    (_hhE : FakeEllipticCurve.IsPullbackVia (f : T →+* T') E' E'' hE)
     (hA : A''.A ⟶ A'.A)
-    (hhA : FakeEllipticCurve.IsPullbackVia (f : T →+* T') A' A'' hA)
+    (_hhA : FakeEllipticCurve.IsPullbackVia (f : T →+* T') A' A'' hA)
     (hgE'' : FakeEllipticCurve.IsPullbackVia (algebraMap S T') E E''
       (hE ≫ gE))
     (hgA'' : FakeEllipticCurve.IsPullbackVia (algebraMap S T') A A''
@@ -445,6 +471,7 @@ theorem representsOn_iff (r d : ℕ) {S : Type} [CommRing S]
         FakeEllipticCurve.IsoVia E' E'' iE hiE →
         FakeEllipticCurve.IsoVia A' A'' iA hiA → iE.hom ≫ gE'' = gE →
         iA.hom ≫ gA'' = gA → iE.hom ≫ ψ = φ ≫ iA.hom →
+        iA.hom ≫ ψ' = φ' ≫ iE.hom →
         pt T E' A' gE hgE gA hgA φ φ' hφ hp hl =
           pt T E'' A'' gE'' hgE'' gA'' hgA'' ψ ψ' hψ hq hm) ∧
       (∀ (T T' : Type) [CommRing T] [Algebra S T] [CommRing T']
@@ -457,9 +484,9 @@ theorem representsOn_iff (r d : ℕ) {S : Type} [CommRing S]
         (hp : FakeEllipticCurve.IsIsogenyPair (r ^ d) E' A' φ φ')
         (hl : FakeEllipticCurve.PreservesLevel E' A' φ hφ)
         (E'' A'' : FakeEllipticCurve Λ N T') (hE : E''.A ⟶ E'.A)
-        (hhE : FakeEllipticCurve.IsPullbackVia (f : T →+* T') E' E'' hE)
+        (_hhE : FakeEllipticCurve.IsPullbackVia (f : T →+* T') E' E'' hE)
         (hA : A''.A ⟶ A'.A)
-        (hhA : FakeEllipticCurve.IsPullbackVia (f : T →+* T') A' A'' hA)
+        (_hhA : FakeEllipticCurve.IsPullbackVia (f : T →+* T') A' A'' hA)
         (hgE'' : FakeEllipticCurve.IsPullbackVia (algebraMap S T') E E''
           (hE ≫ gE))
         (hgA'' : FakeEllipticCurve.IsPullbackVia (algebraMap S T') A A''
