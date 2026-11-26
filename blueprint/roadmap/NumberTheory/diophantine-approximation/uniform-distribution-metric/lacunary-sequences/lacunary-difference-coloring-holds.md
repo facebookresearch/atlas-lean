@@ -2,7 +2,7 @@
 
 For every lacunary sequence $a_0, a_1, \dots$ of positive integers (some $\varepsilon > 0$ has $a_{k+1} \ge (1 + \varepsilon) a_k$ for every $k$) there is a colouring of $\mathbb{N}$ with finitely many colours such that $b$ and $b + a_k$ have different colours for all $b$ and $k$.
 
-This proves [Erdős Problem 894 (chromatic number of lacunary Cayley graphs)](lacunary-difference-coloring.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 894 (chromatic number of lacunary Cayley graphs)](lacunary-difference-coloring.md), the statement recorded as a proposition, in the affirmative; the resolution is the published work cited under Sources.
 
 ## Sources
 

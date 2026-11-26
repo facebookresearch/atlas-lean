@@ -2,7 +2,7 @@
 
 For all reals $0 < a < b$ there is a natural number $n \ge 1$ with $a < \tau(n+1)/\tau(n) < b$, where $\tau(m)$ is the number of divisors of $m$: the ratios $\tau(n+1)/\tau(n)$ are dense in $(0, \infty)$.
 
-This proves [Erdős Problem 964 (ratios of consecutive divisor counts)](divisor-count-ratio-dense.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 964 (ratios of consecutive divisor counts)](divisor-count-ratio-dense.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Eberhard (2025), cited under Sources.
 
 ## Sources
 

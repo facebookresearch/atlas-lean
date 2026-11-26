@@ -2,7 +2,7 @@
 
 For every finite set $S$ of primes there are infinitely many natural numbers $n$ such that the exponent of every $p \in S$ in the prime factorization of $n!$ is even.
 
-This proves [Erdős Problem 646 (even prime exponents in n!)](factorial-even-exponents-infinite.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 646 (even prime exponents in n!)](factorial-even-exponents-infinite.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Berend (1997), cited under Sources.
 
 ## Sources
 

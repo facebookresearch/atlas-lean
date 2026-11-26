@@ -2,7 +2,7 @@
 
 There are infinitely many natural numbers $n$ with $P(n) > P(n + 1) > P(n + 2)$, where $P(m)$ is the largest prime factor of $m$ ($0$ if $m \le 1$).
 
-This proves [Erdős Problem 372 (descending largest prime factors of three consecutive integers)](infinitely-many-descending-largest-prime.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 372 (descending largest prime factors of three consecutive integers)](infinitely-many-descending-largest-prime.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Balog (2001), cited under Sources.
 
 ## Sources
 

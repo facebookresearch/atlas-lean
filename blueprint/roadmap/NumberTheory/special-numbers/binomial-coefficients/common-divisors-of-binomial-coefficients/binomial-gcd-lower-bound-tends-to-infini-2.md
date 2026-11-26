@@ -2,7 +2,7 @@
 
 There is $h : \mathbb{N} \to \mathbb{N}$ with $h(n) \to \infty$ such that $\gcd\bigl(\binom{n}{i}, \binom{n}{j}\bigr) \ge h(n)$ for all natural numbers $n, i, j$ with $2 \le i < j$ and $2j \le n$.
 
-This proves [Erdős Problem 698 (common divisors of binomial coefficients)](binomial-gcd-lower-bound-tends-to-infini.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 698 (common divisors of binomial coefficients)](binomial-gcd-lower-bound-tends-to-infini.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Bergman (2011), cited under Sources.
 
 ## Sources
 

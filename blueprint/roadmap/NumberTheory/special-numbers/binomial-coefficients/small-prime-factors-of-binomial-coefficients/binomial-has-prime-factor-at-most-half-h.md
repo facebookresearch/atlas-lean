@@ -2,7 +2,7 @@
 
 For all natural numbers $n$ and $k$ with $1 < k < n - 1$ and $(n, k) \ne (7, 3), (7, 4)$, the binomial coefficient $\binom{n}{k}$ has a prime factor $p$ with $2p \le n$.
 
-This proves [Erdős Problem 384 (small prime factors of binomial coefficients)](binomial-has-prime-factor-at-most-half.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 384 (small prime factors of binomial coefficients)](binomial-has-prime-factor-at-most-half.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Ecklund (1969), cited under Sources.
 
 ## Sources
 

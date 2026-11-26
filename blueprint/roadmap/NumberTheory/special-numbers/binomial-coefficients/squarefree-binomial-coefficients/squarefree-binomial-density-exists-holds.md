@@ -2,7 +2,7 @@
 
 For every $r$, the set of natural numbers $n$ such that $\binom{n}{k}$ is squarefree for at least $r$ values $1 \le k < n$ has a natural density.
 
-This proves [Erdős Problem 378, first question](squarefree-binomial-density-exists.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 378, first question](squarefree-binomial-density-exists.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Granville and Ramaré (1996), cited under Sources.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 For every natural number $s$ there are infinitely many $n \ge 2$ such that every binomial coefficient $\binom{n}{k}$ with $1 \le k < n$ is divisible by $p^s$ for some prime $p$ (depending on $k$).
 
-This proves [Erdős Problem 379 (prime-power divisors common to all binomial coefficients)](binomial-prime-power-exponent-unbounded.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 379 (prime-power divisors common to all binomial coefficients)](binomial-prime-power-exponent-unbounded.md), the statement recorded as a proposition, in the affirmative; the resolution is the one recorded in Erdős Problems, Problem #379.
 
 ## Sources
 

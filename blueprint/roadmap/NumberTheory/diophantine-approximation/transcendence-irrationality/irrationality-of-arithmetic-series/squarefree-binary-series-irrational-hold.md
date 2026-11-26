@@ -2,7 +2,7 @@
 
 The real number $\sum_{n \ge 1} \mu(n)^2 n/2^n$ is irrational, where $\mu$ is the Möbius function (so the sum runs over the squarefree $n$).
 
-This proves [Erdős Problem 259 (irrationality of the squarefree binary series)](squarefree-binary-series-irrational.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 259 (irrationality of the squarefree binary series)](squarefree-binary-series-irrational.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Chen and Ruzsa (1999), cited under Sources.
 
 ## Sources
 

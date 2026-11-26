@@ -2,7 +2,7 @@
 
 There is a real $C$ such that for every $n \ge 1$, $\sum_{1 \le k < \varphi(n)} (a_{k+1} - a_k)^2 \le C n^2/\varphi(n)$, where $a_1 < \dots < a_{\varphi(n)}$ are the integers $1 \le a < n$ coprime to $n$.
 
-This proves [Erdős Problem 220 (squared gaps between reduced residues)](reduced-residue-squared-gaps-bound.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 220 (squared gaps between reduced residues)](reduced-residue-squared-gaps-bound.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Montgomery and Vaughan (1986), cited under Sources.
 
 ## Sources
 

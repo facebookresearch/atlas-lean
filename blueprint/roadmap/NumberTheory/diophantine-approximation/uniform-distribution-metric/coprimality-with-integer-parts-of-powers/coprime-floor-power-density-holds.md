@@ -2,7 +2,7 @@
 
 For every real $\alpha > 0$ that is not an integer, the natural numbers $n \ge 1$ with $\gcd(n, \lfloor n^\alpha \rfloor) = 1$ have natural density $6/\pi^2$ (the proportion of them among $0, 1, \dots, b-1$ tends to $6/\pi^2$ as $b \to \infty$).
 
-This proves [Erdős Problem 1149 (density of n coprime to the integer part of a power)](coprime-floor-power-density.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 1149 (density of n coprime to the integer part of a power)](coprime-floor-power-density.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Bergelson and Richter (2017), cited under Sources.
 
 ## Sources
 

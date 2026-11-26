@@ -2,6 +2,8 @@
 
 It is not the case that for some real $\varepsilon > 0$, every sufficiently large natural number $n$ is $2^k + m$ for some $k \ge 0$ and positive integer $m$ with $\Omega(m) < \varepsilon \log\log m$, where $\Omega(m)$ is the number of prime factors of $m$ counted with multiplicity.
 
+This refutes [Erdős Problem 205, second question](eventually-representable-eps-log-log.md), the statement recorded as a proposition; the refutation is the one recorded in Erdős Problems, Problem #205.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #205, https://www.erdosproblems.com/205.

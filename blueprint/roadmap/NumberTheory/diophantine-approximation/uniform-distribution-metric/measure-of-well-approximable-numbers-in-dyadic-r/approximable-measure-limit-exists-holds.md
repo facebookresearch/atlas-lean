@@ -2,7 +2,7 @@
 
 For all reals $A > 0$ and $c > 1$, the Lebesgue measure of $S(N, A, c)$ converges as $N \to \infty$, where for a natural number $N$ and reals $A$ and $c$, $S(N, A, c)$ is the set of $\alpha \in (0, 1)$ with $|\alpha - x/y| < A/y^2$ for some coprime integers $x$ and $y$ with $N \le y \le cN$.
 
-This proves [Erdős Problem 1001 (limit measure of well-approximable numbers)](approximable-measure-limit-exists.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 1001 (limit measure of well-approximable numbers)](approximable-measure-limit-exists.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Kesten and Sós (1966), cited under Sources.
 
 ## Sources
 

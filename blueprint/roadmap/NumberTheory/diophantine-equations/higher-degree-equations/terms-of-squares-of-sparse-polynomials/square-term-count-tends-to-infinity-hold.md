@@ -2,7 +2,7 @@
 
 For every $M$ there is $K$ such that the square of every polynomial with rational coefficients and at least $K$ nonzero terms has at least $M$ nonzero terms.
 
-This proves [Erdős Problem 485 (terms of the square of a sparse polynomial)](square-term-count-tends-to-infinity.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 485 (terms of the square of a sparse polynomial)](square-term-count-tends-to-infinity.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Schinzel (1987), cited under Sources.
 
 ## Sources
 

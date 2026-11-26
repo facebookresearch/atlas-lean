@@ -2,7 +2,7 @@
 
 For every irrational $\alpha$ and all reals $0 \le u < v \le 1$: if there is $C$ with $\bigl|\#\{1 \le m \le n : \{\alpha m\} \in [u, v)\} - n(v - u)\bigr| \le C$ for every $n$, then $v - u = k\alpha + j$ for some integers $k$ and $j$; here $\{t\}$ is the fractional part of $t$.
 
-This proves [Erdős–Szüsz conjecture on intervals of bounded remainder](bounded-remainder-interval-length.md), the statement recorded as a proposition.
+This resolves [Erdős–Szüsz conjecture on intervals of bounded remainder](bounded-remainder-interval-length.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Kesten (1966), cited under Sources.
 
 ## Sources
 

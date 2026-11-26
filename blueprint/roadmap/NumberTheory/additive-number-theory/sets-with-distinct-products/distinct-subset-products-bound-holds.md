@@ -2,7 +2,7 @@
 
 For every real $\varepsilon > 0$ and all sufficiently large $n$, every set $A \subseteq \{1, \dots, n\}$ whose subsets have pairwise distinct products satisfies $|A| \le \pi(n) + \pi(\lfloor\sqrt n\rfloor) + \varepsilon \sqrt n/\log n$, where $\pi$ is the prime-counting function.
 
-This proves [Erdős Problem 795 (sets with distinct subset products)](distinct-subset-products-bound.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 795 (sets with distinct subset products)](distinct-subset-products-bound.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Raghavan (2025), cited under Sources.
 
 ## Sources
 

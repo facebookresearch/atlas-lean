@@ -2,7 +2,7 @@
 
 Every strictly increasing sequence $a_1 < a_2 < \cdots$ of positive integers with $\sum_k 1/a_k = 1$, other than Sylvester's sequence $a_k = u_k + 1$, has some $c < c_0$ with $a_n^{1/2^n} < c$ for infinitely many $n$ (so $\liminf_n a_n^{1/2^n} < c_0$), where $c_0 = \lim_n u_n^{1/2^n} = 1.264085\ldots$, where $u_1 = 1$, $u_{n+1} = u_n(u_n + 1)$.
 
-This proves [Erdős Problem 315 (growth of Egyptian expansions of one)](sylvester-extremal-liminf.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 315 (growth of Egyptian expansions of one)](sylvester-extremal-liminf.md), the statement recorded as a proposition, in the affirmative; the resolution is the published work cited under Sources.
 
 ## Sources
 

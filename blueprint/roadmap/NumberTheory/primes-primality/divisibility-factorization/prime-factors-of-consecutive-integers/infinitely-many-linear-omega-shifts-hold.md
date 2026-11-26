@@ -2,7 +2,7 @@
 
 There are a real $C$ and infinitely many natural numbers $n$ such that $\omega(n + k) \le C k$ for every $k \ge 1$, where $\omega(m)$ is the number of distinct prime factors of $m$.
 
-This proves [Erdős Problem 248 (few prime factors in all shifts)](infinitely-many-linear-omega-shifts.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 248 (few prime factors in all shifts)](infinitely-many-linear-omega-shifts.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Tao and Teräväinen (2025), cited under Sources.
 
 ## Sources
 

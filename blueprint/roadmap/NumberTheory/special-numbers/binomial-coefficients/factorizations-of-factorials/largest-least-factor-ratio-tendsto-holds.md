@@ -2,7 +2,7 @@
 
 $t(n)/n \to 1/e$ as $n \to \infty$, where for a natural number $n$, $t(n)$ is the largest $t$ such that $n! = a_1 \cdots a_n$ with $n$ natural numbers $a_i \ge t$.
 
-This proves [Erdős Problem 391, first question](largest-least-factor-ratio-tendsto.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 391, first question](largest-least-factor-ratio-tendsto.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Alexeev, Conway, Rosenfeld, Sutherland, Tao, Uhr and Ventullo (2025), cited under Sources.
 
 ## Sources
 

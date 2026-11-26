@@ -2,7 +2,7 @@
 
 For all natural numbers $n$, $a > 1$ and $b > 1$ with $F_n = a^b$, either $F_n = 8$ or $F_n = 144$, where $F_n$ is the $n$-th Fibonacci number: the only Fibonacci numbers that are perfect powers $a^b$ with $a, b > 1$ are $8$ and $144$.
 
-This proves [Perfect powers in the Fibonacci sequence, as a statement](fibonacci-perfect-powers.md), the statement recorded as a proposition.
+This resolves [Perfect powers in the Fibonacci sequence, as a statement](fibonacci-perfect-powers.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Bugeaud, Mignotte and Siksek (2006), cited under Sources.
 
 ## Sources
 

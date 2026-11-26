@@ -2,7 +2,7 @@
 
 For every $a \ge 1$ there is $b > a$ such that the reduced denominator of $\sum_{n=a}^{b+1} 1/n$ is smaller than the reduced denominator of $\sum_{n=a}^{b} 1/n$.
 
-This proves [Erdős Problem 290 (decreasing denominators of harmonic blocks)](harmonic-block-denominator-drops.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 290 (decreasing denominators of harmonic blocks)](harmonic-block-denominator-drops.md), the statement recorded as a proposition, in the affirmative; the resolution is due to van Doorn (2024), cited under Sources.
 
 ## Sources
 

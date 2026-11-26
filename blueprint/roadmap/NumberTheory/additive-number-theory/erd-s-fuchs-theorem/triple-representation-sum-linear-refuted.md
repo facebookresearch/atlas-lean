@@ -2,6 +2,8 @@
 
 It is not the case that there are a set $A$ of natural numbers and reals $c > 0$ and $C$ with $\bigl|\sum_{n=0}^{N} r_3(n) - cN\bigr| \le C$ for every $N$, where $r_3(n)$ is the number of ordered triples of elements of $A$ with sum $n$.
 
+This refutes [Erdős Problem 764 (three-fold Erdős–Fuchs question)](triple-representation-sum-linear.md), the statement recorded as a proposition; the refutation is the published work cited under Sources.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #764, https://www.erdosproblems.com/764.

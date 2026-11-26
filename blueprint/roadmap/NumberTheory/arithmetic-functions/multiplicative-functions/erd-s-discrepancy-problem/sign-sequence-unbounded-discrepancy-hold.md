@@ -2,7 +2,7 @@
 
 For every $f : \mathbb{N} \to \{-1, 1\}$ and every real $C > 0$ there are integers $d, m \ge 1$ with $\bigl|\sum_{k=1}^{m} f(kd)\bigr| > C$.
 
-This proves [Erdős Problem 67 (the Erdős discrepancy problem)](sign-sequence-unbounded-discrepancy.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 67 (the Erdős discrepancy problem)](sign-sequence-unbounded-discrepancy.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Tao (2016), cited under Sources.
 
 ## Sources
 

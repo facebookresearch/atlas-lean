@@ -2,7 +2,7 @@
 
 The set of $n$ with $\varphi(n) > \varphi(n - \varphi(n))$ has natural density $1$, where $\varphi$ is Euler's totient function.
 
-This proves [Erdős Problem 1064, first part](totient-exceeds-almost-all.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 1064, first part](totient-exceeds-almost-all.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Luca and Pomerance (2002), cited under Sources.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 For all sufficiently large $N$, the positive integers that are sums of distinct unit fractions $1/n$ with $n \in \{1, \dots, N\}$ form an initial segment $\{1, \dots, m\}$.
 
-This proves [Erdős Problem 308, second question](representable-integers-initial-segment.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 308, second question](representable-integers-initial-segment.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Croot III (1999), cited under Sources.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 For every $\delta > 0$ and every $\varepsilon > 0$ there is $X_0$ such that for every $X \ge X_0$, every finite set of points in a closed disc of radius $X$ whose pairwise distances are all at distance at least $\delta$ from the nearest integer has fewer than $X^{1/2 + \varepsilon}$ points.
 
-This proves [Erdős Problem 465, second question](near-integer-distance-points-sqrt-bound.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 465, second question](near-integer-distance-points-sqrt-bound.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Konyagin (2001), cited under Sources.
 
 ## Sources
 

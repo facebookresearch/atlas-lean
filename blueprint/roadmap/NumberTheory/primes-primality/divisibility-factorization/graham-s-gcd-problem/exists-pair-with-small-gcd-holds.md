@@ -2,7 +2,7 @@
 
 Every nonempty finite set $A$ of positive integers contains $a$ and $b$ (possibly equal) with $\gcd(a, b)\,|A| \le a$.
 
-This proves [Erdős Problem 402 (Graham's gcd problem)](exists-pair-with-small-gcd.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 402 (Graham's gcd problem)](exists-pair-with-small-gcd.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Balasubramanian and Soundararajan (1996), cited under Sources.
 
 ## Sources
 

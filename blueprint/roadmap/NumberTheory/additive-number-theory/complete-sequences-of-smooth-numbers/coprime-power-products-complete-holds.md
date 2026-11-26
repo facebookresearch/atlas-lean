@@ -2,7 +2,7 @@
 
 For all coprime natural numbers $a, b \ge 2$, every sufficiently large natural number is a sum of distinct integers of the form $a^k b^l$ with $k, l \ge 0$.
 
-This proves [Erdős Problem 246 (completeness of the products a^k b^l)](coprime-power-products-complete.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 246 (completeness of the products a^k b^l)](coprime-power-products-complete.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Birch (1959), cited under Sources.
 
 ## Sources
 

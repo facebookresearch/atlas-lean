@@ -2,7 +2,7 @@
 
 For infinitely many natural numbers $N$, $|B_N| + \operatorname{loc} N \le |C_N| + 2$; here for a natural number $N$, $B_N$ is the set of integers $a \in \{1, \dots, N\}$ with $2a^2 \le N$, or with $a$ even and $a^2 \le 2N$: the integers in $[1, (N/2)^{1/2}]$ together with the even integers up to $(2N)^{1/2}$, $|C_N|$ is the largest size of a set $C$ with $B_N \subseteq C \subseteq \{1, \dots, N\}$ and $\operatorname{lcm}(a, b) \le N$ for all $a, b \in C$, and for a real $x$, $\operatorname{loc} x$ is the least $r$ such that the $r$-fold iterated natural logarithm of $x$ lies in $[0, 1)$ ($0$ if there is none).
 
-This proves [Chen–Dai bound for Erdős Problem 441, as a statement](erdos-construction-excess-frequently.md), the statement recorded as a proposition.
+This resolves [Chen–Dai bound for Erdős Problem 441, as a statement](erdos-construction-excess-frequently.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Chen and Dai (2007), cited under Sources.
 
 ## Sources
 

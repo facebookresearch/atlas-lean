@@ -2,7 +2,7 @@
 
 For all natural numbers $n$ and $k$ with $k \ge 2$ and $2k \le n$, some $i < k$ has $n - i \nmid \binom{n}{k}$.
 
-This proves [Some factor fails to divide the binomial coefficient, as a statement](exists-exception.md), the statement recorded as a proposition.
+This resolves [Some factor fails to divide the binomial coefficient, as a statement](exists-exception.md), the statement recorded as a proposition, in the affirmative; the resolution is the one recorded in Erdős Problems, Problem #1063.
 
 ## Sources
 

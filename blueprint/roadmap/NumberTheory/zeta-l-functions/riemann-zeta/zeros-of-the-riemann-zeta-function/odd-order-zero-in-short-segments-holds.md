@@ -2,7 +2,7 @@
 
 For every real $\varepsilon > 0$ there is $T_0$ such that for every $T > T_0$ some $t$ with $T < t \le T + T^{1/4 + \varepsilon}$ is the ordinate of a zero of odd order of the Riemann zeta function on the critical line (the order of vanishing of $\zeta$ at $1/2 + it$ is odd).
 
-This proves [First Hardy–Littlewood zeta function conjecture](odd-order-zero-in-short-segments.md), the statement recorded as a proposition.
+This resolves [First Hardy–Littlewood zeta function conjecture](odd-order-zero-in-short-segments.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Hardy and Littlewood (1916), cited under Sources.
 
 ## Sources
 

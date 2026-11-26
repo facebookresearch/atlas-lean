@@ -2,7 +2,7 @@
 
 $F(N)/\log N \to 1$ as $N \to \infty$, where $F(N)$ is the number of positive integers that are sums of distinct unit fractions $1/n$ with $n \in \{1, \dots, N\}$.
 
-This proves [Erdős Problem 309, first question](representable-count-asymptotic.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 309, first question](representable-count-asymptotic.md), the statement recorded as a proposition, in the affirmative; the resolution is the published work cited under Sources.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 There is a constant $C$ such that for every $n$, the equation $n = 2^a + 3^b + 2^c 3^d$ has at most $C$ solutions $(a, b, c, d)$ in natural numbers.
 
-This proves [Erdős Problem 407 (representations n = 2^a + 3^b + 2^c 3^d)](two-three-representation-count-bounded.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 407 (representations n = 2^a + 3^b + 2^c 3^d)](two-three-representation-count-bounded.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Evertse, Győry, Stewart and Tijdeman (1986), cited under Sources.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 Every set $A$ of positive integers with positive upper density (some $\delta > 0$ has $|A \cap \{1, \dots, N\}| \ge \delta N$ for infinitely many $N$) contains a finite set $S$ with $\sum_{n \in S} 1/n = 1$.
 
-This proves [Erdős Problem 298 (unit sums in sets of positive density)](positive-upper-density-has-unit-sum.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 298 (unit sums in sets of positive density)](positive-upper-density-has-unit-sum.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Bloom (2021), cited under Sources.
 
 ## Sources
 

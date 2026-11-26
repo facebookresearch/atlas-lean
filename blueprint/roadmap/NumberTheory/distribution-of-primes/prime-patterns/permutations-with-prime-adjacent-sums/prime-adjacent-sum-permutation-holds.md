@@ -2,7 +2,7 @@
 
 There is a permutation $a_0, a_1, \dots$ of the positive integers (a bijection from $\mathbb{N}$ onto the positive integers) such that $a_k + a_{k+1}$ is prime for every $k$.
 
-This proves [Erdős Problem 473 (permutations of the positive integers with prime adjacent sums)](prime-adjacent-sum-permutation.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 473 (permutations of the positive integers with prime adjacent sums)](prime-adjacent-sum-permutation.md), the statement recorded as a proposition, in the affirmative; the resolution is the one recorded in Erdős Problems, Problem #473.
 
 ## Sources
 

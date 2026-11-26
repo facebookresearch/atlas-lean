@@ -2,7 +2,7 @@
 
 For every colouring of the positive squares with two colours, every sufficiently large integer is a sum of distinct squares of one colour.
 
-This proves [Erdős Problem 843 (Burr–Erdős question on Ramsey completeness of the squares)](squares-ramsey-two-complete.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 843 (Burr–Erdős question on Ramsey completeness of the squares)](squares-ramsey-two-complete.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Conlon, Fox and Pham (2021), cited under Sources.
 
 ## Sources
 

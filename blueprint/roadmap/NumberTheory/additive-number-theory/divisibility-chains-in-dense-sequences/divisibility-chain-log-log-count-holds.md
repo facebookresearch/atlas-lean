@@ -6,7 +6,7 @@ $$\limsup_{x \to \infty} \frac{\#\{i < x : a_{n_i} < x\}}{\log\log x} \ge \limsu
 
 the limits superior taken over integers $x$ in the extended reals.
 
-This proves [Erdős Problem 1217 (dense divisibility chains)](divisibility-chain-log-log-count.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 1217 (dense divisibility chains)](divisibility-chain-log-log-count.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Alexeev, Barreto, Li, Lichtman, Price, Shah, Tang and Tao (2026), cited under Sources.
 
 ## Sources
 

@@ -6,7 +6,7 @@ $$\frac1X \sum_{n=1}^{X} \pi_A(n + h_1) \cdots \pi_A(n + h_k) \to 0 \quad (X \to
 
 where for a set $A$ of integers at least $2$ and a natural number $n$, $\pi_A(n) = (-1)^{\#\{a \in A : a \mid n\}}$.
 
-This proves [AimPL question on Liouville-like functions with vanishing correlations](exists-coprime-set-with-vanishing-correl.md), the statement recorded as a proposition.
+This resolves [AimPL question on Liouville-like functions with vanishing correlations](exists-coprime-set-with-vanishing-correl.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Klurman, Mangerel and Teräväinen (2026), cited under Sources.
 
 ## Sources
 

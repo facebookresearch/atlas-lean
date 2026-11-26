@@ -2,7 +2,7 @@
 
 There are a real $C$ and a Ramsey $2$-complete set $A$ of positive integers with $|A \cap \{1, \dots, N\}| \le C(\log N)^2$ for every $N \ge 2$, where a set $A$ of natural numbers is Ramsey $2$-complete when for every colouring of $A$ with two colours, every sufficiently large integer is the sum of a finite set of distinct elements of $A$ of one colour.
 
-This proves [Erdős Problem 54 (sparse Ramsey complete sets)](sparse-ramsey-two-complete-exists.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 54 (sparse Ramsey complete sets)](sparse-ramsey-two-complete-exists.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Conlon, Fox and Pham (2021), cited under Sources.
 
 ## Sources
 

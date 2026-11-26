@@ -2,7 +2,7 @@
 
 For every colouring of the positive integers with finitely many colours there are distinct positive integers $a, b, c$ of the same colour with $1/a = 1/b + 1/c$.
 
-This proves [Erdős Problem 303 (monochromatic solutions of 1/a = 1/b + 1/c)](monochromatic-unit-fraction-triple.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 303 (monochromatic solutions of 1/a = 1/b + 1/c)](monochromatic-unit-fraction-triple.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Brown and Rödl (1991), cited under Sources.
 
 ## Sources
 

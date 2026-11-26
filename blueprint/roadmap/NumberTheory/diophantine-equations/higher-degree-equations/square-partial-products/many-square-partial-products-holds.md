@@ -2,7 +2,7 @@
 
 For every real $\varepsilon > 0$ and all sufficiently large $x$ there are integers $1 \le a_1 < \dots < a_k \le x$ with more than $x^{1-\varepsilon}$ partial products $a_1 \cdots a_j$ that are perfect squares.
 
-This proves [Erdős Problem 437 (square partial products)](many-square-partial-products.md), the statement recorded as a proposition.
+This resolves [Erdős Problem 437 (square partial products)](many-square-partial-products.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Bui, Pratt and Zaharescu (2024), cited under Sources.
 
 ## Sources
 

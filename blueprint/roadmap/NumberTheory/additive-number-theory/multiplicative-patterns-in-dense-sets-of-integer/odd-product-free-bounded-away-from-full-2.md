@@ -2,7 +2,7 @@
 
 For every $k \ge 2$ there is $c > 0$ with $F_{2k+1}(N) \le (1 - c)N$ for all sufficiently large $N$, where $F_k(N)$ is the largest size of a set $A \subseteq \{1, \dots, N\}$ such that no product of $k$ distinct elements of $A$ is a perfect square.
 
-This proves [Tao's bound for sets with no square product of an odd number of elements, as a statement](odd-product-free-bounded-away-from-full.md), the statement recorded as a proposition.
+This resolves [Tao's bound for sets with no square product of an odd number of elements, as a statement](odd-product-free-bounded-away-from-full.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Tao (2024), cited under Sources.
 
 ## Sources
 
