@@ -1,7 +1,8 @@
 # Ehrhart numerator of the six-dimensional counterexample simplex
 
 The full-dimensional
-weighted simplex with weights $(1,1,1,1,1,3)$ has Ehrhart numerator
+[weighted simplex](../weighted-projective-space-simplices/weighted-simplex.md) with weights
+$(1,1,1,1,1,3)$ has Ehrhart numerator
 $1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$.
 
 ## Sources

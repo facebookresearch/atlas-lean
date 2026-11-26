@@ -401,11 +401,11 @@ Ehrhart unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122
 Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer Decomposition Property and
 Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5. -/
 public theorem hibiWeightedSimplex_hStar :
-    PowerSeries.mk (fun n => (LatticePointEnumerator.latticeEnumerator 6
-      (weightedSimplex ![1, 1, 1, 1, 1, 3]) n : ℤ)) * (1 - PowerSeries.X) ^ 7 =
-        ((1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
-          2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6 : Polynomial ℤ) :
-          PowerSeries ℤ) := by
+    IsHStarPolynomial (weightedSimplex ![1, 1, 1, 1, 1, 3])
+      (1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
+        2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6) := by
+  unfold IsHStarPolynomial
+  simp only [ehrhart_eq_latticeEnumerator, Fintype.card_fin]
   let G : PowerSeries ℤ := PowerSeries.mk fun n => ((6 + n).choose 6 : ℤ)
   have hG : G * (1 - PowerSeries.X) ^ 7 = 1 :=
     PowerSeries.mk_add_choose_mul_one_sub_pow_eq_one ℤ 6
@@ -502,8 +502,7 @@ public theorem hibiSymmetricUnimodal_refuted : ¬ hibiSymmetricUnimodal := by
   let h : Polynomial ℤ := 1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
     2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6
   have hStar : IsHStarPolynomial (latticePolytope S) h := by
-    unfold IsHStarPolynomial
-    simp only [ehrhart_eq_latticeEnumerator, Fintype.card_fin, hS]
+    rw [hS]
     exact hibiWeightedSimplex_hStar
   have hSymm : ∀ i ≤ 6, h.coeff i = h.coeff (6 - i) := by
     intro i hi
