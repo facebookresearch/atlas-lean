@@ -12,11 +12,18 @@ public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.Group.Indicator
 public import Mathlib.Algebra.Group.Nat.Defs
 public import Mathlib.Order.Interval.Set.Defs
+import Batteries.Data.Nat.Bitwise.Lemmas
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Nat.Find
+import Mathlib.Data.Nat.Order.Lemmas
 import Mathlib.Order.MinMax
 import MathlibExt.Data.Nat.DyadicBlock
 
-/-! # The NS property and indicator functions of upper intervals -/
+/-! # The NS property of chocolate-bar games
+
+This module characterizes upper-interval indicators with the NS property and proves
+that clamping coordinates by NS functions preserves the set of nim-sums below a given width.
+-/
 
 namespace MetaMathlibExt
 
@@ -33,6 +40,19 @@ Article G3, Definition 11 (text of arXiv:2207.09134v1, NS property in Section 2)
 public def HasNSProperty (h : ℕ → ℕ) : Prop :=
   Monotone h ∧ ∀ z z' i : ℕ, 0 < i → z / 2 ^ i = z' / 2 ^ i →
     h z / 2 ^ (i - 1) = h z' / 2 ^ (i - 1)
+
+/-- **Quotients of a truncated NS function by powers of two.** Let $h : \mathbb{N} \to \mathbb{N}$
+have the NS property and let $z, z', k \in \mathbb{N}$ with $k \ge 1$ and
+$\lfloor z' / 2^k \rfloor = \lfloor z / 2^k \rfloor$. Then for every $y \in \mathbb{N}$,
+$\lfloor \min(h(z'), y) / 2^{k-1} \rfloor = \lfloor \min(h(z), y) / 2^{k-1} \rfloor$.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 2 (ii) (`integers-2025-G3-lem-2`). -/
+public theorem HasNSProperty.min_div_two_pow_eq {h : ℕ → ℕ} (hh : HasNSProperty h)
+    {z z' k : ℕ} (hk : 0 < k) (hz : z' / 2 ^ k = z / 2 ^ k) (y : ℕ) :
+    min (h z') y / 2 ^ (k - 1) = min (h z) y / 2 ^ (k - 1) :=
+  min_div_two_pow_eq_of_div_two_pow_eq (hh.2 z' z k hk hz) y
 
 /-- **Constant functions have the NS property.** For every natural number $c$, the constant
 function $\mathbb{N} \to \mathbb{N}$ with value $c$ has the NS property.
@@ -124,6 +144,77 @@ public theorem indicator_Ici_even_iff_hasNSProperty {f : ℕ → ℕ} (hf : Mono
       · have hne := Nat.find_min hone (show z < m by omega)
         have := hle z
         omega
+
+namespace image_foldl_xor_eq_image_min
+
+-- At the highest bit where a and b differ, the masks agree from that bit upwards.
+private theorem xor_lt_of_dyadic_agreement {g : ℕ → ℕ}
+    (hg : ∀ a b k, a / 2 ^ (k + 1) = b / 2 ^ (k + 1) → g a / 2 ^ k = g b / 2 ^ k)
+    {a b : ℕ} (hab : a < b) : g b ^^^ (g a ^^^ a) < b := by
+  obtain ⟨k, hne, heq⟩ := Nat.exists_not_and_succ_of_not_zero_of_exists
+    (p := fun k ↦ a / 2 ^ k = b / 2 ^ k) (by simpa using hab.ne)
+    ⟨b, by rw [Nat.div_eq_of_lt (hab.trans Nat.lt_two_pow_self),
+      Nat.div_eq_of_lt Nat.lt_two_pow_self]⟩
+  apply Nat.lt_of_div_lt_div (c := 2 ^ k)
+  simpa only [Nat.xor_div_two_pow, hg a b k heq, Nat.xor_xor_cancel_left] using
+    (Nat.lt_of_le_of_ne (Nat.div_le_div_right hab.le) hne)
+
+end image_foldl_xor_eq_image_min
+
+/-- **Nim-sum sets under clamping by functions with the NS property.** Let $m \in \mathbb{N}$,
+let $f_0, \dots, f_{m-1} : \mathbb{N} \to \mathbb{N}$ have the NS property, and let
+$x_0, \dots, x_{m-1}, z \in \mathbb{N}$ satisfy $x_t \le f_t(z)$ for every $t < m$. Then
+$$
+\{x_0 \oplus \cdots \oplus x_{m-1} \oplus w : w < z\} =
+\{\min(x_0, f_0(w)) \oplus \cdots \oplus \min(x_{m-1}, f_{m-1}(w)) \oplus w : w < z\},
+$$
+where $\oplus$ denotes nim-sum (bitwise exclusive or).
+
+The printed left-hand nim-sum carries a stray index $j \ne i$ with $i$ unbound; it is read as the
+full nim-sum, as in Lemma 5 (the case of two functions), which the proof generalises.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 6 (`integers-2025-G3-lem-6`). -/
+public theorem image_foldl_xor_eq_image_min {m : ℕ} {f : Fin m → ℕ → ℕ}
+    (hf : ∀ t, HasNSProperty (f t)) {x : Fin m → ℕ} {z : ℕ} (hx : ∀ t, x t ≤ f t z) :
+    {c | ∃ w < z, c = (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ w} =
+      {c | ∃ w < z, c = (List.ofFn fun t ↦ min (x t) (f t w)).foldl (· ^^^ ·) 0 ^^^ w} := by
+  let g (w : ℕ) := (List.ofFn fun t ↦ min (x t) (f t w)).foldl (· ^^^ ·) 0
+  have gz : g z = (List.ofFn x).foldl (· ^^^ ·) 0 := by simp [g, min_eq_left (hx _)]
+  have hlt {a b : ℕ} (hab : a < b) : g b ^^^ (g a ^^^ a) < b := by
+    refine image_foldl_xor_eq_image_min.xor_lt_of_dyadic_agreement ?_ hab
+    intro u v k huv
+    have hdiv (l : List ℕ) : l.foldl (· ^^^ ·) 0 / 2 ^ k =
+        (l.map (· / 2 ^ k)).foldl (· ^^^ ·) 0 := by
+      simpa only [Nat.zero_div] using
+        (List.foldl_map_hom (l := l) (a := 0) (g := (· / 2 ^ k))
+          (f := (· ^^^ ·)) (f' := (· ^^^ ·)) fun _ _ ↦ Nat.xor_div_two_pow.symm).symm
+    simp only [g, hdiv, List.map_ofFn]
+    congr 2
+    funext t
+    have ht := (hf t).2 u v (k + 1) (Nat.zero_lt_succ _) huv
+    simpa [Function.comp_def, min_comm (x t)] using
+      min_div_two_pow_eq_of_div_two_pow_eq (k := k) (by simpa using ht) (x t)
+  -- Removing the mask at z sends each clamped nim-sum to a width below z.
+  let perm (w : Fin z) : Fin z := ⟨g z ^^^ (g w ^^^ w), hlt w.isLt⟩
+  have hinj : Function.Injective perm := by
+    intro u v h
+    have he : g u ^^^ u.val = g v ^^^ v.val := Nat.xor_right_injective (congrArg Fin.val h)
+    apply Fin.ext
+    rcases lt_trichotomy u.val v.val with huv | huv | hvu
+    · simpa [he] using hlt huv
+    · exact huv
+    · simpa [← he] using hlt hvu
+  rw [← gz]
+  ext c
+  change (∃ w < z, c = g z ^^^ w) ↔ ∃ w < z, c = g w ^^^ w
+  constructor
+  · rintro ⟨w, hw, rfl⟩
+    obtain ⟨v, hv⟩ := Finite.surjective_of_injective hinj (⟨w, hw⟩ : Fin z)
+    exact ⟨v, v.isLt, by simpa [perm] using congrArg (fun i : Fin z ↦ g z ^^^ i.val) hv.symm⟩
+  · rintro ⟨w, hw, rfl⟩
+    exact ⟨perm ⟨w, hw⟩, (perm ⟨w, hw⟩).isLt, by simp [perm]⟩
 
 end
 
