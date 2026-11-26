@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.PrimeFin
-public import MathlibExt.NumberTheory.Goormaghtigh
+public import MathlibExt.NumberTheory.GoormaghtighPrimes
 
 namespace MetaMathlibExt
 
@@ -63,24 +63,6 @@ public theorem_wanted goormaghtigh_prime_lt_ten_pow_seven_hundred
     (hn : 3 ≤ n) (hpx : p = ∑ i ∈ Finset.range m, x ^ i)
     (hpy : p = ∑ i ∈ Finset.range n, y ^ i) :
     p = 31 ∨ p = 8191
-
-/-- **Under abc, there are only finitely many Goormaghtigh primes.** Assume the abc conjecture in
-the following form: for every real $\varepsilon > 0$, there are only finitely many triples
-$(a, b, c)$ of positive integers with $a + b = c$, $\gcd(a, b) = 1$ and
-$\operatorname{rad}(abc)^{1 + \varepsilon} \le c$, where $\operatorname{rad}(k)$ is the product of
-the distinct primes dividing $k$. Then there are only finitely many primes $p$ for which there
-exist natural numbers $x, y, m, n$ with $2 \le x < y$ and $n \ge 3$ such that
-
-$$p = \sum_{i=0}^{m-1} x^i = \sum_{i=0}^{n-1} y^i.$$
-
-Source: Jon Grantham, *No New Goormaghtigh Primes up to 10^700*, INTEGERS 24 (2024),
-Article A98, Corollary 1 (`integers-2024-A98-cor-1`). -/
-public theorem_wanted goormaghtigh_primes_finite_of_abc
-    (habc : ∀ ε : ℝ, 0 < ε →
-      {t : ℕ × ℕ × ℕ | 0 < t.1 ∧ 0 < t.2.1 ∧ t.1 + t.2.1 = t.2.2 ∧ Nat.Coprime t.1 t.2.1 ∧
-        ((∏ q ∈ (t.1 * t.2.1 * t.2.2).primeFactors, (q : ℝ)) ^ (1 + ε) ≤ (t.2.2 : ℝ))}.Finite) :
-    {p : ℕ | p.Prime ∧ ∃ x y m n : ℕ, 2 ≤ x ∧ x < y ∧ 3 ≤ n ∧
-      p = ∑ i ∈ Finset.range m, x ^ i ∧ p = ∑ i ∈ Finset.range n, y ^ i}.Finite
 
 end
 

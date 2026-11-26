@@ -1,0 +1,225 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.CStarAlgebra.ContinuousMap
+public import Mathlib.Topology.UnitInterval
+
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.Hom
+import Mathlib.Topology.Path
+
+/-!
+# Point-norm homotopies of nonunital star-algebra homomorphisms
+
+A homotopy is one nonunital star-algebra homomorphism into the algebra of
+continuous paths, with its two endpoint actions fixed. Continuity of that
+homomorphism is automatic for complex C-star algebras and is therefore not
+repeated as structure data.
+-/
+
+@[expose] public section
+
+open scoped CStarAlgebra
+
+universe uA uB uC uD
+
+namespace NonUnitalStarAlgHom
+
+variable {A : Type uA} {B : Type uB} {C : Type uC} {D : Type uD}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable [NonUnitalCStarAlgebra C] [NonUnitalCStarAlgebra D]
+
+/-- Point-norm homotopy through nonunital star-algebra homomorphisms. -/
+def Homotopic (φ ψ : A →⋆ₙₐ[ℂ] B) : Prop :=
+  ∃ F : A →⋆ₙₐ[ℂ] C(unitInterval, B),
+    (∀ a, F a 0 = φ a) ∧ ∀ a, F a 1 = ψ a
+
+namespace Homotopic
+
+/-- A homomorphism as a constant homomorphism-valued path. -/
+private def constantPathHom (φ : A →⋆ₙₐ[ℂ] B) :
+    A →⋆ₙₐ[ℂ] C(unitInterval, B) where
+  toFun a := ContinuousMap.const unitInterval (φ a)
+  map_zero' := by ext; simp
+  map_add' _ _ := by ext; simp
+  map_mul' _ _ := by ext; simp
+  map_smul' _ _ := by ext; simp
+  map_star' a := by
+    ext t
+    exact map_star φ a
+
+/-- The path supplied by a homotopy at one coefficient. -/
+private def coefficientPath
+    {φ ψ : A →⋆ₙₐ[ℂ] B}
+    (F : A →⋆ₙₐ[ℂ] C(unitInterval, B))
+    (h0 : ∀ a, F a 0 = φ a) (h1 : ∀ a, F a 1 = ψ a) (a : A) :
+    Path (φ a) (ψ a) where
+  toContinuousMap := F a
+  source' := h0 a
+  target' := h1 a
+
+@[simp]
+private theorem coefficientPath_apply
+    {φ ψ : A →⋆ₙₐ[ℂ] B}
+    (F : A →⋆ₙₐ[ℂ] C(unitInterval, B))
+    (h0 : ∀ a, F a 0 = φ a) (h1 : ∀ a, F a 1 = ψ a)
+    (a : A) (t : unitInterval) :
+    coefficientPath F h0 h1 a t = F a t :=
+  rfl
+
+/-- Every homomorphism is homotopic to itself. -/
+theorem refl (φ : A →⋆ₙₐ[ℂ] B) : φ.Homotopic φ :=
+  ⟨constantPathHom φ, fun _ ↦ rfl, fun _ ↦ rfl⟩
+
+/-- Reverse the path belonging to a homotopy. -/
+private def reversePathHom
+    {φ ψ : A →⋆ₙₐ[ℂ] B}
+    (F : A →⋆ₙₐ[ℂ] C(unitInterval, B))
+    (h0 : ∀ a, F a 0 = φ a) (h1 : ∀ a, F a 1 = ψ a) :
+    A →⋆ₙₐ[ℂ] C(unitInterval, B) where
+  toFun a := (coefficientPath F h0 h1 a).symm.toContinuousMap
+  map_zero' := by
+    ext t
+    simp [coefficientPath]
+  map_add' a b := by
+    ext t
+    simp [coefficientPath]
+  map_mul' a b := by
+    ext t
+    simp [coefficientPath]
+  map_smul' z a := by
+    ext t
+    simp [coefficientPath]
+  map_star' a := by
+    ext t
+    change (F (star a)) (unitInterval.symm t) =
+      star ((F a) (unitInterval.symm t))
+    rw [map_star F a]
+    rfl
+
+/-- Homotopy is symmetric. -/
+theorem symm {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ) :
+    ψ.Homotopic φ := by
+  obtain ⟨F, h0, h1⟩ := h
+  refine ⟨reversePathHom F h0 h1, ?_, ?_⟩
+  · intro a
+    exact Path.source (coefficientPath F h0 h1 a).symm
+  · intro a
+    exact Path.target (coefficientPath F h0 h1 a).symm
+
+/-- Concatenate two compatible homomorphism-valued paths. -/
+private noncomputable def transPathHom
+    {φ ψ χ : A →⋆ₙₐ[ℂ] B}
+    (F : A →⋆ₙₐ[ℂ] C(unitInterval, B))
+    (hF0 : ∀ a, F a 0 = φ a) (hF1 : ∀ a, F a 1 = ψ a)
+    (K : A →⋆ₙₐ[ℂ] C(unitInterval, B))
+    (hK0 : ∀ a, K a 0 = ψ a) (hK1 : ∀ a, K a 1 = χ a) :
+    A →⋆ₙₐ[ℂ] C(unitInterval, B) where
+  toFun a :=
+    ((coefficientPath F hF0 hF1 a).trans
+      (coefficientPath K hK0 hK1 a)).toContinuousMap
+  map_zero' := by
+    ext t
+    simp [Path.trans_apply, coefficientPath]
+  map_add' a b := by
+    ext t
+    simp [Path.trans_apply, coefficientPath]
+    split_ifs <;> rfl
+  map_mul' a b := by
+    ext t
+    simp [Path.trans_apply, coefficientPath]
+    split_ifs <;> rfl
+  map_smul' z a := by
+    ext t
+    simp [Path.trans_apply, coefficientPath]
+  map_star' a := by
+    ext t
+    change
+      ((coefficientPath F hF0 hF1 (star a)).trans
+          (coefficientPath K hK0 hK1 (star a))) t =
+        star (((coefficientPath F hF0 hF1 a).trans
+          (coefficientPath K hK0 hK1 a)) t)
+    rw [Path.trans_apply, Path.trans_apply]
+    split_ifs
+    · change (F (star a)) _ = star ((F a) _)
+      rw [map_star F a]
+      rfl
+    · change (K (star a)) _ = star ((K a) _)
+      rw [map_star K a]
+      rfl
+
+/-- Homotopy is transitive. -/
+theorem trans {φ ψ χ : A →⋆ₙₐ[ℂ] B}
+    (hφψ : φ.Homotopic ψ) (hψχ : ψ.Homotopic χ) : φ.Homotopic χ := by
+  obtain ⟨F, hF0, hF1⟩ := hφψ
+  obtain ⟨K, hK0, hK1⟩ := hψχ
+  refine ⟨transPathHom F hF0 hF1 K hK0 hK1, ?_, ?_⟩
+  · intro a
+    exact Path.source
+      ((coefficientPath F hF0 hF1 a).trans (coefficientPath K hK0 hK1 a))
+  · intro a
+    exact Path.target
+      ((coefficientPath F hF0 hF1 a).trans (coefficientPath K hK0 hK1 a))
+
+/-- Precomposition preserves homotopy. -/
+theorem precomp {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ)
+    (η : C →⋆ₙₐ[ℂ] A) : (φ.comp η).Homotopic (ψ.comp η) := by
+  obtain ⟨F, h0, h1⟩ := h
+  refine ⟨F.comp η, ?_, ?_⟩
+  · intro c
+    exact h0 (η c)
+  · intro c
+    exact h1 (η c)
+
+/-- Postcomposition preserves homotopy. -/
+theorem postcomp {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ)
+    (η : B →⋆ₙₐ[ℂ] C) : (η.comp φ).Homotopic (η.comp ψ) := by
+  obtain ⟨F, h0, h1⟩ := h
+  refine ⟨(ContinuousMap.compNonUnitalStarAlgHom unitInterval η).comp F, ?_, ?_⟩
+  · intro a
+    simpa only [NonUnitalStarAlgHom.comp_apply, ContinuousMap.compNonUnitalStarAlgHom_apply]
+      using congrArg (fun b : B => η b) (h0 a)
+  · intro a
+    simpa only [NonUnitalStarAlgHom.comp_apply, ContinuousMap.compNonUnitalStarAlgHom_apply]
+      using congrArg (fun b : B => η b) (h1 a)
+
+/-- Composition in both variables preserves homotopy. -/
+theorem comp
+    {φ0 φ1 : A →⋆ₙₐ[ℂ] B} {ψ0 ψ1 : B →⋆ₙₐ[ℂ] C}
+    (hφ : φ0.Homotopic φ1) (hψ : ψ0.Homotopic ψ1) :
+    (ψ0.comp φ0).Homotopic (ψ1.comp φ1) :=
+  (hφ.postcomp ψ0).trans (hψ.precomp φ1)
+
+/-- Point-norm homotopy is an equivalence relation. -/
+theorem equivalence (A : Type uA) (B : Type uB)
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
+    Equivalence (Homotopic :
+      (A →⋆ₙₐ[ℂ] B) → (A →⋆ₙₐ[ℂ] B) → Prop) :=
+  { refl := fun φ ↦ NonUnitalStarAlgHom.Homotopic.refl φ
+    symm := fun {φ ψ} h ↦
+      NonUnitalStarAlgHom.Homotopic.symm (φ := φ) (ψ := ψ) h
+    trans := fun {φ ψ χ} h₁ h₂ ↦
+      NonUnitalStarAlgHom.Homotopic.trans
+        (φ := φ) (ψ := ψ) (χ := χ) h₁ h₂ }
+
+end Homotopic
+
+end NonUnitalStarAlgHom
+
+namespace ContinuousMap
+
+/-- Evaluation at the two endpoints of the unit interval gives point-norm
+homotopic nonunital star homomorphisms. -/
+theorem evalZero_homotopic_evalOne
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    (evalNonUnitalStarAlgHom (A := A) (0 : unitInterval)).Homotopic
+      (evalNonUnitalStarAlgHom (A := A) (1 : unitInterval)) := by
+  refine ⟨NonUnitalStarAlgHom.id ℂ C(unitInterval, A), ?_, ?_⟩
+  · intro f
+    rfl
+  · intro f
+    rfl
+
+end ContinuousMap
