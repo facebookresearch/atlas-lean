@@ -8,72 +8,94 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Probability.Moments.Variance
+public import MathlibExt.Probability.Statistics.Measurement.AffineLaws
 
-import MathlibExt.Probability.Statistics.Measurement.AffineLaws
-import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-! # Means and variances under affine change of scale -/
 
 open MeasureTheory ProbabilityTheory
+open scoped ProbabilityTheory
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Means and variances under affine change of scale.** On a probability space, the map
-$x \mapsto ax+b$ takes the mean of an integrable real random variable to $a$ times its mean
-plus $b$. For a square-integrable variable it scales the variance by $a^2$. Differences of means
-scale by $a$, so their ratios are invariant when $a$ and the original denominator are nonzero.
-Ratios of means are invariant under nonzero scaling with nonzero denominator, but translation
-can change them: shifting constants $1$ and $2$ by $1$ changes the ratio from $1/2$ to $2/3$.
-An original ratio of one stays one under an affine change when both denominators are nonzero.
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-Source: Grinstead and Snell, *Introduction to Probability*, Dartmouth PDF dated July 4, 2006,
-Theorems 6.2 and 6.7 for expectation and variance. The statements on ratios follow algebraically. -/
-theorem affine_mean_variance_laws {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] (a b : ℝ) :
-    let M := fun Z : Ω → ℝ => ∫ ω, Z ω ∂μ
-    let F := fun (Z : Ω → ℝ) ω => a * Z ω + b
-    (∀ {X : Ω → ℝ}, Integrable X μ → M (F X) = a * M X + b) ∧
-    (∀ {X : Ω → ℝ}, MemLp X 2 μ → variance (F X) μ = a ^ 2 * variance X μ) ∧
+/-- Applying the same affine map to two integrable random variables scales the difference
+of their means by the slope. -/
+theorem sub_means_affine [IsProbabilityMeasure μ] {X Y : Ω → ℝ}
+    (hX : Integrable X μ) (hY : Integrable Y μ) (a b : ℝ) :
+    μ[fun ω => a * X ω + b] - μ[fun ω => a * Y ω + b] = a * (μ[X] - μ[Y]) := by
+  rw [integral_const_mul_add_const hX, integral_const_mul_add_const hY]
+  ring
+
+/-- Applying the same nonzero scaling preserves the ratio of two integrals when the
+original denominator is nonzero. These are Bochner integrals, with value zero for
+nonintegrable functions. -/
+theorem div_means_const_mul {X Y : Ω → ℝ} {a : ℝ} (ha : a ≠ 0) (_hY : μ[Y] ≠ 0) :
+    μ[fun ω => a * X ω] / μ[fun ω => a * Y ω] = μ[X] / μ[Y] := by
+  simp only [integral_const_mul, mul_div_mul_left _ _ ha]
+
+/-- A ratio of means equal to one remains one under a common affine change, provided both
+original and transformed denominators are nonzero. The slope need not be nonzero. -/
+theorem div_means_affine_eq_one [IsProbabilityMeasure μ] {X Y : Ω → ℝ} {a b : ℝ}
+    (hX : Integrable X μ) (hY : Integrable Y μ) (hY₀ : μ[Y] ≠ 0)
+    (hFY₀ : μ[fun ω => a * Y ω + b] ≠ 0) (hratio : μ[X] / μ[Y] = 1) :
+    μ[fun ω => a * X ω + b] / μ[fun ω => a * Y ω + b] = 1 := by
+  have heq : μ[X] = μ[Y] := by simpa only [one_mul] using (div_eq_iff hY₀).mp hratio
+  rw [integral_const_mul_add_const hX, integral_const_mul_add_const hY, heq, div_self]
+  rwa [← integral_const_mul_add_const hY]
+
+/-- A common affine change with nonzero slope preserves a ratio of differences of means
+when the original denominator is nonzero. -/
+theorem div_sub_means_affine [IsProbabilityMeasure μ] {X Y U W : Ω → ℝ} {a b : ℝ}
+    (hX : Integrable X μ) (hY : Integrable Y μ) (hU : Integrable U μ) (hW : Integrable W μ)
+    (ha : a ≠ 0) (hden : μ[U] - μ[W] ≠ 0) :
+    (μ[fun ω => a * X ω + b] - μ[fun ω => a * Y ω + b]) /
+      (μ[fun ω => a * U ω + b] - μ[fun ω => a * W ω + b]) = (μ[X] - μ[Y]) / (μ[U] - μ[W]) := by
+  rw [integral_const_mul_add_const hX, integral_const_mul_add_const hY,
+    integral_const_mul_add_const hU, integral_const_mul_add_const hW]
+  exact MathlibExt.Probability.Statistics.Measurement.affine_sub_div_affine_sub
+    ha μ[X] μ[Y] μ[U] μ[W] hden
+
+/-- **Means and variances under affine change of scale.** Summary of the affine laws for
+real random variables on an arbitrary probability space. The mean of an integrable variable
+transforms affinely, and the variance of a square-integrable variable scales by the square
+of the slope. Differences of means of integrable variables scale by the slope. For integrable
+variables, ratios of means are invariant under nonzero scaling when the denominator is
+nonzero. A ratio of one survives a common affine change when both the original and transformed
+denominators are nonzero. Ratios of differences of means are invariant under a common affine
+change with nonzero slope when the original denominator is nonzero.
+
+For individual laws use `MeasureTheory.integral_const_mul_add_const`,
+`ProbabilityTheory.variance_const_mul_add_const`, `sub_means_affine`, `div_means_const_mul`,
+`div_means_affine_eq_one`, and `div_sub_means_affine`.
+
+Grinstead and Snell, *Introduction to Probability*, Dartmouth PDF dated July 4, 2006,
+Theorems 6.2 and 6.7 give the discrete expectation and variance cases. The formulation here
+uses an arbitrary probability measure, and the statements on ratios follow algebraically. -/
+theorem affine_mean_variance_laws (μ : Measure Ω) [IsProbabilityMeasure μ] (a b : ℝ) :
+    (∀ {X : Ω → ℝ}, Integrable X μ → μ[fun ω => a * X ω + b] = a * μ[X] + b) ∧
+    (∀ {X : Ω → ℝ}, MemLp X 2 μ → variance (fun ω => a * X ω + b) μ = a ^ 2 * variance X μ) ∧
     (∀ {X Y : Ω → ℝ}, Integrable X μ → Integrable Y μ →
-      M (F X) - M (F Y) = a * (M X - M Y)) ∧
-    (∀ {X Y : Ω → ℝ}, Integrable X μ → Integrable Y μ → a ≠ 0 → M Y ≠ 0 →
-      M (fun ω => a * X ω) / M (fun ω => a * Y ω) = M X / M Y) ∧
-    (M (fun _ => 1) / M (fun _ => 2) = 1 / 2 ∧
-      M (fun _ => 1 + 1) / M (fun _ => 2 + 1) = 2 / 3) ∧
+      μ[fun ω => a * X ω + b] - μ[fun ω => a * Y ω + b] = a * (μ[X] - μ[Y])) ∧
+    (∀ {X Y : Ω → ℝ}, Integrable X μ → Integrable Y μ → a ≠ 0 → μ[Y] ≠ 0 →
+      μ[fun ω => a * X ω] / μ[fun ω => a * Y ω] = μ[X] / μ[Y]) ∧
     (∀ {X Y : Ω → ℝ}, Integrable X μ → Integrable Y μ →
-      M Y ≠ 0 → M (F Y) ≠ 0 → M X / M Y = 1 → M (F X) / M (F Y) = 1) ∧
+      μ[Y] ≠ 0 → μ[fun ω => a * Y ω + b] ≠ 0 → μ[X] / μ[Y] = 1 →
+      μ[fun ω => a * X ω + b] / μ[fun ω => a * Y ω + b] = 1) ∧
     (∀ {X Y U W : Ω → ℝ}, Integrable X μ → Integrable Y μ → Integrable U μ → Integrable W μ →
-      a ≠ 0 → M U - M W ≠ 0 →
-      (M (F X) - M (F Y)) / (M (F U) - M (F W)) = (M X - M Y) / (M U - M W)) := by
-  let M := fun Z : Ω → ℝ => ∫ ω, Z ω ∂μ
-  let F := fun (Z : Ω → ℝ) ω => a * Z ω + b
-  have hmean {Z : Ω → ℝ} (hZ : Integrable Z μ) : M (F Z) = a * M Z + b :=
-    integral_const_mul_add_const hZ
-  have hdiff {X Y : Ω → ℝ} (hX : Integrable X μ) (hY : Integrable Y μ) :
-      M (F X) - M (F Y) = a * (M X - M Y) := by
-    rw [hmean hX, hmean hY]
-    ring
-  refine ⟨@hmean, ?_, @hdiff, ?_, ?_, ?_, ?_⟩
-  · intro X hX
-    exact variance_const_mul_add_const hX.aestronglyMeasurable
-  · intro X Y _ _ ha _
-    dsimp only [M]
-    simp only [integral_const_mul, mul_div_mul_left _ _ ha]
-  · simp [show (1 : ℝ) + 1 = 2 by norm_num, show (2 : ℝ) + 1 = 3 by norm_num]
-  · intro X Y hX hY hY₀ hFY₀ hratio
-    change M (F X) / M (F Y) = 1
-    have heq : M X = M Y := by simpa only [one_mul] using (div_eq_iff hY₀).mp hratio
-    have hFeq : M (F X) = M (F Y) := by rw [hmean hX, hmean hY, heq]
-    rw [hFeq, div_self hFY₀]
-  · intro X Y U W hX hY hU hW ha hden
-    change (M (F X) - M (F Y)) / (M (F U) - M (F W)) = (M X - M Y) / (M U - M W)
-    rw [hmean hX, hmean hY, hmean hU, hmean hW]
-    exact MathlibExt.Probability.Statistics.Measurement.affine_sub_div_affine_sub
-      ha (M X) (M Y) (M U) (M W) hden
+      a ≠ 0 → μ[U] - μ[W] ≠ 0 →
+      (μ[fun ω => a * X ω + b] - μ[fun ω => a * Y ω + b]) /
+        (μ[fun ω => a * U ω + b] - μ[fun ω => a * W ω + b]) = (μ[X] - μ[Y]) / (μ[U] - μ[W])) :=
+  ⟨fun hX => integral_const_mul_add_const hX,
+    fun hX => variance_const_mul_add_const hX.aestronglyMeasurable,
+    fun hX hY => sub_means_affine hX hY a b,
+    fun _ _ ha hY₀ => div_means_const_mul ha hY₀,
+    fun hX hY hY₀ hFY₀ hratio => div_means_affine_eq_one hX hY hY₀ hFY₀ hratio,
+    fun hX hY hU hW ha hden => div_sub_means_affine hX hY hU hW ha hden⟩
 
 end
 

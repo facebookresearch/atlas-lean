@@ -8,4 +8,4 @@ Ratios of differences of means, $(E[X] - E[Y])/(E[U] - E[W])$ for integrable $X,
 
 ## Sources
 
-- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, Dartmouth PDF dated July 4, 2006, Theorems 6.2 and 6.7, <https://math.dartmouth.edu/~prob/prob/prob.pdf>. The source states the expectation and variance identities; the statements about ratios follow algebraically.
+- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, Dartmouth PDF dated July 4, 2006, Theorems 6.2 and 6.7, <https://math.dartmouth.edu/~prob/prob/prob.pdf>. These give the discrete expectation and variance cases. The laws above use an arbitrary probability measure, and the ratio identities follow algebraically.
