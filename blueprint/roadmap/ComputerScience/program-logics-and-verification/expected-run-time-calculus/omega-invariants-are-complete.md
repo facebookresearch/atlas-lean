@@ -9,6 +9,7 @@ For every run-time $f$, program $C$ and probabilistic guard $\xi$ there is a fam
 ## Proof depends on
 
 - [Continuity of the expected run-time transformer](continuity-of-the-expected-run-time-transformer.md)
+- [Least fixed point of a Scott-continuous map](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/lfp.md)
 
 ## Sources
 

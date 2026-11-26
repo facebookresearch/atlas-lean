@@ -12,6 +12,8 @@ Let $f$ be a run-time, $C$ a program and $\xi$ a probabilistic guard.
 ## Proof depends on
 
 - [Continuity of the expected run-time transformer](continuity-of-the-expected-run-time-transformer.md)
+- [Least fixed point of a Scott-continuous map](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/lfp.md)
+- [The least fixed point is a fixed point](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/lfp-eq.md)
 
 ## Sources
 

@@ -5,6 +5,11 @@ A *deterministic Rabin automaton* (DRA) is a [Rabin automaton](../../../TheoryOf
 ## Depends on
 
 - [Rabin automaton](../../../TheoryOfComputation/omega-automata-and-games/rabin-and-streett-automata/rabin.md)
+- [Satisfaction of LTL formulas on ω-words](../linear-temporal-logic/satisfies.md)
+
+## Proof depends on
+
+- [No deterministic Büchi automaton accepts "eventually always 0"](../../../TheoryOfComputation/omega-automata-and-games/b-chi-automata-for-infinitely-often-and-eventual/not-exists-da-buchi-eventually-zero.md)
 
 ## Sources
 

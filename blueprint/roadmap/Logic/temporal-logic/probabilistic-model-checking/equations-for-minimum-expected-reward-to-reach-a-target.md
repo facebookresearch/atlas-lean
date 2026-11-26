@@ -12,6 +12,7 @@ while $E^{\min}_s(F^T_r) = \infty$ for $s \notin S^1_{\max}$. The existence of a
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
 - [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 - [Reward structures](reward-structures.md)
+- [End components](end-components.md)
 
 ## Proof depends on
 

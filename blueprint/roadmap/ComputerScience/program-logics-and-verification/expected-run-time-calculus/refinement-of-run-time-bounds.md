@@ -9,6 +9,7 @@ Let $F = F^{\langle \xi, C \rangle}_f$ be the [characteristic functional](charac
 ## Proof depends on
 
 - [Basic properties of the expected run-time transformer](basic-properties-of-the-expected-run-time-transformer.md)
+- [The least fixed point is a fixed point](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/lfp-eq.md)
 
 ## Sources
 

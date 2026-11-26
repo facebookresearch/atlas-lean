@@ -1,6 +1,6 @@
 # Linear programs are solvable in polynomial time
 
-There is an algorithm that, given a linear program with rational data, decides whether it is feasible and whether it is bounded and, if it has an optimum, returns an optimal vertex, in time polynomial in the [encoding size](encoding-size-of-a-linear-program.md) of the input. The feasibility part is [linear programming is in P](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md); this page adds optimization, which lexicographic ranking and PCTL model checking use. The first such algorithm was Khachiyan's ellipsoid method (1979); interior-point methods, starting with Karmarkar's algorithm (1984), give others, for example Ye's potential-reduction algorithm with $O(\sqrt{n}\,L)$ iterations.
+There is an algorithm that, given a linear program $\min\{c^\top x : A x = b,\ x \ge 0\}$ in standard equality form with rational data, decides whether it is feasible and whether it is bounded and, if it has an optimum, returns an optimal vertex of its feasible region (which, lying in the nonnegative orthant, has vertices whenever it is nonempty), in time polynomial in the [encoding size](encoding-size-of-a-linear-program.md) of the input. The feasibility part is [linear programming is in P](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md); this page adds optimization, which lexicographic ranking and PCTL model checking use. The first such algorithm was Khachiyan's ellipsoid method (1979); interior-point methods, starting with Karmarkar's algorithm (1984), give others, for example Ye's potential-reduction algorithm with $O(\sqrt{n}\,L)$ iterations.
 
 ## Expansion
 
@@ -17,7 +17,7 @@ This page becomes ready once these prerequisites are stated:
 ## Proof depends on
 
 - [Linear programming is in P (Khachiyan)](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
-- [The measure L is at most the encoding size](the-measure-l-is-at-most-the-encoding-size.md)
+- [The measure L exceeds the encoding size by at most a constant](the-measure-l-is-at-most-the-encoding-size.md)
 - [Near-optimal points round to optimal vertices](near-optimal-points-round-to-optimal-vertices.md)
 
 ## Sources

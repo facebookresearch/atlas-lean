@@ -3,7 +3,9 @@
 For [list segments](list-segment-predicate.md) the following equivalences hold in every state:
 
 $$\mathrm{list}\ a\ (i, j) \iff i \mapsto a, j,$$
+
 $$\mathrm{list}\ (\alpha \cdot \beta)\ (i, k) \iff \exists j.\ \mathrm{list}\ \alpha\ (i, j) \ast \mathrm{list}\ \beta\ (j, k),$$
+
 $$\mathrm{list}\ (\alpha \cdot b)\ (i, k) \iff \exists j.\ \mathrm{list}\ \alpha\ (i, j) \ast (j \mapsto b, k).$$
 
 The second, the composition law, is proved by structural induction on $\alpha$.

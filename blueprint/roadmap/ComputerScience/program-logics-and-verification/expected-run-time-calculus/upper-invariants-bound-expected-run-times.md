@@ -14,6 +14,7 @@ that is, $F^{\langle \xi, C \rangle}_f(I) \preceq I$ for the [characteristic fun
 ## Proof depends on
 
 - [Continuity of the expected run-time transformer](continuity-of-the-expected-run-time-transformer.md)
+- [The least fixed point lies below every prefixed point](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/lfp-le.md)
 
 ## Sources
 
