@@ -10,7 +10,7 @@ interpretation to second-order arithmetic and System F.
 
 ## Depends on
 
-- [Curry-style System F](curry-style-system-f.md)
+- [Extrinsic typing of pure System F terms](../system-f/the-five-typing-rules-of-pure-system-f/typing.md)
 
 ## Proof depends on
 

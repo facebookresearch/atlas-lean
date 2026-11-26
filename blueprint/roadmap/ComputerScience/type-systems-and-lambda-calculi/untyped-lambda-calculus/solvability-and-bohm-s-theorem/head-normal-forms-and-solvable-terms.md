@@ -16,7 +16,7 @@ Every untyped λ-term $\tau$ can be written in exactly one way as $\lambda x_1 \
 
 ## Depends on
 
-- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Expansion
 

@@ -1,7 +1,7 @@
 # The calculus λP
 
 λP is the system of the λ-cube with sorts $*$ and $\square$, the axiom $* : \square$ and the rules $(*, *)$ and $(*, \square)$, as a
-[pure type system](../advanced-type-systems/pure-type-systems-and-the-calculus-of.md): types may depend on terms, but there is no quantification over types. Spelled out, its raw expressions are
+[pure type system](../pure-type-systems-and-the-calculus-of.md): types may depend on terms, but there is no quantification over types. Spelled out, its raw expressions are
 
 $$\Gamma ::= \{\} \mid \Gamma, (x : \varphi) \mid \Gamma, (\alpha : \kappa), \qquad \kappa ::= * \mid (\Pi x{:}\varphi)\kappa, \qquad
 \varphi ::= \alpha \mid (\forall x{:}\varphi)\varphi \mid \varphi\, M, \qquad M ::= x \mid M\, M \mid \lambda x{:}\varphi.\, M,$$
@@ -15,7 +15,7 @@ the objects of type $\tau$, and implication is the case in which $x$ does not oc
 
 ## Depends on
 
-- [Pure type systems and the calculus of constructions](../advanced-type-systems/pure-type-systems-and-the-calculus-of.md)
+- [Pure type systems and the calculus of constructions](../pure-type-systems-and-the-calculus-of.md)
 
 ## Sources
 

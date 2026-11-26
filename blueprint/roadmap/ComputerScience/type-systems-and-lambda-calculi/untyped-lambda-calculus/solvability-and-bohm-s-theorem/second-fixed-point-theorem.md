@@ -7,9 +7,13 @@ $$A \simeq_\beta F\, [\![A]\!].$$
 
 So a term may refer to its own code: for a term $\Phi$ with a free variable $x$, taking $F = \lambda x.\, \Phi$ gives a term $A$ with $A \simeq_\beta \Phi[[\![A]\!]/x]$.
 
+## Depends on
+
+- [λ-definable functions are exactly the partial recursive functions](../../../../TheoryOfComputation/equivalence-of-models/counter-and-combinator-models/lambda-definable-functions-are-exactly-the.md)
+
 ## Proof depends on
 
-- [λ-definable functions are exactly the partial recursive functions](../../../TheoryOfComputation/equivalence-of-models/counter-and-combinator-models/lambda-definable-functions-are-exactly-the.md)
+- [λ-definable functions are exactly the partial recursive functions](../../../../TheoryOfComputation/equivalence-of-models/counter-and-combinator-models/lambda-definable-functions-are-exactly-the.md)
 
 ## Expansion
 

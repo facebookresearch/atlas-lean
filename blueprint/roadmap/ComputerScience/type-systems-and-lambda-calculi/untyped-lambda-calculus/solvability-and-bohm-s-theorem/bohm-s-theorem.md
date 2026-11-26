@@ -9,7 +9,7 @@ Consequently, for arbitrary terms $v$ and $v'$ there are terms $t_1, \dots, t_k$
 
 ## Depends on
 
-- [Head normal forms and solvable terms](head-normal-forms-and-solvable-terms.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Expansion
 

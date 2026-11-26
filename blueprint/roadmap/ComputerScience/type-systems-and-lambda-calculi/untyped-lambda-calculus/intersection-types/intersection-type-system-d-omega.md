@@ -16,7 +16,7 @@ the polarity flipping on the left of $\to$ and preserved through $\wedge$.
 
 ## Depends on
 
-- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Sources
 

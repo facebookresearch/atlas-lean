@@ -10,4 +10,3 @@
 - [Gödel's Dialectica interpretation of Heyting arithmetic](dialectica-interpretation-of-heyting-arithmetic.md)
 - [Provably total functions of PA are exactly the System T definable functions](provably-total-functions-are-system-t-definable.md)
 - [Strong normalization of System T is not provable in PA](strong-normalization-of-system-t-is-unprovable.md)
-

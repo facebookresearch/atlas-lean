@@ -9,7 +9,7 @@ normalizable terms.
 
 ## Depends on
 
-- [Böhm's theorem](bohm-s-theorem.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Proof depends on
 

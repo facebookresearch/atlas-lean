@@ -15,7 +15,7 @@ So well-typed GTLC programs never reach an untrapped error, although trapped cas
 
 ## Proof depends on
 
-- [Syntactic type soundness](../type-soundness/syntactic-type-soundness.md)
+- [Syntactic type soundness](../../type-soundness/syntactic-type-soundness.md)
 
 ## Sources
 

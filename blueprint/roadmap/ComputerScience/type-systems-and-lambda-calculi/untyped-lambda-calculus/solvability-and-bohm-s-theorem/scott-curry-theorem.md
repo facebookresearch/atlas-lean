@@ -17,7 +17,7 @@ Then $X$ and $Y$ are recursively inseparable: no recursive set $A$ satisfies $X 
 ## Proof depends on
 
 - [The second fixed point theorem](second-fixed-point-theorem.md)
-- [λ-definable functions are exactly the partial recursive functions](../../../TheoryOfComputation/equivalence-of-models/counter-and-combinator-models/lambda-definable-functions-are-exactly-the.md)
+- [λ-definable functions are exactly the partial recursive functions](../../../../TheoryOfComputation/equivalence-of-models/counter-and-combinator-models/lambda-definable-functions-are-exactly-the.md)
 
 ## Expansion
 

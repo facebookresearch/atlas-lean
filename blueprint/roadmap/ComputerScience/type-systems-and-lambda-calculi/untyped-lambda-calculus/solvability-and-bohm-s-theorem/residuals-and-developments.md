@@ -14,7 +14,7 @@ subterm $(\lambda x.\, x)(\lambda x.\, x)$ both give $(\lambda x.\, x)\, x$, but
 
 ## Depends on
 
-- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Expansion
 

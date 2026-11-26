@@ -18,7 +18,7 @@ $\mu t.\, \alpha$ and its unfolding $[\mu t.\, \alpha / t]\alpha$, the equi-recu
 
 ## Background
 
-- [Iso-recursive types: safety without normalization](../advanced-type-systems/iso-recursive-types-safety-without-normalization.md)
+- [Iso-recursive types: safety without normalization](../iso-recursive-types-safety-without-normalization.md)
 
 ## Sources
 
