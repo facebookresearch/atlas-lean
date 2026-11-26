@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.StrictCategory
-import Mathlib.CategoryTheory.Whiskering
+import MathlibExt.AlgebraicTopology.CategoricalSource.NerveBasic
 
 /-!
 # The original coherent simplices and their nerve
@@ -45,8 +45,8 @@ def coherentSimplices : SimplexCategory ⥤ Carrier.{u} where
   map_comp f g := SimplicialThickening.functor_comp f.toOrderHom.uliftMap g.toOrderHom.uliftMap
 
 /-- The genuine coherent nerve functor of the actual coherent-simplex diagram. -/
-def coherentNerveFunctor : Carrier.{u} ⥤ SSet.{u} :=
-  yoneda ⋙ (CategoryTheory.Functor.whiskeringLeft _ _ _).obj coherentSimplices.op
+abbrev coherentNerveFunctor : Carrier.{u} ⥤ SSet.{u} :=
+  CategoryTheory.simplicialNerveFunctor.{u, u}
 
 /-- This nerve is literally the pinned Mathlib coherent nerve on the same original enrichment. -/
 theorem coherentNerve_eq_mathlib (C : Carrier.{u}) :

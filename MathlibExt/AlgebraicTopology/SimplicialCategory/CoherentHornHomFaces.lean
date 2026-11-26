@@ -103,4 +103,7 @@ theorem common_map (j k : Fin (n + 3)) (hj : j ≠ i) (hk : k ≠ i) (hjk : j < 
         (congrArg (HornFaces.object f) (common_vertex j k hjk b.as.down).symm)) :=
   retargetMap_eq (HornFaces.faceFunctor_compatibility f j k hj hk hjk) a b _ _ _ _
 
+-- Materialize the unfolding equation here so importing modules share its source owner.
+attribute [local simp] retargetMap
+
 end CategoryTheory.CoherentRealization.HornHomFaces

@@ -35,33 +35,19 @@ theorem zeroPoint_unique (i : coherentSimplex.{u} ⦋0⦌) : i = zeroPoint := by
   exact Subsingleton.elim (α := Fin 1) _ _
 
 private instance zeroPath_subsingleton (i j : coherentSimplex.{u} ⦋0⦌) :
-    Subsingleton (SimplicialThickening.Path i.as j.as) where
-  allEq a b := by
-    apply SimplicialThickening.Path.ext
-    ext k
-    constructor
-    · intro _
-      have h : k = i.as := by
-        apply ULift.ext
-        exact Subsingleton.elim (α := Fin 1) _ _
-      simpa only [h] using b.left
-    · intro _
-      have h : k = i.as := by
-        apply ULift.ext
-        exact Subsingleton.elim (α := Fin 1) _ _
-      simpa only [h] using a.left
+    Subsingleton (SimplicialThickening.Path i.as j.as) := by
+  apply SimplicialThickening.Path.subsingleton_of_forall_not_lt
+  intro k hik _
+  have h : i.as = k := by
+    apply ULift.ext
+    exact Subsingleton.elim (α := Fin 1) _ _
+  exact (ne_of_lt hik) h
 
 private instance zeroPath_hom_subsingleton (i j : coherentSimplex.{u} ⦋0⦌)
     (a b : SimplicialThickening.Path i.as j.as) : Subsingleton (a ⟶ b) where
   allEq f g := by
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
-
-private theorem zeroHom_unique (i j : coherentSimplex.{u} ⦋0⦌) (q : SimplexCategoryᵒᵖ)
-    (a b : (i ⟶[SSet.{u}] j).obj q) : a = b := by
-  exact @CategoryTheory.Functor.ext (Fin (q.unop.len + 1)) inferInstance
-    (SimplicialThickening.Path i.as j.as) inferInstance a b
-      (fun _ => Subsingleton.elim _ _) (fun _ _ _ => Subsingleton.elim _ _)
 
 /-- The canonical map to the actual simplicial tensor unit. -/
 def toUnit (X : SSet.{u}) : X ⟶ 𝟙_ SSet.{u} where
@@ -84,25 +70,12 @@ def vertexOf (C : Carrier.{u}) (σ : CoherentSimplexIn C ⦋0⦌) : C := σ.obj 
 object. -/
 theorem constant_vertexOf (C : Carrier.{u}) (σ : CoherentSimplexIn C ⦋0⦌) :
     constantSimplex C ⦋0⦌ (vertexOf C σ) = σ := by
-  refine EnrichedFunctor.ext SSet.{u}
-    (F := constantSimplex C ⦋0⦌ (vertexOf C σ)) (G := σ)
-    (fun i => congrArg σ.obj (zeroPoint_unique i).symm) ?_
-  intro i j
-  obtain rfl := zeroPoint_unique i
-  obtain rfl := zeroPoint_unique j
-  change (toUnit _ ≫ eId SSet.{u} (σ.obj zeroPoint)) ≫ 𝟙 _ = σ.map zeroPoint zeroPoint
-  rw [Category.comp_id]
-  ext q a
-  have h : a = (eId SSet.{u} zeroPoint).app q PUnit.unit := zeroHom_unique _ _ q a _
-  subst a
-  exact congr($(σ.map_id zeroPoint).app q PUnit.unit).symm
+  apply (SimplicialNerve.vertexEquiv (ForgetEnrichment SSet.{u} C)).injective
+  rfl
 
 /-- The actual coherent-nerve vertex equivalence retains individual original objects. -/
-def verticesEquiv (C : Carrier.{u}) : CoherentSimplexIn C ⦋0⦌ ≃ C where
-  toFun := vertexOf C
-  invFun := constantSimplex C ⦋0⦌
-  left_inv := constant_vertexOf C
-  right_inv _ := rfl
+abbrev verticesEquiv (C : Carrier.{u}) : CoherentSimplexIn C ⦋0⦌ ≃ C :=
+  SimplicialNerve.vertexEquiv (ForgetEnrichment SSet.{u} C)
 
 /-- Original object readback is natural for every actual enriched functor. -/
 theorem verticesEquiv_map (C D : Carrier.{u}) (F : C ⟶ D) (σ : CoherentSimplexIn C ⦋0⦌) :

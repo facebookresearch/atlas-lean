@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 -- Author: @toskua
-import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomBoxWords
+import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomOpenBox
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCompositionFace
 
 /-!
@@ -43,36 +43,8 @@ theorem mem_iff (hij : i ≤ j) (k : Interior i j) {q : SimplexCategoryᵒᵖ}
     p ∈ (HomOpenBox.subcomplex hij k).obj q ↔
       (∀ a, k.val ∈ (p.obj a).I) ∨
         ∃ t : CubeBoxes.Remaining k,
-          (∀ a, t.val.val ∉ (p.obj a).I) ∨ (∀ a, t.val.val ∈ (p.obj a).I) := by
-  rw [mem_homBox_iff, CubeBoundary.mem_upperBox_iff]
-  rw [upper_word_iff]
-  constructor
-  · rintro (h | ⟨t, ht⟩)
-    · left
-      intro a
-      exact (interval_coordinate_one_iff hij p k a).mp (h a)
-    · right
-      refine ⟨t, ?_⟩
-      rcases (boundary_word_iff _).mp ht with ht | ht
-      · left
-        intro a
-        exact (coordinate_zero_iff hij p t.val a).mp (ht a)
-      · right
-        intro a
-        exact (interval_coordinate_one_iff hij p t.val a).mp (ht a)
-  · rintro (h | ⟨t, ht⟩)
-    · left
-      intro a
-      exact (interval_coordinate_one_iff hij p k a).mpr (h a)
-    · right
-      refine ⟨t, (boundary_word_iff _).mpr ?_⟩
-      rcases ht with ht | ht
-      · left
-        intro a
-        exact (coordinate_zero_iff hij p t.val a).mpr (ht a)
-      · right
-        intro a
-        exact (interval_coordinate_one_iff hij p t.val a).mpr (ht a)
+          (∀ a, t.val.val ∉ (p.obj a).I) ∨ (∀ a, t.val.val ∈ (p.obj a).I) :=
+  HomOpenBox.mem_iff hij k p
 
 /-- The actual coherent Hom-box subcomplex is exactly its retained negative and original
 composition faces. -/

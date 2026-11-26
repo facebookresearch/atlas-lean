@@ -29,7 +29,7 @@ open SimplicialQuiver
 variable {O : Type u}
 
 /-- The same existing free quiver enrichment with its literal original object labels. -/
-abbrev object (Q : Data O) : FixedObjects O := ⟨⟨free Q⟩, rfl⟩
+abbrev object (Q : Data O) : FixedObjects O := ⟨free Q, rfl⟩
 
 /-- The original whole length-one simplicial generator of the existing free enrichment. -/
 abbrev generator (Q : Data O) (x y : O) : Q.Hom x y ⟶ hom (object Q) x y :=

@@ -31,7 +31,7 @@ namespace CarrierColimitTest
 def pointQuiver : Data LoopLabels.{u} where
   Hom _ _ := (Functor.const SimplexCategoryᵒᵖ).obj PEmpty.{u + 1}
 
-def pointCarrier : Carrier.{u} := ⟨free pointQuiver⟩
+def pointCarrier : Carrier.{u} := free pointQuiver
 
 def pointInterpretation (x : arrow.{u}.val) : Interpretation pointQuiver arrow.val where
   obj _ := x

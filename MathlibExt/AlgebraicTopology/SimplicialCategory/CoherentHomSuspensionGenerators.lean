@@ -62,7 +62,7 @@ theorem quiver_other (K : SSet.{u}) (a b : Objects.{u}) (h : ¬(a = left ∧ b =
 whole original
   generating paths. -/
 def carrier (K : SSet.{u}) : Carrier.{u} :=
-  ⟨SimplicialQuiver.free (quiver K)⟩
+  SimplicialQuiver.free (quiver K)
 
 /-- Every actual generating cell retains the supplied original source and target labels. -/
 theorem generator_endpoints (K : SSet.{u}) {n : SimplexCategoryᵒᵖ} {a b : Objects.{u}}

@@ -29,7 +29,7 @@ variable {O : Type u} (x y : O)
 
 /-- The actual free enrichment, with the original fixed object labels. -/
 abbrev object (X : SSet.{u}) : FixedObjects O :=
-  ⟨⟨SimplicialQuiver.free (SingleHom.quiver x y X)⟩, rfl⟩
+  ⟨SimplicialQuiver.free (SingleHom.quiver x y X), rfl⟩
 
 /-- Every original free vertex has exactly its supplied fixed label. -/
 @[simp]
