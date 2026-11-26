@@ -7,4 +7,4 @@ Hamiltonian.
 
 ## Sources
 
-- S. Špacapan, A counterexample to prism-hamiltonicity of 3-connected planar graphs, Journal of Combinatorial Theory, Series B 148 (2021), 46–52, https://arxiv.org/abs/1906.06683.
+- S. Špacapan, A counterexample to prism-hamiltonicity of 3-connected planar graphs, Journal of Combinatorial Theory, Series B 146 (2021), 364–371, https://doi.org/10.1016/j.jctb.2020.09.012; arXiv version: https://arxiv.org/abs/1906.06683.
