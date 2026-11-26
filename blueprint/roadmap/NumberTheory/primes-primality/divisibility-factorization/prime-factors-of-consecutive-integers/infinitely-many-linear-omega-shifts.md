@@ -2,7 +2,7 @@
 
 The statement that there are a real $C$ and infinitely many natural numbers $n$ such that $\omega(n + k) \le C k$ for every $k \ge 1$, where $\omega(m)$ is the number of distinct prime factors of $m$.
 
-This page records the statement as a proposition. Its resolution: [Integers all of whose shifts have few prime factors](infinitely-many-linear-omega-shifts-hold.md).
+This page records the statement as a proposition.
 
 ## Sources
 

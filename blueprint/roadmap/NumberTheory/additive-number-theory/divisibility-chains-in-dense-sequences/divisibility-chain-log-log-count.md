@@ -6,7 +6,7 @@ $$\limsup_{x \to \infty} \frac{\#\{i < x : a_{n_i} < x\}}{\log\log x} \ge \limsu
 
 the limits superior taken over integers $x$ in the extended reals.
 
-This page records the statement as a proposition. Its resolution: [Dense sequences contain long divisibility chains](divisibility-chain-log-log-count-holds.md).
+This page records the statement as a proposition.
 
 ## Sources
 

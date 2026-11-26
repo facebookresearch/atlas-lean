@@ -6,4 +6,3 @@
 - [Erdős Problem 318, third question](nontrivial-squares-have-signed-zero-sums.md)
 - [Arithmetic progressions have vanishing signed unit fraction sums](arithmetic-progressions-have-signed-zero-2.md)
 - [Some sets of positive density lack vanishing signed unit fraction sums](positive-density-sets-have-signed-zero-s-2.md)
-- [Squares have vanishing signed unit fraction sums](nontrivial-squares-have-signed-zero-sums-2.md)

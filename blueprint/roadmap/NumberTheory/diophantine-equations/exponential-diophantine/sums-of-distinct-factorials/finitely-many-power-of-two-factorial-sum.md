@@ -2,7 +2,7 @@
 
 The statement that only finitely many pairs $(m, S)$, with $m$ a natural number and $S$ a finite set of positive integers, satisfy $2^m = \sum_{a \in S} a!$.
 
-This page records the statement as a proposition. Its resolution: [Finitely many powers of two are sums of distinct factorials](finitely-many-power-of-two-factorial-sum-2.md).
+This page records the statement as a proposition.
 
 ## Sources
 

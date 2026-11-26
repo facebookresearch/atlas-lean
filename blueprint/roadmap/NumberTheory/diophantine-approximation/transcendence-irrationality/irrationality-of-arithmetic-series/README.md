@@ -3,7 +3,6 @@
 - [Erdős Problem 250 (irrationality of the sum of sigma(n)/2^n)](divisor-sum-binary-series-irrational.md)
 - [The sum of sigma(n)/2^n is irrational](divisor-sum-binary-series-irrational-hol.md)
 - [Erdős Problem 69 (irrationality of the sum of omega(n)/2^n)](omega-power-series-irrational.md)
-- [The sum of omega(n)/2^n is irrational](omega-power-series-irrational-holds.md)
 - [Series of reciprocals of rising products](rising-product-series.md)
 - [Erdős Problem 270 (irrationality of rising-product series)](rising-product-series-irrational.md)
 - [Rising-product series can be rational](rising-product-series-irrational-refuted.md)
