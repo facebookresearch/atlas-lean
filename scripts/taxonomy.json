@@ -13147,6 +13147,7 @@
   "MathlibExt/NumberTheory/GibonacciPolynomialOddRatioSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GibonacciPolynomialSquareSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GiugaNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Giuga numbers"},
+  "MathlibExt/NumberTheory/GleefulNumbers": {"to": "NumberTheory/additive-number-theory", "title": "Sums of powers of consecutive primes"},
   "MathlibExt/NumberTheory/GobelBSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelNonIntegrality": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelResidueExponentPeriod": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
