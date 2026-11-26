@@ -44,21 +44,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
-/-- **Triples with square pairwise sums from a semi-magic square of squares.** Let $e_{ij}$,
-$1 \le i, j \le 3$, be integers such that the matrix of squares $(e_{ij}^2)$ is semi-magic, that
-is, all its row sums and all its column sums are equal. Put $a_1 = e_{13}^2$, $a_2 = e_{31}^2$,
-$a_3 = e_{22}^2$ and $b_1 = 0$, $b_2 = e_{21}^2 - e_{13}^2$, $b_3 = e_{11}^2 - e_{22}^2$. Then
-$a_i + b_j$ is a perfect square for all $i, j \in \{1, 2, 3\}$.
-
-Source: Ajai Choudhry, "Two Sets of Integers Such That All
-Elements of the Sumset of the Two Sets Are Perfect Squares",
-Lemma 2. -/
-theorem_wanted pairwiseSumsSquares_triple_of_isSemiMagicRoots
-    (e : Fin 3 → Fin 3 → ℤ) (he : IsSemiMagicRoots e) :
-    PairwiseSumsSquares
-      ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2]
-      ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2]
-
 /-- **Quintuple extensions come from a second semi-magic square.** Let $E = (e_{ij})$ be a
 $3 \times 3$ integer matrix whose squared entries $e_{ij}^2$ have all three row sums and all three
 column sums equal to one common integer. Put $(a_1, a_2, a_3) = (e_{13}^2, e_{31}^2, e_{22}^2)$ and
