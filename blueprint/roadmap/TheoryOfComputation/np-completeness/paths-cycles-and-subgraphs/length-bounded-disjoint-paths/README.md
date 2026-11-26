@@ -25,7 +25,6 @@
 - [MAXIMUM LENGTH-BOUNDED EDGE-DISJOINT PATHS with fixed `K ≥ 5` is NP-complete](maximum-length-bounded-edge-disjoint-pat.md)
 - [MAXIMUM LENGTH-BOUNDED EDGE-DISJOINT PATHS with `K = 4` is NP-complete](maximum-length-bounded-edge-disjoint-pat-2.md)
 - [Instances of MINIMUM MAXIMUM DISJOINT CONNECTING PATHS](min-max-disjoint-connecting-paths-instan.md)
-- [Graph of an instance of MINIMUM MAXIMUM DISJOINT CONNECTING PATHS](graph-3.md)
 - [Edge Length](edge-length.md)
 - [Well-formed MINIMUM MAXIMUM DISJOINT CONNECTING PATHS instances](well-formed-3.md)
 - [Feasible MINIMUM MAXIMUM DISJOINT CONNECTING PATHS instances](min-max-disjoint-connecting-paths-feasib.md)

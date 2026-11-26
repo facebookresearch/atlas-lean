@@ -5,7 +5,6 @@
 - [MULTIPLE CHOICE MATCHING (bipartite, classes of at most 2 edges, K = |V|/2) is NP-complete](multiple-choice-matching-bipartite-np-co.md)
 - [Instances of MULTIPLE CHOICE MATCHING](multiple-choice-matching-instance.md)
 - [Edge List](edge-list.md)
-- [Graph](graph.md)
 - [Well-formed MULTIPLE CHOICE MATCHING instances](well-formed-2.md)
 - [Feasible MULTIPLE CHOICE MATCHING instances](multiple-choice-matching-feasible.md)
 - [The decision problem MULTIPLE CHOICE MATCHING](multiple-choice-matching-dec.md)

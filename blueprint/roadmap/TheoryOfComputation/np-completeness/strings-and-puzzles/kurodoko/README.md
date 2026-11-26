@@ -1,7 +1,6 @@
 # Kurodoko
 
 - [Instances of KURODOKO (KUROMASU)](kurodoko-instance.md)
-- [Grid](grid.md)
 - [Visible](visible.md)
 - [Well-formed KURODOKO (KUROMASU) instances](well-formed.md)
 - [Feasible KURODOKO (KUROMASU) instances](kurodoko-feasible.md)

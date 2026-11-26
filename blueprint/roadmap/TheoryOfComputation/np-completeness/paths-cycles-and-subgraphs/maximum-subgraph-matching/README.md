@@ -1,9 +1,6 @@
 # Maximum subgraph matching
 
 - [Instances of MAXIMUM SUBGRAPH MATCHING](maximum-subgraph-matching-instance.md)
-- [Digraph Of Arcs](digraph-of-arcs.md)
-- [Graph G](graph-g.md)
-- [Graph H](graph-h.md)
 - [Well-formed MAXIMUM SUBGRAPH MATCHING instances](well-formed.md)
 - [Feasible MAXIMUM SUBGRAPH MATCHING instances](maximum-subgraph-matching-feasible.md)
 - [The decision problem MAXIMUM SUBGRAPH MATCHING](maximum-subgraph-matching-dec.md)
