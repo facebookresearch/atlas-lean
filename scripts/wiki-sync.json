@@ -13105,7 +13105,7 @@
 "Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.backwardValue": "ac1aa638840e6d8f",
 "Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.backward_induction": "f39eb978e6b7d55d",
 "Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.stageArcLength": "45fecb2dcb1b2c85",
-"Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.stageGraph_acyclic": "7728c6b9a9286388",
+"Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.stageArc_acyclic": "7728c6b9a9286388",
 "Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.totalCost": "b7ecf7c74494d3f1",
 "Cslib.Algorithms.Lean.DirectedAdjacency": "2655f787cb8e7157",
 "Cslib.Algorithms.Lean.DirectedAdjacency.DijkstraCost": "f3847025aa69b656",

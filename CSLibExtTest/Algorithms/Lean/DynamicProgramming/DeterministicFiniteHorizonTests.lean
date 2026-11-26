@@ -228,10 +228,10 @@ example : IsLeast (Set.range fun p : Quiver.Path (V := parallel.StageVertex) (St
 
 example (p : Quiver.Path (V := detour.StageVertex) (StageVertex.node 1 5) (StageVertex.node 1 5)) :
     p = Quiver.Path.nil :=
-  detour.stageGraph_acyclic p
+  detour.stageArc_acyclic p
 
 example (p : Quiver.Path (V := parallel.StageVertex) StageVertex.sink StageVertex.sink) :
     p.length = 0 := by
-  rw [parallel.stageGraph_acyclic p, Quiver.Path.length_nil]
+  rw [parallel.stageArc_acyclic p, Quiver.Path.length_nil]
 
 end Cslib.Algorithms.Lean.DeterministicFiniteHorizon.Tests

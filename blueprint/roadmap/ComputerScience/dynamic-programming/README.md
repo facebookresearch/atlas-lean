@@ -6,10 +6,11 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Admissible sequence of a deterministic control problem](is-admissible-sequence.md)
 - [Total cost of a control sequence from a stage](total-cost.md)
 - [Backward-induction values](backward-value.md)
+- [Backward induction for deterministic finite-horizon control](deterministic-finite-horizon-dynamic-programming.md)
 - [Vertices of the stage-indexed graph](stage-vertex.md)
 - [Arcs of the stage-indexed graph](stage-arc.md)
 - [Arc lengths of the stage-indexed graph](stage-arc-length.md)
-- [The stage-indexed graph is acyclic](stage-graph-acyclic.md)
+- [The stage-indexed graph is acyclic](stage-arc-acyclic.md)
 - [Longest common subsequence](longest-common-subsequence/README.md)
 - [Longest increasing subsequence](longest-increasing-subsequence/README.md)
 - [Matrix chain multiplication](matrix-chain-multiplication/README.md)
@@ -20,8 +21,6 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Subset sum](subset-sum/README.md)
 - [Weighted interval scheduling](weighted-interval-scheduling/README.md)
 - [Zero-one knapsack problem](zero-one-knapsack-problem/README.md)
-
-- [Backward induction for deterministic finite-horizon control](deterministic-finite-horizon-dynamic-programming.md)
 
 ## Related topics
 

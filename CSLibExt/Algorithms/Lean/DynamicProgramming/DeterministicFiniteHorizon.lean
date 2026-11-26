@@ -36,7 +36,7 @@ minimizing action at every stage attains it, and that `V_t(s)` is the length of 
 from `(t, s)` to the sink in the stage-indexed graph. That graph is the quiver on
 `ControlProblem.StageVertex` with arcs `ControlProblem.StageArc` and lengths
 `ControlProblem.stageArcLength`; its paths and path lengths are Mathlib's `Quiver.Path` and
-`Quiver.Path.addWeight`, and it is acyclic (`ControlProblem.stageGraph_acyclic`).
+`Quiver.Path.addWeight`, and it is acyclic (`ControlProblem.stageArc_acyclic`).
 `ControlProblem.backwardValue` is the solution of the recursion, computed by
 `Fin.reverseInduction`.
 
@@ -50,14 +50,17 @@ or stage-dependent data, so it is not reused here.
 * `Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.backward_induction`:
   the backward-induction values are the minimum total costs, minimizing choices are optimal, and
   the values are shortest-path distances to the sink.
-* `Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.stageGraph_acyclic`:
+* `Cslib.Algorithms.Lean.DeterministicFiniteHorizon.ControlProblem.stageArc_acyclic`:
   the stage-indexed graph has no cycles.
 
 ## References
 
 * S. Ma, *Handout 4: Deterministic Systems and the Shortest Path Problem*, SEEM 3470, CUHK, 2014
-  (after D. P. Bertsekas, *Dynamic Programming and Optimal Control*, Vol. I, §§2.1–2.2), §2.1 and
-  the DP recursion (1).
+  (its suggested reading: D. P. Bertsekas, *Dynamic Programming and Optimal Control*, Vol. I,
+  3rd ed., Athena Scientific, 2005, §§2.1–2.2), §2.1 and the DP recursion (1).
+* D. P. Bertsekas, *Lecture Slides – Dynamic Programming*, based on lectures given at MIT, Fall
+  2015, Lecture 2, slide "DP algorithm" (optimality of minimizing choices), and Lecture 3, slides
+  "Deterministic finite-state problem" and "Backward and forward DP algorithms" (shortest paths).
 -/
 
 @[expose] public section
@@ -359,7 +362,7 @@ private theorem rank_path {v w : P.StageVertex} (p : Quiver.Path v w) :
 
 /-- **The stage-indexed graph is acyclic.** In the stage-indexed graph of a deterministic control
 problem, every path from a vertex to itself is the trivial path. -/
-theorem stageGraph_acyclic {v : P.StageVertex} (p : Quiver.Path v v) : p = Quiver.Path.nil :=
+theorem stageArc_acyclic {v : P.StageVertex} (p : Quiver.Path v v) : p = Quiver.Path.nil :=
   Quiver.Path.eq_nil_of_length_zero p (by have := P.rank_path p; omega)
 
 theorem backwardValue_spec (t : Fin (N + 1)) (s : S) :
