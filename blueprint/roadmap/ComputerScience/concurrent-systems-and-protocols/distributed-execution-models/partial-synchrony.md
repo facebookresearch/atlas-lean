@@ -5,6 +5,8 @@ In Dwork, Lynch and Stockmeyer's partially synchronous models, there are bounds 
 ## Depends on
 
 - [Timed message-passing runs](timed-message-passing-runs.md)
+- [Communication bound](communication-bound.md)
+- [Processor bound](processor-bound.md)
 
 ## Sources
 
