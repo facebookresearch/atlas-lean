@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.OrdinaryConstantCoefficientModels
+public import MathlibExt.AlgebraicGeometry.OrdinaryConstantCoefficient
 
 /-!
 # Native constant-ring module construction and full DG comparison
@@ -36,12 +37,6 @@ def_wanted ordinary_constant_ring_source (A : OrdinaryAlgebras) (N : ShuffleAlge
 /-- Assemble the complete native ordinary-to-DG module comparison with every action and homogeneous map fixed. -/
 def_wanted ordinary_constant_module_source (A : OrdinaryAlgebras) (N : ShuffleAlgebraFunctor ℤ)
     (C : ConstantRingSource A N) : OrdinaryModuleSource A N C
-
-/-- This all-complex native source comparison is a whole DG quasi-equivalence. -/
-theorem_wanted ordinary_constant_module_quasi_equivalence (A : OrdinaryAlgebras)
-    (N : ShuffleAlgebraFunctor ℤ) (C : ConstantRingSource A N) (J : OrdinaryModuleSource A N C) :
-    letI := moduleDG A
-    J.functor.IsQuasiEquivalence
 
 /-- Assemble the same native constant-ring module/action construction over all ordinary rings. -/
 def_wanted ordinary_tor_system (N : ShuffleAlgebraFunctor ℤ) : OrdinaryTorSystem N

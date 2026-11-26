@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956FiveTwelfthsHolds
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956PointFourHolds
 
 @[expose] public section
 
@@ -23,9 +24,9 @@ Source: Optimization Problems, Constant 1b, frozen at commit
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`, `constants/1b.md`, SHA-256
 `1c51678108c90a2e841e1b49fa97940e4e1870324e1d949ddcb5b4345a0153ec`.
 The source gives an optimization problem with known bounds and a known discrete
-equivalence, but no supported exact-value conjecture. The half upper bound, quarter lower bound,
-and Moser lower bound are proved in MathlibExt. The remaining claims are explicit
-`theorem_wanted` declarations.
+equivalence, but no supported exact-value conjecture. The half upper bound, $0.4$ upper bound,
+quarter lower bound, and Moser lower bound are proved in MathlibExt. The remaining claims are
+explicit `theorem_wanted` declarations.
 The decimal payloads are literal source requests, not certified rounded bounds.
 Full primary-paper and numerical-certificate verification remains deferred.
 -/
@@ -150,12 +151,6 @@ Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 4/9$.
 Source: Erdős, unpublished, recorded by Optimization Problems 1b. -/
 public theorem_wanted upperBound_Erdos_unpublished_fourNinths_holds :
   upperBound_Erdos_unpublished_fourNinths
-
-/-- **Motzkin–Ralston–Selfridge upper bound $0.4$ for the minimum-overlap constant.** The
-continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.4$.
-
-Source: Motzkin--Ralston--Selfridge 1956 and Optimization Problems 1b. -/
-public theorem_wanted upperBound_MRS1956_pointFour_holds : upperBound_MRS1956_pointFour
 
 /-- **Haugland's unpublished 1993 upper bound for the minimum-overlap constant.** The continuous
 Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.385694$.
