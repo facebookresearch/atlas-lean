@@ -3,13 +3,21 @@
 **Setting.** Consider receding [Fisher–Stefan travelling waves](fisher-stefan-travelling-waves.md) with speed $c \to -\infty$: $U'' + cU' + U(1-U) = 0$ on $z < 0$, $U(-\infty) = 1$, $U(0) = 0$, $\kappa = -c/U'(0)$.
 
 **Proposition (boundary layer).** Dividing by $c^2$ makes the problem singular as $1/c \to 0$. The outer solution is $U \equiv 1$. In the inner variable $\zeta = cz \in (0, \infty)$ the equation becomes
+
 $$\frac{d^2U}{d\zeta^2} + \frac{dU}{d\zeta} + \frac{1}{c^2}U(1-U) = 0,$$
+
 and the expansion $U = U_0 + c^{-2}U_1 + c^{-4}U_2 + O(c^{-6})$ with $U_k(0) = 0$, $U_0 \to 1$, $U_{k\ge1} \to 0$ as $\zeta \to \infty$ has
+
 $$U_0(\zeta) = 1 - e^{-\zeta},\qquad U_1(\zeta) = \Big(\zeta - \frac12\Big)e^{-\zeta} + \frac12 e^{-2\zeta}.$$
+
 Consequently
+
 $$\kappa(c) = -1 + \frac{1}{2c^2} + O(c^{-4})\qquad(c \to -\infty),$$
+
 so $\kappa \to -1^{+}$, and inversely
+
 $$c \sim -\frac{1}{\sqrt{2(\kappa+1)}}\qquad(\kappa \to -1^{+}).$$
+
 Receding waves therefore require $-1 < \kappa < 0$, and the front becomes a boundary layer of width $O(1/|c|)$ at the moving edge.
 
 ## Depends on

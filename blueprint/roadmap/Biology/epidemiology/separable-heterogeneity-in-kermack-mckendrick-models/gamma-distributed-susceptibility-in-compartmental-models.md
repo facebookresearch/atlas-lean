@@ -1,16 +1,23 @@
 # Gamma-distributed susceptibility in compartmental models
 
 In the [separable heterogeneous Kermack–McKendrick model](separable-static-heterogeneity-by-redefining-the-depletion-function.md) take $\Omega = [0, \infty)$, relative susceptibility $a(x) = x$, and $\Phi$ the gamma distribution with mean $1$ and variance $1/p$, with density
+
 $$x \mapsto \frac{p^p}{\Gamma(p)}\, x^{p-1} e^{-px}, \qquad p > 0.$$
+
 Its Laplace transform is $\hat\Phi(\lambda) = (1 + \lambda/p)^{-p}$.
 
 **Closed-form depletion functions.**
+
 $$\Psi(w) = N\Bigl[1 - \Bigl(1 + \frac{w}{p}\Bigr)^{-p}\Bigr] \quad \text{if } c \equiv 1, \qquad \Psi(w) = N\Bigl[1 - \Bigl(1 + \frac{w}{p}\Bigr)^{-p-1}\Bigr] \quad \text{if } c(\xi) = \xi.$$
 
 **Standard form in the total susceptible fraction.** With reference trait $\bar x = 1$ the total susceptible fraction is $s_{\mathrm{tot}} = \hat\Phi(w)$, and the compartmental system becomes
+
 $$\frac{ds_{\mathrm{tot}}}{dt} = -\bar F\, s_{\mathrm{tot}}^{1 + 1/p}, \qquad \frac{dY}{dt} = \Sigma Y + \bar F\, H(s_{\mathrm{tot}})\, V, \qquad \bar F = UY,$$
+
 with
+
 $$H(s) = N s^{1 + 1/p} \quad \text{if } c \equiv 1, \qquad H(s) = N\Bigl(1 + \frac1p\Bigr) s^{1 + 2/p} \quad \text{if } c(\xi) = \xi.$$
+
 As $p \to \infty$ (no heterogeneity) these reduce to the homogeneous model.
 
 ## Depends on

@@ -1,12 +1,17 @@
 # Establishment of a mutation on a multicopy plasmid under random segregation
 
 Each cell carries exactly $n$ copies of a non-transmissible plasmid, $i$ of them mutant. A cell of type $i$ divides at rate $\lambda_i$ and dies at rate $\mu_i$. Before division every plasmid is replicated once (neglect new mutation, so a type-$i$ cell holds $2i$ mutant and $2n - 2i$ wild-type copies), and the $2n$ copies are split uniformly at random into two daughters of $n$ copies each. Hence a daughter receives $k$ mutant copies with the hypergeometric probability
+
 $$h_{i}(k) = \frac{\binom{2i}{k}\binom{2n - 2i}{n - k}}{\binom{2n}{n}},$$
+
 and the daughter pair is $\{k, 2i - k\}$ with probability $2h_i(k)$ for $k \ne i$ and $h_i(i)$ for $k = i$. Assume the wild type is subcritical, $\lambda_0 < \mu_0$, so type-$0$ lineages die out.
 
 **Proposition.** While mutants are rare their lineages form a multitype branching process on types $1, \dots, n$; the establishment probability $p_{\mathrm{est}}(n)$ of a single mutant copy is $1 - q_1$, where $(q_1, \dots, q_n)$ is the minimal solution in $[0,1]^n$ of
+
 $$(\lambda_i + \mu_i)\,q_i = \mu_i + \lambda_i \sum_{\{k, k'\}} P_i(\{k,k'\})\, q_k q_{k'}, \qquad q_0 = 1.$$
+
 For $n = 1$, $p_{\mathrm{est}}(1) = 1 - \mu_1/\lambda_1$ when $\lambda_1 > \mu_1$. For $n = 2$, with $r = \mu_1/\lambda_1$ for heterozygous cells and $r_2 = \mu_2/\lambda_2 < 1$ for mutant homozygotes,
+
 $$p_{\mathrm{est}}(2) = \frac14 - \frac34 r + \frac14\sqrt{9 - 6r + 9r^2 - 8r_2}.$$
 
 ## Depends on

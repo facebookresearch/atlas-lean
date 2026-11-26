@@ -1,7 +1,9 @@
 # Characterization of minimal Colless trees
 
 For $n \ge 2$ let $c_n$ be the [minimum Colless index](minimum-colless-index.md) on $n$ leaves, and define the set of **admissible root splits**
+
 $$QB(n) = \{(n_a, n_b) \in \mathbb N^2 : n_a \ge n_b \ge 1,\ n_a + n_b = n,\ c_{n_a} + c_{n_b} + n_a - n_b = c_n\}.$$
+
 It is nonempty, since $(\lceil n/2 \rceil, \lfloor n/2 \rfloor) \in QB(n)$. A tree with $n$ leaves is a **minimal Colless tree** if its Colless index equals $c_n$.
 
 **Proposition.** Let $T = (T_a, T_b)$ be a bifurcating tree with $n \ge 2$ leaves, $T_a$ with $n_a$ leaves and $T_b$ with $n_b$ leaves, $n_a \ge n_b$. The following are equivalent:

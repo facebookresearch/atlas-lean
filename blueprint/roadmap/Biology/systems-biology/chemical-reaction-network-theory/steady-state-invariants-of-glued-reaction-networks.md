@@ -1,7 +1,9 @@
 # Steady-state invariants of glued reaction networks
 
 A reaction network $N = (\mathcal{S}, \mathcal{C}, \mathcal{R})$ with species concentrations $x = (x_1, \dots, x_n)$ and rate constants $\kappa = (\kappa_{ij})$ has mass-action ODEs
+
 $$\frac{dx}{dt} = \sum_{y_i \to y_j \in \mathcal{R}} \kappa_{ij}\, x^{y_i} (y_j - y_i) =: \big(f_1(x), \dots, f_n(x)\big).$$
+
 The **steady-state ideal** is $I_N = \langle f_1, \dots, f_n \rangle \subseteq \mathbb{Q}[\kappa; x]$; its elements are **steady-state invariants**. For observable species $x_{j_1}, \dots, x_{j_l}$ the invariants involving only them form the elimination ideal $I_N^{\mathrm{elim}} = I_N \cap \mathbb{Q}[\kappa; x_{j_1}, \dots, x_{j_l}]$.
 
 Let $N = N_1 \cup N_2$ be obtained by **gluing** $N_1$ and $N_2$ over complexes (a nonzero complex in common, no common reaction) or over reactions (at least one common reaction). Write $\kappa(i), x(i)$ for the rate constants and species of $N_i$, and let $\varphi_i : \mathbb{Q}[\kappa; x] \to \mathbb{Q}[\kappa(i); x(i)]$ be the ring homomorphism fixing $\kappa(i)$ and $x(i)$ and sending every other rate constant and species to $0$.

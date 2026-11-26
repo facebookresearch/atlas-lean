@@ -3,12 +3,17 @@
 Use the definitions of binary rooted and unrooted phylogenetic networks with no redundant bridgeless components from [counting level-1 phylogenetic networks](counting-level-1-phylogenetic-networks.md). A rooted network has **level 2** if every bridgeless component contains at most two reticulations; an unrooted network has level 2 if a tree is obtained by deleting at most two edges from each bridgeless component and suppressing degree-2 vertices. Each nontrivial bridgeless component of a rooted level-2 network contracts to one of the finitely many level-1 or level-2 **generators** (directed multigraphs obtained by deleting the outgoing cut arcs and contracting in-degree-1 out-degree-1 vertices).
 
 **Theorem (unrooted level-2).** Let $u_n$ be the number of unrooted level-2 networks with $n + 1$ labelled leaves and $U(z) = \sum_{n \ge 0} u_n z^n/n!$. Then
+
 $$U = z\,\varphi(U), \qquad \varphi(u) = \frac{1}{1 - \dfrac{3u^5 - 16u^4 + 32u^3 - 30u^2 + 12u}{4(1-u)^4}},$$
+
 hence $u_n = (n-1)!\,[u^{n-1}]\,\varphi(u)^n$. The sequence $(u_n)_{n \ge 1}$ begins $1, 6, 135, 5052, 264270$, and
+
 $$u_n \sim c_1\, c_2^{\,n}\, n^{n-1}, \qquad c_1 \approx 0.07695,\ c_2 \approx 5.4925,$$
+
 where $\tau \approx 0.12117$ is the root of $\varphi(\tau) = \tau\varphi'(\tau)$ in the disk of convergence of $\varphi$ and the singularity of $U$ is $\rho = \tau/\varphi(\tau) \approx 0.06698$.
 
 **Theorem (rooted level-2).** The exponential generating function $L(z)$ of rooted level-2 networks by number of leaves satisfies an equation $L = z\,\varphi_2(L)$ with $\varphi_2$ an explicit rational function, obtained by summing over the generators the ways of attaching subnetworks to their sides. The numbers $\ell_n$ of rooted level-2 networks with $n$ leaves begin $1, 18, 1143, 120078, 17643570, 3332111850$ and satisfy
+
 $$\ell_n \sim c_1\, c_2^{\,n}\, n^{n-1}, \qquad c_1 \approx 0.02931,\ c_2 \approx 15.433.$$
 
 In both cases the number of nontrivial bridgeless components and the number of edges inside them are asymptotically normal with linear mean and variance.

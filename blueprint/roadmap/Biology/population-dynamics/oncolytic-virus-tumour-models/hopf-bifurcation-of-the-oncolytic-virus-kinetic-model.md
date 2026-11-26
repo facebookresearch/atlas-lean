@@ -1,11 +1,15 @@
 # Hopf bifurcation of the oncolytic virus kinetic model
 
 **Model.** Let $C$, $I$ and $V$ be the nondimensional densities of uninfected tumour cells, infected tumour cells and free virus. The spatially homogeneous (kinetic) oncolytic virus model is
+
 $$\dot C = C(1 - C - I) - CV, \qquad \dot I = CV - aI, \qquad \dot V = \theta I - \gamma V,$$
+
 with $a, \gamma > 0$ (scaled death rate of infected cells and viral clearance rate) and the effective viral production rate $\theta > 0$ as bifurcation parameter. It is the kinetic part of the reaction–diffusion system $C_t = D_c\Delta C + \dots$, $I_t = D_i \Delta I + \dots$, $V_t = \Delta V + \dots$ with homogeneous Neumann boundary conditions.
 
 **Steady states.** $E_0 = (0,0,0)$, $E_1 = (1,0,0)$ and, for $\theta > a\gamma$, the coexistence state
+
 $$E_+ = (C^*, I^*, V^*) = \left(\frac{a\gamma}{\theta},\ \frac{\gamma(1 - C^*)}{\theta + \gamma},\ \frac{\theta(1 - C^*)}{\theta + \gamma}\right),$$
+
 which arises by a transcritical bifurcation at $\theta_t = a\gamma$. The basic reproduction number of the virus is $R_0 = \theta/(a\gamma)$.
 
 **Proposition.**
@@ -13,7 +17,9 @@ which arises by a transcritical bifurcation at $\theta_t = a\gamma$. The basic r
 1. If $R_0 \le 1$, the nonnegative steady states are $E_0$, a saddle, and $E_1$, locally asymptotically stable.
 2. If $R_0 > 1$, $E_0$ and $E_1$ are saddles and $E_+$ lies in the positive orthant.
 3. $E_+$ is locally asymptotically stable if $\theta > \theta_t$ and $\kappa(\theta) > 0$, where
+
 $$\kappa(\theta) = -\theta^3 + m\theta^2 + \gamma m\theta + a\gamma^3, \qquad m = (a+\gamma)^2 + a(\gamma + 1).$$
+
 4. $\kappa$ has a unique positive root $\theta_H > \theta_t$, and the system undergoes a Hopf bifurcation at $\theta = \theta_H$: for $\theta > \theta_H$ the coexistence state loses stability to oscillations.
 
 ## Expansion

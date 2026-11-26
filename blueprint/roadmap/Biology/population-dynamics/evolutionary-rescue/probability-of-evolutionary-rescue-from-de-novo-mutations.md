@@ -3,7 +3,9 @@
 Consider a large population of wild-type cells, initially $\bar N$ in number, each dividing at rate $\lambda_0$ and dying at rate $\mu_0 > \lambda_0$, so that the wild-type count is approximated deterministically by $N(t) = \bar N e^{-(\mu_0 - \lambda_0)t}$. At each division a mutant lineage arises with probability $\nu$ (for a gene on $n$ plasmid copies mutating with probability $u$ per copy, $\nu = un$ to first order), and a mutant lineage founded by one mutant cell escapes stochastic loss with probability $p_{\mathrm{est}}$, independently of other lineages while mutants are rare.
 
 **Proposition.** If successful mutant lineages arise as a Poisson process with intensity $\nu\lambda_0 N(t)\,p_{\mathrm{est}}$, the probability that the population is rescued is
+
 $$P_{\mathrm{rescue}} \approx 1 - \exp\Big(-\int_0^\infty \nu\lambda_0 N(t)\,p_{\mathrm{est}}\,dt\Big) = 1 - \exp\Big(-\frac{\nu\lambda_0\bar N}{\mu_0 - \lambda_0}\,p_{\mathrm{est}}\Big).$$
+
 In particular, for a gene on $n$ plasmid copies with wild-type rates independent of $n$, rescue is more likely with copy number $n_1$ than with $n_2$ if and only if $n_1 p_{\mathrm{est}}(n_1) > n_2 p_{\mathrm{est}}(n_2)$.
 
 ## Expansion

@@ -1,6 +1,7 @@
 # Minimal Colless trees have minimum Sackin index
 
 The **Sackin index** of a rooted tree $T$ is the sum of the depths $\delta_T(x)$ of its leaves, equivalently the sum of the numbers of descendant leaves of its internal nodes:
+
 $$S(T) = \sum_{x \text{ leaf}} \delta_T(x) = \sum_{v \in \mathring V(T)} \kappa_T(v).$$
 
 **Lemma (characterization of Sackin-minimal trees, due to Fischer and quoted in the source).** Let $T = (T_a, T_b)$ be bifurcating with $n \ge 2$ leaves, $n_a \ge n_b$, and $k_n = \lceil \log_2 n \rceil$. Then $T$ has minimum Sackin index among bifurcating trees with $n$ leaves if and only if $T_a$ and $T_b$ have minimum Sackin index and $n_a - n_b \le \min\{n - 2^{k_n - 1},\ 2^{k_n} - n\}$.

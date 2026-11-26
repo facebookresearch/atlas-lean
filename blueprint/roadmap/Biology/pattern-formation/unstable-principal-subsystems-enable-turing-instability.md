@@ -1,7 +1,9 @@
 # Unstable principal subsystems enable diffusion-driven instability
 
 Let $n \ge 2$ and let $A = (a_{ij}) \in \mathbb{R}^{n \times n}$ be the Jacobian of the kinetics $u_t = f(u)$ at a spatially uniform steady state $u_s$ of the reaction-diffusion system
+
 $$\partial_t u_j = D_j \,\partial_x^2 u_j + f_j(u), \qquad j = 1, \dots, n,$$
+
 with diffusion coefficients $D_1, \dots, D_n \ge 0$. A Fourier mode of wavenumber $k \in \mathbb{R}$ evolves under the matrix $C(k) = A - k^2 D$, $D = \operatorname{diag}(D_1, \dots, D_n)$. Assume $A$ is stable (every eigenvalue has negative real part). For a nonempty proper index set $J \subsetneq \{1, \dots, n\}$, write $A_J$ for the principal submatrix of $A$ on the rows and columns in $J$; the linear system $\dot v = A_J v$ is the **subsystem** on the species in $J$.
 
 **Theorem (unstable subsystem implies Turing instability).** If some principal submatrix $A_J$ has an eigenvalue with positive real part, then there are diffusion coefficients $D_1, \dots, D_n > 0$ and a wavenumber $k \neq 0$ such that $C(k)$ has an eigenvalue with positive real part, i.e. the uniform state is stable for the kinetics but unstable for the reaction-diffusion system. One can take $D_j$ small for $j \in J$ and $D_j$ large for $j \notin J$.

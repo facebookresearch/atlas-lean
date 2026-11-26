@@ -1,15 +1,23 @@
 # Hybrid reward–punishment incentives and the cooperation threshold
 
 **Model.** A well-mixed population of $N \ge 2$ players, each a cooperator (C) or defector (D), plays a cooperation dilemma; with $j$ cooperators let $\Pi_C(j), \Pi_D(j)$ be the average payoffs and $\delta = \Pi_C(j) - \Pi_D(j)$. For the donation game (benefit $B >$ cost $c$) and the public goods game (group size $n$, multiplier $1 < r < n$, contribution $c$),
+
 $$\delta_{\mathrm{DG}} = -\Big(c + \frac{B}{N-1}\Big), \qquad \delta_{\mathrm{PGG}} = -c\Big(1 - \frac{r(N-n)}{n(N-1)}\Big),$$
+
 both negative and independent of $j$. An institution raises each cooperator's payoff by $\theta$ at cost $\theta/a$ (reward) or lowers each defector's payoff by $\theta$ at cost $\theta/b$ (punishment), with efficiency ratios $a, b > 0$; the **hybrid** scheme pays $\theta\min(j/a, (N-j)/b)$ per generation. Strategies update by the pairwise-comparison (Fermi) rule with selection intensity $\beta > 0$, giving a birth–death chain on $\{0, \dots, N\}$ with transitions $u_{i,i\pm1} = \frac{N-i}{N}\frac{i}{N}\big(1 + e^{\mp\beta(\delta + \theta)}\big)^{-1}$ and absorbing states $0, N$. With fundamental matrix $(n_{ik}) = (I-U)^{-1}$ on the transient states and a mutant equally likely to arise in either monomorphic state, the expected total costs are
+
 $$E_{\mathrm{mix}}(\theta) = \frac{\theta}{2}\sum_{j=1}^{N-1}(n_{1j} + n_{N-1,j})\min\Big(\frac{j}{a}, \frac{N-j}{b}\Big),$$
+
 and $E_r$, $E_p$ with $j/a$, respectively $(N-j)/b$, in place of the minimum.
 
 **Proposition (cooperation threshold).** The ratio of fixation probabilities of a single cooperator and a single defector is
+
 $$\frac{\rho_{D,C}}{\rho_{C,D}} = e^{\beta(N-1)(\delta + \theta)},$$
+
 so the long-run frequency of cooperation $\rho_{D,C}/(\rho_{D,C} + \rho_{C,D})$ is at least $\omega \in (0,1)$ if and only if
+
 $$\theta \ge \theta_0(\omega) = \frac{1}{(N-1)\beta}\log\frac{\omega}{1-\omega} - \delta .$$
+
 The design problem is to minimize $E_{\mathrm{mix}}(\theta)$ over $\theta \ge \theta_0(\omega)$.
 
 **Proposition (hybrid incentives are cheaper).** For all $\theta$, $E_{\mathrm{mix}}(\theta) \le \min\{E_r(\theta), E_p(\theta)\}$. If $b/a \le 1/(N-1)$ then $E_{\mathrm{mix}} = E_r$ (pure reward is optimal), and if $b/a \ge N-1$ then $E_{\mathrm{mix}} = E_p$ (pure punishment is optimal); in between the hybrid scheme is strictly cheaper.

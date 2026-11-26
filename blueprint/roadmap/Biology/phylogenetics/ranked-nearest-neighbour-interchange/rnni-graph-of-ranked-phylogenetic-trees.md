@@ -1,7 +1,9 @@
 # RNNI graph of ranked phylogenetic trees
 
 A **ranked phylogenetic tree** on $n$ leaves is a rooted binary tree whose leaves are labelled bijectively by $\{a_1, \dots, a_n\}$ and whose $n-1$ internal nodes are labelled bijectively by ranks $\{1, \dots, n-1\}$ so that every child has strictly smaller rank than its parent (leaves have rank $0$). Two such trees are identical if an isomorphism preserves edges, leaf labels and ranks. There are
+
 $$\frac{(n-1)!\, n!}{2^{n-1}}$$
+
 ranked trees on $n$ leaves. A tree is determined by its **cluster representation** $[C_1, \dots, C_{n-1}]$, where $C_t$ is the set of leaves below the internal node of rank $t$.
 
 **Definition (RNNI($\rho$) graph).** For a real $\rho \ge 0$, the vertices of $\mathrm{RNNI}(\rho)$ are the ranked trees on $n$ leaves, and two trees are adjacent when one is obtained from the other by

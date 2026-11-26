@@ -1,12 +1,17 @@
 # Integrated form of compartmental epidemic models
 
 **Kermack–McKendrick model.** In a closed population of size $N$, let $S(t)$ be the number of susceptibles and $F(t)$ the force of infection, with
+
 $$\frac{dS}{dt} = -FS, \qquad F(t) = \int_0^\infty A(\tau)\, F(t-\tau)\, S(t-\tau)\, d\tau,$$
+
 where $A(\tau) \ge 0$ is the expected contribution to the force of infection of an individual infected $\tau$ time units ago. Assume $F$ is negligible in the infinite past and $S(-\infty) = N$, and let $w(t) = \int_{-\infty}^t F(\sigma)\, d\sigma$ be the cumulative force of infection. Then $S(t) = N e^{-w(t)}$ and $w$ solves the renewal equation
+
 $$w(t) = \int_0^\infty A(\tau)\, \Psi\bigl(w(t-\tau)\bigr)\, d\tau, \qquad \Psi(w) = N(1 - e^{-w}).$$
 
 **Proposition (reduction to ODEs).** Suppose $A(\tau) = U e^{\tau\Sigma} V$ for a $1 \times n$ row vector $U$, an $n \times 1$ column vector $V$ and an $n \times n$ matrix $\Sigma$. Then $Q(t) = \int_0^\infty e^{\tau \Sigma} V\, \Psi(w(t-\tau))\, d\tau$ satisfies the closed $n$-dimensional system (the **integrated form**)
+
 $$\frac{dQ}{dt} = \Sigma Q + V\, \Psi(UQ), \qquad w = UQ,$$
+
 and conversely $w = UQ$ solves the renewal equation for every solution $Q$. With $Y(t) = \int_0^\infty e^{\tau\Sigma} V F(t-\tau) S(t-\tau)\, d\tau$, the **standard form** $\dot S = -FS$, $\dot Y = \Sigma Y + (FS)V$, $F = UY$ holds, and $Q(t) = \int_{-\infty}^t Y(\sigma)\, d\sigma$.
 
 **Examples.** For SIR, $\dot S = -\beta IS$, $\dot I = -\alpha I + \beta IS$, the integrated form is $\dot Q = -\alpha Q + \Psi(\beta Q)$ with $Q = \int_{-\infty}^t I$. For SEIR the integrated form is $\dot Q_1 = -\gamma Q_1 + \Psi(\beta Q_2)$, $\dot Q_2 = \gamma Q_1 - \alpha Q_2$, with $V = (1, 0)^\top$, $U = (0, \beta)$ and $\Sigma = \begin{pmatrix} -\gamma & 0 \\ \gamma & -\alpha \end{pmatrix}$.

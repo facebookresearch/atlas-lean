@@ -1,17 +1,25 @@
 # Integrodifference Klausmeier model and its consistency with the PDE model
 
 **Local Klausmeier model.** With plant density $u(x,t) \ge 0$, water density $w(x,t) \ge 0$, $x \in \mathbb R$ increasing uphill, rainfall $A > 0$, plant mortality $B > 0$, downhill flow speed $\nu \ge 0$ and water diffusivity $d > 0$, the nondimensional model is
+
 $$u_t = u^2 w - Bu + u_{xx}, \qquad w_t = A - w - u^2 w + \nu w_x + d\,w_{xx}.$$
 
 **Integrodifference model.** Separating each season into a growth phase without dispersal and a dispersal phase, the densities $u_n, w_n$ after $n$ steps satisfy
+
 $$u_{n+1} = C\,\phi * f(u_n, w_n),\qquad w_{n+1} = D\,\phi_1 * g(u_n, w_n),$$
+
 $$f(u,w) = u^2w - Bu + \tfrac1C u,\qquad g(u,w) = A - u^2 w - w + \tfrac1D w,$$
+
 where $\phi$ is a symmetric plant-dispersal kernel, $\phi_1$ a water-redistribution kernel with mean $\mu_{\phi_1} \le 0$ (symmetric on flat ground), and $C, D > 0$ scale the growth step. The spatially uniform steady states coincide with those of the PDE: the desert $(0, A)$ and, for $A > 2B$,
+
 $$\bar u_{2,3} = \frac{A \pm \sqrt{A^2 - 4B^2}}{2B},\qquad \bar w_{2,3} = \frac{A \mp \sqrt{A^2-4B^2}}{2},$$
+
 the vegetated state $(\bar u_2, \bar w_2)$ (larger $\bar u$) being the one that can be stable to homogeneous perturbations.
 
 **Proposition (consistency).** Let the step length be $T > 0$ and set
+
 $$C = T,\quad \sigma_\phi^2 = 2T,\quad D = T,\quad \mu_{\phi_1} = -\nu T,\quad \int x^2\phi_1(x)\,dx = 2dT,$$
+
 with $\nu = o(T^{-1})$, and let $\phi, \phi_1$ have finite moments of all orders and decay exponentially. Writing $P v = v_t - \Gamma v - h_1(v)$ for the PDE operator ($\Gamma = \operatorname{diag}(\partial_x^2,\ \nu\partial_x + d\partial_x^2)$, $h_1$ the reaction terms) and $P_T$ for the operator whose zeros sampled at $t = nT$ solve the integrodifference model, one has $Pv - P_Tv \to 0$ as $T \to 0^+$ for every smooth $v$. Consistency is equation-level; convergence of solutions is supported numerically but not proved.
 
 ## Depends on

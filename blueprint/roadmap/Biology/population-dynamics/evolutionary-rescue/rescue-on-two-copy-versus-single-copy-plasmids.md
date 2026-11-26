@@ -5,7 +5,9 @@ Use the establishment probabilities $p_{\mathrm{est}}(1)$, $p_{\mathrm{est}}(2)$
 **Proposition.**
 
 1. *(No dosage effect: mutant homozygotes have rates $\lambda_{\mathrm{hom}} > \mu_{\mathrm{hom}}$ for both $n = 1$ and $n = 2$.)* Then $p_{\mathrm{est}}(1) > p_{\mathrm{est}}(2)$, and
+
 $$P_{\mathrm{rescue}}(n=2) > P_{\mathrm{rescue}}(n=1) \iff \frac{\lambda_{\mathrm{het}}}{\mu_{\mathrm{het}}} > \frac{3\,\lambda_{\mathrm{hom}}/\mu_{\mathrm{hom}}}{1 + 2\,\lambda_{\mathrm{hom}}/\mu_{\mathrm{hom}}}.$$
+
 With $\mu \equiv 1$, $\lambda_{\mathrm{hom}} = 1 + s$ and $\lambda_{\mathrm{het}} = 1 + \alpha s$ this reads $\alpha > 1/(3 + 2s)$.
 2. *(Dosage effect: rates depend on the absolute number of mutant copies, $\lambda_1 > \mu_1$ for one copy and $\lambda_2 \ge \lambda_1$, $\mu_2 \le \mu_1$ for two.)* Then $p_{\mathrm{est}}(2) > p_{\mathrm{est}}(1) \iff \lambda_2/\mu_2 > (\lambda_1/\mu_1)^2$, and $P_{\mathrm{rescue}}(n=2) > P_{\mathrm{rescue}}(n=1)$ always.
 

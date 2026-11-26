@@ -7,10 +7,14 @@ $$H(\delta)=N_A(\delta)+N_B(\delta)-(K_A+K_B),\qquad \delta\in[0,1],$$
 be the gain in asymptotic total population size caused by dispersal at rate $\delta$. Then:
 
 1. **Initial slope (Lemma 4).**
+
 $$H'(0^+)=\frac{(r_A-r_B)(K_A-K_B)}{(r_A-1)(r_B-1)}.$$
+
 So weak dispersal is beneficial exactly when the patch with the larger growth rate also has the larger carrying capacity.
 2. **At most one sign change (Lemma 3).** Define
+
 $$\tilde\delta=\frac{K_AK_B(r_A-1)(r_B-1)(r_A-r_B)}{\bigl(K_A(r_B-1)+K_B(r_A-1)\bigr)\bigl(K_Ar_A(r_B-1)-K_Br_B(r_A-1)\bigr)}.$$
+
 If $r_A=r_B$, or $K_Ar_A(r_B-1)=K_Br_B(r_A-1)$, or $\tilde\delta\notin(0,1]$, then $\delta=0$ is the only zero of $H$; otherwise the zeros of $H$ on $[0,1]$ are exactly $0$ and $\tilde\delta$.
 3. **Four response scenarios (Theorem 1).** Assume $1<r_B<r_A$ and set $c=\sqrt{r_A}(r_B-1)/\bigl(\sqrt{r_B}(r_A-1)\bigr)$, so $0<c<1$. With $\delta_{\max}$ the explicit maximizer location defined in the source:
    - if $c\le K_B/K_A<1$ and $\delta_{\max}\notin(0,1)$, $H$ is positive on $(0,1]$ and strictly increasing on $[0,1]$ (monotonically beneficial);

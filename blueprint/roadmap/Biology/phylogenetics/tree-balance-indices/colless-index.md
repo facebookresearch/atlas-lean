@@ -3,10 +3,13 @@
 Let $T$ be a rooted bifurcating tree with leaf set of size $n \ge 1$, let $\mathring V(T)$ be its set of internal nodes and, for a node $v$, let $\kappa_T(v)$ be the number of leaves descending from $v$. The **balance value** of an internal node $v$ with children $v_1, v_2$ is $\mathrm{bal}_T(v) = |\kappa_T(v_1) - \kappa_T(v_2)|$.
 
 **Definition (Colless index).**
+
 $$C(T) = \sum_{v \in \mathring V(T)} \mathrm{bal}_T(v) = \sum_{v \in \mathring V(T)} |\kappa_T(v_1) - \kappa_T(v_2)|.$$
+
 It depends only on the shape of $T$, not on the leaf labels.
 
 **Root decomposition.** If $n \ge 2$ and $T = (T_a, T_b)$ is the decomposition of $T$ into its two maximal pending subtrees, with $n_a \ge n_b$ leaves, then
+
 $$C(T) = C(T_a) + C(T_b) + n_a - n_b.$$
 
 **Zero index.** For every $n \ge 1$ and every bifurcating tree $T$ with $n$ leaves, $C(T) = 0$ if and only if $n$ is a power of $2$ and $T$ is the fully symmetric tree (every internal node has two children with equal numbers of descendant leaves).

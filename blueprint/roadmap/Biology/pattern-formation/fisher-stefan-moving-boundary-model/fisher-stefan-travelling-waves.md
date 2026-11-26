@@ -1,13 +1,19 @@
 # Invading and receding Fisher–Stefan travelling waves
 
 **Model.** In nondimensional form, a population density $u(x,t)$ occupies $0 < x < L(t)$ and satisfies
+
 $$\frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2} + u(1-u),\qquad \frac{\partial u}{\partial x}(0,t) = 0,\qquad u(L(t),t) = 0,$$
+
 with the moving edge governed by the one-phase Stefan condition
+
 $$\frac{dL}{dt} = -\kappa\,\frac{\partial u}{\partial x}(L(t),t),$$
+
 where $\kappa \in \mathbb R$ is the single parameter (dimensional diffusivity, growth rate and carrying capacity have been scaled out, $\kappa = \hat\kappa/\hat D$).
 
 **Travelling-wave problem.** A travelling wave $u = U(z)$, $z = x - ct$, with the front at $z = 0$ solves
+
 $$U'' + cU' + U(1-U) = 0\quad(-\infty < z < 0),\qquad U(-\infty) = 1,\quad U(0) = 0,\quad c = -\kappa\,U'(0).$$
+
 In the phase plane $U' = V$, $V' = -cV - U(1-U)$ (the Fisher–KPP system), $(1,0)$ is a saddle for every $c$, and $(0,0)$ is a stable node for $c \ge 2$, a stable spiral for $0 < c < 2$, a centre for $c = 0$, an unstable spiral for $-2 < c < 0$ and an unstable node for $c \le -2$. A Fisher–Stefan wave of speed $c$ is the part of the trajectory through the saddle that lies in $U > 0$, $V < 0$ and is cut off where it meets the axis $U = 0$ at $(0, V^*)$; then $\kappa = -c/V^*$.
 
 **Properties.**
