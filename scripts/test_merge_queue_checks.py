@@ -8,7 +8,8 @@ renames the job, or lets one merge group's run cancel another's would leave the
 check missing or wrong, and the queue would drop the PR or hold it until its
 timeout. The one job-level `if` allowed lets only a pull request skip a job,
 and only when the `changes` job of its workflow succeeds and says that the pull
-request does not need it (scripts/ci_scope.py). A required workflow also runs on `pull_request`, never
+request does not need it (scripts/ci_scope.py); `changes` itself may run on
+pull requests only. A required workflow also runs on `pull_request`, never
 `pull_request_target`: from 2 December 2026 GitHub blocks `pull_request_target`
 runs by default in public repositories, and a required check that never reports
 blocks every PR. The required checks are the ones listed under "How PRs merge"
@@ -168,8 +169,12 @@ class MergeQueueChecks(unittest.TestCase):
                 self.assertIsNotNone(condition, f"job {job} needs changes without the condition above")
                 changes = jobs(workflow(name)).get("changes")
                 self.assertIsNotNone(changes, f"{name} has no changes job")
-                for key in ("if", "strategy", "needs"):
+                for key in ("strategy", "needs"):
                     self.assertIsNone(block(changes, key, 4), f"job changes has a job-level {key}")
+                # It may skip itself outside pull requests, which alone consult it, and nothing more.
+                if block(changes, "if", 4) is not None:
+                    self.assertIn(value(changes, "if", 4), ("github.event_name == 'pull_request'",
+                                                            "${{ github.event_name == 'pull_request' }}"))
                 self.assertNotIn(check_name("changes", changes), REQUIRED)
                 self.assertIn(condition.group(1), keys(block(changes, "outputs", 4) or [], 6),
                               f"job changes has no output {condition.group(1)}")
