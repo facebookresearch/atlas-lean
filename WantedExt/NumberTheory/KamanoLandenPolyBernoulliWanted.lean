@@ -31,10 +31,12 @@ formal: power series live in `ℝ⟦X⟧`, and the iterated integrals
   `z(t) = (e^t - 1)/(c₀ e^t + d₀)` is `landenExpVariable`.
 
 Proved in `MathlibExt.NumberTheory.KamanoLandenPolyBernoulli`, which this module
-imports: the Landen formula for the generalized poly-Bernoulli numbers of the first
-kind (`generalizedPolyBernoulliC_landen`). Theorem 5 is false as printed with the
-paper's own definitions (see the docstring of `generalizedPolyBernoulliC_landen`); it
-is stated and proved in the reading its proof establishes. The definitions it uses
+imports: the classical case of the Landen connection formula
+(`generalizedMultiplePolylog_landen_connection_classical`) and the Landen formula for the
+first-kind generalized poly-Bernoulli numbers (`generalizedPolyBernoulliC_landen`).
+Theorem 5 is false as printed with the paper's own definitions (see the docstring of
+`generalizedPolyBernoulliC_landen`); it is stated and proved in the reading its proof
+establishes. The definitions it uses
 (`linearFractionalPoleSeries`, `landenFormSeries`, `integralDivX`, `LandenData` with
 `LandenData.tilde`, `LandenData.formSeries` and `LandenData.polylogRev`,
 `generalizedMultiplePolylog`, `landenExpVariable` and `generalizedPolyBernoulliC`)
@@ -248,26 +250,6 @@ public theorem_wanted generalizedMultiplePolylog_landen_connection (D : LandenDa
     (k : Composition n) :
     subst (-(X * mk fun m => (D.c₀ - D.d₀) ^ m)) (generalizedMultiplePolylog D β γ k.blocks) =
       generalizedMultiplePolylog D.tilde β γ k.blocks
-
-/-- **Landen formula in the classical case.** Let $g = (g_0, g_1, g_2)$ be the Landen data in
-which $g_0 = g_2$ has rows $(1, -1)$ and $(1, 0)$ and $g_1$ is the identity matrix, so that
-$G_{g_1}(t) = 1/t$ and $G_{g_2}(t) = 1/(1 - t)$. For all real numbers $\beta_1$, $\beta_2$,
-$\gamma_1$, $\gamma_2$ and every finite (possibly empty) sequence $\mathbf{k}$ of positive
-integers,
-$\mathrm{Li}_{\mathbf{k}}(g; ((\beta_1, \beta_2), (\gamma_1, \gamma_2)); \frac{z}{z - 1}) =
--\mathrm{Li}_{\mathbf{k}}(g; ((\beta_1, \beta_1 - \beta_2), (\gamma_1, \gamma_1 - \gamma_2)); z)$
-in $\mathbb{R}[[z]]$, where $\frac{z}{z - 1} = -\sum_{n \ge 1} z^n$ is substituted for $z$.
-
-Source: Ken Kamano, *A Generalization of the Landen Connection Formula and
-Generalized Poly-Bernoulli Numbers*, INTEGERS 24 (2024), Article A77, Theorem 3,
-Identity (10). -/
-public theorem_wanted generalizedMultiplePolylog_landen_connection_classical
-    (β₁ β₂ γ₁ γ₂ : ℝ) {n : ℕ} (k : Composition n) :
-    subst (-(X * mk fun _ => (1 : ℝ)))
-        (generalizedMultiplePolylog ⟨2, 1, 0, ![1, 1], ![0, -1], ![0, 1], ![1, 0]⟩
-          ![β₁, β₂] ![γ₁, γ₂] k.blocks) =
-      -generalizedMultiplePolylog ⟨2, 1, 0, ![1, 1], ![0, -1], ![0, 1], ![1, 0]⟩
-          ![β₁, β₁ - β₂] ![γ₁, γ₁ - γ₂] k.blocks
 
 /-- **Duality of multi-poly-Bernoulli-star numbers.** This duality is due to Imatomi. Let $k$
 be an index (a composition of a natural number $m$), let $k^\vee$ be its Hoffman dual, and let

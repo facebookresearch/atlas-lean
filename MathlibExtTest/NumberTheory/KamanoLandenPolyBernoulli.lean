@@ -140,4 +140,34 @@ example (D : LandenData) (β γ : Fin D.s → ℝ) (n : ℕ) :
 example (D : LandenData) (h : D.c₀ + D.d₀ = 0) : landenExpVariable D = 0 := by
   rw [landenExpVariable, PowerSeries.inv_eq_zero.mpr (by simpa using h), mul_zero]
 
+private noncomputable abbrev classicalExampleData : LandenData :=
+  ⟨2, 1, 0, ![1, 1], ![0, -1], ![0, 1], ![1, 0]⟩
+
+-- The weight-zero composition gives the zero series, for arbitrary weights.
+example (β₁ β₂ γ₁ γ₂ : ℝ) :
+    subst (-(X * mk fun _ => (1 : ℝ)))
+      (generalizedMultiplePolylog classicalExampleData ![β₁, β₂] ![γ₁, γ₂] []) = 0 := by
+  simpa only [Composition.ones_blocks, List.replicate_zero, generalizedMultiplePolylog,
+    List.reverse_nil, LandenData.polylogRev.eq_1, neg_zero] using
+    generalizedMultiplePolylog_landen_connection_classical β₁ β₂ γ₁ γ₂ (Composition.ones 0)
+
+private def twoOne : Composition 3 := ⟨[2, 1], by simp, by decide⟩
+
+private theorem classicalExampleData_formSeries (a b : ℝ) :
+    classicalExampleData.formSeries ![a, b] = C a + C b * landenFormSeries 1 (-1) 1 0 := by
+  rw [LandenData.formSeries, Fin.sum_univ_two]
+  simp [landenFormSeries_identity]
+
+-- The index `(2, 1)` uses both the β and γ recursions. For these weights the
+-- transformed forms are `1 - P` and `1 + P`, where `P = z / (1 - z)`.
+example : coeff 2 (subst (-(X * mk fun _ => (1 : ℝ)))
+    (generalizedMultiplePolylog classicalExampleData ![1, 2] ![1, 0] twoOne.blocks)) = -(3 / 8) := by
+  rw [generalizedMultiplePolylog_landen_connection_classical 1 2 1 0 twoOne]
+  rw [show twoOne.blocks = [2, 1] from rfl, generalizedMultiplePolylog,
+    show ([2, 1] : List ℕ).reverse = [1, 2] from rfl, LandenData.polylogRev.eq_4,
+    LandenData.polylogRev.eq_5, LandenData.polylogRev.eq_3, map_neg]
+  simp only [classicalExampleData_formSeries]
+  norm_num [classicalExampleData, landenFormSeries, linearFractionalPoleSeries, integralDivX,
+    coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, Finset.sum_range_succ]
+
 end MathlibExtTest.KamanoLandenPolyBernoulli
