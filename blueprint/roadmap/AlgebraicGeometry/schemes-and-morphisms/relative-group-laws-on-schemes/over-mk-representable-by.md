@@ -1,0 +1,3 @@
+# Presheaf of a relative group law is representable
+
+Let $R$ be a commutative ring, $f : A \to \operatorname{Spec} R$ a morphism of schemes, and $G$ a relative group law on $A$ over $\operatorname{Spec} R$. The underlying presheaf of sets of the presheaf of groups of $G$ on schemes over $\operatorname{Spec} R$ is represented by $A$ viewed as a scheme over $\operatorname{Spec} R$ via $f$: for every scheme $T$ over the base, morphisms $T \to A$ over $\operatorname{Spec} R$ correspond bijectively to points in $A(T)$, by the identity on underlying morphisms of schemes, and this bijection is natural in $T$.

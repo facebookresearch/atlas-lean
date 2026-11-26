@@ -9,3 +9,4 @@
 - [Variable changes transform nonsingular points](nonsingular-map-affine-coordinates-iff.md)
 - [Variable changes give additive equivalences of points](variable-change-add-equiv.md)
 - [The ideal of a point on a Weierstrass curve is nonzero](xyideal-ne-bot.md)
+- [Point ideals on a Weierstrass curve determine the point](xyideal-eq-xyideal-iff.md)
