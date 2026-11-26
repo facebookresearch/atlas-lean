@@ -11,9 +11,15 @@ module
 import MathlibExt.Combinatorics.HomogeneousSetLogWeightErdosProblem191
 import Mathlib.Tactic.Positivity
 
+/-!
+# A monochromatic pair from the logarithmic weight bound
+
+Each vertex in `Finset.Icc 2 n` has weight at most `1 / Real.log 2`, so a monochromatic set
+whose weight exceeds this threshold contains at least two vertices.
+-/
+
 open Filter MathlibExt.Combinatorics.HomogeneousSetLogWeightErdosProblem191Wanted
 
--- A weight larger than the weight of vertex 2 forces a monochromatic pair.
 example : ∀ᶠ n : ℕ in atTop, ∀ G : SimpleGraph ℕ, ∃ X : Finset ℕ,
     X ⊆ Finset.Icc 2 n ∧ (G.IsClique (X : Set ℕ) ∨ G.IsIndepSet (X : Set ℕ)) ∧
       1 < X.card := by
