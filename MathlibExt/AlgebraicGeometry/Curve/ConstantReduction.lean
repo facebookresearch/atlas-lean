@@ -27,7 +27,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.AlgebraicGeometry.Curve.Repartitions
+public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationOrd
 
 /-!
 # Constant reduction of function fields
@@ -46,6 +46,26 @@ two properties are not derived. From them this file builds the reduction map `di
 shows that it preserves degrees and principal divisors, and derives the maps `degZeroMap` on
 divisors of degree zero and `pic0Map` on the degree-zero Picard group `Pic0`. Good reduction,
 `ConstantReduction.IsGood`, is equality of the genera of `Fbar` and `F`.
+
+These two fields and the effectivity `placeDivisor_nonneg` are the characterising properties of
+Deuring's reduction of divisors: effective divisors reduce to effective divisors, degrees are
+preserved, and the divisor of a function with nonzero residue reduces to the divisor of that
+residue (M. Deuring, *Reduktion algebraischer Funktionenkörper nach Primdivisoren des
+Konstantenkörpers*, Math. Z. 47 (1942), 643–654).
+
+The field `exists_smul_mem` gives `integers` the value group of `A`: a constant multiple of a
+function that lies in `integers` with nonzero residue is a unit there. So the structure covers only
+reductions with the value group of `A`. A constant reduction in general may have a larger value
+group: the prolongation of the `5`-adic valuation to `ℚ(x)` in which `x` has value `1 / 2` has
+residue field `𝔽₅(t)`, with `t` the residue of `x ^ 2 / 5`, and admits no `ConstantReduction` with
+its valuation ring as `integers`.
+
+This file adapts `Definitions/Def_AlgebraicCurve_ConstantReduction.lean` of the FLT project (see
+the header) with two changes. There a place reduces to a single place of the same degree; here it
+reduces to an effective divisor (`placeDivisor`), and `divMap` and the results about it are built on
+that. And the two lemmas on orders of constant multiples are in the `Place` namespace:
+`Place.ord_algebraMap`, from `MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationOrd`, needs no
+hypothesis on the constant, and `Place.ord_smul_of_ne_zero` is stated here.
 -/
 
 @[expose] public section
@@ -59,13 +79,6 @@ open IsLocalRing
 namespace Place
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-/-- A constant has order zero at every place. -/
-theorem ord_algebraMap (v : Place K F) (c : K) : v.ord (algebraMap K F c) = 0 := by
-  have h1 := v.ord_nonneg_of_mem (v.algebraMap_mem' c)
-  have h2 := v.ord_nonneg_of_mem (v.algebraMap_mem' c⁻¹)
-  rw [map_inv₀, v.ord_inv] at h2
-  omega
 
 /-- Multiplying a function by a nonzero constant does not change its order at a place. -/
 theorem ord_smul_of_ne_zero (v : Place K F) {c : K} (hc : c ≠ 0) (f : F) :
@@ -85,7 +98,8 @@ function field `Fbar` over the residue field of `A`: a valuation ring `integers`
 `A`, a residue map from it onto `Fbar`, and the reduction `placeDivisor P` of each place `P` of `F`,
 an effective divisor of `Fbar`. Two properties are assumed as fields, not derived: a place and its
 reduction have the same degree (`degree_placeDivisor`), and the reduction of the divisor of a
-function with nonzero residue is the divisor of that residue (`sum_smul_placeDivisor`). -/
+function with nonzero residue is the divisor of that residue (`sum_smul_placeDivisor`). The field
+`exists_smul_mem` restricts the structure to reductions with the value group of `A`. -/
 structure ConstantReduction where
   /-- The valuation ring of `F` along which `F` is reduced. -/
   integers : ValuationSubring F
@@ -103,7 +117,8 @@ structure ConstantReduction where
   residue_algebraMap : ∀ a : A,
     residue ⟨algebraMap L F a, (algebraMap_mem_iff a).mpr a.2⟩ =
       algebraMap (ResidueField A) Fbar (IsLocalRing.residue A a)
-  /-- Every nonzero function has a constant multiple in `integers` with nonzero residue. -/
+  /-- Every nonzero function has a constant multiple in `integers` with nonzero residue; so
+  `integers` has the value group of `A`. -/
   exists_smul_mem : ∀ f : F, f ≠ 0 → ∃ c : L, ∃ h : c • f ∈ integers, residue ⟨c • f, h⟩ ≠ 0
   /-- The reduction of a place is effective. -/
   placeDivisor_nonneg : ∀ P, 0 ≤ placeDivisor P

@@ -38,15 +38,6 @@ example {L : Type*} [Field L] (A : ValuationSubring L) (F : Type*) [Field F]
     R.IsGood ↔ genusFF (ResidueField A) Fbar = genusFF L F :=
   R.isGood_iff
 
--- Constants have order zero at every place, `0` included: the statement has no hypothesis on `c`.
-example {L F : Type*} [Field L] [Field F] [Algebra L F] (P : Place L F) (c : L) :
-    P.ord (algebraMap L F c) = 0 :=
-  P.ord_algebraMap c
-
-example {L F : Type*} [Field L] [Field F] [Algebra L F] (P : Place L F) :
-    P.ord (algebraMap L F 0) = 0 :=
-  P.ord_algebraMap 0
-
 -- Scaling by a nonzero constant keeps the order.
 example {L F : Type*} [Field L] [Field F] [Algebra L F] (P : Place L F) {c : L} (hc : c ≠ 0)
     (f : F) : P.ord (c • f) = P.ord f :=
