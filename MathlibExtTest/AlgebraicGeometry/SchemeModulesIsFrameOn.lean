@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.SchemeModulesIsFrameOn
+public import MathlibExt.AlgebraicGeometry.Modules.InvertibleTensorSections
 
 @[expose] public section
 
@@ -39,3 +40,15 @@ example {X : AlgebraicGeometry.Scheme.{u}} {M : X.Modules} {U : X.Opens}
     apply hb.1
     simp
   exact hU h1
+
+open MonoidalCategory in
+/-- Consumer of both frame developments: the tensor product of two frames on `V` trivializes
+the pullback of `L ⊗ M` to any open `W ≤ U ⊓ V`. -/
+example {X : AlgebraicGeometry.Scheme.{u}} {L M : X.Modules} {U V : X.Opens}
+    {s : Γ(L, U)} {t : Γ(M, U)}
+    (hs : AlgebraicGeometry.Scheme.Modules.IsFrameOn s V)
+    (ht : AlgebraicGeometry.Scheme.Modules.IsFrameOn t V) (W : X.Opens)
+    (hWU : W ≤ U) (hWV : W ≤ V) :
+    Nonempty ((AlgebraicGeometry.Scheme.Modules.pullback W.ι).obj (L ⊗ M) ≅
+      SheafOfModules.unit (W : AlgebraicGeometry.Scheme.{u}).ringCatSheaf) :=
+  (hs.tensorSections ht).nonempty_pullback_iso_unit W hWU hWV
