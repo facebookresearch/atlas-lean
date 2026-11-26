@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Totient
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.PollackPomeranceSieve
+public import MathlibExt.NumberTheory.TotientSigmaDistribution
 
 namespace MetaMathlibExt
 
@@ -67,33 +68,6 @@ public theorem_wanted card_totient_sigma_ge_mul_le (c : ℝ) (hc : 0 < c) :
           C * (x * Real.log (Real.log (Real.log x)) /
             (Real.log x ^ (1 / Real.log (Real.log (Real.log x))) *
               Real.log (Real.log (Real.log (Real.log x)))))
-
-/-- **How often $\varphi(\sigma(n)) \ge n / f(n)$.** Write $\log_k$ for the $k$-fold iterated
-natural logarithm, so $\log_3 x = \log \log \log x$, and let $\varphi$ be Euler's totient function
-and $\sigma$ the sum of divisors. Let $f$ be a real function that is positive and non-decreasing
-on $(0, \infty)$ with $f(x) = o(\log_4 x)$ as $x \to \infty$, and let $P_f(x)$ be the number of
-integers $n$ with $1 \le n \le x$ and $\varphi(\sigma(n)) \ge n / f(n)$. Then, as $x \to \infty$,
-$$
-P_f(x) = O\left(\frac{x f(x)}{\log_4 x} +
-\frac{x \log_3 x}{(\log x)^{1/\log_3 x} \log_4 x}\right)
-$$
-and $P_f(x) = o(x)$.
-
-Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
-INTEGERS 24 (2024), Article A65, Theorem 2 (`integers-2024-A65-thm-2`). -/
-public theorem_wanted card_totient_sigma_ge_div_isBigO (f : ℝ → ℝ)
-    (hpos : ∀ x, 0 < x → 0 < f x) (hmono : MonotoneOn f (Set.Ioi 0))
-    (hf : f =o[atTop] fun x => Real.log (Real.log (Real.log (Real.log x)))) :
-    ((fun x : ℝ => ((((Finset.Icc 1 ⌊x⌋₊).filter fun n : ℕ =>
-        (n : ℝ) / f n ≤ (Nat.totient (ArithmeticFunction.sigma 1 n) : ℝ)).card : ℕ) : ℝ))
-      =O[atTop] fun x =>
-        x * f x / Real.log (Real.log (Real.log (Real.log x))) +
-          x * Real.log (Real.log (Real.log x)) /
-            (Real.log x ^ (1 / Real.log (Real.log (Real.log x))) *
-              Real.log (Real.log (Real.log (Real.log x))))) ∧
-    ((fun x : ℝ => ((((Finset.Icc 1 ⌊x⌋₊).filter fun n : ℕ =>
-        (n : ℝ) / f n ≤ (Nat.totient (ArithmeticFunction.sigma 1 n) : ℝ)).card : ℕ) : ℝ))
-      =o[atTop] fun x => x)
 
 /-- **Exceptions to $\varphi(\sigma(n)) \le n / \log_5 n$.** Write $\log_k$ for the $k$-fold
 iterated natural logarithm, and let $\varphi$ be Euler's totient function and $\sigma$ the sum of

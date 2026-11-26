@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Zeta
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.ArithmeticFunction.GcdSumMeanPow
 public import MathlibExt.NumberTheory.ArithmeticFunction.GcdSumMeanSquare
 public import MathlibExt.NumberTheory.ArithmeticFunction.GcdSumMoments
 
@@ -94,30 +95,6 @@ public theorem_wanted sum_gcdSumMean_pow_asymptotic (k : ℕ) (hk : 5 ≤ k) :
     ∃ P : ℝ[X], ∀ ε : ℝ, 0 < ε →
       (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, gcdSumMean n ^ k - x * P.eval (Real.log x))
         =O[atTop] fun x => x ^ (1 + 2 * ε - 42 / (13 * 2 ^ k - 9))
-
-/-- **Factorization of the Dirichlet series of powers of the mean gcd-sum function.** Let $k$ be a
-natural number and let $A$ be the mean gcd-sum function. There are functions
-$g, h \colon \mathbb{N} \to \mathbb{C}$ such that the Dirichlet series
-$G_k(s) = \sum_{n \ge 1} g(n) n^{-s}$ converges absolutely for every complex $s$ with
-$\operatorname{Re} s > 1/2$, the Dirichlet series $\tilde G_{k,2}(s) = \sum_{n \ge 1} h(n) n^{-s}$
-converges absolutely for every complex $s$ with $\operatorname{Re} s > 1/3$, and for every complex
-$s$ with $\operatorname{Re} s > 1$,
-$$\sum_{n \ge 1} A(n)^k n^{-s} = \zeta(s)^{2^k} G_k(s)$$
-and
-$$G_k(s) \, \zeta(2s)^{4^k - 3^k - \binom{2^k}{2}} = \tilde G_{k,2}(s).$$
-
-The exponent $4^k - 3^k - \binom{2^k}{2}$ is a nonnegative integer, since
-$3^k + \binom{2^k}{2} \le 4^k$. The paper also gives an explicit Euler product for
-$\tilde G_{k,2}$, which is not stated here.
-
-Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
-Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Lemma 8 (`integers-2026-A70-lem-8`). -/
-public theorem_wanted LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul (k : ℕ) :
-    ∃ g h : ℕ → ℂ, (∀ s : ℂ, 1 / 2 < s.re → LSeriesSummable g s) ∧
-      (∀ s : ℂ, 1 / 3 < s.re → LSeriesSummable h s) ∧
-      ∀ s : ℂ, 1 < s.re →
-        LSeries (fun n => ((gcdSumMean n ^ k : ℝ) : ℂ)) s = riemannZeta s ^ (2 ^ k) * LSeries g s ∧
-        LSeries g s * riemannZeta (2 * s) ^ (4 ^ k - 3 ^ k - (2 ^ k).choose 2) = LSeries h s
 
 /-- **Ivić's eighth-moment bound on the line $\operatorname{Re} s = 5/8$.** There are real
 constants $C$ and $T_0$ such that for every real $T \ge T_0$,

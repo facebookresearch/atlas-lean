@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import Mathlib.NumberTheory.EulerProduct.DirichletLSeries
@@ -68,7 +69,7 @@ end
 
 namespace GcdSumMeanSquare
 
-open ArithmeticFunction Complex
+open ArithmeticFunction
 
 private noncomputable def totientRatio : ArithmeticFunction ℝ :=
   ⟨fun n => (n.totient : ℝ) / n, by simp⟩
@@ -81,7 +82,19 @@ private lemma mean_eq (n : ℕ) :
     rw [coe_zeta_mul_apply]
     exact gcdSumMean_eq_sum_totient_div n.succ_pos
 
-private lemma mean_mul {m n : ℕ} (h : m.Coprime n) :
+end GcdSumMeanSquare
+
+open ArithmeticFunction GcdSumMeanSquare in
+/-- **Multiplicativity of the mean gcd-sum function.** For coprime natural numbers $m$ and $n$,
+the mean gcd-sum function satisfies $A(mn) = A(m)A(n)$.
+
+Source: László Tóth, *Another generalization of the gcd-sum function*, Arab. J. Math. 2 (2013),
+313–320, arXiv:1306.1020, Section 1, which gives, for $n \ge 1$, Pillai's identity
+$A(n) = \sum_{d \mid n} \varphi(d)/d$ and the product formula
+$A(n) = \prod_{p \mid n} (1 + \nu_p(n)(1 - 1/p))$ over the primes $p$ dividing $n$, where
+$\nu_p(n)$ is the exponent of $p$ in $n$. Either one gives multiplicativity: the first writes $A$
+as a sum over divisors of the multiplicative function $d \mapsto \varphi(d)/d$. -/
+public theorem gcdSumMean_mul_of_coprime {m n : ℕ} (h : m.Coprime n) :
     gcdSumMean (m * n) = gcdSumMean m * gcdSumMean n := by
   have hr : totientRatio.IsMultiplicative := by
     refine ⟨by simp [totientRatio], fun {m n} h => ?_⟩
@@ -89,7 +102,17 @@ private lemma mean_mul {m n : ℕ} (h : m.Coprime n) :
     simp [totientRatio, Nat.totient_mul h, mul_div_mul_comm]
   simpa only [mean_eq] using (isMultiplicative_zeta.natCast.mul hr).2 h
 
-private lemma mean_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
+/-- **Mean gcd-sum at a prime power.** For every prime $p$ and every nonnegative integer $k$,
+the mean gcd-sum function satisfies $A(p^k) = 1 + k(1 - 1/p)$.
+
+Source: László Tóth, *Another generalization of the gcd-sum function*, Arab. J. Math. 2 (2013),
+313–320, arXiv:1306.1020, Section 1: the case $n = p^k$ of the product formula
+$A(n) = \prod_{q \mid n} (1 + \nu_q(n)(1 - 1/q))$ over the primes $q$ dividing $n$, where
+$\nu_q(n)$ is the exponent of $q$ in $n$. It also follows from Pillai's identity
+$A(n) = \sum_{d \mid n} \varphi(d)/d$, given there too: for $n = p^k$ the divisor $1$
+contributes $1$ and each divisor $p^j$ with $1 \le j \le k$ contributes
+$\varphi(p^j)/p^j = 1 - 1/p$. -/
+public theorem gcdSumMean_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
     gcdSumMean (p ^ k) = 1 + k * (1 - (p : ℝ)⁻¹) := by
   rw [gcdSumMean_eq_sum_totient_div (pow_pos hp.pos _), Nat.sum_divisors_prime_pow hp]
   induction k with
@@ -101,6 +124,48 @@ private lemma mean_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
     rw [pow_succ]
     field_simp
     ring
+
+/-- **Absolute summability from bounds at prime powers.** Let $F$ be a multiplicative complex
+arithmetic function. Suppose $b,d$ are nonnegative summable sequences and
+$|F(p^{k+1})| \le b(p)d(k)$ for every prime $p$ and every $k \ge 0$. Then $\sum_n |F(n)|$ is
+finite.
+
+Source: standard argument from unique factorization. Distinct $n \ge 1$ give distinct finite
+sets of pairs $(p, \nu_p(n))$, where $p$ runs over the primes dividing $n$ and $\nu_p(n) \ge 1$ is
+the exponent of $p$ in $n$, and multiplicativity bounds $|F(n)|$ by the product of
+$b(p)\,d(\nu_p(n) - 1)$ over these pairs. Hence $\sum_{n \ge 1} |F(n)|$ is at most
+the sum, over all finite sets of pairs $(p, k)$ with $p$ prime and $k \ge 1$, of the product of
+$b(p)\,d(k - 1)$ over the set, and this sum is at most
+$\exp\left(\sum_p b(p) \sum_k d(k)\right)$. -/
+public theorem summable_of_prime_power_bound {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
+    {b d : ℕ → ℝ} (hb : Summable b) (hd : Summable d)
+    (hb₀ : ∀ n, 0 ≤ b n) (hd₀ : ∀ n, 0 ≤ d n)
+    (h : ∀ p k : ℕ, p.Prime → ‖F (p ^ (k + 1))‖ ≤ b p * d k) :
+    Summable (fun n => ‖F n‖) := by
+  let w (q : ℕ × ℕ) := b q.1 * d (q.2 - 1)
+  have hd' : Summable (fun e : ℕ => d (e - 1)) := (summable_nat_add_iff 1).mp (by simpa)
+  have hw : Summable w := hb.mul_of_nonneg hd' hb₀ (fun k => hd₀ _)
+  have hall := summable_finsetProd_of_summable_nonneg (f := w)
+    (fun q => mul_nonneg (hb₀ _) (hd₀ _)) hw
+  let graph (n : ℕ) := (n + 1).factorization.graph
+  have hinj : Function.Injective graph := by
+    intro m n hmn
+    exact Nat.succ.inj (Nat.factorization_inj m.succ_ne_zero n.succ_ne_zero
+      (Finsupp.graph_inj.mp hmn))
+  apply (summable_nat_add_iff 1).mp
+  refine (hall.comp_injective hinj).of_nonneg_of_le (fun _ => norm_nonneg _) (fun n => ?_)
+  change ‖F (n + 1)‖ ≤ ∏ q ∈ (n + 1).factorization.graph, w q
+  rw [hF.multiplicative_factorization F n.succ_ne_zero, Finsupp.prod, norm_prod,
+    Finsupp.graph, Finset.prod_map]
+  apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
+  intro p hp
+  obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (Finsupp.mem_support_iff.mp hp)
+  change ‖F (p ^ _)‖ ≤ b p * d ((n + 1).factorization p - 1)
+  simpa [hk] using h p k (Nat.prime_of_mem_primeFactors hp)
+
+namespace GcdSumMeanSquare
+
+open ArithmeticFunction Complex
 
 -- The local correction is 1 + (u² - 4u)x + 4u x²/(1 + x), where u = 1/p.
 private noncomputable def localCoeff (u : ℝ) : ℕ → ℝ
@@ -127,7 +192,8 @@ private noncomputable def meanSquare : ArithmeticFunction ℝ :=
   ⟨fun n => gcdSumMean n ^ 2, by simp [gcdSumMean]⟩
 
 private lemma meanSquare_mult : meanSquare.IsMultiplicative :=
-  ⟨by simp [meanSquare, gcdSumMean_one], fun {m n} h => by simp [meanSquare, mean_mul h, mul_pow]⟩
+  ⟨by simp [meanSquare, gcdSumMean_one], fun {m n} h => by
+    simp [meanSquare, gcdSumMean_mul_of_coprime h, mul_pow]⟩
 
 private noncomputable def twist (f : ArithmeticFunction ℝ) {s : ℂ} (hs : s ≠ 0) :
     ArithmeticFunction ℂ :=
@@ -146,34 +212,6 @@ private lemma twist_prime_pow (f : ArithmeticFunction ℝ) {s : ℂ} (hs : s ≠
     twist f hs (p ^ k) = (f (p ^ k) : ℂ) * ((p : ℂ) ^ (-s)) ^ k := by
   simp only [twist, coe_mk, map_pow]
   rfl
-
--- Each positive integer gives a different finite set of prime-exponent pairs.
--- Bounding the sum over all finite sets therefore bounds the full multiplicative series.
-private lemma summable_of_prime_power_bound {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
-    {b d : ℕ → ℝ} (hb : Summable b) (hd : Summable d)
-    (hb₀ : ∀ n, 0 ≤ b n) (hd₀ : ∀ n, 0 ≤ d n)
-    (h : ∀ p k : ℕ, p.Prime → ‖F (p ^ (k + 1))‖ ≤ b p * d k) :
-    Summable (fun n => ‖F n‖) := by
-  let w (q : ℕ × ℕ) := b q.1 * d (q.2 - 1)
-  have hd' : Summable (fun e : ℕ => d (e - 1)) := (summable_nat_add_iff 1).mp (by simpa)
-  have hw : Summable w := hb.mul_of_nonneg hd' hb₀ (fun k => hd₀ _)
-  have hall := summable_finsetProd_of_summable_nonneg (f := w)
-    (fun q => mul_nonneg (hb₀ _) (hd₀ _)) hw
-  let graph (n : ℕ) := (n + 1).factorization.graph
-  have hinj : Function.Injective graph := by
-    intro m n hmn
-    exact Nat.succ.inj (Nat.factorization_inj m.succ_ne_zero n.succ_ne_zero
-      (Finsupp.graph_inj.mp hmn))
-  apply (summable_nat_add_iff 1).mp
-  refine (hall.comp_injective hinj).of_nonneg_of_le (fun _ => norm_nonneg _) (fun n => ?_)
-  change ‖F (n + 1)‖ ≤ ∏ q ∈ (n + 1).factorization.graph, w q
-  rw [hF.multiplicative_factorization F n.succ_ne_zero, Finsupp.prod, norm_prod,
-    Finsupp.graph, Finset.prod_map]
-  apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
-  intro p hp
-  obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (Finsupp.mem_support_iff.mp hp)
-  change ‖F (p ^ _)‖ ≤ b p * d ((n + 1).factorization p - 1)
-  simpa [hk] using h p k (Nat.prime_of_mem_primeFactors hp)
 
 private lemma summable_twist {f : ArithmeticFunction ℝ} (hf : f.IsMultiplicative)
     {s : ℂ} (hs : 0 < s.re) (hs₀ : s ≠ 0) {b : ℕ → ℝ} (hb : Summable b)
@@ -213,7 +251,7 @@ private lemma meanSquare_summable {s : ℂ} (hs : 1 < s.re) :
     (Real.summable_nat_rpow.mpr (show -s.re < -1 by linarith)) (fun n => by positivity)
   intro p k hp
   change |gcdSumMean (p ^ (k + 1)) ^ 2| * _ ≤ _
-  rw [abs_of_nonneg (sq_nonneg _), mean_prime_pow hp]
+  rw [abs_of_nonneg (sq_nonneg _), gcdSumMean_prime_pow hp]
   obtain ⟨hu₀, hu₁⟩ := inv_prime_bounds hp
   rw [mul_comm ((p : ℝ) ^ (-s.re))]
   apply mul_le_mul_of_nonneg_right _ (by positivity)
@@ -335,7 +373,7 @@ public theorem LSeries_gcdSumMean_sq_eq_riemannZeta_pow_four_div :
     have hx : ‖(p : ℂ) ^ (-s)‖ < 1 := by
       rw [norm_natCast_cpow_of_pos p.prop.pos, neg_re]
       exact Real.rpow_lt_one_of_one_lt_of_neg (by exact_mod_cast p.prop.one_lt) (by linarith)
-    simp only [meanSquare, ArithmeticFunction.coe_mk, mean_prime_pow p.prop, ofReal_pow,
+    simp only [meanSquare, ArithmeticFunction.coe_mk, gcdSumMean_prime_pow p.prop, ofReal_pow,
       ofReal_add, ofReal_one, ofReal_mul, ofReal_natCast, ofReal_sub, correction_prime_pow p.prop,
       show -(2 * s) = (2 : ℕ) * (-s) by push_cast; ring, cpow_nat_mul]
     exact local_identity (p.val : ℝ)⁻¹ hx
