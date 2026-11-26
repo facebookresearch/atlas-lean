@@ -95,8 +95,16 @@ def_wanted nativeRubberPOTSourceRefinement (k : Type) [Field k] [IsAlgClosed k] 
     (U : Over (Spec (.of k))) [IsNoetherian U.left] [LocallyOfFiniteType U.hom] (y : B.stack.Fibre U) :
     RubberPOTSourceCharts.Refinement O P D R S a B U y
 
-/-- Construct the global source object with its actual family, dual, Cech,
-target-frame and torus refinement maps. -/
+/-- The global source complex of Li's family deformation theory for rubber maps: let $k$ be an
+algebraically closed field of characteristic zero, with the rubber target data `O`, `P`, `D`, `R`,
+`S` over $k$, a genus $g$, a ramification profile $a \in \mathbb{Z}^n$ with $\sum_i a_i = 0$ and
+$2g + n > 2$, and a rubber moduli model `B`. Then there is a descent datum
+(`LiFamilySourceDescent.Descent`): a global cochain complex on the affine points of the moduli
+stack, cofibrant at every point, with an étale surjective map from a chart point onto every
+Noetherian affine point of finite type over $k$ (`SourceCover`), quasi-isomorphic base-change maps
+along every map of affine points, quasi-isomorphisms from its evaluation at every chart point to
+the local quotient complex, and homotopies relating these augmentations along every arrow after
+refinement. -/
 def_wanted nativeLiFamilySourceDescent (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (O : ProjectiveLine (Spec (.of k)) (structureModule (Spec (.of k))))
     (P : RelativePair (k := k)) (D : OriginalRubberPair O P)
@@ -105,8 +113,16 @@ def_wanted nativeLiFamilySourceDescent (k : Type) [Field k] [IsAlgClosed k] [Cha
     (B : RubberModuliModel O P D R S (g := g) a) :
     LiFamilySourceDescent.Descent (O := O) (P := P) (D := D) (R := R) (S := S) (a := a) (B := B)
 
-/-- Realize the affine module diagram of a bundle stack objectwise, with a comparison homotopy for
-each restriction arrow (`BundleRealization`; unit and composition coherence is not requested). -/
+/-- A strict cochain realization of the module diagram of a vector bundle stack: let $k$ be a field,
+with the rubber target data `O`, `P`, `D`, `R`, `S` over $k$, a genus $g$, a ramification profile
+$a \in \mathbb{Z}^n$, a rubber moduli model `B` and a vector bundle stack $E$ over its stack. Then
+there is a `BundleRealization` of $E$: a global cochain complex of module presheaves on the affine
+points of the stack, with a quasi-isomorphism from its value at every affine point $p$ to the cone
+of the differential $E^0_p \to E^1_p$ of the module diagram of $E$ (both placed in degree $2$) and,
+for every arrow $f : p \to q$, the map of cones induced by the restriction maps of the diagram
+along $f$ and a homotopy between the two resulting maps from the value at $q$ to the restriction
+along $f$ of the cone at $p$. These homotopies need not be compatible with identities and
+composition. -/
 def_wanted nativeRubberBundleSourceRealization (k : Type) [Field k]
     (O : ProjectiveLine (Spec (.of k)) (structureModule (Spec (.of k))))
     (P : RelativePair (k := k)) (D : OriginalRubberPair O P)

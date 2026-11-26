@@ -13,8 +13,10 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.Diophantine.NegativePellGcd
 public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+public import MathlibExt.NumberTheory.NegativePellDivisibility
 
 namespace MetaMathlibExt
 
@@ -231,17 +233,6 @@ public theorem_wanted negPell_sum_difference_formulas (d : ℕ)
           else 2 * negPellG d m * negPellF d n)
 
 
-/-- **Coprimality of the negative Pell sequences.** Let $d > 1$ be a natural number such that
-$x^2 - d y^2 = -1$ has an integral solution, let $(X, Y)$ be its solution in natural numbers with
-least positive $Y$, and define integers $f_n, g_n$ by $(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$.
-Then for every $n > 0$, $\gcd(d, f_n) = 1$ and $\gcd(f_n, g_n) = 1$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 11(a) (`integers-2024-A111-thm-11`). -/
-public theorem_wanted negPell_gcd_eq_one (d : ℕ) (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (n : ℕ) (hn : 0 < n) :
-    Int.gcd d (negPellF d n) = 1 ∧ Int.gcd (negPellF d n) (negPellG d n) = 1
-
 /-- **Coprimality of negative Pell terms whose indices have an even ratio.** Let $d > 1$ be a
 natural number such that $x^2 - dy^2 = -1$ has an integral solution, let $(X, Y)$ be the solution
 of $x^2 - dy^2 = -1$ in natural numbers with the least positive $Y$, and for each $n$ let $f_n$
@@ -267,18 +258,6 @@ Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 11(c) (`integers-202
 public theorem_wanted negPellF_dvd_iff (d : ℕ) (hd : 1 < d)
     (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (m n : ℕ) (hn : 0 < n) (hnm : n ≤ m) :
     negPellF d n ∣ negPellF d m ↔ (d = 2 ∧ n = 1) ∨ (n ∣ m ∧ Odd (m / n))
-
-/-- **Divisibility of the second coordinates of negative Pell powers.** Let $d > 1$ be a natural
-number such that $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental
-solution (the one with $X, Y > 0$ and $Y$ least), and write
-$(X + Y \sqrt{d})^n = f_n + g_n \sqrt{d}$. For natural numbers $0 < n \le m$, $g_n$ divides $g_m$
-if and only if $n$ divides $m$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 11(d) (`integers-2024-A111-thm-11`). -/
-public theorem_wanted negPellG_dvd_iff (d : ℕ) (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (m n : ℕ) (hn : 0 < n) (hnm : n ≤ m) :
-    negPellG d n ∣ negPellG d m ↔ n ∣ m
 
 /-- **Solutions of |x² − dy²| = z are even when d ≡ 1 and z ≡ 4 (mod 8).** Let $d$ and $z$ be
 integers with $d \equiv 1 \pmod 8$ and $z \equiv 4 \pmod 8$. If integers $x$ and $y$ satisfy

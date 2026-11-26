@@ -168,7 +168,7 @@ private lemma finite_density_bound (n : ℕ) :
 of $\mathbb{R}^4$, the supremum of the upper densities of all packings of congruent balls in
 $\mathbb{R}^4$, satisfies $\frac{\pi^2}{16} \le \Delta_4$.
 
-Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
+Source: dLOV2014 Table 1. -/
 public theorem lowerBound_dLOV2014_wanted : lowerBound_dLOV2014 := by
   let radius (n : ℕ) : PositiveRadius := ⟨n + 3, by positivity⟩
   have hrad : Tendsto radius atTop atTop := by

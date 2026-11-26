@@ -32,22 +32,22 @@ open scoped ENNReal Matrix NNReal
 section
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
 
-def T2 : Matrix (Fin 2) (Fin 2) ℝ := !![0, 2; 0, 0]
+private def T2 : Matrix (Fin 2) (Fin 2) ℝ := !![0, 2; 0, 0]
 
-def E2 : Fin 2 → ℝ := fun _ => 1
+private def E2 : Fin 2 → ℝ := fun _ => 1
 
-theorem T2_sq_eq_zero : (T2 ^ 2 : Matrix (Fin 2) (Fin 2) ℝ) = 0 := by
+private theorem T2_sq_eq_zero : (T2 ^ 2 : Matrix (Fin 2) (Fin 2) ℝ) = 0 := by
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [pow_two, Matrix.mul_apply, Fin.sum_univ_two, T2]
 
-theorem T2_map_sq_eq_zero :
+private theorem T2_map_sq_eq_zero :
     ((T2.map Complex.ofReal) ^ 2 : Matrix (Fin 2) (Fin 2) ℂ) = 0 := by
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [pow_two, Matrix.mul_apply, Fin.sum_univ_two, Matrix.map_apply, T2]
 
-theorem T2_spectralRadius_eq_zero :
+private theorem T2_spectralRadius_eq_zero :
     spectralRadius ℂ (T2.map Complex.ofReal) = 0 := by
   have hle :=
     spectrum.spectralRadius_pow_le (𝕜 := ℂ) (T2.map Complex.ofReal) 2 (by norm_num)
@@ -61,19 +61,19 @@ theorem T2_spectralRadius_eq_zero :
   rw [heq] at hpos2
   exact lt_irrefl _ hpos2
 
-theorem T2_spectralRadius_lt_one :
+private theorem T2_spectralRadius_lt_one :
     spectralRadius ℂ (T2.map Complex.ofReal) < 1 := by
   rw [T2_spectralRadius_eq_zero]
   exact zero_lt_one
 
-theorem T2_summable_entry (i j : Fin 2) :
+private theorem T2_summable_entry (i j : Fin 2) :
     Summable fun n => (T2 ^ n) i j :=
   summable_pow_apply_of_spectralRadius_map_lt_one T2 T2_spectralRadius_lt_one i j
 
-theorem T2_summable : Summable fun n => (T2 ^ n).mulVec E2 0 :=
+private theorem T2_summable : Summable fun n => (T2 ^ n).mulVec E2 0 :=
   summable_pow_mulVec_apply_of_spectralRadius_map_lt_one T2 T2_spectralRadius_lt_one E2 0
 
-theorem T2_tsum : (∑' n, (T2 ^ n).mulVec E2 0) = 3 := by
+private theorem T2_tsum : (∑' n, (T2 ^ n).mulVec E2 0) = 3 := by
   have h0 : (T2 ^ 0).mulVec E2 0 = 1 := by simp [pow_zero, Matrix.one_mulVec, E2]
   have h1 : (T2 ^ 1).mulVec E2 0 = 2 := by
     rw [pow_one]
@@ -92,9 +92,9 @@ theorem T2_tsum : (∑' n, (T2 ^ n).mulVec E2 0) = 3 := by
   rw [hH.tsum_eq, Finset.sum_pair (by norm_num : (0 : ℕ) ≠ 1), h0, h1]
   norm_num
 
-noncomputable def T1 : Matrix (Fin 1) (Fin 1) ℝ := fun _ _ => 1 / 2
+private noncomputable def T1 : Matrix (Fin 1) (Fin 1) ℝ := fun _ _ => 1 / 2
 
-theorem T1_spectralRadius_lt_one :
+private theorem T1_spectralRadius_lt_one :
     spectralRadius ℂ (T1.map Complex.ofReal) < 1 := by
   have hle := spectralRadius_le_nnnorm (𝕜 := ℂ) (T1.map Complex.ofReal)
   have h2 : ‖Complex.ofReal (1 / 2 : ℝ)‖₊ = (1 / 2 : ℝ≥0) := by
@@ -112,18 +112,18 @@ theorem T1_spectralRadius_lt_one :
     exact_mod_cast hnorm
   exact lt_of_le_of_lt hle hnormEN
 
-theorem T1_pow : ∀ n, (T1 ^ n) 0 0 = (1 / 2 : ℝ) ^ n := by
+private theorem T1_pow : ∀ n, (T1 ^ n) 0 0 = (1 / 2 : ℝ) ^ n := by
   intro n
   induction n with
   | zero => simp
   | succ n ih =>
     simp only [pow_succ, Matrix.mul_apply, Fin.sum_univ_one, ih, T1, pow_succ]
 
-theorem T1_summable (E : Fin 1 → ℝ) :
+private theorem T1_summable (E : Fin 1 → ℝ) :
     Summable fun n => (T1 ^ n).mulVec E 0 :=
   summable_pow_mulVec_apply_of_spectralRadius_map_lt_one T1 T1_spectralRadius_lt_one E 0
 
-theorem T1_tsum (E : Fin 1 → ℝ) : (∑' n, (T1 ^ n).mulVec E 0) = 2 * E 0 := by
+private theorem T1_tsum (E : Fin 1 → ℝ) : (∑' n, (T1 ^ n).mulVec E 0) = 2 * E 0 := by
   have hmv : ∀ n, (T1 ^ n).mulVec E 0 = (1 / 2 : ℝ) ^ n * E 0 := by
     intro n
     change ∑ j, (T1 ^ n) 0 j * E j = _
