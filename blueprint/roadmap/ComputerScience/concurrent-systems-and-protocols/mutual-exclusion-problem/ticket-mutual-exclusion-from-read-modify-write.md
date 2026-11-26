@@ -1,6 +1,6 @@
 # Starvation-free mutual exclusion from a read-modify-write register
 
-In the asynchronous shared-memory model with a read-modify-write register $V$ holding two counters $\mathit{first}$ and $\mathit{last}$, both initially $0$, consider the protocol in which a trying process atomically increments $V.\mathit{last}$ and remembers its old value $\ell$, waits until it reads $V.\mathit{first} = \ell$, then enters the critical state, and an exiting process atomically increments $V.\mathit{first}$. It solves the [mutual exclusion problem](the-mutual-exclusion-problem.md) and is starvation-free; indeed it has bounded bypass: once a process has taken its ticket, no other process enters the critical state twice before it does.
+In the asynchronous shared-memory model with a read-modify-write register $V$ holding two counters $\mathit{first}$ and $\mathit{last}$, both initially $0$, consider the protocol in which a trying process atomically increments $V.\mathit{last}$ and remembers its old value $\ell$, waits until it reads $V.\mathit{first} = \ell$, then enters the critical region, and an exiting process atomically increments $V.\mathit{first}$. It solves the [mutual exclusion problem](the-mutual-exclusion-problem.md) and is starvation-free; indeed it has bounded bypass: once a process has taken its ticket, no other process enters the critical region twice before it does.
 
 ## Depends on
 

@@ -15,7 +15,8 @@ Transitivity is not immediate, because the composition of two strong bisimulatio
 
 ## Proof depends on
 
-- [Strong late bisimilarity](strong-late-bisimilarity.md)
+- [Strong late bisimilarity is preserved by renaming to a fresh name](strong-late-bisimilarity-is-preserved-by-fresh-renaming.md)
+- [Strong bisimulations up to restriction are contained in strong late bisimilarity](strong-bisimulations-up-to-restriction.md)
 
 ## Sources
 

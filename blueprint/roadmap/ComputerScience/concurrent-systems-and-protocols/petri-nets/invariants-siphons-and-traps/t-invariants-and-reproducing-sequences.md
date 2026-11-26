@@ -6,10 +6,6 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) with incid
 
 - [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)
 
-## Proof depends on
-
-- [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)
-
 ## Sources
 
 - J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 4.3.13, Proposition 4.3.14 and Proposition 4.3.15 with its proof, p. 89.

@@ -13,6 +13,7 @@ The semantic models of Hoare's Communicating Sequential Processes in Roscoe's pr
 - [The stable failures model is a complete lattice](stable-failures-model-is-a-complete-lattice.md)
 - [Denotational semantics of CSP](denotational-semantics-of-csp.md)
 - [CSP operators are monotone and continuous over the failures-divergences model](csp-operators-are-monotone-over-failures-divergences.md)
+- [Kőnig's lemma for inverse systems](konig-s-lemma-for-inverse-systems.md)
 - [CSP operators are continuous over the stable failures model](csp-operators-are-continuous-over-stable-failures.md)
 - [Deterministic processes in CSP](deterministic-processes.md)
 - [Deterministic processes are the maximal processes under refinement](deterministic-processes-are-maximal.md)

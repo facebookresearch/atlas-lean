@@ -11,9 +11,10 @@ Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) net that is [ext
 
 ## Expansion
 
-This page becomes ready once:
+This page becomes ready once its proof prerequisites are linked:
 
-- A checked locator for the full proof in J. Desel and J. Esparza, *Free Choice Petri Nets*, Cambridge Tracts in Theoretical Computer Science 40, Cambridge University Press, 1995 (source check; the cited notes prove only the easy direction's idea and sketch the other: every minimal siphon is the place set of an S-component, and every place lies in a minimal siphon)
+- for the direction from boundedness to the covering by S-components: every place of a live and bounded extended free-choice net lies in a minimal siphon, and every minimal siphon of such a net is the place set of an S-component (proof prerequisites)
+- for the converse and the bound: an S-component carries the same number of tokens at every reachable marking, so each place is bounded by $M_0(P')$ for every S-component with place set $P'$ containing it, and in a live and bounded net the smallest of these bounds is reached (proof prerequisites)
 
 ## Sources
 

@@ -7,10 +7,6 @@ A member of the [failures-divergences model](the-failures-divergences-model.md) 
 - [Deterministic processes in CSP](deterministic-processes.md)
 - [The failures-divergences model of CSP](the-failures-divergences-model.md)
 
-## Proof depends on
-
-- [Deterministic processes in CSP](deterministic-processes.md)
-
 ## Sources
 
 - A. W. Roscoe, *The Theory and Practice of Concurrency*, Prentice Hall, 1997; revised edition 2005, author's online version, <https://www.cs.ox.ac.uk/bill.roscoe/publications/68b.pdf>, Section 9.1: Lemma 9.1.1 (every member of $\mathcal{D}$ is maximal), Lemma 9.1.2 (deterministic processes correspond to trace sets in which no trace that can terminate is extended by an event) and Lemma 9.1.3 (every maximal element of $\mathcal{N}$ is deterministic), with the construction of a deterministic refinement of an arbitrary process between Lemmas 9.1.2 and 9.1.3.

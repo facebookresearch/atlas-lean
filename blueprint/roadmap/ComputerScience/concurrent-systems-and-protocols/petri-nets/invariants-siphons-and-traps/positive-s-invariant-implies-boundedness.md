@@ -7,10 +7,6 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) with incid
 - [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
 
-## Proof depends on
-
-- [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)
-
 ## Sources
 
 - J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definitions 4.3.1 and 4.3.7, Proposition 4.3.2 and Proposition 4.3.8 with its proof, pp. 85–88.

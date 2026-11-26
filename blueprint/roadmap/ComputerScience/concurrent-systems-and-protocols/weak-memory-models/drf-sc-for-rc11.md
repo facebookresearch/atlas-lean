@@ -1,6 +1,6 @@
 # Data-race freedom guarantees sequential consistency under RC11
 
-An execution is *SC-consistent* if it is complete, satisfies atomicity ($\mathtt{rmw} \cap (\mathtt{rb} ; \mathtt{mo}) = \emptyset$), and $\mathtt{sb} \cup \mathtt{rf} \cup \mathtt{mo} \cup \mathtt{rb}$ is acyclic. If in every SC-consistent execution of a program $P$ every race $(a, b)$ has both $a$ and $b$ of mode $sc$, then the [outcomes of $P$ under RC11](rc11-program-outcomes.md) coincide with its outcomes under sequential consistency. The no-thin-air condition of [RC11 consistency](rc11-consistent-executions.md) is needed for this.
+An execution is *SC-consistent* if it is complete, satisfies atomicity ($\mathtt{rmw} \cap (\mathtt{rb} ; \mathtt{mo}) = \emptyset$), and $\mathtt{sb} \cup \mathtt{rf} \cup \mathtt{mo} \cup \mathtt{rb}$ is acyclic. The outcomes of a program $P$ under sequential consistency are the outcomes of its SC-consistent full executions. If in every SC-consistent execution of $P$ every race $(a, b)$ has both $a$ and $b$ of mode $sc$, then the [outcomes of $P$ under RC11](rc11-program-outcomes.md) coincide with its outcomes under sequential consistency. The no-thin-air condition of [RC11 consistency](rc11-consistent-executions.md) is needed for this.
 
 ## Depends on
 

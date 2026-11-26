@@ -23,9 +23,10 @@ Because $\omega$ forgets how a place grows, the coverability tree does not decid
 
 ## Expansion
 
-This page becomes ready once:
+This page becomes ready once the rest of its proof is linked:
 
-- A checked locator for the termination proof in R. M. Karp and R. E. Miller, "Parallel program schemata", *Journal of Computer and System Sciences*, 1969 (source check). The same argument, by König's lemma and Dickson's lemma, proves that the [coverability graph construction terminates](coverability-graph-construction-terminates.md).
+- the step combining Kőnig's and Dickson's lemmas: along an infinite path of the tree no label repeats an earlier one, so Dickson's lemma, applied to the places that are not yet $\omega$, gives a strictly larger later label and with it a new $\omega$, which can happen at most once per place (proof of termination); the same argument proves that the [coverability graph construction terminates](coverability-graph-construction-terminates.md)
+- the soundness and completeness arguments for properties 1–4, relating firing sequences of the net to paths of the tree (proof of the properties)
 
 ## Sources
 

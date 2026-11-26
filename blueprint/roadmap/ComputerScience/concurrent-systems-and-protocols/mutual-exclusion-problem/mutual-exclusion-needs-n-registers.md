@@ -1,6 +1,6 @@
 # Mutual exclusion for n processes needs n registers
 
-Every protocol that solves [the mutual exclusion problem](the-mutual-exclusion-problem.md), with mutual exclusion and deadlock freedom, for $n \ge 2$ processes in [the asynchronous shared-memory model](../shared-memory-objects/the-asynchronous-shared-memory-model.md) whose base objects are read/write registers uses at least $n$ registers. The proof is a covering argument: before a process can enter the critical section it must write to a register that no other process covers with a pending write, and from any configuration in which every process is in its remainder section one can reach, for $k = 1, \dots, n$, a configuration in which $k$ processes cover $k$ distinct registers and which the other processes cannot distinguish from one in which every process is in its remainder section.
+Every protocol that solves [the mutual exclusion problem](the-mutual-exclusion-problem.md), with mutual exclusion and deadlock freedom, for $n \ge 2$ processes in [the asynchronous shared-memory model](../shared-memory-objects/the-asynchronous-shared-memory-model.md) whose base objects are read/write registers uses at least $n$ registers. The proof is a covering argument.
 
 ## Depends on
 

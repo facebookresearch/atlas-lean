@@ -8,10 +8,6 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md). $N$ is *w
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
 - [T-invariants and reproducing firing sequences](t-invariants-and-reproducing-sequences.md)
 
-## Proof depends on
-
-- [T-invariants and reproducing firing sequences](t-invariants-and-reproducing-sequences.md)
-
 ## Sources
 
 - J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 2.10.3 (p. 38) and Theorem 4.3.17 with its proof (p. 90).

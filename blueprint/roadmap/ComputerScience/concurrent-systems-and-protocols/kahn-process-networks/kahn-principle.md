@@ -4,7 +4,7 @@ The system of equations $\Sigma_P = \{ X_i = \tau_i(X_1, \dots, X_n) \mid 1 \le 
 
 $$X_i^0 = \Lambda, \qquad X_i^{j+1} = \tau_i(X_1^j, \dots, X_n^j).$$
 
-This least solution is taken as the histories of the lines of the network, so a network computes a function of its input streams and its behaviour is determinate: a simulation on a sequential machine under a fair scheduler produces the least solution, and an unfair scheduler can only produce prefixes of it.
+This least solution is taken as the histories of the lines of the network, so the histories are a function of the input streams.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ This least solution is taken as the histories of the lines of the network, so a 
 
 ## Sources
 
-- G. Kahn, "The semantics of a simple language for parallel programming", IFIP Congress 74, 1974; retypeset version read at <https://perso.ensta.fr/~chapoutot/various/kahn_networks.pdf>, Section 3: Property 1 ("Kleene") and the discussion of its consequences, including that a parallel program can be simulated on a sequential machine under a fair scheduler, and Section 6 (only determinate programs).
+- G. Kahn, "The semantics of a simple language for parallel programming", IFIP Congress 74, 1974; retypeset version read at <https://perso.ensta.fr/~chapoutot/various/kahn_networks.pdf>, Section 3: the system $\Sigma_P$, Property 1 ("Kleene") and the choice of its least solution as the histories of the lines.

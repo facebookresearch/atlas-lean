@@ -1,6 +1,6 @@
 # Mutual exclusion from a test-and-set bit
 
-In the asynchronous shared-memory model with a test-and-set bit $\mathit{lock}$, initially $0$, whose atomic operation $\mathrm{TAS}$ sets it to $1$ and returns its old value, and a reset operation that sets it to $0$, consider the protocol in which a trying process repeats $\mathrm{TAS}(\mathit{lock})$ until it returns $0$, then enters the critical state, and an exiting process resets $\mathit{lock}$. It solves the [mutual exclusion problem](the-mutual-exclusion-problem.md): it guarantees mutual exclusion and deadlock freedom. It is not starvation-free: a single fast process can win the bit every time while another process keeps trying.
+In the asynchronous shared-memory model with a test-and-set bit $\mathit{lock}$, initially $0$, whose atomic operation $\mathrm{TAS}$ sets it to $1$ and returns its old value, and a reset operation that sets it to $0$, consider the protocol in which a trying process repeats $\mathrm{TAS}(\mathit{lock})$ until it returns $0$, then enters the critical region, and an exiting process resets $\mathit{lock}$. It solves the [mutual exclusion problem](the-mutual-exclusion-problem.md): it guarantees mutual exclusion and deadlock freedom. It is not starvation-free: a single fast process can win the bit every time while another process keeps trying.
 
 ## Depends on
 

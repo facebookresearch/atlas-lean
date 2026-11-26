@@ -1,6 +1,6 @@
 # Safeness of live marked graphs
 
-A [live](liveness-and-deadlock-freedom.md) [marked graph](subclasses-of-petri-nets.md) $(G, M_0)$ is [safe](boundedness-and-safeness.md) if and only if every arc (place) of $G$ belongs to a directed circuit $C$ with $M_0(C) = 1$. More generally, the maximum number of tokens that an arc can hold in $(G, M_0)$ is the minimum of $M_0(C)$ over the directed circuits $C$ containing it.
+A [live](liveness-and-deadlock-freedom.md) [marked graph](subclasses-of-petri-nets.md) $(G, M_0)$ is [safe](boundedness-and-safeness.md) if and only if every arc (place) of $G$ belongs to a directed circuit $C$ with $M_0(C) = 1$. More generally, for an arc that lies on some directed circuit of $G$, the maximum number of tokens it holds over the markings reachable in $(G, M_0)$ is the minimum of $M_0(C)$ over the directed circuits $C$ containing it.
 
 ## Depends on
 

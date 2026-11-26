@@ -1,10 +1,22 @@
 # Rackoff's exponential-space bound for covering and boundedness
 
-There is a constant $c$ such that the covering problem and the boundedness problem for [vector addition systems](vector-addition-systems.md) can each be decided in space $2^{c n \log n}$, where $n$ is the size of the input. The key step bounds the length of witnesses: if $v_1$ is covered from $v$, it is covered along a path of length at most $2^{2^{c n \log n}}$, and a system with an infinite reachability set has a self-covering path of length at most $2^{2^{c n \log n}}$; a nondeterministic search for such a path runs in exponential space, and Savitch's theorem makes it deterministic.
+There is a constant $c$ such that the covering problem and the boundedness problem for [vector addition systems](vector-addition-systems.md) can each be decided in space $2^{c n \log n}$, where $n$ is the size of the input. The key step bounds the length of witnesses: if $v_1 \in C(v, A)$, then some path from $v$ whose vectors all lie in $\mathbb{N}^k$ ends in a vector $w \ge v_1$ and has length at most $2^{2^{c n \log n}}$; and if $R(v, A)$ is infinite, then $(v, A)$ has a self-covering path, one whose last vector is $\ge$ some earlier vector and differs from it, whose vectors all lie in $\mathbb{N}^k$ and whose length is at most $2^{2^{c n \log n}}$. A nondeterministic search for such a path runs in exponential space, and Savitch's theorem makes it deterministic.
 
 ## Depends on
 
 - [Vector addition systems](vector-addition-systems.md)
+
+## Proof depends on
+
+- [Unbounded vector addition systems have self-covering paths](unbounded-vector-addition-systems-have-self-covering-paths.md)
+
+## Expansion
+
+This page becomes ready once its proof prerequisites are linked:
+
+- the bound on the shortest covering path, by induction on the number of coordinates that must stay nonnegative (Lemmas 3.3 and 3.4 and Theorem 3.5 of the source)
+- the bound on the shortest self-covering path, which uses a bound on small integer solutions of linear systems due to Borosh and Treybig (Lemmas 4.3–4.7 and Theorem 4.8)
+- Savitch's theorem in the form that a nondeterministic machine using space $s(n) \ge \log n$ can be simulated deterministically in space $O(s(n)^2)$ (proof prerequisite)
 
 ## Sources
 

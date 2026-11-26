@@ -5,17 +5,16 @@ A set $X \subseteq \mathbb{N}^k$ is [semilinear](semilinear-sets.md) if and only
 ## Depends on
 
 - [Linear and semilinear sets of vectors](semilinear-sets.md)
-- [Quantifier elimination for Presburger arithmetic](../../../../Logic/model-theory/quantifier-elimination-for-presburger-arithmetic.md)
-
 ## Proof depends on
 
 - [Quantifier elimination for Presburger arithmetic](../../../../Logic/model-theory/quantifier-elimination-for-presburger-arithmetic.md)
 
 ## Expansion
 
-This page becomes ready once:
+This page becomes ready once the rest of its proof is linked:
 
-- A checked locator for the proof in S. Ginsburg and E. H. Spanier, "Semigroups, Presburger formulas, and languages", *Pacific Journal of Mathematics* 16(2):285–296, 1966 (source check)
+- semilinear sets are closed under union, intersection, complement and projection (S. Ginsburg and E. H. Spanier, "Semigroups, Presburger formulas, and languages", *Pacific Journal of Mathematics* 16(2):285–296, 1966), so that a set defined by a quantifier-free formula with linear inequalities and congruences, and hence by any formula after quantifier elimination, is semilinear (proof prerequisite)
+- the converse translation, which defines a linear set with root $r$ and periods $q$ by the existential formula $\exists \lambda\, (x = r + \sum_q \lambda_q q)$ and a semilinear set by the disjunction of these (proof)
 
 ## Sources
 

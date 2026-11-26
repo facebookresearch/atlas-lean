@@ -6,7 +6,7 @@ The denotational semantics of CSP maps each CSP term $P$, in an environment $\xi
 
 This page is a family. The clauses over $\mathcal{T}$ and $\mathcal{F}$ are stated in the [trace semantics](trace-semantics-of-the-csp-operators.md) and the [stable failures semantics](stable-failures-semantics-of-the-csp-operators.md) of the CSP operators. It becomes ready once:
 
-- The clauses of every CSP operator over $\mathcal{N}$, with the fixed-point clause for recursion with respect to failures-divergences refinement (Section 8.3.2 of the source), stated on a page of their own (statement prerequisite; not yet stated)
+- The clauses of every CSP operator over $\mathcal{N}$, with the fixed-point clause for recursion with respect to failures-divergences refinement (Section 8.3.2 of the source), stated on a page of their own (statement prerequisite)
 
 ## Depends on
 

@@ -13,7 +13,7 @@ In the [denotational semantics of CSP](denotational-semantics-of-csp.md) over th
 
 ## Proof depends on
 
-- [Denotational semantics of CSP](denotational-semantics-of-csp.md)
+- [Kőnig's lemma for inverse systems](konig-s-lemma-for-inverse-systems.md)
 
 ## Sources
 

@@ -10,7 +10,6 @@ Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](.
 
 ## Proof depends on
 
-- [Agreement of markings on all S-invariants](../invariants-siphons-and-traps/agreement-on-all-s-invariants.md)
 - [T-invariants of connected marked graphs](t-invariants-of-marked-graphs.md)
 - [Token count on circuits of a marked graph is invariant](../token-count-on-circuits-of-marked-graphs.md)
 - [Liveness of marked graphs](../liveness-of-marked-graphs.md)

@@ -10,10 +10,6 @@ Since trace inclusion is preserved by every operator of the calculus, $\sqsubset
 
 - [May and must testing preorders](may-and-must-testing-preorders.md)
 
-## Proof depends on
-
-- [May and must testing preorders](may-and-must-testing-preorders.md)
-
 ## Sources
 
 - R. De Nicola and M. C. B. Hennessy, "Testing equivalences for processes", *Theoretical Computer Science* 34(1–2):83–133, 1984, <https://www.scss.tcd.ie/Matthew.Hennessy/pubs/old/TCS84.pdf>: Definition 6.4.1 (the alternative preorder $\sqsubseteq'_3$ as trace inclusion), Theorem 6.4.5 for $i = 3$ (proved with the observers $o_s$ that test for the trace $s$), and Theorem 6.4.9 (i).
