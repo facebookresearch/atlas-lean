@@ -9,13 +9,16 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.PrismaticSyntomicModels
+public import MathlibExt.AlgebraicGeometry.PrismaticNygaardTwistsPeriodGeneratorCongruence
 
 /-!
 # Actual Nygaard, Breuil--Kisin and syntomic construction requests
 
 Initial prism maps, finite quotient rings, tensor/dual words, conormal
 period generators, inverse-Frobenius scalars, projection-normalized
-coordinate maps and phi-can fibers are fixed in MathlibExt.
+coordinate maps and phi-can fibers are fixed in MathlibExt; the
+period-generator congruence is proved in
+MathlibExt.AlgebraicGeometry.PrismaticNygaardTwistsPeriodGeneratorCongruence.
 
 Line and Frobenius dictionaries are constructed jointly, with their
 actual quasisyntomic coordinate covers. These requests do not assert
@@ -47,50 +50,66 @@ open MathlibExt.AlgebraicGeometry.PrismaticSyntomicModels
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Construct a genuine quasiregular semiperfectoid covering ring. -/
+/-- For a prime $p$ and a quasisyntomic ring $A$: a quasisyntomic cover $A \to S$ together with a
+perfect prism $(P, I)$, a surjection $P/I \to S$, and an initial object of the category of prisms
+over $(P, I)$ equipped with a compatible map from $S$ to their reduction (`SemiperfectoidCover`). -/
 public def_wanted semiperfectoidCover
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p) :
     SemiperfectoidCover p A
 
-/-- Initial absolute prisms on the actual quasisyntomic basis. -/
+/-- For a prime $p$, a quasisyntomic ring $A$ and every semiperfectoid object $S$ of the relative
+quasisyntomic site of $A$ (`Basis p A`): an initial object of the category of bounded prisms
+$(Q, J)$ equipped with a ring map $S \to Q/J$. -/
 public def_wanted initialBasisPrisms
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p) :
     ∀ B : Basis p A, AbsolutePrismaticBasis.InitialLift p (ring p B)
 
-/-- Normalize the actual zero Nygaard quotient by its Frobenius-residue image. -/
+/-- For a prime $p$, a quasisyntomic ring $A$ and a choice $D$ of initial prisms $(\Delta_S, I_S)$
+for the semiperfectoid objects $S$ of the relative quasisyntomic site of $A$: an isomorphism of
+presheaves $\Delta_S / \mathcal{N}^{\ge 1} \cong S$, where
+$\mathcal{N}^{\ge 1} = \{x : \varphi(x) \in I_S\}$, under which the class of $x$ goes to an element
+of $S$ whose image in $\Delta_S / I_S$ is $\varphi(x) \bmod I_S$ (`ZeroReduction`). -/
 public def_wanted zeroNygaardReduction
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
     (D : ∀ B : Basis p A, AbsolutePrismaticBasis.InitialLift p (ring p B)) :
     ZeroReduction p A D
 
-/-- The source's classical p-torsionfree perfectoid conormal seed and theta reduction. -/
+/-- Let $p$ be a prime and $(P, I)$ a perfect prism whose reduction $P/I$ is $p$-torsion-free. A
+classical Breuil–Kisin seed (`ClassicalSeed`): maps between the conormal modules of the ideals
+$I_n = \varphi(I)\varphi^2(I) \cdots \varphi^{n+1}(I)$ whose $p$-multiples are the natural maps,
+with $p$ injective on each conormal module, such that the inverse limit $L$ is a free, finitely
+generated, invertible $P$-module; together with compatible reductions of these conormal modules to
+$(P/I)/p^{n+1}$, dividing the residue of an element by $p^{n+1}$, and a $P$-linear map $L \to P/I$
+through them whose linearization $P/I \otimes_P L \to P/I$ is an isomorphism. -/
 public def_wanted classicalBreuilKisinSeed
     (p : ℕ) [Fact p.Prime] (P : Prism.{0} p)
     (hPerfect : Function.Bijective (DeltaRing.frobenius p P.ring))
     (hTorsionFree : Function.Injective (fun x : P.Residue ↦ (p : P.Residue) * x)) :
     ClassicalSeed p P
 
-/-- The standard cyclotomic xi has the source's actual conormal transition congruence. -/
-public theorem_wanted periodGeneratorCongruence
-    (p : ℕ) [Fact p.Prime] (P : Prism.{0} p)
-    (hPerfect : Function.Bijective (DeltaRing.frobenius p P.ring))
-    (epsilon : P.ring) (hUnit : IsUnit epsilon)
-    (hTeichmuller : DeltaRing.frobenius p P.ring epsilon = epsilon ^ p)
-    (hTheta : Ideal.Quotient.mk P.ideal epsilon = 1)
-    (hIdeal : P.ideal = Ideal.span {xi p P hPerfect epsilon}) :
-    ∀ n : ℕ, phiPower p P (n + 2) (xi p P hPerfect epsilon) - (p : P.ring) ∈ periodIdeal p P n
-
-/-- The actual compatible conormal generator gives the source period-module frame. -/
+/-- Let $p$ be a prime, $(P, I)$ a perfect prism, $L$ a classical Breuil–Kisin seed for it, and $G$
+a period generator: a unit $\varepsilon$ with $\varphi(\varepsilon) = \varepsilon^p$ and
+$\varepsilon \equiv 1 \pmod I$ such that $I = (\xi)$ for
+$\xi = \sum_{k < p} \varphi^{-1}(\varepsilon)^k$ and
+$\varphi^{n+2}(\xi) - p \in \varphi(I) \cdots \varphi^{n+1}(I)$ for all $n$. Then the map $P \to L$,
+$a \mapsto a e$, is an isomorphism of $P$-modules, where $e \in L$ is the compatible family of the
+classes of $\varphi(\xi)\varphi^2(\xi) \cdots \varphi^{n+1}(\xi)$ in the conormal modules. -/
 public theorem_wanted periodFrameIsIso
     (p : ℕ) [Fact p.Prime] (P : Prism.{0} p)
     (hPerfect : Function.Bijective (DeltaRing.frobenius p P.ring))
     (L : ClassicalSeed p P) (G : Generator p P hPerfect) :
     IsIso (frameHom p P hPerfect L G)
 
-/-- Construct compatible finite filtered lines and their actual coordinate-normalized Frobenius,
-jointly with the vanishing of the negative syntomic fibres after quasisyntomic cohomology. The
-coordinate normalization does not determine the Frobenius (see `FrobeniusModel`), so this property
-is requested for the model chosen here rather than for every Frobenius model. -/
+/-- For a prime $p$, a quasisyntomic ring $A$ whose quasisyntomic global sections functor has a
+right derived functor (`HasDerivedSections`), a choice $D$ of initial prisms of the semiperfectoid
+basis objects and a zero-step reduction $Z$: a Breuil–Kisin twist tower $T$ (line bundles over the
+finite Nygaard quotients with their duals, matching the classical seeds over perfect prisms)
+together with a Frobenius model $F$ for $T$ (maps $\varphi_i$ from the Nygaard filtration step $i$
+of the Nygaard-completed twists to the completed twists, normalized in coordinates by the divided
+Frobenius on a quasisyntomic cover of every basis object) such that the quasisyntomic cohomology of
+the syntomic complex $\mathrm{fib}(\varphi_i - \mathrm{can})$ of weight $i$ vanishes for every
+$i < 0$. The vanishing is asserted for this Frobenius model only: the coordinate normalization does
+not determine the Frobenius. -/
 public def_wanted bmsTwistFrobeniusModels
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
     [MathlibExt.AlgebraicGeometry.PrismaticNygaardCohomology.HasDerivedSections p A]
@@ -99,8 +118,11 @@ public def_wanted bmsTwistFrobeniusModels
     Σ T : TwistTower p A D Z,
       {F : FrobeniusModel p A D Z T // ∀ i : ℤ, i < 0 → IsZero (F.global i)}
 
-/-- These actual syntomic global objects are derived p-complete integer complexes, for every
-Frobenius model (derived completeness is preserved by fibres, whatever the Frobenius). -/
+/-- For a prime $p$, a quasisyntomic ring $A$ whose quasisyntomic global sections functor has a
+right derived functor (`HasDerivedSections`), a choice $D$ of initial prisms of the semiperfectoid
+basis objects, a zero-step reduction $Z$, a twist tower $T$ and any Frobenius model $F$ for $T$: for
+every weight $i \in \mathbb{Z}$, the quasisyntomic cohomology `F.global i` of the syntomic complex
+$\mathrm{fib}(\varphi_i - \mathrm{can})$ is a derived $p$-complete complex of abelian groups. -/
 public theorem_wanted syntomicIsPComplete
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
     [MathlibExt.AlgebraicGeometry.PrismaticNygaardCohomology.HasDerivedSections p A]

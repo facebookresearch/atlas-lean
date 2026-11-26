@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.HiggsSmoothRealizationModels
 public import MathlibExt.AlgebraicGeometry.HiggsKernelComparisonModels
 public import MathlibExt.AlgebraicGeometry.HiggsReconstructionIsomorphisms
 public import MathlibExt.AlgebraicGeometry.ManifoldRationalChernModels
+public import MathlibExt.AlgebraicGeometry.KahlerHiggsCorrespondenceNativeSmoothBundleSectionMultiplication
 
 /-!
 # Wanted normalized compact Kähler Higgs correspondence
@@ -72,10 +73,6 @@ def_wanted native_holomorphic_cotangent_wedge : CotangentWedgeSource (n := n) (M
 theorem_wanted native_smooth_bundle_section_calculus {r : ℕ} (B : SmoothComplexBundle n M r)
     (A : OneFormValue B) : SectionCalculus B A
 
-/-- Actual native smooth coefficient multiplication preserves the same bundle sections. -/
-theorem_wanted native_smooth_bundle_section_multiplication {r : ℕ} (B : SmoothComplexBundle n M r) :
-  SmoothSectionMultiplication B
-
 /-- Native smooth bundle section kernels have their ordinary local sheaf condition. -/
 theorem_wanted native_smooth_bundle_section_gluing {r : ℕ} (B : SmoothComplexBundle n M r)
     [SectionCalculus B 0] [SmoothSectionMultiplication B] : SmoothBundleSheafCondition B
@@ -88,7 +85,15 @@ def_wanted native_holomorphic_higgs_realization [CompactSpace M] [T2Space M] [Se
 
 variable [ExteriorTheory ℝ (Coordinates n) M] [WedgeTheory n M]
 
-/-- Determinant degree providers realize the same double exterior dual and actual first-Chern integral. -/
+/-- Determinant degree data on a compact, connected, Hausdorff, second-countable complex manifold
+$M$ modelled on $\mathbb{C}^n$ (smooth as a real manifold), for the inclusion `S` of holomorphic
+into smooth complex functions: to every locally free $\mathcal{O}_M$-module $E$ of rank $r$, and to
+every finitely presented subsheaf $F$ of such an $E$ of generic rank $q$, it assigns a smooth
+complex line bundle realizing the smooth scalar extension of the reflexive determinant
+$(\Lambda^r E)^{\vee\vee}$ (resp. $(\Lambda^q F)^{\vee\vee}$), a smooth connection on it and a
+closed real $2$-form equal to its first Chern–Weil form (`DeterminantDegreeData`). We assume the
+local calculus, gluing and sheafification properties of the functions, sections and forms on $M$
+used to define these objects. -/
 def_wanted native_determinant_degree_theory [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] (S : HolomorphicSmoothInclusionSource (n := n) (M := M)) : DeterminantDegreeTheory S
 
@@ -124,7 +129,17 @@ def_wanted native_inverse_higgs_kernel_comparison
     [KernelSheafCondition R.physical.bundle h C.connection]
     (H : HarmonicHiggsModel R.physical.bundle h C.connection) : HiggsKernelComparison S E R h C H
 
-/-- A semisimple flat connection's actual harmonic kernel is polystable for the actual determinant integral. -/
+/-- Part of the nonabelian Hodge correspondence: let $M$ be a compact, connected, nonempty,
+Hausdorff, second-countable complex manifold modelled on $\mathbb{C}^n$ (smooth as a real
+manifold) with a Kähler form $\eta$, and let $A$ be a flat connection on a smooth complex vector
+bundle $B$ on $M$ whose local system of horizontal sections is semisimple
+(`SemisimpleHorizontals`) and which is pluriharmonic for a Hermitian metric $h$
+(`IsPluriharmonic`). Then the holomorphic Higgs sheaf of $(B, h, A)$ (`K.object`: the sections
+killed by the $(0,1)$-part of the $h$-unitary part of $A$, with the Higgs field of the harmonic
+Higgs model `H`) is polystable with respect to $\eta$, slopes being computed from the
+determinant degree data `D` and the coordinate integral given by `R` and `P`. We assume the local
+calculus, gluing, sheafification and integration properties of the functions, sections and forms
+on $M$ used to define these objects. -/
 theorem_wanted flat_harmonic_kernel_polystable [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M]
     (S : HolomorphicSmoothInclusionSource (n := n) (M := M)) (D : DeterminantDegreeTheory S)
@@ -138,7 +153,19 @@ theorem_wanted flat_harmonic_kernel_polystable [CompactSpace M] [T2Space M] [Sec
     (H : HarmonicHiggsModel B h A) (K : HarmonicKernelHiggsAdapter (T := T) (W := W) B h A H) :
   IsPolystable S D eta R P K.object
 
-/-- Every actual polystable Higgs object with all actual rational Chern classes zero has a harmonic metric. -/
+/-- Part of the nonabelian Hodge correspondence: let $M$ be a compact, connected, nonempty,
+Hausdorff, second-countable complex manifold modelled on $\mathbb{C}^n$ (smooth as a real
+manifold) with a Kähler form $\eta$, and let $E$ be a locally free holomorphic Higgs sheaf on
+$M$ with a smooth realization `F` (a smooth complex vector bundle with a holomorphic Higgs field).
+Suppose that $E$ is polystable with respect to $\eta$ (slopes computed from the determinant
+degree data `D` and the coordinate integral given by `R` and `P`) and that the rational Chern
+classes $c_j$, $j \ge 1$, of the bundle all vanish (`AllRationalChernZero`, for a smooth
+connection `C` with the given Chern–Weil forms `A` and singular-cohomology comparison data `I`,
+`J`, `Q`, `B`). Then this constructs a Hermitian metric on the bundle that is harmonic for the
+Higgs field: the connection reconstructed from the metric and the Higgs field
+(`reconstructedConnection`) is flat. We assume the local calculus, gluing, sheafification and
+integration properties of the functions, sections and forms on $M$ used to define these objects,
+and that smooth singular simplices of $M$ are closed under the simplicial operators. -/
 def_wanted polystable_higgs_harmonic_metric [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M] [SmoothSingularSource (n := n) (M := M)]
     (S : HolomorphicSmoothInclusionSource (n := n) (M := M)) (D : DeterminantDegreeTheory S)
@@ -154,14 +181,30 @@ def_wanted polystable_higgs_harmonic_metric [CompactSpace M] [T2Space M] [Second
     (hchern : AllRationalChernZero F.physical.bundle C I J A Q B) :
   {h : HermitianMetric F.physical.bundle // IsHarmonicMetric F.physical.bundle h F.geometry}
 
-/-- A genuine pluriharmonic metric on the actual flat connection yields a semisimple horizontal local system. -/
+/-- Part of the nonabelian Hodge correspondence: let $M$ be a compact, connected, nonempty,
+Hausdorff, second-countable complex manifold modelled on $\mathbb{C}^n$ (smooth as a real
+manifold) with a Kähler form $\eta$, and let $A$ be a flat connection on a smooth complex vector
+bundle $B$ on $M$ that is pluriharmonic for a Hermitian metric $h$ (`IsPluriharmonic`). Then the
+local system of horizontal sections of $A$ is semisimple: every locally constant subsheaf of
+finite rank of its sheaf of horizontal sections has a retraction. We assume the local calculus,
+gluing and sheafification properties of the functions, sections and forms on $M$ used to define
+these objects. -/
 theorem_wanted pluriharmonic_flat_horizontals_semisimple [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M] (eta : KahlerStructure n M)
     {r : ℕ} (B : SmoothComplexBundle n M r) (h : HermitianMetric B) (A : SmoothConnection B)
     [SectionCalculus B A.value] [HasSheafify (Opens.grothendieckTopology M) (ModuleCat.{0} ℂ)]
     (hflat : IsFlat B A) (hh : IsPluriharmonic B h A) : SemisimpleHorizontals B A
 
-/-- Two actual harmonic reconstructions of the same Higgs sheaf are isomorphic through its actual native smooth extension. -/
+/-- Part of the nonabelian Hodge correspondence: let $M$ be a compact, connected, nonempty,
+Hausdorff, second-countable complex manifold modelled on $\mathbb{C}^n$ (smooth as a real
+manifold) with a Kähler form $\eta$, let $E$ be a locally free holomorphic Higgs sheaf on $M$
+with a smooth realization `R` (a smooth complex vector bundle with a holomorphic Higgs field), and
+let $h$, $h'$ be Hermitian metrics on the bundle that are both harmonic for the Higgs field, with
+`C`, `C'` realizing the connections reconstructed from them (`reconstructedConnection`). Then
+this constructs an automorphism of the Higgs sheaf $E$ (commuting with the Higgs field) whose
+smooth scalar extension is a parallel isomorphism from the connection `C` to `C'`
+(`HiggsReconstructionIsomorphism`). We assume the local calculus, gluing and sheafification
+properties of the functions, sections and forms on $M$ used to define these objects. -/
 def_wanted harmonic_higgs_reconstruction_unique [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M] (eta : KahlerStructure n M)
     (S : HolomorphicSmoothInclusionSource (n := n) (M := M))
@@ -175,7 +218,17 @@ def_wanted harmonic_higgs_reconstruction_unique [CompactSpace M] [T2Space M] [Se
     (hh' : IsHarmonicMetric R.physical.bundle h' R.geometry) :
   HiggsReconstructionIsomorphism S E R C.connection C'.connection
 
-/-- Metric-choice independence is an actual Higgs isomorphism whose native smooth extension is parallel. -/
+/-- Part of the nonabelian Hodge correspondence: let $M$ be a compact, connected, nonempty,
+Hausdorff, second-countable complex manifold modelled on $\mathbb{C}^n$ (smooth as a real
+manifold) with a Kähler form $\eta$, and let $A$ be a flat connection on a smooth complex vector
+bundle $B$ on $M$ whose local system of horizontal sections is semisimple and which is
+pluriharmonic for two Hermitian metrics $h$ and $h'$. Then this constructs an isomorphism between
+the holomorphic sheaves of $(B, h, A)$ and $(B, h', A)$ (the sections killed by the
+$(0,1)$-parts of the unitary parts of $A$) that intertwines the Higgs fields of the harmonic
+Higgs models `H` and `H'` and whose smooth scalar extension, through the identifications `I` and
+`J` with smooth sections of $B$, is given by an automorphism of $B$ parallel for $A$
+(`KernelParallelMapSource`). We assume the local calculus, gluing and sheafification properties
+of the functions, sections and forms on $M$ used to define these objects. -/
 def_wanted pluriharmonic_metric_higgs_parallel_iso [CompactSpace M] [T2Space M] [SecondCountableTopology M]
     [ConnectedSpace M] [Nonempty M]
     (eta : KahlerStructure n M) {r : ℕ} (B : SmoothComplexBundle n M r) (A : SmoothConnection B)
