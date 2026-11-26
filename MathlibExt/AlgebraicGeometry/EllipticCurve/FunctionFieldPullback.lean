@@ -1720,9 +1720,9 @@ private theorem solution {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassC
 end FunctionFieldPullback.TwoSmul
 
 
-/- Points of order two: a nonsingular point `(x, y)` of a Weierstrass curve over a field satisfies
-`2 • (x, y) = 0` exactly when `Ψ₂Sq(x) = 0`. Used only in this file. -/
-private theorem WeierstrassCurve.Affine.Point.two_smul_some_eq_zero_iff {F : Type*} [Field F]
+/-- **Points of order two.** A nonsingular point `(x, y)` of a Weierstrass curve `W` over a field
+satisfies `2 • (x, y) = 0` exactly when `Ψ₂Sq(x) = 0`. -/
+theorem WeierstrassCurve.Affine.Point.two_smul_some_eq_zero_iff {F : Type*} [Field F]
     [DecidableEq F] (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :
     2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 :=
   FunctionFieldPullback.TwoSmul.solution W h
