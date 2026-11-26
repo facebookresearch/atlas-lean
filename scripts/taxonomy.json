@@ -13570,6 +13570,7 @@
   "MathlibExt/NumberTheory/OeisA265233": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Franel numbers"},
   "MathlibExt/NumberTheory/OeisA265233GeneratingFunction": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Franel numbers"},
   "MathlibExt/NumberTheory/OlympicGamesNumerationExistsPellHalfCompanionRepresentation": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Numeration by Fibonacci and Pell numbers"},
+  "MathlibExt/NumberTheory/OlympicGamesNumerationExistsTwoPellHalfCompanionRepresentation": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Numeration by Fibonacci and Pell numbers"},
   "MathlibExt/NumberTheory/OppermannCyclicNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Distribution of cyclic numbers"},
   "MathlibExt/NumberTheory/OresmeConvolutions": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
   "MathlibExt/NumberTheory/OresmeJacobsthalLucasCongruence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
