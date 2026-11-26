@@ -11564,6 +11564,7 @@
   "MathlibExt/Combinatorics/SetFamily/BollobasSetPairs": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Bollobás's set-pairs inequality"},
   "MathlibExt/Combinatorics/SetFamily/Chvatal": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Chvátal's conjecture"},
   "MathlibExt/Combinatorics/SetFamily/ErdosProblem794": {"to": "Combinatorics/extremal-set-theory/hypergraph-turan", "title": "Dense 3-uniform hypergraphs"},
+  "MathlibExt/Combinatorics/SetFamily/ImprovedSunflowerBound": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Sunflower lemma"},
   "MathlibExt/Combinatorics/SetFamily/IndependentSet": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Independent sets in hypergraphs"},
   "MathlibExt/Combinatorics/SetFamily/NoSingletonIntersection": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Families with no singleton intersection"},
   "MathlibExt/Combinatorics/SetFamily/SixPointsThreeTriples": {"to": "Combinatorics/extremal-set-theory/hypergraph-turan", "title": "Ruzsa–Szemerédi (6,3) theorem"},
