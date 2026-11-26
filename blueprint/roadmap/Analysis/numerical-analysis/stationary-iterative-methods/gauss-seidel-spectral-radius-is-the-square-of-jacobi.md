@@ -4,7 +4,7 @@ Let $A = \begin{pmatrix} D_1 & A_{12} \\ A_{21} & D_2 \end{pmatrix}$ be an $n \t
 
 $$\rho(G_{GS}) = \rho(G_J)^2.$$
 
-So when $0 < \rho(G_J) < 1$, both iterations converge and the asymptotic convergence rate of Gauss–Seidel, $-\log \rho(G_{GS})$, is twice that of Jacobi. This compares worst-case rates over all starting vectors; for a particular starting vector the errors can behave otherwise: for $A = \begin{pmatrix} 2 & -1 \\ -1 & 2 \end{pmatrix}$, $b = 0$ and $x_0 = (1, 0)$, one Gauss–Seidel sweep gives $0$, while two Jacobi sweeps give $(1/4, 0)$. When $\rho(G_J) = 0$, both iteration matrices are nilpotent and both iterations reach the solution after at most $n$ steps, for example after one step for $A = I$. When $\rho(G_J) \ge 1$, neither iteration converges for every starting vector.
+So when $0 < \rho(G_J) < 1$, both iterations converge and the asymptotic convergence rate of Gauss–Seidel, $-\log \rho(G_{GS})$, is twice that of Jacobi. This compares worst-case rates over all starting vectors; for a particular starting vector the errors can behave otherwise: for $A = \begin{pmatrix} 2 & -1 \\ -1 & 2 \end{pmatrix}$, $b = 0$ and $x_0 = (1, 0)$, one Gauss–Seidel sweep gives $0$, while two Jacobi sweeps give $(1/4, 0)$. When $\rho(G_J) = 0$, both iteration matrices are nilpotent and both iterations reach the solution after at most $n$ steps, for example after one step for $A = I$. When $\rho(G_J) \ge 1$, neither method guarantees convergence for every pair of right-hand side and starting vector.
 
 ## Depends on
 
