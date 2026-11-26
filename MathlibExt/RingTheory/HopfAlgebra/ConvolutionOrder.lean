@@ -40,6 +40,8 @@ import Mathlib.RingTheory.HopfAlgebra.Convolution
 import Mathlib.RingTheory.Norm.Basic
 import Mathlib.RingTheory.Norm.Defs
 import Mathlib.RingTheory.TensorProduct.Basic
+import MathlibExt.Algebra.AlgebraicGroup.FunctorOfPoints
+import MathlibExt.Algebra.Coalgebra.Convolution
 
 open TensorProduct WithConv Coalgebra
 
@@ -52,35 +54,12 @@ noncomputable section
 section postComp
 
 variable {R : Type*} [CommSemiring R] {C : Type*} [AddCommMonoid C] [Module R C] [Coalgebra R C]
-variable {A A' A'' : Type*} [Semiring A] [Algebra R A] [Semiring A'] [Algebra R A']
-  [Semiring A''] [Algebra R A'']
-
-def postComp (g : A →ₐ[R] A') : WithConv (C →ₗ[R] A) →+* WithConv (C →ₗ[R] A') where
-  toFun F := toConv (g.toLinearMap ∘ₗ F.ofConv)
-  map_one' := by
-    apply WithConv.ext
-    ext c
-    simp [LinearMap.convOne_def]
-  map_mul' F G := by
-    apply WithConv.ext
-    simpa using LinearMap.algHom_comp_convMul_distrib g F G
-  map_zero' := by
-    apply WithConv.ext
-    simp
-  map_add' F G := by
-    apply WithConv.ext
-    simp [LinearMap.comp_add]
-
-@[local simp] lemma postComp_apply (g : A →ₐ[R] A') (F : WithConv (C →ₗ[R] A)) :
-    postComp g F = toConv (g.toLinearMap ∘ₗ F.ofConv) := rfl
-
-private lemma postComp_comp (g : A →ₐ[R] A') (g' : A' →ₐ[R] A'') (F : WithConv (C →ₗ[R] A)) :
-    postComp g' (postComp g F) = postComp (g'.comp g) F := rfl
+variable {A A' : Type*} [Semiring A] [Algebra R A] [Semiring A'] [Algebra R A']
 
 def postCompEquiv (g : A ≃ₐ[R] A') :
     WithConv (C →ₗ[R] A) ≃+* WithConv (C →ₗ[R] A') :=
-  { postComp (g : A →ₐ[R] A') with
-    invFun := postComp (g.symm : A' →ₐ[R] A)
+  { (g : A →ₐ[R] A').convPostcomp with
+    invFun := (g.symm : A' →ₐ[R] A).convPostcomp
     left_inv := fun F => by
       apply WithConv.ext; ext c; simp
     right_inv := fun F => by
@@ -91,68 +70,13 @@ end postComp
 section antipode
 
 variable {R : Type*} [CommSemiring R] {H : Type*} [Semiring H] [HopfAlgebra R H]
-
-private lemma id_convMul_antipode :
-    toConv (LinearMap.id : H →ₗ[R] H) * toConv (HopfAlgebra.antipode R) = 1 := by
-  apply WithConv.ext
-  change LinearMap.mul' R H ∘ₗ TensorProduct.map LinearMap.id (HopfAlgebra.antipode R) ∘ₗ comul = _
-  exact HopfAlgebra.mul_antipode_lTensor_comul
-
-private lemma antipode_convMul_id :
-    toConv (HopfAlgebra.antipode R) * toConv (LinearMap.id : H →ₗ[R] H) = 1 := by
-  apply WithConv.ext
-  change LinearMap.mul' R H ∘ₗ TensorProduct.map (HopfAlgebra.antipode R) LinearMap.id ∘ₗ comul = _
-  exact HopfAlgebra.mul_antipode_rTensor_comul
-
 variable {A : Type*} [Semiring A] [Algebra R A]
 
-private lemma toLinearMap_convMul_comp_antipode (g : H →ₐ[R] A) :
-    toConv g.toLinearMap * toConv (g.toLinearMap ∘ₗ HopfAlgebra.antipode R) = 1 := by
-  have h1 : postComp g (toConv (LinearMap.id : H →ₗ[R] H)) = toConv g.toLinearMap := rfl
-  have h2 : postComp g (toConv (HopfAlgebra.antipode R)) =
-      toConv (g.toLinearMap ∘ₗ HopfAlgebra.antipode R) := rfl
-  rw [← h1, ← h2, ← map_mul, id_convMul_antipode, map_one]
-
-private lemma comp_antipode_convMul_toLinearMap (g : H →ₐ[R] A) :
-    toConv (g.toLinearMap ∘ₗ HopfAlgebra.antipode R) * toConv g.toLinearMap = 1 := by
-  have h1 : postComp g (toConv (LinearMap.id : H →ₗ[R] H)) = toConv g.toLinearMap := rfl
-  have h2 : postComp g (toConv (HopfAlgebra.antipode R)) =
-      toConv (g.toLinearMap ∘ₗ HopfAlgebra.antipode R) := rfl
-  rw [← h1, ← h2, ← map_mul, antipode_convMul_id, map_one]
-
 private lemma isUnit_toConv_toLinearMap (g : H →ₐ[R] A) : IsUnit (toConv g.toLinearMap) :=
-  isUnit_iff_exists.mpr
-    ⟨_, toLinearMap_convMul_comp_antipode g, comp_antipode_convMul_toLinearMap g⟩
+  (isUnit_iff_exists.mpr ⟨_, LinearMap.id_mul_antipode, LinearMap.antipode_mul_id⟩ :
+    IsUnit (toConv (LinearMap.id : H →ₗ[R] H))).map g.convPostcomp
 
 end antipode
-
-section commAntipode
-
-variable {R : Type*} [CommSemiring R] {H : Type*} [CommSemiring H] [HopfAlgebra R H]
-
-private def antipodeAlgHom : H →ₐ[R] H :=
-  AlgHom.ofLinearMap (HopfAlgebra.antipode R) HopfAlgebra.antipode_one fun a b => by
-    rw [HopfAlgebra.antipode_mul_antidistrib, mul_comm]
-
-variable {A : Type*} [CommSemiring A] [Algebra R A]
-
-private lemma point_mul_comp_antipode (g : WithConv (H →ₐ[R] A)) :
-    g * toConv (g.ofConv.comp antipodeAlgHom) = 1 := by
-  apply toConv_injective.comp (AlgHom.toLinearMap_injective.comp ofConv_injective)
-  change toConv (g * toConv (g.ofConv.comp antipodeAlgHom)).ofConv.toLinearMap =
-    toConv (1 : WithConv (H →ₐ[R] A)).ofConv.toLinearMap
-  rw [AlgHom.toLinearMap_convMul, AlgHom.toLinearMap_convOne]
-  exact toLinearMap_convMul_comp_antipode g.ofConv
-
-private lemma comp_antipode_mul_point (g : WithConv (H →ₐ[R] A)) :
-    toConv (g.ofConv.comp antipodeAlgHom) * g = 1 := by
-  apply toConv_injective.comp (AlgHom.toLinearMap_injective.comp ofConv_injective)
-  change toConv (toConv (g.ofConv.comp antipodeAlgHom) * g).ofConv.toLinearMap =
-    toConv (1 : WithConv (H →ₐ[R] A)).ofConv.toLinearMap
-  rw [AlgHom.toLinearMap_convMul, AlgHom.toLinearMap_convOne]
-  exact comp_antipode_convMul_toLinearMap g.ofConv
-
-end commAntipode
 
 section Setup
 
@@ -170,9 +94,7 @@ abbrev P (R : Type u) [CommRing R] (H : Type v) [CommRing H] [HopfAlgebra R H]
     (T : Type w) [CommRing T] [Algebra R T] : Type _ := WithConv (H →ₐ[R] T)
 
 def ι : D R H T →+* E R H T :=
-  postComp (Algebra.TensorProduct.includeLeft : T →ₐ[R] T ⊗[R] H)
-
-private lemma ι_apply_apply (φ : D R H T) (h : H) : (ι φ) h = φ h ⊗ₜ (1 : H) := rfl
+  (Algebra.TensorProduct.includeLeft : T →ₐ[R] T ⊗[R] H).convPostcomp.toRingHom
 
 private def xE : E R H T :=
   toConv (Algebra.TensorProduct.includeRight : H →ₐ[R] T ⊗[R] H).toLinearMap
@@ -223,11 +145,13 @@ private lemma tT_comp_includeLeft (u : P R H T) :
   change tT u (algebraMap T (T ⊗[R] H) s) = algebraMap T (T ⊗[R] H) s
   exact (tT u).commutes s
 
-private def Φ (u : P R H T) : E R H T →+* E R H T := postComp ((tT u).restrictScalars R)
+private def Φ (u : P R H T) : E R H T →+* E R H T :=
+  ((tT u).restrictScalars R).convPostcomp.toRingHom
 
 private lemma Φ_ι (u : P R H T) (φ : D R H T) : Φ u (ι φ) = ι φ := by
-  change postComp _ (postComp _ φ) = _
-  rw [postComp_comp, tT_comp_includeLeft]
+  change ((tT u).restrictScalars R).convPostcomp
+    ((Algebra.TensorProduct.includeLeft : T →ₐ[R] T ⊗[R] H).convPostcomp φ) = _
+  rw [← AlgHom.comp_apply, ← AlgHom.convPostcomp_comp, tT_comp_includeLeft]
   rfl
 
 private lemma Φ_xE (u : P R H T) : Φ u xE = (xE : E R H T) * ι (toD u) := by
@@ -257,16 +181,10 @@ private lemma tT_one : tT (1 : P R H T) = AlgHom.id T (T ⊗[R] H) := by
   rw [tT_comp_includeRight, τ_one]
   rfl
 
-private def inv (u : P R H T) : P R H T := toConv (u.ofConv.comp antipodeAlgHom)
-
-private lemma mul_inv (u : P R H T) : u * inv u = 1 := point_mul_comp_antipode u
-
-private lemma inv_mul (u : P R H T) : inv u * u = 1 := comp_antipode_mul_point u
-
 private def tTEquiv (u : P R H T) : T ⊗[R] H ≃ₐ[T] T ⊗[R] H :=
-  AlgEquiv.ofAlgHom (tT u) (tT (inv u))
-    (by rw [tT_comp_tT, mul_inv, tT_one])
-    (by rw [tT_comp_tT, inv_mul, tT_one])
+  AlgEquiv.ofAlgHom (tT u) (tT u⁻¹)
+    (by rw [tT_comp_tT, mul_inv_cancel, tT_one])
+    (by rw [tT_comp_tT, inv_mul_cancel, tT_one])
 
 end Setup
 
@@ -283,16 +201,6 @@ attribute [local instance] algebraDE
 
 private lemma algebraMap_eq : algebraMap (D R H T) (E R H T) = ι := rfl
 
-private lemma smul_def' (φ : D R H T) (F : E R H T) : φ • F = ι φ * F := rfl
-
-private lemma smul_apply (φ : D R H T) (F : E R H T) (h : H) :
-    (φ • F) h = ∑ i ∈ (ℛ R h).index, φ ((ℛ R h).left i) • F ((ℛ R h).right i) := by
-  rw [smul_def', Coalgebra.Repr.convMul_apply (ℛ R h)]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [ι_apply_apply, Algebra.smul_def, Algebra.TensorProduct.algebraMap_apply,
-    Algebra.algebraMap_self, RingHom.id_apply]
-
-
 private def ΦEquiv (u : P R H T) : E R H T ≃ₐ[D R H T] E R H T :=
   { postCompEquiv ((tTEquiv u).restrictScalars R) with
     commutes' := fun φ => Φ_ι u φ }
@@ -305,46 +213,10 @@ variable {ι₀ : Type*} [Fintype ι₀] (b : Module.Basis ι₀ R H)
 
 private abbrev bT : Module.Basis ι₀ T (T ⊗[R] H) := b.baseChange T
 
-private def coordFun (F : E R H T) (i : ι₀) : D R H T :=
-  toConv (((bT (T := T) b).coord i).restrictScalars R ∘ₗ F.ofConv)
-
-omit [IsCocomm R H] [Fintype ι₀] in
-private lemma coordFun_apply (F : E R H T) (i : ι₀) (h : H) :
-    coordFun b F i h = (bT (T := T) b).coord i (F h) := rfl
-
-private def ofCoordFun (g : ι₀ → D R H T) : E R H T :=
-  toConv (∑ i, (LinearMap.toSpanSingleton T (T ⊗[R] H) (bT (T := T) b i)).restrictScalars R ∘ₗ
-    (g i).ofConv)
-
-omit [IsCocomm R H] in
-private lemma ofCoordFun_apply (g : ι₀ → D R H T) (h : H) :
-    ofCoordFun b g h = ∑ i, (g i) h • bT (T := T) b i := by
-  simp [ofCoordFun, LinearMap.sum_apply]
-
-private def coordEquiv : E R H T ≃ₗ[D R H T] (ι₀ → D R H T) where
-  toFun := coordFun b
-  invFun := ofCoordFun b
-  map_add' F G := by
-    ext i : 1
-    apply WithConv.ext; ext h
-    simp [coordFun_apply]
-  map_smul' φ F := by
-    ext i : 1
-    apply WithConv.ext; ext h
-    rw [coordFun_apply, smul_apply, map_sum, RingHom.id_apply, Pi.smul_apply, smul_eq_mul,
-      Coalgebra.Repr.convMul_apply (ℛ R h)]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [LinearMap.map_smul, coordFun_apply, smul_eq_mul]
-  left_inv F := by
-    apply WithConv.ext; ext h
-    rw [ofCoordFun_apply]
-    simp only [coordFun_apply, Module.Basis.coord_apply]
-    exact (bT (T := T) b).sum_repr (F h)
-  right_inv g := by
-    ext i : 1
-    apply WithConv.ext; ext h
-    rw [coordFun_apply, ofCoordFun_apply, Module.Basis.coord_apply]
-    rw [(bT (T := T) b).repr_sum_self]
+private def coordEquiv : E R H T ≃ₗ[D R H T] (ι₀ → D R H T) :=
+  { (bT (T := T) b).convCoordEquiv R H with
+    map_smul' := fun φ F => funext fun i =>
+      (bT (T := T) b).convCoordEquiv_convPostcomp_mul φ F i }
 
 private def basisDE : Module.Basis ι₀ (D R H T) (E R H T) :=
   Module.Basis.ofEquivFun (coordEquiv b)
@@ -385,9 +257,9 @@ end DeligneOrderKills
 
 namespace HopfAlgebra
 
-/-- For a finite free cocommutative Hopf algebra `H` of rank `n` over a
-commutative ring `R`, every `R`-algebra point of `H`, viewed in the
-convolution algebra, satisfies `f ^ n = 1`. -/
+/-- **Points of a finite free cocommutative Hopf algebra are killed by its rank.** For a finite
+free cocommutative Hopf algebra `H` of rank `n` over a commutative ring `R`, every `R`-algebra
+point of `H`, viewed in the convolution algebra, satisfies `f ^ n = 1`. -/
 public theorem convPow_finrank_eq_one_of_isCocomm
     (R : Type u) [CommRing R]
     (H : Type v) [CommRing H] [HopfAlgebra R H] [Coalgebra.IsCocomm R H]
