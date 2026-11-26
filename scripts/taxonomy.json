@@ -10348,6 +10348,7 @@
   "Domains/Biology/StatisticalGenetics/PolyPhen": {"to": "Biology/bioinformatics", "title": "Profile scores for amino acid substitutions"},
   "Domains/Biology/StatisticalGenetics/ProximalContamination": {"to": "Biology/statistical-genetics", "title": "Proximal contamination in mixed-model association"},
   "Domains/Biology/StatisticalGenetics/Relatedness": {"to": "Biology/quantitative-genetics", "title": "Genomic relationship matrices"},
+  "Domains/Biology/StatisticalGenetics/RischRecurrenceProdSubOneGeTwoMul": {"to": "Biology/statistical-genetics", "title": "Risch recurrence-risk ratios for multilocus traits"},
   "Domains/Biology/StatisticalGenetics/SelectionGradient": {"to": "Biology/quantitative-genetics", "title": "Lande's selection gradient"},
   "Domains/Biology/StatisticalGenetics/SelectionGradientMultivariate": {"to": "Biology/quantitative-genetics", "title": "Lande's selection gradient"},
   "Domains/Biology/StatisticalGenetics/ShetPosterior": {"to": "Biology/statistical-genetics", "title": "Posterior of the heterozygous selection coefficient"},
