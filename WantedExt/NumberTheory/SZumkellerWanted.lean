@@ -35,6 +35,7 @@ public import MathlibExt.NumberTheory.SZumkeller
 public import MathlibExt.NumberTheory.SumSquaredDivisorsProduct
 public import MathlibExt.NumberTheory.UnitaryDivisorCount
 public import MathlibExt.NumberTheory.SZumkellerHarmonicMeanSqLeOfIsSZumkeller
+public import MathlibExt.NumberTheory.SZumkellerIsSquareOfIsSZumkellerOdd
 
 namespace MetaMathlibExt
 
@@ -104,14 +105,6 @@ Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 6(ii). -/
 public theorem_wanted eight_le_card_primeFactors_of_isSZumkeller_odd (n : ℕ)
     (h : IsSZumkeller n) (ho : Odd n) (h3 : 3 ∣ n) : 8 ≤ n.primeFactors.card
-
-/-- **Odd s-Zumkeller numbers are perfect squares.** Every odd s-Zumkeller number is a perfect
-square.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 7. -/
-public theorem_wanted isSquare_of_isSZumkeller_odd (n : ℕ) (h : IsSZumkeller n) (ho : Odd n) :
-    IsSquare n
 
 /-- **Lower bound for odd s-Zumkeller numbers divisible by 3.** Every odd s-Zumkeller number $n$
 divisible by $3$ satisfies
