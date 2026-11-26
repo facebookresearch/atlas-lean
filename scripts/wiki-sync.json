@@ -34644,6 +34644,7 @@
 "IsLocalRing.isUnit_natCast_iff_ringChar_not_dvd": "efb53bd41af91f7d",
 "IsLocalRing.of_isDomain_of_module_finite_of_isAdicComplete": "6b36058198c20a9d",
 "IsLocalRing.quotient_of_ne_top": "224f56cf70f8b0f2",
+"IsLocalRing.ringKrullDim_adicCompletion_maximalIdeal_eq": "d7772c3f49d32ed3",
 "IsLocalRing.two_le_ringKrullDim_adicCompletion_of_two_le": "7a27c31dc3b6e451",
 "IsLocalRing.uniqueFactorizationMonoid_of_isPrincipalIdealRing_quotient": "080cec4bf76bd5be",
 "IsLocalization.AtPrime.emultiplicity_maximalIdeal_map_eq": "4e03a82bfcb45555",
