@@ -47,7 +47,8 @@ variable (R : Type u) [CommRing R] (F : Type u) [Field F] [Algebra R F] (j : F) 
 variable {F} in
 public theorem j_ne_zero : j ≠ 0 := Fact.out
 
-/-- The integral closure of `R[S]` in `F`, as the chart algebra of a two-chart model. -/
+/-- The integral closure of `R[S]` in `F`, as an `R`-subalgebra of `F`: the chart ring at `S` of
+the two-chart gluing. -/
 public abbrev chartAlg (S : Set F) : Subalgebra R F :=
   (integralClosure (Algebra.adjoin R S) F).restrictScalars R
 
@@ -222,9 +223,10 @@ instance isOpenImmersion_fInf : IsOpenImmersion (fInf R F j) := by
   have := isLocalization_away_inclInf R F j
   exact IsOpenImmersion.of_isLocalization (jInvChartInf R F j)
 
-/-- The two-chart integral model of `F` at `j ≠ 0`: the scheme obtained by gluing `Spec` of the
-integral closures of `R[j]` and `R[j⁻¹]` in `F` along `Spec` of the integral closure of
-`R[j, j⁻¹]`, which is an open subscheme of both. -/
+/-- The scheme glued from chart rings inside `F` at `j ≠ 0`: `Spec` of the integral closures of
+`R[j]` and `R[j⁻¹]` in `F`, glued along `Spec` of the integral closure of `R[j, j⁻¹]`, which is an
+open subscheme of both. These hypotheses do not make its function field `F`: for `R = ℚ`,
+`F = ℚ(t)` and `j = 1` all three chart rings are `ℚ`, so the glued scheme is `Spec ℚ`. -/
 public def _root_.AlgebraicCurve.TwoChartIntegralModel : Scheme.{u} :=
   pushout (fFin R F j) (fInf R F j)
 
@@ -328,10 +330,11 @@ public theorem baseChangeι_toBase (S : Type u) [CommRing S] [Algebra R S] :
       baseChangeToBase R F j S ≫ Spec.map (CommRingCat.ofHom (algebraMap R S)) :=
   pullback.condition
 
-/-- The reduction of the model modulo an ideal `I` of `R`: its base change along the quotient map
-`R → R ⧸ I`, which lies over the closed subscheme `V(I)` of `Spec R`. When `I` is maximal, `R ⧸ I`
-is the residue field at the closed point `I` and this is the fibre over that point; in general it
-is not a fibre over a point (for `I = ⊥` it is the whole model, up to isomorphism). -/
+/-- The reduction of the glued scheme modulo an ideal `I` of `R`: its base change along the
+quotient map `R → R ⧸ I`, which lies over the closed subscheme `V(I)` of `Spec R`. When `I` is
+maximal, `R ⧸ I` is the residue field at the closed point `I` and this is the fibre over that
+point; in general it is not a fibre over a point (for `I = ⊥` it is the whole glued scheme, up to
+isomorphism). -/
 public abbrev reduction (I : Ideal R) : Scheme.{u} := baseChange R F j (R ⧸ I)
 
 public abbrev reductionι (I : Ideal R) :
@@ -372,7 +375,7 @@ public theorem chartAlg_le_restrictScalars (S : Set F) :
 `chartAlg R F S → chartAlg R' F S` inside `F` induced by extending the coefficient ring from `R`
 to `R'`. It is not the scalar extension `R' ⊗[R] chartAlg R F S` in general: for `R = ℤ`,
 `R' = ℤ[T]` acting on `ℚ` by `T ↦ 0` and `S = {2}`, both chart rings are `ℤ`, while the scalar
-extension is `ℤ[T]`. The base change of the glued model along `Spec R' → Spec R` is the pullback
+extension is `ℤ[T]`. The base change of the glued scheme along `Spec R' → Spec R` is the pullback
 `baseChange`. -/
 public def chartCoeffIncl (S : Set F) : chartAlg R F S →+* chartAlg R' F S :=
   (Subalgebra.inclusion (chartAlg_le_restrictScalars R F R' S)).toRingHom

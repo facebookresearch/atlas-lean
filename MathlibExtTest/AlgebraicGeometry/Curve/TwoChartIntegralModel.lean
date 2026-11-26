@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Curve.TwoChartIntegralModel
 import Mathlib.Algebra.GCDMonoid.IntegrallyClosed
+import Mathlib.FieldTheory.RatFunc.AsPolynomial
 
 @[expose] public section
 
@@ -73,6 +74,26 @@ example [Fact ((2 : ℚ) ≠ 0)] :
     AlgHom.coe_toRingHom, TwoChartIntegralModel.coe_chartIncl,
     TwoChartIntegralModel.coe_jChartFin, map_one, Subalgebra.coe_one] at h
   linear_combination h / 2
+
+/-- The hypotheses do not make the glued scheme a model of `F`: for `F = K(t)` and `j = 1`, the
+generator `t` lies in none of the three chart rings, each being the integral closure of `K` in
+`K(t)`. -/
+example (K : Type) [Field K] [Fact ((1 : RatFunc K) ≠ 0)] :
+    (RatFunc.X : RatFunc K) ∉ TwoChartIntegralModel.chartAlgFin K (RatFunc K) 1 ∧
+      (RatFunc.X : RatFunc K) ∉ TwoChartIntegralModel.chartAlgInf K (RatFunc K) 1 ∧
+      (RatFunc.X : RatFunc K) ∉ TwoChartIntegralModel.chartAlgMid K (RatFunc K) 1 := by
+  have key : ∀ S : Set (RatFunc K), S ⊆ {1, 1⁻¹} →
+      (RatFunc.X : RatFunc K) ∉ TwoChartIntegralModel.chartAlg K (RatFunc K) S := by
+    intro S hS h
+    rw [TwoChartIntegralModel.mem_chartAlg_iff] at h
+    have : Algebra.IsIntegral K (Algebra.adjoin K S) :=
+      Algebra.IsIntegral.adjoin fun x hx => by
+        have hx' := hS hx
+        simp only [inv_one, Set.mem_insert_iff, Set.mem_singleton_iff, or_self] at hx'
+        rw [hx']
+        exact isIntegral_one
+    exact RatFunc.transcendental_X (isIntegral_trans (R := K) _ h).isAlgebraic
+  exact ⟨key _ (by simp), key _ (by simp), key _ subset_rfl⟩
 
 /-- The reduction of the concrete model modulo `2` lies over `Spec (ℤ ⧸ (2))`. -/
 example [Fact ((2 : ℚ) ≠ 0)] :
