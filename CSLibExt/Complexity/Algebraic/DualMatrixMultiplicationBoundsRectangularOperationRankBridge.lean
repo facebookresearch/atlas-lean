@@ -899,7 +899,7 @@ private theorem rank_admissible_circuit {F : Type u} [Field F] {k w : ℝ}
 $F$ and every real $k \ge 0$, the rectangular matrix multiplication exponent at aspect $k$ defined
 by arithmetic-circuit size equals the one defined by tensor rank.
 
-Source: LG2012 exact bilinear-rank characterization; the operation/rank transfer is missing. -/
+Source: LG2012 exact bilinear-rank characterization. -/
 public theorem rectangularOperationRankBridge :
     ∀ (F : Type u) [Field F] [Infinite F] (k : ℝ), 0 ≤ k →
       rectangularCircuitExponent F k =
