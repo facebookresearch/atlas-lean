@@ -1,4 +1,4 @@
-# Javanpeykar Belyi
+# Javanpeykar's bound for Belyi curves
 
 - [The complement of $0$, $1$ and $\infty$ in the projective line](belyi-locus.md)
 - [Belyi map](is-belyi-map.md)

@@ -11,5 +11,4 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 3 of 3](part-03/README.md)
 
-- [Defining Integers In Rationals](part-03/defining-integers-in-rationals/README.md)
 - [Soundness of Farkas certificates](part-03/farkas-infeasible.md)

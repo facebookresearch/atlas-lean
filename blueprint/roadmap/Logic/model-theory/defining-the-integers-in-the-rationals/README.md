@@ -1,4 +1,4 @@
-# Defining Integers In Rationals
+# Defining the integers in the rationals
 
 - [Robinson's definition of `ℤ` in `ℚ`](mem-range-int-cast-iff-robinson.md)
 - [Poonen's `∀²∃⁷` definition of `ℤ` in `ℚ`](exists-forall-two-exists-seven-poonen.md)

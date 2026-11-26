@@ -1,4 +1,4 @@
-# Faltings Height
+# Stable Faltings height
 
 - [Base change of an abelian variety along a field extension](field-base-change.md)
 - [Stable Faltings height](faltings-height.md)
