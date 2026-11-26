@@ -1,4 +1,3 @@
-# Soundness of CDCL
+# Soundness of CDCL when the empty clause is present
 
-A reachable state whose current clause set contains the empty clause
-refutes the input formula.
+Let $F$ be a CNF formula. If the current clause set (the input clauses followed by the learned clauses) of a state reachable from the initial state of CDCL on $F$ contains the empty clause, then $F$ is unsatisfiable.

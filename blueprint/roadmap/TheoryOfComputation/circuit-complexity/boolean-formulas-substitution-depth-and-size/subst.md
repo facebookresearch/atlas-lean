@@ -1,4 +1,3 @@
-# Subst
+# Substitution into a Boolean formula
 
-Substitution: replace each input `i` of the outer formula by a formula `wiring i` over `m`
-inputs. Every occurrence of input `i` gets its own copy of `wiring i`.
+For a formula $g$ over $n$ inputs and formulas $w_0, \dots, w_{n-1}$ over $m$ inputs, the substituted formula replaces every input leaf $x_i$ of $g$ by its own copy of $w_i$; constant leaves stay unchanged.

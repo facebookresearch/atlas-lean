@@ -1,6 +1,6 @@
 # Fooling sets and rectangle covers
 
 - [Is Fooling](is-fooling.md)
-- [Rect Mono](rect-mono.md)
-- [Eq of mem rect](eq-of-mem-rect.md)
-- [Fooling card le](fooling-card-le.md)
+- [Monochromatic-1 rectangle](rect-mono.md)
+- [A monochromatic-1 rectangle meets a fooling set at most once](eq-of-mem-rect.md)
+- [Fooling-set bound on rectangle covers](fooling-card-le.md)

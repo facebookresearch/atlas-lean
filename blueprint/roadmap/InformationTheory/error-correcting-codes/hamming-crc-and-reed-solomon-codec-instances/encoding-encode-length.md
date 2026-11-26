@@ -1,3 +1,3 @@
-# Encoding encode length
+# Hamming(7,4) codewords have length seven
 
-Hamming(7,4) codewords always have length 7.
+Every word produced by the [Hamming(7,4) codec](encoding.md) has length $7$.

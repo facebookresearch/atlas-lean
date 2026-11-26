@@ -1,4 +1,3 @@
-# Soundness of CDCL
+# Soundness of CDCL at an empty conflict clause
 
-A reachable state whose conflict clause is empty refutes the input
-formula.
+Let $F$ be a CNF formula. If a state reachable from the initial state of CDCL on $F$ has the empty clause as its conflict clause, then $F$ is unsatisfiable.

@@ -1,4 +1,3 @@
-# Merge Len Step
+# Merge step tracking the length
 
-One fold step tracking the merged length alongside the accumulator: each
-step adds `s.length - overlap` with the current accumulator.
+One step of a fold that tracks a length beside the merged string: from a pair $(a, \ell)$ and a string $s$, the step returns $(\mathrm{merge}(a, s), \ell + |s| - \mathrm{overlap}(a, s))$, with truncated subtraction, where merge and overlap are those of the [merge along the overlap](merge.md).

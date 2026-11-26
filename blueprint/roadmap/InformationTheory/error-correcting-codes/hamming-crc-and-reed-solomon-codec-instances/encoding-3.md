@@ -1,3 +1,3 @@
-# Encoding
+# Reed–Solomon codec
 
-For distinct evaluation points `α_1, …, α_n` over a field and `k ≤ n`, the Reed-Solomon codec for polynomials of degree less than `k`, decoding with a key-equation solver for radius `⌊(n - k) / 2⌋`; decoding rejects inputs whose length differs from `n`.
+Let $\alpha_1, \dots, \alpha_n$ be distinct points of a field $F$, let $k \le n$, and fix a key-equation solver for radius $t = \lfloor (n - k)/2 \rfloor$ that is sound (every pair it returns solves the key equations) and complete (it returns a pair whenever a solution exists). The codec has as messages the polynomials over $F$ of degree strictly less than $k$ and alphabet $F$: a message $p$ is encoded as $(p(\alpha_1), \dots, p(\alpha_n))$. A word of length $n$ is decoded with the solver, and the result is kept only if it is a polynomial of degree less than $k$; a word of any other length is rejected.

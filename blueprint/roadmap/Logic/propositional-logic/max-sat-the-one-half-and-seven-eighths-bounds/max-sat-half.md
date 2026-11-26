@@ -1,6 +1,3 @@
-# Max sat half
+# MAX-SAT one-half bound, counting occurrences
 
-MAX-SAT, counting clause occurrences: for a family `F` of nonempty
-clauses indexed by `s`, some assignment satisfies the clauses at no fewer than
-half of the indices. A clause occurring at several indices counts once per
-index.
+Let $s$ be a finite subset of an index type and $F$ a family of clauses over $n$ variables with $F_i$ nonempty for every $i \in s$. Then some assignment satisfies $F_i$ for at least $|s|/2$ of the indices $i \in s$. A clause occurring at several indices counts once per index; for $s = \emptyset$ the bound is $0$.

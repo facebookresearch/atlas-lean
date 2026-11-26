@@ -1,3 +1,3 @@
-# Encoding encode length
+# Reed–Solomon codewords have length n
 
-For distinct evaluation points over a field and `k ≤ n`, every Reed-Solomon codeword has length `n`.
+Every word produced by the [Reed–Solomon codec](encoding-3.md) has length $n$.

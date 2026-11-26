@@ -1,3 +1,3 @@
-# Two mul card weighted monomials ge
+# Lower bound from the row sums on the weighted monomial count
 
-For a weight `w > 0` and a degree bound `D`, the number of monomials `X^i Y^j` with `i + w j ≤ D` satisfies `D (D + 2) ≤ 2 w · #{(i, j) : i + w j ≤ D}`.
+For natural numbers $w \ge 1$ and $D$, the number $N$ of pairs $(i, j)$ with $0 \le i, j \le D$ and $i + wj \le D$ satisfies $D(D + 2) \le 2wN$. The weight must be a natural number; for a fractional weight the bound fails, e.g. at $D = 1$ and $w = 1/5$ the set has three elements, while $D(D + 2)/(2w) = 15/2$.

@@ -15,5 +15,5 @@
 - [Hamming Norm of mem code](hamming-norm-of-mem-code.md)
 - [Distinct codewords are at distance exactly `2^(m-1)`](hamming-dist-encode.md)
 - [Min Weight code](min-weight-code.md)
-- [The Hadamard code has minimum distance `2^(m-1)`](min-dist-code.md)
+- [Minimum distance of the positive-order Hadamard code](min-dist-code.md)
 - [Min Dist code zero](min-dist-code-zero.md)

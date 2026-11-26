@@ -1,3 +1,3 @@
-# Assigns
+# Variable assigned by a trail
 
-The trail assigns the variable `x`.
+A trail assigns the variable $x$ when $x$ is the variable of some decided or propagated entry of the trail, in either polarity.

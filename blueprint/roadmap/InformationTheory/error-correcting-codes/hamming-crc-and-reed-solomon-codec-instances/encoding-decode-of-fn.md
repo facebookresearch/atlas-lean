@@ -1,3 +1,3 @@
-# Encoding decode of Fn
+# Hamming(7,4) codec on a seven-bit word
 
-Decoding any 7-bit vector returns its corrected message.
+For every seven-bit word $y$, the [Hamming(7,4) codec](encoding.md) returns the four data bits of the syndrome-decoded word of $y$. This is the transmitted message only when at most one bit was flipped ([recovery from one error](encoding-decode-of-fn-encode-add.md)); with two or more errors the decoder can return a different message.

@@ -4,7 +4,7 @@
 
 - [To Leaf Symbols?](to-leaf-symbols.md)
 - [To Leaf Symbols? map val](to-leaf-symbols-map-val.md)
-- [Encoding](encoding.md)
+- [Huffman codec](encoding.md)
 - [Encoding encode length](encoding-encode-length.md)
 
 ## Run Length
