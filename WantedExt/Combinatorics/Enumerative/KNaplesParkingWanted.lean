@@ -71,20 +71,6 @@ public def ascendingNaplesOneCount (n k : ℕ) : ℕ :=
     (∀ i j : Fin n, i ≤ j → α i ≤ α j) ∧ IsNaplesParkingFunction k α ∧
       ∃ i : Fin n, i.val = 0 ∧ α i = 1).card
 
-/-- **Number of descending strictly $k$-Naples parking functions.** For natural numbers $n$ and
-$k$, this is the number of preferences $\alpha = (a_1, \dots, a_n) \in \{1, \dots, n\}^n$ that
-are descending ($a_1 \ge a_2 \ge \dots \ge a_n$), are $k$-Naples parking functions, and are not
-$(k - 1)$-Naples parking functions. It is used for $k \ge 1$; for $k = 0$, where $k - 1$ is
-read as $0$, the count is $0$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 4. -/
-public def descendingStrictNaplesCount (n k : ℕ) : ℕ :=
-  ((Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun α =>
-    (∀ i j : Fin n, i ≤ j → α j ≤ α i) ∧ IsNaplesParkingFunction k α ∧
-      ¬ IsNaplesParkingFunction (k - 1) α).card
-
 /-- **Naples counts for $n = 2$ and $k = 1$.** Among the preferences of length $2$ with entries
 in $\{1, 2\}$, exactly $3$ are weakly increasing $1$-Naples parking functions ($I_{2,1} = 3$),
 and exactly $2$ of these start with $1$ ($U_{2,1} = 2$); exactly $3$ are weakly decreasing
@@ -244,21 +230,6 @@ public theorem_wanted ascendingNaples_generatingFunction {k : ℕ} (hk : 1 ≤ k
           (catalan k : PowerSeries ℕ) * PowerSeries.X ^ k *
             PowerSeries.mk (fun n => ascendingNaplesOneCount n (k - 1)) *
             PowerSeries.mk (fun n => ascendingNaplesOneCount n k)
-
-/-- **Counting descending $k$-Naples parking functions.** For all natural numbers $n \ge 1$ and
-$k \ge 1$, the number of weakly decreasing $k$-Naples parking functions of length $n$ is
-$\binom{2n-1}{n} - \binom{2n-1}{n+k+1}$, and the number of weakly decreasing strictly
-$k$-Naples parking functions of length $n$ (those that are $k$-Naples but not $(k-1)$-Naples)
-is $\frac{k+1}{n} \binom{2n}{n+k+1}$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Theorem 7. -/
-public theorem_wanted descendingNaplesCount_eq_choose {n k : ℕ} (hn : 1 ≤ n) (hk : 1 ≤ k) :
-    descendingNaplesCount n k = Nat.choose (2 * n - 1) n - Nat.choose (2 * n - 1) (n + k + 1) ∧
-      (descendingStrictNaplesCount n k : ℚ) =
-        ((k : ℚ) + 1) / n * Nat.choose (2 * n) (n + k + 1)
-
 
 /-- **Lattice path of a parking preference.** Let $\alpha = (a_1, \dots, a_n)$ be a sequence of
 natural numbers. Its lattice path is the sequence of $2n$ steps, each an Up step $(1, 1)$ or a

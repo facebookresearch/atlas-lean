@@ -18,7 +18,7 @@ open LT.LatticeTree
 
 /-- Source-faithful consumer for the even-translate relation, with the
 original binders. -/
-theorem exactSource_isTranslateEven_iff
+private theorem exactSource_isTranslateEven_iff
     {𝒪 : Type} [CommRing 𝒪] {K : Type} [Field K] [Algebra 𝒪 K] {π : 𝒪}
     {B : Type} [CommRing B] [Algebra 𝒪 B]
     (g : GL (Fin 2) K) (c : Kˣ)
@@ -40,7 +40,7 @@ example {R : Type} [CommRing R] {K : Type} [Field K] [Algebra R K]
 
 /-- Source-faithful consumer for the existence of Drinfeld quadruples, with the original
 binders. -/
-theorem exactSource_exists_drinfeldDatum_isQuadrupleOf
+private theorem exactSource_exists_drinfeldDatum_isQuadrupleOf
     {𝒪 : Type} [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] {K : Type} [Field K]
     [Algebra 𝒪 K] [IsFractionRing 𝒪 K] {π : 𝒪} (hπ : Irreducible π)
     (hfin : Finite (𝒪 ⧸ Ideal.span {π}))
