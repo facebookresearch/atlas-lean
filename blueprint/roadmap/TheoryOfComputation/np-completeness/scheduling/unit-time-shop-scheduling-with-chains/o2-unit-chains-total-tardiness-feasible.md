@@ -1,0 +1,3 @@
+# Feasible instances of TWO-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, MINIMIZING TOTAL TARDINESS
+
+An instance $(d, A, K)$ is feasible when there is a unit-time open-shop schedule on two machines respecting the chains: start times $\sigma_k(j)$ for job $j$ on machine $k$ such that each machine starts its operations at pairwise different times, each job starts its two operations at pairwise different times, and if $(i, j) \in A$ then every operation of $j$ starts at or after every operation of $i$ completes ($\sigma_k(i) + 1 \le \sigma_{k'}(j)$) whose total tardiness, with $C_j = \max(\sigma_0(j), \sigma_1(j)) + 1$, is at most $K$: $\sum_j (C_j - d_j) \le K$ with truncated subtraction.
