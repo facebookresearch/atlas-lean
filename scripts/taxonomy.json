@@ -12923,6 +12923,7 @@
   "MathlibExt/NumberTheory/Digits/DyadicMantissa": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Binary digit sums and the Trollope–Delange formula"},
   "MathlibExt/NumberTheory/Digits/DyadicOdometer": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Binary digit sums and the Trollope–Delange formula"},
   "MathlibExt/NumberTheory/Digits/ExactCoveringSystemDigraph": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
+  "MathlibExt/NumberTheory/Digits/ExactCoveringSystemDigraphEcsdTypeOneRelIso": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/ExactCoveringSystemDigraphTypeTwo": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/FibMemLucasIntervals": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
   "MathlibExt/NumberTheory/Digits/GrundmanNivenBound": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Niven numbers"},
