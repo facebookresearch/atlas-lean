@@ -17386,7 +17386,7 @@
   "WantedExt/NumberTheory/MonochromaticUnitFractionsErdosProblem46Wanted": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Monochromatic unit fraction sums"},
   "WantedExt/NumberTheory/MultiplicativeAdditivePairedSquaresWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "WantedExt/NumberTheory/MultiplicativeSignMeanValueErdosProblem239Wanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Mean values of multiplicative functions"},
-  "WantedExt/NumberTheory/MultiplicativeSignOmegaBoundWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Partial sums of multiplicative ±1 functions"},
+  "WantedExt/NumberTheory/MultiplicativeSignOmegaBoundWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Partial sums of totally multiplicative ±1 functions"},
   "WantedExt/NumberTheory/NLagrangeSpectrumWanted": {"to": "NumberTheory/diophantine-approximation", "title": "n-Lagrange and n-Markoff spectra"},
   "WantedExt/NumberTheory/NagellLjunggrenCubeResiduesWanted": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Nagell–Ljunggren equation"},
   "WantedExt/NumberTheory/NagellLjunggrenFiveCubeWanted": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Nagell–Ljunggren equation"},

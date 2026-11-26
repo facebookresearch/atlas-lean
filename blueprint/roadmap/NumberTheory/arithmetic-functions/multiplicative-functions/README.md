@@ -12,7 +12,7 @@ Dirichlet and unitary convolution, completely multiplicative and additive functi
 - [Mean values of multiplicative functions](mean-values-of-multiplicative-functions/README.md)
 - [Multiplicative functions in short intervals](multiplicative-functions-in-short-intervals/README.md)
 - [Möbius–Fermat function](m-bius-fermat-function/README.md)
-- [Partial sums of multiplicative ±1 functions](partial-sums-of-multiplicative-1-functions/README.md)
+- [Partial sums of totally multiplicative ±1 functions](partial-sums-of-multiplicative-1-functions/README.md)
 - [Random multiplicative functions](random-multiplicative-functions/README.md)
 - [Rearick logarithm](rearick-logarithm/README.md)
 - [Antimultiplicative arithmetic functions](antimultiplicative-arithmetic-functions/README.md)

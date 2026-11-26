@@ -1,6 +1,6 @@
 # Edges of the reduced comma digraph leave valid vertices
 
-If the reduced comma digraph $G_b'$ has an edge from $(d, u, \kappa)$, then $1 \le d < b$ and $u \in U(b, d)$, the set of final values of comma sequences in the danger interval of $d$.
+If the reduced comma digraph $G_b'$ has an edge from $(d, u, \kappa)$, then $1 \le d < b$ and $u \in U(b, d)$, the set of offsets $u$ of final terms $d b^k - u$ of comma sequences in the danger interval of $d$.
 
 ## Sources
 

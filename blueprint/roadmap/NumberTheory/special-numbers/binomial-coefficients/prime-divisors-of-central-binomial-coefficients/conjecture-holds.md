@@ -2,7 +2,7 @@
 
 There are infinitely many pairs $0 < n < m$ of natural numbers such that $\binom{2n}{n}$ and $\binom{2m}{m}$ have the same prime divisors.
 
-This resolves [Erdős Problem 730 (central binomial coefficients with the same prime divisors)](conjecture.md), the statement recorded as a proposition, in the affirmative; the resolution, recorded in Erdős Problems, Problem #730, is an AI-assisted proof by L. Price, accepted by the site.
+This resolves [Erdős Problem 730 (central binomial coefficients with the same prime divisors)](conjecture.md), the statement recorded as a proposition, in the affirmative; the resolution, recorded in Erdős Problems, Problem #730, is a model-generated proof (GPT Pro, prompted by L. Price), accepted by the site.
 
 ## Sources
 

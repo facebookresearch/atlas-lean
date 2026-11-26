@@ -1,6 +1,6 @@
 # Cycle sum of comma differences in base ten
 
-$S_{10}(1, 3) = 460$, where for natural numbers $b$, $d$ and $u$, $S_b(d, u) = \sum_{m=0}^{b/\gcd(b,d) - 1} \bigl(((md - u) \bmod b)\, b + d\bigr)$, with $(md - u) \bmod b \in \{0, \dots, b-1\}$; it is the sum of the cycle of comma differences.
+$S_{10}(1, 3) = 460$, where for natural numbers $b > 0$, $d$ and $u$, $S_b(d, u) = \sum_{0 \le m < b/\gcd(b,d)} \bigl(((md - u) \bmod b)\, b + d\bigr)$, with $(md - u) \bmod b \in \{0, \dots, b-1\}$, the sum of the cycle of comma differences ($S_0(d, u) = 0$).
 
 ## Sources
 
