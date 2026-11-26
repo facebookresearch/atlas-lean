@@ -18,6 +18,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Algebra.Ring.Int.Parity
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Nat.Factorial.BigOperators
@@ -60,37 +61,6 @@ rational number $\sum_{k=0}^{n-1} M_k^+(n)$, where $M_k^+(n) = ((-1)^k + k!\,(n-
 Morozov's sign-adjusted quotient. -/
 def wilsonQuotientZPlus (n : ℕ) : ℚ :=
   ∑ k ∈ Finset.range n, wilsonQuotientMPlus k n
-
-private theorem factorial_add_eq_mul_shifted_prod (n k : ℕ) (hn : 0 < n) :
-    (n + k).factorial = n * (n - 1).factorial * ∏ i ∈ Finset.range k, (n + (i + 1)) := by
-  induction k with
-  | zero =>
-    simp only [Nat.add_zero, Finset.range_zero, Finset.prod_empty, mul_one]
-    conv_lhs => rw [← Nat.sub_add_cancel hn, Nat.factorial_succ, Nat.sub_add_cancel hn]
-  | succ k ih =>
-    rw [← Nat.add_assoc, Nat.factorial_succ, ih, Finset.prod_range_succ, Nat.add_assoc]
-    ac_rfl
-
-private theorem alternating_sum_range_two_mul_eq_zero (R : Type*) [Ring R] (n : ℕ) :
-    ∑ k ∈ Finset.range (2 * n), (-1 : R) ^ k = 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    have h2n : 2 * (n + 1) = (2 * n + 1) + 1 := by ring
-    rw [h2n, Finset.sum_range_succ, Finset.sum_range_succ, ih]
-    have heven : Even (2 * n) := even_two.mul_right n
-    have hodd : Odd (2 * n + 1) := ⟨n, rfl⟩
-    rw [heven.neg_one_pow, hodd.neg_one_pow]
-    simp
-
-private theorem alternating_sum_range_odd_eq_one (R : Type*) [Ring R] (n : ℕ) (hodd : Odd n) :
-    ∑ k ∈ Finset.range n, (-1 : R) ^ k = 1 := by
-  obtain ⟨m, hm⟩ := hodd
-  rw [hm]
-  have hsplit : 2 * m + 1 = (2 * m) + 1 := by ring
-  rw [hsplit, Finset.sum_range_succ, alternating_sum_range_two_mul_eq_zero R m]
-  have heven : Even (2 * m) := even_two.mul_right m
-  rw [heven.neg_one_pow, zero_add]
 
 private theorem distinct_mul_dvd_factorial (a b m : ℕ) (ha0 : 0 < a) (hb0 : 0 < b)
     (hne : a ≠ b) (ham : a ≤ m) (hbm : b ≤ m) : a * b ∣ m.factorial := by
@@ -139,8 +109,8 @@ private theorem wilsonQuotientZPlus_two_mul_eq_div (n : ℕ) (hn : 1 ≤ n) :
   have hn0 : n ≠ 0 := by omega
   have hnR : (n : ℚ) ≠ 0 := by exact_mod_cast hn0
   have h2nR : ((2 * n : ℕ) : ℚ) ≠ 0 := by exact_mod_cast (by omega : 2 * n ≠ 0)
-  have halt : ∑ k ∈ Finset.range (2 * n), (-1 : ℚ) ^ k = 0 :=
-    alternating_sum_range_two_mul_eq_zero ℚ n
+  have halt : ∑ k ∈ Finset.range (2 * n), (-1 : ℚ) ^ k = 0 := by
+    rw [neg_one_geom_sum, ite_eq_left (even_two_mul n)]
   have hsub : ∀ k ∈ Finset.range (2 * n),
       Nat.factorial (2 * n - k - 1) = Nat.factorial (2 * n - 1 - k) := by
     intro k _
@@ -196,7 +166,11 @@ private theorem quotient_eq_factorial_mul (n k : ℕ) (hn : 0 < n) (hk : k < n) 
     Nat.factorial k * Nat.factorial (2 * n - 1 - k) / n =
       Nat.factorial k * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1)) := by
   have hadd : 2 * n - 1 - k = n + (n - 1 - k) := by omega
-  rw [hadd, factorial_add_eq_mul_shifted_prod n (n - 1 - k) hn]
+  have hprod : ∏ i ∈ Finset.range (n - 1 - k), (n + 1 + i) =
+      ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1)) :=
+    Finset.prod_congr rfl fun i _ => by rw [Nat.add_assoc, Nat.add_comm 1 i]
+  rw [hadd, ← Nat.factorial_mul_ascFactorial n (n - 1 - k), Nat.ascFactorial_eq_prod_range,
+    ← Nat.mul_factorial_pred hn.ne', hprod]
   have hcomm :
       Nat.factorial k *
           (n * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) =
@@ -454,8 +428,8 @@ private theorem sum_add_pow_eq_sq_add_one (p : ℕ) (hodd : Odd p) :
   rw [Finset.sum_add_distrib]
   have hsumP : ∑ k ∈ Finset.range p, (p : ℤ) = (p : ℤ) ^ 2 := by
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, pow_two]
-  have hsumA : ∑ k ∈ Finset.range p, (-1 : ℤ) ^ k = 1 :=
-    alternating_sum_range_odd_eq_one ℤ p hodd
+  have hsumA : ∑ k ∈ Finset.range p, (-1 : ℤ) ^ k = 1 := by
+    rw [neg_one_geom_sum, ite_eq_right (Nat.not_even_iff_odd.mpr hodd)]
   rw [hsumP, hsumA]
 
 private theorem sum_quotient_modEq_zero_of_composite (n : ℕ) (hn : 1 ≤ n)
