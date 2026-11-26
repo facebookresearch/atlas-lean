@@ -34,6 +34,7 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 
 - [Advanced composition](differentially-private-pi-advanced.md)
 - [The Gaussian mechanism](gaussian-mechanism-differentially-privat.md)
+- [Gaussian calibration tail estimate](gaussian-calibration-tail-le.md)
 - [Transfer theorem for adaptive data analysis](differentially-private-transfer.md)
 
 ## Related topics
