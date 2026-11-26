@@ -37,6 +37,7 @@ public import MathlibExt.NumberTheory.UnitaryDivisorCount
 public import MathlibExt.NumberTheory.SZumkellerHarmonicMeanSqLeOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
+public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
 public import MathlibExt.NumberTheory.SZumkellerCardUnitaryDivisorsOfIsUnitarySZumkeller
 
 namespace MetaMathlibExt
@@ -127,13 +128,6 @@ public theorem_wanted isUnitarySZumkeller_bounds (n q : ℕ) (h : IsUnitarySZumk
       2 / (q : ℚ) ^ 2 + 1 ≤
         ∏ p ∈ n.primeFactors,
           (1 + ((p : ℚ) ^ n.factorization p) ^ 2) / ((p : ℚ) ^ n.factorization p) ^ 2
-
-/-- There is no odd unitary s-Zumkeller number.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 13. -/
-public theorem_wanted not_isUnitarySZumkeller_of_odd (n : ℕ) (ho : Odd n) :
-    ¬ IsUnitarySZumkeller n
 
 end
 
