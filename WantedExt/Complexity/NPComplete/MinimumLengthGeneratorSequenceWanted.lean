@@ -63,7 +63,9 @@ reduction from every language in `NP`
 the target `P`, and `K` in unary (a list of `K` copies of `true`). -/
 abbrev MinimumLengthGeneratorSequenceInstance := ℕ × List (List ℕ) × List ℕ × List Bool
 
-/-- The value at `x` of the permutation given by the list `p` of its values. -/
+/-- Entry `x` of the list `p`, or `x` itself when `p` has no entry `x`. The list is arbitrary
+(`[0, 0]` sends both `0` and `1` to `0`); when `p` lists a permutation of `0, …, p.length - 1`
+this is the value at `x` of that permutation, extended by fixing larger points. -/
 def apply (p : List ℕ) (x : ℕ) : ℕ := p.getD x x
 
 /-- The product of the generators with indices `w = [i₁, …, i_j]`, applied to `x`:

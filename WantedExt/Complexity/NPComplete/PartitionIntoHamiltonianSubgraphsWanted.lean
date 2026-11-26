@@ -60,8 +60,9 @@ reduction from every language in `NP`
 arc `u → v`. -/
 abbrev PartitionIntoHamiltonianSubgraphsInstance := ℕ × List (ℕ × ℕ)
 
-/-- The directed graph of the instance, with an arc `u → v` for each pair `(u, v)` of the arc
-list. -/
+/-- The directed graph of the instance on the vertices below `n`, with an arc `u → v` for each
+pair `(u, v)` of the arc list with both endpoints below `n`. Pairs with an endpoint at least `n`
+give no arc, and a listed pair `(u, u)` gives a loop. -/
 def Graph (i : PartitionIntoHamiltonianSubgraphsInstance) : Digraph (Fin i.1) where
   Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2
 

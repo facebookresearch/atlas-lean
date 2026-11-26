@@ -72,7 +72,8 @@ reduction from every language in `NP`
 `i`-th entry `(a, b)` is `s(i) = a / b`; `m` is their number), and the bound `K`. -/
 abbrev MultiprocessorSchedulingSpeedFactorsInstance := List ℕ × List (ℕ × ℕ) × ℕ
 
-/-- The underlying `MultiprocessorScheduling` instance: the task lengths, `m` and `K`. -/
+/-- The underlying `MultiprocessorScheduling` instance: the task lengths, the number `m` of speed
+records (`0` for an empty list) as the number of processors, and `K`. -/
 def toMultiprocessorScheduling (i : MultiprocessorSchedulingSpeedFactorsInstance) :
     MultiprocessorSchedulingInstance :=
   (i.1, i.2.1.length, i.2.2)

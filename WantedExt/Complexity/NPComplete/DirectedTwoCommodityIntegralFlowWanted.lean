@@ -69,7 +69,9 @@ abbrev DirectedTwoCommodityIntegralFlowInstance :=
 def arcs (i : DirectedTwoCommodityIntegralFlowInstance) : List (ℕ × ℕ) :=
   i.2.1.map fun a => (a.1, a.2.1)
 
-/-- The capacity `c(u, v)` of the arc from `u` to `v`, and `0` when there is no such arc. -/
+/-- The capacity `c(u, v)` in the first arc record, in list order, from `u` to `v`, and `0` when
+there is no such record. Records with the same endpoints need not agree; only `WellFormed` rules
+out repeated arcs. -/
 def capacity (i : DirectedTwoCommodityIntegralFlowInstance) (u v : ℕ) : ℕ :=
   ((i.2.1.find? fun a => a.1 = u ∧ a.2.1 = v).map fun a => a.2.2).getD 0
 

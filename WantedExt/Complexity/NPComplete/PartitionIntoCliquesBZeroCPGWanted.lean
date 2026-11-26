@@ -78,7 +78,10 @@ reduction from every language in `NP`
 /-- The grid point `2p` of the grid refined by a factor of `2`. -/
 def double (p : ℕ × ℕ) : ℕ × ℕ := (2 * p.1, 2 * p.2)
 
-/-- The interior points of the segment from `p` to `q` on the refined grid. -/
+/-- The closed coordinatewise box between `2p` and `2q` on the grid refined by a factor of `2`,
+minus those two points. No order or alignment of `p` and `q` is assumed (for `(0, 0)` and
+`(1, 1)` it contains `(0, 1)`); for an ordered horizontal or vertical segment from `p` to `q` it
+is the set of interior points of the segment on the refined grid. -/
 def interiorPoints (s : (ℕ × ℕ) × (ℕ × ℕ)) : Set (ℕ × ℕ) :=
   Set.Icc (double s.1) (double s.2) \ {double s.1, double s.2}
 

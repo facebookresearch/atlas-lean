@@ -68,8 +68,9 @@ reduction from every language in `NP`
 /-- An instance: vertex count `n` (vertices `Fin n`), arc list, and the bound `K`. -/
 abbrev MaxDirectedCutInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- The directed graph `G = (V, A)` of the instance: an arc from `u` to `v` when `(u, v)` is
-listed. -/
+/-- The directed graph `G = (V, A)` of the instance on the vertices below `n`: an arc from `u` to
+`v`, both below `n`, when `(u, v)` is listed. Pairs with an endpoint at least `n` give no arc,
+and a listed pair `(u, u)` gives a loop. -/
 def Graph (i : MaxDirectedCutInstance) : Digraph (Fin i.1) where
   Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.1
 
