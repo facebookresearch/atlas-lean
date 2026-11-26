@@ -1,4 +1,3 @@
-# Feasible PROTEIN FOLDING IN THE 2D HP MODEL instances
+# Feasible PROTEIN FOLDING IN THE HP MODEL instances in dimension $d$
 
-A PROTEIN FOLDING IN THE 2D HP MODEL instance is feasible when some folding of the string in
-`ℤ^d` has at least `K` H-H contacts.
+For a dimension $d$, a PROTEIN FOLDING IN THE HP MODEL instance $(s, K)$ is feasible in dimension $d$ when some [folding](is-folding.md) of $s$ in $\mathbb{Z}^d$ has at least $K$ [H-H contacts](contacts.md).

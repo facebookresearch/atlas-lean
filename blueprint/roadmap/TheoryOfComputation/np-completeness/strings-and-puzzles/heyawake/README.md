@@ -6,7 +6,7 @@
 - [Rooms of HEYAWAKE cells](room-of.md)
 - [Well-formed HEYAWAKE instances](well-formed.md)
 - [Grid Graph](grid-graph.md)
-- [Solves](solves.md)
+- [Solutions of a HEYAWAKE grid](solves.md)
 - [Feasible HEYAWAKE instances](heyawake-feasible.md)
 - [HEYAWAKE as a decision problem](heyawake-dec.md)
 - [HEYAWAKE is NP-complete](heyawake-np-complete.md)

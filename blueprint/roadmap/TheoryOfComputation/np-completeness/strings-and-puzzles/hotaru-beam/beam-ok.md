@@ -1,3 +1,3 @@
-# Beam OK
+# Legal beams in HOTARU BEAM
 
-`B` is a legal beam for the firefly `F` that ends at the firefly `G`.
+A list $B$ of grid points is a legal beam from the firefly $F$ to the firefly $G$ when $B$ is nonempty; its first point is one unit from $F$ in the direction of $F$'s dot; $F$ followed by $B$ is a path of unit grid steps; every point of $B$ lies on the grid; no point of $B$ before the last is the intersection of a firefly; the last point is $G$'s intersection; the point before it (or $F$, when $B$ has one point) is not the neighbour of $G$ in the direction of $G$'s dot; and, when $F$ is numbered, the path $F, B$ has exactly that number of [bends](bends.md).

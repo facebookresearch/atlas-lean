@@ -6,7 +6,7 @@
 - [Adjacent grid points](adjacent.md)
 - [Bends](bends.md)
 - [Well-formed HOTARU BEAM instances](well-formed.md)
-- [Beam OK](beam-ok.md)
+- [Legal beams in HOTARU BEAM](beam-ok.md)
 - [Feasible HOTARU BEAM instances](hotaru-beam-feasible.md)
 - [HOTARU BEAM as a decision problem](hotaru-beam-dec.md)
 - [HOTARU BEAM is NP-complete](hotaru-beam-np-complete.md)

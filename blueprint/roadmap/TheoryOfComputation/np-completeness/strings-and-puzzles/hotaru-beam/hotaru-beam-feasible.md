@@ -1,4 +1,3 @@
 # Feasible HOTARU BEAM instances
 
-Every firefly `f` has a beam `beam f` ending at `tgt f`, the beams do not intersect, and the
-beams connect all fireflies into one component.
+A HOTARU BEAM instance is feasible when each firefly $f$ has a [legal beam](beam-ok.md) $B_f$ ending at a firefly $t(f)$, the points that the beams pass through before their last points are pairwise distinct, within one beam and across beams, and the graph joining each $f$ to $t(f)$ is connected.
