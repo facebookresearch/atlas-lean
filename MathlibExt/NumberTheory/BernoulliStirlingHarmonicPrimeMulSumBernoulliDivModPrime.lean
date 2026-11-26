@@ -8,13 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliDuality
-public import MathlibExt.NumberTheory.Bernoulli.StirlingHarmonic
-public import MathlibExt.NumberTheory.Bernoulli.SumModPrime
-public import MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime
-public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
-public import Mathlib.NumberTheory.Harmonic.Defs
+public import Mathlib.NumberTheory.Bernoulli
+public import MathlibExt.NumberTheory.RatResidue
 import Mathlib.Algebra.Field.ZMod
+import MathlibExt.NumberTheory.Bernoulli.SumModPrime
+import MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime
 
 /-!
 # A prime-scaled sum of Bernoulli numbers divided by complementary indices
@@ -33,27 +31,18 @@ open Finset
 
 namespace prime_mul_sum_bernoulli_div_mod_prime
 
-private lemma integral_bernoulli' (p : ℕ) [Fact p.Prime] (n : ℕ) (hn : n + 1 < p) :
-    Rat.padicValuation p (bernoulli' n) ≤ 1 := by
-  induction n using Nat.strong_induction_on with
-  | ind n ih =>
-    rw [bernoulli'_def]
-    refine (Rat.padicValuation p).map_sub_le (by simp) ((Rat.padicValuation p).map_sum_le ?_)
-    intro j hj
-    have hjn := mem_range.mp hj
-    have hunit : Int.padicValuation p (↑(n - j + 1) : ℤ) = 1 := by
-      rw [Int.padicValuation_eq_one_iff, Int.natCast_dvd_natCast]
-      exact Nat.not_dvd_of_pos_of_lt (by omega) (by omega)
-    rw [← Nat.cast_sub hjn.le, ← Nat.cast_add_one, map_mul, map_div₀,
-      Rat.padicValuation_natCast, Rat.padicValuation_natCast, hunit, div_one]
-    exact mul_le_one' (Int.padicValuation_le_one _ _) (ih j hjn (by omega))
+-- Implementation note: `integral_bernoulli` adapts the private
+-- `padicValuation_bernoulli_le_one` of `MathlibExt/NumberTheory/Bernoulli/SumModPrime.lean`
+-- to the index `p - 1`, `den_ne_zero` is the denominator argument in the proof of
+-- `sum_bernoulli_to_prime_sub_three_mod_prime` (`Bernoulli/TruncatedSumModPrime.lean`), and
+-- `hres` below is the private `ratResidue_eq_ratCast` of `Bernoulli/SumModPrime.lean`.
 
 private lemma integral_bernoulli (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2)
     (j : ℕ) (hj : j ≤ p) (hjp : j ≠ p - 1) :
     Rat.padicValuation p (bernoulli j) ≤ 1 := by
   by_cases hlt : j < p - 1
   · rw [bernoulli.eq_def, map_mul]
-    exact mul_le_one' (by simp) (integral_bernoulli' p j (by omega))
+    exact mul_le_one' (by simp) (padicValuation_bernoulli'_le_one (p := p) j (by omega))
   · have heq : j = p := by omega
     rw [heq, bernoulli_eq_zero_of_odd ((Fact.out : p.Prime).odd_of_ne_two hp2)
       (Fact.out : p.Prime).one_lt]
