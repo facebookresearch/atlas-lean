@@ -1,6 +1,6 @@
 # Chasing tableau queries with functional and join dependencies
 
-Let $R$ be a relation schema, $F$ a set of functional and join dependencies over $R$, and $(T,t)$ a tableau query over $R$. Every chasing sequence of
+Let $R$ be a relation schema, $F$ a set of functional and join dependencies over $R$, and $(T,t)$ a tableau query over $R$ without constants. Every chasing sequence of
 $(T,t)$ by $F$ terminates, and all terminal chasing sequences yield the same result up to renaming of
 variables (the chase is Church–Rosser). Moreover, $F$ logically implies a dependency $\sigma$ if and only if
 chasing the tableau associated with $\sigma$ by $F$ produces the conclusion of $\sigma$. This yields the
@@ -13,4 +13,4 @@ tableau test for lossless joins.
 
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995 (authors' web edition), Lemma 8.4.4, Theorem 8.4.12 and Theorem 8.4.18. <http://webdam.inria.fr/Alice/pdfs/all.pdf>
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995 (authors' web edition), the restriction to tableau queries with no constants at the start of Section 8.4 (p. 175), Lemma 8.4.4, Theorem 8.4.12 and Theorem 8.4.18. <http://webdam.inria.fr/Alice/pdfs/all.pdf>
