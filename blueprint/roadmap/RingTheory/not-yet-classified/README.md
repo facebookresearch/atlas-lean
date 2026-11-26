@@ -30,6 +30,7 @@ Topics added since this subject's fields were last revised.
 - [Free Of Regular Sequence](free-of-regular-sequence/README.md)
 - [Frobenius Exists](frobenius-exists/README.md)
 - [Geometric Differential Operators](geometric-differential-operators/README.md)
+- [Hecke Localization](hecke-localization/README.md)
 - [Hochschild Cochains](hochschild-cochains/README.md)
 - [Hopf Galois](hopf-galois/README.md)
 - [Hopf Ker](hopf-ker/README.md)
@@ -55,4 +56,5 @@ Topics added since this subject's fields were last revised.
 - [Jacobian Square Presentation](associated-discr-norm-jacobian-det-of-sq.md)
 - [Left integrals on a finite free Hopf algebra](exists-left-integral-sum-apply-mul-eq-co.md)
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
+- [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
 - [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
