@@ -4,5 +4,5 @@ For every infinite field $K$, all $m \le n$, all coefficients $a_{ijk} \in K$ an
 
 ## Sources
 
-- A. Conca, *Products of linear spaces, polymatroids and integral posets*, in Kommutative Algebra, Oberwolfach Reports 2 (2005), no. 19, 1087–1090, Conjecture, p. 1089.
+- A. Conca, *Products of linear spaces, polymatroids and integral posets*, in Kommutative Algebra, Oberwolfach Reports 2 (2005), issue 2 (Report 19/2005), 1087–1090, Conjecture, p. 1089.
 - A. Conca, E. De Negri and E. Gorla, *Universal Gröbner bases and Cartwright–Sturmfels ideals*, Int. Math. Res. Not. IMRN 2020, no. 7, 1979–1991, arXiv:1608.08942, Main Theorem.

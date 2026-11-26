@@ -33,8 +33,8 @@ namespace MathlibExt.LinearAlgebra.Matrix.MatchedSNRQuotient
 
 open _root_.Matrix
 
-/-- The matched-filter output SNR quotient `(wᵀs)^2 / (wᵀRw)` of weight `w` for signal
-`s` in noise with covariance `R`. -/
+/-- The matched-filter quotient `(wᵀs)^2 / (wᵀRw)` of weight `w` and signal `s`, with
+`x / 0 = 0`. When `R` is the noise covariance and `wᵀRw > 0` it is the output SNR. -/
 noncomputable def matchedSNR {ι : Type} [Fintype ι] (R : Matrix ι ι ℝ) (s w : ι → ℝ) : ℝ :=
   (w ⬝ᵥ s) ^ 2 / (w ⬝ᵥ R *ᵥ w)
 
@@ -174,15 +174,15 @@ theorem matchedSNR_eq_dotProduct_inv_mulVec_iff {ι : Type} [Fintype ι] [Decida
   · rintro ⟨c, hc, rfl⟩
     exact matchedSNR_inv_mulVec_smul _ hR _ hs _ hc
 
-/-- **Zero signal.** For `s = 0`, every nonzero weight has zero SNR. -/
+/-- **Zero signal.** For `s = 0`, every nonzero weight has zero SNR, using `x / 0 = 0`
+when `wᵀRw = 0` (for instance `R = 0`). -/
 theorem matchedSNR_zero_signal {ι : Type} [Fintype ι] (R : Matrix ι ι ℝ)
     (w : ι → ℝ) (hw : w ≠ 0) :
     matchedSNR R 0 w = 0 := by
   show (w ⬝ᵥ (0 : ι → ℝ)) ^ 2 / (w ⬝ᵥ R *ᵥ w) = 0
   rw [dotProduct_zero, show (0:ℝ) ^ 2 = 0 from zero_pow two_ne_zero, zero_div]
 
-/-- Boundary `w = 0`: the quotient is the totalized `0 / 0 = 0`, so the equality
-characterization needs `w ≠ 0` (here `0 = 0 • R⁻¹ s` with `c = 0`). -/
+/-- Boundary `w = 0`: the quotient is the totalized `0 / 0 = 0`. -/
 theorem matchedSNR_zero_weight {ι : Type} [Fintype ι] (R : Matrix ι ι ℝ) (s : ι → ℝ) :
     matchedSNR R s 0 = 0 := by
   show ((0 : ι → ℝ) ⬝ᵥ s) ^ 2 / ((0 : ι → ℝ) ⬝ᵥ R *ᵥ (0 : ι → ℝ)) = 0

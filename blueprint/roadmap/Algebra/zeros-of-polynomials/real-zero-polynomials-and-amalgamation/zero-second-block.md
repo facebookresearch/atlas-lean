@@ -2,4 +2,4 @@
 
 For $\ell, m, n \in \mathbb{N}$, the $\mathbb{R}$-algebra homomorphism $\mathbb{R}[x, y, z] \to \mathbb{R}[x, z]$, $r(x, y, z) \mapsto r(x, 0, z)$, for blocks $x, y, z$ of $\ell, m, n$ variables.
 
-Source: M. Schweighofer, *Spectrahedral relaxations of hyperbolicity cones*, in Real Algebraic Geometry with a View Toward Hyperbolic Programming and Free Probability, Oberwolfach Reports 17 (2020), no. 12, 652–654, real zero amalgamation conjecture, p. 653.
+Source: M. Schweighofer, *Spectrahedral relaxations of hyperbolicity cones*, in Real Algebraic Geometry with a View Toward Hyperbolic Programming and Free Probability, Oberwolfach Reports 17 (2020), issue 1 (Report 12/2020), 652–654, real zero amalgamation conjecture, p. 653.

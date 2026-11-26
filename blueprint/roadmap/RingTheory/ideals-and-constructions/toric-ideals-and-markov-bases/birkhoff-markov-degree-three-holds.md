@@ -4,5 +4,5 @@ For every field $K$ and every $p \ge 3$, the toric ideal of the Birkhoff model, 
 
 ## Sources
 
-- AIM workshop *Computational algebraic statistics*, problem list, https://aimath.org/WWN/compalgstat/compalgstat.pdf, Problem 1.
-- T. Yamaguchi, M. Ogawa and A. Takemura, *Markov degree of the Birkhoff model*, J. Algebraic Combin. 40 (2014), 293–311, Theorem 2.1.
+- AIM workshop *Computational algebraic statistics*, problem list, https://aimath.org/WWN/compalgstat/compalgstat.pdf, Problem 1 (which asks for an explicit Markov basis; the motivation for this statement).
+- T. Yamaguchi, M. Ogawa and A. Takemura, *Markov degree of the Birkhoff model*, J. Algebraic Combin. 40 (2014), 293–311, doi:10.1007/s10801-013-0488-z, Theorem 1, p. 295 (Theorem 2.1 of the preprint arXiv:1304.1237).

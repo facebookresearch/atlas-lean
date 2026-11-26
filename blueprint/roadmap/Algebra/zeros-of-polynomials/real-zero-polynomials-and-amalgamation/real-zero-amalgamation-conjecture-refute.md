@@ -4,5 +4,5 @@ It is not the case that for all block sizes $\ell, m, n$ and every degree bound 
 
 ## Sources
 
-- M. Schweighofer, *Spectrahedral relaxations of hyperbolicity cones*, in Real Algebraic Geometry with a View Toward Hyperbolic Programming and Free Probability, Oberwolfach Reports 17 (2020), no. 12, 652–654, real zero amalgamation conjecture, p. 653.
+- M. Schweighofer, *Spectrahedral relaxations of hyperbolicity cones*, in Real Algebraic Geometry with a View Toward Hyperbolic Programming and Free Probability, Oberwolfach Reports 17 (2020), issue 1 (Report 12/2020), 652–654, real zero amalgamation conjecture, p. 653.
 - D. Sawall and M. Schweighofer, *Amalgamation of real zero polynomials*, Indag. Math. (N.S.) 35 (2024), 37–59, arXiv:2305.07403, Example 6.1.
