@@ -21,6 +21,6 @@ The key tool is a maximal version of the isolating cut lemma: for a terminal set
 
 ## Sources
 
-- Zhongtian He, Shang-En Huang, Thatchaphol Saranurak, "Cactus Representations in Polylogarithmic Max-flow via Maximal Isolating Mincuts", arXiv preprint (2023), arXiv:2311.10706.
+- Zhongtian He, Shang-En Huang, Thatchaphol Saranurak, "Cactus Representations in Polylogarithmic Max-flow via Maximal Isolating Mincuts", SODA (2024), arXiv:2311.10706.
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.
 - Chandra Chekuri, Kent Quanrud, "Isolating Cuts, (Bi-)Submodularity, and Faster Algorithms for Connectivity", ICALP (2021), arXiv:2103.12908.

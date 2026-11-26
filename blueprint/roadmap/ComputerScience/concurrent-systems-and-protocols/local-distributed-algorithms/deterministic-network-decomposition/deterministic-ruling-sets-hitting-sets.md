@@ -1,6 +1,6 @@
 # Deterministic ruling sets and hitting sets in polylogarithmic time
 
-Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. An $(\alpha, \beta)$-ruling set is a set $R \subseteq V$ whose vertices are pairwise at distance at least $\alpha$ and such that every vertex is within distance $\beta$ of $R$; a maximal independent set is a $(2, 1)$-ruling set. There is a deterministic CONGEST algorithm computing a $(2, O(\log\log n))$-ruling set in $\tilde O(\log n)$ rounds, and there are deterministic polylogarithmic-round algorithms computing hitting sets (a set meeting every vertex's neighbourhood of size at least $k$, of size $O(n \log n / k)$) and spanners with $O(\log n)$ stretch and $\tilde O(n)$ edges.
+Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. An $(\alpha, \beta)$-ruling set is a set $R \subseteq V$ whose vertices are pairwise at distance at least $\alpha$ and such that every vertex is within distance $\beta$ of $R$; a maximal independent set is a $(2, 1)$-ruling set. There is a deterministic LOCAL algorithm computing a $(2, O(\log\log n))$-ruling set in $\tilde O(\log n)$ rounds, and there are deterministic polylogarithmic-round algorithms computing hitting sets (a set meeting every vertex's neighbourhood of size at least $k$, of size $O(n \log n / k)$) and spanners with $O(\log n)$ stretch and $\tilde O(n)$ edges.
 
 ## Proof sketch
 
@@ -9,6 +9,7 @@ The ruling set algorithm repeatedly halves the identifier space bit by bit: in e
 ## Depends on
 
 - [The CONGEST model of distributed computing](the-congest-model.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

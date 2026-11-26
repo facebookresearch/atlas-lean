@@ -4,7 +4,7 @@ For a threshold $\theta \in [0,1]$ let the **V-shaped** (elementary) scoring rul
 
 ## Proof sketch
 
-By the Savage–Schervish characterization, the expected score of a proper scoring rule is a convex function $G$ of the forecast and $S(p,y) = G(p) + G'(p)(y - p)$ up to sign conventions; writing $G$ as an integral of hinge functions $\max(p - \theta, 0)$ against the measure $G''$ expresses $S$ as an integral of the elementary rules, and boundedness of $S$ bounds the total mass of $G''$. Regret is linear in the scoring rule, so the supremum over the convex set of mixtures is attained at the extreme points $S_\theta$.
+By the Savage–Schervish characterization, the expected score of a proper scoring rule is a convex function $G$ of the forecast and $S(p,y) = G(p) + G'(p)(y - p)$ up to sign conventions; writing $G$ as an integral of hinge functions $\max(p - \theta, 0)$ against the measure $G''$ expresses $S$ as an integral of the elementary rules, and boundedness of $S$ bounds the total mass of $G''$. Regret is subadditive in the scoring rule, so with bounded total mass of $G''$ the U-calibration error is controlled up to a constant factor by the supremum of regret over the elementary rules $S_\theta$.
 
 ## Depends on
 

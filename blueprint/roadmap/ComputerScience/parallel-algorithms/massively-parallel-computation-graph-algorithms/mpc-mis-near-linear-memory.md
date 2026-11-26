@@ -1,6 +1,6 @@
 # MIS in O(log log Delta) MPC rounds with near-linear memory
 
-In the MPC model with local memory $S = \tilde O(n)$, a maximal independent set of an $n$-vertex graph with maximum degree $\Delta$ can be computed by a randomized algorithm in $O(\log\log \Delta)$ rounds with high probability, and the same round complexity applies to maximal matching and $(2 + \varepsilon)$-approximate vertex cover in this memory regime.
+In the MPC model with local memory $S = \tilde O(n)$, a maximal independent set of an $n$-vertex graph with maximum degree $\Delta$ can be computed by a randomized algorithm in $O(\log\log \Delta)$ rounds with high probability, and, with the same memory, a $(2 + \varepsilon)$-approximate maximum matching and a $(2 + \varepsilon)$-approximate minimum vertex cover can be computed in $O(\log\log n)$ rounds.
 
 ## Proof sketch
 

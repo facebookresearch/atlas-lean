@@ -21,6 +21,7 @@ Up to an additive $O(n\gamma)$ term, write $n(R(A_S) - R_{\mathrm{emp}}(A_S)) = 
 ## Proof depends on
 
 - [Moment inequality for sums of weakly correlated functions](weakly-correlated-sum-moment-inequality.md)
+- [Mixed moment growth implies mixed sub-exponential tails](moment-growth-to-tail-bound.md)
 
 ## Sources
 

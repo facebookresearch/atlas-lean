@@ -1,6 +1,6 @@
 # Epoch-wise cell sampling for weighted range counting
 
-Let $\beta = (w t_u)^2$ and divide a random sequence of $n$ weighted insertions, read backwards from the final query, into epochs $i = 1, 2, \dots$ of $\beta^i$ insertions each, with points chosen from a grid tailored to epoch $i$. For every epoch $i$ with $\beta^i \le n$, a uniformly random query must, in expectation, probe $\Omega\big(\log_{\beta} n\big)$ cells whose most recent write occurred in epoch $i$, where $\log_\beta n = \lg n / \lg(w t_u)$.
+Let $t_u$ be the worst-case update time and $\beta = (w t_u)^2$ and divide a random sequence of $n$ weighted insertions, read backwards from the final query, into epochs $i = 1, 2, \dots$ of $\beta^i$ insertions each, with points chosen from a grid tailored to epoch $i$. For every epoch $i$ with $\beta^i \le n$, a uniformly random query must, in expectation, probe $\Omega\big(\log_{\beta} n\big)$ cells whose most recent write occurred in epoch $i$, where $\log_\beta n = \lg n / \lg(w t_u)$.
 
 ## Proof sketch
 
@@ -9,7 +9,7 @@ Updates after epoch $i$ write at most $t_u \sum_{j < i} \beta^j = O(t_u \beta^{i
 ## Depends on
 
 - [Dynamic weighted orthogonal range counting](weighted-dominance-range-counting.md)
-- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
+- [The cell-probe model](../range-query-structures/advanced-data-structures/the-cell-probe-model.md)
 
 ## Proof depends on
 
