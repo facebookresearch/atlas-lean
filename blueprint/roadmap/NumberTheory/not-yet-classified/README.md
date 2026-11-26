@@ -4,10 +4,7 @@ Topics added since this subject's fields were last revised.
 
 - [Adelic Lift](adelic-lift/README.md)
 - [Adelic Periodization](adelic-periodization/README.md)
-- [Eisenstein Congruence](eisenstein-congruence/README.md)
-- [Eisenstein Two Gamma0](eisenstein-two-gamma0/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
-- [Fricke Gamma0](fricke-gamma0/README.md)
 - [Fundamental Domain Exact Volume](fundamental-domain-exact-volume/README.md)
 - [Hecke Operator](hecke-operator/README.md)
 - [Hecke Torsion Cayley Hamilton](hecke-torsion-cayley-hamilton/README.md)
@@ -20,4 +17,3 @@ Topics added since this subject's fields were last revised.
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
 - [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
-- [Level One Trace](exists-level-one-coe-eq-zpow-smul-add-he.md)
