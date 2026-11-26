@@ -5,8 +5,10 @@ $L(\mathcal{T})$ in coalescent units of $2N_e$ generations, and let $\rho/2 = 2N
 population-scaled recombination rate per base pair. Under the sequentially Markovian coalescent SMC', the
 distance $d$ along the genome to the next change of the tree, that is to the next change of at least one
 coalescence time, has density
+
 $$p_r(d \mid \mathcal{T}) = \frac{\rho}{2}\,\alpha(\mathcal{T})\,L(\mathcal{T})\,
 \exp\Bigl[-\frac{\rho}{2}\,\alpha(\mathcal{T})\,L(\mathcal{T})\,d\Bigr], \qquad d > 0,$$
+
 where
 
 $$\alpha(\mathcal{T}) = 1 - \mathbb{P}(\text{tree unchanged} \mid \mathcal{T})$$

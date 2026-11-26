@@ -19,8 +19,10 @@ probability
 $$\mathbb{P}(\text{tree unchanged} \mid b,t,\mathcal{T}) = \frac1i + e^{it}\sum_{j = A_n(t_b^u)+1}^{i} P_{ij}, \qquad i = A_n(t).$$
 
 Averaging the breakpoint uniformly along the branch,
+
 $$\mathbb{P}(\text{tree unchanged} \mid b,\mathcal{T}) = \frac{1}{t_b^u - t_b^l}\sum_{i = A_n(t_b^u)+1}^{A_n(t_b^l)} p_b(i), \qquad
 p_b(i) = \frac1i\Bigl[T_i + \bigl(e^{i\sigma_i} - e^{i\sigma_{i+1}}\bigr)\sum_{j = A_n(t_b^u)+1}^{i} P_{ij}\Bigr],$$
+
 and weighting the branches by their lengths gives, with $L(\mathcal{T})$ the total branch length,
 
 $$\mathbb{P}(\text{tree unchanged} \mid \mathcal{T}) = \frac{1}{L(\mathcal{T})}\sum_{b=1}^{2n-2} \sum_{i = A_n(t_b^u)+1}^{A_n(t_b^l)} p_b(i).$$

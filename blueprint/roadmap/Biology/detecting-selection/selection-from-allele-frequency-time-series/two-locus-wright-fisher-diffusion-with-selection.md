@@ -7,13 +7,16 @@ Consider a diploid, randomly mating population of $N$ individuals at two loci $A
 $$dX(t) = \mu(X(t))\, dt + \sigma(X(t))\, dW(t),$$
 
 with $W$ a six-dimensional standard Brownian motion. Writing $p_A = x_1 + x_2$, $p_B = x_1 + x_3$, $\eta_A(x) = p_A h_A + (1 - p_A)(1 - h_A)$, $\eta_B(x) = p_B h_B + (1 - p_B)(1 - h_B)$ and $D(x) = x_1x_4 - x_2x_3$, the drift is
+
 $$\begin{aligned}
 \mu_1 &= \alpha_A x_1 (1 - p_A)\eta_A + \alpha_B x_1 (1 - p_B)\eta_B - \tfrac{\rho}{2} D, &
 \mu_2 &= \alpha_A x_2 (1 - p_A)\eta_A - \alpha_B x_2\, p_B\, \eta_B + \tfrac{\rho}{2} D,\\
 \mu_3 &= -\alpha_A x_3\, p_A\, \eta_A + \alpha_B x_3 (1 - p_B)\eta_B + \tfrac{\rho}{2} D, &
 \mu_4 &= -\alpha_A x_4\, p_A\, \eta_A - \alpha_B x_4\, p_B\, \eta_B - \tfrac{\rho}{2} D,
 \end{aligned}$$
+
 and the $4 \times 6$ diffusion coefficient, with one column per unordered pair of haplotypes $\{1,2\}, \{1,3\}, \{1,4\}, \{2,3\}, \{2,4\}, \{3,4\}$, is
+
 $$\sigma(x) = \begin{pmatrix}
 \sqrt{x_1x_2} & \sqrt{x_1x_3} & \sqrt{x_1x_4} & 0 & 0 & 0\\
 -\sqrt{x_2x_1} & 0 & 0 & \sqrt{x_2x_3} & \sqrt{x_2x_4} & 0\\

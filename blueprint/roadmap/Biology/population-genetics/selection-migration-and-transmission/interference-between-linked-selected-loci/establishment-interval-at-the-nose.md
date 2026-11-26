@@ -6,10 +6,12 @@ most-fit established class, growing exponentially at rate $(q-1)s$ from its esta
 $1/\bigl[(q-1)s\bigr]$, and let $\tau_q$ be the interval until the next class $n_q$, one mutation fitter,
 becomes established, where establishment time is defined by extrapolating the later deterministic growth
 at rate $qs$ back to size $1/(qs)$. Then the mean and variance of this interval are
+
 $$\langle \tau_q \rangle = \frac{1}{(q-1)s}\,
 \ln\Bigl[\frac{s}{U_b}\,\frac{(q-1)\sin(\pi/q)}{\pi e^{\gamma/q}}\Bigr],
 \qquad
 \mathrm{Var}(\tau_q) = \frac{\pi^2}{6}\Bigl[\frac{1}{[(q-1)s]^2} - \frac{1}{[qs]^2}\Bigr],$$
+
 where $\gamma = 0.5772\ldots$ is Euler's constant. The distribution of $\tau_q$ is skewed: values well
 below the mean occur with appreciable probability, values well above it almost never.
 

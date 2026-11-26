@@ -9,8 +9,10 @@ $$P_{ii} = -\frac1i e^{-i\sigma_i}, \qquad P_{ij} = \exp\Bigl(-i\sigma_i - \sum_
 For a branch $b$ let $b'$ be the branch it coalesces with and $c$ their parental branch, labelled so that
 $t_b^l \le t_{b'}^l$. Under the SMC', the probability that a recombination event does not change the tree
 topology is
+
 $$\mathbb{P}(\text{topology unchanged} \mid \mathcal{T}) = \frac{1}{L(\mathcal{T})}\sum_{b=1}^{2n-2}
 \Bigl[\sum_{i = A_n(t_{b'}^l)+1}^{A_n(t_b^l)} p_{b,1}(i) + \sum_{i = A_n(t_{b'}^u)+1}^{A_n(t_{b'}^l)} p_{b,2}(i)\Bigr],$$
+
 where
 
 $$p_{b,1}(i) = \frac1i\Bigl[T_i + \bigl(e^{i\sigma_i} - e^{i\sigma_{i+1}}\bigr)\Bigl(\sum_{j = A_n(t_{b'}^u)+1}^{A_n(t_{b'}^l)} P_{ij} + \sum_{j = A_n(t_c^u)+1}^{i} P_{ij}\Bigr)\Bigr],$$
@@ -23,6 +25,7 @@ tree without changing the topology alter the intensity of the remaining process.
 observation that the product $L(\mathcal{T})\beta(\mathcal{T})$ is nearly unchanged by a
 topology-unchanging recombination, even though $L(\mathcal{T})$ and $\beta(\mathcal{T})$ separately are
 not, the distribution is approximated by
+
 $$p_r(d \mid \mathcal{T}) \approx \frac{\rho}{2}\,\beta(\mathcal{T})\,L(\mathcal{T})\,
 \exp\Bigl[-\frac{\rho}{2}\,\beta(\mathcal{T})\,L(\mathcal{T})\,d\Bigr].$$
 

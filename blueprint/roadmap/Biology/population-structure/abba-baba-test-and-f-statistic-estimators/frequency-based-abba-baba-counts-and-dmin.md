@@ -2,9 +2,11 @@
 
 Let $P_1, P_2, P_3$ be three populations and $O$ an outgroup, and let $\hat p_{ij}$ be the estimated derived-allele frequency in
 $P_j$ at biallelic site $i \in \{1,\dots,n\}$, where the outgroup carries the ancestral allele ($\hat p_{iO} = 0$). Define
+
 $$n_{ABBA} = \sum_{i=1}^n (1-\hat p_{i1})\,\hat p_{i2}\,\hat p_{i3}, \qquad
 n_{BABA} = \sum_{i=1}^n \hat p_{i1}\,(1-\hat p_{i2})\,\hat p_{i3}, \qquad
 n_{BBAA} = \sum_{i=1}^n \hat p_{i1}\,\hat p_{i2}\,(1-\hat p_{i3}),$$
+
 the expected numbers of sites with each pattern when one allele is drawn per population, and
 
 $$D = \frac{n_{ABBA} - n_{BABA}}{n_{ABBA} + n_{BABA}} .$$
