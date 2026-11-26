@@ -7,4 +7,4 @@ single movement that carries the person from the leaf back to the center is not 
 
 ## Sources
 
-- Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6, Definition (the star model), characteristic example.
+- Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6, Section 4, Definition 25, characteristic example.

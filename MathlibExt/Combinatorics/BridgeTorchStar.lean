@@ -59,7 +59,7 @@ at $u$ otherwise.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def StarMove.src {n k : ℕ} (m : StarMove n k) : Option (Fin k) :=
   if m.outward then none else some m.leaf
 
@@ -69,7 +69,7 @@ $u_\ell$ if it goes outward from $o$, and at the center $o$ otherwise.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def StarMove.dst {n k : ℕ} (m : StarMove n k) : Option (Fin k) :=
   if m.outward then some m.leaf else none
 
@@ -84,7 +84,7 @@ step start at $v$.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def IsStarStep {n k : ℕ} (pos : Fin n → Option (Fin k)) (tor : Option (Fin k) → ℕ)
     (step : List (StarMove n k)) : Prop :=
   (∀ m ∈ step, 1 ≤ m.persons.card ∧ m.persons.card ≤ 2 ∧ ∀ p ∈ m.persons, pos p = m.src) ∧
@@ -102,7 +102,7 @@ center if it is inward), and $\mathrm{pos}(p)$ if no movement of $S$ includes $p
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def starStepPos {n k : ℕ} (pos : Fin n → Option (Fin k)) (step : List (StarMove n k)) :
     Fin n → Option (Fin k) :=
   fun p => match step.find? (fun m => decide (p ∈ m.persons)) with
@@ -116,7 +116,7 @@ movements of $S$ that start at $v$ and $b$ is the number of movements of $S$ tha
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def starStepTorch {n k : ℕ} (tor : Option (Fin k) → ℕ) (step : List (StarMove n k)) :
     Option (Fin k) → ℕ :=
   fun v => tor v - (step.filter fun m => m.src = v).length +
@@ -128,7 +128,7 @@ movements, and $0$ if no person moves.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def starStepDuration {n k : ℕ} (step : List (StarMove n k)) : ℕ :=
   (step.map fun m => m.persons.sup fun p => (p : ℕ) + 1).foldr max 0
 
@@ -143,7 +143,7 @@ exactly when every person already stands at a leaf.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def starRunFrom {n k : ℕ} :
     (Fin n → Option (Fin k)) → (Option (Fin k) → ℕ) → List (List (StarMove n k)) → Bool
   | pos, _, [] => decide (∀ p, (pos p).isSome)
@@ -162,7 +162,7 @@ configuration every person is at some leaf.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 def IsStarSchedule (n k t : ℕ) (σ : List (List (StarMove n k))) : Prop :=
   starRunFrom (fun _ => none) (fun v => if v = none then t else 0) σ = true
 
@@ -173,7 +173,7 @@ $k = 0$ or $t = 0$), then $T(n, k, t) = 0$ by convention.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model). -/
+Section 4, Definition 25. -/
 noncomputable def starTime (n k t : ℕ) : ℕ :=
   sInf {d | ∃ σ, IsStarSchedule n k t σ ∧ (σ.map starStepDuration).sum = d}
 
@@ -184,7 +184,7 @@ the sum of the durations of its steps.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model), definition of `T(n, k, t)`. -/
+Section 4, Definition 25, definition of `T(n, k, t)`. -/
 theorem starTime_le {n k t : ℕ} {σ : List (List (StarMove n k))}
     (hσ : IsStarSchedule n k t σ) : starTime n k t ≤ (σ.map starStepDuration).sum :=
   Nat.sInf_le ⟨σ, hσ, rfl⟩
@@ -196,7 +196,7 @@ schedule, and its total duration is $2$.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model), characteristic example. -/
+Section 4, Definition 25, characteristic example. -/
 theorem isStarSchedule_two_one_one :
     IsStarSchedule 2 1 1 [[⟨Finset.univ, 0, true⟩]] ∧
       ([[(⟨Finset.univ, 0, true⟩ : StarMove 2 1)]].map starStepDuration).sum = 2 := by
@@ -210,7 +210,7 @@ single movement that carries the person from the leaf back to the center is not 
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (the star model), characteristic example. -/
+Section 4, Definition 25, characteristic example. -/
 theorem not_isStarStep_return_without_torch :
     ¬ IsStarStep (fun _ : Fin 1 => (some 0 : Option (Fin 1)))
       (fun v => if v = none then 1 else 0) [⟨Finset.univ, 0, false⟩] := by

@@ -7,4 +7,4 @@ schedule, and its total duration is $2$.
 
 ## Sources
 
-- Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6, Definition (the star model), characteristic example.
+- Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6, Section 4, Definition 25, characteristic example.
