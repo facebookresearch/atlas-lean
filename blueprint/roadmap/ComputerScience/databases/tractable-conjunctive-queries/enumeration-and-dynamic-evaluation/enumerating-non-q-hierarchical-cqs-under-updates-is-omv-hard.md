@@ -7,7 +7,7 @@ with $n$ the size of the active domain.
 
 **Theorem.** Fix $\varepsilon > 0$ and a self-join free conjunctive query $\varphi$ that is not
 [q-hierarchical](q-hierarchical-conjunctive-queries.md). Unless the
-[OMv conjecture](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+[OMv conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
 fails, no dynamic algorithm with arbitrary preprocessing time and update time $O(n^{1-\varepsilon})$ enumerates $\varphi(D)$ with
 delay $O(n^{1-\varepsilon})$. Together with the [upper bound](q-hierarchical-cqs-can-be-maintained-under-updates.md) this gives a
 dichotomy for self-join free conjunctive queries.
@@ -16,7 +16,7 @@ dichotomy for self-join free conjunctive queries.
 
 - [Enumeration with linear preprocessing and constant delay](enumeration-with-linear-preprocessing-and-constant-delay.md)
 - [Q-hierarchical conjunctive queries](q-hierarchical-conjunctive-queries.md)
-- [The online matrix-vector multiplication conjecture](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+- [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
 
 ## Sources
 

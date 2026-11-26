@@ -13,4 +13,4 @@ In particular every fixpoint of $T_P$ is a model of $P$; the converse fails in g
 ## Sources
 
 - S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Lemma 12.3.1(ii) and (iii) (p. 283).
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Lemma 35.10(2) and (3) (p. 325).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Lemma 35.10(2) and (3) (pp. 324–325).

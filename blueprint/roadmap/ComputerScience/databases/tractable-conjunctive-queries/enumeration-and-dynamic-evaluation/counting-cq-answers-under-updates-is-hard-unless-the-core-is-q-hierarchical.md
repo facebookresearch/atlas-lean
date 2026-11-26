@@ -5,7 +5,7 @@ processes single-tuple insertions and deletions; the preprocessing, update, dela
 a random access machine as in [enumeration with constant delay](enumeration-with-linear-preprocessing-and-constant-delay.md),
 with $n$ the size of the active domain.
 
-**Theorem.** Fix $\varepsilon > 0$ and a conjunctive query $\varphi$ whose [core](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
+**Theorem.** Fix $\varepsilon > 0$ and a conjunctive query $\varphi$ whose [core](../../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 is not [q-hierarchical](q-hierarchical-conjunctive-queries.md). Assuming the OMv conjecture and the Orthogonal Vectors conjecture,
 no dynamic algorithm with arbitrary preprocessing time and update time $O(n^{1-\varepsilon})$ computes $|\varphi(D)|$ in time
 $O(n^{1-\varepsilon})$. If $\varphi$ is q-hierarchical, $|\varphi(D)|$ is computed in constant time after linear preprocessing and
@@ -14,9 +14,9 @@ with constant update time.
 ## Depends on
 
 - [Q-hierarchical conjunctive queries](q-hierarchical-conjunctive-queries.md)
-- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
-- [The online matrix-vector multiplication conjecture](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
-- [The 3SUM, APSP and Orthogonal Vectors hypotheses](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
+- [Minimizations and cores of conjunctive queries](../../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
+- [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+- [The 3SUM, APSP and Orthogonal Vectors hypotheses](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
 
 ## Proof depends on
 

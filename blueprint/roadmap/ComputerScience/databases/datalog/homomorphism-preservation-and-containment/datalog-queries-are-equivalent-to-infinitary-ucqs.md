@@ -1,14 +1,16 @@
 # Datalog queries are equivalent to infinitary unions of conjunctive queries
 
 An infinitary union of conjunctive queries over a schema $\mathbf S$ is a possibly infinite disjunction
-$\bigvee_{i \in N} \varphi_i(\bar x)$ of conjunctive queries over $\mathbf S$ with the same free variables $\bar x$, evaluated on
+$\bigvee_{i \in N} \varphi_i(\bar x)$ of conjunctive queries over $\mathbf S$ with the same free variables $\bar x$, in which a disjunct may also
+contain equality atoms $y = a$ between a variable, possibly free, and a constant, evaluated on
 a database $D$ as the union of the answer sets $\varphi_i(D)$.
 
 **Proposition.** For every Datalog query $q = (P, R)$ over a schema $\mathbf S$ whose rule heads contain only variables,
 each occurring in the rule body (Definition 35.1 of the first source), there is an infinitary union of conjunctive
 queries $q' = \varphi(\bar x)$ over $\mathbf S$ whose constants are those of $P$ and with $q \equiv q'$. The disjuncts can be
 taken to be the conjunctive queries over $\mathbf S$ obtained from the rules for $R$ by repeatedly unfolding intensional
-atoms with rules of $P$, that is, the expansion trees of $P$.
+atoms with rules of $P$, that is, the expansion trees of $P$. The equality atoms are needed: for the head-safe rules
+$T(x, x) \mathrel{:-} E(x)$ and $Q(x) \mathrel{:-} T(x, c)$, the unfolding of $Q$ is $E(x) \wedge x = c$.
 
 ## Depends on
 

@@ -1,7 +1,7 @@
 # Enumeration with linear preprocessing and constant delay
 
 Model of computation: a random access machine with words of $O(\log n)$ bits and uniform cost, as in the
-[word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md). An
+[word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md). An
 enumeration problem asks, given an input $x$, to output all $y$ with $(x, y) \in R$, without repetition. It belongs to the class
 $\mathrm{DelayC}_{\mathrm{lin}}$ if some algorithm outputs the first answer within time $O(|x|)$ (linear preprocessing) and each
 further answer, and the end-of-output signal, within time $O(1)$ of the previous output (constant delay). For conjunctive
@@ -10,8 +10,8 @@ conjunctive query $Q$, $\mathrm{Enum}\langle Q\rangle$ is the problem of listing
 
 ## Depends on
 
-- [The word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
-- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
+- [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Sources
 

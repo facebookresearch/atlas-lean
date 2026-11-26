@@ -17,6 +17,10 @@ otherwise it is in polynomial time. Whether $q'$ has a triad can be checked in t
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 
+## Proof depends on
+
+- [Edmonds-Karp computes a maximum flow and a minimum cut](../../graph-algorithms/spanning-trees-flows-matchings/edmonds-karp-algorithm/edmonds-karp-max-flow-min-cut.md)
+
 ## Sources
 
 - C. Freire, W. Gatterbauer, N. Immerman and A. Meliou, "The complexity of resilience and responsibility for self-join-free conjunctive queries", *Proc. VLDB Endowment* 9(3) (2015) 180–191; extended version arXiv:1507.00674 <https://arxiv.org/abs/1507.00674>, Definitions 3.1, 3.6 and 3.7, Proposition 3.8, Theorem 3.24 and Corollary 3.25.

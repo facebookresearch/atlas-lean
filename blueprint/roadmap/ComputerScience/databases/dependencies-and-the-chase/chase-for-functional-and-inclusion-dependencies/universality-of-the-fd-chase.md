@@ -19,4 +19,4 @@ $S$. The tableau version for functional and join dependencies is the [tableau ch
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Lemma 10.11 (p. 74), and its use in Proposition 10.13.
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Lemma 10.11 (p. 74), and its use in Proposition 10.13 (p. 75).
