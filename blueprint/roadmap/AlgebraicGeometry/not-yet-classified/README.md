@@ -1206,4 +1206,5 @@ Topics added since this subject's fields were last revised.
 - [Crossing Resolution Proper](crossing-resolution-proper/README.md)
 - [Segre](segre/README.md)
 - [Semistable Model](semistable-model/README.md)
+- [QMIsogeny](qmisogeny/README.md)
 - [Abelian De Rham Comparison](abelian-de-rham-comparison/README.md)

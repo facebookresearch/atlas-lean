@@ -1,0 +1,18 @@
+# Entangled Strategies and Nonlocal Games
+
+- [Entangled strategies and the entangled value of a game](entangled-strategies-and-entangled-value.md)
+- [Rigidity of near-optimal CHSH strategies](rigidity-of-near-optimal-chsh-strategies.md)
+- [Commuting-operator strategies and value](commuting-operator-strategies-and-value.md)
+- [Linear constraint system games and operator solutions](linear-constraint-system-games.md)
+- [The Mermin–Peres magic square game](mermin-peres-magic-square-game.md)
+- [Projective strategies suffice (Naimark dilation)](projective-strategies-suffice.md)
+- [Quantum soundness of the two-player linearity test](quantum-soundness-of-the-linearity-test.md)
+- [The entangled value of parallel repetitions is nonincreasing](entangled-value-of-repetitions-is-nonincreasing.md)
+- [Synchronous correlations have tracial representations](tracial-representation-of-synchronous-correlations.md)
+- [Cleve–Mittal: finite-dimensional operator solutions give perfect strategies](operator-solutions-give-perfect-strategies.md)
+- [XOR games and Tsirelson's vector characterization](xor-games-and-tsirelsons-theorem.md)
+- [Natarajan–Vidick Pauli braiding test](pauli-braiding-test.md)
+- [Perfect commuting strategies and the synchronous game algebra](perfect-strategies-and-synchronous-game-algebra.md)
+- [Classical and entangled values of the odd-cycle game](odd-cycle-game-values.md)
+- [Anchored Parallel Repetition for Nonlocal Games](anchored-parallel-repetition-steps/README.md)
+- [Quantum Soundness of the Low Individual Degree Test](quantum-low-individual-degree-test/README.md)
