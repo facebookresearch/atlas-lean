@@ -11,6 +11,7 @@ module
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.Combinatorics.Enumerative.Pentagonal.EulerFunction
 import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Tactic.FieldSimp
@@ -27,6 +28,15 @@ The five residue classes of Euler's pentagonal series give a central Euler produ
 bilateral series, evaluated by the two relevant specializations of Watson's quintuple product.
 The quintuple evaluations follow by multiplying two Jacobi series and grouping their terms by
 an integer linear form modulo three; a sign-reversing involution cancels the third class.
+
+## References
+
+* L. Carlitz and M. V. Subbarao, *A Simple Proof of the Quintuple Product Identity*,
+  Proc. Amer. Math. Soc. **32** (1972), no. 1, 42–44, §2, for the product of two Jacobi
+  series, the regrouping modulo three, and the sign-reversing reindexing.
+* M. D. Hirschhorn, *The Power of q: A Personal Journey*, Developments in Mathematics **49**,
+  Springer, Cham, 2017, Chapter 8, pp. 85–92, the reference cited for the five-dissection
+  by Harishkumar, Menezes, and Mahadeva Naika.
 -/
 
 namespace MetaMathlibExt
@@ -53,11 +63,6 @@ private lemma poch_ne_zero {a q : ℂ} (ha : ‖a‖ < 1) (hq : ‖q‖ < 1) : P
     simp [h] at hnorm
   · simpa only [norm_mul, norm_neg, norm_pow] using
       (summable_geometric_of_lt_one (norm_nonneg q) hq).mul_left ‖a‖
-
-private lemma hasProd_progression (q : ℂ) (a k : ℕ) (hk : ‖q ^ k‖ < 1) :
-    HasProd (fun n : ℕ ↦ 1 - q ^ (k * n + a)) (P (q ^ a) (q ^ k)) := by
-  refine (hasProd_qPochhammerInf (q ^ a) (q ^ k) hk).congr_fun fun n ↦ ?_
-  rw [pow_add, pow_mul, mul_comm (q ^ a)]
 
 private lemma poch_even_odd (a p : ℂ) (hp : ‖p‖ < 1) :
     P a (p ^ 2) * P (a * p) (p ^ 2) = P a p := by
@@ -137,27 +142,20 @@ private lemma theta_hasSum {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1)
 
 local notation "ε" => (-1 : ℂ)
 
-/-- Euler's pentagonal series, obtained by grouping the Jacobi factors modulo three. -/
-private lemma euler_hasSum {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1) :
+/-- Mathlib's pentagonal number theorem, written using `thetaTerm` and the raw product. -/
+private lemma euler_hasSum {q : ℂ} (hq : ‖q‖ < 1) :
     HasSum (thetaTerm q 3 1 ε) (P q q) := by
-  have h3 := norm_pow_lt_one hq (by decide : (3 : ℕ) ≠ 0)
-  have h := theta_hasSum hq0 hq (k := 3) (a := 1) (by decide) (by decide) (s := ε) (by norm_num)
-  norm_num at h
-  have hsplit := (Nat.divModEquiv 3).symm.hasProd_iff.mpr (hasProd_qPochhammerInf q q hq)
-  have hgroup : HasProd (fun n : ℕ ↦ (1 - q ^ (3 * n + 3)) * (1 - q ^ (3 * n + 1)) *
-      (1 - q ^ (3 * n + 2))) (P q q) := by
-    refine hsplit.prod_fiberwise fun n ↦ ?_
-    change HasProd (fun i : Fin 3 ↦ 1 - q * q ^ (n * 3 + i.val)) _
-    convert hasProd_fintype _ using 1
-    rw [Fin.prod_univ_three]
-    norm_num
-    simp only [← pow_succ']
-    rw [show n * 3 = 3 * n by ring, show 3 * n + 1 + 1 = 3 * n + 2 by omega,
-      show 3 * n + 2 + 1 = 3 * n + 3 by omega]
-    ring
-  rw [← (((hasProd_progression q 3 3 h3).mul (hasProd_progression q 1 3 h3)).mul
-    (hasProd_progression q 2 3 h3)).unique hgroup]
-  simpa only [pow_one] using h
+  have hp : eulerFunction q = P q q := by
+    rw [eulerFunction_eq_tprod hq, qPochhammerInfRaw]
+    exact tprod_congr fun n ↦ by rw [pow_succ']
+  rw [← hp]
+  refine (hasSum_eulerFunction_pentagonal hq).congr_fun (g := thetaTerm q 3 1 ε) fun n ↦ ?_
+  have hn : (pentagonal n : ℤ) = 3 * tri n + n := by
+    have h : 2 * ((pentagonal n : ℤ) - (3 * tri n + n)) = 0 := by
+      linear_combination two_mul_natCast_pentagonal n - 3 * two_mul_tri n
+    omega
+  simp only [Int.cast_negOnePow, ← zpow_natCast q (pentagonal n), hn, thetaTerm,
+    Nat.cast_ofNat, Nat.cast_one, one_mul]
 
 /-- The theta ratio in the five-dissection comes from the signed Jacobi evaluations. -/
 private lemma ramanujan_prod {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1)
@@ -241,9 +239,9 @@ private lemma quint_term {q : ℂ} (hq0 : q ≠ 0) (i : ℕ) (r n j : ℤ) :
   rw [mul_left_comm, mul_assoc (ε ^ n), ← zpow_add₀ hq0, he, zpow_add₀ hq0]
   ring
 
-private lemma quint_inner_zero {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1) :
+private lemma quint_inner_zero {q : ℂ} (hq : ‖q‖ < 1) :
     ∑' j : ℤ, quintInner q 0 j = P (q ^ 10) (q ^ 10) := by
-  have h := euler_hasSum (pow_ne_zero 10 hq0) (norm_pow_lt_one hq (by decide))
+  have h := euler_hasSum (norm_pow_lt_one hq (by decide : (10 : ℕ) ≠ 0))
   rw [← h.tsum_eq, ← (Equiv.neg ℤ).tsum_eq (thetaTerm (q ^ 10) 3 1 ε)]
   refine tsum_congr fun j ↦ ?_
   simp only [quintInner, Equiv.neg_apply, thetaTerm, zpow_neg, ← inv_zpow, inv_neg, inv_one,
@@ -252,9 +250,9 @@ private lemma quint_inner_zero {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1) :
     linear_combination -15 * two_mul_tri (-j)]
   norm_cast
 
-private lemma quint_inner_one {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1) :
+private lemma quint_inner_one {q : ℂ} (hq : ‖q‖ < 1) :
     ∑' j : ℤ, quintInner q 1 j = P (q ^ 10) (q ^ 10) := by
-  have h := euler_hasSum (pow_ne_zero 10 hq0) (norm_pow_lt_one hq (by decide))
+  have h := euler_hasSum (norm_pow_lt_one hq (by decide : (10 : ℕ) ≠ 0))
   refine (tsum_congr fun j ↦ ?_).trans h.tsum_eq
   simp only [quintInner, thetaTerm, Nat.cast_ofNat, Nat.cast_one, mul_one, one_mul]
   rw [← zpow_natCast q 10, ← zpow_mul, show 15 * j * j + (5 - 10) * j = 10 * (3 * tri j + j) by
@@ -311,7 +309,7 @@ private lemma quintuple_eval {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1) {i : �
     simp_rw [Function.comp_apply, hfiber, hterm, tsum_mul_left, tsum_mul_right]
     norm_num only [Fin.val_zero, Fin.val_one, Fin.val_two, Nat.cast_zero, Nat.cast_one,
       Nat.cast_ofNat]
-    rw [quint_inner_zero hq0 hq, quint_inner_one hq0 hq, quint_inner_two]
+    rw [quint_inner_zero hq, quint_inner_one hq, quint_inner_two]
     ring
   have hn := poch_ne_zero (norm_pow_lt_one hq (by decide : (10 : ℕ) ≠ 0))
     (norm_pow_lt_one hq (by decide : (10 : ℕ) ≠ 0))
@@ -445,13 +443,13 @@ private lemma pentagonal_class_four {q : ℂ} (hq0 : q ≠ 0) (n : ℤ) :
 
 private lemma euler_five_classes {q : ℂ} (hq0 : q ≠ 0) (hq : ‖q‖ < 1) :
     P q q = quintProd (q ^ 5) 1 - q * P (q ^ 25) (q ^ 25) - q ^ 2 * quintProd (q ^ 5) 2 := by
-  have he := euler_hasSum hq0 hq
+  have he := euler_hasSum hq
   have hs := fiveClasses.summable_iff.mpr he.summable
   have h5 := norm_pow_lt_one hq (by decide : (5 : ℕ) ≠ 0)
   have hq5 := pow_ne_zero 5 hq0
   have h1 := quintuple_eval hq5 h5 (i := 1) (by decide)
   have h2 := quintuple_eval hq5 h5 (i := 2) (by decide)
-  have h25 := euler_hasSum (pow_ne_zero 25 hq0) (norm_pow_lt_one hq (by decide))
+  have h25 := euler_hasSum (norm_pow_lt_one hq (by decide : (25 : ℕ) ≠ 0))
   rw [← he.tsum_eq, ← fiveClasses.tsum_eq (thetaTerm q 3 1 ε)]
   change (∑' x, (thetaTerm q 3 1 ε ∘ fiveClasses) x) = _
   rw [hs.tsum_prod, tsum_fintype]
