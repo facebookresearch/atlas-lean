@@ -5,7 +5,8 @@ $q(D) \subseteq q'(D)$ for every (finite) database $D$ that satisfies $\Sigma$. 
 functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$ identifies terms as the
 dependencies dictate, computes in polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or
 yields a query whose atoms satisfy $\Sigma$; in that case a witness is a homomorphism from $q'$ to the chased query that
-maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase.
+maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase. NP-hardness is inherited from containment
+of conjunctive queries by taking $\Sigma$ empty.
 
 ## Depends on
 
@@ -21,6 +22,7 @@ maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase.
 - [The chase for functional dependencies runs in polynomial time](../dependencies-and-the-chase/chase-for-functional-and-inclusion-dependencies/the-fd-chase-runs-in-polynomial-time.md)
 - [Universality of the chase for functional dependencies](../dependencies-and-the-chase/chase-for-functional-and-inclusion-dependencies/universality-of-the-fd-chase.md)
 - [Homomorphism theorem for conjunctive queries with constants](cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
+- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
 
 ## Sources
 
