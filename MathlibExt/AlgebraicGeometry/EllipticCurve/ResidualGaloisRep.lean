@@ -43,9 +43,12 @@ public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 /-!
 # Unramified residual representations of Weierstrass curves
 
-The residual representation `WeierstrassCurve.residualGaloisRepOf` of a rational
-Weierstrass curve at `p` is unramified at `q` exactly when inertia at every valuation
-subring lying over `q` fixes every `p`-torsion point.
+Let `W` be a rational Weierstrass curve and `p` a prime. Assume that the `p`-torsion of `W`
+over `AlgebraicClosure ℚ` has `p ^ 2` points and that the Galois action on it is trivial on
+the automorphisms fixing some finite extension of `ℚ`; these two hypotheses construct the
+residual representation `WeierstrassCurve.residualGaloisRepOf` of `W` at `p`. That
+representation is unramified at `q` exactly when inertia at every valuation subring lying
+over `q` fixes every `p`-torsion point.
 
 The Galois action on points, the residual representation and the valuation predicates are
 the existing ones from `PointGaloisAction`, `ResidualModularity`, `ResidualGaloisRep`,
@@ -67,9 +70,9 @@ variable {R : Type*} {S : Type*} {K : Type*} [CommRing R] [Field S]
   [Field K] [DecidableEq K] [Algebra R S] [Algebra R K]
   [Algebra S K] [IsScalarTower R S K]
 
-/-- The representation on `n`-torsion points is unramified at `q` when
-every inertia element at every valuation ring above `q` fixes every
-`n`-torsion point. -/
+/-- **Unramified Galois action on torsion points.** The Galois action on the `n`-torsion points
+of `W'` over `K` is unramified at `q` when, at every valuation subring of `K` lying over `q`,
+every element of its inertia subgroup in `K ≃ₐ[S] K` fixes every `n`-torsion point. -/
 def GaloisRepUnramifiedAt (W' : Affine R) (n : ℕ) (q : ℕ) : Prop :=
   ∀ A : ValuationSubring K, A.LiesOverPrime q →
     ∀ σ ∈ A.inertiaSubgroupIn S,
@@ -78,9 +81,14 @@ def GaloisRepUnramifiedAt (W' : Affine R) (n : ℕ) (q : ℕ) : Prop :=
 end WeierstrassCurve.Affine.Point
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point in
-/-- The residual representation attached to a curve is unramified at
-`q` exactly when the Galois action on `p`-torsion points is
-unramified at `q`. -/
+/-- **The residual representation is unramified exactly when inertia fixes torsion points.**
+Let `W` be a Weierstrass curve over `ℚ` and `p` a prime. Assume that the `p`-torsion of `W` over
+`AlgebraicClosure ℚ` has `p ^ 2` points and that the Galois action on it is trivial on the
+automorphisms fixing some finite extension of `ℚ`; these two hypotheses construct the residual
+representation of `W` at `p`, whose space is that `p`-torsion. Then this representation is
+unramified at `q`, that is, every inertia element at every valuation subring of
+`AlgebraicClosure ℚ` lying over `q` acts on it as the identity, exactly when every such inertia
+element fixes every `p`-torsion point of `W`. -/
 theorem WeierstrassCurve.residualGaloisRepOf_isUnramifiedAt_iff
     (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : Nat.card

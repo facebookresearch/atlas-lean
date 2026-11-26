@@ -36,8 +36,9 @@ example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
         (S := ℚ) (K := AlgebraicClosure ℚ) W p q :=
   WeierstrassCurve.residualGaloisRepOf_isUnramifiedAt_iff W p hcard hker q
 
--- Unfolding consumer: unramifiedness of the attached representation
--- means inertia acts trivially on every `p`-torsion point.
+-- Unfolding consumer: under the torsion-count and finite-level hypotheses that construct it,
+-- unramifiedness of the attached representation means inertia acts trivially on every
+-- `p`-torsion point.
 open Classical in
 example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : Nat.card
