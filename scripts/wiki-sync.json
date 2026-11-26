@@ -104370,6 +104370,7 @@
 "SimpleGraph.le_bookNumber": "c4f4eeacb1a7f212",
 "SimpleGraph.le_hypercubeTuranNumber": "bfe7e887eeadfbe4",
 "SimpleGraph.lexProduct": "a04b765c652417b7",
+"SimpleGraph.localClusteringCoefficient": "2982cbd4fadcc8bf",
 "SimpleGraph.localComplement": "4fbdad42f583fdd7",
 "SimpleGraph.localComplement_adj": "8b61f822f4e909f7",
 "SimpleGraph.localComplement_adj_left": "bdba15953e760de5",
