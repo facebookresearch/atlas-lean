@@ -33,6 +33,7 @@ module
 public import Mathlib.Algebra.Quaternion
 public import Mathlib.GroupTheory.DoubleCoset
 public import MathlibExt.Algebra.Quaternion.FiniteAdeleBox
+public import MathlibExt.Algebra.Quaternion.Order
 
 @[expose] public section
 
@@ -43,68 +44,18 @@ noncomputable section
 
 namespace QuaternionAlgebra
 
-variable {a b : ℚ}
-
-structure IsOrder (Λ : Submodule ℤ ℍ[ℚ, a, b]) : Prop where
-
-  one_mem : (1 : ℍ[ℚ, a, b]) ∈ Λ
-
-  mul_mem : ∀ ⦃x y : ℍ[ℚ, a, b]⦄, x ∈ Λ → y ∈ Λ → x * y ∈ Λ
-
-  spanTop : Submodule.span ℚ (Λ : Set ℍ[ℚ, a, b]) = ⊤
-
-  fg : Λ.FG
-
-def IsUnitOf (Λ : Submodule ℤ ℍ[ℚ, a, b]) (u : ℍ[ℚ, a, b]) : Prop :=
-  u ∈ Λ ∧ ∃ v ∈ Λ, u * v = 1 ∧ v * u = 1
-
-def IsQuadraticDatum (t n : ℤ) (α : ℍ[ℚ, a, b]) : Prop :=
-  α * α - (t : ℚ) • α + (n : ℚ) • (1 : ℍ[ℚ, a, b]) = 0
-
-def EmbeddingDatum (Λ : Submodule ℤ ℍ[ℚ, a, b]) (t n : ℤ) : Type :=
-  {α : ℍ[ℚ, a, b] // α ∈ Λ ∧ IsQuadraticDatum t n α}
-
-def IsOptimalDatum (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) : Prop :=
-  ∀ x ∈ Λ, (∃ c d : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + d • α) →
-    ∃ p q : ℤ, x = (p : ℚ) • (1 : ℍ[ℚ, a, b]) + (q : ℚ) • α
-
-def UnitConj {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d d' : EmbeddingDatum Λ t n) : Prop :=
-  ∃ u : ℍ[ℚ, a, b], IsUnitOf Λ u ∧ d'.1 * u = u * d.1
-
-/-- `f` is the embedding conductor of `α` in `Λ`: the least positive `f` with
-`f • x ∈ ℤ + ℤα` for every `x ∈ Λ` in the rational span of `1` and `α`.
-Unlike the adapted source, `f` must be positive: for `f = 0` the other two
-clauses hold for every `α`. -/
-def HasEmbeddingConductor (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b])
-    (f : ℕ) : Prop :=
-  0 < f ∧ (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
-      ∃ p q : ℤ, (f : ℚ) • x = (p : ℚ) • (1 : ℍ[ℚ, a, b]) + (q : ℚ) • α) ∧
-    (∀ g : ℕ, 0 < g → g < f →
-      ¬ (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
-        ∃ p q : ℤ, (g : ℚ) • x = (p : ℚ) • (1 : ℍ[ℚ, a, b]) + (q : ℚ) • α))
-
-abbrev EmbeddingDatum.HasConductor {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ}
-    (d : EmbeddingDatum Λ t n) (f : ℕ) : Prop :=
-  HasEmbeddingConductor Λ d.1 f
-
-def EmbeddingClassSet (Λ : Submodule ℤ ℍ[ℚ, a, b]) (t n : ℤ) : Type :=
-  Quot (UnitConj (Λ := Λ) (t := t) (n := n))
-
-noncomputable def condEmbeddingCount (Λ : Submodule ℤ ℍ[ℚ, a, b]) (t n : ℤ) (f : ℕ) : ℕ :=
-  Nat.card {c : EmbeddingClassSet Λ t n //
-    ∃ d : EmbeddingDatum Λ t n, Quot.mk _ d = c ∧ d.HasConductor f}
-
-theorem isQuadraticDatum_iff {t n : ℤ} {α : ℍ[ℚ, a, b]} :
-    IsQuadraticDatum t n α ↔ α * α - (t : ℚ) • α + (n : ℚ) • (1 : ℍ[ℚ, a, b]) = 0 :=
-  Iff.rfl
-
 section ReducedNorm
 
 variable {R : Type*} [CommRing R] {a b : R}
 
+/-- **Reduced norm.** The reduced norm of `x = x₀ + x₁ i + x₂ j + x₃ k` in the quaternion
+algebra `ℍ[R, a, b]` over a commutative ring `R`, where `i² = a`, `j² = b` and `k = i j`:
+`x₀² - a x₁² - b x₂² + a b x₃²`. -/
 def nrd (x : ℍ[R, a, b]) : R :=
   x.re ^ 2 - a * x.imI ^ 2 - b * x.imJ ^ 2 + a * b * x.imK ^ 2
 
+/-- **Reduced trace.** The reduced trace of `x = x₀ + x₁ i + x₂ j + x₃ k` in the quaternion
+algebra `ℍ[R, a, b]` over a commutative ring `R`: `2 x₀`. -/
 def trd (x : ℍ[R, a, b]) : R := 2 * x.re
 
 @[simp] theorem nrd_mk (x₀ x₁ x₂ x₃ : R) :
@@ -136,6 +87,9 @@ end ReducedNorm
 
 variable {a b : ℚ}
 
+/-- **Adelic class set.** For `B = ℍ[ℚ, a, b]`, the ring `𝔸_f` of finite adeles of `ℚ` and a
+subgroup `U` of the finite ideles `(B ⊗[ℚ] 𝔸_f)ˣ`, the double coset space
+`Bˣ \ (B ⊗[ℚ] 𝔸_f)ˣ / U`, where `Bˣ` acts on the left through `d ↦ d ⊗ 1`. -/
 abbrev ClassSet (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) : Type :=
   DoubleCoset.Quotient
     (((Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range :
@@ -148,12 +102,16 @@ namespace ClassSet
 variable {U U' : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ}
 
 variable (U) in
-
+/-- **Class of a finite idele.** The class of a finite idele `x` in the adelic class set
+`Bˣ \ (B ⊗[ℚ] 𝔸_f)ˣ / U` of `B = ℍ[ℚ, a, b]`. -/
 abbrev mk (x : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) : ClassSet U :=
   DoubleCoset.mk (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range U x
 
 theorem mk_surjective : Function.Surjective (mk U) := Quotient.mk''_surjective
 
+/-- **Change of level on class sets.** For subgroups `U ≤ U'` of the finite ideles of
+`B = ℍ[ℚ, a, b]`, the map from the class set at `U` to the class set at `U'` sending the
+class of `x` at `U` to the class of `x` at `U'`. -/
 def map (h : U ≤ U') : ClassSet U → ClassSet U' :=
   Quotient.map' id fun x y hxy => by
     obtain ⟨c, hc, d, hd, rfl⟩ := DoubleCoset.rel_iff.mp hxy
@@ -179,19 +137,18 @@ end ClassSet
 
 section HeckeKernel
 
+/-- **Hecke incidence set.** For a subgroup `U` and a set `S` of finite ideles of
+`B = ℍ[ℚ, a, b]`, a finite idele `x` and a class `y` in `ClassSet U`: the left cosets of `U`
+with a representative `h ∈ S` such that `x h` lies in the class `y`. -/
 def HeckeIncidence (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (x : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (y : ClassSet U) : Type :=
   {c : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ ⧸ U //
     ∃ h ∈ S, (h : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ ⧸ U) = c ∧ ClassSet.mk U (x * h) = y}
 
-/-- The Hecke kernel at `x` and `y`: the number of cosets `hU` with `h ∈ S` and `x.out * h` in
-the class `y`. Unlike the adapted source, it is `ℕ∞`-valued, so an infinite incidence set gives
-`⊤` rather than `0`. -/
-def heckeKernel (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
-    (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (x y : ClassSet U) : ℕ∞ :=
-  ENat.card (HeckeIncidence U S x.out y)
-
+/-- **Hecke incidences after a right translation by `U`.** If `S` is stable under left
+multiplication by `U` and `u ∈ U`, then `h U ↦ u h U` is a bijection from the Hecke incidence
+set at `x u` to the Hecke incidence set at `x`. -/
 def heckeIncidenceEquiv (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (hS : ∀ u ∈ U, ∀ s ∈ S, u * s ∈ S)
@@ -210,27 +167,49 @@ def heckeIncidenceEquiv (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (
   left_inv c := Subtype.ext (by simp)
   right_inv c := Subtype.ext (by simp)
 
-theorem heckeKernel_mk (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+theorem card_heckeIncidence_eq_of_mk_eq
+    (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
-    (hS : ∀ u ∈ U, ∀ s ∈ S, u * s ∈ S)
-    (x : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (y : ClassSet U) :
-    heckeKernel U S (ClassSet.mk U x) y = ENat.card (HeckeIncidence U S x y) := by
-  obtain ⟨δ, hδ, u, hu, hout⟩ :=
-    DoubleCoset.mk_out_eq_mul (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range U x
-  unfold heckeKernel
-  rw [show (ClassSet.mk U x).out = δ * x * u from hout]
+    (hS : ∀ u ∈ U, ∀ s ∈ S, u * s ∈ S) {x x' : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ}
+    (h : ClassSet.mk U x = ClassSet.mk U x') (y : ClassSet U) :
+    ENat.card (HeckeIncidence U S x y) = ENat.card (HeckeIncidence U S x' y) := by
+  obtain ⟨δ, hδ, u, hu, rfl⟩ := DoubleCoset.eq.mp h
   have e1 : HeckeIncidence U S (δ * x * u) y ≃ HeckeIncidence U S (δ * x) y :=
     heckeIncidenceEquiv U S hS (δ * x) u hu y
   have e2 : HeckeIncidence U S (δ * x) y ≃ HeckeIncidence U S x y := by
     refine Equiv.subtypeEquivRight fun c => ?_
     obtain ⟨δ', rfl⟩ := MonoidHom.mem_range.mp hδ
     simp only [mul_assoc, ClassSet.mk_diagonal_mul]
-  rw [ENat.card_congr (e1.trans e2)]
+  exact (ENat.card_congr (e1.trans e2)).symm
+
+-- Unlike the adapted source, which counts from the chosen representative `x.out` in `ℤ`, the
+-- kernel is defined on classes, needs `hS` for that, and is `ℕ∞`-valued.
+/-- **Hecke kernel.** For a subgroup `U` of the finite ideles of `B = ℍ[ℚ, a, b]` and a set
+`S` of finite ideles stable under left multiplication by `U`, the Hecke kernel at classes `x`
+and `y` of `ClassSet U`: the number of left cosets `h U` with `h ∈ S` and `x₀ h` in the class
+`y`, for a representative `x₀` of `x`. Because `S` is stable under left multiplication by `U`,
+this number does not depend on the representative. It takes values in `ℕ∞`, so infinitely many
+such cosets give `⊤`. -/
+def heckeKernel (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+    (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+    (hS : ∀ u ∈ U, ∀ s ∈ S, u * s ∈ S) (x y : ClassSet U) : ℕ∞ :=
+  Quotient.liftOn' x (fun x₀ => ENat.card (HeckeIncidence U S x₀ y)) fun _ _ h =>
+    card_heckeIncidence_eq_of_mk_eq U S hS (Quotient.sound' h) y
+
+theorem heckeKernel_mk (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+    (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+    (hS : ∀ u ∈ U, ∀ s ∈ S, u * s ∈ S)
+    (x : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (y : ClassSet U) :
+    heckeKernel U S hS (ClassSet.mk U x) y = ENat.card (HeckeIncidence U S x y) :=
+  rfl
 
 end HeckeKernel
 
 section Level
 
+/-- **Hecke set at `ℓ`.** For a `ℤ`-submodule `Λ` of `B = ℍ[ℚ, a, b]` with finite adelic box
+`Λ̂` in `B ⊗[ℚ] 𝔸_f`, the finite ideles `h` with `h ∈ Λ̂` and `ℓ h⁻¹ ∈ Λ̂`, but `h⁻¹ ∉ Λ̂` and
+`ℓ⁻¹ h ∉ Λ̂`. -/
 def primeHeckeSet (Λ : Submodule ℤ ℍ[ℚ, a, b]) (ℓ : ℕ) :
     Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ :=
   {h | (h : ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) ∈ Submodule.finiteAdeleBox Λ ∧
@@ -251,6 +230,8 @@ theorem mem_primeHeckeSet_iff (Λ : Submodule ℤ ℍ[ℚ, a, b]) (ℓ : ℕ)
       (ℓ : ℚ)⁻¹ • (h : ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) ∉ Submodule.finiteAdeleBox Λ :=
   Iff.rfl
 
+/-- **Hecke set at `ℓ` with level `P`.** For `ℤ`-submodules `Λ` and `P` of `B = ℍ[ℚ, a, b]`,
+the elements `h` of the Hecke set of `Λ` at `ℓ` with `h - 1` in the finite adelic box of `P`. -/
 def levelHeckeSet (Λ P : Submodule ℤ ℍ[ℚ, a, b]) (ℓ : ℕ) :
     Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ :=
   primeHeckeSet Λ ℓ ∩
@@ -263,6 +244,9 @@ theorem mem_levelHeckeSet_iff (Λ P : Submodule ℤ ℍ[ℚ, a, b]) (ℓ : ℕ)
         (h : ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) - 1 ∈ Submodule.finiteAdeleBox P :=
   Iff.rfl
 
+/-- **Congruence level.** For `ℤ`-submodules `Λ` and `P` of `B = ℍ[ℚ, a, b]` with finite adelic
+boxes `Λ̂` and `P̂`, the subgroup of finite ideles `u` with `u Λ̂ = Λ̂`, `u P̂ = P̂` and
+`u x - x ∈ P̂` for every `x ∈ Λ̂`. -/
 def congruenceLevel (Λ P : Submodule ℤ ℍ[ℚ, a, b]) :
     Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ where
   carrier := {u | u ∈ Submodule.finiteIdeleStabilizer Λ ∧ u ∈ Submodule.finiteIdeleStabilizer P ∧
@@ -312,6 +296,8 @@ theorem mem_congruenceLevel_iff (Λ P : Submodule ℤ ℍ[ℚ, a, b])
 theorem congruenceLevel_le (Λ P : Submodule ℤ ℍ[ℚ, a, b]) :
     congruenceLevel Λ P ≤ Submodule.finiteIdeleStabilizer Λ := fun _ hu => hu.1
 
+/-- **Norm ideal.** For a `ℤ`-submodule `Λ` of `B = ℍ[ℚ, a, b]` and `q ∈ ℕ`, the `ℤ`-span of
+the products `x y z` with `x, y, z ∈ Λ` and reduced norm `nrd y ∈ q ℤ`. -/
 def normIdeal (Λ : Submodule ℤ ℍ[ℚ, a, b]) (q : ℕ) : Submodule ℤ ℍ[ℚ, a, b] :=
   Submodule.span ℤ {w | ∃ x ∈ Λ, ∃ y ∈ Λ, ∃ z ∈ Λ, (∃ m : ℤ, nrd y = (q : ℚ) * m) ∧ w = x * y * z}
 
@@ -368,11 +354,17 @@ section FiniteIdele
 
 variable {a b : ℚ}
 
+/-- **Adelic quadratic subring.** For `α` in `B = ℍ[ℚ, a, b]`, the subring of `B ⊗[ℚ] 𝔸_f`
+generated by `α ⊗ 1` and the elements `1 ⊗ c` with `c ∈ 𝔸_f`, where `𝔸_f` is the ring of finite
+adeles of `ℚ`. -/
 def finiteAdeleQuadSubring (α : ℍ[ℚ, a, b]) : Subring (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) :=
   Subring.closure
     ({α ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ)} ∪
       Set.range (fun r : FiniteAdeleRing (𝓞 ℚ) ℚ => (1 : ℍ[ℚ, a, b]) ⊗ₜ[ℚ] r))
 
+/-- **Adelic quadratic units.** For `α` in `B = ℍ[ℚ, a, b]`, the subgroup of finite ideles `u`
+of `B` such that `u` and `u⁻¹` lie in the subring of `B ⊗[ℚ] 𝔸_f` generated by `α ⊗ 1` and the
+elements `1 ⊗ c` with `c ∈ 𝔸_f`. -/
 def finiteIdeleQuadUnits (α : ℍ[ℚ, a, b]) : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ
   where
   carrier := {u | (u : ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) ∈ finiteAdeleQuadSubring α ∧
@@ -391,9 +383,15 @@ def finiteIdeleQuadUnits (α : ℍ[ℚ, a, b]) : Subgroup (ℍ[ℚ, a, b] ⊗[�
     intro x hx
     exact ⟨hx.2, by rw [inv_inv]; exact hx.1⟩
 
+/-- **Global quadratic units.** For `α` in `B = ℍ[ℚ, a, b]`, the finite ideles `d ⊗ 1` with
+`d ∈ Bˣ` that lie in the subgroup of adelic quadratic units of `α`. -/
 def quadUnitsDiagonal (α : ℍ[ℚ, a, b]) : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ :=
   (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range ⊓ finiteIdeleQuadUnits α
 
+/-- **Idelic embedding set.** For a `ℤ`-submodule `Λ` of `B = ℍ[ℚ, a, b]` with finite
+adelic box `Λ̂` and for `α ∈ B`, the finite ideles `β` such that every `y` in the subring of
+`B ⊗[ℚ] 𝔸_f` generated by `α ⊗ 1` and `1 ⊗ 𝔸_f` satisfies `β⁻¹ y β ∈ Λ̂` exactly when
+`y ∈ Λ̂`. -/
 def embeddingSetOrd (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) :
     Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ :=
   {β | ∀ y ∈ finiteAdeleQuadSubring α,
@@ -402,20 +400,30 @@ def embeddingSetOrd (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) :
         ∈ (Submodule.finiteAdeleBox Λ : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ))
       ↔ y ∈ (Submodule.finiteAdeleBox Λ : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ))}
 
+/-- **Idelic embedding class set.** For a `ℤ`-submodule `Λ` of `B = ℍ[ℚ, a, b]` and `α ∈ B`,
+the classes of the double coset space `Dα \ (B ⊗[ℚ] 𝔸_f)ˣ / Stab(Λ̂)` that have a representative
+in the idelic embedding set of `Λ` and `α`. Here `Dα` is the group of global quadratic
+units of `α`, and `Stab(Λ̂)` is the stabilizer of the finite adelic box `Λ̂` of `Λ`. -/
 def IdelicEmbeddingClassSet (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) : Type :=
   {q : DoubleCoset.Quotient
-      ((quadUnitsDiagonal α : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) : Set (ℍ[ℚ, a,
-        b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+      ((quadUnitsDiagonal α : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
+        Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
       ((Submodule.finiteIdeleStabilizer Λ : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
         Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) //
     ∃ x ∈ embeddingSetOrd Λ α,
       DoubleCoset.mk (quadUnitsDiagonal α) (Submodule.finiteIdeleStabilizer Λ) x = q}
 
+/-- **Fibre of the idelic embedding class set.** For a `ℤ`-submodule `Λ` of `B = ℍ[ℚ, a, b]`,
+`α ∈ B` and a finite idele `β`, the classes of the double coset space
+`Dα \ (B ⊗[ℚ] 𝔸_f)ˣ / Stab(Λ̂)` with a representative `x` in the idelic embedding set of
+`Λ` and `α` whose class in `Bˣ \ (B ⊗[ℚ] 𝔸_f)ˣ / Stab(Λ̂)` is the class of `β`. Here `Dα` is the
+group of global quadratic units of `α`, and `Stab(Λ̂)` is the stabilizer of the finite adelic box
+`Λ̂` of `Λ`. -/
 def EmbeddingClassFibre (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b])
     (β : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) : Type :=
   {q : DoubleCoset.Quotient
-      ((quadUnitsDiagonal α : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) : Set (ℍ[ℚ, a,
-        b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+      ((quadUnitsDiagonal α : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
+        Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
       ((Submodule.finiteIdeleStabilizer Λ : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
         Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) //
     ∃ x ∈ embeddingSetOrd Λ α,
@@ -423,10 +431,12 @@ def EmbeddingClassFibre (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]
       (DoubleCoset.mk (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range
           (Submodule.finiteIdeleStabilizer Λ) x :
         DoubleCoset.Quotient
-          (((Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ]
-            FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
-          ((Submodule.finiteIdeleStabilizer Λ : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ)
-            ℚ)ˣ) : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ))
+          (((Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range :
+              Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
+            Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+          ((Submodule.finiteIdeleStabilizer Λ :
+              Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
+            Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ))
         = DoubleCoset.mk (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range
           (Submodule.finiteIdeleStabilizer Λ) β}
 
