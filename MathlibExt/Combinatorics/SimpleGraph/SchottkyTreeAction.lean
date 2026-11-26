@@ -45,8 +45,8 @@ namespace CerednikDrinfeld
 
 variable {E V : Type*}
 
-/-- Degeneracy data for a graph: two endpoint maps from edges to vertices,
-together with a positive width for every edge. -/
+/-- **Degeneracy data.** Two endpoint maps from a set of edges to a set of vertices, together
+with a positive width for every edge. -/
 structure DegeneracyData (E V : Type*) where
   /-- The first endpoint of an edge. -/
   a : E → V
@@ -61,7 +61,7 @@ open MulAction
 
 variable {G : Type*} [Group G] {W : Type*} [MulAction G W] (𝒯 : SimpleGraph W)
 
-/-- An action of a group `G` on the vertex set of a graph `𝒯` that preserves
+/-- **Graph action.** An action of a group `G` on the vertex set of a graph `𝒯` that preserves
 adjacency. -/
 class GraphAction (G : Type*) [Group G] {W : Type*} [MulAction G W] (𝒯 : SimpleGraph W) :
     Prop where
@@ -81,19 +81,19 @@ instance dartAction : MulAction G 𝒯.Dart where
 
 theorem smul_dart_symm (g : G) (d : 𝒯.Dart) : (g • d).symm = g • d.symm := rfl
 
-/-- The set of orbits of darts of `𝒯` under `G`: the oriented edges of the quotient
-graph. An edge of `𝒯` has two darts, one for each orientation. When no element of `G` sends
-one to the other, they lie in two orbits and the quotient keeps both orientations: for the
-translation action of `ℤ` on the integer path graph, the quotient has one vertex and one
-unoriented loop, but two oriented edges. When some element of `G` inverts the edge, that is,
-sends one of its darts to the reverse dart, both darts lie in one orbit, which
-`quotientReversal` fixes. -/
+/-- **Oriented quotient edges.** The set of orbits of darts of `𝒯` under `G`: the oriented
+edges of the quotient graph. An edge of `𝒯` has two darts, one for each orientation. When no
+element of `G` sends one to the other, they lie in two orbits and the quotient keeps both
+orientations: for the translation action of `ℤ` on the integer path graph, the quotient has
+one vertex and one unoriented loop, but two oriented edges. When some element of `G` inverts
+the edge, that is, sends one of its darts to the reverse dart, both darts lie in one orbit,
+which `quotientReversal` fixes. -/
 abbrev QuotEdge (G : Type*) [Group G] {W : Type*} [MulAction G W] (𝒯 : SimpleGraph W)
     [GraphAction G 𝒯] :=
   orbitRel.Quotient G 𝒯.Dart
 
-/-- The set of orbits of vertices of `𝒯` under `G`: the vertex set of the
-quotient graph. -/
+/-- **Quotient vertices.** The set of orbits of vertices of `𝒯` under `G`: the vertex set of
+the quotient graph. -/
 abbrev QuotVert (G : Type*) [Group G] (W : Type*) [MulAction G W] := orbitRel.Quotient G W
 
 theorem card_stabilizer_smul (g : G) (d : 𝒯.Dart) :
@@ -102,9 +102,9 @@ theorem card_stabilizer_smul (g : G) (d : 𝒯.Dart) :
   exact Subgroup.card_map_of_injective (MulAut.conj g).injective
 
 variable (G) in
-/-- The width of an oriented quotient edge: the cardinality of the stabilizer of
-any dart above it. It is defined only when every dart stabilizer is finite, so
-that the width is the actual, positive cardinality. -/
+/-- **Width of an oriented quotient edge.** The cardinality of the stabilizer of any dart
+above it. It is defined only when every dart stabilizer is finite, so that the width is the
+actual, positive cardinality. -/
 def stabWidth (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) (e : QuotEdge G 𝒯) : ℕ+ :=
   ⟨Nat.card (stabilizer G e.out), @Nat.card_pos _ _ (hfin e.out)⟩
 
@@ -114,10 +114,10 @@ theorem coe_stabWidth_mk (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) (d 
     (stabilizerEquivStabilizerOfOrbitRel (Quotient.mk_out (s := orbitRel G 𝒯.Dart) d)).toEquiv
 
 variable (G) in
-/-- The degeneracy data of the quotient graph, indexed by its oriented edges
-(the dart orbits): a dart orbit runs from the orbit of the first vertex of its
-darts to the orbit of their second vertex, and its width is the cardinality of
-a dart stabilizer, which requires every dart stabilizer to be finite. -/
+/-- **Degeneracy data of the quotient graph.** It is indexed by the oriented edges (the dart
+orbits): a dart orbit runs from the orbit of the first vertex of its darts to the orbit of
+their second vertex, and its width is the cardinality of a dart stabilizer, which requires
+every dart stabilizer to be finite. -/
 def quotientDegeneracyData (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) :
     DegeneracyData (QuotEdge G 𝒯) (QuotVert G W) where
   a := Quotient.map' (fun d : 𝒯.Dart => d.fst) (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
@@ -125,7 +125,7 @@ def quotientDegeneracyData (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) :
   w := stabWidth G 𝒯 hfin
 
 variable (G) in
-/-- The reversal of an oriented quotient edge, induced by dart reversal. It fixes
+/-- **Reversal of oriented quotient edges.** The map induced by dart reversal. It fixes
 exactly the dart orbits of the edges that some element of `G` inverts
 (`quotientReversal_mk_eq_self_iff`). -/
 def quotientReversal : QuotEdge G 𝒯 → QuotEdge G 𝒯 :=
@@ -139,11 +139,11 @@ theorem quotientReversal_mk_eq_self_iff (d : 𝒯.Dart) :
   rw [quotientReversal_mk, Quotient.eq'', MulAction.orbitRel_apply, MulAction.mem_orbit_iff]
 
 variable (G) in
-/-- A group acting on a tree is a uniform tree lattice if the action is faithful,
-every vertex stabilizer is finite, and the quotient graph is finite, with finitely
-many vertex orbits and dart orbits. Only the uniform (cocompact) case is covered: a
-general tree lattice need only have finite covolume, the sum of `1 / |stabilizer G v|`
-over the vertex orbits, and its quotient graph can be infinite. -/
+/-- **Uniform tree lattice.** A group acting on a tree is a uniform tree lattice if the action
+is faithful, every vertex stabilizer is finite, and the quotient graph is finite, with finitely
+many vertex orbits and dart orbits. Only the uniform (cocompact) case is covered: a general
+tree lattice need only have finite covolume, the sum of `1 / |stabilizer G v|` over the vertex
+orbits, and its quotient graph can be infinite. -/
 structure IsUniformTreeLattice : Prop where
   /-- The graph is a tree. -/
   isTree : 𝒯.IsTree
@@ -157,9 +157,9 @@ structure IsUniformTreeLattice : Prop where
   finite_quotEdge : Finite (QuotEdge G 𝒯)
 
 variable (G) in
-/-- A group acting on a tree is a Schottky group if every vertex stabilizer
-is trivial, no group element sends a dart to its reverse, and the quotient
-graph is finite, with finitely many vertex orbits and dart orbits. -/
+/-- **Schottky group.** A group acting on a tree is a Schottky group if every vertex stabilizer
+is trivial, no group element sends a dart to its reverse, and the quotient graph is finite,
+with finitely many vertex orbits and dart orbits. -/
 structure IsSchottky : Prop where
   /-- The graph is a tree. -/
   isTree : 𝒯.IsTree
@@ -222,26 +222,27 @@ theorem finite_stabilizer_dart (h : IsUniformTreeLattice G 𝒯) (d : 𝒯.Dart)
   have := h.finite_stabilizer d.fst
   exact Finite.of_injective _ (Subgroup.inclusion_injective (stabilizer_dart_le 𝒯 d))
 
-/-- The `Fintype` structure on the quotient vertex set of a uniform tree lattice, which is
-finite. -/
+/-- **Finite quotient vertex set.** The `Fintype` structure on the quotient vertex set of a
+uniform tree lattice, which is finite. -/
 @[reducible] def fintypeQuotVert (h : IsUniformTreeLattice G 𝒯) : Fintype (QuotVert G W) :=
   @Fintype.ofFinite _ h.finite_quotVert
 
-/-- The `Fintype` structure on the set of oriented quotient edges (dart orbits) of a
-uniform tree lattice, which is finite. -/
+/-- **Finite set of oriented quotient edges.** The `Fintype` structure on the set of oriented
+quotient edges (dart orbits) of a uniform tree lattice, which is finite. -/
 @[reducible] def fintypeQuotEdge (h : IsUniformTreeLattice G 𝒯) : Fintype (QuotEdge G 𝒯) :=
   @Fintype.ofFinite _ h.finite_quotEdge
 
 end IsUniformTreeLattice
 
-/-- Two actions of groups `G` and `H` on `W` agree through a homomorphism
-`ρ : G →* H`. -/
+/-- **Actions agreeing through a homomorphism.** Two actions of groups `G` and `H` on `W`
+agree through a homomorphism `ρ : G →* H`: `g • w = ρ g • w` for every `g : G` and `w : W`. -/
 def ActsThrough (W : Type*) {G H : Type*} [Group G] [Group H] [MulAction G W] [MulAction H W]
     (ρ : G →* H) : Prop :=
   ∀ (g : G) (w : W), g • w = ρ g • w
 
 variable {𝒯} in
-/-- The graph automorphism given by the action of `g : G`. -/
+/-- **Action of a group element on the graph.** The graph homomorphism `𝒯 →g 𝒯` given by the
+action of `g : G`. -/
 def smulHom (g : G) : 𝒯 →g 𝒯 where
   toFun w := g • w
   map_rel' h := GraphAction.smul_adj g h
@@ -255,34 +256,39 @@ theorem quotEdge_mk_smul (g : G) (d : 𝒯.Dart) :
       Quotient.mk (orbitRel G 𝒯.Dart) d :=
   Quotient.sound (mem_orbit d g)
 
-/-- The index of a dart relative to an oriented quotient edge `q`: the indicator
-of the dart lying over `q` minus the indicator of its reverse lying over `q`. It is
-`1` if the dart lies over `q` and its reverse does not, `-1` if the reverse does and
-the dart does not, and `0` otherwise. In particular it is `0` on both darts of an
-edge that some element of `G` inverts: the dart and its reverse then lie in one
-orbit, and the two indicators cancel (`dartIndex_eq_zero_of_smul_eq_symm`). -/
+/-- **Index of a dart relative to an oriented quotient edge.** The indicator of the dart
+lying over `q` minus the indicator of its reverse lying over `q`. It is `1` if the dart lies
+over `q` and its reverse does not, `-1` if the reverse does and the dart does not, and `0`
+otherwise. In particular it is `0` on both darts of an edge that some element of `G` inverts:
+the dart and its reverse then lie in one orbit, and the two indicators cancel
+(`dartIndex_eq_zero_of_smul_eq_symm`). -/
 def dartIndex [DecidableEq (QuotEdge G 𝒯)] (q : QuotEdge G 𝒯) (d : 𝒯.Dart) : ℤ :=
   (if Quotient.mk (orbitRel G 𝒯.Dart) d = q then 1 else 0) -
     (if Quotient.mk (orbitRel G 𝒯.Dart) d.symm = q then 1 else 0)
 
-/-- The cycle of a walk in the quotient graph: for each label `e : E`, the signed
-count of the walk's darts over the oriented quotient edge `orb e`, that is, the
-sum of their indices relative to `orb e`. A dart over `orb e` counts `1` and a dart
-whose reverse lies over it counts `-1`; the darts of an edge that `G` inverts
-count `0`. -/
+/-- **Signed edge counts of a walk.** For each label `e : E`, the signed count of the walk's
+darts over the oriented quotient edge `orb e`, that is, the sum of their indices relative to
+`orb e`: a dart over `orb e` counts `1`, a dart whose reverse lies over it counts `-1`, and the
+darts of an edge that `G` inverts count `0`. The endpoints of the walk are arbitrary, so its
+image in the quotient graph need not be closed: under the trivial action on a single edge, the
+one-step walk has count `1` and joins two different vertex orbits. `pathCycle` is the closed
+case. -/
 def walkCycle [DecidableEq (QuotEdge G 𝒯)] {E : Type*} (orb : E → QuotEdge G 𝒯) {u v : W}
     (p : 𝒯.Walk u v) :
     E → ℤ :=
   fun e => (p.darts.map (dartIndex 𝒯 (orb e))).sum
 
 variable {𝒯} in
-/-- A chosen path between two reachable vertices. -/
+/-- **Chosen path between reachable vertices.** A path between two reachable vertices, chosen
+by `Classical.choice`. -/
 def somePath {u v : W} (h : 𝒯.Reachable u v) : 𝒯.Path u v := by
   classical exact h.some.toPath
 
 open scoped Classical in
-/-- The cycle of the chosen path from `v₀` to `g • v₀`, or zero if they are
-not reachable. -/
+/-- **Cycle of a group element in the quotient graph.** The signed edge counts (`walkCycle`)
+of the chosen path from `v₀` to `g • v₀`, or zero if they are not reachable. The endpoints
+`v₀` and `g • v₀` lie in one orbit, so the image of the path in the quotient graph is a closed
+walk, which these counts record. -/
 def pathCycle [DecidableEq (QuotEdge G 𝒯)] {E : Type*} (orb : E → QuotEdge G 𝒯) (v₀ : W)
     (g : G) : E → ℤ :=
   if h : 𝒯.Reachable v₀ (g • v₀) then walkCycle 𝒯 orb (somePath h : 𝒯.Walk v₀ (g • v₀)) else 0

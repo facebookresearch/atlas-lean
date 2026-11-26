@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.FieldTheory.Fixed.InvariantFractionField
 public import Mathlib.Algebra.MvPolynomial.Rename
+public import Mathlib.Basic.Complex.Basic
 
 @[expose] public section
 
@@ -216,6 +217,134 @@ theorem conjTransport_symm_x1 :
   change (rot k)⁻¹ • x1 k = x0 k
   rw [← algebraMap.smul']
   exact congrArg _ (inv_smul_eq_iff.mpr (rot_smul_X0 k).symm)
+
+/-- The automorphism `X ↦ -X` of `ℂ[X]`. -/
+abbrev negX : ℂ[X] ≃ₐ[ℂ] ℂ[X] := algEquivAevalNegX
+
+/-- Coefficientwise complex conjugation of `ℂ[X]`. -/
+abbrev conjX : ℂ[X] ≃+* ℂ[X] := Polynomial.mapEquiv (starRingAut : ℂ ≃+* ℂ)
+
+theorem negX_apply (p : ℂ[X]) : negX p = p.comp (-X) := by
+  rw [algEquivAevalNegX_apply, comp_eq_aeval]
+
+theorem conjX_apply (p : ℂ[X]) : conjX p = p.map (starRingEnd ℂ) := rfl
+
+/-- The `ℂ`-automorphisms of `ℂ[X]` that commute with coefficient conjugation. -/
+def commConj : Subgroup (ℂ[X] ≃ₐ[ℂ] ℂ[X]) where
+  carrier := {φ | ∀ p, conjX (φ p) = φ (conjX p)}
+  one_mem' _ := rfl
+  mul_mem' {φ ψ} hφ hψ p := by
+    change conjX (φ (ψ p)) = φ (ψ (conjX p))
+    rw [hφ, hψ]
+  inv_mem' {φ} hφ p := by
+    change conjX (φ.symm p) = φ.symm (conjX p)
+    apply φ.injective
+    rw [AlgEquiv.apply_symm_apply, ← hφ, AlgEquiv.apply_symm_apply]
+
+theorem negX_mem_commConj : negX ∈ commConj := fun p => by
+  rw [negX_apply, negX_apply, conjX_apply, conjX_apply, Polynomial.map_comp, Polynomial.map_neg,
+    Polynomial.map_X]
+
+/-- The group `{1, X ↦ -X}` of `ℂ`-automorphisms of `ℂ[X]`. -/
+abbrev negGroup : Subgroup (ℂ[X] ≃ₐ[ℂ] ℂ[X]) := Subgroup.zpowers negX
+
+/-- Coefficient conjugation, an ambient semilinear automorphism of `ℂ[X]` lying over complex
+conjugation: it commutes with `X ↦ -X`. -/
+def conjAmb : AmbientSemilinearAut ℂ negGroup ℂ[X] where
+  base := starRingAut
+  map := conjX
+  map_algebraMap c := by
+    rw [conjX_apply, Polynomial.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply,
+      Polynomial.map_C]
+    rfl
+  map_smul g p := by
+    have hle : Subgroup.zpowers negX ≤ commConj := Subgroup.zpowers_le.mpr negX_mem_commConj
+    exact hle g.2 p
+
+/-- `i X²` in the fraction field of `ℂ[X]`. -/
+abbrev iX2 : FractionRing ℂ[X] := algebraMap ℂ[X] (FractionRing ℂ[X]) (C Complex.I * X ^ 2)
+
+/-- `i X` in the fraction field of `ℂ[X]`. -/
+abbrev iX : FractionRing ℂ[X] := algebraMap ℂ[X] (FractionRing ℂ[X]) (C Complex.I * X)
+
+/-- `i X²` is fixed by `X ↦ -X`, so it lies in the field fixed by `{1, X ↦ -X}`. -/
+theorem iX2_mem : iX2 ∈ (FixedPoints.intermediateField negGroup :
+    IntermediateField ℂ (FractionRing ℂ[X])) := fun g => by
+  change (g : negGroup) • iX2 = iX2
+  rw [← algebraMap.smul']
+  congr 1
+  have hle : Subgroup.zpowers negX ≤ MulAction.stabilizer _ (C Complex.I * X ^ 2 : ℂ[X]) :=
+    Subgroup.zpowers_le.mpr (by rw [MulAction.mem_stabilizer_iff, AlgEquiv.smul_def, negX_apply]; simp)
+  exact hle g.2
+
+/-- `i X` is not fixed by `X ↦ -X`, which sends it to `-i X`. -/
+theorem iX_notMem : iX ∉ (FixedPoints.intermediateField negGroup :
+    IntermediateField ℂ (FractionRing ℂ[X])) := fun h => by
+  have h1 := h ⟨negX, Subgroup.mem_zpowers negX⟩
+  change negX • iX = iX at h1
+  rw [← algebraMap.smul', AlgEquiv.smul_def, negX_apply] at h1
+  have h2 := congrArg (fun p : ℂ[X] => (p.coeff 1).im)
+    (IsFractionRing.injective ℂ[X] (FractionRing ℂ[X]) h1)
+  norm_num at h2
+
+/-- Every element is fixed by the trivial subgroup of `{1, X ↦ -X}`, `i X` included. -/
+theorem iX_mem_bot : iX ∈ (FixedPoints.intermediateField (⊥ : Subgroup negGroup) :
+    IntermediateField ℂ (FractionRing ℂ[X])) := fun γ => by
+  change (γ : negGroup) • iX = iX
+  rw [Subgroup.mem_bot.mp γ.2, one_smul]
+
+/-- Negation moves the image in the fraction field of a polynomial with a coefficient whose
+imaginary part is nonzero, such as `i X²` and `i X`. -/
+theorem neg_ne_self {p : ℂ[X]} {n : ℕ} (hp : (p.coeff n).im ≠ 0) :
+    -algebraMap ℂ[X] (FractionRing ℂ[X]) p ≠ algebraMap ℂ[X] (FractionRing ℂ[X]) p := fun h => by
+  have h1 : -p = p := IsFractionRing.injective ℂ[X] (FractionRing ℂ[X]) (by rw [map_neg]; exact h)
+  have h2 : (-(p.coeff n)).im = (p.coeff n).im := by
+    rw [← Polynomial.coeff_neg, h1]
+  rw [Complex.neg_im] at h2
+  exact hp (by linarith)
+
+/-- The coefficient action of conjugation on the field fixed by `{1, X ↦ -X}` sends the invariant
+`i X²` to `-i X²`: it restricts the semilinear automorphism, not the identity. -/
+theorem coeffAct_conjAmb_iX2 :
+    ((AlgebraicCurve.SemilinearAut.toRingAut (AmbientSemilinearAut.coeffAct conjAmb)
+        ⟨iX2, iX2_mem⟩ :
+        (FixedPoints.intermediateField negGroup : IntermediateField ℂ (FractionRing ℂ[X]))) :
+        FractionRing ℂ[X]) = -iX2 := by
+  change conjAmb.fracMap iX2 = -iX2
+  rw [AmbientSemilinearAut.fracMap_algebraMap, ← map_neg]
+  congr 1
+  change (C Complex.I * X ^ 2).map (starRingEnd ℂ) = _
+  simp
+
+/-- So the coefficient action of conjugation, and its image under `coeffActHom`, are not the
+identity, and its base automorphism is complex conjugation. -/
+example : AmbientSemilinearAut.coeffActHom conjAmb ≠ 1 ∧
+    AlgebraicCurve.SemilinearAut.baseAut (AmbientSemilinearAut.coeffAct conjAmb) =
+      starRingAut := by
+  refine ⟨fun h => ?_, rfl⟩
+  have hx := coeffAct_conjAmb_iX2
+  rw [← AmbientSemilinearAut.coeffActHom_apply, h] at hx
+  exact neg_ne_self (p := C Complex.I * X ^ 2) (n := 2) (by simp) hx.symm
+
+/-- On the field fixed by the trivial subgroup, the coefficient action of conjugation sends
+`i X`, which `X ↦ -X` does not fix, to `-i X`. -/
+theorem coeffActOf_bot_conjAmb_iX :
+    ((AlgebraicCurve.SemilinearAut.toRingAut
+        (AmbientSemilinearAut.coeffActOf (⊥ : Subgroup negGroup) conjAmb) ⟨iX, iX_mem_bot⟩ :
+        (FixedPoints.intermediateField (⊥ : Subgroup negGroup) :
+          IntermediateField ℂ (FractionRing ℂ[X]))) : FractionRing ℂ[X]) = -iX := by
+  change conjAmb.fracMap iX = -iX
+  rw [AmbientSemilinearAut.fracMap_algebraMap, ← map_neg]
+  congr 1
+  change (C Complex.I * X).map (starRingEnd ℂ) = _
+  simp
+
+/-- So the coefficient action on the field fixed by the trivial subgroup is not the identity
+either. -/
+example : AmbientSemilinearAut.coeffActOfHom (⊥ : Subgroup negGroup) conjAmb ≠ 1 := fun h => by
+  have hx := coeffActOf_bot_conjAmb_iX
+  rw [← AmbientSemilinearAut.coeffActOfHom_apply, h] at hx
+  exact neg_ne_self (p := C Complex.I * X) (n := 1) (by simp) hx.symm
 
 /-- On the complete graph on `Fin 2`, the transposition exchanges the two
 vertex types: it adds one to the type of each vertex. -/

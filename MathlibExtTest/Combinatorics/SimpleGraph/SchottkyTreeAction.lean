@@ -168,8 +168,9 @@ theorem dartIndex_dartF [DecidableEq (QuotEdge (Multiplicative ℤ) intPathGraph
   · rw [dartIndex, ite_eq_left rfl, ite_eq_right (Ne.symm hne)]; rfl
   · rw [dartIndex, ite_eq_right (Ne.symm hne), SimpleGraph.Dart.symm_symm, ite_eq_left rfl]; rfl
 
-/-- So the one-step walk `0 → 1` winds once around the loop: its cycle at the
-forward orbit is `1`. -/
+/-- So the one-step walk `0 → 1` winds once around the loop: its signed count at the forward
+orbit is `1`, and its endpoints `0` and `1` lie in the one vertex orbit, so its image in the
+quotient is closed. -/
 example [DecidableEq (QuotEdge (Multiplicative ℤ) intPathGraph)] :
     walkCycle intPathGraph
       (fun _ : Unit => (Quotient.mk'' dartF : QuotEdge (Multiplicative ℤ) intPathGraph))
@@ -245,6 +246,31 @@ example (e : QuotEdge (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool)) :
     rw [coe_stabWidth_mk, htop, Subgroup.card_top, Nat.card_eq_fintype_card,
       Fintype.card_multiplicative, ZMod.card]
 
+/-- The dart `false → true` of the single edge, the complete graph on `Bool`. -/
+def dartFT : (⊤ : SimpleGraph Bool).Dart := ⟨(false, true), Bool.false_ne_true⟩
+
+/-- Under the trivial action of the group of order two on the single edge, the one-step walk
+`false → true` has signed count `1` on the orbit of its dart, but its endpoints lie in different
+vertex orbits: signed edge counts need not come from a closed walk in the quotient. -/
+example [DecidableEq (QuotEdge (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool))] :
+    walkCycle (⊤ : SimpleGraph Bool)
+        (fun _ : Unit =>
+          (Quotient.mk'' dartFT : QuotEdge (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool)))
+        (SimpleGraph.Walk.cons dartFT.adj SimpleGraph.Walk.nil) () = 1 ∧
+      (Quotient.mk'' false : QuotVert (Multiplicative (ZMod 2)) Bool) ≠ Quotient.mk'' true := by
+  refine ⟨?_, fun h => ?_⟩
+  · have hne : (Quotient.mk'' dartFT.symm :
+        QuotEdge (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool)) ≠ Quotient.mk'' dartFT :=
+      fun h => by
+        obtain ⟨g, hg⟩ := MulAction.mem_orbit_iff.mp (Quotient.exact' h)
+        exact Bool.false_ne_true (congrArg (fun d : (⊤ : SimpleGraph Bool).Dart => d.fst) hg)
+    unfold walkCycle
+    rw [SimpleGraph.Walk.darts_cons, SimpleGraph.Walk.darts_nil, List.map_singleton,
+      List.sum_singleton, dartIndex, ite_eq_left rfl, ite_eq_right hne]
+    rfl
+  · obtain ⟨g, hg⟩ := MulAction.mem_orbit_iff.mp (Quotient.exact' h)
+    exact Bool.false_ne_true hg.symm
+
 /-- The permutations of `Bool` act on the complete graph on `Bool`, a single
 edge. -/
 instance : GraphAction (Equiv.Perm Bool) (⊤ : SimpleGraph Bool) where
@@ -279,7 +305,7 @@ theorem dartIndex_swap [DecidableEq (QuotEdge (Equiv.Perm Bool) (⊤ : SimpleGra
   rw [dartIndex, h, sub_self]
 
 /-- The same cancellation through the general lemma: the walk from `false` to
-`true` has cycle zero under the swap, although it crosses the edge. -/
+`true` has signed edge counts zero under the swap, although it crosses the edge. -/
 example [DecidableEq (QuotEdge (Equiv.Perm Bool) (⊤ : SimpleGraph Bool))] {E : Type*}
     (orb : E → QuotEdge (Equiv.Perm Bool) (⊤ : SimpleGraph Bool)) :
     walkCycle (⊤ : SimpleGraph Bool) orb
@@ -289,7 +315,7 @@ example [DecidableEq (QuotEdge (Equiv.Perm Bool) (⊤ : SimpleGraph Bool))] {E :
   rw [walkCycle_cons, dartIndex_eq_zero_of_smul_eq_symm _ _ (swap_smul_dart _), walkCycle_nil,
     zero_add]
 
-/-- The walk cycle of the empty walk is zero, and dart indices change sign
+/-- The signed edge counts of the empty walk are zero, and dart indices change sign
 under reversal, on the integer path graph. -/
 example [DecidableEq (QuotEdge (Multiplicative ℤ) intPathGraph)]
     (orb : Bool → QuotEdge (Multiplicative ℤ) intPathGraph) (u : ℤ) :

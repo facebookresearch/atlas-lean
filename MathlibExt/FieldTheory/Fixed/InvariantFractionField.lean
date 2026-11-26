@@ -46,8 +46,8 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-/-- The subgroup of pairs of ring automorphisms of `F` and `K` that agree on
-the image of `K` in `F`: semilinear automorphisms of `F` over `K`. -/
+/-- **Semilinear automorphisms.** The subgroup of pairs of ring automorphisms of `F` and `K`
+that agree on the image of `K` in `F`: semilinear automorphisms of `F` over `K`. -/
 def SemilinearAut : Subgroup (RingAut F × RingAut K) where
   carrier := {p | ∀ a : K, p.1 (algebraMap K F a) = algebraMap K F (p.2 a)}
   one_mem' _ := rfl
@@ -67,11 +67,12 @@ theorem mem_iff {p : RingAut F × RingAut K} :
     p ∈ SemilinearAut K F ↔ ∀ a : K, p.1 (algebraMap K F a) = algebraMap K F (p.2 a) :=
   Iff.rfl
 
-/-- The automorphism of `F` underlying a semilinear automorphism. -/
+/-- **Automorphism underlying a semilinear automorphism.** The automorphism of `F` underlying a
+semilinear automorphism. -/
 def toRingAut (g : SemilinearAut K F) : F ≃+* F := g.val.1
 
-/-- The automorphism of the base field `K` underlying a semilinear
-automorphism. -/
+/-- **Base automorphism of a semilinear automorphism.** The automorphism of the base field `K`
+underlying a semilinear automorphism. -/
 def baseAut (g : SemilinearAut K F) : K ≃+* K := g.val.2
 
 theorem commutes (g : SemilinearAut K F) (a : K) :
@@ -89,18 +90,18 @@ section Generic
 variable (K : Type*) [Field K] (G : Type*) [Group G] (M : Type*) [CommRing M] [Algebra K M]
 variable [MulSemiringAction G M] [SMulCommClass G K M]
 
-/-- The action of `G` on the fraction ring of `M` induced by its action on `M`, that is,
-Mathlib's `IsFractionRing.mulSemiringAction`. -/
+/-- **Action on the fraction ring.** The action of `G` on the fraction ring of `M` induced by
+its action on `M`, that is, Mathlib's `IsFractionRing.mulSemiringAction`. -/
 scoped instance fracMulSemiringAction [IsDomain M] : MulSemiringAction G (FractionRing M) :=
   IsFractionRing.mulSemiringAction G M (FractionRing M)
 
-/-- The induced action commutes with the scalars of `K`, by Mathlib's
-`IsFractionRing.smulCommClass`. -/
+/-- **Commutation with the scalars.** The induced action commutes with the scalars of `K`, by
+Mathlib's `IsFractionRing.smulCommClass`. -/
 scoped instance fracSMulCommClass [IsDomain M] : SMulCommClass G K (FractionRing M) :=
   IsFractionRing.smulCommClass G K M K (FractionRing M)
 
-/-- The action of `g : G` on the field fixed by a normal subgroup `N`,
-as a ring equivalence. -/
+/-- **Residual action of an element.** The action of `g : G` on the field fixed by a normal
+subgroup `N`, as a ring equivalence. -/
 def residualActRingEquiv [IsDomain M] (N : Subgroup G) [hN : N.Normal] (g : G) :
     (FixedPoints.intermediateField N : IntermediateField K (FractionRing M)) ≃+*
       (FixedPoints.intermediateField N : IntermediateField K (FractionRing M)) where
@@ -126,8 +127,8 @@ theorem coe_residualActRingEquiv [IsDomain M] (N : Subgroup G) [N.Normal] (g : G
         FractionRing M) =
       g • (x : FractionRing M) := rfl
 
-/-- The residual action of `G` on the field fixed by a normal subgroup `N`,
-as `K`-algebra equivalences. -/
+/-- **Residual action.** The action of `G` on the field fixed by a normal subgroup `N`, as
+`K`-algebra equivalences. -/
 def residualAct [IsDomain M] (N : Subgroup G) [N.Normal] :
     G →* ((FixedPoints.intermediateField N : IntermediateField K (FractionRing M)) ≃ₐ[K]
       (FixedPoints.intermediateField N : IntermediateField K (FractionRing M))) where
@@ -157,8 +158,9 @@ theorem mem_fixedPoints_iff_forall_residualAct [IsDomain M] (N : Subgroup G) [N.
       ∀ g : G, residualAct K G M N g x = x :=
   ⟨fun h g => Subtype.ext (h g), fun h g => congrArg Subtype.val (h g)⟩
 
-/-- A semilinear automorphism of `M` over `K` that commutes with the action
-of `G`: a ring automorphism of `M` lying over a ring automorphism of `K`. -/
+/-- **Ambient semilinear automorphism.** A semilinear automorphism of `M` over `K` that
+commutes with the action of `G`: a ring automorphism of `M` lying over a ring automorphism of
+`K`. -/
 structure AmbientSemilinearAut where
   /-- The automorphism of the base field. -/
   base : K ≃+* K
@@ -177,8 +179,8 @@ section Transport
 
 omit [SMulCommClass G K M]
 
-/-- The extension of an ambient semilinear automorphism to the fraction
-ring of `M`. -/
+/-- **Extension to the fraction ring.** The extension of an ambient semilinear automorphism to
+the fraction ring of `M`. -/
 def fracMap (s : AmbientSemilinearAut K G M) : FractionRing M ≃+* FractionRing M :=
   IsFractionRing.ringEquivOfRingEquiv s.map
 
@@ -250,8 +252,8 @@ end Transport
 
 section Coeff
 
-/-- The restriction of an ambient semilinear automorphism to the field fixed by `G`,
-as a ring equivalence. -/
+/-- **Restriction to the fixed field.** The restriction of an ambient semilinear automorphism
+to the field fixed by `G`, as a ring equivalence. -/
 def invMap [IsDomain M] (s : AmbientSemilinearAut K G M) :
     (FixedPoints.intermediateField G : IntermediateField K (FractionRing M)) ≃+*
       (FixedPoints.intermediateField G : IntermediateField K (FractionRing M)) where
@@ -264,8 +266,8 @@ def invMap [IsDomain M] (s : AmbientSemilinearAut K G M) :
   map_mul' x y := Subtype.ext (map_mul s.fracMap (x : FractionRing M) y)
   map_add' x y := Subtype.ext (map_add s.fracMap (x : FractionRing M) y)
 
-/-- The semilinear automorphism of the field fixed by `G` induced by an
-ambient semilinear automorphism. -/
+/-- **Coefficient action on the fixed field.** The semilinear automorphism of the field fixed
+by `G` induced by an ambient semilinear automorphism. -/
 def coeffAct [IsDomain M] (s : AmbientSemilinearAut K G M) :
     AlgebraicCurve.SemilinearAut K
       (FixedPoints.intermediateField G : IntermediateField K (FractionRing M)) :=
@@ -284,7 +286,8 @@ theorem coe_coeffAct_toRingAut [IsDomain M] (s : AmbientSemilinearAut K G M)
         FractionRing M) =
       s.fracMap (x : FractionRing M) := rfl
 
-/-- The induced action on the field fixed by `G`, as a group homomorphism. -/
+/-- **Coefficient action on the fixed field as a homomorphism.** The induced action on the
+field fixed by `G`, as a group homomorphism. -/
 def coeffActHom [IsDomain M] :
     AmbientSemilinearAut K G M →* AlgebraicCurve.SemilinearAut K
       (FixedPoints.intermediateField G : IntermediateField K (FractionRing M)) where
@@ -317,8 +320,8 @@ theorem fracMap_comm_residualAct [IsDomain M] (s : AmbientSemilinearAut K G M)
       g • s.fracMap (x : FractionRing M) := by
   rw [coe_residualAct, fracMap_smul]
 
-/-- The restriction of an ambient semilinear automorphism to the field
-fixed by `Γ`, as a ring equivalence. -/
+/-- **Restriction to the field fixed by a subgroup.** The restriction of an ambient semilinear
+automorphism to the field fixed by `Γ`, as a ring equivalence. -/
 def invMapOf [IsDomain M] (Γ : Subgroup G) (s : AmbientSemilinearAut K G M) :
     (FixedPoints.intermediateField Γ : IntermediateField K (FractionRing M)) ≃+*
       (FixedPoints.intermediateField Γ : IntermediateField K (FractionRing M)) where
@@ -342,8 +345,8 @@ theorem coe_invMapOf [IsDomain M] (Γ : Subgroup G) (s : AmbientSemilinearAut K 
       FractionRing M) =
       s.fracMap (x : FractionRing M) := rfl
 
-/-- The semilinear automorphism of the `Γ`-fixed field induced by an
-ambient semilinear automorphism. -/
+/-- **Coefficient action on the field fixed by a subgroup.** The semilinear automorphism of the
+`Γ`-fixed field induced by an ambient semilinear automorphism. -/
 def coeffActOf [IsDomain M] (Γ : Subgroup G) (s : AmbientSemilinearAut K G M) :
     AlgebraicCurve.SemilinearAut K
       (FixedPoints.intermediateField Γ : IntermediateField K (FractionRing M)) :=
@@ -362,7 +365,8 @@ theorem coe_coeffActOf_toRingAut [IsDomain M] (Γ : Subgroup G) (s : AmbientSemi
         FractionRing M) =
       s.fracMap (x : FractionRing M) := rfl
 
-/-- The induced action on `Γ`-fixed fields, as a group homomorphism. -/
+/-- **Coefficient action on the field fixed by a subgroup as a homomorphism.** The induced
+action on `Γ`-fixed fields, as a group homomorphism. -/
 def coeffActOfHom [IsDomain M] (Γ : Subgroup G) :
     AmbientSemilinearAut K G M →* AlgebraicCurve.SemilinearAut K
       (FixedPoints.intermediateField Γ : IntermediateField K (FractionRing M)) where
@@ -410,9 +414,10 @@ theorem smul_mem_fixedPoints_of_mem_normalizer [IsDomain M] (Δ : Subgroup G) {g
   smul_mem_fixedPoints_of_forall_mem K G M g
     (fun d hd => (Subgroup.mem_normalizer_iff''.1 hg d).1 hd) hx
 
-/-- Transport of the field fixed by `Δ` to the field fixed by `Δ'` by the action of `g`,
-as a ring equivalence. It requires conjugation by `g`, the map `d ↦ g * d * g⁻¹`, to carry
-`Δ` onto `Δ'`: `d ∈ Δ'` exactly when `g⁻¹ * d * g ∈ Δ`. -/
+/-- **Conjugation transport as a ring equivalence.** Transport of the field fixed by `Δ` to the
+field fixed by `Δ'` by the action of `g`, as a ring equivalence. It requires conjugation by
+`g`, the map `d ↦ g * d * g⁻¹`, to carry `Δ` onto `Δ'`: `d ∈ Δ'` exactly when
+`g⁻¹ * d * g ∈ Δ`. -/
 def conjTransportRingEquiv [IsDomain M] (g : G) (Δ Δ' : Subgroup G)
     (h : ∀ d : G, d ∈ Δ' ↔ g⁻¹ * d * g ∈ Δ) :
     (FixedPoints.intermediateField Δ : IntermediateField K (FractionRing M)) ≃+*
@@ -436,9 +441,9 @@ theorem coe_conjTransportRingEquiv [IsDomain M] (g : G) (Δ Δ' : Subgroup G)
         FractionRing M) =
       g • (x : FractionRing M) := rfl
 
-/-- Transport of the field fixed by `Δ` to the field fixed by `Δ'` by the action of `g`,
-as a `K`-algebra equivalence. It requires conjugation by `g`, the map `d ↦ g * d * g⁻¹`, to
-carry `Δ` onto `Δ'`: `d ∈ Δ'` exactly when `g⁻¹ * d * g ∈ Δ`. -/
+/-- **Conjugation transport.** Transport of the field fixed by `Δ` to the field fixed by `Δ'`
+by the action of `g`, as a `K`-algebra equivalence. It requires conjugation by `g`, the map
+`d ↦ g * d * g⁻¹`, to carry `Δ` onto `Δ'`: `d ∈ Δ'` exactly when `g⁻¹ * d * g ∈ Δ`. -/
 def conjTransport [IsDomain M] (g : G) (Δ Δ' : Subgroup G)
     (h : ∀ d : G, d ∈ Δ' ↔ g⁻¹ * d * g ∈ Δ) :
     (FixedPoints.intermediateField Δ : IntermediateField K (FractionRing M)) ≃ₐ[K]
@@ -474,7 +479,7 @@ theorem mem_iff_of_mem_normalizer (Δ : Subgroup G) {g : G}
     d ∈ Δ ↔ g⁻¹ * d * g ∈ Δ :=
   Subgroup.mem_normalizer_iff''.1 hg d
 
-/-- The action of the normalizer of `Δ` on the `Δ`-fixed field, as
+/-- **Normalizer action.** The action of the normalizer of `Δ` on the `Δ`-fixed field, as
 `K`-algebra equivalences. -/
 def normalizerAct [IsDomain M] (Δ : Subgroup G) :
     ↥(Subgroup.normalizer (Δ : Set G)) →*
@@ -548,24 +553,26 @@ variable (K : Type*) [Field K] (G : Type*) [Group G] (M : Type*) [CommRing M] [I
 variable [Algebra K M]
 variable [MulSemiringAction G M] [SMulCommClass G K M]
 
-/-- The invariant field of the Mumford quotient layer: the field of elements of the
-fraction ring of `M` fixed by `G`, that is, Mathlib's `FixedPoints.intermediateField`. -/
+/-- **Mumford field.** The invariant field of the Mumford quotient layer: the field of
+elements of the fraction ring of `M` fixed by `G`, that is, Mathlib's
+`FixedPoints.intermediateField`. -/
 abbrev mumfordField : IntermediateField K (FractionRing M) := FixedPoints.intermediateField G
 
 variable {W : Type*} [MulAction G W] (𝒯 : SimpleGraph W) (w₀ : W)
 
 variable {G} in
-/-- The element `g` exchanges the two vertex types: it adds one to the type
-of every vertex. -/
+/-- **Type exchanger.** The element `g` exchanges the two vertex types: it adds one to the
+type of every vertex. -/
 def IsTypeExchanger (g : G) : Prop :=
   ∀ w : W, vertexType 𝒯 w₀ (g • w) = vertexType 𝒯 w₀ w + 1
 
-/-- There is an element of `G` exchanging the two vertex types, that is,
-adding one to the type of every vertex. -/
+/-- **Existence of a type exchanger.** There is an element of `G` exchanging the two vertex
+types, that is, adding one to the type of every vertex. -/
 def HasTypeExchanger : Prop := ∃ g : G, IsTypeExchanger 𝒯 w₀ g
 
 variable {G 𝒯 w₀} in
-/-- A type exchanger is not type-preserving. -/
+/-- **Type exchangers are not type-preserving.** A type exchanger does not lie in the
+type-preserving subgroup. -/
 theorem IsTypeExchanger.notMem_typePreserving {g : G} (hg : IsTypeExchanger 𝒯 w₀ g) :
     g ∉ typePreserving G 𝒯 w₀ := fun hp => by
   have h := hg w₀
@@ -577,15 +584,16 @@ theorem HasTypeExchanger.exists_notMem_typePreserving (h : HasTypeExchanger G �
     ∃ g : G, g ∉ typePreserving G 𝒯 w₀ :=
   h.imp fun _ hg => hg.notMem_typePreserving
 
-/-- The field fixed by the type-preserving subgroup, that is, Mathlib's
-`FixedPoints.intermediateField` of that subgroup. -/
+/-- **Mumford field of the type-preserving subgroup.** The field fixed by the type-preserving
+subgroup, that is, Mathlib's `FixedPoints.intermediateField` of that subgroup. -/
 abbrev mumfordFieldPlus : IntermediateField K (FractionRing M) :=
   FixedPoints.intermediateField (typePreserving G 𝒯 w₀)
 
 theorem mumfordField_le_mumfordFieldPlus : mumfordField K G M ≤ mumfordFieldPlus K G M 𝒯 w₀ :=
   fun _ hx g => hx g
 
-/-- The residual action on the type-preserving fixed field. -/
+/-- **Exchanger action.** The residual action of `G` on the field fixed by the
+type-preserving subgroup. -/
 abbrev exchangerAct [(typePreserving G 𝒯 w₀).Normal] :
     G →* (↥(mumfordFieldPlus K G M 𝒯 w₀) ≃ₐ[K] ↥(mumfordFieldPlus K G M 𝒯 w₀)) :=
   residualAct K G M (typePreserving G 𝒯 w₀)
