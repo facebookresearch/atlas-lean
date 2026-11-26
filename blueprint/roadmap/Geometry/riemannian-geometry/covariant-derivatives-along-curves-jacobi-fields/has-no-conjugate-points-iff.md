@@ -1,4 +1,3 @@
-# Has No Conjugate Points iff
+# No conjugate points means no Jacobi field vanishes twice
 
-Burns-Matveev Section 4 characterization: no conjugate points iff every Jacobi field along a
-geodesic that vanishes at two distinct times is identically zero.
+A finite-dimensional smooth Riemannian manifold $M$ has no conjugate points if and only if, for every geodesic velocity curve $u$ defined on all of $\mathbb{R}$ and every vector field $J$ along it, also defined at every real time, that satisfies the Jacobi equation and vanishes at two distinct times $a \ne b$, $J$ is identically zero (Burns–Matveev, Section 4).

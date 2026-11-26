@@ -3,8 +3,8 @@
 ## Two Manifolds
 
 - [Is Isometry Diffeomorph](is-isometry-diffeomorph.md)
-- [Is Conformal Diffeomorph](is-conformal-diffeomorph.md)
-- [Is Conformal Diffeomorph](is-conformal-diffeomorph-2.md)
+- [Conformal diffeomorphisms](is-conformal-diffeomorph.md)
+- [Isometries are conformal diffeomorphisms](is-conformal-diffeomorph-2.md)
 - [Conformally Equivalent](conformally-equivalent.md)
 
 ## Groups
@@ -24,4 +24,4 @@
 
 ## Bridge
 
-- [Is Conformal Map mfderiv of mem conformal Group](is-conformal-map-mfderiv-of-mem-conforma.md)
+- [The differential of a conformal diffeomorphism is conformal](is-conformal-map-mfderiv-of-mem-conforma.md)

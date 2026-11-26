@@ -44,8 +44,8 @@ open scoped BigOperators
 
 namespace EarthScience
 
-/-- A rotation (orthogonal matrix) preserves radius: the squared radius
-`∑ i, (Q *ᵥ x) i ^ 2` of a rotated vector equals that of `x`. -/
+/-- A real `3 × 3` matrix `Q` with `Q * Qᵀ = 1` (any element of `O(3)`, reflections included)
+preserves radius: the squared radius `∑ i, (Q *ᵥ x) i ^ 2` of `Q *ᵥ x` equals that of `x`. -/
 theorem rotation_preserves_radius_sq {Q : Matrix (Fin 3) (Fin 3) ℝ}
     (hQ : Q * Matrix.transpose Q = 1) (x : Fin 3 → ℝ) :
     ∑ i, (Matrix.mulVec Q x i) ^ 2 = ∑ i, (x i) ^ 2 := by

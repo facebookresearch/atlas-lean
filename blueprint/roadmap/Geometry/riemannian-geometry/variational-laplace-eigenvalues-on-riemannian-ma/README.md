@@ -1,8 +1,8 @@
 # Variational Laplace eigenvalues on Riemannian manifolds
 
-- [Dirichlet Energy](dirichlet-energy.md)
-- [Rayleigh Quotient](rayleigh-quotient.md)
-- [Variational Eigenvalue](variational-eigenvalue.md)
+- [Dirichlet energy](dirichlet-energy.md)
+- [Rayleigh quotient](rayleigh-quotient.md)
+- [Variational min-max values](variational-eigenvalue.md)
 - [Smooth Test Submodule](smooth-test-submodule.md)
 - [Dirichlet Energy const](dirichlet-energy-const.md)
 - [Variational Eigenvalue antitone](variational-eigenvalue-antitone.md)
@@ -14,6 +14,6 @@
 - [Smooth Test Submodule mono](smooth-test-submodule-mono.md)
 - [Has Compact Support norm sq](has-compact-support-norm-sq.md)
 - [Mass pos lt top of mem smooth Test Submodule](mass-pos-lt-top-of-mem-smooth-test-submo.md)
-- [Dirichlet Energy vector Space](dirichlet-energy-vector-space.md)
-- [Dirichlet Eigenvalue](dirichlet-eigenvalue.md)
-- [Neumann Eigenvalue](neumann-eigenvalue.md)
+- [Dirichlet energy on an inner product space](dirichlet-energy-vector-space.md)
+- [Dirichlet variational values of an open set](dirichlet-eigenvalue.md)
+- [Neumann variational values of a manifold](neumann-eigenvalue.md)

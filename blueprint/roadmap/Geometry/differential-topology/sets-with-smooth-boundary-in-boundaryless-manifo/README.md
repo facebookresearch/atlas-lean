@@ -7,9 +7,9 @@
 
 ## Has Smooth Boundary
 
-- [Intro](intro.md)
+- [Open sets with local defining functions have smooth boundary](intro.md)
 - [Is Open](is-open.md)
-- [Exists is Local Defining Function](exists-is-local-defining-function.md)
+- [Sets with smooth boundary have local defining functions](exists-is-local-defining-function.md)
 - [Of is Clopen](of-is-clopen.md)
 
 ## Manifold

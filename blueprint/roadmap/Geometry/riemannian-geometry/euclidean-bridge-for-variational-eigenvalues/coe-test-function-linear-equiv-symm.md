@@ -1,3 +1,3 @@
 # Coe test Function Linear Equiv symm
 
-For an open set `Ω` of a finite-dimensional real normed space `E`, the inverse of the linear equivalence between test functions on `Ω` and smooth functions on `E` with compact support in `Ω` preserves the underlying function.
+For an open set $\Omega$ of a real normed space $E$ (no finite dimension is assumed), the inverse of the linear equivalence between test functions on $\Omega$ and smooth functions on $E$ with compact support in $\Omega$ leaves the underlying function unchanged.

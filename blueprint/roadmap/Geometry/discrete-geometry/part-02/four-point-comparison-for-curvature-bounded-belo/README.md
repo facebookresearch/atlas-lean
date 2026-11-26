@@ -5,9 +5,9 @@
 - [Model Diameter](model-diameter.md)
 - [Model Cos](model-cos.md)
 - [Model Sin](model-sin.md)
-- [Model Triangle Defined](model-triangle-defined.md)
-- [Model Angle](model-angle.md)
-- [Model Angle Defined](model-angle-defined.md)
+- [Sides admissible for comparison](model-triangle-defined.md)
+- [Model angle](model-angle.md)
+- [Admissible comparison angles](model-angle-defined.md)
 - [Comparison Angle](comparison-angle.md)
 - [Four Point Comparison](four-point-comparison.md)
 - [Is Alex](is-alex.md)
@@ -27,7 +27,7 @@
 - [Model Angle le pi](model-angle-le-pi.md)
 - [Model Angle comm](model-angle-comm.md)
 - [Comparison Angle comm](comparison-angle-comm.md)
-- [Model Angle Defined comm](model-angle-defined-comm.md)
+- [Admissibility is symmetric in the two endpoints](model-angle-defined-comm.md)
 
 ## Is Alex
 

@@ -1,6 +1,6 @@
 # Euclidean bridge for variational eigenvalues
 
-- [Test Function Linear Equiv](test-function-linear-equiv.md)
+- [Test functions as compactly supported smooth functions](test-function-linear-equiv.md)
 - [Coe test Function Linear Equiv](coe-test-function-linear-equiv.md)
 - [Coe test Function Linear Equiv symm](coe-test-function-linear-equiv-symm.md)
 - [Rayleigh Quotient test Function](rayleigh-quotient-test-function.md)
