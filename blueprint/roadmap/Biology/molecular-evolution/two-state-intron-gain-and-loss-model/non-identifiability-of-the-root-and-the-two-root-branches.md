@@ -1,0 +1,13 @@
+# Non-identifiability of the root and the two root branches in the intron gain–loss model
+
+**Model.** Let $T$ be a rooted binary tree with $N \ge 2$ leaves (species) and root $\rho$ with children $c_1, c_2$. Each target site evolves independently as a two-state Markov chain on $\{0, 1\}$ (intron absent or present): along branch $k$ it changes $0 \to 1$ (gain) with probability $g_k \in (0, 1)$ and $1 \to 0$ (loss) with probability $l_k \in (0, 1)$, and the root is in state $1$ with probability $\pi \in (0, 1)$. Parallel gains and regain after loss are allowed. The data are the counts of leaf presence/absence patterns over the target sites, and the likelihood is multinomial in the leaf-pattern probabilities.
+
+**Claim.** The leaf-pattern distribution depends on the five parameters $(\pi, g_1, l_1, g_2, l_2)$ of the root and its two branches only through the joint distribution $J(a, b) = \Pr(s_{c_1} = a, s_{c_2} = b)$ of the states of $c_1$ and $c_2$, which has three free parameters. Consequently, at any parameter value with $g_1 + l_1 \ne 1$, there is a two-parameter family of nearby values of $(\pi, g_1, l_1, g_2, l_2)$, with all other branch parameters fixed, that gives exactly the same likelihood. In particular, if a maximum-likelihood estimate exists in the interior, there are infinitely many, and the intron content of the root and the numbers of gains and losses on the two deepest branches cannot be estimated from leaf data alone.
+
+## Expansion
+
+By the Markov property, the leaf distribution is obtained by summing over the states of $c_1, c_2$, weighting by $J$ and the conditional laws of the two subtrees, which do not involve the five root parameters. Writing $T_k$ for the $2 \times 2$ transition matrix of branch $k$, $J = T_1^{\top} \operatorname{diag}(\pi_0, \pi_1)\, T_2$. Fix $J$ and the marginal $\mu_1 = J \mathbf{1}$ of $c_1$. Choose any $(\pi', T_1')$ near $(\pi, T_1)$ with $T_1'^{\top} \pi' = \mu_1$ (three parameters, one linear constraint) and set $T_2' = \operatorname{diag}(\pi')^{-1} (T_1'^{\top})^{-1} J$; invertibility of $T_1'$ is the condition $g_1' + l_1' \ne 1$. Its rows sum to one because $(T_1'^{\top})^{-1} J \mathbf{1} = (T_1'^{\top})^{-1} \mu_1 = \pi'$, and its entries stay in $(0, 1)$ by continuity, so $(\pi', T_1', T_2')$ is a valid parameter giving the same $J$. This is the two-state analogue of the fact that a root placed on an edge cannot be located from leaf data under a non-clock model.
+
+## Sources
+
+- H. D. Nguyen, M. Yoshihama and N. Kenmochi, "New maximum likelihood estimators for eukaryotic intron evolution", PLoS Computational Biology 1 (2005), e79, Methods, Proposition 1. <https://doi.org/10.1371/journal.pcbi.0010079> PMCID: PMC1323467.

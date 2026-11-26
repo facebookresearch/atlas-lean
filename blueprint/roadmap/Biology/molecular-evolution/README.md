@@ -14,3 +14,4 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Two-state intron gain and loss model](two-state-intron-gain-and-loss-model/README.md)
