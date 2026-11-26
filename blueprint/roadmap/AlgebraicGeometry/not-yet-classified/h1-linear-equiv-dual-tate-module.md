@@ -26,3 +26,14 @@ existence of a compatible isomorphism rather than for the canonical one; for $k$
 it is Theorem 12.1(a) in that existence form. The étale cohomology
 $H^1(A_K, \mathbb{Z}_\ell) = \varprojlim_n H^1(A_K, \mathbb{Z}/\ell^n)$ of the source is read
 through pro-étale cohomology, which computes it here.
+
+## Informally uses
+
+- [The ℓ-adic first cohomology of an abelian variety is the dual of its Tate module](../abelian-varieties/etale-cohomology-of-abelian-varieties/l-adic-first-cohomology-and-the-tate-module.md),
+  Milne's Theorem 12.1 (a) for a separably closed field, through the coverings given by
+  multiplication by $\ell^n$ and the torsion of the Picard group
+- [Galois compatibility of the duality between ℓ-adic H¹ and the Tate module](../abelian-varieties/etale-cohomology-of-abelian-varieties/galois-compatibility-of-the-tate-module-duality.md),
+  Milne's Remark 12.5 in degree one
+- [First pro-étale cohomology with ℓ-adic coefficients as a limit](../grothendieck-topologies/first-pro-etale-cohomology-as-a-limit.md),
+  which identifies the pro-étale cohomology of the statement with
+  $\varprojlim_n H^1(A_K, \mathbb{Z}/\ell^n)$, the $\lim^1$ term vanishing as $A_K$ is connected
