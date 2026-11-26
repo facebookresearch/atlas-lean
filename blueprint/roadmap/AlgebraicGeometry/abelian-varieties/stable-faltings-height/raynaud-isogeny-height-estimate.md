@@ -4,7 +4,9 @@ Let $k$ be a number field and $A$, $A'$, $A_1$, $A_2$ [abelian varieties](../abe
 $k$, and let $h_F$ be the [stable Faltings height](faltings-height.md).
 
 1. If $\varphi \colon A \to A'$ is an [isogeny](../isogenies-of-abelian-schemes.md), then
-   $$\lvert h_F(A') - h_F(A) \rvert \le \frac{1}{2} \log \deg \varphi.$$
+
+    $$\lvert h_F(A') - h_F(A) \rvert \le \frac{1}{2} \log \deg \varphi.$$
+
 2. $h_F(A_1 \times A_2) = h_F(A_1) + h_F(A_2)$.
 3. $h_F(\widehat A) = h_F(A)$ for the [dual abelian variety](../dual-abelian-variety.md) $\widehat
    A$.

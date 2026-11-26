@@ -20,11 +20,14 @@ period theorem](abelian-subvariety-from-the-period-theorem.md). Then:
 
 1. For $C$ one of the $C_{i,j}$, $C'$ one of $A$, $A'$, $A_i$, and any principal polarizations of
    $Z(C)$ and $Z(C')$,
-   $$\Lambda\bigl(\operatorname{Hom}_{k_1}(Z(C), Z(C'))\bigr) \le 2^{-30} P^{16 \nu(C')}.$$
+
+    $$\Lambda\bigl(\operatorname{Hom}_{k_1}(Z(C), Z(C'))\bigr) \le 2^{-30} P^{16 \nu(C')}.$$
+
 2. For the last minima $\Lambda$, $\Lambda'$, $\Lambda_i$ of [isogeny degrees from last
    minima](isogeny-degree-from-last-minima.md), formed over $K$ with this choice of $A_1, \dots, A_t$,
-   $$\Lambda_i \le (9g)^{4g} P^{32 \nu(A_i)} \qquad \text{and} \qquad \Lambda \Lambda' \le
-   2^{-116} (9g)^{8g} P^{64 \nu(A)}.$$
+
+    $$\Lambda_i \le (9g)^{4g} P^{32 \nu(A_i)} \qquad \text{and} \qquad \Lambda \Lambda' \le
+    2^{-116} (9g)^{8g} P^{64 \nu(A)}.$$
 
 All last minima are for the [Rosati metrics](rosati-metric-on-homomorphisms.md) of the principal
 polarizations.

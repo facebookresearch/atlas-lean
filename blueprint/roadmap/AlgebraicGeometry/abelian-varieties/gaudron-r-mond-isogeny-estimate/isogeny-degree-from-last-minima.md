@@ -19,11 +19,14 @@ polarizations. Then:
 
 1. There is an [isogeny](../isogenies-of-abelian-schemes.md) $A \to A''$ defined over $K$ of degree
    at most
-   $$(16g)^{2g}\, \Lambda^{4g} \prod_{i=1}^t \Lambda_i^{8 n_i^2 g_i d_i}.$$
+
+    $$(16g)^{2g}\, \Lambda^{4g} \prod_{i=1}^t \Lambda_i^{8 n_i^2 g_i d_i}.$$
+
 2. There is a pair of isogenies $\varphi_1 \colon A \to A'$ and $\varphi_2 \colon A' \to A$ defined
    over $K$ with
-   $$\max(\deg \varphi_1, \deg \varphi_2) \le (16g)^{4g}\, (\Lambda \Lambda')^{4g} \prod_{i=1}^t
-   \Lambda_i^{8 n_i^2 g_i d_i}.$$
+
+    $$\max(\deg \varphi_1, \deg \varphi_2) \le (16g)^{4g}\, (\Lambda \Lambda')^{4g} \prod_{i=1}^t
+    \Lambda_i^{8 n_i^2 g_i d_i}.$$
 
 Item 2 is Gaudron and Rémond's Proposition 6.3 (3). Item 1 is their Proposition 6.2, an isogeny $A
 \to A''$ of degree at most $(16g)^{2g} \Lambda^{4g} \prod_i V_i^{g_i n_i \min(2n_i, 4)}

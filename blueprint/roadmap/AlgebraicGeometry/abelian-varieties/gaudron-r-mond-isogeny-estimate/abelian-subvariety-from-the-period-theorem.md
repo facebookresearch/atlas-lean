@@ -24,9 +24,11 @@ such that
    \setminus \{0\}$ and $m_1, \dots, m_{128b} \in \mathbb{Z}$ with $H \subset \operatorname{Ker}
    \bigl(\ell f \circ p + \sum_{j=1}^{128b} m_j q_j\bigr)$;
 3. the degree of $H$ for the polarization of $Z$ is at most
-   $$\Bigl( (8b)^{64 b^2} [k : \mathbb{Q}] \max\bigl(1, h_F(A), h_F(B), \log [k :
-   \mathbb{Q}]\bigr)^2 \Bigr)^{8 \nu(B)},$$
-   where $h_F$ is the [stable Faltings height](../stable-faltings-height/faltings-height.md).
+
+    $$\Bigl( (8b)^{64 b^2} [k : \mathbb{Q}] \max\bigl(1, h_F(A), h_F(B), \log [k :
+    \mathbb{Q}]\bigr)^2 \Bigr)^{8 \nu(B)},$$
+
+    where $h_F$ is the [stable Faltings height](../stable-faltings-height/faltings-height.md).
 
 Together with the [bound for the last minimum from an abelian
 subvariety](last-minimum-from-an-abelian-subvariety.md), this bounds the last minimum of
