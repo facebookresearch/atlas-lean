@@ -1,4 +1,3 @@
 # Is Isogeny one refl
 
-The identity pair is a `1`-isogeny of a fake elliptic curve with
-itself.
+Every fake elliptic curve is `1`-isogenous to itself.
