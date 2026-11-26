@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundH2016Holds
 
 @[expose] public section
 
@@ -77,13 +78,6 @@ $C_{1b} \le 0.382002$.
 
 Source: Haugland 1996; Optimization Problems, Constant 1b. -/
 def upperBound_H1996 : Prop := C₁ᵦ ≤ (382002 : ℝ) / 1000000
-
-/-- **Statement of Haugland's 2016 upper bound for the minimum-overlap constant.** The
-proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies
-$C_{1b} \le 0.380926$.
-
-Source: Haugland 2016; Optimization Problems, Constant 1b. -/
-def upperBound_H2016 : Prop := C₁ᵦ ≤ (380926 : ℝ) / 1000000
 
 /-- **AlphaEvolve upper bound for the minimum-overlap constant (statement).** The statement that
 the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380924$.
@@ -181,12 +175,6 @@ minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.382002$.
 
 Source: Haugland 1996 and Optimization Problems 1b. -/
 public theorem_wanted upperBound_H1996_holds : upperBound_H1996
-
-/-- **Haugland's 2016 upper bound for the minimum-overlap constant.** The continuous Erdős
-minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380926$.
-
-Source: Haugland 2016 and Optimization Problems 1b. -/
-public theorem_wanted upperBound_H2016_holds : upperBound_H2016
 
 /-- **AlphaEvolve upper bound for the minimum-overlap constant.** The continuous Erdős
 minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380924$.
