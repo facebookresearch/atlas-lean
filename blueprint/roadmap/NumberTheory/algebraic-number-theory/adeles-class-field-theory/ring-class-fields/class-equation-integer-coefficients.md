@@ -17,8 +17,10 @@ $\mathfrak{a}_1, \ldots, \mathfrak{a}_h$ represent the classes of $C(\mathcal{O}
 2. $j(\mathfrak{a})$ is an algebraic integer for every proper fractional $\mathcal{O}$-ideal
    $\mathfrak{a}$;
 3. the class equation of $\mathcal{O}$,
-   $$H_{\mathcal{O}}(X) = \prod_{i=1}^{h} \bigl(X - j(\mathfrak{a}_i)\bigr),$$
-   has coefficients in $\mathbb{Z}$.
+
+    $$H_{\mathcal{O}}(X) = \prod_{i=1}^{h} \bigl(X - j(\mathfrak{a}_i)\bigr),$$
+
+    has coefficients in $\mathbb{Z}$.
 
 ## Expansion
 
