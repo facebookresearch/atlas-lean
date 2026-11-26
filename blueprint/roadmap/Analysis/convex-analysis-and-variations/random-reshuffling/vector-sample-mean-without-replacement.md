@@ -20,22 +20,11 @@ $$
 
 ## Proof
 
-If $k=N$, the sole sample is $I$ and its mean is $\bar X$, including when
-$N=1$. Otherwise fix a coordinate $r$ and write $y_i=(X_i)_r$. In the
-complete-randomization unbiasedness identity, take the treated set to be $S$,
-the treated outcomes to be $y_i$ and the control outcomes to be zero. The
-scalar difference in means is then $(\bar X_S)_r$, and the average treatment
-effect is $(\bar X)_r$. Applying the identity in every coordinate gives the
-vector equality. The exact real-valued special case (including the census) is
-[`randExp_sampleMean`](https://github.com/facebookresearch/atlas-lean/blob/bb9ed90b40cede6b893a6a05435969113b3ec58b/MathlibExt/Probability/Sampling/SimpleRandomSampling.lean#L109-L123).
-
-## Depends on
-
-- [Expectation under complete randomization](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/rand-exp.md) for real-valued coordinates.
-
-## Proof depends on
-
-- [Unbiasedness of the difference in means under complete randomization](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/rand-exp-diff-in-means.md) when $k<N$.
+For each coordinate $r$, apply the
+[scalar sample-mean identity](../../../Probability/statistical-estimation/finite-population-survey-sampling/rand-exp-sample-mean.md)
+to the values $y_i=(X_i)_r$. The expectation of that coordinate of
+$\bar X_S$ is the corresponding coordinate of $\bar X$. In a census
+($k=N$), including $N=1$, the sole sample is $I$.
 
 ## Sources
 
