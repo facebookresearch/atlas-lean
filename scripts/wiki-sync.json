@@ -45593,6 +45593,7 @@
 "MathlibExt.Analysis.Fourier.AddCircle.RiemannLebesgue.tendsto_fourierCoeff_cofinite_of_continuous": "e0258baa0b306852",
 "MathlibExt.Analysis.Fourier.AiryKatoSmoothingIdentityWanted.AirySolution": "4d73b3c6aac369c3",
 "MathlibExt.Analysis.Fourier.AiryKatoSmoothingIdentityWanted.exists_pos_const_integral_norm_deriv_airySolution_sq_eq": "8a48bfa5e04df3af",
+"MathlibExt.Analysis.Fourier.AiryKatoSmoothingIdentityWanted.integral_norm_deriv_airySolution_sq_eq": "6d69306e68e20f28",
 "MathlibExt.Analysis.Fourier.ApproximateIdentityRealWanted.tendsto_eLpNorm_convolution_rescale_sub": "1002348d5f6da074",
 "MathlibExt.Analysis.Fourier.ApproximateIdentityRealWanted.tendsto_eLpNorm_sub_fejerMean": "2583e500d19e9f41",
 "MathlibExt.Analysis.Fourier.BandLimitedDerivSobolevBoundWanted.dotHSeminorm": "6f8b82188abec95a",

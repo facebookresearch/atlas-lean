@@ -43,8 +43,6 @@ example (u : 𝓢(ℝ, ℂ)) (x : ℝ) : AirySolution u 0 x = u x := by
       field_simp
       linear_combination -u x * hscale
 
--- Both observations have the same time-integrated energy, even at distinct spatial points.
-example (u : ℝ → ℂ) (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hc : HasCompactSupport u) (x y : ℝ) :
-    (∫ t, ‖deriv (AirySolution u t) x‖ ^ 2) = ∫ t, ‖deriv (AirySolution u t) y‖ ^ 2 := by
-  obtain ⟨_, _, h⟩ := exists_pos_const_integral_norm_deriv_airySolution_sq_eq
-  exact ((h u hu hc).2 x).trans ((h u hu hc).2 y).symm
+example (u : 𝓢(ℝ, ℂ)) (x : ℝ) :
+    (∫ t, ‖deriv (AirySolution u t) x‖ ^ 2) = (1 / 3 : ℝ) * ∫ y, ‖u y‖ ^ 2 :=
+  (integral_norm_deriv_airySolution_sq_eq u x).2
