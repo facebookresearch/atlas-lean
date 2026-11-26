@@ -9,9 +9,15 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_ModularCurve_SiegelUnit_exists_peaked_exponent.lean`
+`Theorems/Thm_ModularCurve_SiegelUnit_exists_peaked_exponent.lean`,
+`P2M/Sol/S_ModularCurve_SiegelUnit_exists_peaked_exponent.lean`,
+`Theorems/Thm_ModularCurve_SiegelUnit_mem_span_levelBernoulliWeight_dilate_iff_even.lean`,
+`P2M/Sol/S_ModularCurve_SiegelUnit_mem_span_levelBernoulliWeight_dilate_iff_even.lean`,
+`Theorems/Thm_ModularCurve_SiegelUnit_sum_levelBernoulliWeight_add_mul.lean`,
+`P2M/Sol/S_ModularCurve_SiegelUnit_sum_levelBernoulliWeight_add_mul.lean`,
+`Theorems/Thm_ModularCurve_SiegelUnit_sum_totient_mul_levelBernoulliWeight_dilate_eq_zero.lean`
 and
-`P2M/Sol/S_ModularCurve_SiegelUnit_exists_peaked_exponent.lean`
+`P2M/Sol/S_ModularCurve_SiegelUnit_sum_totient_mul_levelBernoulliWeight_dilate_eq_zero.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -1099,11 +1105,21 @@ open Peak
 
 namespace ModularCurve.SiegelUnit
 
-/-- For `2 ≤ N`, there are nonnegative exponents `m r s`, translation
-invariant in the second index and vanishing at `(0, 0)`, whose associated
-Bernoulli cusp-order function is positive at `(1, 0)` and strictly larger
-at every other primitive cusp pair, apart from the stated exceptional
-pairs. -/
+/-- **Peaked exponents for Siegel units.** Let `2 ≤ N`. There are exponents
+`m : ZMod N → ZMod N → ℕ` with `m 0 0 = 0` and `m r (s + r) = m r s` for all `r` and
+`s`, whose Bernoulli order function
+`Ord x y = ∑ r, ∑ s, m r s * (6 * v ^ 2 - 6 * N * v + N ^ 2)`, where `v` is the
+representative in `[0, N)` of `r * x + s * y`, satisfies `0 < Ord 1 0` and
+`Ord 1 0 < Ord x y` for every primitive pair `(x, y)` (one with `a * x + b * y = 1`
+for some `a` and `b`) in the comparison set. So the vanishing order at `(1, 0)` is
+positive and strictly smaller than at every pair of the comparison set.
+
+The comparison set consists of the primitive pairs outside two exceptional families:
+
+* the pairs with `y = 0` and `x = ±1`, that is `(1, 0)` itself and `(-1, 0)`, at which
+  `Ord` takes the same value, because `Ord (-x) (-y) = Ord x y` (the weight
+  `6 * v ^ 2 - 6 * N * v + N ^ 2` is unchanged under `v ↦ N - v`);
+* the pairs with `y = ±1`, which the statement leaves out of the comparison. -/
 theorem exists_peaked_exponent (N : ℕ) [NeZero N] (hN : 2 ≤ N) :
     ∃ (m : ZMod N → ZMod N → ℕ) (Ord : ZMod N → ZMod N → ℤ),
       (∀ x y : ZMod N, Ord x y =
