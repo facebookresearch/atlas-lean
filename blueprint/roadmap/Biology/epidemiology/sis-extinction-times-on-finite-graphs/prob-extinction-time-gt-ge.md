@@ -10,4 +10,4 @@ matrix is a rate matrix). Then the extinction time `τ` satisfies
 
 ## Sources
 
-- Ganesh, Massoulié and Towsley (2005), Theorem 4.1.
+- A. Ganesh, L. Massoulié and D. Towsley, "The effect of network topology on the spread of epidemics", in *Proceedings of IEEE INFOCOM 2005*, vol. 2, pp. 1455–1466, Theorem 4.1, doi:10.1109/INFCOM.2005.1498374.

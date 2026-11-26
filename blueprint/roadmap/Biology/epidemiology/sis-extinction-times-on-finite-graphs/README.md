@@ -9,3 +9,7 @@
 - [Fast die-out, survival probability](prob-ne-empty-le.md)
 - [Fast die-out, expected extinction time](lintegral-extinction-time-le.md)
 - [Slow die-out](prob-extinction-time-gt-ge.md)
+
+## Sources
+
+- A. Ganesh, L. Massoulié and D. Towsley, The effect of network topology on the spread of epidemics, in *Proceedings of IEEE INFOCOM 2005*, vol. 2, 1455–1466, <https://doi.org/10.1109/INFCOM.2005.1498374>.

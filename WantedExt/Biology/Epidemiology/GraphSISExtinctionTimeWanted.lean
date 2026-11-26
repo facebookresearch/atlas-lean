@@ -94,7 +94,9 @@ Eq. (2)). Let `G` be a finite connected graph on `n` vertices with adjacency spe
 recovery rate `1` from the set `X₀` (`hQ` records that its rate matrix is a rate matrix). Then
 for every `t ≥ 0`, `P(X(t) ≠ ∅) ≤ √(n |X₀|) exp ((β ρ(A) - 1) t)`.
 
-Source: Ganesh, Massoulié and Towsley (2005), Theorem 3.1. -/
+Source: A. Ganesh, L. Massoulié and D. Towsley, "The effect of network topology on the spread of
+epidemics", in *Proceedings of IEEE INFOCOM 2005*, vol. 2, pp. 1455–1466, Theorem 3.1,
+doi:10.1109/INFCOM.2005.1498374. -/
 theorem_wanted prob_ne_empty_le (G : SimpleGraph V) (hG : G.Connected) (β : ℝ) (hβ : 0 < β)
     (hρ : β * adjSpectralRadius G < 1) (hQ : IsRateMatrix (sisRateMatrix G β 1))
     (X₀ : Finset V) (t : ℝ≥0) :
@@ -107,7 +109,9 @@ spectral radius `ρ(A)`, let `β > 0` with `β ρ(A) < 1`, and run the SIS proce
 rate `β` and recovery rate `1` from any set `X₀` (`hQ` records that its rate matrix is a rate
 matrix). Then the expected extinction time satisfies `E τ ≤ (log n + 1) / (1 - β ρ(A))`.
 
-Source: Ganesh, Massoulié and Towsley (2005), Theorem 3.1. -/
+Source: A. Ganesh, L. Massoulié and D. Towsley, "The effect of network topology on the spread of
+epidemics", in *Proceedings of IEEE INFOCOM 2005*, vol. 2, pp. 1455–1466, Theorem 3.1,
+doi:10.1109/INFCOM.2005.1498374. -/
 theorem_wanted lintegral_extinctionTime_le (G : SimpleGraph V) (hG : G.Connected) (β : ℝ)
     (hβ : 0 < β) (hρ : β * adjSpectralRadius G < 1) (hQ : IsRateMatrix (sisRateMatrix G β 1))
     (X₀ : Finset V) :
@@ -122,7 +126,9 @@ matrix is a rate matrix). Then the extinction time `τ` satisfies
 `P(τ > ⌊(β η(G, m))^(m-1)⌋ / (2m)) ≥ ((1 - r) / e) (1 - K r^m)`, where
 `K = sup_{x ≥ 1} x² (e^(1/2) / 2)^(x-1)` (`dieOutConstant`).
 
-Source: Ganesh, Massoulié and Towsley (2005), Theorem 4.1. -/
+Source: A. Ganesh, L. Massoulié and D. Towsley, "The effect of network topology on the spread of
+epidemics", in *Proceedings of IEEE INFOCOM 2005*, vol. 2, pp. 1455–1466, Theorem 4.1,
+doi:10.1109/INFCOM.2005.1498374. -/
 theorem_wanted prob_extinctionTime_gt_ge (G : SimpleGraph V) (hG : G.Connected) (m : ℕ)
     (hm : 2 ≤ m) (hmn : m ≤ Fintype.card V / 2) (β : ℝ) (hβ : 0 < β)
     (hη : 1 < β * isoperimetric G m) (hQ : IsRateMatrix (sisRateMatrix G β 1))

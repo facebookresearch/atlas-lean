@@ -8,4 +8,4 @@ matrix). Then the expected extinction time satisfies `E τ ≤ (log n + 1) / (1 
 
 ## Sources
 
-- Ganesh, Massoulié and Towsley (2005), Theorem 3.1.
+- A. Ganesh, L. Massoulié and D. Towsley, "The effect of network topology on the spread of epidemics", in *Proceedings of IEEE INFOCOM 2005*, vol. 2, pp. 1455–1466, Theorem 3.1, doi:10.1109/INFCOM.2005.1498374.
