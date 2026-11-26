@@ -51,9 +51,11 @@ sequence `S` against it: a statement about every sequence covers such environmen
 expectation over a randomized learner's predictions is taken on a fixed sequence, as an oblivious
 environment chooses it in advance. This loses nothing against an environment that also sees the
 learner's earlier random predictions, but not that of the current round (Shalev-Shwartz and
-Ben-David, Section 21.2): `p_t` depends only on the earlier examples, so each round still costs
-`|p_t - y_t|` in expectation given the past, and the expected regret is at most the largest regret
-on a fixed sequence of the same length.
+Ben-David, Section 21.2). As the environment does not see the current round's random prediction,
+each round still costs `|p_t - y_t|` in expectation given the past. As `p_t` depends only on the
+earlier examples, the resulting `∑_t |p_t - y_t| - min_{h ∈ H} ∑_t |h(x_t) - y_t|` is the regret
+on the sequence the environment produced. So the expected regret is at most the supremum of the
+regret over fixed sequences of the same length.
 
 ## References
 

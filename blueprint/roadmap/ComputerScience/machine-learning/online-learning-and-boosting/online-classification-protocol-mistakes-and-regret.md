@@ -23,10 +23,13 @@ oblivious (fixing the sequence in advance) for randomized learners, unless state
 predictions are functions of the earlier examples, so an adaptive environment produces a single sequence against it,
 and a statement about every sequence covers adaptive environments. The expected number of mistakes of a randomized
 learner is taken over its predictions on a fixed sequence. This loses nothing against an environment that also sees
-the learner's random predictions of the earlier rounds, but not that of the current round: $p_t$ depends only on the
-earlier examples, so given the past each round still costs $\lvert p_t - y_t \rvert$ in expectation, and the expected
-regret against such an environment is at most the largest regret over fixed sequences of length $T$, the quantity
-that equations (21.1) and (21.2) of the source define.
+the learner's random predictions of the earlier rounds, but not that of the current round. As the environment does not
+see the current round's random prediction, each round still costs $\lvert p_t - y_t \rvert$ in expectation given the
+past. As $p_t$ depends only on the earlier examples,
+$\sum_t \lvert p_t - y_t \rvert - \min_{h \in H} \sum_t \lvert h(x_t) - y_t \rvert$ is then the regret on the sequence
+the environment produced, a fixed sequence of length $T$ once it is produced. So the expected regret against such an
+environment is at most the supremum of the regret over fixed sequences of length $T$, the quantity that equations (21.1)
+and (21.2) of the source define.
 
 ## Sources
 
