@@ -15,8 +15,7 @@ public import MathlibExt.AlgebraicGeometry.EqualCharacteristicFFModels
 # Native equal-characteristic relative FF construction requests
 
 Fargues--Scholze, arXiv:2102.13459v4, Definition I.2.2 and Section II.1.
-The source coefficient field is the actual k((t)) for finite k, now defined
-in `MathlibExt.AlgebraicGeometry.EqualCharacteristicFFModels`, and
+The source coefficient field is the actual k((t)) for finite k, and
 the original integral period ring is R+[[t]]. Actual t, varpi, q-power
 coefficient Frobenius, rational maps and all-rank valuation spectra are
 fixed by the public definitions. The annular/quotient sheaf dictionaries
