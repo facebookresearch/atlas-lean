@@ -34,7 +34,7 @@ example {X Y Z : Scheme.{v}} (f : X ⟶ Y) (g : Y ⟶ Z) [Flat f]
 -- Boundary consumer: when the cover is the identity, the hypothesis on
 -- the composite is the conclusion itself, and no flatness argument is
 -- needed beyond the identity cover being flat, surjective and
--- quasi-compact.
+-- locally of finite presentation.
 example {Y Z : Scheme.{u}} (g : Y ⟶ Z) [LocallyOfFinitePresentation g] :
     LocallyOfFinitePresentation g :=
   LocallyOfFinitePresentation.of_comp_of_flat_of_surjective (𝟙 Y) g
