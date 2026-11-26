@@ -11732,6 +11732,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/WalkPath": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Walks and paths"},
   "MathlibExt/Combinatorics/SimplicialSphereShared": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Face numbers of simplicial spheres"},
   "MathlibExt/Combinatorics/SinglyEvenMagicSquares": {"to": "Combinatorics/designs-latin-squares", "title": "Magic squares"},
+  "MathlibExt/Combinatorics/SlowANimIsPPositionSetExtend": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
   "MathlibExt/Combinatorics/SlowCubeEdgeNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/SlowCubeFaceNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/SlowCubeVertexNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
