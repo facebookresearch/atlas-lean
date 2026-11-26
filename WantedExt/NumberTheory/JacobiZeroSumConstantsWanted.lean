@@ -15,6 +15,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.JacobiAgreementChineseRemainder
+public import MathlibExt.NumberTheory.JacobiAgreementUnitsLift
 public import MathlibExt.NumberTheory.JacobiKernelLift
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumPrimePower
 
@@ -346,21 +347,6 @@ public theorem_wanted jacobi_kernel_subset_image_jacobi_eq_legendre (n p p' : �
     (hp : p.Prime) (hp' : p'.Prime) (hpn : p ∣ n) (hp'n : p' ∣ n)
     (hcop : Nat.Coprime p (n / p)) (y : ZMod (n / p)) (hy : y ∈ jacobiOneSet (n / p)) :
     ∃ x ∈ jacobiEqSet n p', ZMod.castHom (Nat.div_dvd_of_dvd hpn) (ZMod (n / p)) x = y
-
-/-- **Units modulo a prime divisor lift to units where the Jacobi and Legendre symbols agree.**
-Let $n$ be odd and let $p'$ be a prime dividing $n$ such that $p'$ is coprime to $n/p'$. Write
-$L(n;p')$ for the set of units $x$ of $\mathbb{Z}/n\mathbb{Z}$ whose least nonnegative
-representative $v$ satisfies $\left(\frac{v}{n}\right) = \left(\frac{v}{p'}\right)$, where both
-are Jacobi symbols. Then every unit $z$ of $\mathbb{Z}/p'\mathbb{Z}$ is the reduction modulo $p'$
-of some element of $L(n;p')$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 29
-(`jis-2024-24.1.7-lem-29`). -/
-public theorem_wanted units_prime_subset_image_jacobi_eq_legendre (n p' : ℕ) (hn : Odd n)
-    (hp' : p'.Prime) (hp'n : p' ∣ n) (hcop : Nat.Coprime p' (n / p')) (z : ZMod p')
-    (hz : IsUnit z) :
-    ∃ x ∈ jacobiEqSet n p', ZMod.castHom hp'n (ZMod p') x = z
 
 open Classical in
 /-- **Weighted zero-sum criterion for the Jacobi–Legendre weights.** Let $n$ be a squarefree
