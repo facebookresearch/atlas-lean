@@ -3,5 +3,5 @@
 The decision problem INDEPENDENT SET on total graphs of bipartite graphs accepts a bitstring $x$
 exactly when $x$ decodes, under the canonical bitstring encoding of INDEPENDENT SET on total
 graphs of bipartite graphs instances, to an instance that is [well-formed](well-formed.md) and
-[feasible](independent-set-total-graph-bipartite-fe.md). It rejects every bitstring that does
+[feasible](../independent-set-on-restricted-graph-classes/triangle-free-independent-set-feasible.md). It rejects every bitstring that does
 not decode to an instance.

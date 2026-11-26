@@ -10,6 +10,5 @@
 - [Straight Edge](straight-edge.md)
 - [Arm](arm.md)
 - [View](view.md)
-- [Well-formed EYE-WITLESS instances](well-formed.md)
 - [Feasible EYE-WITLESS instances](eye-witless-feasible.md)
 - [EYE-WITLESS as a decision problem](eye-witless-dec.md)

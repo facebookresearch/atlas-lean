@@ -42,7 +42,7 @@
 - [INTERSECTION GRAPH FOR RECTANGLES ON A GRID as a decision problem](intersection-graph-for-rectangles-on-agr-2.md)
 - [INTERSECTION GRAPH FOR RECTANGLES ON A GRID is NP-complete](intersection-graph-for-rectangles-on-agr-3.md)
 - [Instances of INTERSECTION GRAPH FOR SEGMENTS ON A GRID](intersection-graph-for-segments-on-agrid.md)
-- [Well-formed instances of INTERSECTION GRAPH FOR SEGMENTS ON A GRID](well-formed-8.md)
+- [Well-formed edge-list instances with two positive grid dimensions](well-formed-8.md)
 - [Segments on the M × N grid](on-grid.md)
 - [Feasible instances of INTERSECTION GRAPH FOR SEGMENTS ON A GRID](intersection-graph-for-segments-on-agrid-2.md)
 - [INTERSECTION GRAPH FOR SEGMENTS ON A GRID as a decision problem](intersection-graph-for-segments-on-agrid-3.md)

@@ -35,7 +35,7 @@
 - [(2, 1)-DEFECTIVE COLORING OF PLANAR GRAPHS as a decision problem](defective-coloring-two-one-planar-dec.md)
 - [(2, 1)-DEFECTIVE COLORING OF PLANAR GRAPHS is NP-complete](defective-coloring-two-one-planar-np-com.md)
 - [Instances of GRAPH K-COLORABILITY ON CIRCLE GRAPHS](graph-coloring-circle-graph-instance.md)
-- [Well-formed instances of GRAPH K-COLORABILITY ON CIRCLE GRAPHS](well-formed-7.md)
+- [Well-formed chord-list instances](well-formed-7.md)
 - [Feasible instances of GRAPH K-COLORABILITY ON CIRCLE GRAPHS](graph-coloring-circle-graph-feasible.md)
 - [GRAPH K-COLORABILITY ON CIRCLE GRAPHS as a decision problem](graph-coloring-circle-graph-dec.md)
 - [GRAPH K-COLORABILITY ON CIRCLE GRAPHS is NP-complete](graph-coloring-circle-graph-np-complete.md)
