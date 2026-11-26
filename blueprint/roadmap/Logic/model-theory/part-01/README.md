@@ -13,7 +13,7 @@
 - [Elementary equivalence of free products](elementary-equivalence-of-free-products/README.md)
 - [Finite entailment for positive Horn logic](finite-entailment-for-positive-horn-logic/README.md)
 - [Decidability of polynomial equations in powers of two](decidability-of-polynomial-equations-in-powers-o/README.md)
-- [Decidable theories of abelian groups with a pure subgroup](decidable-theories-of-abelian-groups-with-a-pure/README.md)
+- [Element-pure-subgroup theories of abelian groups](decidable-theories-of-abelian-groups-with-a-pure/README.md)
 - [Rings embeddable in skew fields](rings-embeddable-in-skew-fields/README.md)
 - [Specker–Blatter theorem for ternary relations](specker-blatter-theorem-for-ternary-relations/README.md)
 - [Squarelike and discriminating groups](squarelike-and-discriminating-groups/README.md)

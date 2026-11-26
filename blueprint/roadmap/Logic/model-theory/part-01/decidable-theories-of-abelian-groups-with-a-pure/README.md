@@ -1,4 +1,4 @@
-# Decidable theories of abelian groups with a pure subgroup
+# Element-pure-subgroup theories of abelian groups
 
 - [Linear terms in the language of abelian groups](linear-term.md)
 - [Atomic formulas for abelian groups with pure subgroups](pure-atom.md)

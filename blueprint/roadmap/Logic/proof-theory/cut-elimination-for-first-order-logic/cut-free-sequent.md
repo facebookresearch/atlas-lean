@@ -13,3 +13,5 @@ Cut-free derivability is the smallest relation on sequents closed under the foll
 - (Reductio) From $\neg \varphi, \Gamma \Rightarrow \bot$ infer $\Gamma \Rightarrow \varphi$, where $\neg \varphi$ is $\varphi \to \bot$.
 - (Reflexivity) $\Gamma \Rightarrow t = t$ for every term $t$.
 - (Substitution) From $\Gamma \Rightarrow s = t$ and $\Gamma \Rightarrow \varphi(s)$ infer $\Gamma \Rightarrow \varphi(t)$.
+
+The left rules ($\to$ left and $\forall$ left) act only on the first formula of the context, and there are no weakening, exchange or contraction rules; assumption and ex falso apply to any member of the context.

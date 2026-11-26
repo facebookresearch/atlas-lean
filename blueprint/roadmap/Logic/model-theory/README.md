@@ -33,7 +33,7 @@ Relations between formal theories and their structures: first-order languages of
 - [Elementary equivalence of free products](part-01/elementary-equivalence-of-free-products/README.md)
 - [Finite entailment for positive Horn logic](part-01/finite-entailment-for-positive-horn-logic/README.md)
 - [Decidability of polynomial equations in powers of two](part-01/decidability-of-polynomial-equations-in-powers-o/README.md)
-- [Decidable theories of abelian groups with a pure subgroup](part-01/decidable-theories-of-abelian-groups-with-a-pure/README.md)
+- [Element-pure-subgroup theories of abelian groups](part-01/decidable-theories-of-abelian-groups-with-a-pure/README.md)
 - [Rings embeddable in skew fields](part-01/rings-embeddable-in-skew-fields/README.md)
 - [Specker–Blatter theorem for ternary relations](part-01/specker-blatter-theorem-for-ternary-relations/README.md)
 - [Squarelike and discriminating groups](part-01/squarelike-and-discriminating-groups/README.md)

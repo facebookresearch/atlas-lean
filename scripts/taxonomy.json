@@ -17258,7 +17258,7 @@
   "WantedExt/ModelTheory/MorleyCategoricityWanted": {"to": "Logic/model-theory", "title": "Morley's categoricity theorem"},
   "WantedExt/ModelTheory/PositiveHornFiniteEntailmentOpenGardenProblem37863Wanted": {"to": "Logic/model-theory", "title": "Finite entailment for positive Horn logic"},
   "WantedExt/ModelTheory/PowersOfTwoPolynomialZerosDecidableAIMLogicProblem121Wanted": {"to": "Logic/model-theory", "title": "Decidability of polynomial equations in powers of two"},
-  "WantedExt/ModelTheory/PureSubgroupTheoryDecidableKourovka3Problem21Wanted": {"to": "Logic/model-theory", "title": "Decidable theories of abelian groups with a pure subgroup"},
+  "WantedExt/ModelTheory/PureSubgroupTheoryDecidableKourovka3Problem21Wanted": {"to": "Logic/model-theory", "title": "Element-pure-subgroup theories of abelian groups"},
   "WantedExt/ModelTheory/SkewFieldEmbeddableRingsKourovka2Problem38Wanted": {"to": "Logic/model-theory", "title": "Rings embeddable in skew fields"},
   "WantedExt/ModelTheory/SpeckerBlatterTernaryOpenGardenProblem37444Wanted": {"to": "Logic/model-theory", "title": "Specker–Blatter theorem for ternary relations"},
   "WantedExt/ModelTheory/SquarelikeDiscriminatingGroupKourovka15Problem86Wanted": {"to": "Logic/model-theory", "title": "Squarelike and discriminating groups"},

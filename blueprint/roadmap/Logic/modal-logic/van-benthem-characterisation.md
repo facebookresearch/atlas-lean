@@ -10,4 +10,4 @@ This is the converse half of van Benthem's characterization theorem; the other h
 
 ## Sources
 
-- J. van Benthem, "Modal Correspondence Theory", PhD thesis, University of Amsterdam, 1976, and "Modal Logic and Classical Logic", Bibliopolis, 1983; see also P. Blackburn, M. de Rijke, Y. Venema, Modal Logic, Cambridge University Press, 2001, §2.7.
+- J. van Benthem, "Modal Correspondence Theory", PhD thesis, University of Amsterdam, 1976, and "Modal Logic and Classical Logic", Bibliopolis, 1983; see also P. Blackburn, M. de Rijke, Y. Venema, Modal Logic, Cambridge University Press, 2001, §2.6, Theorem 2.68.

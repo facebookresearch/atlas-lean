@@ -10,4 +10,4 @@ is computable. Here $\mathrm{Pr} \vdash \sigma$ is derivability from the Presbur
 
 - M. Presburger, "Über die Vollständigkeit eines gewissen Systems der Arithmetik ganzer Zahlen in welchem die Addition die einzige Operation ist", in *Comptes Rendus du I Congrès des Mathématiciens des Pays Slaves*, Warsaw, 1929, 92-101.
 - H. Enderton, *A Mathematical Introduction to Logic*, 2nd ed., Academic Press, 2001, §3.2.
-- G. Boolos, J. Burgess, and R. Jeffrey, *Computability and Logic*, 5th ed., Cambridge University Press, 2007, Chapter 28.
+- G. Boolos, J. Burgess, and R. Jeffrey, *Computability and Logic*, 5th ed., Cambridge University Press, 2007, Chapter 24.

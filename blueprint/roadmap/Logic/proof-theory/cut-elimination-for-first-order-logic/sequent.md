@@ -14,3 +14,5 @@ Derivability of sequents in the classical sequent calculus with cut is the small
 - (Reflexivity) $\Gamma \Rightarrow t = t$ for every term $t$.
 - (Substitution) From $\Gamma \Rightarrow s = t$ and $\Gamma \Rightarrow \varphi(s)$ infer $\Gamma \Rightarrow \varphi(t)$.
 - (Cut) From $\Gamma \Rightarrow \varphi$ and $\varphi, \Gamma \Rightarrow \psi$ infer $\Gamma \Rightarrow \psi$.
+
+The left rules ($\to$ left and $\forall$ left) act only on the first formula of the context, and there are no weakening, exchange or contraction rules; assumption and ex falso apply to any member of the context.
