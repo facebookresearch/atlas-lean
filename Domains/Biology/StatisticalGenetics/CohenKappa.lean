@@ -23,6 +23,8 @@ kappa is `κ = (p_o - p_e) / (1 - p_e)`.
 
 ## Main statements
 
+* `kappa_eq_zero_of_independent`: when the table is the product of its margins (independent
+  raters), `p_o = p_e`, so `κ = 0` when `p_e < 1`.
 * `kappa_le_kappaMax`: when `p_e < 1`, every joint probability table with the margins of `P`
   has `κ ≤ κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 - p_e)`, since `pᵢᵢ ≤ min(pᵢ., p.ᵢ)`, with
   equality for a table with these margins whose diagonal is `min(pᵢ., p.ᵢ)` (Cohen's `κ_M`,
@@ -65,6 +67,20 @@ noncomputable def kappa {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
 `κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 - p_e)`. -/
 noncomputable def kappaMax {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
   (∑ i, min (rowMargin P i) (colMargin P i) - chance P) / (1 - chance P)
+
+set_option linter.unusedVariables false in
+/-- **Independent raters** (Cohen 1960; derived): let `P` be a joint probability table that is the
+product of its margins (`pᵢⱼ = pᵢ. p.ⱼ` for all `i, j`) with chance agreement `p_e < 1`. Then
+`κ = 0`.
+
+Source: Cohen (1960). -/
+public theorem kappa_eq_zero_of_independent {k : ℕ} (P : Fin k → Fin k → ℝ)
+    (hP : IsTable P) (hind : ∀ i j, P i j = rowMargin P i * colMargin P j)
+    (he : chance P < 1) :
+    kappa P = 0 := by
+  have h : observed P = chance P := by
+    simp only [observed, chance, hind]
+  simp only [kappa, h, sub_self, zero_div]
 
 private lemma residual_mul_div {k : ℕ} (a : Fin k → ℝ) (ha : ∀ i, 0 ≤ a i)
     (t : ℝ) (ht : ∑ i, a i = t) (i : Fin k) : a i * t / t = a i := by
