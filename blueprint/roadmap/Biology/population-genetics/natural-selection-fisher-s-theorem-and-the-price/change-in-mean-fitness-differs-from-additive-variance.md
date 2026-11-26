@@ -19,13 +19,6 @@ $$\frac{V_A}{\bar w(p)} = \frac{1}{6} = \frac{6}{36} \ne \frac{5}{36} .$$
 So the one-generation change in mean fitness under diploid viability selection is not equal to
 $V_A / \bar w$ in general; here the difference $-1/36$ comes from dominance in fitness.
 
-## Depends on
-
-- [Diploid mean fitness under Hardy–Weinberg proportions](diploid-mean-fitness.md)
-- [One generation of diploid viability selection](diploid-select.md)
-- [Average effect of an allele](../../quantitative-genetics/fisher-s-decomposition-of-genetic-variance/avg-effect.md)
-- [Additive genetic variance](../../quantitative-genetics/fisher-s-decomposition-of-genetic-variance/add-var.md)
-
 ## Sources
 
 - J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Section II.8 "Selection and Fitness", subsection "The Fundamental Theorem of Natural Selection",
