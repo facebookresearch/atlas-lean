@@ -1341,6 +1341,7 @@
   "CSLibExt/Complexity/KeyTheorems/NaturalProofs": {"to": "TheoryOfComputation/hierarchy-theorems-and-barriers", "title": "Natural proofs barrier"},
   "CSLibExt/Complexity/KeyTheorems/MASubsetAM": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Arthur–Merlin and Merlin–Arthur classes"},
   "CSLibExt/Complexity/KeyTheorems/MajorityNotInAC0": {"to": "TheoryOfComputation/circuit-complexity", "title": "Lower bounds for AC0 circuits"},
+  "CSLibExt/Complexity/NPComplete/SequencingToMinimizeWeightedTardinessDefs": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Single-machine sequencing"},
   "CSLibExt/Computability/Automata/DA/EncodedDFA": {"to": "TheoryOfComputation/decision-procedures", "title": "Encoded finite automata"},
   "CSLibExt/Computability/Automata/DA/MathlibDFA": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Minimal deterministic automaton"},
   "CSLibExt/Computability/Automata/DA/MyhillNerodeBridge": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Myhill–Nerode theorem"},
