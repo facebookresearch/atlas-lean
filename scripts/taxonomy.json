@@ -9708,6 +9708,7 @@
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook35": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook51": {"to": "Analysis/hilbert-spaces", "title": "Orthogonal systems and general orthogonal series"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook64": {"to": "Analysis/banach-spaces/duality-and-weak-topologies", "title": "Hahn–Banach theorem"},
+  "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook86": {"to": "Analysis/hilbert-spaces", "title": "Orthogonal systems and general orthogonal series"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook87": {"to": "Analysis/function-spaces", "title": "Nonlinear interpolation on L^p spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook7": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/SobolevTraceR3PlaneBounded": {"to": "Analysis/function-spaces", "title": "Sobolev trace inequality"},
