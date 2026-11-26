@@ -129,10 +129,10 @@ private theorem slice_ext_and_exists_of_flat
 Given a pushout square with `M` flat over `B`, a comparison map
 to `B₁`, and three slices `e i` of `N` over `M` compatible with three slices
 `p i` of the base, every triple of automorphisms of `M` that is trivial
-modulo the kernel of `B → B₁` glues to a unique automorphism of `N` over
-`B'`. The glued automorphism is itself trivial modulo the kernel of
-`B' → B₁`, and it is the unique algebra map over `B'` with the prescribed
-slices. -/
+modulo the extension to `M` of the kernel of `B → B₁` glues to a unique
+automorphism of `N` over `B'`. The glued automorphism is itself trivial
+modulo the extension to `N` of the kernel of `B' → B₁`, and it is the
+unique algebra map over `B'` with the prescribed slices. -/
 public theorem exists_algEquiv_slice_eq_of_flat
     {B : Type u} {B₁ : Type v} {B' : Type w} {M : Type x} {N : Type y}
     [CommRing B] [CommRing B₁] [CommRing B'] [CommRing M] [CommRing N]
@@ -163,22 +163,6 @@ public theorem exists_algEquiv_slice_eq_of_flat
     p hinj hsurj e heM heB
   let J : Ideal M := (RingHom.ker (algebraMap B B₁)).map (algebraMap B M)
   let J' : Ideal N := (RingHom.ker (algebraMap B' B₁)).map (algebraMap B' N)
-  have hJt : ∀ (i : Fin 3) (m : M), m ∈ J → t i m ∈ J := by
-    intro i m hm
-    have hle : J.map (t i : M →+* M) ≤ J := by
-      rw [Ideal.map_map]
-      have hcomp : (t i : M →+* M).comp (algebraMap B M) = algebraMap B M :=
-        RingHom.ext fun b => (t i).commutes b
-      rw [hcomp]
-    exact hle (Ideal.mem_map_of_mem _ hm)
-  have hJt' : ∀ (i : Fin 3) (m : M), m ∈ J → (t i).symm m ∈ J := by
-    intro i m hm
-    have hle : J.map ((t i).symm : M →+* M) ≤ J := by
-      rw [Ideal.map_map]
-      have hcomp : ((t i).symm : M →+* M).comp (algebraMap B M) = algebraMap B M :=
-        RingHom.ext fun b => (t i).symm.commutes b
-      rw [hcomp]
-    exact hle (Ideal.mem_map_of_mem _ hm)
   have ht' : ∀ (i : Fin 3) (m : M), (t i).symm m - m ∈ J := by
     intro i m
     have h := ht i ((t i).symm m)
@@ -199,19 +183,19 @@ public theorem exists_algEquiv_slice_eq_of_flat
       rw [map_add, map_add, map_add, add_sub_add_comm]
       exact J.add_mem hx hy
   have hex : ∀ (s : Fin 3 → (M ≃ₐ[B] M)),
-      (∀ i m, s i m - m ∈ J) → (∀ i m, m ∈ J → s i m ∈ J) →
+      (∀ i m, s i m - m ∈ J) →
         ∀ n : N, ∃ n' : N, ∀ i, e i n' = s i (e i n) := by
-    intro s hs hsJ n
+    intro s hs n
     refine hsurjN (fun i => s i (e i n)) (fun i j => ?_)
     have hdecomp : s i (e i n) - s j (e j n) =
         (s i (e i n) - e i n) + (e i n - e j n) - (s j (e j n) - e j n) := by ring
     rw [hdecomp]
     exact J.sub_mem (J.add_mem (hs i _) (hcong n i j)) (hs j _)
   have hmk : ∀ (s : Fin 3 → (M ≃ₐ[B] M)),
-      (∀ i m, s i m - m ∈ J) → (∀ i m, m ∈ J → s i m ∈ J) →
+      (∀ i m, s i m - m ∈ J) →
         ∃ σ : N →ₐ[B'] N, ∀ i n, e i (σ n) = s i (e i n) := by
-    intro s hs hsJ
-    choose f hf using hex s hs hsJ
+    intro s hs
+    choose f hf using hex s hs
     let σ₀ : N →ₐ[B'] N :=
       { toFun := f
         map_one' := hinjN _ _ fun i => by rw [hf, map_one, map_one]
@@ -223,8 +207,8 @@ public theorem exists_algEquiv_slice_eq_of_flat
         commutes' := fun x =>
           hinjN _ _ fun i => by rw [hf, heB, AlgEquiv.commutes] }
     exact ⟨σ₀, fun i n => hf n i⟩
-  obtain ⟨σ, hσ⟩ := hmk t ht hJt
-  obtain ⟨σ', hσ'⟩ := hmk (fun i => (t i).symm) ht' hJt'
+  obtain ⟨σ, hσ⟩ := hmk t ht
+  obtain ⟨σ', hσ'⟩ := hmk (fun i => (t i).symm) ht'
   have h1 : ∀ n, σ (σ' n) = n :=
     fun n => hinjN _ _ fun i => by rw [hσ, hσ', AlgEquiv.apply_symm_apply]
   have h2 : ∀ n, σ' (σ n) = n :=
