@@ -42,15 +42,6 @@ private theorem div_add_eq {q n : ℕ} (hq : 0 < q) (hn : 0 < n) :
     (n + q + q - 1) / q = (n + q - 1) / q + 1 := by
   rw [show n + q + q - 1 = n + q - 1 + q by omega, Nat.add_div_right _ hq]
 
-/-- **Alternating stride sum with a single term.** For natural numbers $q$, $t$ and $n$ with
-$1 \le n \le q$, the alternating stride sum satisfies $S_{q,t}(n) = 1/n^t$.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equation (9). -/
-public theorem strideAlternatingSum_of_le {q t n : ℕ} (hn : 0 < n) (hnq : n ≤ q) :
-    strideAlternatingSum q t n = 1 / (n : ℝ) ^ t := by
-  simp [strideAlternatingSum, div_eq_one_of_le hn hnq]
-
 /-- **Signed stride sum with a single term.** For natural numbers $q$, $t$ and $n$ with
 $1 \le n \le q$, the signed stride sum satisfies $T_{q,t}(n) = 1/n^t$.
 
@@ -59,21 +50,6 @@ Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equatio
 public theorem strideSignedSum_of_le {q t n : ℕ} (hn : 0 < n) (hnq : n ≤ q) :
     strideSignedSum q t n = 1 / (n : ℝ) ^ t := by
   simp [strideSignedSum, div_eq_one_of_le hn hnq]
-
-/-- **Recurrence for the alternating stride sum.** Let $q \ge 1$, $n \ge 1$ and $t \ge 0$ be
-integers and let $S_{q,t}$ denote the alternating stride sum. Then
-$S_{q,t}(n + q) = 1/(n + q)^t - S_{q,t}(n)$.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equation (9). -/
-public theorem strideAlternatingSum_add {q t n : ℕ} (hq : 0 < q) (hn : 0 < n) :
-    strideAlternatingSum q t (n + q) = 1 / ((n + q : ℕ) : ℝ) ^ t - strideAlternatingSum q t n := by
-  rw [strideAlternatingSum, div_add_eq hq hn, Finset.sum_range_succ', strideAlternatingSum,
-    sub_eq_neg_add, ← Finset.sum_neg_distrib]
-  congr 1
-  · refine Finset.sum_congr rfl fun i _ => ?_
-    rw [show n + q - q * (i + 1) = n - q * i by rw [Nat.mul_succ]; omega, pow_succ]
-    ring
 
 /-- **Recurrence for the signed stride sum.** Let $q \ge 1$, $n \ge 1$ and $t \ge 0$ be integers
 and let $T_{q,t}$ denote the signed stride sum. Then

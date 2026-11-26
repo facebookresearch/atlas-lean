@@ -55,11 +55,22 @@ private theorem div_add_eq_local {q n : ℕ} (hq : 0 < q) (hn : 0 < n) :
     (n + q + q - 1) / q = (n + q - 1) / q + 1 := by
   rw [(by omega : n + q + q - 1 = n + q - 1 + q), Nat.add_div_right _ hq]
 
-private theorem stride_of_le {q t n : ℕ} (hn : 0 < n) (hnq : n ≤ q) :
+/-- **Alternating stride sum with a single term.** For natural numbers $q$, $t$ and $n$ with
+$1 \le n \le q$, the alternating stride sum satisfies $S_{q,t}(n) = 1/n^t$.
+
+Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
+Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equation (9). -/
+public theorem strideAlternatingSum_of_le {q t n : ℕ} (hn : 0 < n) (hnq : n ≤ q) :
     strideAlternatingSum q t n = 1 / (n : ℝ) ^ t := by
   simp [strideAlternatingSum, div_eq_one_of_le_local hn hnq]
 
-private theorem stride_add {q t n : ℕ} (hq : 0 < q) (hn : 0 < n) :
+/-- **Recurrence for the alternating stride sum.** Let $q \ge 1$, $n \ge 1$ and $t \ge 0$ be
+integers and let $S_{q,t}$ denote the alternating stride sum. Then
+$S_{q,t}(n + q) = 1/(n + q)^t - S_{q,t}(n)$.
+
+Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
+Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equation (9). -/
+public theorem strideAlternatingSum_add {q t n : ℕ} (hq : 0 < q) (hn : 0 < n) :
     strideAlternatingSum q t (n + q) = 1 / ((n + q : ℕ) : ℝ) ^ t - strideAlternatingSum q t n := by
   rw [strideAlternatingSum, div_add_eq_local hq hn, Finset.sum_range_succ', strideAlternatingSum,
     sub_eq_neg_add, ← Finset.sum_neg_distrib]
@@ -130,7 +141,7 @@ private theorem weighted_term (q t n : ℕ) (hq : 0 < q) (hn : 0 < n) :
       strideAlternatingSum q t n / n -
         strideAlternatingSum q t (n + q) / (n + q : ℕ) +
           1 / ((n + q : ℕ) : ℝ) ^ (t + 1) := by
-  rw [stride_add hq hn, Nat.cast_add, pow_succ]
+  rw [strideAlternatingSum_add hq hn, Nat.cast_add, pow_succ]
   have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   have hnq0 : (n : ℝ) + q ≠ 0 := by positivity
   field_simp
@@ -159,7 +170,7 @@ private theorem finite_identity (q t : ℕ) (hq : 0 < q) (N : ℕ) :
     rw [sub_eq_zero]
     apply Finset.sum_congr rfl
     intro j hj
-    rw [stride_of_le (by omega) (by simpa using Finset.mem_range.mp hj)]
+    rw [strideAlternatingSum_of_le (by omega) (by simpa using Finset.mem_range.mp hj)]
     simp [pow_succ, div_eq_mul_inv, mul_comm]
   | succ N ih =>
     rw [Finset.sum_range_succ, ih]
@@ -211,9 +222,12 @@ $$
 $$
 converge to $\zeta(t + 1)$ as $N \to \infty$, where $\zeta$ is the Riemann zeta function.
 
-The series converges only conditionally, since $S_{q,t}(n)$ does not tend to $0$, which is why
-it is stated through its partial sums. The second expression in equation (9) and the general
-identity (8) use a quantity $A^{(t)}$ that the record does not define and are not stated here.
+The series converges only conditionally, which is why it is stated through its partial sums.
+On the subsequence $n = 1 + mq$, reversing the alternating sum gives a magnitude
+$|S_{q,t}(n)| \ge 1 - (1 + q)^{-t}$; the weight is at least $1/n$, yielding a divergent harmonic
+lower bound for the series of absolute values. The second expression in equation (9) and the
+general identity (8) use a quantity $A^{(t)}$ that the record does not define and are not stated
+here.
 
 Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
 Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 1,
