@@ -30,7 +30,7 @@ example {R : Type u} [CommRing R] (I : Ideal R) [IsAdicComplete I R]
     I M t hI ht hker L hL
 
 /-- Compatible families in the constant inverse system. -/
-def constantCompatible (R : Type u) [CommRing R] : Submodule R (∀ _ : ℕ, R) where
+private def constantCompatible (R : Type u) [CommRing R] : Submodule R (∀ _ : ℕ, R) where
   carrier := {x | ∀ n, x (n + 1) = x n}
   zero_mem' := fun _ => rfl
   add_mem' := fun hx hy n => by rw [Pi.add_apply, Pi.add_apply, hx n, hy n]
