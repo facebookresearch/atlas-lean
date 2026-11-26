@@ -140,4 +140,22 @@ theorem freeCount_firstPrimes (k : ℕ) (r : Fin k → ℕ) :
     freeCount_firstPrimes.borderedDet_eq_prod, Nat.cast_prod]
   exact Finset.prod_congr rfl fun i _ => by rw [Nat.cast_sub (hp i).one_le, Nat.cast_one]
 
+/-- **Recurrence for the bordered determinants of the first primes.** Let $k \ge 2$ and let
+$p_1, \dots, p_k$ be the first $k$ primes. For $m \le k$ let $f_m = F_m(p_1, \dots, p_m)$, where
+$F_m(p_1, \dots, p_m)$ is $(-1)^m$ times the determinant of the $(m+1) \times (m+1)$ matrix whose
+first row consists of ones and whose row $i + 1$, for $1 \le i \le m$, has $p_i$ in column $i$ and
+$1$ in every other column. Then $f_k = (p_k - 1) f_{k-1}$.
+
+Source: Florian Pausinger, "Counting Appearances of Integers in
+Sets of Arithmetic Progressions", Lemma 1. -/
+theorem borderedOnesDiagDet_firstPrimes_recurrence (k : ℕ)
+    (hk : 2 ≤ k) :
+    borderedOnesDiagDet (firstPrimes k) =
+      ((Nat.nth Nat.Prime (k - 1) : ℤ) - 1) *
+        borderedOnesDiagDet (firstPrimes (k - 1)) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (show k ≠ 0 by omega)
+  simp only [Nat.succ_sub_one, freeCount_firstPrimes.borderedDet_eq_prod, firstPrimes]
+  rw [Fin.prod_univ_castSucc]
+  exact mul_comm _ _
+
 end MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
