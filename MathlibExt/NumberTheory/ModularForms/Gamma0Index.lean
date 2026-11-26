@@ -46,11 +46,14 @@ import Mathlib.GroupTheory.GroupAction.Quotient
 /-!
 # Index of the congruence subgroup Gamma0
 
-The index of `Gamma0 N` in `SL(2, Z)` is the Dedekind psi value `psi(N)`.
-The proof identifies the quotient by the Borel subgroup of upper-triangular
-matrices with the projective line `ProjectiveLine (ZMod N)`, whose points are
-counted by `card_projectiveLine_zmod`, and transfers the index along reduction
-modulo `N`, which is surjective by
+For `N ≠ 0`, the index of `Gamma0 N` in `SL(2, Z)` is the Dedekind psi value
+`psi(N)`. The cardinality of the quotient of the modular group by the image of
+`Gamma0 N` equals that index for every `N`; both are `0` when the index is
+infinite, as for `N = 0`. The proof identifies the quotient by the Borel
+subgroup of upper-triangular matrices with the projective line
+`ProjectiveLine (ZMod N)`, whose points are counted by
+`card_projectiveLine_zmod`, and transfers the index along reduction modulo `N`,
+which is surjective by
 `Matrix.SpecialLinearGroup.map_intCastRingHom_zmod_surjective`.
 -/
 
@@ -186,7 +189,9 @@ open scoped MatrixGroups in
 /-- **Cosets of $\Gamma_0(N)$ in the modular group.** For every natural number $N$, the
 cardinality of the quotient of the modular group `𝒮ℒ` (the image of $\mathrm{SL}_2(\mathbb{Z})$ in
 $\mathrm{GL}_2(\mathbb{R})$) by the image of $\Gamma_0(N)$ equals the index of $\Gamma_0(N)$ in
-$\mathrm{SL}_2(\mathbb{Z})$. -/
+$\mathrm{SL}_2(\mathbb{Z})$. Both are natural numbers, so both are $0$ when the quotient is
+infinite, as it is for $N = 0$: `Nat.card` of an infinite type and `Subgroup.index` of a subgroup
+of infinite index are $0$. -/
 theorem ModularCurve.card_quotient_gamma0_eq_index (N : ℕ) :
     Nat.card (𝒮ℒ ⧸ (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ)
       (CongruenceSubgroup.Gamma0 N)).subgroupOf 𝒮ℒ) =
