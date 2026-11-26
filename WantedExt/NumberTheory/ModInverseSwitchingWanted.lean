@@ -50,23 +50,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Nat.GCD.Basic
 public import MathlibExt.NumberTheory.ModInverseSwitching
+public import MathlibExt.NumberTheory.ModInverseSwitchingIsLeastAbsInverseAll
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.ModInverseSwitchingWanted
-
-/-- **Every switching inverse is a least absolute inverse.** Let $(r_i)$, $(s_i)$ and $N$ be
-Euclidean switching data. Then for every $i$ with $1 \le i \le N + 1$, $s_i$ is the least
-absolute inverse of $r_i$ modulo $r_{i-1}$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Corollary 1. -/
-theorem_wanted isLeastAbsInverse_all
-    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N) :
-    ∀ i : ℕ, 1 ≤ i → i ≤ N + 1 →
-      IsLeastAbsInverse (s i) (r i : ℤ) (r (i - 1))
 
 /-- **The Euclidean Bézout coefficients are least absolute inverses.** Let $m > n > 1$ be
 integers, write $g = \gcd(m, n)$, and let $(r_i)$, $(s_i)$ and $N$ be Euclidean switching data
