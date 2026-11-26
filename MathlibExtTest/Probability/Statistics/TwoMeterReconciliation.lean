@@ -64,6 +64,42 @@ example :
   · norm_num [E] at hopt ⊢
     exact hopt
 
+-- The zero estimator is unbiased at zero but not uniformly. With centered errors, a
+-- unit-sum comparator is uniformly unbiased and its variance is at least that of the GLS estimate.
+example :
+    let P := (gaussianReal 0 1).prod (gaussianReal 0 4)
+    let Z : ℝ → ℝ × ℝ → ℝ := fun t p => 0 * (t + p.1) + 0 * (t + p.2)
+    let A : ℝ → ℝ × ℝ → ℝ := fun t p => (3 / 4) * (t + p.1) + (1 / 4) * (t + p.2)
+    let E : ℝ × ℝ → ℝ := fun p => (4 * (3 + p.1) + (3 + p.2)) / 5
+    (∫ p, Z 0 p ∂P) = 0 ∧ (¬ ∀ t : ℝ, (∫ p, Z t p ∂P) = t) ∧
+      (∀ t : ℝ, (∫ p, A t p ∂P) = t) ∧ variance E P ≤ variance (A 3) P := by
+  intro P Z A E
+  have h₁ : HasLaw (Prod.fst : ℝ × ℝ → ℝ) (gaussianReal 0 1) P := measurePreserving_fst.hasLaw
+  have h₂ : HasLaw (Prod.snd : ℝ × ℝ → ℝ) (gaussianReal 0 4) P := measurePreserving_snd.hasLaw
+  have he₁ := h₁.memLp (memLp_id_gaussianReal 2)
+  have he₂ := h₂.memLp (memLp_id_gaussianReal 2)
+  have hm₁ : (∫ p, p.1 ∂P) = 0 := by rw [h₁.integral_eq, integral_id_gaussianReal]
+  have hm₂ : (∫ p, p.2 ∂P) = 0 := by rw [h₂.integral_eq, integral_id_gaussianReal]
+  have hv₁ : variance (Prod.fst : ℝ × ℝ → ℝ) P = 1 := by
+    rw [h₁.variance_eq, variance_id_gaussianReal]
+    norm_num
+  have hv₂ : variance (Prod.snd : ℝ × ℝ → ℝ) P = 4 := by
+    rw [h₂.variance_eq, variance_id_gaussianReal]
+    norm_num
+  have hcov : covariance (Prod.fst : ℝ × ℝ → ℝ) Prod.snd P = 0 :=
+    covariance_fst_snd_prod (memLp_id_gaussianReal 2) (memLp_id_gaussianReal 2)
+  have hA : ∀ t : ℝ, (∫ p, A t p ∂P) = t :=
+    (two_meter_linear_unbiased_iff he₁ he₂ hm₁ hm₂ (a := 3 / 4) (b := 1 / 4)).2 (by norm_num)
+  refine ⟨by simp [Z], ?_, hA, ?_⟩
+  · intro hZ
+    have hsum := (two_meter_linear_unbiased_iff he₁ he₂ hm₁ hm₂ (a := 0) (b := 0)).1 hZ
+    norm_num at hsum
+  · have h := two_meter_reconciliation_min_variance he₁ he₂ (by norm_num) (by norm_num)
+      hv₁ hv₂ hm₁ hm₂ hcov
+    have hopt := h.2 (3 / 4) (1 / 4) hA 3
+    norm_num [E, A] at hopt ⊢
+    exact hopt
+
 -- The second error is twice the first, so its variance is 4 but the errors are correlated.
 example : variance (fun z : ℝ => (4 * z + 2 * z) / 5) (gaussianReal 0 1) = 36 / 25 := by
   let P := gaussianReal 0 1

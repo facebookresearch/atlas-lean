@@ -85,7 +85,32 @@ private theorem variance_weighted_meters {Ω : Type*} [MeasurableSpace Ω] {P : 
   simp only [u, w, variance_const_mul, covariance_const_mul_left, covariance_const_mul_right]
   ring
 
+private theorem integral_weighted_meters {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {e₁ e₂ : Ω → ℝ} (he₁ : MemLp e₁ 2 P) (he₂ : MemLp e₂ 2 P)
+    (θ a b : ℝ) :
+    (∫ ω, a * (θ + e₁ ω) + b * (θ + e₂ ω) ∂P) =
+      (a + b) * θ + (a * (∫ ω, e₁ ω ∂P) + b * (∫ ω, e₂ ω ∂P)) := by
+  have hi₁ := (he₁.const_mul a).integrable one_le_two
+  have hi₂ := (he₂.const_mul b).integrable one_le_two
+  have hi : Integrable (fun ω => a * e₁ ω + b * e₂ ω) P := hi₁.add hi₂
+  have heq : (fun ω => a * (θ + e₁ ω) + b * (θ + e₂ ω)) =
+      fun ω => (a + b) * θ + (a * e₁ ω + b * e₂ ω) := by
+    funext ω
+    ring
+  rw [heq, integral_add (integrable_const ((a + b) * θ)) hi, integral_const,
+    integral_add hi₁ hi₂, integral_const_mul, integral_const_mul]
+  simp only [probReal_univ, one_smul]
+
 @[expose] public section
+
+/-- For centered square-integrable errors, a linear combination of the two meter readings
+with fixed weights `a` and `b` is unbiased for every parameter value exactly when `a + b = 1`. -/
+lemma two_meter_linear_unbiased_iff {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {e₁ e₂ : Ω → ℝ} (he₁ : MemLp e₁ 2 P) (he₂ : MemLp e₂ 2 P)
+    (hm₁ : (∫ ω, e₁ ω ∂P) = 0) (hm₂ : (∫ ω, e₂ ω ∂P) = 0) {a b : ℝ} :
+    (∀ t : ℝ, (∫ ω, a * (t + e₁ ω) + b * (t + e₂ ω) ∂P) = t) ↔ a + b = 1 := by
+  simp only [integral_weighted_meters he₁ he₂, hm₁, hm₂, mul_zero, add_zero]
+  exact ⟨fun h => by simpa only [mul_one] using h 1, fun h t => by rw [h, one_mul]⟩
 
 /-- **Weighted reconciliation of two meters.** Let the two readings be `θ + e₁` and `θ + e₂`,
 with square-integrable errors of positive variances `v₁` and `v₂`. The GLS estimate using the
@@ -94,8 +119,9 @@ the unique minimizer of the sum of squared residuals weighted by the inverse var
 Its bias is the same weighted average of the error means, so it is unbiased when both means
 vanish; if only the first meter has mean error `β`, its bias is `v₂ * β / (v₁ + v₂)`.
 With uncorrelated errors its variance is `v₁ * v₂ / (v₁ + v₂)`, at most either individual
-variance and minimal among all linear estimators with weights summing to one (the linear
-unbiased estimators for centered errors). With variances `1` and `4` and `e₂ = 2 * e₁`, the same
+variance and minimal among all linear estimators with weights summing to one. For centered
+errors, these are exactly the linear estimators that are unbiased for every parameter value,
+by `two_meter_linear_unbiased_iff`. With variances `1` and `4` and `e₂ = 2 * e₁`, the same
 estimator has variance `36 / 25`, not `4 / 5`.
 
 The minimality uses Aitken's theorem (A. C. Aitken, *On least squares and linear combination of
@@ -131,12 +157,6 @@ theorem two_meter_reconciliation {Ω : Type*} [MeasurableSpace Ω] {P : Measure 
     funext ω
     dsimp only [E, estimate, a, b]
     ring
-  have hE' : E = fun ω => θ + (a * e₁ ω + b * e₂ ω) := by
-    rw [hE]
-    funext ω
-    calc
-      _ = (a + b) * θ + (a * e₁ ω + b * e₂ ω) := by ring
-      _ = _ := by rw [hab, one_mul]
   have hvar := variance_weighted_meters he₁ he₂ θ a b
   rw [← hE, hv₁, hv₂] at hvar
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -154,12 +174,7 @@ theorem two_meter_reconciliation {Ω : Type*} [MeasurableSpace Ω] {P : Measure 
     have hp := mul_pos (add_pos (inv_pos.mpr h₁) (inv_pos.mpr h₂))
       (sq_pos_of_ne_zero (sub_ne_zero.mpr hx))
     linarith
-  · have hi₁ := (he₁.const_mul a).integrable one_le_two
-    have hi₂ := (he₂.const_mul b).integrable one_le_two
-    have hi : Integrable (fun ω => a * e₁ ω + b * e₂ ω) P := hi₁.add hi₂
-    rw [hE', integral_add (integrable_const θ) hi, integral_const,
-      integral_add hi₁ hi₂, integral_const_mul, integral_const_mul]
-    simp only [probReal_univ, one_smul]
+  · rw [hE, integral_weighted_meters he₁ he₂, hab, one_mul]
     dsimp only [a, b]
     ring
   · intro hcov
@@ -196,6 +211,32 @@ theorem two_meter_reconciliation {Ω : Type*} [MeasurableSpace Ω] {P : Measure 
     rw [hEc, variance_const_add (he₁.const_mul (6 / 5 : ℝ)).aestronglyMeasurable,
       variance_const_mul, hv₁]
     norm_num
+
+/-- With centered, uncorrelated square-integrable errors of positive variances, the
+inverse-variance estimate is unbiased for every parameter value and has variance no greater
+than any fixed linear combination of the two readings that is unbiased for every parameter
+value. The variance comparison holds at each parameter value. -/
+theorem two_meter_reconciliation_min_variance {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {e₁ e₂ : Ω → ℝ} (he₁ : MemLp e₁ 2 P) (he₂ : MemLp e₂ 2 P)
+    {v₁ v₂ : ℝ} (h₁ : 0 < v₁) (h₂ : 0 < v₂)
+    (hv₁ : variance e₁ P = v₁) (hv₂ : variance e₂ P = v₂)
+    (hm₁ : (∫ ω, e₁ ω ∂P) = 0) (hm₂ : (∫ ω, e₂ ω ∂P) = 0)
+    (hcov : covariance e₁ e₂ P = 0) :
+    let E := fun (t : ℝ) ω => (v₂ * (t + e₁ ω) + v₁ * (t + e₂ ω)) / (v₁ + v₂)
+    (∀ t : ℝ, (∫ ω, E t ω ∂P) = t) ∧
+      ∀ a b : ℝ, (∀ t : ℝ, (∫ ω, a * (t + e₁ ω) + b * (t + e₂ ω) ∂P) = t) →
+        ∀ θ : ℝ, variance (E θ) P ≤ variance (fun ω => a * (θ + e₁ ω) + b * (θ + e₂ ω)) P := by
+  intro E
+  constructor
+  · intro t
+    have hbias := (two_meter_reconciliation t he₁ he₂ h₁ h₂ hv₁ hv₂).2.2.1
+    change (∫ ω, E t ω ∂P) - t = _ at hbias
+    simpa only [hm₁, hm₂, mul_zero, add_zero, zero_div, sub_eq_zero] using hbias
+  · intro a b h_unbiased θ
+    have hab := (two_meter_linear_unbiased_iff he₁ he₂ hm₁ hm₂).mp h_unbiased
+    have hb : b = 1 - a := eq_sub_of_add_eq' hab
+    subst b
+    exact ((two_meter_reconciliation θ he₁ he₂ h₁ h₂ hv₁ hv₂).2.2.2.1 hcov).2.2 a
 
 end
 
