@@ -25,3 +25,7 @@
 - [A nonnegative eddy viscosity extracts energy from the mean flow](mean-flow-extraction-modeled-reynolds-st-2.md)
 - [Nonnegative production does not force a nonnegative eddy viscosity](mean-flow-extraction-nonneg-converse-fai.md)
 - [Boussinesq closure for a plane strain](modeled-reynolds-stress-plane-strain.md)
+- [Covariance form of the Reynolds stress](reynolds-stress-eq.md)
+- [Exact ensemble-averaged momentum equation](mean-momentum.md)
+- [Sign of energy extraction by an eddy-viscosity closure](mean-flow-extraction-modeled-reynolds-st-3.md)
+- [A positive eddy viscosity does not give realizability](modeled-reynolds-stress-realizability-fa.md)

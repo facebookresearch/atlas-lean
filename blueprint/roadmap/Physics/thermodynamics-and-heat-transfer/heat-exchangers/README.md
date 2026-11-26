@@ -56,3 +56,11 @@
 ## The equal-capacity boundary
 
 - [Counterflow effectiveness at equal capacity rates](counterflow-effectiveness-one-substituti.md)
+- [Parallel-flow exchanger solution](is-parallel-flow-solution.md)
+- [Equal and opposite heat](heat-balance.md)
+- [Is Counterflow Solution](is-counterflow-solution.md)
+- [Heat duty of a parallel-flow exchanger](heat-eq-effectiveness.md)
+- [Counterflow effectiveness](heat-eq-effectiveness-2.md)
+- [Parallel-flow effectiveness lies in the unit interval](parallel-effectiveness-bounds.md)
+- [Counterflow effectiveness lies in [0, 1]](counterflow-effectiveness-bounds.md)
+- [Counterflow is at least as effective as parallel flow](parallel-effectiveness-le-counterflow-ef.md)

@@ -30,3 +30,5 @@
 - [Sign of the convective heat rate](sign-convective-heat-rate.md)
 - [Sign of the heat rate from a power-law Nusselt number](power-law-heat-rate-sign.md)
 - [Sign of the heat rate where a power-law correlation applies](power-law-correlation-heat-rate-sign.md)
+- [Nusselt correlation record](nusselt-correlation.md)
+- [Applicability of a Nusselt correlation](applies.md)
