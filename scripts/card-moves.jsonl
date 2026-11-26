@@ -897,6 +897,8 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing", "article_id": "af_16ad33e0fae74766f1934edc"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
+{"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
 {"folder": "Algebra/not-yet-classified/affine-recurrence-convergence", "to": "Algebra/polynomials/single-cue-error-correction-convergence", "article_id": "af_a7908067a8d03361ea6c04d3"}
 {"page": "Algebra/not-yet-classified/affine-recurrence-convergence/error-correction-tendsto-iff-of-ne", "to": "Algebra/polynomials/single-cue-error-correction-convergence/error-correction-tendsto-iff-of-ne", "article_id": "af_2ee112a1a6e995608674e25b"}
 {"page": "Algebra/not-yet-classified/affine-recurrence-convergence/error-correction-tendsto", "to": "Algebra/polynomials/single-cue-error-correction-convergence/error-correction-tendsto", "article_id": "af_2effd6b20cbe90d0d692a490"}

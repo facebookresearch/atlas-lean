@@ -1193,3 +1193,6 @@ Topics added since this subject's fields were last revised.
 - [Faltings Height](faltings-height/README.md)
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
+- [Canonical Polarization Data](canonical-polarization-data/README.md)
+- [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
+- [Modular Model Conductor](modular-model-conductor/README.md)
