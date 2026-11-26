@@ -1,0 +1,3 @@
+# Euler equations projected on the velocity
+
+Let a flow in three-dimensional space have constant density $\rho > 0$, a pressure $p$ and a body force with potential $\Phi$, and let it satisfy the Euler equations. Assume that its velocity field $u$ does not depend on time and that $u(t, \cdot)$ is differentiable in space for every $t$; the pressure and enthalpy may depend on time. Then at every time $t_0$ and coordinate point $v$ about any origin, the coordinate fields satisfy $\langle u, (Du)\,u\rangle + \frac{1}{\rho}(Dp)\,u + (D\Phi)\,u = 0$, where $Du$, $Dp$ and $D\Phi$ are Fréchet derivatives at time $t_0$ (the zero map where the field is not differentiable).
