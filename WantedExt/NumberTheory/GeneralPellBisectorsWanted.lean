@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.Diophantine.BisectorEquationIntZero
 public import MathlibExt.NumberTheory.Diophantine.NegativePellGcd
 public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
@@ -50,16 +51,6 @@ public theorem_wanted bisector_equation_symm (a b c : ℝ)
     (c ≠ 0 → (a - -c⁻¹) ^ 2 * (b ^ 2 + 1) = (b - -c⁻¹) ^ 2 * (a ^ 2 + 1)) ∧
       (-a - -c) ^ 2 * ((-b) ^ 2 + 1) = (-b - -c) ^ 2 * ((-a) ^ 2 + 1) ∧
       (b - c) ^ 2 * (a ^ 2 + 1) = (a - c) ^ 2 * (b ^ 2 + 1)
-
-/-- **No nontrivial integer solutions of the bisector equation with $a = 0$ or $b = 0$.** Let
-$a, b, c$ be integers with $a = 0$ or $b = 0$ and
-$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$. Then $|a| = |b|$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 2(b)
-(`integers-2024-A111-prop-2`). -/
-public theorem_wanted bisector_equation_int_zero (a b c : ℤ) (h0 : a = 0 ∨ b = 0)
-    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) : |a| = |b|
 
 /-- **Integer solutions of the bisector equation.** For a natural number $d > 1$ such that
 $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its solution in positive integers
@@ -259,19 +250,6 @@ public theorem_wanted negPellF_dvd_iff (d : ℕ) (hd : 1 < d)
     (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (m n : ℕ) (hn : 0 < n) (hnm : n ≤ m) :
     negPellF d n ∣ negPellF d m ↔ (d = 2 ∧ n = 1) ∨ (n ∣ m ∧ Odd (m / n))
 
-/-- **Solutions of |x² − dy²| = z are even when d ≡ 1 and z ≡ 4 (mod 8).** Let $d$ and $z$ be
-integers with $d \equiv 1 \pmod 8$ and $z \equiv 4 \pmod 8$. If integers $x$ and $y$ satisfy
-$|x^2 - dy^2| = z$, then $x$ and $y$ are both even.
-
-The paper also assumes $z > 1$; this is not needed. The second sentence of part (c) of the
-paper's lemma, on the fundamental unit, is not formalized.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(c), first sentence
-(`integers-2024-A111-lem-1`). -/
-public theorem_wanted even_of_abs_sq_sub_mul_sq_four_mod_eight (d z : ℤ) (hd : d % 8 = 1)
-    (hz : z % 8 = 4) (x y : ℤ) (h : |x ^ 2 - d * y ^ 2| = z) : Even x ∧ Even y
-
 open Classical in
 /-- **Primes with strictly primitive representations.** For an integer $d$, $S(d)$ is the set of
 primes $p$ for which there is an integer $l > 0$ such that $|x^2 - d y^2| = p^l$ has a strictly
@@ -281,7 +259,8 @@ Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between P
 Rational Slopes*, INTEGERS 24 (2024), Article A111, Notation 2
 (`integers-2024-A111-thm-8`). -/
 def strictPrimitivePrimes (d : ℤ) : Set ℕ :=
-  {p | p.Prime ∧ ∃ l : ℕ, 0 < l ∧ ∃ x y : ℤ, IsCoprime x (d * y) ∧ |x ^ 2 - d * y ^ 2| = (p : ℤ) ^ l}
+  {p | p.Prime ∧ ∃ l : ℕ, 0 < l ∧ ∃ x y : ℤ,
+    IsCoprime x (d * y) ∧ |x ^ 2 - d * y ^ 2| = (p : ℤ) ^ l}
 
 open Classical in
 /-- **Strictly primitive exponent.** Let $d$ be an integer and $p$ a natural number, and let
@@ -470,7 +449,8 @@ public theorem_wanted strictPrimitivePrimes_eq_split (d : ℤ) (hd : 1 < d) (hsq
     (hcase : d % 8 = 1 ∨ (d % 8 = 5 ∧ ∀ u : (NumberField.RingOfIntegers K)ˣ,
       ((u : NumberField.RingOfIntegers K) : K) ∈ Algebra.adjoin ℤ {s}) ∨ d % 4 = 2) :
     strictPrimitivePrimes d =
-      {p : ℕ | p.Prime ∧ ((Ideal.span {(p : ℤ)}).primesOver (NumberField.RingOfIntegers K)).ncard = 2}
+      {p : ℕ | p.Prime ∧
+        ((Ideal.span {(p : ℤ)}).primesOver (NumberField.RingOfIntegers K)).ncard = 2}
 
 /-- **Strictly primitive primes are 2 and the split primes.** Let $d > 1$ be a square-free
 integer, let $K$ be any number field of degree $2$ over $\mathbb{Q}$ containing an element $s$
@@ -490,7 +470,8 @@ public theorem_wanted strictPrimitivePrimes_eq_split_insert_two (d : ℤ) (hd : 
     (hη : ∃ u : (NumberField.RingOfIntegers K)ˣ,
       ((u : NumberField.RingOfIntegers K) : K) ∉ Algebra.adjoin ℤ {s}) :
     strictPrimitivePrimes d = insert 2
-      {p : ℕ | p.Prime ∧ ((Ideal.span {(p : ℤ)}).primesOver (NumberField.RingOfIntegers K)).ncard = 2}
+      {p : ℕ | p.Prime ∧
+        ((Ideal.span {(p : ℤ)}).primesOver (NumberField.RingOfIntegers K)).ncard = 2}
 
 /-- **The strictly primitive exponent is at most the class number.** Let $d > 1$ be a squarefree
 integer with $d \equiv 2$ or $d \equiv 3 \pmod 4$, and let $K$ be a number field of degree $2$
