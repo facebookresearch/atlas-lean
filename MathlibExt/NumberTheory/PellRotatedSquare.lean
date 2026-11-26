@@ -151,6 +151,33 @@ Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 3.3, definitio
 public theorem pellShiftBound_zero_zero (D : ℤ) : pellShiftBound D 0 0 = 1 := by
   simp [pellShiftBound]
 
+set_option linter.unusedVariables false in
+/-- **The shifted Pell norm function at zero is at most the bound.** Let $D$, $\alpha$, $\beta$,
+$a$ and $b$ be integers and let $i, j \in \{1, -1\}$. Put $\varepsilon = \alpha + \beta \sqrt{D}$
+and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, let
+$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
+$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$, let
+$f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$ and let $K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$.
+Then $f_{i,j}(0) \le K$.
+
+Here $\sqrt{s} = 0$ for $s < 0$, a quotient by $0$ is $0$, and $c^0 = 1$ for every real $c$; no
+further condition is placed on the integers.
+
+Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
+Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.5
+(`integers-2025-A112-lem-3-5`). -/
+public theorem pellShiftedNorm_zero_le_pellShiftBound (D α β a b : ℤ) {i j : ℤ}
+    (hi : i = 1 ∨ i = -1) (hj : j = 1 ∨ j = -1) :
+    pellShiftedNorm D α β a b i j 0 ≤ pellShiftBound D a b := by
+  have hiAbs : |(i : ℝ)| = 1 := by
+    rcases hi with rfl | rfl <;> simp
+  rw [pellShiftedNorm_zero, pellShiftBound]
+  calc
+    |(i : ℝ) + a| + |(b : ℝ)| ≤ (|(i : ℝ)| + |(a : ℝ)|) + |(b : ℝ)| :=
+      add_le_add (abs_add_le _ _) le_rfl
+    _ = |(a : ℝ)| + (|(b : ℝ)| + 1) := by rw [hiAbs]; ac_rfl
+    _ ≤ _ := add_le_add le_rfl (le_max_left _ _)
+
 end
 
 end MetaMathlibExt

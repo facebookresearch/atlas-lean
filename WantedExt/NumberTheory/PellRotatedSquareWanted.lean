@@ -97,24 +97,6 @@ public theorem_wanted pell_solutions_in_rotated_square_explicit {D : ℤ} {a : P
         p = (i * (a ^ n).x, j * (a ^ n).y)} ∧
       (Q.ncard : ℤ) = 2 + 4 * m)
 
-/-- **The shifted Pell norm function at zero is at most the bound.** Let $D$, $\alpha$, $\beta$,
-$a$ and $b$ be integers and let $i, j \in \{1, -1\}$. Put $\varepsilon = \alpha + \beta \sqrt{D}$
-and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, let
-$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
-$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$, let
-$f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$ and let $K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$.
-Then $f_{i,j}(0) \le K$.
-
-Here $\sqrt{s} = 0$ for $s < 0$, a quotient by $0$ is $0$, and $c^0 = 1$ for every real $c$; no
-further condition is placed on the integers.
-
-Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
-Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.5
-(`integers-2025-A112-lem-3-5`). -/
-public theorem_wanted pellShiftedNorm_zero_le_pellShiftBound (D α β a b : ℤ) {i j : ℤ}
-    (hi : i = 1 ∨ i = -1) (hj : j = 1 ∨ j = -1) :
-    pellShiftedNorm D α β a b i j 0 ≤ pellShiftBound D a b
-
 /-- **The shifted Pell norm function is at most the bound up to its last crossing.** Let $D$ be
 an integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation
 $X^2 - D Y^2 = 1$, put $\varepsilon = \alpha + \beta \sqrt{D}$ and
