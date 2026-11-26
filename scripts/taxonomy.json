@@ -13444,7 +13444,6 @@
   "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquaresMultiplicativeAdditivePairedSquaresDichotomy": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquaresMultiplicativeAdditivePairedSquaresEqIdOfThreeOrFour": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquaresRigidity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
-  "MathlibExt/NumberTheory/MultiplicativeAdditiveSixSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/MultiplicativeAdditiveThreePairedSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/NStepFibonacciSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/NStepLucasSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Lucas numbers"},
