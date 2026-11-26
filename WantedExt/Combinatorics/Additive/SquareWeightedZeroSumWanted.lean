@@ -159,22 +159,6 @@ public theorem_wanted ncard_squareSet_primePower (p r : ℕ) (hp : p.Prime) (hr 
     (Odd r → (squareSet (p ^ r)).ncard =
       ∑ k ∈ Finset.range ((r + 1) / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard)
 
-/-- **Square-weighted zero sums lift from a prime-power component.** Let $n \ge 2$, let $p$ be a
-prime dividing $n$, and let $r$ be the exponent of $p$ in $n$. Write $S(m)$ for the set of
-nonzero squares in $\mathbb{Z}_m$. Let $x_1, \dots, x_k$ be a sequence in $\mathbb{Z}_n$ whose
-reduction $\bar x_1, \dots, \bar x_k$ modulo $p^r$ has an $S(p^r)$-weighted zero sum, that is,
-there are $b_1, \dots, b_k \in S(p^r)$ with $\sum_i b_i \bar x_i = 0$. Then there are
-$a_1, \dots, a_k \in S(n)$ with $\sum_i a_i x_i = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 7. -/
-public theorem_wanted squareWeightedZeroSum_of_primePower_reduction (n p r k : ℕ)
-    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r)
-    (S : Fin k → ZMod n)
-    (hS : HasWeightedZeroSum (squareSet (p ^ r))
-      (fun i => (ZMod.cast (S i) : ZMod (p ^ r)))) :
-    HasWeightedZeroSum (squareSet n) S
-
 /-- **Prime-power bound for the square-weighted consecutive constant.** Let $n \ge 2$, let $p$ be a
 prime dividing $n$ and let $r = v_p(n)$ be the exponent of $p$ in $n$. For a natural number $m$,
 write $S(m)$ for the set of nonzero squares in $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ and
