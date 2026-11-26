@@ -26,7 +26,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ INSTANCE: a claw-free graph `G = (V, E)` (no induced `K₁,₃`) and a positive 
 QUESTION: is there a dominating set of size at most `K`, i.e. `V' ⊆ V` with `|V'| ≤ K` such that
 every vertex outside `V'` has a neighbour in `V'`?
 
-This is DOMINATING SET ([GT2], `DominatingSetWanted`) restricted to claw-free graphs. Johnson's
+This is DOMINATING SET ([GT2], `DominatingSetDefs`) restricted to claw-free graphs. Johnson's
 1985 table (NP-completeness column 16) and its 2022 revision list it as NP-complete with the
 reference [GJ]: Garey and Johnson's comment to [GT2] records that EDGE DOMINATING SET is
 NP-complete (Yannakakis and Gavril), and an edge dominating set of `H` is exactly a dominating set
