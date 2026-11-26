@@ -25,3 +25,4 @@ Topics added since this subject's fields were last revised.
 - [Matched SNRQuotient](matched-snrquotient/README.md)
 - [Schur Source Energy](schur-source-energy/README.md)
 - [Schur Strict Positivity](schur-strict-positivity/README.md)
+- [Common eigenvector of commuting endomorphisms](exists-common-eigenvector-of-commute.md)
