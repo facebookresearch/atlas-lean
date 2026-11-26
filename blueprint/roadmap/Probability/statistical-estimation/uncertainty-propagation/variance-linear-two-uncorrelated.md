@@ -6,4 +6,4 @@ For arbitrary real weights $p$, $X : \Omega \to \mathbb{R}^2$ and real $a_1, a_2
 
 $$\operatorname{Var}_p(a_1 X_0 + a_2 X_1) = a_1^2 \operatorname{Var}_p(X_0) + a_2^2 \operatorname{Var}_p(X_1).$$
 
-Without the vanishing cross-covariance the term $2 a_1 a_2 \operatorname{Cov}_p(X_0, X_1)$ must be kept.
+In general the cross term $2 a_1 a_2 \operatorname{Cov}_p(X_0, X_1)$ must be kept; it vanishes exactly when $a_1 a_2 \operatorname{Cov}_p(X_0, X_1) = 0$, so zero covariance is sufficient but not necessary when a coefficient is zero.

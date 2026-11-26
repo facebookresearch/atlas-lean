@@ -32,7 +32,6 @@
 - [Time maps to the ISQ time base](to-isqhom-time.md)
 - [Current maps to the ISQ current base](to-isqhom-current-dim.md)
 - [Charge maps to current times time](to-isqhom-charge-eq-current-mul-time.md)
-- [Charge is current times time in the ISQ](to-isqhom-charge-eq-single-current-mul-s.md)
 - [SI exponents of voltage](to-isqhom-voltage-dim-exponent.md)
 - [SI exponents of resistance](to-isqhom-resistance-dim-exponent.md)
 - [SI exponents of capacitance](to-isqhom-capacitance-dim-exponent.md)

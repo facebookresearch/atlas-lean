@@ -36,10 +36,7 @@
 - [Compliance at the upper endpoint of the design interval](compliance-upper-endpoint.md)
 
 ## Units
-
-- [Dimension of the effective axial stiffness](axial-stiffness-dimension.md)
 - [Dimension of the tip displacement](tip-displacement-dimension.md)
-- [Dimension of the compliance](compliance-dimension.md)
 - [Dimension of the compliance sensitivity](compliance-sensitivity-dimension.md)
 
 ## Compliance error: one-parameter steps

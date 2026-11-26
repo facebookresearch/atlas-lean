@@ -26,7 +26,6 @@
 - [Power times time is energy in the ISQ](power-dim-mul-time.md)
 - [Molar mass times molar flow rate is mass flow rate](molar-mass-dim-mul-molar-flow-dim.md)
 - [Faraday constant times amount is charge](faraday-dim-mul-amount-dim.md)
-- [Torsional stiffness has the dimension of energy](torsional-stiffness-dim-eq-energy-dim.md)
 - [A newton metre is not a newton per metre](force-dim-mul-length-ne-div-length.md)
 - [Mass flow rate differs from molar flow rate](mass-flow-dim-ne-molar-flow-dim.md)
 - [Molar flow rate is not a particle rate](molar-flow-dim-ne-inv-time.md)

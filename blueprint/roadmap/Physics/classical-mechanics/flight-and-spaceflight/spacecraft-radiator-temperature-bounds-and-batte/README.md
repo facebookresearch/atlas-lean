@@ -3,7 +3,6 @@
 - [Radiator temperature rate](radiator-rate.md)
 - [Clipped radiator temperature rate](clipped-radiator-rate.md)
 - [Clipped radiator rate agrees with the radiator rate on the box](clipped-radiator-rate-eq-of-mem.md)
-- [Lipschitz bound for the clipped radiator rate](clipped-radiator-rate-lipschitz.md)
 - [Clipped radiator rate is Lipschitz](clipped-radiator-rate-lipschitz-with.md)
 - [Radiator rate is nonnegative at the lower box end](radiator-rate-nonneg-at-min.md)
 - [Radiator rate is nonpositive at the upper box end](radiator-rate-nonpos-at-max.md)

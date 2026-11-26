@@ -4,4 +4,4 @@ Let $P$ be a partition $0 = \xi_0 < \xi_1 < \dots < \xi_n = 1$ of $[0,1]$ and $I
 
 $$\alpha\,(I_P \hat u)(x/L) = \alpha\, p_c(x/L),$$
 
-where $p_c$ is the continuous piecewise linear function with nodal values $c$, $\alpha = \frac{q L^2}{2\,EA}$ and $\hat u(\xi) = \xi(1-\xi)$.
+where $p_c$ is the continuous function with nodal values $c$ that is affine on each cell $[\xi_{i}, \xi_{i+1}]$ and constant on each exterior ray, equal to $c_0$ on $(-\infty, 0]$ and to $c_n$ on $[1, \infty)$ (as $I_P \hat u$ is), $\alpha = \frac{q L^2}{2\,EA}$ and $\hat u(\xi) = \xi(1-\xi)$.

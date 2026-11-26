@@ -6,12 +6,6 @@
 - [Dimension of energy](energy-dim.md)
 - [Dimension of thermodynamic temperature](temperature-dim.md)
 - [Dimension of the molar gas constant](gas-constant-dim.md)
-- [Exponents of the amount dimension](amount-dim-exponent.md)
-- [Exponents of the amount concentration dimension](concentration-dim-exponent.md)
-- [Exponents of the molar mass dimension](molar-mass-dim-exponent.md)
-- [Exponents of the molar energy dimension](molar-energy-dim-exponent.md)
-- [Exponents of the diffusivity dimension](diffusivity-dim-exponent.md)
-- [Exponents of the stress dimension](stress-dim-exponent.md)
 - [Exponents of the energy dimension](energy-dim-exponent.md)
 - [Exponents of the temperature dimension](temperature-dim-exponent.md)
 - [Exponents of the gas constant dimension](gas-constant-dim-exponent.md)
@@ -65,8 +59,6 @@
 - [Molar energy rescales by its own factor](molar-energy-dim-scale.md)
 
 ## Temperature and dimensionless arguments of log and exp
-
-- [Kelvin differences equal Celsius differences](celsius-to-kelvin-sub-celsius-to-kelvin.md)
 - [Scaling a Celsius reading does not scale its kelvin value](celsius-to-kelvin-mul-ne.md)
 - [Doubling 20 degrees Celsius does not double its kelvin value](celsius-to-kelvin-two-mul-twenty-ne.md)
 - [Inverse temperature is positive](inverse-temperature-pos.md)

@@ -5,3 +5,5 @@ For a positive number of cells $N$ and real $c_0, a, v, L, \Delta t$, put $\Delt
 $$w_j^n = c\bigl(n\,\Delta t,\ \bar{j}\,\Delta x\bigr),$$
 
 where $\bar{j} \in \{0, \dots, N-1\}$ is the representative of $j$.
+
+Real division by zero is $0$, so for $L = 0$ both $\Delta x$ and the phase are $0$ and every sample equals $c_0$.

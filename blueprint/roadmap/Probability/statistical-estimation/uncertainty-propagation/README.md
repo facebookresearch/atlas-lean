@@ -20,7 +20,6 @@
 ## Deterministic Lipschitz error propagation
 
 - [Lipschitz error propagation](lipschitz-error-propagation.md)
-- [Lipschitz error budget](lipschitz-error-budget.md)
 - [Affine maps propagate errors exactly](affine-exact.md)
 
 ## Rank-deficient calibration and parameter identification
@@ -33,7 +32,6 @@
 - [Identifiability on an affine space through a base point](identifiable-on-affine-mk.md)
 - [Identifiability restricts to every affine parameter space](identifiable-on-affine-of-identifiable.md)
 - [Identifiability on the whole parameter space](identifiable-on-affine-top-iff-identifia.md)
-- [Identifiability in basis coordinates](identifiable-mul-basis-iff-trivial-ker.md)
 - [Affine identifiability through a basis of directions](identifiable-on-affine-mk-iff-identifiab.md)
 - [Kernel direction defeats unique recovery on an affine space](exists-distinct-on-affine-of-nontrivial.md)
 - [Identifiability of a linear calibration model](identifiable.md)

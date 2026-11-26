@@ -3,7 +3,6 @@
 ## Units of the calibration
 
 - [Dimensioned strain from an affine gauge calibration](gauge-strain-qty.md)
-- [Base exponents of the electric-potential dimension](voltage-dim-exponent.md)
 - [Coordinate of the dimensioned gauge strain](gauge-strain-qty-val.md)
 - [Voltage dimension](voltage-dim.md)
 - [Gauge strain is invariant under a change of units](gauge-strain-coord-dim-scale.md)
@@ -21,7 +20,6 @@
 
 - [Mean of calibrated gauge strains](mean-vec-gauge-strain-vec.md)
 - [Covariance matrix of calibrated gauge strains](cov-matrix-gauge-strain-vec.md)
-- [Entries of the gauge strain covariance](cov-matrix-gauge-strain-vec-apply.md)
 - [Variance of a combination of two correlated gauges](cov-matrix-two-gauges.md)
 - [Gauge strain variances are nonnegative](cov-matrix-gauge-strain-vec-self-nonneg.md)
 

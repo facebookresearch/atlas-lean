@@ -1,6 +1,6 @@
 # Position of the largest entry in permutations avoiding 321 and vincular 2143
 
-For natural numbers $n, k$, let $a(n, k)$ be the number of permutations $\sigma$ of $\{0, \dots, n-1\}$ that avoid the classical pattern $321$, avoid the vincular pattern $2143$ (positions $i, i+1, j, k$ with $i + 1 < j < k$ and $\sigma(i+1) < \sigma(i) < \sigma(k) < \sigma(j)$), and take the largest value $n - 1$ at position $k - 1$ (in $1$-based terms, $\sigma(k) = n$). Then:
+For natural numbers $n, k$, let $a(n, k)$ be the number of permutations $\sigma$ of $\{0, \dots, n-1\}$ that avoid the classical pattern $321$, avoid the vincular pattern $2143$ (positions $i, i+1, j, k$ with $i + 1 < j < k$ and $\sigma(i+1) < \sigma(i) < \sigma(k) < \sigma(j)$), and take the largest value $n - 1$ at a position $j$ with $j + 1 = k$ (in $1$-based terms, $\sigma(k) = n$); in particular $a(n, 0) = 0$, since no position $j$ satisfies $j + 1 = 0$. Then:
 
 - $a(n, 1) = 1$ for every $n \ge 1$;
 - $a(n, n) = F_{2n-3}$ for every $n > 1$;
