@@ -193,6 +193,23 @@ private theorem fibAB_succ_mul_discriminant (a b : ℂ) (k : ℕ) :
         rw [lucasAB_add_two a b k]
         ring
 
+-- The stated identity keeps the source's nonzero-discriminant hypothesis.
+set_option linter.unusedVariables false in
+/-- **Discriminant times an (a, b)-Fibonacci number.** Let $a$ and $b$ be complex numbers with
+$a^2 + 4b \ne 0$, and write $F_n$ and $L_n$ for the $(a,b)$-Fibonacci and $(a,b)$-Lucas
+numbers. Then for every natural number $m$,
+$$(a^2 + 4b) F_{m+1} = L_{m+2} + b L_m.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Corollary 4. -/
+theorem disc_mul_fibAB (a b : ℂ) (hΔ : a ^ 2 + 4 * b ≠ 0)
+    (m : ℕ) :
+    (a ^ 2 + 4 * b) * fibAB a b (m + 1) =
+      lucasAB a b (m + 2) + b * lucasAB a b m := by
+  rw [mul_comm (a ^ 2 + 4 * b)]
+  exact fibAB_succ_mul_discriminant a b m
+
 -- The terms telescope along indices of either parity, starting at k + 1.
 private theorem sum_fibAB_stride_two (a b : ℂ) (k n : ℕ) :
     (∑ i ∈ Finset.range n, (-b) ^ (n - (i + 1)) * fibAB a b (2 * i + k + 1)) *
