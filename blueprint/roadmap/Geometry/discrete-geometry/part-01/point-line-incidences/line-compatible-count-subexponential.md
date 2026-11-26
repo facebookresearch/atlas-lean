@@ -1,6 +1,7 @@
-# Subexponential count of line-compatible sequences (statement)
+# Subexponential count of complete line-size profiles (statement)
 
-The proposition that
-there is a real constant $C$ such that for every natural number $n$, the number $f(n)$ of
-line-compatible sequences for $n$ is at most $e^{C \sqrt{n}}$; that is, there are at most
-$\exp(O(\sqrt{n}))$ line-compatible sequences. This is Erdős Problem 733.
+There is a real constant
+$C$ such that for every natural number $n$, at most $e^{C \sqrt{n}}$ distinct complete line-size
+profiles occur among $n$-point sets in the plane. In this formulation of Erdős Problem 733,
+each profile records the number of points on every line determined by two distinct points of
+the set.

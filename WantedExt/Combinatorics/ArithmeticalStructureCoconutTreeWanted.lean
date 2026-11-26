@@ -19,6 +19,7 @@ public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTwoLeaves
 public import MathlibExt.Combinatorics.ArithmeticalStructureStar
 public import MathlibExt.Combinatorics.EuclideanChainLength
+public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTreeCoconutSmoothPath
 
 namespace MetaMathlibExt
 
@@ -120,43 +121,6 @@ public theorem_wanted IsSmoothCoconut.eq_euclideanChainLength_sub_one {p s : ℕ
     (hp : 0 < p) {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
     p = euclideanChainLength (∑ j, r (.inr j)) (r (.inl ⟨p - 1, by omega⟩)) - 1
 
-/-- **Smooth coconut structures with central label above one.** Let $p \ge 1$ and let $(d, r)$ be
-a smooth arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$, with central vertex $v_p$
-and leaves $\ell_1, \ldots, \ell_s$. Then $d_{v_p} > 1$ if and only if
-$r_{v_p} < \sum_{j=1}^{s} r_{\ell_j}$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 8
-(`integers-2025-A82-prop-8`). -/
-public theorem_wanted IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
-    {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
-    1 < d (.inl ⟨p - 1, by omega⟩) ↔ r (.inl ⟨p - 1, by omega⟩) < ∑ j, r (.inr j)
-
-/-- **Smoothing at a path vertex of a coconut tree.** Let the coconut tree $CT(p + 1, s)$ have
-path vertices $v_1, \dots, v_{p+1}$, central vertex $v_{p+1}$ and leaves $\ell_1, \dots, \ell_s$,
-let $d$ and $r$ be labelings of its vertices by natural numbers, and let $1 \le k \le p + 1$.
-Smoothing $(d, r)$ at $v_k$ gives the labelings $(d', r')$ of $CT(p, s)$ obtained by deleting
-$v_k$ and renumbering the remaining path vertices $v_1, \dots, v_{k-1}, v_{k+1}, \dots, v_{p+1}$
-in order as $v_1, \dots, v_p$. Every remaining vertex keeps its value of $r$ and its value of $d$,
-except that $d$ drops by $1$ (truncated at $0$) at the path neighbours $v_{k-1}$ and $v_{k+1}$
-of $v_k$, where they exist.
-
-The paper applies it only at a non-central vertex ($k \le p$) with $d(v_k) = 1$: for $k \ge 2$
-this is the degree-2 smoothing of Definition 3.1 and for $k = 1$ the smoothing at $v_1$ of
-Definition 3.4.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definitions 3.1 and 3.4
-(arXiv numbering). -/
-public def coconutSmoothPath {p s : ℕ} (i : Fin (p + 1))
-    (x : (Fin (p + 1) ⊕ Fin s → ℕ) × (Fin (p + 1) ⊕ Fin s → ℕ)) :
-    (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ) :=
-  (Sum.elim
-      (fun j => if j.val + 1 = i.val ∨ j.val = i.val then x.1 (.inl (i.succAbove j)) - 1
-        else x.1 (.inl (i.succAbove j)))
-      (fun l => x.1 (.inr l)),
-    Sum.elim (fun j => x.2 (.inl (i.succAbove j))) (fun l => x.2 (.inr l)))
-
 /-- **Smoothing at a leaf of a coconut tree.** Let the coconut tree $CT(p, s + 1)$ have path
 vertices $v_1, \dots, v_p$, central vertex $v_p$ and leaves $\ell_1, \dots, \ell_{s+1}$, let $d$
 and $r$ be labelings of its vertices by natural numbers, and let $1 \le k \le s + 1$. Smoothing
@@ -227,21 +191,6 @@ public inductive CoconutAncestor : (p s : ℕ) → (Fin p ⊕ Fin s → ℕ) × 
       (y : (Fin q ⊕ Fin t → ℕ) × (Fin q ⊕ Fin t → ℕ)) (l : Fin (s + 1))
       (hd : x.1 (.inr l) = 1) (h : CoconutAncestor p s (coconutSmoothLeaf l x) q t y) :
       CoconutAncestor p (s + 1) x q t y
-
-/-- **Path smoothing preserves arithmetical structures on coconut trees.** Let $s \ge 1$ and let
-$(d, r)$ be an arithmetical structure on the coconut tree $CT(p + 1, s)$, whose path vertices are
-$v_1, \dots, v_{p+1}$ with central vertex $v_{p+1}$. If $d(v_k) = 1$ for some non-central path
-vertex $v_k$ (that is, $1 \le k \le p$), then smoothing $(d, r)$ at $v_k$ gives an arithmetical
-structure on $CT(p, s)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 3.3
-(`integers-2025-A82-prop-1`) and Proposition 3.6 for `i = 1` (`integers-2025-A82-prop-2`). -/
-public theorem_wanted IsArithmeticalStructure.coconutSmoothPath {p s : ℕ} (hs : 1 ≤ s)
-    {x : (Fin (p + 1) ⊕ Fin s → ℕ) × (Fin (p + 1) ⊕ Fin s → ℕ)}
-    (hx : IsArithmeticalStructure (coconutTree (p + 1) s) x.1 x.2) (i : Fin (p + 1))
-    (hi : i.val < p) (hd : x.1 (.inl i) = 1) :
-    IsArithmeticalStructure (coconutTree p s) (coconutSmoothPath i x).1 (coconutSmoothPath i x).2
 
 /-- **Smoothing a leaf preserves arithmetical structures.** Let $p$ and $s$ be natural numbers
 with $p + s \ge 2$, let $(d, r)$ be an arithmetical structure on the coconut tree
