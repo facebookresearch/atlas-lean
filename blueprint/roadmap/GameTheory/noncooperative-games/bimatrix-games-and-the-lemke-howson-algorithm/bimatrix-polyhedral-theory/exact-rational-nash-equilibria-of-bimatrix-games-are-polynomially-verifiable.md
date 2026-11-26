@@ -1,6 +1,6 @@
 # Exact rational Nash equilibria of bimatrix games are polynomially verifiable
 
-Encode a two-player game with rational payoffs in binary. Every such game with nonempty strategy sets has a Nash equilibrium with rational probabilities whose bit length is bounded by an explicit polynomial in the input length $L$ (for instance $120 L^3 + 400 L + 100$ bits suffice), and the relation "$w$ encodes such an equilibrium of the game encoded by $c$" is decidable in polynomial time. Hence finding a rational Nash equilibrium of a bimatrix game is a total search problem in TFNP.
+Encode a two-player game with rational payoffs in binary. Every such game with nonempty strategy sets has a Nash equilibrium with rational probabilities whose bit length is at most $120 L^3 + 400 L + 100$ in the input length $L$, and the relation "$w$ encodes such an equilibrium of the game encoded by $c$" is decidable in polynomial time. Hence finding a rational Nash equilibrium of a bimatrix game is a total search problem in TFNP.
 
 ## Proof sketch
 

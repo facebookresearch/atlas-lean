@@ -5,8 +5,6 @@ Let $V \subseteq \mathbb{R}^n$ be a real algebraic set, the common zero set of f
 1. there is a finite game with exactly three players whose set of totally mixed Nash equilibria is stably isomorphic to $V$; and
 2. there is a finite game in which every player has exactly two pure strategies whose set of totally mixed Nash equilibria is stably isomorphic to $V$.
 
-In both cases the game and the semialgebraic homeomorphism from $V \times \mathbb{R}^{k}$ (for a suitable $k$) onto the equilibrium set are explicit.
-
 ## Proof sketch
 
 First compactify and translate $V$ into the open simplex by a semialgebraic change of coordinates. For three players use the Horner-chain game and read off the homeomorphism from the equilibrium characterization; for binary games, replace each Horner step by a separate two-strategy player whose indifference equation is that step.

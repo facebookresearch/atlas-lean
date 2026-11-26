@@ -10,10 +10,6 @@ $$
 
 Condition on $x$, $\rho$ and the prefix $h_1, \dots, h_{J-1}$; for each index $j$, the probability that both runs return $j$ is at least the square of the single-run probability by Jensen's inequality, and summing over $j$ with Cauchy–Schwarz gives $\mathrm{acc}^2/q$. Subtract the probability $\mathrm{acc}/|H|$ that the fresh answer repeats.
 
-## Depends on
-
-- [The random oracle model](../../../public-key/random-oracle-constructions/the-random-oracle-model.md)
-
 ## Proof depends on
 
 - [The rewinding lemma](../../zero-knowledge-and-arguments/the-rewinding-lemma.md)

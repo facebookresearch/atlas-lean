@@ -1,6 +1,6 @@
 # Mixed price of anarchy Θ(log m / log log log m) on related machines
 
-For load-balancing games on $m \ge 16$ uniformly related machines, every mixed Nash equilibrium has expected makespan $O(\log m / \log\log\log m) \cdot \mathrm{OPT}$. Conversely, for suitable parameters there are instances on $m$ related machines (replicating the speed tiers of the pure lower-bound construction) with a mixed Nash equilibrium of expected makespan $\Omega(\log m / \log\log\log m) \cdot \mathrm{OPT}$.
+For load-balancing games on $m \ge 16$ uniformly related machines, every mixed Nash equilibrium has expected makespan $O(\log m / \log\log\log m) \cdot \mathrm{OPT}$. Conversely, for infinitely many $m$ there are instances on $m$ related machines (replicating the speed tiers of the pure lower-bound construction) with a mixed Nash equilibrium of expected makespan $\Omega(\log m / \log\log\log m) \cdot \mathrm{OPT}$.
 
 ## Proof sketch
 

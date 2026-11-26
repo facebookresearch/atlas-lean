@@ -1,6 +1,6 @@
 # Uniform hard-core lemma: dense masks fooling efficient sequence tests
 
-Let $(X, B)$ be a samplable pair with pseudoentropy gap $\gamma$ against probabilistic polynomial-time predictors. Then for every efficient test $T$ on sequences of $k$ independent samples (with $k$ polynomial) and every density $\delta$ below the entropy threshold $H(B\mid X)$, there is, for all large $n$, a soft mask $\mu$ of density at least $\delta$, with nonzero mask probabilities bounded below by an explicit inverse polynomial, such that $T$ distinguishes $k$ samples $(X_j, B_j)$ from $k$ samples $(X_j, B'_j)$ with the labels freshly masked by $\mu$ with advantage at most $\gamma/4$. One threshold works uniformly for all tests in an efficiently indexed polynomial-size family.
+Let $(X, B)$ be a samplable pair with pseudoentropy gap $\gamma$ against probabilistic polynomial-time predictors. Then for every efficient test $T$ on sequences of $k$ independent samples (with $k$ polynomial) and every density $\delta$ below the entropy threshold $H(B\mid X)$, there is, for all large $n$, a soft mask $\mu$ of density at least $\delta$, with nonzero mask probabilities at least $1/p(n)$ for a polynomial $p$, such that $T$ distinguishes $k$ samples $(X_j, B_j)$ from $k$ samples $(X_j, B'_j)$ with the labels freshly masked by $\mu$ with advantage at most $\gamma/4$. One threshold works uniformly for all tests in an efficiently indexed polynomial-size family.
 
 ## Proof sketch
 

@@ -3,14 +3,14 @@
 Let $\mathrm{PKE}$ be $\delta$-correct with a finite message space $M$ (no spreadness is required). For every IND-CCA adversary $\mathcal{A}$ against the implicit-rejection KEM $\mathrm{FO}^{\not\perp}[\mathrm{PKE}, G, H]$ making at most $q_G$, $q_H$ random-oracle queries and any number of decapsulation queries, there is an IND-CPA adversary $\mathcal{B}$ against $\mathrm{PKE}$ with about the same running time such that
 
 $$
-\mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\not\perp}}(\mathcal{A}) \le c_1 q_G\delta + \frac{c_2 (q_G + q_H) + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})
+\mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\not\perp}}(\mathcal{A}) \le 2 (q_G + q_H)\delta + \frac{2 (q_G + q_H) + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})
 $$
 
-for small absolute constants $c_1, c_2$; part of the guessing term accounts for random-oracle queries that hit the secret rejection seed. No term depends on the number of decapsulation queries. Asymptotically, for an efficient, IND-CPA-secure, $\delta$-correct word-level PKE family with $\delta$ and $1/|M|$ negligible, $\mathrm{FO}^{\not\perp}$ is IND-CCA secure in the random oracle model against probabilistic polynomial-time adversaries.
+Part of the guessing term accounts for random-oracle queries that hit the secret rejection seed. No term depends on the number of decapsulation queries. Asymptotically, for an efficient, IND-CPA-secure, $\delta$-correct word-level PKE family with $\delta$ and $1/|M|$ negligible, $\mathrm{FO}^{\not\perp}$ is IND-CCA secure in the random oracle model against probabilistic polynomial-time adversaries.
 
 ## Proof sketch
 
-First replace the implicit-rejection keys $H(s, c)$ by an independent random table, losing $q_H/|M|$. Couple the oracle $H$ on ciphertexts so that decapsulation can be simulated without the secret key (correctness hop, $q_G\delta$), then show the challenge key is uniform unless the challenge plaintext is queried to $G$ or $H$, which is bounded through one-wayness by the IND-CPA advantage.
+First replace the implicit-rejection keys $H(s, c)$ by an independent random table, losing $q_H/|M|$. Couple the oracle $H$ on ciphertexts so that decapsulation can be simulated without the secret key (correctness hop, $(q_G + q_H)\delta$), then show the challenge key is uniform unless the challenge plaintext is queried to $G$ or $H$, which is bounded through one-wayness by the IND-CPA advantage.
 
 ## Depends on
 
@@ -28,4 +28,4 @@ First replace the implicit-rejection keys $H(s, c)$ by an independent random tab
 
 ## Sources
 
-- Dennis Hofheinz, Kathrin Hövelmanns and Eike Kiltz, "A Modular Analysis of the Fujisaki–Okamoto Transformation", Theory of Cryptography (TCC 2017), 2017.
+- Dennis Hofheinz, Kathrin Hövelmanns and Eike Kiltz, "A Modular Analysis of the Fujisaki–Okamoto Transformation", Theory of Cryptography (TCC 2017), 2017, Section 3.3, with the corrected $\delta$ terms of the errata in Cryptology ePrint Archive, Paper 2017/604.

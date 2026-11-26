@@ -1,6 +1,6 @@
 # No cross-monotonic scheme for facility location beats budget balance 1/3
 
-For every $\gamma > 1/3$ there is a metric facility location game (with $m$ facilities of opening cost $3$, primary agents at distance $1$ from their own facility and shared agents at distance $1$ from all facilities, for suitable $m, k$) that admits no $\gamma$-budget-balanced cross-monotonic cost-sharing scheme. Thus the factor $1/3$ is tight.
+For every $\gamma > 1/3$ there is a metric facility location game that admits no $\gamma$-budget-balanced cross-monotonic cost-sharing scheme; it has $m$ facilities of opening cost $3$, primary agents at distance $1$ from their own facility and shared agents at distance $1$ from all facilities, where $m$ and the numbers of agents depend on $\gamma$. Thus the factor $1/3$ is tight.
 
 ## Proof sketch
 

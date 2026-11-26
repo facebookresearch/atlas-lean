@@ -4,7 +4,7 @@ Let $A$ be a pca. For every application term $t(x, y_1, \dots, y_n)$ built from 
 
 $$(\lambda^* x.\, t)(\vec a)\cdot b \simeq t(b, \vec a).$$
 
-The abstraction is defined by $\lambda^* x.\,x = \mathsf{s}\,\mathsf{k}\,\mathsf{k}$, $\lambda^* x.\,u = \mathsf{k}\,u$ for $u$ not containing $x$, and $\lambda^* x.\,(u\,v) = \mathsf{s}\,(\lambda^* x.\,u)\,(\lambda^* x.\,v)$. Consequently every pca has pairing, projections and a fixed-point combinator.
+The abstraction is defined by $\lambda^* x.\,x = \mathsf{s}\,\mathsf{k}\,\mathsf{k}$, $\lambda^* x.\,u = \mathsf{k}\,u$ for $u$ a constant or a variable other than $x$, and $\lambda^* x.\,(u\,v) = \mathsf{s}\,(\lambda^* x.\,u)\,(\lambda^* x.\,v)$ for every application $u\,v$, whether or not it contains $x$. Consequently every pca has pairing, projections and a fixed-point combinator.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Witness-reuse hazard when VOLE masks double as garbling offsets
 
-Suppose a VOLE-in-the-head prover reuses the first $\lambda$ bits of its witness as Free-XOR garbled-circuit label offsets within CRT-structured VOLE masks. Then the masks satisfy linear relations that leak parities of the witness: there is a test which a distinguisher knowing a candidate witness $r$ runs on the transcript to distinguish real masks from simulated ones with non-negligible advantage, even when $r$ is placed first in the witness order, so the proof is not witness-knowing zero knowledge. Reordering the witness so that the reused bits are independent of the masked positions, and an intermediate hop that decouples the CRT witness reuse, repair the simulation with a concrete query-bounded loss.
+Suppose a VOLE-in-the-head prover reuses the first $\lambda$ bits of its witness as Free-XOR garbled-circuit label offsets within CRT-structured VOLE masks. Then the masks satisfy linear relations that leak parities of the witness: there is a test which a distinguisher knowing a candidate witness $r$ runs on the transcript to distinguish real masks from simulated ones with non-negligible advantage, even when $r$ is placed first in the witness order, so the proof is not witness-knowing zero knowledge. Reordering the witness so that the reused bits are independent of the masked positions, and an intermediate hop that decouples the CRT witness reuse, repair the simulation.
 
 ## Proof sketch
 

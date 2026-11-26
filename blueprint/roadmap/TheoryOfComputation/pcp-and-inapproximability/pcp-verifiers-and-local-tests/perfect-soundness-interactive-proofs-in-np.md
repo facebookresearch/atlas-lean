@@ -1,6 +1,6 @@
 # Interactive proofs with perfect soundness are in NP
 
-Let $L$ have an interactive proof whose verifier runs in probabilistic polynomial time, accepts every $x \in L$ with some positive probability against a suitable prover (positive completeness suffices), and accepts no $x \notin L$ with positive probability against any prover (perfect soundness). Then $L \in \mathrm{NP}$.
+Let $L$ have an interactive proof whose verifier runs in probabilistic polynomial time, accepts every $x \in L$ with some positive probability against some prover (positive completeness suffices), and accepts no $x \notin L$ with positive probability against any prover (perfect soundness). Then $L \in \mathrm{NP}$.
 
 ## Proof sketch
 

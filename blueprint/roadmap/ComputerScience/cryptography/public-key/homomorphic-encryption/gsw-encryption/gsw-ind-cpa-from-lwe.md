@@ -1,6 +1,6 @@
 # IND-CPA security of GSW from decision LWE
 
-Consider GSW with an explicit parameter family indexed by $\lambda$ (for example $k = \lambda + 1$, $n = k$, $w = 16 + 8\lceil \log_2 k \rceil$, $N = (n+1)w$, $m = N + 2\lambda$, centered-binomial LWE errors) satisfying the entropy margin $m \ge w(n+1) + 2\lambda$ and the fresh-decryption margin. If decision LWE holds for this family and error law, GSW is IND-CPA secure: every probabilistic polynomial-time adversary has advantage at most twice the advantage of an explicit LWE distinguisher plus $2N\sqrt{2^{w(n+1)}/2^m}$, which is negligible.
+Consider GSW with a parameter family indexed by $\lambda$ (for example $k = \lambda + 1$, $n = k$, $w = 16 + 8\lceil \log_2 k \rceil$, $N = (n+1)w$, $m = N + 2\lambda$, centered-binomial LWE errors) satisfying the entropy margin $m \ge w(n+1) + 2\lambda$ and the fresh-decryption margin. If decision LWE holds for this family and error law, GSW is IND-CPA secure: every probabilistic polynomial-time adversary has advantage at most twice the advantage of an LWE distinguisher built from it plus $2N\sqrt{2^{w(n+1)}/2^m}$, which is negligible.
 
 ## Proof sketch
 

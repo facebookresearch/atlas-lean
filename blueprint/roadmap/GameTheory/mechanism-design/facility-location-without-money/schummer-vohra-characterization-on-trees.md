@@ -1,6 +1,6 @@
 # Schummer–Vohra characterization on trees
 
-On a finite connected tree metric graph with positive edge lengths, a deterministic facility-location mechanism with distance costs is strategyproof and onto if and only if it is the evaluation map of an extended median voter scheme; every such mechanism is group strategyproof in the strong sense, and non-dictatorial strategyproof onto mechanisms exist (for example majority on a three-leaf star). For anonymous mechanisms with three agents on a three-leaf tree there is an explicit dichotomy into median-type schemes.
+On a finite connected tree metric graph with positive edge lengths, a deterministic facility-location mechanism with distance costs is strategyproof and onto if and only if it is the evaluation map of an extended median voter scheme; every such mechanism is group strategyproof in the strong sense, and non-dictatorial strategyproof onto mechanisms exist (for example majority on a three-leaf star).
 
 ## Proof sketch
 

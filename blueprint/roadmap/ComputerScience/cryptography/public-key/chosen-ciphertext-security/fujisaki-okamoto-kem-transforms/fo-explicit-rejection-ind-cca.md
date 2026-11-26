@@ -3,10 +3,10 @@
 Let $\mathrm{PKE}$ be $\delta$-correct and $\gamma$-spread with a finite message space $M$. For every IND-CCA adversary $\mathcal{A}$ against $\mathrm{FO}^{\perp}[\mathrm{PKE}, G, H]$ making at most $q_G$, $q_H$ random-oracle queries and $q_D$ decapsulation queries, there is an IND-CPA adversary $\mathcal{B}$ against $\mathrm{PKE}$ with about the same running time such that
 
 $$
-\mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\perp}}(\mathcal{A}) \le c_1 q_G \delta + q_D 2^{-\gamma} + \frac{c_2 (q_G + q_H) + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})
+\mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\perp}}(\mathcal{A}) \le 2 (q_G + q_H) \delta + q_D 2^{-\gamma} + \frac{2 (q_G + q_H) + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})
 $$
 
-for small absolute constants $c_1, c_2$ (a correctness term, a spreadness term, a guessing term and three times the IND-CPA advantage).
+(a correctness term, a spreadness term, a guessing term and three times the IND-CPA advantage).
 
 Asymptotically: if a word-level PKE family is efficient, IND-CPA secure, $\delta$-correct and $\gamma$-spread with $\delta$, $2^{-\gamma}$ and $1/|M|$ negligible, then $\mathrm{FO}^{\perp}$ is IND-CCA secure in the random oracle model against probabilistic polynomial-time adversaries.
 
@@ -30,4 +30,4 @@ Replace decapsulation by a keyless simulator that answers from the random-oracle
 
 ## Sources
 
-- Dennis Hofheinz, Kathrin Hövelmanns and Eike Kiltz, "A Modular Analysis of the Fujisaki–Okamoto Transformation", Theory of Cryptography (TCC 2017), 2017.
+- Dennis Hofheinz, Kathrin Hövelmanns and Eike Kiltz, "A Modular Analysis of the Fujisaki–Okamoto Transformation", Theory of Cryptography (TCC 2017), 2017, Section 3.3, with the corrected $\delta$ terms of the errata in Cryptology ePrint Archive, Paper 2017/604.

@@ -1,6 +1,6 @@
 # The adaptive clinching auction with public budgets
 
-With public budgets, the adaptive clinching auction raises a price clock and lets each bidder clinch units at the current price whenever the remaining supply exceeds the total demand of the other active bidders (demand at price $p$ being remaining budget over $p$ for active bidders). It is feasible, budget feasible, individually rational, Pareto optimal and DSIC with respect to values. For two bidders it has an explicit three-phase closed form involving logarithmic payments; misreporting budgets can be profitable, so it is not truthful when budgets are private.
+With public budgets, the adaptive clinching auction raises a price clock and lets each bidder clinch units at the current price whenever the remaining supply exceeds the total demand of the other active bidders (demand at price $p$ being remaining budget over $p$ for active bidders). It is feasible, budget feasible, individually rational, Pareto optimal and DSIC with respect to values. Misreporting budgets can be profitable, so it is not truthful when budgets are private.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Smoothness and price of anarchy of polynomial congestion games
 
-Let $d \ge 1$ and let $\varphi_d > 1$ be the unique root of $\varphi^{d+1} = (1 + \varphi)^d$. Every atomic congestion game whose resource latencies are polynomials $\ell_e(k) = \sum_{j=0}^d a_{e,j} k^j$ with nonnegative coefficients is $(\lambda_d, \mu_d)$-smooth for explicit $\lambda_d$ and $\mu_d < 1$ with $\lambda_d / (1 - \mu_d) = \varphi_d^{\,d+1}$. Consequently every pure Nash equilibrium, and in expectation every coarse correlated equilibrium, has social cost at most $\varphi_d^{\,d+1}$ times the cost of any profile, and in particular at most $(d+1)^{d+1}$ times it. For $d = 2$ the game is also smooth with an explicit quadratic pair giving a sharper constant.
+Let $d \ge 1$ and let $\varphi_d > 1$ be the unique root of $\varphi^{d+1} = (1 + \varphi)^d$. Every atomic congestion game whose resource latencies are polynomials $\ell_e(k) = \sum_{j=0}^d a_{e,j} k^j$ with nonnegative coefficients is $(\lambda_d, \mu_d)$-smooth for some $\lambda_d > 0$ and $\mu_d \in [0, 1)$ with $\lambda_d / (1 - \mu_d) = \varphi_d^{\,d+1}$. Consequently every pure Nash equilibrium, and in expectation every coarse correlated equilibrium, has social cost at most $\varphi_d^{\,d+1}$ times the cost of any profile, and in particular at most $(d+1)^{d+1}$ times it.
 
 ## Proof sketch
 

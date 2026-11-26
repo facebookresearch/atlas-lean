@@ -12,10 +12,6 @@ Two quorums of size $n - t$ intersect, so at most one value can be proposed in s
 - [Asynchronous message-passing systems](../../distributed-execution-models/asynchronous-message-passing-systems.md)
 - [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
-## Proof depends on
-
-- [FLP impossibility of asynchronous consensus with agreement, validity and termination](../../flp-impossibility/flp-impossibility.md)
-
 ## Sources
 
 - Michael Ben-Or, "Another Advantage of Free Choice (Extended Abstract): Completely Asynchronous Agreement Protocols", Proceedings of the Second Annual ACM Symposium on Principles of Distributed Computing (PODC '83), 1983.

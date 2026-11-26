@@ -17,4 +17,4 @@ If others bid $\beta$, a bidder with value $v$ bidding $b$ wins with probability
 
 ## Sources
 
-- Jason D. Hartline, "Mechanism Design and Approximation", Book manuscript, chapters 1–7 revised 20 September 2021, 2021.
+- Jason D. Hartline, "Mechanism Design and Approximation", Book manuscript, chapters 1–7 revised 20 September 2021.

@@ -1,6 +1,6 @@
 # GSW is bootstrappable and yields leveled FHE from LWE
 
-At the logarithmic-depth parameter family ($t = 1 + \lceil\log_2(\lambda+2)\rceil$, $w = 16384 t^2$, $L = 512 t$), GSW evaluates its own decryption circuit and its NAND-augmented decryption circuit within the depth budget, so it is bootstrappable for the identity and NAND gates; its secret keys, fresh ciphertexts and evaluation outputs have fixed widths, and evaluation of every permitted circuit is perfectly correct. Consequently, under decision LWE for this family, Gentry's bootstrapping construction instantiated with GSW is a leveled fully homomorphic encryption scheme that is correct, compact and IND-CPA secure, with an explicit concrete bound in terms of the LWE advantage and the statistical hiding error; under an additional circular-security assumption it is fully homomorphic.
+At the logarithmic-depth parameter family ($t = 1 + \lceil\log_2(\lambda+2)\rceil$, $w = 16384 t^2$, $L = 512 t$), GSW evaluates its own decryption circuit and its NAND-augmented decryption circuit within the depth budget, so it is bootstrappable for the identity and NAND gates; its secret keys, fresh ciphertexts and evaluation outputs have fixed widths, and evaluation of every permitted circuit is perfectly correct. Consequently, under decision LWE for this family, Gentry's bootstrapping construction instantiated with GSW is a leveled fully homomorphic encryption scheme that is correct, compact and IND-CPA secure; under an additional circular-security assumption it is fully homomorphic.
 
 ## Proof sketch
 

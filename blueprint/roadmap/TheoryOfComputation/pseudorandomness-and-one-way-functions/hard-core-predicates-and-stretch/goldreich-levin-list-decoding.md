@@ -1,10 +1,10 @@
 # Goldreich–Levin list decoding of the Hadamard code with oracle access
 
-There is a probabilistic oracle algorithm $\mathrm{GL}$ that, on input $n$ and $\varepsilon = 1/m$ (given in unary), runs in time polynomial in $n$ and $m$ and, for every oracle $B : \{0,1\}^n \to \{0,1\}$ (no efficiency assumption), outputs with probability at least $1/2$ a list $L$ of at most $O(n m^4)$ distinct strings such that every $x \in \{0,1\}^n$ with
+There is a probabilistic oracle algorithm $\mathrm{GL}$ that, on input $n$ and $\varepsilon = 1/m$ (given in unary), runs in time polynomial in $n$ and $m$ and, for every oracle $B : \{0,1\}^n \to \{0,1\}$ (no efficiency assumption), outputs with probability at least $1/2$ a list $L$ of at most $16 n m^4 + 2$ distinct strings such that every $x \in \{0,1\}^n$ with
 
 $$\Pr_{r \leftarrow \{0,1\}^n}\bigl[B(r) = \langle x, r \rangle\bigr] \ge \frac{1}{2} + \varepsilon$$
 
-belongs to $L$, simultaneously for all such $x$. One explicit choice of list bound is $16 n m^4 + 2$.
+belongs to $L$, simultaneously for all such $x$.
 
 ## Proof sketch
 

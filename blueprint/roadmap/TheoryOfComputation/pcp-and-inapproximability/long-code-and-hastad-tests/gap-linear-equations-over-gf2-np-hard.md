@@ -1,6 +1,6 @@
 # A constant-gap linear-equations problem over GF(2) is NP-hard
 
-There are constants $1/2 < s < c < 1$ such that it is NP-hard to distinguish systems of linear equations over $\mathbb{F}_2$ (equations counted with multiplicity) in which some assignment satisfies at least a $c$ fraction of the equations from those in which every assignment satisfies fewer than an $s$ fraction. One explicit pair of thresholds is $c = 4/7$ and $s = \frac{4}{7}\big(1 - \frac{1}{6 \cdot 2^{77}}\big)$, obtained elementarily from the NP-hardness of gap MAX-3SAT by replacing each clause with seven parity equations over subsets of its literals.
+There are constants $1/2 < s < c < 1$ such that it is NP-hard to distinguish systems of linear equations over $\mathbb{F}_2$ (equations counted with multiplicity) in which some assignment satisfies at least a $c$ fraction of the equations from those in which every assignment satisfies fewer than an $s$ fraction. One such pair of thresholds is $c = 4/7$ and $s = \frac{4}{7}\big(1 - \frac{1}{6 \cdot 2^{77}}\big)$, obtained elementarily from the NP-hardness of gap MAX-3SAT by replacing each clause with seven parity equations over subsets of its literals.
 
 ## Proof sketch
 

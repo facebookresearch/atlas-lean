@@ -4,7 +4,7 @@ For every $q \ge 2$, every $(q, \delta, \varepsilon)$-locally decodable code $C 
 
 $$n \ge c(q, \delta, \varepsilon, |\Gamma|) \cdot k^{q/(q-1)}$$
 
-with an explicit constant $c > 0$, for adaptive decoders as well (with a constant depending on $|\Gamma|^{q}$). For $q = 1$, the message length $k$ is bounded by a function of $\delta$, $\varepsilon$ and $\log|\Gamma|$ alone. The proof is information-theoretic and uses no linearity.
+for a constant $c(q, \delta, \varepsilon, |\Gamma|) > 0$ that depends only on $q$, $\delta$, $\varepsilon$ and $|\Gamma|$, for adaptive decoders as well (with a constant depending on $|\Gamma|^{q}$). For $q = 1$, the message length $k$ is bounded by a function of $\delta$, $\varepsilon$ and $\log|\Gamma|$ alone. The proof is information-theoretic and uses no linearity.
 
 ## Proof sketch
 

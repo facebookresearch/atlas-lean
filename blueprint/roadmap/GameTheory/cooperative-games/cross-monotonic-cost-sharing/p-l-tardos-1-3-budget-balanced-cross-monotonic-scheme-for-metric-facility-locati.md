@@ -1,6 +1,6 @@
 # Pál–Tardos 1/3-budget-balanced cross-monotonic scheme for metric facility location
 
-For every metric facility location game there is a cross-monotonic cost-sharing scheme that is $\tfrac13$-budget-balanced: all agents grow ghost shares uniformly, a facility becomes tight at the time $t$ with $\sum_j \max(0, t - d(i, j)) = f_i$, and an agent's share freezes once it reaches a tight facility within a constant factor; the opening time of a facility has the closed form $\min_{\emptyset \ne S} (f_i + \sum_{j \in S} d(i, j))/|S|$ over subsets of the coalition. Moulin's mechanism with this scheme is therefore group-strategyproof and recovers at least a third of the cost.
+For every metric facility location game there is a cross-monotonic cost-sharing scheme that is $\tfrac13$-budget-balanced: all agents grow ghost shares uniformly, a facility becomes tight at the time $t$ with $\sum_j \max(0, t - d(i, j)) = f_i$, and an agent's ghost share freezes once it reaches a tight facility, that is, at time $\min_i \max(t_i, d(i, j))$, where the opening time $t_i$ of facility $i$ is $\min_{\emptyset \ne S} (f_i + \sum_{j \in S} d(i, j))/|S|$ over subsets $S$ of the coalition. Moulin's mechanism with this scheme is therefore group-strategyproof and recovers at least a third of the cost.
 
 ## Proof sketch
 

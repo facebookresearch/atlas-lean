@@ -6,7 +6,7 @@ $$
 t \cdot \varepsilon_{\mathrm{PCP}}^{\,k} + \frac{t^2}{2^{\sigma}} + \frac{t \cdot c}{2^\sigma},
 $$
 
-up to small constants $c$ depending on the tree depth: either the query trace contains a collision or an inversion of the Merkle oracle, or the proof's root is consistent with one PCP table and each of the at most $t$ Fiat–Shamir queries yields PCP randomness accepting that table with probability at most $\varepsilon_{\mathrm{PCP}}^k$. The verifier runs in time polynomial in $|x|$ and $\sigma$ and makes a number of oracle queries polylogarithmic in the table length, even on arbitrary (unframed or oversized) proof strings.
+for a constant $c$ depending only on the depth of the Merkle tree: either the query trace contains a collision or an inversion of the Merkle oracle, or the proof's root is consistent with one PCP table and each of the at most $t$ Fiat–Shamir queries yields PCP randomness accepting that table with probability at most $\varepsilon_{\mathrm{PCP}}^k$. The verifier runs in time polynomial in $|x|$ and $\sigma$ and makes a number of oracle queries polylogarithmic in the table length, even on arbitrary (unframed or oversized) proof strings.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Mixed and totally mixed Nash equilibrium sets are semialgebraic
 
-Let $G$ be a finite game, viewed as a point set in $\mathbb{R}^{\sum_i |S_i|}$. The set of mixed Nash equilibria of $G$ equals the common nonnegativity set of finitely many explicit polynomials: $x_{i,a} \ge 0$, $\pm(\sum_a x_{i,a} - 1) \ge 0$ and $D_{i,a}(x) - E_i(x) \ge 0$ for all $i, a$. Hence it is a basic closed semialgebraic set. The set of totally mixed Nash equilibria is cut out by the strict inequalities $x_{i,a} > 0$ together with the polynomial equations $\sum_a x_{i,a} = 1$ and $D_{i,a}(x) = D_{i,b}(x)$, so it is semialgebraic.
+Let $G$ be a finite game, viewed as a point set in $\mathbb{R}^{\sum_i |S_i|}$. The set of mixed Nash equilibria of $G$ equals the common nonnegativity set of finitely many polynomials: $x_{i,a} \ge 0$, $\pm(\sum_a x_{i,a} - 1) \ge 0$ and $D_{i,a}(x) - E_i(x) \ge 0$ for all $i, a$. Hence it is a basic closed semialgebraic set. The set of totally mixed Nash equilibria is cut out by the strict inequalities $x_{i,a} > 0$ together with the polynomial equations $\sum_a x_{i,a} = 1$ and $D_{i,a}(x) = D_{i,b}(x)$, so it is semialgebraic.
 
 ## Proof sketch
 

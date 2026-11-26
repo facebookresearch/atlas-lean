@@ -14,4 +14,4 @@ The row with index $\Delta$ contributes to $v_j$ exactly when $\Delta_j = 1$, an
 
 - Carsten Baum et al., "FAEST v3: Algorithm Specifications", FAEST Team, 2026.
 - Carsten Baum et al., "Publicly Verifiable Zero-Knowledge and Post-Quantum Signatures from VOLE-in-the-Head", Advances in Cryptology – CRYPTO 2023, Part V, 2023.
-- Ryad Benadjila, Charles Bouillaguet, Thibauld Feneuil and Matthieu Rivain, "MQOM: MQ on my Mind: Algorithm Specifications and Supporting Documentation", Version 3.0, August 31, 2026, 2026.
+- Ryad Benadjila, Charles Bouillaguet, Thibauld Feneuil and Matthieu Rivain, "MQOM: MQ on my Mind: Algorithm Specifications and Supporting Documentation", Version 3.0, August 31, 2026.

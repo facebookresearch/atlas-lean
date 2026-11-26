@@ -11,10 +11,6 @@ With linear utilities, the optimum for a coalition gives each good to a member v
 - [Cooperative game with transferable utility](../shapley-value/coop-game.md)
 - [Core allocation](../bondareva-shapley-theorem/is-core-allocation.md)
 
-## Proof depends on
-
-- [Bondareva–Shapley theorem](../bondareva-shapley-theorem/bondareva-shapley.md)
-
 ## Sources
 
 - Kamal Jain and Mohammad Mahdian, "Cost Sharing", Algorithmic Game Theory, Cambridge University Press, 2007.

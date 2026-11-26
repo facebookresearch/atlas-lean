@@ -1,6 +1,6 @@
 # Integer perturbation of best response polytopes recovers exact rational equilibria
 
-Let $A, B$ be $m \times n$ integer matrices with entries in $[1, H]$, and let $K = 2^E$ for an explicit polynomial bit bound $E = E(m, n, H)$. The perturbed polytopes $P_\varepsilon = \{x \ge 0 : B^\top x \le K^n \mathbf 1 + (K^{n-1-j})_j\}$ and $Q_\varepsilon = \{y \ge 0 : A y \le K^m \mathbf 1 + (K^{m-1-i})_i\}$ are nondegenerate, and from every nonzero completely labelled vertex pair of $(P_\varepsilon, Q_\varepsilon)$ an exact rational Nash equilibrium of $(A, B)$ is computable by Cramer's rule, with numerators and denominators of bit length polynomial in $m$, $n$ and $\log H$.
+There is a polynomial $E(m, n, \log H)$ such that the following holds. Let $A, B$ be $m \times n$ integer matrices with entries in $[1, H]$, and let $K = 2^{E(m, n, \log H)}$. The perturbed polytopes $P_\varepsilon = \{x \ge 0 : B^\top x \le K^n \mathbf 1 + (K^{n-1-j})_j\}$ and $Q_\varepsilon = \{y \ge 0 : A y \le K^m \mathbf 1 + (K^{m-1-i})_i\}$ are nondegenerate, and from every nonzero completely labelled vertex pair of $(P_\varepsilon, Q_\varepsilon)$ an exact rational Nash equilibrium of $(A, B)$ is computable by Cramer's rule, with numerators and denominators of bit length polynomial in $m$, $n$ and $\log H$.
 
 ## Proof sketch
 

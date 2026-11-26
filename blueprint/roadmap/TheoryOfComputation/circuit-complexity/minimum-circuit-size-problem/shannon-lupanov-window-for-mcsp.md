@@ -1,6 +1,6 @@
 # The Shannon–Lupanov window for MCSP
 
-There is an absolute constant $c$ such that every Boolean function on $n$ inputs has a De Morgan circuit of size at most $c\, 2^n / n$ (Lupanov), so every truth table is a yes-instance of $\mathrm{MCSP}[s]$ once $s(n) \ge c\,2^n/n$; conversely, the number of functions with circuits of size at most $2^n/(c\, n)$ is at most $2^{2^n/2}$, so for thresholds below $2^n/(cn)$ almost every truth table is a no-instance. Thus the answer to MCSP on random truth tables changes only within a constant factor of $2^n/n$.
+There is an absolute constant $c$ such that every Boolean function on $n$ inputs has a De Morgan circuit of size at most $c\, 2^n / n$ (Lupanov), so every truth table is a yes-instance of $\mathrm{MCSP}[s]$ once $s(n) \ge c\,2^n/n$; conversely, the number of functions with circuits of size at most $2^n/(c\, n)$ is at most $2^{2^n/2}$, so for thresholds below $2^n/(cn)$ almost every truth table is a no-instance. Thus the answer to MCSP on random truth tables changes only for thresholds between $2^n/(c\,n)$ and $c\,2^n/n$.
 
 ## Proof sketch
 

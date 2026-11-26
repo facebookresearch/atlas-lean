@@ -1,6 +1,6 @@
 # Projected discrete tâtonnement computes approximate equilibria of WGS markets
 
-For an exchange market whose excess demand satisfies weak gross substitutability, after rescaling units and adding a phantom trader that regularizes demand on a bounded price box, the projected discrete tâtonnement process $p^{t+1}_g = \Pi\bigl(p^t_g (1 + \delta Z_g(p^t))\bigr)$, with a suitably small step $\delta$ and projection $\Pi$ onto the box, reaches a weak approximate equilibrium: a price vector at which every good's excess demand is at most an $\varepsilon$ fraction of supply, after a number of iterations bounded explicitly in terms of the market parameters and $1/\varepsilon$.
+For an exchange market whose excess demand satisfies weak gross substitutability, after rescaling units and adding a phantom trader that regularizes demand on a bounded price box, the projected discrete tâtonnement process $p^{t+1}_g = \Pi\bigl(p^t_g (1 + \delta Z_g(p^t))\bigr)$, with projection $\Pi$ onto the box and a step $\delta > 0$ depending on the market and $\varepsilon$, reaches a weak approximate equilibrium (a price vector at which every good's excess demand is at most an $\varepsilon$ fraction of supply) after a number of iterations polynomial in $1/\varepsilon$ and in the size of the market: the number of traders plus the number of goods plus the number of bits encoding the utility functions and initial endowments.
 
 ## Proof sketch
 

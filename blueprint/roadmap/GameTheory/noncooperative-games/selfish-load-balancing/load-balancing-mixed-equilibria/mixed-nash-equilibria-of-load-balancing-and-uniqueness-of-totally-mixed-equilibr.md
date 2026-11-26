@@ -1,6 +1,6 @@
 # Mixed Nash equilibria of load balancing and uniqueness of totally mixed equilibria
 
-In a load-balancing game on related machines, the expected cost to job $i$ of machine $j$ under the mixed profile $p$ is $\mathbb{E}[\ell_j] + (1 - p_i(j))\, w_i / s_j$, and $p$ is a mixed Nash equilibrium iff every machine in the support of $p_i$ minimizes this quantity. If all weights are positive and the number of jobs is not $1$, there is at most one totally mixed Nash equilibrium. For two unit jobs on two machines of speeds $1$ and $s$, a totally mixed equilibrium exists iff $1/2 < s < 2$, and it is given in closed form.
+In a load-balancing game on related machines, the expected cost to job $i$ of machine $j$ under the mixed profile $p$ is $\mathbb{E}[\ell_j] + (1 - p_i(j))\, w_i / s_j$, and $p$ is a mixed Nash equilibrium iff every machine in the support of $p_i$ minimizes this quantity. If all weights are positive and the number of jobs is not $1$, there is at most one totally mixed Nash equilibrium. For two unit jobs on two machines of speeds $1$ and $s$, a totally mixed equilibrium exists iff $1/2 < s < 2$, and then each job chooses the speed-$1$ machine with probability $(2 - s)/(1 + s)$.
 
 ## Proof sketch
 

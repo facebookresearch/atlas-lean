@@ -4,7 +4,7 @@ Let $E$ be a strong PRP on $2n$-bit blocks. The half-block cipher encrypts an $n
 
 ## Proof sketch
 
-Replace $E$ by a random permutation and then by the forgetful two-sided oracle. Encryption outputs are then fresh uniform blocks independent of the message unless a nonce collides, and decryptions of non-challenge ciphertexts are independent of the challenge bit.
+Replace $E$ by a random permutation and then, with a table that answers redundant queries so that the permutation oracle receives none, by the forgetful two-sided oracle. Encryption outputs are then fresh uniform blocks independent of the message unless a nonce collides, and decryptions of non-challenge ciphertexts are independent of the challenge bit.
 
 ## Depends on
 

@@ -4,8 +4,7 @@ Given a block cipher $E : K \times X \to X$ on a group $X$ (usually $\{0,1\}^n$ 
 
 ## Depends on
 
-- [Ideal cipher model](../../security-games/probabilistic-oracle-programs/ideal-cipher-model.md)
-- [Compression-function collision game](../merkle-damg-rd-construction/compression-collision-game.md)
+- [Block cipher (uniform family)](../../symmetric-key/block-ciphers-and-strong-prps/block-cipher.md)
 
 ## Sources
 

@@ -21,4 +21,4 @@ The expected virtual value of a single bidder is zero. The second-price auction 
 
 - Jeremy Bulow and Paul Klemperer, "Auctions Versus Negotiations", The American Economic Review, 1996.
 - Tim Roughgarden, "Twenty Lectures on Algorithmic Game Theory", Cambridge University Press, 2016.
-- Jason D. Hartline, "Mechanism Design and Approximation", Book manuscript, chapters 1–7 revised 20 September 2021, 2021.
+- Jason D. Hartline, "Mechanism Design and Approximation", Book manuscript, chapters 1–7 revised 20 September 2021.
