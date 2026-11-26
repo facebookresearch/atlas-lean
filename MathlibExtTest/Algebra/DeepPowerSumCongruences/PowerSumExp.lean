@@ -52,4 +52,44 @@ example : PowerSeries.coeff 4 (series Unit) = (1 / 8 : ℚ) • MvPolynomial.psu
   · intro h
     exact (h (by simp [twoTwos, degrees])).elim
 
+-- Degree zero uses the empty partition even when there are no variables.
+example : MvPolynomial.esymm (Fin 0) ℚ 0 = 1 := by
+  rw [esymm_eq_sum_partitions]
+  simp
+
+-- The two partitions of 2 give (p₁² - p₂) / 2, including the sign of (2).
+example (σ : Type*) [Fintype σ] :
+    MvPolynomial.esymm σ ℚ 2 =
+      (1 / 2 : ℚ) • MvPolynomial.psum σ ℚ 1 ^ 2 - (1 / 2 : ℚ) • MvPolynomial.psum σ ℚ 2 := by
+  let ones : (2 : ℕ).Partition := ⟨{1, 1}, by simp, by decide⟩
+  let two : (2 : ℕ).Partition := ⟨{2}, by simp, by decide⟩
+  have huniv : (Finset.univ : Finset (2 : ℕ).Partition) = {ones, two} := by
+    ext l
+    simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, true_iff]
+    by_cases h : 2 ∈ l.parts
+    · right
+      have hs := l.parts_sum
+      rw [← Multiset.cons_erase h, Multiset.sum_cons] at hs
+      have he : l.parts.erase 2 = 0 := by
+        apply Multiset.eq_zero_of_forall_notMem
+        intro a ha
+        have hpos := l.parts_pos (Multiset.mem_of_mem_erase ha)
+        have hle := Multiset.le_sum_of_mem ha
+        omega
+      apply Nat.Partition.ext
+      rw [← Multiset.cons_erase h, he]
+      rfl
+    · left
+      have hr := Multiset.eq_replicate_of_mem (s := l.parts) (a := 1) fun a ha ↦ by
+        have hpos := l.parts_pos ha
+        have hle := Nat.Partition.le_of_mem_parts ha
+        have hne : a ≠ 2 := fun e ↦ h (e ▸ ha)
+        omega
+      have hs := l.parts_sum
+      rw [hr, Multiset.sum_replicate, Nat.nsmul_eq_mul, mul_one] at hs
+      exact Nat.Partition.ext (by simpa [hs, ones] using hr)
+  have hne : ones ≠ two := by decide
+  rw [esymm_eq_sum_partitions, huniv, Finset.sum_insert (by simpa using hne), Finset.sum_singleton]
+  norm_num [ones, two, Multiset.count_cons, pow_two, sub_eq_add_neg, neg_smul]
+
 end MetaMathlibExt.PowerSumExpTest

@@ -13,6 +13,7 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 import Mathlib.Combinatorics.Enumerative.Partition.GenFun
+import Mathlib.RingTheory.PowerSeries.Log
 
 /-!
 # Exponential of restricted power sums
@@ -65,6 +66,14 @@ private theorem subst_exp_add {f g : PowerSeries A}
   simp only [MvPowerSeries.substAlgHom_apply] at h
   rw [hcomp hsum, hcomp (hx 0), hcomp (hx 1), MvPowerSeries.subst_add hinputs] at h
   simpa [x, inputs, MvPowerSeries.subst_X hinputs] using h
+
+private theorem subst_exp_sum {ι : Type*} (f : ι → PowerSeries A)
+    (hf : ∀ i, constantCoeff (f i) = 0) (s : Finset ι) :
+    (exp ℚ).subst (∑ i ∈ s, f i) = ∏ i ∈ s, (exp ℚ).subst (f i) := by
+  induction s using Finset.cons_induction with
+  | empty => simp [subst_zero_eq_C_constantCoeff]
+  | cons i s hi ih =>
+      rw [sum_cons, prod_cons, subst_exp_add (hf i) (by simp [hf]), ih]
 
 private theorem coeff_subst_exp_congr {f g : PowerSeries A} {n : ℕ}
     (hf : constantCoeff f = 0) (hg : constantCoeff g = 0)
@@ -129,15 +138,8 @@ private theorem subst_exp_eq_genFun [TopologicalSpace A] [T2Space A] (c : ℕ �
       Nat.Partition.genFun (fun i k ↦ (1 / (k.factorial : ℚ)) • c i ^ k) := by
   have hprod (s : Finset ℕ) :
       (exp ℚ).subst (∑ i ∈ s, monomial (i + 1) (c (i + 1))) =
-        ∏ i ∈ s, (exp ℚ).subst (monomial (i + 1) (c (i + 1))) := by
-    induction s using Finset.cons_induction with
-    | empty =>
-        rw [sum_empty, prod_empty, subst_zero_eq_C_constantCoeff]
-        simp
-    | cons i s hi ih =>
-        rw [sum_cons, prod_cons, subst_exp_add, ih]
-        · simp [← coeff_zero_eq_constantCoeff, coeff_monomial]
-        · simp [← coeff_zero_eq_constantCoeff, coeff_monomial]
+        ∏ i ∈ s, (exp ℚ).subst (monomial (i + 1) (c (i + 1))) :=
+    subst_exp_sum _ (fun i ↦ by simp [← coeff_zero_eq_constantCoeff, coeff_monomial]) s
   -- To compute coefficient n, every partial sum containing degrees 1 through n suffices.
   have h : HasProd (fun i : ℕ ↦ (exp ℚ).subst (monomial (i + 1) (c (i + 1))))
       ((exp ℚ).subst (PowerSeries.mk fun i ↦ if i = 0 then 0 else c i)) := by
@@ -226,5 +228,71 @@ public theorem exp_signedPowerSumSeries_eq_sum_partitions (σ : Type*) [Fintype 
     obtain ⟨a, ha, haS⟩ := hl
     refine prod_eq_zero (Multiset.mem_toFinset.mpr ha) ?_
     simp [c, haS, Multiset.count_ne_zero.mpr ha]
+
+private theorem subst_exp_rescale_log {A : Type*} [CommRing A] [Algebra ℚ A] (a : A) :
+    (exp ℚ).subst (rescale a (log A)) = 1 + C a * X := by
+  have hlog : (exp ℚ).subst (log A) = 1 + (X : PowerSeries A) := calc
+    _ = PowerSeries.subst (log A) ((exp ℚ).subst (X : PowerSeries A)) := by
+      rw [subst_comp_subst_apply HasSubst.X' HasSubst.log, subst_X HasSubst.log]
+    _ = _ := by rw [← map_algebraMap_eq_subst_X, map_exp, subst_exp_log]
+  calc
+    _ = rescale a ((exp ℚ).subst (log A)) := by
+      rw [rescale_eq_subst, rescale_eq_subst,
+        subst_comp_subst_apply HasSubst.log (HasSubst.smul_X' a)]
+    _ = _ := by rw [hlog, map_add, map_one, rescale_X]
+
+private theorem exp_signedPowerSumSeries_eq_prod (σ : Type*) [Fintype σ] :
+    (exp ℚ).subst (PowerSeries.mk fun n ↦ if n ≠ 0 then
+      ((-1 : ℚ) ^ (n - 1) / n) • MvPolynomial.psum σ ℚ n else 0) =
+        ∏ i : σ, (1 + C (MvPolynomial.X i : MvPolynomial σ ℚ) * X) := by
+  let L (i : σ) := rescale (MvPolynomial.X i) (log (MvPolynomial σ ℚ))
+  have hL (i : σ) : constantCoeff (L i) = 0 := by
+    simp [L, ← coeff_zero_eq_constantCoeff]
+  -- Coefficientwise, the signed power-sum series is the sum of the individual logarithms.
+  have hsum : (PowerSeries.mk fun n ↦ if n ≠ 0 then
+      ((-1 : ℚ) ^ (n - 1) / n) • MvPolynomial.psum σ ℚ n else 0) = ∑ i, L i := by
+    apply PowerSeries.ext
+    intro n
+    by_cases hn : n = 0
+    · simp [hn, map_sum, L]
+    have hsign : (-1 : ℚ) ^ (n + 1) = (-1 : ℚ) ^ (n - 1) := by
+      rw [show n + 1 = (n - 1) + 2 by omega, pow_add]
+      norm_num
+    simp only [coeff_mk, hn, ne_eq, not_false_eq_true, ↓reduceIte, map_sum, L, coeff_rescale,
+      coeff_log, hsign, MvPolynomial.psum]
+    rw [Finset.smul_sum]
+    refine sum_congr rfl fun i _ ↦ ?_
+    rw [Algebra.smul_def, mul_comm]
+  rw [hsum, exp_signedPowerSumSeries_eq_sum_partitions.subst_exp_sum L hL]
+  exact prod_congr rfl fun i _ ↦ subst_exp_rescale_log (MvPolynomial.X i)
+
+private theorem coeff_prod_one_add_X (σ : Type*) [Fintype σ] (n : ℕ) :
+    coeff n (∏ i : σ, (1 + C (MvPolynomial.X i : MvPolynomial σ ℚ) * X)) =
+      MvPolynomial.esymm σ ℚ n := by
+  rw [prod_one_add, map_sum, MvPolynomial.esymm, powersetCard_eq_filter, sum_filter]
+  refine sum_congr rfl fun s _ ↦ ?_
+  rw [prod_mul_distrib, ← map_prod, prod_const, coeff_C_mul_X_pow]
+  simp only [eq_comm (a := n)]
+
+/-- **Elementary symmetric polynomials in terms of power sums.** Let $\sigma$ be a finite set of
+variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_n$ be the $n$-th elementary symmetric
+polynomial and $p_k = \sum_{i \in \sigma} x_i^k$ the $k$-th power sum. For a partition $\lambda$
+of $n$ with parts $\lambda_1, \dots, \lambda_\ell$, write
+$p_\lambda = p_{\lambda_1} \cdots p_{\lambda_\ell}$, $\varepsilon_\lambda = (-1)^{n - \ell}$ and
+$z_\lambda = \prod_a a^{r_a} \, r_a!$, where $r_a$ is the number of parts equal to $a$ and the
+product runs over the distinct parts $a$. Then for every $n \ge 0$,
+$$e_n = \sum_{\lambda \vdash n} \frac{\varepsilon_\lambda}{z_\lambda} \, p_\lambda.$$
+
+Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
+Congruences*, INTEGERS 24 (2024), Article A46, Corollary 21 (`integers-2024-A46-cor-21`). -/
+public theorem esymm_eq_sum_partitions (σ : Type*) [Fintype σ] (n : ℕ) :
+    MvPolynomial.esymm σ ℚ n = ∑ l : n.Partition,
+      ((-1 : ℚ) ^ (n - Multiset.card l.parts) /
+        ((l.parts.toFinset.prod fun a => a ^ l.parts.count a * (l.parts.count a).factorial :
+          ℕ) : ℚ)) • (l.parts.map (MvPolynomial.psum σ ℚ)).prod := by
+  have h := congrArg (coeff (R := MvPolynomial σ ℚ) n)
+    (exp_signedPowerSumSeries_eq_sum_partitions σ Set.univ)
+  simpa only [Set.mem_univ, true_and, implies_true, filter_true, coeff_mk,
+    exp_signedPowerSumSeries_eq_prod, coeff_prod_one_add_X] using h
 
 end MetaMathlibExt
