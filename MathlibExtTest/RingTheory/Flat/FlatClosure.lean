@@ -23,8 +23,8 @@ example {R F G : Type*} [CommRing R] [Field F] [Algebra R F] [CommRing G]
     g ∈ flatClosure B ↔ (1 : F) ⊗ₜ[R] g ∈ B :=
   mem_flatClosure_iff
 
-/-! Concrete closures over `ℤ`. The generic fibre `K ⊗[ℤ] (ℤ × ℤ)` of `ℤ × ℤ` over a
-field `K` is read through its two coordinate evaluations to `K`. -/
+/-! Concrete closures over `ℤ`. The base change `K ⊗[ℤ] (ℤ × ℤ)` of `ℤ × ℤ` to a field `K`
+is read through its two coordinate evaluations to `K`; for `K = ℚ` it is the generic fibre. -/
 
 -- The `K`-algebra map `K ⊗[ℤ] (ℤ × ℤ) → K` induced by a coordinate `π`.
 private noncomputable def coordEval (K : Type) [Field K] (π : ℤ × ℤ →ₐ[ℤ] ℤ) :
@@ -36,8 +36,8 @@ private lemma coordEval_tmul {K : Type} [Field K] (π : ℤ × ℤ →ₐ[ℤ] �
     (g : ℤ × ℤ) : coordEval K π (q ⊗ₜ g) = q * π g := by
   simp [coordEval]
 
--- If `1 ⊗ g` is the constant `q` of the generic fibre, both coordinates of `g`
--- equal `q` in `K`.
+-- If `1 ⊗ g` is the constant `q` of the base change to `K`, both coordinates of
+-- `g` equal `q` in `K`.
 private lemma coords_eq_of_algebraMap_eq {K : Type} [Field K] {g : ℤ × ℤ} {q : K}
     (h : algebraMap K (K ⊗[ℤ] (ℤ × ℤ)) q = (1 : K) ⊗ₜ[ℤ] g) :
     (g.1 : K) = q ∧ (g.2 : K) = q := by
