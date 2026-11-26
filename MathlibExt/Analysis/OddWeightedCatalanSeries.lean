@@ -23,7 +23,18 @@ import Mathlib.Tactic.Ring
 # The odd-weighted Catalan series
 
 Expand each reciprocal difference in the digamma series into a sum of rising factorial ratios.
-Summing the resulting double series in the opposite order gives the Catalan coefficients.
+Summing the resulting double series in the opposite order gives the Catalan coefficients
+and proves summability on the half-plane where the expansion converges.
+
+## References
+
+* Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of Nörlund*,
+  INTEGERS 25 (2025), Article A18, pp. 1–12, Theorem 5, identity (11).
+  <https://math.colgate.edu/~integers/z18/z18.pdf>
+* Einar Hille, *On the Logarithmic Derivatives of the Gamma Function*,
+  Mathematisk-fysiske Meddelelser 8 (1927), no. 1, §2, p. 6, equation (22).
+  This is identity (2) in Adegoke and Frontczak; Hille cites N. E. Nörlund,
+  *Vorlesungen über Differenzenrechnung*, Springer (1924), p. 251.
 -/
 
 open Filter Finset Topology
@@ -283,5 +294,17 @@ public theorem tsum_odd_mul_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 1 / 2
   simp_rw [(hrow _).tsum_eq, (hcol _).tsum_eq] at hexchange
   simp_rw [catalan_term (by linarith : 0 < z.re)]
   rw [tsum_mul_left, hexchange, (gap_hasSum hz).tsum_eq]
+
+/-- The $(2n+1)$-weighted Catalan series with complex binomial denominators is summable
+for $\operatorname{Re} z > 1/2$. -/
+public theorem summable_odd_mul_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 1 / 2 < z.re) :
+    Summable fun n : ℕ ↦ (2 * (n : ℂ) + 1) * catalan n /
+      (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) := by
+  have hz₀ : 0 < z.re := by linarith
+  have hs := (summable_terms hz).prod_symm
+  have hcol (n : ℕ) := column_sum hz₀ n (hs.prod_factor n)
+  have h : Summable (fun n : ℕ ↦ ∑' k : ℕ, term (z + k) n) := hs.prod
+  simp_rw [(hcol _).tsum_eq] at h
+  simpa only [catalan_term hz₀] using h.mul_left (2 * z)
 
 end MetaMathlibExt

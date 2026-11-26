@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 import MathlibExt.Analysis.OddWeightedCatalanSeries
+import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Analysis.PSeries
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Tactic.FieldSimp
@@ -20,10 +21,21 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# A Catalan series in terms of the digamma function
+# Catalan series in terms of the digamma function
 
 We evaluate the Catalan series with a complex binomial denominator by telescoping
 its sum with a multiple of the odd-weighted series at the shifted parameter.
+Half the difference between the odd-weighted and unweighted sums gives the index-weighted series.
+
+## References
+
+* Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of Nörlund*,
+  INTEGERS 25 (2025), Article A18, pp. 1–12, Theorems 3 and 5 and Corollary 1
+  (identities (7), (11) and (12)). <https://math.colgate.edu/~integers/z18/z18.pdf>
+* Einar Hille, *On the Logarithmic Derivatives of the Gamma Function*,
+  Mathematisk-fysiske Meddelelser 8 (1927), no. 1, §2, p. 6, equation (22), citing
+  N. E. Nörlund, *Vorlesungen über Differenzenrechnung*, Springer (1924), p. 251.
+  This is the digamma identity (2) behind Theorems 3 and 5.
 -/
 
 open Filter Finset Topology
@@ -174,5 +186,41 @@ public theorem tsum_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 0 < z.re) :
   rw [hw, show coeff z 0 = 1 by simp [coeff, binom], sub_zero, mul_one] at hvalue
   have hz₀ : z ≠ 0 := by simpa using add_nat_ne hz 0
   linear_combination hvalue - 2 * mul_inv_cancel₀ hz₀
+
+/-- **Digamma evaluation of the $n$-weighted Catalan series with binomial denominators.** Let
+$C_n$ be the $n$-th Catalan number and $\psi$ the digamma function, and for complex $z$ write
+$\binom{n+z}{n} = \prod_{j=1}^{n} (z+j)/j$. For every complex number $z$ with
+$\operatorname{Re} z > 1/2$,
+$$\sum_{n=0}^{\infty} \frac{n\,C_n}{4^n \binom{n+z}{n}} =
+2z\,\psi(z) - z\bigl(\psi(z + \tfrac12) + \psi(z - \tfrac12)\bigr).$$
+
+Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
+Nörlund*, INTEGERS 25 (2025), Article A18, Corollary 1 (`integers-2025-A18-cor-1`). -/
+public theorem tsum_nat_mul_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 1 / 2 < z.re) :
+    ∑' n : ℕ, (n : ℂ) * catalan n / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) =
+      2 * z * Complex.digamma z -
+        z * (Complex.digamma (z + 1 / 2) + Complex.digamma (z - 1 / 2)) := by
+  have hz₀ : 0 < z.re := by linarith
+  let f (n : ℕ) : ℂ := catalan n / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j)
+  let g (n : ℕ) : ℂ := (2 * (n : ℂ) + 1) * catalan n / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j)
+  have hg : Summable g := summable_odd_mul_catalan_div_four_pow_mul_binom hz
+  have hf : Summable f := hg.norm.of_norm_bounded fun n ↦ by
+    have hweight : (2 * (n : ℂ) + 1) = ((2 * (n : ℝ) + 1 : ℝ) : ℂ) := by push_cast; rfl
+    dsimp only [g]
+    rw [mul_div_assoc, norm_mul, hweight, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+    exact le_mul_of_one_le_left (norm_nonneg _) (le_add_of_nonneg_left (by positivity))
+  calc
+    _ = ∑' n : ℕ, (1 / 2 : ℂ) * (g n - f n) := by
+      apply tsum_congr
+      intro n
+      dsimp [f, g]
+      ring
+    _ = (1 / 2 : ℂ) * ((∑' n : ℕ, g n) - ∑' n : ℕ, f n) := by
+      rw [tsum_mul_left, hg.tsum_sub hf]
+    _ = _ := by
+      dsimp only [g, f]
+      rw [tsum_odd_mul_catalan_div_four_pow_mul_binom hz,
+        tsum_catalan_div_four_pow_mul_binom hz₀]
+      ring
 
 end MetaMathlibExt
