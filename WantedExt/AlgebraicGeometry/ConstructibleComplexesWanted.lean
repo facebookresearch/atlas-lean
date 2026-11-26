@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel
+public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemKernel
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleScalarExtension
 
 /-!
@@ -19,7 +20,9 @@ public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleSc
 The requests use actual sheaves, kernels, algebraic stratifications
 and derived functors; the cokernel statement for local systems
 (`localSystem_cokernel`) is proved in
-`MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel`.
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel`,
+and the kernel statement for local systems (`localSystem_kernel`) is proved in
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemKernel`.
 The perverse t-structure is not requested here.
 The theorem `constructible_scalarExtension` is proved in
 `MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleScalarExtension`.
@@ -39,13 +42,6 @@ open MathlibExt.AlgebraicGeometry.PerverseSheaves
 open MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 attribute [local instance] HasDerivedCategory.standard
-
-/-- Kernels of morphisms of finite-rank local systems are finite-rank local systems. -/
-public theorem_wanted localSystem_kernel (k : Type) [Field k] (Z : TopCat.{0})
-    (F G : CoefficientSheaf k Z) (a : F ⟶ G)
-    (hF : ConstructibleComplexes.IsFiniteRankLocalSystem k Z F)
-    (hG : ConstructibleComplexes.IsFiniteRankLocalSystem k Z G) :
-    ConstructibleComplexes.IsFiniteRankLocalSystem k Z (kernel a)
 
 /-- Field extension preserves local triviality and finite rank. -/
 public theorem_wanted scalarExtension_localSystem (k l : Type) [Field k] [Field l]
