@@ -4,5 +4,6 @@ Recognition of languages by monoid morphisms, syntactic congruences and monoids,
 
 - [Syntactic monoid](syntactic-monoid/README.md)
 - [Transition monoids and regularity](transition-monoids-and-regularity/README.md)
+- [Varieties and algebraic characterizations](varieties-and-algebraic-characterizations/README.md)
 - [Inverse homomorphic images of regular languages](inverse-homomorphic-images-of-regular-languages/README.md)
 - [Language quotients and syntactic monoids](language-quotients-and-syntactic-monoids/README.md)

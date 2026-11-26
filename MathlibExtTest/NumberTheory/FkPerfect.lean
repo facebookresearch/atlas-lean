@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.FkPerfect
+import Mathlib.Tactic.NormNum
 
 /-! # Tests for `MathlibExt.NumberTheory.FkPerfect` -/
 
@@ -109,6 +110,23 @@ example : ¬ IsKLNearPerfect 2 3 5 :=
 example (k p : ℕ) (hp : p.Prime) : IsKLNearPerfect k 0 p := by
   refine ⟨1, one_dvd p, hp.one_lt, ?_⟩
   simp only [hp.sum_divisors, one_pow, zero_mul, add_zero]
+
+-- `18` is `[1, 1]`-near-perfect, and twice a power of `5` is never `[1, ℓ]`-near-perfect.
+example : IsKLNearPerfect 1 1 18 :=
+  (isKLNearPerfect_one_two_mul_prime_pow 3 2 1 (by decide) (by decide) (by decide)).1
+
+example (a l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect 1 l (2 * 5 ^ a) := by
+  intro h
+  have heq :=
+    (isKLNearPerfect_one_two_mul_prime_pow 5 a l (by decide) (by decide) hl).2 h
+  have hpow : (5 : ℕ) ^ a = 9 := by omega
+  cases a with
+  | zero => norm_num at hpow
+  | succ a =>
+    have hdiv : 5 ∣ (9 : ℕ) := by
+      rw [← hpow]
+      exact dvd_pow_self 5 (by omega)
+    norm_num at hdiv
 
 -- `3 * 5` is not near `F₂`-perfect: both exponents are odd.
 example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFkPerfect 2 (3 * 5) := by
