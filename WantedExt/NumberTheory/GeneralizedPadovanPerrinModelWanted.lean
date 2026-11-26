@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
 public import MathlibExt.NumberTheory.PadovanPerrinShiftWindow
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModelKPadovanPerrinEqSumRho
 
 namespace MetaMathlibExt
 
@@ -28,26 +29,6 @@ open Polynomial
 section Model
 
 variable {R : Type*}
-
-/-- **Padovan–Perrin coefficients.** Let $R$ be a commutative semiring, let $k_1, k_2 \in R$ and
-let $p, s, n$ be natural numbers. The coefficient $\rho(n, s + p)$ attached to $k_1, k_2, p, s$ is
-$0$ when $n < s + p$; when $n \ge s + p$ it is the sum of $\binom{a + b}{a} k_1^a k_2^b$ over all
-pairs of natural numbers $a, b \le n$ with $s a + (s + p) b = n - (s + p)$. For $s > 0$ the bounds
-$a, b \le n$ hold automatically.
-
-For $s > 0$ this is the coefficient $\rho(n, r)$, $r = s + p$, of the paper's general formula (12)
-for the recurrence $v_n = k_1 v_{n-s} + k_2 v_{n-s-p}$. The paper's Proposition 4 prints the
-constraint as $s a + (s + p) b = n - (s + p - 1)$, which contradicts its own normalization
-$\rho(s + p, s + p) = 1$ for $s \ge 2$; the constraint used here is the one of formula (12).
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, equation (12) and Proposition 4. -/
-def padovanPerrinRho [CommSemiring R] (k₁ k₂ : R) (p s n : ℕ) : R :=
-  if n < s + p then 0 else
-    ∑ ab ∈ (Finset.range (n + 1) ×ˢ Finset.range (n + 1)).filter
-        (fun ab => s * ab.1 + (s + p) * ab.2 = n - (s + p)),
-      (Nat.choose (ab.1 + ab.2) ab.1 : R) * k₁ ^ ab.1 * k₂ ^ ab.2
 
 /-- **The Padovan–Perrin coefficients vanish below the order.** Let $R$ be a commutative
 semiring, let $k_1, k_2 \in R$ and let $p, s, n$ be natural numbers with $n < s + p$. Then the
@@ -387,27 +368,6 @@ public theorem_wanted padovanPerrin_eq_sum_roots (k₁ k₂ p s : ℕ) (hk₁ : 
         ((X ^ (s + p) - C (k₁ : ℂ) * X ^ p - C (k₂ : ℂ)).roots.map fun x =>
           x ^ (n - 1 - m) /
             (derivative (X ^ (s + p) - C (k₁ : ℂ) * X ^ p - C (k₂ : ℂ))).eval x).sum
-
-/-- **Combinatorial formula for the $k$-Padovan–Perrin numbers.** Let $R$ be a commutative ring,
-let $k \in R$, and let $v \colon \mathbb{N} \to R$ satisfy $v(n + 3) = v(n + 1) + k\,v(n)$ for
-every $n$, that is, $v$ solves the Padovan–Perrin recurrence with $k_1 = 1$, $k_2 = k$, $p = 1$,
-$s = 2$. Let $\rho(m) = \rho(m, 3)$ be the Padovan–Perrin coefficient for these parameters:
-$\rho(m) = 0$ for $m < 3$, and for $m \ge 3$ it is the sum of $\binom{a+b}{a} k^b$ over all
-$a, b \ge 0$ with $2a + 3b = m - 3$. Then for every $n \ge 3$,
-$$v(n) = \rho(n)\,(k\,v(0) + v(1)) + (k\,v(1) + v(2))\,\rho(n - 1) + k\,v(2)\,\rho(n - 2).$$
-
-The paper prints the middle coefficient as $k\,v(1)$; the coefficient $k\,v(1) + v(2)$ is the one
-its Theorem 3 gives, and the printed form fails for $k = 2$, $(v(0), v(1), v(2)) = (0, 0, 1)$,
-$n = 4$, where $v(4) = 1$ but the printed right side is $0$. The paper takes $k \ge 2$ an integer.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 8 (`integers-2024-A49-prop-8`). -/
-public theorem_wanted kPadovanPerrin_eq_sum_rho [CommRing R] (k : R) (v : ℕ → R)
-    (hv : (padovanPerrinRecurrence 1 k 1 2).IsSolution v) (n : ℕ) (hn : 3 ≤ n) :
-    v n = padovanPerrinRho 1 k 1 2 n * (k * v 0 + v 1) +
-      (k * v 1 + v 2) * padovanPerrinRho 1 k 1 2 (n - 1) +
-        k * v 2 * padovanPerrinRho 1 k 1 2 (n - 2)
 
 /-- **Fundamental $k$-Padovan–Perrin solutions as coefficients $\rho$.** Let $R$ be a commutative
 ring and $k \in R$, and take the Padovan–Perrin recurrence with $k_1 = 1$, $k_2 = k$, $p = 1$,

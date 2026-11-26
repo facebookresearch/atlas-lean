@@ -13051,6 +13051,7 @@
   "MathlibExt/NumberTheory/GeneralizedPadovanPerrinCompanion": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/GeneralizedPadovanPerrinExpansion": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/GeneralizedPadovanPerrinModel": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
+  "MathlibExt/NumberTheory/GeneralizedPadovanPerrinModelKPadovanPerrinEqSumRho": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/GeneralizedSecondMarkovVieta": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedSylvester": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sylvester's sequence"},
   "MathlibExt/NumberTheory/GeneralizedTau": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},
