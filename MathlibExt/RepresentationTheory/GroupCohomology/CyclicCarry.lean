@@ -34,10 +34,13 @@ public import Mathlib.RepresentationTheory.Rep.Basic
 # Cyclic carry data for group cohomology
 
 For an element `s` of finite order generating its group, `cyclicLog`
-records the discrete logarithm of an element to the base `s`, `carryFun`
-is the associated carry cochain with value `a`, and `cyclicInv` sums a
+records the discrete logarithm of an element to the base `s`, and `carryFun`
+is the associated carry cochain with value `a`. `cyclicInv` sums a
 two-variable function over the pairs `(s ^ i, s)` with `i < orderOf s`:
 the first variable ranges over the powers of `s`, the second is fixed at `s`.
+It needs neither hypothesis on `s` and is a plain sum of an arbitrary function,
+so it does not by itself produce an element fixed by the group; when `s` has
+infinite order, `orderOf s = 0` and the sum is empty.
 -/
 
 @[expose] public section
@@ -103,13 +106,17 @@ public theorem carryFun_of_le (s : G) (hs : ∀ g : G, g ∈ Subgroup.zpowers s)
     carryFun s hs hfin a p = a :=
   ite_eq_left h
 
-/-- The cyclic invariant sum: sum a two-variable function over the pairs
-`(s ^ i, s)` with `i < orderOf s`, so the first variable ranges over the
-powers of `s` and the second is fixed at `s`. -/
+/-- The cyclic sum of a two-variable function `c`: the sum of `c (s ^ i, s)`
+over `i < orderOf s`, so the first variable ranges over the powers of `s` and
+the second is fixed at `s`. The definition is a plain sum: it takes no
+hypothesis on `s` or `c` and does not assert that the result is fixed by `G`.
+When `s` does not generate `G`, the first variable still ranges only over the
+powers of `s`; when `s` has infinite order, `orderOf s = 0`, the sum is empty
+and the value is `0`. -/
 public noncomputable def cyclicInv (s : G) {A : Rep ℤ G} (c : G × G → A) : A :=
   ∑ i ∈ Finset.range (orderOf s), c (s ^ i, s)
 
-/-- The cyclic invariant sum unfolds to its defining finite sum. -/
+/-- The cyclic sum unfolds to its defining finite sum. -/
 public theorem cyclicInv_apply (s : G) {A : Rep ℤ G} (c : G × G → A) :
     cyclicInv s c = ∑ i ∈ Finset.range (orderOf s), c (s ^ i, s) :=
   rfl
