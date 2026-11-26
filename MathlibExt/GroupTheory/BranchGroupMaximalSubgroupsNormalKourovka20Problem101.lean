@@ -22,7 +22,7 @@ a finitely generated branch group. Are all finite-index maximal subgroups of `G`
 
 We construct a branch group on the five-letter tree whose action on the first level is the
 alternating group. The inverse image of a point stabilizer is a non-normal maximal subgroup
-of index five.
+of finite index.
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.101 (A. Thillaisundaram). UnsolvedMath
@@ -360,9 +360,8 @@ private theorem pointStabilizer_not_normal :
 
 /--
 **A finitely generated branch group with a non-normal maximal subgroup of finite index.**
-The finitely generated branch group constructed on the five-letter rooted tree acts on the first
-level as the alternating group $A_5$. The preimage of a point stabilizer is a non-normal maximal
-subgroup of index five, giving a negative answer to Kourovka Problem 20.101.
+Some finitely generated branch group has a maximal subgroup of finite index that is not normal.
+This gives a negative answer to Kourovka Problem 20.101.
 
 Garciarena and Petschick give a different example on the 21-letter tree. Their group has a
 non-normal maximal subgroup and satisfies the stronger condition that every maximal subgroup has

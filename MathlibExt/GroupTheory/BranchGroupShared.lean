@@ -6,17 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Portions of this file are adapted from:
-
-`WantedExt/GroupTheory/BranchGroupShared.lean` (ATLAS), for the rooted tree, group action and
-rigid stabilizer definitions originally shared with the OpenConjectures entry
-`OpenConjectures.GroupTheory.BranchGroupsBoundedlyAcyclic`.
-Copyright (c) Meta Platforms, Inc. and affiliates.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The source credits no individual authors.
--/
-
 module
 
 public import Mathlib.GroupTheory.Index
