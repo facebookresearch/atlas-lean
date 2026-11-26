@@ -8,3 +8,7 @@ real function `g` and `x`, `x*` two treatment values. Assume H1-H4 with no covar
 implies `P(X = x, Z = z) > 0`. Then
 
 `NDE(x, x*; Y) = ∑_z [E(g(Y) | X = x, Z = z) - E(g(Y) | X = x*, Z = z)] P(Z = z | X = x*)`.
+
+Under these positivity conditions, every term with a nonzero factor `P(Z = z | X = x*)` conditions
+only on events of positive probability, so the formula's convention for events of weight `0` does
+not enter.

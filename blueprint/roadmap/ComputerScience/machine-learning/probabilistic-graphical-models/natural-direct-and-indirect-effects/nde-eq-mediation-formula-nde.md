@@ -17,7 +17,10 @@ and positivity on the support: `P(W = w) > 0` implies `P(X = x*, W = w) > 0`, an
 
 `NDE(x, x*; Y) = ∑_{w,z} [E(g(Y) | x, z, w) - E(g(Y) | x*, z, w)] P(z | x*, w) P(w)`.
 
-No premise that `W` is unaffected by the treatment is needed. Neither source states positivity, and
-the formula fails without it: a deterministic model whose treatment never takes the value `x`
-satisfies H1-H4 and the first positivity condition, yet its NDE is `1` while the formula, which
-reads a conditional mean given an event of probability zero as `0`, is `0`.
+Under these positivity conditions, every term with a nonzero factor `P(z | x*, w) P(w)` conditions
+only on events of positive probability, so the formula's convention for events of weight `0` does
+not enter. No premise that `W` is unaffected by the treatment is needed. Neither source states
+positivity, and the formula fails without it: a deterministic model whose treatment never takes the
+value `x` satisfies H1-H4 and the first positivity condition, yet its NDE is `1` while the formula
+is `0`, since the event `X = x, Z = z` has probability zero and the weighted mean over it is `0` by
+convention.

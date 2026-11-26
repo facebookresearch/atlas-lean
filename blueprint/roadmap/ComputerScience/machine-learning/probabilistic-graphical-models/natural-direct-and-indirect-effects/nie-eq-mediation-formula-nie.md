@@ -17,4 +17,7 @@ and positivity on the support: `P(W = w) > 0` implies `P(X = x, W = w) > 0` and
 
 `NIE(x, x*; Y) = ∑_{w,z} E(g(Y) | x*, z, w) [P(z | x, w) - P(z | x*, w)] P(w)`.
 
-No premise that `W` is unaffected by the treatment is needed.
+Under these positivity conditions, every term with a nonzero factor
+`[P(z | x, w) - P(z | x*, w)] P(w)` conditions only on events of positive probability, so the
+formula's convention for events of weight `0` does not enter. No premise that `W` is unaffected by
+the treatment is needed.

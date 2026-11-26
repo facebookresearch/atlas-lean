@@ -41,8 +41,8 @@ identification of causal mediation*, Psychological Methods, 2014 (technical repo
 
 ## Identification
 
-- [Probability of an event under a weight](law-prob.md)
-- [Conditional mean under a weight](law-mean.md)
+- [Weight of an event](law-prob.md)
+- [Weighted mean over an event](law-mean.md)
 - [The mediation formula for the NDE](mediation-formula-nde.md)
 - [The mediation formula for the NIE](mediation-formula-nie.md)
 - [Events of the induced law are events of the noise](law-prob-induced-law.md)
@@ -78,3 +78,4 @@ identification of causal mediation*, Psychological Methods, 2014 (technical repo
 
 - [Structural causal models and counterfactuals](../structural-causal-models-and-counterfactuals/README.md): the models, interventions and counterfactuals used here.
 - [The back-door adjustment](../causal-bayesian-networks/backdoor-adjustment.md): adjustment for the effect of an intervention, which the mediation formula extends to natural effects.
+- [Potential outcomes and causal identification](../../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md): the potential-outcome framework, which takes the counterfactual outcomes as primitive.

@@ -8,3 +8,7 @@ mediator value `z`, `Y_{x*z} ⫫ X` and `Y_{x*z} ⫫ Z | X`, and for `x'` in `{x
 implies `P(X = x*, Z = z) > 0`. Then
 
 `NIE(x, x*; Y) = ∑_z E(g(Y) | X = x*, Z = z) [P(Z = z | X = x) - P(Z = z | X = x*)]`.
+
+Under these positivity conditions, every term with a nonzero factor
+`P(Z = z | X = x) - P(Z = z | X = x*)` conditions only on events of positive probability, so the
+formula's convention for events of weight `0` does not enter.

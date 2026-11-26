@@ -7,5 +7,5 @@ values. If the cross-world independence `Y_{x'z} ⫫ Z_{x*} | W` holds under the
 
 `NDE(x, x*; Y) = ∑_{w,z} [E(g(Y_{xz}) | w) - E(g(Y_{x*z}) | w)] P(Z_{x*} = z | w) P(w)`,
 
-where `| w` conditions on the factual covariates `W = w`, and a conditional mean or probability
-given an event of probability zero is read as `0`.
+where `| w` conditions on the factual covariates `W = w`. The terms with `P(w) = 0` vanish, and in
+the others the conditioning event `W = w` has positive probability.

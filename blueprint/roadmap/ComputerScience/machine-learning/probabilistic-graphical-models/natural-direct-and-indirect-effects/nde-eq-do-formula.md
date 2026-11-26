@@ -13,3 +13,5 @@ in `{x, x*}` and every mediator value `z` (P01, eq. (7)). Then
 where `E(g(Y) | do(x, z), w)` is the mean given `W = w` under the law of `do(X = x, Z = z)`,
 `P(Z = z | do(x*), w)` the probability given `W = w` under the law of `do(X = x*)`, and `P(w)` the
 observational probability of `W = w`: every factor is an interventional or the observational law.
+The terms with `P(w) = 0` vanish; in the others every conditioning event has positive probability,
+since interventions on the treatment and the mediator leave the law of `W` unchanged.

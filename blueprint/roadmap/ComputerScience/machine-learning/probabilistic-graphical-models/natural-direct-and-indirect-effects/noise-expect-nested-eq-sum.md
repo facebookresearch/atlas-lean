@@ -7,5 +7,5 @@ cross-world independence `Y_{xz} ⫫ Z_{x'} | W` holds under the noise law for e
 
 `E(g(Y_{x, Z_{x'}})) = ∑_{w,z} E(g(Y_{xz}) | w) P(Z_{x'} = z | w) P(w)`,
 
-where `| w` conditions on `W = w`, and a conditional mean or probability given an event of
-probability zero is read as `0`. No positivity is needed.
+where `| w` conditions on `W = w`. The terms with `P(w) = 0` vanish, and in the others the
+conditioning event `W = w` has positive probability. No positivity is needed.

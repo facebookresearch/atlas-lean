@@ -13,4 +13,7 @@ implies `P(X = x, Z = z, W = w) > 0`. Then
 
 `NDE(x, x*; Y) = ∑_{w,z} [E(g(Y) | x, z, w) - E(g(Y) | x*, z, w)] P(z | x*, w) P(w)`.
 
-The conclusion follows from H1-H4 and positivity alone; A-1 completes the published hypothesis set.
+Under these positivity conditions, every term with a nonzero factor `P(z | x*, w) P(w)` conditions
+only on events of positive probability, so the formula's convention for events of weight `0` does
+not enter. The conclusion follows from H1-H4 and positivity alone; A-1 completes the published
+hypothesis set.

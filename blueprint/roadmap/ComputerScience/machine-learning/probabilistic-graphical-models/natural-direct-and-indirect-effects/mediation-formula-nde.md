@@ -1,6 +1,14 @@
 # The mediation formula for the NDE
 
-**The mediation formula for the NDE**, a functional of the law `P` alone: P14, eq. (14a)
-(`∑_{w,z} [E(Y | x, z, w) - E(Y | x*, z, w)] P(z | x*, w) P(w)`); with `W = ∅` it is P01, eq. (17),
-and P14, eq. (16). Here `E(Y | x, z, w)` is the mean of `g(Y)` given `X = x`, `Z = z` and `W = w`
-under `P`, and a conditional mean or probability given an event of probability zero is read as `0`.
+**The mediation formula for the NDE**, a function of a real weight `P` on full assignments alone.
+For a treatment node `X`, a mediator node `Z`, an outcome node `Y` read through a real function `g`,
+a set `W` of nodes and values `x`, `x*`, it is
+
+`∑_{w,z} [m(x, z, w) - m(x*, z, w)] (P(x*, z, w) / P(x*, w)) P(w)`,
+
+where `P(x*, z, w)`, `P(x*, w)` and `P(w)` are the weights of the events `X = x*, Z = z, W = w`,
+`X = x*, W = w` and `W = w`, `m(x, z, w)` is the weighted mean of `g(Y)` over the event
+`X = x, Z = z, W = w`, and a ratio whose denominator is `0` is `0`. When `P` is a probability law,
+the ratios over events of positive probability are the conditional means and probabilities of P14,
+eq. (14a), `∑_{w,z} [E(Y | x, z, w) - E(Y | x*, z, w)] P(z | x*, w) P(w)`; with `W = ∅` it is P01,
+eq. (17), and P14, eq. (16).

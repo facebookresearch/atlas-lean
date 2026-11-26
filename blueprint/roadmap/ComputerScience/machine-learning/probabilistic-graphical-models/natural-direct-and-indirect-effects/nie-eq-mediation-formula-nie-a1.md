@@ -14,5 +14,7 @@ values) and `Y_{x*z} ⫫ Z_{x'} | W` (the cross-world condition at both values),
 
 `NIE(x, x*; Y) = ∑_{w,z} E(g(Y) | x*, z, w) [P(z | x, w) - P(z | x*, w)] P(w)`.
 
-The conclusion follows from the independences and positivity alone; A-1 completes the published
-hypothesis set.
+Under these positivity conditions, every term with a nonzero factor
+`[P(z | x, w) - P(z | x*, w)] P(w)` conditions only on events of positive probability, so the
+formula's convention for events of weight `0` does not enter. The conclusion follows from the
+independences and positivity alone; A-1 completes the published hypothesis set.
