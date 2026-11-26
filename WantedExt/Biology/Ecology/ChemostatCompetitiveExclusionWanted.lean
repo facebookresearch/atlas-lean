@@ -13,21 +13,32 @@ Species `i` with maximal growth rate `mᵢ`, half-saturation constant `aᵢ` and
 for one substrate in a chemostat with input concentration `S⁰` and dilution rate `D`, common to
 the substrate and every species: `S' = (S⁰ - S) D - ∑ᵢ (1/yᵢ) mᵢ xᵢ S / (aᵢ + S)` and
 `xᵢ' = xᵢ (mᵢ S / (aᵢ + S) - D)`. With `bᵢ = mᵢ / D` and the break-even concentration
-`λᵢ = aᵢ / (bᵢ - 1)` for `bᵢ > 1`, Hsu, Hubbell and Waltman (1977) proved: if one species `i₀`
-has `b_{i₀} > 1` and `λ_{i₀} < S⁰`, and every other species has either `bⱼ ≤ 1` or
-`λ_{i₀} < λⱼ` (hypothesis H1), then from positive initial data `S → λ_{i₀}`,
+`λᵢ = aᵢ / (bᵢ - 1)` for `bᵢ > 1`, Hsu, Hubbell and Waltman (1977, Theorem 3.3) proved: if every
+species has `bᵢ > 1`, one species `i₀` has the strictly smallest break-even concentration and
+`λ_{i₀} < S⁰` (their hypothesis (Hₙ)), then from positive initial data `S → λ_{i₀}`,
 `x_{i₀} → y_{i₀} (S⁰ - λ_{i₀})` and every other species dies out. Independently of the
-competition, a species with `bⱼ ≤ 1` or `λⱼ ≥ S⁰` dies out (their Theorems 3.2 and 3.4).
+competition, a species with `bⱼ ≤ 1` or `λⱼ > S⁰` dies out (their Theorem 3.2), and when the
+smallest break-even concentration equals `S⁰` every species dies out (their Theorem 3.4).
+Rapaport and Veruete (2017) reprove the exclusion theorem for increasing growth rates, setting
+`λⱼ = ∞` for a species whose growth rate never reaches `D` (their Definition 1); their
+Proposition 1 assumes distinct break-even concentrations, and their §3.5 extends it to ties
+among the losing species.
 
-Recorded here: the exclusion theorem and the die-out theorem. The die-out statement uses the
-form `λⱼ ≥ S⁰` of Rapaport (2017, Lemma 1(2)), which covers both Theorem 3.2 (`λⱼ > S⁰`) and
-Theorem 3.4 (`λ₁ = S⁰` with `λ₁` the smallest). Theorem 3.5 (equal break-even concentrations)
-is not formalized.
+Recorded here: the exclusion theorem in the generality of Rapaport and Veruete's Proposition 1
+with §3.5 (losing species may have `bⱼ ≤ 1`, and losing species may share a break-even
+concentration), and the die-out theorem. The die-out statement uses the form `λⱼ ≥ S⁰` of
+Rapaport and Veruete's Lemma 1(2), which covers both Theorem 3.2 (`λⱼ > S⁰`) and Theorem 3.4
+(`λ₁ = S⁰` with `λ₁` the smallest). Their Lemma 1 is stated under the assumption of distinct
+break-even concentrations, but the comparison argument that proves part (2) does not use it, so
+the die-out statement does not assume it. Theorem 3.5 (equal break-even concentrations) is not
+formalized.
 
 Sources: S. B. Hsu, S. Hubbell and P. Waltman, "A mathematical theory for single-nutrient
 competition in continuous cultures of micro-organisms", SIAM J. Appl. Math. 32 (1977) 366–383,
-doi:10.1137/0132030, Theorems 3.1, 3.2, 3.4; A. Rapaport, "A new proof of the competitive
-exclusion principle in the chemostat", arXiv:1711.06928 (2017), Lemma 1 and Proposition 1.
+doi:10.1137/0132030, Theorems 3.2, 3.3 and 3.4; A. Rapaport and M. Veruete, "A new proof of the
+competitive exclusion principle in the chemostat", arXiv:1711.06928 (2017), Definition 1,
+Lemma 1, Proposition 1 and §3.5 (numbering of the preprint), published in Discrete Contin. Dyn.
+Syst. Ser. B 24 (2019) 3755–3764, doi:10.3934/dcdsb.2018314.
 -/
 module
 
@@ -57,14 +68,19 @@ def IsSolution {ι : Type*} [Fintype ι] (S₀ D : ℝ) (m a y : ι → ℝ) (S 
     HasDerivAt S ((S₀ - S t) * D - ∑ i, 1 / y i * m i * x t i * S t / (a i + S t)) t ∧
       ∀ i, HasDerivAt (fun s => x s i) (x t i * (m i * S t / (a i + S t) - D)) t
 
-/-- **Competitive exclusion** (Hsu, Hubbell and Waltman 1977, Theorem 3.1): let `S⁰ > 0`,
-`D > 0`, and for every species `i` let `mᵢ, aᵢ, yᵢ > 0`. Suppose species `i₀` has `m_{i₀} > D`
-and break-even concentration `λ_{i₀} < S⁰`, and every other species `j ≠ i₀` has `mⱼ ≤ D` or
-(`mⱼ > D` and `λ_{i₀} < λⱼ`). Then every solution `(S, x)` of the chemostat on `[0, ∞)` with
-`S(0) ≥ 0` and `xᵢ(0) > 0` for every species `i` satisfies, as `t → ∞`, `S(t) → λ_{i₀}`,
-`x_{i₀}(t) → y_{i₀} (S⁰ - λ_{i₀})`, and `xⱼ(t) → 0` for every `j ≠ i₀`.
+/-- **Competitive exclusion** (Hsu, Hubbell and Waltman 1977, Theorem 3.3; Rapaport and Veruete
+2017, Proposition 1 and §3.5): let `S⁰ > 0`, `D > 0`, and for every species `i` let
+`mᵢ, aᵢ, yᵢ > 0`. Suppose species `i₀` has `m_{i₀} > D` and break-even concentration
+`λ_{i₀} < S⁰`, and every other species `j ≠ i₀` has `mⱼ ≤ D` or (`mⱼ > D` and `λ_{i₀} < λⱼ`).
+Then every solution `(S, x)` of the chemostat on `[0, ∞)` with `S(0) ≥ 0` and `xᵢ(0) > 0` for
+every species `i` satisfies, as `t → ∞`, `S(t) → λ_{i₀}`, `x_{i₀}(t) → y_{i₀} (S⁰ - λ_{i₀})`,
+and `xⱼ(t) → 0` for every `j ≠ i₀`. Hsu, Hubbell and Waltman's Theorem 3.3 assumes in addition
+that every `mᵢ > D`, and Rapaport and Veruete's Proposition 1 that the break-even concentrations
+are distinct; their §3.5 extends it to ties among the losing species, which the hypotheses here
+allow, and a species with `mⱼ ≤ D` has break-even concentration `∞` in their Definition 1.
 
-Sources: Hsu, Hubbell and Waltman (1977), Theorem 3.1; Rapaport (2017), Proposition 1. -/
+Sources: Hsu, Hubbell and Waltman (1977), Theorem 3.3; Rapaport and Veruete (2017),
+Definition 1, Proposition 1 and §3.5. -/
 public theorem_wanted competitive_exclusion {ι : Type*} [Fintype ι] [DecidableEq ι]
     (S₀ D : ℝ) (m a y : ι → ℝ) (hS₀ : 0 < S₀) (hD : 0 < D) (hm : ∀ i, 0 < m i)
     (ha : ∀ i, 0 < a i) (hy : ∀ i, 0 < y i) (i₀ : ι) (hgrow : D < m i₀)
@@ -78,12 +94,18 @@ public theorem_wanted competitive_exclusion {ι : Type*} [Fintype ι] [Decidable
       ∀ j, j ≠ i₀ → Tendsto (fun t => x t j) atTop (𝓝 0)
 
 /-- **Die-out of species that cannot break even** (Hsu, Hubbell and Waltman 1977, Theorems 3.2
-and 3.4; Rapaport 2017, Lemma 1(2)): let `S⁰ > 0`, `D > 0`, and for every species `i` let
-`mᵢ, aᵢ, yᵢ > 0`. If species `j` has `mⱼ ≤ D`, or `mⱼ > D` and break-even concentration
+and 3.4; Rapaport and Veruete 2017, Lemma 1(2)): let `S⁰ > 0`, `D > 0`, and for every species `i`
+let `mᵢ, aᵢ, yᵢ > 0`. If species `j` has `mⱼ ≤ D`, or `mⱼ > D` and break-even concentration
 `λⱼ ≥ S⁰`, then every solution `(S, x)` of the chemostat on `[0, ∞)` with `S(0) ≥ 0` and
 `xᵢ(0) > 0` for every species `i` satisfies `xⱼ(t) → 0` as `t → ∞`, whatever the other species.
+Hsu, Hubbell and Waltman's Theorem 3.2 covers `mⱼ ≤ D` and `λⱼ > S⁰`, and their Theorem 3.4 the
+case where `λⱼ = S⁰` is the smallest break-even concentration. Rapaport and Veruete's
+Lemma 1(2) gives the form `λⱼ ≥ S⁰` whatever the other species; it is stated under their
+assumption of distinct break-even concentrations, but its proof, a comparison argument for `xⱼ`
+alone, does not use that assumption, so the statement here does not assume it.
 
-Sources: Hsu, Hubbell and Waltman (1977), Theorems 3.2 and 3.4; Rapaport (2017), Lemma 1. -/
+Sources: Hsu, Hubbell and Waltman (1977), Theorems 3.2 and 3.4; Rapaport and Veruete (2017),
+Lemma 1(2) and its proof. -/
 public theorem_wanted dies_out {ι : Type*} [Fintype ι] (S₀ D : ℝ) (m a y : ι → ℝ)
     (hS₀ : 0 < S₀) (hD : 0 < D) (hm : ∀ i, 0 < m i) (ha : ∀ i, 0 < a i) (hy : ∀ i, 0 < y i)
     (j : ι) (hj : m j ≤ D ∨ (D < m j ∧ S₀ ≤ breakEven D (m j) (a j)))

@@ -44,13 +44,23 @@ i.e. the parasitoids of the next generation are the parasitized hosts. -/
 noncomputable def step (F a k : ℝ) (z : ℝ × ℝ) : ℝ × ℝ :=
   (F * z.1 * (1 + a * z.2 / k) ^ (-k), z.1 - F * z.1 * (1 + a * z.2 / k) ^ (-k) / F)
 
-/-- The equilibrium parasitoid density `P* = k (F^{1/k} - 1) / a` (May 1978, eq. 5). -/
+/-- **Parasitoid density of May's positive equilibrium.** The formula
+`P* = k (F^{1/k} - 1) / a` (May 1978, eq. 5), a total function of real `F`, `a` and `k`. For
+`F > 1`, `a > 0` and `k > 0` it is the parasitoid coordinate of the positive equilibrium of May's
+map (`equilibrium_spec`); for other parameters it need not be. -/
 noncomputable def parasitoidEq (F a k : ℝ) : ℝ := k * (F ^ (1 / k) - 1) / a
 
-/-- The equilibrium host density `H* = (F / (F - 1)) P*` (May 1978, eq. 6). -/
+/-- **Host density of May's positive equilibrium.** The formula `H* = (F / (F - 1)) P*`
+(May 1978, eq. 6), a total function of real `F`, `a` and `k`. For `F > 1`, `a > 0` and `k > 0`
+it is the host coordinate of the positive equilibrium of May's map (`equilibrium_spec`); for
+other parameters it need not be. -/
 noncomputable def hostEq (F a k : ℝ) : ℝ := F / (F - 1) * parasitoidEq F a k
 
-/-- The equilibrium point `(H*, P*)`. -/
+/-- **May's positive equilibrium.** The point `(H*, P*)` with `H* = (F / (F - 1)) P*` and
+`P* = k (F^{1/k} - 1) / a`, a total function of real `F`, `a` and `k`. For `F > 1`, `a > 0` and
+`k > 0` it has both coordinates positive and is the only fixed point of May's map with both
+coordinates positive (`equilibrium_spec`). For other parameters it need not be a fixed point:
+`F = 0` and `a = k = 1` give `(0, -1)`, which the map sends to `(0, 0)`. -/
 noncomputable def equilibrium (F a k : ℝ) : ℝ × ℝ := (hostEq F a k, parasitoidEq F a k)
 
 /-- A point `z*` of `ℝ × ℝ` is a **locally asymptotically stable fixed point of `T` on the open

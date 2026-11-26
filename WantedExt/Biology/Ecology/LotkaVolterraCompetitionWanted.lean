@@ -82,7 +82,10 @@ namespace Params
 
 variable (p : Params)
 
-/-- The competition vector field at `(x₁, x₂)`. -/
+/-- **The competition vector field.** At `z = (x₁, x₂)` it is
+`(r₁ x₁ (1 - (x₁ + α₁₂ x₂) / K₁), r₂ x₂ (1 - (x₂ + α₂₁ x₁) / K₂))`: the coefficient `α₁₂` weighs
+the effect of species `2` on the growth of species `1`, and `α₂₁` the effect of species `1` on
+species `2`. -/
 noncomputable def field (z : ℝ × ℝ) : ℝ × ℝ :=
   (p.r₁ * z.1 * (1 - (z.1 + p.α₁₂ * z.2) / p.K₁), p.r₂ * z.2 * (1 - (z.2 + p.α₂₁ * z.1) / p.K₂))
 
