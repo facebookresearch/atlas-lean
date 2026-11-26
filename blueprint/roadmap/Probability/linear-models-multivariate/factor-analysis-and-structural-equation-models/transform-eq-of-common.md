@@ -4,4 +4,4 @@ Let $\Lambda$ be a matrix with $v \mapsto \Lambda v$ injective, $\nu$ intercepts
 
 ## Sources
 
-- Wu and Estabrook (2016), as cited in the source: Sections 2.1, 2.2 and 3.1.
+- H. Wu and R. Estabrook, "Identification of confirmatory factor analysis models of different levels of invariance for ordered categorical outcomes", *Psychometrika* 81(4) (2016): Sections 2.1, 2.2 and 3.1.

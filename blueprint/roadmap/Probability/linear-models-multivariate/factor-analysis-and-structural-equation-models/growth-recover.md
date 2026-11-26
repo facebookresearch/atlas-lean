@@ -4,4 +4,4 @@ Let $\Lambda$ be the $3 \times 2$ linear growth loading matrix with rows $(1, 0)
 
 ## Sources
 
-- Duncan and Duncan (2009), as cited in the source: Figure 2.
+- T. E. Duncan and S. C. Duncan, "The ABC's of LGM: an introductory guide to latent variable growth curve modeling", *Social and Personality Psychology Compass* 3 (2009): Figure 2.

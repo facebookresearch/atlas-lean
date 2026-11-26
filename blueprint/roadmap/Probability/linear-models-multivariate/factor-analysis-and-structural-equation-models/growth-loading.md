@@ -4,4 +4,4 @@ The linear growth loading matrix for three equally spaced time points is the $3 
 
 ## Sources
 
-- Duncan and Duncan (2009), as cited in the source: Figure 2.
+- T. E. Duncan and S. C. Duncan, "The ABC's of LGM: an introductory guide to latent variable growth curve modeling", *Social and Personality Psychology Compass* 3 (2009): Figure 2.

@@ -11,7 +11,7 @@
 - [Observational law of a treatment study](obs-law.md)
 - [Propensity read from an observational law](propensity-from-law.md)
 - [Inverse-probability-weighted treatment effect functional](ipw-ate.md)
-- [Identification of the average treatment effect by inverse probability weighting](ate-eq-ipw-ate-obs-law.md)
+- [Identification of the average treatment effect from the observational law by inverse probability weighting](ate-eq-ipw-ate-obs-law.md)
 - [The average treatment effect is identified by the observational law](ate-is-identified-by-observational-law.md)
 - [The observed datum depends only on the received arm](obs-datum-eq-of-eq-on.md)
 - [Unobserved potential outcomes do not affect the observed law](obs-law-eq-of-eq-on.md)

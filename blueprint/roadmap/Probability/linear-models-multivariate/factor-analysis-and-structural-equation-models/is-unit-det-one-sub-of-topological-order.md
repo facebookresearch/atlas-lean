@@ -4,4 +4,4 @@ Let $B$ be a square matrix over a commutative ring indexed by a finite set $V$ o
 
 ## Sources
 
-- Drton, arXiv:1612.05994, as cited in the source.
+- M. Drton, "Algebraic problems in structural equation modeling", in *The 50th Anniversary of Gröbner Bases*, Advanced Studies in Pure Mathematics 77, Mathematical Society of Japan (2018); arXiv:1612.05994.

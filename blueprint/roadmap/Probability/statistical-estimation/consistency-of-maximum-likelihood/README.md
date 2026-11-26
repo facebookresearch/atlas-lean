@@ -22,7 +22,7 @@
 - [An identified maximum is well separated](exists-pos-add-le-of-is-identified-on.md)
 - [One step of Wald's consistency argument](dist-lt-of-forall-abs-sub-lt.md)
 - [Wald's argmax theorem for near-maximizers](tendsto-of-tendsto-uniformly-on-of-le-ad.md)
-- [Wald's argmax theorem](tendsto-of-tendsto-uniformly-on.md)
+- [Wald's argmax theorem for an upper semicontinuous limit on a compact set](tendsto-of-tendsto-uniformly-on.md)
 - [Continuity of the average log-likelihood](continuous-on-avg-log-lik.md)
 - [Existence of a maximum-likelihood estimator](exists-is-mleon.md)
 - [Continuity of the population criterion from a uniform law of large numbers](continuous-on-pop-crit-of-tendsto-unifor.md)

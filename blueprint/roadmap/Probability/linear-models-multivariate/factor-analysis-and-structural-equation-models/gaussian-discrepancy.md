@@ -4,4 +4,4 @@ For real $p \times p$ matrices $S$ (sample) and $C$ (model), the Gaussian discre
 
 ## Sources
 
-- Bartlett, lecture notes for STAT 241A (2007), Lemma 2, as cited in the source.
+- P. L. Bartlett, lecture notes for STAT 241A, University of California, Berkeley (2007), Lemma 2.

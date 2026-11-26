@@ -1,5 +1,7 @@
 # Likelihood and maximum likelihood estimators
 
+The [Poisson likelihood of an observed count](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik.md), its [positivity](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik-pos.md) and its [recursion](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik-succ.md) are stated with gene constraint scores.
+
 ## Definition
 
 - [Normalized density family](normalized-density-family.md)
@@ -23,9 +25,6 @@
 
 ## Likelihood of independent Poisson counts
 
-- [Poisson likelihood of a count](poisson-lik.md)
-- [Positivity of the Poisson likelihood](poisson-lik-pos.md)
-- [Recursion of the Poisson likelihood](poisson-lik-succ.md)
 - [Poisson log-likelihood of counts](poisson-log-lik.md)
 - [Probability of a count vector under independent Poisson laws](pi-poisson-measure-real-singleton.md)
 - [The Poisson-random-field log-likelihood](log-pi-poisson-measure-real-singleton.md)
