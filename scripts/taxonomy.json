@@ -12849,6 +12849,7 @@
   "MathlibExt/NumberTheory/ConwayHofstadterLikeSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Conway–Hofstadter sequences"},
   "MathlibExt/NumberTheory/CotangentPowerSums": {"to": "NumberTheory/exponential-sums", "title": "Cotangent power sums"},
   "MathlibExt/NumberTheory/CoprimePrimeSquareCubeSplit": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
+  "MathlibExt/NumberTheory/CotangentPowerSumsIMulCotPowEqSumIteratedDerivCot": {"to": "NumberTheory/exponential-sums", "title": "Cotangent power sums"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressions": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressionsAvailableRecurrence": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
   "MathlibExt/NumberTheory/CountingAppearancesProgressionsFirstPrimes": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Counting integers in residue classes modulo primes"},
