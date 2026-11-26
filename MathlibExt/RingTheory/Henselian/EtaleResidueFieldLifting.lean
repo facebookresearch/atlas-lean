@@ -667,10 +667,10 @@ end H1Aux
 
 namespace Algebra.Etale
 
-/-- Over a Henselian local ring `R`, a map between the residue-field base
-changes of a finite étale `R`-algebra `O` and a finite `R`-algebra `C`
-lifts to a unique `R`-algebra map `O →ₐ[R] C`. The target `C` is not
-assumed étale or local. -/
+/-- **Residue-field maps out of finite étale algebras lift uniquely.** Over a
+Henselian local ring `R`, a map between the residue-field base changes of a
+finite étale `R`-algebra `O` and a finite `R`-algebra `C` lifts to a unique
+`R`-algebra map `O →ₐ[R] C`. The target `C` is not assumed étale or local. -/
 theorem existsUnique_algHom_baseChange_residueField_eq_of_moduleFinite_of_henselianLocalRing
     (R : Type u) [CommRing R] [HenselianLocalRing R]
     (O : Type v) [CommRing O] [Algebra R O] [Module.Finite R O] [Algebra.Etale R O]
