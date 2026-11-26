@@ -2,6 +2,8 @@
 
 For every $k \ge 3$ and every colouring of the integers with finitely many colours there is a monochromatic set of $k$ primes in arithmetic progression.
 
+This proves [Erdős Problem 1187 (monochromatic progressions of primes)](monochromatic-prime-progressions.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #1187, https://www.erdosproblems.com/1187.

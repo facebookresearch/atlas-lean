@@ -2,6 +2,8 @@
 
 The equation $x^x y^y = z^z$ has infinitely many solutions in integers $x, y, z > 1$. For example $x = 2^{12}3^6$, $y = 2^8 3^8$, $z = 2^{11}3^7$.
 
+This proves [Erdős Problem 674 (the equation x^x y^y = z^z)](self-power-equation-infinitely-many-solu.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #674, https://www.erdosproblems.com/674.

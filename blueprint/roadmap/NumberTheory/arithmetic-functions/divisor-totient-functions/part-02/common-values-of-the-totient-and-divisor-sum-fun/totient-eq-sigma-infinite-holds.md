@@ -2,6 +2,8 @@
 
 There are infinitely many pairs of positive integers $(n, m)$ with $\varphi(n) = \sigma(m)$, where $\varphi$ is Euler's totient function and $\sigma$ the sum-of-divisors function.
 
+This proves [Erdős Problem 48 (common values of the totient and divisor-sum functions)](totient-eq-sigma-infinite.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #48, https://www.erdosproblems.com/48.

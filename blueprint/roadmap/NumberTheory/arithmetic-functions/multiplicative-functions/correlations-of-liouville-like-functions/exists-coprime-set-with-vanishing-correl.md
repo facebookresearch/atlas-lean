@@ -6,6 +6,8 @@ $$\frac1X \sum_{n=1}^{X} \pi_A(n + h_1) \cdots \pi_A(n + h_k) \to 0 \quad (X \to
 
 where for a set $A$ of integers at least $2$ and a natural number $n$, $\pi_A(n) = (-1)^{\#\{a \in A : a \mid n\}}$.
 
+This page records the statement as a proposition. Its resolution: [Liouville-like functions with vanishing correlations exist](exists-coprime-set-with-vanishing-correl-2.md).
+
 ## Sources
 
 - AimPL: Sarnak's conjecture, Problem 7.2.

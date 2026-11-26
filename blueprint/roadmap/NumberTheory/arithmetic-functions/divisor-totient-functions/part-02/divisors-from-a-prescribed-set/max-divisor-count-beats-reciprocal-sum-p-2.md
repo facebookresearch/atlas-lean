@@ -6,6 +6,8 @@ $$\max_{1 \le n < x} d_A(n) > M \Bigl(\sum_{n \in A,\ 1 \le n < x} \frac1n\Bigr)
 
 where $d_A(n)$ is the number of elements of $A$ dividing $n$ (the maximum is $0$ when $x \le 1$). That is, the quotient has limit superior $\infty$.
 
+This proves [Erdős Problem 444 (divisors from a set versus its reciprocal sum)](max-divisor-count-beats-reciprocal-sum-p.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #444, https://www.erdosproblems.com/444.

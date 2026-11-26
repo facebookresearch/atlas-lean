@@ -2,6 +2,8 @@
 
 Only finitely many triples $(a, k, p)$ of natural numbers with $p$ an odd prime satisfy $(p - 1)! + a^{p-1} = p^k$.
 
+This proves [Erdős Problem 405 (the equation (p − 1)! + a^(p − 1) = p^k)](finitely-many-factorial-power-solutions.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #405, https://www.erdosproblems.com/405.

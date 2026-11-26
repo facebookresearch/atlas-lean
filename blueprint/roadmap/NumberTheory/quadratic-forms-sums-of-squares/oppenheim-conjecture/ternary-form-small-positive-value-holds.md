@@ -2,6 +2,8 @@
 
 For every irrational $\alpha > 0$ and every $\varepsilon > 0$ there are positive integers $x, y, z$ with $|x^2 + y^2 - \alpha z^2| < \varepsilon$.
 
+This proves [Erdős Problem 496 (small values of x² + y² − α z²)](ternary-form-small-positive-value.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #496, https://www.erdosproblems.com/496.

@@ -2,6 +2,8 @@
 
 For every $n$, every set $A \subseteq \{1, \dots, n\}$ with $\operatorname{lcm}(a, b) > n$ for all distinct $a, b \in A$ satisfies $\sum_{a \in A} 1/a \le 31/30$.
 
+This proves [Erdős Problem 542, first question](large-lcm-reciprocal-sum-bound.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #542, https://www.erdosproblems.com/542.

@@ -2,6 +2,8 @@
 
 For every real $\varepsilon > 0$ and all sufficiently large $n$, every set $A \subseteq \{1, \dots, n\}$ of integers with $|A| \le \sqrt n$ satisfies $A \subseteq B + B$ for some set $B$ of integers with $|B| \le \varepsilon\sqrt n$.
 
+This proves [Erdős Problem 806 (Erdős–Newman problem on small bases)](small-basis-covers-sqrt-sets.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #806, https://www.erdosproblems.com/806.

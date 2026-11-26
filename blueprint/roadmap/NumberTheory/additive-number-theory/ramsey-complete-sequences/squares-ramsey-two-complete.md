@@ -2,6 +2,8 @@
 
 The statement that for every colouring of the positive squares with two colours, every sufficiently large integer is a sum of distinct squares of one colour.
 
+This page records the statement as a proposition. Its resolution: [The squares are Ramsey 2-complete](squares-ramsey-two-complete-holds.md).
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #843, https://www.erdosproblems.com/843.

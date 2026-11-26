@@ -2,6 +2,8 @@
 
 The real number $\sum_{n \ge 1} \sigma(n)/2^n$ is irrational, where $\sigma(n)$ is the sum of the divisors of $n$.
 
+This proves [Erdős Problem 250 (irrationality of the sum of sigma(n)/2^n)](divisor-sum-binary-series-irrational.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #250, https://www.erdosproblems.com/250.

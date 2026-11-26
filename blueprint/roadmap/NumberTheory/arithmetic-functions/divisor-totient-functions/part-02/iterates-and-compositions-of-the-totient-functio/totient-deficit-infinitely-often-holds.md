@@ -2,6 +2,8 @@
 
 There are infinitely many $n$ with $\varphi(n) < \varphi(n - \varphi(n))$, where $\varphi$ is Euler's totient function.
 
+This proves [Erdős Problem 1064, second part](totient-deficit-infinitely-often.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #1064, https://www.erdosproblems.com/1064.

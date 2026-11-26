@@ -2,6 +2,8 @@
 
 For every natural number $n \ge 5$, the central binomial coefficient $\binom{2n}{n}$ is not squarefree.
 
+This proves [Erdős Problem 175 (non-squarefree central binomial coefficients)](central-binom-not-squarefree.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #175, https://www.erdosproblems.com/175.

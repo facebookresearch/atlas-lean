@@ -2,6 +2,8 @@
 
 There are infinitely many natural numbers $n$ with $\tau(n) = \tau(n + 1)$, where $\tau(m)$ is the number of divisors of $m$.
 
+This proves [Erdős Problem 946 (consecutive integers with equally many divisors)](infinitely-many-equal-consecutive-diviso.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #946, https://www.erdosproblems.com/946.

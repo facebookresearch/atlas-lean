@@ -2,6 +2,8 @@
 
 For all sufficiently large $N$, the least positive integer that is not a sum of distinct unit fractions $1/n$ with $n \in \{1, \dots, N\}$ is $m_N$ or $m_N + 1$, where $m_N = \lfloor \sum_{n \le N} 1/n \rfloor$.
 
+This proves [Erdős Problem 308, first question](least-non-representable-near-harmonic.md), the statement recorded as a proposition.
+
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #308, https://www.erdosproblems.com/308.
