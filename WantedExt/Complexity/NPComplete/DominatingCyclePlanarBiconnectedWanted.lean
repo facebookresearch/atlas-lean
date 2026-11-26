@@ -31,7 +31,7 @@ public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
