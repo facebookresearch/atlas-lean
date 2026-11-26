@@ -13,6 +13,9 @@ public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
+import all MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
+import all MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+import MathlibExt.NumberTheory.ArithmeticFunction.JordanTotient
 import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 import Mathlib.Data.Nat.Factorization.Root
 import Mathlib.Data.Nat.Totient
@@ -34,6 +37,10 @@ and the average order from Champak Talukdar and Helen K. Saikia,
 namespace MetaMathlibExt
 
 open Asymptotics Filter Topology
+open ArithmeticFunction (jordanTotient jordanTotient_apply_one jordanTotient_eq_sum_moebius
+  jordanTotient_prime_pow isMultiplicative_jordanTotient)
+open squareSplit_moebius_inversion (split_coords)
+open squareSplitMoebius_proof (UV_mul UV_dvd UV_prime_pow)
 
 private lemma primeCorrection_le (p : Nat.Primes) :
     |-(1 / ((p : ℕ) : ℝ) ^ 2) + (((p : ℕ) : ℝ) - 1) ^ 2 /
@@ -65,35 +72,32 @@ private lemma primeCorrection_summable :
   exact ((Real.summable_one_div_nat_pow.mpr (by decide : 1 < 2)).subtype
     Nat.Prime).of_nonneg_of_le (fun _ => abs_nonneg _) primeCorrection_le
 
-private theorem split_coords {u v : ℕ} (hu : Squarefree u) (hv : v ≠ 0) :
-    squareSplitU (u * v ^ 2) = u ∧ squareSplitV (u * v ^ 2) = v := by
-  have hn := mul_ne_zero hu.ne_zero (pow_ne_zero 2 hv)
-  have hroot : Nat.floorRoot 2 (u * v ^ 2) = v := by
-    apply Nat.eq_of_factorization_eq (Nat.floorRoot_ne_zero.mpr ⟨by decide, hn⟩) hv
-    intro p
-    rw [Nat.factorization_floorRoot, Finsupp.floorDiv_apply, Nat.factorization_mul hu.ne_zero
-      (pow_ne_zero 2 hv), Nat.factorization_pow]
-    change (u.factorization p + 2 * v.factorization p) / 2 = v.factorization p
-    have := hu.natFactorization_le_one p
-    omega
-  have hV : squareSplitV (u * v ^ 2) = v := by
-    simpa [Nat.floorRoot, hn, squareSplitV] using hroot
-  have h := squareSplitU_mul_squareSplitV_sq hn
-  rw [hV] at h
-  exact ⟨Nat.eq_of_mul_eq_mul_right (Nat.pos_of_ne_zero (pow_ne_zero 2 hv)) h, hV⟩
+private lemma jordanTotient_two_eq :
+    ((jordanTotient 2 : ArithmeticFunction ℕ) : ArithmeticFunction ℤ) =
+      (ArithmeticFunction.pow 2 : ArithmeticFunction ℤ) * ArithmeticFunction.moebius := by
+  ext n
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp
+  rw [ArithmeticFunction.natCoe_apply, jordanTotient_eq_sum_moebius hn,
+    ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal
+      (fun a b => (ArithmeticFunction.pow 2 : ArithmeticFunction ℤ) a *
+        ArithmeticFunction.moebius b)]
+  refine Finset.sum_congr rfl fun d hd => ?_
+  simp [ArithmeticFunction.pow_apply, mul_comm]
 
-private noncomputable def jordan : ArithmeticFunction ℤ :=
-  (ArithmeticFunction.pow 2 : ArithmeticFunction ℤ) * ArithmeticFunction.moebius
-
-private lemma jordan_sum (n : ℕ) : ∑ d ∈ n.divisors, jordan d = (n : ℤ) ^ 2 := by
-  rw [← ArithmeticFunction.coe_zeta_mul_apply]
-  rw [jordan, ← mul_assoc, mul_comm (ArithmeticFunction.zeta : ArithmeticFunction ℤ),
-    mul_assoc, ArithmeticFunction.coe_zeta_mul_moebius, mul_one]
+private lemma jordanTotient_two_sum (n : ℕ) :
+    ∑ d ∈ n.divisors, (jordanTotient 2 d : ℤ) = (n : ℤ) ^ 2 := by
+  have h := ArithmeticFunction.coe_zeta_mul_apply
+    (f := ((jordanTotient 2 : ArithmeticFunction ℕ) : ArithmeticFunction ℤ)) (x := n)
+  simp only [ArithmeticFunction.natCoe_apply] at h
+  rw [← h, jordanTotient_two_eq, ← mul_assoc,
+    mul_comm (ArithmeticFunction.zeta : ArithmeticFunction ℤ), mul_assoc,
+    ArithmeticFunction.coe_zeta_mul_moebius, mul_one]
   simp
 
 private noncomputable def candidate : ArithmeticFunction ℤ :=
   ⟨fun n => if n = 0 then 0 else (Nat.totient (squareSplitU n) : ℤ) *
-    jordan (squareSplitV n), by simp⟩
+    (jordanTotient 2 (squareSplitV n) : ℤ), by simp⟩
 
 private lemma candidate_sum (n : ℕ) (hn : n ≠ 0) :
     ∑ d ∈ squareSplitDivisors n, candidate d = (n : ℤ) := by
@@ -115,13 +119,14 @@ private lemma candidate_sum (n : ℕ) (hn : n ≠ 0) :
     exact Prod.ext (h₁.1.symm.trans h₂.1) (h₁.2.symm.trans h₂.2)
   rw [Finset.sum_image hinj, Finset.sum_product]
   have he (a : ℕ) (ha : a ∈ u.divisors) (b : ℕ) (hb : b ∈ v.divisors) :
-      candidate (a * b ^ 2) = (a.totient : ℤ) * jordan b := by
+      candidate (a * b ^ 2) = (a.totient : ℤ) * jordanTotient 2 b := by
     obtain ⟨hUa, hVb⟩ := split_coords (hu.squarefree_of_dvd (Nat.dvd_of_mem_divisors ha))
       (Nat.pos_of_mem_divisors hb).ne'
     simp [candidate, hUa, hVb, mul_ne_zero (Nat.pos_of_mem_divisors ha).ne'
       (pow_ne_zero 2 (Nat.pos_of_mem_divisors hb).ne')]
   simp_rw [Finset.sum_congr rfl (fun a ha => Finset.sum_congr rfl (fun b hb => he a ha b hb))]
-  simp_rw [← Finset.mul_sum, jordan_sum, ← Finset.sum_mul, ← Nat.cast_sum, Nat.sum_totient]
+  simp_rw [← Finset.mul_sum, jordanTotient_two_sum, ← Finset.sum_mul, ← Nat.cast_sum,
+    Nat.sum_totient]
   simp
 
 private lemma determined_by_sum (φ ψ : ArithmeticFunction ℤ)
@@ -145,56 +150,25 @@ private lemma determined_by_sum (φ ψ : ArithmeticFunction ℤ)
     omega
 
 
-private lemma jordan_multiplicative : jordan.IsMultiplicative :=
-  ArithmeticFunction.isMultiplicative_pow.natCast.mul
-    ArithmeticFunction.isMultiplicative_moebius
-
 private lemma candidate_multiplicative : candidate.IsMultiplicative := by
   apply ArithmeticFunction.IsMultiplicative.iff_ne_zero.mpr
   constructor
-  · simp [candidate, squareSplitU_one, squareSplitV_one, jordan]
+  · simp [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one]
   intro m n hm hn h
-  have hprod (F : ℕ → ℕ → ℕ) :
-      (m * n).factorization.prod F = m.factorization.prod F * n.factorization.prod F := by
-    rw [Nat.factorization_mul_of_coprime h]
-    exact Finsupp.prod_add_index_of_disjoint h.disjoint_primeFactors F
-  have hu : squareSplitU (m * n) = squareSplitU m * squareSplitU n := hprod _
-  have hv : squareSplitV (m * n) = squareSplitV m * squareSplitV n := hprod _
-  have hUm : squareSplitU m ∣ m := by
-    conv_rhs => rw [← squareSplitU_mul_squareSplitV_sq hm]
-    exact Nat.dvd_mul_right _ _
-  have hUn : squareSplitU n ∣ n := by
-    conv_rhs => rw [← squareSplitU_mul_squareSplitV_sq hn]
-    exact Nat.dvd_mul_right _ _
-  have hVm : squareSplitV m ∣ m := by
-    conv_rhs => rw [← squareSplitU_mul_squareSplitV_sq hm]
-    exact dvd_mul_of_dvd_right (dvd_pow_self _ (by decide : 2 ≠ 0)) _
-  have hVn : squareSplitV n ∣ n := by
-    conv_rhs => rw [← squareSplitU_mul_squareSplitV_sq hn]
-    exact dvd_mul_of_dvd_right (dvd_pow_self _ (by decide : 2 ≠ 0)) _
+  obtain ⟨hu, hv⟩ := UV_mul h
+  obtain ⟨hUm, hVm⟩ := UV_dvd m
+  obtain ⟨hUn, hVn⟩ := UV_dvd n
   simp only [candidate, ArithmeticFunction.coe_mk, ite_eq_right hm, ite_eq_right hn,
     ite_eq_right (mul_ne_zero hm hn), hu, hv, Nat.totient_mul (h.of_dvd hUm hUn), Nat.cast_mul,
-    jordan_multiplicative.map_mul_of_coprime (h.of_dvd hVm hVn)]
+    (isMultiplicative_jordanTotient 2).map_mul_of_coprime (h.of_dvd hVm hVn)]
   ring
 
-private lemma split_prime_pow (p k : ℕ) (hp : p.Prime) :
-    squareSplitU (p ^ k) = p ^ (k % 2) ∧ squareSplitV (p ^ k) = p ^ (k / 2) := by
-  constructor <;> simp [squareSplitU, squareSplitV, hp.factorization_pow]
-
-private lemma jordan_prime_pow_succ (p b : ℕ) (hp : p.Prime) :
-    jordan (p ^ (b + 1)) = (p : ℤ) ^ (2 * b) * ((p : ℤ) ^ 2 - 1) := by
-  have h₀ := jordan_sum (p ^ b)
-  have h₁ := jordan_sum (p ^ (b + 1))
-  rw [Nat.sum_divisors_prime_pow hp] at h₀
-  rw [Nat.sum_divisors_prime_pow hp, Finset.sum_range_succ, h₀] at h₁
-  have he : (p : ℤ) ^ (2 * b) * ((p : ℤ) ^ 2 - 1) =
-      ((p : ℤ) ^ (b + 1)) ^ 2 - ((p : ℤ) ^ b) ^ 2 := by
-    rw [pow_succ (p : ℤ) b, mul_pow]
-    simp only [pow_mul, mul_comm 2 b]
-    ring
-  rw [he]
-  simp only [Nat.cast_pow] at h₁
-  omega
+private lemma jordanTotient_two_prime_pow_succ (p b : ℕ) (hp : p.Prime) :
+    (jordanTotient 2 (p ^ (b + 1)) : ℤ) = (p : ℤ) ^ (2 * b) * ((p : ℤ) ^ 2 - 1) := by
+  rw [jordanTotient_prime_pow hp (Nat.add_one_pos b), Nat.add_sub_cancel, Nat.cast_mul,
+    Nat.cast_sub (Nat.one_le_pow _ _ hp.pos)]
+  push_cast
+  ring
 
 private noncomputable def inverseId : ArithmeticFunction ℤ :=
   ArithmeticFunction.pmul ArithmeticFunction.moebius ArithmeticFunction.id
@@ -234,15 +208,15 @@ private lemma candidate_eq_id_mul_correction :
 
 
 private lemma candidate_even (p b : ℕ) (hp : p.Prime) :
-    candidate (p ^ (2 * b)) = jordan (p ^ b) := by
-  obtain ⟨hu, hv⟩ := split_prime_pow p (2 * b) hp
+    candidate (p ^ (2 * b)) = (jordanTotient 2 (p ^ b) : ℤ) := by
+  obtain ⟨hu, hv⟩ := UV_prime_pow (k := 2 * b) hp
   have hu' : 2 * b % 2 = 0 := by omega
   have hv' : 2 * b / 2 = b := by omega
   simp [candidate, hp.ne_zero, hu, hv, hu', hv']
 
 private lemma candidate_odd (p b : ℕ) (hp : p.Prime) :
-    candidate (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * jordan (p ^ b) := by
-  obtain ⟨hu, hv⟩ := split_prime_pow p (2 * b + 1) hp
+    candidate (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * (jordanTotient 2 (p ^ b) : ℤ) := by
+  obtain ⟨hu, hv⟩ := UV_prime_pow (k := 2 * b + 1) hp
   have hu' : (2 * b + 1) % 2 = 1 := by omega
   have hv' : (2 * b + 1) / 2 = b := by omega
   simp [candidate, hp.ne_zero, hu, hv, hu', hv', Nat.totient_prime hp,
@@ -250,9 +224,10 @@ private lemma candidate_odd (p b : ℕ) (hp : p.Prime) :
 
 private lemma candidate_prime_pow_step (p k : ℕ) (hp : p.Prime) :
     candidate (p ^ (k + 4)) = (p : ℤ) ^ 2 * candidate (p ^ (k + 2)) := by
-  have hj (b : ℕ) : jordan (p ^ (b + 2)) = (p : ℤ) ^ 2 * jordan (p ^ (b + 1)) := by
-    rw [show b + 2 = (b + 1) + 1 by omega, jordan_prime_pow_succ p (b + 1) hp,
-      jordan_prime_pow_succ p b hp, show 2 * (b + 1) = 2 + 2 * b by omega, pow_add]
+  have hj (b : ℕ) : (jordanTotient 2 (p ^ (b + 2)) : ℤ) =
+      (p : ℤ) ^ 2 * (jordanTotient 2 (p ^ (b + 1)) : ℤ) := by
+    rw [show b + 2 = (b + 1) + 1 by omega, jordanTotient_two_prime_pow_succ p (b + 1) hp,
+      jordanTotient_two_prime_pow_succ p b hp, show 2 * (b + 1) = 2 + 2 * b by omega, pow_add]
     ring
   rcases Nat.even_or_odd k with hk | hk
   · obtain ⟨b, rfl⟩ := hk
@@ -293,7 +268,7 @@ private lemma correction_prime_pow_tail (p k : ℕ) (hp : p.Prime) :
     have he₃ : 3 = 2 * 1 + 1 := rfl
     have he₂ : 2 = 2 * 1 := rfl
     rw [he₃, he₂, candidate_odd p 1 hp, candidate_even p 1 hp,
-      show 1 = 0 + 1 by rfl, jordan_prime_pow_succ p 0 hp]
+      show 1 = 0 + 1 by rfl, jordanTotient_two_prime_pow_succ p 0 hp]
     ring
   | succ k ih =>
     rw [show k + 1 + 3 = (k + 3) + 1 by omega, correction_prime_pow_succ p (k + 3) hp,
@@ -316,16 +291,16 @@ private lemma correction_prime_pow_bound (p k : ℕ) (hp : p.Prime) (hk : k ≠ 
     rw [show 1 = 0 + 1 by rfl, correction_prime_pow_succ p 0 hp]
     have he₁ : 1 = 2 * 0 + 1 := rfl
     rw [he₁, candidate_odd p 0 hp]
-    simp [candidate, squareSplitU_one, squareSplitV_one, jordan]
+    simp [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one]
   · change |(correction (p ^ 2) : ℝ)| ≤ (p : ℝ) ^ 1
     rw [show 2 = 1 + 1 by rfl, correction_prime_pow_succ p 1 hp]
     change |((candidate (p ^ 2) - (p : ℤ) * candidate (p ^ 1) : ℤ) : ℝ)| ≤ (p : ℝ) ^ 1
     have he₂ : 2 = 2 * 1 := rfl
     have he₁ : 1 = 2 * 0 + 1 := rfl
     rw [he₂, candidate_even p 1 hp, show 1 = 0 + 1 by rfl,
-      jordan_prime_pow_succ p 0 hp, he₁, candidate_odd p 0 hp]
+      jordanTotient_two_prime_pow_succ p 0 hp, he₁, candidate_odd p 0 hp]
     simp only [Nat.pow_zero]
-    have hj : jordan 1 = 1 := jordan_multiplicative.1
+    have hj : (jordanTotient 2 1 : ℤ) = 1 := by rw [jordanTotient_apply_one, Nat.cast_one]
     rw [hj]
     simp only [Int.cast_sub, Int.cast_mul, Int.cast_pow, Int.cast_natCast,
       Int.cast_one]
@@ -409,16 +384,17 @@ private lemma correction_weighted_summable (s : ℝ) (hs : 1 < s) :
 private lemma correction_prime (p : ℕ) (hp : p.Prime) : correction p = -1 := by
   have h := correction_prime_pow_succ p 0 hp
   rw [show 0 + 1 = 2 * 0 + 1 by rfl, candidate_odd p 0 hp] at h
-  simpa [candidate, squareSplitU_one, squareSplitV_one, jordan] using h
+  simpa [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one] using h
 
 private lemma correction_square (p : ℕ) (hp : p.Prime) :
     correction (p ^ 2) = (p : ℤ) - 1 := by
   have h := correction_prime_pow_succ p 1 hp
   norm_num only [Nat.reduceAdd] at h
   have hc₂ : candidate (p ^ 2) = (p : ℤ) ^ 2 - 1 := by
-    simpa using (candidate_even p 1 hp).trans (jordan_prime_pow_succ p 0 hp)
+    simpa using (candidate_even p 1 hp).trans (jordanTotient_two_prime_pow_succ p 0 hp)
   have hc₁ : candidate p = (p : ℤ) - 1 := by
-    simpa [candidate, squareSplitU_one, squareSplitV_one, jordan] using candidate_odd p 0 hp
+    simpa [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one] using
+      candidate_odd p 0 hp
   rw [pow_one, hc₂, hc₁] at h
   linarith
 
