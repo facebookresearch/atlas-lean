@@ -180,10 +180,12 @@ private theorem frobeniusSubfield_core
     · rw [← hd, hrel, hr, pow_succ]
     · rw [← hmap, hS₁r, frobeniusSubfield_succ]
 
-/-- For a finite purely inseparable extension `E / M` of characteristic `p` whose ambient field
-`E` has degree `p` over its Frobenius image (`[E : E^p] = p`), the degree `[E : M]` is a power
-`p ^ r`, and the image of the base field `M` in `E` is exactly the image of the `r`-th iterated
-Frobenius. -/
+/-- **Purely inseparable extensions and iterated Frobenius images.** Let $p$ be a prime and let
+$E/M$ be a finite purely inseparable extension of fields of characteristic $p$ such that $E$ has
+degree $p$ over its Frobenius image $E^p$, the subfield of $p$-th powers: $[E : E^p] = p$. Then
+there is a natural number $r$ with $[E : M] = p^r$, and the image of $M$ in $E$ equals $E^{p^r}$,
+the subfield of $p^r$-th powers, which is the image of the $r$-th iterated Frobenius endomorphism
+of $E$. -/
 public theorem
     exists_finrank_eq_pow_and_fieldRange_eq_iterateFrobenius_of_isPurelyInseparable
     {M : Type*} [Field M] [Algebra M E] [FiniteDimensional M E]
