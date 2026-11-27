@@ -1,0 +1,87 @@
+# Piling-up lemma and toy-substitution-permutation-network trail bias
+
+## Part 1: abstract piling-up lemma
+
+- [Bias](bias.md)
+- [Correlation](correlation.md)
+- [Correlation eq two mul bias](correlation-eq-two-mul-bias.md)
+- [Joint PMF](joint-pmf.md)
+- [Joint PMF apply](joint-pmf-apply.md)
+- [Joint PMF to Real](joint-pmf-to-real.md)
+- [Xor All zero](xor-all-zero.md)
+- [Xor All succ](xor-all-succ.md)
+- [Bit Sign xor](bit-sign-xor.md)
+- [Sign of false](bit-sign-false.md)
+- [Bit Sign true](bit-sign-true.md)
+- [Bit Sign xor All](bit-sign-xor-all.md)
+- [Classical filter eq](classical-filter-eq.md)
+- [Distribution of the exclusive or of independent bits](map-xor-all-apply.md)
+- [Map xor All to Real](map-xor-all-to-real.md)
+- [Correlation eq sum sign](correlation-eq-sum-sign.md)
+- [Prod correlation eq sum](prod-correlation-eq-sum.md)
+- [Prod sign mul to Real](prod-sign-mul-to-real.md)
+- [Sum sign mul eq sub](sum-sign-mul-eq-sub.md)
+- [Correlation of an exclusive or](correlation-xor.md)
+- [Product of correlations in terms of biases](prod-correlation-eq-pow-mul-prod-bias.md)
+- [Piling-up lemma](piling-up.md)
+- [Piling-up lemma for no bits](piling-up-zero.md)
+- [Piling-up lemma for one bit](piling-up-one.md)
+- [A zero-correlation factor gives zero correlation](correlation-xor-eq-zero.md)
+- [Pushforward of a finite distribution as a filtered sum](map-of-fintype-to-real.md)
+- [Dep Weight](dep-weight.md)
+- [Dep Weight sum](dep-weight-sum.md)
+- [A dependent pair of bits](dep-joint.md)
+- [The dependent weight at (false, false)](dep-weight-to-real-ff.md)
+- [The dependent weight at (true, true)](dep-weight-to-real-tt.md)
+- [The dependent weight at (false, true)](dep-weight-to-real-ft.md)
+- [The dependent weight at (true, false)](dep-weight-to-real-tf.md)
+- [Fiber of the first projection over false](fiber-fst-false.md)
+- [Fiber of the first projection over true](fiber-fst-true.md)
+- [Fiber of the second projection over false](fiber-snd-false.md)
+- [Fiber of the second projection over true](fiber-snd-true.md)
+- [Fiber of the exclusive or over false](fiber-xor-false.md)
+- [Fiber of the exclusive or over true](fiber-xor-true.md)
+- [Dep Joint fst false](dep-joint-fst-false.md)
+- [Dep Joint fst true](dep-joint-fst-true.md)
+- [Dep Joint snd false](dep-joint-snd-false.md)
+- [Dep Joint snd true](dep-joint-snd-true.md)
+- [Dep Joint xor false](dep-joint-xor-false.md)
+- [Dep Joint xor true](dep-joint-xor-true.md)
+- [Both marginals of the dependent pair are unbiased](dep-joint-marginals-uniform.md)
+- [Dependent bits can have a correlated exclusive or](dep-joint-xor-correlation.md)
+
+## Numeric instances of the piling-up lemma
+
+- [Biased coin](biased-coin.md)
+- [Probability of false for a biased coin](biased-coin-false-to-real.md)
+- [Probability of true for a biased coin](biased-coin-true-to-real.md)
+- [Bias of a biased coin](biased-coin-bias.md)
+- [Coin34](coin34.md)
+- [Coin14](coin14.md)
+- [Bias of the coin with probability three quarters of false](bias-coin34.md)
+- [Bias of the coin with probability one quarter of false](bias-coin14.md)
+
+## Part 2: toy substitution-permutation network
+
+- [Permute](permute.md)
+- [Spn Round](spn-round.md)
+- [Parity](parity.md)
+- [Transport Mask](transport-mask.md)
+- [Zmod parity add](zmod-parity-add.md)
+- [Decide add one](decide-add-one.md)
+- [Parity of an exclusive or](parity-xor.md)
+- [Parity permute](parity-permute.md)
+- [Err Bit](err-bit.md)
+- [Foldr range xor telescope](foldr-range-xor-telescope.md)
+- [Trail error bits telescope to boundary parities](trail-telescope.md)
+
+## Toy-SPN concrete instances
+
+- [Swap2](swap2.md)
+- [Mask0](mask0.md)
+
+## Trail bias bridge
+
+- [Trail check and exclusive or have the same law](map-trail-eq.md)
+- [Trail bias in Matsui form](trail-bias-matsui.md)
+- [Trail correlation is the product of correlations](trail-bias-correlation.md)
