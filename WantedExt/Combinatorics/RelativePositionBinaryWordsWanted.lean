@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
 public import MathlibExt.Combinatorics.Words.AntitoneRelativePosition
 public import MathlibExt.Combinatorics.Words.BoundedRunPositions
+public import MathlibExt.Combinatorics.Words.ClonedWordPositions
 public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.GoldenEigenvector
@@ -199,31 +200,6 @@ public theorem_wanted letterPosition_prepend_equilibrious (u : List Bool) {k : �
     letterPosition (u ++ₛ w) true (n + k) = letterPosition w true n + 2 * k ∧
       letterPosition (u ++ₛ w) false (n + k) = letterPosition w false n + 2 * k ∧
       relativePosition (u ++ₛ w) (n + k) = relativePosition w n
-
-/-- **Position functions of a cloned word.** Let $w$ be an infinite binary word over the
-letters $a$ and $b$ in which both letters occur infinitely often, let $k$ be a natural number,
-and let $\varphi_k(w)$ be the word whose letter at position $i$ is the letter of $w$ at position
-$\lfloor i/k \rfloor$ (for $k \ge 1$, the word obtained from $w$ by repeating each letter $k$
-times). For a word $v$ and a letter $\alpha$, let $p_{\alpha,v}(n)$ be the position (counting
-from $0$) of the $n$-th occurrence of $\alpha$ in $v$, and let $r_v(n) = p_{b,v}(n) - p_{a,v}(n)$.
-Then for all natural numbers $m$ and $j$ with $1 \le j \le k$,
-$p_{a,\varphi_k(w)}(mk+j) = k\,p_{a,w}(m+1) + j - 1$,
-$p_{b,\varphi_k(w)}(mk+j) = k\,p_{b,w}(m+1) + j - 1$ and
-$r_{\varphi_k(w)}(mk+j) = k\,r_w(m+1)$.
-
-The paper takes $k \ge 2$; the identities hold for $k = 1$ ($\varphi_1$ is the identity) and are
-vacuous for $k = 0$, so no bound on $k$ is assumed.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 24
-(`jis-2025-25.1.5-lem-24`). -/
-public theorem_wanted letterPosition_clone {w : ℕ → Bool} (hw : BothLettersInfinite w)
-    (k m j : ℕ) (hj : 1 ≤ j) (hjk : j ≤ k) :
-    letterPosition (fun i => w (i / k)) true (m * k + j) =
-        k * letterPosition w true (m + 1) + j - 1 ∧
-      letterPosition (fun i => w (i / k)) false (m * k + j) =
-        k * letterPosition w false (m + 1) + j - 1 ∧
-      relativePosition (fun i => w (i / k)) (m * k + j) = k * relativePosition w (m + 1)
 
 open Filter Topology in
 /-- **Letter frequency and growth of letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be
