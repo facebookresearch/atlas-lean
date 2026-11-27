@@ -308,72 +308,6 @@ private theorem getLast?_map_neg_target {n : Nat} (q : List (Edge n)) :
     | nil => rfl
     | cons d ds => exact ih
 
-/-- The last element of an appended singleton list. -/
-private theorem getLast?_append_singleton {α : Type*} (L : List α) (x : α) :
-    (L ++ [x]).getLast? = some x := by
-  induction L with
-  | nil => rfl
-  | cons y ys ih =>
-    cases ys with
-    | nil => rfl
-    | cons z zs => exact ih
-
-/-- The last element of a reversed list is the head. -/
-private theorem getLast?_reverse {α : Type*} (l : List α) :
-    (l.reverse).getLast? = l.head? := by
-  induction l with
-  | nil => rfl
-  | cons e es ih =>
-    simp only [List.reverse_cons]
-    rw [getLast?_append_singleton]
-    rfl
-
-/-- The head of a reversed list is the last element. -/
-private theorem head?_reverse {α : Type*} (l : List α) :
-    (l.reverse).head? = l.getLast? := by
-  induction l with
-  | nil => rfl
-  | cons e es ih =>
-    simp only [List.reverse_cons]
-    cases hrev : es.reverse with
-    | nil =>
-      cases es with
-      | nil => rfl
-      | cons d ds =>
-        have hne : (d :: ds).reverse ≠ [] := by
-          simp only [List.reverse_cons]
-          cases hL : ds.reverse with
-          | nil => simp
-          | cons y ys => simp
-        exact absurd hrev hne
-    | cons y ys =>
-      cases es with
-      | nil =>
-        simp only [List.reverse_nil] at hrev
-        exact absurd hrev (by simp)
-      | cons d ds =>
-        rw [hrev] at ih
-        have happ : ((y :: ys) ++ [e]).head? = (y :: ys).head? := rfl
-        rw [happ]
-        exact ih
-
-/-- The head of a mapped list is the mapped head. -/
-private theorem head?_map {α β : Type*} (f : α → β) (l : List α) :
-    ((l.map f).head?) = ((l.head?).map f) := by
-  cases l with
-  | nil => rfl
-  | cons e es => rfl
-
-/-- The last element of a mapped list is the mapped last element. -/
-private theorem getLast?_map {α β : Type*} (f : α → β) (l : List α) :
-    ((l.map f).getLast?) = ((l.getLast?).map f) := by
-  induction l with
-  | nil => rfl
-  | cons e es ih =>
-    cases es with
-    | nil => rfl
-    | cons d ds => exact ih
-
 /-- Reversing and mapping twice restores the occurrence list. -/
 private theorem map_reverse_involutive {n : Nat} (q : List (Edge n)) :
     (((((q.map fun e =>
@@ -524,7 +458,7 @@ private theorem isWeightedPath_revNegEdges_iff {n : Nat} {edges : List (Edge n)}
                 (((first :: rest).getLast?).map fun e =>
                 ({ source := e.target, target := e.source, weight := -e.weight } :
                   Edge n)) := by
-                rw [head?_reverse, getLast?_map]
+                rw [List.head?_reverse, List.getLast?_map]
               rw [hp] at hhead
               cases hq : (first :: rest).getLast? with
               | none =>
@@ -542,7 +476,7 @@ private theorem isWeightedPath_revNegEdges_iff {n : Nat} {edges : List (Edge n)}
                 (((first :: rest).head?).map fun e =>
                 ({ source := e.target, target := e.source, weight := -e.weight } :
                   Edge n)) := by
-                rw [getLast?_reverse, head?_map]
+                rw [List.getLast?_reverse, List.head?_map]
               rw [hp] at hlast
               rw [hlast]
               change some (first.source) = some b
@@ -587,7 +521,7 @@ private theorem isWeightedPath_revNegEdges_iff {n : Nat} {edges : List (Edge n)}
               (((first :: rest).getLast?).map fun e =>
               ({ source := e.target, target := e.source, weight := -e.weight } :
                 Edge n)) := by
-              rw [head?_reverse, getLast?_map]
+              rw [List.head?_reverse, List.getLast?_map]
             rw [hp] at hhead
             cases hq : (first :: rest).getLast? with
             | none =>
@@ -605,7 +539,7 @@ private theorem isWeightedPath_revNegEdges_iff {n : Nat} {edges : List (Edge n)}
               (((first :: rest).head?).map fun e =>
               ({ source := e.target, target := e.source, weight := -e.weight } :
                 Edge n)) := by
-              rw [getLast?_reverse, head?_map]
+              rw [List.getLast?_reverse, List.head?_map]
             rw [hp] at hlast
             rw [hlast]
             change some (first.source) = some a
@@ -655,14 +589,14 @@ private theorem isAcyclic_revNegEdges {n : Nat} {edges : List (Edge n)}
         (List.getLast_eq_iff_getLast?_eq_some hrev_ne).mp rfl
       have h4 : cycle.head? = some (cycle.head hne) :=
         (List.head_eq_iff_head?_eq_some hne).mp rfl
-      rw [getLast?_reverse, h4] at h1
+      rw [List.getLast?_reverse, h4] at h1
       exact (Option.some_inj.mp h1).symm
     have hhd : cycle.reverse.head hrev_ne = cycle.getLast hne := by
       have h1 : (cycle.reverse).head? = some (cycle.reverse.head hrev_ne) :=
         (List.head_eq_iff_head?_eq_some hrev_ne).mp rfl
       have h4 : cycle.getLast? = some (cycle.getLast hne) :=
         (List.getLast_eq_iff_getLast?_eq_some hne).mp rfl
-      rw [head?_reverse, h4] at h1
+      rw [List.head?_reverse, h4] at h1
       exact (Option.some_inj.mp h1).symm
     rw [hgl, hhd]
     exact (revNegEdges_edge_iff).mp hclose
