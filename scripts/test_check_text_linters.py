@@ -156,6 +156,19 @@ class MainTests(unittest.TestCase):
                       "`MathlibExt.«New-Name»` needs «»", out)
         self.assertIn("MathlibExt/A.lean:72:", out)
 
+    def test_a_dotted_file_name_is_reported_and_its_namesake_linted(self):
+        # `First.Second.lean` is the module `MathlibExt.«First.Second»`, which lint-style cannot
+        # read; `First/Second.lean`, the module `MathlibExt.First.Second`, it reads.
+        files = [ChangedFile("MathlibExt/First.Second.lean", "A", frozenset({1})),
+                 ChangedFile("MathlibExt/First/Second.lean", "A", frozenset({1}))]
+        linted: list[str] = []
+        code, out = run_main("", 0, files=files, linted=linted)
+        self.assertEqual(code, 1)
+        self.assertEqual(linted, ["MathlibExt/First/Second.lean"])
+        self.assertIn("MathlibExt/First.Second.lean:1: Module name `MathlibExt.«First.Second»` "
+                      "needs «»", out)
+        self.assertNotIn("MathlibExt/First/Second.lean:1:", out)
+
     def test_an_unreadable_base_is_a_failure_to_run(self):
         out = io.StringIO()
         with patch.object(check, "changed_files", side_effect=GitError("no such ref: nope")), \

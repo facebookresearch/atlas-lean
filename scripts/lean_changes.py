@@ -62,13 +62,20 @@ class ChangedFile:
         return self.path.split("/", 1)[0]
 
     @property
+    def components(self) -> list[str]:
+        """The components of the file's module: those of its path, without `.lean`."""
+        return self.path.removesuffix(".lean").split("/")
+
+    @property
     def module(self) -> str:
-        return self.path.removesuffix(".lean").replace("/", ".")
+        """The components of the file's module joined by `.` as they are, so that `A/B.lean`
+        and a file named `A.B.lean` share this spelling; `lean_module` tells them apart."""
+        return ".".join(self.components)
 
     @property
     def lean_module(self) -> str | None:
-        """The module's name as Lean reads it, or `None` if Lean cannot name it."""
-        return lean_name(self.module)
+        """The module's name as Lean reads and prints it, or `None` if Lean cannot name it."""
+        return lean_name(self.components)
 
     @property
     def base_path(self) -> str | None:
@@ -183,8 +190,9 @@ def specs(libraries: Sequence[str]) -> list[str]:
 
 def changed_files(base: str, libraries: Sequence[str] = PRODUCTION_LIBRARIES,
                   cwd: Path = ROOT) -> list[ChangedFile]:
-    """The Lean files of `libraries` that `base...HEAD` adds, modifies or renames."""
-    common = ["--no-color", "--no-ext-diff", "-M", "--diff-filter=AMR", f"{base}...HEAD", "--"]
+    """The Lean files of `libraries` that `base...HEAD` adds, modifies or renames, or whose type
+    it changes (`T`, as when a symbolic link becomes a file), which counts as a modification."""
+    common = ["--no-color", "--no-ext-diff", "-M", "--diff-filter=AMRT", f"{base}...HEAD", "--"]
     diff = git(["diff", "--unified=0", "--src-prefix=a/", "--dst-prefix=b/", *common,
                 *specs(libraries)], cwd)
     statuses = parse_name_status(git(["diff", "--name-status", "-z", *common,
@@ -247,12 +255,13 @@ def is_id_rest(char: str) -> bool:
             or is_subscript_alnum(char))
 
 
-def lean_name(module: str) -> str | None:
-    """`module` as Lean reads and prints it: each component that is not an identifier by Lean's
-    rule (`isIdFirst`, then `isIdRest`), such as `New-Name`, in «», as `Name.toString` writes it.
-    `None` if the checks cannot write a component so: one with « or », or a control character."""
+def lean_name(components: Sequence[str]) -> str | None:
+    """The module of `components` as Lean reads and prints it: each component that is not an
+    identifier by Lean's rule (`isIdFirst`, then `isIdRest`), such as `New-Name` or `A.B`, in «»,
+    as `Name.toString` writes it. `None` if the checks cannot write a component so: one with « or
+    », or a control character."""
     parts = []
-    for part in module.split("."):
+    for part in components:
         if part and is_id_first(part[0]) and all(map(is_id_rest, part[1:])):
             parts.append(part)
         elif not part or "«" in part or "»" in part or not part.isprintable():
@@ -260,11 +269,6 @@ def lean_name(module: str) -> str | None:
         else:
             parts.append(f"«{part}»")
     return ".".join(parts)
-
-
-def lean_unescaped(name: str) -> str:
-    """A name as Lean prints it, without its «», as `ChangedFile.module` spells it."""
-    return name.replace("«", "").replace("»", "")
 
 
 def printable(path: str) -> str:
@@ -303,13 +307,17 @@ def aggregators(files: Sequence[ChangedFile], cwd: Path = ROOT,
     try:
         for library in sorted({file.library for file in files}):
             path = cwd / library / f"{AGGREGATOR}.lean"
-            if path.exists():
+            imports = sorted({file.lean_module for file in files if file.library == library})
+            try:
+                # Created anew, so that it never writes through a file or a link already there.
+                out = path.open("x", encoding="utf-8")
+            except FileExistsError:
                 raise AggregatorError(
                     f"{path.relative_to(cwd)} exists, so the checks cannot write their "
-                    f"aggregator module there; rename that file")
-            imports = sorted({file.lean_module for file in files if file.library == library})
-            path.write_text("".join(f"import {module}\n" for module in imports))
+                    f"aggregator module there; rename that file") from None
             written.append(path)
+            with out:
+                out.write("".join(f"import {module}\n" for module in imports))
             names.append(f"{library}.{AGGREGATOR}")
         yield names
     finally:
