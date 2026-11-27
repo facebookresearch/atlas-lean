@@ -20,7 +20,7 @@ $$
 
 $$
 \begin{aligned}
-\operatorname{Var}(P) = \mathbb{E}(P) &+ \lambda_2\rho_3^2\,\delta_+\int_0^\infty\!\!\int_{\mathbb{R}_+}\Big[\int_{-s}^{(t - s)\wedge 0}\overline F_3(u)\,\mathrm{d}u\Big]^2\,\mathrm{d}s\,F_2(\mathrm{d}t)\\
+\operatorname{Var}(P) = \mathbb{E}(P) &+ \lambda_2\rho_3^2\,\delta_+\int_0^\infty\!\!\int_{\mathbb{R}_+}\Big[\int_{-s}^{(t - s)\wedge 0}\overline F_3(-u)\,\mathrm{d}u\Big]^2\,\mathrm{d}s\,F_2(\mathrm{d}t)\\
 &+ \rho_2^2\rho_3^2\,\delta_+(1 - \delta_+)\int_{\mathbb{R}_+^4} e^{-\Lambda|(u_1 - u_2) + (v_1 - v_2)|}\prod_{i=1}^2 \overline F_2(u_i)\,\overline F_3(v_i)\,\mathrm{d}u_i\,\mathrm{d}v_i .
 \end{aligned}
 $$
