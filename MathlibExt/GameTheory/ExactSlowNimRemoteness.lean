@@ -23,7 +23,8 @@ basic-vector value by at most two, and the M-move lowers it by one. When `0 < k`
 value of every position equals its Smith remoteness. For positive even remoteness, critical
 positions have uniform pile parity. Moves from an all-even critical position that lower every pile
 of size equal to its remoteness give a critical position at the preceding parameter.
-For odd remoteness, the unique critical-lowering move keeps the unique even pile.
+For odd-critical positions with `k ≥ 2`, the unique critical-lowering move keeps the unique even
+pile.
 
 `NIM(k + 1, k)` is played on `k + 1` piles (a position is `x : Fin (k + 1) → ℕ`); a move removes
 exactly one stone from each of `k` nonempty piles. This is the existing Slow`A`-Nim game
