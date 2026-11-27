@@ -6,6 +6,7 @@
 - [Places and orders of vanishing](place/README.md)
 - [Function fields of curves](function-fields-of-curves/README.md)
 - [Evaluation at rational places](evaluation-at-rational-places/README.md)
+- [Weil reciprocity for function fields](weil-reciprocity-for-function-fields/README.md)
 - [Separating Transcendental](exists-separating-transcendental.md)
 - [Adic Valuation Rank One](adic-valuation-is-rank-one-discrete.md)
 - [Adic Valuation Trivial On](adic-valuation-is-trivial-on.md)
@@ -21,3 +22,5 @@
 - [Rat Func Genus Exists](stichtenoth-genus-exists.md)
 - [Rat Func Non Finite Place](to-valuation-subring-eq-of-forall-ne-of.md)
 - [Genus Exists](stichtenoth-genus-exists-of-is-curve-ove.md)
+- [Place Extension](pullback-over.md)
+- [Rational Weil Reciprocity](weil-reciprocity.md)
