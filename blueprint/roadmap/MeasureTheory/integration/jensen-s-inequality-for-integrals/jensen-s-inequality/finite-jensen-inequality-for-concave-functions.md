@@ -5,7 +5,8 @@ with $\sum_i w_i = 1$,
 
 $$\sum_{i=1}^n w_i f(p_i) \le f\Big(\sum_{i=1}^n w_i p_i\Big).$$
 
-For instance, for a random variable $X$ with finitely many positive values, $E \log X \le \log E X$.
+For instance, for a random variable $X$ with finitely many positive values, $E \log X \le \log E X$. The Mathlib declaration is more general: the
+scalars may come from any linearly ordered field and the values may lie in an ordered module.
 
 ## Sources
 

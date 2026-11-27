@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Field.Rat
+public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Logic.Function.Iterate
 public import MathlibExt.NumberTheory.GibonacciNumber
@@ -26,6 +27,11 @@ import Mathlib.Tactic.Ring
 At the ratio of consecutive Fibonacci numbers, Cassini's identity reduces the denominator
 of the generating function to a sign divided by the square of a Fibonacci number.
 At $-G_{n+1}/G_n$, the generating function also takes an integer value whenever $G_n \ne 0$.
+
+## References
+
+- Michael P. Knapp, [*Fibonacci Generating Functions*](https://cs.uwaterloo.ca/journals/JIS/VOL27/Knapp/knapp5.pdf),
+  Journal of Integer Sequences 27 (2024), Article 24.3.1, pp. 1–12, Lemma 6.
 -/
 
 namespace MetaMathlibExt
@@ -123,6 +129,86 @@ private theorem isGibonacciGood_div_iff_dvd (a b p q : ℤ) (hq : q ≠ 0) :
   refine and_congr_right fun hd => exists_congr fun z => ?_
   have hd' : (d : ℚ) ≠ 0 := by exact_mod_cast hd
   rw [div_eq_iff hd', mul_comm (z : ℚ), ← Int.cast_mul, Int.cast_inj]
+
+-- Keep the source's nonzero-seed hypothesis, although the calculation does not use it.
+set_option linter.unusedVariables false in
+/-- **Congruence criterion for good fractions.** Let $a, b, p, q$ be integers with
+$(a, b) \ne (0, 0)$, $q \ne 0$ and $\gcd(p, q) = 1$, and put $m = |q^2 - pq - p^2|$. Then
+$p / q$ is good for $(a, b)$ if and only if there are integers $u$ and $v$ with
+$(q - p) u \equiv 1$, $p v \equiv 1$, $a \equiv -b p u$ and $a \equiv -b q v \pmod{m}$.
+
+In the source's notation, with modular inverses, the condition reads
+$a \equiv -bp(q - p)^{-1} \equiv -bqp^{-1} \pmod{m}$.
+
+Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
+Sequences 27 (2024), Article 24.3.1, Lemma 6
+(`jis-2024-24.3.1-lem-6`). -/
+public theorem isGibonacciGood_iff (a b p q : ℤ)
+    (hab : (a, b) ≠ (0, 0)) (hcop : Int.gcd p q = 1) (hq : q ≠ 0) :
+    IsGibonacciGood a b ((p : ℚ) / (q : ℚ)) ↔
+    ∃ u v : ℤ, (q - p) * u ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
+      p * v ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
+      a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
+      a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|] := by
+  let d := q ^ 2 - p * q - p ^ 2
+  have hpq : IsCoprime p q := Int.isCoprime_iff_gcd_eq_one.mpr hcop
+  have hfactor : q * (q - p) - p ^ 2 = d := by dsimp [d]; ring
+  -- Reducing d modulo q or p leaves a signed square of the other term.
+  have hdq : IsCoprime d q := by
+    rw [← hfactor, IsCoprime.mul_sub_left_left_iff]
+    exact hpq.pow_left
+  have hdp : IsCoprime d p := by
+    rw [show d = q ^ 2 - p * (q + p) by dsimp [d]; ring, IsCoprime.sub_mul_left_left_iff]
+    exact hpq.symm.pow_left
+  have hd : d ≠ 0 := by
+    intro h
+    simp only [h, isCoprime_zero_left, Int.isUnit_iff] at hdp hdq
+    rcases hdp with rfl | rfl <;> rcases hdq with rfl | rfl <;> norm_num [d] at h
+  have hdsub : IsCoprime d (q - p) := by
+    rw [← hfactor, IsCoprime.mul_sub_right_left_iff]
+    have hp_sub : IsCoprime p (q - p) := by
+      simpa only [mul_one] using (IsCoprime.sub_mul_left_right_iff (z := (1 : ℤ))).mpr hpq
+    exact hp_sub.pow_left
+  have hinverse {c : ℤ} (hc : IsCoprime d c) : ∃ w : ℤ, c * w ≡ 1 [ZMOD d] := by
+    obtain ⟨w, z, hw⟩ := hc.symm
+    exact ⟨w, Int.modEq_of_dvd ⟨z, by linear_combination -hw⟩⟩
+  have hsolve {c k w : ℤ} (hw : c * w ≡ 1 [ZMOD d]) :
+      (a * c ≡ k [ZMOD d]) ↔ a ≡ k * w [ZMOD d] := by
+    constructor
+    · intro h
+      calc
+        a ≡ a * (c * w) [ZMOD d] := by simpa only [mul_one] using (hw.mul_left a).symm
+        _ ≡ k * w [ZMOD d] := by simpa only [mul_assoc] using h.mul_right w
+    · intro h
+      calc
+        a * c ≡ (k * w) * c [ZMOD d] := h.mul_right c
+        _ ≡ k [ZMOD d] := by simpa only [mul_assoc, mul_comm w c, mul_one] using hw.mul_left k
+  change _ ↔ ∃ u v : ℤ, (q - p) * u ≡ 1 [ZMOD |d|] ∧ p * v ≡ 1 [ZMOD |d|] ∧
+    a ≡ -b * p * u [ZMOD |d|] ∧ a ≡ -b * q * v [ZMOD |d|]
+  simp only [Int.modEq_abs]
+  have hnum : (b - a) * p + a * q = a * (q - p) - (-b * p) := by ring
+  rw [isGibonacciGood_div_iff_dvd a b p q hq, and_iff_right hd, hdq.dvd_mul_left_iff,
+    hnum, ← Int.modEq_iff_dvd, Int.modEq_comm]
+  constructor
+  · intro h
+    obtain ⟨u, hu⟩ := hinverse hdsub
+    obtain ⟨v, hv⟩ := hinverse hdp
+    have ha := (hsolve hu).mp h
+    -- The quadratic relation makes the two residue formulas agree.
+    have hquad : p ^ 2 ≡ q * (q - p) [ZMOD d] := by
+      rw [Int.modEq_iff_dvd, hfactor]
+    have huv : p * u ≡ q * v [ZMOD d] := calc
+      p * u ≡ (p * u) * (p * v) [ZMOD d] := by
+        simpa only [mul_one] using (hv.mul_left (p * u)).symm
+      _ ≡ (q * (q - p)) * (u * v) [ZMOD d] := by
+        convert hquad.mul_right (u * v) using 1
+        ring
+      _ ≡ q * v [ZMOD d] := by
+        convert hu.mul_left (q * v) using 1 <;> ring
+    refine ⟨u, v, hu, hv, ha, ha.trans ?_⟩
+    simpa only [mul_assoc] using huv.mul_left (-b)
+  · rintro ⟨u, _, hu, _, ha, _⟩
+    exact (hsolve hu).mpr ha
 
 /-- **Goodness passes to two transformed fractions.** Let $a$, $b$, $p$, $q$ be integers with
 $q \ne 0$ and $\gcd(p, q) = 1$, and suppose that $p/q$ is good for $(a, b)$. If $p + q \ne 0$,
