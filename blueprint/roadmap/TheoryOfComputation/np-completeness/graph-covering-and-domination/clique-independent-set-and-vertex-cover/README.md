@@ -138,7 +138,7 @@
 - [Test for the moved bit true](part-06/is-v.md)
 - [Pair-bit transform of each mode](part-06/fb.md)
 
-## [Label after the move phase of the CLIQUE/VERTEX-COVER reduction machine to SAT ≤ CLIQUE is polynomial-time](part-07/README.md)
+## [Label after the move phase of the CLIQUE/VERTEX-COVER reduction machine to Instances of planar max-degree-3 VERTEX COVER](part-07/README.md)
 
 - [Label after the move phase of the CLIQUE/VERTEX-COVER reduction machine](part-07/next.md)
 - [Counter of the first output number of the CLIQUE/VERTEX-COVER reduction machine](part-07/ctr.md)
@@ -160,6 +160,9 @@
 - [INDEPENDENT-SET ≤ VERTEX-COVER is polynomial-time](part-07/is-poly-time-is-to-vc.md)
 - [The CLIQUE emitter](part-07/emit-clique.md)
 - [SAT ≤ CLIQUE is polynomial-time](part-07/is-poly-time-reduce-clique.md)
+- [Feasible instances of CLIQUE on Hamiltonian graphs](part-07/clique-hamiltonian-feasible.md)
+- [Instances of CONNECTED VERTEX COVER on planar graphs of maximum degree 4](part-07/connected-vertex-cover-planar-max-degree-4.md)
+- [Instances of planar max-degree-3 VERTEX COVER](part-07/vertex-cover-planar-max-degree-three-ins.md)
 
 ## [CLIQUE is NP-hard to VERTEX-COVER (exact size $k$) is NP-complete](part-08/README.md)
 
@@ -175,15 +178,12 @@
 - [INDEPENDENT-SET is NP-complete](part-08/ind-set-dec-np-complete.md)
 - [VERTEX-COVER (exact size $k$) is NP-complete](part-08/vertex-cover-dec-np-complete.md)
 - [Well-formed instances of CLIQUE ON HAMILTONIAN GRAPHS](part-08/well-formed.md)
-- [Feasible instances of CLIQUE on Hamiltonian graphs](part-08/clique-hamiltonian-feasible.md)
 - [CLIQUE ON HAMILTONIAN GRAPHS as a decision problem](part-08/clique-hamiltonian-dec.md)
 - [CLIQUE ON HAMILTONIAN GRAPHS is NP-complete](part-08/clique-hamiltonian-np-complete.md)
-- [Instances of CONNECTED VERTEX COVER on planar graphs of maximum degree 4](part-08/connected-vertex-cover-planar-max-degree-4.md)
 - [Well-formed instances of CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4](part-08/well-formed-2.md)
 - [Feasible instances of CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4](part-08/connected-vertex-cover-planar-max-degree-2.md)
 - [CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 as a decision problem](part-08/connected-vertex-cover-planar-max-degree-3.md)
 - [CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 is NP-complete](part-08/connected-vertex-cover-planar-max-degree.md)
-- [Instances of planar max-degree-3 VERTEX COVER](part-08/vertex-cover-planar-max-degree-three-ins.md)
 - [Well-formed instances of VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3](part-08/well-formed-3.md)
 - [Feasible instances of VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3](part-08/vertex-cover-planar-max-degree-three-fea.md)
 - [VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3 as a decision problem](part-08/vertex-cover-planar-max-degree-three-dec.md)

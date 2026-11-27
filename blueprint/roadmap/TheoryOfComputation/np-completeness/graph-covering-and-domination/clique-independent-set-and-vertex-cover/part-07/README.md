@@ -1,4 +1,4 @@
-# Label after the move phase of the CLIQUE/VERTEX-COVER reduction machine to SAT ≤ CLIQUE is polynomial-time
+# Label after the move phase of the CLIQUE/VERTEX-COVER reduction machine to Instances of planar max-degree-3 VERTEX COVER
 
 - [Label after the move phase of the CLIQUE/VERTEX-COVER reduction machine](next.md)
 - [Counter of the first output number of the CLIQUE/VERTEX-COVER reduction machine](ctr.md)
@@ -20,3 +20,6 @@
 - [INDEPENDENT-SET ≤ VERTEX-COVER is polynomial-time](is-poly-time-is-to-vc.md)
 - [The CLIQUE emitter](emit-clique.md)
 - [SAT ≤ CLIQUE is polynomial-time](is-poly-time-reduce-clique.md)
+- [Feasible instances of CLIQUE on Hamiltonian graphs](clique-hamiltonian-feasible.md)
+- [Instances of CONNECTED VERTEX COVER on planar graphs of maximum degree 4](connected-vertex-cover-planar-max-degree-4.md)
+- [Instances of planar max-degree-3 VERTEX COVER](vertex-cover-planar-max-degree-three-ins.md)
