@@ -1,3 +1,3 @@
 # Well-formed instances of NESETRIL-RODL DIMENSION
 
-An instance is well-formed when $n$ is written in unary, the edge list describes a simple graph on $0, \dots, n-1$, and $1 \le K \le |E|$.
+An instance is well-formed when $n$ is written in unary, the edge list $E$ has no repeated entries and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$, and $1 \le K \le |E|$.

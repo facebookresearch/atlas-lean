@@ -4,7 +4,6 @@
 - [BLACK-WHITE PEBBLE GAME WITHOUT RE-PEBBLING as a decision problem](black-white-pebble-game-no-repebbling-de.md)
 - [Feasible instances of BLACK-WHITE PEBBLE GAME WITHOUT RE-PEBBLING](black-white-pebble-game-no-repebbling-fe.md)
 - [Instances of BLACK-WHITE PEBBLE GAME WITHOUT RE-PEBBLING](black-white-pebble-game-no-repebbling-in.md)
-- [BLACK-WHITE PEBBLE GAME WITHOUT RE-PEBBLING is NP-complete](black-white-pebble-game-no-repebbling-np.md)
 - [Clear blocks](clear.md)
 - [State described by a list](decode-state.md)
 - [Valid block configurations](is-configuration.md)
@@ -42,4 +41,3 @@
 - [ONE-PERSON PEBBLE GAME as a decision problem](yet-another-pebble-game-one-person-dec.md)
 - [Feasible instances of ONE-PERSON PEBBLE GAME](yet-another-pebble-game-one-person-feasi.md)
 - [Instances of ONE-PERSON PEBBLE GAME](yet-another-pebble-game-one-person-insta.md)
-- [ONE-PERSON PEBBLE GAME is NP-complete](yet-another-pebble-game-one-person-np-co.md)
