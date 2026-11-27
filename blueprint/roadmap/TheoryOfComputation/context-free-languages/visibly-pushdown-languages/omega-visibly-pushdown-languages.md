@@ -15,4 +15,4 @@ through a factorization of the word into pending letters and well-matched blocks
 
 ## Sources
 
-- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004, author copy <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 6, the definition of $\omega$-VPAs with Büchi and Muller conditions, Theorem 7 (closure), the language $L_{\mathrm{repbdd}}$ and Theorem 8 (deterministic versus nondeterministic $\omega$-VPAs), and Theorem 9 (complementability) with its proof.
+- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 6, the definition of $\omega$-VPAs with Büchi and Muller conditions, Theorem 7 (closure), the language $L_{\mathrm{repbdd}}$ and Theorem 8 (deterministic versus nondeterministic $\omega$-VPAs), and Theorem 9 (complementability) with its proof.

@@ -1,14 +1,15 @@
 # Quantitative games
 
 Games on graphs whose plays are evaluated by a number rather than won or lost: shortest-path, mean-payoff, total-payoff, energy and
-discounted-payoff games, and their stochastic versions. On finite arenas these games are positionally determined; mean-payoff games
+discounted-payoff games, and their stochastic versions. On finite arenas energy, mean-payoff, total-payoff and discounted-payoff games are positionally determined for both players, while in
+shortest-path games only Max always has a positional optimal strategy; mean-payoff games
 are solvable in NP ∩ coNP, in UP ∩ coUP and in pseudo-polynomial time, and parity games reduce to them, but no polynomial-time
 algorithm is known. Stochastic reachability games add random vertices. Qualitative games with
 reachability, Büchi, parity and Muller conditions are in [Muller, Rabin and Streett games](../muller-rabin-and-streett-games/README.md).
 
 - [Quantitative games and their values](quantitative-games-and-values.md)
 - [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](classical-quantitative-objectives.md)
-- [Shortest-path, energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
+- [Energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
 - [Mean-payoff values are rationals with small denominators](mean-payoff-values-are-rationals-with-small-denominators.md)
 - [Solving mean-payoff games is in NP ∩ coNP](solving-mean-payoff-games-is-in-np-and-conp.md)
 - [Parity games reduce to mean-payoff games](parity-games-reduce-to-mean-payoff-games.md)

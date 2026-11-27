@@ -15,7 +15,7 @@ discounted-payoff games.
 
 ## Proof depends on
 
-- [Shortest-path, energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
+- [Energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
 - [Discounted-payoff values are the unique fixed point of a contraction](discounted-payoff-values-are-the-unique-fixed-point.md)
 - [Mean-payoff values are rationals with small denominators](mean-payoff-values-are-rationals-with-small-denominators.md)
 

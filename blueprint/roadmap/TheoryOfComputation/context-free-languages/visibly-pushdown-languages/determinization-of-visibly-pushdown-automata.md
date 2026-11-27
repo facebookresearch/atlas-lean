@@ -13,5 +13,5 @@ words accepted by nondeterministic automata with $O(s)$ states for which every d
 
 ## Sources
 
-- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004, author copy <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.2, Theorem 2 (determinization) with its proof and Corollary 1.
+- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.2, Theorem 2 (determinization) with its proof and Corollary 1.
 - R. Alur and P. Madhusudan, "Adding nesting structure to words", *Journal of the ACM* 56(3), 2009, author copy <https://www.cis.upenn.edu/~alur/Jacm09.pdf>: Theorem 3.3 (determinization) and Theorem 3.4 (succinctness of nondeterminism), and Section 5.1 (VPLs are deterministic context-free languages).

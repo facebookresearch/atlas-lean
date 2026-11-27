@@ -17,4 +17,4 @@ VPLs are context-free.
 
 ## Sources
 
-- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004, author copy <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.1, Definition 1 (visibly pushdown automaton), its runs and acceptance, Definition 2 (visibly pushdown languages) and the examples after it.
+- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.1, Definition 1 (visibly pushdown automaton), its runs and acceptance, Definition 2 (visibly pushdown languages) and the examples after it.

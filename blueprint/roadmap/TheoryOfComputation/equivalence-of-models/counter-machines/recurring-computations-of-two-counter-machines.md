@@ -17,6 +17,7 @@ In particular the problem is undecidable, and it is not even in the arithmetical
 This page becomes ready once:
 
 - The $\Sigma^1_1$-completeness of the existence of a computation of a nondeterministic Turing machine on the empty tape that visits its starting state infinitely often (Harel, Pnueli and Stavi), from which the cited proof reduces (proof prerequisite; not yet stated)
+- The analytical hierarchy, its level $\Sigma^1_1$ and the reductions that define hardness for it (statement prerequisite; not yet stated)
 
 ## Sources
 

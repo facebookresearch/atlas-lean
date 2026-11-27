@@ -9,8 +9,9 @@ nested words over $\Sigma$ onto words over the tagged alphabet $\hat\Sigma = \Si
 A *nested word automaton* $A = (Q, q_0, Q_f, P, p_0, P_f, \delta_c, \delta_i, \delta_r)$ has linear states $Q$, hierarchical states $P$ and transition
 functions $\delta_c : Q \times \Sigma \to Q \times P$, $\delta_i : Q \times \Sigma \to Q$ and $\delta_r : Q \times P \times \Sigma \to Q$: at a call it passes a linear state forward and a
 hierarchical state along the nesting edge, which the matching return consumes. It accepts if its run ends in $Q_f$ and the hierarchical
-states on pending calls are in $P_f$; a language of nested words is *regular* if some nested word automaton accepts it. Read on tagged
-words, nested word automata are exactly the deterministic [visibly pushdown automata](visibly-pushdown-automata.md), and a language of tagged
+states on pending calls are in $P_f$; a language of nested words is *regular* if some nested word automaton accepts it. On tagged words,
+linearly accepting nested word automata (those with $P_f = P$, whose acceptance does not depend on pending calls) are deterministic
+[visibly pushdown automata](visibly-pushdown-automata.md), and a language of tagged
 words is a visibly pushdown language if and only if the corresponding language of nested words is regular.
 
 ## Depends on

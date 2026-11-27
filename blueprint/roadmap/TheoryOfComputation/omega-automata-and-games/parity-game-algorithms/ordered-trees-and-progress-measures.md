@@ -7,7 +7,8 @@ and $\le$ is the lexicographic order on the set $Y_t$ of leaves. For $p \in \{1,
 $(D_{d-1}, \dots, D_p)$, and set $\ell \lhd_p \ell'$ if $\ell_{\ge p} < \ell'_{\ge p}$ for $p$ odd and if $\ell_{\ge p} \le \ell'_{\ge p}$ for $p$ even. Add a top element
 $\top$ above all leaves with $\ell \lhd_p \top$ for every $p$ and every $\ell \in Y_t \cup \{\top\}$, including $\top \lhd_p \top$.
 
-Let $\mathcal{G}$ be a [parity game](../parity-games/parity-game.md) with priorities in $\{1, \dots, d\}$ on its edges. A *progress measure* over $t$ is a map
+Let $\mathcal{G}$ be a [parity game](../parity-games/parity-game.md) with priorities in $\{1, \dots, d\}$ on its edges (the linked definition puts
+priorities on positions; a priority on a position can be moved to its outgoing edges). A *progress measure* over $t$ is a map
 $\mu : V \to Y_t \cup \{\top\}$ such that for every vertex $u$:
 some edge $u \xrightarrow{p} v$ has $\mu(v) \lhd_p \mu(u)$ if $u$ belongs to Eve, and every edge $u \xrightarrow{p} v$ has $\mu(v) \lhd_p \mu(u)$ if $u$ belongs to Adam.
 Equivalently $\mu$ is a pre-fixed point, $\mathcal{O}_t(\mu) \le \mu$, of the monotone operator $\mathcal{O}_t$ built from

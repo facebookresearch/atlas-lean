@@ -2,7 +2,7 @@
 
 For every nondeterministic [Büchi automaton](../emptiness-of-b-chi-automata/mem-language-iff.md) $\mathcal{A} = (Q, A, q_0, \Delta, F)$ with $Q = \{0, \dots, k\}$ and
 $q_0 = 0$ there is a sentence of [monadic second-order logic](../logic-and-tree-automata/monadic-second-order-logic-over-words.md) with successor that holds in exactly the
-infinite words accepted by $\mathcal{A}$, constructed effectively. It states the existence of pairwise disjoint sets $X_0, \dots, X_k$ coding a run
+infinite words accepted by $\mathcal{A}$, constructed effectively. It states the existence of pairwise disjoint sets $X_0, \dots, X_k$ covering all positions and coding a run
 ($X_i$ is the set of positions where the state is $i$) such that the first position is in $X_0$, every pair of consecutive positions
 $x, y$ with $x \in X_i$, $y \in X_j$ and letter $a$ at $x$ satisfies $(i, a, j) \in \Delta$, and infinitely many positions lie in $\bigcup_{i \in F} X_i$
 (for every position some later position does).

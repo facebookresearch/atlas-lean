@@ -17,4 +17,4 @@ or complement.
 
 ## Sources
 
-- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004, author copy <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.2, Theorem 1 (closure) with its proof and Corollary 1 (closure under complementation).
+- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.2, Theorem 1 (closure) with its proof and Corollary 1 (closure under complementation).

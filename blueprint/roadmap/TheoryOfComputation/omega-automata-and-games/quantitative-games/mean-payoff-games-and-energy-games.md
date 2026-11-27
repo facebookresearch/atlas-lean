@@ -13,7 +13,7 @@ $T(n, m, W)$ thus solves mean-payoff games in the same time and computes mean-pa
 
 ## Proof depends on
 
-- [Shortest-path, energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
+- [Energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
 - [Mean-payoff values are rationals with small denominators](mean-payoff-values-are-rationals-with-small-denominators.md)
 
 ## Sources

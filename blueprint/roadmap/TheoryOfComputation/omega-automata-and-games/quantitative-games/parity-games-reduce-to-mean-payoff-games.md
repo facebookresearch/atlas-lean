@@ -1,7 +1,7 @@
 # Parity games reduce to mean-payoff games
 
 Let $\mathcal{G}$ be a [parity game](../parity-games/parity-game.md) with $n$ vertices and priorities $c(e) \in \{1, \dots, d\}$ on the edges (max-parity,
-even priorities good for Eve). The [mean-payoff game](classical-quantitative-objectives.md) on the same arena with weights $c'(e) = (-n)^{c(e)}$
+even priorities good for Eve; priorities on edges rather than on positions as in the linked definition, which changes no result here). The [mean-payoff game](classical-quantitative-objectives.md) on the same arena with weights $c'(e) = (-n)^{c(e)}$
 satisfies: Eve wins $\mathcal{G}$ from $v$ if and only if the mean-payoff value of $v$ is at least $0$. The weights have $O(d \log n)$
 bits, so solving parity games reduces in polynomial time to solving mean-payoff games with threshold $0$. The point is that on a
 simple cycle the weight of the largest priority dominates the sum of all the others.
@@ -13,7 +13,7 @@ simple cycle the weight of the largest priority dominates the sum of all the oth
 
 ## Proof depends on
 
-- [Shortest-path, energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
+- [Energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
 
 ## Sources
 

@@ -12,5 +12,5 @@ $(a, \ell)$; the resulting VPA accepts the words of $L$ annotated with the stack
 
 ## Sources
 
-- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004, author copy <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.1, Proposition 1 (embedding context-free languages as VPLs) with its proof.
+- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.1, Proposition 1 (embedding context-free languages as VPLs) with its proof.
 - R. Alur and P. Madhusudan, "Adding nesting structure to words", *Journal of the ACM* 56(3), 2009, author copy <https://www.cis.upenn.edu/~alur/Jacm09.pdf>: Theorem 5.2 (relation between CFLs and VPLs).

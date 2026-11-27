@@ -5,7 +5,8 @@ move that stops the play. A stopped play is evaluated by the vector in $\mathbb{
 infinite play by a top element $\top$; vectors are compared at the largest priority where they differ, more occurrences being better
 for an even priority and worse for an odd one, and $\top$ is greatest. A positional strategy $\sigma$ of Eve has value
 $\mathrm{val}_\sigma(v) = \inf_\tau$ of the evaluation of the play from $v$, and the algorithm only uses strategies all of whose infinite plays
-satisfy parity, starting from the strategy that always stops. An edge $u \xrightarrow{p} v$ is *improving* if extending $\mathrm{val}_\sigma(v)$ by $p$
+satisfy parity, starting from the strategy that always stops, after first removing the attractor of Adam to the cycles among his own vertices
+whose largest priority is odd (on those vertices he wins). An edge $u \xrightarrow{p} v$ is *improving* if extending $\mathrm{val}_\sigma(v)$ by $p$
 gives more than $\mathrm{val}_\sigma(u)$. Switching any nonempty set
 of improving edges yields a strategy whose value is at least as large everywhere and strictly larger somewhere (progress), and a
 strategy without improving edges is optimal and wins from exactly Eve's winning region (optimality). Since there are finitely

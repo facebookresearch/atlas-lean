@@ -18,4 +18,4 @@ the specification.
 
 ## Sources
 
-- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004, author copy <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.3, the paragraph on emptiness, Theorem 3 with its proof, and Figure 2 (summary of decision problems).
+- R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.3, the paragraph on emptiness, Theorem 3 with its proof, and Figure 2 (summary of decision problems).
