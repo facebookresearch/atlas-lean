@@ -17,6 +17,7 @@ Licensed under the Apache License, Version 2.0.
 
 module
 
+public import MathlibExt.RingTheory.Perfectoid.CrystallinePeriodRingBasic
 public import MathlibExt.RingTheory.Perfectoid.FontaineThetaKernel
 public import MathlibExt.RingTheory.Perfectoid.Functoriality
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
@@ -337,11 +338,6 @@ theorem algebraMap_bDeRham_injective : Function.Injective (algebraMap 𝔹⁺ �
   IsFractionRing.injective 𝔹⁺ 𝔹
 
 /-! ### The `ℚ_[p]`-algebra structures -/
-
-/-- The ring map `ℤ_[p] ≅ W(𝔽_p) → W(𝓞_ℂ_[p]♭)` induced by `𝔽_p → 𝓞_ℂ_[p]♭`. -/
-def padicIntToAinf : ℤ_[p] →+* 𝔸 :=
-  (WittVector.map (ZMod.castHom (dvd_refl p) (PreTilt 𝓞_ℂ_[p] p))).comp
-    (WittVector.equiv p).symm.toRingHom
 
 /-- The map `ℤ_[p] → W(𝓞_ℂ_[p]♭)` is fixed by the map of Witt vectors induced by any ring map of
 the tilt. -/

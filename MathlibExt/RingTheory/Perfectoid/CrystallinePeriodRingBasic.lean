@@ -21,7 +21,7 @@ module
 
 public import MathlibExt.RingTheory.AdicCompletion.PowerSeriesEval
 public import MathlibExt.RingTheory.Perfectoid.FontaineThetaKernel
-import Mathlib.RingTheory.WittVector.Compare
+public import Mathlib.RingTheory.WittVector.Compare
 import Mathlib.RingTheory.WittVector.Identities
 
 /-!
@@ -67,7 +67,7 @@ local notation "𝕀" => RingHom.ker (fontaineThetaInvertP 𝓞_ℂ_[p] p)
 section Objects
 
 /-- The ring map `ℤ_[p] ≃ W(𝔽_p) → W(𝓞_ℂ_[p]♭)` induced by `𝔽_p → 𝓞_ℂ_[p]♭`. -/
-private def padicIntToAinf : ℤ_[p] →+* 𝔸 :=
+def padicIntToAinf : ℤ_[p] →+* 𝔸 :=
   (WittVector.map (ZMod.castHom (dvd_refl p) (PreTilt 𝓞_ℂ_[p] p))).comp
     (WittVector.equiv p).symm.toRingHom
 
