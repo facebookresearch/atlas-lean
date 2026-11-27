@@ -24,3 +24,4 @@ Convex sets and convex bodies in Euclidean space: Helly-type and Radon-type theo
 - [Ulam's flat-sections problem in dimension three](ulam-flat-sections-convex.md)
 - [Knaster–Kuratowski–Mazurkiewicz lemma](kkm-lemma.md)
 - [Convex set](convex-set.md)
+- [Ellipsoidal bodies](is-ellipsoidal-body.md)
