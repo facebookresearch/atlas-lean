@@ -20,6 +20,12 @@ import Mathlib.Tactic.NormNum
 Each arch top has a unique move to a child of the original position. From that child,
 subtracting once returns to the original position. Counting the left arch tops row by row
 gives `3 * Tₖ = 2 ^ (k - 2) + 2 * (-1) ^ k` for `2 ≤ k` (`count_arch_tops_calkinWilfRow`).
+
+## References
+
+* Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+  of the Game Euclid*, The Fibonacci Quarterly 62 (1) (2024), pp. 15–28,
+  Corollary 4.7 and Proposition 5.2.
 -/
 
 namespace MetaMathlibExt
@@ -799,6 +805,98 @@ public theorem count_arch_tops_calkinWilfRow (k : ℕ) (hk : 2 ≤ k) :
     conv_lhs => rw [h, pow_add]
     norm_num
   rw [hc, row_count_formula, he]
+
+open fibonacci_arch_tops in
+/-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and
+$F_{j+2} = F_{j+1} + F_j$. Call a pair $(a, b)$ of natural numbers a P-position when the Euclid
+P-position test returns true at $(a, b)$, read it as the vertex $a/b$ of the Calkin–Wilf tree, and
+let $s(a/b) = a/(a+b)$ be its son and $d(a/b) = (a+b)/b$ its daughter; write $s^k$ and $d^k$ for
+the $k$-fold iterates. Let $n \ge 1$ and $k \ge 0$, and let $V = F_{2n-1}/F_{2n-2}$. Then $V$ is a
+P-position, its son's daughter $d(s(V))$ is $F_{2n+1}/F_{2n}$, and its daughter's son $s(d(V))$
+is $F_{2n}/(F_{2n} + F_{2n-2})$. The vertex $L = d(s^k((F_{2n+1} - F_{2n})/F_{2n}))$ is a
+P-position whose numerator is $F_{2n+1} + kF_{2n-1}$ and whose denominator is
+$F_{2n+1} + (k-1)F_{2n-1}$, and the vertex $R = s(d^k(F_{2n}/F_{2n-2}))$ is the P-position
+$(F_{2n} + kF_{2n-2})/(F_{2n} + (k+1)F_{2n-2})$.
+
+Here $L$ and $R$ are level $k$ (level $0$ the top) of the left and right branches of the arch
+topped by $d(s(V))$ and $s(d(V))$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 5.2. -/
+public theorem fibonacci_arch_positions (n k : ℕ) (hn : 1 ≤ n) :
+    let F : ℕ → ℕ := fun j => Nat.fib (j + 1)
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let V := (F (2 * n - 1), F (2 * n - 2))
+    let L := t (s^[k] (F (2 * n + 1) - F (2 * n), F (2 * n)))
+    let R := s (t^[k] (F (2 * n), F (2 * n - 2)))
+    euclidPPosition V.1 V.2 = true ∧ t (s V) = (F (2 * n + 1), F (2 * n)) ∧
+      s (t V) = (F (2 * n), F (2 * n) + F (2 * n - 2)) ∧
+      ((L.1 : ℤ) = F (2 * n + 1) + k * F (2 * n - 1) ∧
+        (L.2 : ℤ) = F (2 * n + 1) + (k - 1) * F (2 * n - 1) ∧ euclidPPosition L.1 L.2 = true) ∧
+      (R = (F (2 * n) + k * F (2 * n - 2), F (2 * n) + (k + 1) * F (2 * n - 2)) ∧
+        euclidPPosition R.1 R.2 = true) := by
+  obtain ⟨i, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  intro F s t V L R
+  let a := F (2 * (i + 1) - 1)
+  let b := F (2 * (i + 1) - 2)
+  let c := F (2 * (i + 1))
+  let d := F (2 * (i + 1) + 1)
+  have ha : a = Nat.fib (2 * i + 2) := congrArg Nat.fib (by omega)
+  have hb : b = Nat.fib (2 * i + 1) := congrArg Nat.fib (by omega)
+  have hp : euclidPPosition a b = true := ha ▸ hb ▸ fib_pair i
+  have hc : c = a + b := by
+    rw [ha, hb, Nat.add_comm (Nat.fib (2 * i + 2))]
+    exact Nat.fib_add_two (n := 2 * i + 1)
+  have hd : d = a + c := by
+    rw [ha]
+    exact Nat.fib_add_two (n := 2 * i + 2)
+  have hsub : d - c = a := by rw [hd, Nat.add_sub_cancel]
+  -- Each iteration adds the fixed coordinate to the other one.
+  have hs (j : ℕ) : s^[j] (a, c) = (a, j * a + c) := by
+    induction j with
+    | zero => simp
+    | succ j ih =>
+      rw [Function.iterate_succ_apply', ih]
+      refine Prod.ext rfl ?_
+      simp only [s]
+      ring
+  have ht (j : ℕ) : t^[j] (c, b) = (c + j * b, b) := by
+    induction j with
+    | zero => simp
+    | succ j ih =>
+      rw [Function.iterate_succ_apply', ih]
+      refine Prod.ext ?_ rfl
+      simp only [t]
+      ring
+  have hL : L = (d + k * a, k * a + c) := by
+    change t (s^[k] (d - c, c)) = _
+    rw [hsub, hs, hd]
+    simp only [t, add_left_comm, add_assoc, add_comm]
+  have hR : R = (c + k * b, c + (k + 1) * b) := by
+    change s (t^[k] (c, b)) = _
+    rw [ht, Nat.add_one_mul]
+    simp only [s, add_assoc]
+  -- The closed forms identify the iterated positions with the two P-positions.
+  have hden : d + k * a - a = k * a + c := by rw [hd]; omega
+  have hP := fibonacci_arch_tops (i + 1) k (Nat.succ_pos i)
+  refine ⟨hp, ?_, ?_, ⟨?_, ?_, ?_⟩, ⟨hR, ?_⟩⟩
+  · change (a + (a + b), a + b) = (d, c)
+    rw [hd, hc]
+  · change (a + b, a + b + b) = (c, c + b)
+    rw [hc]
+  · rw [hL]
+    change ((d + k * a : ℕ) : ℤ) = (d : ℤ) + (k : ℤ) * a
+    simp only [Nat.cast_add, Nat.cast_mul]
+  · rw [hL]
+    change ((k * a + c : ℕ) : ℤ) = (d : ℤ) + ((k : ℤ) - 1) * a
+    rw [hd]
+    push_cast
+    ring
+  · rw [hL, ← hden]
+    exact hP.1.1
+  · rw [hR]
+    exact hP.2.1
 
 end
 
