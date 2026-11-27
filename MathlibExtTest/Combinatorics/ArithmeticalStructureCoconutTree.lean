@@ -48,8 +48,8 @@ example : ∃ d r : Fin 1 ⊕ Fin 2 → ℕ,
     IsSmoothCoconut 1 2 d r ∧ d (.inl 0) ≤ 1 ∧ (∑ j, r (.inr j)) ≤ r (.inl 0) := by
   let d : Fin 1 ⊕ Fin 2 → ℕ := Sum.elim (fun _ => 1) (fun _ => 2)
   let r : Fin 1 ⊕ Fin 2 → ℕ := Sum.elim (fun _ => 2) (fun _ => 1)
-  have h : IsSmoothCoconut 1 2 d r := by
-    refine ⟨⟨by decide, by decide, ?_, ?_⟩, by decide, by decide⟩
+  have ha : IsArithmeticalStructure (coconutTree 1 2) d r := by
+    refine ⟨by decide, by decide, ?_, ?_⟩
     · intro v
       classical
       rw [finsum_mem_def, finsum_eq_sum_of_fintype, Fintype.sum_sum_type, Fin.sum_univ_one,
@@ -59,14 +59,19 @@ example : ∃ d r : Fin 1 ⊕ Fin 2 → ℕ,
         simp [coconutTree, SimpleGraph.fromRel_adj, d, r]
     · intro g hg
       exact Nat.dvd_one.mp (hg (.inr 0))
+  have h : IsSmoothCoconut 1 2 d r := (ha.isSmoothCoconut_iff (by decide)).mpr ⟨by decide, by
+    intro i j hij
+    have heq : j = i := Subsingleton.elim _ _
+    subst j
+    exact (lt_irrefl i hij).elim⟩
   have hcenter : d (.inl 0) ≤ 1 := h.center_le_one_of_two (by decide)
   refine ⟨d, r, h, hcenter, Nat.le_of_not_gt ?_⟩
   intro hsum
   exact (Nat.not_lt_of_ge hcenter) ((h.one_lt_center_iff (by decide)).mpr hsum)
 
--- With a path predecessor, a centre labelled d = 2 has r-label strictly below the leaf sum.
+-- On a two-vertex path the first r-label is strictly below the centre's r-label.
 example : ∃ d r : Fin 2 ⊕ Fin 3 → ℕ,
-    IsSmoothCoconut 2 3 d r ∧ r (.inl 1) < ∑ j, r (.inr j) := by
+    IsSmoothCoconut 2 3 d r ∧ r (.inl 1) < ∑ j, r (.inr j) ∧ r (.inl 0) < r (.inl 1) := by
   let d : Fin 2 ⊕ Fin 3 → ℕ := fun _ => 2
   let r : Fin 2 ⊕ Fin 3 → ℕ := Sum.elim ![1, 2] (fun _ => 1)
   have h : IsSmoothCoconut 2 3 d r := by
@@ -80,4 +85,5 @@ example : ∃ d r : Fin 2 ⊕ Fin 3 → ℕ,
         simp [coconutTree, SimpleGraph.fromRel_adj, d, r]
     · intro g hg
       exact Nat.dvd_one.mp (hg (.inr 0))
-  exact ⟨d, r, h, (h.one_lt_center_iff (by decide)).mp (by decide)⟩
+  refine ⟨d, r, h, (h.one_lt_center_iff (by decide)).mp (by decide), ?_⟩
+  exact (h.1.isSmoothCoconut_iff (by decide)).mp h |>.2 (show (0 : Fin 2) < 1 by decide)

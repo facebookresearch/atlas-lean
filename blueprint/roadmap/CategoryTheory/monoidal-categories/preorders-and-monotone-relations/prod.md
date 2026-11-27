@@ -1,0 +1,3 @@
+# Tensor product of preorders
+
+In the category of preorders and monotone relations, a morphism $X \to Y$ is a relation that is downward closed in its input and upward closed in its output. The tensor product $X \otimes Y$ of two objects is the product $X \times Y$ of the underlying preorders, ordered coordinatewise: $(x, y) \le (x', y')$ when $x \le x'$ and $y \le y'$. It is the monoidal product, not a categorical product of this category: for the one-point preorder $\mathbf{1}$ there are two monotone relations $\mathbf{1} \to \mathbf{1} \times \mathbf{1}$, the empty and the full one, but four pairs of monotone relations $\mathbf{1} \to \mathbf{1}$.

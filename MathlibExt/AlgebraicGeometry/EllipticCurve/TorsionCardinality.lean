@@ -461,13 +461,13 @@ theorem rel₄_of_anti_oddRec_evenRec (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     linarith only [hba]
   obtain ⟨m, rfl|rfl⟩ := b.even_or_odd'
   · have ea : Even a := by rw [← ha']; exact (even_two_mul _).add even_two
-    simp_rw [cMin, dMin, if_pos ea]
+    simp_rw [cMin, dMin, ite_eq_left ea]
     have hm : m ≥ 2 := by linarith only [h6, ha']
     convert (rel₃_iff₄ W (m + 1) m 1).mp ((rel₃_iff_oddRec W m).mpr <| oddRec _ hm) using 2
     all_goals ring
   · have nea : ¬ Even a := by
       rw [← ha', Int.not_even_iff_odd]; convert odd_two_mul_add_one (m + 1) using 1; ring
-    simp_rw [cMin, dMin, if_neg nea]
+    simp_rw [cMin, dMin, ite_eq_right nea]
     have hm : m + 1 ≥ 3 := by linarith only [h6, ha']
     convert (rel₄_iff_evenRec W (m + 1)).mpr (evenRec _ hm) using 2
     all_goals ring
@@ -684,9 +684,9 @@ lemma compl₂EDS_mul_b : letI W := normEDS b c d
   exact complEDS₂_mul_b b c d m
 
 lemma normEDS_six_eq_mul : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c := by
-  rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_compl₂EDS, compl₂EDS, if_neg (by decide)]
+  rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_compl₂EDS, compl₂EDS, ite_eq_right (by decide)]
   simp_rw [Int.reduceAdd, Int.reduceSub, normEDS_three, normEDS]
-  rw [preNormEDS_one, preNormEDS_two, preNormEDS_four, if_neg (by decide)]
+  rw [preNormEDS_one, preNormEDS_two, preNormEDS_four, ite_eq_right (by decide)]
   ring
 
 end Complement
@@ -1509,7 +1509,7 @@ theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
     all_goals obtain ⟨ns, eq⟩ := ih 1 (by omega) one_ne_zero
     · erw [← addX_smul_one_smul_one, ← addY_smul_one_smul_one, zero_add, add_zsmul _ 1 1, eq]
       exact ⟨Affine.nonsingular_add ns ns fun h ↦ smulY_one_ne_negY h.2,
-        dif_neg fun h ↦ smulY_one_ne_negY h.2⟩
+        dite_eq_right fun h ↦ smulY_one_ne_negY h.2⟩
     set n2 := n + 1 + 1
     obtain ⟨ns1, eq1⟩ := ih (n + 1) (by omega) (by omega)
     obtain ⟨ns2, eq2⟩ := ih n2 (by omega) (by omega)
@@ -2056,13 +2056,13 @@ private theorem isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic] {n : ℕ} (hn :
       exact eval_ne_of_isCoprime hA hb hΨ0
   ·
     by_cases hev : Even (n : ℤ)
-    · rw [if_pos hev] at hG
+    · rw [ite_eq_left hev] at hG
       exact one_ne_zero hG
-    · rw [if_neg hev] at hG
+    · rw [ite_eq_right hev] at hG
       have hnodd : ¬Even n := fun h => hev (by exact_mod_cast h)
       have hb : ((W.baseChange K).ΨSq ((n : ℤ) + 1)).eval x₀ = 0 := by
         have h2 : ((W.baseChange K).ΨSq ((n + 1 : ℕ) : ℤ)).eval x₀ = 0 := by
-          rw [ΨSq_ofNat, if_pos (Nat.even_add_one.mpr hnodd), eval_mul, hG, mul_zero]
+          rw [ΨSq_ofNat, ite_eq_left (Nat.even_add_one.mpr hnodd), eval_mul, hG, mul_zero]
         rwa [Nat.cast_add, Nat.cast_one] at h2
       exact eval_ne_of_isCoprime (isCoprime_ΨSq_succ W n) hΨ0 hb
 
@@ -2076,7 +2076,7 @@ omit [DecidableEq K] in
 
 private theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
     (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
-  rw [ΨSq_ofNat, if_neg (Nat.not_even_iff_odd.mpr hodd), mul_one]
+  rw [ΨSq_ofNat, ite_eq_right (Nat.not_even_iff_odd.mpr hodd), mul_one]
 
 private theorem smul_eq_zero_iff_preΨ'_eval [W.IsElliptic] {n : ℕ} (hodd : Odd n)
     (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :

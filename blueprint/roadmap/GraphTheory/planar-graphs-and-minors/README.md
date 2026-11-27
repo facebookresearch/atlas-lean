@@ -4,6 +4,7 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 
 - [Discrete Gauss–Bonnet formula for polyominoes](discrete-gauss-bonnet-formula-for-polyominoes/README.md)
 - [Euler's formula and cycle rank](euler-s-formula-and-cycle-rank/README.md)
+- [Euler's formula for connected plane graphs](euler-s-formula-for-connected-plane-graphs.md)
 - [Graph minors](graph-minors/README.md)
 - [Tree-width](tree-width/README.md)
 - [Rank-width and vertex-minors](rank-width-and-vertex-minors/README.md)
@@ -16,3 +17,7 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 - [Discrete Jordan curve theorem for the square lattice](discrete-jordan-curve-theorem-for-the-square-lat/README.md)
 - [Hopf's Umlaufsatz for lattice polygons](hopf-s-umlaufsatz-for-lattice-polygons/README.md)
 - [Crossing points of the regular drawing of the complete bipartite graph](legendre-regular-crossing.md)
+- [Constant-distortion L¹ embedding of planar graph metrics](planar-metrics-l1-distortion.md)
+- [Ordinary crossing formula for complete bipartite graphs](complete-bipartite-ordinary-crossing-number.md)
+- [Hill formula for the ordinary crossing number of complete graphs](complete-graph-ordinary-crossing-number.md)
+- [Hamiltonian cycle in a cubic bipartite three-connected planar graph](barnette-hamiltonian-cycle.md)
