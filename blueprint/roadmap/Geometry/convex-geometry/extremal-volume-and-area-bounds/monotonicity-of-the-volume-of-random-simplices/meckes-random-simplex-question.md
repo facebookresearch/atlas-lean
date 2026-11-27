@@ -8,7 +8,7 @@ Here $\mathbb{E} V_d(P^K_{d+1})$ is the expected volume of the convex hull of $d
 
 $$\mathbb{E} V_d(P^K_{d+1}) = \frac{1}{|K|^{d+1}} \int_{K^{d+1}} \bigl|\operatorname{conv}\{x_0, \dots, x_d\}\bigr| \, dx_0 \cdots dx_d,$$
 
-with $|\cdot|$ Lebesgue measure on $\mathbb{R}^d$, and a convex body is a compact convex set with nonempty interior. It holds; the resolution is [Random simplex volume is monotone up to an exponential factor](meckes-random-simplex-question-holds.md).
+with $|\cdot|$ Lebesgue measure on $\mathbb{R}^d$, and a convex body is a compact convex set with nonempty interior.
 
 ## Sources
 

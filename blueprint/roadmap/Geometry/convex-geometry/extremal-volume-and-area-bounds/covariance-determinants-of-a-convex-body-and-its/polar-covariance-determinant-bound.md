@@ -4,7 +4,7 @@ Conjecture (B. Klartag): there is a constant $C > 0$ such that for every $n \ge 
 
 $$\det\bigl(\operatorname{Cov}(K)\, \operatorname{Cov}(K^\circ)\bigr) \le \left(\frac{C}{n}\right)^{2n},$$
 
-where $\operatorname{Cov}(S)$ is the $n \times n$ covariance matrix of the uniform probability measure on $S$ (Lebesgue measure restricted to $S$ and divided by $|S|$), with entries $\operatorname{Cov}(S)_{ij} = \mathbb{E}[(X_i - \mathbb{E}X_i)(X_j - \mathbb{E}X_j)]$ for $X$ uniform on $S$, and $K^\circ = \{y : \langle x, y\rangle \le 1 \text{ for all } x \in K\}$ is the polar of $K$. A convex body is a compact convex set with nonempty interior, and barycenter at the origin means $\int_K x \, dx = 0$. It holds; the resolution is [Covariance determinant bound for a convex body and its polar](polar-covariance-determinant-bound-holds.md).
+where $\operatorname{Cov}(S)$ is the $n \times n$ covariance matrix of the uniform probability measure on $S$ (Lebesgue measure restricted to $S$ and divided by $|S|$), with entries $\operatorname{Cov}(S)_{ij} = \mathbb{E}[(X_i - \mathbb{E}X_i)(X_j - \mathbb{E}X_j)]$ for $X$ uniform on $S$, and $K^\circ = \{y : \langle x, y\rangle \le 1 \text{ for all } x \in K\}$ is the polar of $K$. A convex body is a compact convex set with nonempty interior, and barycenter at the origin means $\int_K x \, dx = 0$.
 
 ## Sources
 

@@ -2,4 +2,3 @@
 
 - [Expected volume of a random simplex in a convex body](expected-simplex-volume.md)
 - [Meckes's question on monotonicity of random simplex volume](meckes-random-simplex-question.md)
-- [Random simplex volume is monotone up to an exponential factor](meckes-random-simplex-question-holds.md)

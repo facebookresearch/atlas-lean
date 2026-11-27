@@ -4,7 +4,7 @@ Erdős Problem 989 (first question) asks for the following statement: for every 
 
 $$\left\lvert\, \#\bigl(A \cap \overline{B}(c, r)\bigr) - \pi r^2 \,\right\rvert > M.$$
 
-Equivalently, $f(r) = \sup_{c} \bigl\lvert \#(A \cap \overline{B}(c, r)) - \pi r^2 \bigr\rvert$, the largest discrepancy of a closed disc of radius $r$, is unbounded as a function of $r > 0$. It holds; the resolution is [Erdős problem 989: unbounded disc discrepancy](disc-discrepancy-unbounded-holds.md).
+Equivalently, $f(r) = \sup_{c} \bigl\lvert \#(A \cap \overline{B}(c, r)) - \pi r^2 \bigr\rvert$, the largest discrepancy of a closed disc of radius $r$, is unbounded as a function of $r > 0$.
 
 ## Sources
 

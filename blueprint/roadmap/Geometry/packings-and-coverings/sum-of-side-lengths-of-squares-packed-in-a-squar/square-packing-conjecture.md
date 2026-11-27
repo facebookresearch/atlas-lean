@@ -6,8 +6,6 @@ Conjecture: for every integer $k \ge 1$ and all closed squares $Q_1, \dots, Q_{k
 
 $$\sum_{i=1}^{k^2+1} s_i \le k.$$
 
-It is false; the refutation is [Erdős problem 106: the $k^2 + 1$ squares conjecture is false](square-packing-conjecture-refuted.md).
-
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #106, https://www.erdosproblems.com/106

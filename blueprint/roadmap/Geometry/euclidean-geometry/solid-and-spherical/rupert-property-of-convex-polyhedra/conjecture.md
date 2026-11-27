@@ -6,8 +6,6 @@ Here $\pi(x) = (x_1, x_2)$ is the projection of $\mathbb{R}^3$ onto the first tw
 
 $$\{\pi(Q_1 x) + t : x \in P\} \subseteq \operatorname{int} \{\pi(Q_2 x) : x \in P\}.$$
 
-It is false; the refutation is [A convex polyhedron without Rupert's property](conjecture-refuted.md).
-
 ## Sources
 
 - Wikipedia, List of unsolved problems in mathematics, Geometry: Rupert's property
