@@ -1,12 +1,12 @@
 # Renaming block identifiers commutes with execution
 
-**Theorem (renaming states).** In the [memory-safe language](block-structured-memory-safe-language.md), for every state $s$, command $c$ and permutation $\pi$ of identifiers
+**Theorem (renaming states).** In the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md), for every state $s$, command $c$ and permutation $\pi$ of identifiers
 there is a permutation $\pi'$ such that $[\![c]\!](\pi \cdot s) = \mathrm{error}$ if $[\![c]\!](s) = \mathrm{error}$, $[\![c]\!](\pi \cdot s) = \bot$ if $[\![c]\!](s) = \bot$, and
 $[\![c]\!](\pi \cdot s) = \pi' \cdot \pi \cdot s'$ if $[\![c]\!](s) = s'$. Programs cannot observe identifiers, so renaming the initial state only changes the choice of fresh identifiers.
 
 ## Depends on
 
-- [A memory-safe language with block identifiers](block-structured-memory-safe-language.md)
+- [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md)
 
 ## Sources
 
