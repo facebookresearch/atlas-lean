@@ -7,4 +7,4 @@ $y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$.
 
 ## Sources
 
-- Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 4, Equation (4.1).
+- Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 4, Equation (6).
