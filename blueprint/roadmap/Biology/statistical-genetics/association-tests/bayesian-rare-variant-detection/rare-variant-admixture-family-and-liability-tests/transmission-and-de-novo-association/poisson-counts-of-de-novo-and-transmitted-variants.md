@@ -12,7 +12,7 @@ Under the null $\gamma = 1$ all three rates lose their dependence on risk, so a 
 
 ## Depends on
 
-- [Poisson likelihood of de novo counts](../../../gene-constraint-scores-pli-and-loeuf/poisson-lik.md)
+- [Poisson likelihood of de novo counts](../../../../gene-constraint-scores-pli-and-loeuf/poisson-lik.md)
 
 ## Expansion
 

@@ -18,7 +18,7 @@ This score is the admixed-population analogue of an association test run inside 
 
 ## Depends on
 
-- [Cochran–Armitage trend test](../../cochran-armitage-trend-test/README.md)
+- [Cochran–Armitage trend test](../../../cochran-armitage-trend-test/README.md)
 
 ## Expansion
 

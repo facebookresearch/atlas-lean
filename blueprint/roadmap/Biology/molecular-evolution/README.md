@@ -21,7 +21,6 @@
 - [History graphs for genome evolution under parsimony](history-graphs-for-genome-evolution-under-parsimony/README.md)
 - [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
-- [Antibody affinity landscapes](antibody-affinity-landscapes/README.md)
 - [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
 - [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)
 - [Microsatellite average squared distance](microsatellite-average-squared-distance/README.md)

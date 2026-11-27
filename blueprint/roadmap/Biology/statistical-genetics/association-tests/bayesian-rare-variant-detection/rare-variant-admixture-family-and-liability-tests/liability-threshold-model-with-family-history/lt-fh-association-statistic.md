@@ -11,7 +11,7 @@ where $r^2$ is the squared sample correlation, compared with a $\chi^2_1$ distri
 ## Depends on
 
 - [Posterior mean genetic liability given case-control status and family history](posterior-mean-genetic-liability.md)
-- [The Cochran–Armitage statistic is N r²](../../cochran-armitage-trend-test/ca-stat-eq-mul-sample-corr-sq.md)
+- [The Cochran–Armitage statistic is N r²](../../../cochran-armitage-trend-test/ca-stat-eq-mul-sample-corr-sq.md)
 
 ## Expansion
 

@@ -16,7 +16,7 @@ Two consequences follow. The effective number of markers drops from $M$ to $|C| 
 
 ## Depends on
 
-- [The SKAT variance-component statistic](../../skat-variance-component-test/continuous-skat-q.md)
+- [The SKAT variance-component statistic](../../../skat-variance-component-test/continuous-skat-q.md)
 
 ## Expansion
 

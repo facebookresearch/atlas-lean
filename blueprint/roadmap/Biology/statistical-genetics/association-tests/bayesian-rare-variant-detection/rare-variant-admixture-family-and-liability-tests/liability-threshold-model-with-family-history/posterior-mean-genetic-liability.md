@@ -20,7 +20,7 @@ Example (Hujoel et al.): with $K = 5\%$, $h^2 = 50\%$ and parental history only,
 
 ## Depends on
 
-- [Case indicator of the threshold model](../../../liability-scale-heritability-from-ld-score-regre/case-ind.md)
+- [Case indicator of the threshold model](../../../../liability-scale-heritability-from-ld-score-regre/case-ind.md)
 
 ## Expansion
 

@@ -18,7 +18,7 @@ The restriction matters: with $K = 2$ and rates $2$ and $4$, $\mathbb{E} R \appr
 
 ## Proof depends on
 
-- [Jensen's inequality](../../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+- [Jensen's inequality](../../../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 
 ## Expansion
 

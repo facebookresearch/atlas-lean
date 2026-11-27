@@ -14,8 +14,8 @@ to first order in $q$, with residual variance close to $1$.
 
 ## Depends on
 
-- [Case indicator of the threshold model](../../liability-scale-heritability-from-ld-score-regre/case-ind.md)
-- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Case indicator of the threshold model](../../../liability-scale-heritability-from-ld-score-regre/case-ind.md)
+- [Hardy–Weinberg proportions](../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Expansion
 
