@@ -6,6 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`LeanEval/Analysis/Choquet.lean` (leanprover/lean-eval), at commit
+38361be884302c7edce1908c4aef8296eb2cb27e, for the statements of `choquet` and `bauer_unique`.
+Manifests: `manifests/problems/choquet_representation_theorem.toml` and
+`manifests/problems/bauer_extreme_point_uniqueness.toml`, both rev 1, status archived.
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison (problem submitter)
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use these portions except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. lean-eval ships no `NOTICE` file.
+
+Modification notice (Apache License 2.0, Section 4). ATLAS converted the evaluation problems
+to Batteries wanted declarations, adapted their namespace and documentation, and made the
+`CompleteSpace` binder explicit. This module contains the statements moved from
+`WantedExt/Analysis/ChoquetWanted.lean` with their proofs.
+-/
 module
 
 public import Mathlib.Analysis.Convex.Extreme
@@ -36,6 +62,10 @@ set, even without convexity. For a compact convex set in a real Banach space wit
 σ-algebra, `bauer_unique` shows that a probability measure carried by the set with an extreme
 point as its Bochner barycenter must be the Dirac measure at that point.
 
+`choquet` applies the second-countable construction in the separable closed real span of the
+compact convex set and pushes the measure forward along the inclusion. The same construction
+supplies `choquet_representation_of_isCompact`.
+
 ## References
 
 * G. Choquet, *Existence et unicité des représentations intégrales au moyen des points extrémaux
@@ -43,10 +73,6 @@ point as its Bochner barycenter must be the Dirac measure at that point.
 * H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Archiv der Mathematik 9 (1958),
   pp. 389–393.
 * O. Knill, *Some fundamental theorems in mathematics*, §88 (the Banach-space formulation).
-
-The proof of `choquet` reuses the null-complement conclusion of the original proof of
-`MathlibExt.Analysis.Convex.ChoquetWanted.choquet_representation_of_isCompact` in this module
-(`MathlibExt.Analysis.Convex.Choquet`).
 -/
 
 namespace MathlibExt.Analysis.Convex.ChoquetWanted
@@ -818,13 +844,6 @@ namespace MathlibExt.Analysis.ChoquetWanted.Analysis
 
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
-/-
-The Choquet statement below comes from `LeanEval.Analysis.Choquet` at commit
-38361be884302c7edce1908c4aef8296eb2cb27e of leanprover/lean-eval, problem
-`choquet_representation_theorem` (submitted by Kim Morrison).
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-ATLAS adapted the namespace and documentation, made completeness explicit, and supplied the proof.
--/
 -- Preserve the existing public name, including its repeated `Analysis` component.
 set_option linter.dupNamespace false in
 /-- **Choquet's representation theorem in Banach spaces.** Let $X$ be a real Banach space with its
@@ -873,14 +892,6 @@ public theorem choquet [CompleteSpace X] [MeasurableSpace X] [BorelSpace X]
     exact hy'.2.linear_image ι.toLinearMap
   · rw [hmeas.integral_map]
     exact ((ι.integral_comp_comm hint).trans (congrArg ι hbary)).symm
-
-/-
-The Bauer statement below comes from `LeanEval.Analysis.Choquet` at commit
-38361be884302c7edce1908c4aef8296eb2cb27e of leanprover/lean-eval, problem
-`bauer_extreme_point_uniqueness` (submitted by Kim Morrison).
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-ATLAS adapted the namespace and documentation and supplied the proof.
--/
 
 /- **Bauer's uniqueness at extreme points.** If `x` is an extreme point of a
 compact convex set `K` and `μ` is a probability measure supported on `K`
