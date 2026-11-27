@@ -115,7 +115,9 @@ lemma integrable_snd_map_nonresponseShift {P : Measure (Bool × ℝ)} [IsFiniteM
     (measurable_nonresponseShift δ).aemeasurable).2
     (hP.add ((integrable_const δ).indicator measurableSet_nonresponse))
 
-/-- The δ-shift moves the full-data mean by `δ P(R = false)`. -/
+/-- For a finite measure `P` on `Bool × ℝ` with integrable second coordinate, the δ-shift moves
+the integral of the second coordinate by `δ * P.real {z | z.1 = false}`. When `P` is a
+probability measure this is the full-data mean moving by `δ P(R = false)`. -/
 theorem integral_snd_map_nonresponseShift {P : Measure (Bool × ℝ)} [IsFiniteMeasure P]
     (hP : Integrable Prod.snd P) (δ : ℝ) :
     ∫ z, z.2 ∂(P.map (nonresponseShift δ)) =

@@ -33,8 +33,8 @@ convergence-stable when `D'(x*) = s_xy + s_yy < 0` (Eshel 1983), equivalently `s
 because `s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`; near a convergence-stable `x*` the fitness
 gradient points towards `x*`.
 
-This module defines `sxx` (`fitnessGradient`, `sxy`, `syy` and `IsSingular` are defined in
-`Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoint`) and proves
+This module re-exports `fitnessGradient`, `sxx`, `sxy`, `syy` and `IsSingular` from
+`Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoint` and proves
 `convergenceStable_iff_and_gradient`: for an invasion fitness of class `C²`, `s_xy + s_yy < 0`
 iff `s_yy < s_xx` at `(x*, x*)`, and if `s_xy + s_yy < 0` then `(x* - x) D(x) > 0` for
 residents `x` near but distinct from `x*`.
@@ -51,10 +51,6 @@ open Set Filter
 open scoped Topology
 
 namespace WantedExt.Biology.Ecology.SingularStrategyClassificationWanted
-
-/-- The second partial derivative `∂²s/∂x²` (resident variable) at `(a, b)`. -/
-noncomputable def sxx (s : ℝ → ℝ → ℝ) (a b : ℝ) : ℝ :=
-  deriv (fun x => deriv (fun x' => s x' b) x) a
 
 private noncomputable def PD1 (s : ℝ → ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
   deriv (fun x => s x p.2) p.1

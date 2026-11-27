@@ -47,29 +47,6 @@ public theorem_wanted hasSum_heightOneMultipleZeta_mul_pow {s r : ℂ} (hs : 1 <
     (hr : ‖r - 1‖ < ‖s - 1‖) (hrs : r.re < s.re) :
     HasSum (fun j : ℕ => heightOneMultipleZeta s j * (r - 1) ^ j) (multipleHurwitzZeta r s)
 
-/-- **Generalized Goldbach series for height one multiple zeta values.** Let $k \ge 1$ be an
-integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
-Riemann zeta function, $c(k, m)$ for the unsigned Stirling numbers of the first kind,
-$H_k = \sum_{i=1}^{k} 1/i$ for the $k$-th harmonic number and
-$H_{k,k} = \sum_{i=1}^{k} (-1)^{i-1} \binom{k}{i} i^{-k}$ for the Roman harmonic number. Then the
-series $\sum_{j \ge 0} \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
-sum $\frac{1}{k!} \bigl(\sum_{m=0}^{k-1} c(k, m) \, \zeta(k + 1 - m) + H_k\bigr)$, and the series
-$\sum_{j \ge 0} (-1)^j \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
-sum $\frac{H_{k,k}}{k} - \frac{1}{2 \, k! \, k}$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Theorem 2 (`integers-2024-A43-thm-2`). -/
-public theorem_wanted hasSum_heightOneMultipleZeta_goldbach (k : ℕ) (hk : 1 ≤ k) :
-    HasSum (fun j : ℕ => (k : ℂ) ^ j * heightOneMultipleZeta ((k : ℂ) + 1) j -
-        1 / ((k.factorial : ℂ) * k))
-      (1 / (k.factorial : ℂ) *
-        (∑ m ∈ Finset.range k, (k.stirlingFirst m : ℂ) * riemannZeta ((k : ℂ) + 1 - m) +
-          (harmonic k : ℂ))) ∧
-    HasSum (fun j : ℕ => (-1) ^ j * ((k : ℂ) ^ j * heightOneMultipleZeta ((k : ℂ) + 1) j -
-        1 / ((k.factorial : ℂ) * k)))
-      (((∑ i ∈ Finset.Icc 1 k, (-1 : ℚ) ^ (i - 1) * (k.choose i : ℚ) / (i : ℚ) ^ k) / k -
-        1 / (2 * (k.factorial : ℚ) * k) : ℚ) : ℂ)
-
 /-- **Expansion of the hyperharmonic zeta function in height one multiple zeta values.** Let $r$
 and $s$ be complex numbers with $\operatorname{Re} s > 0$, $|r| < |s|$ and
 $\operatorname{Re} r < \operatorname{Re} s$. Write $\zeta(s, \{1\}^j)$ for the height one multiple
