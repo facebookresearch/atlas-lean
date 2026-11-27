@@ -36,6 +36,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
+section
+
+variable {S : Type*} [AddCommSemigroup S]
+
 /-- **CR-set.** A subset $A$ of a commutative semigroup $(S, +)$ is a CR-set (combinatorially rich)
 when for every natural number $n$, including $n = 0$, there is a natural number $r$ such that for
 every $r \times n$ matrix $(m_{ij})$ with entries in $S$ there are a nonempty set
@@ -49,9 +53,11 @@ semigroup. Over a nonempty $S$ the two definitions agree.
 
 Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
 25 (2025), Article A4, Definition 2. -/
-def IsCRSet {S : Type*} [AddCommSemigroup S] (A : Set S) : Prop :=
+def IsCRSet (A : Set S) : Prop :=
   ∀ n : ℕ, ∃ r : ℕ, ∀ M : Fin r → Fin n → S, ∃ α : Finset (Fin r), α.Nonempty ∧
     ∃ s : S, ∀ j, (α.toList.map fun i => M i j).foldl (· + ·) s ∈ A
+
+end
 
 /-- **Arithmetic progressions in CR-sets.** If $A$ is a CR-set in a commutative semigroup
 $(S, +)$ and $l$ is a natural number, then the set of pairs $(a, b) \in S \times S$ such that
