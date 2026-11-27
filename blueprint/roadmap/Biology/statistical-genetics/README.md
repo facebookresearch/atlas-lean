@@ -27,4 +27,5 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
 - [Familial relative risk explained by common variants](familial-relative-risk-explained-by-common-variants/README.md)
 - [Sum of Single Effects (SuSiE) regression](sum-of-single-effects-susie/README.md)
+- [Annotation-informed polygenic risk prediction](annotation-informed-polygenic-risk-prediction/README.md)
 - [Latent variance component REML](latent-variance-component-reml/README.md)

@@ -42,29 +42,13 @@ public import MathlibExt.NumberTheory.SZumkellerCardUnitaryDivisorsOfIsUnitarySZ
 public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
 public import MathlibExt.NumberTheory.SZumkellerEightLeCardPrimeFactorsOfIsSZumkellerOdd
 public import MathlibExt.NumberTheory.SZumkellerTwelveLeCardDivisorsOfIsSZumkeller
+public import MathlibExt.NumberTheory.SZumkellerTwoDivMinFacSqAddOneLtProd
+public import MathlibExt.NumberTheory.SZumkellerIsSquareOfIsSZumkellerOdd
 public import MathlibExt.NumberTheory.SZumkellerIsSZumkellerEvenProps
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **A prime-factor product bound for s-Zumkeller numbers.** Let $n$ be an s-Zumkeller number
-and let $p_1$ be its least prime factor. Then
-$$\frac{2}{p_1^2} + 1 < \prod_{p} \frac{p^2}{p^2 - 1},$$
-where the product ranges over the distinct prime factors $p$ of $n$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 5. -/
-public theorem_wanted two_div_minFac_sq_add_one_lt_prod (n : ℕ) (h : IsSZumkeller n) :
-    2 / (n.minFac : ℚ) ^ 2 + 1 < ∏ p ∈ n.primeFactors, (p : ℚ) ^ 2 / (p ^ 2 - 1)
-
-/-- **Odd s-Zumkeller numbers are perfect squares.** Every odd s-Zumkeller number is a perfect
-square.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 7. -/
-public theorem_wanted isSquare_of_isSZumkeller_odd (n : ℕ) (h : IsSZumkeller n) (ho : Odd n) :
-    IsSquare n
 
 /-- **Lower bound for odd s-Zumkeller numbers divisible by 3.** Every odd s-Zumkeller number $n$
 divisible by $3$ satisfies

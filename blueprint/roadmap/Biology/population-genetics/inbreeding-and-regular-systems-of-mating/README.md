@@ -5,4 +5,5 @@
 - [Inbreeding under repeated full-sib mating](inbreeding-under-full-sib-mating.md)
 - [Viability selection in an inbred population](selection-under-inbreeding.md)
 - [Mean fitness is linear in the inbreeding coefficient](mean-fitness-under-inbreeding.md)
+- [Inbreeding and mean-fitness dynamics](inbreeding-and-mean-fitness-dynamics/README.md)
 - [Pedigree-conditioned coalescence under selfing](pedigree-conditioned-coalescence-under-selfing/README.md)
