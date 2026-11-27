@@ -4,7 +4,7 @@
 
 $$\mu\, b'(e^\ast;h) + (1-\mu)\, b'(e^\ast;l) = c,$$
 
-and is assumed increasing in $\mu$. The government picks $\pi$ in an optimistic (best equilibrium) or pessimistic (worst equilibrium) Stackelberg sense.
+and is assumed increasing in $\mu$. Assume also $c < b'(0;l)$ (the source's Assumption 2: even when certain that the infection level is low, individuals take some positive unilateral effort); the source's Example 2 shows that the theorems below can fail without it. The government picks $\pi$ in an optimistic (best equilibrium) or pessimistic (worst equilibrium) Stackelberg sense.
 
 **Theorem (structure of equilibrium objectives).** Let $\alpha(G)$ be the independence number of $G$.
 1. The largest expected aggregate effort over Nash equilibria equals $\alpha(G)\,\mathbb{E}[e^\ast]$, attained by the specialised equilibrium in which a maximum independent set exerts $e^\ast$ and everyone else free-rides.

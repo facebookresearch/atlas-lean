@@ -8,7 +8,13 @@ $p^y(t,\cdot)$ is the state distribution of player $y$, and $K$ weights states a
 
 **Theorem (verification).** If $u^x(t,e)$ is a $C^1$ solution of the HJB system $\dot u^x(t,e)=-\hat H^x\big(t,e,Z^x_t,\Delta_eu^x(t,\cdot)\big)$, $u^x(T,e)=g^x(e,Z^x_T)$, with $\Delta_eu(e')=u(e')-u(e)$ and $\hat H$ the minimized Hamiltonian, then $u^x$ is the value function for the given flow, and the Hamiltonian minimizer $\hat\phi^x(t,e)=\hat a^x_e(t,Z^x_t,u^x(t,\cdot))$ is an optimal Markov control.
 
-**Theorem (existence of equilibrium).** Assume the rates are bounded and Lipschitz, $K$ is Lipschitz, and the Hamiltonian minimizer is locally Lipschitz. If
+**Theorem (existence of equilibrium).** Assume, with $A$ the control set:
+
+- (rates, Condition 2.3) $|q^x_{e,e'}(a,z)|\le q_{\max}$ for all $x,e,e',a,z$, and there is $C$ with $|q^x_{i,k+i}(a,z)-q^x_{j,k+j}(a,z')|\le C\big(\mathbf 1_{\{i\ne j\}}+|z-z'|^p\big)$ for $p=1,2$ (indices of $E$ taken cyclically);
+- (impact, Condition 2.4) $|K(a,e)-K(a',e)|\le L_K|a-a'|$ and $|K(a,e)|\le C_K$;
+- (control-affine rates and convex costs, Condition 2.7) the rate matrix is $Q^x(a,z)=Q_1(z)+aQ_2(z)$ with $Q_2$ locally Lipschitz; $a\mapsto f^x(t,e,z,a)$ is $C^1$ and strongly convex uniformly in $(t,e,z)$, with $(t,z)\mapsto\partial_af^x$ locally Lipschitz uniformly in $(a,e)$; $f$ and $g$ are uniformly bounded and $z\mapsto f^x(t,e,z,a)$ is continuous.
+
+These make the Hamiltonian minimizer $\hat a$ locally Lipschitz. If
 
 $$\|w\|_{L^2(I\times I)}\,L_K\,L_{\hat a}(C_K)<1,$$
 

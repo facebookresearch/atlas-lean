@@ -1,6 +1,6 @@
 # Optimal nutrient supply in a viscous Cahn–Hilliard–Keller–Segel tumour model
 
-**State system.** On a smooth bounded $\Omega\subset\mathbb R^3$, $Q=\Omega\times(0,T)$, the tumour phase field $\phi\in(-1,1)$, chemical potential $\mu$ and nutrient $\sigma\ge0$ satisfy, with homogeneous Neumann conditions,
+**State system.** On a smooth bounded connected $\Omega\subset\mathbb R^2$ (the source's separation argument is two-dimensional; it says the property cannot be established in dimension three), $Q=\Omega\times(0,T)$, the tumour phase field $\phi\in(-1,1)$, chemical potential $\mu$ and nutrient $\sigma\ge0$ satisfy, with homogeneous Neumann conditions,
 
 $$\begin{aligned} \partial_t\phi-\Delta\mu+m\phi&=\gamma(\phi,\sigma),\\ \tau\partial_t\phi-\Delta\phi+F'(\phi)-\sigma&=\mu,\\ \partial_t\sigma-\Delta\sigma+\nabla\cdot(\sigma\nabla\phi)&=\sigma-\sigma^2+u, \end{aligned}$$
 

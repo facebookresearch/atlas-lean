@@ -20,7 +20,13 @@ $$
 P_\alpha = M(\alpha)S_0 + \alpha I_0 + (1-\alpha)\Big(\beta - \gamma - \frac{\beta I_0}{S_0 + I_0}\Big) I_0.
 $$
 
-Then the quantity $M(\alpha)S + \alpha I + (1-\alpha)\big(\beta - \gamma - \frac{\beta I}{S+I}\big)I$ is conserved and equals $P_\alpha$. A pair of nonnegative absolutely continuous functions $(S, I)$ solves the system if and only if $S(t) = g_\alpha(I(t))$, where $g_\alpha$ is the nonnegative root of this quadratic conservation law (an explicit, convex function of $I$ determined by $\alpha, \beta, \gamma, M(\alpha), P_\alpha$), and $I$ solves the scalar equation
+Write $F(S,I) = \frac{\beta S}{S+I} - \gamma$. Differentiating the $S$ equation gives the first-order system
+
+$$
+M(\alpha)S' = -(1-\alpha)\big(F(S,I)\,I\big)' - \alpha F(S,I)\,I, \qquad I' = F(S,I)\,I, \qquad S(0) = S_0,\ I(0) = I_0 .
+$$
+
+Along its solutions the quantity $M(\alpha)S + \alpha I + (1-\alpha)\big(\beta - \gamma - \frac{\beta I}{S+I}\big)I$ is conserved and equals $P_\alpha$. A pair of nonnegative absolutely continuous functions $(S, I)$ solves the first-order system if and only if $S(t) = g_\alpha(I(t))$, where $g_\alpha$ is the nonnegative root of this quadratic conservation law (an explicit, convex function of $I$ determined by $\alpha, \beta, \gamma, M(\alpha), P_\alpha$), and $I$ solves the scalar equation
 
 $$
 I' = \Big(\beta - \gamma - \frac{\beta I}{g_\alpha(I) + I}\Big) I, \qquad I(0) = I_0.
@@ -28,7 +34,9 @@ $$
 
 For $\alpha = 1$ this reduces to $S = N - I$.
 
-**Proposition (equilibria and global stability).** The equilibria of the scalar equation are $0$ and
+A solution of the first-order system satisfies ${}^{\mathrm{CF}}D_t^{\alpha} S + F(S,I)I = F(S_0,I_0)\,I_0\,e^{-\alpha t/(1-\alpha)}$, so it solves the Caputo–Fabrizio system if and only if $F(S_0,I_0)\,I_0 = 0$ (for absolutely continuous $S$ the Caputo–Fabrizio derivative vanishes at $t = 0$, so the $S$ equation forces this). The source's Theorem 2 states the equivalence for the Caputo–Fabrizio system itself, which holds only under this condition. The two propositions below are about the first-order system.
+
+**Proposition (equilibria and global stability).** For the first-order system, the equilibria of the scalar equation are $0$ and
 
 $$
 E_\alpha = \frac{(\beta - \gamma)\,P_\alpha}{\alpha(\beta - \gamma) + M(\alpha)\gamma}.

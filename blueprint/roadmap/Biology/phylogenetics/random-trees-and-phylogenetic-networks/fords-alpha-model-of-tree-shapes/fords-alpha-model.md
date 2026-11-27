@@ -2,14 +2,14 @@
 
 **Objects.** Trees are rooted binary trees; a *cladogram* on $[n]=\{1,\ldots,n\}$ is a tree with leaves bijectively labelled by $[n]$. Write $\mathcal{BT}^*_n$, $\mathcal{BT}_n$ for unlabelled trees (shapes) and cladograms with $n$ leaves, and $\mathcal{OBT}^*_n$, $\mathcal{OBT}_n$ for their ordered versions (children of each internal node ordered). For an internal node $v$ with children $v_1,v_2$, its *numerical split* is $NS_T(v)=(\kappa_T(v_1),\kappa_T(v_2))$, the numbers of descendant leaves (ordered as in the tree, or increasingly for unordered trees); $NS(T)$ is the multiset of numerical splits. A *symmetric branch point* is an internal node whose two child subtrees are isomorphic. $T\star T'$ denotes the root join of two trees.
 
-**The model.** Fix $\alpha\in[0,1]$. Grow a cladogram from a single leaf labelled $1$; for $m=2,\ldots,n$ insert leaf $m$ either on an arc (subdividing it) or above the current root, choosing
+**The model.** Fix $\alpha\in[0,1]$. Grow a cladogram from a single leaf labelled $1$. Leaf $2$ is added with probability $1$, making the cherry on $\{1,2\}$. For $m=3,\ldots,n$ insert leaf $m$ either on an arc (subdividing it) or above the current root, choosing
 
 - a given pendant arc with probability $\dfrac{1-\alpha}{m-1-\alpha}$,
 - a given internal arc, or the new-root position, with probability $\dfrac{\alpha}{m-1-\alpha}$.
 
-The probability $P^{(*)}_{\alpha,n}$ of a shape is the total probability of all growth histories producing it, and the probabilities $P_{\alpha,n}$ on cladograms, $P^{(o,*)}_{\alpha,n}$ on ordered shapes and $P^{(o)}_{\alpha,n}$ on ordered cladograms are obtained by spreading each shape's probability uniformly over its preimages. The values $\alpha=0$ and $\alpha=1/2$ recover the Yule (ERM) and uniform (PDA) models.
+The probability $P^{(*)}_{\alpha,n}$ of a shape is the total probability of all growth histories producing it, and the probabilities $P_{\alpha,n}$ on cladograms, $P^{(o,*)}_{\alpha,n}$ on ordered shapes and $P^{(o)}_{\alpha,n}$ on ordered cladograms are obtained by spreading each shape's probability uniformly over its preimages. (Read literally at $m=2$, the rule would leave only the root position, of weight $\alpha/(1-\alpha)$, since a single leaf has no arc; the source has the same literal slip.) The values $\alpha=0$ and $\alpha=1/2$ recover the Yule (ERM) and uniform (PDA) models.
 
-**Markov branching for ordered shapes.** Let $\Gamma_\alpha(1)=1$ and $\Gamma_\alpha(n)=(n-1-\alpha)\,\Gamma_\alpha(n-1)$ for $n\ge 2$, and for $a,b\ge 1$
+**Markov branching for ordered shapes.** Let $\Gamma_\alpha(1)=1$ and $\Gamma_\alpha(n)=(n-1-\alpha)\,\Gamma_\alpha(n-1)$ for $n\ge 2$ (the source's Proposition 1 prints $n>2$, which leaves $\Gamma_\alpha(2)$ undefined; the cherry has probability $1$, so $q_\alpha(1,1)=\varphi_\alpha(1,1)/\Gamma_\alpha(2)=(1-\alpha)/\Gamma_\alpha(2)$ must equal $1$, which forces $\Gamma_\alpha(2)=1-\alpha$, the case $n=2$ of the recursion), and for $a,b\ge 1$
 
 $$\varphi_\alpha(a,b) = \frac{\alpha}{2}\binom{a+b}{a} + (1-2\alpha)\binom{a+b-2}{a-1}, \qquad q_\alpha(a,b) = \frac{\Gamma_\alpha(a)\,\Gamma_\alpha(b)}{\Gamma_\alpha(a+b)}\,\varphi_\alpha(a,b).$$
 

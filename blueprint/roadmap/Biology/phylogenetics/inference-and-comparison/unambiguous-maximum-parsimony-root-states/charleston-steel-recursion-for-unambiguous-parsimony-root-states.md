@@ -10,7 +10,7 @@ Charleston and Steel conjectured that $f_{k,r} = f_{k-p,r} + f_{k-p-1,r}$ when $
 
 $$ f_{k+1,r} = f_{k-p+1,r} + f_{k-p,r}. $$
 
-The initial values satisfy $f_{0,r} = 1$, $f_{k,r} = 2$ for $1 \le k \le p$, $f_{p+1,r} = 3$, and $f_{k,r} \le 4$ for $p+1 < k \le r$. So the conjecture holds for every even $r$, in particular for $r = 4$ (nucleotides) and $r = 20$ (amino acids).
+The initial values satisfy $f_{0,r} = 1$, $f_{k,r} = 2$ for $1 \le k \le p$, $f_{p+1,r} = 3$, and $f_{k,r} \le 4$ for $p+1 < k \le r$. So the conjecture holds for every even $r$ and all $k \ge r+1$, in particular for $r = 4$ (nucleotides) and $r = 20$ (amino acids); at small $k$ it can fail (the source's values $f_{5,6} = f_{6,8} = 3$ differ from the conjectured ones).
 
 **Odd number of states.** The conjecture fails in general for odd $r$: for $r = 2p - 1$, $p \ge 2$, it predicts $f_{p+1,r} = 2 f_{1,r} = 4$, but in fact $f_{p+1,r} = 3$ (Observation 1). For $r = 3$ (Main Theorem 1), $f_{2,3} = 2$, $f_{3,3} = 3$, and for all $k \ge 3$, $f_{k+1,3} = 2 f_{k,3}^{A_2} = 2 f_{k-1,3}$, where $A_2$ is any two-element set containing $a$. The recursion therefore holds for $r = 3$ once the initial conditions are adjusted.
 

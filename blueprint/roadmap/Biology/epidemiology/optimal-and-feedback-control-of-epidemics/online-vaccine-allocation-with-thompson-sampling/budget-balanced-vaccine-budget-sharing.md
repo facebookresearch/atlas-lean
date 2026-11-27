@@ -4,7 +4,7 @@ In the metapopulation SIRD vaccine allocation game, each agent $k$ with budget $
 
 $$\bar I_i^{\mathrm{in}}(t) = \bar I_i + \beta_i\bar S_i\bar I_i - \gamma_i\bar I_i + \rho\sum_{j\in N_i\cap V_k}p_{ij}\bar I_j, \qquad \bar I_i^{\mathrm{out}}(t) = \rho\sum_{j\in N_i\setminus V_k}p_{ij}\bar I_j,$$
 
-and define the external infection ratio $R_k(t) = \sum_{i\in V_k}\bar I_i^{\mathrm{out}}/\sum_{i\in V_k}(\bar I_i^{\mathrm{in}} + \bar I_i^{\mathrm{out}})$. Let $p^I_{k'k}(t) = \rho\sum_{i\in V_k}\sum_{j\in N_i\cap V_{k'}}p_{ij}\bar I_j(t)$ be the infected flow from agent $k'$ into agent $k$ (so $p^I_{kk} = 0$). Agent $k'$ shares the fraction $R_{k'}(t)$ of its budget, split in proportion to capacity-weighted infected flows:
+and define the external infection ratio $R_k(t) = \sum_{i\in V_k}\bar I_i^{\mathrm{out}}/\sum_{i\in V_k}(\bar I_i^{\mathrm{in}} + \bar I_i^{\mathrm{out}})$. For $k' \ne k$ let $p^I_{k'k}(t) = \rho\sum_{i\in V_k}\sum_{j\in N_i\cap V_{k'}}p_{ij}\bar I_j(t)$ be the infected flow from agent $k'$ into agent $k$, and set $p^I_{kk}(t) := 0$ by convention (the formula would count infected flows between nodes of one agent; the source's proof asserts that it vanishes). Agent $k'$ shares the fraction $R_{k'}(t)$ of its budget, split in proportion to capacity-weighted infected flows:
 
 $$B^{\mathrm{sh}}_k(t) = B_k(t)\big(1 - R_k(t)\big) + \sum_{k'\neq k}B_{k'}(t)R_{k'}(t)\,\frac{p^I_{kk'}(t)/\Gamma_k}{\sum_{k''}p^I_{k''k'}(t)/\Gamma_{k''}}.$$
 
@@ -16,7 +16,7 @@ $$B^{\mathrm{sh}}_k(t) = B_k(t)\big(1 - R_k(t)\big) + \sum_{k'\neq k}B_{k'}(t)R_
 
 ## Expansion
 
-Each agent keeps $B_k(1 - R_k)$ and gives away $B_kR_k$, so balance reduces to showing that the received amounts sum to the shared amounts. For a fixed donor $k'$, the split weights $\big(p^I_{kk'}/\Gamma_k\big)/\sum_{k''}p^I_{k''k'}/\Gamma_{k''}$ over recipients $k$ sum to one, because the $k = k'$ term vanishes ($p^I_{k'k'} = 0$); exchanging the order of summation finishes the proof. The rule sends money toward the agents that seed a donor's external infections, weighted inversely by capacity, so low-capacity agents receive proportionally more. In the global instance most countries lower their own infections and deaths by sharing with high-mobility partners under a fixed total budget.
+Each agent keeps $B_k(1 - R_k)$ and gives away $B_kR_k$, so balance reduces to showing that the received amounts sum to the shared amounts. For a fixed donor $k'$, the split weights $\big(p^I_{kk'}/\Gamma_k\big)/\sum_{k''}p^I_{k''k'}/\Gamma_{k''}$ over recipients $k$ sum to one, because the $k = k'$ term vanishes ($p^I_{k'k'} = 0$ by convention); exchanging the order of summation finishes the proof. The rule sends money toward the agents that seed a donor's external infections, weighted inversely by capacity, so low-capacity agents receive proportionally more. In the global instance most countries lower their own infections and deaths by sharing with high-mobility partners under a fixed total budget.
 
 ## Sources
 

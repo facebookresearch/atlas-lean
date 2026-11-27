@@ -4,7 +4,7 @@
 
 $$S_t - d_1\Delta S = -\sum_{i=1}^m \theta_i f_i(S,I), \qquad I_t - d_2\Delta I = \sum_{i=1}^m \theta_i f_i(S,I) - \gamma I, \qquad R_t - d_3\Delta R = \gamma I,$$
 
-with homogeneous Neumann boundary conditions, positive initial data, diffusion rates $d_k > 0$ and recovery rate $\gamma > 0$. The candidate incidence functions $f_1,\dots,f_m$ are smooth with $f_i(0,I) = f_i(S,0) = 0$, and the weights range over the simplex
+with homogeneous Neumann boundary conditions, non-negative initial data $(S_0,I_0,R_0) \in H^2(\mathcal O)^3$ satisfying the Neumann condition, diffusion rates $d_k > 0$ and recovery rate $\gamma > 0$. The candidate incidence functions $f_1,\dots,f_m$ are smooth and non-negative with $f_i(0,I) = f_i(S,0) = 0$, and the weights range over the simplex
 
 $$\mathcal U_{ad} = \Big\{\theta \in \mathbb R^m : \theta_i \ge 0,\ \sum_{i=1}^m \theta_i = 1\Big\}.$$
 

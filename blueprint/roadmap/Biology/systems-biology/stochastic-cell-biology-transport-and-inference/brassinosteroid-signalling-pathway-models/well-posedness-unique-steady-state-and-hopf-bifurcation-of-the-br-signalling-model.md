@@ -10,7 +10,9 @@ with $\kappa\ge1$ (ratio of receptor to BKI1 totals), positive rate constants $\
 
 **Theorem (unique steady state).** For every parameter set the system has exactly one steady state $(b^*,k^*,z^*)\in M$.
 
-**Theorem (Hopf bifurcation).** The linearization at the steady state has a cubic characteristic polynomial $\lambda^3+a_2\lambda^2+a_1\lambda+a_0$; as the BZR phosphorylation parameters $\delta_z$ and $\rho_z$ vary, the Routh–Hurwitz quantity $a_2a_1-a_0$ changes sign and the system undergoes a Hopf bifurcation. Oscillations occur only for relatively large $\delta_z,\rho_z$ (fast BZR phosphorylation cycling); for the fitted wild-type parameters the steady state is stable, consistent with BR homeostasis.
+**Linearization.** The linearization at the steady state has a cubic characteristic polynomial $\lambda^3+a_2\lambda^2+a_1\lambda+a_0$, and the steady state is locally asymptotically stable exactly when the Routh–Hurwitz conditions $a_2,a_0>0$, $a_2a_1-a_0>0$ hold.
+
+**Numerical observation (not proved in the source).** For one parameter set (the source's Table 1 with $\theta_z=41.2$), varying the BZR phosphorylation parameters $\delta_z$ and $\rho_z$ makes $a_2a_1-a_0$ change sign numerically, with a Hopf bifurcation to oscillations for relatively large $\delta_z,\rho_z$ (fast BZR phosphorylation cycling); for the fitted wild-type parameters the steady state is stable, consistent with BR homeostasis.
 
 ## Expansion
 

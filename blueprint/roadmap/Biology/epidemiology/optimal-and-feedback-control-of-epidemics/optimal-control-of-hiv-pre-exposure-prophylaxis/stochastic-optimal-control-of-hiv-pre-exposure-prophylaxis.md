@@ -11,13 +11,13 @@ with force of infection $\Phi = I + \eta_C C + \eta_A A$, $\xi_1 = \alpha + \mu 
 $$J(u) = \mathbb{E}\Big[\int_0^T \big(w_1 I(t) + w_2\,u(t)^2\big)\,dt\Big], \qquad w_1, w_2 > 0.$$
 
 **Theorem.**
-1. (Well-posedness.) For every positive initial state the controlled system has a unique global solution that stays in $\mathbb{R}^5_{+}$ almost surely, and the total population satisfies $N(t) \to \Lambda/\mu$.
+1. (Well-posedness.) For every positive initial state the controlled system has a unique global solution that stays in $\mathbb{R}^5_{+}$ almost surely, and the total population satisfies $\limsup_{t\to\infty} N(t) \le \Lambda/\mu$, with $N(t) \le \Lambda/\mu$ for all $t$ if $N(0) \le \Lambda/\mu$ (since $dN = (\Lambda - \mu N - dA)\,dt$, the limit need not be $\Lambda/\mu$ when $d > 0$).
 2. (Optimal PrEP rate.) The optimal control is
 
 $$\hat u(t) = \min\Big\{\max\Big\{0,\ \frac{S(t)\,\big(p_1(t) - p_5(t)\big)}{2 w_2}\Big\},\ 1\Big\},$$
 
 where $(p,q)$ is the unique solution of the linear adjoint backward SDE system of the stochastic maximum principle and $p_1, p_5$ are the adjoints of $S$ and $E$.
-3. (Budget constraints by Lagrange multipliers.) For a constraint $\mathbb{E}\big[\int_0^T M(t,X,u)\,dt\big] = 0$ (Type I) or $\int_0^T M(t,X,u)\,dt = 0$ almost surely (Type II), suppose the penalised unconstrained problem with multiplier $\lambda \in \mathbb{R}$ (Type I) or random multiplier $\mu$ (Type II) is solvable by $u^\ast_\lambda$. If some $\lambda_0$ makes $u^\ast_{\lambda_0}$ satisfy the constraint, then $u^\ast_{\lambda_0}$ solves the constrained problem; for inequality constraints the same holds with $\lambda_0 \ge 0$ (respectively $\mu_0 \ge 0$ almost surely).
+3. (Budget constraints by Lagrange multipliers.) For a constraint $\mathbb{E}\big[\int_0^T M(t,X,u)\,dt\big] = 0$ (Type I) or $\int_0^T M(t,X,u)\,dt = 0$ almost surely (Type II), suppose the penalised unconstrained problem with multiplier $\lambda \in \mathbb{R}$ (Type I) or random multiplier $\mu$ (Type II) is solvable by $u^\ast_\lambda$. If some $\lambda_0$ makes $u^\ast_{\lambda_0}$ satisfy the constraint, then $u^\ast_{\lambda_0}$ solves the constrained problem; for an inequality constraint $\mathbb{E}\big[\int_0^T M\,dt\big] \le 0$ (respectively $\int_0^T M\,dt \le 0$ almost surely) the same holds when $\lambda_0 \ge 0$ (respectively $\mu_0 \ge 0$ almost surely) and $u^\ast_{\lambda_0}$ attains the constraint with equality.
 
 ## Expansion
 

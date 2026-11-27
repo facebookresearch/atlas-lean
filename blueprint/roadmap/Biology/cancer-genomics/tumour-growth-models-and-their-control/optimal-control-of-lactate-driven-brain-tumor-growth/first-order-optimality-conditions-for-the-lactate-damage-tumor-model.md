@@ -1,6 +1,6 @@
 # First-order optimality conditions for the lactate-damage tumor model
 
-Consider the brain tumor control problem with cytotoxic control $\chi_1$, lactate-targeting control $\chi_2$, state $(\varphi,\sigma,\mathbf{u},z)$ (tumor density, lactate, displacement, damage), admissible set $\mathcal{U}_{ad}$ and tracking cost $\mathcal{J}$ with weights $\alpha_1,\dots,\alpha_9 \ge 0$, as in the existence result. Let $\mathcal{S} : \boldsymbol{\chi} \mapsto (\varphi,\sigma,\mathbf{u},z)$ be the control-to-state operator.
+Consider the brain tumor control problem with cytotoxic control $\chi_1$, lactate-targeting control $\chi_2$, state $(\varphi,\sigma,\mathbf{u},z)$ (tumor density, lactate, displacement, damage), admissible set $\mathcal{U}_{ad}$ and tracking cost $\mathcal{J}$ with weights $\alpha_1,\dots,\alpha_9 \ge 0$, as in the existence result, under the hypotheses (H1)–(H12) stated there. Let $\mathcal{S} : \boldsymbol{\chi} \mapsto (\varphi,\sigma,\mathbf{u},z)$ be the control-to-state operator.
 
 **Theorem.**
 

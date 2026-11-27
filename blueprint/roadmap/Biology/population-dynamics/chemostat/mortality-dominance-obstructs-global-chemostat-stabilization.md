@@ -6,7 +6,7 @@ $$ p_0\mu(S_{\mathrm{in}}) < p_0\mu(\bar S) < b \qquad \text{and} \qquad \mu'(S)
 
 **Theorem.** Then no nonnegative locally Lipschitz feedback $D(X,S) \ge 0$ globally stabilizes $(X^*, S^*)$: for every such feedback the closed-loop system has unbounded solutions in the logarithmic coordinates, i.e. solutions that leave every compact subset of the open quadrant.
 
-**Haldane kinetics.** For $\mu(S) = MS/(K + S + aS^2)$ with $M, K, a > 0$ the dichotomy is sharp up to the balanced case: if $p_0\mu(S_{\mathrm{in}}) > b$ the fortified feedback achieves global stabilization, and if $p_0\mu(S_{\mathrm{in}}) < b$ global stabilization by a positive feedback is impossible. The same holds for any unimodal $C^1$ growth rate, including all concave ones.
+**Haldane kinetics.** For $\mu(S) = MS/(K + S + aS^2)$ with $M, K, a > 0$ and $p_0 = 1$, the dichotomy is sharp up to the balanced case: if $\mu(S_{\mathrm{in}}) > b$ the fortified feedback achieves global stabilization, and if $\mu(S_{\mathrm{in}}) < b$ global stabilization by a positive feedback is impossible. The same holds for any $C^1$ growth rate that is non-decreasing up to some $\hat S$ and non-increasing after it, including all concave ones. (The source states this clause as $\mu(S_{\mathrm{in}}) > b$ versus $\mu(S_{\mathrm{in}}) < b$, without $p_0$; for general $p_0$ the passage to $p_0\mu(S_{\mathrm{in}})$ needs an argument beyond substitution, so the clause is stated here for $p_0 = 1$, where the two forms agree.)
 
 ## Depends on
 

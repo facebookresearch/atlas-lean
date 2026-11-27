@@ -8,7 +8,7 @@ $$\hat\delta_{\mathrm{int}}^m(x,y) = \frac{1}{m}\sum_{j=1}^m d_g^{\mathcal T_j}(
 
 Its expectation $\bar\delta_{\mathrm{int}}(x,y)$ is an additive tree metric on the unrooted species tree $\mathcal S_u$, which is the basis of NJst, ASTRID and related distance methods.
 
-**Theorem.** There is a constant $C>0$ such that for every integer $n\ge 4$ and every $f>0$ there is a species tree $(\mathcal S,\Gamma)$ with $n$ leaves and shortest branch length $f$ such that, for all pairs of species $\ell,\ell'$ and all $m\ge 1$,
+**Theorem.** There are constants $C, f_0>0$ such that for every integer $n\ge 4$ and every $f\in(0,f_0]$ there is a species tree $(\mathcal S,\Gamma)$ with $n$ leaves and shortest branch length $f$ such that, for all pairs of species $\ell,\ell'$ and all $m\ge 1$,
 
 $$\mathrm{Var}\big[\hat\delta_{\mathrm{int}}^m(\ell,\ell')\big] \ge C\,\frac{d_g^{\mathcal S_u}(\ell,\ell')}{m},$$
 

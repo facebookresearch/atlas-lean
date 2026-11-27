@@ -6,7 +6,7 @@ $$
 x_d(k+1) = (1-\delta) x_d(k) + (1 - x_d(k)) \sum_{t \in \mathcal{D}} n m_t \beta \big[ 1 - (1 - \pi_{d,S}\bar d)(1 - \pi_{t,X}\bar t) \big] x_t(k).
 $$
 
-**Proposition.** Let $\delta, \beta \in (0,1]$, let the activation probabilities $\pi_{d,S}, \pi_{d,X} \in (0,1]$ be constant in time, and assume $\beta(d_{avg} + d_{max}) \le 1$. Define $F \in \mathbb{R}^{|\mathcal{D}| \times |\mathcal{D}|}$ by
+**Proposition.** Let $\delta, \beta \in (0,1]$, let the activation probabilities $\pi_{d,S}, \pi_{d,X} \in (0,1]$ be constant in time, and assume $\beta n(d_{avg} + d_{max})/(n-1) \le 1$. Define $F \in \mathbb{R}^{|\mathcal{D}| \times |\mathcal{D}|}$ by
 
 $$
 F_{d,t} = \delta_{dt}(1 - \delta) + n m_t \beta \big[ 1 - (1 - \pi_{d,S}\bar d)(1 - \pi_{t,X}\bar t) \big],
@@ -15,7 +15,9 @@ $$
 where $\delta_{dt}$ is the Kronecker delta. Then $[0,1]^{|\mathcal{D}|}$ is invariant, and:
 
 1. if $\rho(F) \le 1$, the disease-free state $x = 0$ is the unique equilibrium and attracts all of $[0,1]^{|\mathcal{D}|}$;
-2. if $\rho(F) > 1$, there are exactly two equilibria, $0$ and an endemic $x^*$ with $x^*_d > 0$ for all $d$. If moreover $\delta + \beta(d_{avg} + d_{max}) \le 1$, then $x^*$ attracts $[0,1]^{|\mathcal{D}|} \setminus \{0\}$.
+2. if $\rho(F) > 1$, there are exactly two equilibria, $0$ and an endemic $x^*$ with $x^*_d > 0$ for all $d$. If moreover $\delta + \beta n(d_{avg} + d_{max})/(n-1) \le 1$, then $x^*$ attracts $[0,1]^{|\mathcal{D}|} \setminus \{0\}$.
+
+The source's proposition assumes $\beta(d_{avg} + d_{max}) \le 1$ (and $\delta + \beta(d_{avg} + d_{max}) \le 1$ in item 2). That does not make $[0,1]^{|\mathcal{D}|}$ invariant, because the row sums of $F$ carry the factor $n/(n-1)$: with $n = 3$, one class $d = 1$, $\pi = 1$, $\beta = 1/2$ and $\delta = 10^{-4}$ the map sends $x = 0.9$ to $1.00116$. The factor $n/(n-1)$ in the conditions above restores the bound.
 
 ## Depends on
 

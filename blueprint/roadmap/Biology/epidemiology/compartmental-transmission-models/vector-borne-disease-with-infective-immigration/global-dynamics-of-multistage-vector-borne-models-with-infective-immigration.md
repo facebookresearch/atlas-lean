@@ -12,11 +12,11 @@ The natural simplex $\{S_h + E_h + \mathbf{1}^{\mathsf T}\mathbf{I}_h \le N_h,\ 
 
 **Theorem.**
 
-1. *(Equilibria.)* If $\boldsymbol\beta = 0$ there is a unique weakly endemic equilibrium. If $\boldsymbol\beta \ne 0$ and $p \ne 0$, or if $\langle\boldsymbol\beta, (\operatorname{diag}(\alpha) - M)^{-1}\mathbf{p}\rangle \ne 0$, there is a unique strongly endemic equilibrium. Otherwise the threshold
+1. *(Equilibria.)* If $\boldsymbol\beta = 0$ there is a unique weakly endemic equilibrium. If $p \ne 0$ and $\langle\boldsymbol\beta, (\operatorname{diag}(\alpha) - M)^{-1} e_1\rangle \ne 0$, or if $\langle\boldsymbol\beta, (\operatorname{diag}(\alpha) - M)^{-1}\mathbf{p}\rangle \ne 0$, there is a unique strongly endemic equilibrium. Otherwise the threshold
 
 $$\mathcal{N}_0^2 = \frac{a^2 \beta_{vh}\nu_v\nu_h}{\alpha_v(\mu_v + \delta_v)\,\alpha_h\,\mu_h}\,\frac{N_v}{N_h}\,\frac{\pi_h(1 - p - \mathbf{1}^{\mathsf T}\mathbf{p} - p_{n+1})}{N_h}\,\big\langle\boldsymbol\beta, (\operatorname{diag}(\alpha) - M)^{-1} e_1\big\rangle,$$
 
-with $\alpha_h = \mu_h + \nu_h + \eta$ and $\alpha_v = \mu_v + \nu_v + \delta_v$, decides: a unique weakly endemic equilibrium if $\mathcal{N}_0^2 \le 1$, a unique strongly endemic one if $\mathcal{N}_0^2 > 1$.
+with $\alpha_h = \mu_h + \nu_h + \eta$ and $\alpha_v = \mu_v + \nu_v + \delta_v$, decides: a unique weakly endemic equilibrium if $\mathcal{N}_0^2 \le 1$, a unique strongly endemic one if $\mathcal{N}_0^2 > 1$. (The source's Theorem 3.1 states the first case as $\boldsymbol\beta \ne 0$ and $p \ne 0$; that fails when no transmitting stage is reachable from stage 1, e.g. $n = 2$, $G = D = 0$, $\boldsymbol\beta = (0,\beta_2)$, $p > 0$, $\mathbf{p} = \mathbf{0}$, where $I_2 \to 0$.)
 2. *(Global stability.)* Every strongly endemic equilibrium is globally asymptotically stable whenever it exists, and so is every weakly endemic equilibrium.
 3. *(No immigration of infected hosts: sharp threshold.)* If $p = 0$, $\mathbf{p} = \mathbf{0}$ and $p_{n+1} = 0$, then $\mathcal{R}_0^2 = \mathcal{N}_0^2(0, \mathbf{0}, 0)$ and: for $\mathcal{R}_0^2 \le 1$ the disease-free equilibrium is globally asymptotically stable; for $\mathcal{R}_0^2 > 1$ it is unstable and a unique endemic equilibrium exists and is globally asymptotically stable.
 

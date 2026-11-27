@@ -1,6 +1,6 @@
 # Well-posedness of the Caputo time-fractional SIR system with $p$-Laplacian diffusion
 
-Let $\Omega \subset \mathbb{R}^n$ be a bounded domain with smooth boundary, $\mathcal{T} > 0$, $0 < \alpha < 1$, $p \ge 2$, and let ${}^{C}D^{\alpha}_t$ denote the Caputo derivative
+Let $\Omega \subset \mathbb{R}^2$ be a bounded domain with smooth boundary, $\mathcal{T} > 0$, $0 < \alpha < 1$, $p \ge 2$, and let ${}^{C}D^{\alpha}_t$ denote the Caputo derivative
 
 $$
 {}^{C}D^{\alpha}_t f(t) = \frac{1}{\Gamma(1-\alpha)} \int_0^t (t-y)^{-\alpha} f'(y)\, dy .

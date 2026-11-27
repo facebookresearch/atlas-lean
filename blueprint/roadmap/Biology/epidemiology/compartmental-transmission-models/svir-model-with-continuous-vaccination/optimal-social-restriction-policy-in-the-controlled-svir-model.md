@@ -22,7 +22,7 @@ with $\lambda_1(T)=\lambda_2(T)=\lambda_3(T)=0$, and $u^*(t)$ minimizes $H(t,S,V
 
 1. Quadratic cost $c(u)=bu^2$: $u^*(t)=\min\{\max[0,\beta_0I(t)K(t)/(2b)],\bar u\}$.
 2. Exponential cost $c(u)=e^{ku}-1$, when $\lambda_3>\lambda_1$ and $\lambda_3>\lambda_2$: $u^*(t)=\min\{\max[0,\frac1k\ln\frac{\beta_0I(t)K(t)}{k}],\bar u\}$ if $K(t)>0$, and $u^*(t)=0$ if $K(t)\le0$.
-3. Linear cost $c(u)=au$: the optimal policy is bang-bang with a possible singular arc, $u^*=1$ where $\partial H/\partial u<0$, $u^*=0$ where $\partial H/\partial u>0$, and a singular value $u_{\rm sing}$ on intervals where $\partial H/\partial u\equiv0$.
+3. Linear cost $c(u)=au$: the optimal policy is bang-bang with a possible singular arc, $u^*=\bar u$ where $\partial H/\partial u<0$, $u^*=0$ where $\partial H/\partial u>0$, and a singular value $u_{\rm sing}$ on intervals where $\partial H/\partial u\equiv0$. (The source's (17) prints $u^*=1$, which leaves the admissible range when $\bar u<1$.)
 
 ## Depends on
 

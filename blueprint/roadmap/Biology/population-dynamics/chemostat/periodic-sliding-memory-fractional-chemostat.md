@@ -16,7 +16,7 @@ $$ {}^{\mathrm{MC}}_{L}D_t^{\alpha} s = \vartheta^{1-\alpha}\Big[-\tfrac{1}{Y}\m
 
 The combination $z = Y(s_{\mathrm{in}} - s) - x$ satisfies ${}^{\mathrm{MC}}_{L}D_t^{\alpha} z = -\vartheta^{1-\alpha} D(t) z$ and has no nontrivial periodic solution, so periodic solutions lie on $x = Y(s_{\mathrm{in}} - s)$ and the system reduces to the scalar equation
 
-$$ {}^{\mathrm{MC}}_{L}D_t^{\alpha} s = \vartheta^{1-\alpha}\big(D(t) - \nu(s)\big), \qquad \nu(s) = \frac{\mu_{\max} s}{K Y (s_{\mathrm{in}} - s) + s} . $$
+$$ {}^{\mathrm{MC}}_{L}D_t^{\alpha} s = \vartheta^{1-\alpha}\big(D(t) - \nu(s)\big)(s_{\mathrm{in}} - s), \qquad \nu(s) = \frac{\mu_{\max} s}{K Y (s_{\mathrm{in}} - s) + s} . $$
 
 For a constant dilution rate $D \equiv \bar D < \mu_{\max}$ the nontrivial equilibrium is
 

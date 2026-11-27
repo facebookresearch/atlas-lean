@@ -10,9 +10,11 @@ and for $2 \le k \le 9$, $j_k(n) \sim c'_k\, n^{-((k-1)^2 + (k-1)/2)} (\mu'_k)^{
 
 **Theorem 4.2.** Let ${\sf lv}^1_{k,\sigma}(n)$ be the number of distinct lv1-shapes of all $k$-noncrossing, $\sigma$-canonical structures of length $n$. Its generating function is
 
-$$ {\bf Lv}^1_{k,\sigma}(x) = \frac{(1+x)(1+x^{2\sigma})}{(1-x)(x^{2\sigma+1} + 2x^{2\sigma} + 1)}\, {\bf F}_k\!\left( \frac{(1+x)^2 x^{2\sigma} (1 + x^{2\sigma})}{(x^{2\sigma+1} + 2x^{2\sigma} + 1)^2} \right), $$
+$$ {\bf Lv}^1_{k,\sigma}(x) = \frac{(1+x)(1+x^{2\sigma})}{(1-x)(x^{2\sigma+1} + 2x^{2\sigma} + 1)}\, {\bf F}_k\!\left( \frac{(1+x)^2 x^{2\sigma} (1 + x^{2\sigma})}{(x^{2\sigma+1} + 2x^{2\sigma} + 1)^2} \right) - \frac{x}{1-x}, $$
 
 and for $2 \le k \le 9$, $1 \le \sigma \le 10$, ${\sf lv}^1_{k,\sigma}(n) \sim c'_{k,\sigma}\, n^{-((k-1)^2 + (k-1)/2)} \chi_{k,\sigma}^{-n}$, with $\chi_{k,\sigma}$ the minimal positive solution of $\frac{(1+x)^2 x^{2\sigma}(1+x^{2\sigma})}{(x^{2\sigma+1} + 2x^{2\sigma} + 1)^2} = \rho_k^2$.
+
+The source's eq. (39) prints the formula without the term $-x/(1-x)$. Its $h=0$ term $(j_k(0,0)+j_k(1,0)x)/(1-x)=(1+x)/(1-x)$ then counts 2 shapes without arcs at every length $n\ge1$, where there is one (a structure of length $n\ge1$ without arcs has the one-vertex shape); subtracting $x/(1-x)$ corrects this and leaves the asymptotics unchanged.
 
 ## Depends on
 

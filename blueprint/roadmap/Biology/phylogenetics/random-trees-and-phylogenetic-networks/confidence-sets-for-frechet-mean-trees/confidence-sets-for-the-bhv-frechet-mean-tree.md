@@ -1,6 +1,10 @@
 # Confidence sets for the Fréchet mean phylogenetic tree in BHV space
 
-Let $\mathcal T_m$ be Billera–Holmes–Vogtmann (BHV) space of metric phylogenetic trees, a CAT(0) space made of Euclidean orthants, one per tree topology, with geodesic distance $d$. For a distribution $F$ on $\mathcal T_m$, the **Fréchet function** is $G(u) = \int d(q,u)^2\, F(dq)$ and the **Fréchet mean** is $T^* = \arg\min_u G(u)$. For a tree $T$ in a top-dimensional orthant, let $\Phi_T : \mathcal T_m \to \mathbb R^m$ be the log map: it sends each tree to the Euclidean vector of the initial direction and length of its geodesic from $T$.
+Let $\mathcal T_m$ be Billera–Holmes–Vogtmann (BHV) space of metric phylogenetic trees, a CAT(0) space made of Euclidean orthants, one per tree topology, with geodesic distance $d$. For a distribution $F$ on $\mathcal T_m$, the **Fréchet function** is $G(u) = \int d(q,u)^2\, F(dq)$ and the **Fréchet mean** is $T^* = \arg\min_u G(u)$. For a base tree $T^\circ$ in a top-dimensional orthant, the log map $\log_{T^\circ}(T) = d(T^\circ, T)\,v_{T^\circ}(T) \in \mathbb R^m$ records the length $d(T^\circ,T)$ and the unit initial direction $v_{T^\circ}(T)$ of the geodesic from $T^\circ$ to $T$, and the **modified log map** used below is its translate
+
+$$\Phi_{T^\circ}(T) = \log_{T^\circ}(T) + t^\circ,$$
+
+where $t^\circ \in \mathbb R^m$ is the vector of internal edge lengths of $T^\circ$; the components are ordered by the convention of Barden, Le and Owen that matches edges across neighbouring topologies. Thus $\Phi_{T^\circ}(T^\circ) = t^\circ$, and for $T$ in the orthant of $T^\circ$, $\Phi_{T^\circ}(T)$ is the vector of internal edge lengths of $T$.
 
 **Theorem (central limit theorem).** Let $T_1,\dots,T_n$ be i.i.d. from $F$ with finite Fréchet function. Suppose the Fréchet mean $T^*$ lies in a top-dimensional stratum and $F(D_{T^*}) = 0$, where $D_{T^*}$ is the set of trees on the boundaries of the maximal cells of $T^*$. Then the sample Fréchet mean $\hat T_n$ satisfies
 

@@ -4,7 +4,7 @@
 
 $$\dot X_i = r_i\Big(1 - \frac{N}{K}\Big)\Big(1 - \frac{2 d_i^I}{D_{\max}} D\Big) X_i - d_i^T X_i + \sum_j \Big(A_{ij} + \frac{A^I_{ij}}{D_{\max}} D\Big) X_j, \qquad X_i(0) = f_i N_0,$$
 
-which is control-affine, $\dot X^\theta = F_0^\theta(X^\theta) + F_1^\theta(X^\theta)\,D$, in the uncertain parameter vector $\theta = (r, K, d^I, d^T, A, A^I, f, N_0)$ ranging over a compact set $\Theta$. Parameter uncertainty is described by a probability measure $\mu$ on $\Theta$, and the **averaged ensemble cost** for a $C^2$ penalty $\ell \ge 0$ on tumour size is
+which is control-affine, $\dot X^\theta = F_0^\theta(X^\theta) + F_1^\theta(X^\theta)\,D$, in the uncertain parameter vector $\theta = (r, K, d^I, d^T, A, A^I, f, N_0)$ ranging over a compact set $\Theta$ on which $f_i \ge 0$, $\sum_i f_i = 1$, $K \in [K_{\min}, K_{\max}]$ with $K_{\min} > 0$, and $0 \le N_0 \le K$. Parameter uncertainty is described by a probability measure $\mu$ on $\Theta$, and the **averaged ensemble cost** for a $C^2$ penalty $\ell \ge 0$ on tumour size is
 
 $$\mathcal{J}(D) = \int_\Theta \int_0^T \ell\big(N_D^\theta(t)\big)\,dt\,d\mu(\theta), \qquad D \in \mathcal{U} = \{D \in L^2(0,T) : 0 \le D \le D_{\max}\}.$$
 
@@ -16,7 +16,7 @@ $$\mathcal{J}(D) = \int_\Theta \int_0^T \ell\big(N_D^\theta(t)\big)\,dt\,d\mu(\t
 $$\nabla_D \mathcal{J}(t) = \int_\Theta g_D^\theta(t)\, F_1^\theta\big(X_D^\theta(t)\big)\,d\mu(\theta),$$
 
 where the covector $g_D^\theta$ solves the backward adjoint equation $\dot g = -\ell'(N)\,\mathbf{1}^\top - g\,(\partial_x F_0^\theta + D\,\partial_x F_1^\theta)$, $g(T) = 0$; moreover projecting $D - \eta\nabla\mathcal{J}$ onto $\mathcal{U}$ equals projecting after first projecting $-\nabla\mathcal{J}$ onto the tangent cone of $\mathcal{U}$.
-4. (Bang-bang structure.) An optimal dose satisfies $D^\star = D_{\max}$ where $\psi(t) > 0$ and $D^\star = 0$ where $\psi(t) < 0$, with switching function $\psi(t) = \int_\Theta g^\theta_{D^\star}(t)\,F_1^\theta(X^\theta_{D^\star}(t))\,d\mu(\theta)$; on a positive-measure set where $\psi = 0$ the control is singular.
+4. (Bang-bang structure.) An optimal dose minimises $\psi(t)\,v$ over $v \in [0,D_{\max}]$: $D^\star = 0$ where $\psi(t) > 0$ and $D^\star = D_{\max}$ where $\psi(t) < 0$, with switching function $\psi(t) = \int_\Theta g^\theta_{D^\star}(t)\,F_1^\theta(X^\theta_{D^\star}(t))\,d\mu(\theta)$; on a positive-measure set where $\psi = 0$ the control is singular. (The source's Remark 4 states the two cases the other way round; the form here is the one its Proposition 2.5 gives for a minimiser, since $\psi = \nabla\mathcal{J}$.)
 
 ## Expansion
 

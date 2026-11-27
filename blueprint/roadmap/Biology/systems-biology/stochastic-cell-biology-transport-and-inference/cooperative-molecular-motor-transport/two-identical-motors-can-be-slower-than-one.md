@@ -11,7 +11,7 @@
 
 $$F_2^*>2F_1^* .$$
 
-3. *(Fluctuating detachment regime.)* When the motor separation fluctuates on the same scale as the attachment dynamics, there are $s_*,\theta_*>0$ such that $v_2(F)<v_1(F)$ for all $s<s_*$ and $|F|<\theta_*$; the key estimate is $\tfrac12(G(r)+G(-r))<G(0)$ for the averaged force–velocity map $G$ and all $r>0$.
+3. *(Including cargo fluctuations.)* When the thermal fluctuations of the cargo position are kept (the source's Section 5.3), write $\mathcal{A}_g(m,\sigma^2)$ for the average of $g$ against the normal law with mean $m$ and variance $\sigma^2$. Then a single motor has velocity $\mathcal{A}_g(sF, s^2/2)$, and each of two motors at signed separation $r$ has the cargo-averaged drift $G(r) = \mathcal{A}_g(-rs/2, s^2/4)$, so $v_2(F)$ is the average of $\tfrac12(G(r)+G(-r))$ over the stationary law of $r$. There are $s_*,\theta_*>0$ such that $v_2(F)<v_1(F)$ for all $s<s_*$ and $|F|<\theta_*$; the key estimate is $\tfrac12(G(r)+G(-r))<G(0)$ for all $r>0$.
 
 Thus the common mean-field assumption that bound motors share the load equally overestimates the speed of multi-motor cargo at low load and underestimates its stall force.
 

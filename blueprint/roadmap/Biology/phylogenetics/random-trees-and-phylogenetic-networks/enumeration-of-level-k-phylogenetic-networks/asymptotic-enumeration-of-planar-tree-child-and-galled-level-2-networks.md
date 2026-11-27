@@ -8,7 +8,7 @@
 
 $$T = x + \frac{T^2}{2} + \frac12\big(U^2-1\big)T + \frac32\,U^2\,\frac{T}{1-T}\big(U^2-1\big)T + U^4\big(U^2-1\big)T^2 + \frac14\,U^2\big(U^2-1\big)^2T^2.$$
 
-Comparing coefficients gives $t_1,t_2,\ldots = 1, 3, 66, 2235, 99900, 5732775, \ldots$
+Comparing coefficients gives $t_1,t_2,\ldots = 1, 3, 66, 2235, 99990, 5732775, \ldots$ (the source's list prints $t_5 = 99900$; iterating the equation gives $99990$)
 
 **Theorem.** The numbers $t_n$ of level-2 tree-child networks with $n$ leaves satisfy
 

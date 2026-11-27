@@ -44,7 +44,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Enumeration of galled tree-child networks](random-trees-and-phylogenetic-networks/enumeration-of-galled-tree-child-networks/README.md)
 - [Enumeration of level-k phylogenetic networks](random-trees-and-phylogenetic-networks/enumeration-of-level-k-phylogenetic-networks/README.md)
 - [Fringe patterns of random ranked tree-child networks](random-trees-and-phylogenetic-networks/fringe-patterns-of-random-ranked-tree-child-networks/README.md)
-- [Encoding phylogenetic networks by subnetworks](random-trees-and-phylogenetic-networks/encoding-phylogenetic-networks-by-subnetworks/README.md)
 - [NNI and triangle operations on unrooted phylogenetic networks](random-trees-and-phylogenetic-networks/nni-and-triangle-operations-on-unrooted-networks/README.md)
 - [Universal binary tree-based networks](random-trees-and-phylogenetic-networks/universal-binary-tree-based-networks/README.md)
 - [Top-k support tree ranking](random-trees-and-phylogenetic-networks/top-k-support-tree-ranking/README.md)

@@ -8,7 +8,7 @@ has exponential solutions $z(t) = z(0) e^{-\lambda t}$, and the admissible rate 
 
 $$ \lambda \int_0^L u^{-\alpha} e^{\lambda u}\, du = k\, \Gamma(1-\alpha) . $$
 
-**Local stability of the fractional chemostat equilibrium.** For the reduced periodic Contois chemostat ${}^{\mathrm{MC}}_{L}D_t^{\alpha} s = \vartheta^{1-\alpha}\bar D - \nu(s)$ with constant dilution $\bar D < \mu_{\max}$, linearizing at the equilibrium $\bar s$ (where $\nu(\bar s) = \bar D$) gives the relaxation equation with
+**Local stability of the fractional chemostat equilibrium.** For the reduced periodic Contois chemostat ${}^{\mathrm{MC}}_{L}D_t^{\alpha} s = \vartheta^{1-\alpha}\big[\bar D - \nu(s)\big](s_{\mathrm{in}} - s)$ with constant dilution $\bar D < \mu_{\max}$, linearizing at the equilibrium $\bar s$ (where $\nu(\bar s) = \bar D$) gives the relaxation equation with
 
 $$ k = \vartheta^{1-\alpha}\, \nu'(\bar s)\, (s_{\mathrm{in}} - \bar s) > 0 , $$
 

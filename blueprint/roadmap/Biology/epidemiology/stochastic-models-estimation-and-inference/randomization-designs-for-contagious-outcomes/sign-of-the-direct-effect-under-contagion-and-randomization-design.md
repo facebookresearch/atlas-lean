@@ -4,11 +4,11 @@
 
 $$\lambda_{ij}(t) = e^{x_{ij}\beta + \eta_{ij}}\Big(\alpha + \sum_{k \ne j} y_{ik}(t)\, e^{x_{ik}\gamma + \xi_{ik}}\Big),$$
 
-where $\alpha \ge 0$ is the force of infection from outside the cluster, $\eta_{ij}$ and $\xi_{ik}$ are individual susceptibility and infectiousness coefficients, $\beta$ is the treatment effect on susceptibility and $\gamma$ the treatment effect on infectiousness. The **susceptibility effect** (hazard ratio for $j$ treated versus untreated, holding the treatments and infection histories of all others fixed) is $\mathrm{SHR}_{ij} = e^{\beta}$, so $\beta = 0$ means the treatment does not protect its recipient.
+where $\alpha > 0$ is the force of infection from outside the cluster, $\eta_{ij}$ and $\xi_{ik}$ are individual susceptibility and infectiousness coefficients, $\beta$ is the treatment effect on susceptibility and $\gamma$ the treatment effect on infectiousness. The **susceptibility effect** (hazard ratio for $j$ treated versus untreated, holding the treatments and infection histories of all others fixed) is $\mathrm{SHR}_{ij} = e^{\beta}$, so $\beta = 0$ means the treatment does not protect its recipient.
 
 The **individual average direct effect** at a fixed follow-up time $\mathcal{T}$ is $DE_{ij}(\mathcal{T}) = \overline{Y}_{ij}(\mathcal{T}, 1) - \overline{Y}_{ij}(\mathcal{T}, 0)$, where $\overline{Y}_{ij}(\mathcal{T}, x)$ averages the expected infection outcome over the conditional law of the other cluster members' treatments given $X_{ij} = x$. Three designs are considered: **Bernoulli** (independent $\mathrm{Bernoulli}(p)$ treatments), **block** (exactly $m_i = \lfloor p n_i \rfloor \ge 1$ treated, uniformly at random) and **cluster** (all members treated with probability $p$, otherwise none).
 
-**Theorem.** Suppose $\beta = 0$ (no susceptibility effect).
+**Theorem.** Suppose $\beta = 0$ (no susceptibility effect) and $\mathcal{T} > 0$ (with $\alpha = 0$ or $\mathcal{T} = 0$ nobody is infected and $DE_{ij} = 0$ for every $\gamma$).
 
 1. Under Bernoulli randomization, $DE_{ij}(\mathcal{T}) = 0$.
 2. Under block randomization, $\operatorname{sign} DE_{ij}(\mathcal{T}) = -\operatorname{sign}\gamma$: the direct effect is positive when treatment lowers infectiousness ($\gamma < 0$), zero when $\gamma = 0$, and negative when $\gamma > 0$.

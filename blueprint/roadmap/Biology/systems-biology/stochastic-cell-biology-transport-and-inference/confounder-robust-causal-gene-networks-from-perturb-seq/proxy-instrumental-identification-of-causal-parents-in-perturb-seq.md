@@ -10,7 +10,7 @@ $$\log\mathbb{E}[Y_j \mid \mathbf D,X,\ell] = \log\ell + \theta^*_{j0} + \beta_j
 
 with $\theta_{jk} = 0$ for $k \notin \mathrm{pa}(j)$. Hence every parent set $\mathrm{pa}(j)$, and the DAG, is identifiable.
 
-**Two-stage estimator.** By induction over the DAG, $\eta_k(\mathbf D,X) = (1, D_k, \mathbf D_{\mathrm{anc}(k)}^\top, X^\top)\,\xi_k$ is linear, so (i) the first stage fits a GLM of $Y_k$ on $(D_k,\mathbf D_{\widehat{\mathrm{anc}}(k)},X)$ with offset $\log\ell$ to get $\hat\eta_k$; (ii) the second stage fits a GLM of $Y_j$ on $(X, D_j, \hat\eta_k : k \in \widehat{\mathrm{anc}}(j))$ with offset $\log\ell$. With the Murphy–Topel correction for estimated regressors, $z_{\theta_{jk}} = \hat\theta_{jk}/\sqrt{\hat V_{\mathrm{MT},kk}} \to N(0,1)$, and parents are selected by Wald tests under online FDR control.
+**Two-stage estimator.** By induction over the DAG, $\eta_k(\mathbf D,X) = (1, D_k, \mathbf D_{\mathrm{anc}(k)}^\top, X^\top)\,\xi_k$ is linear, so (i) the first stage fits a GLM of $Y_k$ on $(D_k,\mathbf D_{\widehat{\mathrm{anc}}(k)},X)$ with offset $\log\ell$ to get $\hat\eta_k$; (ii) the second stage fits a GLM of $Y_j$ on $(X, D_j, \hat\eta_k : k \in \widehat{\mathrm{anc}}(j))$ with offset $\log\ell$. With the Murphy–Topel correction for estimated regressors, under the regularity conditions of Murphy and Topel (2002) for these quasi-maximum likelihood estimators and under the null $\theta_{jk} = 0$, $z_{\theta_{jk}} = \hat\theta_{jk}/\sqrt{\hat V_{\mathrm{MT},kk}} \to N(0,1)$ in distribution as the number of cells grows, and parents are selected by Wald tests under online FDR control.
 
 ## Depends on
 

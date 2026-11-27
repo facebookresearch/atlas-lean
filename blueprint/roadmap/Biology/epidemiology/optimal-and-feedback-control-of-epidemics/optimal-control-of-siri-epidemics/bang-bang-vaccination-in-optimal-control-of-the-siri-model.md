@@ -4,7 +4,7 @@
 
 $$\dot x_S=-\beta x_Sx_Iu_P-x_Su_V,\qquad \dot x_I=\beta x_Sx_Iu_P+\hat\beta x_Rx_Iu_P-\gamma x_I,\qquad \dot x_R=-\hat\beta x_Rx_Iu_P+x_Su_V+\gamma x_I .$$
 
-Recovered (or vaccinated) individuals can be reinfected at rate $\hat\beta$; $\hat\beta=0$ gives SIR and $\hat\beta=\beta$ gives SIS. The cube $[0,1]^3$ is positively invariant.
+Recovered (or vaccinated) individuals can be reinfected at rate $\hat\beta$; $\hat\beta=0$ gives SIR and $\hat\beta=\beta$ gives SIS. The simplex $\{x \ge 0,\ x_S+x_I+x_R=1\}$ is positively invariant. (The source's Lemma 2.1 states invariance of the cube $[0,1]^3$, which fails: from $(0,1,1)$, $\dot x_I=\hat\beta u_P-\gamma>0$ when $\hat\beta u_P>\gamma$.)
 
 **Equilibria.** For constant inputs with $u_V^{\rm eq}>0$, the disease-free point $(0,0,1)$ always exists and the endemic point $\bigl(0,\,1-\tfrac{\gamma}{\hat\beta u_P^{\rm eq}},\,\tfrac{\gamma}{\hat\beta u_P^{\rm eq}}\bigr)$ exists iff $\gamma<\hat\beta u_P^{\rm eq}$. The disease-free point is locally asymptotically stable iff $\gamma>\hat\beta u_P^{\rm eq}$ and the endemic point iff $\gamma<\hat\beta u_P^{\rm eq}$: once vaccination empties the susceptible class, persistence is decided by the *reinfection* reproduction number $\hat\beta u_P^{\rm eq}/\gamma$.
 

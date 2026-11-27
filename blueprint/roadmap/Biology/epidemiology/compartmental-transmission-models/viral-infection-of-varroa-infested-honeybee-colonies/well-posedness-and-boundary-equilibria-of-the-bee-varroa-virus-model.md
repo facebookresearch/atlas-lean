@@ -8,7 +8,7 @@ $$M' = r(M+N) - nM - \frac{p}{h(B+I)}M(M+N) - M(\beta I + \delta N + eB),$$
 
 $$N' = -nN - \frac{p}{h(B+I)}N(N+M) + \beta MI + \delta MN - eNB,$$
 
-on $\mathcal D^0 = \{(B,I,M,N) \in \mathbb R^4_+ : B + I \ne 0\}$. Here $b$ is the queen's daily laying rate, split between healthy and infected brood in proportion to the colony composition; $\lambda$ and $\gamma$ are mite-to-bee and bee-to-bee transmission rates; $m$ and $\mu$ are natural and disease-induced bee mortality; $r$, $n$ are mite birth and death rates; $p/(h(B+I))$ is mite crowding relative to the number of hosts; $\beta$ is acquisition of the virus by mites from infected bees, $\delta$ mite-to-mite transmission, and $e$ the grooming removal of mites by healthy bees.
+on $\mathcal D^0 = \{(B,I,M,N) \in \mathbb R^4_+ : B + I \ne 0\}$. Here $b$ is the queen's daily laying rate, split between healthy and infected brood in proportion to the colony composition; $\lambda$ and $\gamma$ are mite-to-bee and bee-to-bee transmission rates; $m$ and $\mu$ are natural and disease-induced bee mortality; $r$, $n$ are mite birth and death rates; $p/(h(B+I))$ is mite crowding relative to the number of hosts; $\beta$ is acquisition of the virus by mites from infected bees, $\delta$ mite-to-mite transmission, and $e$ the grooming removal of mites by healthy bees. The source prints the last term of the $M$ equation as $-M(\beta I - \delta N - eB)$; the signs here are the ones its own description of the terms (loss of virus-free mites to infection by $\beta I$ and $\delta N$, removal by grooming $eB$) and the $N$ equation require, since $\beta MI + \delta MN$ must leave $M$ when it enters $N$.
 
 **Theorem (well-posedness and boundedness).** For $X_0 \in \mathcal D^0$ there is a unique solution on $[0,\infty)$; it stays in $\mathcal D^0$, and, with $\tilde m = m + \mu$ and some constant $L > 0$,
 
@@ -17,7 +17,7 @@ $$\frac{b}{\tilde m} \le \liminf_{t\to\infty}(B + I) \le \limsup_{t\to\infty}(B 
 **Boundary equilibria.**
 
 - $E_1 = (b/m, 0, 0, 0)$ (healthy, mite-free colony) and $E_2 = (0, b/(m+\mu), 0, 0)$ (fully infected, mite-free) always exist.
-- $E_3 = \big(b/m, 0, M_3, 0\big)$ with $M_3 = (r - n - eb/m)\,hb/(pm)$ (healthy bees with virus-free mites) is feasible iff $r - n > eb/m$: mites persist only if their birth rate beats their death rate plus grooming by the healthy population.
+- $E_3 = \big(b/m, 0, M_3, 0\big)$ with $M_3 = (r - n - eb/m)\,hb/(pm)$ (healthy bees with virus-free mites) is feasible iff $r - n > eb/m$ (the source prints $M_3 = (r - eb/m)\,bh/(rm)$, feasible for $r \ge eb/m$; setting $I = N = 0$, $B = b/m$ in the $M$ equation gives the logistic law in the Expansion, whose positive root is the $M_3$ above): mites persist only if their birth rate beats their death rate plus grooming by the healthy population.
 - $E_4 = \Big(\dfrac{\mu^2 - b\gamma + m\mu}{\mu\gamma}, \dfrac{b\gamma - m\mu}{\mu\gamma}, 0, 0\Big)$ (endemic virus without mites) is feasible iff $0 < b\gamma - m\mu < \mu^2$.
 - A healthy-bee-free equilibrium $E_5 = (0, b/(m+\mu), M_5, N_5)$ arises from the intersection in the positive quadrant of two conics in the $(M,N)$ plane; a coexistence equilibrium is studied numerically.
 

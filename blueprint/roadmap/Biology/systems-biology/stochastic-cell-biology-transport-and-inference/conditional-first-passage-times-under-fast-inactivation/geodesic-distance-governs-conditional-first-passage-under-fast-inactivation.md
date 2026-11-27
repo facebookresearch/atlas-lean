@@ -7,9 +7,9 @@ $$ C = \frac{L^2}{4D} , $$
 where $L$ is the appropriate distance from $U_0$ to $U_{\mathrm T}$:
 
 - pure diffusion in $\mathbb{R}^d$: $L$ is the Euclidean distance;
-- the Itô diffusion $dX = b(X)\,dt + \sqrt{2D}\,\Sigma(X)\,dW$ with bounded Hölder drift and uniformly elliptic Hölder $a = \Sigma\Sigma^{\top}$: $L$ is the geodesic distance in the Riemannian metric $a^{-1}$, independent of $b$;
+- the Itô diffusion $dX = b(X)\,dt + \sqrt{2D}\,\Sigma(X)\,dW$ with bounded Hölder drift, uniformly elliptic Hölder $a = \Sigma\Sigma^{\top}$, and $\mathbb{R}^d \setminus U_{\mathrm T}$ bounded: $L$ is the geodesic distance in the Riemannian metric $a^{-1}$, independent of $b$;
 - diffusion on a manifold with reflecting obstacles: $L$ is the length of the shortest admissible path avoiding the obstacles;
-- a partially absorbing target with finite reactivity $\kappa > 0$: $C$ is unchanged.
+- a partially absorbing target with finite reactivity $\kappa > 0$, in the two cases the source covers (one-dimensional diffusion with a half-line target, and pure diffusion in a smooth bounded domain of $\mathbb{R}^d$ whose target is a finite disjoint union of hyperspheres): $C$ is unchanged.
 
 Combined with the conditional-moment asymptotics, for an independent gamma inactivation time $\sigma$ with rate $\lambda$ and every $m \ge 1$
 

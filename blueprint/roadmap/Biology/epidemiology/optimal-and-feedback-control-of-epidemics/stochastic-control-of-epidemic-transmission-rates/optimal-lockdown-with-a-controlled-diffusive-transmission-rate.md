@@ -19,7 +19,7 @@ $$\lambda V=-zxy\,V_x+(zx-\alpha)y\,V_y+\tfrac12\sigma(z)^2V_{zz}+\min_{\xi\in[0
 
 $$\hat\xi(x,y,z)\in\operatorname*{arg\,min}_{\xi\in[0,L]}\bigl\{C(y,\xi)+b(z,\xi)V_z(x,y,z)\bigr\}$$
 
-is optimal whenever the closed-loop system admits a solution.
+is optimal whenever the closed-loop system admits a unique strong solution.
 
 In the mean-reverting case study the optimal policy numerically has three phases: the epidemic first runs freely, is then vigorously tamed, and finally a less stringent containment is kept. After a certain date the product $\frac{\beta_t}{\alpha}S_t$ stays strictly below one while the reproduction number $\beta_t/\alpha$ itself oscillates above one, and larger fluctuations $\sigma$ make the lockdown start earlier and spread over a longer period.
 

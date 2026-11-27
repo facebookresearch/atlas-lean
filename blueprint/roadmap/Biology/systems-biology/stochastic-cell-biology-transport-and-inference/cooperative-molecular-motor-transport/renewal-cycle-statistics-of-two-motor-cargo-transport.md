@@ -2,13 +2,11 @@
 
 **Setting.** A cargo is attached to two cooperative but different motors (e.g. kinesin-1 and kinesin-2), each of which binds to and unbinds from a microtubule. In a scale-separated limit (detached motors fastest, then the cargo, then the attached motors) the system coarse-grains to a continuous-time Markov chain on attachment states $\{(1,2),(1),(2),\emptyset\}$ with effective, configuration-averaged switching rates, while the cargo position $M$ drifts and diffuses within each state. Starting from both motors attached, a run consists of $N+1$ *cycles*: excursions from state $(1,2)$ until the next return to $(1,2)$ or the final complete detachment $\emptyset$. Let $(\Delta T^j,\Delta M^j)$ be the i.i.d. durations and cargo displacements of the cycles, $N$ (geometric) the number of completed detachment–reattachment cycles, $T=\sum_{j=1}^{N+1}\Delta T^j$ the run time and $M_\emptyset=\sum_{j=1}^{N+1}\Delta M^j$ the run length.
 
-**Proposition (run time and length).** By Wald's first and second identities,
+**Proposition (run time and length).** By Wald's first identity,
 
-$$\mathbb E T=\mathbb E[N+1]\,\mu_{\Delta T},\qquad \mathbb E M_\emptyset=\mathbb E[N+1]\,\mu_{\Delta M},$$
+$$\mathbb E T=\mathbb E[N+1]\,\mu_{\Delta T},\qquad \mathbb E M_\emptyset=\mathbb E[N+1]\,\mu_{\Delta M}.$$
 
-$$\operatorname{Var}T=\mathbb E[N+1]\,\sigma^2_{\Delta T}+\operatorname{Var}(N+1)\,\mu^2_{\Delta T},\qquad \operatorname{Var}M_\emptyset=\mathbb E[N+1]\,\sigma^2_{\Delta M}+\operatorname{Var}(N+1)\,\mu^2_{\Delta M},$$
-
-and $\operatorname{Cov}(T,M_\emptyset)=\mathbb E[N+1]\sigma_{\Delta T,\Delta M}+\operatorname{Var}(N+1)\mu_{\Delta T}\mu_{\Delta M}$.
+The source's Proposition 1(2) also gives compound-sum formulas for $\operatorname{Var}T$, $\operatorname{Var}M_\emptyset$ and $\operatorname{Cov}(T,M_\emptyset)$; they need the cycle increments to be independent of the number of cycles, which fails here because $N+1$ is a stopping time for the cycles (Monte Carlo in this chain with nonidentical motors: $\operatorname{Var}T=5.99$ against the formula's $8.22$), so they are not stated.
 
 **Proposition (effective velocity and diffusivity).** For the *ensemble* (pooled-run) statistics,
 
@@ -20,7 +18,7 @@ and the *long-run* velocity and diffusivity of a cargo that reattaches after com
 
 ## Expansion
 
-The run is a sum of a stopped number of i.i.d. cycle increments, with $N+1$ a stopping time for the cycle filtration, which is exactly the setting of Wald's identities. The effective diffusivity $D=\lim\operatorname{Var}(M_t-Vt)/(2t)$ of a renewal–reward process equals the variance of the centered cycle reward $\Delta M-V\Delta T$ divided by twice the mean cycle length, which expands to the stated quadratic form. The scale separation allows the attachment rates to be computed by averaging over the quasi-stationary spring extension, so that force-dependent detachment and the different stepping speeds of the two motor types enter only through a few effective parameters.
+The run is a sum of a stopped number of i.i.d. cycle increments, with $N+1$ a stopping time for the cycle filtration, which is exactly the setting of Wald's identities; the second identity gives the pooled diffusivity in terms of cycle moments. The effective diffusivity $D=\lim\operatorname{Var}(M_t-Vt)/(2t)$ of a renewal–reward process equals the variance of the centered cycle reward $\Delta M-V\Delta T$ divided by twice the mean cycle length, which expands to the stated quadratic form. The scale separation allows the attachment rates to be computed by averaging over the quasi-stationary spring extension, so that force-dependent detachment and the different stepping speeds of the two motor types enter only through a few effective parameters.
 
 ## Sources
 

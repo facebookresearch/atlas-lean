@@ -16,13 +16,13 @@ $$\Phi(c,v)=A_0\int_0^Tc\,s\,Z\,dt+A_1\int_0^TQ(c)\,dt+\int_0^T\Bigl(A_{21}v+\fr
 
 new infections plus the social cost $Q$ of distancing (decreasing, vanishing at $c_0$) plus vaccination cost.
 
-**Theorem.** Assume $\beta_0\in W^{1,\infty}$, $\gamma\Gamma\in L^\infty$, $\int_0^{x_+}\gamma=\infty$, $Y_0/\Gamma\in L^\infty$, and $Q$ convex and $C^1$.
+**Theorem.** Assume $\beta_0\in W^{1,\infty}$, $\gamma\Gamma\in L^\infty$, $\int_0^{x_+}\gamma=\infty$, $Y_0/\Gamma\in L^\infty$, $c_->0$, and $Q$ of class $C^1$ and strictly convex on $[c_-,c_0]$ (the source's (34)).
 
 1. For every $(c,v)\in\mathcal U$ the state system has a unique solution, with $Z\in W^{1,\infty}(0,T)$, $0\le Z\le M=\|\beta_0\|_\infty\|Y_0\|e^{c_0\|\beta_0\|_\infty T}$ and $Z$ Lipschitz with an explicit constant.
 2. An optimal pair $(c^*,v^*)$ exists.
 3. *(First-order conditions.)* With $(p,q)$ the solution of the backward adjoint (dual) system, $E_1=-q\,s^*Z^*$ and $E_2=p-A_{21}$,
 
-$$c^*(t)=\mathcal Lf_1,c_-,c_0),\qquad v^*(t)=0\ \text{on }[0,T_1],\qquad v^*(t)=\mathcal Lf_2,0,\delta)\ \text{on }[T_1,T],$$
+$$c^*(t)=\mathcal L[f_1,c_-,c_0]\big(E_1(t)\big),\qquad v^*(t)=0\ \text{on }[0,T_1],\qquad v^*(t)=\mathcal L[f_2,0,\delta]\big(E_2(t)\big)\ \text{on }[T_1,T],$$
 
 where for strictly increasing $f$ on $[a,b]$, $\mathcal L[f,a,b]$ is the pointwise inverse of $f$ plus the normal cone of the box $[a,b]$ (the clipped inverse of $f$), $f_1(c)=A_1Q'(c)$ and $f_2(v)=A_{22}v$.
 

@@ -10,7 +10,7 @@ where $\mu$ is bounded and $C^1$ on $[0,\infty)$ with $\mu(0) = 0$ and $\mu(S) >
 
 $$ D(X,S) = \frac{D^*\mu(S)X}{\mu(S^*)X^*} + \frac{\delta b}{\mu(S^*)^{1+\alpha}}\, \big|\mu(S) - \mu(S^*)\big|^{1+\alpha}\, \mathbf{1}_{\{S \le S^*\}} $$
 
-makes $(X^*, S^*)$ globally asymptotically stable on the whole open quadrant $(0,\infty)\times(0,S_{\mathrm{in}})$; if moreover $\alpha > 0$, the equilibrium is also locally exponentially stable. For $b = 0$ the feedback reduces to the known law $D = \mu(S)X/X^*$.
+makes $(X^*, S^*)$ globally asymptotically stable on the whole open quadrant $(0,\infty)\times(0,S_{\mathrm{in}})$; if moreover $\alpha > 0$, the equilibrium is also locally exponentially stable. For $b = 0$ the feedback reduces to $D = p_0\mu(S)X/X^*$ (the equilibrium gives $p_0\mu(S^*) = D^*$), which is the known law $D = \mu(S)X/X^*$ when $p_0 = 1$.
 
 ## Depends on
 

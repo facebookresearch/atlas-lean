@@ -6,14 +6,30 @@ $$\dot S_H = \theta_1 + \beta_3 R_H - \mu_1 S_H - (1 - u_1 - u_3)\big(\tau_1 I_F
 
 $$\dot E_H = (1 - u_1 - u_3)\big(\tau_1 I_F + \tau_2 I_D + \tau_3\lambda(M)\big)S_H - (\mu_1 + \beta_1 + \beta_2 + u_4)E_H, \quad \dot I_H = \beta_1 E_H - (\sigma_1 + \mu_1)I_H, \quad \dot R_H = (\beta_2 + u_4)E_H - (\beta_3 + \mu_1)R_H;$$
 
-free-range dogs follow an uncontrolled SEI model with force $\kappa_1 I_F + \kappa_2 I_D + \kappa_3\lambda(M)$; domestic dogs follow an SEIRS model with force $(1 - u_1 - u_2)\big(\frac{\psi_1 I_F}{1+\rho_1} + \frac{\psi_2 I_D}{1+\rho_2} + \frac{\psi_3\lambda(M)}{1+\rho_3}\big)$, where the $\rho_i$ are deterrence factors; and the environment obeys $\dot M = \nu_1 I_H + \nu_2 I_F + \nu_3 I_D - \mu_4 M$. The effective reproduction number $\mathcal{R}_e$ is the spectral radius of the next-generation matrix $FV^{-1}$ (with $\mathcal{R}_0$ its value without controls).
+the free-range dogs (uncontrolled) satisfy
+
+$$\dot S_F = \theta_2 - \big(\kappa_1 I_F + \kappa_2 I_D + \kappa_3\lambda(M)\big)S_F - \mu_2 S_F, \quad \dot E_F = \big(\kappa_1 I_F + \kappa_2 I_D + \kappa_3\lambda(M)\big)S_F - (\mu_2 + \gamma)E_F, \quad \dot I_F = \gamma E_F - (\mu_2 + \sigma_2)I_F;$$
+
+with the domestic-dog force $\Phi_D = (1 - u_1 - u_2)\big(\frac{\psi_1 I_F}{1+\rho_1} + \frac{\psi_2 I_D}{1+\rho_2} + \frac{\psi_3\lambda(M)}{1+\rho_3}\big)$, where the $\rho_i$ are deterrence factors, the domestic dogs satisfy
+
+$$\dot S_D = \theta_3 - \mu_3 S_D - \Phi_D S_D + \gamma_3 R_D, \quad \dot E_D = \Phi_D S_D - (\mu_3 + \gamma_1 + \gamma_2 + u_4)E_D, \quad \dot I_D = \gamma_1 E_D - (\mu_3 + \sigma_3)I_D, \quad \dot R_D = (\gamma_2 + u_4)E_D - (\mu_3 + \gamma_3)R_D;$$
+
+and the environment obeys $\dot M = \nu_1 I_H + \nu_2 I_F + \nu_3 I_D - \mu_4 M$ (the source's system (1)). The effective reproduction number is the source's (16),
+
+$$\mathcal{R}_e = \frac{R_{33} + R_{21} + \sqrt{R_{21}^2 - 2R_{33}R_{21} + 4R_{31}R_{23} + R_{33}^2}}{2},$$
+
+with $R_{21} = \frac{\kappa_1\theta_2\gamma}{\mu_2(\mu_2+\gamma)(\sigma_2+\mu_2)}$, $R_{23} = \frac{\kappa_2\theta_2 a_3}{\mu_2}$, $R_{31} = \frac{(1-u_1-u_2)\psi_1\theta_3\gamma}{(1+\rho_1)\mu_3(\mu_2+\gamma)(\sigma_2+\mu_2)}$, $R_{33} = \frac{(1-u_1-u_2)\psi_2\theta_3 a_3}{(1+\rho_2)\mu_3}$ and $a_3 = \frac{\gamma}{(\mu_3+\gamma_1+\gamma_2+u_4)(\sigma_3+\mu_3)}$, as printed; $\mathcal{R}_0$ is its value without controls. (The source obtains it as the spectral radius of $FV^{-1}$ for its (14)–(15), whose $F$ has a zero column for $M$; the spectral radius of the full next-generation matrix with the environmental route can differ.)
 
 **Theorem.**
 
 1. *(Well-posedness.)* Solutions starting in the nonnegative orthant remain positive and are uniformly bounded.
-2. *(Disease-free equilibrium.)* The rabies-free equilibrium is globally asymptotically stable when the reproduction number is below one and unstable when it exceeds one.
-3. *(Endemic equilibrium.)* If $\mathcal{R}_e \ge 1$ (with $E_H, E_F, E_D > 0$) there is a unique endemic equilibrium, and it is globally asymptotically stable when $\mathcal{R}_e > 1$.
-4. *(Optimal control.)* For a finite-horizon objective penalizing exposed and infectious classes plus quadratic control costs over bounded measurable controls, an optimal control exists and is unique, and it satisfies Pontryagin's principle: there are adjoint variables $\lambda_1, \dots, \lambda_{12}$ with $\lambda_j' = -\partial H/\partial y_j$ and $\lambda_j(t_f) = 0$, and each optimal control is the projection onto its admissible interval of the stationary point of the Hamiltonian, e.g. $u_1^* = \max\{0, \min(1, \cdot)\}$ with an explicit expression in the adjoint differences $\lambda_2 - \lambda_1$, $\lambda_9 - \lambda_8$ and the forces of infection.
+2. *(Disease-free equilibrium.)* The rabies-free equilibrium is globally asymptotically stable when $\mathcal{R}_0 < 1$ and unstable otherwise (the source's Theorem 3).
+3. *(Endemic equilibrium.)* If $\mathcal{R}_e \ge 1$, the system has exactly one equilibrium with $E_H, E_F, E_D > 0$ (the source's Theorem 4, whose hypothesis "$E_H, E_F, E_D > 0$" is a condition on the equilibrium sought), and it is globally asymptotically stable when $\mathcal{R}_e > 1$.
+4. *(Optimal control.)* For the objective (the source's (22))
+
+$$J(u_1,\dots,u_4) = \int_{t_0}^{t_f}\Big(K_1M + K_2E_H + K_3I_H + K_4E_D + K_5I_D - K_6S_D + \frac12\sum_{j=1}^4A_ju_j^2\Big)dt,$$
+
+with positive weights $K_i$, $A_j$ (the term $-K_6S_D$ rewards susceptible domestic dogs), minimized over bounded measurable controls with values in $[0,1]$, an optimal control exists and is unique, and it satisfies Pontryagin's principle: there are adjoint variables $\lambda_1, \dots, \lambda_{12}$ with $\lambda_j' = -\partial H/\partial y_j$ and $\lambda_j(t_f) = 0$, and each optimal control is the projection onto its admissible interval of the stationary point of the Hamiltonian, e.g. $u_1^* = \max\{0, \min(1, \cdot)\}$ with an explicit expression in the adjoint differences $\lambda_2 - \lambda_1$, $\lambda_9 - \lambda_8$ and the forces of infection.
 
 ## Depends on
 

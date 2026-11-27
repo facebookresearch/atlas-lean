@@ -17,3 +17,5 @@
 - [Global stabilization of an age-structured chemostat](global-stabilization-of-an-age-structured-chemostat.md)
 - [Mortality dominance obstructs global chemostat stabilization](mortality-dominance-obstructs-global-chemostat-stabilization.md)
 - [Periodic chemostat with a sliding-memory Caputo derivative](periodic-sliding-memory-fractional-chemostat.md)
+
+- [Evolutionary games, harvesting and chemostats](evolutionary-games-harvesting-and-chemostats/README.md)

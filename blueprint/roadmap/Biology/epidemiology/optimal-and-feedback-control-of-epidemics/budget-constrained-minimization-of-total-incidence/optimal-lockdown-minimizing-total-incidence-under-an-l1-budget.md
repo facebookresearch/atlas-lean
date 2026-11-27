@@ -3,7 +3,7 @@
 Consider the SIR model with a time-dependent intervention $u(t) \in [0,1]$ that reduces the rate of infectious contacts,
 
 $$
-S' = -\beta (1 - u) S I, \qquad I' = \beta (1 - u) S I - \gamma I, \qquad \beta, \gamma > 0,
+S' = -\beta (1 - u) S I, \qquad I' = \beta (1 - u) S I - \gamma I, \qquad \beta, \gamma > 0,\quad R_0 = \beta/\gamma > 1,
 $$
 
 with $S(0), I(0) > 0$ and $S(0) + I(0) \le 1$. The **total incidence** is $S(0) - S_u(\infty)$, the fraction ever infected after time $0$. Interventions are piecewise continuous and have a linear cost budget $\|u\|_1 = \int_0^\infty u(t)\, dt \le c_1$ and a maximal level $\|u\|_\infty \le c_{\max}$.

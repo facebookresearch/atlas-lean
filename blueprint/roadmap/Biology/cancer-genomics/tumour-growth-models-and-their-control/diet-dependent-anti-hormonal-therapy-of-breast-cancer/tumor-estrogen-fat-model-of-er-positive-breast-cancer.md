@@ -4,7 +4,7 @@ Let $T(t)$ be tumor volume, $E(t)$ the intratumoral estrogen concentration and $
 
 $$\frac{dT}{dt} = \frac{k_1E}{a_1 + E}\,T\,(1 - m_1T), \qquad \frac{dE}{dt} = rF - \mu E, \qquad \frac{dF}{dt} = -\alpha TF,$$
 
-with non-negative parameters $k_1$ (maximal growth rate), $a_1$ (half-saturation estrogen level), $m_1$ (inverse carrying capacity), $r$ (estrogen production by fat), $\mu$ (washout) and $\alpha$ (fat consumption), and non-negative initial data $(T_0,E_0,F_0)$. Diet enters only through $F_0$ (high-fat versus control diet).
+with positive parameters $k_1$ (maximal growth rate), $a_1$ (half-saturation estrogen level), $m_1$ (inverse carrying capacity), $r$ (estrogen production by fat), $\mu$ (washout) and $\alpha$ (fat consumption), and non-negative initial data $(T_0,E_0,F_0)$. Diet enters only through $F_0$ (high-fat versus control diet).
 
 **Proposition 1.** For non-negative initial conditions the system has a unique solution, which is non-negative and bounded for all $t \ge 0$. Moreover $F(t) \le F_0$,
 

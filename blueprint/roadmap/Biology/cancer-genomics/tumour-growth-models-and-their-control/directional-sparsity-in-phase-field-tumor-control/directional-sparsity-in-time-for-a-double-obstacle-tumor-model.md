@@ -1,6 +1,6 @@
 # Directional sparsity in time of optimal therapies for a double-obstacle phase-field tumor model
 
-Let $\Omega \subset \mathbb{R}^3$ be a bounded smooth domain, $T > 0$, $Q = \Omega \times (0,T)$, and let $\alpha, \beta > 0$ and $\chi \ge 0$. The state $(\mu, \varphi, \xi, \sigma)$ (chemical potential, tumor fraction, selection of the subdifferential, nutrient) solves, with homogeneous Neumann boundary conditions and given initial data,
+Let $\Omega \subset \mathbb{R}^3$ be a bounded smooth domain, $T > 0$, $Q = \Omega \times (0,T)$, and let $\alpha, \beta, \chi > 0$. The state $(\mu, \varphi, \xi, \sigma)$ (chemical potential, tumor fraction, selection of the subdifferential, nutrient) solves, with homogeneous Neumann boundary conditions and given initial data,
 
 $$ \alpha \partial_t \mu + \partial_t \varphi - \Delta \mu = P(\varphi)(\sigma + \chi(1-\varphi) - \mu) - h(\varphi) u_1, \qquad \beta \partial_t \varphi - \Delta \varphi + \xi + F_2'(\varphi) = \mu + \chi \sigma, \quad \xi \in \partial I_{[-1,1]}(\varphi), $$
 

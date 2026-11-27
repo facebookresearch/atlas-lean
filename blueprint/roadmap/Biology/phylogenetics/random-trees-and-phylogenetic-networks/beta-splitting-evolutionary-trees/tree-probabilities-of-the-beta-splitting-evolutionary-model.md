@@ -16,10 +16,6 @@ $$
 
 **Extinction and continuous time.** Adding freezing (extinction) events with probability $\delta$ per event gives a generating–organizing–deleting process. In the continuous-time version, each active leaf with potential $L_j$ splits at rate $\lambda(1-\delta)L_j$ and goes extinct at rate $\lambda\delta L_j$. Its embedded tree after $n$ events has the same law as the discrete process stopped after $n$ effective events.
 
-## Depends on
-
-- [Ranked labeled histories of coalescent trees](../../../coalescent-theory/ranked-labeled-histories-of-coalescent-trees/README.md)
-
 ## Expansion
 
 Conditionally on the split proportions, the subsequent splits that fall into the left part of node $i$ are those with $U_j$ inside its left interval. Each such event has conditional probability proportional to $b_i$, so the $n_i^L$ left and $n_i^R$ right descendants of node $i$ contribute $b_i^{n_i^L}(1-b_i)^{n_i^R}$. Integrating each $b_i$ against the Beta density gives the product formula. Since the product does not depend on the ranking, summing over the rankings compatible with a planar shape multiplies it by the number of such rankings, $\prod_i \binom{n_i^L + n_i^R}{n_i^L}$, which rewrites as the factor $(n-1)!/\prod_i (n_i^L + n_i^R + 1)$. The construction generalizes the Blum–François Beta-splitting model and Aldous' Beta-splitting cladograms by letting the split of diversification potential between sister species be asymmetric.

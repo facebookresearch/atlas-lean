@@ -4,7 +4,7 @@ Consider the age-structured chemostat with cell density $f(t,a)$, substrate $S(t
 
 $$ \partial_t f + \partial_a f = -(\beta(a) + D) f, \qquad f(t,0) = \mu(S)\int_0^\infty k(a) f(t,a)\, da, \qquad \dot S = D(S_{\mathrm{in}} - S) - \mu(S)\int_0^\infty q(a) f(t,a)\, da , $$
 
-with bounded $C^1$ functions $\mu, \beta, k, q \ge 0$. Assume (B): there are constants $b, \gamma \ge 0$ and $p_0, q_0 > 0$ with $\beta \le b$ and
+with bounded $C^1$ functions $\mu, \beta, k, q \ge 0$, where $\mu(0) = 0$ and $\mu(S) > 0$ for $S > 0$, and solutions satisfy $f(t,a) \to 0$ as $a \to \infty$ for every $t \ge 0$. Assume (B): there are constants $b, \gamma \ge 0$ and $p_0, q_0 > 0$ with $\beta \le b$ and
 
 $$ q(a) = q_0\, e^{\int_0^a \beta(s)\,ds - b a}, \qquad k(a) = (p_0 + \gamma q_0 a)\, e^{\int_0^a \beta(s)\,ds - b a} . $$
 
@@ -14,7 +14,13 @@ $$ \dot S = D(S_{\mathrm{in}}-S) - \mu(S) X, \qquad \dot X = q_0\mu(S) Y - (b + 
 
 whose equilibria for $D \equiv D^*$ satisfy $\mu(S^*) = (b+D^*)^2/(p_0(b+D^*) + \gamma q_0)$. Let $\lambda = 1 - p_0\mu(S^*)/(b + D^*) \in [0,1)$.
 
-**Theorem.** Under an explicit inequality (C) bounding $\mu(S^*)/\mu(S) - 1$ on $[S^*, S_{\mathrm{in}}]$ in terms of $b$, $D^*$ and $\lambda$ (which reduces to $p_0\mu(S) > b$ on $[S^*, S_{\mathrm{in}}]$ when $\gamma = 0$), for every $\delta > 0$ and $\alpha \in [0,1)$ the feedback
+Assume (C): there is a constant $\phi > 1$ such that for all $S \in [S^*, S_{\mathrm{in}}]$
+
+$$ \Big(b - \frac{\lambda(b+D^*)}{2}\Big)\Big(\frac{\mu(S^*)}{\mu(S)} - 1\Big) + (1+\lambda)\frac{\lambda^2\phi(b+D^*)^2}{4D^*}\Big(\frac{\mu(S^*)}{\mu(S)} - 1\Big)^2 < D^*\Big(1 - \frac{1}{4(1+\lambda)\phi}\Big) $$
+
+(the source's (30)); when $\gamma = 0$, so $\lambda = 0$, it is equivalent to $p_0\mu(S) > b$ on $[S^*, S_{\mathrm{in}}]$.
+
+**Theorem.** Under (B) and (C), for every $\delta > 0$ and $\alpha \in [0,1)$ the feedback
 
 $$ D(X,S) = \frac{D^*\mu(S)X}{\mu(S^*)X^*} + \frac{\delta}{\mu(S^*)^{1+\alpha}}\, \big|\mu(S)-\mu(S^*)\big|^{1+\alpha}\, \mathbf{1}_{\{S\le S^*\}} $$
 

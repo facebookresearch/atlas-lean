@@ -12,7 +12,7 @@ The cells satisfy no-flux boundary conditions, and the drug is injected through 
 
 $$d_4\,\partial_\nu U=v(x,t)\,H(N-a_0)\quad\text{on }S\times(0,\infty),$$
 
-where $H$ is a $C^1$ Heaviside-type function ($H(s)=0$ for $s<0$, $H(s)=1$ for $s\ge\delta$). Diffusivities are bounded below by $\delta_0>0$ and growth coefficients satisfy $0<r_0\le r_i\le R_0$.
+where $H$ is a $C^1$ Heaviside-type function ($H(s)=0$ for $s<0$, $H(s)=1$ for $s\ge\delta$). Diffusivities are bounded below by $\delta_0>0$ and growth coefficients satisfy $0<r_0\le r_i\le R_0$. The parameters $a_i$, $c_i$, $k_1$, $\alpha$, $\rho$ are positive, $k_2$ is bounded with $k_2\ge k_0>0$ for a constant $k_0$, and the inputs $v\ge0$ on $S$ and $s\ge0$ in $\Omega$ satisfy $\|v\|_{L^\infty(S\times(0,\tilde t))}+\|s\|_{L^\infty(\Omega\times(0,\tilde t))}\le A_1$ for every $\tilde t>0$ with one constant $A_1$, so the bound is uniform in time (the source's (H1), (H2) and (H4)).
 
 **Theorem (well-posedness and attractor).** For nonnegative bounded initial data there is a global nonnegative bounded weak solution; it is classical under smoothness and compatibility conditions and unique when the diffusivities are Hölder continuous in $(x,t)$. If the coefficients are time independent, the solution is bounded uniformly in time and the solution semigroup has a maximal attractor in $L^\infty_+(\Omega)$.
 
@@ -22,7 +22,11 @@ $$\|T(t)\|_{L^\infty(\Omega)}\le Ce^{-\kappa t},\qquad t\ge\tau_*,$$
 
 for constants $C,\kappa>0$: the tumour is eliminated exponentially fast.
 
-**Theorem (optimal injection rate).** For a cost functional $J(v;N,T,I,U)$ over admissible boundary rates $U_{ad}$, subject to the state constraints $\int_\Omega N(x,t)\,dx\ge a_0$ and $\int_\Omega I(x,t)\,dx\ge b_0$ on $[0,t_0]$ (assumed feasible), an optimal injection rate $u\in U_{ad}$ exists, and it satisfies a first-order optimality condition expressed through the weak solution of the linearized (sensitivity) system whose drug boundary condition is $d_4\partial_\nu U^*=vH(N-a_0)+uH'(N-a_0)N^*$.
+**Theorem (optimal injection rate).** Assume moreover that the diffusivities $d_i(x,t,z)$ are Hölder continuous in $(x,t)$. Fix $t_0>0$, a constant $A_0>A_1$, $\lambda>0$, the admissible rates $U_{ad}=\{v\in L^\infty(S\times(0,t_0)):0\le v\le A_0\}$ and the cost
+
+$$J(v)=\int_\Omega T(x,t_0)\,dx+\lambda\|v\|_{L^\infty(S\times(0,t_0))}.$$
+
+For the minimization of $J$ over $U_{ad}$, subject to the state constraints $\int_\Omega N(x,t)\,dx\ge a_0$ and $\int_\Omega I(x,t)\,dx\ge b_0$ on $[0,t_0]$ with $0<a_0<\int_\Omega N_0$ and $0<b_0<\int_\Omega I_0$ (assumed feasible), an optimal injection rate $u\in U_{ad}$ exists, and it satisfies a first-order optimality condition expressed through the weak solution of the linearized (sensitivity) system whose drug boundary condition is $d_4\partial_\nu U^*=vH(N-a_0)+uH'(N-a_0)N^*$.
 
 ## Expansion
 

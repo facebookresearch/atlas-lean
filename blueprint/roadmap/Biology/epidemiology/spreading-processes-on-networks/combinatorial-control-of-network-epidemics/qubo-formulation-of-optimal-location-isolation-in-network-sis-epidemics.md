@@ -10,7 +10,7 @@ $$f(\mathbf{x},\mathbf{u}) = \sum_{i}\sum_{t=1}^{T} x_i(t) + \gamma\sum_i n_i u_
 
 balancing infections against the population affected by isolation, $\gamma \ge 0$.
 
-**Proposition (well-posedness).** If $\lambda \le \max_i\big(1 + \sum_j A_{ij}\,n_j/n_i\big)^{-1}$, the box $\prod_i [0,n_i]$ is positively invariant, with or without control.
+**Proposition (well-posedness).** If $\lambda \le \min_i\big(1 + \sum_j A_{ij}\,n_j/n_i\big)^{-1}$, the box $\prod_i [0,n_i]$ is positively invariant, with or without control. (The source's Proposition 1 prints $\max_i$, which is not enough: $M = 2$, $n_1 = 1$, $n_2 = 100$, $A_{12} = 1$, $A_{21} = 0$, $\lambda = 1$ sends $(0,100)$ to $x_1 = 100 > n_1$.)
 
 **Theorem (two-step horizon).** For $T = 2$ and initial state $\bar{\mathbf{x}} = \mathbf{x}(0)$, the optimal isolation policy is $\mathbf{u}^\ast = \mathbf{1} - \mathbf{z}^\ast$, where $\mathbf{z}^\ast$ solves the quadratic unconstrained binary optimisation (QUBO) problem
 

@@ -8,7 +8,9 @@ $$ \dot S = \Lambda - \beta_1 S U_1 - \mu S + \theta E - u_1 \rho S Z, \qquad \d
 
 Minimize
 
-$$ J[u_1, u_2] = \int_0^{t_f} \bigl( B_1 U_1 + B_2 u_1^4 + B_3 u_2^2 \bigr)\, dt. $$
+$$ J[u_1, u_2] = \int_0^{t_f} \bigl( B_1 U_1 + B_2 u_1^4 + B_3 u_2^2 \bigr)\, dt, $$
+
+with positive weights $B_1, B_2, B_3$ and positive bounds $u_{1\max}, u_{2\max}$.
 
 **Theorem 4.1 (existence).** There is an optimal control pair $(u_1^*, u_2^*)$ minimizing $J$ over the admissible controls.
 

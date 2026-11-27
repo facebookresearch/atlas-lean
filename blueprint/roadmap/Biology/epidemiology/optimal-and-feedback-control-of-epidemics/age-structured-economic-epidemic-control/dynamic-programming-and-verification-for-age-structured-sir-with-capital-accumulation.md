@@ -14,7 +14,7 @@ $$\dot K = F(K, L) - \int_0^{\bar a} c\, n\, da - \delta K - D\Big(\int_0^{\bar 
 
 and the planner maximizes, for example, the welfare $\int_0^\infty\int_0^{\bar a} e^{-\rho t}\, n^\nu u(c, \theta)\, da\, dt$ over consumption $c$, $\theta$ and $\eta$.
 
-**Hypotheses.** $\mu_S, \mu_R > 0$ are locally integrable with $\int_0^{\bar a}\mu_S = \int_0^{\bar a}\mu_R = \infty$ (nobody survives past $\bar a$); $\mu_I(a,\kappa)$ is measurable, Lipschitz and increasing in $\kappa$ uniformly in $a$, with $\int_0^{\bar a}\mu_I(a,\kappa)\, da = \infty$.
+**Hypotheses.** $\mu_S, \mu_R > 0$ are locally integrable with $\int_0^{\bar a}\mu_S = \int_0^{\bar a}\mu_R = \infty$ (nobody survives past $\bar a$); $\mu_I(a,\kappa)$ is measurable, Lipschitz and increasing in $\kappa$ uniformly in $a$, with $\int_0^{\bar a}\mu_I(a,\kappa)\, da = \infty$ for every $\kappa$; $F(\cdot, L)$ is Lipschitz for every $L \ge 0$, with Lipschitz constants bounded uniformly in $L$; $\varphi : [0,1] \to [0,1]$ is increasing with $\varphi(1) = 1$; the age profiles $\alpha, \beta, \gamma, e$ (and the source's further profile $\xi$) are non-negative and in $L^2(0,\bar a)$; $D$ is positive and concave; $\delta > 0$ and $\nu \in [0,1]$; and $u : \mathbb{R} \times [0,1] \to \mathbb{R}$ is positive, continuous and increasing in both variables (the source's Hypothesis 3.1(i)–(viii)).
 
 **Theorem.**
 

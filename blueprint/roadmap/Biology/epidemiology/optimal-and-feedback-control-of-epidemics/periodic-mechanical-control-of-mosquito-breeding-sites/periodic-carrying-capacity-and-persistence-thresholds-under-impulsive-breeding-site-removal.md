@@ -8,7 +8,7 @@ with sex ratio $r$, daily egg output $b$, maturation rate $\nu_L$ and mortalitie
 
 $$\mathcal N = \frac{\nu_L\, r b}{(\nu_L + \mu_L)\,\mu_v}.$$
 
-For constant $K_v > 0$: if $\mathcal N \le 1$ the trivial equilibrium is globally asymptotically stable, and if $\mathcal N > 1$ the positive equilibrium is globally asymptotically stable on the positive cone.
+For constant $K_v > 0$ the compact set $\mathcal K = \{(L_v, A_v) \in \mathbb R^2_+ : L_v \le K_v,\ A_v \le \tfrac{\nu_L}{\mu_v}K_v\}$ is positively invariant, and for initial data in $\mathcal K$: if $\mathcal N \le 1$ the trivial equilibrium is globally asymptotically stable, and if $\mathcal N > 1$ the positive equilibrium is globally asymptotically stable.
 
 **Impulsive control.** Breeding sites regrow linearly toward $K_{\max}$ at rate $r_K$ and a public agent removes a fraction $\gamma(H) \in (0,1)$ of them every $\tau$ days, the fraction depending on the level $H$ of household protective behavior:
 
@@ -20,10 +20,10 @@ $$K_{v,per}(t) = \Big(1 - \frac{\gamma(H_0)\,e^{-r_K(t - n\tau)}}{1 - (1 - \gamm
 
 and every solution converges to it.
 
-**Proposition (persistence and extinction thresholds).** Let $H(t) \to H_0$ and $C = r_K\,\gamma(H_0)/(1 - e^{-r_K\tau})$.
+**Proposition (persistence and extinction thresholds).** Let $H(t) \to H_0$ and $C = r_K\,\gamma(H_0)/(1 - e^{-r_K\tau})$, and take initial data of the mosquito subsystem in $\mathcal K$ with $K_{\max}$ (which bounds $K_v$) in place of $K_v$.
 
-- If $\displaystyle \mathcal N > \Big(1 + \frac{\mu_v}{\nu_L}\frac{C}{1-\gamma(H_0)}\Big)\Big(1 + \frac{1}{\nu_L + \mu_L}\frac{C}{1-\gamma(H_0)}\Big)$, the coupled system has a unique positive $\tau$-periodic solution that attracts all nontrivial initial data.
-- If $\displaystyle \mathcal N \le \Big(1 + \frac{\mu_v}{\nu_L}C\Big)\Big(1 + \frac{1}{\nu_L + \mu_L}C\Big)$, every solution converges to the trivial equilibrium: the mosquito population is eliminated.
+- If $\displaystyle \mathcal N > \Big(1 + \frac{\mu_v}{\nu_L}\frac{C}{1-\gamma(H_0)}\Big)\Big(1 + \frac{1}{\nu_L + \mu_L}\frac{C}{1-\gamma(H_0)}\Big)$, the coupled system has a unique positive $\tau$-periodic solution that attracts all nontrivial initial data in this set.
+- If $\displaystyle \mathcal N \le \Big(1 + \frac{\mu_v}{\nu_L}C\Big)\Big(1 + \frac{1}{\nu_L + \mu_L}C\Big)$, every solution with initial data in this set converges to the trivial equilibrium: the mosquito population is eliminated.
 
 Since $C$ increases with $\gamma(H_0)$, households that reduce their own protective effort in response to public mechanical control lower $\gamma(H_0)$, which shrinks both thresholds and can switch the outcome from elimination to persistence.
 

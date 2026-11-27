@@ -4,7 +4,7 @@
 
 **Theorem.**
 
-1. *(Polygon gluings.)* Glue the $n$ black sides of a $2n$-gon with alternating black and grey sides to its $n$ grey sides, respecting orientation, according to $\pi$. The result is a closed orientable surface of genus $g$ whose boundary graph has $k$ vertices with $2 - 2g = k - n + 1$, and the vertices correspond bijectively to alternating cycles of $G(\pi)$. Hence $H(n, n + 1 - 2g) = h_g(n)$, the number of genus-$g$ gluings.
+1. *(Polygon gluings.)* Take a $2n$-gon whose boundary consists of $n$ consecutive black sides followed by $n$ grey sides, the black sides oriented counterclockwise and the grey sides clockwise, and glue the black sides to the grey sides, respecting orientation, according to $\pi$. The result is a closed orientable surface of genus $g$ whose boundary graph has $k$ vertices with $2 - 2g = k - n + 1$, and the vertices correspond bijectively to alternating cycles of $G(\pi)$. Hence $H(n, n + 1 - 2g) = h_g(n)$, the number of genus-$g$ gluings.
 2. *(Matrix integral.)* With $\mu_N$ the complex Ginibre measure $\propto e^{-\operatorname{Tr}(XX^*)}$ on $N \times N$ complex matrices,
 
 $$p_n(N) := \sum_{g=0}^{\lfloor n/2\rfloor} H(n, n + 1 - 2g)\, N^{n - 2g + 1} = \int \operatorname{Tr}\big(X^n X^{*n}\big)\, d\mu_N(X).$$

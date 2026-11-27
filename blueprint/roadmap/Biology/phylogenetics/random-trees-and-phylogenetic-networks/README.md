@@ -14,7 +14,6 @@ Random models of tree shapes and the geometry of tree space, and the enumeration
 - [Enumeration of galled tree-child networks](enumeration-of-galled-tree-child-networks/README.md)
 - [Enumeration of level-k phylogenetic networks](enumeration-of-level-k-phylogenetic-networks/README.md)
 - [Fringe patterns of random ranked tree-child networks](fringe-patterns-of-random-ranked-tree-child-networks/README.md)
-- [Encoding phylogenetic networks by subnetworks](encoding-phylogenetic-networks-by-subnetworks/README.md)
 - [NNI and triangle operations on unrooted phylogenetic networks](nni-and-triangle-operations-on-unrooted-networks/README.md)
 - [Universal binary tree-based networks](universal-binary-tree-based-networks/README.md)
 - [Top-k support tree ranking](top-k-support-tree-ranking/README.md)

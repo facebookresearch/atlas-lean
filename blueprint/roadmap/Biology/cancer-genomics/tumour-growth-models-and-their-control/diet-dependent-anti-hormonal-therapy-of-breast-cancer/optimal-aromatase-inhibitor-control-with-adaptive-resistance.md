@@ -6,7 +6,7 @@ $$\frac{dS}{dt} = \frac{k_1E}{a_1+E}S\big(1 - m_1(S + \eta R)\big) - \frac{ca_2^
 
 $$\frac{dR}{dt} = k_3R\big(1 - m_1(S + \eta R)\big) + \frac{ca_3^l}{a_3^l + E^l}S, \qquad \frac{dE}{dt} = (1-u)rF - \mu E, \qquad \frac{dF}{dt} = k_2F(1 - m_2F) - \alpha(S+R)F.$$
 
-Sensitive cells die at low estrogen (Hill threshold $a_2$) and adapt into resistant cells (threshold $a_3$, Hill coefficient $l$, maximal rate $c$); resistant cells grow estrogen independently at rate $k_3$; $\eta$ scales competition; fat grows logistically.
+Sensitive cells die at low estrogen (Hill threshold $a_2$) and adapt into resistant cells (threshold $a_3$, Hill coefficient $l$, maximal rate $c$); resistant cells grow estrogen independently at rate $k_3$; $\eta$ scales competition; fat grows logistically. All parameters $k_1, k_2, k_3, a_1, a_2, a_3, m_1, m_2, c, l, \eta, r, \mu, \alpha$ are positive.
 
 **Proposition 2.** With constant treatment ($1-u \equiv p \in (0,1]$) and non-negative initial data the solution exists, is unique, non-negative and bounded; in particular $\limsup_{t\to\infty}\big(S(t) + \eta R(t)\big) \le 1/m_1$.
 

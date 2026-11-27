@@ -28,10 +28,6 @@ and $v^*$ is given by the same formula with $(B, \Phi_v, v_{\max})$. On the inte
 
 So saturating pharmacodynamics with only a linear dose penalty already produces **regular, continuously modulated dosing arcs**. In the control-affine (log-kill) model with the same cost, the Hamiltonian is affine in each control, and extremals are bang–bang except on singular arcs.
 
-## Depends on
-
-- [Michaelis–Menten kinetics and the quasi-steady state](../../../systems-biology/michaelis-menten-kinetics-and-the-quasi-steady-s/README.md)
-
 ## Expansion
 
 $\partial H/\partial u = A + \Phi_u/(1+u)^2$ and $\partial^2 H/\partial u^2 = -2\Phi_u/(1+u)^3$. So $H$ is strictly convex in $u$ exactly when $\Phi_u < 0$, and stationarity gives $(1+u)^2 = -\Phi_u/A$. When $\Phi_u \ge -A$ the Hamiltonian is nondecreasing on $[0, u_{\max}]$; when $\Phi_u \le -A(1+u_{\max})^2$ it is nonincreasing. Projecting the stationary point onto the box gives the three regimes. Because the transcribed optimal control problem is nonconvex, global search (particle swarm) is used to find the switching structure before local SQP refinement.

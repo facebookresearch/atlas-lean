@@ -19,7 +19,7 @@ $$\int_0^\infty e^{-rt} C x(t)\,dt \;\ge\; \int_0^\infty e^{-rt} C \chi(t)\,dt \
 $$p^{\mathsf T} = C\,(rI - A)^{-1} \ge 0,$$
 
 which is also the optimal solution of the linear program $\min \|p\|_1$ subject to $p \ge 0$, $p^{\mathsf T}A - r p^{\mathsf T} \le -C$; $p_i$ upper-bounds the expected discounted cost of an outbreak seeded at node $i$.
-3. (Feasibility) These constraints are feasible if and only if $A - rI$ is Hurwitz, i.e. the spectral abscissa satisfies $\lambda_{\max}(A) < r$; minimizing the admissible discount rate is therefore an upper-bound surrogate for minimizing $\lambda_{\max}(A)$.
+3. (Feasibility) If $C$ is entrywise positive, these constraints are feasible if and only if $A - rI$ is Hurwitz, i.e. the spectral abscissa satisfies $\lambda_{\max}(A) < r$; minimizing the admissible discount rate is therefore an upper-bound surrogate for minimizing $\lambda_{\max}(A)$. (The source's Corollary 1 states this for non-negative $C$, where it fails: $C = 0$, $p = 0$ is feasible for every $A$.)
 
 ## Expansion
 

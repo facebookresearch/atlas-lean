@@ -16,6 +16,10 @@ An equilibrium is *strongly endemic* if every infectious stage of every host spe
 
 So for an irreducible host-vector configuration the dynamics are a sharp dichotomy: either the pathogen dies out in all hosts and vectors, or it persists at a unique positive level in every host stage and every vector species.
 
+## Depends on
+
+- [Basic reproduction number of the multi-host multi-stage multi-vector model](basic-reproduction-number-of-the-multi-host-multi-vector-model.md)
+
 ## Proof depends on
 
 - [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)

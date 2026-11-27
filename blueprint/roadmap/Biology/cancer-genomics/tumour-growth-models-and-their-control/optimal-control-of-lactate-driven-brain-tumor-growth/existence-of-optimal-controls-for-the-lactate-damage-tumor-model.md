@@ -8,6 +8,19 @@ $$-\operatorname{div}\big[\mathbb{A}\,\varepsilon(\partial_t \mathbf{u}) + \math
 
 with homogeneous Neumann conditions for $\varphi, z$, the Robin condition $\partial_\nu \sigma = \sigma_\Gamma - \sigma$, $\mathbf{u} = 0$ on $\partial\Omega$, and given initial data. Here $\beta$ is a maximal monotone graph forcing $z \in [0,1)$ and $\pi$ a Lipschitz perturbation.
 
+**Hypotheses** (the source's (H1)–(H12)):
+
+- (H1) $p, g \in C^{0,1}(\mathbb{R}^2) \cap C^2(\mathbb{R}^2)$ with $0 \le p \le p^*$, $0 \le g \le g^*$ for positive constants $p^*, g^*$, and $N > 0$ is a constant;
+- (H2) $k_1, k_2, S \in C^{0,1}(\mathbb{R}^2) \cap C^2(\mathbb{R}^2)$ with $0 \le k_1 \le k_1^*$, $0 < k_{2*} \le k_2 \le k_2^*$, $0 \le S \le S^*$ for constants $k_1^*, k_{2*}, k_2^*, S^*$;
+- (H3) $\mathbb{A}$ is a constant, symmetric, strictly positive definite fourth-order tensor; $\mathbb{B} \in C^{0,1}(\mathbb{R}) \cap C^2(\mathbb{R})$ is bounded, symmetric and positive definite; $\mathbf{f} \in L^\infty(0,T;L^2(\Omega)^d)$;
+- (H4) $\beta = \hat\beta'$ for a lower semicontinuous convex $\hat\beta : \mathbb{R} \to [0,+\infty]$ with $\hat\beta \in C^3(0,1)$, $\lim_{r\to0^+}\beta(r) = -\infty$ and $\lim_{r\to1^-}\beta(r) = +\infty$;
+- (H5) $\pi = \hat\pi'$ for a concave $\hat\pi \in C^1(\mathbb{R}) \cap C^3(0,1)$, with $\pi$ Lipschitz continuous (the prototype is $\hat\beta(r) + \hat\pi(r) = C_1\big(r\ln r + (1-r)\ln(1-r)\big) - C_2r^2$);
+- (H6) $\iota \in L^\infty(Q) \cap H^1(0,T;L^2(\Omega))$;
+- (H7) $\Psi \in W^{2,\infty}(\Omega \times \mathbb{R} \times \mathbb{R}^{d\times d})$ (in particular bounded), Lipschitz continuous in $(\varphi,\varepsilon)$ uniformly in $x$;
+- (H8) $\sigma_\Gamma \in L^2(0,T;L^2(\partial\Omega))$ with $0 \le \sigma_\Gamma \le M_0$ for a constant $M_0 > 0$;
+- (H9) $\varphi_0 \in H^2(\Omega)$ with $\partial_\nu\varphi_0 = 0$ and $0 \le \varphi_0 \le N$; $\sigma_0 \in L^2(\Omega)$ with $0 \le \sigma_0 \le M_0$; $\mathbf{u}_0 \in H^2(\Omega)^d \cap H^1_0(\Omega)^d$; $z_0 \in H^2(\Omega)$ with $\partial_\nu z_0 = 0$, $\operatorname{ess\,inf} z_0 > 0$ and $\operatorname{ess\,sup} z_0 < 1$;
+- (H10)–(H12) the weights $\alpha_1, \dots, \alpha_9$ below are non-negative and not all zero, the targets satisfy $\varphi_Q, \sigma_Q, z_Q \in L^2(Q)$, $\varphi_\Omega, \sigma_\Omega \in L^2(\Omega)$, and $\gamma : \Omega \times \mathbb{R} \to [0,\infty)$ is Carathéodory with $\gamma(x,\cdot) \in C^1(\mathbb{R})$ and $|\gamma| + |\partial_\varphi\gamma| \le C_\gamma$ on $\Omega \times [0,N]$.
+
 The admissible set is $\mathcal{U}_{ad} = \mathcal{U}^1_{ad} \times \mathcal{U}^2_{ad}$ with
 
 $$\mathcal{U}^1_{ad} = \{\chi_1 \in L^2(0,T;H^1(\Omega)) \cap L^\infty(Q) : \|\chi_1\|_{L^2(H^1)} \le C_{ad},\ \underline{\chi}_1 \le \chi_1 \le \overline{\chi}_1\}, \qquad \mathcal{U}^2_{ad} = \{\chi_2 \in L^\infty(Q) : \underline{\chi}_2 \le \chi_2 \le \overline{\chi}_2\},$$
@@ -16,7 +29,7 @@ a nonempty closed convex set. The cost is the tracking-type functional
 
 $$\mathcal{J} = \tfrac{\alpha_1}{2}\|\varphi - \varphi_Q\|^2_{L^2(Q)} + \tfrac{\alpha_2}{2}\|\varphi(T) - \varphi_\Omega\|^2_{L^2(\Omega)} + \alpha_3 \int_\Omega \varphi(T) + \tfrac{\alpha_4}{2}\|\sigma - \sigma_Q\|^2_{L^2(Q)} + \tfrac{\alpha_5}{2}\|\sigma(T) - \sigma_\Omega\|^2_{L^2(\Omega)} + \tfrac{\alpha_6}{2}\|\sqrt{\gamma(\varphi)}\,\varepsilon(\mathbf{u})\|^2_{L^2(Q)} + \tfrac{\alpha_7}{2}\|z - z_Q\|^2_{L^2(Q)} + \alpha_8 \int_\Omega z(T) + \tfrac{\alpha_9}{2}\|\boldsymbol{\chi}\|^2_{L^2(Q)},$$
 
-with non-negative weights not all zero.
+with non-negative weights not all zero (H10).
 
 **Theorem.**
 

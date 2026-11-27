@@ -4,13 +4,13 @@
 
 $$\begin{aligned} \alpha\partial_t\mu+\partial_t\varphi-\Delta\mu&=P(\varphi)\big(\sigma+\chi(1-\varphi)-\mu\big)-h(x,t)\,u_1,\\ \beta\partial_t\varphi-\Delta\varphi+F_1'(\varphi)+F_2'(\varphi)&=\mu+\chi\sigma,\\ \partial_t\sigma-\Delta\sigma&=-\chi\Delta\varphi-P(\varphi)\big(\sigma+\chi(1-\varphi)-\mu\big)+u_2, \end{aligned}$$
 
-with homogeneous Neumann conditions, where $F_1$ is the singular logarithmic part of the double-well potential (e.g. $F_1(r)=(1+r)\log(1+r)+(1-r)\log(1-r)$ on $(-1,1)$), $F_2$ is smooth, $u_1$ is a cytotoxic drug acting through $h$ and $u_2$ a nutrient supply. For controls in the box $\mathcal U_{ad}=\{\underline u_i\le u_i\le\overline u_i\}$ the system is well posed with strong solutions and $\varphi$ stays uniformly separated from $\pm1$, so the control-to-state map $\mathcal S$ is twice Fréchet differentiable.
+with homogeneous Neumann conditions, where $F_1$ is the singular logarithmic part of the double-well potential (e.g. $F_1(r)=(1+r)\log(1+r)+(1-r)\log(1-r)$ on $(-1,1)$), $F_2$ is smooth, $u_1$ is a cytotoxic drug acting through $h$ and $u_2$ a nutrient supply. Assume (the source's (A1)–(A6)): $\alpha,\beta,\chi>0$; $F=F_1+F_2$ with $F_2\in C^5(\mathbb R)$ having Lipschitz $F_2'$, and $F_1:\mathbb R\to[0,+\infty]$ convex and lower semicontinuous with $F_1(0)=0$, $F_1|_{(-1,1)}\in C^5(-1,1)$ and $F_1'(r)\to\mp\infty$ as $r\to\mp1$; $P\in C^3(\mathbb R)\cap W^{3,\infty}(\mathbb R)$ and $h\in L^\infty(Q)$ nonnegative and bounded; initial data $\mu_0,\sigma_0\in H^1(\Omega)\cap L^\infty(\Omega)$ and $\varphi_0\in H^2(\Omega)$ with $\partial_\nu\varphi_0=0$ and $-1<\min\varphi_0\le\max\varphi_0<1$; constants $\underline u_i<\overline u_i$; and $R>0$ with $\mathcal U_{ad}\subset\{\mathbf u\in L^\infty(Q)^2:\|\mathbf u\|_{L^\infty(Q)^2}<R\}$. For controls in the box $\mathcal U_{ad}=\{\underline u_i\le u_i\le\overline u_i\}$ the system is well posed with strong solutions and $\varphi$ stays uniformly separated from $\pm1$, so the control-to-state map $\mathcal S$ is twice Fréchet differentiable.
 
 **Control problem.** Minimize
 
 $$\widehat J(\mathbf u)=\frac{b_1}{2}\int_Q|\varphi-\widehat\varphi_Q|^2+\frac{b_2}{2}\int_\Omega|\varphi(T)-\widehat\varphi_\Omega|^2+\frac{b_3}{2}\int_Q|\mathbf u|^2+\kappa\int_Q\big(|u_1|+|u_2|\big)$$
 
-over $\mathcal U_{ad}$, with $\kappa>0$ and $\underline u_i<0<\overline u_i$. Write $\widehat J_1$ for the smooth part.
+over $\mathcal U_{ad}$, with $b_1,b_2\ge0$, $b_3>0$, $\kappa>0$, targets $\widehat\varphi_\Omega\in H^1(\Omega)$, $\widehat\varphi_Q\in L^2(Q)$ (the source's (C1)–(C2)), and $\underline u_i<0<\overline u_i$. Write $\widehat J_1$ for the smooth part.
 
 **Theorem (first order and full sparsity).** If $\mathbf u^*$ is locally optimal with adjoint state $(p^*,q^*,r^*)$, there is $\boldsymbol\lambda^*\in\partial g(\mathbf u^*)$, $g(\mathbf u)=\int_Q(|u_1|+|u_2|)$, with
 

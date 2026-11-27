@@ -12,7 +12,7 @@ $$\mathcal W^m_{x_0,t_0} \xrightarrow{\;w\;} \mathcal B_{x_0,t_0},$$
 
 weak convergence of probability measures on the path space with the uniform metric $d_\infty(\eta_1,\eta_2) = \sup_{t \le t_0} d(\eta_1(t), \eta_2(t))$. In particular the endpoint distributions (transition kernels at time $t_0$) of the random walks converge to the Brownian transition kernel.
 
-No curvature assumption on $X$ is needed; the result extends to polyhedral complexes in which every top-dimensional cell is isometric to one fixed polyhedron.
+No curvature assumption on $X$ is needed.
 
 ## Expansion
 

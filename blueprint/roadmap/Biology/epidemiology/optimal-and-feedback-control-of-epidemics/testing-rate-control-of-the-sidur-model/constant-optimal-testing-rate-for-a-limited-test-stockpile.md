@@ -24,7 +24,7 @@ $$
 R_1 = \frac{x_S^0\beta}{\frac{C}{1-\theta} + \gamma N}, \qquad R_2 = \frac{x_S^0\beta}{\gamma N}, \qquad R_2 > R_1 .
 $$
 
-**Proposition (COST policy).** Assume $R_1>1$. The epidemic then has a peak during testing at $\xi_{p_1} = \tfrac{N}{\beta}\ln R_1$ and a second peak after the stockpile runs out at $\xi_{p_2} = \tfrac{N}{\beta}\ln R_2$, with $\xi_{p_1}\le\Xi\le\xi_{p_2}$. Their heights are
+**Proposition (COST policy).** Let $\xi_{p_1} = \tfrac{N}{\beta}\ln R_1$ and $\xi_{p_2} = \tfrac{N}{\beta}\ln R_2$, and assume $R_1>1$ and $\xi_{p_1}<\Xi$, so that both peaks exist ($R_1>1$ alone does not give this: a small stockpile makes $\Xi\to0$). The epidemic then has a peak during testing at $\xi_{p_1}$ and a second peak after the stockpile runs out at $\xi_{p_2}$, with $\Xi\le\xi_{p_2}$. Their heights are
 
 $$
 \begin{aligned}
@@ -39,7 +39,11 @@ $$
 \Xi = \frac{N}{\beta}\left(1 + \ln R_1 - \frac{R_1}{R_2 - R_1}\ln\frac{R_2}{R_1}\right),
 $$
 
-and this solution is unique when $R_1>1$.
+and this solution is unique under these assumptions.
+
+## Depends on
+
+- [Best-effort testing rate to stop epidemic growth](best-effort-testing-rate-to-stop-epidemic-growth.md)
 
 ## Expansion
 
