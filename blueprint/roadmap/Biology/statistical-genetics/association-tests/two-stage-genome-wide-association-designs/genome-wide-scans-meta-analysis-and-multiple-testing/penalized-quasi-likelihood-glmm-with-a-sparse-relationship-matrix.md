@@ -26,4 +26,4 @@ The working vector is the first-order Taylor expansion of the link at the curren
 
 ## Sources
 
-- L. Jiang, Z. Zheng, H. Fang and J. Yang, "A generalized linear mixed model association tool for biobank-scale data", Nature Genetics 53 (2021), 1616–1621, Online Methods ("The fastGWA-GLMM method": null-model quasi-likelihood, PQL estimating equations, REML quasi-likelihood and the iteration steps 1–9; "The grid-search-based fastGWA-GLMM-REML optimizer"), <https://doi.org/10.1038/s41588-021-00954-4>.
+- L. Jiang, Z. Zheng, H. Fang and J. Yang, "A generalized linear mixed model association tool for biobank-scale data", Nature Genetics 53 (2021), 1616–1621, Online Methods ("The fastGWA-GLMM method": null-model quasi-likelihood, PQL estimating equations, REML quasi-likelihood and the iteration steps 1–9; "The grid-search-based fastGWA-GLMM-REML optimizer"), <https://doi.org/10.1038/s41588-021-00954-4>; open-access author preprint at Research Square, <https://doi.org/10.21203/rs.3.rs-128758/v1> (<https://www.researchsquare.com/article/rs-128758/latest.pdf>).
