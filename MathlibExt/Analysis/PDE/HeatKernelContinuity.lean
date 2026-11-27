@@ -36,7 +36,10 @@ open MathlibExt.Analysis
 
 namespace MathlibExt.Analysis.PDE.HeatKernel
 
-/-- The fixed-Gaussian formula also represents the stationary nonpositive-time extension. -/
+/-- For every `f` and all real `t`, `x`, the heat evolution of `f` is a rescaled Gaussian
+integral: `heatSolution f t x = ∫ y, heatKernel ℝ 1 y * f (x - sqrt t * y)`, where
+`heatKernel ℝ 1 y = (4 * π) ^ (-1 / 2) * exp (-y ^ 2 / 4)`. For `t ≤ 0`, where `sqrt t = 0`,
+both sides equal `f x`. -/
 theorem heatSolution_rescaled_all (f : ℝ → ℝ) (t x : ℝ) :
     heatSolution f t x = ∫ y, heatKernel ℝ 1 y * f (x - sqrt t * y) := by
   by_cases ht : 0 < t
