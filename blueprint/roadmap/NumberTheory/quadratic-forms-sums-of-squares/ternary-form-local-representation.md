@@ -10,7 +10,8 @@ $d = a_1 a_2 a_3$. Call $f$ isotropic over $K$ if $f(x) = 0$ for some nonzero $x
 
 Here $(b, c)_K$ is the Hilbert symbol of $K$: $1$ if $b x^2 + c y^2 = 1$ has a solution in $K$, and
 $-1$ otherwise. For nonzero $b, c$ this is $1$ exactly when $z^2 - b x^2 - c y^2$ has a nonzero
-zero: a solution of $b x^2 + c y^2 = 1$ gives the zero $(x, y, 1)$, and a nonzero zero with $z = 0$
+zero: a solution $(x, y)$ of $b x^2 + c y^2 = 1$ gives the zero $(z, x, y) = (1, x, y)$, setting $z = 1$
+and keeping $x, y$, and a nonzero zero with $z = 0$
 makes $b x^2 + c y^2$ a hyperbolic plane, which takes every value, $1$ included.
 
 This node is still to be broken down. Part 1 follows from that description of the symbol applied to
