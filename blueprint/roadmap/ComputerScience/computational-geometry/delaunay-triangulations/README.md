@@ -13,7 +13,7 @@ Triangulations of planar point sets with empty circumcircles: edge flips, angle 
 - [The Delaunay triangulation maximizes the angle sequence](the-delaunay-triangulation-maximizes-the-angle-sequence.md)
 - [Euclidean minimum spanning trees lie in the Delaunay triangulation](euclidean-minimum-spanning-trees-lie-in-the-delaunay-triangulation.md)
 - [The in-circle test as a lifted orientation test](the-in-circle-test-as-a-lifted-orientation-test.md)
-- [Delaunay triangles are lower hull facets of the lifted points](delaunay-triangles-are-lower-hull-facets-of-the-lifted-points.md)
+- [Delaunay triangles are the lower faces of the lifted points](delaunay-triangles-are-lower-hull-facets-of-the-lifted-points.md)
 - [Randomized incremental Delaunay triangulation](randomized-incremental-delaunay-triangulation.md)
 - [The Delaunay triangulation is a geometric spanner](the-delaunay-triangulation-is-a-geometric-spanner.md)
 - [The closest pair is a Delaunay edge](the-closest-pair-is-a-delaunay-edge.md)

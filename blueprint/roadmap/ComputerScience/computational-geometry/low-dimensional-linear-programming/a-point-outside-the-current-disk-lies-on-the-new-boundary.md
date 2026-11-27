@@ -1,7 +1,7 @@
 # A point outside the current disk lies on the new boundary
 
 For finite sets $Q, R \subseteq \mathbb{R}^2$ with $|R| \le 2$, let $D(Q, R)$ be a closed disk of smallest radius that contains $Q \cup R$ and has every point of $R$ on its boundary circle, when such a disk exists.
-1. If $D(Q, R)$ exists it is unique: two such disks of the same radius $r$ with distinct centres at distance $\rho$ would give a smaller one, centred at the midpoint of the centres with radius $\sqrt{r^2 - \rho^2/4}$, which contains their intersection and has every common boundary point on its boundary.
+1. If $Q \cup R \neq \emptyset$ and $D(Q, R)$ exists, it is unique (for $Q = R = \emptyset$ every disk of radius $0$ qualifies): two such disks of the same radius $r$ with distinct centres at distance $\rho$ would give a smaller one, centred at the midpoint of the centres with radius $\sqrt{r^2 - \rho^2/4}$, which contains their intersection and has every common boundary point on its boundary.
 2. Let $p_1, \dots, p_i$ be points of $\mathbb{R}^2$ and $R$ a set of at most one point with $i \ge 2$, and suppose $D(\{p_1, \dots, p_i\}, R)$ exists. If $p_i \notin D(\{p_1, \dots, p_{i-1}\}, R)$, then $p_i$ lies on the boundary circle of $D(\{p_1, \dots, p_i\}, R)$, that is, $D(\{p_1, \dots, p_i\}, R) = D(\{p_1, \dots, p_{i-1}\}, R \cup \{p_i\})$. For $R = \emptyset$ this says that if $p_i \notin B_{i-1}$ then $p_i$ lies on the boundary of $B_i$, where $B_i$ is the minimum enclosing disk of $p_1, \dots, p_i$.
 
 No general-position assumption is needed.
