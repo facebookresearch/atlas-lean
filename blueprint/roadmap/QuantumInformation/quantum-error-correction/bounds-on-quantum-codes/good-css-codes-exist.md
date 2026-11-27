@@ -20,8 +20,12 @@ $1^n \cdot 1^n = n \equiv 0 \pmod 2$.
 
 ## Proof depends on
 
-- [The greedy Gilbert–Varshamov lemma for code families](greedy-gilbert-varshamov-lemma-for-code-families.md)
 - [Counting weakly self-dual codes](counting-weakly-self-dual-codes.md)
+- [Volume of a Hamming ball, entropy upper bound](../../../InformationTheory/error-correcting-codes/bounds-on-code-size/sum-choose-mul-pow-le-exp.md): the entropy bound on the number of low-weight words
+
+## Related topics
+
+- [The greedy Gilbert–Varshamov lemma for code families](greedy-gilbert-varshamov-lemma-for-code-families.md): the same greedy argument on the full space
 
 ## Sources
 
