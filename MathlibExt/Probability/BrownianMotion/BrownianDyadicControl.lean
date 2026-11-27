@@ -186,7 +186,7 @@ theorem tsum_brownianProductLaw_brownianDyadicBadEvent_ne_top (N : Nat) :
       (ENNReal.natCast_ne_top (6 * N))
       (ENNReal.inv_ne_top.mpr <| ne_of_gt <|
         tsub_pos_iff_lt.mpr <| ENNReal.inv_lt_one.2 <| by norm_num)
-  · exact ENNReal.tsum_le_tsum
+  · exact tsum_le_tsum
       (fun n => brownianProductLaw_brownianDyadicBadEvent_le N n)
 
 /-- Borel–Cantelli: for fixed `N`, almost surely all grid increments at level `n` are below `2⁻ⁿ`

@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.PellSilverRatio
 public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsPellHalfCompanionRepresentation
 public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsTwoPellHalfCompanionRepresentation
+public import MathlibExt.NumberTheory.OlympicGamesNumerationFloorGreedyBronzeCompanionSumMul
 
 /-!
 # Fibonacci and Pell numeration identities from the Olympic games
@@ -222,35 +223,6 @@ theorem_wanted exists_bronze_companion_representation (R : ℕ → ℤ)
       a 1 ≤ 3 ∧ (a 1 = 3 → a 2 = 0 ∧ a 3 = 0) ∧
       (∀ k, 1 < k → (k % 3 = 1 → a k ≤ 4) ∧ (k % 3 ≠ 1 → a k ≤ 1)) ∧
       ∀ k, a k = 4 → a (k - 1) = 0 ∧ a (k + 1) = 0 ∧ a (k - 3) < 4 ∧ a (k + 3) < 4
-
-/-- **Floor of greedy bronze sums times $(3 + \sqrt{13})/2$.** Let $B_n$ be the bronze numbers
-($B_0 = 0$, $B_1 = 1$, $B_{n+2} = 3B_{n+1} + B_n$, the Lucas sequence $U(3, -1)$), and let
-$C_n = B_{n+1} - 2B_n$ and $D_n = B_{n+1} - B_n$ be the companion bronze numbers of the first and
-second type. Let $R$ and $R'$ be the integer sequences with $R_{3m+1} = B_{2m+1}$,
-$R_{3m+2} = C_{2m+2}$, $R_{3m} = D_{2m}$ and $R'_{3m+1} = D_{2m+1}$, $R'_{3m+2} = B_{2m+2}$,
-$R'_{3m} = C_{2m+1}$ for all $m \ge 0$. Let $n$ be a natural number and $a_1, a_2, \dots$ natural
-numbers such that $\sum_{k=1}^{m-1} a_k R_k < R_m$ for every $1 \le m \le n + 1$, and let
-$t = \sum_{k=1}^{n} a_k R_k$. Then
-$\lfloor t (3 + \sqrt{13})/2 \rfloor = \sum_{k=1}^{n} a_k R'_{k+1}$.
-
-The hypothesis says that the $a_k$ are the digits of the greedy representation of Theorem 9;
-$n$ need not be minimal.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 10 (1). -/
-theorem_wanted floor_greedy_bronze_companion_sum_mul (R R' : ℕ → ℤ)
-    (hR : ∀ k, R k =
-      if k % 3 = 1 then lucasU bronzeLucasParams (2 * (k / 3) + 1)
-      else if k % 3 = 2 then bronzeCompanionFirst (2 * (k / 3) + 2)
-      else bronzeCompanionSecond (2 * (k / 3)))
-    (hR' : ∀ k, R' k =
-      if k % 3 = 1 then bronzeCompanionSecond (2 * (k / 3) + 1)
-      else if k % 3 = 2 then lucasU bronzeLucasParams (2 * (k / 3) + 2)
-      else bronzeCompanionFirst (2 * (k / 3) + 1))
-    (n : ℕ) (a : ℕ → ℕ)
-    (ha : ∀ m, 1 ≤ m → m ≤ n + 1 → ∑ k ∈ Ico 1 m, (a k : ℤ) * R k < R m) :
-    ⌊((∑ k ∈ Icc 1 n, (a k : ℤ) * R k : ℤ) : ℝ) * ((3 + Real.sqrt 13) / 2)⌋ =
-      ∑ k ∈ Icc 1 n, (a k : ℤ) * R' (k + 1)
 
 /-- **Floor of greedy mixed bronze sums times $(5 + \sqrt{13})/6$.** Let $B_n$ be the bronze
 numbers ($B_0 = 0$, $B_1 = 1$, $B_{n+2} = 3B_{n+1} + B_n$, the Lucas sequence $U(3, -1)$), and let
