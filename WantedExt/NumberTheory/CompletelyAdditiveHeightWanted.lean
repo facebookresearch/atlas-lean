@@ -11,6 +11,8 @@ LICENSE file in the root directory of this source tree.
 
 Statements from Hartosh Singh Bal, *Completely Additive Height Functions: Profile
 Laws, Matula Bounds, and Inverse Growth*, INTEGERS 26 (2026), Article A116.
+The statement `isGreatest_primeIndexHeight_level` is proved in
+`MathlibExt.NumberTheory.CompletelyAdditiveHeightIsGreatestPrimeIndexHeightLevel`.
 
 A height function is a completely additive `H : ℕ → ℕ` (on positive integers) with `H(p) ≥ 1`
 for every prime `p` and only finitely many primes at each height `n ≥ 1`. Primes are indexed
@@ -25,6 +27,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeight
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeightIsGreatestPrimeIndexHeightLevel
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeightExistsHeightFunctionWithProfile
 
 namespace MetaMathlibExt
@@ -51,18 +54,6 @@ public theorem_wanted heightLevel_card_eq_multipartitions {H : ℕ → ℕ} (hH 
     Nat.card {m : ℕ // 0 < m ∧ H m = n} =
       Nat.card {α : (Σ ℓ : Fin n, Fin {p : ℕ | p.Prime ∧ H p = ℓ.1 + 1}.ncard) → ℕ //
         ∑ x, (x.1.1 + 1) * α x = n}
-
-/-- **The largest integer at each height for the prime-index height.** Let $H$ be the completely
-additive function on the positive integers with $H(p) = i$ when $p$ is the $i$-th prime, so that
-$H(2) = 1$, $H(3) = 2$ and $H(5) = 3$. For every natural number $n$, $2^n$ is the largest integer
-$m \ge 1$ with $H(m) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 4
-(`integers-2026-A116-prop-4`). -/
-public theorem_wanted isGreatest_primeIndexHeight_level (n : ℕ) :
-    IsGreatest
-      {m : ℕ | 0 < m ∧ additiveOfPrimeValues (fun p => Nat.count Nat.Prime p + 1) m = n} (2 ^ n)
 
 /-- **Largest number at a given Matula height.** Write $p_i$ for the $i$-th prime, indexed from
 one ($p_1 = 2$), and let $H$ be a function from the natural numbers to themselves that is
