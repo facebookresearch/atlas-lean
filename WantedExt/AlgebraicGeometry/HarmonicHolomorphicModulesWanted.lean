@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphic
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
@@ -25,8 +26,10 @@ The holomorphic coefficient sheaf condition
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`,
 `holomorphic_cotangent_sheaf_condition` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition`,
-and `harmonic_holomorphic_kernel_sheaf_condition` is proved in
-`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition`.
+`harmonic_holomorphic_kernel_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition`,
+and `pluriharmonic_higgs_integrable` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
 Polystability, Chern vanishing and the full correspondence are separate
@@ -84,7 +87,3 @@ def_wanted pluriharmonic_holomorphic_higgs_model [T2Space M] [SecondCountableTop
 
 /-- Construct the actual exterior-square map of this same normalized Higgs field. -/
 def_wanted harmonic_higgs_exterior_square (H : HarmonicHiggsModel B h A) : HiggsExteriorSquare B h A H
-
-/-- The third pluriharmonic equation makes that actual O-linear exterior square zero. -/
-theorem_wanted pluriharmonic_higgs_integrable (hh : IsPluriharmonic B h A)
-    (H : HarmonicHiggsModel B h A) (S : HiggsExteriorSquare B h A H) : IsIntegrable B h A S
