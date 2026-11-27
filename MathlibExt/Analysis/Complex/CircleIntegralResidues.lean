@@ -90,7 +90,7 @@ public theorem circleIntegral_eq_sum_residue_of_simplePole
             else h w - ∑ b ∈ Z, c b * (w - b)⁻¹)
           =ᶠ[𝓝[≠] z] fun w => g z hzZ w - ∑ b ∈ Z.erase z, c b * (w - b)⁻¹ := by
         filter_upwards [hgeq z hzZ, hevNotZ] with w hw hwZ
-        simp only [dif_neg hwZ]
+        simp only [dite_eq_right hwZ]
         rw [hw, ← Finset.add_sum_erase Z _ hzZ]
         simp only [div_eq_mul_inv]
         ring
@@ -101,7 +101,7 @@ public theorem circleIntegral_eq_sum_residue_of_simplePole
             g w hw w - ∑ b ∈ Z.erase w, c b * (w - b)⁻¹
             else h w - ∑ b ∈ Z, c b * (w - b)⁻¹)
           =ᶠ[𝓝 z] fun w => g z hzZ w - ∑ b ∈ Z.erase z, c b * (w - b)⁻¹ :=
-        eventuallyEq_nhds_of_eventuallyEq_nhdsNE hev (by simp only [dif_pos hzZ])
+        eventuallyEq_nhds_of_eventuallyEq_nhdsNE hev (by simp only [dite_eq_left hzZ])
       exact hΨan.congr hfull.symm
     · have hopen : ∀ᶠ w in 𝓝 z, w ∉ Z := by
         have : ∀ᶠ w in 𝓝 z, w ∈ ((Z : Set ℂ))ᶜ :=
@@ -112,7 +112,7 @@ public theorem circleIntegral_eq_sum_residue_of_simplePole
             else h w - ∑ b ∈ Z, c b * (w - b)⁻¹)
           =ᶠ[𝓝 z] fun w => h w - ∑ b ∈ Z, c b * (w - b)⁻¹ := by
         filter_upwards [hopen] with w hw
-        simp only [dif_neg hw]
+        simp only [dite_eq_right hw]
       have han : AnalyticAt ℂ (fun w => h w - ∑ b ∈ Z, c b * (w - b)⁻¹) z :=
         (hh z hz hzZ).sub (hsum_an Z z fun b hb hbz => hzZ (hbz ▸ hb))
       exact han.congr hev.symm
@@ -135,7 +135,7 @@ public theorem circleIntegral_eq_sum_residue_of_simplePole
       (g := fun z => if hz : z ∈ Z then
         g z hz z - ∑ b ∈ Z.erase z, c b * (z - b)⁻¹
         else h z - ∑ b ∈ Z, c b * (z - b)⁻¹)
-      hR.le (fun z hzs => by simp only [dif_neg (hZsphere z hzs)])]
+      hR.le (fun z hzs => by simp only [dite_eq_right (hZsphere z hzs)])]
     exact h0
   have hIntTerm : ∀ b ∈ Z, CircleIntegrable (fun z => c b * (z - b)⁻¹) z₀ R := by
     intro b hb

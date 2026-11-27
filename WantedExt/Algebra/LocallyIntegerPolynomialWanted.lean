@@ -18,6 +18,7 @@ public import MathlibExt.Algebra.Polynomial.InterpolationPolyExchange
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialComp
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialInjective
+public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialRestriction
 public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
 public import MathlibExt.Algebra.LocallyIntegerPolynomialCircuitCoeffDen
@@ -44,17 +45,6 @@ open Polynomial Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Locally integer polynomial functions agreeing on an infinite subset are equal.** Let
-$U \subseteq V \subseteq \mathbb{Z}$ with $U$ infinite, and let $f, g : V \to \mathbb{Z}$ lie in
-the ring $\mathrm{LIP}(V)$ of locally integer polynomial functions on $V$. If $f(x) = g(x)$ for
-every $x \in U$, then $f = g$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Corollary 1 (`integers-2025-A41-cor-1`). -/
-public theorem_wanted lip_restrict_injective {U V : Set ℤ} (hU : U.Infinite) (hUV : U ⊆ V)
-    {f g : V → ℤ} (hf : f ∈ lipSubring V) (hg : g ∈ lipSubring V)
-    (h : f ∘ Set.inclusion hUV = g ∘ Set.inclusion hUV) : f = g
 
 /-- **Intersection of two arithmetic progressions of natural numbers.** Let $a_1, a_2, d_1, d_2$
 be natural numbers with $d_1, d_2 > 0$, where $\mathbb{N} = \{0, 1, 2, \dots\}$, and let
