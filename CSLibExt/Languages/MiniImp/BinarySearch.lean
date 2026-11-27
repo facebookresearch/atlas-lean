@@ -35,7 +35,7 @@ open Cslib.Algorithms.Lean.TimeM
     "mid" ≠ "lo" ∧ "mid" ≠ "hi" ∧ "mid" ≠ "value" ∧
     "value" ≠ "lo" ∧ "value" ≠ "hi" ∧ "value" ≠ "mid" := by decide
 
-/-- The loop guard `lo < hi`, using MiniImp's existing comparison syntax. -/
+/-- The loop guard `lo < hi`, written `¬ (hi ≤ lo)` in MiniImp's comparison syntax. -/
 def guard : BExp := .not (.le (.var "hi") (.var "lo"))
 
 /-- One actual MiniImp iteration: compute midpoint, read, then narrow the
@@ -237,7 +237,9 @@ theorem program_exec_success (xs : Array Nat) (key : Nat) (s : State) :
     (by simp [u, State.update])
   exact ⟨t, ht⟩
 
-/-- A runnable lower-bound demonstration. Fuel uses only the input length. -/
+/-- Runs `program xs key` from the all-zero store with fuel `xs.size + 7`, which depends only
+on the input length, and returns the final value of `lo` (`none` when `exec` returns
+`none`). -/
 def run (xs : Array Nat) (key : Nat) : Option Nat :=
   (exec (xs.size + 7) (program xs key) (fun _ => 0)).map (fun s => s "lo")
 
