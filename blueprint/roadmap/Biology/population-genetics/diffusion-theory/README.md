@@ -26,6 +26,6 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
 - [Numerical analysis of Wright–Fisher equations](numerical-analysis-of-wright-fisher-equations/README.md)
-
+- [Coupled Wright–Fisher diffusion duality](coupled-wright-fisher-diffusion-duality/README.md)
 - [Gradient-flow structure of evolutionary models](gradient-flow-structure-of-evolutionary-models/README.md)
 - [Replicator dynamics in Aitchison geometry](replicator-dynamics-in-aitchison-geometry/README.md)
