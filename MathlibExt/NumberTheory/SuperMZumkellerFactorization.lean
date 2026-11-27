@@ -19,8 +19,8 @@ import Mathlib.Tactic.Ring
 
 Put `M = divisorProd n`. Complementary divisors of `M` have product `M`. If `M` is
 not a square, the criterion allows a quarter of the divisor count in whole pairs.
-If `M` is a square, its exponents are multiples of four; use whole pairs and the
-fourth root, avoiding the pair that contains it.
+If M is a square and the criterion holds, its odd divisor count forces every prime exponent to
+be a multiple of four. Use whole pairs and the fourth root, avoiding the pair that contains it.
 
 ## References
 
