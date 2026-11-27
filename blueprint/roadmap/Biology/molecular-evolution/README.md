@@ -21,6 +21,7 @@
 - [History graphs for genome evolution under parsimony](history-graphs-for-genome-evolution-under-parsimony/README.md)
 - [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
+- [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
 - [Accessibility percolation on genotype graphs](accessibility-percolation-on-genotype-graphs/README.md)
 - [Fitness–distance monotonicity and mutation-rate control](fitness-distance-monotonicity-and-mutation-rate-control/README.md)
 - [Gauge fixing of sequence-function maps](gauge-fixing-of-sequence-function-maps/README.md)
