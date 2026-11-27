@@ -40,7 +40,7 @@ rate whose conditioning event is null is `0`.
   rates only if `FNR = 1` in both or `PPV = 1` in both.
 * `falsePositiveRate_eq_zero_of_positivePredictiveValue_eq_one`: `PPV = 1` forces `FPR = 0`.
 * `exists_positivePredictiveValue_eq_one`, `exists_positivePredictiveValue_eq_zero`: both
-  exceptions occur, at every prevalence.
+  exceptions occur for every prevalence `p ∈ (0, 1)`.
 * `predictiveParity_errorRateBalance_tradeoff`: the statements above together.
 
 The rates of a general population are those of the law of `(Y, Ŷ)`: for random variables
