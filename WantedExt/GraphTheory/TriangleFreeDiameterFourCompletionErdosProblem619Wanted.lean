@@ -53,14 +53,13 @@ def diameterFourCompletionLinearSaving : Prop :=
 /--
 Resolved false: erdosproblems.com/619 records a disproof by Claude Fable 5 (prompted by Kuhn, who
 sketches the construction in the discussion thread). No refereed proof is published: the disproof
-is recorded only on erdosproblems.com/619 and in its discussion thread. The construction gives,
-for every `η > 0`, a connected triangle-free graph `G` on `n` vertices with `h₄(G) > (1 - η) n`;
-optimising its parameters, as T. F. Bloom does in the thread, gives
-`h₄(G) ≥ n - O(n^{8/9} (log n)^{2/9})` for infinitely many `n`. The disproof is formalized in
-Lean and the problem is listed as solved (Lean); on the main branch of formal-conjectures,
-`FormalConjectures/ErdosProblems/619.lean` states `erdos_619` without its proof and links the two
-formal proofs named below. Source: T. F. Bloom, Erdős Problems, Problem #619,
-https://www.erdosproblems.com/619 (status SOLVED (LEAN)); resolution: the disproof recorded on
+is recorded on erdosproblems.com/619, in its discussion thread and in nick-kuhn/erdos-619
+(`sketch.md`, with the formal proof below). The construction gives, for every `η > 0`, a connected
+triangle-free graph `G` on `n` vertices with `h₄(G) > (1 - η) n`; optimising its parameters, as
+T. F. Bloom does in the thread, gives `h₄(G) ≥ n - O(n^{8/9} (log n)^{2/9})` for infinitely many
+`n`. The disproof is formalized in Lean and the problem is listed as solved (Lean). Source: T. F.
+Bloom, Erdős Problems, Problem #619, https://www.erdosproblems.com/619 (status SOLVED (LEAN));
+resolution: the disproof recorded on
 erdosproblems.com/619 and in its discussion thread, https://www.erdosproblems.com/forum/thread/619;
 formal proofs: nick-kuhn/erdos-619 at commit 7f65718b8c1019ecc24e6c9a6b04ec4c66a4e26f,
 Solution.lean, line 5869 (`erdos_619_fc_solution`), and google-deepmind/formal-conjectures at

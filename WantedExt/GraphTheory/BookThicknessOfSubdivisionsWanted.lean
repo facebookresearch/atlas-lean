@@ -65,19 +65,19 @@ def conjecture : Prop :=
         HasBookEmbedding G' k → HasBookEmbedding G (f k)
 
 /--
-Not settled by the cited source: arXiv:2011.04195 refutes the bounded-subdivisions conjecture of
-Blankenship and Oporowski, not this exact-once specialization. That conjecture (Conjecture 1
-there) asks for `f` with `sn(G) ≤ f(sn(G'), k)` for every subdivision `G'` of `G` with at most `k`
-division vertices per edge, where the stack-number `sn` is the book thickness. By Dujmović and
-Wood's lemma every graph `G` has a 3-stack subdivision with `1 + 2⌈log₂ qn(G)⌉` division vertices
-per edge, so the 5-subdivision of each graph `S_b □ H_n` of Theorem 1 (queue-number at most 4,
-stack-number unbounded) has a 3-stack layout. That argument uses five division vertices per edge
-and gives no bound on the book thickness of once-subdivided graphs, so it does not decide
-`conjecture`: this statement records a wanted answer, not a known one. Source: V. Dujmović,
-D. Eppstein, R. Hickingbotham, P. Morin and D. R. Wood, Stack-number is not bounded by
-queue-number, Combinatorica 42 (2022), 151-164, https://doi.org/10.1007/s00493-021-4585-7,
-arXiv:2011.04195, https://arxiv.org/abs/2011.04195 (Theorem 1 and the paragraph 'Subdivisions'
-of the introduction). Moved from `OpenConjectures/GraphTheory/BookThicknessOfSubdivisions`.
+Resolved false: by Theorem 2 of arXiv:2011.04195 and the bound after it, the graphs `S_b □ H_n`
+have queue-number at most 4 and unbounded stack-number (book thickness), and by Lemma 12 of
+Dujmović and Wood the once-subdivided graph `G'` of every graph `G` has `sn(G') ≤ qn(G) + 1`. So
+the once-subdivided graphs of this family have book thickness at most 5 while the graphs
+`S_b □ H_n` themselves have unbounded book thickness, and no `f` exists. arXiv:2011.04195 also
+refutes the bounded-subdivisions conjecture of Blankenship and Oporowski (Conjecture 1 there)
+through 5-subdivisions. Sources: V. Dujmović, D. Eppstein, R. Hickingbotham, P. Morin and
+D. R. Wood, Stack-number is not bounded by queue-number, Combinatorica 42 (2022), 151-164,
+https://doi.org/10.1007/s00493-021-4585-7, arXiv:2011.04195, https://arxiv.org/abs/2011.04195
+(numbering of arXiv v2: Theorems 1 and 2, and the paragraph 'Subdivisions' of the introduction);
+V. Dujmović and D. R. Wood, Stacks, queues and tracks: layouts of graph subdivisions, Discrete
+Math. Theor. Comput. Sci. 7 (2005), 155-202, https://doi.org/10.46298/dmtcs.346 (Lemma 12,
+p. 167). Moved from `OpenConjectures/GraphTheory/BookThicknessOfSubdivisions`.
 -/
 public theorem_wanted conjecture_refuted : ¬ conjecture
 
