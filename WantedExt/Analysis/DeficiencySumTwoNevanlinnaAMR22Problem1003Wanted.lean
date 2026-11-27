@@ -40,17 +40,27 @@ is taken in `ℝ≥0∞`. Both conclusions are stated in one target.
 noncomputable def nevanlinnaT (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   ValueDistribution.characteristic f ⊤ r
 
-/-- The Nevanlinna deficiency `δ(a, f) = liminf_{r → ∞} m(r, a) / T(r, f)` of `a ∈ ℂ ∪ {∞}`. -/
+/-- The Nevanlinna deficiency `δ(a, f) = liminf_{r → ∞} m(r, a) / T(r, f)` of `a ∈ ℂ ∪ {∞}`,
+with the quotient computed in `ℝ` (`x / 0 = 0`) and the real `liminf`, which has no meaning of its
+own when the quotient is not eventually bounded. For a nonconstant meromorphic `f`, `T(r, f) → ∞`
+and `0 ≤ m(r, a) ≤ T(r, f) + O(1)`, so this is the classical deficiency, in `[0, 1]`; for a
+constant `f` (for instance `f = 0`) the value is fixed by these conventions. -/
 noncomputable def deficiency (f : ℂ → ℂ) (a : WithTop ℂ) : ℝ :=
   Filter.liminf (fun r : ℝ => ValueDistribution.proximity f a r / nevanlinnaT f r) Filter.atTop
 
-/-- The order `ρ = limsup_{r → ∞} log T(r, f) / log r` of `f`, in `EReal`. -/
+/-- The order `ρ = limsup_{r → ∞} log T(r, f) / log r` of `f`, in `EReal` (so it may be `⊤`),
+with the quotient computed in `ℝ` (`log 0 = 0`, `x / 0 = 0`). For a nonconstant meromorphic `f`,
+`T(r, f) → ∞`, so these conventions affect only bounded `r` and this is the classical order; for a
+constant `f` the value is fixed by the conventions. -/
 noncomputable def order (f : ℂ → ℂ) : EReal :=
   Filter.limsup (fun r : ℝ => ((Real.log (nevanlinnaT f r) / Real.log r : ℝ) : EReal)) Filter.atTop
 
-/-- F. Nevanlinna's conjecture (Hayman–Lingham Problem 1.3): if `f` is a non-constant meromorphic
-function of finite order `ρ` with `∑_a δ(a, f) = 2`, then `ρ = n / 2` for an integer `n ≥ 2` and
-every deficiency is rational. -/
+/-- F. Nevanlinna's conjecture (Hayman–Lingham Problem 1.3): if `f` is meromorphic on `ℂ`, not
+constant in the sense that for no `c` does `f z = c` hold for all `z` outside a set without
+accumulation points in `ℂ`, of finite order `ρ`, and `∑_a δ(a, f) = 2`, the sum running over the
+whole Riemann sphere `ℂ ∪ {∞}` (`WithTop ℂ`) of the deficiencies, each replaced by
+`max (δ(a, f), 0)` and summed in `ℝ≥0∞`, then `ρ = n / 2` for an integer `n ≥ 2` and every
+deficiency is rational. -/
 def deficiencySumTwoConjecture : Prop :=
   ∀ f : ℂ → ℂ, Meromorphic f → (¬ ∃ c : ℂ, ∀ᶠ z in Filter.codiscrete ℂ, f z = c) →
     order f < ⊤ → ∑' a : WithTop ℂ, ENNReal.ofReal (deficiency f a) = 2 →
