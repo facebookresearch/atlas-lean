@@ -10,4 +10,4 @@ that is, $\lambda f.\, \lambda x.\, f^n(x)$ in named notation; in particular $\o
 
 ## Sources
 
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, §2.2.
+- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, Def. 6.4.4 (the Church numerals).

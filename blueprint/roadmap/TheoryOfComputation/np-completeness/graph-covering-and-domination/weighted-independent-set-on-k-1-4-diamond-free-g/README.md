@@ -2,7 +2,7 @@
 
 The graph of an instance is the [simple graph of its vertex count and edge list](../../graph-coloring-and-partitioning/graph-3-coloring/part-01/edge-graph.md).
 
-- [Weighted independent set instances ($K_{1,4}$- and diamond-free)](weighted-independent-set-instance.md)
+- [Instances of vertex-weighted independent set problems](weighted-independent-set-instance.md)
 - [Vertex weights of a weighted independent set instance](weight.md)
 - [Well-formed weighted independent set instances ($K_{1,4}$, diamond)](well-formed.md)
 - [Instances with a heavy independent set](weighted-independent-set-feasible.md)

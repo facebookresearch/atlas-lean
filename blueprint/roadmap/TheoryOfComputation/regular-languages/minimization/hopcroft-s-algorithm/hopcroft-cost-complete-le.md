@@ -9,3 +9,5 @@ $$2\,|\Sigma|\, n\,(\lfloor \log_2 n \rfloor + 1),$$
 
 where $\lfloor \log_2 0 \rfloor = 0$. This fuel suffices for the waiting list to become empty, so the trace is that
 of the complete run. The bound counts predecessor visits and pops only; it is not a bound on the whole running time.
+
+In particular, since $n \le n + 1$ and $\lfloor \log_2 \rfloor$ is monotone, the cost is at most $C\,|\Sigma|\,(n + 1)(\lfloor \log_2 (n + 1) \rfloor + 1)$ with $C = 2$, including the case $n = 0$; this weaker form is also stated on its own.

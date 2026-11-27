@@ -8,4 +8,4 @@ Variables other than $c$ are left unchanged; in particular, indices above $c$ ar
 
 ## Sources
 
-- B. C. Pierce, *Types and Programming Languages*, MIT Press, 2002, §6.1.
+- B. C. Pierce, *Types and Programming Languages*, MIT Press, 2002, §6.2, Def. 6.2.4.

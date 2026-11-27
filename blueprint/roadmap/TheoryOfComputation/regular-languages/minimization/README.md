@@ -7,4 +7,3 @@ Nerode equivalence, the minimal automaton and its universal property, and the mi
 - [Brzozowski's algorithm](brzozowski-s-algorithm/README.md)
 - [Moore's algorithm](moore-s-algorithm/README.md)
 - [Hopcroft's algorithm](hopcroft-s-algorithm/README.md)
-- [Hopcroft's total-work bound](hopcroft-total-work.md)

@@ -10,4 +10,4 @@ so $A_n = \underline{1}\,(\underline{1}\,(\cdots(\underline{1}\;\underline{0})\c
 
 ## Sources
 
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, §2.2.
+- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, Def. 6.4.4 (the Church numerals and their bodies).

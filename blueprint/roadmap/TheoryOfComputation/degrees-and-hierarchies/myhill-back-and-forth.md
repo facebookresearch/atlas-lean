@@ -8,5 +8,5 @@ No recursive enumerability of $A$ or $B$ is assumed.
 
 ## Sources
 
-- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 7.1.
+- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Springer, 1987, Ch. I §5, p. 24 (Myhill's isomorphism theorem).
 - H. Rogers, *Theory of Recursive Functions and Effective Computability*, §7.6.

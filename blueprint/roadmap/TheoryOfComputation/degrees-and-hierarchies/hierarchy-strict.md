@@ -10,5 +10,5 @@ The following holds: for every $n \in \mathbb{N}$ there is a set $A \subseteq \m
 
 ## Sources
 
-- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 4.6.
+- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Springer, 1987, Ch. IV §2, p. 64 (Post's theorem and the hierarchy theorem).
 - H. Rogers, *Theory of Recursive Functions and Effective Computability*, §13.5.

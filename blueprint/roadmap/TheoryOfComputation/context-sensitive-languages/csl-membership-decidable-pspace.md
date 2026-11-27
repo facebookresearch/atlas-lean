@@ -6,4 +6,5 @@ The context-sensitivity hypothesis matters: for unrestricted grammars membership
 
 ## Sources
 
-- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013, §5.1 (Theorem 5.9) and §8.2 (Savitch's theorem).
+- J. E. Hopcroft and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, Addison-Wesley, 1979, §9.3, Theorem 9.5 (a linear bounded automaton recognizes the language, hence nondeterministic linear space).
+- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013, §8.2 (Savitch's theorem).

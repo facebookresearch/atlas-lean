@@ -9,4 +9,4 @@ The following holds: every context-free grammar $g$ over $\{a, b, c\}$ with $L(g
 ## Sources
 
 - S. Ginsburg, *The Mathematical Theory of Context-Free Languages*, McGraw-Hill, 1966.
-- J. E. Hopcroft and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, Addison-Wesley, 1979, Chapter 7.
+- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013, p. 108 and Problem 2.29.

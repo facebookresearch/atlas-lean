@@ -3,7 +3,10 @@
 The graph of an instance is the [simple graph of its vertex count and edge list](../../graph-coloring-and-partitioning/graph-3-coloring/part-01/edge-graph.md).
 
 - [Instances of VERTEX DISJOINT CYCLE COVER](vertex-disjoint-cycle-cover-instance.md)
-- [Well-formed VERTEX DISJOINT CYCLE COVER instances](well-formed.md)
 - [Feasibility for VERTEX DISJOINT CYCLE COVER](vertex-disjoint-cycle-cover-feasible.md)
 - [VERTEX DISJOINT CYCLE COVER as a decision problem](vertex-disjoint-cycle-cover-dec.md)
 - [VERTEX DISJOINT CYCLE COVER is NP-complete](vertex-disjoint-cycle-cover-np-complete.md)
+
+## Related topics
+
+- [Well-formed instances of ACYCLIC COLORING](../../graph-coloring-and-partitioning/acyclic-coloring/well-formed.md): the same well-formedness condition.

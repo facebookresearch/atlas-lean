@@ -13,4 +13,4 @@ So Büchi automata can be complemented with $2^{O(n \log n)}$ states, with one c
 ## Sources
 
 - O. Kupferman and M. Y. Vardi, "Weak alternating automata are not that weak", *ACM Transactions on Computational Logic* 2 (2001), 408-429 (rank-based complementation).
-- S. Schewe, "Büchi complementation made tight", *Proceedings of STACS 2009*, LNCS 5518, 661-672.
+- S. Schewe, "Büchi complementation made tight", *Proceedings of STACS 2009*, LIPIcs 3 (2009), 661-672.

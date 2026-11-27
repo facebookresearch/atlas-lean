@@ -6,4 +6,4 @@ The following holds: there are recursively enumerable sets $A, B \subseteq \math
 
 - R. M. Friedberg, "Two recursively enumerable sets of incomparable degrees of unsolvability", *Proceedings of the National Academy of Sciences* 43 (1957), 236–238.
 - A. A. Muchnik, "On the unsolvability of the problem of reducibility in the theory of algorithms", *Doklady Akademii Nauk SSSR* 108 (1956), 194–197.
-- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Ch. III, Theorem 1.1.
+- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Springer, 1987, Ch. VII §2, p. 118.

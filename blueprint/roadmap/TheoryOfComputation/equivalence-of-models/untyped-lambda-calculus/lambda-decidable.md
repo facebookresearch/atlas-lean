@@ -8,5 +8,5 @@ where $\overline{n} = \lambda.\,\lambda.\,\underline{1}(\cdots(\underline{1}\,\u
 
 ## Sources
 
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, §2.2.
+- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, Defs. 6.2.2 and 6.4.4 (truth values and Church numerals) and §3.1 (compatible beta reduction).
 - R. I. Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 2.3.

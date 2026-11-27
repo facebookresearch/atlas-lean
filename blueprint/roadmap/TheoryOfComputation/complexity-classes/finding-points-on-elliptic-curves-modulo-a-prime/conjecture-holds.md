@@ -1,6 +1,6 @@
 # Polynomial-time point finding on elliptic curves modulo a prime
 
-This result proves the proposition stated as [Finding a point on an elliptic curve modulo a prime](conjecture.md). Precisely, there is a single function $A : \mathbb{N}^3 \to \mathbb{N}^2$, computable in polynomial time by a two-tape Turing machine (with inputs and outputs encoded in binary through their standard natural-number codes), such that for all natural numbers $a, b, p$ with $p$ prime and $y^2 = x^3 + ax + b$ nonsingular modulo $p$, whenever the curve has a point $(x, y)$ with $x, y < p$ modulo $p$, the output $A(a, b, p) = (x_0, y_0)$ satisfies $x_0, y_0 < p$ and
+This result proves the proposition stated as [Finding a point on an elliptic curve modulo a prime](conjecture.md). Precisely, there is a single function $A : \mathbb{N}^3 \to \mathbb{N}^2$, computed in time polynomial in the length of the encoded input by a deterministic Turing machine with a finite set of stacks and distinguished input and output stacks (with inputs and outputs encoded in binary through their standard natural-number codes), such that for all natural numbers $a, b, p$ with $p$ prime and $y^2 = x^3 + ax + b$ nonsingular modulo $p$, whenever the curve has a point $(x, y)$ with $x, y < p$ modulo $p$, the output $A(a, b, p) = (x_0, y_0)$ satisfies $x_0, y_0 < p$ and
 
 $$y_0^2 \equiv x_0^3 + a x_0 + b \pmod p.$$
 

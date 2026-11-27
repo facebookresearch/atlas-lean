@@ -8,4 +8,4 @@ Thus $\uparrow_c$ adds one to the indices of the variables that are free relativ
 
 ## Sources
 
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, §2.1.
+- B. C. Pierce, *Types and Programming Languages*, MIT Press, 2002, §6.2, Def. 6.2.1, with shift amount $1$.

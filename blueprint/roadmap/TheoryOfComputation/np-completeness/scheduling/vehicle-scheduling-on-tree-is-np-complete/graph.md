@@ -1,3 +1,3 @@
-# Tree of a VEHICLE SCHEDULING ON TREE instance
+# Graph of the parent list of a VEHICLE SCHEDULING ON TREE instance
 
-For an instance $(P, R, K)$ of VEHICLE SCHEDULING ON TREE with parent list $P = ((p_k, f_k, b_k))_{k < m}$, its graph is the simple graph on $\{0, \dots, m\}$ in which distinct vertices $i$ and $j$ are adjacent exactly when $\{i, j\} = \{p_k, k + 1\}$ for some $k < m$. Pairs with $p_k > m$ contribute no edge.
+For an instance $(P, R, K)$ of VEHICLE SCHEDULING ON TREE with parent list $P = ((p_k, f_k, b_k))_{k < m}$, its graph is the simple graph on $\{0, \dots, m\}$ in which distinct vertices $i$ and $j$ are adjacent exactly when $\{i, j\} = \{p_k, k + 1\}$ for some $k < m$. Pairs with $p_k > m$ and pairs with $p_k = k + 1$ contribute no edge, so for an arbitrary parent list the graph need not be a tree: for $P = ((1, 2, 3))$ the only pair is $(1, 1)$ and both vertices are isolated. Under the parent condition $p_k \le k$ of [well-formedness](well-formed.md) it is the intended rooted tree with root $0$.

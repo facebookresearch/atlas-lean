@@ -14,7 +14,9 @@ is a regular language over $\Gamma$.
 
 The finiteness of the input alphabet is needed: without it, for any nonregular $K \subseteq \Gamma^*$ the one-state transducer on the input alphabet $K$ that emits each letter's underlying word maps the regular language of one-letter words onto $K$.
 
+The output alphabet may be arbitrary because the finitely many states and input letters use only finitely many output letters in the initial, emitted and final output words; the image is regular over that finite subalphabet, and hence over $\Gamma$.
+
 ## Sources
 
-- J. Berstel, Transductions and Context-Free Languages, 1979, Chapter II, Theorem 2.1.
-- J. Sakarovitch, Elements of Automata Theory, 2009, Chapter IV, Proposition IV.2.5.
+- J. Berstel, Transductions and Context-Free Languages, 1979, Chapter III, Corollary 4.2 (rational transductions preserve rational languages).
+- J. Sakarovitch, Elements of Automata Theory, 2009, Chapter IV, §1.3.2, Evaluation Theorem 1.3 and Corollary 1.3.

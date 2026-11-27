@@ -10,4 +10,4 @@ that is, $\lambda x.\, \lambda y.\, x$ and $\lambda x.\, \lambda y.\, y$ in name
 
 ## Sources
 
-- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, §2.2.
+- H. P. Barendregt, *The Lambda Calculus: Its Syntax and Semantics*, North-Holland, 1984, Def. 6.2.2 (the truth values).

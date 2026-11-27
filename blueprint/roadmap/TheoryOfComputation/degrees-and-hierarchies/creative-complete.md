@@ -4,5 +4,5 @@ The following holds. Let $A \subseteq \mathbb{N}$ be creative: $A$ is recursivel
 
 ## Sources
 
-- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Ch. I, Theorem 5.8.
+- R. I. Soare, *Recursively Enumerable Sets and Degrees*, Springer, 1987, Ch. II §4, p. 40 (complete, productive and creative sets).
 - H. Rogers, *Theory of Recursive Functions and Effective Computability*, §8.4.

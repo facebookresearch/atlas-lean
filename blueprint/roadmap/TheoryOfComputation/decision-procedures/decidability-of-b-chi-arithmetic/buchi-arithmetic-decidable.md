@@ -4,7 +4,7 @@ Statement: Büchi arithmetic is decidable. Consider the first-order language wit
 
 $$\{\, n \in \mathbb{N} : n = \ulcorner \varphi \urcorner \text{ for some sentence } \varphi \text{ with } \mathbb{N} \models \varphi \,\}$$
 
-is computable, where $\ulcorner \varphi \urcorner$ is the Gödel numbering of sentences by iterated pairing with tags $0$ to $4$ for $\bot$, equality, $V_2$, implication and $\forall$. An explicit numbering is used because the mere existence of a Boolean-valued characteristic function on sentences would not express algorithmic decidability. Büchi arithmetic is equivalent in expressive power to the weak monadic second-order theory of one successor (WS1S); the approach of the sources is Büchi's automata construction.
+is computable, where $\ulcorner \varphi \urcorner$ is the Gödel numbering of sentences by iterated pairing with tags $0$ to $4$ for $\bot$, equality, $V_2$, implication and $\forall$. An explicit numbering is used because the mere existence of a Boolean-valued characteristic function on sentences would not express algorithmic decidability. Büchi arithmetic corresponds to the weak monadic second-order theory of one successor (WS1S) when a number is represented by the finite set of positions of the $1$s in its binary expansion, not by a single position; the approach of the sources is Büchi's automata construction.
 
 ## Sources
 

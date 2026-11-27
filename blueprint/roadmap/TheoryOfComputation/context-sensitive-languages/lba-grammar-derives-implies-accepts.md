@@ -8,4 +8,4 @@ Together with the converse inclusion (every nonempty word accepted by $M$ is der
 
 ## Sources
 
-- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013, §5.1.
+- J. E. Hopcroft and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, Addison-Wesley, 1979, §9.3, Theorem 9.6, for the converse construction of a grammar from a linear bounded automaton, excluding the empty word; the grammar here is a boundary-tagged variant of that construction.
