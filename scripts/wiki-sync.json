@@ -98094,7 +98094,7 @@
 "MetaMathlibExt.tendsto_relativePosition_div_of_frequency": "0d3af16012beb644",
 "MetaMathlibExt.tendsto_sq_mul_fareyStaircase_sub": "23da6f30c253d8c4",
 "MetaMathlibExt.tendsto_strideAlternatingSum_digamma_half": "63678f6e68ad39bb",
-"MetaMathlibExt.tendsto_strideAlternatingSum_riemannZeta": "9343f2d3206d2664",
+"MetaMathlibExt.tendsto_strideAlternatingSum_riemannZeta": "1acb708adef10b14",
 "MetaMathlibExt.tendsto_strideAlternatingSum_riemannZeta_add": "cdce5de544dcf6b1",
 "MetaMathlibExt.tendsto_strideSignedSum_digamma": "047d1ae8de0ee5bf",
 "MetaMathlibExt.tendsto_strideSignedSum_dirichletEta": "f18bc03c378be908",
