@@ -16,9 +16,9 @@ Disease-free equilibria are $(\rho N, (1-\rho)N, 0, 0, 0)$, $\rho \in (0,1)$ bei
 
     $$R_0 = \frac{\rho\beta_1 + (1-\rho)\beta_2}{\kappa},$$
 
-    and the disease-free equilibrium is asymptotically stable if and only if $\rho\beta_1 + (1-\rho)\beta_2 < \kappa$.
+    and the Jacobian of the linearized infected subsystem $(I_s, I_a)$ at $(\rho N, (1-\rho)N, 0, 0, 0)$ is Hurwitz if and only if $\rho\beta_1 + (1-\rho)\beta_2 < \kappa$, i.e. $R_0 < 1$. Below, the disease-free equilibrium is called *linearly stable* when this Jacobian is Hurwitz and *linearly unstable* when it has an eigenvalue with positive real part.
 
-2. If $\beta_2 \ge \kappa$, the disease-free equilibrium is unstable for every $\rho$. If $\beta_2 < \min\{\beta_1, \kappa\}$, it is stable exactly when $\rho < (\kappa - \beta_2)/(\beta_1 - \beta_2)$; in particular, if $\beta_1 < \kappa$ it is stable for every $\rho \in (0,1)$.
+2. If $\beta_2 \ge \kappa$, the disease-free equilibrium is linearly unstable for every $\rho$. If $\beta_2 < \min\{\beta_1, \kappa\}$, it is linearly stable exactly when $\rho < (\kappa - \beta_2)/(\beta_1 - \beta_2)$; in particular, if $\beta_1 < \kappa$ it is linearly stable for every $\rho \in (0,1)$.
 3. The normalized sensitivity indices of $R_0$ are ordered by $\rho$: $\Upsilon^{R_0}_\rho < \Upsilon^{R_0}_{\beta_1} < \Upsilon^{R_0}_{\beta_2}$ if $\rho < \frac{\beta_2}{\beta_1+\beta_2}$; $\Upsilon^{R_0}_\rho < \Upsilon^{R_0}_{\beta_2} < \Upsilon^{R_0}_{\beta_1}$ if $\frac{\beta_2}{\beta_1+\beta_2} < \rho < \frac{\beta_2}{\beta_1}$; and $\Upsilon^{R_0}_{\beta_2} < \Upsilon^{R_0}_\rho < \Upsilon^{R_0}_{\beta_1}$ if $\rho > \frac{\beta_2}{\beta_1}$.
 
 ## Depends on

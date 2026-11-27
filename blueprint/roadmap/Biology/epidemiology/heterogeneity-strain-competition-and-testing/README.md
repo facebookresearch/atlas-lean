@@ -2,7 +2,6 @@
 
 Compartmental epidemic models with heterogeneous susceptibility, behaviour, resistance or dose response, competition and co-infection of strains, waning immunity and reinfection, and group testing for detection and control.
 
-- [Co infection reproduction numbers](co-infection-reproduction-numbers/README.md)
 - [Correlated dorfman pooled testing](correlated-dorfman-pooled-testing/README.md)
 - [Dynamic group testing for epidemic control](dynamic-group-testing-for-epidemic-control/README.md)
 - [Epidemics with dose threshold resistance](epidemics-with-dose-threshold-resistance/README.md)

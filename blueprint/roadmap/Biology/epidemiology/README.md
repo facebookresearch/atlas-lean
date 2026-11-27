@@ -43,7 +43,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Behavior and control](behavior-and-control/README.md)
 - [Epidemic inference and testing](epidemic-inference-and-testing/README.md)
 - [Asymptomatic contact process](stochastic-and-network-epidemic-models/asymptomatic-contact-process/README.md)
-- [Co infection reproduction numbers](heterogeneity-strain-competition-and-testing/co-infection-reproduction-numbers/README.md)
 - [Contact process on adaptive networks](stochastic-and-network-epidemic-models/contact-process-on-adaptive-networks/README.md)
 - [Contact process on power law trees](stochastic-and-network-epidemic-models/contact-process-on-power-law-trees/README.md)
 - [Cooperative parasite invasion on spatial host networks](stochastic-and-network-epidemic-models/cooperative-parasite-invasion-on-spatial-host-networks/README.md)

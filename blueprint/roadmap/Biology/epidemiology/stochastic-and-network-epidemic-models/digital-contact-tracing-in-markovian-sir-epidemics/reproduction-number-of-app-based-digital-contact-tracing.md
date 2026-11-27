@@ -9,7 +9,7 @@ In a homogeneously mixing population of size $n$, a Markovian SIR epidemic has c
 
     If $R_D > 1$, the final number infected tends to infinity with positive probability; if $R_D \le 1$, the final fraction infected tends to $0$ in probability.
 
-3. **Combined tracing.** The same branching description and threshold dichotomy hold when, in addition, every contact of any diagnosed individual is manually traced independently with probability $p$.
+3. **Combined tracing.** With manual tracing added (each contact of a diagnosed individual traced independently with probability $p$), the epidemic converges on finite time intervals to a limit process that is a two-type branching process in to-be-traced components, rooted at an app-user or at a non-app-user. With $R_{DM}$ the largest eigenvalue of its mean-offspring matrix, the final number infected tends to infinity with positive probability if $R_{DM} > 1$, and the final fraction infected tends to $0$ in probability if $R_{DM} \le 1$.
 
 ## Expansion
 
@@ -17,4 +17,4 @@ Tracing creates dependence along app-user chains, because an app-user can be tra
 
 ## Sources
 
-- Tom Britton and Dongni Zhang, "Epidemic models with digital and manual contact tracing", Advances in Applied Probability 57 (2025), 1430–1455, <https://doi.org/10.1017/apr.2025.15>; numbering as in arXiv:2211.12869: Section 3 (main results: the limit-process proposition and its corollary for digital tracing, and the three theorems comparing critical fractions and the individual reproduction number).
+- Tom Britton and Dongni Zhang, "Epidemic models with digital and manual contact tracing", Advances in Applied Probability 57 (2025), 1430–1455, <https://doi.org/10.1017/apr.2025.15>; numbering as in arXiv:2211.12869: Section 3 (main results: the limit-process proposition and its corollary for digital tracing, the proposition and corollary for the combined model in Section 3.2, and the three theorems comparing critical fractions and the individual reproduction number) and Section 5.
