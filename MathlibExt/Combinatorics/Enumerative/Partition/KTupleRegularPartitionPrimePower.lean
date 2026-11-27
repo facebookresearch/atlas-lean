@@ -61,8 +61,8 @@ Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Wor
 and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 3.
 -/
 public theorem kTupleRegularPartition_primePower_congruent (p m ℓ α s r n : ℕ)
-    (hp : Nat.Prime p) (hm : 0 < m) (hℓ : 0 < ℓ) (hs : 0 < s) (hsα : s ≤ α) (hr₁ : 1 ≤ r)
-    (hrp : r ≤ p ^ s - 1) :
+    (hp : Nat.Prime p) (hm : 0 < m) (hℓ : 0 < ℓ) (hs : 0 < s) (hsα : s ≤ α) (hr₁ : 1 ≤ r) (hrp : r ≤
+        p ^ s - 1) :
     Nat.ModEq (p ^ (α - s + 1))
       (kTupleRegularPartitionCount ℓ (p ^ α * m) (p ^ s * n + r)) 0 := by
   let : Fact p.Prime := ⟨hp⟩
