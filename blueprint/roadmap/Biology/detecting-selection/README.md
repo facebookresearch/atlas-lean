@@ -14,5 +14,8 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Codon-model likelihood ratio tests for positive selection](codon-model-tests-for-positive-selection/README.md)
+- [Latent factor mixed models](latent-factor-mixed-models/README.md)
+- [Linear and optimal neutrality tests](linear-and-optimal-neutrality-tests/README.md)
 - [Excess synonymous constraint](excess-synonymous-constraint/README.md)
 - [Site-specific conservation scores from rate scaling](site-specific-conservation-scores-from-rate-scaling/README.md)
