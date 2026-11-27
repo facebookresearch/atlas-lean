@@ -30,16 +30,13 @@ public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Moments.Covariance
+public import MathlibExt.Probability.Statistics.FiellerRatio
 
 @[expose] public section
 
 namespace WantedExt.Probability.Statistics.FiellerRatioWanted
 
 open MeasureTheory ProbabilityTheory
-
-/-- **Fieller's confidence set.** The set `{θ | (a - θ b)² ≤ z² (v_aa - 2 θ v_ab + θ² v_bb)}`. -/
-def fiellerSet (a b vaa vab vbb z : ℝ) : Set ℝ :=
-  {θ | (a - θ * b) ^ 2 ≤ z ^ 2 * (vaa - 2 * θ * vab + θ ^ 2 * vbb)}
 
 /-- **Exact coverage of Fieller's set.** Let `μ` be a probability measure and let
 `(a, b) : Ω → ℝ × ℝ` have a Gaussian law under `μ`, with `Var a = v_aa`, `Var b = v_bb`,
@@ -57,20 +54,5 @@ public theorem_wanted measureReal_mem_fiellerSet {Ω : Type*} [MeasurableSpace �
     (hV : 0 < vaa - 2 * θ * vab + θ ^ 2 * vbb) (hz : 0 < z) :
     μ.real {ω | θ ∈ fiellerSet (a ω) (b ω) vaa vab vbb z} =
       (gaussianReal 0 1).real (Set.Icc (-z) z)
-
-/-- **Shape of Fieller's set.** Let `v_aa ≥ 0`, `v_bb ≥ 0` and `v_ab² ≤ v_aa v_bb`
-(a positive semidefinite covariance), let `z > 0`, and let `a, b` be real. If `b² > z² v_bb`,
-Fieller's set is a bounded closed interval `[l, u]` containing `a / b`. If `b² < z² v_bb`, it is
-either the whole real line or the complement of a bounded open interval `(l, u)` with `l < u`.
-
-Sources: E. C. Fieller, "Some problems in interval estimation", J. R. Statist. Soc. B 16 (1954)
-175–185. -/
-public theorem_wanted fiellerSet_shape (a b vaa vab vbb z : ℝ) (hvaa : 0 ≤ vaa) (hvbb : 0 ≤ vbb)
-    (hpsd : vab ^ 2 ≤ vaa * vbb) (hz : 0 < z) :
-    (z ^ 2 * vbb < b ^ 2 →
-        ∃ l u : ℝ, l ≤ u ∧ fiellerSet a b vaa vab vbb z = Set.Icc l u ∧ a / b ∈ Set.Icc l u) ∧
-      (b ^ 2 < z ^ 2 * vbb →
-        fiellerSet a b vaa vab vbb z = Set.univ ∨
-          ∃ l u : ℝ, l < u ∧ fiellerSet a b vaa vab vbb z = (Set.Ioo l u)ᶜ)
 
 end WantedExt.Probability.Statistics.FiellerRatioWanted
