@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.AlternatingHyperharmonic
+public import MathlibExt.NumberTheory.AlternatingHyperharmonicTypeII
 public import MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree
 public import MathlibExt.Analysis.Asymptotics.Jakimczuk
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -98,68 +98,6 @@ public theorem_wanted sum_pow_mul_log_pow_isEquivalent (m n k : ℕ) :
       fun x : ℕ => (x : ℝ) ^ (m + 1) * Real.log x ^ n /
         ((m + 1) * Real.log (Real.log x) ^ k))
 
-/-- **Li's coefficients $a(r, m, j)$.** The rational numbers $a(r, m, j)$, for natural numbers
-$r$, $m$, $j$, are defined by recursion on $r$. For all $m$ and $j$, $a(0, m, j) = 0$; moreover
-$a(1, 0, 0) = 1$ and $a(1, m, j) = 0$ for $(m, j) \ne (0, 0)$. For $r \ge 1$ the values of
-order $r + 1$ are as follows. First,
-$$a(r+1, r, 0) = -\sum_{m=0}^{r-1} \frac{a(r, m, r-m-1)}{r-m}.$$
-For $0 \le m \le r - 1$ and $1 \le \ell \le r - m$,
-$$a(r+1,m,\ell) = \sum_{j=\ell-1}^{r-1-m} \frac{a(r,m,j)}{j+1} \binom{j+1}{j-\ell+1} B_{j-\ell+1}.$$
-For $0 \le m \le r - 1$,
-$$a(r+1, m, 0) = -\sum_{y=0}^{m} \sum_{j=\max(0, m-y-1)}^{r-1-y} a(r, y, j)\, D(m, j, y),$$
-where
-$$D(m, j, y) = \frac{1}{j+1} \sum_{\ell=\max(0, m-y-1)}^{j} \binom{j+1}{j-\ell} B_{j-\ell}
-\binom{\ell+1}{m-y} (-1)^{1+\ell-m+y}.$$
-All other values $a(r+1, m, \ell)$ are $0$. Here $B_n$ are the Bernoulli numbers with
-$B_1 = 1/2$, that is, the numbers determined by $\sum_{j=0}^{k} \binom{k+1}{j} B_j = k + 1$ for
-all $k \ge 0$.
-
-Li writes $D(r, m, j, y)$; the value does not depend on $r$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 3 (quoting Li, *Euler sums of generalized hyperharmonic numbers*). -/
-public def liCoeffA : ℕ → ℕ → ℕ → ℚ
-  | 0, _, _ => 0
-  | 1, m, j => if m = 0 ∧ j = 0 then 1 else 0
-  | r + 2, m, l =>
-    if m = r + 1 ∧ l = 0 then
-      -∑ m' ∈ range (r + 1), liCoeffA (r + 1) m' (r - m') / ((r + 1 - m' : ℕ) : ℚ)
-    else if m ≤ r ∧ 1 ≤ l ∧ l ≤ r + 1 - m then
-      ∑ j ∈ Icc (l - 1) (r - m), liCoeffA (r + 1) m j / ((j + 1 : ℕ) : ℚ) *
-        ((j + 1).choose (j + 1 - l) : ℚ) * bernoulli' (j + 1 - l)
-    else if m ≤ r ∧ l = 0 then
-      -∑ y ∈ range (m + 1), ∑ j ∈ Icc (m - y - 1) (r - y), liCoeffA (r + 1) y j *
-        ∑ i ∈ Icc (m - y - 1) j, 1 / ((j + 1 : ℕ) : ℚ) * ((j + 1).choose (j - i) : ℚ) *
-          bernoulli' (j - i) * ((i + 1).choose (m - y) : ℚ) * (-1) ^ (1 + i + y - m)
-    else 0
-
-/-- **The coefficient $a(1, 0, 0)$.** The coefficient $a(1, 0, 0)$ of Li's Lemma 3 equals $1$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 3. -/
-public theorem liCoeffA_one_zero_zero : liCoeffA 1 0 0 = 1 := by
-  simp [liCoeffA]
-
-/-- **The coefficient $a(2, 1, 0)$.** The coefficient $a(2, 1, 0)$ of Li's Lemma 3 equals $-1$.
-
-By the recursion, $a(2, 1, 0) = -a(1, 0, 0) = -1$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 3. -/
-public theorem liCoeffA_two_one_zero : liCoeffA 2 1 0 = -1 := by
-  simp [liCoeffA]
-
-/-- **Li's coefficients $c(m, j)$.** For natural numbers $m$ and $j$, the rational number
-$c(m, j)$ is $\frac{1}{m+1} \binom{m+1}{m+1-j} B_{m+1-j}$ when $j \le m + 1$ and $0$ otherwise,
-where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Definition 4. -/
-public def liCoeffC (m j : ℕ) : ℚ :=
-  if j ≤ m + 1 then
-    1 / ((m + 1 : ℕ) : ℚ) * ((m + 1).choose (m + 1 - j) : ℚ) * bernoulli' (m + 1 - j)
-  else 0
-
 /-- **Li's coefficient $c(0, 0)$.** Li's coefficient $c(0, 0)$ equals $\frac{1}{2}$ (this is the
 Bernoulli number $B_1$ in the convention $B_1 = +\frac{1}{2}$).
 
@@ -167,17 +105,6 @@ Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
 Article 24.4.1, Definition 4. -/
 public theorem liCoeffC_zero_zero : liCoeffC 0 0 = 1 / 2 := by
   simp [liCoeffC]
-
-/-- **Li's coefficients $d(m, j)$.** For natural numbers $m$ and $j$, the rational number
-$d(m, j)$ is $\frac{1}{m+1} \sum_{k} \binom{m+1}{m-k} B_{m-k} \binom{1+k}{j} (-1)^{1+k-j}$, the sum
-running over the natural numbers $k$ with $\max(j - 1, 0) \le k \le m$ (so $d(m, j) = 0$ when
-$j > m + 1$), where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Definition 4. -/
-public def liCoeffD (m j : ℕ) : ℚ :=
-  1 / ((m + 1 : ℕ) : ℚ) * ∑ k ∈ Icc (j - 1) m,
-    ((m + 1).choose (m - k) : ℚ) * bernoulli' (m - k) * ((1 + k).choose j : ℚ) * (-1) ^ (1 + k - j)
 
 /-- **Li's coefficient $d(0, 1)$.** Li's coefficient $d(0, 1)$ equals $1$.
 
@@ -322,24 +249,6 @@ Article 24.4.1, Lemma 2 (`jis-2024-24.4.1-lem-2`). -/
 public theorem_wanted generalizedHyperharmonic_isEquivalent {p r : ℕ} (hp : 2 ≤ p) (hr : 1 ≤ r) :
     (fun n : ℕ => signedIteratedPartialSum false (generalizedHarmonic p) r n) ~[atTop]
       fun n : ℕ => (n : ℝ) ^ (r - 1) * (∑' i : ℕ, 1 / (i : ℝ) ^ p) / (r - 1).factorial
-
-/-- **Explicit formula for type II alternating hyperharmonic numbers.** For real $s$ write
-$\overline{H}_n^{(s)} = \sum_{i=1}^{n} (-1)^{i-1}/i^s$ for the alternating generalized harmonic
-numbers. For a natural number $p$, the type II generalized alternating hyperharmonic numbers are
-$H_n^{(p,1,2)} = \overline{H}_n^{(p)}$ and $H_n^{(p,r+1,2)} = \sum_{k=1}^{n} H_k^{(p,r,2)}$. Let
-$a(r, m, j)$ be Li's rational coefficients. Then for all natural numbers $r, n, p \ge 1$,
-$$
-H_n^{(p,r,2)} = \sum_{m=0}^{r-1} \sum_{j=0}^{r-1-m} a(r, m, j)\, n^j\, \overline{H}_n^{(p-m)},
-$$
-where the index $p - m$ is a real number and may be negative.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 3 (`jis-2024-24.4.1-lem-3`). -/
-public theorem_wanted alternatingHyperharmonic_typeII_eq_sum {r n p : ℕ} (hr : 1 ≤ r)
-    (hn : 1 ≤ n) (hp : 1 ≤ p) :
-    signedIteratedPartialSum false (alternatingGeneralizedHarmonic p) r n =
-      ∑ m ∈ range r, ∑ j ∈ range (r - m),
-        (liCoeffA r m j : ℝ) * (n : ℝ) ^ j * alternatingGeneralizedHarmonic ((p : ℝ) - m) n
 
 /-- **Explicit formulas for type I and type III alternating hyperharmonic numbers.** For real $s$
 write $H_n^{(s)} = \sum_{i=1}^{n} 1/i^s$ and $\overline{H}_n^{(s)} = \sum_{i=1}^{n} (-1)^{i-1}/i^s$
