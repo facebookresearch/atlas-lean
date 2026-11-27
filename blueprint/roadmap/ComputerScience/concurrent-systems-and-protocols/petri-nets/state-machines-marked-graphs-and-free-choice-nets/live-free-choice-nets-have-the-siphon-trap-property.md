@@ -7,6 +7,7 @@ Let $(N, M_0)$ be a net that is [extended free-choice](extended-free-choice-nets
 - [Extended free-choice nets](extended-free-choice-nets.md)
 - [Siphons and traps](../siphons-and-traps.md)
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 

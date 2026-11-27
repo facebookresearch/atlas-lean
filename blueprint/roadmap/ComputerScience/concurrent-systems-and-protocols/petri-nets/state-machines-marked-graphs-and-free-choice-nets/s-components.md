@@ -6,6 +6,7 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md). A subnet 
 
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Sources
 

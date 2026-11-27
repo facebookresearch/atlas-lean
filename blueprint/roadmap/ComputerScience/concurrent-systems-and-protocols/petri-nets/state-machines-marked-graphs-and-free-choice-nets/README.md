@@ -2,6 +2,7 @@
 
 Efficient structure theory for three classes of nets: liveness, boundedness and reachability in state machines and marked graphs, Genrich's theorem, and for free-choice nets clusters, allocations, both halves of Commoner's liveness theorem, S-components, Hack's boundedness theorem, the rank theorem and the complexity of liveness and reachability.
 
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 - [State machines conserve the number of tokens](state-machines-conserve-tokens.md)
 - [Bounds of live state machines](bounds-of-live-state-machines.md)
 - [Reachability in live state machines](reachability-in-live-state-machines.md)

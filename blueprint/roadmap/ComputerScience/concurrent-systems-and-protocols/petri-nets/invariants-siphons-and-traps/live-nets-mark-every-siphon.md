@@ -6,6 +6,7 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) that is co
 
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
 - [Siphons and traps](../siphons-and-traps.md)
+- [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 

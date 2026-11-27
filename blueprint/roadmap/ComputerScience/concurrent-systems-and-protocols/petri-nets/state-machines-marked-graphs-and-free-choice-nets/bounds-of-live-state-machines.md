@@ -6,6 +6,7 @@ Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [state machine](
 
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 

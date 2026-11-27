@@ -8,6 +8,7 @@ Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) net that is [ext
 - [Extended free-choice nets](extended-free-choice-nets.md)
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
 - [S-components of a net](s-components.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Expansion
 

@@ -6,6 +6,7 @@ Let $N$ be a connected [marked graph](../subclasses-of-petri-nets.md). A vector 
 
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [T-invariants and reproducing firing sequences](../invariants-siphons-and-traps/t-invariants-and-reproducing-sequences.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Sources
 

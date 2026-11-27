@@ -6,6 +6,7 @@ Let $N$ be a connected [state machine](../subclasses-of-petri-nets.md). A vector
 
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [A positive S-invariant implies boundedness](../invariants-siphons-and-traps/positive-s-invariant-implies-boundedness.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Sources
 

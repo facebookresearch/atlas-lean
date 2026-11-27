@@ -7,6 +7,7 @@ The graph form follows from [Kőnig's lemma for inverse systems](../../../proces
 ## Depends on
 
 - [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
+- [Kőnig's lemma for inverse systems](../../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
 
 ## Proof depends on
 

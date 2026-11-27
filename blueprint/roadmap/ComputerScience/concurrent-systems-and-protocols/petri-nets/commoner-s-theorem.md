@@ -7,6 +7,7 @@ Let $(N, M_0)$ be a [free-choice net](subclasses-of-petri-nets.md) whose net is 
 - [State machines, marked graphs and free-choice nets](subclasses-of-petri-nets.md)
 - [Siphons and traps](siphons-and-traps.md)
 - [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
+- [Connected and strongly connected nets](state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 

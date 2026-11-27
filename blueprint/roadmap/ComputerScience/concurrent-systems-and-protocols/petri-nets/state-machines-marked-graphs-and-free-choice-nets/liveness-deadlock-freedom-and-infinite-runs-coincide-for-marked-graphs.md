@@ -6,6 +6,7 @@ Let $N$ be a strongly connected [marked graph](../subclasses-of-petri-nets.md) a
 
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 

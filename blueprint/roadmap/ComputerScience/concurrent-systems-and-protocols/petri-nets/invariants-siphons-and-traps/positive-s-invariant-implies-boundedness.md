@@ -8,6 +8,7 @@ For a pure net these S-invariants are the rational solutions of the equation on 
 
 - [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
+- [S-invariants of a Petri net](../s-invariants.md)
 
 ## Sources
 

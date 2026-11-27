@@ -7,6 +7,8 @@ The problem that asks, given a net $(N, M_0)$ that is [extended free-choice](ext
 - [Extended free-choice nets](extended-free-choice-nets.md)
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
 - [NP-complete decision problems](../../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
+- [Siphons and traps](../siphons-and-traps.md)
 
 ## Proof depends on
 

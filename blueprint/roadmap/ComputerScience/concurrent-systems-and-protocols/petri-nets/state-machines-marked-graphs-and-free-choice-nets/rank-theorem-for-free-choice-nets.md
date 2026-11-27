@@ -11,6 +11,7 @@ Let $(N, M_0)$ be a net that is [extended free-choice](extended-free-choice-nets
 - [T-invariants and reproducing firing sequences](../invariants-siphons-and-traps/t-invariants-and-reproducing-sequences.md)
 - [Clusters of a net](clusters-of-a-net.md)
 - [Siphons and traps](../siphons-and-traps.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Expansion
 

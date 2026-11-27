@@ -16,6 +16,7 @@ The *coverability graph* is obtained from the tree by identifying all nodes with
 
 - [Place/transition Petri nets](../place-transition-petri-nets.md)
 - [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
+- [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
 
 ## Sources
 

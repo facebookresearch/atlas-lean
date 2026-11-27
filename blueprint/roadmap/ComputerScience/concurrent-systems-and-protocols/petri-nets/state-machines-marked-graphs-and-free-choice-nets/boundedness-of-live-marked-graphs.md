@@ -7,6 +7,8 @@ Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](.
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
+- [Safeness of live marked graphs](../safeness-of-live-marked-graphs.md)
 
 ## Proof depends on
 
