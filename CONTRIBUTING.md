@@ -174,7 +174,8 @@ A pull request changes the Lean or the graph:
   writes their docstring digests, and places the new modules that a `Place:`
   line names or that take a placed module's declarations.
 - **Graph side:** everything under `blueprint/`, and `scripts/taxonomy.json`,
-  `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` and
+  `scripts/wiki-sync.json`, the card move ledger (`scripts/card-moves.jsonl`
+  and `scripts/card-moves.d/`) and
   `scripts/mathgraph-map.jsonl`. A **graph pull request** changes the wiki.
   It changes Lean only as the [graph rules](docs/BLUEPRINT.md#graph-rules)
   allow, such as an expansion's wanted statements or the docstring a page's fix
@@ -586,7 +587,17 @@ group before it merges:
 
 - `repository integrity` (CI): the deterministic repository checks.
 - `build` (CI): the Lean build and its policy checks.
-- `check the graph` (CI): `autoform check` on the graph as committed.
+- `check the graph` (CI): `autoform check` on the graph as committed, and the
+  card move ledger's integrity as the merge commit or merge group combines it,
+  against the commit it was made from, with `scripts/card_moves.py check`,
+  which reads the ledger's files and Git tree-entry metadata (names, modes and
+  types) for regular roadmap `README.md` files, not page contents, and nothing
+  else: it fails on rows that break a rule among them, an edited
+  frozen file, an edited, renamed or deleted merged fragment, or new fragments
+  that interact ([Move ledger](docs/cards.md#move-ledger)). What needs the
+  rest of the tree is not required: whether each move ends at a live page of
+  its article is the site build's ledger step's, and whether every move since
+  the base has its row is `check the cards`'s.
 - `source-diagnostics` (Source diagnostics).
 - `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
   checks a pin change again against the queue's base.
@@ -601,6 +612,7 @@ job-level `strategy` and no job-level `if` but the one that skips `build` on
 some PRs. CI's `decide which checks to run` job (`scripts/ci_scope.py`) skips
 `build` on a PR whose every changed path is graph data (`blueprint/`,
 `scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
+the move ledger's fragments in `scripts/card-moves.d/`,
 `scripts/mathgraph-map.jsonl`) or documentation (Markdown outside `scripts/`
 and `.github/`, and `.agents/` and `.claude/`), and a skipped required check
 counts as passed. On a PR whose every changed path is graph data, documentation,

@@ -488,7 +488,8 @@ class Batches(unittest.TestCase):
     def setUp(self) -> None:
         self.root = Path(tempfile.mkdtemp()).resolve()
         self.addCleanup(shutil.rmtree, self.root, True)
-        for name in ("graph_batch.py", "sync_wiki.py", "generate_wiki.py", "extract_v2_lean_dependencies.py"):
+        for name in ("graph_batch.py", "sync_wiki.py", "card_moves.py", "generate_wiki.py",
+                     "extract_v2_lean_dependencies.py"):
             self.write(f"scripts/{name}", (SCRIPTS / name).read_text())
         self.write("mkdocs.yml", (ROOT / "mkdocs.yml").read_text())
         self.write(".gitignore", "__pycache__/\n")
