@@ -20,7 +20,7 @@ $$ \frac{d}{dt}\mathbb E\big[[S]_t\big] = \sum_{G \subseteq S} \frac{\varrho_G}{
 
 $$\frac{d}{dt}\mathbb E\big[[1,2]_t\big] = \frac{\varrho_{\{1\}}}{N}\,\mathbb E\big[[1]_t[2]_t - N[1,2]_t\big], \qquad \frac{d}{dt}\mathbb E\big[[1]_t[2]_t\big] = \frac{b}{N}\,\mathbb E\big[N[1,2]_t - [1]_t[2]_t\big],$$
 
-   so the expected linkage disequilibrium $\mathbb E\big[N[1,2]_t - [1]_t[2]_t\big]$ decays exponentially at rate $(\varrho_{\{1\}} + b)/N$.
+   so the expected linkage disequilibrium $\mathbb E\big[N[1,2]_t - [1]_t[2]_t\big]$ decays exponentially at rate $\varrho_{\{1\}} + b/N$. (Note: equation (22) of arXiv:1105.0793 prints $(\varrho_1 + b)/N$, whereas equations (20)–(21) give $\varrho_{\{1\}} + b/N$.)
 
 For three or more sites with resampling the source argues only heuristically that closure fails, and this page claims nothing there.
 
