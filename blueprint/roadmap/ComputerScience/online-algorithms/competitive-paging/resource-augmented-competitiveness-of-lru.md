@@ -1,16 +1,13 @@
 # Resource-augmented competitiveness of LRU
 
-Let $1 \le h \le k$. Let LRU run with a fast memory of $k$ pages and the offline optimum MIN with a fast memory of $h$ pages, both starting with empty fast memory. For every request sequence $s$, $F_{\mathrm{LRU}}(s) \le \frac{k}{k - h + 1} F_{\mathrm{MIN}}(s) + h$, where $F$ counts page faults. In particular, with $k = 2h$, $F_{\mathrm{LRU}}(s) \le 2 F_{\mathrm{MIN}}(s) + h$.
+Let $1 \le h \le k$. Let LRU run with a fast memory of $k$ pages, starting from any list $c$ of pages as its cache (most recently used first), and let the offline optimum MIN, the furthest-in-future manager, run with a fast memory of $h$ pages, starting from any cache $c_0$ of at most $h$ pages without repetition. For every request sequence $s$, $(k - h + 1) F_{\mathrm{LRU}}(s) \le k F_{\mathrm{MIN}}(s) + (k - h + 1) h$, that is, $F_{\mathrm{LRU}}(s) \le \frac{k}{k - h + 1} F_{\mathrm{MIN}}(s) + h$, where $F$ counts page faults.
 
-## Depends on
+## Remarks
 
-- [Number of misses in a trace](../../greedy-algorithms-and-matroids/furthest-in-future-caching/misses.md)
-- [Deterministic online paging algorithm](deterministic-online-paging-algorithm.md)
+With $k = 2h$ the bound gives $F_{\mathrm{LRU}}(s) \le 2 F_{\mathrm{MIN}}(s) + h$.
 
-## Proof depends on
-
-- [Furthest-in-future caching has the fewest misses](../../greedy-algorithms-and-matroids/furthest-in-future-caching/furthest-in-future-misses-le.md)
+The additive term $h$ reflects that the two fast memories may start with different pages, so that LRU may fault $h$ times before MIN faults at all. If LRU's fast memory initially contains all the pages in MIN's fast memory and no others more recently used, as when both start empty, the additive term can be dropped.
 
 ## Sources
 
-- D. D. Sleator and R. E. Tarjan, "Amortized efficiency of list update and paging rules", *Communications of the ACM* 28(2):202–208, 1985, Section 4, Theorem 6
+- D. D. Sleator and R. E. Tarjan, "Amortized efficiency of list update and paging rules", *Communications of the ACM* 28(2):202–208, 1985, Section 4, Theorem 6 and the remarks after its proof

@@ -15299,6 +15299,7 @@
 "Cslib.Algorithms.Lean.Online.Paging.lruMisses": "0f5131f95abe5dcc",
 "Cslib.Algorithms.Lean.Online.Paging.lruMisses_le": "c6b4c7ad438685ae",
 "Cslib.Algorithms.Lean.Online.Paging.lruMisses_le_furthestInFuture": "7b247957ccbc697a",
+"Cslib.Algorithms.Lean.Online.Paging.lruMisses_le_furthestInFuture_of_le": "768cff62565288b7",
 "Cslib.Algorithms.Lean.Online.Paging.lruMisses_phase": "6fbd4a9f3a76f3ec",
 "Cslib.Algorithms.Lean.Online.Paging.lruPager": "073d895586b4f1c1",
 "Cslib.Algorithms.Lean.Online.Paging.lruPager_misses": "e803c6eb16c0d151",
