@@ -22,7 +22,19 @@ import MathlibExt.Combinatorics.Enumerative.Partition.ReciprocalEulerDissection
 # Iterated congruences for 9-regular partitions
 
 The eighth power of Euler's product gives the 9-regular partition counts modulo three.
-Its odd coefficients give the recurrence iterated in `card_nine_regular_iterate_modEq`.
+Its odd coefficients give the recurrence iterated in `card_nine_regular_iterate_modEq`:
+for every positive integer `n`, the 9-regular partition counts at `4 * n + 1` and `n`
+are congruent modulo `3`.
+
+## References
+
+- S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+  Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+  Article A39, pp. 1–30, Theorem 19 and Corollary 5.
+- J. A. Ewell, *New representations of Ramanujan’s tau function*, Proc. Amer. Math. Soc. 128(3)
+  (2000), pp. 723–726. The proof of Theorem 19 in Sriram and Christopher cites Ewell's
+  congruence $\tau(4n) \equiv \tau(n) \pmod 3$. The Lean proof instead uses the existing
+  Euler-product argument `card_nine_regular_iterate_modEq.step` in this module.
 -/
 
 namespace MetaMathlibExt
@@ -206,6 +218,19 @@ private theorem small_counts : count 1 = 1 ∧ count 2 = 2 ∧ count 3 = 3 := by
   exact ⟨Fintype.card_unique, c₂, by omega⟩
 
 end card_nine_regular_iterate_modEq
+
+/-- **A congruence for 9-regular partitions at $4n + 1$.** Let $R_9(m)$ denote the number of
+partitions of $m$ in which no part is divisible by $9$. For every positive integer $n$,
+$R_9(4n + 1) \equiv R_9(n) \pmod 3$.
+
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
+public theorem card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
+    ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
+    ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3] := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn.ne'
+  exact card_nine_regular_iterate_modEq.step (m + 1)
 
 open card_nine_regular_iterate_modEq in
 /-- **Iterated congruences for 9-regular partitions modulo 3.** Let $R_9(m)$ denote the number of
