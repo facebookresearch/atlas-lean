@@ -1,6 +1,6 @@
 # Indistinguishability obfuscation implies hardness of finding Nash equilibria
 
-Assume a (sub-exponentially secure) indistinguishability obfuscator and one-way functions. Then the End-of-the-Line problem is hard on average for polynomial-time algorithms; consequently $\mathsf{PPAD}$ contains problems that are hard on average, and computing a Nash equilibrium of a two-player game in normal form is cryptographically hard.
+Assume sub-exponentially hard injective one-way functions and a quasi-polynomially secure indistinguishability obfuscator for $\mathsf{P}/\mathsf{poly}$, or alternatively a sub-exponentially secure indistinguishability obfuscator and sub-exponentially hard (not necessarily injective) one-way functions. Then the End-of-the-Line problem is hard on average, over an efficiently samplable distribution of instances, for polynomial-time algorithms; consequently $\mathsf{PPAD}$ contains problems that are hard on average, and computing a Nash equilibrium of a two-player game in normal form is cryptographically hard.
 
 ## Proof sketch
 
@@ -17,4 +17,5 @@ Construct an End-of-the-Line instance whose line consists of signed counter valu
 
 ## Sources
 
-- Nir Bitansky, Omer Paneth, Alon Rosen, "On the Cryptographic Hardness of Finding a Nash Equilibrium", FOCS (2015).
+- Nir Bitansky, Omer Paneth, Alon Rosen, "On the Cryptographic Hardness of Finding a Nash Equilibrium", FOCS (2015), ECCC TR15-001, Theorem 1.1 and Section 1.1.
+- Nir Bitansky, Omer Paneth, Daniel Wichs, "Perfect Structure on the Edge of Chaos: Trapdoor Permutations from Indistinguishability Obfuscation", TCC (2016-A), IACR ePrint 2015/126.

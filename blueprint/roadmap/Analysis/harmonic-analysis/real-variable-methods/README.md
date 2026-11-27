@@ -11,3 +11,7 @@ These are the methods of C. Fefferman and E. M. Stein (*Some maximal inequalitie
 
 - [Wavelets and multiscale analysis](../wavelets/README.md): the same dyadic decomposition of the line, used to build orthonormal bases.
 - [Fourier series](../fourier-series/README.md): Carleson's theorem on almost-everywhere convergence of Fourier series of $L^2$ functions.
+
+- [Maximal triangular Hilbert transform at the symmetric exponents](maximal-triangular-hilbert-l3-estimate.md)
+- [Directional Hilbert truncations at a reciprocal Lipschitz scale](short-directional-hilbert-reciprocal-lipschitz-scale.md)
+- [Fixed-scale Hilbert transforms along unit Lipschitz directions](short-lipschitz-directional-hilbert-extensions.md)

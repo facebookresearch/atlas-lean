@@ -3,3 +3,8 @@
 - [Encoding of pairs](encode-prod.md)
 - [Binary encoding of natural numbers](encode-nat-binary.md)
 - [Harvey–van der Hoeven: integer multiplication in time $O(n \log n)$](theorem-1-1.md)
+- [Fixed-tape multiplication with an explicit logarithmic saving](fixed-tape-multiplication-with-explicit-log-saving.md)
+- [Uniform tape multiplication at a near-square-root logarithmic exponent](uniform-near-square-root-log-multiplication.md)
+- [Weak ETH implies a randomized deadline lower bound for the low product bits](weak-eth-randomized-low-product-tape-lower-bound.md)
+- [Weak ETH implies a sound nondeterministic deadline lower bound for the low product bits](weak-eth-nondeterministic-low-product-tape-lower-bound.md)
+- [Weak ETH makes one half the infimum logarithmic exponent for exact tape multiplication](weak-eth-multiplication-log-exponent-infimum.md)
