@@ -4,6 +4,7 @@
 - [Exoo's lower bound for $R(5, 5)$](forty-three-le-graph-ramsey-five-five.md)
 - [The Angeltveit–McKay upper bound for $R(5, 5)$](graph-ramsey-five-five-le-forty-six.md)
 - [The value of $R(3, 5)$](graph-ramsey-three-five.md)
+- [The triangle–triangle Ramsey number is six](graph-ramsey-three-three.md)
 - [The value of $R(3, 6)$](graph-ramsey-three-six.md)
 - [The value of $R(3, 7)$](graph-ramsey-three-seven.md)
 - [The value of $R(3, 8)$](graph-ramsey-three-eight.md)

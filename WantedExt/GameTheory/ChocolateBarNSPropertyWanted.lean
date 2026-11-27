@@ -19,6 +19,7 @@ public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtFoldlXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorEq
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq
+public import MathlibExt.GameTheory.NimPassIndicator
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -162,17 +163,6 @@ public theorem heightChocolateBarGrundy_zero {s : ℕ} (F : (Fin s → ℕ) → 
   exact Nat.sInf_eq_zero.mpr (Or.inl ⟨fun _ u hu ↦ absurd hu (Nat.not_lt_zero u),
     fun v hv ↦ absurd hv (Nat.not_lt_zero v)⟩)
 
-/-- **Pass indicator of Nim with a restricted pass.** For $s$ piles with thresholds
-$m_0, \dots, m_{s-1}$ and pile sizes $x_0, \dots, x_{s-1}$ (natural numbers), the pass
-indicator is $1$ if $m_j \le x_j$ for some pile $j$ (the pass may be used), and $0$ if
-$x_j < m_j$ for every pile $j$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 and Corollary 2 (the function `F`). -/
-public def nimPassIndicator {s : ℕ} (m x : Fin s → ℕ) : ℕ :=
-  if ∃ j, m j ≤ x j then 1 else 0
-
 /-- **The Nim pass indicator is at most one.** For every $s \in \mathbb{N}$ and all
 $m, x \in \mathbb{N}^s$, the pass indicator of $m$ at $x$ is at most $1$; that is, it takes values
 in $\{0, 1\}$.
@@ -294,22 +284,6 @@ public theorem_wanted indicator_sections_iff_heightChocolateBarGrundy_eq_xor {s 
     (∀ (x : Fin s → ℕ) i, ∃ m, Even m ∧
         (fun t ↦ F (Function.update x i t)) = (Set.Ici m).indicator 1) ↔
       ∀ x y, y ≤ F x → heightChocolateBarGrundy F x y = (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ y
-
-/-- **Sections of the Nim pass indicator with the NS property.** Let $s \in \mathbb{N}$ and
-$m \in \mathbb{N}^s$ with $m_i > 0$ for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be
-the pass indicator of $m$: $F(x) = 1$ if $m_j \le x_j$ for some $j$, and $F(x) = 0$ otherwise.
-For $x \in \mathbb{N}^s$, $i < s$ and $t \in \mathbb{N}$ write $x[i \mapsto t]$ for $x$ with its
-$i$-th coordinate replaced by $t$. Then the following are equivalent: (a) for all
-$x \in \mathbb{N}^s$ and $i < s$, the function $t \mapsto F(x[i \mapsto t])$ has the NS property;
-(b) $m_i$ is even for every $i < s$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 (`integers-2025-G3-lem-10`). -/
-public theorem_wanted nimPassIndicator_sections_hasNSProperty_iff {s : ℕ} {m : Fin s → ℕ}
-    (hm : ∀ i, 0 < m i) :
-    (∀ (x : Fin s → ℕ) i, HasNSProperty fun t ↦ nimPassIndicator m (Function.update x i t)) ↔
-      ∀ i, Even (m i)
 
 /-- **Nim with a restricted pass.** Let $s \in \mathbb{N}$ and $m \in \mathbb{N}^s$ with $m_i > 0$
 for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be the pass indicator of $m$:

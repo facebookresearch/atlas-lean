@@ -1,0 +1,3 @@
+# Stopped mass after exactly n transitions
+
+For a finite set of states $S$, real functions $q$ on $S$ and $Q$ on $S \times S$, a start state $i$ and $n \in \mathbb{N}$, the stopped mass at level $n$ is the total completed-path weight $\sum q(x_n) \prod_{k<n} Q(x_k, x_{k+1})$ over all paths $(x_0, \dots, x_n)$ with $x_0 = i$, that is, over paths with exactly $n$ transitions. It is a raw real weight: for one state with $Q(i,i) = -2$ and $q(i) = 1$, the stopped mass at level $1$ is $-2$. When $q$ and $Q$ are stop probabilities and a survival kernel (nonnegative, with $q(x) + \sum_y Q(x, y) = 1$ for every $x$), it is the probability that the walk from $i$ stops after exactly $n$ transitions.

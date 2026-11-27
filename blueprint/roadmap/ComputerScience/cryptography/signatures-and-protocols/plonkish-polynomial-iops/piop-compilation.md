@@ -1,10 +1,10 @@
 # Compiling polynomial IOPs with polynomial commitments into succinct arguments
 
-Let $\Pi$ be a public-coin PIOP for $\mathcal{R}$ with knowledge soundness error $\epsilon$, and let $\mathsf{PC}$ be a polynomial commitment scheme for the same polynomial class that is binding and has knowledge-sound evaluation proofs (an extractor recovering the committed polynomial from accepting evaluation proofs). Replacing each oracle by a commitment and each query by an evaluation proof yields an interactive argument of knowledge for $\mathcal{R}$ with knowledge error $\epsilon+\mathrm{negl}(\lambda)$; if moreover the compiled argument has negligible state-restoration (for instance round-by-round) knowledge error, applying the Fiat–Shamir transform in the random oracle model yields a non-interactive argument of knowledge (a SNARK when $\mathsf{PC}$ has succinct commitments and evaluation proofs). Zero knowledge is preserved if $\Pi$ is honest-verifier zero knowledge with bounded query leakage and $\mathsf{PC}$ is hiding with zero-knowledge evaluation proofs.
+Let $\Pi$ be a public-coin PIOP for $\mathcal{R}$ with negligible knowledge soundness error, and let $\mathsf{PC}$ be a polynomial commitment scheme for the same polynomial class that is binding and has knowledge-sound evaluation proofs (an extractor recovering the committed polynomial from accepting evaluation proofs; witness-extended emulation in Bünz–Fisch–Szepieniec). Replacing each oracle by a commitment and each query by an evaluation proof yields a public-coin interactive argument of knowledge for $\mathcal{R}$ (with witness-extended emulation when $\mathsf{PC}$ has it). Its communication is $O_\lambda(q)$ bits for $q$ the query complexity of $\Pi$ when $\mathsf{PC}$ is succinct, and for constant round complexity the Fiat–Shamir transform in the random oracle model makes it non-interactive, which is how Marlin obtains preprocessing zkSNARKs. Zero knowledge is preserved: if $\mathsf{PC}$ is hiding and $\Pi$ is zero knowledge with query bound $q$ and a polynomial-time query checker, the argument is zero knowledge (Marlin); if $\mathsf{PC}$ is hiding with an honest-verifier zero-knowledge evaluation protocol, honest-verifier zero knowledge of $\Pi$ is preserved (Bünz–Fisch–Szepieniec).
 
 ## Proof sketch
 
-The extractor uses the evaluation extractor of $\mathsf{PC}$ to obtain polynomials consistent with all answered queries; binding ensures these do not depend on the queries. The interaction then is a valid PIOP execution, so PIOP knowledge soundness applies. Fiat–Shamir soundness for the public-coin compiled argument follows in the random oracle model, with round-by-round or state-restoration analysis.
+The extractor uses the evaluation extractor of $\mathsf{PC}$ to obtain polynomials consistent with all answered queries; binding ensures these do not depend on the queries. The interaction then is a valid PIOP execution, so PIOP knowledge soundness applies; negligible knowledge error of $\Pi$ keeps the combined error negligible.
 
 ## Depends on
 
@@ -17,5 +17,5 @@ The extractor uses the evaluation extractor of $\mathsf{PC}$ to obtain polynomia
 
 ## Sources
 
-- Alessandro Chiesa, Yuncong Hu, Mary Maller, Pratyush Mishra, Psi Vesely, Nicholas Ward, "Marlin: Preprocessing zkSNARKs with Universal and Updatable SRS", EUROCRYPT (2020).
-- Benedikt Bünz, Ben Fisch, Alan Szepieniec, "Transparent SNARKs from DARK Compilers", EUROCRYPT (2020), IACR ePrint 2019/1229.
+- Alessandro Chiesa, Yuncong Hu, Mary Maller, Pratyush Mishra, Psi Vesely, Nicholas Ward, "Marlin: Preprocessing zkSNARKs with Universal and Updatable SRS", EUROCRYPT (2020), IACR ePrint 2019/1047 (Theorems 8.1, 8.3 and 8.4).
+- Benedikt Bünz, Ben Fisch, Alan Szepieniec, "Transparent SNARKs from DARK Compilers", EUROCRYPT (2020), IACR ePrint 2019/1229 (Theorem 4).

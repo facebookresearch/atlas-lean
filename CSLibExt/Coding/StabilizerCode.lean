@@ -250,7 +250,7 @@ private theorem generator_comm_dots {n r : ℕ} {a b : Fin r → Fin n → ZMod 
     add_comm (b k) (b j)] at hcommE
   have hentry := congrFun (congrFun hcommE (a j + a k)) 0
   simp only [Matrix.smul_apply, smul_eq_mul, pauli, Matrix.of_apply, zero_add,
-    eq_self_iff_true, if_true, dotProduct_zero, sign_zero, mul_one] at hentry
+    eq_self_iff_true, ite_true, dotProduct_zero, sign_zero, mul_one] at hentry
   have hs : c j * c k ≠ 0 := mul_ne_zero (hcz j) (hcz k)
   have hsign : sign ((b j) ⬝ᵥ (a k)) = sign ((b k) ⬝ᵥ (a j)) :=
     mul_left_cancel₀ hs hentry
@@ -328,9 +328,9 @@ private theorem sum_split_succ {n : ℕ} {M : Type*} [AddCommMonoid M] (F : Fin 
   have h1 : (∑ j ∈ T, F j) = ∑ j : Fin (n + 1), (if j ∈ T then F j else 0) := by
     have hsub : (∑ j ∈ T, (if j ∈ T then F j else 0))
         = ∑ j : Fin (n + 1), (if j ∈ T then F j else 0) :=
-      Finset.sum_subset (Finset.subset_univ T) (fun j _ hj => if_neg hj)
+      Finset.sum_subset (Finset.subset_univ T) (fun j _ hj => ite_eq_right hj)
     rw [← hsub]
-    exact Finset.sum_congr rfl (fun j hj => (if_pos hj).symm)
+    exact Finset.sum_congr rfl (fun j hj => (ite_eq_left hj).symm)
   rw [h1, Fin.sum_univ_succ]
   have hfun : (fun i : Fin n => if i.succ ∈ T then F i.succ else 0)
       = (fun i => if i ∈ T' then F i.succ else 0) := by
@@ -340,9 +340,9 @@ private theorem sum_split_succ {n : ℕ} {M : Type*} [AddCommMonoid M] (F : Fin 
   have hcongr : (∑ i : Fin n, (if i ∈ T' then F i.succ else 0)) = ∑ i ∈ T', F i.succ := by
     have hsub : (∑ i ∈ T', (if i ∈ T' then F i.succ else 0))
         = ∑ i : Fin n, (if i ∈ T' then F i.succ else 0) :=
-      Finset.sum_subset (Finset.subset_univ T') (fun i _ hi => if_neg hi)
+      Finset.sum_subset (Finset.subset_univ T') (fun i _ hi => ite_eq_right hi)
     rw [← hsub]
-    exact Finset.sum_congr rfl (fun i hi => if_pos hi)
+    exact Finset.sum_congr rfl (fun i hi => ite_eq_left hi)
   rw [hcongr]
 
 /-- A subset product is a nonzero scalar times the summed Pauli. -/
@@ -445,15 +445,15 @@ private theorem sums_eq_zero_of_groupElem_eq_one {n r : ℕ} {a b : Fin r → Fi
   rw [hσeq] at h1
   have hentry := congrFun (congrFun h1 (∑ j ∈ T, a j)) 0
   simp only [Matrix.smul_apply, smul_eq_mul, pauli, Matrix.of_apply, zero_add,
-    eq_self_iff_true, if_true, dotProduct_zero, sign_zero, mul_one,
+    eq_self_iff_true, ite_true, dotProduct_zero, sign_zero, mul_one,
     Matrix.one_apply] at hentry
   by_cases hA0 : (∑ j ∈ T, a j) = 0
-  · rw [if_pos hA0] at hentry
+  · rw [ite_eq_left hA0] at hentry
     rw [hA0, hentry, one_smul] at h1
     have hBv : ∀ v : Fin n → ZMod 2, sign ((∑ j ∈ T, b j) ⬝ᵥ v) = 1 := by
       intro v
       have hv := congrFun (congrFun h1 v) v
-      simp only [pauli, Matrix.of_apply, add_zero, eq_self_iff_true, if_true,
+      simp only [pauli, Matrix.of_apply, add_zero, eq_self_iff_true, ite_true,
         Matrix.one_apply] at hv
       exact hv
     have hB0 : (∑ j ∈ T, b j) = 0 := by
@@ -476,7 +476,7 @@ private theorem sums_eq_zero_of_groupElem_eq_one {n r : ℕ} {a b : Fin r → Fi
       rw [hBe] at hi
       simpa using hi
     exact ⟨hA0, hB0⟩
-  · rw [if_neg hA0] at hentry
+  · rw [ite_eq_right hA0] at hentry
     exact absurd hentry hσne
 
 /-- A subset product commutes with `y` when every generator does. -/
@@ -636,7 +636,7 @@ private theorem trace_pauli_eq_zero_of_ne {n : ℕ} (A B : Fin n → ZMod 2)
         rw [add_zero]
         exact hcon.symm
       exact add_left_cancel_iff.mp hAA
-    exact Finset.sum_eq_zero (fun v _ => if_neg (hneg v))
+    exact Finset.sum_eq_zero (fun v _ => ite_eq_right (hneg v))
   rw [htr]
   rcases h with hA | hB
   · exact hcase A hA
@@ -645,7 +645,7 @@ private theorem trace_pauli_eq_zero_of_ne {n : ℕ} (A B : Fin n → ZMod 2)
       have hif : ∀ v : Fin n → ZMod 2, (if v = v + 0 then sign (B ⬝ᵥ v) else 0)
           = sign (B ⬝ᵥ v) := by
         intro v
-        rw [add_zero, if_pos rfl]
+        rw [add_zero, ite_eq_left rfl]
       simp only [hif]
       have hex : ∃ c ∈ (⊤ : Cslib.CodingTheory.LinearCode (ZMod 2) (Fin n)),
           c ⬝ᵥ B ≠ 0 := by
@@ -667,7 +667,7 @@ private theorem trace_pauli_eq_zero_of_ne {n : ℕ} (A B : Fin n → ZMod 2)
           = (if v ∈ (⊤ : Cslib.CodingTheory.LinearCode (ZMod 2) (Fin n))
             then sign (v ⬝ᵥ B) else 0) := by
         intro v
-        rw [if_pos Submodule.mem_top, dotProduct_comm]
+        rw [ite_eq_left Submodule.mem_top, dotProduct_comm]
       rw [Finset.sum_congr rfl (fun v _ => hcongr v)]
       exact hsum
     · exact hcase A hA0
@@ -887,14 +887,14 @@ theorem trace_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : 
     obtain ⟨T, _, rfl⟩ := Finset.mem_image.mp hs
     by_cases hT : T = ∅
     · subst hT
-      rw [groupElem_empty, if_pos rfl, Matrix.trace_one, hcard2]
+      rw [groupElem_empty, ite_eq_left rfl, Matrix.trace_one, hcard2]
       norm_cast
     · have hne : groupElem a b c T ≠ 1 := by
         intro hcon
         apply hT
         obtain ⟨hA, hB⟩ := sums_eq_zero_of_groupElem_eq_one hsq hcomm T hcon
         exact eq_empty_of_sums_eq_zero _ _ hind T hA hB
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       obtain ⟨σ, hσne, hσeq⟩ := groupElem_eq_smul_pauli hsq hcomm T
       have hAB : (∑ j ∈ T, a j) ≠ 0 ∨ (∑ j ∈ T, b j) ≠ 0 := by
         by_contra hcon
@@ -914,9 +914,9 @@ theorem trace_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : 
     trans ∑ s ∈ stabilizerGroup a b c, (if s = 1 then (2 : ℂ) ^ n else 0)
     · exact Finset.sum_congr rfl (fun s hs => htr s hs)
     · rw [Finset.sum_eq_single 1]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
       · intro s _ hs1
-        exact if_neg hs1
+        exact ite_eq_right hs1
       · intro hcon
         exact absurd h1mem hcon
   have h2n : (2 : ℂ) ^ n = (2 : ℂ) ^ (n - r) * (2 : ℂ) ^ r := by
