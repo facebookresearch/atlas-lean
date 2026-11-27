@@ -17,7 +17,7 @@ $$A_\pm(\Lambda) = \begin{pmatrix} 0 & 1 \\ D_\pm (\Lambda - R'_\pm) & -c \end{p
 
 $$\sigma^+_{\mathrm{abs}} = \Big\{ \Lambda \in \mathbb{R} : \Lambda < \lambda - \frac{c^2}{4 D_i} \Big\}, \qquad \sigma^-_{\mathrm{abs}} = \Big\{ \Lambda \in \mathbb{R} : \Lambda < -\lambda - \frac{c^2}{4 D_g} \Big\}$$
 
-(eqs. (35)-(36)). $\sigma^-_{\mathrm{abs}}$ always lies in the open left half-plane; $\sigma^+_{\mathrm{abs}}$ does so exactly when $c > c^*$, and at $c = c^*$ its right end is $0$.
+(eqs. (35)-(36)). $\sigma^-_{\mathrm{abs}}$ always lies in the open left half-plane; $\sigma^+_{\mathrm{abs}}$ does so exactly when $c \ge c^*$; at $c = c^*$ its supremum is $0$.
 3. For $c_\beta < c < c^*$ the waves are absolutely unstable: in every one-sided weighted space $H^1_\nu$ ($e^{\nu z} q \in H^1$) the essential spectrum still meets the open right half-plane.
 4. For $c > c^*$, every weight $\nu$ in the open interval of eq. (37), which contains $\nu = c/(2D_i)$, moves the whole essential spectrum into the open left half-plane, at a positive distance from the imaginary axis; $\nu = c/(2D_i)$ moves its right edge furthest, to $\lambda - c^2/(4D_i) < 0$, the right end of $\sigma^+_{\mathrm{abs}}$.
 5. At $c = c^*$ no weight moves the essential spectrum into the open left half-plane: for every $\nu$ the weighted spectrum meets the closed right half-plane, and the best weight $\nu = c^*/(2D_i)$ leaves its right edge at $0$ (marginal stability).

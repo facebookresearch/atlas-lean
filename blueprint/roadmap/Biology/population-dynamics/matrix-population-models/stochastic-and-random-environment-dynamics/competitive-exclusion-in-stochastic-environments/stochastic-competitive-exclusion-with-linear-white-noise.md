@@ -24,7 +24,7 @@ $$\limsup_{t \to \infty} \frac{\ln \min_i x_i(t)}{t} \le -\alpha, \qquad \alpha 
 
 that is, at least one species goes extinct. The conclusion bounds the minimum density; it does not say which species is lost, which can depend on the path.
 
-The nondegeneracy $K > 0$ cannot be dropped. For $n = 2$, $m = 1$, $R = 2 - x_1 - x_2$, $\alpha_i = 0$, $b_{i1} = 1$ and $\Sigma = 0$, the null vector is $c = (1, -1)$, $K = 0$, and $(1/2, 1/2)$ is a positive equilibrium: neither species disappears.
+The nondegeneracy $K > 0$ cannot be dropped. For $n = 2$, $m = 1$, $R = 2 - x_1 - x_2$, $\alpha_i = 0$, $b_{i1} = 1$ and $\Sigma = 0$, the null vector is $c = (1, -1)$, $K = 0$, and $(1, 1)$ is a positive equilibrium (every point of $x_1 + x_2 = 2$ is one): neither species disappears.
 
 Linear noise can still change which species wins. For two species on one resource $R = \bar R - a_1x_1 - a_2x_2$ with $a_j, b_i > 0$, $\mu_i = -\alpha_i + b_i \bar R$, $\beta_{ij} = b_i a_j$ and $\Sigma = \operatorname{diag}(\sigma_1^2, \sigma_2^2)$, $\mu_i > \sigma_i^2/2$, species 1 wins and species 2 goes extinct almost surely when $\frac{\mu_1}{b_1}\big(1 - \frac{\sigma_1^2}{2\mu_1}\big) > \frac{\mu_2}{b_2}\big(1 - \frac{\sigma_2^2}{2\mu_2}\big)$, and the reverse holds when the inequality is reversed; noise can thus overturn the deterministic winner $\mu_1/b_1 > \mu_2/b_2$.
 

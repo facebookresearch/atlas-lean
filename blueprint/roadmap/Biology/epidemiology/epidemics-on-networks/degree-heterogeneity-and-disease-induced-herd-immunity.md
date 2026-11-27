@@ -24,11 +24,11 @@ with equality only when all nodes have the same degree. The same holds if $\tau$
 
 ## Depends on
 
-- [Basic reproduction ratio as the spectral radius of the next-generation operator](../next-generation-matrix-and-the-basic-reproductio/next-generation-operator-and-r0-in-heterogeneous-populations.md)
+- [The basic reproduction ratio `R₀`](../next-generation-operator-and-basic-reproduction/generation-growth.md)
 
 ## Proof depends on
 
-- [$R_0$ under separable and preferential mixing](../next-generation-matrix-and-the-basic-reproductio/r0-under-separable-and-preferential-mixing.md)
+- [`R₀` for a separable kernel](../next-generation-operator-and-basic-reproduction/generation-growth-eq-integral-of-separab.md)
 
 ## Expansion
 
