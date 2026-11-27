@@ -1,8 +1,10 @@
 # Expected number of conflicts in randomized incremental construction
 
-Let $S = (X, \Pi, D, K)$ be a configuration space of fixed dimension $d$ with $|X| = n$, and let $t_r$ be the expected number of configurations active with respect to a uniformly random $r$-element subset of $X$. A *conflict* is a pair $(\Delta, s)$ with $\Delta \in T_r$ for some step $r$ of the random insertion order and $s \in K(\Delta)$. The expected number of conflicts during the randomized incremental construction of $T(X)$ is
+Let $S = (X, \Pi, D, K)$ be a configuration space of fixed dimension $d$ with $|X| = n$, and let $t_r$ be the expected number of configurations active with respect to a uniformly random $r$-element subset of $X$. A *conflict* is a pair $(\Delta, s)$ with $\Delta \in T_r$ for some step $0 \le r \le n$ of the random insertion order, where $T_0 = T(\emptyset)$ and $s \in K(\Delta)$. The expected number of conflicts during the randomized incremental construction of $T(X)$ is
 
-$$O\Big(n \sum_{r=1}^{n} \frac{t_r}{r^2}\Big).$$
+$$O\Big(n + n \sum_{r=1}^{n} \frac{t_r}{r^2}\Big).$$
+
+The term $n$ accounts for the constantly many configurations active at step $0$, those with empty defining set, each in conflict with at most $n$ elements.
 
 In the Delaunay and trapezoidal-map applications, the location cost of the algorithm is bounded by the number of conflicts.
 
