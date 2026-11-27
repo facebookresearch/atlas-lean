@@ -24,6 +24,8 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.RingTheory.Coprime.Basic
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
+public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageDegenerateSecondOrderSums
+public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageLucasUSumDvdIffOfPEqOne
 
 /-!
 # Period lengths modulo `n` and averages of second-order recurrences
@@ -32,7 +34,11 @@ Statements from Michal Křížek and Lawrence Somer, *Period Lengths Modulo n an
 Terms of Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36
 (sections 1-4, partial: some clauses of Theorem 1.3, Corollary 3.1 (iv) and the main
 chain characterization of Theorem 4.3 are omitted, and false clauses are corrected or
-omitted as recorded in the source audit).
+omitted as recorded in the source audit). The theorem `degenerate_secondOrder_sums` is proved,
+and the definition `lucasAllAveragesIntegral` is defined, in
+`MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageDegenerateSecondOrderSums`.
+The theorem `lucasU_sum_dvd_iff_of_p_eq_one` is proved in
+`MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageLucasUSumDvdIffOfPEqOne`.
 
 The paper writes the recurrence as `W (n + 2) = a * W (n + 1) + b * W n` with discriminant
 `D = a ^ 2 + 4 * b`. This module uses the repository convention of `lucasU`: parameters
@@ -47,19 +53,6 @@ unity) is `IsNondegenerateLucasPair params.p params.q`; `Q ≠ 0` is built into
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Restricted period of a Lucas sequence modulo $m$.** For a Lucas sequence $U = U(P, Q)$ and
-a natural number $m$, the least restricted period $\rho_U(m)$ of $U$ modulo $m$ is the least
-$s > 0$ such that $m \mid U_s$ and $U_{s+1}$ is coprime to $m$, and $0$ if there is no such $s$.
-
-In the paper's terms, $U_{s+1} \equiv M \pmod m$ for a multiplier $M$ coprime to $m$; for
-$s = \rho_U(m)$ this $U_{s+1}$ is the multiplier $M_U(m)$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 1, equations
-(1.10) and (1.12). -/
-noncomputable def lucasURestrictedPeriod (params : LucasSequenceParams) (m : ℕ) : ℕ :=
-  sInf {s : ℕ | 0 < s ∧ (m : ℤ) ∣ lucasU params s ∧ IsCoprime (lucasU params (s + 1)) (m : ℤ)}
 
 /-- **Moduli divisible by their Lucas period.** For the Lucas sequence $U$ with integer
 parameters $P$ and $Q \ne 0$ ($U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$), $S(U)$ is
@@ -81,22 +74,6 @@ Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Averag
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
 def lucasAverageSet (params : LucasSequenceParams) : Set ℕ :=
   {n | n ∈ lucasPeriodSet params ∧ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i}
-
-/-- **Integral averages of all recurrences.** For integers $P$ and $Q \ne 0$ and a natural number
-$n$, the property that $n$ has integral averages means that every integer sequence
-$(w_k)_{k \ge 0}$ with $w_{k+2} = P w_{k+1} - Q w_k$ for all $k$ satisfies
-$n \mid w_1 + \dots + w_n$; for $n > 0$ this says that the average
-$A_W(n) = (w_1 + \dots + w_n)/n$ is an integer.
-
-In the paper's notation $a = P$ and $b = -Q$, so the recurrence reads
-$w_{k+2} = a w_{k+1} + b w_k$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 2 (definition of
-`B_W(n)` and `A_W(n)`). -/
-def lucasAllAveragesIntegral (params : LucasSequenceParams) (n : ℕ) : Prop :=
-  ∀ w : ℕ → ℤ, (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
-    (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, w i
 
 /-- **Period of a Lucas sequence modulo 1.** For every Lucas sequence $U = U(P, Q)$, the least
 period $\pi_U(1)$ of $U$ modulo $1$ equals $1$.
@@ -220,24 +197,6 @@ public theorem_wanted lucasU_two_mul_and_lucasU_dvd (params : LucasSequenceParam
       -params.q * lucasU params n ^ 2 + lucasU params (n + 1) ^ 2) ∧
     (∀ m n, m ∣ n → lucasU params m ∣ lucasU params n)
 
-/-- **Periods of second-order recurrences modulo $m$.** Let $U$ be the Lucas sequence with
-integer parameters $P$ and $Q \neq 0$, let $m$ be a positive integer with $\gcd(m, Q) = 1$, and
-write $\pi(m)$ and $\rho(m)$ for the period and the restricted period of $U$ modulo $m$. Then
-$\pi(m) > 0$ and $\rho(m) > 0$, and every integer sequence $w$ with
-$w_{k+2} = P w_{k+1} - Q w_k$ for all $k$ satisfies $w_{n + \pi(m)} \equiv w_n \pmod m$ and
-$w_{n + \rho(m)} \equiv U_{\rho(m) + 1} w_n \pmod m$ for every natural number $n$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.1
-(`integers-2024-A36-thm-1-1`). -/
-public theorem_wanted lucasUPeriod_isPeriod_of_secondOrder (params : LucasSequenceParams)
-    (m : ℕ) (hm : 0 < m) (hmb : IsCoprime (m : ℤ) params.q) (w : ℕ → ℤ)
-    (hw : ∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) :
-    0 < lucasUPeriod params m ∧ 0 < lucasURestrictedPeriod params m ∧
-    (∀ n, w (n + lucasUPeriod params m) ≡ w n [ZMOD m]) ∧
-    (∀ n, w (n + lucasURestrictedPeriod params m) ≡
-      lucasU params (lucasURestrictedPeriod params m + 1) * w n [ZMOD m])
-
 /-- **Periods of Lucas sequences modulo a least common multiple.** Let $U$ be the Lucas sequence
 with integer parameters $P$ and $Q \neq 0$, and write $\pi(m)$ and $\rho(m)$ for its period and
 restricted period modulo $m$. Let $m$ and $n$ be positive integers with $\gcd(mn, Q) = 1$. Then
@@ -262,47 +221,6 @@ public theorem_wanted lucasUPeriod_lcm (params : LucasSequenceParams) (m n : ℕ
       (lucasURestrictedPeriod params)^[i] (Nat.lcm m n) =
           Nat.lcm ((lucasURestrictedPeriod params)^[i] m)
             ((lucasURestrictedPeriod params)^[i] n)
-
-/-- **Sums of eight degenerate second-order recurrences.** For an integer sequence
-$(w_j)_{j \ge 0}$ write $B_w(n) = w_1 + \dots + w_n$. Let $u$ be the sequence with $u_0 = 0$,
-$u_1 = 1$ and $u_{j+2} = u_j$, and $v$ the sequence with $v_0 = 0$, $v_1 = 1$ and
-$v_{j+2} = -2 v_{j+1} - v_j$. For every $n \ge 1$: $B_u(n) = \lfloor (n + 1) / 2 \rfloor$ and
-$B_v(n) = (-1)^{n+1} \lfloor (n + 1) / 2 \rfloor$; $n$ divides $B_w(n)$ for every integer
-sequence $w$ with $w_{j+2} = w_j$ if and only if $n = 1$; $n$ divides $B_w(n)$ for every integer
-sequence $w$ with $w_{j+2} = 2 w_{j+1} - w_j$ if and only if $n$ is odd; and $n$ divides
-$B_w(n)$ for every integer sequence $w$ with $w_{j+2} = -2 w_{j+1} - w_j$ if and only if
-$n = 1$. For every integer sequence $w$ and every $n \in \mathbb{N}$: if $w_{j+2} = -w_j$ for all
-$j$, then $B_w(4n) = 0$; if $w_{j+2} = w_{j+1} - w_j$ for all $j$, then $B_w(6n) = 0$; if
-$w_{j+2} = -w_{j+1} - w_j$ for all $j$, then $B_w(3n) = 0$; if $w_{j+2} = w_{j+1}$ for all $j$,
-then $B_w(n) = n w_1$; if $w_{j+2} = -w_{j+1}$ for all $j$, then $B_w(2n) = 0$; and if
-$w_{j+2} = 2 w_{j+1} - w_j$ for all $j$, then $2 B_w(n) = (w_1 - w_0) n (n + 1) + 2 w_0 n$ and,
-when $n \ge 1$, $B_w(2n - 1) = (2n - 1)(n (w_1 - w_0) + w_0)$.
-
-In the paper's notation $W_{j+2} = a W_{j+1} + b W_j$ these are the pairs $(a, b) = (0, 1)$,
-$(0, -1)$, $(1, -1)$, $(-1, -1)$, $(2, -1)$, $(-2, -1)$, $(1, 0)$ and $(-1, 0)$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.1
-(`integers-2024-A36-thm-2-1`). -/
-public theorem_wanted degenerate_secondOrder_sums :
-    (∀ n, 1 ≤ n → ∑ i ∈ Finset.Icc 1 n, lucasU ⟨0, -1, by decide⟩ i = ((n + 1) / 2 : ℕ)) ∧
-    (∀ n, 1 ≤ n → (lucasAllAveragesIntegral ⟨0, -1, by decide⟩ n ↔ n = 1)) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w k) → ∀ n, ∑ i ∈ Finset.Icc 1 (4 * n), w i = 0) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = w (k + 1) - w k) →
-      ∀ n, ∑ i ∈ Finset.Icc 1 (6 * n), w i = 0) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w (k + 1) - w k) →
-      ∀ n, ∑ i ∈ Finset.Icc 1 (3 * n), w i = 0) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = 2 * w (k + 1) - w k) →
-      ∀ n : ℕ, 2 * ∑ i ∈ Finset.Icc 1 n, w i = (w 1 - w 0) * n * (n + 1) + 2 * w 0 * n) ∧
-    (∀ n, 1 ≤ n → (lucasAllAveragesIntegral ⟨2, 1, by decide⟩ n ↔ Odd n)) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = 2 * w (k + 1) - w k) →
-      ∀ n : ℕ, 1 ≤ n → ∑ i ∈ Finset.Icc 1 (2 * n - 1), w i =
-        ((2 * n - 1 : ℕ) : ℤ) * (n * (w 1 - w 0) + w 0)) ∧
-    (∀ n, 1 ≤ n → ∑ i ∈ Finset.Icc 1 n, lucasU ⟨-2, 1, by decide⟩ i =
-      (-1) ^ (n + 1) * ((n + 1) / 2 : ℕ)) ∧
-    (∀ n, 1 ≤ n → (lucasAllAveragesIntegral ⟨-2, 1, by decide⟩ n ↔ n = 1)) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = w (k + 1)) → ∀ n : ℕ, ∑ i ∈ Finset.Icc 1 n, w i = n * w 1) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w (k + 1)) → ∀ n, ∑ i ∈ Finset.Icc 1 (2 * n), w i = 0)
 
 /-- **Sum formula for second-order recurrences.** Let $P, Q$ be integers with $Q \ne 0$ and
 $P^2 - 4Q \ne 0$, let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and let
@@ -445,17 +363,6 @@ public theorem_wanted lcm_mem_lucasAverageSet (params : LucasSequenceParams) (m 
     lucasAllAveragesIntegral params (Nat.lcm m n) ∧
     ∀ w : ℕ → ℤ, (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
       (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 r, w i
-
-/-- **Divisibility of Lucas sums when $P = 1$.** Let $U$ be the Lucas sequence $U_0 = 0$,
-$U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $P = 1$ and $Q \ne 0$. For every positive integer
-$n$ coprime to $Q$, $n \mid U_1 + \cdots + U_n$ if and only if $U_{n+2} \equiv 1 \pmod n$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.6
-(`integers-2024-A36-thm-2-6`). -/
-public theorem_wanted lucasU_sum_dvd_iff_of_p_eq_one (params : LucasSequenceParams)
-    (hp : params.p = 1) (n : ℕ) (hn : 0 < n) (hnb : IsCoprime (n : ℤ) params.q) :
-    (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i ↔ lucasU params (n + 2) ≡ 1 [ZMOD n]
 
 /-- **Integral averages extend to least common multiples.** Let $U$ be the Lucas sequence with
 parameters $P$ and $Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$, and

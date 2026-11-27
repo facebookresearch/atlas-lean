@@ -1,0 +1,3 @@
+# The fuelled IMP evaluator reruns a while loop after a successful body
+
+Let $\operatorname{exec}(k, c, s)$ be the fuelled IMP evaluator, which returns either $\mathrm{some}(t)$, success with a final state $t$, or failure $\bot$; at fuel $k + 1$ every recursive call, including both parts of a sequence and the body and the repeated loop of a while, receives fuel $k$. For every fuel $k$, Boolean expression $b$, command $c$ and states $s, m$ such that $b$ is true at $s$ and $\operatorname{exec}(k, c, s) = \mathrm{some}(m)$, $\operatorname{exec}(k + 1, \mathtt{while}\ b\ \mathtt{do}\ c, s) = \operatorname{exec}(k, \mathtt{while}\ b\ \mathtt{do}\ c, m)$.

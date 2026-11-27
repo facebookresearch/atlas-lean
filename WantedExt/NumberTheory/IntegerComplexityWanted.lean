@@ -45,6 +45,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.IntegerComplexityLogBound
 public import MathlibExt.NumberTheory.IntegerComplexityRecurrence
+public import MathlibExt.NumberTheory.IntegerComplexitySubadditive
 public import MathlibExt.NumberTheory.IntegerComplexityTwoPowMulThreePow
 
 set_option autoImplicit false
@@ -52,21 +53,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.IntegerComplexityWanted
-
-/-- **A criterion for lower bounds on integer complexity.** Write $\lVert n \rVert$ for the
-integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using
-$1$, $+$, $\times$ and parentheses. Let $P$ be a real-valued function on the natural numbers with
-$P(1) = 1$ such that $P(n + m) \le P(n) + P(m)$ and $P(nm) \le P(n) + P(m)$ for all positive
-integers $n$ and $m$. Then $P(n) \le \lVert n \rVert$ for every positive integer $n$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Proposition 2. -/
-theorem_wanted le_complexity_of_subadditive (P : ℕ → ℝ)
-    (h1 : P 1 = 1)
-    (hadd : ∀ n m : ℕ, 1 ≤ n → 1 ≤ m → P (n + m) ≤ P n + P m)
-    (hmul : ∀ n m : ℕ, 1 ≤ n → 1 ≤ m → P (n * m) ≤ P n + P m)
-    (n : ℕ) (hn : 1 ≤ n) :
-    P n ≤ (cx n : ℝ)
 
 /-- **Proposition 3**: `‖n‖ ≤ L(n)` for every positive `n`,
 where `L` is the function of Definition 1, given by its

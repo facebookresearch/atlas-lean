@@ -1,0 +1,3 @@
+# Ladder-height limit from the Cramér root
+
+Let $X_0, X_1, \dots$ be i.i.d. integer-valued random variables on a probability space that are not almost surely $0$, with score walk $S$, maximum $M = \sup_n S_n$ and defective ladder-height law $g$. Suppose $\theta > 0$ solves $\mathbb{E}[e^{\theta X_0}] = 1$, the support $\{k : g_k > 0\}$ of the ladder-height law has greatest common divisor $1$, and the tilted ladder mean $\mu = \sum_k k\, g_k e^{\theta k}$ is finite. Then $e^{\theta k}\, \mathbb{P}(M > k) \to (1 - \mathbb{P}(M > 0)) / ((e^\theta - 1)\, \mu)$ as $k \to \infty$ (Cramér–Lundberg, Karlin–Dembo).
