@@ -4,4 +4,3 @@
 - [Well-formed instances of TRANSITIVE SUBGRAPH](well-formed.md)
 - [Feasible instances of TRANSITIVE SUBGRAPH](transitive-subgraph-feasible.md)
 - [The TRANSITIVE SUBGRAPH decision problem](transitive-subgraph-dec.md)
-- [TRANSITIVE SUBGRAPH is NP-complete](transitive-subgraph-np-complete.md)

@@ -4,4 +4,3 @@
 - [Well-formed instances of SHAPLEY-SHUBIK VOTING POWER](well-formed.md)
 - [Feasible instances of SHAPLEY-SHUBIK VOTING POWER](shapley-shubik-voting-power-feasible.md)
 - [The SHAPLEY-SHUBIK VOTING POWER decision problem](shapley-shubik-voting-power-dec.md)
-- [SHAPLEY-SHUBIK VOTING POWER is NP-complete](shapley-shubik-voting-power-np-complete.md)

@@ -14,7 +14,6 @@
 - [Scheme contains no loop in STRONG INEQUIVALENCE OF IANOV SCHEMES (loop-free, trivial `P₂`)](loop-free.md)
 - [Well-formed instances of STRONG INEQUIVALENCE OF IANOV SCHEMES (loop-free, trivial `P₂`)](well-formed-2.md)
 - [The STRONG INEQUIVALENCE OF IANOV SCHEMES (loop-free, trivial $P_2$) decision problem](strong-inequivalence-of-ianov-schemes-lo.md)
-- [STRONG INEQUIVALENCE OF IANOV SCHEMES (loop-free, trivial $P_2$) is NP-complete](strong-inequivalence-of-ianov-schemes-lo-2.md)
 - [Ianov schemes](ianov-scheme.md)
 - [Instances of STRONG INEQUIVALENCE OF IANOV SCHEMES](strong-inequivalence-of-ianov-schemes-in.md)
 - [Scheme over `nF` function symbols and `nP` predicate symbols in STRONG INEQUIVALENCE OF IANOV SCHEMES](is-scheme-2.md)

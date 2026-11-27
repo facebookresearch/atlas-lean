@@ -10,4 +10,3 @@
 - [Some command leaks `r'` from `P` in SAFETY OF MONO-OPERATIONAL FILE PROTECTION SYSTEMS](leaks.md)
 - [Feasible instances of SAFETY OF MONO-OPERATIONAL FILE PROTECTION SYSTEMS](safety-of-mono-operational-protection-sy-2.md)
 - [The SAFETY OF MONO-OPERATIONAL FILE PROTECTION SYSTEMS decision problem](safety-of-mono-operational-protection-sy-3.md)
-- [SAFETY OF MONO-OPERATIONAL FILE PROTECTION SYSTEMS is NP-complete](safety-of-mono-operational-protection-sy-4.md)

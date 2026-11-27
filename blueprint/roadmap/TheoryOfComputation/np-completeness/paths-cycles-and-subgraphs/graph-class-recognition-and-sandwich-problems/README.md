@@ -70,7 +70,6 @@
 - [Track interval graphs in d-TRACK INTERVAL GRAPH RECOGNITION](is-track-interval-graph.md)
 - [Feasible instances of d-TRACK INTERVAL GRAPH RECOGNITION](track-interval-graph-recognition-feasibl.md)
 - [The d-TRACK INTERVAL GRAPH RECOGNITION decision problem](track-interval-graph-recognition-dec.md)
-- [d-TRACK INTERVAL GRAPH RECOGNITION is NP-complete for every fixed d ≥ 2](track-interval-graph-recognition-np-comp.md)
 - [Instances of RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS)](triangle-graph-recognition-instance.md)
 - [Triangle graphs in RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS)](is-triangle-graph.md)
 - [Feasible instances of RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS)](triangle-graph-recognition-feasible.md)

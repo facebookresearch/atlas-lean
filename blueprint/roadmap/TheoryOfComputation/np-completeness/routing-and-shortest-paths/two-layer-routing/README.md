@@ -9,7 +9,6 @@
 - [Grid segments inside the channel in TWO-LAYER CHANNEL ROUTING](in-channel.md)
 - [Feasible instances of TWO-LAYER CHANNEL ROUTING](two-layer-channel-routing-feasible.md)
 - [The TWO-LAYER CHANNEL ROUTING decision problem](two-layer-channel-routing-dec.md)
-- [TWO-LAYER CHANNEL ROUTING is NP-complete](two-layer-channel-routing-np-complete.md)
 - [Instances of TWO-LAYER MULTIPLE MODULE ROUTING](two-layer-multiple-module-routing-instan.md)
 - [Axis-parallel rectangle as its corner coordinates `(x₁, y₁, x₂, y₂)` in TWO-LAYER MULTIPLE MODULE ROUTING](rect.md)
 - [Rectangle of an encoded module in TWO-LAYER MULTIPLE MODULE ROUTING](module-rect.md)
@@ -21,4 +20,3 @@
 - [Well-formed instances of TWO-LAYER MULTIPLE MODULE ROUTING](well-formed-2.md)
 - [Feasible instances of TWO-LAYER MULTIPLE MODULE ROUTING](two-layer-multiple-module-routing-feasib.md)
 - [The TWO-LAYER MULTIPLE MODULE ROUTING decision problem](two-layer-multiple-module-routing-dec.md)
-- [TWO-LAYER MULTIPLE MODULE ROUTING is NP-complete](two-layer-multiple-module-routing-np-com.md)

@@ -9,4 +9,3 @@
 - [Well-formed instances of CLIQUE in segment intersection graphs (SEG)](well-formed.md)
 - [Feasible instances of CLIQUE in segment intersection graphs (SEG)](segment-intersection-clique-feasible.md)
 - [The CLIQUE in segment intersection graphs (SEG) decision problem](segment-intersection-clique-dec.md)
-- [CLIQUE in segment intersection graphs (SEG) is NP-complete](segment-intersection-clique-np-complete.md)

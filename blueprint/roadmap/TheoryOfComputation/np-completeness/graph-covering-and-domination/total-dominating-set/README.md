@@ -8,7 +8,5 @@
 - [TOTAL DOMINATING SET is NP-complete](total-dominating-set-np-complete.md)
 - [Well-formed instances of TOTAL DOMINATING SET on bipartite graphs](well-formed-2.md)
 - [The TOTAL DOMINATING SET on bipartite graphs decision problem](total-dominating-set-bipartite-dec.md)
-- [TOTAL DOMINATING SET on bipartite graphs is NP-complete](total-dominating-set-bipartite-np-comple.md)
 - [Well-formed instances of TOTAL DOMINATING SET for undirected path graphs](well-formed-2-2.md)
 - [The TOTAL DOMINATING SET for undirected path graphs decision problem](total-dominating-set-undirected-path-gra.md)
-- [TOTAL DOMINATING SET for undirected path graphs is NP-complete](total-dominating-set-undirected-path-gra-2.md)

@@ -6,4 +6,3 @@
 - [Well-formed instances of SPARSE APPROXIMATION](well-formed.md)
 - [Feasible instances of SPARSE APPROXIMATION](sparse-approximation-feasible.md)
 - [The SPARSE APPROXIMATION decision problem](sparse-approximation-dec.md)
-- [SPARSE APPROXIMATION is NP-complete](sparse-approximation-np-complete.md)

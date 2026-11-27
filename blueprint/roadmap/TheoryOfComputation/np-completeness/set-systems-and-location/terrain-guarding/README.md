@@ -9,4 +9,3 @@
 - [Well-formed instances of TERRAIN GUARDING](well-formed.md)
 - [Feasible instances of TERRAIN GUARDING](terrain-guarding-feasible.md)
 - [The TERRAIN GUARDING decision problem](terrain-guarding-dec.md)
-- [TERRAIN GUARDING is NP-complete](terrain-guarding-np-complete.md)

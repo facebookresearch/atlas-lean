@@ -9,4 +9,3 @@ Problem 13 of Karp's 1972 list: decide whether the vertices of a graph are cover
 - [The CLIQUE COVER decision problem](clique-cover-dec.md)
 - [CLIQUE COVER is NP-complete](clique-cover-np-complete.md)
 - [The PARTITION INTO CLIQUES for graphs of thickness at most k decision problem](thickness-partition-into-cliques-dec.md)
-- [PARTITION INTO CLIQUES for graphs of thickness at most k is NP-complete for every fixed k ≥ 1](thickness-partition-into-cliques-np-comp.md)

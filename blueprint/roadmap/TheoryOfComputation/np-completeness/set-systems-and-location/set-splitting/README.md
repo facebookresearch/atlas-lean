@@ -8,4 +8,3 @@
 - [Members of `C` as a family of subsets of `Fin n` in SET SPLITTING for partial Steiner triple systems](triple-family.md)
 - [Well-formed instances of SET SPLITTING for partial Steiner triple systems](well-formed-2.md)
 - [The SET SPLITTING for partial Steiner triple systems decision problem](set-splitting-partial-steiner-triple-sys.md)
-- [SET SPLITTING for partial Steiner triple systems is NP-complete](set-splitting-partial-steiner-triple-sys-2.md)

@@ -6,4 +6,3 @@
 - [Well-formed instances of SANTA CLAUS (MAX-MIN FAIR ALLOCATION)](well-formed.md)
 - [Feasible instances of SANTA CLAUS (MAX-MIN FAIR ALLOCATION)](santa-claus-feasible.md)
 - [The SANTA CLAUS (MAX-MIN FAIR ALLOCATION) decision problem](santa-claus-dec.md)
-- [SANTA CLAUS (MAX-MIN FAIR ALLOCATION) is NP-complete](santa-claus-np-complete.md)

@@ -25,4 +25,3 @@
 - [Single-winner STV winner in SINGLE TRANSFERABLE VOTE MANIPULATION](winner.md)
 - [Feasible instances of SINGLE TRANSFERABLE VOTE MANIPULATION](single-transferable-vote-manipulation-fe.md)
 - [The SINGLE TRANSFERABLE VOTE MANIPULATION decision problem](single-transferable-vote-manipulation-de.md)
-- [SINGLE TRANSFERABLE VOTE MANIPULATION is NP-complete](single-transferable-vote-manipulation-np.md)

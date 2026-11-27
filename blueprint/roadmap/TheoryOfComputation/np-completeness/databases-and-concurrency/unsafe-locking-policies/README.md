@@ -12,7 +12,6 @@
 - [Schedule of reads and writes of `σ` in UNSAFE LOCKING POLICY for two distributed transactions](read-write-schedule.md)
 - [Feasible instances of UNSAFE LOCKING POLICY for two distributed transactions](unsafe-locking-policy-two-distributed-fe.md)
 - [The UNSAFE LOCKING POLICY for two distributed transactions decision problem](unsafe-locking-policy-two-distributed-de.md)
-- [UNSAFE LOCKING POLICY for two distributed transactions is NP-complete](unsafe-locking-policy-two-distributed-np.md)
 - [Step `(c, x)` in UNSAFE LOCKING POLICY](step.md)
 - [Instances of UNSAFE LOCKING POLICY](unsafe-locking-policy-instance.md)
 - [Transaction is well-formed in UNSAFE LOCKING POLICY](txn-well-formed.md)
@@ -24,4 +23,3 @@
 - [Read-write schedule of `n` transactions is serializable in UNSAFE LOCKING POLICY](is-serializable.md)
 - [Feasible instances of UNSAFE LOCKING POLICY](unsafe-locking-policy-feasible.md)
 - [The UNSAFE LOCKING POLICY decision problem](unsafe-locking-policy-dec.md)
-- [UNSAFE LOCKING POLICY is NP-complete](unsafe-locking-policy-np-complete.md)

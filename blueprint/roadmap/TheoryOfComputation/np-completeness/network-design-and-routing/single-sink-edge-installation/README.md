@@ -6,4 +6,3 @@
 - [SINGLE-SINK EDGE INSTALLATION: Vertex list `p` uses the edge `{u, v}`](uses-edge.md)
 - [Feasible instances of SINGLE-SINK EDGE INSTALLATION](single-sink-edge-installation-feasible.md)
 - [The SINGLE-SINK EDGE INSTALLATION decision problem](single-sink-edge-installation-dec.md)
-- [SINGLE-SINK EDGE INSTALLATION is NP-complete](single-sink-edge-installation-np-complet.md)

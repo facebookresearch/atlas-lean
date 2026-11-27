@@ -77,4 +77,3 @@
 - [Well-formed instances of DOMINATING SET IN UNIT DISK GRAPHS](well-formed-23.md)
 - [Feasible instances of DOMINATING SET IN UNIT DISK GRAPHS](unit-disk-dominating-set-feasible.md)
 - [The DOMINATING SET IN UNIT DISK GRAPHS decision problem](unit-disk-dominating-set-dec.md)
-- [DOMINATING SET IN UNIT DISK GRAPHS is NP-complete](unit-disk-dominating-set-np-complete.md)

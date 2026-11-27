@@ -8,7 +8,5 @@
 - [Pairwise consistency of the triples in 3-DIMENSIONAL MATCHING for pairwise consistent triples](pairwise-consistent.md)
 - [Well-formed instances of 3-DIMENSIONAL MATCHING for pairwise consistent triples](well-formed-2.md)
 - [The 3-DIMENSIONAL MATCHING for pairwise consistent triples decision problem](three-dimensional-matching-pairwise-cons.md)
-- [3-DIMENSIONAL MATCHING for pairwise consistent triples is NP-complete](three-dimensional-matching-pairwise-cons-2.md)
 - [Well-formed instances of 3-DIMENSIONAL MATCHING with at most three occurrences per element](well-formed-2-2.md)
 - [The 3-DIMENSIONAL MATCHING with at most three occurrences per element decision problem](three-dimensional-matching-three-occurre-3.md)
-- [3-DIMENSIONAL MATCHING with at most three occurrences per element is NP-complete](three-dimensional-matching-three-occurre-4.md)
