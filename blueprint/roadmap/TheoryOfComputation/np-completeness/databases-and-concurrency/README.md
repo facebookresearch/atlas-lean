@@ -10,5 +10,6 @@ Relational database design and querying (keys, prime attributes, normal forms, c
 - [Unsafe locking policies](unsafe-locking-policies/README.md)
 - [Deadlock exposure in packet switching networks](deadlock-exposure-in-packet-switching-networks/README.md)
 - [Deadlock potential](deadlock-potential/README.md)
-
 - [Containment of unions of conjunctive queries](containment-of-unions-of-conjunctive-queries/README.md)
+- [k-anonymity](k-anonymity/README.md)
+- [Minimum cardinality key](minimum-cardinality-key/README.md)
