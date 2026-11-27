@@ -8,6 +8,9 @@ Lower bounds on the minimax risk $\inf_{\hat\theta} \sup_\theta \mathbb{E}_\thet
 - [Le Cam's two-point bound with Pinsker's inequality](mul-one-sub-sqrt-kl-div-le-minimax.md)
 - [Le Cam's two-point lower bound](mul-one-sub-total-variation-dist-le-mini.md)
 - [Le Cam's two-point lower bound for one deterministic estimator](mul-one-sub-total-variation-dist-le-two.md)
+- [Fano's inequality](fano-finite.md)
+- [Le Cam's two-point bound](lecam-two-point.md)
+- [Le Cam's bound in KL form](lecam-kl.md)
 - [Fano and Two-Point Minimax Rates](fano-and-two-point-minimax-rates/README.md)
 - [Robust Hypothesis Selection](robust-hypothesis-selection/README.md)
 
