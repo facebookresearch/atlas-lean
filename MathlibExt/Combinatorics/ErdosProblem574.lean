@@ -32,12 +32,23 @@ import Mathlib.Tactic
 Erdős Problem 574 asked whether, for every $k \ge 2$, the ratio
 $\mathrm{ex}(n; \{C_{2k-1}, C_{2k}\}) / (n/2)^{1 + 1/k}$ tends to $1$ as
 $n \to \infty$. It does not: the one-sided blow-up of the Wenger graph
-$W_2(q)$ over a finite field is $\{C_5, C_6\}$-free and has
-$2q^4$ edges on $3q^3$ vertices, so at $k = 3$ the ratio is at least
-$8/7$ infinitely often. The main result is `conjecture_refuted`. The graph
-is Wenger's (R. Wenger, *Extremal graphs with no $C_4$'s, $C_6$'s, or
-$C_{10}$'s*, J. Combin. Theory Ser. B 52 (1991), 113–116); the blow-up,
-its freeness and its edge count are proved here directly.
+$W_2(q)$ over a field with $q$ elements, which replaces each line by two
+copies with the same neighbours, is $\{C_5, C_6\}$-free and has
+$2q^4 = 2(n/3)^{4/3}$ edges on $n = 3q^3$ vertices, against the predicted
+$(n/2)^{4/3}$, so at $k = 3$ the ratio is at least $8/7$ infinitely often.
+The main result is `conjecture_refuted`.
+
+The graph is Wenger's (R. Wenger, *Extremal graphs with no $C_4$'s, $C_6$'s,
+or $C_{10}$'s*, J. Combin. Theory Ser. B 52 (1991), 113–116). Replacing each
+vertex on one side of a bipartite graph of girth greater than $2k$ by $k - 1$
+copies with the same neighbourhood keeps it $C_{2k}$-free: this is
+Construction 4.28 of Z. Füredi and M. Simonovits, *The history of degenerate
+(bipartite) extremal graph problems*, arXiv:1306.5167, who attribute it to
+F. Lazebnik, V. A. Ustimenko and A. J. Woldar (Discrete Math. 1999). The
+blow-up here is its case $k = 3$. Füredi and Simonovits apply the same case
+to Benson's girth-8 graph for the lower bound of their Theorem 4.31, due to
+Z. Füredi, A. Naor and J. Verstraëte (Adv. Math. 2006). The freeness and the
+edge count of the blow-up are proved here directly.
 -/
 
 @[expose] public section
@@ -298,7 +309,11 @@ private theorem sumCases {A B : Type*} (x : A ⊕ B) :
   | inl a => exact Or.inl ⟨a, rfl⟩
   | inr b => exact Or.inr ⟨b, rfl⟩
 
-/-- **The blow-up of the Wenger graph has no 6-cycle.** -/
+/-- **The blow-up of the Wenger graph has no 6-cycle.** For every field $K$, the blow-up of the
+Wenger graph over $K$ contains no copy of the cycle graph $C_6$. Such a copy alternates between
+three points and three line copies. Since each line has only two copies, the three underlying
+lines are either distinct, giving a 6-cycle in the Wenger graph, or exactly two of them
+coincide, giving a 4-cycle; the Wenger graph has neither. -/
 theorem blowGraph_free_six : (SimpleGraph.cycleGraph 6).Free (blowGraph (K := K)) := by
   rintro ⟨f⟩
   have hadj : ∀ i j : Fin 6, (SimpleGraph.cycleGraph 6).Adj i j →
@@ -385,7 +400,9 @@ theorem blowGraph_free_six : (SimpleGraph.cycleGraph 6).Free (blowGraph (K := K)
       exact (by decide : (0 : Fin 6) ≠ 2) (f.injective hEq)
     exact blowNoSixData hp01 hp12 hp20 hb01 hb12 hb20 h00 h10 h11 h21 h22 h02
 
-/-- **The blow-up of the Wenger graph has no 5-cycle:** it is bipartite. -/
+/-- **The blow-up of the Wenger graph has no 5-cycle.** For every field $K$, the blow-up of the
+Wenger graph over $K$ contains no copy of the cycle graph $C_5$, since it is bipartite: every
+edge joins a point to a copy of a line. -/
 theorem blowGraph_free_five : (SimpleGraph.cycleGraph 5).Free (blowGraph (K := K)) := by
   rintro ⟨f⟩
   have hadj : ∀ i j : Fin 5, (SimpleGraph.cycleGraph 5).Adj i j →
@@ -583,14 +600,15 @@ private theorem le_extremalNumber_of_card {V : Type*} [Fintype V] (G : SimpleGra
     exact hle
   · exact ⟨G', hfree', rfl⟩
 
-/-- **Lower bound for the extremal number at $k = 3$.** For every $m$, the
-blow-up of the Wenger graph over the field with $2^{m+1}$ elements has
-$2 \cdot (2^{m+1})^4$ edges on $3 \cdot (2^{m+1})^3$ vertices and is
-$\{C_5, C_6\}$-free. -/
+/-- **Lower bound for the extremal number at $k = 3$.** For every natural number $m$,
+$\mathrm{ex}(3 \cdot (2^{m+1})^3; \{C_5, C_6\}) \ge 2 \cdot (2^{m+1})^4$, where
+$\mathrm{ex}(n; \{C_5, C_6\})$ is the supremum of the numbers of edges of simple graphs on $n$
+vertices that contain no copy of the cycle graph $C_5$ and no copy of the cycle graph $C_6$.
+The witness is the blow-up of the Wenger graph over the field with $2^{m+1}$ elements, which
+has $2 \cdot (2^{m+1})^4$ edges on $3 \cdot (2^{m+1})^3$ vertices and is $\{C_5, C_6\}$-free. -/
 theorem extremalNumber_three_lower (m : ℕ) :
     2 * (2 ^ (m + 1)) ^ 4 ≤ extremalNumber 3 (3 * (2 ^ (m + 1)) ^ 3) := by
   classical
-  have : Fact (Nat.Prime 2) := ⟨by norm_num⟩
   let K := GaloisField 2 (m + 1)
   let : Fintype K := Fintype.ofFinite K
   let : DecidableEq K := Classical.decEq K
@@ -668,6 +686,17 @@ ratio $\mathrm{ex}(n; \{C_{2k-1}, C_{2k}\}) / (n/2)^{1 + 1/k}$ tends to $1$ as $
 Here $\mathrm{ex}(n; \{C_{2k-1}, C_{2k}\})$ is the extremal number: the supremum of the numbers
 of edges of simple graphs on $n$ vertices that contain no copy of the cycle graph $C_{2k-1}$ and
 no copy of the cycle graph $C_{2k}$.
+
+The case $k = 3$ already fails. Replacing each vertex on one side of a bipartite graph of girth
+greater than $2k$ by $k - 1$ copies with the same neighbourhood keeps it bipartite and
+$C_{2k}$-free (Füredi–Simonovits, Construction 4.28, which they attribute to Lazebnik,
+Ustimenko and Woldar). For $k = 3$, the Wenger graph over a field with $q$ elements is
+bipartite with no 4-cycle and no 6-cycle, and doubling its lines gives a $\{C_5, C_6\}$-free
+graph with $2q^4 = 2(n/3)^{4/3}$ edges on $n = 3q^3$ vertices, against the predicted
+$(n/2)^{4/3}$: at these $n$ the ratio is at least $2 (2/3)^{4/3} > 8/7$, and the fields with
+$2^{m+1}$ elements give infinitely many of them. Applied to Benson's girth-8 graph instead, the
+same construction gives the lower bound of Füredi–Simonovits, Theorem 4.31, due to Füredi,
+Naor and Verstraëte (Adv. Math. 2006).
 
 Lazebnik, Ustimenko and Woldar (Discrete Math. 1999), per Füredi–Simonovits
 (arXiv:1306.5167, Construction 4.28), blow up one side of Benson's girth-12 bipartite graph to

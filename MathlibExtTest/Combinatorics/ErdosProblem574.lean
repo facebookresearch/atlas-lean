@@ -18,9 +18,6 @@ import MathlibExt.Combinatorics.ErdosProblem574
 
 namespace MathlibExt.Combinatorics.ErdosProblem574Wanted
 
-/-- The prime `2`, as a typeclass fact for the test field `ZMod 2`. -/
-instance factPrimeTwo : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-
 /-- Erdős Problem 574 is false. -/
 example : ¬ conjecture := conjecture_refuted
 
@@ -42,7 +39,7 @@ example : (SimpleGraph.cycleGraph 5).Free (Wenger.blowGraph (K := ZMod 2)) :=
 example : (SimpleGraph.cycleGraph 6).Free (Wenger.blowGraph (K := ZMod 2)) :=
   Wenger.blowGraph_free_six
 
-/-- Two adjacent pairs in the Wenger graph over `ZMod 2`. -/
+/-- An adjacent pair in the Wenger graph over `ZMod 2`. -/
 example : Wenger.adj ((0, 0, 0) : ZMod 2 × ZMod 2 × ZMod 2) (0, 0, 0) := ⟨by decide, by decide⟩
 
 /-- A nonadjacent pair in the Wenger graph over `ZMod 2`. -/
