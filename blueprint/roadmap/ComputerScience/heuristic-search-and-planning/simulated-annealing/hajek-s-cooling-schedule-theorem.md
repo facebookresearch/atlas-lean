@@ -25,6 +25,7 @@ page for the pending prerequisite below and links it under the dependency sectio
 ## Related topics
 
 - [Fixed-temperature Gibbs law and zero-temperature concentration](fixed-temperature-gibbs-law-and-zero-temperature.md)
+- [Hajek's theorem for the logarithmic cooling schedule](hajek-iff.md): the logarithmic case, $T_{k+1} = c/\log(k+2)$, as a separate statement.
 
 ## Sources
 

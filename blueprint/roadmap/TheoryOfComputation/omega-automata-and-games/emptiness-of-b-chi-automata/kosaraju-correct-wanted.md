@@ -7,17 +7,17 @@ The following holds for every such graph $G$, with $V$ the number of vertices, $
 1. The Kosaraju blocks form the strongly connected component partition of $G$: every block is nonempty and duplicate-free, distinct blocks are disjoint, the blocks cover exactly the vertices of $G$, two vertices share a block exactly when each is reachable from the other, and for every vertex $m$ of a block $B$, a vertex $v$ is strongly connected to $m$ exactly when $v \in B$.
 2. The first search, run as the step-by-step depth-first-search machine from its initial state with roots $v_1, \dots, v_{|V|}$, halts with an empty work stack and outputs the whole-graph search after exactly
 
-$$n_1 = 2V + E$$
+    $$n_1 = 2V + E$$
 
-steps.
+    steps.
 3. The second search, run the same way on $G^T$ with roots in decreasing finishing order, halts with an empty work stack and outputs that search after exactly
 
-$$n_2 = R + P + \sum_{v \in \mathrm{pre}} \lvert \mathrm{adj}_{G^T}(v) \rvert$$
+    $$n_2 = R + P + \sum_{v \in \mathrm{pre}} \lvert \mathrm{adj}_{G^T}(v) \rvert$$
 
-steps, where $R$ is the length of the root list (the decreasing finishing order), $\mathrm{pre}$ is the preorder of the second search and $P$ its length.
+    steps, where $R$ is the length of the root list (the decreasing finishing order), $\mathrm{pre}$ is the preorder of the second search and $P$ its length.
 4. In total,
 
-$$n_1 + n_2 \le 4V + 2(E + E_2).$$
+    $$n_1 + n_2 \le 4V + 2(E + E_2).$$
 
 These are counts of machine transitions only; the cost of evaluating adjacency lists is not counted.
 

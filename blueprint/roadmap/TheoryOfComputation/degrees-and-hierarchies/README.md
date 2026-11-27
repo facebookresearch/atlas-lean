@@ -14,4 +14,3 @@ Turing and many-one reducibility, Turing degrees and the jump, recursive isomorp
 - [An immune set exists](immune-exists.md)
 - [Myhill's isomorphism theorem, hard direction](myhill-back-and-forth.md)
 - [Post's theorem: $\Delta_{n+1}$ sets and the jump](post-jump.md)
-- [A simple set exists](simple-exists.md)

@@ -23,10 +23,5 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 
 - [Reactive synthesis](reactive-synthesis/README.md)
 - [Rank-based Büchi complementation with an explicit state bound](buchi-complement-bounded-wanted.md)
-- [Büchi emptiness via strongly connected components](b-chi-emptiness-via-strongly-connected-component/README.md)
 - [McNaughton's theorem](mc-naughton-wanted.md)
-- [Positional determinacy of finite parity games (Zielonka)](parity-positional-determinacy-wanted.md)
-- [Parity games are in NP ∩ coNP, via progress-measure certificates](parity-games-np-inter-co-np-wanted.md)
-- [Reactive synthesis for deterministic parity specifications (Church's problem)](reactive-synthesis-for-deterministic-parity-spec/README.md)
 - [Safra/Piterman determinization of Büchi automata](safra-piterman-determinization-of-b-chi-automata/README.md)
-- [Zielonka's recursive solver for finite parity games](zielonka-s-recursive-solver-for-finite-parity-ga/README.md)

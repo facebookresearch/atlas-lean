@@ -21,3 +21,8 @@
 - [Lasso detection by finite reachability](has-lasso-iff-lasso-states-nonempty.md)
 - [Büchi emptiness test](is-empty-b.md)
 - [Correctness of the Büchi emptiness test](is-empty-b-iff.md)
+
+## Emptiness via strongly connected components
+
+- [Correctness and step count of Kosaraju's SCC algorithm](kosaraju-correct-wanted.md)
+- [Büchi emptiness via Kosaraju's SCC algorithm](buchi-emptiness-via-kosaraju-wanted.md)

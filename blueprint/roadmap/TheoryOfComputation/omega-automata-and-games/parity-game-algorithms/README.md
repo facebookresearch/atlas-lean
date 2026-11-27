@@ -19,3 +19,12 @@ positional determinacy are in [parity games](../parity-games/README.md).
 - [Quasipolynomial lower bound on separating safety automata](quasipolynomial-lower-bound-on-separating-safety-automata.md)
 - [A quasipolynomial attractor decomposition algorithm](a-quasipolynomial-attractor-decomposition-algorithm.md)
 - [Polynomial-time solvability of parity games](polynomial-time-solvability-of-parity-games.md)
+
+## Zielonka's recursive solver
+
+- [Zielonka's recursive parity game solver](zielonka-solve.md)
+- [Correctness of Zielonka's recursive solver](zielonka-solver-wanted.md)
+
+## Complexity of solving parity games
+
+- [Parity games are in NP ∩ coNP, via progress-measure certificates](parity-games-np-inter-co-np-wanted.md)
