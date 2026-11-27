@@ -25,6 +25,7 @@ public import Mathlib.RingTheory.Coprime.Basic
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageDegenerateSecondOrderSums
+public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageTwoAdicSums
 
 /-!
 # Period lengths modulo `n` and averages of second-order recurrences
@@ -50,27 +51,6 @@ unity) is `IsNondegenerateLucasPair params.p params.q`; `Q ≠ 0` is built into
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Moduli divisible by their Lucas period.** For the Lucas sequence $U$ with integer
-parameters $P$ and $Q \ne 0$ ($U_0 = 0$, $U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$), $S(U)$ is
-the set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo
-$n$ divides $n$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
-def lucasPeriodSet (params : LucasSequenceParams) : Set ℕ :=
-  {n | 0 < n ∧ IsCoprime (n : ℤ) params.q ∧ lucasUPeriod params n ∣ n}
-
-/-- **Average set of a Lucas sequence.** Let $U$ be the Lucas sequence with parameters $P$ and
-$Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$, and let $S(U)$ be the
-set of positive integers $n$ coprime to $Q$ such that the period $\pi_U(n)$ of $U$ modulo $n$
-divides $n$. The average set $S'(U)$ is the set of $n \in S(U)$ with $n \mid U_1 + \dots + U_n$,
-that is, those $n \in S(U)$ for which the average $(U_1 + \dots + U_n)/n$ is an integer.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Remark 2.2. -/
-def lucasAverageSet (params : LucasSequenceParams) : Set ℕ :=
-  {n | n ∈ lucasPeriodSet params ∧ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i}
 
 /-- **Period of a Lucas sequence modulo 1.** For every Lucas sequence $U = U(P, Q)$, the least
 period $\pi_U(1)$ of $U$ modulo $1$ equals $1$.
@@ -470,29 +450,6 @@ public theorem_wanted lucasAverageSet_two_pow_of_p_two_mod_four (params : LucasS
       IsLeast {x | 2 ^ k ∣ x ∧ x ∈ lucasPeriodSet params} (2 ^ k) ∧
       lucasAllAveragesIntegral params (2 ^ k)
 
-/-- **Lucas sums not divisible by $2^k$ when $P \equiv 0$ and $-Q \equiv 1 \pmod 4$.** Let $P$
-and $Q \ne 0$ be integers forming a nondegenerate Lucas pair with $P \equiv 0 \pmod 4$ and
-$-Q \equiv 1 \pmod 4$, and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
-$U_{k+2} = P U_{k+1} - Q U_k$. Let $S'(U)$ be the set of positive integers $n$ coprime to $Q$
-such that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$ and $n \mid U_1 + \dots + U_n$.
-Then for every $k \ge 1$ and every natural number $n$ with $2^k \mid n$ and $2^{k+1} \nmid n$,
-$2^k$ does not divide $U_1 + \dots + U_n$; for every even $n > 0$, no element of $S'(U)$ is
-divisible by $n$; and every positive integer $m$ with $m \mid U_1 + \dots + U_m$ is odd.
-
-In the paper's notation $a = P$ and $b = -Q$, so the hypotheses are $a \equiv 0$ and
-$b \equiv 1 \pmod 4$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.16
-(`integers-2024-A36-thm-2-16`). -/
-public theorem_wanted lucasU_sum_not_dvd_of_p_zero_mod_four (params : LucasSequenceParams)
-    (hnd : IsNondegenerateLucasPair params.p params.q) (hp : params.p ≡ 0 [ZMOD 4]) (hq : -params.q
-        ≡ 1 [ZMOD 4]) :
-    (∀ n k : ℕ, 1 ≤ k → 2 ^ k ∣ n → ¬ 2 ^ (k + 1) ∣ n →
-      ¬ ((2 ^ k : ℕ) : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i) ∧
-    (∀ n, 0 < n → Even n → ¬ ∃ x, n ∣ x ∧ x ∈ lucasAverageSet params) ∧
-    ∀ m : ℕ, 0 < m → (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 m, lucasU params i → Odd m
-
 /-- **Powers of two when $P \equiv 0$ and $-Q \equiv -1 \pmod 4$.** Let $P$ and $Q \ne 0$ be
 integers forming a nondegenerate Lucas pair with $P \equiv 0 \pmod 4$ and $-Q \equiv -1 \pmod 4$,
 and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
@@ -523,29 +480,6 @@ public theorem_wanted lucasAverageSet_two_pow_of_p_zero_mod_four (params : Lucas
     ∀ k, 2 ≤ k → IsLeast {x | 2 ^ k ∣ x ∧ x ∈ lucasAverageSet params} (2 ^ k) ∧
       IsLeast {x | 2 ^ k ∣ x ∧ x ∈ lucasPeriodSet params} (2 ^ k) ∧
       lucasAllAveragesIntegral params (2 ^ k)
-
-/-- **Lucas sums not divisible by $2^k$ when $P \equiv 2$ and $-Q \equiv -1 \pmod 4$.** Let $P$
-and $Q \ne 0$ be integers forming a nondegenerate Lucas pair with $P \equiv 2 \pmod 4$ and
-$-Q \equiv -1 \pmod 4$, and let $U$ be the Lucas sequence given by $U_0 = 0$, $U_1 = 1$ and
-$U_{k+2} = P U_{k+1} - Q U_k$. Let $S'(U)$ be the set of positive integers $n$ coprime to $Q$
-such that the period $\pi_U(n)$ of $U$ modulo $n$ divides $n$ and $n \mid U_1 + \dots + U_n$.
-Then for every $k \ge 1$ and every natural number $n$ with $2^k \mid n$ and $2^{k+1} \nmid n$,
-$2^k$ does not divide $U_1 + \dots + U_n$; for every even $n > 0$, no element of $S'(U)$ is
-divisible by $n$; and every positive integer $m$ with $m \mid U_1 + \dots + U_m$ is odd.
-
-In the paper's notation $a = P$ and $b = -Q$, so the hypotheses are $a \equiv 2$ and
-$b \equiv -1 \pmod 4$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.18
-(`integers-2024-A36-thm-2-18`). -/
-public theorem_wanted lucasU_sum_not_dvd_of_p_two_mod_four (params : LucasSequenceParams)
-    (hnd : IsNondegenerateLucasPair params.p params.q) (hp : params.p ≡ 2 [ZMOD 4]) (hq : -params.q
-        ≡ -1 [ZMOD 4]) :
-    (∀ n k : ℕ, 1 ≤ k → 2 ^ k ∣ n → ¬ 2 ^ (k + 1) ∣ n →
-      ¬ ((2 ^ k : ℕ) : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i) ∧
-    (∀ n, 0 < n → Even n → ¬ ∃ x, n ∣ x ∧ x ∈ lucasAverageSet params) ∧
-    ∀ m : ℕ, 0 < m → (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 m, lucasU params i → Odd m
 
 /-- **Wyler's theorem on the period of a Lucas sequence.** Let $U$ be the Lucas sequence with
 integer parameters $P$ and $Q$, where the pair $(P, Q)$ is nondegenerate, and write $\pi(m)$ and
