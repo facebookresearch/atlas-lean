@@ -13,6 +13,7 @@
 - [Unique real root](exists-unique-char-fun-eq-one.md)
 - [Sign of the intrinsic rate](sign-of-char-fun-eq-one.md)
 - [Dominance of the real root](re-lt-of-char-fun-complex-eq-one.md)
+- [Direct Riemann integrability](directly-riemann-integrable.md)
 - [Sharpe–Lotka–Feller renewal theorem](tendsto-exp-neg-mul-births.md)
 - [Forward Product](forward-product.md)
 - [Normalize](normalize.md)

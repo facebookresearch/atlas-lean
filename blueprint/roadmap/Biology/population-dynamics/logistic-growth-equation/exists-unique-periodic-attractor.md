@@ -6,4 +6,4 @@
 
 ## Sources
 
-- Cushing and Henson (2002), Conjecture 1; Elaydi and Sacker (2005), §3.
+- Cushing and Henson (2002), Conjecture 1; Elaydi and Sacker (2005, J. Difference Equ. Appl.), §4.
