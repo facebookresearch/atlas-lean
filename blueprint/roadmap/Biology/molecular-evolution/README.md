@@ -21,6 +21,7 @@
 - [History graphs for genome evolution under parsimony](history-graphs-for-genome-evolution-under-parsimony/README.md)
 - [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
+- [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
 - [Drift analysis of adaptive walks](drift-analysis-of-adaptive-walks/README.md)
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
