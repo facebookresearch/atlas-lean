@@ -164,3 +164,34 @@ example : IsUlamWord [false, true, false, true, false, false] ∧
   decide
 
 end MetaMathlibExt.two_mul_add_four_le_ulamWordCount
+
+namespace MetaMathlibExt.ulamDensity_inv_isTheta_ulamGapMean
+
+private theorem values_eq {n : ℕ} {l : List ℕ} (hd : l.Nodup) (hs : l.Pairwise (· ≤ ·))
+    (h : (ulamValuesSorted n).toFinset = l.toFinset) : ulamValuesSorted n = l := by
+  rw [← (List.toFinset_sort (r := (· ≤ ·)) hd).2 hs, ← h, ulamValuesSorted,
+    Finset.sort_toFinset]
+
+-- The empty list has no gaps; at length two there is exactly one gap.
+example : ulamGapMean 0 = 0 ∧ ulamValuesSorted 2 = [1, 2] ∧ ulamGapMean 2 = 1 := by
+  have h₀ : ulamValuesSorted 0 = [] := by
+    apply values_eq (by decide) (by decide)
+    rw [ulamValuesSorted, Finset.sort_toFinset]
+    decide
+  have h₂ : ulamValuesSorted 2 = [1, 2] := by
+    apply values_eq (by decide) (by decide)
+    rw [ulamValuesSorted, Finset.sort_toFinset]
+    decide
+  exact ⟨by simp [ulamGapMean, h₀], h₂, by norm_num [ulamGapMean, h₂, List.zipWith_cons_cons]⟩
+
+-- Length three has unequal gaps (2, 1, 2), so the mean is not an integer.
+example : ulamValuesSorted 3 = [1, 3, 4, 6] ∧ ulamGapMean 3 = 5 / 3 := by
+  have h₃ : ulamValuesSorted 3 = [1, 3, 4, 6] :=
+    values_eq (by decide) (by decide) (by simpa using ulamValuesSorted_three)
+  exact ⟨h₃, by norm_num [ulamGapMean, h₃, List.zipWith_cons_cons]⟩
+
+example : (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
+    fun n => (ulamGapMean n : ℝ) :=
+  ulamDensity_inv_isTheta_ulamGapMean
+
+end MetaMathlibExt.ulamDensity_inv_isTheta_ulamGapMean
