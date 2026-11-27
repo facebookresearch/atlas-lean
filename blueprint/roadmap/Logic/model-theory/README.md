@@ -2,6 +2,7 @@
 
 Relations between formal theories and their structures: first-order languages of algebraic structures, quantifier elimination, categoricity and o-minimality.
 
+- [Defining the integers in the rationals](defining-the-integers-in-the-rationals/README.md)
 - [First-order language of groups](first-order-language-of-groups/README.md)
 - [Quantifier elimination for real closed fields](quantifier-elimination-for-real-closed-fields/README.md)
 - [Wilkie's conjecture](wilkie-s-conjecture/README.md)
