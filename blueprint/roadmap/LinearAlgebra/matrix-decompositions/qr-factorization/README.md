@@ -19,6 +19,8 @@ Gram–Schmidt orthonormalization of the columns $a_1, \dots, a_k$ produces orth
 - [Each column is the combination of the Q columns with coefficients from R](col-vec-eq-sum.md): each column is a combination of the columns of $Q$
 - [The Gram–Schmidt factors reproduce the matrix](eq-qr-q-mul-qr-r.md): the factors reproduce $A$
 - [Diagonal of a product of upper triangular matrices](diag-mul-of-is-upper-triangular.md): a lemma used for uniqueness
+- [A Householder reflection maps a vector to a multiple of the first unit vector](householder-reflection-maps-a-vector-to-a-multiple-of-e1.md)
+- [QR factorization by Householder reflections](qr-factorization-by-householder-reflections.md): the factorization used in floating point, for any $m \times n$ matrix with $m \ge n$
 
 ## Related topics
 
