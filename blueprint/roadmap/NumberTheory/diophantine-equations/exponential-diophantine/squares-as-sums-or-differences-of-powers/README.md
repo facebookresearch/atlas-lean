@@ -7,6 +7,7 @@
 - [$19^x + 151^y$ is never a perfect square](pow19-add-pow151-ne-sq.md)
 - [Solutions of $2^x + 1 = z^2$](two-pow-add-one-eq-sq.md)
 - [Solutions of $n^x + 1 = z^2$ for $n \ne 2$](pow-add-one-eq-sq.md)
+- [No solutions of $(5^n)^x + (4^m p + 1)^y = z^2$ for $m \ge 1$](five-pow-add-four-pow-mul-add-one-ne-sq.md)
 - [The case $x = 0$ of $n^x + (5p)^y = z^2$](one-add-pow-eq-sq.md)
 - [Evenness of $x$ in $n^x + (5p)^y = z^2$ when $n \equiv 2, 3 \pmod 5$](even-of-pos-exp.md)
 - [Opposite parity of the exponents in $n^x + (5p)^y = z^2$ when $n \equiv p \equiv 3 \pmod 4$](opposite-parity.md)
