@@ -76035,6 +76035,7 @@
 "Matrix.exists_balanced_coloring_offDiagonal": "9cdf3ad90602dcec",
 "Matrix.exists_eq_of_mem_specialUnitaryGroup_fin_two": "56226502cf8a1bbb",
 "Matrix.exists_isUnit_det_submatrix_of_rank_eq": "275c4a917294e6a6",
+"Matrix.exists_mulVec_bounds_of_sum_row_eq_one": "4e24a610af22887c",
 "Matrix.exists_nonneg_mulVec_eq_iff": "315a08d0528633fb",
 "Matrix.exists_nonneg_mulVec_le_iff": "4c1f8f403631413f",
 "Matrix.exists_orthogonalGroup_mul_eq_rectangularDiagonal": "07f745d957f337d7",
