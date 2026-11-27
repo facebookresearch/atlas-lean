@@ -11,6 +11,7 @@ Conventions: the dimension $d$ is fixed and the complex is the input. In contras
 ## Depends on
 
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,8 +19,8 @@ Conventions: the dimension $d$ is fixed and the complex is the input. In contras
 
 ## Expansion
 
-Novikov's construction gives, for fixed $d \ge 5$, an effectively constructible sequence of simplicial complexes $\Sigma_i$, each a homology $d$-sphere, such that each $\Sigma_i$ is either a PL $d$-sphere or has nontrivial fundamental group, and no algorithm decides which case holds. Let $K_i$ be the $(d-1)$-skeleton of $\Sigma_i$. A lemma of the source shows, for a homology $d$-sphere $\Sigma$ with $(d-1)$-skeleton $K$: if $\Sigma$ is a PL sphere then $K$ PL-embeds in $\mathbb{R}^d$, and if $K$ PL-embeds in $\mathbb{R}^d$ then $\Sigma$ is homeomorphic to $S^d$; the second part uses Lefschetz duality and a weak PL Schoenflies theorem. So deciding embeddability of the $K_i$ would separate the two cases.
+Novikov's construction gives, for fixed $d \ge 5$, an effectively constructible sequence of simplicial complexes $\Sigma_i$, each a homology $d$-sphere, such that each $\Sigma_i$ is either a PL $d$-sphere or has nontrivial fundamental group, and no algorithm decides which case holds. Let $K_i$ be the $(d-1)$-skeleton of $\Sigma_i$. A lemma of the source shows, for a homology $d$-sphere $\Sigma$ with $(d-1)$-skeleton $K$: if $\Sigma$ is a PL sphere then $K$ PL-embeds in $\mathbb{R}^d$, and if $K$ PL-embeds in $\mathbb{R}^d$ then $\Sigma$ is homeomorphic to $S^d$; the second part uses Lefschetz duality and a weak PL Schoenflies theorem. So deciding embeddability of the $K_i$ would separate the two cases. A good expansion links this lemma, Lefschetz and Alexander duality and the weak PL Schoenflies theorem, which have no pages here.
 
 ## Sources
 
-- Jiří Matoušek, Martin Tancer and Uli Wagner, *Hardness of embedding simplicial complexes in $\mathbb{R}^d$*, J. Eur. Math. Soc. (JEMS) 13 (2011), no. 2, 259–295, https://doi.org/10.4171/JEMS/252, read in the copy arXiv:0807.0336v2: the statement is Theorem 1.1 there, the consequence on subdivisions is the corollary after it, and the proof is in its section "Undecidability: Proof of Theorem 1.1", combining Novikov's theorem as quoted there with the lemma relating embeddings of the skeleton to sphere recognition.
+- Jiří Matoušek, Martin Tancer and Uli Wagner, *Hardness of embedding simplicial complexes in $\mathbb{R}^d$*, J. Eur. Math. Soc. (JEMS) 13 (2011), no. 2, 259–295, https://doi.org/10.4171/JEMS/252, read in the copy arXiv:0807.0336v2: the statement is Theorem 1.1 there, the consequence on subdivisions is the corollary after it, and the proof is in Section 3 ("Undecidability: Proof of Theorem 1.1"), combining Novikov's theorem as quoted there (Theorem 3.1) with Lemma 3.3, which relates embeddings of the skeleton to sphere recognition, and Lemma 3.2.

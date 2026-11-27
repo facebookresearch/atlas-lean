@@ -4,7 +4,7 @@ Homeomorphism and recognition problems for triangulated manifolds, immersibility
 
 - [The homeomorphism problem for closed manifolds of dimension at least four is undecidable](homeomorphism-problem-is-undecidable.md)
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
-- [Deciding whether a regular cover of a surface carries a nontrivial simple closed curve is undecidable](simple-curves-in-surface-covers-undecidable.md)
+- [Deciding whether a normal subgroup of a surface group contains an essential simple closed curve is undecidable](simple-curves-in-surface-covers-undecidable.md)
 - [Smooth embeddability of manifolds with boundary in Euclidean space is undecidable in a range of even codimension](smooth-embeddability-is-undecidable.md)
 - [Smooth immersibility of manifolds in Euclidean space is undecidable in a range of even codimension](smooth-immersibility-is-undecidable.md)
 - [The n-sphere is algorithmically unrecognizable for n at least five](sphere-recognition-is-undecidable.md)

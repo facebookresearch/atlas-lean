@@ -10,7 +10,9 @@ Conventions: the input is promised to present a group in $\mathcal{A}$. The case
 
 ## Depends on
 
+- [Closed manifold, not required to be connected](../../manifolds-geometric-topology/closed-topological-manifold.md)
 - [R-orientation of a topological manifold](../../algebraic-topology/homological-orientation.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +20,7 @@ None.
 
 ## Expansion
 
-The groups in these classes have algebraic characterizations: by Kervaire, $\mathcal{K}_3$ consists of the finitely presented groups $G$ with $H_1(G) \cong \mathbb{Z}$, $H_2(G) = 0$ and an element whose normal closure is $G$ (Theorem 2.1 of the source), and Simon characterized $\mathcal{S}$ similarly, also through Wirtinger presentations (Theorems 2.2 and 2.3). For all pairs except $(\mathcal{A}, \mathcal{B}) = (\mathcal{G}, \mathcal{M})$, Section 3 uses what the authors call $(\mathcal{A}, \mathcal{B}, \mathcal{C})$-constructions to show that an algorithm for the recognition problem would decide triviality of finite presentations, which is undecidable. A key tool is a computable embedding of a finitely presented group $G$ into a perfect finitely presented group $P$ with $P = 1$ when $G = 1$ and with $H_2(P)$ infinite when $G \ne 1$ (Proposition 3.1 and Addendum 3.2). The remaining pair $(\mathcal{G}, \mathcal{M})$ is handled separately in Section 4.
+The groups in these classes have algebraic characterizations: by Kervaire, $\mathcal{K}_3$ consists of the finitely presented groups $G$ with $H_1(G) \cong \mathbb{Z}$, $H_2(G) = 0$ and an element whose normal closure is $G$ (Theorem 2.1 of the source), and Simon characterized $\mathcal{S}$ similarly, also through Wirtinger presentations (Theorems 2.2 and 2.3). For all pairs except $(\mathcal{A}, \mathcal{B}) = (\mathcal{G}, \mathcal{M})$, Section 3 uses what the authors call $(\mathcal{A}, \mathcal{B}, \mathcal{C})$-constructions to show that an algorithm for the recognition problem would decide triviality of finite presentations, which is undecidable. A key tool is a computable embedding of a finitely presented group $G$ into a perfect finitely presented group $P$ with $P = 1$ when $G = 1$ and with $H_2(P)$ infinite when $G \ne 1$ (Proposition 3.1 and Addendum 3.2). The remaining pair $(\mathcal{G}, \mathcal{M})$ is handled separately in Section 4. A good expansion links Kervaire's and Simon's characterizations, Proposition 3.1 with Addendum 3.2 and the undecidability of triviality of finite presentations, which have no pages here.
 
 ## Sources
 

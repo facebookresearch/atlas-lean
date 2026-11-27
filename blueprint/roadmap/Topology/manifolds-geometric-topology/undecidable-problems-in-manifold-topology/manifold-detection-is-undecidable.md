@@ -13,14 +13,18 @@ Conventions: the input is an arbitrary finite simplicial complex, with no dimens
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 - [Closed manifold, not required to be connected](../closed-topological-manifold.md)
 - [Homeomorphism](../../topological-spaces/homeomorphism.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [The n-sphere is algorithmically unrecognizable for n at least five](sphere-recognition-is-undecidable.md)
+- [Novikov–Boone theorem (unsolvability of the word problem)](../../../GroupTheory/presentations-and-decision-problems/word-problem-for-groups/novikov-unsolvable.md)
+- [Topological Poincaré conjecture in dimensions at least 5](../poincar-conjecture/poincare-high-dim-topological.md)
+- [Suspension of a topological space](../../algebraic-topology/cones-and-suspensions/let-x-be-a-topological-space.md)
 
 ## Expansion
 
-Fix $d \ge 5$ and a finitely presented group $G$ with undecidable word problem. Novikov's construction gives, for each word $w$, a finite simplicial complex $X_w$ that is a $d$-dimensional homology sphere with fundamental group trivial exactly when $w$ represents $1$; in that case $X_w$ is homeomorphic to $S^d$ by Smale's theorem, and otherwise its fundamental group is nontrivial. The suspension $S X_w$ adds two cone points $a$ and $b$. If $w = 1$, then $X_w \cong S^d$ and $S X_w \cong S^{d+1}$ is a manifold. If $w \ne 1$, then $X_w$ has nontrivial fundamental group, so loops arbitrarily close to $a$ are not null-homotopic in $S X_w \setminus \{a, b\}$, and $S X_w$ is not locally Euclidean at $a$. Hence $S X_w$ is a manifold if and only if $w = 1$, and an algorithm for manifold detection would solve the word problem of $G$.
+Fix $d \ge 5$ and a finitely presented group $G$ with undecidable word problem. Novikov's construction gives, for each word $w$, a finite simplicial complex $X_w$ that is a $d$-dimensional homology sphere with fundamental group trivial exactly when $w$ represents $1$; in that case $X_w$ is homeomorphic to $S^d$ by the high-dimensional Poincaré conjecture (Smale), and otherwise its fundamental group is nontrivial. The suspension $S X_w$ adds two cone points $a$ and $b$. If $w = 1$, then $X_w \cong S^d$ and $S X_w \cong S^{d+1}$ is a manifold. If $w \ne 1$, then $X_w$ has nontrivial fundamental group, so loops arbitrarily close to $a$ are not null-homotopic in $S X_w \setminus \{a, b\}$, and $S X_w$ is not locally Euclidean at $a$. Hence $S X_w$ is a manifold if and only if $w = 1$, and an algorithm for manifold detection would solve the word problem of $G$. A good expansion links the local argument that a point with arbitrarily small loops that are essential in a punctured neighborhood is not a manifold point, and the realization of the simplicial suspension as the topological suspension; neither has a page here.
 
 ## Sources
 

@@ -11,6 +11,7 @@ Conventions: the input complexes are finite and connected (connectedness is deci
 ## Depends on
 
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ None.
 
 ## Expansion
 
-Rabin and Adian proved that no algorithm decides, given a finite presentation $\langle g_1, \dots, g_k \mid r_1, \dots, r_l \rangle$, whether the group it presents is trivial. From such a presentation one effectively builds the presentation complex: one vertex, one edge for each generator and one $2$-cell for each relator, attached along the corresponding word; after barycentric subdivision this is a finite simplicial $2$-complex whose fundamental group is the presented group, by van Kampen's theorem. An algorithm deciding simple connectivity of finite $2$-complexes would therefore decide triviality of finite presentations.
+Rabin and Adian proved that no algorithm decides, given a finite presentation $\langle g_1, \dots, g_k \mid r_1, \dots, r_l \rangle$, whether the group it presents is trivial. From such a presentation one effectively builds the presentation complex: one vertex, one edge for each generator and one $2$-cell for each relator, attached along the corresponding word; after barycentric subdivision this is a finite simplicial $2$-complex whose fundamental group is the presented group, by van Kampen's theorem. An algorithm deciding simple connectivity of finite $2$-complexes would therefore decide triviality of finite presentations. A good expansion links the undecidability of triviality, the presentation complex and van Kampen's theorem, which have no pages here.
 
 ## Sources
 

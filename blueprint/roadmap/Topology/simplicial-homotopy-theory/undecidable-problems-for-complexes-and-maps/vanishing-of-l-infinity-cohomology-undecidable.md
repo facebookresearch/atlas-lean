@@ -15,6 +15,8 @@ Conventions: a finite simplicial complex is described by its vertex set and the 
 
 - [Integral singular homology](../../algebraic-topology/hurewicz-theorem/integral-homology.md)
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Normed vector space](../../../Analysis/banach-spaces/normed-spaces/normed-space.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,8 +24,8 @@ None.
 
 ## Expansion
 
-The key input is that a connected CW complex $X$ with finite $1$-skeleton and infinite fundamental group has $H^{n+1}_{(\infty)}((S^1)^n \times X; \mathbb{R}) \ne 0$ for every $n \ge 0$: in degree $1$, the distance from a base vertex in the universal cover is an unbounded $0$-cochain with bounded coboundary, which gives a nonzero class. For presentations, given a finite presentation of a group $H$ form $G = \mathbb{Z}^{n-1} \times H$. If $H$ is infinite, $H^n_{(\infty)}(G; \mathbb{R}) \ne 0$ by the nonvanishing result; if $H$ is finite, $G$ has a finite-index subgroup isomorphic to $\mathbb{Z}^{n-1}$, so it has the same $\ell^\infty$-cohomology, which vanishes in degree $n$ for dimensional reasons. Deciding vanishing would therefore decide finiteness of $H$, contradicting the Adian–Rabin theorem for the class of finite groups. The case of simplicial complexes is handled in the same way with explicit complexes.
+The key input is that a connected CW complex $X$ with finite $1$-skeleton and infinite fundamental group has $H^{n+1}_{(\infty)}((S^1)^n \times X; \mathbb{R}) \ne 0$ for every $n \ge 0$: in degree $1$, the distance from a base vertex in the universal cover is an unbounded $0$-cochain with bounded coboundary, which gives a nonzero class. For presentations, given a finite presentation of a group $H$ form $G = \mathbb{Z}^{n-1} \times H$. If $H$ is infinite, $H^n_{(\infty)}(G; \mathbb{R}) \ne 0$ by the nonvanishing result; if $H$ is finite, $G$ has a finite-index subgroup isomorphic to $\mathbb{Z}^{n-1}$, so it has the same $\ell^\infty$-cohomology, which vanishes in degree $n$ for dimensional reasons. Deciding vanishing would therefore decide finiteness of $H$, contradicting the Adian–Rabin theorem for the class of finite groups. The case of simplicial complexes is handled in the same way with explicit complexes. A good expansion links Proposition 7.1, the invariance of $\ell^\infty$-cohomology under passing to finite-index subgroups and the Adian–Rabin theorem for finiteness, which have no pages here.
 
 ## Sources
 
-- Francesco Milizia, *$\ell^\infty$-cohomology: amenability, relative hyperbolicity, isoperimetric inequalities and undecidability*, J. Topol. Anal. 18 (2026), no. 6, 1645–1674 (online 2025), https://doi.org/10.1142/S1793525325500268, read in the copy arXiv:2107.09089v4: the statement is Theorem 1.6 there, the definitions are in its introduction, and the proof, with the nonvanishing result for infinite fundamental groups, is in its section on uncomputability.
+- Francesco Milizia, *$\ell^\infty$-cohomology: amenability, relative hyperbolicity, isoperimetric inequalities and undecidability*, J. Topol. Anal. 18 (2026), no. 6, 1645–1674 (online 2025), https://doi.org/10.1142/S1793525325500268, read in the copy arXiv:2107.09089v4: the statement is Theorem 1.6 there, the definitions are in its introduction, and the proof, with the nonvanishing result for infinite fundamental groups (Proposition 7.1), is in Section 7 ("Some undecidable algorithmic problems"), with the finer statements for complexes of fixed dimension in Theorem 7.3.

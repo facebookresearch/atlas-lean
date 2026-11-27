@@ -15,6 +15,7 @@ Conventions: the dimensions $m$ and $n$ are fixed and the manifold is the input.
 
 - [Semialgebraic set](../../../Logic/model-theory/wilkie-s-conjecture/is-semialgebraic.md)
 - [Closed manifold, not required to be connected](../closed-topological-manifold.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,8 +23,8 @@ Conventions: the dimensions $m$ and $n$ are fixed and the manifold is the input.
 
 ## Expansion
 
-By the Smale–Hirsch theorem (and Haefliger–Poenaru in the PL case), immersions of $M$ in $\mathbb{R}^n$ correspond up to homotopy to lifts of the classifying map of the tangent bundle of $M$ to a suitable Grassmannian, so immersibility becomes a homotopy-theoretic lifting problem. In the smooth case this lifting property is stable, so for $m < n$ it reduces to lifting the stable tangent classifying map $M \to BSO$ through $BSO_{n-m} \to BSO$. Following the work of Čadek, Krčál, Matoušek, Vokřínek and Wagner on extension problems, where deciding which rational homotopy invariants can be attained amounts to solving systems of Diophantine equations, Manin and Weinberger show that in the stated range the lifting problem reduces from Hilbert's tenth problem, which gives undecidability of immersibility.
+By the Smale–Hirsch theorem (and Haefliger–Poenaru in the PL case), immersions of $M$ in $\mathbb{R}^n$ correspond up to homotopy to lifts of the classifying map of the tangent bundle of $M$ to a suitable Grassmannian, so immersibility becomes a homotopy-theoretic lifting problem. In the smooth case this lifting property is stable, so for $m < n$ it reduces to lifting the stable tangent classifying map $M \to BSO$ through $BSO_{n-m} \to BSO$. Following the work of Čadek, Krčál, Matoušek, Vokřínek and Wagner on extension problems, where deciding which rational homotopy invariants can be attained amounts to solving systems of Diophantine equations, Manin and Weinberger show that in the stated range the lifting problem reduces from Hilbert's tenth problem, which gives undecidability of immersibility. A good expansion links the Smale–Hirsch and Haefliger–Poenaru theorems and this reduction of the lifting problem to Diophantine equations, which have no pages here.
 
 ## Sources
 
-- Fedor Manin and Shmuel Weinberger, *Algorithmic aspects of immersibility and embeddability*, Int. Math. Res. Not. IMRN 2024, no. 17, 12433–12454, https://doi.org/10.1093/imrn/rnae170, read in the copy arXiv:1812.09413v4, whose numbering is used here: the statement is Theorem 8 at the start of its section on immersibility, clauses (ii) and (iv), with the decidable clauses (i) and (iii) and the reduction to lifting problems in its proof.
+- Fedor Manin and Shmuel Weinberger, *Algorithmic aspects of immersibility and embeddability*, Int. Math. Res. Not. IMRN 2024, no. 17, 12433–12454, https://doi.org/10.1093/imrn/rnae170, read in the copy arXiv:1812.09413v4, whose numbering is used here: the statement is Theorem 3.1 at the start of Section 3 ("Immersibility"), clauses (ii) and (iv), with the decidable clauses (i) and (iii) and the reduction to lifting problems in its proof; the theorem is also quoted in Section 1.2.
