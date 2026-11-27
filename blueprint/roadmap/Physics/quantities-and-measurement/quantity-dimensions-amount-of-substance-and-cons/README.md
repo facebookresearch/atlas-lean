@@ -62,7 +62,6 @@
 - [Doubling 20 degrees Celsius does not double its kelvin value](celsius-to-kelvin-two-mul-twenty-ne.md)
 - [Inverse temperature is positive](inverse-temperature-pos.md)
 - [Coordinate formula for the logarithm of a ratio](log-ratio-val.md)
-- [Logarithm of a ratio equal to one](log-ratio-eq-zero-of-div-eq-one.md)
 - [Molar energy over gas constant times temperature is dimensionless](molar-energy-dim-div-gas-constant-dim-mu.md)
 - [Boltzmann factor of a molar energy](exp-scaled-energy.md)
 - [Coordinate formula for the Boltzmann factor](exp-scaled-energy-val.md)

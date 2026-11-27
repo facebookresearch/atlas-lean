@@ -7,7 +7,7 @@ For natural numbers $n, k$, let $a(n, k)$ be the number of permutations $\sigma$
 - $a(n, k) = a(n-1, k-1) + a(n-1, k)$ for $1 < k < n$;
 - with $g(x, t) = \sum_{n \ge 0} \Big( \sum_{k=1}^{n} a(n, k)\, t^k \Big) x^n$, a power series in $x$ over $\mathbb{Q}[t]$,
 
-$$(1 - x - t x)(1 - 3 t x + t^2 x^2)\, g(x, t) = t x (1 - t x)(1 - 2 t x).$$
+    $$(1 - x - t x)(1 - 3 t x + t^2 x^2)\, g(x, t) = t x (1 - t x)(1 - 2 t x).$$
 
 $F_m$ is the Fibonacci number with $F_0 = 0$, $F_1 = 1$, and the subtraction in the index is natural-number subtraction.
 
