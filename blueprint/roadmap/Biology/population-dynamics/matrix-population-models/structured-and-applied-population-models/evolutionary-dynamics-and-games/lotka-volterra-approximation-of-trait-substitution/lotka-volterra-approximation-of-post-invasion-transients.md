@@ -17,7 +17,7 @@ $$\frac{dn_i}{dt} = n_i\Big(\gamma_i + \sum_{j=1}^{N+1}a_{ij}n_j + R_i\Big), \qq
 
 a Lotka–Volterra system up to a remainder of order $\varepsilon^2$.
 2. (Approximability) The closeness condition holds when within-cluster differences are small relative to the leading eigenvalue of the community Jacobian at $\breve m$, both when all approximate densities are large and, with a refined analysis, when some are small.
-3. (Invasion implies substitution) For a monomorphic resident (and, by extension, for several residents) and a mutant with positive invasion fitness away from evolutionary singular points, the approximating Lotka–Volterra system has the mutant replacing its parent while the rest of the community stays near its equilibrium.
+3. (Invasion implies substitution in one-dimensional trait space) In a one-dimensional trait space, for a monomorphic resident—or more generally an arbitrary set of resident phenotypes forming well-recognizable and well-separated clusters (Sect. 8, Appendix K)—if a mutant $s_{N+1}$ arising from resident $s_i$ satisfies the sufficient condition (8.3), $\breve F_z(s_i)(s_{N+1} - s_i) > \varepsilon^2 [C_{Fzz} + C'_{Fzm} C'_m]$ (positive first-order invasion fitness away from evolutionary singular points dominating the $O(\varepsilon^2)$ remainder), then the approximating Lotka–Volterra system has the mutant replacing its parent while the rest of the community stays near its equilibrium. (Higher-dimensional trait spaces are covered in Sect. 5.4 / Appendix I for Theorems 1–3 and Corollary 1, whereas local coexistence regions can occur around the zero fitness contour in higher dimensions.)
 
 ## Depends on
 
@@ -30,4 +30,4 @@ Rewrite the fitness of each phenotype as a function of the approximate densities
 
 ## Sources
 
-- H. C. Ito, U. Dieckmann, J. A. J. Metz, "Lotka–Volterra approximations for evolutionary trait-substitution processes", Journal of Mathematical Biology 80(7) (2020) 2141–2226, axioms and Eq. (2.3), Proposition 1, Lemmas 1–2, Theorem 1 (Eqs. (3.4a), (3.6a)–(3.6b)) and the invasion-implies-substitution application, <https://doi.org/10.1007/s00285-020-01493-y>, PMCID PMC7250815.
+- H. C. Ito, U. Dieckmann, J. A. J. Metz, "Lotka–Volterra approximations for evolutionary trait-substitution processes", Journal of Mathematical Biology 80(7) (2020) 2141–2226, axioms and Eq. (2.3), Proposition 1, Lemmas 1–2, Theorem 1 (Eqs. (3.4a), (3.6a)–(3.6b)) Sect. 5.4 / Appendix I (higher-dimensional Theorems 1–3 and Corollary 1), and Sect. 8 / Appendix K (Eq. (8.3), invasion-implies-substitution in one-dimensional trait space), <https://doi.org/10.1007/s00285-020-01493-y>, PMCID PMC7250815.
