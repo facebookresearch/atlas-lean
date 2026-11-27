@@ -272,9 +272,11 @@ theorem rank_periods_eq_of_normal (ρ : Representation F G V) (hle : H' ≤ H)
   let b := Module.Free.chooseBasis (fixedSubalgebra S act H) (ρ.periods act H)
   rw [← b.mk_eq_rank'', ← (periodsBasisOfNormal ρ hle hN hL hfaithful b).mk_eq_rank'']
 
-/-- **Galois descent for the dimension of `D_S(V)`**: `dim_{S^H} D_{S,H}(V) =
-dim_{S^{H'}} D_{S,H'}(V)`, for `H' ≤ H` normal in `H` and of finite index such that `S^{H'}` is a
-field on which `H/H'` acts faithfully (every `h ∈ H` fixing `S^{H'}` pointwise lies in `H'`). -/
+/-- **Galois descent for the dimension of `D_S(V)`, natural-number form**:
+`finrank_{S^H} D_{S,H}(V) = finrank_{S^{H'}} D_{S,H'}(V)` (zero at infinite rank;
+`rank_periods_eq_of_normal` is the equality of ranks), for `H' ≤ H` normal in `H` and of finite
+index such that `S^{H'}` is a field on which `H/H'` acts faithfully (every `h ∈ H` fixing `S^{H'}`
+pointwise lies in `H'`). -/
 theorem finrank_periods_eq_of_normal (ρ : Representation F G V) (hle : H' ≤ H)
     (hN : (H'.subgroupOf H).Normal) [(H'.subgroupOf H).FiniteIndex]
     (hL : IsField (fixedSubalgebra S act H'))
