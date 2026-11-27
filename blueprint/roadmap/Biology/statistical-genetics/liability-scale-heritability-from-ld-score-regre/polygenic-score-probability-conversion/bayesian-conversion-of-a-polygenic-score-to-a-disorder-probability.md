@@ -12,7 +12,7 @@ $$\mathbb{E}[S \mid D=1] = R^2 i_1, \qquad \operatorname{Var}(S \mid D=1) = R^2\
 
 $$\mathbb{E}[S \mid D=0] = -R^2 i_0, \qquad \operatorname{Var}(S \mid D=0) = R^2\bigl(1 - R^2 i_0(i_0 + t)\bigr).$$
 
-The score has smaller variance in cases than in controls, a difference that matters most for rare disorders and well-predicting scores.
+When $K < 1/2$ (so $t > 0$), the score has smaller variance in cases than in controls; the variances are equal at $K = 1/2$ and the order reverses for $K > 1/2$. The difference that matters most for rare disorders and well-predicting scores.
 
 **Conversion.** Approximate the conditional laws of $S$ in cases and controls by Gaussians $f_1$, $f_0$ with these moments, and let $\pi$ be a prior disorder probability for the individual (for example the case fraction of the clinical setting, which may exceed $K$). By Bayes' theorem the predicted disorder probability for an individual with score $s$ is
 

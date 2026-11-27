@@ -18,8 +18,8 @@ Whether this bound is exponential depends on how $m$ grows with $L$, and even ex
 
 ## Proof depends on
 
-- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-- [Countable subadditivity of a measure](../../../MeasureTheory/measures/measures-and-countable-additivity/measures/measure-i-union-le.md)
+- [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Countable subadditivity of a measure](../../../../MeasureTheory/measures/measures-and-countable-additivity/measures/measure-i-union-le.md)
 
 ## Expansion
 

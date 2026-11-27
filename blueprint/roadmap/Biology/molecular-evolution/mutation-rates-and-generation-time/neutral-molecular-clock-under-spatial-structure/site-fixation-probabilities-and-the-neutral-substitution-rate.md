@@ -24,7 +24,7 @@ so the clock is accelerated exactly when turnover and reproductive value are pos
 
 ## Depends on
 
-- [Long-run expected calendar-time rate of neutral substitution](../long-run-neutral-substitution-rate-law-of-large.md)
+- [Long-run expected calendar-time rate of neutral substitution](../../long-run-neutral-substitution-rate-law-of-large.md)
 
 ## Expansion
 

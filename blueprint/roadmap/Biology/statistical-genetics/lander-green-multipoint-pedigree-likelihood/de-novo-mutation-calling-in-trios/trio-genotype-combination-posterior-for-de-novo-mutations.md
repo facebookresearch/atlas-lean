@@ -2,7 +2,11 @@
 
 At a biallelic site, let $G_M$, $G_F$ and $G_C$ be the genotypes of mother, father and child, and let $L(D \mid G)$ be the per-individual genotype likelihood of the observed bases $D$. Enumerate the possible trio genotype combinations: on the autosomes there are $27$, of which $15$ obey Mendelian inheritance, $10$ carry one de novo mutation and $2$ carry two; on the X chromosome of a female offspring there are $18$ (the father being haploid), with $8$ Mendelian, $8$ single and $2$ double; for a male offspring, who inherits his X from his mother, only $6$ mother–offspring combinations exist, $4$ Mendelian and $2$ single de novo.
 
-Given a per-site mutation rate $\mu$, with $n$ combinations carrying one de novo mutation and $m$ carrying two, assign the genotype-combination prior $P_C$ that splits a total mass of order $\mu$ over the $n$ single-mutation combinations and of order $\mu^2$ over the $m$ double-mutation combinations, the rest going to the Mendelian combinations. The posterior probability of a combination is then proportional to the product of the three genotype likelihoods and this prior,
+Given a per-site mutation rate $\mu$, with $n$ combinations carrying one de novo mutation and $m$ carrying two, assign each genotype combination $C$ the prior weight
+
+$$P_C \;=\; \begin{cases} 1 - n\mu - m\mu^2 & \text{if } C \text{ follows Mendel's laws,}\\ \mu & \text{if } C \text{ implies one de novo mutation,}\\ \mu^2 & \text{if } C \text{ implies two de novo mutations.}\end{cases}$$
+
+These weights are unnormalised (each Mendelian combination receives $1 - n\mu - m\mu^2$, so they do not sum to $1$); only their ratios matter, since the posterior is normalised over the combinations. The posterior probability of a combination is then proportional to the product of the three genotype likelihoods and this prior,
 
 $$P(G_M, G_F, G_C \mid D) \;\propto\; L(D_M \mid G_M)\, L(D_F \mid G_F)\, L(D_C \mid G_C)\, P_C ,$$
 

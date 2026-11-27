@@ -20,7 +20,4 @@
 - [Distribution of simple repeat lengths](distribution-of-simple-repeat-lengths/README.md)
 - [Fitness landscapes and epistasis](fitness-landscapes-and-epistasis/README.md)
 - [Mutation rates and generation time](mutation-rates-and-generation-time/README.md)
-- [Neutral molecular clock under spatial structure](neutral-molecular-clock-under-spatial-structure/README.md)
 - [Phenotypic mutation rates and translational errors](phenotypic-mutation-rates-and-translational-errors/README.md)
-- [Selection stringency in directed evolution](selection-stringency-in-directed-evolution/README.md)
-- [Time scale of evolutionary discovery](time-scale-of-evolutionary-discovery/README.md)

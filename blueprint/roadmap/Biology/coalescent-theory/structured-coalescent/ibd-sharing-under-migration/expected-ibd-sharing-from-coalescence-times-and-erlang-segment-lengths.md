@@ -6,7 +6,7 @@ $$\Pr[\ell \in R \mid \boldsymbol\theta] \;=\; \int_0^\infty \pi_{\boldsymbol\th
 
 and by linearity of expectation this quantity equals the **expected fraction of the genome** shared by the pair through segments with length in $R$. In a Wright–Fisher population of constant size $N_e$ one has $\pi(t) = e^{-t/N_e}/N_e$ and the double integral has a closed form.
 
-Three consequences follow from the same quantity: over a region of genetic length $\gamma$ the number of shared segments with length in $R$ is Poisson with mean $\gamma$ times the per-site probability divided by the mean segment length in $R$; the length of a randomly sampled shared segment has density proportional to $\int_0^\infty \pi(t) f(\ell\mid t)\,dt$ restricted to $R$; and the whole distribution of the shared genome fraction, not only its mean, is determined by $\pi_{\boldsymbol\theta}$.
+Three consequences follow from the same quantity. Since $f(\ell \mid t)$ is the length of the segment covering a fixed site, it is length-biased, so the length of a randomly sampled shared segment has density proportional to $\ell^{-1}\int_0^\infty \pi(t) f(\ell\mid t)\,dt$ on $R$. Over a region of genetic length $\gamma$ the number of shared segments with length in $R$ is modelled as Poisson with mean $\gamma$ times the per-site probability divided by the mean length of a randomly sampled segment in $R$. Under this Poisson model, the whole distribution of the shared genome fraction, not only its mean, is determined by $\pi_{\boldsymbol\theta}$.
 
 ## Depends on
 
@@ -20,3 +20,4 @@ The key structural point is that the demographic model enters only through the c
 ## Sources
 
 - P. F. Palamara, I. Pe'er, "Inference of historical migration rates via haplotype sharing", *Bioinformatics* 29 (2013), i180–i188, <https://doi.org/10.1093/bioinformatics/btt239> (PMC3694674). Methods, "Haplotype sharing and demographic history", Equations (1)–(3).
+- P. F. Palamara, T. Lencz, A. Darvasi, I. Pe'er, "Length distributions of identity by descent reveal fine-scale demographic history", *American Journal of Human Genetics* 91 (2012), 809–822, <https://doi.org/10.1016/j.ajhg.2012.08.030> (PMC3487132). The division by $\ell$ for sampled segments (before Eq. (10)) and the Poisson model for the number of shared segments.

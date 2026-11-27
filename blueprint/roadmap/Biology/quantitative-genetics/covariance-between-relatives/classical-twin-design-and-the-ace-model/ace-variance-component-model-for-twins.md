@@ -18,9 +18,9 @@ the narrow-sense heritability being $h^2 = a^2$. The parameters are admissible o
 
 ## Depends on
 
-- [Falconer's estimator](../covariance-between-relatives/falconer.md)
-- [Full-sib covariance in terms of variance components](../fisher-s-decomposition-of-genetic-variance/cov-full-sibs-eq.md)
-- [Log-density of the multivariate Gaussian](../../../Probability/linear-models-multivariate/gaussian-maximum-likelihood/log-multivariate-gaussian-pdfreal.md)
+- [Falconer's estimator](../falconer.md)
+- [Full-sib covariance in terms of variance components](../../fisher-s-decomposition-of-genetic-variance/cov-full-sibs-eq.md)
+- [Log-density of the multivariate Gaussian](../../../../Probability/linear-models-multivariate/gaussian-maximum-likelihood/log-multivariate-gaussian-pdfreal.md)
 
 ## Expansion
 

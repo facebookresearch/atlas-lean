@@ -12,9 +12,9 @@ Hence $\alpha = 0$ means effect sizes independent of frequency (common variants 
 
 **Stabilizing selection produces $\alpha < 0$.** With Gaussian fitness $w(z) = \exp(-(M - z)^2 / (2V_S))$ centered at the population mean $M$, a causal allele with effect $\beta$ at frequency $x$ changes on average by
 
-$$\mathbb{E}[\Delta x] \approx s_{ud}\, x(1 - x)\left(\tfrac12 - x\right), \qquad s_{ud} = -\frac{\beta^2}{2V_S},$$
+$$\mathbb{E}[\Delta x] \approx s_{ud}\, x(1 - x)(1 - 2x), \qquad s_{ud} = -\frac{\beta^2}{2V_S},$$
 
-an underdominant form in which the minor allele is always disfavored and selection strength grows with $\beta^2$; large-effect alleles are thus kept at low frequency, giving a negative relationship between $\beta^2$ and $x(1-x)$.
+where $s_{ud}$ is the selection coefficient of the heterozygote for a rare allele (genotype fitnesses $w_k \approx 1 + s_{ud}(k - 2x)^2$ for $k$ copies). This is an underdominant form in which the minor allele is always disfavored and selection strength grows with $\beta^2$; large-effect alleles are thus kept at low frequency, giving a negative relationship between $\beta^2$ and $x(1-x)$. (Correction of the source: Koch and Sunyaev's Eq. (1) prints $\mathbb{E}[\Delta x] \approx s_{ud}\, x(1-x)(\tfrac12 - x)$ with the same $s_{ud}$, which is half the value derived from the stated model: $\bar w = 1 + 2s_{ud}\,x(1-x)$ and $\mathbb{E}[\Delta x] = \tfrac{x(1-x)}{2\bar w}\tfrac{d\bar w}{dx}$.)
 
 ## Depends on
 

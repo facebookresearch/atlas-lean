@@ -16,7 +16,7 @@ Diagonal terms $\Omega_{jj}$ (dominance of single variants) are excluded.
 
 ## Depends on
 
-- [Genotypic value without epistasis](../../../quantitative-genetics/fisher-s-decomposition-of-genetic-variance/total-value.md): the additive model $\Omega = 0$
+- [Genotypic value without epistasis](../../../../quantitative-genetics/fisher-s-decomposition-of-genetic-variance/total-value.md): the additive model $\Omega = 0$
 
 ## Expansion
 

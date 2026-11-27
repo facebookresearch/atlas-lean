@@ -20,8 +20,8 @@ The lower bound holds for any population size $N$ with $4^L \gg N$, and even whe
 
 ## Depends on
 
-- [Weak-mutation limit justifies the origination–fixation chain](../origination-fixation-dynamics/weak-mutation-limit-justifies-the-origination-fi.md)
-- [Fixation probability of the Moran process](../../population-genetics/moran-model/moran-fixation.md)
+- [Weak-mutation limit justifies the origination–fixation chain](../../origination-fixation-dynamics/weak-mutation-limit-justifies-the-origination-fi.md)
+- [Fixation probability of the Moran process](../../../population-genetics/moran-model/moran-fixation.md)
 
 ## Expansion
 

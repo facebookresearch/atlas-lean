@@ -13,13 +13,13 @@ One forward–backward pass of the null model therefore yields the statistic for
 ## Depends on
 
 - [Autoregressive model of pool allele frequencies along a chromosome](autoregressive-model-of-pool-allele-frequencies.md)
-- [Reversible stochastic matrix](../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/is-reversible.md)
-- [Smoothed state weights](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/smoothed.md): the null-model posteriors $\Pr(x_c \mid y)$
+- [Reversible stochastic matrix](../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/is-reversible.md)
+- [Smoothed state weights](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/smoothed.md): the null-model posteriors $\Pr(x_c \mid y)$
 
 ## Proof depends on
 
-- [Forward-backward smoothing is a joint-to-likelihood ratio](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/smoothed-eq.md)
-- [Bayes' rule for discrete observations](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/posterior-eq-bayes-posterior.md): $\Pr(y \mid x_c) = \Pr(y)\Pr(x_c \mid y)/\pi(x_c)$
+- [Forward-backward smoothing is a joint-to-likelihood ratio](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/smoothed-eq.md)
+- [Bayes' rule for discrete observations](../../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/posterior-eq-bayes-posterior.md): $\Pr(y \mid x_c) = \Pr(y)\Pr(x_c \mid y)/\pi(x_c)$
 
 ## Expansion
 

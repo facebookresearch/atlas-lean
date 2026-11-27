@@ -8,9 +8,13 @@ so double reduction raises the coalescence probability out of the within-individ
 
 $$E = \begin{pmatrix} 0 & \tfrac{2}{2+\alpha} & \tfrac{\alpha}{2+\alpha} \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}:$$
 
-a pair sampled within one individual coalesces *instantaneously* with probability $\alpha/(\alpha+2)$, and otherwise scatters into different individuals and coalesces at a rate strictly greater than $1/4$. Hence the limit is not Kingman's coalescent, and the long-term coalescent effective size is smaller than $4N$.
+a pair sampled within one individual coalesces *instantaneously* with probability $\alpha/(\alpha+2)$, and otherwise scatters into different individuals, after which it coalesces at rate $\tfrac14 + \tfrac34\cdot\tfrac{\alpha}{\alpha+2}$. For $0 < \alpha \le 1/6$ this rate is strictly greater than $1/4$, so the limit is not Kingman's coalescent and the long-term coalescent effective size is smaller than $4N$. At the endpoint $\alpha = 0$ the instantaneous probability is $0$ and the rate is exactly $1/4$: the limit is Kingman's coalescent with effective size $4N$.
 
-For a sample of $n$ lineages distributed as $k$ individuals holding two lineages, $l$ individuals holding three and $m$ individuals holding four, the number of instantaneous coalescences contributed by the doubly occupied individuals is $X \sim \mathrm{Binomial}(k, \alpha/(\alpha+2))$ and by the triply occupied individuals $Y \sim \mathrm{Binomial}(l, 3\alpha/(\alpha+2))$; after this instantaneous adjustment the surviving lineages lie in distinct individuals and coalesce at rate $O(1/N)$.
+For a sample of $n$ lineages distributed as $k$ individuals holding two lineages, $l$ individuals holding three and $m$ individuals holding four, the number of instantaneous coalescences contributed by the doubly occupied individuals is $X \sim \mathrm{Binomial}(k, \alpha/(\alpha+2))$ by the triply occupied individuals $Y \sim \mathrm{Binomial}(l, 3\alpha/(\alpha+2))$, and, among the quadruply occupied individuals, the numbers $Z_1$, $Z_2$, $Z_3$ with one, two and no instantaneous coalescences satisfy
+
+$$(Z_1, Z_2, Z_3) \sim \mathrm{Multinomial}\Bigl(m;\ \tfrac{12\alpha(1-\alpha)}{(\alpha+2)^2},\ \tfrac{9\alpha^2}{(\alpha+2)^2},\ \tfrac{4(1-\alpha)^2}{(\alpha+2)^2}\Bigr),$$
+
+After this instantaneous adjustment the $n - X - Y - Z_1 - 2Z_2$ surviving lineages lie in distinct individuals and coalesce at rate $O(1/N)$.
 
 ## Depends on
 

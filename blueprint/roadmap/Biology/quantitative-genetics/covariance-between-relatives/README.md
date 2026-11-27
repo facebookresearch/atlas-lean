@@ -34,3 +34,7 @@
 - [Single-locus model as Cockerham components](to-components.md)
 - [Single-locus covariance between relatives in Cockerham form](rel-cov-eq-cov.md)
 - [One-locus phantom heritability](falconer-eq-of-locus.md)
+
+## Twin design
+
+- [Classical twin design and the ACE model](classical-twin-design-and-the-ace-model/README.md)

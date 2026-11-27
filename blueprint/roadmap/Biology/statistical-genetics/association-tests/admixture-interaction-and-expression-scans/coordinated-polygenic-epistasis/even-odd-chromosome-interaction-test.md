@@ -15,7 +15,7 @@ Splitting by whole chromosomes keeps the two scores free of shared variants and 
 ## Depends on
 
 - [Coordinated epistasis](coordinated-epistasis.md)
-- [Ordinary least-squares estimator](../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md): the fit of the interaction regression
+- [Ordinary least-squares estimator](../../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md): the fit of the interaction regression
 
 ## Expansion
 

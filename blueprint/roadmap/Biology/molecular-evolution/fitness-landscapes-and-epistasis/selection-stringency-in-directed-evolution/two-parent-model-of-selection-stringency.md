@@ -12,13 +12,13 @@ so the $i$-th draw from the same DFE raises the expected maximum by only $1/(\la
 
 ## Depends on
 
-- [Mean of the exponential law](../../../Probability/distributions/continuous/exponential-distribution/integral-id-exp-measure.md)
-- [Harmonic numbers](../../coalescent-theory/fu-s-branch-length-covariances-for-every-sample/harm.md)
+- [Mean of the exponential law](../../../../Probability/distributions/continuous/exponential-distribution/integral-id-exp-measure.md)
+- [Harmonic numbers](../../../coalescent-theory/fu-s-branch-length-covariances-for-every-sample/harm.md)
 
 ## Proof depends on
 
-- [Competing exponential clocks](../../../Probability/distributions/continuous/exponential-distribution/competing-exponential-clocks.md)
-- [The memoryless property characterizes the exponential law](../../../Probability/distributions/continuous/exponential-distribution/memoryless-property-characterizes-the-exponential-law.md)
+- [Competing exponential clocks](../../../../Probability/distributions/continuous/exponential-distribution/competing-exponential-clocks.md)
+- [The memoryless property characterizes the exponential law](../../../../Probability/distributions/continuous/exponential-distribution/memoryless-property-characterizes-the-exponential-law.md)
 
 ## Expansion
 

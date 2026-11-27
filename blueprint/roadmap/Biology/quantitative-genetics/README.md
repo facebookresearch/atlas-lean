@@ -20,5 +20,4 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Homozygosity-by-descent hidden Markov models](homozygosity-by-descent-hidden-markov-models/README.md)
 - [Predicting cross means and variances](predicting-cross-means-and-variances/README.md)
 - [Alpha model of frequency-dependent effect sizes](alpha-model-of-frequency-dependent-effect-sizes/README.md)
-- [Classical twin design and the ACE model](classical-twin-design-and-the-ace-model/README.md)
 - [Cross-validated forward search QTL mapping](cross-validated-forward-search-qtl-mapping/README.md)

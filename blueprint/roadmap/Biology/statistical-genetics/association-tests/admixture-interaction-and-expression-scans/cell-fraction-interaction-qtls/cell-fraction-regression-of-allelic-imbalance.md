@@ -17,11 +17,11 @@ The analogous total-expression test is the interaction eQTL regression $y=\mu+\b
 
 ## Depends on
 
-- [Beta-binomial mass function](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/beta-binomial/beta-binomial-pmf.md): the read-count model
+- [Beta-binomial mass function](../../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/beta-binomial/beta-binomial-pmf.md): the read-count model
 
 ## Proof depends on
 
-- [Variance of the beta-binomial law](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/beta-binomial/variance-beta-binomial.md): the overdispersed variance
+- [Variance of the beta-binomial law](../../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/beta-binomial/variance-beta-binomial.md): the overdispersed variance
 
 ## Expansion
 
