@@ -1,0 +1,20 @@
+# Timed automata
+
+Timed automata read timed words, infinite words whose letters carry strictly increasing, unbounded real time stamps,
+and constrain their transitions by comparing real-valued clocks with rational constants. Timed Büchi and timed Muller
+automata accept the same timed languages, which are closed under union and intersection but not under
+complementation, and whose universality problem is undecidable; deterministic timed Muller automata are closed under
+all Boolean operations. Emptiness is decided by the region construction, in
+[timed and infinite-state verification](../../../Logic/temporal-logic/timed-and-infinite-state-verification/README.md).
+
+- [Timed words and timed languages](timed-words-and-timed-languages.md)
+- [Timed Büchi automata and timed regular languages](timed-buchi-automata.md)
+- [Timed Muller automata](timed-muller-automata.md)
+- [Timed Büchi and timed Muller automata accept the same timed languages](timed-buchi-and-timed-muller-automata-are-equally-expressive.md)
+- [Timed regular languages are closed under union and intersection](timed-regular-languages-are-closed-under-union-and-intersection.md)
+- [Rational time stamps suffice for the untimed language of a timed automaton](rational-time-stamps-suffice-for-untimed-languages.md)
+- [Universality of timed automata is undecidable](universality-of-timed-automata-is-undecidable.md)
+- [Timed regular languages are not closed under complementation](timed-regular-languages-are-not-closed-under-complementation.md)
+- [Deterministic timed automata](deterministic-timed-automata.md)
+- [Deterministic timed Muller automata are closed under Boolean operations](deterministic-timed-muller-automata-are-closed-under-boolean.md)
+- [Inclusion in the language of a deterministic timed automaton is PSPACE-complete](inclusion-in-a-deterministic-timed-automaton-is-pspace-complete.md)
