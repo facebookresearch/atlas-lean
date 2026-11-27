@@ -111,6 +111,14 @@ class ParseTests(unittest.TestCase):
         self.assertEqual(findings[4].message,
                          "LINTER FAILED:\nmaximum recursion depth has been reached")
 
+    def test_reads_a_module_name_with_a_space(self):
+        output = ("/- The `simpNF` linter reports:\nSIMP LEMMAS ARE NOT IN SIMP-NORMAL FORM.\n"
+                  "This linter can be disabled with `@[nolint simpNF]`. -/\n"
+                  "-- MathlibExt.«My File»\n#check @X.Pt.mk.injEq /- LINTER FAILED:\nx -/\n")
+        findings = check.parse_run_linter(output)
+        self.assertEqual([(f.declaration, f.module) for f in findings],
+                         [("X.Pt.mk.injEq", "MathlibExt.«My File»")])
+
     def test_declaration_names(self):
         self.assertEqual(check.declaration_name("@Foo.bar✝¹ 1 unused argument:"),
                          ("Foo.bar", "1 unused argument:", True))
@@ -382,7 +390,8 @@ end
 
 # `let rec` and `where` helpers, named after the helpers whose values hold them, as Lean's `#print`
 # names each: a `let rec` in a `where` helper's value, in another `let rec`'s value (by indentation
-# or inside brackets), after another one's `;`, and in a structure-instance field's value.
+# or inside brackets), after another one's `;`, in a structure-instance field's value, and in a
+# helper after structure-instance fields.
 LET_RECS = """\
 namespace LR
 
@@ -408,6 +417,21 @@ structure Box where
 
 def boxed : Box where
   value := let rec g (k : Nat) : Nat := k; g 1
+
+def boxed2 : Box where
+  value := go2 1
+where
+  go2 (k : Nat) : Nat :=
+    let rec inner2 (j : Nat) : Nat := j
+    inner2 k
+
+def pair (n : Nat) : Nat := let rec p (k : Nat) : Nat := k, q (j : Nat) : Nat := p j; q n
+
+def props : Prop := let rec s : Prop := ∀ m : Nat, m = m; s
+
+def typed (n : Nat) : Nat := let rec t : ∀ m : Nat, m = m := fun _ => rfl, u (k : Nat) := k; u n
+
+def cons (n : Nat) : List Nat := let rec v : List Nat := [n], w (k : Nat) : List Nat := k :: v; w n
 
 end LR
 """
@@ -502,9 +526,15 @@ class IndexTests(unittest.TestCase):
         names = check.index_source(LET_RECS).names
         self.assertTrue({"LR.total.go", "LR.total.go.inner", "LR.outer.a", "LR.outer.a.b",
                          "LR.flat.c", "LR.flat.d", "LR.nest.e", "LR.nest.e.f",
-                         "LR.boxed.g"} <= names)
+                         "LR.boxed.g", "LR.boxed2.go2", "LR.boxed2.go2.inner2",
+                         # `let rec p ... := v, q ... := w` declares both; a comma in a type or
+                         # in a value that declares nothing after it does not.
+                         "LR.pair.p", "LR.pair.q", "LR.props.s", "LR.typed.t", "LR.typed.u",
+                         "LR.cons.v", "LR.cons.w"} <= names)
         self.assertFalse({"LR.total.inner", "LR.outer.b", "LR.flat.c.d", "LR.nest.f",
-                          "LR.boxed.value.g"} & names)
+                          "LR.boxed.value.g", "LR.boxed2.inner2", "LR.boxed2.value",
+                          "LR.pair.p.q", "LR.props.m", "LR.props.s.m", "LR.typed.m",
+                          "LR.cons.k"} & names)
 
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
@@ -731,6 +761,21 @@ class PlaceTests(unittest.TestCase):
             finding = Finding(name, "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
                               line, 1)
             self.assertTrue(self.place_in(finding, head, base).added, name)
+
+    def test_a_let_rec_declaration_appended_after_a_comma_is_new(self):
+        # The change appends `, q ...` to the line of an existing `let rec p`: `q` is new.
+        base_text = ("namespace LR\n\ndef pair (n : Nat) : Nat := let rec p (k : Nat) : Nat := k; "
+                     "p n\n\nend LR\n")
+        head = base_text.replace("(k : Nat) : Nat := k; p n",
+                                 "(k : Nat) : Nat := k, q (j spare : Nat) : Nat := p j; q n 0")
+        files = {"MathlibExt/A.lean": (head, {3})}
+        base = base_names(MathlibExt__A=base_text)
+        new = Finding("LR.pair.q", "unusedArguments", "", "MathlibExt.A", "MathlibExt/A.lean", 3,
+                      1)
+        self.assertTrue(self.place_in(new, files, base).added)
+        kept = Finding("LR.pair.p", "unusedArguments", "", "MathlibExt.A", "MathlibExt/A.lean", 3,
+                       1)
+        self.assertFalse(self.place_in(kept, files, base).added)
 
     def test_a_let_rec_in_a_helper_hides_no_declaration_of_the_parent(self):
         # `total.go.inner` is the `let rec` in `go`; a new `total.inner` is another declaration,
