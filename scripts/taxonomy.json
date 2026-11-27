@@ -14883,6 +14883,7 @@
   "MathlibExt/RingTheory/PiFieldQuotient": {"to": "RingTheory/ideals-and-constructions", "title": "Products of rings and fields"},
   "MathlibExt/RingTheory/Polynomial/AdjoinRootTensorProduct": {"to": "RingTheory/ideals-and-constructions", "title": "Chinese remainder theorem for polynomial quotients"},
   "MathlibExt/RingTheory/Polynomial/AffineProduct": {"to": "Algebra/polynomials", "title": "Coefficients of products with linear factors"},
+  "MathlibExt/RingTheory/Polynomial/BernsteinConversion": {"to": "Analysis/approximation-theory", "title": "Bernstein polynomials"},
   "MathlibExt/RingTheory/Polynomial/Eisenstein/AdjoinRoot": {"to": "RingTheory/ramification", "title": "Totally ramified extensions and Eisenstein polynomials"},
   "MathlibExt/RingTheory/Polynomial/HilbertSyzygy": {"to": "RingTheory/syzygies-and-resolutions", "title": "Hilbert's syzygy theorem"},
   "MathlibExt/RingTheory/Polynomial/MorganVoycePolynomial": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Morgan–Voyce polynomials"},
