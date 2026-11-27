@@ -561,7 +561,7 @@ def main() -> int:
                     return 2
                 outputs.append(output)
     except AggregatorError as error:
-        print(error, file=sys.stderr)
+        print(inert(str(error)), file=sys.stderr)
         return 2
 
     indexes = {path: index_source(read_source(path)) for path in files}

@@ -217,17 +217,45 @@ def base_text(base: str, path: str, cwd: Path = ROOT) -> str | None:
 
 
 # A name component that Lean reads as it is; any other is written in «».
-IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_'!?]*")
+def is_letter_like(char: str) -> bool:
+    """Lean's `isLetterLike`: the letters other than ASCII that an identifier can hold."""
+    c = ord(char)
+    return ((0x3B1 <= c <= 0x3C9 and c != 0x3BB)                    # lower Greek, but lambda
+            or (0x391 <= c <= 0x3A9 and c not in (0x3A0, 0x3A3))    # upper Greek, but Pi, Sigma
+            or 0x3CA <= c <= 0x3FB                                  # Coptic
+            or 0x1F00 <= c <= 0x1FFE                                # polytonic Greek
+            or 0x2100 <= c <= 0x214F                                # letter-like symbols
+            or 0x1D49C <= c <= 0x1D59F                              # script, double-struck, ...
+            or (0xC0 <= c <= 0xFF and c not in (0xD7, 0xF7))        # Latin-1, but × and ÷
+            or 0x100 <= c <= 0x17F)                                 # Latin Extended-A
+
+
+def is_subscript_alnum(char: str) -> bool:
+    """Lean's `isSubScriptAlnum`."""
+    c = ord(char)
+    return 0x2080 <= c <= 0x2089 or 0x2090 <= c <= 0x209C or 0x1D62 <= c <= 0x1D6A or c == 0x2C7C
+
+
+def is_id_first(char: str) -> bool:
+    """Lean's `isIdFirst`, whose `isAlpha` is ASCII only."""
+    return (char.isascii() and char.isalpha()) or char == "_" or is_letter_like(char)
+
+
+def is_id_rest(char: str) -> bool:
+    """Lean's `isIdRest`."""
+    return ((char.isascii() and char.isalnum()) or char in "_'!?" or is_letter_like(char)
+            or is_subscript_alnum(char))
 
 
 def lean_name(module: str) -> str | None:
-    """`module` as Lean reads it, with each component that is not an identifier, such as
-    `New-Name`, in «», or `None` if a component cannot be written so."""
+    """`module` as Lean reads and prints it: each component that is not an identifier by Lean's
+    rule (`isIdFirst`, then `isIdRest`), such as `New-Name`, in «», as `Name.toString` writes it.
+    `None` if the checks cannot write a component so: one with « or », or a control character."""
     parts = []
     for part in module.split("."):
-        if IDENTIFIER.fullmatch(part):
+        if part and is_id_first(part[0]) and all(map(is_id_rest, part[1:])):
             parts.append(part)
-        elif not part or "«" in part or "»" in part or "\n" in part:
+        elif not part or "«" in part or "»" in part or not part.isprintable():
             return None
         else:
             parts.append(f"«{part}»")
@@ -239,6 +267,13 @@ def lean_unescaped(name: str) -> str:
     return name.replace("«", "").replace("»", "")
 
 
+def printable(path: str) -> str:
+    """`path` with each character that is not printable, such as a newline, written as its
+    escape (`\\n`), so that the path prints on one line."""
+    return "".join(char if char.isprintable() else char.encode("unicode_escape").decode("ascii")
+                   for char in path)
+
+
 def unnameable(files: Sequence[ChangedFile], annotate: bool = False) -> list[ChangedFile]:
     """The files whose module Lean cannot name, which the checks leave out, saying so (and in
     GitHub Actions, with `annotate`, annotating each)."""
@@ -247,7 +282,7 @@ def unnameable(files: Sequence[ChangedFile], annotate: bool = False) -> list[Cha
         message = "Lean cannot name the module of this file, so the checks skip it; rename it."
         if annotate and in_actions():
             print(annotation("warning", file.path, 1, "module name", message))
-        print(f"{file.path}: {message}", file=sys.stderr)
+        print(inert(f"{printable(file.path)}: {message}"), file=sys.stderr)
     return skipped
 
 
@@ -304,15 +339,23 @@ def annotation(level: str, path: str, line: int, title: str, message: str,
     return f"::{level} {','.join(fields)}::{escape(message)}"
 
 
-# A line that GitHub Actions reads as a workflow command: `::` after any leading space.
+# GitHub Actions reads a workflow command in a line of a step's output in two forms: `::` at the
+# start of the line, after any whitespace, and the older `##[`, anywhere in it. The runner starts a
+# line at `\r` as well as at `\n`.
 COMMAND_LINE = re.compile(r"^(\s*)::", re.MULTILINE)
+LEGACY_COMMAND = "##["
 
 
 def inert(text: str) -> str:
-    """`text`, which a tool printed, with every line that GitHub Actions would read as a workflow
-    command broken up (`: :`), so that printing it to the job log cannot annotate a file or
-    otherwise command the runner; outside GitHub Actions, `text` as it is."""
-    return COMMAND_LINE.sub(r"\1: :", text) if in_actions() else text
+    """`text`, which a tool printed or a pull request wrote, with every workflow command that GitHub
+    Actions would read in it broken up: a line that starts with `::` gets `: :`, `##[` becomes
+    `## [`, and a `\r` a line break. So printing it to the job log cannot annotate a file, stop
+    the job's later commands or otherwise command the runner. Outside GitHub Actions, `text` as it
+    is."""
+    if not in_actions():
+        return text
+    text = text.replace("\r\n", "\n").replace("\r", "\n").replace(LEGACY_COMMAND, "## [")
+    return COMMAND_LINE.sub(r"\1: :", text)
 
 
 def in_actions() -> bool:
@@ -346,7 +389,7 @@ def guarded(main: Callable[[], int]) -> Callable[[], int]:
         try:
             return main()
         except GitError as error:
-            print(f"Cannot read the change: {error}", file=sys.stderr)
+            print(inert(f"Cannot read the change: {error}"), file=sys.stderr)
             return 2
     return run
 
@@ -367,7 +410,7 @@ def build(base: str, cwd: Path = ROOT) -> int:
             print(inert(result.stdout or ""), end="")
             return 0 if result.returncode == 0 else 1
     except AggregatorError as error:
-        print(error, file=sys.stderr)
+        print(inert(str(error)), file=sys.stderr)
         return 2
 
 
