@@ -17,4 +17,5 @@ isogenies of bounded degree; and Raynaud's estimate removes the auxiliary height
 - [Isogeny degrees from last minima](isogeny-degree-from-last-minima.md)
 - [Bounds for the last minima of the lattices of homomorphisms](last-minimum-bounds.md)
 - [Isogeny estimate with auxiliary heights](isogeny-estimate-with-auxiliary-heights.md)
+- [Poincaré's complete reducibility theorem](poincare-reducibility.md)
 - [Gaudron–Rémond isogeny estimate](exists-isogenies-degree-le-kappa.md)

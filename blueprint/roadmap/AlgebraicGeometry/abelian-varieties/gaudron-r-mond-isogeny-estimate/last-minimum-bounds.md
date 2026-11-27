@@ -6,7 +6,7 @@ which all endomorphisms of $A \times A'$ are defined, and suppose $k \subset K \
 maximal family $A_1, \dots, A_t$ of abelian subvarieties of $A$ defined over $K$, simple over $K$ and
 pairwise non-isogenous over $K$, so that $A$ is isogenous over $K$ to $A'' = \prod_{i=1}^t
 A_i^{n_i}$ for integers $n_i \ge 1$ ([Poincaré's complete reducibility
-theorem](../poincare-reducibility.md)). For each $i$ choose an isogeny over $k_1$ between $A_i$ and a
+theorem](poincare-reducibility.md)). For each $i$ choose an isogeny over $k_1$ between $A_i$ and a
 product $\prod_{j=1}^{u_i} C_{i,j}^{m_{i,j}}$ of powers of abelian varieties $C_{i,j}$ simple over
 $k_1$ and pairwise non-isogenous, and put $A''' = \prod_{i=1}^t \prod_{j=1}^{u_i} C_{i,j}^{n_i
 m_{i,j}}$, isogenous to $A$ over $k_1$. Let
@@ -64,7 +64,7 @@ This node is still to be broken down. A good expansion states and links:
   for $Z(C)$ and the invariant $\nu$
 - [Isogeny degrees from last minima](isogeny-degree-from-last-minima.md), for $\Lambda$,
   $\Lambda'$ and $\Lambda_i$
-- [Poincaré's complete reducibility theorem](../poincare-reducibility.md), for the decompositions
+- [Poincaré's complete reducibility theorem](poincare-reducibility.md), for the decompositions
   $A''$ and $A'''$
 - [Stable Faltings height](../stable-faltings-height/faltings-height.md), for $M$ and $P$
 - [Zarhin's trick](../zarhin-trick.md), for the principal polarizations of $Z(C)$ and $Z(C')$

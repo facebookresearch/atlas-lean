@@ -1,12 +1,12 @@
 # Poincaré's complete reducibility theorem
 
-Let $A$ be an [abelian variety](abelian-scheme.md) over a perfect field $k$. An abelian variety is
+Let $A$ be an [abelian variety](../abelian-scheme.md) over a perfect field $k$. An abelian variety is
 simple if its only abelian subvarieties are $0$ and itself. Then there are simple abelian
 subvarieties $A_1, \dots, A_n$ of $A$ such that the addition map
 
 $$A_1 \times \dots \times A_n \to A, \qquad (a_1, \dots, a_n) \mapsto a_1 + \dots + a_n,$$
 
-is an [isogeny](isogenies-of-abelian-schemes.md). Grouping isogenous factors, $A$ is isogenous to a
+is an [isogeny](../isogenies-of-abelian-schemes.md). Grouping isogenous factors, $A$ is isogenous to a
 product $\prod_{i=1}^t B_i^{r_i}$ of powers of simple abelian varieties $B_i$ that are pairwise
 non-isogenous.
 
@@ -34,14 +34,14 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
-- [Abelian scheme](abelian-scheme.md), for abelian varieties over $k$
-- [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md)
+- [Abelian scheme](../abelian-scheme.md), for abelian varieties over $k$
+- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md)
 
 ## Proof depends on
 
-- [Abelian varieties are projective](abelian-varieties-are-projective.md), for an ample invertible
+- [Abelian varieties are projective](../abelian-varieties-are-projective.md), for an ample invertible
   sheaf $L$ on $A$
-- [Dual abelian variety](dual-abelian-variety.md), for $\phi_L$, which is an isogeny for ample $L$,
+- [Dual abelian variety](../dual-abelian-variety.md), for $\phi_L$, which is an isogeny for ample $L$,
   and the dual $\imath^\vee$ of the inclusion
 
 ## Sources
