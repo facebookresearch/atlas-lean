@@ -18,4 +18,4 @@ The construction is recursive: the leaves are arranged so that each top-level sp
 
 ## Sources
 
-- Magnus Bordewich, Simone Linz, Megan Owen, Katherine St. John, Charles Semple and Kristina Wicke, "On the maximum agreement subtree conjecture for balanced trees", arXiv:2005.07357 (2020), Section 1, Theorems 1.1 and 1.3; Theorem 4.6 (explicit construction); Theorem 5.1, <https://doi.org/10.48550/arXiv.2005.07357>.
+- Magnus Bordewich, Simone Linz, Megan Owen, Katherine St. John, Charles Semple and Kristina Wicke, "On the maximum agreement subtree conjecture for balanced trees", arXiv:2005.07357 (2020), Section 1, Theorems 1.1 and 1.3; Theorem 4.6 (explicit construction); Section 5 (proof of the lower bound, Theorem 1.3), <https://doi.org/10.48550/arXiv.2005.07357>.

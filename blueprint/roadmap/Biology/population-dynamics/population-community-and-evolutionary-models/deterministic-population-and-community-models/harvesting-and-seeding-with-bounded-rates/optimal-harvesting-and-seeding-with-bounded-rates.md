@@ -1,6 +1,6 @@
 # Optimal harvesting and seeding with bounded rates
 
-**Model.** $d$ interacting species in a random environment follow $d\xi = b(\xi)\,dt + \sigma(\xi)\,dw$ on $\overline{S} = [0,\infty)^d$, with $b(0) = \sigma(0) = 0$ (extinct species stay extinct without intervention). Harvesting $Y(t)$ and seeding (repopulation) $Z(t)$, nondecreasing adapted processes, give
+**Model.** $d$ interacting species in a random environment follow $d\xi = b(\xi)\,dt + \sigma(\xi)\,dw$ on $\overline{S} = [0,\infty)^d$, with $b(0) = \sigma(0) = 0$ (extinct species stay extinct without intervention); $b$ and $\sigma$ are locally Lipschitz, and for every initial condition in $S$ the uncontrolled equation has a unique global solution in $S$. Harvesting $Y(t)$ and seeding (repopulation) $Z(t)$, nondecreasing adapted processes, give
 
 $$X(t) = x + \int_0^t b(X)\,ds + \int_0^t\sigma(X)\,dw - Y(t) + Z(t), \qquad X(t) \ge 0.$$
 
@@ -12,13 +12,13 @@ Three regimes are considered: bounded seeding rate $dZ = C\,dt$, $0 \le C \le \l
 
 **Theorem.**
 
-*(1)* (Truncation, bounded seeding) If for some $U > 0$, $\sum_i[b_i(x) - \delta(x_i - U)]f_i < 0$ for $|x| > U$, then there is $x^* \in [0,U]^d$ with $V(x) = V(x^*) + f\cdot(x - x^*)$ outside $[0,U]^d$, and $V$ equals the value $V^U$ of the problem confined to $[0,U]^d$: above a threshold one harvests instantly down to $[0,U]^d$.
+*(1)* (Truncation, bounded seeding, constant prices $f_i(x) \equiv f_i$) If for some $U > 0$, $\sum_i[b_i(x) - \delta(x_i - U)]f_i < 0$ for $|x| > U$, then there is $x^* \in [0,U]^d$ with $V(x) = V(x^*) + f\cdot(x - x^*)$ outside $[0,U]^d$, and $V$ equals the value $V^U$ of the problem confined to $[0,U]^d$: above a threshold one harvests instantly down to $[0,U]^d$.
 
 *(2)* (HJB, both rates bounded) $V$ is finite and continuous on $\overline{S}$ and is a viscosity solution of
 
-$$(\mathcal{L} - \delta)V + \max_{\xi\in[-\lambda,\mu]}\big[\xi^-\cdot(f - \nabla V) - \xi^+\cdot(g - \nabla V)\big] = 0,$$
+$$(\mathcal{L} - \delta)V + \max_{\xi\in[-\mu,\lambda]}\big[\xi^-\cdot(f - \nabla V) - \xi^+\cdot(g - \nabla V)\big] = 0,$$
 
-where $\mathcal{L}$ is the generator of the uncontrolled diffusion.
+where $\mathcal{L}$ is the generator of the uncontrolled diffusion and $\xi = C - R$ is the net seeding rate, so $-\mu \le \xi \le \lambda$. (The source's (2.19) and Theorem 2.6 print $[-\lambda,\mu]$; its Section 2 and (2.18) use $[-\mu,\lambda]$.)
 
 *(3)* (Numerical approximation) Under a diagonal-dominance condition on the diffusion matrix $\sigma\sigma'$, the values $V^h$ of locally consistent controlled Markov chains with step $h$ converge to $V$ (resp. $V^U$) on $[0,U]^d$ in each of the three regimes, and near-optimal chain policies are near-optimal for the diffusion.
 

@@ -6,7 +6,7 @@
 
 *(1) Robustness.* Tolerance persists on an open time interval around $\tau$ and under small perturbations of either initial condition. At the first crossing time $t_1$ one has $\psi_1(t_1)=\phi_1(t_1)$ and $f(\psi(t_1))\le f(\phi(t_1))$.
 
-*(2) Obstruction.* If $\phi_1,\psi_1\to0$ monotonically and $(x_p,y_p)$ lies on the backward orbit of $(x_r,y_r)$, so that $\psi$ is a time-shift of $\phi$, there is no tolerance. If $y$ inhibits $x$ throughout a region containing both trajectories and the graph of $\psi$ lies above that of $\phi$ (with $x_p$ beyond a threshold $M$), there is no tolerance either. Conversely, tolerance requires a region of inhibition in which the two solutions take equal first components.
+*(2) Obstruction.* If $\phi_1,\psi_1\to0$ monotonically and $(x_p,y_p)$ lies on the backward orbit of $(x_r,y_r)$, so that $\psi$ is a time-shift of $\phi$, there is no tolerance. If $x_p>M=\max_{t\ge0}\phi_1(t)$, the graph of $\psi$ is bounded above by that of $\phi$ ($\psi_2(s_2)<\phi_2(s_1)$ whenever $\psi_1(s_2)=\phi_1(s_1)$) and $y$ inhibits $x$ ($f$ is decreasing in $y$) in a region containing both trajectories, there is no tolerance either. If instead the graph of $\psi$ is bounded below by that of $\phi$ ($\psi_2(s_2)>\phi_2(s_1)$ whenever $\psi_1(s_2)=\phi_1(s_1)$), tolerance requires a region of inhibition containing points $\psi(s_2)$, $\phi(s_1)$ with $\psi_1(s_2)=\phi_1(s_1)$.
 
 *(3) Linear systems, distinct eigenvalues.* For $\dot{\mathbf x}=A\mathbf x$ with eigenvalues $\lambda_2<\lambda_1<0$ and eigenvectors $v$, $w$, write $(x_r,y_r)=c_1v+c_2w$ and $(x_p,y_p)=d_1v+d_2w$.
 

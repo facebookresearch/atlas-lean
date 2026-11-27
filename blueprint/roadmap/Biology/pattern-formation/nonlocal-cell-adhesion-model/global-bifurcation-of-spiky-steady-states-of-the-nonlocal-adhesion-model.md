@@ -16,14 +16,14 @@ $$\alpha_n = \frac{n\pi}{\bar u\, h'(\bar u)\, L\, M_n(\omega)}, \qquad e_n(x) =
 
 and near $(\alpha_n,\bar u)$ all nontrivial steady states lie on a curve $u_n(x,s) = \bar u + s\,\alpha_n e_n(x) + o(s)$ (Crandall–Rabinowitz).
 
-**Theorem (global bifurcation, linear adhesion $h(u)=u$).** Restrict to the space $H^2_{\Sigma_n}$ of $L/n$-periodic, even functions (dihedral symmetry $\Sigma_n$). The steady-state set contains a closed connected continuum $\mathcal C \subset \mathbb R \times H^2_{\Sigma_n}$ such that
+**Theorem (global bifurcation, linear adhesion $h(u)=u$, uniform kernel $\omega\equiv\tfrac12$).** Restrict to the space $H^2_{\Sigma_n}$ of $L/n$-periodic, even functions (dihedral symmetry $\Sigma_n$). The steady-state set contains a closed connected continuum $\mathcal C \subset \mathbb R \times H^2_{\Sigma_n}$ such that
 
 1. $\mathcal C$ contains the local branch through $(\alpha_n,\bar u)$;
 2. every $(\alpha,u) \in \mathcal C$ has $\alpha > 0$ and $u > 0$;
 3. $\mathcal C = \mathcal C^+ \cup \mathcal C^-$ with $\mathcal C^+ \cap \mathcal C^- = \{(\alpha_n,\bar u)\}$, and away from the bifurcation point the two unilateral branches consist of *$n$-spiky* functions: $u'$ has exactly $2n$ simple zeros, located at the tile boundaries $x = mL/(2n)$, with alternating sign of $u'$ on consecutive tiles;
 4. both unilateral branches are unbounded: for every $\alpha \ge \alpha_n$ each of $\mathcal C^\pm$ contains a solution with that $\alpha$.
 
-Consequently, for every $\alpha > \alpha_n$ the periodic linear-adhesion steady-state problem has at least two distinct $n$-spiked solutions, one peaked at $x=0$ and one at $x = L/(2n)$.
+Consequently, for $h(u)=u$, $\omega\equiv\tfrac12$ and every $\alpha > \alpha_n$, the periodic steady-state problem has at least two distinct $n$-spiked solutions, one peaked at $x=0$ and one at $x = L/(2n)$.
 
 ## Expansion
 

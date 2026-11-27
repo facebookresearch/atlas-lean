@@ -18,9 +18,9 @@ $$R_c=\frac{\beta}{a}\Big[\frac{r_Q\gamma_1}{q}+\frac{r_Apk_1}{s}+\frac{(1-p)k_1
 
 *(3)* *(Quarantine threshold.)* $\partial R_c/\partial\gamma_1<0$, i.e. quarantining exposed individuals has a positive population-level impact, iff $r_Q<r_{\gamma_1}$, where
 
-$$r_{\gamma_1}=\frac{q}{k_1+\mu}\Big[\frac{r_Apk_1}{s}+\frac{(1-p)k_1}{i}\Big]+\frac{r_J\,q}{(k_1+\mu)j}\Big[\frac{(1-p)k_1\gamma_2}{i}-\frac{k_2(k_1+\mu)}{q}\Big]>0;$$
+$$r_{\gamma_1}=\frac{q}{k_1+\mu}\Big[\frac{r_Apk_1}{s}+\frac{(1-p)k_1}{i}\Big]+\frac{r_J\,q}{(k_1+\mu)j}\Big[\frac{(1-p)k_1\gamma_2}{i}-\frac{k_2(k_1+\mu)}{q}\Big];$$
 
-if $r_Q>r_{\gamma_1}$, more quarantine raises $R_c$.
+if $r_Q>r_{\gamma_1}$, more quarantine raises $R_c$. The threshold $r_{\gamma_1}$ can be negative (the source's display asserts $r_{\gamma_1}>0$, which fails for some parameters), in which case quarantine raises $R_c$ for every $r_Q\ge 0$.
 
 *(4)* *(Isolation threshold.)* Analogously, isolation of symptomatic individuals lowers $R_c$ iff $r_J$ is below an explicit threshold $r_{\gamma_2}$.
 

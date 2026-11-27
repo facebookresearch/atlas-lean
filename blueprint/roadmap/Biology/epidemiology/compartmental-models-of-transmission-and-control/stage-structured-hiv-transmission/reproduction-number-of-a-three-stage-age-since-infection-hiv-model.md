@@ -27,4 +27,4 @@ $\Gamma_1$ and $\Gamma_2$ are the probabilities of surviving stage 1 and stage 2
 
 ## Sources
 
-- Mboya Ba, Ramsès Djidjou-Demasse, Mountaga Lam, Jean-Jules Tewa, "Optimal intervention strategies of staged progression HIV infections through an age-structured model with probabilities of ART drop out", arXiv:1911.06703 (2019), Section 2 (model, Assumption 2.1, $\mathcal R_0$), Theorem 2.1, Proposition 2.2, Theorem 2.3, Proposition 7.3 and Theorem 8.3, <https://doi.org/10.48550/arXiv.1911.06703>.
+- Mboya Ba, Ramsès Djidjou-Demasse, Mountaga Lam, Jean-Jules Tewa, "Optimal intervention strategies of staged progression HIV infections through an age-structured model with probabilities of ART drop out", arXiv:1911.06703 (2019), Section 2 (model, Assumption 1.1, $\mathcal R_0$), Theorem 2.1, Proposition 2.2, Theorem 2.3, Proposition 7.3 and Theorem 8.3, <https://doi.org/10.48550/arXiv.1911.06703>.

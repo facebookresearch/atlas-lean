@@ -6,7 +6,11 @@ $$dZ^i_t=b_i(Z_t)\,dt+\sqrt{a_i(Z^i_t)}\,dW^i_t,\qquad i=1,\dots,d,$$
 
 with independent Brownian motions $W^i$, absorbed at the extinction set $\Gamma=\{z\in\overline U: z_i=0\text{ for some } i\}$, $T_\Gamma=\inf\{t>0:Z_t\in\Gamma\}$. A typical case is the stochastic Lotka–Volterra community $dZ^i=Z^i(r_i-\sum_j c_{ij}Z^j)\,dt+\sqrt{\gamma_iZ^i}\,dW^i$. A probability measure $\mu$ on $U=(0,\infty)^d$ is a **quasi-stationary distribution (QSD)** if $\mathbb{P}^\mu[Z_t\in\cdot\mid t<T_\Gamma]=\mu$ for all $t\ge 0$.
 
-**Hypotheses.** (H1) $a_i\in C^2([0,\infty))$, $a_i(0)=0<a_i'(0)$, $a_i>0$ on $(0,\infty)$, $\limsup_{s\to\infty}\big(|a_i'|^2/a_i+a_i''\big)<\infty$ and $\int_1^\infty a_i^{-1/2}\,ds=\infty$. (H2) $b_i\in C^1(\overline U)$ with $b_i=0$ on $\{z_i=0\}$. (H3) A Lyapunov function $V\in C^2(\overline U)$, $V>0$, with $V\to\infty$ and $b\cdot\nabla V\to-\infty$ as $|z|\to\infty$, plus growth and domination conditions on $a_i,b_i,V$ at infinity.
+**Hypotheses.** (H1) $a_i\in C^2([0,\infty))$, $a_i(0)=0<a_i'(0)$, $a_i>0$ on $(0,\infty)$, $\limsup_{s\to\infty}\big(|a_i'|^2/a_i+a_i''\big)<\infty$ and $\int_1^\infty a_i^{-1/2}\,ds=\infty$. (H2) $b_i\in C^1(\overline U)$ with $b_i=0$ on $\{z_i=0\}$. (H3) There is a positive $V\in C^2(\overline U)$ such that:
+- (1) $V(z)\to\infty$ and $(b\cdot\nabla V)(z)\to-\infty$ as $|z|\to\infty$;
+- (2) there is a nonnegative continuous $\tilde V:[0,\infty)\to[0,\infty)$ with $\int_1^\infty e^{-\beta\tilde V(s)}a_i(s)^{-1}\,ds<\infty$ for all $\beta>0$ and all $i$, and $V(z)\ge\sum_{i=1}^d\tilde V(z_i)$ on $U$;
+- (3) $\displaystyle\lim_{|z|\to\infty}\frac{1}{b\cdot\nabla V}\sum_{i=1}^d\Big(|\partial_{z_i}b_i|+\frac{|a_i'b_i|}{a_i}+|a_i'\partial_{z_i}V|+|a_i\partial^2_{z_iz_i}V|\Big)=0$;
+- (4) there are $C,R>0$ with $\sum_{i=1}^d\big(a_i|\partial_{z_i}V|^2+b_i^2/a_i\big)\le-C\,b\cdot\nabla V$ on $U\setminus B^+_R$, where $B^+_R=(0,R)^d$.
 
 **Theorem.** Under (H1)–(H3), $Z$ reaches $\Gamma$ in finite time almost surely, it admits a QSD $\mu_1$, and there is $r_1>0$ such that for every compactly supported initial law $\mu$ on $U$, every $f\in C_b(U)$ and every small $\varepsilon>0$,
 

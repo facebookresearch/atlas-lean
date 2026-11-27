@@ -30,4 +30,4 @@ The quantity $a/(1+b)^\tau$ plays the role of the expected number of new fecund 
 
 ## Sources
 
-- Sabrina H. Streipert, Gail S. K. Wolkowicz, "An alternative delayed population growth difference equation model", arXiv:2010.04378 (2020), Section 2 (model, eqs. for $H$, $m$, $M$, $\tau_c$), Theorems 2, 6, 7, 11 and 14, Propositions 8, 12–13, <https://doi.org/10.48550/arXiv.2010.04378>.
+- Sabrina H. Streipert, Gail S. K. Wolkowicz, "An alternative delayed population growth difference equation model", arXiv:2010.04378 (2020), Section 2 (model, eqs. for $H$, $m$, $M$, $\tau_c$), Theorems 3.2, 3.6, 3.7, 3.11 and 3.14, Propositions 3.8, 3.12–3.13, <https://doi.org/10.48550/arXiv.2010.04378>.

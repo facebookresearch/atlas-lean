@@ -8,7 +8,7 @@ For a rooted binary tree with leaf depths $\delta_\ell$, $p_\ell=2^{-\delta_\ell
 
 **Theorem.**
 
-*(1)* (Markov branching trees) If $T_n$ is a Markov branching tree with root-split distributions $(q_n)$, $K_n\sim q_n$, and $\mu_n=\mathbb E[B_2(T_n)]$, $v_n=\operatorname{Var}B_2(T_n)$, then $\mu_1=v_1=0$ and
+*(1)* (Markov branching trees) If $T_n$ is a Markov branching tree with root-split distributions $(q_n)$, symmetric in the sense $q_n(k)=q_n(n-k)$ as in the source's definition, $K_n\sim q_n$, and $\mu_n=\mathbb E[B_2(T_n)]$, $v_n=\operatorname{Var}B_2(T_n)$, then $\mu_1=v_1=0$ and
 
 $$\mu_n=\mathbb E[\mu_{K_n}]+1,\qquad v_n=\tfrac14\operatorname{Var}\big(\mu_{K_n}+\mu_{n-K_n}\big)+\tfrac12\mathbb E[v_{K_n}].$$
 
@@ -30,4 +30,4 @@ The root-split recursion makes $B_2$ additive in expectation over Markov branchi
 
 ## Sources
 
-- François Bienvenu, Gabriel Cardona, Celine Scornavacca, "Revisiting Shao and Sokal's $B_2$ index of phylogenetic balance", arXiv:2010.08079 (2020), Definition of $B_2$, Propositions 1.1–1.2, Corollary 1.5, Theorem 2.1, Theorems 3.1, 3.3–3.5 and Proposition 3.2, <https://doi.org/10.48550/arXiv.2010.08079>.
+- François Bienvenu, Gabriel Cardona, Celine Scornavacca, "Revisiting Shao and Sokal's $B_2$ index of phylogenetic balance", arXiv:2010.08079 (2020), Definition 1.2 ($B_2$), Propositions 1.7–1.8, Corollary 1.12, Theorem 2.3, Theorem 3.1 and Proposition 3.3 (Galton–Watson trees), Theorem 3.4 (Markov branching trees), Theorems 3.7 and 3.9 (Yule and PDA models), numbering of v2, <https://doi.org/10.48550/arXiv.2010.08079>.

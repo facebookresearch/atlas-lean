@@ -14,4 +14,4 @@ The network built from a TCS by adding pairs in reverse order is tree-child, its
 
 ## Sources
 
-- Remie Janssen, Mark Jones, Yukihiro Murakami, "Combining Networks using Cherry Picking Sequences", arXiv:1912.03999 (2019), Definitions 1–7, Lemmas 3–5 and 10, Theorems 1–2, <https://doi.org/10.48550/arXiv.1912.03999>.
+- Remie Janssen, Mark Jones, Yukihiro Murakami, "Combining Networks using Cherry Picking Sequences", arXiv:1912.03999 (2019), Definitions 1–7, Lemmas 3–5 and 10, Theorem 1, <https://doi.org/10.48550/arXiv.1912.03999>.

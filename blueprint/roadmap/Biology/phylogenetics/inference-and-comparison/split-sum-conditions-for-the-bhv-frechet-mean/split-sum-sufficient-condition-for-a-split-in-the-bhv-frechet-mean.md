@@ -18,4 +18,4 @@ The proof uses the characterization of the Fréchet mean through the translated 
 
 ## Sources
 
-- M. Anaya, O. Anipchenko-Ulaj, A. Ashfaq, J. Chiu, M. Kaiser, M. S. Ohsawa, M. Owen, E. Pavlechko, K. St. John, S. Suleria, K. Thompson, C. Yap, "Properties for the Fréchet mean in Billera-Holmes-Vogtmann treespace", arXiv:1907.05937 (2019), <https://doi.org/10.48550/arXiv.1907.05937>. Section 2 (Proposition 1, Lemma 1, Theorems 1–4) and Section 3 (Lemmas 3–5, Theorem 5, Definition 8, Corollary 1, Examples 2 and 3).
+- M. Anaya, O. Anipchenko-Ulaj, A. Ashfaq, J. Chiu, M. Kaiser, M. S. Ohsawa, M. Owen, E. Pavlechko, K. St. John, S. Suleria, K. Thompson, C. Yap, "Properties for the Fréchet mean in Billera-Holmes-Vogtmann treespace", arXiv:1907.05937 (2019), <https://doi.org/10.48550/arXiv.1907.05937>. Section 2 (Proposition 1, Lemma 1, Theorems 1–4) and Section 3 (Lemmas 2–4, Theorem 5, Definition 8, Corollary 1, Examples 2 and 3).

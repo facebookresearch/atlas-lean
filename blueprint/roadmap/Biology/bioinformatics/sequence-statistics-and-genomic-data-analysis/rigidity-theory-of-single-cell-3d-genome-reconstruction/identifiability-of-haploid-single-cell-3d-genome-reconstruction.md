@@ -14,4 +14,4 @@ The backbone-power lemma follows by induction: $K_{d+2}$ is globally $d$-rigid a
 
 ## Sources
 
-- Sean Dewar, Georg Grasegger, Kaie Kubjas, Fatemeh Mohammadi and Anthony Nixon, "Single-cell 3D genome reconstruction in the haploid setting using rigidity theory", arXiv:2407.10700 (2024), Lemmas 7, 8, 14 and 16, Proposition 12 and Theorem 15, <https://doi.org/10.48550/arXiv.2407.10700>.
+- Sean Dewar, Georg Grasegger, Kaie Kubjas, Fatemeh Mohammadi and Anthony Nixon, "Single-cell 3D genome reconstruction in the haploid setting using rigidity theory", arXiv:2407.10700 (2024), Lemmas 3.3, 3.4, 4.4 and 4.6, Proposition 4.2 and Theorem 4.5 (numbering of v1 and v2), <https://doi.org/10.48550/arXiv.2407.10700>.

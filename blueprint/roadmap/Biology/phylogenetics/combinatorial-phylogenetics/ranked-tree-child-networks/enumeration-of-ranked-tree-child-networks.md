@@ -20,4 +20,4 @@ Going back in time, the $k$-th event (counted from the root) acts on $k+1$ linea
 
 ## Sources
 
-- François Bienvenu, Amaury Lambert and Mike Steel, "Combinatorial and stochastic properties of ranked tree-child networks", arXiv:2007.09701 (2020), Propositions 1.1 and 1.2, Theorem 2.1, Corollaries 2.2, 2.3 and 2.5, Proposition 2.4, <https://doi.org/10.48550/arXiv.2007.09701>.
+- François Bienvenu, Amaury Lambert and Mike Steel, "Combinatorial and stochastic properties of ranked tree-child networks", arXiv:2007.09701 (2020), Propositions 1.6 and 1.8, Theorem 2.3, Corollaries 2.4–2.5, Proposition 2.6 and Corollary 2.7, <https://doi.org/10.48550/arXiv.2007.09701>.

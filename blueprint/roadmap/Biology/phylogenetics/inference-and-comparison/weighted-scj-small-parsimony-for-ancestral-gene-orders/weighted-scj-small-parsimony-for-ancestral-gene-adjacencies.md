@@ -9,7 +9,7 @@ $$ D(\lambda,T) = \sum_{v,a}\Big(\alpha\,(1 - p_{v,a})\,w_{v,a} + (1 - \alpha)\,
 a convex combination of the weight of discarded ancestral adjacencies and the SCJ evolutionary cost.
 
 **Theorem.**
-1. (Hardness) The weighted SCJ labeling problem is NP-hard for every $\alpha > 33/34$, via the NP-completeness of a Maximum Intersection Matching Problem.
+1. (Hardness) The weighted SCJ labeling problem is NP-hard for every $\alpha$ with $33/34 < \alpha < 1$, via the NP-completeness of a Maximum Intersection Matching Problem.
 2. (Decomposition) Build the *global adjacency graph* on all marker extremities, with an edge $\{a,b\}$ whenever some internal node has adjacency $\{a,b\}$ as a candidate. The set of optimal labelings is the Cartesian product of the optimal labelings of the instances restricted to its connected components; conflict-free components (a single edge) are solved in $O(n)$.
 3. (Fixed-parameter tractability) With $D$ the maximum vertex degree and $M$ the maximum number of vertices of a conflicting component, an adaptation of the Sankoff–Rousseau dynamic program solves the problem in time $O\big(nN(1+D)^{2M}\big)$ and space $O\big(nN(1+D)^{M}\big)$. Uniform sampling of co-optimal labelings has the same bounds.
 

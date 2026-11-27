@@ -32,4 +32,4 @@ The proof couples $\kappa_\ell$ (resp. $\chi_\ell$) with an explicit Markov chai
 
 ## Sources
 
-- François Bienvenu, Amaury Lambert and Mike Steel, "Combinatorial and stochastic properties of ranked tree-child networks", arXiv:2007.09701 (2020), Section 4: Theorem 4.1 (Poisson limit of cherries), Propositions 4.2–4.4 (cherry Markov chain and moments), Propositions 4.6 and 4.7 (tridents), <https://doi.org/10.48550/arXiv.2007.09701>.
+- François Bienvenu, Amaury Lambert and Mike Steel, "Combinatorial and stochastic properties of ranked tree-child networks", arXiv:2007.09701 (2020), Section 4: Theorem 4.2 (limits of cherries and tridents), Propositions 4.3–4.5 (cherry Markov chain and moments), Propositions 4.6–4.8 (tridents), <https://doi.org/10.48550/arXiv.2007.09701>.

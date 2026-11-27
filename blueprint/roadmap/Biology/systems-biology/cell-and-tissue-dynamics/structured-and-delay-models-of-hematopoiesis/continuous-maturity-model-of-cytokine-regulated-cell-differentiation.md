@@ -24,4 +24,4 @@ Along characteristics, the progenitor density at maturity $x$ is the stem-cell o
 
 ## Sources
 
-- Marie Doumic, Anna Marciniak-Czochra, Benoit Perthame and Jorge P. Zubelli, "A Structured Population Model of Cell Differentiation", arXiv:1012.0682 (2010), Section 2 (model and continuum limit, Proposition 2.1), Theorem 3.1, Corollaries 3.4 and 3.6, Theorems 4.1–4.2, Lemma 5.1 and Propositions 5.2–5.3, <https://doi.org/10.48550/arXiv.1012.0682>.
+- Marie Doumic, Anna Marciniak-Czochra, Benoit Perthame and Jorge P. Zubelli, "A Structured Population Model of Cell Differentiation", arXiv:1012.0682 (2010), Section 1 (model and continuum limit, Proposition 1.1), Theorem 2.1, Corollaries 2.4 and 2.6, Theorems 3.1–3.2, Lemma 4.1 and Propositions 4.2–4.3, <https://doi.org/10.48550/arXiv.1012.0682>.

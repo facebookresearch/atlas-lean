@@ -26,4 +26,4 @@ For each tree $T$ let $(\mathcal A^T,\mathcal B^T)$ be the support of the geodes
 
 ## Sources
 
-- M. Anaya, O. Anipchenko-Ulaj, A. Ashfaq, J. Chiu, M. Kaiser, M. S. Ohsawa, M. Owen, E. Pavlechko, K. St. John, S. Suleria, K. Thompson, C. Yap, "Properties for the Fréchet mean in Billera-Holmes-Vogtmann treespace", arXiv:1907.05937 (2019), <https://doi.org/10.48550/arXiv.1907.05937>. Section 3.2 (Theorem 6, Corollary 2, Example 5, Definition 9, Corollary 3) and Section 4.
+- M. Anaya, O. Anipchenko-Ulaj, A. Ashfaq, J. Chiu, M. Kaiser, M. S. Ohsawa, M. Owen, E. Pavlechko, K. St. John, S. Suleria, K. Thompson, C. Yap, "Properties for the Fréchet mean in Billera-Holmes-Vogtmann treespace", arXiv:1907.05937 (2019), <https://doi.org/10.48550/arXiv.1907.05937>. Section 3.2 (Theorem 6, Corollary 2, Example 4, Definition 9, Corollary 3) and Section 4.

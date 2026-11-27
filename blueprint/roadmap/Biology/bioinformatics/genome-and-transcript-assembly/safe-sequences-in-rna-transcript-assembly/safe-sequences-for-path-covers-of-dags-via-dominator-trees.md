@@ -17,4 +17,4 @@ If every path through $u$ contains $X$, then any path cover, which must cover $u
 
 ## Sources
 
-- Francisco Sena, Romeo Rizzi and Alexandru I. Tomescu, "Safe Sequences via Dominators in DAGs for Path-Covering Problems", arXiv:2411.03871 (2024), Section 1 (Theorem 1, characterization of safe sequences), Section 3.3 (Theorem 2, characterization of maximal safe sequences), Section 4 (experiments), Appendices A, B and D, <https://doi.org/10.48550/arXiv.2411.03871>.
+- Francisco Sena, Romeo Rizzi and Alexandru I. Tomescu, "Safe Sequences via Dominators in DAGs for Path-Covering Problems", arXiv:2411.03871 (2024), Section 1 (Theorem 1, characterization of safe sequences; Theorems 2–3, computation and enumeration of maximal safe sequences), Section 3.3 (Theorem 4, characterization of maximal safe sequences), Theorems 5–8 (subset and arc covers), numbering of v3–v4, Section 4 (experiments), Appendices A, B and D, <https://doi.org/10.48550/arXiv.2411.03871>.

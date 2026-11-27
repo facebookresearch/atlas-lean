@@ -15,12 +15,11 @@ Here $k\in[0,1]$ is the efficacy of endocrine therapy (blocking estrogen product
 **Results.**
 1. The system has a unique solution, and $\mathbb R^5_+$ is positively invariant.
 2. Estrogen relaxes to $E^*=p(1-k)/\theta$ exponentially at rate $\theta$, so endocrine therapy scales the estrogen load, and hence the transformation flux $l_1NE^*(1-k)=l_1p(1-k)^2N/\theta$, quadratically in $1-k$.
-3. Linearization at the tumor-free, tumor-dominant ("death") and coexistence equilibria gives local stability conditions in terms of two threshold quantities $\mathscr R_0$ and $\mathscr R_1$ (built from the Jacobian entries at the equilibrium) and Routh–Hurwitz inequalities on the characteristic polynomial; the tumor-free state is locally asymptotically stable when both thresholds are below one.
 
 ## Expansion
 
-The estrogen and immunotherapy equations decouple from the cell populations except through $I$, so the long-time estrogen level is set by production and clearance alone, and endocrine therapy acts twice: on estrogen production and on its effect. With $k<1$ the transformation term keeps feeding the tumor compartment, which is why the combination with diet (reducing tumor growth) and immunotherapy (raising immune killing) is needed to push the tumor-related thresholds below one; numerical simulations in the source compare treatment combinations.
+The estrogen and immunotherapy equations decouple from the cell populations except through $I$, so the long-time estrogen level is set by production and clearance alone, and endocrine therapy acts twice: on estrogen production and on its effect. With $k<1$ the transformation term keeps feeding the tumor compartment: at $E=E^*>0$, any equilibrium with $T=0$ must have $N=0$, so the system has no tumor-free equilibrium with healthy tissue unless endocrine therapy is fully effective ($k=1$). (The source's stability analysis linearizes at a point with $T=0$ and $N>0$, which for $k<1$ is not an equilibrium of its system, so its stability theorems are not stated here.) Numerical simulations in the source compare treatment combinations of diet (reducing tumor growth) and immunotherapy (raising immune killing).
 
 ## Sources
 
-- Hassnaa Akil and Nadia Idrissi Fatmi, "A mathematical model of Breast cancer (ER+) with excess estrogen: Mixed treatments using Ketogenic diet, endocrine therapy and Immunotherapy", arXiv:2205.11974 (2022), Section 2 (model), Theorems 1–2 (well-posedness and invariance) and Section 4 (Theorems 3–6, local stability conditions), <https://doi.org/10.48550/arXiv.2205.11974>.
+- Hassnaa Akil and Nadia Idrissi Fatmi, "A mathematical model of Breast cancer (ER+) with excess estrogen: Mixed treatments using Ketogenic diet, endocrine therapy and Immunotherapy", arXiv:2205.11974 (2022), Section 2 (model), Theorems 1–2 (well-posedness and invariance), <https://doi.org/10.48550/arXiv.2205.11974>.

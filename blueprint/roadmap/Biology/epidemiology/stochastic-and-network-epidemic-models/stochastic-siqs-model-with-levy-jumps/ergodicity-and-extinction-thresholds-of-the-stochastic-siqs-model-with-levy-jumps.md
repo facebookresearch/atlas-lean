@@ -8,7 +8,14 @@ dI &= \big(\beta SI - (\mu_2 + \delta + \gamma)I\big)dt + \sigma_2I\,dW_2 + \int
 dQ &= \big(\delta I - (\mu_3 + k)Q\big)dt + \sigma_3Q\,dW_3 + \int_Z\eta_3(u)Q(t^-)\widetilde{N}(dt,du).
 \end{aligned}$$
 
-The noise $\sigma_\beta\,dW_\beta$ perturbs the transmission rate; $\widetilde{N}$ is a compensated Poisson random measure with finite Lévy measure $\nu$, and $1 + \eta_i > 0$ with the usual integrability. Let $\chi = 2\mu_1 - \max_i\sigma_i^2 - \int_Z[\bar\eta^2\vee\underline\eta^2]\,d\nu > 0$ and put $\Lambda_2 = \int_Z\big(\eta_2(u) - \ln(1+\eta_2(u))\big)\nu(du)$ and $c_I = \mu_2 + \delta + \gamma + \sigma_2^2/2$. Define
+The noise $\sigma_\beta\,dW_\beta$ perturbs the transmission rate; $\widetilde{N}$ is a compensated Poisson random measure with Lévy measure $\nu$ on $Z\subseteq(0,\infty)$, $\nu(Z)<\infty$, and the $\eta_i$ are bounded. Write $\bar\sigma=\max_i\sigma_i^2$, $\bar\eta=\max_i\eta_i$, $\underline\eta=\min_i\eta_i$, $\hat\rho_{n,p}(u)=(1+\bar\eta(u))^{np}-1-np\,\bar\eta(u)$, $\check\rho_{n,p}(u)=(1+\underline\eta(u))^{np}-1-np\,\underline\eta(u)$ and $\ell_{n,p}=\int_Z\hat\rho_{n,p}\vee\check\rho_{n,p}\,d\nu$. The source assumes throughout:
+- (A1) $\int_Z\eta_i^2\,d\nu<\infty$ for $i=1,2,3$;
+- (A2) $1+\eta_i(u)>0$ for all $u\in Z$, and $\int_Z\big(\eta_i-\ln(1+\eta_i)\big)\,d\nu<\infty$;
+- (A3) $\int_Z\big(\ln(1+\eta_i)\big)^2\,d\nu<\infty$;
+- (A4) $\int_Z\big((1+\bar\eta)^2-1\big)^2\,d\nu<\infty$;
+- (A5) for each positive integer $n$ there is $p>1$ with $\Gamma_{n,p}=\mu_1-\frac{np-1}{2}\bar\sigma-\frac{\ell_{n,p}}{np}>0$.
+
+Let $\chi = 2\mu_1 - \bar\sigma - \int_Z[\bar\eta^2\vee\underline\eta^2]\,d\nu > 0$ and put $\Lambda_2 = \int_Z\big(\eta_2(u) - \ln(1+\eta_2(u))\big)\nu(du)$ and $c_I = \mu_2 + \delta + \gamma + \sigma_2^2/2$. Define
 
 $$\mathcal{R}^s_0 = \frac{1}{c_I}\Big(\frac{\beta A}{\mu_1} - \frac{A^2\sigma_\beta^2}{\mu_1\chi} - \Lambda_2\Big), \qquad \widehat{\mathcal{R}}^s_0 = \frac{1}{c_I}\Big(\frac{\beta A}{\mu_1} - \frac{\sigma_\beta^2A^2}{2\mu_1^2} - \Lambda_2\Big).$$
 

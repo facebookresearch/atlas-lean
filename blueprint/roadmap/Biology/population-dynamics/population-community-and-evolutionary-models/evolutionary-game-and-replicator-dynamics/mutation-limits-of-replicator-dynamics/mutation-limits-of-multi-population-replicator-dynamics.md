@@ -23,4 +23,4 @@ At a rest point of RMD, $x_{ih}(f_{ih}-\bar f_i)=-M(c_{ih}-x_{ih})$, which bound
 
 ## Sources
 
-- J. Bauer, M. Broom, E. Alonso, "The Stabilisation of Equilibria in Evolutionary Game Dynamics through Mutation: Mutation Limits in Evolutionary Games", arXiv:1905.07839 (2019), Section 1 (RD, Propositions 1.2–1.8), Section 2 (RMD, Definitions 2.1–2.2, Lemmas 2.3, 2.5, 2.8–2.9, Corollary 2.6, Proposition 2.10), Section 3 (Definitions 3.1, 3.5, 3.7, Proposition 3.3, Corollary 3.4, Lemmas 3.6, 3.8, 3.11), <https://doi.org/10.48550/arXiv.1905.07839>.
+- J. Bauer, M. Broom, E. Alonso, "The Stabilisation of Equilibria in Evolutionary Game Dynamics through Mutation: Mutation Limits in Evolutionary Games", arXiv:1905.07839 (2019), Section 2 (RD, Propositions 2.2–2.8), Section 3 (RMD, Definitions 3.1–3.2, Lemmas 3.3, 3.5, 3.8–3.9, Corollary 3.6, Proposition 3.10), Section 4 (Definitions 4.1, 4.5, 4.7, Proposition 4.3, Corollary 4.4, Lemmas 4.6, 4.8, 4.11), numbering of v1 and v2, <https://doi.org/10.48550/arXiv.1905.07839>.

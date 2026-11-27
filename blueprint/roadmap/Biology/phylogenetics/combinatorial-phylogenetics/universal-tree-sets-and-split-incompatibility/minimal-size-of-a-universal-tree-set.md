@@ -2,9 +2,11 @@
 
 **Setting.** A *split* of a taxon set $X$ ($|X|=n$) is a bipartition $A|B$ into nonempty parts; a phylogenetic $X$-tree *displays* a split if deleting some edge produces it. By the splits-equivalence theorem, a set of splits is the split set of a tree iff it contains all trivial splits and is pairwise compatible ($A\cap C$, $A\cap D$, $B\cap C$ or $B\cap D$ empty). A **universal tree set** is a collection of $X$-trees that together display every split of $X$, and the **universal incompatibility** $U(n)$ is the minimum size of such a collection.
 
-**Theorem.** For $n\ge2$ write $n=2m$ or $n=2m+1$. Then
+**Theorem.** For $n=2$ or $n\ge4$ write $n=2m$ or $n=2m+1$. Then
 
 $$U(n)=\left\lceil\frac12\binom nm\right\rceil.$$
+
+For $n=3$ every split is trivial and the star tree displays all of them, so $U(3)=1$ (the formula would give $2$).
 
 **Normalized incompatibility.** For a split system $S$ on $X$, the minimal number of trees needed to display $S$ divided by $U(|X|)$ lies in $(0,1]$ and allows comparing the incompatibility of split networks built on different numbers of taxa.
 

@@ -19,7 +19,7 @@ Here $F$, with $F'(\phi) = \phi\,(\phi\Sigma(\phi))'$, is a generalized stress f
 1. (Nutrient) For each admissible $\phi$ the nutrient problem has a unique $C^2$ solution $c$. It is monotonically decreasing in $x$, with maximum $1$ at the vessel wall.
 2. (Existence) Let $\beta = \max(\beta_1,\beta_2)$ with $\beta_1 = \sqrt{C_Pg_{\max}\Gamma_{\max}/(F(\phi_0) - F(\epsilon))}$ and $\beta_2 = C_P\sqrt{L_g\Gamma_{\max}L_f}$, where $C_P$ is a Poincaré constant, $g_{\max}$ and $\Gamma_{\max}$ bound $g$ and $\Gamma$, $L_f$ is the Lipschitz constant of $f = F^{-1}$ on $[F(\epsilon),1]$, and $\epsilon \in (0,\phi_0)$ is a positivity threshold. If $\beta w < 1$, the stationary problem has a solution $(\phi,c)$ with $\|1 - c\|_\infty \le \alpha w^2\|\phi\|_{L^2}$.
 3. (Closeness to the stress-free state) Every solution satisfies $\|\phi - \phi_0\|_\infty \le \dfrac{g_{\max}}{L_gC_P}(\beta_2w)^2$.
-4. (Free boundary) If $\phi$ also satisfies the free-boundary condition that fixes the stationary cord width, then (under a further assumption on $\Gamma$) $\phi \ge \phi_0$ throughout the cord.
+4. (Free boundary) If $\phi$ also satisfies the free-boundary condition that fixes the stationary cord width, then, if $\Gamma$ is nondecreasing on $[0,1]$ with $\Gamma(0) < 0 < \Gamma(1)$, $\phi \ge \phi_0$ throughout the cord.
 
 Thin enough cords (small $w$) therefore have a steady state close to the stress-free density, with nutrient depleted by at most $O(w^2)$ from the vessel to the interface. A perturbative argument then identifies the steady cord width.
 

@@ -6,7 +6,7 @@ $$G_\ell(y) = \sum_{n\ge0}\mathbb{P}(N_\ell = n)y^n = \mathbf{u}\,(\mathbf{P} + 
 
 for a starting row vector $\mathbf{u}$ and the all-ones column vector $\mathbf{v}$.
 
-**Partial recursion.** Assume $\mathbf{P}$ is irreducible, aperiodic and positive with Perron eigenvalue $\lambda$; put $\widetilde{\mathbf{P}} = \mathbf{P}/\lambda$, $\widetilde{\mathbf{Q}} = \mathbf{Q}/\lambda$, let $\nu$ be the modulus of the second eigenvalue of $\widetilde{\mathbf{P}}$, and define $\mathbf{F}_k(i) = y^k^i\mathbf{v}$ with iterated differences $\mathbf{D}^0_k(i) = \mathbf{F}_k(i)$, $\mathbf{D}^j_k(i) = \mathbf{D}^{j-1}_k(i) - \mathbf{D}^{j-1}_k(i-1)$. Then $\mathbf{D}^k_k(i) = \mathbf{C}_k + O(\nu^{i/(k+1)})$ for a constant vector $\mathbf{C}_k$, and for every $\alpha \ge 0$
+**Partial recursion.** Assume $\mathbf{P}$ is irreducible, aperiodic and positive with Perron eigenvalue $\lambda$; put $\widetilde{\mathbf{P}} = \mathbf{P}/\lambda$, $\widetilde{\mathbf{Q}} = \mathbf{Q}/\lambda$, let $\nu$ be the modulus of the second eigenvalue of $\widetilde{\mathbf{P}}$, and define $\mathbf F_k(i)=[y^k]\,(\widetilde{\mathbf P}+y\widetilde{\mathbf Q})^i\,\mathbf v$ (and $\mathbf F_k(i)=0$ for $i<0$) with iterated differences $\mathbf{D}^0_k(i) = \mathbf{F}_k(i)$, $\mathbf{D}^j_k(i) = \mathbf{D}^{j-1}_k(i) - \mathbf{D}^{j-1}_k(i-1)$. Then $\mathbf{D}^k_k(i) = \mathbf{C}_k + O(\nu^{i/(k+1)})$ for a constant vector $\mathbf{C}_k$, and for every $\alpha \ge 0$
 
 $$\mathbb{P}(N_\ell = k) = \underbrace{\lambda^{\ell-m}\sum_{j'=0}^{k}\binom{\ell-m-\alpha-k+j'}{k}\mathbf{u}\,\mathbf{D}^{j'}_k(\alpha+j')}_{P_{k,\ell-m}(\alpha)} + \lambda^{\ell-m}\binom{\ell-m-\alpha}{k}O\big(\nu^{\alpha/(k+1)}\big).$$
 

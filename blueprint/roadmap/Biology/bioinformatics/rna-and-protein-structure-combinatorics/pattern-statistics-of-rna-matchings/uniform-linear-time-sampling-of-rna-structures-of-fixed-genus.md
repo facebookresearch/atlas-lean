@@ -8,7 +8,7 @@ so $g$ follows directly from counting boundary components. Secondary structures 
 
 **Theorem.**
 
-*(1)* (Chapuy's trisection bijection) A unicellular map of genus $g$ has exactly $2g$ trisections. There is a bijection between pairs (map of genus $g$, trisection) and the disjoint union over $k<g$ of tuples (map of genus $k$, ordered $2g-2k+1$ distinct vertices). Consequently
+*(1)* (Chapuy's trisection bijection) A unicellular map of genus $g$ has exactly $2g$ trisections. There is a bijection between pairs (map of genus $g$, trisection) and the disjoint union over $k<g$ of tuples (map of genus $k$, set of $2g-2k+1$ distinct vertices). Consequently
 
 $$2g\,\epsilon_g(n)=\binom{n+1-2(g-1)}3\epsilon_{g-1}(n)+\dots+\binom{n+1}{2g+1}\epsilon_0(n),$$
 

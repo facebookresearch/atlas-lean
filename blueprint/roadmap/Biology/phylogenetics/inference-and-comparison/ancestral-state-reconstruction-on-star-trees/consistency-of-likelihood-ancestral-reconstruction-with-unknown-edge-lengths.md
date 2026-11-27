@@ -8,7 +8,7 @@ with known stationary distribution $\pi>0$. Assume $\liminf_n\bar s>0$, where $\
 
 **Theorem.** As $n\to\infty$ with $N$ fixed or slowly growing:
 
-*(1)* The empirical Bayes estimator concentrates on the set $\mathcal H$ of maximizers of the limiting averaged likelihood: $\mathbb P(\hat\rho_B\in\mathcal H)\to1$. Both estimators are therefore consistent exactly when $\mathcal H=\{\rho^*\}$.
+*(1)* The empirical Bayes estimator concentrates on the set $\mathcal H$ of maximizers of the limiting averaged likelihood: $\mathbb P(\hat\rho_B\in\mathcal H)\to1$. Both estimators are therefore consistent if $\mathcal H=\{\rho^*\}$ and inconsistent if $\rho^*\notin\mathcal H$; the case $\rho^*\in\mathcal H$ with $|\mathcal H|\ge2$ is not settled.
 
 *(2)* (Symmetric models) If $\pi_1=\dots=\pi_c=1/c$, then $\mathbb P(\hat\rho=\rho^*)\to1$.
 

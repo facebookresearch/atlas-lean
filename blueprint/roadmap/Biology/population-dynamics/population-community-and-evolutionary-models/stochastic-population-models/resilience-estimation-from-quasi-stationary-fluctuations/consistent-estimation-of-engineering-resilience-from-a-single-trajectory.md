@@ -12,7 +12,7 @@ the empirical matrix $M^*_{\mathrm{emp}}$ by $e^{\tau M^*_{\mathrm{emp}}(T,\tau,
 
 $$\bigl|\mathbb E_n[S^\mu_p(T,K)] - \mu^K_p\bigr| \le C\,(K + \|n\|_1)\Bigl(\frac{1 + \log K}{T} + e^{-c(\|n\|_1 \wedge K)} + T e^{-c'K}\Bigr),$$
 
-with positive constants $c, c', C$; the precise statement of Theorem 3.4 has, in addition, an exponentially small term in the killing rate of $\nu_K$. With $n = \Theta(K)$ and $T = \Theta(K^{a+1}\log K)$ the bias is $\Theta(K^{-a})$, while for $T$ of order $e^{\Theta(K)}$ or larger the average collapses to $0$ because the process has been absorbed.
+with positive constants $c, c', C$; the precise statement of Theorem 3.4 has, in addition, an exponentially small term in the killing rate of $\nu_K$. With $n = \Theta(K)$ and $T = \Theta(K^{a+1}\log K)$ the bias is $O(K^{-a})$, while for $T$ of order $e^{\Theta(K)}$ or larger the average collapses to $0$ because the process has been absorbed.
 
 **Theorem 5.7 (consistency of the empirical resilience).** For a lag $\tau = \Theta(1)$, an initial state $n = \Theta(K)$, $0 < T \ll \exp(\Theta(K))$ and $K$ large enough, with probability at least $1 - 1/K$,
 

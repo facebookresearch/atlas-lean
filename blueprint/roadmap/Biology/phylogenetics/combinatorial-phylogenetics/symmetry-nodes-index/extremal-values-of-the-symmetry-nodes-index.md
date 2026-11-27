@@ -22,4 +22,4 @@ The root of a tree is a symmetry node only if both pendant subtrees have the sam
 
 ## Sources
 
-- S. J. Kersting, M. Fischer, "Measuring tree balance using symmetry nodes -- a new balance index and its extremal properties", arXiv:2105.00719 (2021), Section 2 (definitions of symmetry node, SNI, binary weight), Definition of weight trees, Theorems 3.1, 3.3, 3.5, 3.9, Proposition 3.6, Proposition 7.3 and Corollary 7.4, <https://doi.org/10.48550/arXiv.2105.00719>.
+- S. J. Kersting, M. Fischer, "Measuring tree balance using symmetry nodes -- a new balance index and its extremal properties", arXiv:2105.00719 (2021), Section 2 (definitions of symmetry node, SNI, binary weight), Definition 3.4 (weight trees), Lemma 3.2 (recursion), Theorems 3.1, 3.3, 3.5, 3.9, Proposition 3.6 and Lemma 3.8 (subadditivity of $wt$), <https://doi.org/10.48550/arXiv.2105.00719>.

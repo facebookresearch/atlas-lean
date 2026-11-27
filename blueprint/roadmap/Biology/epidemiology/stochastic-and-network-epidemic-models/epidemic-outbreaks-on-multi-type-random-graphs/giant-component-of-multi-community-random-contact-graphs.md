@@ -18,4 +18,4 @@ Exploring the component of a vertex is, up to $o(n)$ explored vertices, a multi-
 
 ## Sources
 
-- Dor Minzer, Yaron Oz, Muli Safra and Lior Wainstain, "Pandemic Spread in Communities via Random Graphs", arXiv:2101.05354 (2021), Section 1.2 (model and Theorem 1.2.1) and Theorem 2.2.1, <https://doi.org/10.48550/arXiv.2101.05354>.
+- Dor Minzer, Yaron Oz, Muli Safra and Lior Wainstain, "Pandemic Spread in Communities via Random Graphs", arXiv:2101.05354 (2021), Section 1 (model and Theorem 1.1) and Theorem 2.8 (numbering of v1 and v2), <https://doi.org/10.48550/arXiv.2101.05354>.

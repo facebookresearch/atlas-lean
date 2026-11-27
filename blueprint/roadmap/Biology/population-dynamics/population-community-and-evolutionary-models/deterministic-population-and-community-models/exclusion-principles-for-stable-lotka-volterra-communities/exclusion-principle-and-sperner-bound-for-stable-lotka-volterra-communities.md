@@ -14,7 +14,7 @@ The support of an equilibrium $\bar p\ge0$ is its *community* $\mathcal I=\{i:\b
 
 **Corollary (Sperner bound).** Internally $D$-stable stable communities form an antichain under inclusion, so a Lotka–Volterra system on $N$ species has at most $\binom{N}{\lfloor N/2\rfloor}$ strictly stable, internally $D$-stable equilibria.
 
-**Multiplicity.** The bound is nearly attainable: if each community in a family has weak internal competition ($\sum_{j\in\mathcal I,j\ne i}\hat B_{ij}\le\alpha a_i$) but strongly inhibits outsiders ($\sum_{j\in\mathcal I}\hat B_{ij}>a_i/(1-\alpha)$ for $i\notin\mathcal I$), with $\alpha<\frac12$, then every community in the family supports a strictly stable equilibrium. Without $D$-stability, a stable community can contain a stable single-species subcommunity.
+**Multiplicity.** The bound is nearly attainable. Assume $a_i>0$ and $B_{ij}\ge0$ for all $i,j$, and put $\hat B_{ij}=B_{ij}a_j/B_{jj}$. If each community in a family has weak internal competition ($\sum_{j\in\mathcal I,j\ne i}\hat B_{ij}\le\alpha a_i$) but strongly inhibits outsiders ($\sum_{j\in\mathcal I}\hat B_{ij}>a_i/(1-\alpha)$ for $i\notin\mathcal I$), with $\alpha\in(0,\frac12)$, then every community in the family supports a strictly stable equilibrium, which attracts all solutions with the same support. Without $D$-stability, a stable community can contain a stable single-species subcommunity.
 
 ## Expansion
 
@@ -22,4 +22,4 @@ If $\bar q$ is $D$-stable on $\mathcal Q$ and $\bar p\neq\bar q$ is supported in
 
 ## Sources
 
-- Won Eui Hong and Robert L. Pego, "Exclusion and multiplicity for stable communities in Lotka-Volterra systems", arXiv:2102.00611 (2021), Proposition 2.2, Theorems 3.1, 3.3 and 3.4, Corollaries 3.2, 3.10 and 4.3, Proposition 5.5 and Theorem 6.3, <https://doi.org/10.48550/arXiv.2102.00611>.
+- Won Eui Hong and Robert L. Pego, "Exclusion and multiplicity for stable communities in Lotka-Volterra systems", arXiv:2102.00611 (2021), Proposition 2.2, Theorems 3.1, 3.3 and 3.4, Corollaries 3.2, 3.10 and 4.3, Proposition 5.6 and Theorem 6.3, <https://doi.org/10.48550/arXiv.2102.00611>.

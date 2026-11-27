@@ -14,4 +14,4 @@ Plane trees with $n$ edges are in bijection with noncrossing perfect matchings o
 
 ## Sources
 
-- Christine Heitsch, Chi N. Y. Huynh and Greg Johnston, "On a barrier height problem for RNA branching", arXiv:2303.12227 (2023), Theorem 1 (forward paths and minmax decompositions), Theorem 2 (bijection with noncrossing partitions), Theorem 3, Corollary 4, Theorem 5, Corollaries 6–8, <https://doi.org/10.48550/arXiv.2303.12227>.
+- Christine Heitsch, Chi N. Y. Huynh and Greg Johnston, "On a barrier height problem for RNA branching", arXiv:2303.12227 (2023), Theorem 1 (forward paths and minmax decompositions), Theorem 2 and Corollary 5 (tree partitions), Corollary 3 and Theorem 4 (common upper bounds), Corollaries 6–7 (common lower bounds), Theorem 8 (bijection with noncrossing partitions), <https://doi.org/10.48550/arXiv.2303.12227>.

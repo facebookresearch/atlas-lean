@@ -18,7 +18,7 @@ The feedback is *positive* if $a>0$ on $R$ whenever $S$ is occupied (cells in S 
 
 1. (Existence) Every RS system has periodic solutions made of $k$ non-interacting isolated clusters for each $k\le M$, a uniform solution, and, for each divisor $k$ of $n$, a cyclic $k$-cluster solution with $n/k$ cells per cluster.
 2. (Positive feedback) A gap of width at least $|R|+|S|$ never shrinks, and an isolated group of width less than $|R|+|S|$ contracts to a single cluster. Solutions made of strictly isolated clusters form a locally asymptotically stable set, and are neutrally stable within the $k$-cluster solutions. Any solution with at least one gap of width at least $|R|+|S|$ converges to a periodic solution made entirely of isolated clusters.
-3. (Negative feedback) Solutions made of strictly isolated clusters are locally unstable. Two clusters closer than $|R|+|S|$ but isolated from the other cells repel until their gap approaches $|R|+|S|$. Hence $k\le M$ clusters converge to a periodic clustered solution with isolated clusters.
+3. (Negative feedback) Solutions made of strictly isolated clusters are locally unstable. If two clusters are closer than $|R|+|S|$ and remain isolated from the other cells, the gap between them increases and converges to $|R|+|S|$. Hence $k\le M$ clusters converge to a periodic clustered solution with isolated clusters.
 
 ## Expansion
 
@@ -26,4 +26,4 @@ Under positive feedback, the leading cell of a group enters $S$ first and speeds
 
 ## Sources
 
-- Todd Young, Bastien Fernandez, Richard Buckalew, Gregory Moses and Erik Boczko, "Clustering in Cell Cycle Dynamics with General Response/Signaling Feedback", arXiv:1111.6818 (2011), Definition 2.1 (RS-feedback system, (H1)–(H5)), Propositions 2.4–2.5, 3.1–3.4, 4.1–4.2 and Corollary 4.3, <https://doi.org/10.48550/arXiv.1111.6818>.
+- Todd Young, Bastien Fernandez, Richard Buckalew, Gregory Moses and Erik Boczko, "Clustering in Cell Cycle Dynamics with General Response/Signaling Feedback", arXiv:1111.6818 (2011), Definition 1.1 (RS-feedback system, (H1)–(H5)), Propositions 2.4–2.5, 3.1–3.4, 4.1–4.2 and Corollary 4.3, <https://doi.org/10.48550/arXiv.1111.6818>.

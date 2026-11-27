@@ -16,7 +16,7 @@ where $\xi$ is the relative infectiousness of the acute stage.
 
 $$ R_0^\alpha(u_T) = \beta_C\,\frac{\xi(u_T + \mu) + \gamma}{(\gamma + \mu)(u_T + \mu)} = \frac{\xi\beta_C}{\gamma + \mu} + \frac{\beta_C\gamma}{(\gamma + \mu)(u_T + \mu)} , $$
 
-which does not depend on $\alpha$. Within-host emergence of strains without phenotypic novelty leaves the epidemic threshold unchanged. Treatment is *efficient*, meaning some finite rate $u_T^*$ achieves $R_0 = 1$, if $\xi\beta_C < \gamma + \mu$: acute-stage transmission alone must be subcritical, because treatment reaches only chronic cases.
+which does not depend on $\alpha$. Within-host emergence of strains without phenotypic novelty leaves the epidemic threshold unchanged. If $R_0^\alpha(0) > 1$, treatment is *efficient* (some finite $u_T^* \ge 0$ gives $R_0^\alpha(u_T^*) = 1$) if and only if $\xi\beta_C < \gamma + \mu$: acute-stage transmission alone must be subcritical, because treatment reaches only chronic cases.
 
 **Theorem (phenotypic variation, imperfect treatment, prophylaxis).** Let strains differ in transmissibility $\beta_{Ci}$ and in treatment failure rate $\zeta_i$ (treated people $T_i$ return to $I_{Ci}$). Let susceptibles enter prophylaxis $P$ at rate $u_P$, leaving it at rate $\delta$, with strain-specific protection $\psi_i$. Then
 
