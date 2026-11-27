@@ -20,6 +20,12 @@ For an admissible sequence, `morphIterate_getElem_eq_substitutionAutomaton_tail`
 the letter at its weighted position with the final state of the substitution automaton.
 The theorem `substitutionAutomaton_admissibleSequence` identifies the state after each digit
 with the corresponding letter of the sequence.
+
+## References
+
+* Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for ℤ*,
+  INTEGERS 24 (2024), Article A112, pp. 1–27. Neutral padding follows Lemma 7.1 (p. 19),
+  using the automaton identities (7) and (8) of Section 6.
 -/
 
 namespace MetaMathlibExt
@@ -580,6 +586,106 @@ Source: Labbé and Lepšová, *Dumont-Thomas Complement Numeration Systems for �
 public theorem lastLetterDigits_fibonacci :
     lastLetterDigits (fun a : Fin 2 => if a = 0 then [0, 1] else [0]) 2 1 = [0, 1] := by
   decide
+
+namespace seedAutomaton_neutral_padding
+
+private theorem iterate_singleton_ne_nil {A : Type*} {η : A → List A} (hη : IsNonErasing η)
+    (n : ℕ) (a : A) : morphIterate η n [a] ≠ [] := by
+  induction n with
+  | zero => simp [morphIterate]
+  | succ n ih =>
+    obtain ⟨b, rest, hrest⟩ := List.exists_cons_of_ne_nil ih
+    rw [morphIterate, hrest]
+    change η b ++ morphExtend η rest ≠ []
+    simp [hη b]
+
+-- The first block in the iterated image is obtained by taking digit zero first.
+private theorem run_replicate_zero {A : Type*} {η : A → List A} (hη : IsNonErasing η)
+    (n : ℕ) (a : A) :
+    substitutionAutomaton η a (List.replicate n 0) = (morphIterate η n [a])[0]? := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih =>
+    obtain ⟨b, rest, ha⟩ := List.exists_cons_of_ne_nil (hη a)
+    have hsplit : morphExtend η [a] = [b] ++ rest := by simp [morphExtend, ha]
+    rw [List.replicate_succ, substitutionAutomaton_cons, ha, List.getElem?_cons_zero,
+      Option.bind_some, ih, morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_split η
+        hsplit]
+    exact (List.getElem?_append_left (List.length_pos_iff.mpr
+      (iterate_singleton_ne_nil hη n b))).symm
+
+-- The last block is obtained by reading the last index of the current image before recursing.
+private theorem run_lastLetterDigits {A : Type*} {η : A → List A} (hη : IsNonErasing η)
+    (n : ℕ) (a : A) :
+    substitutionAutomaton η a (lastLetterDigits η n a) = (morphIterate η n [a]).getLast? := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih =>
+    let b := (η a).getLast (hη a)
+    have hb : (η a).getLast? = some b := List.getLast?_eq_some_getLast (hη a)
+    obtain ⟨pre, hpre⟩ := List.getLast?_eq_some_iff.mp hb
+    have hsplit : morphExtend η [a] = pre ++ [b] := by simpa [morphExtend] using hpre
+    simp only [lastLetterDigits_succ_of_getLast? η n a b hb, substitutionAutomaton_cons,
+      ← List.getLast?_eq_getElem?, hb, Option.bind_some, ih,
+      morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_split η hsplit,
+      List.getLast?_append, List.getLast?_eq_some_getLast (iterate_singleton_ne_nil hη n b),
+      Option.some_or]
+
+end seedAutomaton_neutral_padding
+
+/-- **Neutral words of the seed automaton.** Let $\eta$ be a substitution on an alphabet $A$,
+and let $u : \mathbb{Z} \to A$ be a two-sided periodic point of $\eta$ whose least period is
+$p$ and whose seed letters $u_{-1}$ and $u_0$ are growing ($|\eta^k(u_{-1})| \to \infty$ and
+$|\eta^k(u_0)| \to \infty$ as $k \to \infty$). Let $\mathcal{A}_{\eta,s}$ be the automaton of
+the seed $s = u_{-1}|u_0$, let $W_{\min} = 0^p$, and let
+$W_{\max} = \mathrm{last}_{\eta,p}(u_{-1})$ be the digit word along last letters with $p$ steps
+starting from $u_{-1}$. Then for every word $v$ of natural numbers and every $i \in \mathbb{N}$:
+if $\mathcal{A}_{\eta,s}$ accepts $0v$, then it accepts $0\,W_{\min}^i\,v$ with the same output;
+and if $\mathcal{A}_{\eta,s}$ accepts $1v$, then it accepts $1\,W_{\max}^i\,v$ with the same
+output.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 7.1. -/
+public theorem seedAutomaton_neutral_padding {A : Type*} (η : A → List A) (u : ℤ → A)
+    (p : ℕ) (hu : IsPeriodicPointWithGrowingSeed η u p) (v : List ℕ) (i : ℕ) :
+    ((seedAutomaton η (u (-1)) (u 0) (0 :: v)).isSome →
+        seedAutomaton η (u (-1)) (u 0) (0 :: (List.replicate (i * p) 0 ++ v)) =
+          seedAutomaton η (u (-1)) (u 0) (0 :: v)) ∧
+      ((seedAutomaton η (u (-1)) (u 0) (1 :: v)).isSome →
+        seedAutomaton η (u (-1)) (u 0)
+            (1 :: ((List.replicate i (lastLetterDigits η p (u (-1)))).flatten ++ v)) =
+          seedAutomaton η (u (-1)) (u 0) (1 :: v)) := by
+  have hη := hu.1.isNonErasing
+  have hper := hu.isTwoSidedPeriodicPoint
+  have hzero : substitutionAutomaton η (u 0) (List.replicate p 0) = some (u 0) := by
+    have hlen := List.length_pos_iff.mpr
+      (seedAutomaton_neutral_padding.iterate_singleton_ne_nil hη p (u 0))
+    rw [seedAutomaton_neutral_padding.run_replicate_zero hη, List.getElem?_eq_getElem hlen]
+    congr 1
+    simpa using hper.2.1 1 0 (by simpa using hlen)
+  have hone : substitutionAutomaton η (u (-1)) (lastLetterDigits η p (u (-1))) =
+      some (u (-1)) := by
+    have hlen := List.length_pos_iff.mpr
+      (seedAutomaton_neutral_padding.iterate_singleton_ne_nil hη p (u (-1)))
+    have hlast : (morphIterate η p [u (-1)]).length - 1 <
+        (morphIterate η p [u (-1)]).length := by omega
+    rw [seedAutomaton_neutral_padding.run_lastLetterDigits hη, List.getLast?_eq_getElem?,
+      List.getElem?_eq_getElem hlast]
+    congr 1
+    simpa using hper.2.2 1 0 (by simpa using hlen)
+  have repeat_loop (a : A) (w : List ℕ) (h : substitutionAutomaton η a w = some a) (j : ℕ) :
+      substitutionAutomaton η a ((List.replicate j w).flatten ++ v) =
+        substitutionAutomaton η a v := by
+    induction j with
+    | zero => simp
+    | succ j ih =>
+      rw [List.replicate_succ, List.flatten_cons, List.append_assoc,
+        substitutionAutomaton_admissibleSequence.run_append, h, Option.bind_some, ih]
+  refine ⟨fun _ => ?_, fun _ => ?_⟩
+  · simpa only [seedAutomaton_zero_cons, List.flatten_replicate_replicate] using
+      repeat_loop (u 0) (List.replicate p 0) hzero i
+  · simpa only [seedAutomaton_one_cons] using
+      repeat_loop (u (-1)) (lastLetterDigits η p (u (-1))) hone i
 
 /-- **The complement radix order.** For finite words $w$ and $w'$ over $\mathbb{N}$, write
 $|w|$ for the length of $w$. Then $w \prec w'$ holds exactly in the following three cases:
