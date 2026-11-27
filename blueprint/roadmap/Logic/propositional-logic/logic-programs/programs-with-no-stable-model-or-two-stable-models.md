@@ -18,4 +18,4 @@ So a normal program may have no stable model or several.
 ## Sources
 
 - V. Lifschitz, "Foundations of logic programming", in G. Brewka (ed.), *Principles of Knowledge Representation*, CSLI Publications, 1996, pp. 69–127, <https://www.cs.utexas.edu/~vl/papers/flp.ps>, Section 3.1 (Proposition 3.1 and its Corollary: a program has no answer set, or only the inconsistent one, or consistent answer sets only) and Section 3.8 (normal programs without answer sets).
-- M. Gelfond and V. Lifschitz, "The stable model semantics for logic programming", in *Logic Programming: Proceedings of the Fifth International Conference and Symposium*, MIT Press, 1988, pp. 1070–1080, <https://www.cs.utexas.edu/~vl/papers/stable.ps>, Section 2 (the definition of stable models, applied to the examples there).
+- M. Gelfond and V. Lifschitz, "The stable model semantics for logic programming", in *Logic Programming: Proceedings of the Fifth International Conference and Symposium*, MIT Press, 1988, pp. 1070–1080, <https://www.cs.utexas.edu/~vl/papers/stable.ps>, Section 2 (the definition of stable models) and Section 3 (the examples).

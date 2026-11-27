@@ -6,6 +6,7 @@ A program whose rules all have empty positive bodies is tight; $p \leftarrow p$ 
 
 ## Depends on
 
+- [Acyclic graph](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/topological-sorting/is-acyclic.md)
 - [Normal logic program](normal-logic-program.md)
 
 ## Sources

@@ -17,4 +17,4 @@ Let $P$ be a [definite](normal-logic-program.md) finite ground program. Then $P$
 ## Sources
 
 - P. Hitzler, *Operator-based semantics for logic programs*, lecture notes, TU Dresden, winter semester 2004/05, <https://people.cs.ksu.edu/~hitzler/topics/teaching/ws04/plecture.pdf>, Theorem 2.22(iii).
-- M. Gelfond and V. Lifschitz, "The stable model semantics for logic programming", in *Logic Programming: Proceedings of the Fifth International Conference and Symposium*, MIT Press, 1988, pp. 1070–1080, <https://www.cs.utexas.edu/~vl/papers/stable.ps>, Section 2: a program without negation has a unique stable model, its minimal Herbrand model.
+- M. Gelfond and V. Lifschitz, "The stable model semantics for logic programming", in *Logic Programming: Proceedings of the Fifth International Conference and Symposium*, MIT Press, 1988, pp. 1070–1080, <https://www.cs.utexas.edu/~vl/papers/stable.ps>, Section 2 (the definition of stable models) and Section 3: a program without negation has a unique stable model, its minimal Herbrand model.

@@ -12,4 +12,4 @@ Supported models need not be minimal: the program $p \leftarrow p$ has the suppo
 ## Sources
 
 - P. Hitzler, *Operator-based semantics for logic programs*, lecture notes, TU Dresden, winter semester 2004/05, <https://people.cs.ksu.edu/~hitzler/topics/teaching/ws04/plecture.pdf>, Definition 2.17 (after Apt, Blair and Walker) and Program 2.20.
-- V. Lifschitz, "Foundations of logic programming", in G. Brewka (ed.), *Principles of Knowledge Representation*, CSLI Publications, 1996, pp. 69–127, <https://www.cs.utexas.edu/~vl/papers/flp.ps>, Section 3.2 (sets of literals supported by a program).
+- V. Lifschitz, "Foundations of logic programming", in G. Brewka (ed.), *Principles of Knowledge Representation*, CSLI Publications, 1996, pp. 69–127, <https://www.cs.utexas.edu/~vl/papers/flp.ps>, Section 3.1 (sets of literals supported by a program, defined just before Proposition 3.3).

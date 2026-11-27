@@ -13,4 +13,4 @@ For a definite program $T_P$ is monotone. When negative bodies occur it need not
 
 ## Sources
 
-- P. Hitzler, *Operator-based semantics for logic programs*, lecture notes, TU Dresden, winter semester 2004/05, <https://people.cs.ksu.edu/~hitzler/topics/teaching/ws04/plecture.pdf>, Definition 2.4 (the operator $T_P$ for normal programs), Proposition 2.7 (continuity for definite programs) and the remark at the start of Section 2.1.
+- P. Hitzler, *Operator-based semantics for logic programs*, lecture notes, TU Dresden, winter semester 2004/05, <https://people.cs.ksu.edu/~hitzler/topics/teaching/ws04/plecture.pdf>, Definition 2.4 (the operator $T_P$ for normal programs) and the proof of Proposition 2.7 (monotonicity for definite programs). The non-monotone example applies Definition 2.4.
