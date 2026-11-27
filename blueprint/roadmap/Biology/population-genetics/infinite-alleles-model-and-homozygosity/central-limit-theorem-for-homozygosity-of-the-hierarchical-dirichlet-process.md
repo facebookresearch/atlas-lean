@@ -22,4 +22,4 @@ Conditionally on the base weights $\mathbf V$, the second-level weights are a Di
 
 ## Sources
 
-- S. Feng and J. E. Paguyo, "Central limit theorems associated with the hierarchical Dirichlet process", arXiv:2404.16034 (2024), Theorems 1.1–1.4 and Proposition 3.3, <https://doi.org/10.48550/arXiv.2404.16034>.
+- Shui Feng and J. E. Paguyo, "Central limit theorems associated with the hierarchical Dirichlet process", Stoch. Process. Appl. 190 (2025), 104767, <https://doi.org/10.1016/j.spa.2025.104767>. Numbering follows the arXiv version, arXiv:2404.16034 (2024): Theorems 1.1–1.4 and Proposition 3.3, <https://doi.org/10.48550/arXiv.2404.16034>.

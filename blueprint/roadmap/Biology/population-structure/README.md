@@ -25,10 +25,8 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Rank of the f4 matrix of left and right populations](rank-of-the-f4-matrix-of-left-and-right-populati/README.md)
 - [Tree-shaped admixture graphs and the four-point condition](tree-shaped-admixture-graphs-and-the-four-point/README.md)
 - [Wright's F-statistics](wright-s-f-statistics/README.md)
+- [Spatial Λ-Fleming–Viot process with varying population size](spatial-lambda-fleming-viot-with-varying-population-size/README.md)
 
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
-- [Identifiability of structured population histories](identifiability-of-structured-population-histories/README.md)
-- [Spatial Λ-Fleming–Viot process with varying population size](spatial-lambda-fleming-viot-with-varying-population-size/README.md)
-- [Spectral estimation of admixture models](spectral-estimation-of-admixture-models/README.md)

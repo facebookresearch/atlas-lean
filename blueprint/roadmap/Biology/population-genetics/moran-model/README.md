@@ -31,5 +31,7 @@
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
 - [Colonization time of the Moran process on graphs](colonization-time-of-the-moran-process-on-graphs.md)
-- [Excursion decomposition of allelic replacement in the Moran model](excursion-decomposition-of-allelic-replacement-in-the-moran-model.md)
-- [Pure-death duality and spectral transition probabilities of the Moran model with mutation](pure-death-duality-and-spectral-transition-probabilities-of-the-moran-model-with-mutation.md)
+- [Age extremes in Moran models](age-extremes-in-moran-models/README.md)
+- [Moran process fixation times](moran-process-fixation-times/README.md)
+- [Poissonian interacting trajectories of clonal interference](poissonian-interacting-trajectories-of-clonal-interference/README.md)
+- [Voter model and coalescing random walks](voter-model-and-coalescing-random-walks/README.md)

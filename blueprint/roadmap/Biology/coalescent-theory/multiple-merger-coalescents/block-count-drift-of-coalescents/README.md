@@ -10,4 +10,3 @@
 - [Block-count drift of Kingman's coalescent](block-drift-dirac-zero.md)
 - [Block-count drift of the Bolthausen–Sznitman coalescent](block-drift-volume.md)
 - [The block-counting generator applied to the identity](block-counting-generator-mul-vec-nat-cas.md)
-- [Second-moment bound for block counts of coalescents with dust](second-moment-bound-for-block-counts-of-coalescents-with-dust.md)

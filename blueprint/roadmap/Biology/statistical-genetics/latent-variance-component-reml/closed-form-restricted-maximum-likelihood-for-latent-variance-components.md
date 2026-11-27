@@ -26,4 +26,4 @@ Rotating samples by $(U_1\ U_2)$ splits the problem into a covariate block and i
 
 ## Sources
 
-- Muhammad Ammar Malik, Tom Michoel, "Restricted maximum-likelihood method for learning latent variance components in gene expression data with known and unknown confounders", arXiv:2005.02921 (2020), model (Methods), Theorems 1-5 and Propositions 1-2, <https://doi.org/10.48550/arXiv.2005.02921>.
+- Muhammad Ammar Malik and Tom Michoel, "Restricted maximum-likelihood method for learning latent variance components in gene expression data with known and unknown confounders", G3 (Bethesda) 12 (2022), jkab410, <https://doi.org/10.1093/g3journal/jkab410>. Numbering follows the arXiv version, arXiv:2005.02921 (2020): model (Methods), Theorems 1–5 and Propositions 1–2, <https://doi.org/10.48550/arXiv.2005.02921>.

@@ -30,4 +30,4 @@ For the sharp peak alone the quasispecies has the series representation $x(u) = 
 
 ## Sources
 
-- Maxime Berger, Raphaël Cerf, "Survival of the flattest in the quasispecies model", arXiv:2306.09221 (2023), Theorems 1, 4 and 6 and Proposition 1 (Sections 1, 2 and 7), <https://doi.org/10.48550/arXiv.2306.09221>.
+- Maxime Berger and Raphaël Cerf, "Survival of the flattest in the quasispecies model", Adv. Appl. Probab. 57 (2025), 566–606, <https://doi.org/10.1017/apr.2024.39>. Numbering follows the arXiv version, arXiv:2306.09221 (2023): Theorem 1.9 (error threshold), Theorem 1.26 (sharp peak versus plateau, proved in Section 7) and Proposition 2.6 (series representation), <https://doi.org/10.48550/arXiv.2306.09221>.

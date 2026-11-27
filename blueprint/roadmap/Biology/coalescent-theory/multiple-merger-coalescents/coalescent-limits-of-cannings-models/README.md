@@ -35,4 +35,3 @@
 - [Möhle–Sagitov classification of the coalescent limits of Cannings models](mohle-sagitov-classification-limiting-merger-rat.md)
 - [Convergence of Cannings ancestral partition chains for a fixed sample size](mohle-sagitov-fixed-n-cannings-partition-generat.md)
 - [Path-space limits of Cannings ancestral partitions to Λ-coalescents](partition-and-path-limits-of-cannings-models.md)
-- [Multi-type Cannings models and their exchangeable coalescent limits](multi-type-cannings-models-and-their-exchangeable-coalescent-limits.md)

@@ -12,3 +12,6 @@ frequency spectrum under multiple mergers.
 - [Site frequency spectrum under Λ-coalescents](site-frequency-spectrum-under-coalescents/README.md)
 - [Speed of coming down from infinity](speed-of-coming-down-from-infinity/README.md)
 - [Λ-coalescent limits of Cannings models](coalescent-limits-of-cannings-models/README.md)
+- [Asymmetric Wright–Fisher genealogies](asymmetric-wright-fisher-genealogies/README.md)
+- [Coming down from infinity of interacting particle systems](coming-down-from-infinity-of-interacting-particle-systems/README.md)
+- [Λ-asymmetric ancestral selection graph](lambda-asymmetric-ancestral-selection-graph/README.md)

@@ -52,3 +52,7 @@
 
 - [Conditional Poisson process of mutations on the local trees of the ancestral recombination graph](conditional-mutation-ppp-on-the-measurable-tree.md)
 - [Variance of the number of segregating sites with intragenic recombination](variance-of-segregating-sites-with-intragenic-re.md)
+
+## Further results
+
+- [Latent mutations of rare alleles under selection](latent-mutations-of-rare-alleles-under-selection/README.md)

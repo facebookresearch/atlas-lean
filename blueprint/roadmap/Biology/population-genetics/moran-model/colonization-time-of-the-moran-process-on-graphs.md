@@ -20,4 +20,4 @@ Split the process into $n-1$ stages, stage $k$ ending when the $(k+1)$-st mutant
 
 ## Sources
 
-- L. Kopfová, J. Tkadlec, "Colonization times in Moran process on graphs", arXiv:2410.09476 (2024), Results section (definitions of the $r\to\infty$ Moran process and colonization time, Theorems 1–4) and the supplementary sections on general, regular and undirected bounds, <https://doi.org/10.48550/arXiv.2410.09476>.
+- Lenka Kopfová and Josef Tkadlec, "Colonization times in Moran process on graphs", PLOS Comput. Biol. 21 (2025), e1012868, <https://doi.org/10.1371/journal.pcbi.1012868>. Numbering follows the arXiv version, arXiv:2410.09476 (2024): Results section (definitions of the $r\to\infty$ Moran process and colonization time, Theorems 1–4) and the supplementary sections on general, regular and undirected bounds, <https://doi.org/10.48550/arXiv.2410.09476>.

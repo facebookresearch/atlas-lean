@@ -11,4 +11,4 @@
 - [Weak seed bank: Kingman coalescent with rates multiplied by 1/(E B)^2](weak-seed-bank-kingman-coalescent-with-rates-mul.md)
 
 - [Wright–Fisher diffusion with a strong seed bank](wright-fisher-diffusion-with-a-strong-seed-bank.md)
-- [Continuum seed-bank diffusion and its coalescent dual](continuum-seed-bank-diffusion-and-its-coalescent-dual.md)
+- [Seed-bank Cannings graphs](seed-bank-cannings-graphs/README.md)

@@ -22,4 +22,4 @@ Read backwards in time, the formula says each ancestral lineage diffuses with th
 
 ## Sources
 
-- Raphaël Forien, Bastian Wiederhold, "Central limit theorems describing isolation by distance under varying population size", arXiv:2407.10211 (2024), Conjecture 10 and Theorem 11 (Section 3, "Wright–Malécot formula"), <https://doi.org/10.48550/arXiv.2407.10211>.
+- Raphaël Forien and Bastian Wiederhold, "Central limit theorems describing isolation by distance under varying population size", ALEA Lat. Am. J. Probab. Math. Stat. 22 (2025), 283, <https://doi.org/10.30757/ALEA.v22-11>. Numbering follows the arXiv version, arXiv:2407.10211 (2024): Conjecture 3.5 and Theorem 3.6 (Section 3, "Wright–Malécot formula"), <https://doi.org/10.48550/arXiv.2407.10211>.

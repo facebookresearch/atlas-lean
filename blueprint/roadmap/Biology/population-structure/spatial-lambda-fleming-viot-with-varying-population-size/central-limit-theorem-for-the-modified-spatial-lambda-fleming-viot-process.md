@@ -24,4 +24,4 @@ The generator of the rescaled process splits into a dispersal part, which become
 
 ## Sources
 
-- Raphaël Forien, Bastian Wiederhold, "Central limit theorems describing isolation by distance under varying population size", arXiv:2407.10211 (2024), Definition 2, Assumption 1, Proposition 7 and Theorem 8, <https://doi.org/10.48550/arXiv.2407.10211>.
+- Raphaël Forien and Bastian Wiederhold, "Central limit theorems describing isolation by distance under varying population size", ALEA Lat. Am. J. Probab. Math. Stat. 22 (2025), 283, <https://doi.org/10.30757/ALEA.v22-11>. Numbering follows the arXiv version, arXiv:2407.10211 (2024): Assumption 2.1, Definition 2.2, Proposition 3.2 and Theorem 3.3, <https://doi.org/10.48550/arXiv.2407.10211>.

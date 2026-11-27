@@ -23,4 +23,4 @@ Under neutrality the offspring counts are independent of the past and the classi
 
 ## Sources
 
-- S. Brown, P. A. Jenkins, A. M. Johansen, J. Koskela, "Weak Convergence of Non-neutral Genealogies to Kingman's Coalescent", arXiv:2110.05356 (2021), Section 2 (assumption (A1), definitions of $c_N$, $\tau_N$, $D_N$, Propositions 1–3) and Section 3 (Theorem 1), <https://doi.org/10.48550/arXiv.2110.05356>.
+- Suzie Brown, Paul A. Jenkins, Adam M. Johansen and Jere Koskela, "Weak convergence of non-neutral genealogies to Kingman’s coalescent", Stoch. Process. Appl. 162 (2023), 76–105, <https://doi.org/10.1016/j.spa.2023.04.016>. Numbering follows the arXiv version, arXiv:2110.05356 (2021): Section 2 (assumption (A1), definitions of $c_N$, $\tau_N$, $D_N$, Propositions 1–3) and Section 3 (Theorem 1), <https://doi.org/10.48550/arXiv.2110.05356>.

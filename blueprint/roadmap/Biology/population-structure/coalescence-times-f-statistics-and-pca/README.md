@@ -24,3 +24,7 @@
 - [Genotype covariance as double-centred pairwise differences](gen-cov-eq-double-center.md)
 - [McVean's genealogical model for PCA](mc-vean-model.md)
 - [McVean's theorem on expected genotype covariance](integral-gen-cov.md)
+
+## Further results
+
+- [Identifiability of structured population histories](identifiability-of-structured-population-histories/README.md)
