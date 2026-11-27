@@ -15,6 +15,7 @@ For item 1, consider $f(s,t,y,\Pi')=(s+t,\ U^{\Pi,y}(1,1^{t}),\dots,U^{\Pi,y}(n,
 ## Depends on
 
 - [Conditional KT complexity and the Minimum Conditional KT Problem McKTP](conditional-kt-complexity-and-mcktp.md)
+- [Log-space computable functions](../../../complexity-classes/time-and-space-complexity-classes/log-space-computable.md)
 - [One-way function families](../../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 - [Weak one-way function](../../one-way-function-transformations/weak-one-way-function.md)
 
