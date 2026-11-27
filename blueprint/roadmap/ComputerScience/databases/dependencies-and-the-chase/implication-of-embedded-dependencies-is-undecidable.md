@@ -20,7 +20,9 @@ not co-recursively enumerable.
 
 This node states a precise result that the cited textbook summarizes without a full proof (it derives the untyped case
 from functional and unary inclusion dependencies and refers to the literature for the typed case and for embedded
-multivalued dependencies). A good expansion checks those original proofs and cites them under `## Depends on
+multivalued dependencies). A good expansion checks those original proofs and cites them under `## Sources`.
+
+## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
