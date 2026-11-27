@@ -41,11 +41,9 @@ every `y < x`" is equivalent to the same condition for the componentwise (`Pi`) 
   *On Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
   pp. 1–21, Theorem 1, Corollary 1 (i)–(ii), Proposition 1 (Sections 1.7 and 2), and Lemmas 1–4.
   Section 1.3 relates P-positions to even remoteness.
-* The proof of Proposition 1 uses the option recursions `SpragueGrundy.isP_iff` and
-  `SpragueGrundy.smithRemoteness_eq` from `MathlibExt.GameTheory.SpragueGrundy` and
-  `MathlibExt.GameTheory.SmithRemoteness`, respectively. In this module it reuses
-  `exactSlowNimBasicValue_eq_smithRemoteness`, `exactSlowNimBasicValue_of_supports_basicB`, and
-  `odd_support_of_even_after`.
+* The proof of Proposition 1 uses `SpragueGrundy.even_smithRemoteness_iff_isP` from
+  `MathlibExt.GameTheory.SmithRemoteness`, together with `exactSlowNimBasicValue_eq_smithRemoteness`
+  and `exactSlowNimBasicValue_of_supports_basicB` in this module.
 * Vladimir Gurvich and Nhan Bao Ho, *Slow k-Nim*, RUTCOR Research Report 3 (2015),
   arXiv:1508.05777 (introduction of exact slow Nim; reference [7] in the above paper).
 * C. A. B. Smith, *Graphs and composite games*, Journal of Combinatorial Theory 1 (1966),
@@ -1506,33 +1504,6 @@ public theorem exactSlowNim_critical_of_odd {k m : ℕ} (hk : 2 ≤ k) (hm : Odd
     · exact (Nat.not_even_iff_odd.mpr (h.2.2.2 p) hpe).elim
   · simp only [exactSlowNimMRuleMove, hkept]
 
-/-- In an impartial game, a position is a P-position exactly when its Smith remoteness is even. -/
-private theorem smithRemoteness_even_iff_isP (G : SpragueGrundy.ImpartialGame) (p : G.Pos) :
-    Even (SpragueGrundy.smithRemoteness G p) ↔ SpragueGrundy.IsP G p := by
-  classical
-  induction p using (SpragueGrundy.wfRel G).induction with
-  | h p ih =>
-    let values := (G.moves p).image (SpragueGrundy.smithRemoteness G)
-    have hfilter : ¬ (values.filter Even).Nonempty ↔ SpragueGrundy.IsP G p := by
-      rw [SpragueGrundy.isP_iff]
-      constructor
-      · intro he q hq hp
-        exact he ⟨_, Finset.mem_filter.mpr
-          ⟨Finset.mem_image_of_mem _ hq, (ih q hq).mpr hp⟩⟩
-      · rintro hp ⟨v, hv⟩
-        obtain ⟨hv, hev⟩ := Finset.mem_filter.mp hv
-        obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hv
-        exact hp q hq ((ih q hq).mp hev)
-    rw [← hfilter, SpragueGrundy.smithRemoteness_eq]
-    split_ifs with he hne
-    · have hmin := (Finset.mem_filter.mp (Finset.min'_mem _ he)).2
-      exact iff_of_false (Nat.not_even_iff_odd.mpr ((by decide : Odd 1).add_even hmin))
-        (not_not_intro he)
-    · have hodd : Odd (values.max' hne) := Nat.not_even_iff_odd.mp fun h =>
-        he ⟨_, Finset.mem_filter.mpr ⟨Finset.max'_mem _ hne, h⟩⟩
-      exact iff_of_true ((by decide : Odd 1).add_odd hodd) he
-    · exact iff_of_true (by decide) he
-
 open exactSlowNim_critical_of_even in
 /-- **Proposition 1 (odd P-positions of exact slow k-NIM).** Let $0 < k$ and let
 $\mathrm{NIM}(k + 1, k)$ be Slow$A$-Nim on $k + 1$ stacks with $A = \{k\}$. A position
@@ -1547,7 +1518,7 @@ public theorem exactSlowNim_odd_isP_iff {k : ℕ} (hk : 0 < k) (x : Fin (k + 1) 
     (hx : ∀ i, Odd (x i)) :
     SpragueGrundy.IsP (slowANimGame (k + 1) {k}) x ↔
       ∃ m, ∑ i, x i = k * m + k - 1 ∧ (∀ i, x i < m) ∧ Even m := by
-  rw [← smithRemoteness_even_iff_isP (slowANimGame (k + 1) {k}) x,
+  rw [← SpragueGrundy.even_smithRemoteness_iff_isP (slowANimGame (k + 1) {k}) x,
     ← exactSlowNimBasicValue_eq_smithRemoteness hk x]
   constructor
   · intro hb
