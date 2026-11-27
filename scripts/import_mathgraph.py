@@ -333,10 +333,14 @@ def symlink_problem(path: Path) -> str | None:
 
 def input_problems() -> list[str]:
     """Symbolic links on what the checks read before any page: the roadmap and links folders, every links file, the
-    taxonomy, the card move ledger and the map."""
-    paths = [wiki.ROADMAP, sync.LINKS, wiki.TAXONOMY, wiki.ROOT / "scripts" / "card-moves.jsonl", MAP]
+    taxonomy, the card move ledger (its frozen file, its folder of fragments and every entry of that folder) and the
+    map."""
+    fragments = wiki.ROOT / "scripts" / "card-moves.d"
+    paths = [wiki.ROADMAP, sync.LINKS, wiki.TAXONOMY, wiki.ROOT / "scripts" / "card-moves.jsonl", fragments, MAP]
     if symlink_on(sync.LINKS) is None and sync.LINKS.is_dir():
         paths += sorted(sync.LINKS.glob("*.jsonl"))
+    if symlink_on(fragments) is None and fragments.is_dir():
+        paths += sorted(fragments.iterdir())
     return [problem for path in paths if (problem := symlink_problem(path))]
 
 
@@ -606,8 +610,9 @@ def read_wiki(problems: list[str]) -> Wiki:
     owners, doubled, ids, cards = annotation_owners()
     try:
         retired = sync.retired_addresses()
-    except (ValueError, AttributeError):
-        problems.append("scripts/card-moves.jsonl is not a JSON object per line")
+    except (ValueError, AttributeError) as error:
+        problems.append(f"the card move ledger (scripts/card-moves.jsonl and scripts/card-moves.d/) cannot be read: "
+                        f"{error or 'a row is no JSON object'}")
         retired = set()
     return Wiki(owners, doubled, ids, cards, retired, mapped)
 
@@ -1129,7 +1134,7 @@ def lay_out(directory: Path, kids: list, taken: dict[str, str], retired: set[str
         else:
             clash = taken.get(kid.slug.casefold())
         if clash is None and f"{here}/{kid.slug}" in retired:
-            clash = f"the address {PREFIX}{here}/{kid.slug}, which scripts/card-moves.jsonl records"
+            clash = f"the address {PREFIX}{here}/{kid.slug}, which the card move ledger records"
         if clash:
             problems.append(f"{repo_path(path)}/ cannot be made a folder: it collides with {clash}")
             continue
@@ -1150,7 +1155,7 @@ def name_page(page: Page, directory: Path, taken: dict[str, str], retired: set[s
     if reserved:
         clash = reserved
     elif f"{here}/{stem}" in retired:
-        clash = f"the address {PREFIX}{here}/{stem}, which scripts/card-moves.jsonl records"
+        clash = f"the address {PREFIX}{here}/{stem}, which the card move ledger records"
     if clash:
         problems.append(f"{page.row.where()}: its stem {stem} collides with {clash}, in {repo_path(directory)}; a stem "
                         "is never numbered, as a numbered name could hide a duplicate")
@@ -1501,7 +1506,7 @@ def make_plan(manifest: Path, digest: str) -> Plan:
                                 + (", a symbolic link" if taken.is_symlink() else ""))
                 return False
         if folder in known.retired:
-            problems.append(f"{PREFIX}{folder}/ cannot be made a folder: scripts/card-moves.jsonl records the address")
+            problems.append(f"{PREFIX}{folder}/ cannot be made a folder: the card move ledger records the address")
             return False
         if not make(parent):
             return False

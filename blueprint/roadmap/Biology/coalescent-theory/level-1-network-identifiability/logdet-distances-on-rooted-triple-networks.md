@@ -17,7 +17,7 @@ Under $\mathcal M$ all taxa share the same base distribution, so the $\ln(g_a g_
 
 ## Depends on
 
-- [Log-det distance](../../phylogenetics/log-det-estimation-of-the-gtr-rate-matrix/log-det-distance.md)
+- [Log-det distance](../../phylogenetics/gtr-identifiability-and-estimation/log-det-estimation-of-the-gtr-rate-matrix/log-det-distance.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](../multispecies-coalescent/network-multispecies-coalescent-fixed-network-ge.md)
 
 ## Proof depends on
