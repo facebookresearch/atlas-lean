@@ -40,8 +40,9 @@ colours. As in Chen-Jing-Zang, `r` is a positive integer.
 variable {V E : Type}
 
 /-- The loopless multigraph with vertex set `V` and edge set `E`, the edge `e` joining `src e` and
-`tgt e`, is an `r`-graph: no loops, every vertex has degree `r`, and for every vertex set `X` of odd
-size at least `r` edges have exactly one end in `X`. -/
+`tgt e`, is an `r`-graph: no loops, every vertex has degree `r`, and for every finite vertex set `X`
+of odd size at least `r` edges have exactly one end in `X`. The predicate assumes `E` finite but
+not `V`; `rGraphChromaticIndexLeSucc` adds `[Fintype V]`. -/
 def IsRGraph (r : ℕ) [Fintype E] (src tgt : E → V) : Prop :=
   (∀ e, src e ≠ tgt e) ∧
     (∀ v, EndpointMapMultigraph.degreeWithin src tgt Finset.univ v = r) ∧

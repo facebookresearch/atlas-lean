@@ -23,6 +23,7 @@ public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 public import MathlibExt.NumberTheory.BinomidIndexAdd
 public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
+public import MathlibExt.NumberTheory.BinomidIndexApplyPeriodEqApplyZero
 
 namespace MetaMathlibExt
 
@@ -40,18 +41,6 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 3
 public theorem_wanted isLexMinimalExtensionOf_periodic_of_monotoneOn {m : ℕ}
     (hm : 0 < m) {e : ℕ → ℕ} (he : MonotoneOn e (Set.Iio m)) :
     IsLexMinimalExtensionOf (fun i => e (i % m)) m
-
-/-- **A lex-minimal extension periodic from its second entry is periodic.** Let
-$\eta = (e_1, e_2, \dots)$ be a lex-minimal extension and let $p \ge 1$. If $e_{i+p} = e_i$
-for every $i \ge 2$, then $e_{1+p} = e_1$, so the whole sequence $\eta$ is periodic with
-period $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 4
-(`integers-2024-A53-prop-4`). -/
-public theorem_wanted IsLexMinimalExtension.apply_period_eq_apply_zero {η : ℕ → ℕ}
-    (hη : IsLexMinimalExtension η) {p : ℕ} (hp : 0 < p)
-    (hper : ∀ i, 1 ≤ i → η (i + p) = η i) : η p = η 0
 
 /-- **Periodic binomid indices are lex-minimal extensions.** If an infinite binomid index
 $e = (e_1, e_2, \dots)$ is periodic, that is, there is $p \ge 1$ with $e_{i+p} = e_i$ for all
