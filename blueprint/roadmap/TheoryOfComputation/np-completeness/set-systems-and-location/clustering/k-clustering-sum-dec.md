@@ -1,0 +1,3 @@
+# The decision problem K-CLUSTERING SUM
+
+K-CLUSTERING SUM as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for K-CLUSTERING SUM](well-formed.md) (a well-formed CLUSTERING instance whose distance is $0$ exactly on the diagonal and satisfies the triangle inequality) and feasible for CLUSTERING with the sum of within-cluster distances. The feasibility test is the unrestricted problem's; the restriction to K-CLUSTERING SUM comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.
