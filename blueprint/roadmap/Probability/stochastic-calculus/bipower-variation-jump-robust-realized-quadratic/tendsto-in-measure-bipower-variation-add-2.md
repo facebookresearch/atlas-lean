@@ -1,0 +1,3 @@
+# Convergence of bipower variation in the presence of jumps
+
+On a probability space, let the continuous increments be $s_{n,i} Z_{n,i}$, where each row $(Z_{n,i})_i$ is independent, every $Z_{n,i}$ is measurable and distributed like $Z_{0,0}$, and $\mathbb{E}[Z_{0,0}^4] < \infty$. Suppose $\sum_{i \le L_n} s_{n,i}^4 \to 0$ and $\sum_{i < L_n} |s_{n,i}|\,|s_{n,i+1}| \to V$. Add the increments over the grid cells $(i/n, (i+1)/n]$ of $K$ random jumps with measurable sizes $\xi_k$ at measurable, almost surely distinct times $\tau_k$, with $K$ measurable. Then the bipower variation $\sum_{i < L_n} |d_{n,i}|\,|d_{n,i+1}|$ of the combined increments $d_{n,i}$ tends to $(\mathbb{E}|Z_{0,0}|)^2 V$ in probability: the jumps do not contribute.

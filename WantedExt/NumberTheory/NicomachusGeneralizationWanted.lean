@@ -52,26 +52,4 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.NicomachusGeneralizationWanted
 
-/-- **Kim–Stolarsky balanced quadratic sum.** Let $k \ge 1$, let $\alpha_k$ be the numbers of
-Equation (12) (so $\alpha_1 = 1$ and $\alpha_{k+1} = (15 + 7\alpha_k)/(13 + 6\alpha_k)$), let $u_k$
-be the integers of Proposition 1, and let $T_n = n(n+1)/2$. With
-$(a, b, c) = (1, \alpha_k, -(1 + \alpha_k))$ and $(d, e, f) = (-a, -c, -b)$ as in (17), for every
-natural number $m$,
-$$\sum_{j=1}^{m} (a + bj + cj^2)(d + ej + fj^2) =
-T_{m-1}\left(\frac{(1 + m)(2 - 3m^2)}{3(3 + 2u_k)} + (3 + 2m)\,T_{m-1}\right).$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Theorem 2. -/
-theorem_wanted sum_quadratic_mul_quadratic_eq (k : ℕ) (hk : 1 ≤ k)
-    (m : ℕ) :
-    (∑ j ∈ Finset.Icc 1 m,
-      (1 + (nicomachusAlpha k : ℝ) * (j : ℝ) -
-          (1 + (nicomachusAlpha k : ℝ)) * (j : ℝ) ^ 2) *
-        (-1 + (1 + (nicomachusAlpha k : ℝ)) * (j : ℝ) -
-          (nicomachusAlpha k : ℝ) * (j : ℝ) ^ 2)) =
-      nicomachusTriangular (m - 1) *
-        (((1 + (m : ℝ)) * (2 - 3 * (m : ℝ) ^ 2) /
-          (3 * (3 + 2 * (nicomachusU k : ℝ)))) +
-            (3 + 2 * (m : ℝ)) * nicomachusTriangular (m - 1))
-
 end MathlibExt.NumberTheory.NicomachusGeneralizationWanted
