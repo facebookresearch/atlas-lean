@@ -7,4 +7,3 @@
 - [Identification of a correlated two-factor model](identification-of-a-correlated-two-factor-model.md)
 - [Latent mean differences are not identified without invariance constraints](nonidentification-of-latent-mean-differences.md)
 - [Reduced form and covariance of a linear structural equation model](reduced-form-covariance-of-a-linear-sem.md)
-- [Wright's path-coefficient rules](wrights-method-of-path-coefficients.md)

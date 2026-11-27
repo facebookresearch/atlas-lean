@@ -32,7 +32,5 @@
 - [Almost-linear-work edit approximation in the raw-band bit model](raw-band-almost-linear-edit-distance-approximation.md)
 - [Branch guard and product law of raw-band edit approximation](raw-band-branch-and-randomness-model.md)
 - [Answer, work, and footprint of the raw-band edit model](raw-band-answer-work-and-footprint.md)
-- [Four-Russians edit distance in subquadratic time](four-russians-edit-distance-in-subquadratic-time.md)
-- [Myers' bit-vector algorithm for approximate string matching](myers-bit-vector-algorithm-for-approximate-string-matching.md)
 
 The conditional lower bound for edit distance under the Strong Exponential Time Hypothesis is [in fine-grained complexity](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/edit-distance-has-no-strongly-subquadratic.md).
