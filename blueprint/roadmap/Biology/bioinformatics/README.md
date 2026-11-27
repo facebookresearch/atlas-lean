@@ -31,6 +31,3 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
 - [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
 - [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
-- [Empirical Bayes batch-effect adjustment](empirical-bayes-batch-effect-adjustment/README.md)
-- [Graphical lasso for sparse inverse covariance estimation](graphical-lasso-sparse-inverse-covariance/README.md)
-- [Surrogate variable analysis](surrogate-variable-analysis/README.md)
