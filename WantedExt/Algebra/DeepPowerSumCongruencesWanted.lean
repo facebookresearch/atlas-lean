@@ -21,6 +21,7 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerSpan
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PEquivClass
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
@@ -186,17 +187,6 @@ public theorem_wanted isDividedPowerIdeal_maximalIdeal_pow_iff {p : ℕ} [Fact p
     {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {e : ℕ} (he0 : e ≠ 0)
     (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) (k : ℕ) :
     IsDividedPowerIdeal (IsLocalRing.maximalIdeal O ^ k) ↔ e ≤ (p - 1) * k
-
-/-- **When the maximal ideal of a DVR is a divided-power ideal.** Let $p$ be a prime and let $O$ be
-a discrete valuation ring with maximal ideal $\mathfrak{m}$ such that $pO = \mathfrak{m}^e$ for
-some integer $e \ge 1$. Then $\mathfrak{m}$ is a divided-power ideal if and only if $e \le p - 1$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8 (`integers-2024-A46-cor-8`). -/
-public theorem_wanted isDividedPowerIdeal_maximalIdeal_iff {p : ℕ} [Fact p.Prime]
-    {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {e : ℕ} (he0 : e ≠ 0)
-    (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) :
-    IsDividedPowerIdeal (IsLocalRing.maximalIdeal O) ↔ e ≤ p - 1
 
 /-- **$(p)$ is a divided-power ideal of $\mathbb{Z}_p$.** For every prime $p$, the ideal generated
 by $p$ in the ring $\mathbb{Z}_p$ of $p$-adic integers is a divided-power ideal.
