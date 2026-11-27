@@ -17,6 +17,8 @@ import Mathlib.Tactic.Ring
 # Explicit formula for the supergeneralized Leonardo p-numbers
 
 `fibonacciP_succ_eq_sum_choose` writes the Fibonacci p-numbers as sums of binomial coefficients.
+`superLeonardoP_one_succ_eq_sum_choose` gives the binomial sum for linear initial values and unit
+increment.
 The binomial sums in `superLeonardoP_eq_sum_choose` give the coefficients of the initial
 values and of the constant increment in the Leonardo recurrence.
 -/
@@ -108,6 +110,38 @@ private theorem diagonalSum_one_succ (p t : ℕ) :
     rw [show t - p + p = t by omega] at h
     simp only [Nat.choose_one_right] at h
     omega
+
+set_option linter.unusedVariables false in
+/-- **Binomial sum for supergeneralized Leonardo p-numbers with linear initial values.** Let
+$p \ge 1$ be a natural number and $y$ the real sequence $y_i = i + 1$, so that the initial values
+are $y_0, \dots, y_p = 1, \dots, p + 1$. For every natural number $n$, the supergeneralized
+Leonardo $p$-numbers $\mathcal{L}_{p,1,y}$ with $k = 1$ and initial values $y$ satisfy
+$$\mathcal{L}_{p,1,y}(n) = \sum_{i=0}^{\lfloor (n+1)/(p+1) \rfloor} \binom{n+1-pi}{i+1}.$$
+
+Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
+Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
+Theorem 5. -/
+public theorem superLeonardoP_one_succ_eq_sum_choose (p : ℕ) (hp : 1 ≤ p) (n : ℕ) :
+    superLeonardoP p 1 (fun i => (i : ℝ) + 1) n =
+      ∑ i ∈ Finset.range ((n + 1) / (p + 1) + 1), ((n + 1 - p * i).choose (i + 1) : ℝ) := by
+  simp only [Nat.mul_comm p, ← Nat.cast_sum]
+  change superLeonardoP p 1 (fun i => (i : ℝ) + 1) n = (diagonalSum p (n + 1) 1 : ℝ)
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    by_cases hn : n ≤ p
+    · rw [superLeonardoP_of_le p 1 _ hn]
+      by_cases h : n < p
+      · rw [diagonalSum_initial p (n + 1) 1 (by omega), Nat.choose_one_right,
+          Nat.cast_add, Nat.cast_one]
+      · have heq : n = p := by omega
+        subst n
+        rw [diagonalSum_one_succ, Nat.sub_self, diagonalSum_initial p p 1 le_rfl,
+          diagonalSum_initial p 0 1 (Nat.zero_le p)]
+        simp
+    · rw [superLeonardoP_of_lt p 1 _ (by omega), ih (n - 1) (by omega),
+        ih (n - p - 1) (by omega), show n - 1 + 1 = n by omega,
+        show n - p - 1 + 1 = n - p by omega, diagonalSum_one_succ]
+      simp
 
 private theorem superLeonardoP_forcing (p k : ℕ) (x : ℕ → ℝ) (n : ℕ) :
     superLeonardoP p k x n =

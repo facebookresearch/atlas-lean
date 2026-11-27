@@ -12,12 +12,12 @@ $$1 - F_{IT} = (1 - F_{IS})(1 - F_{ST}).$$
 
 The identity is the factorization $H_I/H_T = (H_I/H_S)(H_S/H_T)$. In Wright's interpretation the three
 indices are inbreeding coefficients of individuals relative to their subpopulation, of subpopulations
-relative to the total population, and of individuals relative to the total population; the
-factorization then expresses that non-identity relative to the total population requires non-identity
-at each level. For subpopulation allele frequencies, the
+relative to the total population, and of individuals relative to the total population. The identity is
+an algebraic relation between the ratios and does not require a probabilistic sampling model. For
+subpopulation allele frequencies, the
 [Wahlund identity](../patterson-s-f-statistics/wahlund.md) gives $H_T - H_S$ as twice the variance of the
 allele frequencies among subpopulations.
 
 ## Sources
 
-- J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Section VI.9 "Hierarchical population structure", equations (VI-60)–(VI-61), p. 276.
+- J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Section VI.9 "Hierarchical population structure", equations (VI-58), (VI-59), and (VI-61), pp. 275–276.

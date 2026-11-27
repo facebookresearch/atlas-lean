@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Divisors
-public import MathlibExt.NumberTheory.Digits.KaprekarMaximalPeriod
+public import MathlibExt.NumberTheory.Digits.KaprekarPrimeBase
 
 /-!
 # Four-digit Kaprekar dynamics in odd bases (Chen, Ono, Schwartz, Thakur)
@@ -24,21 +24,6 @@ period criterion are in `MathlibExt/NumberTheory/Digits/KaprekarMaximalPeriod.le
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Long Kaprekar cycles force a prime base.** Let $B > 3$ be odd, let $K_B$ be the four-digit
-Kaprekar map and $X_B$ its state space. Every point of $X_B$ that is periodic for $K_B$ has
-minimal period at most $(B - 1)/2$, and if some point of $X_B$ has minimal period exactly
-$(B - 1)/2$ under $K_B$, then $B$ is prime.
-
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, *Four-Digit Kaprekar
-Dynamics in Odd Bases*, Journal of Integer Sequences 29 (2026), Article 26.4.7,
-Corollary 22 (`jis-2026-26.4.7-cor-22`). -/
-public theorem_wanted kaprekar_minimalPeriod_le_and_prime_of_eq (B : ℕ) (hB : Odd B)
-    (hB3 : 3 < B) :
-    (∀ d ∈ kaprekarFourDigitStates B, d ∈ Function.periodicPts (kaprekarFourDigitStep B) →
-      Function.minimalPeriod (kaprekarFourDigitStep B) d ≤ (B - 1) / 2) ∧
-      ((∃ d ∈ kaprekarFourDigitStates B,
-          Function.minimalPeriod (kaprekarFourDigitStep B) d = (B - 1) / 2) → B.Prime)
 
 /-- **Number of Kaprekar cycles of maximal length.** Let $B > 3$ be odd, let $K_B$ be the
 four-digit Kaprekar map and $X_B$ its state space, and put $q = (B - 1)/2$. If some point of

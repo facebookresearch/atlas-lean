@@ -187,7 +187,7 @@ private theorem dif_without_impact :
             (fun _ : Fin 1 => (1 / 2 : ℝ))
             (flat_0 z) (flat_1 z))).toMeasure = 1 / 2) := by
   have hex : (if (0 : Fin 2) = 0 then (1 / 4 : ℝ) else 3 / 4) ≠ 1 / 2 := by
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     norm_num
   have hR := (latentMixture_coordinate_moments
     (PMF.ofFintype (fun z : Fin 2 => if z = 0

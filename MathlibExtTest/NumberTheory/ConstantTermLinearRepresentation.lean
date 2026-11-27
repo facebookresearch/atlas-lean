@@ -77,6 +77,55 @@ example (e : Fin 1 → ℤ) (he : e ≠ 0) :
     (by decide) (by decide) P Pt (fun j => by simp [hsq])).2 2
   simp [hct]
 
+-- With P = 3x^2 + 5, p = 2, m = 1 and i = 0, the Cartier operator keeps 3x + 5:
+-- the sum over the box [-1, 1] reads the coefficients at exponents 2 and 0.
+example :
+    laurentCartier 2 ((single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ) + single 0 5) ^ 1 *
+      single 0 1) =
+      single (fun _ : Fin 1 => (1 : ℤ)) 3 + single 0 5 := by
+  have hm : laurentDeg (single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ) + single 0 5) ≤
+      1 + 1 := by
+    rw [laurentDeg_le_iff]
+    intro j hj t
+    have hsub : (single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ) + single 0 5).coeff.support ⊆
+        {(fun _ : Fin 1 => (2 : ℤ)), 0} := by
+      have h1 : (single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ) + single 0 5).coeff.support ⊆
+          (single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ)).coeff.support ∪
+            (single (0 : Fin 1 → ℤ) (5 : ℤ)).coeff.support := by
+        rw [coeff_add]
+        exact Finsupp.support_add
+      have h2 : (single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ)).coeff.support ⊆
+          {(fun _ : Fin 1 => (2 : ℤ))} := by
+        simp [coeff_single]
+      have h3 : (single (0 : Fin 1 → ℤ) (5 : ℤ)).coeff.support ⊆ {0} := by
+        simp [coeff_single]
+      exact h1.trans (Finset.union_subset (h2.trans (by simp)) (h3.trans (by simp)))
+    have hj2 := hsub hj
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hj2
+    rcases hj2 with rfl | rfl <;> simp
+  have hi : (0 : Fin 1 → ℤ) ∈
+      Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-(1 : ℤ)) 1 := by simp
+  have h := laurentCartier_pow_mul_single_eq_sum (r := 1) (p := 2) Nat.prime_two
+    (single (fun _ : Fin 1 => (2 : ℤ)) (3 : ℤ) + single 0 5) 1 hm 1 (by decide)
+    (0 : Fin 1 → ℤ) hi
+  have hT : Fintype.piFinset (fun _ : Fin 1 => Finset.Icc (-((1 : ℕ) : ℤ)) ((1 : ℕ) : ℤ)) =
+      {(fun _ : Fin 1 => (-1 : ℤ)), (fun _ : Fin 1 => (0 : ℤ)),
+        (fun _ : Fin 1 => (1 : ℤ))} := by
+    decide
+  rw [hT] at h
+  rw [h]
+  clear h hm hi hT
+  ext j
+  simp only [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, AddMonoidAlgebra.coeff_single,
+    Finsupp.single_apply, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, pow_one]
+  rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
+  generalize ha : j 0 = a
+  have hj : j = fun _ => a := by funext t; rw [← ha]; congr 1; exact Subsingleton.elim t 0
+  subst hj
+  by_cases h1 : a = -1 <;> by_cases h0 : a = 0 <;> by_cases h1' : a = 1
+  all_goals simp [h1, h0, h1', funext_iff, nsmul_eq_mul]
+  omega
+
 -- Doubling sends -1 to the boundary -2 on the first step. That entry eventually vanishes.
 example :
     let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-2 : ℤ) 2
@@ -89,3 +138,28 @@ example :
   obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single Nat.prime_two 1 2
   refine ⟨s, fun n hn => ?_⟩
   exact (congrArg (fun M : Matrix T T (ZMod 2) => M i j) (hs n hn)).trans (by decide +revert)
+
+-- Modulo 8, the initial dilation sends -1 to -2. That entry eventually vanishes,
+-- and the origin entry of each stabilized power is 1.
+example :
+    let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-2 : ℤ) 2
+    let A := Matrix.of fun i j : ↥T => if i.val = (2 : ℕ) • j.val then (1 : ZMod 8) else 0
+    let i : ↥T := ⟨fun _ => -2, by decide⟩
+    let j : ↥T := ⟨fun _ => -1, by decide⟩
+    let z : ↥T := ⟨0, by decide⟩
+    A i j = 1 ∧ ∃ s : ℕ, ∀ n ≥ s, (A ^ n) i j = 0 ∧ (A ^ n) z z = 1 := by
+  intro T A i j z
+  refine ⟨by decide +revert, ?_⟩
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single_zmod Nat.prime_two 3 (by decide) 1 2
+  refine ⟨s, fun n hn => ⟨?_, ?_⟩⟩
+  · exact (congrArg (fun M : Matrix T T (ZMod 8) => M i j) (hs n hn)).trans (by decide +revert)
+  · exact (congrArg (fun M : Matrix T T (ZMod 8) => M z z) (hs n hn)).trans (by decide +revert)
+
+-- A zero-width box has only the origin: the stabilized matrix is the identity.
+example :
+    let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-(0 : ℤ)) 0
+    let A := Matrix.of fun i j : ↥T => if i.val = (3 : ℕ) • j.val then (1 : ZMod 9) else 0
+    ∃ s : ℕ, ∀ n ≥ s, A ^ n = 1 := by
+  intro T A
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single_zmod Nat.prime_three 2 (by decide) 1 0
+  exact ⟨s, fun n hn => (hs n hn).trans (by decide +revert)⟩

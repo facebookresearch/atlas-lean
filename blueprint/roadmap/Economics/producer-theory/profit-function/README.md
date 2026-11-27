@@ -6,3 +6,5 @@
 - [The profit function is convex](convex-on-profit-fn.md)
 - [Attained maxima lie in the profit function's domain](mem-profit-domain.md)
 - [The profit function equals the attained maximal profit](profit-fn-eq.md)
+
+- [Interior first-order conditions for profit maximization and cost minimization](interior-first-order-conditions.md)

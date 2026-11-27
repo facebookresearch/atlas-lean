@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.DescendingNaplesDyckPath
 
 open MetaMathlibExt
@@ -26,4 +27,24 @@ example : ¬ IsKDyckPath 2 2 ![true, false, false, true] := by decide
 
 example : (Finset.univ.filter (IsKDyckPath 3 1)).card = 9 := by
   rw [← descendingNaplesCount_eq_card_kDyckPath (by decide) (by decide)]
+  decide
+
+-- The only preference of length one is already 0-Naples.
+example : descendingNaplesCount 1 1 = 1 ∧ descendingStrictNaplesCount 1 1 = 0 := by
+  decide
+
+-- Count directly from the parking rule, not from the path formula.
+example : descendingNaplesCount 3 1 = 9 ∧ descendingStrictNaplesCount 3 1 = 4 := by
+  decide
+
+example : descendingNaplesCount 3 1 = 9 ∧ (descendingStrictNaplesCount 3 1 : ℚ) = 4 := by
+  obtain ⟨h, hs⟩ := descendingNaplesCount_eq_choose (n := 3) (k := 1) (by decide) (by decide)
+  constructor
+  · rw [h]
+    decide
+  · rw [hs, show Nat.choose (2 * 3) (3 + 1 + 1) = 6 by decide]
+    norm_num
+
+-- At k = n, all descending preferences already park with k - 1.
+example : descendingNaplesCount 3 3 = 10 ∧ descendingStrictNaplesCount 3 3 = 0 := by
   decide
