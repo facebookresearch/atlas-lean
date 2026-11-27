@@ -5,6 +5,11 @@ Let $H$ be a nonempty pattern of length $m \ge 1$ with stationary probability $P
 ## Depends on
 
 - [Finite-state Markov chain with a given transition matrix](../../../Probability/markov-chains/finite-markov-chains/is-finite-markov-chain.md)
+- [Ergodic finite Markov chain](../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/is-ergodic.md)
+
+## Proof depends on
+
+- [Stationary distribution of a primitive chain has full support](../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/stationary-pos.md)
 
 ## Expansion
 
