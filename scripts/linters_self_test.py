@@ -53,6 +53,8 @@ def lintersProbeUnused (n : Nat) (m : Nat) : Nat := n + 1
 
 theorem lintersProbeAddComm (a b : Nat) : a + b = b + a := Nat.add_comm a b
 
+alias lintersProbeAddCommAlias := lintersProbeAddComm
+
 theorem lintersProbeIff (a b : Nat) : a + 0 = b ↔ a = b := by simp
 
 universe u v
@@ -118,7 +120,10 @@ EXPECTED = {
 }
 # Patterns that the output must not match after the first and the second commit.
 ABSENT = {
-    "check_env_linters.py": ([r"duplicateStatement: lintersProbeInst ",
+    # An alias restates its target on purpose: it is neither reported nor shown as a match.
+    "check_env_linters.py": ([r"duplicateStatement: lintersProbeAddCommAlias ",
+                              r"same statement as [^\n]*`lintersProbeAddCommAlias`",
+                              r"duplicateStatement: lintersProbeInst ",
                               r"docBlameThm: lintersProbeNoDocOk ",
                               r"rootNamespace: lintersProbeListed "], []),
 }
