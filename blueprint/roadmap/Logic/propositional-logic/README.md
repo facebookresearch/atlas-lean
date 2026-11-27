@@ -26,3 +26,4 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 
 - [Proof certificates](proof-certificates/README.md)
 - [SAT solving](sat-solving/README.md)
+- [Many-valued propositional logics](many-valued-propositional-logics/README.md)
