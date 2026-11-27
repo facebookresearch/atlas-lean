@@ -1005,7 +1005,6 @@ theorem noiseMeasure_apply_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U
         first
           | exact Measure.dirac_apply_of_notMem h
           | rw [Measure.dirac_apply _ (noise_measSet s)]
-            exact Set.indicator_of_notMem h 1
           | rw [Measure.dirac_apply' _ (noise_measSet s)]
             exact Set.indicator_of_notMem h 1
       rw [h0, mul_zero]

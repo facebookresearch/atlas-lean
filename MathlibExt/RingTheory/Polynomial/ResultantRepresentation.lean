@@ -159,7 +159,7 @@ private theorem coeff_Pof_n (N₁ : MvPolynomial (Fin 1) ℚ) (hn : Even n) :
         intro h0
         apply h
         rw [eq_single_of_apply d, ← h0]
-      rw [if_neg h0, if_neg h, mul_zero]
+      rw [ite_eq_right h0, ite_eq_right h, mul_zero]
   rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq']
   split_ifs with h
   · rfl
@@ -217,11 +217,11 @@ private theorem coeff_zero_genericW {S : Type*} [CommRing S] (c : Fin b → S) :
   | succ b =>
     right
     refine ⟨0, ?_⟩
-    rw [coeff_add, coeff_X_pow, if_neg (Nat.succ_ne_zero b).symm, zero_add, finsetSum_coeff]
+    rw [coeff_add, coeff_X_pow, ite_eq_right (Nat.succ_ne_zero b).symm, zero_add, finsetSum_coeff]
     rw [Finset.sum_eq_single (0 : Fin (b + 1))]
     · simp
     · intro i _ hi
-      rw [coeff_C_mul, coeff_X_pow, if_neg, mul_zero]
+      rw [coeff_C_mul, coeff_X_pow, ite_eq_right, mul_zero]
       intro h
       exact hi (Fin.ext h.symm)
     · intro h; exact (h (Finset.mem_univ _)).elim

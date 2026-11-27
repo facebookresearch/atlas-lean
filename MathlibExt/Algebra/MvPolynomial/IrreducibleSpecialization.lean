@@ -124,7 +124,7 @@ private lemma coeff_sum_monomial {E : Type w} [CommRing E] (c : BddExp σ d → 
   rw [Finset.sum_eq_single a]
   · simp
   · intro b _ hb
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hb (Subtype.ext h)
   · intro h; exact absurd (Finset.mem_univ a) h
@@ -173,7 +173,7 @@ private lemma eq_sum_monomial_of_bdd {E : Type w} [CommRing E] (g : MvPolynomial
     · by_contra h
       exact hm (hg m (mem_support_iff.mpr h))
     · intro b _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hm (h ▸ b.2)
 
@@ -303,7 +303,7 @@ private lemma exists_coeff_ne_zero_of_not_isUnit {E : Type w} [Field E] {p : MvP
     rw [coeff_C]
     by_cases hm : m = 0
     · subst hm; simp
-    · rw [if_neg (Ne.symm hm), hcon m hm]
+    · rw [ite_eq_right (Ne.symm hm), hcon m hm]
 
 private lemma not_isUnit_of_coeff_ne_zero {E : Type w} [CommRing E] [IsReduced E] {p :
     MvPolynomial σ E}
@@ -312,7 +312,7 @@ private lemma not_isUnit_of_coeff_ne_zero {E : Type w} [CommRing E] [IsReduced E
   intro hu
   rw [MvPolynomial.isUnit_iff_eq_C_of_isReduced] at hu
   obtain ⟨r, -, rfl⟩ := hu
-  rw [coeff_C, if_neg (Ne.symm hm)] at h
+  rw [coeff_C, ite_eq_right (Ne.symm hm)] at h
   exact h rfl
 
 private lemma totalDegree_map_le {E : Type w} [CommRing E] (φ : R →+* E) (F : MvPolynomial σ R) :
