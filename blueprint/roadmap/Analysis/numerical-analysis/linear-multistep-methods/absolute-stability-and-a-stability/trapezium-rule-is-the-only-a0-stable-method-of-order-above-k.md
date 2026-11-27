@@ -1,6 +1,6 @@
 # The trapezium rule is the only A(0)-stable k-step method of order greater than k
 
-The only [A(0)-stable](a-alpha-stability.md) linear $k$-step method whose order exceeds $k$ is the trapezium rule method $y_{n+1} - y_n = \tfrac h2 (f_{n+1} + f_n)$.
+For $k = 1$ the only [A(0)-stable](a-alpha-stability.md) linear $k$-step method of order greater than $k$ is the trapezium rule method $y_{n+1} - y_n = \tfrac h2 (f_{n+1} + f_n)$, up to multiplying all coefficients $\alpha_j, \beta_j$ by a common nonzero constant; for $k \ge 2$ there is none.
 
 ## Depends on
 

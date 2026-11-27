@@ -1,6 +1,6 @@
 # Differentiation of the interpolating polynomial
 
-Let $x_0, \dots, x_n$ be distinct points, let $I$ be the smallest closed interval containing them, let $f$ be $n + 2$ times continuously differentiable on $I$, and let $Q_n$ be the polynomial of degree at most $n$ interpolating $f$ at the nodes, with Lagrange basis polynomials $l_0, \dots, l_n$. Then for each node $x_k$ there is $\xi_k \in I$ with
+Let $n \ge 1$, let $x_0, \dots, x_n$ be distinct points, let $I$ be the smallest closed interval containing them, let $f$ be $n + 2$ times continuously differentiable on $I$, and let $Q_n$ be the polynomial of degree at most $n$ interpolating $f$ at the nodes, with Lagrange basis polynomials $l_0, \dots, l_n$. Then for each node $x_k$ there is $\xi_k \in I$ with
 
 $$f'(x_k) = \sum_{j=0}^n f(x_j)\, l_j'(x_k) + \frac{f^{(n+1)}(\xi_k)}{(n + 1)!} \prod_{j \ne k} (x_k - x_j).$$
 

@@ -1,6 +1,6 @@
 # A(α)-stable methods of orders three and four exist for every α < π/2
 
-For each $\alpha \in [0, \pi/2)$ there exist [A(α)-stable](a-alpha-stability.md) linear $k$-step methods of order $p$ with $k = p = 3$, and with $k = p = 4$. So relaxing A-stability to A(α)-stability, for any $\alpha < \pi/2$, lifts the order bound $2$ of the second Dahlquist barrier.
+For each $\alpha \in (0, \pi/2)$ there exist [A(α)-stable](a-alpha-stability.md) linear $k$-step methods of order $p$ with $k = p = 3$, and with $k = p = 4$. So relaxing A-stability to A(α)-stability, for any $\alpha < \pi/2$, lifts the order bound $2$ of the second Dahlquist barrier.
 
 ## Depends on
 

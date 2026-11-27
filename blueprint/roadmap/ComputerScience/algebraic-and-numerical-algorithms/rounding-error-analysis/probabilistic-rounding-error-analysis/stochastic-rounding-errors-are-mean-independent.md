@@ -1,6 +1,6 @@
 # Stochastic rounding errors are mean independent
 
-Let a computation perform a sequence of elementary operations, each rounded by [stochastic rounding](stochastic-rounding.md) with fresh randomness, and let $\delta_1, \delta_2, \dots$ be the relative rounding errors in the order they are made, $\delta_k = (\hat c_k - c_k)/c_k$ for the exact result $c_k \ne 0$ of the $k$-th operation on the computed operands. Then each $\delta_k$ has mean zero and
+Let a computation perform a sequence of elementary operations, each rounded by [stochastic rounding](stochastic-rounding.md) with fresh randomness, assume that every exact result $c_k$ of the $k$-th operation on the computed operands lies in the range of the floating-point numbers, and let $\delta_1, \delta_2, \dots$ be the relative rounding errors in the order they are made, $\delta_k = (\hat c_k - c_k)/c_k$ when $c_k \ne 0$ and $\delta_k = 0$ when $c_k = 0$, in which case the operation is exact. Then each $\delta_k$ has mean zero and
 
 $$\mathbb{E}[\delta_k \mid \delta_1, \dots, \delta_{k-1}] = \mathbb{E}[\delta_k] = 0 .$$
 

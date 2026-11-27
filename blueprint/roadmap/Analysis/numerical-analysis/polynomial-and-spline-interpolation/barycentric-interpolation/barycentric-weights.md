@@ -4,7 +4,7 @@ Let $F$ be a field, $\iota$ a type of indices, $s$ a finite set of indices and $
 
 $$w_i = \prod_{j \in s,\ j \ne i} (v_i - v_j)^{-1},$$
 
-with the field convention $0^{-1} = 0$. So $w_i = 0$ when another node of $s$ coincides with $v_i$, and for $i \notin s$ the product runs over all of $s$. For distinct real nodes $x_0, \dots, x_n$ and $i \in s$ this is $w_j = 1/\prod_{k \ne j}(x_j - x_k)$.
+with the field convention $0^{-1} = 0$. So $w_i = 0$ when another node of $s$ coincides with $v_i$, and for $i \notin s$ the product runs over all of $s$. For distinct real nodes $x_0, \dots, x_n$ and $j \in \{0, \dots, n\}$ this is $w_j = 1/\prod_{k \ne j}(x_j - x_k)$.
 
 ## Sources
 

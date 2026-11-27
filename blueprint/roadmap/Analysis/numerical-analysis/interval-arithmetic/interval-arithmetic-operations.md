@@ -8,7 +8,7 @@ and, when $0 \notin Y$, $X \div Y = \{x / y : x \in X,\ y \in Y\}$. Each of thes
 
 $$[a,b] + [c,d] = [a + c,\ b + d], \qquad [a,b] - [c,d] = [a - d,\ b - c],$$
 
-and $[a,b] \times [c,d] = [\min P, \max P]$ for the set $P = \{ac, ad, bc, bd\}$ of endpoint products. Each operation is a set extension of the corresponding real operation: it contains $x \circ y$ for every $x \in X$ and $y \in Y$. The set operations are the pointwise images, while the endpoint formulas, the four-corner product and the reciprocal form of the quotient are what make each result again an interval with computable endpoints.
+and $[a,b] \times [c,d] = [\min P, \max P]$ for the set $P = \{ac, ad, bc, bd\}$ of endpoint products, and, when $0 \notin [c,d]$, $[a,b] \div [c,d] = [a,b] \times [1/d, 1/c]$. Each operation is a set extension of the corresponding real operation: it contains $x \circ y$ for every $x \in X$ and $y \in Y$. The set operations are the pointwise images, while the endpoint formulas, the four-corner product and the reciprocal form of the quotient are what make each result again an interval with computable endpoints.
 
 ## Depends on
 
