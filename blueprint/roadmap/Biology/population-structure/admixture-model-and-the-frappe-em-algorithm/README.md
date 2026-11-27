@@ -58,3 +58,4 @@
 ## Latent subspace estimation
 
 - [Latent subspace estimation of admixture](latent-subspace-estimation-of-admixture/README.md)
+- [Uncertainty of supervised individual admixture estimates](uncertainty-of-supervised-individual-admixture-estimates/README.md)
