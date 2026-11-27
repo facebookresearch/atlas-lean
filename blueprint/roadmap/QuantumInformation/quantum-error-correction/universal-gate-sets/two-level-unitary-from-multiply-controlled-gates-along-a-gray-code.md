@@ -4,7 +4,7 @@ Let $n \ge 1$ and let $T$ be a two-level unitary (a unitary that is [two-level](
 acting on the computational basis states $|x\rangle$ and $|y\rangle$, $x \ne y \in \{0, 1\}^n$. Let
 $x = g_1, g_2, \dots, g_m = y$ be a shortest Gray code from $x$ to $y$: consecutive strings differ in exactly one bit
 and each bit in which $x$ and $y$ differ is flipped exactly once, so the strings are distinct and $m - 1 \le n$ is the
-Hamming distance of $x$ and $y$. Then $T$ is a product of $2m - 3 \le 2n - 1$ gates, each a multiply controlled gate $\wedge_{n-1}(V)$
+Hamming distance of $x$ and $y$. Then $T$ is a product of $2m - 3 \le 2n - 1$ gates, each a multiply controlled gate $\wedge_{n-1}(V)$ (with $\wedge_0(V) = V$ for $n = 1$)
 acting on the bit where two consecutive strings differ, with its $n - 1$ controls conjugated by single-qubit NOT gates on
 the controls that must be $0$. The first $m - 2$ gates are such controlled NOTs, swapping $|g_1\rangle$ with
 $|g_2\rangle$, then $|g_2\rangle$ with $|g_3\rangle$, up to $|g_{m-2}\rangle$ with $|g_{m-1}\rangle$; the next applies
@@ -15,6 +15,7 @@ of $O(n^2)$ gates each, $T$ costs $O(n^3)$ single-qubit gates and CNOTs.
 ## Depends on
 
 - [Two-level matrix](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md)
+- [Multiply controlled unitaries from CNOT and single-qubit gates](multiply-controlled-unitary-from-cnot-and-single-qubit-gates.md)
 
 ## Proof depends on
 
