@@ -18,3 +18,4 @@
 
 - [Occupation times and mean absorption time of the Wright–Fisher diffusion with selection](occupation-time-formula-and-mean-absorption-time.md)
 - [Feynman–Kac formula with killing for the Wright–Fisher diffusion](feynman-kac-formula-with-killing.md)
+- [Additive path functionals](additive-path-functionals/README.md)

@@ -8,8 +8,8 @@ For a new mutation, $x = 1/(2N)$, this equals $2N - 1$: in the diffusion approxi
 
 ## Depends on
 
-- [Expected integral of heterozygosity until absorption](../../../../Biology/population-genetics/diffusion-theory/absorption-of-the-neutral-wright-fisher-martinga/integral-two-mul-one-sub-absorption-time.md)
-- [Moment recursion for additive path functionals](../../../../Probability/stochastic-calculus/one-dimensional-diffusions/kac-maruyama-kimura-moment-recursion.md)
+- [Expected integral of heterozygosity until absorption](../../absorption-of-the-neutral-wright-fisher-martinga/integral-two-mul-one-sub-absorption-time.md)
+- [Moment recursion for additive path functionals](../../../../../Probability/stochastic-calculus/one-dimensional-diffusions/kac-maruyama-kimura-moment-recursion.md)
 
 ## Expansion
 

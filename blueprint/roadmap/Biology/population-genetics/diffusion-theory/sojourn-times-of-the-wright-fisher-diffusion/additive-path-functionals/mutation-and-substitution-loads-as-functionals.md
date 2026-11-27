@@ -10,8 +10,8 @@ and its quotient by $u(p)$, the integral of $d$ against the fixation-conditioned
 
 ## Depends on
 
-- [Dirichlet Green's function of a one-dimensional diffusion](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
-- [Sojourn density conditioned on fixation](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/conditional-green.md)
+- [Dirichlet Green's function of a one-dimensional diffusion](../../selection-duality-and-general-one-dimensional-di/green-function.md)
+- [Sojourn density conditioned on fixation](../../selection-duality-and-general-one-dimensional-di/conditional-green.md)
 
 ## Expansion
 
