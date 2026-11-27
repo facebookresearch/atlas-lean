@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -831,6 +832,63 @@ elif "/compare/" in path:
         self.assertNotIn("continue-on-error", keep)
         self.assertEqual((keep["with"]["name"], keep["with"]["path"], keep["with"]["if-no-files-found"]),
                          ("tasks", "build/tasks.json", "error"))
+
+    def test_the_nodes_to_expand_are_published_with_the_task_lists_commit(self):
+        # CONTRIBUTING.md, Picking a task: graph-tasks.json, from the index the render wrote, after tasks.json and
+        # before MkDocs copies site-src/ into the site. Only `next_task.py --graph` needs it, so it cannot fail the job.
+        name = "List the nodes still to expand"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Keep the task list") + 1)
+        self.assertLess(names.index(name), names.index("Build the Markdown site"))
+        self.assertTrue(step["continue-on-error"])
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "build").mkdir()
+            (root / "site-src" / "dependencies").mkdir(parents=True)
+            (root / "build" / "tasks.json").write_text(json.dumps({"commit": "c" * 40, "commit_date": "2026-11-27"}))
+            nodes = [{"id": "Algebra", "kind": "scope", "status": "not_ready", "route": "../roadmap/Algebra/"},
+                     {"id": "Algebra/a", "kind": "node", "status": "not_ready", "title": "A",
+                      "route": "../roadmap/Algebra/index.html#a"},
+                     {"id": "Algebra/b", "kind": "node", "status": "can_state", "route": "../roadmap/Algebra/b.html"},
+                     # A node to expand without a usable route is still listed, with no page.
+                     {"id": "Algebra/c", "kind": "node", "status": "not_ready", "title": "C"},
+                     {"id": "Algebra/d", "kind": "node", "status": "not_ready", "title": "D", "route": 7}]
+            index = root / "site-src" / "dependencies" / "index.json"
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": nodes}))
+            script = step["run"]
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            published = json.loads((root / "site-src" / "graph-tasks.json").read_text())
+            self.assertEqual(published, {"schema": next_task.GRAPH_SCHEMA, "commit": "c" * 40,
+                                         "commit_date": "2026-11-27", "nodes": [
+                                             {"node_id": "Algebra/a", "title": "A",
+                                              "page": "roadmap/Algebra/index.html#a"},
+                                             {"node_id": "Algebra/c", "title": "C", "page": None},
+                                             {"node_id": "Algebra/d", "title": "D", "page": None}]})
+            # next_task.py reads what the step writes.
+            with mock.patch.object(next_task, "request", lambda url: json.dumps(published).encode()):
+                self.assertEqual([item["node_id"] for item in next_task.load_graph({"commit": "c" * 40,
+                                                                                    "commit_date": "2026-11-27"})],
+                                 ["Algebra/a", "Algebra/c", "Algebra/d"])
+            # An index with no node to expand gives an empty list.
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": [nodes[2]]}))
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads((root / "site-src" / "graph-tasks.json").read_text())["nodes"], [])
+            # Another format, a node without its kind or status, or a node to expand without an id, or one id twice,
+            # leaves no file.
+            for wrong in ({"nodes": nodes}, {"schema": "autoform-dag-search/v1", "nodes": "x"},
+                          {"schema": "autoform-dag-search/v1", "nodes": [{"id": "Algebra/c", "kind": "node"}]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [nodes[1], nodes[1]]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [dict(nodes[1], id=" ")]}):
+                (root / "site-src" / "graph-tasks.json").unlink(missing_ok=True)
+                index.write_text(json.dumps(wrong))
+                result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+                self.assertNotEqual(result.returncode, 0, wrong)
+                self.assertFalse((root / "site-src" / "graph-tasks.json").exists(), wrong)
 
     def run_task_step(self, output: str, status: int = 0, files: dict[str, str] | None = None):
         """Run the task step in a fixture checkout of *files*, with an Autoform that writes *output* and exits with

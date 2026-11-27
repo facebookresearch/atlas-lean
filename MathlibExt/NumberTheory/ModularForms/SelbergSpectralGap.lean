@@ -122,7 +122,7 @@ private theorem ext_fderiv_const (c v : ℂ) (z : UpperHalfPlane) :
   have heq : ext (fun _ => c) =ᶠ[𝓝 (z : ℂ)] fun _ => c := by
     filter_upwards [UpperHalfPlane.isOpen_upperHalfPlaneSet.mem_nhds z.im_pos]
       with w hw
-    rw [ext, dif_pos hw]
+    rw [ext, dite_eq_left hw]
   rw [heq.fderiv_eq]
   simp
 
@@ -154,7 +154,7 @@ private theorem ext_eventuallyEq {f : UpperHalfPlane → ℂ} {F : ℂ → ℂ}
     ext f =ᶠ[𝓝 (z : ℂ)] F := by
   filter_upwards [UpperHalfPlane.isOpen_upperHalfPlaneSet.mem_nhds z.im_pos]
     with w hw
-  rw [ext, dif_pos hw]
+  rw [ext, dite_eq_left hw]
   exact hF ⟨w, hw⟩
 
 private theorem partialRe_eq {f : UpperHalfPlane → ℂ} {F : ℂ → ℂ}
