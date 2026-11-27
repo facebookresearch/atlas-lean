@@ -87,7 +87,9 @@ noncomputable def hc0PopMeat [MeasurableSpace Ω] (X0 : Ω → (k → ℝ)) (U0 
     (μ : Measure Ω) : Matrix k k ℝ :=
   Matrix.of fun a b => ∫ ω, (U0 ω) ^ 2 * X0 ω a * X0 ω b ∂μ
 
-/-- The population HC0 sandwich `Q⁻¹ Ω Q⁻ᵀ`, the asymptotic covariance of `√n (β̂ₙ - β)`. -/
+/-- The population HC0 sandwich `Q⁻¹ Ω Q⁻ᵀ`. Under the assumptions of
+`tendstoInDistribution_sqrt_mul_olsSeqEstimator_sub` it is the asymptotic covariance of
+`√n (β̂ₙ - β)`. -/
 noncomputable def hc0PopSandwich [DecidableEq k] [MeasurableSpace Ω] (X0 : Ω → (k → ℝ))
     (U0 : Ω → ℝ) (μ : Measure Ω) : Matrix k k ℝ :=
   (popGram X0 μ)⁻¹ * hc0PopMeat X0 U0 μ * ((popGram X0 μ)⁻¹)ᵀ

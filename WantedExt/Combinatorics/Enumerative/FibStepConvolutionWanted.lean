@@ -468,22 +468,6 @@ theorem_wanted fibStepGF_triple_identity (m p q : ℕ)
         (1 - PowerSeries.X) ^ 2 *
           (fibStepGF (m + p) - fibStepGF m)
 
-/-- **A product identity for three consecutive Fibonacci step generating functions.** Let
-$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
-$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
-$F^{(k)}_n$. Then
-$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} = X^m F^{(m)} F^{(m+2)} - F^{(m+1)} + F^{(m)}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 24. -/
-theorem_wanted fibStepGF_triple_consecutive (m : ℕ)
-    (hm : 1 ≤ m) :
-    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
-        fibStepGF (m + 2) =
-      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) -
-        fibStepGF (m + 1) + fibStepGF m
-
 /-- **Generating-function form of the triple convolution with two consecutive step sequences.**
 For a natural number $s$ let $F^{(s)}(X) = \sum_{n \ge 0} F^{(s)}_n X^n$ be the ordinary
 generating function, with rational coefficients, of the Fibonacci $s$-step numbers
