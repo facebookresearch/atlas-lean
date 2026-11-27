@@ -10,7 +10,9 @@ LICENSE file in the root directory of this source tree.
 # Sums involving a family of gibonacci polynomial squares
 
 Statements from Thomas Koshy, *Sums Involving a Family of Gibonacci Polynomial Squares:
-Generalizations*, The Fibonacci Quarterly 62 (2024), Article koshy11112023.
+Generalizations*, The Fibonacci Quarterly 62 (2024), Article koshy11112023. The theorem
+`hasSum_fibPoly_sq_family` is proved in
+`MathlibExt.NumberTheory.Recurrences.GibonacciPolynomialSquareFamilyHasSumFibPolySqFamily`.
 
 The Fibonacci polynomials `f_n(x)` (`f_0 = 0`, `f_1 = 1`) and Lucas polynomials `l_n(x)`
 (`l_0 = 2`, `l_1 = x`), both with `z_{n+2} = x z_{n+1} + z_n`, are the existing
@@ -29,36 +31,13 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 public import MathlibExt.NumberTheory.Recurrences.GibonacciPolynomialRatioTelescoping
+public import MathlibExt.NumberTheory.Recurrences.GibonacciPolynomialSquareFamilyHasSumFibPolySqFamily
 
 namespace MetaMathlibExt
 
 open Polynomial
 
 @[expose] public section
-
-/-- **Series over a family of Fibonacci polynomial squares.** Let $x > 0$ be real, let
-$\alpha = (x + \sqrt{x^2 + 4})/2$, and let $f_n = f_n(x)$ be the Fibonacci polynomials, given by
-$f_0 = 0$, $f_1 = 1$ and $f_{n+2} = x f_{n+1} + f_n$, evaluated at $x$. Let $k$, $r$, $t$ be
-positive integers and $p$ a natural number with $t \le 2p$. Then the series
-$$\sum_{n=1}^{\infty} \frac{(-1)^{tk} f_r f_{2pk}}{f_{(2pn+t-p)k}^2 - (-1)^{tk} f_{pk}^2}$$
-converges unconditionally, and its sum is $f_{tk+r} / f_{tk} - \alpha^r$.
-
-This is the Fibonacci-polynomial case of Theorem 3.1 of the source. The source takes $x$ to be an
-integer; the statement is made for real $x > 0$, which contains the positive integers.
-
-Source: Thomas Koshy, *Sums Involving a Family of Gibonacci Polynomial Squares:
-Generalizations*, The Fibonacci Quarterly 62 (2024), Article koshy11112023, Theorem 3.1
-(`fq-2024-koshy11112023-thm-3.1`). -/
-public theorem_wanted hasSum_fibPoly_sq_family {x : ℝ} (hx : 0 < x) {k p r t : ℕ} (hk : 0 < k)
-    (hr : 0 < r) (ht : 0 < t) (htp : t ≤ 2 * p) :
-    HasSum (fun n : ℕ =>
-        (-1) ^ (t * k) * aeval x (generalizedFibonacciPolynomial 0 1 X 1 r) *
-            aeval x (generalizedFibonacciPolynomial 0 1 X 1 (2 * p * k)) /
-          (aeval x (generalizedFibonacciPolynomial 0 1 X 1 ((2 * p * (n + 1) + t - p) * k)) ^ 2 -
-            (-1) ^ (t * k) * aeval x (generalizedFibonacciPolynomial 0 1 X 1 (p * k)) ^ 2))
-      (aeval x (generalizedFibonacciPolynomial 0 1 X 1 (t * k + r)) /
-          aeval x (generalizedFibonacciPolynomial 0 1 X 1 (t * k)) -
-        ((x + Real.sqrt (x ^ 2 + 4)) / 2) ^ r)
 
 /-- **Series over a family of Lucas polynomial squares.** Let $x > 0$ be real, let
 $\Delta = \sqrt{x^2 + 4}$ and $\alpha = (x + \Delta)/2$, and let $f_n$ and $l_n$ be the
