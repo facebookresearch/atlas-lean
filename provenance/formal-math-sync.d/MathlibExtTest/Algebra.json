@@ -7,6 +7,42 @@
       "upstream_sha256": "b4777bc00236b1691dd25524f4c5d26b1e327fc3f4cc3010b44ce817a03161bb"
     },
     {
+      "path": "MathlibExtTest/Algebra/Category/CommAlgCat/CotangentPushoutFlatNonflat.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "820d1abb19ed1d117cc763be96b971309f1e9f991529cb4a594480d6823ac585",
+      "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fea4e11d90f25325758725eec3fa6f11bb2027e81ca902a989a6227ef8625791"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Category/CommAlgCat/CotangentPushoutIndependentCoefficient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6697ea0fed12184cd4ed8564410f90f4bb4d8f0e9967b9ff0cdf089c5d099ace",
+      "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b2f0fef16c1cde52e6c22f3de0ac44fb9061db8d68dcc30f595397576969a7dd"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Category/CommAlgCat/PolynomialCotangentContraction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "54c2331b5d2e196eaadee3a28778aa4d6efddf3af8cbe2003326ecc98b69378b",
+      "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d22a3f83d2fdb2c71f4f0be012762753083763d2c4ccde293bdb256c863df777"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Category/CommAlgCat/StandardSimplexPolynomialCotangent.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "74706da2bbe4af5ef4f0a628d60b1181c02683068e1db8afdc963df91392f1a8",
+      "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "401d78c8f79d90d15bb1455df6749e660e4883fb3d78314aa4552324b5cd690b"
+    },
+    {
       "path": "MathlibExtTest/Algebra/Category/Grp/ExactnessTransport.lean",
       "disposition": "identical",
       "published_sha256": "5a68bbc3684043e4b52b17661ae3303e17852e1fae981908fab293f3a1417c3f",
@@ -197,6 +233,15 @@
       "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "63158e41706953a282a7c1014b0299dac856b5688f7bccf0519ddada34b32807"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Category/ModuleCat/RegularElementTorTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "90385e19da517a50959e766250b8a0675ad49bddeb210e238b7d7af79f359d53",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "83f60b218741ab3e92848fdfcf4e9a7b87355776cb5f698ccacfa1fe3c913d2d"
     },
     {
       "path": "MathlibExtTest/Algebra/Category/ModuleCat/TensorFoldTests.lean",
@@ -446,6 +491,78 @@
       "rationale": "Atlas adaptation of the independently authored general stable matrix colimit Morita client. Frozen original authored source file SHA-256: a07e62d19e8f1e07f753d7ee7444652c75dddebaf1db896872ea5bb9bb276679. This original is absent from source snapshot 9a495da20622876d4a72852b4de7e0921e976bc0; Atlas copyright and Lean 4.36 public-API compatibility changes retain its authorship notice."
     },
     {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/HomologyCokernelNaturalityExamples.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5ea8b849a3a4e091fa42573c4a02c5f000f647232c214fcb2fb11f60743b08f6",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "02111de744653a941142bcbce1f51e8c1a53e40296b2cf4be846b1d0c4a92877"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/HomologyCokernelTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bfa52c7749cec7b13bc1e0ee94f76b6f2426d3de2c0288154a649a8121a43436",
+      "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Adds a concrete full integer-antidiagonal regression at p+q=-3 with the (-1,-2) Tor1 summand in grading -2; projective terms/images earn comparison exactness, original assertions and nonflat ZMod2 coefficients are retained. Native compilation remains pending. Qualifies categorical coproduct references as Limits.Sigma, avoiding the root Sigma.map function in the new integer-antidiagonal section; original fixture and mathematical maps are unchanged.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "54729247c26adbe8a60fc1ecd4bf786ade1cd1e1989421a63d08753bf038642f"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/TorAntidiagonalKernelTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "09b9f4ec1f4c1ffa1b86a2aff64c1e013d33ae53a92b51f4efd7d4053cd636a0",
+      "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Removes surplus EOF blank lines; all nonwhitespace source tokens are unchanged.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "79932a78825ce41e749c8305f0b1ff9e4cbe6b7f158ce3f7ef8f1d473e2aecd9"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundaryCoefficientNaturalityTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "77cdb4b893cf7ae419ea0e0e294f64a99e76d59067df5d151f4733678cb58848",
+      "rationale": "General Tor coefficient naturality client from the actual recorded formal source commit, subsequently reusing regular-element multiplication, resolution projectivity and tensor unitor APIs. All original assertions, worlds and maps remain unchanged. Formal-source branch publication remains pending; the global sync pin is unchanged.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "2ac18ddbb25efff4fdd40b153039e7cf7d0d876a18f90e14f0a124a792e0a48a"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundaryKernelCriterionTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0bdba4a69cd85c903be6196f181b4c406d7cdabfe53eaa95ca09fe0122368ef9",
+      "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Removes surplus EOF blank lines; all nonwhitespace source tokens are unchanged.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "1ed44de7ffa5cdfc91935227b376536580af425c9750f22ebf6f72dbc21e24fa"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/EndpointCofreeAdjunctionTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "95e2001d864bf51d1b9dc038652c8510b43672c4fe68cf056997c965ab3510a9",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "e2701f4009f5f29f989b8642b400a0cc8abb45d685e1aa6311bee5828cc67670"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/EndpointCofreeFunctorTransportTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "20ec3605a5ed12ec5952ebcf96d9382d3fa10420acb2b52e326f74dc01b7538d",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "98359999a2af5a3237fac0baa12b077cc19ccc7b74573ccaae52f0429db00095"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/EndpointCofreeTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d64679c9721590306f6b4e7a19aa85fdb55ea95fcdaa52dfc335fa0962771d97",
+      "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Adapts the Omega tactic import to public meta import Lean.Elab.Tactic.Omega for Lean4.36.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "2c8a113b72f1f8c4faacdca35ee4d0e6bb320a46f26932235dab50e826772acc"
+    },
+    {
       "path": "MathlibExtTest/Algebra/Homology/KoszulFamilyZeroDivisorSigns.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -460,6 +577,15 @@
       "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "09c08368ac839075f3ed7a8f601eb5c04936e1bbbf4fae2928ed0eab359deade"
+    },
+    {
+      "path": "MathlibExtTest/Algebra/Homology/ResolutionNormalizationTransportTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d62820c18a7a7ebcef11930ebda7db739dc07b908f1ff0310d1ab87f907fbb69",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "3e02ba1e07283199bbc271f216b1016924814efb18a706ec21cb8fe0e876c0d1"
     },
     {
       "path": "MathlibExtTest/Algebra/Homology/SpectralObject/FunctorTests.lean",

@@ -25,6 +25,24 @@
       "upstream_sha256": "53b883f7d0217b644e71d8d4c089a09398e5c604ff08265fb0a19447370b44c2"
     },
     {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientNaturalityTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "33c582d01ca21b24322dae011318fb597d351f053ab55100002a8d88088ae2d3",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "bdda442cd567407a3ae466346e197614fe2eb726a3fd335d6975b0d65883c570"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/ContCohomology/FlatMapFunctorialityTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a1bb4b67b4ffac1cc6580558f8d1166bd9d1c00268ab463d14fb218f4efc552e",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "80d8a214e63d0569d503533d9fc74c91b300936feffee3032cc7881ff9682e32"
+    },
+    {
       "path": "MathlibExtTest/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupOneAnyProjectionTests.lean",
       "backport": "pending",
       "disposition": "diverged",

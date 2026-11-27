@@ -65,6 +65,24 @@
       "upstream_sha256": "cf5573dcfa62ee56ff6f4323ef355fcb6bffee205bcbd700cc3822d871abda5e"
     },
     {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/AdditiveResolutionCondition.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2cb92d9f1f1a4eda6d77dd5febfbcb092a9b24d80cf1a8b42b9018d12fbc8a07",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "442a7d35da4359d85f48af30576f14e59f9a4897c8bf804159fc504c495e8fd5"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CanonicalHigherCotangentComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1cf148f696d695b0ec0f2488da62882d5ba00dae20045cf8051cceca01b33766",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9ed17364e4bb83dc731207bb65f9e6ca0507e12cff96bacddb073b81b00f3bde"
+    },
+    {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/CanonicalPolynomialGeneratorDecomposition.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -81,6 +99,15 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state polynomial-generator, derived/tensor module, graded and finite-coordinate contracts with their original universe/hypothesis scope; all noncomment tokens and legal text are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "0c9e45e005e134c99f7aea60c15c0fb5045eb46512a532a337700c29403f5b77"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CanonicalPolynomialResolutionComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ee67d091293a6c9f7d4e590a41ebebee9c26d9c0a5a2ed828778f1f13b30e9ac",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "30c92c9e8ffff376eb300898988e29754908e976058015a5094ab6470e1fa8ff"
     },
     {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/CanonicalPolynomialSplitting.lean",
@@ -155,6 +182,15 @@
       "upstream_sha256": "4160b93c82cb4e7aaf59a6c62fc712ce779bed6b874f39fe0f751f3914af1820"
     },
     {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/AdditiveNormalization.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "275dad28df5bd8369ad872fa17fc5a87ccf74a8ebb3619a6dffcba8b8d218868",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9790ae7d5378bb03f43f38859c9e1c86b8076ffc44440e6b577eae8661e3b2b9"
+    },
+    {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/Adjunction.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -162,6 +198,33 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state polynomial-generator, derived/tensor module, graded and finite-coordinate contracts with their original universe/hypothesis scope; all noncomment tokens and legal text are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "ab9e229ccc8ec8ed7ae35656501ca53411798b8b573f6e1aeadf37103d6f1524"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/AlgebraModule.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "126282be7c0c3eefcac79705edf84a89c0815dcd52ecbe38ab96c04b1dfe95da",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d2cb3c1e497b426a6dbe763c9a82b11684563e2535830e9ced6abec231e32e27"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/Chain.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "140c2f3027a132444ef903cf1849131735dbdc1f6c08cb6f92013a65adcdbb9e",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7a0ae956d26b50e72746735abd4eda66894797a7d08ae1a04c0dd7d3d091cc7c"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/Coefficients.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "53d12f5d257241456138e88f97e60ed0a563a324840803170db32e527ab9ef4a",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "cb74906cd6c501de97266ad4493976964c8678e34f8c744741fe253c283cf82b"
     },
     {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/HigherForms.lean",
@@ -180,6 +243,15 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state polynomial-generator, derived/tensor module, graded and finite-coordinate contracts with their original universe/hypothesis scope; all noncomment tokens and legal text are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "9a40208b4d4393eecd599a16f3c4bcf536a53cef5fd30bc72878dc8e5258bc07"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentPushout/Simplicial.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6f5d464d6be9d2b726d9d25423e2003a77239af4720760f40235e98c9f426132",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fc5d1e6eb058bb2b81c2083059894904e1285fbbd0cc9d63b5b59ca4979142ba"
     },
     {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/CotangentSimplicial.lean",
@@ -236,6 +308,33 @@
       "upstream_sha256": "3502b172d9e89810bdfe09491e8c571abcc9b044372ecfbacb7c9c76bba2914f"
     },
     {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/HigherAndreQuillenHomology.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "77e3f3ccb9ceaee88fd1cb28ab502ea691506f673e0314926adafb8bacc82bc5",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b5557e280d728421dc0ed8526292eade25bcde97c4dc41fa219d0bebe687d420"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialBoundaryComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c4e152db63fa52910b09be553a29032db8ffdfe448b6e575167195635649f443",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "39057297218a3f42e46661c588e3e79b94689b10913d1ce9208e06026b3496cf"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialConstantSourcePrism.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a385213fba82327e5700e4b2b97e9843285f7a9344d45e11d8a1d8cf159e89e4",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fc90f800fbdeb872a4e70c212fe3f9349c4bb7aacfa9b06b16a15000d7fcb0f0"
+    },
+    {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialCotangentAugmentation.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -254,6 +353,123 @@
       "upstream_sha256": "45ca4f78ed6dfe834c0fce928155e224d7d318eca596edc95e62b30393ba3fe0"
     },
     {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialCotangentHorizontal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "afce6033412ed86aa797ec128a468d023a9a8f6f24c915d1e1303f3826c33070",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "af0eba3272cb34927573603eec19d7d07850cef205f52819046d035692be2585"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialCotangentIndependence.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4a4ea29cd091e91cc342c890acd78bf400e8e97643c8f59a07904497a3cc46c3",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Makes the chosen HasDerivedCategory.{w} ambient universe explicit in the three derived-cotangent docstrings.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "61e23c37367f410101835b6394c3b5e667ebdced7a98906b4934140ed15a8156"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialCotangentPrism.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "897b95f0e4e8a83ed23db7da6229b47282f694884d210382bfabf5ef85787a7d",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "28cb6b1caeef3c1448d551293df515e2b53d2497212b84913eb8c9371755d367"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialCotangentReplacement.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "107f56ad52ec25932b3b58b7ecc1e893c04769911735e19f1ebc33b4696044a8",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "cc7369d44e4f13968fbb5f603380919a924a06f7ac07f0156ff80a6456daefb1"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialCotangentResolutionFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f439d9b4cb428667e26c6e4898aecbb63807a2b5e907ecd8bad60549b8b64d37",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5bf52d26114544f03c92703320b3f0315f7ab8cb2d13f92f59d7234a14dbe48c"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialHornLift.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9137c72a4606828105c10791cda12519f9c2a2d167124fb04e55b05b27b7b423",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "beccff6e1948a42bb3ec45b7400455c90e5b371c592e283bfbb76fb7fd8500d7"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialOrderedPrismShell.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "94d4a6c3dab5baba57cb7ec887449f644338650d7242bd0543c81ed502a44ce8",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e1cef9464e61bcc92ee07f4c67ddf2509743078af5197c18f11075f9d3603501"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialPrismDegreeAssembly.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "011a6f63ea9ab30ae1ad2d1d7fcb9d1dd3290c88727d16352531f51f540abee1",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9951152530104d9700e83d1b96112ca3a5201b004527400c19c209cd1240ad92"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialPrismDegreeOne.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bf5ce0399e653c74f80af81378a58ff1e34c205bb64a235b2d8f3481695b9be1",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "bd49c01ab6f3dc8aecb8415f3c886cef82dfd64ec33a3271c57696be9854f295"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialPrismFirstNondegenerateTriangle.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "021594fde830bdd2efd3ef523c109d8be2b5834cecec0d5e1a2acb0d4027ee47",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3f45e15f15e315e2d956a13657cdbcda36b49b55f9f39251a55330373060a4b1"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialPrismNondegenerateDegreeExtension.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "34de6ed2cdd4fa7eb159627ed59cc41ef81e23c9c99c80edbc470bb51d484998",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a000a89c9da3805b4a60b5ac5077c2384165076243b2579f85e19db0be0f90a9"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialPrismSecondNondegenerateTriangle.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9ef15e67db7ca03f314c72733bdee83e97925b11ec1f34aed265d9e1eb7014d6",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "41fae460322bf463537d866df31e6277863d2cfd3bd614b32c3e55642566c697"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialRelativePrism.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "975e4883019c5b0c4b25a0a48f029805012d10be93044b6e2128d973eafe790b",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f458804a0287760a88326bf0ed7f80110eb27d0c9cb2dd926e94c56be28ee646"
+    },
+    {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialResolution.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -261,6 +477,24 @@
       "rationale": "Import the general Hochschild, Eulerian, and Chevalley–Eilenberg API with Atlas mathematical documentation, preserving its original hypotheses, signs, and source attribution. Give nonunital, commutative cotangent/resolution, Lie-module and coefficient/bicomplex prerequisites self-contained mathematical docstrings with precise hypotheses, morphism directions, signs and independent universes. Every noncomment code/import/option/privacy/legal token is retained.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "ba3bee417089a8ab5926aac17f43061104088fe96891617d7442fe77e693d152"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialResolutionAdditiveAsphericity.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6ece1ad930404147e3b005edcfda99e7f5ad05299d9e098139a5efee1140fb91",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f6a53e1bfdcc6e197e60b06fb0a3d6452cd5f43910037325a08230f28388f3b4"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialResolutionAsphericity.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7b5c600316e13592617ac734516d7fdf597c4cb4b3fd15d138618ba37e5b93b5",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "36b0decc15de0389a710448d9ea0625b4e617b18b96f7fbb2cbb6856a2c90bad"
     },
     {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialResolutionContraction.lean",
@@ -281,6 +515,33 @@
       "upstream_sha256": "cfed42eba447260d709525db5d6a26998a52c281ce9a518bfa728463b6f25106"
     },
     {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialSplitComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d6e1b9b65fbc54f171642ed5790951db126a3dd125ed228bb31c31e24bd96c6d",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fc121429e443c41fb4823518fc5f370695f09fe82f6e299cfe896f2718469853"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialSplitDegreeExtension.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "592a1ecec87ba052967863704b17f64f3da6d6ba41f8ec253a13021d1541adb1",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4fed93a9b06032889dab71fa840430d604da5c816bce29ef2f0462f456a0ec4a"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialSplitTruncatedComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8301785eab1ac56972b0985fed0d4dc2a80ae0827d0215cc72aab853eebdb3d2",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "788a7c765be3eaf2416b92235ab9a22064f1865a688bf706be4424b0974f0f5b"
+    },
+    {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialSplitting.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -288,6 +549,15 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state polynomial-generator, derived/tensor module, graded and finite-coordinate contracts with their original universe/hypothesis scope; all noncomment tokens and legal text are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "3fbc86f683aa6919a8d9f13ef9f95010de1523b588d11c3adcff9bbe6aa4e6b5"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/PolynomialZeroGeneratedPrism.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4cf940166777dac5476b95c05df7fd61042b864d419c8b848259439427398fea",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "398e22dad3f796b226239e787cfc31b57be24303ef30dac307bed31c632c2f48"
     },
     {
       "path": "MathlibExt/Algebra/Category/CommAlgCat/RestrictScalars.lean",
@@ -306,6 +576,15 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state polynomial-generator, derived/tensor module, graded and finite-coordinate contracts with their original universe/hypothesis scope; all noncomment tokens and legal text are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "9230197f5f07be7952e8a97c73094e38c11fe88365287a6ddc81b0510a4d126a"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/CommAlgCat/StandardSimplexPolynomialCotangent.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1a74e3a90451c10008a58cd6df184b89767b72a703258cd11392bafe149f6e8d",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9ee7147e5fca41c3ab821c832d62d029d9d83e031e8b6118cd2061b7283965a5"
     },
     {
       "path": "MathlibExt/Algebra/Category/FGModuleCat/BimoduleTensor.lean",
@@ -1568,6 +1847,24 @@
       "disposition": "diverged",
       "published_sha256": "d6dd3785dcd064fda067242eccad16964cb99493dac1c94fa4d94e7fe0dc3fc4",
       "rationale": "Introduce the verified general relative-resolution and transport API prepared for MathlibExt, adapted to Atlas documentation; historical source snapshot does not yet contain this new module. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged."
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/ModuleCat/RegularElementResolution.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4808ceabee26fda2e594116e26650c010f8c9cc9b5aa57f777806505f5fb6933",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "3a632e2383ae91594296d40b2c80241a6ff3c73ea8c384c7508a7155a9f24902"
+    },
+    {
+      "path": "MathlibExt/Algebra/Category/ModuleCat/RegularElementTor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "71cd09c1c58819f0b742706f5618b457a967b69514bf09a5edf9f6bd899b6ab6",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "b095a7920a3904583711eebad257eafcdf158aa92d5cff5ab2ac0e1f0f7f4ea4"
     },
     {
       "path": "MathlibExt/Algebra/Category/ModuleCat/RegularUnitAutomorphisms.lean",
@@ -4250,6 +4547,15 @@
       "upstream_sha256": "c30f5233715266345cd1d71f44744af4fe451ada6891f4bd02f383d09d3a9c89"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicFullCylinder.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "828f033dfffb8ae1cae1c1e56ccbcbbfe3e683c7750f215e029ef8edbbbe6a96",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ce119aa436018c7975f286dac6166b9d00b4964525ad62ed91b3a874cdb069d3"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicSubcategory.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4286,6 +4592,69 @@
       "upstream_sha256": "73ef447c483320d248ebfd5df37eafd89d97598708cf548f5fedf5cb9abe8759"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindow.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "afc4cac2a4f1923ee871956310f1cbb29fa5f85839aa265feab7b72bc7fe04d9",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "62ae3a2a3024ad0b0c64c92be87b504b25420fdd573d1c2aac1b01aedcc6f17c"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindowCycleComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9bfb20004ad41fde404e000297caa92cc3a19e5c01f25aa140cb418e42ae881d",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4edaa28cf848060412c0c1605b896c85244c3911013d6d430a5a4657a77e5b4e"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindowCycleFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b06d15fa4cd13f316ddf4d3de6bfbf6ee403ce0ba0395c498fb95a7819c23c48",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b1076f8edd71ed16ba7b7342a884003a1ddcbebd4abfd7ab829fe18ef69130f3"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindowReassembly.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ea0056ae28cf91a6c56cd10b4111faf1af2df0afd13467eac45ec7da42571147",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e656f63140b0b8bfee3763fda14322dcea589971712ca93651e74581e48f24ee"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindowSignedDisk.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "921bf06236f524a557c4dfe0838290decba2f606f5b76e3fdb87a6524ff76af2",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7f27fbc2bb34515424be14a9d8248e49f2f2de9fcfb8e9ec7cce8ebad36577e2"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindowTruncationFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b0553c148c96d97f641ebc62d9f1204976e359e00a5e8f9962fa57b09041f4b2",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b18baa5a168569f80304fd30d05cc91b7ffd23a6a7106d62d7a66a05b3321a58"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicWindowTruncationSequence.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0598905efd1275b4f4f8ef63cc2af9d098bfa743013cea234891b1fd5ee6530c",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a994188574f33f42bfda84d46d6acb8f105961113cefa5ba7f602a87e4d1544e"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientCofiberExactness.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4293,6 +4662,15 @@
       "rationale": "Use canonical Atlas Waldhausen terminology and pinned native proof defaults; original public statements, maps, indexing, coefficient hypotheses and independent universe scopes are preserved. Native compilation and any necessary same-statement proof repair remain pending. Mathematical docs state tensor/cochain, bounded-acyclic, derived-opposite, mixed/twisting and prism-descent contracts with actual signs, worlds and structural hypotheses; source tokens and legal text remain unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "528616f315a34d3ea3b7799f93d78a0d70ef1a9eea3a663d7408e8b6dcd33e68"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientFullCylinder.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "44f22ceda116a218dd909810b39c462562e91c02b1a1e471264d5313b4be9ef4",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "0ca57a8a9b5405cdb79f9af0b6d6874808afca9658aa77ccf02914d928081ba0"
     },
     {
       "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAmbientWaldhausen.lean",
@@ -4340,6 +4718,24 @@
       "upstream_sha256": "17e011f4fde67ef6c2c6bdf1b2e161ad3fa82e49d52537f207d002b420f9477a"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedMappingCylinderBoundary.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "dac930fce12674aae56072211408536c0514ea326b88a23dfa95871ea655e67f",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6098469990ebb8ba4f7b889966021df0c3f0b5b7e9d436a8727c11f15bf281d6"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedMappingCylinderCharts.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "09bd2117fd08a079424cf73a3777d344f02e9452a78795e37c325e1d5919a711",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "868e183626388f27fc07a7ba37f3d4b4f0a4026501068a5e10ab071813ad3527"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedMappingCylinderCore.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4374,6 +4770,96 @@
       "rationale": "General MathlibExt API imported from the recorded immutable source, with Atlas mathematical documentation and original authors/license retained. Native 4.36 adaptation and default resource limits; mathematical statements, maps, signs and independent universes preserved. Mathematical docs state the chain/cochain pairing, bounded-complex, injective/colimit, truncation and quasi-isomorphism contracts with the original shapes, worlds and signs; code and legal credits are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "f1d4be38c79344be40c2b2cafb007fe116b97ffaad37a680f7b3fd29a662f393"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedSingleWaldhausen.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "806d52d6a356f9da0e2ae1ddf0b1d02f9b868e6cfacff2ad28fa18c30685d510",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved. Restores all twelve canonical ambientWaldhausenCategory factory calls after the typeclass-name port; only the twenty-four type annotations retain WaldhausenCategoryWithoutGluing.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fcaa3ebc41ca82fbdf9111bfcaff76f54adeb20818b7c4705bbd3dc725a9bfe5"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowGluing.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7141deeee820430b7f0bd6c8860446fa8e97791b356cae9ccc8f138d44f6b381",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "357da6724d4ea85cd158a239e85a4dc6a505a0911946f47f29e2f7136e7e6ffa"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowGradedCoproduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2fe2a48b650662dd1126dd064f3f8537a69bb0840b1fec66d0b1d1341f07269a",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4b01d6ef62d515cec34d33dfd98bc89990d869fc4b4572c0b0f4c40b4ba1a4fb"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowGradedEvaluation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7f8bb99b028061af510cba63e32280b537a102d863ddef1d9e2ae9bfe04c554c",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e84bf3e47face788e175d73aaf69fc26e2dd1cc229f2d4ad3d0fd45b13c98d26"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowGradedIteration.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "75a1b82393bb79ffbbfbb318d60dbd1129a929eb2679bb3f5db17b0e3669fcf9",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "401f68fa989615da7132b095bdaa13e67eb4f5ad56e50646ab44cd6589af566f"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowGradedSuffix.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "62d3cefe8b2fd80cfee7a9258eb399a25b8d39aa3db0779cd03ca30499f726ce",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9113dc0e98fbd3e47c388b21e17dfc66dd4cd345bfa8b1d547ec847561251080"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowTopCofiber.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c1cd20ce22a80868ef62f5e8c965e4afff1ba2ab1fcdc319a82a20637e0a32fd",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "099b22fe5e3d4c99c4c1e89943dbfb5f11fb7bfde864691fb8d4e3115d125a68"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowTopFunctorExactness.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "41907b4aa950daa0752ba009a768d2a22f53b7eb4990082c7efe9811f925d981",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ed3fbd8b64b1df92a576bb62239568f19d739089fe00774f5c79b2529f5f3236"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowTopIteration.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "42a02da69bdc54a8d9314f68ae35d38baa10810a23734d95bfef478154d69729",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ce24a04456d9cfc1bf81c8eebf1166ca33b6e078852985421de20fdb80969146"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedWindowWaldhausen.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "eec693922bd4fb8265684516cf2211a8bf54d19bb1537a6811fa76174f1fab77",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation. Renames the original no-gluing Waldhausen typeclass/namespace to the current Lean4.36 API; mathematical hypotheses and separate gluing laws are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ff58e5d9271f26e2511ea81156eb1adec6a928977e7b064d413d8b3552d56604"
     },
     {
       "path": "MathlibExt/Algebra/Homology/CochainComplex/EnoughInjectives.lean",
@@ -6421,6 +6907,15 @@
       "upstream_sha256": "9e75e3e057a8a6760c075c923ce25857be2093a7fa7ca53beee00d4830e89b56"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/AndreQuillenSpectralSequence.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "fa26a097a15f4636e2b594acbf3a2b688f24de6fbd113e18b3e34209b1cc0dab",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b7e98e9687d0f38bb21fc10fac097a3db01ea273eee2122e60f73cd474b8da80"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/Hochschild/AntisymmetricBarWords.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -6464,6 +6959,33 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "d87380d860b04543ef6b84948df5b8cd5770a6b6fa16de8e7ef41538935d88f3"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/CanonicalCoefficientHochschildAugmentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e85c7948d0ea8b1a4ec93c4ae2fdf5b9e452e8b21bd264263b3bd94c4948c8d9",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f241f6a3325bade7bdf4ce0f4a89e793ddfde93f9286d38de310977d0487cd4a"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/CanonicalOrdinaryProperHarrisonAQ.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "609343957677864700ec0a0a5a50358ee9604c098664660f49bc07e6acf06f37",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f1b76ae24783fb0920154a52ad7e2d84e7616cb947b23261dd8a4b9d0cdbbf5f"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/CanonicalPositiveHochschildAugmentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b13c4cdcdcfc067d1ea8fcf7292bcf7322549b53c34ea59f7dbca23af760d762",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6fc742fa18f31672660abcaa70f2a51faf90d2b6b09f173e7da81295da4dfdfc"
     },
     {
       "path": "MathlibExt/Algebra/Homology/Hochschild/CanonicalProperShuffleCotangentComparison.lean",
@@ -7669,6 +8191,60 @@
       "upstream_sha256": "b2c2f18e7c71cc4e444de1f7131bd152c6efb11368bdef694e2710897e79fcd8"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/PolynomialResolutionCoefficientAugmentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0115ea3cc31a62227c89927ace97e1b3d8eddc21e4e7f282a20d7c9be6294b53",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2c973e99f4ae7c79b4a7274a83dbf4b12c0cff7b59ff531a1014094c66a35eee"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/PolynomialResolutionDiagram.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5a9d16375afc6b440c6042563067c84c4829c0b1b2e77eff06d825006c98a946",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "59124e6daa91c13af4e14b1f037c7ed64b6bbff753f812f1ffe1e6f20ad6bdba"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/PolynomialResolutionHorizontalAugmentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6e6866b289cb376c78fb98f46003cddc9741460e294bbe75d1ff81109b5fe077",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a141da176d82c9b5a8a35aed723c7262217617a2a29bf1ab1ccae21ee3740904"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/PolynomialResolutionSecondPage.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a38439b574c24e015927ea68e2a91cd4de2fcecd716e6d290424cd300e183e31",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "74daac59070dcb426b85d56aa7b3999ab466d822f4a9fae9bbe126bf1a25d443"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/PolynomialResolutionTensorPowers.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4c763fb5f391fd03f1d8e5ee498bb3fb3ba44a1a695a82f29addf0fe89343350",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6d76d3a90017d7024e764bc7e1006d6eb3dcce4390e5aff4b3143953696e83fb"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/PolynomialResolutionTotalAugmentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "fba6b0e7a207b60c3f3101a64d2e35b27729cc15b37a66687abb77a51c50e577",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3341cae2743f413fa446c3f30b64d7b454bfcc8916d72c3375a3d149afd017d2"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/Hochschild/PositiveAlgebraCochainKernel.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -8236,6 +8812,51 @@
       "upstream_sha256": "cbfc3938718b3276dd3e53bd9ac5d3207fab51cb0907e02b7f53dc784532d06d"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/BalancedTensor/HomologyCokernel.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "82f5b70c7e56f30c52f473872b5ab7724cf3602b649a316f5f75572d2931a393",
+      "rationale": "Imported newly authored general MathlibExt API from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "0de06454ae709ca572f53170bfe691b01d67d3766126ef2b934646e003c8f462"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/BalancedTensor/HomologyCokernelNaturality.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d3dfeec76f7915f50093700865bb3b9b4440cedea0209077aed449d1557825c5",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "bdf5a3135862885c5cdb64e06a3794286d26172c6e43bb3ec1771695f46b3d72"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/BalancedTensor/TorAntidiagonalKernel.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6839ee741e47b54d2aa483f9d27cb653ac867c93600da8020467eebd18ca8aef",
+      "rationale": "Imported general Tor image/kernel API with ATLAS mathematical documentation. The private image-kernel naturality proof now reuses the canonical Abelian kernel-image sequence image-map law; public statements, universes, maps and all other proof bodies are preserved.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "9d5a5b7de3e2313cc0517980991c8c32642cc1705937f8f264c1df797406bedf"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundaryCoefficientNaturality.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "43d2869fa384d11dd774c36be3abb2b9e992b0da2dae4bbdf65b49f506d7f92f",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "d3ba7761591c49609c4adbd248ad86e3b1f84b3bdc11a4c5a97e41c5ed0a3459"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundaryKernelCriterion.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "34b27e8999f2e2bb59d49ea27f95b535d94b41dbae3924d2727bef7d217ff485",
+      "rationale": "Imported newly authored general MathlibExt API from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Removes surplus EOF blank lines; all nonwhitespace source tokens are unchanged.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "39e5dde4df1e82845b65c9c47838fc41ecfd8c0ec1e1a0b07072f526d2fb50e9"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/HomologicalComplex/ChangeObjects.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -8297,6 +8918,42 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "80ec78dfbc84a70105d80ba60bed62e5539eca21c615e3ac6b7887afaf6e802f"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/EndpointCofree.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4aade3744d019da749b75c106c47973a3ad78802f55ab290c19c74857022cf2f",
+      "rationale": "General endpoint-cofree API refactor: constructions move to Basic; canonical native adjunction transports injectivity/enough injectives while preserving all legacy public names and types. The general discrete injectivity helper becomes public with its proof unchanged. The canonical Meta license header is exact; authors are retained in a separate comment.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "4605477a14ea32876324f1cce8b60341e20e39d9e1822cbe7ea23b89c7593e28"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/EndpointCofreeAdjunction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "417e245193c2ac7ff84f3e51700e7e020549bd9dbdd4940147ac584eaad655f3",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "b685c67069348e6f183719a31f232b3f1f9a77b0c18b63aaf3cd3ee74c6df9bc"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/EndpointCofreeBasic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5e9b549afc8088ed203a292e52da5ba20ab324441accfb7afe8eb230b8747da8",
+      "rationale": "Extracts the core constructions from MathlibExt/Algebra/Homology/HomologicalComplex/EndpointCofree.lean at the recorded origin commit into EndpointCofreeBasic.lean. The recorded upstream fingerprint belongs to that original source path, before this split. All 27 moved public construction names, signatures and implementations are preserved; injectivity proofs remain in the public facade and use the canonical adjunction. The canonical Meta license header is exact; authors are retained in a separate comment.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "4605477a14ea32876324f1cce8b60341e20e39d9e1822cbe7ea23b89c7593e28"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/EndpointCofreeFunctorTransport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c23cc15a10de35fd27b3a9c37e10fabdcb7a89972099eb55d4f6ba34898f9c10",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "81e4f741124c11fb7b4068cee67a7a2ea54cc0ffa1524c2f44471b8207b66a58"
     },
     {
       "path": "MathlibExt/Algebra/Homology/HomologicalComplex/HomologyProjection.lean",
@@ -8957,6 +9614,15 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "c3a295038483a8103b1395a6d44b97425a101f0039ebf51b08f025e2bde909a5"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/InjectiveResolutionNormalizationTransport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c7e250abbe4f64553a7978ae0917e5a6f49a08e6cdcb0d6f4f81394cdeb5dedc",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "0b391e90abd1d9ddbafa0d97b317e5b9eddce43b04e12df876ab088dd8465781"
     },
     {
       "path": "MathlibExt/Algebra/Homology/KilledBy.lean",
@@ -10394,6 +11060,15 @@
       "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "0d6c758e86788d5328960c2b19b83415873c6dea18ff02f54df28a3a166ee02b"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ProjectiveResolutionNormalizationTransport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a416ffaa8fd1731a2864d2f4ab82899bb31959cefa66c0ffd1bf7980168d2657",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "1ef5a8aca89a9f962e8b20561be0e77505b643952dcf4ace55fb8ec592baf8c0"
     },
     {
       "path": "MathlibExt/Algebra/Homology/QuasiIsoColimits.lean",

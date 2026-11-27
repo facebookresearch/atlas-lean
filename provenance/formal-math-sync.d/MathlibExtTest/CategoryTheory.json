@@ -19,6 +19,15 @@
       "upstream_sha256": "3aa5027008c1b8d12c843102ceba3e32598b005cf9b632baf5096c738a2b64c0"
     },
     {
+      "path": "MathlibExtTest/CategoryTheory/Abelian/LeftDerived/CoefficientColimitTorsionTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "03d9df9e8d96732c0b8f4e65c655b598e521a53d2200763af20a5289adf08711",
+      "rationale": "General regression client from the actual recorded formal source commit, followed by canonical regular-element API reuse and two native proof corrections: explicit zmultiplesHom carrier and pointwise AddCommGrpCat.ext. All original assertions, worlds and maps are preserved. Formal-source branch publication remains pending; the global sync pin is unchanged.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "2bede78a708b37fb8f88138c70abcc93ac944cb0f7abff3a56113874cf5f40c2"
+    },
+    {
       "path": "MathlibExtTest/CategoryTheory/Action/CoefficientIndexTests.lean",
       "disposition": "identical",
       "published_sha256": "a5926a7750cfb94fd444347740f78ffafe1813a66e17b571ca84634d87019cc0",
@@ -65,6 +74,96 @@
       "disposition": "identical",
       "published_sha256": "30f3c0206a082a57f8514e05a90cbaba933d0b5e3b6b1c1527f370f4f6707ca8",
       "upstream_sha256": "98ce95d33be026233ad4b572898dd494242b6198dee0148c54f9918c6b904046"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosCofreeContraction.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "b19e4c8e90579f774826ad25e30acae0ea7d9e9e4bc430e1cbf63f4dc7db49fd",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a12f9b76c8d4a28c4aabc002e9f65c83d8e9c9e9004902c217a08e9f0b6d6e4d"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosComplex.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "1e95af08b4d08318f0f6af3a35cd4bb8747c2039d9c222ac2e8c4348eaa0fb12",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "28afa5b454d1da2ad86a2c2c753daa5819b6e5a0fea4d1c76a971773b62d56e8"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosCosimplicial.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "145216c80e7cff9d70d13291a30a88d079110d99227e42108dd5ca567f3ad674",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2b96d111662490e526e859e41159727f4284787a4818004273c9bd18bdb362dc"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosDeltaFunctor.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "807aa64d41c32af0fc6c212697908a2f7a1aabcef60e5693e2f5375af6055f11",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ca10cdc174959537279fbe2c36c07b196111713f7271ed087a6f7aa1bc0f48ce"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosExact.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "f9ade105f318bc68f968e99853f5a18dbaefa3319fd103a7d6fec03aafc99990",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b2f9d1213d9ece8e1bb2da2ae3ffafa79d45346d14c6c67e21f2b4894fcbadcd"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosLimitZero.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "d2d769c1a400c34d450045e64a194f96fa7c080a906b18d1c29184a74be5103d",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ad44031dc60fe2382668309a2e365c665da76ef0bdc89340dcc43fd7bb3a66b7"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosNormalization.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "3c5cf509d6adb721f2f3ebbdb3d34d418164a2c161d206f185f74358ea8af5f7",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "729568f44093a1e002a2d02d8bf16c83785773d6ce9080590595b49c08ea17c5"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosRightDerived.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "e946a12d9061540123d7eb6c23ae016fdb2e7dc5a5a428101aa105e42a641972",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "757fb79de290d2093af5881125174bfae5c3e2fd07657d413997e5d41e32b041"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosStrictCoordinates.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "c65d27e2601af584e48063609983d498210b3f68019153defb9100dcdf1b75a5",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "33166f0e15558c7cb4a33d9402f4204be48b93ba30ec9abd8d891404906d1849"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/CategoryCohomology/RoosUniversal.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "6e1442a19c68426d403322329f4b2131575b0d252a956d21dda4b9fc5659c730",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2e26c47f05e81fefddc2a8568efccc5990c8e43620005aeaebbb63938bb683c9"
     },
     {
       "path": "MathlibExtTest/CategoryTheory/Enriched/CentralGradedInputActionsTests.lean",
@@ -544,6 +643,33 @@
       "upstream_sha256": "52dcd2719289389519f34622283bad3c0c0dca3362a0da5d050030bf878f7e25"
     },
     {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/CoproductKernelTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a16e59431f0bde7a5fe6f6256ae7b3181de56c7efbe60ed273cc1941391bbbf6",
+      "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation.",
+      "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c",
+      "upstream_sha256": "309220496e90798a8cf26decccdfac2142ab03f661e4e4773a1805a625067f12"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/DiscreteCofree.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "34ad9963e6c2ad292382f18399ac566f5e79b33668438b04c2f6c1b307a3e073",
+      "rationale": "Imported general cofree-diagram and enough-injectives APIs with genuine clients; preserves source authors, mathematical hypotheses, independent universes and Lean implementations, with ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fc4c89253a1a2ff80153faab19866b00d7a72104d5d9d9ac4e2b96435c8b538c"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/DiscreteCofreeEnoughInjectives.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "f6d71e95f5dfd0f225419af97dbea1f524c13e324ed7b0c3ac7c54d1ed5b747b",
+      "rationale": "Imported general cofree-diagram and enough-injectives APIs with genuine clients; preserves source authors, mathematical hypotheses, independent universes and Lean implementations, with ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e50c84ef87cd721d0b9639cf815f9e41f8be3fb94c3b933ad7789e1a53cc0759"
+    },
+    {
       "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/EndofunctorCone.lean",
       "disposition": "identical",
       "published_sha256": "084ae75fa37f442c5ad0ccfe70ae8023c6c0b46e1121f065a3199766565dee2d",
@@ -554,6 +680,87 @@
       "disposition": "identical",
       "published_sha256": "7c0243b69a06c3bb26d762c227481d2879885f18b5821a35e868d76dcb336a7b",
       "upstream_sha256": "fbce9fcf8103ccb8b7db79b4ee0945a94facaa66d7e754b9446e9ec00cf73488"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialCofree.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "f357c7015b58ce94c549cc4e8250c4a05663df12af6f89e0a53d26c447ff9183",
+      "rationale": "Imported general cofree-diagram and enough-injectives APIs with genuine clients; preserves source authors, mathematical hypotheses, independent universes and Lean implementations, with ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6e7f3416c868bf04f8c34aec36c8df90078247afa648f9fedda159fbd728b485"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialEnoughInjectives.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "d986e1ecb944ed77b851dbf0929ba98bb34fd352e23daedf74ab3365ea807f18",
+      "rationale": "Imported general cofree-diagram and enough-injectives APIs with genuine clients; preserves source authors, mathematical hypotheses, independent universes and Lean implementations, with ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ead1ca6beefeb2444731dbd2f1307f34de55081dc12e60580d9a547c64aa6083"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialEventuallyConstant.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "fba430abe08dd7ee732c2f36c5aa9ef351c2f0042b7ea53574b1dd40d1fb9c5f",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "22c2bed87a6d6b8ea354bf29fca2ef28c9f0425b18b2739a3db3d17362d12f9b"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialInjective.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "6f2939612b952f1237a3545e46adbe0faaa275e8b4b75e36e86e7a7837acf61b",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "89ac2b9f4179eff6d95c1fc0346c4b51ea7868c181552e5b1b5e9d238c4aa9cc"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialLimOneExact.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "803a02821736ae41ad4ea4f1489742943acd26ce07c3c9d5effb476f6a99b7e5",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f6e3efe64807dc349828abacb2652709dec68e9ab4e6fbb48ec31ff06738e682"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialLimOneIntegerTwoTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "20e6b9a4a2d62a6845d29c73e81293c6b9185663a7683f0b9b45fd4d79a39f28",
+      "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.",
+      "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399",
+      "upstream_sha256": "570dfafad87608854d44b49ac3c74591ebbc828c3e2789f9c0d0f59af948e469"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialLimOneParity.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "cdba2b35584b32d3568f6f4e25847cd1fb1275ded2f22e9eb7eb4d0f2ecffc63",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f5090f3332ac9b19ce1df29f6826b947b4c4987b1d97e1b5d583146b28e7b65f"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialLimOneParityNaturality.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "fb84d58a2cc371e8121157b9776262c0c4ee370b10a5e0bdae21c731cdab867a",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "05086dfd0cb9aeaf38d0409c1d5aaa9807ffbbfeb5156ecd85d7b07683d0a217"
+    },
+    {
+      "path": "MathlibExtTest/CategoryTheory/Limits/Shapes/SequentialLimitExactness.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "d393140fb24be7da557e96e2a58c2ab4b0c436ce04337927310105acfd61bc5d",
+      "rationale": "Imported general Roos cohomology, derived-limit and inverse-sequence APIs and genuine clients with ATLAS mathematical documentation; original authors, Lean code, assumptions, universes and assertions are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1e0195c58fa9e079e4ab719bff02b9601afd8bf226c739987f963dfce80ee3a0"
     },
     {
       "path": "MathlibExtTest/CategoryTheory/Limits/SourceObjectTransportPublicUse.lean",
