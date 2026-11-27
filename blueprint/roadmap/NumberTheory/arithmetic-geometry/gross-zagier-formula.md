@@ -21,7 +21,8 @@ $$L'(E/K, 1) = \frac{\lVert\omega\rVert^2 \, \hat h(y_K)}{c^2 \, \lvert D_K \rve
 
 where $\hat h$ is the canonical height of $E$ over $K$, normalised as by Gross and Zagier (Chapter I, §4, and (6.4)),
 $\hat h(P) = \lim_{n \to \infty} 4^{-n} \log H_K(x(2^n P))$ with $H_K(x) = \prod_v \max(1, \lvert x \rvert_v)^{[K_v : \mathbb{Q}_v]}$
-over the places $v$ of $K$ (the height over $K$, as Coates defines it with the coordinates $(1 : x)$; twice the absolute height
+over the places $v$ of $K$, where $x(O) = \infty$ and $H_K(\infty) = 1$, the height of the point $(0 : 1)$, so that
+$\hat h(O) = 0$ (the height over $K$, as Coates defines it with the coordinates $(1 : x)$; twice the absolute height
 $\lim_{n \to \infty} 4^{-n} h(x(2^n P))$ of the [Gross–Zagier–Zhang page](gross-zagier-zhang-formula.md)): a
 positive definite quadratic form on $E(K) \otimes \mathbb{R}$, so that, like the
 [Néron–Tate height](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), it
@@ -60,6 +61,8 @@ Gross and Zagier assume throughout that the discriminant is odd (Chapter I, §3,
 
 ## Proof depends on
 
+- [Decomposition of rational primes in a quadratic field](../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for the comparison of the splitting condition with Gross and Zagier's: for $D_K$ prime to $N$, a prime $\ell \mid N$ splits in $K$ exactly when $\left(\frac{D_K}{\ell}\right) = 1$, from which, with Hensel's lemma, $D_K$ is a square modulo $4N$
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md), for the Hecke correspondences $T_m$ acting on $J_0(N)$ in the pairings $\langle c, T_m c^\sigma \rangle$
 - [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for the rationality of the Heegner points over the Hilbert class field
 
 The rest of its proof is that of the sources below, as the Expansion describes.

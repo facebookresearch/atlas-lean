@@ -40,7 +40,9 @@ on the parity of $D$. When $w(E) = 1$ the same proof uses instead the nonvanishi
 
 ## Proof depends on
 
-Its proof is that of the sources below, as the Expansion describes.
+- [Decomposition of rational primes in a quadratic field](../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for the equivalence in item 1: a prime $\ell \nmid D$ splits in $\mathbb{Q}(\sqrt{D})$ exactly when $\left(\frac{D}{\ell}\right) = \varepsilon_D(\ell) = 1$
+
+The rest of its proof is that of the sources below, as the Expansion describes.
 
 ## Sources
 

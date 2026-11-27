@@ -20,8 +20,8 @@ $$L'(E/K, 1) = \frac{2 \lVert\omega\rVert^2 \, \hat h(y_K)}{c^2 \, \lvert D_K \r
 
 where $\hat h$ is the absolute Néron–Tate height on $E(K)$, normalised by
 $\hat h(P) = \frac{1}{[K : \mathbb{Q}]} \lim_{n \to \infty} 4^{-n} \log H_K(x(2^n P))$ with
-$H_K(x) = \prod_v \max(1, \lvert x \rvert_v)^{[K_v : \mathbb{Q}_v]}$ over the places $v$ of $K$, with the convention
-$\hat h(O) = 0$ at the origin. Since $\frac{1}{[K : \mathbb{Q}]} \log H_K(x)$ is the absolute logarithmic height of $x$,
+$H_K(x) = \prod_v \max(1, \lvert x \rvert_v)^{[K_v : \mathbb{Q}_v]}$ over the places $v$ of $K$, where $x(O) = \infty$
+and $H_K(\infty) = 1$, the height of the point $(0 : 1)$, so that $\hat h(O) = 0$. Since $\frac{1}{[K : \mathbb{Q}]} \log H_K(x)$ is the absolute logarithmic height of $x$,
 $\hat h(P) = \lim_{n \to \infty} 4^{-n} h(x(2^n P))$ for the absolute logarithmic height $h$, which is half of the
 height of the [Gross–Zagier page](gross-zagier-formula.md), taken over $K$. Like the
 [Néron–Tate height](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), it

@@ -36,6 +36,7 @@ Darmon (p. 21) gives the same map as a complex uniformisation $\Phi_N$ of $E(\ma
 
 ## Proof depends on
 
+- [Shimura's abelian variety attached to a weight-two eigenform](shimura-abelian-variety-of-an-eigenform.md), its item (i) for $\Gamma = \Gamma_0(N)$ and $f$: the quotient $\nu \colon J_0(N) \to E_0$ over $\mathbb{Q}$ of the Jacobian of $X_0(N)$ (Darmon, §2.5, pp. 18–19), an elliptic curve by its item (iii) as the $a_n(f)$ are integers, through which $X_0(N) \to E_0$, $P \mapsto \nu((P) - (\infty))$, sends $\infty$ to the origin
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s) = L(f, s)$ and the isogeny from $E$ to the Eichler–Shimura curve of $f$
 
 The rest of its proof is that of the sources below, as the Expansion describes.
