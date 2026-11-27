@@ -30,7 +30,7 @@ These are exactly the stability conditions of the corresponding equilibria of th
 ## Depends on
 
 - [Grindrod's two-species fitness-gradient dispersal model](grindrod-fitness-gradient-dispersal-model.md)
-- [Turing instability](../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/turing-instability.md)
+- [Turing instability](../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/turing-instability.md)
 
 ## Expansion
 

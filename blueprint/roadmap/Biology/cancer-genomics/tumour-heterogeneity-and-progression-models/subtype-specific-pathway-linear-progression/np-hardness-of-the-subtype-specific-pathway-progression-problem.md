@@ -6,7 +6,7 @@
 
 ## Proof depends on
 
-- [MAXIMUM CUT is NP-complete](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/maximum-cut/max-cut-np-complete.md)
+- [MAXIMUM CUT is NP-complete](../../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/maximum-cut/max-cut-np-complete.md)
 
 ## Expansion
 

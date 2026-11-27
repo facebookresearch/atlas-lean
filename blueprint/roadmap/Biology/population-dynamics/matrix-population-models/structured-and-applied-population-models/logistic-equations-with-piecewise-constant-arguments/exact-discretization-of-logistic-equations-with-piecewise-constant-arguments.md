@@ -24,7 +24,7 @@ For a Jacobian with block-triangular structure the characteristic polynomial fac
 
 ## Depends on
 
-- [Explicit solution of the logistic equation](../../logistic-growth-equation/logistic.md)
+- [Explicit solution of the logistic equation](../../../logistic-growth-equation/logistic.md)
 
 ## Expansion
 

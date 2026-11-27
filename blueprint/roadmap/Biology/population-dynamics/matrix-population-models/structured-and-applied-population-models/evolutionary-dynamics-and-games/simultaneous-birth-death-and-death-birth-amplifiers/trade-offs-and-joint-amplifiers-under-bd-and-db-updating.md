@@ -14,7 +14,7 @@ and $G_N$ is a **Bd$_r$-amplifier** (resp. **dB$_r$-amplifier**) if $\rho_r^{Bd}
 
 ## Proof depends on
 
-- [Jensen's inequality](../../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+- [Jensen's inequality](../../../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 
 ## Expansion
 

@@ -18,7 +18,7 @@ with the same blocks and coupling vectors $\boldsymbol\gamma^{(x)}$, $\boldsymbo
 
 ## Proof depends on
 
-- [Jensen's inequality](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
+- [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 
 ## Expansion
 

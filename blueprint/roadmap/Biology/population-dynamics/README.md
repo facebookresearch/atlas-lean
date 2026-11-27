@@ -2,7 +2,6 @@
 
 Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.
 
-- [Structured, spatial and applied population models](structured-and-applied-population-models/README.md)
 - [Classification of adaptive-dynamics singular strategies](classification-of-adaptive-dynamics-singular-str/README.md)
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
 - [Folk theorem of evolutionary game theory](folk-theorem-of-evolutionary-game-theory/README.md)

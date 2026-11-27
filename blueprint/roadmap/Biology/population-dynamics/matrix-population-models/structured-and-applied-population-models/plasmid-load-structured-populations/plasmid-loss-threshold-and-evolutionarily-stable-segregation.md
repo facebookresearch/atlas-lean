@@ -12,7 +12,7 @@ is linear and splits as $x_0' = (\beta(0,\alpha) - \mu(0,\alpha)) x_0 + B^\top y
 
 ## Proof depends on
 
-- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
+- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
 
 ## Expansion
 

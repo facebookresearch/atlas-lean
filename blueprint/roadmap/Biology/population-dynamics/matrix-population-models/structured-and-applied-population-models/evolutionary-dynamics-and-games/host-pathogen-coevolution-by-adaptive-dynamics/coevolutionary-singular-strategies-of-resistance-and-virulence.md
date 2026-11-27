@@ -26,12 +26,12 @@ $$\frac{dx_1}{d\tau} = \tfrac12\mu_1\sigma_1^2 S^*\,g_1, \qquad \frac{dx_2}{d\ta
 
 ## Depends on
 
-- [Convergence stability](../../../classification-of-adaptive-dynamics-singular-str/convergence-stable-iff-and-gradient.md)
-- [Evolutionary branching point](../../../classification-of-adaptive-dynamics-singular-str/branching-point.md)
+- [Convergence stability](../../../../classification-of-adaptive-dynamics-singular-str/convergence-stable-iff-and-gradient.md)
+- [Evolutionary branching point](../../../../classification-of-adaptive-dynamics-singular-str/branching-point.md)
 
 ## Proof depends on
 
-- [LaSalle's invariance principle](../../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+- [LaSalle's invariance principle](../../../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
 
 ## Expansion
 
