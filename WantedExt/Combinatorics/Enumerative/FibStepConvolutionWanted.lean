@@ -43,6 +43,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionFibStepGFMixedTriple
 
 set_option autoImplicit false
 
@@ -467,24 +468,6 @@ theorem_wanted fibStepGF_triple_identity (m p q : ℕ)
           fibStepGF (m + p + q) -
         (1 - PowerSeries.X) ^ 2 *
           (fibStepGF (m + p) - fibStepGF m)
-
-/-- **Generating-function form of the triple convolution with two consecutive step sequences.**
-For a natural number $s$ let $F^{(s)}(X) = \sum_{n \ge 0} F^{(s)}_n X^n$ be the ordinary
-generating function, with rational coefficients, of the Fibonacci $s$-step numbers
-$F^{(s)}_n$. For all natural numbers $m \ge 1$ and $p \ge 1$, the formal power series over
-$\mathbb{Q}$ satisfy
-$$
-X^m F^{(m)}(X) F^{(m+1)}(X) F^{(p)}(X) = F^{(p)}(X) F^{(m+1)}(X) - F^{(p)}(X) F^{(m)}(X).
-$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 25. -/
-theorem_wanted fibStepGF_mixed_triple (m p : ℕ) (hm : 1 ≤ m)
-    (hp : 1 ≤ p) :
-    PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 1) *
-        fibStepGF p =
-      fibStepGF p * fibStepGF (m + 1) - fibStepGF p * fibStepGF m
 
 /-- **Triple convolution of two consecutive Fibonacci step sequences with a third.** Write
 $F^{(s)}_k$ for the Fibonacci $s$-step numbers, and write $\sum_{K(3,N)}$ for a sum over all

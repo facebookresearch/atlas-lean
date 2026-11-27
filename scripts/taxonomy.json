@@ -10992,6 +10992,7 @@
   "MathlibExt/Combinatorics/Enumerative/FenceTiling": {"to": "Combinatorics/elementary-enumeration", "title": "Combinations without specified separations"},
   "MathlibExt/Combinatorics/Enumerative/FenceTilingSum": {"to": "Combinatorics/tilings-board-placements", "title": "Fence tilings and bi-periodic Fibonacci numbers"},
   "MathlibExt/Combinatorics/Enumerative/FibStepConvolution": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
+  "MathlibExt/Combinatorics/Enumerative/FibStepConvolutionFibStepGFMixedTriple": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/Combinatorics/Enumerative/FibonacciAlternatingSums": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Alternating sums of Motzkin numbers"},
   "MathlibExt/Combinatorics/Enumerative/FibonacciPAPAvoidance": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in parity-alternating permutations"},
   "MathlibExt/Combinatorics/Enumerative/FibonacciSquaredAddition": {"to": "Combinatorics/tilings-board-placements", "title": "Fence tilings and bi-periodic Fibonacci numbers"},
