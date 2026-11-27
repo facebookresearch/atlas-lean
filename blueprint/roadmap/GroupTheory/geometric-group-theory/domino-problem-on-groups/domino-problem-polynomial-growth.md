@@ -2,12 +2,9 @@
 
 A finitely generated virtually nilpotent group (equivalently, a group of polynomial growth) has decidable domino problem if and only if it is virtually free, that is, virtually cyclic or finite; the same holds for groups whose center contains a non-trivial finitely generated torsion-free subgroup.
 
-Then (source):
+For every finitely generated virtually nilpotent group $G$, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.1 of the source).
 
-1. for every finitely generated virtually nilpotent group $G$, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.1);
-2. for every finitely generated group $G$ whose center has a non-trivial, finitely generated, torsion-free subgroup, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.2).
-
-For instance, $\mathbb{Z} \times H$ satisfies the hypothesis of clause 2 for every finitely generated $H$. The source conjectures that a finitely generated group has decidable domino problem exactly when it is virtually free.
+The source proves the same equivalence for every finitely generated group $G$ whose center has a non-trivial, finitely generated, torsion-free subgroup (Theorem 1.2); for instance $\mathbb{Z} \times H$ satisfies this hypothesis for every finitely generated $H$. The source conjectures that a finitely generated group has decidable domino problem exactly when it is virtually free.
 
 ## Depends on
 
@@ -15,6 +12,7 @@ For instance, $\mathbb{Z} \times H$ satisfies the hypothesis of clause 2 for eve
 - [Group](../../group-basics/group.md)
 - [Polynomial growth with respect to a finite subset](../f-lner-sets-and-polynomial-growth/has-polynomial-growth.md)
 - [Center of a group](../../group-basics/group-center.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

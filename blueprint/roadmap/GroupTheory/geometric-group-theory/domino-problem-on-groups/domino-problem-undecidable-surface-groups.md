@@ -15,6 +15,7 @@ the fundamental group of the closed orientable surface of genus $g$. The domino 
 - [Domino problem of a finitely generated group](domino-problem-of-a-group.md)
 - [Group](../../group-basics/group.md)
 - [Surface groups](../../presentations-and-decision-problems/free-subgroups-of-one-relator-groups/is-surface-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -24,6 +24,7 @@ In particular these problems are undecidable for every infinite $G$ with the spe
 - [Solvable word problem](../../presentations-and-decision-problems/word-problem-for-groups/word-problem-solvable.md)
 - [The Turing jump](../../../TheoryOfComputation/degrees-and-hierarchies/turing-degrees-and-the-turing-jump/jump.md)
 - [Turing reducibility of predicates](../../../TheoryOfComputation/degrees-and-hierarchies/turing-degrees-and-the-turing-jump/turing-reducible-pred.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

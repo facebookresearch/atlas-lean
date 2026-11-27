@@ -13,6 +13,7 @@ is of finite type when $\mathcal{F}$ is finite. Patterns are coded by writing ea
 ## Depends on
 
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,9 +21,9 @@ None.
 
 ## Expansion
 
-For two finite generating sets the two domino problems are many-one equivalent, so decidability is a property of the group; it is also invariant under commensurability, and a group containing a finitely generated subgroup with undecidable domino problem has undecidable domino problem. The complement of the domino problem, the set of finite sets $\mathcal{F}$ with $X_{\mathcal{F}} = \emptyset$, is recursively enumerable when $G$ is finitely presented or has decidable word problem, by compactness. For $G = \mathbb{Z}^2$ with nearest-neighbour patterns this is the Wang tiling problem. Some sources define the domino problem as the set of $\mathcal{F}$ with $X_{\mathcal{F}} = \emptyset$; this is the complement and has the same decidability.
+For two finite generating sets the two domino problems are many-one equivalent, so decidability is a property of the group; it is also invariant under commensurability, and a group containing a finitely generated subgroup with undecidable domino problem has undecidable domino problem. For $G = \mathbb{Z}^2$ with nearest-neighbour patterns this is the Wang tiling problem. Some sources define the domino problem as the set of $\mathcal{F}$ with $X_{\mathcal{F}} = \emptyset$; this is the complement and has the same decidability.
 
 ## Sources
 
 - N. Aubrun, S. Barbieri and E. Moutot, "The domino problem is undecidable on surface groups", 44th International Symposium on Mathematical Foundations of Computer Science (MFCS 2019), Leibniz International Proceedings in Informatics (LIPIcs) 138 (2019), article 46, https://doi.org/10.4230/LIPIcs.MFCS.2019.46; arXiv:1811.08420v1 (Section 2.1, definition of subshifts and of the domino problem on graphs and finitely generated groups, in arXiv:1811.08420v1).
-- N. Aubrun, S. Barbieri and M. Sablik, "A notion of effectiveness for subshifts on finitely generated groups", Theoretical Computer Science 661 (2017), 35–55, https://doi.org/10.1016/j.tcs.2016.11.033; arXiv:1412.2582v3 (Section 3 of arXiv:1412.2582v3, subsection "Application: A class of groups with undecidable domino problem", where the domino problem is the set of codings of finite pattern sets with empty subshift).
+- N. Aubrun, S. Barbieri and M. Sablik, "A notion of effectiveness for subshifts on finitely generated groups", Theoretical Computer Science 661 (2017), 35–55, https://doi.org/10.1016/j.tcs.2016.11.033; arXiv:1412.2582v3 (Section 3.1 of arXiv:1412.2582v3, "Application: A class of groups with undecidable domino problem", where the domino problem is the set of codings of finite pattern sets with empty subshift).
