@@ -1,16 +1,16 @@
 # A truly subcubic negative triangle detector gives a truly subcubic (min,+) product
 
-Suppose negative triangle detection on tripartite graphs with $m$ vertices per part can be performed at cost at most $c\, m^{3 - \delta}$ for some constants $c \ge 0$ and $0 < \delta \le 2$. Then the $(\min,+)$ product of two $n \times n$ matrices with entries in $\{-W, \dots, W\} \cup \{+\infty\}$ can be computed at cost at most
+Suppose negative triangle detection on tripartite graphs with $m$ vertices per part can be performed in time at most $c\, m^{3 - \delta}$ for some constants $c > 0$ and $0 < \delta \le 2$. Then the $(\min,+)$ product of two $n \times n$ matrices with entries in $\{-W, \dots, W\} \cup \{+\infty\}$, $W \ge 2$, can be computed in time
 
 $$
-544\, c\, \lceil \log_2(4W + 2) \rceil\, n^{3 - \delta/3}.
+O\big(n^{2}\, T(n^{1/3}) \log W\big) = O\big(n^{3 - \delta/3} \log W\big), \qquad T(m) = c\, m^{3-\delta},
 $$
 
-Combined with the converse reduction, negative triangle detection, the $(\min,+)$ product and all-pairs shortest paths are equivalent under subcubic reductions for polynomially bounded weights.
+which is Theorem 4.2 of Vassilevska Williams and Williams; its hypothesis that $T(m)/m$ is nondecreasing holds since $\delta \le 2$, and smaller $W$ are covered by $W = 2$. The time counts the detector calls together with the work of the reduction. Combined with the converse reduction, negative triangle detection, the $(\min,+)$ product and all-pairs shortest paths are equivalent under subcubic reductions for polynomially bounded weights.
 
 ## Proof sketch
 
-Compose the three steps: finding by halving, APNT by blocking with block size $s = n^{1/3}$, and simultaneous binary search. With $t = n/s$ blocks, APNT costs $O((t^3 + n^2) s^{3-\delta})$, which is $O(n^{3 - \delta/3})$.
+Compose the three steps: finding by halving, APNT by blocking with block size $s = n^{1/3}$, and simultaneous binary search over the $O(\log W)$ bits of the entries. With $t = n/s$ blocks, APNT costs $O((t^3 + n^2) s^{3-\delta})$, which is $O(n^{3 - \delta/3})$.
 
 ## Depends on
 

@@ -11,14 +11,16 @@ module
 public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.Combinatorics.ReducedComplexities
 import Mathlib.NumberTheory.ZetaValues
 import MathlibExt.Analysis.Asymptotics.CatalanAsymptoticExpansion
 
 /-!
-# Hurwitz zeta at three quarters and odd arguments
+# Hurwitz zeta and paperfolding series at odd arguments
 
 We express the Hurwitz zeta value at three quarters and each odd integer greater than one
-in terms of the Riemann zeta value and an even-index Euler number.
+in terms of the Riemann zeta value and an even-index Euler number. We also evaluate the
+signed paperfolding Dirichlet series at those integers.
 -/
 
 namespace MetaMathlibExt
@@ -216,5 +218,99 @@ public theorem hurwitzZeta_three_quarters_two_mul_add_one (k : ℕ) (hk : 1 ≤ 
   rw [← hpred]
   field_simp
   ring
+
+open MathlibExt.Combinatorics.ReducedComplexitiesWanted (paperfoldingSeq)
+
+namespace tsum_neg_one_pow_paperfolding
+
+-- The sequence index is one less than the denominator.
+private lemma paperfoldingSeq_odd (n : ℕ) : paperfoldingSeq (2 * n + 1) = paperfoldingSeq n := by
+  unfold paperfoldingSeq
+  rw [show 2 * n + 1 + 1 = 2 * (n + 1) by omega,
+    Nat.factorization_mul (by decide : 2 ≠ 0) (Nat.succ_ne_zero n), Finsupp.add_apply,
+    Nat.prime_two.factorization_self, pow_add, pow_one,
+    Nat.mul_div_mul_left _ _ (by decide : 0 < 2)]
+
+private lemma paperfoldingSeq_even (n : ℕ) :
+    paperfoldingSeq (2 * n) = decide ((2 * n + 1) % 4 ≠ 1) := by
+  unfold paperfoldingSeq
+  rw [Nat.factorization_eq_zero_of_not_dvd (by omega : ¬ 2 ∣ 2 * n + 1), pow_zero, Nat.div_one]
+
+private noncomputable def signedTerm (s n : ℕ) : ℝ :=
+  (-1 : ℝ) ^ (paperfoldingSeq n).toNat * term s (n + 1)
+
+private lemma summable_signedTerm {s : ℕ} (hs : 1 < s) : Summable (signedTerm s) := by
+  apply Summable.of_norm
+  refine ((Real.summable_one_div_nat_pow.mpr hs).comp_injective
+    (i := fun n : ℕ => n + 1) (by intro a b h; dsimp at h; omega)).congr fun n => ?_
+  change term s (n + 1) = ‖signedTerm s n‖
+  have ht : 0 ≤ term s (n + 1) := by unfold term; positivity
+  simp [signedTerm, Real.norm_eq_abs, abs_of_nonneg ht]
+
+private lemma hasSum_even_index_signedTerm {s : ℕ} (hs : 1 < s) :
+    HasSum (fun n => signedTerm s (2 * n)) (progression s 1 - progression s 3) := by
+  have h₁ (n : ℕ) : signedTerm s (2 * (2 * n)) = term s (4 * n + 1) := by
+    simp [signedTerm, paperfoldingSeq_even, show 2 * (2 * n) + 1 = 4 * n + 1 by omega,
+      show (4 * n + 1) % 4 = 1 by omega]
+  have h₃ (n : ℕ) : signedTerm s (2 * (2 * n + 1)) = -term s (4 * n + 3) := by
+    simp [signedTerm, paperfoldingSeq_even, show 2 * (2 * n + 1) + 1 = 4 * n + 3 by omega,
+      show (4 * n + 3) % 4 = 3 by omega]
+  rw [sub_eq_add_neg]
+  exact HasSum.even_add_odd ((summable_progression hs 1).hasSum.congr_fun h₁)
+    ((summable_progression hs 3).hasSum.neg.congr_fun h₃)
+
+private lemma hasSum_odd_index_signedTerm {s : ℕ} (hs : 1 < s) :
+    HasSum (fun n => signedTerm s (2 * n + 1)) ((1 / (2 : ℝ) ^ s) * ∑' n, signedTerm s n) := by
+  refine ((summable_signedTerm hs).hasSum.mul_left _).congr_fun fun n => ?_
+  have hterm : term s (2 * (n + 1)) = (1 / (2 : ℝ) ^ s) * term s (n + 1) := by
+    simp [term, mul_pow, mul_comm]
+  simp only [signedTerm, paperfoldingSeq_odd, show 2 * n + 1 + 1 = 2 * (n + 1) by omega, hterm]
+  ring
+
+end tsum_neg_one_pow_paperfolding
+
+open tsum_neg_one_pow_paperfolding
+
+/-- **The $\pm 1$ paperfolding Dirichlet series at odd integers.** Let $(f_n)_{n \ge 0}$ be the
+regular paperfolding sequence, indexed from $0$, and let $E_{2k}$ be the even-index Euler number.
+For every integer $k \ge 1$,
+$$
+\sum_{n \ge 0} \frac{(-1)^{f_n}}{(n+1)^{2k+1}} =
+\frac{\pi^{2k+1} |E_{2k}|}{(2^{2k+2} - 2)(2k)!}.
+$$
+
+In the source's indexing $b_n = f_{n-1}$ for $n \ge 1$, this is the sum over $n \ge 1$ of
+$(-1)^{b_n}/n^{2k+1}$. The source prints the sum as $\sum_{n \ge 0} (-1)^{b_n}/(n+1)^{2k+1}$,
+which uses $b_0$, left undetermined by the recurrence $b_{2n} = b_n$; its proof (from Lemma 5)
+gives the sum over $n \ge 1$ stated here.
+
+Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Corollary 7
+(`jis-2025-25.4.4-cor-7`); `bₙ` read from arXiv:2508.04151v1. -/
+public theorem tsum_neg_one_pow_paperfolding (k : ℕ) (hk : 1 ≤ k) :
+    ∑' n : ℕ, (-1 : ℝ) ^ (paperfoldingSeq n).toNat / ((n + 1 : ℕ) : ℝ) ^ (2 * k + 1) =
+      Real.pi ^ (2 * k + 1) * ((|chapter5EulerEven k| : ℤ) : ℝ) /
+        (((2 : ℝ) ^ (2 * k + 2) - 2) * (2 * k).factorial) := by
+  let s := 2 * k + 1
+  have hs : 1 < s := by dsimp [s]; omega
+  have hsplit := (HasSum.even_add_odd (hasSum_even_index_signedTerm hs)
+    (hasSum_odd_index_signedTerm hs)).tsum_eq
+  let S : ℝ := ∑' n, signedTerm s n
+  have hbalance : S - (1 / (2 : ℝ) ^ s) * S = progression s 1 - progression s 3 := by
+    change S = (progression s 1 - progression s 3) + (1 / (2 : ℝ) ^ s) * S at hsplit
+    linarith only [hsplit]
+  have hpow : 1 < (2 : ℝ) ^ s := one_lt_pow₀ (by norm_num) (by omega)
+  have hden : 0 < ((2 : ℝ) ^ s * 2 - 2) * (2 * k).factorial := by
+    exact mul_pos (by linarith) (by positivity)
+  -- This is the odd-residue difference used in the Hurwitz zeta evaluation above.
+  have hdiff := (eq_div_iff (by positivity : (2 * (2 : ℝ) ^ s * (2 * k).factorial) ≠ 0)).mp
+    (odd_difference k hk)
+  trans S
+  · exact tsum_congr fun n => div_eq_mul_one_div _ _
+  rw [show (2 : ℝ) ^ (2 * k + 2) = 2 ^ s * 2 from pow_succ 2 s, eq_div_iff hden.ne']
+  calc
+    _ = (S - (1 / (2 : ℝ) ^ s) * S) * (2 * (2 : ℝ) ^ s * (2 * k).factorial) := by
+      field_simp
+    _ = _ := by rw [hbalance]; exact hdiff
 
 end MetaMathlibExt

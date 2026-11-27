@@ -10,3 +10,4 @@ Independent sets, cliques and dominating sets in graphs, with bounds on their si
 - [Independence polynomial of claw-free graphs](independence-polynomial-of-claw-free-graphs/README.md)
 - [Maximal cliques and triangles](maximal-cliques-and-triangles/README.md)
 - [Odd independent sets](odd-independent-sets/README.md)
+- [Logarithmic independence bound for clique-free graphs](logarithmic-independence-bound-clique-free.md)

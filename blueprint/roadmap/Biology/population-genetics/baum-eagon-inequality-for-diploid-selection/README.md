@@ -9,3 +9,4 @@
 - [Wright's formula](diploid-select-two-sub.md)
 
 - [A viability matrix negative definite on the simplex directions gives a unique, locally stable multiallelic polymorphism](multiallelic-stable-polymorphism-criterion.md)
+- [Complexity of diploid selection dynamics](complexity-of-diploid-selection-dynamics/README.md)

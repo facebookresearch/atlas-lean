@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.Radical.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Nat
 public import MathlibExt.NumberTheory.Bernoulli.DifferenceDenominatorLCM
+public import MathlibExt.NumberTheory.Bernoulli.KellnerSondowBernoulliDenominator
 public import MathlibExt.NumberTheory.Bernoulli.OddRadical
 public import MathlibExt.NumberTheory.Bernoulli.PolynomialDenominatorRadical
 public import MathlibExt.NumberTheory.BernoulliDerivativeDenominatorBernoulliDerivativeIntegralIff
@@ -21,18 +22,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial UniqueFactorizationMonoid
-
-/-- **Product formula for the denominator of $B_n(x) - B_n$.** Let $n \ge 1$, let $B_n(x)$ be
-the $n$-th Bernoulli polynomial and $B_n = B_n(0)$ the $n$-th Bernoulli number, and write
-$s_p(n)$ for the sum of the base-$p$ digits of $n$. Then $\mathbb{D}_n$, the product of the
-primes $p$ with $s_p(n) \ge p$, equals the denominator of the polynomial $B_n(x) - B_n$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2,
-definition of `𝔻_n` and equation (2.3), quoting Kellner (2017), Section 5. -/
-public theorem_wanted bernoulliDiffDenominator_eq_polynomialDenominator (n : ℕ) (hn : 1 ≤ n) :
-    bernoulliDiffDenominator n =
-      polynomialDenominator (Polynomial.bernoulli n - C (_root_.bernoulli n))
 
 /-- **Kellner's large-prime conjectures imply the Bernoulli derivative conjectures.** For
 $n \in \mathbb{N}$ let $\mathbb{D}^{+}_n$ be the product of the primes $p > \sqrt{n}$ whose
