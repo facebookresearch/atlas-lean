@@ -105,8 +105,8 @@ theorem ts_trim_smul {Omega : Type*}
     (mu : @Measure Omega mOmega) (hm : m ≤ mOmega) (a : ℝ≥0∞) :
     (a • mu).trim hm = a • (mu.trim hm) :=
   @Measure.ext _ m _ _ (fun s hs => by
-    rw [Measure.smul_apply, trim_measurableSet_eq hm hs,
-      trim_measurableSet_eq hm hs, Measure.smul_apply])
+    rw [smul_apply, trim_measurableSet_eq hm hs,
+      trim_measurableSet_eq hm hs, smul_apply])
 
 /-- DLR consistency of `μ` with the kernels `K n`: for every `n`, the joint law of the configuration
 seen through `outsideSigma (window n)` and the configuration itself is `μ|_{outside} ⊗ₘ K n`. -/
