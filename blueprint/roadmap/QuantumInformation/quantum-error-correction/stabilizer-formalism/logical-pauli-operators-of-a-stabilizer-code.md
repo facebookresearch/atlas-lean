@@ -20,16 +20,18 @@ maximal commuting set and choose $\bar X_i$ by symplectic Gram–Schmidt, so tha
 ## Depends on
 
 - [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md)
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Proof depends on
 
 - [Pauli operators commute exactly when their symplectic product vanishes](pauli-operators-commute-iff-symplectic-product-vanishes.md)
-- [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md)
+- [Symplectic Gram–Schmidt over $\mathbb{F}_2$](symplectic-gram-schmidt-over-f2.md)
+- [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md): the normalizer modulo phases is the $(n+k)$-dimensional symplectic complement
 
 ## Sources
 
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.2, equations (3.10)–(3.13).
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.9.4, equation (7.145).
-- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 3.4 ("We can in fact identify $N(S)/S$ with the logical Pauli group $P_k$").
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 3.4 ("We can in fact identify $N(S)/S$ with the logical Pauli group $\mathcal{P}_k$").
