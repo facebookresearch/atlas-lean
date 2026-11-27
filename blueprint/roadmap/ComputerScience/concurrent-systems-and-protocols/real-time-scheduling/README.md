@@ -8,3 +8,4 @@
 - [Resource access protocols](resource-access-protocols/README.md)
 - [Deadline-driven scheduling](deadline-driven-scheduling/README.md)
 - [Multiprocessor real-time scheduling](multiprocessor-real-time-scheduling/README.md)
+- [Mixed-criticality scheduling](mixed-criticality-scheduling/README.md)

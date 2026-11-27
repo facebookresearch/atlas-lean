@@ -48,6 +48,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Data.Fintype.Pi
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
+public import MathlibExt.GameTheory.SnortOppositionStrategy
 public import MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins
 
 namespace MetaMathlibExt
@@ -208,15 +209,6 @@ check of `queenGraph` and `SimpleGraph.rookGraph`. -/
 theorem snort_two_by_two :
     SnortFirstPlayerWins (queenGraph 2 2) ∧ SnortSecondPlayerWins (SimpleGraph.rookGraph 2 2) := by
   unfold SnortFirstPlayerWins SnortSecondPlayerWins; decide
-
-/-- **The second player wins Snort on opposable graphs.** If a finite simple graph $G$ is
-opposable, then the second player wins Snort on $G$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Lemma 1 (Kakihara,
-Proposition 3.6). -/
-public theorem_wanted snortSecondPlayerWins_of_isOpposable [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsOpposable G) : SnortSecondPlayerWins G
 
 /-- **Fireworks preserve second-player wins in Snort.** Let $G$ be a finite simple graph and let
 $(u, v)$ be a response pair of $G$ whose distance in $G$ is at least $3$ (infinite distance,
