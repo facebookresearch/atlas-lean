@@ -9,4 +9,3 @@
 - [Triangle-independent edge sets](triangle-independence-number.md)
 - [Triangle edge transversals](triangle-transversal-number.md)
 - [Erdős Problem 621 (triangle-independent sets and triangle transversals)](triangle-independent-plus-transversal.md)
-- [Resolution of Erdős Problem 621](triangle-independent-plus-transversal-ho.md)
