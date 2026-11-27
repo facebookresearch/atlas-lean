@@ -60,6 +60,7 @@
 - [Sorted prefix carries the most posterior mass](sum-le-sum-sorted-prefix.md)
 - [The shortest credible prefix has minimum size](le-card-of-is-credible-set.md)
 - [A minimum-size credible set exists and is a sorted prefix](exists-minimal-credible-prefix.md)
+- [Hierarchical SNP–mark–expression causal-path fine-mapping](hierarchical-snp-mark-expression-causal-path-fine-mapping.md)
 - [CAFEH: joint fine-mapping and colocalization across many traits under allelic heterogeneity](cafeh-multi-trait-colocalization-under-allelic-heterogeneity.md)
 - [Coloc posterior reweighting under alternative priors](coloc-posterior-reweighting-under-alternative-priors.md)
 - [Coloc prior elicitation and region-size dependence](coloc-prior-elicitation-and-region-size-dependence.md)

@@ -26,6 +26,7 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Tree-shaped admixture graphs and the four-point condition](tree-shaped-admixture-graphs-and-the-four-point/README.md)
 - [Wright's F-statistics](wright-s-f-statistics/README.md)
 - [Clustering, introgression tests and scenario choice](clustering-introgression-tests-and-scenario-choice/README.md)
+- [Spectral analysis of local ancestry](spectral-analysis-of-local-ancestry/README.md)
 
 ## Related topics
 

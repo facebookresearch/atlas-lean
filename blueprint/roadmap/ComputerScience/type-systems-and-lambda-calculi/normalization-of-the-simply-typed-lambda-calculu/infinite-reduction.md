@@ -1,0 +1,3 @@
+# Infinite call-by-value reduction sequences
+
+Consider call-by-value reduction $t \to u$ on intrinsically typed terms of the simply typed lambda calculus (left-to-right and weak: an application first reduces its function position, then its argument once the function is a value, and $(\lambda b)\,a$ contracts to the instantiation $b[a]$ only when $a$ is a value, a value being a lambda abstraction; no step goes under a binder). A term $t$ of type $A$ in context $\Gamma$ begins an infinite reduction when there is a sequence $(s_n)_{n \in \mathbb{N}}$ of terms of type $A$ in $\Gamma$ with $s_0 = t$ and $s_n \to s_{n+1}$ for every $n \in \mathbb{N}$.
