@@ -21,6 +21,7 @@ and conditionally on $\ell_{n,b}>0$, $(\log n)\ell_{n,b}$ has the limiting tail 
 
 ## Depends on
 
+- [Infinite-sites mutation on a finite genealogy](../../poisson-mutation-on-the-kingman-genealogy/branch-mutation-kernel.md)
 - [Merger rates of the Bolthausen–Sznitman coalescent](../../coalescents/merger-rate-volume.md)
 
 ## Proof depends on

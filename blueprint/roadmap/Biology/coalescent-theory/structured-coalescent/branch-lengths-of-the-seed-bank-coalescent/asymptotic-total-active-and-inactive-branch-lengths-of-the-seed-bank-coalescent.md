@@ -12,6 +12,8 @@ Consequently, if mutations fall at rate $\mu$ along all branches, the number of 
 
 ## Depends on
 
+- [Number of segregating sites under infinite-sites mutation](../../poisson-mutation-on-the-kingman-genealogy/seg-sites.md)
+- [Infinite-sites mutation on a finite genealogy](../../poisson-mutation-on-the-kingman-genealogy/branch-mutation-kernel.md)
 - [Seed-bank coalescent](../seed-bank-coalescent/seed-bank-coalescent-active-dormant-lineages.md)
 
 ## Proof depends on

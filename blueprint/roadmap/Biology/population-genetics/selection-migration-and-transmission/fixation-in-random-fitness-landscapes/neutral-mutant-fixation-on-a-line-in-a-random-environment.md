@@ -20,6 +20,7 @@ So environmental randomness gives an on-average neutral minority invader a fixat
 
 ## Depends on
 
+- [Rademacher distribution](../../../../Analysis/banach-spaces/geometry-of-banach-spaces/rademacher-type-and-cotype/rademacher-distribution.md)
 - [Existence of Brownian motion](../../../../Probability/stochastic-calculus/construction-and-sample-paths-of-brownian-motion/exists-is-brownian-real.md)
 
 ## Proof depends on
