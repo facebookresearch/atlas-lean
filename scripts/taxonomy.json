@@ -12980,6 +12980,7 @@
   "MathlibExt/NumberTheory/CentralBinomProductEquationOne": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
   "MathlibExt/NumberTheory/CentralBinomProductEquationSmall": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
   "MathlibExt/NumberTheory/CentralBinomProductEquationSubOne": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
+  "MathlibExt/NumberTheory/CentralBinomProductEquationSubTwo": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
   "MathlibExt/NumberTheory/CentralBinomProductInequality": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
   "MathlibExt/NumberTheory/CentralBinomialProductAsymptotics": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Products of factorials and binomial coefficients"},
   "MathlibExt/NumberTheory/ChooseAddModEqPrime": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},
