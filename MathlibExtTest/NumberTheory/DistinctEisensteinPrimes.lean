@@ -65,4 +65,3 @@ open MathlibExt.NumberTheory.CharModThree in
 -- `chi` agrees with the Legendre symbol modulo three; at 5, a non-residue, both are `-1`.
 example : chi 5 = (legendreSym 3 5 : ℝ) := by
   exact_mod_cast chi_eq_legendreSym 5
-

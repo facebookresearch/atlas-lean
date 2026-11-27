@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 public import MathlibExt.NumberTheory.LurothConsecutiveDigitsLeVolumeLurothDigitsGe
 public import MathlibExt.NumberTheory.LurothConsecutiveDigitsVolumeLurothCylinder
+public import MathlibExt.NumberTheory.LurothConsecutiveDigits
 
 /-!
 # Functions of consecutive digits in Lüroth series
@@ -157,24 +158,6 @@ public theorem_wanted volume_limsup_lurothPreimage_zero_one {m : ℕ}
     let E := {x ∈ Set.Ioc (0 : ℝ) 1 |
       ∃ᶠ n in atTop, (fun i : Fin m => lurothDigitSeq x (n + i)) ∈ S n}
     (∑' n, volume (A n) < ∞ → volume E = 0) ∧ (∑' n, volume (A n) = ∞ → volume E = 1)
-
-/-- **Upper bound for the measure of a Lüroth digit superlevel set.** Let $m \in \mathbb{N}$, let
-$F : \mathbb{R}^m \to \mathbb{R}$ be non-decreasing on $[2, \infty)^m$ for the coordinatewise
-order, let $y \in \mathbb{R}$, and write $d_k(x)$ for the $k$-th Lüroth digit of $x$. Then the
-Lebesgue measure of $\{x \in (0, 1] : F(d_1(x), \dots, d_m(x)) \ge y\}$ is at most
-$$3^m \int_{\{x \in [2, \infty)^m : F(x) \ge y\}} \prod_{i=1}^{m} \frac{1}{x_i^2} \, dx.$$
-
-The paper states this bound for $y = \Psi(n)$ under the hypotheses of its Theorem 4; only
-the monotonicity of $F$ is used.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 6
-(`integers-2024-A67-thm-6`). -/
-public theorem_wanted volume_lurothDigits_ge_le {m : ℕ} (F : (Fin m → ℝ) → ℝ)
-    (hmono : MonotoneOn F {x | ∀ i, 2 ≤ x i}) (y : ℝ) :
-    volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))} ≤
-      3 ^ m * ∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ y ≤ F x},
-        ENNReal.ofReal (∏ i, 1 / x i ^ 2)
 
 end
 

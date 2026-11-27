@@ -1,0 +1,3 @@
+# Order of an element at a place
+
+Let $K \subseteq F$ be fields, more precisely a field $F$ with a $K$-algebra structure, and let $v$ be a place of $F$ over $K$, with valuation ring $\mathcal{O}_v \subseteq F$: a discrete valuation ring containing the image of $K$ and different from $F$. The order of $f \in F$ at $v$ is the integer $\operatorname{ord}_v(f) = -\log w(f)$, where $w$ is the valuation of $v$, whose nonzero values are $e^n$ for $n \in \mathbb{Z}$, with $w(0) = 0$, and $\log e^n = n$. For $f \neq 0$, writing $f = u \pi^n$ with $u$ a unit of $\mathcal{O}_v$ and $\pi$ a uniformizer gives $\operatorname{ord}_v(f) = n$. By convention $\operatorname{ord}_v(0) = 0$.
