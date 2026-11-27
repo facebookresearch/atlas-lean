@@ -750,6 +750,9 @@ protected lemma IsEllSequence'.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
       convert congr($h₄ * $h₂ ^ 3 - $h₁ * $h₃ ^ 3) <;> omega
   | neg ih n => rw [ellW.neg one two, ellU.neg (h1 ▸ one) (h2 ▸ two), ih]
 
+lemma compl₂EDS_two_three_two (n : ℤ) : compl₂EDS (2 : ℤ) 3 2 n = 2 :=
+  complEDS₂_two_three_two n
+
 section Divisibility
 
 variable (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
