@@ -16,4 +16,4 @@ The two routes to recent identity are disjoint: consanguinity contributes probab
 
 ## Sources
 
-- D. Reich, K. Thangaraj, N. Patterson, A. L. Price and L. Singh, "Reconstructing Indian population history", *Nature* 461 (2009), 489–494, footnote to Table 1 (fraction of recessive diseases due to founder events), <https://doi.org/10.1038/nature08365> (PMC2842210).
+- D. Reich, K. Thangaraj, N. Patterson, A. L. Price and L. Singh, "Reconstructing Indian population history", *Nature* 461 (2009), 489–494, footnote to Table 2 (fraction of recessive diseases due to founder events), <https://doi.org/10.1038/nature08365> (PMC2842210).
