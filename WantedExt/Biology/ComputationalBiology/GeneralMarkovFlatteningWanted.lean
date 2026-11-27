@@ -27,7 +27,8 @@ of a tensor of indeterminates. For four taxa, a flattening along a split that is
 the tree has rank larger than `κ` outside a proper algebraic subset of the parameter space
 (Allman and Rhodes 2006, Theorem 2 with `λ = κ`); since the parameter space is an affine space and
 the locus where all `(κ + 1)`-minors vanish is algebraic, that subset is proper exactly when one
-parameter value gives rank larger than `κ`, which is the form recorded here.
+parameter value gives rank larger than `κ`, the form in which
+`exists_card_lt_rank_flatten_nonEdge` states it.
 
 Trees are the repository's unrooted binary phylogenetic trees (`UnrootedBinaryTree`) with their
 edge splits and quartets (`CSLibExt.Bioinformatics.Phylogenetics.Splits`); the root may be any
@@ -46,6 +47,7 @@ public import CSLibExt.Bioinformatics.Phylogenetics.Splits
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.RingTheory.MvPolynomial.Basic
+public import CSLibExt.Biology.ComputationalBiology.GeneralMarkovFlattening
 
 @[expose] public section
 
@@ -54,71 +56,7 @@ namespace WantedExt.Biology.ComputationalBiology.GeneralMarkovFlatteningWanted
 open MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
 open Cslib.Bioinformatics.Phylogenetics.Splits
 
-section Model
-
-variable {V K X R : Type} [Fintype V] [Fintype K] [CommSemiring R]
-  (G : SimpleGraph V) [DecidableRel G.Adj] (ℓ : X → V)
-
-/-- The edge `a – b` is directed away from the root `r`: `b` is one step farther from `r`. -/
-def IsAwayFrom (r a b : V) : Prop :=
-  G.Adj a b ∧ G.dist r b = G.dist r a + 1
-
-open Classical in
-/-- The joint distribution of the states `σ` at all vertices for the root distribution `π` and
-the edge matrices `M a b` on the edges `a → b` directed away from the root `r`:
-`π(σ r) ∏_{a → b} M a b (σ a) (σ b)`. -/
-noncomputable def treeJoint (r : V) (π : K → R) (M : V → V → Matrix K K R) (σ : V → K) : R :=
-  π (σ r) * ∏ ab ∈ Finset.univ.filter (fun ab : V × V => IsAwayFrom G r ab.1 ab.2),
-    M ab.1 ab.2 (σ ab.1) (σ ab.2)
-
-open Classical in
-/-- The joint distribution of the leaf states, `φ_r(π, M)`: the probability that the leaf of each
-taxon `x` has state `u x`, summing the joint distribution over the states at the other
-vertices. -/
-noncomputable def leafDist (r : V) (π : K → R) (M : V → V → Matrix K K R) (u : X → K) : R :=
-  ∑ σ ∈ Finset.univ.filter (fun σ : V → K => ∀ x, σ (ℓ x) = u x), treeJoint G r π M σ
-
-/-- Stochastic parameters for the root `r`: a probability vector `π` and, on every edge directed
-away from `r`, a Markov matrix (nonnegative entries, rows summing to one). -/
-def IsStochastic (r : V) (π : K → ℝ) (M : V → V → Matrix K K ℝ) : Prop :=
-  (∀ i, 0 ≤ π i) ∧ ∑ i, π i = 1 ∧ ∀ a b, IsAwayFrom G r a b →
-    (∀ i j, 0 ≤ M a b i j) ∧ ∀ i, ∑ j, M a b i j = 1
-
-/-- Complex parameters for the root `r` satisfying the stochastic linear constraints: the root
-vector sums to one and every edge matrix directed away from `r` has rows summing to one. -/
-def IsComplexStochastic (r : V) (π : K → ℂ) (M : V → V → Matrix K K ℂ) : Prop :=
-  ∑ i, π i = 1 ∧ ∀ a b, IsAwayFrom G r a b → ∀ i, ∑ j, M a b i j = 1
-
-end Model
-
-section Flattening
-
-variable {X K R : Type} [DecidableEq X]
-
-/-- The **flattening** of a function `P` of leaf states along the split `A | Aᶜ`: the matrix with
-rows the states on `A`, columns the states off `A`, and entries `P(u, v)`. -/
-def flatten (A : Finset X) (P : (X → K) → R) :
-    Matrix ({x // x ∈ A} → K) ({x // x ∉ A} → K) R :=
-  fun u v => P fun x => if h : x ∈ A then u ⟨x, h⟩ else v ⟨x, h⟩
-
-end Flattening
-
-variable {X K : Type} [Fintype X] [DecidableEq X] [Fintype K] [DecidableEq K]
-
-/-- The leaf of each taxon, as a vertex. -/
-def leafOf (T : UnrootedBinaryTree X) (x : X) : T.V :=
-  T.label x
-
-/-- **Edge flattenings have rank at most `κ`** (Allman and Rhodes 2008, Section 2): for the
-general Markov model with `κ` states on an unrooted binary phylogenetic tree `T`, rooted at any
-vertex, with stochastic parameters, the flattening of the leaf distribution along every edge
-split of `T` has rank at most `κ`.
-
-Source: Allman and Rhodes (2008), Section 2. -/
-public theorem_wanted rank_flatten_leafDist_le (T : UnrootedBinaryTree X) (r : T.V)
-    (π : K → ℝ) (M : T.V → T.V → Matrix K K ℝ) (hp : IsStochastic T.G r π M)
-    {A : Finset X} (hA : A ∈ edgeSplits T) :
-    (flatten A (leafDist T.G (leafOf T) r π M)).rank ≤ Fintype.card K
+variable {X : Type} [Fintype X] [DecidableEq X]
 
 /-- The **phylogenetic ideal** `𝔞_T` of the two-state general Markov model on `T`: the
 polynomials in the indeterminates `p_u`, `u : X → Fin 2`, that vanish at every scalar multiple of
@@ -152,21 +90,5 @@ flattenings of a `2 × ⋯ × 2` tensor of indeterminates.
 Source: Allman and Rhodes (2008), Theorem 4. -/
 public theorem_wanted phylogeneticIdeal_eq_span_edgeMinors (T : UnrootedBinaryTree X) :
     phylogeneticIdeal T = Ideal.span (edgeMinors T)
-
-/-- **Non-edge flattenings of four-taxon trees have rank larger than `κ` for generic parameters**
-(Allman and Rhodes 2006, Theorem 2 with `λ = κ`): for an unrooted binary phylogenetic tree `T` on
-four taxa displaying the quartet `01|23`, and each of the two splits `{0, 2} | {1, 3}` and
-`{0, 3} | {1, 2}` that are not edges of `T`, some complex stochastic parameters give a leaf
-distribution whose flattening along that split has rank larger than `κ`, the number of states
-(`2 ≤ κ`). Since the rank-at-most-`κ` locus is algebraic in the parameters, it is then a proper
-algebraic subset of the parameter space, and the tree is identified from generic parameters by
-the vanishing of the `(κ + 1)`-minors of its own flattening.
-
-Source: Allman and Rhodes (2006), Theorem 2. -/
-public theorem_wanted exists_card_lt_rank_flatten_nonEdge (hK : 2 ≤ Fintype.card K)
-    (T : UnrootedBinaryTree (Fin 4)) (hT : DisplaysQuartet T 0 1 2 3)
-    (A : Finset (Fin 4)) (hA : A = {0, 2} ∨ A = {0, 3}) :
-    ∃ (r : T.V) (π : K → ℂ) (M : T.V → T.V → Matrix K K ℂ), IsComplexStochastic T.G r π M ∧
-      Fintype.card K < (flatten A (leafDist T.G (leafOf T) r π M)).rank
 
 end WantedExt.Biology.ComputationalBiology.GeneralMarkovFlatteningWanted

@@ -56,6 +56,18 @@ example : maximumNimGrundy (· / 3) 2 = 0 := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
 
+-- For the smallest divisor and `j = 1`, the largest pile below the divisor is terminal.
+example : maximumNimGrundy (· / 2) 1 = 0 :=
+  maximumNimGrundy_sub_eq_zero 2 1 (by decide) (by decide) (by decide)
+
+-- An interior value of `j` gives a positive pile strictly below `k`.
+example : maximumNimGrundy (· / 7) 4 = 0 :=
+  maximumNimGrundy_sub_eq_zero 7 3 (by decide) (by decide) (by decide)
+
+-- At `j = k`, the theorem also covers the empty pile for any permitted divisor.
+example (k : ℕ) (hk : 2 ≤ k) : maximumNimGrundy (· / k) 0 = 0 := by
+  simpa only [Nat.sub_self] using maximumNimGrundy_sub_eq_zero k k hk (by omega) le_rfl
+
 -- Test section: Grundy numbers at multiples of the divisor. For `k = 3`, the piles `3`, `6` and
 -- `9` have Grundy numbers `1`, `2` and `3`.
 example : maximumNimGrundy (· / 3) 3 = 1 :=
@@ -73,6 +85,21 @@ example : maximumNimGrundy (· / 2) 4 = 2 :=
   maximumNimGrundy_div_eq_of_dvd 2 4 (by decide) (by decide) (by decide)
 
 example : maximumNimGrundy (· / 2) 4 = 4 / 2 := maximumNimGrundy_div_two_four
+
+private theorem halving_step (m : ℕ) (_hm : 1 ≤ m) :
+    (m - 1) / 2 ≤ m / 2 ∧ m / 2 ≤ (m - 1) / 2 + 1 := by
+  omega
+
+-- The halving rule increases at four but stays flat at five.
+example : maximumNimGrundy (· / 2) 4 = 2 :=
+  maximumNimGrundy_eq_rule_of_lt (· / 2) rfl halving_step 4 (by decide) (by decide)
+
+example : maximumNimGrundy (· / 2) 5 = maximumNimGrundy (· / 2) 2 :=
+  maximumNimGrundy_eq_sub_rule_succ (· / 2) rfl halving_step 5 (by decide) (by decide)
+
+-- With no legal moves, the flat recurrence also applies at the first positive pile.
+example : maximumNimGrundy (fun _ => 0) 1 = maximumNimGrundy (fun _ => 0) 0 :=
+  maximumNimGrundy_eq_sub_rule_succ (fun _ => 0) rfl (fun _ _ => by simp) 1 le_rfl rfl
 
 -- In multiplicative form: `G(k * m) = m` for every `k ≥ 2` and `m ≥ 1`.
 example (k m : ℕ) (hk : 2 ≤ k) (hm : 1 ≤ m) : maximumNimGrundy (· / k) (k * m) = m := by
@@ -112,6 +139,18 @@ example : ¬(8 : ℕ) ∣ 3 * (8 - 2) - 3 :=
 example : maximumNimH 3 0 < maximumNimH 3 1 ∧ maximumNimH 3 1 < maximumNimH 3 2 :=
   ⟨maximumNimH_strictMono 3 0 1 (by decide) (by decide),
    maximumNimH_strictMono 3 1 2 (by decide) (by decide)⟩
+
+-- At `x = 0` the bound is attained, including at the smallest permitted step.
+example : 0 < 1 ∧ 1 ≤ maximumNimH 2 0 :=
+  maximumNimH_succ_le (k := 2) (x := 0) (hk := le_rfl)
+
+example : maximumNimH 2 0 = 1 := by decide
+
+-- At `k = 3` and `x = 2`, the quotient contributes an additional unit.
+example : 2 < 3 ∧ 3 ≤ maximumNimH 3 2 :=
+  maximumNimH_succ_le 3 2 (by decide)
+
+example : 3 < maximumNimH 3 2 := by decide
 
 -- Zero iterations leave both real maps at the starting position.
 example (x : ℕ) :

@@ -44,6 +44,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.UnrootedBinaryTreeCount
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Domains.Biology.ComputationalBiology.CherryDistribution
 
 @[expose] public section
 
@@ -52,30 +53,6 @@ namespace WantedExt.Biology.ComputationalBiology.CherryDistributionWanted
 open MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
 open Filter Topology ProbabilityTheory
 open scoped Nat
-
-/-- The number of **cherries** of `T`: the two-element sets of taxa whose leaves are both
-adjacent to a common vertex. -/
-noncomputable def cherryCount {X : Type} (T : UnrootedBinaryTree X) : ℕ :=
-  Nat.card {s : Finset X // s.card = 2 ∧ ∃ v : T.V, ∀ x ∈ s, T.G.Adj (T.label x : T.V) v}
-
-/-- The unrooted binary phylogenetic trees on the taxa `Fin n`, up to label-preserving
-isomorphism. There are `(2 n - 5)‼` of them for `n ≥ 3` (`nat_card_unrootedBinaryTree`). -/
-abbrev TreeClass (n : ℕ) : Type 1 :=
-  Quot (UnrootedBinaryTree.Iso (X := Fin n))
-
-/-- The isomorphism classes containing a tree whose cherry count satisfies `P`. -/
-def classesWith (n : ℕ) (P : ℕ → Prop) : Set (TreeClass n) :=
-  {q | ∃ T : UnrootedBinaryTree (Fin n), Quot.mk _ T = q ∧ P (cherryCount T)}
-
-/-- The probability, under the uniform model on `n` taxa, that the cherry count satisfies `P`:
-the proportion of isomorphism classes with that property. -/
-noncomputable def uniformProb (n : ℕ) (P : ℕ → Prop) : ℝ :=
-  (Nat.card (classesWith n P) : ℝ) / Nat.card (TreeClass n)
-
-/-- The mean of the cherry count under the uniform model on `n` taxa. A tree on `n` taxa has at
-most `n.choose 2` cherries, so the sum runs over every possible value. -/
-noncomputable def cherryMean (n : ℕ) : ℝ :=
-  ∑ k ∈ Finset.range (n.choose 2 + 1), (k : ℝ) * uniformProb n (· = k)
 
 /-- The variance of the cherry count under the uniform model on `n` taxa. -/
 noncomputable def cherryVariance (n : ℕ) : ℝ :=
@@ -91,13 +68,6 @@ public theorem_wanted uniformProb_cherryCount_eq (n k : ℕ) (hn : 4 ≤ n) (hk 
     uniformProb n (· = k) =
       ((n ! * (n - 2)! * (n - 4)! * 2 ^ (n - 2 * k) : ℕ) : ℝ) /
         ((n - 2 * k)! * (2 * n - 4)! * k ! * (k - 2)! : ℕ)
-
-/-- **Mean cherry count** (McKenzie and Steel 2000, Theorem 4(b), due to Steel and Penny 1993):
-under the uniform model on `n ≥ 4` taxa, `E[C_n] = n (n - 1) / (2 (2 n - 5))`.
-
-Source: McKenzie and Steel (2000), Theorem 4(b). -/
-public theorem_wanted cherryMean_eq (n : ℕ) (hn : 4 ≤ n) :
-    cherryMean n = (n : ℝ) * (n - 1) / (2 * (2 * n - 5))
 
 /-- **Variance of the cherry count** (McKenzie and Steel 2000, Theorem 4(b), via Steel 1988):
 under the uniform model on `n ≥ 4` taxa,

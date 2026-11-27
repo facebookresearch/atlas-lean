@@ -22,3 +22,8 @@ example {G : Type*} [Group G] (a b : G) : wordMap G 1 (a, b) = 1 := by
 example : ∃ w : FreeGroup (Fin 2), w ≠ 1 ∧
     ¬ Function.Surjective (wordMap (Matrix.ProjectiveSpecialLinearGroup (Fin 2) ℝ) w) := by
   simpa [psl2RealWordMapsSurjective, not_forall] using psl2RealWordMapsSurjective_refuted
+
+example : ∃ w : FreeGroup (Fin 2), w ≠ 1 ∧ ∃ r : Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+    ∀ xy, wordMap _ w xy ≠ r := by
+  simpa [so3WordMapsSurjective, Function.Surjective, not_forall] using
+    so3WordMapsSurjective_refuted

@@ -16,7 +16,8 @@ public import MathlibExt.Combinatorics.Words.RelativePositionBinaryWords
 `letterPosition_reconstruction` recovers each pair of occurrence positions from the
 previously occupied positions and the signed distance between the next two occurrences.
 `exists_word_letterPosition_eq_iff` characterizes which sequences can occur as the positions of
-one letter in a word starting with `true`.
+one letter in a word that starts with `true` and in which both letters occur infinitely often
+(`BothLettersInfinite`).
 -/
 
 namespace MetaMathlibExt
