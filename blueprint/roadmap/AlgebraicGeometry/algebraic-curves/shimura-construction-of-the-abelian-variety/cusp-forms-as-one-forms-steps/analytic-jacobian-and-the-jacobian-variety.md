@@ -2,8 +2,8 @@
 
 Let $C$ be a curve over $\mathbb{C}$, that is, a proper smooth geometrically irreducible $\mathbb{C}$-scheme of dimension
 one, let $J_C$ be its [Jacobian variety](../../jacobians-of-curves/jacobian.md), and let
-$P \in C(\mathbb{C})$, with $f^P \colon C \to J_C$ the canonical map sending a point $Q$ to the
-class of the divisor $Q - P$. Let $X = C(\mathbb{C})$, a compact Riemann surface, with
+$P \in C(\mathbb{C})$, with $f^P \colon C \to J_C$ the [Abel–Jacobi map](../../jacobians-of-curves/of-curve.md) based at
+$P$, the canonical map sending a point $Q$ to the class of the divisor $Q - P$. Let $X = C(\mathbb{C})$, a compact Riemann surface, with
 [Jacobian](../../jacobians-of-compact-riemann-surfaces/jacobian.md) $J(X)$ and
 [Abel–Jacobi map](../../jacobians-of-compact-riemann-surfaces/of-curve.md)
 $\varphi_P \colon X \to J(X)$. Then $J_C$ is an abelian variety over $\mathbb{C}$, and there is an isomorphism of
@@ -19,6 +19,7 @@ variety.
 ## Depends on
 
 - [Jacobian of a smooth proper curve](../../jacobians-of-curves/jacobian.md), for $J_C$
+- [Abel–Jacobi map](../../jacobians-of-curves/of-curve.md), for the morphism $f^P \colon C \to J_C$
 - [Jacobian of a compact Riemann surface](../../jacobians-of-compact-riemann-surfaces/jacobian.md),
   for $J(X)$
 - [Abel–Jacobi map](../../jacobians-of-compact-riemann-surfaces/of-curve.md), for $\varphi_P$

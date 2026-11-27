@@ -20,6 +20,8 @@ coordinate on $\mathfrak{H}$.
 - [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for the compact Riemann surface $\mathfrak{H}^*/\Gamma$ and the Jacobian $J$ of $X_\Gamma$
 - [Jacobian of a compact Riemann surface](../../jacobians-of-compact-riemann-surfaces/jacobian.md), for $J$
 - [Abel–Jacobi map](../../jacobians-of-compact-riemann-surfaces/of-curve.md), for $\psi$
+- [The Abel–Jacobi map is holomorphic](../../jacobians-of-compact-riemann-surfaces/of-curve-cont-mdiff.md), for the
+  pullback $\delta\psi$ of holomorphic $1$-forms along $\psi$
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](../holomorphic-one-forms-steps/holomorphic-one-forms-and-tangent-space.md), for $D_J$
 - [Cusp form](../../../../NumberTheory/modular-forms-q-series/modular-forms/cusp-form.md), for $S_2(\Gamma)$
 - [Congruence subgroup $\Gamma_0(N)$](../../../../NumberTheory/modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md)

@@ -63,11 +63,17 @@ This node is still to be broken down. A good expansion states and links:
   $X(\Gamma' \alpha \Gamma)$, "the locus of $z \times \alpha(z)$ modulo $\Gamma \times \Gamma'$", and (1.3)); §2, p. 527 (the
   definition $(f \mid [\alpha]_k)(z) = \det(\alpha)^{k/2} (c z + d)^{-k} f(\alpha(z))$).
 - J. S. Milne, *Modular Functions and Modular Forms*, course notes, version 1.31 (2017),
-  <https://www.jmilne.org/math/CourseNotes/MF.pdf>: Lemma 5.30, p. 81 (if $\Gamma = \bigcup (\Gamma \cap \alpha^{-1} \Gamma \alpha) \beta_i$
+  <https://www.jmilne.org/math/CourseNotes/MF.pdf>: Lemma 5.30, p. 80 (if $\Gamma = \bigcup (\Gamma \cap \alpha^{-1} \Gamma \alpha) \beta_i$
   is a disjoint union, then so is $\Gamma \alpha \Gamma = \bigcup \Gamma \alpha_i$ with $\alpha_i = \alpha \beta_i$), and the
-  paragraph after it, p. 81 (a modular form regarded as a $k$-fold differential, with $T(p)$ "the pull-back followed by
-  the trace"); Remark 4.8, p. 50 (the computation $d(\gamma z) = (c z + d)^{-2}\, dz$ for $\gamma \in \mathrm{SL}_2(\mathbb{Z})$).
+  paragraph after its proof, p. 81 (a modular form regarded as a $k$-fold differential, with $T(p)$ "the pull-back
+  followed by the trace"); Remark 4.8, p. 50 (the computation $d(\gamma z) = (c z + d)^{-2}\, dz$ for
+  $\gamma \in \mathrm{SL}_2(\mathbb{Z})$).
 - W. Stein, *Modular Forms: A Computational Approach*, Graduate Studies in Mathematics 79, American Mathematical
   Society, 2007; author's version <https://wstein.org/books/modform/stein-modform.pdf>, page numbers of that version:
-  §3.1, p. 37 (for $\Gamma_0(N)$ and $n$ prime to $N$, the Hecke operator $T_n$ as $\pi_{1*} \circ \pi_2^*$ on
-  differentials, for two maps $X_0(nN) \to X_0(N)$).
+  §3.1, p. 37 (for $\Gamma_0(N)$ and a prime $p \nmid N$, the Hecke operator $T_p$ as $\pi_{1*} \circ \pi_2^*$ on
+  differentials, for the two maps $X_0(pN) \to X_0(N)$ of (3.1.1)). Stein writes this description for every $n$ prime
+  to $N$; his two maps are defined through cyclic subgroups of order $n$, while Shimura's $T_n$ sums the operators of
+  all the distinct double cosets $\Gamma \beta \Gamma$ (Shimura (1973), p. 525). For $n = p^2$ with $p \nmid N$ and
+  $\Gamma = \Gamma_0(N)$, that sum contains, besides the double coset of $\mathrm{diag}(1, p^2)$, the double coset of
+  $p\gamma$ for $\gamma \in \Gamma_0(N)$ with $\gamma \equiv \mathrm{diag}(p^{-1}, p) \pmod N$, whose operator is the
+  identity of $S_2(\Gamma_0(N))$ by the normalization of $[\alpha]_2$ (Shimura (1973), p. 527).

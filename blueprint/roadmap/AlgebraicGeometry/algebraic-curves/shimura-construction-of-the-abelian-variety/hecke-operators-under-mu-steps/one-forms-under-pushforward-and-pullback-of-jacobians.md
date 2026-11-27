@@ -22,6 +22,10 @@ Then:
 - [Jacobian of a compact Riemann surface](../../jacobians-of-compact-riemann-surfaces/jacobian.md)
 - [Pushforward on Jacobians](../../jacobians-of-compact-riemann-surfaces/pushforward.md)
 - [Pullback on Jacobians](../../jacobians-of-compact-riemann-surfaces/pullback.md)
+- [The pushforward on Jacobians is holomorphic](../../jacobians-of-compact-riemann-surfaces/pushforward-cont-mdiff.md),
+  for the pullback of holomorphic $1$-forms along $\pi_*$
+- [The pullback map on Jacobians is holomorphic](../../jacobians-of-compact-riemann-surfaces/pullback-cont-mdiff.md),
+  for the pullback of holomorphic $1$-forms along $\pi^*$
 - [Pullback of holomorphic $1$-forms along an Abel–Jacobi map](../cusp-forms-as-one-forms-steps/pullback-of-one-forms-along-the-abel-jacobi-map.md),
   for the identifications of $D_{J(X)}$ and $D_{J(X')}$ with the holomorphic differentials
 
@@ -31,6 +35,9 @@ Then:
   for the identifications and their independence of the base points
 - [Abel–Jacobi map](../../jacobians-of-compact-riemann-surfaces/of-curve.md), for the Abel–Jacobi
   maps of $X$ and $X'$
+- [Universal property of the Jacobian](../../jacobians-of-curves/exists-unique-of-curve-comp.md), for the factorization
+  of a morphism from a curve into an abelian variety through the Abel–Jacobi map, which gives the compatibility of
+  $\pi_*$ with the Abel–Jacobi maps
 
 ## Expansion
 

@@ -20,6 +20,8 @@ $J(X)$ whose value at the origin is the linear form $\lambda \mapsto \lambda(\om
 - [Jacobian of a compact Riemann surface](../../jacobians-of-compact-riemann-surfaces/jacobian.md),
   for $J(X)$
 - [Abel–Jacobi map](../../jacobians-of-compact-riemann-surfaces/of-curve.md), for $\varphi_P$
+- [The Abel–Jacobi map is holomorphic](../../jacobians-of-compact-riemann-surfaces/of-curve-cont-mdiff.md), for the
+  pullback of holomorphic $1$-forms along $\varphi_P$
 
 ## Proof depends on
 
