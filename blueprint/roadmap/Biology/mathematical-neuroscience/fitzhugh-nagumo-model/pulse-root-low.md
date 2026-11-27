@@ -1,11 +1,12 @@
-# Lower root of the post-pulse factor
+# Lower quadratic-formula expression of the post-pulse factor
 
-For real `v`, the lower root is `(-3v - √(12 - 3v²))/2`. For `v² ≤ 4` it is the smaller root in `δ`
-of the post-pulse factor `1 - v² - v δ - δ²/3`: from a rest state with voltage `v`, a pulse of this
-amplitude lands on the voltage nullcline. For `v² > 4` the square root is `0` by the convention
-`√x = 0` for `x < 0`, so the value is `-3v/2`; then the post-pulse factor has no real root.
+For real `v`, the lower pulse root is `r₋(v) = (-3v - √(12 - 3v²))/2`, the quadratic-formula
+expression with the minus sign for the post-pulse factor `1 - v² - v δ - δ²/3` in `δ`. For `v² > 4`
+the square root is `0` by the convention `√x = 0` for `x < 0`, so the value is `-3v/2`. For `v² ≤ 4`
+the post-pulse factor is positive exactly for `r₋(v) < δ < r₊(v)`, with the
+[upper expression](pulse-root-high.md) `r₊(v)` ([positivity window](rest-factor-pos-iff.md)).
 
-For a rest state on the open left branch `-2 < v < -1` it is positive, and the positive pulses after
-which the voltage rises are exactly those between it and the [upper root](pulse-root-high.md)
-([rising window](is-rising-after-pulse-iff.md)), a nonempty open interval
-([distinct roots](pulse-root-low-lt-pulse-root-high.md)).
+For a rest state on the open left branch `-2 < v < -1`, `r₋(v)` is
+[positive](pulse-root-low-pos.md), and the positive pulses after which the voltage rises are exactly
+those between `r₋(v)` and `r₊(v)` ([rising window](is-rising-after-pulse-iff.md)), a nonempty open
+interval ([distinct values](pulse-root-low-lt-pulse-root-high.md)).

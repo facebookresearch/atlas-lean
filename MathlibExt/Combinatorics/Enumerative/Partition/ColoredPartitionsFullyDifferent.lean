@@ -8,17 +8,20 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Bell
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Multiset.Sort
 import Mathlib.Data.List.Sort
+import MathlibExt.Combinatorics.Enumerative.BellStirlingSum
 
 /-!
 # Colored partitions with different sizes and colors
 
 The cardinality formula sums over distinct-size partitions and counts valid colorings
-by assigning colors in increasing order of part size.
+by assigning colors in increasing order of part size. For bounded sizes, adding the largest
+size gives a Stirling recurrence for the counts by number of parts.
 -/
 
 namespace MetaMathlibExt
@@ -232,5 +235,223 @@ public theorem card_coloredPartitions_fullyDifferent (n : ℕ) :
   rw [heq, card_biUnion hdisjoint]
   refine sum_congr rfl fun μ hμ => ?_
   simpa [colors] using card_colorings (sorted_parts hμ) (used := ∅) (by simp)
+
+namespace card_coloredPartitions_fullyDifferent_le
+
+/-- All placements on the triangular board, including the empty placement. -/
+private def placements (n : ℕ) : Finset (Finset (ℕ × ℕ)) :=
+  (((Icc 1 n ×ˢ Icc 1 n).filter (fun p : ℕ × ℕ => p.2 ≤ p.1)).powerset.filter
+    fun T => (T.image Prod.fst).card = T.card ∧ (T.image Prod.snd).card = T.card)
+
+private lemma mem_placements {n : ℕ} {T : Finset (ℕ × ℕ)} :
+    T ∈ placements n ↔
+      (∀ p ∈ T, 1 ≤ p.2 ∧ p.2 ≤ p.1 ∧ p.1 ≤ n) ∧
+        Set.InjOn Prod.fst (T : Set (ℕ × ℕ)) ∧ Set.InjOn Prod.snd (T : Set (ℕ × ℕ)) := by
+  simp only [placements, mem_filter, mem_powerset, card_image_iff]
+  refine and_congr_left' ?_
+  change (∀ ⦃p : ℕ × ℕ⦄, p ∈ T → _) ↔ _
+  simp only [mem_filter, mem_product, mem_Icc]
+  constructor
+  · intro h p hp
+    exact ⟨(h hp).1.2.1, (h hp).2, (h hp).1.1.2⟩
+  · intro h p hp
+    obtain ⟨h₁, h₂, h₃⟩ := h p hp
+    exact ⟨⟨⟨h₁.trans h₂, h₃⟩, ⟨h₁, h₂.trans h₃⟩⟩, h₂⟩
+
+private lemma empty_mem_placements (n : ℕ) : ∅ ∈ placements n := by
+  simp [placements]
+
+private lemma card_le_of_mem_placements {n : ℕ} {T : Finset (ℕ × ℕ)}
+    (hT : T ∈ placements n) : T.card ≤ n := by
+  obtain ⟨hb, hi, _⟩ := mem_placements.mp hT
+  have hsub : T.image Prod.fst ⊆ Icc 1 n := by
+    rintro m hm
+    obtain ⟨p, hp, rfl⟩ := mem_image.mp hm
+    obtain ⟨h₁, h₂, h₃⟩ := hb p hp
+    exact mem_Icc.mpr ⟨h₁.trans h₂, h₃⟩
+  simpa [card_image_of_injOn hi, Nat.card_Icc] using card_le_card hsub
+
+private def placementsWithCard (n k : ℕ) : Finset (Finset (ℕ × ℕ)) :=
+  (placements n).filter fun T => T.card = k
+
+private lemma placementsWithCard_zero (n : ℕ) : placementsWithCard n 0 = {∅} := by
+  ext T
+  simp only [placementsWithCard, mem_filter, card_eq_zero, mem_singleton]
+  exact ⟨And.right, fun h => h.symm ▸ ⟨empty_mem_placements n, rfl⟩⟩
+
+private lemma placementsWithCard_eq_empty {n k : ℕ} (hk : n < k) :
+    placementsWithCard n k = ∅ := by
+  apply eq_empty_iff_forall_notMem.mpr
+  intro T hT
+  obtain ⟨hT, hcard⟩ := mem_filter.mp hT
+  have hle := card_le_of_mem_placements hT
+  exact (not_lt_of_ge (hcard ▸ hle)) hk
+
+private def availableColors (n : ℕ) (T : Finset (ℕ × ℕ)) : Finset ℕ :=
+  Icc 1 (n + 1) \ T.image Prod.snd
+
+private def extend (n : ℕ) (T : Finset (ℕ × ℕ)) : Finset (Finset (ℕ × ℕ)) :=
+  (availableColors n T).image fun j => insert (n + 1, j) T
+
+private lemma notMem_last {n : ℕ} {T : Finset (ℕ × ℕ)}
+    (hT : T ∈ placements n) (j : ℕ) : (n + 1, j) ∉ T :=
+  fun h => (Nat.not_succ_le_self n) ((mem_placements.mp hT).1 _ h).2.2
+
+private lemma insert_last_inj {n j l : ℕ} {T U : Finset (ℕ × ℕ)}
+    (hT : T ∈ placements n) (hU : U ∈ placements n)
+    (h : insert (n + 1, j) T = insert (n + 1, l) U) : j = l ∧ T = U := by
+  have hmem : (n + 1, j) ∈ insert (n + 1, l) U := h ▸ mem_insert_self _ _
+  have hjl : j = l := congrArg Prod.snd
+    ((mem_insert.mp hmem).resolve_right (notMem_last hU j))
+  subst l
+  -- Recover the smaller placement by erasing the common last-row pair.
+  have he := congrArg (fun V : Finset (ℕ × ℕ) => V.erase (n + 1, j)) h
+  rw [erase_insert (notMem_last hT j), erase_insert (notMem_last hU j)] at he
+  exact ⟨rfl, he⟩
+
+private lemma insert_mem_placements {n j : ℕ} {T : Finset (ℕ × ℕ)}
+    (hT : T ∈ placements n) (hj : j ∈ availableColors n T) :
+    insert (n + 1, j) T ∈ placements (n + 1) := by
+  obtain ⟨hb, hSize, hColor⟩ := mem_placements.mp hT
+  obtain ⟨hj, hjNot⟩ := mem_sdiff.mp hj
+  refine mem_placements.mpr ⟨?_, ?_, ?_⟩
+  · intro p hp
+    rcases mem_insert.mp hp with rfl | hp
+    · exact ⟨(mem_Icc.mp hj).1, (mem_Icc.mp hj).2, le_rfl⟩
+    · obtain ⟨h₁, h₂, h₃⟩ := hb p hp
+      exact ⟨h₁, h₂, h₃.trans (Nat.le_succ _)⟩
+  · rw [coe_insert, Set.injOn_insert (notMem_last hT j)]
+    refine ⟨hSize, ?_⟩
+    rintro ⟨p, hp, he⟩
+    have hle := (hb p hp).2.2
+    change p.1 = n + 1 at he
+    rw [he] at hle
+    exact Nat.not_succ_le_self n hle
+  · rw [coe_insert, Set.injOn_insert (notMem_last hT j)]
+    exact ⟨hColor, fun ⟨p, hp, he⟩ => hjNot (mem_image.mpr ⟨p, hp, he⟩)⟩
+
+/-- Separate placements according to whether they use the new, largest size. -/
+private lemma placementsWithCard_succ (n k : ℕ) :
+    placementsWithCard (n + 1) (k + 1) =
+      placementsWithCard n (k + 1) ∪ (placementsWithCard n k).biUnion (extend n) := by
+  ext T
+  simp only [placementsWithCard, mem_filter, mem_union, mem_biUnion, extend, mem_image]
+  constructor
+  · rintro ⟨hT, hcard⟩
+    obtain ⟨hb, hSize, hColor⟩ := mem_placements.mp hT
+    by_cases hlast : ∃ j, (n + 1, j) ∈ T
+    · obtain ⟨j, hj⟩ := hlast
+      refine Or.inr ⟨T.erase (n + 1, j), ⟨mem_placements.mpr ⟨?_,
+        hSize.mono (erase_subset _ _), hColor.mono (erase_subset _ _)⟩,
+        Nat.add_right_cancel ((card_erase_add_one hj).trans hcard)⟩,
+        j, mem_sdiff.mpr ⟨mem_Icc.mpr ⟨(hb _ hj).1, (hb _ hj).2.1⟩, ?_⟩, insert_erase hj⟩
+      · intro p hp
+        obtain ⟨hne, hp⟩ := mem_erase.mp hp
+        obtain ⟨h₁, h₂, h₃⟩ := hb p hp
+        have hne' : p.1 ≠ n + 1 := fun he => hne (hSize hp hj he)
+        exact ⟨h₁, h₂, by omega⟩
+      · intro hc
+        obtain ⟨p, hp, he⟩ := mem_image.mp hc
+        obtain ⟨hne, hp⟩ := mem_erase.mp hp
+        exact hne (hColor hp hj he)
+    · refine Or.inl ⟨mem_placements.mpr ⟨?_, hSize, hColor⟩, hcard⟩
+      rintro ⟨m, j⟩ hp
+      obtain ⟨h₁, h₂, h₃⟩ := hb _ hp
+      have hne : m ≠ n + 1 := fun he => hlast ⟨j, he ▸ hp⟩
+      exact ⟨h₁, h₂, by change m ≤ n + 1 at h₃; change m ≤ n; omega⟩
+  · rintro (⟨hT, hcard⟩ | ⟨U, ⟨hU, hcard⟩, j, hj, rfl⟩)
+    · obtain ⟨hb, hSize, hColor⟩ := mem_placements.mp hT
+      exact ⟨mem_placements.mpr ⟨fun p hp =>
+        ⟨(hb p hp).1, (hb p hp).2.1, (hb p hp).2.2.trans (Nat.le_succ _)⟩,
+        hSize, hColor⟩, hcard⟩
+    · exact ⟨insert_mem_placements hU hj, (card_insert_of_notMem (notMem_last hU j)).trans
+        (congrArg (· + 1) hcard)⟩
+
+private lemma card_extend {n k : ℕ} {T : Finset (ℕ × ℕ)} (hT : T ∈ placementsWithCard n k) :
+    (extend n T).card = n + 1 - k := by
+  obtain ⟨hT, hcard⟩ := mem_filter.mp hT
+  obtain ⟨hb, _, hColor⟩ := mem_placements.mp hT
+  have hsub : T.image Prod.snd ⊆ Icc 1 (n + 1) := by
+    intro j hj
+    obtain ⟨p, hp, rfl⟩ := mem_image.mp hj
+    obtain ⟨h₁, h₂, h₃⟩ := hb p hp
+    exact mem_Icc.mpr ⟨h₁, (h₂.trans h₃).trans (Nat.le_succ _)⟩
+  rw [extend, card_image_of_injOn, availableColors, card_sdiff_of_subset hsub,
+    card_image_of_injOn hColor, hcard, Nat.card_Icc, Nat.add_sub_cancel]
+  exact fun _ _ _ _ h => (insert_last_inj hT hT h).1
+
+private lemma card_placementsWithCard_succ (n k : ℕ) :
+    (placementsWithCard (n + 1) (k + 1)).card =
+      (n + 1 - k) * (placementsWithCard n k).card + (placementsWithCard n (k + 1)).card := by
+  rw [placementsWithCard_succ, card_union_of_disjoint, card_biUnion]
+  · rw [sum_const_nat fun _ hT => card_extend hT]
+    ac_rfl
+  · intro T hT U hU hne
+    simp only [Function.onFun, disjoint_left, extend, mem_image]
+    rintro _ ⟨j, _, rfl⟩ ⟨l, _, he⟩
+    exact hne (insert_last_inj (mem_filter.mp hT).1 (mem_filter.mp hU).1 he.symm).2
+  · simp only [disjoint_left, mem_biUnion, extend, mem_image]
+    rintro T hT ⟨U, _, j, _, rfl⟩
+    exact notMem_last (mem_filter.mp hT).1 j (mem_insert_self _ _)
+
+/-- A placement of `k` pairs on the board of size `n` contributes to Stirling column `n+1-k`.
+The last row is either unused or uses one of the colors not used by the smaller placement. -/
+private lemma card_placementsWithCard (n k : ℕ) :
+    (placementsWithCard n k).card = (n + 1).stirlingSecond (n + 1 - k) := by
+  induction n generalizing k with
+  | zero =>
+    cases k with
+    | zero => rw [placementsWithCard_zero, card_singleton, Nat.sub_zero, Nat.stirlingSecond_self]
+    | succ k =>
+      rw [placementsWithCard_eq_empty (Nat.succ_pos k), card_empty,
+        Nat.sub_eq_zero_of_le (Nat.succ_le_succ (Nat.zero_le k)), Nat.stirlingSecond_succ_zero]
+  | succ n ih =>
+    cases k with
+    | zero => rw [placementsWithCard_zero, card_singleton, Nat.sub_zero, Nat.stirlingSecond_self]
+    | succ k =>
+      by_cases hk : k ≤ n
+      · rw [card_placementsWithCard_succ, ih k, ih (k + 1)]
+        have h₁ : n + 1 + 1 - (k + 1) = (n - k) + 1 := by omega
+        have h₂ : n + 1 - k = (n - k) + 1 := by omega
+        have h₃ : n + 1 - (k + 1) = n - k := by omega
+        rw [h₁, h₂, h₃, Nat.stirlingSecond_succ_succ (n + 1) (n - k)]
+      · rw [placementsWithCard_eq_empty (by omega : n + 1 < k + 1), card_empty,
+          Nat.sub_eq_zero_of_le (by omega : n + 1 + 1 ≤ k + 1), Nat.stirlingSecond_succ_zero]
+
+private lemma card_placements (n : ℕ) : (placements n).card = Nat.bell (n + 1) := by
+  calc
+    (placements n).card = ∑ k ∈ range (n + 1 + 1), (placementsWithCard n k).card := by
+      apply card_eq_sum_card_fiberwise
+      intro T hT
+      exact mem_range.mpr ((card_le_of_mem_placements hT).trans_lt (by omega))
+    _ = ∑ k ∈ range (n + 1 + 1), (n + 1).stirlingSecond (n + 1 + 1 - 1 - k) := by
+      exact sum_congr rfl fun k _ => card_placementsWithCard n k
+    _ = Nat.bell (n + 1) := by
+      rw [sum_range_reflect, bell_eq_sum_stirlingSecond]
+
+end card_coloredPartitions_fullyDifferent_le
+
+open card_coloredPartitions_fullyDifferent_le
+
+/-- **Colored partitions into fully different parts with bounded size.** A colored part is a pair
+$(m, j)$ of integers with $1 \le j \le m$, read as the part $m$ in color $j$. For every $n \ge 0$,
+the number of nonempty finite sets of colored parts $(m, j)$ with $m \le n$ in which no two
+colored parts have the same size $m$ and no two have the same color $j$ is $B_{n+1} - 1$, where
+$B_k$ denotes the $k$-th Bell number.
+
+Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
+Identities*, INTEGERS 26 (2026), Article A20, Theorem 3 (`integers-2026-A20-thm-3`). -/
+public theorem card_coloredPartitions_fullyDifferent_le (n : ℕ) :
+    (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun x : ℕ × ℕ => x.2 ≤ x.1)).powerset.filter
+      (fun T => T.Nonempty ∧ (T.image Prod.fst).card = T.card ∧
+        (T.image Prod.snd).card = T.card)).card = Nat.bell (n + 1) - 1 := by
+  have h : (placements n).erase ∅ =
+      (((Icc 1 n ×ˢ Icc 1 n).filter (fun p : ℕ × ℕ => p.2 ≤ p.1)).powerset.filter
+        fun T => T.Nonempty ∧ (T.image Prod.fst).card = T.card ∧
+          (T.image Prod.snd).card = T.card) := by
+    ext T
+    simp only [mem_erase, placements, mem_filter, nonempty_iff_ne_empty]
+    exact ⟨fun ⟨he, hp, hi⟩ => ⟨hp, he, hi⟩, fun ⟨hp, he, hi⟩ => ⟨he, hp, hi⟩⟩
+  rw [← h, card_erase_of_mem (empty_mem_placements n), card_placements]
 
 end MetaMathlibExt

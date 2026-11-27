@@ -11,13 +11,12 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.RingTheory.ClusterAlgebra.LaurentPhenomenon
 public import MathlibExt.RingTheory.ClusterAlgebra.Mutation
-public import MathlibExt.RingTheory.ClusterAlgebra.SomosFour
+public import MathlibExt.RingTheory.ClusterAlgebra.SomosFourIntegrality
 
 /-!
 # The Laurent phenomenon (wanted)
 
-Statement-only targets: the Laurent phenomenon of Fomin and Zelevinsky for coefficient-free
-seed patterns, and integrality of the Somos-4 sequence.
+The Laurent phenomenon of Fomin and Zelevinsky for coefficient-free seed patterns.
 
 The ambient field is `ℚ(x_i : i ∈ n)`, realised as `FractionRing (MvPolynomial n ℤ)` with the
 initial cluster `x_i = X_i`. The ring of Laurent polynomials `ℤ[x_i^{±1}]` is the `ℤ`-subalgebra
@@ -44,12 +43,5 @@ covers expansions in any cluster of the pattern. -/
 theorem_wanted laurent_phenomenon {n : Type*} [Fintype n] [DecidableEq n]
     (B : Matrix n n ℤ) (hB : IsSkewSymmetrizable B) (w : List n) (i : n) :
     (mutateSeq w (initialCluster n, B)).1 i ∈ laurentSubalgebra n
-
-/-- **Integrality of the Somos-4 sequence.** Every term of the Somos-4 sequence
-`1, 1, 1, 1, 2, 3, 7, 23, 59, …` is an integer (Fomin, Williams and Zelevinsky, *Introduction to
-cluster algebras, Chapters 1–3*, arXiv:1608.05735v5, Example 3.4.3, deduced there from the
-Laurent phenomenon; Fomin and Zelevinsky, *The Laurent phenomenon*, Adv. in Appl. Math. 28
-(2002), Example 3.3, Laurentness of the generalized Somos-4 recurrence). -/
-theorem_wanted somos4_isInt (m : ℕ) : ∃ z : ℤ, somos4 m = z
 
 end MathlibExt.RingTheory.ClusterAlgebra.LaurentPhenomenonWanted

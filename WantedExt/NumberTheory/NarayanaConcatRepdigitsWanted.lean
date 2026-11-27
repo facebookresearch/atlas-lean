@@ -57,23 +57,6 @@ public theorem_wanted narayanaCowsSequence_isConcatTwoRepdigitsBase_iff {n b : �
         (12, 3), (12, 4), (12, 7), (12, 8), (12, 9), (13, 2), (13, 4), (13, 5), (13, 7),
         (13, 8), (14, 6), (17, 7), (17, 9), (18, 5)} : Finset (ℕ × ℕ))
 
-/-- **Logarithmic bounds for Narayana numbers that concatenate two repdigits.** Let $(N_n)$ be
-Narayana's cows sequence and let $\alpha$ be a real number with $\alpha^3 = \alpha^2 + 1$ (so
-$\alpha \approx 1.46557$ is the unique real root of $x^3 - x^2 - 1$). Let $b \ge 2$, $n \ge 1$
-and $l, m \ge 1$ be natural numbers, and let $a_1, a_2$ be digits with $1 \le a_1 \le b - 1$,
-$0 \le a_2 \le b - 1$ and $a_1 \ne a_2$. If $(b - 1) N_n = a_1 (b^l - 1) b^m + a_2 (b^m - 1)$,
-that is, the base-$b$ expansion of $N_n$ is $l$ copies of $a_1$ followed by $m$ copies of
-$a_2$, then $(l + m - 1) \log b + \log \alpha < n \log \alpha < (l + m) \log b + 1$.
-
-Source: Prasanta Kumar Ray and Kisan Bhoi, *Narayana Numbers Which Are Concatenations of Two
-Base b Repdigits*, INTEGERS 24 (2024), Article A20, Lemma 1 (`integers-2024-A20-lem-1`). -/
-public theorem_wanted narayanaCowsSequence_concat_log_bounds {α : ℝ} (hα : α ^ 3 = α ^ 2 + 1)
-    {n b a₁ a₂ l m : ℕ} (hb : 2 ≤ b) (hn : 1 ≤ n) (ha₁ : 1 ≤ a₁) (ha₁b : a₁ < b)
-    (ha₂b : a₂ < b) (hl : 1 ≤ l) (hm : 1 ≤ m) (hne : a₁ ≠ a₂)
-    (heq : (b - 1) * narayanaCowsSequence n = a₁ * (b ^ l - 1) * b ^ m + a₂ * (b ^ m - 1)) :
-    ((l + m - 1 : ℕ) : ℝ) * Real.log b + Real.log α < n * Real.log α ∧
-      n * Real.log α < ((l + m : ℕ) : ℝ) * Real.log b + 1
-
 end
 
 end MetaMathlibExt

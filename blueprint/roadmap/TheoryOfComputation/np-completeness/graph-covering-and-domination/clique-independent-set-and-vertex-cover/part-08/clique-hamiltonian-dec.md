@@ -1,0 +1,3 @@
+# CLIQUE ON HAMILTONIAN GRAPHS as a decision problem
+
+The decision problem CLIQUE ON HAMILTONIAN GRAPHS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for CLIQUE ON HAMILTONIAN GRAPHS and whose graph (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) has a clique (a set of pairwise adjacent vertices) with at least $K$ vertices. It rejects every bitstring that does not decode to such an instance.

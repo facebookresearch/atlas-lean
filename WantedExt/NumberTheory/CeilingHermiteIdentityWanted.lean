@@ -10,7 +10,10 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.InclExclLikeSumBounds
+public import MathlibExt.NumberTheory.InclExclLikeSumRelations
 public import MathlibExt.NumberTheory.TverbergSumPeriodic
+public import MathlibExt.Algebra.Order.Floor.HalfShift
+public import MathlibExt.NumberTheory.CeilingHermiteIdentityTverbergSumRoundBounds
 
 /-!
 # Inclusion-exclusion-like sums with floor, ceiling and nearest-integer functions (statements)
@@ -21,7 +24,8 @@ This file states the sharp bounds of Onphaeng, Khemaratchatakumthorn and Pongsri
 `g^(F)`, `f^(F)` and the partial sums `S^(F)`, `T^(F)` of Jacobsthal and Tverberg type,
 where `F` is one of `⌊·⌋` (`j = 1`), `⌈·⌉` (`j = 2`),
 `r⁺(x) = ⌊x + 1/2⌋` (`j = 3`, Mathlib's `round`, see `round_eq`) and
-`r⁻(x) = ⌈x - 1/2⌉` (`j = 4`).
+`r⁻(x) = ⌈x - 1/2⌉` (`j = 4`). The sharp bounds for `f^(r⁺)`, `tverbergSum_round_bounds`, are
+proved in `MathlibExt.NumberTheory.CeilingHermiteIdentityTverbergSumRoundBounds`.
 
 Conventions: the multiset `C = {a_1, …, a_ℓ}` is a tuple `a : Fin ℓ → ℤ`; the modulus `m` is a
 natural number, and at `m = 0` Lean's `x / 0 = 0` makes every term `F 0 = 0`, so statements whose
@@ -34,32 +38,6 @@ quotient `m / 2`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Relations and periodicity of the inclusion-exclusion-like sums.** Let $n \ge 2$ and write
-$g_1$, $g_2$, $g_3$, $g_4$ for the inclusion-exclusion-like sums $g^{(F)}$ with $F$ the floor
-function $\lfloor y \rfloor$, the ceiling function $\lceil y \rceil$, the nearest-integer function
-$\lfloor y + 1/2 \rfloor$ (ties rounded up) and $\lceil y - 1/2 \rceil$ (ties rounded down),
-respectively. For every $x = (x_1, \dots, x_n) \in \mathbb{R}^n$:
-(i) $g_3(x) = g_1(x) - g_1(x_1, \dots, x_n, 1/2)$;
-(ii) $g_4(x) = g_2(x) - g_2(x_1, \dots, x_n, -1/2)$;
-(iii) for each $j \in \{1, 2, 3, 4\}$, each index $i$ and each integer $q$, adding $q$ to $x_i$
-does not change $g_j(x)$.
-
-Parts (i) and (ii) also hold for $n < 2$; part (iii) fails for $n = 1$, where
-$g_1(x) = \lfloor x \rfloor$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 1. -/
-public theorem_wanted inclExclLikeSum_relations_and_periodic {n : ℕ} (hn : 2 ≤ n)
-    (x : Fin n → ℝ) :
-    inclExclLikeSum round x =
-        inclExclLikeSum Int.floor x - inclExclLikeSum Int.floor (Fin.snoc x (1 / 2 : ℝ)) ∧
-      inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) x =
-        inclExclLikeSum Int.ceil x - inclExclLikeSum Int.ceil (Fin.snoc x (-1 / 2 : ℝ)) ∧
-      ∀ F ∈ ({Int.floor, Int.ceil, round, fun y : ℝ => ⌈y - 1 / 2⌉} : Set (ℝ → ℤ)),
-        ∀ (i : Fin n) (q : ℤ),
-        inclExclLikeSum F (Function.update x i (x i + q)) = inclExclLikeSum F x
 
 /-- **Tverberg's sum in terms of the inclusion-exclusion-like sum.** Let $F$ be one of
 $\lfloor \cdot \rfloor$, $\lceil \cdot \rceil$, $r^+(y) = \lfloor y + 1/2 \rfloor$ and
@@ -124,68 +102,6 @@ public theorem_wanted inclExclLikeSum_floor_extrema {n : ℕ} (hn : 2 ≤ n) :
       inclExclLikeSum Int.floor (fun _ : Fin n => (1 / 2 : ℝ)) = -2 ^ (n - 2) ∧
       inclExclLikeSum Int.floor (fun _ : Fin n => 1 / 2 - 1 / (n : ℝ) ^ 2) = 2 ^ (n - 2) - 1
 
-/-- **Vanishing and periodicity of partial Tverberg sums.** Let $\ell \ge 2$, let
-$a = (a_1, \dots, a_\ell)$ be integers and let $m$ be a natural number. Let $F$ be one of
-$\lfloor \cdot \rfloor$, $\lceil \cdot \rceil$, $r^+(y) = \lfloor y + 1/2 \rfloor$ and
-$r^-(y) = \lceil y - 1/2 \rceil$, and for an integer $k$ let
-$f^F(a, k) =
-\sum_{U \subseteq \{1, \dots, \ell\}} (-1)^{\ell - |U|} F((k + \sum_{i \in U} a_i)/m)$
-be Tverberg's sum, with $x/0 = 0$. For natural $K$ put $S^F(a, K) = \sum_{k=0}^{K} f^F(a, k)$
-and $T^F(a, K) = \sum_{k=1}^{K} f^F(a, k)$, and for an index $i$ and an integer $p$ let $a'$ be
-$a$ with $a_i$ replaced by $a_i + p m$. Then:
-(i) $\sum_{k=0}^{m-1} f^F(a, k) = 0$ (an empty sum when $m = 0$);
-(ii) $S^F(a, K + q m) = S^F(a, K)$ for all natural $K$ and $q$, and $S^F(a', K) = S^F(a, K)$
-for every natural $K$, every index $i$ and every integer $p$;
-(iii) if $F$ is $\lceil \cdot \rceil$ or $r^-$, then $T^F(a, m) = 0$,
-$T^F(a, K + q m) = T^F(a, K)$ for all natural $K$ and $q$, and $T^F(a', K) = T^F(a, K)$ for
-every natural $K$, every index $i$ and every integer $p$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 7. -/
-public theorem_wanted tverbergPartialSum_vanish_and_periodic {ℓ : ℕ} (hℓ : 2 ≤ ℓ)
-    (a : Fin ℓ → ℤ) (m : ℕ) :
-    (∀ F ∈ ({Int.floor, Int.ceil, round, fun y : ℝ => ⌈y - 1 / 2⌉} : Set (ℝ → ℤ)),
-      ∑ k ∈ Finset.range m, tverbergSum F a m k = 0 ∧
-        ∀ K q : ℕ, ∑ k ∈ Finset.range (K + q * m + 1), tverbergSum F a m k =
-          ∑ k ∈ Finset.range (K + 1), tverbergSum F a m k ∧
-        ∀ (K : ℕ) (i : Fin ℓ) (q : ℤ),
-          ∑ k ∈ Finset.range (K + 1), tverbergSum F (Function.update a i (a i + q * m)) m k =
-            ∑ k ∈ Finset.range (K + 1), tverbergSum F a m k) ∧
-      ∀ F ∈ ({Int.ceil, fun y : ℝ => ⌈y - 1 / 2⌉} : Set (ℝ → ℤ)),
-        ∑ k ∈ Finset.Icc 1 m, tverbergSum F a m k = 0 ∧
-          ∀ K q : ℕ, ∑ k ∈ Finset.Icc 1 (K + q * m), tverbergSum F a m k =
-            ∑ k ∈ Finset.Icc 1 K, tverbergSum F a m k ∧
-          ∀ (K : ℕ) (i : Fin ℓ) (q : ℤ),
-            ∑ k ∈ Finset.Icc 1 K, tverbergSum F (Function.update a i (a i + q * m)) m k =
-              ∑ k ∈ Finset.Icc 1 K, tverbergSum F a m k
-
-/-- **Floor and ceiling of a quotient plus one half.** For every integer $q$ and every positive
-integer $m$, $\lfloor q/m + 1/2 \rfloor = \lfloor (q + \lfloor m/2 \rfloor)/m \rfloor$ and
-$\lceil q/m + 1/2 \rceil = \lceil (q + \lceil m/2 \rceil)/m \rceil$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 8. -/
-public theorem_wanted floor_ceil_div_add_half (q : ℤ) (m : ℕ) (hm : 0 < m) :
-    ⌊(q : ℝ) / m + 1 / 2⌋ = ⌊((q + (m / 2 : ℕ) : ℤ) : ℝ) / m⌋ ∧
-      ⌈(q : ℝ) / m + 1 / 2⌉ = ⌈((q + ((m + 1) / 2 : ℕ) : ℤ) : ℝ) / m⌉
-
-/-- **Extrema of the ceiling inclusion-exclusion-like sum.** Let $n \ge 2$ and let $g_2$ be the
-inclusion-exclusion-like sum $g^{(F)}$ in $n$ real variables with $F$ the ceiling function. Then
-$-2^{n-2} + 1 \le g_2(x) \le 2^{n-2}$ for every $x \in \mathbb{R}^n$; the minimum $-2^{n-2} + 1$
-is attained at the point with all coordinates $1/2 + 1/n^2$, and the maximum $2^{n-2}$ at the
-point with all coordinates $1/2$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Theorem 1. -/
-public theorem_wanted inclExclLikeSum_ceil_extrema {n : ℕ} (hn : 2 ≤ n) :
-    (∀ x : Fin n → ℝ, -2 ^ (n - 2) + 1 ≤ inclExclLikeSum Int.ceil x ∧
-      inclExclLikeSum Int.ceil x ≤ 2 ^ (n - 2)) ∧
-      inclExclLikeSum Int.ceil (fun _ : Fin n => 1 / 2 + 1 / (n : ℝ) ^ 2) = -2 ^ (n - 2) + 1 ∧
-      inclExclLikeSum Int.ceil (fun _ : Fin n => (1 / 2 : ℝ)) = 2 ^ (n - 2)
-
 /-- **Extrema of the round-half-up inclusion-exclusion-like sum.** Let $n \ge 2$ and let $g_3$ be
 the inclusion-exclusion-like sum $g^{(F)}$ in $n$ real variables with
 $F(y) = \lfloor y + 1/2 \rfloor$, the nearest integer to $y$ with ties rounded up. Then
@@ -239,28 +155,6 @@ public theorem_wanted tverbergSum_ceil_bounds {ℓ : ℕ} (hℓ : 2 ≤ ℓ) :
       ∀ r : ℕ, 0 < r →
         tverbergSum Int.ceil (fun _ : Fin ℓ => (r : ℤ)) (2 * r) 0 = (-1) ^ (ℓ + 1) * 2 ^ (ℓ - 2) ∧
           tverbergSum Int.ceil (fun _ : Fin ℓ => (r : ℤ)) (2 * r) r = (-1) ^ ℓ * 2 ^ (ℓ - 2)
-
-/-- **Sharp bounds for Tverberg's sum with rounding half up.** Let $\ell \ge 2$ and let $F$ be
-rounding to the nearest integer with ties rounded up, $F(y) = \lfloor y + 1/2 \rfloor$.
-For integers $a_1, \dots, a_\ell$, a natural number $m$ and an integer $k$, let
-$f(a, m, k) =
-\sum_{U \subseteq \{1, \dots, \ell\}} (-1)^{\ell - |U|} F((k + \sum_{i \in U} a_i)/m)$
-be Tverberg's sum of $F$, with $x/0 = 0$. Then $-2^{\ell-2} \le f(a, m, k) \le 2^{\ell-2}$ for
-all such $a$, $m$ and $k$. Both bounds are attained: for every integer $r \ge 1$, if $a_i = r$
-for all $i$ and $m = 2r$, then $f(a, m, 0) = (-1)^{\ell+1} 2^{\ell-2}$ and
-$f(a, m, r) = (-1)^{\ell} 2^{\ell-2}$.
-
-The paper states the equality cases separately for odd and even $\ell$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Theorem 5. -/
-public theorem_wanted tverbergSum_round_bounds {ℓ : ℕ} (hℓ : 2 ≤ ℓ) :
-    (∀ (a : Fin ℓ → ℤ) (m : ℕ) (k : ℤ),
-      -2 ^ (ℓ - 2) ≤ tverbergSum round a m k ∧ tverbergSum round a m k ≤ 2 ^ (ℓ - 2)) ∧
-      ∀ r : ℕ, 0 < r →
-        tverbergSum round (fun _ : Fin ℓ => (r : ℤ)) (2 * r) 0 = (-1) ^ (ℓ + 1) * 2 ^ (ℓ - 2) ∧
-          tverbergSum round (fun _ : Fin ℓ => (r : ℤ)) (2 * r) r = (-1) ^ ℓ * 2 ^ (ℓ - 2)
 
 /-- **Sharp bounds for Tverberg's sum with rounding half down.** Let $\ell \ge 2$ and let $F$ be
 rounding to the nearest integer with ties rounded down, $F(y) = \lceil y - 1/2 \rceil$.

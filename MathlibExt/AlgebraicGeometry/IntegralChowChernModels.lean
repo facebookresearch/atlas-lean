@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.IntegerSchemeChow
 public import MathlibExt.AlgebraicGeometry.GeometricChowOperators
+public import MathlibExt.AlgebraicGeometry.IntegralOperationalChow
 public import MathlibExt.AlgebraicGeometry.AlgebraicBundleGeometry
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 
@@ -46,18 +47,6 @@ open CoherentCurveLinearSeries AlgebraicBundleGeometry
 abbrev SchemeData := FieldScheme ℂ
 abbrev Chow (X : SchemeData) (d : ℤ) := IntegerSchemeChow.ChowGroup X d
 
-def cycleFinsupp (X : Scheme) [IsNoetherian X] :
-    AlgebraicCycle X ℤ →ₗ[ℤ] (X →₀ ℤ) where
-  toFun c := Finsupp.ofSupportFinite c c.finite_support
-  map_add' a b := by ext x; rfl
-  map_smul' r a := by ext x; rfl
-
-def cycleInclusion (X : Scheme) (d : ℤ) :
-    IntegerSchemeChow.CycleGroup X d →ₗ[ℤ] AlgebraicCycle X ℤ where
-  toFun c := c.val
-  map_add' _a _b := rfl
-  map_smul' _r _a := rfl
-
 variable {X Y : SchemeData}
 
 /-- The actual proper push of a single generic point, with its dimension filter. -/
@@ -70,21 +59,9 @@ def pushBasis (f : X.scheme ⟶ Y.scheme) (d : ℤ) (x : X.scheme.left) :
 def cyclePush (f : X.scheme ⟶ Y.scheme) (d : ℤ) :
     IntegerSchemeChow.CycleGroup X.scheme.left d →+
       IntegerSchemeChow.CycleGroup Y.scheme.left d :=
-  (Finsupp.linearCombination ℤ (pushBasis f d) ∘ₗ cycleFinsupp X.scheme.left ∘ₗ
-    cycleInclusion X.scheme.left d).toAddMonoidHom
-
-/-- Pull the actual point closure, retaining all scheme-theoretic multiplicities. -/
-def pullBasis (f : Y.scheme ⟶ X.scheme) (d : ℤ) (r : ℕ) (x : X.scheme.left) :
-    IntegerSchemeChow.CycleGroup Y.scheme.left (d+r) :=
-  IntegerSchemeChow.dimensionPart Y.scheme.left (d+r)
-    (AlgebraicCycle.map (GeometricChowOperators.fiberInclusion f.left x) Order.height Order.height
-      (integralFundamentalCycle (GeometricChowOperators.pointFiber f.left x)))
-
-def cyclePull (f : Y.scheme ⟶ X.scheme) (d : ℤ) (r : ℕ) :
-    IntegerSchemeChow.CycleGroup X.scheme.left d →+
-      IntegerSchemeChow.CycleGroup Y.scheme.left (d+r) :=
-  (Finsupp.linearCombination ℤ (pullBasis f d r) ∘ₗ cycleFinsupp X.scheme.left ∘ₗ
-    cycleInclusion X.scheme.left d).toAddMonoidHom
+  (Finsupp.linearCombination ℤ (pushBasis f d) ∘ₗ
+    _root_.AlgebraicGeometry.IntegralOperationalChow.cycleCoordinates X.scheme.left ∘ₗ
+      (IntegerSchemeChow.cyclesOfDimension X.scheme.left d).subtype.toIntLinearMap).toAddMonoidHom
 
 /-- Properness and descent concern the fixed residue-degree map. -/
 structure ProperPushDescent (f : X.scheme ⟶ Y.scheme) : Prop where
@@ -96,7 +73,8 @@ structure ProperPushDescent (f : X.scheme ⟶ Y.scheme) : Prop where
 structure SmoothPullDescent (f : Y.scheme ⟶ X.scheme) (r : ℕ) : Prop where
   [smooth : SmoothOfRelativeDimension r f.left]
   preserves : ∀ d : ℤ, rationalEquivalences X.scheme.left d ≤
-    (rationalEquivalences Y.scheme.left (d+r)).comap (cyclePull f d r)
+    (rationalEquivalences Y.scheme.left (d+r)).comap
+      (_root_.AlgebraicGeometry.IntegralOperationalChow.flatCycleMap f d r).toAddMonoidHom
 
 def properPush {f : X.scheme ⟶ Y.scheme} (D : ProperPushDescent f) (d : ℤ) :
     Chow X d →+ Chow Y d :=
@@ -104,9 +82,11 @@ def properPush {f : X.scheme ⟶ Y.scheme} (D : ProperPushDescent f) (d : ℤ) :
 
 def smoothPull {f : Y.scheme ⟶ X.scheme} {r : ℕ} (D : SmoothPullDescent f r) (d : ℤ) :
     Chow X d →+ Chow Y (d+r) :=
-  QuotientAddGroup.map _ _ (cyclePull f d r) (D.preserves d)
+  QuotientAddGroup.map _ _
+    (_root_.AlgebraicGeometry.IntegralOperationalChow.flatCycleMap f d r).toAddMonoidHom
+    (D.preserves d)
 
-def chowCast (X : SchemeData) {d e : ℤ} (h : d=e) : Chow X d →+ Chow X e := by
+def chowCast (X : SchemeData) {d e : ℤ} (h : d = e) : Chow X d →+ Chow X e := by
   cases h
   exact AddMonoidHom.id _
 

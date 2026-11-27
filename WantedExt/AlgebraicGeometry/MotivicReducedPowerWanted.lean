@@ -98,10 +98,16 @@ variable {k : Type} [Field k]
   {delta : CoefficientConeSource B (integralSequence ell) (primeWeight ell)}
   {c : BasedIntegralLift N B I Q F J V T₀ Eprime point t delta}
 
-/-- Construct the canonical reduced powers: the source family with native cycle normalization and
-the completed expansion, together with Voevodsky's operation laws for it (`PowerOperationLaws`).
-The laws are requested for this constructed source, not for every source with the same
-normalization on schemes, which does not determine the power maps. -/
+/-- Reduced power operations (Voevodsky): let $k$ be a perfect field and $ℓ$ a prime with $ℓ ≠ 0$
+in $k$; fix the given motivic interface data (including an affine-to-Tate comparison with the
+properties of the canonical one, a bijective representability map and approximation data for the
+classifying space of the symmetric group on $ℓ$ letters), a circle cycle orientation and
+suspension equivalences $σ$. Then: canonical reduced power data
+(`CanonicalPowerCoefficientSource`: geometric power maps normalized on cycle classes, with the
+completed coefficient decomposition) satisfying Voevodsky's operation laws for $σ$
+(`PowerOperationLaws`): the Cartan formula for total powers, $P^0 = \mathrm{id}$, vanishing of
+$P^j$ and $B^j$ for $j < 0$, $βP^j = B^j$ and $βB^j = 0$, naturality, and compatibility with the
+simplicial-circle and torus suspensions. -/
 def_wanted canonicalPowerOperations [PerfectField k] (hchar : (ell : k) ≠ 0)
     {Ls : CircleCycleOrientation (S₀ := S₀) T F}
     (σ : SuspensionEquivalences T F N B Zi K₀ F₀ D S M₁ hF U₀ Ls Lt ell) :

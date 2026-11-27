@@ -20,19 +20,15 @@ public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 @[expose] public section
 
 /-!
-# Projectivity and normalized rational direct images
+# Projectivity of complex projective space
 
-Projectivity over `ℂ` and projective space `ℙⁿ_ℂ` are those of
-`MathlibExt.AlgebraicGeometry.ProjectiveSpace` over the complex numbers: a
-closed immersion into some `ℙⁿ_ℂ` that respects the structure morphism. The
-normalized direct image uses Mathlib's derived pushforward on the analytic
-topological spaces of complex points: `ℚ_X[n]` places the rational constant
-sheaf in cohomological degree `-n`.
-
-The declarations live in the namespace
-`MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted`, shared
-with the requests that use them; this module itself is complete and requests
-nothing.
+Projectivity over `ℂ` and projective space `ℙⁿ_ℂ` are
+`ProjectiveSpace.IsProjective` and `ProjectiveSpace.projectiveSpace ℂ` (a closed
+immersion into some `ℙⁿ_ℂ` respecting the structure morphism), and the rational
+normalized direct image `Rf_* ℚ_X[n]` is `ConstructibleComplexes.normalizedDirectImage ℚ`.
+This module records that `ℙⁿ_ℂ` is projective, in the namespace
+`MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted` shared with the
+requests that use it; it is complete and requests nothing.
 
 ## Reference
 
@@ -51,26 +47,10 @@ noncomputable section
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Projectivity over `ℂ`: a closed immersion over `ℂ` into some projective
-space, `ProjectiveSpace.IsProjective` over the complex numbers. -/
-abbrev IsProjectiveOverC (X : ComplexScheme) : Prop :=
-  ProjectiveSpace.IsProjective X
-
-/-- Projective space `ℙⁿ_ℂ`, as a scheme over `ℂ`: `ProjectiveSpace.projectiveSpace`
-over the complex numbers. -/
-abbrev projectiveSpace (n : ℕ) : ComplexScheme :=
-  ProjectiveSpace.projectiveSpace ℂ n
-
 /-- Projective space is projective over `ℂ`, through the identity. -/
-theorem isProjectiveOverC_projectiveSpace (n : ℕ) : IsProjectiveOverC (projectiveSpace n) :=
+theorem isProjective_projectiveSpace (n : ℕ) :
+    ProjectiveSpace.IsProjective (ProjectiveSpace.projectiveSpace ℂ n) :=
   ⟨n + 1, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance, (Category.id_comp _).symm⟩
-
-/-- The rational normalized direct image `Rf_* ℚ_X[n]`, with the constant sheaf
-placed in degree `-n`: `ConstructibleComplexes.normalizedDirectImage` at
-`k = ℚ`. -/
-abbrev normalizedDirectImage (X Y : ComplexScheme) (f : X ⟶ Y) (n : ℕ) :
-    RationalDerived (space Y) :=
-  ConstructibleComplexes.normalizedDirectImage ℚ X Y f n
 
 end
 

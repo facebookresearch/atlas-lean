@@ -11,6 +11,10 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Order.Monotone.Union
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -19,6 +23,10 @@ import Mathlib.Tactic.Ring
 At positive integers the floor of Campbell's interpolation recovers the sequence whose decimal
 blocks form his counterexample. On each block of integers from a power of ten to one less than
 the next power, the defining sum for the sequence has constant increments.
+
+Campbell's interpolation is monotone on $[0, \infty)$. On the last unit interval before each power
+of ten it is an integral of a piecewise linear function, which is nonnegative because the
+sequence jumps at that power of ten by at least the previous power of ten.
 -/
 
 namespace MetaMathlibExt
@@ -264,6 +272,290 @@ theorem floor_campbellF_eq_campbellH2 :
     (∀ n : ℕ, 1 ≤ n → ⌊campbellF n⌋₊ = campbellH2 n) ∧
     ∀ n : ℕ, 10 ≤ n → campbellF n = campbellH2 n := by
   exact ⟨floor_campbellF_eq_campbellH2.floor_eq, floor_campbellF_eq_campbellH2.eq_of_ten_le⟩
+
+namespace campbellF_monotoneOn
+
+private theorem ten_le_pow {k : ℕ} (hk : 1 ≤ k) : 10 ≤ 10 ^ k := by
+  calc 10 = 10 ^ 1 := by norm_num
+    _ ≤ 10 ^ k := Nat.pow_le_pow_right (by norm_num) hk
+
+-- Every term of the defining sum over one decimal block is the same power of ten.
+private theorem sum_block {k n : ℕ} (hk : 10 ≤ 10 ^ k) (hhi : n < 10 ^ (k + 1)) :
+    ∑ i ∈ Finset.Icc (10 ^ k + 1) n, campbellH1 i = (n - 10 ^ k) * 10 ^ k := by
+  rw [Finset.sum_const_nat (m := 10 ^ k) (by
+    intro i hi
+    obtain ⟨hli, hui⟩ := Finset.mem_Icc.mp hi
+    have hilog := Nat.log_eq_of_pow_le_of_lt_pow (by omega : 10 ^ k ≤ i) (hui.trans_lt hhi)
+    simp [campbellH1, hilog, show ¬ i < 10 by omega])]
+  simp
+
+-- The jump of `h₂` at `10 ^ (k + 1)` is at least `p = 10 ^ k`. The number
+-- `h₂ (10 ^ (k + 1) - 1) + p` is a multiple `p * a` of `p`, and the sum defining
+-- `h₂ (10 ^ (k + 1))` is at least `p * (a + 9)`; rounding it down to a multiple of `10 * p`
+-- leaves at least `p * a`.
+private theorem pow_add_campbellH2_le {k : ℕ} (hk : 1 ≤ k) :
+    10 ^ k + campbellH2 (10 ^ (k + 1) - 1) ≤ campbellH2 (10 ^ (k + 1)) := by
+  have hk10 := ten_le_pow hk
+  have hP : 10 ^ (k + 1) = 10 * 10 ^ k := by ring
+  have hlogP : Nat.log 10 (10 ^ (k + 1)) = k + 1 := Nat.log_pow (by norm_num) _
+  have hlogP1 : Nat.log 10 (10 ^ (k + 1) - 1) = k :=
+    Nat.log_eq_of_pow_le_of_lt_pow (by omega) (by omega)
+  have hQ := sum_block hk10 (n := 10 ^ (k + 1) - 1) (by omega)
+  have hh1 : campbellH1 (10 ^ (k + 1)) = 10 ^ (k + 1) := by
+    simp [campbellH1, hlogP, show ¬ 10 ^ (k + 1) < 10 by omega]
+  have hS : ∑ i ∈ Finset.Icc 1 (10 ^ (k + 1)), campbellH1 i =
+      ∑ i ∈ Finset.Icc 1 (10 ^ k), campbellH1 i +
+        ∑ i ∈ Finset.Icc (10 ^ k + 1) (10 ^ (k + 1) - 1), campbellH1 i +
+          campbellH1 (10 ^ (k + 1)) := by
+    have e1 : ∀ n, Finset.Icc 1 n = Finset.Ioc 0 n := fun n => Finset.Icc_add_one_left_eq_Ioc 0 n
+    have e2 : ∀ n, Finset.Icc (10 ^ k + 1) n = Finset.Ioc (10 ^ k) n :=
+      fun n => Finset.Icc_add_one_left_eq_Ioc _ n
+    have h1 : 10 ^ (k + 1) = (10 ^ (k + 1) - 1) + 1 := by omega
+    rw [e1, e1, e2]
+    conv_lhs => rw [h1]
+    rw [Finset.sum_Ioc_succ_top (by omega), ← h1,
+      ← Finset.sum_Ioc_consecutive campbellH1 (Nat.zero_le (10 ^ k))
+        (by omega : 10 ^ k ≤ 10 ^ (k + 1) - 1)]
+  obtain ⟨d, hd⟩ : ∃ d, 10 ^ (k + 1) - 1 - 10 ^ k = d ∧ 9 * 10 ^ k = d + 1 :=
+    ⟨10 ^ (k + 1) - 1 - 10 ^ k, rfl, by omega⟩
+  have hempty : Finset.Icc (10 ^ (k + 1) + 1) (10 ^ (k + 1)) = ∅ := Finset.Icc_eq_empty (by omega)
+  simp only [campbellH2, hlogP, hlogP1, hS, hQ, hh1, hempty, Finset.sum_empty, add_zero, hd.1]
+  rw [hP]
+  set p := 10 ^ k
+  set s := ∑ i ∈ Finset.Icc 1 p, campbellH1 i
+  have hp0 : 0 < p := by omega
+  have hq : p * (s / p) ≤ s := Nat.mul_div_le s p
+  have key1 : p * (s / p + d + 10) ≤ s + d * p + 10 * p := by nlinarith
+  have key2 : (s / p + d + 10) / 10 ≤ (s + d * p + 10 * p) / (10 * p) := by
+    rw [Nat.le_div_iff_mul_le (by positivity)]
+    calc (s / p + d + 10) / 10 * (10 * p) = ((s / p + d + 10) / 10 * 10) * p := by ring
+      _ ≤ (s / p + d + 10) * p := Nat.mul_le_mul_right _ (Nat.div_mul_le_self _ _)
+      _ = p * (s / p + d + 10) := by ring
+      _ ≤ _ := key1
+  have key3 : s / p + d + 1 ≤ 10 * ((s / p + d + 10) / 10) := by omega
+  calc p + (p * (s / p) + d * p) = p * (s / p + d + 1) := by ring
+    _ ≤ p * (10 * ((s / p + d + 10) / 10)) := Nat.mul_le_mul_left _ key3
+    _ = 10 * p * ((s / p + d + 10) / 10) := by ring
+    _ ≤ 10 * p * ((s + d * p + 10 * p) / (10 * p)) := Nat.mul_le_mul_left _ key2
+
+-- The jump `h₂(10^m) - h₂(10^m - 1)` that enters the definition of `h₃^{(m)}`.
+private noncomputable def jump (m : ℕ) : ℝ :=
+  (campbellH2 (10 ^ m) : ℝ) - campbellH2 (10 ^ m - 1)
+
+private theorem pow_le_jump {k : ℕ} (hk : 1 ≤ k) : (10 : ℝ) ^ k ≤ jump (k + 1) := by
+  have h : ((10 ^ k + campbellH2 (10 ^ (k + 1) - 1) : ℕ) : ℝ) ≤ campbellH2 (10 ^ (k + 1)) := by
+    exact_mod_cast pow_add_campbellH2_le hk
+  push_cast at h
+  unfold jump
+  linarith
+
+-- `h₃^{(k+1)}` rewritten around the points `10^(k+1) - 1` and `10^(k+1)`, where it takes the
+-- values `10^k` and `10^(k+1)`; both pieces equal `2 * jump - 19 * 10^k / 10` at the break point
+-- `10^(k+1) - 1/10`.
+private theorem campbellH3_eq (k : ℕ) (t : ℝ) :
+    campbellH3 (k + 1) t =
+      if t ≤ 10 * 10 ^ k - 1 / 10 then
+        (20 * jump (k + 1) - 29 * 10 ^ k) / 9 * (t - (10 * 10 ^ k - 1)) + 10 ^ k
+      else (119 * 10 ^ k - 20 * jump (k + 1)) * (t - 10 * 10 ^ k) + 10 * 10 ^ k := by
+  have e1 : (10 : ℝ) ^ (k + 1) = 10 * 10 ^ k := by ring
+  have e2 : (10 : ℝ) ^ (2 * (k + 1)) = 100 * (10 ^ k) ^ 2 := by ring
+  have e3 : (10 : ℝ) ^ (2 * (k + 1) - 1) = 10 * (10 ^ k) ^ 2 := by
+    rw [show 2 * (k + 1) - 1 = 2 * k + 1 by omega]
+    ring
+  simp only [campbellH3, jump, e1, e2, e3, Nat.add_sub_cancel]
+  split_ifs <;> ring
+
+private theorem continuous_campbellH3 (k : ℕ) : Continuous (campbellH3 (k + 1)) := by
+  refine (Continuous.if_le (by fun_prop) (by fun_prop) continuous_id' continuous_const ?_).congr
+    (fun t => (campbellH3_eq k t).symm)
+  intro t ht
+  rw [ht]
+  ring
+
+private theorem campbellH3_nonneg {k : ℕ} (hk : 1 ≤ k) {t : ℝ} (ht₁ : 10 * 10 ^ k - 1 ≤ t)
+    (ht₂ : t ≤ 10 * 10 ^ k) : 0 ≤ campbellH3 (k + 1) t := by
+  have hH := pow_le_jump hk
+  have hp : (0 : ℝ) < 10 ^ k := by positivity
+  rw [campbellH3_eq]
+  split_ifs with h
+  · nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ 9 - 10 * (t - (10 * 10 ^ k - 1))) hp.le,
+      mul_nonneg (by linarith : (0 : ℝ) ≤ t - (10 * 10 ^ k - 1))
+        (by linarith : (0 : ℝ) ≤ 20 * jump (k + 1) - 19 * 10 ^ k)]
+  · nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ 1 - 10 * (10 * 10 ^ k - t)) hp.le,
+      mul_nonneg (by linarith : (0 : ℝ) ≤ 10 * 10 ^ k - t)
+        (by linarith : (0 : ℝ) ≤ 20 * jump (k + 1) - 19 * 10 ^ k)]
+
+private theorem integral_affine (α β c u v : ℝ) :
+    ∫ t in u..v, (α * (t - c) + β) = α * ((v - c) ^ 2 - (u - c) ^ 2) / 2 + β * (v - u) := by
+  have hderiv : ∀ x ∈ Set.uIcc u v,
+      HasDerivAt (fun t => α * (t - c) ^ 2 / 2 + β * t) (α * (x - c) + β) x := by
+    intro x _
+    have h := ((((hasDerivAt_id' x).sub_const c).fun_pow 2).const_mul α).div_const 2 |>.add
+      ((hasDerivAt_id' x).const_mul β)
+    convert h using 1
+    simp
+    ring
+  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv
+    ((by fun_prop : Continuous fun t : ℝ => α * (t - c) + β).intervalIntegrable u v)]
+  ring
+
+-- Over the last unit interval of a decimal block, `h₃` integrates to the jump of `h₂`.
+private theorem integral_campbellH3 (k : ℕ) :
+    ∫ t in (10 * 10 ^ k - 1 : ℝ)..(10 * 10 ^ k), campbellH3 (k + 1) t = jump (k + 1) := by
+  have hc := continuous_campbellH3 k
+  rw [← intervalIntegral.integral_add_adjacent_intervals (b := 10 * 10 ^ k - 1 / 10)
+    (hc.intervalIntegrable _ _) (hc.intervalIntegrable _ _)]
+  have h₁ : ∫ t in (10 * 10 ^ k - 1 : ℝ)..(10 * 10 ^ k - 1 / 10), campbellH3 (k + 1) t =
+      ∫ t in (10 * 10 ^ k - 1 : ℝ)..(10 * 10 ^ k - 1 / 10),
+        ((20 * jump (k + 1) - 29 * 10 ^ k) / 9 * (t - (10 * 10 ^ k - 1)) + 10 ^ k) := by
+    refine intervalIntegral.integral_congr fun t ht => ?_
+    rw [Set.uIcc_of_le (by linarith)] at ht
+    rw [campbellH3_eq, ite_eq_left ht.2]
+  have h₂ : ∫ t in (10 * 10 ^ k - 1 / 10 : ℝ)..(10 * 10 ^ k), campbellH3 (k + 1) t =
+      ∫ t in (10 * 10 ^ k - 1 / 10 : ℝ)..(10 * 10 ^ k),
+        ((119 * 10 ^ k - 20 * jump (k + 1)) * (t - 10 * 10 ^ k) + 10 * 10 ^ k) := by
+    refine intervalIntegral.integral_congr fun t ht => ?_
+    rw [Set.uIcc_of_le (by linarith)] at ht
+    rw [campbellH3_eq]
+    split_ifs with h
+    · rw [le_antisymm h ht.1]
+      ring
+    · rfl
+  rw [h₁, h₂, integral_affine, integral_affine]
+  ring
+
+private theorem log_floor_eq {x : ℝ} {k : ℕ} (h₁ : (10 : ℝ) ^ k ≤ x) (h₂ : x < 10 ^ (k + 1)) :
+    Nat.log 10 ⌊x⌋₊ = k := by
+  have hx : 0 ≤ x := (by positivity : (0 : ℝ) ≤ 10 ^ k).trans h₁
+  apply Nat.log_eq_of_pow_le_of_lt_pow
+  · exact Nat.le_floor (by exact_mod_cast h₁)
+  · exact (Nat.floor_lt hx).2 (by exact_mod_cast h₂)
+
+-- Campbell's interpolation beyond `10`, once the index of the decimal block is known.
+private theorem campbellF_of_log {x : ℝ} {k : ℕ} (hx : 10 < x) (hk : Nat.log 10 ⌊x⌋₊ = k) :
+    campbellF x =
+      if x ≤ 10 ^ (k + 1) - 1 then
+        (x * ((campbellH2 (10 ^ (k + 1) - 1) : ℝ) - campbellH2 (10 ^ k)) -
+          (campbellH2 (10 ^ k) + 10 ^ k * (campbellH2 (10 ^ (k + 1) - 1) : ℝ) -
+            10 ^ (k + 1) * campbellH2 (10 ^ k))) / (9 * 10 ^ k - 1)
+      else
+        (campbellH2 (10 ^ (k + 1) - 1) : ℝ) +
+          ∫ t in ((10 : ℝ) ^ (k + 1) - 1)..x, campbellH3 (k + 1) t := by
+  have h₁ : ¬ x ≤ 100 / 11 := by linarith
+  have h₂ : ¬ x ≤ 10 := by linarith
+  simp only [campbellF, h₁, h₂, hk, ite_false, Nat.add_sub_cancel]
+
+-- On `[10^k, 10^(k+1) - 1]` Campbell's interpolation is affine with nonnegative slope.
+private theorem monotoneOn_block {k : ℕ} (hk : 1 ≤ k) :
+    MonotoneOn campbellF (Set.Icc ((10 : ℝ) ^ k) (10 ^ (k + 1) - 1)) := by
+  have hk10 := ten_le_pow hk
+  have hk10' : (10 : ℝ) ≤ 10 ^ k := by exact_mod_cast hk10
+  have hD : (0 : ℝ) < 9 * 10 ^ k - 1 := by linarith
+  have hy : (campbellH2 (10 ^ k) : ℝ) ≤ campbellH2 (10 ^ (k + 1) - 1) := by
+    have hn : ((10 ^ k : ℕ) : ℝ) ≤ ((10 ^ (k + 1) - 1 : ℕ) : ℝ) := Nat.cast_le.2 (by omega)
+    rw [Nat.cast_pow, Nat.cast_ofNat] at hn
+    rw [floor_campbellF_eq_campbellH2.h2_on_block hk10 (n := 10 ^ (k + 1) - 1) (by omega)
+      (by omega)]
+    nlinarith
+  refine MonotoneOn.congr (f₁ := fun x =>
+    (x * ((campbellH2 (10 ^ (k + 1) - 1) : ℝ) - campbellH2 (10 ^ k)) -
+      (campbellH2 (10 ^ k) + 10 ^ k * (campbellH2 (10 ^ (k + 1) - 1) : ℝ) -
+        10 ^ (k + 1) * campbellH2 (10 ^ k))) / (9 * 10 ^ k - 1)) ?_ ?_
+  · intro a _ b _ hab
+    dsimp only
+    gcongr
+  · intro x hx
+    rcases hx.1.eq_or_lt with h | h
+    · have hf := floor_campbellF_eq_campbellH2.2 (10 ^ k) hk10
+      push_cast at hf
+      rw [← h, hf, div_eq_iff hD.ne']
+      ring
+    · rw [campbellF_of_log (by linarith) (log_floor_eq h.le (by linarith [hx.2])),
+        ite_eq_left hx.2]
+
+-- On `[10^(k+1) - 1, 10^(k+1)]` Campbell's interpolation is the integral of a nonnegative
+-- function, and it reaches `h₂(10^(k+1))` at the right endpoint.
+private theorem monotoneOn_tail {k : ℕ} (hk : 1 ≤ k) :
+    MonotoneOn campbellF (Set.Icc ((10 : ℝ) ^ (k + 1) - 1) (10 ^ (k + 1))) := by
+  have hk10 := ten_le_pow hk
+  have hk10' : (10 : ℝ) ≤ 10 ^ k := by exact_mod_cast hk10
+  have hP : (10 : ℝ) ^ (k + 1) = 10 * 10 ^ k := by ring
+  have hc := continuous_campbellH3 k
+  refine MonotoneOn.congr (f₁ := fun x => (campbellH2 (10 ^ (k + 1) - 1) : ℝ) +
+    ∫ t in ((10 : ℝ) ^ (k + 1) - 1)..x, campbellH3 (k + 1) t) ?_ ?_
+  · intro x hx y hy hxy
+    dsimp only
+    have hsplit := intervalIntegral.integral_add_adjacent_intervals (a := (10 : ℝ) ^ (k + 1) - 1)
+      (b := x) (c := y) (μ := MeasureTheory.volume) (hc.intervalIntegrable _ _)
+      (hc.intervalIntegrable _ _)
+    have : 0 ≤ ∫ t in x..y, campbellH3 (k + 1) t :=
+      intervalIntegral.integral_nonneg hxy fun t ht =>
+        campbellH3_nonneg hk (by linarith [hx.1, ht.1]) (by linarith [hy.2, ht.2])
+    linarith
+  · intro x hx
+    dsimp only
+    rcases hx.1.eq_or_lt with h | h
+    · have hcast : ((10 ^ (k + 1) - 1 : ℕ) : ℝ) = (10 : ℝ) ^ (k + 1) - 1 := by
+        rw [Nat.cast_sub (Nat.one_le_pow _ _ (by norm_num)), Nat.cast_pow, Nat.cast_ofNat,
+          Nat.cast_one]
+      rw [← h, intervalIntegral.integral_same, add_zero, ← hcast,
+        floor_campbellF_eq_campbellH2.2 _ (by omega)]
+    rcases hx.2.eq_or_lt with h' | h'
+    · rw [h', hP, integral_campbellH3 k, jump, ← hP,
+        show ((10 : ℝ) ^ (k + 1)) = ((10 ^ (k + 1) : ℕ) : ℝ) by push_cast; ring,
+        floor_campbellF_eq_campbellH2.2 _ (by omega)]
+      ring
+    · rw [campbellF_of_log (by linarith) (log_floor_eq (by linarith) h'),
+        ite_eq_right (not_le.2 h)]
+
+private theorem monotoneOn_Icc_zero_ten : MonotoneOn campbellF (Set.Icc 0 10) := by
+  have h₁ : MonotoneOn campbellF (Set.Icc 0 (100 / 11)) := by
+    intro a ha b hb hab
+    rw [campbellF, ite_eq_left ha.2, campbellF, ite_eq_left hb.2]
+    gcongr
+  have h₂ : MonotoneOn campbellF (Set.Icc (100 / 11) 10) := by
+    refine MonotoneOn.congr (f₁ := fun x => 10 * x - 90) ?_ ?_
+    · intro a _ b _ hab
+      dsimp only
+      linarith
+    · intro x hx
+      rcases hx.1.eq_or_lt with h | h
+      · rw [← h, campbellF, ite_eq_left le_rfl]
+        norm_num
+      · rw [campbellF_of_mem h hx.2]
+  rw [← Set.Icc_union_Icc_eq_Icc (b := 100 / 11) (by norm_num) (by norm_num)]
+  exact h₁.union_right h₂ (isGreatest_Icc (by norm_num)) (isLeast_Icc (by norm_num))
+
+private theorem monotoneOn_Icc_zero_pow (m : ℕ) :
+    MonotoneOn campbellF (Set.Icc 0 (10 ^ (m + 1))) := by
+  induction m with
+  | zero => simpa using monotoneOn_Icc_zero_ten
+  | succ k ih =>
+    have hk : 1 ≤ k + 1 := by omega
+    have hpos : (1 : ℝ) ≤ 10 ^ (k + 1) := one_le_pow₀ (by norm_num)
+    have hle : (10 : ℝ) ^ (k + 1) ≤ 10 ^ (k + 1 + 1) - 1 := by
+      rw [pow_succ _ (k + 1)]
+      linarith
+    have h₂₃ := (monotoneOn_block hk).union_right (monotoneOn_tail hk) (isGreatest_Icc hle)
+      (isLeast_Icc (by linarith))
+    rw [Set.Icc_union_Icc_eq_Icc hle (by linarith)] at h₂₃
+    have h := ih.union_right h₂₃ (isGreatest_Icc (by positivity)) (isLeast_Icc (by linarith))
+    rwa [Set.Icc_union_Icc_eq_Icc (by positivity) (by linarith)] at h
+
+end campbellF_monotoneOn
+
+/-- **Monotonicity of Campbell's interpolation.** Campbell's interpolation $f$ is monotone
+(non-decreasing) on $[0, \infty)$: for all real numbers $x$ and $y$ with $0 \le x \le y$,
+$f(x) \le f(y)$.
+
+Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
+Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 5
+(`jis-2026-26.3.4-lem-5`). -/
+theorem campbellF_monotoneOn : MonotoneOn campbellF (Set.Ici 0) := by
+  intro a ha b hb hab
+  obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt b (by norm_num : (1 : ℝ) < 10)
+  have hbn : b ≤ 10 ^ (n + 1) := hn.le.trans (pow_le_pow_right₀ (by norm_num) (Nat.le_succ n))
+  exact campbellF_monotoneOn.monotoneOn_Icc_zero_pow n ⟨ha, hab.trans hbn⟩ ⟨hb, hbn⟩ hab
 
 end
 

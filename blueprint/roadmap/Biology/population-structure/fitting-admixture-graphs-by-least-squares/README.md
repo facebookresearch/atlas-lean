@@ -18,3 +18,4 @@
 - [For positive definite covariance all maximizers give the same fit](mul-vec-eq-of-is-constrained-maximizer.md)
 - [A positive definite Gram matrix makes the constrained maximizer unique](eq-of-is-constrained-maximizer-of-pos-de.md)
 - [One-edge example where the nonnegativity constraint is active](is-constrained-maximizer-one-neg.md)
+- [Profiling the admixture proportions in the qpGraph fit](outer-optimization-over-admixture-proportions.md)

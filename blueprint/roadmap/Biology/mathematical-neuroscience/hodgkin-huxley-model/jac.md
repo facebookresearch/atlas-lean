@@ -11,7 +11,7 @@ a_h & 0 & -(\alpha_h + \beta_h) & 0 \\
 a_n & 0 & 0 & -(\alpha_n + \beta_n)
 \end{pmatrix},$$
 
-where the rates are evaluated at $V$ and $a_y = \alpha_y'(V)(1 - y) - \beta_y'(V)\,y$ for
-$y = m, h, n$; the six rates are differentiable everywhere. With the convention $x/0 = 0$, the first
-row is $0$ when $C = 0$. The matrix is the derivative of the vector field at $x$ for every parameter
-set ([linearization](has-fderiv-at-field.md)).
+where the rates are evaluated at $V$, $a_y = \alpha_y'(V)(1 - y) - \beta_y'(V)\,y$ for
+$y = m, h, n$, and a prime denotes the derivative, taken as $0$ at a point where it does not exist.
+With the convention $x/0 = 0$, the first row is $0$ when $C = 0$. The matrix is the derivative of
+the vector field at $x$ for every parameter set ([linearization](has-fderiv-at-field.md)).

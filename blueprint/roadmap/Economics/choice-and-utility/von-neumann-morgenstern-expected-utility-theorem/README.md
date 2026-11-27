@@ -10,6 +10,7 @@
 - [Expected utility of a degenerate lottery](expected-utility-single.md)
 - [Existence of an expected-utility representation](exists-is-expected-utility-representatio.md)
 - [Expected utility is unique up to positive affine transformation](exists-pos-affine.md)
+- [Expected utility is preserved by positive affine but not by all increasing transformations](expected-utility-and-transformations.md)
 
 ## Sources
 

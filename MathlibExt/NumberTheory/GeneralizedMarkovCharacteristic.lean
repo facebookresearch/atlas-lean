@@ -309,4 +309,45 @@ public theorem genMarkovCharNumber_dvd_sub (k : ℕ) (w : List Bool)
     · exact Vertex.dvd_sub (vertex_left_subtree k w) hu
     · exact (Nat.not_lt_of_ge (fareyTree_right_den_le_num w) ht1).elim
 
+open genMarkovCharNumber_dvd_sub in
+/-- **The characteristic number solves $x^2 + kx + 1 \equiv 0 \pmod{m_t}$.** Let
+$k \in \mathbb{N}$, let $w$ be a finite sequence of left and right moves, let $(r, t, s)$ be
+the vertex of the Farey tree at $w$, and let $(m_r, m_t, m_s)$ be the vertex of the
+$k$-generalized Markov tree $\mathrm{MT}(k)$ at $w$. Write $t = n/d$. If $0 < n < d$ and $u$
+is a characteristic number of $(m_r, m_t, m_s)$, then $m_t$ divides $u^2 + ku + 1$, that is,
+$u^2 + ku + 1 \equiv 0 \pmod{m_t}$.
+
+Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.7. -/
+public theorem genMarkovCharNumber_sq_add (k : ℕ) (w : List Bool)
+    (ht : 0 < (fareyTree w).2.1.1) (ht1 : (fareyTree w).2.1.1 < (fareyTree w).2.1.2) (u : ℕ)
+    (hu : IsGenMarkovCharNumber (genMarkovTree k w).1 (genMarkovTree k w).2.1
+      (genMarkovTree k w).2.2 u) :
+    (genMarkovTree k w).2.1 ∣ u ^ 2 + k * u + 1 := by
+  cases w with
+  | nil => exact (Nat.lt_irrefl _ ht1).elim
+  | cons dir w =>
+    cases dir
+    · have hsub := genMarkovCharNumber_dvd_sub k (false :: w) ht ht1 u hu
+      have hv := vertex_left_subtree k w
+      generalize genMarkovTree k (false :: w) = t at hv hsub ⊢
+      obtain ⟨a, b, c⟩ := t
+      obtain ⟨⟨_, _, _, he⟩, ⟨cop, _⟩, _⟩ := hv
+      have he' : (a : ℤ) ^ 2 + (b : ℤ) ^ 2 + (c : ℤ) ^ 2 +
+          k * ((b : ℤ) * c + (c : ℤ) * a + (a : ℤ) * b) = (3 + 3 * (k : ℤ)) * a * b * c := by
+        exact_mod_cast he
+      have hmarkov : (b : ℤ) ∣ (a : ℤ) ^ 2 + k * a * c + (c : ℤ) ^ 2 := by
+        refine ⟨(3 + 3 * (k : ℤ)) * a * c - b - k * (c + (a : ℤ)), ?_⟩
+        linear_combination he'
+      -- Replacing c by a * u changes the polynomial by a multiple of b.
+      have hdiff : (b : ℤ) ∣ (a * (u : ℤ) - c) * (a * (u : ℤ) + c + k * a) :=
+        dvd_mul_of_dvd_left hsub _
+      have hscaled : (b : ℤ) ∣ (a : ℤ) * (a * ((u : ℤ) ^ 2 + k * u + 1)) := by
+        obtain ⟨x, hx⟩ := hmarkov
+        obtain ⟨y, hy⟩ := hdiff
+        exact ⟨x + y, by linear_combination hx + hy⟩
+      have hquad := cop.symm.dvd_of_dvd_mul_left (cop.symm.dvd_of_dvd_mul_left hscaled)
+      exact_mod_cast hquad
+    · exact (Nat.not_lt_of_ge (fareyTree_right_den_le_num w) ht1).elim
+
 end MetaMathlibExt

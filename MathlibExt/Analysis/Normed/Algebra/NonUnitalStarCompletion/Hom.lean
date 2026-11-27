@@ -1,0 +1,266 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.Normed.Algebra.NonUnitalStarCompletion
+public import Mathlib.Algebra.Star.StarAlgHom
+
+/-!
+# Monoid-equivariant star homomorphisms from the nonunital completion
+
+A continuous nonunital star hom extends by the existing additive completion
+extension. The source carries its original seminormed ring, continuous star
+and distributive monoid action. The complete separated target needs no norm,
+scalar ring or star-ring structure.
+
+The computed source ring, star and scalar action are retained. Multiplication
+keeps its original order, and coefficient values, continuity and uniqueness
+refer to this one extension function.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open UniformSpace.Completion
+
+namespace NonUnitalStarAlgHom
+
+universe uR uA uB
+
+variable {R : Type uR} {A : Type uA} {B : Type uB}
+variable [Monoid R]
+variable [NonUnitalSeminormedRing A] [StarRing A] [ContinuousStar A]
+variable [DistribMulAction R A] [UniformContinuousConstSMul R A]
+variable [NonUnitalNonAssocRing B] [UniformSpace B] [IsUniformAddGroup B]
+variable [CompleteSpace B] [T0Space B] [ContinuousMul B]
+variable [Star B] [ContinuousStar B]
+variable [DistribMulAction R B] [UniformContinuousConstSMul R B]
+
+/-- **Star-homomorphic extension from a uniform completion.** Let a monoid `R` act distributively on a
+nonunital seminormed ring `A` with continuous ring involution and on a nonunital, possibly
+nonassociative ring `B`. Assume that `B` has a complete separated additive uniformity, continuous
+multiplication and star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let
+`φ : A → B` be a continuous `R`-equivariant nonunital star homomorphism. The homomorphism extends to
+an `R`-equivariant nonunital star homomorphism from the uniform completion of `A` to `B`. -/
+noncomputable def fromCompletion
+    (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
+    let C := UniformSpace.Completion A;
+    let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A;
+    letI : NonUnitalNormedRing C := rC;
+    let rS : StarRing C := nonUnitalCompletionStarRing A;
+    letI : StarRing C := rS;
+    let mC : DistribMulAction R C := inferInstance;
+    letI : DistribMulAction R C := mC;
+    C →⋆ₙₐ[R] B := by
+  let C := UniformSpace.Completion A
+  let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A
+  let : NonUnitalNormedRing C := rC
+  let rS : StarRing C := nonUnitalCompletionStarRing A
+  let : StarRing C := rS
+  let mC : DistribMulAction R C := inferInstance
+  let : DistribMulAction R C := mC
+  let : ContinuousStar C := nonUnitalCompletionStarRing_continuousStar A
+  change C →⋆ₙₐ[R] B
+  let φa : A →+ B := AddMonoidHom.ofClass φ
+  have hφa : Continuous φa := hφ
+  let e : C →+ B := φa.extension hφa
+  have he : Continuous e := φa.continuous_extension hφa
+  have hcoe (a : A) : e (a : C) = φ a :=
+    φa.extension_coe hφa a
+  have hSmulCoe (r : R) (a : A) :
+      ((r • a : A) : C) = r • (a : C) :=
+    UniformSpace.Completion.coe_smul r a
+  have hMulCoe (a b : A) :
+      ((a * b : A) : C) = (a : C) * (b : C) :=
+    nonUnitalCompletion_coe_mul A a b
+  have hStarCoe (a : A) : star (a : C) = ((star a : A) : C) :=
+    nonUnitalCompletionStarRing_star_coe A a
+  have hSmul : ∀ (r : R) (x : C), e (r • x) = r • e x := by
+    intro r x
+    have hLeft : Continuous (fun x : C => e (r • x)) :=
+      he.comp (continuous_const_smul r)
+    have hRight : Continuous (fun x : C => r • e x) :=
+      (continuous_const_smul r).comp he
+    refine UniformSpace.Completion.induction_on
+      (α := A) (p := fun x : C => e (r • x) = r • e x) x
+      (isClosed_eq hLeft hRight) ?_
+    intro a
+    rw [← hSmulCoe r a, hcoe (r • a), hcoe a]
+    exact map_smul φ r a
+  have hMul : ∀ x y : C, e (x * y) = e x * e y := by
+    intro x y
+    have hLeft : Continuous (fun p : C × C => e (p.1 * p.2)) :=
+      he.comp (continuous_fst.mul continuous_snd)
+    have hRight : Continuous (fun p : C × C => e p.1 * e p.2) :=
+      (he.comp continuous_fst).mul (he.comp continuous_snd)
+    refine UniformSpace.Completion.induction_on₂
+      (α := A) (β := A) (p := fun x y : C => e (x * y) = e x * e y)
+      x y (isClosed_eq hLeft hRight) ?_
+    intro a b
+    rw [← hMulCoe a b, hcoe (a * b), hcoe a, hcoe b]
+    exact map_mul φ a b
+  have hStar : ∀ x : C, e (star x) = star (e x) := by
+    intro x
+    have hLeft : Continuous (fun x : C => e (star x)) :=
+      he.comp continuous_star
+    have hRight : Continuous (fun x : C => star (e x)) :=
+      continuous_star.comp he
+    refine UniformSpace.Completion.induction_on
+      (α := A) (p := fun x : C => e (star x) = star (e x)) x
+      (isClosed_eq hLeft hRight) ?_
+    intro a
+    rw [hStarCoe a, hcoe (star a), hcoe a]
+    exact map_star φ a
+  exact
+    { toFun := e
+      map_zero' := e.map_zero
+      map_add' := e.map_add
+      map_smul' := hSmul
+      map_mul' := hMul
+      map_star' := hStar }
+
+/-- **Underlying additive completion extension.** Let a monoid `R` act distributively on a nonunital
+seminormed ring `A` with continuous ring involution and on a nonunital, possibly nonassociative ring
+`B`. Assume that `B` has a complete separated additive uniformity, continuous multiplication and
+star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let `φ : A → B` be a
+continuous `R`-equivariant nonunital star homomorphism. The function underlying the star-homomorphic
+extension is the continuous additive extension of `φ` to the uniform completion of `A`. -/
+theorem coe_fromCompletion
+    (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
+    let C := UniformSpace.Completion A;
+    let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A;
+    letI : NonUnitalNormedRing C := rC;
+    let rS : StarRing C := nonUnitalCompletionStarRing A;
+    letI : StarRing C := rS;
+    let mC : DistribMulAction R C := inferInstance;
+    letI : DistribMulAction R C := mC;
+    (fromCompletion φ hφ : C → B) =
+      ((AddMonoidHom.ofClass φ).extension
+        (show Continuous (AddMonoidHom.ofClass φ : A →+ B) from hφ) : C → B) := by
+  let C := UniformSpace.Completion A
+  let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A
+  let : NonUnitalNormedRing C := rC
+  let rS : StarRing C := nonUnitalCompletionStarRing A
+  let : StarRing C := rS
+  let mC : DistribMulAction R C := inferInstance
+  let : DistribMulAction R C := mC
+  rfl
+
+/-- **Values of the completion extension.** Let a monoid `R` act distributively on a nonunital
+seminormed ring `A` with continuous ring involution and on a nonunital, possibly nonassociative ring
+`B`. Assume that `B` has a complete separated additive uniformity, continuous multiplication and
+star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let `φ : A → B` be a
+continuous `R`-equivariant nonunital star homomorphism. For every `a ∈ A`, the extended homomorphism
+satisfies `φ̄(ι(a)) = φ(a)` on the canonical completion image. -/
+@[simp]
+theorem fromCompletion_apply_coe
+    (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) (a : A) :
+    let C := UniformSpace.Completion A;
+    let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A;
+    letI : NonUnitalNormedRing C := rC;
+    let rS : StarRing C := nonUnitalCompletionStarRing A;
+    letI : StarRing C := rS;
+    let mC : DistribMulAction R C := inferInstance;
+    letI : DistribMulAction R C := mC;
+    fromCompletion φ hφ (a : C) = φ a := by
+  let C := UniformSpace.Completion A
+  let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A
+  let : NonUnitalNormedRing C := rC
+  let rS : StarRing C := nonUnitalCompletionStarRing A
+  let : StarRing C := rS
+  let mC : DistribMulAction R C := inferInstance
+  let : DistribMulAction R C := mC
+  let φa : A →+ B := AddMonoidHom.ofClass φ
+  have hφa : Continuous φa := hφ
+  let e : C →+ B := φa.extension hφa
+  have hFun : (fromCompletion φ hφ : C → B) = (e : C → B) :=
+    coe_fromCompletion φ hφ
+  change (fromCompletion φ hφ : C → B) (a : C) = φ a
+  calc
+    (fromCompletion φ hφ : C → B) (a : C) = e (a : C) := congrFun hFun (a : C)
+    _ = φ a := φa.extension_coe hφa a
+
+/-- **Continuity of the extended star homomorphism.** Let a monoid `R` act distributively on a nonunital
+seminormed ring `A` with continuous ring involution and on a nonunital, possibly nonassociative ring
+`B`. Assume that `B` has a complete separated additive uniformity, continuous multiplication and
+star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let `φ : A → B` be a
+continuous `R`-equivariant nonunital star homomorphism. The extended `R`-equivariant nonunital star
+homomorphism is continuous from the uniform completion of `A` to `B`. -/
+theorem continuous_fromCompletion
+    (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
+    let C := UniformSpace.Completion A;
+    let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A;
+    letI : NonUnitalNormedRing C := rC;
+    let rS : StarRing C := nonUnitalCompletionStarRing A;
+    letI : StarRing C := rS;
+    let mC : DistribMulAction R C := inferInstance;
+    letI : DistribMulAction R C := mC;
+    Continuous (fromCompletion φ hφ : C → B) := by
+  let C := UniformSpace.Completion A
+  let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A
+  let : NonUnitalNormedRing C := rC
+  let rS : StarRing C := nonUnitalCompletionStarRing A
+  let : StarRing C := rS
+  let mC : DistribMulAction R C := inferInstance
+  let : DistribMulAction R C := mC
+  let φa : A →+ B := AddMonoidHom.ofClass φ
+  have hφa : Continuous φa := hφ
+  let e : C →+ B := φa.extension hφa
+  have hFun : (fromCompletion φ hφ : C → B) = (e : C → B) :=
+    coe_fromCompletion φ hφ
+  change Continuous (fromCompletion φ hφ : C → B)
+  rw [hFun]
+  exact φa.continuous_extension hφa
+
+/-- **Uniqueness of the completion star homomorphism.** Let a monoid `R` act distributively on a
+nonunital seminormed ring `A` with continuous ring involution and on a nonunital, possibly
+nonassociative ring `B`. Assume that `B` has a complete separated additive uniformity, continuous
+multiplication and star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let
+`φ : A → B` be a continuous `R`-equivariant nonunital star homomorphism. Any continuous
+`R`-equivariant nonunital star homomorphism from the completion to `B` agreeing with `φ` on all
+canonical source images equals this extension. -/
+theorem fromCompletion_unique
+    (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
+    let C := UniformSpace.Completion A;
+    let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A;
+    letI : NonUnitalNormedRing C := rC;
+    let rS : StarRing C := nonUnitalCompletionStarRing A;
+    letI : StarRing C := rS;
+    let mC : DistribMulAction R C := inferInstance;
+    letI : DistribMulAction R C := mC;
+    ∀ ψ : C →⋆ₙₐ[R] B,
+      Continuous ψ → (∀ a : A, ψ (a : C) = φ a) →
+        ψ = fromCompletion φ hφ := by
+  let C := UniformSpace.Completion A
+  let rC : NonUnitalNormedRing C := nonUnitalCompletionNormedRing A
+  let : NonUnitalNormedRing C := rC
+  let rS : StarRing C := nonUnitalCompletionStarRing A
+  let : StarRing C := rS
+  let mC : DistribMulAction R C := inferInstance
+  let : DistribMulAction R C := mC
+  change ∀ ψ : C →⋆ₙₐ[R] B,
+    Continuous ψ → (∀ a : A, ψ (a : C) = φ a) →
+      ψ = fromCompletion φ hφ
+  intro ψ hψ hCoeff
+  have hΓ : Continuous (fromCompletion φ hφ : C → B) :=
+    continuous_fromCompletion φ hφ
+  have hFun : (ψ : C → B) = (fromCompletion φ hφ : C → B) :=
+    UniformSpace.Completion.ext (α := A) hψ hΓ fun a =>
+      (hCoeff a).trans (fromCompletion_apply_coe φ hφ a).symm
+  exact NonUnitalStarAlgHom.ext fun x => congrFun hFun x
+
+end NonUnitalStarAlgHom
+
+end
+
+end

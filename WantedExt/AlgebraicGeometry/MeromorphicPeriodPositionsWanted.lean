@@ -11,6 +11,9 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionMaps
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
+public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsLocalPositionIffPeriod
+public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodModuleGeneratorMap
+public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodBoundFrameIndependence
 
 /-!
 # Actual source period bridges and Hecke position comparison requests
@@ -20,6 +23,12 @@ Its bridge uses the actual chart model/global-ring dictionary and every
 finite completion stage. The Cartier/period parameter unit is explicit.
 Position and lattice requests concern the actual completed global
 comparison, with every representation and every original frame retained.
+The local position comparison `localPosition_iff_period` is proved in
+`MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsLocalPositionIffPeriod`.
+The period module generator map `periodModule_generator_map` is proved in
+`MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodModuleGeneratorMap`.
+The period bound frame independence `periodBound_frame_independence` is proved in
+`MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodBoundFrameIndependence`.
 
 Source: Fargues--Scholze, arXiv:2102.13459v4, Sections III.3 and VI.1--VI.2.
 No classification or Hecke-stack equivalence is a hypothesis.
@@ -40,7 +49,14 @@ open CompletedTorsorSourceFrames MeromorphicTorsorCompletion MeromorphicPeriodPo
 open AlgebraicGroupPointRepresentations AnalyticProObjectSites
 open MathlibExt.LinearAlgebra.LocalizedLattices
 
-/-- Match each actual source untilt period chart to its native whole analytic pole chart. -/
+/-- A pole chart matching a period chart: for a prime $p$, coefficient data `K` for a finite
+extension $E$ of $\mathbb{Q}_p$, realization data `R` and `I`, a relative Fargues–Fontaine curve
+family `A`, an untilt `T` of a perfectoid base, a source divisor `D` (an untilt divisor with its
+cover by period charts), an index `i` of that cover whose curve chart pair is strongly Noetherian,
+and a puncture `U` of the divisor map: a pole chart of the divisor map at `U` with the same Tate
+pair as the `i`-th period chart, together with a period bridge to that chart (`PeriodBridge`: an
+identification of their completed rings matching coefficients, finite quotients, $E$-scalars and
+filtrations, which sends the formal parameter to a unit multiple of the period parameter). -/
 public def_wanted untiltPeriodPoleChart (p : ℕ) [Fact p.Prime]
     {E : MixedField p} (K : CoefficientData p E)
     (R : AffineRealization p) (I : IntegerPresentation p K)
@@ -54,7 +70,17 @@ public def_wanted untiltPeriodPoleChart (p : ℕ) [Fact p.Prime]
 
 section GeneralFormalLattices
 
-/-- Realize every actual formal representation image as its original finite-projective lattice. -/
+/-- The lattice of a represented framed modification: for a prime $p$, a reductive group scheme $G$
+over a field $E$ with torsor descent `H` and pullback preservation `P` on $E$-spaces, a map
+$d : D \to X$ of $E$-spaces with a puncture `U`, a pole chart `Q` at `U` whose whole chart is
+strongly Noetherian, with algebraization `Aq`, fpqc torsor condition `Bq` along its completion,
+source frames `F`, the condition `h` that its parameter is a unit on the puncture and a completion
+comparison `C`, a meromorphic Hecke modification `M` with integral frames `left` and `right` of its
+two bundles on `Q`, and an $n$-dimensional representation $\rho$ of $G$: the image of the standard
+lattice $\widehat{\mathcal{O}}^n$ under the matrix of $\rho$ at the framed element of `M` is a
+lattice (finite projective, of full rank $n$ and bounded) in $\widehat{\mathcal{O}}[1/t]^n$, where
+$\widehat{\mathcal{O}}$ is the completion of the chart's coefficient ring along the divisor and $t$
+its formal parameter. -/
 public def_wanted representedFormalLattice (p : ℕ) [Fact p.Prime]
     (E : Type) [Field E] (G : Over (Spec (.of E))) [GrpObj G]
     [ReductiveGroupSchemeModels.IsReductive (Spec (.of E)) G]
@@ -103,13 +129,6 @@ variable (G : Over (Spec (.of E.field))) [GrpObj G]
   (left : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).left)
   (right : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).right)
 
-/-- Exact source position agrees with the actual period double orbit, retaining its unit. -/
-public theorem_wanted localPosition_iff_period
-    [ReductiveGroupSchemeModels.IsReductive (Spec (.of E.field)) G]
-    (μ : Cocharacter E.field G) :
-    HasLocalPosition p E.field G H P d U Q Aq Bq F h C M left right μ ↔
-      HasPeriodPosition p K R I A T D V d U Q B G H P Aq Bq F h C M left right μ
-
 /-- Every original representation gives the actual computed period lattice image. -/
 public def_wanted representedPeriodLattice
     [ReductiveGroupSchemeModels.IsReductive (Spec (.of E.field)) G]
@@ -117,21 +136,6 @@ public def_wanted representedPeriodLattice
     PeriodGroupPositionModels.RepresentedLattice p K V.chart.refinement.untilt
       V.scalar V.parameter G ρ
         (periodElement p K R I A T D V d U Q B G H P Aq Bq F h C M left right)
-
-/-- Every lattice generator follows the same original completed coefficient/period square. -/
-public theorem_wanted periodModule_generator_map
-    (n : ℕ) (ρ : Representation E.field G n) (v : Fin n → FormalRing p E.field d U Q) :
-    (PeriodGroupPositionModels.representationMatrix p K V.chart.refinement.untilt
-      V.scalar V.parameter G ρ
-        (periodElement p K R I A T D V d U Q B G H P Aq Bq F h C M left right) :
-          Matrix (Fin n) (Fin n)
-            (FractionRing (DeRhamPlus p V.chart.refinement.untilt.affine.pair)
-              V.parameter.value)).mulVec
-              (fun i ↦ algebraMap _ _
-                (positivePeriod p K R I A T D V d U Q B.toCompletionDictionary (v i))) =
-      fun i ↦ genericPeriodMap p K R I A T D V d U Q B
-        ((framedMatrix p E.field G H P d U Q Aq Bq F h C M left right n ρ).mulVec
-          (fun j ↦ algebraMap _ (GenericRing p E.field d U Q) (v j)) i)
 
 /-- Every change of original integral frames preserves the actual relative position. -/
 public theorem_wanted periodPosition_frame_independence
@@ -141,15 +145,6 @@ public theorem_wanted periodPosition_frame_independence
     (μ : Cocharacter E.field G) :
     HasPeriodPosition p K R I A T D V d U Q B G H P Aq Bq F h C M left right μ ↔
       HasPeriodPosition p K R I A T D V d U Q B G H P Aq Bq F h C M left' right' μ
-
-/-- Closed representation-lattice bounds retain the same all-frame invariance. -/
-public theorem_wanted periodBound_frame_independence
-    [ReductiveGroupSchemeModels.IsReductive (Spec (.of E.field)) G]
-    (left' : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).left)
-    (right' : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).right)
-    (μ : Cocharacter E.field G) :
-    IsPeriodBounded p K R I A T D V d U Q B G H P Aq Bq F h C M left right μ ↔
-      IsPeriodBounded p K R I A T D V d U Q B G H P Aq Bq F h C M left' right' μ
 
 end SourcePeriods
 

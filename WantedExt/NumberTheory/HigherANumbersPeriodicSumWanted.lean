@@ -18,6 +18,8 @@ public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.HigherANumbersPeriodicSumFloorMulPowModEq
+public import MathlibExt.NumberTheory.HigherANumbersTowerTauAdjacentDigits
 
 /-!
 # Higher `a`-numbers in `ℤ_p`-towers via lattice points
@@ -41,33 +43,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Sum of an eventually periodic sequence.** Let $K$ be a field of characteristic zero, let
-$f : \mathbb{N} \to K$, and let $L \ge 1$ and $D \ge 1$ be natural numbers such that
-$f(i + L) = f(i)$ for all $i \ge D$. Let $\bar f = \frac{1}{L} \sum_{k=D}^{D+L-1} f(k)$ be the
-average over one period. Then for every natural number $N \ge D - 1$,
-$$\sum_{i=1}^{N} f(i) = \sum_{i=1}^{D-1} f(i) + (N - D + 1) \bar f +
-\sum_{k=1}^{(N-D+1) \bmod L} \left(f(k + D - 1) - \bar f\right).$$
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Corollary 1 (Sum of an eventually periodic sequence) (`integers-2026-A78-cor-1`). -/
-public theorem_wanted sum_Icc_of_eventually_periodic {K : Type*} [Field K] [CharZero K]
-    (f : ℕ → K) {L D : ℕ} (hL : 0 < L) (hD : 1 ≤ D) (hf : ∀ i, D ≤ i → f (i + L) = f i)
-    {N : ℕ} (hN : D - 1 ≤ N) :
-    ∑ i ∈ Icc 1 N, f i =
-      ∑ i ∈ Icc 1 (D - 1), f i + ((N + 1 - D : ℕ) : K) * ((∑ k ∈ Ico D (D + L), f k) / L) +
-        ∑ k ∈ Icc 1 ((N + 1 - D) % L), (f (k + D - 1) - (∑ k ∈ Ico D (D + L), f k) / L)
-
-
-/-- **Base-$p$ digits of a rational number.** For a natural number $p$, a rational number $x$ and
-an integer $k$, the $k$-th base-$p$ digit of $x$ is $[p^k](x) = \lfloor x / p^k \rfloor \bmod p$;
-for $p \ge 1$ this is the residue of $\lfloor x / p^k \rfloor$ modulo $p$ in $\{0, \dots, p - 1\}$.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Section 2.2 (definition of `[p^k](x)`). -/
-def basePDigit (p : ℕ) (x : ℚ) (k : ℤ) : ℤ := ⌊x / (p : ℚ) ^ k⌋ % p
-
 /-- **Base-5 digits of 2/3.** Writing $[5^j](x)$ for the $j$-th base-$5$ digit of a rational
 number $x$, we have $[5^{-1}](2/3) = 3$, $[5^{-2}](2/3) = 1$ and $[5^0](2/3) = 0$.
 
@@ -78,26 +53,6 @@ theorem basePDigit_five_two_thirds :
     basePDigit 5 (2 / 3) (-1) = 3 ∧ basePDigit 5 (2 / 3) (-2) = 1 ∧ basePDigit 5 (2 / 3) 0 = 0 := by
   refine ⟨?_, ?_, ?_⟩ <;> norm_num [basePDigit, zpow_neg]
 
-/-- **Prime-to-$p$ part of the denominator.** For a natural number $p$ and a rational number
-$x$ whose denominator in lowest terms is $b \ge 1$, $x_D$ is the natural number $b / p^k$, where
-$p^k$ is the largest power of $p$ dividing $b$ (with $k = 0$ when $p = 1$).
-
-For a prime $p$ and $x > 0$ this gives $x = p^{v_p(x)} x_N / x_D$ with $x_N$ and $x_D$ coprime to
-$p$, where $x_N$ is the prime-to-$p$ part of the numerator (Notation 2).
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_D`). -/
-def primeToPDen (p : ℕ) (x : ℚ) : ℕ := x.den / p ^ padicValNat p x.den
-
-/-- **Prime-to-$p$ part of the numerator.** For a natural number $p$ and a rational number $x$
-whose numerator in lowest terms is $a$, $x_N$ is the natural number $|a| / p^k$, where $p^k$ is
-the largest power of $p$ dividing $|a|$, with $k = 0$ when $p = 1$ or $a = 0$. In particular
-$x_N = 0$ when $x = 0$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_N`). -/
-def primeToPNum (p : ℕ) (x : ℚ) : ℕ := x.num.natAbs / p ^ padicValNat p x.num.natAbs
-
 /-- **The prime-to-$p$ parts of $1$.** For every natural number $p$, the prime-to-$p$ part $x_D$
 of the denominator and the prime-to-$p$ part $x_N$ of the numerator of $x = 1$ are both $1$.
 
@@ -105,19 +60,6 @@ Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_N`, `x_D` of `1`). -/
 theorem primeToPDen_one_primeToPNum_one (p : ℕ) : primeToPDen p 1 = 1 ∧ primeToPNum p 1 = 1 := by
   simp [primeToPDen, primeToPNum, Nat.padicValNat_def]
-
-/-- **Period of the base-$p$ expansion.** For a natural number $p$ and a rational number $x$, let
-$x_D$ be the denominator of $x$ in lowest terms divided by the largest power of $p$ dividing it.
-The period $L_x$ of the base-$p$ expansion of $x$ is the multiplicative order of $p$ modulo $x_D$:
-the least $n \ge 1$ with $p^n \equiv 1 \pmod{x_D}$, or $0$ if there is no such $n$. For prime $p$
-this is the order of $p$ in $(\mathbb{Z}/x_D\mathbb{Z})^\times$.
-
-For prime $p$ and $x > 0$, Lemma 2 of the source identifies $L_x$ with the minimal period of the
-base-$p$ digits of $x$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `L_x` and Lemma 2. -/
-noncomputable def basePPeriod (p : ℕ) (x : ℚ) : ℕ := orderOf (p : ZMod (primeToPDen p x))
 
 /-- **The base-$p$ expansion of $1$ has period $1$.** For every natural number $p$, the period
 $L_1$ of the base-$p$ expansion of $1$ equals $1$.
@@ -127,17 +69,6 @@ Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Lemma 2 (`L_x = 1` wh
 theorem basePPeriod_one (p : ℕ) : basePPeriod p 1 = 1 := by
   rw [basePPeriod, (primeToPDen_one_primeToPNum_one p).1]
   exact orderOf_eq_one_iff.mpr (Subsingleton.elim _ _)
-
-/-- **Delay of the base-$p$ expansion.** For a natural number $p$ and a rational number $x$, the
-delay of the base-$p$ expansion of $x$ is $D_x = -v_p(x)$, where $v_p$ is the $p$-adic valuation
-(with $v_p(0) = 0$).
-
-For prime $p$ and $x > 0$, Lemma 2 of the source identifies $D_x$ with the minimal delay of the
-base-$p$ digits of $x$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `D_x` and Lemma 2. -/
-noncomputable def basePDelay (p : ℕ) (x : ℚ) : ℤ := -padicValRat p x
 
 /-- **The delay of $1/p$ is $1$.** For every prime $p$, the delay of the base-$p$ expansion of
 $1/p$ is $D_{1/p} = -v_p(1/p) = 1$, where $v_p$ is the $p$-adic valuation.
@@ -158,13 +89,6 @@ Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `x̄`. 
 noncomputable def basePDigitAverage (p : ℕ) (x : ℚ) : ℚ :=
   (∑ k ∈ Icc (basePDelay p x + 1) (basePDelay p x + basePPeriod p x), (basePDigit p x (-k) : ℚ)) /
     basePPeriod p x
-
-/-- **The ratio $\tau = (p + 1)/d$.** For natural numbers $p$ and $d$, $\tau$ is the rational
-number $(p + 1)/d$, which is $0$ when $d = 0$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 1 (i). -/
-def towerTau (p d : ℕ) : ℚ := ((p : ℚ) + 1) / d
 
 /-- **The constant $\gamma$.** For natural numbers $p$, $d$ and $r$,
 $\gamma = ((p - 1) r + (p + 1))/d$, a rational number (taken to be $0$ when $d = 0$).
@@ -432,21 +356,6 @@ public theorem_wanted basePDigit_eventually_periodic_iff (p : ℕ) [Fact p.Prime
     (∀ k : ℤ, D + 1 ≤ k → basePDigit p x (-(k + L)) = basePDigit p x (-k)) ↔
       basePPeriod p x ∣ L ∧ basePDelay p x ≤ D
 
-/-- **Digits of $\tau i$ next to the radix point.** Let $p$ be a prime, $d$ a divisor of $p - 1$
-and $\tau = (p + 1)/d$, and write $[p^j](x)$ for the $j$-th base-$p$ digit of a rational number
-$x$. For every natural number $i$, $[p^{-1}](\tau i) = [p^0](\tau i)$ if and only if $p$ divides
-$i$.
-
-The source's positivity assumption on $i$ is dropped (the claim holds at $i = 0$), and $p$ is any
-prime.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Lemma 3 (`integers-2026-A78-lem-3`). -/
-public theorem_wanted basePDigit_towerTau_neg_one_eq_zero_iff (p d : ℕ) [Fact p.Prime]
-    (hd : d ∣ p - 1) (i : ℕ) :
-    basePDigit p (towerTau p d * i) (-1) = basePDigit p (towerTau p d * i) 0 ↔ p ∣ i
-
 /-- **A digit criterion for $\delta(i) = 1$.** Let $p$ be a prime, $d$ a divisor of $p - 1$ and
 $\tau = (p + 1)/d$. For a rational $t$ and an integer $k$ write $[p^k](t)$ for the $k$-th base-$p$
 digit of $t$, the residue of $\lfloor t / p^k \rfloor$ modulo $p$ in
@@ -535,22 +444,6 @@ public theorem_wanted fract_mul_pow_periodic (p : ℕ) [Fact p.Prime] {x : ℚ} 
         Int.fract (x * (p : ℚ) ^ (n + basePPeriod p x)) = Int.fract (x * (p : ℚ) ^ n)) ∧
       (∑ n ∈ Ico (basePDelay p x) (basePDelay p x + basePPeriod p x), Int.fract (x * (p : ℚ) ^ n)) /
           basePPeriod p x = basePDigitAverage p x / ((p : ℚ) - 1)
-
-/-- **Periodicity of $\lfloor x p^n \rfloor$ modulo $x_N$ and modulo $p$.** Let $p$ be a prime and
-$x$ a positive rational. Write $x_N$ for the prime-to-$p$ part of the numerator of $x$,
-$D_x = -v_p(x)$ for the delay of its base-$p$ expansion, and $L_x$ for its period, the order of
-$p$ modulo the prime-to-$p$ part of the denominator of $x$. Then for every integer $n$:
-(i) if $n \ge D_x$, then $\lfloor x p^n \rfloor \equiv \lfloor x p^{n + L_x} \rfloor \pmod{x_N}$;
-(ii) if $n \ge D_x + 1$, then $\lfloor x p^n \rfloor \equiv \lfloor x p^{n + L_x} \rfloor \pmod p$.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Lemma 7 (`integers-2026-A78-lem-7`). -/
-public theorem_wanted floor_mul_pow_modEq (p : ℕ) [Fact p.Prime] {x : ℚ} (hx : 0 < x) :
-    (∀ n : ℤ, basePDelay p x ≤ n →
-        ⌊x * (p : ℚ) ^ n⌋ ≡ ⌊x * (p : ℚ) ^ (n + basePPeriod p x)⌋ [ZMOD primeToPNum p x]) ∧
-      (∀ n : ℤ, basePDelay p x + 1 ≤ n →
-        ⌊x * (p : ℚ) ^ n⌋ ≡ ⌊x * (p : ℚ) ^ (n + basePPeriod p x)⌋ [ZMOD p])
 
 /-- **Splitting the sum of $\delta$ by powers of $p$.** Let $p$ be a prime, $d$ a natural number
 dividing $p - 1$, $x \ge 1$ a rational number and $n$ a natural number. With $\tau = (p + 1)/d$,

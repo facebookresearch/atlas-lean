@@ -30,3 +30,8 @@
 - [With heavy tails the limit generator differs from Kingman's for n ≥ 3](block-counting-generator-ne-kingman.md)
 - [Heavy-tailed Cannings lineage counts have a multiple-merger limit](tendsto-lineage-matrix-pow-of-heavy-tail.md)
 - [With limit measure δ₀ the lineage count converges to Kingman's](tendsto-lineage-matrix-pow-dirac-zero.md)
+
+- [Generator convergence of Cannings ancestral partition chains under pattern limits](generator-convergence-of-cannings-partition-chai.md)
+- [Möhle–Sagitov classification of the coalescent limits of Cannings models](mohle-sagitov-classification-limiting-merger-rat.md)
+- [Convergence of Cannings ancestral partition chains for a fixed sample size](mohle-sagitov-fixed-n-cannings-partition-generat.md)
+- [Path-space limits of Cannings ancestral partitions to Λ-coalescents](partition-and-path-limits-of-cannings-models.md)

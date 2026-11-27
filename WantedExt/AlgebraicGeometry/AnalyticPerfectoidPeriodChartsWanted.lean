@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodCharts
+public import MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodChartsToricStructuralThetaKernel
 
 /-!
 # Direct qualified affinoid-perfectoid period chart requests
@@ -19,6 +20,9 @@ qualification retains an actual finite original affinoid stage, native
 K scalars and a finite etale rational polydisc map. Taylor is fixed on
 every finite structural theta quotient. The full connection is the
 local ABSOLUTE-theta-generator fraction extension of the positive one.
+The toric coordinates lie in the structural theta kernel
+(`toricStructuralThetaKernel`, in
+`MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodChartsToricStructuralThetaKernel`).
 
 The structural period objects are the naive ones of `StructuralDeRhamPeriodSources` (Scholze's
 withdrawn Definition 6.8, erratum item (3)): the Taylor map is requested, but its invertibility
@@ -72,11 +76,6 @@ public theorem_wanted affinePerfectoidToricCover (hSmooth : IsSmooth p X.hom) :
   HasToricCover p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential
 
 variable (C : ToricChart p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential)
-
-/-- Each u_i belongs to the ORIGINAL structural theta kernel before completion. -/
-public theorem_wanted toricStructuralThetaKernel (i : Fin C.dimension) :
-  ((S.scalars.structuralTheta.hom.app (op C.boundary.formal)).hom)
-    (ToricChart.infCoordinate p K B X P S (absoluteForms p K B X P S Ω) AΩ.differential C i) = 0
 
 variable [∀ U : AnalyticProObjectSites.ProEtaleSite p X.left,
   HasSheafify ((proTopology p X.left P).over U) CommRingCat.{1}]

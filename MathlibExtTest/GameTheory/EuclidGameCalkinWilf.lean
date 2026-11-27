@@ -62,3 +62,56 @@ example : euclidPPosition 7 9 = true :=
 example : euclidPPosition 8 13 = false :=
   (euclidPPosition_self_similar 2 (3, 2) (by decide) (by decide) [false, true, false]).trans
     (by decide)
+
+-- The closed forms reach deep levels at once: at level `10 ^ 6` below the arch tops 3/2 and 2/3
+-- the branches are at `(10 ^ 6 + 3)/(10 ^ 6 + 2)` and `(10 ^ 6 + 2)/(10 ^ 6 + 3)`.
+example :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    t (s^[10 ^ 6] (3 - 2, 2)) = (10 ^ 6 + 3, 10 ^ 6 + 2) ∧
+      s (t^[10 ^ 6] (2, 3 - 2)) = (10 ^ 6 + 2, 10 ^ 6 + 3) := by
+  obtain ⟨⟨h₁, h₂⟩, h₃, h₄⟩ :=
+    arch_branch_levels 3 2 2 3 (10 ^ 6) (by decide) (by decide) (by decide) (by decide)
+  intro s t
+  refine ⟨Prod.ext ?_ ?_, Prod.ext ?_ ?_⟩ <;> apply Nat.cast_injective (R := ℤ) <;> push_cast
+  exacts [h₁.trans (by norm_num), h₂.trans (by norm_num), h₃.trans (by norm_num),
+    h₄.trans (by norm_num)]
+
+-- Along the left branch the numerator exceeds the denominator by `a - b` at every level.
+example (a b k : ℕ) (hb : 0 < b) (hab : b < a) :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    ((t (s^[k] (a - b, b))).1 : ℤ) - (t (s^[k] (a - b, b))).2 = a - b := by
+  obtain ⟨⟨h₁, h₂⟩, -⟩ := arch_branch_levels a b 1 2 k hb hab one_pos one_lt_two
+  intro s t
+  rw [h₁, h₂]
+  ring
+
+-- Along the right branch the denominator exceeds the numerator by `d - c` at every level.
+example (c d k : ℕ) (hc : 0 < c) (hcd : c < d) :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    ((s (t^[k] (c, d - c))).2 : ℤ) - (s (t^[k] (c, d - c))).1 = d - c := by
+  obtain ⟨-, h₁, h₂⟩ := arch_branch_levels 2 1 c d k one_pos one_lt_two hc hcd
+  intro s t
+  rw [h₁, h₂]
+  ring
+
+-- At the root and level zero the left denominator uses the coefficient `-1`.
+example : euclidPPosition 1 1 = true ∧ euclidPPosition 3 2 = true ∧
+    euclidPPosition 2 3 = true ∧ (2 : ℤ) = 3 + (0 - 1) * 1 := by
+  obtain ⟨hV, _, _, ⟨_, hden, hL⟩, _, hR⟩ := fibonacci_arch_positions 1 0 (by decide)
+  exact ⟨hV, hL, hR, hden⟩
+
+-- At level two of the next arch, check both tops and the asymmetric branch coordinates.
+example :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let L := t (s^[2] (3, 5))
+    let R := s (t^[2] (5, 2))
+    t (s (3, 2)) = (8, 5) ∧ s (t (3, 2)) = (5, 7) ∧
+      (L.1 : ℤ) = 14 ∧ (L.2 : ℤ) = 11 ∧ euclidPPosition L.1 L.2 = true ∧
+      R = (9, 11) ∧ euclidPPosition R.1 R.2 = true := by
+  obtain ⟨_, hTopL, hTopR, ⟨hNum, hDen, hL⟩, hPairR, hR⟩ :=
+    fibonacci_arch_positions 2 2 (by decide)
+  exact ⟨hTopL, hTopR, hNum, hDen, hL, hPairR, hR⟩

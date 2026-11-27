@@ -1,6 +1,6 @@
 # Linear quadratic regulator
 
-The linear quadratic regulator (LQR) controls the linear system $x_{t+1} = A x_t + B u_t$ so as to minimize the quadratic cost $\sum_t (x_t^\top Q x_t + u_t^\top R u_t)$. Recht (2019) uses it as the baseline on which to compare reinforcement learning methods: with known dynamics, dynamic programming solves it exactly. The cost-to-go is a quadratic form $x^\top M_t x$, the optimal control is the linear state feedback $u_t = -K_t x_t$, and the matrices are computed backwards by the Riccati recursion, a completion of squares in the control at each step. Here the deterministic version of the source's finite-horizon problem (4.1), with terminal cost, is solved in full, under the added assumption that $R$ is positive definite; the infinite-horizon limit, the discrete algebraic Riccati equation and its stabilizing solution, and the unknown-dynamics problems of the source are not treated here.
+The linear quadratic regulator (LQR) controls the linear system $x_{t+1} = A x_t + B u_t$ so as to minimize the quadratic cost $\sum_t (x_t^\top Q x_t + u_t^\top R u_t)$. Recht (2019) uses it as the baseline on which to compare reinforcement learning methods: with known dynamics, dynamic programming solves it exactly. The cost-to-go is a quadratic form $x^\top M_t x$, the optimal control is the linear state feedback $u_t = -K_t x_t$, and the matrices are computed backwards by the Riccati recursion, a completion of squares in the control at each step. Here the deterministic version of the source's finite-horizon problem (4.1), with terminal cost, is solved in full, under the added assumption that $R$ is positive definite; the unknown-dynamics problems of the source are not treated here. For constant matrices with $(A, B)$ stabilizable, the Riccati recursion from zero terminal cost is nondecreasing and converges to a positive semidefinite solution of the discrete algebraic Riccati equation; when $Q = C^\top C$ with $(C, A)$ detectable as well, the limit is the unique stabilizing positive semidefinite solution and is reached from every positive semidefinite start (the dual of the filtering result of Anderson and Moore, 1979, §4.4). Under the same two hypotheses, the stabilizing feedback is optimal among inputs of finite infinite-horizon cost, with value $x_0^\top P x_0$; Sontag (1998, §8.4) proves the continuous-time version under controllability and states the discrete-time version, also under controllability, as Lemma/Exercise 8.4.4; the stabilizable and detectable discrete-time version is derived on the infinite-horizon optimality page.
 
 - [Riccati gain](riccati-gain.md)
 - [Riccati update](riccati-map.md)
@@ -14,6 +14,9 @@ The linear quadratic regulator (LQR) controls the linear system $x_{t+1} = A x_t
 - [Finite-horizon LQR cost](lqr-cost.md)
 - [Every control sequence costs at least the Riccati value](lqr-cost-ge.md)
 - [The linear feedback attains the Riccati value](lqr-cost-feedback.md)
+- [The Riccati recursion converges to the stabilizing solution](riccati-recursion-converges-to-the-stabilizing-solution.md)
+- [Infinite-horizon optimality of the stabilizing Riccati feedback](infinite-horizon-lqr-optimality-of-the-stabilizing-feedback.md)
+- [Exact cost decomposition and the unique optimal control of finite-horizon LQR](exact-cost-decomposition-and-unique-optimal-control-of-finite-horizon-lqr.md)
 
 ## Related topics
 

@@ -13,25 +13,16 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientDerivatives
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Real Filter Topology
-
-/-- **Area between powers of cosines.** For natural numbers $n$ and $k$, the area between the
-curves $y = \cos^n x$ and $y = \cos^n(kx)$ on $[0, \pi]$ is
-$A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$, where $\cos^n x$ means $(\cos x)^n$.
-
-The paper's $A_n$ is the limit of $A_n(k)$ as $k \to \infty$ (Eq. (1)), with $k$ running over
-the natural numbers.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Eq. (1). -/
-public noncomputable def cosPowArea (n k : ℕ) : ℝ :=
-  ∫ x in (0 : ℝ)..π, |cos x ^ n - cos (k * x) ^ n|
 
 /-- **The area between cosine powers vanishes for exponent zero.** For natural numbers $n$ and
 $k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$ be the area between $\cos^n x$ and
@@ -87,20 +78,6 @@ public theorem_wanted tendsto_cosPowArea_of_even (n : ℕ) :
       (𝓝 (16 / (2 ^ n * π) * ∑ j ∈ Finset.range ((n - 4) / 4 + 1),
         (n.choose (2 * j + 1) : ℝ) / ((n : ℝ) / 2 - (2 * j + 1)) ^ 2)))
 
-/-- **Recursion for the limiting areas between cosine powers.** For natural numbers $n$ and $k$,
-let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. For every natural number $n \ge 3$ there
-are real numbers $L$ and $L'$ such that $A_n(k) \to L$ and $A_{n-2}(k) \to L'$ as $k \to \infty$
-through the natural numbers, and $L = \frac{n-1}{n} L' + \frac{c}{n^2 \pi}$, where $c = 8$ if $n$
-is odd and $c = 16$ if $n$ is even.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 3
-(`jis-2025-25.2.3-thm-3`). -/
-public theorem_wanted cosPowArea_limit_recursion {n : ℕ} (hn : 3 ≤ n) :
-    ∃ L L' : ℝ, Tendsto (fun k => cosPowArea n k) atTop (𝓝 L) ∧
-      Tendsto (fun k => cosPowArea (n - 2) k) atTop (𝓝 L') ∧
-      L = ((n : ℝ) - 1) / n * L' + (if Odd n then 8 else 16) / ((n : ℝ) ^ 2 * π)
-
 /-- **Limiting area between cosine powers via double factorials.** For natural numbers $n$ and
 $k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. As $k \to \infty$ through the natural
 numbers: if $n$ is odd, then
@@ -124,35 +101,6 @@ public theorem_wanted tendsto_cosPowArea_doubleFactorial (n : ℕ) :
           ((2 * j).doubleFactorial : ℝ) /
             ((2 * j + 1).doubleFactorial * (2 * j + 2)))))
 
-/-- **The cotangent limit $4/x$.** For every nonzero real number $x$, as $k \to \infty$ through the
-natural numbers,
-$$\left(\frac{1}{k} - 1\right)\cot\frac{x}{k-1} + \left(\frac{1}{k} + 1\right)\cot\frac{x}{k+1}
-\to \frac{4}{x}.$$
-
-The paper states this for every real number $x$; the hypothesis $x \neq 0$ is added because at
-$x = 0$ the cotangents and $4/x$ are undefined.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 8
-(`jis-2025-25.2.3-lem-8`). -/
-public theorem_wanted tendsto_cot_div_pred_add_cot_div_succ {x : ℝ} (hx : x ≠ 0) :
-    Tendsto (fun k : ℕ => (1 / (k : ℝ) - 1) * cot (x / (k - 1)) +
-      (1 / (k : ℝ) + 1) * cot (x / (k + 1))) atTop (𝓝 (4 / x))
-
-/-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
-number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \int_{2\pi\ell/(k+1)}^{2\pi\ell/(k-1)} \bigl(\cos(qkx) - \cos(qx)\bigr)\,dx
-\to \frac{4}{q^2\pi}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 9
-(`jis-2025-25.2.3-lem-9`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_odd_odd {q : ℕ} (hq : Odd q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ∫ x in (2 * π * l / ((2 * m + 1 : ℝ) + 1))..(2 * π * l / ((2 * m + 1 : ℝ) - 1)),
-        (cos (q * (2 * m + 1 : ℝ) * x) - cos (q * x))) atTop
-      (𝓝 (4 / ((q : ℝ) ^ 2 * π)))
-
 /-- **Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and odd $k$.** Let $q$ be an
 even natural number, for each natural number $m$ put $k = 2m + 1$, and let
 $f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
@@ -169,41 +117,6 @@ public theorem_wanted tendsto_sum_integral_cos_sub_cos_odd_even {q : ℕ} (hq : 
           (cos (q * x) - cos (q * (2 * m + 1 : ℝ) * x))) -
         ∫ x in ((l : ℝ) * π / ((2 * m + 1 : ℝ) + 1))..((l : ℝ) * π / ((2 * m + 1 : ℝ) - 1)),
           (cos (q * x) - cos (q * (2 * m + 1 : ℝ) * x)))) atTop
-      (𝓝 (if q % 4 = 0 then 0 else 16 / ((q : ℝ) ^ 2 * π)))
-
-/-- **Alternating integral sums of $\cos qx - \cos qkx$ for odd $q$ and even $k$.** Let $q$ be an
-odd natural number, for each natural number $m$ put $k = 2m$, and let
-$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \left(\int_{2(\ell-1)\pi/(k-1)}^{2\ell\pi/(k+1)} f(x)\,dx -
-\int_{2\ell\pi/(k+1)}^{2\ell\pi/(k-1)} f(x)\,dx\right) \to \frac{8}{q^2\pi}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 11
-(`jis-2025-25.2.3-lem-11`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : Odd q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ((∫ x in (((l : ℝ) - 1) * 2 * π / ((2 * m : ℝ) - 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
-        ∫ x in ((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) - 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
-      (𝓝 (8 / ((q : ℝ) ^ 2 * π)))
-
-/-- **Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and even $k$.** Let $q$ be an
-even natural number, for each natural number $m$ put $k = 2m$, and let
-$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \left(\int_{(\ell-1)\pi/(k-1)}^{\ell\pi/(k+1)} f(x)\,dx -
-\int_{\ell\pi/(k+1)}^{\ell\pi/(k-1)} f(x)\,dx\right)$$
-tends to $0$ if $q \equiv 0 \pmod 4$ and to $16/(q^2\pi)$ if $q \equiv 2 \pmod 4$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 12
-(`jis-2025-25.2.3-lem-12`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_even {q : ℕ} (hq : Even q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ((∫ x in (((l : ℝ) - 1) * π / ((2 * m : ℝ) - 1))..((l : ℝ) * π / ((2 * m : ℝ) + 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
-        ∫ x in ((l : ℝ) * π / ((2 * m : ℝ) + 1))..((l : ℝ) * π / ((2 * m : ℝ) - 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
       (𝓝 (if q % 4 = 0 then 0 else 16 / ((q : ℝ) ^ 2 * π)))
 
 end

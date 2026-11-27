@@ -14,89 +14,13 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.FibonacciGeneratingFunctions
+public import MathlibExt.NumberTheory.FibonacciGeneratingFunctionsKnappMRelations
 public import MathlibExt.NumberTheory.GibonacciNumber
+public import MathlibExt.NumberTheory.GibonacciPowerSeries
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generating series of a Gibonacci sequence.** Let $a$ and $b$ be integers and let
-$(G_n)_{n \ge 0}$ be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. In the ring
-$\mathbb{Q}[[X]]$ of formal power series with rational coefficients,
-
-$$(1 - X - X^2) \sum_{n \ge 0} G_n X^n = a + (b - a) X.$$
-
-This is the product form of the quotient $\frac{(b - a)x + a}{1 - x - x^2}$ for the generating
-function of $(G_n)$.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 5
-(`jis-2024-24.3.1-lem-5`). -/
-public theorem_wanted gibonacci_powerSeries_mul (a b : ℤ) :
-    (1 - PowerSeries.X - PowerSeries.X ^ 2 : PowerSeries ℚ)
-        * PowerSeries.mk (fun n => ((gibonacciNumber a b n : ℤ) : ℚ))
-      = PowerSeries.C (a : ℚ)
-        + PowerSeries.C ((b : ℚ) - (a : ℚ)) * PowerSeries.X
-
-/-- **Congruence criterion for good fractions.** Let $a, b, p, q$ be integers with
-$(a, b) \ne (0, 0)$, $q \ne 0$ and $\gcd(p, q) = 1$, and put $m = |q^2 - pq - p^2|$. Then
-$p / q$ is good for $(a, b)$ if and only if there are integers $u$ and $v$ with
-$(q - p) u \equiv 1$, $p v \equiv 1$, $a \equiv -b p u$ and $a \equiv -b q v \pmod{m}$.
-
-In the source's notation, with modular inverses, the condition reads
-$a \equiv -bp(q - p)^{-1} \equiv -bqp^{-1} \pmod{m}$.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 6
-(`jis-2024-24.3.1-lem-6`). -/
-public theorem_wanted isGibonacciGood_iff (a b p q : ℤ)
-    (hab : (a, b) ≠ (0, 0)) (hcop : Int.gcd p q = 1) (hq : q ≠ 0) :
-    IsGibonacciGood a b ((p : ℚ) / (q : ℚ)) ↔
-    ∃ u v : ℤ, (q - p) * u ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
-      p * v ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
-      a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
-      a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|]
-
-/-- **Consecutive ratios of a shifted Gibonacci sequence are good.** Let $a$ and $b$ be integers
-and let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = -b$ and $H_1 = a$. For every
-natural number $n$ with $H_{n+1} \ne 0$, the ratio $H_n / H_{n+1}$ is good for $(a, b)$.
-
-The source indexes $H$ by all integers.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 8
-(`jis-2024-24.3.1-lem-8`). -/
-public theorem_wanted isGibonacciGood_shifted_ratio (a b : ℤ) (n : ℕ)
-    (h : gibonacciNumber (-b) a (n + 1) ≠ 0) :
-    IsGibonacciGood a b
-      ((gibonacciNumber (-b) a n : ℚ) / (gibonacciNumber (-b) a (n + 1) : ℚ))
-
-/-- **Good consecutive ratios of a Gibonacci sequence.** Let $p$ and $q$ be coprime integers,
-let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = p$ and $H_1 = q$, and put
-$m = |q^2 - pq - p^2|$. Call a pair of integers $(a, b)$ admissible when $H_n / H_{n+1}$ is
-good for $(a, b)$ for every natural number $n$ with $H_{n+1} \ne 0$. Then there are infinitely
-many admissible pairs, and a pair $(a, b)$ is admissible if and only if there are integers $u$
-and $v$ with $(q - p) u \equiv 1$, $p v \equiv 1$, $a \equiv -b p u$ and
-$a \equiv -b q v \pmod{m}$.
-
-In the source's notation, with modular inverses, the condition reads
-$a \equiv -bp(q - p)^{-1} \equiv -bqp^{-1} \pmod{m}$. The source indexes $H$ by all integers.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Theorem 3
-(`jis-2024-24.3.1-thm-3`). -/
-public theorem_wanted isGibonacciGood_ratios_infinite_iff (p q : ℤ)
-    (hcop : Int.gcd p q = 1) :
-    (Set.Infinite {ab : ℤ × ℤ | ∀ n : ℕ, gibonacciNumber p q (n + 1) ≠ 0 →
-        IsGibonacciGood ab.1 ab.2
-          ((gibonacciNumber p q n : ℚ) / (gibonacciNumber p q (n + 1) : ℚ))}) ∧
-    ∀ a b : ℤ, (∀ n : ℕ, gibonacciNumber p q (n + 1) ≠ 0 →
-        IsGibonacciGood a b
-          ((gibonacciNumber p q n : ℚ) / (gibonacciNumber p q (n + 1) : ℚ))) ↔
-      ∃ u v : ℤ, (q - p) * u ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
-        p * v ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
-        a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
-        a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|]
 
 /-- Lemma 9: the values `H_n / H_{n+1}` (`n ∈ ℤ`, `H_{n+1} ≠ 0`) of the
 sequence with `H_0 = -b`, `H_1 = a` are exactly the values
@@ -108,18 +32,6 @@ Sequences 27 (2024), Article 24.3.1, Lemma 9 (`jis-2024-24.3.1-lem-9`). -/
 public theorem_wanted gibonacci_shifted_ratios_eq_negated_ratios (a b : ℤ) :
     {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-b, a), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} =
       {x : ℚ | ∃ w ∈ fibonacciPairOrbit (a, b), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1}
-
-/-- Lemma 11: `M(a, b, p+q, p+2q) = -3M(a, b, q, p+q) - M(a, b, p, q)` and
-`M(a,b,p,q)² + 3M(a,b,p,q)M(a,b,q,p+q) + M(a,b,q,p+q)² = a² + ab - b²`.
-Stated for every `(p, q) ≠ (0, 0)`; the paper assumes `q ≠ 0`,
-`p + q ≠ 0`, `p + 2q ≠ 0`.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 11 (`jis-2024-24.3.1-lem-11`). -/
-public theorem_wanted knappM_recurrence_and_quadratic (a b p q : ℤ) (hpq : (p, q) ≠ (0, 0)) :
-    knappM a b (p + q) (p + 2 * q) = -3 * knappM a b q (p + q) - knappM a b p q ∧
-      knappM a b p q ^ 2 + 3 * knappM a b p q * knappM a b q (p + q) +
-          knappM a b q (p + q) ^ 2 = ((a ^ 2 + a * b - b ^ 2 : ℤ) : ℚ)
 
 /-- Lemma 12: if `a² + ab - b² < 0` and `p / q` (lowest terms) is good for
 `(a, b)`, some consecutive pair `(H_n, H_{n+1})` of its family has

@@ -34,197 +34,14 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import MathlibExt.Combinatorics.Additive.MaxMinIndecomposability
+public import MathlibExt.Combinatorics.Additive.MaxMinIndecomposabilityLunarHoeffdingExtremalSetNcardLe
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Pointwise Filter Topology
-
-/-- **Max-min product.** The max-min product of sequences $g, h \colon \mathbb{N} \to \mathbb{N}$
-is the sequence $g \otimes h$ with $(g \otimes h)_k = \max_{i + j = k} \min(g_i, h_j)$ for every
-$k \in \mathbb{N}$, the maximum running over pairs of natural numbers $(i, j)$. This is the product
-of the max-min semiring $(\mathbb{N}, \max, \min)$ on coefficient sequences.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(the max-min semiring and its polynomials). -/
-public def maxMinMul (g h : ℕ → ℕ) : ℕ → ℕ :=
-  fun k => (Finset.antidiagonal k).sup fun p => min (g p.1) (h p.2)
-
-/-- **Constant coefficient of a max-min product.** For all sequences
-$g, h \colon \mathbb{N} \to \mathbb{N}$, the max-min product satisfies
-$(g \otimes h)_0 = \min(g_0, h_0)$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(the max-min semiring and its polynomials). -/
-public theorem maxMinMul_zero (g h : ℕ → ℕ) : maxMinMul g h 0 = min (g 0) (h 0) := by
-  simp [maxMinMul]
-
-/-- **Linear coefficient of a max-min product.** For all sequences
-$g, h \colon \mathbb{N} \to \mathbb{N}$, the max-min product satisfies
-$(g \otimes h)_1 = \max(\min(g_0, h_1), \min(g_1, h_0))$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(the max-min semiring and its polynomials). -/
-public theorem maxMinMul_one (g h : ℕ → ℕ) :
-    maxMinMul g h 1 = max (min (g 0) (h 1)) (min (g 1) (h 0)) := by
-  simp [maxMinMul, Finset.Nat.antidiagonal_succ]
-
-/-- **Monomials over the max-min semiring.** A coefficient sequence
-$g : \mathbb{N} \to \mathbb{N}$ over the max-min semiring is a monomial when exactly one of its
-entries is nonzero, that is, when it is $c x^i$ for some index $i$ and some coefficient $c \neq 0$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(definition of indecomposable). -/
-public def IsMaxMinMonomial (g : ℕ → ℕ) : Prop :=
-  ∃ i, ∀ j, g j ≠ 0 ↔ j = i
-
-/-- **The zero sequence is not a monomial.** The zero coefficient sequence
-$\mathbb{N} \to \mathbb{N}$ is not a max-min monomial: a monomial has exactly one nonzero
-entry, and the zero sequence has none.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(definition of indecomposable). -/
-public theorem not_isMaxMinMonomial_zero : ¬ IsMaxMinMonomial 0 := by
-  rintro ⟨i, hi⟩
-  exact (hi i).2 rfl rfl
-
-/-- **Max-min indecomposable sequences.** A coefficient sequence $f : \mathbb{N} \to \mathbb{N}$
-is indecomposable (in the arXiv version: irreducible) when for all sequences
-$g, h : \mathbb{N} \to \mathbb{N}$ with $g \otimes h = f$, where $\otimes$ is the max-min product,
-$g$ or $h$ is a max-min monomial, that is, a sequence with exactly one nonzero term.
-
-Factors range over all sequences $\mathbb{N} \to \mathbb{N}$; for a natural number $b$ and $f$
-with all terms less than $b$, this is equivalent to factoring over $\{0, \dots, b - 1\}$, by
-applying the digit map $x \mapsto \min(x, b - 1)$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(definition of indecomposable). -/
-public def IsMaxMinIndecomposable (f : ℕ → ℕ) : Prop :=
-  ∀ g h : ℕ → ℕ, maxMinMul g h = f → IsMaxMinMonomial g ∨ IsMaxMinMonomial h
-
-/-- **The zero sequence is decomposable.** The zero coefficient sequence
-$\mathbb{N} \to \mathbb{N}$ is not indecomposable over the max-min semiring: it factors as
-$0 = 0 \otimes 0$, where $\otimes$ is the max-min product, and the zero sequence is not a
-monomial.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(definition of indecomposable). -/
-public theorem not_isMaxMinIndecomposable_zero : ¬ IsMaxMinIndecomposable 0 := by
-  intro h
-  have h0 : maxMinMul (0 : ℕ → ℕ) 0 = 0 := by
-    funext k
-    simp [maxMinMul]
-  rcases h 0 0 h0 with h1 | h1 <;> exact not_isMaxMinMonomial_zero h1
-
-/-- **Coefficient sequence of a digit string.** Let $n$ and $b$ be natural numbers. The
-coefficient sequence of a digit string $a = (a_0, \dots, a_{n-1})$ with digits in
-$\{0, \dots, b - 1\}$ is the sequence $\mathbb{N} \to \mathbb{N}$ whose $k$-th term is $a_k$ for
-$k < n$ and $0$ for $k \ge n$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(lunar numbers `ℒ_b` as polynomials over `ℬ_b = {0, …, b - 1}`). -/
-public def digitSeq {n b : ℕ} (a : Fin n → Fin b) : ℕ → ℕ :=
-  fun k => if hk : k < n then (a ⟨k, hk⟩ : ℕ) else 0
-
-/-- **A digit string has no coefficients beyond its length.** Let $n$ and $b$ be natural numbers
-and let $a = (a_0, \dots, a_{n-1})$ be a digit string with digits in $\{0, \dots, b - 1\}$. Then
-for every $k \ge n$, the $k$-th term of the coefficient sequence of $a$ is $0$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(lunar numbers `ℒ_b` as polynomials over `ℬ_b = {0, …, b - 1}`). -/
-public theorem digitSeq_of_le {n b : ℕ} (a : Fin n → Fin b) {k : ℕ} (hk : n ≤ k) :
-    digitSeq a k = 0 := by
-  simp [digitSeq, Nat.not_lt.2 hk]
-
-/-- **Lunar unit.** For a natural number $b$, the lunar unit of base $b$ is the coefficient sequence
-$\mathbb{N} \to \mathbb{N}$ whose constant term is $b - 1$ and whose other terms are all $0$, that
-is, the constant polynomial $b - 1$ over the max-min semiring. The subtraction is truncated, so
-the lunar unit of base $0$ is the zero sequence.
-
-For sequences with all terms less than $b$, the lunar unit is the identity of the max-min product.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(definition of prime lunar numbers). -/
-public def lunarUnit (b : ℕ) : ℕ → ℕ :=
-  fun k => if k = 0 then b - 1 else 0
-
-/-- **The lunar unit is a monomial.** For every natural number $b \ge 2$, the lunar unit of base
-$b$, the sequence with constant term $b - 1$ and all other terms $0$, is a max-min monomial: it
-has exactly one nonzero term.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(definition of prime lunar numbers). -/
-public theorem isMaxMinMonomial_lunarUnit {b : ℕ} (hb : 2 ≤ b) :
-    IsMaxMinMonomial (lunarUnit b) :=
-  ⟨0, fun j => by by_cases hj : j = 0 <;> simp [lunarUnit, hj]; omega⟩
-
-/-- **Lunar primes.** Let $b$ be a natural number. The lunar unit of base $b$ is the constant
-polynomial $b - 1$, the sequence with constant term $b - 1$ and all other terms $0$. A coefficient
-sequence $f : \mathbb{N} \to \mathbb{N}$ is a lunar prime of base $b$ (Applegate, LeBrun and
-Sloane) when for all sequences $g, h : \mathbb{N} \to \mathbb{N}$ with all terms less than $b$ and
-$g \otimes h = f$, where $\otimes$ is the max-min product, $g$ or $h$ is the lunar unit.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(definition of prime lunar numbers). -/
-public def IsLunarPrime (b : ℕ) (f : ℕ → ℕ) : Prop :=
-  ∀ g h : ℕ → ℕ, (∀ i, g i < b) → (∀ i, h i < b) → maxMinMul g h = f →
-    g = lunarUnit b ∨ h = lunarUnit b
-
-/-- **Zero is not a lunar prime.** For every integer $b \ge 2$, the zero sequence is not a lunar
-prime of base $b$: $0 = 0 \otimes 0$, where $\otimes$ is the max-min product, and $0$ is not the
-lunar unit, the constant polynomial $b - 1$ with coefficient sequence $(b - 1, 0, 0, \dots)$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(definition of prime lunar numbers). -/
-public theorem not_isLunarPrime_zero {b : ℕ} (hb : 2 ≤ b) : ¬ IsLunarPrime b 0 := by
-  intro h
-  have h0 : maxMinMul (0 : ℕ → ℕ) 0 = 0 := by
-    funext k
-    simp [maxMinMul]
-  have hne : (0 : ℕ → ℕ) ≠ lunarUnit b := by
-    intro he
-    have := congrFun he 0
-    simp [lunarUnit] at this
-    omega
-  rcases h 0 0 (fun _ => by simp; omega) (fun _ => by simp; omega) h0 with h1 | h1 <;>
-    exact hne h1
-
-/-- **Lunar prime candidates.** Let $b$ be a natural number. A coefficient sequence
-$f : \mathbb{N} \to \mathbb{N}$ is a prime candidate in base $b$ when its constant term $f_0$ is
-nonzero and some term $f_i$ equals $b - 1$, where the subtraction is truncated, so that
-$b - 1 = 0$ when $b = 0$. For $f$ with all terms less than $b$, the second condition says that
-the largest coefficient of $f$ is $b - 1$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(definition of prime candidate). -/
-public def IsLunarPrimeCandidate (b : ℕ) (f : ℕ → ℕ) : Prop :=
-  f 0 ≠ 0 ∧ ∃ i, f i = b - 1
-
-/-- **The lunar unit is a prime candidate.** For every natural number $b \ge 2$, the lunar unit
-of base $b$, the sequence with constant term $b - 1$ and all other terms $0$, is a prime candidate
-in base $b$: its constant term is nonzero and one of its terms equals $b - 1$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 2
-(definition of prime candidate). -/
-public theorem isLunarPrimeCandidate_lunarUnit {b : ℕ} (hb : 2 ≤ b) :
-    IsLunarPrimeCandidate b (lunarUnit b) :=
-  ⟨by simp [lunarUnit]; omega, 0, by simp [lunarUnit]⟩
 
 /-- **Shitov's theorem: almost all Boolean polynomials with nonzero constant term are prime.**
 For $n \in \mathbb{N}$, consider the Boolean polynomials of degree exactly $n$ with nonzero
@@ -308,37 +125,6 @@ public theorem_wanted boolean_close_factor_pairs_card_le {n k : ℕ} (hk : 0 < k
         ((p.1 + p.2).card : ℝ) ≤ p.1.card + p.2.card + d}.ncard : ℝ) ≤
       (n : ℝ) ^ (2 * d + 2) * 2 ^ k
 
-/-- **Indecomposable prime candidates are lunar primes.** Let $n$ and $b \ge 2$ be natural
-numbers, let $a = (a_0, \dots, a_{n-1})$ be a digit string with digits in $\{0, \dots, b - 1\}$,
-and let $f$ be its coefficient sequence. If $f$ is a prime candidate in base $b$ and $f$ is
-max-min indecomposable, then $f$ is a lunar prime of base $b$.
-
-This is Lemma 30 (Applegate, LeBrun and Sloane).
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Lemma 30
-(`jis-2025-25.2.7-lem-30`). -/
-public theorem_wanted isLunarPrime_of_indecomposable_candidate {n b : ℕ} (hb : 2 ≤ b)
-    (a : Fin n → Fin b) (hc : IsLunarPrimeCandidate b (digitSeq a))
-    (hi : IsMaxMinIndecomposable (digitSeq a)) :
-    IsLunarPrime b (digitSeq a)
-
-
-/-- **Level counts of a lunar number.** Let $f$ be a lunar number of base $b$ and degree at most
-$n$, with digits $c_0, \dots, c_n \in \{0, \dots, b - 1\}$, and let $i$ be a natural number. The
-level count $|f_i|$ is the number of indices $k \le n$ with $c_k \ge i$, that is, the number of
-nonzero coefficients of the $i$-level support $f_i = s_i(f)$, the Boolean polynomial with
-coefficient $1$ at $x^k$ when $c_k \ge i$ and $0$ otherwise.
-
-A lunar number $f$ is not a monomial $t x^m$ (with $t = 0$ allowed) if and only if $|f_1| \ge 2$,
-and $f_i$ is not a monomial if and only if $|f_i| \ge 2$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Section 2, Definitions 13 and 16. -/
-public def lunarLevelCount {n b : ℕ} (i : ℕ) (f : Fin (n + 1) → Fin b) : ℕ :=
-  (Finset.univ.filter fun k => i ≤ (f k : ℕ)).card
-
 /-- **Level counts of $1 \oplus 2x^2$ in base $3$.** For the base-$3$ lunar number
 $f = 1 \oplus 2x^2$ of degree at most $2$, with digits $1, 0, 2$, exactly two digits are at least
 $1$ and exactly one digit is at least $2$: $|f_1| = 2$ and $|f_2| = 1$.
@@ -387,25 +173,6 @@ Section 2, before Remark 22. -/
 public def lunarLevelDecomposableSet (b n : ℕ) : Set (Fin (n + 1) → Fin b) :=
   {h | ∃ f g : Fin (n + 1) → Fin b, 2 ≤ lunarLevelCount (b / 2) f ∧
     2 ≤ lunarLevelCount (b / 2) g ∧ maxMinMul (digitSeq f) (digitSeq g) = digitSeq h}
-
-/-- **Hoeffding extremal lunar numbers.** Let $b$ and $n$ be natural numbers and $d$ a real
-number. Let $\mathcal{L}_b^n$ be the set of lunar numbers of base $b$ and degree at most $n$
-(digit strings $c_0, \dots, c_n$ with digits in $\{0, \dots, b - 1\}$), with the max-min product
-$\otimes$, and for $f \in \mathcal{L}_b^n$ let $|f_i|$ be the number of its digits that are at
-least $i$. The set $\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers consists of the
-$h \in \mathcal{L}_b^n$ for which there is an index $i$ with $1 \le i \le b - 1$ such that either
-$\bigl||h_i| - (b - i)n/b\bigr| > d/2$, or $h = f \otimes g$ for some $f, g \in \mathcal{L}_b^n$
-with $\bigl||f_i| + |g_i| - (b - i)(n + 1)/b\bigr| > d/2$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Definition 23. -/
-public def lunarHoeffdingExtremalSet (b n : ℕ) (d : ℝ) : Set (Fin (n + 1) → Fin b) :=
-  {h | ∃ i, 1 ≤ i ∧ i ≤ b - 1 ∧
-    (d / 2 < |(lunarLevelCount i h : ℝ) - ((b : ℝ) - i) * n / b| ∨
-      ∃ f g : Fin (n + 1) → Fin b, maxMinMul (digitSeq f) (digitSeq g) = digitSeq h ∧
-        d / 2 < |((lunarLevelCount i f + lunarLevelCount i g : ℕ) : ℝ) -
-          ((b : ℝ) - i) * (n + 1) / b|)}
 
 private theorem digitSeq_one_one_zero_mul :
     maxMinMul (digitSeq (![1, 1, 0] : Fin 3 → Fin 2)) (digitSeq (![1, 1, 0] : Fin 3 → Fin 2)) =
@@ -482,19 +249,6 @@ public theorem_wanted lunarDecomposableSet_ncard_le {b : ℕ} (hb : 2 ≤ b) :
           (n : ℝ) ^ (2 * d + 4) * (2 : ℝ) ^ (d / 2 - (n + 1) / 3) +
           v * (n : ℝ) ^ (2 * d + 2) * (2 : ℝ) ^ v * (b : ℝ) ^ (d / 2 - n / b) +
           (n : ℝ) ^ 2 * (2 : ℝ) ^ (-v))
-
-/-- **Bound on the number of Hoeffding extremal lunar numbers.** Fix an integer $b \ge 2$. There is
-a constant $C > 0$ such that for every integer $n \ge 1$ and every real $d > 0$, the set
-$\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers of base $b$ and degree at most $n$
-has at most $C n^2 e^{-d^2/(4(n+2))} b^n$ elements.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Lemma 24 (`jis-2025-25.2.7-lem-24`). -/
-public theorem_wanted lunarHoeffdingExtremalSet_ncard_le {b : ℕ} (hb : 2 ≤ b) :
-    ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n → ∀ d : ℝ, 0 < d →
-      ((lunarHoeffdingExtremalSet b n d).ncard : ℝ) ≤
-        C * (n : ℝ) ^ 2 * Real.exp (-d ^ 2 / (4 * (n + 2))) * (b : ℝ) ^ n
 
 /-- **Level counts of a product that is not Hoeffding extremal.** Let $b$ and $n$ be natural
 numbers, $d$ a real number and $f, g, h$ lunar numbers of base $b$ and degree at most $n$ with

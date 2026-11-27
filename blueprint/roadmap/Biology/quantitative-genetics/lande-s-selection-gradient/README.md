@@ -20,3 +20,7 @@
 - [Multivariate directional selection differential](selection-differential-mv.md)
 - [Lande's gradient of mean fitness for multivariate traits](has-gradient-at-mean-fitness-mv.md)
 - [Lande's equation for multivariate traits](selection-differential-mv-eq.md)
+
+- [Polygenic adaptation](polygenic-adaptation.md)
+- [Composite likelihood for the selection gradient from SNP likelihoods](composite-likelihood-for-the-selection-gradient-from-snp-likelihoods.md)
+- [Quadratic-approximation estimator of the selection gradient](quadratic-approximation-estimator-of-the-selection-gradient.md)

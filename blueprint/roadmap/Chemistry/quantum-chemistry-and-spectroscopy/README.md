@@ -6,3 +6,7 @@ Quantum models of atoms and molecules and their spectra: angular momentum, the r
 - [Molecular symmetry and vibrational modes](molecular-symmetry-and-vibrational-modes/README.md)
 - [Nuclear magnetic resonance](nuclear-magnetic-resonance/README.md)
 - [Variational method, perturbation theory and Hückel theory](variational-method-perturbation-theory-and-h-cke/README.md)
+
+- [Optimal Lieb–Oxford constant](optimal-lieb-oxford-constant.md)
+
+- [Continuum Coulomb energy](continuum-coulomb-energy/README.md)

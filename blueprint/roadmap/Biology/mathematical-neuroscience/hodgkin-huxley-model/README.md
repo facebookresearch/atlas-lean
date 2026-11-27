@@ -119,11 +119,11 @@
 ## The steady-state current and its derivative
 
 - [Steady-state current–voltage relation I∞](steady-current.md)
-- [Derivative of the steady-state current](steady-current-deriv.md)
+- [Termwise derivative formula of the steady-state current](steady-current-deriv.md)
 
 ## Monotonicity of the squid steady-state current
 
-- [The squid steady-state current has positive slope for −12 ≤ V ≤ 115](steady-current-deriv-squid-pos.md)
+- [The squid I∞ termwise derivative formula is positive for −12 ≤ V ≤ 115](steady-current-deriv-squid-pos.md)
 - [The squid steady-state current increases strictly for −12 ≤ V ≤ 115](strict-mono-on-steady-current-squid.md)
 
 ## Uniqueness of the squid equilibrium

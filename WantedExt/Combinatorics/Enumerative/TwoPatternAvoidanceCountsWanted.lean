@@ -13,7 +13,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Inv
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Choose.Basic
-public import MathlibExt.Combinatorics.Enumerative.DoubleAscentDescent
+public import MathlibExt.Combinatorics.Enumerative.AscentDescent132321
 public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
@@ -134,25 +134,6 @@ public theorem_wanted ascDesGF_123_132 :
         ascDesGF (pattern3 ![0, 1, 2]) (pattern3 ![0, 2, 1]) =
       1 + PowerSeries.X - 2 * q * PowerSeries.X + p * PowerSeries.X ^ 2 -
         q * PowerSeries.X ^ 2 - p * q * PowerSeries.X ^ 2 + q ^ 2 * PowerSeries.X ^ 2
-
-/-- **Ascents and descents over permutations avoiding $132$ and $321$.** Let
-$$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$
-where $\sigma$ runs over the permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
-$132$ and $321$, and $\mathrm{asc}(\sigma)$ and $\mathrm{des}(\sigma)$ are the numbers of ascents
-and descents of $\sigma$; $G$ is a formal power series in $x$ with coefficients in
-$\mathbb{Q}[p, q]$. Then
-$$(1 - px)^3\, G = 1 + x - 3px - 2px^2 + 3p^2x^2 + qx^2 + p^2x^3 - p^3x^3.$$
-
-Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
-Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Corollary 2
-(`integers-2026-A18-cor-2`). -/
-public theorem_wanted ascDesGF_132_321 :
-    let p : PowerSeries (MvPolynomial (Fin 2) ℚ) := PowerSeries.C (MvPolynomial.X 0)
-    let q : PowerSeries (MvPolynomial (Fin 2) ℚ) := PowerSeries.C (MvPolynomial.X 1)
-    (1 - p * PowerSeries.X) ^ 3 * ascDesGF (pattern3 ![0, 2, 1]) (pattern3 ![2, 1, 0]) =
-      1 + PowerSeries.X - 3 * p * PowerSeries.X - 2 * p * PowerSeries.X ^ 2 +
-        3 * p ^ 2 * PowerSeries.X ^ 2 + q * PowerSeries.X ^ 2 + p ^ 2 * PowerSeries.X ^ 3 -
-        p ^ 3 * PowerSeries.X ^ 3
 
 /-- **Ascents and descents over permutations avoiding $213$ and $231$.** Let
 $$G = \sum_{n \ge 0} \sum_{\sigma} x^n p^{\mathrm{asc}(\sigma)} q^{\mathrm{des}(\sigma)},$$

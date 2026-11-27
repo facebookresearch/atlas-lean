@@ -1,0 +1,109 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Category.Basic
+public import MathlibExt.Analysis.CStarAlgebra.C0DirectSum
+
+/-!
+# Actual heterogeneous C-star c0 sums in the C-star category
+
+The carrier is the closed subalgebra of the bounded dependent product whose
+norm levels have finite support. The category object, coordinate inclusions,
+projections and family maps retain the existing carrier and formulas.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open CategoryTheory
+
+namespace NonUnitalCStarAlgCat
+
+universe u
+
+/-- The literal closed c0-subalgebra carrier of a heterogeneous family. -/
+abbrev c0SumCarrier {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) :=
+  CStarC0Sum (fun i => A i)
+
+/-- The actual completed heterogeneous c0 sum, including an empty index type. -/
+def c0SumObj {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) :
+    NonUnitalCStarAlgCat.{u} :=
+  NonUnitalCStarAlgCat.of (c0SumCarrier A)
+
+/-- The canonical single-coordinate inclusion into the actual c0 sum. -/
+def c0SumInclusion {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) (i : I) :
+    A i ⟶ c0SumObj A := by
+  classical
+  exact CStarC0Sum.single (fun j => A j) i
+
+/-- Coordinate evaluation on the actual completed c0 sum. -/
+def c0SumProjection {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) (i : I) :
+    c0SumObj A ⟶ A i :=
+  CStarC0Sum.eval (fun j => A j) i
+
+/-- Actual component star homomorphisms act coordinatewise on the c0 sum. -/
+def c0SumMap {I : Type u} {A B : I → NonUnitalCStarAlgCat.{u}}
+    (f : ∀ i, A i ⟶ B i) : c0SumObj A ⟶ c0SumObj B :=
+  CStarC0Sum.map (fun i => A i) (fun i => B i) f
+
+/-- The category inclusion has the literal dependent single-coordinate value. -/
+theorem c0SumInclusion_apply {I : Type u} (A : I → NonUnitalCStarAlgCat.{u})
+    (i : I) (a : A i) (j : I) :
+    c0SumProjection A j (c0SumInclusion A i a) = (by
+      classical
+      let x : ∀ k, A k := Pi.single i a
+      exact x j) := by
+  classical
+  rfl
+
+/-- The actual inclusion is the identity at the included coordinate. -/
+@[simp]
+theorem c0SumInclusion_apply_self {I : Type u}
+    (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : A i) :
+    c0SumProjection A i (c0SumInclusion A i a) = a := by
+  classical
+  exact CStarC0Sum.single_apply_self (fun j => A j) i a
+
+/-- A different coordinate of an actual inclusion is zero. -/
+@[simp]
+theorem c0SumInclusion_apply_ne {I : Type u}
+    (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : A i)
+    {j : I} (hji : j ≠ i) : c0SumProjection A j (c0SumInclusion A i a) = 0 := by
+  classical
+  exact CStarC0Sum.single_apply_ne (fun k => A k) i a hji
+
+/-- The projection has exactly the existing coordinate-evaluation formula. -/
+@[simp]
+theorem c0SumProjection_apply {I : Type u}
+    (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : c0SumCarrier A) :
+    c0SumProjection A i a = a i := rfl
+
+/-- The family homomorphism retains every original component value. -/
+@[simp]
+theorem c0SumMap_apply {I : Type u} {A B : I → NonUnitalCStarAlgCat.{u}}
+    (f : ∀ i, A i ⟶ B i) (a : c0SumObj A) (i : I) :
+    c0SumProjection B i (c0SumMap f a) = f i (c0SumProjection A i a) := rfl
+
+/-- Matching coordinate evaluation retracts the actual inclusion. -/
+@[simp]
+theorem c0SumInclusion_projection {I : Type u}
+    (A : I → NonUnitalCStarAlgCat.{u}) (i : I) :
+    c0SumInclusion A i ≫ c0SumProjection A i = 𝟙 (A i) := by
+  ext a
+  exact c0SumInclusion_apply_self A i a
+
+/-- A component inclusion is norm preserving on the actual completed carrier. -/
+@[simp]
+theorem norm_c0SumInclusion {I : Type u}
+    (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : A i) :
+    ‖c0SumInclusion A i a‖ = ‖a‖ := by
+  classical
+  exact CStarC0Sum.norm_single (fun j => A j) i a
+
+end NonUnitalCStarAlgCat

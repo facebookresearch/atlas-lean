@@ -2,5 +2,4 @@
 
 For every real $V$, $m_\infty(V) = \alpha_m(V)/(\alpha_m(V) + \beta_m(V))$, the
 [steady state](steady.md) of the sodium activation kinetics with the rates [$\alpha_m$](alpha-m.md)
-and [$\beta_m$](beta-m.md). Both rates are positive, so the denominator is positive and
-$0 < m_\infty(V) < 1$.
+and [$\beta_m$](beta-m.md).

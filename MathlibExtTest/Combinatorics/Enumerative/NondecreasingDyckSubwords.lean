@@ -47,3 +47,10 @@ example : nondecreasingDyckSubwordTotal [U, D] 1 = 1 := by decide +kernel
 example : nondecreasingDyckSubwordTotal [U, D] 4 = 32 := by decide +kernel
 
 example : nondecreasingDyckSubwordTotal [U, D] 5 = 99 := by decide +kernel
+
+-- Only UDUDUD contributes two overlapping copies of UDU at semilength three.
+example : ((nondecreasingDyckWords 3).filter fun p =>
+    dyckSubwordCount [U, D, U] p.val.toList = 2).card = 1 := by decide +kernel
+
+-- Semilength five is the first term determined by the homogeneous recurrence.
+example : nondecreasingDyckSubwordTotal [U, D, U] 5 = 46 := by decide +kernel

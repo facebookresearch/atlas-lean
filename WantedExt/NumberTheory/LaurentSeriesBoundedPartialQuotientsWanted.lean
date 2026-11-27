@@ -9,8 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotients
+public import MathlibExt.NumberTheory.LaurentSeriesConvergentProperties
 public import Mathlib.Algebra.Polynomial.FieldDivision
+public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotientsLaurentSubConvergentOrder
+public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotientsLaurentMobiusOrderIdentities
 
 namespace MetaMathlibExt
 
@@ -65,45 +67,6 @@ public theorem_wanted baumSweet_exists_root_continuedFraction (n : ℕ)
         ∀ k, 1 ≤ k → laurentPartialQuotient f k =
           polyToLaurentInv (P ^ (2 ^ ((k - 1) * n)) + Q ^ (2 ^ (k * n)))
 
-/-- **Basic properties of the convergents of a Laurent series.** Let $K$ be a field and let
-$\alpha \in K((x^{-1}))$ be irrational, with partial quotients $b_0, b_1, \dots$ and convergents
-$P_n / Q_n$, where $P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$, $Q_0 = 1$,
-$P_{n+1} = b_{n+1} P_n + P_{n-1}$ and $Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. For a Laurent series
-$y = \sum_m c_m x^{-m}$ let $v(y)$ be its order, the least $m$ with $c_m \ne 0$, and let
-$v(0) = 0$; thus $|y| = |x|^{-v(y)}$ for $y \ne 0$. For $\beta \in K((x^{-1}))$ write
-$[b_k, \dots, b_n, \beta] = b_k + 1/(b_{k+1} + 1/(\cdots + 1/(b_n + 1/\beta)))$. Then:
-(i) for every $n \ge 0$ and every $\beta \ne 0$ such that $[b_k, \dots, b_n, \beta] \ne 0$ for
-all $1 \le k \le n$, $(\beta P_n + P_{n-1}) / (\beta Q_n + Q_{n-1}) = [b_0, \dots, b_n, \beta]$;
-(ii) $P_n Q_{n-1} - P_{n-1} Q_n = (-1)^{n+1}$ for every $n \ge 0$;
-(iii) $Q_{n-1} \ne 0$ and $v(Q_n) < v(Q_{n-1})$ for every $n \ge 1$;
-(iv) $v(Q_n) = v(b_1) + \dots + v(b_n)$ for every $n \ge 1$;
-(v) $v(\alpha - P_n / Q_n) = -v(b_{n+1}) - 2 v(Q_n)$ for every $n \ge 1$;
-(vi) $v(Q_n \alpha - P_n) < v(Q_{n+1} \alpha - P_{n+1})$ for every $n \ge 1$.
-
-Part (iii) fails at $n = 0$ because $Q_{-1} = 0$.
-
-Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
-Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
-Lemma 1 (`integers-2026-A57-lem-1`). -/
-public theorem_wanted laurentConvergent_properties (α : LaurentSeries K)
-    (hα : LaurentIsIrrational α) :
-    (∀ n : ℕ, ∀ β : LaurentSeries K, β ≠ 0 →
-        (∀ k, 1 ≤ k → k ≤ n → ((List.range' k (n + 1 - k)).map (laurentPartialQuotient α)).foldr
-          (fun b t => b + t⁻¹) β ≠ 0) →
-        (β * laurentConvNum α (n + 1) + laurentConvNum α n) /
-            (β * laurentConvDen α (n + 1) + laurentConvDen α n) =
-          ((List.range (n + 1)).map (laurentPartialQuotient α)).foldr (fun b t => b + t⁻¹) β) ∧
-      (∀ n : ℕ, laurentConvNum α (n + 1) * laurentConvDen α n -
-          laurentConvNum α n * laurentConvDen α (n + 1) = (-1) ^ (n + 1)) ∧
-      (∀ n : ℕ, 1 ≤ n → laurentConvDen α n ≠ 0 ∧
-          (laurentConvDen α (n + 1)).order < (laurentConvDen α n).order) ∧
-      (∀ n : ℕ, 1 ≤ n → (laurentConvDen α (n + 1)).order =
-          ∑ i ∈ Finset.Icc 1 n, (laurentPartialQuotient α i).order) ∧
-      (∀ n : ℕ, 1 ≤ n → (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order =
-          -(laurentPartialQuotient α (n + 1)).order - 2 * (laurentConvDen α (n + 1)).order) ∧
-      (∀ n : ℕ, 1 ≤ n → (laurentConvDen α (n + 1) * α - laurentConvNum α (n + 1)).order <
-          (laurentConvDen α (n + 2) * α - laurentConvNum α (n + 2)).order)
-
 /-- **Frobenius acts on continued fractions of Laurent series.** Let $K$ be a finite field with
 $q$ elements and let $\alpha \in K((x^{-1}))$, with partial quotients $b_0, b_1, \dots$ and
 convergent numerators and denominators $P_n, Q_n$, where $P_{-1} = 1$ and $Q_{-1} = 0$. Then for
@@ -151,25 +114,6 @@ public theorem_wanted laurent_eq_convergent_of_order (α : LaurentSeries K)
           polyToLaurentInv Q =
             HahnSeries.C c * laurentConvDen α (n + 1) + HahnSeries.C d * laurentConvDen α n)
 
-/-- **Distance from an irrational Laurent series to its convergents.** Let $K$ be a field, let
-$\alpha \in K((x^{-1}))$ be irrational with convergents $P_n/Q_n$ ($n \ge 0$), and for nonzero
-$y \in K((x^{-1}))$ let $|y| = |x|^{\deg y}$, where $\deg y$ is the largest exponent of $x$
-occurring in $y$ and $|x| > 1$ is fixed. (i) If $|\alpha| \ge 1$, then
-$|\alpha - P_n/Q_n| < |\alpha|$ for all $n \ge 0$. (ii) If $|\alpha| < 1$, then
-$|\alpha - P_0/Q_0| = |\alpha|$ and $|\alpha - P_n/Q_n| < |\alpha|$ for all $n \ge 1$.
-
-Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
-Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
-Lemma 4 (`integers-2026-A57-lem-4`). -/
-public theorem_wanted laurent_sub_convergent_order (α : LaurentSeries K)
-    (hα : LaurentIsIrrational α) :
-    (α.order ≤ 0 → ∀ n : ℕ,
-        α.order < (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order) ∧
-      (0 < α.order →
-        (α - laurentConvNum α 1 / laurentConvDen α 1).order = α.order ∧
-          ∀ n : ℕ, 1 ≤ n →
-            α.order < (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order)
-
 /-- **Lasjaunias's bound on the next partial quotient.** Let $\mathbb{F}_q$ be a finite field, let
 $A, B, C, D \in \mathbb{F}_q[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$, and let
 $\alpha \in \mathbb{F}_q((x^{-1}))$ be irrational with $\alpha = (A\alpha^q + B)/(C\alpha^q + D)$.
@@ -202,45 +146,6 @@ public theorem_wanted lasjaunias_partialQuotient_bound [Fintype K] [DecidableEq 
         (-C * P + A * Q) / gcd (D * P - B * Q) (-C * P + A * Q) = T ^ Fintype.card K) :
     -(laurentPartialQuotient α (n + 1)).order <
       ((A * D - B * C).natDegree : ℤ) - 2 * (gcd (D * P - B * Q) (-C * P + A * Q)).natDegree
-
-/-- **Degree identities at convergents of a Möbius–Frobenius fixed point.** Let $K$ be a finite
-field with $q$ elements, let $A, B, C, D \in K[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$,
-and let $\alpha \in K((x^{-1}))$ be irrational with $\alpha = (A \alpha^q + B) / (C \alpha^q + D)$.
-Let $b_0, b_1, \dots$ be the partial quotients of $\alpha$ and $P_n / Q_n$ its convergents, where
-$P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$, $Q_0 = 1$, $P_{n+1} = b_{n+1} P_n + P_{n-1}$ and
-$Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. For a Laurent series $y = \sum_m c_m x^{-m}$ let $v(y)$ be its
-order, the least $m$ with $c_m \ne 0$, and let $v(0) = 0$; thus $|y| = |x|^{-v(y)}$ for
-$y \ne 0$. Let $n \ge 0$, let $P, Q \in K[x]$ be coprime with $Q \ne 0$ and $P Q_n = Q P_n$,
-and put $R_1 = DP - BQ$, $S_1 = -CP + AQ$, $R_2 = AP^q + BQ^q$ and $S_2 = CP^q + DQ^q$, with
-the degree of the zero polynomial taken to be $0$. Then:
-(i) if $v(\alpha - A/C) < v(\alpha - P/Q)$, then
-$v(S_1 \alpha^q - R_1) = \deg S_1 - \deg \Delta - v(b_{n+1})$;
-(ii) if $v(\alpha^q + D/C) < q \, v(\alpha - P/Q)$, then
-$v(S_2 \alpha - R_2) = \deg S_2 - \deg \Delta - q \, v(b_{n+1})$.
-
-Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
-Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
-Lemma 7, (3.7) and (3.8) (`integers-2026-A57-lem-7`). -/
-public theorem_wanted laurentMobius_order_identities [Fintype K] (A B C D : Polynomial K)
-    (hΔ : A * D - B * C ≠ 0) (hC : C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
-    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
-      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
-    (n : ℕ) (P Q : Polynomial K) (hPQ : IsCoprime P Q) (hQ : Q ≠ 0)
-    (hconv : polyToLaurentInv P * laurentConvDen α (n + 1) =
-      polyToLaurentInv Q * laurentConvNum α (n + 1)) :
-    ((α - polyToLaurentInv A / polyToLaurentInv C).order <
-        (α - polyToLaurentInv P / polyToLaurentInv Q).order →
-      (polyToLaurentInv (-C * P + A * Q) * α ^ Fintype.card K -
-          polyToLaurentInv (D * P - B * Q)).order =
-        ((-C * P + A * Q).natDegree : ℤ) - (A * D - B * C).natDegree -
-          (laurentPartialQuotient α (n + 1)).order) ∧
-      ((α ^ Fintype.card K + polyToLaurentInv D / polyToLaurentInv C).order <
-          Fintype.card K * (α - polyToLaurentInv P / polyToLaurentInv Q).order →
-        (polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) * α -
-            polyToLaurentInv (A * P ^ Fintype.card K + B * Q ^ Fintype.card K)).order =
-          ((C * P ^ Fintype.card K + D * Q ^ Fintype.card K).natDegree : ℤ) -
-            (A * D - B * C).natDegree -
-            Fintype.card K * (laurentPartialQuotient α (n + 1)).order)
 
 /-- **Lasjaunias's criterion for unbounded partial quotients.** Let $\mathbb{F}_q$ be a finite
 field, let $A, B, C, D \in \mathbb{F}_q[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$, and let

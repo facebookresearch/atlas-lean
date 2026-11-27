@@ -1,0 +1,3 @@
+# Well-formed instances of MAXIMUM CUT ON UNIT DISK GRAPHS
+
+An instance $(P, E, K)$ is well-formed for MAXIMUM CUT ON UNIT DISK GRAPHS when every coordinate code in $P$ has a positive denominator, the centers in $P$ are distinct as points of the plane, $(|P|, E, K)$ is a well-formed MAXIMUM CUT instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < |P|$, $v < |P|$, $u \ne v$ and $(v, u) \notin E$), the graph on $0, \dots, |P|-1$ given by $E$ (adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) equals the unit disk graph of $P$ (two distinct positions adjacent exactly when their centers are at Euclidean distance at most $1$), and $K > 0$.

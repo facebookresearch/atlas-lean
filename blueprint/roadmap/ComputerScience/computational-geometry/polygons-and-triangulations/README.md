@@ -1,0 +1,17 @@
+# Polygons and triangulations
+
+- [Simple polygons](simple-polygons.md)
+- [The even–odd point-in-polygon test](the-evenodd-point-in-polygon-test.md)
+- [Diagonals and triangulations of a simple polygon](diagonals-and-triangulations-of-a-simple-polygon.md)
+- [Triangulation theorem for simple polygons](triangulation-theorem-for-simple-polygons.md)
+- [The dual of a polygon triangulation is a tree](the-dual-of-a-polygon-triangulation-is-a-tree.md)
+- [Meisters' two ears theorem](meisters-two-ears-theorem.md)
+- [Three-colorability of polygon triangulations](three-colorability-of-polygon-triangulations.md)
+- [Chvátal's art gallery theorem](chvatal-s-art-gallery-theorem.md)
+- [Monotone polygons](monotone-polygons.md)
+- [Polygons without interior cusps are monotone](polygons-without-interior-cusps-are-monotone.md)
+- [Partition of a simple polygon into monotone pieces](partition-of-a-simple-polygon-into-monotone-pieces.md)
+- [Triangulating a monotone polygon in linear time](triangulating-a-monotone-polygon-in-linear-time.md)
+- [Triangulating a simple polygon in $O(n \log n)$ time](triangulating-a-simple-polygon-in-o-n-log-n-time.md)
+- [Chazelle's linear-time polygon triangulation](chazelle-s-linear-time-polygon-triangulation.md)
+- [Seidel's randomized algorithm for two-variable linear programming](seidel-s-randomized-incremental-algorithm-for.md)

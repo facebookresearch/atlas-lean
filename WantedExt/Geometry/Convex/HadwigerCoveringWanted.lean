@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Geometry.Convex.IlluminationFiniteMinimum
+public import MathlibExt.Geometry.Convex.IlluminationInteriorCovering
+public import MathlibExt.Geometry.Convex.IlluminationInteriorEquivalence
 import Batteries.Util.ProofWanted
 
 /-!
@@ -85,17 +87,6 @@ theorem_wanted directionalHomothetFormulationsEquivalent :
     ∀ n : ℕ, 0 < n → ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K →
       ∀ q : ℕ, IlluminatedByDirections K q ↔ CoveredBySmallerPositiveHomothets K q
 
-/-- **Directional illumination is equivalent to covering by interior translates.** Let $n \ge 1$,
-let $K \subseteq \mathbb{R}^n$ be a convex body and let $q$ be a natural number. Then some $q$ unit
-vectors illuminate $K$ if and only if $K$ is covered by $q$ translates
-$v_1 + \operatorname{int} K, \dots, v_q + \operatorname{int} K$ of its interior, repetitions
-allowed.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction. -/
-theorem_wanted directionalInteriorFormulationsEquivalent :
-    ∀ n : ℕ, 0 < n → ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K →
-      ∀ q : ℕ, IlluminatedByDirections K q ↔ CoveredByInteriorTranslates K q
-
 /-- **Directional and exterior-point illumination numbers are equal.** For every $n \ge 1$ and
 every convex body $K \subseteq \mathbb{R}^n$, the directional illumination number of $K$ equals
 its exterior-point illumination number. These are the least $q$ such that some $q$ unit vectors,
@@ -107,17 +98,6 @@ equivalence, whose Lean proof is also requested here. -/
 theorem_wanted directionalExternalIlluminationNumbersEqual (n : ℕ) (hn : 0 < n)
     (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
     directionalIlluminationNumber K = externalPointIlluminationNumber K
-
-/-- **Directional illumination number equals the interior-translate covering number.** For every
-$n \ge 1$ and every convex body $K \subseteq \mathbb{R}^n$, the directional illumination number of
-$K$ equals the least $q$ such that $K$ is covered by $q$ translates of its interior
-$\operatorname{int} K$. Both sides take the value $\infty$ when no finite family exists.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction; follows from the
-finite-count equivalence, whose Lean proof is also requested here. -/
-theorem_wanted directionalInteriorCoveringNumbersEqual (n : ℕ) (hn : 0 < n)
-    (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
-    directionalIlluminationNumber K = translateCoveringNumber K (interior K)
 
 /-- **Uniform covering by interior translates and uniform directional illumination.** For
 integers $n \ge 1$ and $q \ge 0$, every convex body in $\mathbb{R}^n$ (a compact convex set with

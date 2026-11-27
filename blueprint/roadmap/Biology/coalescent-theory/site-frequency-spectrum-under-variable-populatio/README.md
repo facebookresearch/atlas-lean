@@ -44,3 +44,13 @@
 - [First-coalescence times depend only on sizes at nonnegative times](first-coal-mean-comp-max.md)
 - [Non-identifiability from a bounded sample size](exists-ne-ae-first-coal-mean-eq-icc.md)
 - [Non-identifiability of general histories](exists-ne-ae-first-coal-mean-eq.md)
+
+- [Rate matrices of the coalescent in an allelic background with a frozen frequency path](background-coalescent-rate-matrices-for-a-frozen.md)
+- [A bounded function whose Laplace transform vanishes at every binomial coefficient](bounded-function-nonzero-on-a-set-of-positive-me.md)
+- [Certified evaluation of the expected site frequency spectrum for piecewise-constant population size](certified-evaluation-of-the-expected-sfs-for-pie.md)
+- [Coalescent in an allelic background with a given frequency path](coalescent-in-an-allelic-background-with-a-given.md)
+- [The time-changed coalescent as the limit of a Wright–Fisher model of varying size](derivation-of-the-time-changed-coalescent-from-a.md)
+- [Two bounded size histories with equal first-coalescence times](perturbing-a-constant-history-by-g-gives-two-bou.md)
+- [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
+
+- [Coalescence manifold and step-function moments](coalescence-manifold-and-step-function-moments/README.md)

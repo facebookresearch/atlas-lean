@@ -1,0 +1,3 @@
+# The raw HH map computed at a specified canonical common...
+
+The raw HH map computed at a specified canonical common lift height.

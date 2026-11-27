@@ -29,20 +29,6 @@ public theorem_wanted infinite_primes_not_dvd_mul_pow_sub (α β γ : ℤ) (hα 
     (hγ : γ ≠ 0) (h : ∀ k : ℕ, β ≠ γ * α ^ k ∧ β * α ^ k ≠ γ) :
     {p : ℕ | p.Prime ∧ ∀ n : ℕ, 0 < n → ¬ (p : ℤ) ∣ γ * α ^ n - β}.Infinite
 
-/-- **Classification of locally nilpotent polynomials at $1$.** A polynomial $u \in \mathbb{Z}[x]$
-of positive degree is locally nilpotent at $1$ if and only if it has one of the following forms,
-for some $p \in \mathbb{Z}[x]$: $(x-1)p(x)$ with $p \ne 0$; $-2x + 4 + p(x)(x-1)(x-2)$;
-$-2x^2 + 7x - 3 + p(x)(x-1)(x-2)(x-3)$; or $u = x + 1$.
-
-Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
-Article A13, Theorem 4.1. -/
-public theorem_wanted locallyNilpotentAt_one_classification :
-    {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅} =
-      {u | ∃ p : ℤ[X], p ≠ 0 ∧ u = (X - 1) * p} ∪
-        {u | ∃ p : ℤ[X], u = -2 * X + 4 + p * (X - 1) * (X - 2)} ∪
-        {u | ∃ p : ℤ[X], u = -2 * X ^ 2 + 7 * X - 3 + p * (X - 1) * (X - 2) * (X - 3)} ∪
-        {X + 1}
-
 /-- **Classification of locally nilpotent polynomials at $0$.** A polynomial $u \in \mathbb{Z}[x]$
 of positive degree is locally nilpotent at $0$ if and only if it has one of the following forms:
 $x + b$ with $b \in \mathbb{Z}$, $b \ne 0$; $ax + b$ with $a, b \in \mathbb{Z}$, $b \ne 0$, $a$

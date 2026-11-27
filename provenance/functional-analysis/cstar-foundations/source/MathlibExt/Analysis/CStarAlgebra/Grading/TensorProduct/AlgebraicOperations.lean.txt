@@ -1,0 +1,337 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading
+public import Mathlib.Algebra.Algebra.Bilinear
+public import Mathlib.Algebra.Module.TransferInstance
+public import Mathlib.Algebra.Star.TensorProduct
+public import Mathlib.LinearAlgebra.TensorProduct.Associator
+import Mathlib.Tactic.FinCases
+
+/-!
+# Algebraic Koszul tensor operations
+
+The carrier is a grading-indexed copy of the ordinary complex algebraic
+tensor. The product is a genuine bilinear map obtained from the finite
+projection-sum braiding and the nonunital coefficient multiplication maps.
+The signed star is a conjugate-linear map obtained from the corresponding
+real-sign projection sum and the ordinary tensor star.
+
+This is the strict operation prefix. Associativity, involutivity of the
+signed star and reversal of products are further proof obligations; no
+nonunital ring or star-ring instance is asserted here. The grading action
+constructed below is an actual order-two linear action on the raw carrier.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped TensorProduct BigOperators
+
+namespace CStarGrading
+
+universe uA uB
+
+/-- The ordinary algebraic tensor on a separate carrier indexed by the two
+explicit coefficient gradings. -/
+structure AlgebraicTensorProduct
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (γA : CStarGrading A) (γB : CStarGrading B) where
+  /-- The underlying ordinary complex tensor. -/
+  toTensor : A ⊗[ℂ] B
+
+namespace AlgebraicTensorProduct
+
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable (γA : CStarGrading A) (γB : CStarGrading B)
+
+@[ext]
+theorem ext {x y : AlgebraicTensorProduct γA γB}
+    (h : x.toTensor = y.toTensor) : x = y := by
+  cases x
+  cases y
+  cases h
+  rfl
+
+/-- The exact carrier equivalence with the ordinary algebraic tensor. -/
+def equiv : AlgebraicTensorProduct γA γB ≃ A ⊗[ℂ] B where
+  toFun := toTensor
+  invFun := AlgebraicTensorProduct.mk
+  left_inv x := by cases x; rfl
+  right_inv _ := rfl
+
+instance instAddCommGroup : AddCommGroup (AlgebraicTensorProduct γA γB) :=
+  (equiv γA γB).addCommGroup
+
+instance instModule : Module ℂ (AlgebraicTensorProduct γA γB) := by
+  let e : AlgebraicTensorProduct γA γB ≃+ A ⊗[ℂ] B :=
+    { equiv γA γB with map_add' := fun _ _ => rfl }
+  exact e.module ℂ
+
+/-- The carrier equivalence preserves the original complex vector-space
+structure. -/
+def linearEquiv : AlgebraicTensorProduct γA γB ≃ₗ[ℂ] A ⊗[ℂ] B := by
+  let e : AlgebraicTensorProduct γA γB ≃+ A ⊗[ℂ] B :=
+    { equiv γA γB with map_add' := fun _ _ => rfl }
+  exact e.linearEquiv ℂ
+
+/-- Insert an ordinary algebraic tensor into its grading-indexed copy. -/
+def ofTensor : A ⊗[ℂ] B →ₗ[ℂ] AlgebraicTensorProduct γA γB :=
+  (linearEquiv γA γB).symm.toLinearMap
+
+@[simp]
+theorem toTensor_ofTensor (z : A ⊗[ℂ] B) :
+    (ofTensor γA γB z).toTensor = z := rfl
+
+@[simp]
+theorem ofTensor_toTensor (z : AlgebraicTensorProduct γA γB) :
+    ofTensor γA γB z.toTensor = z := by cases z; rfl
+
+/-- The actual elementary tensor on the new carrier. -/
+def tmul (a : A) (b : B) : AlgebraicTensorProduct γA γB :=
+  ofTensor γA γB (a ⊗ₜ[ℂ] b)
+
+@[simp]
+theorem toTensor_tmul (a : A) (b : B) :
+    (tmul γA γB a b).toTensor = a ⊗ₜ[ℂ] b := rfl
+
+/-- The original finite Koszul sign projection on the ordinary complex tensor. -/
+def signProjection : A ⊗[ℂ] B →ₗ[ℂ] A ⊗[ℂ] B :=
+  ∑ p : ZMod 2, ∑ q : ZMod 2,
+    degreeSign (p * q) •
+      TensorProduct.map (γA.partProjection p).toLinearMap
+        (γB.partProjection q).toLinearMap
+
+/-- The finite Koszul sign projection has its original elementary tensor value. -/
+theorem signProjection_tmul (a : A) (b : B) :
+    signProjection γA γB (a ⊗ₜ[ℂ] b) =
+      ∑ p : ZMod 2, ∑ q : ZMod 2,
+        degreeSign (p * q) •
+          (γA.partProjection p a ⊗ₜ[ℂ] γB.partProjection q b) := by
+  simp only [signProjection, LinearMap.sum_apply, LinearMap.smul_apply,
+    TensorProduct.map_tmul, ContinuousLinearMap.coe_coe]
+
+/-- Exchange the original tensor factors after their finite Koszul sign projection. -/
+def rawBraiding : A ⊗[ℂ] B →ₗ[ℂ] B ⊗[ℂ] A :=
+  (TensorProduct.comm ℂ A B).toLinearMap.comp (signProjection γA γB)
+
+/-- Braiding an elementary tensor exchanges its original projected factors with the Koszul sign. -/
+theorem rawBraiding_tmul (a : A) (b : B) :
+    rawBraiding γA γB (a ⊗ₜ[ℂ] b) =
+      ∑ p : ZMod 2, ∑ q : ZMod 2,
+        degreeSign (p * q) •
+          (γB.partProjection q b ⊗ₜ[ℂ] γA.partProjection p a) := by
+  change (TensorProduct.comm ℂ A B)
+      (signProjection γA γB (a ⊗ₜ[ℂ] b)) = _
+  simp only [signProjection, LinearMap.sum_apply, LinearMap.smul_apply,
+    TensorProduct.map_tmul, ContinuousLinearMap.coe_coe,
+    map_sum, map_smul, TensorProduct.comm_tmul]
+
+open TensorProduct (assoc map) in
+/-- Reassociation follows Mathlib's `TensorProduct.gradedMul` construction
+by Eric Wieser, using the actual nonunital bilinear multiplication maps. -/
+def rawMulMap : A ⊗[ℂ] B →ₗ[ℂ] A ⊗[ℂ] B →ₗ[ℂ] A ⊗[ℂ] B := by
+  refine TensorProduct.curry ?_
+  refine map (LinearMap.mul' ℂ A) (LinearMap.mul' ℂ B) ∘ₗ ?_
+  refine (assoc ℂ _ _ _).symm.toLinearMap ∘ₗ
+    .lTensor _ ?_ ∘ₗ (assoc ℂ _ _ _).toLinearMap
+  refine (assoc ℂ _ _ _).toLinearMap ∘ₗ
+    .rTensor _ ?_ ∘ₗ (assoc ℂ _ _ _).symm.toLinearMap
+  exact rawBraiding γB γA
+
+/-- The raw bilinear multiplication has its original signed projection formula on elementary tensors. -/
+theorem rawMulMap_tmul_tmul (a c : A) (b d : B) :
+    rawMulMap γA γB (a ⊗ₜ[ℂ] b) (c ⊗ₜ[ℂ] d) =
+      ∑ p : ZMod 2, ∑ q : ZMod 2,
+        degreeSign (p * q) •
+          ((a * γA.partProjection q c) ⊗ₜ[ℂ]
+            (γB.partProjection p b * d)) := by
+  rw [rawMulMap]
+  dsimp only [TensorProduct.curry_apply, LinearMap.coe_comp,
+    LinearEquiv.coe_coe, Function.comp_apply, TensorProduct.assoc_tmul,
+    TensorProduct.map_tmul, LinearMap.id_coe, id_eq,
+    TensorProduct.assoc_symm_tmul, LinearMap.rTensor_tmul, LinearMap.lTensor_tmul]
+  rw [rawBraiding_tmul]
+  simp only [map_sum, TensorProduct.tmul_sum,
+    TensorProduct.sum_tmul, TensorProduct.tmul_smul, TensorProduct.smul_tmul',
+    TensorProduct.assoc_tmul, TensorProduct.assoc_symm_tmul,
+    TensorProduct.map_tmul, LinearMap.mul'_apply, smul_mul_assoc]
+
+/-- The original conjugate-linear signed star on the ordinary complex tensor. -/
+def rawStarMap : A ⊗[ℂ] B →ₗ⋆[ℂ] A ⊗[ℂ] B :=
+  (starLinearEquiv ℂ (A := A ⊗[ℂ] B)).toLinearMap.comp
+    (signProjection γA γB)
+
+/-- The raw conjugate-linear star has its original signed projection formula on elementary tensors. -/
+theorem rawStarMap_tmul (a : A) (b : B) :
+    rawStarMap γA γB (a ⊗ₜ[ℂ] b) =
+      ∑ p : ZMod 2, ∑ q : ZMod 2,
+        degreeSign (p * q) •
+          (star (γA.partProjection p a) ⊗ₜ[ℂ]
+            star (γB.partProjection q b)) := by
+  change star (signProjection γA γB (a ⊗ₜ[ℂ] b)) = _
+  simp only [signProjection, LinearMap.sum_apply, LinearMap.smul_apply,
+    TensorProduct.map_tmul, ContinuousLinearMap.coe_coe,
+    star_sum, star_smul, star_degreeSign, TensorProduct.star_tmul]
+
+/-- The signed tensor multiplication transports the single original raw bilinear map. -/
+def mulMap : AlgebraicTensorProduct γA γB →ₗ[ℂ]
+    AlgebraicTensorProduct γA γB →ₗ[ℂ] AlgebraicTensorProduct γA γB :=
+  ((rawMulMap γA γB).compl₁₂ (linearEquiv γA γB).toLinearMap
+    (linearEquiv γA γB).toLinearMap).compr₂ (ofTensor γA γB)
+
+instance instMul : Mul (AlgebraicTensorProduct γA γB) where
+  mul x y := mulMap γA γB x y
+
+/-- The signed tensor star transports the single original raw conjugate-linear map. -/
+def starMap : AlgebraicTensorProduct γA γB →ₗ⋆[ℂ]
+    AlgebraicTensorProduct γA γB :=
+  (ofTensor γA γB).comp ((rawStarMap γA γB).comp (linearEquiv γA γB).toLinearMap)
+
+instance instStar : Star (AlgebraicTensorProduct γA γB) where
+  star x := starMap γA γB x
+
+/-- The multiplication on every elementary tensor pair has the full
+finite-projection formula, including coefficients of mixed degree. -/
+theorem toTensor_tmul_mul_tmul (a c : A) (b d : B) :
+    (tmul γA γB a b * tmul γA γB c d).toTensor =
+      ∑ p : ZMod 2, ∑ q : ZMod 2,
+        degreeSign (p * q) •
+          ((a * γA.partProjection q c) ⊗ₜ[ℂ]
+            (γB.partProjection p b * d)) := by
+  change rawMulMap γA γB (a ⊗ₜ[ℂ] b) (c ⊗ₜ[ℂ] d) = _
+  exact rawMulMap_tmul_tmul γA γB a c b d
+
+/-- The star on every elementary tensor has the full signed projection
+formula, without selecting a degree for either coefficient. -/
+theorem toTensor_star_tmul (a : A) (b : B) :
+    (star (tmul γA γB a b)).toTensor =
+      ∑ p : ZMod 2, ∑ q : ZMod 2,
+        degreeSign (p * q) •
+          (star (γA.partProjection p a) ⊗ₜ[ℂ]
+            star (γB.partProjection q b)) := by
+  change rawStarMap γA γB (a ⊗ₜ[ℂ] b) = _
+  exact rawStarMap_tmul γA γB a b
+
+private theorem projection_eq_if_of_mem
+    {C : Type*} [NonUnitalCStarAlgebra C] (γ : CStarGrading C)
+    {m : ZMod 2} {c : C} (hc : c ∈ γ.part m) (n : ZMod 2) :
+    γ.partProjection n c = if n = m then c else 0 := by
+  by_cases h : n = m
+  · subst n
+    rw [ite_eq_left rfl]
+    exact γ.partProjection_eq_self_of_mem hc
+  · rw [ite_eq_right h]
+    exact γ.partProjection_eq_zero_of_mem_ne hc (Ne.symm h)
+
+/-- Homogeneity of the two crossing coefficients gives exactly the Koszul
+product sign. The other two coefficients may have mixed degree. -/
+theorem tmul_mul_tmul_of_mem (a c : A) (b d : B)
+    {p q : ZMod 2} (hb : b ∈ γB.part p) (hc : c ∈ γA.part q) :
+    tmul γA γB a b * tmul γA γB c d =
+      degreeSign (p * q) • tmul γA γB (a * c) (b * d) := by
+  apply (linearEquiv γA γB).injective
+  change (tmul γA γB a b * tmul γA γB c d).toTensor =
+    degreeSign (p * q) • ((a * c) ⊗ₜ[ℂ] (b * d))
+  rw [toTensor_tmul_mul_tmul]
+  simp [projection_eq_if_of_mem γA hc, projection_eq_if_of_mem γB hb,
+    TensorProduct.ite_tmul, TensorProduct.tmul_ite]
+
+/-- The star of a homogeneous elementary tensor has the printed product
+of degrees as its sign. -/
+theorem star_tmul_of_mem (a : A) (b : B)
+    {p q : ZMod 2} (ha : a ∈ γA.part p) (hb : b ∈ γB.part q) :
+    star (tmul γA γB a b) =
+      degreeSign (p * q) • tmul γA γB (star a) (star b) := by
+  apply (linearEquiv γA γB).injective
+  change (star (tmul γA γB a b)).toTensor =
+    degreeSign (p * q) • (star a ⊗ₜ[ℂ] star b)
+  rw [toTensor_star_tmul]
+  simp [projection_eq_if_of_mem γA ha, projection_eq_if_of_mem γB hb,
+    apply_ite, TensorProduct.ite_tmul]
+
+/-- The factor grading generators act on the literal tensor factors. -/
+def generator : AlgebraicTensorProduct γA γB ≃ₗ[ℂ]
+    AlgebraicTensorProduct γA γB := by
+  let LA : A ≃ₗ[ℂ] A := LinearEquiv.ofBijective
+    (LinearMap.ofClass γA.generatorAut) γA.generatorAut.bijective
+  let LB : B ≃ₗ[ℂ] B := LinearEquiv.ofBijective
+    (LinearMap.ofClass γB.generatorAut) γB.generatorAut.bijective
+  exact (linearEquiv γA γB).trans
+    ((TensorProduct.congr LA LB).trans (linearEquiv γA γB).symm)
+
+@[simp]
+theorem generator_tmul (a : A) (b : B) :
+    generator γA γB (tmul γA γB a b) =
+      tmul γA γB (γA.generatorAut a) (γB.generatorAut b) := by
+  apply (linearEquiv γA γB).injective
+  change TensorProduct.map (LinearMap.ofClass γA.generatorAut)
+      (LinearMap.ofClass γB.generatorAut) (a ⊗ₜ[ℂ] b) =
+    γA.generatorAut a ⊗ₜ[ℂ] γB.generatorAut b
+  exact TensorProduct.map_tmul _ _ a b
+
+/-- The actual factor action has order two on the entire algebraic tensor. -/
+theorem generator_involutive : Function.Involutive (generator γA γB) := by
+  have h : ∀ z : A ⊗[ℂ] B,
+      generator γA γB (generator γA γB (ofTensor γA γB z)) =
+        ofTensor γA γB z := by
+    intro z
+    induction z using TensorProduct.inductionOn with
+    | tmul a b =>
+        change generator γA γB (generator γA γB (tmul γA γB a b)) =
+          tmul γA γB a b
+        rw [generator_tmul, generator_tmul,
+          γA.generator_involutive, γB.generator_involutive]
+    | add x y hx hy =>
+        simp only [map_add, hx, hy]
+  intro z
+  simpa only [ofTensor_toTensor] using h z.toTensor
+
+/-- The grading group acts by the identity in degree zero and the actual
+factor generator in degree one. -/
+def gradingAction (n : ZMod 2) : AlgebraicTensorProduct γA γB ≃ₗ[ℂ]
+    AlgebraicTensorProduct γA γB :=
+  if n = 0 then LinearEquiv.refl ℂ _ else generator γA γB
+
+@[simp]
+theorem gradingAction_zero (z : AlgebraicTensorProduct γA γB) :
+    gradingAction γA γB 0 z = z := by simp [gradingAction]
+
+/-- The linear action respects addition in the actual two-element grading
+group. -/
+theorem gradingAction_add (m n : ZMod 2) (z : AlgebraicTensorProduct γA γB) :
+    gradingAction γA γB (m + n) z =
+      gradingAction γA γB m (gradingAction γA γB n z) := by
+  have h0 : gradingAction γA γB (0 : ZMod 2) = LinearEquiv.refl ℂ _ := by
+    unfold gradingAction
+    exact ite_eq_left rfl
+  have h1 : gradingAction γA γB (1 : ZMod 2) = generator γA γB := by
+    unfold gradingAction
+    exact ite_eq_right (show (1 : ZMod 2) ≠ 0 by decide)
+  have hm : m = 0 ∨ m = 1 := by
+    fin_cases m
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  have hn : n = 0 ∨ n = 1 := by
+    fin_cases n
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  rcases hm with rfl | rfl <;> rcases hn with rfl | rfl
+  · simp only [zero_add, h0, LinearEquiv.refl_apply]
+  · simp only [zero_add, h0, h1, LinearEquiv.refl_apply]
+  · simp only [add_zero, h0, h1, LinearEquiv.refl_apply]
+  · have h11 : (1 : ZMod 2) + 1 = 0 := by decide
+    simpa only [h11, h0, h1, LinearEquiv.refl_apply] using
+      (generator_involutive γA γB z).symm
+
+end AlgebraicTensorProduct
+
+end CStarGrading

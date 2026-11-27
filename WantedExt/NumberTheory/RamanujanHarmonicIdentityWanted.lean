@@ -20,6 +20,10 @@ is the source used for the formulas below.
 The diagonal uniqueness theorem and Ramanujan's binomial sine series are proved in
 `MathlibExt.NumberTheory.RamanujanHarmonicIdentity` and
 `MathlibExt.NumberTheory.RamanujanBinomialSine`, respectively.
+The first shifted convolution (published Corollary 2) is proved in
+`MathlibExt.NumberTheory.RamanujanShiftedHarmonicConvolution`.
+The second shifted convolution (published Corollary 3) is proved in
+`MathlibExt.NumberTheory.RamanujanHarmonicIdentitySumChooseSubChooseMulHarmonicEqAdd`.
 Three other records from this paper are already proved in MathlibExt and
 are not restated here: Theorem 1 is
 `MetaMathlibExt.binomial_harmonic_convolution`; Lemma 2
@@ -42,53 +46,17 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
+public import MathlibExt.NumberTheory.GouldReciprocalBinomial
 public import MathlibExt.NumberTheory.RamanujanBinomialSine
 public import MathlibExt.NumberTheory.RamanujanHarmonicIdentity
+public import MathlibExt.NumberTheory.RamanujanShiftedHarmonicConvolution
+public import MathlibExt.NumberTheory.RamanujanHarmonicIdentitySumChooseSubChooseMulHarmonicEqAdd
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted
-
-/-- **Shifted binomial–harmonic convolution (Alzer–Kwong, Corollary 1).** For natural numbers $k$
-and $n$ with $2 \le k \le n$,
-$$
-\sum_{\nu=1}^{n+1} \Bigl(\binom{n+k-\nu-1}{n} - \binom{n+k-\nu-1}{k-2}\Bigr) H_\nu =
-\binom{n+k}{k-1} (H_k - H_{n+1}) - \frac{1}{n+1} \binom{n+k}{k},
-$$
-where $H_m = \sum_{j=1}^{m} 1/j$ is the $m$-th harmonic number.
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Corollary 1. -/
-theorem_wanted sum_choose_sub_choose_mul_harmonic_succ_eq
-    (k n : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n) :
-    ∑ ν ∈ Finset.Icc 1 (n + 1),
-        ((Nat.choose (n + k - ν - 1) n : ℚ) -
-          (Nat.choose (n + k - ν - 1) (k - 2) : ℚ)) * harmonic ν =
-      (Nat.choose (n + k) (k - 1) : ℚ) *
-          (harmonic k - harmonic (n + 1)) -
-        (1 / ((n : ℚ) + 1)) * (Nat.choose (n + k) k : ℚ)
-
-/-- **Shifted binomial–harmonic convolution (Alzer–Kwong, Corollary 2).** For natural numbers $k$
-and $n$ with $1 \le k \le n - 1$,
-$$
-\sum_{\nu=1}^{n} \Bigl(\binom{n+k-\nu-1}{n-2} - \binom{n+k-\nu-1}{k}\Bigr) H_\nu =
-\binom{n+k}{k+1} (H_k - H_n) + \frac{1}{k+1} \binom{n+k+1}{k+1},
-$$
-where $H_m = \sum_{j=1}^{m} 1/j$ is the $m$-th harmonic number.
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Corollary 2. -/
-theorem_wanted sum_choose_sub_choose_mul_harmonic_eq_add
-    (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n - 1) :
-    ∑ ν ∈ Finset.Icc 1 n,
-        ((Nat.choose (n + k - ν - 1) (n - 2) : ℚ) -
-          (Nat.choose (n + k - ν - 1) k : ℚ)) * harmonic ν =
-      (Nat.choose (n + k) (k + 1) : ℚ) * (harmonic k - harmonic n) +
-        (1 / ((k : ℚ) + 1)) * (Nat.choose (n + k + 1) (k + 1) : ℚ)
 
 /-- **The Rung-Obaid trigonometric identity.** Let $k$ and $n$ be natural numbers with
 $1 \le k \le n$, and let $\theta$ be a real number. Then
@@ -108,23 +76,5 @@ theorem_wanted sum_two_pow_choose_sub_mul_cos_pow_sin
           Real.cos θ ^ ν * Real.sin ((ν : ℝ) * θ) =
       (2 : ℝ) ^ (n + k) * Real.cos θ ^ (n + k) *
         Real.sin (((n : ℝ) - (k : ℝ)) * θ)
-
-/-- **Gould's reciprocal binomial identity (Alzer–Kwong, Lemma 4).** Let $N$ be a natural number
-and $x$ a real number with $x \ne \nu$ for every $\nu \in \{0, 1, \dots, N\}$. Then
-$$
-\sum_{\nu=0}^{N} \frac{(-1)^\nu}{x - \nu} \binom{N}{\nu} = \frac{(-1)^N}{(x - N) \binom{x}{N}},
-$$
-where $\binom{x}{N} = x(x-1)\cdots(x-N+1)/N!$ is the generalized binomial coefficient.
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Lemma 4. -/
-theorem_wanted sum_neg_one_pow_div_mul_choose_eq
-    (N : ℕ) (x : ℝ)
-    (hx : ∀ ν ∈ Finset.Icc 0 N, x ≠ (ν : ℝ)) :
-    ∑ ν ∈ Finset.Icc 0 N,
-        ((-1 : ℝ) ^ ν / (x - (ν : ℝ))) *
-          (Nat.choose N ν : ℝ) =
-      (-1 : ℝ) ^ N / ((x - (N : ℝ)) * Ring.choose x N)
 
 end MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted

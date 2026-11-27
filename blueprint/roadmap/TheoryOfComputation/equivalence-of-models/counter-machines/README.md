@@ -11,3 +11,5 @@
 - [Counter-machine execution is constant after halting](counter-exec-n-eq-of-halted.md)
 - [Output membership for counter machines](mem-counter-eval-of-halted.md)
 - [Counter-machine decidable predicates](counter-decidable.md)
+- [Two-counter machines are universal](two-counter-machines-are-universal.md)
+- [Recurring computations of two-counter machines are Σ¹₁-hard](recurring-computations-of-two-counter-machines.md)

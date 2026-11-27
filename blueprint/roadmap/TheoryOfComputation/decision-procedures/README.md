@@ -11,3 +11,6 @@ Algorithms deciding questions about finite automata, regular expressions and con
 - [Emptiness of context-free and regular intersections](emptiness-of-context-free-and-regular-intersecti/README.md)
 - [Decision procedures for regular expressions](decision-procedures-for-regular-expressions/README.md)
 - [String constraints and word equations](string-constraints-and-word-equations/README.md)
+
+- [Presburger arithmetic and real addition](presburger-arithmetic-and-real-addition/README.md)
+- [Satisfiability modulo theories](satisfiability-modulo-theories/README.md)

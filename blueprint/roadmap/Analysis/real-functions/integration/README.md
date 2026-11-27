@@ -16,3 +16,4 @@ The Riemann integral via tagged partitions, iterated-integral formulas, moments,
 - [The integral of $x f(x) f'(x)$ equals $-1/2$](integral-mul-mul-deriv-eq-neg-half.md)
 - [Uniformly continuous integrable functions vanish at infinity](tendsto-cocompact-zero-of-integrable.md)
 - [Unit-window bound for the integral of $\sin(t^2)$](abs-integral-sin-sq-lt-inv.md)
+- [Change of variables in the Lebesgue integral on the line](change-of-variables-on-an-interval.md)

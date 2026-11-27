@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
+public import MathlibExt.Algebra.LinearRecurrence
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -330,19 +331,46 @@ private theorem circuitArrayOf_zero_succ (bdry : ℕ → Option K) (k : ℕ) :
     show k + 1 - (0 + 1) / 2 = k + 1 by omega]
   simp only [Even.zero, ite_true]
 
-private theorem circuitGrid_succ_left (bdry : ℕ → Option K) (m r d : ℕ) (hd : d ≠ 1) :
+/-- **Left edges after a reduction.** Let $K$ be a field, $\beta$ a boundary assignment and
+$T^0, T^1, \dots$ the labellings of the reduced grids. For natural numbers $m$, $r$ and $d \ne 1$,
+the left edge of the triangle of $T^{m+1}$ in row $r$ and diagonal $d$ is the left-edge reduction
+`circuitLeftEdge` of the triangles of $T^m$ in row $r$ and diagonal $d - 1$, in row $r$ and diagonal
+$d$, and in row $r + 1$ and diagonal $d$; the boundary value $\beta(m + 1)$ is not used.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2 (Steps 1-5). -/
+theorem circuitGrid_succ_left (bdry : ℕ → Option K) (m r d : ℕ) (hd : d ≠ 1) :
     circuitGrid bdry (m + 1) r d .left =
       circuitLeftEdge (circuitGrid bdry m r (d - 1)) (circuitGrid bdry m r d)
         (circuitGrid bdry m (r + 1) d) := by
   simp [circuitGrid, circuitReduce, hd]
 
-private theorem circuitGrid_succ_right (bdry : ℕ → Option K) (m r d : ℕ) (hd : d ≠ r) :
+/-- **Right edges after a reduction.** Let $K$ be a field, $\beta$ a boundary assignment and
+$T^0, T^1, \dots$ the labellings of the reduced grids. For natural numbers $m$, $r$ and $d \ne r$,
+the right edge of the triangle of $T^{m+1}$ in row $r$ and diagonal $d$ is the right-edge reduction
+`circuitRightEdge` of the triangles of $T^m$ in row $r$ and diagonal $d$, in row $r$ and diagonal
+$d + 1$, and in row $r + 1$ and diagonal $d + 1$; the boundary value $\beta(m + 1)$ is not used.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2 (Steps 1-5). -/
+theorem circuitGrid_succ_right (bdry : ℕ → Option K) (m r d : ℕ) (hd : d ≠ r) :
     circuitGrid bdry (m + 1) r d .right =
       circuitRightEdge (circuitGrid bdry m r d) (circuitGrid bdry m r (d + 1))
         (circuitGrid bdry m (r + 1) (d + 1)) := by
   simp [circuitGrid, circuitReduce, hd]
 
-private theorem circuitGrid_succ_base (bdry : ℕ → Option K) (m r d : ℕ) :
+/-- **Bases after a reduction.** Let $K$ be a field, $\beta$ a boundary assignment and
+$T^0, T^1, \dots$ the labellings of the reduced grids. For all natural numbers $m$, $r$ and $d$, the
+base of the triangle of $T^{m+1}$ in row $r$ and diagonal $d$ is the base reduction
+`circuitBaseEdge` of the triangles of $T^m$ in row $r + 2$ and diagonal $d + 1$, in row $r + 1$ and
+diagonal $d$, and in row $r + 1$ and diagonal $d + 1$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2 (Steps 1-5). -/
+theorem circuitGrid_succ_base (bdry : ℕ → Option K) (m r d : ℕ) :
     circuitGrid bdry (m + 1) r d .base =
       circuitBaseEdge (circuitGrid bdry m (r + 2) (d + 1)) (circuitGrid bdry m (r + 1) d)
         (circuitGrid bdry m (r + 1) (d + 1)) := by
@@ -370,10 +398,17 @@ private theorem circuitBaseEdge_one :
   norm_num [circuitBaseEdge, circuitY, circuitRightArm, circuitLeftArm, circuitTopArm,
     circuitDelta]
 
-/-- After `m` reductions, the edges at distance at least `m` from both boundaries are still `1`:
-writing `a = d - 1` and `b = r - d`, the left edge is `1` when `m ≤ a` and `m ≤ b + 1`, the right
-edge when `m ≤ a + 1` and `m ≤ b`, and the base when `m ≤ a + 1` and `m ≤ b + 1`. -/
-private theorem circuitGrid_eq_one (bdry : ℕ → Option K) (m : ℕ) :
+/-- **Interior edges stay one.** Let $K$ be a field of characteristic zero, $\beta$ a boundary
+assignment and $T^0, T^1, \dots$ the labellings of the reduced grids. For every natural number $m$
+and all natural numbers $r$ and $d$, the triangle of $T^m$ in row $r$ and diagonal $d$ has left edge
+$1$ when $m + 1 \le d$ and $m + d \le r + 1$, right edge $1$ when $m \le d$ and $m + d \le r$, and
+base $1$ when $m \le d$ and $m + d \le r + 1$. That is, after $m$ reductions the edges at distance
+at least $m$ from both boundaries are still $1$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2. -/
+theorem circuitGrid_eq_one (bdry : ℕ → Option K) (m : ℕ) :
     (∀ r d, m + 1 ≤ d → m + d ≤ r + 1 → circuitGrid bdry m r d .left = 1) ∧
       (∀ r d, m ≤ d → m + d ≤ r → circuitGrid bdry m r d .right = 1) ∧
       (∀ r d, m ≤ d → m + d ≤ r + 1 → circuitGrid bdry m r d .base = 1) := by
@@ -399,7 +434,15 @@ private theorem circuitGrid_eq_one (bdry : ℕ → Option K) (m : ℕ) :
         hA (r + 1) d (by omega) (by omega), hA (r + 1) (d + 1) (by omega) (by omega)]
       exact circuitBaseEdge_one
 
-private theorem circuitGrid_eq_one_fun (bdry : ℕ → Option K) (m r d : ℕ) (h1 : m + 1 ≤ d)
+/-- **Interior triangles stay all-one.** Let $K$ be a field of characteristic zero, $\beta$ a
+boundary assignment and $T^0, T^1, \dots$ the labellings of the reduced grids. For natural numbers
+$m$, $r$ and $d$ with $m + 1 \le d$ and $m + d \le r$, all three edges of the triangle of $T^m$ in
+row $r$ and diagonal $d$ are $1$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2. -/
+theorem circuitGrid_eq_one_fun (bdry : ℕ → Option K) (m r d : ℕ) (h1 : m + 1 ≤ d)
     (h2 : m + d ≤ r) : circuitGrid bdry m r d = fun _ => 1 := by
   obtain ⟨hL, hR, hB⟩ := circuitGrid_eq_one bdry m
   funext e
@@ -418,10 +461,17 @@ private theorem front_step (c x : K) (hx : x ≠ 0) (hc : c ≠ 3 * x) :
   field_simp
   ring
 
-/-- The front of the left boundary: after `k + 1` reductions, the left edge of the triangle on
-diagonal `k + 1` (at distance `k` from the left boundary) of a row `r ≥ 2k + 1` is
-`1 - c / 9 ^ k`, where `1 - c` is the left boundary value after the first reduction. -/
-private theorem circuitGrid_front (bdry : ℕ → Option K) (c : K)
+/-- **Front of the left boundary.** Let $K$ be a field of characteristic zero, $\beta$ a
+boundary assignment and $T^0, T^1, \dots$ the labellings of the reduced grids. Let $c \in K$ with
+$c \ne 3 \cdot 9^k$ for every natural number $k$, such that the left boundary value after the
+first reduction is $1 - c$ (that is, $\beta(1)$ if given and $2/3$ otherwise equals $1 - c$). Then
+for every natural number $k$ and every row $r \ge 2k + 1$, the left edge of the triangle of
+$T^{k+1}$ in row $r$ and diagonal $k + 1$ is $1 - c/9^k$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2. -/
+theorem circuitGrid_front (bdry : ℕ → Option K) (c : K)
     (h1 : (bdry 1).getD (2 / 3) = 1 - c) (hc : ∀ k : ℕ, c ≠ 3 * 9 ^ k) (k : ℕ) :
     ∀ r : ℕ, 2 * k + 1 ≤ r → circuitGrid bdry (k + 1) r (k + 1) .left = 1 - c / 9 ^ k := by
   induction k with

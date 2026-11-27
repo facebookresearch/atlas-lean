@@ -101,7 +101,7 @@ structure FlagSchemeModel (n : ℕ) (D : Shape n) where
   [variety : IsComplexVariety scheme]
   [proper : IsProper scheme.hom]
   [smooth : SmoothOfRelativeDimension (flagDimension D) scheme.hom]
-  projective : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC scheme
+  projective : ProjectiveSpace.IsProjective scheme
   points : ∀ A : CommAlgCat.{0} ℂ, (affineScheme A ⟶ scheme) ≃ AffineFlag A n D
   baseChange : ∀ {A B : CommAlgCat.{0} ℂ} (f : A ⟶ B)
     (x : affineScheme A ⟶ scheme) (d : Step D),

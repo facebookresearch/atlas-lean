@@ -3,7 +3,7 @@
 ## Quartics and the Routh–Hurwitz conditions
 
 - [Monic quartic with real coefficients](quartic.md)
-- [Derivative of the monic quartic](quartic-deriv.md)
+- [Termwise derivative formula of the monic quartic](quartic-deriv.md)
 - [Third Hurwitz determinant of a monic quartic](hurwitz3.md)
 - [Roots of μ² + p μ + q with p, q > 0 have negative real part](re-neg-of-quad-eq-zero.md)
 - [Sufficient Routh–Hurwitz conditions for a real quartic](re-neg-of-quartic-eq-zero.md)
@@ -39,7 +39,7 @@
 
 ## The Jacobian along the branch
 
-- [Arrowhead entries of the squid Jacobian along the equilibrium branch](arrow-at.md)
+- [Arrowhead entries along the equilibrium branch](arrow-at.md)
 - [The linear and constant coefficients and Δ₃ are continuous in V](continuous-arrow-at.md)
 
 ## Signs of the coefficients at 15 mV and at rest

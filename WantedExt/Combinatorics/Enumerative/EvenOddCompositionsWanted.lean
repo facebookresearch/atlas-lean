@@ -15,6 +15,9 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.EvenOddCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedResiduePartCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedLargePartCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedMinimumPartCompositions
 
 namespace MetaMathlibExt
 
@@ -38,33 +41,6 @@ public theorem_wanted sum_distincts_neg_one_pow_card (n : ℕ) :
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = (-1) ^ j) ∧
       ((∀ j : ℕ, 2 * n ≠ j * (3 * j + 1) ∧ 2 * n ≠ j * (3 * j - 1)) →
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = 0)
-
-/-- **Signed count of compositions with parts greater than one.** For every $n \ge 0$, among the
-compositions of $n + 1$ whose parts are all greater than $1$, the number with an odd number of
-parts minus the number with an even number of parts is $(-1)^j$ if $n = 3j + 1$ or $n = 3j + 2$
-for some $j \ge 0$, and $0$ otherwise.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 5
-(`jis-2024-24.6.5-thm-5`). -/
-public theorem_wanted compositionOddMinusEven_parts_gt_one (n : ℕ) :
-    (∀ j : ℕ, n = 3 * j + 1 ∨ n = 3 * j + 2 →
-        compositionOddMinusEven (n + 1) (fun c => ∀ a ∈ c.blocks, 1 < a) = (-1) ^ j) ∧
-      ((∀ j : ℕ, n ≠ 3 * j + 1 ∧ n ≠ 3 * j + 2) →
-        compositionOddMinusEven (n + 1) (fun c => ∀ a ∈ c.blocks, 1 < a) = 0)
-
-/-- **Signed count of compositions with parts at least $k$.** Let $k, n \ge 1$. Among the
-compositions of $n + k - 1$ whose parts are all at least $k$, the number with an odd number of
-parts minus the number with an even number of parts equals
-$\sum_{j=0}^{\lfloor (n-1)/k \rfloor} (-1)^j \binom{n-1-j(k-1)}{j}$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 8
-(`jis-2024-24.6.5-thm-8`). -/
-public theorem_wanted compositionOddMinusEven_parts_ge (k n : ℕ) (hk : 1 ≤ k) (hn : 1 ≤ n) :
-    compositionOddMinusEven (n + k - 1) (fun c => ∀ a ∈ c.blocks, k ≤ a)
-      = ∑ j ∈ Finset.range ((n - 1) / k + 1),
-          (-1 : ℤ) ^ j * ((n - 1 - j * (k - 1)).choose j : ℤ)
 
 /-- **Nyirenda's identity for distinct parts modulo a multiple of four.** Let $r \ge 1$ and $n$
 be natural numbers, and let $E(n)$ and $O(n)$ be the numbers of partitions of $n$ into distinct
@@ -105,22 +81,6 @@ public theorem_wanted sum_distincts_mod_two_mul_add_one_neg_one_pow_card (r n : 
             a % (2 * r + 1) = 0 ∨ a % (2 * r + 1) = r ∨ a % (2 * r + 1) = r + 1),
           (-1 : ℤ) ^ p.parts.card = 0)
 
-/-- **Signed count of compositions with parts at least $k$ in a residue class.** Let $k, n \ge 1$
-and $r > s \ge 0$. Among the compositions of $n + k - 1$ whose parts are all at least $k$ and
-congruent to $k + s$ modulo $r$, the number with an odd number of parts minus the number with an
-even number of parts is the sum of $(-1)^j \binom{i+j}{i}$ over all $i, j \ge 0$ with
-$ri + j(k+s) + s + 1 = n$ (an empty sum when $n \le s$).
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 10
-(`jis-2024-24.6.5-thm-10`). -/
-public theorem_wanted compositionOddMinusEven_parts_ge_modEq (k n r s : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) (hsr : s < r) :
-    compositionOddMinusEven (n + k - 1)
-        (fun c => ∀ a ∈ c.blocks, k ≤ a ∧ a % r = (k + s) % r)
-      = ∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
-          if r * i + j * (k + s) + s + 1 = n then (-1 : ℤ) ^ j * ((i + j).choose i : ℤ)
-          else 0
 
 /-- **Signed count of residue-class compositions with parts at least $r - s$.** Let $r > s \ge 0$,
 let $k = r - s$ and let $n \ge 1$. Among the compositions of $n + k - 1$ whose parts are all at
@@ -171,29 +131,6 @@ public theorem_wanted card_partition_franklin (k m n : ℕ) (hk : 1 ≤ k) :
         (p.parts.toFinset.filter fun a => k ≤ p.parts.count a).card = m).card
       = (Finset.univ.filter fun p : n.Partition =>
         (p.parts.toFinset.filter fun a => k ∣ a).card = m).card
-
-/-- **Signed count of Huang's compositions, binomial form.** Let $k, n \ge 1$ and $m \ge 0$.
-Among the compositions of $n + k - 1$ with exactly $m$ parts less than $k$ in which every part
-less than $k$ is preceded by a part at least $k$ and followed by a part that is either the last
-part or greater than $k$, let $b^{(m)}_{k,n}$ be the number with an odd number of parts minus the
-number with an even number of parts. Then $b^{(m)}_{k,n}$ is the sum of
-$(-1)^{\ell+j} \binom{i}{m} \binom{i+j-1}{j} \binom{m}{\ell} \binom{m+h-1}{h}$ over all
-$i, j, \ell, h \ge 0$ with $i + (k+1)m + jk + \ell(k-1) + h = n$, where $\binom{-1}{0} = 1$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 16
-(`jis-2024-24.6.5-thm-16`). -/
-public theorem_wanted compositionOddMinusEven_huang_eq_sum (k m n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) :
-    compositionOddMinusEven (n + k - 1)
-        (fun c => (c.blocks.filter fun a => a < k).length = m ∧
-          IsHuangSmallPartPlacement k c.blocks)
-      = ∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
-          ∑ l ∈ Finset.range (m + 1), ∑ h ∈ Finset.range (n + 1),
-            if i + (k + 1) * m + j * k + l * (k - 1) + h = n then
-              (-1 : ℤ) ^ (l + j) * (i.choose m : ℤ) * ((i + j - 1).choose j : ℤ) *
-                (m.choose l : ℤ) * ((m + h - 1).choose h : ℤ)
-            else 0
 
 /-- **Signed count of Huang's compositions, monomial form.** Let $k \ge 2$, $m \ge 0$ and
 $n \ge 1$. Among the compositions of $n + k - 1$ with exactly $m$ parts less than $k$ in which

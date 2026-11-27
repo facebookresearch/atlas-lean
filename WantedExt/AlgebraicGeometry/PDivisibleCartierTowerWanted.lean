@@ -29,7 +29,11 @@ open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.PDivisibleGroupSchemes
 open MathlibExt.AlgebraicGeometry.PDivisibleCartierTowerModels
 
-/-- Assemble the original finite duals with their displayed source-induced arrows. -/
+/-- **The Cartier dual of a p-divisible group.** For a prime $p$, a commutative ring $R$ and a
+$p$-divisible group $G$ over $\operatorname{Spec} R$, there is a $p$-divisible group $G^∨$ over
+$\operatorname{Spec} R$ with isomorphisms $G^∨[p^n] ≅ G[p^n]^∨$ to the Cartier duals of the levels
+of $G$, under which the inclusions of $G^∨$ correspond to the duals of the division maps of $G$, and
+the division maps of $G^∨$ to the duals of the inclusions of $G$ (`CartierDualTower`). -/
 public def_wanted geometricCartierDualTower
     (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R]
     (G : PDivisibleGroup (Spec (.of R)) p) : CartierDualTower p R G

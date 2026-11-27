@@ -6,6 +6,7 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 
 - [Expected risk](risk.md)
 - [Empirical risk](empirical-risk.md)
+- [Learning a discrete distribution in total variation](learning-a-discrete-distribution-in-total-variat/README.md)
 - [Measurability of the empirical risk](measurable-empirical-risk.md)
 - [Empirical risk minimization under a uniform deviation bound](risk-le-add-two-mul-of-forall-abs-sub-le.md)
 - [Uniform deviation of the empirical risk over a finite class](measure-real-exists-abs-empirical-risk-s.md)
@@ -16,6 +17,14 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Rademacher complexity](rademacher-complexity/README.md)
 - [PAC-Bayes bounds](pac-bayes-bounds/README.md)
 - [Algorithmic stability](algorithmic-stability/README.md)
+
+- [Generalization bound for sample compression schemes](generalization-bound-for-sample-compression-schemes.md)
+- [Generalization bound for norm-bounded linear predictors with Lipschitz loss](generalization-bound-for-norm-bounded-linear-predictors-with.md)
+- [Stability of regularized loss minimization](stability-of-regularized-loss-minimization.md)
+- [Shattering lower bound for PAC learning](shattering-lower-bound-for-pac-learning.md)
+- [Weak learnability implies PAC learnability via boosting](weak-learnability-implies-pac-learnability-via-boosting.md)
+- [VC and Natarajan classes: uniform convergence and the fundamental theorems](vc-and-natarajan-classes/README.md)
+- [Limits of uniform convergence for explaining deep-learning generalization](limits-of-uniform-convergence-for-explaining-deep-learning-g.md)
 
 ## Related topics
 
@@ -33,3 +42,10 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [PAC learning](../pac-learning/README.md): the realizable case, where a consistent learner over a finite class needs only $\log(|H|/\delta)/\varepsilon$ examples and no concentration inequality.
 - [Two-layer neural networks and Barron space](../supervised-learning/two-layer-neural-networks-and-barron-space/README.md): Rademacher bounds for path-norm balls of two-layer networks and the a priori estimate of the population risk of the path-norm regularized estimator.
 - [Finite-sample expressivity of ReLU networks](../supervised-learning/finite-sample-expressivity-of-relu-networks/README.md): two-layer ReLU networks with $2n + d$ weights fit every labelling of $n$ distinct points, so uniform deviation bounds over such a class cannot explain generalization at that sample size.
+
+## Research directions
+
+- [Generalization of trained finite-width neural networks with feature learning](generalization-of-trained-finite-width-networks.md)
+- [Sharp guarantees for out-of-distribution generalization](out-of-distribution-generalization-guarantees.md)
+- [Occam and Description-Length Bounds](occam-and-description-length-bounds/README.md)
+- [Rademacher Generalization and Margin Bounds](rademacher-and-margin-bounds/README.md)

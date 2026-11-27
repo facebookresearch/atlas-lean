@@ -9,46 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.NLagrangeSpectrum
 public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.DiophantineApproximation.Basic
 public import Mathlib.Order.LiminfLimsup
+public import MathlibExt.NumberTheory.ContinuedFractions.CommonPrefix
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Topology
-
-/-- **$n$-Lagrange approximability.** For a natural number $n$ and a real number $\xi$, the
-$n$-Lagrange approximability of $\xi$ is the element of the extended reals
-$$\lambda_n(\xi) = \limsup_{s/t \to \xi} \frac{\gcd(t, n)}{t^2 \, |s/t - \xi|},$$
-where the limsup is over rational numbers $s/t \ne \xi$, written in lowest terms with $t > 0$,
-tending to $\xi$. For $n = 1$ this is the classical Lagrange approximability $\lambda(\xi)$.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Introduction, equation (3). -/
-noncomputable def nLagrangeApproximability (n : ℕ) (ξ : ℝ) : EReal :=
-  limsup (fun q : ℚ => (((Nat.gcd q.den n : ℝ) / ((q.den : ℝ) ^ 2 * |(q : ℝ) - ξ|) : ℝ) : EReal))
-    (comap ((↑) : ℚ → ℝ) (𝓝[≠] ξ))
-
-/-- **The $1$-Lagrange approximability is the classical one.** For every real number $\xi$, the
-$1$-Lagrange approximability of $\xi$ is
-$$\lambda_1(\xi) = \limsup_{s/t \to \xi} \frac{1}{t^2 \, |s/t - \xi|},$$
-taken in the extended reals, where the limsup is over rational numbers $s/t \ne \xi$, written in
-lowest terms with $t > 0$, tending to $\xi$. That is, the factor $\gcd(t, 1)$ in the definition
-equals $1$.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Introduction, equations (1) and (3). -/
-theorem nLagrangeApproximability_one (ξ : ℝ) :
-    nLagrangeApproximability 1 ξ =
-      limsup (fun q : ℚ => ((1 / ((q.den : ℝ) ^ 2 * |(q : ℝ) - ξ|) : ℝ) : EReal))
-        (comap ((↑) : ℚ → ℝ) (𝓝[≠] ξ)) := by
-  simp [nLagrangeApproximability]
 
 /-- **$n$-Markoff approximability.** For a natural number $n$ and real numbers $\xi$ and $\xi'$, the
 $n$-Markoff approximability is the supremum in the extended reals
@@ -122,47 +95,6 @@ theorem mem_nMarkoffSpectrum (n : ℕ) (α : ℝ) :
     α ∈ nMarkoffSpectrum n ↔
       ∃ ξ ξ' : ℝ, Irrational ξ ∧ Irrational ξ' ∧ ξ ≠ ξ' ∧ nMarkoffApproximability n ξ ξ' = α :=
   Iff.rfl
-
-/-- **Convergents and the Lagrange approximability.** Let $\xi$ be an irrational real number,
-with complete quotients $\xi_0 = \xi$ and $\xi_{k+1} = 1/\{\xi_k\}$, where $\{x\}$ is the
-fractional part of $x$, and digits $a_k = \lfloor \xi_k \rfloor$, so that
-$\xi = [a_0; a_1, a_2, \dots]$. For $k \ge 1$ let
-$c_k = a_k + [0; a_{k-1}, \dots, a_1] + \{\xi_k\}$, where the middle term is $0$ when $k = 1$.
-Then for every $k \ge 1$ the convergent $p/q = [a_0; a_1, \dots, a_{k-1}]$, written in lowest terms
-with $q > 0$, satisfies $(-1)^k / (q^2 (p/q - \xi)) = c_k$. Moreover, the $1$-Lagrange
-approximability $\lambda_1(\xi)$ equals $\limsup_{k \to \infty} c_k$, taken in the extended reals.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Proposition 4 (`integers-2025-A47-prop-4`), parts (a) and (c), quoted from Cusick and Flahive,
-Appendix 1. -/
-public theorem_wanted convergent_quality_and_lagrange_limsup (ξ : ℝ) (hξ : Irrational ξ) :
-    let cq : ℕ → ℝ := fun k => (fun x : ℝ => (Int.fract x)⁻¹)^[k] ξ
-    let a : ℕ → ℤ := fun k => ⌊cq k⌋
-    let rev : ℕ → ℝ := fun k =>
-      ((List.range (k - 1)).reverse.map (fun i => a (i + 1))).foldr
-        (fun b acc => 1 / ((b : ℝ) + acc)) 0
-    let cut : ℕ → ℝ := fun k => (a k : ℝ) + rev k + Int.fract (cq k)
-    (∀ k : ℕ, 1 ≤ k →
-        (-1 : ℝ) ^ k / (((ξ.convergent (k - 1)).den : ℝ) ^ 2 *
-          ((ξ.convergent (k - 1) : ℝ) - ξ)) = cut k) ∧
-      nLagrangeApproximability 1 ξ = limsup (fun k => ((cut k : ℝ) : EReal)) atTop
-
-/-- **Real numbers with a common continued fraction prefix are close.** Let $\xi$ and $\xi'$ be
-real numbers with continued fraction expansions $[a_0; a_1, a_2, \dots]$ and
-$[a_0'; a_1', a_2', \dots]$, computed by $\xi_0 = \xi$, $a_i = \lfloor \xi_i \rfloor$ and
-$\xi_{i+1} = 1/(\xi_i - a_i)$, stopping when $\xi_i = a_i$ (so an expansion is finite exactly when
-the number is rational). Let $k \ge 0$ be an integer, and suppose that $a_0 = a_0'$ and that for
-each $1 \le i \le k$ either both expansions have a digit of index $i$ and $a_i = a_i'$, or neither
-has one. Then $|\xi - \xi'| \le 2^{1-k}$.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Lemma 5 (`integers-2025-A47-lem-5`), quoted from Cusick and Flahive, Lemma 1. -/
-public theorem_wanted abs_sub_le_of_contFrac_prefix_eq (ξ ξ' : ℝ) (k : ℕ)
-    (h0 : (GenContFract.of ξ).h = (GenContFract.of ξ').h)
-    (hk : ∀ i < k, (GenContFract.of ξ).partDens.get? i = (GenContFract.of ξ').partDens.get? i) :
-    |ξ - ξ'| ≤ 2 ^ (1 - (k : ℤ))
 
 /-- **The $n$-approximabilities as maxima over divisors.** Let $n \ge 1$, let $\lambda_n$ and
 $\mu_n$ be the $n$-Lagrange and $n$-Markoff approximabilities, and let $\xi \ne \xi'$ be irrational

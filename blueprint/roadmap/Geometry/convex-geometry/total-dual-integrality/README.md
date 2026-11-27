@@ -5,6 +5,7 @@ A linear system $A x \le b$ is *totally dual integral* (TDI) if for every integr
 - [Totally dual integral system](is-tdi.md)
 - [Upper-bound systems are totally dual integral](is-tdi-upper-bound.md)
 - [Edmonds–Giles theorem](extreme-points-integral-of-is-tdi.md)
+- [Totally unimodular systems have integral vertices](totally-unimodular-systems-have-integral-vertices.md)
 
 ## Related topics
 

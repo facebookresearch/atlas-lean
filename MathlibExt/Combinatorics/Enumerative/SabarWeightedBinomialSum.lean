@@ -10,10 +10,14 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
-/-! # Sabar's consecutive weighted binomial sums -/
+/-! # Sabar's weighted binomial sums -/
 
 namespace MetaMathlibExt
 
@@ -61,5 +65,43 @@ public theorem sum_choose_mul_two_pow_add_succ (n : ℕ) (hn : 1 ≤ n) :
       rw [show n + 1 + (n + 1) = 2 * n + 2 by omega,
         ← mul_assoc 2 ((n + 1 + n).choose n), ← hcentral, pow_succ]
       ring
+
+/-- **Sabar's alternating binomial sum equal to $n$.** For every natural number $n \ge 2$, in the
+rational numbers,
+
+$$\sum_{k=1}^{n} (-1)^{k+1} \left(1 - \frac{2k}{n+1} + \frac{n}{k+1}\right) \binom{n+k}{k} = n.$$
+
+Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
+(2026), Article A27, Corollary 2 (`integers-2026-A27-cor-2`). -/
+public theorem sum_neg_one_pow_mul_choose_eq_self (n : ℕ) (hn : 2 ≤ n) :
+    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k + 1) *
+        (1 - 2 * (k : ℚ) / (n + 1) + (n : ℚ) / (k + 1)) * ((n + k).choose k : ℚ) = n := by
+  let a (k : ℕ) : ℚ := (n + k).choose k
+  -- The summand is the forward difference of `F`.
+  let F (k : ℕ) : ℚ := (-1 : ℚ) ^ k * (1 - (k : ℚ) / (n + 1)) * a k
+  have hn1 : (n : ℚ) + 1 ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
+  have hstep (k : ℕ) : (-1 : ℚ) ^ (k + 1) *
+      (1 - 2 * (k : ℚ) / (n + 1) + (n : ℚ) / (k + 1)) * a k = F (k + 1) - F k := by
+    have hk1 : (k : ℚ) + 1 ≠ 0 := by exact_mod_cast Nat.succ_ne_zero k
+    have hchoose : a (k + 1) = ((n : ℚ) + k + 1) * a k / ((k : ℚ) + 1) := by
+      apply (eq_div_iff hk1).2
+      simpa [a, Nat.add_assoc, add_assoc] using
+        (congrArg (fun x : ℕ => (x : ℚ)) (Nat.add_one_mul_choose_eq (n + k) k)).symm
+    simp only [F, hchoose, pow_succ, Nat.cast_add, Nat.cast_one]
+    field_simp [hn1, hk1]
+    ring
+  change (∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k + 1) *
+    (1 - 2 * (k : ℚ) / (n + 1) + (n : ℚ) / (k + 1)) * a k) = n
+  calc
+    _ = ∑ k ∈ Finset.Icc 1 n, (F (k + 1) - F k) :=
+      Finset.sum_congr rfl fun k _ => hstep k
+    _ = F (n + 1) - F 1 := Finset.sum_Icc_sub (le_trans (by decide : 1 ≤ 2) hn) F
+    _ = n := by
+      have htop : F (n + 1) = 0 := by simp [F, div_self hn1]
+      have hbot : F 1 = -(n : ℚ) := by
+        simp only [F, a, pow_one, Nat.cast_one, Nat.choose_one_right, Nat.cast_add]
+        field_simp [hn1]
+        ring
+      rw [htop, hbot, zero_sub, neg_neg]
 
 end MetaMathlibExt

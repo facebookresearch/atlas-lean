@@ -14,3 +14,8 @@
 - [Hardy–Weinberg frequency $2pq$ of the heterozygote](offspring-heterozygote.md)
 - [Deviation from Hardy–Weinberg proportions](hw-deviation.md)
 - [Hardy–Weinberg proportions after one generation of random mating](hw-deviation-offspring.md)
+
+- [Complete positive assortative mating with equal genotype-class contribution](complete-positive-assortative-mating-by-genotype.md)
+- [Autotetraploid chromosome segregation approaches binomial proportions](autopolyploid-segregation.md)
+- [Equivalence testing of Hardy-Weinberg equilibrium](equivalence-testing-of-hardy-weinberg-equilibrium/README.md)
+- [HLA haplotype coverage of peptide vaccines](hla-haplotype-coverage-of-peptide-vaccines/README.md)

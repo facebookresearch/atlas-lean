@@ -20,7 +20,9 @@ public import MathlibExt.Combinatorics.Words.BalancedNestedXor
 public import MathlibExt.Combinatorics.Words.CobhamUniformMorphism
 public import MathlibExt.Combinatorics.Words.MetaAutomaticOne
 public import MathlibExt.Combinatorics.Words.MetaAutomaticTwo
+public import MathlibExt.Combinatorics.Words.MetaAutomaticTwoDigitMask
 public import MathlibExt.Combinatorics.Words.RegularSequence
+public import MathlibExt.Combinatorics.Words.RightSpecialFactors
 public import MathlibExt.Combinatorics.Words.ThueMorseQuarto
 
 namespace MetaMathlibExt
@@ -39,29 +41,6 @@ public theorem metaAutomaticOne_small : (List.range 16).map metaAutomaticOne =
     [false, true, true, false, true, false, true, false, true, false, true, false, false,
       true, false, true] := by
   simp [List.range_succ, metaAutomaticOne]
-
-/-- **Right-special factors.** Let $a$ be an infinite binary word and $n$ a natural number. The
-right-special factors of $a$ of length $n$ are the binary words $u$ of length $n$ such that both
-$u0$ and $u1$ are factors of $a$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 5 (definition of `RS_a(n)`). -/
-public def rightSpecialFactors (a : ℕ → Bool) (n : ℕ) : Set (Fin n → Bool) :=
-  {u | ∀ b : Bool, (Fin.snoc (α := fun _ => Bool) u b) ∈ InfiniteWord.factorSet a (n + 1)}
-
-/-- **The all-zero word has no right-special factors.** For every natural number $n$, the
-infinite binary word $000\cdots$ has no right-special factors of length $n$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Section 5. -/
-public theorem rightSpecialFactors_const_false (n : ℕ) :
-    rightSpecialFactors (fun _ => false) n = ∅ := by
-  ext u
-  simp only [Set.mem_empty_iff_false, iff_false]
-  intro hu
-  obtain ⟨i, hi⟩ := hu true
-  have := congrFun hi (Fin.last n)
-  simp at this
 
 /-- **Allouche–Shallit criterion for automatic sequences.** Let $A$ be a finite set,
 $U : \mathbb{N} \to A$ a sequence and $q \ge 2$ a natural number. Let $t, a, b, n_0$ be natural
@@ -86,25 +65,6 @@ public theorem_wanted isKAutomaticSequence_of_digit_recurrence {A : Type} [Finty
       U (q ^ (t + 1) * n + j) =
         f j (Sum.elim (fun i => U (n + i - a)) (fun p => U (q ^ p.1.1 * n + p.1.2)))) :
     IsKAutomaticSequence q U
-
-/-- **Joint recurrence for $\mathcal{M}_1$ and its nested companion.** Read the values of the
-meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$, write $\oplus$ for addition modulo $2$,
-and let $b(m) = \mathcal{M}_1(2m + 1 - \mathcal{M}_1(m))$ for every $m \in \mathbb{N}$. Then for
-every $n \ge 1$, with $x = \mathcal{M}_1(n)$ and $y = b(n)$, the pairs
-$s(k) = (\mathcal{M}_1(k), b(k))$ satisfy $s(4n) = (x, y)$, $s(4n+1) = (1 \oplus x, x \oplus y)$,
-$s(4n+2) = (y, 1 \oplus x)$ and $s(4n+3) = (1 \oplus y, 1 \oplus x \oplus y)$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 12 (`jis-2026-26.4.1-lem-12`). -/
-public theorem_wanted metaAutomaticOne_pair_closure (b : ℕ → Bool)
-    (hb : ∀ m, b m = metaAutomaticOne (2 * m + 1 - (metaAutomaticOne m).toNat))
-    (n : ℕ) (hn : 1 ≤ n) :
-    (metaAutomaticOne (4 * n), b (4 * n)) = (metaAutomaticOne n, b n) ∧
-      (metaAutomaticOne (4 * n + 1), b (4 * n + 1)) =
-        (!metaAutomaticOne n, xor (metaAutomaticOne n) (b n)) ∧
-      (metaAutomaticOne (4 * n + 2), b (4 * n + 2)) = (b n, !metaAutomaticOne n) ∧
-      (metaAutomaticOne (4 * n + 3), b (4 * n + 3)) =
-        (!b n, !xor (metaAutomaticOne n) (b n))
 
 /-- **An automaton for the meta-automatic sequence $\mathcal{M}_1$.** The meta-automatic sequence
 $\mathcal{M}_1$ is $4$-automatic. Moreover, let $\delta$ be the transition map on the states
@@ -213,37 +173,6 @@ public theorem_wanted metaAutomaticTwo_digit_formula (n : ℕ) :
     metaAutomaticTwo n = decide ((∑ k ∈ Finset.range (n + 1),
       (if k % 3 = 0 then n / 4 ^ k % 4 % 2 + n / 4 ^ k % 4 / 2
         else if k % 3 = 1 then n / 4 ^ k % 4 / 2 else n / 4 ^ k % 4 % 2)) % 2 = 1)
-
-/-- **$\mathcal{M}_2$ is the Thue–Morse sequence along a binary digit mask.** For a natural
-number $m$ with binary digits $b_i = \lfloor m / 2^i \rfloor \bmod 2$, let $q(m)$ be the sum of
-$b_i 2^i$ over the $i \le m$ with $i \not\equiv 2 \pmod 3$, that is, the number obtained from $m$
-by setting its binary digits in the positions $i \equiv 2 \pmod 3$ to zero. Then for every natural
-number $n$, the meta-automatic sequence $\mathcal{M}_2$ and the Thue–Morse sequence $t$ satisfy
-$\mathcal{M}_2(n) = t(q(n))$. Moreover, writing the base-$4$ digits of $n$ as
-$d_k = \lfloor n / 4^k \rfloor \bmod 4 = 2 j_k + i_k$ with $i_k, j_k \in \{0, 1\}$, we have
-$q(n) = \sum_{k=0}^{n} d'_k 4^k$, where $d'_k = d_k$ if $k \equiv 0 \pmod 3$, $d'_k = 2 j_k$ if
-$k \equiv 1 \pmod 3$, and $d'_k = i_k$ if $k \equiv 2 \pmod 3$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Theorem 26 (`jis-2026-26.4.1-thm-26`). -/
-public theorem_wanted metaAutomaticTwo_eq_thueMorse_mask (q : ℕ → ℕ)
-    (hq : ∀ m, q m = ∑ i ∈ (Finset.range (m + 1)).filter (fun i => i % 3 ≠ 2),
-      m / 2 ^ i % 2 * 2 ^ i) (n : ℕ) :
-    metaAutomaticTwo n = thueMorse (q n) ∧
-      q n = ∑ k ∈ Finset.range (n + 1),
-        (if k % 3 = 0 then n / 4 ^ k % 4
-          else if k % 3 = 1 then 2 * (n / 4 ^ k % 4 / 2) else n / 4 ^ k % 4 % 2) * 4 ^ k
-
-/-- **First difference of the factor complexity of a binary word.** Let $a$ be an infinite word
-over $\{0, 1\}$, let $p_a$ be its factor complexity, and let $\mathrm{RS}_a(n)$ be the set of
-right-special factors of $a$ of length $n$. Then for every $n \ge 1$,
-$p_a(n+1) = p_a(n) + \#\mathrm{RS}_a(n)$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Lemma 27 (`jis-2026-26.4.1-lem-27`). -/
-public theorem_wanted wordFactorComplexity_succ_eq_add_rightSpecial (a : ℕ → Bool) (n : ℕ)
-    (hn : 1 ≤ n) :
-    wordFactorComplexity a (n + 1) = wordFactorComplexity a n + (rightSpecialFactors a n).ncard
 
 /-- **Right-special factor counts of automatic sequences are regular.** Let $k$ be a natural
 number and $a$ an infinite binary word that is $k$-automatic, and for each $n$ let

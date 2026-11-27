@@ -15,6 +15,9 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.PQDiophantineTuples
+public import MathlibExt.NumberTheory.PadicValuationMinTwice
+public import MathlibExt.NumberTheory.SDiophantineSystemFour
+public import MathlibExt.NumberTheory.SDiophantineTuples
 
 /-!
 # `{p, q}`-Diophantine quadruples and quintuples
@@ -25,26 +28,23 @@ distinct positive integers whose pairwise products plus one are `S`-units
 (`MetaMathlibExt.IsSDiophantineTuple`). For a quadruple `(a, b, c, d)` the paper writes
 `s₁ = ab + 1`, `s₂ = ac + 1`, `s₃ = ad + 1`, `s₄ = bc + 1`, `s₅ = bd + 1`, `s₆ = cd + 1`,
 `sᵢ = p ^ αᵢ * q ^ βᵢ`; here `αᵢ` and `βᵢ` are `padicValNat p sᵢ` and `padicValNat q sᵢ`.
-Lemmas 2 and 4-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
-earlier results.
+Lemmas 5 and 6, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems;
+Lemmas 1-5 quote earlier results.
 
 Proved in `MathlibExt.NumberTheory.PQDiophantineTuples`: Lemmas 1 and 3
 (`MetaMathlibExt.not_mul_add_one_dvd_mul_add_one` and `MetaMathlibExt.dvd_gcd_sub_div_gcd`).
+Proved in `MathlibExt.NumberTheory.PadicValuationMinTwice`: Lemma 2
+(`MetaMathlibExt.padicValNat_two_smallest_eq`).
+Proved in `MathlibExt.NumberTheory.SDiophantineSystemFour`: Lemma 4
+(`MetaMathlibExt.not_exists_sDiophantine_system_four`).
+Proved in `MathlibExt.NumberTheory.SDiophantineTuples`: Lemma 7
+(`MetaMathlibExt.sDiophantine_quadruple_caseIV_bound`), alongside the definition of
+`MetaMathlibExt.IsSDiophantineTuple`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **$S$-Diophantine tuples.** Let $S$ be a finite set of natural numbers. A finite set $s$ of
-natural numbers is an $S$-Diophantine tuple if all its elements are positive and, for all
-distinct $a, b \in s$, every prime factor of $ab + 1$ lies in $S$. A tuple $(a_1, \dots, a_m)$ of
-distinct positive integers is encoded by the set of its entries, which has $m$ elements.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Section 1 (definition of `S`-Diophantine `m`-tuples). -/
-def IsSDiophantineTuple (S s : Finset ℕ) : Prop :=
-  (∀ a ∈ s, 0 < a) ∧ ∀ a ∈ s, ∀ b ∈ s, a ≠ b → (a * b + 1).primeFactors ⊆ S
 
 /-- **$(1, 3)$ is a $\{2\}$-Diophantine pair.** The set $\{1, 3\}$ is a $\{2\}$-Diophantine
 tuple, since $1 \cdot 3 + 1 = 2^2$.
@@ -84,45 +84,6 @@ theorem isSDiophantineTuple_two_three_five_one_three_eight :
     simp
   rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
     first | exact absurd rfl hab | exact h4 | exact h9 | exact h25
-
-/-- **The two smallest valuations coincide.** Let $\ell$ be a prime and $a, b, c, d$ natural
-numbers. Put $s_1 = ab + 1$, $s_2 = ac + 1$, $s_3 = ad + 1$, $s_4 = bc + 1$, $s_5 = bd + 1$,
-$s_6 = cd + 1$, and let $v_i$ be the $\ell$-adic valuation of $s_i$. Then in each of the tuples
-$(v_2, v_3, v_4, v_5)$, $(v_1, v_2, v_5, v_6)$ and $(v_1, v_3, v_4, v_6)$ the minimum value occurs
-at two different positions.
-
-Taking $\ell = p$ and $\ell = q$ gives the source's statements for the exponents of a
-$\{p, q\}$-Diophantine quadruple. No Diophantine hypothesis is needed: the proof uses only the
-identities $abcd = (s_1 - 1)(s_6 - 1) = (s_2 - 1)(s_5 - 1) = (s_3 - 1)(s_4 - 1)$.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 2, quoting Szalay and Ziegler (2013), Proposition 1
-(`integers-2025-A92-lem-2`). -/
-public theorem_wanted padicValNat_two_smallest_eq {ℓ : ℕ} (hℓ : ℓ.Prime) (a b c d : ℕ) :
-    let v : Fin 6 → ℕ := ![padicValNat ℓ (a * b + 1), padicValNat ℓ (a * c + 1),
-      padicValNat ℓ (a * d + 1), padicValNat ℓ (b * c + 1), padicValNat ℓ (b * d + 1),
-      padicValNat ℓ (c * d + 1)]
-    let minTwice : (Fin 4 → ℕ) → Prop := fun x => ∃ i j, i ≠ j ∧ x i = x j ∧ ∀ k, x i ≤ x k
-    minTwice ![v 1, v 2, v 3, v 4] ∧ minTwice ![v 0, v 1, v 4, v 5] ∧
-      minTwice ![v 0, v 2, v 3, v 5]
-
-/-- **The Szalay–Ziegler system (4) has no solutions.** Let $p \ne q$ be odd primes and let
-$a, b, c, d$ be integers with $0 < a < b < c < d$. Then there are no natural numbers
-$\beta_1, \alpha_4, \beta_4, \alpha_2, \alpha_5, \alpha_3, \beta_3, \beta_6$ with
-$ab + 1 = q^{\beta_1}$, $bc + 1 = p^{\alpha_4} q^{\beta_4}$, $ac + 1 = p^{\alpha_2}$,
-$bd + 1 = p^{\alpha_5}$, $ad + 1 = p^{\alpha_3} q^{\beta_3}$ and $cd + 1 = q^{\beta_6}$.
-
-Any solution would make $\{a, b, c, d\}$ a $\{p, q\}$-Diophantine quadruple.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 4, System (4), quoting Szalay and Ziegler, INTEGERS 13
-(2013), Section 4 (`integers-2025-A92-lem-4`). -/
-public theorem_wanted not_exists_sDiophantine_system_four {p q a b c d : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p ≠ q) (ha : 0 < a) (hab : a < b)
-    (hbc : b < c) (hcd : c < d) :
-    ¬∃ β₁ α₄ β₄ α₂ α₅ α₃ β₃ β₆ : ℕ, a * b + 1 = q ^ β₁ ∧ b * c + 1 = p ^ α₄ * q ^ β₄ ∧
-      a * c + 1 = p ^ α₂ ∧ b * d + 1 = p ^ α₅ ∧ a * d + 1 = p ^ α₃ * q ^ β₃ ∧
-      c * d + 1 = q ^ β₆
 
 /-- **Exponent cases for $\{p, q\}$-Diophantine quadruples with $p \equiv 3 \pmod 4$.** Let
 $p \ne q$ be primes with $p \equiv 3 \pmod 4$, and let $a < b < c < d$ be natural numbers such
@@ -215,36 +176,6 @@ public theorem_wanted sDiophantine_quadruple_caseIII_bounds {p q a b c d : ℕ} 
     let β := padicValNat q (a * b + 1)
     let β' := padicValNat q (a * d + 1)
     (d : ℝ) < 103 / 100 * (q : ℝ) ^ (2 * (β' - β)) ∧ (b : ℝ) < 103 / 100 * (q : ℝ) ^ (β' - β)
-
-/-- **Bound on $b$ in Case IV for $\{p, q\}$-Diophantine quadruples.** Let $p$ and $q$ be
-primes with $p \equiv 3 \pmod 4$, $p \ge 7$ and $q \equiv 1 \pmod 4$, and let $a < b < c < d$
-be natural numbers such that $\{a, b, c, d\}$ is a $\{p, q\}$-Diophantine tuple. Write
-$s_1, \dots, s_6$ for $ab + 1, ac + 1, ad + 1, bc + 1, bd + 1, cd + 1$, and let $\alpha_i$ and
-$\beta_i$ be the exponents of $p$ and $q$ in the prime factorization of $s_i$. Suppose that
-$0 = \alpha_3 = \alpha_4 < \alpha_1 = \alpha_2 < \alpha_5 < \alpha_6$ and
-$0 < \beta_1 = \beta_6 < \beta_2 = \beta_5$, $\beta_5 < \beta_3$, $\beta_5 < \beta_4$. Then
-$b < 1.042 \, q^{\beta_2 - \beta_1}$.
-
-The assumptions on the exponents are Case IV of Table 1 of the source together with
-$\beta_1 > 0$.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 7 (`integers-2025-A92-lem-7`). -/
-public theorem_wanted sDiophantine_quadruple_caseIV_bound {p q a b c d : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hp3 : p % 4 = 3) (hp7 : 7 ≤ p) (hq1 : q % 4 = 1) (hab : a < b)
-    (hbc : b < c) (hcd : c < d) (hS : IsSDiophantineTuple {p, q} {a, b, c, d})
-    (hcase : padicValNat p (a * d + 1) = 0 ∧ padicValNat p (b * c + 1) = 0 ∧
-      0 < padicValNat p (a * b + 1) ∧ padicValNat p (a * b + 1) = padicValNat p (a * c + 1) ∧
-      padicValNat p (a * c + 1) < padicValNat p (b * d + 1) ∧
-      padicValNat p (b * d + 1) < padicValNat p (c * d + 1) ∧
-      0 < padicValNat q (a * b + 1) ∧ padicValNat q (a * b + 1) = padicValNat q (c * d + 1) ∧
-      padicValNat q (c * d + 1) < padicValNat q (a * c + 1) ∧
-      padicValNat q (a * c + 1) = padicValNat q (b * d + 1) ∧
-      padicValNat q (b * d + 1) < padicValNat q (a * d + 1) ∧
-      padicValNat q (b * d + 1) < padicValNat q (b * c + 1)) :
-    let β := padicValNat q (a * b + 1)
-    let β' := padicValNat q (a * c + 1)
-    (b : ℝ) < 1042 / 1000 * (q : ℝ) ^ (β' - β)
 
 /-- **The fourteen exponent cases for $\{p, q\}$-Diophantine quadruples.** Let $p \ne q$ be
 primes and let $a < b < c < d$ be natural numbers such that $\{a, b, c, d\}$ is a

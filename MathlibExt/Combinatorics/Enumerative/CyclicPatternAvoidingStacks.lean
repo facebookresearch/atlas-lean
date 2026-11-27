@@ -15,8 +15,9 @@ import Mathlib.Data.List.Sublists
 /-!
 # Cyclic-pattern-avoiding stacks
 
-After any given number of passes of the cyclic sorting machine for `123`, a permutation reaches
-the identity exactly when its reduction does. The definitions are from
+Reducing a permutation before one pass of the cyclic sorting machine for `123` preserves the
+reduced output. After any given number of passes, a permutation reaches the identity exactly when
+its reduction does. The definitions are from
 Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
 Article A15.
 
@@ -751,21 +752,16 @@ private theorem heads_of_no_pair (x : ℕ) (s : List ℕ)
 
 end cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq
 
-open cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq in
-/-- **Reduction and iterates of $SC_{[123]}$.** Let $\pi$ be a permutation of
-$[n] = \{1, \dots, n\}$, written as a sequence, let $\mathrm{red}(\pi)$ be its reduction, of
-length $\ell$, and let $SC_{[123]}^k$ be the $k$-fold iterate of the cyclic avoidance machine
-$SC_{[123]}$. For every $k \ge 0$, $SC_{[123]}^k(\pi) = 12 \cdots n$ if and only if
-$SC_{[123]}^k(\mathrm{red}(\pi)) = 12 \cdots \ell$.
+namespace reductionSeq_cyclicSortingMachine_123_reductionSeq
 
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Corollary 1 (`integers-2026-A15-cor-1`). -/
-public theorem cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq {n k : ℕ}
-    {π : List ℕ} (hπ : π.Perm (List.range' 1 n)) :
-    (cyclicSortingMachine [1, 2, 3])^[k] π = List.range' 1 n ↔
-      (cyclicSortingMachine [1, 2, 3])^[k] (reductionSeq π) =
-        List.range' 1 (reductionSeq π).length := by
-  change machine^[k] π = _ ↔ machine^[k] (reductionSeq π) = _
+open cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq
+
+-- Induct on permutations by contracting an adjacent pair a, a + 1 until reduction fixes the input.
+private theorem expansion_induction {P : ℕ → List ℕ → Prop}
+    (fixed : ∀ {n π}, π.Perm (List.range' 1 n) → reductionSeq π = π → P n π)
+    (expand_step : ∀ {n π} a, π.Perm (List.range' 1 n) → 1 ≤ a → a ≤ n →
+      P n π → P (n + 1) (expand a false π))
+    {n π} (hπ : π.Perm (List.range' 1 n)) : P n π := by
   by_cases h : ∃ u a v, π = u ++ a :: (a + 1) :: v
   · obtain ⟨u, a, v, rfl⟩ := h
     have ha := List.mem_range'_1.mp (hπ.mem_iff.mp (by simp : a ∈ u ++ a :: (a + 1) :: v))
@@ -782,18 +778,68 @@ public theorem cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq {n k : �
         have hc := (hπ.filter (fun x => decide (x ≠ a + 1))).map (lower a)
         change t.Perm (contract a (List.range' 1 (n + 1))) at hc
         rwa [← hr, contract_expand] at hc
-      have hinj : Function.Injective (expand a false) :=
-        Function.LeftInverse.injective (contract_expand a)
-      rw [← he, iterate_expand _ _ _ (ht.nodup_iff.mpr (List.nodup_range' 1)),
-        ← hr, hinj.eq_iff, reduction_expand]
-      exact cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq (k := k) ht
+      rw [← he]
+      exact expand_step a ht ha.1 (by omega) (expansion_induction fixed expand_step ht)
   · simp only [not_exists] at h
     have hs : consecutiveRunHeads none π = π := by
       cases π with
       | nil => rfl
       | cons x xs => simp [consecutiveRunHeads, heads_of_no_pair x xs h]
-    have hr : reductionSeq π = π := by rw [reductionSeq, hs, standardize_perm hπ]
-    rw [hr, hπ.length_eq, List.length_range']
+    exact fixed hπ (by rw [reductionSeq, hs, standardize_perm hπ])
 termination_by n
+
+end reductionSeq_cyclicSortingMachine_123_reductionSeq
+
+open cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq
+  reductionSeq_cyclicSortingMachine_123_reductionSeq in
+/-- **Reducing before the $123$ cyclic sorting machine does not change the reduced output.** For
+every permutation $\pi$ of $[n] = \{1, \ldots, n\}$, applying the cyclic sorting machine
+$\mathrm{SC}_{[123]}$ to the reduction $\operatorname{red}(\pi)$ and reducing the result gives the
+reduction of $\mathrm{SC}_{[123]}(\pi)$:
+$\operatorname{red}(\mathrm{SC}_{[123]}(\operatorname{red}(\pi))) =
+\operatorname{red}(\mathrm{SC}_{[123]}(\pi))$.
+
+Only this identity is stated; the lemma's further assertion that blocks $a, a+1, \ldots, a+k$ of
+$\pi$ enter and leave the stack together is not part of the statement.
+
+Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
+Article A15, Lemma 1 (`integers-2026-A15-lem-1`). -/
+public theorem reductionSeq_cyclicSortingMachine_123_reductionSeq {n : ℕ} {π : List ℕ}
+    (hπ : π.Perm (List.range' 1 n)) :
+    reductionSeq (cyclicSortingMachine [1, 2, 3] (reductionSeq π)) =
+      reductionSeq (cyclicSortingMachine [1, 2, 3] π) := by
+  apply expansion_induction (P := fun _ π => reductionSeq (machine (reductionSeq π)) =
+    reductionSeq (machine π)) _ _ hπ
+  · intro n π _ hfixed
+    rw [hfixed]
+  · intro n π a hπ _ _ ih
+    rw [reduction_expand, machine_expand a π (hπ.nodup_iff.mpr (List.nodup_range' 1)),
+      reduction_expand]
+    exact ih
+
+open cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq
+  reductionSeq_cyclicSortingMachine_123_reductionSeq in
+/-- **Reduction and iterates of $SC_{[123]}$.** Let $\pi$ be a permutation of
+$[n] = \{1, \dots, n\}$, written as a sequence, let $\mathrm{red}(\pi)$ be its reduction, of
+length $\ell$, and let $SC_{[123]}^k$ be the $k$-fold iterate of the cyclic avoidance machine
+$SC_{[123]}$. For every $k \ge 0$, $SC_{[123]}^k(\pi) = 12 \cdots n$ if and only if
+$SC_{[123]}^k(\mathrm{red}(\pi)) = 12 \cdots \ell$.
+
+Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
+Article A15, Corollary 1 (`integers-2026-A15-cor-1`). -/
+public theorem cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq {n k : ℕ}
+    {π : List ℕ} (hπ : π.Perm (List.range' 1 n)) :
+    (cyclicSortingMachine [1, 2, 3])^[k] π = List.range' 1 n ↔
+      (cyclicSortingMachine [1, 2, 3])^[k] (reductionSeq π) =
+        List.range' 1 (reductionSeq π).length := by
+  apply expansion_induction (P := fun n π => machine^[k] π = List.range' 1 n ↔
+    machine^[k] (reductionSeq π) = List.range' 1 (reductionSeq π).length) _ _ hπ
+  · intro n π hπ hfixed
+    rw [hfixed, hπ.length_eq, List.length_range']
+  · intro n π a hπ ha hn ih
+    have hinj := Function.LeftInverse.injective (contract_expand a)
+    rw [iterate_expand _ _ _ (hπ.nodup_iff.mpr (List.nodup_range' 1)),
+      ← expand_range (b := 1) ha (by omega : a < 1 + n), hinj.eq_iff, reduction_expand]
+    exact ih
 
 end MetaMathlibExt

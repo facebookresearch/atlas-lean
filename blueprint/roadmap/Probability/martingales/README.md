@@ -8,6 +8,7 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
 - [One-period fundamental theorem of asset pricing](fundamental-theorem-of-asset-pricing/README.md)
 - [Martingale convergence theorem](martingale-convergence-theorems/README.md)
 - [Optimal stopping and the Snell envelope](optimal-stopping-and-the-snell-envelope/README.md)
+- [Finite-horizon optimal stopping on a binomial tree](finite-horizon-optimal-stopping-on-a-binomial-tree/README.md)
 - [Optional stopping theorem](optional-stopping-theorem/README.md)
 - [Secretary problem: the $1/e$ law](secretary-problem/README.md)
 - [Orthogonality of martingale increments](square-integrable-martingales/README.md)
@@ -16,6 +17,8 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
 - [Doob's $L^p$ maximal inequality](doob-s-lp-maximal-inequality/README.md)
 - [Lévy's upward theorem](levy-s-upward-theorem/README.md)
 - [Uniform integrability](uniform-integrability/README.md)
+- [Self-normalized bounds for symmetric random walks](self-normalized-bounds-for-symmetric-random-walk/README.md)
+- [Prophet inequalities](prophet-inequalities/README.md)
 
 ## Related topics
 
@@ -23,3 +26,6 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
   martingales, the Itô integral as a martingale, and Lévy's characterisation of Brownian motion.
 - [Sequential tests and quickest change detection](../hypothesis-testing/sequential-tests-and-quickest-change-detection/README.md):
   sequential testing and change detection, solved by reduction to optimal stopping.
+
+- [Stopping times and martingale problems](stopping-times-and-martingale-problems/README.md)
+- [Quadratic variation of continuous local martingales](quadratic-variation-of-continuous-local-martingales/README.md)

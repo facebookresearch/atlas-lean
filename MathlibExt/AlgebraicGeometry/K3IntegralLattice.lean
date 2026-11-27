@@ -91,7 +91,12 @@ def gram : Matrix (Fin 22) (Fin 22) ℤ := fun i j ↦
 /-- The actual integer bilinear expression of that fixed matrix. -/
 def latticePairing (v w : Fin 22 → ℤ) : ℤ := ∑ i, ∑ j, v i * gram i j * w j
 
-/-- Both cohomology modules and the cup product are fixed before this comparison is requested. -/
+/-- An identification of the integral cohomology of a complex scheme $X$ with the K3 lattice:
+$\mathbb{Z}$-linear isomorphisms $H^2(X^{\mathrm{an}}, \mathbb{Z}) \cong \mathbb{Z}^{22}$ and
+$H^4(X^{\mathrm{an}}, \mathbb{Z}) \cong \mathbb{Z}$, for the cohomology of the constant sheaf
+$\mathbb{Z}$ on the space of complex points of $X$, under which the cup product
+$H^2 \times H^2 \to H^4$ becomes the bilinear form with Gram matrix `gram` of
+$3U \oplus E_8(-1) \oplus E_8(-1)$. -/
 structure IntegralCupComparison (X : ComplexScheme) where
   second : IntegralSecond X ≃ₗ[ℤ] (Fin 22 → ℤ)
   top : IntegralTop X ≃ₗ[ℤ] ℤ

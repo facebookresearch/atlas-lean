@@ -27,3 +27,21 @@
 - [The variance function x(1 − x) is 1-Lipschitz on the unit interval](abs-mul-one-sub-sub-le.md)
 - [The coefficient √(x(1 − x)) is 1/2-Hölder on the unit interval](abs-sqrt-mul-one-sub-sub-le.md)
 - [Lipschitz bound for the selection–mutation drift on the unit interval](abs-genic-drift-sub-le.md)
+
+## Several alleles
+
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](k-allele-wright-fisher-generator-on-the-simplex.md)
+- [The Dirichlet law is stationary for parent-independent mutation](dirichlet-stationary-law-for-parent-independent.md)
+
+- [A countable polynomial core for the Wright–Fisher generator with selection and mutation](countable-polynomial-graph-core-for-l-alpha-thet.md)
+- [Limit points of Wright–Fisher chains solve the martingale problem with selection and mutation](limit-points-of-wf-chains-solve-the-l-alpha-thet.md)
+- [Pathwise uniqueness for the Wright–Fisher stochastic differential equation](pathwise-uniqueness-for-the-wf-sde.md)
+- [Under the selection path measure the canonical process solves the selection martingale problem](under-p-alpha-the-canonical-process-solves-the-s.md)
+- [Uniqueness for the selection martingale problem by an inverse change of measure](uniqueness-for-the-selection-martingale-problem.md)
+- [Weak convergence of Wright–Fisher chains with weak selection and mutation](weak-convergence-of-wf-chains-with-weak-selectio.md)
+- [Well-posedness of the biallelic Wright–Fisher diffusion with general diploid selection and mutation](well-posedness-of-the-biallelic-wf-diffusion-wit.md)
+- [Well-posedness of the K-allele Wright–Fisher diffusion with diploid selection](well-posedness-of-the-k-allele-wf-diffusion-with.md)
+- [Sample frequency spectrum of a two-state marker under selection–mutation balance](sample-frequency-spectrum-under-selection-mutation-balance.md)
+## Further topics
+- [Wright–Fisher diffusion under strong selection](wright-fisher-diffusion-under-strong-selection/README.md)
+- [Wright–Fisher graph model](wright-fisher-graph-model/README.md)

@@ -8,5 +8,4 @@ $$\alpha_n(V) = \frac{0.01\,(10 - V)}{e^{(10 - V)/10} - 1} \quad (V \ne 10),
 
 the value at $V = 10$ being the limit of the formula there. Equivalently
 $\alpha_n(V) = \varphi((10 - V)/10)/10$ for every real $V$, where $\varphi$ is the
-[extension of $x/(e^x - 1)$ by $1$ at $0$](vtrap.md). The rate is positive and continuously
-differentiable.
+[extension of $x/(e^x - 1)$ by $1$ at $0$](vtrap.md).

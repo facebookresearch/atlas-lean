@@ -57,3 +57,17 @@ example : 1 ≤ subRepCount ({1, 2, 4, 6} : Finset ℤ) 3 ∧
   have hB : Finset.Icc (1 : ℤ) ((2 : ℤ) - 1) ∪
       (Finset.Icc (1 : ℤ) (2 + 1)).image (· * (2 : ℤ)) = {1, 2, 4, 6} := by decide
   exact ⟨hB ▸ h.2 3 (by decide), hB ▸ h.2 4 (by decide)⟩
+
+-- Multiplicity two is covered even for the shortest nonempty interval.
+example : diffBasisNumber 2 1 ≤ 8 := by
+  have h := diffBasisNumber_div_sqrt_le 2 1
+  norm_num at h
+  exact h
+
+-- A zero multiplicity is allowed, even when the interval is not empty.
+example : (diffBasisNumber 0 2 : ℝ) / Real.sqrt 2 ≤ 0 := by
+  simpa using diffBasisNumber_div_sqrt_le 0 2
+
+-- At n = 0 Lean's division by zero gives the stated convention.
+example (g : ℕ) : (diffBasisNumber g 0 : ℝ) / Real.sqrt 0 ≤ 2 * (1 + 1 / Real.sqrt 0) * g := by
+  simpa only [Nat.cast_zero] using diffBasisNumber_div_sqrt_le g 0

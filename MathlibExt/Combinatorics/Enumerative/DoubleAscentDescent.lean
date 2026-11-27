@@ -64,15 +64,6 @@ Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (
 public def permAscents {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∃ h : i.val + 1 < n, σ i < σ ⟨i.val + 1, h⟩).card
 
-/-- **Descent number of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$,
-$\operatorname{des}(\sigma)$ is the number of positions $i$ with $i + 1 < n$ and
-$\sigma(i + 1) < \sigma(i)$.
-
-Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
-Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (`asc`, `des`). -/
-public def permDescents {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
-  (Finset.univ.filter fun i : Fin n => ∃ h : i.val + 1 < n, σ ⟨i.val + 1, h⟩ < σ i).card
-
 /-- **Ascent–descent generating function of a pair of patterns.** For permutations $\tau$ and
 $\rho$ of $\{0, 1, 2\}$, let $S_n(\tau, \rho)$ be the set of permutations of
 $\{0, 1, \dots, n-1\}$ that contain neither $\tau$ nor $\rho$ as a classical pattern. The

@@ -12,6 +12,7 @@ public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.RingTheory.PowerSeries.Derivative
 import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!
@@ -19,7 +20,8 @@ import Mathlib.RingTheory.PowerSeries.Expand
 
 The generalized tau function is defined by the integer powers of Euler's pentagonal series,
 with a shift of one degree. Modulo a prime `p`, the Frobenius map makes the `2p`-th power
-of the series a power series in `X ^ p`.
+of the series a power series in `X ^ p`. For `n > 0` and `|k| ≥ 2`, the formal power rule
+shows that `|k|` divides `n * generalizedTau k (n + 1)`.
 -/
 
 namespace MetaMathlibExt
@@ -117,6 +119,27 @@ public theorem generalizedTau_two_mul_prime_succ_modEq_zero (p : ℕ) (hp : p.Pr
   change (Int.castRingHom (ZMod p)) _ = 0
   rw [← coeff_map, map_pow, ← map_frobenius_expand p hodd.pos.ne', coeff_map,
     coeff_expand_of_not_dvd p hodd.pos.ne' _ hn, map_zero]
+
+/-- **Divisibility of $n\,\tau_k(n + 1)$ by $|k|$.** Let $\tau_k$ be the generalized tau function.
+For every positive integer $n$ and every integer $k$ with $|k| \ge 2$,
+$n\,\tau_k(n + 1) \equiv 0 \pmod{|k|}$.
+
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
+public theorem mul_generalizedTau_succ_modEq_zero (n : ℕ) (hn : 0 < n)
+    (k : ℤ) (hk : 2 ≤ |k|) :
+    (n : ℤ) * generalizedTau k (n + 1) ≡ 0 [ZMOD |k|] := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn.ne'
+  have dvd_coeff_pow (f : ℤ⟦X⟧) (m : ℕ) : (m : ℤ) ∣ (d + 1 : ℤ) * coeff (d + 1) (f ^ m) := by
+    use coeff d (f ^ (m - 1) * derivative f)
+    rw [mul_comm (d + 1 : ℤ), ← coeff_derivative, derivative_pow, mul_assoc, coeff_natCast_mul]
+  rw [Int.modEq_zero_iff_dvd, generalizedTau, coeff_succ_X_mul, ← Int.natCast_natAbs]
+  cases k with
+  | ofNat m => simpa using dvd_coeff_pow (pentagonalSeries ℤ) m
+  | negSucc m =>
+    rw [zpow_eq_inv_pow_natAbs _ (Int.negSucc_lt_zero m).le, Units.val_pow_eq_pow_val]
+    exact dvd_coeff_pow _ _
 
 end
 

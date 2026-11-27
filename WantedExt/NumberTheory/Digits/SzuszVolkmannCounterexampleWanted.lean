@@ -17,6 +17,14 @@ many trailing zeros, and a differentiable increasing interpolation `f` with `⌊
 `η(f) = 2` and `η(f') = 1`, where `η(h) = lim_{x → ∞} log h(x) / log x`. Szüsz and Volkmann's
 Theorem 2 would make `0.h₂(1)h₂(2)…` normal; the paper shows it is not. Normality uses
 `MetaMathlibExt.NormalNumber.IsNormalInBase`.
+
+The definitions and the other proved statements are in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample`, which this module imports;
+`MetaMathlibExt.tendsto_log_campbellF_div_log` is proved in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleTendstoLogCampbellFDivLog`, which this
+module also imports; `MetaMathlibExt.campbellH1_sum_and_y_relations` is proved in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleCampbellH1SumAndYRelations`, which this
+module also imports.
 -/
 module
 
@@ -24,29 +32,12 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample
 public import MathlibExt.NumberTheory.NormalNumber
+public import MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleTendstoLogCampbellFDivLog
+public import MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleCampbellH1SumAndYRelations
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Sums of $h_1$ and the jumps of $h_2$ at powers of ten.** Let $h_1$ be Campbell's auxiliary
-sequence and $h_2$ Campbell's sequence. For every integer $\ell \ge 1$,
-$\sum_{i=1}^{10^{\ell+1}-1} h_1(i) = \sum_{j=0}^{\ell-1} 900 \cdot 100^j$, the number written
-$9090\cdots900$ ($\ell$ blocks $90$, then $0$). Moreover, writing $y_1(n) = h_2(10^{n-1})$ and
-$y_2(n) = h_2(10^n - 1)$, for every integer $\ell \ge 2$ we have
-$(y_2(\ell) - y_1(\ell)) / (9 \cdot 10^{\ell-1} - 1) = 10^{\ell-1}$ and
-$y_1(\ell + 1) - y_2(\ell) = 10^{2\lfloor \ell/2 \rfloor}$.
-
-Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
-Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 2
-(`jis-2026-26.3.4-lem-2`). -/
-public theorem_wanted campbellH1_sum_and_y_relations :
-    (∀ ℓ : ℕ, 1 ≤ ℓ →
-      ∑ i ∈ Finset.Icc 1 (10 ^ (ℓ + 1) - 1), campbellH1 i = ∑ j ∈ Finset.range ℓ, 900 * 100 ^ j) ∧
-    ∀ ℓ : ℕ, 2 ≤ ℓ →
-      ((campbellH2 (10 ^ ℓ - 1) : ℚ) - campbellH2 (10 ^ (ℓ - 1))) / (9 * 10 ^ (ℓ - 1) - 1) =
-          10 ^ (ℓ - 1) ∧
-        (campbellH2 (10 ^ ℓ) : ℤ) - campbellH2 (10 ^ ℓ - 1) = 10 ^ (2 * (ℓ / 2))
 
 /-- **Differentiability of Campbell's interpolation.** Campbell's interpolation $f$ is
 differentiable at every real $x > 0$.
@@ -55,25 +46,6 @@ Source: John M. Campbell, *A Counterexample to a Purported Construction of Norma
 Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 4
 (`jis-2026-26.3.4-lem-4`). -/
 public theorem_wanted campbellF_differentiableOn : DifferentiableOn ℝ campbellF (Set.Ioi 0)
-
-/-- **Monotonicity of Campbell's interpolation.** Campbell's interpolation $f$ is monotone
-(non-decreasing) on $[0, \infty)$: for all real numbers $x$ and $y$ with $0 \le x \le y$,
-$f(x) \le f(y)$.
-
-Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
-Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 5
-(`jis-2026-26.3.4-lem-5`). -/
-public theorem_wanted campbellF_monotoneOn : MonotoneOn campbellF (Set.Ici 0)
-
-/-- **Growth exponent of Campbell's interpolation.** For Campbell's interpolation $f$,
-$\log f(x) / \log x \to 2$ as $x \to \infty$ over the reals; that is, $\eta(f) = 2$, where
-$\eta(h) = \lim_{x \to \infty} \log h(x) / \log x$.
-
-Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
-Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 6
-(`jis-2026-26.3.4-lem-6`). -/
-public theorem_wanted tendsto_log_campbellF_div_log :
-    Filter.Tendsto (fun x => Real.log (campbellF x) / Real.log x) Filter.atTop (nhds 2)
 
 /-- **Growth exponent of the derivative of Campbell's interpolation.** For Campbell's
 interpolation $f$, $\log f'(x) / \log x \to 1$ as $x \to \infty$ over the reals; that is,

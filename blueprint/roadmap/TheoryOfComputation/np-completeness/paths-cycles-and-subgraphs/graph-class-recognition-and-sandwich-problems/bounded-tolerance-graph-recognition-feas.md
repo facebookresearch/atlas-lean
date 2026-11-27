@@ -1,0 +1,3 @@
+# Feasible instances of BOUNDED TOLERANCE GRAPH RECOGNITION
+
+An instance $(n, E)$ of TOLERANCE GRAPH RECOGNITION is feasible for BOUNDED TOLERANCE GRAPH RECOGNITION when the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$ has a bounded tolerance representation: real numbers $l_v \le r_v$ and $t_v > 0$ for each vertex $v$, with $t_v \le r_v - l_v$, such that two distinct vertices $u$ and $v$ are adjacent exactly when $\min(t_u, t_v) \le \max(0, \min(r_u, r_v) - \max(l_u, l_v))$, the length of the overlap of the intervals $[l_u, r_u]$ and $[l_v, r_v]$.

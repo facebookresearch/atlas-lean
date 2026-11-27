@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.NonattackingBishopsAnassas
+public import MathlibExt.Combinatorics.Enumerative.BishopsArshonReindex
 
 /-!
 # Counting nonattacking placements of bishops and anassas
@@ -48,30 +49,6 @@ open Finset
 
 /-! ## The bishop -/
 
-/-- **Arshon's formula for nonattacking bishops (Kotěšovec's form).** For all natural numbers $m$
-and $k$, the number $B_S(m, k)$ of placements of $k$ nonattacking bishops on the $m \times m$
-board satisfies
-
-$$
-B_S(m, k) = \sum_{j=0}^{m} \sum_{i=0}^{\lfloor (m+1)/2 \rfloor}
-\binom{\lfloor (m+1)/2 \rfloor}{i} S\bigl(i + \lfloor m/2 \rfloor, m - j\bigr)
-\sum_{l=0}^{\lfloor m/2 \rfloor} \binom{\lfloor m/2 \rfloor}{l}
-S\bigl(l + \lfloor (m+1)/2 \rfloor, m - k + j\bigr),
-$$
-
-where, for integers $a \ge 0$ and $b$, $S(a, b)$ is the Stirling number of the second kind when
-$b \ge 0$ and $0$ when $b < 0$ (Knuth's extended Stirling numbers of the second kind).
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 3 (Arshon, Kotěšovec)
-(`jis-2025-25.8.6-thm-3`). -/
-public theorem_wanted bishopsSquare_eq_arshon (m k : ℕ) :
-    bishopsSquare m k =
-      ∑ j ∈ range (m + 1), ∑ i ∈ range ((m + 1) / 2 + 1),
-        ((m + 1) / 2).choose i * extStirlingSecond (i + m / 2 : ℕ) ((m : ℤ) - j) *
-          ∑ l ∈ range (m / 2 + 1),
-            (m / 2).choose l * extStirlingSecond (l + (m + 1) / 2 : ℕ) ((m : ℤ) - k + j)
-
 /-- **Recurrence for bishops on white squares.** Write $R_W(m, k)$ for the number of placements of
 $k$ nonattacking bishops on the white squares (those $(i, j)$ with $i + j$ even) of the
 $m \times m$ board $[1, m]^2$, and $\pi(n) \in \lbrace 0, 1 \rbrace$ for the remainder of $n$
@@ -89,21 +66,6 @@ public theorem_wanted bishopsWhite_recurrence (m k : ℕ) :
     (bishopsWhite (m + 1) (k + 1) : ℤ) =
         bishopsWhite m (k + 1) + ((m : ℤ) - k + ((m + 1) % 2 : ℕ)) * bishopsWhite m k ∧
       bishopsWhite m 0 = 1 ∧ bishopsWhite 0 (k + 1) = 0
-
-/-- **Recurrence for bishops on the black squares.** Let $R_K(m, k)$ be the number of
-nonattacking placements of $k$ bishops on the black squares $(i, j)$, with $i + j$ odd, of the
-board $\{1, \dots, m\}^2$, and let $\pi(m) \in \{0, 1\}$ be the remainder of $m$ modulo $2$.
-For $m, k \ge 1$,
-$$R_K(m, k) = R_K(m-1, k) + (m - k + 1 - \pi(m)) \, R_K(m-1, k-1)$$
-in the integers, and for every natural number $m$, $R_K(m, 0) = 1$ and $R_K(0, k) = 0$ for
-$k \ge 1$.
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 4 (`jis-2025-25.8.6-thm-4`). -/
-public theorem_wanted bishopsBlack_recurrence (m k : ℕ) :
-    (bishopsBlack (m + 1) (k + 1) : ℤ) =
-        bishopsBlack m (k + 1) + ((m : ℤ) - k + 1 - ((m + 1) % 2 : ℕ)) * bishopsBlack m k ∧
-      bishopsBlack m 0 = 1 ∧ bishopsBlack 0 (k + 1) = 0
 
 /-- **Extended Stirling formula for bishops on white squares.** For all natural numbers $m$ and
 $k$, the number $R_W(m, k)$ of placements of $k$ nonattacking bishops on the white squares (those
@@ -134,17 +96,6 @@ Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 4 (`jis-2025-25.
 public theorem_wanted bishopsBlack_eq_sum (m k : ℕ) :
     bishopsBlack m k =
       ∑ j ∈ range (k + 1), (m / 2).choose j * extStirlingSecond ((m : ℤ) - j) ((m : ℤ) - k)
-
-/-- **Ward's identity for Stirling numbers of the second kind.** For natural numbers $k \le m$,
-$$S(m, m - k) = \sum_{p=0}^{k} S_2(k + p, p) \binom{m}{k + p},$$
-where $S$ denotes the Stirling numbers of the second kind and $S_2$ the 2-associated Stirling
-numbers of the second kind.
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Lemma 8 (`jis-2025-25.8.6-lem-8`). -/
-public theorem_wanted stirlingSecond_sub_eq_sum_associated (m k : ℕ) (hk : k ≤ m) :
-    (Nat.stirlingSecond m (m - k) : ℤ) =
-      ∑ p ∈ range (k + 1), twoAssocStirlingSecond (k + p) p * m.choose (k + p)
 
 /-- **Santos's expansion of a product of binomial coefficients.** For natural numbers $p$, $q$
 and complex numbers $x$, $z$,

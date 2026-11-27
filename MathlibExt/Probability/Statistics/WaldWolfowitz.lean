@@ -808,94 +808,11 @@ private theorem lrProd_succ (P₀ P₁ : Measure X) (n : ℕ) (ω : ℕ → X) :
     lrProd P₀ P₁ (n + 1) ω = lrProd P₀ P₁ n ω * P₁.rnDeriv P₀ (ω n) := by
   simp [lrProd, prod_range_succ]
 
-private theorem measurable_coord_observationFiltration {n i : ℕ} (hi : i < n) :
-    Measurable[observationFiltration X n] fun ω : ℕ → X => ω i := by
-  change Measurable[MeasurableSpace.pi.comap (range n).restrict] fun ω : ℕ → X => ω i
-  exact (@measurable_pi_apply (range n) (fun _ => X) (fun _ => inferInstance)
-    ⟨i, mem_range.2 hi⟩).comp (comap_measurable _)
-
 private theorem measurable_lrProd (P₀ P₁ : Measure X) (n : ℕ) :
     Measurable[observationFiltration X n] (lrProd P₀ P₁ n) :=
   Finset.measurable_prod _ fun _ hi =>
     (Measure.measurable_rnDeriv _ _).comp
       (measurable_coord_observationFiltration (mem_range.1 hi))
-
-/-- **Markov property of i.i.d. coordinates.** Integrating a function of an `𝓕ₙ`-measurable
-quantity and of the next coordinate over an `𝓕ₙ`-event amounts to integrating out that
-coordinate first. -/
-private theorem setLIntegral_infinitePi_coord (P₀ : Measure X) [IsProbabilityMeasure P₀] (n : ℕ)
-    {F : Set (ℕ → X)} (hF : MeasurableSet[observationFiltration X n] F) {u : (ℕ → X) → ℝ≥0∞}
-    (hu : Measurable[observationFiltration X n] u) {h : ℝ≥0∞ → X → ℝ≥0∞}
-    (hh : Measurable (Function.uncurry h)) :
-    ∫⁻ ω in F, h (u ω) (ω n) ∂Measure.infinitePi (fun _ : ℕ => P₀) =
-      ∫⁻ ω in F, ∫⁻ x, h (u ω) x ∂P₀ ∂Measure.infinitePi (fun _ : ℕ => P₀) := by
-  classical
-  have hle : observationFiltration X n ≤ observationFiltration X (n + 1) :=
-    (observationFiltration X).mono (Nat.le_succ n)
-  have hFm : MeasurableSet F := (observationFiltration X).le n F hF
-  have hun : Measurable[observationFiltration X (n + 1)] u := hu.mono hle le_rfl
-  have hcoord : Measurable[observationFiltration X (n + 1)] fun ω : ℕ → X => ω n :=
-    measurable_coord_observationFiltration (Nat.lt_succ_self n)
-  set f : (ℕ → X) → ℝ≥0∞ := F.indicator fun ω => h (u ω) (ω n) with hf
-  set g : (ℕ → X) → ℝ≥0∞ := F.indicator fun ω => ∫⁻ x, h (u ω) x ∂P₀ with hg
-  have hfm : Measurable[observationFiltration X (n + 1)] f :=
-    (hh.comp (hun.prodMk hcoord)).indicator (hle F hF)
-  have hgm : Measurable[observationFiltration X n] g :=
-    (hh.lintegral_prod_right'.comp hu).indicator hF
-  have hFdep : ∀ x t, Function.update x n t ∈ F ↔ x ∈ F := by
-    intro x t
-    have hind : Measurable[observationFiltration X n] (F.indicator fun _ => (1 : ℝ≥0∞)) :=
-      Measurable.indicator measurable_const hF
-    have hdep := hind.dependsOn_of_piFinset
-    have := hdep (x := Function.update x n t) (y := x) fun i hi =>
-      Function.update_of_ne (mem_range.1 hi).ne _ _
-    by_cases hx : x ∈ F <;> by_cases hx' : Function.update x n t ∈ F <;> simp_all
-  have hudep : ∀ x t, u (Function.update x n t) = u x := fun x t =>
-    hu.dependsOn_of_piFinset fun i hi => Function.update_of_ne (mem_range.1 hi).ne _ _
-  obtain ⟨x₀⟩ : Nonempty (ℕ → X) := Measure.nonempty_of_neZero (Measure.infinitePi fun _ : ℕ => P₀)
-  rw [← lintegral_indicator hFm, ← lintegral_indicator hFm]
-  change ∫⁻ ω, f ω ∂_ = ∫⁻ ω, g ω ∂_
-  rw [lintegral_infinitePi_of_piFinset (fun _ : ℕ => P₀) (s := range (n + 1)) hfm x₀,
-    lintegral_infinitePi_of_piFinset (fun _ : ℕ => P₀) (s := range n) hgm x₀, range_add_one,
-    lmarginal_insert' _ (hfm.mono ((observationFiltration X).le _) le_rfl) notMem_range_self]
-  congr 1
-  funext x
-  simp only [hf, hg, Set.indicator, hFdep, hudep, Function.update_self]
-  split_ifs <;> simp
-
-private theorem enat_toENNReal_eq_tsum (k : ℕ∞) :
-    (k : ℝ≥0∞) = ∑' n : ℕ, if (n : ℕ∞) < k then 1 else 0 := by
-  induction k using ENat.recTopCoe with
-  | top =>
-    simp only [ENat.natCast_lt_top, ite_true, ENat.toENNReal_top]
-    exact (ENNReal.tsum_const_eq_top_of_ne_zero one_ne_zero).symm
-  | coe m =>
-    rw [tsum_eq_sum (s := range m)]
-    · rw [sum_congr rfl (g := fun _ => (1 : ℝ≥0∞)) fun n hn => by simp [mem_range.1 hn]]
-      simp
-    · intro n hn
-      simpa using hn
-
-/-- The tail-sum formula for the expectation of a random time. -/
-private theorem lintegral_enat_eq_tsum {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    {T : Ω → WithTop ℕ} (hT : ∀ n : ℕ, MeasurableSet {ω | (n : WithTop ℕ) < T ω}) :
-    ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂μ = ∑' n : ℕ, μ {ω | (n : WithTop ℕ) < T ω} := by
-  have hpt : ∀ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) =
-      ∑' n : ℕ, {ω | (n : WithTop ℕ) < T ω}.indicator 1 ω := by
-    intro ω
-    refine (enat_toENNReal_eq_tsum (T ω)).trans ?_
-    congr 1
-    funext n
-    simp only [Set.indicator, Set.mem_ofPred_eq, Pi.one_apply]
-    have hiff : ((n : ℕ∞) < (show ℕ∞ from T ω)) ↔ ((n : WithTop ℕ) < T ω) := Iff.rfl
-    by_cases hn : (n : WithTop ℕ) < T ω
-    · rw [ite_eq_left (hiff.2 hn), ite_eq_left hn]
-    · rw [ite_eq_right (mt hiff.1 hn), ite_eq_right hn]
-  simp_rw [hpt]
-  rw [lintegral_tsum fun n => (measurable_one.indicator (hT n)).aemeasurable]
-  congr 1
-  funext n
-  rw [lintegral_indicator_one (hT n)]
 
 /-! ### The potential argument -/
 
@@ -917,21 +834,6 @@ private noncomputable def remValue (P₀ P₁ : Measure X) (κ c ℓ₀ : ℝ≥
   ∫⁻ ω in {ω | (n : WithTop ℕ) ≤ T ω}, bayesValue P₀ P₁ κ c (ℓ₀ * lrProd P₀ P₁ n ω)
     ∂Measure.infinitePi (fun _ : ℕ => P₀)
 
-private theorem measurableSet_lt_stoppingTime {T : (ℕ → X) → WithTop ℕ}
-    (hT : IsStoppingTime (observationFiltration X) T) (n : ℕ) :
-    MeasurableSet[observationFiltration X n] {ω | (n : WithTop ℕ) < T ω} := by
-  have hset : {ω | (n : WithTop ℕ) < T ω} = {ω | T ω ≤ n}ᶜ :=
-    Set.ext fun ω => by simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, not_le]
-  rw [hset]
-  exact (hT n).compl
-
-private theorem setOf_succ_le_eq {Ω : Type*} (T : Ω → WithTop ℕ) (n : ℕ) :
-    {ω | ((n + 1 : ℕ) : WithTop ℕ) ≤ T ω} = {ω | (n : WithTop ℕ) < T ω} := by
-  ext ω
-  change ((n + 1 : ℕ) : ℕ∞) ≤ (T ω : ℕ∞) ↔ (n : ℕ∞) < (T ω : ℕ∞)
-  rw [Nat.cast_add, Nat.cast_one]
-  exact ENat.add_one_le_iff (ENat.natCast_ne_top n)
-
 private theorem remValue_eq (P₀ P₁ : Measure X) (κ c ℓ₀ : ℝ≥0∞) {T : (ℕ → X) → WithTop ℕ}
     (hT : IsStoppingTime (observationFiltration X) T) (n : ℕ) :
     remValue P₀ P₁ κ c ℓ₀ T n = stopValue P₀ P₁ κ c ℓ₀ T n +
@@ -939,8 +841,9 @@ private theorem remValue_eq (P₀ P₁ : Measure X) (κ c ℓ₀ : ℝ≥0∞) {
         ∂Measure.infinitePi (fun _ : ℕ => P₀) := by
   have hset : {ω | (n : WithTop ℕ) ≤ T ω} = {ω | T ω = n} ∪ {ω | (n : WithTop ℕ) < T ω} := by
     ext ω; simp only [Set.mem_union, Set.mem_ofPred_eq, le_iff_eq_or_lt, eq_comm]
-  rw [remValue, stopValue, hset, lintegral_union
-    ((observationFiltration X).le n _ (measurableSet_lt_stoppingTime hT n))]
+  have hS : MeasurableSet[observationFiltration X n] {ω | (n : WithTop ℕ) < T ω} :=
+    hT.measurableSet_gt n
+  rw [remValue, stopValue, hset, lintegral_union ((observationFiltration X).le n _ hS)]
   refine Set.disjoint_left.2 fun ω h1 h2 => ?_
   simp only [Set.mem_ofPred_eq] at h1 h2
   rw [h1] at h2
@@ -959,11 +862,13 @@ private theorem setLIntegral_bayesCont_eq (P₀ P₁ : Measure X) [IsProbability
   have hh : Measurable (Function.uncurry fun y x => bayesValue P₀ P₁ κ c (y * P₁.rnDeriv P₀ x)) :=
     (measurable_bayesValue P₀ P₁ κ c).comp
       (measurable_fst.mul ((Measure.measurable_rnDeriv _ _).comp measurable_snd))
+  have hS : MeasurableSet[observationFiltration X n] {ω | (n : WithTop ℕ) < T ω} :=
+    hT.measurableSet_gt n
   simp only [bayesCont]
   rw [lintegral_add_left (f := fun ω => c * (1 + ℓ₀ * lrProd P₀ P₁ n ω))
     (measurable_const.mul (measurable_const.add hYm)), stepCost, remValue,
-    setOf_succ_le_eq,
-    ← setLIntegral_infinitePi_coord P₀ n (measurableSet_lt_stoppingTime hT n) hY hh]
+    setOfPred_natCast_add_one_le_eq,
+    ← setLIntegral_infinitePi_coord P₀ n hS hY hh]
   congr 2
   funext ω
   rw [lrProd_succ, mul_assoc]
@@ -973,7 +878,9 @@ private theorem remValue_zero (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀
     remValue P₀ P₁ κ c ℓ₀ T 0 = bayesValue P₀ P₁ κ c ℓ₀ := by
   simp [remValue, lrProd_zero]
 
-/-- The value function lies below the expected loss accumulated by any stopping time. -/
+/-- For any stopping time `T` and horizon `n`, the value at the initial state `ℓ₀` is at most the
+expected sampling cost of `T` before `min T n`, plus the value at the state where `T` stops before
+`n`, plus the value at time `n` on `{n ≤ T}`. -/
 private theorem bayesValue_le_sum_add_remValue (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
     {κ : ℝ≥0∞} (hκ : κ ≠ ∞) (c ℓ₀ : ℝ≥0∞) {T : (ℕ → X) → WithTop ℕ}
     (hT : IsStoppingTime (observationFiltration X) T) (n : ℕ) :
@@ -989,8 +896,10 @@ private theorem bayesValue_le_sum_add_remValue (P₀ P₁ : Measure X) [IsProbab
       ← setLIntegral_bayesCont_eq P₀ P₁ κ c ℓ₀ hT]
     refine add_le_add le_rfl (lintegral_mono fun ω => bayesValue_le_cont P₀ P₁ hκ c _)
 
-/-- If continuing is optimal wherever the stopping time `T` continues, the expected loss of `T` is
-the value function. -/
+/-- If continuing is optimal at the state of every time at which the stopping time `T` continues,
+the bound of `bayesValue_le_sum_add_remValue` is reversed: the expected sampling cost of `T`
+before `min T n`, plus the value at the state where `T` stops before `n`, plus the value at time
+`n` on `{n ≤ T}`, is at most the value at the initial state `ℓ₀`. -/
 private theorem sum_add_remValue_le_bayesValue (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
     (κ c ℓ₀ : ℝ≥0∞) {T : (ℕ → X) → WithTop ℕ}
     (hT : IsStoppingTime (observationFiltration X) T)
@@ -1052,7 +961,8 @@ private theorem tsum_stepCost (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀
     ∑' k, stepCost P₀ P₁ c ℓ₀ T k =
       c * (∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀) +
         ℓ₀ * ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₁)) := by
-  have hS := measurableSet_lt_stoppingTime hT
+  have hS : ∀ n : ℕ, MeasurableSet[observationFiltration X n] {ω | (n : WithTop ℕ) < T ω} :=
+    fun n => hT.measurableSet_gt n
   have hSm : ∀ k : ℕ, MeasurableSet {ω | (k : WithTop ℕ) < T ω} := fun k =>
     (observationFiltration X).le k _ (hS k)
   have hk : ∀ k, stepCost P₀ P₁ c ℓ₀ T k =
@@ -1130,14 +1040,14 @@ private theorem bayesValue_le_risk (P₀ P₁ : Measure X) [IsProbabilityMeasure
       (κ * Measure.infinitePi (fun _ : ℕ => P₀) D +
         ℓ₀ * Measure.infinitePi (fun _ : ℕ => P₁) Dᶜ) := by
   have hSm : ∀ k : ℕ, MeasurableSet {ω | (k : WithTop ℕ) < T ω} := fun k =>
-    (observationFiltration X).le k _ (measurableSet_lt_stoppingTime hT k)
+    (observationFiltration X).le k _ (hT.measurableSet_gt k)
   set S := ∑' k, (stepCost P₀ P₁ c ℓ₀ T k + stopValue P₀ P₁ κ c ℓ₀ T k) with hSdef
   have hbound : ∀ n : ℕ, bayesValue P₀ P₁ κ c ℓ₀ ≤
       S + κ * Measure.infinitePi (fun _ : ℕ => P₀) {ω | (n : WithTop ℕ) < T ω} := by
     intro n
     refine (bayesValue_le_sum_add_remValue P₀ P₁ hκ c ℓ₀ hT (n + 1)).trans (add_le_add
       (sum_le_tsum _) ?_)
-    rw [remValue, setOf_succ_le_eq, ← setLIntegral_const]
+    rw [remValue, setOfPred_natCast_add_one_le_eq, ← setLIntegral_const]
     exact lintegral_mono fun ω => (bayesValue_le P₀ P₁ κ c _).trans (min_le_left _ _)
   have htend : Tendsto (fun n : ℕ =>
       S + κ * Measure.infinitePi (fun _ : ℕ => P₀) {ω | (n : WithTop ℕ) < T ω}) atTop (𝓝 S) := by

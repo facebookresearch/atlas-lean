@@ -1,6 +1,7 @@
 # Small parsimony problem
 
 - [Min-plus cost semiring](cost.md)
+- [Cost bounds for Sankoff and Fitch](cost-bounds-for-sankoff-and-fitch.md)
 
 ## Sankoff's algorithm
 

@@ -14,84 +14,16 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
+public import MathlibExt.NumberTheory.NegRFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
+public import MathlibExt.NumberTheory.RFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RLucasPolynomial
+public import MathlibExt.NumberTheory.RLucasPolynomialAlternatingSum
+public import MathlibExt.NumberTheory.RFibonacciPolynomialNegRFibonacciEqSumRoots
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The $r$-Fibonacci polynomials.** Let $R$ be a commutative semiring, let $r$ be a natural
-number and let $x, y \in R$. The $r$-Fibonacci polynomials $U^{(r)}_n(x, y) \in R$, $n \ge 0$, are
-defined by $U^{(r)}_0 = 0$, $U^{(r)}_k = x^{k-1}$ for $1 \le k \le r$, and
-$U^{(r)}_{n+1} = x \, U^{(r)}_n + y \, U^{(r)}_{n-r}$ for $n \ge r$.
-
-These are the initial values and recurrence displayed for $\xi_n = m^{n-1} U_n$ in the paper,
-at $m = 1$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 4. -/
-public def rFibonacciPolynomial {R : Type*} [CommSemiring R] (r : ℕ) (x y : R) : ℕ → R
-  | 0 => 0
-  | n + 1 =>
-    if n < r then x ^ n
-    else x * rFibonacciPolynomial r x y n + y * rFibonacciPolynomial r x y (n - r)
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **The zeroth $r$-Fibonacci polynomial vanishes.** For every natural number $r$ and all
-$x, y$ in a commutative semiring $R$, the $r$-Fibonacci polynomial $U^{(r)}_0(x, y)$ is $0$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 4. -/
-public theorem rFibonacciPolynomial_zero {R : Type*} [CommSemiring R] (r : ℕ) (x y : R) :
-    rFibonacciPolynomial r x y 0 = 0 := by
-  rw [rFibonacciPolynomial]
-
-/-- **Initial values of the $r$-Fibonacci polynomials.** Let $R$ be a commutative semiring, let
-$x, y \in R$, and let $n < r$ be natural numbers. Then the $r$-Fibonacci polynomial
-$U^{(r)}_{n+1}(x, y)$ equals $x^n$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 4. -/
-public theorem rFibonacciPolynomial_succ_of_lt {R : Type*} [CommSemiring R] {r n : ℕ}
-    (x y : R) (h : n < r) : rFibonacciPolynomial r x y (n + 1) = x ^ n := by
-  rw [rFibonacciPolynomial]
-  simp [h]
-
-/-- **Recurrence for the $r$-Fibonacci polynomials.** Let $R$ be a commutative semiring, let
-$x, y \in R$, and let $r \le n$ be natural numbers. Then the $r$-Fibonacci polynomials
-$U_m = U^{(r)}_m(x, y)$ satisfy $U_{n+1} = x \, U_n + y \, U_{n-r}$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 4. -/
-public theorem rFibonacciPolynomial_succ_of_le {R : Type*} [CommSemiring R] {r n : ℕ}
-    (x y : R) (h : r ≤ n) :
-    rFibonacciPolynomial r x y (n + 1)
-      = x * rFibonacciPolynomial r x y n + y * rFibonacciPolynomial r x y (n - r) := by
-  rw [rFibonacciPolynomial]
-  simp [show ¬n < r by omega]
-
-/-- **The $1$-Fibonacci polynomials at $x = y = 1$ are the Fibonacci numbers.** For every
-natural number $n$, the $r$-Fibonacci polynomial with $r = 1$, evaluated at $x = y = 1$ in the
-natural numbers, is the $n$-th Fibonacci number: $U^{(1)}_n(1, 1) = F_n$, where $F_0 = 0$,
-$F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 1. -/
-public theorem rFibonacciPolynomial_one_one_one :
-    ∀ n, rFibonacciPolynomial 1 (1 : ℕ) 1 n = Nat.fib n
-  | 0 => by rw [rFibonacciPolynomial_zero]; rfl
-  | 1 => by rw [rFibonacciPolynomial_succ_of_lt _ _ (by omega)]; simp
-  | n + 2 => by
-    rw [rFibonacciPolynomial_succ_of_le _ _ (by omega), rFibonacciPolynomial_one_one_one (n + 1),
-      show n + 1 - 1 = n by omega, rFibonacciPolynomial_one_one_one n, Nat.fib_add_two]
-    ring
 
 /-- **Geometrically weighted sum of $r$-Fibonacci polynomials.** Let $K$ be a field, let $r \ge 1$
 be a natural number, let $x, y, m \in K$ with $1 - m x - m^{r+1} y \ne 0$, and write $U_j$ for
@@ -114,24 +46,6 @@ public theorem_wanted sum_pow_mul_rFibonacciPolynomial {K : Type*} [Field K] {r 
           - m ^ (r + 1) * y * ∑ j ∈ Finset.Icc 1 r,
               m ^ (n + j - r - 1) * rFibonacciPolynomial r x y (n + j - r))
         / (1 - m * x - m ^ (r + 1) * y)
-
-/-- **Sum of the first $n$ $r$-Fibonacci polynomials.** Let $K$ be a field, let $r \ge 1$ be a
-natural number, let $x, y \in K$ with $1 - x - y \ne 0$, and write $U_j$ for the $r$-Fibonacci
-polynomial $U^{(r)}_j(x, y)$. Then for every natural number $n$,
-$$
-\sum_{j=1}^{n} U_j = \frac{1 - U_{n+1} - y \sum_{j=1}^{r} U_{n-r+j}}{1 - x - y},
-$$
-where the terms of the inner sum with $n - r + j \le 0$ are zero.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Corollary 2 (`integers-2025-A38-cor-2`). -/
-public theorem_wanted sum_rFibonacciPolynomial {K : Type*} [Field K] {r : ℕ} (hr : 1 ≤ r)
-    (x y : K) (hP : 1 - x - y ≠ 0) (n : ℕ) :
-    ∑ j ∈ Finset.Icc 1 n, rFibonacciPolynomial r x y j
-      = (1 - rFibonacciPolynomial r x y (n + 1)
-          - y * ∑ j ∈ Finset.Icc 1 r, rFibonacciPolynomial r x y (n + j - r))
-        / (1 - x - y)
 
 /-- **Alternating sum of $r$-Fibonacci polynomials.** Let $K$ be a field, let $r \ge 1$ be a
 natural number, let $x, y \in K$ with $1 + x + (-1)^r y \ne 0$, and write $U_j$ for the
@@ -617,29 +531,6 @@ public theorem_wanted sum_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : 
               m ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
         / (1 - m * x - m ^ (r + 1) * y) - 1
 
-/-- **Alternating sum of $r$-Lucas polynomials.** Let $K$ be a field, let $r \ge 1$ and $s$ be
-natural numbers, let $x, y \in K$ with $1 + x + (-1)^r y \ne 0$, and write $V_j$ for the
-$r$-Lucas polynomial of type $s$, $V_j = V^{(r,s)}_j(x, y)$. Then for every natural number
-$n \ge r - 1$,
-$$
-\sum_{j=1}^{n} (-1)^j V_j =
-\frac{1 - (-1)^r s y + (-1)^n V_{n+1} + (-1)^r y \sum_{j=1}^{r} (-1)^{n-r+j} V_{n-r+j}}
-{1 + x + (-1)^r y} - 1.
-$$
-
-For $n < r - 1$ the right side involves $V$ at negative indices.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Corollary 5 (`integers-2025-A38-cor-5`). -/
-public theorem_wanted sum_neg_one_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : ℕ}
-    (hr : 1 ≤ r) (hn : r ≤ n + 1) (s : ℕ) (x y : K) (hP : 1 + x + (-1) ^ r * y ≠ 0) :
-    ∑ j ∈ Finset.Icc 1 n, (-1) ^ j * rLucasPolynomial r s x y j
-      = (1 - (-1) ^ r * s * y + (-1) ^ n * rLucasPolynomial r s x y (n + 1)
-          + (-1) ^ r * y * ∑ j ∈ Finset.Icc 1 r,
-              (-1) ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
-        / (1 + x + (-1) ^ r * y) - 1
-
 /-- **Companion sequence of the $(-r)$-Fibonacci polynomials.** Let $A$ be a commutative ring,
 $r$ a natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence
 $V^{(-r)}_n(x, y) \in A$, $n \ge 0$, is defined by $V^{(-r)}_0 = r + 1$ and, if $r \ge 1$, by
@@ -712,23 +603,6 @@ public theorem negRLucas_succ_of_le {A : Type*} [CommRing A] {r n : ℕ} (x : A)
       = ↑y⁻¹ * negRLucas r x y (n - r + 1) - ↑y⁻¹ * x * negRLucas r x y (n - r) := by
   rw [negRLucas]
   simp [show r ≠ 0 by omega, show ¬n + 1 < r by omega, show n + 1 ≠ r by omega]
-
-/-- **Explicit sum for the (-r)-Fibonacci polynomials.** Let $A$ be a commutative ring,
-$r \ge 2$, $x \in A$ and $y$ a unit of $A$, and write $U_n = U^{(-r)}_n(x, y)$. For every
-$n \ge 0$,
-$$U_{n+1} = \sum_{k=0}^{\lfloor n/r \rfloor} \binom{k}{n - rk} y^{-k} (-x)^{n-rk},$$
-where $\binom{a}{b} = 0$ for $b > a$, so the terms with $(r+1) k < n$ vanish.
-
-The paper states $n \ge 1$ and $x$ a unit; the identity holds for $n = 0$ and every $x$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 6 (`integers-2025-A38-thm-6`). -/
-public theorem_wanted negRFibonacci_succ_eq_sum {A : Type*} [CommRing A] {r : ℕ}
-    (hr : 2 ≤ r) (x : A) (y : Aˣ) (n : ℕ) :
-    negRFibonacci r x y (n + 1)
-      = ∑ k ∈ Finset.range (n / r + 1),
-          ((k.choose (n - r * k) : ℕ) : A) * (↑y⁻¹ : A) ^ k * (-x) ^ (n - r * k)
 
 /-- **The companion sequence in terms of the $(-r)$-Fibonacci polynomials.** Let $A$ be a
 commutative ring, $r \ge 2$ a natural number, $x \in A$ and $y$ a unit of $A$, and let
@@ -808,27 +682,6 @@ public theorem_wanted negRLucas_generatingFunction {A : Type*} [CommRing A] {r :
         + PowerSeries.C (x * ↑y⁻¹) * PowerSeries.X ^ (r + 1)) *
       PowerSeries.mk (fun n => negRLucas r x y n)
       = PowerSeries.C ((r : A) + 1) - PowerSeries.C (↑y⁻¹ : A) * PowerSeries.X ^ r
-
-/-- **Binet formula for the (-r)-Fibonacci polynomials.** Let $K$ be a field, $r \ge 2$,
-$x \in K$ and $y \in K$ nonzero, and write $U_n = U^{(-r)}_n(x, y)$. Suppose that
-$\beta_0, \dots, \beta_r \in K$ are pairwise distinct and that
-$t^{r+1} - y^{-1} t + x y^{-1} = \prod_{k=0}^{r} (t - \beta_k)$ as polynomials over $K$. Then for
-every $n \ge 0$,
-$$U_{n+1} = \sum_{k=0}^{r} \frac{\beta_k^{n+r+1}}{r \beta_k^{r+1} - x y^{-1}},$$
-where a term whose denominator vanishes is read as $0$.
-
-The paper's hypothesis $x \ne \frac{r}{r+1} ((r+1) y)^{-1/r}$ is replaced by the distinctness of
-the zeros (compare Lemma 1).
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 9 (`integers-2025-A38-thm-9`). -/
-public theorem_wanted negRFibonacci_eq_sum_roots {K : Type*} [Field K] {r : ℕ} (hr : 2 ≤ r)
-    (x : K) (y : Kˣ) (β : Fin (r + 1) → K) (hβ : Function.Injective β)
-    (hP : (Polynomial.X ^ (r + 1) - Polynomial.C (↑y⁻¹ : K) * Polynomial.X
-      + Polynomial.C (x * ↑y⁻¹) : Polynomial K) = ∏ k, (Polynomial.X - Polynomial.C (β k)))
-    (n : ℕ) :
-    negRFibonacci r x y (n + 1) = ∑ k, β k ^ (n + r + 1) / (r * β k ^ (r + 1) - x * ↑y⁻¹)
 
 /-- **Binet formula for the companion sequence $V^{(-r)}$.** Let $K$ be a field, $r \ge 2$ a
 natural number, $x \in K$ and $y$ a unit of $K$, and let $V^{(-r)}_n(x, y)$ be the companion

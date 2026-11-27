@@ -9,16 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.SimpleGraph.CliqueWidth
-public import MathlibExt.Combinatorics.SimpleGraph.RankWidth
+public import MathlibExt.Combinatorics.SimpleGraph.RankWidthCliqueWidth
 public import MathlibExt.Combinatorics.SimpleGraph.TreeDecomposition
+public import MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost
 
 /-!
 # Rank-width: wanted theorems
 
-Central theorems on rank-width whose proofs are deferred: the comparison of rank-width with
-clique-width (Oum–Seymour), vertex-minor monotonicity, the bound of rank-width by tree-width, and
-the excluded vertex-minor theorem.
+Central theorems on rank-width whose proofs are deferred: vertex-minor monotonicity, the bound of
+rank-width by tree-width, and the excluded vertex-minor theorem. The upper bound on rank-width in
+terms of clique-width (Oum–Seymour) is in
+`MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost`.
 
 ## References
 
@@ -35,22 +36,6 @@ the excluded vertex-minor theorem.
 namespace SimpleGraph
 
 variable {V : Type*} [Fintype V]
-
-/-- **Rank-width is at most clique-width (Oum–Seymour).** If a finite graph has clique-width at
-most `k`, it has rank-width at most `k`; this is the inequality `rw(G) ≤ cw(G)` of Oum and
-Seymour, *Approximating clique-width and branch-width*, J. Combin. Theory Ser. B 96 (2006),
-Proposition 6.3 (also Oum, arXiv:1601.03800v2, Theorem 2.1). -/
-theorem_wanted HasCliqueWidthAtMost.hasRankWidthAtMost {G : SimpleGraph V} {k : ℕ}
-    (h : G.HasCliqueWidthAtMost k) : G.HasRankWidthAtMost k
-
-/-- **Clique-width is bounded by an exponential in rank-width (Oum–Seymour).** If a finite graph
-has rank-width at most `k`, it has clique-width at most `2 ^ (k + 1) - 1`; this is the inequality
-`cw(G) ≤ 2 ^ (rw(G) + 1) - 1` of Oum and Seymour, *Approximating clique-width and branch-width*,
-J. Combin. Theory Ser. B 96 (2006), Proposition 6.3 (also Oum, arXiv:1601.03800v2,
-Theorem 2.1). With the previous statement, a class of graphs has bounded rank-width if and only
-if it has bounded clique-width. -/
-theorem_wanted HasRankWidthAtMost.hasCliqueWidthAtMost {G : SimpleGraph V} {k : ℕ}
-    (h : G.HasRankWidthAtMost k) : G.HasCliqueWidthAtMost (2 ^ (k + 1) - 1)
 
 /-- **Rank-width does not increase under vertex-minors.** If `H` is a vertex-minor of the finite
 graph `G` and `G` has rank-width at most `k`, then so does `H` (Oum, *Rank-width and

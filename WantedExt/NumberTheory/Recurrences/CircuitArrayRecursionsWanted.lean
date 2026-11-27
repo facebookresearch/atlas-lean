@@ -16,6 +16,9 @@ public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Polynomial.Basic
 public import MathlibExt.NumberTheory.Recurrences.CircuitArray
+public import MathlibExt.NumberTheory.Recurrences.CircuitArrayM
+public import MathlibExt.NumberTheory.Recurrences.CircuitArrayMRowZero
+public import MathlibExt.NumberTheory.Recurrences.CircuitArrayRecursionsCircuitArrayMRowTwo
 
 /-!
 Statements from Evans and Hendel on recursions of the rows of the circuit array: Section 3
@@ -28,40 +31,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Annihilator of a sequence.** Let $K$ be a semiring, $p = \sum_i a_i X^i \in K[X]$ and
-$G \colon \mathbb{N} \to K$ a sequence, and let $E$ be the translation operator
-$E(G_s) = G_{s+1}$. The operator $p(E)$ annihilates $G$ when $\sum_i a_i G_{s+i} = 0$ for every
-$s \ge 0$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Section 3 (definitions of the translation operator and of an annihilator). -/
-def AnnihilatesSeq {K : Type*} [Semiring K] (p : K[X]) (G : ℕ → K) : Prop :=
-  ∀ s : ℕ, p.sum (fun i a => a * G (s + i)) = 0
-
-/-- **Every operator annihilates the zero sequence.** For every semiring $K$ and every polynomial
-$p \in K[X]$, the operator $p(E)$ annihilates the zero sequence, where $E$ is the translation
-operator $E(G_s) = G_{s+1}$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Section 3 (definition of an annihilator). -/
-theorem annihilatesSeq_zero {K : Type*} [Semiring K] (p : K[X]) : AnnihilatesSeq p (0 : ℕ → K) := by
-  intro s
-  simp [Polynomial.sum]
-
-/-- **The characteristic polynomial annihilates the solutions of its recurrence.** Let $K$ be a
-field, $d \ge 0$ and $a_0, \dots, a_{d-1} \in K$. If a sequence $G \colon \mathbb{N} \to K$
-satisfies $G_{n+d} = \sum_{i=0}^{d-1} a_i G_{n+i}$ for every $n \ge 0$, then the characteristic
-polynomial $X^d - \sum_{i=0}^{d-1} a_i X^i$ of this recurrence annihilates $G$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Lemma 3.4 (`fq-2024-hendel08232024rev2-lem-3.4`). -/
-public theorem_wanted annihilatesSeq_charPoly_of_isSolution {K : Type*} [Field K]
-    (E : LinearRecurrence K) (G : ℕ → K) (hG : E.IsSolution G) :
-    AnnihilatesSeq E.charPoly G
 
 /-- **The operator $E - c$ annihilates the powers of $c$.** Let $K$ be a field, $c \in K$, and let
 $E$ be the translation operator $E(G_s) = G_{s+1}$ on sequences $G \colon \mathbb{N} \to K$. Then
@@ -96,49 +65,6 @@ public theorem_wanted annihilatesSeq_sum_prod_and_mul :
         AnnihilatesSeq p₁ G₁ → AnnihilatesSeq p₂ G₂ →
         AnnihilatesSeq ((p₁.roots ×ˢ p₂.roots).map (fun r => X - C (r.1 * r.2))).prod
           (fun s => G₁ s * G₂ s)
-
-/-! ### Section 2: the multivariable circuit array
-
-The reduction of the triangular grid, the circuit array of a choice of boundary values, the circuit
-array and the one-variable circuit array are defined in
-`MathlibExt.NumberTheory.Recurrences.CircuitArray`. -/
-
-/-- **Variables of the multivariable circuit array.** For a natural number $m$, $X_m$ is the
-indeterminate $X_m$ regarded as an element of the field of fractions
-$\mathbb{Q}(X_0, X_1, X_2, \dots)$ of the polynomial ring $\mathbb{Q}[X_0, X_1, X_2, \dots]$ in
-countably many variables.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Definition 2.5 (the variables `X_i`). -/
-noncomputable def circuitVar (m : ℕ) : FractionRing (MvPolynomial ℕ ℚ) :=
-  algebraMap (MvPolynomial ℕ ℚ) (FractionRing (MvPolynomial ℕ ℚ)) (MvPolynomial.X m)
-
-/-- **Multivariable circuit array.** Reduce the all-one triangular grid row by row as in Section 2,
-and after the $m$-th reduction, for every $m \ge 1$, set every boundary edge (the left edges on the
-first diagonal and the right edges on the last diagonal) to the variable $X_m$ of the field of
-rational functions over $\mathbb{Q}$ in $X_0, X_1, \dots$. The multivariable circuit array
-$C^M_{i,j}$ (Table 3) is the circuit array read off these grids: for $j \ge 1$ and
-$0 \le i \le 2(j-1)$, it is the left edge for even $i$, or the right edge for odd $i$, of the
-triangle in row $2j - 1$ and diagonal $j - \lfloor (i+1)/2 \rfloor$ of the $j$-times reduced
-grid (other indices give junk values). In particular $C^M_{2(m-1),m} = X_m$ for every $m \ge 1$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Definition 2.5 and Table 3. -/
-noncomputable def circuitArrayM (i j : ℕ) : FractionRing (MvPolynomial ℕ ℚ) :=
-  circuitArrayOf (fun m => if m = 0 then none else some (circuitVar m)) i j
-
-/-- **First entries of the left diagonal of the multivariable circuit array.** The multivariable
-circuit array $C^M$, with values in the field of rational functions over $\mathbb{Q}$ in the
-variables $X_0, X_1, \dots$, satisfies $C^M_{0,1} = X_1$ and $C^M_{2,2} = X_2$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Definition 2.5. -/
-theorem circuitArrayM_diagonal :
-    circuitArrayM 0 1 = circuitVar 1 ∧ circuitArrayM 2 2 = circuitVar 2 := by
-  constructor <;> simp [circuitArrayM, circuitArrayOf, circuitGrid]
 
 /-! ### Section 4 -/
 
@@ -212,64 +138,6 @@ public theorem_wanted circuitArrayX_row_two (s : ℕ) (hs : 2 ≤ s) :
       ((27 * 9 ^ ((s : ℤ) - 3) - 1) - 24 * (2 * (s : RatFunc ℚ) - 3) * 9 ^ ((s : ℤ) - 3) * RatFunc.X +
           (81 * 81 ^ ((s : ℤ) - 3) - 3 * 9 ^ ((s : ℤ) - 3)) * RatFunc.X ^ 2) /
         (9 ^ ((s : ℤ) - 2) * RatFunc.X - 1) ^ 2
-
-/-- **Row 0 of the multivariable circuit array.** Let $C^M$ be the multivariable circuit array, with
-values in the field of rational functions over $\mathbb{Q}$ in the variables $X_0, X_1, \dots$.
-For every integer $s \ge 1$, $C^M_{0,s} = (9^{s-1} - 1 + X_1)/9^{s-1}$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Corollary 4.8 (`fq-2024-hendel08232024rev2-cor-4.8`). -/
-public theorem_wanted circuitArrayM_row_zero (s : ℕ) (hs : 1 ≤ s) :
-    circuitArrayM 0 s = (9 ^ (s - 1) - 1 + circuitVar 1) / 9 ^ (s - 1)
-
-/-- **Row 1 of the multivariable circuit array.** Let $C^M$ be the multivariable circuit array, with
-values in the field of rational functions over $\mathbb{Q}$ in the variables $X_0, X_1, \dots$.
-For every integer $s \ge 2$,
-$C^M_{1,s} = (9^{s-1} - 1 + X_1)/\bigl(3(X_1 + 3 \cdot 9^{s-2} - 1)\bigr)$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Corollary 4.10 (`fq-2024-hendel08232024rev2-cor-4.10`). -/
-public theorem_wanted circuitArrayM_row_one (s : ℕ) (hs : 2 ≤ s) :
-    circuitArrayM 1 s = (9 ^ (s - 1) - 1 + circuitVar 1) / (3 * (circuitVar 1 + 3 * 9 ^ (s - 2) - 1))
-
-/-- **Row 2 of the multivariable circuit array.** Let $C^M$ be the multivariable circuit array, with
-values in the field of rational functions over $\mathbb{Q}$ in the variables $X_0, X_1, \dots$.
-For every integer $s \ge 2$,
-$$C^M_{2,s} = \frac{\sum_{i,j} c_{i,j}(s) X_1^i X_2^j}{(3 \cdot 9^{s-2} - 1 + X_1)^2},$$
-where the sum runs over the six coefficients $c_{2,1}(s) = 9^{s-2}$, $c_{2,0}(s) = 9^{s-2} - 1$,
-$c_{1,1}(s) = 4 \cdot 9^{s-2}$, $c_{1,0}(s) = 2 + (16(s-2) - 2) \cdot 9^{s-2}$,
-$c_{0,1}(s) = 4 \cdot 9^{s-2}$ and
-$c_{0,0}(s) = -1 + 9 \cdot 81^{s-2} - (8 + 16(s-2)) \cdot 9^{s-2}$.
-Moreover, writing $E$ for the translation operator on rational sequences, the shifted coefficient
-sequences $s \mapsto c_{i,j}(s+2)$, $s \ge 0$, are annihilated as in Table 4: $c_{0,0}$ by
-$(E-81)(E-9)^2(E-1)$, $c_{0,1}$ by $(E-1)(E-9)$, $c_{1,0}$ by $(E-9)^2(E-1)$, $c_{1,1}$ by
-$E-9$, $c_{2,0}$ by $(E-1)(E-9)$ and $c_{2,1}$ by $E-9$.
-
-The paper's base case is $s = 3$; the identity also holds at $s = 2$. The recursions column of
-Table 4 is omitted (its $X_1^0 X_2^1$ entry $G_s = 10G_{s-1} - G_{s-2}$ is misprinted for
-$-9G_{s-2}$).
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Corollary 4.12 (`fq-2024-hendel08232024rev2-cor-4.12`) and Table 4. -/
-public theorem_wanted circuitArrayM_row_two :
-    (∀ s : ℕ, 2 ≤ s →
-      circuitArrayM 2 s =
-        (9 ^ (s - 2) * circuitVar 1 ^ 2 * circuitVar 2 + (9 ^ (s - 2) - 1) * circuitVar 1 ^ 2 +
-            4 * 9 ^ (s - 2) * circuitVar 1 * circuitVar 2 +
-            (2 + (16 * ((s : FractionRing (MvPolynomial ℕ ℚ)) - 2) - 2) * 9 ^ (s - 2)) * circuitVar 1 +
-            4 * 9 ^ (s - 2) * circuitVar 2 +
-            (-1 + 9 * 81 ^ (s - 2) - (8 + 16 * ((s : FractionRing (MvPolynomial ℕ ℚ)) - 2)) * 9 ^ (s - 2))) /
-          (3 * 9 ^ (s - 2) - 1 + circuitVar 1) ^ 2) ∧
-      AnnihilatesSeq ((X - C 81) * (X - C 9) ^ 2 * (X - C 1))
-        (fun s : ℕ => -1 + 9 * (81 : ℚ) ^ s - (8 + 16 * (s : ℚ)) * 9 ^ s) ∧
-      AnnihilatesSeq ((X - C 1) * (X - C 9)) (fun s : ℕ => 4 * (9 : ℚ) ^ s) ∧
-      AnnihilatesSeq ((X - C 9) ^ 2 * (X - C 1)) (fun s : ℕ => 2 + (16 * (s : ℚ) - 2) * 9 ^ s) ∧
-      AnnihilatesSeq (X - C 9) (fun s : ℕ => 4 * (9 : ℚ) ^ s) ∧
-      AnnihilatesSeq ((X - C 1) * (X - C 9)) (fun s : ℕ => (9 : ℚ) ^ s - 1) ∧
-      AnnihilatesSeq (X - C 9) (fun s : ℕ => (9 : ℚ) ^ s)
 
 end
 

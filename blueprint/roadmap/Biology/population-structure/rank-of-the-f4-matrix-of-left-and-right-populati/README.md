@@ -9,6 +9,7 @@
 - [The f4 matrix rank is at most the rank of the right contrasts](rank-f4-matrix-le-rank-contrast-right.md)
 - [The f4 matrix rank is at most the rank of the left contrasts](rank-f4-matrix-le-rank-contrast-left.md)
 - [Right populations with the reference's weights give a zero f4 matrix](f4-matrix-eq-zero-of-weight-right-succ-e.md)
+- [The generic rank of the f4 matrix is the common independent-set number](generic-rank-of-f4-matrices-equals-the-common-in.md)
 
 ## Individuals of the global-ancestry model
 
@@ -22,3 +23,7 @@
 - [Admixture-model f4 statistics of an individual mix the ancestral ones](f4-ancestry-freq-individual.md)
 - [The admixture model bounds the rank of the individual f4 matrix](rank-f4-matrix-ancestry-freq-le.md)
 - [Admixture-model rank bound for the f4 matrix over finitely many loci](rank-f4-matrix-ancestry-freq-le-of-finit.md)
+
+- [Asymptotic chi-square for minimum-distance rank statistics (assembly)](asymptotic-chi-square-for-minimum-distance-rank.md)
+- [Local manifold structure of rank-k matrices](local-manifold-structure-of-rank-k-matrices.md)
+- [Local quadratic approximation of the distance to a smooth submanifold](local-quadratic-approximation-of-the-distance-to.md)

@@ -38,9 +38,14 @@ open ManifoldDifferentialForms KahlerClassGeometry CoordinateFormIntegrals
 open HyperkahlerComplexStructures SmoothDeRhamBettiBridge
 open scoped Manifold ContDiff
 
-/-- The chart integral of top forms against a finite smooth partition of unity
-on a complex manifold is well defined, linear, and vanishes on exact forms. The
-holomorphic charts give the orientation that Stokes' theorem needs. -/
+/-- **Linearity and Stokes' theorem for the chart integral of top forms.** Let $M$ be a manifold
+modelled on $\mathbb{C}^n$ that is smooth both as a real and as a complex manifold, assuming the
+basic laws of the chart exterior derivative (`ExteriorTheory`); let $C$ identify $\mathbb{R}^{2n}$
+with $\mathbb{C}^n$ along the standard real frame, and $A$ be a finite smooth partition of unity
+whose weights are nonnegative, with compact supports inside the charts at their centres. Then for
+the integral of a smooth $2n$-form, the sum over $A$ of the Lebesgue integrals of its weighted
+chart densities, every chart density is integrable, the integral is $\mathbb{R}$-linear, and it
+vanishes on $d\beta$ for every smooth $(2n-1)$-form $\beta$ (`IntegrationTheory n M C A`). -/
 public theorem_wanted integrationTheory (n : ℕ) (M : Type) [TopologicalSpace M]
     [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
     [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M]

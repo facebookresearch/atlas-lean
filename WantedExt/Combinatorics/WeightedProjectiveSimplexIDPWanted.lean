@@ -14,6 +14,7 @@ public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexCoefficients
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexIDP
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexOneSupported
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
 public import MathlibExt.Geometry.LatticePointEnumerator
 
@@ -203,20 +204,6 @@ public def SatisfiesIDPNecessary {n : ℕ} (q : Fin n → ℕ) : Prop :=
   ∀ j, 1 + ∑ i, q i % q j = q j
 
 /-! ## Theorems 1--9 -/
-
-/-- **Reflexivity criterion for weighted projective simplices.** Let $q = (q_1, \dots, q_n)$ be
-natural-number weights with $q_i \ge 1$ for every $i$. The weighted projective simplex with
-weights $q$ is reflexive if and only if $q_i$ divides $1 + \sum_{j=1}^n q_j$ for every $i$.
-
-Reflexivity here is the geometric, height-by-height notion rather than a divisibility condition,
-so the statement relates two independently defined properties.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public theorem_wanted reflexive_iff_weight_dvd {n : ℕ} (q : Fin n → ℕ)
-    (hq : ∀ i, 1 ≤ q i) :
-    IsReflexive (weightedSimplex q) ↔ ∀ i, q i ∣ 1 + ∑ j, q j
 
 /-- **Reflexivity criterion in support form.** Let $d \ge 1$, let $r_1, \dots, r_d$ be pairwise
 distinct natural numbers with $r_i \ge 1$, and let $x_1, \dots, x_d$ be natural numbers with
@@ -436,19 +423,6 @@ public theorem_wanted idp_reflexive_multiplicity_bounds {d : ℕ} (r x : Fin d �
     (∀ j : Fin d, ∀ h : j.val + 1 < d,
       let last : Fin d := ⟨d - 1, Nat.sub_lt (Nat.zero_lt_of_lt h) (by omega)⟩
       ¬r j ∣ r last → x last ≤ r j / (r last % r j))
-
-/-- **One-supported IDP reflexive weighted simplices have all weights one.** Let $r \ge 1$ and
-$x \ge 1$ be natural numbers, and let $q = (r, \dots, r)$ be the weight vector consisting of $x$
-copies of $r$. If the weighted projective simplex with weights $q$ is reflexive and has the
-integer decomposition property, then $r = 1$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Proposition 1. -/
-public theorem_wanted one_supported_idp_reflexive_support_eq_one (r x : ℕ)
-    (hr : 1 ≤ r) (hx : 1 ≤ x)
-    (href : IsReflexive (weightedSimplexList (List.replicate x r)))
-    (hidp : HasIDP (weightedSimplexList (List.replicate x r))) : r = 1
 
 /-- **IDP reflexive two-supported weighted simplices.** Let $r = (r_1, r_2)$ and
 $x = (x_1, x_2)$ be pairs of positive integers with $r_1 < r_2$, and let

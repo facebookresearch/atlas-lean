@@ -27,7 +27,9 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Tikhonov regularization](tikhonov-regularization/README.md)
 - [Convexity via the tangent-plane inequality](convex-on-iff-forall-le-add-fderiv-withi.md)
 - [Karush–Kuhn–Tucker conditions for inequality constraints](karush-kuhn-tucker-inequality.md)
+- [Convex KKT conditions are sufficient](is-min-on-of-karush-kuhn-tucker-convex.md)
 - [Finite sums of convex functions are convex](convex-on-finset-sum.md)
+- [Subdifferential calculus](subdifferential-calculus/README.md)
 
 ## Related topics
 
@@ -35,3 +37,9 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Least squares, ridge and lasso regression](../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)
 - [Newton's method](../numerical-analysis/newton-s-method/README.md)
 - [Conjugate gradient method](../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/README.md)
+
+## Research directions
+
+- [Existence of minimizers for quasiconvex elastic energies](existence-of-minimizers-for-quasiconvex-elastic-energies.md)
+
+- [Regularity and singularities of elastic energy minimizers](regularity-and-singularities-of-elastic-minimizers.md)

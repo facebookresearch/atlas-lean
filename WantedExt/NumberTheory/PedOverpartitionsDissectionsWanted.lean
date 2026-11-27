@@ -11,8 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.EulerQuotientThreeDissection
+public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductFourthTwoDissection
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.NumberTheory.RamanujanFiveDissection
 
 /-!
 # `[j, k]`-overpartitions with even parts distinct (Harishkumar, Menezes, Mahadeva Naika)
@@ -42,21 +44,6 @@ namespace MetaMathlibExt
 open MetaMathlibExt.QPochhammer
 
 @[expose] public section
-
-/-- **Ramanujan's 5-dissection of Euler's product.** Let $q$ be a complex number with
-$|q| < 1$. For $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{n \ge 0} (1 - q^k q^{kn})$, and
-for complex $a$, $b$ with $|a|, |b| < 1$ let $f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2}
-b^{n(n-1)/2}$ be Ramanujan's general theta function; all these products and series converge,
-so the raw infinite product and the raw theta sum take these values. For $|x| < 1$ put
-$R(x) = f(-x, -x^4) / f(-x^2, -x^3)$. Then
-$f_1 = f_{25} \left( R(q^5)^{-1} - q - q^2 R(q^5) \right)$.
-
-Source: Harishkumar T, Shruthi Menezes, and M. S. Mahadeva Naika, *On [j, k]-Overpartitions with
-Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Lemma 5 (`integers-2025-A69-lem-5`). -/
-public theorem_wanted qPochhammerInf_five_dissection (q : ℂ) (hq : ‖q‖ < 1) :
-    let R : ℂ → ℂ := fun x => ramanujanThetaRaw (-x) (-x ^ 4) / ramanujanThetaRaw (-x ^ 2) (-x ^ 3)
-    qPochhammerInfRaw q q =
-      qPochhammerInfRaw (q ^ 25) (q ^ 25) * ((R (q ^ 5))⁻¹ - q - q ^ 2 * R (q ^ 5))
 
 /-- **Ramanujan's 7-dissection of Euler's product.** Let $q$ be a complex number with
 $|q| < 1$. For $k \ge 1$ let $f_k = (q^k; q^k)_\infty = \prod_{n \ge 0} (1 - q^k q^{kn})$, and
@@ -262,30 +249,6 @@ theorem cubicCoeffVector_one_two :
       (List.range 5).map (cubicCoeffVector 2) = [3, 81, 729, 0, 0] := by
   decide
 
-/-- **The 2-dissection of $f_1^4$.** For $k \ge 1$ let $f_k = \prod_{m \ge 1} (1 - q^{km})$, an
-integer power series in $q$. Then
-$$f_1^4 f_2^2 f_4^2 f_8^4 = f_4^{12} - 4 q f_2^4 f_8^8.$$
-Dividing by $f_2^2 f_4^2 f_8^4$ gives
-$f_1^4 = \frac{f_4^{10}}{f_2^2 f_8^4} - 4q \frac{f_2^2 f_8^4}{f_4^2}$.
-
-Source: Harishkumar T, Shruthi Menezes, and M. S. Mahadeva Naika, *On [j, k]-Overpartitions with
-Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Lemma 1, (7)
-(`integers-2025-A69-lem-1`). -/
-public theorem_wanted qEulerProduct_fourth_two_dissection :
-    𝔣 1 ^ 4 * 𝔣 2 ^ 2 * 𝔣 4 ^ 2 * 𝔣 8 ^ 4 = 𝔣 4 ^ 12 - 4 * X * 𝔣 2 ^ 4 * 𝔣 8 ^ 8
-
-/-- **A 3-dissection of a quotient of Euler products.** In the ring of integer power series in
-$q$, let $f_k = \prod_{m \ge 1} (1 - q^{km})$ denote the Euler products. Then
-$f_1^2 f_6 f_9 f_{18} = f_2 f_6 f_9^3 - 2q f_2 f_3 f_{18}^3$. Since every $f_k$ with $k \ge 1$ has
-constant term $1$, this is the 3-dissection
-$f_1^2 / f_2 = f_9^2 / f_{18} - 2q f_3 f_{18}^2 / (f_6 f_9)$ with denominators cleared.
-
-Source: Harishkumar T, Shruthi Menezes, and M. S. Mahadeva Naika, *On [j, k]-Overpartitions with
-Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Lemma 3, (11)
-(`integers-2025-A69-lem-3`). -/
-public theorem_wanted qEulerProduct_sq_div_three_dissection :
-    𝔣 1 ^ 2 * 𝔣 6 * 𝔣 9 * 𝔣 18 = 𝔣 2 * 𝔣 6 * 𝔣 9 ^ 3 - 2 * X * 𝔣 2 * 𝔣 3 * 𝔣 18 ^ 3
-
 /-- **Congruences modulo 32 for $\mathrm{ped}_{9,9}$.** For $k \ge 1$ let
 $f_k = \prod_{m \ge 1} (1 - q^{km})$, an integer power series in $q$, and let
 $\mathrm{ped}_{9,9}(n)$ be the coefficient of $q^n$ in $f_4 f_{18} / (f_1 f_9)$. Then for all
@@ -316,7 +279,8 @@ public theorem_wanted pedNineNine_congruences_mod_thirtyTwo (α β n : ℕ) :
       coeff n (4 * 𝔣 1 ^ 3 * 𝔣 3 * 𝔣 4 * 𝔣 6 + 16 * X * 𝔣 2 ^ 2 * 𝔣 6 ^ 6) [ZMOD 32] ∧
     pedNineNine (4 * 3 ^ (4 * α + 6) * n + (19 * 3 ^ (4 * α + 5) - 1) / 2) ≡
       pedNineNine (4 * 3 ^ (4 * α + 4) * n + (19 * 3 ^ (4 * α + 3) - 1) / 2) [ZMOD 32] ∧
-    pedNineNine (4 * 3 ^ (4 * α + 4) * 5 ^ (2 * β) * n + (19 * 3 ^ (4 * α + 3) * 5 ^ (2 * β) - 1) / 2)
+    pedNineNine (4 * 3 ^ (4 * α + 4) * 5 ^ (2 * β) * n +
+      (19 * 3 ^ (4 * α + 3) * 5 ^ (2 * β) - 1) / 2)
       ≡ coeff n (16 * 𝔣 1 * 𝔣 6 ^ 3) [ZMOD 32] ∧
     ∀ i ∈ ({0, 1, 2, 4} : Finset ℕ),
       pedNineNine (4 * 3 ^ (4 * α + 4) * 5 ^ (2 * β + 1) * (5 * n + i) +
@@ -365,12 +329,14 @@ public theorem_wanted pedNineNine_congruences_mod_sixteen (α β γ n : ℕ) :
     pedNineNine (2 * 3 ^ (4 * α + 3) * n + (11 * 3 ^ (4 * α + 2) - 1) / 2) ≡ 0 [ZMOD 16] ∧
     pedNineNine (2 * 3 ^ (4 * α + 6) * n + (11 * 3 ^ (4 * α + 5) - 1) / 2) ≡ 0 [ZMOD 16] ∧
     pedNineNine (2 * 3 ^ (4 * α + 4) * n + (11 * 3 ^ (4 * α + 3) - 1) / 2) ≡ 0 [ZMOD 16] ∧
-    pedNineNine (4 * 3 ^ (4 * α + 4) * 5 ^ (2 * β) * n + (7 * 3 ^ (4 * α + 3) * 5 ^ (2 * β) - 1) / 2)
+    pedNineNine (4 * 3 ^ (4 * α + 4) * 5 ^ (2 * β) * n +
+      (7 * 3 ^ (4 * α + 3) * 5 ^ (2 * β) - 1) / 2)
       ≡ coeff n (8 * 𝔣 1 ^ 7) [ZMOD 16] ∧
     (∀ i ∈ ({0, 2, 3, 4} : Finset ℕ),
       pedNineNine (4 * 3 ^ (4 * α + 4) * 5 ^ (2 * β + 1) * (5 * n + i) +
         (11 * 3 ^ (4 * α + 3) * 5 ^ (2 * β + 1) - 1) / 2) ≡ 0 [ZMOD 16]) ∧
-    pedNineNine (4 * 3 ^ (4 * α + 3) * 7 ^ (2 * γ) * n + (5 * 3 ^ (4 * α + 2) * 7 ^ (2 * γ) - 1) / 2)
+    pedNineNine (4 * 3 ^ (4 * α + 3) * 7 ^ (2 * γ) * n +
+      (5 * 3 ^ (4 * α + 2) * 7 ^ (2 * γ) - 1) / 2)
       ≡ coeff n (8 * 𝔣 1 ^ 5) [ZMOD 16] ∧
     ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset ℕ),
       pedNineNine (4 * 3 ^ (4 * α + 3) * 7 ^ (2 * γ + 1) * (7 * n + j) +
@@ -410,7 +376,8 @@ Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Theorem 3 (`integers-2025
 public theorem_wanted pedNineNine_more_congruences_mod_sixteen (α β γ n : ℕ) :
     pedNineNine (4 * 3 ^ (4 * α + 3) * n + (13 * 3 ^ (4 * α + 2) - 1) / 2) ≡ 0 [ZMOD 16] ∧
     pedNineNine (4 * 3 ^ (4 * α + 3) * n + (19 * 3 ^ (4 * α + 2) - 1) / 2) ≡ 0 [ZMOD 16] ∧
-    pedNineNine (4 * 3 ^ (4 * α + 3) * 5 ^ (2 * β) * n + (7 * 3 ^ (4 * α + 2) * 5 ^ (2 * β) - 1) / 2)
+    pedNineNine (4 * 3 ^ (4 * α + 3) * 5 ^ (2 * β) * n +
+      (7 * 3 ^ (4 * α + 2) * 5 ^ (2 * β) - 1) / 2)
       ≡ coeff n (8 * 𝔣 1 ^ 7) [ZMOD 16] ∧
     (∀ i ∈ ({0, 2, 3, 4} : Finset ℕ),
       pedNineNine (4 * 3 ^ (4 * α + 3) * 5 ^ (2 * β + 1) * (5 * n + i) +
@@ -418,7 +385,8 @@ public theorem_wanted pedNineNine_more_congruences_mod_sixteen (α β γ n : ℕ
     pedNineNine (4 * 3 ^ (4 * α + 5) * n + (13 * 3 ^ (4 * α + 4) - 1) / 2) ≡ 0 [ZMOD 16] ∧
     pedNineNine (2 * 3 ^ (4 * α + 5) * n + (7 * 3 ^ (4 * α + 4) - 1) / 2) ≡
       pedNineNine (2 * 3 ^ (4 * α + 3) * n + (7 * 3 ^ (4 * α + 2) - 1) / 2) [ZMOD 16] ∧
-    pedNineNine (4 * 3 ^ (4 * α + 4) * 7 ^ (2 * γ) * n + (5 * 3 ^ (4 * α + 3) * 7 ^ (2 * γ) - 1) / 2)
+    pedNineNine (4 * 3 ^ (4 * α + 4) * 7 ^ (2 * γ) * n +
+      (5 * 3 ^ (4 * α + 3) * 7 ^ (2 * γ) - 1) / 2)
       ≡ coeff n (8 * 𝔣 1 ^ 5) [ZMOD 16] ∧
     ∀ j ∈ ({0, 2, 3, 4, 5, 6} : Finset ℕ),
       pedNineNine (4 * 3 ^ (4 * α + 4) * 7 ^ (2 * γ + 1) * (7 * n + j) +

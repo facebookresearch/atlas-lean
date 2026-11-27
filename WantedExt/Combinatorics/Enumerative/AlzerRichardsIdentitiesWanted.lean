@@ -15,8 +15,10 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliDerivatives
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsEvenBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsFubiniIdentity
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsHypergeometricSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsReciprocalSum
@@ -108,26 +110,6 @@ theorem_wanted sum_eulerNumber_mul_sum_centralPowerSum {n : ℕ} (hn : 1 ≤ n)
       (2 ^ (n + 1) - 1) * ((if n % 2 = 1 then 0 else chapter5EulerEven (n / 2) : ℤ) : ℚ) =
     ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℚ) * T k n
 
-/-- **Alzer–Richards identity for Fubini numbers.** Let $n \ge 1$ be an integer, let $a(k)$ be
-the $k$-th Fubini (ordered Bell) number and $S(r, j)$ the Stirling numbers of the second kind,
-and for integers $r, k \ge 0$ let
-$A(r, k) = \sum_{j=0}^{k} (-1)^j \binom{k}{j} j! \, S(r, j)$. Then
-$$
-\sum_{k=0}^{n-1} \binom{n}{k} a(k) \sum_{\nu=0}^{n+1} \binom{n+1}{\nu} A(n-k, \nu) +
-(2^{n+1} - 1) a(n) = \sum_{k=0}^{n} \binom{n+1}{k+1} A(n, k).
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 7, Equation (8). -/
-theorem_wanted sum_fubiniNumber_mul_sum_alternatingStirling {n : ℕ} (hn : 1 ≤ n)
-    (A : ℕ → ℕ → ℤ)
-    (hA : ∀ r k, A r k = ∑ j ∈ range (k + 1),
-      (-1 : ℤ) ^ j * (k.choose j : ℤ) * (j.factorial : ℤ) * (Nat.stirlingSecond r j : ℤ)) :
-    ∑ k ∈ range n, (n.choose k : ℤ) * fubiniNumber k *
-        ∑ ν ∈ range (n + 2), ((n + 1).choose ν : ℤ) * A (n - k) ν +
-      (2 ^ (n + 1) - 1) * fubiniNumber n =
-    ∑ k ∈ range (n + 1), ((n + 1).choose (k + 1) : ℤ) * A n k
-
 /-- **A binomial sum as a terminating ${}_2F_1$ series.** Write
 $x^{\overline{n}} = x(x+1)\cdots(x+n-1)$ for the rising factorial of a complex number $x$, and
 $\binom{w}{k} = w(w-1)\cdots(w-k+1)/k!$ for a complex number $w$ and a natural number $k$. Let
@@ -209,31 +191,6 @@ theorem_wanted sum_choose_mul_choose_div_choose_shifted {m : ℕ} (hm : 1 ≤ m)
           (2 ^ (2 * k) * Ring.choose ((k : ℂ) - m + 1 / 2 - x) k) =
         (-1 : ℂ) ^ ((m - 1) / 2) * (m + 1) /
           (2 ^ m * Ring.choose ((m : ℂ) / 2 - 1) ((m - 1) / 2)))
-
-/-- **Derivatives at zero of powers of $(1 - e^x)/x$.** Write $S(n, k)$ for the Stirling numbers
-of the second kind. Let $f : \mathbb{R} \to \mathbb{R}$ satisfy $f(0) = -1$ and
-$f(x) = (1 - e^x)/x$ for every $x \ne 0$. Then for all natural numbers $k$ and $r$, the $r$-th
-derivative of $f^k$ at $0$ equals $(-1)^k S(r+k, k) / \binom{r+k}{k}$.
-
-This is the expansion recorded in Gradshteyn and Ryzhik, p. 1047.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Lemma 1. -/
-theorem_wanted iteratedDeriv_pow_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf0 : f 0 = -1)
-    (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) (k r : ℕ) :
-    iteratedDeriv r (fun x => f x ^ k) 0 =
-      (-1 : ℝ) ^ k * (Nat.stirlingSecond (r + k) k : ℝ) / ((r + k).choose k : ℝ)
-
-/-- **Derivatives of $x/(1 - e^x)$ at zero.** Write $B_k$ for the $k$-th Bernoulli number,
-with the convention $B_1 = -1/2$. Let $f : \mathbb{R} \to \mathbb{R}$ satisfy $f(0) = -1$ and
-$f(x) = (1 - e^x)/x$ for every $x \ne 0$. Then for every natural number $k$, the $k$-th
-derivative of $1/f$ at $0$ equals $-B_k$.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Lemma 2. -/
-theorem_wanted iteratedDeriv_inv_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf0 : f 0 = -1)
-    (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) (k : ℕ) :
-    iteratedDeriv k (fun x => 1 / f x) 0 = -(bernoulli k : ℝ)
 
 /-- **Derivatives at zero of $(1 + (1 - e^x)/x)^{n+1}$.** Let $f : \mathbb{R} \to \mathbb{R}$
 satisfy $f(0) = -1$ and $f(x) = (1 - e^x)/x$ for every $x \ne 0$, and let $n$ be a natural

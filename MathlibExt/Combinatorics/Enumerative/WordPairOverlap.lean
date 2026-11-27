@@ -12,6 +12,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.Ring
@@ -23,7 +24,9 @@ The overlap of a pair of words `(u, v)` is the number of positions of `v` whose 
 `u`. For a fixed first word using `j` distinct letters out of `k`, summing `q ^ overlap` over the
 second words of length `r` gives `(q j + k - j) ^ r`, and `C(k, j) j! S(n, j)` words of length `n`
 use exactly `j` distinct letters. Together these give the sum of `q ^ overlap` over all pairs of
-words of equal length (`wordPairs_sameLength_overlap_sum`).
+words of lengths `n` and `r`, stated with `(q j + k - j) ^ r` written as the coefficient of `x ^ r`
+in `c x (1 - c x)⁻¹` for `c = q j + k - j` (`wordPairs_overlap_sum_eq_coeff`), and over all pairs
+of words of equal length (`wordPairs_sameLength_overlap_sum`).
 -/
 
 namespace MetaMathlibExt
@@ -133,9 +136,45 @@ private theorem sum_overlap (k n r : ℕ) (hn : 1 ≤ n) (q : ℚ) :
   push_cast
   ring
 
+open PowerSeries in
+/-- For `r ≥ 1`, the coefficient of `x ^ r` in `c x (1 - c x)⁻¹` is `c ^ r`. -/
+private theorem coeff_C_mul_X_mul_inv (c : ℚ) (r : ℕ) (hr : 1 ≤ r) :
+    coeff r (C c * X * (1 - C c * X)⁻¹) = c ^ r := by
+  have h : (1 - C c * X)⁻¹ = PowerSeries.mk fun m => c ^ m := by
+    refine (PowerSeries.inv_eq_iff_mul_eq_one (by simp)).2 ?_
+    rw [mul_sub, mul_one, ← mul_assoc]
+    ext (_ | m)
+    · simp
+    · simp [coeff_succ_mul_X, pow_succ]
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hr
+  rw [h, mul_right_comm, coeff_succ_mul_X, coeff_C_mul, coeff_mk, pow_succ']
+
 end WordPairOverlap
 
 open WordPairOverlap
+
+open PowerSeries in
+/-- **Overlap statistic on pairs of words.** Fix natural numbers $k$, $n \ge 1$, $r \ge 1$ and a
+rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of
+$(u, v)$ is the number of positions of $v$ whose letter occurs in $u$. Write $[x^m] F$ for the
+coefficient of $x^m$ in a formal power series $F$ over $\mathbb{Q}$, $S(m, j)$ for the Stirling
+numbers of the second kind, and $c_j = qj + k - j$. Then the sum of $q^{\text{overlap}}$ over all
+pairs $(u, v)$ with $u$ of length $n$ and $v$ of length $r$ equals
+$\sum_{j=1}^{k} \binom{k}{j} \, [x^r]\bigl(c_j x \, (1 - c_j x)^{-1}\bigr) \, j! \, S(n, j)$.
+
+Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24
+(2024), Article A107, Theorem 2 (`integers-2024-A107-thm-2`). -/
+public theorem wordPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) (q : ℚ) :
+    ∑ p ∈ (Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))),
+        q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
+      ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) *
+        coeff r (PowerSeries.C (q * j + (k - j : ℕ)) * X *
+          (1 - PowerSeries.C (q * j + (k - j : ℕ)) * X)⁻¹) *
+        (j.factorial * Nat.stirlingSecond n j) := by
+  rw [sum_overlap k n r hn q]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [coeff_C_mul_X_mul_inv _ r hr]
+  ring
 
 /-- **Overlap statistic on pairs of words of equal length.** Fix natural numbers $k$ and $n \ge 1$
 and a rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of

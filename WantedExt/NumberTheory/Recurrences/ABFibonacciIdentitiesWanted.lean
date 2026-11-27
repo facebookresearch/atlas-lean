@@ -42,6 +42,7 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.ArithmeticFunction.UnitaryConvolution
 public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentities
+public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesConvolutionLucasABFibAB
 
 set_option autoImplicit false
 
@@ -137,54 +138,6 @@ theorem_wanted sum_neg_one_pow_fib (n : ℕ) :
         (-1 : ℂ) ^ i * lucasAB 1 1 (2 * i + 1) =
       (-1) ^ n * fibAB 1 1 (2 * n + 2))
 
-/-- **Alternating sums of Pell and Pell–Lucas numbers.** Let $(P_n)$ and $(Q_n)$ be the Pell
-and Pell–Lucas numbers, that is, the $(2, 1)$-Fibonacci and $(2, 1)$-Lucas numbers, viewed as
-complex numbers. Then for every integer $n \ge 0$,
-$$\sum_{i=0}^{n} (-1)^i P_{2i} = \frac{(-1)^n Q_{2n+1} - 2}{8}, \qquad
-\sum_{i=0}^{n} (-1)^i Q_{2i} = (-1)^n P_{2n+1} + 1,$$
-$$\sum_{i=0}^{n} (-1)^i P_{2i+1} = \frac{(-1)^n Q_{2n+2} + 2}{8}, \qquad
-\sum_{i=0}^{n} (-1)^i Q_{2i+1} = (-1)^n P_{2n+2}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 10(c). -/
-theorem_wanted sum_neg_one_pow_pell (n : ℕ) :
-    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * fibAB 2 1 (2 * i) =
-      ((-1) ^ n * lucasAB 2 1 (2 * n + 1) - 2) / 8) ∧
-    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i) =
-      (-1) ^ n * fibAB 2 1 (2 * n + 1) + 1) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1) =
-      ((-1) ^ n * lucasAB 2 1 (2 * n + 2) + 2) / 8) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1) =
-      (-1) ^ n * fibAB 2 1 (2 * n + 2))
-
-/-- **Weighted alternating sums of Jacobsthal and Jacobsthal–Lucas numbers.** Let $(J_n)$ and
-$(j_n)$ be the Jacobsthal and Jacobsthal–Lucas numbers, that is, the $(1, 2)$-Fibonacci and
-$(1, 2)$-Lucas numbers, viewed as complex numbers. Then for every integer $n \ge 0$,
-$$\sum_{i=0}^{n} (-1)^i 2^{n-i} J_{2i} = \frac{(-1)^n j_{2n+1} - 2^n}{9}, \qquad
-\sum_{i=0}^{n} (-1)^i 2^{n-i} j_{2i} = (-1)^n J_{2n+1} + 2^n,$$
-$$\sum_{i=0}^{n} (-1)^i 2^{n-i} J_{2i+1} = \frac{(-1)^n j_{2n+2} + 2^{n+2}}{9}, \qquad
-\sum_{i=0}^{n} (-1)^i 2^{n-i} j_{2i+1} = (-1)^n J_{2n+2}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 10(d). -/
-theorem_wanted sum_neg_one_pow_jacobsthal (n : ℕ) :
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * 2 ^ (n - i) * fibAB 1 2 (2 * i) =
-      ((-1) ^ n * lucasAB 1 2 (2 * n + 1) - 2 ^ n) / 9) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * 2 ^ (n - i) * lucasAB 1 2 (2 * i) =
-      (-1) ^ n * fibAB 1 2 (2 * n + 1) + 2 ^ n) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * 2 ^ (n - i) * fibAB 1 2 (2 * i + 1) =
-      ((-1) ^ n * lucasAB 1 2 (2 * n + 2) + 2 ^ (n + 2)) / 9) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * 2 ^ (n - i) * lucasAB 1 2 (2 * i + 1) =
-      (-1) ^ n * fibAB 1 2 (2 * n + 2))
-
 /-- **Alternating sums of even-indexed k-Lucas numbers.** Let $k$ be a complex number, and let
 $(F_{k,n})$ and $(L_{k,n})$ be the $k$-Fibonacci and $k$-Lucas numbers, that is, the
 $(k, 1)$-Fibonacci and $(k, 1)$-Lucas numbers. Then for all integers $m \ge 1$ and $n \ge 0$,
@@ -198,27 +151,6 @@ theorem_wanted sum_neg_one_pow_k_lucasAB (k : ℂ) (m n : ℕ)
     ∑ i ∈ Finset.range (n + 1),
         (-1 : ℂ) ^ i * lucasAB k 1 (2 * (i + m)) =
       (-1) ^ n * fibAB k 1 (2 * (n + m) + 1) + fibAB k 1 (2 * m - 1)
-
-/-- **A convolution of (a, b)-Lucas and (a, d)-Fibonacci numbers.** Let $a, b, d$ be complex
-numbers with $b \ne d$, and write $L^{a,b}_n$ for the $(a,b)$-Lucas numbers and $F^{a,b}_n$ for
-the $(a,b)$-Fibonacci numbers. Then for every natural number $n$,
-$$(b - d) \sum_{i=1}^{n} L^{a,b}_{n-i} F^{a,d}_i = L^{a,b}_{n+1} - L^{a,d}_{n+1}$$
-and
-$$\sum_{i=1}^{n} L^{a,b}_{n-i} F^{a,d}_i = \sum_{i=1}^{n} L^{a,d}_{n-i} F^{a,b}_i.$$
-
-The source states the first identity in divided form,
-$\sum_{i=1}^{n} L^{a,b}_{n-i} F^{a,d}_i = (L^{a,b}_{n+1} - L^{a,d}_{n+1})/(b - d)$.
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Corollary 14(a). -/
-theorem_wanted convolution_lucasAB_fibAB (a b d : ℂ) (hbd : b ≠ d)
-    (n : ℕ) :
-    (b - d) * ∑ i ∈ Finset.Icc 1 n,
-          lucasAB a b (n - i) * fibAB a d i =
-        lucasAB a b (n + 1) - lucasAB a d (n + 1) ∧
-      ∑ i ∈ Finset.Icc 1 n, lucasAB a b (n - i) * fibAB a d i =
-        ∑ i ∈ Finset.Icc 1 n, lucasAB a d (n - i) * fibAB a b i
 
 /-- **Fibonacci, Jacobsthal and Pell convolution identities.** Write $F_n$ and $L_n$ for the
 Fibonacci and Lucas numbers (the $(1,1)$-Fibonacci and $(1,1)$-Lucas numbers), $J_n$ and $j_n$

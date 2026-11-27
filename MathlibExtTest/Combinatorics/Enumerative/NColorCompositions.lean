@@ -69,6 +69,18 @@ example :
   refine ⟨?_, by decide⟩
   simpa [Finset.sum_range_succ] using trib_three_mul (k := 2)
 
+-- At `k = 0`, the `-1` cancels `t(0)` and the last index `-1` contributes zero.
+example : trib 1 = -1 + (trib 0 + trib (-1)) ∧ trib 1 = 0 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_one] using trib_three_mul_add_one (k := 0)
+
+-- At `k = 2`, the two additional pairs give `t(7) = 20`.
+example :
+    trib 7 = -1 + ((trib 6 + trib 5) + (trib 3 + trib 2) + (trib 0 + trib (-1))) ∧
+      trib 7 = 20 := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_three_mul_add_one (k := 2)
+
 -- The first admissible values `n = 3, 4`, each with one summand.
 example :
     (trib 3 + trib 1 = 2 * trib 2 ∧ trib 4 + trib 2 = 2 * trib 3) ∧

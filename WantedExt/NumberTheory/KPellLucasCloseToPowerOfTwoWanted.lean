@@ -13,6 +13,7 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo
+public import MathlibExt.NumberTheory.KPellLucasDominantRoot
 
 /-!
 # `k`-Pell–Lucas numbers close to a power of 2
@@ -80,43 +81,6 @@ public theorem_wanted kPellLucas_dominantRoot_golden_approx (k n : ℕ) (hk : 50
           (goldenRatio ^ 2 - 1) /
             ((k + 1) * (goldenRatio ^ 2) ^ 2 - 3 * k * goldenRatio ^ 2 + k - 1)| <
         4 * k / goldenRatio ^ k
-
-/-- **Main term of the dominant root (Lemma 3).** Let $\varphi$ be the golden ratio, let $k$ and
-$n$ be natural numbers with $k \ge 50$ and $n < \varphi^{k/2}$, and let $\alpha > 0$ be a real
-number with $\alpha^k = 2\alpha^{k-1} + \sum_{i=0}^{k-2} \alpha^i$. Write
-$g_k(z) = (z - 1) / ((k + 1) z^2 - 3kz + k - 1)$. Then there is a real number $\xi$ with
-$|\xi| < 1.25 / \varphi^{k/2}$ such that
-$(2\alpha - 2) \, g_k(\alpha) \, \alpha^n = \frac{2\varphi^{2n+1}}{\varphi + 2} (1 + \xi)$.
-
-Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
-a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 3 (`integers-2025-A67-lem-3`). -/
-public theorem_wanted kPellLucas_dominantRoot_main_term (k n : ℕ) (hk : 50 ≤ k)
-    (hnk : (n : ℝ) < goldenRatio ^ ((k : ℝ) / 2)) (α : ℝ) (hα : 0 < α)
-    (hroot : α ^ k = 2 * α ^ (k - 1) + ∑ i ∈ Finset.range (k - 1), α ^ i) :
-    ∃ ξ : ℝ, (2 * α - 2) * ((α - 1) / ((k + 1) * α ^ 2 - 3 * k * α + k - 1)) * α ^ n =
-        2 * goldenRatio ^ (2 * n + 1) / (goldenRatio + 2) * (1 + ξ) ∧
-      |ξ| < 1.25 / goldenRatio ^ ((k : ℝ) / 2)
-
-/-- **Continued-fraction lower bound for rational approximations.** Let $\tau$ be an irrational real
-number with simple continued fraction expansion $[a_0; a_1, a_2, \ldots]$, so that
-$a_0 = \lfloor \tau \rfloor$, and let $q_0, q_1, \ldots$ be the denominators of its convergents. Let
-$M > 0$ be a real number, let $N$ be the least positive integer with $q_N > M$, and put
-$a(M) = \max \{a_k : 0 \le k \le N\}$. Then
-
-$$\left|\tau - \frac{y}{x}\right| > \frac{1}{(a(M) + 2)\, x^2}$$
-
-for all integers $x$ and $y$ with $0 < x < M$.
-
-Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
-a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 5 (`integers-2025-A67-lem-5`). -/
-public theorem_wanted lt_abs_sub_div_of_max_partialQuotient (τ : ℝ) (hτ : Irrational τ) (M : ℝ)
-    (hM : 0 < M) (N : ℕ) (hN : 0 < N) (hqN : M < (GenContFract.of τ).dens N)
-    (hNmin : ∀ j, 0 < j → j < N → (GenContFract.of τ).dens j ≤ M) (a : ℕ → ℝ)
-    (ha₀ : a 0 = (GenContFract.of τ).h)
-    (ha : ∀ j, (GenContFract.of τ).partDens.get? j = some (a (j + 1))) (x y : ℤ) (hx : 0 < x)
-    (hxM : (x : ℝ) < M) :
-    1 / (((Finset.range (N + 1)).sup' Finset.nonempty_range_add_one a + 2) * (x : ℝ) ^ 2) <
-      |τ - y / x|
 
 /-- **Absolute bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 9).** Let $k$, $n$
 and $m$ be natural numbers with $k \ge 2$, $m \ge 1$ and $n \ge k + 1$, and let $Q^{(k)}_n$ be

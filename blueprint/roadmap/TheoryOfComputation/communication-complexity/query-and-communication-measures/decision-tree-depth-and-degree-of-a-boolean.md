@@ -1,0 +1,9 @@
+# Decision-tree depth and degree of a Boolean function
+
+Let $f : \{0,1\}^n \to \{0,1\}$. A deterministic decision tree over $x_1, \dots, x_n$ is a rooted binary tree whose internal nodes are labelled by variables, with the two children of a node corresponding to the two values of its variable, and whose leaves are labelled by $0$ or $1$; it computes $f$ if, for every $x$, the leaf reached by following $x$ is labelled $f(x)$. The *decision-tree depth* $D(f)$ is the minimum depth of a decision tree computing $f$. The *degree* $\deg(f)$ is the degree of the unique multilinear polynomial $p \in \mathbb{R}[x_1, \dots, x_n]$ with $p(x) = f(x)$ for all $x \in \{0,1\}^n$.
+
+For $x \in \{0,1\}^n$ and $B \subseteq \{1, \dots, n\}$ let $x^B$ be $x$ with the bits in $B$ flipped. The *sensitivity* $s(f, x)$ is the number of $i$ with $f(x^{\{i\}}) \ne f(x)$, and the *block sensitivity* $bs(f, x)$ is the largest number of pairwise disjoint sets $B_1, \dots, B_k$ with $f(x^{B_j}) \ne f(x)$ for all $j$. A *certificate* for $f$ at $x$ is a set $S$ of positions such that every $y$ agreeing with $x$ on $S$ has $f(y) = f(x)$, and $C(f, x)$ is the least size of one. Then $s(f) = \max_x s(f, x)$, $bs(f) = \max_x bs(f, x)$, $C(f) = \max_x C(f, x)$, and for $b \in \{0,1\}$, $C_b(f) = \max_{x : f(x) = b} C(f, x)$, with $C_b(f) = 0$ when $f$ never takes the value $b$.
+
+## Sources
+
+- H. Buhrman and R. de Wolf, "Complexity measures and decision tree complexity: a survey", *Theoretical Computer Science* 288(1):21–43, 2002, <https://homepages.cwi.nl/~rdewolf/publ/qc/dectree.pdf>: Section 2.2 (the representing multilinear polynomial and degree), Section 3.1 (deterministic decision trees and $D(f)$), Section 4.1, Definition 1 (certificates, $C(f)$, $C^{(0)}(f)$, $C^{(1)}(f)$) and Section 4.2, Definition 2 (sensitivity and block sensitivity).

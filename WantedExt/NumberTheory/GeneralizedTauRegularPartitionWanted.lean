@@ -17,8 +17,15 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
+public import MathlibExt.NumberTheory.FourRegularPartitionParity
 public import MathlibExt.NumberTheory.GeneralizedTau
+public import MathlibExt.NumberTheory.GeneralizedTauPrimeSquare
 public import MathlibExt.NumberTheory.NineRegularPartitionIteration
+public import MathlibExt.NumberTheory.PartitionConvolutionModThree
+public import MathlibExt.NumberTheory.RamanujanTauModNineteen
+public import MathlibExt.NumberTheory.RamanujanTauModSeventeen
+public import MathlibExt.NumberTheory.RamanujanTauModThree
+public import MathlibExt.NumberTheory.GeneralizedTauRegularPartitionCardPrimeRegularModEqGeneralizedTauPred
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -76,16 +83,6 @@ public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk
           p.parts.count i ∈ (Finset.Icc 1 k).filter (fun a => Odd (k.choose a))).card : ℤ)
       [ZMOD 2]
 
-/-- **Parity of the $4$-regular partition function.** For a positive integer $n$, let $R_4(n)$ be
-the number of partitions of $n$ with no part divisible by $4$. Then $R_4(n)$ is odd if and only if
-$n$ is a triangular number, that is, $n = m(m + 1)/2$ for some integer $m \ge 0$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
-public theorem_wanted odd_card_four_regular_iff_triangular (n : ℕ) (hn : 0 < n) :
-    Odd (Nat.Partition.restricted n (¬ 4 ∣ ·)).card ↔ ∃ m : ℕ, n = m * (m + 1) / 2
-
 /-- **Parity of $\tau_{14}$ and $\tau_6$ at odd arguments.** Let $\tau_k(m)$ be the generalized
 tau function, the coefficient of $q^m$ in $q \prod_{j \ge 1} (1 - q^j)^k$, and let $R_8(n)$ be
 the number of partitions of $n$ in which no part is divisible by $8$. For every positive integer
@@ -123,16 +120,6 @@ Article A39, Theorem 6 (`integers-2024-A39-thm-6`). -/
 public theorem_wanted ramanujanTau_succ_modEq_nine_regular (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       (if 3 ∣ n then ((Nat.Partition.restricted (n / 3) (¬ 9 ∣ ·)).card : ℤ) else 0) [ZMOD 3]
-
-/-- **Ramanujan's congruence $\tau(3n) \equiv 0 \pmod 3$.** Let $\tau = \tau_{24}$ be Ramanujan's
-tau function, where $\tau_k$ is the generalized tau function. For every integer $n \ge 1$,
-$\tau(3n) \equiv 0 \pmod 3$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Corollary 1 (`integers-2024-A39-cor-1`). -/
-public theorem_wanted ramanujanTau_three_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
-    generalizedTau 24 (3 * n) ≡ 0 [ZMOD 3]
 
 /-- **9-regular partitions modulo 3 and the divisor sum.** Let $R_9(m)$ denote the number of
 partitions of $m$ in which no part is divisible by $9$, and let $\sigma(m)$ be the sum of the
@@ -220,48 +207,6 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_eleven (n : ℕ) (h
         if 13 * pentagonal r ≤ n then
           (r.negOnePow : ℤ) * generalizedTau 11 (n - 13 * pentagonal r + 1)
         else 0 [ZMOD 13]
-
-/-- **Ramanujan's $\tau$ modulo $17$ via $\tau_7$.** Let $\tau = \tau_{24}$ be Ramanujan's tau
-function, where $\tau_k$ is the generalized tau function, and let $P(r) = r(3r - 1)/2$ for
-integers $r$. For every integer $n \ge 1$,
-$$\tau(n + 1) \equiv \sum_{17P(r) \le n} (-1)^r \tau_7(n - 17P(r) + 1) \pmod{17},$$
-the sum running over all integers $r$ with $17P(r) \le n$.
-
-The source record prints $\tau_7(s)$ in place of $\tau_7(s + 1)$, where $n = 17P(r) + s$;
-that version is false at $n = 1$. The shifted index comes from the identity
-$\prod_{m \ge 1} (1 - q^m)^7 (1 - q^{17m}) = \sum_{r, s} (-1)^r \tau_7(s + 1) q^{17P(r) + s}$,
-which follows from Definition 1.1 and is used in the proof.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 11 (`integers-2024-A39-thm-11`). -/
-public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_seven (n : ℕ) (hn : 0 < n) :
-    generalizedTau 24 (n + 1) ≡
-      ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
-        if 17 * pentagonal r ≤ n then
-          (r.negOnePow : ℤ) * generalizedTau 7 (n - 17 * pentagonal r + 1)
-        else 0 [ZMOD 17]
-
-/-- **Ramanujan's $\tau$ modulo $19$ via $\tau_5$.** Let $\tau = \tau_{24}$ be Ramanujan's tau
-function, where $\tau_k$ is the generalized tau function, and let $P(r) = r(3r - 1)/2$ for
-integers $r$. For every integer $n \ge 1$,
-$$\tau(n + 1) \equiv \sum_{19P(r) \le n} (-1)^r \tau_5(n - 19P(r) + 1) \pmod{19},$$
-the sum running over all integers $r$ with $19P(r) \le n$.
-
-The source record prints $\tau_5(s)$ in place of $\tau_5(s + 1)$, where $n = 19P(r) + s$;
-that version is false at $n = 1$. The shifted index comes from the identity
-$\prod_{m \ge 1} (1 - q^m)^5 (1 - q^{19m}) = \sum_{r, s} (-1)^r \tau_5(s + 1) q^{19P(r) + s}$,
-which follows from Definition 1.1 and is used in the proof.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 12 (`integers-2024-A39-thm-12`). -/
-public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_five (n : ℕ) (hn : 0 < n) :
-    generalizedTau 24 (n + 1) ≡
-      ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
-        if 19 * pentagonal r ≤ n then
-          (r.negOnePow : ℤ) * generalizedTau 5 (n - 19 * pentagonal r + 1)
-        else 0 [ZMOD 19]
 
 /-- **Ramanujan's $\tau$ modulo $23$ via pentagonal numbers.** Let $\tau = \tau_{24}$ be
 Ramanujan's tau function, where $\tau_k$ is the generalized tau function, and let
@@ -356,25 +301,6 @@ public theorem_wanted generalizedTau_two_mul_prime_add_one_succ_modEq (p : ℕ) 
           ((r + s + t).negOnePow : ℤ)
         else 0 [ZMOD p]
 
-/-- **Generalized tau at $p^2 + 1$ modulo $p$.** Let $p$ be an odd prime and $n$ a natural number,
-and for an integer $j$ let $P(j) = j(3j - 1)/2$ be the generalized pentagonal number. Then
-$\tau_{p^2 + 1}(n + 1)$ is congruent modulo $p$ to the sum of $(-1)^{r + s}$ over the pairs of
-integers $(r, s)$ with $-n \le r, s \le n$ and $n = P(r) + p^2 P(s)$.
-
-The record prints the condition as $n + 1 = P(r) + p^2 P(s)$; that is false, and the proof's
-identity $\sum \tau_{p^2+1}(n + 1) q^n \equiv \prod (1 - q^m)(1 - q^{p^2 m}) \pmod{p}$ gives the
-index $n$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 18 (`integers-2024-A39-thm-18`). -/
-public theorem_wanted generalizedTau_prime_sq_add_one_succ_modEq (p : ℕ) (hp : p.Prime)
-    (hodd : Odd p) (n : ℕ) :
-    generalizedTau (p ^ 2 + 1) (n + 1) ≡
-      ∑ r ∈ Finset.Icc (-(n : ℤ)) n, ∑ s ∈ Finset.Icc (-(n : ℤ)) n,
-        if n = pentagonal r + p ^ 2 * pentagonal s then ((r + s).negOnePow : ℤ) else 0
-      [ZMOD p]
-
 /-- **A congruence for 9-regular partitions at $4n + 1$.** Let $R_9(m)$ denote the number of
 partitions of $m$ in which no part is divisible by $9$. For every positive integer $n$,
 $R_9(4n + 1) \equiv R_9(n) \pmod 3$.
@@ -385,18 +311,6 @@ Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
-/-- **Prime-regular partitions and the generalized tau function.** Let $p$ be a prime and $n$ a
-natural number. Let $R_p(n)$ be the number of partitions of $n$ in which no part is divisible by
-$p$, and let $\tau_k(m)$ be the generalized tau function, the coefficient of $q^m$ in
-$q \prod_{j \ge 1} (1 - q^j)^k$. Then $R_p(n) \equiv \tau_{p-1}(n + 1) \pmod p$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
-public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp : p.Prime) (n : ℕ) :
-    ((Nat.Partition.restricted (n) (¬ p ∣ ·)).card : ℤ)
-        ≡ generalizedTau ((p : ℤ) - 1) (n + 1) [ZMOD p]
 
 /-- **$\tau_{-k}$ and partition convolutions modulo a prime.** Let $l$ be an odd prime, let $k$ be a
 natural number with $2 \le k < l$, let $n$ be a natural number, and write $p(s)$ for the number of
@@ -426,23 +340,6 @@ public theorem_wanted generalizedTau_neg_succ_modEq_partition_convolution (k : �
         ∑ s ∈ Finset.range (n / l + 1),
           generalizedTau ((l : ℤ) - k) (n - l * s + 1)
               * (Fintype.card (Nat.Partition s) : ℤ) [ZMOD l]
-
-/-- **Partition convolution modulo $3$.** Let $p(a)$ be the number of partitions of $a$, and let
-$\omega(t)$ be the coefficient of $q^t$ in Euler's product $\prod_{m \ge 1} (1 - q^m)$. For every
-integer $n \ge 0$,
-$$\sum_{a + b = n} p(a)\, p(b) \equiv \sum_{0 \le s \le n/3} \omega(n - 3s)\, p(s) \pmod 3,$$
-the left sum running over pairs $(a, b)$ of nonnegative integers and the right one over integers
-$s$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Corollary 6 (`integers-2024-A39-cor-6`). -/
-public theorem_wanted partition_convolution_two_modEq_three (n : ℕ) :
-    (∑ x ∈ Finset.antidiagonal n,
-        (Fintype.card (Nat.Partition x.1) : ℤ) * (Fintype.card (Nat.Partition x.2) : ℤ)) ≡
-      ∑ s ∈ Finset.range (n / 3 + 1),
-        PowerSeries.coeff (n - 3 * s) (PowerSeries.pentagonalSeries ℤ)
-            * (Fintype.card (Nat.Partition s) : ℤ) [ZMOD 3]
 
 /-- **Partition composition sums vanishing modulo a prime.** Let $p(a)$ be the number of
 partitions of $a$. Let $\ell \ge 5$ be a prime and $m \ge 0$ an integer such that
@@ -485,17 +382,6 @@ public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 
     (hk : (k - 1).Prime)
     (h : ∀ t : ℤ, pentagonal t ≤ n - 1 → ¬ (k - 1) ∣ n - 1 - pentagonal t) :
     generalizedTau k n ≡ 0 [ZMOD ((k - 1 : ℕ) : ℤ)]
-
-/-- **Divisibility of $n\,\tau_k(n + 1)$ by $|k|$.** Let $\tau_k$ be the generalized tau function.
-For every positive integer $n$ and every integer $k$ with $|k| \ge 2$,
-$n\,\tau_k(n + 1) \equiv 0 \pmod{|k|}$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
-public theorem_wanted mul_generalizedTau_succ_modEq_zero (n : ℕ) (hn : 0 < n) (k : ℤ) (hk : 2 ≤ |k|)
-    :
-    (n : ℤ) * generalizedTau k (n + 1) ≡ 0 [ZMOD |k|]
 
 /-- **Vanishing of the generalized tau function modulo $|k|/d$.** Let $\tau_k(n)$ be the
 generalized tau function, the coefficient of $q^n$ in $q \prod_{j \ge 1} (1 - q^j)^k$. Let $k$ be

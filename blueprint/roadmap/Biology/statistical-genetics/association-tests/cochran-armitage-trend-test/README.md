@@ -48,3 +48,12 @@
 - [Exact conditional null law of the Cochran–Armitage statistic](measure-real-fm-stat-mem-genotype-total.md)
 - [Fixed-margin Cochran–Armitage test is asymptotically χ²₁](tendsto-in-distribution-fm-stat.md)
 - [Singular fixed-margin design: no χ²₁ limit](not-tendsto-in-distribution-fm-stat-of-c.md)
+
+## The allelic test under inbreeding
+
+- [Allelic-test variance inflation under inbreeding](allelic-test-miscalibration-under-hardy-weinberg.md)
+
+## Further topics
+
+- [Order-restricted genetic models and MAX3](order-restricted-genetic-models-and-max3/README.md)
+- [Sure independence screening with trend tests](sure-independence-screening-with-trend-tests/README.md)

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Data.Finset.Piecewise
@@ -22,7 +23,20 @@ namespace MetaMathlibExt
 
 /-! Boolean functions on `n` variables are `(Fin n → Bool) → Bool`; monotone
 means Mathlib's `Monotone` for the coordinatewise order with `false ≤ true`.
-The paper's variable `x₁` (the top bit of the truth table) is index `0`. -/
+The paper's variable `x₁` (the top bit of the truth table) is index `0`.
+
+## References
+
+* Aniruddha Biswas and Palash Sarkar, *Counting Unate and Monotone Boolean Functions Under
+  Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer Sequences 28 (2025),
+  Article 25.3.4, pp. 1–19. Proposition 14(b), p. 11, gives the class-count equalities for
+  balanced functions. The preceding definitions and results are drawn from the same paper.
+  <https://cs.uwaterloo.ca/journals/JIS/VOL28/Biswas/biswas6.pdf>
+* Valentin Bakoev, *Generating and identification of monotone Boolean functions*, in
+  Mathematics and Education in Mathematics: Proceedings of the Thirty Second Spring Conference
+  of the Union of Bulgarian Mathematicians (2003), pp. 226–232. Biswas and Sarkar credit the
+  monotone concatenation criterion in their Proposition 4 to Bakoev.
+-/
 
 /-- **Weight of a Boolean function.** The weight $\mathrm{wt}(f)$ of an $n$-variable Boolean
 function $f \colon \{0,1\}^n \to \{0,1\}$ is the number of inputs $x \in \{0,1\}^n$ with
@@ -617,6 +631,36 @@ private theorem exists_isBoolFunVarPermEquiv_comp_castSucc {n : ℕ}
   rw [hsnoc, update_comp_equiv]
   simp [τ, hconst]
 
+/-- The classes in arity `n + 1` split into the old classes and the new non-degenerate ones. -/
+private theorem boolFunClassCount_varPerm_succ
+    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
+      P n (fun x => g (x ∘ e)) ↔ P m g)
+    (n : ℕ) :
+    boolFunClassCount IsBoolFunVarPermEquiv (P (n + 1))
+      = boolFunClassCount IsBoolFunVarPermEquiv (P n)
+        + boolFunClassCount IsBoolFunVarPermEquiv
+          (fun f => IsNondegenerateBoolFun f ∧ P (n + 1) f) := by
+  have hR := equivalence_isBoolFunVarPermEquiv
+  -- Non-degeneracy splits the classes of `P (n + 1)` ...
+  have hsplit := classCount_split (hR (n + 1)).refl
+    (fun f g h => ⟨isNondegenerateBoolFun_of_isBoolFunVarPermEquiv h,
+      isNondegenerateBoolFun_of_isBoolFunVarPermEquiv ((hR (n + 1)).symm h)⟩) (P (n + 1))
+  -- ... and the degenerate classes are those of `P n`, with a dummy last variable added.
+  have hdeg : boolFunClassCount IsBoolFunVarPermEquiv
+      (fun f => ¬ IsNondegenerateBoolFun f ∧ P (n + 1) f) =
+        boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
+    refine classCount_eq_of_map (hR n) (hR (n + 1)) (fun g x => g (x ∘ Fin.castSuccEmb))
+      (fun g => ?_) isBoolFunVarPermEquiv_comp_castSucc_iff (fun f f' h hf => ?_)
+      (fun f hf => exists_isBoolFunVarPermEquiv_comp_castSucc hf.1)
+    · exact ⟨fun h => (hP n (n + 1) Fin.castSuccEmb g).1 h.2,
+        fun h => ⟨not_isNondegenerateBoolFun_comp_castSucc g,
+          (hP n (n + 1) Fin.castSuccEmb g).2 h⟩⟩
+    · exact ⟨fun hnd => hf.1 (isNondegenerateBoolFun_of_isBoolFunVarPermEquiv
+        ((hR (n + 1)).symm h) hnd), (iff_of_isBoolFunVarPermEquiv P hP h).1 hf.2⟩
+  rw [hdeg] at hsplit
+  exact hsplit.trans (Nat.add_comm _ _)
+
 end boolFunClassCount_varPerm_nondegenerate_eq_sub
 
 open boolFunClassCount_varPerm_nondegenerate_eq_sub in
@@ -645,24 +689,281 @@ public theorem boolFunClassCount_varPerm_nondegenerate_eq_sub
     boolFunClassCount IsBoolFunVarPermEquiv (fun f => IsNondegenerateBoolFun f ∧ P (n + 1) f)
       = boolFunClassCount IsBoolFunVarPermEquiv (P (n + 1))
         - boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
-  have hR := equivalence_isBoolFunVarPermEquiv
-  -- Non-degeneracy splits the classes of `P (n + 1)` ...
-  have hsplit := classCount_split (hR (n + 1)).refl
-    (fun f g h => ⟨isNondegenerateBoolFun_of_isBoolFunVarPermEquiv h,
-      isNondegenerateBoolFun_of_isBoolFunVarPermEquiv ((hR (n + 1)).symm h)⟩) (P (n + 1))
-  -- ... and the degenerate classes are those of `P n`, with a dummy last variable added.
-  have hdeg : boolFunClassCount IsBoolFunVarPermEquiv
-      (fun f => ¬ IsNondegenerateBoolFun f ∧ P (n + 1) f) =
-        boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
-    refine classCount_eq_of_map (hR n) (hR (n + 1)) (fun g x => g (x ∘ Fin.castSuccEmb))
-      (fun g => ?_) isBoolFunVarPermEquiv_comp_castSucc_iff (fun f f' h hf => ?_)
-      (fun f hf => exists_isBoolFunVarPermEquiv_comp_castSucc hf.1)
-    · exact ⟨fun h => (hP n (n + 1) Fin.castSuccEmb g).1 h.2,
-        fun h => ⟨not_isNondegenerateBoolFun_comp_castSucc g,
-          (hP n (n + 1) Fin.castSuccEmb g).2 h⟩⟩
-    · exact ⟨fun hnd => hf.1 (isNondegenerateBoolFun_of_isBoolFunVarPermEquiv
-        ((hR (n + 1)).symm h) hnd), (iff_of_isBoolFunVarPermEquiv P hP h).1 hf.2⟩
-  omega
+  rw [boolFunClassCount_varPerm_succ P hP n, Nat.add_sub_cancel_left]
+
+open boolFunClassCount_varPerm_nondegenerate_eq_sub in
+/-- **Permutation classes counted by non-degenerate ones.** Let $(P_n)_{n \ge 0}$ be a family of
+properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
+variables: for all $m$ and $n$, every injection $e$ from $\{1, \dots, m\}$ to $\{1, \dots, n\}$
+and every $m$-variable function $g$, the $n$-variable function $x \mapsto g(x \circ e)$ has $P_n$
+if and only if $g$ has $P_m$. Write $[P]_n$ for the number of classes of $n$-variable functions
+with $P_n$ under permutation of the variables, and $\mathrm{nd}[P]_n$ for the same count over the
+non-degenerate $n$-variable functions with $P_n$. Then for every $n$,
+$$[P]_n = \sum_{i=0}^{n} \mathrm{nd}[P]_i.$$
+
+The paper assumes only closure under permutations of the variables; the counting argument also
+needs invariance under adding or removing dummy variables. Closure under permutations alone is not
+enough: if $P_1$ holds for all four $1$-variable functions and $P_n$ holds for none when
+$n \ne 1$, then $[P]_1 = 4$ but $\mathrm{nd}[P]_0 + \mathrm{nd}[P]_1 = 0 + 2 = 2$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 11 (`jis-2025-25.3.4-prop-11`). -/
+public theorem boolFunClassCount_varPerm_eq_sum_nondegenerate
+    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
+      P n (fun x => g (x ∘ e)) ↔ P m g)
+    (n : ℕ) :
+    boolFunClassCount IsBoolFunVarPermEquiv (P n)
+      = ∑ i ∈ Finset.range (n + 1),
+          boolFunClassCount IsBoolFunVarPermEquiv (fun f => IsNondegenerateBoolFun f ∧ P i f) := by
+  induction n with
+  | zero =>
+    have hzero : (fun f : (Fin 0 → Bool) → Bool => IsNondegenerateBoolFun f ∧ P 0 f) = P 0 :=
+      funext fun _ => propext ⟨And.right, fun hf => ⟨fun i => Fin.elim0 i, hf⟩⟩
+    rw [Finset.sum_range_one, hzero]
+  | succ n ih =>
+    rw [Finset.sum_range_succ, boolFunClassCount_varPerm_succ P hP n, ih]
+
+namespace boolFunClassCount_varPerm_unate_le
+
+open Function boolFunClassCount_varPerm_nondegenerate_eq_sub
+
+variable {n : ℕ}
+
+private def flip (a x : Fin n → Bool) (i : Fin n) : Bool := xor (x i) (a i)
+
+private theorem flip_flip (a : Fin n → Bool) : Involutive (flip a) := by
+  intro x
+  funext i
+  simp [flip]
+
+private theorem flip_update (a x : Fin n → Bool) (i : Fin n) (b : Bool) :
+    flip a (update x i b) = update (flip a x) i (xor b (a i)) := by
+  funext j
+  by_cases h : j = i <;> simp [flip, h]
+
+/-- Flipping the coordinates that are not increasing makes every edge increasing. -/
+private theorem exists_monotone_flip {f : (Fin n → Bool) → Bool} (hf : IsUnateBoolFun f) :
+    ∃ a : Fin n → Bool, Monotone (f ∘ flip a) := by
+  classical
+  let a (i : Fin n) := decide (¬ IsBoolFunIncreasingIn f i)
+  refine ⟨a, monotone_of_le_update fun x i hx => ?_⟩
+  simp only [comp_apply, flip_update]
+  by_cases hi : IsBoolFunIncreasingIn f i
+  · simpa [a, hi] using hi (flip a x) (by simp [flip, a, hi, hx])
+  · have hy : flip a x i = true := by simp [flip, a, hi, hx]
+    have he : update (flip a x) i true = flip a x := by rw [← hy, update_eq_self]
+    have hedge := ((hf i).resolve_left hi) (update (flip a x) i false) (by simp)
+    rw [update_idem, he] at hedge
+    simpa [a, hi] using hedge
+
+private theorem nondegenerate_flip {f : (Fin n → Bool) → Bool} (hf : IsNondegenerateBoolFun f)
+    (a : Fin n → Bool) : IsNondegenerateBoolFun (f ∘ flip a) := by
+  intro i
+  obtain ⟨x, hx⟩ := hf i
+  refine ⟨flip a x, ?_⟩
+  simp only [comp_apply, flip_update, flip_flip a x]
+  simpa [flip] using hx
+
+private theorem weight_flip (f : (Fin n → Bool) → Bool) (a : Fin n → Bool) :
+    boolFunWeight (f ∘ flip a) = boolFunWeight f := by
+  apply Finset.card_equiv ((flip_flip a).toPerm _)
+  intro x
+  simp [Involutive.coe_toPerm]
+
+/-- If each function with property `P` can be flipped to one with property `Q`, the flips of
+one representative of each `Q`-class cover all the `P`-classes. -/
+private theorem classCount_le_of_flip (P Q : ((Fin n → Bool) → Bool) → Prop)
+    (h : ∀ f, P f → ∃ a, Q (f ∘ flip a)) :
+    boolFunClassCount IsBoolFunVarPermEquiv P ≤
+      2 ^ n * boolFunClassCount IsBoolFunVarPermEquiv Q := by
+  classical
+  let cls (B : ((Fin n → Bool) → Bool) → Prop) f := {g | B g ∧ IsBoolFunVarPermEquiv f g}
+  let classes (B : ((Fin n → Bool) → Bool) → Prop) := {S | ∃ f, B f ∧ S = cls B f}
+  let rep := invFun (cls Q)
+  let cover a S := cls P (rep S ∘ flip a)
+  have hcover : classes P ⊆ Set.image2 cover Set.univ (classes Q) := by
+    rintro _ ⟨f, hf, rfl⟩
+    obtain ⟨a, hg⟩ := h f hf
+    let g := f ∘ flip a
+    -- Express g as a permutation of the chosen representative, and permute its mask with it.
+    have hmem : g ∈ cls Q (rep (cls Q g)) := by
+      rw [show cls Q (rep (cls Q g)) = cls Q g from apply_invFun_apply]
+      exact ⟨hg, isBoolFunVarPermEquiv_refl g⟩
+    obtain ⟨σ, hσ⟩ := hmem.2
+    refine ⟨a ∘ σ, Set.mem_univ _, cls Q g, ⟨g, hg, rfl⟩, ?_⟩
+    have hrel : IsBoolFunVarPermEquiv (rep (cls Q g) ∘ flip (a ∘ σ)) f := by
+      refine ⟨σ, fun x => ?_⟩
+      calc
+        f x = g (flip a x) := congrArg f (flip_flip a x).symm
+        _ = _ := hσ (flip a x)
+    have hR := equivalence_isBoolFunVarPermEquiv n
+    exact Set.ext fun k => and_congr_right fun _ => ⟨hR.trans (hR.symm hrel), hR.trans hrel⟩
+  rw [classCount_eq_ncard, classCount_eq_ncard]
+  calc
+    (classes P).ncard ≤ (Set.image2 cover Set.univ (classes Q)).ncard := Set.ncard_le_ncard hcover
+    _ ≤ (Set.univ : Set (Fin n → Bool)).ncard * (classes Q).ncard :=
+      Set.ncard_image2_le Set.finite_univ (Set.toFinite _)
+    _ = 2 ^ n * (classes Q).ncard := by simp [Nat.card_eq_fintype_card]
+
+end boolFunClassCount_varPerm_unate_le
+
+open boolFunClassCount_varPerm_unate_le in
+/-- **Unate versus monotone permutation classes.** Write $[Q]_n$ for the number of classes of
+$n$-variable Boolean functions with property $Q$ under permutation of the variables. Let $U$, $M$,
+$B$ and $\mathrm{nd}$ be the properties of being unate, monotone (nondecreasing for the
+coordinatewise order with $0 < 1$), balanced (true of a function $f$ when $2\,\mathrm{wt}(f) = 2^n$,
+where $\mathrm{wt}(f)$ is the weight of $f$) and non-degenerate, and write juxtaposition for
+conjunction, so that $BU$ is the property of being balanced and unate. Then for every $n$,
+$[\mathrm{nd}\,U]_n \le 2^n [\mathrm{nd}\,M]_n$, $[\mathrm{nd}\,BU]_n \le 2^n [\mathrm{nd}\,BM]_n$,
+$[U]_n \le 2^n [M]_n$ and $[BU]_n \le 2^n [BM]_n$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 12 (`jis-2025-25.3.4-prop-12`). -/
+public theorem boolFunClassCount_varPerm_unate_le (n : ℕ) :
+    boolFunClassCount (n := n) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ IsUnateBoolFun f)
+      ≤ 2 ^ n * boolFunClassCount (n := n) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ Monotone f) ∧
+    boolFunClassCount (n := n) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n)
+      ≤ 2 ^ n * boolFunClassCount (n := n) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ Monotone f ∧ 2 * boolFunWeight f = 2 ^ n) ∧
+    boolFunClassCount (n := n) IsBoolFunVarPermEquiv IsUnateBoolFun
+      ≤ 2 ^ n * boolFunClassCount (n := n) IsBoolFunVarPermEquiv Monotone ∧
+    boolFunClassCount (n := n) IsBoolFunVarPermEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n)
+      ≤ 2 ^ n * boolFunClassCount (n := n) IsBoolFunVarPermEquiv
+        (fun f => Monotone f ∧ 2 * boolFunWeight f = 2 ^ n) := by
+  refine ⟨classCount_le_of_flip _ _ ?_, classCount_le_of_flip _ _ ?_,
+    classCount_le_of_flip _ _ ?_, classCount_le_of_flip _ _ ?_⟩
+  · rintro f ⟨hnd, hu⟩
+    obtain ⟨a, hm⟩ := exists_monotone_flip hu
+    exact ⟨a, nondegenerate_flip hnd a, hm⟩
+  · rintro f ⟨hnd, hu, hb⟩
+    obtain ⟨a, hm⟩ := exists_monotone_flip hu
+    exact ⟨a, nondegenerate_flip hnd a, hm, by rwa [weight_flip]⟩
+  · exact fun _ => exists_monotone_flip
+  · rintro f ⟨hu, hb⟩
+    obtain ⟨a, hm⟩ := exists_monotone_flip hu
+    exact ⟨a, hm, by rwa [weight_flip]⟩
+
+namespace card_unate_boolFun_relations
+
+open Function
+open boolFunClassCount_varPerm_unate_le (flip_update exists_monotone_flip)
+open boolFunClassCount_varPerm_unate_le renaming
+  flip → flipInputs, flip_flip → flipInputs_involutive
+
+variable {n : ℕ}
+
+private theorem unate_flip_of_monotone {g : (Fin n → Bool) → Bool} (hg : Monotone g)
+    (a : Fin n → Bool) : IsUnateBoolFun (g ∘ flipInputs a) := by
+  intro i
+  cases ha : a i
+  · left
+    intro x hx
+    have hy : flipInputs a x i = false := by simp [flipInputs, ha, hx]
+    simp only [comp_apply, flip_update, ha, Bool.xor_false]
+    apply hg
+    calc
+      flipInputs a x = update (flipInputs a x) i false := by rw [← hy, update_eq_self]
+      _ ≤ update (flipInputs a x) i true := update_le_update_iff'.2 (Bool.false_le true)
+  · right
+    intro x hx
+    have hy : flipInputs a x i = true := by simp [flipInputs, ha, hx]
+    simp only [comp_apply, flip_update, ha, Bool.xor_true, Bool.not_true]
+    apply hg
+    calc
+      update (flipInputs a x) i false ≤ update (flipInputs a x) i true :=
+        update_le_update_iff'.2 (Bool.false_le true)
+      _ = flipInputs a x := by rw [← hy, update_eq_self]
+
+/-- Input flips of monotone functions cover the unate functions. When every input matters,
+the mask and the original monotone function are uniquely determined. -/
+private theorem count_flips (P : ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ f a, P f → P (f ∘ flipInputs a)) :
+    let unate := Nat.card {f // IsUnateBoolFun (n := n) f ∧ P f}
+    let monotone := 2 ^ n * Nat.card {f // Monotone f ∧ P f}
+    unate ≤ monotone ∧ ((∀ f, P f → IsNondegenerateBoolFun f) → unate = monotone) := by
+  dsimp only
+  let toUnate : (Fin n → Bool) × {f // Monotone f ∧ P f} → {f // IsUnateBoolFun f ∧ P f} :=
+    fun ⟨a, g⟩ => ⟨g.val ∘ flipInputs a, unate_flip_of_monotone g.prop.1 a, hP _ a g.prop.2⟩
+  have hsurj : Surjective toUnate := by
+    intro f
+    obtain ⟨a, ha⟩ := exists_monotone_flip f.prop.1
+    refine ⟨⟨a, ⟨f.val ∘ flipInputs a, ha, hP _ a f.prop.2⟩⟩, Subtype.ext ?_⟩
+    funext x
+    exact congrArg f.val (flipInputs_involutive a x)
+  have hcard : Nat.card ((Fin n → Bool) × {f // Monotone f ∧ P f}) =
+      2 ^ n * Nat.card {f // Monotone f ∧ P f} := by
+    simp [Nat.card_prod, Nat.card_eq_fintype_card]
+  have hle := Nat.card_le_card_of_surjective toUnate hsurj
+  rw [hcard] at hle
+  refine ⟨hle, fun hnd => le_antisymm hle ?_⟩
+  rw [← hcard]
+  refine Nat.card_le_card_of_injective toUnate ?_
+  rintro ⟨a, g⟩ ⟨b, h⟩ heq
+  have hcomp : g.val ∘ flipInputs a = h.val ∘ flipInputs b := congrArg Subtype.val heq
+  -- Equal flipped functions relate the monotone functions by the XOR of the two masks.
+  have hmask (x : Fin n → Bool) :
+      h.val x = xor (g.val (fun i => xor (x i) (xor (b i) (a i)))) false := by
+    rw [Bool.xor_false]
+    calc
+      h.val x = h.val (flipInputs b (flipInputs b x)) :=
+        congrArg h.val (flipInputs_involutive b x).symm
+      _ = g.val (flipInputs a (flipInputs b x)) := (congrFun hcomp (flipInputs b x)).symm
+      _ = _ := congrArg g.val (funext fun i => Bool.xor_assoc (x i) (b i) (a i))
+  have hab : a = b := by
+    funext i
+    have hi := isBoolFunNNEquiv_monotone_iff.mask_eq_output
+      g.prop.1 h.prop.1 hmask i (hnd _ g.prop.2 i)
+    exact Bool.xor_right_inj.mp (hi.trans (Bool.xor_self (b i)).symm)
+  subst b
+  exact congrArg (Prod.mk a)
+    (Subtype.ext ((flipInputs_involutive a).surjective.injective_comp_right hcomp))
+
+end card_unate_boolFun_relations
+
+open card_unate_boolFun_relations in
+open boolFunClassCount_varPerm_unate_le (nondegenerate_flip weight_flip) in
+open boolFunClassCount_varPerm_unate_le renaming flip → flipInputs in
+/-- **Unate versus monotone Boolean function counts.** For $n \ge 0$, write $U_n$ and $M_n$ for
+the numbers of unate and of monotone $n$-variable Boolean functions, $BU_n$ and $BM_n$ for the
+numbers of those that are moreover balanced, that is, twice their weight equals $2^n$, and write
+the prefix $\mathrm{nd}\text{-}$ for the same counts restricted to non-degenerate functions.
+Then $\mathrm{nd}\text{-}U_n = 2^n \, \mathrm{nd}\text{-}M_n$,
+$\mathrm{nd}\text{-}BU_n = 2^n \, \mathrm{nd}\text{-}BM_n$, $U_n \le 2^n M_n$ and
+$BU_n \le 2^n BM_n$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 3 (`jis-2025-25.3.4-prop-3`). -/
+public theorem card_unate_boolFun_relations (n : ℕ) :
+    Nat.card {f : (Fin n → Bool) → Bool // IsNondegenerateBoolFun f ∧ IsUnateBoolFun f}
+        = 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
+            IsNondegenerateBoolFun f ∧ Monotone f} ∧
+      Nat.card {f : (Fin n → Bool) → Bool //
+          IsNondegenerateBoolFun f ∧ IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n}
+        = 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
+            IsNondegenerateBoolFun f ∧ Monotone f ∧ 2 * boolFunWeight f = 2 ^ n} ∧
+      Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f}
+        ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool // Monotone f} ∧
+      Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n}
+        ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
+            Monotone f ∧ 2 * boolFunWeight f = 2 ^ n} := by
+  let balanced (f : (Fin n → Bool) → Bool) : Prop := 2 * boolFunWeight f = 2 ^ n
+  have hbalanced (f : (Fin n → Bool) → Bool) (a : Fin n → Bool) (hf : balanced f) :
+      balanced (f ∘ flipInputs a) := by simpa only [balanced, weight_flip] using hf
+  refine ⟨?_, ?_, ?_, (count_flips balanced hbalanced).1⟩
+  · simpa only [and_comm] using
+      (count_flips IsNondegenerateBoolFun (fun _ a h => nondegenerate_flip h a)).2 fun _ h => h
+  · simpa only [and_left_comm] using
+      (count_flips (fun f => IsNondegenerateBoolFun f ∧ balanced f)
+        (fun f a h => ⟨nondegenerate_flip h.1 a, hbalanced f a h.2⟩)).2 fun _ h => h.1
+  · simpa only [and_true] using (count_flips (fun _ => True) (fun _ _ h => h)).1
 
 /-- **Weight symmetry of monotone Boolean functions.** For all $n \ge 0$ and all $w$ with
 $0 \le w \le 2^n$, the number of monotone $n$-variable Boolean functions of weight $w$ equals
@@ -704,6 +1005,101 @@ public theorem card_unate_boolFun_weight_symm (n w : ℕ) (hw : w ≤ 2 ^ n) :
       simpa [boolFunWeight] using
         (Finset.card_filter_add_card_filter_not (s := Finset.univ) (fun x => f x = true))
     omega
+
+namespace boolFunClassCount_balanced_unate_eq_monotone
+
+variable {n : ℕ}
+
+private theorem nnEquivalence : Equivalence (IsBoolFunNNEquiv (n := n)) where
+  refl := isBoolFunNNEquiv_refl
+  symm := by
+    rintro f g ⟨a, c, h⟩
+    refine ⟨a, c, fun x => ?_⟩
+    rw [h]
+    simp
+  trans := by
+    rintro f g k ⟨a, c, hfg⟩ ⟨b, d, hgk⟩
+    refine ⟨fun i => xor (b i) (a i), xor c d, fun x => ?_⟩
+    rw [hgk, hfg]
+    simp only [Bool.xor_assoc]
+
+private theorem npnEquivalence : Equivalence (IsBoolFunNPNEquiv (n := n)) where
+  refl := isBoolFunNPNEquiv_refl
+  symm := by
+    rintro f g ⟨σ, a, c, h⟩
+    refine ⟨σ.symm, fun i => a (σ.symm i), c, fun x => ?_⟩
+    rw [h]
+    simp
+  trans := by
+    rintro f g k ⟨σ, a, c, hfg⟩ ⟨τ, b, d, hgk⟩
+    refine ⟨σ.trans τ, fun i => xor (b (σ i)) (a i), xor c d, fun x => ?_⟩
+    rw [hgk, hfg]
+    simp only [Equiv.trans_apply, Bool.xor_assoc]
+
+/-- If `Q` is contained in `P` and meets each `P`-class, intersection with `Q` is a bijection. -/
+private theorem classCount_eq_of_restriction
+    {R : ((Fin n → Bool) → Bool) → ((Fin n → Bool) → Bool) → Prop}
+    (hR : Equivalence R) {P Q : ((Fin n → Bool) → Bool) → Prop}
+    (hQP : ∀ f, Q f → P f) (hrep : ∀ f, P f → ∃ g, Q g ∧ R f g) :
+    boolFunClassCount R P = boolFunClassCount R Q := by
+  have hclass {B : ((Fin n → Bool) → Bool) → Prop} {f g} (hfg : R f g) :
+      {k | B k ∧ R f k} = {k | B k ∧ R g k} :=
+    Set.ext fun _ => and_congr_right fun _ => ⟨hR.trans (hR.symm hfg), hR.trans hfg⟩
+  have hrestrict (f : (Fin n → Bool) → Bool) :
+      {g | P g ∧ R f g} ∩ {g | Q g} = {g | Q g ∧ R f g} :=
+    Set.ext fun _ => ⟨fun h => ⟨h.2, h.1.2⟩, fun h => ⟨⟨hQP _ h.1, h.2⟩, h.1⟩⟩
+  change {S : Set _ | ∃ f, P f ∧ S = {g | P g ∧ R f g}}.ncard =
+    {S : Set _ | ∃ f, Q f ∧ S = {g | Q g ∧ R f g}}.ncard
+  refine Set.ncard_congr (fun S _ => S ∩ {g | Q g}) ?_ ?_ ?_
+  · rintro _ ⟨f, hf, rfl⟩
+    obtain ⟨g, hg, hfg⟩ := hrep f hf
+    exact ⟨g, hg, (hrestrict f).trans (hclass hfg)⟩
+  · rintro _ _ ⟨f, hf, rfl⟩ ⟨g, _, rfl⟩ heq
+    rw [hrestrict, hrestrict] at heq
+    -- A member of the common restriction witnesses that the original classes agree.
+    obtain ⟨k, hk, hfk⟩ := hrep f hf
+    have hmem : k ∈ {l | Q l ∧ R f l} := ⟨hk, hfk⟩
+    rw [heq] at hmem
+    exact hclass (hR.trans hfk (hR.symm hmem.2))
+  · rintro _ ⟨f, hf, rfl⟩
+    exact ⟨_, ⟨f, hQP f hf, rfl⟩, hrestrict f⟩
+
+end boolFunClassCount_balanced_unate_eq_monotone
+
+open boolFunClassCount_balanced_unate_eq_monotone in
+open boolFunClassCount_varPerm_unate_le (flip exists_monotone_flip weight_flip) in
+/-- **Balanced unate and balanced monotone functions have equally many NN- and NPN-classes.**
+For every $n$, call an $n$-variable Boolean function $f$ balanced when $2\,\mathrm{wt}(f) = 2^n$,
+where $\mathrm{wt}(f)$ is the weight of $f$. The number of NN-inequivalent balanced unate
+$n$-variable Boolean functions equals the number of NN-inequivalent balanced monotone ones, and
+the number of NPN-inequivalent balanced unate $n$-variable Boolean functions equals the number of
+NPN-inequivalent balanced monotone ones. Here monotone means nondecreasing for the coordinatewise
+order with $0 < 1$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 14(b) (`jis-2025-25.3.4-prop-14`). -/
+public theorem boolFunClassCount_balanced_unate_eq_monotone (n : ℕ) :
+    boolFunClassCount (n := n) IsBoolFunNNEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n)
+        = boolFunClassCount (n := n) IsBoolFunNNEquiv
+          (fun f => Monotone f ∧ 2 * boolFunWeight f = 2 ^ n) ∧
+      boolFunClassCount (n := n) IsBoolFunNPNEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n)
+        = boolFunClassCount (n := n) IsBoolFunNPNEquiv
+          (fun f => Monotone f ∧ 2 * boolFunWeight f = 2 ^ n) := by
+  let balanced (f : (Fin n → Bool) → Bool) : Prop := 2 * boolFunWeight f = 2 ^ n
+  have hsub (f : (Fin n → Bool) → Bool) (hf : Monotone f ∧ balanced f) :
+      IsUnateBoolFun f ∧ balanced f := ⟨isUnateBoolFun_of_monotone hf.1, hf.2⟩
+  have hrep (f : (Fin n → Bool) → Bool) (hf : IsUnateBoolFun f ∧ balanced f) :
+      ∃ g, (Monotone g ∧ balanced g) ∧ IsBoolFunNNEquiv f g := by
+    obtain ⟨a, ha⟩ := exists_monotone_flip hf.1
+    refine ⟨f ∘ flip a, ⟨ha, ?_⟩, a, false, fun _ => (Bool.xor_false _).symm⟩
+    simpa only [balanced, weight_flip] using hf.2
+  refine ⟨classCount_eq_of_restriction nnEquivalence hsub hrep,
+    classCount_eq_of_restriction npnEquivalence hsub fun f hf => ?_⟩
+  obtain ⟨g, hg, a, c, h⟩ := hrep f hf
+  exact ⟨g, hg, 1, a, c, h⟩
 
 end
 

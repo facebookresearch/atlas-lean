@@ -60,14 +60,12 @@ abbrev CompactSheaf := (IsCompactSupported k X).FullSubcategory
 are small (`Type 0`), as for the U-small filtrant systems of Kashiwara--Schapira. -/
 abbrev IndSheaf := Ind (CompactSheaf k X)
 
-/-- The structural input. The compact-support sheaves, with the hom-groups inherited from all
-sheaves, have finite products, kernels and cokernels, and every coimage-image comparison is an
-isomorphism; the abelian structure below is built on the inherited preadditive structure. The
-ind-sheaves carry an abelian structure (Kashiwara--Schapira, Categories and Sheaves,
-Theorem 8.6.5(i)); Mathlib constructs it only for small categories and the compact-support sheaves
-are not small, so it is recorded here. A category has at most one additive structure, so this datum
-is determined up to propositional equality. Dependents are conditional on an instance; a
-construction is requested in `WantedExt` (`IndSheafSourceRequests.actual_compact_sheaf_source`). -/
+/-- Abelian structure for compactly supported sheaves of $k$-modules ($k$ a field) on $X$ and for
+their ind-sheaves. An instance records that the full subcategory `CompactSheaf k X` of sheaves with
+compact support has finite products, kernels and cokernels, and that, with the hom-groups inherited
+from all sheaves, every coimage-image comparison in it is an isomorphism; and it gives an abelian
+structure `indAbelian` on the ind-sheaves `Ind (CompactSheaf k X)` (cf. Kashiwara–Schapira,
+*Categories and Sheaves*, Theorem 8.6.5(i)). -/
 class CompactSheafSource where
   [hasFiniteProducts : Limits.HasFiniteProducts (CompactSheaf k X)]
   [hasKernels : Limits.HasKernels (CompactSheaf k X)]

@@ -189,7 +189,10 @@ def coefficientMap (V : ModuleCat.{1} ℤ) (z : RelativeCoefficientCycles G V) :
   H.sectionMap _ L.smoothTotal
     (coefficientClass (A := A) (G := G) (L := L) (S := S) (φ := φ) (T := T) (C := C) V z)
 
-/-- Only the literal complement-null equation is a source proof output. -/
+/-- The condition that the coefficient section of the finite relative cycle $z$ with coefficients
+in $V$ (`coefficientMap`), a map from the pointed object represented by the total space of $L$ to
+the affine coefficient object `affineK` of $V$, vanishes on the complement of the zero section:
+its composite with the map represented by the inclusion of that complement is the zero map. -/
 structure ComplementNull (V : ModuleCat.{1} ℤ) (z : RelativeCoefficientCycles G V) : Prop where
   null : representedMap L.complementInclusion ≫
     coefficientMap (D₀ := D₀) (G₀ := G₀) (R := R) A G L S φ T Q H C V z =

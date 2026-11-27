@@ -10,3 +10,4 @@
 - [Primary-deficit-to-output ratio](deficit-ratio.md)
 - [Affine recurrence convergence](affine-recurrence-tendsto.md)
 - [Debt ratio converges at constant deficit ratio and stable coefficient](debt-ratio-tendsto-of-stable.md)
+- [Affine recurrences by the size of the multiplier](affine-recurrences-by-multiplier.md)

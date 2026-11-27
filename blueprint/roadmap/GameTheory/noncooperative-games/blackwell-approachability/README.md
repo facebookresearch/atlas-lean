@@ -23,6 +23,9 @@ In a repeated game with vector payoffs, a closed convex set is approachable when
 ## Almost-sure approachability
 
 - [σ-algebra of a history](history-sigma.md)
+- [Monotonicity of the history σ-algebras](history-sigma-mono.md)
+- [History σ-algebras are sub-σ-algebras](history-sigma-le.md)
+- [Measurability of functions of the history](measurable-history-sigma.md)
 - [Blackwell's approachability theorem](blackwell-approachability.md)
 
 ## Related topics

@@ -12,6 +12,7 @@ import MathlibExt.Combinatorics.Enumerative.GeneralizedLeonardoLogBehavior
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for log-convexity, log-concavity and reciprocal log-balancedness
@@ -83,5 +84,62 @@ example (n : ℕ) (hn : 1 ≤ n) :
     push_cast
     field_simp
     linarith
+
+-- Check the original type and named arguments through the production import.
+example (k : ℕ) (hk : 1 ≤ k) (n : ℕ) (hn : 4 ≤ n) :
+    (1 / (genLeonardo k n : ℝ)) ^ 2 ≤
+        (1 / (genLeonardo k (n - 1) : ℝ)) * (1 / (genLeonardo k (n + 1) : ℝ)) ∧
+      (1 / (genLeonardo k (n - 1) : ℝ) / (n - 1).factorial) *
+          (1 / (genLeonardo k (n + 1) : ℝ) / (n + 1).factorial) ≤
+        (1 / (genLeonardo k n : ℝ) / n.factorial) ^ 2 :=
+  inv_genLeonardo_logBalanced (k := k) (n := n) hk hn
+
+-- At the first covered index for k = 1, the neighboring terms are 5 and 15.
+example : (1 / 9 : ℝ) ^ 2 ≤ (1 / 5) * (1 / 15) ∧
+    (1 / 5 / Nat.factorial 3 : ℝ) * (1 / 15 / Nat.factorial 5) ≤
+      (1 / 9 / Nat.factorial 4) ^ 2 :=
+  inv_genLeonardo_logBalanced 1 le_rfl 4 le_rfl
+
+-- The first propagated case for k = 2 uses the triple 22, 37, 61.
+example : (1 / 37 : ℝ) ^ 2 ≤ (1 / 22) * (1 / 61) ∧
+    (1 / 22 / Nat.factorial 5 : ℝ) * (1 / 61 / Nat.factorial 7) ≤
+      (1 / 37 / Nat.factorial 6) ^ 2 :=
+  inv_genLeonardo_logBalanced 2 (by decide) 6 (by decide)
+
+-- At index three the log-convexity inequality for the reciprocals fails for k = 1.
+example : (1 / (genLeonardo 1 2 : ℝ)) * (1 / (genLeonardo 1 4 : ℝ)) <
+    (1 / (genLeonardo 1 3 : ℝ)) ^ 2 := by
+  norm_num [genLeonardo]
+
+-- At the first covered index the three partial sums are 2, k + 4 and 3k + 7.
+example (k : ℕ) (hk : 1 ≤ k) : 2 * (3 * (k : ℤ) + 7) ≤ (k + 4 : ℤ) ^ 2 := by
+  convert! genLeonardo_partialSum_logConcave k hk 2 (by decide) using 1 <;>
+    norm_num [Finset.sum_range_succ, genLeonardo] <;> ring
+
+-- One index earlier the log-concavity difference is negative for every positive k.
+example (k : ℕ) :
+    (∑ i ∈ Finset.range 2, genLeonardo k i) ^ 2 -
+      (∑ i ∈ Finset.range 1, genLeonardo k i) * (∑ i ∈ Finset.range 3, genLeonardo k i) =
+        -(k : ℤ) := by
+  norm_num [Finset.sum_range_succ, genLeonardo]
+  ring
+
+-- The first eligible triple for k = 1 consists of the Leonardo numbers 109, 177 and 287.
+example : ((177 : ℝ) ^ (1 / 10 : ℝ)) ^ 2 ≤
+    (109 : ℝ) ^ (1 / 9 : ℝ) * (287 : ℝ) ^ (1 / 11 : ℝ) := by
+  have hs : Real.sqrt 57 ≤ 35 := Real.sqrt_le_iff.mpr (by norm_num)
+  have h := genLeonardo_rpow_inv_logBalanced 1 le_rfl 9 le_rfl
+    (by norm_num; linarith) 10 le_rfl
+  exact h.1
+
+-- For k = 29 the square-root threshold is exactly 11, so the factorial inequality starts at 12.
+example :
+    (genLeonardo 29 11 : ℝ) ^ (1 / 11 : ℝ) / Nat.factorial 11 *
+        ((genLeonardo 29 13 : ℝ) ^ (1 / 13 : ℝ) / Nat.factorial 13) ≤
+      ((genLeonardo 29 12 : ℝ) ^ (1 / 12 : ℝ) / Nat.factorial 12) ^ 2 := by
+  have hs : Real.sqrt 1849 = 43 := by
+    rw [show (1849 : ℝ) = 43 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  exact (genLeonardo_rpow_inv_logBalanced 29 (by decide) 11 (by decide)
+    (by norm_num [hs]) 12 le_rfl).2
 
 end MetaMathlibExt

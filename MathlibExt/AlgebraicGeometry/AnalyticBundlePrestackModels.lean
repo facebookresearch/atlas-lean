@@ -65,7 +65,9 @@ def underlyingPullback {X Y : ESpace p E} (f : X ⟶ Y) :
     bundlePullback p E G H P f ⋙ forgetBundles p E G H X ≅
       forgetBundles p E G H Y ⋙ pullbackSetSheaves p E f := Iso.refl _
 
-/-- The ambient sheaf coherence is the completed native Mathlib pseudofunctor. -/
+/-- The pseudofunctor sending an analytic adic space $X$ over $E$ to the category of sheaves of
+sets on the slice site over $X$, for the étale topology `ambientTopology`, and a morphism
+$f : X \to Y$ to pullback of sheaves along $f$ (`pseudofunctorOver`). -/
 def sheafDiagram : Pseudofunctor (LocallyDiscrete (ESpace p E)ᵒᵖ) Cat.{1, 1} :=
   (ambientTopology p E).pseudofunctorOver (Type 0)
 

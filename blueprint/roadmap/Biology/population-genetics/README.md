@@ -22,3 +22,11 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Baum–Eagon inequality for diploid selection](baum-eagon-inequality-for-diploid-selection/README.md)
 - [Wright's island model](wright-s-island-model/README.md)
 - [Wright–Fisher Markov chain](wright-fisher-markov-chain/README.md)
+
+- [Inbreeding and regular systems of mating](inbreeding-and-regular-systems-of-mating/README.md)
+- [Selection, migration and transmission](selection-migration-and-transmission/README.md)
+- [Effective population size](effective-population-size/README.md)
+
+- [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
+- [Gene drive spread with demographic feedback](gene-drive-spread-with-demographic-feedback/README.md)
+- [Polyploid continuum](polyploid-continuum/README.md)

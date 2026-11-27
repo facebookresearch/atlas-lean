@@ -39,7 +39,9 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Data.Nat.Choose.AlternatingRowSums
 public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.Recurrences.EvenBinomialAlternatingSum
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.GFPFibSumChoose
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
 public import MathlibExt.NumberTheory.Recurrences.OddBinomialAlternatingSum
 
@@ -48,20 +50,6 @@ namespace MetaMathlibExt
 open Polynomial Finset
 
 @[expose] public section
-
-/-- **Explicit formula for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
-polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
-defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. Then for every $n \ge 1$,
-$$F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n-i-1}{i} d^{n-2i-1} g^i.$$
-
-The source quotes this formula from Flórez and Saunders.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.1 (1) (`fq-2024-florez11012023-lem-3.1`). -/
-public theorem_wanted gfp_fib_eq_sum_choose (d g : ℤ[X]) {n : ℕ} (hn : 1 ≤ n) :
-    generalizedFibonacciPolynomial 0 1 d g n =
-      ∑ i ∈ range ((n - 1) / 2 + 1), ((n - i - 1).choose i : ℤ[X]) * d ^ (n - 2 * i - 1) * g ^ i
 
 /-- **Explicit formula for Lucas-type generalized Fibonacci polynomials.** Let $\alpha$ and $p_0$
 be integers with $\alpha p_0 = 2$, let $p_1$ and $g$ be polynomials with integer coefficients, and
@@ -95,21 +83,6 @@ public theorem_wanted choose_sub_sub_one_eq_two_zpow_mul_sum {m n : ℕ} (hmn : 
       (2 : ℚ) ^ (2 * (m : ℤ) - n + 1) *
         ∑ j ∈ Icc m ((n - 1) / 2), (j.choose m : ℚ) * (n.choose (2 * j + 1) : ℚ)
 
-/-- **Binomial coefficients of even lower index as an alternating sum.** For natural numbers $n$
-and $k$ with $k < \lfloor n/2 \rfloor$,
-$$\binom{n}{2k} = n \sum_{i=k}^{\lfloor n/2 \rfloor} \frac{(-1)^{i-k}}{n-i} \, 2^{n-2i-1}
-  \binom{n-i}{i} \binom{i}{k},$$
-an identity of rational numbers in which the exponent $n-2i-1$ may be $-1$.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.2 (3) (`fq-2024-florez11012023-lem-3.2`). -/
-public theorem_wanted choose_two_mul_eq_alternating_sum {n k : ℕ} (hk : k < n / 2) :
-    (n.choose (2 * k) : ℚ) =
-      n * ∑ i ∈ Icc k (n / 2),
-        (-1) ^ (i - k) / ((n : ℚ) - i) * (2 : ℚ) ^ ((n : ℤ) - 2 * i - 1) *
-          ((n - i).choose i : ℚ) * (i.choose k : ℚ)
-
 /-- **Catalan identity for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
 polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
 defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. Then for every natural number
@@ -123,26 +96,6 @@ public theorem_wanted gfp_fib_catalan (d g : ℤ[X]) (n : ℕ) :
     2 ^ (n - 1) * generalizedFibonacciPolynomial 0 1 d g n =
       ∑ i ∈ range ((n - 1) / 2 + 1),
         (n.choose (2 * i + 1) : ℤ[X]) * d ^ (n - 2 * i - 1) * (4 * g + d ^ 2) ^ i
-
-/-- **Generating function of the floor-exponent binomial sums.** Let $R$ be a commutative ring,
-$t \in R$ and $\ell \ge 1$ an integer, and for $n \ge 0$ let
-$T_\ell(n; t) = \sum_{i=0}^{n} \binom{n}{i} t^{\lfloor i/\ell \rfloor}$. Then in the ring $R[[x]]$
-of formal power series,
-$$\Big(\sum_{n \ge 0} T_\ell(n; t)\, x^n\Big) \big((1-x)^\ell - t x^\ell\big)
-  = \sum_{k=0}^{\ell-1} \Big(\sum_{i=0}^{k} (-1)^i \binom{i+\ell-k-1}{i}\Big) x^k.$$
-
-So the generating function of the $T_\ell(n; t)$ is this polynomial divided by the series
-$(1-x)^\ell - t x^\ell$, which is invertible since its constant term is $1$.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Theorem 4.4 (`fq-2024-florez11012023-thm-4.4`). -/
-public theorem_wanted floorPowBinomialSum_generatingFunction {R : Type*} [CommRing R] (t : R)
-    {ℓ : ℕ} (hℓ : 1 ≤ ℓ) :
-    PowerSeries.mk (fun n => ∑ i ∈ range (n + 1), (n.choose i : R) * t ^ (i / ℓ)) *
-        ((1 - PowerSeries.X) ^ ℓ - PowerSeries.C t * PowerSeries.X ^ ℓ) =
-      ∑ k ∈ range ℓ, PowerSeries.C (∑ i ∈ range (k + 1),
-        (-1 : R) ^ i * ((i + ℓ - k - 1).choose i : R)) * PowerSeries.X ^ k
 
 /-- **Generating function of the binomial section sums.** Let $R$ be a commutative ring, $t \in R$,
 and let $\ell$ and $s$ be natural numbers with $s < \ell$. Put

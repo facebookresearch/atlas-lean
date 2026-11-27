@@ -31,4 +31,37 @@ example (x : ℂ) :
   rw [sum_choose_centralBinom_one_sub_pow_mul_pow]
   norm_num [sum_range_succ, Nat.choose]
 
+-- The even-index sum covers both parities of the upper index and the degree-zero boundary.
+example :
+    ∑ k ∈ range (0 / 2 + 1), (Nat.choose 0 (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      1 := by
+  rw [sum_choose_even_centralBinom_div_four_pow]
+  norm_num [Nat.choose]
+
+example :
+    ∑ k ∈ range (3 / 2 + 1), (Nat.choose 3 (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      5 / 2 := by
+  rw [sum_choose_even_centralBinom_div_four_pow]
+  norm_num [Nat.choose]
+
+example :
+    ∑ k ∈ range (4 / 2 + 1), (Nat.choose 4 (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      35 / 8 := by
+  rw [sum_choose_even_centralBinom_div_four_pow]
+  norm_num [Nat.choose]
+
+-- Check the degree-zero boundary and a positive odd degree.
+example : ∑ k ∈ range (0 + 1), (Nat.choose 0 k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) = 1 := by
+  rw [sum_choose_centralBinom_div_two_pow]
+  norm_num [sum_range_succ, Nat.choose]
+
+example : ∑ k ∈ range (1 + 1), (Nat.choose 1 k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) = 2 := by
+  rw [sum_choose_centralBinom_div_two_pow]
+  norm_num [sum_range_succ, Nat.choose]
+
+-- For n = 2 the last even-index term has signed exponent 2 - 4 = -2.
+example : ∑ k ∈ range (2 + 1), (Nat.choose 2 k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) = 9 / 2 := by
+  rw [sum_choose_centralBinom_div_two_pow]
+  norm_num [sum_range_succ, Nat.choose]
+
 end MetaMathlibExt

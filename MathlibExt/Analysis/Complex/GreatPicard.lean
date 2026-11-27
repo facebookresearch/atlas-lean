@@ -14,6 +14,8 @@ import MathlibExt.Analysis.Complex.Bloch
 import Mathlib.Analysis.Complex.HasPrimitives
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Analysis.Complex.Liouville
+import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.Complex.Arg
@@ -28,7 +30,7 @@ import Mathlib.Topology.Algebra.Order.Field
 
 @[expose] public section
 
-open Set Filter Topology Metric
+open Set Filter Topology Metric Bornology
 
 namespace MathlibExt.Analysis.Complex.GreatPicardWanted
 
@@ -1244,5 +1246,36 @@ theorem greatPicard
     rcases hcon2 with ⟨l, hl⟩ | hpole
     · exact absurd ⟨l, hl⟩ hf.2.1
     · exact absurd hpole hf.2.2
+
+/-- **Little Picard theorem.** A nonconstant entire function $g : \mathbb{C} \to \mathbb{C}$
+omits at most one complex value. This follows by applying Great Picard at infinity. -/
+theorem littlePicard {g : ℂ → ℂ} (hg : Differentiable ℂ g) (hnc : ¬ ∃ c, ∀ z, g z = c) :
+    Set.Subsingleton {w : ℂ | ∀ z, g z ≠ w} := by
+  intro a ha b hb
+  let G (z : ℂ) := g z⁻¹
+  have hinv : Tendsto (Inv.inv : ℂ → ℂ) (cocompact ℂ) (𝓝[≠] 0) := by
+    rw [← Metric.cobounded_eq_cocompact]
+    exact tendsto_inv₀_cobounded'
+  have hess : IsEssentialIsolatedSingularityAt G 0 := by
+    refine ⟨⟨1, zero_lt_one, fun z hz ↦ ?_⟩, ?_, ?_⟩
+    · have hz0 : z ≠ 0 := hz.2
+      exact ((hg z⁻¹).comp z (differentiableAt_id.inv hz0)).differentiableWithinAt
+    · rintro ⟨c, hc⟩
+      have hlim : Tendsto g (cocompact ℂ) (𝓝 c) := by
+        simpa [Function.comp_def, G] using hc.comp hinv
+      exact hnc ⟨c, fun z ↦ hg.apply_eq_of_tendsto_cocompact z hlim⟩
+    · intro h
+      -- A pole at infinity would make the entire reciprocal of g - a tend to zero.
+      have hlim : Tendsto g (cocompact ℂ) (cobounded ℂ) := by
+        simpa [Function.comp_def, G] using (tendsto_norm_atTop_iff_cobounded.mp h).comp hinv
+      have hdiff := (hg.sub_const a).inv (fun z ↦ sub_ne_zero.mpr (ha z))
+      have heq := hdiff.apply_eq_of_tendsto_cocompact 0
+        (tendsto_inv₀_cobounded.comp ((tendsto_sub_const_cobounded a).comp hlim))
+      exact inv_ne_zero (sub_ne_zero.mpr (ha 0)) heq
+  have exceptional (w : ℂ) (hw : ∀ z, g z ≠ w) :
+      ∃ r : ℝ, 0 < r ∧ Set.Finite {z ∈ Metric.ball 0 r \ {0} | G z = w} := by
+    refine ⟨1, zero_lt_one, Set.finite_empty.subset ?_⟩
+    exact fun z hz ↦ (hw z⁻¹ hz.2).elim
+  exact greatPicard hess (exceptional a ha) (exceptional b hb)
 
 end MathlibExt.Analysis.Complex.GreatPicardWanted

@@ -9,20 +9,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Graph.GraphMinor
-public import MathlibExt.Combinatorics.SimpleGraph.Bramble
-public import MathlibExt.Combinatorics.SimpleGraph.TreeDecomposition
+public import MathlibExt.Combinatorics.Graph.TreewidthMinor
+public import MathlibExt.Combinatorics.SimpleGraph.TreewidthDuality
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 
 /-!
 # Tree-width: wanted theorems
 
-Central theorems on tree-width whose proofs are deferred: minor-monotonicity, the tree-width
-duality theorem of Seymour and Thomas, the grid theorem of Robertson and Seymour, and the
-well-quasi-ordering of graphs of bounded tree-width (the bounded case of the graph minor theorem
-`MetaMathlibExt.graph_minor_theorem`). Graph minors are
-`MetaMathlibExt.IsMinor` on bundled finite graphs; tree-width is
+Central theorems on tree-width whose proofs are deferred: the grid theorem of Robertson and
+Seymour, and the well-quasi-ordering of graphs of bounded tree-width (the bounded case of the
+graph minor theorem `MetaMathlibExt.graph_minor_theorem`). Graph minors are
+`MetaMathlibExt.IsMinor` on bundled finite graphs. Tree-width is
 `SimpleGraph.HasTreewidthAtMost`.
 
 ## References
@@ -36,23 +34,6 @@ well-quasi-ordering of graphs of bounded tree-width (the bounded case of the gra
 namespace MetaMathlibExt
 
 open SimpleGraph
-
-/-- **Tree-width does not increase under taking minors.** If `H` is a minor of the finite graph
-`G` and `G` has tree-width at most `k`, then so does `H` (Diestel, *Graph Theory*, 6th ed.,
-Lemma 12.4.1, from Lemmas 12.3.2 and 12.3.3). -/
-theorem_wanted IsMinor.hasTreewidthAtMost {H G : FinGraph} (h : IsMinor H G) {k : ℕ}
-    (hG : G.G.HasTreewidthAtMost k) : H.G.HasTreewidthAtMost k
-
-/-- **Tree-width duality theorem (Seymour–Thomas).** For every finite graph `G` and every
-`k : ℕ`, `G` has tree-width at most `k` if and only if it contains no bramble of order greater
-than `k + 1` (Diestel, *Graph Theory*, 6th ed., Theorem 12.4.3, "a graph has tree-width `< k` if
-and only if it contains no bramble of order `> k`", applied with `k + 1`; P. D. Seymour and
-R. Thomas, *Graph searching and a min-max theorem for tree-width*, J. Combin. Theory Ser. B 58
-(1993) 22–33). The source's case `k = 0`, which concerns only the graph with no vertices, is not
-part of this statement. -/
-theorem_wanted hasTreewidthAtMost_iff_forall_bramble {V : Type*} [Finite V] (G : SimpleGraph V)
-    (k : ℕ) :
-    G.HasTreewidthAtMost k ↔ ∀ (B : Set (Set V)) (hB : G.IsBramble B), ¬hB.OrderGT (k + 1)
 
 /-- **Grid theorem (Robertson–Seymour).** For every integer `r` there is an integer `k` such that
 every finite graph of tree-width greater than `k` has the `r × r` grid as a minor; the grid is the

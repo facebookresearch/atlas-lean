@@ -37,9 +37,9 @@ discrete form of Hopf's Umlaufsatz (rotation index `±1`). With `ω ^ 2 = i` the
 the walk is therefore `ω^{±4} = -1`. This sign is the reason the Kac-Ward weight of a simple loop is
 `-x^{length}`.
 
-See also `MathlibExt.Geometry.HopfUmlaufsatzWanted.Geometry.HopfUmlaufsatz.hopf_umlaufsatz`, the
-open request for the Umlaufsatz of smooth plane curves; the result here is its lattice-polygon
-analogue.
+See also `MathlibExt.Geometry.HopfUmlaufsatzWanted.Geometry.HopfUmlaufsatz.hopf_umlaufsatz` in
+`MathlibExt.Geometry.HopfUmlaufsatz`, the Umlaufsatz of smooth plane curves; the result here is its
+lattice-polygon analogue.
 
 ## Main results
 

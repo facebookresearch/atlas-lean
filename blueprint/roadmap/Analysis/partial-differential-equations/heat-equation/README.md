@@ -11,6 +11,7 @@ The pages below give the properties of $\Phi$ in every finite dimension, the wea
 subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy problem.
 
 - [Heat-kernel solution](heat-solution.md)
+- [The one-dimensional heat solution as a heat-kernel convolution](heat-solution-eq-kernel.md)
 - [The Gaussian heat kernel solves the heat equation](heat-kernel-solves-heat-equation.md)
 - [Fundamental solution of the heat equation](heat-kernel.md)
 - [The heat kernel is positive](heat-kernel-pos.md)
@@ -22,6 +23,7 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Parabolic boundary of a space-time cylinder](parabolic-boundary.md)
 - [Weak maximum principle for the heat equation](exists-mem-parabolic-boundary-is-max-on.md)
 - [Uniqueness for the heat equation on a bounded domain](eq-on-of-heat-equation.md)
+- [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
 
 ## Related topics
 

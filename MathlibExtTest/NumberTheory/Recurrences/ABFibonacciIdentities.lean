@@ -54,3 +54,33 @@ example :
   obtain ⟨hEven, hOdd⟩ := sum_neg_b_pow_fibAB_disc 1 2 (by norm_num) 2
   rw [hEven, hOdd]
   norm_num [lucasAB]
+
+-- The first negative summand distinguishes the even and odd Pell and Pell–Lucas sums.
+example :
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * fibAB 2 1 (2 * i)) = -2 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i)) = -4 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1)) = -4 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1)) = -12 := by
+  obtain ⟨hPe, hQe, hPo, hQo⟩ := sum_neg_one_pow_pell 1
+  rw [hPe, hQe, hPo, hQo]
+  norm_num [fibAB, lucasAB]
+
+-- At n = 0 each sum returns its initial even or odd term.
+example :
+    (∑ i ∈ Finset.range 1, (-1 : ℂ) ^ i * 2 ^ (0 - i) * fibAB 1 2 (2 * i)) = 0 ∧
+    (∑ i ∈ Finset.range 1, (-1 : ℂ) ^ i * 2 ^ (0 - i) * lucasAB 1 2 (2 * i)) = 2 ∧
+    (∑ i ∈ Finset.range 1, (-1 : ℂ) ^ i * 2 ^ (0 - i) * fibAB 1 2 (2 * i + 1)) = 1 ∧
+    (∑ i ∈ Finset.range 1, (-1 : ℂ) ^ i * 2 ^ (0 - i) * lucasAB 1 2 (2 * i + 1)) = 1 := by
+  obtain ⟨hJe, hLe, hJo, hLo⟩ := sum_neg_one_pow_jacobsthal 0
+  rw [hJe, hLe, hJo, hLo]
+  norm_num [fibAB, lucasAB]
+
+-- At n = 1 the two weights are 2 and -1.
+example :
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * 2 ^ (1 - i) * fibAB 1 2 (2 * i)) = -1 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * 2 ^ (1 - i) * lucasAB 1 2 (2 * i)) = -1 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * 2 ^ (1 - i) * fibAB 1 2 (2 * i + 1)) = -1 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * 2 ^ (1 - i) * lucasAB 1 2 (2 * i + 1)) = -5 := by
+  obtain ⟨hJe, hLe, hJo, hLo⟩ := sum_neg_one_pow_jacobsthal 1
+  rw [hJe, hLe, hJo, hLo]
+  norm_num [fibAB, lucasAB]
