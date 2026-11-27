@@ -20,6 +20,11 @@ Summed over cells, the bound is maximized jointly over decoder and encoder param
 
 - [Zero-inflated negative binomial likelihood of the scVI generative model](zero-inflated-negative-binomial-likelihood-of-the-scvi-generative-model.md)
 
+## Proof depends on
+
+- [Kullback-Leibler divergence between multivariate Gaussians](../../../../InformationTheory/not-yet-classified/part-01/vector-gaussian-kl/kl-div-multivariate-gaussian.md)
+- [Kullback–Leibler divergence between real Gaussians](../../../../InformationTheory/not-yet-classified/part-01/scalar-gaussian-kl/kl-div-gaussian-real.md)
+
 ## Proof sketch
 
 Jensen's inequality applied to $\log p(x \mid s) = \log \mathbb{E}_q[p(x, z, \ell \mid s)/q(z, \ell \mid x, s)]$ gives the bound, and the identity $\log p(x \mid s) - \mathrm{ELBO} = D_{\mathrm{KL}}(q \,\|\, p(\cdot \mid x, s))$ identifies the gap. Because both the prior and the variational family factorize over $z$ and $\ell$, the divergence of the joint splits into the two terms. The Kullback–Leibler divergence is invariant under the bijection $\ell \mapsto \log \ell$, so the log-normal term is the Gaussian divergence between $\mathcal{N}(a, b)$ and $\mathcal{N}(\ell_\mu, \ell_\sigma^2)$. The prior centred on the observed log library size per batch is what lets $\ell$ absorb sequencing-depth variation, so that $z$ is left to encode biological variation; a variant without $\ell$ performed worse at clustering and differential expression.

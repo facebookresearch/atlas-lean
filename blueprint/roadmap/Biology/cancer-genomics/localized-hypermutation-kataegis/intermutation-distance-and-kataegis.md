@@ -11,6 +11,10 @@ and a rainfall plot displays $\log_{10} d_i$ against $p_i$, coloured by substitu
 
 Recording at each base whether a Poisson process of rate $\lambda$ placed at least one mutation there gives the discrete model with $q = 1 - e^{-\lambda}$, not $q = \lambda$; with this $q$ the geometric distribution function equals the exponential one at every integer, $1 - (1-q)^x = 1 - e^{-\lambda x}$, while taking $q = \lambda$ is only a first-order approximation for small $\lambda$. Under either model, runs of many consecutive small $d_i$ are exponentially unlikely. Kataegis is the occurrence of localized clusters in which many consecutive substitutions have intermutation distances orders of magnitude below the genome-wide mean, typically with a consistent class and sequence context within a cluster.
 
+## Depends on
+
+- [Poisson process](../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
+
 ## Remarks
 
 Plotting the gap rather than a binned density is what makes a cluster visible at any scale: a region whose mutations are $10^2$ bases apart in a genome averaging $10^5$ appears as a band three decades below the bulk, regardless of how many mutations it contains. The exponential null is the right baseline because a Poisson process has independent increments; departures therefore implicate a process acting processively along a short stretch of DNA rather than independently at each site. Two features of such clusters carry mechanistic information: the strand-consistent runs of a single substitution class, indicating processive action on one strand, and the restriction of the mutated base to a specific flanking context, which points to an enzymatic deaminase rather than to a background damage-repair imbalance. The same statistic distinguishes genuine clustering from an excess of adjacent double substitutions, which produce $d_i = 1$ and must be counted separately.

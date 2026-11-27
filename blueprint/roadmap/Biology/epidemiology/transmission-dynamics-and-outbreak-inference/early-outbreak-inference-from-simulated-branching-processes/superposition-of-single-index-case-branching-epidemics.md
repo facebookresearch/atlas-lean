@@ -16,6 +16,11 @@ where $C_1, C_2, \dots$ are independent copies of $C$, independent of $(T_i)$. I
 - [Negative-binomial offspring distribution](../../superspreading-and-negative-binomial-offspring/nb-offspring.md)
 - [Negative-binomial extinction probability is the least fixed point](../../superspreading-and-negative-binomial-offspring/is-least-extinction-prob-nb-offspring.md)
 
+## Proof depends on
+
+- [Generating function of the negative-binomial law in closed form](../../superspreading-and-negative-binomial-offspring/pgf-nb-offspring.md)
+- [Convolution of negative binomial laws with a common $p$](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial-splitting/sum-neg-binomial-pmf-mul.md)
+
 ## Proof sketch
 
 Without depletion, the offspring numbers and generation intervals of each case are independent of everything else, so the descendants of different index cases form independent subtrees, and shifting each subtree by its introduction time gives the sum. The negative-binomial law with mean $R_0$ and dispersion $k$ has generating function $(1 + (R_0/k)(1 - s))^{-k}$; the $n$-th power is the generating function with mean $n R_0$ and dispersion $n k$. The combined epidemic dies out exactly when every subtree does, which gives $q^n$. The superposition is what makes large simulation studies cheap: one library of single-index-case epidemics can be resampled and time-shifted to build epidemics with any number of index cases and any introduction dates, as was done to infer early SARS-CoV-2 transmission from the epidemic size in Wuhan.

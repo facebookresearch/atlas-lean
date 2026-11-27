@@ -6,9 +6,13 @@ $$\min_{W \in \mathbb{R}_{\ge 0}^{N \times k},\ H \in \mathbb{R}_{\ge 0}^{k \tim
 
 where column $j$ of $W$ is the $j$-th mutational signature, a non-negative profile over the $N$ mutation classes, row $j$ of $H$ gives the exposure of each sample to that signature, and $U$ is the residual. The reconstruction $\widehat{A} = WH$ satisfies $\widehat{A}_{nm} = \sum_{j=1}^{k} W_{nj} H_{jm}$, so each sample's catalogue is modelled as a non-negative mixture of the same $k$ signatures.
 
+## Depends on
+
+- [Objective of nonnegative matrix factorization](../../../ComputerScience/machine-learning/unsupervised-learning/non-negative-matrix-factorization/objective.md)
+
 ## Remarks
 
-The model says that each mutational process acts with a fixed probability profile over sequence contexts and that catalogues differ only in how long and how strongly each process operated, which is precisely a non-negative mixture. Non-negativity is what makes the factors interpretable as processes: unconstrained factorizations of the same rank fit at least as well but mix positive and negative contributions that no mechanism can produce. The Frobenius objective is the Gaussian-error choice and is minimized by multiplicative update rules that preserve non-negativity and do not increase the objective; it is not jointly convex, so solutions depend on initialization, and repeated runs are needed. The factorization is also only identified up to a scaling $W \to WD$, $H \to D^{-1}H$ with $D$ positive diagonal, and up to permutation of the $k$ components; a reported signature is a column of $W$ after a fixed normalization. A systematic sequencing artifact that recurs with a reproducible context profile is indistinguishable from a biological process in this model.
+The model says that each mutational process acts with a fixed probability profile over sequence contexts and that catalogues differ only in how long and how strongly each process operated, which is precisely a non-negative mixture. Non-negativity is what makes the factors interpretable as processes: unconstrained factorizations of the same rank fit at least as well but mix positive and negative contributions that no mechanism can produce. The Frobenius objective is the Gaussian-error choice and is minimized by multiplicative update rules that preserve non-negativity and [do not increase the objective](../../../ComputerScience/machine-learning/unsupervised-learning/non-negative-matrix-factorization/objective-sweep-le.md); it is not jointly convex, so solutions depend on initialization, and repeated runs are needed. The factorization is also only identified up to a scaling $W \to WD$, $H \to D^{-1}H$ with $D$ positive diagonal, and up to permutation of the $k$ components; a reported signature is a column of $W$ after a fixed normalization. A systematic sequencing artifact that recurs with a reproducible context profile is indistinguishable from a biological process in this model.
 
 ## Sources
 

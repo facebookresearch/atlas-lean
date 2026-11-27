@@ -9,6 +9,7 @@ retained only for pairs whose overlap is significant: for each pair, the $p$-val
 ## Depends on
 
 - [Hypergeometric over-representation test](../../bioinformatics/functional-scores-enrichment-and-networks/gene-category-over-representation/hypergeometric-over-representation-test.md)
+- [Hypergeometric distribution](../../../Probability/distributions/discrete/hypergeometric-distribution/hypergeometric.md)
 
 ## Remarks
 

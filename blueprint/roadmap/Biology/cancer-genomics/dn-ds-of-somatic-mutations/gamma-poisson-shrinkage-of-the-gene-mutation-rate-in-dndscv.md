@@ -26,6 +26,11 @@ intervals for $\omega_k$ come from the profile likelihood integrating out $t_j$.
 
 - [Poisson dN/dS model with trinucleotide substitution rates](poisson-dn-ds-model-with-trinucleotide-substitution-rates.md)
 
+## Proof depends on
+
+- [The marginal law of the hierarchy is negative binomial](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik-eq-neg-binomial-real.md)
+- [Gamma–Poisson conjugacy with exposure](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/posterior-eq-gamma-pdfreal.md)
+
 ## Remarks
 
 As a function of $\lambda_j$, the product of the Poisson likelihood $\lambda_j^{n} e^{-\lambda_j}$ and

@@ -23,6 +23,7 @@ For fixed means $1/\sigma$ and $1/\gamma$ and fixed $r$, the map $m \mapsto (1 +
 ## Proof depends on
 
 - [Reproductive number from growth rate and generation interval](../../euler-lotka-equation-and-the-reproduction-number/reproduction-number.md)
+- [Moment generating function of the gamma distribution](../../../../Probability/distributions/continuous/gamma-distribution/gamma-mgf/mgf-gamma-measure-of-lt.md)
 
 ## Proof sketch
 

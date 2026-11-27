@@ -17,6 +17,7 @@ The two parts share no parameters, and the model treats the detection indicator 
 ## Depends on
 
 - [Cellular detection rate](cellular-detection-rate.md)
+- [The logistic loss is the negative log-likelihood of the logistic model](../../../../ComputerScience/machine-learning/supervised-learning/logistic-regression-and-support-vector-machines/logistic-nll-eq-neg-log-likelihood.md)
 
 ## Remarks
 

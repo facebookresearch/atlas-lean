@@ -17,6 +17,11 @@ and the expected number of anchors is $np$.
 ## Depends on
 
 - [Intermutation distance and regional hypermutation](intermutation-distance-and-kataegis.md)
+- [Poisson distribution function as a function of the mean](../../../Probability/distributions/continuous/poisson-gamma-duality/poisson-gamma-duality-identity/poisson-cdf.md)
+
+## Proof depends on
+
+- [Poisson distribution function is strictly decreasing in the mean](../../../Probability/distributions/continuous/poisson-gamma-duality/poisson-gamma-duality-identity/poisson-cdf-strict-anti-on.md)
 
 ## Proof sketch
 

@@ -16,6 +16,12 @@ So, for a sample with no tumour DNA, at least one assay of the panel is positive
 
 - [Binomial upper tail probability](../detection-power-for-somatic-mutations/upper-tail.md)
 
+## Proof depends on
+
+- [Recursion for the binomial upper tail](../detection-power-for-somatic-mutations/upper-tail-eq-add.md)
+- [Positivity of binomial probabilities](../detection-power-for-somatic-mutations/binom-pmf-pos.md)
+- [The binomial upper tail is strictly increasing in the success probability](../../phylogenetics/evolutionary-conservation-scores/strict-mono-on-binom-tail.md)
+
 ## Proof sketch
 
 Independence across assays is the modelling assumption that makes the tail exact; it is reasonable when the dominant error source is position-specific sequencing and amplification noise, calibrated separately at each locus, rather than a shared contamination event, which would correlate the calls and inflate the true tail above the binomial value.

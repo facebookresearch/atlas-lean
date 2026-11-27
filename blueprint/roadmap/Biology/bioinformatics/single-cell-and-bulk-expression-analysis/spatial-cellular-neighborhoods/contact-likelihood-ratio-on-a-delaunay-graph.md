@@ -10,6 +10,10 @@ $$L_{ij} = \frac{N_{ij}\, N_t}{N_{i\cdot}\, N_{\cdot j}}, \qquad R_{ij} = \frac{
 
 $L_{ij} = 1$ exactly when the observed number of $i$-$j$ edges equals the number expected if edge endpoints were assigned independently with the marginal type frequencies $N_{i\cdot}/N_t$ and $N_{\cdot j}/N_t$; $L_{ij} > 1$ indicates enrichment of direct contact and $L_{ij} < 1$ depletion. A type absent from the section has zero margins and receives no ratio. Comparing two patient groups is done on $\log_2$ of the ratio of their $L_{ij}$ matrices, entrywise where both ratios are defined and positive.
 
+## Depends on
+
+- [Delaunay triangulations](../../../../ComputerScience/computational-geometry/polygons-and-triangulations/delaunay-triangulations.md)
+
 ## Remarks
 
 The statistic is the pointwise lift of a contingency table: it divides the joint edge frequency $N_{ij}/N_t$ by the product of marginals $(N_{i\cdot}/N_t)(N_{\cdot j}/N_t)$, so it is exactly the ratio of observed to expected counts under independence, and it is invariant to the overall number of edges. Using Delaunay adjacency rather than a distance threshold makes "direct neighbour" a combinatorial property of the point configuration, so the statistic does not require choosing a length scale. The normalization by both margins is what separates genuine preferential contact from mere abundance: a rare cell type that touches a common one often does so only because the partner is common, and that effect is divided out.

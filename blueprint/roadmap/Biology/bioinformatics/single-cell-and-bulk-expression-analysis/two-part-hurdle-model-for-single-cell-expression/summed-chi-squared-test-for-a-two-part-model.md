@@ -10,6 +10,10 @@ so the combined statistic $T_g = T^D_g + T^C_g$ tests the hypothesis in both com
 
 - [Two-part hurdle model for single-cell expression](hurdle-model-for-single-cell-expression.md)
 
+## Proof depends on
+
+- [Chi-square moment generating functions multiply by adding degrees](../../../../Probability/distributions/continuous/chi-square-distribution/prod-mgf-chi-square-measure-eq-mgf-sum.md)
+
 ## Proof sketch
 
 The sum of independent chi-squared variables is chi-squared with the degrees of freedom added, which is immediate from the moment generating function $(1-2t)^{-d/2}$ for $t < 1/2$. Independence is supplied by the model: the detection indicator and the positive expression level are conditionally independent given the design, so the two score or likelihood-ratio statistics are asymptotically independent. This is what lets a change in the proportion of expressing cells and a change in the conditional mean be detected by one test, rather than by two tests whose combination would need a correction. Using a variance estimate shrunk across genes in the continuous part leaves the asymptotic calibration intact while stabilizing genes expressed in few cells.

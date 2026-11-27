@@ -18,6 +18,11 @@ and declare a copy-number breakpoint between them when $D_{ij}$ exceeds a cutoff
 
 - [Freeman-Tukey variance-stabilizing transform for Poisson counts](freeman-tukey-variance-stabilizing-transform-for-poisson-counts.md)
 
+## Proof depends on
+
+- [Pooled Gamma–Poisson conjugacy](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/pooled-posterior-eq-gamma-pdfreal.md)
+- [Mean of the pooled posterior](../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/integral-id-pooled-posterior.md)
+
 ## Remarks
 
 The gamma prior shrinks window means toward a common level, which damps the noise of sparse single-cell counts, and conjugacy makes the posterior exact and cheap. Comparing whole posterior distributions rather than point estimates lets the Kolmogorov-Smirnov distance account for the uncertainty of each window. Adaptive halving of the cutoff guards against under-segmentation in cells with few detected genes. With a median gene spacing of about $24.5$ kb and roughly $12.5\%$ of genes detected, a $25$-gene window corresponds to a resolution of about $5$ Mb.

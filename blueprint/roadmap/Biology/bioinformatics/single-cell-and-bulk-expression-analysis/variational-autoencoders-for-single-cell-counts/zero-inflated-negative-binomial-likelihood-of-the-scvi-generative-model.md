@@ -20,6 +20,16 @@ The negative binomial component has mean $\mu_{ng} = \ell_n \rho_{ng}$ and varia
 
 $$\frac{\pi_{ng}}{\pi_{ng} + (1 - \pi_{ng}) \big(\theta_g/(\theta_g + \mu_{ng})\big)^{\theta_g}}.$$
 
+## Depends on
+
+- [Negative binomial mass function with size and mean](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-real.md)
+
+## Proof depends on
+
+- [The marginal law of the hierarchy is negative binomial](../../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik-eq-neg-binomial-real.md)
+- [Mean of the negative binomial law](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/has-sum-mul-neg-binomial-real.md)
+- [Variance of the negative binomial law](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/variance-neg-binomial.md)
+
 ## Remarks
 
 With rate $\beta = \theta_g/\rho_{ng}$, integrating the Poisson mass against the Gamma density gives

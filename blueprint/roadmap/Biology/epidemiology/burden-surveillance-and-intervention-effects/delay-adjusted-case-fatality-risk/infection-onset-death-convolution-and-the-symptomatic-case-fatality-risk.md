@@ -14,6 +14,10 @@ $$\frac{A_{\mathrm{d}}(t)}{A_{\mathrm{on}}(t)} = \frac{D(t)}{\Omega(t)} = \mathr
 (for $r > 0$ in the cumulative form). For $r > 0$, $M_{\mathrm{od}}(-r) < 1$, so the crude ratio underestimates the sCFR; for a gamma onset-to-death delay with shape $k$ and rate $b$, $M_{\mathrm{od}}(-r) = (1 + r/b)^{-k}$.
 3. **Ascertainment.** If only a fraction $\varepsilon \in (0, 1]$ of symptomatic cases is confirmed while all deaths are counted, confirmed-case ratios are inflated by $1/\varepsilon$; under exponential growth the crude ratio of deaths to confirmed cases is $\mathrm{sCFR}\cdot M_{\mathrm{od}}(-r)/\varepsilon$, so delay and under-ascertainment bias it in opposite directions.
 
+## Proof depends on
+
+- [Moment generating function of the gamma distribution](../../../../Probability/distributions/continuous/gamma-distribution/gamma-mgf/mgf-gamma-measure-of-lt.md)
+
 ## Proof sketch
 
 Item 1 is Fubini's theorem: $\int_{\mathbb{R}} A_{\mathrm{d}} = \mathrm{sCFR} \int_0^\infty f_{\mathrm{od}}(u) \int_{\mathbb{R}} A_{\mathrm{on}}(t - u)\, dt\, du = \mathrm{sCFR}\, \Omega(\infty)$. Item 2 follows by substituting $A_{\mathrm{on}}(t - u) = c\, e^{rt} e^{-ru}$, which factors the convolution, and integrating $e^{rs}$ over $(-\infty, t]$ for the cumulative form; $M_{\mathrm{od}}(-r) < 1$ for $r > 0$ because $e^{-ru} < 1$ on $u > 0$ and $f_{\mathrm{od}}$ is a density. The gamma case is the gamma moment-generating function. In the Wuhan analysis these convolutions sit on top of an age-structured, age-of-infection SIR model with relative susceptibilities, and the sCFR is fitted jointly with the ascertainment rate (confirmed cases modelled as Poisson with mean $\varepsilon$ times true onsets), exported traveller cases and charter-flight prevalence, yielding an overall sCFR of about $1.4\%$ under $P_{\mathrm{sym}} = 0.5$.

@@ -14,6 +14,10 @@ $$\widehat{Z}_1 = \prod_{k=1}^{K} \frac{1}{n}\sum_{m=1}^{n} L(\theta_{k-1,m})^{\
 2. If the draws are exact, with draws for different $k$ independent, then $\widehat Z_1$ is unbiased for $Z_1$.
 3. (Path sampling.) If $\mathbb{E}_{p_\beta}|\ln L|$ is finite and integrable in $\beta$, then $\ln Z_1 = \int_0^1 \mathbb{E}_{p_\beta}[\ln L(\theta)]\, d\beta$.
 
+## Proof depends on
+
+- [Importance sampling is unbiased](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/monte-carlo-and-importance-sampling/integral-is-estimate.md)
+
 ## Remarks
 
 Part 1: $\int L^{\beta_k - \beta_{k-1}}\, L^{\beta_{k-1}}\pi/Z_{\beta_{k-1}} = Z_{\beta_k}/Z_{\beta_{k-1}}$, and the product telescopes with $Z_0 = 1$, which is where properness of the prior is needed. Part 2: each factor is an unbiased sample mean, and the expectation of a product of independent factors is the product of expectations. Part 3: $\frac{d}{d\beta}\ln Z_\beta = \mathbb{E}_{p_\beta}[\ln L]$, integrated from $0$ to $1$. Each stepping-stone ratio is an importance-sampling estimate between neighbouring power posteriors, so it stays accurate when the steps are small, unlike the harmonic-mean estimator. Ratios of marginal likelihoods give Bayes factors for comparing clock, demographic and substitution models; generalized stepping-stone sampling replaces the prior by a working distribution fitted to the posterior to improve accuracy and numerical stability.

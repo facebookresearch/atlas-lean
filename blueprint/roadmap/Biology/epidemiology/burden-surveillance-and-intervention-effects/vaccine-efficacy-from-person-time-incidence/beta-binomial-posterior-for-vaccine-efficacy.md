@@ -25,6 +25,11 @@ $$\Pr(\mathrm{VE} > v_0 \mid x) \;=\; \Pr\Bigl(\theta < \frac{r(1-v_0)}{1 + r(1-
 
 - [Vaccine efficacy as one minus the incidence rate ratio](vaccine-efficacy-as-one-minus-the-incidence-rate-ratio.md)
 
+## Proof depends on
+
+- [Binomial law of a Poisson count given the total](../../../../Probability/distributions/discrete/multinomial-distribution/has-law-cond-binomial.md)
+- [Beta–binomial conjugacy](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/posterior-binomial-kernel-beta-measure.md)
+
 ## Proof sketch
 
 If $X_v \sim \mathrm{Poisson}(\mu_v)$ and $X_p \sim \mathrm{Poisson}(\mu_p)$ are independent, then

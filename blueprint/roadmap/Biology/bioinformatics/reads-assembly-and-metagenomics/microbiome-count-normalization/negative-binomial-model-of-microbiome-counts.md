@@ -20,6 +20,12 @@ which depends on the library size (heteroscedasticity) and does not vanish as $s
 
 - [Negative-binomial offspring probabilities](../../../epidemiology/superspreading-and-negative-binomial-offspring/nb-pmf.md)
 
+## Proof depends on
+
+- [The marginal law of the hierarchy is negative binomial](../../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik-eq-neg-binomial-real.md)
+- [Mean of the negative binomial law](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/has-sum-mul-neg-binomial-real.md)
+- [Variance of the negative binomial law](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/variance-neg-binomial.md)
+
 ## Remarks
 
 The gamma variable has mean $\mu_i$ and variance $\phi_i \mu_i^2$. By the laws of total expectation and variance, $\mathbb{E}[K_{ij}] = s_j \mathbb{E}[\Lambda_{ij}] = s_j\mu_i$ and $\operatorname{Var}(K_{ij}) = \mathbb{E}[s_j\Lambda_{ij}] + \operatorname{Var}(s_j \Lambda_{ij}) = s_j\mu_i + s_j^2\phi_i\mu_i^2$; integrating the Poisson mass function against the gamma density gives the negative binomial law. The first variance term is technical (sampling) noise, which shrinks relative to the mean as the library grows; the second is biological variation among replicates, which does not. Ignoring $\phi_i > 0$ (testing proportions or Poisson counts directly) underestimates the variance and inflates false positives in differential-abundance tests. Pooling dispersion estimates across taxa through a mean-dispersion trend, as done in RNA-seq software, stabilizes the estimate of $\phi_i$ with few replicates.
