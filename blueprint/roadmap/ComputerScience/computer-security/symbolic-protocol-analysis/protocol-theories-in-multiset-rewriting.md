@@ -4,7 +4,8 @@ Durgin, Lincoln, Mitchell and Scedrov model protocols by multiset rewriting over
 $N(t)$ for messages in transit, intruder knowledge facts $M(t)$ and role-state facts; a rule $F_1, \dots, F_k \to \exists \vec x.\ G_1, \dots, G_m$ replaces facts matching its
 left side by its right side instantiated with fresh values (nonces) for $\vec x$. A *protocol theory* $T = I \cup R \cup A$ in *restricted form* has as initialization theory $I$ a finite set of ground facts with no rewrite rules,
 a role generation theory $R$, and a finite set $A$ of *restricted roles*, each with role states from a finite list $A_1, \dots, A_a$ and only rules
-$A_i(\dots), NR_j(\dots) \to \exists \dots.\ A_k(\dots), NS(\dots)$ with $i < k$ that consume one network message and emit one, moving the role state forward; the *standard intruder theory* $\mathcal M$ lets the intruder read, decompose, compose,
+$A_i(\dots), NR_j(\dots) \to \exists \dots.\ A_k(\dots), NS_\ell(\dots)$ with $i < k$ and $j < \ell$ that consume one network message and emit one, moving the role state and the
+network index forward (as defined precisely in [restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)); the *standard intruder theory* $\mathcal M$ lets the intruder read, decompose, compose,
 encrypt with known keys, decrypt with known keys and send messages, and generate fresh data.
 
 For a protocol theory $T$, a ground term $S$ (the secret) and bounds $n$, $r$ and $k$, the scenario $(T, \mathcal M, S, n, r, k)$ belongs to the set $\mathrm{PA}$ of scenarios

@@ -12,6 +12,11 @@ are weakly indistinguishable up to $(C, \top_I)$ in the nondeterministic sense.
 - [Qualified robustness](qualified-robustness.md)
 - [Typing rules for robust declassification](typing-rules-for-robust-declassification.md)
 
+## Proof depends on
+
+- [Fair attacks are A-attacks](fair-attacks-are-a-attacks.md)
+- [A-attacks write no high-integrity variable](a-attacks-write-no-high-integrity-variable.md)
+
 ## Sources
 
 - A. C. Myers, A. Sabelfeld and S. Zdancewic, "Enforcing robust declassification and qualified robustness", *Journal of Computer Security* 14(2), 2006, copy at <https://www.cse.chalmers.se/~andrei/msz-jcs.pdf>: Section 7.2, the typing rule for endorse, Theorem 4 and Theorem 5 with their proofs (Propositions 10–13).
