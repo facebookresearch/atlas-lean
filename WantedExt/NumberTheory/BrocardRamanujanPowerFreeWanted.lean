@@ -10,16 +10,16 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.IsPrimePow
-public import Mathlib.Algebra.MvPolynomial.Eval
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Factorial.Basic
-public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Data.Nat.PrimeFin
 public import MathlibExt.NumberTheory.BrocardRamanujanFewPrimeFactors
 public import MathlibExt.NumberTheory.BrocardRamanujanPowerFree
 public import MathlibExt.NumberTheory.FactorialDivisor
 public import MathlibExt.NumberTheory.FactorialDivisorBound
 public import MathlibExt.NumberTheory.PowerFree
+public import Mathlib.Algebra.MvPolynomial.Eval
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Factorization.Defs
 
 /-!
 # The Brocard-Ramanujan equation with `k`-free integers and prime powers
