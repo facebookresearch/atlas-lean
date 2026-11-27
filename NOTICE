@@ -413,3 +413,15 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+Filtered closed-colimit source notices
+--------------------------------------
+
+The following source author credits accompany these contributed modules and clients.
+Copyright and third-party license notices remain in the source files.
+
+Files:
+  MathlibExt/Topology/Category/TopCat/Colimits/FilteredClosedColimit.lean
+  MathlibExtTest/Topology/Category/TopCat/Colimits/FilteredClosedColimitTests.lean
+
+Authors: Avocado, Tsutomu Okano
