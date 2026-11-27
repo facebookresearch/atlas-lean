@@ -1,6 +1,10 @@
 # Cache-oblivious algorithms
 
 - [The ideal-cache model](the-ideal-cache-model.md)
+- [k-mergers](k-mergers.md)
+- [A k-merger fits in quadratic space](a-k-merger-fits-in-quadratic-space.md)
+- [Circular queues cost one miss per line](circular-queues-cost-one-miss-per-line.md)
+- [Cache complexity of a k-merger](cache-complexity-of-a-k-merger.md)
 - [Cache-oblivious scanning and matrix transposition](cache-oblivious-scanning-and-matrix.md)
 - [Cache-oblivious matrix multiplication](cache-oblivious-matrix-multiplication.md)
 - [Funnelsort](funnelsort.md)

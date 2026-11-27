@@ -7,7 +7,7 @@
 - [Unary Nullstellensatz and unary Sherali–Adams refutations of CNF formulas](unary-nullstellensatz-and-unary-sherali-adams.md)
 - [Göös–Kamath–Robere–Sokolov: PPA^dt is characterized by Nullstellensatz degree over F2](ppa-dt-characterized-by-f2-nullstellensatz.md)
 - [Göös et al.: PPAD^dt, PPADS^dt, SOPL^dt and EOPL^dt are characterized by uNS, uSA, RevRes and RevResT](ppad-ppads-sopl-eopl-proof-system-characterizations.md)
-- [Buss–Johnson: Turing reductions between TFNP problems yield Frege and Nullstellensatz proofs, and conversely](turing-reductions-yield-propositional-proofs.md)
+- [Buss–Johnson: Turing reductions between type-2 TFNP problems yield Frege and Nullstellensatz proofs, with a converse for uniform LK proofs](turing-reductions-yield-propositional-proofs.md)
 - [Intersection theorems: Reversible Resolution is the intersection of Resolution and unary Sherali–Adams](reversible-resolution-intersection-theorem.md)
 - [Approximate Nullstellensatz lower bound for the sink-of-potential-line formulas via approximate degree of OR](approximate-nullstellensatz-sink-of-potential-line.md)
 - [Resolution is not simulated by unary Sherali–Adams: low-degree simulations need exponentially large coefficients](resolution-not-simulated-by-unary-sherali-adams.md)
