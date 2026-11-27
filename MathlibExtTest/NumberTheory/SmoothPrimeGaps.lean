@@ -14,7 +14,8 @@ import MathlibExt.NumberTheory.SmoothPrimeGaps
 # Tests for difference smoothness
 
 The admissible pair `{-1, 1}` has absolute difference two, attaining the
-lower bound for a two-element set.
+lower bound for a two-element set. At size zero, the existence theorem gives
+the empty set with both required properties.
 -/
 
 open MetaMathlibExt
@@ -31,3 +32,8 @@ example : IsDifferenceSmooth 2 {(-1 : ℤ), 1} := by
   intro a ha b hb hab
   simp only [Finset.mem_insert, Finset.mem_singleton] at ha hb
   rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;> first | contradiction | exact htwo
+
+example : IsAdmissibleFinset ∅ ∧ IsDifferenceSmooth 0 ∅ := by
+  obtain ⟨H, hcard, hadm, hsmooth⟩ := exists_admissible_differenceSmooth 0
+  obtain rfl := Finset.card_eq_zero.mp hcard
+  exact ⟨hadm, hsmooth⟩

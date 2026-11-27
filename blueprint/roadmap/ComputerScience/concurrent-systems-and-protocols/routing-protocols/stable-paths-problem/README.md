@@ -1,0 +1,6 @@
+# Stable paths problem
+
+A combinatorial model of policy-based interdomain routing such as BGP: each node ranks its permitted paths to an origin, and a solution is a path assignment in which every node uses its best path consistent with its neighbours'. The model, dispute wheels, and the uniqueness of the solution without a dispute wheel are stated in [interdomain routing games](../../../../GameTheory/noncooperative-games/selfish-routing-and-the-price-of-anarchy/interdomain-routing-games/README.md): see [Stable paths problem and dispute wheels](../../../../GameTheory/noncooperative-games/selfish-routing-and-the-price-of-anarchy/interdomain-routing-games/stable-paths-problem-and-dispute-wheels.md) and [Absence of dispute wheels guarantees a unique stable assignment and convergence](../../../../GameTheory/noncooperative-games/selfish-routing-and-the-price-of-anarchy/interdomain-routing-games/absence-of-dispute-wheels-guarantees-a-unique-stable-assignment-and-convergence.md). This folder adds:
+
+- [Solvability of the stable paths problem is NP-complete](solvability-of-the-stable-paths-problem-is-np-complete.md)
+- [Every dispute wheel contains a minimal sub-wheel](every-dispute-wheel-contains-a-minimal-sub-wheel.md)

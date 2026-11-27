@@ -34,6 +34,20 @@ example : Even (2 : ℤ) ∧ Even (-2 : ℤ) :=
 example (x y : ℤ) (h : x ^ 2 = 5 * y ^ 2) : Even x ∧ Even y :=
   even_of_abs_sq_sub_mul_sq_zero_mod_eight 5 0 rfl rfl x y (by rw [h, sub_self, abs_zero])
 
+-- A negative coefficient in the residue class d ≡ 1 gives a positive difference of 116.
+example : Even (2 : ℤ) ∧ Even (-4 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight (-7) 116 rfl rfl 2 (-4) (by decide)
+
+-- The difference is −20 before taking its absolute value.
+example : Even (-4 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight 9 20 rfl rfl (-4) 2 (by decide)
+
+-- The smallest possible z is 4, and a coordinate may be zero.
+example : Even (0 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight 1 4 rfl rfl 0 2 (by decide)
+
+#print axioms even_of_abs_sq_sub_mul_sq_four_mod_eight
+
 -- The horizontal line and the line of slope 3/4 have an external bisector of slope -3.
 example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
     (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
