@@ -20,6 +20,7 @@
 
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
+- [Bayesian skyline coalescent prior](bayesian-skyline-coalescent-prior.md)
 
 ## Population sizes set by ecological competition
 
