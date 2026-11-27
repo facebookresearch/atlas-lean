@@ -17,6 +17,7 @@ public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofLEqAddHofCount
 public import MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofLIterateBasic
+public import MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofstadterFIterateBasic
 
 /-!
 # Pointwise order of generalized Hofstadter functions
@@ -49,28 +50,6 @@ Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), 
 Theorem 1 (`jis-2026-26.3.3-thm-1`). -/
 public theorem_wanted hofstadterF_le_succ {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
     hofstadterF k n ≤ hofstadterF (k + 1) n
-
-/-- **Basic properties of the iterated Hofstadter functions.** Let $j, k \ge 1$, let $F_k$ be the
-generalized Hofstadter function, and write $F_k^i$ for its $i$-fold iterate. Then
-$F_k^j(1) = F_k^j(2) = 1$; $F_k^j(n) \ge 1$ for every $n \ge 1$; $F_k^j(n) < n$ for every
-$n \ge 2$; $F_k(n+1) - F_k(n) = 1 - \bigl(F_k^k(n) - F_k^k(n-1)\bigr)$ in $\mathbb{Z}$ for every
-$n \ge 1$; $F_k^j(n+1)$ equals $F_k^j(n)$ or $F_k^j(n) + 1$ for every $n \ge 0$; and $F_k^j$ is
-monotone and surjective from $\mathbb{N}$ to $\mathbb{N}$ but not injective.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 2 (`jis-2026-26.3.3-prop-2`). -/
-public theorem_wanted hofstadterF_iterate_basic {j k : ℕ} (hj : 1 ≤ j) (hk : 1 ≤ k) :
-    (hofstadterF k)^[j] 1 = 1 ∧ (hofstadterF k)^[j] 2 = 1 ∧
-      (∀ n, 1 ≤ n → 1 ≤ (hofstadterF k)^[j] n) ∧
-      (∀ n, 2 ≤ n → (hofstadterF k)^[j] n < n) ∧
-      (∀ n, 1 ≤ n →
-        (hofstadterF k (n + 1) : ℤ) - hofstadterF k n =
-          1 - (((hofstadterF k)^[k] n : ℤ) - (hofstadterF k)^[k] (n - 1))) ∧
-      (∀ n, (hofstadterF k)^[j] (n + 1) = (hofstadterF k)^[j] n ∨
-        (hofstadterF k)^[j] (n + 1) = (hofstadterF k)^[j] n + 1) ∧
-      Monotone (hofstadterF k)^[j] ∧ Function.Surjective (hofstadterF k)^[j] ∧
-      ¬ Function.Injective (hofstadterF k)^[j]
 
 /-- **Fibres of the iterated Hofstadter functions.** Let $k \ge 1$ and $j \ge 0$. Let $F_k$ be the
 generalized Hofstadter function, let $x_k[0]\,x_k[1] \cdots$ be the fixed point, beginning with
