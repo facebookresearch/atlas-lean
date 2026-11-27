@@ -173,10 +173,12 @@ theorem AlgebraicCurve.Divisor.degree_eq_zero_of_forall_eq_ord {K F : Type*} [Fi
   rw [← Divisor.degree_pushforward (F := RatFunc K) D, Divisor.pushforward_div hf hD hE]
   exact RationalFunctionField.degree_eq_zero_of_forall_eq_ord E hE
 
-/-- Weil reciprocity descends along a finite separable extension `F' / F`: if it holds for `F`,
-then it holds for the pair `f`, `algebraMap F F' g`, provided `F` has characteristic zero and
-principal divisors (`HasPrincipalDivisors K F`), every place of `F` is rational, and so are the
-places in the supports of the divisors of `f` and `algebraMap F F' g`. -/
+/-- Weil reciprocity descends along a finite separable extension `F' / F`. Let `f ∈ F'` and
+`g ∈ F` be nonzero, with the divisors of `f` and `algebraMap F F' g` disjoint. If Weil
+reciprocity holds for `F`, then it holds for the pair `f`, `algebraMap F F' g`, provided `F` has
+characteristic zero and principal divisors (`HasPrincipalDivisors K F`), every place of `F` is
+rational, and so are the places in the supports of the divisors of `f` and `algebraMap F F' g`.
+-/
 theorem AlgebraicCurve.weilReciprocity_algebraMap {K F F' : Type*} [Field K] [Field F] [Field F']
     [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F']
     [Algebra.IsSeparable F F'] [CharZero F] [HasPrincipalDivisors K F]

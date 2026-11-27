@@ -30,6 +30,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluation
+public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
 public import MathlibExt.AlgebraicGeometry.Curve.RationalFunctionField
 import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationLemmas
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
@@ -985,7 +986,8 @@ end
 
 open Polynomial IsDedekindDomain WithZero IsLocalRing _root_.AlgebraicCurve AlgebraicCurve
   _root_.AlgebraicCurve.RationalFunctionField AlgebraicCurve.RationalFunctionField in
-/-- Weil reciprocity for the rational function field over an algebraically closed field. -/
+/-- Weil reciprocity for the rational function field: for `K` algebraically closed, nonzero
+`f, g ∈ RatFunc K` with disjoint divisors satisfy `f(div g) = g(div f)`. -/
 theorem AlgebraicCurve.RationalFunctionField.weilReciprocity (K : Type*) [Field K] [IsAlgClosed K] :
     WeilReciprocity K (RatFunc K) := by
   classical

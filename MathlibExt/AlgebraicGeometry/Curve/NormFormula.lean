@@ -46,13 +46,14 @@ import MathlibExt.RingTheory.NormTrace.Prod
 /-!
 # Norms, divisors and evaluation along a finite separable extension
 
-For a finite separable extension `F' / F` of function fields over `K`, the order of the norm
-`N(f)` at a place `v` of `F` is the sum of `f(w|v) ord_w f` over the places `w` above `v`, each
-term weighted by the inertia degree `f(w|v)` alone (`AlgebraicCurve.Place.ord_norm_eq_sum_fiber`),
-so the pushforward of `div f` is `div (N f)` (`AlgebraicCurve.Divisor.pushforward_div`). When `v`
-and the places above it are rational and `f` is a unit at each place above `v`, the value of
-`N(f)` at `v` is the product of the values of `f` at the places above `v`, each raised to its
-ramification index `e(w|v)` (`AlgebraicCurve.Place.evalAt_norm_eq_prod_fiber`).
+Let `F' / F` be a finite separable extension of function fields over `K` and `f ∈ F'` nonzero.
+When `F` has characteristic zero, the order of the norm `N(f)` at a place `v` of `F` is the sum
+of `f(w|v) ord_w f` over the places `w` above `v`, each term weighted by the inertia degree
+`f(w|v)` alone (`AlgebraicCurve.Place.ord_norm_eq_sum_fiber`), so the pushforward of `div f` is
+`div (N f)` (`AlgebraicCurve.Divisor.pushforward_div`). In any characteristic, when `v` and the
+places above it are rational and `f` is a unit at each place above `v`, the value of `N(f)` at
+`v` is the product of the values of `f` at the places above `v`, each raised to its ramification
+index `e(w|v)` (`AlgebraicCurve.Place.evalAt_norm_eq_prod_fiber`).
 -/
 
 @[expose] public section

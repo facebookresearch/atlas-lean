@@ -43,9 +43,9 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceClassification
-import Mathlib.RingTheory.DedekindDomain.Factorization
 import MathlibExt.AlgebraicGeometry.Curve.OrdEqNegLog
 import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationLemmas
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceDeg
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceOrd
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
@@ -54,12 +54,13 @@ import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
 # Principal divisors of the rational function field
 
 The places of `RatFunc K` over `K` are the finite places attached to irreducible polynomials
-(`Curve/RatFuncPlaces`) and the place at infinity (`Curve/RatFuncPlaceInfty`). We show that a
-nonzero rational function has finitely many zeros and poles, that its principal divisor has
-degree zero (`AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors`), and that every place
-has degree one when `K` is algebraically closed. We also show that a field `F` finite over
-`RatFunc K` is finite over the image of any `K`-algebra map `RatFunc K → F`, and that over an
-algebraically closed `K` every nonconstant element of `F` is the image of `X` under such a map.
+(`Curve/RatFuncPlaces`) and the place at infinity (`Curve/RatFuncPlaceInfty`). We show that the
+divisor of a nonzero rational function has degree zero
+(`AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord`;
+`Curve/RatFuncPrincipalDivisors` states this as `HasPrincipalDivisors K (RatFunc K)`), and that
+every place has degree one when `K` is algebraically closed. We also show that a field `F` finite
+over `RatFunc K` is finite over the image of any `K`-algebra map `RatFunc K → F`, and that over
+an algebraically closed `K` every nonconstant element of `F` is the image of `X` under such a map.
 -/
 
 @[expose] public section
@@ -254,25 +255,6 @@ open IsDedekindDomain WithZero IsLocalRing
 
 variable {K : Type*} [Field K]
 
-private theorem finite_setOf_valuation_ne_one' {f : RatFunc K} (hf : f ≠ 0) :
-    {w : HeightOneSpectrum K[X] | w.valuation (RatFunc K) f ≠ 1}.Finite := by
-  have hnum : (Ideal.span {f.num} : Ideal K[X]) ≠ 0 := by
-    simpa [Ideal.span_singleton_eq_bot] using RatFunc.num_ne_zero hf
-  have hden : (Ideal.span {f.denom} : Ideal K[X]) ≠ 0 := by
-    simpa [Ideal.span_singleton_eq_bot] using f.denom_ne_zero
-  refine Set.Finite.subset ((Ideal.finite_factors hnum).union (Ideal.finite_factors hden))
-    fun w hw => ?_
-  by_contra hcon
-  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, Ideal.dvd_span_singleton] at hcon
-  refine hw ?_
-  have h1 : w.valuation (RatFunc K) (algebraMap K[X] (RatFunc K) f.num) = 1 :=
-    (HeightOneSpectrum.valuation_eq_one_iff_notMem w).mpr hcon.1
-  have h2 : w.valuation (RatFunc K) (algebraMap K[X] (RatFunc K) f.denom) = 1 :=
-    (HeightOneSpectrum.valuation_eq_one_iff_notMem w).mpr hcon.2
-  rw [show f = algebraMap K[X] (RatFunc K) f.num / algebraMap K[X] (RatFunc K) f.denom from
-    f.num_div_denom.symm, map_div₀, h1, h2]
-  exact div_one 1
-
 theorem subsingleton_setOf_forall_ne_ofHeightOneSpectrum :
     {v : Place K (RatFunc K) |
       ∀ w : HeightOneSpectrum K[X], v ≠ Place.ofHeightOneSpectrum w}.Subsingleton := by
@@ -283,24 +265,6 @@ theorem subsingleton_setOf_forall_ne_ofHeightOneSpectrum :
   rcases eq_ofHeightOneSpectrum_or_eq_placeInfty v' with ⟨w, h'⟩ | h'
   · exact absurd h' (hv' w)
   rw [h, h']
-
-theorem finite_setOf_ord_ne_zero {f : RatFunc K} (hf : f ≠ 0) :
-    {v : Place K (RatFunc K) | v.ord f ≠ 0}.Finite := by
-  refine Set.Finite.subset
-    (Set.Finite.union
-      (Set.Finite.image (Place.ofHeightOneSpectrum (K := K))
-        (finite_setOf_valuation_ne_one' hf))
-      (Set.Subsingleton.finite subsingleton_setOf_forall_ne_ofHeightOneSpectrum))
-    fun v hv => ?_
-  simp only [Set.mem_ofPred_eq] at hv
-  simp only [Set.mem_union, Set.mem_image, Set.mem_ofPred_eq]
-  by_cases hcase : ∃ w : HeightOneSpectrum K[X], v = Place.ofHeightOneSpectrum w
-  · obtain ⟨w, rfl⟩ := hcase
-    refine Or.inl ⟨w, fun hone => hv ?_, rfl⟩
-    exact ((Place.ofHeightOneSpectrum (K := K) w).ord_eq_zero_iff_adicValuation_eq_one hf).mpr
-      ((Place.isEquiv_adicValuation_ofHeightOneSpectrum (K := K) (F := RatFunc K)
-        w).eq_one_iff_eq_one.mp hone)
-  · exact Or.inr fun w h => hcase ⟨w, h⟩
 
 end RationalFunctionField
 
@@ -476,14 +440,6 @@ theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K 
       f.denom Dden hDden
     rw [map_add, h2, add_zero] at h1
     exact h1
-
-theorem AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors (K : Type*) [Field K] :
-    HasPrincipalDivisors K (RatFunc K) :=
-  ⟨fun f hf =>
-    ⟨Finsupp.ofSupportFinite (fun v : Place K (RatFunc K) => v.ord f)
-        (AlgebraicCurve.RationalFunctionField.finite_setOf_ord_ne_zero hf),
-      fun _ => rfl,
-      AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord _ fun _ => rfl⟩⟩
 
 namespace AlgebraicCurve.RationalFunctionField
 

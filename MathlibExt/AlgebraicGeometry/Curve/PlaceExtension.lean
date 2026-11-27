@@ -71,9 +71,10 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F']
 namespace Divisor
 
 variable (F') in
-/-- The pullback of divisors along `F' / F`, weighting each place of `F'` by its ramification
-index. It sums over `Place.fiberOver`, so unlike `Divisor.pullback`, which sums over `Place.fiber`,
-it does not need principal divisors on `F'`; the two agree when both are defined. -/
+/-- The pullback of divisors along a finite separable extension `F' / F`, weighting each place of
+`F'` by its ramification index. It sums over `Place.fiberOver`, so unlike `Divisor.pullback`,
+which sums over `Place.fiber`, it does not need principal divisors on `F'`; the two agree when
+both are defined. -/
 def pullbackOver : Divisor K F →+ Divisor K F' :=
   Finsupp.liftAddHom fun v =>
     { toFun n := ∑ w ∈ v.fiberOver F', Finsupp.single w (n * w.ramificationIndex F)

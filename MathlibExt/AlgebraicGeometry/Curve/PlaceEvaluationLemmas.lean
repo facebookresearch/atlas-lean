@@ -54,6 +54,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluation
+public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationOrd
 import Mathlib.LinearAlgebra.Charpoly.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Zero
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces
@@ -63,26 +64,26 @@ import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces
 
 `AlgebraicCurve.Place.evalAt` and `CurveDivisor.evalFun` (in `Curve/PlaceEvaluation`) evaluate a
 function of a function field `F / K` at a rational place and on a divisor supported on rational
-places. This file proves how these evaluations interact with constants, products, inverses and
-powers of functions, and with sums and multiples of divisors.
+places. This file proves how these evaluations interact with products, inverses and powers of
+functions, and with sums and multiples of divisors (constants are in
+`Curve/PlaceEvaluationOrd`).
 
 ## Main results
 
 * `AlgebraicCurve.Place.evalAt_ne_zero`, `AlgebraicCurve.Place.evalAt_inv`,
-  `AlgebraicCurve.Place.evalAt_zpow`: at a rational place where `f` has order zero, the value of
-  `f` is nonzero and evaluation commutes with inverses and integer powers.
-* `AlgebraicCurve.Place.evalAt_algebraMap`, `AlgebraicCurve.Place.evalAt_congr`: a constant
-  evaluates to itself, and two functions whose difference vanishes at the place have the same
-  value.
+  `AlgebraicCurve.Place.evalAt_zpow`: at a rational place where a nonzero `f` has order zero, the
+  value of `f` is nonzero and evaluation commutes with inverses and integer powers.
+* `AlgebraicCurve.Place.evalAt_congr`: two functions whose difference vanishes at the place have
+  the same value.
 * `CurveDivisor.evalFun_add`, `CurveDivisor.evalFun_mul`, `CurveDivisor.evalFun_zpow_left`,
   `CurveDivisor.evalFun_zsmul`, `CurveDivisor.evalFun_single_sub_single`: evaluation on sums and
   multiples of divisors, and of products and powers of functions.
-* `AlgebraicCurve.Place.eq_ord_of_addHom_of_nonneg_iff`: a map `F → ℤ` that sends products to
-  sums, takes the value `1`, and is nonnegative exactly on the valuation ring of a place is the
-  order function of that place.
-* `AlgebraicCurve.Place.ord_algebraMap`: nonzero constants have order zero at every place.
+* `AlgebraicCurve.Place.eq_ord_of_addHom_of_nonneg_iff`: a map `F → ℤ` that sends products of
+  nonzero elements to sums, takes the value `1` at a nonzero element, and is nonnegative at a
+  nonzero `x` exactly when `x` lies in the valuation ring of a place agrees with the order
+  function of that place on nonzero elements.
 * `Algebra.norm_eq_pow_finrank_of_isNilpotent_sub_algebraMap`: if `a - μ` is nilpotent in a free
-  finite `R`-algebra `A`, the norm of `a` is `μ ^ [A : R]`.
+  finite algebra `A` over a domain `R`, the norm of `a` is `μ ^ [A : R]`.
 -/
 
 @[expose] public section
@@ -142,14 +143,6 @@ theorem evalAt_zpow (hv : v.IsRational) {f : F} (hf : f ≠ 0) (h : v.ord f = 0)
     have : (f ^ (m + 1) : F) = f ^ ((m + 1 : ℕ) : ℤ) := by rw [zpow_natCast]
     rw [this, v.ord_zpow, h, mul_zero]
 
-theorem evalAt_algebraMap (hv : v.IsRational) (a : K) : v.evalAt hv (algebraMap K F a) = a := by
-  rw [v.evalAt_of_mem hv (v.algebraMap_mem' a)]
-  have ha : (⟨algebraMap K F a, v.algebraMap_mem' a⟩ : v.toValuationSubring)
-      = algebraMap K v.toValuationSubring a := Subtype.ext (v.coe_algebraMap a).symm
-  rw [ha, ← ResidueField.algebraMap_eq,
-    ← IsScalarTower.algebraMap_apply K v.toValuationSubring v.ResidueField,
-    v.residueInv_algebraMap hv]
-
 theorem evalAt_congr (hv : v.IsRational) {f g : F} (hf : f ∈ v.toValuationSubring)
     (hg : g ∈ v.toValuationSubring) (h : f - g = 0 ∨ 0 < v.ord (f - g)) :
     v.evalAt hv f = v.evalAt hv g := by
@@ -177,12 +170,6 @@ theorem evalAt_congr (hv : v.IsRational) {f g : F} (hf : f ∈ v.toValuationSubr
     rw [← sub_eq_zero, ← map_sub]
     exact (IsLocalRing.residue_eq_zero_iff _).mpr hmem
   rw [v.evalAt_of_mem hv hf, v.evalAt_of_mem hv hg, hres]
-
-theorem ord_algebraMap (c : K) : v.ord (algebraMap K F c) = 0 := by
-  have h1 := v.ord_nonneg_of_mem (v.algebraMap_mem' c)
-  have h2 := v.ord_nonneg_of_mem (v.algebraMap_mem' c⁻¹)
-  rw [map_inv₀, v.ord_inv] at h2
-  omega
 
 theorem eq_ord_of_addHom_of_nonneg_iff (w : Place K F) (φ : F → ℤ)
     (hmul : ∀ x y, x ≠ 0 → y ≠ 0 → φ (x * y) = φ x + φ y) (hone : ∃ t, t ≠ 0 ∧ φ t = 1)
