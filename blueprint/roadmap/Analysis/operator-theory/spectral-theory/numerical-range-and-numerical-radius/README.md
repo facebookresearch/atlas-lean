@@ -38,3 +38,5 @@
 - [Conjugates of eigenvalues lie in the numerical range](conj-mem-numerical-range-of-exists-unit.md)
 - [The numerical range is bounded by the operator norm](numerical-range-subset-closed-ball-norm.md)
 - [Lower bound from the numerical range](inf-dist-numerical-range-mul-norm-le-nor.md)
+- [No uniform complete numerical-range bound has constant below two](two-le-of-uniform-complete-numerical-ran.md)
+- [Invertibility of rational matrix denominators off the closed numerical range](is-unit-aeval-rat-func-denom-of-no-poles.md)
