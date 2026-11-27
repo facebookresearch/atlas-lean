@@ -4,7 +4,7 @@ Let $k$ be a number field and $E$ an elliptic curve over $k$ with $j$-invariant 
 $h_F(E)$ be its [stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md),
 and for $\tau \in \mathbb{H}$ let $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$ and
 $j(\tau) = 1728\, g_2(\tau)^3 / \Delta(\tau)$, as in
-[Silverman's formula](faltings-height-of-an-elliptic-curve.md) and the
+[Silverman's formula](faltings-height-in-terms-of-discriminant-and-periods.md) and the
 [complex uniformization](complex-uniformization.md). For each embedding $\iota : k \to \mathbb{C}$
 choose $\tau_\iota \in \mathbb{H}$ with $j(\tau_\iota) = \iota(j)$, and for each finite place $v$ of $k$
 let $\| \cdot \|_v$ be Deligne's absolute value at $v$, the one given by a maximal ideal $\mathfrak{p}$
@@ -39,14 +39,14 @@ that Deligne gives for the minimum of $h_{\mathrm{geom}}$.
 ## Depends on
 
 - [Stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md), for $h_F(E)$
-- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md),
+- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-in-terms-of-discriminant-and-periods.md),
   for $\Delta(\tau)$ and its normalization
 - [Complex uniformization of elliptic curves](complex-uniformization.md), for $j(\tau)$ and the
   existence of $\tau_\iota$
 
 ## Proof depends on
 
-- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md),
+- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-in-terms-of-discriminant-and-periods.md),
   for Silverman's formula over $k$ and over finite extensions of $k$
 - [Faltings height over the field of definition and the stable height](faltings-height-and-stable-height.md),
   for $h_F(E) = h_{\mathrm{Fal}}(E/k)$ under good, hence semistable, reduction, and

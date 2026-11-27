@@ -36,6 +36,6 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [Faltings height of an elliptic curve over its field of definition](faltings-height-over-the-field-of-definition.md)
 - [The finite places in Silverman's formula for the Faltings height](faltings-height-finite-places.md)
 - [The infinite places in Silverman's formula for the Faltings height](faltings-height-infinite-places.md)
-- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md)
+- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-in-terms-of-discriminant-and-periods.md)
 - [Faltings height over the field of definition and the stable height](faltings-height-and-stable-height.md)
 - [Deligne's formula for the stable Faltings height of an elliptic curve](stable-height-of-an-elliptic-curve.md)
