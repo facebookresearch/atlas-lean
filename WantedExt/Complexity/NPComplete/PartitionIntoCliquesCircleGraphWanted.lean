@@ -40,7 +40,7 @@ one per vertex, two vertices adjacent when their chords intersect), and a positi
 QUESTION: can `V` be partitioned into `k ≤ K` disjoint sets `V₁, …, V_k` such that each `Vᵢ`
 induces a complete subgraph of `G`?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to circle
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to circle
 graphs. Keil and Stewart (2006), Theorem 2.1, prove that the clique cover problem on circle
 graphs, partitioning the vertex set into the minimum number of subsets each inducing a clique, is
 NP-complete.

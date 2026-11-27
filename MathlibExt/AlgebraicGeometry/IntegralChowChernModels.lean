@@ -86,7 +86,7 @@ def smoothPull {f : Y.scheme ⟶ X.scheme} {r : ℕ} (D : SmoothPullDescent f r)
     (_root_.AlgebraicGeometry.IntegralOperationalChow.flatCycleMap f d r).toAddMonoidHom
     (D.preserves d)
 
-def chowCast (X : SchemeData) {d e : ℤ} (h : d=e) : Chow X d →+ Chow X e := by
+def chowCast (X : SchemeData) {d e : ℤ} (h : d = e) : Chow X d →+ Chow X e := by
   cases h
   exact AddMonoidHom.id _
 

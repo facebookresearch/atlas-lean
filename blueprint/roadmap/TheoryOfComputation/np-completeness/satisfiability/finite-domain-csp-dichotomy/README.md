@@ -1,0 +1,17 @@
+# The Finite-Domain CSP Dichotomy
+
+- [Finite relational templates and the homomorphism problem CSP(A)](finite-templates-and-csp-of-a.md)
+- [Cores of finite relational structures](cores-of-finite-relational-structures.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
+- [Every finite structure has a unique core, and constants can be added to a core without changing CSP complexity](core-uniqueness-and-adding-constants.md)
+- [Pol–Inv Galois connection over finite domains: CSP complexity depends only on the polymorphism clone](pol-inv-galois-connection-finite-domains.md)
+- [Minions, minion homomorphisms and pp-constructions](minions-minion-homomorphisms-pp-constructions.md)
+- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
+- [Barto–Opršal–Pinsker: pp-constructibility is captured by minion homomorphisms of polymorphisms](barto-oprsal-pinsker-pp-constructions-minion-homomorphisms.md)
+- [Bulatov–Jeavons–Krokhin: a core with no Taylor polymorphism has an NP-complete CSP](bulatov-jeavons-krokhin-no-taylor-np-complete.md)
+- [The Feder–Vardi Dichotomy Conjecture and its algebraic form](feder-vardi-dichotomy-conjecture.md)
+- [Maróti–McKenzie: finite Taylor algebras have weak near-unanimity terms](maroti-mckenzie-taylor-implies-wnu.md)
+- [Siggers: a finite algebra is Taylor iff it has a 6-ary Siggers term](siggers-six-ary-taylor-term.md)
+- [Barto–Kozik: finite idempotent Taylor algebras have cyclic terms of every prime arity above the domain size](barto-kozik-cyclic-terms-prime-arity.md)
+- [Bulatov and Zhuk: the CSP dichotomy theorem for finite templates](bulatov-zhuk-csp-dichotomy-theorem.md)
+- [The CSP tractability meta-problem is decidable via a single height-1 Siggers check](csp-tractability-meta-problem-decidable.md)
