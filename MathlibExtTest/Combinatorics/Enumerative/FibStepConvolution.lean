@@ -74,4 +74,16 @@ example :
         fibStepGF 2 * fibStepGF 4 + fibStepGF 1 * fibStepGF 4 := by
   simpa only [pow_one] using fibStepGF_quadruple_consecutive (m := 1) (hm := by decide)
 
+-- The triple identity at the smallest allowed step order, where X ^ m reduces to X.
+example :
+    PowerSeries.X ^ 3 * fibStepGF 1 * fibStepGF 2 * fibStepGF 3 =
+      PowerSeries.X * fibStepGF 1 * fibStepGF 3 - fibStepGF 2 + fibStepGF 1 := by
+  simpa only [pow_one] using fibStepGF_triple_consecutive (m := 1) (hm := by decide)
+
+-- The Fibonacci, tribonacci and tetranacci specialization has shift five.
+example :
+    PowerSeries.X ^ 5 * fibStepGF 2 * fibStepGF 3 * fibStepGF 4 =
+      PowerSeries.X ^ 2 * fibStepGF 2 * fibStepGF 4 - fibStepGF 3 + fibStepGF 2 :=
+  fibStepGF_triple_consecutive (m := 2) (hm := by decide)
+
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleDerangements
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleFirstCorrectThree
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleLeftShift
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -58,20 +59,6 @@ public theorem_wanted card_solvedIn_three_firstCorrectAt_one (n : ℕ) (hn : 4 �
     (Nat.card {π : Equiv.Perm (Fin n) //
         PermWordleSolvedIn S π 3 ∧ PermWordleFirstCorrectAt S π 1} : ℚ) =
       1 - 2 ^ (n + 1) + 3 ^ n + (n : ℚ) ^ 2 / 2 + 5 * (n : ℚ) / 2 - n * 2 ^ n
-
-/-- **A unique three-guess solve with no early correct position.** Let $n \ge 4$ and let $S$ be
-a permutation Wordle strategy (a permutation $S[m]$ of $\{0, \dots, m-1\}$ for each $m$) whose
-component $S[n]$ is an $n$-cycle. Exactly one permutation $\pi$ of $\{0, \dots, n-1\}$ is
-guessed by $S$ in exactly three guesses with the third guess being the first guess that has a
-correct position.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Theorem 11 (`jis-2026-26.1.7-thm-11`). -/
-public theorem_wanted card_solvedIn_three_firstCorrectAt_three (n : ℕ) (hn : 4 ≤ n)
-    (S : (m : ℕ) → Equiv.Perm (Fin m)) (hcyc : (S n).IsCycle)
-    (hsupp : (S n).support = Finset.univ) :
-    Nat.card {π : Equiv.Perm (Fin n) //
-      PermWordleSolvedIn S π 3 ∧ PermWordleFirstCorrectAt S π 3} = 1
 
 /-- **Three-guess solves of cyclic shift first correct at guess two.** For $n \ge 4$, the number
 of permutations $\pi$ of $\{0, \dots, n-1\}$ that the cyclic shift strategy guesses in exactly
