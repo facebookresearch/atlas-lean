@@ -1,10 +1,10 @@
 # Uniqueness of the subgame-perfect equilibrium without continuation ties
 
-In a finite perfect-information game, backward induction produces a pure subgame-perfect equilibrium, which is in particular a pure Nash equilibrium. If there are no chance nodes and no player has the same payoff at any two leaves, then the moving player's optimal choice is unique at every step of backward induction (there are no continuation ties), and the backward-induction profile is the unique pure subgame-perfect equilibrium.
+In a finite extensive game with perfect information (without chance nodes), backward induction produces a pure subgame-perfect equilibrium, which is in particular a pure Nash equilibrium (Osborne, Proposition 173.1; von Stengel, Section 3.8). Moreover, in any such game in which the backward-induction procedure selects a single optimal action for the player who moves at the start of each subgame (no continuation ties), the strategy profile selected by backward induction is the unique pure subgame-perfect equilibrium (Osborne, Section 5.5, p. 170 and Proposition 172.1).
 
 ## Proof sketch
 
-By the one-shot deviation principle every subgame-perfect equilibrium picks, at each node, an optimal choice given optimal play below. Without ties this choice is unique, and induction on height shows it coincides with backward induction.
+By Proposition 172.1 (equivalently, the one-shot deviation principle), the set of subgame-perfect equilibria of a finite-horizon perfect-information game is exactly the set of strategy profiles isolated by backward induction. When backward induction selects a single optimal action at every decision node, that set is a singleton. In particular, if no player has the same payoff at any two leaves, then distinct actions at a decision node lead to disjoint subtrees and hence to distinct leaves, so the moving player's optimal choice is unique at every step of backward induction (compare Mas-Colell, Whinston and Green, Propositions 9.B.1 and 9.B.2).
 
 ## Depends on
 
