@@ -1,7 +1,7 @@
 # Visibly pushdown automata and visibly pushdown languages
 
 A *pushdown alphabet* $\tilde\Sigma = \langle \Sigma_c, \Sigma_r, \Sigma_\ell \rangle$ splits a finite alphabet $\Sigma = \Sigma_c \cup \Sigma_r \cup \Sigma_\ell$ into disjoint sets of *calls*, *returns* and
-*local actions*. A *visibly pushdown automaton* (VPA) over $\tilde\Sigma$ is a tuple $M = (Q, Q_{\mathrm{in}}, \Gamma, \delta, Q_F)$ with a finite stack alphabet $\Gamma$
+*local actions*. A *visibly pushdown automaton* (VPA) over $\tilde\Sigma$ is a tuple $M = (Q, Q_{\mathrm{in}}, \Gamma, \delta, Q_F)$ with a finite set $Q$ of states, $Q_{\mathrm{in}}, Q_F \subseteq Q$, a finite stack alphabet $\Gamma$
 containing a bottom symbol $\bot$ and
 $\delta \subseteq (Q \times \Sigma_c \times Q \times (\Gamma \setminus \{\bot\})) \cup (Q \times \Sigma_r \times \Gamma \times Q) \cup (Q \times \Sigma_\ell \times Q)$: on a call it pushes one symbol, on a return
 it pops one symbol (reading $\bot$ without popping it when the stack is empty), and on a local action it leaves the stack unchanged.

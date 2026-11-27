@@ -1,7 +1,7 @@
 # Curtis–Hedlund–Lyndon theorem on $\mathbb{Z}^d$
 
 Let $S$ be a finite set of states and $d \ge 1$. Give the configuration space $S^{\mathbb{Z}^d}$ the topology of the metric
-$d(c, e) = 2^{-\min\{\lVert \vec x \rVert_\infty : c(\vec x) \ne e(\vec x)\}}$ (two configurations are close when they agree on a large cube around the origin); its
+$d(c, e) = 2^{-\min\{\lVert \vec x \rVert_\infty : c(\vec x) \ne e(\vec x)\}}$ (with $d(c, c) = 0$; two configurations are close when they agree on a large cube around the origin); its
 balls are the *cylinders* $\mathrm{Cyl}(c, r) = \{e : e(\vec x) = c(\vec x) \text{ whenever } \lVert \vec x \rVert_\infty \le r\}$, which are clopen, and the space is
 compact. Let $\sigma_1, \dots, \sigma_d$ be the shifts in the $d$ coordinate directions. A map $G : S^{\mathbb{Z}^d} \to S^{\mathbb{Z}^d}$ is the global transition function of
 a [cellular automaton](cellular-automata-on-z-d.md) if and only if $G$ is continuous and $\sigma_j \circ G = G \circ \sigma_j$ for $j = 1, \dots, d$ (Hedlund; Curtis and Lyndon). The

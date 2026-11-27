@@ -1,7 +1,7 @@
 # Universality and inclusion for visibly pushdown automata are EXPTIME-complete
 
-For [visibly pushdown automata](visibly-pushdown-automata.md), emptiness is decidable in time $O(n^3)$ in the number of states, as for any pushdown
-automaton, while the universality problem ($L(M) = \Sigma^*$?) and the inclusion problem ($L(M_1) \subseteq L(M_2)$?) are complete for deterministic
+For [visibly pushdown automata](visibly-pushdown-automata.md), emptiness is decidable in polynomial time in the size of the automaton, as for any pushdown
+automaton (for nested word automata in time $O(|A|^3)$ in the size of $A$), while the universality problem ($L(M) = \Sigma^*$?) and the inclusion problem ($L(M_1) \subseteq L(M_2)$?, for automata over a common pushdown alphabet) are complete for deterministic
 exponential time ([EXP](../../complexity-classes/time-and-space-complexity-classes/exp.md)). Both are undecidable for general pushdown automata. Inclusion reduces to emptiness
 of $L(M_1)$ intersected with the complement of $L(M_2)$; hardness of universality is by a reduction from the membership problem of
 alternating linear-space Turing machines. For program verification the cost is polynomial in the program and exponential only in

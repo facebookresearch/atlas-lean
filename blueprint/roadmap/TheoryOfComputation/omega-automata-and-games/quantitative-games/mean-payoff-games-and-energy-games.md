@@ -1,10 +1,10 @@
 # Mean-payoff games and energy games are interreducible
 
-For a one-player graph $G$ with integer weights, $G$ satisfies $\mathrm{MeanPayoff}^- \ge 0$ (every infinite path from the given vertex has
+For a finite one-player graph $G$ with integer weights, $G$ satisfies $\mathrm{MeanPayoff}^- \ge 0$ (every infinite path from the given vertex has
 $\mathrm{MeanPayoff}^- \ge 0$) if and only if it satisfies $\mathrm{Energy} < \infty$, both being equivalent to every reachable cycle having
 non-negative total weight; for a single sequence the two properties are not equivalent. Consequently, for a finite
-[mean-payoff game](classical-quantitative-objectives.md) $\mathcal{G}$ and the energy game $\mathcal{G}'$ on the same arena, in which Max wants the needed budget
-small, $\mathrm{val}^{\mathcal{G}}(u) \ge 0$ if and only if $\mathrm{val}^{\mathcal{G}'}(u) < \infty$ for every vertex $u$. An algorithm computing energy values in time
+[mean-payoff game](classical-quantitative-objectives.md) $\mathcal{G}$ and the energy game $\mathcal{G}'$ on the same graph in which the vertices of Max in $\mathcal{G}$ belong to the
+player who minimizes the energy (Min of $\mathcal{G}'$) and those of Min to the maximizer, $\mathrm{val}^{\mathcal{G}}(u) \ge 0$ if and only if $\mathrm{val}^{\mathcal{G}'}(u) < \infty$ for every vertex $u$. An algorithm computing energy values in time
 $T(n, m, W)$ thus solves mean-payoff games in the same time and computes mean-payoff values in time $O(\log(n^2 W) \cdot T(n, m, 2nW))$: a binary search
 over the candidate values $p/q$ with $q \le n$ tests each threshold on the weights $q w - p$, whose absolute values are at most $2nW$.
 

@@ -12,7 +12,7 @@ Let the colours be integer weights, $\rho = \rho_0 \rho_1 \rho_2 \cdots \in \mat
 - *discounted payoff* with discount factor $\lambda \in (0, 1)$: $\mathrm{DiscountedPayoff}_\lambda(\rho) = (1 - \lambda) \sum_{i \ge 0} \lambda^i \rho_i$, which
   exists for bounded weights and satisfies $\mathrm{DiscountedPayoff}_\lambda(\rho) = (1 - \lambda)\rho_0 + \lambda\, \mathrm{DiscountedPayoff}_\lambda(\rho_1 \rho_2 \cdots)$.
 
-A game with weights in $[-W, W]$ on $n$ vertices and $m$ edges is the input to the algorithms for these objectives; a
+A game with weights in $[-W, W]$, for an integer $W \ge 1$, on $n$ vertices and $m$ edges is the input to the algorithms for these objectives; a
 *mean-payoff game* (and similarly for the other objectives) is a quantitative game whose condition is the objective applied to
 the sequence of edge weights of a play.
 

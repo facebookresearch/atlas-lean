@@ -1,6 +1,7 @@
 # Universality of nondeterministic finite automata is PSPACE-complete
 
-A nondeterministic finite automaton $\mathcal{A}$ over $\Sigma$ is *universal* if it accepts every word of $\Sigma^*$. Deciding whether a given
+A nondeterministic finite automaton $\mathcal{A}$ over $\Sigma$ (finitely many states, a set of initial and a set of final states, and a
+transition relation labelled by letters) is *universal* if it accepts every word of $\Sigma^*$. The alphabet is part of the input, or fixed with at least two letters. Deciding whether a given
 $\mathcal{A}$ is not universal is decidable in exponential time and is [PSPACE](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)-complete (Meyer and Stockmeyer);
 hence so is universality. The upper bound tests the complementary automaton, obtained by the subset construction, for nonemptiness
 on the fly: a nondeterministic search guesses a word letter by letter while storing only the current set of states, in polynomial

@@ -9,6 +9,7 @@ universal computation; the construction extends to $p$ tape symbols with deletio
 
 ## Depends on
 
+- [Halting of a single-tape machine](../../computability/halting-problem-for-single-tape-turing-machines/tm0-halts-on.md)
 - [Tag systems and cyclic tag systems](tag-systems-and-cyclic-tag-systems.md)
 
 ## Sources

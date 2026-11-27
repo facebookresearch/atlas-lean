@@ -1,8 +1,8 @@
 # Every context-free language is a projection of a visibly pushdown language
 
 For every context-free language $L$ over $\Sigma$ there is a [visibly pushdown language](visibly-pushdown-automata.md) $L'$ over the pushdown alphabet
-$\langle \Sigma \times \{c\}, \Sigma \times \{r\}, \Sigma \times \{\ell\} \rangle$ with $L = h(L')$, where $h$ maps each symbol $(a, s)$ to $a$. Given a pushdown automaton for $L$ that
-pushes or pops at most one symbol per step, relabel each $a$-transition that pushes by $(a, c)$, each one that pops by $(a, r)$ and the others by
+$\langle \Sigma \times \{c\}, \Sigma \times \{r\}, \Sigma \times \{\ell\} \rangle$ with $L = h(L')$, where $h$ maps each symbol $(a, s)$ to $a$. Given a pushdown automaton for $L$ without $\varepsilon$-moves in which
+every step pushes one symbol, pops one symbol or leaves the stack unchanged (one exists for every context-free language, accepting the empty word by an initial final state if needed), relabel each $a$-transition that pushes by $(a, c)$, each one that pops by $(a, r)$ and the others by
 $(a, \ell)$; the resulting VPA accepts the words of $L$ annotated with the stack operations used to accept them.
 
 ## Depends on

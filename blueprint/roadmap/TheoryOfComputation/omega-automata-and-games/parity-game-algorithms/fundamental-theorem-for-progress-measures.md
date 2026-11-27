@@ -1,6 +1,6 @@
 # Fundamental theorem for progress measures
 
-Let $\mathcal{G}$ be a [parity game](../parity-games/parity-game.md) and $v$ a vertex. Eve wins from $v$ if and only if there are a tree $t$ and a
+Let $\mathcal{G}$ be a finite [parity game](../parity-games/parity-game.md) and $v$ a vertex. Eve wins from $v$ if and only if there are a tree $t$ of some height $h$, with every priority of $\mathcal{G}$ at most $2h$, and a
 [progress measure](ordered-trees-and-progress-measures.md) $\mu : V \to Y_t \cup \{\top\}$ with $\mu(v) \ne \top$. The proof first treats one-player parity
 graphs, where a graph satisfies parity from $v$ (every cycle reachable from $v$ has even maximal priority) exactly when some progress
 measure is not $\top$ at $v$, and then applies this to the graph left by a positional winning strategy.

@@ -10,8 +10,10 @@ $$\mathrm{val}^{\mathcal{G}}_{\mathrm{Max}}(v) = \sup_\sigma \inf_\tau f(\pi^v_{
 
 and always $\mathrm{val}^{\mathcal{G}}_{\mathrm{Max}}(v) \le \mathrm{val}^{\mathcal{G}}_{\mathrm{Min}}(v)$. The game is *determined* at $v$ when they are equal, and the common
 number is the *value* $\mathrm{val}^{\mathcal{G}}(v)$. A strategy $\sigma$ of Max is *optimal* from $v$ if $\inf_\tau f(\pi^v_{\sigma,\tau}) = \mathrm{val}^{\mathcal{G}}_{\mathrm{Max}}(v)$, and
-symmetrically for Min. A quantitative objective is *positional* if Max has positional optimal strategies in every game with that
-objective, and *bi-positional* if both players do; *uniformly* means that one strategy is optimal from every vertex. A threshold
+symmetrically for Min. A quantitative objective is *positional* if in every game with that objective, from every vertex $v$ and for every threshold $x$,
+whenever Max has a strategy ensuring $x$ from $v$ she has a positional one; it is *bi-positional* if moreover the same holds for Min with the
+dual meaning of ensuring. When optimal strategies are guaranteed to exist, this amounts to positional optimal strategies for Max, respectively
+for both players; *uniformly* means that one strategy serves from every vertex. A threshold
 $x$ turns $f$ into the qualitative condition $f_{\ge x} = \{\pi : f(\pi) \ge x\}$.
 
 ## Depends on

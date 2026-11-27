@@ -1,7 +1,7 @@
 # Recurring computations of two-counter machines are Σ¹₁-hard
 
 A *nondeterministic two-counter machine* has two counters $C, D$ over $\mathbb{N}$ and instructions $1, \dots, n$, each of which increments or
-decrements a counter and moves nondeterministically to one of two specified instructions, or jumps conditionally on a counter being
+decrements a counter (a decrement being enabled only when the counter is positive) and moves nondeterministically to one of two specified instructions, or jumps conditionally on a counter being
 zero. A configuration is $(i, c, d)$; a *computation* is an infinite sequence of consecutive configurations starting at $(1, 0, 0)$, and
 it is *recurring* if the instruction counter equals $1$ infinitely often. Deciding whether a given nondeterministic two-counter
 machine has a recurring computation is $\Sigma^1_1$-hard, along the lines of the $\Sigma^1_1$-completeness of the existence of a computation of a

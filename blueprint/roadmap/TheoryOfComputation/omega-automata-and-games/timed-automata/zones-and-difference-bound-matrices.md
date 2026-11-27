@@ -11,7 +11,8 @@ time successors of a nonempty zone. The
 $\mathrm{Pre}_{\ge 0}(Z)$, the reset $\mathrm{Reset}_R(Z)$ and its inverse $\mathrm{Unreset}_R(Z)$; together they compute the successors and predecessors of a set of valuations by an edge.
 
 Each basic operation maps a DBM to a DBM and is computed in time $O(n^3)$ for an $n \times n$ DBM, by editing entries and running the Floyd–Warshall
-all-pairs shortest-path algorithm, which also brings a DBM to a canonical form that is unique for its zone. The complement of a zone given by an
+all-pairs shortest-path algorithm, which also brings a DBM to a canonical form; after adding the implicit bounds $0 - x_i \le 0$ and setting the diagonal to $(\le, 0)$, the canonical
+form is unique for each nonempty zone, and all DBMs of the empty zone are mapped to one representative. The complement of a zone given by an
 $n \times n$ DBM is a union (federation) of at most $n(n - 1)$ zones.
 
 ## Depends on

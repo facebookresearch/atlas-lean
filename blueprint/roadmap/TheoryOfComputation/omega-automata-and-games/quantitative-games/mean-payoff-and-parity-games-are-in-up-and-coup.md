@@ -12,6 +12,7 @@ discounted-payoff games, and placing the latter in $\mathrm{UP} \cap \mathrm{coU
 
 ## Proof depends on
 
+- [Mean-payoff values are rationals with small denominators](mean-payoff-values-are-rationals-with-small-denominators.md)
 - [Discounted payoff approximates mean payoff](discounted-payoff-approximates-mean-payoff.md)
 - [Solving discounted-payoff games is in UP ∩ coUP](solving-discounted-payoff-games-is-in-up-and-coup.md)
 - [Parity games reduce to mean-payoff games](parity-games-reduce-to-mean-payoff-games.md)

@@ -4,7 +4,8 @@ For every [tag system](tag-systems-and-cyclic-tag-systems.md) with symbols numbe
 by the word of length $k$ over $\{Y, N\}$ whose only $Y$ is at position $i$, the tape and the $k$ appendants are encoded letterwise, and the
 list of the cyclic tag system consists of the $k$ encoded appendants in order followed by $k$ empty appendants. Reading an encoded
 symbol at the start of the list appends exactly the encoded appendant; reading one halfway through the list appends nothing, which
-emulates the ignored second symbol. Hence cyclic tag systems are universal.
+emulates the ignored second symbol. The emulation is read at the start of each pass through the list and stops when fewer than two encoded
+symbols remain, when the tag system halts. Hence cyclic tag systems are universal.
 
 ## Depends on
 
