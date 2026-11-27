@@ -4,6 +4,8 @@ The loss of acting greedily on an approximate optimal value (Singh and Yee 1994;
 
 - [Loss of a greedy policy for an approximate value](optimal-value-sub-policy-value-greedy-le.md)
 - [Sup-norm loss for any greedy policy](sup-norm-loss-for-any-greedy-policy.md)
+- [Transition concentration coefficient](transition-concentration-coefficient.md)
+- [The future distribution coefficient](the-future-distribution-coefficient.md)
 - [Greedy policies of value iteration are near-optimal](optimal-value-sub-policy-value-greedy-va.md)
 - [Approximate value iteration policy loss](approximate-value-iteration-policy-loss.md)
 - [Componentwise Bellman residual bound for a greedy policy](componentwise-bellman-residual-bound.md)

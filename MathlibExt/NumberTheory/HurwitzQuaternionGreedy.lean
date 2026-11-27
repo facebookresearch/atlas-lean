@@ -55,9 +55,10 @@ set_option quotPrecheck false in
 local notation "IsUnitMulSq" Q:max r:max => ∃ U ∈ 𝐇, Quaternion.normSq U = 1 ∧
   ∃ R ∈ 𝐇, Quaternion.normSq R = ((r : ℕ) : ℚ) ∧ Q = U * R ^ 2
 
-namespace quaternionGreedy_mem_of_not_unit_mul_sq
-
-private theorem normSq_nat {q : Quaternion ℚ} (hq : q ∈ 𝐇) :
+/-- **The norm of a Hurwitz quaternion is a natural number.** If the four rational coordinates of a
+quaternion $q$ are either all integers or all halves of odd integers, then its norm
+$\mathrm{Nm}(q)$, the sum of the squares of its coordinates, equals some natural number $n$. -/
+public theorem hurwitz_normSq_nat {q : Quaternion ℚ} (hq : q ∈ 𝐇) :
     ∃ n : ℕ, Quaternion.normSq q = (n : ℚ) := by
   have hInt : ∃ z : ℤ, Quaternion.normSq q = (z : ℚ) := by
     rcases hq with ⟨a, b, c, d, ha, hb, hc, hd⟩ | ⟨a, b, c, d, ha, hb, hc, hd⟩
@@ -85,19 +86,21 @@ private theorem sq_mem {q : Quaternion ℚ} (hq : q ∈ 𝐇) : q ^ 2 ∈ 𝐇 :
         Int.cast_ofNat] <;>
       ring
 
-private theorem normSq_eq_mul_sq {q a r : Quaternion ℚ} {k : ℕ}
+/-- **The norm of $ar^2$ factors as $\mathrm{Nm}(a)\,\mathrm{Nm}(r)^2$ in the natural numbers.** Let
+$a$ and $r$ be Hurwitz quaternions (quaternions whose four rational coordinates are either all
+integers or all halves of odd integers), and let $q = ar^2$ have norm $\mathrm{Nm}(q) = k$ for a
+natural number $k$. Then there are natural numbers $m$ and $n$ with $\mathrm{Nm}(a) = m$,
+$\mathrm{Nm}(r) = n$ and $k = mn^2$. -/
+public theorem hurwitz_normSq_eq_mul_sq {q a r : Quaternion ℚ} {k : ℕ}
     (hq : q = a * r ^ 2) (hqk : Quaternion.normSq q = (k : ℚ)) (ha : a ∈ 𝐇) (hr : r ∈ 𝐇) :
     ∃ m n : ℕ, Quaternion.normSq a = (m : ℚ) ∧ Quaternion.normSq r = (n : ℚ) ∧
       k = m * n ^ 2 := by
-  obtain ⟨m, hm⟩ := normSq_nat ha
-  obtain ⟨n, hn⟩ := normSq_nat hr
+  obtain ⟨m, hm⟩ := hurwitz_normSq_nat ha
+  obtain ⟨n, hn⟩ := hurwitz_normSq_nat hr
   refine ⟨m, n, hm, hn, ?_⟩
   rw [hq, map_mul, map_pow, hm, hn] at hqk
   exact_mod_cast hqk.symm
 
-end quaternionGreedy_mem_of_not_unit_mul_sq
-
-open quaternionGreedy_mem_of_not_unit_mul_sq in
 /-- **Quaternions of prime-square norm separating the greedy set from Rankin's set.** A Hurwitz
 quaternion is a quaternion whose four rational coordinates are either all integers or all halves
 of odd integers; its norm $\mathrm{Nm}(q)$ is the sum of the squares of its coordinates, and a
@@ -132,7 +135,7 @@ public theorem quaternionGreedy_mem_of_not_unit_mul_sq
     refine (hGq Q).2 ⟨hQ, hQ0, ?_⟩
     rintro ⟨a, ha, r, hr, _, hr1, _, heq⟩
     have haH := ((hGq a).1 ha).1
-    obtain ⟨m, n, hm, hn, hmn⟩ := normSq_eq_mul_sq heq hQn haH hr
+    obtain ⟨m, n, hm, hn, hmn⟩ := hurwitz_normSq_eq_mul_sq heq hQn haH hr
     have hndvd : n ^ 2 ∣ p ^ 2 := ⟨m, hmn.trans (mul_comm _ _)⟩
     have hnp : n ∣ p := (Nat.pow_dvd_pow_iff (by decide : 2 ≠ 0)).mp hndvd
     rcases (Nat.dvd_prime hp).mp hnp with h | h
@@ -146,7 +149,7 @@ public theorem quaternionGreedy_mem_of_not_unit_mul_sq
     refine (hGq 1).2 ⟨hOneH, one_ne_zero, ?_⟩
     rintro ⟨a, ha, r, hr, _, hr1, _, heq⟩
     have hOneNorm : Quaternion.normSq (1 : Quaternion ℚ) = ((1 : ℕ) : ℚ) := by simp
-    obtain ⟨m, n, _, hn, hmn⟩ := normSq_eq_mul_sq heq hOneNorm ((hGq a).1 ha).1 hr
+    obtain ⟨m, n, _, hn, hmn⟩ := hurwitz_normSq_eq_mul_sq heq hOneNorm ((hGq a).1 ha).1 hr
     have hdvd : n ^ 2 ∣ 1 := ⟨m, hmn.trans (mul_comm _ _)⟩
     have hn1 : n ∣ 1 := (dvd_pow_self _ (by decide : 2 ≠ 0)).trans hdvd
     exact hr1 (by simpa [Nat.dvd_one.mp hn1] using hn)

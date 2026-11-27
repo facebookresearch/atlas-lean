@@ -9,14 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Analysis.FourierConvergenceWanted
+public import MathlibExt.Analysis.Fourier.Fejer
 
 /-!
 # Carleson's theorem (statement)
 
 Almost-everywhere convergence of the symmetric Fourier partial sums of a square-integrable
 2π-periodic function, stated with the partial sums `fourierPartialSum` of
-`WantedExt.Analysis.FourierConvergenceWanted`.
+`MathlibExt.Analysis.Fourier.Fejer`.
 -/
 
 @[expose] public section

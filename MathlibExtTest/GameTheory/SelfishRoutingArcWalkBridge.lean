@@ -75,14 +75,14 @@ open MathlibExt.GameTheory.SelfishRouting
 /-! ### Travel-time bridge checks -/
 
 /-- Link travel times with distinct slopes per arc: `t e x = (e + 1) x + 1`. -/
-noncomputable def tt (e : Fin 4) (x : ℝ) : ℝ := (((e : ℕ) : ℝ) + 1) * x + 1
+private noncomputable def tt (e : Fin 4) (x : ℝ) : ℝ := (((e : ℕ) : ℝ) + 1) * x + 1
 
 /-- Two routes sharing arc `2`; the parallel arcs `0` and `1` stay distinct. -/
-abbrev sharedRoutes : Fin 2 → List (Fin 4) := ![[0, 2], [1, 2]]
+private abbrev sharedRoutes : Fin 2 → List (Fin 4) := ![[0, 2], [1, 2]]
 /-- Route `0` traverses arcs `0` and `2` twice. -/
-abbrev doubleRoutes : Fin 2 → List (Fin 4) := ![[0, 2, 3, 0, 2], [0, 2]]
+private abbrev doubleRoutes : Fin 2 → List (Fin 4) := ![[0, 2, 3, 0, 2], [0, 2]]
 /-- `sharedRoutes` plus the route `[0, 2, 3, 0, 2]`, which will carry zero flow. -/
-abbrev zeroFlowRoutes : Fin 3 → List (Fin 4) := ![[0, 2], [1, 2], [0, 2, 3, 0, 2]]
+private abbrev zeroFlowRoutes : Fin 3 → List (Fin 4) := ![[0, 2], [1, 2], [0, 2, 3, 0, 2]]
 
 private theorem sharedArcVolume : edgeVolume sharedRoutes ![1, 2] = ![1, 2, 3, 0] := by
   funext e
