@@ -1,0 +1,3 @@
+# Feasible KEMENY SCORE instances
+
+Some ranking $\pi$ of the candidates (a permutation of $0, \dots, m - 1$) has total [inversion count](../../../../ComputerScience/online-algorithms/list-update-problem/inv.md) $\sum_v \operatorname{inv}(v, \pi)$ at most $k$, summed over the ballots $v$. The ballots are not required to be rankings here: with two candidates, one ballot $[\,]$ and bound $0$, the ranking $[0, 1]$ is a witness, since the empty ballot has no inversions. When every ballot is a ranking, as [well-formedness](well-formed-2.md) requires, $\operatorname{inv}(v, \pi)$ is the Kendall tau distance between $v$ and $\pi$, and the condition says that $\pi$ has total Kendall tau distance at most $k$ from the voters' rankings.
