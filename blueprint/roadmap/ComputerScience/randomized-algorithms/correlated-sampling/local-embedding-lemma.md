@@ -12,6 +12,11 @@ Three elementary properties follow from the definition, with statistical distanc
 
 - [Holenstein's correlated sampling from a distribution-independent seed](correlated-sampling-shared-seed.md)
 
+## Proof depends on
+
+- [Maximal couplings realize statistical distance](../../../Probability/foundations/statistical-distance-and-couplings/maximal-coupling-theorem.md)
+- [Data-processing inequality for total variation](../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/total-variation-dist-comp-le-self.md)
+
 ## Sources
 
 - T. Holenstein, "Parallel Repetition: Simplifications and the No-Signaling Case", Theory of Computing 5, 2009, Section 5 (Definition 5.1, Lemma 5.2, Corollary 5.3 and Lemma 5.4).

@@ -15,6 +15,7 @@ Following Alon, Krivelevich and Sudakov, Section 2.2, let $z$ have $z_v = n - k$
 - [Deterministic recovery from an approximate signal](planted-clique-deterministic-recovery.md)
 - [Spectral norm of planted-clique noise is O(sqrt n)](../../../GraphTheory/random-graphs/planted-clique/planted-clique-noise-spectral-norm.md)
 - [Outside vertices have at most 5|S|/8 neighbors in the planted clique](../../../GraphTheory/random-graphs/planted-clique/planted-clique-outside-degrees.md)
+- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Sources
 

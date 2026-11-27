@@ -1,6 +1,6 @@
 # Truthful online mechanism for unit-demand agents from price sampling
 
-In the unknown single-value unit-demand setting, each agent $l \in L$ has a private value $v_l \ge 0$ for any item in its acceptable set (its neighborhood in $G \subseteq L \times R$), agents arrive in an arbitrary fixed order, and the Price Sampling Algorithm is run on reported values with each matched agent paying the price of its item. For every arrival order this mechanism is ex-post individually rational and ex-post dominant-strategy truthful (no degree bound needed), assuming nonnegative values for the other agents; under truthful reports, well-behaved values (distinct agents with equal value have value $0$) uniformly random order and at least two agents ($|L| \ge 2$), if every agent has at most $d$ acceptable items, its expected social welfare is at least a $1/(4d)$ fraction of the optimal welfare.
+In the unknown single-value unit-demand setting, each agent $l \in L$ has a private value $v_l \ge 0$ for any item in its acceptable set (its neighborhood in $G \subseteq L \times R$), agents arrive in an arbitrary fixed order, and the Price Sampling Algorithm is run on reported values with each matched agent paying the price of its item. For every arrival order this mechanism is ex-post individually rational and ex-post dominant-strategy truthful (no degree bound needed), assuming nonnegative values for the other agents; under truthful reports, well-behaved values (distinct agents with equal value have value $0$), uniformly random order and at least two agents ($|L| \ge 2$), if every agent has at most $d$ acceptable items, its expected social welfare is at least a $1/(4d)$ fraction of the optimal welfare.
 
 ## Proof sketch
 
@@ -10,9 +10,6 @@ Sampled agents receive nothing regardless of their reports, so their reports onl
 
 - [Dominant-strategy incentive compatibility](../../../GameTheory/mechanism-design/revelation-principle/is-dominant-strategy-incentive-compatibl.md)
 - [Matroid secretary problem](matroid-secretary-problem.md)
-
-## Proof depends on
-
 - [Price Sampling Algorithm: 4d-competitive secretary on transversal matroids](transversal-price-sampling.md)
 
 ## Sources

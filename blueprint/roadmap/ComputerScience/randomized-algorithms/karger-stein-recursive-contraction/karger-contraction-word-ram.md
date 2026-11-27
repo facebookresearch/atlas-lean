@@ -1,6 +1,6 @@
 # Karger's contraction algorithm on the randomized word RAM
 
-There is a randomized word-RAM program implementing Karger's Contraction Algorithm on an $n$-vertex weighted multigraph ($n \ge 2$) given by its symmetric weight matrix that runs one trial in $O(n^2)$ instructions; every run outputs the weight of a nontrivial cut, and a trial outputs the minimum cut weight with probability at least $2/(n(n-1))$. Consequently $R$ independent trials run in $O(Rn^2)$ instructions and all miss the minimum cut weight with probability at most $(1 - 2/(n(n-1)))^R$, and $O(n^2 \log n)$ trials, $O(n^4 \log n)$ instructions in total, find it with high probability.
+There is a randomized word-RAM program implementing Karger's Contraction Algorithm on an $n$-vertex weighted multigraph ($n \ge 2$) given by its symmetric weight matrix that runs one trial in $O(n^2)$ instructions; every run outputs the weight of a nontrivial cut, and a trial outputs the minimum cut weight with probability at least $2/(n(n-1))$. Consequently $R$ independent trials run in $O(Rn^2)$ instructions and all miss the minimum cut weight with probability at most $(1 - 2/(n(n-1)))^R$, and in particular $R = \lceil \tfrac12 n(n-1)\ln(2n) \rceil = O(n^2 \log n)$ trials, $O(n^4 \log n)$ instructions in total, miss it with probability at most $1/(2n)$, so they find it with probability exceeding $1 - 1/n$.
 
 ## Proof sketch
 
