@@ -19,6 +19,7 @@ public import MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCycl
 public import MathlibExt.Combinatorics.Enumerative.PeriodicTupleProductCount
 public import MathlibExt.Combinatorics.Enumerative.TotientWeightedDivisorSum
 public import MathlibExt.Data.Int.GCD
+public import MathlibExt.FieldTheory.Finite.NormalBasisTraceZero
 public import MathlibExt.FieldTheory.FiniteFieldNormalBasis
 public import MathlibExt.FieldTheory.NormalBasisFrobeniusRotation
 
@@ -184,22 +185,6 @@ public theorem_wanted normalBasisMap_rotation_iff_conj (n : ℕ)
     b ∈ tupleRotationOrbit a ↔
       minpoly F (∑ i, a i • β ^ (Fintype.card F ^ (i : ℕ))) =
         minpoly F (∑ i, b i • β ^ (Fintype.card F ^ (i : ℕ)))
-
-/-- **Zero-sum tuples correspond to trace-zero elements.** Let $K$ be a finite field that is an
-algebra over a finite field $F$, let $q = |F|$ and $n = [K : F]$, and let $\beta \in K$ be such
-that $\beta, \beta^q, \dots, \beta^{q^{n-1}}$ are linearly independent over $F$. Define
-$\Phi : F^n \to K$ by $\Phi(a_0, \dots, a_{n-1}) = \sum_{i=0}^{n-1} a_i \beta^{q^i}$. Then for
-every $a = (a_0, \dots, a_{n-1}) \in F^n$, we have $a_0 + a_1 + \dots + a_{n-1} = 0$ if and only if
-the trace of $\Phi(a)$ from $K$ to $F$ is $0$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Theorem 30
-(`jis-2026-26.4.6-thm-30`). -/
-public theorem_wanted normalBasisMap_sum_eq_zero_iff_trace (n : ℕ)
-    (hn : Module.finrank F K = n) (β : K)
-    (hβ : LinearIndependent F (fun i : Fin n => β ^ (Fintype.card F ^ (i : ℕ))))
-    (a : Fin n → F) :
-    ∑ i, a i = 0 ↔ Algebra.trace F K (∑ i, a i • β ^ (Fintype.card F ^ (i : ℕ))) = 0
 
 /-- **Trace-zero Galois orbits and zero-sum necklaces.** Let $K$ be a finite field extension
 of a finite field $F$ and $n = [K : F]$. For $z \in K$ let its Galois orbit be the set of all
