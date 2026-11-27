@@ -8,4 +8,3 @@
 - [Erdős Problem 1010 (triangles just above the Turán number)](triangles-above-turan-threshold.md)
 - [Resolution of Erdős Problem 1010](triangles-above-turan-threshold-holds.md)
 - [Erdős Problem 1079 (a vertex with a dense neighbourhood)](dense-neighbourhood-turan.md)
-- [Resolution of Erdős Problem 1079](dense-neighbourhood-turan-holds.md)
