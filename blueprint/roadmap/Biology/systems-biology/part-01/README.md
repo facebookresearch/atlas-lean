@@ -1,0 +1,28 @@
+# Reaction networks, metabolism and translation
+
+Steady states and parameter regions of reaction networks, flux cones and constraint-based metabolic models, autocatalytic sets, structural identifiability and ribosome flow models of translation.
+
+- [Extended Permanence Conjecture](extended-permanence-conjecture.md)
+- [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
+- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
+- [Analytic steady states of reaction-network ODEs](analytic-steady-states-of-reaction-network-odes/README.md)
+- [Conformal decomposition into elementary vectors](conformal-decomposition-into-elementary-vectors/README.md)
+- [Cumomer labeling networks](cumomer-labeling-networks/README.md)
+- [Directed Steiner hypertrees for consortium design](directed-steiner-hypertrees-for-consortium-design/README.md)
+- [Emergence of autocatalytic sets in random catalysis](emergence-of-autocatalytic-sets-in-random-catalysis/README.md)
+- [Flux coupling analysis](flux-coupling-analysis/README.md)
+- [Glycan assembly in Golgi compartments](glycan-assembly-in-golgi-compartments/README.md)
+- [Growth balance analysis](growth-balance-analysis/README.md)
+- [Monotone systems and sign consistency](monotone-systems-and-sign-consistency/README.md)
+- [Projected flux cones](projected-flux-cones/README.md)
+- [Pseudo-RAF sets of catalytic reaction systems](pseudo-raf-sets-of-catalytic-reaction-systems/README.md)
+- [Semidefinite classification of parameter regions](semidefinite-classification-of-parameter-regions/README.md)
+- [Series and isomorphism tests for structural identifiability](series-and-isomorphism-tests-for-structural-identifiability/README.md)
+- [Specific flux optimization by enzyme expression control](specific-flux-optimization-by-enzyme-expression-control/README.md)
+- [Thermodynamic loop law in constraint-based models](thermodynamic-loop-law-in-constraint-based-models/README.md)
+- [Yield optimization in constraint-based models](yield-optimization-in-constraint-based-models/README.md)
+- [Mean-field exclusion with Langmuir kinetics](mean-field-exclusion-with-langmuir-kinetics/README.md)
+- [Networks of ribosome flow models](networks-of-ribosome-flow-models/README.md)
+- [Optimal ribosome density in ribosome flow models](optimal-ribosome-density-in-ribosome-flow-models/README.md)
+- [Ribosome flow model on a ring](ribosome-flow-model-on-a-ring/README.md)
+- [Ribosome flow model with random rates](ribosome-flow-model-with-random-rates/README.md)

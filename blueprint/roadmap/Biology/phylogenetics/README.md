@@ -30,7 +30,3 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
-- [Duplication histories of tandem repeats](duplication-histories-of-tandem-repeats/README.md)
-- [Higher-level phylogenies under the birth–death–skyline](higher-level-phylogenies-under-the-birth-death-skyline/README.md)
-- [NJMerge: constrained neighbor joining](njmerge-constrained-neighbor-joining/README.md)
-- [Node-based and stem-based trees](node-based-and-stem-based-trees/README.md)
