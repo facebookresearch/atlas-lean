@@ -33,6 +33,19 @@ For the remaining differences, counting ensures that a monochromatic progression
 spacing at least `8w` must leave its interval within `12(t + 1)` terms. Taking a regularly
 spaced subsequence handles smaller differences. The resulting estimate depends on the
 number of intervals visited and the subsampling step, both controlled in terms of `a`.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/ShortMonochromaticProgressionsErdosProblem984Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #984, https://www.erdosproblems.com/984 (status
+PROVED). UnsolvedMath record UM-30007110 (`EP-984`), dataset ulamai/UnsolvedMath v1.8.0.
+
+`ℕ` is the positive integers: progressions start at `a ≥ 1` (for `a = 0` the one-term progression
+`{0}` would violate `1 ≤ C · 0^ε`) and have difference `d ≥ 1` (`d = 0` would allow arbitrarily long
+constant progressions). A colouring is a function `ℕ → Fin 2` (its value at `0` is irrelevant), and
+`k ≪_ε a^ε` is a constant `C_ε` with `k ≤ C_ε a^ε`. formal-conjectures has no statement of this
+problem.
 -/
 
 @[expose] public section
