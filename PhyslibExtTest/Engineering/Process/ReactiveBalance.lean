@@ -19,7 +19,9 @@ growing volume at constant concentration still grows the stock, zero
 volume blocks the concentration division, and the closed constant-volume
 case recovers the scaled concentration derivative. Concrete vessels apply
 the mass-versus-volume results: constant density gives `V' = Qin - Qout`,
-and changing density follows the comparison identity and breaks that law.
+three changing-density vessels follow the comparison identity and break
+that law, and one changing-density vessel keeps it because the two
+corrections cancel.
 -/
 
 namespace Engineering.Process.ReactiveBalance.Tests
@@ -100,7 +102,7 @@ example : HasDerivAt (fun t : ℝ => 2 * t) (3 - 1) 0 := by
     (hV.const_mul 2).congr_deriv (by norm_num)
   exact hV.congr_deriv (volume_balance_of_const_density hV (by norm_num) 3 1 hmass)
 
--- Changing density breaks the naive volume law: rho(t) = 1 + t and
+-- Changing density can break the naive volume law: rho(t) = 1 + t and
 -- V(t) = 1 - t keep the mass rho * V = 1 - t ^ 2 stationary at t = 0, so
 -- the mass balance holds with Qin = Qout = 0 (inflow density 1). At
 -- rho = 1, V = 1, rho' = 1, `volume_deriv_eq` gives
@@ -154,5 +156,22 @@ example : HasDerivAt (fun t : ℝ => 5 + 5 / 2 * t) (3 / 2 * 4 - 1 - 5 * 1 / 2) 
     (by norm_num)), fun hnaive => ?_⟩
   have h := volume_deriv_eq hrho hnaive (by norm_num) 3 4 1 hmass
   norm_num at h
+
+-- The closure is sufficient, not necessary: rho(t) = 1 + t and V(t) = 1 + t
+-- with inflow density 2, Qin = 1 and Qout = 0 satisfy the mass balance at
+-- t = 0, where both sides are 2. There rho = 1, V = 1 and rho' = 1, so the two
+-- corrections cancel, (rho_in - rho) * Qin = V * rho' = 1, and
+-- `volume_deriv_eq` gives V' = 2 / 1 * 1 - 0 - 1 * 1 / 1 = Qin - Qout although
+-- the density changes.
+example : HasDerivAt (fun t : ℝ => 1 + t) (2 / 1 * 1 - 0 - 1 * 1 / 1) 0 ∧
+    HasDerivAt (fun t : ℝ => 1 + t) (1 - 0) 0 := by
+  have hrho : HasDerivAt (fun t : ℝ => 1 + t) 1 0 :=
+    (hasDerivAt_id' (0 : ℝ)).const_add 1
+  have hV : HasDerivAt (fun t : ℝ => 1 + t) 1 0 :=
+    (hasDerivAt_id' (0 : ℝ)).const_add 1
+  have hmass : HasDerivAt (fun t : ℝ => (1 + t) * (1 + t)) (2 * 1 - (1 + 0) * 0) 0 :=
+    (hrho.mul hV).congr_deriv (by norm_num)
+  have h := volume_deriv_eq hrho hV (by norm_num) 2 1 0 hmass
+  exact ⟨hV.congr_deriv (h.trans (by norm_num)), hV.congr_deriv (h.trans (by norm_num))⟩
 
 end Engineering.Process.ReactiveBalance.Tests

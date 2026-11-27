@@ -34,9 +34,11 @@ With supplied derivatives of the density `rho` and the volume `V`, nonzero
 density at the instant, and the mass balance
 `(rho * V)' = rho_in * Qin - rho * Qout` (inflow of density `rho_in`,
 outflow at the vessel density), the volume derivative is
-`V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`. Only under the
-constant-density closure `rho = rho_in = rho0` does this reduce to the
-volume law `V' = Qin - Qout`.
+`V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`. Under the
+constant-density closure `rho = rho_in = rho0` this reduces to the volume
+law `V' = Qin - Qout`. The closure is sufficient, not necessary: the law
+also holds whenever the two corrections cancel,
+`(rho_in - rho) * Qin = V * rho'`.
 
 ## ii. Key results
 
