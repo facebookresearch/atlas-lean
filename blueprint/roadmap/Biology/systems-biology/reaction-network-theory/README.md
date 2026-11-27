@@ -17,7 +17,6 @@ Structure and dynamics of chemical reaction networks: multistationarity, bifurca
 - [Mass-balanced randomization of metabolic networks](mass-balanced-randomization-of-metabolic-networks/README.md)
 - [Oscillations in deficiency-one mass-action systems](oscillations-in-deficiency-one-mass-action-systems/README.md)
 - [Oscillations in three-reaction mass-action networks](oscillations-in-three-reaction-mass-action-networks/README.md)
-- [Pseudo-first-order Michaelis–Menten kinetics](pseudo-first-order-michaelis-menten-kinetics/README.md)
 - [Robust Lyapunov functions of reaction networks](robust-lyapunov-functions-of-reaction-networks/README.md)
 - [Selkov glycolytic oscillator](selkov-glycolytic-oscillator/README.md)
 - [Speed-coefficient model reduction](speed-coefficient-model-reduction/README.md)
