@@ -12,13 +12,13 @@ with basal production rate $g_i$ and degradation rate $k_i$. For example, the to
 
 $$m_i = g_i \prod_{j \in \mathcal R_i} \min(1, \lambda_{ji}), \qquad G_i = g_i \prod_{j \in \mathcal R_i} \max(1, \lambda_{ji}) .$$
 
-Then for every initial condition in $[0, \infty)^N$:
+$G_i$ is the maximal production rate of gene $i$. RACIPE samples $G_i$ in a common range and sets $g_i = G_i/\prod_j \max(1, \lambda_{ji})$, so that all genes share the same scale of maximal production.
+
+**Auxiliary properties** (derived here, not stated in the source; proved in the Expansion). For every initial condition in $[0, \infty)^N$:
 
 1. the box $\mathcal B = \prod_i [m_i/k_i,\ G_i/k_i]$ is forward invariant;
 2. $\operatorname{dist}(X_i(t), [m_i/k_i, G_i/k_i]) \le e^{-k_i t}\operatorname{dist}(X_i(0), [m_i/k_i, G_i/k_i])$, so $\mathcal B$ attracts all trajectories exponentially;
 3. every equilibrium lies in $\mathcal B$, and at least one exists.
-
-$G_i$ is the maximal production rate of gene $i$. RACIPE samples $G_i$ in a common range and sets $g_i = G_i/\prod_j \max(1, \lambda_{ji})$, so that all genes share the same scale of maximal production.
 
 ## Depends on
 
@@ -30,4 +30,4 @@ Each factor $H^S_{ji}(x)$ is a convex combination of $1$ and $\lambda_{ji}$ with
 
 ## Sources
 
-- B. Huang, M. Lu, D. Jia, E. Ben-Jacob, H. Levine, J. N. Onuchic, "Interrogating the topological robustness of gene regulatory circuits by randomization", *PLoS Computational Biology* 13(3) (2017) e1005456, Methods (Equations (1)–(2), parameter randomization, the half-functional rule) and Results, "RACIPE as an unbiased method to predict robust gene states for a gene circuit", <https://doi.org/10.1371/journal.pcbi.1005456> (PMC5391964).
+- B. Huang, M. Lu, D. Jia, E. Ben-Jacob, H. Levine, J. N. Onuchic, "Interrogating the topological robustness of gene regulatory circuits by randomization", *PLoS Computational Biology* 13(3) (2017) e1005456, Methods (Equations (1)–(2), parameter randomization, the half-functional rule) and Results, "RACIPE as an unbiased method to predict robust gene states for a gene circuit", <https://doi.org/10.1371/journal.pcbi.1005456> (PMC5391964). The source defines the model and makes no claim about invariant or attracting regions; the auxiliary properties are the page's own comparison and fixed-point argument.

@@ -16,7 +16,11 @@ $$\log p(\phi_g \mid Y_{g\cdot}, \nu_{g\cdot}) = \sum_{i=1}^{n}\Big[\log\Gamma(y
 
 The estimate $\tilde\phi_g$ is its maximizer (posterior mode) after replacing $\nu_{gi}$ by the plug-in $\hat\nu_{gi} = s_i\,\hat\mu_{g,k(i)}$ with $\hat\mu_{g,k} = \frac{1}{n_k}\sum_{i : k(i) = k} y_{gi}/s_i$. Equivalently, $\tilde\phi_g$ maximizes a penalized pseudo-likelihood with penalty $\frac{(\log\phi_g - m_0)^2}{2\tau^2} + \log\phi_g$: the first term shrinks toward the common prior value, the second penalizes large dispersions. Genes with low counts carry little information about $\phi_g$ and are shrunk more.
 
-**Hyperparameters.** $m_0$ is estimated by the median of crude method-of-moments log-dispersions across genes; $\tau^2$ is the sample variance of those log-dispersions minus a baseline variance obtained by re-simulating data with a common dispersion (which isolates the estimation noise), floored at a small constant $c_0$.
+**Hyperparameters.** $m_0$ is estimated by the median of crude method-of-moments log-dispersions across genes; $\tau^2$ is estimated by the robust interquartile-range variance
+
+$$\hat\tau^2 = \max\Big\{\big(\mathrm{IQR}(\log\hat\phi_g)/1.349\big)^2 - \bar S^2,\ c_0\Big\},$$
+
+where $\log\hat\phi_g$ are the crude log-dispersions, $\bar S^2$ is the mean of the same IQR-based variance over pseudo-datasets simulated with the common dispersion $e^{\hat m_0}$ (which isolates the estimation noise), and $c_0 = 0.01$. The sample variance of $\log\hat\phi_g$ is not used, because it overestimates $\tau^2$.
 
 **Test.** For two groups the Wald statistic is
 

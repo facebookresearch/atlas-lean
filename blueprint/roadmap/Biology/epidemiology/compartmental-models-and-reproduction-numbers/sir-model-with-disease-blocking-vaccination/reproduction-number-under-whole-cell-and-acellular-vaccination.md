@@ -1,6 +1,6 @@
-# Reproduction number under infection-blocking and disease-blocking vaccination
+# SIR model with infection-blocking and disease-blocking vaccination
 
-**Model.** In an SIR model with births and deaths (rates $\mu = \nu$, population normalized to one), a fraction $w$ of newborns receives a vaccine that blocks infection (whole-cell-type, entering $R$) and a fraction $a$ receives a vaccine that blocks disease but not infection (acellular-type, entering a vaccinated class $V$), with $w + a \le 1$. Unvaccinated susceptibles $S$ are infected at rate $\beta(I_s + I_a)$ and become symptomatic ($I_s$) with probability $\sigma$ or asymptomatic ($I_a$) otherwise; vaccinated individuals in $V$ are infected at the same rate but always asymptomatically. Symptomatic and asymptomatic infections are equally infectious and recover at rates $\gamma_s, \gamma_a$; immunity wanes at rate $\omega$:
+**Model.** In an SIR model with births and deaths (rates $\mu = \nu$, population normalized to one), a fraction $w$ of newborns receives a vaccine that blocks infection (whole-cell-type, entering $R$) and a fraction $a$ receives a vaccine that blocks disease but not infection (acellular-type, entering a vaccinated class $V$), with $w + a \le 1$. Unvaccinated susceptibles $S$ are infected at rate $\beta(I_s + I_a)$ and become symptomatic ($I_s$) with probability $\sigma$ or asymptomatic ($I_a$) otherwise; vaccinated individuals in $V$ are infected at the same rate but always asymptomatically. Symptomatic and asymptomatic infections are equally infectious and recover at rates $\gamma_s, \gamma_a$; immunity wanes at rate $\omega$. The model is
 
 $$\begin{aligned}
 S' &= \mu(1 - w - a) - \beta(I_s + I_a)S + \omega R - \nu S,\\
@@ -10,7 +10,7 @@ V' &= \mu a - \beta(I_s + I_a)V - \nu V,\\
 R' &= \mu w + \gamma_s I_s + \gamma_a I_a - \omega R - \nu R .
 \end{aligned}$$
 
-**Proposition.** The infection-free equilibrium is
+**Auxiliary properties** (derived here by the next-generation method, not stated in the source; proved in the Expansion). The infection-free equilibrium is
 
 $$S^* = 1 - a - \frac{\nu w}{\omega + \nu}, \qquad V^* = a, \qquad R^* = \frac{\nu w}{\omega + \nu},$$
 
@@ -23,6 +23,8 @@ In particular, if $\gamma_s = \gamma_a = \gamma$,
 $$R_v = \frac{\beta\,(S^* + V^*)}{\gamma + \nu} = \frac{\beta}{\gamma + \nu}\left(1 - \frac{\nu w}{\omega + \nu}\right),$$
 
 so disease-blocking vaccination ($a$) does not reduce transmission at all: it converts symptomatic infections into asymptomatic ones, while only infection-blocking vaccination ($w$) lowers $R_v$. The infection-free equilibrium is locally asymptotically stable if $R_v < 1$ and unstable if $R_v > 1$.
+
+This $R_v$ differs from the source's. Additional file 1 of the source gives, with coverages written $aP$ and $wP$, the disease-free equilibrium $S^* = 1 - aP - wP$, $V^* = aP$, $R^* = wP$ (no waning term) and $R_0 = \beta(1 - aP - wP)(\gamma_s + \nu + \gamma_a\sigma - \gamma_s\sigma)/((\gamma_a + \nu)(\gamma_s + \nu))$ (Eq. (28)), which omits the infection of the vaccinated class $V$ (the term $\beta V^*/(\gamma_a + \nu)$ above) and therefore decreases with $aP$.
 
 ## Depends on
 
@@ -38,4 +40,4 @@ and $F V_{\text{tr}}^{-1}$ has identical columns up to scaling, so it has rank o
 
 ## Sources
 
-- Althouse BM, Scarpino SV, "Asymptomatic transmission and the resurgence of Bordetella pertussis" (2015), Methods, "The model", Equations (1)–(5); the reproduction number is derived here from those equations by the next-generation method, <https://doi.org/10.1186/s12916-015-0382-8>, PMCID PMC4482312.
+- Althouse BM, Scarpino SV, "Asymptomatic transmission and the resurgence of Bordetella pertussis" (2015), Methods, "The model", Equations (1)–(5), and Additional file 1 ("Steady-state Equilibria", "Calculating R0", Eq. (28)); the infection-free equilibrium and $R_v$ are derived here from Equations (1)–(5) by the next-generation method, <https://doi.org/10.1186/s12916-015-0382-8>, PMCID PMC4482312.

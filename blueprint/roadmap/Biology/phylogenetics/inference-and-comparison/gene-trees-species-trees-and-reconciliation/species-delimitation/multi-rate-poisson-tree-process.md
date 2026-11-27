@@ -1,6 +1,6 @@
 # Multi-rate Poisson tree process
 
-**Setting.** $T = (V, E)$ is a rooted binary phylogenetic tree with branch lengths $\ell(x) > 0$ in expected substitutions per site. A *delimitation* is a connected subtree $G = (V_s, E_s)$ containing the root (the speciation process); the remaining branches $E_c = E \setminus E_s$ form maximal subtrees $T_1 = (V_1, E_1), \dots, T_k = (V_k, E_k)$ with disjoint vertex sets and $\bigsqcup_i E_i = E_c$, one per delimited species, rooted at the *coalescent roots*.
+**Setting.** $T = (V, E)$ is a rooted binary phylogenetic tree with branch lengths $\ell(x) > 0$ in expected substitutions per site. A *delimitation* is a connected subtree $G = (V_s, E_s)$ of $T$ containing the root that is itself a binary tree (every node of $G$ has both or neither of its child branches in $E_s$) (the speciation process); the remaining branches $E_c = E \setminus E_s$ form maximal subtrees $T_1 = (V_1, E_1), \dots, T_k = (V_k, E_k)$ with disjoint vertex sets and $\bigsqcup_i E_i = E_c$, one per delimited species, rooted at the *coalescent roots*.
 
 **Single-rate PTP.** Branch lengths are i.i.d. exponential with one rate $\lambda_s$ on $E_s$ and one rate $\lambda_c$ on $E_c$:
 

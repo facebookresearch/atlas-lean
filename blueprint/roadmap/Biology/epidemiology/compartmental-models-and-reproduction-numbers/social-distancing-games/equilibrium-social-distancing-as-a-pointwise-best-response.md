@@ -12,11 +12,11 @@ $$-V_S' = -\kappa + b\, \beta(\kappa) \frac{I}{N} (V_I - V_S), \qquad -V_I' = -c
 
 with $V_R$ the (constant) value of the removed state.
 
-**Proposition (pointwise best response).** A strategy maximizes $V_S$ against a given epidemic course if and only if at almost every time it minimizes the instantaneous expected loss
+**Proposition (pointwise best response, necessary condition).** If a strategy maximizes $V_S$ against a given epidemic course, then at almost every time it minimizes the instantaneous expected loss
 
 $$\kappa + b\, \beta(\kappa) \frac{I(t)}{N} \big(V_S(t) - V_I(t)\big)$$
 
-over $\kappa \ge 0$. If $\beta$ is differentiable and strictly convex, the minimizer is unique: writing $\Delta(t) = b\, (I(t)/N)\, (V_S(t) - V_I(t)) \ge 0$,
+over $\kappa \ge 0$ (the maximum principle, Eq. (13) of the source). If $\beta$ is differentiable and strictly convex, the minimizer is unique: writing $\Delta(t) = b\, (I(t)/N)\, (V_S(t) - V_I(t)) \ge 0$,
 
 $$\kappa^*(t) = 0 \ \text{ if } -\beta'(0)\, \Delta(t) \le 1, \qquad \text{otherwise } \kappa^*(t) \text{ solves } -\beta'(\kappa^*)\, \Delta(t) = 1 .$$
 
@@ -34,7 +34,7 @@ Properties:
 
 ## Expansion
 
-The value of the susceptible state changes at rate equal to the flow cost of distancing plus the hazard of infection times the jump in value $V_I - V_S$; choosing $\kappa$ to make this rate as favourable as possible at each instant is the maximum principle for the individual's control problem, and the greedy (Isaacs) construction of the equilibrium applies it with the population strategy fed back into the epidemic. For a convex differentiable decreasing $\beta$, the function $\kappa \mapsto \kappa + \beta(\kappa)\Delta$ is convex with derivative $1 + \beta'(\kappa)\Delta$; it is minimized at $0$ if that derivative is non-negative at $0$, and otherwise at its unique zero, since strict convexity makes $\beta'$ strictly increasing. Existence and uniqueness of subgame perfect equilibria (finite-time blow-up of the associated Hamilton–Jacobi equation) are not proved, but numerical and analytical evidence supports uniqueness.
+The value of the susceptible state changes at rate equal to the flow cost of distancing plus the hazard of infection times the jump in value $V_I - V_S$; choosing $\kappa$ to make this rate as favourable as possible at each instant is the maximum principle for the individual's control problem; the source states it as a necessary condition satisfied by every subgame perfect equilibrium, and the page claims no converse. The greedy (Isaacs) construction of the equilibrium applies it with the population strategy fed back into the epidemic. For a convex differentiable decreasing $\beta$, the function $\kappa \mapsto \kappa + \beta(\kappa)\Delta$ is convex with derivative $1 + \beta'(\kappa)\Delta$; it is minimized at $0$ if that derivative is non-negative at $0$, and otherwise at its unique zero, since strict convexity makes $\beta'$ strictly increasing. Existence and uniqueness of subgame perfect equilibria (finite-time blow-up of the associated Hamilton–Jacobi equation) are not proved, but numerical and analytical evidence supports uniqueness.
 
 ## Sources
 
