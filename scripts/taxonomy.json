@@ -1782,6 +1782,7 @@
   "CSLibExt/Languages/MiniImp/Exec": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/IMPBridge": {"to": "ComputerScience/programming-language-semantics", "title": "Embedding IMP in the imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/ReadCost": {"to": "ComputerScience/programming-language-semantics", "title": "Read-cost semantics of the imperative language with arrays"},
+  "CSLibExt/Languages/MiniImp/Hoare": {"to": "ComputerScience/program-logics-and-verification", "title": "Hoare logic for an imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/Semantics": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/Syntax": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/VC": {"to": "ComputerScience/program-logics-and-verification", "title": "Hoare logic for an imperative language with arrays"},
