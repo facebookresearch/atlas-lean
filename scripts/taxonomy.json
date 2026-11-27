@@ -14477,6 +14477,7 @@
   "MathlibExt/NumberTheory/X2Y2Count": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by x² + 2y²"},
   "MathlibExt/NumberTheory/ZeckendorfNewInformationZone": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Zeckendorf sum of digits"},
   "MathlibExt/NumberTheory/ZeckendorfOdometer": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Zeckendorf sum of digits"},
+  "MathlibExt/NumberTheory/ZetaStrideSeries": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Stride series for zeta and eta values"},
   "MathlibExt/NumberTheory/ZetaThreeProductFormulas": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Apéry's constant"},
   "MathlibExt/NumberTheory/ZsqrtdNegTwoEuclidean": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "The ring ℤ[√−2]"},
   "MathlibExt/NumberTheory/ZsqrtdNegTwoPrimes": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "The ring ℤ[√−2]"},
