@@ -55,8 +55,12 @@ def MatchAt (X Y : ℕ → α) (i j m : ℕ) : Prop :=
 noncomputable def longestMatch (X Y : ℕ → α) (n : ℕ) : ℕ :=
   sSup {m | ∃ i j, i + m ≤ n ∧ j + m ≤ n ∧ MatchAt X Y i j m}
 
-/-- **Match probability.** `p = P(X₁ = Y₁)`, the measure `P.real` of the event that the first
-letters agree: a probability when `P` is a probability measure, as in the theorems below. -/
+/-- **Match probability.** `p = P(X₁ = Y₁)`: `P.real` of the set of outcomes at which the first
+letters agree. When the first letters are measurable and the alphabet is countable with measurable
+singletons, that set is an event, and under a probability measure this is its probability, as in
+the theorems below (`IIDLetters` makes the letters measurable). Otherwise the set need not be
+measurable, and `P.real` of a set that is not measurable is its outer measure, not the probability
+of an event. -/
 noncomputable def matchProb (P : Measure Ω) (Z : ℕ ⊕ ℕ → Ω → α) : ℝ :=
   P.real {ω | Z (Sum.inl 1) ω = Z (Sum.inr 1) ω}
 

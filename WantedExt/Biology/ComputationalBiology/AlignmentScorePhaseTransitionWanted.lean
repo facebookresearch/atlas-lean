@@ -14,20 +14,22 @@ alphabet, all independent and identically distributed. An alignment of two words
 their letters in order; its score is the number of matched equal letters, minus `μ` times the
 number of matched unequal letters, minus `δ` times the number of letters left unmatched
 (deleted). `S(I, J)` is the best score of an alignment of `I` and `J`; `S_t = S(A₁…A_t, B₁…B_t)`
-is the global score and `M_n` the best score over all pairs of contiguous regions of `A₁…A_n` and
-`B₁…B_n` (p.201). By superadditivity `E S_t / t` converges to `a(μ, δ) = sup_t E S_t / t`, and
-`S_t / t → a(μ, δ)` almost surely. With `r(q) = lim -(1/k) log P(S_k ≥ q k) = inf_k -(1/k) log
-P(S_k ≥ q k)` (equation (7)) and `b = max_{q ≥ 0} q / r(q)` (equation (8)):
+is the global score and `M_n` the best score over all pairs of nonempty contiguous regions of
+`A₁…A_n` and `B₁…B_n` (p.201; equations (1)–(4), pp. 203–204). By superadditivity `E S_t / t`
+converges to `a(μ, δ) = sup_t E S_t / t` (equation (6)), and `S_t / t → a(μ, δ)` almost surely.
+With `r(q) = lim -(1/k) log P(S_k ≥ q k) = inf_k -(1/k) log P(S_k ≥ q k)` (equation (7)) and
+`b = max_{q ≥ 0} q / r(q)` (equation (8)):
 
 * Lemma 3: if `a(μ, δ) > 0` then `M_n / n → a(μ, δ)` and `S_n / n → a(μ, δ)` in probability;
 * Lemma 2: if `a(μ, δ) < 0` then `P((1 - ε) b < M_n / log n < (2 + ε) b) → 1` for every `ε > 0`;
-* Theorem 2: for `q > a(μ, δ)`, `r(q) > 0`.
+* Theorem 2: for every `q > a(μ, δ)`, whatever the sign of `a(μ, δ)`, `r(q) > 0`.
 
 Theorem 1 (a phase transition between linear growth for small penalties and logarithmic growth for
 large ones) is the combination of these lemmas, as the paper says. Here the penalties are finite,
 `0 ≤ μ, δ < ∞`; the paper also allows `∞` (forbidding mismatches or deletions). `r(q)` is used
 for `q ≤ 1`: for `q > 1`, `P(S_k ≥ q k) = 0` and `r(q) = ∞`, which contributes `0` to `b`, and for
-`0 ≤ q ≤ 1` the probability is at least `P(A₁ = B₁) ^ k > 0`. Not recorded here: Lemma 1 (the set
+every `q ≤ 1` the probability is at least `P(A₁ = B₁) ^ k > 0`, since `S_k = k ≥ q k` when all
+`k` letter pairs `(A_i, B_i)` agree. Not recorded here: Lemma 1 (the set
 `{a = 0}` "defines a line" separating `{a < 0}` from `{a > 0}`), whose notion of line the paper
 does not make precise, and the extensions to general scoring and Markov letters. Logarithms are
 natural. As in `LongestMatchShiftsWanted`, letters are indexed from `1`, and the shared
@@ -35,8 +37,9 @@ natural. As in `LongestMatchShiftsWanted`, letters are indexed from `1`, and the
 
 Sources: R. Arratia and M. S. Waterman, "A phase transition for the score in matching random
 sequences allowing deletions", Annals of Applied Probability 4 (1994) 200–225,
-doi:10.1214/aoap/1177005208, pp. 201–210, equations (7)–(9), (14), Lemmas 2 and 3, Theorems 1 and
-2.
+doi:10.1214/aoap/1177005208, pp. 201–210: Theorem 1 (p.202), equations (1)–(4) and (6)
+(pp. 203–204), equation (7) (p.205), equations (8) and (9) and Lemma 2 (p.206), Lemma 3 and
+equation (14) (p.209), and Theorem 2 (p.210).
 -/
 module
 
@@ -83,13 +86,17 @@ noncomputable def optScore (μ δ : ℝ) (I J : List α) : ℝ :=
 def window (X : ℕ → α) (i len : ℕ) : List α :=
   (List.range len).map fun k => X (i + 1 + k)
 
-/-- **Local score.** `M_n`, the best optimal score over pairs of contiguous regions
-`X_{i+1} … X_{i+l}` and `Y_{j+1} … Y_{j+l'}` of the first `n` letters (`i + l ≤ n`,
-`j + l' ≤ n`). `Cslib.Algorithms.Lean.localScore` is the integer-valued counterpart, the largest
-`nwScore` over pairs of infixes. -/
+/-- **Local score.** `M_n`, the best optimal score over pairs of nonempty contiguous regions
+`X_{i+1} … X_{i+l}` and `Y_{j+1} … Y_{j+l'}` of the first `n` letters: `1 ≤ l`, `i + l ≤ n`,
+`1 ≤ l'` and `j + l' ≤ n`, as in equations (1)–(2) (pp. 203–204, `1 ≤ g + 1 ≤ g + i ≤ n` and
+`1 ≤ h + 1 ≤ h + j ≤ n`). The paper defines `M_n` for `n ≥ 1`; for `n = 0` there is no such pair
+and `M_0` is `sSup ∅ = 0`, Lean's value for an empty supremum. The theorems below are limits as
+`n → ∞`, which that value does not affect. `Cslib.Algorithms.Lean.localScore` is the
+integer-valued counterpart over pairs of infixes, but it admits empty infixes, so it is never
+below `0`, the score of two empty words. -/
 noncomputable def localScore (μ δ : ℝ) (X Y : ℕ → α) (n : ℕ) : ℝ :=
   sSup ((fun c : ℕ × ℕ × ℕ × ℕ => optScore μ δ (window X c.1 c.2.1) (window Y c.2.2.1 c.2.2.2)) ''
-    {c | c.1 + c.2.1 ≤ n ∧ c.2.2.1 + c.2.2.2 ≤ n})
+    {c | 0 < c.2.1 ∧ c.1 + c.2.1 ≤ n ∧ 0 < c.2.2.2 ∧ c.2.2.1 + c.2.2.2 ≤ n})
 
 end Score
 
@@ -109,8 +116,10 @@ noncomputable def growthConst (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ �
   ⨆ t : ℕ, (∫ ω, globalScore μ δ Z (t + 1) ω ∂P) / (t + 1)
 
 /-- **Rate function.** `r(q) = inf_{k ≥ 1} -(1/k) log P(S_k ≥ q k)` (equation (7)), used for
-`0 ≤ q ≤ 1`. For i.i.d. letters from a countable alphabet with measurable singletons, under a
-probability measure, every probability in it is then at least `P(A₁ = B₁) ^ k > 0`. For `q > 1`
+`q ≤ 1`, of either sign, with `P(S_k ≥ q k)` read as `P.real` of the set of outcomes where
+`S_k ≥ q k`. For i.i.d. letters from a countable alphabet with measurable singletons, under a
+probability measure, these sets are events, and every probability in it is at least
+`P(A₁ = B₁) ^ k > 0`: when all `k` letter pairs `(A_i, B_i)` agree, `S_k = k ≥ q k`. For `q > 1`
 and `μ, δ ≥ 0` they vanish (`S_k ≤ k`), and `Real.log 0 = 0` makes `rate` `0` there instead of the
 source's `∞`. -/
 noncomputable def rate (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (q : ℝ) : ℝ :=
@@ -128,7 +137,7 @@ i.i.d. letters from a countable alphabet with measurable singletons, under a pro
 and finite penalties `0 ≤ μ`, `0 ≤ δ`, `E S_t / t → a(μ, δ)` and `S_t / t → a(μ, δ)` almost
 surely.
 
-Source: Arratia and Waterman (1994), p.201. -/
+Source: Arratia and Waterman (1994), p.201 and equation (6) (p.204). -/
 public theorem_wanted tendsto_globalScore_div [Countable α] [MeasurableSingletonClass α]
     (P : Measure Ω) [IsProbabilityMeasure P] (Z : ℕ ⊕ ℕ → Ω → α) (hZ : IIDLetters P Z)
     (μ δ : ℝ) (hμ : 0 ≤ μ) (hδ : 0 ≤ δ) :
@@ -142,7 +151,7 @@ alphabet with measurable singletons, under a probability measure, and finite pen
 `0 ≤ μ`, `0 ≤ δ`, if `a(μ, δ) > 0` then `M_n / n → a(μ, δ)` and `S_n / n → a(μ, δ)` in
 probability.
 
-Source: Arratia and Waterman (1994), Lemma 3 and equation (14). -/
+Source: Arratia and Waterman (1994), Lemma 3 and equation (14) (p.209). -/
 public theorem_wanted tendstoInMeasure_localScore_div [Countable α] [MeasurableSingletonClass α]
     (P : Measure Ω) [IsProbabilityMeasure P] (Z : ℕ ⊕ ℕ → Ω → α) (hZ : IIDLetters P Z)
     (μ δ : ℝ) (hμ : 0 ≤ μ) (hδ : 0 ≤ δ) (ha : 0 < growthConst P μ δ Z) :
@@ -156,7 +165,7 @@ countable alphabet with measurable singletons, under a probability measure, and 
 `0 ≤ μ`, `0 ≤ δ`, if `a(μ, δ) < 0` then for every `ε > 0`,
 `P((1 - ε) b < M_n / log n < (2 + ε) b) → 1`, where `b = max_{q ≥ 0} q / r(q)`.
 
-Source: Arratia and Waterman (1994), Lemma 2 and equation (9). -/
+Source: Arratia and Waterman (1994), Lemma 2 and equation (9) (p.206). -/
 public theorem_wanted tendsto_prob_localScore_log_window [Countable α]
     [MeasurableSingletonClass α] (P : Measure Ω) [IsProbabilityMeasure P]
     (Z : ℕ ⊕ ℕ → Ω → α) (hZ : IIDLetters P Z) (μ δ : ℝ) (hμ : 0 ≤ μ) (hδ : 0 ≤ δ)
@@ -166,13 +175,16 @@ public theorem_wanted tendsto_prob_localScore_log_window [Countable α]
 
 /-- **Large-deviation rate** (Arratia and Waterman 1994, Theorem 2 and equation (7)): for i.i.d.
 letters from a countable alphabet with measurable singletons, under a probability measure, and
-finite penalties `0 ≤ μ`, `0 ≤ δ`, for every `q` with `a(μ, δ) < q ≤ 1` and `0 ≤ q`,
-`-(1/k) log P(S_k ≥ q k)` converges to `r(q)` and `r(q) > 0`.
+finite penalties `0 ≤ μ`, `0 ≤ δ`, for every `q` with `a(μ, δ) < q ≤ 1`, of either sign,
+`-(1/k) log P(S_k ≥ q k)` converges to `r(q)` and `r(q) > 0`. Theorem 2 holds whatever the sign of
+`a(μ, δ)`, so when `a(μ, δ) < 0` this covers `a(μ, δ) < q < 0` as well as the thresholds
+`0 ≤ q ≤ 1` that Lemma 2 uses. The cutoff `q ≤ 1` only leaves out `q > 1`, where
+`P(S_k ≥ q k) = 0` and `r(q) = ∞`.
 
-Source: Arratia and Waterman (1994), Theorem 2 and equation (7). -/
+Source: Arratia and Waterman (1994), Theorem 2 (p.210) and equation (7) (p.205). -/
 public theorem_wanted rate_pos [Countable α] [MeasurableSingletonClass α] (P : Measure Ω)
     [IsProbabilityMeasure P] (Z : ℕ ⊕ ℕ → Ω → α) (hZ : IIDLetters P Z) (μ δ : ℝ)
-    (hμ : 0 ≤ μ) (hδ : 0 ≤ δ) (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1)
+    (hμ : 0 ≤ μ) (hδ : 0 ≤ δ) (q : ℝ) (hq₁ : q ≤ 1)
     (hq : growthConst P μ δ Z < q) :
     Tendsto (fun k : ℕ => -Real.log (P.real {ω | q * (k + 1) ≤ globalScore μ δ Z (k + 1) ω}) /
         (k + 1)) atTop (𝓝 (rate P μ δ Z q)) ∧ 0 < rate P μ δ Z q

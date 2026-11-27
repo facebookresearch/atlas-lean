@@ -28,10 +28,12 @@ and follows from the finite-dimensional bound (2) for a partition of `I` into `d
 Lemma 1 bounds the solution of the Stein equation: for `h : ℕ → [0, 1]` and
 `f = S(h - E h(Z))`, `‖Δ f‖ ≤ (1 - e^{-λ})/λ` and `‖f‖ ≤ 1 ∧ 1.4 λ^{-1/2}`.
 
-Here `I` is nonempty and countable (`W` is a countable sum of indicators, a random element of
-`ℕ∞` that is finite almost surely since `λ < ∞`; its law on `ℕ` is taken as the law of
-`W.toNat`, where `ENat.toNat` sends `⊤` to `0`, a null event here, and likewise for the block sums
-`W_j`).
+Here `I` is nonempty and countable. In the dependent Bernoulli setting of the theorems every
+`X_α` is measurable, so `W` is a countable sum of indicators, a random element of `ℕ∞` that is
+finite almost surely since `λ < ∞`; its law on `ℕ` is taken as the law of `W.toNat`, where
+`ENat.toNat` sends `⊤` to `0`, a null event here, and likewise for the block sums `W_j`. The
+definitions themselves are raw formulas, read as laws and probabilities only under these
+measurability hypotheses.
 The coefficients `b₁, b₂, b₃, b₃'` are taken in `[0, ∞]`, so infinite sums are allowed, and the
 total-variation norm `‖μ - ν‖` is Mathlib's `MeasureTheory.tvDist`, which for probability
 measures is twice the largest difference over measurable sets
@@ -138,7 +140,9 @@ structure BernoulliSetting (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Se
   /-- `α ∈ B_α`. -/
   mem : ∀ a, a ∈ B a
 
-/-- `p_α = E X_α`. -/
+/-- `p_α = E X_α`, as the lower Lebesgue integral `∫⁻ X_α ∂P`. It is the expectation of `X_α`,
+which is `P(X_α = 1)`, when `X_α` is measurable with values in `{0, 1}`, as in the dependent
+Bernoulli setting. -/
 noncomputable def pr (P : Measure Ω) (X : I → Ω → ℕ) (a : I) : ℝ≥0∞ :=
   ∫⁻ ω, (X a ω : ℝ≥0∞) ∂P
 
@@ -147,13 +151,17 @@ when the sum is infinite. In the dependent Bernoulli setting the sum is finite. 
 noncomputable def lam (P : Measure Ω) (X : I → Ω → ℕ) : ℝ :=
   (∑' a, pr P X a).toReal
 
-/-- `W = ∑_α X_α`, a random element of `ℕ∞`. -/
+/-- `W = ∑_α X_α`, pointwise, as a function `Ω → ℕ∞`. It is a random element of `ℕ∞` when it is
+measurable, for example when every `X_α` is, as in the dependent Bernoulli setting. -/
 noncomputable def W (X : I → Ω → ℕ) (ω : Ω) : ℕ∞ :=
   ∑' a, (X a ω : ℕ∞)
 
-/-- The law on `ℕ` of `W.toNat`, the image of `W` under `ENat.toNat`, which sends `⊤` to `0`.
-In the dependent Bernoulli setting `λ = E W < ∞`, so `W < ⊤` almost surely and this is the law of
-`W`; for arbitrary `P` and `X` it is only the law of `W.toNat`. -/
+/-- The pushforward `P.map fun ω => (W X ω).toNat`, where `ENat.toNat` sends `⊤` to `0`. When
+`W.toNat` is almost everywhere measurable it is the law on `ℕ` of `W.toNat`. In the dependent
+Bernoulli setting every `X_α` is measurable and `λ = E W < ∞`, so `W < ⊤` almost surely and
+this is the law of `W`. Without that measurability it is not a pushforward law: Mathlib's
+`Measure.map` of a map that is not almost everywhere measurable is a Dirac mass at an arbitrary
+point. -/
 noncomputable def lawWToNat (P : Measure Ω) (X : I → Ω → ℕ) : Measure ℕ :=
   P.map fun ω => (W X ω).toNat
 
@@ -161,7 +169,9 @@ noncomputable def lawWToNat (P : Measure Ω) (X : I → Ω → ℕ) : Measure �
 noncomputable def b₁ (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Set I) : ℝ≥0∞ :=
   ∑' a, ∑' b : B a, pr P X a * pr P X b
 
-/-- `b₂ = ∑_α ∑_{β ∈ B_α, β ≠ α} E(X_α X_β)`. -/
+/-- `b₂ = ∑_α ∑_{β ∈ B_α, β ≠ α} E(X_α X_β)`, each term the lower Lebesgue integral of
+`X_α X_β`, which is its expectation when the `X_α` are measurable, as in the dependent Bernoulli
+setting. -/
 noncomputable def b₂ (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Set I) : ℝ≥0∞ :=
   ∑' a, ∑' b : (B a \ {a} : Set I), ∫⁻ ω, (X a ω * X b ω : ℝ≥0∞) ∂P
 
