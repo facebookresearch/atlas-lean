@@ -23,6 +23,8 @@ import Mathlib.Tactic.Linarith
 
 We bound the coefficients of the generating function by counting pairs on a natural-number
 antidiagonal. A finite geometric sum gives a double-remainder formula for the gcd in base five.
+The same argument gives the floor-division and double-remainder gcd terms in bases two, three and
+four.
 -/
 
 namespace MetaMathlibExt
@@ -281,6 +283,354 @@ public theorem gcd_eq_neg_emod_emod_five_sub_two (a b : ℕ) (ha : 1 ≤ a) (hb 
   change _ = (-q ^ (a * b + a + b)) % D % q - 2
   rw [hfirst, hres.eq, Int.emod_eq_of_lt (by positivity) hsmall]
   omega
+
+
+namespace gcd_arithmetic_terms_small_bases
+
+open gcd_eq_neg_emod_emod_five_sub_two
+
+-- This adapts the proof of `gcd_eq_neg_emod_emod_five_sub_two` from base five to any base `c`
+-- with `2 * (b + 1) < c ^ (a * b)`.
+private theorem emod_of_bound (c : ℤ) (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (hbound : 2 * ((b : ℤ) + 1) < c ^ (a * b)) :
+    (Nat.gcd a b : ℤ) =
+      (-c ^ (a * b * (a * b + a + b))) %
+          ((c ^ (a ^ 2 * b) - 1) * (c ^ (a * b ^ 2) - 1)) %
+        c ^ (a * b) - 2 := by
+  let q := c ^ (a * b)
+  have hq : 2 * (b + 1 : ℤ) < q := hbound
+  let D := (q ^ a - 1) * (q ^ b - 1)
+  let R := q ^ b + (q ^ a - 1) * reducedSum q a b
+  have hnum := numerator_modEq q a b
+  have ⟨hpos, hlt⟩ := remainder_bounds ha hb hq
+  have hfirst : (-q ^ (a * b + a + b)) % D = D - R := by
+    have hneg : -q ^ (a * b + a + b) ≡ D - R [ZMOD D] := by
+      rw [sub_eq_add_neg, Int.modEq_modulus_add_iff]
+      exact hnum.neg
+    rw [hneg.eq, Int.emod_eq_of_lt (by dsimp [D, R]; omega) (by dsimp [D, R]; omega)]
+  have hA : q ^ a ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hB : q ^ b ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hS := reducedSum_modEq q a b hb
+  have hres : D - R ≡ (a.gcd b : ℤ) + 2 [ZMOD q] := by
+    have h := ((hA.sub_right 1).mul (hB.sub_right 1)).sub
+      (hB.add ((hA.sub_right 1).mul hS))
+    convert h using 1
+    ring
+  have hg := Nat.gcd_le_right a hb
+  have hsmall : (a.gcd b : ℤ) + 2 < q := by omega
+  have hpowA : a ^ 2 * b = (a * b) * a := by ring
+  have hpowB : a * b ^ 2 = (a * b) * b := by ring
+  have hpowE : a * b * (a * b + a + b) = (a * b) * (a * b + a + b) := by ring
+  rw [hpowA, hpowB, hpowE, pow_mul c (a * b) a, pow_mul c (a * b) b,
+    pow_mul c (a * b) (a * b + a + b)]
+  change _ = (-q ^ (a * b + a + b)) % D % q - 2
+  rw [hfirst, hres.eq, Int.emod_eq_of_lt (by positivity) hsmall]
+  omega
+
+-- The same argument, with the quotient in place of the negated remainder.
+private theorem floor_of_bound (c : ℤ) (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (hbound : 2 * ((b : ℤ) + 1) < c ^ (a * b)) :
+    (Nat.gcd a b : ℤ) =
+      c ^ (a * b * (a * b + a + b)) / ((c ^ (a ^ 2 * b) - 1) * (c ^ (a * b ^ 2) - 1)) %
+        c ^ (a * b) - 1 := by
+  let q := c ^ (a * b)
+  have hq : 2 * (b + 1 : ℤ) < q := hbound
+  let N := q ^ (a * b + a + b)
+  let D := (q ^ a - 1) * (q ^ b - 1)
+  let S := reducedSum q a b
+  let R := q ^ b + (q ^ a - 1) * S
+  let Q := N / D
+  have hnum := numerator_modEq q a b
+  have ⟨hpos, hlt⟩ := remainder_bounds ha hb hq
+  have hNmod : N % D = R := by
+    have heq : N % D = R % D := by
+      have h : N ≡ R [ZMOD D] := hnum
+      exact h.eq
+    rw [heq, Int.emod_eq_of_lt (by dsimp [R, D, S]; omega) (by dsimp [R, D, S]; omega)]
+  have hEq : N = D * Q + R := by
+    rw [← hNmod]
+    exact (Int.mul_ediv_add_emod _ _).symm
+  have hA : q ^ a ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hB : q ^ b ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hS : S ≡ (a.gcd b : ℤ) + 1 [ZMOD q] := reducedSum_modEq q a b hb
+  have hN0 : N ≡ 0 [ZMOD q] :=
+    Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by dsimp [N]; omega))
+  have hD1 : D ≡ 1 [ZMOD q] := by
+    have h := (hA.sub_right 1).mul (hB.sub_right 1)
+    convert h using 1
+    ring
+  have hR : R ≡ -(S) [ZMOD q] := by
+    have h := hB.add ((hA.sub_right 1).mul (Int.ModEq.refl S))
+    convert h using 1
+    ring
+  have hMod : D * Q + R ≡ (1 : ℤ) * Q + (-(S)) [ZMOD q] := (hD1.mul_right Q).add hR
+  have hEqMod : N ≡ D * Q + R [ZMOD q] := by rw [hEq]
+  have h0 : D * Q + R ≡ 0 [ZMOD q] := hEqMod.symm.trans hN0
+  have h1 : (1 : ℤ) * Q + (-(S)) ≡ 0 [ZMOD q] := hMod.symm.trans h0
+  have h2 : Q - S ≡ 0 [ZMOD q] := by
+    convert h1 using 1
+    ring
+  have hQS : Q ≡ S [ZMOD q] := by
+    have h := h2.add_right S
+    simpa using h
+  have hQ : Q ≡ (a.gcd b : ℤ) + 1 [ZMOD q] := hQS.trans hS
+  have hg := Nat.gcd_le_right a hb
+  have hsmall : (a.gcd b : ℤ) + 1 < q := by omega
+  have hQmod : Q % q = (a.gcd b : ℤ) + 1 := by
+    rw [hQ.eq, Int.emod_eq_of_lt (by positivity) hsmall]
+  have hpowA : a ^ 2 * b = (a * b) * a := by ring
+  have hpowB : a * b ^ 2 = (a * b) * b := by ring
+  have hpowE : a * b * (a * b + a + b) = (a * b) * (a * b + a + b) := by ring
+  rw [hpowA, hpowB, hpowE, pow_mul c (a * b) a, pow_mul c (a * b) b,
+    pow_mul c (a * b) (a * b + a + b)]
+  change _ = Q % q - 1
+  omega
+
+private theorem pow_bound_two_mul (k : ℕ) (hk : 2 ≤ k) :
+    2 * ((k : ℤ) + 1) < (2 : ℤ) ^ (2 * k) := by
+  induction k, hk using Nat.le_induction with
+  | base => norm_num
+  | succ n hn ih =>
+    have hpow : (2 : ℤ) ^ (2 * (n + 1)) = 4 * (2 : ℤ) ^ (2 * n) := by
+      rw [show 2 * (n + 1) = 2 * n + 2 by ring, pow_add]
+      norm_num
+      ring
+    rw [hpow]
+    push_cast
+    have hn' : (2 : ℤ) ≤ (n : ℤ) := by exact_mod_cast hn
+    linarith
+
+private theorem pow_bound_four_lt (b : ℕ) (hb : 3 ≤ b) : (4 : ℤ) < (2 : ℤ) ^ b := by
+  induction b, hb using Nat.le_induction with
+  | base => norm_num
+  | succ n hn ih =>
+    have hpow : (2 : ℤ) ^ (n + 1) = 2 * (2 : ℤ) ^ n := by
+      rw [pow_add]
+      norm_num
+      ring
+    rw [hpow]
+    have hpos : (0 : ℤ) < (2 : ℤ) ^ n := by positivity
+    linarith
+
+private theorem bound_or_base2 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (h11 : (a, b) ≠ (1, 1)) (h12 : (a, b) ≠ (1, 2)) (h21 : (a, b) ≠ (2, 1)) :
+    2 * ((a : ℤ) + 1) < (2 : ℤ) ^ (a * b) ∨
+      2 * ((b : ℤ) + 1) < (2 : ℤ) ^ (a * b) := by
+  by_cases hle : a ≤ b
+  · left
+    by_cases ha1 : a = 1
+    · subst ha1
+      have hb_ne1 : b ≠ 1 := by simpa using h11
+      have hb_ne2 : b ≠ 2 := by simpa using h12
+      have hb3 : 3 ≤ b := by omega
+      have h4 := pow_bound_four_lt b hb3
+      simpa using h4
+    · have ha2 : 2 ≤ a := by omega
+      have hb2 : 2 ≤ b := le_trans ha2 hle
+      have hab_ge : 2 * a ≤ a * b := by
+        rw [mul_comm 2 a]
+        gcongr
+      have hpow_ge : (2 : ℤ) ^ (2 * a) ≤ (2 : ℤ) ^ (a * b) :=
+        pow_le_pow_right₀ (by norm_num) hab_ge
+      exact lt_of_lt_of_le (pow_bound_two_mul a ha2) hpow_ge
+  · right
+    by_cases hb1 : b = 1
+    · subst hb1
+      have ha_ne1 : a ≠ 1 := by simpa using h11
+      have ha_ne2 : a ≠ 2 := by simpa using h21
+      have ha3 : 3 ≤ a := by omega
+      have h4 := pow_bound_four_lt a ha3
+      simpa using h4
+    · have hb2 : 2 ≤ b := by omega
+      have ha2 : 2 ≤ a := by omega
+      have hab_ge : 2 * b ≤ a * b := by gcongr
+      have hpow_ge : (2 : ℤ) ^ (2 * b) ≤ (2 : ℤ) ^ (a * b) :=
+        pow_le_pow_right₀ (by norm_num) hab_ge
+      exact lt_of_lt_of_le (pow_bound_two_mul b hb2) hpow_ge
+
+private theorem bound_or_base_ge3 (c : ℤ) (hc : 3 ≤ c) (a b : ℕ) (ha : 1 ≤ a)
+    (hb : 1 ≤ b) (h11 : (a, b) ≠ (1, 1)) :
+    2 * ((a : ℤ) + 1) < c ^ (a * b) ∨ 2 * ((b : ℤ) + 1) < c ^ (a * b) := by
+  by_cases hle : a ≤ b
+  · left
+    by_cases ha1 : a = 1
+    · subst ha1
+      have hb_ne : b ≠ 1 := by simpa using h11
+      have hb2 : 2 ≤ b := by omega
+      have h9 : (9 : ℤ) ≤ (3 : ℤ) ^ b := by
+        have h : (3 : ℤ) ^ 2 ≤ (3 : ℤ) ^ b := pow_le_pow_right₀ (by norm_num) hb2
+        norm_num at h
+        exact h
+      have hcb : (3 : ℤ) ^ b ≤ c ^ b := pow_le_pow_left₀ (by norm_num) hc b
+      have hab : 1 * b = b := one_mul b
+      rw [hab]
+      norm_num
+      linarith
+    · have ha2 : 2 ≤ a := by omega
+      have hb2 : 2 ≤ b := le_trans ha2 hle
+      have hab_ge : 2 * a ≤ a * b := by
+        rw [mul_comm 2 a]
+        gcongr
+      have h2ge : (2 : ℤ) ^ (2 * a) ≤ (2 : ℤ) ^ (a * b) :=
+        pow_le_pow_right₀ (by norm_num) hab_ge
+      have h2c : (2 : ℤ) ≤ c := by omega
+      have hcb : (2 : ℤ) ^ (a * b) ≤ c ^ (a * b) :=
+        pow_le_pow_left₀ (by norm_num) h2c _
+      exact lt_of_lt_of_le (pow_bound_two_mul a ha2) (le_trans h2ge hcb)
+  · right
+    by_cases hb1 : b = 1
+    · subst hb1
+      have ha_ne : a ≠ 1 := by simpa using h11
+      have ha2 : 2 ≤ a := by omega
+      have h9 : (9 : ℤ) ≤ (3 : ℤ) ^ a := by
+        have h : (3 : ℤ) ^ 2 ≤ (3 : ℤ) ^ a := pow_le_pow_right₀ (by norm_num) ha2
+        norm_num at h
+        exact h
+      have hca : (3 : ℤ) ^ a ≤ c ^ a := pow_le_pow_left₀ (by norm_num) hc a
+      have hab : a * 1 = a := mul_one a
+      rw [hab]
+      norm_num
+      linarith
+    · have hb2 : 2 ≤ b := by omega
+      have ha2 : 2 ≤ a := by omega
+      have hab_ge : 2 * b ≤ a * b := by gcongr
+      have h2ge : (2 : ℤ) ^ (2 * b) ≤ (2 : ℤ) ^ (a * b) :=
+        pow_le_pow_right₀ (by norm_num) hab_ge
+      have h2c : (2 : ℤ) ≤ c := by omega
+      have hcb : (2 : ℤ) ^ (a * b) ≤ c ^ (a * b) :=
+        pow_le_pow_left₀ (by norm_num) h2c _
+      exact lt_of_lt_of_le (pow_bound_two_mul b hb2) (le_trans h2ge hcb)
+
+private theorem floor_symm (c : ℤ) (a b : ℕ) :
+    ((Nat.gcd a b : ℤ) =
+        c ^ (a * b * (a * b + a + b)) / ((c ^ (a ^ 2 * b) - 1) * (c ^ (a * b ^ 2) - 1)) %
+            c ^ (a * b) - 1) ↔
+      ((Nat.gcd b a : ℤ) =
+        c ^ (b * a * (b * a + b + a)) / ((c ^ (b ^ 2 * a) - 1) * (c ^ (b * a ^ 2) - 1)) %
+            c ^ (b * a) - 1) := by
+  have hgcd : (Nat.gcd a b : ℤ) = (Nat.gcd b a : ℤ) := by rw [Nat.gcd_comm]
+  have hE : a * b * (a * b + a + b) = b * a * (b * a + b + a) := by ring
+  have hA : a ^ 2 * b = b * a ^ 2 := by ring
+  have hB : a * b ^ 2 = b ^ 2 * a := by ring
+  have hab : a * b = b * a := mul_comm _ _
+  rw [hgcd, hE, hA, hB, hab, mul_comm ((c ^ (b * a ^ 2) : ℤ) - 1) ((c ^ (b ^ 2 * a) : ℤ) - 1)]
+
+private theorem emod_symm (c : ℤ) (a b : ℕ) :
+    ((Nat.gcd a b : ℤ) =
+        (-c ^ (a * b * (a * b + a + b))) % ((c ^ (a ^ 2 * b) - 1) * (c ^ (a * b ^ 2) - 1)) %
+            c ^ (a * b) - 2) ↔
+      ((Nat.gcd b a : ℤ) =
+        (-c ^ (b * a * (b * a + b + a))) % ((c ^ (b ^ 2 * a) - 1) * (c ^ (b * a ^ 2) - 1)) %
+            c ^ (b * a) - 2) := by
+  have hgcd : (Nat.gcd a b : ℤ) = (Nat.gcd b a : ℤ) := by rw [Nat.gcd_comm]
+  have hE : a * b * (a * b + a + b) = b * a * (b * a + b + a) := by ring
+  have hA : a ^ 2 * b = b * a ^ 2 := by ring
+  have hB : a * b ^ 2 = b ^ 2 * a := by ring
+  have hab : a * b = b * a := mul_comm _ _
+  rw [hgcd, hE, hA, hB, hab, mul_comm ((c ^ (b * a ^ 2) : ℤ) - 1) ((c ^ (b ^ 2 * a) : ℤ) - 1)]
+
+end gcd_arithmetic_terms_small_bases
+
+open gcd_arithmetic_terms_small_bases in
+/-- **The gcd terms in bases $2$, $3$ and $4$.** Let $c \in \{2, 3, 4\}$, let $a, b \ge 1$ be
+natural numbers, and put $E = ab(ab + a + b)$ and $D = (c^{a^2 b} - 1)(c^{a b^2} - 1)$. Then the
+identity
+$$
+\gcd(a, b) = \left( \lfloor c^E / D \rfloor \bmod c^{ab} \right) - 1
+$$
+holds if and only if $(a, b) \ne (1, 1)$, and the identity
+$$
+\gcd(a, b) = \big( ((-c^E) \bmod D) \bmod c^{ab} \big) - 2
+$$
+holds if and only if $(a, b) \ne (1, 1)$. Both identities are read in the integers, where
+$x \bmod m$ is the remainder of $x$ in $\{0, \dots, m - 1\}$ for $m > 0$, also when $x < 0$.
+
+Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
+Common Divisor*, INTEGERS 26 (2026), Article A96, Corollary 2. -/
+public theorem gcd_arithmetic_terms_small_bases (c : ℤ) (hc : c = 2 ∨ c = 3 ∨ c = 4)
+    (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
+    ((Nat.gcd a b : ℤ) =
+        c ^ (a * b * (a * b + a + b)) / ((c ^ (a ^ 2 * b) - 1) * (c ^ (a * b ^ 2) - 1)) %
+            c ^ (a * b) - 1 ↔ (a, b) ≠ (1, 1)) ∧
+      ((Nat.gcd a b : ℤ) =
+        (-c ^ (a * b * (a * b + a + b))) % ((c ^ (a ^ 2 * b) - 1) * (c ^ (a * b ^ 2) - 1)) %
+            c ^ (a * b) - 2 ↔ (a, b) ≠ (1, 1)) := by
+  rcases hc with rfl | hc
+  · constructor
+    · constructor
+      · intro hEq hContra
+        have hpair : a = 1 ∧ b = 1 := by simpa using hContra
+        obtain ⟨rfl, rfl⟩ := hpair
+        norm_num at hEq
+      · intro hNe
+        by_cases h12 : (a, b) = (1, 2)
+        · have hpair : a = 1 ∧ b = 2 := by simpa using h12
+          obtain ⟨rfl, rfl⟩ := hpair
+          norm_num
+        · by_cases h21 : (a, b) = (2, 1)
+          · have hpair : a = 2 ∧ b = 1 := by simpa using h21
+            obtain ⟨rfl, rfl⟩ := hpair
+            norm_num
+          · have hbound := bound_or_base2 a b ha hb hNe h12 h21
+            rcases hbound with h | h
+            · have hbound' : 2 * ((a : ℤ) + 1) < (2 : ℤ) ^ (b * a) := by
+                rw [mul_comm b a]
+                exact h
+              have hEq' := floor_of_bound 2 b a hb ha hbound'
+              exact (floor_symm 2 a b).mpr hEq'
+            · exact floor_of_bound 2 a b ha hb h
+    · constructor
+      · intro hEq hContra
+        have hpair : a = 1 ∧ b = 1 := by simpa using hContra
+        obtain ⟨rfl, rfl⟩ := hpair
+        norm_num at hEq
+      · intro hNe
+        by_cases h12 : (a, b) = (1, 2)
+        · have hpair : a = 1 ∧ b = 2 := by simpa using h12
+          obtain ⟨rfl, rfl⟩ := hpair
+          norm_num
+        · by_cases h21 : (a, b) = (2, 1)
+          · have hpair : a = 2 ∧ b = 1 := by simpa using h21
+            obtain ⟨rfl, rfl⟩ := hpair
+            norm_num
+          · have hbound := bound_or_base2 a b ha hb hNe h12 h21
+            rcases hbound with h | h
+            · have hbound' : 2 * ((a : ℤ) + 1) < (2 : ℤ) ^ (b * a) := by
+                rw [mul_comm b a]
+                exact h
+              have hEq' := emod_of_bound 2 b a hb ha hbound'
+              exact (emod_symm 2 a b).mpr hEq'
+            · exact emod_of_bound 2 a b ha hb h
+  · have hc3 : 3 ≤ c := by omega
+    constructor
+    · constructor
+      · intro hEq hContra
+        have hpair : a = 1 ∧ b = 1 := by simpa using hContra
+        obtain ⟨rfl, rfl⟩ := hpair
+        rcases hc with rfl | rfl <;> norm_num at hEq
+      · intro hNe
+        have hbound := bound_or_base_ge3 c hc3 a b ha hb hNe
+        rcases hbound with h | h
+        · have hbound' : 2 * ((a : ℤ) + 1) < c ^ (b * a) := by
+            rw [mul_comm b a]
+            exact h
+          have hEq' := floor_of_bound c b a hb ha hbound'
+          exact (floor_symm c a b).mpr hEq'
+        · exact floor_of_bound c a b ha hb h
+    · constructor
+      · intro hEq hContra
+        have hpair : a = 1 ∧ b = 1 := by simpa using hContra
+        obtain ⟨rfl, rfl⟩ := hpair
+        rcases hc with rfl | rfl <;> norm_num at hEq
+      · intro hNe
+        have hbound := bound_or_base_ge3 c hc3 a b ha hb hNe
+        rcases hbound with h | h
+        · have hbound' : 2 * ((a : ℤ) + 1) < c ^ (b * a) := by
+            rw [mul_comm b a]
+            exact h
+          have hEq' := emod_of_bound c b a hb ha hbound'
+          exact (emod_symm c a b).mpr hEq'
+        · exact emod_of_bound c a b ha hb h
 
 end
 
