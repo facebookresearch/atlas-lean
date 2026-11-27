@@ -29,3 +29,4 @@ Items 2, 3, 4 are successively weaker, and item 1 implies item 2 because a one-w
 ## Sources
 
 - Shuichi Hirahara and Mikito Nanashima, "One-Way Functions and Zero Knowledge", STOC (2024), ECCC TR24-063 (Theorem 2.1; Section 3.2: Definitions 3.1 and 3.3, Lemmas 3.2 and 3.4; Section 5.4).
+- Minh-Huyen Nguyen, Shien Jin Ong and Salil Vadhan, "Statistical Zero-Knowledge Arguments for NP from Any One-Way Function", Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science (FOCS), 2006.

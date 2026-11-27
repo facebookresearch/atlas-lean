@@ -8,6 +8,9 @@ Each check is a sum-check over $\mu$ variables whose prover can be implemented i
 
 ## Depends on
 
+- [Polynomial interactive oracle proofs](polynomial-iop.md)
+- [Interactive arguments](../zero-knowledge-and-arguments/interactive-arguments.md)
+- [Knowledge soundness](../zero-knowledge-and-arguments/knowledge-soundness.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
 - [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
 
