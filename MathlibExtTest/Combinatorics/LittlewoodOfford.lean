@@ -16,6 +16,11 @@ import Mathlib.Tactic.NormNum
 
 open Finset MathlibExt.Combinatorics.ScottishBook179Wanted
 
+-- The binomial estimate at an even and an odd length: 10 * 252 ^ 2 ≤ 4 ^ 10 and 7 * 35 ^ 2 ≤ 4 ^ 7.
+example : 10 * Nat.choose 10 5 ^ 2 ≤ 4 ^ 10 := mul_choose_half_sq_le_four_pow 10
+
+example : 7 * Nat.choose 7 3 ^ 2 ≤ 4 ^ 7 := mul_choose_half_sq_le_four_pow 7
+
 -- Specialize the uniform constant to one negative coefficient and an arbitrary admissible shift.
 example : ∃ A : ℝ, ∀ c : ℝ, 1 ≤ |c| →
     ((univ.filter (fun ε : Fin 1 → Bool => |c + (if ε 0 then -1 else 1)| < 1)).card : ℝ)
