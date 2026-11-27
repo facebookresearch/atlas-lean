@@ -12,3 +12,4 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Prestige-biased cultural transmission](prestige-biased-cultural-transmission/README.md)
 - [Adaptive introgression with linked deleterious alleles](adaptive-introgression-with-linked-deleterious-alleles/README.md)
 - [Fitness-class dynamics with mutation](fitness-class-dynamics-with-mutation/README.md)
+- [Dynamical limits to adaptation](dynamical-limits-to-adaptation/README.md)
