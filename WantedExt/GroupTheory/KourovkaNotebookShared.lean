@@ -29,6 +29,7 @@ public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.GroupTheory.RegularWreathProduct
 public import Mathlib.GroupTheory.Solvable
 public import Mathlib.Order.CompletePartialOrder
+public import MathlibExt.GroupTheory.KourovkaCompositionFactor
 public import MathlibExt.GroupTheory.SigmaNilpotent
 public import MathlibExt.GroupTheory.SigmaSubnormal
 
@@ -49,14 +50,6 @@ central series of $G_{i+1}$ lies in $G_i$, that is, $G_{i+1} / G_i$ is nilpotent
 def FittingHeightLE (G : Type*) [Group G] (h : ℕ) : Prop :=
   ∃ s : ℕ → Subgroup G, s 0 = ⊥ ∧ s h = ⊤ ∧ ∀ i < h, (s i).Normal ∧ s i ≤ s (i + 1) ∧
     ∃ c : ℕ, (s (i + 1)).lowerCentralSeries c ≤ s i
-
-/-- **Composition factors via subnormal subgroups.** A group $S$ is a composition factor of a group
-$K$ if $S$ is simple and some subnormal subgroup $H$ of $K$ has a surjective homomorphism onto $S$.
-
-For finite $K$ this is the same as $S$ occurring as a factor of a composition series of $K$
-(refine the subnormal chain through the kernel). -/
-def IsCompositionFactor (S K : Type*) [Group S] [Group K] : Prop :=
-  IsSimpleGroup S ∧ ∃ H : Subgroup K, H.IsSubnormal ∧ ∃ f : H →* S, Function.Surjective f
 
 /-- **Conjugacy separable groups.** A group $G$ is conjugacy separable if any two elements
 $x, y \in G$ whose images are conjugate in every quotient $G / N$ by a normal subgroup $N$ of

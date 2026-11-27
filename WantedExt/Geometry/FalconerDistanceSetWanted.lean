@@ -9,15 +9,12 @@ LICENSE file in the root directory of this source tree.
 /-
 # Source requests for the Falconer distance threshold
 
-The implemented Euclidean model and elementary laws are upstream. These eight
-source-labelled propositions are private ProofWanted data, not assumed proofs.
-Source specifications are adapted from the retained C34a work by
-`/root/audit_c1a_final`; the supported split is local Codex work by
-`/root/finish_c32_saved`.
+The Euclidean model and the proved planar lower bound are in MathlibExt.
+The remaining source-labelled propositions adapt the C34a catalogue.
 -/
 module
 
-public import MathlibExt.Geometry.FalconerDistanceSet
+public import MathlibExt.Geometry.FalconerDistanceSetLowerBound
 public import Batteries.Util.ProofWanted
 
 @[expose] public section
@@ -95,16 +92,6 @@ Source: optimization catalogue C34a, GIOW (2018) upper row. -/
 def upperBound_GIOW2018 : Prop :=
   FalconerDistanceSet.planarDistanceThreshold ≤ (5 : ℝ≥0∞) / 4
 
-/-- **Statement of the lower bound $1$ for the planar distance threshold.** This is the
-proposition that the planar distance threshold, the infimum of all $s \in [0, 2]$ such that
-every compact set $E \subseteq \mathbb{R}^2$ of Hausdorff dimension strictly greater than $s$
-has a distance set $\{\|x - y\| : x, y \in E\}$ of positive one-dimensional Lebesgue measure,
-is at least $1$.
-
-Source: optimization catalogue C34a and GIOW's endpoint lattice examples, line 76. -/
-def lowerBound_Falconer1985 : Prop :=
-  (1 : ℝ≥0∞) ≤ FalconerDistanceSet.planarDistanceThreshold
-
 /-- **Falconer's distance set theorem.** For every integer $d \ge 2$ and every compact set
 $E \subseteq \mathbb{R}^d$ whose Hausdorff dimension is strictly greater than $(d+1)/2$, the
 distance set $\{\|x - y\| : x, y \in E\}$ has positive one-dimensional Lebesgue measure.
@@ -158,13 +145,5 @@ $\{|x - y| : x, y \in E\}$ of positive Lebesgue measure, is at most $5/4$.
 
 Source: optimization catalogue C34a, GIOW (2018) upper row. -/
 theorem_wanted upperBound_GIOW2018_holds : upperBound_GIOW2018
-
-/-- **Falconer's lower bound for the planar distance threshold.** The planar distance
-threshold, the infimum of all $s \in [0, 2]$ such that every compact set
-$E \subseteq \mathbb{R}^2$ of Hausdorff dimension strictly greater than $s$ has a distance set
-$\{\|x - y\| : x, y \in E\}$ of positive one-dimensional Lebesgue measure, is at least $1$.
-
-Source: optimization catalogue C34a and GIOW, arXiv:1808.09346v1, line 76. -/
-theorem_wanted lowerBound_Falconer1985_holds : lowerBound_Falconer1985
 
 end FalconerDistanceSetWanted

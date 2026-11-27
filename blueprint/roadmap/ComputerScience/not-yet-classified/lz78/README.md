@@ -1,0 +1,18 @@
+# LZ78
+
+- [LZ78 token](token.md)
+- [Next LZ78 phrase](next-aux.md)
+- [LZ78 phrases and tokens with fuel](parse-encode-aux.md)
+- [LZ78 decoding from a dictionary](decode-aux.md)
+- [LZ78 incremental parsing](parse.md)
+- [LZ78 encoding](encode.md)
+- [LZ78 decoding](decode.md)
+- [LZ78 decoding inverts encoding](decode-encode.md)
+- [LZ78 codec](encoding.md)
+- [LZ78 phrases concatenate to the input](flatten-parse.md)
+- [LZ78 phrases are nonempty](ne-nil-of-mem-parse.md)
+- [LZ78 phrases are distinct, except possibly the last](nodup-drop-last-parse.md)
+- [Proper prefixes of an LZ78 phrase are earlier phrases](prefix-mem-parse.md)
+- [One LZ78 token per phrase](encoding-encode-length.md)
+- [LZ78 token indices point backwards](fst-encode-le.md)
+- [Only the last LZ78 token can omit its symbol](is-some-snd-of-mem-drop-last-encode.md)

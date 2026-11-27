@@ -9,6 +9,7 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Abelian varieties are projective](abelian-varieties-are-projective.md)
 - [Flatness and étaleness criteria for homomorphisms of group schemes](flatness-and-etaleness-criteria-for-group-schemes.md)
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md)
+- [Quotient of an abelian variety by an abelian subvariety](quotient-by-an-abelian-subvariety.md)
 - [Representability of relative Picard functors](representability-of-picard-functors.md)
 - [Dual abelian variety](dual-abelian-variety.md)
 - [Dual abelian scheme](dual-abelian-scheme.md)
@@ -22,3 +23,5 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md)
 - [Deformations and p-divisible groups](deformations-and-p-divisible-groups/README.md)
 - [Moduli of abelian varieties and their compactifications](moduli-and-compactifications/README.md)
+- [Stable Faltings height](stable-faltings-height/README.md)
+- [Gaudron–Rémond isogeny estimate](gaudron-r-mond-isogeny-estimate/README.md)
