@@ -33,6 +33,10 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Unit cells and Bravais types](part-02/unit-cells-and-bravais-types/README.md)
 - [Squaring the square with distinct squares](part-02/squaring-the-square-distinct-squares.md)
 - [Sylvester–Gallai theorem](part-02/sylvester-gallai.md)
+- [Degenerate model angles and the real line](part-02/degenerate-model-angles-and-the-real-line/README.md)
+- [Derivatives of model trigonometry](part-02/derivatives-of-model-trigonometry/README.md)
+- [Euclidean affine spaces satisfy the curvature-0 four-point comparison](part-02/euclidean-affine-spaces-are-alexandrov-of-curvat/README.md)
+- [Four-point comparison for curvature bounded below](part-02/four-point-comparison-for-curvature-bounded-belo/README.md)
 
 ## [Acute triangulations of the cube to Integral heptagons in general position](part-03/README.md)
 

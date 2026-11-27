@@ -103,8 +103,8 @@ theorem eval_boolean_false (ρ : Nat → String) (b : Cslib.IMP.BExp)
   rw [eval_boolean]
   cases b.eval (project ρ s) <;> simp
 
-/-- Every canonical execution lifts from any target state with the right
-projection. Only the projected final state is prescribed. -/
+/-- Under an injective renaming, every canonical execution lifts from any target state
+with the right projection. Only the projected final state is prescribed. -/
 theorem lift_execution {ρ : Nat → String} (hρ : Function.Injective ρ)
     {c : Cslib.IMP.Cmd} {i f : Cslib.IMP.State}
     (h : Cslib.IMP.BigStep c i f) :
@@ -201,7 +201,8 @@ private theorem reflect_and_frame {ρ : Nat → String}
       exact ⟨.whileTrue ((eval_boolean ρ _ _).mp hb) h₁ h₂,
         fun x hx => (hf₂ x hx).trans (hf₁ x hx)⟩
 
-/-- Every execution of a translated command projects to canonical IMP. -/
+/-- Under an injective renaming, every execution of a translated command projects to
+canonical IMP. -/
 theorem reflect_execution {ρ : Nat → String} (hρ : Function.Injective ρ)
     {c : Cslib.IMP.Cmd} {s t : State} (h : BigStep (command ρ c) s t) :
     Cslib.IMP.BigStep c (project ρ s) (project ρ t) :=
@@ -214,7 +215,8 @@ theorem unmapped_preserved {ρ : Nat → String} (hρ : Function.Injective ρ)
     (x : String) (hx : ∀ n, x ≠ ρ n) : t x = s x :=
   (reflect_and_frame hρ h c rfl).2 x hx
 
-/-- Exact execution correspondence with existential target state completion. -/
+/-- Exact execution correspondence under an injective renaming, with existential target
+state completion. -/
 theorem execution_iff {ρ : Nat → String} (hρ : Function.Injective ρ)
     (c : Cslib.IMP.Cmd) (s : State) (f : Cslib.IMP.State) :
     Cslib.IMP.BigStep c (project ρ s) f ↔
@@ -225,8 +227,8 @@ theorem execution_iff {ρ : Nat → String} (hρ : Function.Injective ρ)
   · rintro ⟨t, ht, rfl⟩
     exact reflect_execution hρ ht
 
-/-- Canonical semantic partial-correctness triples hold for the translated
-program and projected assertions. This does not assert termination. -/
+/-- Under an injective renaming, canonical semantic partial-correctness triples hold for
+the translated program and projected assertions. This does not assert termination. -/
 theorem valid_to_hoare {ρ : Nat → String} (hρ : Function.Injective ρ)
     {P Q : Cslib.IMP.Assertion} {c : Cslib.IMP.Cmd}
     (h : Cslib.IMP.Valid P c Q) :
