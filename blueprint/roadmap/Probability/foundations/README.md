@@ -9,7 +9,6 @@ Probability measures and laws of random variables, expected value and the change
 - [Borel–Cantelli lemmas](borel-cantelli-lemmas/README.md)
 - [Kolmogorov's zero–one law](kolmogorov-s-zero-one-law/README.md)
 - [Hewitt–Savage zero–one law](hewitt-savage-zero-one-law/README.md)
-- [Probability mass functions: uniform distributions and coin fixing](probability-mass-functions-uniform-distributions/README.md)
 - [Kolmogorov's extension theorem for sequences](kolmogorov-extension-theorem-for-sequences/README.md)
 - [Kolmogorov extension theorem](kolmogorov-extension-theorem/README.md)
 - [Conditional expectation](conditional-expectation/README.md)

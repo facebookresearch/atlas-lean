@@ -18,7 +18,6 @@ Prediction from labelled data: least squares, ridge, lasso, logistic regression,
 - [Sufficient input subsets](sufficient-input-subsets/README.md)
 - [Matrix-aware optimizers](matrix-aware-optimizers/README.md)
 - [Effective ranks and benign overfitting](effective-ranks-and-benign-overfitting/README.md)
-- [Empirical neural tangent kernel](empirical-neural-tangent-kernel/README.md)
 - [Implicit regularization of SGD in linear models](implicit-regularization-of-sgd-in-linear-models/README.md)
 - [Finite-sample expressivity of ReLU networks](finite-sample-expressivity-of-relu-networks/README.md)
 - [Classification-calibrated losses](classification-calibrated-losses/README.md)
