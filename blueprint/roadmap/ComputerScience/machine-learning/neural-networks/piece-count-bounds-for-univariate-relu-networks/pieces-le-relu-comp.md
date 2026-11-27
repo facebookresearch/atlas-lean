@@ -1,4 +1,3 @@
 # ReLU after a piecewise affine function
 
-ReLU after a bounded-piece function: at most one new breakpoint per
-affine piece (the unique root of a nonconstant affine piece).
+If $h : \mathbb{R} \to \mathbb{R}$ has [at most $n$ affine pieces](pieces-le.md), then $x \mapsto \max(h(x), 0)$ has at most $2n$ affine pieces.

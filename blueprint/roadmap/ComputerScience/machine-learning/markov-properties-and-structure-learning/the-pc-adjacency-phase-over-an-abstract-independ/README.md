@@ -22,7 +22,6 @@
 
 ## Graph lemmas and faithfulness
 
-- [Adjacency in the skeleton of a network](skeleton-adj.md)
 - [Adjacent nodes are never d-separated](not-d-separated-of-adj.md)
 - [Faithful laws give Markov oracles](markov-oracle-2.md)
 - [Faithful laws give adjacency-faithful oracles](adjacency-faithful-2.md)

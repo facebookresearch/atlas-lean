@@ -14,7 +14,6 @@
 - [Latent parents of the reaching latents stay among them](mem-latents-into-of-edge-mem.md)
 - [Latents reaching the two sides of a split are disjoint](disjoint-latents-into-sdiff.md)
 - [Latents reaching a set split along a subset](latents-into-union-sdiff.md)
-- [Latent parents of a truncated set stay among the reaching latents](latent-parent-mem-latents-into.md)
 - [Q-factor as a truncated product over the reaching latents](q-factor-eq-sum-prod-latents-into.md)
 - [Q-factor of a split with no bidirected edge across it](q-factor-eq-mul-of-not-adj.md)
 - [The latents reaching a set grow with the set](latents-into-mono.md)

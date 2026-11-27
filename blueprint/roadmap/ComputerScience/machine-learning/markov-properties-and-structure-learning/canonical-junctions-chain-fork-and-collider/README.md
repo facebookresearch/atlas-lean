@@ -5,7 +5,6 @@
 - [Collider structure on three nodes](collider-pa.md)
 - [Chain junction](cond-indep-chain.md)
 - [Fork junction](cond-indep-fork.md)
-- [Fair coin](fair-coin.md)
 - [Collider network for Berkson's paradox](berkson-net.md)
 - [The collider event has probability three quarters](berkson-net-marginal-collider.md)
 - [The parents in the collider network are independent](berkson-net-cond-indep-parents.md)

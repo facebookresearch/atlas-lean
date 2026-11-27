@@ -1,4 +1,3 @@
 # Posterior argmax classifiers pick a MAP class
 
-A posterior argmax classifier is exactly a classifier that picks a MAP class at every
-observation of positive evidence (countable setting).
+Let the set $C$ of classes be countable and nonempty with measurable singletons, the observation space $\mathcal X$ countable with measurable singletons, $P$ a Markov kernel from $C$ to $\mathcal X$ and $\pi$ a finite measure on $C$, and write $P \circ \pi$ for the marginal measure on $\mathcal X$. A classifier $f : \mathcal X \to C$ is a [posterior argmax classifier](is-posterior-argmax.md) for $P$ and $\pi$ if and only if, for every observation $x$ with $(P \circ \pi)(\{x\}) \ne 0$, the class $f(x)$ is a maximum a posteriori class for $x$ under $P$ and $\pi$.

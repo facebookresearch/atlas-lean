@@ -1,6 +1,5 @@
 # Restricted Boltzmann machine conditionals
 
-- [Real value of a bit](bit.md)
 - [Score of a restricted Boltzmann machine](score.md)
 - [Logit of a hidden unit](hidden-logit.md)
 - [Logit of a visible unit](visible-logit.md)

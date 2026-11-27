@@ -16,7 +16,6 @@
 
 ## The parent-set structure of a network
 
-- [Parents in the structure of a network](mem-to-pa.md)
 - [The structure of a network is acyclic](is-acyclic-to-pa.md)
 - [Adjacency in the structure of a network](adjacent-to-pa-iff.md)
 

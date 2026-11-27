@@ -1,6 +1,5 @@
 # Logistic and softmax regression
 
-- [Indicator of a Boolean label](ind.md)
 - [Bernoulli distribution on the Booleans](bernoulli-dist.md)
 - [Log-loss of a score](log-loss.md)
 - [The log-loss is the Bernoulli negative log-likelihood](log-loss-eq-neg-log.md)
