@@ -19,6 +19,13 @@ can change its behaviour only by introducing trapped cast errors (adding an anno
 
 - [Cast insertion preserves precision](cast-insertion-preserves-precision.md)
 - [Simulation of more precise programs](simulation-of-more-precise-programs.md)
+- [Catch-up to a value on the left](catchup-to-value-on-the-left.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- A simulation result that preserves divergence: if $f_1 \sqsubseteq f_1'$ and $f_1$ reduces forever, then so does $f_1'$, ruling out infinitely many consecutive steps of $f_1$ matched by zero steps of $f_1'$ (proof prerequisite for the divergence clause of part 2 and the first clause of part 3; not yet stated, and the source's argument after Lemma 11 does not supply it)
 
 ## Sources
 

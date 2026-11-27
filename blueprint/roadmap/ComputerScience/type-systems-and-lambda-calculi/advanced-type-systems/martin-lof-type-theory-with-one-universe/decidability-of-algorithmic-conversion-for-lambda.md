@@ -27,4 +27,4 @@ This page becomes ready once:
 
 ## Sources
 
-- A. Abel, J. Öhman and A. Vezzosi, "Decidability of conversion for type theory in type theory", *Proceedings of the ACM on Programming Languages* 2(POPL), Article 23, 2018, <https://doi.org/10.1145/3158111>: Section 4.2 (context equality, before Lemma 4.1), Section 4.2, the definition of context equality, Lemmas 4.1–4.4 and Theorem 4.5 (decidability of algorithmic equality).
+- A. Abel, J. Öhman and A. Vezzosi, "Decidability of conversion for type theory in type theory", *Proceedings of the ACM on Programming Languages* 2(POPL), Article 23, 2018, <https://doi.org/10.1145/3158111>: Section 4.2, the definition of context equality, Lemmas 4.1–4.4 and Theorem 4.5 (decidability of algorithmic equality).
