@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.FermatPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprime
 public import MathlibExt.NumberTheory.StrongPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePart
+public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePartPowers
 public import MathlibExt.NumberTheory.StrongPseudoprimeZPowNeg
 public import MathlibExt.NumberTheory.PseudoprimeBasesFermatNumbersFermatNumberStrongPseudoprimeBasesSubgroup
 
@@ -106,25 +107,6 @@ public theorem_wanted hasDensity_zero_strongPseudoprime_bases_conditions_fail :
         (sInf ((fun p => (p - 1).factorization 2) '' (n.primeFactors : Set ℕ)) = 1 ∨
           n.primeFactors.card = 1) ∧
         ((∃ p : ℕ, p.Prime ∧ p ∣ n ∧ p % 4 = 3) ∨ IsPrimePow n))} 0
-
-/-- **Composite divisors of primitive parts without the intrinsic factor are strong pseudoprimes to
-every power of the base.** Let $b > 1$ and $m > 2$ be natural numbers, write $\Phi_j(b)$ for the
-value at $b$ of the $j$-th cyclotomic polynomial over $\mathbb{Z}$, and let $c > 1$ be a natural
-number that is not prime. If $c$ divides $\Phi_m(b) / \gcd(\Phi_m(b), m)$ or
-$\Phi_{2m}(b) / \gcd(\Phi_{2m}(b), m)$, then for every unit $u$ of $\mathbb{Z}/c\mathbb{Z}$ equal
-to the residue class of $b$ and every integer $t$, $c$ is a strong pseudoprime to the base $u^t$.
-
-These two quotients are the primitive parts of $b^m - 1$ and $b^m + 1$ with the intrinsic factor
-removed.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Corollary 4 (`integers-2024-A23-cor-4`). -/
-public theorem_wanted isStrongPseudoprime_zpow_of_dvd_primitivePart {b m c : ℕ} (hb : 1 < b)
-    (hm : 2 < m) (hc : 1 < c) (hcomp : ¬c.Prime) :
-    let Φ : ℕ → ℤ := fun j => (Polynomial.cyclotomic j ℤ).eval (b : ℤ)
-    ((c : ℤ) ∣ Φ m / (Int.gcd (Φ m) m : ℤ) ∨ (c : ℤ) ∣ Φ (2 * m) / (Int.gcd (Φ (2 * m)) m : ℤ)) →
-      ∀ u : (ZMod c)ˣ, (u : ZMod c) = b → ∀ t : ℤ,
-        IsStrongPseudoprime c ((u ^ t : (ZMod c)ˣ) : ZMod c)
 
 end
 
