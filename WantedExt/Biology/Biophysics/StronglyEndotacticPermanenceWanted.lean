@@ -47,7 +47,7 @@ reversibility and mass-action field are the shared definitions of
 `WantedExt.Biology.Biophysics.WeaklyReversiblePositiveSteadyStateWanted`.
 
 Sources: M. Gopalkrishnan, E. Miller, A. Shiu, "A geometric approach to the global attractor
-conjecture", SIAM J. Appl. Dyn. Syst. 13 (2014) 758–797, Definitions 3.1–3.11 and 4.1–4.2,
+conjecture", SIAM J. Appl. Dyn. Syst. 13 (2014) 758–797, Section 3, Definitions 4.1–4.2,
 Theorems 1.1 and 1.3 (arXiv:1305.5303).
 -/
 module
@@ -55,6 +55,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Dynamics.PolynomialNetworks.RealExponent
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Topology.Compactness.Compact
@@ -67,32 +68,33 @@ open MathlibExt.Biology.Dynamics
 
 variable {S ρ : Type*} [Fintype S] (N : RealExponentNetwork S ρ)
 
-/-- For finite species `S` (`[Fintype S]`), the pairing `⟨w, y⟩ = ∑_{s : S} w_s y_s`. -/
-def pair (w y : S → ℝ) : ℝ :=
-  ∑ s, w s * y s
-
-/-- Reaction `r` is `w`-essential: its reaction vector is not orthogonal to `w`. -/
+/-- For finite species `S` (`[Fintype S]`), reaction `r` is `w`-essential: its reaction vector
+is not orthogonal to `w`, that is, `⟨w, y' - y⟩ ≠ 0` for `r : y → y'`, where
+`⟨w, y⟩ = ∑_{s : S} w_s y_s` is the dot product. -/
 def IsEssential (w : S → ℝ) (r : ρ) : Prop :=
-  pair w (N.reactionVector r) ≠ 0
+  w ⬝ᵥ N.reactionVector r ≠ 0
 
-/-- The reactant of `r` lies in the `w`-support: it is `≤_w`-maximal among the reactants of
-`w`-essential reactions. -/
+/-- For finite species `S` (`[Fintype S]`), the reactant of `r` is `≤_w`-maximal among the
+reactants of `w`-essential reactions, where `y ≤_w y'` means `⟨w, y⟩ ≤ ⟨w, y'⟩` for the dot
+product `⟨w, y⟩ = ∑_{s : S} w_s y_s`. For a `w`-essential reaction `r` this says that its
+reactant lies in the `w`-support; the predicate itself does not require `r` to be
+`w`-essential. -/
 def InSupport (w : S → ℝ) (r : ρ) : Prop :=
-  ∀ r', IsEssential N w r' → pair w (N.src r') ≤ pair w (N.src r)
+  ∀ r', IsEssential N w r' → w ⬝ᵥ N.src r' ≤ w ⬝ᵥ N.src r
 
 /-- For finite species `S` (`[Fintype S]`), the network is endotactic: for every `w`, every
 `w`-essential reaction whose reactant lies in the `w`-support has `⟨w, y' - y⟩ < 0`, where
 `⟨w, y⟩ = ∑_{s : S} w_s y_s`. -/
 def IsEndotactic : Prop :=
-  ∀ w r, IsEssential N w r → InSupport N w r → pair w (N.reactionVector r) < 0
+  ∀ w r, IsEssential N w r → InSupport N w r → w ⬝ᵥ N.reactionVector r < 0
 
 /-- For finite species `S` (`[Fintype S]`), the network is strongly endotactic: it is endotactic,
 and for every `w` not orthogonal to the stoichiometric subspace some reaction `y → y'` has
 `⟨w, y' - y⟩ < 0` and a reactant `y` that is `≤_w`-maximal among all reactants, where
 `⟨w, y⟩ = ∑_{s : S} w_s y_s`. -/
 def IsStronglyEndotactic : Prop :=
-  IsEndotactic N ∧ ∀ w, (∃ r, pair w (N.reactionVector r) ≠ 0) →
-    ∃ r, pair w (N.reactionVector r) < 0 ∧ ∀ r', pair w (N.src r') ≤ pair w (N.src r)
+  IsEndotactic N ∧ ∀ w, (∃ r, w ⬝ᵥ N.reactionVector r ≠ 0) →
+    ∃ r, w ⬝ᵥ N.reactionVector r < 0 ∧ ∀ r', w ⬝ᵥ N.src r' ≤ w ⬝ᵥ N.src r
 
 /-- The network has exactly one linkage class: it has a complex, and any two complexes are joined
 by an undirected path of reactions. -/
@@ -141,8 +143,10 @@ theorem_wanted isPermanent_of_isStronglyEndotactic {S ρ : Type*} [Fintype S] [F
 
 /-- **Weakly reversible networks with one linkage class are permanent** (Gopalkrishnan–Miller–
 Shiu 2014, Theorem 1.3). Every weakly reversible reaction network with real complexes, finitely
-many species and reactions, and exactly one linkage class is permanent (in the sense of
-`isPermanent_of_isStronglyEndotactic`).
+many species and reactions, and exactly one linkage class is permanent: for every tempering by
+compact intervals in `(0, ∞)` and every positive `x₀`, every trajectory of the mass-action
+differential inclusion stays in a compact subset of the positive orthant, and some compact subset
+of the positive orthant eventually contains every trajectory defined on a ray.
 
 Source: M. Gopalkrishnan, E. Miller, A. Shiu, SIAM J. Appl. Dyn. Syst. 13 (2014) 758–797,
 Theorem 1.3. -/

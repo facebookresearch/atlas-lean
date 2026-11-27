@@ -87,11 +87,13 @@ noncomputable def jacobianDetPoly [Fintype S] [DecidableEq S] [Fintype ρ] :
     MvPolynomial (S ⊕ (ρ ⊕ S)) ℤ :=
   (Matrix.of fun s s' => pderiv (.inl s') (formationPoly N s)).det
 
-/-- **Injectivity criterion** (Craciun–Feinberg 2005, Theorem 3.1). Let `N` be a network with
-finitely many species and reactions, with no reaction from a complex to itself and at most one
-reaction between two complexes, operated with an outflow reaction for every species. Then `N` is
-injective if and only if the Jacobian determinant `det (∂p_N/∂c (c, k))` is nonzero for all
-positive concentrations `c` and all positive rate constants `k`.
+/-- **Injectivity criterion for natural-number coefficients** (the case of natural-number
+coefficients of Craciun–Feinberg 2005, Theorem 3.1). Let `N` be a network whose complexes have
+natural-number coefficients, with finitely many species and reactions, with no reaction from a
+complex to itself and at most one reaction between two complexes, operated with an outflow
+reaction for every species. Then `N` is injective if and only if the Jacobian determinant
+`det (∂p_N/∂c (c, k))` is nonzero for all positive concentrations `c` and all positive rate
+constants `k`.
 
 Source: G. Craciun, M. Feinberg, SIAM J. Appl. Math. 65 (2005) 1526–1546, Theorem 3.1. -/
 theorem_wanted isInjective_iff_jacobianDet_ne_zero [Fintype S] [DecidableEq S] [Fintype ρ]
@@ -100,10 +102,13 @@ theorem_wanted isInjective_iff_jacobianDet_ne_zero [Fintype S] [DecidableEq S] [
     IsInjective N ↔ ∀ (c : S → ℝ) (k : ρ ⊕ S → ℝ), (∀ s, 0 < c s) → (∀ i, 0 < k i) →
       aeval (Sum.elim c k) (jacobianDetPoly N) ≠ 0
 
-/-- **Coefficient criterion** (Craciun–Feinberg 2005, Theorem 3.3). Under the hypotheses of
-`isInjective_iff_jacobianDet_ne_zero`, the network is injective if and only if every coefficient
-of the Jacobian determinant `det (∂p_N/∂c)`, expanded as a polynomial in the concentrations and
-the rate constants, is nonnegative.
+/-- **Coefficient criterion for natural-number coefficients** (the case of natural-number
+coefficients of Craciun–Feinberg 2005, Theorem 3.3). Let `N` be a network whose complexes have
+natural-number coefficients, with finitely many species and reactions, with no reaction from a
+complex to itself and at most one reaction between two complexes, operated with an outflow
+reaction for every species. Then `N` is injective if and only if every coefficient of the
+Jacobian determinant `det (∂p_N/∂c)`, expanded as a polynomial in the concentrations and the rate
+constants, is nonnegative.
 
 Source: G. Craciun, M. Feinberg, SIAM J. Appl. Math. 65 (2005) 1526–1546, Theorem 3.3. -/
 theorem_wanted isInjective_iff_coeff_jacobianDet_nonneg [Fintype S] [DecidableEq S]

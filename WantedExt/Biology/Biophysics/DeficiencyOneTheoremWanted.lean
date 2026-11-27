@@ -20,12 +20,18 @@ is terminal if no reaction leads out of it. A complex `c` lies in a terminal str
 exactly when every complex reachable from `c` can reach `c` back, and two such complexes lie in
 the same terminal strong linkage class exactly when one reaches the other.
 
-**Deficiency-one theorem** (Feinberg 1987, Theorem 6.2.1). Consider a mass-action system whose
-network has `ℓ` linkage classes, each containing just one terminal strong linkage class, and
-suppose that (i) `δ_θ ≤ 1` for every linkage class `θ` and (ii) `∑_θ δ_θ = δ`. Then for every
-choice of positive rate constants there is at most one positive steady state in each positive
-stoichiometric compatibility class. If the network is moreover weakly reversible, there is exactly
-one positive steady state in each positive stoichiometric compatibility class.
+**Deficiency-one theorem** (Feinberg 1987, Theorem 6.2.1, as stated in Johnston 2016, Theorem
+2.2). Consider a mass-action system whose network has `ℓ` linkage classes, each containing just
+one terminal strong linkage class, and suppose that (i) `δ_θ ≤ 1` for every linkage class `θ` and
+(ii) `∑_θ δ_θ = δ`. If, for some choice of positive rate constants, the system has a positive
+steady state, then each positive stoichiometric compatibility class contains exactly one positive
+steady state. If the network is moreover weakly reversible, the system has a positive steady
+state for every choice of positive rate constants.
+
+The two statements below are consequences of this theorem: for every choice of positive rate
+constants, each positive stoichiometric compatibility class contains at most one positive steady
+state, and for a weakly reversible network exactly one. The step from one positive steady state to
+one in every class is not stated here.
 
 The linear-algebra part of the proof (hypothesis (ii) holds exactly when the subspaces `𝒮_θ` are
 independent, and the mass-action equations then decouple across linkage classes) is proved in
@@ -35,7 +41,8 @@ linkage-class subspaces and deficiencies used here are the shared definitions of
 network, its stoichiometric subspace, linkage graph, deficiency, weak reversibility and
 mass-action field are those of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`. Complexes
 are encoded with natural-number stoichiometric coefficients, as for the chemical networks of the
-source. The existence half for
+source; Johnston's networks allow nonnegative real coefficients, and the statements here are its
+case of natural-number coefficients. The existence half for
 weakly reversible networks is also a consequence of Boros's theorem (every weakly reversible
 mass-action system has a positive steady state in every positive stoichiometric class).
 
@@ -43,7 +50,9 @@ Sources: M. Feinberg, "Chemical reaction network structure and the stability of 
 isothermal reactors — I. The deficiency zero and deficiency one theorems", Chem. Eng. Sci. 42
 (1987) 2229–2268, Section 6.2, Theorem 6.2.1; proof in M. Feinberg, "The existence and
 uniqueness of steady states for a class of chemical reaction networks", Arch. Rational Mech.
-Anal. 132 (1995) 311–370.
+Anal. 132 (1995) 311–370; M. D. Johnston, "A linear programming approach to dynamical
+equivalence, linear conjugacy, and the Deficiency One Theorem", J. Math. Chem. 54 (2016)
+1612–1631, Section 2.4, Theorem 2.2 (arXiv:1602.08396v2).
 -/
 module
 
@@ -82,7 +91,10 @@ network. Then for all positive rate constants `k`, two positive steady states `x
 mass-action system whose difference lies in the stoichiometric subspace (the same positive
 stoichiometric compatibility class) are equal.
 
-Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1. -/
+Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1.
+
+Source: M. D. Johnston, J. Math. Chem. 54 (2016) 1612–1631, Theorem 2.2 (arXiv:1602.08396v2), the
+case of natural-number coefficients. -/
 theorem_wanted eq_of_pos_steadyState [Fintype S] [Fintype ρ]
     (hT : OneTerminalClassPerLinkageClass N)
     [Fintype N.linkageGraph.ConnectedComponent] (hδ : ∀ θ, N.linkageClassDeficiency θ ≤ 1)
@@ -92,12 +104,18 @@ theorem_wanted eq_of_pos_steadyState [Fintype S] [Fintype ρ]
     (hye : N.massActionField k y = 0) :
     x = y
 
-/-- **Deficiency-one theorem, weakly reversible case** (Feinberg 1987, Theorem 6.2.1). Under the
-hypotheses of `eq_of_pos_steadyState`, if the network is moreover weakly reversible, then for all
-positive rate constants `k` and every positive state `x₀` there is exactly one positive steady
-state `x` of the mass-action system with `x - x₀` in the stoichiometric subspace.
+/-- **Deficiency-one theorem, weakly reversible case** (Feinberg 1987, Theorem 6.2.1). Let the
+network have finitely many species (`[Fintype S]`), reactions (`[Fintype ρ]`) and linkage
+classes. Suppose each linkage class contains just one terminal strong linkage class, every
+linkage-class deficiency is at most one, the linkage-class deficiencies sum to the deficiency of
+the network, and the network is weakly reversible. Then for all positive rate constants `k` and
+every positive state `x₀` there is exactly one positive steady state `x` of the mass-action
+system with `x - x₀` in the stoichiometric subspace.
 
-Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1. -/
+Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1.
+
+Source: M. D. Johnston, J. Math. Chem. 54 (2016) 1612–1631, Theorem 2.2 (arXiv:1602.08396v2), the
+case of natural-number coefficients. -/
 theorem_wanted existsUnique_pos_steadyState_of_isWeaklyReversible [Fintype S] [Fintype ρ]
     (hT : OneTerminalClassPerLinkageClass N)
     [Fintype N.linkageGraph.ConnectedComponent] (hδ : ∀ θ, N.linkageClassDeficiency θ ≤ 1)

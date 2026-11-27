@@ -30,6 +30,10 @@ path that begins at a species node and ends at a reaction node, or a disjoint un
 Then, taken with mass-action kinetics, the network does not have the capacity for multiple
 positive equilibria.
 
+The source's complexes may have nonnegative real coefficients; the theorem is stated here for
+networks whose complexes have natural-number coefficients, the case of natural-number coefficients
+of Theorem 1.1.
+
 Representation. Each reaction node `r` carries two distinct complexes `lhs r` and `rhs r` with
 natural-number coefficients, a forward reaction `lhs r → rhs r`, and the reverse reaction when
 `r` is a reversible pair. An edge descriptor is a triple (species, reaction node, side); it is an
@@ -39,7 +43,12 @@ edges. A cycle of length `2 (k + 1)` visits distinct species nodes `s_0, …, s_
 reaction nodes `r_0, …, r_k`, entering `r_i` from `s_i` and leaving it to `s_{i+1}` (indices mod
 `k + 1`) along two different edges. Its common edges with another cycle are a union of maximal
 runs of consecutive edges, and a run joins a species node to a reaction node exactly when it has
-an odd number of edges.
+an odd number of edges. Unlike the source's set of reactions, two reaction nodes may carry the
+same pair of complexes (for instance `A → B` and `B → A` as two irreversible nodes). The theorem
+still follows from the source's: merging such nodes and adding their rate constants gives a
+network with the same equilibria, whose SR graph is the subgraph on one reaction node from each
+merged group, with the same edge labels and coefficients, so its cycles, c-pairs and S-to-R
+intersections are among those of this network.
 
 Sources: G. Craciun, M. Feinberg, "Multiple equilibria in complex chemical reaction networks:
 II. The species-reaction graph", SIAM J. Appl. Math. 66 (2006) 1321–1338, Section 1,
@@ -60,9 +69,12 @@ public import Mathlib.Algebra.Group.Nat.Even
 
 namespace WantedExt.Biology.Biophysics.SpeciesReactionGraphWanted
 
-/-- A reaction network whose reaction nodes are reactions or reversible reaction pairs: node `r`
-has the distinct complexes `lhs r` and `rhs r`, the reaction `lhs r → rhs r`, and the reverse
-reaction `rhs r → lhs r` when `reversible r`. -/
+section Networks
+
+/-- A reaction network whose complexes have natural-number coefficients and whose reaction nodes
+are reactions or reversible reaction pairs: node `r` has the distinct complexes `lhs r` and
+`rhs r` in `ℕ^S`, the reaction `lhs r → rhs r`, and the reverse reaction `rhs r → lhs r` when
+`reversible r`. -/
 structure SRNetwork (S ρ : Type*) where
   /-- The left complex of each reaction node. -/
   lhs : ρ → S → ℕ
@@ -87,12 +99,26 @@ noncomputable def cfstrField [Fintype S] [Fintype ρ] (flow : ℝ) (cf : S → �
     if N.reversible r then kb r * (∏ s', c s' ^ N.rhs r s') * ((N.lhs r s : ℝ) - N.rhs r s)
     else 0)
 
-/-- The network has the capacity for multiple positive equilibria in the CFSTR. -/
+/-- For finite species (`[Fintype S]`) and finitely many reaction nodes (`[Fintype ρ]`), the
+network has the capacity for multiple positive equilibria in the CFSTR: for some flow rate per
+volume `g/V > 0`, some nonnegative feed concentrations and some positive forward and reverse rate
+constants, the CFSTR mass-action system has two distinct equilibria with all concentrations
+positive. -/
 def HasCapacityForMultipleEquilibria [Fintype S] [Fintype ρ] : Prop :=
   ∃ (flow : ℝ) (cf : S → ℝ) (kf kb : ρ → ℝ), 0 < flow ∧ (∀ s, 0 ≤ cf s) ∧
     (∀ r, 0 < kf r) ∧ (∀ r, 0 < kb r) ∧
     ∃ a b : S → ℝ, a ≠ b ∧ (∀ s, 0 < a s) ∧ (∀ s, 0 < b s) ∧
       N.cfstrField flow cf kf kb a = 0 ∧ N.cfstrField flow cf kf kb b = 0
+
+end SRNetwork
+
+end Networks
+
+section SpeciesReactionGraph
+
+namespace SRNetwork
+
+variable {S ρ : Type*} (N : SRNetwork S ρ)
 
 /-- The complex on side `side` of reaction node `r` (`false`: `lhs`, `true`: `rhs`). -/
 def complexOn (r : ρ) (side : Bool) : S → ℕ :=
@@ -191,12 +217,18 @@ def STORIntersection {k l : ℕ} (C : N.Cycle k) (D : N.Cycle l) : Prop :=
 
 end SRNetwork
 
+end SpeciesReactionGraph
+
+section Theorem
+
 open SRNetwork
 
-/-- **Species-reaction graph theorem** (Craciun–Feinberg 2006, Theorem 1.1). If in the SR graph
-of a network (i) each cycle is an o-cycle or an s-cycle and (ii) no two e-cycles have a
-species-to-reaction intersection, then the network, taken with mass-action kinetics in a CFSTR,
-does not have the capacity for multiple positive equilibria.
+/-- **Species-reaction graph theorem for natural-number coefficients** (the case of
+natural-number coefficients of Craciun–Feinberg 2006, Theorem 1.1). Let `N` be a network whose
+complexes have natural-number coefficients, with finitely many species and reaction nodes. If in
+the SR graph of `N` (i) each cycle is an o-cycle or an s-cycle and (ii) no two e-cycles have a
+species-to-reaction intersection, then `N`, taken with mass-action kinetics in a CFSTR, does not
+have the capacity for multiple positive equilibria.
 
 Source: G. Craciun, M. Feinberg, SIAM J. Appl. Math. 66 (2006) 1321–1338, Theorem 1.1. -/
 theorem_wanted not_hasCapacityForMultipleEquilibria {S ρ : Type*} [Fintype S] [DecidableEq S]
@@ -205,5 +237,7 @@ theorem_wanted not_hasCapacityForMultipleEquilibria {S ρ : Type*} [Fintype S] [
     (h2 : ∀ (k l : ℕ) (C : N.Cycle k) (D : N.Cycle l), C.IsECycle → D.IsECycle →
       ¬ STORIntersection C D) :
     ¬ N.HasCapacityForMultipleEquilibria
+
+end Theorem
 
 end WantedExt.Biology.Biophysics.SpeciesReactionGraphWanted

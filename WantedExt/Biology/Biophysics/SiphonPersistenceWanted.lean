@@ -33,8 +33,10 @@ consistent associated Petri net.
 each siphon contains the support of a P-semiflow, then the network is persistent.
 
 Solutions are taken on `[0, ∞)` and in `𝒪₊`, as in the source (where `ω(S₀)` is only considered
-for solutions defined for all `t ≥ 0`); conservativity makes them bounded. The network structure
-is that of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`.
+for solutions defined for all `t ≥ 0`); conservativity makes them bounded. The orthant `𝒪₊` is
+`Set.Ici 0` in `S → ℝ`. The network structure is that of
+`MathlibExt.Dynamics.PolynomialNetworks.Deficiency`, and siphons are the finite sets of species of
+`WantedExt.Biology.Biophysics.SiphonPrimeDecompositionWanted.IsSiphon`.
 
 Sources: D. Angeli, P. De Leenheer, E. D. Sontag, "A Petri net approach to the study of
 persistence in chemical reaction networks", Math. Biosci. 210 (2007) 598–618, Sections 2–5,
@@ -49,6 +51,7 @@ public import Mathlib.Analysis.Analytic.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
+public import WantedExt.Biology.Biophysics.SiphonPrimeDecompositionWanted
 
 @[expose] public section
 
@@ -58,27 +61,26 @@ open MathlibExt.Biology.Dynamics.ComplexBalanced Filter Topology
 
 variable {S ρ : Type*} (N : ReactionNetwork S ρ)
 
-/-- The stoichiometry matrix entry `Γ_{jr} = β_{rj} - α_{rj}`. -/
+/-- The stoichiometry matrix entry `Γ_{jr} = β_{rj} - α_{rj}`, where `α_{rj} = src r j` and
+`β_{rj} = prod r j` are the coefficients of the species `j` in the reactant and product complexes
+of the reaction `r` of `N`. -/
 def stoich (j : S) (r : ρ) : ℝ :=
   (N.prod r j : ℝ) - N.src r j
 
-/-- The closed nonnegative orthant `𝒪₊`. -/
-def nonnegOrthant (S : Type*) : Set (S → ℝ) :=
-  {x | ∀ j, 0 ≤ x j}
-
 /-- Admissible reaction rates `R : ℝ^S → ℝ^ρ` in the sense of the source: each `R_r` is real
-analytic on an open set containing `𝒪₊`, depends only on the reactants of `r`, is nondecreasing
+analytic on an open set containing the closed nonnegative orthant `𝒪₊ = Set.Ici 0`, depends only
+on the reactants of `r`, is nondecreasing
 in each reactant concentration on `𝒪₊`, vanishes on `𝒪₊` when a reactant concentration is zero
 and is positive on `𝒪₊` when all reactant concentrations are positive. -/
 structure IsAdmissibleRate [Fintype S] [DecidableEq S] (R : (S → ℝ) → ρ → ℝ) : Prop where
-  analytic : ∃ U : Set (S → ℝ), IsOpen U ∧ nonnegOrthant S ⊆ U ∧
+  analytic : ∃ U : Set (S → ℝ), IsOpen U ∧ Set.Ici 0 ⊆ U ∧
     ∀ r, AnalyticOnNhd ℝ (fun x => R x r) U
   reactants : ∀ r x y, (∀ j, 0 < N.src r j → x j = y j) → R x r = R y r
-  monotone : ∀ r, ∀ x ∈ nonnegOrthant S, ∀ j, 0 < N.src r j →
+  monotone : ∀ r, ∀ x ∈ Set.Ici (0 : S → ℝ), ∀ j, 0 < N.src r j →
     0 ≤ fderiv ℝ (fun z => R z r) x (Pi.single j 1)
-  zero_of_reactant_zero : ∀ r, ∀ x ∈ nonnegOrthant S, (∃ j, 0 < N.src r j ∧ x j = 0) →
+  zero_of_reactant_zero : ∀ r, ∀ x ∈ Set.Ici (0 : S → ℝ), (∃ j, 0 < N.src r j ∧ x j = 0) →
     R x r = 0
-  pos_of_reactants_pos : ∀ r, ∀ x ∈ nonnegOrthant S, (∀ j, 0 < N.src r j → 0 < x j) →
+  pos_of_reactants_pos : ∀ r, ∀ x ∈ Set.Ici (0 : S → ℝ), (∀ j, 0 < N.src r j → 0 < x j) →
     0 < R x r
 
 /-- For finitely many reactions (`[Fintype ρ]`), the vector field `S ↦ Γ R(S)`, whose `j`-th
@@ -89,7 +91,7 @@ noncomputable def field [Fintype ρ] (R : (S → ℝ) → ρ → ℝ) (x : S →
 /-- For finitely many reactions (`[Fintype ρ]`), `φ` is a solution of `Ṡ = Γ R(S)` on `[0, ∞)`
 in `𝒪₊` starting at `x₀`. -/
 def IsSolution [Fintype ρ] (R : (S → ℝ) → ρ → ℝ) (x₀ : S → ℝ) (φ : ℝ → S → ℝ) : Prop :=
-  φ 0 = x₀ ∧ ∀ t, 0 ≤ t → φ t ∈ nonnegOrthant S ∧
+  φ 0 = x₀ ∧ ∀ t, 0 ≤ t → φ t ∈ Set.Ici 0 ∧
     HasDerivWithinAt φ (field N R (φ t)) (Set.Ici 0) t
 
 /-- The network with rates `R` is persistent: for every initial state with all concentrations
@@ -115,11 +117,6 @@ every species `j`. -/
 def IsConsistent [Fintype ρ] : Prop :=
   ∃ v : ρ → ℝ, (∀ r, 0 < v r) ∧ ∀ j, ∑ r, stoich N j r * v r = 0
 
-/-- A siphon: a nonempty set `Σ` of species such that every input reaction of a species of `Σ`
-(a reaction producing it) is an output reaction of some species of `Σ` (consumes it). -/
-def IsSiphon (Z : Set S) : Prop :=
-  Z.Nonempty ∧ ∀ j ∈ Z, ∀ r, 0 < N.prod r j → ∃ i ∈ Z, 0 < N.src r i
-
 /-- **Necessary condition for persistence** (Angeli–De Leenheer–Sontag 2007, Theorem 1). For
 admissible rates `R`, a conservative and persistent network has a consistent associated Petri
 net.
@@ -139,8 +136,8 @@ Source: D. Angeli, P. De Leenheer, E. D. Sontag, Math. Biosci. 210 (2007) 598–
 Theorem 2. -/
 theorem_wanted isPersistent_of_siphon [Fintype S] [DecidableEq S] [Fintype ρ]
     {R : (S → ℝ) → ρ → ℝ} (hR : IsAdmissibleRate N R) (hcons : IsConservative N)
-    (hsiph : ∀ Z : Set S, IsSiphon N Z →
-      ∃ c : S → ℝ, IsPSemiflow N c ∧ {j | 0 < c j} ⊆ Z) :
+    (hsiph : ∀ Z : Finset S, SiphonPrimeDecompositionWanted.IsSiphon N Z →
+      ∃ c : S → ℝ, IsPSemiflow N c ∧ ∀ j, 0 < c j → j ∈ Z) :
     IsPersistent N R
 
 end WantedExt.Biology.Biophysics.SiphonPersistenceWanted
