@@ -14,6 +14,10 @@ $$r = R - m + |C|,$$
 
 so minimizing runs is equivalent to finding a minimum-cardinality path cover.
 
+## Proof depends on
+
+- [Succinct rank and select](../../../../ComputerScience/data-structures/range-query-structures/advanced-data-structures/succinct-rank-and-select.md)
+
 ## Expansion
 
 Order preservation is what makes the weights compressible: neighbouring $k$-mers on a genome usually have equal abundance, so $W$ has long runs, whereas a minimal perfect hash function scatters $k$-mers and destroys runs. Each path of the cover starts a fresh run at its first string, and every junction inside a path glues two runs into one, which yields $r = R - m + |C|$ since a cover of $m$ nodes by $|C|$ paths has $m - |C|$ junctions.

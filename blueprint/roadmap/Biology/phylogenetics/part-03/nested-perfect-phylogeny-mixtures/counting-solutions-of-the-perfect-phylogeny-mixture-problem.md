@@ -16,6 +16,10 @@ $$\prod_{c \ne r} \deg^{\mathrm{in}}_{G_F}(c).$$
 
 Thus solutions are typically non-unique: with few samples the ancestry graph is dense ($\gamma$ near zero) and many arborescences satisfy the sum condition, and adding samples raises $\gamma$ and shrinks the solution space.
 
+## Depends on
+
+- [Perfect phylogeny for a binary character matrix](../../splits-compatibility-ultrametrics-and-upgma/is-perfect-phylogeny.md)
+
 ## Expansion
 
 By Tutte's directed matrix-tree theorem, the number of spanning arborescences rooted at $r$ is $\det \hat L_r$, where $L$ has diagonal entries $\deg^{\mathrm{in}}$ and $-1$ for each edge, and $\hat L_r$ deletes row and column $r$. Ordering vertices topologically makes $\hat L_r$ upper triangular, so the determinant is the product of in-degrees, which bounds the solutions since only arborescences satisfying the sum condition count. Hardness is proved by a reduction from Subset Sum, strengthening the NP-completeness of deciding PPM with two samples.

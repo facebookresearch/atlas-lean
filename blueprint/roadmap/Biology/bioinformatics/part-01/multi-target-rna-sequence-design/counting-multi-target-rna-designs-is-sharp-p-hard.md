@@ -6,7 +6,7 @@ Let $G = (V_1 \cup V_2, E)$ be a connected bipartite **base-pair dependency grap
 
 **Corollary.** Counting valid designs, and hence computing the design partition function, is #P-hard even when the dependency graph is bipartite and connected; a polynomial-time algorithm would imply $\#P = FP$.
 
-Moreover, among the $4^m$ assignments of $m$ positions forming a connected component of the base-pair dependency graph, at most $2^m$ respect pairing rules, which prunes the dynamic programme.
+Moreover, among the $4^m$ assignments of $m$ positions forming a connected component of the base-pair dependency graph, at most $2^{m+1}$ respect pairing rules (four choices for one position, then at most two canonical partners for each further position reached along the component), which prunes the dynamic programme.
 
 ## Depends on
 

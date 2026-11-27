@@ -9,6 +9,10 @@ $$\kappa = -\sum_{i,j} w_i\,v_j\,\big(\nabla_x p_{ij}(0)\cdot v\big).$$
 2. *(Direction and stability.)* Near $(1,0)$: if $\kappa < 0$ the bifurcation is backward (positive equilibria exist for $r < 1$) and those equilibria are unstable; if $\kappa > 0$ it is forward ($r > 1$) and they are locally asymptotically stable. The extinction equilibrium is stable for $r < 1$ and unstable for $r > 1$.
 3. *(Net reproductive number.)* If $P(x) = F(x) + T(x)$ with fecundity matrix $F \ge 0$ and transition matrix $T \ge 0$ with $\rho[T(0)] < 1$, the inherent net reproductive number $R_0 = \rho\big[F(0)(I - T(0))^{-1}\big]$ satisfies $R_0 < 1$, $= 1$, $> 1$ exactly when $r < 1$, $= 1$, $> 1$, and $R_0$ may replace $r$ as the bifurcation parameter in parts 1–2.
 
+## Depends on
+
+- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
+
 ## Expansion
 
 Writing the equilibrium equation as $x = rP(0)x + h(r,x)$ with $h$ of higher order, the Rabinowitz global bifurcation alternative applies at the simple characteristic value $r = 1$ (simple and with positive eigenvector by Perron–Frobenius); positivity rules out the alternative of returning to another characteristic value, leaving an unbounded branch. A Lyapunov–Schmidt expansion $x = \varepsilon v + O(\varepsilon^2)$, $r = 1 + r_1\varepsilon + O(\varepsilon^2)$ gives $r_1 = \kappa/(w^{\mathsf T}v)$, so the sign of $\kappa$ fixes the direction, and the exchange of stability links direction to stability. If every derivative $\partial p_{ij}/\partial x_k(0) \le 0$ (negative density feedback only) and not all vanish, then $\kappa > 0$; a backward bifurcation requires at least one positive derivative, a component Allee effect.

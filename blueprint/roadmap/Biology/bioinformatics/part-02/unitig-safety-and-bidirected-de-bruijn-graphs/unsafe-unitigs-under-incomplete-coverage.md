@@ -14,7 +14,7 @@ Error-free reads induce **sequenced segments** $\mathcal S = \{S_1, \dots\}$: th
 
 ## Depends on
 
-- [De Bruijn graph genome assembly](../../de-bruijn-graph-genome-assembly/README.md)
+- [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
 ## Expansion
 

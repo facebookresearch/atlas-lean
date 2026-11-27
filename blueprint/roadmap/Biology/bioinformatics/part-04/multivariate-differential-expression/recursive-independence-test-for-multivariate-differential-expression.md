@@ -16,6 +16,10 @@ A distribution is **PCWT** if it is strictly positive and its independence relat
 
 **Recursive independence test (RIT).** Test $X_i \perp Y$ for all genes, keep the significant set $S_1$; for each newly added gene $X_i$ test $X_i \perp X_j$ against all genes not yet selected and add the significant ones; recurse until no gene is added. By Theorem 1, RIT is consistent for $M$ whenever the marginal tests are consistent; it performs on the order of $|\hat M|\, n$ tests, and multiplicity is controlled at level $\alpha$ by applying a false-discovery-rate correction within each round.
 
+## Depends on
+
+- [Symmetry of conditional independence](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/bayesian-networks/cond-indep-symm.md)
+
 ## Expansion
 
 Composition lets dependence of $X_k$ on $Y$ given some set be traced to a single variable in that set, and weak transitivity propagates dependence along chains; together they turn conditional dependence on arbitrary contexts into reachability in the graph of pairwise marginal dependencies. Theorems 2–3 justify the PCWT assumption for transcript measurements: a cellular network of transcripts, proteins and metabolites modelled as a faithful Bayesian network is PCWT, and observing only transcripts (marginalizing the rest) or holding some variables fixed preserves the class. Without PCWT, a gene can be MDE yet unreachable, as in XOR-type interactions.

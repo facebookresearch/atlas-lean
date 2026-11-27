@@ -1,23 +1,26 @@
 # Helmholtz decomposition of steady-state flow and the synchronization map
 
-**Setting.** States $x \in \mathbb{R}^d$ follow a Langevin equation $\dot x = f(x) + \omega$ with Gaussian white noise of diffusion matrix $\Gamma(x)$, and the associated Fokker–Planck equation has a non-equilibrium steady-state (NESS) density $p(x)$. The state is partitioned as $x = (\eta, b, \mu)$ into external, blanket and internal states.
-
-**Statement.**
-1. *(Markov blanket.)* The NESS density factorizes as
+**Setting.** States $x \in \mathbb{R}^d$ follow a Langevin equation $\dot x = f(x) + \omega$ with Gaussian white noise of diffusion matrix $\Gamma(x)$, and the associated Fokker–Planck equation has a non-equilibrium steady-state (NESS) density $p(x)$. The state is partitioned as $x = (\eta, b, \mu)$ into external, blanket and internal states, and the partition is assumed to be a *Markov blanket*: the NESS density factorizes as
 
 $$p(\mu, \eta, b) = p(\mu \mid b)\,p(\eta \mid b)\,p(b),$$
 
-i.e. internal and external states are conditionally independent given blanket states.
-2. *(Helmholtz decomposition.)* With surprisal $\mathfrak{J}(x) = -\log p(x)$, the flow can be written
+i.e. internal and external states are conditionally independent given blanket states. This is a hypothesis on the partition, not a consequence of the Langevin dynamics.
+
+**Statement.**
+1. *(Helmholtz decomposition.)* With surprisal $\mathfrak{J}(x) = -\log p(x)$, the flow can be written
 
 $$f(x) = \big(Q(x) - \Gamma(x)\big)\nabla \mathfrak{J}(x) - \Lambda(x), \qquad \Lambda(x)_i = \sum_{j=1}^d \frac{\partial}{\partial x_j}\big(Q_{ij}(x) - \Gamma_{ij}(x)\big),$$
 
 where $Q = -Q^{\mathsf T}$ is skew-symmetric (solenoidal, divergence-free flow on the level sets of $p$) and $\Gamma$ is positive semidefinite (gradient descent on surprisal that balances the fluctuations). Equivalently $p \propto e^{-\mathfrak J}$ is stationary for this flow.
-3. *(Synchronization map.)* Let $\hat\mu_b = \arg\max_\mu p(\mu \mid b)$ and $\hat\eta_b = \arg\max_\eta p(\eta\mid b)$. When the map $b \mapsto \hat\mu_b$ is injective on the blanket states considered, there is a map $\sigma$ with
+2. *(Synchronization map.)* Let $\hat\mu_b = \arg\max_\mu p(\mu \mid b)$ and $\hat\eta_b = \arg\max_\eta p(\eta\mid b)$. When the map $b \mapsto \hat\mu_b$ is injective on the blanket states considered, there is a map $\sigma$ with
 
 $$\sigma(\hat\mu_b) = \hat\eta_b,$$
 
 so that each internal conditional mode parametrizes a belief about the external conditional mode.
+
+## Proof depends on
+
+- [Rotational drifts share the Gibbs stationary density](../../../../Probability/stochastic-calculus/fokker-planck-equation/divergence-flux-rotational-gibbs.md)
 
 ## Expansion
 

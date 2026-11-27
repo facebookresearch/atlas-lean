@@ -10,6 +10,10 @@ $$P(T \in dt \mid C) = \frac{\theta^r t^{r-1} e^{-\theta t}}{(r-1)!}\,dt, \qquad
 
 Hence $(r-1)/T$ is an unbiased predictor of $\theta$ for $r \ge 2$, the uniformly minimum variance unbiased one based on the $r$ exponential spacings, with variance $\theta^2/(r-2)$ for $r \ge 3$; $\psi(r) - \log T$ is unbiased for $\log\theta$, with variance $\psi'(r)$, where $\psi$ is the digamma function ($\psi(1) = -\gamma_{\mathrm{Euler}}$); and for constants $0 \le a < b$ with $P(a \le \Gamma(r,1) \le b) = 1-\alpha$, the interval $[a/T, b/T]$ contains $\theta$ with exact probability $1 - \alpha$, conditionally on $C$. All predictors are strongly consistent as $r \to \infty$.
 
+## Depends on
+
+- [The Good–Turing identity for the missing mass](../../../not-yet-classified/good-turing/expect-missing-mass.md)
+
 ## Expansion
 
 Without Poissonization, the counts of different colours in a fixed-size sample are multinomially dependent, which is what blocks unbiased prediction of $\theta$; the auxiliary Poisson clock is simulated independently of the urn and removes that dependence exactly, not asymptotically, so no assumption on how the data were collected is needed. Repeating the procedure along a long sample gives sequential predictions of coverage at increasing depth, and in simulated environments modelled on human-gut and soil communities these predictions were markedly more accurate than sequential Robbins-type estimates, whose errors persist from one depth to the next. Prediction intervals for $\theta$ can exclude zero, unlike singleton-based bounds when no singletons are seen.

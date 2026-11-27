@@ -12,7 +12,7 @@ $$N \ge \frac{G}{L - \ell_{\mathrm{interleaved}} - 1}\,\ln\frac{1}{2\varepsilon}
 
 ## Depends on
 
-- [Lander–Waterman coverage model](../../lander-waterman-coverage-model/README.md)
+- [Lander–Waterman limit for the uncovered fraction](../../lander-waterman-coverage-model/tendsto-normalized-count-uncovered.md)
 
 ## Expansion
 

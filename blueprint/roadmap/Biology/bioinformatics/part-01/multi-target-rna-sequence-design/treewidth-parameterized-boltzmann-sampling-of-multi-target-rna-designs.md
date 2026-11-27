@@ -14,6 +14,10 @@ time (precomputation improvable to $O(n k\, 2^{w+1} 2^{c})$, where $c \le w+1$ b
 
 Weights achieving prescribed expected energies $\mathbb{E}(F_\ell \mid \pi) = E_\ell^\star$ exist on a convex optimization landscape ($\mathbb{E}(F_\ell \mid \pi)$ decreases in $\pi_\ell$), giving multidimensional Boltzmann sampling with a final rejection step to energies within tolerance.
 
+## Depends on
+
+- [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
+
 ## Expansion
 
 The algorithm is cluster-tree elimination: each contribution is assigned to one bag containing its dependencies, and messages from child to parent bags tabulate, for each nucleotide assignment of their separator, the partition function of the subtree; multiplying the messages at the root gives $Z_\pi$, and stochastic backtracking reverses the computation to draw sequences. Message tables have $4^{|\text{separator}|}$ entries and each step ranges over one extra position, which yields the $4^{w+1}$ factor; the number of contributions and bags is $O(nk)$. Realistic loop-based energies can be encoded exactly but raise the treewidth, so a structure-specific affine fit of Turner energies to stacking energies is used to target realistic free energies.

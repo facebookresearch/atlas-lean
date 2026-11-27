@@ -23,7 +23,7 @@ For example, $n_0 = 20$ and $\varepsilon = 0.1$ give $l(20, 0.1) = \lceil 18/3 \
 ## Depends on
 
 - [q-gram filtering lemma for approximate matching](../../q-gram-filtering-lemma-for-approximate-matching.md)
-- [Smith–Waterman local alignment](../../sequence-alignment/smith-waterman-local-alignment/README.md)
+- [The table computes the optimal local alignment score](../../sequence-alignment/smith-waterman-local-alignment/sw-tab-eq-local-score.md)
 
 ## Expansion
 

@@ -1,6 +1,5 @@
 # Tree comparison, consensus and balance
 
-- [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Colless-like balance indices](colless-like-balance-indices/README.md)
 - [Cophenetic metrics for phylogenetic trees](cophenetic-metrics-for-phylogenetic-trees/README.md)
 - [Counting serially sampled ranked trees](counting-serially-sampled-ranked-trees/README.md)

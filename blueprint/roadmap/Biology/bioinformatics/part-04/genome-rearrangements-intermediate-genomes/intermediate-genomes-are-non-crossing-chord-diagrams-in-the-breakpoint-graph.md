@@ -12,7 +12,7 @@ the product over the $AB$-cycles $K$ with $|K|$ vertices.
 
 ## Depends on
 
-- [Genome rearrangements](../../genome-rearrangements/README.md)
+- [Double-cut-and-join distance formula](../../genome-rearrangements/double-cut-and-join-distance-formula.md)
 
 ## Expansion
 

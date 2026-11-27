@@ -22,6 +22,10 @@ $$A^{\mathsf T}P + PA + \sum_{l=1}^L A_l^{\mathsf T}PA_l + I + \tfrac1\rho PBB^{
 
 then the network tolerates the genetic fluctuations and attenuates environmental stimuli to level $\rho$. The best certified level is $\rho_0 = \min \rho$ subject to this inequality, which by a Schur complement is a linear matrix inequality in $(P, \rho)$.
 
+## Proof depends on
+
+- [Itô's formula](../../../../Probability/stochastic-calculus/it-s-formula/ito-formula.md)
+
 ## Expansion
 
 For $V(x) = x^{\mathsf T}Px$, Itô's formula gives $E\,dV = E\big[x^{\mathsf T}(PA + A^{\mathsf T}P + \sum_l A_l^{\mathsf T}PA_l)x + 2x^{\mathsf T}PBv\big]dt$, the extra $A_l^{\mathsf T}PA_l$ terms being the Itô correction from multiplicative noise. Completing the square in $v$ shows that the joint inequality makes $E[V(x(t_p))] + E\int_0^{t_p}(x^{\mathsf T}x - \rho v^{\mathsf T}v)\,dt \le V(x(0))$, which is the attenuation bound. Because the fluctuation terms $A_l^{\mathsf T}PA_l$ are positive semidefinite and consume part of the stability margin of $A$, larger genetic fluctuations leave less room for the disturbance term and force a larger $\rho$: robustness to genetic variation and the capacity to respond to the environment trade off within the same Lyapunov budget.

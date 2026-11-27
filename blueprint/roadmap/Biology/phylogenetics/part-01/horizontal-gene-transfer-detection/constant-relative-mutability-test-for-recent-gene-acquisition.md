@@ -8,19 +8,15 @@
 
 $$\Pr\big(|h_{g'} - \hat h_{g'}| > \varepsilon\big) \le 2e^{-2n\varepsilon^2}.$$
 
-**Theorem.** Let $g$ (length $n$) be suspected of transfer between strains $S_1, S_2$; let $w$ be a witness gene present in $S_1, S_2$ and in two reference organisms $R_1, R_2$ that also carry $g$. With observed Hamming distances $\hat h_g(R), \hat h_w(R), \hat h_w(S)$, set
+**Theorem.** Let $g$ (length $n$) be suspected of transfer between strains $S_1, S_2$; let $w$ be a witness gene present in $S_1, S_2$ and in two reference organisms $R_1, R_2$ that also carry $g$. With the expected Hamming distances $h_g(R), h_w(R), h_w(S)$ between the references and between the strains, set
 
-$$d_g(S) = \frac{\mathrm{corr}(\hat h_g(R))}{\mathrm{corr}(\hat h_w(R))}\,\mathrm{corr}(\hat h_w(S)).$$
+$$\delta_g(S) = \frac{\mathrm{corr}(h_g(R))}{\mathrm{corr}(h_w(R))}\,\mathrm{corr}(h_w(S)).$$
 
-Under vertical inheritance with CRM,
+Under vertical inheritance with CRM, the observed distance $\hat h_g(S)$ of $g$ between the strains satisfies
 
-$$\Pr\big(|\hat h_g(S) - \mathrm{corr}^{-1}(d_g(S))| > \varepsilon\big) \le 2e^{-2n\varepsilon^2},$$
+$$\Pr\big(|\hat h_g(S) - \mathrm{corr}^{-1}(\delta_g(S))| > \varepsilon\big) \le 2e^{-2n\varepsilon^2}.$$
 
-so vertical descent of $g$ is rejected at level $\delta_r$ when $|\hat h_g(S) - \mathrm{corr}^{-1}(d_g(S))| > \sqrt{\ln(2/\delta_r)/(2n)}$.
-
-## Depends on
-
-- [Chernoff bound for a chance-low synteny index](chernoff-bound-for-a-chance-low-synteny-index.md)
+The practical test replaces $h_g(R), h_w(R), h_w(S)$ by the observed $\hat h_g(R), \hat h_w(R), \hat h_w(S)$, giving the plug-in value $d_g(S)$, and rejects vertical descent of $g$ at level $\delta_r$ when $|\hat h_g(S) - \mathrm{corr}^{-1}(d_g(S))| > \sqrt{\ln(2/\delta_r)/(2n)}$. This plug-in test is an approximation: the bound above does not account for the estimation error of the three plug-in distances, which the test ignores.
 
 ## Proof depends on
 

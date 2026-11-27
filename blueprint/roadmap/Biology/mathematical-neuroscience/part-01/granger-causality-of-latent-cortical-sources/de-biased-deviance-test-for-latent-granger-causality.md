@@ -18,6 +18,15 @@ the central and non-central chi-square distributions, where $H_0$ is the reduced
 
 **Consequences.** The link is declared at level $1-\alpha$ if $\mathcal D^{db} > F^{-1}_{\chi^2(M_d)}(1-\alpha)$, with Benjamini–Yekutieli control of the false discovery rate over the $M(M-1)$ candidate links. From $L$ independent trials the non-centrality is estimated by $\hat\nu = \max\{\frac1L\sum_{l}\mathcal D^{db,(l)} - M_d,\,0\}$, giving the false-negative rate $\eta(\alpha) = F_{\chi^2(M_d,\hat\nu)}\big(F^{-1}_{\chi^2(M_d)}(1-\alpha)\big)$.
 
+## Depends on
+
+- [Chi-square distribution](../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
+
+## Proof depends on
+
+- [Wilks' theorem (simple null)](../../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-two-mul-log-like.md)
+- [Wilks' theorem, supremum form](../../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-two-mul-i-sup-lo.md)
+
 ## Expansion
 
 Without regularization, Wilks' theorem gives the chi-square limits through asymptotic normality of the maximum-likelihood estimator; the $\ell_1$ penalty biases the estimates so that normality fails. The correction $\mathcal B$ is the one-step Newton (de-sparsifying) adjustment: a quadratic expansion of $\ell$ around each penalized estimate shows that adding $-\dot\ell^{\mathsf T}\ddot\ell^{-1}\dot\ell$ recovers the log-likelihood at the unpenalized optimum to first order, after which the classical nested-model argument applies with $M_d$ degrees of freedom. The non-centrality estimator uses that a $\chi^2(q,\nu)$ variable has mean $q + \nu$.

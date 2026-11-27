@@ -6,9 +6,9 @@
 
 **Theorem.** If $X$ is a $k$-MDE of $I$ and $2 \le |X| < |S|$, then every greedy extension $X^+$ is a $(k+1)$-MDE of $I$.
 
-**Corollary (greedy is optimal from any start).** Starting from any initial set $I$, repeatedly adding the species that most increases $\delta$ produces, after $k$ steps, a $k$-MDE of $I$, for every $k$ with $|I| + k \ge 2$. In particular, starting from a maximally divergent set of $h \ge 2$ species, $k$ greedy steps give a maximally divergent set of $h + k$ species.
+**Corollary (greedy is optimal from any start).** Starting from any nonempty initial set $I$, repeatedly adding the species that most increases $\delta$ produces, after $k$ steps, a $k$-MDE of $I$, for every $k \ge 1$. In particular, starting from a maximally divergent set of $h \ge 2$ species, $k$ greedy steps give a maximally divergent set of $h + k$ species.
 
-The condition $|X| \ge 2$ is needed: with $I = \emptyset$ and $k = 1$ every single species has divergence $0$, but not every single species starts an optimal pair.
+The conditions $|X| \ge 2$ and $I \ne \emptyset$ are needed: with $I = \emptyset$ every single species has divergence $0$, but not every single species starts an optimal pair, so greedy from $\emptyset$ can fail already for $k = 2$. For $I = \emptyset$ one starts instead from a pair at maximum distance, as in [greedy maximization of phylogenetic diversity](greedy-maximization-of-phylogenetic-diversity.md).
 
 ## Depends on
 

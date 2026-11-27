@@ -16,8 +16,7 @@ unless the Strong Exponential Time Hypothesis (SETH) is false.
 
 ## Depends on
 
-- [Li–Stephens haplotype copying model](../../../population-structure/li-stephens-haplotype-copying-model/README.md)
-- [Sequence alignment](../../sequence-alignment/README.md)
+- [The Li–Stephens copying model](../../../population-structure/li-stephens-haplotype-copying-model/hmm.md)
 
 ## Expansion
 

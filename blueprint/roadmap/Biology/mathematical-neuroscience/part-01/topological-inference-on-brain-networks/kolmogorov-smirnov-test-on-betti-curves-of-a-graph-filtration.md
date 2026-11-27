@@ -20,6 +20,10 @@ $$\lim_{q \to \infty}\mathbb P\Big(D_q / \sqrt{2q} \ge d\Big) = 2\sum_{i=1}^\inf
 
 giving the asymptotic p-value $2e^{-2 d_o^2} - 2e^{-8 d_o^2} + 2e^{-18 d_o^2} - \cdots$ for the observed normalized statistic $d_o = D_q/\sqrt{2q}$; its first term is the $i = 1$ term of the series. (The prose after Eq. 4 of the source writes the first term as $2e^{-d_o^2}$, inconsistent with Eq. 4.)
 
+## Depends on
+
+- [Cyclomatic number $|E| + 1 - |V|$ of a finite graph](../../../../GraphTheory/planar-graphs-and-minors/euler-s-formula-and-cycle-rank/cyclomatic-number.md)
+
 ## Expansion
 
 Removing an edge either splits a component ($\beta_0$ rises by one) or breaks a cycle ($\beta_1$ falls by one), never both, which gives monotonicity and the Euler relation. Because $\beta_0$ over the filtration encodes the single-linkage dendrogram (components merge in the order of single-linkage distances), the test is invariant under any monotone reparametrization of the edge weights, such as $1 - c$ versus $\sqrt{1 - c}$. In a two-sample setting the exact law replaces permutation tests whose permutation counts are astronomically large. Applied to twin correlation matrices $C_{\mathrm{MZ}}, C_{\mathrm{DZ}}$, with Falconer's heritability index $\mathrm{HI} = 2(C_{\mathrm{MZ}} - C_{\mathrm{DZ}})$ from $\mathrm{corr}_{\mathrm{MZ}} = A + C$ and $\mathrm{corr}_{\mathrm{DZ}} = A/2 + C$, it detects that monozygotic twin networks are more connected and contain more cycles at every correlation level.

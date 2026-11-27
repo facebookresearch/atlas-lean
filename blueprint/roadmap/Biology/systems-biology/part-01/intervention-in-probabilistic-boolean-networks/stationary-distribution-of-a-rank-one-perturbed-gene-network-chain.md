@@ -18,6 +18,11 @@ $$\tilde\pi^{\mathsf T}(x) = \pi^{\mathsf T} + \frac{\pi_x}{1 - (p_{\tilde x} - 
 
 with $z_x$ the column of $Z$ indexed by $x$.
 
+## Proof depends on
+
+- [Existence of a stationary distribution](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-stationary.md)
+- [Uniqueness of the stationary distribution of a primitive chain](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/stationary-unique.md)
+
 ## Expansion
 
 The BNp formula separates the event that no gene is perturbed (probability $(1-p)^n$, deterministic update) from the event that exactly the genes in which $x$ and $y$ differ are perturbed. For the perturbation theorem, write $\tilde\pi^{\mathsf T}(I - \tilde P) = 0$ as $\tilde\pi^{\mathsf T}(I - P) = (\tilde\pi^{\mathsf T}a)\,b^{\mathsf T}$; multiplying by $Z$ and using $(I-P)Z = I - e\pi^{\mathsf T}$, $b^{\mathsf T}e = 0$ and $\tilde\pi^{\mathsf T}e = 1$ gives $\tilde\pi^{\mathsf T} = \pi^{\mathsf T} + (\tilde\pi^{\mathsf T}a)\,b^{\mathsf T}Z$; solving for the scalar $\tilde\pi^{\mathsf T}a$ yields the formula. The shift of mass caused by any single-state intervention therefore costs one vector–matrix product once $\pi$ and $Z$ are known.

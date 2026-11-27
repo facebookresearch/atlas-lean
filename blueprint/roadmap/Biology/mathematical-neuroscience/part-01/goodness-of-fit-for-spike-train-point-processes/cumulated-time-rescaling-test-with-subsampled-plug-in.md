@@ -14,6 +14,14 @@ $$\sqrt{\hat N^{c,p}([0,p\theta])}\;\sup_{u\in[0,1]}\Big|\frac{1}{\hat N^{c,p}([
 
 Rejecting when the statistic exceeds the $1-\alpha$ quantile of $K$ gives a test of asymptotic level $\alpha$ for the model class used to build $\hat\lambda_i$ (e.g. inhomogeneous Poisson or Hawkes).
 
+## Depends on
+
+- [Poisson process](../../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
+
+## Proof depends on
+
+- [Inhomogeneous Poisson processes by a deterministic time change](../../../../Probability/point-processes/poisson-processes/inhomogeneous-poisson-processes-by-deterministic.md)
+
 ## Expansion
 
 Concatenating unit-rate Poisson processes yields a unit-rate Poisson process on $[0,\sum_i\Lambda_i(T_{\max})]$; because this length is random, the test is restricted to the deterministic window $[0,p\theta]$, which it covers with probability tending to one when $E\Lambda_1(T_{\max}) > \theta$. Conditionally on the count, the points in the window are i.i.d. uniform, giving the Kolmogorov limit, and the $p^{-1/2}$ rate condition makes the estimated rescaling an asymptotically negligible perturbation. For Poisson processes one may instead aggregate (superpose) trials: the superposition of $p$ i.i.d. Poisson processes with compensator $\Lambda$ is Poisson with compensator $p\Lambda$, and conditionally on its count its points are i.i.d. with c.d.f. $\Lambda(t)/\Lambda(T_{\max})$. The plug-in lemma explains the classical failure: an estimate fitted on the tested data is correlated with the empirical c.d.f., making the standard critical values wrong.

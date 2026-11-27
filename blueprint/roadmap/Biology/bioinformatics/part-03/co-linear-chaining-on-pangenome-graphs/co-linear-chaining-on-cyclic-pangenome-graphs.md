@@ -18,6 +18,10 @@ $$O\big(\Gamma_c\,|\mathcal{P}|\,N\log N + |\mathcal{P}|\,N\log(|\mathcal{P}|N)\
 
 and space $O(N|\mathcal{P}| + |V||\mathcal{P}|)$; on a DAG one round suffices and the method reduces to width-parameterized DAG chaining.
 
+## Proof depends on
+
+- [FASTER-APSP computes shortest-path weights](../../../../ComputerScience/graph-algorithms/shortest-paths/all-pairs-shortest-paths-by-min-plus-products/faster-apsp-distance-spec.md)
+
 ## Expansion
 
 On a DAG, processing vertices in topological order guarantees that every predecessor anchor is final before it is queried. Cycles destroy this order, so the algorithm instead repeats rounds: after round $i$, every chain with at most $i$ anchors is already scored correctly (induction on chain size), and a chain has at most $N$ anchors, which gives convergence. Range-maximum queries over query coordinates $M[j].d$ in each path's search tree find the best predecessor reachable through that path in logarithmic time. Pangenome graphs have small path covers and converge in few rounds in practice, which makes long-read alignment to cyclic human pangenome graphs feasible.

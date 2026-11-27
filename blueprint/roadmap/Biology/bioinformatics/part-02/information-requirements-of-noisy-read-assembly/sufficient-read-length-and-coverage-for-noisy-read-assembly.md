@@ -20,6 +20,11 @@ $$N > \max\left(\frac{G \ln(3/\epsilon)}{L - \tilde\ell_{crit} - 2\ell_{iid}},\;
 
 the X-phased Multibridging algorithm is $\epsilon$-feasible. Thus noisy reads need only about $2\ell_{iid}$ extra bases of read length beyond the noiseless requirement that every triple repeat and one repeat of each interleaved pair be bridged, while the coverage term matches Lander–Waterman coverage up to the same shift.
 
+## Proof depends on
+
+- [Fixed-direction Chernoff bound, rate form](../../../../Probability/large-deviations/cram-r-s-theorem/cramer-upper-bound-rate.md)
+- [Bridging form of Ukkonen's condition](../information-limits-of-shotgun-assembly/bridging-form-of-ukkonens-condition.md)
+
 ## Expansion
 
 The two equations bound, by Chernoff estimates, the probability that two unrelated length-$\ell_{iid}$ segments look alike (about $G^2$ pairs, per-base mismatch probability $3/4$) and that a true overlap looks too noisy (about $G$ pairs, per-base mismatch probability $2p - \frac43 p^2$ between two noisy copies). The repeat-aware rule inspects both ends of a candidate overlap so that one end falls in a random flank, separating repeat copies. Greedy assembly needs each flanked repeat bridged by a read; multibridging builds a de Bruijn graph with large $K$ and resolves repeats that are only partially bridged, lowering the read-length threshold from $\tilde\ell_{max}$ to $\tilde\ell_{crit}$. The $\ln(3N/\epsilon)/L$ terms ensure coverage of every gap of the required overlap length.

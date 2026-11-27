@@ -14,7 +14,11 @@ $$P_G(s,t) = P_G(s,u)\,\hat p\,P_G(v,t) \qquad \text{for all } s \in V_u,\ t \in
 
 Each pair is tested in $O(|V|^2)$ time; removing a cut edge splits the problem into independent subproblems on $V_u$ and $V_v$, and a tree is recovered exactly by recursion.
 
-**Theorem 2 (degree-two vertices).** If $s$ has exactly two neighbours $u, v$, then (i) $P_G(s,t) < 2\hat p - \hat p^2$ for all $t$; (ii) $P_G(s,t) < P_G(s,u) = P_G(s,v)$ for all $t \notin \{s,u,v\}$; and (iii) $P_G(s,t) < \max\{P_G(u,t), P_G(v,t)\}$ for all $t \notin \{s,u,v\}$.
+**Theorem 2 (degree-two vertices).** If $s$ has exactly two neighbours $u, v$, then (i) $P_G(s,t) < 2\hat p - \hat p^2$ for all $t \ne s$; (ii) $P_G(s,t) < P_G(s,u) = P_G(s,v)$ for all $t \notin \{s,u,v\}$; and (iii) $P_G(s,t) < \max\{P_G(u,t), P_G(v,t)\}$ for all $t \notin \{s,u,v\}$.
+
+## Depends on
+
+- [Bridge test for an edge set](../../../../ComputerScience/greedy-algorithms-and-matroids/graphic-matroid/bridge-in.md)
 
 ## Expansion
 

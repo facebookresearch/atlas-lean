@@ -10,6 +10,10 @@ $$f_b(b) = \frac{\Gamma(2\alpha)}{\Gamma(\alpha)^2}\,(\lambda_m\lambda_u)^{\alph
 
 It depends on the rates only through $\theta = \lambda_m/\lambda_u = \mathrm{E}(U)/\mathrm{E}(M)$: dividing numerator and denominator by $\lambda_u^{2\alpha}$ gives $f_b(b) = \frac{\Gamma(2\alpha)}{\Gamma(\alpha)^2}\theta^{\alpha}(1-\rho)^{\alpha}[b(1-b)]^{\alpha-1}((\theta-1)b+1)\big/\bigl(((\theta-1)b+1)^2 - 4\rho\theta b(1-b)\bigr)^{\alpha+1/2}$. Letting $\rho \to 0$ recovers the ratio of independent gammas with a common shape, and with $\theta = 1$ as well the $\mathrm{Beta}(\alpha,\alpha)$ law, the case implicitly assumed by beta regression.
 
+## Proof depends on
+
+- [Real moments of the gamma density](../../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/lintegral-gamma-pdf-mul-rpow.md)
+
 ## Expansion
 
 Expand the Bessel function, $I_{\nu}(z) = \sum_{k \ge 0} (z/2)^{2k+\nu}/(k!\,\Gamma(k+\nu+1))$, so that $f_{M,U}$ becomes a series in $(mu)^{k+\alpha-1}e^{-(\lambda_m m+\lambda_u u)/(1-\rho)}$. The density of $b$ is $\int_0^\infty s\, f_{M,U}(sb, s(1-b))\,ds$; term by term the $s$-integral is $\Gamma(2k+2\alpha)(1-\rho)^{2k+2\alpha}/L(b)^{2k+2\alpha}$, which leaves the factor $(1-\rho)^{\alpha}$. The duplication formula $\Gamma(2k+2\alpha) = 2^{2k+2\alpha-1}\Gamma(k+\alpha)\Gamma(k+\alpha+\tfrac12)/\sqrt{\pi}$ turns the remaining sum into the binomial series $\sum_k \Gamma(k+\alpha+\frac12)(4x)^k/k! = \Gamma(\alpha+\frac12)(1-4x)^{-\alpha-1/2}$ with $x = \rho\lambda_m\lambda_u b(1-b)/L(b)^2 < 1/4$, which gives the closed form.

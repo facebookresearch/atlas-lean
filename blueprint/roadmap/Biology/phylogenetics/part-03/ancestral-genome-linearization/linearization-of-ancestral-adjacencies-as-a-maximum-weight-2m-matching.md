@@ -27,6 +27,10 @@ In contrast, requiring a single circular chromosome (MAX-ROW-Ci1P) or only linea
 without multiplicities (MAX-ROW-C1P) is NP-complete already for degree-2 matrices, since these contain
 the traveling salesman and vertex-disjoint path cover problems.
 
+## Proof depends on
+
+- [General matching is in P (Edmonds' blossom algorithm)](../../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
+
 ## Expansion
 
 Each occurrence of a vertex on a cyclic walk contributes two incident walk edges, so a feasible

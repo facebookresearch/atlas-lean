@@ -1,7 +1,5 @@
 # Network control, inference and stochastic gene networks
 
-- [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
-- [Stochastic reaction networks](stochastic-reaction-networks/README.md)
 - [Control kernels of Boolean networks](control-kernels-of-boolean-networks/README.md)
 - [Effective number of experiments in expression compendia](effective-number-of-experiments-in-expression-compendia/README.md)
 - [Frequency–amplitude coordination of biological oscillators](frequency-amplitude-coordination-of-biological-oscillators/README.md)

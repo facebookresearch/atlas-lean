@@ -10,6 +10,10 @@ The case $k = 2$ (only triangles must satisfy the triangle inequality) is ConsT;
 
 **Approximation for ConsT.** Let $\bar\Delta$ be the set of triangles of $G$ violating the triangle inequality, and for each edge $\{u,v\}$ let $S_{uv} \subseteq \bar\Delta$ be the violated triangles containing it, with cost $r(\{u,v\})$. Removing a set of edges leaves a consistent graph iff the corresponding sets cover $\bar\Delta$, so ConsT is equivalent to minimum-weight set cover on $\{S_{uv}\}$ (maximizing the kept reward = minimizing the removed reward). Since every violated triangle lies in exactly three sets, an LP-rounding algorithm removes at most $3$ times the optimal removed reward.
 
+## Proof depends on
+
+- [Greedy set cover is a logarithmic approximation](../../../../ComputerScience/approximation-algorithms/greedy-set-cover/greedy-set-cover-approx-log.md)
+
 ## Expansion
 
 The reduction is from Independent Set. Given $G$ and $\ell$, add a vertex $u$ joined to every vertex, give the original edges $d = r = 3$ and the new edges $d = r = 1$. Any path of three or more edges has length at least $3$ and so violates nothing; violations come only from triangles $u,v,w$ with $\{v,w\} \in E$, since $1 + 1 < 3$. Taking all original edges plus the spokes to an independent set $I$ is consistent with reward $3|E| + |I|$. Conversely, an optimal solution can be assumed to contain all original edges (swapping a spoke for a missing original edge never lowers the reward), and then the chosen spokes must end in an independent set; so reward $\ge 3|E| + \ell$ is achievable iff $G$ has an independent set of size $\ell$. With unit rewards the same swap argument works with threshold $|E| + \ell$. Applied to yeast 4C data, triangle-consistent filtering kept more total confidence than a standard 1% false-discovery filter while giving 3D embeddings with lower error and less sensitivity to initialization.

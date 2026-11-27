@@ -18,6 +18,10 @@ $$\log\mu_r \mid \log\boldsymbol\mu_{-r} = q\log\mu_0 - \sum_{i \ne r}\log\mu_i 
 
 $$\log\mu_i \mid \log\boldsymbol\mu_{-i,r} \sim \mathcal N\Big(\tfrac12\big(q\log\mu_0 - \mathbf 1_{q-2}'\log\boldsymbol\mu_{-i,r}\big),\; \tfrac12 a_\mu^2\Big).$$
 
+## Depends on
+
+- [Gaussian conditioning (Schur complement)](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
+
 ## Expansion
 
 With $M = \sum_i \log\mu_i$, the pair $(\log\boldsymbol\mu, M)$ is jointly normal with $\mathrm{Cov}(\log\boldsymbol\mu, M) = a_\mu^2\mathbf 1_q$ and $\mathrm{Var}(M) = q a_\mu^2$; Gaussian conditioning on $M = q\log\mu_0$ gives Proposition 1 (as in West and Harrison's Theorem 8.2). Propositions 2 and 3 follow from the Sherman–Morrison inverse $(I_m - \tfrac1q\mathbf 1\mathbf 1')^{-1} = I_m + \tfrac{1}{q-m}\mathbf 1\mathbf 1'$: for $m = q-1$ the conditional variance vanishes, and for $m = q-2$ it equals $a_\mu^2/2$. A sampler therefore updates $\log\boldsymbol\mu_{-r}$ with the conditionals of Proposition 3 and sets $\mu_r$ deterministically; choosing $r$ at random in each iteration avoids distorting posterior inference for a fixed reference gene.

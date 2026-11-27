@@ -29,6 +29,10 @@ $\mathrm{TP} = \emptyset$). The read is assigned to a node minimizing $\mathrm{P
 5. When the true source is among the hits, assignment to the LCA has zero expected-distance
    predictive power, which motivates choosing $q < 1$.
 
+## Proof depends on
+
+- [Lowest common ancestors via range minimum queries](../../../../ComputerScience/data-structures/range-query-structures/advanced-data-structures/lowest-common-ancestors-via-range-minimum.md)
+
 ## Expansion
 
 For property 2, $(|\mathrm{FN}| + |\mathrm{FP}|)/(2|\mathrm{TP}|) + 1$ is the reciprocal of the F-measure, so

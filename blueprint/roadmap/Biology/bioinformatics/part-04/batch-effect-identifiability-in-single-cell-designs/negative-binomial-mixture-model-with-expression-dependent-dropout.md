@@ -18,6 +18,10 @@ $$\Pr(Y_{big} = 0 \mid k) = f_{\mathrm{NB}}(0;\mu,\phi_{bg}) + \sum_{x \ge 1}\si
 
 $$\Pr(Y_{big} = y \mid k) = \big(1 - \sigma(\gamma_{b0}+\gamma_{b1}y)\big)\,f_{\mathrm{NB}}(y;\mu,\phi_{bg}), \quad y > 0.$$
 
+## Depends on
+
+- [Negative binomial mass function with size and mean](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-real.md)
+
 ## Expansion
 
 An observed zero is either a biological zero ($X = 0$) or a dropout of a positive count, and the dropout probability depends on the unobserved count itself, so the missingness is not at random; the sum over $x$ integrates the latent count out. Because batch effects $\nu_{bg}$ are additive on the log-mean scale while cell-type effects $\beta_{gk}$ are shared across batches, differences between two cell types are the same in every batch, which is the lever that makes batch effects estimable. Posterior sampling of $W$, $X$ and $Z$ yields cell-type clusters, batch-corrected counts and imputed dropouts.

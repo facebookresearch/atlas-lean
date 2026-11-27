@@ -20,6 +20,10 @@ $$F_\pi = \sum_{\tau=1}^{T}\mathbb{E}_{Q(s_\tau\mid\pi)}[\log Q(s_\tau\mid\pi)] 
 
 Since $F[Q] = D_{KL}[Q \,\|\, P(\cdot \mid o_{1:t})] - \log P(o_{1:t})$, minimizing $F$ over the mean-field family is approximate Bayesian inference, and $F$ upper-bounds the surprisal $-\log P(o_{1:t})$.
 
+## Depends on
+
+- [Evidence lower bound of a single observation](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/mean-field-variational-inference/elbo.md)
+
 ## Expansion
 
 Both factorizations turn the logarithms into sums; grouping the $A$-terms gives $D_{KL}[Q(A)\|P(A)]$ plus the expected log-likelihood, the $\pi$-terms give $D_{KL}[Q(\pi)\|P(\pi)]$, and the remaining terms, which depend on $\pi$, are averaged under $Q(\pi)$. Setting the gradient of $F_\pi$ with respect to the categorical parameters of $Q(s_\tau\mid\pi)$ to zero gives softmax fixed-point updates that combine forward and backward messages with the expected log-likelihood $\mathbb{E}_{Q(A)}[\log A] = \psi(a) - \psi(a_0)$ (digamma of the Dirichlet counts); a gradient descent on $F_\pi$ is read as neuronal dynamics, and the same updates coincide with variational message passing.

@@ -16,6 +16,14 @@ $$\text{E-step:}\quad Z^{(t)}_{i,(j,k)} = \frac{\pi^{(t)}_{(j,k)}}{\sum_{(j',k')
 
 $$\text{M-step:}\quad \pi^{(t+1)}_{(j,k)} = \frac{\sum_{i=1}^N Z^{(t)}_{i,(j,k)} + N\,\mathrm{Spline}(j,k)}{N + \sum_{j'<k'} N\,\mathrm{Spline}(j',k')} .$$
 
+## Depends on
+
+- [Dirichlet–multinomial conjugacy](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/posterior-categorical-seq-kernel-dirichl.md)
+
+## Proof depends on
+
+- [The EM inequality](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/em-q-sub-le-log-lik-sub.md)
+
 ## Expansion
 
 The E-step distributes each multi-read across its alignable bin pairs in proportion to current contact probabilities; uni-reads keep weight one. The M-step is the Dirichlet–multinomial posterior mode, blending local interaction evidence with the distance-decay prior, which prevents multi-reads from being absorbed entirely by already dense bin pairs. The final posterior probabilities $\mathbb P(Z_{i,(j,k)} = 1 \mid \mathbf Y_i, \boldsymbol\pi)$ assign each multi-read to its most probable bin pair, retaining it only when that probability exceeds $0.5$, which keeps the output compatible with standard significant-interaction callers.

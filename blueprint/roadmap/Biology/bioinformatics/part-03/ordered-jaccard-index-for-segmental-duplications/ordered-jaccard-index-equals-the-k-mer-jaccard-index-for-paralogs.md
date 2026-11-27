@@ -10,6 +10,11 @@ $$\hat J(s,s') = J\big(K(s), K(s')\big) = \frac{|K(s) \cap K(s')|}{|K(s) \cup K(
 
 Moreover $s \circledast s'$ can then be computed in linear time by scanning $s$ and $s'$ simultaneously.
 
+## Depends on
+
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
+- [The k-mers of a string](../../de-bruijn-graph-genome-assembly/kmers.md)
+
 ## Expansion
 
 Always $s \circledast s' \le |K(s) \cap K(s')|$, since matched $k$-mers are shared. Conversely, immediately after duplication the two copies are identical and, with no repeated $k$-mers, all shared $k$-mers are matched colinearly; a crossing pair would require a shared $k$-mer created after divergence, which the assumption excludes. So under the error model the two indices coincide, and lower bounds on the Jaccard index implied by the divergence threshold (used to seed SD candidates) transfer to $\hat J$, while the colinear version is cheaper to evaluate and less fooled by shuffled shared content. The lemma underlies fast SD detection and cross-species SD decomposition into elementary SDs and core duplicons.

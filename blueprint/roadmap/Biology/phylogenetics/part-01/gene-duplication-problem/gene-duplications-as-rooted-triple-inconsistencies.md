@@ -13,6 +13,7 @@ A **rooted triple** $xy|z$ is the binary tree on three leaves in which the path 
 ## Depends on
 
 - [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
 
 ## Expansion
 

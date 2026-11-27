@@ -16,6 +16,10 @@
 
 Maximally spanning seeds form a subset of the supermaximal exact matches (non-enclosed seeds); the omitted non-enclosed seeds are those completely covered by two or more longer non-enclosed seeds, which cannot be part of an optimal alignment.
 
+## Depends on
+
+- [FM-index backward search](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/backward-search.md)
+
 ## Expansion
 
 Corollary 1 follows because a maximal extension stops only when the next character yields no occurrence, so a seed through $i$ reaching further left (or right) would contradict maximality of the backward (forward) phase. For Corollary 2, every seed returned at the midpoint $p$ has length at least $1$ and contains $p$, so $S.\mathrm{begin} \le p < S.\mathrm{end}$; the two remainders therefore have total length strictly less than $e - b$, and the recursion depth is bounded by the query length.

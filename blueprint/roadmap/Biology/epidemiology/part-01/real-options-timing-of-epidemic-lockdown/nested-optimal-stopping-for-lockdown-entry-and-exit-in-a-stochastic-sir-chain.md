@@ -24,7 +24,12 @@ and lockdown is optimally imposed at the first exit time from $C_0 = \{x : \psi(
 
 ## Depends on
 
-- [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
+- [Path of a continuous-time Markov chain](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-path.md)
+
+## Proof depends on
+
+- [Jump chain of a continuous-time Markov chain](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-jump-chain.md)
+- [Holding times of a continuous-time Markov chain](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-holding-time.md)
 
 ## Expansion
 

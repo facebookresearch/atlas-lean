@@ -12,6 +12,11 @@ $$\sigma_d = \sum_{h=d+1}^{m-1} \max_h, \qquad th_d = th - \sigma_d, \qquad pfxs
 3. For a surjective alphabet map $\Phi : \mathcal A \to \underline{\mathcal A}$, the transformed matrix $\underline M(i, b) = \max\{M(i,a) : \Phi(a) = b\}$ satisfies $sc(\Phi(w), \underline M) \ge sc(w, M)$, so matches of $\underline M$ on the recoded sequence form a superset of the true matches and serve as an exact filter.
 4. For integer-valued scores and an i.i.d. background, the smallest threshold $t$ whose tail probability $P(sc(X,M) \ge t)$ does not exceed a given p-value $\pi$ can be computed by a dynamic program over columns restricted to scores above the intermediate thresholds, and the rows may be permuted (most discriminative first) without changing the score distribution.
 
+## Depends on
+
+- [Score of a site under a position weight matrix](../../position-weight-matrices/score.md)
+- [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+
 ## Expansion
 
 For (2) ⇒ (1), the suffix after column $d$ contributes at most $\sigma_d$, so a full score of at least $th$ forces each prefix to be at least $th - \sigma_d$; for (1) ⇒ (2), take $d = m-1$, where $\sigma_{m-1} = 0$. Sorting columns by discrimination makes early failure likely, which is where the large speedups on nucleotide matrices come from (factors 17 to 275 over previous exact methods were reported). The filter in item 3 works because taking the maximum over each character class can only raise every column score.

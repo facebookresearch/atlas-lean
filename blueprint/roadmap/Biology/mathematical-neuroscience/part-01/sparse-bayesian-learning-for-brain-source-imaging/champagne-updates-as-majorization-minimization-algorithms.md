@@ -20,6 +20,10 @@ with $C_y$ the sample covariance; it is non-convex in $\gamma$.
 
 **Low-SNR surrogate (Proposition 4).** With $\sigma^2$ normalized to 1, $\mathcal{L}^{\text{Low-SNR}}_{\text{conv}}(\gamma \mid \gamma^k) = \operatorname{tr}(L\Gamma L^{\mathsf T}) + \frac1T\sum_t y(t)^{\mathsf T}\Sigma_y^{-1}y(t)$ majorizes $\mathcal{L}_{II}$, yields an MM algorithm satisfying Theorem 1, and $\mathcal{L}_{II}(\gamma) = \mathcal{L}^{\text{Low-SNR}}_{\text{conv}}(\gamma\mid\gamma^k) + O(\mathrm{SNR})$ as the signal-to-noise ratio tends to zero.
 
+## Depends on
+
+- [Gaussian conditioning (Schur complement)](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
+
 ## Expansion
 
 Descent follows from the sandwich $f(u^{k+1}) \le g(u^{k+1}\mid u^k) \le g(u^k \mid u^k) = f(u^k)$. For EM, Jensen's inequality applied to $-\log \mathbb{E}_{p(X\mid\gamma)} p(Y \mid X)$ with the current posterior as importance distribution gives the surrogate, whose minimizer is the M-step; condition [A3] holds because $\log|\Gamma|$ is geodesically convex on positive definite matrices, so local minima of the surrogate are global. For convex bounding, concavity of $\gamma \mapsto \log|\sigma^2 I + L\operatorname{diag}(\gamma)L^{\mathsf T}|$ gives $\log|\Sigma_y| \le \log|\Sigma_y^k| + \operatorname{tr}\big((\Sigma_y^k)^{-1}(\Sigma_y - \Sigma_y^k)\big)$, which is linear in $\gamma$ with slopes $z_n^k$; together with the variational form $\frac1T\sum_t \bar x_n(t)^2/\gamma_n$ the surrogate separates over $n$ and its minimizer is the square-root update. For the low-SNR bound, $\log|I + L\Gamma L^{\mathsf T}| = \sum_i \log(1 + p_i)$ over eigenvalues $p_i$ of $L\Gamma L^{\mathsf T}$ is at most $\sum_i p_i = \operatorname{tr}(L\Gamma L^{\mathsf T})$, with equality to first order as the $p_i \to 0$.

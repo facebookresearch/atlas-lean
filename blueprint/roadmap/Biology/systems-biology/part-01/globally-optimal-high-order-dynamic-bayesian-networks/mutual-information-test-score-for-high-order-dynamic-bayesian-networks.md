@@ -18,6 +18,14 @@ $$l_{i\sigma_i(1)} = (r_i - 1)(r_{i\sigma_i(1)} - 1), \qquad l_{i\sigma_i(j)} = 
 
 (Eqs. (1)-(3) of the source). If all variables have $k$ states, the penalty of a parent set depends only on its size $s$: $u(s) = \sum_{j=1}^{s} \chi_{\alpha, (k-1)^2 k^{j-1}}$ (Proposition 3 of the source).
 
+## Depends on
+
+- [Mutual information of a finite joint law](../../../../InformationTheory/entropy-and-mutual-information/conditional-entropy-and-mutual-information/measure-mutual-information-to-measure.md)
+
+## Proof depends on
+
+- [Chi-square distribution](../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
+
 ## Expansion
 
 The first term is the log-likelihood in information form: maximizing $\sum_i 2N\, I(X_i, Pa_i)$ is maximum likelihood, which always prefers the complete network because mutual information never decreases when a parent is added. The penalty uses Kullback's result that, if $X_i$ and $X_j$ are conditionally independent given $Pa_i$, then $2N\, I(X_i, X_j \mid Pa_i)$ is approximately $\chi^2$ with $(r_i - 1)(r_j - 1) q_i$ degrees of freedom, $q_i$ being the number of joint states of $Pa_i$; adding parents one at a time telescopes these tests. A parent therefore raises the score only if its conditional information with the child exceeds the level-$\alpha$ critical value. Because the score decomposes over nodes and inter-slice edges cannot create cycles, each node's parent set can be optimized separately, which is exploited by exact parent-set search.

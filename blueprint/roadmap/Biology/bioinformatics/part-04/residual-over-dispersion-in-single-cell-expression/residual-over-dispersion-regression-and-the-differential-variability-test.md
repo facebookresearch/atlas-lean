@@ -20,6 +20,10 @@ $$\log_2\frac{\delta_i^A}{\delta_i^B} = \log_2(e)\Big[\underbrace{f^A(\mu_i^A) -
 
 **Decision rule.** Gene $i$ is called differentially variable when $\mathbb P(|\epsilon_i^A - \epsilon_i^B| > \psi_0 \mid \text{data}) > \alpha_R$ for a tolerance $\psi_0 > 0$, or, for $\psi_0 = 0$, when $2\max\{\pi_i, 1 - \pi_i\} - 1 > \alpha_R$ with $\pi_i = \mathbb P(\epsilon_i^A - \epsilon_i^B > 0 \mid \text{data})$; the threshold $\alpha_R$ is calibrated to a target expected false discovery rate.
 
+## Depends on
+
+- [The marginal law of the hierarchy is negative binomial](../../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik-eq-neg-binomial-real.md)
+
 ## Expansion
 
 Integrating out $\rho_{ij}$ gives a negative binomial likelihood, and writing the prior as $\delta_i \sim \log\text{-}t_\eta(f(\mu_i), \sigma^2)$ with the scale-mixture representation $\epsilon_i \mid \lambda_i \sim \mathcal N(0, \sigma^2/\lambda_i)$, $\lambda_i \sim \mathrm{Gamma}(\eta/2, \eta/2)$ makes $\beta$, $\sigma^2$, $\lambda_i$ conjugate, so the posterior is sampled by adaptive Metropolis-within-Gibbs. Heavy $t$ tails (default $\eta = 5$) keep outlying genes from distorting the trend, and the linear term stabilizes the fit where few genes have a given mean. Under $\psi_0 = 0$ the two-sided tail probability is identically one, hence the switch to the maximum of the one-sided posterior probabilities.

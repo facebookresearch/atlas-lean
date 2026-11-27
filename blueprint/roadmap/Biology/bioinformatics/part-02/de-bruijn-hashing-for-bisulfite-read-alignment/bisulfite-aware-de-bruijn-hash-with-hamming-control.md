@@ -20,6 +20,10 @@ $$d_H(P_1,P_2) \le k \ \Longrightarrow\ d_H\big(h^{\oplus}_{BS}(P_1),\,h^{\oplus
 
 Hence an approximate search for $P$ with up to $k$ mismatches only needs to visit fingerprints in the radius-$2k$ Hamming ball around $h^{\oplus}_{BS}(P)$, followed by verification.
 
+## Depends on
+
+- [Hamming distance is the weight of the difference](../../../../InformationTheory/error-correcting-codes/linear-codes/hamming-dist-eq-hamming-norm-sub.md)
+
 ## Expansion
 
 The lemma is immediate from the definition of $h(T)$: the window of $h(T)$ starting at $i$ is by construction the fingerprint of the $m$-mer of $T$ starting at $i$. For the bisulfite hash, invariance holds because the encoding identifies C with T and G with A. A single substitution changes at most one bit in the encoding of each block that contains the position; since the final block may overlap the previous one, a position lies in at most two blocks, so each mismatch flips at most two bits of the XOR and $k$ mismatches flip at most $2k$. Indexing $h(T)$ with a succinct full-text index gives memory comparable to FM-index aligners while searching a much smaller neighbourhood than backtracking over all mismatch patterns.

@@ -16,6 +16,10 @@ A **maximal repeated pair** is a triple $(p_1, p_2, \alpha)$ with $p_1 \ne p_2$ 
 
 **Consequences.** Since a string of length $|S|$ has at most $|S|$ maximal repeats, and each contributes at most $|\Sigma|^2$ pairs $(l, r)$, $S$ has at most $|S| \, |\Sigma|^2$ minimal absent words of length at least $3$. Maximal repeats are the path labels of the left-diverse internal nodes of the suffix tree of $S$, so all minimal absent words can be enumerated from a suffix tree, or equivalently from a suffix array with its LCP and Burrows-Wheeler arrays, in time linear in $|S|$ plus the output size.
 
+## Proof depends on
+
+- [Suffix tree](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-tree/suffix-tree.md)
+
 ## Expansion
 
 If $l \alpha r$ is absent while $l \alpha$ and $\alpha r$ occur, at positions $p_1$ and $p_2$ say, the character after the occurrence of $l \alpha$ cannot be $r$ and the character before the occurrence of $\alpha r$ cannot be $l$; hence the two occurrences of $\alpha$ differ on both sides, a maximal repeated pair. Theorem 2 restates minimal absence locally: $l \alpha$ and $\alpha r$ occur exactly when $l \in \mathcal{L}_\alpha$ and $r \in \mathcal{R}_\alpha$, and $l \alpha r$ occurs exactly when $(l, r)$ encloses some occurrence of $\alpha$. Minimal absent words (unlike all absent words or nullomers) form a set of linear size that determines the string, which makes them a compact signature for comparing genomes.

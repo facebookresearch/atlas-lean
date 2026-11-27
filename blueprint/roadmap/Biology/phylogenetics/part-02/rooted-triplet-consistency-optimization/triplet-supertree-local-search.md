@@ -16,6 +16,10 @@ The same difference governs the comparison of regrafting $v$ above a node $b$ wi
 
 **Theorem (complexity).** After a one-time $O(kn^3)$ pass that counts how many of the $k$ input trees display each triplet over the $n$ taxa, the best tree in the full SPR neighbourhood and in the full TBR neighbourhood of a supertree can each be found in $O(n^3)$ time, compared with $O(kn^4)$ and $O(kn^5)$ for naive evaluation.
 
+## Depends on
+
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
+
 ## Expansion
 
 Moving $T_v$ one step down past $z$ changes the resolution of only the triplets with one leaf in each of $T_v$, $T_y$, $T_z$: they switch from $yz|v$ to $vy|z$, which is the lemma. Regrafting further away is a chain of such moves, so the score of every regraft position of a pruned subtree is a prefix sum along the tree, computed with $O(n^3)$ preprocessed triplet counts by dynamic programming. A TBR move is an SPR followed by re-rooting the pruned subtree, and the best re-rooting of each subtree can be chosen independently of the regraft point, which keeps TBR at the same cubic bound.

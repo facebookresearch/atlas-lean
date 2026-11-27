@@ -16,8 +16,9 @@ then under the network multispecies coalescent the tree $S = (((A,E),B),C,D)$, w
 
 ## Depends on
 
-- [Multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/README.md)
-- [Quartet support and determination of trees by quartets](../../quartet-support-and-determination-of-trees-by-qu/README.md)
+- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [Total quartet support of a tree](../../quartet-support-and-determination-of-trees-by-qu/quartet-score.md)
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](../../../coalescent-theory/multispecies-coalescent/network-multispecies-coalescent-fixed-network-ge.md)
 
 ## Expansion
 

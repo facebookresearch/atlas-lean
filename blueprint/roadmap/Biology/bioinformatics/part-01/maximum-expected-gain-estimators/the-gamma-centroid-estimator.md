@@ -23,13 +23,17 @@ $\gamma = 1$ is the centroid estimator.
    $\alpha_1 \mathrm{TP} + \alpha_2 \mathrm{TN} - \alpha_3 \mathrm{FP} - \alpha_4 \mathrm{FN}$ is the
    $\gamma$-centroid estimator with $\gamma = \frac{\alpha_1 + \alpha_4}{\alpha_2 + \alpha_3}$.
 2. $\mathbb{E}[G_\gamma(\theta, y) \mid D] = \sum_{i} \bigl((\gamma + 1) p_i - 1\bigr) y_i + \mathrm{const}$.
-   Hence, if $\mathcal{Y}$ is closed under switching any coordinate from 1 to 0, the $\gamma$-centroid
-   estimator maximizes the sum of the marginal probabilities $p_i > \frac{1}{\gamma + 1}$ included in
-   the prediction.
+   Hence the $\gamma$-centroid estimator maximizes $\sum_{i : y_i = 1} \bigl(p_i - \frac{1}{\gamma + 1}\bigr)$
+   over $y \in \mathcal{Y}$; if $\mathcal{Y}$ is closed under switching any coordinate from 1 to 0, it
+   includes only coordinates with $p_i > \frac{1}{\gamma + 1}$.
 3. If moreover $\mathcal{Y}$ is defined by "at most one 1 in each of a family of index sets" (as for
    alignments and pseudoknot-free or general base pairings) and $0 < \gamma \le 1$, the estimator is the
    consensus estimator $\hat{y}_i = [p_i > \frac{1}{\gamma + 1}]$, which is then guaranteed to lie in
    $\mathcal{Y}$.
+
+## Depends on
+
+- [Base-pair probability](../../mccaskill-partition-function-for-rna-folding/pair-prob.md)
 
 ## Expansion
 

@@ -14,6 +14,10 @@ with species importance values summing to one within each taxon, so that each ge
 
 **Result.** The normalized good and bad edge weights can be computed directly from the gene trees by dynamic programming over each tree, without enumerating the $\Theta(n^4)$ quartets; for example, the total weight of taxon pairs below a vertex $u$, $\sum_{z \ne w \in L(u)} I(z) I(w)$, is a single dynamic-programming quantity $g_0[u]$, and for singletons $X, Y$ the sum $\mathcal G[X,Y] + \mathcal B[X,Y]$ is a closed form in root quantities. With a perfectly balanced subproblem decomposition the whole method runs in $O(n^3 k)$ time.
 
+## Depends on
+
+- [Resolution of a taxon set induced by a tree](../../quartet-support-and-determination-of-trees-by-qu/induces.md)
+
 ## Expansion
 
 Siblings in a displayed quartet should stay on the same side of the split and non-siblings should be separated, which is what the cut objective rewards. Without normalization, quartets involving artificial taxa receive inflated weights from a single gene tree, which distorts later splits; normalized weights restore one vote per gene tree and improved accuracy in simulations. Graph construction dominates the cost of each subproblem, so the direct construction controls the overall running time.

@@ -23,7 +23,7 @@ $$E_3 = \Big(\frac{A(A-B)}{A - B + C},\ \frac{AC}{A-B+C},\ A,\ 1,\dots,1\Big).$$
 
 ## Depends on
 
-- [Logistic growth equation](../../logistic-growth-equation/README.md)
+- [Explicit solution of the logistic equation](../../logistic-growth-equation/logistic.md)
 
 ## Proof depends on
 

@@ -8,6 +8,10 @@
 
 **Example ($k = 2$, $p = 3$).** The three searches $\mathcal{S}_1 = (123, 000, 022)$, $\mathcal{S}_2 = (321, 000, 012)$ and $\mathcal{S}_3 = (213, 001, 012)$ form a search scheme: $\mathcal{S}_1$ matches $P_1$ exactly and extends right with up to two errors; $\mathcal{S}_2$ matches $P_3$ exactly, then allows one error in $P_2$ and two in total; $\mathcal{S}_3$ matches $P_2$ exactly, extends left with at most one error, then right with between one and two.
 
+## Depends on
+
+- [FM-index backward search](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/backward-search.md)
+
 ## Expansion
 
 The bidirectional index is what makes non-left-to-right part orders possible. The pigeonhole strategy is the special search scheme with $p = k+1$ searches, each starting with one exact part. General schemes limit the number of errors allowed while the matched string is still short, because near the root of the index the branching is dense and backtracking is expensive; later parts, when few index branches survive, may absorb the remaining errors. Checking losslessness amounts to enumerating the error vectors $(e_1,\dots,e_p)$ with $\sum e_i \le k$ and verifying that for some search the partial sums of $e_{\pi[1]}, e_{\pi[2]},\dots$ stay within $[L[i],U[i]]$. The cited paper keeps the scheme fixed but chooses the part boundaries dynamically for each pattern, from the sizes of the index intervals.

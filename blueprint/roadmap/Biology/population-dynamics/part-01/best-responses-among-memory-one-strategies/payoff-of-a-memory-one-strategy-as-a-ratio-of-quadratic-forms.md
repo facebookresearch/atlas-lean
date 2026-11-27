@@ -14,6 +14,10 @@ with $a = -Pq_2 + P + Tq_4$ and $\bar a = -q_2 + q_4 + 1$. Against opponents $q^
 
 **Theorem 2 (best responses).** A best response $p^* = \arg\max_{p \in [0,1]^4}\sum_{i} u_{q^{(i)}}(p)$ lies in the finite candidate set $S_q$ of points $p$ obtained, for each partition $J \cup K = \{1,2,3,4\}$, by fixing $p_j \in \{0, 1\}$ for $j \in J$ and solving $\partial_{p_k}\sum_i u_{q^{(i)}}(p) = 0$ for $k \in K$, together with the vertices $\{0,1\}^4$.
 
+## Depends on
+
+- [Existence of a stationary distribution](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-stationary.md)
+
 ## Expansion
 
 The stationary distribution of the four-state chain is a ratio of determinants by Cramer's rule; each transition entry is affine in each $p_i$ and no product $p_i p_i$ appears in any minor, which leaves only cross terms $p_i p_j$ and gives zero diagonals. Since $u_q$ is not concave (against unconditional cooperation, $(0,0,0,0)$, $(\tfrac12, 0, 0, 0)$ and $(\tfrac12, 0, 0, \tfrac12)$ are all best responses), the maximum over the box is found by Karush–Kuhn–Tucker reasoning: on each face some coordinates sit at bounds and the others satisfy first-order conditions, a system of polynomial equations after clearing the positive denominators. Evaluating the objective on $S_q$ yields best responses that are generally not zero-determinant (extortionate) strategies, and in multi-opponent settings memory-one best responses can be outperformed by optimized strategies with longer memory.

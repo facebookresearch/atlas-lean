@@ -14,7 +14,8 @@ with $C_1$ depending on $\|K\|_1, \eta$ and $C_2$ on $\delta, \eta, \|K\|_1, \|K
 
 ## Depends on
 
-- [Cumulated time-rescaling test with subsampled plug-in](cumulated-time-rescaling-test-with-subsampled-plug-in.md)
+- [Poisson process](../../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
+- [Superposition](../../../../Probability/point-processes/poisson-processes/add.md)
 
 ## Expansion
 

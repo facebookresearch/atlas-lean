@@ -22,6 +22,10 @@ Unweighted UniFrac depends only on presence and absence; raw weighted UniFrac eq
 
 **Branch contributions.** Since each distance is a sum over branches, the share of branch $b$ in, for example, $d_u$ is $l_b\,|\mathbf 1(p_{ib} > 0) - \mathbf 1(p_{jb} > 0)| \big/ \bigl(d_u(i,j)\sum_{b'} l_{b'}\bigr)$. Deep branches (many descendants) are shared by almost all samples and contribute little to $d_u$ but much to $d_w$; hence unweighted UniFrac emphasizes shallow parts of the phylogeny and weighted UniFrac deep parts, with generalized UniFrac in between as $\alpha$ varies.
 
+## Depends on
+
+- [Coupling of two probability measures](../../../../MeasureTheory/optimal-transport/kantorovich-duality/is-coupling.md)
+
 ## Expansion
 
 A branch contributes to $d_u$ only if exactly one sample has descendants below it, which almost never holds for branches with many descendants; in $d_w$ its contribution is the difference in descendant mass, which is largest near the root. Real microbiome data show the effect starkly: in the source's antibiotic time course, branches with at most 9 descendants carry about 90% of unweighted but only about 25% of weighted UniFrac.

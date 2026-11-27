@@ -18,6 +18,8 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
 
+- [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
+- [Stochastic reaction networks](stochastic-reaction-networks/README.md)
 - [Chemical reaction network theory](chemical-reaction-network-theory/README.md)
 
 - [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
@@ -31,8 +33,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 
 ## [Network control, inference and stochastic gene networks](part-01/README.md)
 
-- [Gene regulatory network dynamics](part-01/gene-regulatory-network-dynamics/README.md)
-- [Stochastic reaction networks](part-01/stochastic-reaction-networks/README.md)
 - [Control kernels of Boolean networks](part-01/control-kernels-of-boolean-networks/README.md)
 - [Effective number of experiments in expression compendia](part-01/effective-number-of-experiments-in-expression-compendia/README.md)
 - [Frequency–amplitude coordination of biological oscillators](part-01/frequency-amplitude-coordination-of-biological-oscillators/README.md)

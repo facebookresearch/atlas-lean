@@ -38,6 +38,14 @@ is, if and only if $\delta > \frac{T - R}{T - P}$. Tit-for-Tat is a partner stra
 $\delta > \frac{T - R}{T - P}$ and $\delta > \frac{T - R}{R - S}$; win-stay lose-shift if and only if
 $\delta > \frac{T - R}{R - P}$ and $\delta > \frac{T - R}{T - S}$.
 
+## Depends on
+
+- [Is Strategy](../../zero-determinant-strategies-in-iterated-games/is-strategy.md)
+
+## Proof depends on
+
+- [Press–Dyson determinant lemma](../../zero-determinant-strategies-in-iterated-games/dot-product-eq-div-pd-det.md)
+
 ## Expansion
 
 The lemma telescopes the probability that player I cooperates: $\delta q_I(t+1) - q_I(t) =

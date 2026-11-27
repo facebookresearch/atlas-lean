@@ -20,6 +20,10 @@ $$P(C) = \sum_{k \ge 1} P(K = k)\, P(C \mid k),$$
 
 and calling a variant whenever $\mathcal{M} \notin C$ has false-positive rate $\alpha = 1 - P(C)$. The **standard model** uses separate one-tailed intervals with type-specific $m$ for ISV and DSV; the **symmetric model** uses the two-tailed interval and treats them as opposites.
 
+## Depends on
+
+- [Law of the Gaussian sample mean](../../../../Probability/linear-models-multivariate/cochran-s-theorem/has-law-sample-mean.md)
+
 ## Expansion
 
 The sampling theorem is the Gaussian distribution of a sample mean: substituting $x = (\ell - \lambda)\sqrt{k}/\sigma$ turns the interval probability into an error function. Because ISV detection disallows reads falling inside the inserted sequence, fewer inserts are admissible around insertions than around deletions, so the two variant types have different power and error profiles, contrary to the common symmetric assumption. Combining the binomial (asymptotically Poisson) number of spanning inserts with the conditional sampling probability gives a priori detection power and error rates for planning sequencing depth and choosing library size and spread.

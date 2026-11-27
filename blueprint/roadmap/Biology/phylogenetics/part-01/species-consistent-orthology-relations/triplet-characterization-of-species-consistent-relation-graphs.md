@@ -14,6 +14,10 @@ $$P_3(R) = \{\, s(x)s(y)|s(z) \;:\; zx, zy \in E(R),\ xy \notin E(R),\ s(x) \ne 
 
 **Theorem 2.** Let $R$ be a satisfiable relation graph and $S$ a species tree. Then $R$ is $S$-consistent iff $S$ displays every triplet of $P_3(R)$.
 
+## Depends on
+
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
+
 ## Expansion
 
 Necessity in Theorem 2: if $z$ is orthologous to both $x$ and $y$ while $x,y$ are paralogous, then in any satisfying tree $\mathrm{lca}_G(x,y)$ is a duplication strictly below the speciation $\mathrm{lca}_G(x,z) = \mathrm{lca}_G(y,z)$, so $G$ contains the gene triplet $xy|z$; $S$-consistency of that speciation forces $S$ to display $s(x)s(y)|s(z)$. Sufficiency builds the cotree of the cograph and uses that every internal node $v$ has leaves $x,y$ below it with $\mathrm{lca}_S(s(x),s(y)) = s_G(v)$ and $\mathrm{lca}_G(x,y) = v$ (Lemma 2). Lemma 1 refines non-binary nodes along $S$, so the results hold for binary and non-binary gene trees alike. Theorem 2 gives a polynomial test for $S$-consistency, which is the certificate check in the hardness results.

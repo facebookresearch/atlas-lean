@@ -10,6 +10,10 @@
 
 Since $C\alpha$ can be taken arbitrarily close to $\frac{2\alpha}{1 - 2\alpha} < 2.43\,\theta$, the total expected time is $O(m\, n^{2.43\theta}\log n)$: nearly $O(m \log n)$ for modest divergence, far below the $\Theta(mn)$ of full dynamic programming, while still recovering almost all homologous bases.
 
+## Depends on
+
+- [The k-mers of a string](../../de-bruijn-graph-genome-assembly/kmers.md)
+
 ## Expansion
 
 A homologous $k$-mer survives mutation with probability $(1-\theta)^k = n^{-C\alpha}$, so long anchor-free gaps are rare and extension of a gap of length $\ell$ costs $O(\ell^2)$; summing over the geometric-like gap distribution gives the $n^{C\alpha}$ factor. Spurious anchors arise from random $k$-mer matches with probability about $4^{-k} = n^{-C}$ per pair, which is negligible for $C$ large; second-moment bounds on the dependent sums of homologous and spurious anchor counts control both the chaining work and the chance that an optimal chain uses spurious anchors. The constraint $\theta < 0.206$ is equivalent to $\alpha < 1/6$, needed to make the conditions on $C$ compatible.

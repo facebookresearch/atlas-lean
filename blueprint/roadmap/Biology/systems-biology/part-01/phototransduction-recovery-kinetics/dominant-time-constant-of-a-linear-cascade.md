@@ -8,9 +8,9 @@ $$e^*(t) = C \sum_{i=1}^{n} \frac{e^{-a_i t}}{\prod_{j \ne i}(a_j - a_i)}, \qqua
 
 $$e^*(t) = C' e^{-t/\tau_n}\,\big(1 + O(\delta)\big), \qquad C' = \frac{C}{\prod_{j < n}(a_j - a_n)} .$$
 
-## Depends on
+## Proof depends on
 
-- [Recovery translation invariance](recovery-translation-invariance.md)
+- [Laplace transform of a causal convolution](../../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/laplace-transform-of-a-causal-convolution.md)
 
 ## Expansion
 

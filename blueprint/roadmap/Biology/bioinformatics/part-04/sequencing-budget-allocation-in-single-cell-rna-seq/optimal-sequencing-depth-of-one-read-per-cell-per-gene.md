@@ -8,7 +8,7 @@ where $P_X$ is an unknown cell distribution (possibly a mixture of sub-populatio
 
 For a gene with mean relative expression $p_g = \mathbb{E}[X_{cg}]$, the expected number of reads assigned to it is $p_g B = n_{\text{reads},g}\, n_{\text{cells}}$, where $n_{\text{reads},g} = p_g\, n_{\text{reads}}$ is the mean number of reads per cell for gene $g$.
 
-**Theorem (optimal budget allocation; stated informally in the source).** For estimating each of the quantities above, the allocation minimizing the worst-case estimation error over a broad family of distributions $P_{X_g}$ is
+**Theorem (optimal budget allocation, informal form).** For estimating each of the quantities above, the allocation minimizing the worst-case (minimax) estimation error over the family of distributions $P_X$ fixed in the source's Supplementary Note 5 is
 
 $$n^*_{\text{reads},g} \asymp 1, \qquad n^*_{\text{cells}} \asymp B\, p_g,$$
 
@@ -17,6 +17,8 @@ i.e. a sequencing depth of order one read per cell per gene, independent of the 
 For a set of genes of interest whose smallest mean relative expression is $p^*$, minimizing the worst-case error over the set gives the depth $n^*_{\text{reads}} = 1/p^*$, and additional budget should be spent on more cells at that depth.
 
 ## Expansion
+
+This node still has to be stated precisely. A good expansion gives one page per target quantity, each stating the formal theorem of Supplementary Note 5 of the source: the class of distributions $P_X$ over which the worst case is taken, the error measure, and the minimax rate in $n_{\text{cells}}$ and $n_{\text{reads}}$ at fixed budget $B$, together with the empirical Bayes estimator attaining it. The heuristic behind the result follows.
 
 At fixed budget, deeper sequencing of fewer cells reduces Poisson noise per cell but leaves the cell-to-cell sampling error of $P_X$ at order $1/\sqrt{n_{\text{cells}}}$, while shallower sequencing of more cells increases the Poisson noise. Heuristically, conditional on $\gamma_c$ the $k$-th falling factorial moment of $Y_{cg}$ equals $(\gamma_c n_{\text{reads}})^k\,\mathbb{E}[X_{cg}^k]$, so moments can be estimated without bias at any depth; the Poisson part of the variance is negligible relative to cell sampling while the expected count per cell is large and dominates once it is small, so the two error sources balance at an expected count of order one per cell per gene. The same depth is optimal for the distributional quantities because their minimax rates under Poisson deconvolution are governed by the same per-cell signal-to-noise ratio. Plug-in estimates are biased at shallow depth (zero inflation inflates the apparent coefficient of variation), which is why the theorem's rate requires empirical Bayes.
 

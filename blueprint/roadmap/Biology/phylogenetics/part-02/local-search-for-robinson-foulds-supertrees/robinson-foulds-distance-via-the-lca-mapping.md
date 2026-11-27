@@ -14,6 +14,10 @@ The **LCA mapping** $\mathcal M_{S,T} : V(S) \to V(T)$ sends $u$ to $\mathrm{lca
 
 Consequently $\mathrm{RF}(S, T)$ is computable in $O(n)$ time from the LCA mapping, and minimizing $\mathrm{RF}$ over trees with a fixed node count reduces to minimizing $|\mathcal F_T|$.
 
+## Depends on
+
+- [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
+
 ## Expansion
 
 Lemma 1 is counting: shared clusters number $|I(S)| - |\mathcal F_T|$, and the symmetric difference is $|I(T)| + |I(S)| - 2(|I(S)| - |\mathcal F_T|)$. For Lemma 2, $\mathcal C(u) \subseteq \mathcal L(T_{\mathcal M(u)})$ always, with equality exactly when the cluster appears in $T$; a bottom-up pass gives the LCA mapping and the leaf counts in linear time.

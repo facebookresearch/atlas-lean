@@ -14,6 +14,10 @@ $$W_{is} = u_s(\alpha_i - \bar\alpha) + (1, c_s^\top)(\beta_i - \bar\beta) + (\e
 
 with $\bar\alpha = m^{-1}\sum_i \alpha_i$, $\bar\beta = m^{-1}\sum_i \beta_i$, $\epsilon_{is} = \varepsilon_{is} + e_{is}$ and $\bar\epsilon_s = m^{-1}\sum_i \epsilon_{is}$. Consequently the ordinary least squares coefficient $\tilde\alpha_i$ of $u_s$ in the regression of $W_{is}$ on $z_s = (u_s, 1, c_s^\top)^\top$ is unbiased for $\alpha_i - \bar\alpha$, not for $\alpha_i$: CLR regression tests $H_{0,i}\colon \alpha_i = 0$ with bias $-\bar\alpha$, which is nonzero whenever the differential effects do not average to zero across taxa (for instance when abundant taxa change in the same direction).
 
+## Depends on
+
+- [Unbiasedness of ordinary least squares](../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/integral-ols-estimator.md)
+
 ## Expansion
 
 The normalizing totals $\sum_j X_{js}$ cancel in the CLR transform because it subtracts the per-sample mean of the log proportions, which equals the mean log absolute abundance minus the same log total. Averaging the linear model over taxa gives the subtracted terms $u_s\bar\alpha + (1, c_s^\top)\bar\beta + \bar\epsilon_s$. The conditional variance of $\tilde\alpha_i$ is $\hat\rho\, n^{-1}\operatorname{var}(\epsilon_{is} - \bar\epsilon_s)$, where $\hat\rho$ is the $(1,1)$ entry of $(n^{-1}\sum_s z_s z_s^\top)^{-1}$.

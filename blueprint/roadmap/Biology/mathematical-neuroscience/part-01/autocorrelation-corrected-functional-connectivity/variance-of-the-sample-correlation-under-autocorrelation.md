@@ -16,6 +16,10 @@ which for stationary series can be rewritten as weighted sums over lags of produ
 
 **Effective degrees of freedom.** Writing $V(\hat\rho) = (1 - \rho^2)^2/\hat N$ defines an effective sample size $\hat N$. Under $\rho = 0$ it reduces to Quenouille's $\hat N = N\big(\sum_{k=-\infty}^{\infty}\rho_{XX,k}\rho_{YY,k}\big)^{-1}$, and for two AR(1) series with lag-one coefficients $\phi_X, \phi_Y$ to Bartlett's $\hat N = N\,\frac{1 - \phi_X\phi_Y}{1 + \phi_X\phi_Y}$.
 
+## Proof depends on
+
+- [Expected output quadratic form equals a trace](../../../../InformationTheory/not-yet-classified/part-01/linear-gaussian-all-law-converse/integral-output-quadratic-eq-trace.md)
+
 ## Expansion
 
 Substituting case 1 into the trace formula gives $N(\rho^2 + \rho^4 + \rho^2 + 1 - 4\rho^2)/N^2 = (1-\rho^2)^2/N$, a useful check on the signs. Positive autocorrelation in both series inflates the variance through the $\mathrm{tr}(\Sigma_X\Sigma_Y)$ term, so treating $N$ time points as independent overstates the evidence for a connection, and Fisher's $z$-transform no longer stabilizes the variance. Unlike global corrections that use one autocorrelation for all nodes, the formula is evaluated per pair from estimated (regularized, truncated) autocorrelation and cross-correlation functions; in resting-state fMRI the correction varies strongly across region pairs with region size and location, and applying it changes thresholded network topology.

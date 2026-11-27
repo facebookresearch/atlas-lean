@@ -12,6 +12,10 @@ $$l_{s_1}(i) = \max\{ l_w[j] : w \in I_{s_1, s_2}, \ k + j = i, \ k \text{ an oc
 
 and no irredundant subword can be omitted.
 
+## Proof depends on
+
+- [Suffix tree](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-tree/suffix-tree.md)
+
 ## Expansion
 
 Every occurrence of a common subword is either itself an occurrence of an irredundant subword or is covered by one, so the superimposed suffix-length scores already reach the longest match at each position. Conversely, an irredundant $w$ has an uncovered occurrence $i$, where $l_{s_1}(i) = |w|$ is witnessed by $w$ alone, so $w$ is necessary. This is the reason the average common substring score, built from matching statistics, can be decomposed into a linear number of patterns, which is the starting point for removing overlapping (overcounted) matches.

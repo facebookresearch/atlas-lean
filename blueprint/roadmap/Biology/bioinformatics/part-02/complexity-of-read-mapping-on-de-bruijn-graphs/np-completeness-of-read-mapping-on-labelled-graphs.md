@@ -10,6 +10,10 @@ $$\sum_{i=1}^{|q|} F(m_i, q_i) \le t.$$
 
 **Proposition 2.** GRMP is NP-complete.
 
+## Proof depends on
+
+- [DIRECTED HAMILTONIAN PATH is NP-complete](../../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/hamiltonian-path-in-directed-graphs/directed-hamiltonian-path-np-complete.md)
+
 ## Expansion
 
 Proposition 1 is a reduction from the Hamiltonian path problem: with unit costs and $l = t = |V|$, a path with $|V|$ nodes exists exactly when $G$ has a Hamiltonian path. For Proposition 2, take a FLATSP instance and an alphabet $\{y_0, y_1, \dots\}$ large enough to encode every edge cost, label each edge $e$ by $y_{c(e)}$, let the query be $q = \alpha^{l-1}$ for a fresh letter $\alpha$, and set $F(y_i, \alpha) = i$. Then the mapping cost of a path equals its FLATSP cost, so the two instances have the same answer. Membership in NP is immediate since a candidate path can be checked in linear time.

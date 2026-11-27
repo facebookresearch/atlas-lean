@@ -30,6 +30,10 @@ $$\sum_{Z \subseteq S_{+}} (-1)^{|Z|}\, \frac{P(S_{-} = 0, Z = 0, D_k = 1 \mid R
 with $\tau(k, Z) = \sum_{S \in S_{+} \setminus Z} (1 - \lambda_{D_k, S})$ for the expected sufficiency and
 $\tau(k, Z) = \sum_{S \in Z} \bigl(1 - \frac{1}{\lambda_{D_k, S}}\bigr)$ for the expected disablement.
 
+## Depends on
+
+- [Counterfactual probability given evidence](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/cf-prob.md)
+
 ## Expansion
 
 Ranking by posterior asks which disease the patient most likely has; ranking by a counterfactual

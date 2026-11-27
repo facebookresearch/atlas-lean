@@ -16,6 +16,10 @@ Balance and excess alone do not force open walks: a balanced cycle of positive m
 
 Each walk spells a derived chromosome as a concatenation of reference segments, so the reconstruction of clone- and haplotype-specific karyotypes from bulk tumour data becomes the search for clone-specific multiplicities $\mu_i$ satisfying these balance conditions, consistent with allele-specific copy numbers and with each unlabeled novel adjacency assigned to haplotypes, while minimizing a deviation from the observed read-depth-derived copy numbers.
 
+## Proof depends on
+
+- [Euler circuit criterion for directed multigraphs](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-circuit-iff.md)
+
 ## Expansion
 
 At a balanced vertex, each traversal of the segment edge can be paired with one traversal of an incident adjacency edge (a self-loop is entered and left at the same vertex, hence the factor $2$), so walks extend through every non-telomere vertex; the unmatched segment traversals at an excess vertex are where open walks end. In each connected component of the positive-multiplicity subgraph the total excess is even, since the segment-degree and adjacency-degree sums are both even. Joining these ends in pairs by new adjacency-coloured edges makes every vertex balanced, and Kotzig's theorem for two-edge-coloured multigraphs gives an alternating Eulerian circuit per component; cutting it at the new edges yields open walks, and a component without new edges stays one closed walk.

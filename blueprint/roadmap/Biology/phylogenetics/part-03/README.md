@@ -1,7 +1,5 @@
 # Species-tree estimation, networks and inference
 
-- [Phylogenetic inference and comparison](inference-and-comparison/README.md)
-- [Phylogenetic invariants](phylogenetic-invariants/README.md)
 - [Alignment-free distance from k-mismatch common substrings](alignment-free-distance-from-k-mismatch-common-substrings/README.md)
 - [Ancestral genome linearization](ancestral-genome-linearization/README.md)
 - [Circular split networks](circular-split-networks/README.md)

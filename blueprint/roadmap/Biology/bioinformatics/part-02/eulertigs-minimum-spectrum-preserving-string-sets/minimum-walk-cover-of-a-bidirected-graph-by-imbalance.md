@@ -9,6 +9,11 @@
 3. Every unique walk cover of $G$ has at least $\mathrm{imbalance}(G)/2$ walks.
 4. A connected bigraph can be made Eulerian (all imbalances zero) by inserting arcs between unbalanced nodes in $O(|V| + |E|)$ time, and a Eulerian cycle of a connected Eulerian bigraph can be found in $O(|V| + |E|)$ time. Breaking the cycle at the inserted arcs gives a walk cover with $\max\bigl(1, \mathrm{imbalance}(G)/2\bigr)$ walks, which is minimum.
 
+## Proof depends on
+
+- [Euler circuit criterion for directed multigraphs](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-circuit-iff.md)
+- [Hierholzer's algorithm finds Euler circuits in directed multigraphs](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/hierholzer-is-euler-circuit.md)
+
 ## Expansion
 
 Adding or removing an arc changes the imbalance of two nodes by one or of one node by two, so parity is preserved from the empty graph. A walk passing through $v$ uses one in-end and one out-end, so surplus arc ends at an unbalanced node must be absorbed by walk endpoints; each walk has two endpoints, giving the bound. This is the bidirected analogue of the classical fact that a connected directed graph decomposes into $\max(1, \sum_v |\delta^+(v) - \delta^-(v)|/2)$ trails.

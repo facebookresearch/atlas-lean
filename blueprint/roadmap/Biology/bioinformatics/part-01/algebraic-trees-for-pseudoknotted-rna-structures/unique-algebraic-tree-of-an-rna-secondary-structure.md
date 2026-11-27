@@ -18,6 +18,10 @@ A regular tree grammar $G_{RNA}$ over these operators, with hairpins as base cas
 
 Forgetting the primary sequence in the algebraic tree gives a *structural RNA tree*; the classical tree alignment distance $d_T(t_1, t_2) = \min\{\sigma(\mathcal L)\}$ over alignments $\mathcal L$ of two such trees then defines a similarity measure for RNA structures with arbitrary pseudoknots.
 
+## Depends on
+
+- [Bottom-up finite tree automata](../../../../TheoryOfComputation/omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
+
 ## Expansion
 
 The proof of uniqueness parses a structure from left to right, identifying hairpins and deciding at each step which operator joins the current pseudoloop with the next hairpin; crossing is selected only when the rightmost hairpin actually crosses a pair of the pseudoloop on its left. The grammar's conditional productions encode the well-definedness side conditions of crossing, so every derivation spells a valid structure. Pseudoknot-free structures never use $\bowtie$ and reduce to the usual tree representation.

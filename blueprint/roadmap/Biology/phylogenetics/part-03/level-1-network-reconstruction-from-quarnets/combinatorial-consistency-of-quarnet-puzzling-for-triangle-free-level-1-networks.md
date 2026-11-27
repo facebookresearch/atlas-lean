@@ -11,6 +11,10 @@ A **semi-directed network** on $X$ ($|X| \ge 4$) is obtained from a binary roote
 
 **Theorem 1.** Let $N$ be a triangle-free semi-directed level-1 network on $X$ and let $Q$ be the set of (unweighted) tf-quarnets induced by $N$. Then Squirrel applied to $Q$, with the travelling-salesman instances solved exactly, reconstructs $N$.
 
+## Proof depends on
+
+- [An unrooted binary tree is determined by its induced quartet trees](../../quartet-support-and-determination-of-trees-by-qu/iso-of-induces-iff.md)
+
 ## Expansion
 
 Two ingredients carry the proof. First (supplementary Lemma A.2), if $Q$ is induced by a network, the Berry-Gascuel tree $T^*$ is exactly the blobtree of $N$. Every cut-edge split of $N$ is supported by all quarnets straddling it (split-support 1), and because $T_1$ refines $T^*$, contracting least supported edges passes through $T^*$, so the true blobtree is among the candidates. Second, at a blob vertex the leaf-to-leaf distances derived from the quarnets form a Kalmanson metric for the circular order of the true cycle, and for a Kalmanson metric that order is an optimal travelling-salesman tour, so the cycle order is recovered; the 4-cycle quarnets then locate the reticulation. Statistical consistency is not claimed: it is inherited only from a statistically consistent method for producing the input quarnets, such as an invariant-based quarnet classifier.

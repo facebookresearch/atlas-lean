@@ -14,6 +14,10 @@ where $N_{\mathrm{dg}}$ is the diagonal matrix with the diagonal of $N$.
 
 $$\bar\eta^{\mathsf T} = \mathbf 1^{\mathsf T} N, \qquad V(\eta^{\mathsf T}) = \mathbf 1^{\mathsf T} N (2N - I) - \bar\eta^{\mathsf T} \circ \bar\eta^{\mathsf T}.$$
 
+## Proof depends on
+
+- [Neumann series](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/inv-one-sub-nonneg.md)
+
 ## Expansion
 
 $N = \sum_{t \ge 0} U^t$ counts expected visits. Second moments follow from the renewal argument that the number of visits to $i$, given at least one, is geometric with mean $N_{ii}$, giving $\mathbb E[\text{visits}^2] = (2N_{\mathrm{dg}} - I)N$. For longevity, $\eta$ satisfies $\mathbb E[\eta^2] = \mathbf 1^{\mathsf T} N (2N - I)$ by first-step analysis; subtracting the squared mean gives the variance. Even individuals with identical vital rates differ in outcome through these variances (individual stochasticity).

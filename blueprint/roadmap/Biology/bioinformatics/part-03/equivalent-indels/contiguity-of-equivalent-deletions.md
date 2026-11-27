@@ -9,6 +9,10 @@
 
 Consequently each equivalence class of length-$\ell$ deletions is a contiguous run of start positions $\{a, a+1, \dots, b\}$, found by extending from any member while $r_k = r_{k+\ell}$ holds; the deleted alleles in one class are cyclic rotations of one another, and the stretch $r_a \cdots r_{b+\ell-1}$ has period $\ell$, since $r_k = r_{k+\ell}$ for $a \le k < b$. The same holds for insertions by exchanging the roles of reference and alternative sequence.
 
+## Depends on
+
+- [Rotation orbit of a tuple](../../../../Combinatorics/elementary-enumeration/necklaces-over-a-group-with-identity-product/tuple-rotation-orbit.md)
+
 ## Expansion
 
 Shifting a deletion one base to the right removes $r_{j+\ell}$ instead of $r_j$ and keeps everything else, so the two products agree exactly when those two bases match, which is part 1. For two equivalent deletions, comparing the products letter by letter forces the stretch between them to be built from repeated copies of the deleted block, and part 1 then applies at every intermediate shift, which gives parts 2 and 3 and the transitivity needed for contiguity. Choosing one canonical representative per class (for instance the leftmost start) removes duplicate database entries that a fixed distance window would either miss or wrongly merge, and shows that the precise position of an indel inside a repeat is not identifiable from sequence alone.

@@ -15,6 +15,10 @@ $S$ is a Nash equilibrium if $\pi(S', S) \le \pi(S, S)$ for all $S'$; an *evolut
 
 **Example.** Tit-for-tat (TFT) is a Nash equilibrium for $\delta$ large enough but not an ESS: always-cooperate (ALLC) earns exactly what TFT earns against TFT and against ALLC, so it drifts in neutrally. Once ALLC is sufficiently frequent, always-defect (ALLD), which cannot invade pure TFT, invades by exploiting ALLC.
 
+## Depends on
+
+- [Evolutionarily stable state of a matrix game](../../stability-of-evolutionarily-stable-states/is-ess.md)
+
 ## Expansion
 
 Against any strategy, a mutant that differs only off the equilibrium path (in histories never reached when the resident plays itself) is neutral. Such drift can remove the punishment that kept a defector out, which is the indirect invasion; conversely, defecting populations can be indirectly invaded by cooperative strategies. Evolution in an unrestricted strategy space therefore moves between equilibria, and long-run cooperation levels are set by the mutation (exploration) process rather than by any single stable strategy.

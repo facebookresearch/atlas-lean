@@ -14,9 +14,9 @@ $$S(n_1,\dots,n_m) = \sum_{i=1}^{n_m}\sum_{j=0}^{\min(i,n_{m-1})}\binom ij\binom
 
 With $A^j(\alpha) = F(n_1,\dots,n_j+\alpha)/R(\alpha)$ the first recursion becomes
 
-$$A^j(0) = R(n_j)\sum_{i=1}^{n_j}A^{j-1}(i), \qquad A^j(\alpha+1) = \frac{(n_j+\alpha)(n_j+\alpha+1)}{\alpha(\alpha+1)}A^j(\alpha) + \frac{R(n_j+\alpha+1)}{R(\alpha+1)}A^{j-1}(n_j+\alpha+1),$$
+$$A^j(0) = R(n_j)\sum_{i=1}^{n_j}A^{j-1}(i), \qquad A^j(\alpha+1) = \frac{(n_j+\alpha)(n_j+\alpha+1)}{\alpha(\alpha+1)}A^j(\alpha) + \frac{R(n_j+\alpha+1)}{R(\alpha+1)}A^{j-1}(n_j+\alpha+1) \quad (\alpha \ge 1),$$
 
-so $F(n_1,\dots,n_m)$ is computed in $O(mn)$ arithmetic steps, $n = \sum_in_i$.
+(the step from $\alpha = 0$ to $\alpha = 1$ is computed directly from the first recursion), so $F(n_1,\dots,n_m)$ is computed in $O(mn)$ arithmetic steps, $n = \sum_in_i$.
 
 ## Depends on
 

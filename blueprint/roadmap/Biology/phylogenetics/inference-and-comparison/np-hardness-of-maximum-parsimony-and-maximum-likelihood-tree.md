@@ -20,11 +20,11 @@ A sound expansion has separate pages for:
 
 ## Depends on
 
-- [Polynomial-time many-one reduction](../../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
+- [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 
 ## Related topics
 
-- [Sankoff's algorithm computes the small-parsimony cost](../../small-parsimony-problem/sankoff-eq-inf.md)
+- [Sankoff's algorithm computes the small-parsimony cost](../small-parsimony-problem/sankoff-eq-inf.md)
 
 ## Sources
 

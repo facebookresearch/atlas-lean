@@ -21,9 +21,10 @@ $$J(U,U_1,U_2) = \sum_{p=1}^m\sum_{i=1}^{n_1}\Big|u^{(1)}_{p,i} - \sum_{\ell:\pi
 
 **Theorem 2.** PCTI is NP-hard, even for $m = 1$ sample.
 
-## Depends on
+## Proof depends on
 
-- [Cancer cell fraction estimation](../cancer-cell-fraction-estimation/README.md)
+- [3-PARTITION is NP-complete](../../../TheoryOfComputation/np-completeness/number-and-packing-problems/3-partition-problem/three-partition-np-complete.md)
+- [Edmonds-Karp computes a maximum flow and a minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/edmonds-karp-algorithm/edmonds-karp-max-flow-min-cut.md)
 
 ## Expansion
 

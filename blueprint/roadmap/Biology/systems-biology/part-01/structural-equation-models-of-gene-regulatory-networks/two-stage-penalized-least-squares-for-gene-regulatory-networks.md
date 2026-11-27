@@ -24,6 +24,10 @@ $$\Pr(\hat{\mathcal{A}}_k = \mathcal{A}_k) \to 1, \qquad \sqrt n\,(\hat\gamma_{k
 
 When $p \asymp q = o(n)$ diverge, non-asymptotic bounds hold with high probability for the ridge first stage, for the $\ell_1$ error of $\hat\gamma_k$ under a restricted-eigenvalue condition, and for exact support recovery under an irrepresentable-type condition.
 
+## Depends on
+
+- [Linear moment model for instrumental variables](../../../statistical-genetics/mendelian-randomization/linear-moment-model.md)
+
 ## Expansion
 
 Because $Z_{-k}$ is a function of $X$, it is independent of the composite error $\epsilon_k + \xi_{-k}\gamma_k$, which is the instrumental-variables view of classical two-stage least squares; any consistent first-stage estimate of $Z_{-k}$ then gives consistent second-stage estimates in low dimensions. Ridge regression keeps the first stage well defined when $p \ge n$, and Theorem 5.2-type convergence $n^{-1}\hat Z_{-k}^\top H_k \hat Z_{-k} \to M_k$ lets the adaptive-lasso oracle argument go through as if the true conditional expectations were observed. Fitting one limited-information equation per gene parallelizes across genes and avoids the memory cost of full-information likelihoods.

@@ -34,6 +34,10 @@ decreasing taxa at $\delta_k + l_1$ ($l_1 < 0$), increasing taxa at $\delta_k + 
 $\nu_{j0} \le \nu_{j1}, \nu_{j2}$; the EM algorithm estimates $\delta_k$, and tests of $A\beta_j = A\beta_j^{0}$ use
 the bias-corrected $\beta_j^{*} - \hat{\delta}$.
 
+## Depends on
+
+- [Unbiasedness of ordinary least squares](../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/integral-ols-estimator.md)
+
 ## Expansion
 
 Since $\beta_j^{*}$ is the least squares fit to $y_j - \theta^{*}$, any error in $\theta^{*}$ lying in the

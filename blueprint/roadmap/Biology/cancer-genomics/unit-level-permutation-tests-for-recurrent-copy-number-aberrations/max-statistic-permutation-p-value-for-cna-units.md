@@ -10,6 +10,10 @@ $$P\bigl(U_{k,L}(X)\bigr) = \frac{1 + \sum_{t=1}^T \mathbb{1}\Bigl[\max_{k'} U_{
 
 where the maximum runs over all windows of $L$ consecutive probes. If, under the null hypothesis that no aberration is recurrent, the observed matrix and the $T$ permuted matrices are exchangeable, then for every $u \in [0,1]$ the probability that some length-$L$ unit gets $P \le u$ is at most $u$: the p-values are valid and control the family-wise error rate over all units of that length. Deletions are treated in the same way with left tails.
 
+## Proof depends on
+
+- [Validity of the Fisher randomization test](../../../Probability/not-yet-classified/part-06/fisher-randomization/is-valid-pvalue-fisher-randomization.md)
+
 ## Expansion
 
 Comparing every unit with the maximum score over the whole permuted genome is the max-$T$ device: a family-wise error occurs only if the observed maximum ranks among the top $\lfloor u(T+1)\rfloor$ of $T+1$ exchangeable maxima, which has probability at most $u$; the $+1$ in numerator and denominator makes the Monte Carlo p-value exact rather than anti-conservative. Permuting whole units preserves the correlation between adjacent probes that per-probe permutation, as in the [GISTIC permutation null](../gistic-permutation-null-for-copy-number-scores/permutation-null.md), destroys, and computing the null separately for each length $L$ accounts for the length dependence of background aberration rates.

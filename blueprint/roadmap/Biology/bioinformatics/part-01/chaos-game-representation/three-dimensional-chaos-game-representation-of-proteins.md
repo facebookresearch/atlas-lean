@@ -17,6 +17,10 @@ The *ball controlled by* $\omega$ is $B_\omega$, centred at $u X_0 + (1-u)\omega
 4. the number of occurrences of $\omega$ (respectively of the dipeptide $\omega_1\omega_2$) equals the number of points $X_n$ in $B_\omega$ (respectively in $B_{\omega_1\omega_2}$);
 5. the point $X_n$ determines the prefix $\omega_1\cdots\omega_n$.
 
+## Depends on
+
+- [Regular convex polytope](../../../../Geometry/discrete-geometry/part-01/platonic-solids-and-regular-polytopes/is-regular.md)
+
 ## Expansion
 
 Since $X_n - (uX_0 + (1-u)\omega_n) = u(X_{n-1} - X_0)$ and $\|X_{n-1} - X_0\| \le 1$ by induction, $X_n$ lies in $B_{\omega_n}$; iterating once more places it in the radius-$u^2$ ball of the last two letters. Two adjacent vertices are at distance $a$, so the centres of their controlled balls are at distance $(1-u)a$, and tangency $2u = (1-u)a$ gives $u = a/(2+a)$, which equals the stated closed form; non-adjacent vertices are farther apart, so all controlled balls are interior-disjoint. Disjointness at every scale makes the address of $X_n$ unique, which yields both counting statements and the recovery of the prefix, exactly as the quadrant structure does for the two-dimensional DNA representation with $u = 1/2$. Dipeptide counts read off the image give a 400-dimensional feature vector for alignment-free protein comparison.

@@ -31,6 +31,10 @@ highest k-count.
 k-count frequency $f(v)$ the threshold is the end of the first sufficiently long run of consecutive
 zeros of $f$.
 
+## Depends on
+
+- [The k-mers of a string](../../de-bruijn-graph-genome-assembly/kmers.md)
+
 ## Expansion
 
 A substitution at position $e$ spoils exactly the $k$ windows that contain it. An inserted nucleotide

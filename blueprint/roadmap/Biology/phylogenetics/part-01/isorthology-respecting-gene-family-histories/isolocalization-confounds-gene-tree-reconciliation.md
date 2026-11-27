@@ -10,6 +10,10 @@ A gene tree $G$ has the **isolocalization property** if for every isorthologous 
 
 **Corollary 2.** The same holds when only a subtree $G'$ of the gene tree has the isolocalization property, provided $H$ has a speciation $s$ with surviving pair $(a_1,a_2)$ and a descendant duplication $d$ with surviving pair $(a_2, b)$, all three genes in $G'$.
 
+## Depends on
+
+- [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
+
 ## Expansion
 
 Take isorthologs $a_1, a_2$ with $\mathrm{lca}_H(a_1,a_2) = s$ and a gene $b$ with $\mathrm{lca}_H(a_2, b) = d$ below $s$. Then $b$ is orthologous but not isorthologous to $a_1$, yet lies in the subtree rooted at $s$, violating isolocalization. Since a reconciliation is the gene tree itself with nodes labelled by the LCA mapping, it can only return a history whose topology is that of $G$; so the true $H$ is unreachable. In the smallest example, reconciliation moves the duplication to the root and invents a loss absent from the true history; the problem is not merely misrooting.

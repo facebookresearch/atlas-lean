@@ -37,6 +37,7 @@ is consistent (with the star species tree).
 ## Depends on
 
 - [Satisfiability of partial orthology and paralogy constraints](satisfiability-of-partial-orthology-and-paralogy-constraints.md)
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
 
 ## Expansion
 

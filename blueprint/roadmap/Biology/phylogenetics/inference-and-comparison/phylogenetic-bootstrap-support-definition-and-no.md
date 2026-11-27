@@ -4,14 +4,14 @@ Fix a tree estimator $\mathrm{est}$ (a map from alignments of $m$ sites on a tax
 
 $$\widehat s_B(\sigma)=\frac1B\sum_{b=1}^B\bigl[\sigma\text{ is a split of }\mathrm{est}(M^{*b})\bigr].$$
 
-Conditionally on $M$, it is an unbiased Monte Carlo estimate of the ideal support $s(\sigma)=P^*\bigl(\sigma\text{ is a split of }\mathrm{est}(M^*)\bigr)$, the fraction of the $m^m$ resamplings whose estimated tree contains $\sigma$ (the [bootstrap support](../../splits-compatibility-ultrametrics-and-upgma/bootstrap-support.md) of the split), and $\widehat s_B(\sigma)\to s(\sigma)$ almost surely as $B\to\infty$. The limit $s(\sigma)$ is a conditional probability given the observed alignment; without further assumptions it is neither a p-value for a hypothesis about $\sigma$ nor a posterior probability of $\sigma$. Resampling single columns treats sites as independent and ignores linkage among sites.
+Conditionally on $M$, it is an unbiased Monte Carlo estimate of the ideal support $s(\sigma)=P^*\bigl(\sigma\text{ is a split of }\mathrm{est}(M^*)\bigr)$, the fraction of the $m^m$ resamplings whose estimated tree contains $\sigma$ (the [bootstrap support](../splits-compatibility-ultrametrics-and-upgma/bootstrap-support.md) of the split), and $\widehat s_B(\sigma)\to s(\sigma)$ almost surely as $B\to\infty$. The limit $s(\sigma)$ is a conditional probability given the observed alignment; without further assumptions it is neither a p-value for a hypothesis about $\sigma$ nor a posterior probability of $\sigma$. Resampling single columns treats sites as independent and ignores linkage among sites.
 
 For a one-column alignment ($m=1$) every replicate equals $M$, so $\widehat s_B(\sigma)=s(\sigma)\in\{0,1\}$ for every $B$.
 
 ## Depends on
 
-- [Bootstrap support](../../splits-compatibility-ultrametrics-and-upgma/bootstrap-support.md)
-- [The Monte Carlo estimator is consistent](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/monte-carlo-and-importance-sampling/tendsto-mc-estimate.md)
+- [Bootstrap support](../splits-compatibility-ultrametrics-and-upgma/bootstrap-support.md)
+- [The Monte Carlo estimator is consistent](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/monte-carlo-and-importance-sampling/tendsto-mc-estimate.md)
 
 ## Expansion
 

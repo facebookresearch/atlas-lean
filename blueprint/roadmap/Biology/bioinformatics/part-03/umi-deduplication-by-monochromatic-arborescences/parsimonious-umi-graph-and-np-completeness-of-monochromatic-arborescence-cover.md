@@ -11,6 +11,10 @@ Treat the elements of $T_i$ as the *colours* of $v_i$. An **arborescence** in $G
 
 **Theorem.** Minimum cardinality covering by monochromatic arborescences is NP-complete.
 
+## Proof depends on
+
+- [DOMINATING SET ON BIPARTITE GRAPHS is NP-complete](../../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/dominating-set-on-restricted-graph-classes/dominating-set-bipartite-np-complete.md)
+
 ## Expansion
 
 Membership in NP is immediate. Hardness is by reduction from dominating set: given an undirected graph $H = (V, F)$, replace each edge by a bi-directed edge and give vertex $i$ the colour set $T_i = \{i\} \cup \{j : \{i, j\} \in F\}$. A dominating set $D$ yields $|D|$ stars, each rooted at $x \in D$ and coloured $x$, covering $V$. Conversely, the colour $\ell$ of a monochromatic arborescence lies in every vertex's set, so vertex $\ell$ belongs to it and is adjacent to all its other vertices; the colours of $k$ covering arborescences form a dominating set of size $k$. In practice the cover is computed greedily per weakly connected component: repeatedly take the (vertex, transcript) pair whose breadth-first monochromatic arborescence is largest and delete it. An arborescence whose admissible colours span several genes is resolved by an EM allocation of counts proportional to gene abundance (no length effect for tagged-end protocols).

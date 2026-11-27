@@ -11,6 +11,10 @@
 
 Subtree and chain reduction alone produce a kernel whose size is linear in $h(S,T)$, so computing the hybridization number is fixed-parameter tractable in $h$.
 
+## Depends on
+
+- [Is Rooted Agreement Forest](../../../not-yet-classified/rooted-spragreement-forest/is-rooted-agreement-forest.md)
+
 ## Expansion
 
 Deleting the edges entering each hybridization vertex of an optimal network leaves an acyclic agreement forest with one more component than the hybridization number, and conversely an acyclic forest can be wired back into a network without circular inheritance, which gives the characterization. A common pendant subtree never needs to be cut, and a long common chain is either kept whole or every leaf in it isolated, which is why the chain can be truncated to two leaves with a weight recording the $n-2$ possibly isolated leaves. The cluster rule is the decomposition that makes exhaustive search practical: an algorithm that applies subtree and chain reductions, then splits at the smallest common cluster, then searches each small piece exhaustively solved real grass-family instances that a direct search could not.

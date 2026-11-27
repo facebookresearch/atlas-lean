@@ -20,8 +20,8 @@ $$D^*_{uv}[a,b] = -\ln p(ab.uv)$$
 
 ## Depends on
 
-- [Multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/README.md)
-- [Neighbor joining](../../neighbor-joining/README.md)
+- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [Split decomposition of a tree metric](../../neighbor-joining/dist-eq-sum-darts.md)
 
 ## Expansion
 

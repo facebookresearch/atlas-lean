@@ -14,6 +14,10 @@ If $\xi \le N$ is the maximal correlation order, i.e. $f_A(a) = 0$ for $a > \xi$
 
 $$\kappa_m[Z] = \sum_{a=1}^{\xi} a^m\,\nu_a\,h .$$
 
+## Depends on
+
+- [Poisson process](../../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
+
 ## Expansion
 
 Theorem 1 follows from the multilinearity of cumulants: $\kappa_m[\sum_i X_i] = \sum_{i_1,\dots,i_m}\kappa[X_{i_1},\dots,X_{i_m}]$, a sum of joint cumulants of order exactly $m$ in which each term only sees the correlation structure of at most $m$ of the variables. For Theorem 2, $Z$ counts carrier events in the bin weighted by their amplitudes, so $Z$ is a compound Poisson variable with Poisson mean $\nu h$ and jump law $f_A$, whose cumulants are $\nu h\,\mathbb{E}[A^m]$. Because the counts are binned, the result does not depend on exact synchrony: jitter small relative to $h$ leaves the cumulants essentially unchanged. The CuBIC test exploits the linear system $\kappa_m[Z] = \sum_a a^m \nu_a h$ with $\nu_a \ge 0$: if the empirical cumulants up to order $m$ are incompatible with any nonnegative rates supported on $a \le \xi$, correlations of order greater than $\xi$ must be present. The cited paper extends this inference to non-stationary carrier rates.

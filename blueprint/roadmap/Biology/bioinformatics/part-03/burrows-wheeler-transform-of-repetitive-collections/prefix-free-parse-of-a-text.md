@@ -17,6 +17,10 @@ The **parse** $P$ lists the occurrences of elements of $D$ in $\#T\dashv^{w}$ fr
 4. For such suffixes $x, x'$, $f(x) \prec f(x') \Rightarrow x \prec x'$.
 5. The permutation sorting $T[0..n-1]\dashv^{w}, \dots, T[n-1]\dashv^{w}, \#T\dashv^{w}$ also sorts the suffixes of $T' = T\dashv$.
 
+## Depends on
+
+- [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+
 ## Expansion
 
 If $s \in S$ were a proper prefix of $s' \in S$, the last $w$ characters of $s$ (an element of $E'$) would occur strictly inside $s'$, so the dictionary phrase ending in $s'$ would contain three trigger occurrences, contradicting condition 4; this gives Lemma 1, and Lemma 2 follows because two non-prefix strings already differ within their common length. For Lemma 3, the phrase spanning from the last trigger at or before the start of $x$ to the first trigger strictly after it is an element of $D$, and its tail starting at $x$ is the unique element of $S$ prefixing $x$. Lemma 4 is Lemma 2 applied to $f(x)$ and $f(x')$. Together they say that comparing short dictionary suffixes already orders most text suffixes.

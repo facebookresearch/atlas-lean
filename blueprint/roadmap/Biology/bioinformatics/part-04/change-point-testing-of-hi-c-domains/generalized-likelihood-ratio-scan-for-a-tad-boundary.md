@@ -14,6 +14,14 @@ $$g_t = \frac{\big(G_{\tilde A_1} - \frac{t}{2-t}\, G_{\tilde A_1 \cup \tilde R}
 
 and if $\xi/n \to \delta > 0$, then $\tilde Z \to \max_{\delta < t < 1-\delta} g_t$.
 
+## Depends on
+
+- [Negative binomial mass function with size and mean](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-real.md)
+
+## Proof depends on
+
+- [Wilks' theorem (simple null)](../../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-two-mul-log-like.md)
+
 ## Expansion
 
 Under the null the triangle of counts is a random walk with a two-dimensional time index, so Donsker's invariance principle yields the Gaussian-field limit; $|A_{0,1}|/|A_{0,1} \cup R| \to t/(2-t)$ and $|A_{0,1}\cup R|/|A| \to t(2-t)$ give the weights in $g_t$. Critical values are obtained by Monte Carlo from the limit. Boundaries are found top-down by binary segmentation (taking the arg max of $Z_m$ in each sub-block until blocks are smaller than $2\xi$), pruned by re-testing in reverse order, and assigned hierarchy levels bottom-up by re-testing each boundary against its flanking blocks.

@@ -11,7 +11,7 @@ Partition the maximal unitigs of $G_{\mathrm{dbl}}(K)$ into nonpalindromic $D_{\
 
 ## Depends on
 
-- [De Bruijn graph genome assembly](../../de-bruijn-graph-genome-assembly/README.md)
+- [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
 ## Expansion
 

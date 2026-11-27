@@ -12,6 +12,10 @@ where $\mathrm{rot}_k$ cyclically rotates the $2k$-bit word by $k$ bits and $\op
 
 **Hamming-1 neighbours.** For $k = 2\ell + 1$, two $k$-mers at Hamming distance $1$ differ in their $\ell$-suffix, in the $\ell$-suffix of their reverse complements, or in their middle base. Hence all **weak** $k$-mers (species-exclusive $k$-mers with a Hamming-1 neighbour in the other species) are found by sorting the $k$-mer list together with reverse complements, scanning blocks of equal $(\ell+1)$-prefix, and re-sorting blocks of equal $\ell$-prefix with middle base and suffix swapped.
 
+## Proof depends on
+
+- [Bézout coefficients are modular inverses](../../../../NumberTheory/congruences/congruences-modular-arithmetic/modular-inverses-from-the-euclidean-algorithm/bezout-coeffs-are-inverses.md)
+
 ## Expansion
 
 Since $4^k$ is a power of two and $a$ is odd, $a$ is invertible modulo $4^k$ (extended Euclid), and rotation and xor are involutions; this proves the lemma. The rotation moves the low-entropy high bits created by the max in the canonical code into the interior before multiplication. In a $(3,4)$ bucketed Cuckoo table with $k = 25$ and about $1.28 \times 10^9$ buckets, each entry takes $2 + 3 + 20 = 25$ bits (hash choice, species value, quotient). Each read is then classified by counting host, graft, both and weak $k$-mers.

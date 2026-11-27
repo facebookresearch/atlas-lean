@@ -35,6 +35,10 @@ $$E(Y^{a=0} \mid E = 1) - E(Y^{a=1} \mid E = 1) = E(Y \mid E = 1, A = 0)\Bigl(1 
 so external knowledge of the attack risk among exposed unvaccinated people, or of the exposure
 probability, identifies the absolute effect.
 
+## Depends on
+
+- [Finite-population average treatment effect](../../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/ate.md)
+
 ## Expansion
 
 Exposure necessity gives $E(Y \mid A = a) = P(E = 1 \mid A = a)\,E(Y \mid E = 1, A = a)$, and no effect on

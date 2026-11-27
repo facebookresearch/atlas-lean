@@ -12,6 +12,10 @@ a binary string $B$ is mapped to $M_B = M_{b_1}M_{b_2}\cdots M_{b_l}$, and to th
 
 **Corollary.** Two reads of the same length have the same quadruplet if and only if they are identical. Hence binning reads by distinct quadruplets reproduces exact $k$-mer counting ($k = l$), while nearby quadruplets correspond to similar reads, so histogram estimates of the four-dimensional quadruplet distribution and the Hellinger distance between samples interpolate between exact matching and similarity.
 
+## Depends on
+
+- [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
+
 ## Expansion
 
 Right multiplication by $M_0$ adds the second column of a matrix to the first, and by $M_1$ adds the first column to the second; since entries stay positive, the last letter is recovered by seeing which column dominates entrywise, subtracting, and repeating, which inverts the map (the two matrices generate a free monoid inside $SL_2(\mathbb Z)$). For Proposition 2, $\operatorname{tr}(WF) = \sum_{i,j}W_{ij}F_{ji}$ is a rational combination of $1,\sqrt2,\sqrt3,\sqrt5$, and square roots of distinct square-free integers are linearly independent over $\mathbb Q$, so the combination determines all four integer entries. Small edits change only a few factors of the product, which keeps the numbers of similar reads close (alternating strings give Fibonacci entries, showing exponential growth and hence the logarithm). Including each read's reverse complement removes strand bias, and regressing quadruplets on GC content removes amplification bias before distances are computed.

@@ -20,6 +20,10 @@ where $(\xi_t)$ is an i.i.d. sequence in a separable metric space $E$ and the fi
 
 Examples: stochastic Ricker and Beverton–Holt models fall under the first theorem; mate limitation and predator saturation under the second.
 
+## Proof depends on
+
+- [Strong law of large numbers from the ergodic theorem](../../../../Dynamics/ergodic-theory/birkhoff-ergodic-theorem/tendsto-average-coordinates-ae.md)
+
 ## Expansion
 
 The quantity $\mathbb E[\log f(x,\xi)]$ is the long-run per-capita log growth rate of a population held at density $x$. Monotonicity in $x$ sandwiches $\log X_t$ between random walks with drifts $\mathbb E\log f(0,\cdot)$ and $\mathbb E\log f(\infty,\cdot)$; the strong law of large numbers then settles the extinction and growth cases, while in the mixed cases the random walk comparison applies only near $0$ or near $\infty$, giving persistence (negative feedback pushes back) or conditional outcomes (positive feedback amplifies departures).

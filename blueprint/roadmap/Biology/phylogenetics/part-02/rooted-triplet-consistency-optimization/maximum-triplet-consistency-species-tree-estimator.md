@@ -23,7 +23,8 @@ and $V(X)$ is the optimum; the total running time is $O(n^2 k\,|\mathcal{SBP}|^2
 
 ## Depends on
 
-- [Multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/README.md)
+- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
 
 ## Expansion
 

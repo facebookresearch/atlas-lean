@@ -20,6 +20,10 @@ $$k = O\Big(\frac{\log n}{\ell^2}\Big)\ \text{characters, and } k = O\Big(\frac{
 
 without a minimum edge length, all $\ell^*$-separated triplets are resolved with $k = O(\log n/\ell^{*2})$; and if all edge lengths lie between $\ell$ and $O(\ell)$, a bottom-up algorithm with a sufficiently low mutation rate needs only $k = O(\log n/\ell)$.
 
+## Depends on
+
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
+
 ## Expansion
 
 Mutations above $\mathrm{LCA}(a,b,c)$ are shared by all three leaves and cancel in $s(a,b) - s(b,c)$. A character contributes to $s(a,b)$ after the split either through one mutation on the internal edge toward $\mathrm{LCA}(a,b)$ or through homoplasy (two independent identical mutations), whereas it contributes to $s(b,c)$ only through homoplasy, with probability $e^{-\lambda d}(1 - e^{-\lambda(1-d)})^2 q$; subtracting and using $0.6x \le 1 - e^{-x} \le x$ on $[0,1]$ gives the gap. Monotonicity of the success probability in the separation reduces to the worst case, and Chernoff bounds for binomial counts plus a union bound over the $O(n^3)$ triplets produce the $\log n$ factor. These bounds match the $O(\log n/\ell^2)$ guarantees known for the two-state Cavender–Farris–Neyman model despite irreversibility, many states and missing data.

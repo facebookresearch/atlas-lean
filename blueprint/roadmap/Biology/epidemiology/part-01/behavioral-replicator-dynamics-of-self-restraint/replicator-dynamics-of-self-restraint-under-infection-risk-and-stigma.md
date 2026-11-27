@@ -18,17 +18,26 @@ $$\dot{x} = x(1 - x)(\pi_G - \pi_S) = x(1 - x)\bigl(\Delta - \eta c\, x - \sigma
 
 $$\hat{x}_\iota = \frac{\Delta - \sigma_\iota \zeta_0}{\eta c - \sigma_\iota \zeta_1},$$
 
-which lies in $(0, 1)$ if and only if $\sigma_\iota \zeta_0 < \Delta < \eta c + \sigma_\iota(\zeta_0 - \zeta_1)$. If
-moreover $\eta c > \sigma_\iota \zeta_1$, the interior point is asymptotically stable and $0$, $1$ are
-unstable.
+defined when $\eta c \ne \sigma_\iota \zeta_1$. If $\eta c > \sigma_\iota \zeta_1$, it lies in $(0, 1)$ if and
+only if $\sigma_\iota \zeta_0 < \Delta < \eta c + \sigma_\iota(\zeta_0 - \zeta_1)$, and then it is asymptotically
+stable while $0$ and $1$ are unstable. If $\eta c < \sigma_\iota \zeta_1$, it lies in $(0, 1)$ if and only if
+$\eta c + \sigma_\iota(\zeta_0 - \zeta_1) < \Delta < \sigma_\iota \zeta_0$, and then it is unstable while $0$ and $1$
+are asymptotically stable.
 
 **Proposition (effect of a non-binding emergency declaration).** With interior stable points in both
 regimes, $\hat{x}_1 < \hat{x}_0$, that is, stigma amplification alone reduces going out, if and only if
 
 $$\Delta < \frac{\zeta_0}{\zeta_1}\, \eta c .$$
 
-**Comparative statics.** The interior share increases with $u_{\mathrm{out}}$ and $\zeta_1$ and decreases
-with $u_{\mathrm{home}}$, $\eta$, $c$, $\sigma$, $\zeta_0$ and (under the declaration) $\rho$.
+**Comparative statics.** At an interior stable point ($\eta c > \sigma_\iota \zeta_1$), the share increases
+with $u_{\mathrm{out}}$ and $\zeta_1$ and decreases with $u_{\mathrm{home}}$, $\eta$, $c$ and $\zeta_0$. Its
+derivative in $\sigma$, and under the declaration in $\rho$, has the sign of $\zeta_1 \Delta - \zeta_0 \eta c$:
+the share decreases with $\sigma$ and $\rho$ when $\Delta < \zeta_0 \eta c / \zeta_1$ and increases with them
+when $\Delta > \zeta_0 \eta c / \zeta_1$.
+
+## Depends on
+
+- [Replicator Field](../../../population-dynamics/stability-of-boundary-evolutionarily-stable-stra/replicator-field.md)
 
 ## Expansion
 

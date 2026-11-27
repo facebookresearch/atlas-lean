@@ -18,6 +18,10 @@ so the returned cost is an upper bound on the optimal tree alignment cost. It ru
 
 **Affine gaps.** For affine indel costs $G(k) = a + bk$ the median property (Lemma 2) fails, and using $e_P$ directly can report costs that no assignment achieves; a modified pairwise RAG alignment with four dynamic-programming matrices (Affine-DO) restores the guarantee that some compatible assignment has cost at most the reported value, with the same time complexity.
 
+## Depends on
+
+- [The Needleman–Wunsch recurrence](../../../bioinformatics/sequence-alignment/pairwise-sequence-alignment/nw-score-eq.md)
+
 ## Expansion
 
 Feasibility is shown by a pre-order backtrack: pick any sequence in the root's RAG, then at each child pick a contained sequence closest to the parent's choice. Lemma 2 guarantees that whatever was chosen at the parent, the children's choices realize exactly the cost $e_P$ charged at that vertex, so the charges add up to the cost of a concrete assignment. Under affine costs, choosing a sequence inside a median RAG can split an indel block and incur an extra gap opening not counted by $e_P$; Affine-DO tracks gap openings in the RAG alignment and proves feasibility by a credit–debit induction over subtrees.

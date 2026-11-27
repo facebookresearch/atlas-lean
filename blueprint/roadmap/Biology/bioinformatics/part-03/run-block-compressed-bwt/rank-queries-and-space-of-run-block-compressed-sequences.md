@@ -16,6 +16,10 @@ and if it is not, the run-block part counts the $r_r$ preceding run blocks and t
 
 **Theorem (space).** With $b$ chosen of order $\sqrt{n/r}$, the representation uses $O\!\left(\dfrac{n}{\sqrt{\ell}}\log\sigma\right)$ bits, sublinear in $n$ when runs are long.
 
+## Depends on
+
+- [Succinct rank and select](../../../../ComputerScience/data-structures/range-query-structures/advanced-data-structures/succinct-rank-and-select.md)
+
 ## Expansion
 
 Each non-run block contains at least one run head, so there are at most $r$ non-run blocks; hence $|T_P| \le rb$ and $|T_R| \ge n/b - r$. With $A = O(\log\sigma)$ bits per wavelet-tree character the total is about $S(b) = A r b + (1 + A)\,n/b - A r$, minimized at $b \approx \sqrt{(1+A)n/(Ar)}$, giving $S = O(A\sqrt{nr}) = O(n\log\sigma/\sqrt{\ell})$. The rank formula decomposes the prefix into whole run blocks (each contributing $b$ copies of its character), whole non-run blocks, and the partial current block.

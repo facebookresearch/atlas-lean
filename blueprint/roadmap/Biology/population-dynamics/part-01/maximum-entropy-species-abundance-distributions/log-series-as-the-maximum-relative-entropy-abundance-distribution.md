@@ -24,6 +24,10 @@ $$P(n) = \phi\,\frac{\omega^n}{n}, \qquad 0 < \omega < 1, \quad \phi = \frac{-1}
 
 where $\omega = e^{-\lambda_1}$ is determined by $\bar n = \dfrac{-\omega}{(1-\omega)\log(1-\omega)}$.
 
+## Proof depends on
+
+- [The Boltzmann distribution maximizes entropy at fixed mean energy](../../../../Chemistry/chemical-thermodynamics/canonical-ensemble-of-a-finite-system/shannon-entropy-le-shannon-entropy-boltz.md)
+
 ## Expansion
 
 Treating each of $S$ species as completely idiosyncratic makes the community-level abundance vector a product of independent identically distributed draws, so the counts $s_n$ of species with abundance $n$ are multinomial; maximizing that multinomial probability with Stirling's approximation is maximizing $\Delta H$. Substituting $P_\pi \propto 1/n$ and $h_1 = n$ into the Gibbs form gives $P(n) \propto e^{-\lambda_1 n}/n$, and normalization gives $\phi$ via $\sum_{n\ge1}\omega^n/n = -\log(1-\omega)$. Adding $h_2(n) = \log n$ gives $P(n) \propto n^{-1-\lambda_2}e^{-\lambda_1 n}$, and adding both $\log n$ and $(\log n)^2$ gives a discretized log-normal-type tail. The log-series is thus reached without the demographic assumptions of neutral theory, as the least informative SAD consistent with a fixed mean.

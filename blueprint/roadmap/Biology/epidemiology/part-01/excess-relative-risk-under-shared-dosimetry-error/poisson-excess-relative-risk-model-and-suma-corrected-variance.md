@@ -18,6 +18,11 @@ where $G = \operatorname{diag}\big(t_i e^{a_0 + a_1C_{1,i}+a_2C_{2,i}+a_3C_{3,i}
 
 **Computation.** With an $n\times k$ matrix $\mathbf X_1$ of $k$ Monte Carlo dose replicates, the sample covariance of $W = M\mathbf X_1$ equals $M\widehat{\operatorname{Cov}}(X_1\mid Z_1)M^{\mathsf T}$, at cost $\Theta(pnk + p^2k)$ instead of $\Theta(n^2k + p^2n^2)$.
 
+## Depends on
+
+- [Poisson likelihood](../../../../Probability/hypothesis-testing/monotone-likelihood-ratio/poisson-lik.md)
+- [Fisher information](../../../../Probability/statistical-estimation/fisher-information-and-the-cram-r-rao-bound/fisher-information.md)
+
 ## Expansion
 
 The score is linear in the observed counts, whose conditional mean depends on the true dose; averaging over the dose replicates adds to the Poisson variance a term quadratic in $b_1$ through the dose covariance, which is dense when errors are shared. Wald intervals with this variance ignore that it grows with $b_1$; score-type intervals that plug the null value into the variance can become unbounded, because the test statistic tends to a finite limit as $b_1^* \to \pm\infty$.

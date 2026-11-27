@@ -26,6 +26,11 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Quartet support and determination of trees by quartets](quartet-support-and-determination-of-trees-by-qu/README.md)
 - [Sampling model for log-det estimation of the GTR rate matrix](sampling-model-for-log-det-estimation-of-the-gtr/README.md)
 
+- [Phylogenetic inference and comparison](inference-and-comparison/README.md)
+
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+
 ## [Reconciliation, gene duplication and orthology](part-01/README.md)
 
 - [Consensus reconciliation under optimal gene tree rootings](part-01/consensus-reconciliation-under-optimal-gene-tree-rootings/README.md)
@@ -50,7 +55,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 ## [Tree comparison, consensus and balance](part-02/README.md)
 
-- [Phylogenetic diversity](part-02/phylogenetic-diversity/README.md)
 - [Colless-like balance indices](part-02/colless-like-balance-indices/README.md)
 - [Cophenetic metrics for phylogenetic trees](part-02/cophenetic-metrics-for-phylogenetic-trees/README.md)
 - [Counting serially sampled ranked trees](part-02/counting-serially-sampled-ranked-trees/README.md)
@@ -72,8 +76,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 ## [Species-tree estimation, networks and inference](part-03/README.md)
 
-- [Phylogenetic inference and comparison](part-03/inference-and-comparison/README.md)
-- [Phylogenetic invariants](part-03/phylogenetic-invariants/README.md)
 - [Alignment-free distance from k-mismatch common substrings](part-03/alignment-free-distance-from-k-mismatch-common-substrings/README.md)
 - [Ancestral genome linearization](part-03/ancestral-genome-linearization/README.md)
 - [Circular split networks](part-03/circular-split-networks/README.md)

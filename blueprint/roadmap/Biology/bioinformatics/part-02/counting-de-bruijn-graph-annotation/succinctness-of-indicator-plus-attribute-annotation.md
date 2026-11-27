@@ -28,6 +28,10 @@ delimiters encoding the indicator), so the scheme is never worse than it, while 
 rank-supporting compressed binary-relation structure for the indicator and any compressor for the
 attributes.
 
+## Depends on
+
+- [Succinct rank and select](../../../../ComputerScience/data-structures/range-query-structures/advanced-data-structures/succinct-rank-and-select.md)
+
 ## Expansion
 
 Splitting the matrix into "where" and "what" does not change its entropy: the support is one of

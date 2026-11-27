@@ -10,6 +10,11 @@ and $x$ is *positive* if $I(x) > 0$. Within each pure cycle the positive rotatio
 
 **Proposition.** Membership $x \in D_k$ can be decided in $O(k)$ time and $O(1)$ extra memory: compute $I(x)$ and $I(x')$; return true if $I(x) > 0 \ge I(x')$; if $I(x) = I(x') = 0$, all rotations have zero embedding and $x$ is accepted iff it is the lexicographically smallest rotation, which a single $O(k)$ scan over the doubled string decides.
 
+## Depends on
+
+- [Rotation orbit of a tuple](../../../../Combinatorics/elementary-enumeration/necklaces-over-a-group-with-identity-product/tuple-rotation-orbit.md)
+- [Fixed-length necklaces](../../../../Combinatorics/elementary-enumeration/special-counting-sequences/necklace.md)
+
 ## Expansion
 
 Because a pure cycle contributes exactly one node, $|D_k|$ equals the number of conjugacy classes (necklaces), the classical lower bound for a decycling set; Mykkeltveit proved that this choice hits every cycle, not only the pure ones. The membership test avoids storing $D_k$, whose size grows like $\sigma^k/k$, which is what allows decycling-based minimizer orders for $k$ in the hundreds.

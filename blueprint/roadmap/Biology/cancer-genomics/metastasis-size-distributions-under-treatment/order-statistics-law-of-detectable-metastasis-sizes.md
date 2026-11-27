@@ -16,9 +16,17 @@ $$\omega(t) = \frac{F(t) - F(\max\{0,\,t - V + T\})}{\int_0^{\min\{W-T-\psi(m),\
 
 The total number of viable metastases in the site at age $t$ is Poisson with mean
 
-$$E(t) = q\alpha\int_0^{\min\{t-T,\,V\}} \Phi(s)^\theta\, F(W-T-s)\,ds,$$
+$$E(t) = q\alpha\int_0^{\min\{t-T,\,V-T\}} \Phi(s)^\theta\, F(t-T-s)\,ds,$$
 
 so the probability of having at least one is $1 - e^{-E(t)}$.
+
+## Depends on
+
+- [Poisson process](../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
+
+## Proof depends on
+
+- [Thinning of a Poisson process](../../../Probability/point-processes/poisson-processes/thinning.md)
 
 ## Expansion
 

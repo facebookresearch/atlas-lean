@@ -4,15 +4,15 @@ This node covers the following result. Every stochastically modeled mass-action 
 
 ## Depends on
 
-- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
-- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
+- [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md)
 
 ## Expansion
 
 A good expansion replaces this node by planned pages beside it, each citing the source below:
 
 1. The stochastic mass-action model of a reaction network: the continuous-time Markov chain on $\mathbb{Z}^d_{\ge 0}$ with mass-action propensities, and non-explosivity (finitely many jumps in finite time, almost surely).
-2. Complex balancing of the deterministic model: [complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md), and a complex-balanced network as one whose deterministic model has a positive complex-balanced equilibrium.
+2. Complex balancing of the deterministic model: [complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md), and a complex-balanced network as one whose deterministic model has a positive complex-balanced equilibrium.
 3. Non-explosivity of complex-balanced stochastic mass-action systems for every initial distribution.
 
 Nothing beyond the statement above is claimed here.

@@ -12,6 +12,10 @@ $$\tau\dot u = -u + Wr + e, \qquad \bar e = \bar r'_{\mathrm{net}}\odot W_{\math
 
 with prospective rates $r = \rho(u) + \tau\dot\rho(u)$, prospective errors $e = \bar e + \tau\dot{\bar e}$, target error $\bar e^*_o = u^*_o - u_o$ on outputs and $\bar e^*_i = 0$ elsewhere. Low-pass filtering the first equation gives the instantaneous moving equilibrium $u = W\bar r(u) + \bar e(u)$.
 
+## Depends on
+
+- [Euler–Lagrange equation](../../../../Analysis/convex-analysis-and-variations/euler-lagrange-equation/euler-lagrange-equation.md)
+
 ## Expansion
 
 Since $u = \tilde u - \tau\dot{\tilde u}$, the Euler–Lagrange operator becomes $\big(1 + \tau\frac{d}{dt}\big)\frac{\partial}{\partial u_i}$, a look-ahead gradient; its kernel consists of functions decaying like $e^{-(t-t_0)/\tau}$, so after transients $\partial L/\partial u_i = 0$ along the trajectory, and this condition is the error equation. No acceleration term appears because the second derivative of $\tilde u$ is absorbed. The prospective rate is the inverse low-pass filter of $\rho(u)$, which is why a step change in one layer's voltage propagates to the next layer within an infinitesimal time and the input–output map $u_o = F_W(\bar r_{\mathrm{in}}, \bar e^*_o)$ is instantaneous regardless of depth. The error equation has the form of backpropagation through the transposed network weights.

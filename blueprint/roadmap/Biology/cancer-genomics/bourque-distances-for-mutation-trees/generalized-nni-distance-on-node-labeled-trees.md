@@ -6,7 +6,9 @@ Each edge $(u,v)$ induces the bipartition $P(e) = \{P_u, P_v\}$ of $L$ into labe
 
 **Proposition.** For 1-labeled trees $S, T$ on the same label set,
 
-$$\tfrac12\, \mathrm{RF}(S,T) \ \le\ d_{\mathrm{gnni}}(S,T) \ <\ \mathrm{RF}(S,T).$$
+$$\tfrac12\, \mathrm{RF}(S,T) \ \le\ d_{\mathrm{gnni}}(S,T) \ \le\ \mathrm{RF}(S,T),$$
+
+with strict inequality on the right when $S \ne T$.
 
 ## Depends on
 

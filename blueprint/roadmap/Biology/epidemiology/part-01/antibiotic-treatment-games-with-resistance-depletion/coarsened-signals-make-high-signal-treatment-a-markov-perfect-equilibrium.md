@@ -20,6 +20,10 @@ That is, the gap between the two posteriors must be at least the prior probabili
 
 **Related results.** In the original continuous-signal game a symmetric pure-strategy Markov perfect equilibrium always exists, but the socially optimal symmetric policy (which, while effectiveness remains large, treats only patients with posterior close to $1$) is never an equilibrium.
 
+## Proof depends on
+
+- [Exists is Backward Induction is Subgame Perfect](../../../../GameTheory/not-yet-classified/part-01/backward-induction/exists-is-backward-induction-is-subgame.md)
+
 ## Expansion
 
 By the one-stage-deviation principle it suffices to rule out a single-period deviation to treating everyone. Writing the continuation values recursively, that deviation is unprofitable in E-state $k$ iff a quantity proportional to $(1 + F(T))\,p_L - F(T)\,p_H$ is at most $v_{k-1} - v_{k-2}$, the value of one extra dose under the profile. The value is strictly increasing in $k$, so the right side is positive for $k \ge 2$ and zero at $k = 1$, where no future remains; the binding case $k = 1$ gives $F(T)p_H \ge (1+F(T))p_L$, which rearranges to the stated condition. Coarsening works by removing small deviations: with a continuous signal a physician can profitably treat a patient just below the threshold, whereas the coarse signal only allows the large deviation of treating everyone, which may not pay.

@@ -4,11 +4,16 @@ Let a sample contain genomes $s_1,\dots,s_a$ with abundances $p_1,\dots,p_a > 0$
 
 $$p_i' = \frac{p_i\, n_i^L}{\sum_{i'=1}^a p_{i'}\, n_{i'}^L}$$
 
-for the resulting unnormalized abundance, $c_i$ for the number of reads that contain a unique $L$-mer of $s_i$ (and are therefore assigned to $s_i$), $\hat p_i = c_i/(q_i n)$, $p_{\min} = \min_i p_i$ and $q_{\min} = \min_i q_i$. Then for every $\zeta \in (0,1)$:
+for the resulting unnormalized abundance, $c_i$ for the number of reads that contain a unique $L$-mer of $s_i$ (and are therefore assigned to $s_i$), $\hat p_i = c_i/(q_i n)$, $p'_{\min} = \min_i p'_i$ and $q_{\min} = \min_i q_i$. Then for every $\zeta \in (0,1)$:
 
-1. with probability at least $1-\zeta$ every $s_i$ receives at least one read (is identified) if $n \ge 2\bigl((a+1) + \ln(1/\zeta)\bigr)/(p_{\min} q_{\min})^2$;
+1. with probability at least $1-\zeta$ every $s_i$ receives at least one read (is identified) if $n \ge 2\bigl((a+1) + \ln(1/\zeta)\bigr)/(p'_{\min} q_{\min})^2$;
 2. with probability at least $1-\zeta$, $\sum_i |\hat p_i - p_i'| \le \epsilon$ if $n \ge 2\bigl((a+1) + \ln(1/\zeta)\bigr)/(\epsilon\, q_{\min})^2$;
 3. equivalently, for a given $n$, with probability at least $1-\zeta$, $\sum_i |\hat p_i - p_i'| \le \sqrt{2\bigl(\ln(1/\zeta) + (a+1)\bigr)/(n\, q_{\min}^2)}$.
+
+## Proof depends on
+
+- [Sanov's upper bound, non-asymptotic](../../../../InformationTheory/entropy-and-mutual-information/method-of-types/iid-prob-empirical-mem-le.md)
+- [Pinsker's inequality, square-root form](../../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/total-variation-dist-le-sqrt-kl-div.md)
 
 ## Expansion
 

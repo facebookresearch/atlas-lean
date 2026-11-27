@@ -18,6 +18,10 @@ $$P_{\text{Alien}} = p_0 + \sum_{x = v+1}^{2^l - 1} p_x,$$
 
 and $P_{\text{Alien}} > 0.223$ as $|S| \to \infty$.
 
+## Proof depends on
+
+- [Cuckoo insertion succeeds without rehashing with high probability](../../../../ComputerScience/data-structures/hashing/cuckoo-hashing/cuckoo-insertion-succeeds-without-rehashing.md)
+
 ## Expansion
 
 An alien hashes to independent uniform positions of $A$ and $B$, so $\tau(s') = x$ exactly when the two looked-up entries $t$ and $t \oplus x$ XOR to $x$, giving Lemma 1. Array entries never hit by a stored key stay $0$; a fixed position of $A$ is missed by all $n$ keys with probability $(1 - 1/m_a)^n \to e^{-n/m_a}$, and similarly for $B$. Hence $p_0 = \sum_x a_x b_x \ge a_0 b_0 \to e^{-n(1/m_a + 1/m_b)}$, and the power-of-two sizes give $1 < n(1/m_a + 1/m_b) \le 1.5$, so $p_0 \ge e^{-1.5} \approx 0.223$. The theorem sums $p_x$ over the unused categories.

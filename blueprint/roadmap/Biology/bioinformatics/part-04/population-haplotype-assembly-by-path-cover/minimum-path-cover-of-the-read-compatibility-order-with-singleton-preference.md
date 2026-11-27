@@ -6,6 +6,10 @@
 
 **Theorem.** Let $\vec G$ have $n$ nodes and let $B^\varepsilon$ be the bipartite graph with a left copy $x_l$ and a right copy $x_r$ of every node, an edge $x_l y_r$ of weight $1$ for every arc $x \to y$ of $\vec G$, and an edge $x_l x_r$ of weight $1/(n+1)$ for every node. Take a maximum-weight matching of $B^\varepsilon$, contract each pair $x_l, x_r$, and take connected components. The result is a minimum path cover of $\vec G$ which, among minimum path covers, maximizes the number of single-node paths.
 
+## Proof depends on
+
+- [Dilworth's theorem](../../../../Combinatorics/partially-ordered-sets/dilworth-s-theorem/dilworth-decomposition.md)
+
 ## Expansion
 
 In the unweighted "connects-to" bipartite graph, a matching with $k$ edges corresponds to a set of arcs with in- and out-degree at most one, i.e. to a path cover with $n - k$ paths, so a maximum matching gives a minimum path cover. With the light self-edges, a maximum-weight matching has total weight $k'$ with $k \le k' < k+1$ for the maximum unweighted matching size $k$, because $n$ light edges weigh less than one heavy edge; hence it still uses exactly $k$ heavy edges (the path count $n - k$ is unchanged) and uses the remaining weight to isolate as many reads as possible. Isolated reads are the likeliest to carry sequencing errors. Randomizing the node order before the Hungarian algorithm samples different optimal colourings, and reads always coloured alike are reported as one haplotype; a dynamic program over SNP loci then threads a consensus through the assembled haplotype regions with the fewest crossovers (minimum chimerism).

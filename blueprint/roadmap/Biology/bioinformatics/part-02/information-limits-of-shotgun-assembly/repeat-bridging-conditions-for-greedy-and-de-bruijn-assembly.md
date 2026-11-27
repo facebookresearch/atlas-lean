@@ -15,7 +15,7 @@ Use the repeat, triple-repeat, interleaving and bridging notions of the bridging
 ## Depends on
 
 - [Bridging form of Ukkonen's condition](bridging-form-of-ukkonens-condition.md)
-- [De Bruijn graph genome assembly](../../de-bruijn-graph-genome-assembly/README.md)
+- [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
 ## Expansion
 

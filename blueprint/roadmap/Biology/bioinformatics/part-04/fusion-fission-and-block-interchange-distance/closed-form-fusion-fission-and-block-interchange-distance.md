@@ -16,6 +16,10 @@ $$d(\alpha, I) = \frac{n - f(I\alpha^{-1}) + \chi(\alpha) + \chi(I)}{2} - \omega
 
 and an optimal scenario in canonical order can be computed in $O(n^2)$ time.
 
+## Depends on
+
+- [Number of cycles of a permutation](../../../../Combinatorics/stirling-bell-eulerian/stirling-lah-numbers/stirling-numbers-of-the-first-kind/cycle-quotient-count.md)
+
 ## Expansion
 
 Any scenario is a product of 2-cycles equal to $I\alpha^{-1}$, fusions and fissions contributing one each and block-interchanges two, so the lemma bounds the event count from below by $n - f(I\alpha^{-1})$ weighted accordingly. Fusions and fissions are each forced in number within a component (every chromosome of $\alpha$ in the component must be merged into one and then split into the chromosomes of $I$), and choosing the fusion transpositions inside cycles of $I\alpha^{-1}$ keeps the count tight, leaving the block-interchanges to account for the remaining transpositions in pairs. Summing the per-component counts $\delta_i = n_{fu} + n_{bi} + n_{fi}$ gives the formula. The method was used to compare gene orders of multi-chromosomal circular bacterial genomes.

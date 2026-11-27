@@ -17,6 +17,10 @@ $$w(M) = 3n - s(M)\ \text{(median, guided halving)},\qquad w(M) = 2n - d_{BP}(\D
 
 so a maximum-weight perfect matching is an optimal genome.
 
+## Proof depends on
+
+- [General matching is in P (Edmonds' blossom algorithm)](../../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
+
 ## Expansion
 
 Each common adjacency between $M$ and an input contributes $1$ and each common telomere contributes $\tfrac12$ to the matching weight, which is exactly the quantity subtracted from $n$ in the breakpoint distance; summing over inputs gives the identities above. Maximum-weight perfect matching is polynomial, so all three problems are. Restricting $G$ to gene extremities (dropping the $t_x$ vertices) forces every extremity into an adjacency and hence yields circular solutions. The same construction does not control linearity: a matching may close chromosomes into circles, which is why the linear versions behave differently. The construction extends to the median of any number of genomes.

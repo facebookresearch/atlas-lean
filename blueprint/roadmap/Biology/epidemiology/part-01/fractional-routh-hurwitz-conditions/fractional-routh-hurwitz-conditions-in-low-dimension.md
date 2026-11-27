@@ -12,7 +12,7 @@ $D(P) > 0$ means three distinct real roots and $D(P) < 0$ means one real root an
 
 **Proposition.** All roots of $P$ satisfy $(\ast)$ under the following conditions.
 1. $n = 1$: iff $a_1 > 0$.
-2. $n = 2$: iff either the Routh–Hurwitz conditions $a_1 > 0$, $a_2 > 0$ hold, or
+2. $n = 2$: iff the Routh–Hurwitz conditions $a_1 > 0$, $a_2 > 0$ hold, or $a_1 = 0 < a_2$ (roots $\pm i\sqrt{a_2}$, with $|\arg\lambda| = \pi/2$), or
 
 $$a_1 < 0,\qquad 4a_2 > a_1^2,\qquad \Big|\tan^{-1}\frac{\sqrt{4a_2 - a_1^2}}{a_1}\Big| > \frac{\alpha\pi}{2}.$$
 
@@ -21,9 +21,14 @@ $$a_1 < 0,\qquad 4a_2 > a_1^2,\qquad \Big|\tan^{-1}\frac{\sqrt{4a_2 - a_1^2}}{a_
 5. $n = 3$, $D(P) < 0$: if $a_1 > 0$, $a_2 > 0$ and $a_1a_2 = a_3$, then $(\ast)$ holds for all $\alpha \in [0,1)$.
 6. Any $n$: $a_n > 0$ is necessary.
 
+## Depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+- [Routh–Hurwitz criterion for planar systems](../../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/is-linearly-stable-iff.md)
+
 ## Expansion
 
-(1) The root is $-a_1$. (2) Real roots or roots with negative real part reduce to Routh–Hurwitz; a complex pair with positive real part $-a_1/2 > 0$ has argument $\tan^{-1}\big(\sqrt{4a_2 - a_1^2}/a_1\big)$ in absolute value, which must exceed $\alpha\pi/2$. (3) Real roots satisfy $(\ast)$ only if negative, so the classical conditions are exact. (4) Write $P(\lambda) = (\lambda + b)(\lambda - \beta - i\gamma)(\lambda - \beta + i\gamma)$, so $a_1 = b - 2\beta$, $a_2 = \beta^2 + \gamma^2 - 2b\beta$, $a_3 = b(\beta^2 + \gamma^2)$ with $b > 0$. If $\beta > 0$, then $a_1 \ge 0$ gives $b \ge 2\beta$ and $a_2 \ge 0$ gives $\beta^2 + \gamma^2 \ge 2b\beta \ge 4\beta^2$, so $\gamma^2 \ge 3\beta^2$ and the complex roots have $|\arg\lambda| \ge \pi/3 > \alpha\pi/2$. (5) Then $P(\lambda) = (\lambda + a_1)(\lambda^2 + a_2)$, with roots $-a_1$ and $\pm i\sqrt{a_2}$ of argument $\pi/2 > \alpha\pi/2$. (6) Factoring over real and complex-conjugate roots gives $a_n = \prod_j b_j \prod_k (\beta_k^2 + \gamma_k^2)$, and a nonpositive real root violates $(\ast)$. The criterion is applied to disease-free equilibria of fractional epidemic models, where $a_n > 0$ typically reduces to a threshold on the reproduction number.
+(1) The root is $-a_1$. (2) Real roots or roots with negative real part reduce to Routh–Hurwitz; a complex pair with positive real part $-a_1/2 > 0$ has argument $\tan^{-1}\big(\sqrt{4a_2 - a_1^2}/a_1\big)$ in absolute value, which must exceed $\alpha\pi/2$; a purely imaginary pair ($a_1 = 0 < a_2$) has argument $\pi/2 > \alpha\pi/2$. (3) Real roots satisfy $(\ast)$ only if negative, so the classical conditions are exact. (4) Write $P(\lambda) = (\lambda + b)(\lambda - \beta - i\gamma)(\lambda - \beta + i\gamma)$, so $a_1 = b - 2\beta$, $a_2 = \beta^2 + \gamma^2 - 2b\beta$, $a_3 = b(\beta^2 + \gamma^2)$ with $b > 0$. If $\beta > 0$, then $a_1 \ge 0$ gives $b \ge 2\beta$ and $a_2 \ge 0$ gives $\beta^2 + \gamma^2 \ge 2b\beta \ge 4\beta^2$, so $\gamma^2 \ge 3\beta^2$ and the complex roots have $|\arg\lambda| \ge \pi/3 > \alpha\pi/2$. (5) Then $P(\lambda) = (\lambda + a_1)(\lambda^2 + a_2)$, with roots $-a_1$ and $\pm i\sqrt{a_2}$ of argument $\pi/2 > \alpha\pi/2$. (6) Factoring over real and complex-conjugate roots gives $a_n = \prod_j b_j \prod_k (\beta_k^2 + \gamma_k^2)$, and a nonpositive real root violates $(\ast)$. The criterion is applied to disease-free equilibria of fractional epidemic models, where $a_n > 0$ typically reduces to a threshold on the reproduction number.
 
 ## Sources
 

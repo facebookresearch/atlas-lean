@@ -21,6 +21,10 @@ $$\min_\mu\ \sum_{j=1}^n \big(\rho_j \mu_j - r_j \log(\rho_j \mu_j)\big)\quad \t
 
 a separable convex objective under the balance constraints, which the source writes as flow conservation on the associated bidirected graph.
 
+## Proof depends on
+
+- [Euler circuit criterion for directed multigraphs](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-circuit-iff.md)
+
 ## Expansion
 
 Necessity: each pass of a trail through a non-telomeric vertex uses one interval edge and one reference or variant edge there, which is (1); a telomeric vertex meets only its interval edge, so a trail visits it only at an end, which forces multiplicity one at the two telomeres of a single trail. Sufficiency is Kotzig's theorem: a connected two-edge-coloured multigraph in which every vertex meets as many edges of one colour as of the other has a properly coloured (alternating) Eulerian circuit. Per connected component of the positive-multiplicity subgraph, the interval-edge copies at telomeric vertices are even in number (both colour-degree sums are even and agree off $T$); join them in pairs by new adjacency-coloured edges, apply Kotzig's theorem, and cut the circuit at the new edges. Components without a telomeric vertex give closed trails, which are circular chromosomes. Solutions need not be unique: with perfect data the true genome is one solution, but solutions that leave some variant edges at multiplicity $0$ are also consistent, which is what makes the formulation robust to false adjacencies.

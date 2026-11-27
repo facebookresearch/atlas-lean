@@ -16,6 +16,10 @@ $$\mathrm{CostRem}(v) = \sum_{c \in \mathrm{Children}(v)} \mathrm{Size}(n_v, m_c
 
 and $v$ is removed when this cost is negative. A greedy construction first builds a binary tree by repeatedly matching the pair of (aggregated) columns with the largest intersection, then prunes internal nodes bottom-up with this criterion.
 
+## Depends on
+
+- [Succinct rank and select](../../../../ComputerScience/data-structures/range-query-structures/advanced-data-structures/succinct-rank-and-select.md)
+
 ## Expansion
 
 A child of $v$ stores bits only for rows that are non-zero in $v$, i.e. a vector of length $m_v$ equal to the number of set bits of $v$; after removing $v$ it must be indexed by the rows of $v$'s parent, of which there are $n_v$. The criterion trades the cost of storing $v$ against the cost of lengthening its children, and it can be evaluated from stored lengths and popcounts without rebuilding the tree. Grouping similar columns under a common ancestor makes the ancestor's index vector sparse relative to the union, which is where the compression gain comes from when labels are correlated.

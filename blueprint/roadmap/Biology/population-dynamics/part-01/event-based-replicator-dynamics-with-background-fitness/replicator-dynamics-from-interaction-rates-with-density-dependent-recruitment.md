@@ -18,6 +18,10 @@ and for fixed $q$ the population size is attracted to the density nullcline
 
 $$\tilde n = \Big(1 - \frac{\Psi + 1 - \sum_iq_is_i}{\Phi + \sum_iq_iV_i}\Big)K.$$
 
+## Depends on
+
+- [Replicator Field](../../stability-of-boundary-evolutionarily-stable-stra/replicator-field.md)
+
 ## Expansion
 
 Each strategy's growth rate is $V_i(1-n/K) - (1-s_i) + \Phi(1 - n/K) - \Psi$; background terms are the same for all strategies, so they cancel in the frequency equation and affect selection only through the population size $n$, which enters the frequency dynamics via the recruitment factor $1 - n/K$. The ratio $\theta$ is the mean number of background events between two focal games; letting $\theta \to \infty$ (rare focal games) is the weak-selection limit in which the game's feedback on ecology vanishes. Unlike a constant added to a payoff matrix, background fertility and mortality enter as separate demographic rates, and they shift the density nullcline and hence the strength of density-dependent selection.

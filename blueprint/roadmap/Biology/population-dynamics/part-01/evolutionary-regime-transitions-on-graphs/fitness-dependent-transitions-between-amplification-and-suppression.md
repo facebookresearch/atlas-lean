@@ -14,11 +14,11 @@ and $\Phi = \Phi_0$ iff $G$ is regular (isothermal). For $r > 1$, $G$ is an ampl
 1. Most non-regular graphs of order at most $10$ are amplifiers for all $r > 1$, but suppressors and transitions occur: among the $112$ graphs of order $6$, five are isothermal, exactly one (the $\ell_6$ graph) is a suppressor for all $r > 1$, and six are suppressors that become amplifiers at a unique critical fitness.
 2. Among the $853$ graphs of order $7$, exactly three are suppressors for every $r > 1$, $52$ are suppressors with a unique transition to amplification, and three are amplifiers that become suppressors at a unique $r_c$ (approximately $4.98$, $6.37$ and $24.79$), so amplification under weak selection need not persist under strong selection even with frequency-independent fitness.
 3. From order $8$ on there are graphs with two or more transitions (suppressor–amplifier–suppressor, amplifier–suppressor–amplifier, and triple transitions); hence the regime of a graph cannot in general be inferred from simulations over a bounded fitness range.
-4. For the $\ell$-graphs $\ell_N^{2,2}$ (a clique split into two halves, each joined to one of two extra adjacent vertices), exact computation for $6 \le N \le 15$ shows suppression up to a unique transition to amplification.
+4. For the $\ell$-graphs $\ell_N^{n,m}$ (a clique $K_{N-2}$ together with two adjacent extra vertices, joined respectively to disjoint sets of $n$ and $m$ vertices of the clique), so that $\ell_6^{2,2} = \ell_6$, exact computation of $\ell_N^{2,2}$ for $7 \le N \le 15$ shows suppression up to a unique transition to amplification.
 
 ## Depends on
 
-- [Isothermal theorem for evolutionary graph dynamics](../../isothermal-theorem-for-evolutionary-graph-dynami/README.md)
+- [Isothermal theorem, "if" direction](../../isothermal-theorem-for-evolutionary-graph-dynami/average-fixation-eq-moran-fixation.md)
 
 ## Expansion
 

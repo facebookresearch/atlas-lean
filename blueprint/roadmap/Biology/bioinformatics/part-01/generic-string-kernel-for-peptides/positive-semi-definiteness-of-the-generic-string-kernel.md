@@ -18,6 +18,15 @@ $$\mathrm{GS}(x,x',L,\sigma_p,\sigma_c) = \sum_{i}\sum_{j} e^{-\frac{(i-j)^2}{2\
 
 where the inner sums of $B_{i,j}$ share prefixes and are accumulated incrementally in $l$.
 
+## Depends on
+
+- [Positive-definite kernel](../../../../Analysis/hilbert-spaces/positive-definite-kernels/is-pos-def-kernel.md)
+
+## Proof depends on
+
+- [Inner products of features form a positive-definite kernel](../../../../Analysis/hilbert-spaces/positive-definite-kernels/is-pos-def-kernel-of-eq-inner.md)
+- [Regularized kernel matrices are invertible](../../../../ComputerScience/machine-learning/supervised-learning/gaussian-process-regression/is-unit-det-kernel-matrix-add.md)
+
 ## Expansion
 
 Write $A(i - j) = \langle B(i - \cdot), B(j - \cdot)\rangle_{L^2}$ and $K_l(u,v) = \langle \phi_l(u), \phi_l(v)\rangle$; then $K(x,x') = \sum_l \big\langle \sum_i B(i - \cdot)\otimes \phi_l(x_{i+1..i+l}),\ \sum_j B(j - \cdot)\otimes\phi_l(x'_{j+1..j+l})\big\rangle$, an inner product of explicit feature vectors, hence positive semi-definite. For the GS kernel, $K_l$ is a Gaussian RBF kernel on $\mathbb R^{ld}$, and the Gaussian shift penalty is a self-convolution because convolving two Gaussians gives a Gaussian:

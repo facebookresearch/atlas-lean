@@ -14,7 +14,7 @@ $$f(x_i\mid z_1,\dots,z_n) = \frac{G_i(x_i)\,F_u(x_i)\,F_v(x_i)\,f(x_i)}{L(T)}.$
 
 ## Depends on
 
-- [Felsenstein's pruning algorithm](../../felsenstein-s-pruning-algorithm/README.md)
+- [Felsenstein's pruning algorithm computes the likelihood conditioned on the root state](../../felsenstein-s-pruning-algorithm/prune-eq-brute-lik.md)
 
 ## Expansion
 

@@ -10,11 +10,11 @@ A **local (selection) scheme** with window $w$ is a function $f : \Sigma^w \to \
 
 **Theorem (forbidden-word UHS).** There is an explicit set $\mathcal F_{\sigma,w} \subseteq \Sigma^w$, defined from a run $0^{d}$ of zeros with $d$ of order $\log_\sigma w$, that is an $(O(\ln w / w), w)$-UHS, giving a selection scheme within a $\ln w$ factor of the $\Omega(1/w)$ lower bound.
 
-**Theorem (Mykkeltveit sets).** The Mykkeltveit decycling set $\mathcal M_{\sigma,w}$, which contains exactly one $w$-mer from each pure rotation cycle (a necklace count $N_{\sigma,w} = \frac1w\sum_{d \mid w}\varphi(d)\sigma^{w/d}$), leaves remaining paths of length polynomial in $w$: bounded above by $O(w^3)$ via a geometric relaxation (sharpened to $O(w^2)$ by a potential argument) and below by an explicit path of length $\Omega(w^2)$.
+**Theorem (Mykkeltveit sets).** The Mykkeltveit decycling set $\mathcal M_{\sigma,w}$, which contains exactly one $w$-mer from each pure rotation cycle (a necklace count $N_{\sigma,w} = \frac1w\sum_{d \mid w}\varphi(d)\sigma^{w/d}$), leaves remaining paths of length polynomial in $w$: the remaining path length $g(w)$ satisfies $\Omega(w^2) \le g(w) \le O(w^3)$, the upper bound via a geometric relaxation and the lower bound by an explicit path.
 
 ## Depends on
 
-- [De Bruijn graph genome assembly](../../de-bruijn-graph-genome-assembly/README.md)
+- [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
 ## Expansion
 

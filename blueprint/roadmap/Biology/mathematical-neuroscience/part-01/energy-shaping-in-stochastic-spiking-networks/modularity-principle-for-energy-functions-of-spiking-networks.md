@@ -18,6 +18,10 @@ for every principal neuron $k$ and every $t$, regardless of which other circuits
 
 $$E_{\mathcal N, \mathcal I}(\mathbf x) = E_{\mathcal N}(\mathbf x) + \sum_{i \in \mathcal I} U_i(\mathbf x).$$
 
+## Depends on
+
+- [The Boltzmann distribution is canonical](../../../../Chemistry/chemical-thermodynamics/canonical-ensemble-of-a-finite-system/is-canonical-boltzmann-prob.md)
+
 ## Expansion
 
 Membrane integration is linear, so the contributions of the principal weights and of each circuit add; under the hypothesis, the total potential of each principal neuron equals the energy difference of $E_{\mathcal N} + \sum_{i \in \mathcal I} U_i$ for flipping that neuron, which is exactly the neural computability condition for that energy. Auxiliary neurons may relate stochastically to principal neurons, avoiding the large energy barriers that arise when higher-order terms are built from deterministically defined, symmetrically connected hidden units. Examples are a winner-take-all motif, which raises the energy of states in which not exactly one of $K$ principal neurons is active (encoding a $K$-valued variable), and an OR motif with one excitatory and one inhibitory auxiliary neuron that penalizes states with none of its principal neurons active, which together encode traveling-salesman and 3-SAT instances as energy landscapes searched by the network's stochastic dynamics.

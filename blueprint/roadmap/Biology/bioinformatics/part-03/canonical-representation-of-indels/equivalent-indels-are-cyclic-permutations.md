@@ -6,6 +6,10 @@ Let $R$ be a reference sequence. An **insertion** of a nonempty string $d$ at po
 
 **UPS coordinate.** Starting from a reported indel, extending the region of equivalence as far as possible to the left and right (while the shifted indel remains equivalent) yields a canonical interval, the **Universal Positioning System coordinate**; two indel calls describe the same variant if and only if they have the same type, the same length, the same UPS coordinate and indel strings that are rotations of each other, so the comparison is independent of the left- or right-alignment convention used by a caller.
 
+## Depends on
+
+- [Rotation orbit of a tuple](../../../../Combinatorics/elementary-enumeration/necklaces-over-a-group-with-identity-product/tuple-rotation-orbit.md)
+
 ## Expansion
 
 If $d_1$ and $d_2$ are inserted at the two ends of a stretch $S$ of the reference and give the same result, then $d_1 S = S d_2$. By the Lyndon–Schützenberger theorem on the equation $xz = zy$ in a free monoid, $d_1 = uv$, $d_2 = vu$ and $S = (uv)^j u$ for some $j \ge 0$; so $S$ is periodic with period $|d_1|$ and sliding the insertion one position at a time through $S$ rotates the inserted string by one character. Deletions are handled the same way, with the deleted string read from the reference. This is why left-normalization alone is not enough to compare calls made by different pipelines on repeats.

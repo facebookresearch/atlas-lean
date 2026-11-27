@@ -16,7 +16,7 @@ where gaps are treated as missing data (summed over all states). The supremum ne
 
 ## Depends on
 
-- [Jukes–Cantor model](../../jukes-cantor-model/README.md)
+- [Jukes–Cantor transition probability](../../jukes-cantor-model/jc-prob.md)
 
 ## Expansion
 

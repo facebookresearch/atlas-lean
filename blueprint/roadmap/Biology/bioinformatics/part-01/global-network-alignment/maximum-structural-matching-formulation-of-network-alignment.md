@@ -19,6 +19,11 @@ $$\max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{\{(i,j),(k,l)\} \in P} \tau(i,j,
 
 subject to $\sum_{(i,j)\in\delta(v)} x_{ij} \le 1$ for all $v \in V_1 \cup V_2$, $y_{ijkl} \le x_{ij}$, $y_{ijkl} \le x_{kl}$, and $x, y \in \{0,1\}$. A feasible point has objective at most $s(M)$ for the matching $M$ with characteristic vector $x$, with equality when $y_{ijkl} = x_{ij}x_{kl}$ for every pair.
 
+## Proof depends on
+
+- [Matching polytope](../../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope.md)
+- [SUBGRAPH ISOMORPHISM is NP-complete](../../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/subgraph-isomorphism/subgraph-isomorphism-np-complete.md)
+
 ## Expansion
 
 NP-hardness is by reduction from maximum common subgraph: with $\sigma \equiv 0$ and $\tau(i,j,k,l) = 1$ exactly when $(i,k) \in E_1$ and $(j,l) \in E_2$, an optimal alignment maps the largest set of edges of $G_1$ onto edges of $G_2$. The matching correspondence holds because an alignment, ignoring order, is exactly a set of vertex pairs no two of which share an endpoint. The degree constraints encode the matching polytope's inequalities, and the $y$ constraints are the standard linearization of the quadratic objective: they force $y_{ijkl} \le x_{ij}x_{kl}$, and since $\tau \ge 0$ an optimal point may take $y_{ijkl} = x_{ij}x_{kl}$. Each structural match appears in exactly one term of $s(a)$, $s(M_a)$ and the objective, so the three scores agree.

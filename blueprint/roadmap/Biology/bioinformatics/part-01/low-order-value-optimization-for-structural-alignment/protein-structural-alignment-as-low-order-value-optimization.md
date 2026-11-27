@@ -14,6 +14,10 @@ the best score over all correspondences, as a function of the displacement. Equi
 
 **Two-step scheme.** A convergent method alternates (A) choosing a correspondence in the active set for the current displacement and (B) a step that strictly improves the score of that fixed correspondence. Dynamic programming over monotone bijections yields the best bijective correspondence for a given orientation (DP-LS); the non-bijective correspondence that maps each atom of the smaller protein to its nearest atom of the other globally maximizes any score that increases as distances decrease (NB-LS). In both, step (B) is a safeguarded line-search Newton iteration on $f_\nu$ rather than the RMSD-minimizing Procrustes superposition used by STRUCTAL, which optimizes a different objective and can oscillate between alignments.
 
+## Proof depends on
+
+- [Armijo sufficient decrease condition](../../../../Analysis/numerical-analysis/line-search-methods/armijo-condition.md)
+
 ## Expansion
 
 Since the set of correspondences is finite, the objective is the upper envelope of finitely many smooth functions; it is non-smooth only where two correspondences tie. The LOVO framework shows that one may ignore this non-smoothness and take the gradient of any active function: a sufficient increase of the active $f_\nu$ at fixed correspondence implies an increase of the envelope, because re-optimizing the correspondence at the new point can only increase the score further. Hence the score is monotone across iterations, which the classical alternation with Procrustes does not guarantee.

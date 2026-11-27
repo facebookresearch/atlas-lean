@@ -20,6 +20,10 @@ $$\tilde\Theta = \Theta + Q = (\mu - e)1_N^\top + B_1X_1^\top + B_2X_2^\top + B_
 
 so the thinned data follow the same model with exactly known added effects $B_2, B_3$ and a shifted intercept, while every unknown feature of the real data ($B_1$, $A$, $Z$, $\Omega$) is retained. The same conclusion holds for negative binomial counts and for mixtures of negative binomials when the thinning acts on the mean.
 
+## Proof depends on
+
+- [Thinning of a Poisson process](../../../../Probability/point-processes/poisson-processes/thinning.md)
+
 ## Expansion
 
 By the lemma, $\tilde y_{gn}$ is Poisson with mean $2^{\theta_{gn}} 2^{q_{gn}} = 2^{\theta_{gn} + q_{gn}}$, which is the log-linear addition. Taking $\Pi$ uniform makes the added signal independent of hidden confounders; choosing $\Pi$ to correlate $\Pi X_3$ with estimated surrogate variables makes confounder adjustment harder in a controlled way. Special cases evaluate two-group differential expression ($\tilde\Theta = \tilde\mu 1_N^\top + b x^\top\Pi^\top + \Omega$), library-size normalization (adding $1_G x^\top$ terms) and factor analysis (recovering $\Pi X_3$ among estimated factors).

@@ -10,6 +10,14 @@ $$k < \frac{(m - k - 1)\log\sigma}{\log(md)} .$$
 
 **Theorem 2.** Under the same model, with the profiles indexed by a suffix tree, all profiles within distance $k$ of a query profile are found in $O(m)$ average-case time under the same condition on $k$ (worst case $O(md + m\log md)$).
 
+## Depends on
+
+- [Kruskal's algorithm gives a minimum spanning forest](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
+
+## Proof depends on
+
+- [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+
 ## Expansion
 
 The expected number of spurious candidate pairs is at most $B d/\sigma^{L}$, where $B = d\lfloor m/L\rfloor$ is the number of blocks, since two random aligned blocks agree with probability $\sigma^{-L}$. Each costs $O(k)$ to verify, giving $O\big(md + (md)^{2 - (m-k-1)\log\sigma / ((k+1)\log(md))}\big)$, which is linear exactly under the stated condition. In practice the LCP-cluster method is up to two orders of magnitude faster than naive all-pairs computation for goeBURST on large bacterial typing databases.

@@ -30,6 +30,10 @@ $$(UG\otimes PD + U\otimes Q)^{\mathsf T} + (UG\otimes PD + U\otimes Q) \le 0,\q
 
 then the noisy network of oscillators (5) is stochastically synchronous with attenuation $\gamma$. For fixed $U$ these are linear matrix inequalities.
 
+## Proof depends on
+
+- [Itô's formula](../../../../Probability/stochastic-calculus/it-s-formula/ito-formula.md)
+
 ## Expansion
 
 With $V(x) = x^{\mathsf T}(U\otimes P)x$ and Itô's formula, the zero-row-sum structure of $U$ rewrites the drift term as $\sum_{i<j}(-U_{ij})\,2(x_i-x_j)^{\mathsf T}P(F(x_i)-F(x_j))$ plus the coupling term, while the Itô correction is bounded by $\rho\sum_i|v_i|^2$ through $U\otimes P \le \rho I$; conditions (3) then make $\mathbb E\int_0^t\big[\sum_{i<j}(-U_{ij})|x_i-x_j|^2 - \gamma\sum_i|v_i|^2\big]ds \le \mathbb E V(x(0)) = 0$. For Lur'e oscillators, choosing $Q = PT$ and adding the S-procedure terms $-2\sum_i \lambda_{li}\Delta f_i(\Delta f_i - k_{li}\Delta y_i) \ge 0$ from the sector conditions turns the nonlinear first inequality of (3) into the first LMI of (8). Because $\gamma$ enters linearly, minimizing $\gamma$ subject to (8) gives a design rule for coupling strength and topology that best attenuates noise; mean-square synchronization is generally not achievable under persistent additive noise, which motivates the attenuation definition.

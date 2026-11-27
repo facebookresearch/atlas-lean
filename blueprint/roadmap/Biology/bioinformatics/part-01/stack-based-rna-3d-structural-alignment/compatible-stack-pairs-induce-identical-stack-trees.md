@@ -8,6 +8,10 @@
 
 **Consequence.** Build the compatibility graph whose vertices are e-stack pairs, with an edge when two pairs are compatible and also share a similar rigid transformation (the RMSD of their concatenated coordinates is below the cutoff). Any clique is a consistent consensus of stacks with isomorphic trees in the two molecules; a maximum clique is taken as the conserved helical core. The core splits the remaining sequence into matched hairpin, internal and multi-loops, which are aligned pairwise by an affine-gap dynamic program using the superposition of the core.
 
+## Depends on
+
+- [Rooted ordered tree](../../../../ComputerScience/data-structures/disjoint-sets-and-dynamic-trees/euler-tour-tree/tree.md)
+
 ## Expansion
 
 The proof is by induction on tree depth. If a stack $q_j^A$ were a child of $q_i^A$ while $q_j^B$ were not a child of $q_i^B$, then $q_j^B$ would lie in the subtree of some child of $q_i^B$, so it would have more enclosing stacks than its partner, and some pair of e-stack pairs would disagree on enclosure, contradicting pairwise compatibility. Hence children correspond to children, and their order agrees because juxtaposition is also preserved. Pairwise compatibility therefore guarantees a globally consistent, order-preserving correspondence of helices, which is why a clique (a pairwise condition) suffices.
