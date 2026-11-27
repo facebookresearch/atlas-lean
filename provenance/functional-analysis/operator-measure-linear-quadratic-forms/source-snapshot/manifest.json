@@ -1,0 +1,74 @@
+{
+  "schema": "atlas.mathlibext-source-snapshot.v1",
+  "library": "MathlibExt",
+  "encoding": "UTF-8 JSON Lines with literal source_text strings; standard JSON escaping only",
+  "source_version": "This immutable pre-adaptation source version is identified by the listed file and chunk SHA256 hashes.",
+  "file_count": 6,
+  "original_source_lines": 1258,
+  "original_bytes": 42878,
+  "chunks": [
+    {
+      "file": "part-0001.jsonl",
+      "sha256": "cc63daa5d12966db37f54a6a554d0f6916ce13a734e738a19458dccf63bbae75",
+      "bytes": 45383,
+      "rows": 6
+    }
+  ],
+  "files": [
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/HalfDimensionalTotallyIsotropic.lean",
+      "original_sha256": "42204ff0e423871655894623105382bbf8dcd638f78305b62f31847fadd4c581",
+      "original_bytes": 11122,
+      "original_lines": 306,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/Pfister.lean",
+      "original_sha256": "64863e845198312f51eedca0d6b6b3d3662342d7191f53d01ce8c568d88e0937",
+      "original_bytes": 4159,
+      "original_lines": 127,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterIsotropicSubspace.lean",
+      "original_sha256": "9a8e401f764c50fd393de5c125ed71639db3b70677dac3c0dcbb653ed486e6f0",
+      "original_bytes": 2765,
+      "original_lines": 80,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterRoundness.lean",
+      "original_sha256": "b909510c7f51cabe7344d82956fb118e2c94308ef6bcb7c66aa92b4a300e297c",
+      "original_bytes": 3719,
+      "original_lines": 124,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterSuccessor.lean",
+      "original_sha256": "c937f5c65be9181e975b2119646f8dc46d3ce8267174c6a839ab0d5eac4cd1ac",
+      "original_bytes": 11147,
+      "original_lines": 330,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/Round.lean",
+      "original_sha256": "ad18ecf49b5b9145b2c8e466d394ca7ca5255a0f4e2cf310286bedeb1ccbad70",
+      "original_bytes": 9966,
+      "original_lines": 291,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    }
+  ],
+  "adaptation_scope": "snapshot_adaptations concerns the archive bytes only; production adaptations are recorded separately in the batch provenance manifest."
+}
