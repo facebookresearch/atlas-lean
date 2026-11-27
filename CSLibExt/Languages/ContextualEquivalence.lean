@@ -56,9 +56,9 @@ structure CtxObs {J : Type u} (A : CtxAlgebra J) where
   Prog : J → Prop
   /-- Outcome type. -/
   Outcome : Type v
-  /-- Label family for the anchor semantics. -/
+  /-- Label family for the semantics `sem`. -/
   Label : J → Type v
-  /-- Anchor semantics at each program judgment. -/
+  /-- Operational semantics at each program judgment. -/
   sem : ∀ {k : J}, Prog k → OpSem (A.Tm k) (Label k)
   /-- Outcome relation on configurations. -/
   outcome : ∀ {k : J}, A.Tm k → Outcome → Prop
@@ -131,7 +131,7 @@ theorem ctxApprox_approxAdequate {J : Type u} {A : CtxAlgebra J} (O : CtxObs A) 
   rw [A.plug_hole] at h2
   exact h2
 
-/-- Contextual approximation contains every adequate closed family. -/
+/-- Contextual approximation contains every approximately adequate, context-closed family. -/
 theorem ctxApprox_isGreatest {J : Type u} {A : CtxAlgebra J} (O : CtxObs A)
     (R : RelFamily A) :
     ApproxAdequate O R → CtxClosed R →
