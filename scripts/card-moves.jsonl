@@ -1175,4 +1175,3 @@
 {"page": "Analysis/partial-differential-equations/global-regularity-of-the-navier-stokes-equations", "to": "Analysis/partial-differential-equations/viscous-dispersive-and-kinetic-evolution/global-regularity-of-the-navier-stokes-equations", "article_id": "af_5fff502b9aa4df4ebda4c265"}
 {"page": "Geometry/convex-geometry/isoperimetric-inequality", "to": "Geometry/convex-geometry/extremal-volume-and-area-bounds/isoperimetric-inequality", "article_id": "af_b0c76c4c3aa9ba72110094b9"}
 {"page": "Geometry/riemannian-geometry/admits-positive-scalar-curvature-metric", "to": "Geometry/riemannian-geometry/curvature-of-riemannian-manifolds/admits-positive-scalar-curvature-metric", "article_id": "af_200b12ef2af1c938a007d607"}
-{"statement": "af_cb26668736bcfae4a225b5ef", "page": "Biology/mathematical-neuroscience/coupled-oscillators/mirollo-strogatz-synchronization-of-pulse-coupled-integrate-and-fire-o", "replaced_by": "af_dff5554c7666753135ba3bff"}
