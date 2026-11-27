@@ -207,7 +207,7 @@ example :
 nonwrapping burst of length at most `r` has no accepted translation, because the parser's
 acceptance test is the receiver register `runRegister` on the body. -/
 example (l r : ℕ) (taps : BitVec r) (h0 : taps.getLsbD 0 = true)
-    (bits e : List Bool) (hbits : bits.length = l) (hlen : e.length = bits.length + r) (L : ℕ)
+    (bits e : List Bool) (hlen : e.length = bits.length + r) (L : ℕ)
     (he : IsBitBurstLE e L) (hL : L ≤ r) (out : List Bool) :
     ¬(frameParser l r taps).Translates
         (FrameToken.start ::
@@ -215,7 +215,6 @@ example (l r : ℕ) (taps : BitVec r) (h0 : taps.getLsbD 0 = true)
             [FrameToken.endTok])
         out :=
   nonzeroRemainderBody_rejected l r taps _
-    (by simp [encodedBody, checkBits, Nat.length_toBitsBE, hlen, hbits])
     (runRegister_ne_zero_of_isBitBurstLE r taps h0 bits e hlen L he hL) out
 
 /-- The receiver rejects the length-16 XMODEM burst frame in the frame parser. -/
@@ -226,7 +225,7 @@ example (out : List Bool) :
               FrameToken.bit ++
             [FrameToken.endTok])
         out :=
-  nonzeroRemainderBody_rejected 72 16 xmodemTaps _ (by decide +kernel)
+  nonzeroRemainderBody_rejected 72 16 xmodemTaps _
     (runRegister_ne_zero_of_isBitBurstLE 16 xmodemTaps (by decide) xmodemCheckPayload burst16
       length_burst16 16 isBitBurstLE_burst16 le_rfl) out
 

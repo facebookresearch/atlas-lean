@@ -156,11 +156,6 @@ private theorem one_le_of_isBitBurstLE {e : List Bool} {L : ℕ} (he : IsBitBurs
   have := hi j hj hej
   omega
 
-/-- The codeword has the fixed length `bits.length + r`. -/
-private theorem length_encodedBody (r : ℕ) (taps : BitVec r) (bits : List Bool) :
-    (encodedBody r taps bits).length = bits.length + r := by
-  simp [encodedBody, checkBits, Nat.length_toBitsBE]
-
 /-- **Bit-order transfer.** Under the MSB-first order, a nonzero bit burst of length at most `L`
 is a polynomial burst of length at most `L` in the sense of `Cslib.CodingTheory.CRC`. -/
 theorem isBurstLE_messagePoly_of_isBitBurstLE (e : List Bool) (L : ℕ)
@@ -222,7 +217,7 @@ theorem runRegister_ne_zero_of_isBitBurstLE (r : ℕ) (taps : BitVec r)
   intro hz
   have hc := (runRegister_eq_zero_iff taps _).mp (runRegister_encodedBody_eq_zero r taps bits)
   rw [runRegister_eq_zero_iff,
-    messagePoly_zipWith_xor _ _ (by rw [length_encodedBody, hlen])] at hz
+    messagePoly_zipWith_xor _ _ (by rw [encodedBody_length, hlen])] at hz
   refine not_dvd_messagePoly_mul_X_pow taps h0 e L he hL 0 ?_
   rw [pow_zero, mul_one]
   exact (dvd_add_right hc).mp hz
@@ -237,7 +232,7 @@ theorem finalRegister_ne_zero_of_isBitBurstLE (r : ℕ) (taps : BitVec r)
   intro hz
   have hc := (finalRegister_eq_zero_iff taps _).mp (finalRegister_encodedBody_eq_zero r taps bits)
   rw [finalRegister_eq_zero_iff,
-    messagePoly_zipWith_xor _ _ (by rw [length_encodedBody, hlen]), add_mul] at hz
+    messagePoly_zipWith_xor _ _ (by rw [encodedBody_length, hlen]), add_mul] at hz
   exact not_dvd_messagePoly_mul_X_pow taps h0 e L he hL r ((dvd_add_right hc).mp hz)
 
 /-- **Serial CRC burst detection.** For a monic binary generator `g` of degree `r` with
