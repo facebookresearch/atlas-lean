@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Circumscribing polygons of disjoint segments (Mirzaian; Ghosh-Goswami Conjecture 16)
+# Circumscribing polygons of disjoint segments (Mirzaian; Ghosh-Goswami Conjecture 9)
 
 S. K. Ghosh and P. P. Goswami, Unsolved problems in visibility graphs of points, segments and
-polygons, Conjecture 16 (Mirzaian): every segment visibility graph `G` contains a Hamiltonian cycle
-`C` that corresponds to the boundary of a circumscribing polygon in the embedded segment visibility
-graph `G'`.
+polygons, arXiv:1012.5187v4, Conjecture 9 (Mirzaian): every segment visibility graph `G` contains a
+Hamiltonian cycle `C` that corresponds to the boundary of a circumscribing polygon in the embedded
+segment visibility graph `G'`.
 -/
 
 module
@@ -29,7 +29,8 @@ namespace MathlibExt.Geometry.CircumscribingPolygonAMR131Problem0014Wanted
 
 /-!
 Source: S. K. Ghosh and P. P. Goswami, Unsolved problems in visibility graphs of points, segments
-and polygons, ACM Comput. Surv. 46 (2013), arXiv:1012.5187, Conjecture 16 (A. Mirzaian).
+and polygons, arXiv:1012.5187v4, Conjecture 9 (A. Mirzaian; Conjecture 8 in v1 and v2), published
+in ACM Comput. Surv. 46 (2013).
 UnsolvedMath record UM-00800545 (`AMR-131-0014`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Segments are given by an endpoint family `e : Fin (2m) → ℝ × ℝ`, segment `k` joining `e (2k)` and `e
@@ -59,9 +60,10 @@ def IsCircumscribing {m : ℕ} (e : Fin (2 * m) → ℝ × ℝ) (π : Equiv.Perm
         {⟨2 * k.val, by omega⟩, ⟨2 * k.val + 1, by omega⟩}) ∨
       openSegment ℝ (e ⟨2 * k.val, by omega⟩) (e ⟨2 * k.val + 1, by omega⟩) ⊆ interior K
 
-/-- Mirzaian's conjecture (Ghosh–Goswami, Conjecture 16) for segments that are not all collinear:
-the segment visibility graph of `m` pairwise disjoint nondegenerate segments, not all on one line,
-has a Hamiltonian cycle whose drawing is the boundary of a circumscribing polygon. -/
+/-- Mirzaian's conjecture (Ghosh–Goswami, arXiv:1012.5187v4, Conjecture 9) for segments that are
+not all collinear: the segment visibility graph of `m` pairwise disjoint nondegenerate segments,
+not all on one line, has a Hamiltonian cycle whose drawing is the boundary of a circumscribing
+polygon. -/
 def circumscribingPolygonExists : Prop :=
   ∀ (m : ℕ) (e : Fin (2 * m) → ℝ × ℝ), IsDisjointSegmentFamily e → ¬ Collinear ℝ (Set.range e) →
     ∃ π : Equiv.Perm (Fin (2 * m)), (∀ t, SegAdj e (π t) (π (finRotate (2 * m) t))) ∧
@@ -71,11 +73,12 @@ def circumscribingPolygonExists : Prop :=
 Resolved false: Urabe and Watanabe gave a set of disjoint segments in the plane (not all collinear)
 whose segment visibility graph has no Hamiltonian cycle bounding a circumscribing polygon, as the
 problem list records. Source: S. K. Ghosh and P. P. Goswami, Unsolved problems in visibility graphs
-of points, segments and polygons, ACM Comput. Surv. 46 (2013), arXiv:1012.5187, Conjecture 16 (A.
-Mirzaian); resolution: M. Urabe and M. Watanabe, On a counterexample to a conjecture of Mirzaian,
-Comput. Geom. 2 (1992), 51-53, doi:10.1016/0925-7721(92)90020-S, the problem list (Section 3):
-'Urabe and Watanabe gave a counter-example to Conjecture 16'; a set of disjoint segments admitting
-no circumscribing polygon, https://doi.org/10.1016/0925-7721(92)90020-S.
+of points, segments and polygons, arXiv:1012.5187v4, Conjecture 9 (A. Mirzaian; Conjecture 8 in v1
+and v2), published in ACM Comput. Surv. 46 (2013); resolution: M. Urabe and M. Watanabe, On a
+counterexample to a conjecture of Mirzaian, Comput. Geom. 2 (1992), 51-53,
+doi:10.1016/0925-7721(92)90020-S; the problem list (Section 3) records their counterexample to the
+conjecture, a set of disjoint segments admitting no circumscribing polygon,
+https://doi.org/10.1016/0925-7721(92)90020-S.
 -/
 public theorem_wanted circumscribingPolygonExists_refuted : ¬ circumscribingPolygonExists
 

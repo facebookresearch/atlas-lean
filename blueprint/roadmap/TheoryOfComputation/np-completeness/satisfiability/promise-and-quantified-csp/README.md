@@ -1,0 +1,15 @@
+# Promise and Quantified Constraint Satisfaction
+
+- [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
+- [Quantified constraint satisfaction QCSP(Γ) over a finite constraint language](quantified-csp-over-finite-language.md)
+- [Polynomially and exponentially generated powers (PGP and EGP)](polynomially-exponentially-generated-powers.md)
+- [The polymorphism minion Pol(A,B) of a promise template](polymorphism-minion-of-a-promise-template.md)
+- [The Chen Conjecture on the complexity of QCSP](chen-conjecture-qcsp.md)
+- [Zhuk: every finite algebra has either polynomially or exponentially generated powers](zhuk-pgp-egp-dichotomy.md)
+- [Barto–Bulín–Krokhin–Opršal: minion homomorphisms between polymorphism minions give log-space PCSP reductions](bbko-minion-homomorphism-log-space-reduction.md)
+- [BBKO hardness criterion: minion homomorphisms to minions of bounded essential arity imply NP-hardness](bbko-bounded-essential-arity-np-hardness.md)
+- [Barto–Bulín–Krokhin–Opršal: it is NP-hard to (2k−1)-colour a k-colourable graph, in particular to 5-colour a 3-colourable graph](bbko-np-hard-2k-minus-1-colour-k-colourable.md)
+- [Krokhin–Opršal–Wrochna–Živný: PCSP(H, K3) is NP-hard for every non-bipartite 3-colourable graph H](kowz-pcsp-h-k3-np-hard.md)
+- [Zhuk–Martin: the Chen Conjecture holds for finite conservative constraint languages](zhuk-martin-chen-conjecture-conservative.md)
+- [Zhuk–Martin: QCSP monsters refute the Chen Conjecture (P, NP, coNP, PSPACE on three elements; DP and Θ2P on larger domains)](zhuk-martin-qcsp-monsters.md)
+- [Krokhin–Opršal–Wrochna–Živný: adjunction reductions for approximate graph colouring](kowz-adjunction-approximate-colouring.md)
