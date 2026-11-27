@@ -5,6 +5,8 @@ A hash family $H$ is *correlation robust* (Ishai, Kilian, Nissim and Petrank; Ch
 ## Depends on
 
 - [PRF advantage](../../symmetric-key/pseudorandom-functions/prf-advantage.md)
+- [Free-XOR garbling](../../signatures-and-protocols/secure-multiparty-computation/boolean-garbling-constructions/free-xor-garbling.md)
+- [Ideal 1-out-of-2, batched and 1-out-of-4 oblivious transfer](../../signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-protocols/oblivious-transfer-functionalities.md)
 
 ## Sources
 
