@@ -27,7 +27,3 @@ Weak convergence and convergence in probability, tightness and Prokhorov's theor
 - [Continuous mapping on Polish and outer-approximation spaces](continuous-mapping-on-polish-and-outer-approxima/README.md)
 - [Total variation and couplings on finite spaces](total-variation-and-couplings-on-finite-spaces/README.md)
 - [Delta method with a moving centre](delta-method-of-has-strict-fderiv-at.md)
-
-## The Bhattacharyya coefficient
-
-- [The Bhattacharyya coefficient](bhattacharyya-coeff.md)

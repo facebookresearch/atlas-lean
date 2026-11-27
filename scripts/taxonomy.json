@@ -14695,7 +14695,7 @@
   "MathlibExt/Probability/Distributions/NegativeBinomialSplitting": {"to": "Probability/distributions/discrete", "title": "Negative binomial and beta-binomial distributions"},
   "MathlibExt/Probability/Distributions/PoissonBinomial": {"to": "Probability/distributions/discrete", "title": "Poisson binomial distribution"},
   "MathlibExt/Probability/Distributions/PoissonGamma": {"to": "Probability/distributions/continuous", "title": "Poisson–Gamma duality"},
-  "MathlibExt/Probability/Distributions/PoissonKernel": {"to": "Probability/distributions/discrete", "title": "Poisson distribution"},
+  "MathlibExt/Probability/Distributions/PoissonKernel": {"to": "Probability/distributions/discrete", "title": "Moments, kernels and identifiability of the Poisson law"},
   "MathlibExt/Probability/Distributions/PoissonMixture": {"to": "Probability/distributions/discrete", "title": "Negative binomial and beta-binomial distributions"},
   "MathlibExt/Probability/Distributions/PoissonSum": {"to": "Probability/distributions/discrete", "title": "Poisson distribution"},
   "MathlibExt/Probability/Distributions/Semicircle": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
