@@ -88,26 +88,6 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Section 4, definition of restricte
 public def restrictedSmoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
   (smoothWords n).filter fun w => ∀ i j : Fin n, j.val = i.val + 1 → ¬(w i = 1 ∧ w j = 1)
 
-/-- **Words with all letters at most a bound.** Given a finite set $S$ of words of length $n$
-with letters in $\mathbb{N}$ and a natural number $k$, this is the set of words in $S$ all of
-whose letters are at most $k$. Applied to the words of $S$ whose last letter is $k$, it gives
-those whose largest letter is $k$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `ℬ_{n,i}`. -/
-public def wordsBoundedBy {n : ℕ} (S : Finset (Fin n → ℕ)) (k : ℕ) : Finset (Fin n → ℕ) :=
-  S.filter fun w => ∀ i : Fin n, w i ≤ k
-
-/-- **Capacity distribution of Catalan words ending in their largest letter.** For natural
-numbers $n$ and $i$, $b(n, i; q) \in \mathbb{Z}[q]$ is the sum of $q^{\mathrm{cap}(w)}$, where
-$\mathrm{cap}(w)$ is the capacity of $w$, over the Catalan words $w$ of length $n$ whose last
-letter is $i$ and all of whose letters are at most $i$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `b(n, i; q)`. -/
-public noncomputable def catalanMaxEndCapacityDist (n i : ℕ) : ℤ[X] :=
-  capacityDist (wordsBoundedBy (wordsEndingIn (catalanWords n) i) i)
-
 /-- **Capacity distribution of smooth words by last letter.** For $n, i \ge 0$, $r(n, i; q)$ is the
 polynomial $\sum_w q^{\operatorname{cap}(w)} \in \mathbb{Z}[q]$, where $w$ runs over the smooth
 words of length $n$ whose last letter is $i$ and $\operatorname{cap}(w)$ is the capacity of $w$.
@@ -355,19 +335,6 @@ public theorem_wanted catalanMaxEndCapacityDist_recurrence (n i : ℕ) (hi : 1 <
         ∑ m ∈ Finset.Icc 1 (n - i - 1),
           T ((m * i : ℕ) : ℤ) * toLaurent (catalanMaxEndCapacityDist (n - m - 1) i) *
             invert (toLaurent (areaDist (catalanGrowthWords m (i - 1))))
-
-/-- **Boundary values of the capacity distributions on Catalan words.** Write $a(n, i)$ for the
-capacity distribution of the Catalan words of length $n$ ending in $i$, $b(n, i)$ for that of
-those Catalan words of length $n$ ending in $i$ whose largest letter is $i$, and $a(n)$ for the
-capacity distribution of all Catalan words of length $n$. For every $n \ge 1$,
-$a(n, n) = b(n, 1) = b(n, n) = 1$, and if $n \ge 2$ then $a(n, 1) = a(n - 1)$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 2 (`integers-2025-A5-lem-2`). -/
-public theorem_wanted catalanCapacityDist_boundary (n : ℕ) (hn : 1 ≤ n) :
-    (2 ≤ n → catalanCapacityDist n 1 = capacityDist (catalanWords (n - 1))) ∧
-      catalanCapacityDist n n = 1 ∧ catalanMaxEndCapacityDist n 1 = 1 ∧
-        catalanMaxEndCapacityDist n n = 1
 
 /-- **Generating function of Catalan words by last letter.** Let $C(x) = \sum_{n \ge 0} C_n x^n$
 be the generating function of the Catalan numbers $C_n$. For every $i \ge 1$, let $a_{n,i}$ be the

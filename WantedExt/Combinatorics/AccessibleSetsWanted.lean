@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.Combinatorics.AccessibleSets
 public import MathlibExt.Combinatorics.AccessibleSetsGrowth
+public import MathlibExt.Combinatorics.AccessibleSetsQuotients
 public import MathlibExt.Combinatorics.AccessibleSetsRecurrence
 public import MathlibExt.Combinatorics.EvenFibonacciAccessibility
 
@@ -129,16 +130,6 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted polynomial_range_large (p : Polynomial ℤ)
     (hlead : 0 < p.leadingCoeff) (hzero : p.eval 0 = 0) :
     IsLarge {d : ℕ | 0 < d ∧ ∃ n : ℕ+, p.eval (n : ℤ) = (d : ℤ)}
-
-/-- **Integral quotients of an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let
-$A$ be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{n \ge 1 : nd \in A\}$,
-that is, the positive integers of the form $a/d$ with $a \in A$, is $r$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 11(i). -/
-public theorem_wanted accessible_integral_quotients (A : Set ℕ) (d r : ℕ)
-    (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
-    IsRAccessible r {n : ℕ | 0 < n ∧ ∃ a ∈ A, a = n * d}
 
 /-- **A 2-coloring with no monochromatic 6-term progression with positive Fibonacci gap.** There
 is a coloring of the positive integers with two colors such that no 6-term arithmetic progression

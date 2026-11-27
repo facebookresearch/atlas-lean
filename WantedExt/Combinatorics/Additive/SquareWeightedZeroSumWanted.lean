@@ -17,6 +17,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Squarefree.Basic
 public import MathlibExt.Combinatorics.Additive.WeightedDavenport
+public import MathlibExt.Combinatorics.Additive.SquareSetPrimePowerCount
 public import MathlibExt.Combinatorics.Additive.SquareWeightedZeroSum
 
 namespace MetaMathlibExt
@@ -144,20 +145,6 @@ public theorem_wanted squareSet_primePower_decomposition (p r : ℕ) (hp : p.Pri
     let pieces : Fin (l + 1) → Set (ZMod (p ^ r)) := fun k =>
       ((p : ZMod (p ^ r)) ^ (2 * (k : ℕ))) • unitSquareSet (p ^ r)
     squareSet (p ^ r) = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces
-
-/-- **Number of nonzero squares modulo a prime power.** Let $p$ be a prime and $r \ge 1$, and write
-$S(m)$ for the set of nonzero squares and $U(m)^2$ for the set of squares of units in
-$\mathbb{Z}/m\mathbb{Z}$. If $r$ is even, then
-$|S(p^r)| = \sum_{k=0}^{r/2-1} |U(p^{r-2k})^2|$, and if $r$ is odd, then
-$|S(p^r)| = \sum_{k=0}^{(r-1)/2} |U(p^{r-2k})^2|$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Theorem 6. -/
-public theorem_wanted ncard_squareSet_primePower (p r : ℕ) (hp : p.Prime) (hr : 0 < r) :
-    (Even r → (squareSet (p ^ r)).ncard =
-      ∑ k ∈ Finset.range (r / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard) ∧
-    (Odd r → (squareSet (p ^ r)).ncard =
-      ∑ k ∈ Finset.range ((r + 1) / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard)
 
 /-- **Prime-power bound for the square-weighted consecutive constant.** Let $n \ge 2$, let $p$ be a
 prime dividing $n$ and let $r = v_p(n)$ be the exponent of $p$ in $n$. For a natural number $m$,
