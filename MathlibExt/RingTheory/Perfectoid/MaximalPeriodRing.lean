@@ -83,7 +83,7 @@ theorem bMaxPlus_le_bMax : bMaxPlus p ≤ bMax p :=
   Algebra.adjoin_mono Set.subset_union_left
 
 /-- Membership in `restrictedPowerSeries p`, unfolded. -/
-private theorem mem_restrictedPowerSeries {f : 𝔸⟦X⟧} :
+theorem mem_restrictedPowerSeries {f : 𝔸⟦X⟧} :
     f ∈ restrictedPowerSeries p ↔ ∀ k : ℕ, ∃ N : ℕ, ∀ n ≥ N, (p : 𝔸) ^ k ∣ coeff n f :=
   Iff.rfl
 
@@ -185,12 +185,12 @@ theorem logTeichmuller_mem_aMax {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1
 /-! ### Galois stability -/
 
 /-- The action of `σ ∈ Gal(ℚ̄_p/ℚ_p)` on `W(𝓞_ℂ_[p]♭)[1/p]`, induced by `integralGalois p σ`. -/
-private abbrev galoisLoc (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) : 𝔸ₚ →+* 𝔸ₚ :=
+abbrev galoisLocalization (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) : 𝔸ₚ →+* 𝔸ₚ :=
   Localization.awayMapNatCast (WittVector.map (PreTilt.map p (integralGalois p σ).toRingHom)) p
 
 /-- The action on `W(𝓞_ℂ_[p]♭)[1/p]` preserves the kernel of `θ`. -/
-private theorem galoisLoc_mem_ker (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) {y : 𝔸ₚ}
-    (hy : y ∈ 𝕀) : galoisLoc p σ y ∈ 𝕀 :=
+theorem galoisLocalization_mem_ker (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) {y : 𝔸ₚ}
+    (hy : y ∈ 𝕀) : galoisLocalization p σ y ∈ 𝕀 :=
   ker_fontaineThetaInvertP_le_comap p (integralGalois p σ).toRingHom hy
 
 /-- A map of `W(𝓞_ℂ_[p]♭)[1/p]` induced by a ring map of the tilt fixes the logarithm series. -/
@@ -204,10 +204,11 @@ private theorem map_logSeries (f : PreTilt 𝓞_ℂ_[p] p →+* PreTilt 𝓞_ℂ
   · rw [map_mul, map_pow, map_neg, map_one, awayMapNatCast_algebraMap_padic]
 
 /-- `σ(Σ aₖ xᵏ) = Σ σ(aₖ) σ(x)ᵏ` in `B_dR^+`. -/
-private theorem galoisBDeRhamPlus_evalBDeRhamPlus (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p)
+theorem galoisBDeRhamPlus_evalBDeRhamPlus (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p)
     {x : 𝔸ₚ} (hx : x ∈ 𝕀) (f : 𝔸ₚ⟦X⟧) :
     galoisBDeRhamPlus p σ (evalBDeRhamPlus p hx f) =
-      evalBDeRhamPlus p (galoisLoc_mem_ker p σ hx) (PowerSeries.map (galoisLoc p σ) f) := by
+      evalBDeRhamPlus p (galoisLocalization_mem_ker p σ hx)
+        (PowerSeries.map (galoisLocalization p σ) f) := by
   change (galoisBDeRhamPlus p σ : 𝔹⁺ →+* 𝔹⁺) (evalBDeRhamPlus p hx f) = _
   rw [galoisBDeRhamPlus_toRingHom]
   exact AdicCompletion.mapRingHom_evalPowerSeries _ _ _ _ hx f
@@ -215,7 +216,7 @@ private theorem galoisBDeRhamPlus_evalBDeRhamPlus (σ : PadicAlgCl p ≃ₐ[ℚ_
 /-- `σ(log(1 + y)) = log(1 + σ(y))`. -/
 private theorem galoisBDeRhamPlus_logOneAdd (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) {y : 𝔸ₚ}
     (hy : y ∈ 𝕀) :
-    galoisBDeRhamPlus p σ (logOneAdd p hy) = logOneAdd p (galoisLoc_mem_ker p σ hy) := by
+    galoisBDeRhamPlus p σ (logOneAdd p hy) = logOneAdd p (galoisLocalization_mem_ker p σ hy) := by
   rw [logOneAdd, galoisBDeRhamPlus_evalBDeRhamPlus, map_logSeries]
   rfl
 
@@ -229,7 +230,7 @@ private theorem exists_map_xi_eq_mul (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlg
   exact hk
 
 /-- The coefficientwise image of a restricted power series under a ring map is restricted. -/
-private theorem map_mem_restrictedPowerSeries (g : 𝔸 →+* 𝔸) {f : 𝔸⟦X⟧}
+theorem map_mem_restrictedPowerSeries (g : 𝔸 →+* 𝔸) {f : 𝔸⟦X⟧}
     (hf : f ∈ restrictedPowerSeries p) : PowerSeries.map g f ∈ restrictedPowerSeries p := by
   refine (mem_restrictedPowerSeries p).2 fun k => ?_
   obtain ⟨N, hN⟩ := (mem_restrictedPowerSeries p).1 hf k
@@ -239,7 +240,7 @@ private theorem map_mem_restrictedPowerSeries (g : 𝔸 →+* 𝔸) {f : 𝔸⟦
   rwa [map_pow, map_natCast] at this
 
 /-- `Σ cⁿ aₙ Xⁿ` is restricted if `Σ aₙ Xⁿ` is. -/
-private theorem rescale_mem_restrictedPowerSeries (c : 𝔸) {f : 𝔸⟦X⟧}
+theorem rescale_mem_restrictedPowerSeries (c : 𝔸) {f : 𝔸⟦X⟧}
     (hf : f ∈ restrictedPowerSeries p) : rescale c f ∈ restrictedPowerSeries p := by
   refine (mem_restrictedPowerSeries p).2 fun k => ?_
   obtain ⟨N, hN⟩ := (mem_restrictedPowerSeries p).1 hf k
