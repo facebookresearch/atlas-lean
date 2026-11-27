@@ -263,6 +263,7 @@ def helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
     `where` declares helpers after a body (`:= ...`, or match alternatives `| ...`), and
     structure fields when it comes straight after the signature (`instance : C where x := 0`);
     only the first are helpers, and a `let rec` in a field's value is the declaration's own.
+    Fields can be followed by a second `where` with helpers, as a body can.
     """
     body = False
     where = None
@@ -274,7 +275,10 @@ def helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
         elif char == "w" and is_word_at(code, offset, "where"):
             if body:
                 where = offset
-            break
+                break
+            # The fields' `where`: their values count as a body, so a later `where` starts
+            # helpers.
+            body = True
     if where is None:
         return let_recs(code, start, stop)
     found = let_recs(code, start, where)

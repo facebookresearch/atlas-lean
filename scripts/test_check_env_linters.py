@@ -382,7 +382,8 @@ end
 
 # `let rec` and `where` helpers, named after the helpers whose values hold them, as Lean's `#print`
 # names each: a `let rec` in a `where` helper's value, in another `let rec`'s value (by indentation
-# or inside brackets), after another one's `;`, and in a structure-instance field's value.
+# or inside brackets), after another one's `;`, in a structure-instance field's value, and in a
+# helper after structure-instance fields.
 LET_RECS = """\
 namespace LR
 
@@ -408,6 +409,13 @@ structure Box where
 
 def boxed : Box where
   value := let rec g (k : Nat) : Nat := k; g 1
+
+def boxed2 : Box where
+  value := go2 1
+where
+  go2 (k : Nat) : Nat :=
+    let rec inner2 (j : Nat) : Nat := j
+    inner2 k
 
 end LR
 """
@@ -502,9 +510,9 @@ class IndexTests(unittest.TestCase):
         names = check.index_source(LET_RECS).names
         self.assertTrue({"LR.total.go", "LR.total.go.inner", "LR.outer.a", "LR.outer.a.b",
                          "LR.flat.c", "LR.flat.d", "LR.nest.e", "LR.nest.e.f",
-                         "LR.boxed.g"} <= names)
+                         "LR.boxed.g", "LR.boxed2.go2", "LR.boxed2.go2.inner2"} <= names)
         self.assertFalse({"LR.total.inner", "LR.outer.b", "LR.flat.c.d", "LR.nest.f",
-                          "LR.boxed.value.g"} & names)
+                          "LR.boxed.value.g", "LR.boxed2.inner2", "LR.boxed2.value"} & names)
 
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
