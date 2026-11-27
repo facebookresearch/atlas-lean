@@ -34,6 +34,7 @@ public import Mathlib.CategoryTheory.Preadditive.LeftExact
 public import Mathlib.Topology.Sheaves.Sheafify
 public import Mathlib.Topology.Sheaves.LocallySurjective
 public import Mathlib.Algebra.Category.Grp.AB
+public import Mathlib.Algebra.Category.Grp.FilteredColimits
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Abelian
 public import Mathlib.Topology.Sheaves.Abelian
 
