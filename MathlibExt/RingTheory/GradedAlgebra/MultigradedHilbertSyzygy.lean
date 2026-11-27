@@ -82,8 +82,8 @@ private def mgsyz_freeComponent (K : Type u) [Field K] {n : ℕ} {ι : Type u}
   letI : Module K (ι →₀ MvPolynomial (Fin n) K) :=
     Module.compHom _ (MvPolynomial.C : K →+* MvPolynomial (Fin n) K)
   exact
-    { carrier := fun f => ∀ j a, a ∈ (f j).support →
-        natDegreeToInt a + δ j = α
+    { carrier := {f | ∀ j a, a ∈ (f j).support →
+        natDegreeToInt a + δ j = α}
       zero_mem' := by
         intro j a ha
         simp at ha
@@ -176,8 +176,8 @@ private def mgsyz_freeComplement (K : Type u) [Field K] {n : ℕ} {ι : Type u}
   letI : Module K (ι →₀ MvPolynomial (Fin n) K) :=
     Module.compHom _ (MvPolynomial.C : K →+* MvPolynomial (Fin n) K)
   exact
-    { carrier := fun f => ∀ j a, a ∈ (f j).support →
-        natDegreeToInt a + δ j ≠ α
+    { carrier := {f | ∀ j a, a ∈ (f j).support →
+        natDegreeToInt a + δ j ≠ α}
       zero_mem' := by
         intro j a ha
         simp at ha
@@ -1272,19 +1272,24 @@ private noncomputable def mgsyz_multigradedResolution
 end mgsyz_Stages
 
 set_option linter.unusedVariables false in
-/-- Existence of a finite multigraded free resolution over `MvPolynomial`.
+/-- **Existence of finite multigraded free resolutions.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, and let $M$ be a multigraded $R$-module that is finitely generated over
+$R$. Then there are a projective resolution $P_\bullet \to M$ over $R$, index types $\iota_i$ for
+$i \in \mathbb{N}$, a multigraded free resolution structure on $P_\bullet$ for the given grading
+of $M$ in which $P_i$ has basis indexed by $\iota_i$, and a number $b \in \mathbb{N}$ such that
+every $\iota_i$ is finite and $\iota_i$ is empty for every $i > b$.
 
-Direct source: Hoffman–Wang,
+The proof uses stagewise minimal homogeneous free covers, the determinant trick,
+dimension shifting, and Hilbert's syzygy theorem.
+
+Proves `Wanted` entry `exists_finite_multigraded_free_resolution`.
+
+Source: Hoffman–Wang,
 https://export.arxiv.org/e-print/math/0601101v1 lines 592-612 (finite free
 graded resolution). The Braun–Davis JIS passage
 https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex lines 856-876
 supplies the motivating Hilbert-syzygy / Poincaré-series context only. No
 `≤ n` bound is claimed here.
-
-Proves `Wanted` entry `exists_finite_multigraded_free_resolution`.
-
-Proof: Uses stagewise minimal homogeneous free covers, the determinant trick,
-dimension shifting, and Hilbert's syzygy theorem.
 -/
 public theorem exists_finite_multigraded_free_resolution
     (K : Type u) (n : ℕ) (M : Type u)

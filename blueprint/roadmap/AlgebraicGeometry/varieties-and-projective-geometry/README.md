@@ -11,7 +11,6 @@ Classical algebraic geometry of affine and projective varieties: hypersurfaces a
 - [Line arrangements in the projective plane](line-arrangements-in-the-projective-plane/README.md)
 - [Multiplicity of a hypersurface at a point](multiplicity-of-a-hypersurface-at-a-point/README.md)
 - [Regular functions on algebraic sets](regular-functions-on-algebraic-sets/README.md)
-- [Seshadri constants of points in the plane](seshadri-constants-of-points-in-the-plane/README.md)
 - [Tangent spaces of algebraic sets](tangent-spaces-of-algebraic-sets/README.md)
 - [Topological reconstruction of varieties](topological-reconstruction-of-varieties/README.md)
 - [Tropical varieties](tropical-varieties/README.md)

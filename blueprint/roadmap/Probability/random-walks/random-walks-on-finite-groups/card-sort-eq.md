@@ -36,7 +36,7 @@ $n = 52$ the total variation distance after $m = 5, 6, 7, 8$ shuffles is $0.924,
 
 - [Cutoff for a family of distance profiles](../../markov-chains/mixing-times-of-markov-chains/has-cutoff.md): the phenomenon that
   Theorem 2 of the paper quantifies for riffle shuffles.
-- Fisher–Yates shuffle:
+- [Fisher–Yates shuffle](../../../ComputerScience/randomized-algorithms/fisher-yates-shuffle/README.md):
   the exact algorithm for a uniform permutation, against which physical shuffles are measured.
 
 ## Sources

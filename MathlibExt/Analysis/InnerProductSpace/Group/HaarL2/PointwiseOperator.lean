@@ -1,0 +1,230 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.Completion
+public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
+public import Mathlib.Topology.Sequences
+
+/-!
+# Bounded pointwise operator fields on the actual vector-valued L2 carrier
+
+The original jointly vector-continuous operator field acts first on
+compact-support vectors. Its pointwise norm bound supplies the actual
+linear map on the computed L2 seminorm, separation and completion.
+The existing canonical completed inclusion puts that same operator on
+the original Lp H 2 carrier. Compact-support approximation and actual
+almost-everywhere subsequences retain its literal formula on all vectors.
+
+No globally separable operator-field range, countability, sigma-finiteness
+or supplied L2 comparison is an input to this construction.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open Filter
+open scoped ENNReal Topology CompactlySupported
+
+namespace MeasureTheory
+namespace HaarL2
+
+noncomputable section
+
+universe uG uH
+
+variable {G : Type uG} [TopologicalSpace G] [R1Space G]
+variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+variable (T : G → H →L[ℂ] H) (hT : Continuous (fun z : G × H => T z.1 z.2))
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous.
+
+The bounded operator field acts on the same compact-support vector functions. -/
+def pointwiseCompactSupport : C_c(G, H) →ₗ[ℂ] C_c(G, H) where
+  toFun f :=
+    { toFun s := T s (f s)
+      continuous_toFun := hT.comp (continuous_id.prodMk f.continuous)
+      hasCompactSupport' := HasCompactSupport.intro f.hasCompactSupport fun s hs => by
+        rw [image_eq_zero_of_notMem_tsupport hs, map_zero] }
+  map_add' f g := by
+    apply CompactlySupportedContinuousMap.ext
+    intro s
+    exact map_add (T s) (f s) (g s)
+  map_smul' c f := by
+    apply CompactlySupportedContinuousMap.ext
+    intro s
+    exact map_smul (T s) c (f s)
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous.
+
+The compact-support operator retains every pointwise value. -/
+@[simp]
+theorem pointwiseCompactSupport_apply (f : C_c(G, H)) (s : G) :
+    pointwiseCompactSupport T hT f s = T s (f s) :=
+  rfl
+
+variable [MeasurableSpace G] [BorelSpace G]
+variable (μ : Measure G) [μ.Regular]
+variable (C : ℝ) (hBound : ∀ s : G, ‖T s‖ ≤ C)
+
+include hBound in
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+
+The pointwise operator bound gives the same compact-support L2 bound. -/
+theorem pointwiseCompactSupport_l2Bound (f : C_c(G, H)) :
+    ‖compactSupportInclusion μ (pointwiseCompactSupport T hT f)‖ ≤
+      C * ‖compactSupportInclusion μ f‖ := by
+  apply Lp.norm_le_mul_norm_of_ae_le_mul
+  filter_upwards [compactSupportInclusion_ae_eq μ (pointwiseCompactSupport T hT f),
+    compactSupportInclusion_ae_eq μ f] with s h₁ h₂
+  rw [h₁, h₂, pointwiseCompactSupport_apply]
+  exact (T s).le_opNorm (f s) |>.trans
+    (mul_le_mul_of_nonneg_right (hBound s) (norm_nonneg (f s)))
+
+variable [CompleteSpace H]
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+Assume `H` is complete.
+
+Descend and extend the compact-support operator through the computed L2 completion. -/
+def pointwiseSourceMap : CompletionCore (H := H) μ →L[ℂ] Lp H 2 μ := by
+  let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
+  let _ : InnerProductSpace ℂ C_c(G, H) := compactSupportInnerProductSpace (H := H) μ
+  let _ : UniformContinuousConstSMul ℂ (SeparatedCore (H := H) μ) :=
+    uniformContinuousConstSMul_of_continuousConstSMul ℂ (SeparatedCore (H := H) μ)
+  let _ : UniformContinuousConstSMul ℂ (Lp H 2 μ) :=
+    uniformContinuousConstSMul_of_continuousConstSMul ℂ (Lp H 2 μ)
+  let F₀ : C_c(G, H) →ₗ[ℂ] Lp H 2 μ :=
+    (compactSupportInclusion μ).comp (pointwiseCompactSupport T hT)
+  have hbound (f : C_c(G, H)) : ‖F₀ f‖ ≤ C * ‖f‖ := by
+    change ‖compactSupportInclusion μ (pointwiseCompactSupport T hT f)‖ ≤
+      C * ‖compactSupportInclusion μ f‖
+    exact pointwiseCompactSupport_l2Bound T hT μ C hBound f
+  let F : C_c(G, H) →L[ℂ] Lp H 2 μ := F₀.mkContinuous C hbound
+  let Q := SeparationQuotient.liftCLM F (fun a b h => (h.map F.continuous).eq)
+  exact Q.fromCompletion
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+Assume `H` is complete.
+
+The source extension has the exact compact-support value. -/
+theorem pointwiseSourceMap_apply (f : C_c(G, H)) :
+    pointwiseSourceMap T hT μ C hBound (toCompletion μ f) =
+      compactSupportInclusion μ (pointwiseCompactSupport T hT f) := by
+  let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
+  let _ : InnerProductSpace ℂ C_c(G, H) := compactSupportInnerProductSpace (H := H) μ
+  let _ : UniformContinuousConstSMul ℂ (SeparatedCore (H := H) μ) :=
+    uniformContinuousConstSMul_of_continuousConstSMul ℂ (SeparatedCore (H := H) μ)
+  let _ : UniformContinuousConstSMul ℂ (Lp H 2 μ) :=
+    uniformContinuousConstSMul_of_continuousConstSMul ℂ (Lp H 2 μ)
+  dsimp only [pointwiseSourceMap]
+  change (_ : SeparatedCore (H := H) μ →L[ℂ] Lp H 2 μ).fromCompletion
+    ((toSeparated μ f : SeparatedCore (H := H) μ) :
+      UniformSpace.Completion (SeparatedCore (H := H) μ)) = _
+  rw [ContinuousLinearMap.fromCompletion_apply_coe]
+  rfl
+
+variable [LocallyCompactSpace G]
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+Assume `H` is complete. Assume `G` is locally compact.
+
+The bounded pointwise operator on the same vector-valued L2 carrier. -/
+def pointwiseOperator : Lp H 2 μ →L[ℂ] Lp H 2 μ :=
+  (pointwiseSourceMap T hT μ C hBound).comp
+    (completionToLp (H := H) μ).symm.toLinearIsometry.toContinuousLinearMap
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+Assume `H` is complete. Assume `G` is locally compact.
+
+The L2 operator retains the compact-support coefficient values. -/
+theorem pointwiseOperator_apply_compactSupport (f : C_c(G, H)) :
+    pointwiseOperator T hT μ C hBound (compactSupportInclusion μ f) =
+      compactSupportInclusion μ (pointwiseCompactSupport T hT f) := by
+  change pointwiseSourceMap T hT μ C hBound
+    ((completionToLp (H := H) μ).symm (compactSupportInclusion μ f)) = _
+  rw [← completionToLp_apply μ f, LinearIsometryEquiv.symm_apply_apply]
+  exact pointwiseSourceMap_apply T hT μ C hBound f
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+Assume `H` is complete. Assume `G` is locally compact.
+
+Every L2 vector has the pointwise operator-field action almost everywhere. -/
+theorem pointwiseOperator_ae_eq (ξ : Lp H 2 μ) :
+    pointwiseOperator T hT μ C hBound ξ =ᵐ[μ] fun s : G => T s (ξ s) := by
+  obtain ⟨v, hv, hconv⟩ :=
+    mem_closure_iff_seq_limit.mp (denseRange_compactSupportInclusion (H := H) μ ξ)
+  choose f hf using hv
+  obtain ⟨ns, hns, hin⟩ := (tendstoInMeasure_of_tendsto_Lp hconv).exists_seq_tendsto_ae
+  have houtconv : Tendsto (fun n => pointwiseOperator T hT μ C hBound (v (ns n))) atTop
+      (𝓝 (pointwiseOperator T hT μ C hBound ξ)) :=
+    ((pointwiseOperator T hT μ C hBound).continuous.tendsto ξ).comp
+      (hconv.comp hns.tendsto_atTop)
+  obtain ⟨ms, hms, hout⟩ :=
+    (tendstoInMeasure_of_tendsto_Lp houtconv).exists_seq_tendsto_ae
+  have hrepin : ∀ᵐ s ∂μ, ∀ n : ℕ, v n s = f n s := by
+    rw [ae_all_iff]
+    intro n
+    rw [← hf n]
+    exact compactSupportInclusion_ae_eq μ (f n)
+  have hrepout : ∀ᵐ s ∂μ, ∀ n : ℕ,
+      pointwiseOperator T hT μ C hBound (v n) s = T s (f n s) := by
+    rw [ae_all_iff]
+    intro n
+    rw [← hf n, pointwiseOperator_apply_compactSupport]
+    filter_upwards [compactSupportInclusion_ae_eq μ (pointwiseCompactSupport T hT (f n))]
+      with s hs
+    exact hs.trans (pointwiseCompactSupport_apply T hT (f n) s)
+  filter_upwards [hin, hout, hrepin, hrepout] with s h₁ h₂ h₃ h₄
+  have hinput : Tendsto (fun n => f (ns (ms n)) s) atTop (𝓝 (ξ s)) :=
+    (h₁.comp hms.tendsto_atTop).congr' (Eventually.of_forall fun n => h₃ (ns (ms n)))
+  have hpoint : Tendsto (fun n => T s (f (ns (ms n)) s)) atTop (𝓝 (T s (ξ s))) :=
+    ((T s).continuous.tendsto (ξ s)).comp hinput
+  have houtput : Tendsto (fun n => T s (f (ns (ms n)) s)) atTop
+      (𝓝 (pointwiseOperator T hT μ C hBound ξ s)) :=
+    h₂.congr' (Eventually.of_forall fun n => h₄ (ns (ms n)))
+  exact tendsto_nhds_unique houtput hpoint
+
+/-- Let `G` be an R₁ topological space and let `H` be a complex normed inner-product space. Specify
+an operator field `T : G → (H →L[ℂ] H)` for which `(s,x) ↦ T(s)x` is jointly continuous. Give
+`G` its Borel σ-algebra and let `μ` be a regular measure. Assume `‖T(s)‖ ≤ C` for every `s ∈ G`.
+Assume `H` is complete. Assume `G` is locally compact.
+
+The pointwise bound controls every L2 vector image. -/
+theorem pointwiseOperator_norm_apply_le (ξ : Lp H 2 μ) :
+    ‖pointwiseOperator T hT μ C hBound ξ‖ ≤ C * ‖ξ‖ := by
+  apply Lp.norm_le_mul_norm_of_ae_le_mul
+  filter_upwards [pointwiseOperator_ae_eq T hT μ C hBound ξ] with s hs
+  rw [hs]
+  exact (T s).le_opNorm (ξ s) |>.trans
+    (mul_le_mul_of_nonneg_right (hBound s) (norm_nonneg (ξ s)))
+
+end
+
+end HaarL2
+end MeasureTheory

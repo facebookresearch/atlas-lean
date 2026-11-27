@@ -27,7 +27,7 @@ example :
         gaussianReal (x / 2) (1 / 2) := by
   have h := posterior_gaussianMarginalLaw_one (0 : ℝ) (v₀ := (1 : ℝ≥0)) (v := (1 : ℝ≥0))
   filter_upwards [h] with x hx
-  rw [hx, normalPosteriorKernel_apply 0 (by positivity) (by positivity) x]
+  rw [hx, normalPosteriorKernel_apply 0 x]
   unfold normalPostMean normalPostVar
   norm_num
 

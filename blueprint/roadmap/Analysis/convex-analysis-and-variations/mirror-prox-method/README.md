@@ -16,4 +16,4 @@ The mirror-prox method (Nemirovski, 2004) solves variational inequalities with a
 
 - [Mirror descent](../mirror-descent/README.md): the proximal setup and the Bregman divergence; mirror descent for nonsmooth problems has rate $O(1/\sqrt{N})$.
 - [Stampacchia's theorem](../stampacchia-s-theorem/README.md): existence and uniqueness for variational inequalities with coercive bilinear forms, the existence side of the problems mirror-prox solves.
-- Von Neumann's minimax theorem: matrix games, bilinear saddle-point problems over pairs of simplices, are the first application of mirror-prox in Nemirovski (2004), Section 5, Example 1.
+- [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/README.md): matrix games, bilinear saddle-point problems over pairs of simplices, are the first application of mirror-prox in Nemirovski (2004), Section 5, Example 1.

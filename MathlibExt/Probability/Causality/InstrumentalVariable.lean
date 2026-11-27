@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.StatisticalGenetics.MendelianRandomization
+public import MathlibExt.Probability.Causality.PotentialOutcomes
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Basic
 import Mathlib.Probability.ConditionalProbability
@@ -16,8 +16,8 @@ import Mathlib.Probability.ConditionalProbability
 /-!
 # Instrumental variables: identification of the local average treatment effect
 
-The LATE identity itself is `PotentialOutcomes.waldEstimand_eq_late` in the
-Mendelian randomization module, reused here. This file adds the observed-law
+The LATE identity itself is `PotentialOutcomes.waldEstimand_eq_late` in
+`MathlibExt.Probability.Causality.PotentialOutcomes`. This file adds the observed-law
 statement of Imbens & Angrist (1994) Theorem 1: the Wald estimand, hence the
 complier average effect, depends on the model only through the law of the
 observed triple.

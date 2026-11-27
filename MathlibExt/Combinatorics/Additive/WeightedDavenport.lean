@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.Order.Floor.Div
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.Data.ZMod.Defs
 import Mathlib.Tactic
@@ -26,9 +27,12 @@ valued in `ℕ∞` (`⊤` when no length forces one).
 
 namespace MetaMathlibExt
 
-/-- A list `s` over `G` is `A`-weighted zero-sum free when no non-empty set of its
-positions, with weights from `A` attached to those positions, has weighted sum zero.
-Lists keep multiplicities; positions are indexed by `Fin s.length`.
+/-- **Weighted zero-sum free sequences.** Let $G$ be an additive commutative monoid and $A$ a
+finite set of natural numbers. A finite sequence $s = (s_1, \dots, s_n)$ over $G$ is
+$A$-weighted zero-sum free when, for every non-empty set $I \subseteq \{1, \dots, n\}$ of
+positions and every choice of weights $a_i \in A$ for $i \in I$, the weighted sum
+$\sum_{i \in I} a_i s_i$ is non-zero, where $a_i s_i$ is the sum of $a_i$ copies of $s_i$.
+Terms are indexed by position, so repeated terms count separately.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (weighted zero-sum subsequences, as used in Lemmas 2 and 3). -/
 def IsWeightedZeroSumFree {G : Type*} [AddCommMonoid G] (A : Finset ℕ) (s : List G) :
@@ -36,17 +40,24 @@ def IsWeightedZeroSumFree {G : Type*} [AddCommMonoid G] (A : Finset ℕ) (s : Li
   ∀ I : Finset (Fin s.length), I.Nonempty → ∀ a : Fin s.length → ℕ,
     (∀ i ∈ I, a i ∈ A) → ∑ i ∈ I, a i • s.get i ≠ 0
 
-/-- The `A`-weighted Davenport constant `D_A(G)`: the least length `ℓ` such that every
-sequence over `G` of length `ℓ` has a non-empty `A`-weighted zero-sum subsequence, valued in
-`ℕ∞` so that it is `⊤` when no such length exists (for example for `A = ∅`, or `A = {1}` and
-`G = ℤ`). For a finite group and a non-empty weight set it is finite.
-The ordinary Davenport constant is `weightedDavenport {1} G`.
+/-- **Weighted Davenport constant.** Let $G$ be an additive commutative monoid and $A$ a finite
+set of natural numbers. The $A$-weighted Davenport constant $D_A(G) \in \mathbb{N} \cup \{\infty\}$
+is the least length $\ell \in \mathbb{N}$ such that no sequence over $G$ of length $\ell$ is
+$A$-weighted zero-sum free, that is, such that every sequence over $G$ of length $\ell$ has a
+non-empty $A$-weighted zero-sum subsequence; it is $\infty$ when no such length exists.
+
+For example $D_A(G) = \infty$ when $A = \emptyset$, or when $A = \{1\}$ and $G = \mathbb{Z}$. For
+a finite group $G$ and a non-empty weight set $A$ it is finite. The ordinary Davenport constant of
+$G$ is $D_{\{1\}}(G)$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (definition of `D_A(G)`). -/
 noncomputable def weightedDavenport (A : Finset ℕ) (G : Type*) [AddCommMonoid G] : ℕ∞ :=
   ⨅ ℓ ∈ {ℓ : ℕ | ∀ s : List G, s.length = ℓ → ¬ IsWeightedZeroSumFree A s}, (ℓ : ℕ∞)
 
-/-- When some forcing length exists, `D_A(G)` is the least one, as a natural number.
+/-- **The weighted Davenport constant as a least length.** Let $G$ be an additive commutative
+monoid, $A$ a finite set of natural numbers and $D_A(G)$ the $A$-weighted Davenport constant
+of $G$. If there is a length $\ell \in \mathbb{N}$ such that no sequence over $G$ of length
+$\ell$ is $A$-weighted zero-sum free, then $D_A(G)$ is finite and equals the least such length.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (definition of `D_A(G)`). -/
 theorem weightedDavenport_eq_natCast_sInf (A : Finset ℕ) (G : Type*) [AddCommMonoid G]
@@ -55,7 +66,10 @@ theorem weightedDavenport_eq_natCast_sInf (A : Finset ℕ) (G : Type*) [AddCommM
       ((sInf {ℓ : ℕ | ∀ s : List G, s.length = ℓ → ¬ IsWeightedZeroSumFree A s} : ℕ) : ℕ∞) :=
   (ENat.natCast_sInf h).symm
 
-/-- Prefixes of a weighted zero-sum free sequence are weighted zero-sum free.
+/-- **Prefixes of weighted zero-sum free sequences.** Let $G$ be an additive commutative monoid
+and $A$ a finite set of natural numbers. If a sequence $s$ over $G$ is $A$-weighted zero-sum
+free, then for every $\ell \in \mathbb{N}$ the prefix of $s$ formed by its first $\ell$ terms
+(all of $s$ when $\ell$ is at least its length) is $A$-weighted zero-sum free.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (definition of `D_A(G)`). -/
 theorem IsWeightedZeroSumFree.take {G : Type*} [AddCommMonoid G] {A : Finset ℕ}
@@ -83,8 +97,11 @@ theorem IsWeightedZeroSumFree.take {G : Type*} [AddCommMonoid G] {A : Finset ℕ
     simp only [hw, hget]
     exact hsum
 
-/-- Upper bound: if every sequence of length `ℓ` has a non-empty `A`-weighted zero sum, then
-`D_A(G) ≤ ℓ`.
+/-- **Upper bound for the weighted Davenport constant.** Let $G$ be an additive commutative
+monoid, $A$ a finite set of natural numbers, $D_A(G)$ the $A$-weighted Davenport constant of
+$G$ and $\ell$ a natural number. If no sequence over $G$ of length $\ell$ is $A$-weighted
+zero-sum free, that is, every sequence over $G$ of length $\ell$ has a non-empty $A$-weighted
+zero-sum subsequence, then $D_A(G) \le \ell$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (definition of `D_A(G)`). -/
 theorem weightedDavenport_le {G : Type*} [AddCommMonoid G] {A : Finset ℕ} {ℓ : ℕ}
@@ -92,7 +109,9 @@ theorem weightedDavenport_le {G : Type*} [AddCommMonoid G] {A : Finset ℕ} {ℓ
     weightedDavenport A G ≤ ℓ :=
   biInf_le (fun ℓ : ℕ => (ℓ : ℕ∞)) h
 
-/-- Lower bound: an `A`-weighted zero-sum free sequence of length `L` gives `L < D_A(G)`.
+/-- **Lower bound for the weighted Davenport constant.** Let $G$ be an additive commutative
+monoid, $A$ a finite set of natural numbers and $D_A(G)$ the $A$-weighted Davenport constant
+of $G$. If a sequence over $G$ of length $L$ is $A$-weighted zero-sum free, then $L < D_A(G)$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (definition of `D_A(G)`). -/
 theorem lt_weightedDavenport {G : Type*} [AddCommMonoid G] {A : Finset ℕ} {s : List G}
@@ -109,7 +128,10 @@ theorem lt_weightedDavenport {G : Type*} [AddCommMonoid G] {A : Finset ℕ} {s :
     rw [weightedDavenport, hne]
     simp
 
-/-- `D_A(G) = ⊤` iff there are `A`-weighted zero-sum free sequences of every length.
+/-- **When the weighted Davenport constant is infinite.** Let $G$ be an additive commutative
+monoid, $A$ a finite set of natural numbers and $D_A(G)$ the $A$-weighted Davenport constant
+of $G$. Then $D_A(G) = \infty$ if and only if for every $\ell \in \mathbb{N}$ there is an
+$A$-weighted zero-sum free sequence over $G$ of length $\ell$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (definition of `D_A(G)`). -/
 theorem weightedDavenport_eq_top_iff {G : Type*} [AddCommMonoid G] {A : Finset ℕ} :
@@ -120,7 +142,9 @@ theorem weightedDavenport_eq_top_iff {G : Type*} [AddCommMonoid G] {A : Finset �
   refine forall_congr' fun ℓ => ?_
   simp only [Set.mem_ofPred_eq, not_forall, not_not, exists_prop]
 
-/-- For a non-empty weight set the weighted Davenport constant of the trivial group is `1`.
+/-- **Weighted Davenport constant of the trivial group.** For every non-empty finite set $A$ of
+natural numbers, the $A$-weighted Davenport constant of the trivial group $\mathbb{Z}/1\mathbb{Z}$
+is $D_A(\mathbb{Z}/1\mathbb{Z}) = 1$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (characteristic value of `D_A`). -/
 theorem weightedDavenport_zmod_one (A : Finset ℕ) (hA : A.Nonempty) :
@@ -149,7 +173,9 @@ theorem weightedDavenport_zmod_one (A : Finset ℕ) (hA : A.Nonempty) :
   rw [weightedDavenport_eq_natCast_sInf _ _ (by rw [hset]; exact Set.nonempty_Ici), hset]
   simp
 
-/-- The ordinary Davenport constant of `ZMod 2` is `2`.
+/-- **Davenport constant of the group of order two.** The ordinary Davenport constant of
+$\mathbb{Z}/2\mathbb{Z}$, that is, its $\{1\}$-weighted Davenport constant, is
+$D_{\{1\}}(\mathbb{Z}/2\mathbb{Z}) = 2$.
 
 Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum Constants*, INTEGERS 26 (2026), Article A89, Section 2 (characteristic value of `D_A`). -/
 theorem weightedDavenport_singleton_one_zmod_two :
@@ -210,5 +236,41 @@ theorem weightedDavenport_singleton_one_zmod_two :
               _ = 0 := by decide)
   rw [weightedDavenport_eq_natCast_sInf _ _ (by rw [hset]; exact Set.nonempty_Ici), hset]
   simp
+
+/-- **A nested ceiling identity for divisors.** For all natural numbers $m, n \ge 2$ with
+$m \mid n$, we have $\lceil n / (\lceil n/(m-1) \rceil - 1) \rceil = m$.
+
+Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
+Constants*, INTEGERS 26 (2026), Article A89, Lemma 1 (`integers-2026-A89-lem-1`). -/
+theorem ceilDiv_ceilDiv_sub_one_sub_one_of_dvd (m n : ℕ) (hm : 2 ≤ m)
+    (hn : 2 ≤ n) (hdvd : m ∣ n) :
+    n ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) = m := by
+  obtain ⟨t, hnt⟩ := hdvd
+  let d := n ⌈/⌉ (m - 1) - 1
+  have hm' : 0 < m - 1 := by omega
+  have ht : 0 < t := by
+    apply Nat.pos_of_ne_zero
+    intro ht0
+    simp [ht0] at hnt
+    omega
+  have hlt : (m - 1) * t < n := by
+    rw [hnt]
+    exact Nat.mul_lt_mul_of_pos_right (by omega) ht
+  have htceil : t < n ⌈/⌉ (m - 1) := by
+    rwa [← not_le, ceilDiv_le_iff_le_mul hm', not_le]
+  have htd : t ≤ d := by dsimp [d]; omega
+  have hd : 0 < d := ht.trans_le htd
+  have hdceil : d < n ⌈/⌉ (m - 1) := by dsimp [d]; omega
+  have hdlt : (m - 1) * d < n := by
+    rwa [← not_le, ← ceilDiv_le_iff_le_mul hm', not_le]
+  have hdn : n ≤ d * m := by
+    rw [hnt, Nat.mul_comm d m]
+    exact Nat.mul_le_mul_left m htd
+  -- The two product bounds pin the outer ceiling to `m`.
+  have hlo : m - 1 < n ⌈/⌉ d := by
+    rwa [← not_le, ceilDiv_le_iff_le_mul hd, Nat.mul_comm d (m - 1), not_le]
+  have hhi := (ceilDiv_le_iff_le_mul hd).mpr hdn
+  change n ⌈/⌉ d = m
+  omega
 
 end MetaMathlibExt

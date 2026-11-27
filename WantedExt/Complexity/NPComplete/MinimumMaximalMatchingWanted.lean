@@ -19,7 +19,7 @@ Applied Mathematics 38 (1980), 364-372, doi:10.1137/0138030.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color

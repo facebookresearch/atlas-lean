@@ -473,9 +473,6 @@ private theorem cntO_perm (n : ℕ) (σ : Equiv.Perm (Fin n)) :
 private theorem cntE_perm (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     cntE n (fun i => (σ i).val) = evenC n σ := rfl
 
-private theorem ofFn_zero_empty (f : Fin 0 → ℕ) : List.ofFn f = [] :=
-  List.eq_nil_of_length_eq_zero List.length_ofFn
-
 private theorem cntO_of_le_one {n : ℕ} (f : Fin n → ℕ) (hn : n ≤ 1) :
     cntO n f = 0 := by
   have h : ∀ i ∈ (Finset.univ : Finset (Fin n)),
@@ -555,7 +552,7 @@ private theorem cnt_bridge (n : ℕ) :
   induction n with
   | zero =>
     intro f p q
-    rw [ofFn_zero_empty f, wt_nil]
+    rw [List.ofFn_zero, wt_nil]
     have hO := cntO_of_le_one f (by omega : 0 ≤ 1)
     have hE := cntE_of_le_one f (by omega : 0 ≤ 1)
     rw [hO, hE, pow_zero, pow_zero, mul_one]
@@ -1035,10 +1032,6 @@ private theorem idxOf_concat_zero (L R : List ℕ) (h : 0 ∉ L) :
     (L ++ 0 :: R).idxOf 0 = L.length := by
   rw [List.idxOf_append_of_notMem h, List.idxOf_cons_self, Nat.add_zero]
 
-private theorem take_concat_zero (L R : List ℕ) :
-    (L ++ 0 :: R).take L.length = L :=
-  List.take_left
-
 private theorem drop_concat_zero (L R : List ℕ) :
     (L ++ 0 :: R).drop (L.length + 1) = R := by
   have h1 : (L ++ 0 :: R).drop L.length = 0 :: R := List.drop_left
@@ -1239,7 +1232,7 @@ private theorem arr_insert_zero_sum (T : Finset ℕ) (h0 : 0 ∉ T)
     have hidx : (L ++ 0 :: R).idxOf 0 = L.length :=
       idxOf_concat_zero L R h0L
     have htake : (L ++ 0 :: R).take ((L ++ 0 :: R).idxOf 0) = L := by
-      rw [hidx]; exact take_concat_zero L R
+      rw [hidx]; exact List.take_left
     have hdrop : (L ++ 0 :: R).drop ((L ++ 0 :: R).idxOf 0 + 1) = R := by
       rw [hidx]; exact drop_concat_zero L R
     have hfin : ((L ++ 0 :: R).take ((L ++ 0 :: R).idxOf 0)).toFinset = U := by
@@ -1517,16 +1510,22 @@ private theorem Fp_even_symm : ∀ (m : ℕ) (p q : ℝ),
   linear_combination hmid + hend
 
 /--
-For every positive `n`, the refined Eulerian polynomial obtained by recording odd and even
-position descents is palindromic of darga `⌊n / 2⌋`; in even degree it is first multiplied by
-`1 + q`.
+**Palindromicity of the refined Eulerian polynomials.** Let $n \ge 1$. For a permutation
+$\sigma$ of $\{1, \dots, n\}$, let $\mathrm{odes}(\sigma)$ (resp. $\mathrm{edes}(\sigma)$) be the
+number of odd (resp. even) positions $i \in \{1, \dots, n-1\}$ with $\sigma(i) > \sigma(i+1)$,
+and let $A_n(p, q) = \sum_{\sigma} p^{\mathrm{odes}(\sigma)} q^{\mathrm{edes}(\sigma)}$, the sum
+over all permutations $\sigma$ of $\{1, \dots, n\}$, be the refined Eulerian polynomial with real
+coefficients. Let $P_n = (1+q) A_n$ if $n$ is even and $P_n = A_n$ if $n$ is odd. Then $P_n$ is
+palindromic of darga $\lfloor n/2 \rfloor$: it is a nonzero polynomial, $P_n(p, q) = P_n(q, p)$
+for all real $p$ and $q$, and $P_n(p, q) = (pq)^{\lfloor n/2 \rfloor} P_n(1/p, 1/q)$ for all
+nonzero real $p$ and $q$.
 
-Hua Sun, "A New Class of Refined Eulerian Polynomials," Journal of Integer Sequences
+Proves `Wanted` entry `refinedEulerianPolynomial_palindromic`.
+
+Source: Hua Sun, "A New Class of Refined Eulerian Polynomials," Journal of Integer Sequences
 21 (2018), Article 18.5.5, Theorem (label pal), lines 160–162
 (polynomial definition lines 135–136, palindromic-darga definition lines 105–110).
 `https://cs.uwaterloo.ca/journals/JIS/VOL21/Sun/sun2.tex`
-
-Proves `Wanted` entry `refinedEulerianPolynomial_palindromic`.
 -/
 theorem refinedEulerianPolynomial_palindromic
     (n : ℕ) (hn : 1 ≤ n) :

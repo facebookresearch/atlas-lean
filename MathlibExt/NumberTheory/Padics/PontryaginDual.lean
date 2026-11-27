@@ -21,39 +21,55 @@ contragredient group action. No topology or continuity condition is imposed.
 
 namespace MetaMathlibExt
 
-/-- The additive quotient `ℚ_p / ℤ_p`, represented using the canonical algebra map. -/
+/-- **The quotient $\mathbb{Q}_p/\mathbb{Z}_p$.** For a prime $p$, $\mathbb{Q}_p/\mathbb{Z}_p$ is
+the quotient of $\mathbb{Q}_p$, viewed as a $\mathbb{Z}_p$-module, by the image of
+$\mathbb{Z}_p$ under the canonical inclusion $\mathbb{Z}_p \to \mathbb{Q}_p$. -/
 noncomputable abbrev PadicQuotientInt (p : ℕ) [Fact p.Prime] :=
   ℚ_[p] ⧸ LinearMap.range (Algebra.linearMap ℤ_[p] ℚ_[p])
 
-/-- The algebraic `ℤ_p`-linear Pontryagin dual with values in `ℚ_p / ℤ_p`. -/
+/-- **Algebraic $p$-adic Pontryagin dual.** For a prime $p$ and a $\mathbb{Z}_p$-module $A$, the
+algebraic $p$-adic Pontryagin dual of $A$ is the $\mathbb{Z}_p$-module
+$\operatorname{Hom}_{\mathbb{Z}_p}(A, \mathbb{Q}_p/\mathbb{Z}_p)$ of all $\mathbb{Z}_p$-linear maps
+from $A$ to $\mathbb{Q}_p/\mathbb{Z}_p$; no topology or continuity condition is imposed. -/
 noncomputable abbrev PadicPontryaginDual (p : ℕ) [Fact p.Prime]
     (A : Type*) [AddCommGroup A] [Module ℤ_[p] A] :=
   A →ₗ[ℤ_[p]] PadicQuotientInt p
 
-/-- Two p-adic Pontryagin-dual elements are equal when they agree pointwise. -/
+/-- **Extensionality for the $p$-adic Pontryagin dual.** Let $p$ be a prime and $A$ a
+$\mathbb{Z}_p$-module. If two elements $\varphi, \psi$ of the algebraic $p$-adic Pontryagin dual
+of $A$ satisfy $\varphi(a) = \psi(a)$ for every $a \in A$, then $\varphi = \psi$. -/
 @[ext]
 theorem PadicPontryaginDual_ext {p : ℕ} [Fact p.Prime]
     {A : Type*} [AddCommGroup A] [Module ℤ_[p] A]
     {φ ψ : PadicPontryaginDual p A} (h : ∀ a, φ a = ψ a) : φ = ψ :=
   LinearMap.ext fun a => h a
 
-/-- The canonical quotient map from `ℚ_p` to `ℚ_p / ℤ_p`. -/
+/-- **The quotient map $\mathbb{Q}_p \to \mathbb{Q}_p/\mathbb{Z}_p$.** For a prime $p$, this is
+the canonical projection $\mathbb{Q}_p \to \mathbb{Q}_p/\mathbb{Z}_p$, $x \mapsto x + \mathbb{Z}_p$,
+as a $\mathbb{Z}_p$-linear map. -/
 noncomputable def padicQuotientMap (p : ℕ) [Fact p.Prime] :
     ℚ_[p] →ₗ[ℤ_[p]] PadicQuotientInt p :=
   (LinearMap.range (Algebra.linearMap ℤ_[p] ℚ_[p])).mkQ
 
-/-- The quotient map kills the canonical image of `ℤ_p` in `ℚ_p`. -/
+/-- **The quotient map vanishes on $\mathbb{Z}_p$.** For a prime $p$ and every
+$z \in \mathbb{Z}_p$, the quotient map $\mathbb{Q}_p \to \mathbb{Q}_p/\mathbb{Z}_p$ sends the
+image of $z$ in $\mathbb{Q}_p$ to $0$. -/
 theorem padicQuotientMap_algebraMap_eq_zero (p : ℕ) [Fact p.Prime] (z : ℤ_[p]) :
     padicQuotientMap p (algebraMap ℤ_[p] ℚ_[p] z) = 0 := by
   unfold padicQuotientMap
   rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
   exact ⟨z, rfl⟩
 
-/-- The quotient map agrees with the quotient constructor. -/
+/-- **The quotient map is the quotient projection.** For a prime $p$ and every
+$x \in \mathbb{Q}_p$, the quotient map $\mathbb{Q}_p \to \mathbb{Q}_p/\mathbb{Z}_p$ sends $x$ to
+its class $x + \mathbb{Z}_p$ in the quotient module. -/
 theorem padicQuotientMap_mkQ_eq (p : ℕ) [Fact p.Prime] (x : ℚ_[p]) :
     padicQuotientMap p x = Submodule.Quotient.mk x := rfl
 
-/-- The contragredient action of `g` on a p-adic Pontryagin-dual element. -/
+/-- **Contragredient action on the $p$-adic Pontryagin dual.** Let $p$ be a prime, $G$ a group
+and $A$ a $\mathbb{Z}_p$-module on which $G$ acts by additive maps commuting with the
+$\mathbb{Z}_p$-action. For $g \in G$ and $\varphi$ in the algebraic $p$-adic Pontryagin dual of
+$A$, $g \cdot \varphi$ is the element $a \mapsto \varphi(g^{-1} a)$ of the dual. -/
 noncomputable def contragredientSMul (p : ℕ) [Fact p.Prime] (G A : Type*) [Group G]
     [AddCommGroup A] [Module ℤ_[p] A] [DistribMulAction G A] [SMulCommClass G ℤ_[p] A]
     (g : G) (φ : PadicPontryaginDual p A) : PadicPontryaginDual p A where
@@ -87,7 +103,10 @@ noncomputable instance instContragredientDistribMulAction (p : ℕ) [Fact p.Prim
     change φ ((g * h)⁻¹ • a) = φ (h⁻¹ • g⁻¹ • a)
     rw [mul_inv_rev, mul_smul]
 
-/-- The contragredient action evaluates by precomposition with the inverse action. -/
+/-- **Evaluating the contragredient action.** Let $p$ be a prime, $G$ a group and $A$ a
+$\mathbb{Z}_p$-module on which $G$ acts by additive maps commuting with the
+$\mathbb{Z}_p$-action. For $g \in G$, $\varphi$ in the algebraic $p$-adic Pontryagin dual of $A$
+and $a \in A$, the contragredient action satisfies $(g \cdot \varphi)(a) = \varphi(g^{-1} a)$. -/
 @[simp]
 theorem smul_apply (p : ℕ) [Fact p.Prime] (G A : Type*) [Group G]
     [AddCommGroup A] [Module ℤ_[p] A] [DistribMulAction G A] [SMulCommClass G ℤ_[p] A]

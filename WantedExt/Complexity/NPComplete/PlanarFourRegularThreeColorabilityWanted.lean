@@ -16,7 +16,7 @@ NP-complete", Discrete Mathematics 30(3) (1980), 289-293, doi:10.1016/0012-365X(
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.PlanarDegreeFourThreeColorabilityWanted

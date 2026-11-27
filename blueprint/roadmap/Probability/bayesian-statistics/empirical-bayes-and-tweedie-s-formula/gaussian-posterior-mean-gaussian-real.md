@@ -15,7 +15,7 @@ The proof applies Stein's lemma to the prior: $\int \mu\, \varphi_v(x - \mu)\, \
 ## Background
 
 - [Stein's lemma](../../statistical-estimation/stein-s-lemma-and-james-stein-estimation/integrable-and-integral-sub-mul-gaussian.md): the identity used in the proof above instead of Tweedie's formula.
-- Posterior mean of the Normal–Normal model: the conjugate posterior mean $(v m_0 + v_0 x)/(v_0 + v)$ with a general prior mean; the bridge shows the two agree when $m_0 = 0$.
+- [Posterior mean of the Normal–Normal model](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/normal-post-mean.md): the conjugate posterior mean $(v m_0 + v_0 x)/(v_0 + v)$ with a general prior mean; [the bridge](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/gaussian-posterior-mean-gaussian-real-eq.md) shows the two agree when $m_0 = 0$.
 
 ## Sources
 

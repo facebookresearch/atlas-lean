@@ -22,7 +22,7 @@ Economic Behavior 63 (2008), 621-641, doi:10.1016/j.geb.2008.02.015.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.GameTheory.MixedNashExistence

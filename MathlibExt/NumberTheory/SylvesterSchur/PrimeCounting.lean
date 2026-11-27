@@ -29,16 +29,21 @@ open Finset Nat
 
 /-! ### Prime-counting estimates -/
 
-/-- Failure of the no-large-prime hypothesis produces a prime divisor of `Nat.choose N r`
-strictly greater than `r`. -/
+/-- **Negating the no-large-prime condition for $\binom{N}{r}$.** Let $N$ and $r$ be natural
+numbers. If it is not the case that every prime dividing $\binom{N}{r}$ is at most $r$, then some
+prime $p$ with $r < p$ divides $\binom{N}{r}$. -/
 theorem exists_large_prime_dvd_choose_of_not_forall_prime_dvd_le {N r : ℕ}
     (hsmall : ¬ ∀ p : ℕ, p.Prime → p ∣ Nat.choose N r → p ≤ r) :
     ∃ p : ℕ, p.Prime ∧ r < p ∧ p ∣ Nat.choose N r := by
   by_contra h
   exact hsmall fun p hp hdvd => le_of_not_gt fun hgt => h ⟨p, hp, hgt, hdvd⟩
 
-/-- If a no-large-prime upper bound for `Nat.choose N r` is smaller than Mathlib's lower
-bound, then `Nat.choose N r` has a prime divisor greater than `r`. -/
+/-- **A prime divisor of $\binom{N}{r}$ above $r$ from an upper bound below the lower bound.**
+Let $N$, $r$ and $U$ be natural numbers, and let $m = \max(N + 1 - r, 0)$. Suppose that
+$\binom{N}{r} \le U$ whenever every prime dividing $\binom{N}{r}$ is at most $r$, and that
+$U < m^r / r!$ as rational numbers. Then some prime $p$ with $r < p$ divides $\binom{N}{r}$.
+
+The quotient $m^r / r!$ is the standard lower bound for $\binom{N}{r}$. -/
 theorem exists_large_prime_dvd_choose_of_upper_lt_lower {N r U : ℕ}
     (hupper :
       (∀ p : ℕ, p.Prime → p ∣ Nat.choose N r → p ≤ r) → Nat.choose N r ≤ U)
@@ -53,8 +58,9 @@ theorem exists_large_prime_dvd_choose_of_upper_lt_lower {N r U : ℕ}
     Nat.pow_le_choose (α := ℚ) r N
   exact (not_lt_of_ge (hlower.trans hupper_q)) hbound
 
-/-- A very elementary bound: there are at most `r - 1` primes up to `r`, since all such primes
-lie in `{2, ..., r}`. -/
+/-- **At most $r - 1$ primes up to $r$.** For every natural number $r \ge 2$, the number
+$\pi(r)$ of primes $p \le r$ satisfies $\pi(r) \le r - 1$, since all such primes lie in
+$\{2, \dots, r\}$. -/
 theorem primeCounting_le_sub_one {r : ℕ} (hr : 2 ≤ r) :
     Nat.primeCounting r ≤ r - 1 := by
   rw [Nat.primeCounting, ← Nat.primesBelow_card_eq_primeCounting' (r + 1)]
@@ -67,9 +73,8 @@ theorem primeCounting_le_sub_one {r : ℕ} (hr : 2 ≤ r) :
       omega⟩
   exact (Finset.card_le_card hsubset).trans_eq (by rw [card_Icc]; omega)
 
-/-- A Mathlib-derived linear prime-counting bound.  This uses
-`Nat.primeCounting'_add_le` with modulus `2`, rather than reproving the odd-prime counting
-argument locally. -/
+/-- **At most $\lfloor r/2 \rfloor + 1$ primes up to $r$.** For every natural number $r$, the
+number $\pi(r)$ of primes $p \le r$ satisfies $\pi(r) \le \lfloor r/2 \rfloor + 1$. -/
 theorem primeCounting_le_half_add_one (r : ℕ) :
     Nat.primeCounting r ≤ r / 2 + 1 := by
   by_cases hr : r ≤ 1
@@ -104,8 +109,11 @@ private lemma primeCounting_le_mod_thirty (r : ℕ) :
     change Nat.primeCounting' (r + 1) ≤ 10 + 8 * ((r - 30) / 30 + 1)
     exact h
 
-/-- Erdős's `3r/8` prime-counting estimate.  The infinite tail follows from the
-residue-class estimate modulo `30`; the range `38 ≤ r < 91` is checked directly. -/
+/-- **Erdős's $3r/8$ prime-counting bound.** For every natural number $r \ge 38$, the number
+$\pi(r)$ of primes $p \le r$ satisfies $\pi(r) \le \lfloor 3r/8 \rfloor$.
+
+The infinite tail follows from the residue-class estimate modulo $30$; the range
+$38 \le r < 91$ is checked directly. -/
 theorem primeCounting_le_three_mul_div_eight {r : ℕ} (hr : 38 ≤ r) :
     Nat.primeCounting r ≤ 3 * r / 8 := by
   by_cases h91 : 91 ≤ r

@@ -19,7 +19,7 @@ Algebraic and Discrete Methods 3(3) (1982), 351-358, doi:10.1137/0603036.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Logic.Equiv.Defs

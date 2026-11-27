@@ -52,20 +52,30 @@ Clause list (every item below appears in the formal text below):
 8. Status: resolved false (`conjecture_refuted` below).
 -/
 
-/-- First Betti rank of a group, as the `ℤ`-rank of its abelianization
-[AMR-109-0273] (Question 2.5, PDF p. 330). -/
-noncomputable def firstBettiRank (G : Type*) [Group G] : Cardinal :=
-  Module.rank ℤ (Additive (Abelianization G))
+/-- **First Betti number of a group.** The first Betti number of a group $G$ is the rank, as a
+cardinal, of its abelianization $G^{\mathrm{ab}}$ viewed as a $\mathbb{Z}$-module.
 
-/-- Farb Question 2.5 [AMR-109-0273] (PDF p. 330): for `n > 3`, does
-`Aut(F_n)` have a finite-index subgroup with positive first Betti
-number? -/
+Source: [AMR-109-0273] (Question 2.5, PDF p. 330). -/
+noncomputable def firstBettiRank (G : Type*) [Group G] : Cardinal :=
+  Module.rank ℤ (Additive (Group.Abelianization G))
+
+/-- **Farb's positive first Betti number question for $\mathrm{Aut}(F_n)$.** The proposition that
+for every natural number $n > 3$, the automorphism group $\mathrm{Aut}(F_n)$ of the free group
+$F_n$ on $n$ generators has a finite-index subgroup $H$ whose first Betti number, the
+$\mathbb{Z}$-rank of the abelianization of $H$, is positive.
+
+Source: Farb Question 2.5 [AMR-109-0273] (PDF p. 330). -/
 def conjecture : Prop :=
   ∀ (n : ℕ), 3 < n →
     ∃ (H : Subgroup (MulAut (FreeGroup (Fin n)))),
       H.FiniteIndex ∧ 0 < firstBettiRank ↥H
 
 /--
+**Some $\mathrm{Aut}(F_n)$ with $n > 3$ has no finite-index subgroup of positive first Betti
+number.** It is not the case that for every natural number $n > 3$ the automorphism group
+$\mathrm{Aut}(F_n)$ of the free group $F_n$ on $n$ generators has a finite-index subgroup $H$ whose
+first Betti number, the $\mathbb{Z}$-rank of the abelianization of $H$, is positive.
+
 Resolved false: Kaluba-Nowak-Ozawa proved that Aut(F5) has Kazhdan's property (T) (Math. Ann.
 375 (2019), 1169-1191, Corollary 2: "The groups Aut(F5) and Out(F5) have property (T)."). Every
 finite-index subgroup of Aut(F5) therefore has property (T): the problem list notes, in the

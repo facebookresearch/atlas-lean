@@ -65,8 +65,12 @@ private theorem translated_rejects {n : Nat}
   rw [_root_.Matrix.mulVec_add, original, zero_add] at translated
   exact witness translated
 
-/-- At most half of all complete binary seeds are accepted when the supplied
-product is incorrect. Acceptance is the actual charged trial's return value. -/
+/-- **Soundness of the Freivalds trial.** Let $A$, $B$, $C$ be $n \times n$ matrices over
+$\mathbb{F}_2$ with $AB \ne C$. Then twice the number of seeds $r \in \mathbb{F}_2^n$ on which the
+Freivalds trial returns true is at most the number of all seeds in $\mathbb{F}_2^n$; that is, at
+most half of the seeds accept.
+
+Acceptance is the return value of the same charged run whose cost is counted. -/
 theorem freivaldsTrial_acceptanceCard_bound {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (wrong : freivaldsMatrix A * freivaldsMatrix B ≠ freivaldsMatrix C) :

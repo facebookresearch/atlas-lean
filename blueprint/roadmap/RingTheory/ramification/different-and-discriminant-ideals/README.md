@@ -20,3 +20,4 @@
 - [Unramified at a height-one prime implies not dividing discriminant](not-dvd-discriminant-ideal-of-is-unramif.md)
 - [Not dividing the discriminant implies unramified at a prime](is-unramified-at-of-not-dvd-discriminant.md)
 - [Height-one form of the discriminant ramification criterion](is-unramified-at-iff-not-dvd-discriminan.md)
+- [Differents of completions and the local factorization of the norm of the different](differents-of-completions.md)

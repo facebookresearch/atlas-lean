@@ -245,16 +245,28 @@ theorem Nf.toTm_rename (ρ : Ren Γ Δ) (n : Nf Γ A) :
     (fun _ _ _ _ ih {Δ} ρ => by simp [ih (Var.lift ρ)])
     n ρ
 
-/-- Kripke semantic values.  Base values are neutral syntax.  A semantic
-function acts after every context extension, which makes reification under a
-binder possible without any untyped weakening operation. -/
+/-- **Kripke semantic values.** For a context $\Gamma$, the semantic values of a simple type in
+$\Gamma$ are defined by recursion on the type. At a base type $b$ they are the neutral terms of
+type $b$ in $\Gamma$ (variables applied to zero or more normal arguments). At an arrow type
+$A \Rightarrow B$ a semantic value is a family that, for every context $\Delta$ and every
+renaming from $\Gamma$ to $\Delta$, maps semantic values of type $A$ in $\Delta$ to semantic
+values of type $B$ in $\Delta$.
+
+Because a semantic function acts after every renaming into a later context, reification under a
+binder needs no untyped weakening operation. -/
 def Sem (Γ : List (Ty Base)) : Ty Base → Type u
   | .base b => Ne Γ (.base b)
   | A ⇒ B => ∀ {Δ}, Ren Γ Δ → Sem Δ A → Sem Δ B
 
 namespace Sem
 
-/-- Transport a semantic value along a renaming. -/
+/-- **Renaming a semantic value.** Given a renaming $\rho$ from a context $\Gamma$ to a context
+$\Delta$, a simple type $A$ and a semantic value $v$ of type $A$ in $\Gamma$, the renamed value is
+the semantic value of type $A$ in $\Delta$ defined by cases on $A$. At a base type it is the
+neutral term $v$ with its free variables renamed by $\rho$. At an arrow type
+$A = B \Rightarrow C$ it sends a renaming $\sigma$ from $\Delta$ to a context $\Theta$ and a
+semantic value $a$ of type $B$ in $\Theta$ to the semantic value of type $C$ in $\Theta$ that $v$
+assigns to the composite renaming ($\rho$ followed by $\sigma$) and $a$. -/
 def rename (ρ : Ren Γ Δ) (A : Ty Base) (v : Sem Γ A) : Sem Δ A :=
   match A with
   | .base _ => Ne.rename ρ v
@@ -293,13 +305,17 @@ mutual
     | A ⇒ B, _, v => .lam (quote B (v .succ (reflect A (.var .zero))))
 end
 
-/-- A semantic environment interprets every variable of `Γ` in a common
-future context `Δ`. -/
+/-- **Semantic environments for normalization by evaluation.** For contexts $\Delta$ and
+$\Gamma$, a semantic environment for $\Gamma$ in $\Delta$ assigns to every variable of $\Gamma$,
+of any type $A$, a Kripke semantic value of type $A$ in $\Delta$. -/
 abbrev SemEnv (Δ Γ : List (Ty Base)) := ∀ {A}, Var Γ A → Sem Δ A
 
 namespace SemEnv
 
-/-- Rename every value in a semantic environment. -/
+/-- **Renaming a semantic environment.** Given a renaming $\rho$ from a context $\Delta$ to a
+context $\Theta$ and a semantic environment $\eta$ for $\Gamma$ in $\Delta$, the renamed
+environment is the semantic environment for $\Gamma$ in $\Theta$ that sends each variable $x$ of
+type $A$ to the semantic value $\eta(x)$ renamed along $\rho$ at type $A$. -/
 def rename (ρ : Ren Δ Θ) (η : SemEnv Δ Γ) : SemEnv Θ Γ :=
   fun {A} x => Sem.rename ρ A (η x)
 
@@ -318,7 +334,11 @@ theorem rename_comp {Ω : List (Ty Base)} (ρ : Ren Δ Θ) (σ : Ren Θ Ω)
   funext A x
   exact Sem.rename_comp ρ σ A (η x)
 
-/-- Extend a semantic environment below one binder. -/
+/-- **Extending a semantic environment by one variable.** Given a semantic value $a$ of type $A$
+in a context $\Delta$ and a semantic environment $\eta$ for $\Gamma$ in $\Delta$, the extended
+environment is the semantic environment for the context $A :: \Gamma$ (the context $\Gamma$ with a
+new innermost variable of type $A$) in $\Delta$ that sends the new innermost variable to $a$ and
+sends the successor of each variable $x$ of $\Gamma$ to $\eta(x)$. -/
 def cons (a : Sem Δ A) (η : SemEnv Δ Γ) : SemEnv Δ (A :: Γ)
   | _, .zero => a
   | _, .succ x => η x
@@ -329,7 +349,10 @@ def cons (a : Sem Δ A) (η : SemEnv Δ Γ) : SemEnv Δ (A :: Γ)
 @[simp] theorem cons_succ (a : Sem Δ A) (η : SemEnv Δ Γ) (x : Var Γ B) :
     cons a η (.succ x) = η x := rfl
 
-/-- The identity environment reflects each variable as a neutral value. -/
+/-- **The identity semantic environment.** For a context $\Gamma$, the identity environment is the
+semantic environment for $\Gamma$ in $\Gamma$ that sends each variable $x$ of type $A$ to the
+reflection at type $A$ of the neutral term $x$. Reflection turns a neutral term into a semantic
+value of the same type in the same context. -/
 def identity : SemEnv Γ Γ := fun {A} x => reflect A (.var x)
 
 end SemEnv

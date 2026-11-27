@@ -1,0 +1,15 @@
+# Motivic Power Quotient Models
+
+- [Component Point](component-point.md)
+- [Power Total](power-total.md)
+- [Source Coordinate](source-coordinate.md)
+- [Total U](total-u.md)
+- [Power Quotient](power-quotient.md)
+- [Map](map.md)
+- [Repeated Representation](repeated-representation.md)
+- [Power Affine Coordinate](power-affine-coordinate.md)
+- [Vector Quotient](vector-quotient.md)
+- [Map](map-2.md)
+- [Map over](map-over.md)
+- [Section](section.md)
+- [Is Normalized](is-normalized.md)

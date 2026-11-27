@@ -1,0 +1,3 @@
+# Algebraic connectivity
+
+Let $V$ and $E$ be finite sets and let each $e \in E$ be an edge from $e^-$ to $e^+$ in $V$ (a finite multigraph; loops $e^- = e^+$ are allowed), with weights $w : E \to \mathbb{R}$ and [Laplacian](laplacian.md) $L_w$, a real symmetric matrix with eigenvalues $\lambda_1 \le \lambda_2 \le \dots \le \lambda_n$, $n = \lvert V\rvert$, listed with multiplicity. The algebraic connectivity is the second-smallest eigenvalue $\lambda_2(L_w)$ when $n \ge 2$, and $0$ when $n < 2$ (D. A. Spielman, *Spectral and Algebraic Graph Theory*, draft of 2 April 2025, Lemma 3.1.1, where the eigenvalues are written $0 = \lambda_1 \le \lambda_2 \le \dots \le \lambda_n$ for nonnegative weights).

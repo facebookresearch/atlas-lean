@@ -14,5 +14,5 @@ simplex. The proof counts modulo $2$ the doors, the unit edges coloured $0$ and 
 
 ## Background
 
-- Every END-OF-THE-LINE instance has a sink: the directed parity principle that the door-to-door walk instantiates.
-- Knaster–Kuratowski–Mazurkiewicz lemma: the $n$-dimensional lemma on barycentric subdivisions is its main step.
+- [Every END-OF-THE-LINE instance has a sink](../../../TheoryOfComputation/completeness-other-classes/ppad-and-the-end-of-the-line-problem/exists-sink.md): the directed parity principle that the door-to-door walk instantiates.
+- [Knaster–Kuratowski–Mazurkiewicz lemma](../../../Geometry/convex-geometry/kkm-lemma.md): the $n$-dimensional lemma on barycentric subdivisions is its main step.

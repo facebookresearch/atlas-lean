@@ -33,12 +33,12 @@ example (K : Type) [Field K] [NumberField K] (D : ArakelovDivisor K) :
   ArakelovDivisor.exists_ne_zero_mem_sectionSet_of_size_gt K D
 
 /-- The Arakelov divisor on `ℚ` with ideal component `1` and radius `2`. -/
-noncomputable def testDivisor : ArakelovDivisor ℚ :=
+private noncomputable def testDivisor : ArakelovDivisor ℚ :=
   (1, fun _ => ⟨2, by norm_num⟩)
 
 /-- Its size is `2`: the unique infinite place has multiplicity `1` and the
 absolute norm of `1` is `1`. -/
-theorem testDivisor_sizeHom : (ArakelovDivisor.sizeHom ℚ testDivisor : ℝ) = 2 := by
+private theorem testDivisor_sizeHom : (ArakelovDivisor.sizeHom ℚ testDivisor : ℝ) = 2 := by
   rw [ArakelovDivisor.sizeHom_coe]
   simp [testDivisor, FractionalIdeal.absNorm_one]
 

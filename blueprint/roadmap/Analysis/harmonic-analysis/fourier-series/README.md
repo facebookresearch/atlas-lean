@@ -12,3 +12,5 @@ Fourier series on the circle and torus: Fejér and Dirichlet kernels, pointwise 
 - [Uniqueness of Fourier coefficients](uniqueness-of-fourier-coefficients/README.md)
 - [Fourier coefficients of the Mathieu–Fibonacci periodic function](mathieu-fibonacci-fourier-coefficient.md)
 - [Periodic convolution](periodic-convolution.md)
+- [Poisson summation formula for functions with power decay](poisson-summation-formula.md)
+- [Theta transformation of a Gaussian sum with a linear term](gaussian-sum-with-linear-term-transformation.md)

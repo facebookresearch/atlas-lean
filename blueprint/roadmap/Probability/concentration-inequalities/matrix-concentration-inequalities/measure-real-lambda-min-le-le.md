@@ -6,7 +6,7 @@ $$\mu\{\lambda_{\min}(Y) \le t\} \le e^{-\theta t} \int \operatorname{tr} e^{\th
 
 ## Informally uses
 
-- Trace exponential dominates the bottom eigenvalue: the matrix step for $\theta < 0$.
+- [Trace exponential dominates the bottom eigenvalue](../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-spectral-norm-of-hermitian-matri/trace-exponential/exp-mul-lambda-min-le-re-trace-exp.md): the matrix step for $\theta < 0$.
 
 ## Sources
 

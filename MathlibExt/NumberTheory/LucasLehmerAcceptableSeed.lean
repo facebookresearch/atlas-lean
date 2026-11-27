@@ -655,22 +655,26 @@ private theorem lucasLehmerSeed_necessity (n : ℕ) (hn_odd : Odd n) (hn_ge : 3 
   simpa [ZMod.intCast_zmod_eq_zero_iff_dvd] using hzero
 
 /--
-A seed `s₁` is acceptable for the Lucas-Lehmer test on `Mₙ` (Assertion A: the
-test diagnoses primality of `Mₙ`) when the two Jacobi-symbol conditions hold.
-Here `Mₙ = mersenne n` and `sₙ₋₁` is the `(n - 2)`-fold iterate of
-`x ↦ x^2 - 2` starting from `s₁`.
+**Lucas–Lehmer test with a general seed.** Let $n \ge 3$ be an odd natural number, let
+$M_n = 2^n - 1$, and let $s_1$ be an integer. Define $s_{k+1} = s_k^2 - 2$ for $k \ge 1$. If the
+Jacobi symbols satisfy $\left(\frac{s_1 + 2}{M_n}\right) = -1$ and
+$\left(\frac{s_1 - 2}{M_n}\right) = 1$, then $M_n$ is prime if and only if $M_n$ divides
+$s_{n-1}$.
+
+In the terminology of Roettger and Williams, such a seed $s_1$ is acceptable: the Lucas–Lehmer
+test started at $s_1$ decides the primality of $M_n$ (their Assertion A).
+
+Proof: Following Mathlib's Lucas-Lehmer order argument, sufficiency uses a quadratic extension
+and the least prime factor; necessity uses the Jacobi conditions and Frobenius conjugation as in
+Lehmer (1930) and Roettger-Williams (2025).
+
+Proves `Wanted` entry `acceptableSeed_of_jacobi`.
 
 Source: E. L. Roettger and H. C. Williams, "Some Remarks Concerning the
 Lucas-Lehmer Primality Test," Journal of Integer Sequences 28 (2025),
 Article 25.2.5, Theorem (label acceptableseed), lines 814–819; Assertion A
 (label assertionA) at lines 187–190,
 https://cs.uwaterloo.ca/journals/JIS/VOL28/Roettger/roettger15.tex
-
-Proves `Wanted` entry `acceptableSeed_of_jacobi`.
-
-Proof: Following Mathlib's Lucas-Lehmer order argument, sufficiency uses a quadratic extension
-and the least prime factor; necessity uses the Jacobi conditions and Frobenius conjugation as in
-Lehmer (1930) and Roettger-Williams (2025).
 -/
 public theorem acceptableSeed_of_jacobi
     (n : ℕ) (hn_odd : Odd n) (hn_ge : 3 ≤ n) (s₁ : ℤ) :

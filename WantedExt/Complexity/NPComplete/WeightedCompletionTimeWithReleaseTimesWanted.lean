@@ -19,12 +19,12 @@ doi:10.1016/S0167-5060(08)70743-X, Theorem 4(a) (`1|rⱼ|∑ Cⱼ` is NP-hard).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Defs
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ has one element; read literally ("`|S(u)| = 1` for all `u ≥ 0`") no schedule w
 the last task finishes, so this is the usual one-task-at-a-time condition `|S(u)| ≤ 1`, which for
 positive lengths is Garey and Johnson's one-processor schedule ([SS1]: `σ` one-to-one, and
 `σ(t) > σ(t')` implies `σ(t) ≥ σ(t') + l(t')`), the predicate `IsOneProcessorSchedule` reused
-from `SequencingToMinimizeWeightedTardinessWanted`. Crescenzi and Kann write `r(t) ∈ ℤ⁺`;
+from `SequencingToMinimizeWeightedTardinessDefs`. Crescenzi and Kann write `r(t) ∈ ℤ⁺`;
 release times here are in `ℤ₀⁺`, as in Lenstra, Rinnooy Kan and Brucker and in
 `TotalCompletionTimeWithReleaseTimesWanted` (adding one to every release time maps the
 instances with release times `0` into those with positive release times, raising every cost by

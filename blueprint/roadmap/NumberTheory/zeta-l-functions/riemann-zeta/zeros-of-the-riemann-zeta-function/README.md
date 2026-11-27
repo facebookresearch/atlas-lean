@@ -1,5 +1,6 @@
 # Zeros of the Riemann zeta function
 
+- [Riemann hypothesis](riemann-hypothesis.md)
 - [Zero-counting function of the Riemann zeta function](zeta-zero-count.md)
 - [First Bellotti–Wong bound on the zero-counting function](bellotti-wong-zero-count-bound.md)
 - [Second Bellotti–Wong bound on the zero-counting function](bellotti-wong-zero-count-bound-small.md)

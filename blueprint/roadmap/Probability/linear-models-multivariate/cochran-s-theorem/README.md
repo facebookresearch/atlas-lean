@@ -20,3 +20,4 @@
 - [Independence of orthogonal linear images of a Gaussian random vector](indep-fun-mul-vec-mul-vec-of-has-law.md)
 - [Independence of orthogonal linear images of a standard Gaussian vector](indep-fun-mul-vec-mul-vec-pi-gaussian-re.md)
 - [Independence of Gaussian images under complementary symmetric matrices](indep-fun-mul-vec-mul-vec-pi-gaussian-re-2.md)
+- [Additivity of sums of squares for orthogonal contrasts](additivity-of-sums-of-squares-for-orthogonal-contrasts.md)

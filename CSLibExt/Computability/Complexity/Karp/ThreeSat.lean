@@ -40,7 +40,7 @@ Components:
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- **Three-literal clause test.** For a CNF formula $\varphi$, this Boolean test holds exactly
 when every clause of $\varphi$ has at most three literals. -/

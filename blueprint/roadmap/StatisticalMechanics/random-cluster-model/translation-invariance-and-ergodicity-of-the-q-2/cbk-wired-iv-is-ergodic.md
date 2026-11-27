@@ -1,0 +1,3 @@
+# Ergodicity of the wired random-cluster measure
+
+For $d \ge 1$ and $0 < p < 1$, the wired infinite-volume measure $\phi^1_{p,2}$ is ergodic: it is translation invariant and every measurable event $A$ with $\tau_g^{-1}(A) = A$ for all $g \in \mathbb{Z}^d$ has measure $0$ or $1$, where $\mathbb{Z}^d$ acts on configurations by $(\tau_g\omega)(e) = \omega(e - g)$, where $e - g$ is the pair $e$ translated by $-g$, and $\phi^1_{p,2}$ is the [wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures) (Grimmett, *The Random-Cluster Model*, 2006, Theorem 4.19).

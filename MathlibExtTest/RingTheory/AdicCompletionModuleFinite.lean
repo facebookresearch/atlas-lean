@@ -18,6 +18,11 @@ example {𝒪 : Type*} [CommRing 𝒪] [IsNoetherianRing 𝒪] [IsLocalRing 𝒪
     IsAdicComplete (IsLocalRing.maximalIdeal T) T :=
   IsLocalRing.isAdicComplete_of_module_finite (𝒪 := 𝒪)
 
+/-- A finite module over an adically complete Noetherian ring is complete. -/
+example {R : Type*} [CommRing R] [IsNoetherianRing R] (I : Ideal R) [IsAdicComplete I R]
+    {M : Type*} [AddCommGroup M] [Module R M] [Module.Finite R M] : IsAdicComplete I M :=
+  IsAdicComplete.of_module_finite I
+
 /-- The local-hom instance is derived from module finiteness by the theorem. -/
 example {𝒪 : Type*} [CommRing 𝒪] [IsNoetherianRing 𝒪] [IsLocalRing 𝒪]
     [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] {T : Type*} [CommRing T] [Algebra 𝒪 T]

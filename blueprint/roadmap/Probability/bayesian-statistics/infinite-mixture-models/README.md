@@ -14,7 +14,7 @@ The prior on class assignments of an infinite mixture model, obtained by letting
 
 ## Related topics
 
-- Ewens sampling formula and the Chinese restaurant process: the sequential construction of the limit law and its exchangeability.
+- [Chinese restaurant process](../blackwell-macqueen-urn/README.md#chinese-restaurant-process): the sequential construction of the limit law and its exchangeability.
 - [Blackwell–MacQueen urn](../blackwell-macqueen-urn/README.md): the same partition law arises as the ties among draws from a Dirichlet process.
 - [Dirichlet process](../dirichlet-process/README.md): the random measure whose finite-dimensional marginals are the Dirichlet weights of the finite mixtures.
-- Conjugate priors: Dirichlet–multinomial conjugacy, which integrates out the mixing weights of the finite model.
+- [Conjugate priors](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/README.md): Dirichlet–multinomial conjugacy, which integrates out the mixing weights of the finite model.

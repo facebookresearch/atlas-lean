@@ -19,7 +19,7 @@ Journal of the ACM 29(2) (1982), 285-309, doi:10.1145/322307.322309.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

@@ -1,4 +1,4 @@
-# No countably additive congruence-invariant measure on all plane sets
+# No countably additive congruence-invariant extension of linear measure to all plane sets
 
 No function $\mu$ on all subsets of $\mathbb{R}^2$ with values in $[0, \infty]$ is congruence invariant,
 countably additive and equal to Carathéodory's linear measure on Borel sets: the countably additive

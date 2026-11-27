@@ -22,10 +22,10 @@ doi:10.1016/j.dam.2021.05.021, Table 1 (row K3,3-FREE*, column HAM CIR: "N [GJ]"
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 public import WantedExt.Complexity.NPComplete.DominatingSetK33FreeWanted
 
 @[expose] public section
@@ -43,7 +43,7 @@ INSTANCE: a graph `G = (V, E)` with no subgraph homeomorphic to `K₃,₃`. QUES
 contain a Hamiltonian circuit?
 
 This is the restriction of HAMILTONIAN CIRCUIT
-(`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`, [GT37]) to the class that
+(`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`, [GT37]) to the class that
 Johnson's 1985 table calls "K3,3-free" and de Figueiredo et al. call K3,3-FREE*: "the class of
 graphs that contain no subgraphs homeomorphic to K3,3; in other words, the class of graphs that do
 not contain K3,3 as a topological minor". The predicate is `DominatingSetK33Free.HasK33Subdivision`

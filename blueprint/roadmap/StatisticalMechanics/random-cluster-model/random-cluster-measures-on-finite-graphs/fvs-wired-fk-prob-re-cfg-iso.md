@@ -1,0 +1,3 @@
+# Boundary-matching isomorphisms preserve wired FK probabilities
+
+Let $G$ and $H$ be simple graphs on finite sets $V$ and $W$, and let $\sigma : V \to W$ be a bijection with $x \sim_G y \iff \sigma(x) \sim_H \sigma(y)$ for all $x, y$, and let $\partial_V \subseteq V$, $\partial_W \subseteq W$ with $x \in \partial_V \iff \sigma(x) \in \partial_W$. For all $p, q \in \mathbb{R}$ and every configuration $\omega$ on $W$, $\phi^w_{G,\partial_V,p,q}(\omega^\sigma) = \phi^w_{H,\partial_W,p,q}(\omega)$, where $\phi^w$ is the [wired random-cluster probability](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) and $\omega^\sigma$ is the [pulled-back configuration](re-cfg-iso.md) on $V$, $\omega^\sigma(e) = \omega(\sigma(e))$.

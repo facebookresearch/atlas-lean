@@ -23,11 +23,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -50,7 +50,7 @@ Johnson's 1985 table had left open. Membership in NP: the certificate is the par
 with a transitive orientation of `G`, both checkable in polynomial time.
 
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question already counts edges), reused
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question already counts edges), reused
 here as in `SimpleMaxCutDegreeThreeWanted`. The restriction is the comparability-graph predicate
 `ComparabilityGraphSandwich.IsComparabilityGraph` from
 `WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted` (some strict partial order `r`

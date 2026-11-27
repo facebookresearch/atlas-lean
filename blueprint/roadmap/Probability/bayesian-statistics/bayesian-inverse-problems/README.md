@@ -17,5 +17,5 @@ The Bayesian formulation of an inverse problem $y = G(u) + \eta$: the posterior 
 - [Function-space MCMC](../function-space-mcmc/README.md): sampling the posterior with Metropolis–Hastings chains that are well defined for function-valued unknowns.
 - [Ensemble Kalman inversion](../ensemble-kalman-inversion/README.md): a derivative-free ensemble method for the same inverse problems.
 - [Gaussian conditioning](../../distributions/continuous/gaussian-conditioning/README.md): for a linear forward map with Gaussian prior and Gaussian noise the posterior is Gaussian, given by the conditioning formula.
-- Gaussian process regression: a linear Bayesian inverse problem with a Gaussian prior on a function, observed through point evaluations with Gaussian noise.
-- Bayes' rule: the posterior as a disintegration of the joint law, which identifies the reweighted prior with the conditional law of the unknown given the data.
+- [Gaussian process regression](../../../ComputerScience/machine-learning/supervised-learning/gaussian-process-regression/README.md): a linear Bayesian inverse problem with a Gaussian prior on a function, observed through point evaluations with Gaussian noise.
+- [Bayes' rule](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/README.md): the posterior as a disintegration of the joint law, which identifies the reweighted prior with the conditional law of the unknown given the data.

@@ -1,0 +1,95 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.KTheory.CStar.Cone
+
+import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Topology.Instances.NNReal.Lemmas
+
+/-!
+# Lifting the endpoint of the C-star cone
+
+The scalar cutoff `t ↦ exp(-t)` gives a canonical continuous
+vanishing-at-infinity function with value one at zero.  Scalar multiplication
+therefore lifts every coefficient-algebra element to the cone.  This is an
+elementwise section of endpoint evaluation, not a star-algebra homomorphism.
+-/
+
+@[expose] public section
+
+open Filter Topology
+open scoped CStarAlgebra NNReal ZeroAtInfty
+
+noncomputable section
+
+universe u
+
+namespace CStarKTheory.Cone
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Lift an element to the cone using the scalar cutoff `exp(-t)`. -/
+def endpointLift
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    (a : A) : Cone A where
+  toFun t := (Real.exp (-((t : ℝ≥0) : ℝ)) : ℂ) • a
+  continuous_toFun := by
+    exact (Complex.continuous_ofReal.comp
+      (Real.continuous_exp.comp
+        (continuous_neg.comp NNReal.continuous_coe))).smul continuous_const
+  zero_at_infty' := by
+    rw [cocompact_eq_atTop]
+    have hcoe : Tendsto (fun t : ℝ≥0 ↦ (t : ℝ)) atTop atTop :=
+      NNReal.tendsto_coe_atTop.mpr tendsto_id
+    have hreal :
+        Tendsto (fun t : ℝ≥0 ↦ Real.exp (-(t : ℝ))) atTop (nhds 0) :=
+      Real.tendsto_exp_neg_atTop_nhds_zero.comp hcoe
+    have hcomplex :
+        Tendsto (fun t : ℝ≥0 ↦ (Real.exp (-(t : ℝ)) : ℂ))
+          atTop (nhds 0) :=
+      (Complex.continuous_ofReal.tendsto 0).comp hreal
+    simpa only [zero_smul] using hcomplex.smul_const a
+
+@[simp]
+theorem endpointLift_apply
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    (a : A) (t : ℝ≥0) :
+    endpointLift a t = (Real.exp (-(t : ℝ)) : ℂ) • a :=
+  rfl
+
+@[simp]
+theorem endpointLift_zero
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    (a : A) :
+    endpointLift a 0 = a := by
+  simp [endpointLift]
+
+@[simp]
+theorem evalZero_endpointLift
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    (a : A) :
+    evalZero A (endpointLift a) = a := by
+  simp
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Endpoint evaluation on the cone is surjective. -/
+theorem evalZero_surjective
+    (A : Type u) [NonUnitalCStarAlgebra A] :
+    Function.Surjective (evalZero A) := by
+  intro a
+  exact ⟨endpointLift a, by simp⟩
+
+end CStarKTheory.Cone

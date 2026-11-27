@@ -15,7 +15,7 @@ public import CSLibExt.Computability.Complexity.Karp.ThreeSatCorrect
 
 @[expose] public section
 
-namespace Cslib.Logic.PL.CNF
+namespace Cslib.Logic.LegacyPL.CNF
 
 private def fourPositive : CNF :=
   [[(0, true), (1, true), (2, true), (3, true)]]
@@ -140,4 +140,4 @@ example :
 
 example : oldTo3Extension false 3 ≠ oldTo3Extension true 3 := by decide
 
-end Cslib.Logic.PL.CNF
+end Cslib.Logic.LegacyPL.CNF

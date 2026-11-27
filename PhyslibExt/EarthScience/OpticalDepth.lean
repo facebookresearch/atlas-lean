@@ -68,13 +68,15 @@ namespace EarthScience
 
 open MeasureTheory intervalIntegral
 
-/-- Optical depth of an absorption-only layer: `τ(a, b) = ∫ x in a..b, κ x`,
-with `κ` the absorption coefficient. -/
+/-- Optical depth of an absorption-only layer: `τ(a, b) = ∫ x in a..b, κ x`, with `κ` the absorption
+coefficient; for `b < a` it is minus the integral of `κ` over `[b, a]`. It is `0` when `κ` is not
+integrable on the interval (the integral of a non-integrable function is `0`). -/
 noncomputable def opticalDepth (κ : ℝ → ℝ) (a b : ℝ) : ℝ :=
   ∫ x in a..b, κ x
 
 set_option linter.unusedVariables false in
-/-- Optical depth adds across adjacent layers: `τ(a, c) = τ(a, b) + τ(b, c)`. -/
+/-- Optical depth adds across adjacent layers: for `a ≤ b ≤ c` and `κ` integrable on
+`[a, b]` and on `[b, c]`, `τ(a, c) = τ(a, b) + τ(b, c)`. -/
 theorem optical_depth_add (κ : ℝ → ℝ) (a b c : ℝ) (hab : a ≤ b) (hbc : b ≤ c)
     (hint1 : IntervalIntegrable κ volume a b)
     (hint2 : IntervalIntegrable κ volume b c) :
@@ -90,7 +92,9 @@ theorem transmission_mul_layers (τ : ℕ → ℝ) (n : ℕ) :
       ∏ i ∈ Finset.range n, Real.exp (-τ i) := by
   rw [← Finset.sum_neg_distrib, Real.exp_sum]
 
-/-- Beer-Lambert transmission multiplies across two adjacent layers. -/
+/-- Beer-Lambert transmission multiplies across two adjacent layers: for `a ≤ b ≤ c`
+and `κ` integrable on `[a, b]` and on `[b, c]`,
+`exp(-τ(a, c)) = exp(-τ(a, b)) * exp(-τ(b, c))`. -/
 theorem transmission_mul_two_layers (κ : ℝ → ℝ) (a b c : ℝ) (hab : a ≤ b) (hbc : b ≤ c)
     (hint1 : IntervalIntegrable κ volume a b)
     (hint2 : IntervalIntegrable κ volume b c) :
@@ -100,8 +104,9 @@ theorem transmission_mul_two_layers (κ : ℝ → ℝ) (a b c : ℝ) (hab : a �
   rw [h, neg_add, Real.exp_add]
 
 set_option linter.unusedVariables false in
-/-- Boundary cases: zero thickness gives zero optical depth, and
-nonnegative absorption gives nonnegative optical depth. -/
+/-- Boundary cases: zero thickness gives zero optical depth, and for `a ≤ b`,
+absorption that is nonnegative and integrable on `[a, b]` gives nonnegative
+optical depth. -/
 theorem optical_depth_nonneg (κ : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b)
     (hκ : ∀ x ∈ Set.Icc a b, 0 ≤ κ x)
     (hint : IntervalIntegrable κ volume a b) :

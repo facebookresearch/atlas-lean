@@ -7,3 +7,4 @@
 - [Smooth schemes over a field are reduced](is-reduced-of-smooth-over-field.md)
 - [Smooth morphisms preserve reducedness](is-reduced-of-is-reduced-of-is-locally-n.md)
 - [Smooth maps from a preconnected scheme have constant relative dimension](exists-smooth-of-relative-dimension-of-p.md)
+- [Smooth morphisms of schemes](smooth-morphism-of-schemes.md)

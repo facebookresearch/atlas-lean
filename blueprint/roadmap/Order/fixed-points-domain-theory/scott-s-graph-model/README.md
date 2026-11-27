@@ -46,7 +46,7 @@ Here $e_n$ is Scott's binary enumeration. The pairing is $\langle n, m\rangle = 
 
 ## Related topics
 
-- Models of the untyped lambda calculus: the interpretation of λ-terms in $P(\omega)$, with soundness of β-reduction.
+- [Models of the untyped lambda calculus](../../../ComputerScience/programming-language-semantics/models-of-the-untyped-lambda-calculus/README.md): the interpretation of λ-terms in $P(\omega)$, with soundness of β-reduction.
 - [Scott-continuous maps and least fixed points](../scott-continuous-maps-and-least-fixed-points/README.md): function spaces and Kleene's fixed-point theorem in general dcpos.
 - [Scott's inverse-limit theorem](../scott-s-inverse-limit-theorem.md): the extensional model $D_\infty \cong [D_\infty \to D_\infty]$.
 - [Continuous lattices](../continuous-lattices/README.md): the injective spaces, of which $P(\omega)$ is one.

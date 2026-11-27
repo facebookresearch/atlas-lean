@@ -72,8 +72,8 @@ lemma travel_times_value :
   ext i
   fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
 
-/-- Full-rank inversion recovers `s`: if `A *ᵥ x = [3 / 4, 1]` then
-`x = [1 / 2, 1 / 4]`. -/
+/-- Full-rank inversion recovers `s`: for `A = [[1, 1], [1, 2]]`, if
+`A *ᵥ x = [3 / 4, 1]` then `x = [1 / 2, 1 / 4]`. -/
 lemma inversion_recovers_slowness {x : Fin 2 → ℚ}
     (h : Matrix.mulVec (!![1, 1; 1, 2] : Matrix (Fin 2) (Fin 2) ℚ) x
       = ![3 / 4, 1]) :

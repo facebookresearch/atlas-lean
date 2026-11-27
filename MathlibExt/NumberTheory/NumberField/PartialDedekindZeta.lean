@@ -22,11 +22,16 @@ namespace NumberField
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- The partial Dedekind zeta function associated to a set `S` of prime ideals of `K`.
+/-- **Partial Dedekind zeta function.** Let $K$ be a number field and $S$ a set of nonzero prime
+ideals of its ring of integers $\mathcal{O}_K$. For such a prime $\mathfrak{p}$ let
+$N(\mathfrak{p}) = |\mathcal{O}_K / \mathfrak{p}|$ be its absolute norm. The partial Dedekind zeta
+function of $S$ is the function $\zeta_{K,S} : \mathbb{C} \to \mathbb{C}$ given by the Euler product
+$$\zeta_{K,S}(s) = \prod_{\mathfrak{p} \in S} \left(1 - N(\mathfrak{p})^{-s}\right)^{-1}.$$
 
-It is the Euler product `∏ 𝔭 ∈ S, (1 - N(𝔭) ^ (-s))⁻¹`. As usual for `tprod`, this
-definition is meaningful without a convergence hypothesis; analytic results should state the
-required convergence region explicitly. -/
+Here a factor with $N(\mathfrak{p})^{-s} = 1$ is taken to be $0$, and the product is an
+unconditional infinite product, defined without any convergence hypothesis: where it does not
+converge unconditionally its value is $1$, so analytic results must state the required region of
+convergence explicitly. -/
 noncomputable def partialDedekindZeta
     (S : Set (IsDedekindDomain.HeightOneSpectrum (RingOfIntegers K))) : ℂ → ℂ :=
   fun s ↦ ∏' (𝔭 : S), (1 - (Ideal.absNorm 𝔭.1.asIdeal : ℂ) ^ (-s))⁻¹

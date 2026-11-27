@@ -24,16 +24,15 @@ common divisor `gcd (a ^ (r / 2) - 1) N` is a nontrivial factor of `N`.
 
 namespace Cslib.Shor
 
-/-- Classical core of Shor's factoring algorithm: if `a ^ r ≡ 1 (mod N)` with
-`r` even, `a ^ (r / 2) ≢ 1 (mod N)` and `a ^ (r / 2) ≢ -1 (mod N)`, then
-the value `Nat.gcd (a ^ (r / 2) - 1) N` that the classical post-processing
-computes is a nontrivial factor of `N`: it divides `N` and lies strictly
-between `1` and `N`. `exists_factor_of_order` is the existential corollary.
+/-- **Shor's order-to-factor reduction.** Let $N$, $a$ and $r$ be natural numbers with $N > 1$ and
+$a \ge 1$. Suppose $a^r \equiv 1 \pmod{N}$, $r$ is even, $a^{r/2} \not\equiv 1 \pmod{N}$ and
+$a^{r/2} \not\equiv -1 \pmod{N}$. Then $d = \gcd(a^{r/2} - 1, N)$, the value computed by the
+classical post-processing, is a nontrivial factor of $N$: $d$ divides $N$ and $1 < d < N$.
 
-In the algorithm `r` is the multiplicative order of `a` modulo `N`, so the
-hypothesis `a ^ (r / 2) ≢ 1 (mod N)` is the minimality of the order, and the
-hypothesis `a ^ (r / 2) ≢ -1 (mod N)` is the "good unit" condition. This
-module assumes that condition; it does not prove its prevalence among units.
+In the algorithm $r$ is the multiplicative order of $a$ modulo $N$, so the hypothesis
+$a^{r/2} \not\equiv 1 \pmod{N}$ is the minimality of the order, and the hypothesis
+$a^{r/2} \not\equiv -1 \pmod{N}$ is the "good unit" condition. This module assumes that
+condition; it does not prove its prevalence among units.
 
 Source: P. W. Shor, Polynomial-time algorithms for prime factorization and
 discrete logarithms on a quantum computer, SIAM J. Comput. 26 (1997),
@@ -89,8 +88,12 @@ theorem gcd_factor_of_order {N a r : ℕ} (hN : 1 < N) (ha : 1 ≤ a)
     rw [hN'] at hdvd
     exact hne1 hdvd
 
-/-- Under the hypotheses of `gcd_factor_of_order`, `N` has a nontrivial
-factor; the witness is `Nat.gcd (a ^ (r / 2) - 1) N`. -/
+/-- **Shor's order-to-factor reduction, existential form.** Let $N$, $a$ and $r$ be natural
+numbers with $N > 1$ and $a \ge 1$. If $a^r \equiv 1 \pmod{N}$, $r$ is even,
+$a^{r/2} \not\equiv 1 \pmod{N}$ and $a^{r/2} \not\equiv -1 \pmod{N}$, then $N$ has a nontrivial
+factor: there is a natural number $d$ with $d \mid N$ and $1 < d < N$.
+
+One such factor is $\gcd(a^{r/2} - 1, N)$. -/
 theorem exists_factor_of_order {N a r : ℕ} (hN : 1 < N) (ha : 1 ≤ a)
     (hord : N ∣ a ^ r - 1) (hr : Even r)
     (hne1 : ¬ N ∣ a ^ (r / 2) - 1) (hnem1 : ¬ N ∣ a ^ (r / 2) + 1) :

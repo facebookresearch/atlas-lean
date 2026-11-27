@@ -1,0 +1,3 @@
+# Potts Gibbs probability with fixed boundary color
+
+Let $G = (V, E)$ be a finite simple graph and $\partial \subseteq V$ a set of boundary vertices, $q \in \mathbb{N}$, $b \in \{0, \dots, q - 1\}$ and $\beta, J \in \mathbb{R}$. The Potts probability with boundary color $b$ of a coloring $\sigma : V \to \{0, \dots, q - 1\}$ is $w^b(\sigma)/Z^b$, where $w^b(\sigma)$ is the [Potts weight with boundary color $b$](potts-weight-wired.md) ($e^{\beta J a(\sigma)}$ if $\sigma = b$ on $\partial$ and $0$ otherwise, with $a(\sigma)$ the number of edges of $G$ whose endpoints have the same color) and $Z^b = \sum_{\sigma'} w^b(\sigma')$ is the [partition function with boundary color $b$](potts-zwired.md).

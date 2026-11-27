@@ -69,6 +69,28 @@ example : komlosConstant < ⊤ ↔ ∃ c : ℝ, 0 < c ∧ ∃ N : ℕ, 1 ≤ N �
     ∀ n : ℕ, N ≤ n → dimensionConstant n ≤ ENNReal.ofReal c :=
   komlosConstant_lt_top_iff_eventual
 
+example : KomlosDiscrepancyWanted.constantFormulationEquivalence :=
+  KomlosDiscrepancyWanted.constantFormulationEquivalence_holds
+
+example : KomlosDiscrepancyWanted.constantFormulationEquivalence =
+    (UniformRectangularBound ↔ komlosConstant < ⊤) := rfl
+
+-- Two nonzero vectors in one coordinate require a padded row in the square formulation.
+example (h : komlosConstant < ⊤) :
+    ∃ C : ℝ, 0 < C ∧ ∃ ε : Fin 2 → ℝ,
+      (∀ i, ε i = 1 ∨ ε i = -1) ∧ |∑ i, ε i * (1 / 2)| ≤ C := by
+  obtain ⟨C, hC, hrect⟩ := KomlosDiscrepancyWanted.constantFormulationEquivalence_holds.2 h
+  have hv (i : Fin 2) : ∑ _j : Fin 1, (1 / 2 : ℝ) ^ 2 ≤ 1 := by norm_num
+  obtain ⟨ε, hε, hcoord⟩ := hrect 2 1 (fun _ _ ↦ 1 / 2) hv
+  exact ⟨C, hC, ε, hε, hcoord 0⟩
+
+-- Both dimensions can be zero, even though the square supremum starts at one.
+example (h : komlosConstant < ⊤) :
+    ∃ C : ℝ, 0 < C ∧ ∃ ε : Fin 0 → ℝ,
+      (∀ i, ε i = 1 ∨ ε i = -1) ∧ ∀ _j : Fin 0, |∑ i, ε i * (0 : ℝ)| ≤ C := by
+  obtain ⟨C, hC, hrect⟩ := KomlosDiscrepancyWanted.constantFormulationEquivalence_holds.2 h
+  exact ⟨C, hC, hrect 0 0 (fun _ _ ↦ 0) (by simp)⟩
+
 #eval "C24 actual [1] admission, finite discrepancy and global lower proof elaborated"
 #eval "C24 nonzero two-dimensional cancellation and zero-dimension proofs elaborated"
 

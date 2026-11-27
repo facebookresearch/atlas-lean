@@ -375,18 +375,19 @@ private lemma double_rep {q a b : ℕ} (_hq1 : 1 < q) (hqodd : Odd q)
   · exact main a b ha hb h hab hsq
   · exact main b a hb ha h hab.symm (by rw [add_comm (b ^ 2) (a ^ 2)]; exact hsq)
 
-/-- For every natural number `d > 2`, `d` can be written as `a ^ 2 + b ^ 2`
-    for relatively prime positive natural numbers `a` and `b` if and only if
-    `d = q` or `d = 2 * q`, where `q` is a product of primes congruent to
-    `1` modulo `4`.
-    Source: Nguyen Viet Dung and Luu Ba Thang, "The Number a²+b²−dc² Revisited",
+/-- **Sums of two coprime squares.** Let $d > 2$ be a natural number. Then $d = a^2 + b^2$ for
+some coprime positive natural numbers $a$ and $b$ if and only if there is a natural number $q$,
+all of whose prime factors are congruent to $1$ modulo $4$, such that $d = q$ or $d = 2q$.
+
+Proves `Wanted` entry `sum_two_coprime_squares_characterization`.
+
+Source: Nguyen Viet Dung and Luu Ba Thang, "The Number a²+b²−dc² Revisited",
     Journal of Integer Sequences 24 (2021), Article 21.9.3, theorem lines 105–107,
     https://cs.uwaterloo.ca/journals/JIS/VOL24/Thang/thang41.tex
     (complete-source SHA-256
     `67e00f914537ff4a5d50f11198afc6d6c8f7f5899063d1d366c6be7387a15ce3`,
     normalized theorem-span SHA-256
     `1035bc1b19d52236db8e2431fda49855637e00a35707700a0519abba11dab528`).
-Proves `Wanted` entry `sum_two_coprime_squares_characterization`.
 -/
 theorem sum_two_coprime_squares_characterization
     (d : ℕ) (hd : 2 < d) :

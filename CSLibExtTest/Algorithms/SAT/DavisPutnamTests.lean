@@ -28,7 +28,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Algorithms.SAT.DavisPutnam
 
-open Cslib.Logic.PL Cslib.Logic.PL.CNF Cslib.Algorithms.SAT.DPLL
+open Cslib.Logic.LegacyPL Cslib.Logic.LegacyPL.CNF Cslib.Algorithms.SAT.DPLL
 
 -- `(x₀ ∨ x₁) ∧ (¬x₀ ∨ x₁)`: eliminating `x₀` leaves the resolvent `x₁ ∨ x₁`.
 #guard eliminate 0 [[(0, true), (1, true)], [(0, false), (1, true)]] == [[(1, true), (1, true)]]

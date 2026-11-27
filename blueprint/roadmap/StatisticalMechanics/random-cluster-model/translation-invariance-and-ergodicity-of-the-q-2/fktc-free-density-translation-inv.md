@@ -1,0 +1,3 @@
+# Translation invariance of the free density given merging marginals
+
+Let $d \in \mathbb{N}$, $v, x, y \in \mathbb{Z}^d$ and $0 < p < 1$. Suppose there is $N$ with $x, y, x + v, y + v \in \Lambda_N$ such that $\phi_{N+k}(\{x, y\} \text{ open}) - \phi_{N+k}(\{x + v, y + v\} \text{ open}) \to 0$ as $k \to \infty$. Then $\theta^0_{\{x,y\}}(p) = \theta^0_{\{x+v,y+v\}}(p)$, where $\phi_m(e \text{ open})$ is the [edge marginal](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md) of the random-cluster probability on $\Lambda_m = \{-m, \dots, m\}^d$ at $(p, 2)$ and $\theta^0_e(p)$ is the [free edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md) of $e$ at $q = 2$.

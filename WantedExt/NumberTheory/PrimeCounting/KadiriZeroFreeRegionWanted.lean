@@ -30,14 +30,20 @@ de Riemann* (preprint), arXiv:math.NT/0401238, Théorème Principal,
 TeX lines 142–148, <https://arxiv.org/html/math.NT/0401238>.
 -/
 
-/-- Kadiri's explicit zero-free region with `R_0 = 5.70176`. -/
+/-- **Kadiri's zero-free region for the Riemann zeta function.** Let $\zeta$ be the Riemann zeta
+function and $\log$ the natural logarithm. For every complex number $s = \sigma + it$ with
+$|t| \ge 2$ and $\sigma \ge 1 - \frac{1}{5.70176 \log |t|}$, we have $\zeta(s) \ne 0$. -/
 public theorem_wanted kadiri_zero_free_region (s : ℂ)
     (ht : 2 ≤ |s.im|)
     (hσ : 1 - 1 / (5.70176 * Real.log |s.im|) ≤ s.re) :
     riemannZeta s ≠ 0
 
-/-- Kadiri's refined zero-free region with `R_0 = 5.69693`, as cited in Dusart
-2016: the region required by `dusart2016_tail_theorem`. -/
+/-- **Kadiri's refined zero-free region for the Riemann zeta function.** Let $\zeta$ be the Riemann
+zeta function and $\log$ the natural logarithm. For every complex number $s = \sigma + it$ with
+$|t| \ge 2$ and $\sigma \ge 1 - \frac{1}{5.69693 \log |t|}$, we have $\zeta(s) \ne 0$.
+
+Source: Kadiri's refined constant as cited in Dusart 2016; this is the region required by
+`dusart2016_tail_theorem`. -/
 public theorem_wanted kadiri_zero_free_region_refined (s : ℂ)
     (ht : 2 ≤ |s.im|)
     (hσ : 1 - 1 / (5.69693 * Real.log |s.im|) ≤ s.re) :

@@ -16,7 +16,7 @@ Information and Systems E105-D(3) (2022), 508-516, doi:10.1587/transinf.2021FCP0
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected

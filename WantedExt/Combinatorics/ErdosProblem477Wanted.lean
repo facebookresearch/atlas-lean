@@ -20,8 +20,10 @@ public import Batteries.Util.ProofWanted
 namespace MathlibExt.Combinatorics.ErdosProblem477Wanted
 
 /-! Source record `UM-00002137-Q001`. -/
-/-- Some integer polynomial `f` of degree at least two and some `A ⊆ ℤ` represent every integer
-uniquely as `a + f(k)` with `a ∈ A` (the pair `(a, f(k))` is unique). -/
+/-- **Erdős Problem 477.** The statement that there are a polynomial $f$ with integer
+coefficients of degree at least $2$ and a set $A$ of integers such that for every integer $n$
+there is exactly one pair $(a, b)$ with $a \in A$, $b = f(k)$ for some integer $k$, and
+$n = a + b$. Only the pair is required to be unique, not the integer $k$. -/
 def conjecture : Prop :=
   ∃ (f : Polynomial ℤ) (A : Set ℤ),
     (↑(2 : ℕ) : WithBot ℕ) ≤ Polynomial.degree f ∧
@@ -31,9 +33,16 @@ def conjecture : Prop :=
 -- Carried source audit `UM-00002137-Q001` (see the Moved/ record).
 
 /--
-Resolved true: Resolved true, against Erdős and Graham's expectation: erdosproblems.com/477
-records that GPT (prompted independently by L. Price and pipeline-math) proved such an A exists
-for f(n) = n^d with every even d >= 6, so f = X^6 witnesses the existential statement. Source:
+**Erdős Problem 477 has a positive answer.** There are a polynomial $f$ with integer
+coefficients of degree at least $2$ and a set $A$ of integers such that for every integer $n$
+there is exactly one pair $(a, b)$ with $a \in A$, $b = f(k)$ for some integer $k$, and
+$n = a + b$.
+
+Contrary to Erdős and Graham's expectation, GPT (prompted independently by L. Price and
+pipeline-math) proved that such a set $A$ exists for $f(k) = k^d$ with every even $d \ge 6$, so
+$f(k) = k^6$ is a witness.
+
+Source:
 T. F. Bloom, Erdős Problem #477, erdosproblems.com (live page, LaTeX source and forum threads
 read 2026-10-22), https://www.erdosproblems.com/477. Moved from
 `OpenConjectures/Combinatorics/ErdosProblem477`.

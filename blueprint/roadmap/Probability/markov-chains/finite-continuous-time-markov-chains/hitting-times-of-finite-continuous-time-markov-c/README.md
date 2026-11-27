@@ -16,3 +16,9 @@
 - [Minimality of the product moment](lintegral-ctmc-hitting-time-mul-le.md)
 - [Backward equations for the mean hitting time](ctmc-hitting-time-backward.md)
 - [Backward equations for the product moment of two hitting times](ctmc-hitting-time-mul-backward.md)
+
+- [Expected transition counts of a finite Markov chain up to a hitting time](expected-transition-counts-of-a-finite-ctmc-up-t.md)
+
+- [Hitting times of closed sets by continuous adapted processes are stopping times](hitting-times-of-closed-sets-by-continuous-adapt.md)
+- [Hitting times of open sets under a right-continuous filtration](usual-conditions-and-continuous-time-hitting-tim.md)
+- [Hitting probabilities of finite birth–death chains](hitting-probabilities-and-stationary-laws-of-bir.md)

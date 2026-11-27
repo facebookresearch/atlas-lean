@@ -1,0 +1,3 @@
+# Adjacency matrix of a rotation map
+
+Let $V$ be a set, $L$ a finite set and $\mathrm{rot}$ a [rotation map](rotation-map.md) on $V \times L$. Its adjacency matrix is the real $V \times V$ matrix whose $(v, w)$ entry is the number of labels $i \in L$ such that the edge with label $i$ at $v$ leads to $w$, that is, the first component of $\mathrm{rot}(v, i)$ is $w$: the number of edges from $v$ to $w$, where a loop at $v$ given by two labels $i \ne j$ with $\mathrm{rot}(v, i) = (v, j)$ counts twice, once for each label, and a label fixed by the rotation map, $\mathrm{rot}(v, i) = (v, i)$, counts once.

@@ -12,7 +12,7 @@ transport inequality, the form that controls integrals of Lipschitz functions.
 
 ## Background
 
-- [Monotonicity of the Wasserstein distances in the exponent](../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-mono.md):
+- [Monotonicity of the Wasserstein distances in the exponent](../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-mono.md):
   $W_1 \le W_2$.
 
 ## Sources

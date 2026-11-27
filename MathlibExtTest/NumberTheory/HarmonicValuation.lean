@@ -179,7 +179,7 @@ example : 2 ≤ (Finset.Ioc 5 9).sup (padicValNat 2) := by
 example : (Finset.Ioc 10 20).sup (padicValNat 3) = 2 := by
   rw [sup_Ioc_padicValNat_eq (r := 2) (c := 2) Nat.prime_three
     (by norm_num) (by norm_num) (by norm_num) (by norm_num),
-    padicValNat.eq_zero_of_not_dvd (by decide)]
+    Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd (by decide)]
 
 example : (Finset.Ioc 10 20).sup (padicValNat 3) = 2 := by
   rw [sup_Ioc_padicValNat_eq_iff Nat.prime_three (by norm_num)]

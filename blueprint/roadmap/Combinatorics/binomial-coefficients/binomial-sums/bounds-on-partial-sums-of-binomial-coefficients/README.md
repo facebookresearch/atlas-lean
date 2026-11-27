@@ -7,4 +7,4 @@
 
 ## Related topics
 
-- Rademacher complexity: the $(eD/r)^r$ bound gives the $\sqrt{2 d \log(e n / d) / n}$ Rademacher complexity of a class of VC dimension $d$.
+- [Rademacher complexity](../../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-complexity/README.md): the $(eD/r)^r$ bound gives the $\sqrt{2 d \log(e n / d) / n}$ Rademacher complexity of a class of VC dimension $d$.

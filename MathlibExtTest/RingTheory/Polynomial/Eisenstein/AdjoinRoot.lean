@@ -57,7 +57,7 @@ lemma padicEisenstein_monic : padicEisenstein.Monic := by
   exact monic_X_pow_sub_C (2 : PadicA) (by decide)
 
 lemma padicEisenstein_natDegree : padicEisenstein.natDegree = 2 := by
-  exact natDegree_X_pow_sub_C
+  exact natDegree_X_pow_sub_C _
 
 lemma padicEisenstein_natDegree_pos : 0 < padicEisenstein.natDegree := by
   rw [padicEisenstein_natDegree]

@@ -10,7 +10,7 @@ Zhao's Setup 7.10 chooses each element independently; the proof there (Boppanaâ€
 
 ## Informally uses
 
-- Harris inequality: conditioning the increasing event $A_i \cap \bigcup_{j < i, j \sim i} A_j$ on the decreasing event "no non-neighbour $A_j$ occurs" can only lower its probability.
+- [Harris inequality](../../../Probability/correlation-inequalities/harris-fkg-bk/harris-inequality/harris-inequality.md): conditioning the increasing event $A_i \cap \bigcup_{j < i, j \sim i} A_j$ on the decreasing event "no non-neighbour $A_j$ occurs" can only lower its probability.
 
 ## Background
 

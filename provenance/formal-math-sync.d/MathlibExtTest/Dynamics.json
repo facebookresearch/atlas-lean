@@ -1,0 +1,9 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/Dynamics/Ergodic/MultipleRecurrence.lean", "disposition": "identical", "published_sha256": "1e9afee6fe2125bbade57ef734987c621217645215e234b5fb1de6c2008cf2fe", "upstream_sha256": "e59688098786ed8fdfe17f19dcc1616c9a2132a8e49edd625c64320c09316f52"},
+    {"path": "MathlibExtTest/Dynamics/EventuallyPeriodicSequence.lean", "disposition": "identical", "published_sha256": "947bd3f298520e36ef7e01a2e172fbf27744e1b8317d50e695219ad450b3e1d8", "upstream_sha256": "ff6e0d9737978590b961ef79a64df7b0d8209d87c42adf29c52bc6959c95e024"},
+    {"path": "MathlibExtTest/Dynamics/Preperiodic.lean", "disposition": "identical", "published_sha256": "db06bed2569e59f1e469fcbbb2c5ecd93e9bfdc5cb5db3eec494bbd5332c5308", "upstream_sha256": "3578f871639659f4073c5c07728e3e66882640befcaa53dc900b7a50755871af"},
+    {"path": "MathlibExtTest/Dynamics/SymbolicDynamics/FullShift.lean", "disposition": "identical", "published_sha256": "db801a02ac442fbf3a1ef3be6e30fbad64618b328e2cb394e0e9ea82809edfcd", "upstream_sha256": "25eebffc024b1dc7ddd1fd9c4107a138f190e93490657975380d4ea677b62404"},
+    {"path": "MathlibExtTest/Dynamics/TopologicalEntropy/Compact.lean", "disposition": "identical", "published_sha256": "d38843e1ff4f91b1348f55d08e43548dcc6bd6797d1032bfe1bd7fd9214570d1", "upstream_sha256": "b5e06604ff6958dd5df6ed5e98fabc9323047e435d03c26638e7254ffa50d75a"}
+  ]
+}

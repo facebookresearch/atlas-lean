@@ -23,7 +23,7 @@ Markov chain Monte Carlo for posteriors with density $\exp(-\Phi)$ against a Gau
 
 ## Related topics
 
-- Markov chain Monte Carlo: Metropolis–Hastings and Gibbs sampling on a finite state space, with general proposals.
+- [Markov chain Monte Carlo](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/README.md): Metropolis–Hastings and Gibbs sampling on a finite state space, with general proposals.
 - [Ornstein–Uhlenbeck process](../../stochastic-calculus/ornstein-uhlenbeck-process/README.md): the pCN proposal is a Crank–Nicolson discretisation of the Ornstein–Uhlenbeck dynamics $du = -u\,ds + \sqrt{2C}\,db$, which leaves the Gaussian prior invariant (Cotter, Roberts, Stuart and White, equations (4.2) and (4.7)).
 - [Mixing times of Markov chains](../../markov-chains/mixing-times-of-markov-chains/README.md): reversibility gives invariance of the posterior; mixing times measure how fast the chain gets there.
 - [Canonical paths and multicommodity flow](../../markov-chains/canonical-paths-and-multicommodity-flow/README.md): spectral-gap bounds for reversible chains.

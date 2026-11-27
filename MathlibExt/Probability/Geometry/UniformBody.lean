@@ -34,7 +34,10 @@ theorem bodyVolume_ne_top {n : ℕ} (K : FullDimensionalBody n) :
     volume (K.body : Set (EuclideanSpace ℝ (Fin n))) ≠ ⊤ :=
   K.body.isCompact.measure_ne_top
 
-/-- The actual normalized indicator density of a convex body. -/
+/-- **Uniform density of a convex body.** Let $n \ge 1$ and let $K \subseteq \mathbb{R}^n$ be a
+full-dimensional convex body, so that its Lebesgue measure $\mathrm{Vol}(K)$ is finite and
+positive. The uniform density of $K$ is the function $f_K \colon \mathbb{R}^n \to \mathbb{R}$ equal
+to $1/\mathrm{Vol}(K)$ on $K$ and to $0$ outside $K$. -/
 noncomputable def bodyDensity {n : ℕ} (K : FullDimensionalBody n) :
     EuclideanSpace ℝ (Fin n) → ℝ :=
   (K.body : Set (EuclideanSpace ℝ (Fin n))).indicator
@@ -86,7 +89,10 @@ theorem bodyDensity_entropy_integrable {n : ℕ} (K : FullDimensionalBody n) :
   exact (integrable_indicator_iff K.body.isCompact.measurableSet).mpr
     (integrableOn_const (bodyVolume_ne_top K))
 
-/-- Uniform bodies embed into the actual law family with all integrals justified. -/
+/-- **Uniform law of a convex body.** Let $n \ge 1$ and let $K \subseteq \mathbb{R}^n$ be a
+full-dimensional convex body of Lebesgue measure $\mathrm{Vol}(K)$. The uniform law of $K$ is the
+log-concave law on $\mathbb{R}^n$ whose probability measure is Lebesgue measure restricted to $K$
+and divided by $\mathrm{Vol}(K)$, and whose density is the uniform density of $K$. -/
 noncomputable def bodyLogConcaveLaw {n : ℕ} (K : FullDimensionalBody n) : LogConcaveLaw n where
   dimension_pos := K.dimension_pos
   law := bodyLaw K
@@ -98,7 +104,11 @@ noncomputable def bodyLogConcaveLaw {n : ℕ} (K : FullDimensionalBody n) : LogC
   moment_two := bodyLaw_integrable_coord_mul K
   entropy_integrable := bodyDensity_entropy_integrable K
 
-/-- The entropy equality uses the integral of the actual normalized density. -/
+/-- **Entropy of the uniform density of a convex body.** Let $n \ge 1$ and let
+$K \subseteq \mathbb{R}^n$ be a full-dimensional convex body with Lebesgue measure
+$\mathrm{Vol}(K)$ and uniform density $f_K$, equal to $1/\mathrm{Vol}(K)$ on $K$ and to $0$
+outside $K$. Then the differential entropy $-\int_{\mathbb{R}^n} f_K(x) \log f_K(x) \, dx$ of
+$f_K$ equals $\log \mathrm{Vol}(K)$. -/
 theorem bodyDensity_entropy {n : ℕ} (K : FullDimensionalBody n) :
     differentialEntropy (bodyDensity K) =
       Real.log (volume (K.body : Set (EuclideanSpace ℝ (Fin n)))).toReal := by
@@ -109,7 +119,13 @@ theorem bodyDensity_entropy {n : ℕ} (K : FullDimensionalBody n) :
   simp only [smul_eq_mul, Measure.real, ENNReal.toReal_inv, Real.log_inv]
   field_simp
 
-/-- The body and entropy conventions agree on the actual uniform body law. -/
+/-- **The entropy and volume isotropic constants of a convex body agree.** Let $n \ge 1$ and let
+$K \subseteq \mathbb{R}^n$ be a full-dimensional convex body of Lebesgue measure
+$\mathrm{Vol}(K)$, with uniform probability measure $\lambda_K$, uniform density $f_K$, and
+covariance matrix $C_K$ of the coordinates under $\lambda_K$. Then the entropy isotropic constant
+of the uniform law of $K$ equals the isotropic constant of $K$, that is,
+$\exp\big(\frac{1}{n} \int_{\mathbb{R}^n} f_K(x) \log f_K(x) \, dx\big) (\det C_K)^{1/(2n)} =
+\big(\det C_K / \mathrm{Vol}(K)^2\big)^{1/(2n)}$. -/
 theorem bodyLogConcaveLaw_isotropicConstant {n : ℕ} (K : FullDimensionalBody n) :
     lawIsotropicConstant (bodyLogConcaveLaw K) = bodyIsotropicConstant K := by
   have hv : 0 < (volume (K.body : Set (EuclideanSpace ℝ (Fin n)))).toReal :=
@@ -129,7 +145,13 @@ theorem bodyLogConcaveLaw_isotropicConstant {n : ℕ} (K : FullDimensionalBody n
   rw [he, Real.exp_neg, div_eq_mul_inv]
   ring
 
-/-- The embedding uses actual body laws and the proved equality of conventions. -/
+/-- **Body isotropic constants are bounded by the law supremum.** For every $n \in \mathbb{N}$,
+the supremum of the isotropic constants of full-dimensional convex bodies in $\mathbb{R}^n$ is at
+most the supremum of the entropy isotropic constants of probability laws on $\mathbb{R}^n$ with a
+log-concave Lebesgue density $f$ such that every coordinate $x_i$ and every product $x_i x_j$ is
+integrable under the law and $f \log f$ is Lebesgue integrable, both suprema taken in
+$[0, \infty]$. Both families are defined only for $n \ge 1$, so for $n = 0$ they are empty and
+both suprema are $0$. -/
 theorem dimensionBodySupremum_le_lawSupremum (n : ℕ) :
     dimensionBodySupremum n ≤ dimensionLawSupremum n := by
   apply iSup_le

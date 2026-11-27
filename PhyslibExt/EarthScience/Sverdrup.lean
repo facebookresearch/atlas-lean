@@ -66,7 +66,8 @@ theorem sverdrup_transport {β V curl ρ₀ : ℝ} (hρ : 0 < ρ₀) (hβ : β �
   linear_combination h
 
 set_option linter.unusedVariables false in
-/-- Zero wind-stress curl gives zero interior meridional transport. -/
+/-- Zero wind-stress curl gives zero interior meridional transport, for `ρ₀ > 0` and
+`β ≠ 0`. -/
 theorem sverdrup_zero_curl {β V ρ₀ : ℝ} (hρ : 0 < ρ₀) (hβ : β ≠ 0)
     (h : β * V = 0 / ρ₀) :
     V = 0 := by

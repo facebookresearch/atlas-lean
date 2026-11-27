@@ -8,6 +8,8 @@
 - [Depth of a linear μ-calculus formula](depth.md)
 - [Extending an environment under a binder](extend-env.md)
 
+- [Expressive power and decision problems of the linear-time μ-calculus](expressive-power-and-decision-problems.md)
+
 ## Satisfaction
 
 - [Satisfaction of linear μ-calculus formulas](sat.md)

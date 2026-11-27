@@ -1,0 +1,9 @@
+# Tietze extension theorem for functions into a closed interval
+
+A continuous function from a closed subset of a normal space into a closed interval $[a, b]$ extends to a continuous function on the whole space with values in the same interval. Mathlib states this for closed embeddings and bounded continuous functions. Let $Y$ be a normal topological space, in which disjoint closed sets have disjoint open neighbourhoods (no $T_1$ axiom is assumed), let $X$ be a topological space and let $e \colon X \to Y$ be a closed embedding, that is, a homeomorphism of $X$ onto a closed subset of $Y$. Let $a \le b$ be real numbers and let $f \colon X \to \mathbb{R}$ be a bounded continuous function with $f(x) \in [a, b]$ for all $x \in X$. Then there is a bounded continuous function $g \colon Y \to \mathbb{R}$ with $g(y) \in [a, b]$ for all $y \in Y$ and $g(e(x)) = f(x)$ for all $x \in X$. For a closed subset $A$ of $Y$ with the subspace topology, take $e$ to be the inclusion of $A$; a continuous function from $A$ to $[a, b]$ is bounded, so this gives the familiar statement, which assumes $a < b$.
+
+## Sources
+
+- James R. Munkres, Topology, 2nd ed., Prentice Hall, 2000.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for normal spaces, in which disjoint closed sets have disjoint open neighbourhoods and points need not be closed: `NormalSpace`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Topology/Separation/Regular.lean#L509-L513.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for closed embeddings: `Topology.IsClosedEmbedding`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Topology/Defs/Induced.lean#L161.

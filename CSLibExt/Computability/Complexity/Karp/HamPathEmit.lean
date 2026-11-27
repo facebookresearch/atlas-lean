@@ -26,7 +26,7 @@ the diamonds and the output within `2000 (|toks φ| + 1)⁵` steps.
 
 namespace Cslib.Complexity.Karp.EmitHam
 
-open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
+open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.LegacyPL
   Computability Cslib.Complexity.SatVerifier
 open Cslib.Complexity.SatVerifier.Lookup (isBitBlock_map isBitBlock_rev)
 

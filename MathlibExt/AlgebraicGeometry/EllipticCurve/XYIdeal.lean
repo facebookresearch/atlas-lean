@@ -9,9 +9,11 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot.lean`
+`Theorems/Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot.lean`,
+`P2M/Sol/S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot.lean`,
+`Theorems/Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_eq_XYIdeal_iff.lean`
 and
-`P2M/Sol/S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot.lean`
+`P2M/Sol/S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_eq_XYIdeal_iff.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -52,5 +54,44 @@ theorem XYIdeal_ne_bot {R : Type*} [CommRing R] [Nontrivial R] {W : Affine R} (x
   XClass_ne_zero (W' := W) x <| by
     have : XClass W x ∈ XYIdeal W x y := Ideal.subset_span (by simp)
     rwa [h0, Ideal.mem_bot] at this
+
+private lemma XYIdeal_eq_map {F : Type*} [Field F] {W : Affine F} (x : F) (y : F[X]) :
+    XYIdeal W x y = Ideal.map (mk W) (Ideal.span {C (X - C x), Y - C y}) := by
+  simp only [XYIdeal, XClass, YClass, ← Set.image_pair, ← Ideal.map_span]
+
+private lemma mk_mem_XYIdeal_of_evalEval_eq_zero {F : Type*} [Field F] {W : Affine F}
+    (x y : F) {p : F[X][Y]} (hp : p.evalEval x y = 0) :
+    mk W p ∈ XYIdeal W x (C y) := by
+  rw [XYIdeal_eq_map]
+  exact Ideal.mem_map_of_mem _ (mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mpr hp)
+
+private lemma mk_mem_XYIdeal_iff' {F : Type*} [Field F] {W : Affine F} {x y : F}
+    (h : W.Equation x y) (p : F[X][Y]) :
+    mk W p ∈ XYIdeal W x (C y) ↔ p.evalEval x y = 0 := by
+  refine ⟨fun hp => ?_, mk_mem_XYIdeal_of_evalEval_eq_zero x y⟩
+  rw [XYIdeal_eq_map, Ideal.mem_map_iff_of_surjective _ AdjoinRoot.mk_surjective] at hp
+  obtain ⟨q, hq, hqp⟩ := hp
+  obtain ⟨r, hr⟩ := AdjoinRoot.mk_eq_mk.mp hqp
+  have hW : W.polynomial ∈ Ideal.span {C (X - C x), Y - C (C y)} :=
+    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mpr h
+  have hpq : p = q - W.polynomial * r := by rw [← hr]; ring
+  rw [hpq]
+  exact mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mp
+    (Ideal.sub_mem _ hq (Ideal.mul_mem_right _ _ hW))
+
+/-- Over a field, the ideals at two affine points of a Weierstrass curve
+coincide only when the points have the same coordinates: the first point
+is assumed to lie on the curve. -/
+theorem XYIdeal_eq_XYIdeal_iff {F : Type*} [Field F] {W : Affine F} {x₁ y₁ : F}
+    (h : W.Equation x₁ y₁) (x₂ y₂ : F) :
+    XYIdeal W x₁ (C y₁) = XYIdeal W x₂ (C y₂) ↔ x₁ = x₂ ∧ y₁ = y₂ := by
+  refine ⟨fun he => ?_, by rintro ⟨rfl, rfl⟩; rfl⟩
+  have hx : XClass W x₂ ∈ XYIdeal W x₁ (C y₁) := he ▸ Ideal.subset_span (by simp)
+  have hy : YClass W (C y₂) ∈ XYIdeal W x₁ (C y₁) := he ▸ Ideal.subset_span (by simp)
+  rw [XClass, mk_mem_XYIdeal_iff' h] at hx
+  rw [YClass, mk_mem_XYIdeal_iff' h] at hy
+  simp only [evalEval_C, eval_sub, eval_X, eval_C] at hx
+  simp only [evalEval_sub, evalEval_X, evalEval_CC] at hy
+  exact ⟨sub_eq_zero.mp hx, sub_eq_zero.mp hy⟩
 
 end WeierstrassCurve.Affine.CoordinateRing

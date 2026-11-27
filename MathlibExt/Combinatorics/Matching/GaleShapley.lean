@@ -22,14 +22,18 @@ Stable perfect matchings for two equal finite sides with strict total preference
 
 namespace MathlibExt.Combinatorics.Matching.GaleShapley
 
-/-- Strict total order modelling strict preference, reusing the shared `MathlibExt.Order` bundle. -/
+/-- **Strict preference order.** A strict total order on a type $\alpha$ is a binary relation
+$<$ on $\alpha$ that is irreflexive ($a < a$ holds for no $a$), transitive ($a < b$ and $b < c$
+imply $a < c$) and total on distinct elements ($a \ne b$ implies $a < b$ or $b < a$). In the
+Gale–Shapley development it models strict preference. -/
 abbrev StrictTotalOrder := MathlibExt.Order.StrictTotalOrder
 
 namespace StrictTotalOrder
 
-/-- Compatibility alias for the former `GaleShapley.StrictTotalOrder.mk` constructor.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.mk` directly. -/
+/-- **Building a strict total order from a relation.** A binary relation $<$ on a set $\alpha$
+that is irreflexive ($a \not< a$ for all $a$), transitive ($a < b$ and $b < c$ imply $a < c$) and
+total on distinct elements ($a \ne b$ implies $a < b$ or $b < a$) defines a strict total order on
+$\alpha$ whose relation is $<$. -/
 abbrev mk {α : Type*} (lt : α → α → Prop)
     (irrefl : ∀ a, ¬lt a a)
     (trans : ∀ {a b c}, lt a b → lt b c → lt a c)
@@ -37,35 +41,32 @@ abbrev mk {α : Type*} (lt : α → α → Prop)
     StrictTotalOrder α :=
   MathlibExt.Order.StrictTotalOrder.mk lt irrefl trans total
 
-/-- Compatibility alias for the former `GaleShapley.StrictTotalOrder.lt` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.lt` directly. -/
+/-- **Relation of a strict total order.** The relation of a strict total order $T$ on a set
+$\alpha$ is its underlying binary relation $<_T$ on $\alpha$, which is irreflexive, transitive,
+and relates any two distinct elements in one direction or the other. -/
 abbrev lt {α : Type*} (self : StrictTotalOrder α) : α → α → Prop :=
   MathlibExt.Order.StrictTotalOrder.lt self
 
-/-- Compatibility alias for the former `GaleShapley.StrictTotalOrder.irrefl` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.irrefl` directly. -/
+/-- **Irreflexivity of a strict total order.** Let $T$ be a strict total order on a set $\alpha$,
+with relation $<_T$. Then $a <_T a$ fails for every $a \in \alpha$. -/
 abbrev irrefl {α : Type*} (self : StrictTotalOrder α) (a : α) : ¬self.lt a a :=
   MathlibExt.Order.StrictTotalOrder.irrefl self a
 
-/-- Compatibility alias for the former `GaleShapley.StrictTotalOrder.trans` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.trans` directly. -/
+/-- **Transitivity of a strict total order.** Let $<$ be the relation of a strict total order on a
+type $\alpha$. If $a, b, c \in \alpha$ satisfy $a < b$ and $b < c$, then $a < c$. -/
 abbrev trans {α : Type*} (self : StrictTotalOrder α) {a b c : α}
     (h1 : self.lt a b) (h2 : self.lt b c) : self.lt a c :=
   MathlibExt.Order.StrictTotalOrder.trans self h1 h2
 
-/-- Compatibility alias for the former `GaleShapley.StrictTotalOrder.total` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.total` directly. -/
+/-- **Strict total orders are total on distinct elements.** Let $<$ be the relation of a strict
+total order on a type $\alpha$. If $a, b \in \alpha$ and $a \ne b$, then $a < b$ or $b < a$. -/
 abbrev total {α : Type*} (self : StrictTotalOrder α) {a b : α} (h : a ≠ b) :
     self.lt a b ∨ self.lt b a :=
   MathlibExt.Order.StrictTotalOrder.total self h
 
-/-- Compatibility alias for the former `GaleShapley.StrictTotalOrder.ext` lemma.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.ext` directly. -/
+/-- **Strict total orders are determined by their relation.** Let $T$ and $T'$ be strict total
+orders on a set $\alpha$, with relations $<_T$ and $<_{T'}$. If $x <_T y \iff x <_{T'} y$ for all
+$x, y \in \alpha$, then $T = T'$. -/
 @[ext]
 theorem ext {α : Type*} {T T' : StrictTotalOrder α} (h : T.lt = T'.lt) :
     T = T' :=
@@ -80,21 +81,33 @@ instance isStrictTotalOrder {α : Type*} (T : StrictTotalOrder α) :
 
 end StrictTotalOrder
 
-/-- Preferences of `M` over `W`. -/
+/-- **Men's preferences.** For sets $M$ (men) and $W$ (women), a preference profile of the men
+assigns to each $m \in M$ a strict total order on $W$, the preferences of $m$. -/
 abbrev MPrefs (M W : Type*) := M → StrictTotalOrder W
 
-/-- Preferences of `W` over `M`. -/
+/-- **Women's preference profile.** For types $M$ and $W$, a preference profile of $W$ over $M$
+assigns to each $w \in W$ a strict total order on $M$, read as the strict preference of $w$
+among the elements of $M$. -/
 abbrev WPrefs (M W : Type*) := W → StrictTotalOrder M
 
-/-- A perfect matching as an equivalence between the two sides. -/
+/-- **Perfect matching.** A perfect matching between sets $M$ and $W$ is a bijection
+$\mu \colon M \to W$, which matches each $m \in M$ with $\mu(m) \in W$. -/
 abbrev PerfectMatching (M W : Type*) := M ≃ W
 
-/-- Blocking pair: `m` prefers `w` over `μ m` and `w` prefers `m` over `μ.symm w`. -/
+/-- **Blocking pair.** Let $M$ and $W$ be sets. Suppose that each $m \in M$ has a strict total
+order $<_m$ of preference on $W$ and each $w \in W$ has a strict total order $<_w$ of preference
+on $M$, where $x <_m y$ means that $m$ prefers $x$ to $y$, and likewise for $<_w$. For a perfect
+matching $\mu$ between $M$ and $W$, a pair $(m, w) \in M \times W$ is a blocking pair when
+$w <_m \mu(m)$ and $m <_w \mu^{-1}(w)$, that is, when $m$ prefers $w$ to $\mu(m)$ and $w$ prefers
+$m$ to $\mu^{-1}(w)$. -/
 def IsBlockingPair {M W : Type*}
     (mp : MPrefs M W) (wp : WPrefs M W) (μ : PerfectMatching M W) (m : M) (w : W) : Prop :=
   (mp m).lt w (μ m) ∧ (wp w).lt m (μ.symm w)
 
-/-- A perfect matching is stable if it has no blocking pair. -/
+/-- **Stable perfect matching.** Let $M$ and $W$ be sets. Suppose that each $m \in M$ has a strict
+total order of preference on $W$ and each $w \in W$ has a strict total order of preference on
+$M$. A perfect matching $\mu$ between $M$ and $W$ is stable for these preferences when no pair
+$(m, w) \in M \times W$ is a blocking pair for $\mu$. -/
 def IsStable {M W : Type*} (mp : MPrefs M W) (wp : WPrefs M W) (μ : PerfectMatching M W) : Prop :=
   ∀ m w, ¬ IsBlockingPair mp wp μ m w
 
@@ -579,8 +592,12 @@ private lemma darun_grows {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] 
       rw [e]
       exact Or.inl (fun m hm => h ⟨m, hm⟩)
 
-/-- Gale–Shapley stable marriage existence without `DecidableEq` instances on the two sides.
-`gale_shapley_exists_stable_matching` is the source-shaped form. -/
+/-- **Existence of stable perfect matchings.** Let $M$ and $W$ be finite sets with the same
+number of elements. Suppose that each $m \in M$ has a strict total order of preference on $W$ and
+each $w \in W$ has a strict total order of preference on $M$. Then some perfect matching between
+$M$ and $W$ is stable for these preferences.
+
+This is the Gale–Shapley theorem, stated without decidability assumptions on $M$ and $W$. -/
 theorem gale_shapley_exists_stable_matching_general
     {M W : Type*} [Fintype M] [Fintype W]
     (hCard : Fintype.card M = Fintype.card W)
@@ -694,8 +711,11 @@ theorem gale_shapley_exists_stable_matching_general
 
 set_option linter.unusedDecidableInType false in
 /--
-For two finite equal-cardinality sides with strict total preferences over opposite side, a stable
-perfect matching exists.
+**Gale–Shapley theorem.** Let $M$ and $W$ be finite sets with the same number of elements.
+Suppose that each $m \in M$ has a strict total order of preference on $W$ and each $w \in W$ has
+a strict total order of preference on $M$. Then some perfect matching between $M$ and $W$ is
+stable for these preferences.
+
 Source: D. Gale and L. S. Shapley, "College Admissions and the Stability of Marriage", American
 Mathematical Monthly 69 (1962), 9–15, DOI 10.2307/2312726.
 It follows from `gale_shapley_exists_stable_matching_general`; the instances `[DecidableEq M]` and

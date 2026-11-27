@@ -194,9 +194,14 @@ end MetaMathlibExt.LagrangeInversionAux
 section
 namespace MetaMathlibExt.LagrangeInversion
 
-/-- Hermite's diagonal form of Lagrange inversion without side conditions: if `w = X * φ(w)` and
-`(1 - X * φ'(w)) * G = F(w)`, then `coeff n (F * φ ^ n) = coeff n G`. The constant term of `w`
-vanishes automatically, and `φ` may have zero constant term. -/
+/-- **Hermite's diagonal form of Lagrange inversion without side conditions.** Let $R$ be a
+commutative ring, let $F$, $\varphi$, $w$ and $G$ be formal power series over $R$, and write
+$[X^n]H$ for the coefficient of $X^n$ in a power series $H$. Write $\varphi'$ for the formal
+derivative of $\varphi$, and $\varphi(w)$, $\varphi'(w)$, $F(w)$ for the substitution of $w$ into
+$\varphi$, $\varphi'$, $F$. If $w = X\,\varphi(w)$ and $(1 - X\,\varphi'(w))\,G = F(w)$, then
+$[X^n](F\varphi^n) = [X^n]G$ for every natural number $n$.
+
+The constant term of $w$ vanishes automatically, and $\varphi$ may have zero constant term. -/
 theorem coeff_mul_pow_eq_coeff_of_eq_X_mul_subst {R : Type*} [CommRing R] (n : ℕ)
     {F phi w G : PowerSeries R} (hw : w = PowerSeries.X * phi.subst w)
     (hG : (1 - PowerSeries.X * (PowerSeries.derivative phi).subst w) * G = F.subst w) :
@@ -206,15 +211,19 @@ theorem coeff_mul_pow_eq_coeff_of_eq_X_mul_subst {R : Type*} [CommRing R] (n : �
   exact (MetaMathlibExt.LagrangeInversionAux.main phi w hw0 hw n F G hG).symm
 
 set_option linter.unusedVariables false in
-/-- Hermite's distinct diagonal/reversion form: the `n`-th coefficient of
-`F * phi ^ n` equals the `n`-th coefficient of the diagonal generating series `G`, where `w` is
-the reverted series (`w = X * phi(w)`) and `(1 - X * phi'(w)) * G = F(w)`.
+/-- **Hermite's diagonal form of Lagrange inversion.** Let $R$ be a commutative ring, let $F$,
+$\varphi$, $w$ and $G$ be formal power series over $R$, and write $[X^n]H$ for the coefficient
+of $X^n$ in a power series $H$. Write $\varphi'$ for the formal derivative of $\varphi$, and
+$\varphi(w)$, $\varphi'(w)$, $F(w)$ for the substitution of $w$ into $\varphi$, $\varphi'$, $F$.
+Suppose that $w$ has constant term $0$, that $\varphi$ has nonzero constant term, that
+$w = X\,\varphi(w)$, and that $(1 - X\,\varphi'(w))\,G = F(w)$. Then
+$[X^n](F\varphi^n) = [X^n]G$ for every natural number $n$.
 
-This contrasts with the derivative-coefficient form in
-`WantedExt/RingTheory/PowerSeries/LagrangeBurmannCoefficientWanted.lean`, which
-extracts the coefficient via an explicit derivative factor; here the derivative
-is instead absorbed into the defining equation for `G`. No definitions are
-duplicated.
+In contrast to the derivative-coefficient form of the Lagrange–Bürmann formula, the derivative
+here is absorbed into the defining equation for $G$.
+
+Proves `Wanted` entry `hermite_lagrange_diagonal_formula`. The source's hypotheses `hw0` and
+`_hphi` are not needed; see `coeff_mul_pow_eq_coeff_of_eq_X_mul_subst`.
 
 Reference: Bakir Farhi, "Some Applications of the Lagrange Inversion Formula
 for the k-Fibonacci Numbers", Journal of Integer Sequences 27 (2024),
@@ -226,9 +235,6 @@ Normalized statement lines 205-210 SHA-256:
   6e89d7158aae443fa6bf9907f922bc8b116a023093496193a6d016f01de94f7b
 Normalized lines 205-240 SHA-256:
   06cba9424deb1a7b852172a86dbc1088947b1225aad87d0577386d59fa3aed58
-
-Proves `Wanted` entry `hermite_lagrange_diagonal_formula`. The source's hypotheses `hw0` and
-`_hphi` are not needed; see `coeff_mul_pow_eq_coeff_of_eq_X_mul_subst`.
 -/
 theorem hermite_lagrange_diagonal_formula
   (n : ℕ) (R : Type*) [CommRing R] (F phi w : PowerSeries R)

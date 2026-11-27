@@ -18,6 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 public import Mathlib.Order.CompletePartialOrder
 
 @[expose] public section

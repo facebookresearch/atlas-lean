@@ -150,8 +150,10 @@ theorem vibroacoustic_port_energy {n m : Type*} [Fintype n]
   exact hfull
 
 /-- All-times form of the reciprocal-port vibroacoustic
-quadratic-balance identity: if the derivative and balance
-hypotheses hold at every time, then the pointwise identity holds
+quadratic-balance identity: with constant symmetric `M`, `K` and `A`,
+if the derivative hypotheses and the balance equations
+`M*dv + C*v + K*x - G*p = 0` and `A*dp + H*p + Gᵀ*v = 0` hold at every
+time, then `1/2 * (vᵀMv + xᵀKx + pᵀAp)` has derivative `-(vᵀCv + pᵀHp)`
 at each time `t`. -/
 theorem vibroacoustic_port_energy_all_times {n m : Type*}
     [Fintype n] [Fintype m] {M K C : Matrix n n ℝ}

@@ -10,5 +10,5 @@ Concentration of polynomials with positive coefficients in independent $\{0,1\}$
 
 - [McDiarmid's inequality](../mcdiarmid-s-inequality/README.md): the bounded-differences inequality that Kim–Vu replaces when worst-case effects are large.
 - [Janson's inequalities](../../../Combinatorics/probabilistic-combinatorics/janson-s-inequalities/README.md): the lower tail of the same subgraph counts, with the same random-subset model.
-- Graph Ramsey numbers: concentration of this kind drives the semi-random construction behind Kim's bound on $R(3,t)$.
+- [Graph Ramsey numbers](../../../GraphTheory/graph-ramsey-theory/graph-ramsey-numbers/README.md): concentration of this kind drives the semi-random construction behind Kim's bound on $R(3,t)$.
 - [Azuma's inequality](../azuma-inequality.md): Kim and Vu's Theorem 1.1, the martingale inequality whose worst-case effects their theorem replaces by average effects.

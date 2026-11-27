@@ -30,11 +30,16 @@ namespace BurnsidePaqb
 
 variable {G : Type*} [Group G] [Fintype G]
 
-/-- The class sum of a finset: sum of the group elements in the group algebra. -/
+/-- **Class sum of a finite subset.** Let $G$ be a group. The class sum of a finite subset
+$C \subseteq G$ is the element $\widehat{C} = \sum_{x \in C} x$ of the complex group algebra
+$\mathbb{C}[G]$. -/
 noncomputable def classSum (C : Finset G) : MonoidAlgebra ℂ G :=
   ∑ x ∈ C, MonoidAlgebra.of ℂ G x
 
-/-- Class sums are central in the group algebra. -/
+/-- **Class sums commute with group elements.** Let $G$ be a finite group, let $g \in G$, and let
+$\widehat{C_g} = \sum_{x \in C_g} x$ be the sum, in the complex group algebra $\mathbb{C}[G]$, of
+the elements of the conjugacy class $C_g$ of $g$. Then $\widehat{C_g} h = h \widehat{C_g}$ for
+every $h \in G$, where $h$ is viewed as a basis element of $\mathbb{C}[G]$. -/
 theorem classSum_central (g h : G) :
     classSum (conjClass g) * MonoidAlgebra.of ℂ G h =
       MonoidAlgebra.of ℂ G h * classSum (conjClass g) := by
@@ -58,7 +63,10 @@ theorem classSum_central (g h : G) :
     congr 1
     group
 
-/-- Class sums commute with every group-algebra element. -/
+/-- **The class sum of the conjugacy class of an element is central.** Let $G$ be a finite group,
+let $g \in G$, and let $\widehat{C_g} = \sum_{x \in C_g} x$ be the sum, in the complex group
+algebra $\mathbb{C}[G]$, of the elements of the conjugacy class $C_g$ of $g$. Then
+$w \widehat{C_g} = \widehat{C_g} w$ for every $w \in \mathbb{C}[G]$. -/
 theorem classSum_central' (g : G) (w : MonoidAlgebra ℂ G) :
     w * classSum (conjClass g) = classSum (conjClass g) * w := by
   have hsingle : ∀ m r, MonoidAlgebra.single m r = r • MonoidAlgebra.of ℂ G m := by
@@ -74,7 +82,9 @@ theorem classSum_central' (g : G) (w : MonoidAlgebra ℂ G) :
         ← mul_smul_comm, ← hsingle m r]
     rw [h1]
 
-/-- Chosen representative of each conjugacy class. -/
+/-- **Chosen representative of a conjugacy class.** For each conjugacy class $K$ of a group $G$,
+the representative of $K$ is an element $g_K \in G$, fixed once and for all by choice, whose
+conjugacy class is $K$. -/
 noncomputable def classRep (l : ConjClasses G) : G :=
   Classical.choose (ConjClasses.mk_surjective l)
 
@@ -83,18 +93,25 @@ theorem classRep_spec (l : ConjClasses G) : ConjClasses.mk (classRep l) = l :=
   Classical.choose_spec (ConjClasses.mk_surjective l)
 
 open Classical in
-/-- The carrier finset of a class is the conjugacy class of its representative. -/
+/-- **Conjugacy class of the chosen representative.** Let $G$ be a finite group. For every
+conjugacy class $K$ of $G$, the set of elements of $K$ equals the conjugacy class of the chosen
+representative of $K$. -/
 theorem carrier_toFinset (l : ConjClasses G) :
     (ConjClasses.carrier l).toFinset = conjClass (classRep l) := by
   rw [conjClass, Set.toFinset_inj, ConjAct.orbit_eq_carrier_conjClasses,
     classRep_spec l]
 
 open Classical in
-/-- Structure constant: number of pairs `(x, y) ∈ Ci × Cj` with `x * y = z`. -/
+/-- **Structure constants of a pair of subsets.** Let $G$ be a finite group. For finite subsets
+$C_i, C_j \subseteq G$ and an element $z \in G$, the structure constant is the number of pairs
+$(x, y) \in C_i \times C_j$ with $xy = z$. -/
 noncomputable def structConst (Ci Cj : Finset G) (z : G) : ℕ :=
   ((Ci.product Cj).filter (fun p => p.1 * p.2 = z)).card
 
-/-- Structure constants are constant on conjugacy classes. -/
+/-- **Class structure constants are class functions.** Let $G$ be a finite group, let
+$g_i, g_j \in G$ with conjugacy classes $C_{g_i}$ and $C_{g_j}$, and for $z \in G$ let $a(z)$ be
+the number of pairs $(x, y) \in C_{g_i} \times C_{g_j}$ with $x y = z$. If $u, z \in G$ are
+conjugate, then $a(u) = a(z)$. -/
 theorem structConst_conj (gi gj u z : G) (h : IsConj u z) :
     structConst (conjClass gi) (conjClass gj) u =
       structConst (conjClass gi) (conjClass gj) z := by
@@ -145,7 +162,10 @@ theorem structConst_conj (gi gj u z : G) (h : IsConj u z) :
       group
 
 omit [Fintype G] in
-/-- The product of class sums, evaluated at `u`, counts factorizations. -/
+/-- **Coefficients of a product of class sums.** Let $G$ be a group, let $C_i$ and $C_j$ be
+finite subsets of $G$, and write $\widehat{C} = \sum_{x \in C} x$ in the complex group algebra
+$\mathbb{C}[G]$. For every $u \in G$, the coefficient of $u$ in $\widehat{C_i} \widehat{C_j}$ is
+the number of pairs $(x, y) \in C_i \times C_j$ with $x y = u$. -/
 theorem coeff_classSum_mul (Ci Cj : Finset G) (u : G) :
     (classSum Ci * classSum Cj).coeff u = (structConst Ci Cj u : ℂ) := by
   classical
@@ -165,7 +185,13 @@ theorem coeff_classSum_mul (Ci Cj : Finset G) (u : G) :
   rfl
 
 open Classical in
-/-- Product of class sums as a combination of class sums (structure constants). -/
+/-- **Products of class sums expand in class sums.** Let $G$ be a finite group. For a finite
+subset $C$ of $G$ write $\widehat{C} = \sum_{x \in C} x$ in the complex group algebra
+$\mathbb{C}[G]$, and for $g \in G$ let $C_g$ be its conjugacy class. Let $g_i, g_j \in G$, and for
+each conjugacy class $K$ of $G$ with chosen representative $z_K$ let $a_K$ be the number of pairs
+$(x, y) \in C_{g_i} \times C_{g_j}$ with $x y = z_K$. Then
+$\widehat{C_{g_i}} \widehat{C_{g_j}} = \sum_K a_K \widehat{K}$, the sum running over all
+conjugacy classes $K$ of $G$. -/
 theorem classSum_mul (gi gj : G) :
     classSum (conjClass gi) * classSum (conjClass gj)
       = ∑ l : ConjClasses G, (structConst (conjClass gi) (conjClass gj) (classRep l) : ℂ)
@@ -186,7 +212,9 @@ theorem classSum_mul (gi gj : G) :
   rw [← ConjClasses.mk_eq_mk_iff_isConj]
   exact (classRep_spec _).symm
 
-/-- Conjugate elements have equal conjugacy classes. -/
+/-- **Conjugate elements have the same conjugacy class.** Let $G$ be a finite group. If
+$g_1, g_2 \in G$ are conjugate, then the conjugacy class of $g_1$ equals the conjugacy class of
+$g_2$. -/
 theorem conjClass_eq_of_isConj {g1 g2 : G} (h : IsConj g1 g2) :
     conjClass g1 = conjClass g2 := by
   ext x
@@ -194,7 +222,9 @@ theorem conjClass_eq_of_isConj {g1 g2 : G} (h : IsConj g1 g2) :
   exact ⟨fun hx => hx.trans h, fun hx => hx.trans (isConj_comm.mp h)⟩
 
 open Classical in
-/-- Carrier class sums commute with every group-algebra element. -/
+/-- **Class sums of conjugacy classes are central.** Let $G$ be a finite group. For every
+conjugacy class $K$ of $G$ and every element $w$ of the complex group algebra $\mathbb{C}[G]$,
+the class sum $\widehat{K} = \sum_{x \in K} x$ satisfies $w \widehat{K} = \widehat{K} w$. -/
 theorem classSum_carrier_central (l : ConjClasses G) (w : MonoidAlgebra ℂ G) :
     w * classSum (ConjClasses.carrier l).toFinset
       = classSum (ConjClasses.carrier l).toFinset * w := by

@@ -43,8 +43,13 @@ namespace Ideal
 
 variable {A : Type*} [CommRing A]
 
-/-- An ideal equals the intersection of the contractions of its
-extensions at the maximal ideals. -/
+/-- **An ideal is the intersection of its contracted localizations at maximal ideals.** Let $A$
+be a commutative ring and $I$ an ideal of $A$. For a maximal ideal $\mathfrak{m}$ of $A$, let
+$\varphi_{\mathfrak{m}} \colon A \to A_{\mathfrak{m}}$ be the canonical map to the localization
+of $A$ at $\mathfrak{m}$. Then
+$I = \bigcap_{\mathfrak{m}} \varphi_{\mathfrak{m}}^{-1}(I A_{\mathfrak{m}})$, the intersection
+over all maximal ideals $\mathfrak{m}$ of $A$: an ideal is the intersection of the contractions
+to $A$ of its extensions to the localizations at the maximal ideals. -/
 theorem eq_iInf_comap_map_localization_maximal (I : Ideal A) :
     (⨅ 𝔪 : MaximalSpectrum A,
       (I.map (algebraMap A (Localization 𝔪.asIdeal.primeCompl))).comap
@@ -69,8 +74,13 @@ theorem eq_iInf_comap_map_localization_maximal (I : Ideal A) :
     rw [Ideal.mem_comap]
     exact Ideal.mem_map_of_mem _ hxI
 
-/-- An ideal equals the intersection of the contractions of its
-extensions at the prime ideals. -/
+/-- **An ideal is the intersection of its contracted localizations at prime ideals.** Let $A$
+be a commutative ring and $I$ an ideal of $A$. For a prime ideal $\mathfrak{p}$ of $A$, let
+$\varphi_{\mathfrak{p}} \colon A \to A_{\mathfrak{p}}$ be the canonical map to the localization
+of $A$ at $\mathfrak{p}$. Then
+$I = \bigcap_{\mathfrak{p}} \varphi_{\mathfrak{p}}^{-1}(I A_{\mathfrak{p}})$, the intersection
+over all prime ideals $\mathfrak{p}$ of $A$: an ideal is the intersection of the contractions
+to $A$ of its extensions to the localizations at the prime ideals. -/
 theorem eq_iInf_comap_map_localization_prime (I : Ideal A) :
     (⨅ 𝔭 : PrimeSpectrum A,
       (I.map (algebraMap A (Localization 𝔭.asIdeal.primeCompl))).comap
@@ -86,8 +96,14 @@ theorem eq_iInf_comap_map_localization_prime (I : Ideal A) :
     rw [Ideal.mem_comap]
     exact Ideal.mem_map_of_mem _ hxI
 
-/-- The intersections of localization contractions at the maximal
-ideals and at the prime ideals agree. -/
+/-- **Contracted localizations of an ideal: the maximal and prime intersections agree.** Let $A$
+be a commutative ring and $I$ an ideal of $A$. For a prime ideal $\mathfrak{p}$ of $A$, let
+$\varphi_{\mathfrak{p}} \colon A \to A_{\mathfrak{p}}$ be the canonical map to the localization
+of $A$ at $\mathfrak{p}$. Then
+$\bigcap_{\mathfrak{m}} \varphi_{\mathfrak{m}}^{-1}(I A_{\mathfrak{m}}) =
+\bigcap_{\mathfrak{p}} \varphi_{\mathfrak{p}}^{-1}(I A_{\mathfrak{p}})$, where the left
+intersection runs over all maximal ideals $\mathfrak{m}$ of $A$ and the right one over all
+prime ideals $\mathfrak{p}$ of $A$. -/
 theorem iInf_comap_map_localization_maximal_eq_prime (I : Ideal A) :
     (⨅ 𝔪 : MaximalSpectrum A,
       (I.map (algebraMap A (Localization 𝔪.asIdeal.primeCompl))).comap
@@ -98,10 +114,15 @@ theorem iInf_comap_map_localization_maximal_eq_prime (I : Ideal A) :
   rw [eq_iInf_comap_map_localization_maximal,
     eq_iInf_comap_map_localization_prime]
 
-/-- Corollary 2.7, maximal-ideal form: the image of `I` in the fraction
-field `K` equals the intersection of its localizations inside `K`.
-Membership in a localized image means that some denominator outside
-the maximal ideal scales the element into the image of `I`. -/
+/-- **The image of an ideal in the fraction field is the intersection of its localizations at
+maximal ideals.** Let $A$ be an integral domain with fraction field $K$, let $I$ be an ideal of
+$A$, and let $M \subseteq K$ be the image of $I$ under the canonical map $A \to K$, an
+$A$-submodule of $K$. For a maximal ideal $\mathfrak{m}$ of $A$, let $M_{\mathfrak{m}}$ be the
+localization of $M$ at $\mathfrak{m}$: the set of $x \in K$ such that $s x \in M$ for some
+$s \in A \setminus \mathfrak{m}$. Then $M = \bigcap_{\mathfrak{m}} M_{\mathfrak{m}}$, the
+intersection over all maximal ideals $\mathfrak{m}$ of $A$, taken inside $K$.
+
+Source: ATLAS NumberTheoryI, Section 2.3, Corollary 2.7, maximal-ideal form. -/
 theorem eq_iInf_localizedAt_maximal [IsDomain A] (K : Type*)
     [Field K] [Algebra A K] [IsFractionRing A K] (I : Ideal A) :
     (⨅ 𝔪 : MaximalSpectrum A,
@@ -110,8 +131,15 @@ theorem eq_iInf_localizedAt_maximal [IsDomain A] (K : Type*)
     Submodule.map (Algebra.linearMap A K) I :=
   Submodule.eq_iInf_localizedAt_maximal _
 
-/-- Corollary 2.7, prime-ideal form: the image of `I` in the fraction
-field `K` equals the intersection of its localizations inside `K`. -/
+/-- **The image of an ideal in the fraction field is the intersection of its localizations at
+prime ideals.** Let $A$ be an integral domain with fraction field $K$, let $I$ be an ideal of
+$A$, and let $M \subseteq K$ be the image of $I$ under the canonical map $A \to K$, an
+$A$-submodule of $K$. For a prime ideal $\mathfrak{p}$ of $A$, let $M_{\mathfrak{p}}$ be the
+localization of $M$ at $\mathfrak{p}$: the set of $x \in K$ such that $s x \in M$ for some
+$s \in A \setminus \mathfrak{p}$. Then $M = \bigcap_{\mathfrak{p}} M_{\mathfrak{p}}$, the
+intersection over all prime ideals $\mathfrak{p}$ of $A$, taken inside $K$.
+
+Source: ATLAS NumberTheoryI, Section 2.3, Corollary 2.7, prime-ideal form. -/
 theorem eq_iInf_localizedAt_prime [IsDomain A] (K : Type*)
     [Field K] [Algebra A K] [IsFractionRing A K] (I : Ideal A) :
     (⨅ 𝔭 : PrimeSpectrum A,

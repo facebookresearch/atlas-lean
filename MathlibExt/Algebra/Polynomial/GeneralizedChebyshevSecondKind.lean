@@ -42,16 +42,19 @@ open Polynomial
 
 variable {R : Type*} [CommRing R]
 
-/-- Modified second-kind base polynomials: `P 0 = 1`, `P 1 = X - C r`, and
-`P (n + 2) = (X - C r) * P (n + 1) - C s * P n`. -/
+/-- **Modified Chebyshev base polynomials of the second kind.** For a commutative ring $R$ and
+$r, s \in R$, the polynomials $P_n \in R[x]$, $n \ge 0$, are defined by $P_0 = 1$,
+$P_1 = x - r$ and $P_{n+2} = (x - r) P_{n+1} - s P_n$ for every $n \ge 0$. -/
 noncomputable def P (r s : R) : ℕ → Polynomial R
   | 0 => 1
   | 1 => X - C r
   | n + 2 => (X - C r) * P r s (n + 1) - C s * P r s n
 
-/-- Generalized Chebyshev polynomials of the second kind: `Q 0 = 1`,
-`Q 1 = P 1 - C lam * P 0`, and
-`Q (n + 2) = P (n + 2) - C lam * P (n + 1) - C mu * P n`. -/
+/-- **Generalized Chebyshev polynomials of the second kind.** For a commutative ring $R$ and
+$r, s, \lambda, \mu \in R$, let $P_n \in R[x]$ be the modified Chebyshev base polynomials
+with parameters $r, s$. The polynomials $Q_n \in R[x]$ are defined by $Q_0 = 1$,
+$Q_1 = P_1 - \lambda P_0$ and $Q_{n+2} = P_{n+2} - \lambda P_{n+1} - \mu P_n$
+for every $n \ge 0$. -/
 noncomputable def Q (r s lam mu : R) (n : ℕ) : Polynomial R :=
   match n with
   | 0 => 1
@@ -78,8 +81,13 @@ theorem Q_add_two (r s lam mu : R) (n : ℕ) :
     Q r s lam mu (n + 2)
       = P r s (n + 2) - C lam * P r s (n + 1) - C mu * P r s n := rfl
 
-/-- General recurrence for `Q`, valid for all `n` (in particular no
-hypothesis on `mu` is needed once shifted past the `n = 0` boundary). -/
+/-- **Three-term recurrence for generalized Chebyshev polynomials.** For a commutative ring $R$,
+all $r, s, \lambda, \mu \in R$ and every $n \ge 0$, the generalized Chebyshev polynomials of
+the second kind $Q_n \in R[x]$ with parameters $r, s, \lambda, \mu$ satisfy
+$Q_{n+3} = (x - r) Q_{n+2} - s Q_{n+1}$.
+
+No hypothesis on $\mu$ is needed because the recurrence starts at $Q_3$; the analogous
+identity $Q_2 = (x - r) Q_1 - s Q_0$ holds only when $\mu = 0$. -/
 theorem Q_recurrence (r s lam mu : R) (n : ℕ) :
     Q r s lam mu (n + 3)
       = (X - C r) * Q r s lam mu (n + 2) - C s * Q r s lam mu (n + 1) := by

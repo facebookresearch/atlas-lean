@@ -18,7 +18,7 @@ Information Processing Letters 32 (1989), 1-2, doi:10.1016/0020-0190(89)90059-8.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
@@ -46,7 +46,7 @@ endpoints is exactly when they intersect. Every circle graph has such a model. `
 states the chord conditions of `DominatingSetCircleGraph.WellFormed` (that predicate also
 constrains a domination bound, which this problem does not have).
 
-The question is the one of HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedWanted`):
+The question is the one of HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedDefs`):
 at least three vertices and a Hamiltonian cycle (Mathlib's `SimpleGraph.IsHamiltonian`), asked
 of the circle graph.
 

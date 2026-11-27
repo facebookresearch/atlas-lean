@@ -14,7 +14,7 @@ public import MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp
 
 namespace MathlibExtTest.Analysis.Numerical.SaturatingRoundHalfUp
 
-open MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp
+open MathlibExt.Analysis.Numerical MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp
 
 /-- Both full-scale endpoints are fixed points. -/
 example : quantize 1 0 7 0 = 0 := by
@@ -30,11 +30,11 @@ example (k : ℤ) (h0 : 0 <= k) (h7 : k <= 7) :
 
 /-- A positive half-step tie rounds toward `+∞`. -/
 example : quantize 1 0 7 (5 / 2 : ℝ) = 3 := by
-  norm_num [quantize, code, round_eq]
+  norm_num [quantize, SaturatingRoundHalfUp.code, round_eq]
 
 /-- A negative half-step tie also rounds toward `+∞`. -/
 example : quantize 1 (-4) 3 (-5 / 2 : ℝ) = -2 := by
-  norm_num [quantize, code, round_eq]
+  norm_num [quantize, SaturatingRoundHalfUp.code, round_eq]
 
 /-- A one-code range is constant. -/
 example (x : ℝ) : quantize 2 5 5 x = 10 := by
@@ -50,28 +50,28 @@ example : IsClipped 1 0 0 10 := by
 input still meets it, with error exactly `Delta / 2`. -/
 example : IsClipped 1 0 0 (1 / 2 : ℝ)
     ∧ |quantize 1 0 0 (1 / 2 : ℝ) - 1 / 2| ≤ 1 / 2 := by
-  refine ⟨?_, ?_⟩ <;> norm_num [IsClipped, quantize, code, round_eq]
+  refine ⟨?_, ?_⟩ <;> norm_num [IsClipped, quantize, SaturatingRoundHalfUp.code, round_eq]
 
 /-- A clipped example refutes the blanket `Delta / 2` claim. -/
 example : ¬ |quantize 1 0 0 10 - 10| ≤ (1 : ℝ) / 2 := by
-  norm_num [quantize, code, round_eq]
+  norm_num [quantize, SaturatingRoundHalfUp.code, round_eq]
 
 /-- Out-of-range inputs saturate to the endpoints. -/
 example : quantize 1 0 7 25 = 7 := by
-  norm_num [quantize, code, round_eq]
+  norm_num [quantize, SaturatingRoundHalfUp.code, round_eq]
 
 example : quantize 1 0 7 (-3 : ℝ) = 0 := by
-  norm_num [quantize, code, round_eq]
+  norm_num [quantize, SaturatingRoundHalfUp.code, round_eq]
 
 /-- Three-bit signed code boundaries. -/
 example : signedMinCode 3 = -4 ∧ signedMaxCode 3 = 3 := by
   refine ⟨?_, ?_⟩ <;> norm_num [signedMinCode, signedMaxCode]
 
 example : quantize 1 (signedMinCode 3) (signedMaxCode 3) (7 / 2 : ℝ) = 3 := by
-  norm_num [signedMinCode, signedMaxCode, quantize, code, round_eq]
+  norm_num [signedMinCode, signedMaxCode, quantize, SaturatingRoundHalfUp.code, round_eq]
 
 example : quantize 1 (signedMinCode 3) (signedMaxCode 3) (-9 / 2 : ℝ) = -4 := by
-  norm_num [signedMinCode, signedMaxCode, quantize, code, round_eq]
+  norm_num [signedMinCode, signedMaxCode, quantize, SaturatingRoundHalfUp.code, round_eq]
 
 /-- An in-range instance of the `Delta / 2` bound, through the public API. -/
 example : |quantize 1 0 7 (13 / 4 : ℝ) - 13 / 4| ≤ 1 / 2 :=
@@ -104,6 +104,6 @@ example : |quantize 1 0 7 10 - 10|
 error equals the interval distance exactly: both sides are `3`. -/
 example : |quantize 1 0 7 10 - 10|
     = |10 - (Set.projIcc (0 : ℝ) 7 (by norm_num) 10 : ℝ)| := by
-  norm_num [quantize, code, round_eq, Set.coe_projIcc]
+  norm_num [quantize, SaturatingRoundHalfUp.code, round_eq, Set.coe_projIcc]
 
 end MathlibExtTest.Analysis.Numerical.SaturatingRoundHalfUp

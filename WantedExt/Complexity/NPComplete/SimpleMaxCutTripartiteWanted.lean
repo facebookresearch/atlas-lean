@@ -21,11 +21,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ QUESTION: is there a partition of `V` into two sets with at least `K` edges betw
 
 This is SIMPLE MAX CUT (MAX CUT with all edge weights one) restricted to tripartite graphs, which
 Bodlaender and Jansen prove NP-complete. The instance, the simple-edge-list conditions and the
-question are those of MAXIMUM CUT (`MaxCutWanted`, whose question counts edges), reused as in
+question are those of MAXIMUM CUT (`MaxCutDefs`, whose question counts edges), reused as in
 `SimpleMaxCutUndirectedPathGraphsWanted`; the restriction adds to `WellFormed` that
 `Cslib.Complexity.Karp.edgeGraph` is tripartite, Mathlib's `Colorable 3` (a partition into three
 independent sets, some possibly empty, is a proper coloring with three colors), and `0 < K`.

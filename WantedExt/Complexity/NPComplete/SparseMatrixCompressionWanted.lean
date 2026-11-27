@@ -21,7 +21,7 @@ sparse matrix compression problem", arXiv:2602.15314 (2026), Section 1 (records 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

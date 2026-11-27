@@ -1,0 +1,16 @@
+# Stable Infinity Category Models
+
+- [Stable Infinity Category](stable-infinity-category.md)
+- [Idempotent Index](idempotent-index.md)
+- [Retract Index](retract-index.md)
+- [Is Idempotent Complete](is-idempotent-complete.md)
+- [Perfect Infinity Category](perfect-infinity-category.md)
+- [Is Exact](is-exact.md)
+- [Exact Functor](exact-functor.md)
+- [Identity is Exact](identity-is-exact.md)
+- [Composition is Exact](composition-is-exact.md)
+- [Id](id.md)
+- [Comp](comp.md)
+- [Is Exact Vertex](is-exact-vertex.md)
+- [Exact Functor Category](exact-functor-category.md)
+- [Exact Functor Space](exact-functor-space.md)

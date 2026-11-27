@@ -16,7 +16,7 @@ in P", arXiv:2502.13536 (2025) (Section 1: the rules; Theorem 7).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic

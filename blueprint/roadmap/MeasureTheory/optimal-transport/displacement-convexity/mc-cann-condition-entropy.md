@@ -8,7 +8,7 @@ Wasserstein gradient flow is the heat equation.
 
 ## Background
 
-- [Negative Boltzmann entropy](../wasserstein-gradient-flows-and-the-jko-scheme/neg-entropy.md):
+- [Negative Boltzmann entropy](../wasserstein-gradient-flows-and-the-jko-scheme/jko-scheme/neg-entropy.md):
   the same functional in the JKO scheme.
 
 ## Sources

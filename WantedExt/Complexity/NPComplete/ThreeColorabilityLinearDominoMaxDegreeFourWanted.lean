@@ -24,14 +24,14 @@ NP-complete on `(K_4, claw, diamond)`-free graphs [Král' et al. 2001].
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
 public import Mathlib.Combinatorics.SimpleGraph.Star
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphColoringWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
 
 @[expose] public section
 

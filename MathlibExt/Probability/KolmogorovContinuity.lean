@@ -845,9 +845,13 @@ theorem kolmogorov_ae_holder_on_dyadics {Ω : Type*} [MeasurableSpace Ω] {μ : 
   · intro q r hq hr
     exact dyadic_holder_of_increment_bound (f := fun t => X t ω) hγ0 hDpos hinc hq hr
 
-/-- **Kolmogorov continuity theorem**, in the original modification formulation.
-The direct dyadic bound permits choosing `Y = X`. See the module docstring for
-the necessary moment-integrability correction to the archived v1 statement. -/
+/-- **Kolmogorov continuity theorem**, dyadic form. If
+`E |X s - X t|^β ≤ K |s - t|^{1 + α}` for all `s, t`, with integrable moments, then for every
+`0 < γ < α / β` there is a modification `Y` of `X` (here `Y = X`) that is almost surely
+`γ`-Hölder on the dyadic rationals of `[0, 1]`. The extension to all times is
+`MathlibExt.Probability.KolmogorovContinuousModification.exists_continuous_modification`. See the
+module docstring for the necessary moment-integrability correction to the archived v1
+statement. -/
 theorem kolmogorov_continuity_theorem {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] {X : ℝ → Ω → ℝ} {α β K : ℝ} (_hα : 0 < α) (hβ : 0 < β)
     (hK : 0 ≤ K)

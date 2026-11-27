@@ -16,7 +16,7 @@ public import CSLibExt.Logics.LinearLogic.CLL.GirardTranslation
 
 namespace Cslib.Logic.CLL.GirardTests
 
-open Cslib.Logic CLL PL PL.Theory InferenceSystem Girard
+open Cslib.Logic CLL LegacyPL LegacyPL.Theory InferenceSystem Girard
 
 inductive Atom where
   | p

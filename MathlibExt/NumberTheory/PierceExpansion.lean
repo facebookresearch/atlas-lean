@@ -26,27 +26,37 @@ until reaching `0`; its length is the length of the Pierce expansion of `a / n`.
 
 namespace PierceExpansion
 
-/-- Pierce remainder trajectory: `traj 0 = a`, `traj (j+1) = n % traj j`,
-absorbing at `0`. -/
+/-- **Pierce remainder trajectory.** For natural numbers $n$ and $a$, the Pierce remainder
+trajectory of $a$ with respect to $n$ is the sequence $t_0, t_1, t_2, \dots$ of natural numbers
+with $t_0 = a$ and, for every $j \ge 0$, $t_{j+1} = 0$ if $t_j = 0$, while if $t_j \ne 0$ then
+$t_{j+1} = n \bmod t_j$ is the remainder of $n$ modulo $t_j$. Once the trajectory reaches $0$ it
+stays there. -/
 def traj (n a : ℕ) : ℕ → ℕ
   | 0 => a
   | j + 1 => if traj n a j = 0 then 0 else n % traj n a j
 
-/-- Unfolding at step zero. -/
+/-- **Initial term of the Pierce trajectory.** For all natural numbers $n$ and $a$, the Pierce
+remainder trajectory of $a$ with respect to $n$ has value $a$ at step $0$. -/
 theorem traj_zero (n a : ℕ) : traj n a 0 = a :=
   rfl
 
-/-- Unfolding after a vanishing step. -/
+/-- **Step of the Pierce trajectory at a zero term.** Let $n$, $a$ and $j$ be natural numbers and
+let $t_0, t_1, \dots$ be the Pierce remainder trajectory of $a$ with respect to $n$. If $t_j = 0$,
+then $t_{j+1} = 0$. -/
 theorem traj_succ_of_eq_zero {n a j : ℕ} (h : traj n a j = 0) :
     traj n a (j + 1) = 0 := by
   simp only [traj, ite_eq_left h]
 
-/-- Unfolding after a nonvanishing step. -/
+/-- **Step of the Pierce trajectory at a nonzero term.** Let $n$, $a$ and $j$ be natural numbers
+and let $t_0, t_1, \dots$ be the Pierce remainder trajectory of $a$ with respect to $n$. If
+$t_j \ne 0$, then $t_{j+1} = n \bmod t_j$, the remainder of $n$ modulo $t_j$. -/
 theorem traj_succ_of_ne_zero {n a j : ℕ} (h : traj n a j ≠ 0) :
     traj n a (j + 1) = n % traj n a j := by
   simp only [traj, ite_eq_right h]
 
-/-- First-step computation. -/
+/-- **First step of the Pierce trajectory.** Let $n$ and $t$ be natural numbers with $t \ne 0$.
+Then the Pierce remainder trajectory of $t$ with respect to $n$ is, at step $1$, equal to
+$n \bmod t$, the remainder of $n$ modulo $t$. -/
 theorem traj_one {n t : ℕ} (ht : t ≠ 0) : traj n t 1 = n % t := by
   have h01 : (1 : ℕ) = 0 + 1 := rfl
   have h0 : traj n t 0 ≠ 0 := by
@@ -54,7 +64,9 @@ theorem traj_one {n t : ℕ} (ht : t ≠ 0) : traj n t 1 = n % t := by
     exact ht
   rw [h01, traj_succ_of_ne_zero h0, traj_zero]
 
-/-- Every Pierce trajectory reaches `0` within `a + 1` steps. -/
+/-- **A bound on when a Pierce trajectory vanishes.** For natural numbers $n$ and $a$, let
+$(t_j)_{j \ge 0}$ be the Pierce remainder trajectory: $t_0 = a$, and $t_{j+1} = n \bmod t_j$ if
+$t_j \ne 0$, $t_{j+1} = 0$ if $t_j = 0$. Then $t_i = 0$ for some $i \le a + 1$. -/
 theorem exists_traj_eq_zero (n a : ℕ) : ∃ i ≤ a + 1, traj n a i = 0 := by
   have key : ∀ j, traj n a j ≤ a - j ∨ ∃ i ≤ j, traj n a i = 0 := by
     intro j
@@ -83,47 +95,66 @@ theorem exists_traj_eq_zero (n a : ℕ) : ∃ i ≤ a + 1, traj n a i = 0 := by
     exact ⟨a + 1, le_refl _, h0⟩
   · exact hex
 
-/-- Every Pierce trajectory hits `0` at some positive step. -/
+/-- **Pierce trajectories vanish at a positive step.** For all natural numbers $n$ and $a$, the
+Pierce remainder trajectory $(t_j)_{j \ge 0}$ of $n$ and $a$ (with $t_0 = a$) satisfies $t_j = 0$
+for some $j \ge 1$. -/
 theorem exists_traj_eq_zero_pos (n a : ℕ) : ∃ j ≥ 1, traj n a j = 0 := by
   rcases exists_traj_eq_zero n a with ⟨i, _, hi0⟩
   refine ⟨i + 1, Nat.succ_le_succ (Nat.zero_le i), ?_⟩
   simp [traj, hi0]
 
-/-- Pierce length: least `j ≥ 1` with `traj j = 0`. This is the length of the Pierce
-expansion of `a / n`. -/
+/-- **Pierce length.** For natural numbers $n$ and $a$, let $(t_j)_{j \ge 0}$ be the Pierce
+remainder trajectory, with $t_0 = a$, $t_{j+1} = n \bmod t_j$ if $t_j \ne 0$ and $t_{j+1} = 0$ if
+$t_j = 0$. The Pierce length $\ell(n, a)$ is the least $j \ge 1$ with $t_j = 0$; such a $j$
+always exists.
+
+For $1 \le a \le n$ this is the length of the Pierce expansion of $a / n$. -/
 noncomputable def length (n a : ℕ) : ℕ :=
   Nat.find (exists_traj_eq_zero_pos n a)
 
-/-- The Pierce length is positive. -/
+/-- **The Pierce length is positive.** For all natural numbers $n$ and $a$, the Pierce length
+$\ell(n, a)$ satisfies $\ell(n, a) \ge 1$. -/
 theorem length_pos (n a : ℕ) : 1 ≤ length n a :=
   (Nat.find_spec (exists_traj_eq_zero_pos n a)).1
 
-/-- The Pierce trajectory vanishes at the Pierce length. -/
+/-- **The Pierce trajectory vanishes at the Pierce length.** For all natural numbers $n$ and $a$,
+the Pierce remainder trajectory $(t_j)_{j \ge 0}$ of $n$ and $a$ satisfies $t_{\ell(n, a)} = 0$,
+where $\ell(n, a)$ is the Pierce length. -/
 theorem traj_length_eq_zero (n a : ℕ) : traj n a (length n a) = 0 :=
   (Nat.find_spec (exists_traj_eq_zero_pos n a)).2
 
-/-- The Pierce length is bounded by any positive vanishing step. -/
+/-- **The Pierce length is at most any positive vanishing step.** For natural numbers $n$, $a$ and
+$j$ with $j \ge 1$, if the Pierce remainder trajectory $(t_i)_{i \ge 0}$ of $n$ and $a$ satisfies
+$t_j = 0$, then the Pierce length $\ell(n, a)$ satisfies $\ell(n, a) \le j$. -/
 theorem length_le_of_traj_eq_zero {n a j : ℕ} (hj : 1 ≤ j)
     (h : traj n a j = 0) : length n a ≤ j :=
   Nat.find_min' _ ⟨hj, h⟩
 
-/-- The Pierce trajectory is nonzero at positive steps below the length. -/
+/-- **The Pierce trajectory is nonzero before the Pierce length.** For natural numbers $n$, $a$ and
+$j$ with $1 \le j < \ell(n, a)$, where $\ell(n, a)$ is the Pierce length, the Pierce remainder
+trajectory $(t_i)_{i \ge 0}$ of $n$ and $a$ satisfies $t_j \ne 0$. -/
 theorem traj_ne_zero_of_lt_length {n a j : ℕ} (hj : 1 ≤ j)
     (hlt : j < length n a) : traj n a j ≠ 0 := by
   have hneg := Nat.find_min _ hlt
   intro h0
   exact hneg ⟨hj, h0⟩
 
-/-- Pierce length function: `max_{1 ≤ a ≤ n} length n a`. -/
+/-- **Maximal Pierce length.** For a natural number $n$, the maximal Pierce length $P(n)$ is the
+maximum of the Pierce lengths $\ell(n, a)$ over $1 \le a \le n$, with $P(0) = 0$. -/
 noncomputable def maxLength (n : ℕ) : ℕ :=
   (Finset.Icc 1 n).sup (length n)
 
-/-- Each Pierce length is bounded by the length function. -/
+/-- **Each Pierce length is at most the maximal Pierce length.** For natural numbers $n$ and $a$
+with $1 \le a \le n$, the Pierce length $\ell(n, a)$ satisfies $\ell(n, a) \le P(n)$, where
+$P(n) = \max_{1 \le b \le n} \ell(n, b)$ is the maximal Pierce length. -/
 theorem length_le_maxLength {n a : ℕ} (ha : a ∈ Finset.Icc 1 n) :
     length n a ≤ maxLength n :=
   Finset.le_sup ha
 
-/-- The length function is bounded by a uniform bound on all lengths. -/
+/-- **A uniform bound on Pierce lengths bounds the maximal Pierce length.** Let $n$ and $L$ be
+natural numbers. If the Pierce length $\ell(n, a)$ satisfies $\ell(n, a) \le L$ for every $a$ with
+$1 \le a \le n$, then the maximal Pierce length $P(n) = \max_{1 \le a \le n} \ell(n, a)$ (which is
+$0$ when $n = 0$) satisfies $P(n) \le L$. -/
 theorem maxLength_le_of_forall {n L : ℕ}
     (h : ∀ a ∈ Finset.Icc 1 n, length n a ≤ L) : maxLength n ≤ L :=
   Finset.sup_le h

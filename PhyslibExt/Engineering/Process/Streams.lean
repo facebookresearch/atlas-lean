@@ -48,6 +48,7 @@ from `Chemistry.Amounts`, not reproved here.
 - B. Mole composition of a stream
 - C. Integrated amounts
 - D. Mass-flow view and mass composition
+- E. Rescaling and signed balances
 
 ## iv. References
 
@@ -282,6 +283,69 @@ lemma mole_mass_round_trip {ι : Type*} [Fintype ι] (s : StreamFlow ι)
   exact Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one
     (Chemistry.Amounts.massFraction_nonneg s.nonneg hM)
     (Chemistry.Amounts.sum_massFraction s.nonneg hs' hM) hM
+
+/-! ## E. Rescaling and signed balances -/
+
+/-- Rescale every species flow of a stream by a nonnegative factor `α`
+(amount-unit or inverse-time-unit change). -/
+def rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι) {α : ℝ} (hα : 0 ≤ α) :
+    StreamFlow ι :=
+  ⟨fun i => α * s.flow i, fun i => mul_nonneg hα (s.nonneg i)⟩
+
+/-- Rescaling scales the total flow by the same factor. -/
+lemma total_rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι) {α : ℝ}
+    (hα : 0 ≤ α) : (s.rescale hα).total = α * s.total := by
+  simp only [rescale, total, Finset.mul_sum]
+
+/-- A species flow balance: inflow minus outflow plus net generation
+equals accumulation, componentwise. The material streams `sIn` and `sOut`
+are nonnegative `StreamFlow` rates, while net generation `gen` and
+accumulation `acc` are signed rates: net consumption is negative
+generation and draining is negative accumulation. -/
+def IsBalance {ι : Type*} [Fintype ι] (sIn sOut : StreamFlow ι)
+    (gen acc : ι → ℝ) : Prop :=
+  ∀ i, sIn.flow i - sOut.flow i + gen i = acc i
+
+/-- **Balance rescaling.** For a positive scale, the rescaled streams form
+a balance exactly when the original streams do. -/
+lemma balance_rescale_iff {ι : Type*} [Fintype ι] {α : ℝ} (hα : 0 < α)
+    (sIn sOut : StreamFlow ι) (gen acc : ι → ℝ) :
+    IsBalance (sIn.rescale hα.le) (sOut.rescale hα.le)
+        (fun i => α * gen i) (fun i => α * acc i) ↔
+      IsBalance sIn sOut gen acc := by
+  have hα0 : α ≠ 0 := ne_of_gt hα
+  simp only [IsBalance, rescale]
+  constructor
+  · intro h i
+    have hi := h i
+    have hfac : α * (sIn.flow i - sOut.flow i + gen i) = α * acc i := by
+      linear_combination hi
+    exact mul_left_cancel₀ hα0 hfac
+  · intro h i
+    have hi := h i
+    linear_combination α * hi
+
+/-- Mole fractions are invariant under a common positive rescaling of the
+flow vector (the algebraic core of composition invariance). -/
+lemma moleFraction_rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι)
+    {α : ℝ} (hα : α ≠ 0) :
+    Chemistry.Amounts.moleFraction (fun i => α * s.flow i) =
+      Chemistry.Amounts.moleFraction s.flow := by
+  funext i
+  simp only [Chemistry.Amounts.moleFraction, ← Finset.mul_sum]
+  rw [mul_div_mul_left _ _ hα]
+
+/-- **Composition invariance.** Under a positive rescaling and a positive
+total flow, the rescaled stream has the same composition as the original. -/
+lemma composition_rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι)
+    {α : ℝ} (hα : 0 < α) (hs : 0 < s.total) :
+    (s.rescale hα.le).composition = s.composition := by
+  have hs' : 0 < (s.rescale hα.le).total := by
+    rw [total_rescale]
+    exact mul_pos hα hs
+  rw [composition_eq_moleFraction _ hs', composition_eq_moleFraction _ hs]
+  congr 1
+  exact moleFraction_rescale s hα.ne'
 
 end StreamFlow
 

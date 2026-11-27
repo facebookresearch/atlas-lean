@@ -56,8 +56,11 @@ theorem multivariateGaussianPDFReal_pos (μ : EuclideanSpace ℝ n) {S : Matrix 
   have h2 : 0 < √S.det := Real.sqrt_pos.2 hS.det_pos
   positivity
 
-/-- The log-density: `log N(x | μ, S) = -(n / 2) log (2 π) - (1 / 2) log det S
-- (x - μ)ᵀ S⁻¹ (x - μ) / 2`. -/
+/-- **Log-density of the multivariate Gaussian.** Let $J$ be a finite set with $n$ elements, let
+$\mu, x \in \mathbb{R}^J$, let $S$ be a positive definite real $J \times J$ matrix, and write
+$\mathcal{N}(x \mid \mu, S)$ for the multivariate Gaussian density at $x$ with mean $\mu$ and
+covariance $S$. Then $\log \mathcal{N}(x \mid \mu, S) = -\frac{n}{2} \log (2\pi) -
+\frac{1}{2} \log \det S - \frac{1}{2} (x - \mu)^{\mathsf T} S^{-1} (x - \mu)$. -/
 theorem log_multivariateGaussianPDFReal (μ : EuclideanSpace ℝ n) {S : Matrix n n ℝ}
     (hS : S.PosDef) (x : EuclideanSpace ℝ n) :
     log (multivariateGaussianPDFReal μ S x) = -(Fintype.card n / 2) * log (2 * π) -
@@ -70,8 +73,14 @@ theorem log_multivariateGaussianPDFReal (μ : EuclideanSpace ℝ n) {S : Matrix 
     log_inv, log_inv, log_pow, log_sqrt h2π.le, log_sqrt hS.det_pos.le]
   ring
 
-/-- The weighted Gaussian log-likelihood in terms of the weighted scatter matrix `C(μ)`:
-`∑ w log N(x | μ, S) = -(W / 2) (n log (2 π) + log det S + tr (S⁻¹ C(μ)))`, `W = ∑ w`. -/
+/-- **The weighted Gaussian log-likelihood via the scatter matrix.** Let $I$ be a finite set and
+$J$ a finite set with $n$ elements, let $x_i \in \mathbb{R}^J$ ($i \in I$) be points with real
+weights $w_i$ whose sum $W = \sum_{i \in I} w_i$ is nonzero, let $\mu \in \mathbb{R}^J$, let $S$
+be a positive definite real $J \times J$ matrix, and let $C(\mu)$ be the weighted scatter matrix
+of the $x_i$ about $\mu$. Write $\mathcal{N}(x \mid \mu, S)$ for the multivariate Gaussian
+density at $x$ with mean $\mu$ and covariance $S$. Then
+$\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid \mu, S) = -\frac{W}{2} \big(n \log (2\pi) +
+\log \det S + \operatorname{tr}(S^{-1} C(\mu))\big)$. -/
 theorem sum_mul_log_multivariateGaussianPDFReal_eq {w : ι → ℝ} (hw : ∑ i, w i ≠ 0)
     (xs : ι → EuclideanSpace ℝ n) (μ : EuclideanSpace ℝ n) {S : Matrix n n ℝ} (hS : S.PosDef) :
     ∑ i, w i * log (multivariateGaussianPDFReal μ S (xs i)) =
@@ -86,8 +95,13 @@ theorem sum_mul_log_multivariateGaussianPDFReal_eq {w : ι → ℝ} (hw : ∑ i,
   simp only [this, Finset.sum_sub_distrib, ← Finset.sum_mul, ← Finset.sum_div, h]
   ring
 
-/-- **The mean MLE**: for any fixed positive definite covariance `S` and positive total weight,
-the weighted mean maximizes the weighted Gaussian log-likelihood over all means. -/
+/-- **The weighted mean is the Gaussian MLE of the mean.** Let $I$ and $J$ be finite sets, let
+$x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$ such that $\sum_i w_i > 0$,
+let $m$ be their weighted mean, and let $S$ be a positive definite real $J \times J$ matrix.
+Write $\mathcal{N}(x \mid \mu, S)$ for the multivariate Gaussian density at $x$ with mean $\mu$
+and covariance $S$. Then for every $\mu \in \mathbb{R}^J$,
+$\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid \mu, S) \le
+\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid m, S)$. -/
 theorem sum_mul_log_multivariateGaussianPDFReal_le_weightedMean {w : ι → ℝ}
     (hw : 0 < ∑ i, w i) (xs : ι → EuclideanSpace ℝ n) (μ : EuclideanSpace ℝ n)
     {S : Matrix n n ℝ} (hS : S.PosDef) :
@@ -110,10 +124,15 @@ theorem sum_mul_log_multivariateGaussianPDFReal_le_weightedMean {w : ι → ℝ}
   have h2 := mul_nonneg hw.le hq0
   nlinarith
 
-/-- **The weighted Gaussian MLE**: if the total weight is positive and the weighted sample
-covariance is positive definite, then the weighted mean and the weighted sample covariance
-maximize the weighted Gaussian log-likelihood `∑ i, wᵢ log N(xᵢ | μ, S)` over all means `μ` and
-positive definite covariances `S`. -/
+/-- **The weighted Gaussian MLE when the sample covariance is positive definite.** Let $I$ and
+$J$ be finite sets, let $x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$ such
+that $\sum_i w_i > 0$, let $m$ be their weighted mean, and let $C$ be their weighted scatter
+matrix about $m$ (the weighted sample covariance); assume $C$ is positive definite. Write
+$\mathcal{N}(x \mid \mu, S)$ for the multivariate Gaussian density at $x$ with mean $\mu$ and
+covariance $S$. Then for every $\mu \in \mathbb{R}^J$ and every positive definite real
+$J \times J$ matrix $S$,
+$\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid \mu, S) \le
+\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid m, C)$. -/
 theorem sum_mul_log_multivariateGaussianPDFReal_le_of_posDef {w : ι → ℝ} (hW : 0 < ∑ i, w i)
     {xs : ι → EuclideanSpace ℝ n} (hC : (weightedScatter w xs (weightedMean w xs)).PosDef)
     (μ : EuclideanSpace ℝ n) {S : Matrix n n ℝ} (hS : S.PosDef) :
@@ -144,10 +163,17 @@ theorem sum_mul_log_multivariateGaussianPDFReal_le_of_posDef {w : ι → ℝ} (h
   have h2 := mul_nonneg hW.le hq0
   nlinarith
 
-/-- **The weighted Gaussian MLE** on points in general position: for positive weights and points
-not all in an affine hyperplane, the weighted mean and the weighted sample covariance maximize the
-weighted Gaussian log-likelihood `∑ i, wᵢ log N(xᵢ | μ, S)` over all means `μ` and positive
-definite covariances `S`. -/
+/-- **The weighted Gaussian MLE for points in general position.** Let $I$ be a nonempty finite
+set and $J$ a finite set, and let $x_i \in \mathbb{R}^J$ ($i \in I$) be points with positive
+weights $w_i > 0$ that do not all lie in an affine hyperplane: for every nonzero
+$v \in \mathbb{R}^J$ there are $i, j \in I$ with
+$\langle v, x_i \rangle \ne \langle v, x_j \rangle$. Let $m$ be their weighted mean and $C$ their
+weighted scatter matrix about $m$ (the weighted sample covariance), and write
+$\mathcal{N}(x \mid \mu, S)$ for the multivariate Gaussian density at $x$ with mean $\mu$ and
+covariance $S$. Then for every $\mu \in \mathbb{R}^J$ and every positive definite real
+$J \times J$ matrix $S$,
+$\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid \mu, S) \le
+\sum_{i \in I} w_i \log \mathcal{N}(x_i \mid m, C)$. -/
 theorem sum_mul_log_multivariateGaussianPDFReal_le {w : ι → ℝ} (hw : ∀ i, 0 < w i)
     {xs : ι → EuclideanSpace ℝ n}
     (hspan : ∀ v : EuclideanSpace ℝ n, v ≠ 0 → ∃ i j, ⟪v, xs i⟫ ≠ ⟪v, xs j⟫) [Nonempty ι]

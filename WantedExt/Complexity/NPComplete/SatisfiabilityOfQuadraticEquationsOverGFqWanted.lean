@@ -20,7 +20,7 @@ satisfied simultaneously is NP-complete).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Defs

@@ -269,31 +269,15 @@ example : BitVec.findIrreducibleModulus 0 = none := by decide
 
 example : (0#0).passesInverseTest = true := by decide
 
-private theorem zero0ToPolynomial : (0#0).toPolynomial = 0 := by
-  ext i
-  simp [BitVec.coeff_toPolynomial]
-
 example : (0#0).monicModulus = 1 := by
-  rw [BitVec.monicModulus, zero0ToPolynomial]
+  rw [BitVec.monicModulus, BitVec.toPolynomial_zero]
   simp
 
 example : ¬Irreducible (0#0).monicModulus := by
   rw [show (0#0).monicModulus = 1 by
-    rw [BitVec.monicModulus, zero0ToPolynomial]
+    rw [BitVec.monicModulus, BitVec.toPolynomial_zero]
     simp]
   exact not_irreducible_one
-
-private theorem one3ToPolynomial : (1#3).toPolynomial = 1 := by
-  ext i
-  rw [BitVec.coeff_toPolynomial, Polynomial.coeff_one]
-  by_cases h0 : i = 0
-  · subst i
-    decide
-  by_cases hi : 3 ≤ i
-  · rw [BitVec.getLsbD_of_ge _ _ hi]
-    simp [h0]
-  have hi' : i = 1 ∨ i = 2 := by omega
-  rcases hi' with h | h <;> subst i <;> decide
 
 private theorem two3ToPolynomial : (2#3).toPolynomial = Polynomial.X := by
   ext i
@@ -315,7 +299,8 @@ private theorem two3ToPolynomial : (2#3).toPolynomial = Polynomial.X := by
 private theorem three3ToPolynomial :
     (3#3).toPolynomial = Polynomial.X + 1 := by
   rw [show (3#3) = (2#3 ^^^ 1#3) by decide,
-    BitVec.toPolynomial_xor, two3ToPolynomial, one3ToPolynomial]
+    BitVec.toPolynomial_xor, two3ToPolynomial,
+    BitVec.toPolynomial_one (by decide : 0 < 3)]
 
 example : (3#3).toBoolListLE = [true, true, false] := by decide
 
@@ -381,12 +366,7 @@ example : ∃ y : BitVec 3, (3#3).mulMod (2#3) y = 1#3 :=
 
 private theorem adjoinRootEquivOne3 :
     (3#3).adjoinRootEquiv (1#3) = 1 := by
-  rw [BitVec.adjoinRootEquiv_apply]
-  have : (1#3).toPolynomial = 1 := by
-    ext i
-    rw [BitVec.coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
-    simp
-  rw [this, map_one]
+  rw [BitVec.adjoinRootEquiv_apply, BitVec.toPolynomial_one (by decide : 0 < 3), map_one]
 
 example : ∃ z : AdjoinRoot (3#3).monicModulus,
     (3#3).adjoinRootEquiv (2#3) * z = 1 := by
@@ -403,11 +383,7 @@ example : ∃ z : AdjoinRoot (3#3).monicModulus,
 example : (3#3).adjoinRootEquiv (2#3) ≠ 0 := by
   intro h
   have hzero : (3#3).adjoinRootEquiv (0#3) = 0 := by
-    rw [BitVec.adjoinRootEquiv_apply]
-    have : (0#3).toPolynomial = 0 := by
-      ext i
-      simp [BitVec.coeff_toPolynomial]
-    rw [this, map_zero]
+    rw [BitVec.adjoinRootEquiv_apply, BitVec.toPolynomial_zero, map_zero]
   have heq : (3#3).adjoinRootEquiv (2#3) =
       (3#3).adjoinRootEquiv (0#3) := h.trans hzero.symm
   have : (2#3) = 0#3 := (3#3).adjoinRootEquiv.injective heq

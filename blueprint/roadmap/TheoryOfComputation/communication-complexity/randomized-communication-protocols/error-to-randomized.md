@@ -1,0 +1,6 @@
+# The two notions of error agree
+
+Let $X$ and $Y$ be sets (the inputs of Alice and of Bob). A (deterministic) protocol is a finite binary tree whose leaves carry output bits and whose internal nodes are owned by Alice, labelled by a map $X \to \{0, 1\}$, or by Bob, labelled by a map $Y \to \{0, 1\}$; on inputs $(x, y)$ the run follows the announced bits from the root to a leaf, whose bit is the output, and the depth is the maximal number of bits announced along a root-to-leaf path. Let $R$ be a nonempty finite set and $(p_r)_{r \in R}$ a public-coin protocol. For nonempty $R$, its error probability for $f : X \times Y \to \{0, 1\}$ at $(x, y)$ is the fraction $|\{r \in R : p_r \text{ outputs a value other than } f(x, y) \text{ on } (x, y)\}| / |R|$. A randomized protocol is a finitely supported probability distribution $\pi$ on protocols (weights $\pi(p) \ge 0$, finitely many nonzero, summing to $1$); its cost is the maximal depth of a protocol in its support, and its error for $f$ at $(x, y)$ is $\sum_p \pi(p)\, e_p(x, y)$, where $e_p(x, y)$ is $0$ if $p$ outputs $f(x, y)$ on $(x, y)$ and $1$ otherwise. The randomized
+protocol defined by $(p_r)$ is the image of the uniform distribution on $R$ under $r \mapsto p_r$. For every
+$f : X \times Y \to \{0, 1\}$ and $(x, y)$, its error at $(x, y)$ equals the error probability of $(p_r)$ at
+$(x, y)$.

@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Ring.Int.Parity
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Iterate
+public import MathlibExt.NumberTheory.Digits.NegativeBaseDigitSquareCongruence
+public import MathlibExt.NumberTheory.Digits.NegativeBaseHappyNumbers
 
 /-!
 # Negative base happy numbers
@@ -31,33 +33,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Fuelled digit-square sum in base `b`: peel the least digit `a % b ∈ [0, |b|)` and continue
-with `(a - a % b) / b`, stopping at `0` or when the fuel runs out.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def negBaseSqDigitSumAux (b : ℤ) : ℕ → ℤ → ℤ
-  | 0, _ => 0
-  | fuel + 1, a =>
-      if a = 0 then 0 else (a % b) ^ 2 + negBaseSqDigitSumAux b fuel ((a - a % b) / b)
-
-/-- The function `S_{2,b}`: the sum of the squares of the base-`b` digits of `a`, for `b ≤ -2`.
-The fuel `2|a| + 2` suffices: the quantity `2a` (for `a ≥ 0`), `2|a| + 1` (for `a < 0`) strictly
-decreases at each digit step.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def negBaseSqDigitSum (b a : ℤ) : ℤ :=
-  negBaseSqDigitSumAux b (2 * a.natAbs + 2) a
-
-/-- `S_{2,b}(0) = 0`.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-theorem negBaseSqDigitSum_zero (b : ℤ) : negBaseSqDigitSum b 0 = 0 := by
-  simp [negBaseSqDigitSum, negBaseSqDigitSumAux]
-
-/-- A single nonzero digit `0 < d < |b|` has `S_{2,b}(d) = d²`.
+/-- **The digit-square sum of a single digit.** Let $b$ and $d$ be integers with $0 < d < -b$, so
+that $b \le -2$ and $d$ is a nonzero base-$b$ digit. Then the base-$b$ digit-square sum $S_{2,b}$
+satisfies $S_{2,b}(d) = d^2$.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
@@ -71,8 +49,11 @@ theorem negBaseSqDigitSum_of_digit {b d : ℤ} (hd0 : 0 < d) (hd : d < -b) :
   simp only [hd0.ne', ↓reduceIte, hmod, sub_self, Int.zero_ediv]
   cases 2 * d.natAbs + 1 <;> simp [negBaseSqDigitSumAux]
 
-/-- Sample values: `-1 = 1·(-10) + 9` and `10 = 1·100 + 9·(-10)` give `S_{2,-10}(-1) =
-S_{2,-10}(10) = 82`, and `5 = 16 - 12 + 1` gives `S_{2,-4}(5) = 11`.
+/-- **Sample values of the negative-base digit-square sum.** Write $S_{2,b}$ for the base-$b$
+digit-square sum, which sends an integer to the sum of the squares of its base-$b$ digits. Then
+$S_{2,-10}(-1) = 82$, $S_{2,-10}(10) = 82$ and $S_{2,-4}(5) = 11$. Indeed $-1 = 1 \cdot (-10) + 9$
+and $10 = 1 \cdot (-10)^2 + 9 \cdot (-10) + 0$ have base-$(-10)$ digits $1, 9$ and $1, 9, 0$, and
+$5 = 1 \cdot (-4)^2 + 3 \cdot (-4) + 1$ has base-$(-4)$ digits $1, 3, 1$ (most significant first).
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
@@ -81,14 +62,18 @@ theorem negBaseSqDigitSum_samples :
       negBaseSqDigitSum (-4) 5 = 11 := by
   decide
 
-/-- An integer `a` is `b`-happy if `S_{2,b}^k(a) = 1` for some `k ≥ 1`.
+/-- **Happy integers in a negative base.** Let $b$ be an integer and let $S_{2,b}$ be the
+base-$b$ digit-square sum, which for $b \le -2$ sends an integer to the sum of the squares of its
+base-$b$ digits. An integer $a$ is $b$-happy if $S_{2,b}^k(a) = 1$ for some $k \ge 1$, where
+$S_{2,b}^k$ denotes the $k$-th iterate of $S_{2,b}$.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
 def IsNegBaseHappy (b a : ℤ) : Prop :=
   ∃ k : ℕ, 0 < k ∧ (negBaseSqDigitSum b)^[k] a = 1
 
-/-- `1` is `b`-happy for every `b ≤ -2`.
+/-- **$1$ is happy in every negative base.** For every integer $b \le -2$, the integer $1$ is
+$b$-happy.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
@@ -96,31 +81,19 @@ theorem isNegBaseHappy_one {b : ℤ} (hb : b ≤ -2) : IsNegBaseHappy b 1 :=
   ⟨1, one_pos, by
     simpa using negBaseSqDigitSum_of_digit (b := b) (d := 1) one_pos (by omega)⟩
 
-/-- `U_{2,b}`: the positive integers `u` with `S_{2,b}^m(u) = u` for some `m ≥ 1`.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def negBaseSqDigitCycles (b : ℤ) : Set ℤ :=
-  {u | 0 < u ∧ ∃ m : ℕ, 0 < m ∧ (negBaseSqDigitSum b)^[m] u = u}
-
-/-- `1 ∈ U_{2,b}` for every `b ≤ -2`.
+/-- **One lies on a cycle of the negative-base digit-square map.** For every integer $b \le -2$,
+$1 \in U_{2,b}$, where $U_{2,b}$ is the set of positive integers lying on a cycle of the base-$b$
+digit-square sum $S_{2,b}$.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
 theorem one_mem_negBaseSqDigitCycles {b : ℤ} (hb : b ≤ -2) : (1 : ℤ) ∈ negBaseSqDigitCycles b :=
   ⟨one_pos, isNegBaseHappy_one hb⟩
 
-/-- A finite set `T` is `(2, b)`-good if for each `u ∈ U_{2,b}` there exist `n, k ≥ 1` with
-`S_{2,b}^k(t + n) = u` for every `t ∈ T`.
+/-- **Happy numbers in base $-2$.** There is an integer $n$ such that $n + 3i$ is $(-2)$-happy for
+every natural number $i$, and an integer $a$ is $(-2)$-happy if and only if $a \equiv 1 \pmod 3$.
 
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def IsNegBaseGood (b : ℤ) (T : Finset ℤ) : Prop :=
-  ∀ u ∈ negBaseSqDigitCycles b, ∃ n : ℤ, 0 < n ∧ ∃ k : ℕ, 0 < k ∧
-    ∀ t ∈ T, (negBaseSqDigitSum b)^[k] (t + n) = u
-
-/-- Grundman–Harris, part (1): there is an infinite arithmetic progression with difference `3` of
-`-2`-happy numbers; indeed `a ∈ ℤ` is `-2`-happy iff `a ≡ 1 (mod 3)`.
+This is part (1) of the Grundman–Harris theorem.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.1. -/
@@ -128,8 +101,10 @@ public theorem_wanted isNegBaseHappy_neg_two_iff :
     (∃ n : ℤ, ∀ i : ℕ, IsNegBaseHappy (-2) (n + 3 * i)) ∧
       ∀ a : ℤ, IsNegBaseHappy (-2) a ↔ a ≡ 1 [ZMOD 3]
 
-/-- Grundman–Harris, part (2): there is an infinite arithmetic progression with difference `2` of
-`-3`-happy numbers; indeed `a ∈ ℤ` is `-3`-happy iff `a ≡ 1 (mod 2)`.
+/-- **Happy numbers in base $-3$.** There is an integer $n$ such that $n + 2i$ is $(-3)$-happy for
+every natural number $i$, and an integer $a$ is $(-3)$-happy if and only if $a \equiv 1 \pmod 2$.
+
+This is part (2) of the Grundman–Harris theorem.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.1. -/
@@ -137,8 +112,11 @@ public theorem_wanted isNegBaseHappy_neg_three_iff :
     (∃ n : ℤ, ∀ i : ℕ, IsNegBaseHappy (-3) (n + 2 * i)) ∧
       ∀ a : ℤ, IsNegBaseHappy (-3) a ↔ a ≡ 1 [ZMOD 2]
 
-/-- Grundman–Harris, part (3): for `b ∈ {-4, -6, -8, -10}` there are arbitrarily long finite runs
-of consecutive `b`-happy numbers.
+/-- **Arbitrarily long runs of consecutive happy numbers in bases $-4$, $-6$, $-8$, $-10$.** Let
+$b \in \{-4, -6, -8, -10\}$. For every natural number $N$ there is an integer $n$ such that
+$n + i$ is $b$-happy for every $0 \le i < N$.
+
+This is part (3) of the Grundman–Harris theorem.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.1. -/
@@ -146,8 +124,12 @@ public theorem_wanted isNegBaseHappy_consecutive_runs_small (b : ℤ)
     (hb : b = -4 ∨ b = -6 ∨ b = -8 ∨ b = -10) (N : ℕ) :
     ∃ n : ℤ, ∀ i < N, IsNegBaseHappy b (n + i)
 
-/-- Grundman–Harris, part (4): for odd `b ≤ -3` there are arbitrarily long finite arithmetic
-progressions with difference `2` of `b`-happy numbers.
+/-- **Arithmetic progressions of happy numbers in odd negative bases.** Let $b \le -3$ be an odd
+integer. For every natural number $N$ there is an integer $n$ such that $n + 2i$ is $b$-happy for
+every natural number $i < N$. Thus there are arbitrarily long finite arithmetic progressions with
+common difference $2$ of $b$-happy integers.
+
+This is part (4) of the theorem of Grundman and Harris.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.1. -/
@@ -155,7 +137,9 @@ public theorem_wanted isNegBaseHappy_two_consecutive_runs_odd (b : ℤ) (hb : b 
     (hodd : Odd b) (N : ℕ) :
     ∃ n : ℤ, ∀ i < N, IsNegBaseHappy b (n + 2 * i)
 
-/-- For even `b ≤ -4` there are arbitrarily long finite runs of consecutive `b`-happy numbers.
+/-- **Arbitrarily long runs of consecutive happy numbers in even bases at most $-4$.** Let
+$b \le -4$ be an even integer. For every natural number $N$ there is an integer $n$ such that
+$n + i$ is $b$-happy for every $0 \le i < N$.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.2. -/
@@ -163,40 +147,8 @@ public theorem_wanted isNegBaseHappy_consecutive_runs_even (b : ℤ) (hb : b ≤
     (N : ℕ) :
     ∃ n : ℤ, ∀ i < N, IsNegBaseHappy b (n + i)
 
-/-- For `b ≤ -2`, a finite set `T` of positive integers and a composition `F` of a finite sequence
-of the maps `S_{2,b}` and `I(t) = t + 1` (the list `ops`, `true` for `S_{2,b}`), if `F(T)` is
-`(2, b)`-good then `T` is `(2, b)`-good.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.1. -/
-public theorem_wanted isNegBaseGood_of_image_comp (b : ℤ) (hb : b ≤ -2) (T : Finset ℤ)
-    (hT : ∀ t ∈ T, 0 < t) (ops : List Bool)
-    (hgood : IsNegBaseGood b (T.image
-      ((ops.map fun op => if op then negBaseSqDigitSum b else fun t => t + 1).foldr (· ∘ ·) id))) :
-    IsNegBaseGood b T
-
-/-- For `b ≤ -7` and each finite set `A` of positive integers there is `k ≥ 1` with
-`S_{2,b}^k(a) < 2b²` for every `a ∈ A`.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.2. -/
-public theorem_wanted exists_iterate_negBaseSqDigitSum_lt (b : ℤ) (hb : b ≤ -7) (A : Finset ℤ)
-    (hA : ∀ a ∈ A, 0 < a) :
-    ∃ k : ℕ, 0 < k ∧ ∀ a ∈ A, (negBaseSqDigitSum b)^[k] a < 2 * b ^ 2
-
-/-- For even `b ≤ -12` and `0 < v < 2b²` there are `0 ≤ w < v` and `0 ≤ c ≤ |b| - 2` with
-`S_{2,b}((|b| - 1) b + v - w - 1) - S_{2,b}((|b| - 1) b² + |b| - 1 - w) + 5 + 2c ≡ 0
-(mod |b| + 1)`.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 3.1. -/
-public theorem_wanted exists_negBaseSqDigitSum_congr (b : ℤ) (hb : b ≤ -12) (heven : Even b)
-    (v : ℤ) (hv0 : 0 < v) (hv : v < 2 * b ^ 2) :
-    ∃ w c : ℤ, 0 ≤ w ∧ w < v ∧ 0 ≤ c ∧ c ≤ |b| - 2 ∧
-      negBaseSqDigitSum b ((|b| - 1) * b + v - w - 1) -
-          negBaseSqDigitSum b ((|b| - 1) * b ^ 2 + |b| - 1 - w) + 5 + 2 * c ≡ 0 [ZMOD |b| + 1]
-
-/-- For even `b ≤ -4`, every finite set of positive integers is `(2, b)`-good.
+/-- **Even bases at most $-4$ make every finite set of positive integers good.** Let $b \le -4$
+be an even integer. Then every finite set of positive integers is $(2, b)$-good.
 
 Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
 Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 3.2. -/

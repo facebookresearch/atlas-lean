@@ -6,7 +6,7 @@ $\sigma(j) < \sigma(i)$. It is $0$ for the identity and $n(n-1)/2$ for the rever
 
 ## Background
 
-- Insertion sort: straight insertion moves each element left past exactly
+- [Insertion sort](../../../../ComputerScience/sorting-and-searching/insertion-sort/README.md): straight insertion moves each element left past exactly
   the earlier elements that form an inversion with it, so $\mathrm{inv}(\sigma)$ measures its
   work.
 

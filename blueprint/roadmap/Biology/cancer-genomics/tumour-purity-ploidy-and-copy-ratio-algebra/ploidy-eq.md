@@ -1,0 +1,7 @@
+# Ploidy from copy-ratio slope and intercept
+
+Let $0 < \alpha \le 1$ and $\tau > 0$. Then
+
+$$\tau = \frac{1 - \delta}{b},$$
+
+where $b = b(\alpha, \tau)$ is the [slope](slope.md) and $\delta = \delta(\alpha, \tau)$ the [intercept](intercept.md).

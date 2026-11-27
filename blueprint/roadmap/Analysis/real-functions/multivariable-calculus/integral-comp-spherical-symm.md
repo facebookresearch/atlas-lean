@@ -13,5 +13,7 @@ change of variables.
 
 ## Sources
 
-- W. Rudin, *Real and Complex Analysis*, 3rd ed., Ch. 8, Exercise 4 (spherical coordinates in $\mathbb{R}^3$).
+- W. Rudin, *Real and Complex Analysis*, 3rd ed., Ch. 8, [Exercise 6, pp. 175–176](https://www.cs.mcgill.ca/~akroit/math/analysis/Rudin%20Real%20and%20Complex%20Analysis.pdf#page=190)
+  (related radial integration formula for nonnegative Borel functions; see dimensions two
+  and three).
 - https://en.wikipedia.org/wiki/Spherical_coordinate_system#Integration_and_differentiation_in_spherical_coordinates

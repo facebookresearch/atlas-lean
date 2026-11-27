@@ -1,0 +1,3 @@
+# Free box measure of a box connection event is the two-point function
+
+Let $d, n \in \mathbb{N}$, $0 < p < 1$, $q > 0$, and $x, y \in \Lambda_n = \{-n, \dots, n\}^d$. Then the [free box measure](../finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) $\phi^0_{\Lambda_n,p,q}$ of the [box connection event](box-conn-event.md) of $x, y$ (the configurations of $\mathbb{Z}^d$ in which $x$ and $y$ are joined by a path of open edges of $\Lambda_n$) equals the [two-point function](../../random-cluster-measures-on-finite-graphs/two-point-fun.md) $\phi_{\Lambda_n,p,q}(x \leftrightarrow y)$ of the random-cluster measure on $\Lambda_n$.

@@ -262,8 +262,22 @@ private lemma submersionComp_writtenInCharts [I.Boundaryless] [J.Boundaryless]
   rw [I.right_inv (by simp [I.range_eq_univ])]
   simp
 
-/-- The projection normal form of a submersion can use any maximal-atlas codomain chart
-containing the image point, after changing and shrinking its domain chart. -/
+/-- **Changing the target chart of a submersion at a point.** Let $\mathbb{K}$ be a nontrivially
+normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$ and $N$ be charted spaces
+modelled, through models with corners, on normed spaces $E$ and $E''$ over $\mathbb{K}$, both
+models without boundary. Let $f : M \to N$ be a $C^n$ submersion at $x \in M$ with complement $F$,
+and let $e : E \to E'' \times F$ be the continuous linear equivalence chosen for it. Then for every
+chart $\psi$ of $N$ in the $C^n$ maximal atlas with $f(x)$ in its domain there is a chart
+$\varphi$ of $M$ in the $C^n$ maximal atlas with $x$ in its domain, such that $f$ maps the domain
+of $\varphi$ into the domain of $\psi$ and
+$\hat\psi \circ f \circ \hat\varphi^{-1} = \mathrm{pr}_1 \circ e$ on the image of $\hat\varphi$,
+where $\hat\varphi$ and $\hat\psi$ denote the charts followed by the models with corners.
+
+Here $f$ is a $C^n$ submersion at $x$ with complement $F$ (a normed space over $\mathbb{K}$) when
+there are charts of $M$ around $x$ and of $N$ around $f(x)$ in the $C^n$ maximal atlases, the
+first mapped by $f$ into the second, in which $f$ reads $\mathrm{pr}_1 \circ e$ on the image of
+the first, for some continuous linear equivalence $e : E \to E'' \times F$; a witness of this
+fixes one such $e$. -/
 theorem _root_.Manifold.IsSubmersionAtOfComplement.exists_domChart_of_codChart
     [I.Boundaryless] [J.Boundaryless]
     {F : Type u} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
@@ -286,8 +300,20 @@ theorem _root_.Manifold.IsSubmersionAtOfComplement.exists_domChart_of_codChart
 
 set_option maxHeartbeats 800000 in
 -- Elaborating the composed chart normal form needs more than the default heartbeat budget.
-/-- The composition of two submersions at a point, with chosen complements, is a submersion
-whose complement is the product of the two chosen complements. -/
+/-- **Composition of submersions at a point with chosen complements.** Let $\mathbb{K}$ be a
+nontrivially normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$
+be charted spaces modelled, through models with corners, on normed spaces $E$, $E''$, $E'''$ over
+$\mathbb{K}$, where the models of $M$ and $N$ have no boundary. Let $F_1$ and $F_2$ be normed
+spaces over $\mathbb{K}$. If $f : M \to N$ is a $C^n$ submersion at $x \in M$ with complement
+$F_1$ and $g : N \to N'$ is a $C^n$ submersion at $f(x)$ with complement $F_2$, then
+$g \circ f$ is a $C^n$ submersion at $x$ with complement $F_2 \times F_1$.
+
+Here $f$ is a $C^n$ submersion at $x$ with complement $F$ when there are charts $\varphi$ of $M$
+around $x$ and $\psi$ of $N$ around $f(x)$ in the $C^n$ maximal atlases, with $f$ mapping the
+domain of $\varphi$ into the domain of $\psi$, and a continuous linear equivalence
+$e : E \to E'' \times F$ such that
+$\hat\psi \circ f \circ \hat\varphi^{-1} = \mathrm{pr}_1 \circ e$ on the image of $\hat\varphi$,
+where $\hat\varphi$ and $\hat\psi$ denote the charts followed by the models with corners. -/
 theorem _root_.Manifold.IsSubmersionAtOfComplement.comp
     [I.Boundaryless] [J.Boundaryless]
     {F₁ F₂ : Type u}
@@ -322,7 +348,19 @@ theorem _root_.Manifold.IsSubmersionAtOfComplement.comp
       (hg.equiv (hf.equiv z).1).1
     exact hgw
 
-/-- The composition of two submersions at a point is a submersion at that point. -/
+/-- **Submersions at a point are closed under composition.** Let $\mathbb{K}$ be a nontrivially
+normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be charted
+spaces modelled, through models with corners, on normed spaces $E$, $E''$, $E'''$ over
+$\mathbb{K}$, where the models of $M$ and $N$ have no boundary. If $f : M \to N$ is a $C^n$
+submersion at $x \in M$ and $g : N \to N'$ is a $C^n$ submersion at $f(x)$, then $g \circ f$ is a
+$C^n$ submersion at $x$.
+
+Here $f$ is a $C^n$ submersion at $x$ when, for some normed space $F$ over $\mathbb{K}$, there are
+charts $\varphi$ of $M$ around $x$ and $\psi$ of $N$ around $f(x)$ in the $C^n$ maximal atlases,
+with $f$ mapping the domain of $\varphi$ into the domain of $\psi$, and a continuous linear
+equivalence $e : E \to E'' \times F$ such that
+$\hat\psi \circ f \circ \hat\varphi^{-1} = \mathrm{pr}_1 \circ e$ on the image of $\hat\varphi$,
+where $\hat\varphi$ and $\hat\psi$ denote the charts followed by the models with corners. -/
 theorem _root_.Manifold.IsSubmersionAt.comp
     [I.Boundaryless] [J.Boundaryless]
     {f : M → N} {g : N → N'} {x : M}
@@ -331,8 +369,20 @@ theorem _root_.Manifold.IsSubmersionAt.comp
   exact (hg.isSubmersionAtOfComplement_complement.comp
     hf.isSubmersionAtOfComplement_complement).isSubmersionAt
 
-/-- The composition of two submersions with chosen global complements is a submersion with the
-product complement. -/
+/-- **Composition of submersions with chosen complements.** Let $\mathbb{K}$ be a nontrivially
+normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be charted
+spaces modelled, through models with corners, on normed spaces $E$, $E''$, $E'''$ over
+$\mathbb{K}$, where the models of $M$ and $N$ have no boundary. Let $F_1$ and $F_2$ be normed
+spaces over $\mathbb{K}$. If $f : M \to N$ is a $C^n$ submersion with complement $F_1$ and
+$g : N \to N'$ is a $C^n$ submersion with complement $F_2$, then $g \circ f$ is a $C^n$
+submersion with complement $F_2 \times F_1$.
+
+Here $f$ is a $C^n$ submersion with complement $F$ when at every $x \in M$ there are charts
+$\varphi$ of $M$ around $x$ and $\psi$ of $N$ around $f(x)$ in the $C^n$ maximal atlases, with
+$f$ mapping the domain of $\varphi$ into the domain of $\psi$, and a continuous linear
+equivalence $e : E \to E'' \times F$ such that
+$\hat\psi \circ f \circ \hat\varphi^{-1} = \mathrm{pr}_1 \circ e$ on the image of $\hat\varphi$,
+where $\hat\varphi$ and $\hat\psi$ denote the charts followed by the models with corners. -/
 theorem _root_.Manifold.IsSubmersionOfComplement.comp
     [I.Boundaryless] [J.Boundaryless]
     {F₁ F₂ : Type u}
@@ -344,7 +394,18 @@ theorem _root_.Manifold.IsSubmersionOfComplement.comp
     IsSubmersionOfComplement (F₂ × F₁) I J' n (g ∘ f) :=
   fun x ↦ (hg (f x)).comp (hf x)
 
-/-- The composition of two submersions is a submersion. -/
+/-- **Submersions are closed under composition.** Let $\mathbb{K}$ be a nontrivially normed
+field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be charted spaces
+modelled, through models with corners, on normed spaces $E$, $E''$, $E'''$ over $\mathbb{K}$,
+where the models of $M$ and $N$ have no boundary. If $f : M \to N$ and $g : N \to N'$ are $C^n$
+submersions, then so is $g \circ f$.
+
+Here $f$ is a $C^n$ submersion when there is one normed space $F$ over $\mathbb{K}$ such that at
+every $x \in M$ there are charts $\varphi$ of $M$ around $x$ and $\psi$ of $N$ around $f(x)$ in
+the $C^n$ maximal atlases, with $f$ mapping the domain of $\varphi$ into the domain of $\psi$, and
+a continuous linear equivalence $e : E \to E'' \times F$ such that
+$\hat\psi \circ f \circ \hat\varphi^{-1} = \mathrm{pr}_1 \circ e$ on the image of $\hat\varphi$,
+where $\hat\varphi$ and $\hat\psi$ denote the charts followed by the models with corners. -/
 theorem _root_.Manifold.IsSubmersion.comp
     [I.Boundaryless] [J.Boundaryless]
     {f : M → N} {g : N → N'}
@@ -354,14 +415,23 @@ theorem _root_.Manifold.IsSubmersion.comp
     hf.isSubmersionOfComplement_complement).isSubmersion
 
 /--
-Composition of submersions at a point between Banach manifolds without boundary. Sources:
-Mathlib `Mathlib/Geometry/Manifold/Submersion.lean` TODO (`IsSubmersionAt.comp`);
-J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
+**Composition of submersions at a point.** Let $\mathbb{K}$ be a nontrivially normed field, let
+$n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be $C^n$ manifolds without
+boundary over $\mathbb{K}$ modelled on Banach spaces. If $f : M \to N$ is a $C^n$ submersion at
+$x \in M$ and $g : N \to N'$ is a $C^n$ submersion at $f(x)$, then $g \circ f$ is a $C^n$
+submersion at $x$. Here $f$ is a $C^n$ submersion at $x$ when there are charts of the $C^n$
+maximal atlases around $x$ and $f(x)$, the first mapped by $f$ into the second, in which $f$ reads
+$(u, v) \mapsto u$ after a continuous linear identification of the model space of $M$ with the
+product of the model space of $N$ and some normed space.
 
 Proves `Wanted` entry `submersionAt_comp`.
 
 Proof: Replace the first submersion's target chart by the second submersion's source chart, then
 compose the two projection normal forms and use the product of their complements.
+
+Sources:
+Mathlib `Mathlib/Geometry/Manifold/Submersion.lean` TODO (`IsSubmersionAt.comp`);
+J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
 -/
 theorem submersionAt_comp
     [CompleteSpace E] [CompleteSpace E''] [CompleteSpace E''']
@@ -373,14 +443,23 @@ theorem submersionAt_comp
   exact hg.comp hf
 
 /--
-Composition of submersions between Banach manifolds without boundary. Sources:
-Mathlib `Mathlib/Geometry/Manifold/Submersion.lean` TODO (`IsSubmersion.comp`);
-J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
+**Composition of submersions.** Let $\mathbb{K}$ be a nontrivially normed field, let
+$n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be $C^n$ manifolds without
+boundary over $\mathbb{K}$ modelled on Banach spaces. If $f : M \to N$ and $g : N \to N'$ are
+$C^n$ submersions, then so is $g \circ f$. Here $f$ is a $C^n$ submersion when there is one normed
+space $F$ such that at every $x \in M$ there are charts of the $C^n$ maximal atlases around $x$ and
+$f(x)$, the first mapped by $f$ into the second, in which $f$ reads $(u, v) \mapsto u$ after a
+continuous linear identification of the model space of $M$ with the product of the model space of
+$N$ and $F$.
 
 Proves `Wanted` entry `submersion_comp`.
 
 Proof: Apply the complement-level pointwise composition theorem using the two fixed global
 complements, then package their product as the complement of the composite.
+
+Sources:
+Mathlib `Mathlib/Geometry/Manifold/Submersion.lean` TODO (`IsSubmersion.comp`);
+J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
 -/
 theorem submersion_comp
     [CompleteSpace E] [CompleteSpace E''] [CompleteSpace E''']

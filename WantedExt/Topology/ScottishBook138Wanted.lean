@@ -22,30 +22,31 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Topology.ScottishBook138Wanted
 
-/-- A compact space is an absolute retract when it is a retract in every
-separable metrizable space containing it: for every embedding into such a
-space there is a continuous retraction back onto the embedded copy. -/
+/-- **Absolute retract.** A topological space $K$ is an absolute retract when $K$ is compact
+and, for every separable metrizable space $X$ and every topological embedding
+$e \colon K \to X$, there is a continuous map $r \colon X \to K$ with $r(e(k)) = k$ for all
+$k \in K$. -/
 def IsAbsoluteRetract (K : Type*) [TopologicalSpace K] : Prop :=
   IsCompact (Set.univ : Set K) ∧
     ∀ (X : Type*) [TopologicalSpace X] [TopologicalSpace.MetrizableSpace X]
       [TopologicalSpace.SeparableSpace X] (e : K → X), Topology.IsEmbedding e →
       ∃ r : X → K, Continuous r ∧ Function.LeftInverse r e
 
-/-- A set is convex in the sense of Wilson when, for every `x, y` in it and
-every `t ∈ [0, 1]`, there is exactly one `z` in it with
-`dist x z = t * dist x y` and `dist z y = (1 - t) * dist x y`. -/
+/-- **Wilson convexity.** A subset $K$ of a pseudometric space $X$ with distance $d$ is convex in
+the sense of Wilson when for all $x, y \in K$ and every real $t$ with $0 \le t \le 1$ there is
+exactly one $z \in K$ with $d(x, z) = t \, d(x, y)$ and $d(z, y) = (1 - t) \, d(x, y)$. -/
 def IsWilsonConvex (X : Type*) [PseudoMetricSpace X] (K : Set X) : Prop :=
   ∀ x ∈ K, ∀ y ∈ K, ∀ t : ℝ, 0 ≤ t → t ≤ 1 →
     ∃! z, z ∈ K ∧ dist x z = t * dist x y ∧ dist z y = (1 - t) * dist x y
 
 /--
-Both parts of Eilenberg's theorem are true. (a) Every nonempty compact convex
-set in a space of type (B0) is an absolute retract. A space of type (B0) is a
-Fréchet space, i.e. a complete metrizable topological vector space; the
-statement is formalized in the stronger Dugundji form, for nonempty compact
-convex sets in any complete metrizable locally convex topological vector
-space over ℝ, which implies the (B0) case. (b) Every nonempty compact set
-that is convex in the sense of Wilson is an absolute retract.
+**Eilenberg's theorem on compact convex absolute retracts.** (a) Every nonempty compact
+convex subset of a complete metrizable locally convex topological vector space over
+$\mathbb{R}$ is an absolute retract. (b) Every nonempty compact subset of a pseudometric
+space that is convex in the sense of Wilson is an absolute retract.
+
+The spaces in part (a) are the real Fréchet spaces, the spaces of type (B0).
+
 Source: S. Eilenberg, Problem 138 of the Scottish Book; the typescript heads
 the entry "Theorem; Eilenberg" and states both (a) and (b) as theorems. Part
 (a) is also the Dugundji theorem, see the 2026 survey "90+ years of the

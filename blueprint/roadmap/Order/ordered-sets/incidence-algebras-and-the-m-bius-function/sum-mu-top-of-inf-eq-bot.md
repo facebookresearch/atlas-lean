@@ -11,7 +11,7 @@ $\sum_{\hat 0 \le s \le t \wedge a} \mu(\hat 0, s)$ and exchanges the sums.
 
 ## Informally uses
 
-- Möbius algebra product:
+- [Möbius algebra product](../../../Combinatorics/partially-ordered-sets/m-bius-algebras-and-flag-vectors/moebius-algebra-mul.md):
   Stanley's proof computes $a\,\delta_{\hat 1}$ in two ways in the Möbius algebra $A(L, K)$, using
   the basis $\delta_t = \sum_{s \le t} \mu(s, t)\, s$ of Theorem 3.9.2.
 

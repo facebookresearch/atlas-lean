@@ -385,25 +385,26 @@ private theorem amp_genFun_eq_restricted (s : ℕ) (hs : Odd s) :
       hRseries.symm
 
 /--
-Andrews' generalization of MacMahon's identity: partitions of `n` whose
-odd-multiplicity parts occur at least `2 * r + 1` times are equinumerous
-with partitions of `n` whose odd parts are congruent to `2 * r + 1`
-modulo `4 * r + 2`.
+**Andrews' generalization of MacMahon's partition theorem.** For all natural numbers $r$ and
+$n$, the number of partitions of $n$ in which every part occurring an odd number of times occurs
+at least $2r + 1$ times equals the number of partitions of $n$ in which every odd part is
+congruent to $2r + 1$ modulo $4r + 2$.
 
-Provenance: Beaullah Mugwangwavari and Darlison Nyirenda, "A Note on the
+For $r = 1$ this is MacMahon's partition theorem: the first condition says that no part occurs
+exactly once, and the second that every part is even or congruent to $3$ modulo $6$.
+
+The proof compares generating functions in $q$. Both sides factor through the product over the
+even parts, and the remaining factors agree by Euler's theorem that partitions into odd parts and
+partitions into distinct parts are equinumerous, applied with $q$ replaced by $q^{2r+1}$.
+
+Proves `Wanted` entry `andrews_macmahon_partition_identity`.
+
+Source: Beaullah Mugwangwavari and Darlison Nyirenda, "A Note on the
 Andrews-Ericksson-Petrov-Romick Bijection for MacMahon's Partition Theorem",
 Journal of Integer Sequences 24 (2021), Article 21.5.6, Theorem `andthm`
 (Andrews' generalization), source lines 113–115,
 <https://cs.uwaterloo.ca/journals/JIS/VOL24/Nyirenda/nyir26.tex>.
-The paper attributes the result to Andrews. At `r = 1` this recovers MacMahon's
-partition theorem (no part occurring exactly once corresponds to parts even or
-`3 mod 6`).
-
-Proves `Wanted` entry `andrews_macmahon_partition_identity`.
-
-Proof: The generating-function route factors both sides through the even-part product and applies
-Euler's odd/distinct identity, `Nat.Partition.card_odds_eq_card_distincts`, after substituting
-`X ↦ X ^ (2 * r + 1)`; the source is Andrews' theorem as quoted in Mugwangwavari and Nyirenda.
+The paper attributes the result to Andrews.
 -/
 public theorem andrews_macmahon_partition_identity
     (r n : ℕ) :

@@ -12,7 +12,7 @@ compactness, the mesh bound $(n/(n+1))^k$ and closedness of the $F_i$.
 
 ## Informally uses
 
-- Sperner's lemma: the $n$-dimensional lemma on iterated barycentric subdivisions.
+- [Sperner's lemma](../../Combinatorics/polytopes-simplicial-complexes/sperner-s-lemma/README.md): the $n$-dimensional lemma on iterated barycentric subdivisions.
 
 ## Background
 

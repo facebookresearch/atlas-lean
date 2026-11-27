@@ -10,3 +10,4 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 - [Burnside's theorem on matrix algebras](burnside-matrix.md)
 - [Frobenius theorem on real division algebras](frobenius-real-division-algebra.md)
 - [Skolem–Noether theorem](skolem-noether.md)
+- [Weyl algebra of polynomial differential operators](weyl-algebra.md)

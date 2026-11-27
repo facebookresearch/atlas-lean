@@ -15,7 +15,7 @@ IEEE Trans. Automat. Control, accepted version (2020), DOI 10.1109/TAC.2020.3047
 
 ## Informally uses
 
-- Multiplicative matrix determinant lemma for invertible matrices:
+- [Multiplicative matrix determinant lemma for invertible matrices](../../../LinearAlgebra/determinants-and-matrix-identities/matrix-determinant-lemma/det-add-vec-mul-vec-of-is-unit-det.md):
   $\det P_{k+1}^{-1} = \det P_k^{-1} \, (1 + \varphi_k^\top P_k \varphi_k)$, so each term is
   $q / (1 + q) \le \log(1 + q)$ with $q = \varphi_k^\top P_k \varphi_k \ge 0$, and the sum telescopes.
 - [The RLS matrix is the inverse of the information matrix](rls-snd-eq-inv.md): $P_k^{-1}$ is the information matrix.

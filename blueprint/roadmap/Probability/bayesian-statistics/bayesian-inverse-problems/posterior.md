@@ -14,7 +14,7 @@ It is a probability measure as soon as $\exp(-\Phi)$ is integrable and $Z > 0$
 
 ## Background
 
-- Bayes' rule for densities:
+- [Bayes' rule for densities](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/README.md):
   the identification of the posterior kernel with prior-times-likelihood, normalised, which is
   the finite-dimensional Bayes' theorem (Dashti and Stuart, Theorem 1.1) behind this definition.
 

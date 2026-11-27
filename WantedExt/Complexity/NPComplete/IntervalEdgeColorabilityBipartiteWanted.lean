@@ -23,7 +23,7 @@ interval edge coloring).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex

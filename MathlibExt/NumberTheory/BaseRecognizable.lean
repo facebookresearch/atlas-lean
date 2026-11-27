@@ -24,17 +24,23 @@ theorem on base dependence and Cobham's gap theorem.
 
 namespace MetaMathlibExt
 
-/-- The value of a base-`k` digit word, with its most significant digit first. -/
+/-- **Value of a base-k digit word.** The value of a word $w = d_1 d_2 \cdots d_m$ of base-$k$
+digits $d_i \in \{0, \dots, k - 1\}$, read with the most significant digit first, is
+$\sum_{i=1}^{m} d_i k^{m-i}$. The empty word has value $0$. -/
 def baseWordValue {k : ℕ} (w : List (Fin k)) : ℕ :=
   w.foldl (fun value digit ↦ value * k + digit.val) 0
 
-/-- A canonical base expansion is empty for zero and otherwise has no leading zero. -/
+/-- **Canonical base-k words.** A word of base-$k$ digits is canonical when it is empty or its
+first (most significant) digit is nonzero. -/
 def IsCanonicalBaseWord {k : ℕ} : List (Fin k) → Prop
   | [] => True
   | digit :: _ => digit.val ≠ 0
 
-/-- A subset of `ℕ` is recognizable in base `k` when a finite deterministic
-automaton accepts exactly its canonical base-`k` expansions. -/
+/-- **Sets recognizable in base k.** For a natural number $k$, a set $S$ of natural numbers is
+recognizable in base $k$ when $k \ge 2$ and some deterministic finite automaton with a nonempty
+finite set of states, reading words of base-$k$ digits from the most significant digit, accepts a
+word $w = d_1 d_2 \cdots d_m$ exactly when $w$ is canonical (empty, or with $d_1 \neq 0$) and its
+value $\sum_{i=1}^{m} d_i k^{m-i}$ lies in $S$. -/
 def IsBaseRecognizable (k : ℕ) (S : Set ℕ) : Prop :=
   2 ≤ k ∧
     ∃ numStates : ℕ, 0 < numStates ∧
@@ -84,7 +90,9 @@ theorem IsCanonicalBaseWord.append {k : ℕ} {u v : List (Fin k)}
   | nil => contradiction
   | cons d u => simpa [IsCanonicalBaseWord] using hu
 
-/-- The canonical base-`k` expansion of `n`, most significant digit first. -/
+/-- **Base-k expansion.** For a natural number $k \ge 2$ and a natural number $n$, the base-$k$
+expansion of $n$ is the word $d_1 d_2 \cdots d_m$ of base-$k$ digits, most significant digit
+first, with $n = \sum_{i=1}^{m} d_i k^{m-i}$ and $d_1 \neq 0$; for $n = 0$ it is the empty word. -/
 def baseDigits {k : ℕ} (hk : 2 ≤ k) (n : ℕ) : List (Fin k) :=
   (Nat.digits k n).reverse.map fun d ↦ ⟨d % k, Nat.mod_lt _ (by omega)⟩
 

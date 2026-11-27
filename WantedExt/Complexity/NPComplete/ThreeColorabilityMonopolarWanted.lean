@@ -23,11 +23,11 @@ problem 3-Colourability: NP-complete, with the reference to Barbato and Bezzi (2
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ClusterDeletionWanted
-public import WantedExt.Complexity.NPComplete.GraphColoringWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 

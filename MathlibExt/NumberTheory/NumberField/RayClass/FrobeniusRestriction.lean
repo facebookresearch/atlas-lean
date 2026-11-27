@@ -42,9 +42,15 @@ variable {K L M : Type*} [Field K] [Field L] [Field M]
   [IsAbelianGalois K L] [IsGalois K M]
 
 open scoped IsMulCommutative in
-/-- Restriction of the chosen Frobenius at `p` from `M` agrees with the chosen
-Frobenius at `p` on the abelian subextension `L`. The lower abelianity is used
-only to trivialize conjugation of the lower Frobenius value. -/
+/-- **Restriction of Frobenius elements in a tower.** Let $K \subseteq L \subseteq M$ be a tower
+of number fields with $L/K$ abelian Galois and $M/K$ Galois, and let $\mathfrak m$ be a modulus
+of $K$ such that $L$ and $M$ are both unramified outside $\mathfrak m$. For every finite prime
+$\mathfrak p$ of $K$ not dividing the finite part of $\mathfrak m$, the restriction to $L$ of the
+chosen Frobenius element of $\mathfrak p$ in $\mathrm{Gal}(M/K)$ equals the chosen Frobenius
+element of $\mathfrak p$ in $\mathrm{Gal}(L/K)$.
+
+The abelianity of $L/K$ is used only to make conjugation of the Frobenius element in
+$\mathrm{Gal}(L/K)$ trivial. -/
 theorem restrictNormalHom_frobeniusAtCoprimePrime
     (m : Modulus K) (hL : m.IsUnramifiedOutside L)
     (hM : m.IsUnramifiedOutside M) (p : m.CoprimePrimes) :

@@ -16,9 +16,10 @@ import Mathlib.NumberTheory.Basic
 
 namespace MetaMathlibExt
 
-/-- Lifting a congruence to one: if `a ≡ 1 [MOD p]` for any natural modulus `p` (not
-necessarily prime), then `a ^ (p ^ n) ≡ 1 [MOD p ^ (n + 1)]` for every `n`. It is the `Nat.ModEq`
-form of `dvd_sub_pow_of_dvd_sub`; `prime_power_lifting_modEq_one` is the source-shaped form. -/
+/-- **Lifting a congruence to one along powers of the modulus.** Let $p$, $n$ and $a$ be natural
+numbers. If $a \equiv 1 \pmod p$, then $a^{p^n} \equiv 1 \pmod{p^{n+1}}$.
+
+The modulus $p$ need not be prime. -/
 theorem pow_pow_modEq_one_of_modEq_one (p n a : ℕ) (h : Nat.ModEq p a 1) :
     Nat.ModEq (p ^ (n + 1)) (a ^ (p ^ n)) 1 := by
   rw [Nat.modEq_iff_dvd] at h ⊢
@@ -26,7 +27,8 @@ theorem pow_pow_modEq_one_of_modEq_one (p n a : ℕ) (h : Nat.ModEq p a 1) :
 
 set_option linter.unusedVariables false in
 /--
-Prime-power lifting for a natural number congruent to one modulo a prime.
+**Prime-power lifting of a congruence to one.** Let $p$ be a prime and let $n$ and $a$ be
+positive integers. If $a \equiv 1 \pmod p$, then $a^{p^n} \equiv 1 \pmod{p^{n+1}}$.
 
 Source: Hacène Belbachir and Celia Salhi, "The Generalized Bi-Periodic
 Fibonacci Sequence Modulo m," Journal of Integer Sequences 24 (2021),

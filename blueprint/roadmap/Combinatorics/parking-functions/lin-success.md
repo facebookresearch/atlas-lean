@@ -15,5 +15,5 @@ $n$ cells, they are the sequences for which the overflow step never occurs.
 
 ## Related topics
 
-- Analysis of linear probing:
+- [Analysis of linear probing](../../ComputerScience/data-structures/hashing/analysis-of-linear-probing/README.md):
   the number of these sequences (Knuth's Lemma 1) and the expected cost of linear probing.

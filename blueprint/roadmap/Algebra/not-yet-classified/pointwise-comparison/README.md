@@ -1,0 +1,17 @@
+# Pointwise Comparison
+
+- [Evaluated Cocone](evaluated-cocone.md)
+- [Pointwise Desc](pointwise-desc.md)
+- [Pointwise Desc fac](pointwise-desc-fac.md)
+- [Pointwise Comparison](pointwise-comparison.md)
+- [Mapped Group Cocone](mapped-group-cocone.md)
+- [Group Cocone Comparison Desc](group-cocone-comparison-desc.md)
+- [Group Cocone Comparison Desc fac](group-cocone-comparison-desc-fac.md)
+- [Group Cocone Comparison Desc joint fac](group-cocone-comparison-desc-joint-fac.md)
+- [Fubini pointwise joint fac](fubini-pointwise-joint-fac.md)
+- [Group Cocone Comparison Desc fubini word](group-cocone-comparison-desc-fubini-word.md)
+- [Group Cocone Comparison Iso](group-cocone-comparison-iso.md)
+- [Group Cocone Comparison Iso hom](group-cocone-comparison-iso-hom.md)
+- [Group Cocone Comparison Iso inv](group-cocone-comparison-iso-inv.md)
+- [Pointwise Comparison map square](pointwise-comparison-map-square.md)
+- [Group Cocone Comparison Desc map square](group-cocone-comparison-desc-map-square.md)

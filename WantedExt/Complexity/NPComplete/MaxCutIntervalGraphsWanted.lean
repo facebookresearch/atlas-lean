@@ -18,10 +18,10 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.IntervalGraphCompletionWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -39,7 +39,7 @@ INSTANCE: an interval graph `G = (V, E)` (simple, undirected) and an integer `k`
 Section 2, decision version of Max Cut; Theorem 1: Max Cut is NP-complete on interval graphs.)
 
 The instance, the simple-edge-list conditions, and the question are those of MAXIMUM CUT
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question counts edges), reused here as
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question counts edges), reused here as
 in `SimpleMaxCutDegreeThreeWanted`. An interval graph is the intersection graph of closed
 intervals on the real line, the repository's `IntervalGraphCompletion.IsIntervalGraph` (also
 used by `AchromaticNumberIntervalGraphsWanted`), applied to `Cslib.Complexity.Karp.edgeGraph`.

@@ -9,4 +9,5 @@ Location, counting and multiplicity of the zeros of polynomials: real-rootedness
 - [Stable polynomials](stable-polynomials/README.md)
 - [Sturm's theorem](sturm-s-theorem/README.md)
 - [Taylor expansion and double roots](taylor-expansion-and-double-roots/README.md)
+- [A polynomial over an integral domain has at most as many roots as its degree](card-roots-le-degree.md)
 - [Auerbach's problem on zero sets of real polynomials](auerbach-polynomial-zero-set-separates-i.md)

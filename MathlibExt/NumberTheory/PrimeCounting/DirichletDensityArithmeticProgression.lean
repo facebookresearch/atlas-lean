@@ -496,9 +496,12 @@ private lemma primeAPRpowSum_one_one_eq (s : ℝ) :
 section
 namespace MetaMathlibExt.NumberTheory.PrimeCounting
 
-/-- For `0 < m` and `Nat.Coprime a m`, the relative Dirichlet density over natural
-residue representatives of the primes `p ≡ a [MOD m]` equals `1 / φ(m)`: as real
-`s → 1⁺`, the quotient of the prime reciprocal-power sums tends to `1 / φ(m)`.
+/-- **Dirichlet density of primes in an arithmetic progression.** Let $a$ and $m$ be natural numbers
+with $m > 0$ and $\gcd(a, m) = 1$, and let $\varphi$ be Euler's totient function. As the real
+number $s$ tends to $1$ from above,
+$$\frac{\sum_{p \equiv a \pmod{m}} p^{-s}}{\sum_{p} p^{-s}} \to \frac{1}{\varphi(m)},$$
+where both sums run over primes $p$. That is, the primes congruent to $a$ modulo $m$ have relative
+Dirichlet density $1/\varphi(m)$ among all primes.
 
 Source: B. Li, S. J. Miller, T. Popescu, D. Sarnecki, and N. Wattanawanichkul,
 "Modeling Random Walks to Infinity on Primes in Z[sqrt(2)]",
@@ -506,9 +509,6 @@ Source: B. Li, S. J. Miller, T. Popescu, D. Sarnecki, and N. Wattanawanichkul,
 [TeX source](https://cs.uwaterloo.ca/journals/JIS/VOL25/Miller/miller11.tex),
 relative Dirichlet-density definition at lines 281-285 and primes-in-arithmetic-
 progressions statement at lines 290-292.
-
-This is a different target from `Chebyshev.weakPNT_arithmeticProgression`, which is
-a von-Mangoldt Cesàro limit rather than this Dirichlet-density formula.
 
 Proves `Wanted` entry `dirichlet_density_primes_arithmetic_progression`.
 -/

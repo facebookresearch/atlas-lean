@@ -40,12 +40,13 @@ and its second part is the oscillation statement ported here.
 
 namespace Real
 
-/-- **Cosine oscillation (phase-shift form).** For every angle `θ` there is a
-phase shift `φ` with `π < φ < 3 * π` such that `cos` moves by at least `1`:
-`1 ≤ |cos θ - cos (θ + φ)|`. The two candidate shifts are `3 * π / 2` and
-`5 * π / 2`, where `cos` takes the values `sin θ` and `-sin θ`; at least one
-of `|cos θ - sin θ|` and `|cos θ + sin θ|` is `≥ 1`, since their squares sum
-to `2`. -/
+/-- **Cosine oscillation (phase-shift form).** For every real number $\theta$ there is a real
+number $\varphi$ with $\pi < \varphi < 3\pi$ such that
+$|\cos\theta - \cos(\theta + \varphi)| \ge 1$.
+
+The two candidate shifts are $3\pi/2$ and $5\pi/2$, where $\cos(\theta + \varphi)$ equals
+$\sin\theta$ and $-\sin\theta$ respectively; at least one of $|\cos\theta - \sin\theta|$ and
+$|\cos\theta + \sin\theta|$ is at least $1$, since their squares sum to $2$. -/
 theorem exists_cos_sub_cos_ge_one (θ : ℝ) :
     ∃ φ : ℝ, π < φ ∧ φ < 3 * π ∧ 1 ≤ |cos θ - cos (θ + φ)| := by
   have hpi : 0 < π := pi_pos
@@ -71,11 +72,11 @@ theorem exists_cos_sub_cos_ge_one (θ : ℝ) :
       (_root_.sq_lt_one_iff_abs_lt_one _).mpr hcon
     linarith
 
-/-- **Cosine oscillation (scaled form, as in the book).** For every `c` and
-every positive natural `K`, there is a point `y` in
-`(c + π / K, c + 3 * π / K)` with `|cos (K * c) - cos (K * y)| ≥ 1`. This is
-the second part of `weierstrass_theorem_I` in v1; it is the estimate that
-drives the slope blow-up in the proof that the Weierstrass function is
+/-- **Cosine oscillation (scaled form).** For every real number $c$ and every positive integer
+$K$, there is a real number $y$ with $c + \pi / K < y < c + 3\pi / K$ such that
+$|\cos(Kc) - \cos(Ky)| \ge 1$.
+
+This is the estimate that drives the slope blow-up in the proof that the Weierstrass function is
 nowhere differentiable. -/
 theorem exists_cos_oscillation (c : ℝ) (K : ℕ) (hK : 0 < K) :
     ∃ y : ℝ, c + π / K < y ∧ y < c + 3 * π / K ∧

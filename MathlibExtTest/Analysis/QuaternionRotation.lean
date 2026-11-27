@@ -39,6 +39,17 @@ example :
 example : (2 : Quaternion ℝ) ∉ unitary (Quaternion ℝ) :=
   QuaternionRotation.two_not_rotation.1
 
+-- The transpose identity needs no unit hypothesis: for the nonunit scalar `2`,
+-- `Rᵀ R = |2|⁴ 1 = 16 • 1`.
+example :
+    Matrix.transpose (QuaternionRotation.rotMatrix 2) * QuaternionRotation.rotMatrix 2 =
+      (16 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ) := by
+  have hN : Quaternion.normSq (2 : Quaternion ℝ) = 4 := by
+    rw [show (2 : Quaternion ℝ) = ((2 : ℝ) : Quaternion ℝ) from rfl, Quaternion.normSq_coe]
+    norm_num
+  rw [QuaternionRotation.rotMatrix_transpose_mul_self, hN]
+  norm_num
+
 -- Kernel: on unit quaternions the identity matrix occurs exactly at `±1`.
 example {q : Quaternion ℝ} (hq : ‖q‖ = 1) :
     QuaternionRotation.rotMatrix q = 1 ↔ q = 1 ∨ q = -1 :=

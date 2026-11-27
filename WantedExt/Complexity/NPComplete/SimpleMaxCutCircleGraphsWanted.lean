@@ -29,10 +29,10 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 public import WantedExt.Complexity.NPComplete.PathwidthCircleGraphsWanted
 
 @[expose] public section
@@ -64,7 +64,7 @@ order turns its edges into chords, and two chords cross exactly when their endpo
 circle graph and "at most `C` crossings" becomes "a cut of size at least `|E'| - C`".
 
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`MaxCutWanted`, whose question counts edges), reused as in `MaxCutIntervalGraphsWanted`; the
+(`MaxCutDefs`, whose question counts edges), reused as in `MaxCutIntervalGraphsWanted`; the
 restriction adds that `Cslib.Complexity.Karp.edgeGraph` is a circle graph, and `0 < K`, to
 `WellFormed`. Circle graphs are `PathwidthCircleGraphs.IsCircleGraph` (from
 `PathwidthCircleGraphsWanted`): isomorphic to the circle graph of a chord model in the sense of

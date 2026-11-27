@@ -225,9 +225,9 @@ private theorem chr_lamP_coeff (hq : 1 ≤ Fintype.card K) (j : ℕ)
   rw [Polynomial.finsetSum_coeff]
   by_cases hn : n < c.natDegree + 1
   · rw [Finset.sum_eq_single n]
-    · rw [Polynomial.coeff_monomial, ite_eq_left rfl]
+    · rw [Polynomial.coeff_monomial_apply, ite_eq_left rfl]
     · intro m _ hne
-      rw [Polynomial.coeff_monomial, ite_eq_right hne]
+      rw [Polynomial.coeff_monomial_apply, ite_eq_right hne]
     · intro hcon
       exact absurd (Finset.mem_range.mpr hn) hcon
   · have hnle : c.natDegree + 1 ≤ n := not_lt.mp hn
@@ -241,7 +241,7 @@ private theorem chr_lamP_coeff (hq : 1 ≤ Fintype.card K) (j : ℕ)
       intro m hm
       have hm' : m < c.natDegree + 1 := Finset.mem_range.mp hm
       have hnm : ¬ m = n := by omega
-      rw [Polynomial.coeff_monomial, ite_eq_right hnm]
+      rw [Polynomial.coeff_monomial_apply, ite_eq_right hnm]
     rw [Finset.sum_eq_zero h1]
     have h2 : c.natDegree < Fintype.card K * n + j := by omega
     exact (Polynomial.coeff_eq_zero_of_natDegree_lt h2).symm
@@ -459,14 +459,14 @@ private theorem chr_isAlgebraic_of_finite_kernel (hq : 1 ≤ Fintype.card K)
               (Fintype.card K ^ l₁.val))
           = g l₁ := by
         rw [Finset.sum_eq_single l₁]
-        · rw [Polynomial.coeff_monomial, ite_eq_left rfl]
+        · rw [Polynomial.coeff_monomial_apply, ite_eq_left rfl]
         · intro l _ hne
           have hneg : ¬ Fintype.card K ^ l.val
               = Fintype.card K ^ l₁.val := by
             intro hcon2
             apply hne
             exact Fin.ext (Nat.pow_right_injective hq2 hcon2)
-          rw [Polynomial.coeff_monomial, ite_eq_right hneg]
+          rw [Polynomial.coeff_monomial_apply, ite_eq_right hneg]
         · intro hcon2
           exact absurd (Finset.mem_univ l₁) hcon2
       rw [hPdef, Polynomial.finsetSum_coeff, hsingle] at hcoeff
@@ -1018,21 +1018,22 @@ private theorem chr_kernel_finite_of_isAlgebraic (hq : 1 ≤ Fintype.card K)
 
 end ChrMain
 
-/-- Christol's theorem: algebraicity iff `p`-automaticity of coefficients.
+/-- **Christol's theorem.** Let $p$ be a prime, $r \ge 1$ a natural number, and $K$ a finite field
+of characteristic $p$ with $q = p^r$ elements. A formal power series
+$f = \sum_n f_n X^n \in K[[X]]$ is algebraic over the polynomial ring $K[X]$ (it is a root of a
+nonzero polynomial with coefficients in $K[X]$) if and only if its coefficient sequence
+$n \mapsto f_n$ is $p$-automatic, that is, its $p$-kernel is finite.
+
+Algebraicity over $K[X]$ is the denominator-cleared form of algebraicity over the rational
+function field $K(X)$; it is not integrality over $K[X]$. Automaticity is taken in base $p$, not
+in base $q$.
+
+Proves `Wanted` entry `christol_theorem`.
 
 Source: Adamczewski--Bell, arXiv:1205.4091v1, lines 260--265:
 for `q` a positive integral power of the characteristic prime `p`, a series
 over `F_q` is algebraic over `F_q(t)` iff its coefficient sequence is
-`p`-automatic.
-
-Polynomial-relation interpretation: `IsAlgebraic (Polynomial K) f` asserts a
-denominator-cleared nonzero polynomial relation over `K[X]` satisfied by `f`,
-which is the formalization of algebraicity over the rational function field
-`K(t)`; it is not integrality (`IsIntegral`). The right side is
-`p`-automaticity (base `p`, not base `q`) of `fun n => PowerSeries.coeff n f`.
-The positivity `0 < r` is preserved verbatim from the source.
-
-Proves `Wanted` entry `christol_theorem`. -/
+`p`-automatic. -/
 public theorem christol_theorem (K : Type*) [Field K] [Finite K] (p q r : ℕ)
     [CharP K p] (hp : Nat.Prime p) (hcard : Nat.card K = q) (hq : q = p ^ r)
     (hr : 0 < r) (f : PowerSeries K) :
@@ -1062,7 +1063,11 @@ section ChrAuto
 
 variable {B : Type*}
 
-/-- Christol's theorem in DFAO form: algebraicity iff automaticity. -/
+/-- **Christol's theorem, automaton form.** Let $p$ be a prime, $r \ge 1$ a natural number, and
+$K$ a finite field of characteristic $p$ with $q = p^r$ elements. A formal power series
+$f = \sum_n f_n X^n \in K[[X]]$ is algebraic over the polynomial ring $K[X]$ (it is a root of a
+nonzero polynomial with coefficients in $K[X]$) if and only if its coefficient sequence
+$n \mapsto f_n$ is $p$-automatic in the sense of finite automata with output. -/
 public theorem christol_theorem_isKAutomaticSequence (K : Type) [Field K] [Fintype K]
     (p q r : ℕ) [CharP K p] (hp : Nat.Prime p) (hcard : Nat.card K = q)
     (hq : q = p ^ r) (hr : 0 < r) (f : PowerSeries K) :

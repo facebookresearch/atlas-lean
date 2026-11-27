@@ -1,0 +1,3 @@
+# Inner image graph on embedded vertices is the open subgraph
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ an injective map that [matches adjacency](ocd-adj-match.md) ($x \sim y$ in $G_{\mathrm{in}}$ if and only if $\iota x \sim \iota y$ in $G_{\mathrm{out}}$). For every configuration $\omega$ on $V_{\mathrm{in}}$ and all $x, y \in V_{\mathrm{in}}$, $\iota x$ and $\iota y$ are adjacent in the [inner image graph](ocd-inner-image-graph.md) of $\omega$ if and only if $\{x, y\}$ is an edge of $G_{\mathrm{in}}$ open in $\omega$.

@@ -190,9 +190,10 @@ theorem crossProb_exp_decay_of_mem_tildePcSet :
 
 Scope of the items:
 * Item 2 is stated on `tildePcSet d`, not on `[0, p_c)`: passing from `p < p̃_c` to
-  `p ∈ tildePcSet d` needs monotonicity of `p ↦ φ_p(S)`, and passing from `p < p_c` to `θ(p) = 0`
-  needs monotonicity of `θ`; neither is proved in MathlibExt (θ monotonicity is
-  `theta_mono_parameter` in PhyslibExt `RandomCluster/PcUpperViaFK`).
+  `p ∈ tildePcSet d` needs monotonicity of `p ↦ φ_p(S)`. That monotonicity and the resulting
+  statement for every `p < p_c` are `StatMech.Percolation.phi_mono` and
+  `StatMech.Percolation.sharp_phase_transition_pc`, in
+  `MathlibExt.Probability.Percolation.SharpnessBelowPc`.
 * Item 3 is informative only when `p̃_c < 1`. This file does not prove that for any `d`; at `d = 1`
   it fails (`p̃_c = p_c = 1`) and item 3 is vacuous. For `d = 2`, `p_c < 1` is proved in PhyslibExt
   (`StatMech.Percolation.pc_two_lt_one_via_fk`), which with item 1 makes item 3 non-vacuous

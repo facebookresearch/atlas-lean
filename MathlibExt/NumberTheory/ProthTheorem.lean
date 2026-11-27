@@ -148,15 +148,16 @@ private theorem proth_composite_impossible (h k N : ℕ) (hh : 0 < h) (hk : 0 < 
     nlinarith
   omega
 
-/-- Proth's theorem (Proth primality criterion via quadratic nonresidue witness):
-a Proth number `N = h * 2 ^ k + 1` with `h` odd and `h < 2 ^ k` is prime
-if and only if there exists `a` with `a ^ ((N - 1) / 2) = -1` in `ZMod N`.
-Source: https://en.wikipedia.org/wiki/Proth%27s_theorem
-
-Proves `Wanted` entry `proth_theorem`.
+/-- **Proth's theorem.** Let $h$ and $k$ be natural numbers with $h$ odd and $h < 2^k$, and let
+$N = h \cdot 2^k + 1$. Then $N$ is prime if and only if there is a residue class $a$ modulo $N$
+with $a^{(N-1)/2} = -1$ in $\mathbb{Z}/N\mathbb{Z}$.
 
 Proof: The forward implication uses a nonsquare and Euler's criterion; the reverse uses Proth's
 least-prime-factor order argument. Sources: Proth (1878), p. 926, and the Wikipedia exposition.
+
+Proves `Wanted` entry `proth_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Proth%27s_theorem
 -/
 theorem proth_theorem (h k N : ℕ) (hOdd : Odd h) (hlt : h < 2 ^ k)
     (hN : N = h * 2 ^ k + 1) :

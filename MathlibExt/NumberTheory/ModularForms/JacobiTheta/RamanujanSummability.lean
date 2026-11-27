@@ -18,10 +18,11 @@ open scoped Topology
 
 namespace MetaMathlibExt
 
-/-- Ramanujan's general theta series absolute convergence (arXiv:2607.26471,
-`Oliver_identities.tex` ll. 127-130): `f(a,b)=∑_{n:ℤ} a^{n(n+1)/2} b^{n(n-1)/2}`
-with `|a*b|<1`. The summand is `MetaMathlibExt.ramanujanThetaTerm` (triangular
-exponents via `Int.toNat`); this is the absolute-summability theorem over `ℝ`. -/
+/-- **Absolute convergence of Ramanujan's general theta series.** For all complex numbers $a$
+and $b$ with $|ab| < 1$, the series $\sum_{n \in \mathbb{Z}} |a^{n(n+1)/2} b^{n(n-1)/2}|$ of
+the absolute values of the terms of Ramanujan's general theta function converges.
+
+Source: arXiv:2607.26471, `Oliver_identities.tex` ll. 127-130. -/
 theorem ramanujanTheta_summable (a b : ℂ) (h : ‖a * b‖ < 1) :
     Summable (fun n : ℤ => ‖ramanujanThetaTerm a b n‖) := by
   have machine : ∀ (x y : ℂ), ‖x * y‖ < 1 →

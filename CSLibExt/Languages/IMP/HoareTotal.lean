@@ -27,9 +27,10 @@ loops, and Dijkstra's semantic weakest precondition `wp`.
 
 namespace Cslib.IMP
 
-/-- Semantic validity of a total-correctness Hoare triple: every initial
-state satisfying the precondition has a terminating execution ending in the
-postcondition. -/
+/-- **Validity of total-correctness Hoare triples.** For assertions $P$ and $Q$ on states and a
+command $c$, the total-correctness Hoare triple with precondition $P$, command $c$ and
+postcondition $Q$ is valid when every state $s$ satisfying $P$ has a terminating big-step
+execution of $c$ from $s$ ending in a state $t$ that satisfies $Q$. -/
 def TValid (pre : Assertion) (command : Cmd) (post : Assertion) : Prop :=
   ∀ ⦃s : State⦄, pre s → ∃ s', BigStep command s s' ∧ post s'
 
@@ -78,10 +79,13 @@ theorem ite {pre post : Assertion} {guard : BExp} {thenBranch elseBranch : Cmd}
     obtain ⟨final, hstep, hpost⟩ := helse ⟨hpre, hguardFalse⟩
     exact ⟨final, .iteFalse hguardFalse hstep, hpost⟩
 
-/-- The variant rule for total correctness of while loops: if every guarded
-body execution from the invariant terminates, restores the invariant, and
-strictly decreases the variant, then the loop terminates in a state
-satisfying the invariant with the guard false. -/
+/-- **Variant rule for while loops.** Let $I$ be an assertion (the invariant), $V$ a function
+from states to natural numbers (the variant), $b$ a Boolean guard and $c$ a command. Suppose
+that for every state $s$ satisfying $I$ in which $b$ evaluates to true, there is a terminating
+big-step execution of $c$ from $s$ ending in a state $s'$ that satisfies $I$ with
+$V(s') < V(s)$. Then the total-correctness Hoare triple with precondition $I$, command
+$\mathtt{while}\ b\ \mathtt{do}\ c$ and postcondition "$I$ holds and $b$ evaluates to false"
+is valid. -/
 theorem whileVariant {invariant : Assertion} {variant : State → Nat}
     {guard : BExp} {body : Cmd}
     (hbody : ∀ s, invariant s → guard.eval s = true →
@@ -113,7 +117,10 @@ theorem whileVariant {invariant : Assertion} {variant : State → Nat}
     key (variant initial) initial hinvariant rfl
   exact ⟨final, hstep, hinvariantFinal, hguardFinal⟩
 
-/-- Total correctness implies partial correctness. -/
+/-- **Total correctness implies partial correctness.** For assertions $P$, $Q$ and a command
+$c$, if the total-correctness Hoare triple with precondition $P$, command $c$ and
+postcondition $Q$ is valid, then the partial-correctness Hoare triple with the same
+precondition, command and postcondition is valid. -/
 theorem valid {pre post : Assertion} {command : Cmd}
     (htotal : TValid pre command post) : Valid pre command post := by
   intro initial final hpre hstep
@@ -121,7 +128,10 @@ theorem valid {pre post : Assertion} {command : Cmd}
   rw [BigStep.deterministic hstep hstep']
   exact hpost
 
-/-- Total correctness yields a terminating small-step execution. -/
+/-- **Total correctness gives a terminating small-step run.** If the total-correctness Hoare
+triple with precondition $P$, command $c$ and postcondition $Q$ is valid and a state $s$
+satisfies $P$, then there is a state $t$ such that $c$, started in $s$, reaches
+$\mathtt{skip}$ with state $t$ in finitely many small steps, and $t$ satisfies $Q$. -/
 theorem terminates {pre post : Assertion} {command : Cmd}
     (htotal : TValid pre command post) {state : State} (hpre : pre state) :
     ∃ final, Terminates command state final ∧ post final := by
@@ -130,7 +140,10 @@ theorem terminates {pre post : Assertion} {command : Cmd}
 
 end TValid
 
-/-- Semantic weakest precondition for total correctness. -/
+/-- **Weakest precondition for total correctness.** For a command $c$ and a postcondition $Q$,
+the weakest precondition $\mathrm{wp}(c, Q)$ is the assertion that holds at a state $s$ exactly
+when there is a terminating big-step execution of $c$ from $s$ ending in a state that satisfies
+$Q$. -/
 def wp (command : Cmd) (post : Assertion) : Assertion :=
   fun s => ∃ s', BigStep command s s' ∧ post s'
 
@@ -215,8 +228,11 @@ theorem ite (guard : BExp) (thenBranch elseBranch : Cmd) (post : Assertion) :
       obtain ⟨final, hstep, hpost⟩ := helse hguardFalse
       exact ⟨final, .iteFalse hguardFalse hstep, hpost⟩
 
-/-- Weakest preconditions unfold a while loop into its exit case and one
-guarded body iteration followed by the loop again. -/
+/-- **Weakest-precondition unfolding of a while loop.** For a Boolean guard $b$, a loop body
+$c$, a postcondition $Q$ and a state $s$, the state $s$ satisfies the total-correctness weakest
+precondition $\mathrm{wp}(\mathtt{while}\ b\ \mathtt{do}\ c, Q)$ if and only if either $b$
+evaluates to false in $s$ and $s$ satisfies $Q$, or $b$ evaluates to true in $s$ and $s$
+satisfies $\mathrm{wp}(c, \mathrm{wp}(\mathtt{while}\ b\ \mathtt{do}\ c, Q))$. -/
 theorem while_iff {guard : BExp} {body : Cmd} {post : Assertion}
     {state : State} :
     wp (.while guard body) post state ↔
@@ -241,7 +257,10 @@ theorem monotone {firstPost secondPost : Assertion} {command : Cmd}
   obtain ⟨final, hstep, hfinal⟩ := hfirst
   exact ⟨final, hstep, hpost hfinal⟩
 
-/-- The weakest precondition strengthens the weakest liberal precondition. -/
+/-- **Total-correctness weakest precondition implies the weakest liberal precondition.** For
+every command $c$, postcondition $Q$ and state $s$, if $s$ satisfies the total-correctness
+weakest precondition $\mathrm{wp}(c, Q)$, then $s$ satisfies the weakest liberal precondition
+$\mathrm{wlp}(c, Q)$. -/
 theorem le_wlp {command : Cmd} {post : Assertion} {state : State}
     (hwp : wp command post state) : wlp command post state := by
   obtain ⟨final, hstep, hpost⟩ := hwp

@@ -1,0 +1,3 @@
+# A colouring of the complement gives a feasible theta value
+
+If the complement $\bar G$ has a proper colouring with $k$ colours, then $k$ is a feasible value of the theta program for $G$. The colour classes of $\bar G$ are cliques of $G$. Give each vertex the unit coordinate vector $e_i$ of its colour $i$ in $\mathbb{R}^k$, and take the all-ones handle $c = e_1 + \dots + e_k$. Two non-adjacent vertices of $G$ are adjacent in $\bar G$, so they have different colours and orthogonal labels. Every cost is $\langle c, e_i\rangle^2 / (\lVert c\rVert^2 \lVert e_i\rVert^2) = 1/k$, so $1 \le k \cdot \mathrm{cost}$. When $k = 0$ the vertex set is empty and any handle in $\mathbb{R}^1$ works.

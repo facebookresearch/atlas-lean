@@ -102,7 +102,7 @@ lemma boxRestrict_extendEdge_succ (d n : ℕ) (ρ : ConfigSpace (Sym2 (boxVerts 
 -/
 
 /-- The event on `Λ_(n+1)` that the origin is connected to `∂Λ_n` by open edges of `Λ_n`. -/
-def innerBdryFinEvent (d n : ℕ) : Set (ConfigSpace (Sym2 (boxVerts d (n + 1)))) :=
+noncomputable def innerBdryFinEvent (d n : ℕ) : Set (ConfigSpace (Sym2 (boxVerts d (n + 1)))) :=
   innerRestrict d n ⁻¹'
     {ω : ConfigSpace (Sym2 (boxVerts d n)) |
       ConnToBdry (boxGraph d n) (boxBoundary d n) ω (IsingFK.boxOrigin d n)}

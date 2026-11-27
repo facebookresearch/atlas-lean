@@ -16,6 +16,6 @@
 
 ## Related topics
 
-- Structure theorems for Boolean functions: FKN and Friedgut's junta theorem, whose proofs rest on the Bonami Lemma and small-set expansion.
-- Kahn–Kalai–Linial inequality: the best-known application of hypercontractivity on the cube.
+- [Structure theorems for Boolean functions](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/README.md): FKN and Friedgut's junta theorem, whose proofs rest on the Bonami Lemma and small-set expansion.
+- [Kahn–Kalai–Linial inequality](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/README.md): the best-known application of hypercontractivity on the cube.
 - [Influences and the noise operator on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/README.md): the noise operator $T_\rho$ and its Fourier description.

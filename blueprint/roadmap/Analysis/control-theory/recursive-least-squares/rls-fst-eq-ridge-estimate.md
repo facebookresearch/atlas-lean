@@ -12,4 +12,4 @@ ridge estimate $(X^\top X + \lambda I)^{-1} X^\top Y$, where $X$ is the
 
 ## Background
 
-- Ridge estimate: the closed form identified here.
+- [Ridge estimate](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/ridge-estimate.md): the closed form identified here.

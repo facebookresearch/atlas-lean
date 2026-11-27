@@ -21,12 +21,12 @@ Hamiltonicity", Computational Geometry 42 (2009), 582-605, doi:10.1016/j.comgeo.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 

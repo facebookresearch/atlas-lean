@@ -27,9 +27,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For positive integers `m < n < 1.4 · 10¹²`, `(m, n)` is a Benelux pair (of first kind)
-if and only if `(m, n) = (75, 1215)` or `(m, n) = (2^k - 2, 2^{2k} - 2^{k+1})` for some
-integer `2 ≤ k ≤ 20`.
+/-- **Benelux pairs of the first kind below $1.4 \cdot 10^{12}$.** Let $m < n$ be
+non-negative integers with $n < 1.4 \cdot 10^{12}$. Then $m$ and $n$ have the same prime
+factors and $m + 1$ and $n + 1$ have the same prime factors (that is, $(m, n)$ is a Benelux
+pair of the first kind) if and only if $(m, n) = (75, 1215)$ or
+$(m, n) = (2^k - 2, 2^{2k} - 2^{k+1})$ for some integer $k$ with $2 \le k \le 20$.
+
+Here $0$ is taken to have no prime factors; for $m = 0$ both sides are false.
 
 Source: Christian Hercher, *On One of Erdős' Problems—An Efficient Search for Benelux
 Pairs*, Journal of Integer Sequences 28 (2025), Article 25.8.5, Theorem 1 a)
@@ -40,9 +44,13 @@ public theorem_wanted benelux_pair_first_kind_iff
       (m = 75 ∧ n = 1215) ∨
         ∃ k : ℕ, 2 ≤ k ∧ k ≤ 20 ∧ m = 2 ^ k - 2 ∧ n = 2 ^ (2 * k) - 2 ^ (k + 1)
 
-/-- For positive integers `m < n < 1.4 · 10¹²`, `(m, n)` is a Benelux pair of second kind
-if and only if `(m, n) = (35, 4374)` or `(m, n) = (2^k + 1, 2^{2k} + 2^{k+1})` for some
-integer `0 ≤ k ≤ 20`.
+/-- **Benelux pairs of the second kind below $1.4 \cdot 10^{12}$.** Let $m < n$ be
+non-negative integers with $n < 1.4 \cdot 10^{12}$. Then $m$ and $n + 1$ have the same prime
+factors and $m + 1$ and $n$ have the same prime factors (that is, $(m, n)$ is a Benelux pair
+of the second kind) if and only if $(m, n) = (35, 4374)$ or
+$(m, n) = (2^k + 1, 2^{2k} + 2^{k+1})$ for some integer $k$ with $0 \le k \le 20$.
+
+Here $0$ is taken to have no prime factors; for $m = 0$ both sides are false.
 
 Source: Christian Hercher, *On One of Erdős' Problems—An Efficient Search for Benelux
 Pairs*, Journal of Integer Sequences 28 (2025), Article 25.8.5, Theorem 1 b)

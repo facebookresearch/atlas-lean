@@ -50,6 +50,7 @@ namespace FundamentalDomainExistsAux
 
 variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
+open Pointwise in
 /-- A symmetric open neighborhood of `1` on which `w⁻¹ * v` stays in a given
 neighborhood of `1`. -/
 private theorem exists_open_inv_mul_subset {W : Set G} (hW : W ∈ nhds (1 : G)) :

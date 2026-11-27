@@ -59,49 +59,64 @@ namespace DehnInvariant
 open Real
 open scoped TensorProduct
 
-/-- The **Dehn group** `ℝ ⊗[ℤ] (ℝ / 2πℤ)`, the target of the Dehn invariant. -/
+/-- **Dehn group.** The Dehn group is the tensor product
+$\mathbb{R} \otimes_{\mathbb{Z}} (\mathbb{R} / 2\pi\mathbb{Z})$ of abelian groups; it is the target
+of the Dehn invariant. -/
 abbrev DehnGroup : Type := ℝ ⊗[ℤ] AddCircle (2 * π)
 
-/-- An edge of a polyhedron, with its length and its dihedral angle in radians. -/
+/-- **Edge of a polyhedron.** An edge, as recorded for the Dehn invariant, is a pair of real
+numbers: its length and its dihedral angle in radians. No positivity or range condition is
+imposed on either. -/
 structure Edge where
   /-- The length of the edge. -/
   length : ℝ
   /-- The dihedral angle at the edge, in radians. -/
   angle : ℝ
 
-/-- The **Dehn invariant** of a list of edges: the sum over edges of
-`length ⊗ₜ dihedral angle` in the Dehn group. -/
+/-- **Dehn invariant.** The Dehn invariant of a list of edges is the sum, over the edges, of
+$\ell \otimes \theta$ in the Dehn group, where $\ell$ is the length of the edge and $\theta$ its
+dihedral angle taken modulo $2\pi$. -/
 noncomputable def dehnInvariant (edges : List Edge) : DehnGroup :=
   (edges.map (fun e => e.length ⊗ₜ[ℤ] (↑e.angle : AddCircle (2 * π)))).sum
 
-/-- The dihedral angle of a regular tetrahedron, `arccos (1 / 3)`. -/
+/-- **Dihedral angle of the regular tetrahedron.** The real number $\arccos(1/3)$, the dihedral
+angle of a regular tetrahedron in radians. -/
 noncomputable def tetrahedralAngle : ℝ := arccos (1 / 3)
 
-/-- The edge list of a cube: 12 edges of length `ℓ`, each with dihedral angle `π / 2`. -/
+/-- **Edge list of a cube.** For a real number $\ell$, the edge list of a cube of side $\ell$
+consists of $12$ edges, each of length $\ell$ with dihedral angle $\pi / 2$. -/
 noncomputable def cubeEdges (ℓ : ℝ) : List Edge := List.replicate 12 ⟨ℓ, π / 2⟩
 
-/-- The edge list of a regular tetrahedron: 6 edges of length `ℓ`, each with dihedral
-angle `arccos (1 / 3)`. -/
+/-- **Edge list of the regular tetrahedron.** For a real number $\ell$, the edge list of a
+regular tetrahedron with edge length $\ell$ is the list of $6$ edges, each of length $\ell$ and
+dihedral angle $\arccos(1/3)$. -/
 noncomputable def tetrahedronEdges (ℓ : ℝ) : List Edge :=
   List.replicate 6 ⟨ℓ, tetrahedralAngle⟩
 
-/-- The Dehn invariant of the empty edge list is `0`. -/
+/-- **Dehn invariant of the empty edge list.** The empty list of edges has Dehn invariant $0$. -/
 @[simp]
 theorem dehnInvariant_nil : dehnInvariant [] = 0 := rfl
 
-/-- The Dehn invariant of a consed edge list splits off the first edge. -/
+/-- **The Dehn invariant splits off the first edge.** Let $e$ be an edge of length $\ell$ and
+dihedral angle $\theta$, and let $L$ be a list of edges. Then the Dehn invariant of the list
+obtained by putting $e$ in front of $L$ equals $\ell \otimes \theta$ plus the Dehn invariant of
+$L$, where $\theta$ is taken modulo $2\pi$. -/
 @[simp]
 theorem dehnInvariant_cons (e : Edge) (edges : List Edge) :
     dehnInvariant (e :: edges) =
       e.length ⊗ₜ[ℤ] (↑e.angle : AddCircle (2 * π)) + dehnInvariant edges := rfl
 
-/-- The Dehn invariant is additive under concatenation of edge lists. -/
+/-- **Additivity of the Dehn invariant under concatenation.** For lists of edges $L_1$ and $L_2$,
+the Dehn invariant of the concatenation of $L_1$ and $L_2$ is the sum of the Dehn invariants of
+$L_1$ and $L_2$. -/
 @[simp]
 theorem dehnInvariant_append (edges₁ edges₂ : List Edge) :
     dehnInvariant (edges₁ ++ edges₂) = dehnInvariant edges₁ + dehnInvariant edges₂ := by
   simp [dehnInvariant, List.map_append, List.sum_append]
 
-/-- The Dehn invariant of a constant edge list is the number of edges times one edge term. -/
+/-- **Dehn invariant of a repeated edge.** For a natural number $n$ and an edge of length $\ell$
+and dihedral angle $\theta$, the Dehn invariant of the list consisting of $n$ copies of that edge
+is $n \cdot (\ell \otimes \theta)$ in the Dehn group, where $\theta$ is taken modulo $2\pi$. -/
 theorem dehnInvariant_replicate (n : ℕ) (e : Edge) :
     dehnInvariant (List.replicate n e) =
       n • (e.length ⊗ₜ[ℤ] (↑e.angle : AddCircle (2 * π))) := by
@@ -127,9 +142,12 @@ private lemma fBar_mk (f : ℝ →ₗ[ℚ] ℝ) (hf_pi : f π = 0) (x : ℝ) :
     fBar f hf_pi (↑x : AddCircle (2 * π)) = f x := by
   simp [fBar, QuotientAddGroup.lift_mk]
 
-/-- If `α / π` is irrational, there is a `ℚ`-linear map `ℝ →ₗ[ℚ] ℝ` that vanishes at `π`
-but not at `α`: `α` lies outside the `ℚ`-span of `π`, and a linear functional on the
-quotient separates it. -/
+/-- **A $\mathbb{Q}$-linear functional separating $\alpha$ from $\pi$.** Let $\alpha$ be a real
+number such that $\alpha / \pi$ is irrational. Then there is a $\mathbb{Q}$-linear map
+$f : \mathbb{R} \to \mathbb{R}$ with $f(\pi) = 0$ and $f(\alpha) \neq 0$.
+
+The idea of the proof: $\alpha$ lies outside the $\mathbb{Q}$-span of $\pi$, and a linear
+functional on the quotient separates it. -/
 theorem exists_linearMap_of_irrational {α : ℝ} (hirr : Irrational (α / π)) :
     ∃ f : ℝ →ₗ[ℚ] ℝ, f π = 0 ∧ f α ≠ 0 := by
   set S := Submodule.span ℚ ({π} : Set ℝ)
@@ -155,9 +173,12 @@ theorem exists_linearMap_of_irrational {α : ℝ} (hirr : Irrational (α / π)) 
     have : (φ (Submodule.Quotient.mk α) : ℝ) = 0 := h
     exact_mod_cast this
 
-/-- A single edge term is nonzero when its length is nonzero and its angle divided by `π`
-is irrational: apply a `ℚ`-linear functional vanishing at `π` but not at the angle to
-detect it. -/
+/-- **Nonvanishing of an edge term in the Dehn group.** Let $\ell$ and $\alpha$ be real numbers
+with $\ell \neq 0$ and $\alpha / \pi$ irrational. Then the pure tensor $\ell \otimes [\alpha]$ is
+nonzero in the Dehn group $\mathbb{R} \otimes_{\mathbb{Z}} (\mathbb{R} / 2\pi\mathbb{Z})$, where
+$[\alpha]$ is the class of $\alpha$ modulo $2\pi$.
+
+The proof applies a $\mathbb{Q}$-linear functional that vanishes at $\pi$ but not at $\alpha$. -/
 theorem tmul_ne_zero_of_irrational {α : ℝ} {ℓ : ℝ}
     (hℓ : ℓ ≠ 0) (hirr : Irrational (α / π)) :
     ℓ ⊗ₜ[ℤ] (↑α : AddCircle (2 * π)) ≠ (0 : DehnGroup) := by
@@ -189,8 +210,11 @@ private theorem smul_tmul_pi_div_two_eq_zero (ℓ : ℝ) :
     exact ⟨3, by ring⟩
   rw [key, TensorProduct.tmul_zero]
 
-/-- **The Dehn invariant of the cube is `0`.** Each of its 12 dihedral angles is `π / 2`,
-and `12 • (π / 2)` vanishes in `ℝ / 2πℤ`. -/
+/-- **The Dehn invariant of the cube is zero.** For every real number $\ell$, the edge list of a
+cube of side $\ell$ (twelve edges of length $\ell$, each with dihedral angle $\pi / 2$) has Dehn
+invariant $0$.
+
+The reason is that $12 \cdot (\pi / 2) = 3 \cdot 2\pi$ vanishes in $\mathbb{R} / 2\pi\mathbb{Z}$. -/
 theorem dehnInvariant_cubeEdges (ℓ : ℝ) : dehnInvariant (cubeEdges ℓ) = 0 := by
   show dehnInvariant (List.replicate 12 ⟨ℓ, π / 2⟩) = 0
   rw [dehnInvariant_replicate]
@@ -198,8 +222,10 @@ theorem dehnInvariant_cubeEdges (ℓ : ℝ) : dehnInvariant (cubeEdges ℓ) = 0 
   rw [← Nat.cast_smul_eq_nsmul ℤ, TensorProduct.smul_tmul']
   exact smul_tmul_pi_div_two_eq_zero ℓ
 
-/-- **The Dehn invariant of the regular tetrahedron is nonzero**, assuming
-`arccos (1 / 3) / π` is irrational. -/
+/-- **Nonzero Dehn invariant of the regular tetrahedron, conditional on irrationality.** Suppose
+that $\arccos(1/3) / \pi$ is irrational. Then for every nonzero real number $\ell$, the edge list
+of a regular tetrahedron of side $\ell$ (six edges of length $\ell$, each with dihedral angle
+$\arccos(1/3)$) has nonzero Dehn invariant. -/
 theorem dehnInvariant_tetrahedronEdges_ne_zero {ℓ : ℝ} (hℓ : ℓ ≠ 0)
     (hirr : Irrational (tetrahedralAngle / π)) :
     dehnInvariant (tetrahedronEdges ℓ) ≠ 0 := by
@@ -210,9 +236,13 @@ theorem dehnInvariant_tetrahedronEdges_ne_zero {ℓ : ℝ} (hℓ : ℓ ≠ 0)
   have h6ℓ : (6 : ℤ) • ℓ ≠ 0 := by simp [hℓ]
   exact tmul_ne_zero_of_irrational h6ℓ hirr
 
-/-- Under the irrationality hypothesis, the cube and the regular tetrahedron have
-different Dehn invariants. In particular, a cube and a regular tetrahedron of equal
-volume are not scissors-congruent. -/
+/-- **Conditionally, the cube and the regular tetrahedron have different Dehn invariants.**
+Suppose that $\arccos(1/3) / \pi$ is irrational. Then for all real numbers $\ell$ and $\ell'$ with
+$\ell' \ne 0$, the edge list of a cube of side $\ell$ and the edge list of a regular tetrahedron
+of side $\ell'$ have different Dehn invariants.
+
+Since scissors-congruent polyhedra have equal Dehn invariants, under this hypothesis a cube and a
+regular tetrahedron of equal volume are not scissors-congruent. -/
 theorem dehnInvariant_cube_ne_dehnInvariant_tetrahedron {ℓ ℓ' : ℝ} (hℓ' : ℓ' ≠ 0)
     (hirr : Irrational (tetrahedralAngle / π)) :
     dehnInvariant (cubeEdges ℓ) ≠ dehnInvariant (tetrahedronEdges ℓ') := by

@@ -11,25 +11,26 @@ $C\rho/(\sigma^3\sqrt{n})$. [Markov chains](markov-chains/README.md) include the
 irreducible aperiodic chains, and [stochastic calculus](stochastic-calculus/README.md) has the
 [Itô integral](stochastic-calculus/it-integral/README.md) and its isometry.
 
-Percolation is the largest field, with about an eighth of the articles. For Bernoulli bond
+[Percolation](percolation/README.md) is the largest field, with about an eighth of the articles. For Bernoulli bond
 percolation on $\mathbb{Z}^d$ with $d \ge 2$ the critical probability lies strictly between $0$ and $1$
-(phase transition); below it, the probability that the origin is connected
-to distance $n$ decays exponentially in $n$ (sharpness); and on $\mathbb{Z}^2$ at
-$p = 1/2$ the Russo–Seymour–Welsh theorem keeps the probability of crossing a
-rectangle of fixed aspect ratio away from $0$ and $1$. Correlation inequalities
-supply the Harris–FKG and van den Berg–Kesten inequalities and
-Reimer's inequality, and
-high-dimensional probability has bounds on the
-KLS constant of log-concave laws.
+([phase transition](percolation/phase-transition/README.md)); below it, the probability that the origin is connected
+to distance $n$ decays exponentially in $n$ ([sharpness](percolation/sharpness/README.md)); and on $\mathbb{Z}^2$ at
+$p = 1/2$ the [Russo–Seymour–Welsh theorem](percolation/crossings/README.md) keeps the probability of crossing a
+rectangle of fixed aspect ratio away from $0$ and $1$. [Correlation inequalities](correlation-inequalities/README.md)
+supply the [Harris–FKG and van den Berg–Kesten inequalities](correlation-inequalities/harris-fkg-bk/README.md) and
+[Reimer's inequality](correlation-inequalities/reimer-inequality/README.md), and
+[high-dimensional probability](high-dimensional-probability/README.md) has bounds on the
+[KLS constant](high-dimensional-probability/kannan-lov-sz-simonovits-conjecture/README.md) of log-concave laws.
 
 [Distributions](distributions/README.md), the second largest field, works out the moments, mass functions and tails of
-named laws. About a sixth of the subject is statistics: hypothesis testing,
-linear models and multivariate analysis,
-statistical estimation, Bayesian statistics
-around the Dirichlet process, and nonparametric and survival methods such as the
+named laws. About a sixth of the subject is statistics: [hypothesis testing](hypothesis-testing/README.md),
+[linear models and multivariate analysis](linear-models-multivariate/README.md),
+[statistical estimation](statistical-estimation/README.md), [Bayesian statistics](bayesian-statistics/README.md)
+around the Dirichlet process, and [nonparametric and survival methods](nonparametric-survival/README.md) such as the
 Kaplan–Meier estimator and the Cox proportional hazards model.
 
 - [Foundations of probability](foundations/README.md)
+- [Expectation, variance and moments](moments/README.md)
 - [Probability distributions](distributions/README.md)
 - [Characteristic functions and generating functions](characteristic-functions/README.md)
 - [Infinitely divisible laws and regular variation](infinite-divisibility-regular-variation/README.md)
@@ -53,3 +54,6 @@ Kaplan–Meier estimator and the Cox proportional hazards model.
 - [Linear models and multivariate analysis](linear-models-multivariate/README.md)
 - [Nonparametric statistics and survival analysis](nonparametric-survival/README.md)
 - [Bayesian statistics](bayesian-statistics/README.md)
+- [Not yet classified](not-yet-classified/README.md)
+
+- [Queueing theory](queueing-theory/README.md)

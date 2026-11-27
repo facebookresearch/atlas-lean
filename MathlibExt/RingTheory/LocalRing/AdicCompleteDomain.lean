@@ -71,7 +71,7 @@ private theorem isAdicComplete_of_finite (M : Type v) [AddCommGroup M] [Module R
     [IsNoetherianRing R] [Module.Finite R M] [IsAdicComplete I R] :
     IsAdicComplete I M := by
   refine
-    { toIsHausdorff := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson_bot I)
+    { toIsHausdorff := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson I)
       toIsPrecomplete := ?_ }
   rw [← AdicCompletion.of_surjective_iff]
   obtain ⟨n, p, hp⟩ := Module.Finite.exists_fin' R M

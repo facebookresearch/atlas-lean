@@ -2,32 +2,32 @@
 
 Combinatorics studies finite and discrete configurations through counting, extremal structure, and constructive arguments.
 
-Additive combinatorics is the largest field, with about one article in seven. It
-runs from zero-sum problems in finite abelian groups and
-sumsets and inverse theorems, from the
+[Additive combinatorics](additive-combinatorics/README.md) is the largest field, with about one article in seven. It
+runs from [zero-sum problems](additive-combinatorics/zero-sum-subset-sums/README.md) in finite abelian groups and
+[sumsets and inverse theorems](additive-combinatorics/sumsets-inverse-theorems/README.md), from the
 Cauchy–Davenport–Chowla theorem to the polynomial Freiman–Ruzsa theorem over $\mathbb{F}_2$ of Gowers, Green, Manners
-and Tao, to Sidon sets and difference sets and
-progressions in dense sets, with Szemerédi's theorem and
-the Gowers uniformity norms that
+and Tao, to [Sidon sets and difference sets](additive-combinatorics/sidon-sets-difference-sets/README.md) and
+[progressions in dense sets](additive-combinatorics/progressions-dense-sets/README.md), with Szemerédi's theorem and
+the [Gowers uniformity norms](additive-combinatorics/progressions-dense-sets/gowers-uniformity-norms/README.md) that
 control progression counts.
-Ramsey theory has the theorems of Ramsey, van der Waerden and Schur, the density and
+[Ramsey theory](ramsey-theory/README.md) has the theorems of Ramsey, van der Waerden and Schur, the density and
 infinitary Hales–Jewett theorems, and Hindman's finite sums theorem.
 
-Combinatorics on words, nearly as large, studies
-morphic and Sturmian words such as the Fibonacci and
-Thue–Morse words, automatic sequences with the theorems of
-Cobham and Christol, and finite words, where Witt's formula counts
-Lyndon words of given content. Permutations are studied through pattern avoidance and
-statistics, and Boolean functions include the
-Kahn–Kalai–Linial inequality: some variable of a Boolean
+[Combinatorics on words](combinatorics-on-words/README.md), nearly as large, studies
+[morphic and Sturmian words](combinatorics-on-words/morphic-sturmian-words/README.md) such as the Fibonacci and
+Thue–Morse words, [automatic sequences](combinatorics-on-words/automatic-sequences/README.md) with the theorems of
+Cobham and Christol, and [finite words](combinatorics-on-words/finite-words/README.md), where Witt's formula counts
+Lyndon words of given content. [Permutations](permutations/README.md) are studied through pattern avoidance and
+statistics, and [Boolean functions](boolean-functions/README.md) include the
+[Kahn–Kalai–Linial inequality](boolean-functions/kahn-kalai-linial-inequality/README.md): some variable of a Boolean
 function on $n$ bits has influence at least of order $\operatorname{Var}(f) \log n / n$.
 
 Eight enumerative fields hold over a third of the articles between them:
-Stirling, Bell and Eulerian numbers,
-integer partitions, [binomial coefficients](binomial-coefficients/README.md) and their
+[Stirling, Bell and Eulerian numbers](stirling-bell-eulerian/README.md),
+[integer partitions](integer-partitions/README.md), [binomial coefficients](binomial-coefficients/README.md) and their
 sums, [Catalan numbers and lattice paths](catalan-numbers-lattice-paths/README.md),
-integer compositions, Riordan arrays,
-parking functions and set partitions.
+[integer compositions](integer-compositions/README.md), [Riordan arrays](riordan-arrays-transforms/README.md),
+[parking functions](parking-functions/README.md) and [set partitions](set-partitions/README.md).
 
 - [Binomial coefficients and identities](binomial-coefficients/README.md)
 - [Catalan numbers and lattice paths](catalan-numbers-lattice-paths/README.md)
@@ -50,3 +50,6 @@ parking functions and set partitions.
 - [Polytopes, Ehrhart theory and simplicial complexes](polytopes-simplicial-complexes/README.md)
 - [Discrepancy theory](discrepancy-theory/README.md)
 - [Probabilistic combinatorics](probabilistic-combinatorics/README.md)
+- [Boolean functions](boolean-functions/README.md)
+- [Elementary enumeration](elementary-enumeration/README.md)
+- [Not yet classified](not-yet-classified/README.md)

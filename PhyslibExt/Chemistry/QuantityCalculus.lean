@@ -413,8 +413,8 @@ lemma rescale_div_rescale_same (u₁ u₂ : UnitScale ISQDimensionBase)
   rw [rescale_div_rescale, h,
     rescale_of_isDimensionless u₁ u₂ (isDimensionless_iff.mpr rfl)]
 
-/-- Converting a value to other units and back recovers it: the self-scaling case of
-transitivity. -/
+/-- Converting a value from a choice of units to the same choice leaves it unchanged; with
+transitivity, converting to other units and back recovers it. -/
 lemma rescale_self (u : UnitScale ISQDimensionBase) (d : Dimension ISQDimensionBase)
     (x : ℝ) : rescale u u d x = x := by
   simp only [rescale, unitFactor, UnitScale.dimScale_self, NNReal.coe_one, one_mul]
@@ -457,18 +457,20 @@ noncomputable def logRatio {d : Dimension ISQDimensionBase} (x x₀ : WithDim d 
     (_hx : 0 < x.val) (_hx₀ : 0 < x₀.val) : ℝ :=
   Real.log (x.val / x₀.val)
 
-/-- The logarithm of a ratio is the difference of the logarithms. -/
+/-- For positive values of one dimension, the logarithm of their ratio is the difference of the
+logarithms of their numerical values. -/
 lemma logRatio_eq_log_sub_log {d : Dimension ISQDimensionBase} {x x₀ : WithDim d ℝ}
     (hx : 0 < x.val) (hx₀ : 0 < x₀.val) :
     logRatio x x₀ hx hx₀ = Real.log x.val - Real.log x₀.val :=
   Real.log_div hx.ne' hx₀.ne'
 
-/-- The logarithm of the ratio of a value to itself is `0`. -/
+/-- For a positive value, the logarithm of the ratio of the value to itself is `0`. -/
 lemma logRatio_self {d : Dimension ISQDimensionBase} {x : WithDim d ℝ} (hx : 0 < x.val) :
     logRatio x x hx hx = 0 := by
   rw [logRatio, div_self hx.ne', Real.log_one]
 
-/-- The logarithm of a ratio of products splits into the sum of the logarithms of the ratios. -/
+/-- For positive values, the logarithm of a ratio of products splits into the sum of the
+logarithms of the ratios. -/
 lemma logRatio_mul_mul {d₁ d₂ : Dimension ISQDimensionBase}
     {x x₀ : WithDim d₁ ℝ} {y y₀ : WithDim d₂ ℝ}
     (hx : 0 < x.val) (hx₀ : 0 < x₀.val) (hy : 0 < y.val) (hy₀ : 0 < y₀.val) :
@@ -479,8 +481,8 @@ lemma logRatio_mul_mul {d₁ d₂ : Dimension ISQDimensionBase}
   simp only [logRatio, WithDim.withDim_hMul_val, ← div_mul_div_comm,
     Real.log_mul (div_pos hx hx₀).ne' (div_pos hy hy₀).ne']
 
-/-- The logarithm of a ratio is unchanged when both values are multiplied by the same positive
-factor. -/
+/-- For positive values of one dimension, the logarithm of their ratio is unchanged when both are
+multiplied by the same positive factor. -/
 lemma logRatio_mul_left {d : Dimension ISQDimensionBase} {x x₀ : WithDim d ℝ} {k : ℝ}
     (hk : 0 < k) (hx : 0 < x.val) (hx₀ : 0 < x₀.val) :
     logRatio (k • x) (k • x₀)
@@ -489,7 +491,7 @@ lemma logRatio_mul_left {d : Dimension ISQDimensionBase} {x x₀ : WithDim d ℝ
       logRatio x x₀ hx hx₀ := by
   simp only [logRatio, WithDim.real_smul_val, smul_eq_mul, mul_div_mul_left _ _ hk.ne']
 
-/-- The logarithm of the ratio of two values of the same dimension does not depend on the
+/-- The logarithm of the ratio of two positive values of the same dimension does not depend on the
 units: a change of units multiplies both values by the same positive unit factor. -/
 lemma logRatio_rescale (u₁ u₂ : UnitScale ISQDimensionBase)
     {d : Dimension ISQDimensionBase} {x x₀ : WithDim d ℝ}
@@ -587,7 +589,8 @@ noncomputable def celsiusToKelvin (tC : ℝ) (htC : -273.15 ≤ tC) :
 noncomputable def kelvinToCelsius (tK : Temperature) : ℝ :=
   tK.toReal - 273.15
 
-/-- Converting a Celsius reading to absolute temperature and back recovers it. -/
+/-- Converting a Celsius reading at or above absolute zero, `tC ≥ -273.15`, to absolute temperature
+and back recovers it. -/
 lemma kelvinToCelsius_celsiusToKelvin (tC : ℝ) (htC : -273.15 ≤ tC) :
     kelvinToCelsius (celsiusToKelvin tC htC) = tC :=
   add_sub_cancel_right tC 273.15
@@ -601,13 +604,15 @@ lemma celsiusToKelvin_kelvinToCelsius (tK : Temperature) :
   apply NNReal.coe_injective
   exact sub_add_cancel tK.toReal 273.15
 
-/-- Temperature differences have the same numerical value in Celsius and kelvin. -/
+/-- For two Celsius readings at or above absolute zero, `-273.15`, their difference has the same
+numerical value in Celsius and kelvin. -/
 lemma celsiusToKelvin_sub_celsiusToKelvin (t₁ t₂ : ℝ)
     (h₁ : -273.15 ≤ t₁) (h₂ : -273.15 ≤ t₂) :
     (celsiusToKelvin t₂ h₂).toReal - (celsiusToKelvin t₁ h₁).toReal = t₂ - t₁ :=
   add_sub_add_right_eq_sub t₂ t₁ 273.15
 
-/-- A Celsius reading is never the numerical kelvin value of its temperature. -/
+/-- A Celsius reading at or above absolute zero, `tC ≥ -273.15`, is never the numerical kelvin value
+of its temperature. -/
 lemma celsiusToKelvin_ne_self (tC : ℝ) (htC : -273.15 ≤ tC) :
     (celsiusToKelvin tC htC).toReal ≠ tC := by
   change tC + 273.15 ≠ tC

@@ -1,0 +1,15 @@
+# Line Bundle Task Contracts
+
+- [Module Presheaves](module-presheaves.md)
+- [Forget Modules](forget-modules.md)
+- [Sheafify Modules](sheafify-modules.md)
+- [Section](section.md)
+- [Tensor Map](tensor-map.md)
+- [Tensor Map eq](tensor-map-eq.md)
+- [Power Map](power-map.md)
+- [Power Functor](power-functor.md)
+- [Unit Diagonal](unit-diagonal.md)
+- [Tensor Section](tensor-section.md)
+- [Section Power](section-power.md)
+- [Pullback Section](pullback-section.md)
+- [Pullback Powers](pullback-powers.md)

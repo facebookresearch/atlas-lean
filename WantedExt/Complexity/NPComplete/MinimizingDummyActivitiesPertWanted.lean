@@ -19,7 +19,7 @@ network", Networks 9 (1979), 189-194, doi:10.1002/net.3230090302.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.Digraph.Basic
