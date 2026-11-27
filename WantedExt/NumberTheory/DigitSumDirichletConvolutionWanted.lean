@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.DigitSumDirichletConvolution
 public import MathlibExt.NumberTheory.Digits.TrollopeDelange
 public import MathlibExt.NumberTheory.DigitSumDirichletConvolutionDigitSumAuxiliaryIsBigO
+public import MathlibExt.NumberTheory.Digits.DigitSumArithSqPartialSum
 
 namespace MetaMathlibExt
 
@@ -79,20 +80,6 @@ public theorem_wanted digitSum_reciprocal_log_pow_sum_isBigO (q : ℕ) (hq : 2 �
     (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((Nat.digits q n).sum : ℝ) / n * log n ^ j -
         ((q : ℝ) - 1) * log x ^ (j + 2) / (2 * (j + 2) * log q)) =O[atTop]
       (fun x => log x ^ (j + 1))
-
-/-- **Partial sums of the second digit-sum convolution.** Let $q \ge 2$ be an integer, let
-$s_q(n)$ be the sum of the base-$q$ digits of $n$, and let $s_q^{(2)} = s_q * s_q$ be its
-Dirichlet square, so $s_q^{(2)}(n) = \sum_{de = n} s_q(d) \, s_q(e)$. Then
-$$\sum_{1 \le n \le x} s_q^{(2)}(n) = \frac{(q - 1)^2}{24 \log^2 q} \, x \log^3 x + O(x \log^2 x)$$
-as $x \to \infty$ through the reals.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 2 (`integers-2026-A43-thm-2`). -/
-public theorem_wanted digitSumArith_sq_partialSum_isBigO (q : ℕ) (hq : 2 ≤ q) :
-    (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((digitSumArith q ^ 2) n : ℝ) -
-        ((q : ℝ) - 1) ^ 2 * x * log x ^ 3 / (24 * log q ^ 2)) =O[atTop]
-      (fun x => x * log x ^ 2)
 
 /-- **Partial sums of the iterated digit-sum convolutions.** Let $q \ge 2$ be an integer, let
 $s_q(n)$ be the sum of the base-$q$ digits of $n$, let $s_q^{(k)}$ be the $k$-fold Dirichlet
