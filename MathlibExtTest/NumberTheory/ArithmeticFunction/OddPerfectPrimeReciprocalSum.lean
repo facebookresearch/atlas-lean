@@ -85,4 +85,22 @@ example : ∃ C : ℝ, (abundancySup 20 : ℝ) ≤ 2 + C / 2 := by
   rw [hmin] at hbound
   simpa using hbound
 
+-- Below the crossing threshold, the lifted product stays at most two.
+example (q : ℕ) (hq : q.Prime) (hodd : Odd q)
+    (h : abundancySup (ordCompl[2] (q + 1)) < 2) :
+    abundancySup (q * ordCompl[2] (q + 1)) ≤ 2 := by
+  by_contra hcon
+  exact not_abundancySup_oddPart_succ_lt_two_and_two_lt q hq hodd
+    ⟨h, not_le.mp hcon⟩
+
+-- At `q = 3` the odd part of `q + 1` is `1`.
+example : ordCompl[2] (3 + 1) = 1 := by
+  have h : (3 : ℕ) + 1 = 2 ^ 2 := by decide
+  rw [h, Nat.ordCompl_self_pow Nat.prime_two]
+
+-- The crossing is impossible at the concrete prime `q = 3`.
+example : ¬ (abundancySup (ordCompl[2] (3 + 1)) < 2 ∧
+    2 < abundancySup (3 * ordCompl[2] (3 + 1))) :=
+  not_abundancySup_oddPart_succ_lt_two_and_two_lt 3 (by decide) (by decide)
+
 end MathlibExtTest.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum

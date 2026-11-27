@@ -1,6 +1,6 @@
 # Complex and symplectic geometry
 
-Manifolds with complex, almost complex, symplectic or contact structures, Riemann surfaces, and integrable Hamiltonian systems.
+Manifolds with complex, almost complex, symplectic or contact structures, Riemann surfaces, and integrable Hamiltonian systems, with sheaves of holomorphic functions and forms on complex manifolds, and currents and Kähler classes on compact complex manifolds. Currents of integration and the Poincaré–Lelong formula used by L² methods are under birational geometry.
 
 - [Darboux's theorem](darboux-s-theorem/README.md)
 - [Identity and open mapping theorems for holomorphic maps](identity-and-open-mapping-theorems-for-holomorph/README.md)

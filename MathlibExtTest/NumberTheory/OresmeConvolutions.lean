@@ -67,6 +67,18 @@ example (n : ℕ) :
   field_simp
   ring
 
+-- At zero both factors in the only summand vanish.
+example : ∑ k ∈ Finset.range 1, (pellNumber k : ℚ) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) =
+    0 := by
+  rw [pellNumber_oresme_convolution 0]
+  norm_num [pellNumber]
+
+-- At index four the three interior terms contribute 3/8, 1, and 5/2.
+example : ∑ k ∈ Finset.range 5, (pellNumber k : ℚ) * (((4 - k : ℕ) : ℚ) / 2 ^ (4 - k)) =
+    31 / 8 := by
+  rw [pellNumber_oresme_convolution 4]
+  norm_num [pellNumber]
+
 -- The Oresme factor `0 / 2 ^ 0` makes the initial convolution vanish, although `j₀ = 2`.
 example : ∑ k ∈ Finset.range 1,
     (jacobsthalLucasNumber k : ℚ) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) = 0 := by

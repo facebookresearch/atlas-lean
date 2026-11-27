@@ -10,6 +10,8 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.FramedMeromorphicGroupModels
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
+public import MathlibExt.AlgebraicGeometry.MeromorphicGroupFactorizationMeromorphicGroupFactorizationUnique
+public import MathlibExt.AlgebraicGeometry.MeromorphicGroupFactorizationPuncturedParameterUnit
 
 /-!
 # Actual finite-pole G-factorization and coefficient restriction requests
@@ -41,17 +43,6 @@ open MathlibExt.AlgebraicGeometry
 open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
 open AnalyticMeromorphicCoordinates MeromorphicCoefficientCompletion
 open FramedMeromorphicGroupModels
-
-/-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
-$U$ a puncture of $d$ (an open embedding with isomorphic stalks onto the complement of the image
-of $d$), and assume that $d$ has a Cartier atlas (`CartierAtlas`: it is a closed embedding with
-surjective stalk maps, covered by pole charts). Then for every pole chart $Q$ of $d$
-(`PoleChart`), its parameter $t$ restricts to a unit on the punctured chart of $Q$. -/
-public theorem_wanted punctured_parameter_unit
-    (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
-    {X D : ESpace p E} (d : D ⟶ X) (U : Puncture p E d)
-    (A : CartierAtlas p E d U) (Q : PoleChart p E d U) :
-    IsUnit (sectionMap p E Q.puncture.map Q.parameter)
 
 /-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
 $U$ a puncture of $d$, and assume that $d$ has a Cartier atlas (`CartierAtlas`). Let $Q$ be a pole
@@ -89,28 +80,5 @@ public def_wanted meromorphicGroupFactorization
     (left : IntegralFrame p E G H d U Q M.left)
     (right : IntegralFrame p E G H d U Q M.right) :
     GroupFactorization p E G H P d U Q h M left right
-
-/-- Uniqueness of the finite-pole factorization: let $p$ be a prime, $E$ a field and $G$ a
-reductive group scheme over $E$, with given torsor descent data $H$ and pullback compatibility $P$
-on analytic adic spaces over $E$. Let $d : D → X$ be a morphism of such spaces with a puncture
-$U$, and $Q$ a pole chart of $d$ whose parameter $t$ restricts to a unit on the punctured chart,
-such that restriction from $\mathcal{O}(Q)[1/t]$ to the sections of the punctured chart is
-injective. For every modification $M$ of $G$-bundles on $X$ along $d$ (`Modification`) with
-integral frames of both of its bundles on $Q$, any two factorizations of $M$ through
-$\mathcal{O}(Q)[1/t]$ (`GroupFactorization`) have the same point of $G$. -/
-public theorem_wanted meromorphicGroupFactorization_unique
-    (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
-    (G : Over (Spec (.of E))) [GrpObj G]
-    [ReductiveGroupSchemeModels.IsReductive (Spec (.of E)) G]
-    (H : ∀ V : ESpace p E, GroupDescent p E G V)
-    (P : PullbackPreservation p E G H)
-    {X D : ESpace p E} (d : D ⟶ X) (U : Puncture p E d)
-    (Q : PoleChart p E d U)
-    (h : IsUnit (sectionMap p E Q.puncture.map Q.parameter))
-    (hi : Function.Injective (puncturedMap p E d U Q h))
-    (M : Modification p E G H P d U)
-    (left : IntegralFrame p E G H d U Q M.left)
-    (right : IntegralFrame p E G H d U Q M.right)
-    (F N : GroupFactorization p E G H P d U Q h M left right) : F.element = N.element
 
 end WantedExt.AlgebraicGeometry.MeromorphicGroupFactorization
