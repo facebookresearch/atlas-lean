@@ -1,6 +1,6 @@
 # Zero count with multiplicity
 
 Sum the natural orders of vanishing of $f$ over $S$.
-This is a count when $S$ is a finite set of zeros and those orders are finite. The order
-is expressed as `analyticOrderAt`; its infinite value is sent to zero, and the finite
-sum is zero when its support is infinite.
+This counts zeros with multiplicity when $S$ is a finite set of zeros at which $f$ is analytic
+and has finite order. `analyticOrderAt` returns zero at nonanalytic points, and conversion to
+`ℕ` sends infinite order to zero. The finite sum is zero when its support is infinite.

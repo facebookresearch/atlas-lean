@@ -1,0 +1,3 @@
+# The decision problem MINIMUM EDGE-COST FLOW with capacities 2 and prices 0/1
+
+MINIMUM EDGE-COST FLOW with capacities $2$ and prices $0$/$1$ as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for MINIMUM EDGE-COST FLOW with capacities 2 and prices 0/1](well-formed.md) (a well-formed MINIMUM EDGE-COST FLOW instance in which every arc has capacity $2$ and price $0$ or $1$) and feasible for MINIMUM EDGE-COST FLOW. The feasibility test is the unrestricted problem's; the restriction to MINIMUM EDGE-COST FLOW with capacities 2 and prices 0/1 comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.
