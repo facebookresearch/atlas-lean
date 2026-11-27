@@ -1,7 +1,16 @@
 # Differential item functioning and group impact are logically independent
 
-Let a binary item have response probabilities $P_g(\theta) = P(Y = 1 \mid \theta, g)$ in groups $g \in \{A, B\}$, and let $\pi_A, \pi_B$ be probability distributions on a common finite set of ability values. The marginal response probabilities are $m_g = \sum_\theta \pi_g(\theta)P_g(\theta)$. With equal response curves (no differential item functioning) the marginal difference is $m_A - m_B = \sum_\theta (\pi_A(\theta) - \pi_B(\theta))P(\theta)$, which need not vanish: with $P_A = P_B$ equal to $1/4$ and $3/4$ at two ability values, $\pi_A = (3/4, 1/4)$ and $\pi_B = (1/4, 3/4)$ give $m_A = 3/8$ and $m_B = 5/8$ (impact without DIF). Different curves can give equal marginals: with $P_A = (1/4, 3/4)$, $P_B = (1/2, 1/2)$ and $\pi_A = \pi_B = (1/2, 1/2)$, both marginals are $1/2$ (DIF without impact). The comparison presupposes that both groups are placed on one anchored latent scale; a positive affine change of the latent coordinate with compensating item parameters leaves each group's response law unchanged.
+Put both groups on the same finite set of ability levels. For each group $g\in\{A,B\}$, let $\pi_g$ be its distribution of ability and $q_g(\theta)\in[0,1]$ its conditional probability of success on one binary item at ability $\theta$. Its [marginal success probability](item-success-marginal.md) is the [latent average](item-success-marginal-eq-sum.md) $m_g=\sum_\theta\pi_g(\theta)q_g(\theta)$. Differential item functioning (DIF) means that the two curves differ at some ability level. Group impact means that the two marginal probabilities differ.
+
+If the two curves coincide with a common curve $q$, the [marginal difference under equal curves](../../not-yet-classified/part-16/impact-difference-of-equal-curves.md) is $m_A-m_B=\sum_\theta(\pi_A(\theta)-\pi_B(\theta))q(\theta)$. The following pairs on two ability levels show that neither difference implies the other:
+
+- **Impact without DIF.** Both curves are $(1/4,3/4)$. The ability distributions $(3/4,1/4)$ and $(1/4,3/4)$ give marginals $3/8$ and $5/8$, respectively.
+- **DIF without impact.** The curves are $(1/4,3/4)$ and $(1/2,1/2)$. Under the common ability distribution $(1/2,1/2)$, both marginals are $1/2$.
+
+## Background
+
+- [Affine rescaling of a finite 2PL latent mixture](../../not-yet-classified/part-06/finite-linking/finite-mixture-two-pl-affine-of-pos.md): a positive affine rescaling of one group's ability coordinate with the corresponding change in item parameters preserves that group's observed law. Comparing curves at the same ability level requires a common, anchored scale.
 
 ## Sources
 
-- The statement is derived on this page from its definitions and the linked results; no external source is followed.
+- The identity and examples are derived here from the finite mixture formula.
