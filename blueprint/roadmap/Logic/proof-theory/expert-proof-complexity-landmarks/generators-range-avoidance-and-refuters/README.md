@@ -1,0 +1,10 @@
+# Generators, Range Avoidance and Refuters
+
+Demi-bits generators as a source of hardness for range avoidance and of proof complexity generators, and the total search problems that locate errors in purported resolution refutations beating a lower bound.
+
+- [Demi-bits generators](demi-bits-generator.md)
+- [Demi-bits generators make range avoidance hard for nondeterministic algorithms](demi-bits-imply-range-avoidance-hardness.md)
+- [Demi-bits generators against a parity-closed proof system yield proof complexity generators](proof-complexity-generators-from-demi-bits-via-linear-extractors.md)
+- [Random output restrictions of a demi-bits generator are proof complexity generators](random-output-restrictions-are-proof-complexity-generators.md)
+- [Refuter problems for resolution lower bounds](resolution-lower-bound-refuter-problems.md)
+- [Refuting short resolution proofs is complete for $\mathrm{rwPHP}(\mathsf{PLS})$](refuting-short-resolution-proofs-is-rwphp-pls-complete.md)

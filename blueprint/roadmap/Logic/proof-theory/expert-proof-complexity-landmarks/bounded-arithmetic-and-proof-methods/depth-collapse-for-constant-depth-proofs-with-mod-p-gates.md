@@ -1,0 +1,29 @@
+# Depth collapse for constant-depth proofs with mod p gates
+
+For a prime $p$, a depth-$d$ proof using AND, OR and mod $p$ connectives of a $\Sigma_j(\oplus^-_p)$ formula converts, with quasipolynomial blowup, into a proof whose formulas are depth-$j$ Boolean combinations of mod $p$ gates applied to small conjunctions. So constant-depth Frege with mod $p$ gates (AC$^0[p]$-Frege) has no strict depth hierarchy.
+
+Fix a prime $p$. Formulas are built from literals $x, \bar{x}$ with unbounded fan-in $\bigwedge$ and $\bigvee$ (the empty ones being the constants true and false) and, for each $k \in [p] = \{0, \dots, p-1\}$, the connective $\oplus^k_p \Phi$ on a nonempty finite multiset $\Phi$ of formulas, true when the number of true members of $\Phi$ is congruent to $k$ modulo $p$, together with its complement $\bar{\oplus}^k_p \Phi$. **$PK_{\oplus_p}$** is the Tait-style system whose lines are cedents (sets of formulas, read disjunctively), with initial cedents $x, \bar{x}$, five families of initial cedents for the mod $p$ connectives (one-element inputs, complementation, exclusiveness of distinct residues, and additivity $\oplus^{k+\ell}_p(\Phi \cup \Psi)$ from $\oplus^k_p \Phi$ and $\oplus^{\ell}_p \Psi$), and the rules weakening, cut, $\bigvee$-introduction and $\bigwedge$-introduction. The depth of a formula is the number of alternations of $\bigwedge$, $\bigvee$ and $\oplus_p$ along a branch of its tree; a depth-$d$ proof uses only formulas of depth at most $d$.
+
+A **$\oplus^-_p$ formula** is $\oplus^k_p \Phi$ or $\bar{\oplus}^k_p \Phi$ with every member of $\Phi$ a conjunction of literals. $\Sigma_0(\oplus^-_p) = \Pi_0(\oplus^-_p)$ are the $\oplus^-_p$ formulas; a $\Pi_{i+1}(\oplus^-_p)$ formula is a $\Sigma_i(\oplus^-_p)$ formula or a conjunction $\bigwedge \Phi$ of a multiset of $\Sigma_i(\oplus^-_p)$ formulas, and $\Sigma_{i+1}(\oplus^-_p)$ is defined dually with $\bigvee$. **$PCK^i_p$** is the subsystem of $PK_{\oplus_p}$ whose cedents contain only literals, conjunctions or disjunctions of literals, and $\Pi_i(\oplus^-_p)$ or $\Sigma_i(\oplus^-_p)$ formulas. Size is the number of symbols; a formula has **$\Sigma$-size** $S$ if its size is at most $S$ and every conjunction or disjunction of literals occurring in it has at most $\log S$ literals, and a proof has $\Sigma$-size $S$ if its size is at most $S$ and each of its formulas has $\Sigma$-size at most $S$.
+
+**Theorem.** Let $p$ be prime, let $j > 0$, and let $\varphi$ be a $\Sigma_j(\oplus^-_p)$ formula of $\Sigma$-size at most $S$. If $\varphi$ has a depth-$d$ $PK_{\oplus_p}$ proof of size at most $S$, then $\varphi$ has a $PCK^j_p$ proof of $\Sigma$-size $S^{\log^e S}$, where $e \in \mathbb{N}$ is a constant depending only on $d$.
+
+The construction is uniform, so for each $j > 0$ this is a uniform quasipolynomial simulation of constant-depth $PK_{\oplus_p}$ by $PCK^j_p$ on such formulas.
+
+## Expansion
+
+The proof is a reflection argument. For second-order predicates $\alpha, \beta, \gamma$ let $j\text{-Ref}(d\text{-}PK_{\oplus_p})$ say that if $\beta$ encodes a $\Sigma_j(\oplus^-_p)$ formula and $\alpha$ encodes a depth-$d$ $PK_{\oplus_p}$ proof of it, then the assignment $\gamma$ satisfies the formula. Induction on the lines of the proof shows $T_2(\oplus_p)(\alpha, \beta, \gamma)$ proves this sentence, and by the conservativity of $T_2(\oplus_p)$ over $APC_2^{\oplus_p P}$ (a form of Toda's theorem in bounded arithmetic) so does $APC_2^{\oplus_p P}(\alpha, \beta, \gamma) \subseteq T_2^{3, \oplus_p P}(\alpha, \beta, \gamma)$. A Paris–Wilkie translation adapted to counting quantifiers turns this proof into quasipolynomial-size $PCK$ proofs of the translated reflection principle; substituting the bits of the given proof for $\alpha$ and of $\varphi$ for $\beta$ leaves a $PCK^j_p$ proof of $\varphi$ in the variables $\gamma$.
+
+A sharper form treats a $\Sigma_3(\oplus^-_p)$ formula $\bigvee_{k<K} \bigwedge_{\ell<L_k} \psi_{k,\ell}$ with $\psi_{k,\ell} \in \Sigma_1(\oplus^-_p)$: the cedents $\{\psi_{k,0}, \dots, \psi_{k,L_k-1}\}_{k<K}$ have a $PCK^1_p$ refutation of $\Sigma$-size $S^{\log^e S}$, so the formulas have depth three (Boolean, then mod $p$ gates, then small conjunctions). Allowing extra axioms that express the surjective weak pigeonhole principle for a suitable function brings the refutation down to tree-like $PCK^0_p$, almost polylogarithmic-degree polynomial calculus. Unlike the earlier flat proofs of Maciel and Pitassi, no threshold connectives are introduced.
+
+## Depends on
+
+- [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
+
+## Proof depends on
+
+- [Bounded arithmetic with mod p counting collapses to approximate counting](modular-counting-arithmetic-collapses-to-approximate-counting.md)
+
+## Sources
+
+- Sam Buss, Leszek Aleksander Kołodziejczyk, Konrad Zdanowski, "Collapsing modular counting in bounded arithmetic and constant depth propositional proofs", *Transactions of the American Mathematical Society*, 2015, doi:10.1090/s0002-9947-2015-06173-4 (Theorem 24; Theorems 25 and 27 and Proposition 26 in Section 5; definitions of $PK_{\oplus_p}$, $PCK^i_p$ and $\Sigma$-size in Section 2.1; numbering of the authors' preliminary version dated 5 July 2012, the edition read).
