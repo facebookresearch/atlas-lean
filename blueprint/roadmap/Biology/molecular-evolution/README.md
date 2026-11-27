@@ -14,3 +14,10 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Antibody escape maps from deep mutational scanning](antibody-escape-maps-from-deep-mutational-scanning/README.md)
+- [Coevolutionary Potts landscapes of protein families](coevolutionary-potts-landscapes-of-protein-families/README.md)
+- [Neutral indel model](neutral-indel-model/README.md)
+- [Coordinated substitution networks of viral variants](coordinated-substitution-networks-of-viral-variants/README.md)
+- [History graphs for genome evolution under parsimony](history-graphs-for-genome-evolution-under-parsimony/README.md)
+- [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
+- [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)

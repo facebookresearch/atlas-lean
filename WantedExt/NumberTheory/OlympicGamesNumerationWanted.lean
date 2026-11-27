@@ -13,11 +13,15 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.NumberTheory.Rayleigh
 public import MathlibExt.NumberTheory.BronzeMetallicIdentities
+public import MathlibExt.NumberTheory.GreedyOddFibonacciFloor
 public import MathlibExt.NumberTheory.OddFibonacciGoldenRatio
 public import MathlibExt.NumberTheory.OddFibonacciRepresentation
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.PellSilverRatio
+public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsPellHalfCompanionRepresentation
+public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsTwoPellHalfCompanionRepresentation
+public import MathlibExt.NumberTheory.OlympicGamesNumerationFloorGreedyBronzeCompanionSumMul
 
 /-!
 # Fibonacci and Pell numeration identities from the Olympic games
@@ -49,47 +53,6 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- **Numeration by doubled Pell and half-companion Pell numbers.** Let $P_n$ be the Pell numbers
-($P_0 = 0$, $P_1 = 1$, $P_{n+2} = 2P_{n+1} + P_n$) and $H_n$ the half-companion Pell numbers
-($H_0 = H_1 = 1$, $H_{n+2} = 2H_{n+1} + H_n$), and let $R_k = 2P_k$ for odd $k$ and
-$R_k = H_k$ for even $k$. Then for every positive integer $t$ there are a natural number $n$ and
-natural numbers $a_0, a_1, a_2, \dots$ such that $R_n \le t < R_{n+1}$,
-$t = \sum_{k=0}^{n} a_k R_k$, $a_0 \le 1$, $a_0 = 0$ if $a_1 = 1$, $a_{2k} \le 3$ and
-$a_{2k+1} \le 1$ for every $k \ge 0$, $a_{2k+2} < 3$ whenever $a_{2k} = 3$ ($k \ge 0$), and
-$a_{2k-1} = a_{2k+1} = 0$ and $a_{2k-2} < 3$ whenever $a_{2k} = 3$ with $k \ge 1$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 4. -/
-theorem_wanted exists_two_pell_halfCompanion_representation (R : ℕ → ℕ)
-    (hR : ∀ k, R k = if k % 2 = 1 then 2 * pellNumber k else pellLucasSequence k)
-    {t : ℕ} (ht : 0 < t) :
-    ∃ (n : ℕ) (a : ℕ → ℕ), R n ≤ t ∧ t < R (n + 1) ∧
-      t = ∑ k ∈ range (n + 1), a k * R k ∧
-      a 0 ≤ 1 ∧ (a 1 = 1 → a 0 = 0) ∧ (∀ k, a (2 * k) ≤ 3 ∧ a (2 * k + 1) ≤ 1) ∧
-      (∀ k, 1 ≤ k → a (2 * k) = 3 → a (2 * k - 1) = 0 ∧ a (2 * k + 1) = 0) ∧
-      (∀ k, 1 ≤ k → a (2 * k) = 3 → a (2 * k - 2) < 3) ∧
-      (∀ k, a (2 * k) = 3 → a (2 * k + 2) < 3)
-
-/-- **Numeration by Pell and half-companion Pell numbers.** Let $P_n$ be the Pell numbers
-($P_0 = 0$, $P_1 = 1$, $P_{n+2} = 2P_{n+1} + P_n$) and $H_n$ the half-companion Pell numbers
-($H_0 = H_1 = 1$, $H_{n+2} = 2H_{n+1} + H_n$), and let $R_k = P_k$ for odd $k$ and
-$R_k = H_k$ for even $k$. Then for every positive integer $t$ there are a natural number $n \ge 1$
-and natural numbers $a_0, a_1, a_2, \dots$ such that $R_n \le t < R_{n+1}$,
-$t = \sum_{k=1}^{n} a_k R_k$, $a_1 \le 2$, $a_2 = 0$ if $a_1 = 2$, $a_{2k+1} \le 3$ and
-$a_{2k} \le 1$ for every $k \ge 0$, and for every $k \ge 1$ with $a_{2k+1} = 3$ we have
-$a_{2k} = a_{2k+2} = 0$, $a_{2k-1} < 3$ and $a_{2k+3} < 3$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 5. -/
-theorem_wanted exists_pell_halfCompanion_representation (R : ℕ → ℕ)
-    (hR : ∀ k, R k = if k % 2 = 1 then pellNumber k else pellLucasSequence k)
-    {t : ℕ} (ht : 0 < t) :
-    ∃ (n : ℕ) (a : ℕ → ℕ), 1 ≤ n ∧ R n ≤ t ∧ t < R (n + 1) ∧
-      t = ∑ k ∈ Icc 1 n, a k * R k ∧
-      a 1 ≤ 2 ∧ (a 1 = 2 → a 2 = 0) ∧ (∀ k, a (2 * k + 1) ≤ 3 ∧ a (2 * k) ≤ 1) ∧
-      (∀ k, 1 ≤ k → a (2 * k + 1) = 3 → a (2 * k) = 0 ∧ a (2 * k + 2) = 0) ∧
-      (∀ k, 1 ≤ k → a (2 * k + 1) = 3 → a (2 * k - 1) < 3 ∧ a (2 * k + 3) < 3)
-
 /-- **Moves of the Beatty octal game.** Let $\alpha$ and $\beta$ be real numbers. In the Beatty
 octal game for $\alpha$ and $\beta$, a move takes a heap of $n$ tokens to a heap of $m$ tokens
 exactly when one of the following holds: $n \ge 1$, $n = \lfloor k\alpha \rfloor$ for some
@@ -120,26 +83,6 @@ Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Thre
 Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 1.1. -/
 theorem beattyOctalMove_lt {α β : ℝ} {n m : ℕ} (h : beattyOctalMove α β n m) : m < n := by
   rcases h with ⟨hn, -, rfl⟩ | ⟨i, -, hi, hin, rfl⟩ <;> omega
-
-/-- **Floor of greedy odd-Fibonacci sums times $\varphi$ and $1 + \varphi$.** Let $F_n$ be the
-Fibonacci numbers ($F_0 = 0$, $F_1 = 1$, $F_{n+2} = F_{n+1} + F_n$) and
-$\varphi = (1 + \sqrt 5)/2$ the golden ratio. Let $n$ be a natural number and $a_0, a_1, \dots$
-natural numbers such that $\sum_{k=0}^{m-1} a_k F_{2k+1} < F_{2m+1}$ for every $m \le n + 1$, and
-let $t = \sum_{k=0}^{n} a_k F_{2k+1}$. Then
-$\lfloor t \varphi \rfloor = \sum_{k=0}^{n} a_k F_{2k+2}$ and
-$\lfloor t (1 + \varphi) \rfloor = \sum_{k=0}^{n} a_k F_{2k+3}$.
-
-The hypothesis says that the $a_k$ are the digits of the greedy representation of Theorem 1
-(here $a_k$ is the paper's $a_{2k+1}$); $n$ need not be minimal and $t = 0$ is allowed.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 2. -/
-theorem_wanted floor_greedy_odd_fib_sum_mul_goldenRatio (n : ℕ) (a : ℕ → ℕ)
-    (ha : ∀ m ≤ n + 1, ∑ k ∈ range m, a k * Nat.fib (2 * k + 1) < Nat.fib (2 * m + 1)) :
-    ⌊((∑ k ∈ range (n + 1), a k * Nat.fib (2 * k + 1) : ℕ) : ℝ) * Real.goldenRatio⌋₊ =
-        ∑ k ∈ range (n + 1), a k * Nat.fib (2 * k + 2) ∧
-      ⌊((∑ k ∈ range (n + 1), a k * Nat.fib (2 * k + 1) : ℕ) : ℝ) * (1 + Real.goldenRatio)⌋₊ =
-        ∑ k ∈ range (n + 1), a k * Nat.fib (2 * k + 3)
 
 /-- **P-positions of the gold game.** Let $\varphi$ be the golden ratio and $F_n$ the Fibonacci
 numbers ($F_1 = F_2 = 1$). In the gold game a heap of $n$ tokens may be removed entirely when
@@ -280,35 +223,6 @@ theorem_wanted exists_bronze_companion_representation (R : ℕ → ℤ)
       a 1 ≤ 3 ∧ (a 1 = 3 → a 2 = 0 ∧ a 3 = 0) ∧
       (∀ k, 1 < k → (k % 3 = 1 → a k ≤ 4) ∧ (k % 3 ≠ 1 → a k ≤ 1)) ∧
       ∀ k, a k = 4 → a (k - 1) = 0 ∧ a (k + 1) = 0 ∧ a (k - 3) < 4 ∧ a (k + 3) < 4
-
-/-- **Floor of greedy bronze sums times $(3 + \sqrt{13})/2$.** Let $B_n$ be the bronze numbers
-($B_0 = 0$, $B_1 = 1$, $B_{n+2} = 3B_{n+1} + B_n$, the Lucas sequence $U(3, -1)$), and let
-$C_n = B_{n+1} - 2B_n$ and $D_n = B_{n+1} - B_n$ be the companion bronze numbers of the first and
-second type. Let $R$ and $R'$ be the integer sequences with $R_{3m+1} = B_{2m+1}$,
-$R_{3m+2} = C_{2m+2}$, $R_{3m} = D_{2m}$ and $R'_{3m+1} = D_{2m+1}$, $R'_{3m+2} = B_{2m+2}$,
-$R'_{3m} = C_{2m+1}$ for all $m \ge 0$. Let $n$ be a natural number and $a_1, a_2, \dots$ natural
-numbers such that $\sum_{k=1}^{m-1} a_k R_k < R_m$ for every $1 \le m \le n + 1$, and let
-$t = \sum_{k=1}^{n} a_k R_k$. Then
-$\lfloor t (3 + \sqrt{13})/2 \rfloor = \sum_{k=1}^{n} a_k R'_{k+1}$.
-
-The hypothesis says that the $a_k$ are the digits of the greedy representation of Theorem 9;
-$n$ need not be minimal.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 10 (1). -/
-theorem_wanted floor_greedy_bronze_companion_sum_mul (R R' : ℕ → ℤ)
-    (hR : ∀ k, R k =
-      if k % 3 = 1 then lucasU bronzeLucasParams (2 * (k / 3) + 1)
-      else if k % 3 = 2 then bronzeCompanionFirst (2 * (k / 3) + 2)
-      else bronzeCompanionSecond (2 * (k / 3)))
-    (hR' : ∀ k, R' k =
-      if k % 3 = 1 then bronzeCompanionSecond (2 * (k / 3) + 1)
-      else if k % 3 = 2 then lucasU bronzeLucasParams (2 * (k / 3) + 2)
-      else bronzeCompanionFirst (2 * (k / 3) + 1))
-    (n : ℕ) (a : ℕ → ℕ)
-    (ha : ∀ m, 1 ≤ m → m ≤ n + 1 → ∑ k ∈ Ico 1 m, (a k : ℤ) * R k < R m) :
-    ⌊((∑ k ∈ Icc 1 n, (a k : ℤ) * R k : ℤ) : ℝ) * ((3 + Real.sqrt 13) / 2)⌋ =
-      ∑ k ∈ Icc 1 n, (a k : ℤ) * R' (k + 1)
 
 /-- **Floor of greedy mixed bronze sums times $(5 + \sqrt{13})/6$.** Let $B_n$ be the bronze
 numbers ($B_0 = 0$, $B_1 = 1$, $B_{n+2} = 3B_{n+1} + B_n$, the Lucas sequence $U(3, -1)$), and let

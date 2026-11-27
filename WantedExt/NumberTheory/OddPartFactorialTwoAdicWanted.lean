@@ -77,18 +77,6 @@ public theorem_wanted oddProductBlock_congr_initial_segment
         (2 ^ (m - 1 - d))
 
 /--
-**Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
-number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
-$\mathrm{od}(n)$ denotes the odd part of $n$.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Corollary 7.
--/
-public theorem_wanted oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) :
-    (2 : ℤ) ^ e ∣ (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ) -
-      (oddPart (Nat.factorial (2 ^ e)) : ℤ)
-
-/--
 **A 2-adic limit of the odd parts of $(2^e)!$.** There is a 2-adic integer $z \in \mathbb{Z}_2$
 such that $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ in $\mathbb{Z}_2$ for every natural
 number $e \ge 3$, where $\operatorname{od}(n)$ is the odd part of $n$.

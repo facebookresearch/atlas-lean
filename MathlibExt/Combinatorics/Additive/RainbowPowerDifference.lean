@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Logic.Function.Iterate
 import Mathlib.Algebra.Order.Interval.Finset.Basic
 import Mathlib.Algebra.Order.Ring.Int
 import Mathlib.Data.Nat.Cast.Order.Field
@@ -60,6 +61,8 @@ use the hypothesis that `p` is odd, which the statement keeps.
   `p - 1` coprime to `k`.
 * `MetaMathlibExt.nondominant_string_length_bounded` gives a uniform bound on non-dominant
   monochromatic runs under a common density hypothesis on the three colors.
+* `MetaMathlibExt.component_monochromatic_of_rainbowFree` shows that a component of
+  `a ↦ f a` that avoids the color of zero is monochromatic.
 
 ## Implementation notes
 
@@ -425,5 +428,53 @@ theorem rainbowFree_powDiff_lift_of_zmod
     ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z) := by
   apply hrf
   simp [h]
+
+/- The statement retains the exactness hypothesis of the source, which the proof does not use. -/
+set_option linter.unusedVariables false in
+/-- **Components avoiding the color of zero are monochromatic.** Let $n$ and $t$ be natural
+numbers, let $f$ be a map from $\mathbb{Z}/n\mathbb{Z}$ to itself, and let $c$ be a coloring of
+$\mathbb{Z}/n\mathbb{Z}$ with $t$ colors that uses every color and is rainbow-free for
+$x - y = f(z)$: no $x, y, z \in \mathbb{Z}/n\mathbb{Z}$ with $x - y = f(z)$ have $c(x), c(y), c(z)$
+pairwise distinct. For $v \in \mathbb{Z}/n\mathbb{Z}$, call the set of $a$ with
+$f^m(a) = f^{m'}(v)$ for some natural numbers $m, m'$ the component of $v$, where $f^m$ is the
+$m$-th iterate of $f$. If no element of the component of $v$ has the color $c(0)$, then all its
+elements have the same color.
+
+The source record prints the equation as $x - y = f(x)$; the paper's proof uses the solution
+$(f(a), 0, a)$ of $x - y = f(z)$, and the reading $x - y = f(x)$ fails on small examples.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 11
+(`integers-2024-A105-lem-11`). -/
+theorem component_monochromatic_of_rainbowFree (n t : ℕ) (f : ZMod n → ZMod n)
+    (c : ZMod n → Fin t) (hc : Function.Surjective c)
+    (hrf : ∀ x y z : ZMod n, x - y = f z → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
+    (v : ZMod n)
+    (h0 : ∀ a : ZMod n, (∃ m m' : ℕ, f^[m] a = f^[m'] v) → c a ≠ c 0)
+    (a b : ZMod n) (ha : ∃ m m' : ℕ, f^[m] a = f^[m'] v)
+    (hb : ∃ m m' : ℕ, f^[m] b = f^[m'] v) :
+    c a = c b := by
+  let inComponent (x : ZMod n) := ∃ i j : ℕ, f^[i] x = f^[j] v
+  have hnext {x : ZMod n} (hx : inComponent x) : inComponent (f x) := by
+    obtain ⟨i, j, hij⟩ := hx
+    refine ⟨i, j + 1, ?_⟩
+    calc
+      f^[i] (f x) = f^[i + 1] x := (Function.iterate_succ_apply f i x).symm
+      _ = f^[j + 1] v := by simpa only [Function.iterate_succ_apply'] using congrArg f hij
+  have hstep {x : ZMod n} (hx : inComponent x) : c (f x) = c x := by
+    by_contra hne
+    exact hrf (f x) 0 x (sub_zero _) ⟨h0 _ (hnext hx), (h0 _ hx).symm, hne⟩
+  have hiterate (x : ZMod n) (hx : inComponent x) (i : ℕ) : c (f^[i] x) = c x := by
+    induction i generalizing x with
+    | zero => rfl
+    | succ i ih =>
+      rw [Function.iterate_succ_apply]
+      exact (ih (f x) (hnext hx)).trans (hstep hx)
+  -- Each meeting point has the color of its starting vertex on either orbit.
+  have hcolor {x : ZMod n} (hx : inComponent x) : c x = c v := by
+    obtain ⟨i, j, hij⟩ := hx
+    exact (hiterate x ⟨i, j, hij⟩ i).symm.trans
+      ((congrArg c hij).trans (hiterate v ⟨0, 0, rfl⟩ j))
+  exact (hcolor ha).trans (hcolor hb).symm
 
 end MetaMathlibExt

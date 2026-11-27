@@ -34,8 +34,11 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
-public import MathlibExt.NumberTheory.TwoComplexityMax
+public import MathlibExt.NumberTheory.TwoComplexityLowerBound
 public import MathlibExt.NumberTheory.TwoComplexitySum
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddTwoOfForm
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLPowAddPow
 
 set_option autoImplicit false
 
@@ -53,15 +56,6 @@ theorem_wanted logb_le_complexityL_le (l n : ℕ) (hl : 1 < l)
     (hln : l ∣ n) (hn : 1 ≤ n) :
     Real.logb l n ≤ (complexityL l n : ℝ) ∧
       (complexityL l n : ℝ) ≤ l * Real.logb l n - 1
-
-/-- **The $l$-complexity of $l^m + l^{m'}$.** Write $\|n\|_l$ for the $l$-complexity of $n$.
-For natural numbers $l > 1$ and $m \ge m' \ge 1$, $\|l^m + l^{m'}\|_l = m + 1$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Corollary 1. -/
-theorem_wanted complexityL_pow_add_pow (l m m' : ℕ)
-    (hl : 1 < l) (h : m' ≤ m) (hm' : 1 ≤ m') :
-    complexityL l (l ^ m + l ^ m') = m + 1
 
 /-- **The 2-complexity of a power of two and of a sum of two powers of two.** Write
 $\|n\|_2$ for the $2$-complexity of $n$. For all natural numbers $m_1$ and $m_2$ with
@@ -86,17 +80,6 @@ theorem_wanted logb_two_bounds (n : ℕ) (h2n : 2 ∣ n)
     Real.logb 2 n ≤ (complexityL 2 n : ℝ) ∧
       (complexityL 2 n : ℝ) ≤ 2 * Real.logb 2 n - 1
 
-/-- **Adding a small multiple of $l$ to a multiple of $l^2$.** Write $\|n\|_l$ for the
-$l$-complexity of $n$. Let $l > 1$, let $b \ge 1$ be a multiple of $l^2$, let $a$ be a natural
-number with $a \le l - 1$, and let $n = b + a l$. Then $\|n\|_l = \|b\|_l + a$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Proposition 2. -/
-theorem_wanted complexityL_decomp (l n b a : ℕ) (hl : 1 < l)
-    (hn : n = b + a * l) (hb : l ^ 2 ∣ b) (hb0 : 1 ≤ b)
-    (ha : a ≤ l - 1) :
-    complexityL l n = complexityL l b + a
-
 /-- **Even $n$ with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 1$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 1$ and let $n$ be an even natural number with
 $2^m < n \le 2^{m+1}$. Then $\|n\|_2 = m + 1$ if and only if $n = 2^m + 2^t$ for some natural
@@ -111,25 +94,6 @@ theorem_wanted complexityL_eq_add_one_iff (m n : ℕ)
     (hn2 : n ≤ 2 ^ (m + 1)) :
     complexityL 2 n = m + 1 ↔
       ∃ t : ℕ, 1 ≤ t ∧ t ≤ m ∧ n = 2 ^ m + 2 ^ t
-
-/-- **Four forms of even numbers with 2-complexity $m + 2$.** Write $\|n\|_2$ for the
-2-complexity of $n$. Let $m \ge 3$ and let $n$ be an even natural number with
-$2^m < n \le 2^{m+1}$. Suppose that $n$ has one of the following forms, where all exponents
-are natural numbers:
-(a) $n = 2^m + 2^{m_2} + 2^{m_3}$ with $m > m_2 > m_3 \ge 1$;
-(b) $n = 2^m + 2^{m_2} + 2^{m_3} + 2^{m_4}$ with $m > m_2 > m_3 > m_4 \ge 2$ and
-$m + m_4 = m_2 + m_3$;
-(c) $n = 2^m + 2^{m-3} + 2^{m_2} + 2^{m_2-1}$ with $m \ge m_2 + 3 \ge 6$;
-(d) $n = 2^m + 2^{m-5} + 2^{m-6} + 2^{m-7}$ with $m \ge 10$.
-Then $\|n\|_2 = m + 2$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Corollary 3. -/
-theorem_wanted complexityL_eq_add_two_of_form (m n : ℕ)
-    (hm : 3 ≤ m) (h2n : 2 ∣ n) (hn1 : 2 ^ m < n)
-    (hn2 : n ≤ 2 ^ (m + 1))
-    (hform : twoComplexityAddTwoForm m n) :
-    complexityL 2 n = m + 2
 
 /-- **Even numbers in $(2^m, 2^{m+1}]$ with 2-complexity $m + 2$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 3$ and let $n$ be an even natural number with
@@ -147,21 +111,6 @@ theorem_wanted complexityL_eq_add_two_iff (m n : ℕ)
     (hm : 3 ≤ m) (h2n : 2 ∣ n) (hn1 : 2 ^ m < n)
     (hn2 : n ≤ 2 ^ (m + 1)) :
     complexityL 2 n = m + 2 ↔ twoComplexityAddTwoForm m n
-
-/-- **Lower bound $\log_2 n + 2$ for the 2-complexity (Zhang's Corollary 4).** Write $\|n\|_2$
-for the 2-complexity of $n$: the least number of copies of $2$ from which $n$ can be built using
-addition and multiplication, and $0$ if $n$ cannot be built. Let $m$ and $n$ be natural numbers
-with $n$ even, $n \ge 1$ and $2^m < n \le 2^{m+1}$. Suppose that $n \ne 2^a + 2^b$ for all
-natural numbers $a \le b$, and that $n$ has none of Zhang's four exceptional forms for $m$.
-Then $\log_2 n + 2 \le \|n\|_2$, where $\log_2$ is the real base-2 logarithm.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Corollary 4. -/
-theorem_wanted logb_two_add_two_le (m n : ℕ) (h2n : 2 ∣ n)
-    (hn : 1 ≤ n) (hn1 : 2 ^ m < n) (hn2 : n ≤ 2 ^ (m + 1))
-    (hpow : ¬ ∃ a b : ℕ, a ≤ b ∧ n = 2 ^ a + 2 ^ b)
-    (hform : ¬ twoComplexityAddTwoForm m n) :
-    Real.logb 2 n + 2 ≤ (complexityL 2 n : ℝ)
 
 /-- **Lower bound for the 2-complexity of even sums of five or more distinct powers of two.**
 Write $\|n\|_2$ for the 2-complexity of $n$. Let $n \ge 1$ be an even natural number and let $S$

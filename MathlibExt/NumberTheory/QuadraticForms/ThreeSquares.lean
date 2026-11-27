@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Int.Interval
+public import Mathlib.Data.Rat.BigOperators
+public import MathlibExt.NumberTheory.QuadraticForms.Reduced
 import Mathlib.Tactic.Ring
 import Mathlib.Data.ZMod.Basic
 
@@ -214,5 +216,71 @@ theorem threeSquareRepresentationCount_eq_threeSquareRepresentationCount_div_fou
         ⟨Finset.mem_product.mpr ⟨ha_mem, hb_mem⟩, hc_mem⟩
     · change ((2 * a', 2 * b'), 2 * c') = q
       rw [← ha', ← hb', ← hc']
+
+/- Gauss reduction gives one representative per proper (SL₂(ℤ)) class, without a
+primitivity restriction. The sign condition on the boundary is part of the reduction
+convention (arXiv:2307.05244, Definition 3.1 and the proof of Theorem 6.1).
+For a reduced form of discriminant −n, b² ≤ a² ≤ ac and a ≥ 1 give
+n = 4ac − b² ≥ 3ac ≥ c ≥ a ≥ |b|. For each (a, b) in these bounds we recover c by
+integer division and check the discriminant to discard nonexact quotients. -/
+private theorem hurwitz_reduced_pair_iff {n : ℕ} {a b : ℤ} :
+    (let c := ((n : ℤ) + b ^ 2) / (4 * a)
+     (a, b) ∈ Finset.Icc 1 (n : ℤ) ×ˢ Finset.Icc (-(n : ℤ)) (n : ℤ) ∧
+       discrim a b c = -(n : ℤ) ∧ BinaryQuadraticForm.IsGaussReduced a b c) ↔
+      ∃ c : ℤ, discrim a b c = -(n : ℤ) ∧ BinaryQuadraticForm.IsGaussReduced a b c := by
+  simp only [Finset.mem_product, Finset.mem_Icc]
+  constructor
+  · exact fun ⟨_, h⟩ ↦ ⟨_, h⟩
+  · rintro ⟨c, hd, hr⟩
+    have ha : 1 ≤ a := by have := hr.pos; omega
+    have hc : 0 ≤ c := by have := hr.le; omega
+    have hbb : b ^ 2 ≤ a ^ 2 := sq_le_sq' hr.neg_le hr.le_of_abs_le
+    have haa : a ^ 2 ≤ a * c := by
+      rw [pow_two]
+      exact mul_le_mul_of_nonneg_left hr.le (le_of_lt hr.pos)
+    have hac : c ≤ a * c := by simpa using mul_le_mul_of_nonneg_right ha hc
+    have hdisc : b ^ 2 - 4 * (a * c) = -(n : ℤ) := by
+      simpa only [discrim, mul_assoc] using hd
+    have hcN : c ≤ (n : ℤ) := by omega
+    have hlo := hr.neg_le
+    have hhi := hr.le_of_abs_le
+    have hle := hr.le
+    have hnum : (n : ℤ) + b ^ 2 = 4 * a * c := by rw [mul_assoc]; omega
+    have hquot : ((n : ℤ) + b ^ 2) / (4 * a) = c := by
+      rw [hnum, Int.mul_ediv_cancel_left _ (by omega)]
+    exact ⟨⟨⟨ha, by omega⟩, ⟨by omega, by omega⟩⟩, by rw [hquot]; exact ⟨hd, hr⟩⟩
+
+/-- **Hurwitz class number.** The Hurwitz class number is the function $H$ from the natural
+numbers to the rationals given by $H(0) = -1/12$; $H(N) = 0$ if $N \equiv 1$ or $2 \pmod 4$; and,
+for $N > 0$ with $N \equiv 0$ or $3 \pmod 4$, $H(N)$ is the number of equivalence classes of
+positive-definite integral binary quadratic forms of discriminant $-N$, primitive or not, where
+the class of a form equivalent to $a (x^2 + y^2)$ for some positive integer $a$ counts with weight
+$1/2$, the class of a form equivalent to $a (x^2 + x y + y^2)$ for some positive integer $a$
+counts with weight $1/3$, and every other class counts with weight $1$.
+
+Source: arXiv:2307.05244 `main.tex` lines 359-365
+    (span SHA-256 `b04cba9e14e90ed1b64100eda01d08dd3de6e1d2b2ea9ec9b1a56cfc467f6622`):
+    `H(N) = 0` if `N ≡ 1` or `2 mod 4`; `H(0) = -1 / 12`; otherwise `N > 0`
+    and `N ≡ 0` or `3 mod 4`, `H(N)` is the class number of not necessarily
+    primitive positive-definite quadratic forms of discriminant `-N`, with
+    weight `1 / 2` for forms equivalent to `a * (x ^ 2 + y ^ 2)` and weight
+    `1 / 3` for forms equivalent to `a * (x ^ 2 + x * y + y ^ 2)`. -/
+def hurwitzClassNumber (n : ℕ) : ℚ :=
+  if n = 0 then -1 / 12
+  else if n % 4 = 1 ∨ n % 4 = 2 then 0
+  else
+    let thirdCoefficient (a b : ℤ) := ((n : ℤ) + b ^ 2) / (4 * a)
+    letI (a b c : ℤ) : Decidable (BinaryQuadraticForm.IsGaussReduced a b c) := by
+      unfold BinaryQuadraticForm.IsGaussReduced
+      infer_instance
+    let pairs := (Finset.Icc 1 (n : ℤ)) ×ˢ Finset.Icc (-(n : ℤ)) (n : ℤ)
+    let reduced := pairs.filter fun (a, b) =>
+      let c := thirdCoefficient a b
+      discrim a b c = -(n : ℤ) ∧ BinaryQuadraticForm.IsGaussReduced a b c
+    reduced.sum fun (a, b) =>
+      let c := thirdCoefficient a b
+      if b = 0 ∧ a = c then 1 / 2
+      else if b = a ∧ a = c then 1 / 3
+      else 1
 
 end Nat
