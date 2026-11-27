@@ -20,7 +20,7 @@ Let `K ⊆ L` be finite extensions of `ℚ_p` inside `ℚ̄_p = PadicAlgCl p`, w
 subgroups `Gal(ℚ̄_p/L) ≤ Gal(ℚ̄_p/K)` (`IntermediateField.fixingSubgroup`), and let `V` be a
 representation of `Gal(ℚ̄_p/ℚ_p)`. We prove that `V` is de Rham over `K` if and only if it is
 de Rham over `L` (`Representation.isDeRham_iff_of_le`), for de Rham representations as in
-J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois representations*, §6.3, Definition 6.27.
+J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois representations*, §6.2.4, Definition 6.27.
 
 When `L/K` is normal (that is, Galois), `G_L` is a normal subgroup of finite index of `G_K`, with
 quotient `Gal(L/K)` (`MathlibExt.FieldTheory.Galois.FixingSubgroup`). The rings of invariants are
