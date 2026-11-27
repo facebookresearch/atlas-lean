@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Ring.Int.Defs
+public import Mathlib.Data.ZMod.Defs
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Nat.Factorization.Basic
@@ -266,19 +266,23 @@ private theorem dependent {A B : ℝ} (hA : A ^ 3 = a) (hB : B ^ 3 = b)
   rw [zpow_sub, ← div_eq_mul_inv]
   exact eq_div_iff_mul_eq'.2 heq.symm
 
-/-- For consecutive positive coefficients, the solution in the `(1, 1)` class modulo three
-is unique. Write `A³ = a`, `B³ = b`, and consider the norm-one units
-`R = (AU - BV) / (A - B)` and `S = (A - B)³`. The coefficients of `A²B` and `AB²`
-in `R` are both `U - V`. In `S` they are `-3` and `3`. -/
-private theorem thue {a b U V : ℤ} (hb : 1 ≤ b) (hab : a = b + 1)
+end Cubic
+
+open Cubic in
+/-- **A cubic Thue equation with consecutive coefficients.** Let $a,b,U,V$ be integers with
+$a = b + 1$ and $b \ge 1$. If $aU^3 - bV^3 = 1$ and $U \equiv V \equiv 1 \pmod 3$, then $U = V$.
+
+Write $A = \sqrt[3]{a}$ and $B = \sqrt[3]{b}$. The coefficients of $A^2B$ and $AB^2$ in the
+norm-one unit $(AU - BV)/(A - B)$ are both $U - V$. In $(A - B)^3$ they are $-3$ and $3$. -/
+public theorem eq_of_succ_mul_cube_sub_mul_cube_eq_one {a b U V : ℤ} (hb : 1 ≤ b) (hab : a = b + 1)
     (h : a * U ^ 3 - b * V ^ 3 = 1) (hU : (U : ZMod 3) = 1) (hV : (V : ZMod 3) = 1) :
     U = V := by
   let x : Cubic a b := ⟨a * U - b * V, U - V, U - V⟩
   let s : Cubic a b := ⟨1, -3, 3⟩
-  have hx : norm x = 1 := by
-    dsimp [norm, x]
+  have hx : Cubic.norm x = 1 := by
+    dsimp [Cubic.norm, x]
     linear_combination (a - b) ^ 2 * h + ((a - b) + 1) * (by omega : a - b = 1)
-  have hs : norm s = 1 := by dsimp [s, norm]; rw [hab]; ring
+  have hs : Cubic.norm s = 1 := by dsimp [s, Cubic.norm]; rw [hab]; ring
   let R := unit x hx
   let S := unit s hs
   let A := (a : ℝ) ^ (1 / 3 : ℝ)
@@ -356,8 +360,6 @@ private theorem thue {a b U V : ℤ} (hb : 1 ≤ b) (hab : a = b + 1)
     obtain ⟨i, hi⟩ := direction_pow_pos hs₁ (Nat.succ_ne_zero n)
     rw [show R.val ^ m = S.val ^ (n + 1) by simpa [zpow_negSucc] using he] at hl
     exact (by decide : (1 : ZMod 3) ≠ -1) (direction_unique hl hi)
-
-end Cubic
 
 private theorem residue_cases {x y : ℤ} {n : ℕ} (hn : 3 ≤ n)
     (hx : x % 9 = 2 ∨ x % 9 = 3 ∨ x % 9 = 5 ∨ x % 9 = 6)
@@ -486,9 +488,10 @@ private theorem odd_case {x y : ℤ} {k : ℕ} (hk : k ≠ 0)
     dsimp [U]; ring
   have eq : U = y := by
     rcases le_or_gt 2 x with hxpos | hxneg
-    · exact Cubic.thue (by omega) (by omega) hthue hU hV
+    · exact eq_of_succ_mul_cube_sub_mul_cube_eq_one (by omega) (by omega) hthue hU hV
     · have hxneg' : 1 ≤ -x := by rw [lt_abs] at hsize; omega
-      exact (Cubic.thue (a := 1 - x) hxneg' (by omega) (by linear_combination hthue) hV hU).symm
+      exact (eq_of_succ_mul_cube_sub_mul_cube_eq_one (a := 1 - x) hxneg' (by omega)
+        (by linear_combination hthue) hV hU).symm
   have hU₁ : 1 < U := one_lt_pow₀ (by nlinarith [sq_abs x, sq_nonneg (|x| - 1)]) hk
   rw [← eq] at hthue
   nlinarith [(by decide : Odd 3).pow_lt_pow.mpr hU₁]

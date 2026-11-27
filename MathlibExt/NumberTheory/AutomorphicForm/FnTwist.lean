@@ -319,6 +319,19 @@ def adelicArchGLInclAt (w : InfinitePlace F) :
     GL (Fin 2) w.Completion →* AdelicGL2 (𝓞 F) F :=
   (adelicArchGLIncl F).comp (archGLIncl F w)
 
+/-- **Inclusions at distinct infinite places commute.** For distinct infinite places `w ≠ w'`,
+the adelic inclusions of a matrix `a` at `w` and of a matrix `b` at `w'` commute. -/
+public theorem adelicArchGLInclAt_commute {w w' : InfinitePlace F} (h : w ≠ w')
+    (a : GL (Fin 2) w.Completion) (b : GL (Fin 2) w'.Completion) :
+    Commute (adelicArchGLInclAt F w a) (adelicArchGLInclAt F w' b) := by
+  have hm : Commute (archMatrixUpdate F w a) (archMatrixUpdate F w' b) := by
+    apply (archMatrixPiEquiv F).injective
+    rw [map_mul, map_mul, archMatrixPiEquiv_archMatrixUpdate,
+      archMatrixPiEquiv_archMatrixUpdate]
+    exact (Pi.mulSingle_commute h _ _).eq
+  have hg : Commute (archGLIncl F w a) (archGLIncl F w' b) := Commute.units_of_val hm
+  exact hg.map (adelicArchGLIncl F)
+
 private def adeleArch : AdeleRing (𝓞 F) F →+* InfiniteAdeleRing F where
   toFun a := a.1
   map_one' := rfl

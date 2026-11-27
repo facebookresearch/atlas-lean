@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliDerivatives
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsEvenBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsFubiniIdentity
@@ -23,6 +24,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsIdentities
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsReciprocalSum
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsSabarIdentity
 public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsSignedStirlingSum
+public import MathlibExt.Combinatorics.Enumerative.AlzerRichardsVanishingStirlingSum
 public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 
@@ -46,21 +48,6 @@ namespace MetaMathlibExt
 
 open Finset Polynomial
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry (chapter5EulerEven)
-
-/-- **Vanishing alternating Stirling sums with $\binom{r+m}{k}$.** Write $S(n, k)$ for the
-Stirling numbers of the second kind. For every natural number $m \ge 1$ and every natural number
-$r$,
-$$
-\sum_{k=0}^{r+m} (-1)^k \frac{\binom{r+m}{k}}{\binom{r+k}{k}} S(r+k, k) = 0.
-$$
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Theorem 3, Equation (5). -/
-theorem_wanted sum_choose_div_choose_mul_stirlingSecond_eq_zero {m : ℕ} (hm : 1 ≤ m)
-    (r : ℕ) :
-    ∑ k ∈ range (r + m + 1), (-1 : ℚ) ^ k *
-        (((r + m).choose k : ℚ) / ((r + k).choose k : ℚ)) *
-          (Nat.stirlingSecond (r + k) k : ℚ) = 0
 
 /-- **Alternating Stirling sums with $\binom{n+1}{k+2}$.** Write $S(n, k)$ for the Stirling
 numbers of the second kind and $B_n$ for the Bernoulli numbers, with $B_1 = -1/2$. Let
@@ -190,31 +177,6 @@ theorem_wanted sum_choose_mul_choose_div_choose_shifted {m : ℕ} (hm : 1 ≤ m)
           (2 ^ (2 * k) * Ring.choose ((k : ℂ) - m + 1 / 2 - x) k) =
         (-1 : ℂ) ^ ((m - 1) / 2) * (m + 1) /
           (2 ^ m * Ring.choose ((m : ℂ) / 2 - 1) ((m - 1) / 2)))
-
-/-- **Derivatives at zero of powers of $(1 - e^x)/x$.** Write $S(n, k)$ for the Stirling numbers
-of the second kind. Let $f : \mathbb{R} \to \mathbb{R}$ satisfy $f(0) = -1$ and
-$f(x) = (1 - e^x)/x$ for every $x \ne 0$. Then for all natural numbers $k$ and $r$, the $r$-th
-derivative of $f^k$ at $0$ equals $(-1)^k S(r+k, k) / \binom{r+k}{k}$.
-
-This is the expansion recorded in Gradshteyn and Ryzhik, p. 1047.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Lemma 1. -/
-theorem_wanted iteratedDeriv_pow_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf0 : f 0 = -1)
-    (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) (k r : ℕ) :
-    iteratedDeriv r (fun x => f x ^ k) 0 =
-      (-1 : ℝ) ^ k * (Nat.stirlingSecond (r + k) k : ℝ) / ((r + k).choose k : ℝ)
-
-/-- **Derivatives of $x/(1 - e^x)$ at zero.** Write $B_k$ for the $k$-th Bernoulli number,
-with the convention $B_1 = -1/2$. Let $f : \mathbb{R} \to \mathbb{R}$ satisfy $f(0) = -1$ and
-$f(x) = (1 - e^x)/x$ for every $x \ne 0$. Then for every natural number $k$, the $k$-th
-derivative of $1/f$ at $0$ equals $-B_k$.
-
-Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-Various Related Results*, INTEGERS 25 (2025), Article A61, Lemma 2. -/
-theorem_wanted iteratedDeriv_inv_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf0 : f 0 = -1)
-    (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) (k : ℕ) :
-    iteratedDeriv k (fun x => 1 / f x) 0 = -(bernoulli k : ℝ)
 
 /-- **Derivatives at zero of $(1 + (1 - e^x)/x)^{n+1}$.** Let $f : \mathbb{R} \to \mathbb{R}$
 satisfy $f(0) = -1$ and $f(x) = (1 - e^x)/x$ for every $x \ne 0$, and let $n$ be a natural

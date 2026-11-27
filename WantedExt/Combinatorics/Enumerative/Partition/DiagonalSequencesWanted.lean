@@ -217,25 +217,6 @@ public theorem_wanted vnArrangementCount_eq_multinomial_mul_prod (t k : ℕ) (hk
       Nat.multinomial (Finset.range (k + 1)) b *
         ∏ i ∈ Finset.Icc 1 (t - k), (∑ j ∈ Finset.Icc i (i + k), b j).choose (b (i + k))
 
-/-- **Partitions in a diagonal class with as many parts as the initial staircase.** Let $\alpha$
-be a partition of $n$ with diagonal sequence $\delta(\alpha) = (d_j)_{j \ge 1}$, set $d_0 = 0$,
-and let $q, L \ge 0$ be integers with $d_j = j$ for all $1 \le j \le q$, $d_{q+1} \ne q + 1$,
-$d_L \ne 0$ and $d_{L+1} = 0$. Put $b_i = \max(d_i - d_{i+1}, 0)$. Then the number of partitions
-of $n$ with exactly $q$ parts whose diagonal sequence equals $\delta(\alpha)$ is
-$$\prod_{i=q}^{L-1} \binom{b_i + b_{i+1}}{b_i}.$$
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Proposition 8. -/
-public theorem_wanted card_diagonalClass_filter_card_parts_eq_q {n : ℕ} (p : Nat.Partition n)
-    (q L : ℕ) (hq : ∀ j ∈ Finset.Icc 1 q, diagonalSequence p.parts j = j)
-    (hq' : diagonalSequence p.parts (q + 1) ≠ q + 1) (hL : diagonalSequence p.parts L ≠ 0)
-    (hL' : diagonalSequence p.parts (L + 1) = 0) :
-    ((diagonalClass p).filter fun β => β.parts.card = q).card =
-      ∏ i ∈ Finset.Ico q L,
-        ((diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) +
-            (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2))).choose
-          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1))
-
 /-- **Partitions in a diagonal class with more parts than the initial staircase.** Let $\alpha$
 be a partition of $n$ with diagonal sequence $\delta(\alpha) = (d_j)_{j \ge 1}$, set $d_0 = 0$,
 and let $q, L \ge 0$ be integers with $d_j = j$ for all $1 \le j \le q$, $d_{q+1} \ne q + 1$,
@@ -266,25 +247,6 @@ public theorem_wanted card_diagonalClass_filter_card_parts_eq_of_lt {n : ℕ}
           ((diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) +
               (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2))).choose
             (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1))
-
-/-- **Number of partitions with a given diagonal sequence.** Let $\alpha$ be a partition of $n$
-with diagonal sequence $\delta(\alpha) = (d_j)_{j \ge 1}$, set $d_0 = 0$, and let $q, L \ge 0$ be
-integers with $d_j = j$ for all $1 \le j \le q$, $d_{q+1} \ne q + 1$, $d_L \ne 0$ and
-$d_{L+1} = 0$. Put $b_i = \max(d_i - d_{i+1}, 0)$. Then the number of partitions of $n$ whose
-diagonal sequence equals $\delta(\alpha)$ is
-$$\prod_{i=q}^{L-1} \binom{b_i + b_{i+1} + 1}{b_i + 1}.$$
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Theorem 1. -/
-public theorem_wanted card_diagonalClass_eq_prod_choose {n : ℕ} (p : Nat.Partition n) (q L : ℕ)
-    (hq : ∀ j ∈ Finset.Icc 1 q, diagonalSequence p.parts j = j)
-    (hq' : diagonalSequence p.parts (q + 1) ≠ q + 1) (hL : diagonalSequence p.parts L ≠ 0)
-    (hL' : diagonalSequence p.parts (L + 1) = 0) :
-    (diagonalClass p).card =
-      ∏ i ∈ Finset.Ico q L,
-        ((diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) +
-            (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2)) + 1).choose
-          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1) + 1)
 
 /-- **Diagonal classes whose multiplicities are at least two.** Let $q \ge 1$, let
 $s = (s_1, s_2, \dots)$ be a sequence of natural numbers, and let $\alpha$ be a partition of $n$
