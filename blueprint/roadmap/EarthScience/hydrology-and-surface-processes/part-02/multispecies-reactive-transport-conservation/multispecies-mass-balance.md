@@ -3,7 +3,7 @@
 Consider species concentrations `c t x : Fin n → ℝ`, fluxes `J t x`, a
 stoichiometric matrix `S` and reaction rates `r(c)` on `[a, b]` at time `t`.
 Suppose each concentration satisfies `∂ₜ c_i = (S r(c))_i - ∂ₓ J_i` at every
-`x ∈ [a, b]`, each flux is differentiable in `x` there, the time and space
+`x` between `a` and `b`, that is, in $[\min(a, b), \max(a, b)]$, each flux is differentiable in `x` there, the time and space
 derivatives are integrable over `[a, b]`, each species inventory `∫ₐᵇ c_i` may
 be differentiated under the integral sign, and every concentration is
 integrable over `[a, b]` at every time. If `l` is a conservation vector, `∑ i,
