@@ -68,4 +68,15 @@ example : ¬ Equiv (nimHeap 0) (nimHeap 1) := by
     exact (by decide : (0 : Fin 2) ∈ Finset.univ.filter fun j : Fin 2 => j.val < 1)
   exact (isP_iff _ _).mp hP _ hmem hPopt
 
+-- A legal move from a heap of size two cannot retain its value.
+example : ¬ Equiv { nimHeap 2 with start := (1 : Fin 3) } (nimHeap 2) :=
+  (spragueGrundyValue_eq_mex_options (nimHeap 2) 2 (fun _ => Iff.rfl)).1 (1 : Fin 3) (by
+    change (1 : Fin 3) ∈ Finset.univ.filter (fun j : Fin 3 => j.val < 2)
+    decide)
+
+-- Both smaller values are attained by options, but the least excluded value is two.
+example : ∀ m < 2, ∃ q ∈ (nimHeap 2).moves (nimHeap 2).start,
+    Equiv { nimHeap 2 with start := q } (nimHeap m) :=
+  (spragueGrundyValue_eq_mex_options (nimHeap 2) 2 (fun _ => Iff.rfl)).2
+
 end MetaMathlibExt.SpragueGrundy
