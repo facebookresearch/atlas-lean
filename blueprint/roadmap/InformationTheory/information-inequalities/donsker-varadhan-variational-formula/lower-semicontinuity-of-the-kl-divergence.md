@@ -6,6 +6,12 @@ $$\mathrm{KL}(\mu \,\|\, \nu) \le \liminf_{n \to \infty} \mathrm{KL}(\mu_n \,\|\
 
 in $[0, \infty]$. For example, $X$ may be the path space $C([0, T]; \mathbb{R}^d)$ with the uniform norm.
 
+## Depends on
+
+- [Borel σ-algebra](../../../MeasureTheory/measurable-spaces/measurable-spaces-and-measurable-functions/sigma-algebras/borel.md)
+- [Probability measure](../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Separable space](../../../Topology/topological-spaces/topological-bases-and-countability-axioms/separable-space.md)
+
 ## Proof depends on
 
 - [Donsker–Varadhan variational formula](kl-div-eq-i-sup.md)
@@ -19,4 +25,4 @@ A sound expansion has separate pages for:
 
 ## Sources
 
-- L. Ambrosio, N. Gigli and G. Savaré, *Gradient Flows in Metric Spaces and in the Space of Probability Measures*, Lectures in Mathematics ETH Zürich, Birkhäuser, 2005, Lemma 9.4.3, cited for this step in the proof of Theorem 10 (Appendix B.2) of S. Chen, S. Chewi, J. Li, Y. Li, A. Salim and A. R. Zhang, *Sampling is as easy as learning the score: theory for diffusion models with minimal data assumptions*, ICLR 2023. <https://par.nsf.gov/servlets/purl/10502932>
+- L. Ambrosio, N. Gigli and G. Savaré, *Gradient Flows in Metric Spaces and in the Space of Probability Measures*, Lectures in Mathematics ETH Zürich, Birkhäuser, 2005, Lemma 9.4.3, which states the result on a separable Hilbert space. The separable metric form above, which covers the uniform-norm path space, is derived by the bounded continuous approximation of the expansion rather than quoted from the book. The lemma is cited for this step in the proof of Theorem 10 (Appendix B.2) of S. Chen, S. Chewi, J. Li, Y. Li, A. Salim and A. R. Zhang, *Sampling is as easy as learning the score: theory for diffusion models with minimal data assumptions*, ICLR 2023. <https://par.nsf.gov/servlets/purl/10502932>
