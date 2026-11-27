@@ -6,7 +6,7 @@ $$
 \sum_{s=1}^{S} A_{l,s} x_s \le c_l \qquad \text{for every link } l .
 $$
 
-Link $l$ is *saturated* by $x$ when equality holds. The feasible allocations form a convex polytope; it is bounded when every source uses at least one link, and it contains a positive allocation.
+Link $l$ is *saturated* by $x$ when equality holds. The feasible allocations form a convex polyhedron, which is a bounded polytope when every source uses at least one link (a source on no link can take any rate), and it contains a positive allocation.
 
 ## Sources
 

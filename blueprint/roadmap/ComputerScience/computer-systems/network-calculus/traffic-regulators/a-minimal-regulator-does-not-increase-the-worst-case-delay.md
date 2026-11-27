@@ -1,6 +1,6 @@
 # A minimal regulator does not increase the worst-case delay
 
-Let a [$\Pi$-regular](pi-regularity.md) flow $(A, L)$ enter a system $S$ that is first in, first out for the flow, with output $(D, L)$, and feed that output to the [minimal $\Pi$-regulator](minimal-per-flow-regulators.md) with the same operator, with output $(E, L)$. Then the worst-case delay through the combination equals the worst-case delay through $S$:
+Let a [$\Pi$-regular](pi-regularity.md) flow $(A, L)$ with real packet dates enter a system $S$ that is first in, first out for the flow, with output $(D, L)$, and feed that output to the [minimal $\Pi$-regulator](minimal-per-flow-regulators.md) with the same operator, with output $(E, L)$. Then the worst-case delay through the combination equals the worst-case delay through $S$:
 
 $$
 \sup_n (E_n - A_n) = \sup_n (D_n - A_n) .

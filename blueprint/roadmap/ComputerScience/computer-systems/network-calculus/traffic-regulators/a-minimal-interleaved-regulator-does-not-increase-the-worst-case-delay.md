@@ -1,6 +1,6 @@
 # A minimal interleaved regulator does not increase the worst-case delay
 
-Let a packet sequence $(A, L, F)$ in which every flow $f$ is $\Pi^f$-regular enter a system $S$ that is first in, first out for the whole sequence, with output $(D, L, F)$, and feed that output to the [minimal interleaved regulator](minimal-interleaved-regulators.md) with the operators $\Pi^f$, with output $(E, L, F)$. Then
+Let a packet sequence $(A, L, F)$, as in [minimal interleaved regulators](minimal-interleaved-regulators.md), with real packet dates and in which every flow $f$ is $\Pi^f$-regular enter a system $S$ that is first in, first out for the whole sequence, with output $(D, L, F)$, and feed that output to the [minimal interleaved regulator](minimal-interleaved-regulators.md) with the operators $\Pi^f$, with output $(E, L, F)$. Then
 
 $$
 \sup_n (E_n - A_n) = \sup_n (D_n - A_n) :

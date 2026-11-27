@@ -1,6 +1,6 @@
 # The embedded Markov chain of the M/G/1 queue
 
-In the M/G/1 queue (Poisson arrivals of rate $\lambda$, i.i.d. service times $B$ independent of the arrivals, one server), let $L^d_k$ be the number of customers left behind by the $k$-th departing customer, and $A_{k+1}$ the number of arrivals during the service time of the $(k + 1)$-th customer. Then
+In the M/G/1 queue (Poisson arrivals of rate $\lambda$, i.i.d. service times $B$ independent of the arrivals, one server that works whenever customers are present and serves them one at a time, without interruption, in order of arrival), let $L^d_k$ be the number of customers left behind by the $k$-th departing customer, and $A_{k+1}$ the number of arrivals during the service time of the $(k + 1)$-th customer. Then
 
 $$
 L^d_{k+1} = L^d_k - \mathbf 1\{L^d_k > 0\} + A_{k+1},
