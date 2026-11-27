@@ -26,7 +26,7 @@ The flexible-array operations on Braun trees: `del_hi`, `add_lo`,
 operations and their specs (both for arrays built from a list and for
 arbitrary invariant arrays), `del_lo2` (Exercise 11.6, an equivalent
 `del_lo` that avoids the trailing `merge`), and the running-time
-bounds for #51 (`Tdel_hi`, `Tadd_lo`, `Tmerge`, `Tdel_lo`).
+bounds for §11.4 (`Tdel_hi`, `Tadd_lo`, `Tmerge`, `Tdel_lo`).
 
 ## Cost model
 
@@ -426,7 +426,7 @@ def Tdel_hi : ℕ → Tree α → ℕ
     else if n % 2 = 0 then 1 + Tdel_hi (n / 2) l
     else 1 + Tdel_hi (n / 2) r
 
-/-- **(#51)** `del_hi` descends along one branch: `Tdel_hi n t ≤ h t + 1`. -/
+/-- **(§11.4)** `del_hi` descends along one branch: `Tdel_hi n t ≤ h t + 1`. -/
 theorem Tdel_hi_le (n : ℕ) (t : Tree α) : Tdel_hi n t ≤ height t + 1 := by
   induction t generalizing n with
   | Leaf => simp [Tdel_hi]
@@ -458,7 +458,7 @@ def Tadd_lo : Tree α → ℕ
   | .Leaf => 1
   | .Node _ _ r => 1 + Tadd_lo r
 
-/-- **(#51)** `add_lo` descends along one branch: `Tadd_lo t ≤ h t + 1`. -/
+/-- **(§11.4)** `add_lo` descends along one branch: `Tadd_lo t ≤ h t + 1`. -/
 theorem Tadd_lo_le (t : Tree α) : Tadd_lo t ≤ height t + 1 := by
   induction t with
   | Leaf => simp [Tadd_lo]
@@ -473,7 +473,7 @@ def Tmerge : Tree α → Tree α → ℕ
   | .Leaf, _ => 1
   | .Node l _ r, _ => 1 + Tmerge l r
 
-/-- **(#51)** `merge` descends along one branch of its first argument:
+/-- **(§11.4)** `merge` descends along one branch of its first argument:
 `Tmerge t₁ t₂ ≤ h t₁ + 1`. -/
 theorem Tmerge_le (t₁ t₂ : Tree α) : Tmerge t₁ t₂ ≤ height t₁ + 1 := by
   induction t₁ generalizing t₂ with
@@ -490,7 +490,7 @@ def Tdel_lo : Tree α → ℕ
   | .Leaf => 1
   | .Node l _ r => 1 + Tmerge l r
 
-/-- **(#51)** `del_lo` is one `merge` along one branch:
+/-- **(§11.4)** `del_lo` is one `merge` along one branch:
 `Tdel_lo t ≤ h t + 1`. -/
 theorem Tdel_lo_le (t : Tree α) : Tdel_lo t ≤ height t + 1 := by
   induction t with
@@ -502,28 +502,28 @@ theorem Tdel_lo_le (t : Tree α) : Tdel_lo t ≤ height t + 1 := by
     have hh : height (Tree.Node l x r) = max (height l) (height r) + 1 := rfl
     omega
 
-/-- **(#51)** `del_hi` is logarithmic on Braun trees. -/
+/-- **(§11.4)** `del_hi` is logarithmic on Braun trees. -/
 theorem Tdel_hi_le_braun {n : ℕ} {t : Tree α} (h : braun t) :
     Tdel_hi n t ≤ Nat.log2 (size t) + 2 := by
   have h1 := Tdel_hi_le n t
   have h2 := height_add_one_le_log2_add_two h
   omega
 
-/-- **(#51)** `add_lo` is logarithmic on Braun trees. -/
+/-- **(§11.4)** `add_lo` is logarithmic on Braun trees. -/
 theorem Tadd_lo_le_braun {t : Tree α} (h : braun t) :
     Tadd_lo t ≤ Nat.log2 (size t) + 2 := by
   have h1 := Tadd_lo_le t
   have h2 := height_add_one_le_log2_add_two h
   omega
 
-/-- **(#51)** `merge` is logarithmic (in its first argument) on Braun trees. -/
+/-- **(§11.4)** `merge` is logarithmic (in its first argument) on Braun trees. -/
 theorem Tmerge_le_braun {t₁ t₂ : Tree α} (h : braun t₁) :
     Tmerge t₁ t₂ ≤ Nat.log2 (size t₁) + 2 := by
   have h1 := Tmerge_le t₁ t₂
   have h2 := height_add_one_le_log2_add_two h
   omega
 
-/-- **(#51)** `del_lo` is logarithmic on Braun trees. -/
+/-- **(§11.4)** `del_lo` is logarithmic on Braun trees. -/
 theorem Tdel_lo_le_braun {t : Tree α} (h : braun t) :
     Tdel_lo t ≤ Nat.log2 (size t) + 2 := by
   have h1 := Tdel_lo_le t

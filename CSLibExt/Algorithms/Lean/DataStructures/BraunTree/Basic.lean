@@ -35,6 +35,20 @@ Lemmas 4.1–4.4, Corollary 4.5; Lemmas 4.7–4.8 via
 `acomplete_height_optimal`; Exercise 4.8 via `acomplete_node_iff`),
 and `inorder` (used by `Balance`).
 
+## Carrier
+
+`Tree` is a dedicated inductive, not Mathlib's `BinaryTree`: the
+book and the Isabelle development state every definition, equation,
+and induction over their own tree datatype, with `Node l x r`
+(children first), while `BinaryTree.node` takes the value first
+(`node x l r`). Restating the development over `BinaryTree` would
+reorder every pattern match, equation lemma, and induction case
+for no proved benefit: the development is self-contained, using no
+Mathlib tree lemmas, and `size` / `height` are the book's recursions
+(`|t|`, `h t`). This follows the repo's sibling textbook ports,
+which likewise carry their own types (Chapter 13 quadtrees,
+Chapter 15 leftist heaps).
+
 ## Provenance
 
 A Lean formalisation of the Chapter 11 Isabelle development in the

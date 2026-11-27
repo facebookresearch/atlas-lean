@@ -38,7 +38,7 @@ Module map:
   §11.3.2 running-time bounds.
 * `BraunTree.FlexibleArray` — `del_hi` / `add_lo` / `merge` /
   `del_lo`, the flexible-array operations, `del_lo2` (Exercise 11.6),
-  and the #51 running-time bounds.
+  and the §11.4 running-time bounds.
 * `BraunTree.OfList` — `take_nths`, `braun_list`, `nodes`, `brauns`
   (Theorem 11.5, Corollary 11.6), and Lemma 11.7.
 * `BraunTree.ToList` — `list_fast_rec` / `list_fast` (Theorem 11.8)

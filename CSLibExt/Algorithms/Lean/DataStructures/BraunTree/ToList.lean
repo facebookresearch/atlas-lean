@@ -44,6 +44,16 @@ where `us` is the filtered (non-`Leaf`) child list. The counter
 measures calls of this function, not allocation, traversal, or total
 runtime.
 
+The bound in `Tlist_fast_rec_le` is a bound on this modelled
+traversal: it does not charge the initial `(ts.map size).sum` pass
+that `list_fast_rec` / `Tlist_fast_rec` compute to obtain fuel, nor
+the repeated `filter isNonLeaf` evaluations in the executable body
+(each level evaluates the filter several times, while the counter
+charges one filter pass per level). The end-to-end cost is still
+linear in the same quantities (the extras are a constant factor),
+but the stated `14 * (∑ |t|) + |ts| + 2` bound is for the modelled
+traversal, not an end-to-end bound.
+
 ## Provenance
 
 A Lean formalisation of the Chapter 11 Isabelle development in the
@@ -573,7 +583,9 @@ theorem list_fast_rec_correct {k : ℕ} {xs : List α} {ts : List (Tree α)}
     list_fast_rec ts = xs :=
   list_fast_rec_correct_aux xs.length rfl hlen h
 
-/-- `list_fast t`: the list of a single Braun tree, in linear time. -/
+/-- `list_fast t`: the list of a single Braun tree, in linear time as
+counted by `Tlist_fast_rec` (see the Cost model note in the module
+header). -/
 def list_fast (t : Tree α) : List α := list_fast_rec [t]
 
 /-- Corollary of Theorem 11.8: `list_fast t = list t` for Braun `t`. -/
@@ -629,7 +641,9 @@ def Tlist_fast_rec_go : ℕ → List (Tree α) → ℕ
           Tlist_fast_rec_go fuel ((ts.filter isNonLeaf).map bleft
             ++ (ts.filter isNonLeaf).map bright))) + 1
 
-/-- `Tlist_fast_rec ts`: running time of `list_fast_rec ts` (book §11.5.4.2). -/
+/-- `Tlist_fast_rec ts`: the modelled running time of `list_fast_rec ts`
+(book §11.5.4.2); see the Cost model note in the module header for
+what the model does and does not charge. -/
 def Tlist_fast_rec (ts : List (Tree α)) : ℕ :=
   Tlist_fast_rec_go ((ts.map size).sum + 2) ts
 
@@ -715,7 +729,11 @@ theorem Tlist_fast_rec_eq (ts : List (Tree α)) :
 on the size of `ts` (which decreases with each recursive call, (11.19)):
 if `us = []` the cost is `|ts| + 2`; otherwise the book's equation
 `Tlist_fast_rec ts = Tlist_fast_rec children + 5|us| + |ts| + 7`, the
-induction hypothesis, and (11.19) give the bound (using `|us| ≥ 1`). -/
+induction hypothesis, and (11.19) give the bound (using `|us| ≥ 1`).
+This is a bound on the modelled traversal (`Tlist_fast_rec`); it
+does not include the initial size-sum pass or the repeated filter
+evaluations in the executable body (see the Cost model note in the
+module header). -/
 theorem Tlist_fast_rec_le (ts : List (Tree α)) :
     Tlist_fast_rec ts ≤ 14 * (ts.map size).sum + ts.length + 2 := by
   have key : ∀ (n : ℕ) {ts : List (Tree α)}, (ts.map size).sum = n →

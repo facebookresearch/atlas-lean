@@ -15,7 +15,7 @@ public import CSLibExt.Algorithms.Lean.DataStructures.BraunTree.FlexibleArray
 
 Concrete `del_hi` / `add_lo` / `merge` / `del_lo` / `del_lo2` cases,
 the `Array` flex operations, the `T*` costs, and restatements of the
-correctness specs and the #51 logarithmic bounds.
+correctness specs and the §11.4 logarithmic bounds.
 -/
 
 @[expose] public section
@@ -156,38 +156,38 @@ example {α : Type u} {a : BraunTree.Array α} (h : a.invar) :
 example {α : Type u} (t : Tree α) : del_lo2 t = del_lo t :=
   del_lo2_eq t
 
-/-- (#51): `del_hi` descends along one branch. -/
+/-- (§11.4): `del_hi` descends along one branch. -/
 example (n : ℕ) (t : Tree Nat) : Tdel_hi n t ≤ height t + 1 :=
   Tdel_hi_le n t
 
-/-- (#51): `add_lo` descends along one branch. -/
+/-- (§11.4): `add_lo` descends along one branch. -/
 example {α : Type u} (t : Tree α) : Tadd_lo t ≤ height t + 1 :=
   Tadd_lo_le t
 
-/-- (#51): `merge` descends along one branch of its first argument. -/
+/-- (§11.4): `merge` descends along one branch of its first argument. -/
 example {α : Type u} (t₁ t₂ : Tree α) : Tmerge t₁ t₂ ≤ height t₁ + 1 :=
   Tmerge_le t₁ t₂
 
-/-- (#51): `del_lo` is one `merge` along one branch. -/
+/-- (§11.4): `del_lo` is one `merge` along one branch. -/
 example {α : Type u} (t : Tree α) : Tdel_lo t ≤ height t + 1 :=
   Tdel_lo_le t
 
-/-- (#51): `del_hi` is logarithmic on Braun trees. -/
+/-- (§11.4): `del_hi` is logarithmic on Braun trees. -/
 example {α : Type u} {n : ℕ} {t : Tree α} (h : braun t) :
     Tdel_hi n t ≤ Nat.log2 (size t) + 2 :=
   Tdel_hi_le_braun h
 
-/-- (#51): `add_lo` is logarithmic on Braun trees. -/
+/-- (§11.4): `add_lo` is logarithmic on Braun trees. -/
 example {α : Type u} {t : Tree α} (h : braun t) :
     Tadd_lo t ≤ Nat.log2 (size t) + 2 :=
   Tadd_lo_le_braun h
 
-/-- (#51): `merge` is logarithmic (in its first argument) on Braun trees. -/
+/-- (§11.4): `merge` is logarithmic (in its first argument) on Braun trees. -/
 example {α : Type u} {t₁ t₂ : Tree α} (h : braun t₁) :
     Tmerge t₁ t₂ ≤ Nat.log2 (size t₁) + 2 :=
   Tmerge_le_braun h
 
-/-- (#51): `del_lo` is logarithmic on Braun trees. -/
+/-- (§11.4): `del_lo` is logarithmic on Braun trees. -/
 example {α : Type u} {t : Tree α} (h : braun t) :
     Tdel_lo t ≤ Nat.log2 (size t) + 2 :=
   Tdel_lo_le_braun h

@@ -553,7 +553,11 @@ def Array.toList (a : Array α) : List α := list a.tree
 /-- Lookup: 0-based index `i` is 1-based index `i + 1` in the tree. -/
 def Array.lookup (a : Array α) (i : ℕ) : Option α := lookup1 (i + 1) a.tree
 
-/-- Update at 0-based index `i`. -/
+/-- Update at 0-based index `i`. Requires `i < a.n` to maintain the
+invariant: `update1` at `i + 1` preserves the tree size in range
+(`array_update_spec_invar`), but an out-of-range update (e.g. `i = 0`
+on an empty array) creates a node via `update1`'s `Leaf` case while
+leaving the cached size `a.n` unchanged, breaking `invar`. -/
 def Array.update (a : Array α) (i : ℕ) (x : α) : Array α :=
   ⟨update1 x (i + 1) a.tree, a.n⟩
 

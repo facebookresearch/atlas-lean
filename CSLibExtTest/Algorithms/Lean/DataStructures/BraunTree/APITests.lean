@@ -153,12 +153,12 @@ example {α : Type u} (xs : List α) :
     Tadds xs 0 (.Leaf : Tree α) ≤ (xs.length + 1) * (Nat.log2 xs.length + 3) :=
   Tadds_le_array xs
 
-/-- (#51): `del_lo` is logarithmic on Braun trees. -/
+/-- (§11.4): `del_lo` is logarithmic on Braun trees. -/
 example {α : Type u} {t : Tree α} (h : braun t) :
     Tdel_lo t ≤ Nat.log2 (size t) + 2 :=
   Tdel_lo_le_braun h
 
-/-- (#51): `merge` is logarithmic (in its first argument) on Braun trees. -/
+/-- (§11.4): `merge` is logarithmic (in its first argument) on Braun trees. -/
 example {α : Type u} {t₁ t₂ : Tree α} (h : braun t₁) :
     Tmerge t₁ t₂ ≤ Nat.log2 (size t₁) + 2 :=
   Tmerge_le_braun h
