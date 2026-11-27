@@ -17,6 +17,11 @@ $$X^{\top}X = N R, \qquad X^{\top}y = \sqrt{N}\, \tilde z, \qquad y^{\top}y = N,
 
 so $\ell(b, \sigma^2; X, y) = \ell_{ss}(b, \sigma^2; R, \tilde z/\sqrt N, 1, N)$, and with an out-of-sample estimate $\hat R \approx R$ the SuSiE-RSS likelihood is $\ell_{\mathrm{RSS}}(b) = \ell_{ss}(b, 1; \hat R, \tilde z / \sqrt N, 1, N)$.
 
+## Depends on
+
+- [Sum of Single Effects (SuSiE) model and factored variational family](../sum-of-single-effects-susie/sum-of-single-effects-model.md)
+- [ELBO monotonicity and KL minimization of IBSS](../sum-of-single-effects-susie/ibss-elbo-monotonicity-and-kl-minimization.md)
+
 ## Expansion
 
 Every quantity IBSS computes (single-effect regressions on residuals, expected residual sums of squares, the ELBO) is a function of $X^{\top}X$, $X^{\top}y$, $y^{\top}y$ and $N$; reorganizing the residual updates as $X^{\top}(y - X\bar b) = X^{\top}y - X^{\top}X\, \bar b$ gives IBSS-ss with $O(J^2)$ cost per iteration instead of $O(NJ)$. For standardized data the marginal slope of SNP $j$ is the sample correlation $r_j = x_j^{\top}y/N$, and with residual variance $1 - r_j^2$ its $z$-score is $\hat z_j = r_j\sqrt N / \sqrt{1 - r_j^2}$; solving gives $r_j^2 = \hat z_j^2 / (N + \hat z_j^2)$ and hence $x_j^{\top} y = \sqrt N\, \hat z_j \sqrt{N / (N + \hat z_j^2)}$, the PVE adjustment.
