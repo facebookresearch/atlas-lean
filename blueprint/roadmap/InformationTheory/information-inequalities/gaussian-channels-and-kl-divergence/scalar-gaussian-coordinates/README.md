@@ -11,8 +11,6 @@
 - [To Euclidean Lin one scalar Coord](to-euclidean-lin-one-scalar-coord.md)
 - [Scalar Coord add](scalar-coord-add.md)
 - [Gaussian law](map-scalar-coord-gaussian-real.md)
-- [Mem Lp scalar Coord of scalar Power Bound](mem-lp-scalar-coord-of-scalar-power-boun.md)
-- [Mem Lp of scalar Power Bound](mem-lp-of-scalar-power-bound.md)
 - [Kl Div map scalar Coord Pair](kl-div-map-scalar-coord-pair.md)
 - [KL chain rule in scalar coordinates](kl-div-map-scalar-coord-pair-comp-prod-e.md)
 - [KL chain rule in scalar coordinates, reference-output form](kl-div-map-scalar-coord-pair-prod-refere.md)

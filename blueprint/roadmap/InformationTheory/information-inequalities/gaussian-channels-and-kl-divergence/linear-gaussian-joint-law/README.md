@@ -3,8 +3,7 @@
 ## The shared finite-power input model
 
 - [Power Constraint](power-constraint.md)
-- [Mem Lp two](mem-lp-two.md)
-- [Integrable norm sq](integrable-norm-sq.md)
+- [Finite second moment from a power bound](mem-lp-two.md)
 - [A power constraint bounds the second moment](integral-norm-sq-le.md)
 - [Integrable](integrable.md)
 - [Power Constraint map iff](power-constraint-map-iff.md)
