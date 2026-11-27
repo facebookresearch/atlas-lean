@@ -4,6 +4,7 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 
 - [Calculus of constructions](calculus-of-constructions/README.md)
 - [Completeness of normalization by evaluation](completeness-of-normalization-by-evaluation/README.md)
+- [De Bruijn and locally nameless terms](de-bruijn-and-locally-nameless-terms/README.md)
 - [Hindley–Milner type inference](hindley-milner-type-inference/README.md)
 - [Simply typed lambda calculus](simply-typed-lambda-calculus/README.md)
 - [System F](system-f/README.md)
