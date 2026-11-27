@@ -30,7 +30,7 @@ Conditioning on $F_{a_L} = 0$ and $F_{b_L} = \beta$, a fixed walk of length $n$ 
 
 ## Depends on
 
-- [Accessible mutational paths in the House-of-Cards landscape](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
+- [Accessible mutational paths in the House-of-Cards landscape](../../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
 
 ## Sources
 

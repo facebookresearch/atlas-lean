@@ -4,3 +4,5 @@ In a finite sequence space with Hamming distance, how much fitness tells about d
 
 - [Intersection of Hamming spheres](intersection-of-hamming-spheres.md)
 - [Weak monotonicity of fitness landscapes](weak-monotonicity-of-fitness-landscapes.md)
+- [Accessibility percolation on genotype graphs](accessibility-percolation-on-genotype-graphs/README.md)
+- [Gauge fixing of sequence-function maps](gauge-fixing-of-sequence-function-maps/README.md)

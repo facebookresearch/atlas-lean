@@ -4,3 +4,4 @@ Markov chain models of genome size under small indels, duplications and large de
 
 - [Logarithmic drift of genome size under duplications and deletions](logarithmic-drift-of-genome-size-under-duplications-and-deletions.md)
 - [Stationary genome size distribution without selection](stationary-genome-size-distribution-without-selection.md)
+- [Unequal recombination in tandem gene arrays](unequal-recombination-in-tandem-gene-arrays/README.md)
