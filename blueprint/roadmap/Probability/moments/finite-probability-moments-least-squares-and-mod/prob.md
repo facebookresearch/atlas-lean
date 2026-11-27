@@ -1,0 +1,3 @@
+# Weight of an event under a finite weight
+
+For any type $\alpha$, a real function $p$ on $\alpha$ and a finite subset $s \subseteq \alpha$, the weight of the event $s$ is the real finite sum $P(s) = \sum_{x \in s} p(x)$. Only the event need be finite, and no sign or normalization is imposed: on $\mathbb{N}$ with $p(k) = 1$ for every $k$, the event $\{2, 5\}$ has weight $2$; for signed weights such as $(-1, 2)$ on two points, an event weight can be negative even though the total is one. When $\alpha$ is finite, $p \ge 0$ and $\sum_x p(x) = 1$, so that $p$ is a finite distribution, $P(s)$ is the probability of $s$.

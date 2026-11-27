@@ -24,6 +24,29 @@ import Mathlib.Tactic.FinCases
 The theorem `conjecture_refuted` uses the 52-vertex construction of Goedgebeur, Jooken,
 Máčajová, Mattiolo, Mazzuoccolo and Ulyanov. We enumerate the possible edge colors at the
 boundary of their four-pole, then compose two four-poles in each of three sectors.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/GraphTheory/PetersenColoringConjectureWanted.lean`:
+
+Source record `OPG-143` (UnsolvedMath numeric id `3196`).
+
+Graphs are finite simple graphs, so parallel edges are excluded from the model
+(see the registry adequacy gaps). The `Bool` layer `false` is the outer 5-cycle
+(`i -- i+1`) and the `Bool` layer `true` is the inner 5-star (`i -- i+2`),
+joined by the spokes `(i, false) -- (i, true)`. Since `1 ≠ 0` and `2 ≠ 0` in
+`ZMod 5`, every generator below joins distinct vertices, so the edge set is
+loop-free and `SimpleGraph.fromEdgeSet` retains all of it.
+
+This Petersen representation is intentionally distinct from
+`PetersenMinorFourFlow.PetersenAdj`: that entry models branch sets in a host
+multigraph (tail/head edges, `Sum (ZMod 5) (ZMod 5)` vertices), while a
+Petersen coloring maps edges between simple graphs, so this entry uses a
+`SimpleGraph` on `ZMod 5 × Bool` with incidence via `SimpleGraph.incidenceSet`.
+Bridgelessness uses the canonical `SimpleGraph.IsBridgeless` predicate.
+
+Historical references: the registry adequacy gaps and the `PetersenMinorFourFlow.PetersenAdj` entry
+named above came from Formal-Math with the retired wanted module and do not resolve in ATLAS.
 -/
 
 @[expose] public section
