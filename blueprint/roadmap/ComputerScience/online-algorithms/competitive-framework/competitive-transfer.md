@@ -1,4 +1,3 @@
 # Competitive transfer
 
-Transfer of competitiveness along a simulation:
-`(c, b)` on `Y` gives `(a·c·d, a·c·q + a·b + p)` on `X`.
+Let $Y$ simulate $X$ with coefficients $(a, p, d, q)$ and strategy map $F$. If a strategy $A$ for $Y$ is $(c, b)$-competitive, then $F(A)$ is $(acd,\ acq + ab + p)$-competitive for $X$.

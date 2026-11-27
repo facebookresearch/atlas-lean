@@ -26,7 +26,6 @@
 - [The success probability is at most one](success-prob-le-one.md)
 - [Karger's bound](success-prob-ge.md)
 - [Every run returns at least the minimum cut size](success-prob-eq-zero-of-lt.md)
-- [Success Prob eq zero of lt min Cut](success-prob-eq-zero-of-lt-min-cut.md)
 
 ## Amplification
 

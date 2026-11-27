@@ -19,7 +19,7 @@ run. The algorithm for $N$ processes is the topic [Bakery algorithm](../bakery-a
 - [Checked](checked.md)
 - [Inv](inv.md)
 - [Inv step](inv-step.md)
-- [Mutex of inv](mutex-of-inv.md)
+- [Mutual exclusion from the invariant](mutex-of-inv.md)
 
 ## Mutual exclusion in LTL
 

@@ -31,6 +31,6 @@
 - [Rand Competitive](rand-competitive.md)
 - [Rand Competitive dirac iff](rand-competitive-dirac-iff.md)
 - [Transfer of randomized competitiveness along a simulation](rand-competitive-transfer.md)
-- [Opt Profit](opt-profit.md)
+- [Optimal profit](opt-profit.md)
 - [Profit Competitive](profit-competitive.md)
 - [Rand Profit Competitive](rand-profit-competitive.md)

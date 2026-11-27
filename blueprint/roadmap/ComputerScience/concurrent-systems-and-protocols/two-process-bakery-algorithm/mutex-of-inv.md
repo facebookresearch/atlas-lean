@@ -1,4 +1,3 @@
-# Mutex of inv
+# Mutual exclusion from the invariant
 
-The invariant excludes both processes from the critical section: each
-would have to come first.
+In a state satisfying the invariant, $p_0$ and $p_1$ are not both in their critical sections: each would have to come first in the ticket order.

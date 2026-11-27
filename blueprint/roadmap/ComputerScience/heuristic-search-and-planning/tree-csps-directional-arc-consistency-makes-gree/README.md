@@ -17,7 +17,7 @@
 - [Directional arc consistency from the DAC pass](dir-arc-consistent-dac.md)
 - [Cost bound for directional arc consistency](dac-time-le.md)
 - [Cost bound, counted by variables](dac-time-le-card.md)
-- [Dir Arc Consistent ac3 All](dir-arc-consistent-ac3-all.md)
+- [AC-3 makes the domains directionally arc consistent](dir-arc-consistent-ac3-all.md)
 
 ## Greedy assignment
 
@@ -26,7 +26,7 @@
 - [Greedy tree-CSP assignment](greedy.md)
 - [Greedy Inv](greedy-inv.md)
 - [Greedy assignment is sound on a tree-structured CSP](is-solution-of-greedy-eq-some.md)
-- [Greedy assignment succeeds on directionally arc consistent domains](greedy-ne-none.md)
+- [Greedy assignment succeeds on nonempty directionally arc consistent domains](greedy-ne-none.md)
 - [Greedy assignment on a tree CSP](greedy-ne-none-iff.md)
 
 ## The tree-CSP algorithm
