@@ -29,7 +29,9 @@ function imposes. The order-`α` Euler polynomials
 `(2 / (e^t + 1))^α e^{xt}`) are `eulerPolyGen`, built
 from the numbers `eulerNumGen α k = E_k^{(α)}(0)`, which
 are defined by the coefficient recurrence of that
-generating function's logarithmic derivative. All
+generating function's logarithmic derivative; both are
+defined in
+`MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyGenRecurrence`. All
 formulas below were pinned and verified by exact rational
 computation (the extraction of this paper flattens most
 displays; the ranges and coefficients stated here are the
@@ -44,6 +46,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.EulerPolynomialBinomialAverage
+public import MathlibExt.NumberTheory.EulerPolynomialStirling
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Basic.Complex.Basic
@@ -56,6 +59,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyGenRecurrence
 
 set_option autoImplicit false
 
@@ -64,77 +68,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Generalized Stirling polynomial.** For natural numbers $n$ and $k$, the generalized
-Stirling polynomial $S(n, k, x)$ is the polynomial in $x$ with rational coefficients
-$$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n.$$
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Proposition 3.1 (definition). -/
-noncomputable def genStirlingPoly (n k : ℕ) : ℚ[X] :=
-  (1 / (Nat.factorial k : ℚ)) •
-    ∑ j ∈ Finset.range (k + 1),
-      ((Nat.choose k j : ℚ) * (-1) ^ (k - j)) •
-        (X + C (j : ℚ)) ^ n
-
-/-- **Taylor coefficients of (2 + 2z)/(2 + 2z + z²).** The rational numbers $\alpha_k$,
-$k \ge 0$, are defined by $\alpha_0 = 1$, $\alpha_1 = 0$ and
-$2\alpha_{k+2} + 2\alpha_{k+1} + \alpha_k = 0$ for every $k \ge 0$. They are the Taylor
-coefficients of $(2 + 2z)/(2 + 2z + z^2)$ at $z = 0$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Lemma 2.2 (generating function). -/
-def eulerAlpha : ℕ → ℚ
-  | 0 => 1
-  | 1 => 0
-  | k + 2 => -eulerAlpha (k + 1) - eulerAlpha k / 2
-
-/-- **Fuel-bounded recurrence for the Euler numbers of order α.** Let $E_m(x)$ denote the Euler
-polynomial. For a complex number $\alpha$, the complex numbers $a_\alpha(f, n)$, for natural
-numbers $f$ (the fuel) and $n$, are defined by $a_\alpha(0, n) = 1$, $a_\alpha(f + 1, 0) = 1$
-and $a_\alpha(f + 1, n + 1) = -\alpha \, a_\alpha(f, n) +
-\frac{\alpha}{2} \sum_{k=0}^{n} \binom{n}{k} a_\alpha(f, k) \, E_{n-k}(0)$.
-
-Whenever $n \le f$, $a_\alpha(f, n)$ equals the Euler number of order $\alpha$,
-$E_n^{(\alpha)}(0)$. -/
-noncomputable def eulerNumGenAux (α : ℂ) : ℕ → ℕ → ℂ
-  | 0, _ => 1
-  | _ + 1, 0 => 1
-  | fuel + 1, n + 1 =>
-      -α * eulerNumGenAux α fuel n + (α / 2) *
-        ∑ k ∈ Finset.range (n + 1),
-          (Nat.choose n k : ℂ) * eulerNumGenAux α fuel k *
-            (((eulerPoly (n - k)).eval (0 : ℚ) : ℚ) : ℂ)
-
-/-- **Euler numbers of order α.** Let $E_m(x)$ denote the Euler polynomial. For a complex number
-$\alpha$, the Euler numbers of order $\alpha$ are the complex numbers $E_n^{(\alpha)}(0)$,
-$n \ge 0$, defined by $E_0^{(\alpha)}(0) = 1$ and
-$E_{n+1}^{(\alpha)}(0) = -\alpha E_n^{(\alpha)}(0) +
-\frac{\alpha}{2} \sum_{k=0}^{n} \binom{n}{k} E_k^{(\alpha)}(0) \, E_{n-k}(0)$ for $n \ge 0$.
-
-This is the coefficient recurrence of the generating function $(2/(e^t + 1))^\alpha$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Section 1 (generalized Euler
-polynomials). -/
-noncomputable def eulerNumGen (α : ℂ) (n : ℕ) : ℂ :=
-  eulerNumGenAux α n n
-
-/-- **Euler polynomials of order α.** For a complex number $\alpha$ and $n \ge 0$, let
-$E_k^{(\alpha)}(0)$ denote the Euler numbers of order $\alpha$. The Euler polynomial of order
-$\alpha$ is the complex polynomial
-$E_n^{(\alpha)}(x) = \sum_{k=0}^{n} \binom{n}{k} E_k^{(\alpha)}(0) \, x^{n-k}$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Section 1 (generalized Euler
-polynomials). -/
-noncomputable def eulerPolyGen (α : ℂ) (n : ℕ) : ℂ[X] :=
-  ∑ k ∈ Finset.range (n + 1),
-    C ((Nat.choose n k : ℂ) * eulerNumGen α k) * X ^ (n - k)
 
 /-- **Euler polynomials at (x + 1)/2 via generalized Stirling polynomials.** Let $E_n(x)$ denote
 the Euler polynomial, $\alpha_k$ the Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$, and
@@ -150,25 +83,6 @@ theorem_wanted eulerPoly_half_eq_sum (n : ℕ) :
       ∑ k ∈ Finset.range (n + 1),
         ((Nat.factorial k : ℚ) * eulerAlpha k) •
           genStirlingPoly n k
-
-/-- **Recurrence for Euler polynomials of order α.** Let $E_m(x)$ denote the Euler polynomial
-and $E_m^{(\alpha)}(x)$ the Euler polynomial of order $\alpha$. For every complex number
-$\alpha$ and every integer $n \ge 1$, as polynomials in $x$,
-$E_n^{(\alpha)}(x) = (x - \alpha/2) \, E_{n-1}^{(\alpha)}(x) +
-\frac{\alpha}{2} \sum_{k=0}^{n-2} \binom{n-1}{k} (-1)^{n-k} E_{n-1-k}(0) \, E_k^{(\alpha)}(x)$,
-where the sum is empty when $n = 1$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Proposition 3.2. -/
-theorem_wanted eulerPolyGen_recurrence (α : ℂ) (n : ℕ)
-    (hn : 1 ≤ n) :
-    eulerPolyGen α n =
-      (X - C (α / 2)) * eulerPolyGen α (n - 1) +
-        C (α / 2) * ∑ k ∈ Finset.range (n - 1),
-          C ((Nat.choose (n - 1) k : ℂ) * (-1) ^ (n - k) *
-            (((eulerPoly (n - 1 - k)).eval (0 : ℚ) : ℚ) : ℂ)) *
-            eulerPolyGen α k
 
 /-- **Euler polynomials via generalized Stirling polynomials.** Let $E_n(x)$ denote the Euler
 polynomial, $\alpha_k$ the Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$, and
