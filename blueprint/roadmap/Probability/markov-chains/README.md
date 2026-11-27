@@ -26,4 +26,5 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Martingale problems](martingale-problems/README.md)
 - [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
 - [Autoregressive processes](autoregressive-processes/README.md)
+- [Mixing-time bounds](mixing-time-bounds/README.md)
 - [Random walks on the symmetric group](random-walks-on-the-symmetric-group/README.md)
