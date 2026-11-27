@@ -31,9 +31,11 @@ namespace Cslib.Crypto.Framework.GenericGroup.RandomEncoding
 
 /-- In a cyclic group of order `N ≥ 2` with largest prime divisor `p`, a strategy given the
 random identifiers of the generator and the target succeeds with probability strictly less
-than `m²/(2p)` if its call budget plus `4⌈log₂ N⌉` is at most `m`. Probability is over the
-secret, the injection and the strategy's independent coins. Identity, inversion and composition
-each use one call; computation on visible bits is free.
+than `m²/(2p)` if its call budget plus `4⌈log₂ N⌉` is at most `m`. Assume `N ≤ 2^n`, so there
+are enough `n`-bit strings to label the group. Draw the secret uniformly in `ZMod N`, draw one
+encoding uniformly from all injections of the group into `n`-bit strings, and draw the strategy's
+coins from its own law, which need not be uniform. These three draws are mutually independent.
+Identity, inversion and composition each use one call; computation on visible bits is free.
 
 Source: A. V. Sutherland, MIT 18.783, Spring 2013, Lecture 11, Theorem 11.1. -/
 theorem_wanted winProb_lt_sq_div_twice_largestPrime {N n q m : ℕ} (hN : 1 < N)
