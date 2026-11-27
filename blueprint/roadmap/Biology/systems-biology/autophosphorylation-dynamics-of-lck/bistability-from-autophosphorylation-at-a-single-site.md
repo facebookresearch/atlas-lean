@@ -33,4 +33,4 @@ Positive steady states of the scalar equation are roots in $(0,A)$ of a cubic $p
 
 ## Sources
 
-- Lisa Maria Kreusser, Alan D. Rendall, "Autophosphorylation and the dynamics of the activation of Lck", arXiv (2021); Bulletin of Mathematical Biology (2021). Section 2 (basic model and its reduction), Section 3 (Theorems 1–3), Section 4 (Lemma 2, Theorem 4). <https://doi.org/10.48550/arXiv.2101.09295>
+- Lisa Maria Kreusser, Alan D. Rendall, "Autophosphorylation and the dynamics of the activation of Lck", arXiv (2021); Bulletin of Mathematical Biology (2021). Section 2 (basic model and its reduction), Section 3 (Theorems 1–3), Section 4 (Lemma 2, Theorem 4). <https://doi.org/10.48550/arXiv.2101.09295>. Published version: Bulletin of Mathematical Biology 83(6) (2021), article 64, <https://doi.org/10.1007/s11538-021-00900-9>; locators above refer to the arXiv version.

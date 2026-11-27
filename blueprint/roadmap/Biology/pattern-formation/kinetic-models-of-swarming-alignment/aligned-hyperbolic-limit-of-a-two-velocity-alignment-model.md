@@ -8,7 +8,7 @@ the diffusive limit of a discrete jump model in which a $j$-oriented entity turn
 
 **Equilibria.** Spatially homogeneous equilibria with positive mass are either *isotropic* ($\bar f_1 = \bar f_{-1} > 0$) or *aligned* ($\bar f_j = 0 < \bar f_{-j}$). The total density $f_1 + f_{-1}$ is conserved by the space-homogeneous dynamics; for $\gamma > 1$ the majority orientation absorbs the whole mass (aligned equilibria attract), and for $0 < \gamma < 1$ the isotropic equilibrium attracts.
 
-**Theorem (aligned picture, $\gamma > 1$).** Consider the hyperbolically scaled problem $\varepsilon(\partial_tf_j + j\partial_xf_j) = $ (right-hand side above) on the torus $\mathbb T$ with continuous initial data $F = (F(1,\cdot),F(-1,\cdot))$ having continuous second derivatives, fix $k\in\{-1,1\}$, and assume $F(-k,x)\ge\mu > 0$ on $\mathbb T$. Let $h(\tau,x)$ be the *initial layer*, the solution of
+**Theorem (aligned picture, $\gamma > 1$).** Consider the hyperbolically scaled problem $\varepsilon(\partial_tf_j + j\partial_xf_j)$ equal to the right-hand side above on the torus $\mathbb T$ with continuous initial data $F = (F(1,\cdot),F(-1,\cdot))$ having continuous second derivatives, fix $k\in\{-1,1\}$, and assume $F(-k,x)\ge\mu > 0$ on $\mathbb T$. Let $h(\tau,x)$ be the *initial layer*, the solution of
 
 $$\partial_\tau h = \frac{(\varrho_0 - h)h^{\gamma} - h(\varrho_0 - h)^{\gamma}}{(\varrho_0 - h)^{\gamma} + h^{\gamma}}, \qquad h(0,x) = F(-k,x), \qquad \varrho_0 = F(1,\cdot) + F(-1,\cdot).$$
 
@@ -26,4 +26,4 @@ Writing $f_k = \bar\varrho - h + \varepsilon u$, $f_{-k} = h + \varepsilon v$ an
 
 ## Sources
 
-- Jacek Banasiak, Mirosław Lachowicz, "On a macroscopic limit of a kinetic model of alignment", arXiv (2012). Section 2 (model, equilibria), Theorem 3.1 (existence), Section 4 (formal macroscopic analysis, initial layer), Lemma 5.1, Theorem 5.2. <https://doi.org/10.48550/arXiv.1207.2643>
+- Jacek Banasiak, Mirosław Lachowicz, "On a macroscopic limit of a kinetic model of alignment", arXiv (2012). Section 2 (model, equilibria), Theorem 3.1 (existence), Section 4 (formal macroscopic analysis, initial layer), Lemma 5.1, Theorem 5.2. <https://doi.org/10.48550/arXiv.1207.2643>. Published version: Mathematical Models and Methods in Applied Sciences 23(14) (2013), 2647–2670, <https://doi.org/10.1142/s0218202513500425>; locators above refer to the arXiv version.

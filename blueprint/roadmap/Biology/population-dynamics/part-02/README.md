@@ -1,0 +1,18 @@
+# Evolutionary dynamics, games and quasispecies
+
+- [Canonical equation from individual-based models](canonical-equation-from-individual-based-models/README.md)
+- [Evolutionary game dynamics on time scales](evolutionary-game-dynamics-on-time-scales/README.md)
+- [Habitat selection in stochastic patchy environments](habitat-selection-in-stochastic-patchy-environments/README.md)
+- [Mate limitation under self-incompatibility](mate-limitation-under-self-incompatibility/README.md)
+- [Moran models of quasispecies](moran-models-of-quasispecies/README.md)
+- [Multi-resource chemostat adaptive dynamics](multi-resource-chemostat-adaptive-dynamics/README.md)
+- [Neutral competition in a heterogeneous environment](neutral-competition-in-a-heterogeneous-environment/README.md)
+- [Prey–predator phenotypic coevolution](prey-predator-phenotypic-coevolution/README.md)
+- [Purely competitive evolutionary game dynamics](purely-competitive-evolutionary-game-dynamics/README.md)
+- [Quasispecies in multitype Galton–Watson processes](quasispecies-in-multitype-galton-watson-processes/README.md)
+- [Resource exploitation interacting particle systems](resource-exploitation-interacting-particle-systems/README.md)
+- [Slow–fast piecewise deterministic prey–predator model](slow-fast-piecewise-deterministic-prey-predator-model/README.md)
+- [Spatial evolutionary games under weak selection](spatial-evolutionary-games-under-weak-selection/README.md)
+- [Stationary stability in finite-population evolutionary dynamics](stationary-stability-in-finite-population-evolutionary-dynamics/README.md)
+- [Stochastic replicator dynamics with random jumps](stochastic-replicator-dynamics-with-random-jumps/README.md)
+- [Two-scale selection ball-and-urn process](two-scale-selection-ball-and-urn-process/README.md)

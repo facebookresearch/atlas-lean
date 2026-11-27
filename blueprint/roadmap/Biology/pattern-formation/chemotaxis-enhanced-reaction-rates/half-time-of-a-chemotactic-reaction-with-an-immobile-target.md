@@ -35,4 +35,4 @@ So for strong attraction ($\gamma\gg\log(\epsilon M_0)$) chemotaxis shortens the
 
 ## Sources
 
-- Alexander Kiselev, Fedor Nazarov, Lenya Ryzhik, Yao Yao, "Chemotaxis and Reactions in Biology", arXiv:2004.06441 (2020): Theorem 1.1 (half-time bounds), Proposition 4.2 and Proposition 4.3 (mass comparison), Theorem 7.1, Corollary 7.2 and Theorem 7.3 (transport and quarter-mass reaction time), Proposition 8.1 (pass-through estimate). <https://doi.org/10.48550/arXiv.2004.06441>
+- Alexander Kiselev, Fedor Nazarov, Lenya Ryzhik, Yao Yao, "Chemotaxis and Reactions in Biology", arXiv:2004.06441 (2020): Theorem 1.1 (half-time bounds), Proposition 4.2 and Proposition 4.3 (mass comparison), Theorem 7.1, Corollary 7.2 and Theorem 7.3 (transport and quarter-mass reaction time), Proposition 8.1 (pass-through estimate). <https://doi.org/10.48550/arXiv.2004.06441>. Published version: Journal of the European Mathematical Society 25(7) (2022), 2641–2696, <https://doi.org/10.4171/jems/1247>; locators above refer to the arXiv version.

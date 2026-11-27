@@ -28,4 +28,4 @@ The proof splits $\mathbb{R}^d$ into the core $B_{r_1}$, where $w$ is essentiall
 
 ## Sources
 
-- Alexander Kiselev, Fedor Nazarov, Lenya Ryzhik, Yao Yao, "Chemotaxis and Reactions in Biology", arXiv:2004.06441 (2020): Theorem 1.2 (two-dimensional inequality), Theorem 5.1 and Corollary 5.2 (three-region inequality), Theorem 5.4 (power weights), Theorems 6.2, 6.4 and 6.7 (convergence to equilibrium), Sections 5–6. <https://doi.org/10.48550/arXiv.2004.06441>
+- Alexander Kiselev, Fedor Nazarov, Lenya Ryzhik, Yao Yao, "Chemotaxis and Reactions in Biology", arXiv:2004.06441 (2020): Theorem 1.2 (two-dimensional inequality), Theorem 5.1 and Corollary 5.2 (three-region inequality), Theorem 5.4 (power weights), Theorems 6.2, 6.4 and 6.7 (convergence to equilibrium), Sections 5–6. <https://doi.org/10.48550/arXiv.2004.06441>. Published version: Journal of the European Mathematical Society 25(7) (2022), 2641–2696, <https://doi.org/10.4171/jems/1247>; locators above refer to the arXiv version.

@@ -10,4 +10,3 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
 - [Coupled biological oscillators](coupled-oscillators/README.md)
-- [Genealogical constructions of Hawkes processes](genealogical-constructions-of-hawkes-processes/README.md)

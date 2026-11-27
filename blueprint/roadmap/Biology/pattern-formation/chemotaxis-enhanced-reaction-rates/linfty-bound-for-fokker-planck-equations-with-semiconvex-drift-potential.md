@@ -26,4 +26,4 @@ Write the equation as $\rho_t-\Delta\rho+\nabla\Phi\cdot\nabla\rho=-(h+\Delta\Ph
 
 ## Sources
 
-- Alexander Kiselev, Fedor Nazarov, Lenya Ryzhik, Yao Yao, "Chemotaxis and Reactions in Biology", arXiv:2004.06441 (2020): Theorem 3.1 ($L^\infty$ bound), Lemma 3.2 (product estimate), Theorem 3.3 (global regularity), Section 3. <https://doi.org/10.48550/arXiv.2004.06441>
+- Alexander Kiselev, Fedor Nazarov, Lenya Ryzhik, Yao Yao, "Chemotaxis and Reactions in Biology", arXiv:2004.06441 (2020): Theorem 3.1 ($L^\infty$ bound), Lemma 3.2 (product estimate), Theorem 3.3 (global regularity), Section 3. <https://doi.org/10.48550/arXiv.2004.06441>. Published version: Journal of the European Mathematical Society 25(7) (2022), 2641–2696, <https://doi.org/10.4171/jems/1247>; locators above refer to the arXiv version.

@@ -26,4 +26,4 @@ A type-1 mutation born at time $s$ founds a clone of size about $e^{\lambda_1(t-
 
 ## Sources
 
-- Rick Durrett, "Population genetics of neutral mutations in exponentially growing cancer cell populations", Annals of Applied Probability 23(1) (2013); arXiv:1302.2742, Section 1.2 (Theorem 4, quoted from Durrett and Moseley, and Theorems 5–6), Section 1.3 (Theorem 7 for wave $k$). <https://doi.org/10.48550/arXiv.1302.2742>
+- Rick Durrett, "Population genetics of neutral mutations in exponentially growing cancer cell populations", Annals of Applied Probability 23(1) (2013); arXiv:1302.2742, Section 1.2 (Theorem 4, quoted from Durrett and Moseley, and Theorems 5–6), Section 1.3 (Theorem 7 for wave $k$). <https://doi.org/10.48550/arXiv.1302.2742>. Published version: The Annals of Applied Probability 23(1) (2013), 230–250, <https://doi.org/10.1214/11-aap824>; locators above refer to the arXiv version.

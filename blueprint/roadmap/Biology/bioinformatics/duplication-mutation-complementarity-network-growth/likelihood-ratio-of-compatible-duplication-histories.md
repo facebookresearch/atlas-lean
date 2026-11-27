@@ -24,4 +24,4 @@ Given the anchor, the one-step probability factorizes over neighbors: a shared n
 
 ## Sources
 
-- Si Li, Kwok Pui Choi, Taoyang Wu, Louxin Zhang, "Reconstruction of network evolutionary history from extant network topology and duplication history", arXiv (2012). Section 2 (DMC model, backward operator, compatibility) and the theoretical results subsection (seed-graph lemma, invariance and likelihood-ratio theorems). <https://doi.org/10.48550/arXiv.1203.2430>
+- Si Li, Kwok Pui Choi, Taoyang Wu, Louxin Zhang, "Reconstruction of network evolutionary history from extant network topology and duplication history", arXiv (2012). Section 2 (DMC model, backward operator, compatibility) and the theoretical results subsection (seed-graph lemma, invariance and likelihood-ratio theorems). <https://doi.org/10.48550/arXiv.1203.2430>. Published version: Bioinformatics Research and Applications (ISBRA 2012), Lecture Notes in Computer Science 7292 (2012), 165–176, <https://doi.org/10.1007/978-3-642-30191-9_16>; locators above refer to the arXiv version.

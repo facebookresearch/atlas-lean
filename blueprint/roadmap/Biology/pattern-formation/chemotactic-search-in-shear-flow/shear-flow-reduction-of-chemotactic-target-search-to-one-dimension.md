@@ -33,4 +33,4 @@ For large $A$ the agent sweeps horizontally across each level $y$ faster than it
 
 ## Sources
 
-- Yishu Gong, Siming He, Alexander Kiselev, "Random search in fluid flow aided by chemotaxis", arXiv (2021). Section 2 (model), Section 4: Theorems 1–3, definitions of the one-dimensional and effective hitting times; proofs in Sections 5–7. <https://doi.org/10.48550/arXiv.2107.02913>
+- Yishu Gong, Siming He, Alexander Kiselev, "Random search in fluid flow aided by chemotaxis", arXiv (2021). Section 2 (model), Section 4: Theorems 1–3, definitions of the one-dimensional and effective hitting times; proofs in Sections 5–7. <https://doi.org/10.48550/arXiv.2107.02913>. Published version: Bulletin of Mathematical Biology 84(7) (2022), article 71, <https://doi.org/10.1007/s11538-022-01024-4>; locators above refer to the arXiv version.

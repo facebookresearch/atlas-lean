@@ -22,4 +22,4 @@ Since each cell alive at time $t$ independently founds a surviving family with p
 
 ## Sources
 
-- Rick Durrett, "Population genetics of neutral mutations in exponentially growing cancer cell populations", Annals of Applied Probability 23(1) (2013); arXiv:1302.2742, Section 1.1 (Theorems 1–3), Section 2 (proofs, Lemma 2.1), Section 3 (Theorem 8, time change to the coalescent). <https://doi.org/10.48550/arXiv.1302.2742>
+- Rick Durrett, "Population genetics of neutral mutations in exponentially growing cancer cell populations", Annals of Applied Probability 23(1) (2013); arXiv:1302.2742, Section 1.1 (Theorems 1–3), Section 2 (proofs, Lemma 2.1), Section 3 (Theorem 8, time change to the coalescent). <https://doi.org/10.48550/arXiv.1302.2742>. Published version: The Annals of Applied Probability 23(1) (2013), 230–250, <https://doi.org/10.1214/11-aap824>; locators above refer to the arXiv version.

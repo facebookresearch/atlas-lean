@@ -36,4 +36,4 @@ The fast–slow structure ($\delta \to 0$) puts $I$ on the attracting branch of 
 
 ## Sources
 
-- Blaine van Rensburg, David J. Needham, Fabian Spill, Alexandra Tzella, "The role of mutants in the spatio-temporal progression of inflammatory bowel disease: three classes of permanent form travelling waves", arXiv (2025). Section 2 and Section 4 (Definitions 4.1–4.3, Theorems 4.1–4.4 and 4.9). <https://doi.org/10.48550/arXiv.2501.07205>
+- Blaine van Rensburg, David J. Needham, Fabian Spill, Alexandra Tzella, "The role of mutants in the spatio-temporal progression of inflammatory bowel disease: three classes of permanent form travelling waves", arXiv (2025). Section 2 and Section 4 (Definitions 4.1–4.3, Theorems 4.1–4.4 and 4.9). <https://doi.org/10.48550/arXiv.2501.07205>. Published version: SIAM Journal on Applied Dynamical Systems 25(2) (2026), 902–939, <https://doi.org/10.1137/25m1781760>; locators above refer to the arXiv version.

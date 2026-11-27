@@ -35,4 +35,4 @@ On $\{x_0 = x_1 = 0\}$ the only point of the simplex is $(0,0,1)$; at it, $\Phi 
 
 ## Sources
 
-- Vanessa Castillo, J. Tomás Lázaro, Josep Sardanyés, "Dynamics and bifurcations in a simple quasispecies model of tumorigenesis", arXiv (2014). Section 2 (model, mean fitness), Section 3 (equilibrium points, Remark 3.1, first-integral lemma, stability analysis and bifurcations). <https://doi.org/10.48550/arXiv.1411.6531>
+- Vanessa Castillo, J. Tomás Lázaro, Josep Sardanyés, "Dynamics and bifurcations in a simple quasispecies model of tumorigenesis", arXiv (2014). Section 2 (model, mean fitness), Section 3 (equilibrium points, Remark 3.1, first-integral lemma, stability analysis and bifurcations). <https://doi.org/10.48550/arXiv.1411.6531>. Published version: Computational and Applied Mathematics 36(1) (2017), 415–431, <https://doi.org/10.1007/s40314-015-0234-3>; locators above refer to the arXiv version.

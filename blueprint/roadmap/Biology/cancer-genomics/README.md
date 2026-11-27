@@ -15,10 +15,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-- [CAR-T and chemoradiotherapy in glioma](car-t-and-chemoradiotherapy-in-glioma/README.md)
 - [CAR-T and temozolomide therapy of malignant gliomas](car-t-and-temozolomide-therapy-of-malignant-gliomas/README.md)
-- [Cross-diffusion in cancer immunotherapy models](cross-diffusion-in-cancer-immunotherapy-models/README.md)
-- [Graphical models of irreversible event accumulation](graphical-models-of-irreversible-event-accumulation/README.md)
 - [Neutral mutations in exponentially growing tumours](neutral-mutations-in-exponentially-growing-tumours/README.md)
-- [Oncogenetic tree reconstruction](oncogenetic-tree-reconstruction/README.md)
 - [Quasispecies model of tumorigenesis](quasispecies-model-of-tumorigenesis/README.md)

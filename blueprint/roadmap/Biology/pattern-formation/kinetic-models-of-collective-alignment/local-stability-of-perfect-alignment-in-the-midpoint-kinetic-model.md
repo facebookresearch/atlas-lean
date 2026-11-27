@@ -18,4 +18,4 @@ On the sphere the model has neither a conserved quantity nor an energy that decr
 
 ## Sources
 
-- Pierre Degond, Amic Frouvelle, Gaël Raoul, "Local stability of perfect alignment for a spatially homogeneous kinetic model", arXiv (2014). Equation of Section 1 (kinetic model), Assumption of Section 3 (midpoint models on the sphere), Proposition 3, Theorem 6, Proposition 12, Theorems 15 and 27. <https://doi.org/10.48550/arXiv.1403.5233>
+- Pierre Degond, Amic Frouvelle, Gaël Raoul, "Local stability of perfect alignment for a spatially homogeneous kinetic model", arXiv (2014). Equation of Section 1 (kinetic model), Assumption 3.1 (midpoint models on the sphere), Proposition 2.3, Theorem 3.2, Proposition 3.8, Theorems 4.3 and 5.9. <https://doi.org/10.48550/arXiv.1403.5233>. Published version: Journal of Statistical Physics 157(1) (2014), 84–112, <https://doi.org/10.1007/s10955-014-1062-3>; locators above refer to the arXiv version.

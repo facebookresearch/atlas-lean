@@ -24,4 +24,4 @@ Steady states are orbits of the Hamiltonian system $p' = q$, $q' = -f(p)$ with e
 
 ## Sources
 
-- Luís Almeida, Pierre-Alexandre Bliman, Nga Nguyen, Nicolas Vauchelet, "Steady-state solutions for a reaction-diffusion equation with Robin boundary conditions: application to the control of dengue vectors", arXiv (2022). Section 2 (Assumptions 2.1–2.2, Theorems 2.1–2.3, Corollary 2.1), Section 4 (application to *Wolbachia*). <https://doi.org/10.48550/arXiv.2209.07165>
+- Luís Almeida, Pierre-Alexandre Bliman, Nga Nguyen, Nicolas Vauchelet, "Steady-state solutions for a reaction-diffusion equation with Robin boundary conditions: application to the control of dengue vectors", arXiv (2022). Section 2 (Assumptions 2.1–2.2, Theorems 2.1–2.3, Corollary 2.1), Section 4 (application to *Wolbachia*). <https://doi.org/10.48550/arXiv.2209.07165>. Published version: European Journal of Applied Mathematics 35(3) (2024), 382–408, <https://doi.org/10.1017/s0956792523000256>; locators above refer to the arXiv version.

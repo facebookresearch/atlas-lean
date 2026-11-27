@@ -23,4 +23,4 @@ A Bogdanov–Takens point is an equilibrium whose linearization has a double zer
 
 ## Sources
 
-- Lisa Maria Kreusser, Alan D. Rendall, "Autophosphorylation and the dynamics of the activation of Lck", arXiv (2021); Bulletin of Mathematical Biology (2021). Section 5 (reduced model and Theorem 5). <https://doi.org/10.48550/arXiv.2101.09295>
+- Lisa Maria Kreusser, Alan D. Rendall, "Autophosphorylation and the dynamics of the activation of Lck", arXiv (2021); Bulletin of Mathematical Biology (2021). Section 5 (reduced model and Theorem 5). <https://doi.org/10.48550/arXiv.2101.09295>. Published version: Bulletin of Mathematical Biology 83(6) (2021), article 64, <https://doi.org/10.1007/s11538-021-00900-9>; locators above refer to the arXiv version.

@@ -33,4 +33,4 @@ The Jacobian of the spatial system at the coexistence point gives a quartic char
 
 ## Sources
 
-- Stefan C. Mancas, Roy S. Choudhury, "Periodic and Chaotic Traveling Wave Patterns in Reaction-Diffusion/Predator-Prey Models with General Nonlinearities", arXiv (2013). Section 1 (model and travelling-wave system), Section 2 (linear stability, quartic Hopf curve and cases (a)–(d)), Section 3 (Lemma 1, Theorem 1 and the transversality computation), Sections 4–5 (systems A–E and numerical results). <https://doi.org/10.48550/arXiv.1302.2499>
+- Stefan C. Mancas, Roy S. Choudhury, "Periodic and Chaotic Traveling Wave Patterns in Reaction-Diffusion/Predator-Prey Models with General Nonlinearities", arXiv (2013). Section 1 (model and travelling-wave system), Section 2 (linear stability, quartic Hopf curve and cases (a)–(d)), Section 3 (Lemma 1, Theorem 1 and the transversality computation), Sections 4–5 (systems A–E and numerical results). <https://doi.org/10.48550/arXiv.1302.2499>. Published version: Far East Journal of Dynamical Systems 11(2) (2009), 117–142, <https://doi.org/10.17654/0972111809010>; locators above refer to the arXiv version.

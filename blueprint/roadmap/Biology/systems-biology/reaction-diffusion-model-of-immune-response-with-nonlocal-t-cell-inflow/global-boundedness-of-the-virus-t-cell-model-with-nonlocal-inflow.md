@@ -32,4 +32,4 @@ Nonnegativity and $u \le 1$ follow from comparison principles, since $w(1) = 0$ 
 
 ## Sources
 
-- Cordula Reisch, Dirk Langemann, "Longterm existence of solutions of a reaction diffusion system with non-local terms modeling an immune response — an interpretation-orientated proof", arXiv (2020). Section 2 (model, growth and inflow functions), Theorem 6, Lemmas 7, 8 and 12, Corollaries 9–11, Theorems 13, 16 and 23. <https://doi.org/10.48550/arXiv.2008.01435>
+- Cordula Reisch, Dirk Langemann, "Longterm existence of solutions of a reaction diffusion system with non-local terms modeling an immune response — an interpretation-orientated proof", arXiv (2020). Section 2 (model, growth and inflow functions), Theorem 6, Lemmas 7, 8 and 12, Corollaries 9–11, Theorems 13, 16 and 23. <https://doi.org/10.48550/arXiv.2008.01435>. Published version: Partial Differential Equations in Applied Mathematics 6 (2022), article 100446, <https://doi.org/10.1016/j.padiff.2022.100446>; locators above refer to the arXiv version.

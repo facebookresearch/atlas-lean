@@ -20,4 +20,4 @@ Each term is a transport or reaction time. Far from the target, $|\nabla c| \app
 
 ## Sources
 
-- Jing An, Alexander Kiselev, Yao Yao, "Reaction enhancement by flux-limited chemotaxis", arXiv:2508.13704 (2025), Section 1.2 (rescaling, initial conditions, rescaled system), Section 1.3 (half-time, Theorem 1.1 and remarks), Section 3 (construction of $H$), Section 4 (duality lemma, Theorems 4.1–4.2, Corollary 4.2), Section 5 (Harnack-type lemmas). <https://doi.org/10.48550/arXiv.2508.13704>
+- Jing An, Alexander Kiselev, Yao Yao, "Reaction enhancement by flux-limited chemotaxis", arXiv:2508.13704 (2025), Section 1.2 (rescaling, initial conditions, rescaled system), Section 1.3 (half-time, Theorem 1.1 and remarks), Section 3 (construction of $H$), Section 4 (duality lemma, Theorems 4.1–4.2, Corollary 4.2), Section 5 (Harnack-type lemmas). <https://doi.org/10.48550/arXiv.2508.13704>. Published version: Journal of Mathematical Biology 92(4) (2026), article 57, <https://doi.org/10.1007/s00285-026-02383-5>; locators above refer to the arXiv version.
