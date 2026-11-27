@@ -12,6 +12,7 @@ import Mathlib.Algebra.Field.GeomSum
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Divisors
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # Exponential approximation of the divisor count and divisor sum
@@ -24,6 +25,62 @@ geometric sum with ratio $e^{-n}$.
 namespace MetaMathlibExt
 
 open Asymptotics Filter Finset
+
+set_option linter.unusedVariables false in
+/-- **Sine lower bound at non-divisors.** For all positive integers $k$ and $n$ with $k \nmid n$,
+$$\frac{\pi^2 k^2}{2} \sin^2\frac{n\pi}{k} \ge 1.$$
+In other words, $A(k, n) = \pi^2 k^2 / 2$ satisfies the hypothesis
+$A(k, n) \sin^2(n\pi/k) \ge 1$ of the exponential approximation of the divisibility indicator.
+
+Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 4 (`integers-2026-A46-lem-4`). -/
+public theorem one_le_pi_sq_mul_sq_div_two_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
+    (hn : 1 ≤ n) (hkn : ¬ k ∣ n) :
+    1 ≤ Real.pi ^ 2 * k ^ 2 / 2 * Real.sin (n * Real.pi / k) ^ 2 := by
+  have hkR : (0 : ℝ) < k := by exact_mod_cast (show 0 < k by omega)
+  let r := n % k
+  have hr : 0 < r := Nat.pos_of_ne_zero (fun h => hkn (Nat.dvd_of_mod_eq_zero h))
+  have hrlt : r < k := Nat.mod_lt n (by omega)
+  -- The squared sine is unchanged by removing whole multiples of π.
+  have hdecomp : (n : ℝ) = (r : ℝ) + k * (↑(n / k) : ℝ) := by
+    exact_mod_cast (Nat.mod_add_div n k).symm
+  have harg : (n : ℝ) * Real.pi / k = (r : ℝ) * Real.pi / k + (↑(n / k) : ℝ) * Real.pi := by
+    rw [hdecomp]
+    field_simp [hkR.ne']
+  have hsign : ((-1 : ℝ) ^ (n / k)) ^ 2 = 1 := by
+    rw [← pow_mul, mul_comm (n / k) 2, pow_mul]
+    norm_num
+  rw [harg, Real.sin_add_nat_mul_pi, mul_pow, hsign, one_mul]
+  -- Reflect the residue to the first half of the interval before applying Jordan's inequality.
+  let s := min r (k - r)
+  have hs : 1 ≤ s := by dsimp [s]; omega
+  have hs₂ : 2 * s ≤ k := by dsimp [s]; omega
+  have hs_sin : Real.sin ((r : ℝ) * Real.pi / k) = Real.sin ((s : ℝ) * Real.pi / k) := by
+    dsimp only [s]
+    rcases le_total r (k - r) with h | h
+    · rw [min_eq_left h]
+    · rw [min_eq_right h, Nat.cast_sub hrlt.le]
+      have heq : ((k : ℝ) - r) * Real.pi / k = Real.pi - (r : ℝ) * Real.pi / k := by
+        field_simp [hkR.ne']
+      rw [heq, Real.sin_pi_sub]
+  rw [hs_sin]
+  have hsR : (1 : ℝ) ≤ s := by exact_mod_cast hs
+  have hs₂R : 2 * (s : ℝ) ≤ k := by exact_mod_cast hs₂
+  have hj := Real.le_sin_mul (div_nonneg (by positivity : 0 ≤ 2 * (s : ℝ)) hkR.le)
+    ((div_le_iff₀ hkR).2 (by simpa only [one_mul] using hs₂R))
+  rw [show Real.pi / 2 * (2 * (s : ℝ) / k) = (s : ℝ) * Real.pi / k by ring] at hj
+  have hscaled : 2 ≤ (k : ℝ) * Real.sin ((s : ℝ) * Real.pi / k) := by
+    linarith only [(div_le_iff₀ hkR).mp hj, hsR]
+  have hp : 2 ≤ Real.pi * ((k : ℝ) * Real.sin ((s : ℝ) * Real.pi / k)) := by
+    have hπ : (1 : ℝ) ≤ Real.pi := by linarith [Real.two_le_pi]
+    have hnonneg : 0 ≤ (k : ℝ) * Real.sin ((s : ℝ) * Real.pi / k) :=
+      (by norm_num : (0 : ℝ) ≤ 2).trans hscaled
+    exact hscaled.trans (by simpa only [one_mul] using mul_le_mul_of_nonneg_right hπ hnonneg)
+  calc
+    1 ≤ (2 : ℝ) ^ 2 / 2 := by norm_num
+    _ ≤ (Real.pi * ((k : ℝ) * Real.sin ((s : ℝ) * Real.pi / k))) ^ 2 / 2 :=
+      div_le_div_of_nonneg_right (pow_le_pow_left₀ (by norm_num) hp 2) (by norm_num)
+    _ = _ := by ring
 
 /-- **Exponential approximation of the divisibility indicator.** Let $A$ be a real-valued
 function of two natural numbers such that $A(k, n) \sin^2(n\pi/k) \ge 1$ for all natural numbers

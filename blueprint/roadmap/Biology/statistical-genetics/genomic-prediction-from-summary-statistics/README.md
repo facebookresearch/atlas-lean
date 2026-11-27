@@ -107,3 +107,7 @@
 - [Pseudo-GWAS subsampling for PRS ensembles](pseudo-gwas-subsampling-for-prs-ensembles/README.md)
 - [Local and global ancestry interaction models](local-and-global-ancestry-interaction-models/README.md)
 - [Imputation-aware SNP panel design](imputation-aware-snp-panel-design/README.md)
+- [Boosted polygenic scores with non-additive effects](boosted-polygenic-scores-with-non-additive-effects/README.md)
+- [Cross-trait penalized polygenic regression](cross-trait-penalized-polygenic-regression/README.md)
+- [Polygenic scores for gene-by-exposure interaction](polygenic-scores-for-gene-by-exposure-interaction/README.md)
+- [Genetic correlation from GWAS summary statistics](genetic-correlation-from-gwas-summary-statistics/README.md)

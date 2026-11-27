@@ -319,7 +319,7 @@ private theorem reflect_comp_eq (q : ℤ) (g' : ℕ) (P : ℤ[X]) (hP : P.natDeg
   · rw [revAt_le hn, mul_comm, ← H3 n hn]
   · push Not at hn
     have h1 : (revAt (2 * g')) n = n := by
-      have hfun : revAtFun (2 * g') n = n := if_neg (not_le.mpr hn)
+      have hfun : revAtFun (2 * g') n = n := ite_eq_right (not_le.mpr hn)
       rwa [revAtFun_eq] at hfun
     rw [h1, coeff_eq_zero_of_natDegree_lt (lt_of_le_of_lt hP hn), zero_mul, mul_zero]
 
@@ -383,8 +383,8 @@ private theorem lpoly_of_counts (q h : ℤ) (hq1 : q - 1 ≠ 0) (g : ℕ) (A T :
       rw [map_add, Polynomial.coeff_coe, hPcoeff, PowerSeries.coeff_X_pow_mul',
         PowerSeries.coeff_C_mul, PowerSeries.coeff_mk]
       by_cases hn : n < 2 * g' + 1
-      · rw [if_pos hn, if_neg (by omega), add_zero]
-      · rw [if_neg hn, if_pos (by omega), zero_add, H2 n (by omega), ha, geom,
+      · rw [ite_eq_left hn, ite_eq_right (by omega), add_zero]
+      · rw [ite_eq_right hn, ite_eq_left (by omega), zero_add, H2 n (by omega), ha, geom,
           PowerSeries.coeff_mk, mul_assoc, ← pow_add]
         congr 2
         omega
@@ -452,7 +452,7 @@ private theorem lpoly_of_counts (q h : ℤ) (hq1 : q - 1 ≠ 0) (g : ℕ) (A T :
       rw [hML, coeff_C_mul]
     have hP3 : (reflect (2 * g') P).comp (C q * X) = C (q ^ g') * P := by
       refine reflect_comp_eq q g' P hPdeg fun n hn => ?_
-      rw [hPcoeff, hPcoeff, if_pos (by omega), if_pos (by omega)]
+      rw [hPcoeff, hPcoeff, ite_eq_left (by omega), ite_eq_left (by omega)]
       have h3 := H3 n (by omega)
       rwa [show g' + 1 - 1 = g' by omega, show 2 * (g' + 1) - 2 - n = 2 * g' - n by omega]
         at h3
@@ -483,7 +483,7 @@ private theorem lpoly_of_counts (q h : ℤ) (hq1 : q - 1 ≠ 0) (g : ℕ) (A T :
     refine ⟨L, ?_, ?_, ?_, ?_⟩
     · rw [show 2 * (g' + 1) = 2 * g' + 2 by ring]
       exact Nat.lt_succ_iff.mp (PowerSeries.natDegree_trunc_lt _ _)
-    · rw [hL, PowerSeries.coeff_trunc, if_pos (by omega), hW0]
+    · rw [hL, PowerSeries.coeff_trunc, ite_eq_left (by omega), hW0]
     · intro i hi
       have h1 := hFEM i (by omega)
       rw [hMLc, hMLc, show 2 * g' + 2 - i = 2 * (g' + 1) - i by omega] at h1
