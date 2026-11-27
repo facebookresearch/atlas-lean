@@ -7,11 +7,15 @@ There is a recursively enumerable category of partitions in which no algorithm d
 1. the problem of deciding, for a partition $p$, whether $p\in\mathcal C$ is undecidable;
 2. no Turing machine computes $|\mathcal C(k,\ell)|$ for all $k,\ell\in\mathbb N$.
 
+(Theorem 1 of the introduction, combining Theorem 4.9 and Corollary 4.10 of the source.)
+
 Without the requirement of recursive enumerability the statement is immediate, since there are uncountably many categories of partitions (Raum and Weber) but only countably many Turing machines. For the familiar categories, such as all partitions, pair partitions or non-crossing partitions, both problems are easy.
 
 ## Depends on
 
 - [Categories of partitions](categories-of-partitions.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
