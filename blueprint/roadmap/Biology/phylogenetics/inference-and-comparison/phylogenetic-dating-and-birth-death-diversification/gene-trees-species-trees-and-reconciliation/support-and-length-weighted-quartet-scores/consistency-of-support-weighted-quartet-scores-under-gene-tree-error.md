@@ -31,7 +31,7 @@ i.e. length weighting has no worse, and asymptotically a constant-factor better,
 ## Depends on
 
 - [Support- and length-weighted quartet score](support-and-length-weighted-quartet-score.md)
-- [The species quartet maximizes quartet support](../../../../coalescent-theory/multispecies-coalescent/split-01-most-probable.md)
+- [The species quartet maximizes quartet support](../../../../../coalescent-theory/multispecies-coalescent/split-01-most-probable.md)
 
 ## Expansion
 

@@ -12,7 +12,7 @@ the clock rate times the time-weighted mean of the species-branch rates traverse
 
 ## Depends on
 
-- [Gene-tree density under the multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [Gene-tree density under the multispecies coalescent](../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
 
 ## Expansion
 

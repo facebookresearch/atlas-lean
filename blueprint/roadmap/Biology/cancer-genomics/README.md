@@ -25,7 +25,4 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
 - [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
 - [Minimum uncovering branching](minimum-uncovering-branching/README.md)
-- [Allelic copy-number states in aneuploid genomes](allelic-copy-number-states-in-aneuploid-genomes/README.md)
-- [Beta-binomial timing of precursor lesions](beta-binomial-timing-of-precursor-lesions/README.md)
-- [Binomial-mixture calling of single nucleotide variants](binomial-mixture-snv-calling/README.md)
-- [Multi-region mutational heterogeneity](multi-region-mutational-heterogeneity/README.md)
+- [Somatic copy-number and clonal timing models](somatic-copy-number-and-clonal-timing/README.md)
