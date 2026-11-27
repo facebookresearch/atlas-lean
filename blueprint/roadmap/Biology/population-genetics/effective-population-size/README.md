@@ -19,4 +19,6 @@
 
 - [Consistency of the linkage-disequilibrium estimator of effective population size under a calibration hypothesis](ld-based-effective-size-estimator-definition-and.md)
 - [Hitchhiking effective size under cyclically fluctuating balancing selection](hitchhiking-effective-size-under-cyclic-balancing-selection.md)
+- [Ancestry-specific effective population size from IBD segments](ancestry-specific-effective-size-from-ibd-segments.md)
+- [Coalescent effective size under random population-size fluctuations](coalescent-effective-size-under-random-population-size-fluctuations.md)
 - [Eigenvalue effective size of structured populations](eigenvalue-effective-size-of-structured-populations/README.md)

@@ -142,4 +142,6 @@
 - [Lattices of ancestral configurations](lattices-of-ancestral-configurations/README.md)
 - [TRAILS coalescent hidden Markov model on a three-species tree](trails-coalescent-hidden-markov-model-on-a-three-species-tree.md)
 - [Enumeration of coalescent histories](enumeration-of-coalescent-histories/README.md)
+- [Label-switching unidentifiability of bidirectional introgression](label-switching-unidentifiability-of-bidirectional-introgression.md)
+- [Gene-tree density under the multispecies coalescent with introgression](multispecies-coalescent-with-introgression-gene-tree-density.md)
 - [Compact coalescent histories](compact-coalescent-histories/README.md)

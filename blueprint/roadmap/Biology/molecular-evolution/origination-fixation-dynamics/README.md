@@ -11,5 +11,6 @@
 - [Bak–Sneppen model](bak-sneppen-model/README.md)
 - [Stochastic models of viral evolution](stochastic-models-of-viral-evolution/README.md)
 - [Survival of the flattest in the quasispecies model](survival-of-the-flattest-in-the-quasispecies-model/README.md)
+- [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)
 - [Fitness–distance monotonicity and mutation-rate control](fitness-distance-monotonicity-and-mutation-rate-control/README.md)
 - [Genome size evolution under rearrangements](genome-size-evolution-under-rearrangements/README.md)
