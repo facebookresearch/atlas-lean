@@ -183,13 +183,6 @@ theorem integralGalois_mul (σ τ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) :
 theorem integralGalois_one : integralGalois p 1 = RingEquiv.refl _ :=
   RingEquiv.ext fun x => Subtype.ext (completionGalois_one_apply p x)
 
-/-- The map of Witt vectors induced by a composite of ring maps is the composite of their maps. -/
-private theorem wittVector_map_comp {A B C : Type*} [CommRing A] [CommRing B] [CommRing C]
-    (g : B →+* C) (f : A →+* B) :
-    WittVector.map (p := p) (g.comp f) = (WittVector.map g).comp (WittVector.map f) :=
-  RingHom.ext fun x => WittVector.ext fun n => by
-    simp only [WittVector.map_coeff, RingHom.comp_apply]
-
 /-- The map of adic completions induced by a composite of ring maps is the composite of their
 maps. -/
 private theorem mapRingHom_comp {A B C : Type*} [CommRing A] [CommRing B] [CommRing C]
@@ -221,7 +214,7 @@ their maps. -/
 private theorem bDeRhamPlus_map_comp (g f : 𝓞_ℂ_[p] →+* 𝓞_ℂ_[p]) :
     BDeRhamPlus.map p (g.comp f) = (BDeRhamPlus.map p g).comp (BDeRhamPlus.map p f) :=
   mapRingHom_comp _ _ _ _ _ _ <| by
-    rw [PreTilt.map_comp, wittVector_map_comp, Localization.awayMapNatCast_comp]
+    rw [PreTilt.map_comp, WittVector.map_comp, Localization.awayMapNatCast_comp]
 
 /-- The map of `B_dR^+` induced by the identity of `𝓞_ℂ_[p]` is the identity. -/
 private theorem bDeRhamPlus_map_id : BDeRhamPlus.map p (RingHom.id 𝓞_ℂ_[p]) = RingHom.id 𝔹⁺ :=
