@@ -433,6 +433,20 @@ def typed (n : Nat) : Nat := let rec t : ∀ m : Nat, m = m := fun _ => rfl, u (
 
 def cons (n : Nat) : List Nat := let rec v : List Nat := [n], w (k : Nat) : List Nat := k :: v; w n
 
+def pf (n : Nat) : Nat :=
+  let rec @[reducible] a11 (k : Nat) : Nat :=
+    let rec inner11 (j : Nat) : Nat := j
+    inner11 k
+  a11 n
+
+def pa (n : Nat) : Nat := let rec a7 (k : Nat) : Nat := k, @[inline] b7 (j : Nat) := a7 j; b7 n
+
+def pd (n : Nat) : Nat :=
+  let rec
+    /-- A documented one. -/
+    @[reducible] a6 (k : Nat) : Nat := k
+  a6 n
+
 end LR
 """
 
@@ -530,11 +544,14 @@ class IndexTests(unittest.TestCase):
                          # `let rec p ... := v, q ... := w` declares both; a comma in a type or
                          # in a value that declares nothing after it does not.
                          "LR.pair.p", "LR.pair.q", "LR.props.s", "LR.typed.t", "LR.typed.u",
-                         "LR.cons.v", "LR.cons.w"} <= names)
+                         "LR.cons.v", "LR.cons.w",
+                         # A declaration of a `let rec` may have a doc comment and attributes.
+                         "LR.pf.a11", "LR.pf.a11.inner11", "LR.pa.a7", "LR.pa.b7",
+                         "LR.pd.a6"} <= names)
         self.assertFalse({"LR.total.inner", "LR.outer.b", "LR.flat.c.d", "LR.nest.f",
                           "LR.boxed.value.g", "LR.boxed2.inner2", "LR.boxed2.value",
                           "LR.pair.p.q", "LR.props.m", "LR.props.s.m", "LR.typed.m",
-                          "LR.cons.k"} & names)
+                          "LR.cons.k", "LR.pf.inner11"} & names)
 
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
@@ -775,6 +792,11 @@ class PlaceTests(unittest.TestCase):
         self.assertTrue(self.place_in(new, files, base).added)
         kept = Finding("LR.pair.p", "unusedArguments", "", "MathlibExt.A", "MathlibExt/A.lean", 3,
                        1)
+        self.assertFalse(self.place_in(kept, files, base).added)
+        # So is a `q` with an attribute.
+        head = head.replace(", q (j spare", ", @[inline] q (j spare")
+        files = {"MathlibExt/A.lean": (head, {3})}
+        self.assertTrue(self.place_in(new, files, base).added)
         self.assertFalse(self.place_in(kept, files, base).added)
 
     def test_a_let_rec_in_a_helper_hides_no_declaration_of_the_parent(self):
