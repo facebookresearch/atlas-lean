@@ -2,6 +2,7 @@
 
 Relations between formal theories and their structures: first-order languages of algebraic structures, quantifier elimination, categoricity and o-minimality.
 
+- [Defining the integers in the rationals](defining-the-integers-in-the-rationals/README.md)
 - [First-order language of groups](first-order-language-of-groups/README.md)
 - [Quantifier elimination for real closed fields](quantifier-elimination-for-real-closed-fields/README.md)
 - [Wilkie's conjecture](wilkie-s-conjecture/README.md)
@@ -16,5 +17,6 @@ Relations between formal theories and their structures: first-order languages of
 
 - [Beth's definability theorem](beth-definability-theorem.md)
 - [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
+- [Compactness theorem for first-order logic](compactness-theorem-for-first-order-logic.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
 - [Ehrenfeucht–Fraïssé games on finite binary relations](ehrenfeucht-fra-ss-games-on-finite-binary-relati/README.md)
