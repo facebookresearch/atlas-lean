@@ -13,9 +13,13 @@ Guibas and Odlyzko, as presented by Odlyzko (1985): let `A` be a word of length 
 alphabet of `q ≥ 2` letters and `f(n)` the number of words of length `n` with no occurrence of `A`
 as a contiguous factor. The autocorrelation of `A` records the borders of `A`: the lengths
 `1 ≤ r ≤ k` whose length-`r` prefix equals the length-`r` suffix (`r = k` always counts). As a
-polynomial, `AA_z = ∑_{r border} z^{r-1}`; the correlation `AB_z` of two words sums `z^{r-1}` over
-the `r ≤ min(|A|, |B|)` for which the length-`r` suffix of `A` equals the length-`r` prefix of
-`B`. With `F(z) = ∑_n f(n) z^{-n}`,
+polynomial, `AA_z = ∑_{r border} z^{r-1}`. For two words `A` and `B`, the suffix–prefix overlap
+polynomial `corr A B z` sums `z^{r-1}` over the `r ≤ min(|A|, |B|)` for which the length-`r`
+suffix of `A` equals the length-`r` prefix of `B`. In the cases used here, the autocorrelation of
+a nonempty word and two words neither of which is a factor of the other, it is the correlation
+`AB_z` of Odlyzko (1985, Section 3), but not for arbitrary pairs: Section 3 also counts each
+occurrence of `B` inside `A` that ends before the last letter of `A`, so for `A = ab` and `B = a`
+it gives `AB_2 = 2`, while `corr A B 2 = 0`. With `F(z) = ∑_n f(n) z^{-n}`,
 
   `F(z) = z AA_z / (1 + (z - q) AA_z)`.
 
@@ -52,13 +56,21 @@ open MeasureTheory
 
 variable {α : Type*} [DecidableEq α]
 
-/-- The **correlation set** of `A` and `B`: the lengths `1 ≤ r ≤ min(|A|, |B|)` for which the
-length-`r` suffix of `A` equals the length-`r` prefix of `B`. For `A = B` these are the borders
-of `A`, including `r = |A|`. -/
+/-- **Suffix–prefix overlap set.** The lengths `1 ≤ r ≤ min(|A|, |B|)` for which the length-`r`
+suffix of `A` equals the length-`r` prefix of `B`. For `A = B ≠ []` these are the borders of `A`,
+including `r = |A|`; `corrSet [] []` is empty. In the cases used here, the autocorrelation of a
+nonempty word and two words neither of which is a factor of the other, they are the positions of
+Odlyzko's correlation `AB` (1985, Section 3), counted by overlap length; for other pairs that
+correlation also has a position for each occurrence of `B` inside `A` that ends before the last
+letter of `A`. -/
 def corrSet (A B : List α) : Finset ℕ :=
   (Finset.Icc 1 (min A.length B.length)).filter fun r => A.drop (A.length - r) = B.take r
 
-/-- The **correlation polynomial** evaluated at `z`: `AB_z = ∑_{r ∈ corrSet A B} z^{r-1}`. -/
+/-- **Suffix–prefix overlap polynomial.** `∑_{r ∈ corrSet A B} z^{r-1}`, evaluated at `z`. In the
+cases used here, the autocorrelation of a nonempty word and two words neither of which is a factor
+of the other, it is Odlyzko's correlation `AB_z` (1985, Section 3), but not for arbitrary pairs:
+for `A = ab` and `B = a`, Section 3 gives `AB_2 = 2`, counting the occurrence of `B` at the start
+of `A`, while `corr A B 2 = 0`. -/
 def corr (A B : List α) (z : ℚ) : ℚ :=
   ∑ r ∈ corrSet A B, z ^ (r - 1)
 
@@ -120,7 +132,8 @@ public theorem_wanted lintegral_waitingTime [MeasurableSpace α] [DiscreteMeasur
 binary letters (each of the two letters has probability `1 / 2` under the probability measure
 `ν`) and two nonempty words `A`, `B` over `Bool`, neither a factor of the other,
 `P(T_B < T_A) · (BB_2 - BA_2) = P(T_A < T_B) · (AA_2 - AB_2)`; that is, the odds that `B`
-appears before `A` are `(AA_2 - AB_2) : (BB_2 - BA_2)`.
+appears before `A` are `(AA_2 - AB_2) : (BB_2 - BA_2)`. Here `XY_2` is `corr X Y 2`, which for
+such words is Odlyzko's correlation.
 
 Source: Odlyzko (1985), presenting Guibas and Odlyzko (1981). -/
 public theorem_wanted conway_odds (ν : Measure Bool) [IsProbabilityMeasure ν]
