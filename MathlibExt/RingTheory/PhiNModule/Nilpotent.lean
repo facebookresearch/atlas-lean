@@ -37,9 +37,12 @@ basis in two ways shows that `det N = p ^ d * σ (det N)` in every finite-dimens
 * `PhiNModule.map_N_iInf_range_N_pow`, `PhiNModule.bijective_restrict_N_iInf_range_N_pow`: in
   finite dimension, `N` maps its stable image bijectively onto itself.
 * `PhiNModule.det_N_eq_pow_mul`: `det N = p ^ d * σ (det N)` in dimension `d`.
-* `PhiNModule.subsingleton_of_bijective_N`: a `(φ, N)`-module on which `N` is bijective is zero.
-* `PhiNModule.iInf_range_N_pow_eq_bot`: the stable image of `N` is zero.
-* `PhiNModule.isNilpotent_N`: the monodromy operator `N` is nilpotent.
+* `PhiNModule.subsingleton_of_bijective_N`: if `v (σ x) = v x` for all `x` and `v p ≠ 0`, a
+  finite-dimensional `(φ, N)`-module on which `N` is bijective is zero.
+* `PhiNModule.iInf_range_N_pow_eq_bot`: under the same hypotheses, the stable image of `N` is
+  zero.
+* `PhiNModule.isNilpotent_N`: under the same hypotheses, the monodromy operator `N` is
+  nilpotent.
 
 ## References
 

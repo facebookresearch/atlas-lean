@@ -22,7 +22,7 @@ public import Mathlib.GroupTheory.SpecificGroups.Quaternion
 public import Mathlib.GroupTheory.Sylow
 public import Mathlib.GroupTheory.Torsion
 public import WantedExt.GroupTheory.DenseTorsionFreeGroupsKourovka1Problem63Wanted
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.InvolutionOddProductCentralKourovka11Problem13Wanted
 
 @[expose] public section
