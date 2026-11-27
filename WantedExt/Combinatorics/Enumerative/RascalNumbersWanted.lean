@@ -99,17 +99,6 @@ theorem_wanted iterate_forwardDiff_sum_rascalGen (j n : ℕ) :
       (fun m => ∑ k ∈ Finset.range (m + 1),
         rascalGenZ j (m : ℤ) (k : ℤ))) n = 1
 
-/-- **Alternating row sums of generalized Rascal numbers vanish on odd rows.** Write
-$R^{(j)}_{n,k}$ for the number of binary words of length $n$ with exactly $k$ ones and at most
-$j$ ascents (positions where a $0$ is immediately followed by a $1$). For all natural numbers
-$j$ and $m$, $\sum_{k=0}^{2m+1} (-1)^k R^{(j)}_{2m+1,k} = 0$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 23. -/
-theorem_wanted sum_rascalGen_alternating_odd (j m : ℕ) :
-    ∑ k ∈ Finset.range (2 * m + 2),
-        (-1 : ℤ) ^ k * (rascalGen j k (2 * m + 1) : ℤ) = 0
-
 /-- **Alternating row sums of generalized Rascal numbers on even rows.** Write $R^{(j)}_{n,k}$ for
 the number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents
 (positions where a $0$ is immediately followed by a $1$). For natural numbers $j$ and $m$ with
