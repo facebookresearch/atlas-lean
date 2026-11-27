@@ -663,6 +663,8 @@ def compl₂EDS : R :=
   letI p := preNormEDS (b ^ 4) c d
   (p (m - 1) ^ 2 * p (m + 2) - p (m - 2) * p (m + 1) ^ 2) * if Even m then 1 else b
 
+private lemma compl₂EDS_eq_complEDS₂ : compl₂EDS b c d m = complEDS₂ b c d m := rfl
+
 lemma compl₂EDSAux_neg : compl₂EDSAux b c d (-m) = -complEDS₂ b c d m - compl₂EDSAux b c d m := by
   simp_rw [compl₂EDSAux, complEDS₂, neg_sub_left, neg_add_eq_sub, ← neg_sub m,
     preNormEDS_neg, even_neg]; ring_nf
@@ -789,15 +791,15 @@ namespace EllSequence
 variable (b c d)
 
 def redInvarNum : R :=
-  complEDS₂ b c d m + normEDS b c d m ^ 3 * b + 2 * compl₂EDSAux b c d m
+  compl₂EDS b c d m + normEDS b c d m ^ 3 * b + 2 * compl₂EDSAux b c d m
 
 lemma complEDS₂_eq_redInvarNum_sub :
     complEDS₂ b c d m =
       redInvarNum b c d m - normEDS b c d m ^ 3 * b - 2 * compl₂EDSAux b c d m := by
-  rw [redInvarNum]; ring
+  rw [redInvarNum, compl₂EDS_eq_complEDS₂]; ring
 
 lemma invarNum_eq_redInvarNum_mul : invarNum (normEDS b c d) 1 m = redInvarNum b c d m * b := by
-  simp_rw [redInvarNum, right_distrib, complEDS₂_mul_b, mul_assoc 2 _ b,
+  simp_rw [redInvarNum, compl₂EDS_eq_complEDS₂, right_distrib, complEDS₂_mul_b, mul_assoc 2 _ b,
     compl₂EDSAux_mul_b, invarNum_normEDS]; ring
 
 def redInvarDenom : R :=
@@ -859,7 +861,7 @@ lemma map_compl₂EDSAux : f (compl₂EDSAux b c d m) = compl₂EDSAux (f b) (f 
 lemma map_redInvarNum : f (redInvarNum b c d m) = redInvarNum (f b) (f c) (f d) m := by
   have mn : ∀ n : ℤ, f (normEDS b c d n) = normEDS (f b) (f c) (f d) n :=
     fun n ↦ map_normEDS f b c d n
-  simp [redInvarNum, map_complEDS₂, mn, map_compl₂EDSAux, map_ofNat]
+  simp [redInvarNum, map_compl₂EDS, mn, map_compl₂EDSAux, map_ofNat]
 
 lemma map_redInvarDenom : f (redInvarDenom b c d m) = redInvarDenom (f b) (f c) (f d) m := by
   have mn : ∀ n : ℤ, f (normEDS b c d n) = normEDS (f b) (f c) (f d) n :=
@@ -1134,7 +1136,7 @@ noncomputable section
 
 def invar : R[X] := 6 * X ^ 2 + C W.b₂ * X + C W.b₄
 
-def ψc : ℤ → R[X][Y] := complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
+def ψc : ℤ → R[X][Y] := compl₂EDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
 
 open Affine (polynomial polynomialX polynomialY negPolynomial)
 open EllSequence
@@ -1170,7 +1172,8 @@ public protected def ωe (n : ℤ) : R[X][Y] :=
 lemma ωe_spec (n : ℤ) :
     2 * W.ωe n + CC W.a₁ * W.φ n * W.ψ n + CC W.a₃ * W.ψ n ^ 3 = W.ψc n := by
   have hψ : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
-  rw [ψc, complEDS₂_eq_redInvarNum_sub, redInvar_normEDS, preΨ₄_add_ψ₂_pow_four,
+  rw [ψc, compl₂EDS_eq_complEDS₂, complEDS₂_eq_redInvarNum_sub, redInvar_normEDS,
+    preΨ₄_add_ψ₂_pow_four,
     mul_assoc (C _), φ_mul_ψ, hψ, invarDenom_eq_redInvarDenom_mul, WeierstrassCurve.ωe, ← hψ,
     invar, b₂, b₄, ψ₂, Affine.polynomialY, Affine.polynomialX, Affine.negPolynomial]
   C_simp; ring
@@ -1185,7 +1188,7 @@ lemma ψc_spec (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) := normEDS_mul_complE
 
 @[simp] lemma ωe_one : W.ωe 1 = Y := by simp [WeierstrassCurve.ωe, ψ₂, ← Affine.Y_sub_polynomialY]
 
-@[simp] lemma ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp [ψc]
+@[simp] lemma ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp [ψc, compl₂EDS_eq_complEDS₂]
 
 end
 
@@ -1194,7 +1197,7 @@ section Map
 variable (f : R →+* S)
 
 lemma map_ψc (n : ℤ) : (W.map f).ψc n = (W.ψc n).map (mapRingHom f) := by
-  simp only [ψc, ← coe_mapRingHom, map_complEDS₂, map_ψ₂, map_Ψ₃, map_preΨ₄]
+  simp only [ψc, ← coe_mapRingHom, map_compl₂EDS, map_ψ₂, map_Ψ₃, map_preΨ₄]
   simp only [coe_mapRingHom, map_C]
 
 lemma map_invar : (W.map f).invar = W.invar.map f := by
@@ -1267,8 +1270,8 @@ lemma polyEval_cusp_φ : polyEval cusp 1 1 (curve.φ n) = 1 := by
   simp only [coe_eval₂RingHom, eval₂_C, eval₂_X]; ring
 
 lemma polyEval_cusp_ψc : polyEval cusp 1 1 (curve.ψc n) = 2 := by
-  rw [ψc, map_complEDS₂, ← evalEval_ψ₂, ← evalEval_Ψ₃, ← evalEval_preΨ₄]
-  simp [cusp_ψ₂, cusp_Ψ₃, cusp_preΨ₄, evalEval, complEDS₂_two_three_two]
+  rw [ψc, map_compl₂EDS, ← evalEval_ψ₂, ← evalEval_Ψ₃, ← evalEval_preΨ₄]
+  simp [cusp_ψ₂, cusp_Ψ₃, cusp_preΨ₄, evalEval, compl₂EDS_eq_complEDS₂, complEDS₂_two_three_two]
 
 lemma polyEval_cusp_ωe : polyEval cusp 1 1 (curve.ωe n) = 1 := by
   have := congr(polyEval cusp 1 1 $(curve.two_mul_ωe n))
