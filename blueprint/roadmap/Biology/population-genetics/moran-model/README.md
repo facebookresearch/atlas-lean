@@ -41,3 +41,8 @@
 - [Entropy rates of evolutionary Markov chains](entropy-rates-of-evolutionary-markov-chains/README.md)
 - [Infinitely many genes model with horizontal transfer](infinitely-many-genes-model-with-horizontal-transfer/README.md)
 - [Labelled Moran model with selection](labelled-moran-model-with-selection/README.md)
+- [Colonization time of the Moran process on graphs](colonization-time-of-the-moran-process-on-graphs.md)
+- [Age extremes in Moran models](age-extremes-in-moran-models/README.md)
+- [Moran process fixation times](moran-process-fixation-times/README.md)
+- [Poissonian interacting trajectories of clonal interference](poissonian-interacting-trajectories-of-clonal-interference/README.md)
+- [Voter model and coalescing random walks](voter-model-and-coalescing-random-walks/README.md)

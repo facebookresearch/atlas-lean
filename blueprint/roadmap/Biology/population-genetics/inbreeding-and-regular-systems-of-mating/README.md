@@ -9,3 +9,4 @@
 - [Multilocus diffusion with assortative mating](multilocus-diffusion-with-assortative-mating/README.md)
 - [Pedigree reconstruction from sequences](pedigree-reconstruction-from-sequences/README.md)
 - [Gene diversity in samples of relatives](gene-diversity-in-samples-of-relatives/README.md)
+- [Pedigree-conditioned coalescence under selfing](pedigree-conditioned-coalescence-under-selfing/README.md)
