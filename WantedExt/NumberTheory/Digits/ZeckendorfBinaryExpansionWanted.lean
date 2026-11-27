@@ -28,6 +28,7 @@ public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfFundamentalSequence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
 public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockCount
+public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockLex
 public import MathlibExt.NumberTheory.Digits.ZeckendorfSubcollection
 
 /-!
@@ -358,17 +359,6 @@ public theorem_wanted subcollectionCount_eval_eq_eval_bar {E E' : Set (ℕ →�
     (hb : IsImmediateSuccessor E μc μb) :
     subcollectionCount E H' (zeckendorfEval H' μ) = zeckendorfEval H μb
 
-/-- **Descending lexicographic order.** For coefficient functions
-$\varepsilon, \varepsilon' \colon \mathbb{N} \to \mathbb{N}$, $\varepsilon <_d \varepsilon'$
-means that there is an index $k$ with $\varepsilon_k < \varepsilon'_k$ and
-$\varepsilon_j = \varepsilon'_j$ for all $j < k$: at the smallest index where they differ,
-$\varepsilon$ is smaller.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def DescLexLT (ε ε' : ℕ → ℕ) : Prop :=
-  ∃ k, ε k < ε' k ∧ ∀ j, j < k → ε j = ε' j
-
 /-- **The maximal block $\bar\beta^2$ for $L = (2, 3, 0)$.** For $L = (2, 3, 0)$, the maximal
 $L^*$-block starting at index $1$ (indices start at $0$; the paper's $\bar\beta^2$) has entries
 $0, 2, 3, 0, 2$ at the indices $0, 1, 2, 3, 4$.
@@ -498,20 +488,6 @@ public theorem_wanted exists_prefix_eq_of_lStar_near (L : List ℕ) (hL : 2 ≤ 
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k + δ → ∀ i ≤ n, ε' i = ε i) ∧
       (∀ ε' ∈ lStarCollection L, ∑' k, (ε k : ℝ) * Q k - δ < ∑' k, (ε' k : ℝ) * Q k →
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k → ∀ i ≤ n, ε' i = lStarInf L ε i)
-
-/-- **Proper blocks below a maximal block.** Let $L = (e_1, \dots, e_N)$ with $N \ge 2$ and
-$e_1 \ne 0$, let $\varepsilon \colon \mathbb{N} \to \mathbb{N}$ and $b \in \mathbb{N}$ with
-$\varepsilon_i = 0$ for all $i < b$, and let $\bar\beta$ be the maximal $L^*$-block starting at
-index $b$. Then $\varepsilon <_d \bar\beta$ in the descending lexicographic order if and only if
-there is $k \ge b$ such that the function equal to $\varepsilon_i$ for $i \le k$ and to $0$ for
-$i > k$ is a proper $L^*$-block with support interval $[b, k]$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 8 (`integers-2025-A25-lem-8`; arXiv:2308.12872v1, Section 3.3). -/
-public theorem_wanted descLexLT_maxLStarBlock_iff (L : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) {ε : ℕ → ℕ} {b : ℕ} (hε : ∀ i, i < b → ε i = 0) :
-    DescLexLT ε (maxLStarBlock L b) ↔
-      ∃ k, b ≤ k ∧ IsProperLStarBlock L (fun i => if i ≤ k then ε i else 0) b k
 
 /-- **Decomposing $L^*$-blocks into $\tilde L^*$-blocks.** Let $L$ and $\tilde L$ be lists of
 natural numbers of length at least $2$ with nonzero first entries whose periodic Zeckendorf

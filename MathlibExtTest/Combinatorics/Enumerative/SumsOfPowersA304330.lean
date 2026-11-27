@@ -150,4 +150,22 @@ example (a : ℕ → ℝ) (h : ∀ n : ℕ, (powerSum 1 n : ℝ) =
     norm_num [Nat.choose] at h₂
     simpa [mul_comm (a 1)] using h₂
 
+-- The upper binomial column vanishes when the endpoint is smaller than its index.
+example : powerSum 4 1 = 1 := by
+  rw [powerSum_even_eq_sum 2 (by decide)]
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide]
+  norm_num [Nat.choose, show arrayR 2 1 = 1 by decide]
+
+-- Both columns contribute to the sum of the first three fourth powers.
+example : powerSum 4 3 = 98 := by
+  rw [powerSum_even_eq_sum 2 (by decide)]
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide]
+  norm_num [Nat.choose, show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide]
+
+-- At n = 0 the expansion has no nonzero summands, for any positive k.
+example (k : ℕ) (hk : 1 ≤ k) :
+    (∑ m ∈ Finset.Icc 1 k, (arrayR k m : ℚ) * (1 / (2 * (m : ℚ) + 1)) *
+      (m.choose (2 * m) : ℚ)) = 0 := by
+  simpa [powerSum] using (powerSum_even_eq_sum k hk 0).symm
+
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
