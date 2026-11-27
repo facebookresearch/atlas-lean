@@ -1130,6 +1130,7 @@
 {"folder": "Physics/not-yet-classified/part-04/finite-state", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state", "article_id": "af_789b392f10ac935b940278f9"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/is-normalized", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/is-normalized", "article_id": "af_c272e06a88b2426f1b036486"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/born-prob", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/born-prob", "article_id": "af_b8b6732cadf23683422121a1"}
+{"page": "ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs", "to": "GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs", "article_id": "af_dec166353a4ec8cdd3025548"}
 {"page": "Biology/systems-biology/remaining-clauses-of-stochastic-chemical-reaction-networks", "to": "Biology/systems-biology/stochastic-reaction-networks/remaining-clauses-of-stochastic-chemical-reaction-networks", "article_id": "af_485b89fc57aa77a06b8353c9"}
 {"page": "Biology/systems-biology/gillespie-direct-method", "to": "Biology/systems-biology/stochastic-reaction-networks/gillespie-direct-method", "article_id": "af_cb4ad8a528ea18f98242fcd3"}
 {"page": "Biology/systems-biology/exactness-of-the-ssa-path-law", "to": "Biology/systems-biology/stochastic-reaction-networks/exactness-of-the-ssa-path-law", "article_id": "af_46bff39c6244b7ff6998f920"}
