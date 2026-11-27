@@ -9,3 +9,4 @@
 - [Deadline-driven scheduling](deadline-driven-scheduling/README.md)
 - [Multiprocessor real-time scheduling](multiprocessor-real-time-scheduling/README.md)
 - [Mixed-criticality scheduling](mixed-criticality-scheduling/README.md)
+- [Schedulability of timed automata with tasks is undecidable](schedulability-of-timed-automata-with-tasks.md)

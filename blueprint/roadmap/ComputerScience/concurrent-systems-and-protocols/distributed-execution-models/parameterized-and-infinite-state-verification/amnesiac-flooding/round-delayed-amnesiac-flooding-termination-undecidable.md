@@ -1,0 +1,25 @@
+# Termination of round-delayed amnesiac flooding is undecidable
+
+In round-delayed amnesiac flooding, nodes forward a message to their neighbors without remembering it, while an adversary may block individual transmissions for finitely many rounds at a time. Whether flooding terminates under an arbitrary computable adversary is undecidable; the reduction uses a fixed triangle.
+
+**Setting (Alafin, Mertzios and Spirakis).** The network is a simple, finite, connected graph $G = (V, E)$ with a source node $g_0$ holding a message. An adversary is a *delay function* $d : \mathbb{N} \times V \times E \to \{0, 1\}$, where $d(j, v, e) = 1$ blocks transmission from $v$ along the incident edge $e$ in round $j$; it must have the *finite delay property* (every maximal run of consecutive blocked rounds for a node and edge is finite). Under the round-delayed amnesiac flooding protocol, a node that newly receives the message in a round sets its pending destinations to all neighbors except those that just delivered it; in each round it transmits along the unblocked edges to pending destinations and keeps the blocked ones pending; it holds the message while it receives it or still has pending transmissions, and it keeps no other memory. Flooding *terminates* if from some round on no node holds the message. The problem RDAF-TERMINATION asks, given $G$, $g_0$ and a computable delay function $d$, whether flooding terminates.
+
+**Theorem (Alafin, Mertzios and Spirakis).** RDAF-TERMINATION is undecidable.
+
+Undecidability persists when the adversary is limited to $O(f(n))$ time and space in round $n$, for any unbounded computable $f$, and the same paper shows that termination is decidable for eventually periodic adversaries.
+
+## Depends on
+
+- [Finite simple graph](../../../../../GraphTheory/planar-graphs-and-minors/graph-minors/fin-graph.md)
+
+## Proof depends on
+
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+
+## Expansion
+
+On the triangle with nodes $\mathrm{Source}, A, B$, a fixed periodic delay function $d_0$ blocks, in rounds $j \equiv 0, 1, 2 \pmod 3$, every edge except $\{\mathrm{Source}, B\}$, $\{\mathrm{Source}, A\}$ and $\{A, B\}$ respectively, and makes the message circulate forever. For a Turing machine $M$ and input $x$, the computable delay function $d(j, u, e)$ is $0$ if $M$ halts on $x$ within $j$ steps and $d_0(j, u, e)$ otherwise. If $M$ halts after $t$ steps, no transmission is blocked from round $t$ on and flooding terminates by round $t + 2$; if $M$ never halts, $d = d_0$ and flooding never terminates.
+
+## Sources
+
+- Oluwatobi Alafin, George B. Mertzios and Paul G. Spirakis, "Round-delayed amnesiac flooding", Theoretical Computer Science 1075, Article 115956, 2026, <https://doi.org/10.1016/j.tcs.2026.115956>; Section 3 (model, protocol and termination) and the undecidability and resilient undecidability theorems of Section 6 ("Undecidability with Arbitrary Computable Adversaries"), with Section 7 on eventually periodic adversaries, of arXiv:2604.04260v1, read at <https://arxiv.org/abs/2604.04260v1>.
