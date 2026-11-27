@@ -38,6 +38,7 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.TotallyDisconnected
 public import Mathlib.Topology.Algebra.Valued.LocallyCompact
 public import Mathlib.Topology.Clopen
 public import Mathlib.Topology.Compactness.Compact
+public import Mathlib.Topology.Separation.Connected
 public import MathlibExt.NumberTheory.NumberField.AdelicFourier
 public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
 public import MathlibExt.NumberTheory.NumberField.HigherUnits
@@ -47,18 +48,27 @@ public import MathlibExt.NumberTheory.NumberField.HigherUnits
 
 For a locally compact field `K`, this file defines the modulus `modulus a` (the factor by which
 multiplication by `a` scales Haar measure), the Schwartz--Bruhat test functions, the local
-Fourier transform `tateFourier`, the multiplicative Haar measure `mulMeasure μ` of an additive
-Haar measure `μ`, and the local zeta integrals `localZeta μ f χ s`, in which a character `χ` of
-`Kˣ` is extended by zero to `K` as Mathlib's `MulChar.ofUnitHom χ`. Local gamma and epsilon
-factors are characterized by Tate's local functional equation under its convergence and
-character conditions (`IsLocalZetaAdmissible`, `IsLocalGammaFactor`,
-`IsLocalEpsilonFactorAt`). At a finite place of a number field it defines conductor exponents
-through the higher unit groups `higherUnitsAt` and the local `L`-factors.
+Fourier transform `tateFourier`, the measure `mulMeasure μ = μ(dx) / modulus x` on `{0}ᶜ`
+attached to an additive Haar measure `μ`, and the local zeta integrals `localZeta μ f χ s`, in
+which a character `χ` of `Kˣ` is extended by zero to `K` as Mathlib's `MulChar.ofUnitHom χ`.
+When singletons are measurable, as on a local field, `mulMeasure μ` gives `{0}` mass zero
+(`mulMeasure_singleton_zero`). Local gamma and epsilon factors are characterized by Tate's
+local functional equation under its convergence and character conditions
+(`IsLocalZetaAdmissible`, `IsLocalGammaFactor`, `IsLocalEpsilonFactorAt`). At a finite place
+of a number field it defines conductor exponents through the higher unit groups
+`higherUnitsAt` and the local `L`-factors.
 
-The local functional equation is written `Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`. In the notation
-of Tate's thesis it reads `ζ(f, c) = ρ(c) ζ(f̂, ĉ)`; for `c = χ |·| ^ s` this is the equation
-above with `γ = ρ(c)⁻¹`. The local epsilon factor is normalized as in Tate's Corvallis article:
-`ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)`.
+The local functional equation is written `Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with
+`f̂ = tateFourier ψ μ f` in the plus convention: the kernel is `ψ (x * y)`, as in
+Definition 4.7 of Poonen's notes. Tate's thesis (§§2.2, 2.4) instead fixes a standard additive
+character, takes the Fourier transform with its complex conjugate, and uses the self-dual
+additive measure; its functional equation reads `ζ(f, c) = ρ(c) ζ(f̂, ĉ)`. When `ψ` is the
+conjugate of the thesis's character, so that `ψ (x * y)` is the thesis's kernel, and `μ` is the
+self-dual measure, the equation above for `c = χ |·| ^ s` is the thesis's with `γ = ρ(c)⁻¹`.
+For other data the two factors differ: replacing `μ` by `t • μ` for a real `t > 0` multiplies
+`γ` by `t`, while `ρ(c)` does not change. The local epsilon factor is normalized as in Tate's
+Corvallis article and in Theorem 4.18(e) of Poonen's notes:
+`ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)` for the same `ψ` and `μ`, so it depends on them too.
 
 ## References
 
@@ -68,6 +78,8 @@ above with `γ = ρ(c)⁻¹`. The local epsilon factor is normalized as in Tate'
 * J. Tate, *Number theoretic background*, in A. Borel and W. Casselman (eds.),
   *Automorphic Forms, Representations and L-Functions*, Proc. Sympos. Pure Math. 33, Part 2,
   Amer. Math. Soc., Providence, RI, 1979, pp. 3--26.
+* B. Poonen, *Tate's thesis*, lecture notes for MIT 18.786, Spring 2015,
+  <https://math.mit.edu/~poonen/786/notes.pdf>.
 -/
 
 @[expose] public section
@@ -129,9 +141,10 @@ section TestFunctions
 variable {K : Type*} [TopologicalSpace K]
 
 /-- **Schwartz--Bruhat test function.** A locally constant function of compact support. On a
-totally disconnected space, such as a nonarchimedean local field, these are the
-Schwartz--Bruhat functions; on a general topological space they are only the locally constant
-part of the classical Schwartz--Bruhat space (on `ℝ`, only `0`). -/
+totally disconnected locally compact group, such as a nonarchimedean local field, these are
+the Schwartz--Bruhat functions (Definition 4.6 of Poonen's notes for local fields); on a
+general topological space they are only the locally constant part of the classical
+Schwartz--Bruhat space (on `ℝ`, only `0`). -/
 public def IsSchwartzBruhat (f : K → ℂ) : Prop :=
   IsLocallyConstant f ∧ HasCompactSupport f
 
@@ -227,13 +240,17 @@ section Fourier
 variable {K : Type*} [Field K] [MeasurableSpace K]
 
 /-- **Local Fourier transform.** `tateFourier ψ μ f y = ∫ x, f x * ψ (x * y) ∂μ`
-(`tateFourier_apply`), in Tate's convention: the kernel `ψ (x * y)`, with a plus sign, and no
-normalizing constant. It is `NumberField.AdelicFourier.fourierIntegral`, whose kernel is
+(`tateFourier_apply`), in the plus convention: the kernel `ψ (x * y)` and no normalizing
+constant, as in Definition 4.7 of Poonen's notes. Tate's thesis uses the complex conjugate of
+its additive character instead, which is this kernel for the conjugate character (see the
+module docstring). It is `NumberField.AdelicFourier.fourierIntegral`, whose kernel is
 `ψ (-(x * y))`, for the inverse character `ψ⁻¹`; equivalently,
 `tateFourier ψ μ f y = fourierIntegral ψ μ f (-y)` (`tateFourier_eq_fourierIntegral_neg`).
 For any additive character and measure this is a Bochner integral, `0` where the integrand
-is not integrable; it is Tate's Fourier transform for a continuous nontrivial `ψ` and an
-additive Haar measure `μ`. -/
+is not integrable. It is the classical Fourier transform when `K` is a local field, `μ` is an
+additive Haar measure and `ψ` is a nontrivial unitary character (`‖ψ x‖ = 1` for all `x`);
+for a continuous nontrivial `ψ` that is not unitary, such as `x ↦ exp x` on `ℝ`, it is a
+Laplace-type transform instead. -/
 public def tateFourier (ψ : AddChar K ℂ) (μ : Measure K) (f : K → ℂ) (y : K) :
     ℂ :=
   NumberField.AdelicFourier.fourierIntegral ψ⁻¹ μ f y
@@ -265,17 +282,33 @@ section Zeta
 variable {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
   [LocallyCompactSpace K] [MeasurableSpace K]
 
-/-- **Multiplicative Haar measure.** The measure `μ(dx) / modulus x` attached to an additive
-Haar measure `μ`, as a measure on `K` carried by `{0}ᶜ`. -/
+/-- **Multiplicative measure of an additive Haar measure.** The measure `μ(dx) / modulus x`
+on `{0}ᶜ`: the restriction of `μ` to `{0}ᶜ`, with density `(modulus x)⁻¹`. When singletons
+are measurable, for instance when `K` is Hausdorff or totally disconnected, it gives `{0}`
+mass zero (`mulMeasure_singleton_zero`), and on a local field its restriction to `Kˣ` is the
+Haar measure `dx / |x|` of `Kˣ` from Tate's thesis (§2.3). Without that hypothesis it can
+charge `{0}`: on `ZMod 2` with the indiscrete topology, whose only measurable sets are `∅` and
+the whole space, it gives `{0}` positive mass. -/
 public def mulMeasure [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] :
     Measure K :=
   (μ.restrict {0}ᶜ).withDensity fun x => ((modulus x : ℝ≥0∞))⁻¹
 
-/-- **Local zeta integral.** `Z(f, χ, s) = ∫ f(x) χ(x) modulus(x) ^ s d×x` for the
-multiplicative Haar measure of the additive Haar measure `μ`, where `χ` is extended by zero to
-`K` as the multiplicative character `MulChar.ofUnitHom χ`. This is a Bochner integral: it
-is Tate's zeta integral where the integrand is integrable (see `IsLocalZetaAdmissible`), and
-`0` elsewhere, not the value of Tate's meromorphic continuation. -/
+/-- **The multiplicative measure does not charge zero.** When singletons are measurable,
+`mulMeasure μ` gives `{0}` mass zero. This covers every Hausdorff or totally disconnected `K`,
+so every field on which `IsLocalZetaAdmissible` is stated. -/
+public theorem mulMeasure_singleton_zero [BorelSpace K] [MeasurableSingletonClass K]
+    (μ : Measure K) [μ.IsAddHaarMeasure] : mulMeasure μ {0} = 0 := by
+  rw [mulMeasure, withDensity_apply _ (measurableSet_singleton 0),
+    Measure.restrict_restrict (measurableSet_singleton 0)]
+  simp
+
+/-- **Local zeta integral.** `Z(f, χ, s) = ∫ f(x) χ(x) modulus(x) ^ s d×x` for the measure
+`d×x = mulMeasure μ` of the additive Haar measure `μ`, where `χ` is extended by zero to `K` as
+the multiplicative character `MulChar.ofUnitHom χ`. This is a Bochner integral: for a
+continuous `χ` on a local field it is Tate's zeta integral, up to the normalization of the
+multiplicative Haar measure, where the integrand is integrable (see `IsLocalZetaAdmissible`),
+and it is `0` where the integrand is not integrable, not the value of Tate's meromorphic
+continuation. -/
 public def localZeta [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
     (f : K → ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) : ℂ :=
   ∫ x, f x * MulChar.ofUnitHom χ x * ((modulus x : ℝ) : ℂ) ^ s ∂(mulMeasure μ)
@@ -287,15 +320,19 @@ public theorem localZeta_zero_fun [BorelSpace K] (μ : Measure K) [μ.IsAddHaarM
 
 /-- **Admissible data for Tate's local zeta integrals.** The convergence and character
 conditions of Tate's local functional equation: `K` is totally disconnected, so that the
-locally constant test functions are its Schwartz--Bruhat functions; `ψ` is a continuous
-nontrivial additive character; `χ` is a continuous character of `Kˣ`; and for every test
-function `f` the integrands of `Z(f, χ, s)` and `Z(f̂, χ⁻¹, 1 - s)`, with
-`f̂ = tateFourier ψ μ f`, are integrable for the multiplicative Haar measure, so both zeta
-integrals converge absolutely. For a unitary `χ` these integrals converge when
-`0 < re s < 1`. Outside the range of absolute convergence Tate's zeta integrals and gamma
-factor are defined by meromorphic continuation, which this API does not cover; there the
-Bochner integrals can be `0` although the integrals diverge, as for the trivial `χ` at
-`s = 0` and the indicator of the valuation ring. -/
+locally constant test functions are its Schwartz--Bruhat functions and `mulMeasure μ` gives
+`{0}` mass zero (`mulMeasure_singleton_zero`); `ψ` is a continuous nontrivial additive
+character; `χ` is a continuous character of `Kˣ`; and for every test function `f` the
+integrands of `Z(f, χ, s)` and `Z(f̂, χ⁻¹, 1 - s)`, with `f̂ = tateFourier ψ μ f`, are
+integrable for `mulMeasure μ`, so both zeta integrals converge absolutely. The classical theory
+takes `ψ` unitary; on a nonarchimedean local field every continuous additive character is. On
+a nonarchimedean local field, for a nontrivial unitary `ψ` and a unitary `χ`, both integrals
+converge for every test function when `0 < re s < 1` (Tate's thesis, §2.4; Theorem 4.18(a)
+of Poonen's notes, applied to `f` and to `f̂`). On other totally disconnected fields they
+can diverge, for instance on `ℚ` with the discrete topology. Outside the range of absolute
+convergence Tate's zeta integrals and gamma factor are defined by meromorphic continuation,
+which this API does not cover; there the Bochner integrals can be `0` although the integrals
+diverge, as for the trivial `χ` at `s = 0` and the indicator of the valuation ring. -/
 public structure IsLocalZetaAdmissible [BorelSpace K] [TotallyDisconnectedSpace K]
     (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) :
     Prop where
@@ -315,10 +352,12 @@ public structure IsLocalZetaAdmissible [BorelSpace K] [TotallyDisconnectedSpace 
 character `ψ` and the additive Haar measure `μ`: the data are admissible
 (`IsLocalZetaAdmissible`: continuous characters, `ψ` nontrivial, and both zeta integrals
 absolutely convergent for every test function), and Tate's local functional equation
-`Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with `f̂ = tateFourier ψ μ f`, holds for every test
-function `f`. By `IsLocalGammaFactor.eq_div` it does not depend on the test function. Values
-of `s` outside the range of absolute convergence, where the gamma factor is defined by
-meromorphic continuation, are outside its scope. -/
+`Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with `f̂ = tateFourier ψ μ f` in the plus convention,
+holds for every test function `f`. By `IsLocalGammaFactor.eq_div` it does not depend on the
+test function. It does depend on `ψ` and `μ`: replacing `μ` by `t • μ` for a real `t > 0`
+multiplies it by `t`; the module docstring says when it is the reciprocal of the factor
+`ρ(c)` of Tate's thesis. Values of `s` outside the range of absolute convergence, where the
+gamma factor is defined by meromorphic continuation, are outside its scope. -/
 public structure IsLocalGammaFactor [BorelSpace K] [TotallyDisconnectedSpace K]
     (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ : ℂ) :
     Prop extends IsLocalZetaAdmissible μ ψ χ s where
@@ -445,7 +484,8 @@ public theorem conductorExponentAt_one :
 /-- **Local L-factor.** The local `L`-factor of `χ` at `v`: for an unramified character the
 Euler factor `(1 - χ ϖ * N(v) ^ (-s))⁻¹` at the uniformizer
 `ϖ = NumberField.AdelicLevel.uniformizerUnit (𝓞 K) K v`, and `1` for a ramified
-character. This is the analytic `L`-factor at every `s` that is not a pole. At a pole, where
+character. For a continuous `χ` (a quasi-character in the sense of Tate's thesis, §2.3), this
+is the analytic `L`-factor at every `s` that is not a pole. At a pole, where
 `χ ϖ * N(v) ^ (-s) = 1` (for the trivial character, at `s = 0`), the formula takes Lean's
 `0⁻¹ = 0`, so `localLFactorAt` is `0` there instead of a pole. -/
 public def localLFactorAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s : ℂ) : ℂ := by
@@ -487,7 +527,7 @@ additive character `ψ` and the additive Haar measure `μ`, when
 includes Tate's convergence and character conditions). The `L`-factors are the values of
 `localLFactorAt`, which are `0` at their poles; in the range of absolute convergence that
 `IsLocalGammaFactor` requires, neither of them has a pole, so this convention does not
-enter. -/
+enter. Like `γ`, `ε` depends on `ψ` and `μ`. -/
 public def IsLocalEpsilonFactorAt (μ : Measure (v.adicCompletion K))
     [μ.IsAddHaarMeasure] (ψ : AddChar (v.adicCompletion K) ℂ)
     (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s ε : ℂ) : Prop :=

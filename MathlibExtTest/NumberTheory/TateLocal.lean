@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.TateLocal
 public import Mathlib.NumberTheory.Padics.ProperSpace
+public import Mathlib.Topology.Instances.ZMod
 
 @[expose] public section
 
@@ -111,7 +112,7 @@ private theorem modulus_eq_one_of_norm_eq_one {p : ℕ} [Fact p.Prime] {u : ℚ_
   · exact (isCompact_closedBall (0 : ℚ_[p]) 1).measure_lt_top.ne
   · rw [hB, ENNReal.coe_one, one_mul]
 
-/-- The multiplicative Haar measure gives the units of `ℤ_[p]` and their translate by the
+/-- The measure `mulMeasure μ` gives the units of `ℤ_[p]` and their translate by the
 uniformizer `p` equal, positive and finite mass. The additive Haar measure does not: it scales
 the translate by the modulus of `p`, which is `p⁻¹`. -/
 example (p : ℕ) [Fact p.Prime] [MeasurableSpace ℚ_[p]] [BorelSpace ℚ_[p]]
@@ -151,6 +152,74 @@ example (p : ℕ) [Fact p.Prime] [MeasurableSpace ℚ_[p]] [BorelSpace ℚ_[p]]
     exact hUo.measure_pos μ ⟨1, by simp⟩
   · rw [hmass]
     exact (isCompact_sphere (0 : ℚ_[p]) 1).measure_lt_top
+
+/-- On every field where the gamma factors are stated (totally disconnected, hence `T1`),
+`mulMeasure μ` gives `{0}` mass zero, with no further hypothesis. -/
+example {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
+    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K]
+    [TotallyDisconnectedSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] :
+    mulMeasure μ {0} = 0 :=
+  mulMeasure_singleton_zero μ
+
+/-- On the discrete field `ZMod 2` an additive Haar measure gives `{0}` positive mass, and
+`mulMeasure μ` removes it. -/
+example [MeasurableSpace (ZMod 2)] [BorelSpace (ZMod 2)] (μ : Measure (ZMod 2))
+    [μ.IsAddHaarMeasure] : 0 < μ {0} ∧ mulMeasure μ {0} = 0 :=
+  ⟨(isOpen_discrete {0}).measure_pos μ (Set.singleton_nonempty 0), mulMeasure_singleton_zero μ⟩
+
+/-- `ZMod 2` with the indiscrete topology. -/
+private def IndiscreteZMod2 : Type := ZMod 2
+
+private instance : Field IndiscreteZMod2 := inferInstanceAs (Field (ZMod 2))
+
+private instance : Finite IndiscreteZMod2 := inferInstanceAs (Finite (ZMod 2))
+
+private instance : TopologicalSpace IndiscreteZMod2 := ⊤
+
+private instance : IsTopologicalRing IndiscreteZMod2 where
+  continuous_add := continuous_top
+  continuous_mul := continuous_top
+  continuous_neg := continuous_top
+
+private instance : LocallyCompactSpace IndiscreteZMod2 :=
+  ⟨fun _ n hn => ⟨n, hn, subset_rfl, n.toFinite.isCompact⟩⟩
+
+private instance : MeasurableSpace IndiscreteZMod2 := borel IndiscreteZMod2
+
+private instance : BorelSpace IndiscreteZMod2 := ⟨rfl⟩
+
+/-- Without measurable singletons `mulMeasure` can charge `0`: on `ZMod 2` with the indiscrete
+topology the only measurable set containing `0` is the whole space, so `{0}` gets the full,
+positive mass. This is why `mulMeasure_singleton_zero` assumes `MeasurableSingletonClass`. -/
+example : 0 < mulMeasure (Measure.addHaar : Measure IndiscreteZMod2) {0} := by
+  set μ : Measure IndiscreteZMod2 := Measure.addHaar
+  have hmeas : ∀ t : Set IndiscreteZMod2, MeasurableSet t → t = ∅ ∨ t = Set.univ := by
+    intro t ht
+    have hle : borel IndiscreteZMod2 ≤ ⊥ := MeasurableSpace.generateFrom_le fun u hu => by
+      rcases (TopologicalSpace.isOpen_top_iff u).mp hu with rfl | rfl
+      · exact @MeasurableSet.empty _ ⊥
+      · exact @MeasurableSet.univ _ ⊥
+    exact MeasurableSpace.measurableSet_bot_iff.mp (hle t ht)
+  have hfull : ∀ (m : Measure IndiscreteZMod2) (s : Set IndiscreteZMod2), s.Nonempty →
+      m s = m Set.univ := by
+    intro m s hs
+    rw [← measure_toMeasurable s]
+    rcases hmeas _ (measurableSet_toMeasurable m s) with h | h
+    · exact absurd (h ▸ subset_toMeasurable m s)
+        (Set.nonempty_iff_ne_empty.mp hs ∘ Set.subset_empty_iff.mp)
+    · rw [h]
+  have h01 : ∀ x : ZMod 2, x = 0 ∨ x = 1 := by decide
+  rw [hfull _ _ (Set.singleton_nonempty 0), mulMeasure, withDensity_apply _ MeasurableSet.univ,
+    Measure.restrict_univ]
+  calc (0 : ℝ≥0∞) < μ Set.univ := Measure.measure_univ_pos.mpr (NeZero.ne μ)
+    _ = μ.restrict {0}ᶜ Set.univ := by
+          rw [Measure.restrict_apply_univ, hfull μ {0}ᶜ ⟨1, by simp⟩]
+    _ = ∫⁻ _, 1 ∂(μ.restrict {0}ᶜ) := by rw [lintegral_one]
+    _ ≤ ∫⁻ x, ((modulus x : ℝ≥0∞))⁻¹ ∂(μ.restrict {0}ᶜ) := by
+          refine lintegral_mono fun x => ?_
+          rcases h01 x with h | h
+          · rw [show x = 0 from h, modulus_zero]; simp
+          · rw [show x = 1 from h, modulus_one]; simp
 
 /-- Lebesgue measure on `ℝ` is an additive Haar measure, so it has local zeta
 integrals. -/
