@@ -1,5 +1,7 @@
-# Generation Growth
+# The basic reproduction ratio `R₀`
 
-The Gelfand radius (per-generation growth factor) `inf_{m ≥ 1} ‖K^m‖^(1/m)` of a bounded real
-operator `K`, which equals the spectral radius of its complexification and defines the basic
-reproduction ratio `R₀ = r(K)` of Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)).
+The per-generation growth factor of a bounded real
+operator `K`, an alias for Mathlib's Gelfand radius `gelfandRadius K`: the limit of
+`‖K^m‖^(1/m)` (`tendsto_gelfandRadius`), which is also `inf_{m ≥ 1} ‖K^m‖^(1/m)` and equals the
+spectral radius of the complexification of `K`. It is the basic reproduction ratio `R₀ = r(K)` of
+Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)).
