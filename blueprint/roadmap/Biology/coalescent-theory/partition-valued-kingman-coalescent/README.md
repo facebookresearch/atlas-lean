@@ -48,4 +48,5 @@
 - [Generator-level lumpability of the ancestral recombination graph to one locus](generator-level-lumpability-of-the-arg-to-each-l.md)
 - [The marginal genealogy at each locus of the ancestral recombination graph is Kingman's](marginal-genealogy-at-each-locus-of-the-arg-is-k.md)
 - [The paintbox representation for the partitions of Kingman's coalescent](paintbox-representation-transported-to-coalescen.md)
+- [Recursive construction of Kingman's coalescent](recursive-construction-of-kingman-s-coalescent/README.md)
 - [Relabeling invariance of marked coalescent genealogies](relabeling-invariance.md)

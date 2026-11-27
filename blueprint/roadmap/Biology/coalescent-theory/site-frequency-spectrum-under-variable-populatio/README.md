@@ -52,6 +52,12 @@
 - [The time-changed coalescent as the limit of a Wright–Fisher model of varying size](derivation-of-the-time-changed-coalescent-from-a.md)
 - [Two bounded size histories with equal first-coalescence times](perturbing-a-constant-history-by-g-gives-two-bou.md)
 - [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
+
+- [Coalescence manifold and step-function moments](coalescence-manifold-and-step-function-moments/README.md)
+- [Information limits of coalescent demographic inference](information-limits-of-coalescent-demographic-inference/README.md)
+- [Minimax limits of SFS-based demographic inference](minimax-limits-of-sfs-based-demographic-inference/README.md)
+- [Sign-change complexity and demographic identifiability](sign-change-complexity-and-demographic-identifiability/README.md)
+- [Site frequency spectrum of sampled birth–death processes](site-frequency-spectrum-of-sampled-birth-death-processes/README.md)
 - [Mass at infinity, density and mean of the pairwise coalescence time under a variable population size](pair-coalescence-time-under-variable-size.md)
 - [First-coalescence means of the variable-size coalescent](first-coalescence-time-under-variable-size.md)
 - [Clock and epoch lengths of the variable-size coalescent](deterministic-coalescent-time-change.md)

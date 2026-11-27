@@ -20,4 +20,5 @@
 - [Diffusion observables averaged over a distribution of fitness effects](averages-over-a-distribution-of-fitness-effects.md)
 - [Expected joint allele-frequency spectrum and its Poisson likelihood](expected-joint-allele-frequency-spectrum-and-poisson-likelihood.md)
 - [Multi-population diffusion for the joint allele-frequency density](multipopulation-diffusion-with-migration-and-admixture.md)
+- [Time-dependent Poisson random fields](time-dependent-poisson-random-fields/README.md)
 - [Fixation flux and divergence in the Poisson random field](fixation-flux-and-divergence.md)

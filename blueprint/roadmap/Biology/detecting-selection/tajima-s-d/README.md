@@ -14,3 +14,4 @@
 - [Level of the Chebyshev test](measure-tajima-chebyshev-test-le.md)
 - [Admissible weight contrasts and folded versions of neutrality tests](fay-wu-h-and-weighted-test-framework.md)
 - [Neutrality tests do not identify the cause of a rejection](tests-do-not-identify-the-evolutionary-cause.md)
+- [Calibration of inferential claims in population genetics](calibration-of-inferential-claims.md)

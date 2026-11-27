@@ -14,5 +14,6 @@
 - [Spectral bound and reproduction number for infinite-dimensional population structure](spectral-bound-and-reproduction-number-for-infinite-dimensional-structure.md)
 - [Threshold dynamics of compartmental epidemic models in periodic environments](threshold-dynamics-in-periodic-environments.md)
 - [SIR model with imperfect testing and quarantine](sir-model-with-imperfect-testing-and-quarantine.md)
-- [Sign of the real-time growth rate and the basic reproduction ratio](next-generation-operator-characterization-of-r0-diekmann-heesterbeek-m.md)
+- [Dominant eigenvalue and real-time growth for the next-generation operator of a heterogeneous population](next-generation-operator-and-r0-in-heterogeneous-populations.md)
+- [$R_0$ under separable mixing with within-group enhancement](r0-under-separable-and-preferential-mixing.md)
 - [Global stability of compartmental models](global-stability-of-compartmental-models/README.md)

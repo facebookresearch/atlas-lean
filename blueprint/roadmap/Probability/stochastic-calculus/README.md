@@ -19,6 +19,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Strong solutions of SDEs with Lipschitz coefficients](sde-lipschitz-exists-unique.md)
 - [Backward stochastic differential equations](backward-stochastic-differential-equations/README.md)
 - [Ornstein–Uhlenbeck process](ornstein-uhlenbeck-process/README.md)
+- [Capacity-two chordal Loewner trace and Hausdorff gauge](capacity-two-sle-trace.md)
 - [Yamada–Watanabe approximating functions](yamada-watanabe-approximating-functions/README.md)
 - [One-dimensional diffusions](one-dimensional-diffusions/README.md)
 
@@ -37,3 +38,5 @@ Continuous-time processes with continuous paths or independent increments: the c
   basic example of a rough path that is not of bounded variation.
 
 - [Stochastic differential equations](stochastic-differential-equations/README.md)
+
+- [Positive critical Hausdorff gauge measure of chordal SLE segments](sle-gauge-positivity.md)

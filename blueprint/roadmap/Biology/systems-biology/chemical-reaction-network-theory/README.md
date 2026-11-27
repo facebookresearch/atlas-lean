@@ -1,6 +1,8 @@
 # Chemical reaction network theory
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
+
+- [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
 - [Persistence of $\kappa$-variable lower-endotactic systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace-further-results.md)
 - [Weakly reversible mass-action systems have positive steady states](existence-of-positive-steady-states-for-weakly-reversible-mass-action.md)
 - [Permanence of two-species endotactic mass-action systems](permanence-of-two-species-endotactic-mass-action-systems.md)

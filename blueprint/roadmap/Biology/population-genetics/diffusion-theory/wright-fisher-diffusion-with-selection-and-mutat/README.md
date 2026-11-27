@@ -45,6 +45,7 @@
 ## Further topics
 - [Wright–Fisher diffusion under strong selection](wright-fisher-diffusion-under-strong-selection/README.md)
 - [Wright–Fisher graph model](wright-fisher-graph-model/README.md)
+- [Logistic branching processes with selection](logistic-branching-processes-with-selection/README.md)
 
 ## Further stationary laws
 

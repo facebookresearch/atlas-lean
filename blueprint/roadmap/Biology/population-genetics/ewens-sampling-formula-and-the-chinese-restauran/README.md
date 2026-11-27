@@ -18,7 +18,12 @@
 - [First-allele frequency in an Ewens sample and its Beta limit](size-biased-allele-frequency-in-an-ewens-sample.md)
 - [Almost-sure l1 convergence of nested Ewens frequencies to GEM and PD](ranked-ewens-frequencies-converge-to-pd-theta.md)
 - [Expected counting measure of GEM and Poisson–Dirichlet masses](poisson-dirichlet-gem-limit-of-ewens-allele-freq.md)
-- [Sampling from the Poisson–Dirichlet distribution gives the Ewens partition](paintbox-sampling-from-gem-gives-the-ewens-partition.md)
+- [Paintbox sampling from GEM weights gives the Ewens partition](paintbox-sampling-from-gem-gives-the-ewens-partition.md)
+
+## Further results
+
+- [Ewens–Pitman partitions with large concentration](ewens-pitman-partitions-with-large-concentration/README.md)
+- [Multi-class Ewens sampling formula](multi-class-ewens-sampling-formula/README.md)
 
 ## Related topics
 
@@ -32,3 +37,5 @@
 - [Ewens–Pitman large deviations](ewens-pitman-large-deviations/README.md)
 - [Martingale limit theorems for the Ewens–Pitman model](martingale-limit-theorems-for-the-ewens-pitman-model/README.md)
 - [Yule process with immigration](yule-process-with-immigration/README.md)
+- [Occupancy sampling from Gibbs–Poisson abundance models](occupancy-sampling-from-gibbs-poisson-abundance-models/README.md)
+- [Expected allelic partition of splitting trees](expected-allelic-partition-of-splitting-trees/README.md)

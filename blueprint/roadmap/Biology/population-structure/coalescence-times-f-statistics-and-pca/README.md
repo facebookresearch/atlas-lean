@@ -28,5 +28,6 @@
 ## Further topics
 
 - [Permutation test of sample exchangeability](permutation-test-of-sample-exchangeability/README.md)
+- [Identifiability of structured population histories](identifiability-of-structured-population-histories/README.md)
 ## Further results
 - [Admixture pulses, coalescence times and f-statistics](admixture-pulse-ancestry-and-f-statistic-bridges.md)

@@ -25,6 +25,7 @@
 ## Further topics
 
 - [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
+- [Gaussian process inference of population size trajectories](gaussian-process-inference-of-population-size-trajectories/README.md)
 ## Extensions of the skyline model
 - [Classical, generalized and heterochronous skyline estimates](grouped-skyline-and-bayesian-skyline.md)
 - [Smoothed skyline models: skyride and skygrid](smoothed-skyline-skyride-skygrid.md)

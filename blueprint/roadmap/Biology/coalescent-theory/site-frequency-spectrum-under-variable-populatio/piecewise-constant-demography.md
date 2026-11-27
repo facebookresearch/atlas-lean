@@ -4,7 +4,7 @@ For a piecewise-constant history with sizes $\nu_j$ on $[s_j, s_{j+1})$, the int
 
 $$E[T^v_k] = \sum_{j=0}^{K-1} \nu_j \int_{\Lambda(s_j)}^{\Lambda(s_{j+1})} g_{nk}(u)\, du,$$
 
-with $\Lambda(s_K) = \infty$, a finite sum of exponentials in the $\Lambda(s_j)$ since each $g_{nk}$ is a linear combination of $e^{-\binom m2 u}$. Bhaskar and Song (2014) prove identifiability of piecewise-defined histories from the expected spectrum: the spectrum determines, up to a common positive factor, the means $c_m$ of the time to the first coalescence among $m$ of the sampled copies, $2 \le m \le n$ (their Lemma 1); these first-coalescence means determine piecewise-constant, piecewise-exponential and piecewise-generalized-exponential histories with $K$ pieces when $n \ge 2K$, $n \ge 4K - 1$ and $n \ge 6K - 2$ respectively (Corollaries 7–9); and, for the same sample sizes, the spectrum itself determines the history up to multiplying all change points and sizes by a common factor $\kappa > 0$, the rescaling of Lemma 10 (Theorem 11).
+with $\Lambda(s_K) = \infty$, a finite sum of exponentials in the $\Lambda(s_j)$ since each $g_{nk}$ is a linear combination of $e^{-\binom m2 u}$. Identifiability of such piecewise histories from the expected spectrum (Bhaskar and Song 2014) is stated in [identifiability of piecewise-exponential demographies from the frequency spectrum](sign-change-complexity-and-demographic-identifiability/identifiability-of-piecewise-exponential-demographies-from-the-sfs.md) and is not restated here.
 
 ## Depends on
 

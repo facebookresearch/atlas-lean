@@ -1,19 +1,21 @@
-# Duality between the two-locus diffusion and the coalescent with recombination
+# Two-locus Wright–Fisher diffusion and coalescent limits, and the coalescence-time side of their duality
 
-For two loci with alleles $a/A$ and $b/B$ and scaled recombination rate $\rho$ ($2Nr_N \to \rho/2$, time in units of $2N$ generations), the allele frequencies and linkage disequilibrium $(p_a, p_b, D)$ of the two-locus Wright–Fisher model converge to the two-locus Wright–Fisher diffusion, whose generator has the recombination drift $-D(1 + \rho/2)\partial_D$ (Ohta and Kimura 1969; Mano 2013, generator (2.1), where $\rho = 4Nr$); and the joint genealogy of a sample at the two loci converges to the two-locus coalescent, in which each pair of lines merges at rate $1$ and each line carrying ancestral material at both loci splits at rate $\rho/2$ (Hudson 1983; Griffiths 1991; Mano 2013, rates (3.1)). The diffusion's generator is the [generator of the two-locus Wright–Fisher diffusion](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-generator.md), and for a sample of two the coalescent's rate matrix is the [rate matrix of the two-locus coalescent](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-rate.md). The target is the duality between them: for a sample of $n$ chromosomes drawn at time $t$, expected haplotype-sampling monomials of the diffusion equal expectations over the two-locus coalescent run for time $t$ from the sample, as a process-level identity derived from the two generators (Mano 2013, Lemma 3.1; Griffiths, Jenkins and Lessard 2016, Sections 3 and 6), with the covariance of coalescence times (Griffiths 1981) and the forward moment equations of Ohta and Kimura (1969) as its two sides.
+For two loci with alleles $a/A$ and $b/B$ and scaled recombination rate $\rho$ ($2Nr_N \to \rho/2$, time in units of $2N$ generations), the allele frequencies and linkage disequilibrium $(p_a, p_b, D)$ of the two-locus Wright–Fisher model converge to the two-locus Wright–Fisher diffusion, whose generator has the recombination drift $-D(1 + \rho/2)\partial_D$ (Ohta and Kimura 1969; Mano 2013, generator (2.1), where $\rho = 4Nr$); and the joint genealogy of a sample at the two loci converges to the two-locus coalescent, in which each pair of lines merges at rate $1$ and each line carrying ancestral material at both loci splits at rate $\rho/2$ (Hudson 1983; Griffiths 1991; Mano 2013, rates (3.1)). The diffusion's generator is the [generator of the two-locus Wright–Fisher diffusion](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-generator.md), and for a sample of two the coalescent's rate matrix is the [rate matrix of the two-locus coalescent](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-rate.md). The moment duality between the two limits (Mano 2013, Lemma 3.1) is [moment duality between the two-locus Wright–Fisher diffusion and the ancestral process with recombination](moment-duality-of-the-two-locus-wright-fisher-diffusion/two-locus-wright-fisher-moment-duality.md) and is not restated here. The targets are the two convergence statements, and, as a consequence of that duality, the identification of the covariance of coalescence times at the two loci (Griffiths 1981) with the solution of the forward moment equations of Ohta and Kimura (1969) (Griffiths, Jenkins and Lessard 2016, Sections 3 and 6).
 
 ## Depends on
 
 - [Generator of the two-locus Wright–Fisher diffusion](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-generator.md)
 - [Rate matrix of the two-locus coalescent](../../../Biology/coalescent-theory/two-locus-coalescent/two-locus-rate.md)
 
+## Proof depends on
+
+- [Moment duality between the two-locus Wright–Fisher diffusion and the ancestral process with recombination](moment-duality-of-the-two-locus-wright-fisher-diffusion/two-locus-wright-fisher-moment-duality.md)
+
 ## Expansion
 
 1. The two-locus Wright–Fisher model with recombination and its diffusion limit, with the generator in the coordinates $(p_a, p_b, D)$.
 2. The joint genealogy at the two loci and its limit, the two-locus coalescent with merging at rate $1$ and splitting at rate $\rho/2$.
-3. The duality function: sampling probabilities of haplotype configurations as polynomials in the haplotype frequencies.
-4. The generator identity between the two-locus diffusion and the two-locus coalescent, and the duality for all $t \ge 0$.
-5. The covariance of coalescence times and the moment equations for $D^2$ as the two sides of the duality.
+3. The covariance of coalescence times and the moment equations for $D^2$ as the two sides of the duality.
 
 ## Sources
 
