@@ -36213,6 +36213,7 @@
 "IsDiscreteValuationRing.trace_residueFieldMulMaximalIdealGradedPiece": "0af4416b78cae380",
 "IsDiscreteValuationRing.unramified_iff_exists_monogenic_separable_reduced_minpoly": "2238e5e477b89673",
 "IsDiscreteValuationRing.unramified_of_primitive_root_of_unity_of_coprime": "e4470da63cfb82b7",
+"IsEuclideanRamsey": "a7c96fcaaba7e07f",
 "IsExactPotential": "859bdef85ca336e9",
 "IsGHarmonic": "2d9a89106aab5686",
 "IsGHarmonic.intro": "40993e9c86992155",
