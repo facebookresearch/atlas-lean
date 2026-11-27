@@ -12,10 +12,11 @@ so that $P_{j,k}/\ell$ is the probability that a fixed lineage free on $(t_{j+1}
 
 $$\Pr[G_i = g \mid g, N(t)] = \frac{1}{\ell} \sum_{j=2}^{n} \sum_{k=2}^{j} F_{j,k}\, P_{j,k},$$
 
-with $\ell$ the total length of $g$. The numbers $F_{j,k}$ form a lower-triangular matrix, the $F$ matrix of the genealogy, and $F$ matrices are in bijection with ranked tree shapes.
+with $\ell$ the total length of $g$. The numbers $F_{j,k}$ form a lower-triangular matrix, the $F$ matrix of the genealogy, and $F$ matrices are in bijection with ranked tree shapes (matching the F-matrix encoding with indices shifted by one, $F_{j,k}$ corresponding to $F_{j-1,k-1}$).
 
 ## Depends on
 
+- [F-matrix encoding and metrics on ranked tree shapes](../../ranked-labeled-histories-of-coalescent-trees/f-matrix-distances-between-ranked-tree-shapes/f-matrix-encoding-and-metrics-on-ranked-tree-shapes.md)
 - [Marginal visible transition density under the SMC$'$](marginal-visible-transition-density-under-the-smc-prime.md)
 - [Probability of a ranked tree shape under the coalescent](../../ranked-labeled-histories-of-coalescent-trees/tajima-genealogies/probability-of-a-ranked-tree-shape.md)
 
