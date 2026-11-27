@@ -22,8 +22,10 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.Algebra.MonoidAlgebra.Defs
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSum
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSumLaurent
+public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSumTopCoeffs
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPositivity
 public import MathlibExt.Algebra.Polynomial.ChebyshevCTrace
+public import MathlibExt.Algebra.Polynomial.KasselReutenauerTopCoefficient
 
 /-!
 # Pairs of intertwined integer sequences (Kassel–Reutenauer)
@@ -54,19 +56,6 @@ open Polynomial
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The Kassel–Reutenauer coefficients $a_{n,i}$.** For natural numbers $n$ and $i$, $a_{n,i}$ is
-the number of positive divisors $d$ of $n$ with
-$$\frac{i + \sqrt{2n + i^2}}{2} < d \le i + \sqrt{2n + i^2},$$
-equivalently with $d(d - 2i) \le 2n$ and $n < 2d(d - i)$. For $n = 0$ the set of divisors is
-taken to be empty, so $a_{0,i} = 0$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, display (2.3), quoting
-their earlier Theorem 1.3 of *Complete determination of the zeta function of the
-Hilbert scheme of n points on a two-dimensional torus*. -/
-public def kasselReutenauerCoeff (n i : ℕ) : ℕ :=
-  ((Nat.divisors n).filter fun d => d * (d - 2 * i) ≤ 2 * n ∧ n < 2 * d * (d - i)).card
 
 /-- **Kassel–Reutenauer polynomial.** For a natural number $n$, the Kassel–Reutenauer polynomial
 $\bar P_n(X) \in \mathbb{Z}[X]$ is defined by
@@ -221,41 +210,6 @@ public theorem_wanted kasselReutenauerPoly_abs_eval_multiplicative_iff (N : ℤ)
           |(kasselReutenauerPoly m).eval N| * |(kasselReutenauerPoly n).eval N|) ↔
       N = -2 ∨ N = -1 ∨ N = 0 ∨ N = 2
 
-/-- **Binomial expansion of the partial sums of Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-For every $n \ge 1$,
-$$F_n = \sum_{m=0}^{\lfloor n/2 \rfloor} (-1)^m \binom{n-m}{m} X^{n-2m} +
-\sum_{m=0}^{\lfloor (n-1)/2 \rfloor} (-1)^m \binom{n-m-1}{m} X^{n-2m-1}.$$
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.4
-(`jis-2026-26.4.4-prop-9`). -/
-public theorem_wanted chebyshevCPartialSum_eq_binomial_sum (n : ℕ) (hn : 1 ≤ n) :
-    chebyshevCPartialSum n =
-      ∑ m ∈ Finset.range (n / 2 + 1), (-1 : ℤ[X]) ^ m * ((n - m).choose m : ℤ[X]) * X ^ (n - 2 * m) +
-        ∑ m ∈ Finset.range ((n - 1) / 2 + 1),
-          (-1 : ℤ[X]) ^ m * ((n - m - 1).choose m : ℤ[X]) * X ^ (n - 2 * m - 1)
-
-/-- **Leading coefficients of the partial sums of Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-For every $n \ge 5$, the polynomial
-$$F_n - \Big(X^n + X^{n-1} - (n-1) X^{n-2} - (n-2) X^{n-3} + \binom{n-2}{2} X^{n-4} +
-\binom{n-3}{2} X^{n-5}\Big)$$
-is either zero or has degree less than $n - 5$.
-
-Here $\binom{n-2}{2} = (n-2)(n-3)/2$ and $\binom{n-3}{2} = (n-3)(n-4)/2$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 3.5
-(`jis-2026-26.4.4-cor-10`). -/
-public theorem_wanted chebyshevCPartialSum_top_coeffs (n : ℕ) (hn : 5 ≤ n) :
-    (chebyshevCPartialSum n -
-        (X ^ n + X ^ (n - 1) - ((n - 1 : ℕ) : ℤ[X]) * X ^ (n - 2) - ((n - 2 : ℕ) : ℤ[X]) * X ^ (n - 3) +
-          ((n - 2).choose 2 : ℤ[X]) * X ^ (n - 4) + ((n - 3).choose 2 : ℤ[X]) * X ^ (n - 5))).degree <
-      ((n - 5 : ℕ) : WithBot ℕ)
-
 /-- **Approximation of $\bar P_n$ by $F_{n-1}$.** Let $\bar P_n$ be the Kassel–Reutenauer
 polynomials, and for $r \ge 0$ let $F_r(X) = 1 + \sum_{j=1}^{r} \bar T_j(X)$ be the partial sum
 of the monic Chebyshev polynomials $\bar T_j$. For $n \ge 2$, every nonzero coefficient of
@@ -288,17 +242,6 @@ public theorem_wanted kasselReutenauerPoly_top_coeffs (n : ℕ) (hn : 10 ≤ n) 
           ((n - 3 : ℕ) : ℤ[X]) * X ^ (n - 4) + ((n - 3).choose 2 : ℤ[X]) * X ^ (n - 5) +
           ((n - 4).choose 2 : ℤ[X]) * X ^ (n - 6))).degree <
       ((n - 6 : ℕ) : WithBot ℕ)
-
-/-- **The top coefficients $a_{n,i}$ equal $1$.** Let $n \ge 1$ and let $i$ be a natural number
-with $n \le 2i + 2$ and $i \le n - 1$; equivalently $n/2 - 1 \le i \le n - 1$, where $n/2$ is
-the rational number, not the integer quotient. Then the Kassel–Reutenauer coefficient $a_{n,i}$
-equals $1$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Lemma 4.3
-(`jis-2026-26.4.4-lem-14`). -/
-public theorem_wanted kasselReutenauerCoeff_eq_one (n i : ℕ) (hn : 1 ≤ n) (hi : n ≤ 2 * i + 2)
-    (hi' : i ≤ n - 1) : kasselReutenauerCoeff n i = 1
 
 /-- **Odd-divisor formula for the Kassel–Reutenauer polynomials.** Let $n \ge 1$, and for each
 odd divisor $d$ of $n$ put $r_n(d) = n/d - (d+1)/2$, an integer. Then the Kassel–Reutenauer

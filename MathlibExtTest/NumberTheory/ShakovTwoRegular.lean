@@ -35,3 +35,16 @@ example (n : ℕ) : (1 ≤ n ∧ shakovSeq n = 3) ↔ n ∈ ({5, 6, 8, 15} : Fin
   have heq := Finset.eq_of_subset_of_card_le hsubset (by rw [hcard]; decide)
   rw [heq]
   exact (hF n).symm
+
+-- Directly evaluate both orders of the child pair beyond the initial triple.
+example : (shakovA 4, shakovA 5, shakovA 6, shakovA 7) = (4, 5, 11, 10) := by decide
+
+example : shakovSeq (shakovA 6).toNat = 5 ∧ shakovSeq (shakovA 7).toNat = 8 := by
+  norm_num [shakovA, shakovSeq.eq_2, shakovSeq.eq_3, shakovSeq.eq_4, shakovSeq.eq_5]
+
+-- Exercise the proved API at the first allowed index and after several pair advances.
+example : shakovSeq (shakovA 1).toNat = 0 := by
+  simpa using shakovSeq_shakovA 1 (by decide)
+
+example : shakovSeq (shakovA 9).toNat = 21 :=
+  (shakovSeq_shakovA 9 (by decide)).trans (by decide)

@@ -18,3 +18,5 @@ Algorithmic information content of individual strings: universal description met
 - [Concatenation costs at most twice the first part](k-append-le.md)
 - [Incompressible strings, and Kolmogorov complexity is not computable](incompressible-strings-and-kolmogorov-complexity/README.md)
 - [Upper semicomputability of Kolmogorov complexity, and incompressible strings](upper-semicomputability-of-kolmogorov-complexity/README.md)
+- [Time-Bounded Kolmogorov Complexity and Meta-Complexity](time-bounded-kolmogorov-complexity/README.md)
+- [Probabilistic Kolmogorov Complexity and Symmetry of Information](probabilistic-kolmogorov-and-symmetry-of-information/README.md)
