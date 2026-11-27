@@ -34,7 +34,7 @@ Without error, opposite homozygotes $(AA, BB)$ are impossible under IBD, so a si
 
 ## Depends on
 
-- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Sources
 

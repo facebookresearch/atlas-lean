@@ -24,7 +24,7 @@ From $f_{AA} \approx p_{AA}(1-\gamma)$ and $f_{AB} \approx p_{AB} + p_{AA}\gamma
 
 ## Depends on
 
-- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Proof depends on
 
