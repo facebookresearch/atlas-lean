@@ -14,12 +14,14 @@ public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HyperLeonardo
 public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
+public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 
 /-!
 # Hyper-Leonardo numbers
 
 Statements from Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino,
-*A Note on Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48.
+*A Note on Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48. The statement
+`hyperLeonardo_convex` is proved in `MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex`.
 
 The Leonardo numbers are `genLeonardo 1` (`Le₀ = Le₁ = 1`, `Le_{n+2} = Le_{n+1} + Le_n + 1`).
 The hyper-Leonardo numbers are their iterated partial sums,
@@ -173,16 +175,6 @@ Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 14
 (`integers-2026-A48-prop-14`). -/
 public theorem_wanted hyperLeonardo_logConcave {r : ℕ} (hr : 1 ≤ r) {n : ℕ} (hn : 2 ≤ n) :
     hyperLeonardo r (n - 1) * hyperLeonardo r (n + 1) ≤ hyperLeonardo r n ^ 2
-
-/-- **Convexity of the hyper-Leonardo numbers.** For all natural numbers $r$ and $n \ge 1$, the
-hyper-Leonardo numbers $\mathrm{Le}^{(r)}_n$ satisfy
-$2 \mathrm{Le}^{(r)}_n \le \mathrm{Le}^{(r)}_{n-1} + \mathrm{Le}^{(r)}_{n+1}$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Theorem 3, with the definition
-of convexity displayed before it (`integers-2026-A48-thm-3`). -/
-public theorem_wanted hyperLeonardo_convex (r n : ℕ) (hn : 1 ≤ n) :
-    2 * hyperLeonardo r n ≤ hyperLeonardo r (n - 1) + hyperLeonardo r (n + 1)
 
 end
 

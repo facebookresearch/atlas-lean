@@ -52,3 +52,8 @@
 ## The allelic test under inbreeding
 
 - [Allelic-test variance inflation under inbreeding](allelic-test-miscalibration-under-hardy-weinberg.md)
+
+## Further topics
+
+- [Order-restricted genetic models and MAX3](order-restricted-genetic-models-and-max3/README.md)
+- [Sure independence screening with trend tests](sure-independence-screening-with-trend-tests/README.md)

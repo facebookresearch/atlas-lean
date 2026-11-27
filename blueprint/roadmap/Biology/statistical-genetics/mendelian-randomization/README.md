@@ -40,6 +40,25 @@
 - [Ratio with a Gaussian denominator has infinite first moment](lintegral-enorm-div-eq-top.md)
 - [Ratio of independent normal variables is not integrable](not-integrable-div-gaussian.md)
 
+## Median-based estimators robust to invalid instruments
+
+- [Simple median Mendelian randomization estimator](simple-median-mr-estimator.md)
+- [Weighted median Mendelian randomization estimator](weighted-median-mr-estimator.md)
+- [Consistency of the weighted median MR estimator under a valid-weight margin](weighted-median-mr-consistency-under-a-valid-weight-margin.md)
+- [Penalized weighted median Mendelian randomization estimator](penalized-weighted-median-mr-estimator.md)
+
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+
+## Further topics
+
+- [Causal network pruning by MR-separation](causal-network-pruning-by-mr-separation/README.md)
+- [Expression QTLs, trait networks and root causal genes](expression-qtls-trait-networks-and-root-causal-genes/README.md)
+- [Focused instrument selection in Mendelian randomization](focused-instrument-selection-in-mendelian-randomization/README.md)
+- [Mendelian randomization causal networks](mendelian-randomization-causal-networks/README.md)
+- [Nonparametric bounds in two-sample Mendelian randomization](nonparametric-bounds-in-two-sample-mendelian-randomization/README.md)
+- [Reverse two-stage least squares](reverse-two-stage-least-squares/README.md)
+- [Selection bias in two-sample Mendelian randomization](selection-bias-in-two-sample-mendelian-randomization/README.md)
+- [Time-varying Mendelian randomization](time-varying-mendelian-randomization/README.md)
+- [Winner's-curse-free Mendelian randomization](winner-s-curse-free-mendelian-randomization/README.md)
