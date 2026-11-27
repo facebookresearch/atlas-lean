@@ -20,7 +20,7 @@ A polynomial is *reciprocal* if `f.reverse = f`; a
 The paper's `𝒩` is the set of `0,1`-polynomials and
 `𝒩_irred` its irreducible members; "reducible" is
 stated as the negation of `Irreducible`. The even/odd
-decomposition of Lemmas 2.1 and 2.2 and the congruence
+decomposition of Lemmas 1 and 2 and the congruence
 of Theorem 1.3 were verified on exact examples
 (e.g. `Φ₇`, whose square composition factors).
 
@@ -62,7 +62,8 @@ $\ell$ and $h_o$; so this amounts to a unique triple $(h_e, h_o, \ell)$.
 
 Source: Pradipto Banerjee and Amit Kundu, "On an
 Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", Lemma 2.1. -/
+Non-cyclotomic 0,1-Polynomials", INTEGERS 24 (2024),
+Article A71, Lemma 1. -/
 theorem_wanted existsUnique_evenOdd_reciprocal (h : ℤ[X]) (k : ℕ)
     (hirr : Irreducible h) (hrec : IsReciprocalPoly h)
     (hdeg : h.natDegree = 2 * k)
@@ -86,7 +87,8 @@ $\ell$ and $f_o$; so this amounts to a unique triple $(f_e, f_o, \ell)$.
 
 Source: Pradipto Banerjee and Amit Kundu, "On an
 Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", Lemma 2.2. -/
+Non-cyclotomic 0,1-Polynomials", INTEGERS 24 (2024),
+Article A71, Lemma 2. -/
 theorem_wanted existsUnique_evenOdd_zeroOne (f : ℤ[X]) (m : ℕ)
     (h01 : IsZeroOnePoly f) (hirr : Irreducible f)
     (hrec : IsReciprocalPoly f) (hdeg : f.natDegree = 2 * m)

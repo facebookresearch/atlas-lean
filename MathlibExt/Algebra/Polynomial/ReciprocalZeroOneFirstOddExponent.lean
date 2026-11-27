@@ -236,7 +236,8 @@ $0$ for every $1 \le e < \ell$, the coefficient of $x^\ell$ in $f$ is nonzero, a
 
 Source: Pradipto Banerjee and Amit Kundu, "On an
 Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", Lemma 2.3. -/
+Non-cyclotomic 0,1-Polynomials", INTEGERS 24 (2024),
+Article A71, Lemma 3. -/
 theorem l_eq_min_support_and_lt (f fe fo : ℤ[X]) (m l : ℕ)
     (h01 : IsZeroOnePoly f) (hirr : Irreducible f)
     (hrec : IsReciprocalPoly f) (hnc : IsNoncyclotomic f)

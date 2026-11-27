@@ -9300,7 +9300,6 @@
   "MathlibExt/Algebra/Polynomial/PerronIrreducibility": {"to": "Algebra/polynomials", "title": "Polynomials with coefficients in arithmetic progression"},
   "MathlibExt/Algebra/Polynomial/PrimeValueConditions": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Prime values of polynomials"},
   "MathlibExt/Algebra/Polynomial/RealRooted": {"to": "Algebra/zeros-of-polynomials", "title": "Real-rooted polynomials"},
-  "MathlibExt/Algebra/Polynomial/ReciprocalZeroOneFirstOddExponent": {"to": "Algebra/polynomials", "title": "Reciprocal 0,1-polynomials"},
   "MathlibExt/Algebra/Polynomial/RiordanOrthogonalPolynomials": {"to": "Algebra/orthogonal-polynomials", "title": "Riordan orthogonal polynomials"},
   "MathlibExt/Algebra/Polynomial/RisingFactorialBinomial": {"to": "Algebra/orthogonal-polynomials", "title": "Binomial theorem for rising factorials"},
   "MathlibExt/Algebra/Polynomial/RootBound": {"to": "Algebra/zeros-of-polynomials", "title": "L1 norm and root bounds for polynomials"},
