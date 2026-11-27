@@ -1,4 +1,4 @@
-# Products of trees in the complex hyperbolic plane
+# The complex hyperbolic plane in a product of four trees
 
 - [The complex hyperbolic plane (ball model)](complex-hyperbolic-plane.md)
 - [Distance of the complex hyperbolic plane](ch-dist.md)

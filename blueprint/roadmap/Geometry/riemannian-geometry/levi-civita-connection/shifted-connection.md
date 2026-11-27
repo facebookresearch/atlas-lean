@@ -4,4 +4,4 @@ Let $g : \mathbb{R}^n \to \mathbb{R}^{n \times n}$ be a matrix-valued function w
 
 $$\Gamma^{(s)\,k}_{\ \ ij}(x) = \Gamma^k_{ij}(x) + \frac{s}{2} \sum_{l=1}^{n} g^{kl}(x)\, T_{ijl}(x).$$
 
-The value $s = -1$ gives the connection $\nabla$ and $s = 1$ its $g$-dual $\nabla^*$.
+Where $g$ is a smooth Riemannian metric and $T$ a smooth totally symmetric cubic tensor, the shifts $s = -1$ and $s = +1$ are torsion-free and dual with respect to $g$.

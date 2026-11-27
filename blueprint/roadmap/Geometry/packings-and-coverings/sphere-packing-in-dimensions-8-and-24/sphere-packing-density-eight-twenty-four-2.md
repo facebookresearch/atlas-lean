@@ -8,6 +8,6 @@ The result consists of these two equalities. As context from the cited papers, t
 
 ## Sources
 
-- L. Carbone (compiler), AIM workshop "Sphere packings, lattices, groups and infinite dimensional algebra", problem list, Question 1 (S. Miller and H. Cohn), https://aimath.org/WWN/spherepacking/spherepacking.pdf
+- L. Carbone (compiler), AIM workshop "Sphere packings, lattices, groups and infinite dimensional algebra", problem list, Question 1 (S. Miller and H. Cohn), https://web.archive.org/web/20260326205344if_/https://www.aimath.org/WWN/spherepacking/spherepacking.pdf
 - M. S. Viazovska, "The sphere packing problem in dimension 8", Ann. of Math. (2) 185 (2017), no. 3, 991-1015, Theorem 1, https://doi.org/10.4007/annals.2017.185.3.7
 - H. Cohn, A. Kumar, S. D. Miller, D. Radchenko and M. Viazovska, "The sphere packing problem in dimension 24", Ann. of Math. (2) 185 (2017), no. 3, 1017-1033, Theorem 1.1, https://doi.org/10.4007/annals.2017.185.3.8

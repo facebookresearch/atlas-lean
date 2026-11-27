@@ -6,7 +6,7 @@ $$P_d(n) = \min_{\substack{S \subset \mathbb{R}^d \\ \lvert S \rvert = n}} \ \ma
 
 A set $A$ is isosceles-free if there are no three distinct points $x, y, z \in A$ such that two of the distances $\lVert x - y \rVert$, $\lVert y - z \rVert$, $\lVert z - x \rVert$ are equal. If no $n$-point subset of $\mathbb{R}^d$ exists (only possible for $d = 0$, $n \ge 2$), the value is $0$ by convention.
 
-So every $n$-point set in $\mathbb{R}^d$ has an isosceles-free subset of size $P_d(n)$, and some $n$-point set has none larger.
+Whenever an $n$-point set exists ($d \ge 1$ or $n \le 1$), every such set has an isosceles-free subset of size $P_d(n)$, and some such set has none larger.
 
 ## Sources
 

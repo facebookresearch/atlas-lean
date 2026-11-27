@@ -10,6 +10,6 @@ In other words, some closed surface carrying a hyperbolic metric has two Finsler
 
 ## Sources
 
-- AIM workshop Geodesics (Tianjin, 2010), problem list by K. Burns and V. S. Matveev, Question 10.1.3. https://aimath.org/pastworkshops/geodesicsproblems.pdf
+- AIM workshop Geodesics (Tianjin, 2010), problem list by K. Burns and V. S. Matveev, Question 10.1.3; also K. Burns and V. S. Matveev, "Open problems and questions about geodesics", Ergodic Theory Dynam. Systems 41 (2021), Question 10.1.3, https://doi.org/10.1017/etds.2019.73
 - K. Burns and V. S. Matveev, Open problems and questions about geodesics, Ergodic Theory Dynam. Systems 41 (2021), 641–684, Question 10.1.3.
 - J. Lang, Projectively equivalent Finsler metrics on surfaces of negative Euler characteristic, J. Topol. Anal. 14 (2022), no. 1, 287–296, Example 1. https://doi.org/10.1142/S1793525320500491

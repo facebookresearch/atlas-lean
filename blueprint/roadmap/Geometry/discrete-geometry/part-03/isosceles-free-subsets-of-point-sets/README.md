@@ -2,4 +2,3 @@
 
 - [Largest guaranteed isosceles-free subset $P_d(n)$](p.md)
 - [Erdős problem 1207: power saving for planar isosceles-free subsets](planar-power-saving.md)
-- [Erdős problem 1207: planar isosceles-free power saving](planar-power-saving-holds.md)

@@ -13,4 +13,4 @@ Here lines and planes are affine subspaces of dimension $1$ and $2$. It holds; t
 
 ## Sources
 
-- E. Croot and V. F. Lev (eds.), problem list of the AIM workshop "Recent trends in additive combinatorics" (2004), Problem 3.12 (J. Bourgain), https://aimath.org/WWN/additivecomb/additivecomb.pdf
+- E. Croot and V. F. Lev (eds.), problem list of the AIM workshop "Recent trends in additive combinatorics" (2004), Problem 3.12 (J. Bourgain)

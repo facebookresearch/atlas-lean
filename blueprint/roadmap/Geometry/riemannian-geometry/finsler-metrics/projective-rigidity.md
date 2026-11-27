@@ -8,5 +8,5 @@ A Finsler metric on $M$ is a continuous function $F : TM \to \mathbb{R}$ that is
 
 ## Sources
 
-- AIM workshop Geodesics (Tianjin, 2010), problem list by K. Burns and V. S. Matveev, Question 10.1.3. https://aimath.org/pastworkshops/geodesicsproblems.pdf
+- AIM workshop Geodesics (Tianjin, 2010), problem list by K. Burns and V. S. Matveev, Question 10.1.3; also K. Burns and V. S. Matveev, "Open problems and questions about geodesics", Ergodic Theory Dynam. Systems 41 (2021), Question 10.1.3, https://doi.org/10.1017/etds.2019.73
 - K. Burns and V. S. Matveev, Open problems and questions about geodesics, Ergodic Theory Dynam. Systems 41 (2021), 641–684, Question 10.1.3.

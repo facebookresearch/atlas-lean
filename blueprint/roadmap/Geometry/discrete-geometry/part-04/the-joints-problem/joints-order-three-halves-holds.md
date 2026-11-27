@@ -9,5 +9,5 @@ So the maximum number of joints of $N$ lines has order $N^{3/2}$.
 
 ## Sources
 
-- AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, Problem 3.13 (T. Tao). https://aimath.org/WWN/additivecomb/additivecomb.pdf
+- AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, Problem 3.13 (T. Tao)
 - L. Guth and N. H. Katz, Algebraic methods in discrete analogs of the Kakeya problem, Adv. Math. 225 (2010), 2828–2839, Theorem 1.1. https://doi.org/10.1016/j.aim.2010.05.015

@@ -8,7 +8,7 @@
 
 ## Dually flat structures
 
-- [Partial derivatives on $\mathbb{R}^n$](partial-deriv.md)
+- [Partial derivative](../../../Analysis/function-spaces/sobolev-embedding-theorem/partial-deriv.md)
 - [Christoffel symbols of a metric on $\mathbb{R}^n$](christoffel.md)
 - [Levi-Civita connection shifted by a cubic tensor](shifted-connection.md)
 - [Curvature of a connection in coordinates](curvature.md)

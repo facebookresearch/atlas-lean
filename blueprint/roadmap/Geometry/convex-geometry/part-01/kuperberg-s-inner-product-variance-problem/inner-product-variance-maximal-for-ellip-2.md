@@ -8,5 +8,5 @@ where $B^n$ is the closed Euclidean unit ball and $\operatorname{Var}(K)$ is the
 
 ## Sources
 
-- G. Kuperberg, item 17 in Problems from the workshop Mahler's conjecture and duality in convex geometry, American Institute of Mathematics, August 9-13, 2010, notes by J. Kim, https://aimath.org/WWN/mahlerduality/mahlerduality.pdf
+- G. Kuperberg, item 17 in Problems from the workshop Mahler's conjecture and duality in convex geometry, American Institute of Mathematics, August 9-13, 2010, notes by J. Kim, https://web.archive.org/web/20260928213022id_/https://aimath.org/WWN/mahlerduality/mahlerduality.pdf
 - B. Klartag, Isotropic constants and Mahler volumes, Adv. Math. 330 (2018), 74-108, §1 and Proposition 1.5, arXiv:1710.08084, https://doi.org/10.1016/j.aim.2018.03.009

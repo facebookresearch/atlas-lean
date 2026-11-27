@@ -15,5 +15,5 @@ This is the theorem of Guth and Katz answering Bourgain's question.
 
 ## Sources
 
-- E. Croot and V. F. Lev (eds.), problem list of the AIM workshop "Recent trends in additive combinatorics" (2004), Problem 3.12 (J. Bourgain), https://aimath.org/WWN/additivecomb/additivecomb.pdf
+- E. Croot and V. F. Lev (eds.), problem list of the AIM workshop "Recent trends in additive combinatorics" (2004), Problem 3.12 (J. Bourgain)
 - L. Guth and N. H. Katz, "Algebraic methods in discrete analogs of the Kakeya problem", Adv. Math. 225 (2010), 2828–2839, Theorem 1.2, arXiv:0812.1043, https://doi.org/10.1016/j.aim.2010.05.015.

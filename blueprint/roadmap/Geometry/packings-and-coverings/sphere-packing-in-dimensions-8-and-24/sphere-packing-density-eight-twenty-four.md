@@ -14,4 +14,4 @@ The proposition consists of these two equalities and names no lattice. As contex
 
 ## Sources
 
-- L. Carbone (compiler), AIM workshop "Sphere packings, lattices, groups and infinite dimensional algebra", problem list, Question 1 (S. Miller and H. Cohn), https://aimath.org/WWN/spherepacking/spherepacking.pdf
+- L. Carbone (compiler), AIM workshop "Sphere packings, lattices, groups and infinite dimensional algebra", problem list, Question 1 (S. Miller and H. Cohn), https://web.archive.org/web/20260326205344if_/https://www.aimath.org/WWN/spherepacking/spherepacking.pdf

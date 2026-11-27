@@ -9,4 +9,4 @@ So the maximum number of joints of $N$ lines has order $N^{3/2}$. It holds; the 
 
 ## Sources
 
-- AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, Problem 3.13 (T. Tao). https://aimath.org/WWN/additivecomb/additivecomb.pdf
+- AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, Problem 3.13 (T. Tao)

@@ -6,5 +6,5 @@ Equivalently, for every $n \ge 3$ there are convex bodies $K, L \subseteq \mathb
 
 ## Sources
 
-- AIM workshop "Sections of convex bodies", problem list, Problem 4, https://aimath.org/pastworkshops/sectionsconvexproblems.pdf
+- AIM workshop "Sections of convex bodies", problem list, Problem 4, https://web.archive.org/web/20260405154901id_/https://www.aimath.org/pastworkshops/sectionsconvexproblems.pdf
 - N. Zhang, "On bodies with congruent sections or projections", J. Differential Equations 265 (2018), 2064–2075, Theorem 1.3, arXiv:1711.10445, https://doi.org/10.1016/j.jde.2018.04.025.

@@ -24,7 +24,7 @@
 - [Euclidean space is Ricci-flat](ricci-vector-space.md)
 - [Euclidean space has zero scalar curvature](scalar-curvature-vector-space.md)
 
-## Milnor's conjecture on fundamental groups of nonnegatively curved manifolds
+## Milnor's conjecture on fundamental groups of manifolds with nonnegative Ricci curvature
 
 - [Milnor's finite-generation property in dimension $n$](milnor-finite-generation.md)
 - [Milnor's conjecture in some dimension at least six](milnor-finite-generation-in-some-dimensi.md)

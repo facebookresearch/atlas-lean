@@ -4,4 +4,4 @@ This is the case of central hyperplane sections in the question whether congruen
 
 ## Sources
 
-- AIM workshop "Sections of convex bodies", problem list, Problem 4, https://aimath.org/pastworkshops/sectionsconvexproblems.pdf
+- AIM workshop "Sections of convex bodies", problem list, Problem 4, https://web.archive.org/web/20260405154901id_/https://www.aimath.org/pastworkshops/sectionsconvexproblems.pdf
