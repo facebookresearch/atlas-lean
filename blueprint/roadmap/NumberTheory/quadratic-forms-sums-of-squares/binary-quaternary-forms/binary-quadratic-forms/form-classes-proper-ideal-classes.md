@@ -45,6 +45,7 @@ Each page states its result precisely, with its locator in the source it follows
 - [Imaginary quadratic discriminant](../../../algebraic-number-theory/quadratic-fields/imaginary-quadratic-discriminants/is-imaginary-quadratic-discriminant.md)
 - [Lattices that are proper ideals](../../../../Analysis/special-functions/elliptic-functions/complex-multiplication-of-period-lattices/is-proper-ideal.md)
 - [Gauss class number of a discriminant](../kronecker-s-class-number-sums/gauss-class-number.md)
+- [Homothetic period pairs](../../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md)
 
 ## Sources
 

@@ -48,6 +48,10 @@ Each page states its result precisely, with its locator in those notes.
 
 - [Lattices that are proper ideals](../../../../Analysis/special-functions/elliptic-functions/complex-multiplication-of-period-lattices/is-proper-ideal.md)
 
+## Proof depends on
+
+- [Homothetic period pairs](../../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md), for lattices with the same $j$-invariant being homothetic
+
 ## Sources
 
 - Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT OpenCourseWare, Fall 2025, [Lecture 19](https://ocw.mit.edu/courses/18-783-elliptic-curves-fall-2025/mit18_783_f25_lec19.pdf), Theorem 19.17 ($\Phi_N \in \mathbb{Z}[X, Y]$), and [Lecture 20](https://ocw.mit.edu/courses/18-783-elliptic-curves-fall-2025/mit18_783_f25_lec20.pdf), §20.3 (the free and transitive action of $C(\mathcal{O})$ on the

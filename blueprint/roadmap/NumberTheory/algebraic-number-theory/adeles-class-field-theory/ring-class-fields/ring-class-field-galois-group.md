@@ -35,13 +35,19 @@ This node is still to be broken down. A good expansion states and links:
   $\sigma \in \mathrm{Gal}(L/K)$ (Lecture 20, equation (2), whose proof the notes omit and cite from
   Silverman, *Advanced topics in the arithmetic of elliptic curves*, Prop. II.2.5), which makes $\Psi$ a
   well-defined injective homomorphism (Lecture 20, Theorem 20.14 and the discussion before it);
-- every class of $C(\mathcal{O})$ contains infinitely many ideals of prime norm (Lecture 20,
-  Theorem 20.11);
-- the Frobenius element $\sigma_{\mathfrak{p}}$ of an unramified prime $\mathfrak{p}$ of $K$ in the
-  abelian extension $L/K$ (Lecture 21, §21.1);
-- the reduction modulo a prime $\mathfrak{q}$ of $L$ above such a prime, which shows that
-  $\Psi(\sigma_{\mathfrak{p}}) = [\mathfrak{p} \cap \mathcal{O}]$, so $\Psi$ is surjective (Lecture 21,
-  proof of Theorem 21.1).
+- the Frobenius element $\sigma_{\mathfrak{p}}$ of a prime $\mathfrak{p}$ of $K$ unramified in the
+  abelian extension $L/K$ (Lecture 21, §21.1), the
+  [chosen Frobenius element at a coprime prime](../artin-map/frobenius-at-coprime-prime.md);
+- for each class $\alpha \in C(\mathcal{O})$, a prime $\mathfrak{p}$ of $K$ such that (i)
+  $\mathfrak{p} \cap \mathcal{O}$ is a proper $\mathcal{O}$-ideal of prime norm $p$ in the class $\alpha$,
+  (ii) $p$ is unramified in $K$ and $\mathfrak{p}$ is unramified in $L$, (iii) each $j(\mathfrak{b})$ is the
+  $j$-invariant of a curve over $L$ with good reduction at every prime $\mathfrak{q}$ of $L$ above
+  $\mathfrak{p}$, and (iv) the values $j(\mathfrak{b})$ are distinct modulo every such $\mathfrak{q}$: every
+  class contains infinitely many ideals of prime norm (Lecture 20, Theorem 20.11), and (ii)–(iv) exclude
+  only finitely many primes (Lecture 21, proof of Theorem 21.1);
+- for such a prime, the reduction modulo a prime $\mathfrak{q}$ of $L$ above $\mathfrak{p}$, which shows
+  that $\Psi(\sigma_{\mathfrak{p}}) = [\mathfrak{p} \cap \mathcal{O}] = \alpha$, so $\Psi$ is surjective
+  (Lecture 21, proof of Theorem 21.1).
 
 Each page states its result precisely, with its locator in those notes.
 
@@ -53,6 +59,7 @@ Each page states its result precisely, with its locator in those notes.
 ## Proof depends on
 
 - [Integer coefficients of the class equation of an imaginary quadratic order](class-equation-integer-coefficients.md), for $L$ being the splitting field over $K$ of a polynomial in $\mathbb{Z}[X]$, hence finite and Galois over $K$, and for the distinct values $j(\mathfrak{b})$, one for each class, on which the class group acts freely
+- [Chosen Frobenius element at a coprime prime](../artin-map/frobenius-at-coprime-prime.md), for the Frobenius element $\sigma_{\mathfrak{p}}$ of a prime of $K$ unramified in $L$
 
 ## Sources
 
@@ -65,8 +72,8 @@ Each page states its result precisely, with its locator in those notes.
   $\mathbb{Q}(\sqrt{\Delta}, x)$ being Galois over $\mathbb{Q}(\sqrt{\Delta})$ and over $\mathbb{Q}$, with
   $\mathrm{Gal}(\mathbb{Q}(\sqrt{\Delta}, x)/\mathbb{Q}(\sqrt{\Delta})) \cong \mathrm{cl}(\Delta)$, for a singular
   modulus $x$ of discriminant $\Delta$.
-- David A. Cox, *Primes of the form* $x^2 + ny^2$, Wiley, New York, 1989, Corollary 11.37, as cited by David Cox, John McKay and Peter Stevenhagen, *Principal moduli and class fields*, Bull. London Math. Soc. 36 (2004), 3–12, [arXiv:math/0311202](https://arxiv.org/abs/math/0311202), §1, for the same action in a special case: for $f \in \mathbb{Q}(j)$, such as
-  $f = j$, $\sigma_\beta(f(\tau_\alpha)) = f(\tau_\gamma)$ when the lattices $I_\alpha = [\tau_\alpha, 1]$,
+- David A. Cox, *Primes of the form* $x^2 + ny^2$, Wiley, New York, 1989, Corollary 11.37, as cited by David Cox, John McKay and Peter Stevenhagen, *Principal moduli and class fields*, Bull. London Math. Soc. 36 (2004), 3–12, [arXiv:math/0311202](https://arxiv.org/abs/math/0311202), §1, for the same action in a special case: $\sigma_\beta(j(\tau_\alpha)) = j(\tau_\gamma)$ (they state it
+  for every $f \in \mathbb{Q}(j)$ with $f(\tau_\alpha)$ finite, here $f = j$) when the lattices $I_\alpha = [\tau_\alpha, 1]$,
   $I_\beta$, $I_\gamma$ attached to elliptic elements $\alpha, \beta, \gamma$ of order 2 of
   $\Gamma_0(n)^\dagger \setminus \Gamma_0(n)$ have the same order and $[I_\alpha I_\beta^{-1}] = [I_\gamma]$,
   where $\sigma_\beta$ corresponds to $[I_\beta]$ under the Artin isomorphism from $C(\mathcal{O})$ onto
