@@ -1,14 +1,15 @@
 # Reducing randomized functionalities to deterministic ones
 
-Let $f$ be an $m$-party randomized functionality $f(x; \rho)$. Define the deterministic functionality $g((x_1, \rho_1), \dots, (x_m, \rho_m)) = f(x; \rho_1 \oplus \dots \oplus \rho_m)$. If a protocol privately computes $g$ against coalitions of at most $t < m$ parties, then the protocol in which every party samples its own uniform $\rho_i$ and runs the protocol for $g$ privately computes $f$ against the same coalitions: the combined coins $\rho = \bigoplus_i \rho_i$ are uniform and independent of the coalition's local random coins $\{\rho_i\}_{i \in I}$ (even though $f$'s outputs may depend on $\rho$), so privately computing $g$ reduces $f$ to $g$ (Goldreich, Proposition 7.3.4 and Section 7.5.2.4, Eq. (7.48); Asharov and Lindell, Section 2.1 for the $t$-threshold form). In the oracle-hybrid setting, this randomized reduction is perfectly private.
+Let $f$ be an $m$-party randomized functionality $f(x; \rho)$. Define the deterministic functionality $g((x_1, \rho_1), \dots, (x_m, \rho_m)) = f(x; \rho_1 \oplus \dots \oplus \rho_m)$. If a protocol privately computes $g$ against coalitions of at most $t < m$ parties, then the protocol in which every party samples its own uniform $\rho_i$ and runs the protocol for $g$ privately computes $f$ against the same coalitions: the combined coins $\rho = \bigoplus_i \rho_i$ are uniform and independent of the coalition's local random coins $\{\rho_i\}_{i \in I}$ (even though $f$'s outputs may depend on $\rho$), so $f$ is privately reducible to $g$ (Goldreich, Proposition 7.3.4 and Section 7.5.2.4, Eq. (7.48); Asharov and Lindell, Section 2.1 for the $t$-threshold form). In the oracle-hybrid setting, this randomized reduction is perfectly private.
 
 ## Proof sketch
 
-For any proper coalition $I$ of size at most $t < m$, at least one honest party $j \notin I$ contributes a fresh uniform string $\rho_j$, so $\rho = \bigoplus_i \rho_i$ is uniform and independent of $\{\rho_i\}_{i \in I}$ and of the inputs. The simulator for $I$ on input $(x_I, y_I)$ samples fresh uniform $\{\rho_i\}_{i \in I}$ and runs the simulator for $g$ on $((x_I, \rho_I), y_I)$; because $g((x_1, \rho_1), \dots, (x_m, \rho_m)) = f(x; \rho)$ depends on the coin tuple only through $\rho$, the simulated view and outputs are identically distributed to the real execution.
+For any proper coalition $I$ of size at most $t < m$, at least one honest party $j \notin I$ contributes a fresh uniform string $\rho_j$, so $\rho = \bigoplus_i \rho_i$ is uniform and independent of $\{\rho_i\}_{i \in I}$ and of the inputs. The simulator for $I$ on input $(x_I, y_I)$ samples fresh uniform $\{\rho_i\}_{i \in I}$ and runs the simulator for $g$ on $((x_I, \rho_I), y_I)$; because $g((x_1, \rho_1), \dots, (x_m, \rho_m)) = f(x; \rho)$ depends on the coin tuple only through $\rho$, the simulated view and outputs are identically distributed to the real execution in the oracle-hybrid (or perfectly private) setting, and computationally indistinguishable when the protocol for $g$ is computationally private.
 
 ## Depends on
 
 - [Synchronous oracle-aided multiparty protocols and perfect semi-honest privacy](oracle-aided-protocols-and-perfect-privacy.md)
+- [Multiparty security against semi-honest adversaries](../multiparty-security-against-semi-honest.md)
 
 ## Sources
 
