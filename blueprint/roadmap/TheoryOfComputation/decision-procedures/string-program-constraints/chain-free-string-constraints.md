@@ -1,0 +1,29 @@
+# Chain-free string constraints
+
+A chain-free string constraint combines transducer relations between concatenations of variables, word equations, regular memberships and length constraints, under a restriction read off a splitting graph of variable occurrences: the graph of every clause has no cycle (chain).
+
+Let $\Sigma$ be a finite alphabet and $X$ a set of string variables. An *$n$-tape automaton* is a finite automaton whose transitions are labelled by tuples in $(\Sigma \cup \{\varepsilon\})^n$; it recognizes the relation of tuples obtained by concatenating the tracks of accepted label sequences. It is *length-preserving* if every transition reads a letter of $\Sigma$ on every track (labels in $\Sigma^n$); a *transducer* is a 2-tape automaton.
+
+String terms $t$ are concatenations of variables ($\varepsilon$ included); arithmetic terms are built from integer constants, lengths $|t|$ and $+$. Atomic constraints are memberships $A(t)$ with $A$ a finite automaton, relational constraints $R(t, t')$ with $R$ a transducer or equality $=$, and arithmetic constraints $t_1 \ge t_2$. A *string formula* is a Boolean combination of atomic constraints in which every relational constraint whose transducer is not length-preserving occurs only positively; memberships, equalities, relational constraints with length-preserving transducers, and arithmetic constraints may be negated, because their negations are again expressible by constraints of these kinds (the source calls them *invertible*). An assignment $\eta : X \to \Sigma^*$, extended to terms by concatenation and to lengths, satisfies $A(t)$ when $\eta(t) \in L(A)$, $R(t, t')$ when $(\eta(t), \eta(t')) \in R$, and arithmetic constraints numerically.
+
+To classify a formula we fix one normal form. Push negations to the atoms and replace each negated atom as follows: $\neg A(t)$ by $\bar A(t)$ with $\bar A$ an automaton for the complement of $L(A)$; a negated arithmetic constraint by the opposite strict inequality; and $\neg R(t, t')$, for $R$ equality or a length-preserving transducer, by the disjunction $|t| < |t'| \vee |t'| < |t| \vee \bar R(t, t')$, where $\bar R$ is a length-preserving automaton for the pairs of equal-length words not in $R$. (Complementing a length-preserving automaton only produces pairs of equal length, so the length disjuncts are needed: $\neg(x = y)$ holds for $x = a$, $y = \varepsilon$.) Then distribute to a disjunctive normal form; its clauses are the clauses of the formula. Let $\Psi = \bigwedge_{j=1}^m R_j(t_{2j-1}, t_{2j})$ be the relational constraints of a clause, with $t_i = x^i_1 \cdots x^i_{n_i}$. Its *positions* are the pairs $(k, i)$ with $1 \le i \le 2m$ and $1 \le k \le n_i$, labelled by the variable $x^i_k$; $(k, 2j-1)$ and $(k, 2j)$ are the left and right positions of the $j$-th constraint, and a left and a right position of the same constraint are *opposing*. The *splitting graph* of $\Psi$ has the positions as nodes and an edge from $p$ to $p'$ whenever some position $p'' \neq p'$ opposing $p$ carries the same variable as $p'$; the edge is labelled by the constraint of $p$.
+
+- A *chain* is a cycle $(p_0, p_1), (p_1, p_2), \dots, (p_n, p_0)$ of edges of the splitting graph, $n \ge 0$.
+- A relational constraint $R(x, t)$ with a single variable $x$ on its left is *left-sided*. A chain is *benign* if all constraints labelling its edges are left-sided with length-preserving relations, and its positions are all left positions or all right positions.
+- A formula is *chain-free* if the splitting graph of every clause of its disjunctive normal form has no chain, and *weakly chaining* if every chain there is benign.
+
+## Depends on
+
+- [Rational relations and transducers](../../regular-languages/automata-and-expressions/rational-relations-and-transductions/rational-relations-and-transducers.md)
+
+## Proof depends on
+
+None.
+
+## Expansion
+
+This is a definition. An edge records that splitting the variable at $p''$, to match the term opposite it, substitutes into the occurrence at $p'$; a chain is a cycle of such substitutions, along which concatenations can multiply. A single atom $T(x, x)$ has a chain consisting of one edge (a self-loop), and $x = y z \wedge R(z, x)$ has a chain through its two constraints. The source shows that the chain-free class strictly contains the straight-line fragment and the acyclic fragment of the Norn solver (word equations, regular and length constraints, without repeated variables in one equation); its motivating example (two sanitizing transducers, a database lookup, a disequality between the sanitized values, and a query built by concatenation) is chain-free but neither straight-line nor acyclic. Not every straight-line program followed by an equation is chain-free: in $T_1(x, y) \wedge T_2(x, z) \wedge y = z$ the occurrences of $x$, $y$ and $z$ form the chain $x \to y \to z \to x$ through the three constraints. Mixed terms containing letters reduce to pure terms by replacing each letter $a$ with a fresh variable constrained to $\{a\}$.
+
+## Sources
+
+- P. A. Abdulla, M. F. Atig, B. P. Diep, L. Holík and P. Janků, "Chain-free string constraints", Automated Technology for Verification and Analysis (ATVA 2019), Lecture Notes in Computer Science 11781, Springer, 2019, pp. 277–293, doi:[10.1007/978-3-030-31784-3_16](https://doi.org/10.1007/978-3-030-31784-3_16); extended technical report arXiv:2307.03970v1 (author list there run together as "Mohamed Faouzi Atig Bui Phi Diep"), <https://arxiv.org/abs/2307.03970v1>: Section 1 (the motivating example and the inclusions), Section 2 (multi-tape automata, length-preserving automata and their closure properties), Section 3 (Figure 2, syntax and semantics of string formulae, invertibility and the restriction on negation, left-sided constraints) and Section 4 (splitting graph, chains, benign chains, chain-free and weakly chaining formulae).
