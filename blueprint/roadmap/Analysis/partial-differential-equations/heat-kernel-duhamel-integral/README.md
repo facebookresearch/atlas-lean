@@ -17,6 +17,5 @@ Reference: Stanford Math 220B, [Heat Equation, §2.7.2](https://web.stanford.edu
 - [Abs heat Solution le exp bound](abs-heat-solution-le-exp-bound.md)
 - [Abs heat Duhamel le](abs-heat-duhamel-le.md)
 - [Heat Duhamel has Exp Growth On Strip](heat-duhamel-has-exp-growth-on-strip.md)
-- [Heat Solution add of exp growth](heat-solution-add-of-exp-growth.md)
 - [Heat Duhamel add](heat-duhamel-add.md)
 - [Heat Duhamel mono](heat-duhamel-mono.md)

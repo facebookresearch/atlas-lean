@@ -16,11 +16,16 @@ import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 
 /-!
-# Alternating cosine integrals at even frequencies
+# Alternating cosine integrals for odd and even multipliers
 
 For Lemma 12 of Dombrowski and Dresden, we telescope the endpoint values of the
 antiderivative, then use the sine sums for the odd moduli `2 * m ± 1`. The two
 cotangents in the odd half-multiplier case must be taken to the limit together.
+
+Lemma 11 (`tendsto_sum_integral_cos_sub_cos_even_odd`), for an odd multiplier `q`, follows from
+Lemma 12 for the multiplier `2 * q` instead of repeating the paper's argument: the substitution
+`x = 2 * y` halves the grids `2 * ℓ * π / (2 * m ± 1)` and doubles the multiplier, so the sum is
+twice the sum of Lemma 12, which tends to `16 / ((2 * q) ^ 2 * π)` since `2 * q ≡ 2 (mod 4)`.
 -/
 
 namespace MetaMathlibExt
@@ -248,5 +253,44 @@ public theorem tendsto_sum_integral_cos_sub_cos_even_even {q : ℕ} (hq : Even q
   refine hlim.congr' ?_
   filter_upwards [eventually_ge_atTop 1] with m hm
   exact (alternating_eq r m hr hm).symm
+
+/-- **Alternating integral sums of $\cos qx - \cos qkx$ for odd $q$ and even $k$.** Let $q$ be an
+odd natural number, for each natural number $m$ put $k = 2m$, and let
+$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
+$$\sum_{\ell=1}^{m} \left(\int_{2(\ell-1)\pi/(k-1)}^{2\ell\pi/(k+1)} f(x)\,dx -
+\int_{2\ell\pi/(k+1)}^{2\ell\pi/(k-1)} f(x)\,dx\right) \to \frac{8}{q^2\pi}.$$
+
+Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
+Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 11
+(`jis-2025-25.2.3-lem-11`). -/
+public theorem tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : Odd q) :
+    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
+      ((∫ x in (((l : ℝ) - 1) * 2 * π / ((2 * m : ℝ) - 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1)),
+          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
+        ∫ x in ((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) - 1)),
+          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
+      (𝓝 (8 / ((q : ℝ) ^ 2 * π))) := by
+  -- The substitution `x = 2 y` turns each integral into twice one of Lemma 12 for `2 q`.
+  have hsub (m : ℕ) (s t D E : ℝ) :
+      (∫ x in (s * 2 * π / D)..(t * 2 * π / E), (cos (q * x) - cos (q * (2 * m : ℝ) * x))) =
+        2 * ∫ y in (s * π / D)..(t * π / E),
+          (cos (((2 * q : ℕ) : ℝ) * y) - cos (((2 * q : ℕ) : ℝ) * (2 * m : ℝ) * y)) := by
+    rw [show s * 2 * π / D = 2 * (s * π / D) by ring, show t * 2 * π / E = 2 * (t * π / E) by ring,
+      ← intervalIntegral.smul_integral_comp_mul_left, smul_eq_mul]
+    refine congrArg (2 * ·) (intervalIntegral.integral_congr fun y _ => ?_)
+    push_cast
+    ring_nf
+  have h := (tendsto_sum_integral_cos_sub_cos_even_even (even_two_mul q)).const_mul 2
+  -- As `q` is odd, `2 q ≡ 2 (mod 4)` and the limit is `2 * (16 / ((2 q) ^ 2 π)) = 8 / (q ^ 2 π)`.
+  have hq0 : (q : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hq.pos.ne'
+  rw [ite_eq_right (by obtain ⟨j, rfl⟩ := hq; omega),
+    show (2 : ℝ) * (16 / (((2 * q : ℕ) : ℝ) ^ 2 * π)) = 8 / ((q : ℝ) ^ 2 * π) by
+      push_cast
+      field_simp
+      ring] at h
+  refine h.congr fun m => ?_
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl fun l _ => ?_
+  rw [hsub, hsub, mul_sub]
 
 end MetaMathlibExt

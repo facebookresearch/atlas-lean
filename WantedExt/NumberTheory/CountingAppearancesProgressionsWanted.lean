@@ -51,7 +51,9 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableRecurrence
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFirstPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableCountDistinctPrimes
 
 set_option autoImplicit false
 
@@ -148,19 +150,6 @@ theorem_wanted availableCount_firstPrimes (k : ℕ)
     (availableCount (firstPrimes k) r : ℤ) =
       onesDiagDet (firstPrimes k)
 
-/-- **Theorem 1, free count.** Let $k$ be a natural number, let $p_1 < \cdots < p_k$ be the
-first $k$ primes and let $r_1, \dots, r_k$ be natural numbers. Then the number of integers $n$
-with $1 \le n \le p_1 \cdots p_k$ such that $n \not\equiv r_i \pmod{p_i}$ for every $i$ equals
-$f_k = (-1)^k \det B$, where $B$ is the $(k+1) \times (k+1)$ integer matrix whose first row
-consists of ones and whose row $i + 1$, for $1 \le i \le k$, has $p_i$ in column $i$ and $1$ in
-every other column.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Theorem 1. -/
-theorem_wanted freeCount_firstPrimes (k : ℕ) (r : Fin k → ℕ) :
-    (freeCount (firstPrimes k) r : ℤ) =
-      borderedOnesDiagDet (firstPrimes k)
-
 /-- **Available integers for three distinct primes.** Let $p$, $q$, $s$ be pairwise distinct
 primes and let $r_1, r_2, r_3$ be any natural numbers. Call an integer $n$ available if it satisfies
 at most one of the congruences $n \equiv r_1 \pmod p$, $n \equiv r_2 \pmod q$ and
@@ -174,19 +163,6 @@ theorem_wanted availableCount_three_primes (p q s : ℕ)
     (hp : p.Prime) (hq : q.Prime) (hs : s.Prime) (hpq : p ≠ q)
     (hps : p ≠ s) (hqs : q ≠ s) (r : Fin 3 → ℕ) :
     (availableCount ![p, q, s] r : ℤ) = onesDiagDet ![p, q, s]
-
-/-- **Available integers for distinct primes.** Let $k \ge 2$, let $p_1, \dots, p_k$ be pairwise
-distinct primes, and let $r_1, \dots, r_k$ be any natural numbers. Call an integer $n$ available if
-$n \equiv r_i \pmod{p_i}$ holds for at most one index $i$. Then the number of available integers $n$
-with $1 \le n \le p_1 p_2 \cdots p_k$ equals $A_k(p_1, \dots, p_k)$, the determinant of the
-$k \times k$ matrix with diagonal entries $p_1, \dots, p_k$ and all other entries $1$.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Theorem 2. -/
-theorem_wanted availableCount_distinct_primes (k : ℕ) (hk : 2 ≤ k)
-    (p : Fin k → ℕ) (hprime : ∀ i, (p i).Prime)
-    (hinj : Function.Injective p) (r : Fin k → ℕ) :
-    (availableCount p r : ℤ) = onesDiagDet p
 
 /-- **Theorem 2, free count.** Let $k \ge 2$, let $p_1, \dots, p_k$ be distinct primes and
 let $r_1, \dots, r_k$ be natural numbers. Then the number of integers $n$ with

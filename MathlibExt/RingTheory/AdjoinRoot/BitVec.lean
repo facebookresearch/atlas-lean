@@ -30,7 +30,8 @@ Copyright 2026 Anthropic, PBC. Licensed under Apache 2.0 (see LICENSE).
 
 namespace BitVec
 
-private theorem degree_toPolynomial_lt {s : Nat} (w : BitVec s) :
+/-- A width-`s` word encodes a polynomial of degree below `s`. -/
+theorem degree_toPolynomial_lt {s : Nat} (w : BitVec s) :
     w.toPolynomial.degree < (s : WithBot Nat) := by
   simpa [toPolynomial] using Polynomial.degree_ofCoeffList_lt
     (w.toBoolListLE.map fun b => if b then (1 : ZMod 2) else 0)

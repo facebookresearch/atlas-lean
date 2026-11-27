@@ -14,6 +14,8 @@ Quintero-Contreras, "Analytical Study and Efficient
 Evaluation of the Josephus Function", *Journal of Integer
 Sequences* 27 (2024), Article 24.3.8
 (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Cruz/cruz4.html>).
+The statement `josephus_add_eq_of_le` is proved in
+`MathlibExt.NumberTheory.JosephusJosephusAddEqOfLe`.
 
 The statements use the existing Josephus survivor
 function `MetaMathlibExt.josephus` (`J_k(1) = 1`,
@@ -53,26 +55,15 @@ public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.JosephusFixedSuccCases
 public import MathlibExt.NumberTheory.JosephusHighExtremal
+public import MathlibExt.NumberTheory.JosephusWrapAround
+public import MathlibExt.NumberTheory.JosephusExtremalTwoMulSub
+public import MathlibExt.NumberTheory.JosephusJosephusAddEqOfLe
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.JosephusWanted
-
-/-- **Josephus recurrence by number of wrap-arounds.** Let $k \ge 2$ and $n \ge 1$ be natural
-numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If $\ell$ is a natural
-number with $\ell(n+1) + 1 \le p + k \le (\ell+1)(n+1)$, then $J_k(n+1) = p + k - \ell(n+1)$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Theorem 2. -/
-theorem_wanted josephus_succ_eq_sub (k n ℓ : ℕ) (hk : 2 ≤ k)
-    (hn : 1 ≤ n)
-    (h : ℓ * (n + 1) + 1 ≤ MetaMathlibExt.josephus k n + k ∧
-      MetaMathlibExt.josephus k n + k ≤ (ℓ + 1) * (n + 1)) :
-    MetaMathlibExt.josephus k (n + 1) =
-      MetaMathlibExt.josephus k n + k - ℓ * (n + 1)
 
 /-- **Josephus fixed points detected by the next value.** Let $k \ge 2$ and $n_p$ be natural
 numbers with $n_p \ge k - 1$, and let $J_k$ be the Josephus function. Then $J_k(n_p) = n_p$ if
@@ -85,19 +76,6 @@ theorem_wanted josephus_eq_self_iff (k np : ℕ) (hk : 2 ≤ k)
     (hnp : k - 1 ≤ np) :
     MetaMathlibExt.josephus k np = np ↔
       MetaMathlibExt.josephus k (np + 1) = k - 1
-
-/-- **Linear growth of the Josephus function before a wrap-around.** Let $k \ge 2$, $n \ge 1$
-and $m$ be natural numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If
-$p + km \le n + m$, then $J_k(n + m) = p + km$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Lemma 6. -/
-theorem_wanted josephus_add_eq_of_le (k n m : ℕ) (hk : 2 ≤ k)
-    (hn : 1 ≤ n)
-    (h : MetaMathlibExt.josephus k n + k * m ≤ n + m) :
-    MetaMathlibExt.josephus k (n + m) =
-      MetaMathlibExt.josephus k n + k * m
 
 /-- **The Josephus function at the first wrap-around.** Let $k \ge 2$, $n \ge 1$ and $m$ be
 natural numbers and let $J_k$ be the Josephus function. Suppose that $m$ is the least natural
@@ -118,23 +96,6 @@ theorem_wanted josephus_add_eq_sub_of_minimal (k n m : ℕ)
     (hwrap : MetaMathlibExt.josephus k n + k * m ≤ 2 * (n + m)) :
     MetaMathlibExt.josephus k (n + m) =
       MetaMathlibExt.josephus k n + k * m - (n + m)
-
-/-- **Extremal points of the Josephus function near $2k - 2$.** Let $k \ge 2$ be a natural
-number and let $J_k$ be the Josephus function; call $m$ low extremal if $1 \le J_k(m) \le k - 1$,
-and high extremal if $m + 1$ is low extremal. If $J_k(2k - 2) \le k - 1$, then $2k - 3$ is high
-extremal and $2k - 2$ is low extremal. If $J_k(2k - 2) > k - 1$, then $2k - 2$ is high extremal
-and $2k - 1$ is low extremal. In particular, $2k - 2$ is always a low or a high extremal point.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Corollary 7. -/
-theorem_wanted extremal_two_mul_sub (k : ℕ) (hk : 2 ≤ k) :
-    (MetaMathlibExt.josephus k (2 * k - 2) ≤ k - 1 →
-      IsHighExtremal k (2 * k - 3) ∧
-        IsLowExtremal k (2 * k - 2)) ∧
-    (k - 1 < MetaMathlibExt.josephus k (2 * k - 2) →
-      IsHighExtremal k (2 * k - 2) ∧
-        IsLowExtremal k (2 * k - 1))
 
 /-- **Linear-step bound at a low extremal point.** Let $k \ge 2$ and $n$ be natural numbers, let
 $J_k$ be the Josephus function, write $j = J_k(n+1)$, and suppose $j \le k - 1$. Then for every
