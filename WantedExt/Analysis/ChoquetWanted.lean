@@ -81,26 +81,6 @@ open MeasureTheory
 
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
-/- **Choquet's representation theorem.** Every point `x` of a compact convex
-set `K` in a Banach space is the barycenter of a probability measure supported
-on the extreme points of `K`: there is a probability measure `μ` with
-`μ (ext K)ᶜ = 0` whose barycenter `∫ y, y ∂μ` equals `x`. -/
-/-- **Choquet's representation theorem in Banach spaces.** Let $X$ be a real Banach space with its
-Borel σ-algebra and let $K \subseteq X$ be compact and convex. For every $x \in K$ there is a
-probability measure $\mu$ on $X$ such that the complement of the set of extreme points of $K$ has
-$\mu$-measure $0$ and the barycenter $\int y \, d\mu(y)$ (a Bochner integral) equals $x$.
-
-Source: G. Choquet, *Existence et unicité des représentations intégrales au moyen des points
-extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956). Knill, *Some fundamental theorems
-in mathematics*, §88. Via leanprover/lean-eval@38361be, problem
-`choquet_representation_theorem`. -/
-public theorem_wanted choquet [CompleteSpace X] [MeasurableSpace X] [BorelSpace X]
-    (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
-    {x : X} (hx : x ∈ K) :
-    ∃ μ : Measure X, IsProbabilityMeasure μ ∧
-      μ (K.extremePoints ℝ)ᶜ = 0 ∧
-      x = ∫ y, y ∂μ
-
 end Analysis
 
 end MathlibExt.Analysis.ChoquetWanted
