@@ -20,10 +20,10 @@ With `σₖ(n) = ∑_{d ∣ n} d^k`, the paper calls `n`
 some proper divisor `d` of `n`, and `[k,ℓ]`-near-perfect if
 `σₖ(n) - n^k - d^k = ℓn`; deficient/near `F_k`-perfect is
 the case `ℓ = 3` (with `k > 1`), and `F`-perfect variants
-are `k = 2`, `ℓ = 3`. Below these are
-`IsKLDeficientPerfect`/`IsKLNearPerfect` and the `With`
-variants fixing the divisor `d` (written additively to stay
-in `ℕ`). The paper's `ℓ` is a positive natural (its
+are `k = 2`, `ℓ = 3`. The imported `MathlibExt` modules
+define these as `IsKLDeficientPerfect`/`IsKLNearPerfect` and
+the `With` variants fixing the divisor `d` (written
+additively to stay in `ℕ`). The paper's `ℓ` is a positive natural (its
 Proposition 2 proof needs `ℓ ≥ 1`: at `ℓ = 0` every prime
 would be `[k,0]`-near-perfect with `d = 1`), so
 `[k,ℓ]`-statements carry `1 ≤ l` where the printed form
@@ -48,6 +48,7 @@ public import MathlibExt.NumberTheory.FkPerfectKlNearPerfectWithPrimePowTwoIff
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoTwoPowMul
 public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
+public import MathlibExt.NumberTheory.FkPerfectNotKlDeficientPerfectWithTwoPowMul
 
 set_option autoImplicit false
 
@@ -101,21 +102,6 @@ theorem_wanted isDeficientFPerfect_two_pow_mul_prime_imp
     (p a : ℕ) (hp : p.Prime) :
     IsDeficientFPerfect (2 ^ a * p) → p = 3 ∧ a = 1
 
-/-- **$2^a p$ is not $[k,\ell]$-deficient-perfect with divisor $1$ or $p$.** Let $k$, $\ell$, $a$
-be natural numbers with $\ell \ge 1$ and let $p$ be an odd prime. Call $n$
-$[k,\ell]$-deficient-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
-$\sigma_k(n) + d^k = n^k + \ell n$, where $\sigma_k(n)$ is the sum of the $k$-th powers of the
-divisors of $n$. Then $2^a p$ is not $[k,\ell]$-deficient-perfect with divisor $1$, and not with
-divisor $p$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 8. -/
-theorem_wanted not_klDeficientPerfectWith_two_pow_mul
-    (k l p a : ℕ) (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
-    ¬ KLDeficientPerfectWith k l (2 ^ a * p) 1 ∧
-      ¬ KLDeficientPerfectWith k l (2 ^ a * p) p
-
 /-- **For $a \ge 2$, $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$ or $p$.** Let $k$,
 $\ell$, $a$ be natural numbers with $\ell \ge 1$ and $a \ge 2$, and let $p$ be an odd prime. Call
 $n$ $[k,\ell]$-near-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
@@ -141,20 +127,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isDeficientFkPerfect_two_mul_pow
     (k p a : ℕ) (hk : 2 < k) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsDeficientFkPerfect k (2 * p ^ a)
-
-/-- **No near $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
-$k > 1$, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural numbers such that
-$a + b$ is odd or both $a$ and $b$ are odd. Then $p_1^a p_2^b$ is not near $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 20. -/
-theorem_wanted not_isNearFkPerfect_pow_mul_pow
-    (k p₁ p₂ a b : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) (ha : 1 ≤ a) (hb : 1 ≤ b)
-    (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
-    ¬ IsNearFkPerfect k (p₁ ^ a * p₂ ^ b)
 
 /-- **No product of distinct odd primes is near $F_k$-perfect.** Let $k > 1$ and let $s$ be a
 finite set of odd primes. Then $\prod_{p \in s} p$ is not near $F_k$-perfect.
