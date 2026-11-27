@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.OresmeConvolutions
 public import MathlibExt.NumberTheory.OresmeJacobsthalLucasCongruence
 public import MathlibExt.NumberTheory.OresmeJacobsthalModuloNine
+public import MathlibExt.NumberTheory.OresmeLucasModuloFive
 public import MathlibExt.NumberTheory.OresmePellCongruence
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
@@ -43,15 +44,6 @@ Jacobsthal–Lucas numbers `j_0 = 2, j_1 = 1` are `jacobsthalLucasNumber`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Powers of two times Lucas numbers modulo 5.** Let $L_m$ denote the Lucas numbers. For every
-natural number $n$, $2^n L_{n+1} \equiv 1 \pmod{5}$.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Corollary 4.4 (`fq-2024-cookbacon061124-cor-4.4`). -/
-public theorem_wanted two_pow_mul_lucasNumber_succ_modEq_five (n : ℕ) :
-    2 ^ n * lucasNumber (n + 1) ≡ 1 [MOD 5]
 
 end
 
