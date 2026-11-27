@@ -17,7 +17,7 @@ import Mathlib.Tactic.NormNum
 
 If the raw convergents of a bi-infinite integer sequence `x` agree strictly with those of `y`
 eastbound and with those of `z` westbound, then `x` and `y` agree on every nonnegative index,
-`x` agrees with `-z` on every negative index, and `z 0 = 0` (`oneSilent_terms`).
+`x (-n) = -z n` for every `n ≥ 1`, and `z 0 = 0` (`oneSilent_terms`).
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73.
