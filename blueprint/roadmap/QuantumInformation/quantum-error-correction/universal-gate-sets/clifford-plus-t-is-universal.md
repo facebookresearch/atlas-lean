@@ -19,7 +19,7 @@ unitaries.
 
 - [Exact universality of CNOT and single-qubit gates](../../quantum-foundations/exact-universality-of-cnot-and-single-qubit-gates.md)
 - [$H$ and $T$ approximate every single-qubit unitary](h-and-t-approximate-every-single-qubit-unitary.md)
-- [Telescoping bound for products of contractions](../../../ComputerScience/quantum-algorithms/unitary-error-budgets/norm-list-of-fn-prod-sub-le.md)
+- [Telescoping bound for products of contractions](../../../ComputerScience/quantum-algorithms/fourier-transforms-block-encodings-and-error-budgets/unitary-error-budgets/norm-list-of-fn-prod-sub-le.md)
 
 ## Background
 
