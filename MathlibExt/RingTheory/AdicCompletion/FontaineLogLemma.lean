@@ -127,8 +127,9 @@ private theorem exists_evalₐ_natCast_pow_mul {β : P} (hβI : β ∈ I) (ξ : 
     ← map_natCast (Ideal.Quotient.mk (I ^ m)), ← map_pow, ← map_mul,
     natCast_pow_mul_eval_trunc A p ξ hpβ f m]
 
-/-- **`A⟦β⟧` is `p`-adically separated**, under the hypotheses of Fontaine's lemma: an element of
-the completion that lies in `p^k A⟦β⟧` for every `k` is zero. -/
+/-- **`A⟦β⟧` is `p`-adically separated** if `p` is invertible in `P`, `p β = ξ` with `ξ ∈ A`, the
+preimage of `I^k` in `A` is `ξ^k A` for every `k`, and `⋂_k (p^k A + ξ^m A) = ξ^m A` for every
+`m`: an element of the completion that lies in `p^k A⟦β⟧` for every `k` is zero. -/
 theorem eq_zero_of_forall_mem_pow_mul {β : P} (hβI : β ∈ I) (ξ : A) {pinv : P}
     (hpβ : (p : P) * β = algebraMap A P ξ) (hpinv : (p : P) * pinv = 1)
     (hξI : algebraMap A P ξ ∈ I)
@@ -336,8 +337,12 @@ private theorem exists_C_pow_mul_logOneSubSeries_eq [Fact p.Prime] {pinv : P}
           hw n h0 hndvd, mul_zero, sub_zero, add_zero]
         ring
 
-/-- **Fontaine's lemma, abstract form**: under the hypotheses above, `a · log(1 - β) ∉ A⟦β⟧` for
-every nonzero `a ∈ A⟦β⟧`. -/
+/-- **Fontaine's lemma, abstract form**: let `p` be a prime and `β ∈ I` with `p β = ξ ∈ A`. Assume
+that `p` and the positive integers `n` are invertible in `P`, with `inv n = 1/n` and
+`p^{v_p(n)}/n ∈ A`, that the preimage of `I^k` in `A` is `ξ^k A` for every `k`, that
+`⋂_k (p^k A + ξ^m A) = ξ^m A` for every `m`, and that `ξ` is a non-zero-divisor of the
+completion. Then `a · log(1 - β) ∉ A⟦β⟧` for every nonzero `a ∈ A⟦β⟧`, where
+`log(1 - β) = -Σ_{n ≥ 1} βⁿ/n`. -/
 theorem mul_evalPowerSeries_logOneSubSeries_not_mem [Fact p.Prime] {β : P} (hβI : β ∈ I) (ξ : A)
     {pinv : P} (hpβ : (p : P) * β = algebraMap A P ξ) (hpinv : (p : P) * pinv = 1)
     (hξI : algebraMap A P ξ ∈ I) (inv : ℕ → P) (hinv : ∀ n : ℕ, n ≠ 0 → (n : P) * inv n = 1)
