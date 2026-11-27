@@ -1,0 +1,15 @@
+# Hecke Localization
+
+- [Hecke data](hecke-data.md)
+- [Free algebra on the Hecke generators](free-alg.md)
+- [Eigenvalue character](theta-tilde.md)
+- [Eigenvalue ideal](m-theta.md)
+- [Hecke subalgebra](op-subalgebra.md)
+- [Hecke action of the free algebra](op-alg-hom.md)
+- [Free-algebra module structure](module-free-alg.md)
+- [Localized Hecke module](ml.md)
+- [Localization map](to-ml.md)
+- [Idempotent splitting](idempotent-splitting.md)
+- [Finite algebras over complete local rings split by idempotents](nonempty-idempotent-splitting-of-finite.md)
+- [Localized Hecke modules are finite and free](finite-and-free-localized-module-of-is-m.md)
+- [Localized Hecke modules with residue-field eigenvalues are finite and free](finite-and-free-localized-module.md)

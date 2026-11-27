@@ -35,23 +35,30 @@ Compact `0`-dimensional groups are taken Hausdorff and totally disconnected (pro
 `p`-subgroups of a profinite group are its maximal closed pro-`p` subgroups; a closed subgroup `P`
 is pro-`p` when `P ∩ N` has `p`-power index in `P` for every open normal subgroup `N`. Since every
 closed pro-`p` subgroup lies in a Sylow `p`-subgroup, the hypothesis is stated as: every closed
-pro-`p` subgroup is abelian of exponent `p` (for a compact group, the same as a topological direct
-product of cyclic groups of order `p`). In a topological group the normal subgroups in question are
+pro-`p` subgroup is abelian with `x ^ p = 1` for every `x` (for a compact group, the same as a
+topological direct product of cyclic groups of order `p`). In a topological group the normal
+subgroups in question are
 the closed ones and a complement is a closed subgroup `K` with `N ∩ K = 1` and `NK = G`
 (`Subgroup.IsComplement'`); a dense normal subgroup of an infinite profinite group has no closed
 complement, so the question is about closed normal subgroups.
 -/
 
-/-- The subgroup `P` of the topological group `G` is a pro-`p` subgroup: its image in every
-quotient `G / N` by an open normal subgroup `N` is a `p`-group, that is, `P ∩ N` has `p`-power
-index in `P`. -/
+/-- The pro-`p` index condition for the subgroup `P` of the topological group `G`: for every
+open normal subgroup `N`, the index of `P ∩ N` in `P` (`Subgroup.index`, which is `0` for an
+infinite index) is a power of `p`. For prime `p` this says that the image of `P` in `G / N` is a
+finite `p`-group for every such `N`. For `p = 0` it does not: in `(ℚ, +)` with the discrete
+topology every proper subgroup has infinite index, so `P = G` meets the condition (indices
+`0 = 0 ^ 1` and `1 = 0 ^ 0`), while its image in `G / {0}` is infinite. For a closed subgroup of a
+profinite group and a prime `p` the condition says that `P` is a pro-`p` subgroup; in a general
+topological group it is weaker: for `P = G = (ℝ, +)` it holds for every prime, since `ℝ` is its
+only open subgroup. -/
 def IsProPSubgroup {G : Type*} [Group G] [TopologicalSpace G] (p : ℕ) (P : Subgroup G) : Prop :=
   ∀ N : Subgroup G, IsOpen (N : Set G) → N.Normal → ∃ k : ℕ, (N.subgroupOf P).index = p ^ k
 
 /-- Every Sylow `p`-subgroup of the profinite group `G` is a direct product of cyclic groups of
 order `p`, for every prime `p`: every closed pro-`p` subgroup (each lies in a Sylow `p`-subgroup,
-a maximal one) is abelian of exponent `p`, which for a compact group is the same as being a
-topological direct product of cyclic groups of order `p`. -/
+a maximal one) is abelian with `x ^ p = 1` for every `x`, which for a compact group is the same
+as being a topological direct product of cyclic groups of order `p`. -/
 def HasElementaryAbelianSylowSubgroups (G : Type*) [Group G] [TopologicalSpace G] : Prop :=
   ∀ p : ℕ, p.Prime → ∀ P : Subgroup G, IsClosed (P : Set G) → IsProPSubgroup p P →
     (∀ x ∈ P, ∀ y ∈ P, x * y = y * x) ∧ ∀ x ∈ P, x ^ p = 1

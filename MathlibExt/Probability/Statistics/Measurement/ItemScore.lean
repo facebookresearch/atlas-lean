@@ -110,7 +110,7 @@ theorem twoPL_lawOf_eq_toMeasure {ι : Type*} [Fintype ι] [DecidableEq ι]
     FisherInformation.lawOf Measure.count
         (fun t Y => (twoPLPMF a b t Y).toReal) θ
       = (twoPLPMF a b θ).toMeasure := by
-  show Measure.count.withDensity
+  change Measure.count.withDensity
       (fun x => ENNReal.ofReal ((twoPLPMF a b θ x).toReal))
       = (twoPLPMF a b θ).toMeasure
   apply Measure.ext_iff.mpr
@@ -124,6 +124,31 @@ theorem twoPL_lawOf_eq_toMeasure {ι : Type*} [Fintype ι] [DecidableEq ι]
     exact ENNReal.ofReal_toReal (PMF.apply_ne_top _ _)
   · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
 
+/-- The log of the 2PL pattern mass is the sum of its item log-probabilities. -/
+theorem twoPL_logPMF_toReal_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) (Y : ι → Bool) :
+    Real.log ((twoPLPMF a b θ Y).toReal) =
+      ∑ j, Real.log (if Y j then Real.sigmoid (a j * (θ - b j))
+        else 1 - Real.sigmoid (a j * (θ - b j))) := by
+  have hne : ∀ j : ι, (if Y j then Real.sigmoid (a j * (θ - b j))
+      else 1 - Real.sigmoid (a j * (θ - b j))) ≠ 0 := by
+    intro j
+    by_cases hY : Y j = true
+    · simp only [ite_eq_left hY]
+      exact ne_of_gt (Real.sigmoid_pos _)
+    · simp only [ite_eq_right hY]
+      exact ne_of_gt (sub_pos.mpr (Real.sigmoid_lt_one _))
+  rw [twoPLPMF_toReal]
+  exact Real.log_prod (fun j _ => hne j)
+
+/-- The derivative of the log of the 2PL pattern mass is the weighted residual sum. -/
+theorem twoPL_logPMF_hasDerivAt {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) (Y : ι → Bool) :
+    HasDerivAt (fun t : ℝ => Real.log ((twoPLPMF a b t Y).toReal))
+      (∑ j, a j * ((if Y j then (1 : ℝ) else 0) - Real.sigmoid (a j * (θ - b j)))) θ := by
+  simp only [twoPL_logPMF_toReal_eq_sum]
+  exact HasDerivAt.fun_sum (fun j _ => score_summand_hasDerivAt a b θ Y j)
+
 /-- **Canonical 2PL score.** The `VectorInference.score` (parameter
 space `E = ℝ`) of the twoPL density at `θ` is, at every response
 pattern `Y`, `∑ j, a j * ((if Y j then 1 else 0) - p_j (θ))` with
@@ -134,33 +159,9 @@ theorem twoPL_score_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
   VectorInference.score (fun t Y => (twoPLPMF a b t Y).toReal) θ Y
     = ∑ j, a j * ((if Y j then (1 : ℝ) else 0)
         - Real.sigmoid (a j * (θ - b j))) := by
-
-  show gradient (fun t : ℝ => Real.log ((twoPLPMF a b t Y).toReal)) θ
-    = ∑ j, a j * ((if Y j then (1 : ℝ) else 0)
-      - Real.sigmoid (a j * (θ - b j)))
+  change gradient (fun t : ℝ => Real.log ((twoPLPMF a b t Y).toReal)) θ = _
   rw [gradient_eq_deriv']
-  have hlog : ∀ t : ℝ, Real.log ((twoPLPMF a b t Y).toReal)
-      = ∑ j, Real.log (if Y j then Real.sigmoid (a j * (t - b j))
-        else 1 - Real.sigmoid (a j * (t - b j))) := by
-    intro t
-    have hne : ∀ j : ι, (if Y j then Real.sigmoid (a j * (t - b j))
-        else 1 - Real.sigmoid (a j * (t - b j))) ≠ 0 := by
-      intro j
-      by_cases hY : Y j = true
-      · simp only [ite_eq_left hY]
-        exact ne_of_gt (Real.sigmoid_pos _)
-      · simp only [ite_eq_right hY]
-        exact ne_of_gt (sub_pos.mpr (Real.sigmoid_lt_one _))
-    rw [twoPLPMF_toReal]
-    exact Real.log_prod (fun j _ => hne j)
-  simp only [hlog]
-  have hsum : HasDerivAt
-      (fun t : ℝ => ∑ j, Real.log (if Y j then Real.sigmoid (a j * (t - b j))
-        else 1 - Real.sigmoid (a j * (t - b j))))
-      (∑ j, a j * ((if Y j then (1 : ℝ) else 0)
-        - Real.sigmoid (a j * (θ - b j)))) θ :=
-    HasDerivAt.fun_sum (fun j _ => score_summand_hasDerivAt a b θ Y j)
-  rw [hsum.deriv]
+  exact (twoPL_logPMF_hasDerivAt a b θ Y).deriv
 
 /-- **The 2PL score has actual mean zero** .
 

@@ -45,35 +45,16 @@ public import Mathlib.Algebra.Order.Floor.Semiring
 public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import MathlibExt.Combinatorics.Enumerative.DowlingExponentialGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.FlattenedPermutationRunRecurrence
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTwoRuns
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
+public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBWord
 public import MathlibExt.Combinatorics.Enumerative.QRWhitneyNumbers
 public import MathlibExt.NumberTheory.QRDowlingPolynomial
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Recursion for flattened partitions by number of runs.** Let $f_{n,k}$ be the number of
-flattened partitions of length $n$ with exactly $k$ runs. For all $n \ge 1$ and $k \ge 2$,
-$$
-f_{n,k} = \sum_{m=1}^{n-2} \left( \binom{n-1}{m} - 1 \right) f_{m,k-1},
-$$
-where the sum is empty when $n \le 2$. Moreover $f_{n,1} = 1$ for every $n \ge 1$, and
-$f_{n,k} = 0$ whenever $2 \le n \le k$.
-
-This is the recursion of Nabawanda, Rakotondrajao, and Bamunoba as quoted in the paper.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Theorem 1 (quoting
-Nabawanda et al., Theorem 1). -/
-public theorem_wanted flattenedPermRunCount_recursion :
-    (∀ n k : ℕ, 1 ≤ n → 2 ≤ k →
-      (flattenedPermRunCount n k : ℤ) =
-        ∑ m ∈ Finset.Icc 1 (n - 2),
-          (((n - 1).choose m : ℤ) - 1) * flattenedPermRunCount m (k - 1)) ∧
-    (∀ n : ℕ, 1 ≤ n → flattenedPermRunCount n 1 = 1) ∧
-    (∀ n k : ℕ, 2 ≤ n → n ≤ k → flattenedPermRunCount n k = 0)
 
 /-- **Flattened Stirling permutations and type $B$ set partitions.** For every natural number
 $n \ge 1$, the set of flattened Stirling permutations of order $n + 1$ is in bijection with the
@@ -136,21 +117,6 @@ public theorem_wanted dowling_eq_sum (n : ℕ) (hn : 1 ≤ n) :
     qrDowlingNumber (QRWhitney.whitneySecond 2 1 1) n =
       ((∑ i ∈ Finset.range (n + 1), n.choose i *
         ∑ k ∈ Finset.range (n - i + 1), 2 ^ (n - i - k) * Nat.stirlingSecond (n - i) k : ℕ) : ℂ)
-
-/-- **The word of a type $B$ set partition is a flattened Stirling permutation.** For every
-natural number $n$ and every type $B$ set partition $P$ of $[-n, n] = \{-n, \dots, n\}$, the word
-$\varphi(P) = w_1 w_2 \cdots w_{2(n+1)}$ of $P$ is a Stirling permutation of order $n + 1$ and is
-flattened.
-
-Source: arXiv:2306.13034, Proposition 3.6; the INTEGERS record is truncated after
-"let `π_i = N_i P_i` be as in", and the statement is completed from the arXiv text.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Proposition 1. -/
-public theorem_wanted typeBFlattenedWord_mem_flattenedStirling {n : ℕ}
-    (P : Finpartition (Finset.Icc (-(n : ℤ)) n)) (hP : IsTypeBSetPartition P) :
-    IsStirlingPermutation (n + 1) (typeBFlattenedWord P) ∧
-      IsFlattenedWord (typeBFlattenedWord P)
 
 /-- **The map $\varphi$ is a bijection from type $B$ set partitions onto flattened Stirling
 permutations.** For a natural number $n$, let $\varphi$ be the map of Buck et al.

@@ -54,14 +54,18 @@ def asymptoticPathOfLinearLength : Prop :=
         MeasureTheory.volume {t : ℝ | 0 ≤ t ∧ ‖γ t‖ < r} ≤ ENNReal.ofReal (C * r)
 
 /--
-Resolved false: Gol'dberg and Erëmenko constructed entire functions of finite order (indeed with
-`log M(r) ≪ φ(r) (log r)²` for any `φ → ∞`) admitting no path `Γ` with `f → ∞` and `ℓ(r) ≪ r`,
-answering Hayman's question (which he proved has a positive answer when `log M(r) ≪ (log r)²`).
+Resolved false: Gol'dberg and Erëmenko proved that for each function `φ(r) → ∞` there is a
+non-constant entire function `f` with `log M(r) ≪ φ(r) (log r)²` admitting no path `Γ` with
+`f → ∞` and `ℓ(r) ≪ r`. With a slowly growing `φ`, for instance `φ(r) = log r`, such an `f` has
+order `0`, so it is a non-constant entire function of finite order and a counterexample; they also
+construct such functions of any prescribed finite order. This answers Hayman's question (which he
+proved has a positive answer when `log M(r) ≪ (log r)²`).
 erdosproblems.com/1115 records the disproof. Source: T. F. Bloom, Erdős Problems, Problem #1115,
 https://www.erdosproblems.com/1115 (status SOLVED); resolution: A. A. Gol'dberg and A. È. Erëmenko,
 Asymptotic curves of entire functions of finite order, Mat. Sb. (N.S.) (1979), 555-581, for every
-φ(r) → ∞ there is an entire f with log M(r) ≪ φ(r) (log r)² and no path Γ with f → ∞ and ℓ(r) ≪ r;
-also of any prescribed finite order (erdosproblems.com/1115), https://www.erdosproblems.com/1115.
+φ(r) → ∞ there is a non-constant entire f with log M(r) ≪ φ(r) (log r)² and no path Γ with
+f → ∞ and ℓ(r) ≪ r; also of any prescribed finite order (erdosproblems.com/1115),
+https://www.erdosproblems.com/1115.
 -/
 public theorem_wanted asymptoticPathOfLinearLength_refuted : ¬ asymptoticPathOfLinearLength
 
