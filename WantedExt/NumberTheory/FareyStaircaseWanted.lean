@@ -28,16 +28,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Limit of the Farey staircase zoomed at the origin.** Let $B_n$ be the zoomed Farey staircase
-of order $n$. For every real $x \ge 0$, $B_n(x) \to \sum_{k=1}^{\lfloor x \rfloor} \log(x/k)$ as
-$n \to \infty$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Theorem 1 (`integers-2024-A37-thm-1`). -/
-public theorem_wanted tendsto_fareyZoom {x : ℝ} (hx : 0 ≤ x) :
-    Filter.Tendsto (fun n : ℕ => fareyZoom n x) Filter.atTop
-      (nhds (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, Real.log (x / k)))
-
 /-- **Limit of the Farey staircase zoomed at a rational point.** Let $B_n$ be the zoomed Farey
 staircase of order $n$, let $x \ge 0$ be real, and let $p$ and $q$ be coprime positive integers.
 Then $B_n(x + pn/q) - B_n(pn/q) \to \frac{1}{q} \sum_{k=1}^{\lfloor qx \rfloor} \log(qx/k)$ as

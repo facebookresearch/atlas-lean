@@ -20,3 +20,4 @@ Relations between formal theories and their structures: first-order languages of
 - [Compactness theorem for first-order logic](compactness-theorem-for-first-order-logic.md)
 - [Upward Löwenheim–Skolem theorem](upward-lowenheim-skolem-theorem.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
+- [A CH obstruction at the countable Hanf threshold](ch-hanf-categoricity-threshold-obstruction.md)

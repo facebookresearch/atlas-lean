@@ -1539,6 +1539,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/not-yet-classified/part-01/congruence-closure/README.md"}], "id": "af_49b001ac800012bafef54467", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/not-yet-classified/part-01/kmrevision/README.md"}], "id": "af_4c9cf64fa0b875e891c57601", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/not-yet-classified/part-01/kmupdate/README.md"}], "id": "af_f2c91d710a687973e8523569", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/model-theory/ch-hanf-categoricity-threshold-obstruction.md"}], "id": "af_81e70801301a6359cafb2e65", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/proof-theory/automatability-of-proof-systems/README.md"}], "id": "af_1d2c9236042e12c89331e8be"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/proof-theory/resolution-separations-and-supercritical-tradeoffs/README.md"}], "id": "af_b717ea157cb011df45190129"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/proof-theory/stabbing-planes-and-semi-algebraic-branching/README.md"}], "id": "af_5f1ca617dea5e77075e70d92"}
