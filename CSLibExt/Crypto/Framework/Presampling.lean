@@ -67,7 +67,7 @@ theorem uniformOfFintype_map_prod (f : α × β → γ) :
 
 /-- **A function of the first entry of a uniform pair.** Let $\alpha$ and $\beta$ be finite
 nonempty sets and $f : \alpha \to \gamma$. For a uniform pair $(a, b) \in \alpha \times \beta$, the
-distribution of $f(a)$ is that of $f(a)$ for a uniform $a \in \alpha$. -/
+distribution of $f(a)$ is that of $f(a')$ for a uniform $a' \in \alpha$. -/
 theorem uniformOfFintype_map_fst (f : α → γ) :
     (U (α × β)).map (fun p => f p.1) = (U α).map f := by
   rw [uniformOfFintype_map_prod, ← PMF.bind_pure_comp]

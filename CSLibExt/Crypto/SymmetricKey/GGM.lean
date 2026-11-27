@@ -39,10 +39,10 @@ query (once for a new node when `m > j`, and `ℓ - i - 1` times to walk down fr
 `prfAdvantage_ggm` is an equality of advantages for fixed finite types: it states no running time,
 and the running-time requirement on `B` and the asymptotic statement that `ggm G` is a secure PRF
 when `G` is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions (`S`
-efficiently represented and sampleable, `G` efficient, and `ℓ` and `Q` polynomially bounded in the
-security parameter), this `B` is an elementary wrapper around `A` (Definition 2.12). For `Q = 0`
-the adversary makes no queries and its advantage is `0`; the assumption `Q ≥ 1` only makes the
-coin set of `B` nonempty.
+efficiently recognizable and efficiently sampleable, `G` efficient, and `ℓ` and `Q` polynomially
+bounded in the security parameter), this `B` is an elementary wrapper around `A`
+(Definition 2.12). For `Q = 0` the adversary makes no queries and its advantage is `0`; the
+assumption `Q ≥ 1` only makes the coin set of `B` nonempty.
 
 **Proof.** The `ℓ Q` hybrids are indexed by `(i, j)` with `i < ℓ` and `j < Q`. In hybrid
 `(i, j)`, the answers are computed as by `B`, the `j`-th query included: from a pair `u m` for the
@@ -404,10 +404,10 @@ $B$ runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most $\e
 query. The equality is one between advantages for fixed finite sets and states no running time;
 the running-time requirement on $B$ and the asymptotic statement that $F$ is a secure PRF when $G$
 is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions ($S$ efficiently
-represented and sampleable, $G$ efficient, and $\ell$ and $Q$ polynomially bounded in the security
-parameter), this $B$ is an elementary wrapper around $A$ (Definition 2.12). For $Q = 0$ the
-adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only makes the coin
-set of $B$ nonempty. -/
+recognizable and efficiently sampleable, $G$ efficient, and $\ell$ and $Q$ polynomially bounded in
+the security parameter), this $B$ is an elementary wrapper around $A$ (Definition 2.12). For
+$Q = 0$ the adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only
+makes the coin set of $B$ nonempty. -/
 theorem prfAdvantage_ggm [NeZero ℓ] (G : S → S × S) (Q : ℕ) [NeZero Q]
     (A : R → OracleComp (Fin ℓ → Bool) S Bool) (hA : ∀ r, FreeM.IsQueryBounded Q (A r)) :
     PRF.prfAdvantage (ggm G) A = ℓ * Q * PRG.prgAdvantage G (ggmReduction G Q A) := by
