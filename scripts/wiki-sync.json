@@ -85527,6 +85527,7 @@
 "MetaMathlibExt.Complexity.NPComplete.TreeIsomorphicEdgeBisection.TreeIsomorphicEdgeBisectionInstance": "ffe022d940a49394",
 "MetaMathlibExt.Complexity.NPComplete.TreeIsomorphicEdgeBisection.WellFormed": "091b93ae5d67330b",
 "MetaMathlibExt.Complexity.NPComplete.TreeIsomorphicEdgeBisection.treeIsomorphicEdgeBisectionDec": "db0a667dcefa7785",
+"MetaMathlibExt.Complexity.NPComplete.TreeIsomorphicEdgeBisection.treeIsomorphicEdgeBisection_npComplete": "f15a9f663bf7d8bb",
 "MetaMathlibExt.Complexity.NPComplete.TreeMinorContainment.WellFormed": "bd59ef7fa793a6e4",
 "MetaMathlibExt.Complexity.NPComplete.TreeMinorContainment.treeMinorContainmentDec": "e737c1e00f9831a5",
 "MetaMathlibExt.Complexity.NPComplete.TreeMinorContainment.treeMinorContainment_npComplete": "394c7fee303507e7",
