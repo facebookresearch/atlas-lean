@@ -3,17 +3,10 @@
 Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, L, NL, the polynomial hierarchy, FPT and W[1]), polynomial-time encodings and reductions, simulation overheads, Blum measures, and inclusions and collapses among deterministic and nondeterministic classes (Savitch, Immerman–Szelepcsényi, Karp–Lipton, Ladner, Mahaney). Randomized, counting, circuit and quantum classes have their own fields.
 
 - [Blum complexity measures](blum-complexity-measures/README.md)
-- [Boolean closure of canonical P](boolean-closure-of-canonical-p/README.md)
-- [Canonical machine complexity](canonical-machine-complexity/README.md)
-- [Canonical RAM instruction costs](canonical-ram-instruction-costs/README.md)
-- [Consequences of canonical polynomial-time reductions](consequences-of-canonical-polynomial-time-reduct/README.md)
-- [Countdown as a consumer of canonical RAM instruction costs](countdown-as-a-consumer-of-canonical-ram-instruc/README.md)
-- [Polynomial-time first projection of bitstring pairs](polynomial-time-first-projection-of-bitstring-pa/README.md)
+- [Canonical complexity and machine models](canonical-complexity-and-machine-models/README.md)
 - [Circuit matrices and register-pair layouts](circuit-matrices-and-register-pair-layouts/README.md)
 - [Polynomially bounded functions](polynomially-bounded-functions/README.md)
 - [Quadratic overhead of single-tape simulation](quadratic-overhead-of-single-tape-simulation/README.md)
-- [Resource annotation laws](resource-annotation-laws/README.md)
-- [Resource annotations via CSLib's `TimeM`](resource-annotations-via-cslib-s-timem/README.md)
 - [The classes P, NP and coNP](the-classes-p-np-and-conp/README.md)
 - [Mahaney's theorem](mahaney-s-theorem/README.md)
 - [Polynomial time in a cost-annotated programming model](polynomial-time-in-a-cost-annotated-programming/README.md)

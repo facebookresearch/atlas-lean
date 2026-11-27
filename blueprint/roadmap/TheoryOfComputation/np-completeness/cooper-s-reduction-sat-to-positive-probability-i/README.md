@@ -17,8 +17,7 @@
 - [Output probability of a rational Boolean network](out-prob.md)
 
 ## Bit-string encoding (numbers in unary, as in `Cslib.Complexity.Karp.encodeE`)
-
-- [Unary code](unary.md)
+- [Unary code of a letter](../../undecidable-problems/post-correspondence-problem/unary-code.md)
 - [Code of a table row](encode-row.md)
 - [Code of a node](encode-rat-node.md)
 - [Code of a network](encode-rat-net.md)
@@ -30,6 +29,7 @@
 
 ## Cooper's construction and the reduction map
 
+- [Satisfaction of a clause](../../../Logic/propositional-logic/conjunctive-normal-form/satisfies-2.md)
 - [Root node](root-node.md)
 - [Constant node](const-node.md)
 - [Deterministic gate](gate-node.md)
@@ -56,7 +56,6 @@
 - [Forced value of a deterministic node](forced-val.md)
 - [Evaluating a construction state](eval-list.md)
 - [The value of a node](eval.md)
-- [The value of a clause](clause-val.md)
 - [The built network evaluates the formula](eval-coop-st-acc.md)
 - [Shape of reachable construction states](well-shaped.md)
 - [Looking up a registered variable](coop-lookup-of-mem-fst-nodup.md)
@@ -72,7 +71,6 @@
 - [Size bound for the encoding of Cooper's network](encode-rat-net-cooper-net-length-le.md)
 - [Reading the roots of Cooper's example](coop-ex-root-read.md)
 - [The node values depend only on the roots' variables](eval-list-congr-of-forall-roots-eq.md)
-- [Node values depend only on the roots' variables](eval-congr-of-forall-roots-eq.md)
 - [Output probability of Cooper's example as a count of assignments](out-prob-cooper-ex-card.md)
 - [Output probability of Cooper's worked example](out-prob-cooper-ex.md)
 - [Cooper's network of an unsatisfiable control has output probability zero](out-prob-cooper-unsat.md)

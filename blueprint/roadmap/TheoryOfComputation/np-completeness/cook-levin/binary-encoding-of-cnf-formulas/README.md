@@ -20,5 +20,3 @@
 - [Polynomial-time many-one reduction](poly-many-one-red.md)
 - [NP-hardness](nphard.md)
 - [NP-complete decision problems](../../../complexity-classes/mahaney-s-theorem/npcomplete.md)
-- [Characterizing NP-hardness](np-hard-iff.md)
-- [Characterizing NP-completeness](np-complete-iff.md)

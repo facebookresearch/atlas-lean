@@ -18,7 +18,6 @@
 - [Swapping a pair takes polynomial time](is-poly-time-swap.md)
 - [Combining the heads of a pair takes polynomial time](is-poly-time-heads.md)
 - [Boolean combinations of polynomial-time deciders](combine.md)
-- [Polynomial time is closed under Boolean combinations](combine-mem-p.md)
 - [Polynomial time is closed under complement](compl-mem-p.md)
 - [Polynomial time is closed under intersection](inf-mem-p.md)
 - [Polynomial time is closed under union](sup-mem-p.md)
