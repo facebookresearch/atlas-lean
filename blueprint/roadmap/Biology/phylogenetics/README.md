@@ -27,6 +27,8 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Sampling model for log-det estimation of the GTR rate matrix](sampling-model-for-log-det-estimation-of-the-gtr/README.md)
 
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
+- [Phylogenetic networks](phylogenetic-networks/README.md)
+- [Tree shape and balance](tree-shape-and-balance/README.md)
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)

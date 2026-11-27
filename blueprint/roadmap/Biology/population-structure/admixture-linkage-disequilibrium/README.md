@@ -47,3 +47,5 @@
 - [Tract-count versus genomic-position weighting in an exponential mixture](migrant-tract-lengths-under-continuous-migration.md)
 - [Identifiability and near-coincident rates in finite exponential mixtures](multi-pulse-ld-curves-as-laplace-transforms-uniq.md)
 - [Variance of a single-chromosome ancestry fraction](variance-of-genome-wide-ancestry-fraction-in-the.md)
+- [Cross-population covariance of linkage disequilibrium after a split](cross-population-covariance-of-linkage-disequilibrium-after-a-split.md)
+- [LD moments immediately after admixture of populations already in LD](ld-moments-immediately-after-admixture-of-linked-sources.md)
