@@ -16,6 +16,12 @@ The source states the two parts together as DEXPTIME-completeness; they hold for
 - [The class EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md)
 - [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The implication problem for Horn clauses without function symbols or existential quantifiers is DEXPTIME-hard, by reduction from exponential-time deterministic Turing machines (Lemma A.4 of the source), which the lower bound reduces from (proof prerequisite; not yet stated)
+
 ## Sources
 
 - N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 5, Theorem 2, Proposition 5.2 (upper bound, Section 5.4.2) and Proposition 5.6 (lower bound, Section 5.5.3) with the remark after it that the reduction needs fact sizes $k \ge k_w$ exponential in the input.

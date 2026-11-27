@@ -16,6 +16,12 @@ measure as the alternation depth of the translated HyperCTL* formula, which also
 - [The complexity class NL](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nl.md)
 - [Nondeterministic space classes](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nspace.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Satisfiability of quantified propositional temporal logic (QPTL) in prenex form with alternation depth $k$ is complete for $\mathrm{NSPACE}(g_c(k, \cdot))$ (Sistla, Vardi and Wolper), used in both directions, together with the linear encoding of a Kripke structure as a QPTL formula (proof prerequisite; not yet stated)
+
 ## Sources
 
 - M. R. Clarkson, B. Finkbeiner, M. Koleini, K. K. Micinski, M. N. Rabe and C. Sánchez, "Temporal logics for hyperproperties", *Principles of Security and Trust (POST 2014)*, Lecture Notes in Computer Science 8414, Springer, 2014, pp. 265–284, extended version arXiv:1401.4492, <https://arxiv.org/abs/1401.4492>: Section 6, Theorem 5 and its proof.
