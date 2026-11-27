@@ -16,7 +16,7 @@ then the posterior is weakly consistent: $Q(U^c\mid\mathbf n_0,\dots,\mathbf n_m
 
 ## Depends on
 
-- [Pitman's merger rate](../../coalescents/merger-rate.md)
+- [Pitman's merger rate](../../../coalescents/merger-rate.md)
 
 ## Expansion
 

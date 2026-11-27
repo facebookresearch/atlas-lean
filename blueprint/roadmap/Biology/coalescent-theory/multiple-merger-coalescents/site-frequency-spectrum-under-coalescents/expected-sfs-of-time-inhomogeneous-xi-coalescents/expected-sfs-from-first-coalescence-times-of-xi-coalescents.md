@@ -26,7 +26,7 @@ Consequently the expected SFS depends on the size history $\zeta$ only through t
 
 ## Depends on
 
-- [Merger rates of a coalescent with simultaneous multiple collisions](../../coalescents/xi-coalescents-simultaneous-multiple-collisions.md)
+- [Merger rates of a coalescent with simultaneous multiple collisions](../../../coalescents/xi-coalescents-simultaneous-multiple-collisions.md)
 
 ## Expansion
 

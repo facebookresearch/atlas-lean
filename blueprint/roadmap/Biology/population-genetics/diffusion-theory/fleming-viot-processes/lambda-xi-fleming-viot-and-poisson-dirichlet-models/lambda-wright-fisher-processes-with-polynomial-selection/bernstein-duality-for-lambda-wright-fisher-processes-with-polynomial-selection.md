@@ -42,7 +42,7 @@ with $h(x)\in(0,1)$ for $x\in(0,1)$, so both boundary points are accessible.
 
 ## Depends on
 
-- [Process-level selection duality with the ASG line-counting process](../../selection-duality-and-general-one-dimensional-di/process-level-selection-duality-with-the-asg-lin.md)
+- [Process-level selection duality with the ASG line-counting process](../../../selection-duality-and-general-one-dimensional-di/process-level-selection-duality-with-the-asg-lin.md)
 
 ## Expansion
 

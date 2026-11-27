@@ -22,7 +22,7 @@ So selection always wins only above an explicit threshold set by the multiple-me
 
 ## Depends on
 
-- [Ξ-coalescents with simultaneous multiple collisions](../../../../coalescent-theory/coalescents/xi-coalescents-simultaneous-multiple-collisions.md)
+- [Ξ-coalescents with simultaneous multiple collisions](../../../../../coalescent-theory/coalescents/xi-coalescents-simultaneous-multiple-collisions.md)
 
 ## Expansion
 

@@ -25,6 +25,4 @@
 - [Fleming–Viot processes with varying population size](fleming-viot-processes-with-varying-population-size/README.md)
 - [Grapheme-valued Wright–Fisher diffusion](grapheme-valued-wright-fisher-diffusion/README.md)
 - [Smoothing distributions of measure-valued population diffusions](smoothing-distributions-of-measure-valued-population-diffusions/README.md)
-- [Frequency-dependent selection in Ξ-Fleming-Viot processes](frequency-dependent-selection-in-xi-fleming-viot-processes/README.md)
-- [Λ-Wright–Fisher processes with polynomial selection](lambda-wright-fisher-processes-with-polynomial-selection/README.md)
-- [Two-parameter Poisson–Dirichlet diffusion](two-parameter-poisson-dirichlet-diffusion/README.md)
+- [Lambda/Xi Fleming–Viot and Poisson–Dirichlet models](lambda-xi-fleming-viot-and-poisson-dirichlet-models/README.md)
