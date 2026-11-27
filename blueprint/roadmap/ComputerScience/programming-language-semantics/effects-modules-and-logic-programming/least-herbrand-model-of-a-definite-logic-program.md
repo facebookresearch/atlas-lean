@@ -7,11 +7,11 @@ Let $B$ be a set of ground atoms and $P$ a set of ground definite clauses $A_0 \
 
 ## Proof
 
-**Proof of part 2.** $T_P$ is monotone. Every Herbrand model $M$ of $P$ satisfies $T_P(M) \subseteq M$, so by induction $T_P^i(\emptyset) \subseteq M_P$ for every $i$. Conversely, $T_P \uparrow \omega$ satisfies every clause of $P$, because the finitely many body atoms of a clause all appear in some $T_P^i(\emptyset)$. So $T_P\uparrow\omega$ is a Herbrand model, and $M_P \subseteq T_P \uparrow \omega$. The same finiteness argument shows that $T_P \uparrow \omega$ is a fixed point, and every fixed point contains all $T_P^i(\emptyset)$.
+**Proof of part 2.** $T_P$ is monotone, so the stages $T_P^i(\emptyset)$ increase with $i$. Every Herbrand model $M$ of $P$ satisfies $T_P(M) \subseteq M$, so by induction $T_P^i(\emptyset) \subseteq M_P$ for every $i$. Conversely, $T_P \uparrow \omega$ satisfies every clause of $P$: if the finitely many body atoms of a clause all belong to $T_P \uparrow \omega$, they all belong to one stage $T_P^i(\emptyset)$, so the head belongs to $T_P^{i+1}(\emptyset)$. So $T_P\uparrow\omega$ is a Herbrand model, and $M_P \subseteq T_P \uparrow \omega$. Being a model, it satisfies $T_P(T_P \uparrow \omega) \subseteq T_P \uparrow \omega$, and monotonicity gives $T_P^{i+1}(\emptyset) \subseteq T_P(T_P \uparrow \omega)$ for every $i$, so $T_P \uparrow \omega$ is a fixed point. By induction, every fixed point contains all $T_P^i(\emptyset)$.
 
 ## Remarks
 
-- For a definite logic program $P$ with variables, a Herbrand interpretation is a model of $P$ exactly when it is a model of the set of ground instances of the clauses of $P$, so the least Herbrand model and the immediate consequence operator of $P$ are those of that set.
+- If the signature has a ground term (equivalently, a constant symbol), then for a definite logic program $P$ with variables, a Herbrand interpretation is a model of $P$ exactly when it is a model of the set of ground instances of the clauses of $P$, so the least Herbrand model and the immediate consequence operator of $P$ are those of that set.
 - Strass, and van Emden and Kowalski, state the model intersection property for a nonempty family. The empty family has intersection $B$, which is a Herbrand model of every set of clauses over $B$.
 - When the atoms are predicate symbols applied to terms, with no built-in equality, and the signature has a constant symbol, $M_P$ is exactly the set of ground atoms that are logical consequences of $P$; without a constant symbol, every atom of $M_P$ is still a logical consequence of $P$ ([Ground logical consequences of a definite program](ground-logical-consequences-of-a-definite-program.md)).
 
