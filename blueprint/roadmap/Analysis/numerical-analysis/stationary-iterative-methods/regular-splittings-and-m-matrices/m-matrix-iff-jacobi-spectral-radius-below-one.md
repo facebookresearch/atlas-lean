@@ -16,6 +16,7 @@ that is, exactly when the Jacobi iteration for $Ax = b$ converges for every righ
 
 - [A nonnegative inverse of I − B forces ρ(B) < 1](nonnegative-inverse-forces-spectral-radius-below-one.md)
 - [A Z-matrix is a nonsingular M-matrix if and only if its inverse is nonnegative](z-matrix-is-a-nonsingular-m-matrix-iff-its-inverse-is-nonnegative.md)
+- [Convergence of stationary iterations](../convergence-of-stationary-iterations.md)
 
 ## Sources
 

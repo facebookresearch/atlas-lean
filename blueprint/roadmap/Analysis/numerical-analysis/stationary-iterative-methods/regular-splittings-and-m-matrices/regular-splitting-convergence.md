@@ -17,6 +17,7 @@ So for a [nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-mat
 
 - [A nonnegative inverse of I − B forces ρ(B) < 1](nonnegative-inverse-forces-spectral-radius-below-one.md)
 - [Perron eigenvector of a nonnegative matrix](perron-eigenvector-of-a-nonnegative-matrix.md)
+- [Convergence of stationary iterations](../convergence-of-stationary-iterations.md)
 
 ## Sources
 

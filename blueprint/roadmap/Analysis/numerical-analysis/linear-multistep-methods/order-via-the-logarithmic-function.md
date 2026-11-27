@@ -6,7 +6,7 @@ $$\varphi(z) = \frac{\rho(z)}{\log z} - \sigma(z),$$
 
 which has a removable singularity at $z = 1$. For a positive integer $p$, the method has [order of accuracy](order-of-accuracy-and-error-constants.md) $p$ if and only if $\varphi$ has a zero of multiplicity exactly $p$ at $z = 1$.
 
-Applied to $y' = y$, the truncation error is $T_n = e^{nh}(\rho(e^h) - h\sigma(e^h))/(h\sigma(1))$, and $\rho(e^h) - h\sigma(e^h) = h\,\varphi(e^h)$; the equivalence compares the two expansions in powers of $h$.
+Applied to $y' = y$, $y(0) = 1$, on the mesh $x_n = nh$, the truncation error is $T_n = e^{nh}(\rho(e^h) - h\sigma(e^h))/(h\sigma(1))$, and $\rho(e^h) - h\sigma(e^h) = h\,\varphi(e^h)$; the equivalence compares the two expansions in powers of $h$.
 
 ## Depends on
 

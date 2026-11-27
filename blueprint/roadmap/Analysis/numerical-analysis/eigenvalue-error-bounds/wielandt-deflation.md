@@ -12,6 +12,10 @@ With $\sigma = \lambda_1$ (Hotelling's choice with $v = u_1/\|u_1\|_2^2$ for a H
 
 - [Convergence of the power method](convergence-of-the-power-method.md)
 
+## Proof depends on
+
+- [Matrix determinant lemma](../../../LinearAlgebra/determinants-and-matrix-identities/matrix-determinant-lemma/det-add-vec-mul-vec-of-is-unit-det.md)
+
 ## Sources
 
 - Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 4.2.1, equation (4.6), Theorem 4.2 (Wielandt) and its proof, and equations (4.7)–(4.8); Section 4.2 applies deflation after the eigenvalue of largest modulus has been computed. The text after (4.8) notes that the new eigenvalue $\lambda_1 - \sigma$ may coincide with another eigenvalue. The proof given there uses left eigenvectors, so it covers a diagonalizable $A$; the characteristic polynomial for general $A$ follows from the matrix determinant lemma, since $(zI - A)^{-1} u_1 = u_1/(z - \lambda_1)$. <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>

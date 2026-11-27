@@ -10,6 +10,10 @@ stopping if $r_k = 0$. Each step is the orthogonal [projection method](projectio
 
 - [Projection method](projection-method.md)
 
+## Proof depends on
+
+- [Galerkin projection minimizes the energy norm of the error](galerkin-projection-minimizes-the-energy-norm-of-the-error.md)
+
 ## Sources
 
 - Y. Saad, *Iterative Methods for Sparse Linear Systems*, 2nd edition, SIAM, 2003, Section 5.3.1, Algorithm 5.2 and the discussion before Lemma 5.8. <https://www-users.cse.umn.edu/~saad/IterMethBook_2ndEd.pdf>

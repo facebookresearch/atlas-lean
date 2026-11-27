@@ -19,7 +19,7 @@ sequences in any norm, so that the convergence theorem applies to systems.
 
 - [Orders, error constants and stability intervals of the Adams methods](adams-methods/orders-and-stability-intervals-of-adams-methods.md)
 - [The two-step Adams–Bashforth method is zero-stable](adams-methods/two-step-adams-bashforth-method-is-zero-stable.md)
-- [Consistency and zero-stability imply convergence](consistency-and-zero-stability-imply-convergence.md)
+- [Dahlquist equivalence theorem](dahlquist-equivalence-theorem.md)
 
 ## Sources
 
