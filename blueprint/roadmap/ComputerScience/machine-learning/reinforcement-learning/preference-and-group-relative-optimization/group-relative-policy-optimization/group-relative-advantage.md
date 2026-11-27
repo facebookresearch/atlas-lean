@@ -2,11 +2,11 @@
 
 Group relative policy optimization (GRPO) scores a sampled response by its reward standardized with the mean and standard deviation of rewards for the same prompt, computed either exactly under the sampling policy or from a group of sampled responses.
 
-Let $X$ be a set of prompts, $Y$ a set of responses, $r : X \times Y \to \mathbb{R}$ a reward, $\alpha$ a sampling policy (the current policy or an earlier one) and $\varepsilon > 0$ a constant. The **population group-relative advantage** is
+Let $X$ be a set of prompts, $Y$ a measurable space of responses, $\alpha$ a sampling policy (the current policy or an earlier one), $r : X \times Y \to \mathbb{R}$ a reward such that $r(x, \cdot)$ is measurable and square-integrable under $\alpha(\cdot \mid x)$ for every $x$ (for instance bounded, or $Y$ finite), and $\varepsilon > 0$ a constant. The **population group-relative advantage** is
 
 $$A_\alpha(x,y) = \frac{r(x,y) - \mu_{\alpha,r}(x)}{\sigma_{\alpha,r,\varepsilon}(x)}, \qquad \mu_{\alpha,r}(x) = \mathbb{E}_{y \sim \alpha(\cdot \mid x)} r(x,y), \quad \sigma_{\alpha,r,\varepsilon}(x) = \sqrt{\sigma_{\alpha,r}(x)^2 + \varepsilon},$$
 
-where $\sigma_{\alpha,r}(x)^2 = \mathbb{E}_{y \sim \alpha(\cdot \mid x)}(r(x,y) - \mu_{\alpha,r}(x))^2$. Its **group estimate** draws $G$ responses $y_1, \dots, y_G$ independently from $\alpha(\cdot \mid x)$, sets $r_i = r(x, y_i)$, and uses
+where $\sigma_{\alpha,r}(x)^2 = \mathbb{E}_{y \sim \alpha(\cdot \mid x)}(r(x,y) - \mu_{\alpha,r}(x))^2$. Its **group estimate** draws $G \ge 2$ responses $y_1, \dots, y_G$ independently from $\alpha(\cdot \mid x)$, sets $r_i = r(x, y_i)$, and uses
 
 $$\hat A_i = \frac{r_i - \bar r}{\sqrt{s^2 + \varepsilon}}, \qquad \bar r = \frac{1}{G} \sum_{j=1}^{G} r_j,$$
 

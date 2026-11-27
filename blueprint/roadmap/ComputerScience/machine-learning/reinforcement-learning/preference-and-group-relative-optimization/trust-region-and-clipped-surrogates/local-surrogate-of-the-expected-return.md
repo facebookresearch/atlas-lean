@@ -10,7 +10,7 @@ let $Q_\pi$, $V_\pi$ and the [advantage](../../performance-difference-lemma/adva
 
 $$L_\pi(\tilde\pi) = \eta(\pi) + \sum_{s \in S} \rho_\pi(s) \sum_{a \in A} \tilde\pi(a \mid s)\, A_\pi(s,a).$$
 
-For comparing policies write $D_{\mathrm{TV}}(p \,\|\, q) = \frac12 \sum_i |p_i - q_i|$, $D^{\max}_{\mathrm{TV}}(\pi, \tilde\pi) = \max_s D_{\mathrm{TV}}(\pi(\cdot \mid s) \,\|\, \tilde\pi(\cdot \mid s))$ and $D^{\max}_{\mathrm{KL}}(\pi, \tilde\pi) = \max_s \mathrm{KL}(\pi(\cdot \mid s) \,\|\, \tilde\pi(\cdot \mid s))$.
+For comparing policies write $D_{\mathrm{TV}}(p \,\|\, q) = \frac12 \sum_i |p_i - q_i|$, $D^{\max}_{\mathrm{TV}}(\pi, \tilde\pi) = \max_s D_{\mathrm{TV}}(\pi(\cdot \mid s) \,\|\, \tilde\pi(\cdot \mid s))$ and $D^{\max}_{\mathrm{KL}}(\pi, \tilde\pi) = \max_s \mathrm{KL}(\pi(\cdot \mid s) \,\|\, \tilde\pi(\cdot \mid s)) \in [0, \infty]$, where $\mathrm{KL}(p \,\|\, q) = \sum_i p_i \log(p_i/q_i)$ (terms with $p_i = 0$ equal to $0$) when $p$ is absolutely continuous with respect to $q$, and $\mathrm{KL}(p \,\|\, q) = +\infty$ otherwise. On the finite set $A$, $D_{\mathrm{TV}}(p \,\|\, q) = \sup_{B \subseteq A} |p(B) - q(B)|$.
 
 ## Depends on
 
@@ -20,6 +20,7 @@ For comparing policies write $D_{\mathrm{TV}}(p \,\|\, q) = \frac12 \sum_i |p_i 
 - [Discounted state occupancy of a policy](../../performance-difference-lemma/occupancy.md)
 - [Kullback–Leibler divergence on a finite space](../../../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-eq-sum.md)
 - [Total variation distance between finite measures](../../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Total variation norm is twice the supremum over events](../../../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/tv-dist-eq-two-mul-total-variation-dist.md)
 
 ## Proof depends on
 

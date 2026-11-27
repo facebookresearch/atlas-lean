@@ -2,7 +2,7 @@
 
 For any group of responses to one prompt, however the responses were sampled, the group-relative REINFORCE direction (each reward minus the group mean, times the score function) is a positive multiple of minus the gradient of a pairwise consistency loss at the current policy.
 
-Let $x$ be a prompt, $y_1, \dots, y_K$ ($K \ge 2$) responses with rewards $r_i = r(x, y_i)$ and mean $\bar r = \frac1K \sum_j r_j$, let $\pi_\theta$ be a parameterized policy with $\pi_{\theta_t}(y_i \mid x) > 0$ and $\theta \mapsto \log \pi_\theta(y_i \mid x)$ differentiable at the current parameter $\theta_t$, and let $\tau > 0$. The **group-relative REINFORCE** direction is
+Let $x$ be a prompt, $y_1, \dots, y_K$ ($K \ge 2$) responses with rewards $r_i = r(x, y_i)$ and mean $\bar r = \frac1K \sum_j r_j$, let $\pi_\theta$ be a policy parameterized by $\theta$ in an open subset of $\mathbb{R}^d$, with $\pi_{\theta_t}(y_i \mid x) > 0$ and $\theta \mapsto \log \pi_\theta(y_i \mid x)$ differentiable at the current parameter $\theta_t$, and let $\tau > 0$. The **group-relative REINFORCE** direction is
 
 $$g = \frac{1}{K} \sum_{i=1}^{K} (r_i - \bar r)\, \nabla_\theta \log \pi_\theta(y_i \mid x)\big|_{\theta = \theta_t},$$
 

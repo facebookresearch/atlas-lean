@@ -2,11 +2,11 @@
 
 For rewards in $[0,1]$, the gain in expected reward of a candidate policy over the current one is at least its importance-weighted group-relative advantage under a sampling policy, minus total variation penalties whose weight grows as the reward variance under the sampling policy shrinks.
 
-Let $\rho_X$ be a distribution on prompts, $Y$ a measurable space of responses, $r$ a reward with $0 \le r(x,y) \le 1$, and $0 < \varepsilon \le 3/4$. Let $\pi_k$ (current), $\alpha$ (sampling) and $\pi$ (candidate) be policies with $\pi(\cdot \mid x)$ absolutely continuous with respect to $\alpha(\cdot \mid x)$. With $J(\pi(\cdot \mid x)) = \mathbb{E}_{y \sim \pi(\cdot \mid x)} r(x,y)$, the population [group-relative advantage](group-relative-advantage.md) $A_\alpha$ and its normalizer $\sigma_{\alpha,r,\varepsilon}$, put
+Let $\rho_X$ be a distribution on a measurable space of prompts, $Y$ a measurable space of responses, $r$ a reward with $0 \le r(x,y) \le 1$, and $0 < \varepsilon \le 3/4$. Let $\pi_k$ (current), $\alpha$ (sampling) and $\pi$ (candidate) be policies with $\pi(\cdot \mid x)$ absolutely continuous with respect to $\alpha(\cdot \mid x)$. The ratio $\pi(y\mid x)/\alpha(y\mid x)$ below denotes a Radon–Nikodym derivative $d\pi(\cdot\mid x)/d\alpha(\cdot\mid x)$, not a quotient of point masses on a nonatomic response space. Assume the scalar functions of $x$ appearing in the averaged bound below are measurable. With $J(\pi(\cdot \mid x)) = \mathbb{E}_{y \sim \pi(\cdot \mid x)} r(x,y)$, the population [group-relative advantage](group-relative-advantage.md) $A_\alpha$ and its normalizer $\sigma_{\alpha,r,\varepsilon}$, put
 
 $$L_\alpha(\pi(\cdot \mid x)) = \mathbb{E}_{y \sim \alpha(\cdot \mid x)}\Bigl[\frac{\pi(y \mid x)}{\alpha(y \mid x)} A_\alpha(x,y)\Bigr].$$
 
-Then for $\rho_X$-almost every $x$, with $\mathrm{TV}(m_1, m_2) = \frac12 \int |m_1 - m_2|$,
+Then for $\rho_X$-almost every $x$, with $\mathrm{TV}(m_1, m_2) = \sup_B |m_1(B) - m_2(B)|$, which equals the source's $\frac12 \int |f_1 - f_2| \, d\lambda$ for densities $f_1, f_2$ of $m_1, m_2$ with respect to any common dominating measure $\lambda$,
 
 $$J(\pi(\cdot \mid x)) - J(\pi_k(\cdot \mid x)) \ge L_\alpha(\pi(\cdot \mid x)) - 2\, \frac{1 - \sigma_{\alpha,r,\varepsilon}(x)}{\sigma_{\alpha,r,\varepsilon}(x)}\, \mathrm{TV}\bigl(\pi(\cdot \mid x), \alpha(\cdot \mid x)\bigr) - 2\, \mathrm{TV}\bigl(\pi_k(\cdot \mid x), \alpha(\cdot \mid x)\bigr).$$
 
@@ -20,6 +20,7 @@ where $x \sim \rho_X$ and $M_{\alpha,r,\varepsilon} = \bigl(\mathbb{E}_{x}\, (1 
 
 - [Group-relative advantage](group-relative-advantage.md)
 - [Total variation distance between finite measures](../../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Total variation norm is twice the supremum over events](../../../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/tv-dist-eq-two-mul-total-variation-dist.md)
 
 ## Proof depends on
 
@@ -36,7 +37,7 @@ The first identity is the change of measure $\int (\pi/\alpha) A_\alpha \, d\alp
 
 What the bound covers: the mean and variance are the exact population statistics under $\alpha$, not group estimates; $L_\alpha$ is the unclipped importance-weighted advantage, without the clipping and without the KL penalty of the [GRPO clipped objective](grpo-clipped-surrogate-objective.md); and the per-prompt weight depends on the data. For a binary verifiable reward with success probability $p$ under $\alpha$, the weight is $(1 - \sqrt{p(1-p) + \varepsilon})/\sqrt{p(1-p) + \varepsilon}$, large when $p$ is near $0$ or $1$, so the bound is weak for prompts that the sampling policy always or never solves; Mroueh et al. relate this to filtering or masking such prompts. Through Pinsker's inequality the bound motivates a KL-constrained, and then clipped, surrogate, but the clipped surrogate is a practical relaxation that the theorem does not cover. Compared with the [trust-region policy improvement bound](../trust-region-and-clipped-surrogates/trust-region-policy-improvement-bound.md), the weights of the total variation terms are policy- and data-dependent rather than absolute constants.
 
-The source states the definitions with $0 < \varepsilon < 1$ and the on-policy corollary with $\varepsilon \le 3/4$; its proof of the general bound uses $\sigma_{\alpha,r,\varepsilon} \le 1$, which the restriction $\varepsilon \le 3/4$ guarantees. The importance-sampling identity requires $\pi(\cdot \mid x)$ to be absolutely continuous with respect to $\alpha(\cdot \mid x)$, which the source uses without stating.
+The source states the definitions with $0 < \varepsilon < 1$ and the on-policy corollary with $\varepsilon \le 3/4$; its proof of the general bound uses $\sigma_{\alpha,r,\varepsilon} \le 1$, which the restriction $\varepsilon \le 3/4$ guarantees. The importance-sampling identity requires $\pi(\cdot \mid x)$ to be absolutely continuous with respect to $\alpha(\cdot \mid x)$, which the source uses without stating. The prompt-measurability assumption makes the averaged expression well-defined: its scalar integrands are bounded because $0\le r\le1$, $\sigma_{\alpha,r,\varepsilon}\ge\sqrt\varepsilon$ and total variation between probability measures is at most $1$. No measurability of an uncountable supremum is inferred merely from the pointwise policy notation.
 
 ## Sources
 

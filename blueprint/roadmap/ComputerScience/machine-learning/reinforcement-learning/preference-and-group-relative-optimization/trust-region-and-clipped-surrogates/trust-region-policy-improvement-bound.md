@@ -8,7 +8,9 @@ $$\eta(\pi_{\mathrm{new}}) \ge L_{\pi_{\mathrm{old}}}(\pi_{\mathrm{new}}) - \fra
 
 Consequently, for all stochastic policies $\pi, \tilde\pi$, with $\varepsilon = \max_{s,a} |A_\pi(s,a)|$,
 
-$$\eta(\tilde\pi) \ge L_\pi(\tilde\pi) - C\, D^{\max}_{\mathrm{KL}}(\pi, \tilde\pi), \qquad C = \frac{4\varepsilon\gamma}{(1-\gamma)^2}.$$
+$$\eta(\tilde\pi) \ge L_\pi(\tilde\pi) - C\, D^{\max}_{\mathrm{KL}}(\pi, \tilde\pi), \qquad C = \frac{4\varepsilon\gamma}{(1-\gamma)^2},$$
+
+with $D^{\max}_{\mathrm{KL}}(\pi, \tilde\pi) \in [0, \infty]$ equal to $+\infty$ unless $\pi(\cdot \mid s)$ is absolutely continuous with respect to $\tilde\pi(\cdot \mid s)$ at every state, and the convention $0 \cdot \infty = 0$ (when $C = 0$ the bound reads $\eta(\tilde\pi) \ge L_\pi(\tilde\pi)$, which the total variation form gives).
 
 For a sequence of policies $\pi_0, \pi_1, \dots$ put $M_i(\pi) = L_{\pi_i}(\pi) - C_i D^{\max}_{\mathrm{KL}}(\pi_i, \pi)$ with $C_i$ the constant $C$ for $\pi = \pi_i$. Then $\eta(\pi_{i+1}) - \eta(\pi_i) \ge M_i(\pi_{i+1}) - M_i(\pi_i)$, so if each $\pi_{i+1}$ maximizes $M_i$ (the exact-advantage policy iteration scheme of the source), then $\eta(\pi_0) \le \eta(\pi_1) \le \eta(\pi_2) \le \cdots$.
 

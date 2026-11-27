@@ -14,11 +14,11 @@ $$p_r(\tau \mid y_1, \dots, y_K, x) = \prod_{k=1}^{K} \frac{e^{r(x, y_{\tau(k)})
 
 for $K = 2$ it is the Bradley–Terry model.
 
-**Reward learning.** Given a finite dataset $\mathcal{D} = \{(x^{(i)}, y_w^{(i)}, y_l^{(i)})\}_{i=1}^{N}$ of comparisons in which $y_w^{(i)}$ was preferred to $y_l^{(i)}$, the Bradley–Terry negative log-likelihood of a reward $r$ is
+**Reward learning.** Given a finite dataset $\mathcal{D} = \{(x^{(i)}, y_w^{(i)}, y_l^{(i)})\}_{i=1}^{N}$ with $N \ge 1$ of comparisons in which $y_w^{(i)}$ was preferred to $y_l^{(i)}$, the Bradley–Terry negative log-likelihood of a reward $r$ is
 
 $$\mathcal{L}_R(r, \mathcal{D}) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \log \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr),$$
 
-the expectation being the average over $\mathcal{D}$. For a prompt distribution $\rho$, a policy $\mu$ that generates the compared responses, and arbitrary preference probabilities $p^*(y \succ y' \mid x) \in [0,1]$, its population form is
+the expectation being the average over $\mathcal{D}$. For finite nonempty $X$ and $Y$, a prompt distribution $\rho$, a policy $\mu$ that generates the compared responses, and arbitrary preference probabilities $p^*(y \succ y' \mid x) \in [0,1]$, its population form is
 
 $$\mathcal{L}_{\mathrm{BT}}(r) = -\mathbb{E}_{x \sim \rho,\ y, y' \sim \mu(\cdot \mid x)}\Bigl[p^*(y \succ y' \mid x) \log \sigma\bigl(r(x,y) - r(x,y')\bigr)\Bigr],$$
 

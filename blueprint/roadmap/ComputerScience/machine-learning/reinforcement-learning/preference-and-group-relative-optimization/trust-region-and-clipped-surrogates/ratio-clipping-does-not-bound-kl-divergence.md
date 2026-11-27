@@ -6,16 +6,18 @@ Fix a state $s_t$, a sampled action $a_t$, a clipping parameter $\epsilon \in (0
 
 $$\Theta = \{\theta : 1 - \epsilon \le r_t(\theta) \le 1 + \epsilon\}.$$
 
-1. Discrete actions: if $|A| \ge 3$ and, as $\theta$ varies, $\pi_\theta(\cdot \mid s_t)$ ranges over all probability vectors on $A$ with positive entries, then $\sup_{\theta \in \Theta} \mathrm{KL}\bigl(\pi_{\theta_{\mathrm{old}}}(\cdot \mid s_t) \,\|\, \pi_\theta(\cdot \mid s_t)\bigr) = +\infty$.
-2. Gaussian policies: if $A = \mathbb{R}^D$, $\pi_\theta(\cdot \mid s_t) = \mathcal{N}(\mu_\theta(s_t), \Sigma_\theta(s_t))$ and $(\mu_\theta(s_t), \Sigma_\theta(s_t))$ ranges over all pairs of a mean in $\mathbb{R}^D$ and a symmetric positive definite $D \times D$ matrix (the source writes semidefinite; a Lebesgue density, and hence the ratio $r_t$, exists only for definite covariance), then the same supremum is $+\infty$.
+1. Finite discrete actions: if $A$ is finite with $|A| \ge 3$ and, as $\theta$ varies, $\pi_\theta(\cdot \mid s_t)$ ranges over all probability vectors on $A$ with positive entries, then $\sup_{\theta \in \Theta} \mathrm{KL}\bigl(\pi_{\theta_{\mathrm{old}}}(\cdot \mid s_t) \,\|\, \pi_\theta(\cdot \mid s_t)\bigr) = +\infty$.
+2. Gaussian policies: if $D \ge 1$ is an integer, $A = \mathbb{R}^D$, $\pi_\theta(\cdot \mid s_t) = \mathcal{N}(\mu_\theta(s_t), \Sigma_\theta(s_t))$ and $(\mu_\theta(s_t), \Sigma_\theta(s_t))$ ranges over all pairs of a mean in $\mathbb{R}^D$ and a symmetric positive definite $D \times D$ matrix (the source writes semidefinite; a Lebesgue density, and hence the ratio $r_t$, exists only for definite covariance), then the same supremum is $+\infty$.
 
 ## Depends on
 
 - [PPO clipped surrogate objective](ppo-clipped-surrogate-objective.md)
+- [Kullback–Leibler divergence on a finite space](../../../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-eq-sum.md)
+- [Kullback-Leibler divergence between multivariate Gaussians](../../../../../InformationTheory/not-yet-classified/part-01/vector-gaussian-kl/kl-div-multivariate-gaussian.md)
 
 ## Proof depends on
 
-- [Kullback-Leibler divergence between multivariate Gaussians](../../../../../InformationTheory/not-yet-classified/part-01/vector-gaussian-kl/kl-div-multivariate-gaussian.md)
+None.
 
 ## Expansion
 

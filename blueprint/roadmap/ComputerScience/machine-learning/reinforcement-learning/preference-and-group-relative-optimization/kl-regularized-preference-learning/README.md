@@ -27,4 +27,4 @@ Learning from pairwise preferences through a KL penalty to a reference policy: t
 - [Reward modeling and DPO as Ψ-preference optimization](rlhf-and-dpo-as-psi-preference-optimization.md)
 - [Identity preference optimization loss](identity-preference-optimization-loss.md)
 - [Uniqueness of the IPO minimizer](uniqueness-of-the-ipo-minimizer.md)
-- [The population IPO loss matches the root-finding loss](sampled-ipo-loss-equals-root-finding-loss.md)
+- [The population IPO loss matches the root-finding loss](population-ipo-loss-equals-root-finding-loss.md)

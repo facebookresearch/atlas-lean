@@ -2,7 +2,7 @@
 
 The GRPO objective is the PPO clipped surrogate with the learned advantage replaced by the group-relative advantage, plus a KL penalty to a reference policy, so that no value network is needed.
 
-Let $\rho$ be a prompt distribution, $\pi_k$ the current policy, $\pi_{\mathrm{ref}}$ a reference policy, $\epsilon \in [0,1]$ a clipping parameter, $\beta > 0$, and $A_{\pi_k}$ the population [group-relative advantage](group-relative-advantage.md) under $\pi_k$. The **on-policy GRPO clipped objective** is
+Use finite nonempty prompt and response sets $X$ and $Y$ for the population objectives on this page. Let $\rho$ be a prompt distribution, $\pi_k$ the current policy, $\pi_{\mathrm{ref}}$ a reference policy, $\epsilon \in [0,1]$ a clipping parameter, $\beta > 0$, and $A_{\pi_k}$ the population [group-relative advantage](group-relative-advantage.md) under $\pi_k$. The **on-policy GRPO clipped objective** is
 
 $$\max_\pi\ \mathbb{E}_{x \sim \rho}\Bigl[\mathbb{E}_{y \sim \pi_k(\cdot \mid x)} \min\Bigl(\frac{\pi(y \mid x)}{\pi_k(y \mid x)} A_{\pi_k}(x,y),\ \mathrm{clip}\Bigl(\frac{\pi(y \mid x)}{\pi_k(y \mid x)}, 1-\epsilon, 1+\epsilon\Bigr) A_{\pi_k}(x,y)\Bigr) - \beta\, \mathrm{KL}\bigl(\pi(\cdot \mid x) \,\|\, \pi_{\mathrm{ref}}(\cdot \mid x)\bigr)\Bigr].$$
 
@@ -10,13 +10,13 @@ In the **off-policy** form the samples and the advantage statistics come from a 
 
 $$L^{c}_\alpha(\pi(\cdot \mid x)) = \mathbb{E}_{y \sim \alpha(\cdot \mid x)}\, f_\epsilon\Bigl(\frac{\pi(y \mid x)}{\alpha(y \mid x)}, \frac{\pi_k(y \mid x)}{\alpha(y \mid x)}, A_\alpha(x,y)\Bigr),$$
 
-the objective is $\mathbb{E}_{x \sim \rho}\bigl[L^{c}_\alpha(\pi(\cdot \mid x)) - \beta\, \mathrm{KL}(\pi(\cdot \mid x) \,\|\, \pi_{\mathrm{ref}}(\cdot \mid x))\bigr]$; $\alpha = \pi_k$ gives the on-policy form.
+the objective is $\mathbb{E}_{x \sim \rho}\bigl[L^{c}_\alpha(\pi(\cdot \mid x)) - \beta\, \mathrm{KL}(\pi(\cdot \mid x) \,\|\, \pi_{\mathrm{ref}}(\cdot \mid x))\bigr]$; $\alpha = \pi_k$ gives the on-policy form. In both forms the inner expectation sums only over responses with positive sampling probability, so its ratios are defined almost surely; the outer expectation sums only over prompts with $\rho(x)>0$. The finite-space KL divergence takes values in $[0,\infty]$ and is $+\infty$ exactly when absolute continuity fails. The overall objective is therefore $-\infty$ if absolute continuity of $\pi(\cdot\mid x)$ with respect to $\pi_{\mathrm{ref}}(\cdot\mid x)$ fails for some prompt with $\rho(x)>0$, and is finite otherwise. A prompt of probability zero contributes nothing. This is a finite-space specialization of the source's population objectives, not a claim that point probabilities give density ratios for continuous responses.
 
-In the **token-level sample form** used to train language models, for each question $q$ a group $o_1, \dots, o_G$ is drawn from $\pi_{\theta_{\mathrm{old}}}(\cdot \mid q)$ and $\theta$ maximizes the expectation of
+In the **token-level sample form** used to train language models, for each question $q$ a group of $G \ge 2$ nonempty outputs $o_1, \dots, o_G$ (each $|o_i| \ge 1$ tokens) is drawn from $\pi_{\theta_{\mathrm{old}}}(\cdot \mid q)$ and $\theta$ maximizes the expectation of
 
 $$\frac{1}{G} \sum_{i=1}^{G} \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} \Bigl\{\min\bigl(\rho_{i,t}(\theta) \hat A_{i,t},\ \mathrm{clip}(\rho_{i,t}(\theta), 1-\epsilon, 1+\epsilon) \hat A_{i,t}\bigr) - \beta\, \hat D_{i,t}(\theta)\Bigr\},$$
 
-where $\rho_{i,t}(\theta) = \pi_\theta(o_{i,t} \mid q, o_{i,<t})/\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t})$, $\hat A_{i,t}$ is the group estimate of the advantage, and $\hat D_{i,t} = u - \log u - 1$ with $u = \pi_{\mathrm{ref}}(o_{i,t} \mid q, o_{i,<t})/\pi_\theta(o_{i,t} \mid q, o_{i,<t})$ is a per-token estimate of the KL penalty.
+where $\rho_{i,t}(\theta) = \pi_\theta(o_{i,t} \mid q, o_{i,<t})/\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t})$, $\hat A_{i,t}$ is the group estimate of the advantage, and $\hat D_{i,t} = u - \log u - 1$ with $u = \pi_{\mathrm{ref}}(o_{i,t} \mid q, o_{i,<t})/\pi_\theta(o_{i,t} \mid q, o_{i,<t})$ is a per-token estimate of the KL penalty; it requires $\pi_\theta$ and $\pi_{\mathrm{ref}}$ to give positive probability to the sampled tokens (as softmax policies do), while $\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t}) > 0$ holds because the tokens were drawn from it.
 
 ## Depends on
 
