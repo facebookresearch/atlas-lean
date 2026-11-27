@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Data.Finset.Piecewise
@@ -617,6 +618,36 @@ private theorem exists_isBoolFunVarPermEquiv_comp_castSucc {n : ℕ}
   rw [hsnoc, update_comp_equiv]
   simp [τ, hconst]
 
+/-- The classes in arity `n + 1` split into the old classes and the new non-degenerate ones. -/
+private theorem boolFunClassCount_varPerm_succ
+    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
+      P n (fun x => g (x ∘ e)) ↔ P m g)
+    (n : ℕ) :
+    boolFunClassCount IsBoolFunVarPermEquiv (P (n + 1))
+      = boolFunClassCount IsBoolFunVarPermEquiv (P n)
+        + boolFunClassCount IsBoolFunVarPermEquiv
+          (fun f => IsNondegenerateBoolFun f ∧ P (n + 1) f) := by
+  have hR := equivalence_isBoolFunVarPermEquiv
+  -- Non-degeneracy splits the classes of `P (n + 1)` ...
+  have hsplit := classCount_split (hR (n + 1)).refl
+    (fun f g h => ⟨isNondegenerateBoolFun_of_isBoolFunVarPermEquiv h,
+      isNondegenerateBoolFun_of_isBoolFunVarPermEquiv ((hR (n + 1)).symm h)⟩) (P (n + 1))
+  -- ... and the degenerate classes are those of `P n`, with a dummy last variable added.
+  have hdeg : boolFunClassCount IsBoolFunVarPermEquiv
+      (fun f => ¬ IsNondegenerateBoolFun f ∧ P (n + 1) f) =
+        boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
+    refine classCount_eq_of_map (hR n) (hR (n + 1)) (fun g x => g (x ∘ Fin.castSuccEmb))
+      (fun g => ?_) isBoolFunVarPermEquiv_comp_castSucc_iff (fun f f' h hf => ?_)
+      (fun f hf => exists_isBoolFunVarPermEquiv_comp_castSucc hf.1)
+    · exact ⟨fun h => (hP n (n + 1) Fin.castSuccEmb g).1 h.2,
+        fun h => ⟨not_isNondegenerateBoolFun_comp_castSucc g,
+          (hP n (n + 1) Fin.castSuccEmb g).2 h⟩⟩
+    · exact ⟨fun hnd => hf.1 (isNondegenerateBoolFun_of_isBoolFunVarPermEquiv
+        ((hR (n + 1)).symm h) hnd), (iff_of_isBoolFunVarPermEquiv P hP h).1 hf.2⟩
+  rw [hdeg] at hsplit
+  exact hsplit.trans (Nat.add_comm _ _)
+
 end boolFunClassCount_varPerm_nondegenerate_eq_sub
 
 open boolFunClassCount_varPerm_nondegenerate_eq_sub in
@@ -645,24 +676,41 @@ public theorem boolFunClassCount_varPerm_nondegenerate_eq_sub
     boolFunClassCount IsBoolFunVarPermEquiv (fun f => IsNondegenerateBoolFun f ∧ P (n + 1) f)
       = boolFunClassCount IsBoolFunVarPermEquiv (P (n + 1))
         - boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
-  have hR := equivalence_isBoolFunVarPermEquiv
-  -- Non-degeneracy splits the classes of `P (n + 1)` ...
-  have hsplit := classCount_split (hR (n + 1)).refl
-    (fun f g h => ⟨isNondegenerateBoolFun_of_isBoolFunVarPermEquiv h,
-      isNondegenerateBoolFun_of_isBoolFunVarPermEquiv ((hR (n + 1)).symm h)⟩) (P (n + 1))
-  -- ... and the degenerate classes are those of `P n`, with a dummy last variable added.
-  have hdeg : boolFunClassCount IsBoolFunVarPermEquiv
-      (fun f => ¬ IsNondegenerateBoolFun f ∧ P (n + 1) f) =
-        boolFunClassCount IsBoolFunVarPermEquiv (P n) := by
-    refine classCount_eq_of_map (hR n) (hR (n + 1)) (fun g x => g (x ∘ Fin.castSuccEmb))
-      (fun g => ?_) isBoolFunVarPermEquiv_comp_castSucc_iff (fun f f' h hf => ?_)
-      (fun f hf => exists_isBoolFunVarPermEquiv_comp_castSucc hf.1)
-    · exact ⟨fun h => (hP n (n + 1) Fin.castSuccEmb g).1 h.2,
-        fun h => ⟨not_isNondegenerateBoolFun_comp_castSucc g,
-          (hP n (n + 1) Fin.castSuccEmb g).2 h⟩⟩
-    · exact ⟨fun hnd => hf.1 (isNondegenerateBoolFun_of_isBoolFunVarPermEquiv
-        ((hR (n + 1)).symm h) hnd), (iff_of_isBoolFunVarPermEquiv P hP h).1 hf.2⟩
-  omega
+  rw [boolFunClassCount_varPerm_succ P hP n, Nat.add_sub_cancel_left]
+
+open boolFunClassCount_varPerm_nondegenerate_eq_sub in
+/-- **Permutation classes counted by non-degenerate ones.** Let $(P_n)_{n \ge 0}$ be a family of
+properties, $P_n$ a property of $n$-variable Boolean functions, that is invariant under renaming
+variables: for all $m$ and $n$, every injection $e$ from $\{1, \dots, m\}$ to $\{1, \dots, n\}$
+and every $m$-variable function $g$, the $n$-variable function $x \mapsto g(x \circ e)$ has $P_n$
+if and only if $g$ has $P_m$. Write $[P]_n$ for the number of classes of $n$-variable functions
+with $P_n$ under permutation of the variables, and $\mathrm{nd}[P]_n$ for the same count over the
+non-degenerate $n$-variable functions with $P_n$. Then for every $n$,
+$$[P]_n = \sum_{i=0}^{n} \mathrm{nd}[P]_i.$$
+
+The paper assumes only closure under permutations of the variables; the counting argument also
+needs invariance under adding or removing dummy variables. Closure under permutations alone is not
+enough: if $P_1$ holds for all four $1$-variable functions and $P_n$ holds for none when
+$n \ne 1$, then $[P]_1 = 4$ but $\mathrm{nd}[P]_0 + \mathrm{nd}[P]_1 = 0 + 2 = 2$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 11 (`jis-2025-25.3.4-prop-11`). -/
+public theorem boolFunClassCount_varPerm_eq_sum_nondegenerate
+    (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
+      P n (fun x => g (x ∘ e)) ↔ P m g)
+    (n : ℕ) :
+    boolFunClassCount IsBoolFunVarPermEquiv (P n)
+      = ∑ i ∈ Finset.range (n + 1),
+          boolFunClassCount IsBoolFunVarPermEquiv (fun f => IsNondegenerateBoolFun f ∧ P i f) := by
+  induction n with
+  | zero =>
+    have hzero : (fun f : (Fin 0 → Bool) → Bool => IsNondegenerateBoolFun f ∧ P 0 f) = P 0 :=
+      funext fun _ => propext ⟨And.right, fun hf => ⟨fun i => Fin.elim0 i, hf⟩⟩
+    rw [Finset.sum_range_one, hzero]
+  | succ n ih =>
+    rw [Finset.sum_range_succ, boolFunClassCount_varPerm_succ P hP n, ih]
 
 namespace boolFunClassCount_varPerm_unate_le
 

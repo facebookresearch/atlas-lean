@@ -21,15 +21,25 @@ algorithm of Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckend
 Representation: An Algorithm to Compute the Distribution and Mixing Properties*, Journal of
 Integer Sequences 27 (2024), Article 24.3.2 (definitions read from arXiv:2309.14285v2).
 
-The main result is `zeckNIZ_cylinder_shift` (Lemma 5.4 in arXiv:2309.14285v2): if the cylinder
+The main results are `zeckNIZ_leading_zeros` (Lemma 5.3 in arXiv:2309.14285v2): for `r ≥ 1`
+and `k ≥ 2`, every Zeckendorf-adic integer in `NIZ_k` has the digits `x_{k+1} = x_k = 0`; and
+`zeckNIZ_cylinder_shift` (Lemma 5.4 in arXiv:2309.14285v2): if the cylinder
 `C_{00 n_{k-1} ⋯ n_2}` lies in `NIZ_k`, then the cylinder `C_{0010 n_{k-1} ⋯ n_2}` lies in
 `NIZ_{k+2}`.
 
-The proof works directly with the prefix values. Let `w` be the value of the common digits
-`n_{k-1} ⋯ n_2`; it is less than `F_k` because no two consecutive digits are `1`. Every point of
-the first cylinder has prefix value `w` at the orders `k - 1` and `k`, so the hypothesis gives
-`F_k ≤ w + r < F_{k+1}`. Every point of the second cylinder has prefix value `w + F_{k+1}` at the
-orders `k + 1` and `k + 2`, and these bounds place it in `CST_{k+2}` but not in `CST_{k+1}`.
+For `zeckNIZ_leading_zeros`, write `v_k = v_{k-1} + x_{k+1} F_{k+1}` and
+`v_{k-1} = v_{k-2} + x_k F_k`, where `v_{k-2} < F_k` and `v_{k-1} < F_{k+1}` because no two
+consecutive digits are `1`. If `x_{k+1} = 1`, then `x_k = 0` and `v_{k-1} < F_k`, and membership
+in `CST_k` forces `v_{k-1} + r < F_k`. If `x_{k+1} = 0` and `x_k = 1`, then
+`F_k ≤ v_k = v_{k-1} < F_{k+1}`, and membership in `CST_k` forces `v_{k-1} + r < F_{k+1}`. Either
+way `x` lies in `CST_{k-1}`, so it is not in `NIZ_k`.
+
+The proof of `zeckNIZ_cylinder_shift` works directly with the prefix values. Let `w` be the value
+of the common digits `n_{k-1} ⋯ n_2`; it is less than `F_k` because no two consecutive digits are
+`1`. Every point of the first cylinder has prefix value `w` at the orders `k - 1` and `k`, so the
+hypothesis gives `F_k ≤ w + r < F_{k+1}`. Every point of the second cylinder has prefix value
+`w + F_{k+1}` at the orders `k + 1` and `k + 2`, and these bounds place it in `CST_{k+2}` but not
+in `CST_{k+1}`.
 -/
 
 namespace MetaMathlibExt
@@ -133,6 +143,48 @@ private theorem prefixValue_lt {x : ℕ → Bool} (hx : x ∈ zeckAdic) :
       omega
 
 end zeckNIZ_cylinder_shift
+
+open zeckNIZ_cylinder_shift in
+/-- **Points of $\mathrm{NIZ}_k$ have leading digits $00$.** Let $r \ge 1$ and $k \ge 2$, and
+let $\mathrm{NIZ}_k$ be the new-information zone of order $k$ for $r$. Every Zeckendorf-adic
+integer $x = (x_i)_{i \ge 2}$ in $\mathrm{NIZ}_k$ has $x_{k+1} = x_k = 0$, that is, the name
+$x_{k+1} \cdots x_2$ of its cylinder of order $k$ starts with $00$.
+
+Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
+An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
+(2024), Article 24.3.2, Lemma 32 (`jis-2024-24.3.2-lem-32`). -/
+public theorem zeckNIZ_leading_zeros {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
+    {x : ℕ → Bool} (hx : x ∈ zeckAdic) (h : x ∈ zeckNIZ r k) :
+    x (k + 1) = false ∧ x k = false := by
+  obtain ⟨j, rfl⟩ : ∃ j, k = j + 2 := ⟨k - 2, by omega⟩
+  change x (j + 3) = false ∧ x (j + 2) = false
+  -- Unfold `x ∈ NIZ_{j+2} = CST_{j+2} \ CST_{j+1}`.
+  have hN : (zeckAdicPrefixValue (j + 2) x + r < Nat.fib (j + 3) ∨
+        (Nat.fib (j + 3) ≤ zeckAdicPrefixValue (j + 2) x ∧
+          zeckAdicPrefixValue (j + 2) x + r < Nat.fib (j + 4))) ∧
+      ¬(zeckAdicPrefixValue (j + 1) x + r < Nat.fib (j + 2) ∨
+        (Nat.fib (j + 2) ≤ zeckAdicPrefixValue (j + 1) x ∧
+          zeckAdicPrefixValue (j + 1) x + r < Nat.fib (j + 3))) :=
+    h
+  -- Peel off the digits `x (j + 3)` and `x (j + 2)` from the prefix values.
+  have e2 : zeckAdicPrefixValue (j + 2) x = zeckAdicPrefixValue (j + 1) x +
+      if x (j + 3) = true then Nat.fib (j + 3) else 0 := prefixValue_succ (j + 1) x
+  have e1 : zeckAdicPrefixValue (j + 1) x = zeckAdicPrefixValue j x +
+      if x (j + 2) = true then Nat.fib (j + 2) else 0 := prefixValue_succ j x
+  -- Zeckendorf words are bounded by the next Fibonacci number.
+  have h0 : zeckAdicPrefixValue j x < Nat.fib (j + 2) := prefixValue_lt hx j
+  have h1 : zeckAdicPrefixValue (j + 1) x < Nat.fib (j + 3) := prefixValue_lt hx (j + 1)
+  have g4 : Nat.fib (j + 4) = Nat.fib (j + 2) + Nat.fib (j + 3) := Nat.fib_add_two
+  cases h3 : x (j + 3)
+  · cases h2 : x (j + 2)
+    · exact ⟨rfl, rfl⟩
+    · -- `x_{k+1} = 0` and `x_k = 1`: then `F_k ≤ v_k = v_{k-1} < F_{k+1}`, so `x ∈ CST_{k-1}`.
+      simp only [h3, h2, Bool.false_eq_true, ite_true, ite_false, add_zero] at e1 e2
+      omega
+  · -- `x_{k+1} = 1` forces `x_k = 0`, and then `v_{k-1} + r < F_k`, so `x ∈ CST_{k-1}`.
+    have h2 : x (j + 2) = false := (hx.2.2 (j + 2)).resolve_right (by simp [h3])
+    simp only [h3, h2, Bool.false_eq_true, ite_true, ite_false, add_zero] at e1 e2
+    omega
 
 open zeckNIZ_cylinder_shift in
 set_option linter.unusedVariables false in

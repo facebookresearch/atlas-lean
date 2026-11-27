@@ -1,15 +1,45 @@
 # Failure detector classes
 
-Consider $n$ processes $\Pi$ in an asynchronous system with reliable channels, and a discrete global clock with ticks $\mathbb{N}$ that the processes cannot read. A *failure pattern* is a function $F$ from times to sets of processes, $F(t)$ being the set of processes that have crashed by time $t$, with $F(t) \subseteq F(t+1)$; processes in $\mathrm{crashed}(F) = \bigcup_t F(t)$ *crash* and the others are *correct*, and at least one process is correct. A *failure detector history* $H$ assigns to each process $p$ and time $t$ the set $H(p, t)$ of processes that $p$ suspects at time $t$, and a *failure detector* $\mathcal{D}$ assigns to each failure pattern $F$ a set $\mathcal{D}(F)$ of histories. For every $F$ and every $H \in \mathcal{D}(F)$:
+The eight failure detector classes pair two completeness conditions with four accuracy
+conditions. The classes $\mathcal{P}$ (perfect), $\mathcal{S}$ (strong), $\Diamond\mathcal{P}$
+(eventually perfect), and $\Diamond\mathcal{S}$ (eventually strong) use strong completeness and,
+respectively, strong, weak, eventual strong, and eventual weak accuracy. The classes
+$\mathcal{Q}$, $\mathcal{W}$, $\Diamond\mathcal{Q}$, and $\Diamond\mathcal{W}$ use weak completeness
+with the same four accuracy conditions, in the same order.
 
-- *strong completeness*: there is a time after which every process that crashes is suspected by every correct process at all times;
-- *weak completeness*: there is a time after which every process that crashes is suspected by some correct process at all times;
-- *strong accuracy*: no process is suspected before it crashes;
-- *weak accuracy*: some correct process is never suspected by any process that has not crashed;
-- *eventual strong accuracy*: there is a time after which no correct process is suspected by any correct process;
-- *eventual weak accuracy*: there is a time after which some correct process is never suspected by any correct process.
+## Model
 
-The classes $\mathcal{P}$ (perfect), $\mathcal{S}$ (strong), $\Diamond\mathcal{P}$ (eventually perfect) and $\Diamond\mathcal{S}$ (eventually strong) consist of the failure detectors with strong completeness and, respectively, strong, weak, eventual strong and eventual weak accuracy; $\mathcal{Q}$, $\mathcal{W}$, $\Diamond\mathcal{Q}$ and $\Diamond\mathcal{W}$ are the corresponding classes with weak completeness.
+The population of processes is finite. The natural-number ticks of the global clock index the
+model; the clock is not available to the processes. A failure pattern $F$ gives the set $F(t)$
+of processes that have crashed by tick $t$, including those crashing at that tick. These sets
+are monotone in $t$. A process is *correct* if it never crashes, and there is at least one
+correct process. It is *alive at tick $t$* if it is not in $F(t)$, even if it crashes later.
+
+A history $H(q,t)$ gives the set of processes suspected by observer $q$ at tick $t$. A detector
+$\mathcal{D}$ assigns a set $\mathcal{D}(F)$ of permitted histories to each pattern $F$.
+The model does not require these sets to be nonempty and does not claim that a detector is
+implementable. Reliable communication is the context of the classification, not part of this
+specification of crash sets and histories.
+
+## Completeness and accuracy
+
+For every pattern $F$ and every history $H\in\mathcal{D}(F)$:
+
+- *Strong completeness:* from some common tick onward, every correct observer suspects every
+  process that crashes.
+- *Weak completeness:* from some common tick onward, each process that crashes is permanently
+  suspected by a fixed correct observer. The observer can differ between crashed processes,
+  but cannot change with the tick.
+- *Strong accuracy:* at each tick, no observer still alive suspects a target still alive.
+- *Weak accuracy:* there is a fixed correct target that no observer suspects at any tick at
+  which that observer is still alive, even if the observer crashes later.
+- *Eventual strong accuracy:* from some tick onward, no correct observer suspects any correct
+  target.
+- *Eventual weak accuracy:* there is a tick and a fixed correct target that no correct observer
+  suspects from that tick onward.
+
+The eventual bounds include the cutoff tick. Because the process set is finite, there is a tick
+after which the set of alive processes equals the fixed set of correct processes.
 
 ## Sources
 
