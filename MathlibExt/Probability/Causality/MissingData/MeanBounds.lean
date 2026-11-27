@@ -17,6 +17,14 @@ With a known outcome range, fixing the law of the response bit and the observed 
 both the response rate and the contribution of respondents to the mean. The remaining
 contribution can be any point from the lower to the upper outcome bound times the nonresponse
 probability, without any missingness or positivity assumption.
+
+## References
+
+* Charles F. Manski, *Partial Identification of Probability Distributions*, Springer, 2003,
+  §1.2 “Means”, Proposition 1.1, <https://doi.org/10.1007/0-387-21786-X_2>.
+* Charles F. Manski, “Anatomy of the Selection Problem”, *Journal of Human Resources* 24(3),
+  1989, pp. 343–360, <https://doi.org/10.2307/145818>, for the earlier support-bound approach
+  to mean regression under selective observation.
 -/
 
 @[expose] public section
@@ -36,14 +44,6 @@ local notation "nonrespondents" => {z : Bool × ℝ | z.1 = false}
 private theorem response_compl : (respondents : Set (Bool × ℝ))ᶜ = nonrespondents := by
   ext ⟨r, y⟩
   cases r <;> simp
-
-private theorem integrable_snd_of_bounded {P : Measure (Bool × ℝ)} [IsFiniteMeasure P]
-    {a b : ℝ} (h : ∀ᵐ z ∂P, z.2 ∈ Set.Icc a b) : Integrable Prod.snd P := by
-  refine (integrable_const (max |a| |b|)).mono' measurable_snd.aestronglyMeasurable ?_
-  filter_upwards [h] with z hz
-  rw [Real.norm_eq_abs]
-  exact abs_le.mpr ⟨(neg_le_neg (le_max_left _ _)).trans ((neg_abs_le _).trans hz.1),
-    hz.2.trans ((le_abs_self _).trans (le_max_right _ _))⟩
 
 private theorem observed_contribution (P : Measure (Bool × ℝ)) :
     (∫ z, z.2 ∂(P.map obsRY)) = ∫ z in respondents, z.2 ∂P := by
@@ -103,23 +103,26 @@ response bit `R` and a real outcome `Y` known to lie in `[a, b]`. Let `q = P(R =
 same observed-data law of `(R, R Y)` and outcome range `[a, b]`, the possible full-data means
 form exactly `[A + (1 - q) a, A + (1 - q) b]`. Every point can be attained by assigning a single
 constant in `[a, b]` to the missing outcomes. The interval includes full and zero response:
-when `q = 1` it reduces to `A`, and when `q = 0` it is `[a, b]`. -/
+when `q = 1` it reduces to `A`, and when `q = 0` it is `[a, b]`.
+
+This is the bounded identity-function case of Manski (2003), Proposition 1.1,
+written without conditioning on the response bit. -/
 theorem missingOutcomeMean_identifiedSet_eq_Icc (P : Measure (Bool × ℝ))
-    [IsProbabilityMeasure P] {a b : ℝ} (hab : a ≤ b) (hP : ∀ᵐ z ∂P, z.2 ∈ Set.Icc a b) :
+    [IsProbabilityMeasure P] {a b : ℝ} (hP : ∀ᵐ z ∂P, z.2 ∈ Set.Icc a b) :
     let q := P.real respondents
     let A := ∫ z, z.2 ∂(P.map obsRY)
     {m : ℝ | ∃ Q : Measure (Bool × ℝ), IsProbabilityMeasure Q ∧
         (∀ᵐ z ∂Q, z.2 ∈ Set.Icc a b) ∧ Q.map obsRY = P.map obsRY ∧
         (∫ z, z.2 ∂Q) = m} = Set.Icc (A + (1 - q) * a) (A + (1 - q) * b) := by
   intro q A
-  have hp := integrable_snd_of_bounded hP
+  have hp := Integrable.of_mem_Icc a b measurable_snd.aemeasurable hP
   have hmass : P.real nonrespondents = 1 - q := nonresponse_mass P
   have hq : 0 ≤ 1 - q := by rw [← hmass]; exact measureReal_nonneg
   ext m
   constructor
   · rintro ⟨Q, hprob, hQ, hobs, rfl⟩
     let : IsProbabilityMeasure Q := hprob
-    have hi := integrable_snd_of_bounded hQ
+    have hi := Integrable.of_mem_Icc a b measurable_snd.aemeasurable hQ
     have hqm : Q.real nonrespondents = 1 - q := by
       rw [nonresponse_mass Q, response_mass_eq hobs]
     have hresp : (∫ z in respondents, z.2 ∂Q) = A := by
@@ -137,7 +140,9 @@ theorem missingOutcomeMean_identifiedSet_eq_Icc (P : Measure (Bool × ℝ))
     change A + (1 - q) * a ≤ m ∧ m ≤ A + (1 - q) * b at hm
     have hw : ∃ t ∈ Set.Icc a b, A + (1 - q) * t = m := by
       rcases hq.eq_or_lt with hz | hpos
-      · simp only [← hz, zero_mul, add_zero] at hm
+      · obtain ⟨_, hz'⟩ := hP.exists
+        have hab : a ≤ b := hz'.1.trans hz'.2
+        simp only [← hz, zero_mul, add_zero] at hm
         exact ⟨a, ⟨le_rfl, hab⟩, by simpa only [← hz, zero_mul, add_zero] using
           (le_antisymm hm.1 hm.2 : A = m)⟩
       · refine ⟨(m - A) / (1 - q), ⟨(le_div_iff₀ hpos).2 ?_, (div_le_iff₀ hpos).2 ?_⟩, ?_⟩

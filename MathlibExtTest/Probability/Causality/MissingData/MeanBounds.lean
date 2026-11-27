@@ -41,8 +41,8 @@ private theorem half_observed_contribution : (∫ z, z.2 ∂(constOutcomeLaw.map
 -- With half the outcomes observed at 1 and the range [0, 2], both endpoints and every interior
 -- point are compatible, and no value outside the interval is compatible.
 example : compatible constOutcomeLaw 0 2 = Set.Icc (1 / 2) (3 / 2) := by
-  have h := missingOutcomeMean_identifiedSet_eq_Icc constOutcomeLaw (by norm_num : (0 : ℝ) ≤ 2)
-    (range_constOutcome (by norm_num [Set.mem_Icc]))
+  have h := missingOutcomeMean_identifiedSet_eq_Icc constOutcomeLaw
+    (range_constOutcome (a := 0) (b := 2) (by norm_num [Set.mem_Icc]))
   change compatible constOutcomeLaw 0 2 = _ at h
   rw [half_response, half_observed_contribution] at h
   norm_num at h ⊢
@@ -51,7 +51,7 @@ example : compatible constOutcomeLaw 0 2 = Set.Icc (1 / 2) (3 / 2) := by
 -- No responses: the entire known range stays compatible.
 example : compatible (Measure.dirac (false, (1 : ℝ))) 0 2 = Set.Icc 0 2 := by
   let P := Measure.dirac (false, (1 : ℝ))
-  have h := missingOutcomeMean_identifiedSet_eq_Icc P (by norm_num : (0 : ℝ) ≤ 2)
+  have h := missingOutcomeMean_identifiedSet_eq_Icc P (a := 0) (b := 2)
     ((ae_dirac_iff (measurable_snd measurableSet_Icc)).2 (by norm_num [Set.mem_Icc]))
   change compatible P 0 2 = _ at h
   simpa [P, Measure.real, Measure.dirac_apply, Measure.map_dirac' measurable_obsRY] using h
@@ -60,14 +60,14 @@ example : compatible (Measure.dirac (false, (1 : ℝ))) 0 2 = Set.Icc 0 2 := by
 -- for missingness by positivity assumptions.
 example : compatible (Measure.dirac (true, (1 : ℝ))) 0 2 = Set.Icc 1 1 := by
   let P := Measure.dirac (true, (1 : ℝ))
-  have h := missingOutcomeMean_identifiedSet_eq_Icc P (by norm_num : (0 : ℝ) ≤ 2)
+  have h := missingOutcomeMean_identifiedSet_eq_Icc P (a := 0) (b := 2)
     ((ae_dirac_iff (measurable_snd measurableSet_Icc)).2 (by norm_num [Set.mem_Icc]))
   change compatible P 0 2 = _ at h
   simpa [P, Measure.real, Measure.dirac_apply, Measure.map_dirac' measurable_obsRY] using h
 
 -- A singleton outcome range also identifies the mean despite nonresponse.
 example : compatible constOutcomeLaw 1 1 = Set.Icc 1 1 := by
-  have h := missingOutcomeMean_identifiedSet_eq_Icc constOutcomeLaw (le_rfl : (1 : ℝ) ≤ 1)
+  have h := missingOutcomeMean_identifiedSet_eq_Icc constOutcomeLaw
     (range_constOutcome ⟨le_rfl, le_rfl⟩)
   change compatible constOutcomeLaw 1 1 = _ at h
   rw [half_response, half_observed_contribution] at h
