@@ -1,6 +1,6 @@
 # Central limit theorems for the allelic frequency spectrum of a splitting tree
 
-**Setting.** As in [the almost-sure limit](almost-sure-limit-of-the-allelic-frequency-spectrum-of-a-splitting-tree.md): a supercritical splitting tree with lifetime law $\mathbb{P}_V$, birth rate $b$, Malthusian parameter $\alpha > 0$ and Laplace exponent $\psi$, neutral Poissonian mutations at rate $\theta$ under infinitely many alleles, population size $N_t$, frequency spectrum $A(k,t)$, martingale limit $\mathcal{E}$ and limiting constants $c_k$ (the number of size-$k$ families per individual, defined there with the factor $W_\theta(a)^{-2}$). All statements are under $\mathbb{P}_\infty$ (conditioned on survival), and $\mathcal{L}(0,K)$ denotes a centered Gaussian law (here on sequences indexed by $k \in \mathbb{N}$, in the sense of finite-dimensional distributions) with covariance $K$.
+**Setting.** As in [the almost-sure limit](almost-sure-limit-of-the-allelic-frequency-spectrum-of-a-splitting-tree.md): a supercritical splitting tree with lifetime law $\mathbb{P}_V$, birth rate $b$, Malthusian parameter $\alpha > 0$ and Laplace exponent $\psi$, neutral Poissonian mutations at rate $\theta$ under infinitely many alleles, population size $N_t$, frequency spectrum $A(k,t)$, martingale limit $\mathcal{E}$ and limiting constants $c_k$ (the number of size-$k$ families per individual, defined there with the factor $W_\theta(a)^{-2}$). All statements are under $\mathbb{P}_\infty$ (conditioned on survival), and $\mathcal{L}(0,K)$ denotes the centered Laplace law with covariance parameter $K$ (here on sequences indexed by $k \in \mathbb{N}$, in the sense of finite-dimensional distributions): the law with characteristic function $\lambda\mapsto\bigl(1+\tfrac12\lambda^\top K\lambda\bigr)^{-1}$, that is, the law of $\sqrt{\mathcal{E}'}\,G$ with $G$ a centered Gaussian vector with covariance $K$ and $\mathcal{E}'\sim\mathrm{Exp}(1)$ independent of $G$.
 
 **Theorem (error of the random-limit approximation).** Assume the clonal subcritical regime $\theta > \alpha$ and $\int_{[0,\infty)} e^{(\theta-\alpha)v}\,\mathbb{P}_V(dv) > 1$. Then
 
@@ -18,7 +18,7 @@ where the covariance $M$ is an explicit integral functional of $\theta$, $W$, $W
 
 $$K_{l,k} = M_{l,k} + c_k c_l\,\frac{\alpha}{b}\Big(1 - 6\,\frac{d}{\alpha}\Big).$$
 
-Both approximations therefore have Gaussian fluctuations of order $e^{\alpha t/2}$, the square root of the population size; replacing the unknown limit $\mathcal{E}$ by the observed $N_t$ removes the extra rank-one term in the covariance.
+Both approximations therefore have fluctuations of order $e^{\alpha t/2}$, the square root of the population size, with a Gaussian variance mixture as limit: the population at time $t$ is about $\mathcal{E}e^{\alpha t}$ with $\mathcal{E}$ exponential under $\mathbb{P}_\infty$, so on the deterministic scale $e^{\alpha t/2}$ the Gaussian fluctuations carry a random variance proportional to $\mathcal{E}$; replacing the unknown limit $\mathcal{E}$ by the observed $N_t$ removes the extra rank-one term in the covariance.
 
 ## Depends on
 

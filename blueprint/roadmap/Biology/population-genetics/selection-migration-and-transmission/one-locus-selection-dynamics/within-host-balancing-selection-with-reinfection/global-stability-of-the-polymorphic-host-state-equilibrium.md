@@ -12,7 +12,7 @@ $$u^0=\frac{2r\eta(1-\eta)^2-(2\eta-1)}{2r\eta^2+4r^2\eta^3(1-\eta)},\qquad u^1=
 
 and $u^\eta=1-u^0-u^1$; $\mathbf u\in\Delta^3$ iff $r\ge r^\ast(\eta)$. If $r>r^\ast(\eta)$, both monomorphic equilibria are saddles and $\mathbf u$ is globally stable on $\Delta^3\setminus\{(1,0,0),(0,0,1)\}$. If $r\le r^\ast(\eta)$, the monomorphic equilibrium of the type favoured at balance (type $A$ if $\eta>1/2$) is globally stable on the simplex minus the other vertex.
 
-**Theorem (maintenance of diversity).** Under moderate selection $s_N=N^{-b}$, frequent reinfection $r_Ns_N\to r>r^\ast(\eta)$, fast parasite reproduction, $M_N$ hosts and a parasite mutation rate $\theta_N=o(r_N)$:
+**Theorem (maintenance of diversity).** Under moderate selection $s_N=N^{-b}$, frequent reinfection $r_Ns_N\to r$ with $r>\max\Big\{\dfrac{\eta}{2(1-\eta)^2},\ \dfrac{1-\eta}{2\eta^2}\Big\}$ (a stronger condition than $r>r^\ast(\eta)$; for $\eta=1/2$ it reads $r>1$ while $r^\ast(1/2)=0$), fast parasite reproduction, $M_N$ hosts and a parasite mutation rate $\theta_N=o(r_N)$:
 
 - started from a monomorphic host population, the host-state proportions enter any $\delta$-neighbourhood of $\mathbf u$ within time $\frac1{c_1\theta_Ns_N}+M_N^\gamma$ with probability tending to $1$;
 - started near $\mathbf u$, the time until type $A$ is lost from all hosts exceeds $\exp(M_N^{1-\gamma})$ with probability tending to $1$, for any $\gamma>0$.
