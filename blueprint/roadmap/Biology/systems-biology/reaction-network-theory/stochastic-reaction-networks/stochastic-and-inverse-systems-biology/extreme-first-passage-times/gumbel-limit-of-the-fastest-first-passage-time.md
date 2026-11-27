@@ -38,8 +38,8 @@ where $\gamma$ is the Euler–Mascheroni constant. Hence $\mathbb{E}[T_N] \sim C
 
 ## Depends on
 
-- [Principal-branch preimages of the Lambert map](../../../../../Analysis/special-functions/elementary-transcendental-functions/lambert-w-function/exists-unique-lambert-map-preimage.md)
-- [Lower-branch preimages of the Lambert map](../../../../../Analysis/special-functions/elementary-transcendental-functions/lambert-w-function/exists-unique-lambert-map-lower-preimage.md)
+- [Principal-branch preimages of the Lambert map](../../../../../../Analysis/special-functions/elementary-transcendental-functions/lambert-w-function/exists-unique-lambert-map-preimage.md)
+- [Lower-branch preimages of the Lambert map](../../../../../../Analysis/special-functions/elementary-transcendental-functions/lambert-w-function/exists-unique-lambert-map-lower-preimage.md)
 
 ## Expansion
 

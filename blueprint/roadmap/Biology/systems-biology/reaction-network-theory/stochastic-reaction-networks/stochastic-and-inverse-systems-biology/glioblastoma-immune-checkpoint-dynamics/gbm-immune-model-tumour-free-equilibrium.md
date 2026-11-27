@@ -22,7 +22,7 @@ Hence the tumor-free equilibrium is locally asymptotically stable if $\lambda_C 
 
 ## Proof depends on
 
-- [Explicit solution of the logistic equation](../../../../population-dynamics/logistic-growth-equation/logistic.md)
+- [Explicit solution of the logistic equation](../../../../../population-dynamics/logistic-growth-equation/logistic.md)
 
 ## Expansion
 
