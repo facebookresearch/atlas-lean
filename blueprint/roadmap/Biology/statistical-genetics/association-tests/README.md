@@ -13,6 +13,5 @@ Probability.
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
 - [Phenome-wide association scans](phenome-wide-association-scans/README.md)
-selection of associated SNPs, and false discovery rate control after one representative is selected
 - [Differentially private GWAS](differentially-private-gwas/README.md)
 - [FDR control after selecting cluster representatives](fdr-control-after-selecting-cluster-representatives/README.md)

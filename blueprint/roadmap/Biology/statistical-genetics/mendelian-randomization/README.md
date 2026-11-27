@@ -50,4 +50,7 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+
+## Correlated cis-instruments
+
 - [Cis-Mendelian randomization with correlated instruments](cis-mendelian-randomization-with-correlated-instruments/README.md)
