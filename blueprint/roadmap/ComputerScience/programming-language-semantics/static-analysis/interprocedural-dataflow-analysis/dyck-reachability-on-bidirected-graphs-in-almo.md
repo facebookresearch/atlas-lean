@@ -4,11 +4,11 @@ Let $k$ be fixed and let $G$ be a bidirected $\Sigma_k$-labeled graph, in the se
 
 ## Depends on
 
+- [Tarjan–van Leeuwen bound for union by rank with path compression](../../../data-structures/disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/run-empty-cost-le-inverse-ackermann.md)
 - [Dyck reachability](dyck-reachability.md)
 
 ## Proof depends on
 
-- [Tarjan–van Leeuwen bound for union by rank with path compression](../../../data-structures/disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/run-empty-cost-le-inverse-ackermann.md)
 - [Dyck reachability on bidirected graphs is symmetric](dyck-reachability-on-bidirected-graphs-is-symm.md)
 
 ## Sources
