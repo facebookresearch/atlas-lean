@@ -1,0 +1,101 @@
+# Shimura's abelian variety attached to a weight-two eigenform
+
+Let $N$ be a positive integer and $\Gamma$ a group of level $N$, that is,
+$\Gamma_1(N) \subset \Gamma \subset \Gamma_0(N)$. Let $J$ be the Jacobian of the
+[modular curve $X_\Gamma$](modular-curve-of-a-group-of-level-n.md) over $\mathbb{Q}$, let
+$\xi_n \in \mathrm{End}(J)$ be the [Hecke endomorphisms](hecke-endomorphisms-of-the-modular-jacobian.md)
+and $T_n$ the [Hecke operators](hecke-operators-of-level-n.md) on the space $S_2(\Gamma)$ of
+[cusp forms](cusp-form.md) of weight $2$ for $\Gamma$. Let
+
+$$f(z) = \sum_{n = 1}^{\infty} a_n e^{2 \pi i n z}, \qquad a_1 = 1,$$
+
+be an element of $S_2(\Gamma)$ that is a common eigenfunction of the $T_n$ for all $n$, that is,
+$f \mid T_n = a_n f$ for all $n \ge 1$, and let $K$ be the subfield of $\mathbb{C}$ generated over
+$\mathbb{Q}$ by the $a_n$ for all $n$.
+
+Then there is a triple $(A, \nu, \theta)$ with the following properties.
+
+- (i) $(A, \nu)$ is a [quotient](../../../AlgebraicGeometry/abelian-varieties/quotient-by-an-abelian-subvariety.md)
+    of $J$ by an abelian subvariety rational over $\mathbb{Q}$: $A$ is an abelian variety over
+    $\mathbb{Q}$ and $\nu \colon J \to A$ is a surjective homomorphism over $\mathbb{Q}$ whose kernel is
+    an abelian subvariety of $J$ defined over $\mathbb{Q}$.
+- (ii) $\theta$ is an isomorphism of $K$ into $\mathrm{End}(A) \otimes \mathbb{Q}$, that is, an injective map
+    preserving sums and products, with
+
+    $$\nu \circ \xi_n = \theta(a_n) \circ \nu \quad \text{in } \mathrm{Hom}(J, A) \otimes \mathbb{Q}
+    \qquad \text{for all } n \ge 1,$$
+
+    where $\mathrm{End}(A)$ and $\mathrm{Hom}(J, A)$ are the endomorphisms and homomorphisms defined
+    over $\mathbb{C}$, that is, of $A_{\mathbb{C}}$ and from $J_{\mathbb{C}}$ to $A_{\mathbb{C}}$. Since
+    $a_1 = 1$ and $\xi_1$ is the identity, this gives $\theta(1) = \mathrm{id}_A$. (The proof shows that
+    the elements of $\theta(K) \cap \mathrm{End}(A)$ are then rational over $\mathbb{Q}$.)
+- (iii) $\dim A = [K : \mathbb{Q}]$; in particular $K$ is a finite extension of $\mathbb{Q}$.
+
+Under the conditions (i) and (ii) the triple is unique up to isomorphism over $\mathbb{Q}$: if
+$(A', \nu', \theta')$ also satisfies (i) and (ii), there is an isomorphism $\varphi \colon A \to A'$ over
+$\mathbb{Q}$ with $\varphi \circ \nu = \nu'$ and $\theta'(a) \circ \varphi = \varphi \circ \theta(a)$ for all
+$a \in K$. (The proof shows that $\nu'$ has the same kernel as $\nu$, so that $(A, \nu)$ and
+$(A', \nu')$ are quotients of $J$ by the same abelian subvariety; $\theta'$ is then determined by (ii),
+because $\nu'$ is surjective and the $a_n$ generate $K$.)
+
+This is the part of Shimura's Theorem 1 that constructs $A$. The theorem further states that for
+every embedding $\sigma \colon K \to \mathbb{C}$ there is an $f_\sigma \in S_2(\Gamma)$ with
+$f_\sigma(z) = \sum a_n^\sigma e^{2 \pi i n z}$ and $f_\sigma \mid T_n = a_n^\sigma f_\sigma$ (printed
+"$f_\sigma \mid T_n = a_n^\sigma f$", a misprint), gives a description
+(iv) of the holomorphic differentials of $A$ pulled back to $J$ in terms of the $f_\sigma$, and, when
+$\Gamma = \Gamma_0(N)$ or $\sum_\sigma \mathbb{C} f_\sigma$ is stable under $h(z) \mapsto h(-1/Nz) / z^2$, an
+identity between the one-dimensional part of the zeta function of $A$ over $\mathbb{Q}$ and
+$\prod_\sigma \sum_n a_n^\sigma n^{-s}$ up to finitely many Euler factors; neither is part of this page.
+
+## Depends on
+
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](modular-curve-of-a-group-of-level-n.md)
+- [Jacobian of a smooth proper curve](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-curves/jacobian.md), for $J$
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md)
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](hecke-operators-of-level-n.md)
+- [Cusp form](cusp-form.md), for $S_2(\Gamma)$
+- [Congruence subgroup $\Gamma_0(N)$](congruence-subgroup-gamma0.md)
+- [Congruence subgroup $\Gamma_1(N)$](congruence-subgroup-gamma1.md)
+- [Quotient of an abelian variety by an abelian subvariety](../../../AlgebraicGeometry/abelian-varieties/quotient-by-an-abelian-subvariety.md)
+- [Abelian scheme](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over $\mathbb{Q}$ and their dimension
+- [Homomorphisms of abelian schemes and commutativity](../../../AlgebraicGeometry/abelian-varieties/homomorphisms-of-abelian-schemes.md), for $\mathrm{Hom}(J, A)$ and $\mathrm{End}(A)$
+
+## Proof depends on
+
+- [Quotient of an abelian variety by an abelian subvariety](../../../AlgebraicGeometry/abelian-varieties/quotient-by-an-abelian-subvariety.md), for the quotient $(A, \nu)$ of $J$ by the abelian subvariety $C$ built from the Hecke algebra
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md), for the rationality of the $\xi_n$ over $\mathbb{Q}$, which makes $C$ and $(A, \nu)$ rational over $\mathbb{Q}$
+
+## Expansion
+
+This node is still to be broken down. A good expansion states and links:
+
+- the isomorphism $\mu \colon S_2(\Gamma) \to D_J$ onto the holomorphic $1$-forms on $J$, defined by
+  $\delta\psi(\mu(f)) = f(z)\,dz$ for the map $\psi \colon \mathfrak{H}^* \to J$, Shimura's relation (1.3),
+  $\mu \circ [\Gamma' \alpha \Gamma]_2 = \delta\{\Gamma' \alpha \Gamma\} \circ \mu'$, and its consequence
+  $\mu \circ T_n = \delta\xi_n \circ \mu$ (p. 525);
+- the description (1.2) of the tangent space at the origin of the kernel of a quotient map
+  $\nu \colon B \to A$ as the annihilator of $\delta\nu(D_A)$;
+- the structure of the subalgebra $\mathfrak{T}$ of $\mathrm{End}(J) \otimes \mathbb{Q}$ generated by the
+  $\xi_n$: $\mathfrak{T} = \mathfrak{R} \oplus \mathfrak{S}$ with $\mathfrak{R}$ the radical of $\mathfrak{T}$ and
+  $\mathfrak{S}$ a commutative semisimple algebra, and the homomorphism $\rho$ of $\mathfrak{T}$ onto $K$
+  with $\rho(\xi_n) = a_n$;
+- the isomorphism of $S_2(\Gamma)$ with $\mathfrak{T}_{\mathbb{C}} = \mathfrak{T} \otimes_{\mathbb{Q}} \mathbb{C}$
+  as $\mathfrak{T}_{\mathbb{C}}$-modules (Shimura's *Introduction to the arithmetic theory of
+  automorphic functions*, Theorem 3.51, as cited on p. 526), which gives $J \neq C$, and the
+  multiplicity $m = 1$ of the representation of $K$ on $D_{A'}$ (p. 527), and so the dimension (iii)
+  and the uniqueness;
+- the fact that a $\mathbb{Q}$-rational action of $K$ on $A'$ makes the representation of $K$ on
+  $D_{A'}$ a multiple of the regular representation of $K$ over $\mathbb{Q}$.
+
+## Sources
+
+- G. Shimura, *On the factors of the jacobian variety of a modular function field*, J. Math. Soc.
+  Japan 25 (1973), 523–544, <https://doi.org/10.2969/jmsj/02530523>: Theorem 1, p. 526, conditions
+  (i)–(iii) and the sentence "Under the conditions (i, ii), the triple $(A, \nu, \theta)$ is unique up to
+  isomorphisms over $\mathbb{Q}$", with the setting of §1, pp. 525–526 (the quotient of an abelian variety
+  by an abelian subvariety, $T_n$ and $\xi_n$, the standard model, the eigenfunction $f$ with $a_1 = 1$
+  and the field $K$); the proof, pp. 526–527 (the algebra $\mathfrak{T}$, the abelian subvariety $C$,
+  [11, Th. 3.51], and the kernel of $\nu'$ in the uniqueness argument).
+- G. Shimura, *Introduction to the Arithmetic Theory of Automorphic Functions*, Publ. Math. Soc.
+  Japan 11, Iwanami Shoten and Princeton University Press, 1971: Theorem 3.51, §7.2 and §7.3, as
+  cited in Shimura (1973) above; not read for this page.

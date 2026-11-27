@@ -8,6 +8,7 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Finite continuous-time Markov chains](finite-continuous-time-markov-chains/README.md)
 - [Finite-dimensional distributions of Markov chains](finite-dimensional-distributions-of-markov-chain/README.md)
 - [Interchange process on the hypercube](interchange-process-on-the-hypercube/README.md)
+- [Jump–hold chains](jump-hold-chains/README.md)
 - [Kolmogorov's criterion for reversibility](kolmogorov-s-criterion-for-reversibility/README.md)
 - [Finite Markov chains](finite-markov-chains/README.md)
 - [Construction of Markov chains](construction-of-markov-chains/README.md)
@@ -25,3 +26,4 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Martingale problems](martingale-problems/README.md)
 - [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
 - [Autoregressive processes](autoregressive-processes/README.md)
+- [Mixing-time bounds](mixing-time-bounds/README.md)

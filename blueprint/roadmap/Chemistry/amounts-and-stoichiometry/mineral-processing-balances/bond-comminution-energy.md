@@ -8,10 +8,6 @@ $E = 0.01\,W_i\bigl(1/\sqrt{P_{80}} - 1/\sqrt{F_{80}}\bigr)$. The cited source i
 by $1000/907.18474$ before using them here. The empirical validity of the law, size-distribution bookkeeping and
 fragmentation models are outside this result.
 
-## Depends on
-
-## Proof depends on
-
 ## Sources
 
 - F. C. Bond, the basic work index equation $W = 10 W_i/\sqrt{P} - 10 W_i/\sqrt{F}$ with sizes in micrometres, reproduced at <https://www.911metallurgist.com/blog/bond-work-index-formula-equation/>.

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.NumberTheory.KGeneralizedFibonacciDiscriminant
 
 namespace MetaMathlibExt
 
@@ -39,33 +40,6 @@ public theorem_wanted abs_discr_kGeneralizedFibonacciPolynomial_mem_iff (k : ℕ
     (F : ℤ → ℤ) (hFzero : ∀ n : ℤ, 2 - (k : ℤ) ≤ n → n < 1 → F n = 0) (hFone : F 1 = 1)
     (hFrec : ∀ n : ℤ, 1 < n → F n = ∑ i ∈ Finset.range k, F (n - 1 - (i : ℤ))) :
     (∃ n : ℕ, |(X ^ k - ∑ i ∈ Finset.range k, X ^ i : ℤ[X]).discr| = F n) ↔ k = 2 ∨ k = 3
-
-/-- **Bounds on the index in Luca's discriminant equation.** Let $k > 100$ be a natural number
-and let $F : \mathbb{Z} \to \mathbb{Z}$ satisfy $F(n) = 0$ for every integer $n$ with
-$2 - k \le n \le 0$, $F(1) = 1$, and $F(n) = F(n-1) + F(n-2) + \cdots + F(n-k)$ for every
-integer $n \ge 2$ (the $k$-generalized Fibonacci sequence). Write
-$L = (k \log k - 2 \log(k-1)) / \log 2$, where $\log$ is the natural logarithm. If a natural
-number $n$ satisfies $F(n)\,(k-1)^2 = 2^{k+1} k^k - (k+1)^{k+1}$, then
-$k + 1.99 + L < n < k + 3.01 + L$.
-
-The equation is the paper's equation (7),
-$F(n) = (2^{k+1} k^k - (k+1)^{k+1}) / (k-1)^2$, multiplied by $(k-1)^2$.
-
-Source: Florian Luca, *On the Discriminant of the k-Generalized Fibonacci Polynomial, II*,
-The Fibonacci Quarterly 62 (2024), no. 3, Lemma 1 (`fq-2024-luca02082024-lem-1`). Equation (7) is
-written after
-multiplying by `(k-1)^2`; `F^{(k)}` is given by its defining properties as in
-`abs_discr_kGeneralizedFibonacciPolynomial_mem_iff`. By Theorem 1 the equation has no
-solution with `k > 100`, so this intermediate bound is implied by that statement. -/
-public theorem_wanted kGeneralizedFibonacci_discr_eq_index_bounds (k : ℕ) (hk : 100 < k)
-    (F : ℤ → ℤ) (hFzero : ∀ n : ℤ, 2 - (k : ℤ) ≤ n → n < 1 → F n = 0) (hFone : F 1 = 1)
-    (hFrec : ∀ n : ℤ, 1 < n → F n = ∑ i ∈ Finset.range k, F (n - 1 - (i : ℤ)))
-    (n : ℕ)
-    (h7 : F n * ((k : ℤ) - 1) ^ 2 = 2 ^ (k + 1) * (k : ℤ) ^ k - ((k : ℤ) + 1) ^ (k + 1)) :
-    (k : ℝ) + 1.99 + ((k : ℝ) * Real.log k - 2 * Real.log ((k : ℝ) - 1)) / Real.log 2 <
-        (n : ℝ) ∧
-      (n : ℝ) < (k : ℝ) + 3.01 +
-        ((k : ℝ) * Real.log k - 2 * Real.log ((k : ℝ) - 1)) / Real.log 2
 
 /-- **Absolute bounds on solutions of Luca's discriminant equation.** Let $k > 100$ be a natural
 number and let $F : \mathbb{Z} \to \mathbb{Z}$ satisfy $F(n) = 0$ for every integer $n$ with
