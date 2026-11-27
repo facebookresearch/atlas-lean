@@ -6,7 +6,6 @@ Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, 
 - [Circuit matrices and register-pair layouts](circuit-matrices-and-register-pair-layouts/README.md)
 - [Polynomially bounded functions](polynomially-bounded-functions/README.md)
 - [Quadratic overhead of single-tape simulation](quadratic-overhead-of-single-tape-simulation/README.md)
-- [Savitch's midpoint recursion for bounded reachability](savitch-s-midpoint-recursion-for-bounded-reachab/README.md)
 - [The classes P, NP and coNP](the-classes-p-np-and-conp/README.md)
 - [Mahaney's theorem](mahaney-s-theorem/README.md)
 - [Polynomial time in a cost-annotated programming model](polynomial-time-in-a-cost-annotated-programming/README.md)

@@ -1445,7 +1445,7 @@
   "CSLibExt/Complexity/KeyTheorems/MajorityNotInAC0": {"to": "TheoryOfComputation/circuit-complexity", "title": "Lower bounds for AC0 circuits"},
   "CSLibExt/Complexity/NPComplete/GraphColoringDefs": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph coloring"},
   "CSLibExt/Complexity/NPComplete/SequencingToMinimizeWeightedTardinessDefs": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Single-machine sequencing"},
-  "CSLibExt/Complexity/Savitch": {"to": "TheoryOfComputation/complexity-classes", "title": "Savitch's midpoint recursion for bounded reachability"},
+  "CSLibExt/Complexity/Savitch": {"to": "TheoryOfComputation/complexity-classes", "title": "Containments between time and space classes"},
   "CSLibExt/Computability/Automata/DA/EncodedDFA": {"to": "TheoryOfComputation/decision-procedures", "title": "Encoded finite automata"},
   "CSLibExt/Computability/Automata/DA/MathlibDFA": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Minimal deterministic automaton"},
   "CSLibExt/Computability/Automata/DA/MyhillNerodeBridge": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Myhill–Nerode theorem"},
