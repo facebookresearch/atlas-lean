@@ -29,6 +29,12 @@ example (g : ℕ) : J g ∈ Sp g := by
   rw [mem_Sp_iff_mem_symplecticGroup, J_eq_neg]
   exact SymplecticGroup.neg_mem (SymplecticGroup.J_mem _ _)
 
+-- The defining equation `ᵗγ J γ = J`, for `γ = J`.
+example (g : ℕ) : (J g)ᵀ * J g * J g = J g :=
+  (mem_Sp_iff g (J g)).mp (by
+    rw [mem_Sp_iff_mem_symplecticGroup, J_eq_neg]
+    exact SymplecticGroup.neg_mem (SymplecticGroup.J_mem _ _))
+
 -- Condition S. 3 holds for every `1 × 1` matrix.
 example (τ : Matrix (Fin 1) (Fin 1) ℂ) : SiegelS3 τ := siegelS3_of_eq_one τ
 

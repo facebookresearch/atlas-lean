@@ -35,10 +35,18 @@ example (x : ℚ) :
       ∑ᶠ v : HeightOneSpectrum (𝓞 ℚ), log (max 1 (HeightOneSpectrum.adicAbv ℚ v x)) := by
   rw [finsum_log_max_one_adicAbv ℚ ℚ x, Module.finrank_self, Nat.cast_one, one_mul]
 
--- `log max(1, a^n) = n log max(1, a)`: `log max(1, 2³) = 3 log 2`, and `max(1, (1/2)³) = 1`.
-example : log (max 1 ((2 : ℝ) ^ 3)) = 3 * log 2 := by
-  rw [log_max_one_pow (by norm_num) 3, max_eq_right (by norm_num)]
-  norm_num
+-- At one place above another: `log max(1, ‖x‖_w) = e f log max(1, ‖x‖_v)`.
+example (K L : Type) [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
+    (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
+    (x : K) :
+    log (max 1 (HeightOneSpectrum.adicAbv L w (algebraMap K L x))) =
+      (w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) : ℕ) *
+        log (max 1 (HeightOneSpectrum.adicAbv K v x)) :=
+  log_max_one_adicAbv_algebraMap_liesOver K L v w x
 
-example : log (max 1 ((1 / 2 : ℝ) ^ 3)) = 0 := by
-  rw [log_max_one_pow (by norm_num) 3, max_eq_left (by norm_num), log_one, mul_zero]
+-- `x = 1`: every term is `log 1 = 0`.
+example (K L : Type) [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
+    (v : HeightOneSpectrum (𝓞 K)) :
+    ∑ᶠ (w : HeightOneSpectrum (𝓞 L)) (_ : w.asIdeal.LiesOver v.asIdeal),
+        log (max 1 (HeightOneSpectrum.adicAbv L w (algebraMap K L 1))) = 0 := by
+  rw [sum_log_max_one_adicAbv_liesOver K L v 1, map_one, max_self, log_one, mul_zero]

@@ -26,9 +26,9 @@ F. Pazuki, *Theta height and Faltings height*, Bull. Soc. Math. France 140 (2012
 ## Main definitions
 
 * `Siegel.upperHalfSpace g`: `𝔖_g`, as a set of matrices `Matrix (Fin g) (Fin g) ℂ`.
-* `Siegel.Sp g`: the integral matrices `γ` with `ᵗγ J γ = J` for `J = (0 1; -1 0)`;
-  `Siegel.mem_Sp_iff_mem_symplecticGroup`: these are the elements of Mathlib's
-  `Matrix.symplecticGroup (Fin g) ℤ`, whose `J` is `(0 -1; 1 0) = -J`.
+* `Siegel.Sp g`: the carrier of Mathlib's `Matrix.symplecticGroup (Fin g) ℤ`;
+  `Siegel.mem_Sp_iff`: these are the integral matrices `γ` with `ᵗγ J γ = J` for
+  `J = (0 1; -1 0)` (Mathlib's `J` is `(0 -1; 1 0) = -J`).
 * `Siegel.smul γ τ`: the matrix `(α τ + β)(λ τ + μ)⁻¹`, with Mathlib's matrix inverse.
 * `Siegel.fundamentalDomain g`: `𝔉_g`.
 
@@ -55,26 +55,34 @@ def upperHalfSpace : Set (Matrix (Fin g) (Fin g) ℂ) :=
 def J : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ :=
   fromBlocks 0 1 (-1) 0
 
-/-- **The integral symplectic group** `Sp_{2g}(ℤ)`: the integral `2g × 2g` matrices `γ` with
-`ᵗγ J γ = J`, `J = (0 1; -1 0)`. -/
+/-- **The integral symplectic group** `Sp_{2g}(ℤ)`, as a set of integral `2g × 2g` matrices: the
+carrier of Mathlib's `Matrix.symplecticGroup (Fin g) ℤ`. By `Siegel.mem_Sp_iff`, these are the
+matrices `γ` with `ᵗγ J γ = J`, `J = (0 1; -1 0)`. -/
 def Sp : Set (Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ) :=
-  {γ | γᵀ * J g * γ = J g}
+  Matrix.symplecticGroup (Fin g) ℤ
 
 theorem J_eq_neg : J g = -Matrix.J (Fin g) ℤ := by
   simp [J, Matrix.J, fromBlocks_neg]
 
-/-- `Sp_{2g}(ℤ)`, defined with `J = (0 1; -1 0)`, is Mathlib's `Matrix.symplecticGroup (Fin g) ℤ`,
-defined with `(0 -1; 1 0) = -J`. -/
-theorem mem_Sp_iff_mem_symplecticGroup (γ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ) :
-    γ ∈ Sp g ↔ γ ∈ Matrix.symplecticGroup (Fin g) ℤ := by
-  rw [SymplecticGroup.mem_iff', Sp, Set.mem_ofPred_eq, J_eq_neg, Matrix.mul_neg, Matrix.neg_mul,
+/-- `Sp_{2g}(ℤ)` is the set of integral `2g × 2g` matrices `γ` with `ᵗγ J γ = J`,
+`J = (0 1; -1 0)`. (Mathlib's `Matrix.symplecticGroup` is defined with `(0 -1; 1 0) = -J`.) -/
+theorem mem_Sp_iff (γ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ) :
+    γ ∈ Sp g ↔ γᵀ * J g * γ = J g := by
+  rw [Sp, SetLike.mem_coe, SymplecticGroup.mem_iff', J_eq_neg, Matrix.mul_neg, Matrix.neg_mul,
     neg_inj]
+
+/-- `Sp_{2g}(ℤ)` is Mathlib's `Matrix.symplecticGroup (Fin g) ℤ`. -/
+theorem mem_Sp_iff_mem_symplecticGroup (γ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ) :
+    γ ∈ Sp g ↔ γ ∈ Matrix.symplecticGroup (Fin g) ℤ :=
+  Iff.rfl
 
 variable {g}
 
-/-- The action `γ · τ = (α τ + β)(λ τ + μ)⁻¹` of an integral `2g × 2g` matrix `γ` with blocks
-`α, β, λ, μ` on a `g × g` complex matrix `τ`. The inverse is Mathlib's `Matrix.inv` (zero for a
-singular matrix). -/
+/-- The matrix `γ · τ = (α τ + β)(λ τ + μ)⁻¹`, for an integral `2g × 2g` matrix `γ` with blocks
+`α, β, λ, μ` and a `g × g` complex matrix `τ`. For `γ ∈ Sp_{2g}(ℤ)` and `τ ∈ 𝔖_g` this is the
+action of `Sp_{2g}(ℤ)` on `𝔖_g` (Pazuki, §2.1); the definition is the formula for all `γ` and
+`τ`, with Mathlib's `Matrix.inv` (zero for a singular matrix), and that it preserves `𝔖_g` is not
+proved here. -/
 noncomputable def smul (γ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ)
     (τ : Matrix (Fin g) (Fin g) ℂ) : Matrix (Fin g) (Fin g) ℂ :=
   ((γ.toBlocks₁₁.map (Int.cast : ℤ → ℂ)) * τ + γ.toBlocks₁₂.map (Int.cast : ℤ → ℂ)) *
@@ -91,7 +99,7 @@ def SiegelS2 (τ : Matrix (Fin g) (Fin g) ℂ) : Prop :=
 
 /-- **Condition S. 3** of Siegel's fundamental domain: for every `k` and every `ξ ∈ ℤ^g` with
 `gcd(ξ_k, …, ξ_g) = 1`, `ᵗξ (Im τ) ξ ≥ Im(τ_{k,k})`; and `Im(τ_{k,k+1}) ≥ 0` for every
-`k < g`. Indices run over `Fin g`, so `k` here is the page's `k - 1`. -/
+`k < g`. Indices run over `Fin g = {0, …, g - 1}`, one less than Pazuki's `1, …, g`. -/
 def SiegelS3 (τ : Matrix (Fin g) (Fin g) ℂ) : Prop :=
   (∀ (k : Fin g) (ξ : Fin g → ℤ), (Finset.univ.filter (k ≤ ·)).gcd ξ = 1 →
       (τ k k).im ≤ ∑ i, ∑ j, (ξ i : ℝ) * (τ i j).im * ξ j) ∧

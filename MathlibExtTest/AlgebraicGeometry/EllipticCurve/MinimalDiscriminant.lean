@@ -41,4 +41,15 @@ example (W : WeierstrassCurve L) [W.IsElliptic] (v : HeightOneSpectrum (𝓞 L))
     v.valuation L W.Δ ≤ WithZero.exp (-(W.minimalDiscriminantOrd v : ℤ)) := by
   simpa using W.minimalDiscriminantOrd_le v 1 (by simpa using h)
 
+-- The explicit scaling `x = c⁻² x'`, `y = c⁻³ y'` that makes any Weierstrass curve integral.
+example (W : WeierstrassCurve L) :
+    ∃ (c : 𝓞 L) (hc : (c : L) ≠ 0), ∀ v : HeightOneSpectrum (𝓞 L),
+      ((⟨(Units.mk0 (c : L) hc)⁻¹, 0, 0, 0⟩ : VariableChange L) • W).IsIntegralAt v :=
+  W.exists_variableChange_isIntegralAt_forall
+
+-- Integrality at `v` is Mathlib's integrality over the valuation ring of `v`.
+example (W : WeierstrassCurve L) (v : HeightOneSpectrum (𝓞 L)) :
+    W.IsIntegralAt v ↔ IsIntegral (v.valuation L).integer W :=
+  W.isIntegralAt_iff_isIntegral v
+
 end WeierstrassCurve

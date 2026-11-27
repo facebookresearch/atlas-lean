@@ -26,18 +26,22 @@ equation is *integral at `𝔭`* if `ord_𝔭(a_i) ≥ 0` for its coefficients, 
 
 * `WeierstrassCurve.IsIntegralAt`, `WeierstrassCurve.minimalDiscriminantOrd`,
   `WeierstrassCurve.minimalDiscriminant`.
+* `WeierstrassCurve.isIntegralAt_iff_isIntegral`: integrality at `v` is Mathlib's
+  `WeierstrassCurve.IsIntegral` over the valuation ring of `v`.
 
 ## Main results
 
-* `WeierstrassCurve.exists_variableChange_isIntegralAt_forall`: there is a variable change
-  `x = c⁻² x'`, `y = c⁻³ y'` with `c ∈ 𝓞 L` nonzero making the equation integral at every `𝔭`.
-* `WeierstrassCurve.exists_minimalDiscriminantOrd`, `WeierstrassCurve.minimalDiscriminantOrd_le`:
-  `δ_𝔭(W)` is attained and is the least such order.
-* `WeierstrassCurve.finite_minimalDiscriminantOrd_ne_zero`: `δ_𝔭(W) = 0` for all but finitely
-  many `𝔭`.
+* `WeierstrassCurve.exists_variableChange_isIntegralAt_forall`: there is a nonzero `c ∈ 𝓞 L`
+  such that the variable change `x = c⁻² x'`, `y = c⁻³ y'` makes the equation integral at
+  every `𝔭`.
+* For `Δ_W ≠ 0`: `WeierstrassCurve.exists_minimalDiscriminantOrd` and
+  `WeierstrassCurve.minimalDiscriminantOrd_le` (`δ_𝔭(W)` is attained and is the least such
+  order) and `WeierstrassCurve.finite_minimalDiscriminantOrd_ne_zero` (`δ_𝔭(W) = 0` for all but
+  finitely many `𝔭`).
 * `WeierstrassCurve.minimalDiscriminant_variableChange`: `Δ_{W/L}` depends only on `W` up to a
   variable change.
-* `WeierstrassCurve.absNorm_minimalDiscriminant`: `N(Δ_{W/L}) = ∏_𝔭 N𝔭 ^ δ_𝔭(W)`.
+* `WeierstrassCurve.absNorm_minimalDiscriminant`: for `Δ_W ≠ 0`,
+  `N(Δ_{W/L}) = ∏_𝔭 N𝔭 ^ δ_𝔭(W)`.
 
 For a discrete valuation ring Mathlib has `WeierstrassCurve.IsMinimal`; this file works with the
 places of a number field directly.
@@ -58,13 +62,22 @@ def IsIntegralAt (W : WeierstrassCurve L) (v : HeightOneSpectrum (𝓞 L)) : Pro
   v.valuation L W.a₁ ≤ 1 ∧ v.valuation L W.a₂ ≤ 1 ∧ v.valuation L W.a₃ ≤ 1 ∧
     v.valuation L W.a₄ ≤ 1 ∧ v.valuation L W.a₆ ≤ 1
 
+/-- **Integrality at a place is integrality over its valuation ring**: `W` is integral at `v`
+if and only if it is integral, in the sense of Mathlib's `WeierstrassCurve.IsIntegral`, over the
+valuation ring `{x ∈ L : v(x) ≤ 1}` of `v`. -/
+theorem isIntegralAt_iff_isIntegral (W : WeierstrassCurve L) (v : HeightOneSpectrum (𝓞 L)) :
+    W.IsIntegralAt v ↔ IsIntegral (v.valuation L).integer W := by
+  constructor
+  · rintro ⟨h₁, h₂, h₃, h₄, h₆⟩
+    exact isIntegral_of_exists_lift _ ⟨⟨_, h₁⟩, rfl⟩ ⟨⟨_, h₂⟩, rfl⟩ ⟨⟨_, h₃⟩, rfl⟩ ⟨⟨_, h₄⟩, rfl⟩
+      ⟨⟨_, h₆⟩, rfl⟩
+  · rintro ⟨W', rfl⟩
+    exact ⟨W'.a₁.2, W'.a₂.2, W'.a₃.2, W'.a₄.2, W'.a₆.2⟩
+
 /-- The discriminant of an equation integral at `v` has `v`-adic valuation at most `1`. -/
 theorem valuation_Δ_le_one_of_isIntegralAt {W : WeierstrassCurve L} {v : HeightOneSpectrum (𝓞 L)}
     (h : W.IsIntegralAt v) : v.valuation L W.Δ ≤ 1 := by
-  obtain ⟨h₁, h₂, h₃, h₄, h₆⟩ := h
-  have : IsIntegral (v.valuation L).integer W :=
-    isIntegral_of_exists_lift _ ⟨⟨_, h₁⟩, rfl⟩ ⟨⟨_, h₂⟩, rfl⟩ ⟨⟨_, h₃⟩, rfl⟩ ⟨⟨_, h₄⟩, rfl⟩
-      ⟨⟨_, h₆⟩, rfl⟩
+  have := (isIntegralAt_iff_isIntegral W v).mp h
   obtain ⟨r, hr⟩ := Δ_integral_of_isIntegral (v.valuation L).integer W
   rw [← hr]
   exact r.2
@@ -90,7 +103,8 @@ theorem exists_valuation_eq_exp_neg {v : HeightOneSpectrum (𝓞 L)} {x : L} (hx
 change `x = c⁻² x'`, `y = c⁻³ y'` (`u = c⁻¹`, `r = s = t = 0`), which multiplies `a_i` by `c^i`,
 gives an equation integral at every finite place of `L`. -/
 theorem exists_variableChange_isIntegralAt_forall :
-    ∃ C : VariableChange L, ∀ v : HeightOneSpectrum (𝓞 L), (C • W).IsIntegralAt v := by
+    ∃ (c : 𝓞 L) (hc : (c : L) ≠ 0), ∀ v : HeightOneSpectrum (𝓞 L),
+      ((⟨(Units.mk0 (c : L) hc)⁻¹, 0, 0, 0⟩ : VariableChange L) • W).IsIntegralAt v := by
   have hden : ∀ a : L, ∃ d : 𝓞 L, d ≠ 0 ∧ ∃ n : 𝓞 L, (d : L) * a = n := by
     intro a
     obtain ⟨⟨n, d⟩, h⟩ := IsLocalization.surj (nonZeroDivisors (𝓞 L)) a
@@ -104,7 +118,7 @@ theorem exists_variableChange_isIntegralAt_forall :
   have hc : (c : L) ≠ 0 := by
     simp only [c, map_mul, ne_eq, mul_eq_zero, RingOfIntegers.coe_eq_zero_iff, not_or]
     exact ⟨⟨⟨⟨hd₁, hd₂⟩, hd₃⟩, hd₄⟩, hd₆⟩
-  refine ⟨⟨(Units.mk0 (c : L) hc)⁻¹, 0, 0, 0⟩, fun v ↦ ?_⟩
+  refine ⟨c, hc, fun v ↦ ?_⟩
   have hv : ∀ m : 𝓞 L, v.valuation L (m : L) ≤ 1 := fun m ↦ by
     rw [HeightOneSpectrum.valuation_of_algebraMap]
     exact v.intValuation_le_one m
@@ -136,12 +150,14 @@ omit [NumberField L] in
 theorem Δ_variableChange_ne_zero [W.IsElliptic] (C : VariableChange L) : (C • W).Δ ≠ 0 :=
   (C • W).isUnit_Δ.ne_zero
 
+/-- For `Δ_W ≠ 0`, some Weierstrass equation of `W` is integral at `v`, so the set of orders
+defining `δ_v(W)` is nonempty. -/
 theorem discriminantOrds_nonempty [W.IsElliptic] (v : HeightOneSpectrum (𝓞 L)) :
     (W.discriminantOrds v).Nonempty := by
-  obtain ⟨C, hC⟩ := W.exists_variableChange_isIntegralAt_forall
-  obtain ⟨n, hn⟩ := exists_valuation_eq_exp_neg (W.Δ_variableChange_ne_zero C)
+  obtain ⟨c, hc, hC⟩ := W.exists_variableChange_isIntegralAt_forall
+  obtain ⟨n, hn⟩ := exists_valuation_eq_exp_neg (W.Δ_variableChange_ne_zero _)
     (valuation_Δ_le_one_of_isIntegralAt (hC v))
-  exact ⟨n, C, hC v, hn⟩
+  exact ⟨n, _, hC v, hn⟩
 
 /-- **The order of the minimal discriminant at a finite place** `v` of `L`: the least
 `ord_v(Δ(C • W))` among the Weierstrass equations `C • W` of `W` that are integral at `v`, over all
@@ -153,7 +169,8 @@ noncomputable def minimalDiscriminantOrd (v : HeightOneSpectrum (𝓞 L)) : ℕ 
 
 /-- **The minimal discriminant** `Δ_{W/L} = ∏_𝔭 𝔭 ^ δ_𝔭(W)` of an elliptic curve over a number
 field `L`, an ideal of `𝓞 L`, the product running over the maximal ideals `𝔭` of `𝓞 L` and
-`δ_𝔭(W)` being `WeierstrassCurve.minimalDiscriminantOrd`.
+`δ_𝔭(W)` being `WeierstrassCurve.minimalDiscriminantOrd`. It is meant for `Δ_W ≠ 0`; for
+`Δ_W = 0` every `δ_𝔭(W)` is `0` and the product is the unit ideal.
 
 Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter II, §3, p. 59:
 a Weierstrass equation over `ℚ` is minimal when a variable change makes its coefficients integers
@@ -162,15 +179,15 @@ local orders are collected into an ideal. -/
 noncomputable def minimalDiscriminant : Ideal (𝓞 L) :=
   ∏ᶠ v : HeightOneSpectrum (𝓞 L), v.asIdeal ^ W.minimalDiscriminantOrd v
 
-/-- **`δ_v(W)` is attained**: some Weierstrass equation `C • W` integral at `v` has
+/-- **`δ_v(W)` is attained.** If `Δ_W ≠ 0`, some Weierstrass equation `C • W` integral at `v` has
 `ord_v(Δ(C • W)) = δ_v(W)`. -/
 theorem exists_minimalDiscriminantOrd [W.IsElliptic] (v : HeightOneSpectrum (𝓞 L)) :
     ∃ C : VariableChange L, (C • W).IsIntegralAt v ∧
       v.valuation L (C • W).Δ = exp (-(W.minimalDiscriminantOrd v : ℤ)) :=
   Nat.sInf_mem (W.discriminantOrds_nonempty v)
 
-/-- **`δ_v(W)` is the least order**: every Weierstrass equation `C • W` integral at `v` has
-`ord_v(Δ(C • W)) ≥ δ_v(W)`, that is, `v(Δ(C • W)) ≤ exp(-δ_v(W))`. -/
+/-- **`δ_v(W)` is the least order.** If `Δ_W ≠ 0`, every Weierstrass equation `C • W` integral at
+`v` has `ord_v(Δ(C • W)) ≥ δ_v(W)`, that is, `v(Δ(C • W)) ≤ exp(-δ_v(W))`. -/
 theorem minimalDiscriminantOrd_le [W.IsElliptic] (v : HeightOneSpectrum (𝓞 L))
     (C : VariableChange L) (hC : (C • W).IsIntegralAt v) :
     v.valuation L (C • W).Δ ≤ exp (-(W.minimalDiscriminantOrd v : ℤ)) := by
@@ -179,10 +196,11 @@ theorem minimalDiscriminantOrd_le [W.IsElliptic] (v : HeightOneSpectrum (𝓞 L)
   rw [hn, exp_le_exp, neg_le_neg_iff, Nat.cast_le]
   exact Nat.sInf_le ⟨C, hC, hn⟩
 
-/-- **`δ_𝔭(W) = 0` for all but finitely many `𝔭`.** -/
+/-- **`δ_𝔭(W) = 0` for all but finitely many `𝔭`**, for `Δ_W ≠ 0`. -/
 theorem finite_minimalDiscriminantOrd_ne_zero [W.IsElliptic] :
     {v : HeightOneSpectrum (𝓞 L) | W.minimalDiscriminantOrd v ≠ 0}.Finite := by
-  obtain ⟨C, hC⟩ := W.exists_variableChange_isIntegralAt_forall
+  obtain ⟨c, hc, hC⟩ := W.exists_variableChange_isIntegralAt_forall
+  set C : VariableChange L := ⟨(Units.mk0 (c : L) hc)⁻¹, 0, 0, 0⟩
   refine (HeightOneSpectrum.Support.finite (𝓞 L) (C • W).Δ⁻¹).subset fun v hv ↦ ?_
   simp only [HeightOneSpectrum.Support, Set.mem_ofPred_eq, map_inv₀]
   have hle := valuation_Δ_le_one_of_isIntegralAt (hC v)
@@ -212,7 +230,7 @@ theorem minimalDiscriminant_variableChange (C : VariableChange L) :
     (C • W).minimalDiscriminant = W.minimalDiscriminant := by
   simp only [minimalDiscriminant, minimalDiscriminantOrd_variableChange]
 
-/-- **The norm of the minimal discriminant**:
+/-- **The norm of the minimal discriminant**: for `Δ_W ≠ 0`,
 `N(Δ_{W/L}) = #(𝓞 L / Δ_{W/L}) = ∏_𝔭 #(𝓞 L / 𝔭) ^ δ_𝔭(W)`. -/
 theorem absNorm_minimalDiscriminant [W.IsElliptic] :
     Ideal.absNorm W.minimalDiscriminant =
