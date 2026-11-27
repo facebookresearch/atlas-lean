@@ -10,7 +10,8 @@
 
 ## Canonical joint law of `(X, H X + Z)`
 
-- [Conditional law of the channel output](cond-distrib-eq-noise-kernel.md)
+Given the input $X = x$, the channel output $HX + Z$ has the law of $Hx + Z$: this is [conditioning on a signal observed in independent additive noise](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-add-of-indep-fun.md) with $f(x) = Hx$.
+
 - [Canonical joint law of `(X, H X + Z)`](map-prod-eq-comp-prod-noise-kernel.md)
 
 ## First and second moments for an arbitrary finite-second-moment input
