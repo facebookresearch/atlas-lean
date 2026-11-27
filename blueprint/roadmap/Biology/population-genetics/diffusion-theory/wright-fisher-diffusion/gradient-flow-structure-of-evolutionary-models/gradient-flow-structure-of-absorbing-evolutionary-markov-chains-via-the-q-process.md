@@ -22,7 +22,7 @@ The Moran process is therefore a time-rescaled entropy-dissipating gradient flow
 
 ## Depends on
 
-- [Moran process as a stochastic matrix](../../moran-model/moran-matrix.md)
+- [Moran process as a stochastic matrix](../../../moran-model/moran-matrix.md)
 
 ## Proof depends on
 

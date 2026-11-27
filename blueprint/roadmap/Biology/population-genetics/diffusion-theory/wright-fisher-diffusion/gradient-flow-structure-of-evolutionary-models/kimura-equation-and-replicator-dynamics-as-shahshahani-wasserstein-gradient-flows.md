@@ -23,7 +23,7 @@ Section 6 argues, without a complete proof, that these structures are compatible
 ## Depends on
 
 - [Gradient-flow structure of absorbing evolutionary Markov chains via the Q-process](gradient-flow-structure-of-absorbing-evolutionary-markov-chains-via-the-q-process.md)
-- [Backward generator of the Wright–Fisher diffusion with selection](../wright-fisher-diffusion/generator.md)
+- [Backward generator of the Wright–Fisher diffusion with selection](../generator.md)
 
 ## Proof depends on
 
