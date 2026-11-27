@@ -1,6 +1,6 @@
 # Kumar: every homogeneous polynomial lies in the border of top-fan-in d+1 depth-three circuits
 
-Over $\mathbb{C}$, every homogeneous polynomial $P$ of degree $d$ in $n$ variables is a limit of polynomials computed by $\Sigma\Pi\Sigma$ circuits of top fan-in at most $d + 1$: there are $\Sigma\Pi\Sigma$ circuits $C_\varepsilon$ of top fan-in $d+1$, whose coefficients are rational functions of $\varepsilon$, with $C_\varepsilon \to P$ as $\varepsilon \to 0$. Moreover, if $P$ has an arithmetic circuit of size $s$, then for every $t \le d$, $P$ lies in the border of $\Sigma\Pi\Sigma$ circuits of top fan-in $s^{O(t)}$ and formal degree $s^{O(d/t)}$. By contrast, some homogeneous quadratics require top fan-in $\Omega(n)$ in exact depth-three circuits.
+Over $\mathbb{C}$, every homogeneous polynomial $P$ of degree $d$ in $n$ variables is a limit of polynomials computed by $\Sigma\Pi\Sigma$ circuits of top fan-in at most $d + 1$: there are $\Sigma\Pi\Sigma$ circuits $C_\varepsilon$ of top fan-in $d+1$, whose coefficients are rational functions of $\varepsilon$, with $C_\varepsilon \to P$ as $\varepsilon \to 0$. Moreover, if $P$ has an arithmetic circuit of size $s \ge d$, then for every $t \le d$, $P$ lies in the border of $\Sigma\Pi\Sigma$ circuits of top fan-in $s^{O(t)}$ and formal degree $s^{O(d/t)}$. By contrast, some homogeneous quadratics require top fan-in $\Omega(n)$ in exact depth-three circuits.
 
 ## Proof sketch
 
