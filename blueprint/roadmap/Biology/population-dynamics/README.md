@@ -24,7 +24,4 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
-- [Interacting species](interacting-species/README.md)
-- [Branching and stochastic populations](branching-and-stochastic-populations/README.md)
-- [Cell and tumour populations](cell-and-tumour-populations/README.md)
-- [Spatial and managed populations](spatial-and-managed-populations/README.md)
+- [Interacting, stochastic and structured populations](interacting-stochastic-and-structured-populations/README.md)

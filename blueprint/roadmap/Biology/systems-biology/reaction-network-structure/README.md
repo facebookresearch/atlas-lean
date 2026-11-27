@@ -2,9 +2,6 @@
 
 Deterministic mass-action reaction networks: steady-state varieties and their bounds, multistationarity, absolute concentration robustness, disguised toric and deficiency-zero realizations, oscillations, limit cycles and chaos.
 
-- [Extended Permanence Conjecture](extended-permanence-conjecture.md)
-- [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
-- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Absolute concentration robustness](absolute-concentration-robustness/README.md)
 - [Bounds on positive equilibria of mass-action networks](bounds-on-positive-equilibria-of-mass-action-networks/README.md)
 - [Chemical chaos and quasi-chemical maps](chemical-chaos-and-quasi-chemical-maps/README.md)

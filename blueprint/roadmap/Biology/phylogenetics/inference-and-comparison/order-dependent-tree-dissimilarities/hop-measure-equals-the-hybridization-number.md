@@ -4,9 +4,9 @@
 
 **HOP vector.** Label each leaf $x$ by $\underline{\sigma(x)}$. For a vertex $v$ let $m(v)$ be the smallest leaf label below $v$; label each internal non-root vertex $v$ with children $v_1, v_2$ by $\max\{m(v_1), m(v_2)\}$, and label $\rho$ by $1$. This puts the non-leaf vertices in bijection with $\{1, \dots, n\}$. For $i = 1, \dots, n$ let $P_i$ be the path from the non-leaf vertex labeled $i$ to the leaf labeled $\underline i$, and let $\mathbf v_i$ be the sequence of labels of the interior vertices of $P_i$. The HOP vector is $[1, \mathbf v_1, \underline 1, \mathbf v_2, \underline 2, \dots, \mathbf v_{n-1}, \underline{n-1}, \underline n]$. For two trees $T, T'$ with HOP blocks $\mathbf u_i, \mathbf v_i$ under $\sigma$,
 
-$$d^\sigma_{\mathrm{HOP}}(T, T') = n - \sum_{i=1}^{n-1} \big|\mathrm{LCS}(\mathbf u_i, \mathbf v_i)\big|,$$
+$$d^\sigma_{\mathrm{HOP}}(T, T') = (n-1) - \sum_{i=1}^{n-1} \big|\mathrm{LCS}(\mathbf u_i, \mathbf v_i)\big|,$$
 
-where LCS is a longest common subsequence; for fixed $\sigma$ this is a metric on $X$-trees. The **HOP measure** is $d^*_{\mathrm{HOP}}(T, T') = \min_\sigma d^\sigma_{\mathrm{HOP}}(T, T')$; it is not a metric (it can violate the triangle inequality).
+where LCS is a longest common subsequence. Each internal non-root vertex $u$ is an interior vertex of exactly one path, $P_{m(u)}$, so the blocks of a tree hold $n-1$ labels in all and $d^\sigma_{\mathrm{HOP}}(T, T')$ is the number of block labels outside a longest common subsequence; in particular $d^\sigma_{\mathrm{HOP}}(T, T) = 0$. For fixed $\sigma$ this is a metric on $X$-trees. The **HOP measure** is $d^*_{\mathrm{HOP}}(T, T') = \min_\sigma d^\sigma_{\mathrm{HOP}}(T, T')$; it is not a metric (it can violate the triangle inequality).
 
 **Hybridization number.** $h(T, T')$ is the minimum number of in-degree-two vertices of a rooted binary phylogenetic network on $X$ displaying both $T$ and $T'$; it equals $m_a(T, T')$, the minimum number of components minus one of an acyclic agreement forest for $T$ and $T'$.
 

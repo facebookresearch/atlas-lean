@@ -28,5 +28,7 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 - [Phylogenetic networks](phylogenetic-networks/README.md)
-- [Tree shape, balance and diversity](tree-shape-and-balance/README.md)
+- [Tree shape and balance](tree-shape-and-balance/README.md)
 
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)

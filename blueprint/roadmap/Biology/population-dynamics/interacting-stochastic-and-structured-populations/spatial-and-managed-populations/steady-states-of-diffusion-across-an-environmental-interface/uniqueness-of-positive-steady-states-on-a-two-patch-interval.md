@@ -24,7 +24,7 @@ Then the problem has a unique positive solution.
 
 ## Depends on
 
-- [Logistic growth equation](../../logistic-growth-equation/README.md)
+- [Logistic growth equation](../../../logistic-growth-equation/README.md)
 
 ## Expansion
 

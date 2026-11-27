@@ -14,7 +14,7 @@ Here $\rho,\rho_m$ are proliferation rates in a shared niche of capacity $1$, $\
 
 ## Depends on
 
-- [Logistic growth equation](../../logistic-growth-equation/README.md)
+- [Logistic growth equation](../../../logistic-growth-equation/README.md)
 
 ## Expansion
 

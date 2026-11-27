@@ -12,7 +12,7 @@ So the bistable switch of multisite phosphorylation survives exchange of any col
 
 ## Depends on
 
-- [Maximal multistationarity of multisite phosphorylation](../maximal-multistationarity-of-multisite-phosphorylation.md)
+- [Maximal multistationarity of multisite phosphorylation](../../maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Lifting nondegenerate multistationarity to networks with intermediates](lifting-nondegenerate-multistationarity-to-networks-with-intermediates.md)
 
 ## Expansion

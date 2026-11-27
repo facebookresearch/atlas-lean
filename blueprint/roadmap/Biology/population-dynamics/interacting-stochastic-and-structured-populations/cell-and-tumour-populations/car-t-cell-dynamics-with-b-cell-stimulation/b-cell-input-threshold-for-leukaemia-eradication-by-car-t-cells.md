@@ -18,7 +18,7 @@ $P_2$ and $P_3$ undergo a transcritical bifurcation: for $I_0>I_0^{\mathrm{crit}
 
 ## Depends on
 
-- [Lotka-Volterra predator-prey model](../../lotka-volterra-predator-prey-model/README.md)
+- [Lotka-Volterra predator-prey model](../../../lotka-volterra-predator-prey-model/README.md)
 
 ## Expansion
 

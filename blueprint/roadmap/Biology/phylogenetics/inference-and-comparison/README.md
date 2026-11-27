@@ -7,7 +7,6 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
 - [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
 - [NP-hardness of maximum parsimony and maximum likelihood tree reconstruction](np-hardness-of-maximum-parsimony-and-maximum-likelihood-tree.md)
-- [Phylogenetic invariants](phylogenetic-invariants/README.md)
 - [Identifiability of phylogenetic tree mixtures](identifiability-of-phylogenetic-tree-mixtures/README.md)
 - [Convergence-divergence models](convergence-divergence-models/README.md)
 - [Distance-based species tree estimation](distance-based-species-tree-estimation/README.md)

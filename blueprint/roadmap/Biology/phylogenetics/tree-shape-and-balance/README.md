@@ -1,8 +1,7 @@
-# Tree shape, balance and diversity
+# Tree shape and balance
 
-Shape statistics of rooted trees: balance indices and their metaconcepts, extremal trees, ranked tree shapes, encodings of trees, the depth of sampled ancestors and phylogenetic diversity.
+Shape statistics of rooted trees: balance indices and their metaconcepts, extremal trees, ranked tree shapes, encodings of trees and the depth of sampled ancestors.
 
-- [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Depth of the mrca of sampled species](depth-of-the-mrca-of-sampled-species/README.md)
 - [F matrices of heterochronous ranked tree shapes](f-matrices-of-heterochronous-ranked-tree-shapes/README.md)
 - [Greedy-from-the-bottom trees](greedy-from-the-bottom-trees/README.md)

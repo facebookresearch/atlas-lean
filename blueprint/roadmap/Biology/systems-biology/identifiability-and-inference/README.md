@@ -2,8 +2,6 @@
 
 Identifiability, reparametrization and experiment design for biochemical and compartmental models, flux profiling, and inference of networks and interventions from data.
 
-- [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
-- [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
 - [Data selection for network reverse engineering](data-selection-for-network-reverse-engineering/README.md)
 - [Identifiability of linear compartmental models](identifiability-of-linear-compartmental-models/README.md)
 - [Identifiability of reaction-network diffusions](identifiability-of-reaction-network-diffusions/README.md)
