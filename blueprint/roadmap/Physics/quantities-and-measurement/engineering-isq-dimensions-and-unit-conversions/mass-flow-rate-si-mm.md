@@ -1,0 +1,3 @@
+# Mass flow rate from metres to millimetres
+
+Let $\mathrm{m}$ be the unit scale with magnitude $1$ at every ISQ base quantity and $\mathrm{mm}$ the one with magnitude $1/1000$ at length and $1$ elsewhere; $\lambda_{\mathrm{m}\to\mathrm{mm}}(d)$ is the factor for converting a coordinate of dimension $d$ from $\mathrm{m}$ to $\mathrm{mm}$. Then $\lambda_{\mathrm{m}\to\mathrm{mm}}(\mathsf{M}\,\mathsf{L}^{-3})\cdot 1000 = 1/1\,000\,000$, $\lambda_{\mathrm{m}\to\mathrm{mm}}(\mathsf{L}\,\mathsf{T}^{-1})\cdot 2 = 2000$, $\lambda_{\mathrm{m}\to\mathrm{mm}}(\mathsf{L}^{2})\cdot\tfrac{1}{100} = 10\,000$, and $\tfrac{1}{1\,000\,000}\cdot 2000\cdot 10\,000 = \lambda_{\mathrm{m}\to\mathrm{mm}}(\mathsf{M}\,\mathsf{T}^{-1})\,(1000\cdot 2\cdot\tfrac{1}{100})$.

@@ -8,5 +8,6 @@ Hardy, Bergman, Dirichlet and Fock spaces and their reproducing kernels, H^∞, 
 - [Fock space](fock-space/README.md)
 - [Hardy space](hardy-space/README.md)
 - [Lacunary power series on the unit disc](lacunary-power-series-on-the-unit-disc/README.md)
+- [Limits of bounded analytic functions along rotated arcs](limits-of-bounded-analytic-functions-along-rotat/README.md)
 - [F. and M. Riesz theorem](riesz-brothers-theorem.md)
 - [Fatou's theorem on radial limits](fatou-radial-limit.md)

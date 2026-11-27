@@ -13,6 +13,4 @@
 - [Synchronizer Observation Budget](synchronizer-observation-budget/README.md)
 - [Synchronous Power Angle](synchronous-power-angle/README.md)
 - [Thermal Interfaces](thermal-interfaces/README.md)
-- [Thermal Power Ports](thermal-power-ports/README.md)
-- [Thermal Trace Certificate](thermal-trace-certificate/README.md)
 - [Thevenin Norton Port](thevenin-norton-port/README.md)
