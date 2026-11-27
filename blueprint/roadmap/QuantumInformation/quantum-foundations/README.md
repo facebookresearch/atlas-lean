@@ -17,6 +17,8 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Superdense coding](superdense-coding.md)
 - [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)
 - [Exact universality of CNOT and single-qubit gates](exact-universality-of-cnot-and-single-qubit-gates.md)
+
+- [At most five mutually unbiased bases in dimension six](mutually-unbiased-bases-dimension-six-upper-five.md)
 - [Tsirelson's Problem and the Connes Embedding Conjecture](tsirelson-problem-and-connes-embedding/README.md)
 - [Pauli Groups, Pauli Twirls and Clifford Observables](pauli-groups-and-clifford-observables/README.md)
 - [Rigidity of Nonlocal Strategies: Linearity and Pauli Tests](rigidity-of-nonlocal-strategies/README.md)

@@ -275,7 +275,11 @@ private lemma chernoff_exponent_eq {t M V D lam : ℝ} (hV : 0 < V) (hD0 : 0 < D
   field_simp
   ring
 
-private lemma bernstein_one_sided {Ω : Type*} [MeasurableSpace Ω]
+/-- One-sided Bernstein bound for a finite family of independent, measurable, centered
+real random variables `Xᵢ` under a probability law `P`. Suppose `M, V, t > 0`,
+`|Xᵢ| ≤ M` almost surely for each `i`, and `∑ᵢ E[Xᵢ²] ≤ V`. Then
+`P(t ≤ ∑ᵢ Xᵢ) ≤ exp(-t² / (2 * (V + M * t / 3)))`. -/
+lemma bernstein_one_sided {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P]
     {n : ℕ} {M V t : ℝ} (hM : 0 < M) (hV : 0 < V) (ht : 0 < t)
     {X : Fin n → Ω → ℝ} (hX : iIndepFun X P) (hXm : ∀ i, Measurable (X i))

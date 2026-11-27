@@ -21,9 +21,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
-
-## Further results
-
+- [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
 - [Algebraic matroid certificates of generic identifiability](algebraic-matroid-certificates-of-generic-identifiability/README.md)
 - [Geometry of tree space](geometry-of-tree-space/README.md)
 - [Sample complexity of tree and ancestral reconstruction](sample-complexity-of-tree-and-ancestral-reconstruction/README.md)

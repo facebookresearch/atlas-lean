@@ -1,6 +1,7 @@
 # Stochastic reaction networks
 
 - [Non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
+- [Stochastic first-passage, immune dynamics, and weak-form estimation](stochastic-and-inverse-systems-biology/README.md)
 - [Couplings of stochastic reaction network simulations](couplings-of-stochastic-reaction-network-simulations/README.md)
 - [First assembly times in stochastic Becker–Döring models](first-assembly-times-in-stochastic-becker-doring-models/README.md)
 - [Multilevel tau-leaping for reaction networks](multilevel-tau-leaping-for-reaction-networks/README.md)

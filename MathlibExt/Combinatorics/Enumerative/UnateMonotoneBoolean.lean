@@ -32,6 +32,8 @@ The paper's variable `x₁` (the top bit of the truth table) is index `0`.
   Article 25.3.4, pp. 1–19. Proposition 14(b), p. 11, gives the class-count equalities for
   balanced functions. The preceding definitions and results are drawn from the same paper.
   <https://cs.uwaterloo.ca/journals/JIS/VOL28/Biswas/biswas6.pdf>
+  Proposition 14(a), p. 11, gives the unrestricted class-count equalities
+  by passing from each unate function to a monotone representative.
 * Valentin Bakoev, *Generating and identification of monotone Boolean functions*, in
   Mathematics and Education in Mathematics: Proceedings of the Thirty Second Spring Conference
   of the Union of Bulgarian Mathematicians (2003), pp. 226–232. Biswas and Sarkar credit the
@@ -1065,6 +1067,35 @@ private theorem classCount_eq_of_restriction
     exact ⟨_, ⟨f, hQP f hf, rfl⟩, hrestrict f⟩
 
 end boolFunClassCount_balanced_unate_eq_monotone
+
+open boolFunClassCount_balanced_unate_eq_monotone (nnEquivalence npnEquivalence
+  classCount_eq_of_restriction) in
+open boolFunClassCount_varPerm_unate_le (exists_monotone_flip) in
+open boolFunClassCount_varPerm_unate_le renaming flip → flipInputs in
+/-- **Unate and monotone functions have equally many NN- and NPN-classes.** For every $n$, the
+number of NN-inequivalent unate $n$-variable Boolean functions equals the number of
+NN-inequivalent monotone ones, and the number of NPN-inequivalent unate $n$-variable Boolean
+functions equals the number of NPN-inequivalent monotone ones. Here monotone means nondecreasing
+for the coordinatewise order with $0 < 1$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 14(a) (`jis-2025-25.3.4-prop-14`). -/
+public theorem boolFunClassCount_unate_eq_monotone (n : ℕ) :
+    boolFunClassCount (n := n) IsBoolFunNNEquiv IsUnateBoolFun
+        = boolFunClassCount (n := n) IsBoolFunNNEquiv Monotone ∧
+      boolFunClassCount (n := n) IsBoolFunNPNEquiv IsUnateBoolFun
+        = boolFunClassCount (n := n) IsBoolFunNPNEquiv Monotone := by
+  have hrep (f : (Fin n → Bool) → Bool) (hf : IsUnateBoolFun f) :
+      ∃ g, Monotone g ∧ IsBoolFunNNEquiv f g := by
+    obtain ⟨a, ha⟩ := exists_monotone_flip hf
+    exact ⟨f ∘ flipInputs a, ha, a, false, fun _ => (Bool.xor_false _).symm⟩
+  refine ⟨classCount_eq_of_restriction nnEquivalence
+    (fun _ => isUnateBoolFun_of_monotone) hrep,
+    classCount_eq_of_restriction npnEquivalence
+      (fun _ => isUnateBoolFun_of_monotone) fun f hf => ?_⟩
+  obtain ⟨g, hg, a, c, h⟩ := hrep f hf
+  exact ⟨g, hg, 1, a, c, h⟩
 
 open boolFunClassCount_balanced_unate_eq_monotone in
 open boolFunClassCount_varPerm_unate_le (flip exists_monotone_flip weight_flip) in
