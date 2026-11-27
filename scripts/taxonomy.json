@@ -13693,6 +13693,7 @@
   "MathlibExt/NumberTheory/LucasPolytopicNumberHasSumInvLucasBracketMulSucc": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/LucasSequence": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LucasSpecialPrime": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
+  "MathlibExt/NumberTheory/LucasTetrahedralRecurrence": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/LurothBorelBernstein": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConsecutiveDigitsIntegral": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConsecutiveDigitsLeVolumeLurothDigitsGe": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
