@@ -140,16 +140,6 @@ theorem degree_principalDivisor {f : RatFunc K} (hf : f ≠ 0) :
     Divisor.degree (principalDivisor hf) = 0 :=
   degree_eq_zero_of_forall_eq_ord (principalDivisor hf) fun _ => rfl
 
-theorem sum_ord_mul_deg_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
-    ∑ v ∈ (finite_setOf_ord_ne_zero hf).toFinset, v.ord f * (v.deg : ℤ) = 0 := by
-  have h1 : (principalDivisor hf : Divisor K (RatFunc K))
-      = ∑ v ∈ (finite_setOf_ord_ne_zero hf).toFinset, Finsupp.single v (v.ord f) :=
-    (Finsupp.sum_single (principalDivisor hf)).symm
-  have h2 := degree_principalDivisor hf
-  rw [h1, map_sum] at h2
-  simp only [Divisor.degree_single] at h2
-  exact h2
-
 end RationalFunctionField
 
 namespace RationalFunctionField
@@ -237,10 +227,6 @@ open AlgebraicCurve.RationalFunctionField
 
 variable {K : Type*} [Field K]
 
-theorem algebraMap_C (c : K) :
-    algebraMap K[X] (RatFunc K) (C c) = algebraMap K (RatFunc K) c := by
-  rw [IsScalarTower.algebraMap_apply K K[X] (RatFunc K), Polynomial.algebraMap_eq]
-
 theorem isRational_placeOfPoint (a : K) : (placeOfPoint K a).IsRational :=
   (Place.isRational_iff_deg_eq_one _).2 (deg_placeOfPoint K a)
 
@@ -253,7 +239,7 @@ theorem evalAt_placeOfPoint_algebraMap (a : K) (q : K[X]) :
     (placeOfPoint K a).algebraMap_mem' _
   have hsub : algebraMap K[X] (RatFunc K) q - algebraMap K (RatFunc K) (q.eval a)
       = algebraMap K[X] (RatFunc K) (q - C (q.eval a)) := by
-    rw [map_sub, algebraMap_C]
+    rw [map_sub, RatFunc.algebraMap_C, ← RatFunc.algebraMap_eq_C]
   have hcongr :
       (placeOfPoint K a).evalAt (isRational_placeOfPoint a) (algebraMap K[X] (RatFunc K) q)
         = (placeOfPoint K a).evalAt (isRational_placeOfPoint a)
@@ -373,13 +359,6 @@ theorem ord_X_sub_C_placeOfPoint_of_ne {a b : K} (hab : a ≠ b) :
     Finsupp.single_eq_of_ne (placeOfPoint_ne_placeInfty K a), add_zero]
 
 omit [DecidableEq (RatFunc K)] in
-theorem ord_X_sub_C_placeOfPoint_self (b : K) :
-    (placeOfPoint K b).ord (algebraMap K[X] (RatFunc K) (X - C b)) = 1 := by
-  classical
-  rw [ord_X_sub_C, Finsupp.add_apply, Finsupp.single_eq_same,
-    Finsupp.single_eq_of_ne (placeOfPoint_ne_placeInfty K b), add_zero]
-
-omit [DecidableEq (RatFunc K)] in
 theorem principalDivisor_X_sub_C_div (a a₀ : K) :
     principalDivisor (div_ne_zero (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a))
         (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)))
@@ -447,9 +426,12 @@ theorem ord_ne_zero_of_mem_support {g : RatFunc K} (hg : g ≠ 0) {v : Place K (
 omit [DecidableEq (RatFunc K)] in
 theorem sum_ord_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
     ∑ v ∈ (principalDivisor hf).support, v.ord f = 0 := by
-  rw [← sum_ord_mul_deg_eq_zero hf]
+  have h := degree_principalDivisor hf
+  rw [← Finsupp.sum_single (principalDivisor hf), Finsupp.sum, map_sum] at h
+  rw [← h]
   exact Finset.sum_congr rfl fun v _ => by
-    rw [deg_eq_one_of_isAlgClosed K v, Nat.cast_one, mul_one]
+    rw [Divisor.degree_single, principalDivisor_apply, deg_eq_one_of_isAlgClosed K v,
+      Nat.cast_one, mul_one]
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
 theorem zpow_sum_eq_prod {c : K} (hc : c ≠ 0) {ι : Type*} (s : Finset ι) (n : ι → ℤ) :
@@ -586,7 +568,8 @@ theorem exists_algebraMap_of_forall_ord_eq_zero {g : RatFunc K} (hg : g ≠ 0)
   have hc₁0 : c₁ ≠ 0 := fun h0 => hnum0 (by rw [← hc₁, h0, map_zero])
   have hc₂0 : c₂ ≠ 0 := fun h0 => hden0 (by rw [← hc₂, h0, map_zero])
   refine ⟨c₁ / c₂, div_ne_zero hc₁0 hc₂0, ?_⟩
-  rw [← g.num_div_denom, ← hc₁, ← hc₂, algebraMap_C, algebraMap_C, map_div₀]
+  rw [← g.num_div_denom, ← hc₁, ← hc₂, RatFunc.algebraMap_C, RatFunc.algebraMap_C,
+    ← RatFunc.algebraMap_eq_C, map_div₀]
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
 theorem crossRatio_reciprocity {a a₀ b : K} (hba : b ≠ a) (hba₀ : b ≠ a₀)
@@ -907,7 +890,7 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
       ord_div_zpow v hg hLb m
     have hg'_b : (placeOfPoint K b).ord
         (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m) = 0 := by
-      rw [hord_g', ord_X_sub_C_placeOfPoint_self, ← hm]
+      rw [hord_g', ord_placeOfPoint_X_sub_C, ← hm]
       ring
     have hsupp' : (principalDivisor hg').support.erase (placeInfty K)
         ⊆ ((principalDivisor hg).support.erase (placeInfty K)).erase (placeOfPoint K b) := by

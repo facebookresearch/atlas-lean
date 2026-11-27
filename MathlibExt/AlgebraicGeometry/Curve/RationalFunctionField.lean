@@ -44,11 +44,9 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceClassification
 import MathlibExt.AlgebraicGeometry.Curve.OrdEqNegLog
-import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationLemmas
-import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
-import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceDeg
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceOrd
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
 
 /-!
 # Principal divisors of the rational function field
@@ -307,107 +305,6 @@ theorem AlgebraicCurve.RationalFunctionField.ord_ofHeightOneSpectrum_of_span {K 
     (RatFunc.algebraMap_ne_zero hp), hval]
   simp [log_exp]
 
-namespace AlgebraicCurve.RationalFunctionField
-
-variable {K : Type*} [Field K]
-
-private theorem single_add_single_apply_eq_ord {vinf : Place K (RatFunc K)}
-    (hvinf : ∀ w : HeightOneSpectrum K[X], vinf ≠ Place.ofHeightOneSpectrum w)
-    {p : K[X]} (hp : Irreducible p) (v : Place K (RatFunc K)) :
-    (Finsupp.single (finitePlace K hp) (1 : ℤ)
-        + Finsupp.single vinf (-(p.natDegree : ℤ))) v
-      = v.ord (algebraMap K[X] (RatFunc K) p) := by
-  have hp0 : p ≠ 0 := hp.ne_zero
-  rw [Finsupp.add_apply]
-  by_cases hfin : ∃ w : HeightOneSpectrum K[X], v = Place.ofHeightOneSpectrum w
-  · obtain ⟨w, rfl⟩ := hfin
-    rw [Finsupp.single_eq_of_ne (hvinf w).symm, add_zero]
-    by_cases hcase :
-        Place.ofHeightOneSpectrum (K := K) (F := RatFunc K) w = finitePlace K hp
-    · rw [hcase, Finsupp.single_eq_same]
-      exact (ord_ofHeightOneSpectrum_of_span (heightOneSpectrumOfIrreducible K hp) hp0
-        (heightOneSpectrumOfIrreducible_asIdeal K hp)).symm
-    · rw [Finsupp.single_eq_of_ne hcase]
-      symm
-      by_contra hne
-      refine hcase ?_
-      have hmem : p ∈ w.asIdeal :=
-        (Place.ord_ofHeightOneSpectrum_ne_zero_iff (K := K) (F := RatFunc K) w hp0).mp hne
-      have hspan : Ideal.span {p} = w.asIdeal :=
-        (PrincipalIdealRing.isMaximal_of_irreducible hp).eq_of_le w.isPrime.ne_top
-          ((Ideal.span_singleton_le_iff_mem _).mpr hmem)
-      have hwp : w = heightOneSpectrumOfIrreducible K hp :=
-        HeightOneSpectrum.ext
-          (hspan.symm.trans (heightOneSpectrumOfIrreducible_asIdeal K hp).symm)
-      rw [hwp]
-      rfl
-  · have hv : ∀ w : HeightOneSpectrum K[X], v ≠ Place.ofHeightOneSpectrum w :=
-      fun w h => hfin ⟨w, h⟩
-    have hveq : v = vinf := subsingleton_setOf_forall_ne_ofHeightOneSpectrum hv hvinf
-    rw [Finsupp.single_eq_of_ne (show v ≠ finitePlace K hp from hv _), zero_add, hveq,
-      Finsupp.single_eq_same,
-      ord_eq_neg_intDegree_of_forall_ne_ofHeightOneSpectrum vinf hvinf (RatFunc.algebraMap_ne_zero
-        hp0),
-      RatFunc.intDegree_polynomial]
-
-private theorem degree_single_add_single {vinf : Place K (RatFunc K)}
-    (hvinf : ∀ w : HeightOneSpectrum K[X], vinf ≠ Place.ofHeightOneSpectrum w)
-    {p : K[X]} (hp : Irreducible p) :
-    Divisor.degree (Finsupp.single (finitePlace K hp) (1 : ℤ)
-        + Finsupp.single vinf (-(p.natDegree : ℤ))) = 0 := by
-  rw [map_add, Divisor.degree_single, Divisor.degree_single,
-    show (finitePlace K hp).deg = p.natDegree from
-      deg_ofHeightOneSpectrum K (heightOneSpectrumOfIrreducible_asIdeal K hp),
-    deg_eq_one_of_forall_ne_ofHeightOneSpectrum vinf hvinf]
-  push_cast
-  ring
-
-end AlgebraicCurve.RationalFunctionField
-
-theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap {K : Type*}
-    [Field K] (q : Polynomial K) : ∀ D : Divisor K (RatFunc K),
-    (∀ v : Place K (RatFunc K), D v = v.ord (algebraMap (Polynomial K) (RatFunc K) q)) →
-    Divisor.degree D = 0 := by
-  classical
-  obtain ⟨vinf, hvinf⟩ := AlgebraicCurve.RationalFunctionField.exists_forall_ne_ofHeightOneSpectrum
-    (K := K)
-  refine UniqueFactorizationMonoid.induction_on_prime q ?_ ?_ ?_
-  · intro D hD
-    have hzero : D = 0 := by
-      ext v
-      simp [hD v]
-    rw [hzero, map_zero]
-  · intro x hx D hD
-    obtain ⟨r, -, rfl⟩ := Polynomial.isUnit_iff.mp hx
-    have hC : (algebraMap K[X] (RatFunc K)) (Polynomial.C r) = algebraMap K (RatFunc K) r := by
-      rw [← Polynomial.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
-    have hzero : D = 0 := by
-      ext v
-      rw [hD v, hC, v.ord_algebraMap]
-      simp
-    rw [hzero, map_zero]
-  · intro a p ha hp ih D hD
-    have hp' : algebraMap K[X] (RatFunc K) p ≠ 0 := RatFunc.algebraMap_ne_zero hp.ne_zero
-    have ha' : algebraMap K[X] (RatFunc K) a ≠ 0 := RatFunc.algebraMap_ne_zero ha
-    set Dp : Divisor K (RatFunc K) :=
-      Finsupp.single (AlgebraicCurve.RationalFunctionField.finitePlace K hp.irreducible) (1
-        : ℤ)
-        + Finsupp.single vinf (-(p.natDegree : ℤ)) with hDp_def
-    have hDp : ∀ v : Place K (RatFunc K), Dp v = v.ord (algebraMap K[X] (RatFunc K) p) :=
-      fun v => AlgebraicCurve.RationalFunctionField.single_add_single_apply_eq_ord hvinf
-        hp.irreducible v
-    have hDa : ∀ v : Place K (RatFunc K),
-        (D - Dp) v = v.ord (algebraMap K[X] (RatFunc K) a) := by
-      intro v
-      rw [Finsupp.sub_apply, hD v, hDp v, map_mul, v.ord_mul hp' ha']
-      ring
-    have hdeg_p : Divisor.degree Dp = 0 :=
-      AlgebraicCurve.RationalFunctionField.degree_single_add_single hvinf hp.irreducible
-    have hdeg_a : Divisor.degree (D - Dp) = 0 := ih (D - Dp) hDa
-    have hsplit : D = Dp + (D - Dp) := by abel
-    rw [hsplit, map_add, hdeg_p, zero_add]
-    exact hdeg_a
-
 theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K : Type*} [Field K]
     {f : RatFunc K} (D : Divisor K (RatFunc K)) (hD : ∀ v : Place K (RatFunc K), D v = v.ord f) :
     Divisor.degree D = 0 := by
@@ -416,30 +313,15 @@ theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K 
       ext v
       simp [hD v]
     rw [hzero, map_zero]
-  · have hden : f.denom ≠ 0 := f.denom_ne_zero
-    have hdenF : algebraMap K[X] (RatFunc K) f.denom ≠ 0 := RatFunc.algebraMap_ne_zero hden
-    set Dden : Divisor K (RatFunc K) :=
-      Finsupp.ofSupportFinite
-        (fun v : Place K (RatFunc K) => v.ord (algebraMap K[X] (RatFunc K) f.denom))
-        (AlgebraicCurve.RationalFunctionField.finite_setOf_ord_ne_zero hdenF) with hDden_def
-    have hDden : ∀ v : Place K (RatFunc K),
-        Dden v = v.ord (algebraMap K[X] (RatFunc K) f.denom) := fun v => rfl
-    have hsplit : ∀ v : Place K (RatFunc K),
-        (D + Dden) v = v.ord (algebraMap K[X] (RatFunc K) f.num) := by
-      intro v
-      rw [Finsupp.add_apply, hD v, hDden v]
-      have hmul : f * algebraMap K[X] (RatFunc K) f.denom
-          = algebraMap K[X] (RatFunc K) f.num :=
-        ((div_eq_iff hdenF).mp f.num_div_denom).symm
-      have h2 := v.ord_mul hf hdenF
-      rw [hmul] at h2
-      exact h2.symm
-    have h1 := AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap
-      f.num (D + Dden) hsplit
-    have h2 := AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap
-      f.denom Dden hDden
-    rw [map_add, h2, add_zero] at h1
-    exact h1
+  · obtain ⟨E, hE, hdeg⟩ :=
+      (AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors K).exists_divisor f hf
+    rw [show D = E from Finsupp.ext fun v => (hD v).trans (hE v).symm, hdeg]
+
+theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap {K : Type*}
+    [Field K] (q : Polynomial K) : ∀ D : Divisor K (RatFunc K),
+    (∀ v : Place K (RatFunc K), D v = v.ord (algebraMap (Polynomial K) (RatFunc K) q)) →
+    Divisor.degree D = 0 :=
+  fun D hD => AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord D hD
 
 namespace AlgebraicCurve.RationalFunctionField
 
