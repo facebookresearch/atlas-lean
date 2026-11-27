@@ -72,7 +72,7 @@ covering a finite set of biallelic sites (Jun et al. 2012, Equations 1 and 2).
 
 open scoped NNReal ENNReal
 
-namespace Domains.Biology.Bioinformatics.Contamination.ReadMixture
+namespace Domains.Biology.StatisticalGenetics.ReadMixtureContamination
 
 open MathlibExt.Biology.PopulationGenetics
 
@@ -469,4 +469,4 @@ theorem arrayLikelihood_eq (s : ι → Site) (pop : ι → PMF (Bool × Bool)) (
   refine Finset.sum_congr rfl fun ε _ => ?_
   ring
 
-end Domains.Biology.Bioinformatics.Contamination.ReadMixture
+end Domains.Biology.StatisticalGenetics.ReadMixtureContamination

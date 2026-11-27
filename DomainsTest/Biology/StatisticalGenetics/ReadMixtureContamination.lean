@@ -8,15 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Domains.Biology.Bioinformatics.Contamination.ReadMixture
+public import Domains.Biology.StatisticalGenetics.ReadMixtureContamination
 
 @[expose] public section
 
-open Domains.Biology.Bioinformatics.Contamination.ReadMixture
+open Domains.Biology.StatisticalGenetics.ReadMixtureContamination
 open MathlibExt.Biology.PopulationGenetics
 open scoped NNReal ENNReal
 
-namespace DomainsTest.Biology.Bioinformatics.Contamination.ReadMixture
+namespace DomainsTest.Biology.StatisticalGenetics.ReadMixtureContamination
 
 /-! ### Base calls (Table 1 of Jun et al. 2012)
 
@@ -154,4 +154,4 @@ example (r : ℝ) : arrayGenotypeProb 0 r 0 = 1 - r ∧ arrayGenotypeProb 0 r 1 
   refine ⟨?_, ?_, ?_⟩ <;>
     simp [arrayGenotypeProb, genotypeGivenArray, genotypingErrorProb] <;> ring
 
-end DomainsTest.Biology.Bioinformatics.Contamination.ReadMixture
+end DomainsTest.Biology.StatisticalGenetics.ReadMixtureContamination
