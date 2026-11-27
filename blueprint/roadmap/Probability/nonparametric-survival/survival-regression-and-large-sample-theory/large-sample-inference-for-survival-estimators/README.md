@@ -1,6 +1,7 @@
 # Large-sample inference for survival estimators
 
-- [Observed cell of a censored subject](cell.md)
+The observed cell of a subject with grid times $(T, C)$ is $(\min(T, C), \mathbf 1\{T \le C\})$, the [observation map of right-censored grid times](../identifiability-under-censoring/censored-obs-map-2.md).
+
 - [Observed censoring mass](obs-cens-mass.md)
 - [Cell probability vector](cell-probs.md)
 - [Empirical cell proportions](cell-proportions.md)

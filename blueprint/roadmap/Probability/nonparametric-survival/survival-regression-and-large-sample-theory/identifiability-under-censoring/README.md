@@ -4,7 +4,6 @@
 - [Observed-data law of right-censored times](censored-obs-law.md)
 - [Observable set of a censoring law](observable-set.md)
 - [The observable set is a down-set](observable-set-downward.md)
-- [Times up to the horizon are observable](iic-subset-observable-set.md)
 - [Nothing after the end of censoring is observable](observable-set-subset-iic.md)
 - [Law of observed failures under censoring](censored-obs-law-apply-prod-true.md)
 - [Law of observed censorings](censored-obs-law-apply-prod-false.md)
