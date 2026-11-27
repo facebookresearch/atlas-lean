@@ -20,3 +20,7 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 - [Discrete Jordan curve theorem for the square lattice](discrete-jordan-curve-theorem-for-the-square-lat/README.md)
 - [Hopf's Umlaufsatz for lattice polygons](hopf-s-umlaufsatz-for-lattice-polygons/README.md)
 - [Crossing points of the regular drawing of the complete bipartite graph](legendre-regular-crossing.md)
+- [Constant-distortion L¹ embedding of planar graph metrics](planar-metrics-l1-distortion.md)
+- [Ordinary crossing formula for complete bipartite graphs](complete-bipartite-ordinary-crossing-number.md)
+- [Hill formula for the ordinary crossing number of complete graphs](complete-graph-ordinary-crossing-number.md)
+- [Hamiltonian cycle in a cubic bipartite three-connected planar graph](barnette-hamiltonian-cycle.md)
