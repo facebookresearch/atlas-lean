@@ -1,6 +1,6 @@
 # Frankl-Wilson explicit Ramsey graphs
 
-For a prime $p$, the graph on $\binom{[p^3]}{p^2 - 1}$ in which two sets are adjacent iff their intersection size is $\equiv -1 \pmod p$ is $K$-Ramsey with $K = \binom{p^3}{p-1}$. In terms of the number of vertices $N$, this gives explicit $K$-Ramsey graphs with $K = 2^{O(\sqrt{\log N \log\log N})}$.
+For a prime $p$, the graph on $\binom{[p^3]}{p^2 - 1}$ in which two sets are adjacent iff their intersection size is $\equiv -1 \pmod p$ has no clique and no independent set on more than $\binom{p^3}{p-1}$ vertices, so it is $K$-Ramsey with $K = \binom{p^3}{p-1}+1$. In terms of the number of vertices $N$, this gives explicit $K$-Ramsey graphs with $K = 2^{O(\sqrt{\log N \log\log N})}$.
 
 ## Proof sketch
 

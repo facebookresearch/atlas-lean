@@ -162,21 +162,6 @@ public theorem_wanted hbcAdmissible_seven_tenths_prod_le (k : ℕ) (hk : 3 ≤ k
     ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
       2 / 7 * (Real.sqrt 15 ^ 2 ^ k - Real.sqrt 15 ^ 2 ^ (k - 1))
 
-/-- **Product bound for prime tuples at $1/2$ starting at $5$.** Let $p_1 < p_2 < \dots < p_k$ be
-primes with $\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 = 5$.
-Put $x = \sqrt{8/3^{31/32}}$. Then $\prod_{i=1}^{k} p_i \le x^{2^k} - x^{2^{k-1}}$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 8. -/
-public theorem_wanted hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ → ℕ) (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
-    (hprime : ∀ i ∈ Finset.Icc 1 k, (y i).Prime)
-    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ 1 / 2)
-    (hlt : 1 / 2 < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ)))
-    (h5 : y 1 = 5) :
-    ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
-      Real.sqrt (8 / (3 : ℝ) ^ ((31 : ℝ) / 32)) ^ 2 ^ k -
-        Real.sqrt (8 / (3 : ℝ) ^ ((31 : ℝ) / 32)) ^ 2 ^ (k - 1)
-
 end
 
 end MetaMathlibExt
