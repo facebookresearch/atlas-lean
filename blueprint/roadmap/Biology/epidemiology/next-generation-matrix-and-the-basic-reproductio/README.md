@@ -13,3 +13,4 @@
 
 - [Spectral bound and reproduction number for infinite-dimensional population structure](spectral-bound-and-reproduction-number-for-infinite-dimensional-structure.md)
 - [Threshold dynamics of compartmental epidemic models in periodic environments](threshold-dynamics-in-periodic-environments.md)
+- [SIR model with imperfect testing and quarantine](sir-model-with-imperfect-testing-and-quarantine.md)
