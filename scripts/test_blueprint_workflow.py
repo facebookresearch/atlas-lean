@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -832,6 +833,63 @@ elif "/compare/" in path:
         self.assertEqual((keep["with"]["name"], keep["with"]["path"], keep["with"]["if-no-files-found"]),
                          ("tasks", "build/tasks.json", "error"))
 
+    def test_the_nodes_to_expand_are_published_with_the_task_lists_commit(self):
+        # CONTRIBUTING.md, Picking a task: graph-tasks.json, from the index the render wrote, after tasks.json and
+        # before MkDocs copies site-src/ into the site. Only `next_task.py --graph` needs it, so it cannot fail the job.
+        name = "List the nodes still to expand"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Keep the task list") + 1)
+        self.assertLess(names.index(name), names.index("Build the Markdown site"))
+        self.assertTrue(step["continue-on-error"])
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "build").mkdir()
+            (root / "site-src" / "dependencies").mkdir(parents=True)
+            (root / "build" / "tasks.json").write_text(json.dumps({"commit": "c" * 40, "commit_date": "2026-11-27"}))
+            nodes = [{"id": "Algebra", "kind": "scope", "status": "not_ready", "route": "../roadmap/Algebra/"},
+                     {"id": "Algebra/a", "kind": "node", "status": "not_ready", "title": "A",
+                      "route": "../roadmap/Algebra/index.html#a"},
+                     {"id": "Algebra/b", "kind": "node", "status": "can_state", "route": "../roadmap/Algebra/b.html"},
+                     # A node to expand without a usable route is still listed, with no page.
+                     {"id": "Algebra/c", "kind": "node", "status": "not_ready", "title": "C"},
+                     {"id": "Algebra/d", "kind": "node", "status": "not_ready", "title": "D", "route": 7}]
+            index = root / "site-src" / "dependencies" / "index.json"
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": nodes}))
+            script = step["run"]
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            published = json.loads((root / "site-src" / "graph-tasks.json").read_text())
+            self.assertEqual(published, {"schema": next_task.GRAPH_SCHEMA, "commit": "c" * 40,
+                                         "commit_date": "2026-11-27", "nodes": [
+                                             {"node_id": "Algebra/a", "title": "A",
+                                              "page": "roadmap/Algebra/index.html#a"},
+                                             {"node_id": "Algebra/c", "title": "C", "page": None},
+                                             {"node_id": "Algebra/d", "title": "D", "page": None}]})
+            # next_task.py reads what the step writes.
+            with mock.patch.object(next_task, "request", lambda url: json.dumps(published).encode()):
+                self.assertEqual([item["node_id"] for item in next_task.load_graph({"commit": "c" * 40,
+                                                                                    "commit_date": "2026-11-27"})],
+                                 ["Algebra/a", "Algebra/c", "Algebra/d"])
+            # An index with no node to expand gives an empty list.
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": [nodes[2]]}))
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads((root / "site-src" / "graph-tasks.json").read_text())["nodes"], [])
+            # Another format, a node without its kind or status, or a node to expand without an id, or one id twice,
+            # leaves no file.
+            for wrong in ({"nodes": nodes}, {"schema": "autoform-dag-search/v1", "nodes": "x"},
+                          {"schema": "autoform-dag-search/v1", "nodes": [{"id": "Algebra/c", "kind": "node"}]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [nodes[1], nodes[1]]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [dict(nodes[1], id=" ")]}):
+                (root / "site-src" / "graph-tasks.json").unlink(missing_ok=True)
+                index.write_text(json.dumps(wrong))
+                result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+                self.assertNotEqual(result.returncode, 0, wrong)
+                self.assertFalse((root / "site-src" / "graph-tasks.json").exists(), wrong)
+
     def run_task_step(self, output: str, status: int = 0, files: dict[str, str] | None = None):
         """Run the task step in a fixture checkout of *files*, with an Autoform that writes *output* and exits with
         *status*."""
@@ -1036,6 +1094,72 @@ elif "/compare/" in path:
         self.assertEqual((full["with"]["name"], full["with"]["path"]), ("blueprint-site-full", "site-full"))
         # A run of main, as the `changes` job decides, whether or not the site is published.
         self.assertEqual(full["if"], "needs.changes.outputs.main == 'true'")
+
+    def test_a_site_that_does_not_keep_the_moved_addresses_is_neither_kept_nor_published(self):
+        # The card pages hook keeps the move ledger's old addresses or only says why it cannot, and MkDocs builds the
+        # site without them. The step after the site's checks fails the job instead, on every build, a pull request's
+        # too, before the site is kept, packed or uploaded: no later step but the diagnostics runs, and neither do the
+        # Mathlib pages or the deployment, which need the job.
+        name = "Check that the site keeps the moved addresses"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Check routes, anchors, and article cards") + 1)
+        self.assertEqual(names.index("Keep dependency diagnostics"), names.index(name) + 1)
+        for later in ("Keep the built site", "Pack the site for GitHub Pages", "Check the packed site",
+                      "Upload Pages artifact"):
+            self.assertLess(names.index(name), names.index(later))
+        for key in ("if", "continue-on-error"):
+            self.assertNotIn(key, step)
+        for later in self.steps[names.index(name) + 2:]:
+            for function in ("always()", "failure()", "cancelled()"):
+                self.assertNotIn(function, later.get("if", ""), later["name"])
+        for job in ("mathlib-pages", "deploy"):
+            self.assertIn("wiki", self.workflow["jobs"][job]["needs"])
+            self.assertNotIn("always()", self.workflow["jobs"][job].get("if", ""))
+        # It checks the hook's own table against the hook's own ledger, the frozen file, and its fragments: a table is
+        # the hook's when it starts with the line the hook's moves_script writes first, which a file of that name from
+        # the theme, also copied into the site, would not.
+        hook = (ROOT / "hooks" / "card_pages.py").read_text()
+        table, ledger = (re.search(rf'(?m)^{constant} = "([^"]+)"$', hook).group(1)
+                         for constant in ("SCRIPT", "LEDGER"))
+        script = step["run"]
+        self.assertIn("set -euo pipefail", script)
+        self.assertIn(f"table={table}\n", script)
+        self.assertIn(f"[[ -f {ledger} ]]", script)
+        self.assertNotIn("${{", script)
+        header = re.search(r"(?m)^header='([^']*)'$", script).group(1)
+        written = re.search(r'(?s)\ndef moves_script\(.*?\n    return \(\n        "(.*?)\\n"', hook)
+        self.assertEqual(written.group(1), header)
+        row = '{"page": "A/old", "to": "A/new", "article_id": "af_' + "0" * 24 + '"}\n'
+        fragment = "scripts/card-moves.d/20261127T000000Z-move.jsonl"
+        made = header + "\n   rewritten to where the address leads before the explorer starts. */\n"
+        cases = [
+            # A row and the hook's table: the site keeps the moved addresses.
+            ({ledger: row, f"site/{table}": made}, 0),
+            # A row, and no table, an empty one, one that is not the hook's, as the theme's would be, or one from the
+            # site source, which the hook never replaces (it then keeps nothing).
+            ({ledger: row}, 1),
+            ({ledger: row, f"site/{table}": ""}, 1),
+            ({ledger: row, f"theme/{table}": "var moves = {};\n", f"site/{table}": "var moves = {};\n"}, 1),
+            ({ledger: row, f"site/{table}": made, f"site-src/{table}": made}, 1),
+            # A row in a fragment only.
+            ({ledger: "", fragment: row, f"site/{table}": made}, 0),
+            ({ledger: "", fragment: row}, 1),
+            # No row, blank lines aside: the hook writes no table.
+            ({ledger: ""}, 0),
+            ({ledger: "\n \t\n"}, 0),
+            # No frozen file is no empty ledger: the hook keeps nothing.
+            ({}, 1),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for files, expected in cases:
+                root = Path(tempfile.mkdtemp(dir=directory))
+                for path, text in files.items():
+                    (root / path).parent.mkdir(parents=True, exist_ok=True)
+                    (root / path).write_text(text)
+                run = subprocess.run(["bash", "-c", script], cwd=root, capture_output=True, text=True)
+                self.assertEqual(run.returncode, expected, (files, run.stdout, run.stderr))
+                self.assertEqual("::error title=Moved addresses not kept::" in run.stdout, bool(expected), run.stdout)
 
     def test_the_mathlib_pages_cannot_hold_back_the_site(self):
         # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the

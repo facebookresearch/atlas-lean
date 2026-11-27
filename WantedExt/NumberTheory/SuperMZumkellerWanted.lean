@@ -46,9 +46,10 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Data.Nat.Factors
 public import MathlibExt.NumberTheory.SuperMZumkeller
+public import MathlibExt.NumberTheory.SuperMZumkellerFactorization
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerFourNotKmPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff
@@ -59,18 +60,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.SuperMZumkellerWanted
-
-/-- **Criterion for super-m-Zumkeller numbers.** Let $n \ge 2$ be an integer, let $\tau(n)$ be the
-number of positive divisors of $n$ and $T(n)$ their product. Then $n$ is super-m-Zumkeller if and
-only if $8$ divides $\alpha \cdot \tau(n) \cdot \tau(T(n))$ for every prime $p$ dividing $n$,
-where $\alpha$ is the exponent of $p$ in $n$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 2. -/
-theorem_wanted isSuperMZumkeller_iff (n : ℕ) (hn : 2 ≤ n) :
-    IsSuperMZumkeller n ↔
-      ∀ p ∈ n.primeFactors,
-        8 ∣ (n.factorization p) * n.divisors.card *
-          (divisorProd n).divisors.card
 
 /-- **Powers of $2$ times at least three distinct odd primes are super-m-Zumkeller.** Let $k$ be
 a natural number and $S$ a finite set of at least three odd primes. Then $2^k \prod_{p \in S} p$
