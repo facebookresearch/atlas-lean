@@ -32,12 +32,13 @@ In Lean the integral is Mathlib's `mellinInv σ (fun s => ((s - a) ^ m)⁻¹) x`
 
 Instead of shifting the contour, we compute a forward Mellin transform and apply Mathlib's
 Mellin inversion theorem `mellinInv_mellin_eq`. Let
-`g_n(t) = (max 0 (-log t))^n / n!`, so `g_n(t) = |log t|^n/n!` for `t ≤ 1` and `g_n(t) = 0` for
-`t ≥ 1`; for `n ≥ 1` it is continuous on `(0, ∞)`. The substitution `t = e^{-y}` and the
-complex Gamma-type integral `∫_0^∞ y^n e^{-wy} dy = n!/w^{n+1}` (`Re w > 0`, proved by induction
-with integration by parts) give `𝓜 g_n (w) = w^{-(n+1)}`. Hence the Mellin transform of
-`f(t) = t^{-a} g_{m-1}(t)` is `(s - a)^{-m}` on `Re s > a`, which is integrable along vertical
-lines because `m ≥ 2`, and Mellin inversion returns `f(x)`.
+`g_n(t) = (max 0 (-log t))^n / n!`. For `n ≥ 1`, `g_n(t) = |log t|^n/n!` for `0 < t ≤ 1` and
+`g_n(t) = 0` for `t ≥ 1`, and `g_n` is continuous on `(0, ∞)`. For `n ≥ 1` the substitution
+`t = e^{-y}` and the complex Gamma-type integral `∫_0^∞ y^n e^{-wy} dy = n!/w^{n+1}` (`Re w > 0`,
+proved by induction with integration by parts) give `𝓜 g_n (w) = w^{-(n+1)}`; for `n = 0` the
+Mellin integral of `g_0 = 1` diverges, which is why `m ≥ 2` is needed. Hence, as `m - 1 ≥ 1`, the
+Mellin transform of `f(t) = t^{-a} g_{m-1}(t)` is `(s - a)^{-m}` on `Re s > a`, which is
+integrable along vertical lines because `m ≥ 2`, and Mellin inversion returns `f(x)`.
 
 ## Source
 
@@ -125,8 +126,8 @@ theorem integral_pow_mul_cexp_neg_mul (n : ℕ) {w : ℂ} (hw : 0 < w.re) :
 `0 < t ≤ 1`, vanishes for `t ≥ 1`, and is continuous on `(0, ∞)`. -/
 noncomputable def logProfile (n : ℕ) (t : ℝ) : ℝ := max 0 (-Real.log t) ^ n / n.factorial
 
-/-- The function `f(t) = t^{-a} g_n(t)`, whose Mellin transform is `(s - a)^{-(n+1)}` on
-`Re s > a`. -/
+/-- The function `f(t) = t^{-a} g_n(t)`. For `n ≥ 1` its Mellin transform is `(s - a)^{-(n+1)}`
+on `Re s > a` (`mellin_kernel`); for `n = 0` its Mellin integral diverges. -/
 noncomputable def kernel (a : ℝ) (n : ℕ) (t : ℝ) : ℂ :=
   (t : ℂ) ^ (-(a : ℂ)) • (logProfile n t : ℂ)
 
@@ -135,8 +136,8 @@ theorem ofReal_exp_cpow (x : ℝ) (z : ℂ) : ((Real.exp x : ℝ) : ℂ) ^ z = c
   rw [Complex.cpow_def_of_ne_zero (by exact_mod_cast (Real.exp_pos x).ne'),
     ← Complex.ofReal_log (Real.exp_pos x).le, Real.log_exp]
 
-/-- After the substitution `t = e^x`, the Mellin integrand of `g_n` at `w` is the reflection of
-`1_{y > 0} y^n e^{-wy} / n!`. -/
+/-- For `n ≥ 1`, after the substitution `t = e^x`, the Mellin integrand of `g_n` at `w` is the
+reflection of `1_{y > 0} y^n e^{-wy} / n!`. -/
 theorem exp_smul_mellin_integrand_logProfile {n : ℕ} (hn : n ≠ 0) (w : ℂ) (x : ℝ) :
     Real.exp x • (((Real.exp x : ℝ) : ℂ) ^ (w - 1) • (logProfile n (Real.exp x) : ℂ)) =
       (Ioi (0 : ℝ)).indicator

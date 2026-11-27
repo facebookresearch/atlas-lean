@@ -49,9 +49,10 @@ and `γΨ` is of rapid decay in vertical strips of `Re s ≥ 1`, then for `σ > 
   absolutely and `J(U) = -J(U*)`;
 * `G(U*, s) = G(U, s) ((∏_{p ≥ U} G_p(s)) - 1)` for `Re s > 3/2`.
 
-The vanishing is proved by moving the line of integration to `Re s = 1` (the integrand is the
-entire function `d^{-1} F(s) (s-1)^{-3}`, of rapid decay in vertical strips), where the integrand
-is odd in `t = Im s` by the functional equation.
+The vanishing is proved by moving the line of integration to `Re s = 1` (on `Re s > 3/2` the
+integrand is `d^{-1} F₁(s)`, an entire function of rapid decay in vertical strips). On
+`Re s = 1` the function `t ↦ F₁(1 + it)` is odd for `t ≠ 0` by the functional equation, hence odd
+almost everywhere, so its integral vanishes.
 
 Source: J. Oesterlé, *Nombres de classes des corps quadratiques imaginaires*, Séminaire Bourbaki
 exposé 631, Astérisque 121–122 (1985), 309–323, §3 and §3.1.
@@ -201,7 +202,8 @@ lemma multipliable_tail
   intro p
   ring
 
-/-- `G(s) = G(U, s) ∏_{p ≥ U} G_p(s)` for `Re s > 3/2`. -/
+/-- If `G = ∏_p G_p` on `Re s > 3/2` and (C2) holds, then `G(s) = G(U, s) ∏_{p ≥ U} G_p(s)` for
+`Re s > 3/2` and every real `U`. -/
 lemma lSeries_eq_partialEuler_mul_tail {g : ℕ → ℂ}
     (hprod : ∀ s : ℂ, 3 / 2 < s.re →
       HasProd (fun p : Nat.Primes => eulerFactor α β α' β' p s) (LSeries g s))
@@ -229,8 +231,9 @@ lemma lSeries_eq_partialEuler_mul_tail {g : ℕ → ℂ}
     (multipliable_tail hC2 hs U).hasProd
   exact (hprod s hs).unique (HasProd.mul_isCompl hcompl h1 h2)
 
-/-- **Oesterlé's (3.1.3).** `G(U*, s) = G(s) - G(U, s) = G(U, s)((∏_{p ≥ U} G_p(s)) - 1)` for
-`Re s > 3/2`. -/
+/-- **Oesterlé's (3.1.3).** If `G = ∏_p G_p` on `Re s > 3/2` and (C2) holds, then
+`G(U*, s) = G(s) - G(U, s) = G(U, s)((∏_{p ≥ U} G_p(s)) - 1)` for `Re s > 3/2` and every real
+`U`. -/
 theorem lSeries_sub_partialEuler {g : ℕ → ℂ}
     (hprod : ∀ s : ℂ, 3 / 2 < s.re →
       HasProd (fun p : Nat.Primes => eulerFactor α β α' β' p s) (LSeries g s))
@@ -254,8 +257,8 @@ lemma norm_inv_cube_le_one (σ : ℝ) {t : ℝ} (ht : 1 ≤ |t|) :
   rw [norm_inv, norm_pow]
   exact inv_le_one_of_one_le₀ (one_le_pow₀ (ht.trans h))
 
-/-- A decay bound on the line `Re s = σ` survives multiplication by `(s - 1)^{-3}` once
-`|t| ≥ 1`. -/
+/-- A decay bound `‖f(σ + it)‖ |t|^k ≤ C` for `|t| ≥ T` survives multiplication by
+`(σ + it - 1)^{-3}` for `|t| ≥ max(T, 1)`. -/
 lemma decay_mul_inv_cube {f : ℂ → ℂ} {σ C T : ℝ} {k : ℕ}
     (hd : ∀ t : ℝ, T ≤ |t| → ‖f (σ + t * I)‖ * |t| ^ k ≤ C) (t : ℝ) (ht : max T 1 ≤ |t|) :
     ‖f (σ + t * I) * (((σ : ℂ) + t * I - 1) ^ 3)⁻¹‖ * |t| ^ k ≤ C := by
@@ -316,8 +319,8 @@ lemma rapidDecay_of_eq_cube_mul {F F₁ : ℂ → ℂ} {S : Set ℝ} (hF : ∀ s
   rw [e]
   exact decay_mul_inv_cube (fun t ht => h σ hσ t ht) t ht
 
-/-- Moving a vertical line of integration: for an entire function of rapid decay in vertical
-strips, `∫ f(b + it) dt = ∫ f(a + it) dt`. -/
+/-- Moving a vertical line of integration: for an entire function `f` of rapid decay in vertical
+strips and real `a ≤ b`, `∫ f(b + it) dt = ∫ f(a + it) dt`. -/
 theorem integral_vertical_eq {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (hdec : RapidDecayInStrips f Set.univ) {a b : ℝ} (hab : a ≤ b) :
     ∫ t : ℝ, f (b + t * I) = ∫ t : ℝ, f (a + t * I) := by
@@ -362,8 +365,9 @@ theorem integral_vertical_eq {f : ℂ → ℂ} (hf : Differentiable ℂ f)
   · exact absurd h I_ne_zero
   · exact sub_eq_zero.1 h
 
-/-- On the line `Re s = 1` the function `F₁` with `F(s) = (s-1)³ F₁(s)` and `F(2-s) = F(s)` is
-odd in `t = Im s`, so its integral vanishes. -/
+/-- If `F(s) = (s-1)³ F₁(s)` and `F(2-s) = F(s)`, then on the line `Re s = 1` the function
+`t ↦ F₁(1 + it)` is odd for `t ≠ 0`, hence odd almost everywhere, so its integral over `ℝ`
+vanishes. -/
 theorem integral_line_one_eq_zero {F F₁ : ℂ → ℂ} (hsymm : ∀ s, F (2 - s) = F s)
     (hF : ∀ s, F s = (s - 1) ^ 3 * F₁ s) : ∫ t : ℝ, F₁ (1 + t * I) = 0 := by
   have hodd : ∀ t : ℝ, t ≠ 0 → F₁ (1 + ((-t : ℝ) : ℂ) * I) = -F₁ (1 + t * I) := by
@@ -389,7 +393,8 @@ theorem integral_line_one_eq_zero {F F₁ : ℂ → ℂ} (hsymm : ∀ s, F (2 - 
 
 variable {d M : ℝ} {ψ g : ℕ → ℂ} {F F₁ : ℂ → ℂ}
 
-/-- On `Re s = σ > 3/2` the integrand of (3.1.1) is `d^{-1} F₁(s)`. -/
+/-- If `d > 0`, `F = d^s γ Ψ G` on `Re s > 3/2` and `F(s) = (s - 1)³ F₁(s)`, then on
+`Re s = σ > 3/2` the integrand of (3.1.1) is `d^{-1} F₁(s)`. -/
 lemma oesterleIntegrand_lSeries_eq (hd : 0 < d)
     (hFeq : ∀ s : ℂ, 3 / 2 < s.re →
       F s = (d : ℂ) ^ s * ((M : ℂ) ^ s * Gamma s ^ 2) * LSeries ψ s * LSeries g s)
@@ -425,7 +430,8 @@ theorem oesterleIntegral_lSeries_eq_zero (hd : 0 < d)
     (by linarith : (1 : ℝ) ≤ σ), ofReal_one, integral_line_one_eq_zero hsymm hF, mul_zero,
     smul_zero]
 
-/-- The integrand of (3.1.1) is integrable on `Re s = σ > 3/2`. -/
+/-- Under (C3), with `F(s) = (s - 1)³ F₁(s)` and `F₁` entire, the integrand of (3.1.1) is
+integrable on `Re s = σ > 3/2`. -/
 lemma integrable_oesterleIntegrand_lSeries (hd : 0 < d)
     (hFeq : ∀ s : ℂ, 3 / 2 < s.re →
       F s = (d : ℂ) ^ s * ((M : ℂ) ^ s * Gamma s ^ 2) * LSeries ψ s * LSeries g s)
@@ -447,8 +453,9 @@ lemma continuous_eulerFactor_line
   refine Continuous.div (by fun_prop) (by fun_prop) (fun t => ?_)
   exact (eulerFactor_estimate hC2 hp (by simpa using hσ)).1
 
-/-- **Absolute convergence of `J(U)`**, following Oesterlé: `G(U, ·)` and `d^{s-1}` are bounded
-on `Re s = σ` and `γΨ(s)(s-1)^{-3}` is integrable there. -/
+/-- **Absolute convergence of `J(U)`**, following Oesterlé: under (C2) and (C4), for
+`σ > 3/2` and every real `U`, `G(U, ·)` and `d^{s-1}` are bounded on `Re s = σ` and
+`γΨ(s)(s-1)^{-3}` is integrable there. -/
 theorem integrable_oesterleIntegrand_partialEuler (hd : 0 < d) (hM : 0 < M)
     (hC2 : ∀ p : ℕ, p.Prime → ‖α p‖ ≤ √p ∧ ‖β p‖ ≤ √p ∧ ‖α' p‖ ≤ √p ∧ ‖β' p‖ ≤ √p)
     (hC4 : ∃ (V : Set ℂ) (Ψ' : ℂ → ℂ), IsOpen V ∧ {s | 1 ≤ s.re} ⊆ V ∧ DifferentiableOn ℂ Ψ' V ∧
