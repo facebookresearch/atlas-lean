@@ -135,25 +135,6 @@ theorem noFreeBifenceTilingSum_one {R : Type*} [CommSemiring R] (a b : R) :
   simp [noFreeBifenceTilingSum, fenceTilings, fenceTilingWeight, filter_singleton, prod_range_succ,
     sq]
 
-/-- **Recurrence for weighted fence tilings of odd boards.** Let $a$ and $b$ be elements of a
-commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with
-cells numbered $1, \dots, m$, by half-squares and $(1/2, 1/2)$-fences, a half-square weighing $a$
-in an odd cell and $b$ in an even cell. Then for every odd $n \ge 3$,
-$$
-S_n = a^2 S_{n-1} + (2ab+1) S_{n-2} +
-2ab \sum_{j=2}^{(n-1)/2} S_{n-2j} + 2a^2 \sum_{j=1}^{(n-1)/2} S_{n-2j-1}.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Lemma 2.1, (2.1) (`fq-2024-belaggoun01132024-lem-2.1`). -/
-public theorem_wanted fenceTilingSum_odd {R : Type*} [CommSemiring R] (a b : R) {n : ℕ}
-    (hn : 2 ≤ n) (ho : Odd n) :
-    fenceTilingSum a b n =
-      a ^ 2 * fenceTilingSum a b (n - 1) + (2 * a * b + 1) * fenceTilingSum a b (n - 2) +
-        2 * a * b * ∑ j ∈ Icc 2 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j) +
-        2 * a ^ 2 * ∑ j ∈ Icc 1 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j - 1)
-
 /-- **Recurrence for weighted tilings with no free bifence.** Let $a$ and $b$ be nonzero elements
 of a field, and let $R_n$ be the weighted number of tilings of an $n$-board by half-squares and
 $(1/2, 1/2)$-fences with no free bifence, where a half-square has weight $a$ in an odd cell and
