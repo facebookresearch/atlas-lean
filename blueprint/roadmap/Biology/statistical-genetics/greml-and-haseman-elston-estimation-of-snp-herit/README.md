@@ -77,6 +77,8 @@
 ## Further topics
 
 - [Sparse two-stage SNP heritability estimation](sparse-two-stage-snp-heritability-estimation/README.md)
+- [ARG-based variance-component analysis](arg-based-variance-component-analysis/README.md)
+- [Pleiotropic shared heritability](pleiotropic-shared-heritability/README.md)
 - [Hutchinson's randomized trace estimator](hutchinson-randomized-trace-estimator.md)
 - [MINQUE variance components from summary statistics](minque-variance-components-from-summary-statistics.md)
 - [RHE-reg: randomized Haseman–Elston regression](rhe-reg-randomized-haseman-elston-regression.md)

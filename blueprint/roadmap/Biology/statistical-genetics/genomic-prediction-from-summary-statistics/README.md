@@ -108,6 +108,8 @@
 - [Local and global ancestry interaction models](local-and-global-ancestry-interaction-models/README.md)
 - [Imputation-aware SNP panel design](imputation-aware-snp-panel-design/README.md)
 - [Boosted polygenic scores with non-additive effects](boosted-polygenic-scores-with-non-additive-effects/README.md)
+- [Cross-trait penalized polygenic regression](cross-trait-penalized-polygenic-regression/README.md)
+- [Polygenic scores for gene-by-exposure interaction](polygenic-scores-for-gene-by-exposure-interaction/README.md)
 - [Haplotype phasing and imputation](haplotype-phasing-and-imputation/README.md)
 - [Heritability-model-informed effect-size priors for polygenic prediction](heritability-model-informed-effect-size-priors-for-polygenic-prediction.md)
 - [Relative accuracy of a polygenic score across ancestries](relative-accuracy-of-a-polygenic-score-across-ancestries.md)

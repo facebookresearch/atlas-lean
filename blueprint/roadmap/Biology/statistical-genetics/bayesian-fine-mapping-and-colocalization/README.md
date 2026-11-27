@@ -60,6 +60,7 @@
 - [Sorted prefix carries the most posterior mass](sum-le-sum-sorted-prefix.md)
 - [The shortest credible prefix has minimum size](le-card-of-is-credible-set.md)
 - [A minimum-size credible set exists and is a sorted prefix](exists-minimal-credible-prefix.md)
+- [Hierarchical SNP–mark–expression causal-path fine-mapping](hierarchical-snp-mark-expression-causal-path-fine-mapping.md)
 - [Deterministic approximation of posteriors (DAP) for multi-SNP association](deterministic-approximation-of-posteriors-dap.md)
 - [Joint likelihood mapping (JLIM) statistic for a shared causal variant](jlim-joint-likelihood-mapping-statistic.md)
 - [LD-block factorization of multi-SNP Bayes factors](ld-block-factorization-of-multi-snp-bayes-factors.md)

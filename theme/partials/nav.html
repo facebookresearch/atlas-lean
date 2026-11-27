@@ -8,7 +8,13 @@
   and the drawer on narrow screens style it as before, and a page without
   entries of its own keeps its table of contents in the drawer, as in
   Material's navigation.
+
+  In a folder of more than `cap` entries, a page lists only the `cap` entries
+  around it, then a link to the folder page, whose own entries list them all.
+  Every page of a folder of a thousand entries carried the whole list, most of
+  the page, so the folder's share of the site grew with the square of its size.
 -#}
+{%- set cap = 50 -%}
 {%- macro href(item) -%}
   {%- if item.is_section -%}
     {#- A section opens its index page (navigation.indexes); a section without one is only a heading. -#}
@@ -69,7 +75,18 @@
     {%- for section in ancestors if href(section) -%}
       <li class="md-nav__item md-nav__item--active"><a href="{{ href(section) }}" class="md-nav__link">{{ section.title }}</a><ul class="md-nav__list">
     {%- endfor -%}
-    {{- entries(node.parent.children if node.parent else nav.items, node, toc) -}}
+    {%- set siblings = node.parent.children if node.parent else nav.items -%}
+    {#- The folder page: the first index page among the folder's children (navigation.indexes), which the list leaves out. -#}
+    {%- set folder = node.parent.children | selectattr("is_page") | selectattr("is_index") | first if node.parent else none -%}
+    {#- A section without an index page counts here as one entry, though entries() lists its children in its place; the site has none below the top level. -#}
+    {%- set listed = siblings | reject("sameas", folder) | list -%}
+    {%- if folder and listed | length > cap -%}
+      {%- set start = [0, [listed.index(node) - cap // 2, listed | length - cap] | min] | max -%}
+      {{- entries(listed[start:start + cap], node, toc) -}}
+      <li class="md-nav__item"><a href="{{ folder.url | url }}" class="md-nav__link">All {{ "{:,}".format(listed | length) }} entries of {{ node.parent.title }}</a></li>
+    {%- else -%}
+      {{- entries(siblings, node, toc) -}}
+    {%- endif -%}
     {%- for section in ancestors if href(section) -%}
       </ul></li>
     {%- endfor -%}

@@ -19,5 +19,8 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Linear and optimal neutrality tests](linear-and-optimal-neutrality-tests/README.md)
 - [Maximal perfect haplotype blocks](maximal-perfect-haplotype-blocks/README.md)
 - [Time-series selection inference under population size change](time-series-selection-inference-under-population-size-change/README.md)
+- [Allele age proxies from linked variation](allele-age-proxies-from-linked-variation/README.md)
+- [Directional selection in ancient DNA time transects](directional-selection-in-ancient-dna-time-transects/README.md)
+- [Localizing the favored mutation in a sweep](localizing-the-favored-mutation-in-a-sweep/README.md)
 - [Genealogy-based inference of selection](genealogy-based-inference-of-selection/README.md)
 - [Rate of adaptive substitution from sweep scans](rate-of-adaptive-substitution-from-sweep-scans/README.md)

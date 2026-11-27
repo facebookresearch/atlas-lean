@@ -71,6 +71,10 @@
 - [Waiting distance until the next tree change under the SMC'](waiting-distance-until-next-tree-change-smc-prime.md)
 ## Identity by descent along the genome
 - [Central limit theorems for detectable IBD rates](central-limit-theorems-for-detectable-ibd-rates/README.md)
+- [Ancestral recombination graph under loose linkage](ancestral-recombination-graph-under-loose-linkage/README.md)
+- [Linked coalescence times under partial selfing](linked-coalescence-times-under-partial-selfing/README.md)
+- [Minimal descriptors of ancestral recombination graphs](minimal-descriptors-of-ancestral-recombination-graphs/README.md)
+- [SMC$'$ transition densities](smc-prime-transition-densities/README.md)
 - [IBS tract length spectrum](ibs-tract-length-spectrum/README.md)
 - [Multiple sequentially markovian coalescent](multiple-sequentially-markovian-coalescent/README.md)
 - [Tree-sequence inference by ancestral haplotype copying](tree-sequence-inference-by-ancestral-haplotype-copying/README.md)

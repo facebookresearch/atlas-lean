@@ -43,6 +43,12 @@
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
 - [Structured coalescent at a neutral site linked to a cyclically fluctuating balanced polymorphism](structured-coalescent-linked-to-cyclic-balanced-polymorphism.md)
+- [Pairwise coalescence time in the spatial Λ-Fleming–Viot process as a Cox process](pairwise-coalescence-time-in-the-slfv-as-a-cox-process.md)
+## Further topics
+- [Coalescing Brownian motion genealogies](coalescing-brownian-motion-genealogies/README.md)
+- [Autotetraploid coalescent](autotetraploid-coalescent/README.md)
+- [IBD sharing under migration](ibd-sharing-under-migration/README.md)
+- [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
 - [Structured coalescent for background selection with recombination](structured-coalescent-for-background-selection-with-recombination.md)
 - [Time-dependent isolation–migration model fitted to coalescence rates](time-dependent-isolation-migration-fit-to-coalescence-rates.md)
 - [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)

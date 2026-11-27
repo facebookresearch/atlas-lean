@@ -27,4 +27,9 @@
 - [The M-step maximizes the EM objective](em-q-le-em-step.md)
 - [EM does not decrease the likelihood](log-lik-le-log-lik-em-step.md)
 - [Monotonicity of the log-likelihood along the class-weight EM iterates](log-lik-iterate-em-step-monotone.md)
+
+## Rare-variant and de novo mutation counts
+
+- [Germline clonal expansion and de novo mutation hotspots](germline-clonal-expansion-and-de-novo-hotspots/README.md)
+- [Unseen-variant frequency estimation](unseen-variant-frequency-estimation/README.md)
 - [Maximum credible population allele frequency for a Mendelian variant](maximum-credible-population-allele-frequency.md)
