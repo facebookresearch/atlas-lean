@@ -16,7 +16,7 @@ and set $b_i := b$ and $b_j := 0$ for every $j < i$. Eve is *declared the winner
 and odd exchanged.
 
 These are the play summaries of Calude, Jain, Khoussainov, Li and Stephan. Rule (a) lets an incoming even priority replace an odd entry
-when all lower entries are positive and even, even if it is smaller; on the losing play $1, 2, 1, 1, \dots$ through three positions, a single $2$ sets only $b_0$. The variant in the cited chapter cannot: on the play $3, 2, 2, \dots$ through two positions of
+when all lower entries are positive and even, even if it is smaller; on the losing play $1, 2, 1, 1, \dots$ through three positions, a single $2$ sets only $b_0$. The variant in the cited chapter, as run in its worked example, cannot: on the play $3, 2, 2, \dots$ through two positions of
 priorities $3$ and $2$, which Eve wins, that variant keeps the odd $b_0 = 3$ forever, while the record above ignores the $3$ and then counts in binary: the first $2$ sets $b_0$, the second $b_1$, and the eighth $b_3 = b_\ell$.
 
 ## Depends on

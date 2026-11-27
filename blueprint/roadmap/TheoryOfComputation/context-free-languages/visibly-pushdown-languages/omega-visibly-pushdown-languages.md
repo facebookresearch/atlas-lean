@@ -13,6 +13,10 @@ through a factorization of the word into pending letters and well-matched blocks
 - [Visibly pushdown automata and visibly pushdown languages](visibly-pushdown-automata.md)
 - [Büchi acceptance condition](../../omega-automata-and-games/emptiness-of-b-chi-automata/mem-language-iff.md)
 
+## Proof depends on
+
+- [Büchi automata are closed under complementation](../../omega-automata-and-games/boolean-closure-of-b-chi-automata/exists-buchi-compl.md)
+
 ## Sources
 
 - R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 6, the definition of $\omega$-VPAs with Büchi and Muller conditions, Theorem 7 (closure), the language $L_{\mathrm{repbdd}}$ and Theorem 8 (deterministic versus nondeterministic $\omega$-VPAs), and Theorem 9 (complementability) with its proof.

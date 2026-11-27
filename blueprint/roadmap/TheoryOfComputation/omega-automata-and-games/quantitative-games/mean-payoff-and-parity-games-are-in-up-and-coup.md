@@ -1,6 +1,7 @@
 # Solving mean-payoff games and parity games is in UP ∩ coUP
 
-Solving finite [mean-payoff games](classical-quantitative-objectives.md) with a threshold, and solving finite [parity games](../parity-games/parity-game.md), are in
+Deciding, for a finite [mean-payoff game](classical-quantitative-objectives.md) with integer weights in binary, a vertex $v$ and a binary-encoded rational $x$, whether
+$\mathrm{val}(v) \ge x$, and deciding whether Eve wins a finite [parity game](../parity-games/parity-game.md) from a given vertex, are in
 $\mathrm{UP} \cap \mathrm{coUP}$ ($\mathrm{UP}$: problems decided by a nondeterministic polynomial-time machine with at most one accepting computation;
 $\mathrm{coUP}$: their complements). The bound follows by reducing parity games to mean-payoff games, mean-payoff games to
 discounted-payoff games, and placing the latter in $\mathrm{UP} \cap \mathrm{coUP}$.

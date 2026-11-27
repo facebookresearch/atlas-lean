@@ -5,8 +5,8 @@ $\mathrm{MeanPayoff}^- \ge 0$) if and only if it satisfies $\mathrm{Energy} < \i
 non-negative total weight; for a single sequence the two properties are not equivalent. Consequently, for a finite
 [mean-payoff game](classical-quantitative-objectives.md) $\mathcal{G}$ and the energy game $\mathcal{G}'$ on the same graph in which the vertices of Max in $\mathcal{G}$ belong to the
 player who minimizes the energy (Min of $\mathcal{G}'$) and those of Min to the maximizer, $\mathrm{val}^{\mathcal{G}}(u) \ge 0$ if and only if $\mathrm{val}^{\mathcal{G}'}(u) < \infty$ for every vertex $u$. An algorithm computing energy values in time
-$T(n, m, W)$ thus solves mean-payoff games in the same time and computes mean-payoff values in time $O(\log(n^2 W) \cdot T(n, m, 2nW))$: a binary search
-over the candidate values $p/q$ with $q \le n$ tests each threshold on the weights $q w - p$, whose absolute values are at most $2nW$.
+$T(n, m, W)$ thus decides $\mathrm{val}^{\mathcal{G}}(u) \ge 0$ for every vertex $u$ in time $T(n, m, W)$, and computes the value of a given vertex in time
+$O(\log(n^2 W) \cdot T(n, m, 2nW))$: a binary search over the candidate values $p/q$ with $q \le n$ tests each threshold on the weights $q w - p$, whose absolute values are at most $2nW$.
 
 ## Depends on
 

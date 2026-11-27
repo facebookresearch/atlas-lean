@@ -14,6 +14,7 @@ lists shortest path among the bi-positional objectives, which Section 5.4 of the
 
 ## Depends on
 
+- [Reachability and safety games are positionally determined and solvable in linear time](../muller-rabin-and-streett-games/reachability-and-safety-games.md)
 - [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](classical-quantitative-objectives.md)
 
 ## Sources

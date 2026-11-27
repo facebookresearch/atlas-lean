@@ -5,7 +5,7 @@ $\mathrm{pset}(r + s) = \mathrm{pset}\,r \cup \mathrm{pset}\,s$, $\mathrm{pset}(
 
 $$\mathrm{pset}(\partial_a r) = \mathrm{pder}_a r:$$
 
-the [partial derivative](antimirov-partial-derivatives.md) is the [Brzozowski derivative](brzozowski-derivatives.md) with its top-level sums split into a set (Nipkow and Traytel).
+the [partial derivative](antimirov-partial-derivatives.md) is the [Brzozowski derivative](brzozowski-derivatives.md) with its sums split into a set, also inside the left factor of a concatenation, and $0$ dropped (Nipkow and Traytel).
 Representing a finite set by an ordered sum, partial derivatives can therefore be simulated on plain regular expressions by a
 normalization that erases $0$s and distributes concatenation over sums on the left; this normalization and ACI equivalence are
 incomparable.

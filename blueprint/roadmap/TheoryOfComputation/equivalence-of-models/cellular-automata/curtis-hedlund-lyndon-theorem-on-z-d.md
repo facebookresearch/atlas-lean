@@ -13,4 +13,4 @@ one-dimensional case is the [Curtis–Hedlund–Lyndon theorem](../../../Dynamic
 
 ## Sources
 
-- J. Kari, "Theory of cellular automata: a survey", *Theoretical Computer Science* 334(1–3):3–33, 2005: Section 2.7 ("Topology and CA dynamics"), the definitions of the metric, of cylinders and of the shifts, and Theorem 3 (credited there to G. A. Hedlund, *Mathematical Systems Theory* 3 (1969)).
+- J. Kari, "Theory of cellular automata: a survey", *Theoretical Computer Science* 334(1–3):3–33, 2005: Section 2.3 (the shifts) and Section 2.7 ("Topology and CA dynamics"), the definitions of the metric and of cylinders, and Theorem 3 (credited there to G. A. Hedlund, *Mathematical Systems Theory* 3 (1969)).

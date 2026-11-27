@@ -1,10 +1,10 @@
 # Stochastic reachability games reduce to simple stochastic games
 
 Every [stochastic reachability game](stochastic-arenas-and-games.md) $\mathcal{G}$ with rational probabilities can be transformed in polynomial time into a
-simple stochastic game $\mathcal{G}'$ with $O(n(\log n + k))$ vertices, $k$ being the number of bits of the probabilities, together with a
+simple stochastic game $\mathcal{G}'$ together with a
 map $h$ from the vertices of $\mathcal{G}$ to those of $\mathcal{G}'$ such that $\mathrm{val}^{\mathcal{G}}(u) = \mathrm{val}^{\mathcal{G}'}(h(u))$ for every $u$: the vertices of value $1$ are
 merged into $\mathrm{Win}$, those of value $0$ into $\mathrm{Lose}$, and every other vertex is kept. Moreover solving (non-stochastic)
-[discounted-payoff games](discounted-payoff-values-are-the-unique-fixed-point.md) reduces in polynomial time to solving stochastic reachability games: after
+[discounted-payoff games](discounted-payoff-values-are-the-unique-fixed-point.md) with a binary-encoded rational discount factor $0 < \lambda < 1$ reduces in polynomial time to solving stochastic reachability games: after
 scaling the weights into $[0, 1]$, each edge $u \xrightarrow{w} v$ is redirected to a new random vertex that moves to $v$ with probability $\lambda$,
 to a sink $\mathrm{Win}$ with probability $(1 - \lambda) w$ and to a sink $\mathrm{Lose}$ with probability $(1 - \lambda)(1 - w)$.
 
@@ -13,6 +13,10 @@ to a sink $\mathrm{Win}$ with probability $(1 - \lambda) w$ and to a sink $\math
 - [Discounted-payoff values are the unique fixed point of a contraction](discounted-payoff-values-are-the-unique-fixed-point.md)
 - [Stochastic arenas, stochastic reachability games and simple stochastic games](stochastic-arenas-and-games.md)
 - [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](classical-quantitative-objectives.md)
+
+## Proof depends on
+
+- [Stochastic reachability games are positionally determined](stochastic-reachability-games-are-positionally-determined.md)
 
 ## Sources
 

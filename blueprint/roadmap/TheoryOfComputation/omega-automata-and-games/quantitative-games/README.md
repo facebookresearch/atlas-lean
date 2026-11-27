@@ -1,7 +1,7 @@
 # Quantitative games
 
 Games on graphs whose plays are evaluated by a number rather than won or lost: shortest-path, mean-payoff, total-payoff, energy and
-discounted-payoff games, and their stochastic versions. On finite arenas energy, mean-payoff, total-payoff and discounted-payoff games are positionally determined for both players, while in
+discounted-payoff games, and their stochastic versions. On finite non-stochastic arenas energy, mean-payoff, total-payoff and discounted-payoff games are positionally determined for both players, while in
 shortest-path games only Max always has a positional optimal strategy; mean-payoff games
 are solvable in NP ∩ coNP, in UP ∩ coUP and in pseudo-polynomial time, and parity games reduce to them, but no polynomial-time
 algorithm is known. Stochastic reachability games add random vertices. Qualitative games with

@@ -10,6 +10,16 @@ $(a, \ell)$; the resulting VPA accepts the words of $L$ annotated with the stack
 - [Visibly pushdown automata and visibly pushdown languages](visibly-pushdown-automata.md)
 - [Context-free grammars](../grammars-and-pushdown-automata/context-free-grammars/README.md)
 
+## Proof depends on
+
+- [Context-free languages are accepted by pushdown automata](../grammars-and-pushdown-automata/pushdown-automata-and-context-free-grammars/exists-pda-accepts.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- The normal form of pushdown automata without $\varepsilon$-moves, accepting by final state, in which every step pushes one symbol, pops one symbol or leaves the stack unchanged (proof prerequisite; not yet stated)
+
 ## Sources
 
 - R. Alur and P. Madhusudan, "Visibly pushdown languages", *Proceedings of the 36th ACM STOC*, 2004; full version of August 2005, whose numbering is cited, <https://www.cis.upenn.edu/~alur/Stoc04.pdf>: Section 2.1, Proposition 1 (embedding context-free languages as VPLs) with its proof.

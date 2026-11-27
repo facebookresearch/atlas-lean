@@ -15,11 +15,11 @@ taking for $\mathcal{A}_1$ an automaton that accepts every timed word.
 ## Depends on
 
 - [Timed Büchi automata and timed regular languages](timed-buchi-automata.md)
+- [Timed words and timed languages](timed-words-and-timed-languages.md)
 
 ## Proof depends on
 
 - [Recurring computations of two-counter machines are Σ¹₁-hard](../../equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
-- [Timed words and timed languages](timed-words-and-timed-languages.md)
 
 ## Sources
 

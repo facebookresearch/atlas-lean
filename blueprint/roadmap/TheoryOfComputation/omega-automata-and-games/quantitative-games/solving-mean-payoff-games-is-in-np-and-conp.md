@@ -3,8 +3,8 @@
 Given a finite [mean-payoff game](classical-quantitative-objectives.md) with integer weights in binary, a vertex $v$ and a rational threshold $x$,
 deciding whether $\mathrm{val}(v) \ge x$ is in [NP](../../complexity-classes/the-classes-p-np-and-conp/np.md) $\cap$
 [coNP](../../complexity-classes/the-classes-p-np-and-conp/co-np.md). A certificate for either answer is a positional optimal strategy of the
-corresponding player, checked in polynomial time by solving the minimum (or maximum) cycle mean problem of the one-player
-game it leaves. No polynomial-time algorithm is known; see
+corresponding player, checked in polynomial time by solving the minimum (or maximum) cycle mean problem on the cyclic components
+of the one-player game it leaves that are reachable from $v$. No polynomial-time algorithm is known; see
 [polynomial-time solvability of mean-payoff games](../polynomial-time-solvability-of-mean-payoff-games.md).
 
 ## Depends on
@@ -15,6 +15,7 @@ game it leaves. No polynomial-time algorithm is known; see
 
 ## Proof depends on
 
+- [Karp's minimum cycle mean theorem](../../../ComputerScience/graph-algorithms/shortest-paths/minimum-cycle-mean/karp-min-cycle-mean.md)
 - [Energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
 
 ## Sources

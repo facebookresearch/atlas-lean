@@ -16,4 +16,4 @@ to the empty output. Allowing free set variables as parameters gives the nondete
 
 ## Sources
 
-- J. Engelfriet and H. J. Hoogeboom, "MSO definable string transductions and two-way finite-state transducers", *ACM Transactions on Computational Logic* 2(2), 2001; numbering of the technical report version, Leiden University TR 98-13, arXiv:cs/9906007: the introduction and Section 2 (two-way generalized sequential machines) and Section 3 (mso definable string transductions: domain formula, copy set, node and edge formulas, and the parametrized nondeterministic version).
+- J. Engelfriet and H. J. Hoogeboom, "MSO definable string transductions and two-way finite-state transducers", *ACM Transactions on Computational Logic* 2(2), 2001; numbering of the technical report version, Leiden University TR 98-13, arXiv:cs/9906007: the introduction and Section 2 (two-way generalized sequential machines) and Section 3 (mso definable string transductions: domain formula, copy set, node and edge formulas, Definitions 10 and 13) and Section 5 (the parametrized nondeterministic version).

@@ -4,7 +4,7 @@ For a finite energy game (the [energy objective](classical-quantitative-objectiv
 weights in $[-W, W]$, the energy values form the least fixed point of the monotone operator on $V \to \mathbb{N} \cup \{\infty\}$ given by
 $\mathcal{O}(\mu)(u) = \min\{\max(\mu(v) - w, 0) : u \xrightarrow{w} v\}$ at vertices of Min and $\max\{\cdots\}$ at vertices of Max, and a value iteration
 algorithm computes them in time $O(nmW)$, every finite energy value being at most $nW$. By the
-[interreduction with mean-payoff games](mean-payoff-games-and-energy-games.md) this solves mean-payoff games in time $O(nmW)$.
+[interreduction with mean-payoff games](mean-payoff-games-and-energy-games.md) this decides $\mathrm{val}(u) \ge 0$ for every vertex $u$ of a mean-payoff game in time $O(nmW)$.
 
 ## Depends on
 

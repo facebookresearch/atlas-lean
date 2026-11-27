@@ -4,7 +4,7 @@ The trees here are rooted, have all leaves at the same depth and totally ordered
 of height $h + 1$ is a list $[t_1, \dots, t_k]$ of trees of height $h$; its *size* is its number of leaves. For a tree $t$ of height $h$
 put $d = 2h$; a leaf is the list of its directions $(D_{d-1}, D_{d-3}, \dots, D_1)$, indexed by the odd numbers below $d$ from the root down,
 and $\le$ is the lexicographic order on the set $Y_t$ of leaves. For $p \in \{1, \dots, d\}$ and a leaf $\ell$ let $\ell_{\ge p}$ be the truncation
-$(D_{d-1}, \dots, D_p)$, and set $\ell \lhd_p \ell'$ if $\ell_{\ge p} < \ell'_{\ge p}$ for $p$ odd and if $\ell_{\ge p} \le \ell'_{\ge p}$ for $p$ even. Add a top element
+to the coordinates $D_q$ with odd $q \ge p$, and set $\ell \lhd_p \ell'$ if $\ell_{\ge p} < \ell'_{\ge p}$ for $p$ odd and if $\ell_{\ge p} \le \ell'_{\ge p}$ for $p$ even. Add a top element
 $\top$ above all leaves with $\ell \lhd_p \top$ for every $p$ and every $\ell \in Y_t \cup \{\top\}$, including $\top \lhd_p \top$.
 
 Let $\mathcal{G}$ be a [parity game](../parity-games/parity-game.md) with priorities in $\{1, \dots, d\}$ on its edges (the linked definition puts

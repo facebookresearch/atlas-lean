@@ -15,7 +15,7 @@ reset threshold exceeds this bound. Even an upper bound on $C(n)$ that is quadra
 
 ## Status
 
-The cited survey states the conjecture as neither confirmed nor refuted as of January 2026, records a withdrawn claimed proof, and lists
+The cited survey states the conjecture as neither confirmed nor refuted as of January 2026, records a claimed proof whose author later reported an error, and lists
 the many classes of automata for which it has been proved; this page does not certify its present status.
 
 ## Sources

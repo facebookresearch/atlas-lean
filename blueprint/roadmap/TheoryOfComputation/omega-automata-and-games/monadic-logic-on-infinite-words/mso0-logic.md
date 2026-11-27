@@ -14,4 +14,4 @@ each element $x$ by the singleton $\{x\}$ (so $X(x)$ becomes $\{x\} \subseteq X$
 
 ## Sources
 
-- W. Thomas, "Languages, automata, and logic", Bericht 9607, Institut für Informatik und Praktische Mathematik, Universität Kiel, May 1996 (preprint of the chapter in G. Rozenberg and A. Salomaa (eds.), *Handbook of Formal Languages*, vol. 3, Springer, 1997; numbering of the preprint): Section 2.1, the paragraphs introducing MSO₀-logic, its atomic formulas and the translation from MSO-logic, and the identification of set expansions of word models with words over extended alphabets.
+- W. Thomas, "Languages, automata, and logic", Bericht 9607, Institut für Informatik und Praktische Mathematik, Universität Kiel, May 1996 (preprint of the chapter in G. Rozenberg and A. Salomaa (eds.), *Handbook of Formal Languages*, vol. 3, Springer, 1997; numbering of the preprint): Section 2.3 ("Monadic Second-Order Logic"), the paragraphs introducing MSO₀-logic, its atomic formulas and the translation from MSO-logic, and the identification of set expansions of word models with words over extended alphabets.

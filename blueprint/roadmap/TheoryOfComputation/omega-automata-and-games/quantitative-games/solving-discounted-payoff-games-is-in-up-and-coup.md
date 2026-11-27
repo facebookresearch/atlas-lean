@@ -1,6 +1,6 @@
 # Solving discounted-payoff games is in UP ∩ coUP
 
-Deciding, for a finite discounted-payoff game with rational discount factor and integer weights, a vertex and a threshold,
+Deciding, for a finite discounted-payoff game with a binary-encoded rational discount factor and integer weights in binary, a vertex and a binary-encoded rational threshold,
 whether the value is at least the threshold is in $\mathrm{UP} \cap \mathrm{coUP}$, where $\mathrm{UP}$ is the class of decision problems decided by a
 nondeterministic polynomial-time Turing machine with at most one accepting computation on every input. The machine guesses the
 [value vector](discounted-payoff-values-are-the-unique-fixed-point.md), which is unique and has a polynomial-size description (it solves a linear system
