@@ -3,7 +3,7 @@
 Every morphism $\varphi$ from $A^*$ to a finite monoid $M$ (with the discrete metric) is uniformly continuous and extends uniquely to a uniformly
 continuous morphism $\hat\varphi : \widehat{A^*} \to M$ on the [free profinite monoid](free-profinite-monoid.md). Equivalently, every map from $A$ to a finite monoid $M$ extends uniquely to a
 continuous monoid morphism $\hat\varphi : \widehat{A^*} \to M$, which is surjective exactly when the image of $A$ generates $M$. For each profinite word $x$ the sequence
-$(x^{n!})_{n > 0}$ converges to an idempotent profinite word $x^\omega$, and $\hat\varphi(x^\omega) = \varphi(x)^\omega$, the unique idempotent power of $\hat\varphi(x)$ in $M$.
+$(x^{n!})_{n > 0}$ converges to an idempotent profinite word $x^\omega$, and $\hat\varphi(x^\omega) = \hat\varphi(x)^\omega$, the unique idempotent power of $\hat\varphi(x)$ in $M$.
 
 ## Depends on
 

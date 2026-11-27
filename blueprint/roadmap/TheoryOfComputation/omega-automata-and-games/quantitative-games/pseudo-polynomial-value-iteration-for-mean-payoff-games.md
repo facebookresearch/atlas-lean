@@ -3,7 +3,7 @@
 For a finite [mean-payoff game](classical-quantitative-objectives.md) with $n$ vertices, $m$ edges and weights in $[-W, W]$, let $\mathrm{val}_k(u)$ be the value of
 the game that stops after $k$ steps and pays the sum of the weights. Then $\lim_k \frac1k \mathrm{val}_k = \mathrm{val}$, and computing
 $\mathrm{val}_k$ for $k = 4n^3 W$ by $k$ rounds of the one-step operator determines the mean-payoff values in time $O(n^3 m W)$; deciding
-whether $\mathrm{val}(u) \ge c$ for a threshold $c$ takes time $O(n^2 m W)$ (Zwick and Paterson). Both bounds are pseudo-polynomial:
+whether $\mathrm{val}(u) \ge c$ for an integer threshold $c$ takes time $O(n^2 m W)$ (Zwick and Paterson). Both bounds are pseudo-polynomial:
 polynomial when the weights are written in unary.
 
 ## Depends on

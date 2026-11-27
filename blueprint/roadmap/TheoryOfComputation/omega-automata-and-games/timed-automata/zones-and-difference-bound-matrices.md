@@ -1,8 +1,12 @@
 # Zones and difference-bound matrices
 
-Let $C = \{x_1, \dots, x_m\}$ be a set of clocks, as for [timed automata](timed-buchi-automata.md). A *zone* is a set of clock valuations in $\mathbb{R}_{\ge 0}^C$ defined by a clock
-constraint; zones are convex. Adding a clock $x_0$ that is always $0$, a *difference-bound matrix* (DBM) is a $(m+1) \times (m+1)$ matrix $M$ with entries
-in $\{\le, <\} \times \mathbb{Z}$, and it represents the zone of valuations $v$ with $v(x_i) - v(x_j) \prec_{i,j} M_{i,j}$ for all $i, j$, where $v(x_0) = 0$. The
+Let $C = \{x_1, \dots, x_m\}$ be a finite set of clocks. An *atomic clock constraint* is $k \preceq x \preceq' l$ or $k \preceq x - y \preceq' l$ with $x, y \in C$,
+$k, l \in \mathbb{Z} \cup \{-\infty, +\infty\}$ and $\preceq, \preceq' \in \{<, \le\}$, and a *clock constraint* is a conjunction of atomic clock constraints. Unlike the clock
+constraints of [timed automata](timed-buchi-automata.md), these have no negation, integer bounds only, and may bound differences of clocks. A *zone* is a set of
+clock valuations in $\mathbb{R}_{\ge 0}^C$ defined by such a clock constraint; zones are convex. Adding a clock $x_0$ that is always $0$, a *difference-bound matrix*
+(DBM) is a $(m+1) \times (m+1)$ matrix $M$ with entries in $(\{\le, <\} \times \mathbb{Z}) \cup \{(<, +\infty)\}$, and it represents the zone of valuations $v$ with
+$v(x_i) - v(x_j) \prec_{i,j} M_{i,j}$ for all $i, j$, where $v(x_0) = 0$ and the entry $(<, +\infty)$ imposes no constraint; it is needed, for example, for the unbounded
+time successors of a nonempty zone. The
 *basic operations* are intersection, the time successors $\mathrm{Post}_{\ge 0}(Z) = \{v : \exists t \ge 0.\ v - t \in Z\}$, the time predecessors
 $\mathrm{Pre}_{\ge 0}(Z)$, the reset $\mathrm{Reset}_R(Z)$ and its inverse $\mathrm{Unreset}_R(Z)$; together they compute the successors and predecessors of a set of valuations by an edge.
 

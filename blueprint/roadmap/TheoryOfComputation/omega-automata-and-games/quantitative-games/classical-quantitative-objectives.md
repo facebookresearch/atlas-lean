@@ -8,7 +8,7 @@ Let the colours be integer weights, $\rho = \rho_0 \rho_1 \rho_2 \cdots \in \mat
 - *mean payoff*: $\mathrm{MeanPayoff}^+(\rho) = \limsup_k \frac1k \sum_{i<k} \rho_i$ and $\mathrm{MeanPayoff}^-(\rho) = \liminf_k \frac1k \sum_{i<k} \rho_i$;
 - *total payoff*: $\mathrm{TotalPayoff}(\rho) = \limsup_n \sum_{i<n} \rho_i$;
 - *energy*: $\mathrm{Energy}(\rho) = \inf\{\ell \in \mathbb{N} : \forall k,\ \ell + \sum_{i<k} \rho_i \ge 0\}$, the least initial budget keeping every partial sum
-  non-negative (here the player who wants the budget small is Min, so energy games are stated with the roles swapped);
+  non-negative ($+\infty$ if there is none) (here the player who wants the budget small is Min, so energy games are stated with the roles swapped);
 - *discounted payoff* with discount factor $\lambda \in (0, 1)$: $\mathrm{DiscountedPayoff}_\lambda(\rho) = (1 - \lambda) \sum_{i \ge 0} \lambda^i \rho_i$, which
   exists for bounded weights and satisfies $\mathrm{DiscountedPayoff}_\lambda(\rho) = (1 - \lambda)\rho_0 + \lambda\, \mathrm{DiscountedPayoff}_\lambda(\rho_1 \rho_2 \cdots)$.
 

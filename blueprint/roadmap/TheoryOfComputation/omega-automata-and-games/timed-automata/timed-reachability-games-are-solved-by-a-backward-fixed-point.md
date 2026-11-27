@@ -2,10 +2,10 @@
 
 In a [timed game](timed-games.md) with configurations $V$, let $\mathrm{Pred}_{\ge 0}(X, Y)$ be the set of configurations from which $X$ is reached by letting time pass
 without meeting $Y$, let $\mathrm{Pred}_c(X)$ and $\mathrm{Pred}_u(X)$ be the predecessors of $X$ by an edge of Eve and of Adam respectively, and define the
-*controllable predecessor* operator $\pi(X) = \mathrm{Pred}_{\ge 0}(X \cup \mathrm{Pred}_c(X),\ \mathrm{Pred}_u(V \setminus X))$, which is monotone. For every target set $G$, the sequence
-$\pi^k(G)$ stabilizes after finitely many steps, and its limit is exactly the set of configurations from which Eve has a strategy to reach $G$. Every
+*controllable predecessor* operator $\pi(X) = \mathrm{Pred}_{\ge 0}(X \cup \mathrm{Pred}_c(X),\ \mathrm{Pred}_u(V \setminus X))$, which is monotone. For every target set $G$ that is, in each location, a finite union of
+zones (for instance a set of locations), the sequence $\pi^k(G)$ stabilizes after finitely many steps, and its limit is exactly the set of configurations from which Eve has a strategy to reach $G$. Every
 iterate is a finite union of [zones](zones-and-difference-bound-matrices.md) in each location, so the backward algorithm runs on unions of DBMs; termination
-follows because the iterates are unions of regions.
+follows because the iterates are unions of regions for the largest constant of the game and of $G$.
 
 ## Depends on
 
