@@ -639,9 +639,12 @@ jobs:
         run: |
           set -euo pipefail
           jq --compact-output --slurpfile tasks build/tasks.json \
-            '{schema: "atlas-graph-tasks/v1", commit: $tasks[0].commit, commit_date: $tasks[0].commit_date,
-              nodes: [.nodes[] | select(.kind == "node" and .status == "not_ready")
-                      | {node_id: .id, title: .title, page: (.route | ltrimstr("../"))}]}
+            'if .schema != "autoform-dag-search/v1" or (.nodes | type) != "array"
+                or any(.nodes[]; type != "object" or (.kind | type) != "string" or (.status | type) != "string")
+             then error("the index is not autoform-dag-search/v1 with a kind and a status for each node") else . end
+             | {schema: "atlas-graph-tasks/v1", commit: $tasks[0].commit, commit_date: $tasks[0].commit_date,
+                nodes: [.nodes[] | select(.kind == "node" and .status == "not_ready")
+                        | {node_id: .id, title: .title, page: (.route | ltrimstr("../"))}]}
              | if any(.nodes[]; (.node_id | type) != "string" or (.node_id | test("\\S") | not))
                   or (.nodes | map(.node_id) | unique | length) != (.nodes | length)
                then error("the index marks a node to expand without an id, or one id twice") else . end' \

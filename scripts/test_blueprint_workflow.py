@@ -868,12 +868,22 @@ elif "/compare/" in path:
                 self.assertEqual([item["node_id"] for item in next_task.load_graph({"commit": "c" * 40,
                                                                                     "commit_date": "2026-11-27"})],
                                  ["Algebra/a"])
-            # A node to expand without an id, or one id twice, leaves no file.
-            (root / "site-src" / "graph-tasks.json").unlink()
-            index.write_text(json.dumps({"nodes": [nodes[1], nodes[1]]}))
+            # An index with no node to expand gives an empty list.
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": [nodes[2]]}))
             result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertFalse((root / "site-src" / "graph-tasks.json").exists())
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads((root / "site-src" / "graph-tasks.json").read_text())["nodes"], [])
+            # Another format, a node without its kind or status, or a node to expand without an id, or one id twice,
+            # leaves no file.
+            for wrong in ({"nodes": nodes}, {"schema": "autoform-dag-search/v1", "nodes": "x"},
+                          {"schema": "autoform-dag-search/v1", "nodes": [{"id": "Algebra/c", "kind": "node"}]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [nodes[1], nodes[1]]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [dict(nodes[1], id=" ")]}):
+                (root / "site-src" / "graph-tasks.json").unlink(missing_ok=True)
+                index.write_text(json.dumps(wrong))
+                result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+                self.assertNotEqual(result.returncode, 0, wrong)
+                self.assertFalse((root / "site-src" / "graph-tasks.json").exists(), wrong)
 
     def run_task_step(self, output: str, status: int = 0, files: dict[str, str] | None = None):
         """Run the task step in a fixture checkout of *files*, with an Autoform that writes *output* and exits with

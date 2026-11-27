@@ -603,14 +603,32 @@ def load_graph(tasks: dict) -> list[dict]:
         raise Failure(f"{GRAPH_TASKS} is not a list of nodes to expand ({GRAPH_SCHEMA}), each with its node id")
     if len({node["node_id"] for node in nodes}) != len(nodes):
         raise Failure(f"{GRAPH_TASKS} lists one node twice")
-    if not tasks.get("commit") or graph.get("commit") != tasks.get("commit") or not tasks.get("commit_date"):
-        raise Failure(f"{GRAPH_TASKS} comes from commit {shown(graph.get('commit'))} and tasks.json from "
-                      f"{shown(tasks.get('commit'))}, or tasks.json has no commit date: the site may be deploying, "
-                      "so run this script again in a few minutes")
+    if not tasks.get("commit") or graph.get("commit") != tasks.get("commit") or not same_time(graph, tasks):
+        raise Failure(f"{GRAPH_TASKS} comes from commit {shown(graph.get('commit'))} of "
+                      f"{shown(graph.get('commit_date'))}, and tasks.json from {shown(tasks.get('commit'))} of "
+                      f"{shown(tasks.get('commit_date'))}: the site may be deploying, so run this script again in a "
+                      "few minutes")
     return [{"node_id": node["node_id"], "title": node.get("title"),
-             "article_path": f"blueprint/roadmap/{node['node_id']}.md",
-             "page": urllib.parse.urljoin(SITE, node["page"]) if isinstance(node.get("page"), str)
-             and node["page"].strip() else None} for node in nodes]
+             "article_path": f"blueprint/roadmap/{node['node_id']}.md", "page": page(node.get("page"))}
+            for node in nodes]
+
+
+def same_time(graph: dict, tasks: dict) -> bool:
+    """Whether the two lists give one commit date, as instants, so that it is the cutoff of both."""
+    try:
+        return moment(graph["commit_date"]) == moment(tasks["commit_date"])
+    except (KeyError, TypeError, AttributeError, ValueError):
+        return False
+
+
+def page(path: object) -> str | None:
+    """The address of a node's page, from its path on the site; none for a path that is not a usable text."""
+    if not isinstance(path, str) or not path.strip():
+        return None
+    try:
+        return urllib.parse.urljoin(SITE, path)
+    except ValueError:
+        return None
 
 
 def graph_taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:

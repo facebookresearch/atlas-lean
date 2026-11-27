@@ -896,6 +896,7 @@ GRAPH = {"schema": "atlas-graph-tasks/v1", "commit": TASKS["commit"], "commit_da
     node("Algebra/t1"),                            # its id is an open pull request's branch
     node("Algebra/t10"),
     node("Combinatorics/ramsey", page=7),          # a page that is not a text gives no link
+    node("Combinatorics/turan", page="http://[x"),  # nor does one that is no address
 ]}
 GRAPH_PULLS = [
     pull(20, "Expand the Sylow theorems", "Expands `blueprint/roadmap/Algebra/groups/sylow.md` into its parts."),
@@ -919,14 +920,15 @@ class Graph(unittest.TestCase):
         self.assertEqual(graph["taken_by"], [{"node_id": "Algebra/groups/sylow", "pull_requests": [20]},
                                              {"node_id": "Algebra/t1", "pull_requests": [21]}])
         self.assertEqual([item["node_id"] for item in graph["next"]],
-                         ["Algebra/groups/sylow-applications", "Algebra/t10", "Combinatorics/ramsey"])
-        self.assertEqual((graph["to_expand"], graph["taken"], graph["free"]), (5, 2, 3))
+                         ["Algebra/groups/sylow-applications", "Algebra/t10", "Combinatorics/ramsey",
+                          "Combinatorics/turan"])
+        self.assertEqual((graph["to_expand"], graph["taken"], graph["free"]), (6, 2, 4))
         self.assertEqual(graph["next"][0], {
             "node_id": "Algebra/groups/sylow-applications", "title": "Node Algebra/groups/sylow-applications",
             "article_path": "blueprint/roadmap/Algebra/groups/sylow-applications.md",
             "page": "https://facebookresearch.github.io/atlas-lean/roadmap/Algebra/groups/index.html",
             "priority": 1})
-        self.assertIsNone(graph["next"][2]["page"])
+        self.assertEqual([graph["next"][2]["page"], graph["next"][3]["page"]], [None, None])
         # The ready tasks are listed as without --graph.
         self.assertEqual({key: value for key, value in result.items() if key != "graph"},
                          json.loads(run(Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,)), "--json", "-n", "10",
@@ -946,6 +948,13 @@ class Graph(unittest.TestCase):
             code, out, err = run(graph_site(graph), "--graph", env=TOKEN)
             self.assertEqual((code, out), (1, ""))
             self.assertIn("run this script again in a few minutes", err)
+        # Nor does one commit with two dates: the cutoff has to be the graph's too.
+        for graph in (dict(GRAPH, commit_date="2026-11-20T15:00:00+00:00"),
+                      {key: value for key, value in GRAPH.items() if key != "commit_date"},
+                      dict(GRAPH, commit_date="not a time")):
+            self.assertEqual(run(graph_site(graph), "--graph", env=TOKEN)[:2], (1, ""), graph)
+        # One instant written another way is the same date.
+        self.assertEqual(run(graph_site(dict(GRAPH, commit_date="2026-11-20T12:00:00Z")), "--graph", env=TOKEN)[0], 0)
         # Nor does a task list without its commit date give a cutoff.
         tasks = {key: value for key, value in TASKS.items() if key != "commit_date"}
         site = graph_site(tasks=tasks)
@@ -977,8 +986,8 @@ class Graph(unittest.TestCase):
             code, out, err = run(graph_site(), "--json", "--graph", "-n", "10", "--priorities", str(path), env=TOKEN)
         self.assertEqual((code, err), (0, ""))
         self.assertEqual([item["node_id"] for item in json.loads(out)["graph"]["next"]],
-                         ["Combinatorics/ramsey", "Algebra/t1", "Algebra/t10", "Algebra/groups/sylow",
-                          "Algebra/groups/sylow-applications"])
+                         ["Combinatorics/ramsey", "Combinatorics/turan", "Algebra/t1", "Algebra/t10",
+                          "Algebra/groups/sylow", "Algebra/groups/sylow-applications"])
 
     def test_without_graph_the_graph_is_neither_read_nor_matched(self) -> None:
         site = graph_site()
@@ -992,7 +1001,7 @@ class Graph(unittest.TestCase):
     def test_the_text_lists_the_nodes_to_expand(self) -> None:
         code, out, err = run(graph_site(open_pages=(OPEN_PULLS + GRAPH_PULLS,)), "--graph", "-n", "1", env=TOKEN)
         self.assertEqual((code, err), (0, ""))
-        self.assertIn("5 nodes to expand; pull requests take 2 of them, so 3 are free.", out)
+        self.assertIn("6 nodes to expand; pull requests take 2 of them, so 4 are free.", out)
         self.assertIn("expand: Node Algebra/groups/sylow-applications", out)
         self.assertIn("Read its page's `## Expansion` section first", out)
 
