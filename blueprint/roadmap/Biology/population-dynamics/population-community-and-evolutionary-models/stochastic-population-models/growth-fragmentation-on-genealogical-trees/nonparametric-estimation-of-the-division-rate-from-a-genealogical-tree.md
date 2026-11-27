@@ -18,7 +18,7 @@ and let $\gamma_{B,\mathbb V}$ be the spectral radius of $\mathcal P_B - 1\otime
 
 $$ \sup_{\rho,\ B \in \mathcal{F}^\lambda(\mathfrak{c})\cap\mathcal{H}^s(\mathcal{D},M)}\mathbb{E}_\mu\Big[\|\widehat B_n - B\|^2_{L^2(\mathcal{D})}\Big]^{1/2} \lesssim \varpi_n^{-1}(\log n)^{1/2}\,n^{-s/(2s+1)}, $$
 
-uniformly over initial laws $\mu$ with a finite second moment of the Lyapunov function.
+for every initial law $\mu$ of $(\xi_\varnothing,\tau_\varnothing)$ with $\int\mathbb V^2\,d\mu<\infty$ (the implied constant may depend on $\mu$).
 
 Up to logarithmic factors this is the classical nonparametric rate $n^{-s/(2s+1)}$ for $s$-Hölder functions. It improves on the rate $n^{-s/(2s+3)}$ obtained from indirect observation of the population size distribution, where $B$ appears as the solution of an ill-posed inverse problem. The method has been applied to single-cell *Escherichia coli* lineage data.
 

@@ -1,6 +1,6 @@
 # Mutation limits of multi-population replicator dynamics
 
-**Setting.** Populations $i\in I$ each have pure strategies $h\le n_i$; the state space is the product of simplices $\Delta=\prod_i\Delta_{n_i}$ and $f\in C^1(U\supset\Delta,\mathbb{R}^S)$ gives payoffs $f_{ih}(x)$ with population averages $\bar f_i(x)=\sum_h x_{ih}f_{ih}(x)$. The replicator dynamics (RD) and the replicator–mutator dynamics (RMD) with mutation rate $M>0$ toward a reference state $c\in\operatorname{int}\Delta$ are
+**Setting.** Populations $i\in I$ each have pure strategies $h\le n_i$; the state space is the product of simplices $\Delta=\prod_i\Delta_{n_i}$ and $f\in C^1(U\supset\Delta,\mathbb{R}^S)$ gives payoffs $f_{ih}(x)$ with population averages $\bar f_i(x)=\sum_h x_{ih}f_{ih}(x)$. As in normal-form games, there is no intraspecific interaction: the payoffs of population $i$ do not depend on the composition of population $i$, that is, $\partial f_{ih}/\partial x_{ik}=0$ for $h,k\le n_i$. The replicator dynamics (RD) and the replicator–mutator dynamics (RMD) with mutation rate $M>0$ toward a reference state $c\in\operatorname{int}\Delta$ are
 
 $$\dot x_{ih}=x_{ih}\bigl(f_{ih}(x)-\bar f_i(x)\bigr),\qquad \dot x_{ih}=x_{ih}\bigl(f_{ih}(x)-\bar f_i(x)\bigr)+M\,(c_{ih}-x_{ih}).$$
 
@@ -15,7 +15,7 @@ A *mutation equilibrium* for $M$ is a rest point $x^M$ of the RMD.
 4. Every regular Nash equilibrium (reduced Jacobian of RD of full rank) is a mutation limit point; every strict Nash equilibrium is an attracting mutation limit point.
 5. If $x^*$ is an attracting mutation limit point, every eigenvalue of the reduced Jacobian of RD at $x^*$ has nonpositive real part.
 
-In the multi-population RD no interior equilibrium is asymptotically stable, while mutation equilibria are asymptotically stable for large $M$; the notion separates Nash equilibria by whether vanishing mutation selects and stabilizes them. Attracting mutation limits do not exist in every game, and characterizing when they exist is open.
+Under this no-intraspecific-interaction assumption, in the multi-population RD no interior equilibrium is asymptotically stable (a rest point is asymptotically stable if and only if it is a strict Nash equilibrium), while mutation equilibria are asymptotically stable for large $M$; the notion separates Nash equilibria by whether vanishing mutation selects and stabilizes them. Attracting mutation limits do not exist in every game, and characterizing when they exist is open.
 
 ## Expansion
 

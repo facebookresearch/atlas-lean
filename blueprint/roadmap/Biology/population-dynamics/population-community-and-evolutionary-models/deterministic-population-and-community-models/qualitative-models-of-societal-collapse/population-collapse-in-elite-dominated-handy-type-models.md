@@ -1,6 +1,6 @@
 # Population collapse in Elite-dominated HANDY-type models
 
-**Setting.** The HANDY model of Motesharrei, Rivas and Kalnay couples a human population, split into Commoners $C$ (who produce wealth) and Elites $E$ (who consume it at a higher rate), to natural resources and accumulated wealth. The analysis replaces its explicit equations by a generic system for total food resources $B$,
+**Setting.** The HANDY model of Motesharrei, Rivas and Kalnay couples a human population, split into Commoners $C$ (who produce wealth) and Elites $E$ (who consume it at a higher rate), to natural resources and accumulated wealth. The concrete model of item 4 below is the source's Elite-dominated variant of HANDY, which adds a decay rate for stored food and gives both populations the same minimum and maximum per capita change rates. The analysis replaces its explicit equations by a generic system for total food resources $B$,
 
 $$B'=B\,R_B(B,C,E),\qquad C'=C\,R_C(B,C,E),\qquad E'=E\,R_E(B,C,E),$$
 
@@ -19,7 +19,13 @@ A trajectory satisfying these is an *H trajectory*. A purely trajectory-level ve
 1. Under H$_1$–H$_2$ there is no equilibrium with $C>0$ and $E>0$.
 2. Every H trajectory is an H$^*$ trajectory.
 3. (Population collapse) For every H$^*$ trajectory, $C(t)\to0$ and $E(t)\to0$ as $t\to\infty$.
-4. Every trajectory of the HANDY model with Elite-dominated parameters and strictly positive initial data is an H$^*$ trajectory, and therefore collapses.
+4. Every trajectory of the Elite-dominated HANDY model below (with constant or time-dependent parameters) with $B(0),C(0),E(0)>0$, where $B=B_{\mathrm{Env}}+B_{\mathrm{Stor}}$, gives an H$^*$ trajectory $(B,C,E)$; hence $C(t)\to0$ and $E(t)\to0$.
+
+**Elite-dominated HANDY model (item 4).** With wild food $B_{\mathrm{Env}}$ and stored food $B_{\mathrm{Stor}}$,
+
+$$B_{\mathrm{Env}}'=\gamma B_{\mathrm{Env}}\Big(1-\frac{B_{\mathrm{Env}}}{\lambda}\Big)-\nu B_{\mathrm{Env}}C,\qquad B_{\mathrm{Stor}}'=\nu B_{\mathrm{Env}}C-\sigma(C+\kappa E)\min\{1,Z\}-\varepsilon B_{\mathrm{Stor}},\qquad C'=G(Z)\,C,\qquad E'=G(\kappa Z)\,E,$$
+
+with $Z=(B_{\mathrm{Stor}}/\rho)/(C+\kappa E)$ and $G(z)=\xi_1+(\xi_2-\xi_1)\min\{1,z\}$. Either all parameters are constants with $\lambda,\gamma,\varepsilon,\rho,\nu,\sigma>0$, $\kappa>1$ and $\xi_1<0<\xi_2$, or, more generally (the source's HANDY$^*$ model), $\sigma>0$ and $\xi_1<0<\xi_2$ are constants while $\lambda,\gamma,\varepsilon,\rho,\nu,\kappa$ are bounded $C^1$ functions of $t$ with bounded derivatives, $\inf\lambda,\inf\gamma,\inf\varepsilon,\inf\rho,\inf\nu>0$ and $\inf\kappa>1$.
 
 ## Expansion
 

@@ -16,7 +16,7 @@ $$\lambda\big(\gamma - (\beta + |\alpha|)\big) < |\alpha|\,\theta,$$
 
 then $\mu_t \rightharpoonup \delta_{\beta/|\alpha|}$: group selection is too weak to move groups away from the within-group optimum for defectors. Above this threshold steady densities $f^\lambda_\theta$ exist; for $\theta\ge1$, as $\lambda\to\infty$ their modal composition tends to $\gamma/|\alpha| - 1 \in (0,1)$ if $\gamma < 2|\alpha|$, which is strictly below the group-optimal composition $x^* = \gamma/(2|\alpha|)$ (a shadow of within-group selection), and tends to $1$ if $\gamma > 2|\alpha|$.
 
-**Stag Hunt and anti-coordination games.** In the Stag Hunt, if the initial density puts mass arbitrarily close to $x=1$, then for every $\lambda>0$, $f(t,\cdot) \rightharpoonup \delta_1$: any between-group competition selects full cooperation. In the anti-coordination games, for every $\lambda\ge0$ and initial Hölder exponents $\zeta,\theta>0$, $\mu_t \rightharpoonup \delta_{\beta/|\alpha|}$.
+**Stag Hunt and anti-coordination games.** In the Stag Hunt, if the initial density puts mass arbitrarily close to $x=1$, then for every $\lambda>0$, $f(t,\cdot) \rightharpoonup \delta_1$: any between-group competition selects full cooperation. In the two anti-coordination games with $S>R$, namely $T>S>R>P$ and $S>T>R>P$ (so that $\gamma-(\beta+|\alpha|)=R-S<0$), for every $\lambda\ge0$ and initial Hölder exponents $\zeta,\theta>0$, $\mu_t \rightharpoonup \delta_{\beta/|\alpha|}$.
 
 ## Expansion
 

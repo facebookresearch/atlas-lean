@@ -33,7 +33,11 @@ $$\sum_{I\in E_1}p_{z,I}=1,$$
 
 where $p_{z,I}$ is the probability that the empirical occupation measures concentrate on $\mathrm{Conv}(\mathcal{M}^{I,+})$ and each outsider $j\notin I$ decays at a rate $r_j(\mu)$ for some such $\mu$. Thus almost surely the community ends up at one of the attracting subcommunities in $E_1$, and the extinct species are exactly those outside it.
 
-The same classification holds in continuous time for Kolmogorov-type stochastic differential equations, with the invasion rates defined as the corresponding stationary averages of the per-capita log-growth drift.
+The same classification holds in continuous time (the source's Theorems 3.4–3.5) for the Kolmogorov system
+
+$$dX_i=X_if_i(X,Y)\,dt+X_ig_i(X,Y)\,dE_i,\qquad dY_j=u_j(X,Y)\,dt+h_j(X,Y)\,dW_j$$
+
+on $\mathcal S$, where $(E,W)=\Gamma^\top B$ for a standard Brownian motion $B$ and $\Gamma^\top\Gamma=\Sigma=(\sigma_{ij})$, under the source's Assumption 3.1: $f_i,g_i,u_j,h_j$ are locally Lipschitz, and there are $C_4,\gamma_4,\gamma_5>0$ and $V\in C^2$ with $V\ge1$, $V(z)\to\infty$ as $|z|\to\infty$, $V(x,y)\ge|x|^{\gamma_5}$ and $\mathcal LV(z)\le C_4-\gamma_4\big(1+\sum_i(|f_i(z)|+|g_i(z)|^2)\big)V(z)$ for the generator $\mathcal L$; the extinction statements also use Assumption 3.2: $\sum_iV_{x_i}(z)x_ig_i(z)+\sum_jV_{y_j}(z)h_j(z)\le CV(z)\sum_i\big(1+|f_i(z)|+|g_i(z)|^2\big)$. The invasion rates are then $r_i(\mu)=\int\big(f_i(z)-\sigma_{ii}g_i(z)^2/2\big)\,\mu(dz)$.
 
 ## Expansion
 

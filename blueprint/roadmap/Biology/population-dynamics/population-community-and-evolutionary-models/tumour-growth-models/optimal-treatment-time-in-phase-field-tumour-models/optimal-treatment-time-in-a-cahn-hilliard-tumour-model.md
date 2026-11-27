@@ -1,6 +1,6 @@
 # Optimal treatment time in a Cahn–Hilliard tumour model
 
-**State equations.** In a bounded domain $\Omega \subset \mathbb{R}^3$ with $C^3$ boundary, let $\varphi \in [-1,1]$ be the tumour/healthy-tissue phase field ($\varphi = 1$ tumour, $\varphi = -1$ healthy), $\mu$ its chemical potential, $\sigma$ the nutrient concentration, and $u \in [0,1]$ the cytotoxic drug dose (the control). With interpolation $h(-1) = 0$, $h(1) = 1$, double-well potential $\Psi$, proliferation, apoptosis, consumption and supply rates $\mathcal{P}, \mathcal{A}, \mathcal{C}, \mathcal{B} \ge 0$, drug kill rate $\alpha > 0$ and vascular nutrient level $\sigma_S$,
+**State equations.** In a bounded domain $\Omega \subset \mathbb{R}^3$ with $C^3$ boundary, let $\varphi$ be the tumour/healthy-tissue phase field (the value $\varphi = 1$ means tumour and $\varphi = -1$ healthy tissue; $\varphi$ is not assumed to stay in $[-1,1]$), $\mu$ its chemical potential, $\sigma$ the nutrient concentration, and $u \in [0,1]$ the cytotoxic drug dose (the control). With interpolation $h(-1) = 0$, $h(1) = 1$, double-well potential $\Psi$, proliferation, apoptosis, consumption and supply rates $\mathcal{P}, \mathcal{A}, \mathcal{C}, \mathcal{B} \ge 0$, drug kill rate $\alpha > 0$, vascular nutrient level $\sigma_S$, and positive constants $A, B$ (related to the interfacial thickness and surface tension),
 
 $$\begin{aligned}
 \partial_t\varphi &= \Delta\mu + (\mathcal{P}\sigma - \mathcal{A} - \alpha u)h(\varphi), \qquad \mu = A\Psi'(\varphi) - B\Delta\varphi,\\
@@ -15,7 +15,7 @@ $$J_r(\varphi, u, \tau) = \frac{\beta_Q}{2}\int_0^\tau\!\!\int_\Omega|\varphi - 
 
 over $u \in \mathcal{U}_{\mathrm{ad}} = \{u \in L^\infty(Q) : 0 \le u \le 1\}$ and $\tau$. The averaged terms over $(\tau - r, \tau)$ relax the end-time terms $\int_\Omega|\varphi(\tau) - \varphi_\Omega|^2$ and $\int_\Omega(1 + \varphi(\tau))$ (tumour size at the end of treatment), and $\beta_T\tau$ penalizes long treatment.
 
-**Theorem (well-posedness).** Assume $\varphi_0 \in H^3$ with $\partial_\nu\varphi_0 = 0$, $\sigma_0 \in H^1$ with $0 \le \sigma_0 \le 1$, $0 \le \sigma_S \le 1$, $h \in C^2$ Lipschitz with values in $[0,1]$, and $\Psi \in C^3$ of at most quartic growth with $|\Psi'| \le k_0\Psi + k_1$ and $\Psi(s) \ge k_2|s| - k_3$. Then for each $u \in \mathcal{U}_{\mathrm{ad}}$ there is a unique weak solution with
+**Theorem (well-posedness).** Assume $\varphi_0 \in H^3$ with $\partial_\nu\varphi_0 = 0$, $\sigma_0 \in H^1$ with $0 \le \sigma_0 \le 1$, $0 \le \sigma_S \le 1$, targets $\varphi_Q, \varphi_\Omega \in L^2(Q)$, $h \in C^2(\mathbb{R};[0,1])$ Lipschitz, and $\Psi \in C^3(\mathbb{R};[0,\infty))$ with, for positive constants $k_0,\dots,k_5$ and all $s,t \in \mathbb{R}$, $|\Psi'(s)| \le k_0\Psi(s) + k_1$, $\Psi(s) \ge k_2|s| - k_3$, $|\Psi''(s)| \le k_4(1 + s^2)$ and $|\Psi'(s) - \Psi'(t)| \le k_5(1 + s^2 + t^2)|s - t|$. Then for each $u \in \mathcal{U}_{\mathrm{ad}}$ there is a unique weak solution with
 
 $$\varphi \in L^\infty(0,T;H^2) \cap L^2(0,T;H^3) \cap H^1(0,T;L^2) \cap C^0(\overline{Q}), \qquad 0 \le \sigma \le 1,$$
 

@@ -13,7 +13,7 @@ So robust assembly, uniform over all error types, costs only a factor $1/\epsilo
 
 ## Depends on
 
-- [Lander–Waterman coverage model](../../lander-waterman-coverage-model/README.md)
+- [Exact uncovered probability of a base of a linear genome](../../lander-waterman-coverage-model/lin-uncovered.md)
 
 ## Expansion
 

@@ -20,7 +20,7 @@ $$(\mathcal{L} - \delta)V + \max_{\xi\in[-\mu,\lambda]}\big[\xi^-\cdot(f - \nabl
 
 where $\mathcal{L}$ is the generator of the uncontrolled diffusion and $\xi = C - R$ is the net seeding rate, so $-\mu \le \xi \le \lambda$. (The source's (2.19) and Theorem 2.6 print $[-\lambda,\mu]$; its Section 2 and (2.18) use $[-\mu,\lambda]$.)
 
-*(3)* (Numerical approximation) Under a diagonal-dominance condition on the diffusion matrix $\sigma\sigma'$, the values $V^h$ of locally consistent controlled Markov chains with step $h$ converge to $V$ (resp. $V^U$) on $[0,U]^d$ in each of the three regimes, and near-optimal chain policies are near-optimal for the diffusion.
+*(3)* (Numerical approximation) Assume the source's Assumption B.1 on $a=\sigma\sigma'$: $a_{ii}(x)-\sum_{j\ne i}a_{ij}(x)\ge0$ for all $i$ and $x$. Let $V^h$ be the values of the locally consistent controlled Markov chains with step $h$. In the first regime (bounded seeding), with constant prices $f_i(x)\equiv f_i$ and the truncation condition of (1) (the source's (2.10)), $V^h\to V$ on $[0,U]^d$ (Theorem 2.5). In the second regime (both rates bounded), $V^h\to V^U$ on $[0,U]^d$ (Theorem 2.7). In the third regime (unbounded seeding), with constant seeding costs $g_i(x)\equiv g_i$, $V^h\to V^U$ on $[0,U]^d$ (Theorem 2.8). In each case near-optimal chain policies are near-optimal for the diffusion.
 
 ## Expansion
 

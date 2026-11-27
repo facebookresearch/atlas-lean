@@ -1,6 +1,6 @@
 # Well-posedness of the time-fractional mechanically coupled tumour growth model
 
-**Model.** On a bounded Lipschitz domain $\Omega\subset\mathbb R^d$ over $(0,T)$, let $\phi$ be the tumour volume fraction, $\mu$ its chemical potential, $\vec u$ the displacement, $\psi$ the nutrient and $\chi$ the chemotherapeutic agent. Subdiffusion of tumour cells is modeled by a fractional order $\alpha\in(0,1)$ in time:
+**Model.** On a bounded Lipschitz domain $\Omega\subset\mathbb R^2$ (the source's two-dimensional setting) over $(0,T)$, let $\phi$ be the tumour volume fraction, $\mu$ its chemical potential, $\vec u$ the displacement, $\psi$ the nutrient and $\chi$ the chemotherapeutic agent. Subdiffusion of tumour cells is modeled by a fractional order $\alpha\in(0,1)$ in time:
 
 $$
 \begin{aligned}
