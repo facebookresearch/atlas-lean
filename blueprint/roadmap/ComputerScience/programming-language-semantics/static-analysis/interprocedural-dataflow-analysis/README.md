@@ -12,5 +12,4 @@ Dataflow analysis across procedure calls in the IFDS framework of Reps, Horwitz 
 - [Dyck reachability](dyck-reachability.md)
 - [Dyck reachability on bidirected graphs is symmetric](dyck-reachability-on-bidirected-graphs-is-symm.md)
 - [Dyck reachability on bidirected graphs in almost-linear time](dyck-reachability-on-bidirected-graphs-in-almo.md)
-- [Lower bound for Dyck reachability on bidirected graphs](lower-bound-for-dyck-reachability-on-bidirecte.md)
 - [Dyck reachability is as hard as context-free recognition](dyck-reachability-is-as-hard-as-context-free-r.md)

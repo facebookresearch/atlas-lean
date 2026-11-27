@@ -4,7 +4,7 @@ Let $G$ be a grammar with a [correct LL(1) parse table](ll-1-lookahead-and-corre
 
 $$\mathrm{parse}(s, w \cdot r) \text{ returns } (v, r) \iff s \xrightarrow{v} w \mid r,$$
 
-and on every input it terminates, either with a value or by rejecting, never with the error that signals left recursion. This is not whole-input acceptance in the sense of [parsers and recognizers](parsers-and-recognizers.md): with the single production $S \to a$, $\mathrm{parse}(S, a\,a)$ returns the value of the first token and the remainder $a$, although $a\,a$ is not in the language. A whole input $w$ is accepted, with value $v$, exactly when $\mathrm{parse}(S, w)$ returns $(v, \varepsilon)$ for the start symbol $S$, which by the biconditional means $S \xrightarrow{v} w \mid \varepsilon$.
+and on every input it terminates, either with a value or by rejecting, never with the error that signals left recursion. This is not whole-input acceptance in the sense of [parsers and recognizers](parsers-and-recognizers.md): with the single production $S \to a$, $\mathrm{parse}(S, a\,a)$ returns the action of $S \to a$ applied to the value of the first token, with the remainder $a$, although $a\,a$ is not in the language. A whole input $w$ is accepted, with value $v$, exactly when $\mathrm{parse}(S, w)$ returns $(v, \varepsilon)$ for the start symbol $S$, which by the biconditional means $S \xrightarrow{v} w \mid \varepsilon$.
 
 **Proof.** The forward direction is [soundness](soundness-of-ll-1-parsing.md), the backward direction is [completeness](completeness-of-ll-1-parsing.md), and termination without error is [error-free termination](error-free-termination-of-ll-1-parsing.md).
 

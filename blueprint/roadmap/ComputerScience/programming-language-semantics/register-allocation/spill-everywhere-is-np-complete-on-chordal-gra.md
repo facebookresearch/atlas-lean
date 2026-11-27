@@ -1,6 +1,6 @@
 # Spill everywhere is NP-complete on chordal graphs
 
-The decision version of the [spill everywhere problem](the-spill-everywhere-problem.md) without holes is NP-complete on chordal graphs, which include the interference graphs of strict SSA programs, even if $w(v) = 1$ for every variable. Hardness for strict SSA programs themselves would also need the converse, that every chordal graph is the interference graph of a strict SSA program, which the source takes from Bouchez, Darte, Guillon and Rastello and which is not claimed here. It remains NP-complete in the incremental case, where the register pressure only has to drop from $\Omega$ to $\Omega - 1$, again with unit weights.
+The decision version of the [spill everywhere problem](the-spill-everywhere-problem.md) without holes is NP-complete on chordal graphs, which include the interference graphs of strict SSA programs, even if $w(v) = 1$ for every variable. Hardness for strict SSA programs themselves would also need the converse, that every chordal graph is the interference graph of a strict SSA program, which is not claimed here. It remains NP-complete in the incremental case, where the register pressure only has to drop from $\Omega$ to $\Omega - 1$, again with unit weights.
 
 **Proof idea.** Membership in NP is clear. For the incremental case, a chordal graph is the intersection graph of subtrees of a tree, and an instance of exact cover by 3-sets is encoded by a tree whose leaves correspond to the elements and subtrees that correspond to the triples.
 

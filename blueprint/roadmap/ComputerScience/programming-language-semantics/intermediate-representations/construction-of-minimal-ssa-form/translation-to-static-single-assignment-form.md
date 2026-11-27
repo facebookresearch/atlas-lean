@@ -19,4 +19,4 @@ The *renaming* step visits the dominator tree top down, keeping for each variabl
 
 ## Sources
 
-- R. Cytron, J. Ferrante, B. K. Rosen, M. N. Wegman and F. K. Zadeck, "Efficiently computing static single assignment form and the control dependence graph", *ACM Transactions on Programming Languages and Systems* 13(4):451–490, 1991, Section 2 (SSA form, the semantics of $\varphi$-functions and the three conditions on a translation), Section 3 (minimal SSA form) and Section 5.2 (Figure 12, the renaming algorithm).
+- R. Cytron, J. Ferrante, B. K. Rosen, M. N. Wegman and F. K. Zadeck, "Efficiently computing static single assignment form and the control dependence graph", *ACM Transactions on Programming Languages and Systems* 13(4):451–490, 1991, Section 2 (control-flow graph conventions), Section 3 (SSA form, the semantics of $\varphi$-functions, the three conditions on a translation and minimal SSA form) and Section 5.2 (Figure 12, the renaming algorithm).

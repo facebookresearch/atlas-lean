@@ -4,10 +4,11 @@ An *e-class analysis* on [e-graphs](e-graphs.md) consists of a domain $D$ with a
 
 $$d_c = \bigvee_{n \in c} \mathrm{make}(n) \quad\text{and}\quad \mathrm{modify}(c) = c,$$
 
-so in particular $d_c \ge \mathrm{make}(n)$ for every $n \in c$. The invariant is the target of the analysis. Rebuilding is extended to work towards it alongside the [congruence invariant](congruence-and-hashcons-invariants-of-e-graphs.md): $\mathrm{add}$ sets the data of a new singleton e-class to $\mathrm{make}(n)$ and applies $\mathrm{modify}$, $\mathrm{merge}$ joins the data of the merged e-classes, and repairing an e-class applies $\mathrm{modify}$ to it and recomputes the data of its parents, joining in $\mathrm{make}$ of each parent e-node and putting a parent e-class back on the worklist when its data change. These assumptions on $D$, $\mathrm{make}$ and $\mathrm{modify}$ do not guarantee that the invariant can be reached: for the e-class $C = \{a, f(C)\}$, the domain $\mathbb{N}$ with join $\max$, identity $\mathrm{modify}$, $\mathrm{make}(a) = 0$ and $\mathrm{make}(f(C)) = d_C + 1$, the invariant would require $d_C = \max(0, d_C + 1)$, which has no solution, and the updates of $d_C$ never stop.
+so in particular $d_c \ge \mathrm{make}(n)$ for every $n \in c$. The invariant is the target of the analysis. [Rebuilding](rebuilding-restores-the-congruence-invariant.md) is extended to work towards it alongside the [congruence invariant](congruence-and-hashcons-invariants-of-e-graphs.md): $\mathrm{add}$ sets the data of a new singleton e-class to $\mathrm{make}(n)$ and applies $\mathrm{modify}$, $\mathrm{merge}$ joins the data of the merged e-classes, and repairing an e-class applies $\mathrm{modify}$ to it and recomputes the data of its parents, joining in $\mathrm{make}$ of each parent e-node and putting a parent e-class back on the worklist when its data change. These assumptions on $D$, $\mathrm{make}$ and $\mathrm{modify}$ do not guarantee that the invariant can be reached: for the e-class $C = \{a, f(C)\}$, the domain $\mathbb{N}$ with join $\max$, identity $\mathrm{modify}$, $\mathrm{make}(a) = 0$ and $\mathrm{make}(f(C)) = d_C + 1$, the invariant would require $d_C = \max(0, d_C + 1)$, which has no solution, and the updates of $d_C$ never stop.
 
 ## Depends on
 
+- [Rebuilding restores the congruence invariant](rebuilding-restores-the-congruence-invariant.md)
 - [E-graphs](e-graphs.md)
 - [Congruence and hashcons invariants of e-graphs](congruence-and-hashcons-invariants-of-e-graphs.md)
 
