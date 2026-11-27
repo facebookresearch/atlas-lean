@@ -12,7 +12,7 @@ $$P_v=\Pr[K\ge N]=\sum_{k=N}^{\sigma}\binom{\sigma}{k}\Pr[D_A]^k\bigl(1-\Pr[D_A]
 
 **Theorem 2 (rare genotypes).** A rare genotype $G$ (frequency $\phi$) is detected only if both chromosomes are covered, $D_G=G\cap C_1\cap C_2$, so $\Pr[D_G]=\phi c^2$, and its discovery probability is the same binomial tail with $\Pr[D_G]$ in place of $\Pr[D_A]$.
 
-**Design consequence.** For fixed total redundancy $R$, substituting $\rho=R/\sigma$ makes $P_v$ a function of the sample size $\sigma$ alone; the source shows (Theorem 3) that for $N=1$ and $N=2$ it has a single interior maximizer $\sigma^*$, necessarily a global maximum; its numerical study shows that $\sigma^*$ increases with $R$ and that $P_v$ falls off faster for $\sigma<\sigma^*$ than for $\sigma>\sigma^*$, so fixing the sample size in advance of the sequencing budget is generally suboptimal.
+**Design consequence.** For fixed total redundancy $R$, substituting $\rho=R/\sigma$ makes $P_v$ a function of the sample size $\sigma$ alone; the source shows (Theorem 3) that for $N=1$ and $N=2$ it has a single interior maximizer $\sigma^*$, necessarily a global maximum, except for rare alleles with $\tau = 1$, where $P_v(\sigma)$ increases monotonically to its supremum as $\sigma \to \infty$ (Wendl and Wilson 2009, Eq. (10)); its numerical study shows that $\sigma^*$ increases with $R$ and that $P_v$ falls off faster for $\sigma<\sigma^*$ than for $\sigma>\sigma^*$, so fixing the sample size in advance of the sequencing budget is generally suboptimal.
 
 ## Expansion
 
