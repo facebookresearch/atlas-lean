@@ -89,7 +89,7 @@ public def IsViablePrefix (g : ContextFreeGrammar T)
     (w : List T),
     RightmostDerives g [Symbol.nonterminal g.initial]
         (α ++ [Symbol.nonterminal A] ++ w.map Symbol.terminal) ∧
-      (∃ r ∈ g.rules, r.input = A ∧ r.output = β ∧ π <:+ α ++ β)
+      (∃ r ∈ g.rules, r.input = A ∧ r.output = β ∧ π <+: α ++ β)
 
 /-- A reduce action at viable prefix `π` with lookahead `ℓ`: the
 handle `A → β` ends exactly at `π` (`π = α ++ β`), the sentential

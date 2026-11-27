@@ -10,7 +10,7 @@ Use `Domains/<Subject>/` for a proved model whose definitions or hypotheses belo
 - [Transport: accessibility](Transport/)
 - [Urban planning: demand and stock balance](Urban/)
 
-Add subjects here rather than adding a Lake library for each field. `Domains` may import `MathlibExt`, `CSLibExt`, and `PhyslibExt`. Those libraries must not import `Domains`. If two layers need a generic result, extract it into the appropriate foundation; put the domain-specific corollary here. Do not import `WantedExt` or tests. Tests mirror the production path in [`DomainsTest`](../DomainsTest/).
+Add subjects here rather than adding a Lake library for each field. `Domains` may import `MathlibExt`, `CSLibExt`, and `PhyslibExt`. Those libraries must not import `Domains`. If two layers need a generic result, extract it into the appropriate foundation; put the domain-specific corollary here. Deferred results over these models belong in `WantedExt`, which may import `Domains`; never import `WantedExt` or tests here. Tests mirror the production path in [`DomainsTest`](../DomainsTest/).
 
 ## Updating an open pull request
 
