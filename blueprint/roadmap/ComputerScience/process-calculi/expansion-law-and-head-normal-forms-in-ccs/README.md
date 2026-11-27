@@ -4,7 +4,6 @@
 - [Deduplicated head normal form of a static CCS process](deduplicated-head-normal-form.md)
 - [The deduplicated head normal form is strongly bisimilar to the head normal form](deduplicated-head-normal-form-bisimilar.md)
 - [Every static CCS process is strongly bisimilar to its deduplicated head normal form](bisimilar-deduplicated-head-normal-form.md)
-- [The deduplicated head normal form enables the same actions](enabled-deduplicated-head-normal-form-if.md)
 - [Enabled actions are the actions of the deduplicated head summands](enabled-iff-mem-deduplicated-head-summan.md)
 - [The deduplicated head normal form has the same ready set](deduplicated-head-normal-form-ready-set.md)
 - [Deduplicated head normalization is idempotent up to strong bisimilarity](deduplicated-head-normal-form-idempotent.md)

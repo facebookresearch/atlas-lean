@@ -6,4 +6,4 @@ For $k = 0$ the base case is vacuous and the step case already asserts $P(s_0)$ 
 
 ## Sources
 
-- M. Sheeran, S. Singh and G. Stålmarck, *Checking safety properties using induction and a SAT-solver*, Formal Methods in Computer-Aided Design (FMCAD 2000), LNCS 1954, Springer, 2000, pp. 108–125.
+- M. Sheeran, S. Singh and G. Stålmarck, *Checking safety properties using induction and a SAT-solver*, Formal Methods in Computer-Aided Design (FMCAD 2000), LNCS 1954, Springer, 2000, pp. 127–144.

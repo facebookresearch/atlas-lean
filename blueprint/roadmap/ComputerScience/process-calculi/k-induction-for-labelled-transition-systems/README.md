@@ -8,4 +8,3 @@
 ## Infinite Paths
 
 - [Soundness of k-induction along infinite paths](k-induction-sound.md)
-- [States on infinite paths are safe under k-induction](safe-of-k-induction.md)
