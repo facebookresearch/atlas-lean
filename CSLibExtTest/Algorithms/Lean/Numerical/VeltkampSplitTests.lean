@@ -31,6 +31,11 @@ example : veltkampSplit 7 4 (-73 / 8 : ℚ) = (-10, 7 / 8) := by decide +kernel
 
 -- An even precision at the smallest and largest permitted split points.
 example : veltkampSplit 4 2 (9 : ℚ) = (8, 1) := by decide +kernel
+
+-- The second rounding is the tie 38 between 36 and 40. Ties toward zero
+-- would choose 36 instead of 40 and produce (12, -2).
+example : veltkampSplit 4 2 (10 : ℚ) = (8, 2) := by decide +kernel
+
 example : veltkampSplit 8 7 (255 : ℚ) = (256, -1) := by decide +kernel
 
 end Cslib.Algorithms.Lean.FloatingPoint
