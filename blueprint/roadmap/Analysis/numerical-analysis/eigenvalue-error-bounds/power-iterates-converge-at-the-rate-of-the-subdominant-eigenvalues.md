@@ -4,7 +4,7 @@ Let $A$ be an $n \times n$ complex matrix with distinct eigenvalues $\lambda_1, 
 
 $$\Big\| \frac{A^k v_0}{\lambda_1^k} - P_1 v_0 \Big\| \le C\, k^{m} \rho^{k}\, \|v_0\| .$$
 
-The proof writes $A^k v_0/\lambda_1^k = P_1 v_0 + \sum_{i \ge 2} \lambda_1^{-k}(\lambda_i I + D_i)^k P_i v_0$ by the [spectral decomposition](spectral-decomposition-of-a-square-matrix.md), with $D_1 = 0$ because $\lambda_1$ is semisimple, and expands $(\lambda_i I + D_i)^k$ by the binomial theorem, which has at most $l_i$ nonzero terms because $D_i^{l_i} = 0$. The restriction $k \ge n$ matters only when $0$ is an eigenvalue with a nontrivial nilpotent part: for $A = (1) \oplus \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ and $v_0 = e_3$, the left side is $1$ at $k = 1$ while $\rho = 0$.
+The proof writes $A^k v_0/\lambda_1^k = P_1 v_0 + \sum_{i \ge 2} \lambda_1^{-k}(\lambda_i I + D_i)^k P_i v_0$ by the [spectral decomposition](spectral-decomposition-of-a-square-matrix.md), with $D_1 = 0$ because $\lambda_1$ is semisimple, and expands $(\lambda_i I + D_i)^k$ by the binomial theorem, which has at most $l_i$ nonzero terms because $D_i^{l_i} = 0$. The restriction $k \ge n$ cannot be dropped. Among positive indices it is needed when the subdominant eigenvalues have nontrivial nilpotent parts: for $A = (1) \oplus \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ and $v_0 = e_3$, the error at $k = 1$ is $\|e_2\| > 0$ (equal to $1$ in the Euclidean norm) while $\rho = 0$. At $k = 0$ the right-hand side vanishes whenever $m \ge 1$: for $A = (1) \oplus \begin{pmatrix} 1/2 & 1 \\ 0 & 1/2 \end{pmatrix}$ and $v_0 = e_3$, the error at $k = 0$ is $\|e_3\|$.
 
 ## Depends on
 

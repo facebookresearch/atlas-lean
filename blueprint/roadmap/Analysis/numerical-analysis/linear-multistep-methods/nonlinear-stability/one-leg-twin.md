@@ -4,7 +4,7 @@ For the autonomous equation $y' = f(y)$, consider the [linear $k$-step method](.
 
 $$\rho(E) y_n = h\, s\, f\big(\sigma(E) y_n / s\big), \qquad\text{which for } \sigma(1) = 1 \text{ reads}\qquad \sum_{j=0}^k \alpha_j y_{n+j} = h\, f\Big(\sum_{j=0}^k \beta_j y_{n+j}\Big).$$
 
-It evaluates $f$ once per step, and it does not change when the multistep equation is multiplied by a nonzero constant. For example, the one-leg twin of the trapezium rule is the implicit midpoint rule $y_{n+1} - y_n = h f(\tfrac12(y_{n+1} + y_n))$, also when the trapezium rule is written $2(y_{n+1} - y_n) = h(f(y_n) + f(y_{n+1}))$.
+Its step equation contains a single evaluation point for $f$, and it does not change when the multistep equation is multiplied by a nonzero constant. For example, the one-leg twin of the trapezium rule is the implicit midpoint rule $y_{n+1} - y_n = h f(\tfrac12(y_{n+1} + y_n))$, also when the trapezium rule is written $2(y_{n+1} - y_n) = h(f(y_n) + f(y_{n+1}))$.
 
 ## Depends on
 

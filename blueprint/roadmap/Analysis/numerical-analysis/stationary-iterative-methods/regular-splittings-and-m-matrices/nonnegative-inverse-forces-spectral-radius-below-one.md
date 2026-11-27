@@ -8,6 +8,7 @@ For $n = 0$ both sides hold. For $n \ge 1$, the forward direction is the Neumann
 
 - [Neumann series](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/inv-one-sub-nonneg.md)
 - [Perron eigenvector of a nonnegative matrix](perron-eigenvector-of-a-nonnegative-matrix.md)
+- [I − B is invertible when ρ(B) < 1](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-unit-one-sub-of-spectral-radius-lt-on.md)
 
 ## Sources
 

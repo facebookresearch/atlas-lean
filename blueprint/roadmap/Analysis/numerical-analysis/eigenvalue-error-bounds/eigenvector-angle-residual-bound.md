@@ -1,10 +1,18 @@
 # Residual bound on the angle to an eigenspace
 
-Let $A$ be an $n \times n$ Hermitian matrix, let $\tilde u \in \mathbb{C}^n$ with $\|\tilde u\|_2 = 1$, let $\tilde\lambda = \tilde u^* A \tilde u$ and $r = A\tilde u - \tilde\lambda \tilde u$. Let $\lambda$ be an eigenvalue of $A$ closest to $\tilde\lambda$, suppose that $A$ has an eigenvalue other than $\lambda$ (otherwise $E_\lambda = \mathbb{C}^n$ and $\theta = 0$), let $\delta = \min\{|\mu - \tilde\lambda| : \mu \text{ an eigenvalue of } A,\ \mu \ne \lambda\}$, and suppose $\delta > 0$, and let $\theta$ be the angle between $\tilde u$ and the eigenspace $E_\lambda$ of $\lambda$, so that $\sin\theta = \|(I - Q)\tilde u\|_2$ for the orthogonal projector $Q$ onto $E_\lambda$. Then
+Let $A$ be an $n \times n$ Hermitian matrix, let $\tilde u \in \mathbb{C}^n$ with $\|\tilde u\|_2 = 1$, let $\tilde\lambda = \tilde u^* A \tilde u$ and $r = A\tilde u - \tilde\lambda \tilde u$. Let $\lambda$ be an eigenvalue of $A$ closest to $\tilde\lambda$, suppose that $A$ has an eigenvalue other than $\lambda$ (otherwise $E_\lambda = \mathbb{C}^n$ and $\theta = 0$), let $\delta = \min\{|\mu - \tilde\lambda| : \mu \text{ an eigenvalue of } A,\ \mu \ne \lambda\}$, and suppose $\delta > 0$, and let $\theta$ be the angle between $\tilde u$ and the eigenspace $E_\lambda$ of $\lambda$, so that $\sin\theta = \|(I - Q)\tilde u\|_2$ for the orthogonal projector $Q$ onto $E_\lambda$. Then, by expanding $\tilde u$ in a unitary eigenbasis, so that $\|r\|_2^2 = \sum_\mu |\mu - \tilde\lambda|^2 \|Q_\mu \tilde u\|_2^2 \ge \delta^2 \|(I - Q)\tilde u\|_2^2$ with $Q_\mu$ the orthogonal projector onto the eigenspace of $\mu$,
 
 $$\sin\theta \le \frac{\|r\|_2}{\delta}.$$
 
 When $\lambda$ is simple, $\theta$ is the angle between $\tilde u$ and an eigenvector of $\lambda$.
+
+## Depends on
+
+- [Rayleigh form of an operator](../../../Analysis/operator-theory/eigenvalue-inequalities/courant-fischer-min-max-theorem/rayleigh-form.md)
+
+## Proof depends on
+
+- [Spectral theorem for normal matrices](../../../LinearAlgebra/eigenvalues-and-canonical-forms/spectral-theorem-for-normal-matrices/exists-unitary-diagonal-of-is-star-norma.md)
 
 ## Related topics
 
