@@ -44,8 +44,9 @@ variable {n : ℕ} (C : Triangle n)
 def pairedBase (j : Fin n) : ℝ :=
   ∑ i : Fin (n - j.val), C i j (by have := i.isLt; omega)
 
-/-- Estimated development factor from `j` to `j + 1`. The denominator is a column total,
-not an individual claim. As usual in `ℝ`, division is total; the method uses positive totals. -/
+/-- Estimated development factor from `j` to `j + 1`. The denominator sums the claims at age `j`
+over accident years with an observed successor; with just one such year, it equals that year's
+claim at age `j`. Division in `ℝ` is total; the method assumes a strictly positive denominator. -/
 def factor (j : Fin n) : ℝ :=
   (∑ i : Fin (n - j.val), C i (j.val + 1) (by have := i.isLt; omega)) / pairedBase C j
 
@@ -126,7 +127,8 @@ theorem one_le_factor (hmono : Nondecreasing C) (j : Fin n) (hpos : 0 < pairedBa
   exact sum_le_sum fun i _ ↦ hmono i j (by have := i.isLt; omega)
 
 /-- The estimated reserve is nonnegative if the latest claim is nonnegative, observed rows are
-nondecreasing, and every paired denominator is positive. No individual cell need be positive. -/
+nondecreasing, and every paired denominator is positive. Some observed cells may be zero, but if
+a paired denominator has only one term, that cell must be strictly positive. -/
 theorem reserve_nonneg (hpos : ∀ j, 0 < pairedBase C j) (hmono : Nondecreasing C)
     (i : Fin (n + 1)) (hi : 0 ≤ latest C i) : 0 ≤ reserve C i := by
   unfold reserve
