@@ -23,3 +23,7 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Pauli Groups, Pauli Twirls and Clifford Observables](pauli-groups-and-clifford-observables/README.md)
 - [Rigidity of Nonlocal Strategies: Linearity and Pauli Tests](rigidity-of-nonlocal-strategies/README.md)
 - [States and Measurements on Operator Algebras](states-and-measurements-on-operator-algebras/README.md)
+- [Generalized probabilistic theories](generalized-probabilistic-theories/README.md)
+- [Quantum logic](quantum-logic/README.md)
+- [Quantum measurement occurrence](quantum-measurement-occurrence/README.md)
+- [Undecidable problems for nonlocal games](undecidable-problems-for-nonlocal-games/README.md)
