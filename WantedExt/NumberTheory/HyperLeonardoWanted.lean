@@ -14,12 +14,14 @@ public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HyperLeonardo
 public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
+public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 
 /-!
 # Hyper-Leonardo numbers
 
 Statements from Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino,
-*A Note on Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48.
+*A Note on Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48. The statement
+`hyperLeonardo_convex` is proved in `MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex`.
 
 The Leonardo numbers are `genLeonardo 1` (`Le₀ = Le₁ = 1`, `Le_{n+2} = Le_{n+1} + Le_n + 1`).
 The hyper-Leonardo numbers are their iterated partial sums,
@@ -76,21 +78,6 @@ Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 3, Equatio
 public theorem_wanted hyperLeonardo_succ_succ (r n : ℕ) :
     hyperLeonardo (r + 1) (n + 1) = hyperLeonardo (r + 1) n + hyperLeonardo r (n + 1)
 
-/-- **Consecutive hyper-Leonardo numbers of order one.** For every natural number $n$, the
-hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
-$Le^{(1)}_{n+1} = Le^{(1)}_n + L_{1,n+1}$, where $L_{1,n}$ is the generalized Leonardo number
-with $k = 1$, that is, the Leonardo number $Le_n$.
-
-This is the case $r = 1$ of the recurrence $Le^{(r)}_n = Le^{(r)}_{n-1} + Le^{(r-1)}_n$. The
-extracted text of the source reads $Le^{(1)}_n = Le_{n-1} + Le_n$, which fails at $n = 2$, where
-$Le^{(1)}_2 = 5$ but $Le_1 + Le_2 = 4$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Corollary 1, Equation (5)
-(`integers-2026-A48-cor-1`). -/
-public theorem_wanted hyperLeonardo_one_succ (n : ℕ) :
-    hyperLeonardo 1 (n + 1) = hyperLeonardo 1 n + genLeonardo 1 (n + 1)
-
 /-- **The convolution of log-concave sequences is log-concave.** Let $(x_n)_{n \ge 0}$ and
 $(y_n)_{n \ge 0}$ be sequences of positive real numbers that are log-concave, that is,
 $x_{j-1} x_{j+1} \le x_j^2$ and $y_{j-1} y_{j+1} \le y_j^2$ for every $j \ge 1$. Let
@@ -137,19 +124,6 @@ public theorem_wanted leonardo_logConvex_logConcave_pointwise :
     (∀ n, n = 2 ∨ n = 4 ∨ 6 ≤ n →
       genLeonardo 1 (n - 1) * genLeonardo 1 (n + 1) ≤ genLeonardo 1 n ^ 2)
 
-/-- **Log-convexity and log-concavity of the hyper-Leonardo numbers at index one.** The
-hyper-Leonardo numbers $\mathrm{Le}^{(r)}_n$ satisfy
-$\left(\mathrm{Le}^{(1)}_1\right)^2 \le \mathrm{Le}^{(1)}_0 \mathrm{Le}^{(1)}_2$, and for every
-natural number $r \ge 2$ they satisfy
-$\mathrm{Le}^{(r)}_0 \mathrm{Le}^{(r)}_2 \le \left(\mathrm{Le}^{(r)}_1\right)^2$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 12
-(`integers-2026-A48-prop-12`). -/
-public theorem_wanted hyperLeonardo_logConvex_logConcave_one :
-    hyperLeonardo 1 1 ^ 2 ≤ hyperLeonardo 1 0 * hyperLeonardo 1 2 ∧
-      ∀ r, 2 ≤ r → hyperLeonardo r 0 * hyperLeonardo r 2 ≤ hyperLeonardo r 1 ^ 2
-
 /-- **Eventual log-concavity of the hyper-Leonardo numbers of order one.** For every natural
 number $n \ge 2$, the hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
 $Le^{(1)}_{n-1} Le^{(1)}_{n+1} \le (Le^{(1)}_n)^2$.
@@ -186,16 +160,6 @@ Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 14
 (`integers-2026-A48-prop-14`). -/
 public theorem_wanted hyperLeonardo_logConcave {r : ℕ} (hr : 1 ≤ r) {n : ℕ} (hn : 2 ≤ n) :
     hyperLeonardo r (n - 1) * hyperLeonardo r (n + 1) ≤ hyperLeonardo r n ^ 2
-
-/-- **Convexity of the hyper-Leonardo numbers.** For all natural numbers $r$ and $n \ge 1$, the
-hyper-Leonardo numbers $\mathrm{Le}^{(r)}_n$ satisfy
-$2 \mathrm{Le}^{(r)}_n \le \mathrm{Le}^{(r)}_{n-1} + \mathrm{Le}^{(r)}_{n+1}$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Theorem 3, with the definition
-of convexity displayed before it (`integers-2026-A48-thm-3`). -/
-public theorem_wanted hyperLeonardo_convex (r n : ℕ) (hn : 1 ≤ n) :
-    2 * hyperLeonardo r n ≤ hyperLeonardo r (n - 1) + hyperLeonardo r (n + 1)
 
 end
 
