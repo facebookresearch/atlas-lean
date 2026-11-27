@@ -55,30 +55,11 @@ public theorem exactSlowNimBasicValue_of_supports_basicA0 {k : ℕ} (hk : 0 < k)
         exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j)) =
           exactSlowNimBasicValue k x - 1) := by
   have hmove : after x j ∈ slowANimMoves {k} x := (mem_moves_iff hk).mpr ⟨j, hj, rfl⟩
-  -- A legal move supplies a type (A1) support at value one.
-  let w (i : Fin (k + 1)) := if i = j then 0 else 1
-  have hwx : w ≤ x := by
-    intro i
-    by_cases hi : i = j
-    · simp [w, hi]
-    · simpa [w, hi] using Nat.succ_le_of_lt (hj i hi)
-  have hw : IsExactSlowNimBasicA1 k 1 w := by
-    refine ⟨?_, ?_, by decide, j, by simp [w], ?_⟩
-    · have hsum : ∑ i, (w i + if i = j then 1 else 0) = k + 1 := by
-        calc
-          _ = ∑ _i : Fin (k + 1), (1 : ℕ) := by
-            apply Finset.sum_congr rfl
-            intro i _
-            by_cases hi : i = j <;> simp [w, hi]
-          _ = _ := by simp
-      simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
-        Nat.mul_one] at hsum ⊢
-      omega
-    · intro i
-      by_cases hi : i = j <;> simp [w, hi]
-    · intro i hi
-      by_contra hij
-      simp [w, hij] at hi
+  -- Extend the zero A0 support under the option to an A1 support at the parent.
+  have hzero : IsExactSlowNimBasicA0 k 0 (fun _ => 0) := by
+    simp [IsExactSlowNimBasicA0]
+  obtain ⟨w, hwx, hw⟩ := odd_support_of_even_after hk j hj
+    (fun i => Nat.zero_le (after x j i)) (Or.inl hzero)
   have hb := le_value hk hwx (Or.inr (Or.inl hw))
   have he := hz.2.2.1
   obtain ⟨hodd, hlt⟩ := (option_profile hk x hb).2.1 he _ hmove
