@@ -44,8 +44,10 @@ $\lVert r_2 \rVert = \lVert s \rVert^{-1}$.
 Source: B. Poonen, "Characterizing integers among rational numbers with a universal-existential
 formula", Amer. J. Math. 131 (2009), 675–682, proof of Lemma 2.1(ii), read in the author's
 version with the corrections of April 15, 2019, p. 3: "If $s \in \mathbb{Q}_p - \mathbb{Z}_p$,
-then $x^2 - sx + 1$ is a product of two distinct factors, by the theory of Newton polygons". The
-norms of the roots are the slopes $\pm v_p(s)$ of that Newton polygon. -/
+then $x^2 - sx + 1$ is a product of two distinct factors, by the theory of Newton polygons". That
+Newton polygon has vertices $(0, 0)$, $(1, v_p(s))$ and $(2, 0)$, so its slopes are $v_p(s)$ and
+$-v_p(s)$; the valuations $v_p(r_1) = v_p(s)$ and $v_p(r_2) = -v_p(s)$ of the roots are minus
+these slopes. -/
 theorem exists_eq_mul_X_sub_C_of_one_lt_norm {p : ℕ} [Fact p.Prime] {s : ℚ_[p]}
     (hs : 1 < ‖s‖) :
     ∃ r₁ r₂ : ℚ_[p], (X ^ 2 - C s * X + 1 : ℚ_[p][X]) = (X - C r₁) * (X - C r₂) ∧
