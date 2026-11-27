@@ -32,27 +32,13 @@ public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
 public import MathlibExt.NumberTheory.Recurrences.OddFibonacciSumDivisibility
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilitySumFibModPrimeEqAndNotDvd
+public import MathlibExt.NumberTheory.Recurrences.PisanoPeriodMinRatio
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
-
-/-- **The minimum of $\pi(n)/n$ over $1 \le n < N$ tends to zero.** Let $\pi(n)$ denote the Pisano
-period of $n$. As $N \to \infty$, the minimum of the real numbers $\pi(n)/n$ over the integers
-$1 \le n \le N - 1$ (defined for $N \ge 2$) tends to $0$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 1. -/
-theorem_wanted tendsto_iInf_pisanoPeriod_div_atTop
-    :
-    Filter.Tendsto
-      (fun N : ℕ =>
-        ⨅ n : {n : ℕ // n ∈ Finset.Icc 1 (N - 1)},
-          (pisanoPeriod n.1 : ℝ) / n.1)
-      Filter.atTop (nhds 0)
 
 /-- **Odd Fibonacci numbers $F_n$ with $F_{F_n + 2} \equiv 1 \pmod{F_n}$.** Let $F_m$ denote the
 $m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. If $p$ is an odd prime with

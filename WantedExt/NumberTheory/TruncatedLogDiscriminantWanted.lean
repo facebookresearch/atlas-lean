@@ -13,6 +13,7 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.TruncatedLogResultantPos
 public import MathlibExt.NumberTheory.TruncatedLogResultantPrimePower
+public import MathlibExt.NumberTheory.TruncatedLogDiscriminantFinitePrimesIsSquareDiscrTruncatedLog
 
 /-!
 # Discriminants of truncated logarithmic polynomials
@@ -113,17 +114,6 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 2
 public theorem_wanted not_dvd_truncatedLogResultantProduct_of_even_power {p e : ℕ}
     (hp : p.Prime) (hp2 : p ≠ 2) (he : 1 ≤ e) :
     ¬ (p : ℤ) ∣ truncatedLogResultantProduct (p ^ (2 * e))
-
-/-- **Finiteness of square discriminants of $F_{mq}$ with $mq \equiv 1 \pmod 4$.** Let
-$F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial and let
-$m \ge 1$ be a natural number. Then there are only finitely many primes $q$ with
-$mq \equiv 1 \pmod 4$ such that the discriminant of $F_{mq}$ is a square in $\mathbb{Q}$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 3
-(`integers-2025-A39-thm-3`). -/
-public theorem_wanted finite_primes_isSquare_discr_truncatedLog {m : ℕ} (hm : 1 ≤ m) :
-    {q : ℕ | q.Prime ∧ m * q % 4 = 1 ∧ IsSquare (truncatedLogPolynomial (m * q)).discr}.Finite
 
 /-- **Discriminants of $F_{p^e}$ for primes $p \equiv 1 \pmod 4$.** Let $p$ be a prime with
 $p \equiv 1 \pmod 4$, let $e \ge 1$, let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the

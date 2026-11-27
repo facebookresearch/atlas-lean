@@ -19,6 +19,7 @@ $L^1$ of a σ-finite measure with $L^\infty$, and it gives conditional expectati
 
 - [Radon–Nikodym theorem for finite signed measures](with-density-rn-deriv-eq.md)
 - [The Radon–Nikodym derivative of a finite signed measure is integrable](integrable-rn-deriv.md): the density is integrable, so the first statement gives $s(E) = \int_E (ds/d\mu) \, d\mu$.
+- [Lebesgue decomposition of a measure](lebesgue-decomposition-of-a-measure.md): a measure $\mu$ is the sum of a part singular with respect to $\nu$ and a part with a density with respect to $\nu$.
 
 ## Background
 
