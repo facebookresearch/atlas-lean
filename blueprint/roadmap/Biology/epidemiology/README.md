@@ -19,6 +19,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Kermack–McKendrick SIR model](kermack-mckendrick-sir-model/README.md)
 - [Multigroup SIS epidemic threshold](multigroup-sis-epidemic-threshold/README.md)
 - [Next-generation matrix and the basic reproduction number](next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Next-generation operator and basic reproduction number](next-generation-operator-and-basic-reproduction/README.md)
 - [Poisson reporting of epidemic incidence](poisson-reporting-of-epidemic-incidence/README.md)
 - [SEIR epidemic model](seir-epidemic-model/README.md)
 - [Sensitivity, specificity and predictive values](sensitivity-specificity-and-predictive-values/README.md)
@@ -36,3 +37,4 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
+- [Epidemic coalescent models](epidemic-coalescent-models/README.md)
