@@ -10,12 +10,14 @@ $$\begin{aligned}
 with $b, c \ge 0$ and all other parameters positive.
 
 **Theorem.** Let $R_0 = \dfrac{\beta_a \Pi_a}{\mu_a(\mu_a + \delta_a)}$, the spectral radius of the next-generation matrix (which is lower triangular, so humans, being dead-end hosts, do not contribute).
+
 1. If $R_0 \le 1$, the only equilibrium is disease-free, $A = (\Pi_a/\mu_a, 0, \Pi_h/\mu_h, 0, 0)$, and it is globally asymptotically stable.
+
 2. If $R_0 > 1$, there is a unique endemic equilibrium with $I_a^{\ast\ast} = \dfrac{\mu_a(R_0 - 1)}{\mu_a b + \beta_a}$, $S_a^{\ast\ast} = (\mu_a + \delta_a)(1 + bI_a^{\ast\ast})/\beta_a$, $I_h^{\ast\ast}$ the unique positive root of
 
-$$g(I_h) = \mu_h(\mu_h + \delta_h + \gamma)\, c\, I_h^3 + (\mu_h + \delta_h + \gamma)(\mu_h + \beta_h I_a^{\ast\ast})\, I_h - \Pi_h \beta_h I_a^{\ast\ast},$$
+    $$g(I_h) = \mu_h(\mu_h + \delta_h + \gamma)\, c\, I_h^3 + (\mu_h + \delta_h + \gamma)(\mu_h + \beta_h I_a^{\ast\ast})\, I_h - \Pi_h \beta_h I_a^{\ast\ast},$$
 
-$S_h^{\ast\ast} = (\mu_h + \delta_h + \gamma) I_h^{\ast\ast}(1 + cI_h^{\ast\ast2})/(\beta_h I_a^{\ast\ast})$ and $R_h^{\ast\ast} = \gamma I_h^{\ast\ast}/\mu_h$; it is globally asymptotically stable for positive initial conditions, and the disease-free equilibrium is unstable.
+    $S_h^{\ast\ast} = (\mu_h + \delta_h + \gamma) I_h^{\ast\ast}(1 + cI_h^{\ast\ast2})/(\beta_h I_a^{\ast\ast})$ and $R_h^{\ast\ast} = \gamma I_h^{\ast\ast}/\mu_h$; it is globally asymptotically stable for positive initial conditions, and the disease-free equilibrium is unstable.
 
 ## Depends on
 

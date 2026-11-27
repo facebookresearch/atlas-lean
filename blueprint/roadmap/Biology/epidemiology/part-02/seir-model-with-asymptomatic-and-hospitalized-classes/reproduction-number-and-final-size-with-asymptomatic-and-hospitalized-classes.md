@@ -11,11 +11,13 @@ $$\begin{aligned}
 where $0 < r \le 1$ is the asymptomatic fraction, $\varphi_s$ the hospitalization (isolation) rate and $\delta_s, \delta_h \ge 0$ disease-induced death rates; all other parameters are positive. Every point $(S^\ast, 0, 0, 0, 0, R^\ast)$ with $0 < S^\ast \le N(0)$ is a disease-free equilibrium (a continuum), with $N^\ast = S^\ast + R^\ast$.
 
 **Theorem.**
+
 1. *(Reproduction number.)* With infected classes ordered $(E, I_a, I_s, I_h)$, $R_0 = \rho(FV^{-1}) = R_a + R_s + R_h$, where
 
-$$R_a = \frac{\beta_a r}{\gamma_a}\frac{S^\ast}{N^\ast}, \qquad R_s = \frac{\beta_s (1-r)}{\varphi_s + \gamma_s + \delta_s}\frac{S^\ast}{N^\ast}, \qquad R_h = \frac{\beta_h (1-r)\varphi_s}{(\varphi_s + \gamma_s + \delta_s)(\gamma_h + \delta_h)}\frac{S^\ast}{N^\ast}.$$
+    $$R_a = \frac{\beta_a r}{\gamma_a}\frac{S^\ast}{N^\ast}, \qquad R_s = \frac{\beta_s (1-r)}{\varphi_s + \gamma_s + \delta_s}\frac{S^\ast}{N^\ast}, \qquad R_h = \frac{\beta_h (1-r)\varphi_s}{(\varphi_s + \gamma_s + \delta_s)(\gamma_h + \delta_h)}\frac{S^\ast}{N^\ast}.$$
 
 2. *(Global stability.)* If $R_0 \le 1$ (computed with $S^\ast/N^\ast = 1$), every solution in the invariant region $\{S + E + I_a + I_s + I_h + R \le N(0)\}$ converges to a disease-free equilibrium of the continuum.
+
 3. *(Final size.)* With $S(\infty) = \lim_{t\to\infty} S(t)$ and $R_0$ computed at $S^\ast = N^\ast = S(0)$,
 
     $$\ln\frac{S(0)}{S(\infty)} \ \ge\ \frac{R_0}{S(0)}\big(S(0) - S(\infty) + E(0)\big) + \frac{1}{S(0)}\left[\frac{\beta_a}{\gamma_a} I_a(0) + \Big(\beta_s + \frac{\varphi_s\beta_h}{\gamma_h + \delta_h}\Big)\frac{I_s(0)}{\varphi_s + \gamma_s + \delta_s} + \frac{\beta_h}{\gamma_h + \delta_h} I_h(0)\right],$$

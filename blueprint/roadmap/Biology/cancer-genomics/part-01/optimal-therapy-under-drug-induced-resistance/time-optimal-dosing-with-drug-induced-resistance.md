@@ -7,12 +7,15 @@ $$\dot x_1 = (1 - x_1 - x_2)\,x_1 - (\epsilon + \alpha u)\,x_1 - d\,u\,x_1, \qqu
 i.e. $\dot x = f(x) + u\,g(x)$ with $g(x) = \big(-(\alpha + d)x_1,\ \alpha x_1\big)^\top$. The simplex $\{x_1, x_2 \ge 0,\ x_1 + x_2 \le 1\}$ is forward invariant and, if $\epsilon > 0$, every solution tends to the fully resistant state $(0, 1)$ whatever the treatment. For a critical volume $V_c \in (0, 1 - \epsilon)$, the failure time is $t_c(u) = \max\{ T : x_1(t) + x_2(t) \le V_c \text{ on } [0, T]\}$, and the problem is to maximize $t_c$ over admissible doses.
 
 **Theorem.**
+
 1. *(Boundary control.)* On the critical line $N = \{x_1 + x_2 = V_c\}$ the dose that holds the tumour volume constant is the feedback
 
-$$u_p(x) = \frac{(1 - V_c)(x_1 + p_r x_2)}{d\,x_1},$$
+    $$u_p(x) = \frac{(1 - V_c)(x_1 + p_r x_2)}{d\,x_1},$$
 
-admissible while $u_p(x) \le M$.
+    admissible while $u_p(x) \le M$.
+
 2. *(Interior arcs.)* Before the trajectory first reaches $N$, an optimal trajectory satisfies the unconstrained Pontryagin maximum principle; singular arcs exist only for $\alpha > 0$, on a line segment where the switching function and its derivative vanish, but they are never locally optimal.
+
 3. *(Synthesis.)* For every $\alpha \ge 0$ the optimal dose is a concatenation of bang–bang arcs and the boundary control, with structure $(YX)^n\, u_p\, Y$ read left to right, where $X$ denotes no treatment ($u = 0$) and $Y$ maximal dose ($u = M$): alternating maximal-dose and treatment-free phases, then holding the tumour at $V_c$, then a final maximal-dose arc.
 
 ## Expansion

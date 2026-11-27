@@ -7,16 +7,19 @@ $$\frac{dRRP_t}{dt} = \hat\alpha_t\,(RRP_0 - RRP_t) - \hat\beta_t\, RRP_t, \qqua
 where $\hat\alpha_t$ is the mean recruitment rate over empty sites and $\hat\beta_t$ the mean release rate over full sites. Unitary rates are per site; bulk rates are $\hat\alpha_t (RRP_0 - RRP_t)$ and $\hat\beta_t RRP_t$.
 
 **Proposition.**
+
 1. *(Cumulative release.)* Over $[0, t]$ the number of vesicles released is
 
-$$\int_0^t \hat\beta_s RRP_s\, ds = \big(RRP_0^{\mathrm{init}} - RRP_t\big) + \int_0^t \hat\alpha_s (RRP_0 - RRP_s)\, ds,$$
+    $$\int_0^t \hat\beta_s RRP_s\, ds = \big(RRP_0^{\mathrm{init}} - RRP_t\big) + \int_0^t \hat\alpha_s (RRP_0 - RRP_s)\, ds,$$
 
-the depletion of the pool plus the cumulative recruitment; starting from rest ($RRP = RRP_0$), cumulative release overestimates the pool capacity by exactly the cumulative recruitment.
+    the depletion of the pool plus the cumulative recruitment; starting from rest ($RRP = RRP_0$), cumulative release overestimates the pool capacity by exactly the cumulative recruitment.
+
 2. *(Steady state.)* If stimulation at frequency $\nu$ reaches a steady state with release $R_{ss}$ per action potential and constant $\hat\alpha = \hat\alpha_{\mathrm{fixed}}$, then $R_{ss}\,\nu = \hat\alpha_{\mathrm{fixed}}(RRP_0 - RRP_{ss})$, so
 
-$$RRP_0 = \frac{R_{ss}\,\nu}{\hat\alpha_{\mathrm{fixed}}} + RRP_{ss},$$
+    $$RRP_0 = \frac{R_{ss}\,\nu}{\hat\alpha_{\mathrm{fixed}}} + RRP_{ss},$$
 
-which reduces to $RRP_0 = R_{ss}\nu/\hat\alpha_{\mathrm{fixed}}$ when heavy stimulation empties the pool ($RRP_{ss} \approx 0$).
+    which reduces to $RRP_0 = R_{ss}\nu/\hat\alpha_{\mathrm{fixed}}$ when heavy stimulation empties the pool ($RRP_{ss} \approx 0$).
+
 3. *(Saturation.)* Bulk recruitment is proportional to the unitary rate only when the pool is empty; with constant $\hat\alpha$, recovery from a depleted pool during rest is exponential with rate $\hat\alpha$.
 
 ## Expansion

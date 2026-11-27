@@ -12,17 +12,21 @@ $$
 $$
 
 **Theorem.**
+
 1. (Well-posedness) For every initial condition in $\Omega = \{x \in \mathbb{R}^5_{\ge 0} : 0 < N \le \Lambda/\mu\}$ there is a unique global non-negative solution, and $\Omega$ is positively invariant.
+
 2. (Equilibria) The disease-free equilibrium is
 
-$$\Sigma_0 = \Big(\frac{\Lambda(\omega + \mu)}{\mu(p\phi + \mu + \omega)},\,0,\,0,\,0,\,\frac{\phi p\Lambda}{\mu(p\phi + \mu + \omega)}\Big),$$
+    $$\Sigma_0 = \Big(\frac{\Lambda(\omega + \mu)}{\mu(p\phi + \mu + \omega)},\,0,\,0,\,0,\,\frac{\phi p\Lambda}{\mu(p\phi + \mu + \omega)}\Big),$$
 
-and the basic reproduction number is
+    and the basic reproduction number is
 
-$$R_0 = \frac{\beta(1-p)\,(\delta\theta + \mu\theta + \nu)\,(\omega + \mu)}{(\delta + \mu)(\nu + \mu)(p\phi + \mu + \omega)} .$$
+    $$R_0 = \frac{\beta(1-p)\,(\delta\theta + \mu\theta + \nu)\,(\omega + \mu)}{(\delta + \mu)(\nu + \mu)(p\phi + \mu + \omega)} .$$
 
-A unique endemic equilibrium $\Sigma_+$ exists iff $R_0 > 1$.
+    A unique endemic equilibrium $\Sigma_+$ exists iff $R_0 > 1$.
+
 3. (Global stability) If $R_0 < 1$, $\Sigma_0$ is globally asymptotically stable in $\Omega$. If $R_0 > 1$, $\Sigma_+$ is globally asymptotically stable on the invariant set $\Gamma = \{x \in \mathbb{R}^5_{\ge 0} : N = \Lambda/\mu\}$ (away from the disease-free boundary).
+
 4. (Waves under switching) Let $\alpha_0, \alpha_+$ be parameter vectors with $R_0(\alpha_0) < 1 < R_0(\alpha_+)$, and alternate them on successive time intervals $[T_i, T_{i+1})$, switching once the state has entered the basin of the next target equilibrium. Then the piecewise-defined solution alternates between neighbourhoods of $\Sigma_0$ and $\Sigma_+$; by item 3 the switching times can always be chosen.
 
 ## Depends on
