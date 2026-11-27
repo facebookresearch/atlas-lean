@@ -1,8 +1,8 @@
 # Founder event age from the decay of allele sharing
 
-For two individuals from a group founded by few individuals $g$ generations ago, consider the number of alleles they share at each SNP (two genotypes identical by descent at a site differ by at most one allele). After subtracting the same quantity computed for pairs from different groups, assume the autocorrelation of allele sharing at genetic distance $x$ (in centimorgans) decays as $e^{-\lambda x}$. Since the haplotypes of the two individuals are separated by $2g$ meioses since the founders, $\lambda \approx 2g/100$ per cM, and the founder event is dated to
+For two individuals from a group founded by few individuals $g$ generations ago, consider the number of alleles they share at each SNP (two genotypes identical by descent at a site differ by at most one allele). After subtracting the same quantity computed for pairs from different groups, assume the autocorrelation of allele sharing at genetic distance $x$ (in centimorgans) decays as $e^{-x/d}$. Since the haplotypes of the two individuals are separated by $2g$ meioses since the founders, $d \approx 100/(2g)$ per cM, and the founder event is dated to
 
-$$g \approx \frac{100}{2\lambda}$$
+$$g \approx \frac{100}{2d}$$
 
 generations ago.
 
