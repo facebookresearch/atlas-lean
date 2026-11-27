@@ -60,6 +60,9 @@ Article A86 (<https://math.colgate.edu/~integers/z86/z86.pdf>).
   exponents `a, b ≥ 1` with `a + b` odd or both `a` and `b` odd, the number `p₁ ^ a * p₂ ^ b` is
   not deficient `F_k`-perfect (Theorem 19). Every divisor is odd and the divisor count
   `(a + 1) * (b + 1)` is even, so `σₖ(n) + d ^ k` is odd while `n ^ k + 3 * n` is even.
+* `not_isDeficientFkPerfect_prime_pow_mul`: for `k > 1` and distinct odd primes `p₁` and `p₂`,
+  no number `p₁ ^ a * p₂` is deficient `F_k`-perfect (Theorem 16). Its divisors are all odd and
+  even in number, so `σₖ(n) + d ^ k` is odd while `n ^ k + 3 * n` is even.
 * `klNearPerfectWith_prime_pow_iff`: for `k ≥ 1` and `ℓ ≥ 1`, the prime power `p ^ a` is
   `[k,ℓ]`-near-perfect with divisor `d` if and only if `2 ≤ a ≤ k`, `d = 1` and
   `ℓ = p ^ (k - a) * ∑ i ∈ Finset.range (a - 1), p ^ (i * k)`. This is Theorem 4, whose printed
@@ -799,7 +802,12 @@ theorem not_isNearFkPerfect_prime_pow_mul
 /-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
 $[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_k(n) + d^k = n^k + 3n$. -/
+$\sigma_k(n) + d^k = n^k + 3n$.
+
+This predicate extends the equation to every natural $k$. For $k > 1$ it agrees with
+Definition 2 of Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saikia, "On Near
+`F_k`-Perfect and Deficient `F_k`-Perfect Numbers", which uses the name only for $k > 1$; the
+results that need $k > 1$ assume it. -/
 def IsDeficientFkPerfect (k n : ℕ) : Prop :=
   IsKLDeficientPerfect k 3 n
 
@@ -945,6 +953,69 @@ theorem not_isDeficientFkPerfect_pow_mul_pow
   have hn1 : (p₁ ^ a * p₂ ^ b) ^ k % 2 = 1 := Nat.odd_iff.mp hn_odd.pow
   have h31 : 3 * (p₁ ^ a * p₂ ^ b) % 2 = 1 :=
     Nat.odd_iff.mp ((by decide : Odd 3).mul hn_odd)
+  omega
+
+private theorem odd_of_dvd_of_odd (e n : ℕ) (hn : Odd n) (he : e ∣ n) : Odd e := by
+  by_contra hcon
+  have hcon' : Even e := Nat.not_odd_iff_even.mp hcon
+  have hneven : Even n := even_iff_two_dvd.mpr ((even_iff_two_dvd.mp hcon').trans he)
+  exact (Nat.not_even_iff_odd.mpr hn) hneven
+
+private theorem card_divisors_prime_pow_mul_prime (p₁ p₂ a : ℕ) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (hne : p₁ ≠ p₂) :
+    (p₁ ^ a * p₂).divisors.card = (a + 1) * 2 := by
+  have hcop : (p₁ ^ a).Coprime p₂ :=
+    Nat.Coprime.pow_left a ((Nat.coprime_primes hp₁ hp₂).mpr hne)
+  have hσ := ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime
+    (f := ArithmeticFunction.sigma 0) hcop
+  simp only [ArithmeticFunction.sigma_zero_apply] at hσ
+  have hpa : (p₁ ^ a).divisors.card = a + 1 := by
+    rw [Nat.divisors_prime_pow hp₁ a, Finset.card_map, Finset.card_range]
+  have hp2 : p₂.divisors.card = 2 := by
+    rw [hp₂.divisors, Finset.card_insert_of_notMem (by
+      simpa only [Finset.mem_singleton] using hp₂.ne_one.symm), Finset.card_singleton]
+  rw [hσ, hpa, hp2]
+
+private theorem even_sum_pow_of_forall_odd (s : Finset ℕ) (k : ℕ)
+    (hodd : ∀ e ∈ s, Odd e) (hcard : Even s.card) :
+    Even (∑ e ∈ s, e ^ k) := by
+  rw [Nat.even_iff, Finset.sum_nat_mod]
+  have h1 : ∀ e ∈ s, e ^ k % 2 = 1 := fun e he => Nat.odd_iff.mp ((hodd e he).pow)
+  have hsum1 : (∑ e ∈ s, e ^ k % 2) = ∑ _e ∈ s, 1 :=
+    Finset.sum_congr rfl (fun e he => h1 e he)
+  obtain ⟨c, hc⟩ := hcard
+  rw [hsum1, ← Finset.card_eq_sum_ones, hc]
+  omega
+
+/-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
+a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
+$p_1^a p_2$ is not deficient $F_k$-perfect.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 16. -/
+theorem not_isDeficientFkPerfect_prime_pow_mul
+    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
+    (hne : p₁ ≠ p₂) :
+    ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂) := by
+  have _ : k ≠ 0 := by omega
+  rintro ⟨d, hdvd, _hlt, hsum⟩
+  have hn : Odd (p₁ ^ a * p₂) := ho₁.pow.mul ho₂
+  have hcard : (p₁ ^ a * p₂).divisors.card = (a + 1) * 2 :=
+    card_divisors_prime_pow_mul_prime p₁ p₂ a hp₁ hp₂ hne
+  have hcardeven : Even (p₁ ^ a * p₂).divisors.card := ⟨a + 1, by rw [hcard]; ring⟩
+  have hσeven : Even (∑ e ∈ (p₁ ^ a * p₂).divisors, e ^ k) :=
+    even_sum_pow_of_forall_odd _ k
+      (fun e he => odd_of_dvd_of_odd e _ hn (Nat.dvd_of_mem_divisors he)) hcardeven
+  have hdk : Odd (d ^ k) := (odd_of_dvd_of_odd d _ hn hdvd).pow
+  have hnk : Odd ((p₁ ^ a * p₂) ^ k) := hn.pow
+  have h3 : Odd 3 := ⟨1, rfl⟩
+  have h3n : Odd (3 * (p₁ ^ a * p₂)) := h3.mul hn
+  obtain ⟨s, hs⟩ := hσeven
+  obtain ⟨t, ht⟩ := hdk
+  obtain ⟨u, hu⟩ := hnk
+  obtain ⟨v, hv⟩ := h3n
   omega
 
 private theorem sigma_prime_pow_eq (p a k : ℕ) (hp : p.Prime) :
