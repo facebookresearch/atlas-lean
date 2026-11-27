@@ -28,6 +28,7 @@ $$E_3 = \Big(\frac{A(A-B)}{A - B + C},\ \frac{AC}{A-B+C},\ A,\ 1,\dots,1\Big).$$
 ## Proof depends on
 
 - [Routh–Hurwitz: a real 2 × 2 matrix is Hurwitz iff tr M < 0 < det M](../../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/is-hurwitz-iff-trace-neg-and-det-pos.md)
+- [Poincaré–Bendixson theorem](../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
 
 ## Expansion
 

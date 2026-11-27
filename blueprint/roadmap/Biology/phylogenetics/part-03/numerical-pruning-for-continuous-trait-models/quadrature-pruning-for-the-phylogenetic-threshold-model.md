@@ -16,6 +16,10 @@ $$f(x_i\mid z_1,\dots,z_n) = \frac{G_i(x_i)\,F_u(x_i)\,F_v(x_i)\,f(x_i)}{L(T)}.$
 
 - [Felsenstein's pruning algorithm computes the likelihood conditioned on the root state](../../felsenstein-s-pruning-algorithm/prune-eq-brute-lik.md)
 
+## Proof depends on
+
+- [Error of the composite Simpson rule](../../../../Analysis/numerical-analysis/numerical-quadrature/composite-simpson-rule-error.md)
+
 ## Expansion
 
 Conditional independence of disjoint subtrees gives the recursion, exactly as in discrete pruning; the only change is that states range over $\mathbb R$, so each node stores its partial likelihood at $N+1$ points and each of the $O(nN)$ stored values costs one $O(N)$ quadrature. Simpson's rule converges as $O(N^{-4})$ for integrands with bounded fourth derivatives; the Gaussian transition densities are smooth and, by induction on the recursion, the fourth derivative of $F_i$ is $O(n_i)$ with $n_i$ the number of tips below $i$, so quadrature errors accumulate additively to $O(nN^{-4})$. The quantile truncation puts total tail mass at most $\epsilon$ outside the integration boxes. The same scheme applies to other non-Gaussian trait models (for example Ornstein–Uhlenbeck processes with discretized observations), though non-reversible processes need the reverse transition density in the $G$ recursion; for sharply peaked integrands, approximating only the non-Gaussian factor by piecewise quadratics (a Gaussian-kernel rule) improves accuracy.

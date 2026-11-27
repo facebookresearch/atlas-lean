@@ -15,6 +15,7 @@ An **optimal reconciliation** maximizes $L$ over all reconciliations of $G$ and 
 ## Depends on
 
 - [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
+- [Poisson law as a probability measure](../../../../Probability/central-limit-theorems/poisson-limit-theorem/poisson-prob-measure.md)
 
 ## Expansion
 

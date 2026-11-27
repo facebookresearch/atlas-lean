@@ -18,6 +18,10 @@ Moreover some completion $t^*$ attains simultaneously the minimum number of dupl
 
 - [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
 
+## Proof depends on
+
+- [Optimality of the LCA reconciliation](../../../not-yet-classified/lcareconciliation/lca-optimal.md)
+
 ## Expansion
 
 Completing a gene tree can never remove losses or duplications, so it suffices to build a completion with the same counts. First, if $M(r(gt)) \ne r(ST)$, graft $gt$ in place of the subtree of $ST$ rooted at $M(r(gt))$; the upper missing clades hang off the path to the root and add neither losses nor duplications. Then insert each lower maximal missing clade $t$ (a maximal clade of $ST$ containing no species of $gt$, below $M(r(gt))$) by subdividing every edge $(x, y)$ of the current tree whose image path passes through the parent $q$ of $r(t)$ and hanging a copy of $t$ there. LCA images of existing nodes do not change, the new nodes are speciations, and a case check gives $F(y) = F'(y) + F'(u)$ at each subdivision, so the loss total is preserved. Induction on the number of lower maximal missing clades finishes the proof.

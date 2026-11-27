@@ -17,6 +17,7 @@ The correction term uses $UA(s_1, s_1) = (|s_1| + 1)/2$, so $\overline{UA}(s_1, 
 ## Depends on
 
 - [Irredundant common subwords and matching statistics](irredundant-common-subwords-and-matching-statistics.md)
+- [Suffix tree](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-tree/suffix-tree.md)
 
 ## Expansion
 

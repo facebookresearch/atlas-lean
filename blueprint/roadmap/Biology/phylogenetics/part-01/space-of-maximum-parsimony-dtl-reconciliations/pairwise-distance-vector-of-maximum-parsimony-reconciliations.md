@@ -14,6 +14,10 @@ Replacing the shift by 2 with the species-tree distance $d_S(s_1, s_2)$ handles 
 
 - [Reconciliation graph of maximum parsimony DTL reconciliations](reconciliation-graph-of-maximum-parsimony-reconciliations.md)
 
+## Proof depends on
+
+- [Cost bound for FFT linear convolution](../../../../ComputerScience/algebraic-and-numerical-algorithms/fast-fourier-transform/fft-linear-time-le.md)
+
 ## Expansion
 
 Distances between traversals are additive over the event choices made at each mapping node: once the first events below $(g, s_1)$ and $(g, s_2)$ are fixed, the remaining differences split into independent contributions from the two gene children, and the distribution of a sum of independent counts is the convolution of their distributions. Processing the acyclic reconciliation graph bottom-up therefore yields the full distribution without enumerating MPRs; the authors validated the recursion against brute force on all instances with up to six leaves.

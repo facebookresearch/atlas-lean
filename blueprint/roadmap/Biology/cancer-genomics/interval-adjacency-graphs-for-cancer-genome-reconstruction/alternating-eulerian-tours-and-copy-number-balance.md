@@ -21,6 +21,10 @@ $$\min_\mu\ \sum_{j=1}^n \big(\rho_j \mu_j - r_j \log(\rho_j \mu_j)\big)\quad \t
 
 a separable convex objective under the balance constraints, which the source writes as flow conservation on the associated bidirected graph.
 
+## Depends on
+
+- [Poisson law as a probability measure](../../../Probability/central-limit-theorems/poisson-limit-theorem/poisson-prob-measure.md)
+
 ## Proof depends on
 
 - [Euler circuit criterion for directed multigraphs](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-circuit-iff.md)

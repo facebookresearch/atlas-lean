@@ -21,6 +21,7 @@ $$\log\mu_i \mid \log\boldsymbol\mu_{-i,r} \sim \mathcal N\Big(\tfrac12\big(q\lo
 ## Depends on
 
 - [Gaussian conditioning (Schur complement)](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
+- [Log-normal distribution](../../../../Probability/distributions/continuous/log-normal-distribution/log-normal-measure.md)
 
 ## Expansion
 

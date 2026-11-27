@@ -22,6 +22,10 @@ and then $\hat p$ as the maximum-likelihood vector among those with $k(p) = \hat
 
 Consequently $H(q_{1-\alpha})$ is an asymptotically honest $(1-\alpha)$ confidence set for the whole segmentation, yielding simultaneous confidence bands for $p$; the localization of active nodes is optimal up to a set of order $\log n$ leaves.
 
+## Depends on
+
+- [Standard real Brownian motion](../../../../Analysis/complex-analysis/geometric-function-theory/loewner-equation/basic-objects-of-the-chordal-loewner-equation/is-standard-brownian-motion.md)
+
 ## Expansion
 
 Because a node could shift its clade's probability by an arbitrarily small amount, the existence of an extra active node can never be excluded; the method therefore reports the fewest active nodes compatible with the data at level $\alpha$, so that every reported clade is present with probability at least $1-\alpha$. The scale penalty balances short and long segments so that the maximum is equally likely to occur at every scale, which makes the limit distribution independent of the unknown signal. The construction extends the SMUCE multiscale change-point estimator from totally ordered sequences to tree-indexed data and generalizes to other exponential-family traits.

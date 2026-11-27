@@ -16,6 +16,7 @@ $$\sigma_d = \sum_{h=d+1}^{m-1} \max_h, \qquad th_d = th - \sigma_d, \qquad pfxs
 
 - [Score of a site under a position weight matrix](../../position-weight-matrices/score.md)
 - [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [The LCP array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Expansion
 

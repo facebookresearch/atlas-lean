@@ -24,6 +24,10 @@ and calling a variant whenever $\mathcal{M} \notin C$ has false-positive rate $\
 
 - [Law of the Gaussian sample mean](../../../../Probability/linear-models-multivariate/cochran-s-theorem/has-law-sample-mean.md)
 
+## Proof depends on
+
+- [Analytic core of Poisson convergence](../../../../Probability/central-limit-theorems/poisson-limit-theorem/elem-symm-poly-tendsto-poisson.md)
+
 ## Expansion
 
 The sampling theorem is the Gaussian distribution of a sample mean: substituting $x = (\ell - \lambda)\sqrt{k}/\sigma$ turns the interval probability into an error function. Because ISV detection disallows reads falling inside the inserted sequence, fewer inserts are admissible around insertions than around deletions, so the two variant types have different power and error profiles, contrary to the common symmetric assumption. Combining the binomial (asymptotically Poisson) number of spanning inserts with the conditional sampling probability gives a priori detection power and error rates for planning sequencing depth and choosing library size and spread.

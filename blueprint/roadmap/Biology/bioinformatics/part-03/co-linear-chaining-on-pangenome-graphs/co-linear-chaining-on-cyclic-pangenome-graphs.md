@@ -21,6 +21,7 @@ and space $O(N|\mathcal{P}| + |V||\mathcal{P}|)$; on a DAG one round suffices an
 ## Proof depends on
 
 - [FASTER-APSP computes shortest-path weights](../../../../ComputerScience/graph-algorithms/shortest-paths/all-pairs-shortest-paths-by-min-plus-products/faster-apsp-distance-spec.md)
+- [Dijkstra's algorithm with a Fibonacci heap in O(m + n log n) word-RAM time](../../../../ComputerScience/graph-algorithms/shortest-paths/dijkstra-priority-queue-costs/dijkstra-fibonacci-heap-word-ram.md)
 
 ## Expansion
 

@@ -16,6 +16,10 @@ i.e. a sequencing depth of order one read per cell per gene, independent of the 
 
 For a set of genes of interest whose smallest mean relative expression is $p^*$, minimizing the worst-case error over the set gives the depth $n^*_{\text{reads}} = 1/p^*$, and additional budget should be spent on more cells at that depth.
 
+## Depends on
+
+- [Poisson law as a probability measure](../../../../Probability/central-limit-theorems/poisson-limit-theorem/poisson-prob-measure.md)
+
 ## Expansion
 
 This node still has to be stated precisely. A good expansion gives one page per target quantity, each stating the formal theorem of Supplementary Note 5 of the source: the class of distributions $P_X$ over which the worst case is taken, the error measure, and the minimax rate in $n_{\text{cells}}$ and $n_{\text{reads}}$ at fixed budget $B$, together with the empirical Bayes estimator attaining it. The heuristic behind the result follows.

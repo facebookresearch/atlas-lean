@@ -13,6 +13,10 @@ the strict ancestors of $v$ adjacent to some vertex of the subtree of $v$. Put $
 - [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
 - [Tree-width at most $k$](../../../../GraphTheory/planar-graphs-and-minors/tree-width/has-treewidth-at-most.md)
 
+## Proof depends on
+
+- [Nice tree decompositions](../../../../ComputerScience/dynamic-programming/tree-decomposition-dynamic-programming/nice-tree-decomposition.md)
+
 ## Expansion
 
 Given an agreeing tree, the bags $\{v\} \cup YW^\Gamma_v$ arranged along $\Gamma$ form a tree decomposition of width $yw(\Gamma)$: every edge joins a vertex to an ancestor, so it lies in the bag of the lower endpoint, and the vertices whose bags contain a fixed $u$ form a connected set of descendants of $u$. Conversely, eliminating vertices along a nice tree decomposition (forget nodes give the order) yields an agreeing tree whose sets $YW_v$ sit inside bags. The formulation suits networks because a dynamic program can process the network's vertices bottom-up along $\Gamma$, keeping state only for the at most $yw(\Gamma)$ "open" ancestors.

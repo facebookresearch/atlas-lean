@@ -16,6 +16,11 @@ so it is nearly $0$ when $\xi \ll \theta$ and $\ell$ is large.
 
 - [Union Bloom filter size and optimal hash count](union-bloom-filter-size-and-optimal-hash-count.md)
 
+## Proof depends on
+
+- [Binomial distribution of a sum of i.i.d. Bernoulli variables](../../../../Probability/distributions/discrete/poisson-binomial-distribution/poisson-binomial-law/bernoulli-sum-pmf-iid.md)
+- [Multiplicative Chernoff bounds for independent [0,1]-valued scores](../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
+
 ## Expansion
 
 The number $X$ of false-positive $k$-mers is $\mathrm{Binomial}(\ell,\xi)$, which gives the exact expression. With $Y = \ell - X$ the number of correctly rejected $k$-mers, $\Pr[X > \theta\ell] = \Pr[Y < \ell - \theta\ell]$, and when $\theta \ge \xi$ the threshold $\ell - \theta\ell$ lies below $\mathbb{E}[Y] = \ell(1-\xi)$; the lower-tail Chernoff bound gives the exponential estimate. With the natural search threshold $\theta = 1/2$, a filter rate of a few percent makes false descents through the tree exponentially unlikely in the query length, which is why the tree tolerates much higher per-$k$-mer false-positive rates than a single-$k$-mer index would.

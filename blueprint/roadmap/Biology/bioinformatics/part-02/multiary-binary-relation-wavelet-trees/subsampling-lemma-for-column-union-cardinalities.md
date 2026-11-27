@@ -18,6 +18,10 @@ In the annotation setting the $o_i$ are the object sets of the label columns, an
 
 - [Multi-BRWT representation of a genome graph annotation](multi-brwt-representation-and-node-removal-cost.md)
 
+## Proof depends on
+
+- [Multiplicative Chernoff bounds for independent [0,1]-valued scores](../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
+
 ## Expansion
 
 For a fixed pair, $|\tilde{o}_i \cup \tilde{o}_j|$ is a sum of $u_{ij}$ independent Bernoulli($p$) variables with mean $p u_{ij} \ge p d$. A multiplicative Chernoff bound gives $\Pr(|\hat{u}_{ij} - u_{ij}| \ge \varepsilon u_{ij}) \le 2 \exp(-p u_{ij} \varepsilon^2 / 3) \le 2\exp(-p d \varepsilon^2/3)$, and a union bound over the at most $(m^2 + m)/2$ unordered pairs (including $i = j$) gives total failure probability at most $(m^2 + m)\exp(-p d \varepsilon^2 / 3)$, which is at most $\delta$ under the stated condition on $p$; the case $p = 1$ is exact.

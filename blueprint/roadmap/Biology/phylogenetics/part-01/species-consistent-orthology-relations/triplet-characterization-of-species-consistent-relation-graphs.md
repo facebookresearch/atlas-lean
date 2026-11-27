@@ -17,6 +17,7 @@ $$P_3(R) = \{\, s(x)s(y)|s(z) \;:\; zx, zy \in E(R),\ xy \notin E(R),\ s(x) \ne 
 ## Depends on
 
 - [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
+- [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
 
 ## Expansion
 

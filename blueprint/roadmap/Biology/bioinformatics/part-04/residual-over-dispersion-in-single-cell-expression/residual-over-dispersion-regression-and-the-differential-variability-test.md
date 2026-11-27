@@ -23,6 +23,7 @@ $$\log_2\frac{\delta_i^A}{\delta_i^B} = \log_2(e)\Big[\underbrace{f^A(\mu_i^A) -
 ## Depends on
 
 - [The marginal law of the hierarchy is negative binomial](../../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik-eq-neg-binomial-real.md)
+- [Log-normal distribution](../../../../Probability/distributions/continuous/log-normal-distribution/log-normal-measure.md)
 
 ## Expansion
 

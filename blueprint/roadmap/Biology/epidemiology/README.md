@@ -35,6 +35,9 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
 - [Structural identifiability of within host viral models](structural-identifiability-of-within-host-viral-models/README.md)
+
+## [Epidemic control, identifiability and model structure](part-01/README.md)
+
 - [Antibiotic treatment games with resistance depletion](part-01/antibiotic-treatment-games-with-resistance-depletion/README.md)
 - [Behavioral replicator dynamics of self-restraint](part-01/behavioral-replicator-dynamics-of-self-restraint/README.md)
 - [Counterfactual diagnosis](part-01/counterfactual-diagnosis/README.md)

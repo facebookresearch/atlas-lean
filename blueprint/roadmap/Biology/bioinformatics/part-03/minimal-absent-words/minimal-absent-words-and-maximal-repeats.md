@@ -20,6 +20,7 @@ A **maximal repeated pair** is a triple $(p_1, p_2, \alpha)$ with $p_1 \ne p_2$ 
 
 - [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
 - [Burrows–Wheeler transform](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/bwt.md)
+- [The LCP array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Proof depends on
 

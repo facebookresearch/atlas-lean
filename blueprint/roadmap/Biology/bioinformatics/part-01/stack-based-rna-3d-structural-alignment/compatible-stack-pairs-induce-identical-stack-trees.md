@@ -11,6 +11,7 @@
 ## Depends on
 
 - [Rooted ordered tree](../../../../ComputerScience/data-structures/disjoint-sets-and-dynamic-trees/euler-tour-tree/tree.md)
+- [RNA secondary structure](../../nussinov-algorithm-for-rna-secondary-structure/is-structure.md)
 
 ## Expansion
 
