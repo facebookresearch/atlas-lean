@@ -157,7 +157,7 @@ private theorem zeckAdicOfNat_one : zeckAdicOfNat 1 = fun i => decide (i = 2) :=
 example : zeckOdometer^[2] (zeckAdicOfNat 2) = fun i => decide (i = 2 ∨ i = 4) := by
   have h : Nat.zeckendorf 4 = [4, 2] :=
     Nat.zeckendorf_sum_fib (l := [4, 2]) (by unfold List.IsZeckendorfRep; decide)
-  rw [zeckNIZ_fib_variation_order_succ.zeckOdometer_iterate_zeckAdicOfNat]
+  rw [zeckOdometer_iterate_zeckAdicOfNat]
   funext i
   simp only [zeckAdicOfNat, show 2 + 2 = 4 from rfl, h, List.mem_cons, List.not_mem_nil,
     or_false]
@@ -171,8 +171,7 @@ example : zeckAdicVariation 1 (fun _ => false) = 1 := by
   have h0 : (fun _ : ℕ => false) = zeckAdicOfNat 0 := by
     funext i
     simp [zeckAdicOfNat]
-  rw [zeckAdicTruncVariation, h0,
-    zeckNIZ_fib_variation_order_succ.zeckOdometer_iterate_zeckAdicOfNat, Nat.zero_add,
+  rw [zeckAdicTruncVariation, h0, zeckOdometer_iterate_zeckAdicOfNat, Nat.zero_add,
     zeckAdicOfNat_one]
   have h : ∀ i ∈ Finset.Icc 2 k, (((decide (i = 2)).toNat : ℕ) : ℤ) = if i = 2 then 1 else 0 :=
     fun i _ => by by_cases hi : i = 2 <;> simp [hi]

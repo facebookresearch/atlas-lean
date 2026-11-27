@@ -26,8 +26,7 @@ from a small addition.
 
 The block stopping theorem bounds which digits can change when a block of Fibonacci
 summands is added to a Zeckendorf-adic integer. On the digit sequences `i(v)` of natural numbers
-the odometer is addition: `T^r(i(v)) = i(v + r)`
-(`zeckNIZ_fib_variation_order_succ.zeckOdometer_iterate_zeckAdicOfNat`).
+the odometer is addition: `T^r(i(v)) = i(v + r)` (`zeckOdometer_iterate_zeckAdicOfNat`).
 
 Each digit of a finite iterate depends on a finite prefix of the input, so it suffices to
 analyze addition of natural numbers. The proof splits each input at the upper window of
@@ -1005,7 +1004,7 @@ numbers, $x + r = T^r(x)$ is the usual sum.
 Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
 An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
 (2024), Article 24.3.2, Section 2.2 (`T` restricted to `ℕ` is `n ↦ n + 1`). -/
-public theorem zeckNIZ_fib_variation_order_succ.zeckOdometer_iterate_zeckAdicOfNat (v r : ℕ) :
+public theorem zeckOdometer_iterate_zeckAdicOfNat (v r : ℕ) :
     zeckOdometer^[r] (zeckAdicOfNat v) = zeckAdicOfNat (v + r) :=
   ofNat_iterate v r
 
