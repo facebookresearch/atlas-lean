@@ -96,9 +96,11 @@ def SiegelS1 (τ : Matrix (Fin g) (Fin g) ℂ) : Prop :=
 def SiegelS2 (τ : Matrix (Fin g) (Fin g) ℂ) : Prop :=
   ∀ i j, |(τ i j).re| ≤ 1 / 2
 
-/-- **Condition S. 3** of Siegel's fundamental domain: for every `k` and every `ξ ∈ ℤ^g` with
-`gcd(ξ_k, …, ξ_g) = 1`, `ᵗξ (Im τ) ξ ≥ Im(τ_{k,k})`; and `Im(τ_{k,k+1}) ≥ 0` for every
-`k < g`. Indices run over `Fin g = {0, …, g - 1}`, one less than Pazuki's `1, …, g`. -/
+/-- **Condition S. 3** of Siegel's fundamental domain, with zero-based indices
+`Fin g = {0, …, g - 1}`: for every `k < g` and every `ξ ∈ ℤ^g` with `gcd(ξ_j : k ≤ j < g) = 1`,
+`ᵗξ (Im τ) ξ ≥ Im(τ_{k,k})`; and `Im(τ_{k,k+1}) ≥ 0` for every `k` with `k + 1 < g`. In Pazuki's
+one-based indices these read `gcd(ξ_k, …, ξ_g) = 1` for `1 ≤ k ≤ g`, and `Im(τ_{k,k+1}) ≥ 0` for
+`1 ≤ k ≤ g - 1`. -/
 def SiegelS3 (τ : Matrix (Fin g) (Fin g) ℂ) : Prop :=
   (∀ (k : Fin g) (ξ : Fin g → ℤ), (Finset.univ.filter (k ≤ ·)).gcd ξ = 1 →
       (τ k k).im ≤ ∑ i, ∑ j, (ξ i : ℝ) * (τ i j).im * ξ j) ∧
@@ -131,8 +133,9 @@ theorem mem_upperHalfSpace_one_iff (τ : Matrix (Fin 1) (Fin 1) ℂ) :
         Matrix.map_apply]
       nlinarith [mul_pos (mul_self_pos.mpr hx0) h]
 
-/-- **For `g = 1`, condition S. 3 holds for every `τ`**: the only `ξ ∈ ℤ¹` with `gcd(ξ_1) = 1`
-are `ξ = ±1`, for which `ᵗξ (Im τ) ξ = Im(τ_{1,1})`; the second part of S. 3 is vacuous. -/
+/-- **For `g = 1`, condition S. 3 holds for every `τ`**: the only `ξ ∈ ℤ¹` with `gcd(ξ_0) = 1`
+are `ξ = ±1`, for which `ᵗξ (Im τ) ξ = Im(τ_{0,0})`; the second part of S. 3 is vacuous, as no
+`k` has `k + 1 < 1`. -/
 theorem siegelS3_of_eq_one (τ : Matrix (Fin 1) (Fin 1) ℂ) : SiegelS3 τ := by
   refine ⟨fun k ξ hξ ↦ ?_, fun k l hkl ↦ absurd hkl (by omega)⟩
   have hk : k = 0 := Subsingleton.elim _ _

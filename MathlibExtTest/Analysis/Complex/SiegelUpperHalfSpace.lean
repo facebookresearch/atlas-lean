@@ -49,4 +49,37 @@ example (g : ℕ) (τ : Matrix (Fin g) (Fin g) ℂ) :
     smul (fromBlocks (1 : Matrix (Fin g) (Fin g) ℤ) 1 0 1) τ = τ + 1 := by
   simp [smul]
 
+-- A genus-one regression for `smul`, S. 1 and `fundamentalDomain`: `τ = [i/2]` lies in `𝔖_1` and
+-- satisfies S. 2 and S. 3, but `γ = J` gives `γ · τ = (-τ)⁻¹ = [2i]`, and S. 1 would need
+-- `det Im(γ · τ) = 2 ≤ 1/2 = det Im τ`; so `τ ∉ 𝔉_1`.
+example :
+    !![Complex.I / 2] ∈ upperHalfSpace 1 ∧ SiegelS2 !![Complex.I / 2] ∧
+      SiegelS3 !![Complex.I / 2] ∧ ¬ SiegelS1 !![Complex.I / 2] ∧
+      !![Complex.I / 2] ∉ fundamentalDomain 1 := by
+  have hJ : J 1 ∈ Sp 1 := by
+    rw [mem_Sp_iff_mem_symplecticGroup, J_eq_neg]
+    exact SymplecticGroup.neg_mem (SymplecticGroup.J_mem _ _)
+  have hsmul : smul (J 1) !![Complex.I / 2] = !![2 * Complex.I] := by
+    simp only [smul, J, toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₁₂, toBlocks_fromBlocks₂₁,
+      toBlocks_fromBlocks₂₂, Matrix.map_zero, Matrix.map_one, Int.cast_zero, Int.cast_one, zero_mul,
+      zero_add, one_mul, add_zero]
+    refine Matrix.inv_eq_right_inv ?_
+    ext i j
+    fin_cases i; fin_cases j
+    simp [Matrix.mul_apply]
+    ring_nf
+    simp [Complex.I_sq]
+  have hS1 : ¬ SiegelS1 !![Complex.I / 2] := by
+    intro h
+    have := h (J 1) hJ
+    rw [hsmul] at this
+    simp [Matrix.det_unique] at this
+    norm_num at this
+  refine ⟨?_, ?_, siegelS3_of_eq_one _, hS1, fun h ↦ hS1 h.2.1⟩
+  · rw [mem_upperHalfSpace_one_iff]
+    simp
+  · intro i j
+    fin_cases i; fin_cases j
+    simp
+
 end Siegel
