@@ -4,7 +4,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 1 of 5](part-01/README.md)
 
-- [Part 2 of 20](part-01/part-02/README.md)
 - [Part 4 of 20](part-01/part-04/README.md)
 - [Part 10 of 20](part-01/part-10/README.md)
 
