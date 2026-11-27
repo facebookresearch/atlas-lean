@@ -27,7 +27,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Girth
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ QUESTION: does `G` contain a Hamiltonian circuit?
 
 De Biasi's theorem gives NP-completeness for graphs without cycles of length at most `k`, for every
 `k ≥ 3`; the case `k = 8` is this class. The instance, its well-formedness and the question are
-those of `WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple
+those of `CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple
 graph on `Fin n`, `n > 0`, given by an edge list); the restriction adds `9 ≤ G.egirth`, Mathlib's
 extended girth (the least length of a cycle, `⊤` for an acyclic graph), so a graph without cycles
 belongs to the class. Membership in NP: the circuit is a certificate, and the girth of a graph is
