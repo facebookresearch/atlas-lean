@@ -25,10 +25,10 @@ for each $\delta\in(0,T)$. So the low-copy species equilibrate instantaneously t
 
 - [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 
-## Expansion
+## Proof sketch
 
 This is a stochastic averaging principle in the style of Kurtz: the discrete species form a fast Markov chain whose generator, for frozen $w$, is that of $\mathcal{S}^w_d$. Complex balance makes its stationary law the product-form Poisson distribution with mean $q^w_d$ (Anderson–Craciun–Kurtz). The occupation measure of $X^N_d$ converges to $\int\delta_{s}\otimes\mathrm{Pois}(q^{z(s)}_d)\,ds$, and the continuous species follow the ODE obtained by averaging their rates against this law. Fixed-time convergence for $t\ge\delta$ uses the fast mixing of the discrete chain.
 
 ## Sources
 
-- D. F. Anderson, D. Cappelletti, T. G. Kurtz, "Finite time distributions of stochastically modeled chemical systems with absolute concentration robustness", arXiv:1604.03388 (2016). <https://doi.org/10.48550/arXiv.1604.03388>
+- David F. Anderson, Daniele Cappelletti and Thomas G. Kurtz, "Finite Time Distributions of Stochastically Modeled Chemical Systems with Absolute Concentration Robustness", *SIAM Journal on Applied Dynamical Systems* 16 (2017), 1309–1339, <https://doi.org/10.1137/16m1070773>. Preprint version: arXiv:1604.03388 (2016), <https://doi.org/10.48550/arXiv.1604.03388>.

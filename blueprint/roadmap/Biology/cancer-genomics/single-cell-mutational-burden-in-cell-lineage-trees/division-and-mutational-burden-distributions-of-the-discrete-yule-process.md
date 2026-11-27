@@ -10,7 +10,7 @@ $$\mathbb{E}[B_{k,i}] = \sum_{\ell=0}^{i} \left[{i \atop \ell}\right]\frac{2^\el
 
 In particular the expected MBD is the expected DD with each division class $\ell$ replaced by a $\mathrm{Pois}(\ell\mu)$ mass function, so it depends on the per-division mutation law only through its mean $\mu$.
 
-## Expansion
+## Proof sketch
 
 A cell with division count $\ell$ is picked with probability $D_{\ell,i}/(i+1)$ and replaced by two cells of count $\ell + 1$, so
 
@@ -20,4 +20,4 @@ which the Stirling recursion solves; summing uses $\sum_\ell \left[{i \atop \ell
 
 ## Sources
 
-- Christo Morison, Dudley Stark and Weini Huang, "Single-cell mutational burden distributions in birth-death processes", arXiv:2309.06355 (2023), Results (division distribution and mutational burden distribution) and Supplementary Proposition S5, <https://doi.org/10.48550/arXiv.2309.06355>.
+- Christo Morison, Dudley Stark and Weini Huang, "Single-cell mutational burden distributions in birth–death processes", *PLOS Computational Biology* 21 (2025), e1013241, <https://doi.org/10.1371/journal.pcbi.1013241>. Preprint version: arXiv:2309.06355 (2023), Results (division distribution and mutational burden distribution) and Supplementary Proposition S5, <https://doi.org/10.48550/arXiv.2309.06355>.

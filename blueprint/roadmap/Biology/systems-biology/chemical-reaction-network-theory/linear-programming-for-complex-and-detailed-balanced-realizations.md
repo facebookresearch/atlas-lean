@@ -11,10 +11,10 @@
 
 Hence a complex (detailed) balanced realization with the given complexes exists iff the corresponding LP is feasible, which is decided in polynomial time by the auxiliary problem $\min\sum_i z_i$ subject to $Ay + z = b$, $y, z \ge 0$ (with $b \ge 0$): the LP is feasible iff this minimum is $0$. A linear objective (e.g. minimising or maximising $\sum a_{ij}$) selects sparse or dense realizations, and one network can admit several distinct detailed balanced realizations.
 
-## Expansion
+## Proof sketch
 
 Because $x^*$ is fixed, every condition in the definitions is linear in the rate constants: dynamical equivalence matches coefficients of each monomial, complex balance is flux conservation at each complex evaluated at the known monomial values, and detailed balance equates forward and reverse fluxes pairwise. A complex balanced realization of a kinetic system has every positive steady state complex balanced, hence a unique locally asymptotically stable positive equilibrium in each stoichiometric class with a Lyapunov function; detailed balanced realizations give thermodynamically consistent reversible models. The search therefore replaces combinatorial enumeration of network structures by a single LP.
 
 ## Sources
 
-- Gabor Szederkenyi and Katalin M. Hangos, "Finding complex balanced and detailed balanced realizations of chemical reaction networks", arXiv:1010.4477 (2010), Section 2 (realizations, complex and detailed balance, LP feasibility theorem) and Section 3 (LP constraints for mass action dynamics, complex balancing and detailed balancing), <https://doi.org/10.48550/arXiv.1010.4477>.
+- Gábor Szederkényi and Katalin M. Hangos, "Finding complex balanced and detailed balanced realizations of chemical reaction networks", *Journal of Mathematical Chemistry* 49 (2011), 1163–1179, <https://doi.org/10.1007/s10910-011-9804-9>. Preprint version: arXiv:1010.4477 (2010), Section 2 (realizations, complex and detailed balance, LP feasibility theorem) and Section 3 (LP constraints for mass action dynamics, complex balancing and detailed balancing), <https://doi.org/10.48550/arXiv.1010.4477>.

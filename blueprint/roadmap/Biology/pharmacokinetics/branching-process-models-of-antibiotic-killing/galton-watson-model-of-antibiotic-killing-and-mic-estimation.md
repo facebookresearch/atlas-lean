@@ -17,10 +17,10 @@ and the **minimal inhibitory concentration** is $\vartheta = \mathrm{MIC} = \min
 2. if $p_1 = 0$, $\widehat m$ is weakly consistent and $\frac{\mu_n'(m)}{\sigma_\varepsilon\,\mu_n(m)\log 2}\sqrt N(\widehat m - m) \to N(0,1)$;
 3. $\widehat\alpha$, $\widehat\beta$ and $\widehat\vartheta$ are weakly consistent, and $\sqrt N(\widehat\alpha - \alpha, \widehat\beta - \beta)$ converges to a centred bivariate normal vector with explicit covariance built from the design $\log c_i$ and the delta-method factors of part 2; the MIC estimator inherits asymptotic normality by the delta method.
 
-## Expansion
+## Proof sketch
 
 With many initial cells, $\log_2 Z_n^{(j)} = \log_2(x_0\mu_n) + O_P(x_0^{-1/2})$ by the central limit theorem for the branching process, so as $x_0 \to \infty$ the remaining randomness is the qPCR measurement error; part 1 is then the central limit theorem for the replicate mean, and part 2 is the delta method through the strictly increasing map $m \mapsto \mu_n(m)$. The Hill-type response linearises as $\log(2/m - 1) = \log\alpha + \beta\log c$, so ordinary least squares on the estimated $m(c_i)$ gives $(\widehat\alpha, \widehat\beta)$ and the MIC solves $m(c) = 1$. The method was applied to *Chlamydia trachomatis* treated with azithromycin and ciprofloxacin.
 
 ## Sources
 
-- Anita Bogdanov, Péter Kevei, Máté Szalai and Dezső Virok, "Stochastic modeling of in vitro bactericidal potency", arXiv:2104.11525 (2021), Sections 2–4, Lemma 1 and Propositions 1–3, <https://doi.org/10.48550/arXiv.2104.11525>.
+- Anita Bogdanov, Péter Kevei, Máté Szalai and Dezső Virok, "Stochastic Modeling of In Vitro Bactericidal Potency", *Bulletin of Mathematical Biology* 84 (2022), 6, <https://doi.org/10.1007/s11538-021-00967-4>. Preprint version: arXiv:2104.11525 (2021), Sections 2–4, Lemma 1 and Propositions 1–3, <https://doi.org/10.48550/arXiv.2104.11525>.

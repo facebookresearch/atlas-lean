@@ -28,10 +28,10 @@ $$\big(\Psi_\tau(FP)(\lambda)\big)(x)=\sum_{A|B\in\mathcal S:\ x\in A}\frac{\lam
 
 which coincides with the Shapley value of the split-based phylogenetic diversity game.
 
-## Expansion
+## Proof sketch
 
 The game $g_C$ is a unanimity-type game in which a coalition gains $1$ as soon as it touches $C$. By symmetry every member of $C$ is pivotal with the same probability and non-members are null players, so $SV(g_C)(x)=\mathbf 1[x\in C]/|C|$. Linearity of the Shapley value in $g$ and the decomposition $PD_\omega=\sum_C\omega(C)g_C$ then give $SV(PD_\omega)=FP(\omega)$. This extends the classical rooted-tree identity (fair proportion equals the Shapley value of the phylogenetic diversity game) to arbitrary, non-hierarchical cluster systems. The uniqueness statement must be phrased on the subspace $\mathbb{PD}(\mathcal C)$, since that is in general a proper subspace of all games. In the split case, each split weight is shared equally between its two sides, which produces the factor $1/(2|A|)$.
 
 ## Sources
 
-- V. Moulton, A. Spillner, K. Wicke, "Phylogenetic diversity indices from an affine and projective viewpoint", arXiv:2403.15842 (2024): Lemma 2.1 (fair proportion is complete and linear), Lemma 4.1 (dimension of $\mathbb{PD}(\mathcal C)$), Theorem 4.2 (characterization of the Shapley value), Corollary 4.3 (fair proportion equals Shapley value), Corollary 6.2 (split-system formula). <https://doi.org/10.48550/arXiv.2403.15842>
+- V. Moulton, A. Spillner and K. Wicke, "Phylogenetic Diversity Indices from an Affine and Projective Viewpoint", *Bulletin of Mathematical Biology* 86 (2024), 103, <https://doi.org/10.1007/s11538-024-01332-x>. Preprint version: arXiv:2403.15842 (2024), Lemma 2.1 (fair proportion is complete and linear), Lemma 4.1 (dimension of $\mathbb{PD}(\mathcal C)$), Theorem 4.2 (characterization of the Shapley value), Corollary 4.3 (fair proportion equals Shapley value), Corollary 6.2 (split-system formula), <https://doi.org/10.48550/arXiv.2403.15842>.

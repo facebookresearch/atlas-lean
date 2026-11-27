@@ -20,10 +20,10 @@ So in the diffusive regime the cheaper macroscopic model yields asymptotically t
 
 - [Parabolic limit of kinetic chemotaxis to the Keller–Segel equation](parabolic-limit-of-kinetic-chemotaxis-to-keller-segel.md)
 
-## Expansion
+## Proof sketch
 
 With Gaussian noise the posterior density with respect to $\mu_0$ is $\exp(-\tfrac{1}{2\gamma^2}|y - \mathcal G(u)|^2)/Z$. The forward limit, uniform over $\mathcal A$, makes $\mathcal G^{\varepsilon,\mathrm{ch}} \to \mathcal G^{\mathrm{KS}}$ uniformly, since each measurement is a test-function integral of $\int_V f_\varepsilon\,dv \to \rho$. Uniform boundedness of the misfits makes the normalising constants $Z^{\varepsilon,\mathrm{ch}}$ and $Z^{\mathrm{KS}}$ bounded away from zero, and $Z^{\varepsilon,\mathrm{ch}} \to Z^{\mathrm{KS}}$. The log-density ratio $\log(d\mu^y_{\varepsilon,\mathrm{ch}}/d\mu^y_{\mathrm{KS}})$ then tends to zero uniformly on $\mathcal A$, so its integral, the KL divergence, vanishes. Hellinger convergence follows from $d_{\mathrm{Hell}}^2 \le \tfrac12 d_{\mathrm{KL}}$.
 
 ## Sources
 
-- Kathrin Hellmuth, Christian Klingenberg, Qin Li and Min Tang, "Multiscale convergence of the inverse problem for chemotaxis in the Bayesian setting", arXiv:2110.13787 (2021), Section 3, Lemmas 1 and 2, Theorem 2 and Corollary 1, <https://doi.org/10.48550/arXiv.2110.13787>.
+- Kathrin Hellmuth, Christian Klingenberg, Qin Li and Min Tang, "Multiscale Convergence of the Inverse Problem for Chemotaxis in the Bayesian Setting", *Computation* 9 (2021), 119, <https://doi.org/10.3390/computation9110119>. Preprint version: arXiv:2110.13787 (2021), Section 3, Lemmas 1 and 2, Theorem 2 and Corollary 1, <https://doi.org/10.48550/arXiv.2110.13787>.

@@ -13,10 +13,10 @@ Write $\alpha=e^{-k_e\tau}$ and $\beta=e^{-k_a\tau}$. Two protocols are compared
 3. For i.i.d. adherence with $\mathbb P(\xi_n=1)=p$, the relative mean concentration is $\mu^{\mathrm{single}}=p<\mu^{\mathrm{double}}=p+p(1-p)$. The relative root-mean-square error decomposes as $\varepsilon=\sqrt{(\varepsilon^{\mathrm{perf}})^2+\eta}$, where $\eta\ge0$ is an explicit quadratic polynomial in $1-p$.
 4. *(Toxicity.)* Under the single-dose protocol, the largest possible concentration over all adherence patterns equals that of perfect adherence, attained at $t^*=\tau\ln\!\big(\frac{(1-\alpha)\ln\beta}{(1-\beta)\ln\alpha}\big)/\ln(\alpha/\beta)$, so missed doses never raise the peak. The double-dose protocol obeys an explicit higher upper bound.
 
-## Expansion
+## Proof sketch
 
 The concentration at a fixed phase of the dosing cycle is a linear filter of the dose sequence with geometric weights $\alpha^n$ and $\beta^n$, which gives a perpetuity-type limit $C$. Because the filter is linear, means depend only on the long-run fraction of dose taken, and second moments depend on the two-point correlations of $f_n$. These are explicit for finite-memory protocols. Comparing $\mu,\varepsilon$ and the overshoot $\theta$ across protocols and drug parameters gives a quantitative way to design regimens that are forgiving to nonadherence. For example, a double-dose catch-up rule raises the mean exposure. Whether it also reduces the fluctuation error $\varepsilon$, and at what toxicity cost $\theta$, depends on $k_a\tau$, $k_e\tau$ and $p$.
 
 ## Sources
 
-- E. D. Counterman, S. D. Lawley, "Designing drug regimens that mitigate nonadherence", arXiv:2108.08358 (2021): Section 2 (model and statistics $\mu,\varepsilon,\theta$), Theorem 1 (large-time limit), Theorem 2 (moments), Corollaries 3–4 (single and double dose protocols), Theorem 5 (maximum concentration). <https://doi.org/10.48550/arXiv.2108.08358>
+- Elijah D. Counterman and Sean D. Lawley, "Designing Drug Regimens that Mitigate Nonadherence", *Bulletin of Mathematical Biology* 84 (2022), 20, <https://doi.org/10.1007/s11538-021-00976-3>. Preprint version: arXiv:2108.08358 (2021), Section 2 (model and statistics $\mu,\varepsilon,\theta$), Theorem 1 (large-time limit), Theorem 2 (moments), Corollaries 3–4 (single and double dose protocols), Theorem 5 (maximum concentration), <https://doi.org/10.48550/arXiv.2108.08358>.

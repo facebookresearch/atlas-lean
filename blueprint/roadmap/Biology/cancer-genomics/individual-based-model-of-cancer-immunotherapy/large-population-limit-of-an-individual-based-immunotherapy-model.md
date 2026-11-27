@@ -20,14 +20,14 @@ $$
 
 and each $\mathfrak{n}_{(g,p)}$ follows the corresponding birth–death–switching–killing balance, with mutational influx $\mathfrak{n}_{(\tilde g,\tilde p)}\,\mu_{\tilde g}\, m((\tilde g,\tilde p),(g,p))\,\bigl\lfloor b(\tilde p) - \sum c_b(\tilde p, \cdot)\,\mathfrak{n}\bigr\rfloor_+$.
 
-## Depends on
-
-- [Lotka–Volterra predator–prey model](../../population-dynamics/lotka-volterra-predator-prey-model/README.md)
-
-## Expansion
+## Proof sketch
 
 The model is a multitype Markov jump process whose jump rates are Lipschitz functions of the rescaled state, with jumps of size $1/K$; the classical law of large numbers for density-dependent population processes (Ethier–Kurtz) then gives almost-sure uniform convergence on compact time intervals to the ODE obtained by replacing each rate by its mean drift. The novel ingredients relative to standard individual-based models are environment-dependent phenotype switching driven by cytokines, therapy-induced T-cell killing with cytokine release, and a competition term that lowers reproduction rather than raising death. For finite $K$ the stochastic system can show tumour extinction or relapse from small residual populations, which the deterministic limit cannot.
 
+## Related topics
+
+- [Lotka–Volterra predator–prey model](../../population-dynamics/lotka-volterra-predator-prey-model/README.md)
+
 ## Sources
 
-- M. Baar, L. Coquille, H. Mayer, M. Hölzel, "A stochastic individual-based model for immunotherapy of cancer", arXiv:1505.00452 (2015), model definition and Proposition 1, <https://doi.org/10.48550/arXiv.1505.00452>.
+- Martina Baar, Loren Coquille, Hannah Mayer, Michael Hölzel, Meri Rogava, Thomas Tüting and Anton Bovier, "A stochastic model for immunotherapy of cancer", *Scientific Reports* 6 (2016), 24169, <https://doi.org/10.1038/srep24169>. Preprint version: arXiv:1505.00452 (2015), model definition and Proposition 1, <https://doi.org/10.48550/arXiv.1505.00452>.

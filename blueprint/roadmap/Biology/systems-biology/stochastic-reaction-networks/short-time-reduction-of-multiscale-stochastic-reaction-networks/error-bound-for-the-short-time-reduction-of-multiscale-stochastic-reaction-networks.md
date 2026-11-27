@@ -1,0 +1,19 @@
+# Error bound for the short-time reduction of multiscale stochastic reaction networks
+
+**Setting.** A reaction network $(\mathcal S, \mathcal C, \mathcal R)$ has species $\mathcal S$, complexes $\mathcal C$ (non-negative integer combinations of species) and reactions $y_k \to y'_k$. The species split into low-copy species $\mathcal S_L = \{S_1,\dots,S_d\}$ and high-copy species $\mathcal S_H = \{S_{d+1},\dots,S_{d+r}\}$, with projections $q_L, q_H$ onto the two coordinate blocks. Fix a scaling parameter $N$ (volume, total mass, Avogadro-scale count). The continuous-time Markov chain $X^N(t) \in \mathbb Z^{d+r}_{\ge 0}$ evolves under mass-action intensities with rate constants $N^{\beta_k}\kappa_k$, and initial counts $X^N_i(0) = N^{\alpha_i} z^0_i$ with $\alpha_i = 0$ for low-copy and $\alpha_i > 0$ for high-copy species. Let $Z^N$ be the scaled process (high-copy coordinates divided by $N^{\alpha_i}$) and $Z^{N,-\theta_0}(t) = Z^N(t/N^{\theta_0})$ its speed-up on the short time scale $N^{-\theta_0}$, where $\theta_0 > 0$ is the time-scale exponent determined by the scaling exponents $\alpha_i, \beta_k$ (the order of the fastest reactions acting on low-copy species). Let $Z$ be the reduced process: high-copy species frozen at their initial concentrations, low-copy species following the projected network $q_L(y_k) \to q_L(y'_k)$ over the fastest reactions, with effective rate constants absorbing the frozen high-copy concentrations.
+
+**Theorem.** Under the paper's tail condition excluding explosion of the reduced system, for each $t$, $Z^{N,-\theta_0}(t) \to Z(t)$ in distribution as $N \to \infty$. Moreover there are constants $c > 0$ and $\nu \in (0,1)$ such that for every measurable $A \subset \mathbb R^{d+r}_{\ge 0}$ and every $T > 0$,
+
+$$\sup_{t\in[0,T]} \big| p^N(A, t) - p(A_L, t) \big| \le \frac{c\,\max\{1, T^2\}}{N^\nu},$$
+
+where $p^N(\cdot,t)$ is the law of $Z^{N,-\theta_0}(t)$, $p(\cdot,t)$ that of $Z(t)$ and $A_L = q_L(A)$. The bound is uniform in $A$ and extends from mass-action to general kinetics.
+
+**Example.** For $A + B \rightleftharpoons 2A$ (forward rate $\kappa_1$, backward $\kappa_2 N$) and $C \to 2A$ (rate $\kappa_3$) with $A(0) = 1$, $B(0) = N$, $C(0) = 10$, on the time scale $t/N$ the copy number of $A$ is approximated by the reduced birth–death network $A \rightleftharpoons 2A$ with rates $\kappa_1$ and $\kappa_2$, with error $O(N^{-\nu})$.
+
+## Proof sketch
+
+The proof compares the Kolmogorov forward equations of the two processes directly. On a truncated state set $S_M$ with $M = N^\rho$, the intensities of the full system on the fast time scale differ from the projected reduced intensities by a factor $1 + O(N^{-\nu_1})$, while slow reactions have intensities $O(N^{-\nu_2})$ (two-intensities lemma). A Grönwall-type bound for linear systems that preserve the simplex turns these intensity errors into density errors of order $M^{c'}\max\{1,t^2\}N^{-\nu'_0}$. The mass outside $S_M$ is controlled by the number of jumps: the reduced process has $E[J(t)^2] \le c\max\{1,t^2\}$, so leaving $S_M$ requires about $M$ jumps, which is unlikely by time $t$. Balancing $\rho$ gives the uniform rate $N^{-\nu}$.
+
+## Sources
+
+- German Enciso and Jinsu Kim, "Accuracy of Multiscale Reduction for Stochastic Reaction Systems", *Multiscale Modeling & Simulation* 19 (2021), 1633–1658, <https://doi.org/10.1137/19m1301928>. Preprint version: arXiv:1909.11916 (2019), main theorem and supporting lemmas (two intensities, jump-count moments, truncation and Grönwall lemmas), <https://doi.org/10.48550/arXiv.1909.11916>.

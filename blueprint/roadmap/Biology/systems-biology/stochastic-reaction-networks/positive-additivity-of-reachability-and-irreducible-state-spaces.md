@@ -16,10 +16,10 @@ $$C \times \mathbb N_0^{|A|} \times \{\mathbf 0\}$$
 
 is an irreducible state space, and under a further degradability condition it is the only one meeting $C \times \mathbb N_0^{d_f}$. If all leaves are minimal and satisfy these conditions, these sets are, up to relabeling, all the irreducible state spaces.
 
-## Expansion
+## Proof sketch
 
 Positive additivity holds because a reaction path enabled from $x$ remains enabled from $x + z$ under the mass-action-type condition: extra molecules never block a reaction. It allows communication classes to be computed on a finite "core" and then extended by translation in the unbounded directions. The procedure is purely linear-algebraic and combinatorial, and its output (closed irreducible classes) is what is needed before speaking of a unique stationary distribution, ergodicity or finite-state-projection truncations.
 
 ## Sources
 
-- A. Gupta, M. Khammash, "Computational identification of irreducible state-spaces for stochastic reaction networks", arXiv:1505.06594 (2015), Assumption 3.1, Propositions 3.2–3.3 (Section 3), Proposition 4.2 (Section 4), Propositions 5.2–5.3 and Theorem 5.4 (Section 5), <https://doi.org/10.48550/arXiv.1505.06594>.
+- Ankit Gupta and Mustafa Khammash, "Computational Identification of Irreducible State-Spaces for Stochastic Reaction Networks", *SIAM Journal on Applied Dynamical Systems* 17 (2018), 1213–1266, <https://doi.org/10.1137/17m1134299>. Preprint version: arXiv:1505.06594 (2015), Assumption 3.1, Propositions 3.2–3.3 (Section 3), Proposition 4.2 (Section 4), Propositions 5.2–5.3 and Theorem 5.4 (Section 5), <https://doi.org/10.48550/arXiv.1505.06594>.

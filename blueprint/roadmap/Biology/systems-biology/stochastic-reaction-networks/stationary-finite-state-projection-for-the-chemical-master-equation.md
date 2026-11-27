@@ -31,10 +31,10 @@ are computable from the sFSP output, where $\mathcal{B}(\mathcal{E}_n)$ is the s
 
 So the computable convergence factor is, up to constants, equivalent to the uncomputable error, and can be used as a stopping rule when enlarging $\mathcal{E}_n$; if $V$ is unknown but linear, $\max V$ on the boundary may be replaced by any norm of the boundary states (Remark 3.3).
 
-## Expansion
+## Proof sketch
 
 Uniqueness: any closed class of the projected chain must contain $x_\ell$, because irreducibility of the original chain gives a reaction path from any state to $x_\ell$, and the first step of that path that leaves $\mathcal{E}_n$ is redirected to $x_\ell$. For the error bound, compare the projected and original generators: they differ only by the redirected outflow, whose total rate under $\bar\pi_n$ is $r^{(n)}_{\mathrm{out}}$, and the drift condition gives a bounded solution of the Poisson equation in the $V$-norm (Meyn–Tweedie), converting this rate discrepancy into a $V$-norm bound scaled by $V$ at the boundary and at $x_\ell$. Linear Foster–Lyapunov functions for many biochemical networks are found by linear programming.
 
 ## Sources
 
-- A. Gupta, J. Mikelson, M. Khammash, "A finite state projection algorithm for the stationary solution of the chemical master equation", arXiv:1704.07259 (2017). <https://doi.org/10.48550/arXiv.1704.07259>
+- Ankit Gupta, Jan Mikelson and Mustafa Khammash, "A finite state projection algorithm for the stationary solution of the chemical master equation", *The Journal of Chemical Physics* 147 (2017), 154101, <https://doi.org/10.1063/1.5006484>. Preprint version: arXiv:1704.07259 (2017), <https://doi.org/10.48550/arXiv.1704.07259>.

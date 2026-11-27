@@ -26,10 +26,10 @@ when this quantity is not small, no quasi-steady-state reduction (standard, tota
 
 - [Michaelis constant](michaelis-constant.md)
 
-## Expansion
+## Proof sketch
 
 Any QSS reduction is a singular-perturbation statement: trajectories collapse quickly onto a slow invariant curve, which near the stationary point is the slow eigendirection. If the two eigenvalues are comparable there is no slow manifold to collapse onto, so the reduction fails irrespective of how it is formulated. Expressing the eigenvalue ratio through trace and determinant avoids square roots and gives an explicit polynomial inequality in the rate constants, complementing sufficient conditions for validity such as $e_0/(K_M + s_0) \ll 1$.
 
 ## Sources
 
-- J. Eilertsen, S. Schnell, S. Walcher, "On the anti-quasi-steady-state conditions of enzyme kinetics", arXiv:2112.04098 (2021), Lemma 1, Proposition 1 and Remark 2 (Section 3), <https://doi.org/10.48550/arXiv.2112.04098>.
+- Justin Eilertsen, Santiago Schnell and Sebastian Walcher, "On the anti-quasi-steady-state conditions of enzyme kinetics", *Mathematical Biosciences* 350 (2022), 108870, <https://doi.org/10.1016/j.mbs.2022.108870>. Preprint version: arXiv:2112.04098 (2021), Lemma 1, Proposition 1 and Remark 2 (Section 3), <https://doi.org/10.48550/arXiv.2112.04098>.

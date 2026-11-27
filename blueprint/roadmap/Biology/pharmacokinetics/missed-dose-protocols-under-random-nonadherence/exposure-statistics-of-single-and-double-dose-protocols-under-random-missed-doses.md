@@ -21,10 +21,10 @@ $$\lambda^{\mathrm{single}} = 1, \quad \lambda^{\mathrm{double}} = \frac{2}{1+\a
 
 The coefficient of variation of the single-dose protocol is $\sqrt{\frac{1-\alpha}{1+\alpha}}\sqrt{p(1-p)}$.
 
-## Expansion
+## Proof sketch
 
 The stationary concentration just after a dose is $\sum_{k\ge0}\alpha^k f_{n-k}$ (times $D/V$), a linear functional of the stationary Markov chain $X_n = (\xi_n, \dots, \xi_{n-m})$, so its first two moments follow from the stationary law $\pi(x) = p^{s(x)}(1-p)^{m+1-s(x)}$ and a geometric sum of autocovariances weighted by $\alpha^{|k|}$; dividing by the perfect-adherence value $1/(1-\alpha)$ gives $\mu$ and $\mathrm{dev}$. The worst case for the double-dose protocol is the pattern miss–take repeated, where each double dose arrives on top of a decayed level, giving $2/(1+\alpha)$. The formulas show a trade-off: making up missed doses raises mean exposure toward $1$ and can lower the deviation for long half-lives ($\alpha$ near $1$), but raises the peak exposure, which matters for drugs with narrow therapeutic windows.
 
 ## Sources
 
-- E. D. Counterman and S. D. Lawley, "What should patients do if they miss a dose of medication? A theoretical approach", arXiv:2102.05442 (2021), model and statistics (Section 2.1), Theorem 1 (Section 2.1.5), and in the Appendix Theorem 2, Corollaries 4–6 and Theorem 7, <https://doi.org/10.48550/arXiv.2102.05442>.
+- Elijah D. Counterman and Sean D. Lawley, "What should patients do if they miss a dose of medication? A theoretical approach", *Journal of Pharmacokinetics and Pharmacodynamics* 48 (2021), 873–892, <https://doi.org/10.1007/s10928-021-09777-6>. Preprint version: arXiv:2102.05442 (2021), model and statistics (Section 2.1), Theorem 1 (Section 2.1.5), and in the Appendix Theorem 2, Corollaries 4–6 and Theorem 7, <https://doi.org/10.48550/arXiv.2102.05442>.

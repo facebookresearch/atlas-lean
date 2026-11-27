@@ -1,3 +1,17 @@
 # Gene regulatory network dynamics
 
 - [Secant criterion for diagonal stability of cyclic negative feedback](secant-criterion-diagonal-stability-of-cyclic-negative-feedback.md)
+- [Averaging principle for hybrid gene-regulation models](averaging-principle-for-hybrid-gene-regulation-models/README.md)
+- [Canalizing Boolean networks](canalizing-boolean-networks/README.md)
+- [Data selection for network reverse engineering](data-selection-for-network-reverse-engineering/README.md)
+- [Degrade-and-fire oscillators with common activator](degrade-and-fire-oscillators-with-common-activator/README.md)
+- [Delayed stochastic gene expression](delayed-stochastic-gene-expression/README.md)
+- [Glass networks](glass-networks/README.md)
+- [Limit cycles of piecewise affine gene networks](limit-cycles-of-piecewise-affine-gene-networks/README.md)
+- [mRNA statistics across the cell cycle](mrna-statistics-across-the-cell-cycle/README.md)
+- [Multistability-equivalent gene regulatory networks](multistability-equivalent-gene-regulatory-networks/README.md)
+- [Observability of conjunctive Boolean networks](observability-of-conjunctive-boolean-networks/README.md)
+- [Redundancy and monotonicity of signed networks](redundancy-and-monotonicity-of-signed-networks/README.md)
+- [Stationary densities of noisy operon expression](stationary-densities-of-noisy-operon-expression/README.md)
+- [Steady states of sigmoidal ODEs and multistate networks](steady-states-of-sigmoidal-odes-and-multistate-networks/README.md)
+- [Time-series model rejection for regulatory networks](time-series-model-rejection-for-regulatory-networks/README.md)

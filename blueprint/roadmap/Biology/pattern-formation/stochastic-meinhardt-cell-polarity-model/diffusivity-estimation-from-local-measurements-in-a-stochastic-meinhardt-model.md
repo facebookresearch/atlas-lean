@@ -22,10 +22,10 @@ $$\delta^{-1}\big(\hat D_{A,\delta} - D_A\big) \xrightarrow{d} N\Big(0,\ D_A\fra
 
 so $\hat D_{A,\delta} \pm \delta(MT)^{-1/2}(\hat D_{A,\delta}\Sigma)^{1/2}q_{1-\alpha/2}$ is an asymptotic $(1-\alpha)$ confidence interval. The nonlinearity, the unobserved inhibitor and the signal $\zeta$ do not affect the limit.
 
-## Expansion
+## Proof sketch
 
 Each local measurement satisfies $dA_\delta = D_A A^\Delta_\delta\,dt + \langle f_A, K_{\delta,x_k}\rangle dt + \sigma_A\|K\|\,dW_k$, a linear regression on $A^\Delta_\delta$ plus a nuisance drift. The observed Fisher information $\sum_k\int_0^T(A^\Delta_\delta)^2dt$ grows like $\delta^{-2}$, because the rough stochastic convolution dominates second derivatives at fine scales, whereas the reaction term is smoother and contributes only $O_P(\delta^{-1/2})$; a martingale central limit theorem then gives the $\delta$-rate. Without the noise ($\sigma_A = 0$) the estimator is biased, since the nonlinear drift no longer averages out.
 
 ## Sources
 
-- Randolf Altmeyer, Till Bretschneider, Josef Janák and Markus Reiß, "Parameter Estimation in an SPDE Model for Cell Repolarisation", arXiv:2010.06340 (2020), Section 2 (existence and uniqueness theorem) and Section 4 (estimator, asymptotic normality theorem and confidence intervals), <https://doi.org/10.48550/arXiv.2010.06340>.
+- Randolf Altmeyer, Till Bretschneider, Josef Janák and Markus Reiß, "Parameter Estimation in an SPDE Model for Cell Repolarization", *SIAM/ASA Journal on Uncertainty Quantification* 10 (2022), 179–199, <https://doi.org/10.1137/20m1373347>. Preprint version: arXiv:2010.06340 (2020), Section 2 (existence and uniqueness theorem) and Section 4 (estimator, asymptotic normality theorem and confidence intervals), <https://doi.org/10.48550/arXiv.2010.06340>.

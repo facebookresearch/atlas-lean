@@ -10,10 +10,10 @@
 
 **Timescales.** When absorption is slow relative to the observation window, the relevant object is the quasi-stationary distribution; for the activation/deactivation example the quasi-stationary distribution of $X_A$ converges to a Poisson distribution as $M \to \infty$, recovering the robust deterministic value in the large-copy limit.
 
-## Expansion
+## Proof sketch
 
 In the conservative network the chain lives on a finite set, so it is eventually absorbed in a closed communication class. Domination $y_1 \ll y_2$ means that whenever $y_1$ can react, so can $y_2$; combined with the deficiency-one kernel structure this forces any closed class with positive probability flux through non-terminal complexes to be transient. Deterministic ACR and stochastic extinction are therefore two faces of the same structural condition, separated by the large-number limit.
 
 ## Sources
 
-- D. F. Anderson, G. A. Enciso, M. D. Johnston, "Stochastic analysis of biochemical reaction networks with absolute concentration robustness", arXiv:1310.3761 (2013), Section 2 (activation/deactivation example), Theorems 1–2 (Section 3) and Section 4 (absorption times and quasi-stationary distributions), <https://doi.org/10.48550/arXiv.1310.3761>.
+- David F. Anderson, Germán A. Enciso and Matthew D. Johnston, "Stochastic analysis of biochemical reaction networks with absolute concentration robustness", *Journal of The Royal Society Interface* 11 (2014), 20130943, <https://doi.org/10.1098/rsif.2013.0943>. Preprint version: arXiv:1310.3761 (2013), Section 2 (activation/deactivation example), Theorems 1–2 (Section 3) and Section 4 (absorption times and quasi-stationary distributions), <https://doi.org/10.48550/arXiv.1310.3761>.

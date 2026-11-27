@@ -24,10 +24,10 @@ $$D = \int_V v \otimes \kappa(x,t,v)\, dv, \qquad \Gamma = -\int_V v\, \theta(x,
 and $\kappa, \theta$ solve the cell problems $\mathcal K_0(\kappa) = vF$, $\mathcal K_0(\theta) = \mathcal K_1(F)$, where $\mathcal K_i(g) = \int_V (K_i\, g' - K_i'\, g)\, dv'$;
 3. the bounds and the convergence are uniform over $\mathcal A$.
 
-## Expansion
+## Proof sketch
 
 Insert the Hilbert expansion $f_\varepsilon = f^{(0)} + \varepsilon f^{(1)} + \varepsilon^2 f^{(2)} + \dots$. At order $\varepsilon^0$ the tumbling operator $\mathcal K_0$ must annihilate $f^{(0)}$; its kernel is spanned by $F$, so $f^{(0)} = \rho F$. At order $\varepsilon^1$, $v \cdot \nabla_x(\rho F) = \mathcal K_0(f^{(1)}) + \mathcal K_1(\rho F)$, solved through the cell functions $\kappa, \theta$ (solvable because $vF$ and $\mathcal K_1(F)$ have zero velocity mean). Integrating the order-$\varepsilon^2$ equation over $V$ kills the collision terms and gives the conservation law for $\rho$ with the flux $-D\nabla\rho + \rho\Gamma$. Uniformity over $\mathcal A$ comes from the lower bound $K_0 \ge \alpha$, which gives a uniform spectral gap for $\mathcal K_0$, and the $C^1$ bounds.
 
 ## Sources
 
-- Kathrin Hellmuth, Christian Klingenberg, Qin Li and Min Tang, "Multiscale convergence of the inverse problem for chemotaxis in the Bayesian setting", arXiv:2110.13787 (2021), Section 2 and Theorem 1, <https://doi.org/10.48550/arXiv.2110.13787>.
+- Kathrin Hellmuth, Christian Klingenberg, Qin Li and Min Tang, "Multiscale Convergence of the Inverse Problem for Chemotaxis in the Bayesian Setting", *Computation* 9 (2021), 119, <https://doi.org/10.3390/computation9110119>. Preprint version: arXiv:2110.13787 (2021), Section 2 and Theorem 1, <https://doi.org/10.48550/arXiv.2110.13787>.

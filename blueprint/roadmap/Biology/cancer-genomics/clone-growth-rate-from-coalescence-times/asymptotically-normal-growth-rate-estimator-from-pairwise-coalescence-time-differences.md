@@ -20,10 +20,10 @@ $$\sqrt n\,(\hat r-r)\Rightarrow\mathcal N\Big(0,\ r^2\Big(4-\frac{\pi^2}{3}\Big
 
 $$\sqrt n\,(\hat r_{Inv}-r)\Rightarrow\mathcal N\Big(0,\ r^2\Big(4-\frac{\pi^2}{3}\Big)\Big).$$
 
-## Expansion
+## Proof sketch
 
 The expected total internal branch length, conditional on the coalescence times, is dominated by $\frac1{n-1}\sum_{i,j}(H_{i,n}-H_{j,n})^+$. This motivates an estimator inversely proportional to the average positive pairwise difference. The quantity $1/\hat r$ is a U-statistic of the i.i.d. logistic variables with symmetric kernel $\tfrac12|U_i-U_j|/r$, so Hoeffding's theorem gives asymptotic normality. Its variance can be computed from logistic moments; this is where $\pi^2/3$, the variance of the logistic law, comes from. The delta method then transfers the result to $\hat r$. A coupling between finite-$T_n$ and limiting coalescence times shows that the difference is $o_p(n^{-1/2})$ under the growth condition on $T_n$. Earlier closed-form estimators based on internal and external branch lengths come from large-$n$ asymptotics and perform poorly in small samples. This estimator is built for that regime: it is computationally cheap, comes with confidence intervals, and is evaluated by simulation for small $n$.
 
 ## Sources
 
-- C. S. Heinzel, J. Schweinsberg, "Estimating the growth rate of a birth and death process using data from a small sample", arXiv:2508.16110 (2025): Section 2 (estimator family and choices of $c(n)$), the lemma on asymptotic normality of $\hat r$ in the limiting model, Section 2.5 (confidence intervals), Theorem 1 (asymptotic normality of $\hat r_{Inv}$ at finite sampling times), appendix (derivation of the conditional internal length). <https://doi.org/10.48550/arXiv.2508.16110>
+- Carola Sophia Heinzel and Jason Schweinsberg, "Estimating the Growth Rate of a Birth and Death Process Using data From a Small Sample", *Bulletin of Mathematical Biology* 88 (2026), 72, <https://doi.org/10.1007/s11538-026-01626-2>. Preprint version: arXiv:2508.16110 (2025), Section 2 (estimator family and choices of $c(n)$), the lemma on asymptotic normality of $\hat r$ in the limiting model, Section 2.5 (confidence intervals), Theorem 1 (asymptotic normality of $\hat r_{Inv}$ at finite sampling times), appendix (derivation of the conditional internal length), <https://doi.org/10.48550/arXiv.2508.16110>.

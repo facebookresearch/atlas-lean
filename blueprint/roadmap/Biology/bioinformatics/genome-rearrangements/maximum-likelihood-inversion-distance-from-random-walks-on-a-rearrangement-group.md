@@ -16,10 +16,10 @@ For example, for a circular genome with three regions and adjacent-pair inversio
 
 **Non-monotonicity relative to minimal distance.** Because $\mathcal{G}$ is non-abelian, different elements at the same minimal distance $d_{\min}$ have very different walk counts, and the MLE can reverse the order induced by the minimal distance: there are pairs with $d_{\min}(g_1) > d_{\min}(g_2)$ but $\hat\lambda_{g_1} < \hat\lambda_{g_2}$ (e.g. $d_{\min}((2,7,6,5,3)) = 6 < 7 = d_{\min}((2,3)(4,6)(7,9))$ with reversed MLE order).
 
-## Expansion
+## Proof sketch
 
 Conditioning on the number $i$ of events gives the Poisson mixture, and uniform choice of events makes each length-$i$ walk equally likely, so $\Pr(g \mid i) = \alpha_i(g)/n^i$. Conjugation by $h \in N_{\mathcal{G}}(\mathcal{S})$ is a graph automorphism of the Cayley graph fixing $e$, mapping walks of length $i$ to walks of length $i$ bijectively, so walk counts and likelihoods agree; the same argument lets walks between two cosets be counted from a single representative. The MLE accounts for the many paths to a genome (saturation), which the minimal distance ignores, and the coset-MLE changes reconstructed phylogenies relative to minimal-distance methods.
 
 ## Sources
 
-- Stuart Serdoz, Attila Egri-Nagy, Jeremy Sumner and Barbara R. Holland, "Maximum likelihood estimates of pairwise rearrangement distances", arXiv:1602.03962 (2016), Sections 2–6 (group-theoretic model, likelihood function, normaliser proposition, coset likelihood, comparison with minimal distance), <https://doi.org/10.48550/arXiv.1602.03962>.
+- Stuart Serdoz, Attila Egri-Nagy, Jeremy Sumner, Barbara R. Holland, Peter D. Jarvis, Mark M. Tanaka and Andrew R. Francis, "Maximum likelihood estimates of pairwise rearrangement distances", *Journal of Theoretical Biology* 423 (2017), 31–40, <https://doi.org/10.1016/j.jtbi.2017.04.015>. Preprint version: arXiv:1602.03962 (2016), Sections 2–6 (group-theoretic model, likelihood function, normaliser proposition, coset likelihood, comparison with minimal distance), <https://doi.org/10.48550/arXiv.1602.03962>.

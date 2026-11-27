@@ -25,7 +25,7 @@ so the pattern wavelength $N/k$ lies between $2h$ and $4h$ sites.
 3. For $h = 1, 2$ the equilibrium is linearly stable for all admissible $(b,d)$; for every $h \ge 3$ and $N$ large enough, some nonzero mode is unstable for some $(b,d)$, and the instability region of mode $k$ is contained in $\mathcal{P}$.
 4. The trivial equilibrium $(1,0)$ is unstable exactly in the modes $k$ with $x_k \ge 1/(b+1)$.
 
-## Expansion
+## Proof sketch
 
 For mode $k$ the linearisation at a homogeneous state $(X_H, M_H)$ is
 
@@ -35,4 +35,4 @@ and the mode is unstable iff a real eigenvalue becomes positive, which reduces t
 
 ## Sources
 
-- Robert Jencks, "The Mean-Field Survival Model for Stripe Formation in Zebrafish Exhibits Turing Instability", arXiv:2411.15293 (2024), Proposition 1 and Theorems 1–2 (Main Results), <https://doi.org/10.48550/arXiv.2411.15293>.
+- Robert Jencks, "The mean-field survival model for stripe formation in zebrafish exhibits Turing instability", *Mathematical Biosciences* 385 (2025), 109463, <https://doi.org/10.1016/j.mbs.2025.109463>. Preprint version: arXiv:2411.15293 (2024), Proposition 1 and Theorems 1–2 (Main Results), <https://doi.org/10.48550/arXiv.2411.15293>.

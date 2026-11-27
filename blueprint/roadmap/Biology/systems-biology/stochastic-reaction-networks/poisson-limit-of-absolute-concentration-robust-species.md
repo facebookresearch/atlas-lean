@@ -23,10 +23,10 @@ In particular $P(X^N_{\mathrm{acr}}(t)\in A)\to P(J\in A)$ uniformly on $[\delta
 
 - [Poisson averaging limit for low-copy species in multiscale reaction networks](poisson-averaging-limit-for-low-copy-species-in-multiscale-reaction-networks.md)
 
-## Expansion
+## Proof sketch
 
 At a positive equilibrium $w^*$ of the reduced continuous system, $(q^{w^*}_d,w^*)$ is a positive equilibrium of $\widetilde{\mathcal{S}}$, so the ACR coordinates of $q^{w^*}_d$ equal $q$ regardless of $w^*$. Applying the averaging theorem with test functions depending only on the ACR coordinates gives the Poisson limit. In the basin case, continuity of the complex-balanced equilibrium $q^w_d$ in $w$ transfers the convergence $z(t)\to w^*$ to the Poisson parameters.
 
 ## Sources
 
-- D. F. Anderson, D. Cappelletti, T. G. Kurtz, "Finite time distributions of stochastically modeled chemical systems with absolute concentration robustness", arXiv:1604.03388 (2016). <https://doi.org/10.48550/arXiv.1604.03388>
+- David F. Anderson, Daniele Cappelletti and Thomas G. Kurtz, "Finite Time Distributions of Stochastically Modeled Chemical Systems with Absolute Concentration Robustness", *SIAM Journal on Applied Dynamical Systems* 16 (2017), 1309–1339, <https://doi.org/10.1137/16m1070773>. Preprint version: arXiv:1604.03388 (2016), <https://doi.org/10.48550/arXiv.1604.03388>.

@@ -13,6 +13,6 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
 - [Bayesian inversion of kinetic chemotaxis](bayesian-inversion-of-kinetic-chemotaxis/README.md)
-- [Look ahead chemotaxis of active brownian ants](look-ahead-chemotaxis-of-active-brownian-ants/README.md)
+- [Look-ahead chemotaxis of active Brownian ants](look-ahead-chemotaxis-of-active-brownian-ants/README.md)
 - [Mean-field survival model of zebrafish stripes](mean-field-survival-model-of-zebrafish-stripes/README.md)
-- [Stochastic meinhardt cell polarity model](stochastic-meinhardt-cell-polarity-model/README.md)
+- [Stochastic Meinhardt cell-polarity model](stochastic-meinhardt-cell-polarity-model/README.md)

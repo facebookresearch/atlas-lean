@@ -1,6 +1,14 @@
 # Chemical reaction network theory
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
-- [Convex fixed-point map for mass-action steady states](convex-fixed-point-map-for-mass-action-steady-states.md)
 - [Linear programming for complex balanced and detailed balanced realizations of reaction networks](linear-programming-for-complex-and-detailed-balanced-realizations.md)
-- [Positive steady states of mass-conserving single terminal-linkage networks](positive-steady-states-of-mass-conserving-single-terminal-linkage-networks.md)
+- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
+- [Complex-linear invariants](complex-linear-invariants/README.md)
+- [Elimination of intermediate species](elimination-of-intermediate-species/README.md)
+- [Kron reduction of reaction networks](kron-reduction-of-reaction-networks/README.md)
+- [Linearly conjugate reaction networks](linearly-conjugate-reaction-networks/README.md)
+- [Reaction network implementations of neural networks](reaction-network-implementations-of-neural-networks/README.md)
+- [Siphons and binomial primary decomposition](siphons-and-binomial-primary-decomposition/README.md)
+- [Steady-state region bounds by semidefinite programming](steady-state-region-bounds-by-semidefinite-programming/README.md)
+- [Tropical equilibration of reaction networks](tropical-equilibration-of-reaction-networks/README.md)
+- [Tropical reduction of biochemical networks](tropical-reduction-of-biochemical-networks/README.md)

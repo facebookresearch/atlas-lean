@@ -14,10 +14,10 @@ with translational diffusion $D_T > 0$, Péclet number (self-propulsion) $\mathr
 3. *Uniqueness of the stationary state for weak coupling.* For fixed $D_T, \mathrm{Pe}, \lambda, \alpha$ and $\gamma$ small enough, every nonnegative weak stationary solution equals the homogeneous state $f_* = \frac{1}{2\pi}$.
 4. *Nonlinear stability.* If the linearized operator at $f_*$ satisfies an exponential decay estimate with rate $\beta > 0$ and $\gamma < 2f_*\min\{D_T, 1\}/\alpha$, then sufficiently small perturbations in $H^2_{\mathbf{x}}L^2_\theta$ decay at any exponential rate $\delta_0 < \beta$.
 
-## Expansion
+## Proof sketch
 
 Because $|\mathbf{p}| \le \rho$, multiplying the $\rho$-equation by $\rho^p$ and using Young's and the two-dimensional Gagliardo–Nirenberg inequality gives $L^{p+1}$ bounds that do not depend on the chemotactic term; Alikakos' $L^p$ iteration then yields a uniform $L^\infty$ bound on $\rho$, elliptic regularity bounds $\nabla c$, and a second iteration bounds $f$. So, in contrast with Keller–Segel, orientation-mediated chemotaxis cannot concentrate mass into a singularity. For small $\gamma$, an $L^2$ energy estimate on the difference of two stationary solutions forces them to coincide. Patterns therefore require $\gamma$ beyond a threshold; numerically, the look-ahead distance $\lambda$ selects between aggregation spots and lane formation.
 
 ## Sources
 
-- M. Bruna, M. Burger and O. de Wit, "Lane formation and aggregation spots in a model of ants", arXiv:2401.15046 (2024), macroscopic model (Section 2.2), and in Section 3 the existence theorem with its weak-solution definition, the no-blow-up proposition (Section 3.1), the conditional uniqueness proposition (Section 3.2) and the conditional nonlinear stability proposition (Section 3.3), <https://doi.org/10.48550/arXiv.2401.15046>.
+- Maria Bruna, Martin Burger and Oscar de Wit, "Lane Formation and Aggregation Spots in a Model of Ants", *SIAM Journal on Applied Dynamical Systems* 24 (2025), 675–709, <https://doi.org/10.1137/24m1634527>. Preprint version: arXiv:2401.15046 (2024), macroscopic model (Section 2.2), and in Section 3 the existence theorem with its weak-solution definition, the no-blow-up proposition (Section 3.1), the conditional uniqueness proposition (Section 3.2) and the conditional nonlinear stability proposition (Section 3.3), <https://doi.org/10.48550/arXiv.2401.15046>.
