@@ -12,8 +12,9 @@ import MathlibExt.RepresentationTheory.AdmissibleRepresentation
 /-! Tests for admissible representations: membership in the ring of invariants `S^H` and in the
 module `D_S(V) = (S ⊗_F V)^H`, the semilinearity of the diagonal action, the trivial
 representation is admissible in the basis form for every action and in the dimension form for
-every nontrivial `S`, the transport of both forms along equivariant isomorphisms of algebras, and
-matrix representations. -/
+every nontrivial `S`, the transport of both forms along equivariant isomorphisms of algebras,
+matrix representations, the comparison map `α_V`, the functor `D_S` on intertwining maps, and the
+comparison with Mathlib's fixed points and invariants. -/
 
 open scoped TensorProduct
 
@@ -116,3 +117,60 @@ example {E : Type*} [Field E] [Algebra F E] {n : ℕ} (ρ : G →* GL (Fin n) E)
 example {E : Type*} [Field E] [Algebra F E] {n : ℕ} (g : G) (v : Fin n → E) :
     ofGL F (1 : G →* GL (Fin n) E) g v = v := by
   simp
+
+-- The comparison map `α_V` sends `s ⊗ x` to `s • x`, and its image is spanned by `D_S(V)`.
+example (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G) (s : S)
+    (x : ρ.periods act H) : ρ.comparison act H (s ⊗ₜ x) = s • (x : S ⊗[F] V) :=
+  comparison_tmul ρ act H s x
+
+example (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G)
+    (x : ρ.periods act H) : (x : S ⊗[F] V) ∈ LinearMap.range (ρ.comparison act H) := by
+  rw [range_comparison]
+  exact Submodule.subset_span x.2
+
+-- For the trivial representation, `α_V` is an isomorphism, and the basis `1 ⊗ vᵢ` of fixed
+-- vectors is an `S^H`-basis of `D_S(V)`.
+example [FiniteDimensional F V] (act : G → S →ₐ[F] S) (H : Subgroup G) :
+    Function.Bijective ((trivial F G V).comparison act H) :=
+  HasFixedBasis.comparison_bijective
+    ⟨_, Algebra.TensorProduct.basis S (Module.finBasis F V), fun i g _ => by
+      rw [Algebra.TensorProduct.basis_apply, TensorProduct.map_tmul, AlgHom.toLinearMap_apply,
+        map_one, trivial_apply]⟩
+
+example [FiniteDimensional F V] (act : G → S →ₐ[F] S) (H : Subgroup G)
+    (hb : ∀ i, Algebra.TensorProduct.basis S (Module.finBasis F V) i ∈
+      (trivial F G V).periods act H) (i : Fin (Module.finrank F V)) :
+    (periodsBasis _ hb i : S ⊗[F] V) = 1 ⊗ₜ Module.finBasis F V i := by
+  simp [Algebra.TensorProduct.basis_apply]
+
+-- `D_S` is a functor on intertwining maps, and `α` is natural.
+example {W U : Type*} [AddCommGroup W] [Module F W] [AddCommGroup U] [Module F U]
+    {ρ : Representation F G V} {σ : Representation F G W} {τ : Representation F G U}
+    (act : G → S →ₐ[F] S) (H : Subgroup G) (f : σ.IntertwiningMap τ)
+    (f' : ρ.IntertwiningMap σ) :
+    periodsMap act H (f.comp f') = (periodsMap act H f).comp (periodsMap act H f') :=
+  periodsMap_comp f f'
+
+example (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G) :
+    periodsMap act H (IntertwiningMap.id ρ) = LinearMap.id :=
+  periodsMap_id
+
+example {W : Type*} [AddCommGroup W] [Module F W] {ρ : Representation F G V}
+    {σ : Representation F G W} (act : G → S →ₐ[F] S) (H : Subgroup G)
+    (f : ρ.IntertwiningMap σ) :
+    σ.comparison act H ∘ₗ (periodsMap act H f).baseChange S =
+      f.toLinearMap.baseChange S ∘ₗ ρ.comparison act H :=
+  comparison_comp_baseChange_periodsMap f
+
+-- For an action by a `MulSemiringAction`, `S^G` is `FixedPoints.subalgebra`, and `D_S(V)` is the
+-- space of invariants of the tensor product of representations.
+example [MulSemiringAction G S] [SMulCommClass G F S] (s : S) (hs : ∀ g : G, g • s = s) :
+    s ∈ fixedSubalgebra S (MulSemiringAction.toAlgHom (M := G) F S) ⊤ := by
+  rw [fixedSubalgebra_toAlgHom_top]
+  exact FixedPoints.mem_subalgebra.2 hs
+
+example (ρ : Representation F G V) (act : G →* (S →ₐ[F] S)) (H : Subgroup G)
+    (x : S ⊗[F] V) :
+    x ∈ (ρ.periods act H).restrictScalars F ↔
+      x ∈ invariants ((tprod (AlgHom.toEnd.comp act) ρ).comp H.subtype) := by
+  rw [restrictScalars_periods]

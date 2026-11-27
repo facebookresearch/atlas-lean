@@ -18,6 +18,8 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivisorCountLSeries
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvInverseOfIsMultiplicative
 
 namespace MetaMathlibExt
 
@@ -66,59 +68,6 @@ public theorem_wanted squareSplitConv_bivariate_iso :
           f (u₁ * v₁ ^ 2) * g ((u / u₁) * (v / v₁) ^ 2)) ∧
     ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
       ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v
-
-/-- **Inverse of a multiplicative function under the square-splitting convolution.** Let $f$ be a
-multiplicative complex arithmetic function (an arithmetic function $h$ is multiplicative when
-$h(1) = 1$ and $h(mn) = h(m)\, h(n)$ for coprime $m$ and $n$), let $\star$ be the square-splitting
-convolution, and let $\varepsilon$ be the arithmetic function with $\varepsilon(1) = 1$ and
-$\varepsilon(n) = 0$ for $n \ne 1$. Then there is a complex arithmetic function $g$ with
-$f \star g = \varepsilon$ such that every complex arithmetic function $g'$ with
-$f \star g' = \varepsilon$ equals $g$. Moreover, $g$ is multiplicative; for every prime $p$ and
-every $k \ge 1$, $\sum_{j=0}^{\lfloor k/2 \rfloor} f(p^{2j})\, g(p^{k-2j}) = 0$ if $k$ is even and
-$\sum_{j=0}^{\lfloor k/2 \rfloor} (f(p^{2j}) g(p^{k-2j}) + f(p^{2j+1}) g(p^{k-2j-1})) = 0$ if $k$ is
-odd; $g(1) = 1/f(1)$; and for every prime $p$, $g(p) = -f(p)/f(1)^2$,
-$g(p^2) = -f(p^2)/f(1)^2$ and $g(p^3) = \big(2 f(p) f(p^2) - f(p^3) f(1)\big)/f(1)^3$.
-
-Multiplicativity includes $f(1) = 1$, so the source's hypothesis $f(1) \ne 0$ holds automatically.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 5
-(`integers-2026-A56-thm-5`). -/
-public theorem_wanted squareSplitConv_inverse_of_isMultiplicative {f : ArithmeticFunction ℂ}
-    (hf : f.IsMultiplicative) :
-    ∃ g : ArithmeticFunction ℂ, squareSplitConv f g = 1 ∧
-      (∀ g' : ArithmeticFunction ℂ, squareSplitConv f g' = 1 → g' = g) ∧
-      g.IsMultiplicative ∧
-      (∀ p k : ℕ, p.Prime → 1 ≤ k →
-        ∑ j ∈ Finset.range (k / 2 + 1), f (p ^ (2 * j)) * g (p ^ (k - 2 * j)) +
-          (if Odd k then ∑ j ∈ Finset.range (k / 2 + 1),
-            f (p ^ (2 * j + 1)) * g (p ^ (k - (2 * j + 1))) else 0) = 0) ∧
-      g 1 = 1 / f 1 ∧
-      ∀ p : ℕ, p.Prime →
-        g p = -f p / f 1 ^ 2 ∧ g (p ^ 2) = -f (p ^ 2) / f 1 ^ 2 ∧
-        g (p ^ 3) = (2 * f p * f (p ^ 2) - f (p ^ 3) * f 1) / f 1 ^ 3
-
-/-- **The square-splitting totient function.** Let $A(n)$ be the set of square-splitting divisors
-of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function with
-$\sum_{d \in A(n)} \varphi_\star(d) = n$ for every $n \ge 1$. Then $\varphi_\star$ is
-multiplicative and $\varphi_\star(1) = 1$. For every prime $p$, $\varphi_\star(p) = p - 1$, and
-for every $b \ge 1$, $\varphi_\star(p^{2b}) = (p^2 - 1)\,p^{2b-2}$ and
-$\varphi_\star(p^{2b+1}) = (p - 1)(p^2 - 1)\,p^{2b-2}$. Moreover, for every $n \ge 1$,
-$$\varphi_\star(n) = \varphi(u(n))\,v(n)^2 \prod_{p \mid v(n)} \left(1 - \frac{1}{p^2}\right),$$
-where $\varphi$ is Euler's totient function, $u(n)$ is the product of the primes dividing $n$ to
-an odd power and $v(n)$ is the positive integer with $n = u(n)\,v(n)^2$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 7
-(`integers-2026-A56-thm-7`). -/
-public theorem_wanted squareSplitTotient_formula (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) :
-    φ.IsMultiplicative ∧ φ 1 = 1 ∧
-    (∀ p : ℕ, p.Prime → φ p = (p : ℤ) - 1 ∧
-      ∀ b, 1 ≤ b → φ (p ^ (2 * b)) = ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2) ∧
-        φ (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2)) ∧
-    ∀ n ≠ 0, (φ n : ℚ) = (squareSplitU n).totient * (squareSplitV n : ℚ) ^ 2 *
-      ∏ p ∈ (squareSplitV n).primeFactors, (1 - 1 / (p : ℚ) ^ 2)
 
 /-- **Average order of the square-splitting totient function.** Let $A(n)$ be the set of
 square-splitting divisors of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function

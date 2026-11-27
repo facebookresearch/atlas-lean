@@ -18,9 +18,12 @@ Licensed under the Apache License, Version 2.0.
 
 module
 
+public import Mathlib.Algebra.Algebra.Subalgebra.Operations
 public import Mathlib.LinearAlgebra.Dimension.Free
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-public import Mathlib.RepresentationTheory.Basic
+public import Mathlib.LinearAlgebra.TensorProduct.Lift
+public import Mathlib.RepresentationTheory.Intertwining
+public import Mathlib.RepresentationTheory.Invariants
 public import Mathlib.RingTheory.TensorProduct.Free
 
 /-!
@@ -28,29 +31,52 @@ public import Mathlib.RingTheory.TensorProduct.Free
 
 Let `F` be a field, `G` a group, `S` a commutative `F`-algebra on which `G` acts through a family
 `act : G → (S →ₐ[F] S)` of `F`-algebra maps, and `ρ` an `F`-linear representation of `G` on `V`.
-For a subgroup `H` of `G`, J.-M. Fontaine, *Le corps des périodes p-adiques*, Astérisque 223 (1994),
-Exposé III, §1.5.1 p. 124, considers
+For a subgroup `H` of `G`, J.-M. Fontaine, *Représentations p-adiques semi-stables*,
+Astérisque 223 (1994), Exposé III, §1.3.2 p. 121, considers
 
 * the ring of invariants `E = S^H` (`Representation.fixedSubalgebra`), and
 * the `E`-module `D_S(V) = (S ⊗_F V)^H` (`Representation.periods`), the invariants of the
   diagonal action `s ⊗ v ↦ act g s ⊗ ρ g v`;
+* the **comparison map** `α_V : S ⊗_E D_S(V) → S ⊗_F V`, `s ⊗ x ↦ s • x`, the `S`-linear map
+  deduced by extension of scalars from the inclusion `D_S(V) ⊆ S ⊗_F V`
+  (`Representation.comparison`).
 
-for a `(F, H)`-regular ring `S` he shows that `dim_E D_S(V) ≤ dim_F V`, and calls `V` admissible
-when equality holds. We record two forms of admissibility, without assuming regularity:
+An intertwining map `f : V → W` induces the `E`-linear map `D_S(f) : D_S(V) → D_S(W)`, the
+restriction of `S ⊗ f` (`Representation.periodsMap`); this makes `D_S` an additive functor, and
+`α` is natural in `V` (`Representation.comparison_comp_baseChange_periodsMap`).
+
+For a `(F, H)`-regular ring `S`, Fontaine shows that `dim_E D_S(V) ≤ dim_F V`, and calls `V`
+admissible when `α_V` is an isomorphism, which happens exactly when equality holds
+(*op. cit.*, §1.4.2 p. 123 and §1.5.1 p. 124; see
+`MathlibExt.RepresentationTheory.AdmissibleRepresentation.Regular`). We record two forms of
+admissibility, without assuming regularity:
 
 * the **dimension form**: `V` is finite-dimensional and `dim_{S^H} D_S(V) = dim_F V`
   (`Representation.IsAdmissible`), the form in which Fontaine uses admissibility for potential
   semistability (*op. cit.*, Exposé III, §1.8.5 pp. 134–135);
 * the **basis form**: `S ⊗_F V` has an `S`-basis of `H`-invariant vectors, that is, `S ⊗_F V` is a
-  trivial `S`-representation of `H` (`Representation.HasFixedBasis`); it implies the dimension
-  form (`Representation.HasFixedBasis.isAdmissible`), and the converse holds for regular rings.
+  trivial `S`-representation of `H` (`Representation.HasFixedBasis`). Such a basis is an
+  `S^H`-basis of `D_S(V)` (`Representation.periodsBasis`), so the basis form implies the dimension
+  form (`Representation.HasFixedBasis.isAdmissible`) and makes `α_V` an isomorphism
+  (`Representation.HasFixedBasis.comparison_bijective`); conversely, if `α_V` is an isomorphism
+  and `D_S(V)` is free over `S^H`, then the basis form holds
+  (`Representation.hasFixedBasis_of_comparison_bijective`).
 
 Both forms are invariant under an equivariant isomorphism of `F`-algebras
 (`Representation.isAdmissible_iff_of_algEquiv`, `Representation.hasFixedBasis_iff_of_algEquiv`),
 which identifies the rings of invariants and the modules `D_S(V)`.
 
+When the family `act` comes from an action of `G`, the ring `S^G` is Mathlib's
+`FixedPoints.subalgebra` (`Representation.fixedSubalgebra_toAlgHom_top`) and the `F`-subspace
+underlying `D_S(V)` is the space of invariants of the tensor product of representations
+`S ⊗_F V` (`Representation.restrictScalars_periods`); the module `D_S(V)` adds the structure of
+an `S^H`-module.
+
 For a field `E` over `F`, a homomorphism `ρ : G →* GL_n(E)` is an `F`-linear representation of `G`
 on `Eⁿ` (`Representation.ofGL`).
+
+All the statements are about abstract groups acting on rings and modules: as in Fontaine's §1, no
+topology is involved, and the continuity of the actions is never assumed.
 -/
 
 @[expose] public noncomputable section
@@ -59,8 +85,9 @@ open scoped TensorProduct
 
 namespace Representation
 
-variable {F G S S' V : Type*} [Field F] [Group G] [CommRing S] [Algebra F S] [CommRing S']
-  [Algebra F S'] [AddCommGroup V] [Module F V]
+variable {F G S S' V W U : Type*} [Field F] [Group G] [CommRing S] [Algebra F S] [CommRing S']
+  [Algebra F S'] [AddCommGroup V] [Module F V] [AddCommGroup W] [Module F W] [AddCommGroup U]
+  [Module F U]
 
 /-! ### The ring of invariants and the module `D_S(V)` -/
 
@@ -80,6 +107,14 @@ def fixedSubalgebra (act : G → S →ₐ[F] S) (H : Subgroup G) : Subalgebra F 
 theorem mem_fixedSubalgebra {act : G → S →ₐ[F] S} {H : Subgroup G} {s : S} :
     s ∈ fixedSubalgebra S act H ↔ ∀ g ∈ H, act g s = s :=
   Iff.rfl
+
+/-- For an action of `G` on `S` by a `MulSemiringAction` commuting with `F`, the ring of invariants
+`S^G` of the family `MulSemiringAction.toAlgHom F S` is `FixedPoints.subalgebra F S G`. -/
+theorem fixedSubalgebra_toAlgHom_top [MulSemiringAction G S] [SMulCommClass G F S] :
+    fixedSubalgebra S (MulSemiringAction.toAlgHom (M := G) F S) ⊤ =
+      FixedPoints.subalgebra F S G := by
+  ext s
+  simp [mem_fixedSubalgebra, FixedPoints.mem_subalgebra]
 
 /-- The diagonal action `s ⊗ v ↦ act g s ⊗ ρ g v` of `g ∈ G` on `S ⊗_F V` is semilinear over the
 action of `g` on `S`. -/
@@ -111,6 +146,18 @@ theorem mem_periods {ρ : Representation F G V} {act : G → S →ₐ[F] S} {H :
     x ∈ ρ.periods act H ↔ ∀ g ∈ H, TensorProduct.map (act g).toLinearMap (ρ g) x = x :=
   Iff.rfl
 
+/-- **`D_S(V)` as a space of invariants**: for an action `act : G →* (S →ₐ[F] S)`, the `F`-subspace
+underlying `D_S(V)` is the space of invariants of `H` in the tensor product of the
+representation `g ↦ act g` of `G` on `S` with `ρ`. -/
+theorem restrictScalars_periods (ρ : Representation F G V) (act : G →* (S →ₐ[F] S))
+    (H : Subgroup G) :
+    (ρ.periods act H).restrictScalars F =
+      invariants ((tprod (AlgHom.toEnd.comp act) ρ).comp H.subtype) := by
+  ext x
+  simp only [Submodule.restrictScalars_mem, mem_periods, mem_invariants, MonoidHom.coe_comp,
+    Function.comp_apply, Subgroup.coe_subtype, tprod_apply, Subtype.forall]
+  rfl
+
 /-! ### Admissibility -/
 
 /-- **`V` is admissible for `S` as a representation of `H`, in the dimension form** (Fontaine,
@@ -126,12 +173,17 @@ def IsAdmissible (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Su
 def HasFixedBasis (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G) : Prop :=
   ∃ (d : ℕ) (b : Module.Basis (Fin d) S (S ⊗[F] V)), ∀ i, b i ∈ ρ.periods act H
 
+section FixedBasis
+
+variable {ρ : Representation F G V} {act : G → S →ₐ[F] S} {H : Subgroup G} {ι : Type*}
+  [Finite ι]
+
 /-- The coordinates of a vector of `D_S(V)` in an `S`-basis of `S ⊗_F V` of `H`-fixed vectors lie
 in `S^H`. -/
-private theorem repr_mem_fixedSubalgebra {ρ : Representation F G V} {act : G → S →ₐ[F] S}
-    {H : Subgroup G} {d : ℕ} (b : Module.Basis (Fin d) S (S ⊗[F] V))
-    (hb : ∀ i, b i ∈ ρ.periods act H) {x : S ⊗[F] V} (hx : x ∈ ρ.periods act H) (i : Fin d) :
+private theorem repr_mem_fixedSubalgebra (b : Module.Basis ι S (S ⊗[F] V))
+    (hb : ∀ i, b i ∈ ρ.periods act H) {x : S ⊗[F] V} (hx : x ∈ ρ.periods act H) (i : ι) :
     b.repr x i ∈ fixedSubalgebra S act H := by
+  have := Fintype.ofFinite ι
   refine mem_fixedSubalgebra.2 fun g hg => ?_
   have h : x = ∑ j, act g (b.repr x j) • b j := by
     conv_lhs => rw [← mem_periods.1 hx g hg, ← b.sum_repr x]
@@ -142,6 +194,29 @@ private theorem repr_mem_fixedSubalgebra {ρ : Representation F G V} {act : G �
   simp only [b.repr_sum_self] at this
   exact this.symm
 
+/-- **An `S`-basis of `S ⊗_F V` of `H`-fixed vectors is an `S^H`-basis of `D_S(V)`**: every
+`x ∈ D_S(V)` is a combination of the basis vectors with coefficients in `S^H`. -/
+def periodsBasis (b : Module.Basis ι S (S ⊗[F] V)) (hb : ∀ i, b i ∈ ρ.periods act H) :
+    Module.Basis ι (fixedSubalgebra S act H) (ρ.periods act H) :=
+  Module.Basis.mk (v := fun i => ⟨b i, hb i⟩)
+    (LinearIndependent.of_comp (ρ.periods act H).subtype
+      (b.linearIndependent.restrict_scalars' (fixedSubalgebra S act H)))
+    (by
+      have := Fintype.ofFinite ι
+      rintro ⟨x, hx⟩ -
+      refine (Submodule.mem_span_range_iff_exists_fun _).2
+        ⟨fun i => ⟨b.repr x i, repr_mem_fixedSubalgebra b hb hx i⟩, Subtype.ext ?_⟩
+      simp only [Submodule.coe_sum, Submodule.coe_smul, Subalgebra.smul_def]
+      exact b.sum_repr x)
+
+/-- The vectors of `periodsBasis b hb` are those of `b`. -/
+@[simp]
+theorem coe_periodsBasis (b : Module.Basis ι S (S ⊗[F] V)) (hb : ∀ i, b i ∈ ρ.periods act H)
+    (i : ι) : (periodsBasis b hb i : S ⊗[F] V) = b i := by
+  simp [periodsBasis]
+
+end FixedBasis
+
 /-- **The basis form of admissibility implies the dimension form**: an `S`-basis of `S ⊗_F V` of
 `H`-fixed vectors is an `S^H`-basis of `D_S(V)`, so
 `dim_{S^H} D_S(V) = rk_S (S ⊗_F V) = dim_F V`. -/
@@ -149,19 +224,129 @@ theorem HasFixedBasis.isAdmissible [Nontrivial S] [FiniteDimensional F V]
     {ρ : Representation F G V} {act : G → S →ₐ[F] S} {H : Subgroup G}
     (h : ρ.HasFixedBasis act H) : ρ.IsAdmissible act H := by
   obtain ⟨d, b, hb⟩ := h
-  let v : Fin d → ρ.periods act H := fun i => ⟨b i, hb i⟩
-  have hli : LinearIndependent (fixedSubalgebra S act H) v :=
-    LinearIndependent.of_comp (ρ.periods act H).subtype
-      (b.linearIndependent.restrict_scalars' (fixedSubalgebra S act H))
-  have hsp : ⊤ ≤ Submodule.span (fixedSubalgebra S act H) (Set.range v) := by
-    rintro ⟨x, hx⟩ -
-    refine (Submodule.mem_span_range_iff_exists_fun _).2
-      ⟨fun i => ⟨b.repr x i, repr_mem_fixedSubalgebra b hb hx i⟩, Subtype.ext ?_⟩
-    simp only [Submodule.coe_sum, Submodule.coe_smul, Subalgebra.smul_def, v]
-    exact b.sum_repr x
   refine ⟨inferInstance, ?_⟩
-  rw [Module.finrank_eq_card_basis (Module.Basis.mk hli hsp),
+  rw [Module.finrank_eq_card_basis (periodsBasis b hb),
     ← Module.finrank_baseChange (R := S) (S := F) (M' := V), Module.finrank_eq_card_basis b]
+
+/-! ### The comparison map -/
+
+/-- **The comparison map `α_V : S ⊗_{S^H} D_S(V) → S ⊗_F V`**, `s ⊗ x ↦ s • x` (Fontaine,
+Exposé III, §1.3.2 p. 121): the `S`-linear map deduced by extension of scalars from the inclusion
+of `D_S(V)` in `S ⊗_F V`. -/
+def comparison (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G) :
+    S ⊗[fixedSubalgebra S act H] ρ.periods act H →ₗ[S] S ⊗[F] V :=
+  (ρ.periods act H).subtype.liftBaseChange S
+
+/-- `α_V (s ⊗ x) = s • x`. -/
+@[simp]
+theorem comparison_tmul (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G)
+    (s : S) (x : ρ.periods act H) : ρ.comparison act H (s ⊗ₜ x) = s • (x : S ⊗[F] V) :=
+  rfl
+
+/-- The image of `α_V` is the `S`-submodule of `S ⊗_F V` spanned by `D_S(V)`. -/
+theorem range_comparison (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G) :
+    LinearMap.range (ρ.comparison act H) = Submodule.span S (ρ.periods act H : Set (S ⊗[F] V)) := by
+  refine le_antisymm ?_ (Submodule.span_le.2 fun x hx => ⟨1 ⊗ₜ ⟨x, hx⟩, by simp⟩)
+  rintro _ ⟨y, rfl⟩
+  induction y using TensorProduct.inductionOn with
+  | tmul s x => exact Submodule.smul_mem _ s (Submodule.subset_span x.2)
+  | add y z hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+
+/-- **The basis form of admissibility makes `α_V` an isomorphism**: `α_V` maps the `S`-basis
+`1 ⊗ bᵢ` of `S ⊗_{S^H} D_S(V)` to the basis `(bᵢ)` of `S ⊗_F V`. -/
+theorem HasFixedBasis.comparison_bijective {ρ : Representation F G V} {act : G → S →ₐ[F] S}
+    {H : Subgroup G} (h : ρ.HasFixedBasis act H) : Function.Bijective (ρ.comparison act H) := by
+  obtain ⟨d, b, hb⟩ := h
+  let c := Algebra.TensorProduct.basis S (periodsBasis b hb)
+  have : ρ.comparison act H = (c.equiv b (_root_.Equiv.refl (Fin d))).toLinearMap :=
+    c.ext fun i => by
+      rw [LinearEquiv.coe_coe, Module.Basis.equiv_apply]
+      simp [c, Algebra.TensorProduct.basis_apply]
+  rw [this]
+  exact (c.equiv b (_root_.Equiv.refl (Fin d))).bijective
+
+/-- **An isomorphism `α_V` gives the basis form of admissibility**, when `S` is nontrivial, `V` is
+finite-dimensional and `D_S(V)` is free over `S^H`: `α_V` maps the `S`-basis `1 ⊗ dᵢ` of
+`S ⊗_{S^H} D_S(V)` given by an `S^H`-basis `(dᵢ)` of `D_S(V)` to an `S`-basis `(dᵢ)` of
+`S ⊗_F V`. -/
+theorem hasFixedBasis_of_comparison_bijective [Nontrivial S] [FiniteDimensional F V]
+    {ρ : Representation F G V} {act : G → S →ₐ[F] S} {H : Subgroup G}
+    [Module.Free (fixedSubalgebra S act H) (ρ.periods act H)]
+    (h : Function.Bijective (ρ.comparison act H)) : ρ.HasFixedBasis act H := by
+  let bE := Module.Free.chooseBasis (fixedSubalgebra S act H) (ρ.periods act H)
+  let b := (Algebra.TensorProduct.basis S bE).map (LinearEquiv.ofBijective _ h)
+  have : Finite (Module.Free.ChooseBasisIndex (fixedSubalgebra S act H) (ρ.periods act H)) :=
+    Module.Finite.finite_basis b
+  let := Fintype.ofFinite (Module.Free.ChooseBasisIndex (fixedSubalgebra S act H)
+    (ρ.periods act H))
+  refine ⟨_, b.reindex (Fintype.equivFin _), fun i => ?_⟩
+  simp [b, Algebra.TensorProduct.basis_apply]
+
+/-! ### Functoriality -/
+
+section Functoriality
+
+variable {ρ : Representation F G V} {σ : Representation F G W} {τ : Representation F G U}
+
+/-- For an intertwining map `f : V → W`, the map `S ⊗ f : S ⊗_F V → S ⊗_F W` commutes with the
+diagonal actions. -/
+theorem map_baseChange_comm (f : ρ.IntertwiningMap σ) (act : G → S →ₐ[F] S) (g : G)
+    (x : S ⊗[F] V) :
+    TensorProduct.map (act g).toLinearMap (σ g) (f.toLinearMap.baseChange S x) =
+      f.toLinearMap.baseChange S (TensorProduct.map (act g).toLinearMap (ρ g) x) := by
+  induction x using TensorProduct.inductionOn with
+  | tmul s v => simp [f.isIntertwining]
+  | add x y hx hy => simp only [map_add, hx, hy]
+
+/-- **The functor `D_S` on morphisms**: an intertwining map `f : V → W` induces the
+`S^H`-linear map `D_S(f) : D_S(V) → D_S(W)`, the restriction of `S ⊗ f`. -/
+def periodsMap (act : G → S →ₐ[F] S) (H : Subgroup G) (f : ρ.IntertwiningMap σ) :
+    ρ.periods act H →ₗ[fixedSubalgebra S act H] σ.periods act H :=
+  ((f.toLinearMap.baseChange S).restrictScalars (fixedSubalgebra S act H)).restrict
+    fun x hx => mem_periods.2 fun g hg => by
+      rw [LinearMap.restrictScalars_apply, map_baseChange_comm, mem_periods.1 hx g hg]
+
+variable {act : G → S →ₐ[F] S} {H : Subgroup G}
+
+/-- `D_S(f)` is the restriction of `S ⊗ f`. -/
+@[simp]
+theorem coe_periodsMap (f : ρ.IntertwiningMap σ) (x : ρ.periods act H) :
+    (periodsMap act H f x : S ⊗[F] W) = f.toLinearMap.baseChange S x :=
+  rfl
+
+/-- `D_S` maps the identity to the identity. -/
+@[simp]
+theorem periodsMap_id : periodsMap act H (IntertwiningMap.id ρ) = LinearMap.id := by
+  ext x
+  simp [IntertwiningMap.toLinearMap_id]
+
+/-- `D_S` preserves composition. -/
+theorem periodsMap_comp (f : σ.IntertwiningMap τ) (f' : ρ.IntertwiningMap σ) :
+    periodsMap act H (f.comp f') = (periodsMap act H f).comp (periodsMap act H f') := by
+  ext x
+  simp [IntertwiningMap.comp_toLinearMap, LinearMap.baseChange_comp]
+
+/-- `D_S` maps the zero map to the zero map. -/
+@[simp]
+theorem periodsMap_zero : periodsMap act H (0 : ρ.IntertwiningMap σ) = 0 := by
+  ext x
+  simp
+
+/-- `D_S` is additive. -/
+theorem periodsMap_add (f f' : ρ.IntertwiningMap σ) :
+    periodsMap act H (f + f') = periodsMap act H f + periodsMap act H f' := by
+  ext x
+  simp [LinearMap.baseChange_add]
+
+/-- **Naturality of `α`**: for an intertwining map `f : V → W`,
+`α_W ∘ (S ⊗ D_S(f)) = (S ⊗ f) ∘ α_V`. -/
+theorem comparison_comp_baseChange_periodsMap (f : ρ.IntertwiningMap σ) :
+    σ.comparison act H ∘ₗ (periodsMap act H f).baseChange S =
+      f.toLinearMap.baseChange S ∘ₗ ρ.comparison act H := by
+  ext x
+  simp
+
+end Functoriality
 
 /-! ### Invariance under equivariant isomorphisms -/
 

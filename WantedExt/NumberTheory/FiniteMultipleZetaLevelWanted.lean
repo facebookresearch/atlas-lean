@@ -14,6 +14,7 @@ public import Mathlib.NumberTheory.FLT.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import MathlibExt.NumberTheory.WieferichPrime
+public import MathlibExt.NumberTheory.FiniteMultipleZetaLevelColoredFiniteMZVOneEqPowMulSumProd
 
 /-!
 # Regular primes, non-Wieferich primes and finite multiple zeta values of level `N`
@@ -39,26 +40,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter
-
-open scoped Classical in
-/-- **Colored finite multiple harmonic sums.** Let $p$ and $N$ be natural numbers, let
-$k = (k_1, \dots, k_r)$ be a finite sequence of natural numbers and let
-$\alpha = (\alpha_1, \dots, \alpha_r) \in (\mathbb{Z}/N\mathbb{Z})^r$. The colored finite multiple
-harmonic sum $\zeta^{\alpha}_{p,N}(k) \in \mathbb{Z}/p\mathbb{Z}$ is the sum of
-$m_1^{-k_1} \cdots m_r^{-k_r}$ over all integers $0 < m_1 < \dots < m_r < p$ with
-$m_i \equiv \alpha_i \pmod N$ for every $i$.
-
-Here $m^{-1}$ is the inverse of $m$ in $\mathbb{Z}/p\mathbb{Z}$; when $p$ is prime every
-$0 < m < p$ is invertible, and for other $p$ non-units get a conventional value.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Section 2.2 (definition of `ζ^α_{p,N}(k)`). -/
-noncomputable def coloredFiniteMZV (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α : Fin r → ZMod N) :
-    ZMod p :=
-  ∑ m ∈ (Finset.univ : Finset (Fin r → Fin p)).filter
-      (fun m : Fin r → Fin p => StrictMono m ∧
-        ∀ i, 0 < (m i : ℕ) ∧ ((m i : ℕ) : ZMod N) = α i),
-    ∏ i, (((m i : ℕ) : ZMod p)⁻¹) ^ k i
 
 /-- **Colored finite multiple harmonic sum of the empty index.** For all natural numbers $p$
 and $N$, the colored finite multiple harmonic sum $\zeta^{\varnothing}_{p,N}(\varnothing)$ of the
@@ -231,36 +212,6 @@ public theorem_wanted finiteMZVColored_eq_neg_one_pow_mul_reverse {N r : ℕ} (h
     ∀ᶠ p in atTop, p.Prime →
       finiteMZVColored p N k c = (-1) ^ (∑ i, k i) *
         finiteMZVColored p N (k ∘ Fin.rev) (fun a => (c a).map fun β i => a - β (Fin.rev i))
-
-open scoped Classical in
-/-- **Decomposition of finite multiple zeta values into level-$N$ pieces.** Let $N \ge 1$ and
-let $k = (k_1, \dots, k_r)$ be a finite sequence of natural numbers (entries equal to $0$ are
-allowed) of weight $w = k_1 + \dots + k_r$. For a prime $p$ put
-$\zeta_p(k) = \sum_{0 < m_1 < \dots < m_r < p} m_1^{-k_1} \cdots m_r^{-k_r}$ in
-$\mathbb{Z}/p\mathbb{Z}$, and for $0 \le j < N$ and a finite sequence $l$ let
-$\zeta^{[j]}_{p,N}(l)$ be the colored finite multiple harmonic sum of level $N$ of $l$ with every
-color equal to the class of $-jp$ modulo $N$. Then for all sufficiently large primes $p$
-$$
-\zeta_p(k) = N^w \sum_{0 \le i_1 \le \dots \le i_{N-1} \le r} \prod_{j=0}^{N-1}
-\zeta^{[j]}_{p,N}(k_{i_j + 1}, \dots, k_{i_{j+1}}),
-$$
-where $i_0 = 0$, $i_N = r$, and $(k_{i_j + 1}, \dots, k_{i_{j+1}})$ is empty when
-$i_j = i_{j+1}$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Proposition 1 (`integers-2024-A22-prop-1`). -/
-public theorem_wanted coloredFiniteMZV_one_eq_pow_mul_sum_prod {N : ℕ} (hN : 0 < N)
-    (κ : List ℕ) :
-    ∀ᶠ p in atTop, p.Prime →
-      coloredFiniteMZV p 1 (fun t : Fin κ.length => κ.get t) 0 =
-        (N : ZMod p) ^ κ.sum *
-          ∑ i ∈ (Finset.univ : Finset (Fin (N - 1) → Fin (κ.length + 1))).filter Monotone,
-            ∏ j : Fin N,
-              let e : ℕ → ℕ := fun t =>
-                if t = 0 then 0 else if h : t - 1 < N - 1 then (i ⟨t - 1, h⟩ : ℕ) else κ.length
-              let sub := (κ.drop (e j)).take (e ((j : ℕ) + 1) - e j)
-              coloredFiniteMZV p N (fun t : Fin sub.length => sub.get t)
-                (fun _ => -((j : ℕ) : ZMod N) * p)
 
 /-- **Raising the level of finite multiple zeta values.** Let $N$ and $M$ be positive integers
 with $N \mid M$, let $k = (k_1, \dots, k_r)$ be an index of positive integers of weight

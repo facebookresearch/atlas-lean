@@ -1,0 +1,3 @@
+# Composite of two tuples of polynomials
+
+For a natural number $N$ and two tuples $F = (F_0, \dots, F_N)$ and $G = (G_0, \dots, G_N)$ of polynomials with rational coefficients in the variables $X_0, \dots, X_N$, the composite $F \circ G$ is the tuple whose $i$-th component is $F_i(G_0, \dots, G_N)$, obtained by substituting $G_j$ for $X_j$ in $F_i$. No homogeneity is assumed. When $F$ and $G$ are tuples of forms that define rational self-maps of projective space $\mathbb{P}^N$, the substituted tuple represents their composite when it is not identically zero. It can be identically zero: for $F = G = (X_2, X_3, 0, 0)$ on $\mathbb{P}^3$, the image of $G$ lies in the base locus of $F$ and the substitution gives the zero tuple.
