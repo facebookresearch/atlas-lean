@@ -22,10 +22,10 @@ transported along the isomorphism `(D₁ × D₂)_K ≅ D₁_K × D₂_K` (`Tens
 The Hodge number `t_H` is additive in direct sums of finite-dimensional modules, and so is the
 Newton number `t_N` for an additive valuation `v` of `K₀` with `v ∘ σ = v`; the inclusions and
 projections are morphisms of filtered `(φ, N)`-modules, and for such `v` the direct sum of two
-finite-dimensional weakly admissible filtered `(φ, N)`-modules is weakly admissible. This is the additive part of the
-statement that the weakly admissible filtered `(φ, N)`-modules form an abelian category
-(Fontaine–Ouyang, Proposition 8.41); kernels, images and cokernels are treated in
-`MathlibExt.RingTheory.PhiNModule.WeaklyAdmissible`.
+finite-dimensional weakly admissible filtered `(φ, N)`-modules is weakly admissible. This is
+the additive part of the statement that the weakly admissible filtered `(φ, N)`-modules form an
+abelian category (Fontaine–Ouyang, Proposition 8.41); kernels, images and cokernels are treated
+in `MathlibExt.RingTheory.PhiNModule.WeaklyAdmissible`.
 
 ## Main definitions
 
