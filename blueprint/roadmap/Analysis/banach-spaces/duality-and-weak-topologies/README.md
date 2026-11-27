@@ -24,3 +24,4 @@ Hahn–Banach, annihilators and bipolars, weak and weak-star convergence and top
 - [Principle of local reflexivity](principle-of-local-reflexivity.md)
 - [Hahn–Banach extension of a linear functional dominated by a sublinear functional](hahn-banach-real-sublinear.md)
 - [Krein–Milman theorem](krein-milman.md)
+- [Failure of the separable quotient assertion under the continuum hypothesis](no-infinite-dimensional-separable-quotient-under-ch.md)

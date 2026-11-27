@@ -15,16 +15,20 @@ public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmega
 public import MathlibExt.NumberTheory.KFull
+public import MathlibExt.NumberTheory.LSeries.LindelofOfRiemannHypothesis
 
 /-!
 # Venkatasubbareddy–Sankaranarayanan, `2^{ω(n)}` on squareful integers — wishlist
 
 Statement-only records for the classical zeta estimates quoted by Venkatasubbareddy and
-Sankaranarayanan, INTEGERS 24 (2024), Article A110 (Lemmas 4, 5, 6 and 8), and their
+Sankaranarayanan, INTEGERS 24 (2024), Article A110 (Lemmas 4, 5 and 6), and their
 asymptotic for the weighted count of squareful integers. This module re-exports the
 factorizations of `F(s) = ∑_{n squareful} 2^{ω(n)} n^{-s}` through zeta products
-(Lemmas 1 and 2), with squareful expressed as `Nat.IsKFull 2`. A positive integer `n` is squareful
-when `p ∣ n` implies `p^2 ∣ n` for every prime `p`; `n = 1` is squareful. The
+(Lemmas 1 and 2), with squareful expressed as `Nat.IsKFull 2`, and the Lindelöf bound for `ζ`
+under the Riemann hypothesis (the bound for `ζ` in Lemma 8). The bound for `1/ζ` under the
+Riemann hypothesis in Lemma 8, `MetaMathlibExt.inv_zeta_le_rpow_of_riemannHypothesis`, is proved
+in `MathlibExt.NumberTheory.LSeries.LindelofOfRiemannHypothesis`. A positive integer `n` is
+squareful when `p ∣ n` implies `p^2 ∣ n` for every prime `p`; `n = 1` is squareful. The
 paper's Lemma 7 (`N(T) ≪ T log T`) is implied by
 `MetaMathlibExt.bellotti_wong_zero_count_bound`.
 -/
@@ -73,31 +77,6 @@ public theorem_wanted zeta_ne_zero_vinogradov_korobov :
       1 - C / (Real.log |s.im| ^ ((2 : ℝ) / 3) *
           Real.log (Real.log |s.im|) ^ ((1 : ℝ) / 3)) ≤ s.re →
         riemannZeta s ≠ 0
-
-/-- **Lindelöf bound from the Riemann hypothesis.** Assume the Riemann hypothesis, and let
-$\varepsilon > 0$ be real. Then there are real constants $C$ and $t_0$ such that
-$|\zeta(\sigma + it)| \le C |t|^{\varepsilon}$ for all real $\sigma$ and $t$ with
-$1/2 \le \sigma \le 1$ and $|t| \ge t_0$.
-
-Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
-Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
-(2024), Article A110, Lemma 8 (`integers-2024-A110-lem-8`). -/
-public theorem_wanted zeta_le_rpow_of_riemannHypothesis (hRH : RiemannHypothesis)
-    (ε : ℝ) (hε : 0 < ε) :
-    ∃ C t₀ : ℝ, ∀ σ t : ℝ, 1 / 2 ≤ σ → σ ≤ 1 → t₀ ≤ |t| →
-      ‖riemannZeta (σ + t * I)‖ ≤ C * |t| ^ ε
-
-/-- **Bound for $1/\zeta$ from the Riemann hypothesis.** Assume the Riemann hypothesis, and let
-$1/2 < \sigma \le 1$ and $\varepsilon > 0$ be real. Then there are real constants $C$ and $t_0$,
-depending on $\sigma$ and $\varepsilon$, such that $|1/\zeta(\sigma + it)| \le C |t|^{\varepsilon}$
-for every real $t$ with $|t| \ge t_0$.
-
-Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
-Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
-(2024), Article A110, Lemma 8 (`integers-2024-A110-lem-8`). -/
-public theorem_wanted inv_zeta_le_rpow_of_riemannHypothesis (hRH : RiemannHypothesis)
-    (σ : ℝ) (hσ : 1 / 2 < σ) (hσ1 : σ ≤ 1) (ε : ℝ) (hε : 0 < ε) :
-    ∃ C t₀ : ℝ, ∀ t : ℝ, t₀ ≤ |t| → ‖(riemannZeta (σ + t * I))⁻¹‖ ≤ C * |t| ^ ε
 
 open Classical in
 /-- **Asymptotic for the sum of $2^{\omega(n)}$ over squareful $n$.** Let $\omega(n)$ be the

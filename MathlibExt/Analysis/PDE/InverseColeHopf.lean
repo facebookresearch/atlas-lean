@@ -115,7 +115,10 @@ private theorem integral_hasDerivAt_time {u : ℝ → ℝ → ℝ}
 noncomputable def normalizationRate (ν : ℝ) (u : ℝ → ℝ → ℝ) (x₀ t : ℝ) : ℝ :=
   u t x₀ ^ 2 / (4 * ν) - deriv (u t) x₀ / 2
 
-/-- Normalized logarithmic inverse profile, using finite oriented integrals. -/
+/-- The normalized inverse Cole–Hopf potential with base point `(t₀, x₀)`:
+`inversePotential ν u t₀ x₀ t x = (∫ s in t₀..t, r s) - (∫ y in x₀..x, u t y) / (2 * ν)`, where
+`r s = normalizationRate ν u x₀ s = u s x₀ ^ 2 / (4 * ν) - deriv (u s) x₀ / 2`, with oriented
+interval integrals and real division. -/
 noncomputable def inversePotential (ν : ℝ) (u : ℝ → ℝ → ℝ) (t₀ x₀ t x : ℝ) : ℝ :=
   (∫ s in t₀..t, normalizationRate ν u x₀ s) - (∫ y in x₀..x, u t y) / (2 * ν)
 
@@ -132,7 +135,8 @@ theorem inverseProfile_pos (ν : ℝ) (u : ℝ → ℝ → ℝ) (t₀ x₀ t x :
     inverseProfile ν u t₀ x₀ t₀ x₀ = 1 := by
   simp [inverseProfile, inversePotential]
 
-/-- At the initial time the profile is the anchored spatial exponential. -/
+/-- At the initial time `t₀`, the inverse Cole–Hopf profile is
+`inverseProfile ν u t₀ x₀ t₀ x = exp (-(∫ y in x₀..x, u t₀ y) / (2 * ν))` for every `x`. -/
 theorem inverseProfile_initial (ν : ℝ) (u : ℝ → ℝ → ℝ) (t₀ x₀ x : ℝ) :
     inverseProfile ν u t₀ x₀ t₀ x = Real.exp (-(∫ y in x₀..x, u t₀ y) / (2 * ν)) := by
   simp [inverseProfile, inversePotential, neg_div]

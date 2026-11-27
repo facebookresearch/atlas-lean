@@ -30,7 +30,7 @@ private theorem exactSource {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, F
       (Fin (1 + H.index - H.index / Nat.card (G 0) - H.index / Nat.card (G 1))) H) :=
   Monoid.CoprodI.nonempty_freeGroupBasis_fin_kuroshRank H hH
 
-theorem exactSourceIsTree {G : Fin 2 → Type*} [∀ i, Group (G i)] :
+private theorem exactSourceIsTree {G : Fin 2 → Type*} [∀ i, Group (G i)] :
     (SimpleGraph.fromRel fun v w : (i : Fin 2) ×
         (Monoid.CoprodI G ⧸ (Monoid.CoprodI.of (M := G) (i := i)).range) =>
         v.1 ≠ w.1 ∧ ∃ g : Monoid.CoprodI G,

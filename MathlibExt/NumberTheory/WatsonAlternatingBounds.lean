@@ -9,13 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.DowkerHalfSum
-import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
-# Decimal bounds for Watson's alternating cosecant sum
+# Bounds for Watson's alternating cosecant sum
 
 For even `n`, reflection and the double-angle identities turn the cosecant sum into
 a trapezoidal sum for the tangent on `[0, π / 4]`. We bound the quadrature error on
@@ -114,18 +113,21 @@ private lemma tangent_sum (n m : ℕ) (hn : n = 2 * m) (hnpos : 0 < n)
   rw [sum_sub_distrib]
   ring
 
--- The first three derivatives of tangent, written as polynomials in its value.
+-- The derivatives of tangent, written as polynomials in its value.
 private noncomputable def d₁ (x : ℝ) := 1 + tan x ^ 2
 private noncomputable def d₂ (x : ℝ) := 2 * tan x + 2 * tan x ^ 3
 private noncomputable def d₃ (x : ℝ) := 2 + 8 * tan x ^ 2 + 6 * tan x ^ 4
-private noncomputable def d₄ (x : ℝ) := (16 * tan x + 24 * tan x ^ 3) * d₁ x
+private noncomputable def d₄ (x : ℝ) := 16 * tan x + 40 * tan x ^ 3 + 24 * tan x ^ 5
+private noncomputable def d₅ (x : ℝ) := 16 + 136 * tan x ^ 2 + 240 * tan x ^ 4 + 120 * tan x ^ 6
+private noncomputable def d₆ (x : ℝ) := (272 * tan x + 960 * tan x ^ 3 + 720 * tan x ^ 5) * d₁ x
 
 private lemma tan_derivatives {x : ℝ} (hx : cos x ≠ 0) :
     HasDerivAt (fun y => -log (cos y)) (tan x) x ∧ HasDerivAt tan (d₁ x) x ∧
-      HasDerivAt d₁ (d₂ x) x ∧ HasDerivAt d₂ (d₃ x) x ∧ HasDerivAt d₃ (d₄ x) x := by
+      HasDerivAt d₁ (d₂ x) x ∧ HasDerivAt d₂ (d₃ x) x ∧ HasDerivAt d₃ (d₄ x) x ∧
+      HasDerivAt d₄ (d₅ x) x ∧ HasDerivAt d₅ (d₆ x) x := by
   have ht : HasDerivAt tan (d₁ x) x := by
     simpa [d₁, ← inv_one_add_tan_sq hx, one_div] using hasDerivAt_tan hx
-  refine ⟨((hasDerivAt_cos x).log hx).neg.congr_deriv ?_, ht, ?_, ?_, ?_⟩
+  refine ⟨((hasDerivAt_cos x).log hx).neg.congr_deriv ?_, ht, ?_, ?_, ?_, ?_, ?_⟩
   · simp [tan_eq_sin_div_cos, neg_div]
   · apply ((ht.pow 2).const_add 1).congr_deriv
     dsimp [d₁, d₂]
@@ -134,37 +136,52 @@ private lemma tan_derivatives {x : ℝ} (hx : cos x ≠ 0) :
     dsimp [d₁, d₃]
     ring
   · apply ((((ht.pow 2).const_mul 8).const_add 2).add ((ht.pow 4).const_mul 6)).congr_deriv
-    dsimp [d₄]
+    dsimp [d₁, d₄]
+    ring
+  · apply (((ht.const_mul 16).add ((ht.pow 3).const_mul 40)).add
+      ((ht.pow 5).const_mul 24)).congr_deriv
+    dsimp [d₁, d₅]
+    ring
+  · apply (((((ht.pow 2).const_mul 136).const_add 16).add ((ht.pow 4).const_mul 240)).add
+      ((ht.pow 6).const_mul 120)).congr_deriv
+    dsimp [d₆]
     ring
 
-private lemma endpoints_le_of_deriv {a b : ℝ} (hab : a ≤ b) {f f' : ℝ → ℝ}
+private lemma endpoints_lt_of_deriv {a b : ℝ} (hab : a < b) {f f' : ℝ → ℝ}
     (hf : ∀ x ∈ Set.Icc a b, HasDerivAt f (f' x) x)
-    (hs : ∀ x ∈ Set.Icc a b, 0 ≤ f' x) : f a ≤ f b := by
-  apply monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc a b)
+    (hs : ∀ x ∈ Set.Ioo a b, 0 < f' x) : f a < f b := by
+  apply strictMonoOn_of_hasDerivWithinAt_pos (convex_Icc a b)
     (fun x hx => (hf x hx).continuousAt.continuousWithinAt)
     (fun x hx => (hf x (interior_subset hx)).hasDerivWithinAt)
-    (fun x hx => hs x (interior_subset hx)) (Set.left_mem_Icc.mpr hab)
-    (Set.right_mem_Icc.mpr hab) hab
+    (fun x hx => hs x (by simpa only [interior_Icc] using hx)) (Set.left_mem_Icc.mpr hab.le)
+    (Set.right_mem_Icc.mpr hab.le) hab
 
 private noncomputable def correctedPrimitive (h x : ℝ) : ℝ :=
   -log (cos x) + h ^ 2 / 12 * d₁ x
 
-/-- Integrating the fourth derivative against the kernel
-`(x - a)² (b - x)² / 24` gives the error after the first endpoint correction. -/
-private lemma cell_bounds {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : b ≤ π / 4) :
+/-- The quartic kernel gives the error after the first endpoint correction. Subtracting its
+mean and integrating by parts twice gives a signed remainder with a sextic kernel. -/
+private lemma cell_bounds {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) (hb : b ≤ π / 4) :
     let h := b - a
     let error := correctedPrimitive h b - correctedPrimitive h a - h / 2 * (tan a + tan b)
-    0 ≤ error ∧ error ≤ h ^ 4 / 384 * (d₃ b - d₃ a) := by
+    0 < error ∧ error < h ^ 4 / 720 * (d₃ b - d₃ a) := by
   let w (x : ℝ) := (x - a) ^ 2 * (b - x) ^ 2 / 24
   let w₁ (x : ℝ) := ((x - a) * (b - x) ^ 2 - (x - a) ^ 2 * (b - x)) / 12
   let w₂ (x : ℝ) := ((b - x) ^ 2 - 4 * (x - a) * (b - x) + (x - a) ^ 2) / 12
   let w₃ (x : ℝ) := ((x - a) - (b - x)) / 2
   let G (x : ℝ) := w x * d₃ x - w₁ x * d₂ x + w₂ x * d₁ x - w₃ x * tan x - log (cos x)
+  let c := (b - a) ^ 4 / 720
+  -- `K'' = c - w` with `K = K' = 0` at both endpoints.
+  let p (x : ℝ) := (x - a) * (b - x)
+  let p₁ (x : ℝ) := (b - x) - (x - a)
+  let K (x : ℝ) := p x ^ 2 * ((b - a) ^ 2 + 2 * p x) / 1440
+  let K₁ (x : ℝ) := p x * ((b - a) ^ 2 + 3 * p x) * p₁ x / 720
+  let H (x : ℝ) := c * d₃ x - G x - K₁ x * d₄ x + K x * d₅ x
   have hG (x : ℝ) (hx : x ∈ Set.Icc a b) :
-      HasDerivAt G (w x * d₄ x) x ∧ HasDerivAt d₃ (d₄ x) x := by
+      HasDerivAt G (w x * d₄ x) x ∧ HasDerivAt H (K x * d₆ x) x := by
     have hc : cos x ≠ 0 := (cos_pos_of_mem_Ioo
       ⟨by linarith [hx.1, pi_pos], by linarith [hx.2, pi_pos]⟩).ne'
-    obtain ⟨hlog, ht, ht₁, ht₂, ht₃⟩ := tan_derivatives hc
+    obtain ⟨hlog, ht, ht₁, ht₂, ht₃, ht₄, ht₅⟩ := tan_derivatives hc
     have hu := (hasDerivAt_id x).sub_const a
     have hv := (hasDerivAt_id x).const_sub b
     have hw : HasDerivAt w (w₁ x) x := by
@@ -182,28 +199,50 @@ private lemma cell_bounds {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : b ≤
     have hw₃ : HasDerivAt w₃ 1 x := by
       apply ((hu.sub hv).div_const 2).congr_deriv
       norm_num
-    refine ⟨?_, ht₃⟩
-    change HasDerivAt (fun x => _ + -log (cos x)) _ _
-    apply (((((hw.mul ht₃).sub (hw₁.mul ht₂)).add (hw₂.mul ht₁)).sub (hw₃.mul ht)).add
-      hlog).congr_deriv
+    have hG' : HasDerivAt G (w x * d₄ x) x := by
+      change HasDerivAt (fun x => _ + -log (cos x)) _ _
+      apply (((((hw.mul ht₃).sub (hw₁.mul ht₂)).add (hw₂.mul ht₁)).sub (hw₃.mul ht)).add
+        hlog).congr_deriv
+      ring
+    have hp : HasDerivAt p (p₁ x) x := by
+      apply (hu.mul hv).congr_deriv
+      dsimp [p₁]
+      ring
+    have hp₁ : HasDerivAt p₁ (-2) x := by
+      apply (hv.sub hu).congr_deriv
+      norm_num
+    have hK : HasDerivAt K (K₁ x) x := by
+      apply (((hp.pow 2).mul ((hp.const_mul 2).const_add ((b - a) ^ 2))).div_const 1440).congr_deriv
+      dsimp [K₁]
+      ring
+    have hK₁ : HasDerivAt K₁ (c - w x) x := by
+      apply (((hp.mul ((hp.const_mul 3).const_add ((b - a) ^ 2))).mul hp₁).div_const
+        720).congr_deriv
+      dsimp [c, w, p, p₁]
+      ring
+    refine ⟨hG', ?_⟩
+    apply ((((ht₃.const_mul c).sub hG').sub (hK₁.mul ht₄)).add (hK.mul ht₅)).congr_deriv
     ring
-  have hd₄ (x : ℝ) (hx : x ∈ Set.Icc a b) : 0 ≤ d₄ x := by
-    have := tan_nonneg_of_nonneg_of_le_pi_div_two (ha.trans hx.1)
-      (show x ≤ π / 2 by linarith [hx.2, pi_pos])
-    dsimp [d₄, d₁]
-    positivity
-  have hlo : G a ≤ G b := endpoints_le_of_deriv hab (fun x hx => (hG x hx).1) fun x hx =>
-    mul_nonneg (by dsimp [w]; positivity) (hd₄ x hx)
-  let c := (b - a) ^ 4 / 384
-  have hhi : c * d₃ a - G a ≤ c * d₃ b - G b := by
-    apply endpoints_le_of_deriv (f := fun x => c * d₃ x - G x) hab
-      (fun x hx => ((hG x hx).2.const_mul c).sub (hG x hx).1)
+  have ht_pos (x : ℝ) (hx : x ∈ Set.Ioo a b) : 0 < tan x :=
+    tan_pos_of_pos_of_lt_pi_div_two (ha.trans_lt hx.1) (by linarith [hx.2, pi_pos])
+  have hlo : G a < G b := by
+    apply endpoints_lt_of_deriv hab (fun x hx => (hG x hx).1)
     intro x hx
-    have hprod : (x - a) * (b - x) ≤ (b - a) ^ 2 / 4 := by
-      nlinarith only [sq_nonneg ((x - a) - (b - x))]
-    have hsq := pow_le_pow_left₀ (mul_nonneg (sub_nonneg.mpr hx.1) (sub_nonneg.mpr hx.2)) hprod 2
-    have hw : w x ≤ c := by dsimp [w, c]; linarith only [hsq]
-    exact sub_nonneg.mpr (mul_le_mul_of_nonneg_right hw (hd₄ x hx))
+    have hu : 0 < x - a := sub_pos.mpr hx.1
+    have hv : 0 < b - x := sub_pos.mpr hx.2
+    have ht := ht_pos x hx
+    dsimp [w, d₄]
+    positivity
+  have hhi : H a < H b := by
+    apply endpoints_lt_of_deriv hab (fun x hx => (hG x hx).2)
+    intro x hx
+    have hp : 0 < p x := mul_pos (sub_pos.mpr hx.1) (sub_pos.mpr hx.2)
+    have ht := ht_pos x hx
+    dsimp only [K, d₆, d₁]
+    positivity
+  have hHa : H a = c * d₃ a - G a := by simp [H, K, K₁, p]
+  have hHb : H b = c * d₃ b - G b := by simp [H, K, K₁, p]
+  rw [hHa, hHb] at hhi
   dsimp [G, w, w₁, w₂, w₃, c, correctedPrimitive] at hlo hhi ⊢
   constructor <;> linarith only [hlo, hhi]
 
@@ -211,7 +250,7 @@ private lemma cell_bounds {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : b ≤
 private lemma sum_bounds (n m : ℕ) (hn : n = 2 * m) (hnpos : 0 < n) (h : ℝ)
     (hh : (n : ℝ) * h = π / 2) (hpos : 0 < h) :
     let error := log 2 / 2 + h ^ 2 / 12 - h / 2 * watsonAlternatingCosecantSum n
-    0 ≤ error ∧ error ≤ h ^ 4 / 384 * 14 := by
+    0 < error ∧ error < h ^ 4 / 720 * 14 := by
   let x (k : ℕ) := (k : ℝ) * h
   have hnm : (n : ℝ) = 2 * m := by exact_mod_cast hn
   have hxm : x m = π / 4 := by
@@ -221,15 +260,16 @@ private lemma sum_bounds (n m : ℕ) (hn : n = 2 * m) (hnpos : 0 < n) (h : ℝ)
   let e (k : ℕ) := correctedPrimitive h (x (k + 1)) - correctedPrimitive h (x k) -
     h / 2 * (tan (x k) + tan (x (k + 1)))
   have hc (k : ℕ) (hk : k ∈ range m) :
-      0 ≤ e k ∧ e k ≤ h ^ 4 / 384 * (d₃ (x (k + 1)) - d₃ (x k)) := by
+      0 < e k ∧ e k < h ^ 4 / 720 * (d₃ (x (k + 1)) - d₃ (x k)) := by
     have hstep : x (k + 1) - x k = h := by simp [x, add_mul]
     have hkm : k + 1 ≤ m := mem_range.mp hk
     have hright : x (k + 1) ≤ π / 4 := hxm ▸
       mul_le_mul_of_nonneg_right (by exact_mod_cast hkm) hpos.le
     simpa only [hstep, e] using cell_bounds (a := x k) (b := x (k + 1))
       (by dsimp [x]; positivity) (by linarith) hright
-  have hlow := sum_nonneg (fun k hk => (hc k hk).1)
-  have hhigh := sum_le_sum (fun k hk => (hc k hk).2)
+  have hm : (range m).Nonempty := ⟨0, mem_range.mpr (by omega)⟩
+  have hlow := sum_pos (fun k hk => (hc k hk).1) hm
+  have hhigh := sum_lt_sum_of_nonempty hm (fun k hk => (hc k hk).2)
   have hs : (∑ k ∈ range m, e k) = correctedPrimitive h (x m) -
       correctedPrimitive h (x 0) - h / 2 * watsonAlternatingCosecantSum n := by
     simp only [e, sum_sub_distrib _ (fun k => h / 2 * _), ← mul_sum,
@@ -243,28 +283,54 @@ private lemma sum_bounds (n m : ℕ) (hn : n = 2 * m) (hnpos : 0 < n) (h : ℝ)
     log_sqrt (by norm_num : (0 : ℝ) ≤ 2)] at hlow hhigh
   constructor <;> linarith only [hlow, hhigh]
 
-/-- At the first admissible index the sum is exactly `2 √2 - 1`. -/
-private lemma four_lower :
-    2 * (4 : ℝ) * log 2 / π + 0.252 / 4 < watsonAlternatingCosecantSum 4 := by
-  have hsin : sin (π * 3 / 4) = √2 / 2 := by
-    rw [show π * 3 / 4 = π - π / 4 by ring, sin_pi_sub, sin_pi_div_four]
-  have hval : watsonAlternatingCosecantSum 4 = 2 * √2 - 1 := by
-    unfold watsonAlternatingCosecantSum
-    rw [show Icc 1 (4 - 1 : ℕ) = {1, 2, 3} by decide]
-    norm_num [hsin, sin_pi_div_four, show π * 2 / 4 = π / 2 by ring, sin_pi_div_two]
-    field_simp
-    nlinarith only [sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
-  rw [hval]
-  have hmain : 2 * (4 : ℝ) * log 2 / π < 1.7652 := by
-    rw [div_lt_iff₀ pi_pos]
-    linarith only [pi_gt_d4, log_two_lt_d9]
-  have hsqrt : (1.4142 : ℝ) < √2 := by
-    exact (lt_sqrt (by norm_num)).2 (by norm_num)
-  linarith
-
 end watson_alternating_simple_bounds
 
 open watson_alternating_simple_bounds
+
+/--
+**Two-sided bounds for Watson's alternating cosecant sum.** For every even natural number
+$n \ge 2$, the alternating cosecant sum $C_n = \sum_{l=1}^{n-1} (-1)^{l+1} / \sin(\pi l / n)$
+satisfies the strict inequalities
+$$
+\frac{2 n \log 2}{\pi} + \frac{\pi}{12 n} - \frac{7 \pi^3}{1440 n^3} < C_n <
+\frac{2 n \log 2}{\pi} + \frac{\pi}{12 n}.
+$$
+The lower bound consists of the first three terms of the asymptotic expansion of $C_n$ and the
+upper bound of the first two.
+
+Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
+of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 6 and Corollary 3.
+-/
+public theorem watson_alternating_sharp_bounds
+    (n : ℕ) (heven : Even n) (hn : 2 ≤ n) :
+    2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ)) -
+          7 * Real.pi ^ 3 / (1440 * (n : ℝ) ^ 3) <
+        watsonAlternatingCosecantSum n ∧
+      watsonAlternatingCosecantSum n <
+        2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ)) := by
+  obtain ⟨m, hm⟩ := heven
+  have hnm : n = 2 * m := by omega
+  have hnpos : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
+  let h := π / (2 * n)
+  have hpos : 0 < h := by dsimp [h]; positivity
+  have hh : (n : ℝ) * h = π / 2 := by dsimp [h]; field_simp
+  have hmain : h * (2 * (n : ℝ) * log 2 / π) = log 2 := by dsimp [h]; field_simp
+  have hlinear : h * (π / (12 * (n : ℝ))) = h ^ 2 / 6 := by
+    dsimp [h]
+    field_simp
+    ring
+  have hcubic : h * (7 * π ^ 3 / (1440 * (n : ℝ) ^ 3)) = 7 * h ^ 4 / 180 := by
+    dsimp [h]
+    field_simp
+    ring
+  obtain ⟨hlo, hhi⟩ := sum_bounds n m hnm (by omega) h hh hpos
+  constructor
+  · apply (mul_lt_mul_iff_of_pos_left hpos).mp
+    rw [mul_sub, mul_add, hmain, hlinear, hcubic]
+    linarith only [hhi]
+  · apply (mul_lt_mul_iff_of_pos_left hpos).mp
+    rw [mul_add, hmain, hlinear]
+    linarith only [hlo]
 
 /--
 **Decimal bounds for Watson's alternating cosecant sum.** For every even natural number
@@ -283,38 +349,26 @@ public theorem watson_alternating_simple_bounds
         watsonAlternatingCosecantSum n ∧
       watsonAlternatingCosecantSum n <
         2 * (n : ℝ) * Real.log 2 / Real.pi + (0.262 : ℝ) / (n : ℝ) := by
-  obtain ⟨m, hm⟩ := heven
-  have hnm : n = 2 * m := by omega
-  have hnpos : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
-  let h := π / (2 * n)
-  have hpos : 0 < h := by dsimp [h]; positivity
-  have hh : (n : ℝ) * h = π / 2 := by dsimp [h]; field_simp
-  have hmain : h * (2 * (n : ℝ) * log 2 / π) = log 2 := by
-    dsimp [h]
+  obtain ⟨hlo, hhi⟩ := watson_alternating_sharp_bounds n heven (by omega)
+  have hn₄ : (4 : ℝ) ≤ n := by exact_mod_cast hn
+  have hnpos : (0 : ℝ) < n := by linarith only [hn₄]
+  have hsq : (16 : ℝ) ≤ (n : ℝ) ^ 2 := by
+    have h := pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 4) hn₄ 2
+    norm_num at h
+    exact h
+  have hcube := pow_le_pow_left₀ pi_pos.le pi_lt_d4.le 3
+  have hcubic : 7 * π ^ 3 / (1440 * (n : ℝ) ^ 2) ≤ 0.00943 := by
+    rw [div_le_iff₀ (by positivity)]
+    linarith only [hsq, hcube]
+  have hscale : π / (12 * (n : ℝ)) - 7 * π ^ 3 / (1440 * (n : ℝ) ^ 3) =
+      (π / 12 - 7 * π ^ 3 / (1440 * (n : ℝ) ^ 2)) / (n : ℝ) := by
     field_simp
-  obtain ⟨hlo, hhi⟩ := sum_bounds n m hnm (by omega) h hh hpos
   constructor
-  · by_cases hfour : n = 4
-    · simpa only [hfour, Nat.cast_ofNat] using four_lower
-    have hn₆ : (6 : ℝ) ≤ n := by exact_mod_cast (show 6 ≤ n by omega)
-    have hh' : h ≤ 0.262 := by
-      linarith only [mul_le_mul_of_nonneg_right hn₆ hpos.le, hh, pi_lt_d4]
-    have hcoef : (0.252 : ℝ) / n < h * (1 / 6 - 28 / 384 * h ^ 2) := by
-      rw [div_lt_iff₀ hnpos, mul_right_comm, mul_comm h, hh]
-      calc
-        (0.252 : ℝ) < 3.14 / 2 * (1 / 6 - 28 / 384 * 0.262 ^ 2) := by norm_num
-        _ ≤ _ := mul_le_mul (by linarith only [pi_gt_d2])
-          (by linarith only [pow_le_pow_left₀ hpos.le hh' 2]) (by norm_num) (by positivity)
-    apply lt_of_lt_of_le (add_lt_add_right hcoef _)
-    apply (mul_le_mul_iff_of_pos_left hpos).mp
-    rw [mul_add, hmain]
-    linarith only [hhi]
-  · have hcoef : h / 6 < (0.262 : ℝ) / n := by
-      rw [lt_div_iff₀ hnpos]
-      linarith only [hh, pi_lt_d4]
-    apply lt_of_le_of_lt _ (add_lt_add_right hcoef _)
-    apply (mul_le_mul_iff_of_pos_left hpos).mp
-    rw [mul_add, hmain]
-    linarith only [hlo]
+  · refine lt_trans ?_ hlo
+    rw [add_sub_assoc, hscale, add_lt_add_iff_left, div_lt_div_iff_of_pos_right hnpos]
+    linarith only [hcubic, pi_gt_d4]
+  · refine lt_trans hhi ?_
+    rw [add_lt_add_iff_left, ← div_div, div_lt_div_iff_of_pos_right hnpos]
+    linarith only [pi_lt_d4]
 
 end MetaMathlibExt
