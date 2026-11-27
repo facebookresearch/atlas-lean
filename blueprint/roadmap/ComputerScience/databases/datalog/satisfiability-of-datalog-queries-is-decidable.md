@@ -19,7 +19,7 @@ polynomial time for Datalog queries whose programs mention no constants.
 ## Proof depends on
 
 - [Least model equals least fixpoint for Datalog](least-model-equals-least-fixpoint-for-datalog.md)
-- [Datalog queries are monotone and homomorphism-preserved; CQ-in-Datalog containment](datalog-queries-are-monotone-and-homomorphism-preserved-cq-i.md)
+- [Datalog queries are preserved under homomorphisms](homomorphism-preservation-and-containment/datalog-queries-are-preserved-under-homomorphisms.md)
 
 ## Sources
 

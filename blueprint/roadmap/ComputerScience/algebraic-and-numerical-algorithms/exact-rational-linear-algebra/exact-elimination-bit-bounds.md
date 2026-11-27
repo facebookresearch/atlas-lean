@@ -1,15 +1,18 @@
 # Polynomial bit-length bounds for exact rational elimination
 
-Let $M$ be an integer matrix with $q$ columns whose entries have absolute value at most $2^{\gamma}$. Fraction-free elimination on $M$ computes its rank, and every entry it produces is, up to sign, a minor of $M$ of order at most $q$ (Edmonds, Theorem 2, for Edmonds' form, which keeps each pivot row once it is used; the linked page for the Bareiss-Jordan form), so it has absolute value at most $q! \, 2^{q\gamma}$, a bit length of at most $q(\gamma + \log_2 q) + 1$ (Edmonds, p. 243 (b)); each numerator before an exact division is the previous pivot times such a minor. In the Bareiss-Jordan form, dividing each pivot row by its pivot gives the reduced row echelon form of $M$ and, for the augmented matrix of a consistent system, a rational solution, whose entries are quotients of two such minors. A rational system $Ax = b$, with $A$ of size $m \times n$ and numerators and denominators of absolute value at most $2^{\beta}$, reduces to this case by clearing denominators row by row (see the proof sketch), with $q = n + 1$ and $\gamma = (n+1)\beta$; in particular all intermediate numbers have bit length polynomial in the input size, and Gaussian elimination over $\mathbb{Q}$ runs in polynomial time.
+Let $M$ be an integer matrix with $q$ columns whose entries have absolute value at most $2^{\gamma}$. Edmonds' fraction-free Gaussian elimination on $M$, which keeps each pivot row once it is used and divides each new entry exactly by the previous pivot, computes the rank of $M$, and every entry it produces is, up to sign, the determinant of a minor of $M$ of order at most $q$ (Edmonds, Section 7, Theorem 2). So every such entry has absolute value at most $q! \, 2^{q\gamma}$, a bit length of at most $q(\gamma + \log_2 q) + 1$, and the elimination runs in time polynomial in the numbers of rows and columns of $M$ and in $\gamma$ (Edmonds, p. 243 (b) and "The algorithm for matrices $A^0$ of integers is good").
 
 ## Proof sketch
 
-Edmonds' Theorem 2 (or Sylvester's identity, for the Bareiss-Jordan form) identifies each entry with a minor, and expanding the determinant bounds a minor of order $k \le q$ by $k! \, (2^{\gamma})^k \le q! \, 2^{q\gamma}$ (p. 243 (b)). For rational input, multiply each row of $[A \mid b]$ by the product of the denominators of its $n + 1$ entries: each cleared entry is a numerator times at most $n$ denominators, so it has absolute value at most $2^{(n+1)\beta}$. Nonzero row scaling changes neither the rank, nor the reduced row echelon form, nor the solution set, and the bound above becomes $(n+1)! \, 2^{(n+1)^2\beta}$, a bit length of $O(n^2\beta + n\log n)$.
+Edmonds' Theorem 2 identifies each entry with a minor, and expanding the determinant bounds a minor of order $k \le q$ by $k! \, (2^{\gamma})^k \le q! \, 2^{q\gamma}$ (p. 243 (b)); each numerator before an exact division is the previous pivot times such a minor, so it obeys the square of the bound. The same bound holds in the Bareiss-Jordan form of the linked page, whose entries are minors by Sylvester's identity; there, dividing each pivot row by its pivot gives the reduced row echelon form of $M$ and, for the augmented matrix of a consistent system, a rational solution whose entries are quotients of two such minors. For a rational system $Ax = b$, with $A$ of size $m \times n$ and numerators and denominators of absolute value at most $2^{\beta}$, multiply each row of $[A \mid b]$ by the product of the denominators of its $n + 1$ entries: each cleared entry is a numerator times at most $n$ denominators, so it has absolute value at most $2^{(n+1)\beta}$. Nonzero row scaling changes neither the rank, nor the reduced row echelon form, nor the solution set, so the integer case applies with $q = n + 1$ and $\gamma = (n+1)\beta$: the bound becomes $(n+1)! \, 2^{(n+1)^2\beta}$, a bit length of $O(n^2\beta + n\log n)$, and Gaussian elimination over $\mathbb{Q}$ runs in polynomial time.
 
 ## Depends on
 
-- [Fraction-free (Bareiss-Jordan) elimination](bareiss-fraction-free-elimination.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+
+## Proof depends on
+
+- [Fraction-free (Bareiss-Jordan) elimination](bareiss-fraction-free-elimination.md)
 
 ## Sources
 
