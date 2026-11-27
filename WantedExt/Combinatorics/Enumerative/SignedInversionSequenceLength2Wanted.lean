@@ -14,9 +14,11 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2BarredPrefix
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2BarredSuffix
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC3
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC38
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC45
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBarCount
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBars
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2Harmonic
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2LastBars
 
 /-!
@@ -79,27 +81,6 @@ public theorem_wanted signedInvSeq_wilf_and_count_b0b0_b00_0b1 :
       signedInvAvoidCount {⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.lt, false, true⟩} ∧
     ∀ n, signedInvAvoidCount {⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n =
         1 + ∑ j ∈ Finset.range n, (2 * j + 1) * j !
-
-/-- **Mansour–Safadi Lemma 3 (signed patterns 0̄1̄, 0̄0̄, 01̄).** A signed inversion sequence of
-length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1, \dots, k - 1,
-\overline{k - 1}\}$. It avoids a length-2 signed pattern $\tau_1\tau_2$ (one of $00$, $01$, $10$,
-each letter possibly barred) when no $i < j$ have $|e_i|$, $|e_j|$ in the same order as $|\tau_1|$,
-$|\tau_2|$ with $e_i$, $e_j$ barred exactly when $\tau_1$, $\tau_2$ are. Write $\bar I_n(B)$ for the
-set of signed inversion sequences of length $n$ that avoid every pattern in $B$. Let
-$B_1 = \{\bar 0\bar 1, \bar 0\bar 0, 0\bar 1\}$, $B_2 = \{\bar 0\bar 1, \bar 0 0, 0\bar 1\}$ and
-$B_3 = \{\bar 0\bar 1, 0\bar 1, 0\bar 0\}$. For every $n \ge 0$,
-$|\bar I_n(B_1)| = |\bar I_n(B_2)| = |\bar I_n(B_3)| = n!\,(1 + H_n)$, where
-$H_n = \sum_{k=1}^{n} 1/k$ is the $n$th harmonic number.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 3 (`integers-2026-A74-lem-3`). -/
-public theorem_wanted signedInvSeq_wilf_and_count_b0b1_b0b0_0b1 :
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, false, true⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} ∧
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.lt, false, true⟩, ⟨.eq, false, true⟩} ∧
-    ∀ n, (signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, false, true⟩} n : ℚ) =
-        n ! * (1 + harmonic n)
 
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, 01\}$.** For a set $B$ of
 length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of signed
@@ -512,25 +493,6 @@ public theorem_wanted signedInvSeq_wilf_and_gf_b1b0_b0b1_b00_01 :
     ((1 - X) * (1 - 2 * X) * (1 - 3 * X + X ^ 2)) * signedInvAvoidGF {⟨.gt, true, true⟩,
         ⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, false⟩} =
       1 - 4 * X + 5 * X ^ 2 - 3 * X ^ 3
-
-/-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, 0\bar1, 01\}$.** For a set $B$
-of length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of
-signed inversion sequences of length $n$ avoiding every pattern of $B$, and let
-$F_B(x) = \sum_{n \ge 0} |\bar I_n(B)| x^n \in \mathbb{Q}[[x]]$. Let
-$B = \{\bar1\bar0, \bar0\bar1, 0\bar1, 01\}$ and $C = \{\bar10, \bar0\bar1, 0\bar1, 01\}$. Then
-$|\bar I_n(B)| = |\bar I_n(C)|$ for every $n \ge 0$, and $(1 - 3x + x^2) F_B(x) = 1 - x$, that is,
-$F_B(x) = (1 - x)/(1 - 3x + x^2)$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 3 (C38) (`integers-2026-A74-thm-3`). -/
-public theorem_wanted signedInvSeq_wilf_and_gf_b1b0_b0b1_0b1_01 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.lt, false, true⟩,
-        ⟨.lt, false, false⟩} =
-      signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.lt, true, true⟩, ⟨.lt, false, true⟩,
-          ⟨.lt, false, false⟩} ∧
-    (1 - 3 * X + X ^ 2) * signedInvAvoidGF {⟨.gt, true, true⟩, ⟨.lt, true, true⟩,
-        ⟨.lt, false, true⟩, ⟨.lt, false, false⟩} =
-      1 - X
 
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar0, \bar00, 01\}$.** For a set $B$
 of length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of

@@ -161,7 +161,10 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   PR,** or the next sync and the next generated layout follow the old place.
   See [Moving a page](#moving-a-page). Moving pages into a card inside their
   topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
-  ([Cards](#cards)).
+  ([Cards](#cards)). A Lean pull request that moves a module's declarations to
+  a new module leaves this to the next
+  [graph-sync batch](#graph-sync-batches), which gives the new module their
+  place when they keep their names.
 
 ### Library navigation
 
@@ -308,6 +311,7 @@ python -m unittest \
   scripts.test_generate_wiki_navigation \
   scripts.test_generate_wiki_docstrings \
   scripts.test_sync_wiki \
+  scripts.test_graph_batch \
   scripts.test_import_mathgraph \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_extract_mathlib_graph \
@@ -441,9 +445,15 @@ python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 
 ## Maintaining articles
 
-A pull request that changes the Lean runs the sync scoped to its own changes,
-from the commit its branch starts at on the branch it targets (here `main`,
-with `origin` this repository), and commits what it writes:
+A Lean pull request runs no sync: the next
+[graph-sync batch](#graph-sync-batches) runs it over all the Lean merged since
+the last batch, and so writes what each Lean pull request's own run would
+([Lean pull requests and graph pull requests](../CONTRIBUTING.md#lean-pull-requests-and-graph-pull-requests)).
+It makes only the edits the errors below ask for. A graph pull request that
+changes the Lean, such as an expansion that adds wanted statements, runs the
+sync scoped to its own changes, from the commit its branch starts at on the
+branch it targets (here `main`, with `origin` this repository), and commits
+what it writes:
 
 ```sh
 python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
@@ -468,9 +478,11 @@ over the whole project.
 
 A link the changes leave naming a declaration the Lean no longer has, and a
 held marker they leave unusable, are errors, and the run then writes nothing:
-relink the row to the declaration's successor and keep its article id, or
-remove the link and keep the page as a planned page ([Writing
-pages](#writing-pages)). So is a row the build refuses ([Mathlib-credited
+relink the row to the declaration's successor and keep its article id, or, in
+a graph pull request, remove the link and keep the page as a planned page
+([Writing pages](#writing-pages)); a Lean pull request leaves a page whose own
+declaration goes with no successor to a graph pull request
+([Say how a pull request touches the graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph)). So is a row the build refuses ([Mathlib-credited
 pages](#mathlib-credited-pages)) that the changes add, as is a symbolic link
 among the files the run reads (the wiki, the Lean libraries, the baseline and
 the other graph files, the site configuration), since a read or write through
@@ -492,7 +504,12 @@ otherwise than the working tree, staged by hand, it asks for the two to agree
 first, since a commit may take either. `--report FILE` also writes the findings
 as JSON. The `graph
 sync` check runs it on every pull request and merge group, and only reports for
-now ([GitHub Actions and publication](#github-actions-and-publication)).
+now ([GitHub Actions and publication](#github-actions-and-publication)). Of a
+Lean pull request, whose wiki changes are at most edits to links files, and of
+a merge group, it asks only for what the errors above name: their missing
+pages, digests and part lists are the next batch's. It still lists the pages
+whose declaration's docstring changed, for the pull request's reviewer to
+check.
 
 After an upstream merge, a maintainer runs the sync over the whole project:
 
@@ -603,6 +620,134 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
 model-driven audit, or required personal token.
+
+### Graph-sync batches
+
+A graph-sync batch is one pull request that brings the wiki in step with all
+the Lean merged into `main` since the last batch. For each documented
+declaration merged without a page it adds the page and its annotation row and
+lists the page on its folder page; it writes the docstring digests the scoped
+sync writes; it places new modules in `scripts/taxonomy.json` and drops the
+places of modules that are gone. One batch is open at a time, made on a fresh
+`main` every one or two hours by whoever runs the batches. So `main`'s graph
+trails its Lean by about one batch, plus the batch's review and queue time;
+the site, built from `main` once a day, can trail `main` by up to a day more.
+
+```sh
+git fetch https://github.com/facebookresearch/atlas-lean.git main
+git switch --detach FETCH_HEAD
+python3 scripts/graph_batch.py make --body ../batch.md
+```
+
+`make` runs on a clean checkout, with Autoform installed as for the sync, and
+reads the merged pull requests' descriptions and GitHub's rendering of them
+with `gh`, logged in (`--bodies FILE` gives them as JSON instead; a description
+given without its rendering places nothing). Write the description outside the
+checkout, as above: a file left in it stops the next `make`. It starts from
+the commit the last batch brought the graph up to, which that batch's commit
+names in a `Graph-sync-through:` trailer (`python3 scripts/graph_batch.py
+base` prints it). The last batch is the newest merged pull request whose head
+is a batch; a commit within a merged branch never counts. The first batch
+gives its base with `--base`; a later one may give an earlier commit, never a
+later one, which would skip Lean. Then it:
+
+1. places each module that neither its own placement nor its folder's covers:
+   as a merged pull request's `Place:` line asks, for a module that pull
+   request's merge changed; else, for a module new since the base, where the
+   module whose declarations it took, by name, is placed, as a proof takes the
+   place of the wanted statement it moves. It never places a module that
+   already has a page outside the topic it would get, since the sync moves no
+   page: placing that one is a graph pull request that moves its pages too. A
+   module it cannot place goes to its subject's `not-yet-classified/` folder,
+   as the sync puts any unplaced module; one in a folder that is no subject
+   gets no pages, and placing it later is a graph pull request that also runs
+   the sync over the whole project ([Maintaining articles](#maintaining-articles))
+   to write them. For the same reason it never places a module older than the
+   base in such a folder, whose older declarations the scoped sync would leave
+   without pages;
+2. drops the placement of each module that no longer exists, as a file or as a
+   folder;
+3. runs the scoped sync over every Lean change since the base, on `main`'s wiki
+   and baseline: from a local commit that has `main`'s tree but the base's Lean;
+4. commits all of it as one commit on top of `main`, with `Graph-sync-base:`
+   and `Graph-sync-through:` trailers, and checks that commit as `verify` does.
+
+When the sync stops, nothing is committed. If it stops on something `main`
+already carries, such as a `held` marker that names a declaration a Lean pull
+request renamed, fix that on `main` first, in a graph pull request: every batch
+from here would stop the same way. If the check after the commit fails,
+`git reset --hard HEAD^` takes the commit away.
+
+A `Place:` line, one per module in a pull request's description, reads
+`Place: <module> -> <field>` or `Place: <module> -> <field> | <topic>`: the
+module as `scripts/taxonomy.json` keys it, a path without `.lean`, and a field
+or subfield of the taxonomy, such as `Algebra/rings-and-fields`. A topic is one
+line of at most 160 characters with none of ``<>[]{}|`@#\`` and no address
+(`://`). Without one, the module takes its docstring's `# ` heading, or else
+its name (its folder's, for a name such as `Basic`), as its topic's title,
+unless it takes declarations from a module placed in the same field, whose
+topic it then joins. A line counts only for a module that its pull request's
+merge changed and that nothing places yet. `make` reads the lines after the
+merge, as untrusted text: only those that GitHub's rendering of the
+description shows as lines of plain text in a top-level paragraph, not in a
+code block, a list, a quotation, a table or a `<details>`, and none of a
+description edited after its pull request merged, which no review of the merge
+saw. A line it leaves out gets a note.
+
+A batch's description has `Graph: batch` and names no issue
+([Graph PRs](../CONTRIBUTING.md#graph-prs)). `--body FILE` writes it: the
+placements, each with where it comes from; the placements dropped; the new modules left unplaced,
+and the changed ones that get no pages, in a folder with no subject; what
+`make` left for an editor (lines it could not follow, modules it could not
+place); the sync's own items for an editor, such as part-list lines its refresh
+replaced; and the pages whose declaration's docstring changed while no pull
+request recorded its digest. Push the commit to a branch of its own and open
+the pull request with that description.
+
+`python3 scripts/graph_batch.py verify <commit>`, run from an up-to-date
+checkout of `main` (it refuses to run from the batch itself, whose checkout's
+scripts and history are the pull request's), checks that the commit is a batch
+and exactly what `make` writes:
+
+- one commit, with `make`'s message, on its `Graph-sync-through:` commit, that
+  changes only the taxonomy, pages and folder pages, links files and the
+  baseline. Both of its commits are among the states `main` has had, on its
+  first-parent history, as `verify` runs the sync of the first;
+- a base no later than where the last batch before it ended;
+- its taxonomy `main`'s with the placements `make` computes applied, byte for
+  byte;
+- its wiki in step, with changes that are exactly what the scoped sync writes,
+  fresh article ids aside (the `--check` above).
+
+From a newer `main`, it also checks that the batch still merges cleanly into
+it, placing each module once, and that the scoped check finds nothing the
+merge breaks, such as a second page for one declaration. Then it runs the sync
+as `make` does and prints the description it recomputes (`--body FILE` writes
+it too).
+
+The batch's reviewer runs `verify` on the exact head, from `main`:
+
+```sh
+git fetch https://github.com/facebookresearch/atlas-lean.git main refs/pull/<number>/head
+git switch --detach FETCH_HEAD
+python3 scripts/graph_batch.py verify <head commit>
+```
+
+and reads what it prints, not the pull request's description, which whoever
+opens the pull request can edit: the placements and where each comes from, the
+placements dropped, the notes, the sync's items for an editor and the pages to
+check. The pages are the sync's, made from docstrings that the Lean pull
+requests' reviews covered. For each page under "Pages to check", the reviewer
+compares the page with its declaration's new docstring, and opens a
+page-problem issue for one that no longer matches: once the batch writes the
+new digest, no sync reports that page again.
+
+A batch is never updated. When `verify`, run from an up-to-date `main`, fails,
+or when the merge queue removes the batch, close it and make the next one from
+a fresh `main`: the next batch starts where the last merged one ended, so a
+closed batch loses nothing. Never merge `main` into a batch: `verify` refuses
+anything but one commit on the commit it names. If a merged batch is reverted,
+make the next one with `--base` set to the reverted batch's base.
 
 ### Mathlib-credited pages
 
@@ -769,7 +914,10 @@ file after them. On any other PR, the build's jobs are skipped and
 that PRs that change only Lean library files, `scripts/taxonomy.json` or
 `scripts/wiki-sync.json` do not wait about 50 minutes for the build, while the
 tests that read such files still run: some check the committed taxonomy as the
-wiki, the Mathlib layer's strict join and the Mathlib pages read it.
+wiki, the Mathlib layer's strict join and the Mathlib pages read it. A PR that
+changes only Lean library files those tests do not read, provenance and
+documentation skips them too: `scripts/ci_scope.py` lists the four Lean modules
+and the document the tests read besides the graph's data and their own code.
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
 than a failure, CI's `check the graph` checks the graph as committed,
 `Graph sync` checks every PR's declarations, and `main`'s daily build checks the
@@ -824,7 +972,12 @@ commit's first parent, or the queue's base on a merge group. It reads the Lean
 sources only, with no Lean build, and takes a few minutes. It only reports for
 now: the check's step cannot fail the job, which is not a required check. The
 verdict, the command that fixes it and whether the PR's wiki changes are only
-the sync's go to the job summary and the `graph-sync` artifact.
+the sync's go to the job summary and the `graph-sync` artifact. A PR that
+changes Lean and no graph file but links files, and a merge group, are held only to the
+check's errors: the links and markers their Lean leaves behind, which the
+summary lists alone. With none, the job says that the next graph-sync batch
+writes their pages, asks for no sync, and lists the pages whose declaration's
+docstring changed, to check.
 
 Publication is disabled until a repository maintainer:
 
