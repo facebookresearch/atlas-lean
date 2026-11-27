@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessPairwiseCoprime
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessParent
 
 namespace MetaMathlibExt
 
@@ -444,19 +445,6 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 3.10. -/
 public theorem_wanted IsGenCohnTriple.mem_wideGenCohnTree {k a b c : ℕ}
     {P Q R : Matrix (Fin 2) (Fin 2) ℤ} (h : IsGenCohnTriple k P Q R a b c) (hab : a ≤ b)
     (hcb : c ≤ b) : ∃ ℓ w, wideGenCohnTree k ℓ w = (P, Q, R)
-
-/-- **Parent triples of a generalized Cohn triple.** Let $k$ be a natural number and let $S$ be
-the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. Let $(P, Q, R)$ be a $k$-generalized
-Cohn triple associated with $(a, b, c)$, and let $b' = \lfloor (a^2 + kac + c^2)/b \rfloor$. Then
-$(P, R, P^{-1}(R + S))$ is a $k$-generalized Cohn triple associated with $(a, c, b')$, and
-$((P + S)R^{-1}, P, R)$ is a $k$-generalized Cohn triple associated with $(b', a, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11. -/
-public theorem_wanted IsGenCohnTriple.parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P R (P⁻¹ * (R + genCohnS k)) a c ((a ^ 2 + k * a * c + c ^ 2) / b) ∧
-      IsGenCohnTriple k ((P + genCohnS k) * R⁻¹) P R ((a ^ 2 + k * a * c + c ^ 2) / b) a c
 
 /-- **Distinct paths give distinct middle matrices in the wide generalized Cohn tree.** For
 every natural number $k$ and every integer $\ell$, if the vertices $(P, Q, R)$ and $(P', Q', R')$
