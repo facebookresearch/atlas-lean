@@ -1765,6 +1765,7 @@
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Syntax": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/EffectHandlers/Basic": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Effect-handling lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/EffectHandlers/Substitution": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Effect-handling lambda calculus"},
+  "CSLibExt/Languages/LambdaCalculus/DeBruijn/Untyped/LocallyNamelessBridge": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "De Bruijn and locally nameless terms"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/StlcExtended": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Extended simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/FOmega": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "System Fω"},
   "CSLibExt/Languages/LambdaCalculus/HindleyMilner/AlgorithmW": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Hindley–Milner type inference"},
