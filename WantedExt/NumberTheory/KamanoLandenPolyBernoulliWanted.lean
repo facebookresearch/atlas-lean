@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.KamanoLandenPolyBernoulli
+public import MathlibExt.NumberTheory.KamanoLandenPolyBernoulliGeneralizedMultiplePolylogSumFormula
 
 /-!
 # Kamano, generalized Landen connection formula and poly-Bernoulli numbers — wishlist
@@ -40,6 +41,10 @@ is stated and proved in the reading its proof establishes. The definitions it us
 `generalizedMultiplePolylog`, `landenExpVariable` and `generalizedPolyBernoulliC`)
 moved there with it, together with their proved lemmas, with the same names,
 statements and docstrings.
+
+Proved in
+`MathlibExt.NumberTheory.KamanoLandenPolyBernoulliGeneralizedMultiplePolylogSumFormula`:
+`generalizedMultiplePolylog_sum_formula`.
 -/
 
 open PowerSeries
@@ -207,25 +212,6 @@ public theorem_wanted multiplePolylog_landen_connection {n : ℕ} (k : Compositi
     subst (-(X * mk fun _ => (1 : ℝ))) (multiplePolylog k.blocks) =
       (-1 : ℝ) ^ k.length •
         ∑ k' : Composition n with k.boundaries ⊆ k'.boundaries, multiplePolylog k'.blocks
-
-/-- **Sum formula.** Let $g = (g_0, g_1, \dots, g_s)$ be Landen data, let
-$\beta, \gamma, \delta \in \mathbb{R}^s$, let $\mu$ be a real number and let $k \ge 1$ be an
-integer. Then
-$\sum_{\mathbf{k}} \mu^{d(\mathbf{k}) - 1} \mathrm{Li}_{\mathbf{k}}(g; (\beta, \gamma); z) =
-\mathrm{Li}_{(k)}(g; (\beta + \mu \gamma, \delta); z)$, where the sum runs over all compositions
-$\mathbf{k} = (k_1, \dots, k_r)$ of $k$ (sequences of positive integers with
-$k_1 + \dots + k_r = k$) and $d(\mathbf{k}) = r$ is the depth of $\mathbf{k}$.
-
-The paper takes $\mu$ an indeterminate; both sides are polynomials in $\mu$, so this
-is equivalent.
-
-Source: Ken Kamano, *A Generalization of the Landen Connection Formula and
-Generalized Poly-Bernoulli Numbers*, INTEGERS 24 (2024), Article A77, Proposition 1,
-Identity (7). -/
-public theorem_wanted generalizedMultiplePolylog_sum_formula (D : LandenData)
-    (β γ δ : Fin D.s → ℝ) (μ : ℝ) (k : ℕ) (hk : 0 < k) :
-    ∑ c : Composition k, μ ^ (c.length - 1) • generalizedMultiplePolylog D β γ c.blocks =
-      generalizedMultiplePolylog D (β + μ • γ) δ [k]
 
 /-- **Generalized Landen connection formula.** Let $g = (g_0, g_1, \dots, g_s)$ be Landen data,
 where $g_0$ has rows $(1, -1)$ and $(c_0, d_0)$ and each $g_i$ ($1 \le i \le s$) has rows
