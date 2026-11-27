@@ -1,0 +1,3 @@
+# Finite sums with the same summands have the same ready set
+
+Let the channel names form a type with decidable equality. For a list $s$ of summands (pairs $(\alpha, P)$ of a CCS action and a static CCS process), $\Sigma s$ denotes the right-associated finite choice $\alpha_1.P_1 + (\alpha_2.P_2 + (\cdots + (\alpha_n.P_n + 0)))$ of its entries, with $\Sigma [\,] = 0$. Let $s$ and $t$ be lists of summands with the same entries, that is, every summand is an entry of $s$ if and only if it is an entry of $t$. Then the set of labels of the outgoing transitions of $\Sigma s$ in static CCS equals that of $\Sigma t$.

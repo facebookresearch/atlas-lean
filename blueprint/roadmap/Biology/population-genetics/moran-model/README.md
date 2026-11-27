@@ -26,7 +26,9 @@
 
 - [Fixation probability in a frequency-dependent Moran process](frequency-dependent-moran-fixation-product-formu.md)
 - [The one-third rule for weak selection in the Moran process](one-third-rule-under-weak-selection.md)
+- [Weak-selection fixation probabilities in structured populations](weak-selection-fixation-probabilities/README.md)
 - [Neutral Moran genealogy as a relabeled Cannings model](moran-model-genealogy-per-step-c-2-n-2-and-time.md)
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
+- [Punctuated evolution in the weak-mutation limit](punctuated-evolution-in-the-weak-mutation-limit/README.md)
