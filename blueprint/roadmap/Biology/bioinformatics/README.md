@@ -31,6 +31,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
 - [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
 - [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
+- [Rare variant discovery probability in population sequencing](rare-variant-discovery-probability-in-population-sequencing/README.md)
 ## [RNA structure, sequence models and network motifs](part-01/README.md)
 - [Affix-array search for RNA sequence-structure patterns](part-01/affix-array-search-for-rna-sequence-structure-patterns/README.md)
 - [Algebraic dynamic programming](part-01/algebraic-dynamic-programming/README.md)
