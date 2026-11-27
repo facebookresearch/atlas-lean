@@ -18,7 +18,6 @@ Relations between formal theories and their structures: first-order languages of
 - [Beth's definability theorem](beth-definability-theorem.md)
 - [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
 - [Compactness theorem for first-order logic](compactness-theorem-for-first-order-logic.md)
-- [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
 - [A CH obstruction at the countable Hanf threshold](ch-hanf-categoricity-threshold-obstruction.md)
 
 ## [Koenigsmann's question on fields elementarily equivalent to the rationals to Elementary equivalence of wreath products](part-01/README.md)
