@@ -19,7 +19,7 @@ The error-reduction framework analyzes the inverse of the random-walk operator r
 
 ## Proof depends on
 
-- [Spectral approximation of graphs](../../../ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs.md)
+- [Spectral approximation of graphs](../../../GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs.md)
 - [Cohen–Doron–Renard–Sberlo–Ta-Shma: black-box error reduction from PRGs to weighted PRGs via Richardson iteration](error-reduction-prg-to-weighted-prg.md)
 
 ## Sources
