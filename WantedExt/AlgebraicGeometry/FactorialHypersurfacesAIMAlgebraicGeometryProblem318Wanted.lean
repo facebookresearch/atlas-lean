@@ -63,11 +63,11 @@ noncomputable def hessianAt (f : MvPolynomial (Fin 5) ℂ) (a : Fin 5 → ℂ) :
   fun i j => eval a (pderiv j (pderiv i f))
 
 /-- Finitely many points lie in `singularLocus f`, and at each of them the Hessian of `f` at the
-representative has rank `4`. For homogeneous `f` this says that the hypersurface `{f = 0} ⊆ ℙ⁴`
-has at most isolated ordinary double points, and `4` is the maximum rank at a singular point, since
-the representative lies in the kernel of the Hessian by Euler's formula. Without homogeneity the
-rank can be `5`: for a fixed representative `a`, the polynomial `∑ᵢ (xᵢ - aᵢ)²` has zero gradient
-and twice the identity matrix as Hessian at `a`. -/
+representative has rank `4`. For homogeneous `f` of positive degree this says that the
+hypersurface `{f = 0} ⊆ ℙ⁴` has at most isolated ordinary double points, and `4` is the maximum
+rank at a singular point, since the representative lies in the kernel of the Hessian by Euler's
+formula. Without homogeneity the rank can be `5`: for a fixed representative `a`, the polynomial
+`∑ᵢ (xᵢ - aᵢ)²` has zero gradient and twice the identity matrix as Hessian at `a`. -/
 def HasOnlyFinitelyManyNodes (f : MvPolynomial (Fin 5) ℂ) : Prop :=
   (singularLocus f).Finite ∧ ∀ P ∈ singularLocus f, (hessianAt f P.rep).rank = 4
 
