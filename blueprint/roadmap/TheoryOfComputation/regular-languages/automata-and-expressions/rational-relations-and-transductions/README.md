@@ -22,3 +22,6 @@ step are in [sequential transducers, Mealy and Moore machines](../sequential-tra
 - [Two-way transducers and MSO-definable string transductions](two-way-transducers-and-mso-transductions.md)
 - [MSO-definable string transductions are exactly the deterministic two-way transductions](mso-transductions-are-two-way-transductions.md)
 - [Subsequentiality of a rational function is decidable](subsequentiality-of-a-rational-function-is-decidable.md)
+- [Antimorphic permutations and input-preserving transducers](theta-input-preserving-transducers/README.md)
+- [Uniformization of relations](uniformization-of-relations/README.md)
+- [Whether a finite-valued transducer has an equivalent deterministic two-tape automaton is undecidable](whether-a-finite-valued-transducer-has-an-equiva.md)

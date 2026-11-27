@@ -24,3 +24,4 @@
 - [One-way liveness has exponential two-way deterministic state cost](one-way-liveness-deterministic-state-lower-bound.md)
 - [Exponential state cost of complementing two-way NFAs](two-way-nfa-complementation-state-bound.md)
 - [Joint two-way complementation and determinization bounds for relational liveness](relational-liveness-joint-state-lower-bounds.md)
+- [Two-way Parikh automata](two-way-parikh-automata/README.md)
