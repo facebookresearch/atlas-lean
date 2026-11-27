@@ -1,6 +1,6 @@
 # Contiguous layout of a fully allocated van Emde Boas tree
 
-Lay out a depth-$d$ van Emde Boas record, over a universe of size $u_d = 2^{2^d}$, as a fixed-size header (presence, minimum, maximum, split size, child span) followed, for $d \ge 1$, by the summary record and the $u_{d-1}$ cluster records of depth $d - 1$, all fully allocated. All subrecords lie within their parent and do not overlap, so the whole tree occupies $O(u)$ contiguous words, the $\Theta(u)$ space of the fully allocated structure (Demaine, 6.046J Lecture 4, "Space Improvements").
+Lay out a depth-$d$ van Emde Boas record, over a universe of size $u_d = 2^{2^d}$, as a fixed-size header (presence, minimum, maximum, split size, child span) followed, for $d \ge 1$, by the summary record and the $u_{d-1}$ cluster records of depth $d - 1$, all fully allocated. All subrecords lie within their parent and do not overlap, so the whole tree occupies $O(u)$ contiguous words, the $\Theta(u)$ space of the fully allocated structure, given by the recurrence $S(u) = (u^{1/2} + 1)\, S(u^{1/2}) + \Theta(u^{1/2}) = \Theta(u)$ (Schwarz, Stanford CS166 Lecture 14, slides 111-112).
 
 ## Proof sketch
 
@@ -13,4 +13,5 @@ With a five-word header the size $\mathrm{span}(d)$ satisfies $\mathrm{span}(0) 
 ## Sources
 
 - E. D. Demaine, "Lecture 4: Divide and Conquer: van Emde Boas Trees", 6.046J Design and Analysis of Algorithms, MIT OpenCourseWare, 2015.
+- K. Schwarz, "van Emde Boas Trees" (Lecture 14), CS166 Data Structures, Stanford University, Spring 2016, slides (PDF pages) 7, 76, 98-112: <http://web.stanford.edu/class/archive/cs/cs166/cs166.1166/lectures/14/Slides14.pdf>.
 - P. van Emde Boas, R. Kaas and E. Zijlstra, "Design and Implementation of an Efficient Priority Queue", Mathematical Systems Theory 10, 1977.
