@@ -44,7 +44,8 @@ builds a file, and `@[nolint]` cannot name them. For them, and for any linter, a
 `["X", "Declaration.name"]` in `scripts/nolints.json`, the list of exceptions that `runLinter`
 reads too, keeps linter `X` off that one declaration: a private one is named by its private name,
 such as `_private.MathlibExt.Foo.0.bar`, so that an entry never matches a declaration of another
-module. `python3 scripts/check_env_linters.py --check-nolints` checks the file's format.
+module. `--check-nolints [FILE]` only reads the file (by default `scripts/nolints.json`) as the
+lint does, and exits 2 if it cannot; the workflow runs it on a pull request that changes the file.
 -/
 
 open Lean Core Meta Batteries.Tactic.Lint
@@ -64,12 +65,12 @@ def restrict (linter : NamedLinter) : NamedLinter :=
 /-- The exceptions file, as for `runLinter`: a JSON array of `[linter, declaration]` pairs. -/
 def nolintsFile : System.FilePath := "scripts/nolints.json"
 
-/-- The exceptions of `nolintsFile`, or none if there is no such file. -/
-def readNolints : IO (Array (Name × Name)) := do
-  unless ← nolintsFile.pathExists do return #[]
-  match Json.parse (← IO.FS.readFile nolintsFile) >>= fromJson? with
+/-- The exceptions of `file`, or none if there is no such file. -/
+def readNolints (file : System.FilePath := nolintsFile) : IO (Array (Name × Name)) := do
+  unless ← file.pathExists do return #[]
+  match Json.parse (← IO.FS.readFile file) >>= fromJson? with
   | .ok nolints => return nolints
-  | .error error => throw <| IO.userError s!"{nolintsFile}: {error}"
+  | .error error => throw <| IO.userError s!"{file}: {error}"
 
 /-- `results` without the findings that `nolints` lists. As for `runLinter`, an entry names one
 declaration by its full name, a private one by its private name, such as
@@ -82,40 +83,84 @@ def dropNolints (nolints : Array (Name × Name))
       if name == linter.name then some decl else none
     (linter, found.filter fun decl _ => !listed.contains decl)
 
-/-- The orders of `names`. -/
-partial def orders (names : List Name) : List (List Name) :=
-  if names.isEmpty then [[]]
-  else names.flatMap fun name => (orders (names.erase name)).map (name :: ·)
+/-- The arguments of nested `max`es. -/
+partial def maxArgs : Level → List Level
+  | .max a b => maxArgs a ++ maxArgs b
+  | level => [level]
 
-/-- Up to this many universe parameters, `canonicalStatement` tries every renaming. -/
-def maxPermutedParams : Nat := 4
+/-- A bijection between some universe parameters of two statements, both ways. -/
+abbrev Renaming := Std.HashMap Name Name × Std.HashMap Name Name
 
-/--
-The statement of a theorem, with its universe parameters renamed `u_1`, `u_2`, … and its levels
-normalized after (Lean orders the arguments of a `max` by universe name), so that statements that
-differ only by a renaming of their universes get one key. With at most `maxPermutedParams`
-parameters, it is the least (`Expr.lt`) such statement over every order of them, so any bijection
-between two theorems' universes is found; with more, the order in which they first occur.
--/
-def canonicalStatement (info : ConstantInfo) : Expr :=
-  let params := info.levelParams
-  if params.isEmpty then info.type else
-  let canonical := (List.range params.length).map fun i => Level.param (.mkSimple s!"u_{i + 1}")
-  let rename (order : List Name) : Expr :=
-    (info.type.instantiateLevelParams order canonical).replaceLevel fun level =>
-      some level.normalize
-  if params.length ≤ maxPermutedParams then
-    (orders params).foldl (init := rename params) fun least order =>
-      let renamed := rename order
-      if renamed.lt least then renamed else least
-  else
-    let occurring := (collectLevelParams {} info.type).params.toList
-    rename (occurring ++ params.filter (!occurring.contains ·))
+/-- `ρ` with `m` mapped to `n`, if it stays a bijection. -/
+def Renaming.extend (ρ : Renaming) (m n : Name) : Option Renaming :=
+  match ρ.1[m]?, ρ.2[n]? with
+  | some n', some m' => if n' == n && m' == m then some ρ else none
+  | none, none => some (ρ.1.insert m n, ρ.2.insert n m)
+  | _, _ => none
+
+/-- A search continues with `k` from each renaming that a match allows, until `k` succeeds. -/
+abbrev Continue := Renaming → Option Renaming
+
+mutual
+  /-- Match the level `a` with `b`, the arguments of a `max` in any order, extending `ρ`. -/
+  partial def matchLevel (ρ : Renaming) (a b : Level) (k : Continue) : Option Renaming :=
+    match a, b with
+    | .zero, .zero => k ρ
+    | .succ a, .succ b => matchLevel ρ a b k
+    | .param m, .param n => (ρ.extend m n).bind k
+    | .max .., .max .. => matchLevelsInAnyOrder ρ (maxArgs a) (maxArgs b) k
+    | .imax a₁ a₂, .imax b₁ b₂ => matchLevel ρ a₁ b₁ fun ρ => matchLevel ρ a₂ b₂ k
+    | _, _ => none
+
+  /-- Match the levels `as` with the levels `bs` in some order, extending `ρ`. -/
+  partial def matchLevelsInAnyOrder (ρ : Renaming) (as bs : List Level) (k : Continue) :
+      Option Renaming :=
+    match as with
+    | [] => if bs.isEmpty then k ρ else none
+    | a :: as => Id.run do
+      for i in [0:bs.length] do
+        if let some ρ := matchLevel ρ a bs[i]! fun ρ => matchLevelsInAnyOrder ρ as (bs.eraseIdx i) k
+        then
+          return some ρ
+      return none
+end
+
+/-- Match the levels `us` with the levels `vs` in order, normalized, extending `ρ`. -/
+def matchLevelList (ρ : Renaming) : List Level → List Level → Continue → Option Renaming
+  | [], [], k => k ρ
+  | u :: us, v :: vs, k => matchLevel ρ u.normalize v.normalize fun ρ => matchLevelList ρ us vs k
+  | _, _, _ => none
+
+/-- Match the statement `a` with `b`, up to the names and annotations of binders, extending `ρ`;
+levels are normalized first, as Lean orders the arguments of a `max` by universe name. Every
+choice is tried until `k` succeeds, so a choice made early never blocks a match. -/
+partial def matchExpr (ρ : Renaming) (a b : Expr) (k : Continue) : Option Renaming :=
+  match a, b with
+  | .bvar i, .bvar j => if i == j then k ρ else none
+  | .sort u, .sort v => matchLevel ρ u.normalize v.normalize k
+  | .const m us, .const n vs => if m == n then matchLevelList ρ us vs k else none
+  | .app f x, .app g y => matchExpr ρ f g fun ρ => matchExpr ρ x y k
+  | .lam _ t x _, .lam _ s y _ => matchExpr ρ t s fun ρ => matchExpr ρ x y k
+  | .forallE _ t x _, .forallE _ s y _ => matchExpr ρ t s fun ρ => matchExpr ρ x y k
+  | .letE _ t v x _, .letE _ s w y _ =>
+    matchExpr ρ t s fun ρ => matchExpr ρ v w fun ρ => matchExpr ρ x y k
+  | .lit l, .lit l' => if l == l' then k ρ else none
+  | .proj s i x, .proj t j y => if s == t && i == j then matchExpr ρ x y k else none
+  | .mdata _ x, _ => matchExpr ρ x b k
+  | _, .mdata _ y => matchExpr ρ a y k
+  | .fvar x, .fvar y => if x == y then k ρ else none
+  | .mvar x, .mvar y => if x == y then k ρ else none
+  | _, _ => none
+
+/-- Whether the statements `a` and `b` are equal up to the names and annotations of binders and
+some bijection between their universe parameters. -/
+def sameStatement (a b : Expr) : Bool :=
+  (matchExpr ({}, {}) a b some).isSome
 
 /--
 A theorem's statement with every universe parameter replaced by `0`, which leaves only explicit
 levels, so `max` and `imax` reduce to numbers. Renaming universes cannot change it, and its hash
-is cached, so it finds the few theorems worth canonicalizing cheaply.
+is cached, so it finds the few theorems worth matching with `sameStatement` cheaply.
 -/
 def erased (info : ConstantInfo) : Expr :=
   if info.levelParams.isEmpty then info.type
@@ -130,34 +175,31 @@ def comparable (env : Environment) (name : Name) (info : ConstantInfo) : Bool :=
 
 /--
 For each theorem among `decls`, the other theorems of the environment that prove the same
-statement (`Expr` equality ignores binder names and binder annotations).
+statement, as `sameStatement` decides.
 -/
 def findDuplicates (decls : Array Name) : CoreM (Std.HashMap Name (Array Name)) := do
   let env ← getEnv
-  let mut statements : Std.HashMap Expr (Array Name) := {}
-  let mut erasedKeys : Std.HashSet Expr := {}
+  -- The theorems to report on, with their statements, by their statements with universes erased.
+  let mut statements : Std.HashMap Expr (Array (Name × Expr)) := {}
   for decl in decls do
     let some info := env.find? decl | continue
     unless comparable env decl info do continue
     -- Typeclass resolution needs an instance even where a theorem proves its statement, so an
     -- instance is not reported; a theorem that restates one is, below.
     if ← isInstance decl then continue
-    let statement := canonicalStatement info
     -- `True` says nothing; a named proposition such as `def Claim : Prop := …` does.
-    if statement.isConstOf ``True then continue
-    statements := statements.alter statement (·.getD #[] |>.push decl)
-    erasedKeys := erasedKeys.insert (erased info)
+    if info.type.isConstOf ``True then continue
+    statements := statements.alter (erased info) (·.getD #[] |>.push (decl, info.type))
   if statements.isEmpty then return {}
   -- Cheap tests first: the environment holds hundreds of thousands of theorems.
   let record (found : Std.HashMap Name (Array Name)) (name : Name) (info : ConstantInfo) :
       Std.HashMap Name (Array Name) := Id.run do
     unless info matches .thmInfo _ do return found
-    unless erasedKeys.contains (erased info) do return found
+    let some targets := statements[erased info]? | return found
     unless comparable env name info do return found
-    let some targets := statements[canonicalStatement info]? | return found
     let mut found := found
-    for target in targets do
-      if target != name then
+    for (target, statement) in targets do
+      if target != name && sameStatement statement info.type then
         found := found.alter target (·.getD #[] |>.push name)
     return found
   let found := env.constants.map₁.fold record {}
@@ -243,8 +285,18 @@ unsafe def lint (root : Name) (modules : List Name) : IO UInt32 := do
   return code
 
 unsafe def main (args : List String) : IO UInt32 := do
+  if let "--check-nolints" :: rest := args then
+    -- Read the exceptions file as `lint` does, and only that.
+    let file : System.FilePath := rest.head?.getD nolintsFile.toString
+    try
+      IO.println s!"{file} lists {(← readNolints file).size} exception(s)."
+      return 0
+    catch error =>
+      IO.eprintln s!"{error}"
+      return 2
   let root :: modules@(_ :: _) := args.map String.toName
-    | IO.eprintln "usage: lake env lean --run scripts/lint_declarations.lean ROOT MODULE..."
+    | IO.eprintln "usage: lake env lean --run scripts/lint_declarations.lean ROOT MODULE...\n\
+        or:    lake env lean --run scripts/lint_declarations.lean --check-nolints [FILE]"
       return 2
   let code ← lint root modules
   -- As `runLinter` does, exit at once: Lean's finalizers can race with the lint's tasks.

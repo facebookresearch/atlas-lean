@@ -72,21 +72,22 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
   `runLinter` does, and four more: `docBlameThm` (a public theorem without a docstring),
   `explicitVarsOfIff` (variables on both sides of an `↔` that should be implicit, in public
   declarations), `duplicateStatement` (a theorem whose statement another theorem of Atlas, Mathlib
-  or their dependencies already proves, up to binder names and a renaming of universes, aliases
-  aside; it searches the changed modules and what they import) and `rootNamespace` (a public
-  declaration outside any namespace, which a later Mathlib name could collide with).
+  or their dependencies already proves, up to binder names and a renaming of universes, plain
+  aliases aside; it searches the changed modules and what they import) and `rootNamespace` (a
+  public declaration outside any namespace, which a later Mathlib name could collide with).
   `@[nolint <linter>]` turns one of Batteries' or Mathlib's linters off for a declaration. Lean
   does not know the two Atlas ones when it builds a file, so for them an entry
   `["<linter>", "<declaration>"]` in `scripts/nolints.json`, which `runLinter` reads too, does
   instead. The entry names one declaration by its full name, a private one by its private name
-  (`_private.<Module>.0.<name>`), and the job checks the file's format. A declaration counts as
-  added when the change adds the line that declares it, below its docstring and attributes, and no
-  declaration of that name is in the changed files at the base (for a private declaration, in its
-  own file: in a `module` file that includes the declarations outside a `public section` that are
-  not marked `public`, the `where` and `let rec` helpers of a declaration that does not expose its
-  body, and those of an instance), so documenting, tagging, editing or moving an existing
-  declaration does not report it. A `theorem_wanted` or `def_wanted` statement is not the
-  declaration that proves it, so a proof's findings are reported;
+  (`_private.<Module>.0.<name>`), and a pull request that changes the file has the driver read it,
+  as the lint does (`lake env lean --run scripts/lint_declarations.lean --check-nolints`). A
+  declaration counts as added when the change adds the line that declares it, below its docstring
+  and attributes, and no declaration of that name is in the changed files at the base (for a
+  private declaration, in its own file: in a `module` file that includes the declarations outside a
+  `public section` that are not marked `public`, the `where` and `let rec` helpers of a declaration
+  that does not expose its body, and those of an instance), so documenting, tagging, editing or
+  moving an existing declaration does not report it. A `theorem_wanted` or `def_wanted` statement
+  is not the declaration that proves it, so a proof's findings are reported;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files.
 

@@ -67,11 +67,6 @@ jobs:
             python3 -m unittest discover -s scripts -p "$tests"
           done
 
-      # A malformed exceptions file stops the declaration linters on every later pull
-      # request, so it fails the job even when nothing else runs.
-      - name: Check the exceptions file
-        run: python3 scripts/check_env_linters.py --check-nolints
-
       # A pull request that changes the toolchain or the manifest has no build
       # to restore, so its Lean files are linted by the pull requests after it.
       # It runs the checks end to end on a probe module instead, which needs
@@ -96,11 +91,18 @@ jobs:
               scripts/bump/pinned_bump.py lean-toolchain lake-manifest.json; then
             self_test=true
           fi
+          nolints=false
+          if ! git diff --quiet HEAD^1 HEAD -- scripts/nolints.json; then
+            nolints=true
+          fi
           setup=false
-          if [[ "$lint" == true || "$self_test" == true ]]; then setup=true; fi
+          if [[ "$lint" == true || "$self_test" == true || "$nolints" == true ]]; then
+            setup=true
+          fi
           {
             echo "lint=$lint"
             echo "self_test=$self_test"
+            echo "nolints=$nolints"
             echo "setup=$setup"
           } >> "$GITHUB_OUTPUT"
 
@@ -137,6 +139,13 @@ jobs:
       - name: Fetch Mathlib cache
         if: steps.scope.outputs.setup == 'true'
         run: lake exe cache get
+
+      # A malformed exceptions file would stop the declaration linters on every later
+      # pull request, so a change to it is read here as the driver reads it, with
+      # Lean's own decoder, even when nothing else runs.
+      - name: Check the exceptions file
+        if: steps.scope.outputs.nolints == 'true'
+        run: lake env lean --run scripts/lint_declarations.lean --check-nolints
 
       # The builds that ci.yml saves from main, so that only the changed files
       # and the modules that main has not built yet are built here. The probe

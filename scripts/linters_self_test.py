@@ -21,6 +21,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -106,6 +107,20 @@ theorem lintersProbeProdUV : @Prod.{{u, v}} = @Prod.{{u, v}} := rfl
 
 theorem lintersProbeProdVU : @Prod.{{v, u}} = @Prod.{{v, u}} := lintersProbeProdUV.{{v, u}}
 
+universe w x y
+
+/-- Five universes, so that no limit on their number hides a swap. -/
+def LintersProbeFive (A : Type u) (B : Type v) (C : Type w) (D : Type x) (E : Type y) :
+    Type (max u v w x y) :=
+  A × B × C × D × E
+
+theorem lintersProbeFiveUV :
+    @LintersProbeFive.{{u, v, w, x, y}} = @LintersProbeFive.{{u, v, w, x, y}} := rfl
+
+theorem lintersProbeFiveVU :
+    @LintersProbeFive.{{v, u, w, x, y}} = @LintersProbeFive.{{v, u, w, x, y}} :=
+  lintersProbeFiveUV.{{v, u, w, x, y}}
+
 theorem lintersProbeCollision : 7 = 7 := rfl
 """
 # Only documents an existing declaration, whose unused argument stays.
@@ -142,6 +157,8 @@ EXPECTED = {
                               r"docBlameThm: lintersProbeListed theorem missing documentation",
                               r"duplicateStatement: lintersProbeProdUV has the same statement as "
                               r"`lintersProbeProdVU`",
+                              r"duplicateStatement: lintersProbeFiveUV has the same statement as "
+                              r"`lintersProbeFiveVU`",
                               # The `mp` theorem of an `alias ⟨_, _⟩` is compared.
                               r"duplicateStatement: lintersProbeMpCopy has the same statement as "
                               r"`lintersProbeIffMp`",
@@ -217,6 +234,37 @@ def run_checks(base: str, round_: int) -> bool:
     return ok
 
 
+# Exceptions files that the driver must accept (exit 0) or reject (exit 2), as Lean decodes names.
+NOLINTS_CASES = [
+    ('[["duplicateStatement", "«foo bar».baz"], '
+     '["synTaut", "_private.MathlibExt.Foo.0.bar"]]', 0),
+    ('[["duplicateStatement", "Foo..bar"]]', 2),
+    ('["rootNamespace"]', 2),
+    ('{"rootNamespace": "Foo.bar"}', 2),
+]
+
+
+def check_nolints_decoder() -> bool:
+    """Whether the driver's `--check-nolints`, which the workflow runs on a change to the file,
+    accepts and rejects what Lean's decoder does."""
+    ok = True
+    with tempfile.TemporaryDirectory() as tmp:
+        for number, (text, want) in enumerate(NOLINTS_CASES):
+            path = Path(tmp, f"nolints-{number}.json")
+            path.write_text(text + "\n", encoding="utf-8")
+            result = subprocess.run(["lake", "env", "lean", "--run",
+                                     str(SCRIPTS / "lint_declarations.lean"), "--check-nolints",
+                                     str(path)],
+                                    cwd=ROOT, capture_output=True, text=True, env=child_env())
+            if result.returncode != want:
+                ok = False
+                print(f"FAIL lint_declarations.lean --check-nolints on {text}: exit "
+                      f"{result.returncode}, wanted {want}\n{result.stdout}{result.stderr}")
+            else:
+                print(f"ok lint_declarations.lean --check-nolints on {text}: exit {want}")
+    return ok
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -239,6 +287,7 @@ def main() -> int:
         ok = run_checks(start, 0)
         commit(DOCUMENTED, "linters self-test: document an existing declaration")
         ok = run_checks(first, 1) and ok
+        ok = check_nolints_decoder() and ok
     finally:
         git("reset", "-q", "--soft", start)
         git("rm", "-q", "--cached", "--ignore-unmatch", "--", *map(str, PROBES))
