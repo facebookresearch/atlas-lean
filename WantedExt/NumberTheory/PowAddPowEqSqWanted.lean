@@ -77,18 +77,4 @@ theorem_wanted pow_add_one_eq_sq (n x z : ℕ) (hn : 1 ≤ n)
     (hn2 : n ≠ 2) :
     n ^ x + 1 = z ^ 2 ↔ x = 1 ∧ z ^ 2 = n + 1
 
-/-- **Corollary 2** (Moonchaisook et al.): the
-Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`
-has no nonnegative integer solution for `m ≥ 1`.
-The paper assumes `p` an odd prime and `n ≥ 1`;
-neither is needed (both bases are `≡ 1 (mod 4)`), so
-`p` and `n` are arbitrary naturals here. The
-hypothesis `m ≥ 1` is needed: `5^1 + (4^0·3 + 1)^1 = 3^2`.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Corollary 2. -/
-theorem_wanted five_pow_add_four_pow_mul_add_one_ne_sq
-    (p m n x y z : ℕ) (hm : 1 ≤ m) :
-    (5 ^ n) ^ x + (4 ^ m * p + 1) ^ y ≠ z ^ 2
-
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted
