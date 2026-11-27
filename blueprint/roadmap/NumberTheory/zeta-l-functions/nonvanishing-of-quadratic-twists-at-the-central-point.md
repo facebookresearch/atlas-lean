@@ -2,7 +2,7 @@
 
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$ with $L$-function
 $L(E, s) = \sum_{n \ge 1} a_n n^{-s}$, and suppose that its root number $w(E)$, the sign in the functional equation
-of [the $L$-function of an elliptic curve](functional-equation-of-the-l-function-of-an-elliptic-curve.md), is $-1$.
+of [the $L$-function of an elliptic curve](root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md), is $-1$.
 For a negative fundamental discriminant $D$ (a
 [fundamental imaginary quadratic discriminant](../algebraic-number-theory/quadratic-fields/imaginary-quadratic-discriminants/is-fundamental-imaginary-quadratic-discr.md))
 prime to $N$, let $\varepsilon_D$ be the
@@ -40,7 +40,7 @@ on the parity of $D$. When $w(E) = 1$ the same proof uses instead the nonvanishi
 
 - [Fundamental imaginary quadratic discriminant](../algebraic-number-theory/quadratic-fields/imaginary-quadratic-discriminants/is-fundamental-imaginary-quadratic-discr.md), for the discriminants $D$
 - [The imaginary quadratic field $\mathbb{Q}(\sqrt{-D})$](../quadratic-forms-sums-of-squares/binary-quaternary-forms/binary-quadratic-forms/imaginary-quadratic-field.md), for $K = \mathbb{Q}(i\sqrt{\lvert D \rvert})$
-- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the root number $w(E)$
+- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the root number $w(E)$
 - [Quadratic Dirichlet character of a fundamental discriminant](../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md), for $\varepsilon_D$
 
 ## Proof depends on

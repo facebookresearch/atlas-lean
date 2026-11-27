@@ -1,7 +1,7 @@
 # The Heegner point of an elliptic curve over an imaginary quadratic field
 
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$ and fix a
-[modular parametrization](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md)
+[modular parametrization](../../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md)
 $\varphi \colon X_0(N) \to E$, defined over $\mathbb{Q}$, that maps the cusp $\infty$ to the origin. Let
 $K \subset \mathbb{C}$ be an imaginary quadratic field of discriminant $D_K \ne -3, -4$, so that its ring of integers
 $\mathcal{O}$ has unit group $\{\pm 1\}$, in which every prime factor of $N$ splits. Choose an ideal $\mathcal{N}$ of
@@ -11,7 +11,7 @@ The complex tori $\mathbb{C}/\mathcal{O}$ and $\mathbb{C}/\mathcal{N}^{-1}$ are 
 $N$-isogeny $\mathbb{C}/\mathcal{O} \to \mathbb{C}/\mathcal{N}^{-1}$ induced by the identity of $\mathbb{C}$, whose
 kernel is $\mathcal{N}^{-1}/\mathcal{O} \cong \mathbb{Z}/N\mathbb{Z}$; so they define a point $x_1 \in X_0(N)(\mathbb{C})$.
 The point $x_1$ is rational over the
-[Hilbert class field](../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md)
+[Hilbert class field](../../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md)
 $K_1 \subset \mathbb{C}$ of $K$. Put $y_1 = \varphi(x_1) \in E(K_1)$. The **Heegner point** of $E$ over $K$ is
 
 $$y_K = \operatorname{Tr}_{K_1/K}(y_1) = \sum_{\sigma \in \operatorname{Gal}(K_1/K)} \sigma(y_1) \in E(K),$$
@@ -32,27 +32,26 @@ This node is still to be broken down. A good expansion states and links:
   points into the independence of $y_K$ from $\mathcal{N}$ up to sign and torsion (Gross and Zagier, Chapter V, §2,
   p. 310, state the independence).
 
-The construction itself is laid out on the pages of the
-[construction of the Heegner point](heegner-point-construction/README.md): the
-[ideal $\mathcal{N}$](heegner-point-construction/ideal-of-index-n-under-the-heegner-hypothesis.md), the
-[cyclic isogeny](heegner-point-construction/kernel-of-the-heegner-isogeny.md), the
-[point $x_1$ of $X_0(N)$](heegner-point-construction/complex-points-of-x0-n-as-cyclic-isogenies.md), its
-[rationality over $K_1$](heegner-point-construction/rationality-of-heegner-points.md) and the
-[action on Heegner points](heegner-point-construction/galois-and-atkin-lehner-action-on-heegner-points.md).
+The construction itself is laid out on the pages beside this one: the
+[ideal $\mathcal{N}$](ideal-of-index-n-under-the-heegner-hypothesis.md), the
+[cyclic isogeny](kernel-of-the-heegner-isogeny.md), the
+[point $x_1$ of $X_0(N)$](complex-points-of-x0-n-as-cyclic-isogenies.md), its
+[rationality over $K_1$](rationality-of-heegner-points.md) and the
+[action on Heegner points](galois-and-atkin-lehner-action-on-heegner-points.md).
 
 ## Depends on
 
-- [An ideal of index $N$ under the Heegner hypothesis](heegner-point-construction/ideal-of-index-n-under-the-heegner-hypothesis.md), for $\mathcal{N}$
-- [The Heegner isogeny is cyclic of degree $N$](heegner-point-construction/kernel-of-the-heegner-isogeny.md), for the cyclic $N$-isogeny $\mathbb{C}/\mathcal{O} \to \mathbb{C}/\mathcal{N}^{-1}$
-- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](heegner-point-construction/complex-points-of-x0-n-as-cyclic-isogenies.md), for the point $x_1$
-- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$ and $X_0(N)$
-- [Hilbert class field of a number field](../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for $K_1$
-- [Unit groups of imaginary quadratic fields](../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for the unit group $\{\pm 1\}$ of $\mathcal{O}$ when $D_K \ne -3, -4$, which the statement asserts
+- [An ideal of index $N$ under the Heegner hypothesis](ideal-of-index-n-under-the-heegner-hypothesis.md), for $\mathcal{N}$
+- [The Heegner isogeny is cyclic of degree $N$](kernel-of-the-heegner-isogeny.md), for the cyclic $N$-isogeny $\mathbb{C}/\mathcal{O} \to \mathbb{C}/\mathcal{N}^{-1}$
+- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](complex-points-of-x0-n-as-cyclic-isogenies.md), for the point $x_1$
+- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$ and $X_0(N)$
+- [Hilbert class field of a number field](../../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for $K_1$
+- [Unit groups of imaginary quadratic fields](../../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for the unit group $\{\pm 1\}$ of $\mathcal{O}$ when $D_K \ne -3, -4$, which the statement asserts
 
 ## Proof depends on
 
-- [Heegner points are rational over the Hilbert class field](heegner-point-construction/rationality-of-heegner-points.md), for $x_1 \in X_0(N)(K_1)$
-- [Galois and Atkin–Lehner action on Heegner points](heegner-point-construction/galois-and-atkin-lehner-action-on-heegner-points.md), for the other choices of $\mathcal{N}$
+- [Heegner points are rational over the Hilbert class field](rationality-of-heegner-points.md), for $x_1 \in X_0(N)(K_1)$
+- [Galois and Atkin–Lehner action on Heegner points](galois-and-atkin-lehner-action-on-heegner-points.md), for the other choices of $\mathcal{N}$
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 

@@ -5,7 +5,7 @@ newform and $\varphi \colon X_0(N) \to E$ a
 [modular parametrization](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md)
 with $\varphi(\infty) = O$, and let $\omega$ be the Néron differential of $E$ with $\varphi^*(\omega) = c\,\omega_f$,
 $c > 0$, where $\omega_f = 2\pi i f(z)\,dz$. Let $K$ be an imaginary quadratic field as for
-[the Heegner point](heegner-point-of-an-elliptic-curve.md): its discriminant $D_K$ is not $-3$ or $-4$ and every prime
+[the Heegner point](heegner-point-construction/heegner-point-of-an-elliptic-curve.md): its discriminant $D_K$ is not $-3$ or $-4$ and every prime
 factor of $N$ splits in $K$. Assume moreover that $D_K$ is odd. (For $D_K$ prime to $N$, the splitting condition is
 Gross and Zagier's condition that $D_K$ be a square modulo $4N$.) Let $y_K \in E(K)$ be the Heegner point.
 
@@ -54,9 +54,9 @@ Gross and Zagier assume throughout that the discriminant is odd (Chapter I, §3,
 ## Depends on
 
 - [Quadratic Dirichlet character of a fundamental discriminant](../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md), for $\varepsilon_K$
-- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for $y_K$
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for $y_K$
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$, $f$ and the constant $c$
-- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../zeta-l-functions/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the continuation of $L(E, s)$
+- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../zeta-l-functions/root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the continuation of $L(E, s)$
 - [The Néron–Tate height of an abelian variety over a number field](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), for the canonical height of $E$ over $K$
 
 ## Proof depends on
@@ -65,7 +65,7 @@ Gross and Zagier assume throughout that the discriminant is odd (Chapter I, §3,
 - [Hensel's lemma with a derivative bound](../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-of-two-mul-add-val-deriva.md), for that step: applied in $\mathbb{Z}_\ell$ to $X^2 - D_K$, with $a_0$ a square root of $D_K$ modulo $\ell$ for odd $\ell \mid N$, and with $a_0 = 1$ for $\ell = 2$, where $D_K \equiv 1 \pmod 8$ as $2$ splits, it makes $D_K$ a square in $\mathbb{Z}_\ell$, hence modulo every power of $\ell$; and $D_K \equiv 1 \pmod 4$ as $D_K$ is odd
 - [Unit groups of imaginary quadratic fields](../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for $u_K = 1$: the unit group of $\mathcal{O}_K$ has order $2$ as $D_K \ne -3, -4$, so the factor $u_K^2$ of Gross and Zagier's formula is $1$
 - [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md), for the Hecke correspondences $T_m$ acting on $J_0(N)$ in the pairings $\langle c, T_m c^\sigma \rangle$
-- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for the rationality of the Heegner points over the Hilbert class field
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for the rationality of the Heegner points over the Hilbert class field
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 
