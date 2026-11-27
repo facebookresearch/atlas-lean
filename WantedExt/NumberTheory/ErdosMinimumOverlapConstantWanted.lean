@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956FiveTwelfthsHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956PointFourHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundYKLBMWKCZGS2026TTTDiscoverHolds
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundS1958Holds
 
 @[expose] public section
 
@@ -106,12 +107,6 @@ continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \l
 Source: Scherk, unpublished 1955; Optimization Problems, Constant 1b. -/
 def lowerBound_Scherk_unpublished_1955 : Prop := 1 - 1 / Real.sqrt 2 ≤ C₁ᵦ
 
-/-- **The proposition $(4 - \sqrt{6})/5 \le C_{1b}$.** This is the proposition that the continuous
-Erdős minimum-overlap constant $C_{1b}$ satisfies $(4 - \sqrt{6})/5 \le C_{1b}$.
-
-Source: Swierczkowski 1958; Optimization Problems, Constant 1b. -/
-def lowerBound_S1958 : Prop := (4 - Real.sqrt 6) / 5 ≤ C₁ᵦ
-
 /-- **White's lower bound for the minimum-overlap constant (statement).** The statement that the
 continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $0.379005 \le C_{1b}$, where
 $0.379005$ is the exact rational number $379005/1000000$.
@@ -192,12 +187,6 @@ minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.
 Source: Scherk, unpublished 1955, recorded by Optimization Problems 1b. -/
 public theorem_wanted lowerBound_Scherk_unpublished_1955_holds :
   lowerBound_Scherk_unpublished_1955
-
-/-- **Świerczkowski's lower bound $C_{1b} \ge (4 - \sqrt{6})/5$.** The continuous Erdős
-minimum-overlap constant $C_{1b}$ satisfies $(4 - \sqrt{6})/5 \le C_{1b}$.
-
-Source: Swierczkowski 1958 and Optimization Problems 1b. -/
-public theorem_wanted lowerBound_S1958_holds : lowerBound_S1958
 
 /-- **White's lower bound for the minimum-overlap constant.** The continuous Erdős minimum-overlap
 constant $C_{1b}$ satisfies $0.379005 \le C_{1b}$.
