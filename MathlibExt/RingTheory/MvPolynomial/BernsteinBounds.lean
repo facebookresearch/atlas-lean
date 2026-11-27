@@ -165,7 +165,7 @@ theorem degreeOf_boxPullback_le (a b : ι → ℝ) (p : MvPolynomial ι ℝ) (i 
     _ = d i := by simp [Pi.single_apply, eq_comm]
     _ ≤ p.degreeOf i := le_degreeOf_of_mem_support i hd
 
-private theorem exists_unit_parameter {a b x : ℝ} (hab : a ≤ b) (hx : x ∈ Set.Icc a b) :
+theorem exists_unit_parameter {a b x : ℝ} (hab : a ≤ b) (hx : x ∈ Set.Icc a b) :
     ∃ t ∈ Set.Icc (0 : ℝ) 1, a + (b - a) * t = x := by
   by_cases h : a = b
   · refine ⟨0, by norm_num, ?_⟩
