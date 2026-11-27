@@ -15,16 +15,11 @@ taking for $\mathcal{A}_1$ an automaton that accepts every timed word.
 ## Depends on
 
 - [Timed Büchi automata and timed regular languages](timed-buchi-automata.md)
+- [Timed words and timed languages](timed-words-and-timed-languages.md)
 
 ## Proof depends on
 
-- [Timed words and timed languages](timed-words-and-timed-languages.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- $\Sigma^1_1$-hardness of the existence of a recurring computation of a nondeterministic two-counter machine, which visits a given instruction infinitely often (proof prerequisite; not yet stated)
+- [Recurring computations of two-counter machines are Σ¹₁-hard](../../equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
 
 ## Sources
 

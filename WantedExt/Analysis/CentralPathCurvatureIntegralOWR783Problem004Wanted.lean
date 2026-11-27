@@ -54,10 +54,13 @@ separate targets; the second implies the first.
 open MeasureTheory Set Matrix
 
 open scoped Matrix.Norms.L2Operator in
-/-- The condition number `χ̄_A = max {‖G⁻¹ A‖ : G an `m × m` nonsingular submatrix of `A`}` (the
-Oberwolfach report's definition; Monteiro–Tsuchiya, Prop. 2.3(b)), with the operator norm induced
-by the Euclidean norms. The submatrix `G` consists of the columns of `A` listed by an injection
-`J : Fin m ↪ Fin n`. -/
+/-- The condition number `χ̄_A`: the supremum (Mathlib's real `sSup`) of `‖G⁻¹ A‖` over the
+nonsingular `m × m` submatrices `G` of `A`, with the operator norm induced by the Euclidean norms;
+the submatrix `G` consists of the columns of `A` listed by an injection `J : Fin m ↪ Fin n`. There
+are finitely many such `G`, so when `A` has full row rank `m` (at least one `G` is nonsingular) this
+is the maximum of the Oberwolfach report's definition (Monteiro–Tsuchiya, Prop. 2.3(b)). When no `G`
+is nonsingular, for example for the zero matrix with `m ≥ 1`, the set is empty and the value is `0`
+by Mathlib's convention, not a classical condition number. -/
 noncomputable def chiBar {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) : ℝ :=
   sSup {r | ∃ J : Fin m ↪ Fin n, IsUnit (A.submatrix id J).det ∧ r = ‖(A.submatrix id J)⁻¹ * A‖}
 
@@ -65,16 +68,21 @@ noncomputable def chiBar {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) : ℝ :=
 noncomputable def chiBarStar {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) : ℝ :=
   sInf {r | ∃ d : Fin n → ℝ, (∀ i, 0 < d i) ∧ r = chiBar (A * Matrix.diagonal d)}
 
-/-- `(x, y, s)` is the point with parameter `ν` of the primal-dual central path of the linear
-program `min cᵀx, Ax = b, x ≥ 0` and its dual `max bᵀy, Aᵀy + s = c, s ≥ 0`: `x ∘ s = ν 1`,
-`Ax = b`, `Aᵀy + s = c`, `x > 0`, `s > 0`. -/
+/-- `(x, y, s)` satisfies the central-path equations with parameter `ν` for the linear program
+`min cᵀx, Ax = b, x ≥ 0` and its dual `max bᵀy, Aᵀy + s = c, s ≥ 0`: `x ∘ s = ν 1`, `Ax = b`,
+`Aᵀy + s = c`, `x > 0`, `s > 0`. The predicate is just these equations and inequalities. Only under
+the standing assumptions and for `ν > 0` is there exactly one solution, the point of the central
+path with parameter `ν`; without them there may be none, or (when `A` has deficient row rank) many
+choices of `y`. -/
 def IsCentralPathPoint {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (b : Fin m → ℝ) (c : Fin n → ℝ)
     (ν : ℝ) (x : Fin n → ℝ) (y : Fin m → ℝ) (s : Fin n → ℝ) : Prop :=
   (∀ i, x i * s i = ν) ∧ A *ᵥ x = b ∧ Aᵀ *ᵥ y + s = c ∧ (∀ i, 0 < x i) ∧ ∀ i, 0 < s i
 
 /-- The Sonnevend–Stoer–Zhao curvature `κ(ν) = ‖ν ẋ(ν) ∘ ṡ(ν)‖^{1/2}` of a path `ν ↦ (x(ν), s(ν))`
-(Euclidean norm, as in the report and Monteiro–Tsuchiya §1 and (7); `∘` the componentwise product,
-dots the derivatives in `ν`). -/
+(Euclidean norm, as in the report and Monteiro–Tsuchiya §1 and (7); `∘` the componentwise product).
+The dots are Mathlib's `deriv` in `ν`: the derivative where `x` (respectively `s`) is differentiable
+at `ν` and `0` where it is not. So the formula is defined for arbitrary paths and has its classical
+meaning where the path is differentiable, as the central path is under the standing assumptions. -/
 noncomputable def curvature {n : ℕ} (x s : ℝ → Fin n → ℝ) (ν : ℝ) : ℝ :=
   Real.sqrt (Real.sqrt (∑ i, (ν * deriv x ν i * deriv s ν i) ^ 2))
 
