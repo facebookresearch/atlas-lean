@@ -1,6 +1,8 @@
 # Labelled transition systems
 
 - [Reachability in a labelled transition system is transitive](trans.md)
+- [A finite run of states gives a labelled execution through the same states](execution-of-finite-run.md)
+- [A labelled execution gives a finite run of states through the same states](finite-run-of-execution.md)
 - [Shifted sequence](shift-seq.md)
 - [Finite run](finite-run.md)
 - [Infinite run](omega-run.md)

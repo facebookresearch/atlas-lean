@@ -166,7 +166,7 @@ theorem fgWeight_nonneg {G : ℝ → ℝ} (hG : ∀ t, 0 ≤ G t) (l i : Fin n) 
 
 variable {G}
 
-/-- `S_0(b, i) ≥ exp (b zᵢ) > 0` for a nonnegative `G`. -/
+/-- `S_0(b, i) > 0` for a nonnegative `G`. -/
 theorem fgWeightedSum_zero_pos (hG : ∀ t, 0 ≤ G t) (b : ℝ) (i : Fin n) :
     0 < fgWeightedSum X ε c G z 0 b i := by
   refine lt_of_lt_of_le (exp_pos (b * z i)) ?_
