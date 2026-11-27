@@ -24,7 +24,7 @@ A modified adaptive law can also steer the infection to a prescribed endemic lev
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics](../spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Spectral radius and die-out of SIS epidemics](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Expansion
 

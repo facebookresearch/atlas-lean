@@ -33,7 +33,7 @@ So the eradication threshold is the same for the exact chain and both approximat
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics on graphs](../spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Spectral radius and die-out of SIS epidemics on graphs](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Expansion
 
