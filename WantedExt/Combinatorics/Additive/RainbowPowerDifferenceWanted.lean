@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceComponents
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceNegation
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
 
@@ -71,25 +72,6 @@ public theorem_wanted powMap_component_unique_cycle (p k : ℕ) [Fact p.Prime] :
     (∀ a : ZMod p, ∃ m : ℕ, ∃ r : ℕ, 0 < r ∧ (a ^ k ^ m) ^ k ^ r = a ^ k ^ m) ∧
       ∀ a b : ZMod p, (∃ r : ℕ, 0 < r ∧ a ^ k ^ r = a) → (∃ r : ℕ, 0 < r ∧ b ^ k ^ r = b) →
         (∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) → ∃ m : ℕ, a ^ k ^ m = b
-
-/-- **Power digraphs modulo a prime with two components.** Let $p$ be a prime and $k > 0$ an even
-natural number, and let $G^k_p$ be the directed graph on $\mathbb{Z}/p\mathbb{Z}$ with an edge
-$a \to a^k$ from every vertex $a$. Its (weak) components are the classes of the equivalence
-relation "$a^{k^m} = b^{k^n}$ for some natural numbers $m, n$". Then $G^k_p$ has exactly two
-components if and only if every prime factor of $p - 1$ divides $k$.
-
-In the source, writing the prime factorization of $k$ as
-$k = 2^{\alpha_0} q_1^{\alpha_1} \cdots q_\ell^{\alpha_\ell}$ with distinct odd primes
-$q_1, \dots, q_\ell$, the condition reads
-$p - 1 = 2^{\beta_0} q_1^{\beta_1} \cdots q_\ell^{\beta_\ell}$ with all $\beta_i \ge 0$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Proposition 1
-(`integers-2024-A105-prop-1`). -/
-public theorem_wanted card_powMap_components_eq_two_iff_of_even
-    (p k : ℕ) [Fact p.Prime] (hk : Even k) (hk0 : 0 < k) :
-    Nat.card (Quot fun a b : ZMod p => ∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) = 2 ↔
-      ∀ q : ℕ, q.Prime → q ∣ p - 1 → q ∣ k
 
 /-- **Power digraphs modulo a prime with three components.** Let $p$ be a prime and $k \ge 3$ an
 odd natural number, and let $G^k_p$ be the directed graph on $\mathbb{Z}/p\mathbb{Z}$ with an edge
