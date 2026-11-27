@@ -60,7 +60,7 @@ $K'_f$, which changes no codimension of a fixed subspace.
 
 ## Expansion
 
-A good expansion has pages for:
+A good expansion states and links:
 
 1. newforms of weight two and level $N$: the operators $T_p$, $U_q$ and $\langle d \rangle$ and the Petersson
    scalar product on $S_2(\Gamma_1(N))$ (Darmon–Diamond–Taylor, §1.2, pp. 26–27, and §1.3, pp. 28–29), the old
@@ -68,9 +68,15 @@ A good expansion has pages for:
    that share the $T_p$-eigenvalues ($p \nmid N$) of a newform of level dividing $N$ (Theorem 1.22);
 2. the step from any $\rho$ as in the theorem to $\rho_f$: a semisimple $\ell$-adic representation is
    determined by its Frobenius traces outside a finite set of primes (Darmon–Diamond–Taylor,
-   Proposition 2.6 (c)), and $\rho_f$ has properties (a) and (c) of their Theorem 3.1;
+   Proposition 2.6 (c)), and $\rho_f$ has properties (a) and (c) of their Theorem 3.1. Their proof has two
+   separate inputs: the Chebotarev density theorem with continuity, which makes the traces of the two
+   representations agree on all of $G_{\mathbb{Q}}$, and the fact that over a field of characteristic $0$ a
+   semisimple representation is determined up to isomorphism by its character (Bourbaki, *Algèbre*, Chapter VIII,
+   §12.1, Proposition 3, as cited by Darmon–Diamond–Taylor, p. 54);
 3. the automorphic representation $\pi$ of $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$ attached to $f$ and its
-   local components $\pi_p$;
+   local components $\pi_p$, normalized so that for $p \nmid N$ the component $\pi_p$ is the unitarily induced
+   $\mathrm{Ind}(\xi_1, \xi_2)$ of unramified characters with $\xi_1(p)p^{1/2}$ and $\xi_2(p)p^{1/2}$ the roots
+   $\alpha_p$, $\beta_p$ of $X^2 - a_p X + \psi(p)\,p$;
 4. Carayol's Théorème (A) for $F = \mathbb{Q}$ and weight $2$: there are a finite extension $E$ of the field
    of rationality $\mathbb{Q}(\pi)$ and a strictly compatible system $\{\sigma^{\lambda'}\}$ of continuous
    two-dimensional $E_{\lambda'}$-adic representations of $G_{\mathbb{Q}}$ such that, for every prime $p$ and
@@ -81,21 +87,42 @@ A good expansion has pages for:
    Frobenius elements correspond to uniformizers, writes $\omega_p$ for the character $\lvert\cdot\rvert_p$, and
    his "Hecke" correspondence $\pi_p \mapsto \sigma(\pi_p)$ differs from the Langlands correspondence by the
    twist by $\omega_p^{1/2}$ followed by the contragredient;
-5. the identification of $\rho$ with Carayol's $\sigma^{\lambda'}$, for the place $\lambda'$ of $E$ above $\ell$
-   that the chosen embeddings determine, after extension of scalars to a common field: at the primes
-   $p \nmid \ell N$ both have Frobenius trace $a_p$, and $\rho$ is absolutely irreducible (item 2), so the
-   semisimplification of $\sigma^{\lambda'}$, which has the same traces, is irreducible, hence so is
-   $\sigma^{\lambda'}$, and the two are isomorphic by Proposition 2.6 (c);
+5. the comparison of $\rho$ with Carayol's $\sigma^{\lambda'}$, for the place $\lambda'$ of $E$ above $\ell$ that
+   the chosen embeddings determine, after extension of scalars to a common field. Carayol's representation is
+   contravariant: for a rational newform on $\Gamma_0(N)$ he identifies it with the natural representation on
+   $H^1(E_f \otimes \overline{\mathbb{Q}}, \mathbb{Q}_l)$ of the elliptic curve $E_f$ attached to $f$ (§0.8,
+   p. 411), the dual of the Tate module
+   $V_\ell E_f$, on which arithmetic Frobenius at a good prime $p \neq \ell$ has determinant $p$, against
+   $p^{-1}$ on $H^1$. In general, for $p \nmid \ell N$ his formula
+   $\sigma(\pi_p) = \xi_1^{-1}\omega_p^{-1/2} \oplus \xi_2^{-1}\omega_p^{-1/2}$ (§0.5, p. 410), read through his
+   normalization of class field theory, makes arithmetic Frobenius act on $\sigma^{\lambda'}$ with eigenvalues
+   $\xi_i(p)p^{-1/2}$, that is $\alpha_p/p = \psi(p)\beta_p^{-1}$ and $\beta_p/p = \psi(p)\alpha_p^{-1}$, while
+   $\rho(\mathrm{Frob}_p)$ has eigenvalues $\alpha_p$, $\beta_p$. These are the eigenvalues of the dual
+   $\rho^\vee$ twisted by the character $\psi'$ with $\psi'(\mathrm{Frob}_p) = \psi(p)$, and of
+   $\rho \otimes \epsilon^{-1}$, since $\det \rho = \psi'\epsilon$ for the cyclotomic character $\epsilon$ (by
+   Chebotarev, from the Frobenius determinants $\psi(p)p$). The representation $\rho \otimes \epsilon^{-1}$ is
+   absolutely irreducible, as $\rho$ is (item 2), so the semisimplification of $\sigma^{\lambda'}$, which has its
+   traces, is irreducible, hence so is $\sigma^{\lambda'}$, and Proposition 2.6 (c) gives
+   $\sigma^{\lambda'} \cong \rho \otimes \epsilon^{-1} \cong \rho^\vee \otimes \psi'$, which for trivial $\psi$
+   is the dual of $\rho$;
 6. the conductor of a Weil–Deligne representation $(r, \mathcal{N})$ of $W_p$ on $V$, the codimension of
    $(\ker \mathcal{N})^{r(I_p)}$ plus the Swan conductor of $r$, and the identity of $m_p(\rho)$ with the
    conductor of the Weil–Deligne representation of $\rho|_{G_p}$ for $p \neq \ell$: $\rho^{I_p}$ is the
    $I_p$-invariant part of $\ker \mathcal{N}$, and $\rho$ and $r$ agree on the groups $I_p^u$, $u > 0$, so that
    $\int_0^\infty \operatorname{codim} \rho^{I_p^u}\,du$ is the Swan conductor;
-7. the invariance of the conductor of a Weil–Deligne representation under twists by unramified characters, such
-   as $\omega_p^{1/2}$, and under passage to the contragredient, so that through Carayol's theorem and the local
-   Langlands correspondence the conductor of the Weil–Deligne representation of $\rho|_{G_p}$ is the conductor of
-   $\pi_p$, the exponent read off its $\varepsilon$-factor;
-8. the theory of local newforms, by which the conductor of $\pi_p$ is $v_p(N)$ for a newform of level $N$;
+7. the invariance of the conductor of a Weil–Deligne representation under twists by characters unramified at
+   $p$, such as $\omega_p^{\pm 1/2}$ and $\epsilon^{-1}$ for $p \neq \ell$, and under passage to the contragredient,
+   so that through item 5, Carayol's theorem and the local Langlands correspondence, whose preservation of
+   $\varepsilon$-factors makes the exponents below agree (Wedhorn, (4.2.5), draws this conclusion for supercuspidal
+   representations), the conductor of the Weil–Deligne representation of $\rho|_{G_p}$ is the conductor $f(\pi_p)$
+   of $\pi_p$. That conductor is read off the $\varepsilon$-factor for an additive character $\eta$ of
+   $\mathbb{Q}_p$ of exponent $n(\eta) = 0$, trivial on $\mathbb{Z}_p$ and nontrivial on $p^{-1}\mathbb{Z}_p$:
+   $\varepsilon(\pi_p, \eta, s) = \varepsilon(\pi_p, \eta, 0)\,p^{-s f(\pi_p)}$. For another $\eta$ the exponent of
+   $p^{-s}$ is $f(\pi_p) + 2n(\eta)$ (Wedhorn, (2.5.4)), and likewise $f(\sigma) + 2n(\eta)$ for a two-dimensional
+   irreducible Weil–Deligne representation $\sigma$ (Wedhorn, (3.2.2));
+8. the theory of local newforms, by which $f(\pi_p)$, the least $t \ge 0$ for which $\pi_p$ has a nonzero vector
+   fixed by the matrices of $\mathrm{GL}_2(\mathbb{Z}_p)$ with lower left entry in $p^t\mathbb{Z}_p$ and lower right
+   entry in $1 + p^t\mathbb{Z}_p$ (Wedhorn, (2.5.4)), is $v_p(N)$ for a newform of level $N$;
 9. the integrality of $m_p(\rho)$ (Darmon–Diamond–Taylor, p. 54), which makes the two forms of the theorem
    equivalent; at finite level it is the
    [integrality of Artin and Swan conductors](../../../AlgebraicGeometry/not-yet-classified/ramification-conductors/finite-image-artin-swan-integral.md).
@@ -107,10 +134,10 @@ A good expansion has pages for:
 
 ## Proof depends on
 
-- [Chebotarev density theorem](../adeles-class-field-theory/chebotarev-density-theorem.md), for the density of Frobenius elements in the finite Galois extensions of $\mathbb{Q}$, which with continuity gives Darmon–Diamond–Taylor's Proposition 2.6 (c), used to compare $\rho$ with $\rho_f$ and with Carayol's $\sigma^{\lambda'}$
-- [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for the Weil–Deligne representation of $\rho|_{G_p}$, $p \neq \ell$, and the equivalence through which Carayol's $\lambda'$-adic realization $\sigma^{\lambda'}(\pi_p)$ corresponds to $\sigma(\pi_p)$
+- [Chebotarev density theorem](../adeles-class-field-theory/chebotarev-density-theorem.md), for the density of Frobenius elements in the finite Galois extensions of $\mathbb{Q}$, which with continuity makes the traces of two representations with the same Frobenius traces at almost all primes agree on all of $G_{\mathbb{Q}}$; with the determination of a semisimple representation in characteristic $0$ by its character (expansion item 2) this gives Darmon–Diamond–Taylor's Proposition 2.6 (c), used to compare $\rho$ with $\rho_f$ and $\rho \otimes \epsilon^{-1}$ with Carayol's $\sigma^{\lambda'}$, and it gives $\det \rho = \psi'\epsilon$
+- [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for the Weil–Deligne representation of $\rho|_{G_p}$, $p \neq \ell$, and of $\sigma^{\lambda'}|_{G_p} \cong (\rho \otimes \epsilon^{-1})|_{G_p}$, its compatibility with tensor operations (for the twist by $\epsilon^{-1}$), and the equivalence through which Carayol's $\lambda'$-adic realization $\sigma^{\lambda'}(\pi_p)$ corresponds to $\sigma(\pi_p)$
 - [Local Langlands correspondence for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/local-langlands-correspondence-for-gl-n.md), for the preservation of $\varepsilon$-factors of twists by characters and the compatibility with twists and contragredients, which relate Carayol's "Hecke" correspondence at $p$ to $\mathrm{rec}_2$
-- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for the $\varepsilon$-factors of $\pi_p$ and of Weil–Deligne representations and the conductor of $\pi_p$
+- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for the $\varepsilon$-factors of $\pi_p$ and of Weil–Deligne representations and the conductor of $\pi_p$, read off the $\varepsilon$-factor for an additive character of exponent $0$ (expansion item 7)
 
 ## Sources
 
@@ -123,7 +150,9 @@ A good expansion has pages for:
     $T_p$ and $U_q$; Definition 1.16 (p. 29) and p. 30: eigenforms and normalized eigenforms; Definition 1.21
     and Theorem 1.22 (p. 31): old and new subspaces, newforms of level $N$;
   - Proposition 2.6 (pp. 53–54), part (c) on p. 54: a semisimple $\ell$-adic representation is determined by
-    its Frobenius traces outside a finite set of primes; p. 54: "It is known that $m_p(\rho)$ is an integer
+    its Frobenius traces outside a finite set of primes, with its proof on p. 54 (Chebotarev and continuity,
+    then "[Bour], ch. 8, sec. 12.1, prop. 3" for characteristic zero; [Bour] is Bourbaki, *Algèbre*, Hermann,
+    1958, in the bibliography, p. 158, not read here); p. 54: "It is known that $m_p(\rho)$ is an integer
     (see chapter VI of [Se2])";
   - §3.1, pp. 84–85: "We suppose in this section that $f = \sum a_n(f)q^n$ is a newform of weight two and level
     $N_f$ (see definition 1.21)", $K_f$, $\psi_f \colon (\mathbb{Z}/N_f\mathbb{Z})^\times \to K_f^\times$, $K'_f$
@@ -138,7 +167,20 @@ A good expansion has pages for:
   - §§0.1–0.4, pp. 409–410: a totally real field $F$ of degree $d$, cuspidal automorphic representations $\pi$ of
     $\mathrm{GL}_2(\mathbb{A}_F)$ of weights $k_i \ge 2$, the normalization under which geometric Frobenius
     elements correspond to uniformizers, and $\omega_\mathfrak{p} = \lvert\cdot\rvert_\mathfrak{p}$;
-  - §§0.5–0.6, p. 410: the "Hecke" correspondence $\pi_\mathfrak{p} \mapsto \sigma(\pi_\mathfrak{p})$, which
-    "diffère de la correspondance de Langlands par torsion par le caractère $\omega_\mathfrak{p}^{1/2}$ suivie
-    du passage à la contragrédiente", and its $\lambda$-adic realizations $\sigma^\lambda(\pi_\mathfrak{p})$;
-  - §0.7, Théorème (A), pp. 410–411.
+  - §§0.5–0.6, p. 410: the "Hecke" correspondence $\pi_\mathfrak{p} \mapsto \sigma(\pi_\mathfrak{p})$, characterized by
+    $L(\chi.\check\sigma(\pi_\mathfrak{p})) = L(\chi.\omega_\mathfrak{p}^{1/2}.\pi_\mathfrak{p})$ and the same for
+    $\varepsilon$, which "diffère de la correspondance de Langlands par torsion par le caractère
+    $\omega_\mathfrak{p}^{1/2}$ suivie du passage à la contragrédiente", with
+    $\sigma(\pi_\mathfrak{p}) = \xi_1^{-1}.\omega_\mathfrak{p}^{-1/2} \oplus \xi_2^{-1}.\omega_\mathfrak{p}^{-1/2}$ for
+    $\pi_\mathfrak{p} = \mathrm{Ind}(\xi_1, \xi_2)$ (unitary induction) and
+    $\det \sigma(\pi_\mathfrak{p}) = \chi_{\pi_\mathfrak{p}}^{-1}.\omega_\mathfrak{p}^{-1}$, and its $\lambda$-adic
+    realizations $\sigma^\lambda(\pi_\mathfrak{p})$;
+  - §0.7, Théorème (A), pp. 410–411;
+  - §0.8, p. 411: for a rational newform $f \in S_2(\Gamma_0(N))$, "$\sigma^l$ est isomorphe à la représentation
+    naturelle de Galois sur l'espace $H^1(E_f \otimes_{\mathbb{Q}} \overline{\mathbb{Q}}, \mathbb{Q}_l)$".
+- T. Wedhorn, "The local Langlands correspondence for GL(n) over $p$-adic fields", lecture notes,
+  arXiv:math/0011210 (version 2): (2.5.4) (the conductor $f(\pi)$ and
+  $\varepsilon(\pi, \psi, s) = \varepsilon(\pi, \psi, 0)q^{-s(f(\pi) + n\,n(\psi))}$), the exponent $n(\psi)$, "the
+  largest integer $n$ such that $\psi(\pi_K^{-n}\mathcal{O}_K) = 1$" (§3.2), (3.2.2) (the conductor of an
+  irreducible Weil–Deligne representation, by the same formula), and (4.2.5) (for supercuspidal representations,
+  $\mathrm{rec}_n$ preserves conductors, by the preservation of $\varepsilon$-factors of pairs).

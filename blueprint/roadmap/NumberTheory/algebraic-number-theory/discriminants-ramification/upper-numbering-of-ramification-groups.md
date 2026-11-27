@@ -25,7 +25,8 @@ Galois subextension $K'/K$ with $H = \operatorname{Gal}(L/K')$ one has $G_u H / 
 and hence, with the transitivity $\psi_{L/K} = \psi_{L/K'} \circ \psi_{K'/K}$, $G^v H / H = (G/H)^v$ for
 every $v \ge -1$.
 
-For an infinite Galois extension $L/K$ of local fields (that is, $L$ algebraic over $K$) with group $G$, the
+For an infinite algebraic Galois extension $L$ of a local field $K$, with group $G$ ($L$ itself need not be
+complete or discretely valued), the
 **ramification groups in the upper numbering** are
 
 $$G^v = \varprojlim_{L'} \operatorname{Gal}(L'/K)^v \qquad (v \ge -1),$$
@@ -41,7 +42,7 @@ $v > 0$.
 
 ## Expansion
 
-A good expansion has pages for:
+A good expansion states and links:
 
 1. the functions $\varphi_{L/K}$ and $\psi_{L/K}$ of a finite Galois extension: the function $i_G$ of a
    quotient (Fontaine–Ouyang, Proposition 1.68), the properties of $\varphi_{L/K}$ (Proposition 1.69), the formula
@@ -68,12 +69,14 @@ A good expansion has pages for:
 ## Proof depends on
 
 - [Ramification groups of local fields](ramification-groups-of-local-fields.md), for $H_i = G_i \cap H$ for a subgroup $H$ (Fontaine–Ouyang, Proposition 1.67), used in the proof of Herbrand's theorem, and for $G_1$ being a normal $p$-subgroup of $G_0$ of index prime to $p$, which makes $G_1$ the image of the wild inertia group
+- [Monogenicity of extensions with separable residue field extension](../../../RingTheory/ramification/monogenic-extensions-of-discrete-valuation-rings/exists-adjoin-eq-top-of-separable-residu.md), for a generator $x$ of $\mathcal{O}_L$ as an $\mathcal{O}_K$-algebra, which defines $i_G$ and is used, with one of $\mathcal{O}_{K'}$ over $\mathcal{O}_K$, in the proof of Proposition 1.68: $\mathcal{O}_L$ is a finite $\mathcal{O}_K$-module with local structure map, and the residue extension is separable because the residue field of $K$ is perfect
 
 ## Sources
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
   archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  §1.1, Definition 1.16, p. 7 (local fields); §1.3.3, pp. 25–28 (the function $i_G$ (1.37), Proposition 1.68, $G_u$ and $\Phi = \varphi_{L/K}$ (1.39),
+  §1.1, Definition 1.16, p. 7 (local fields); §1.3.1, p. 22 ("We fix an element $x$ of $\mathcal{O}_L$ which
+  generates $\mathcal{O}_L$ as an $\mathcal{O}_K$-algebra (such an $x$ exists by $p$-adic analysis)"); §1.3.3, pp. 25–28 (the function $i_G$ (1.37), Proposition 1.68, $G_u$ and $\Phi = \varphi_{L/K}$ (1.39),
   Propositions 1.69 and 1.70, Herbrand's Theorem 1.71, $\Psi = \psi_{L/K}$, Proposition 1.72, the upper numbering (1.43) with
   $G^{-1} = G$, $G^0 = G_0$ and $G^v = 1$ for $v \gg 0$, the formula (1.44) and Proposition 1.73), and §1.3.4,
   pp. 28–29 (the upper numbering (1.45) of an infinite Galois extension, its left continuity, and

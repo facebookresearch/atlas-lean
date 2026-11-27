@@ -59,5 +59,8 @@ $p$, then $m_p(\rho) = 0$, so the product is finite.
   - p. 54: the finiteness of $\rho(P_p)$ and the definitions of $m_p(\rho)$ and $N(\rho)$ ("If $p \ne \ell$ then
     we define the conductor, $m_p(\rho)$, of $\rho$ at $p$ by $m_p(\rho) = \int_{-1}^\infty \operatorname{codim}
     \rho^{I_p^u}\,du = \operatorname{codim} \rho^{I_p} + \int_0^\infty \operatorname{codim} \rho^{I_p^u}\,du$. This is
-    well-defined as $\rho(P_p)$ is a finite group."), which Darmon, Diamond and Taylor give in the same way for
-    mod $\ell$ and Artin representations.
+    well-defined as $\rho(P_p)$ is a finite group."). Darmon, Diamond and Taylor use the same local formula for
+    mod $\ell$ representations and, at every prime, for Artin representations, but for an Artin representation
+    the product $N(\rho)$ runs over all primes, $\ell$ included ("where the product is over all primes $p \ne \ell$
+    in the case of an ℓ-adic or mod ℓ representation and over all primes in the case of an Artin
+    representation").
