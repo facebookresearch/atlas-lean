@@ -32,6 +32,10 @@
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
 - [Punctuated evolution in the weak-mutation limit](punctuated-evolution-in-the-weak-mutation-limit/README.md)
+- [Copy number dynamics of genetic elements](copy-number-dynamics-of-genetic-elements/README.md)
+- [Moran models with heterogeneous resampling rates](moran-models-with-heterogeneous-resampling-rates/README.md)
+- [Stein's method approximations in population genetics](stein-method-approximations-in-population-genetics/README.md)
+- [Moran process in heterogeneous environments](moran-process-in-heterogeneous-environments/README.md)
 - [Colonization time of the Moran process on graphs](colonization-time-of-the-moran-process-on-graphs.md)
 - [Age extremes in Moran models](age-extremes-in-moran-models/README.md)
 - [Moran process fixation times](moran-process-fixation-times/README.md)

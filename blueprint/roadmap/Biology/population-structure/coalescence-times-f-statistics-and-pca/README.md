@@ -25,6 +25,7 @@
 - [McVean's genealogical model for PCA](mc-vean-model.md)
 - [McVean's theorem on expected genotype covariance](integral-gen-cov.md)
 
-## Further results
+## Further topics
 
+- [Permutation test of sample exchangeability](permutation-test-of-sample-exchangeability/README.md)
 - [Identifiability of structured population histories](identifiability-of-structured-population-histories/README.md)

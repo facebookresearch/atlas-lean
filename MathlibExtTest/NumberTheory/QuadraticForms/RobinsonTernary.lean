@@ -24,6 +24,27 @@ open Rat.Robinson
 
 instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
 
+/-- Lemma 1 with the source's binders. -/
+example (p : ℕ) [Fact p.Prime] (hp : p % 4 = 3) (M : ℚ) (hM : M ≠ 0) :
+    (∃ X Y Z : ℚ, X ^ 2 + Y ^ 2 - p * Z ^ 2 = M) ↔
+      (¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = 1) ∧
+        ¬∃ (k : ℤ) (S : ℚ), M = k * S ^ 2 ∧ k ≡ p [ZMOD 8] :=
+  lemma_one hp hM
+
+/-- Lemma 2 with the source's binders. -/
+example (p q : ℕ) [Fact p.Prime] [Fact q.Prime] (hp : p % 4 = 1) (hq : q ≠ 2)
+    (hqp : legendreSym p q = -1) (M : ℚ) (hM : M ≠ 0) :
+    (∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = M) ↔
+      (¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = -1) ∧
+        ¬∃ (k : ℤ) (S : ℚ), M = q * k * S ^ 2 ∧ legendreSym q k = -1 :=
+  lemma_two hp hq hqp hM
+
+/-- Lemma 1 for `p = 3`, both directions: `X ^ 2 + Y ^ 2 - 3 Z ^ 2` represents `2`, and so `2` is
+of neither excluded form. -/
+example : (¬∃ (k : ℤ) (S : ℚ), (2 : ℚ) = 3 * k * S ^ 2 ∧ legendreSym 3 k = 1) ∧
+    ¬∃ (k : ℤ) (S : ℚ), (2 : ℚ) = k * S ^ 2 ∧ k ≡ 3 [ZMOD 8] :=
+  (lemma_one (p := 3) (M := 2) (by norm_num) (by norm_num)).mp ⟨1, 1, 0, by norm_num⟩
+
 /-- Lemma 3 with the source's binders. -/
 example (p : ℕ) [Fact p.Prime] (hp : p % 4 = 3) (M : ℚ) :
     (∃ X Y Z : ℚ, 2 + p * M ^ 2 + p * Z ^ 2 = X ^ 2 + Y ^ 2) ↔ Odd M.den ∧ M.den.Coprime p :=

@@ -42,5 +42,7 @@
 - [Well-posedness of the biallelic Wright–Fisher diffusion with general diploid selection and mutation](well-posedness-of-the-biallelic-wf-diffusion-wit.md)
 - [Well-posedness of the K-allele Wright–Fisher diffusion with diploid selection](well-posedness-of-the-k-allele-wf-diffusion-with.md)
 - [Sample frequency spectrum of a two-state marker under selection–mutation balance](sample-frequency-spectrum-under-selection-mutation-balance.md)
-## Further results
+## Further topics
+- [Wright–Fisher diffusion under strong selection](wright-fisher-diffusion-under-strong-selection/README.md)
+- [Wright–Fisher graph model](wright-fisher-graph-model/README.md)
 - [Logistic branching processes with selection](logistic-branching-processes-with-selection/README.md)
