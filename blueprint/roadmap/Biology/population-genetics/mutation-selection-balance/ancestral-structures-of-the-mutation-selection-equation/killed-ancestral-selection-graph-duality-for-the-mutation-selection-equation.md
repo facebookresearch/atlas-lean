@@ -8,7 +8,7 @@ a Riccati equation whose stable equilibrium is
 
 $$\bar y = \frac12\Big(1 + \frac{u}{s} - \sqrt{\Big(1-\frac{u}{s}\Big)^2 + 4\nu_0\frac{u}{s}}\Big) \ (s > 0), \qquad \bar y = \nu_1 \ (s = 0).$$
 
-**Killed ASG.** Starting from $n$ lines, each line independently branches at rate $s$, is pruned (removed) at rate $u\nu_1$, and at rate $u\nu_0$ the whole process is sent to a cemetery state $\Delta$. Let $R_r \in \mathbb{N}_0 \cup \{\Delta\}$ be its line count, with the convention $y_0^{\Delta} = 0$.
+**Killed ASG.** Starting from $n$ lines, each line independently branches at rate $s$, is pruned (removed) at rate $u\nu_1$, and at rate $u\nu_0$ per line (total rate $R\,u\nu_0$ when there are $R$ lines) the whole process is sent to a cemetery state $\Delta$. Let $R_r \in \mathbb{N}_0 \cup \{\Delta\}$ be its line count, with the convention $y_0^{\Delta} = 0$.
 
 **Theorem (duality).** For all $n$, $y_0 \in [0,1]$ and $t \ge 0$,
 

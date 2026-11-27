@@ -16,11 +16,11 @@ The limit does not depend on $\sigma$. For monomials (Corollary 2.1), $\psi(x) =
 
 $$\mathbf P^\alpha_x(X_T = 1) = x + \alpha\,x(1-x)\Big(\beta - \frac{\gamma}{3}(1+x)\Big) + O(\alpha^2),$$
 
-so for small $\alpha > 0$ and fixed initial frequency $x$, selection raises the fixation probability above its neutral value $x$ if and only if $\psi\big(\frac{1+x}{3}\big) > 0$. As $x \to 0$ this is the [one-third rule](../../moran-model/one-third-rule-under-weak-selection.md) $\psi(1/3) > 0$.
+so for small $\alpha > 0$ and fixed initial frequency $x$, selection raises the fixation probability above its neutral value $x$ if and only if $\psi\big(\frac{1+x}{3}\big) > 0$. As $x \to 0$ this is the [one-third rule](../../../moran-model/one-third-rule-under-weak-selection.md) $\psi(1/3) > 0$.
 
 ## Depends on
 
-- [The one-third rule for weak selection in the Moran process](../../moran-model/one-third-rule-under-weak-selection.md)
+- [The one-third rule for weak selection in the Moran process](../../../moran-model/one-third-rule-under-weak-selection.md)
 
 ## Expansion
 
