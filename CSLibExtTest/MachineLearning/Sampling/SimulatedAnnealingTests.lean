@@ -266,7 +266,7 @@ noncomputable def fig1R (s : Fin 26) : PMF (Fin 26) :=
 theorem arc_iff (s t : Fin 26) : Arc fig1R s t ↔ t ∈ fig1Out s := by
   simp only [Arc, fig1R, PMF.ofFinset_apply]
   by_cases ht : t ∈ fig1Out s
-  · rw [if_pos ht]
+  · rw [ite_eq_left ht]
     exact ⟨fun _ => ht, fun _ => ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)⟩
   · simp [ht]
 
