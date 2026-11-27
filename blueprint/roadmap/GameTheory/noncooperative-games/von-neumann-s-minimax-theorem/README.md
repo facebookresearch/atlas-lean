@@ -4,6 +4,7 @@
 - [Von Neumann's minimax theorem](matrix-game-minimax.md)
 - [Zero-sum value as a linear program](zero-sum-value-as-a-linear-program.md)
 - [Optimal strategy sets of a finite zero-sum game are convex polytopes](optimal-strategy-sets-are-convex.md)
+- [Extensive-Form Games and the Sequence Form](extensive-form-and-sequence-form/README.md)
 
 ## Related topics
 

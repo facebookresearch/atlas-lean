@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.HeightOneMultipleZetaMulNat
+public import MathlibExt.NumberTheory.HeightOneMultipleZetaMulNegNat
 public import MathlibExt.NumberTheory.HeightOneMultipleZetaSeries
 public import WantedExt.NumberTheory.BernoulliStirlingHarmonicWanted
 public import WantedExt.NumberTheory.HyperharmonicEulerSumsWanted
@@ -45,31 +46,6 @@ Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEG
 public theorem_wanted hasSum_heightOneMultipleZeta_mul_pow {s r : ℂ} (hs : 1 < s.re)
     (hr : ‖r - 1‖ < ‖s - 1‖) (hrs : r.re < s.re) :
     HasSum (fun j : ℕ => heightOneMultipleZeta s j * (r - 1) ^ j) (multipleHurwitzZeta r s)
-
-/-- **Height one multiple zeta series weighted by powers of a negative integer.** Let $r \ge 1$
-be an integer and let $\zeta(s, \{1\}^j)$ denote the height one multiple zeta function. For
-every complex number $s$ with $\operatorname{Re} s > r + 1$,
-
-$$\sum_{j \ge 0} \zeta(s, \{1\}^j) (-r)^j = \sum_{m=0}^{r-1} \binom{r-1}{m} (-1)^m (m+1)^{-s}.$$
-
-For every integer $k > r + 1$,
-
-$$\sum_{j \ge 0} \zeta(k, \{1\}^j) (-r)^j = \frac{H_{r,k-1}}{r},$$
-
-where $H_{r,k-1} = \sum_{i=1}^{r} (-1)^{i-1} \binom{r}{i} i^{-(k-1)}$ is the rational Roman
-harmonic number (Equation (2.18)).
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Corollary 2 (`integers-2024-A43-cor-2`). -/
-public theorem_wanted tsum_heightOneMultipleZeta_mul_neg_nat_pow
-    (r : ℕ) (hr : 1 ≤ r) :
-    (∀ s : ℂ, (r : ℝ) + 1 < s.re →
-      ∑' j : ℕ, heightOneMultipleZeta s j * (-(r : ℂ)) ^ j =
-        ∑ m ∈ Finset.range r, ((r - 1).choose m : ℂ) * (-1) ^ m * ((m : ℂ) + 1) ^ (-s)) ∧
-    ∀ k : ℕ, r + 1 < k →
-      ∑' j : ℕ, heightOneMultipleZeta k j * (-(r : ℂ)) ^ j =
-        (((∑ i ∈ Finset.Icc 1 r, (-1 : ℚ) ^ (i - 1) * (r.choose i : ℚ) / (i : ℚ) ^ (k - 1)) /
-          r : ℚ) : ℂ)
 
 /-- **Generalized Goldbach series for height one multiple zeta values.** Let $k \ge 1$ be an
 integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
