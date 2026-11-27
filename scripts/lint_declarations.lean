@@ -25,11 +25,11 @@ environment of `ROOT`, this lints the declarations of the `MODULE`s with:
   in public declarations);
 - `duplicateStatement`: a theorem whose statement another theorem of the environment already
   proves, up to the names of binders and a renaming of universes. Deprecated and generated
-  theorems and aliases are not compared, on either side, nor is a statement that is just `True`.
-  An instance of the changed modules is not reported, since typeclass resolution needs it even
-  where a theorem already proves its statement; a theorem that restates an instance is, since the
-  instance proves it. The environment is that of `ROOT`: the changed modules and what they import,
-  not the modules they do not import;
+  theorems and plain aliases are not compared, on either side, nor is a statement that is just
+  `True`. An instance of the changed modules is not reported, since typeclass resolution needs it
+  even where a theorem already proves its statement; a theorem that restates an instance is, since
+  the instance proves it. The environment is that of `ROOT`: the changed modules and what they
+  import, not the modules they do not import;
 - `rootNamespace`: a public declaration outside any namespace, with which a later Mathlib
   declaration of the same name would collide.
 
@@ -121,11 +121,12 @@ def erased (info : ConstantInfo) : Expr :=
   if info.levelParams.isEmpty then info.type
   else info.type.instantiateLevelParams info.levelParams (info.levelParams.map fun _ => .zero)
 
-/-- Whether the duplicate check compares the theorem `name`. An `alias` restates its target on
-purpose, so it is not compared. -/
+/-- Whether the duplicate check compares the theorem `name`. A plain `alias` restates its target on
+purpose, so it is not compared; the `mp` and `mpr` theorems of `alias ⟨a, b⟩ := h` state
+implications, and are. -/
 def comparable (env : Environment) (name : Name) (info : ConstantInfo) : Bool :=
   info matches .thmInfo _ && !env.isAutoDecl name && !Linter.isDeprecated env name &&
-    (Batteries.Tactic.Alias.aliasExt.find? env name).isNone
+    !(Batteries.Tactic.Alias.aliasExt.find? env name matches some (.plain _))
 
 /--
 For each theorem among `decls`, the other theorems of the environment that prove the same

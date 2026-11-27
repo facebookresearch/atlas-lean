@@ -71,6 +71,10 @@ alias lintersProbeAddCommAlias := lintersProbeAddComm
 
 theorem lintersProbeIff (a b : Nat) : a + 0 = b ↔ a = b := by simp
 
+alias ⟨lintersProbeIffMp, _⟩ := lintersProbeIff
+
+theorem lintersProbeMpCopy (a b : Nat) (h : a + 0 = b) : a = b := (lintersProbeIff a b).mp h
+
 universe u v
 
 /-- A named proposition: its proofs have one statement. -/
@@ -138,6 +142,9 @@ EXPECTED = {
                               r"docBlameThm: lintersProbeListed theorem missing documentation",
                               r"duplicateStatement: lintersProbeProdUV has the same statement as "
                               r"`lintersProbeProdVU`",
+                              # The `mp` theorem of an `alias ⟨_, _⟩` is compared.
+                              r"duplicateStatement: lintersProbeMpCopy has the same statement as "
+                              r"`lintersProbeIffMp`",
                               r"LintersSelfTestPrivateProbe\.lean:\d+:\d+: synTaut: "
                               r"lintersProbeCollision ",
                               r"LintersSelfTestProbe\.lean:\d+:\d+: duplicateStatement: "
@@ -153,7 +160,8 @@ ABSENT = {
                               r"duplicateStatement: lintersProbeInst ",
                               r"docBlameThm: lintersProbeNoDocOk ",
                               r"rootNamespace: lintersProbeListed ",
-                              r"LintersSelfTestProbe\.lean:\d+:\d+: synTaut: lintersProbeCollision ",
+                              r"LintersSelfTestProbe\.lean:\d+:\d+: synTaut: "
+                              r"lintersProbeCollision ",
                               r"LintersSelfTestPrivateProbe\.lean:\d+:\d+: duplicateStatement: "
                               r"lintersProbeCollision "], []),
 }
