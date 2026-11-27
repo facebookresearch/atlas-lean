@@ -10,3 +10,4 @@ Deterministic, nondeterministic, two-way and ε-automata, transducers, regular e
 - [First-order definable word languages are exactly the star-free languages](first-order-definable-languages-are-star-free.md)
 
 - [MSO-definable languages are regular](mso-definable-languages-are-regular.md)
+- [Register automata on data words](register-automata-on-data-words/README.md)
