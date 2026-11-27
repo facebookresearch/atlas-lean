@@ -22,7 +22,7 @@ $$
 
 1. on each interval $[T_k,T_{k+1})$ the genealogy within strain $x_i$ is a Kingman coalescent run at pairwise coalescence rate $2b(x_i)/\hat n(x_i;x_1,\dots,x_p)$, with the trait set of that interval;
 2. at the jump time when strain $x_i$ was founded, all its surviving lineages merge instantaneously into the single founding mutant (a multiple merger);
-3. moment duality holds: for suitable $\zeta_0$, $\mathbb E_{\pi_0}\langle\pi_t^{\otimes n},\zeta_0\rangle=\int\mathbb E_{(u_1,\dots,u_n)}\zeta_0(U_t^1,\dots,U_t^n)\,\pi_0^{\otimes n}(du)$, where $(U^i)$ move by the mutation generator and copy each other's states pairwise (Kingman resampling).
+3. moment duality holds: for every $\zeta_0\in C(\mathcal U^n,\mathbb R)$ such that, for each $i\in\{1,\dots,n\}$ and all fixed $(u_1,\dots,u_{i-1},u_{i+1},\dots,u_n)\in\mathcal U^{n-1}$, the section $u_i\mapsto\zeta_0(u_1,\dots,u_n)$ lies in the domain $D(A)$ of the mutation generator $A$, $\mathbb E_{\pi_0}\langle\pi_t^{\otimes n},\zeta_0\rangle=\int\mathbb E_{(u_1,\dots,u_n)}\zeta_0(U_t^1,\dots,U_t^n)\,\pi_0^{\otimes n}(du)$, where $(U^i)$ move by the mutation generator and copy each other's states pairwise (Kingman resampling).
 
 ## Depends on
 

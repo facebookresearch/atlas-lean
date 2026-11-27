@@ -33,3 +33,4 @@ With dust, $\Xi$ puts no mass on the zero sequence, and the coalescent can be bu
 ## Sources
 
 - Fabian Freund, "Multiple-merger genealogies: models, consequences, inference", in *Probabilistic Structures in Evolution* (E. Baake and A. Wakolbinger, eds.), EMS Series of Congress Reports, EMS Press (2021), 179–202, <https://doi.org/10.4171/ECR/17-1/9>; preprint arXiv:2010.12271 (2020), section "Partition blocks and minimal observable clades", proposition on $f_1$ for $\Xi$-coalescents with dust (after Freund and Möhle, Thm. 1) and the external-branch limit $\mathrm{Exp}(\mu_{-1})$, <https://doi.org/10.48550/arXiv.2010.12271>.
+- Fabian Freund and Martin Möhle, "On the size of the block of 1 for Ξ-coalescents with dust", *Modern Stochastics: Theory and Applications* 4 (2017), 407–425, <https://doi.org/10.15559/17-VMSTA92> (original proof).

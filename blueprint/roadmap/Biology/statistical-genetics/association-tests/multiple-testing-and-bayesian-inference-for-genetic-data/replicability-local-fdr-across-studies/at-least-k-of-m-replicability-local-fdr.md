@@ -18,8 +18,8 @@ the probability that a Poisson-binomial sum of the per-study posterior non-null 
 
 ## Depends on
 
-- [Local false discovery rate](../../../../Probability/hypothesis-testing/two-groups-model-and-local-false-discovery-rates/local-fdr.md)
-- [Distribution of a sum of independent Bernoulli variables](../../../../Probability/distributions/discrete/poisson-binomial-distribution/poisson-binomial-law/bernoulli-sum-pmf.md)
+- [Local false discovery rate](../../../../../Probability/hypothesis-testing/two-groups-model-and-local-false-discovery-rates/local-fdr.md)
+- [Distribution of a sum of independent Bernoulli variables](../../../../../Probability/distributions/discrete/poisson-binomial-distribution/poisson-binomial-law/bernoulli-sum-pmf.md)
 
 ## Expansion
 

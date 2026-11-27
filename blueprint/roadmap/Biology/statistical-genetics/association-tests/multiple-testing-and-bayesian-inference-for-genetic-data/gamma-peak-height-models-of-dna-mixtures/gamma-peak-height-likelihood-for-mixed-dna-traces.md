@@ -27,7 +27,7 @@ with $n_{ia}$ conditionally independent of $(n_{i1},\dots,n_{i,a-1},S_{i1},\dots
 ## Depends on
 
 - [Expectations of factorized functions as evidence probabilities in a Bayesian network](expectations-of-factorized-functions-as-evidence-probabilities-in-a-bayesian-network.md)
-- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Expansion
 

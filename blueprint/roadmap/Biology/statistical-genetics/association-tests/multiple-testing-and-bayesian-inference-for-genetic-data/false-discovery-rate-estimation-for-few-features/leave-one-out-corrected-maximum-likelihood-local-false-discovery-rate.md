@@ -16,7 +16,7 @@ The correction removes the dependence of the fitted prior on the statistic $t_i$
 
 ## Depends on
 
-- [Local false discovery rate](../../../../Probability/hypothesis-testing/two-groups-model-and-local-false-discovery-rates/local-fdr.md)
+- [Local false discovery rate](../../../../../Probability/hypothesis-testing/two-groups-model-and-local-false-discovery-rates/local-fdr.md)
 
 ## Expansion
 

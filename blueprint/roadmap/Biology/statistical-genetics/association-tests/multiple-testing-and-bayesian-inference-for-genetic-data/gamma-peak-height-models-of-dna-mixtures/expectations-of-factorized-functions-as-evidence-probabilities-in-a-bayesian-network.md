@@ -24,7 +24,7 @@ Thus the expectation of any product of factors, such as a likelihood averaged ov
 
 ## Depends on
 
-- [Bayesian network](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/bayesian-networks/bayes-net.md)
+- [Bayesian network](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/bayesian-networks/bayes-net.md)
 
 ## Expansion
 

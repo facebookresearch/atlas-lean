@@ -18,7 +18,7 @@ This holds for every $N$, including $N = 1$ or $2$, where the maximum-likelihood
 
 ## Depends on
 
-- [Tail-area fdr is the posterior null probability given a region](../../../../Probability/hypothesis-testing/two-groups-model-and-local-false-discovery-rates/cond-null-eq-tail-fdr.md)
+- [Tail-area fdr is the posterior null probability given a region](../../../../../Probability/hypothesis-testing/two-groups-model-and-local-false-discovery-rates/cond-null-eq-tail-fdr.md)
 
 ## Expansion
 

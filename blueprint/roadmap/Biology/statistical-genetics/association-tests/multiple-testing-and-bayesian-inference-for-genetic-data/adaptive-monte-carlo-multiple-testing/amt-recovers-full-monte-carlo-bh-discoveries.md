@@ -32,11 +32,11 @@ and this holds even conditionally on any realized set of fMC p-values $\{P_i^{\m
 
 ## Depends on
 
-- [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+- [Benjamini–Hochberg rejection set](../../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
 
 ## Proof depends on
 
-- [Benjamini–Hochberg FDR control for super-uniform nulls](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/integral-false-discovery-proportion-bh-r-2.md)
+- [Benjamini–Hochberg FDR control for super-uniform nulls](../../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/integral-false-discovery-proportion-bh-r-2.md)
 
 ## Expansion
 

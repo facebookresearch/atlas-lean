@@ -11,7 +11,7 @@ $$p^{(\Xi)}_{n,m}=1-\mathbb E\Big(\sum_{i\ge1}\prod_{k=0}^{m-1}\frac{B^{(n)}_{[i
 
 $$p^{(\Xi)}_{n,m}\longrightarrow 1-\mathbb E\Big(\sum_{i\ge1}P_{[i]}^m\Big)=1-\mathbb E\big(X^{m-1}\big)=1-\frac{\mathbb E(Y^m)}{\mathbb E(Y)},$$
 
-where $P_{[i]}=\lim_n B^{(n)}_{[i]}/n$ are the asymptotic frequencies of the blocks merging at absorption, $X$ is the frequency of a size-biased pick among them and $Y$ the frequency of a uniformly chosen one.
+where $P_{[i]}=\lim_n B^{(n)}_{[i]}/n$ are the asymptotic frequencies of the $K$ blocks merging at absorption, $X$ is the frequency of a size-biased pick among them, $\mathbb P(X\in\cdot)=\mathbb E\sum_iP_{[i]}\delta_{P_{[i]}}(\cdot)$, and $Y$ has the mean empirical law of the merging frequencies, $\mathbb P(Y\in\cdot)=\mathbb E\sum_i\delta_{P_{[i]}}(\cdot)/\mathbb E K$. The identity $\mathbb E(X^{m-1})=\mathbb E(Y^m)/\mathbb E(Y)$ is for this $Y$; it fails for a uniform pick among the $K$ blocks given a random $K$.
 3. (Bolthausen–Sznitman coalescent, $\Lambda=\mathrm{Beta}(1,1)$) With $B_1,\dots,B_{n-1}$ independent Bernoulli variables, $\mathbb P(B_i=1)=1/i$,
 
 $$p^{(\mathrm{Beta}(1,1))}_{n,m}=\mathbb E\Big(\frac{B_1+\cdots+B_{m-1}}{B_1+\cdots+B_{n-1}}\Big),\qquad \log(n)\,p^{(\mathrm{Beta}(1,1))}_{n,m}\to\sum_{i=1}^{m-1}\frac1i\quad(n\to\infty).$$
@@ -34,4 +34,5 @@ The subsample misses the sample root exactly when all of $[m]$ has coalesced int
 
 ## Sources
 
-- Fabian Freund, "Multiple-merger genealogies: models, consequences, inference", in *Probabilistic Structures in Evolution* (E. Baake and A. Wakolbinger, eds.), EMS Series of Congress Reports, EMS Press (2021), 179–202, <https://doi.org/10.4171/ECR/17-1/9>; preprint arXiv:2010.12271 (2020), section "How much genetic information is contained in a subsample?", recursion for $p^{(\Lambda)}_{n,m}$ and its two propositions (after Eldon, Freund et al., Props. 2, 4 and 5), <https://doi.org/10.48550/arXiv.2010.12271>.
+- Fabian Freund, "Multiple-merger genealogies: models, consequences, inference", in *Probabilistic Structures in Evolution* (E. Baake and A. Wakolbinger, eds.), EMS Series of Congress Reports, EMS Press (2021), 179–202, <https://doi.org/10.4171/ECR/17-1/9>; preprint arXiv:2010.12271 (2020), section "How much genetic information is contained in a subsample?", recursion for $p^{(\Lambda)}_{n,m}$ and its two propositions (after Eldon and Freund, Props. 2, 4 and 5), <https://doi.org/10.48550/arXiv.2010.12271>.
+- Bjarki Eldon and Fabian Freund, "Genealogical properties of subsamples in highly fecund populations", *Journal of Statistical Physics* 172 (2018), 175–207, <https://doi.org/10.1007/s10955-018-2013-1> (original proofs).

@@ -25,7 +25,7 @@ The instance-wise bound (Theorem 2 of the source) charges hypothesis $p_{(i)}$ a
 ## Depends on
 
 - [AMT recovers the full Monte Carlo BH discoveries](amt-recovers-full-monte-carlo-bh-discoveries.md)
-- [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+- [Benjamini–Hochberg rejection set](../../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
 
 ## Sources
 

@@ -16,13 +16,13 @@ $$
 
 Then $p_0^{\mathrm I}=\pi_0(-A-S^{\mathrm I})^{-1}s^{\mathrm I}$, $\bar p^{\mathrm I}=\bar\pi(-A-S^{\mathrm I})^{-1}s^{\mathrm I}$ and $F_{ST}^{\mathrm I}=(p_0^{\mathrm I}-\bar p^{\mathrm I})/(1-\bar p^{\mathrm I})$. Here $-A=\mathrm{diag}(2u,\,u+u',\,2u')$ holds the total mutation rates of the three pair states. The source prints $(A-S^{\mathrm I})^{-1}$ with the same $A$, a sign slip: for $\mathrm S$ with $c=1$, $K=2$, $u=u'=0.3$ that expression gives $p_0\approx-1.50$, while $\pi_0(-A-S^{\mathrm S})^{-1}s^{\mathrm S}\approx0.412$ is the identity probability.
 
-**Proposition (expected SFS, Proposition 2.2).** Under the infinite-sites model with mutation rates $u,u'$, for a sample of $k$ genes with initial configuration distribution $\pi$ over the states of the $k$-lineage block-counting process with sub-generator $S^{\mathrm I}$, the expected number of sites at which the mutant is carried by $i$ of the $k$ genes is
+**Proposition (expected SFS, Proposition 2.2).** Under the infinite-sites model with mutation rates $u,u'$, take a sample of $k$ genes. The $k$-lineage block-counting chain has states $a=(a_1,\dots,a_k,a_{k+1},\dots,a_{2k})$ in the source's state space $E$, where $a_i$ and $a_{k+i}$ are the numbers of lineages in population 1 and in population 2 that subtend exactly $i$ sampled genes. Lineages move and coalesce at the rates of model $\mathrm I$, and the chain is absorbed when one lineage subtends all $k$ genes. Write $S^{\mathrm I}_k$ for its sub-generator on the transient states (for $k=2$ it is $S^{\mathrm I}$ above) and $\pi$ for the initial distribution. The expected number of sites at which the mutant is carried by $i$ of the $k$ genes is
 
 $$
-\mathbb E_\pi\bigl[\zeta^{(k)}_i\bigr]=\pi\,(-S^{\mathrm I})^{-1}r_i,\qquad i=1,\dots,k-1,
+\mathbb E_\pi\bigl[\zeta^{(k)}_i\bigr]=\pi\,(-S^{\mathrm I}_k)^{-1}r_i,\qquad i=1,\dots,k-1,
 $$
 
-where $r_i$ is the reward vector giving, in each state, the total mutation rate on branches subtending exactly $i$ sampled genes.
+where $r_i(a)=u\,a_i+u'\,a_{k+i}$ is the total mutation rate on branches subtending exactly $i$ sampled genes in state $a$.
 
 ## Depends on
 

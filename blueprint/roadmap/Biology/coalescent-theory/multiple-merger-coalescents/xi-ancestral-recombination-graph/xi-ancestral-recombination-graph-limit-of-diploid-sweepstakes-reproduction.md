@@ -16,7 +16,7 @@ which is four times the probability that two random chromosomes coalesce in one 
 - **groupmerge** into up to four simultaneous groups $J_1,\dots,J_4$, the four parental chromosomes of one sweepstakes pair, in which at least one group has $\ge 3$ members or at least two groups have $\ge 2$;
 - **recomb** of chromosome $i$ between loci $\ell$ and $\ell+1$, splitting it into a left part and a right part.
 
-**Theorem.** Under conditions 1–3, the ancestral process $\xi^{n,N}$ of the sample, sped up by $4/c_N$ generations, converges as $N\to\infty$ to the continuous-time Markov chain $\xi(t)$ with rates
+**Theorem.** Under conditions 1–3, the ancestral process $\xi^{n,N}$ of the sample, run for $\lfloor 4t/c_N\rfloor$ reproduction events up to time $t$, converges as $N\to\infty$ to the continuous-time Markov chain $\xi(t)$ with rates
 
 $$q_{\zeta,\zeta'} = \begin{cases} C_{b;2} & \zeta' = \mathsf{pairmerge}(\zeta),\\ r^{(\ell)} & \zeta' = \mathsf{recomb}_{\cdot,\ell}(\zeta),\\ C_{b;|J|} & \zeta' = \mathsf{groupmerge}_J(\zeta),\end{cases}$$
 

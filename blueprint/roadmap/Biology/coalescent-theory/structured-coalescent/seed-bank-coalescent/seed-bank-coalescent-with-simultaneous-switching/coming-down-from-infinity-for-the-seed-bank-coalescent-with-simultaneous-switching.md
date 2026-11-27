@@ -35,3 +35,4 @@ The switching measure is $z^{-1}\Lambda(dz)$, with a singularity of order at mos
 ## Sources
 
 - Jochen Blath, Noemi Kurt, "Population genetic models of dormancy", in *Probabilistic Structures in Evolution* (E. Baake and A. Wakolbinger, eds.), EMS Series of Congress Reports, EMS Press (2021), 247–266, <https://doi.org/10.4171/ECR/17-1/12>; preprint arXiv:2012.00810 (2020), section "Seed banks with simultaneous switching": definition of the seed bank coalescent with simultaneous switching, remark on the switching measure, convergence to the jump diffusion with duality, and coming-down-from-infinity theorem, <https://doi.org/10.48550/arXiv.2012.00810>.
+- Jochen Blath, Adrián González Casanova, Noemi Kurt and Maite Wilke-Berenguer, "The seed bank coalescent with simultaneous switching", *Electronic Journal of Probability* 25 (2020), 1–21, <https://doi.org/10.1214/19-EJP401> (original proofs).

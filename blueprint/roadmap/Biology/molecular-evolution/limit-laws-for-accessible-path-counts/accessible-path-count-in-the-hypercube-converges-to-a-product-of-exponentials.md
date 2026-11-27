@@ -24,4 +24,4 @@ Proposition 1 comes from counting pairs of open paths by the level at which they
 ## Sources
 
 - J. Berestycki, É. Brunet and Z. Shi, "The number of accessible paths in the hypercube", *Bernoulli* 22 (2016), 653–680, <https://doi.org/10.3150/14-BEJ641>; preprint arXiv:1304.0246 (2013), Proposition 1 and Theorems 1–4, <https://doi.org/10.48550/arXiv.1304.0246>.
-- P. Hegarty and A. Martinsson, "On the existence of accessible paths in various models of fitness landscapes" (source of the hypercube variance in Proposition 1).
+- P. Hegarty and A. Martinsson, "On the existence of accessible paths in various models of fitness landscapes", *Annals of Applied Probability* 24 (2014), 1375–1395, <https://doi.org/10.1214/13-AAP949> (source of the hypercube variance in Proposition 1).

@@ -27,3 +27,4 @@ The expected daily fitness gain in a population at fitness $F$ is $\mathbb{E}(\D
 ## Sources
 
 - E. Baake and A. Wakolbinger, "Microbial populations under selection", in *Probabilistic Structures in Evolution* (E. Baake and A. Wakolbinger, eds.), EMS Series of Congress Reports, EMS Press (2021), 43–68, <https://doi.org/10.4171/ECR/17-1/3>; preprint arXiv:2004.01011 (2020), Section 2 ("Modelling Lenski's long-term evolution experiment"): intraday and interday dynamics, the heuristic for the power law, and Theorem 2.1 (law of large numbers), <https://doi.org/10.48550/arXiv.2004.01011>.
+- Adrián González Casanova, Noemi Kurt, Anton Wakolbinger and Linglong Yuan, "An individual-based model for the Lenski experiment, and the deceleration of the relative fitness", *Stochastic Processes and their Applications* 126 (2016), 2211–2252, <https://doi.org/10.1016/j.spa.2016.01.009> (original proof of the law of large numbers).
