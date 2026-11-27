@@ -4,7 +4,7 @@ For a measure $\mu$ on $\Omega$, a treatment event $T$, potential outcomes $V$ a
 
 ## Background
 
-- The back-door adjustment:
+- [The back-door adjustment](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/backdoor-adjustment.md):
   the graphical criterion that yields the same adjustment formula from a causal diagram.
 
 ## Sources

@@ -1,0 +1,3 @@
+# Monotone-coupled laws with equal edge marginals agree on up-sets
+
+Let $E$ be a finite set, $\Omega = \{0, 1\}^E$, and $\mu, \nu : \Omega \to \mathbb{R}$ admitting a [monotone coupling](../fkg-inequality-and-monotonicity-of-random-cluste/is-monotone-coupling-fun.md) $P$. If $\mu(e \text{ open}) = \nu(e \text{ open})$ for every $e \in E$, then $\mu(A) = \nu(A)$ for every increasing $A \subseteq \Omega$. Here $\mu(e \text{ open}) = \sum_{\omega :\ \omega(e) \text{ open}} \mu(\omega)$ is the [edge marginal](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md) and $\mu(A) = \sum_{\omega \in A} \mu(\omega)$ is the [mass](../fkg-inequality-and-monotonicity-of-random-cluste/event-mass-prob.md) of $A$.

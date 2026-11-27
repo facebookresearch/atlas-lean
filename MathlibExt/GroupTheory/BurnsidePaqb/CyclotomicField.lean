@@ -35,7 +35,12 @@ namespace BurnsidePaqb
 open Polynomial
 
 open Classical in
-/-- The cyclotomic subfield of `ℂ`: `ℚ` adjoin the `m`-th roots of unity. -/
+/-- **Cyclotomic subfield of $\mathbb{C}$.** For a natural number $m$, the $m$-th cyclotomic
+field is the intermediate field of $\mathbb{C}/\mathbb{Q}$ generated over $\mathbb{Q}$ by the
+$m$-th roots of unity, that is, by the complex roots of $X^m - 1$.
+
+For $m = 0$ the polynomial $X^0 - 1$ is zero and is taken to have no roots, so the field is
+$\mathbb{Q}$. -/
 noncomputable def cycSubfield (m : ℕ) : IntermediateField ℚ ℂ :=
   IntermediateField.adjoin ℚ ↑(Polynomial.nthRootsFinset m (1 : ℂ))
 
@@ -45,13 +50,16 @@ theorem mem_cycSubfield_of_pow_eq_one (m : ℕ) (hm : m ≠ 0) (ζ : ℂ)
     (Finset.mem_coe.mpr ((Polynomial.mem_nthRootsFinset (Nat.pos_of_ne_zero hm)
       (1 : ℂ)).mpr h))
 
-/-- `X ^ m - C 1` over `ℚ` maps to the same shape over `ℂ`. -/
+/-- **$X^m - 1$ over $\mathbb{Q}$ and over $\mathbb{C}$.** For every natural number $m$, mapping
+the coefficients of the rational polynomial $X^m - 1$ along the inclusion
+$\mathbb{Q} \to \mathbb{C}$ gives the complex polynomial $X^m - 1$. -/
 theorem map_X_pow_sub_C_rat (m : ℕ) :
     ((X ^ m - C 1 : ℚ[X]).map (algebraMap ℚ ℂ)) = (X ^ m - C 1 : ℂ[X]) := by
   classical
   simp
 
-/-- The `ℚ`-root set of `X ^ m - C 1` in `ℂ` is exactly the roots of unity. -/
+/-- **Complex roots of $X^m - 1$.** For every natural number $m \neq 0$, the set of complex roots
+of the rational polynomial $X^m - 1$ is exactly the set of $m$-th roots of unity in $\mathbb{C}$. -/
 theorem cyc_rootSet (m : ℕ) (hm : m ≠ 0) :
     (X ^ m - C 1 : ℚ[X]).rootSet ℂ =
       ↑(Polynomial.nthRootsFinset m (1 : ℂ)) := by
@@ -65,7 +73,9 @@ theorem cyc_rootSet (m : ℕ) (hm : m ≠ 0) :
     Polynomial.mem_nthRootsFinset (Nat.pos_of_ne_zero hm) (1 : ℂ), haeval ζ]
   exact ⟨fun h => h.2, fun h => ⟨hCne, h⟩⟩
 
-/-- `cycSubfield m` is the splitting field of `X ^ m - C 1` over `ℚ` (for `m ≠ 0`). -/
+/-- **The $m$-th cyclotomic field is a splitting field of $X^m - 1$.** For every natural number
+$m \neq 0$, the subfield of $\mathbb{C}$ generated over $\mathbb{Q}$ by the $m$-th roots of unity
+is a splitting field over $\mathbb{Q}$ of the polynomial $X^m - 1 \in \mathbb{Q}[X]$. -/
 theorem cyc_isSplitting (m : ℕ) (hm : m ≠ 0) :
     (X ^ m - C 1 : ℚ[X]).IsSplittingField ℚ (cycSubfield m) := by
   classical
@@ -80,7 +90,9 @@ theorem cyc_isSplitting (m : ℕ) (hm : m ≠ 0) :
   · rw [cyc_rootSet m hm]
     rfl
 
-/-- For `m = 0` the cyclotomic field collapses to `⊥`. -/
+/-- **The zeroth cyclotomic field is $\mathbb{Q}$.** For $m = 0$ the cyclotomic subfield of
+$\mathbb{C}$ is the bottom intermediate field, that is $\mathbb{Q}$ itself: the polynomial
+$X^0 - 1$ is zero and is taken to have no roots, so nothing is adjoined. -/
 theorem cycSubfield_zero : cycSubfield 0 = ⊥ := by
   classical
   unfold cycSubfield

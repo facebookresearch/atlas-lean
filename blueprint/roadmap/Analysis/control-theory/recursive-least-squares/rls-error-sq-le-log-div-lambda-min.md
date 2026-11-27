@@ -39,7 +39,7 @@ statement gives $|\theta_{t+1} - \theta|^2 = O(\log t / t)$.
 
 ## Background
 
-- Martingales and optional stopping: the source's proof uses a martingale
+- [Martingales and optional stopping](../../../Probability/martingales/README.md): the source's proof uses a martingale
   estimation theorem for $\sum_k a_k w_{k+1}$ with adapted weights.
 - [Convergence of noise-free RLS under growing excitation](tendsto-rls-fst-of-noise-free.md): the deterministic case,
   where any growth of the smallest eigenvalue suffices.

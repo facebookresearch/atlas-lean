@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.HeatTransfer.ConductionPorts
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Pow
@@ -36,6 +40,8 @@ No new definitions or results are introduced here.
 
 - A. Linear field at `t = 1`
 - B. Robin seam discharge
+- C. Fin fixtures
+- D. Thermal network fixtures
 
 ## iv. References
 
@@ -197,3 +203,249 @@ example {D L k h0 hL Ta T : ℝ} (hD : 0 ≤ D) (hL0 : 0 < L)
       (fun x hx => by rw [hPDE1 t ht x hx, hPDE2 t ht x hx]; ring)
       (hcont_w t ht) (hcont_wx t ht) (hcont_wxx t ht) (hEw0 t ht) (hintw t ht))
     hEcont hwcont hinit
+
+/-! ## C. Fin fixtures -/
+
+section FinFixtures
+
+open Real Set Filter Topology ConductionPorts MathlibExt.Biology.Biophysics.MembraneCable
+
+/-- Nonzero fixture: `k = A = h = P = L = 1` (so `m = 1`), `Ta = 300`, base excess `50`. The
+transfer solution with `q 0 = 50 * tanh 1` is a fin steady state with an adiabatic tip and a
+positive base heat rate. -/
+example :
+    IsFinSteadyState 1 1 1 1 300 1 (fun x => 300 + cableVoltage 1 1 50 (50 * Real.tanh 1) x)
+        (cableCurrent 1 1 50 (50 * Real.tanh 1)) ∧
+      cableCurrent 1 1 50 (50 * Real.tanh 1) 1 = 0 ∧
+      (300 + cableVoltage 1 1 50 (50 * Real.tanh 1) 0) - 300 = 50 ∧
+      0 < cableCurrent 1 1 50 (50 * Real.tanh 1) 0 := by
+  have e1 : (1:ℝ) / (1 * 1) = 1 := by norm_num
+  have hbase := isSteadyState_cable (show (0:ℝ) < 1 from zero_lt_one)
+    (show (0:ℝ) < 1 from zero_lt_one) (Icc (0:ℝ) 1) 50 (50 * Real.tanh 1)
+  have hfun : (fun x : ℝ => (300 + cableVoltage 1 1 50 (50 * Real.tanh 1) x) - 300) =
+      cableVoltage 1 1 50 (50 * Real.tanh 1) := by
+    funext x
+    ring
+  have hfin : IsFinSteadyState 1 1 1 1 300 1
+      (fun x => 300 + cableVoltage 1 1 50 (50 * Real.tanh 1) x)
+      (cableCurrent 1 1 50 (50 * Real.tanh 1)) := by
+    rw [isFinSteadyState_iff, e1, hfun]
+    exact hbase
+  have hlam1 : lengthConstant (1:ℝ) 1 = 1 := by
+    unfold lengthConstant
+    rw [div_one, Real.sqrt_one]
+  have hr1 : charResistance (1:ℝ) 1 = 1 := by
+    unfold charResistance
+    rw [mul_one, Real.sqrt_one]
+  have hc : Real.cosh (1:ℝ) ≠ 0 := (cosh_pos _).ne'
+  have htc : Real.sinh 1 / Real.cosh 1 * Real.cosh 1 = Real.sinh 1 :=
+    div_mul_cancel₀ _ hc
+  have hcc : cableCurrent 1 1 50 (50 * Real.tanh 1) 1 = 0 := by
+    simp only [cableCurrent, hlam1, hr1, div_one, Real.tanh_eq_sinh_div_cosh]
+    linear_combination 50 * htc
+  have hcv0 : cableVoltage 1 1 50 (50 * Real.tanh 1) 0 = 50 := by
+    simp only [cableVoltage, hlam1, hr1, div_one, Real.cosh_zero, Real.sinh_zero,
+      mul_one, mul_zero, sub_zero]
+  have ht1 : (0:ℝ) < Real.tanh 1 := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (sinh_pos_iff.2 zero_lt_one) (cosh_pos _)
+  have hcc0 : cableCurrent 1 1 50 (50 * Real.tanh 1) 0 = 50 * Real.tanh 1 := by
+    simp only [cableCurrent, hlam1, hr1, div_one, Real.cosh_zero, Real.sinh_zero,
+      mul_one, mul_zero, sub_zero]
+  refine ⟨hfin, hcc, ?_, ?_⟩
+  · rw [hcv0]
+    norm_num
+  · rw [hcc0]
+    exact mul_pos (show (0:ℝ) < 50 by norm_num) ht1
+
+/-- Small `m L` is a limit: `tanh x / x → 1` as `x → 0⁺`, while the expression evaluated at
+`x = 0` is `0` (division by zero), not the limit. -/
+example :
+    Tendsto (fun x : ℝ => Real.tanh x / x) (𝓝[>] 0) (𝓝 1) ∧ Real.tanh 0 / 0 = 0 := by
+  have hsinh : Tendsto (fun x' : ℝ => Real.sinh x' / x') (𝓝[≠] 0) (𝓝 1) := by
+    have h := (Real.hasDerivAt_sinh 0).tendsto_slope
+    rw [slope_fun_def_field, Real.sinh_zero, Real.cosh_zero] at h
+    simpa only [sub_zero] using h
+  have hcosh : Tendsto (fun x' : ℝ => Real.cosh x') (𝓝[≠] 0) (𝓝 1) := by
+    have h : Tendsto (fun x' : ℝ => Real.cosh x') (𝓝 (0:ℝ)) (𝓝 (Real.cosh 0)) :=
+      Real.continuous_cosh.tendsto 0
+    have h2 := h.mono_left (nhdsWithin_le_nhds (s := ({0}ᶜ : Set ℝ)))
+    rwa [Real.cosh_zero] at h2
+  have hdiv := hsinh.div hcosh (by norm_num : (1:ℝ) ≠ 0)
+  rw [div_one] at hdiv
+  have hfun : (fun x' : ℝ => Real.tanh x' / x') =
+      fun x' => (Real.sinh x' / x') / Real.cosh x' := by
+    funext x'
+    rw [Real.tanh_eq_sinh_div_cosh, div_right_comm]
+  rw [hfun]
+  refine ⟨?_, div_zero _⟩
+  exact hdiv.mono_left (nhdsWithin_mono 0 (fun _ hx => ne_of_gt hx))
+
+end FinFixtures
+
+/-! ## D. Thermal network fixtures -/
+
+section ThermalNetworkFixtures
+
+open ConductionPorts
+
+/-- Derivatives and network equations of the two-node solution, shared by the checks below. -/
+private lemma twoNode_trajectory :
+    let C : Fin 2 → ℝ := ![1, 2]
+    let G : Fin 2 → Fin 2 → ℝ := ![![0, 2], ![2, 0]]
+    let T : Fin 2 → ℝ → ℝ :=
+      ![fun t => 1000 / 3 + 200 / 3 * Real.exp (-3 * t),
+        fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
+    let dT : Fin 2 → ℝ → ℝ :=
+      ![fun t => -200 * Real.exp (-3 * t), fun t => 100 * Real.exp (-3 * t)]
+    (∀ i t, HasDerivAt (T i) (dT i t) t) ∧
+      ∀ i t, C i * dT i t = ∑ j, G i j * (T j t - T i t) := by
+  refine ⟨?_, ?_⟩
+  · intro i t
+    fin_cases i
+    · simp only [Fin.mk_zero, Matrix.cons_val_zero]
+      have hinner : HasDerivAt (fun t : ℝ => -3 * t) (-3 * 1) t := by
+        simpa using (hasDerivAt_id t).const_mul (-3)
+      have hexp := hinner.exp
+      have hmul := hexp.const_mul (200 / 3)
+      have hadd := hmul.const_add (1000 / 3)
+      convert hadd using 1
+      ring
+    · simp only [Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one]
+      have hinner : HasDerivAt (fun t : ℝ => -3 * t) (-3 * 1) t := by
+        simpa using (hasDerivAt_id t).const_mul (-3)
+      have hexp := hinner.exp
+      have hmul := hexp.const_mul (100 / 3)
+      have hsub := (hasDerivAt_const t (1000 / 3)).sub hmul
+      convert hsub using 1
+      ring
+  · intro i t
+    fin_cases i
+    · simp only [Fin.sum_univ_two, Fin.mk_zero, Matrix.cons_val_zero, Matrix.cons_val_one]
+      ring
+    · simp only [Fin.sum_univ_two, Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one]
+      ring
+
+/-- Two-node fixture: `C = (1, 2)`, `G 0 1 = G 1 0 = 2`, no self-conductance, no inputs, initial
+temperatures `400` and `300`. The pair `T 0 t = 1000/3 + (200/3) e^{-3t}`,
+`T 1 t = 1000/3 - (100/3) e^{-3t}` solves the network equations for every `t`, keeps the stored
+heat at `1000`, and has quadratic-functional rate `-20000` at `t = 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, 2]
+    let G : Fin 2 → Fin 2 → ℝ := ![![0, 2], ![2, 0]]
+    let T : Fin 2 → ℝ → ℝ :=
+      ![fun t => 1000 / 3 + 200 / 3 * Real.exp (-3 * t),
+        fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
+    let dT : Fin 2 → ℝ → ℝ :=
+      ![fun t => -200 * Real.exp (-3 * t), fun t => 100 * Real.exp (-3 * t)]
+    (∀ i, 0 < C i) ∧ (∀ i j, 0 ≤ G i j) ∧ (∀ i j, G i j = G j i) ∧
+      (∀ i t, HasDerivAt (T i) (dT i t) t) ∧
+      (∀ i t, C i * dT i t = ∑ j, G i j * (T j t - T i t)) ∧
+      T 0 0 = 400 ∧ T 1 0 = 300 ∧
+      (∀ t, ∑ i, C i * T i t = 1000) ∧
+      -∑ i, ∑ j, G i j * (T i 0 - T j 0) ^ 2 / 2 = -20000 := by
+  obtain ⟨hT, hbal⟩ := twoNode_trajectory
+  have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+  refine ⟨?_, ?_, ?_, hT, hbal, ?_, ?_, ?_, ?_⟩
+  · intro i
+    fin_cases i <;> simp
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp
+  · simp only [Matrix.cons_val_zero, e0]
+    norm_num
+  · simp only [Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+    norm_num
+  · intro t
+    simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    ring
+  · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+    norm_num
+
+/-- Consumers on the two-node solution: the storage balance gives stored-heat derivative `0` at
+every time, and the quadratic identity gives the derivative `-20000` at `t = 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, 2]
+    let T : Fin 2 → ℝ → ℝ :=
+      ![fun t => 1000 / 3 + 200 / 3 * Real.exp (-3 * t),
+        fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
+    (∀ t, HasDerivAt (fun τ => ∑ i, C i * T i τ) 0 t) ∧
+      HasDerivAt (fun τ => ∑ i, C i * T i τ ^ 2 / 2) (-20000) 0 := by
+  obtain ⟨hT, hbal⟩ := twoNode_trajectory
+  have hG : ∀ i j, (![![0, 2], ![2, 0]] : Fin 2 → Fin 2 → ℝ) i j =
+      (![![0, 2], ![2, 0]] : Fin 2 → Fin 2 → ℝ) j i := by
+    intro i j
+    fin_cases i <;> fin_cases j <;> rfl
+  have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+  refine ⟨fun t => ?_, ?_⟩
+  · have h := hasDerivAt_thermalStorage (Q := fun _ => 0) hG (fun i => hT i t)
+      (fun i => (hbal i t).trans (add_zero _).symm)
+    simp only [Finset.sum_const_zero] at h
+    exact h
+  · have h := hasDerivAt_quadraticFunctional hG (fun i => hT i 0) (fun i => hbal i 0)
+    convert h using 1
+    simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+    norm_num
+
+/-- Consumers of the sign lemmas at `T = (400, 300)`: the quadratic functional is nonnegative
+for `C = (1, 2)` and its rate is nonpositive for the nonnegative conductances. -/
+example :
+    0 ≤ ∑ i, (![1, 2] : Fin 2 → ℝ) i * (![400, 300] : Fin 2 → ℝ) i ^ 2 / 2 ∧
+      -∑ i, ∑ j, (![![0, 2], ![2, 0]] : Fin 2 → Fin 2 → ℝ) i j *
+        ((![400, 300] : Fin 2 → ℝ) i - (![400, 300] : Fin 2 → ℝ) j) ^ 2 / 2 ≤ 0 :=
+  ⟨quadraticFunctional_nonneg (fun i => by fin_cases i <;> norm_num) _,
+    quadraticFunctional_rate_nonpos (fun i j => by fin_cases i <;> fin_cases j <;> norm_num) _⟩
+
+/-- Invalid: a negative conductance `G 0 1 = G 1 0 = -1` violates the sign hypothesis of
+`quadraticFunctional_rate_nonpos` and makes the quadratic functional grow: at `T = (1, 0)` the
+rate is `1 > 0`. -/
+example :
+    let G : Fin 2 → Fin 2 → ℝ := ![![0, -1], ![-1, 0]]
+    let T : Fin 2 → ℝ := ![1, 0]
+    ¬ (∀ i j, 0 ≤ G i j) ∧ 0 < -∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2 := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    have h01 := h 0 1
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h01
+    norm_num at h01
+  · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+
+/-- The same negative conductance through the derivative identity, which needs only symmetry:
+with `C = (1, 1)`, the motion `T 0 s = 1 + s`, `T 1 s = -s` obeys the network equations at
+`s = 0`, and the quadratic functional has derivative `1 > 0` there. -/
+example :
+    HasDerivAt (fun τ => ∑ i, (![1, 1] : Fin 2 → ℝ) i *
+        (![fun s => 1 + s, fun s => -s] : Fin 2 → ℝ → ℝ) i τ ^ 2 / 2) 1 0 := by
+  have hG : ∀ i j, (![![0, -1], ![-1, 0]] : Fin 2 → Fin 2 → ℝ) i j =
+      (![![0, -1], ![-1, 0]] : Fin 2 → Fin 2 → ℝ) j i := by
+    intro i j
+    fin_cases i <;> fin_cases j <;> rfl
+  have hT : ∀ i, HasDerivAt ((![fun s => 1 + s, fun s => -s] : Fin 2 → ℝ → ℝ) i)
+      ((![1, -1] : Fin 2 → ℝ) i) 0 := by
+    intro i
+    fin_cases i
+    · simpa using (hasDerivAt_id' (0 : ℝ)).const_add 1
+    · simpa using hasDerivAt_neg (0 : ℝ)
+  have h := hasDerivAt_quadraticFunctional (C := ![1, 1]) hG hT (fun i => by
+    fin_cases i <;> norm_num [Fin.sum_univ_two])
+  convert h using 1
+  norm_num [Fin.sum_univ_two]
+
+/-- Invalid: a negative capacity `C = (1, -2)` violates the sign hypothesis of
+`quadraticFunctional_nonneg` and makes the quadratic functional indefinite: at `T = (0, 1)` it
+is `-1 < 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, -2]
+    let T : Fin 2 → ℝ := ![0, 1]
+    ¬ (∀ i, 0 ≤ C i) ∧ ∑ i, C i * T i ^ 2 / 2 < 0 := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    have h1 := h 1
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h1
+    norm_num at h1
+  · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+
+end ThermalNetworkFixtures

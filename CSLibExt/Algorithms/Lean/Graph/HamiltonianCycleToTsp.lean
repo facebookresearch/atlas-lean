@@ -31,7 +31,11 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.Graph
 
-/-- Negates each adjacency bit, charging one read and one write per bit. -/
+/-- **Hamiltonian-cycle to TSP converter.** The Hamiltonian-cycle to TSP converter takes a Boolean
+array $x$ and, starting from the empty array, scans $x$ from left to right and appends the
+negation of each cell, charging one time unit before and one time unit after each append (one
+read and one write per cell). It returns the resulting array of negated cells together with the
+total time charged. -/
 def hamiltonianCycleToTsp (x : Array Bool) : TimeM Nat (Array Bool) :=
   x.foldlM (fun out bit => do
     TimeM.tick (1 : Nat)
@@ -76,26 +80,39 @@ private lemma ret_toList (x : Array Bool) :
   rw [← Array.foldlM_toList]
   simpa using fold_ret x.toList #[]
 
-/-- The converter preserves the number of input cells, including malformed arrays. -/
+/-- **The Hamiltonian-cycle to TSP converter preserves length.** For every Boolean array $x$, the
+array output by the Hamiltonian-cycle to TSP converter on $x$ has the same length as $x$.
+
+No assumption that $x$ encodes a graph is needed. -/
 theorem hamiltonianCycleToTsp_size (x : Array Bool) :
     (hamiltonianCycleToTsp x).ret.size = x.size := by
   have h := congrArg List.length (ret_toList x)
   simpa using h
 
-/-- Every optional output cell is the negation of the corresponding optional input cell. -/
+/-- **The Hamiltonian-cycle to TSP converter negates every cell.** For every Boolean array $x$ and
+every index $k$, the array output by the Hamiltonian-cycle to TSP converter on $x$ has a cell at
+index $k$ exactly when $x$ does, and that cell is the negation of the cell of $x$ at index $k$. -/
 theorem hamiltonianCycleToTsp_getElem? (x : Array Bool) (k : Nat) :
     (hamiltonianCycleToTsp x).ret[k]? = x[k]?.map Bool.not := by
   rw [← Array.getElem?_toList, ret_toList, List.getElem?_map, Array.getElem?_toList]
 
-/-- The same execution charges one read and one write for every supplied bit. -/
+/-- **Running time of the Hamiltonian-cycle to TSP converter.** For every Boolean array $x$, the
+time charged by the Hamiltonian-cycle to TSP converter on $x$ is $2m$, where $m$ is the length of
+$x$: one unit for reading and one unit for writing each cell. -/
 theorem hamiltonianCycleToTsp_time (x : Array Bool) :
     (hamiltonianCycleToTsp x).time = 2 * x.size := by
   unfold hamiltonianCycleToTsp
   rw [← Array.foldlM_toList]
   simpa using fold_time x.toList #[]
 
-/-- An encoded simple graph yields zero on edges, one on nonedges and the diagonal,
-and symmetric cells. -/
+/-- **Costs produced by the Hamiltonian-cycle to TSP converter.** Let $G$ be a simple graph on the
+vertex set $\{0, \dots, n-1\}$, let $x$ be a Boolean array of length $n^2$ such that for all
+$i, j < n$ the cell of $x$ at index $in + j$ exists and is true exactly when $i$ and $j$ are
+adjacent in $G$, and let $y$ be the array output by the Hamiltonian-cycle to TSP converter on $x$,
+with a Boolean cell read as $1$ if true and $0$ if false. Then for all $i, j < n$ the cell of $y$
+at index $in + j$ exists and equals $0$ if $i$ and $j$ are adjacent in $G$ and $1$ otherwise; for
+every $i < n$ the cell of $y$ at index $in + i$ exists and equals $1$; and for all $i, j < n$ the
+cells of $y$ at indices $in + j$ and $jn + i$ are equal. -/
 theorem hamiltonianCycleToTsp_costs (x : Array Bool) (n : Nat)
     (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (_hsize : x.size = n * n)
@@ -145,8 +162,15 @@ private lemma mapped_walk_zero (x : Array Bool) (n : Nat)
     rw [hzero u v h, ih]
     simp [List.replicate_succ]
 
-/-- Every source Hamiltonian cycle maps to the complete graph with the same support
-and zero actual cost. -/
+/-- **Hamiltonian cycles of the source graph give zero-cost tours.** Let $G$ be a simple graph on
+the vertex set $\{0, \dots, n-1\}$, let $x$ be a Boolean array of length $n^2$ such that for all
+$i, j < n$ the cell of $x$ at index $in + j$ exists and is true exactly when $i$ and $j$ are
+adjacent in $G$, and let $y$ be the array output by the Hamiltonian-cycle to TSP converter on $x$,
+with a Boolean cell read as $1$ if true and $0$ if false. Let $p$ be a Hamiltonian cycle in $G$
+based at a vertex $a$, and let $p'$ be $p$ regarded as a closed walk in the complete graph on
+$\{0, \dots, n-1\}$. Then $p'$ is a Hamiltonian cycle, $p'$ visits the same sequence of vertices
+as $p$, and for every directed edge $(u, v)$ traversed by $p'$ the cell of $y$ at index $un + v$
+exists, and the sum of these cells over the directed edges of $p'$ is $0$. -/
 theorem hamiltonianCycleToTsp_forward (x : Array Bool) (n : Nat)
     (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (hsize : x.size = n * n)
@@ -205,8 +229,15 @@ private lemma edges_of_cost_zero (x : Array Bool) (n : Nat)
         exact hadj
       · exact ih tail ht htail e he
 
-/-- Every complete-graph Hamiltonian cycle of nonpositive actual cost transfers to
-the source graph with unchanged support. -/
+/-- **Tours of cost zero give Hamiltonian cycles of the source graph.** Let $G$ be a simple graph
+on the vertex set $\{0, \dots, n-1\}$, let $x$ be a Boolean array of length $n^2$ such that for
+all $i, j < n$ the cell of $x$ at index $in + j$ exists and is true exactly when $i$ and $j$ are
+adjacent in $G$, and let $y$ be the array output by the Hamiltonian-cycle to TSP converter on $x$,
+with a Boolean cell read as $1$ if true and $0$ if false. Let $p$ be a Hamiltonian cycle based at
+a vertex $a$ in the complete graph on $\{0, \dots, n-1\}$ such that for every directed edge
+$(u, v)$ traversed by $p$ the cell of $y$ at index $un + v$ exists and the sum of these cells over
+the directed edges of $p$ is at most $0$. Then there is a Hamiltonian cycle $q$ in $G$ based at
+$a$ that visits the same sequence of vertices as $p$. -/
 theorem hamiltonianCycleToTsp_reverse (x : Array Bool) (n : Nat)
     (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (hsize : x.size = n * n)
@@ -222,8 +253,14 @@ theorem hamiltonianCycleToTsp_reverse (x : Array Bool) (n : Nat)
   have hedge := edges_of_cost_zero x n G hsize henc p costs hmap hsum
   exact ⟨p.transfer G hedge, hp.transfer hedge, SimpleGraph.Walk.support_transfer p hedge⟩
 
-/-- A source graph has a strict Hamiltonian cycle exactly when the transformed instance
-has a nonpositive-cost strict tour. -/
+/-- **Correctness of the Hamiltonian-cycle to TSP reduction.** Let $G$ be a simple graph on the
+vertex set $V = \{0, \dots, n-1\}$, let $x$ be a Boolean array of length $n^2$ such that for all
+$i, j < n$ the cell of $x$ at index $in + j$ exists and is true exactly when $i$ and $j$ are
+adjacent in $G$, and let $y$ be the array output by the Hamiltonian-cycle to TSP converter on $x$,
+with a Boolean cell read as $1$ if true and $0$ if false. Then $G$ has a Hamiltonian cycle if and
+only if the complete graph on $V$ has a Hamiltonian cycle $p$ such that for every directed edge
+$(u, v)$ traversed by $p$ the cell of $y$ at index $un + v$ exists and the sum of these cells over
+the directed edges of $p$ is at most $0$. -/
 theorem hamiltonianCycleToTsp_iff (x : Array Bool) (n : Nat)
     (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (hsize : x.size = n * n)

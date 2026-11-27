@@ -20,7 +20,7 @@ representations are one-dimensional.
 
 - [Total variation distance of functions on a finite set](../../markov-chains/mixing-times-of-markov-chains/tv-dist.md): the
   distance being bounded.
-- Plancherel formula on a finite abelian group:
+- [Plancherel formula on a finite abelian group](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-plancherel.md):
   the identity behind the second step.
 
 ## Sources

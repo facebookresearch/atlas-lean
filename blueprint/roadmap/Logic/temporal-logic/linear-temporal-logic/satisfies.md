@@ -9,3 +9,7 @@ not; $\varphi \wedge \psi$ holds when both $\varphi$ and $\psi$ do; $\mathsf{X}\
 $\varphi$) holds when $w^{(1)} \models \varphi$; and $\varphi \mathbin{\mathsf{U}} \psi$
 ($\varphi$ until $\psi$) holds when there is a $k$ with $w^{(k)} \models \psi$ and
 $w^{(j)} \models \varphi$ for all $j < k$.
+
+## Related topics
+
+- [Satisfaction of LTL formulas on runs](satisfies-2.md): the same semantics for runs, sequences of states with a valuation of atoms on states.

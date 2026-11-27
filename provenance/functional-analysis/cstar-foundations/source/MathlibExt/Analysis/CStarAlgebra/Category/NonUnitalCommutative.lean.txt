@@ -1,0 +1,174 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Category.Basic
+public import Mathlib.CategoryTheory.Functor.FullyFaithful
+public import Mathlib.Analysis.CStarAlgebra.Spectrum
+public import Mathlib.CategoryTheory.ConcreteCategory.Basic
+public import Mathlib.CategoryTheory.Opposites
+public import MathlibExt.Analysis.Normed.Algebra.CharacterOnePointFunctor
+public import MathlibExt.Topology.Category.LocallyCompactHausdorff.Partial
+
+/-!
+# The actual nonunital commutative category and pointed-character functor
+
+Objects retain their original commutative nonunital C-star fields and maps
+are the existing nonunital star homomorphisms. Their continuity is derived
+from the existing C-star map bound, with no continuity premise. The original
+character space has its existing pointwise locally compact topology; maps
+are the actual infinity-preserving maps of its one-point compactification.
+No equivalence, inverse object or chosen character model supplies DATA.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open CategoryTheory Opposite Topology WeakDual
+open scoped CStarAlgebra OnePoint
+
+universe u
+
+/-- The original commutative nonunital complex C-star fields. -/
+structure NonUnitalCommCStarAlgCat : Type (u + 1) where
+  /-- The original algebra carrier. -/
+  carrier : Type u
+  /-- Its original commutative nonunital C-star algebra dictionary. -/
+  [str : NonUnitalCommCStarAlgebra carrier]
+
+attribute [instance] NonUnitalCommCStarAlgCat.str
+
+namespace NonUnitalCommCStarAlgCat
+
+instance instCoeSort : CoeSort NonUnitalCommCStarAlgCat.{u} (Type u) := ⟨carrier⟩
+
+/-- Bundle the existing nonunital algebra without replacing its norm or scalar structure. -/
+abbrev of (A : Type u) [NonUnitalCommCStarAlgebra A] : NonUnitalCommCStarAlgCat.{u} := ⟨A⟩
+
+/-- Forget only commutativity into the existing canonical category, retaining the actual carrier and norm. -/
+def toNonUnitalCStarAlgCat (A : NonUnitalCommCStarAlgCat.{u}) : NonUnitalCStarAlgCat.{u} :=
+  NonUnitalCStarAlgCat.of A
+
+/-- The original commutative category uses the canonical general category's Hom, identity and composition. -/
+instance category : Category.{u} NonUnitalCommCStarAlgCat.{u} where
+  Hom A B := (NonUnitalCStarAlgCat.category).Hom (toNonUnitalCStarAlgCat A) (toNonUnitalCStarAlgCat B)
+  id A := (NonUnitalCStarAlgCat.category).id (toNonUnitalCStarAlgCat A)
+  comp f g := (NonUnitalCStarAlgCat.category).comp f g
+  id_comp := by intro A B f; exact (NonUnitalCStarAlgCat.category).id_comp f
+  comp_id := by intro A B f; exact (NonUnitalCStarAlgCat.category).comp_id f
+  assoc := by intro A B C D f g h; exact (NonUnitalCStarAlgCat.category).assoc f g h
+
+/-- The commutative dictionary is extra object data; morphisms are the same canonical nonunital star maps. -/
+def forgetfulFunctor : NonUnitalCommCStarAlgCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj := toNonUnitalCStarAlgCat
+  map f := f
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- The canonical forgetful comparison is fully faithful with the exact identity on every Hom. -/
+def fullyFaithfulForgetful : forgetfulFunctor.FullyFaithful where
+  preimage f := f
+  map_preimage _ := rfl
+  preimage_map _ := rfl
+
+/-- Forgetting commutativity preserves the exact original algebra carrier. -/
+theorem toNonUnitalCStarAlgCat_carrier (A : NonUnitalCommCStarAlgCat.{u}) :
+    ↥(toNonUnitalCStarAlgCat A) = A := rfl
+
+instance concreteCategory :
+    ConcreteCategory NonUnitalCommCStarAlgCat.{u} (fun A B => A →⋆ₙₐ[ℂ] B) where
+  hom f := f
+  ofHom f := f
+  hom_ofHom _f := rfl
+  ofHom_hom _f := rfl
+  id_apply _a := rfl
+  comp_apply _f _g _a := rfl
+
+/-- The faithful comparison keeps the original actual nonunital star-map value. -/
+theorem forgetfulFunctor_map_apply {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) (a : A) :
+    forgetfulFunctor.map f a = f a := rfl
+
+/-- The existing weak character carrier with its original locally compact Hausdorff topology. -/
+def characterSpaceObject (A : NonUnitalCommCStarAlgCat.{u}) : LocallyCompactHausPartialCat.{u} := by
+  let : LocallyCompactSpace (characterSpace ℂ A) := CharacterSpace.locallyCompactSpaceNonUnital
+  exact LocallyCompactHausPartialCat.of (characterSpace ℂ A)
+
+/-- The actual source pointed morphism, whose continuity comes from the original C-star map law. -/
+def characterSpaceMap {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) :
+    characterSpaceObject B ⟶ characterSpaceObject A := by
+  let ρ : A →⋆ₙₐ[ℂ] B := ConcreteCategory.hom f
+  exact LocallyCompactHausPartialCat.ofPointedMap
+    (WeakDual.pointedCharacterMap ρ.toNonUnitalAlgHom (map_continuous ρ))
+
+/-- The exact original contravariant pointed-character functor. -/
+def characterSpaceFunctor : NonUnitalCommCStarAlgCat.{u} ⥤ LocallyCompactHausPartialCat.{u}ᵒᵖ where
+  obj A := op (characterSpaceObject A)
+  map f := (characterSpaceMap f).op
+  map_id A := by
+    apply Quiver.Hom.unop_inj
+    apply Under.UnderMorphism.ext
+    exact congrArg (fun f : C(OnePoint (characterSpace ℂ A), OnePoint (characterSpace ℂ A)) =>
+      TopCat.ofHom f) WeakDual.onePointCharacterPrecomposition_id
+  map_comp {A B C} f g := by
+    apply Quiver.Hom.unop_inj
+    apply Under.UnderMorphism.ext
+    let ρ := ConcreteCategory.hom f
+    let σ := ConcreteCategory.hom g
+    exact congrArg (fun h : C(OnePoint (characterSpace ℂ C), OnePoint (characterSpace ℂ A)) =>
+      TopCat.ofHom h)
+      (WeakDual.onePointCharacterPrecomposition_comp ρ.toNonUnitalAlgHom σ.toNonUnitalAlgHom
+        (map_continuous ρ) (map_continuous σ))
+
+/-- Bundling an existing algebra preserves its exact original carrier. -/
+@[simp]
+theorem of_carrier (A : Type u) [NonUnitalCommCStarAlgebra A] : ↥(of A) = A := rfl
+
+/-- The character object has exactly the original weak character carrier, without a replacement model. -/
+@[simp]
+theorem characterSpaceObject_carrier (A : NonUnitalCommCStarAlgCat.{u}) :
+    ↥(characterSpaceObject A) = characterSpace ℂ A := rfl
+
+/-- The actual pointed character map is the original one-point precomposition map. -/
+theorem characterSpaceMap_precomposition {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) :
+    LocallyCompactHausPartialCat.extension
+      (X := characterSpaceObject B) (Y := characterSpaceObject A) (characterSpaceMap f) =
+      WeakDual.onePointCharacterPrecomposition
+        (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B).toNonUnitalAlgHom
+        (map_continuous (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B)) := rfl
+
+/-- Evaluation of the actual character map is literal precomposition with the original nonunital homomorphism. -/
+theorem characterSpaceMap_evaluation {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B)
+    (p : OnePoint (characterSpace ℂ B)) (a : A) :
+    (onePointCharacterSpaceHomeomorph (A := A)
+      (LocallyCompactHausPartialCat.extension
+        (X := characterSpaceObject B) (Y := characterSpaceObject A) (characterSpaceMap f) p) :
+      WeakDual ℂ A) a =
+      (onePointCharacterSpaceHomeomorph (A := B) p : WeakDual ℂ B) (ConcreteCategory.hom f a) := by
+  rw [characterSpaceMap_precomposition]
+  change (onePointCharacterSpaceHomeomorph (A := A)
+    ((onePointCharacterSpaceHomeomorph (A := A)).symm
+      (characterWithZeroPrecomposition
+        (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B).toNonUnitalAlgHom
+        (map_continuous (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B))
+        (onePointCharacterSpaceHomeomorph (A := B) p))) : WeakDual ℂ A) a = _
+  rw [Homeomorph.apply_symm_apply]
+  exact characterWithZeroPrecomposition_apply
+    (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B).toNonUnitalAlgHom
+    (map_continuous (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B))
+    (onePointCharacterSpaceHomeomorph (A := B) p) a
+
+/-- Every original nonunital morphism preserves the actual point at infinity. -/
+theorem characterSpaceMap_infty {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) :
+    LocallyCompactHausPartialCat.extension
+      (X := characterSpaceObject B) (Y := characterSpaceObject A) (characterSpaceMap f) ∞ = ∞ :=
+  LocallyCompactHausPartialCat.extension_infty
+    (X := characterSpaceObject B) (Y := characterSpaceObject A) (characterSpaceMap f)
+
+end NonUnitalCommCStarAlgCat
+
+end

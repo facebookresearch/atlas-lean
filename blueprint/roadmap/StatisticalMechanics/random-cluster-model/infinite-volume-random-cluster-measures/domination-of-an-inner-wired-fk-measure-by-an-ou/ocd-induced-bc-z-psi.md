@@ -1,0 +1,7 @@
+# Factorization of the conditioned outer partition function
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ an injective map that [matches adjacency](ocd-adj-match.md) ($x \sim y$ in $G_{\mathrm{in}}$ if and only if $\iota x \sim \iota y$ in $G_{\mathrm{out}}$), and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices, and let $p, q \in \mathbb{R}$. Configurations on $V$ are assignments of open/closed states to all unordered pairs of elements of $V$ (loops included); $\iota$ maps a pair $\{x, y\}$ to $\{\iota x, \iota y\}$, and the images of pairs of $V_{\mathrm{in}}$ are the [inner pairs](ocd-inner-edge-finset.md). For every configuration $\psi$ on $V_{\mathrm{out}}$,
+
+$$Z^K_{\psi} = Z^{W_\psi}_{G_{\mathrm{in}}}(p, q)\, s(\psi),$$
+
+where $Z^K_\psi$ is the [sum of the wired weights](../../fkg-inequality-and-monotonicity-of-random-cluste/induced-bc-z.md) $w^K_{G_{\mathrm{out}}}$ (boundary wiring the clique $K$ on $\partial_{\mathrm{out}}$) over the configurations agreeing with $\psi$ off the inner pairs, $Z^{W_\psi}_{G_{\mathrm{in}}}$ is the [partition function](../../fkg-inequality-and-monotonicity-of-random-cluste/bc-z.md) on $G_{\mathrm{in}}$ with boundary wiring $W_\psi$ ([induced wiring](ocd-induced-wiring.md) $W_\psi$ on $V_{\mathrm{in}}$ (distinct $x, y$ with $\iota x$ and $\iota y$ joined by a path in $O_\psi$)), and $s(\psi)$ is the [outer factor](ocd-psi-shift.md).

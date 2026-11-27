@@ -9,7 +9,7 @@ Here $n \ge 1$. The law after $k$ random transpositions is the convolution power
 
 ## Background
 
-- Fisher–Yates shuffle:
+- [Fisher–Yates shuffle](../../../ComputerScience/randomized-algorithms/fisher-yates-shuffle/README.md):
   the algorithm with $n - 1$ prescribed transpositions that is exactly uniform; Diaconis and
   Shahshahani's question came from a programmer using $T^{*k}$ instead.
 

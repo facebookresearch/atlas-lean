@@ -26,28 +26,47 @@ positive-`k` source domain.
 -/
 @[expose] public section
 namespace ArithmeticFunction
-/-- Jordan totient `J_k`, integral factorization form (He (1.7)). -/
+/-- **Jordan's totient function.** For a natural number $k$, Jordan's totient function $J_k$ is
+the arithmetic function with natural-number values given by $J_k(0) = 0$ and, for $n \ne 0$,
+$$J_k(n) = \prod_{p \mid n} p^{k(v_p(n) - 1)} (p^k - 1),$$
+where the product runs over the prime divisors $p$ of $n$ and $v_p(n)$ is the exponent of $p$
+in the prime factorization of $n$.
+
+For $k \ge 1$ and $n \ge 1$ this equals $n^k \prod_{p \mid n} (1 - p^{-k})$, the form in which the
+function is usually defined.
+
+Source: Yuan He, *On the mean values of products of Dirichlet L-functions at positive integers*,
+arXiv:2310.18048v3, equation (1.7). -/
 public def jordanTotient (k : ℕ) : ArithmeticFunction ℕ where
   toFun n :=
     if n = 0 then 0
     else ∏ p ∈ n.primeFactors, p ^ (k * (n.factorization p - 1)) *
       (p ^ k - 1)
   map_zero' := ite_eq_left rfl
-/-- Zero extension convention: `J_k(0) = 0`. -/
+/-- **Jordan's totient at zero.** For every natural number $k$, the Jordan totient function
+satisfies $J_k(0) = 0$; this is the convention extending $J_k$ to $0$. -/
 public theorem jordanTotient_zero (k : ℕ) :
     jordanTotient k 0 = 0 := rfl
-/-- `J_k(1) = 1` since the product is empty. -/
+/-- **Jordan's totient at one.** For every natural number $k$, the Jordan totient function
+satisfies $J_k(1) = 1$. -/
 public theorem jordanTotient_apply_one (k : ℕ) :
     jordanTotient k 1 = 1 := by
   simp [jordanTotient, Nat.primeFactors_one]
-/-- Unfolding at nonzero `n` (integral form of He (1.7)). -/
+/-- **Prime-factorization formula for Jordan's totient.** For all natural numbers $k$ and
+$n \neq 0$, the Jordan totient function satisfies
+$$J_k(n) = \prod_{p \mid n} p^{k(v_p(n) - 1)} (p^k - 1),$$
+where the product runs over the distinct primes $p$ dividing $n$ and $v_p(n)$ is the exponent of
+$p$ in the prime factorization of $n$.
+
+Source: Yuan He, arXiv:2310.18048v3, equation (1.7), in integral form. -/
 public theorem jordanTotient_eq_prod_factorization {k n : ℕ}
     (hn : n ≠ 0) :
     jordanTotient k n = ∏ p ∈ n.primeFactors,
       p ^ (k * (n.factorization p - 1)) * (p ^ k - 1) := by
   unfold jordanTotient
   simp [hn]
-/-- Value at prime powers. -/
+/-- **Jordan's totient at prime powers.** For every natural number $k$, every prime $p$ and every
+integer $e \ge 1$, the Jordan totient function satisfies $J_k(p^e) = p^{k(e-1)}(p^k - 1)$. -/
 public theorem jordanTotient_prime_pow {k p e : ℕ} (hp : p.Prime)
     (he : 0 < e) :
     jordanTotient k (p ^ e) =
@@ -57,12 +76,15 @@ public theorem jordanTotient_prime_pow {k p e : ℕ} (hp : p.Prime)
     Nat.primeFactors_prime_pow he.ne' hp
   rw [jordanTotient_eq_prod_factorization hne, hset,
     Finset.prod_singleton, Nat.factorization_pow_self hp]
-/-- Value at primes: `J_k(p) = p^k - 1`. -/
+/-- **Jordan's totient at primes.** For every natural number $k$ and every prime $p$, the Jordan
+totient function satisfies $J_k(p) = p^k - 1$. -/
 public theorem jordanTotient_prime {k p : ℕ} (hp : p.Prime) :
     jordanTotient k p = p ^ k - 1 := by
   have h1 := jordanTotient_prime_pow (k := k) hp one_pos
   simpa [pow_one] using h1
-/-- Jordan totient is multiplicative. -/
+/-- **Jordan's totient function is multiplicative.** For every natural number $k$, the Jordan
+totient function $J_k$ is multiplicative: $J_k(1) = 1$, and $J_k(mn) = J_k(m) J_k(n)$ for all
+coprime natural numbers $m$ and $n$. -/
 public theorem isMultiplicative_jordanTotient (k : ℕ) :
     IsMultiplicative (jordanTotient k) := by
   refine IsMultiplicative.iff_ne_zero.2 ⟨?_, ?_⟩
@@ -123,7 +145,11 @@ public theorem isMultiplicative_jordanTotient (k : ℕ) :
     · apply Finset.prod_congr rfl
       intro p hpn
       rw [hfact_n p hpn]
-/-- `J_1` equals Euler totient, including `0` (He (1.7)). -/
+/-- **Jordan's totient of order one is Euler's totient.** For every natural number $n$,
+$J_1(n) = \varphi(n)$, where $J_1$ is the Jordan totient function $J_k$ with $k = 1$ and
+$\varphi$ is Euler's totient function; at $n = 0$ both sides are $0$.
+
+Source: Yuan He, arXiv:2310.18048v3, equation (1.7). -/
 public theorem jordanTotient_one_apply (n : ℕ) :
     jordanTotient 1 n = n.totient := by
   by_cases hn : n = 0
@@ -216,10 +242,13 @@ private theorem jordanTotient_prime_conv_eq {k p e : ℕ} (hp : p.Prime) :
     hmoeb_p, one_mul, neg_mul, one_mul, hcast_e, hcast_succ, hexp1,
     hexp2, pow_add]
   ring
-/-- Source Möbius sum with orientation `μ(n/d) * d^k` (He (2.7)).
+/-- **Möbius sum for Jordan's totient.** For all natural numbers $k$ and $n \neq 0$, the Jordan
+totient function satisfies, as an identity of integers,
+$$J_k(n) = \sum_{d \mid n} \mu(n/d)\, d^k,$$
+where $d$ runs over the positive divisors of $n$ and $\mu$ is the Möbius function.
 
-Holds for every `k` when `n ≠ 0`, generalizing the positive-`k` source
-statement; the hypothesis `0 < k` is therefore omitted. -/
+Source: Yuan He, arXiv:2310.18048v3, equation (2.7), stated there for positive k; here k = 0 is
+also allowed. -/
 public theorem jordanTotient_eq_sum_moebius {k n : ℕ} (hn : n ≠ 0) :
     ((jordanTotient k n : ℕ) : ℤ) =
       ∑ d ∈ n.divisors, moebius (n / d) * (d : ℤ) ^ k := by
@@ -245,7 +274,12 @@ public theorem jordanTotient_eq_sum_moebius {k n : ℕ} (hn : n ≠ 0) :
         moebius) n) := by rw [hEq]
     _ = ∑ d ∈ n.divisors, moebius (n / d) * (d : ℤ) ^ k :=
         jordanTotient_conv_eq_sum hn
-/-- Cleared-denominator product identity (integral He (1.7)). -/
+/-- **Cleared-denominator Euler product for Jordan's totient.** For all natural numbers $k$ and
+$n \neq 0$, the Jordan totient function satisfies
+$$J_k(n) \prod_{p \mid n} p^k = n^k \prod_{p \mid n} (p^k - 1),$$
+where both products run over the distinct primes $p$ dividing $n$.
+
+Source: Yuan He, arXiv:2310.18048v3, equation (1.7), with denominators cleared. -/
 public theorem jordanTotient_mul_prod_primeFactors_pow {k n : ℕ}
     (hn : n ≠ 0) :
     jordanTotient k n * ∏ p ∈ n.primeFactors, p ^ k =
@@ -273,10 +307,13 @@ public theorem jordanTotient_mul_prod_primeFactors_pow {k n : ℕ}
       = (p ^ (k * (n.factorization p - 1)) * p ^ k) * (p ^ k - 1) := by
         ring
     _ = (p ^ n.factorization p) ^ k * (p ^ k - 1) := by rw [hpow]
-/-- Exact rational Euler product (He (1.7)).
+/-- **Euler product for Jordan's totient.** For all natural numbers $k$ and $n \neq 0$, the Jordan
+totient function satisfies, as an identity of rational numbers,
+$$J_k(n) = n^k \prod_{p \mid n} \left(1 - \frac{1}{p^k}\right),$$
+where the product runs over the distinct primes $p$ dividing $n$.
 
-Holds for every `k` when `n ≠ 0`, generalizing the positive-`k` source
-statement; the hypothesis `0 < k` is therefore omitted. -/
+Source: Yuan He, arXiv:2310.18048v3, equation (1.7), stated there for positive k; here k = 0 is
+also allowed. -/
 public theorem jordanTotient_eq_rational_prod {k n : ℕ} (hn : n ≠ 0) :
     ((jordanTotient k n : ℕ) : ℚ) =
       (n : ℚ) ^ k *

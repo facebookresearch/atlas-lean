@@ -12,4 +12,4 @@ This is the three-dimensional case of L. H. Loomis and H. Whitney, *An inequalit
 
 ## Background
 
-- Shearer's entropy inequality: the entropy form of projection inequalities; applied to the uniform distribution on $V$ and the cover of the three coordinates by the three pairs, each coordinate covered twice, it gives this inequality.
+- [Shearer's entropy inequality](../../../InformationTheory/information-inequalities/shearer-s-entropy-inequality/shearer-entropy-inequality.md): the entropy form of projection inequalities; applied to the uniform distribution on $V$ and the cover of the three coordinates by the three pairs, each coordinate covered twice, it gives this inequality.

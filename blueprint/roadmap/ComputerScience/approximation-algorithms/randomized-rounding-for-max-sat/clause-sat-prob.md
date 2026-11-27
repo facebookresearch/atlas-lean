@@ -7,7 +7,7 @@ $0 \le p_i \le 1$,
 $$1 - \prod_{\ell \in C} \left(1 - \Pr[\ell \text{ true}]\right) = 1 - \prod_{i \in P}(1 - p_i) \prod_{i \in N} p_i .$$
 
 The literals of $C$ use distinct variables. When each variable $x_i$ is set true independently
-with probability $p_i$, this is the probability that $C$ is satisfied: exactly one assignment of
+with probability $p_i$, this is the probability that $C$ is [satisfied](../../../Logic/propositional-logic/conjunctive-normal-form/satisfies-2.md): exactly one assignment of
 the variables of $C$ falsifies it, and its weight is the product.
 
 ## Sources

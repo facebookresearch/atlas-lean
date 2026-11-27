@@ -31,7 +31,15 @@ positive rigidities and lengths, and the supported response is
 unique. The unsupported assembly still kills rigid translation
 and rigid rotation, so one support is insufficient. No
 arbitrary released-frame rigidity characterization is
-included.
+included. For two quartic span fields satisfying the
+uniform-load equation, node continuity, the three support
+conditions, and moment balance, every supported
+finite-element solution has the exact element end data; in
+this configuration the deflection entries are support
+zeros, so the nontrivial exactness is in the three
+rotations. No interior-field equality with the Hermite
+cubic, n-span version, or clamped-support version is
+claimed.
 
 ## ii. Key results
 
@@ -47,12 +55,15 @@ included.
 - `Mechanics.EulerBernoulli.continuousBeamStiffness_mulVec_translation`
   and `continuousBeamStiffness_mulVec_rotation`: the assembled
   rigid modes.
+- `Mechanics.EulerBernoulli.continuousBeam_nodal_exact`:
+  two-span nodal exactness under uniform span loads.
 
 ## iii. Table of contents
 
 - A. Gather matrices, assembly, and support injection
 - B. Transported element results
 - C. Supported stiffness and rigid modes
+- D. Two-span nodal exactness
 
 ## iv. References
 
@@ -88,10 +99,10 @@ def spanTwoGather : Matrix (Fin 4) (Fin 6) ℝ :=
     0, 0, 0, 0, 1, 0;
     0, 0, 0, 0, 0, 1]
 
-/-- Assembled two-span continuous-beam stiffness: the sum of
-the two element stiffnesses scattered by their gather matrices,
-so the middle-node displacement and slope are shared. Span `i`
-has flexural rigidity `EIi` and length `Li`. -/
+/-- Assembled two-span continuous-beam stiffness: the sum of the two element stiffnesses scattered
+by their gather matrices, so the middle-node displacement and slope are shared. Span `i` has
+flexural rigidity `EIi` and length `Li`. A span of length `0` contributes the zero matrix
+(`x / 0 = 0`). -/
 noncomputable def continuousBeamStiffness (EI1 L1 EI2 L2 : ℝ) :
     Matrix (Fin 6) (Fin 6) ℝ :=
   spanOneGatherᵀ * beamStiffness EI1 L1 * spanOneGather
@@ -484,8 +495,8 @@ private theorem continuousBeamStiffness_mulVec_rotation_of
 
 /-! ## C. Supported stiffness and rigid modes -/
 
-/-- The supported quadratic form in factored form: only
-rotational squares survive the support injection. -/
+/-- The supported quadratic form in factored form: only rotational squares survive the support
+injection. A span of length `0` contributes `0` (`x / 0 = 0`). -/
 theorem supportedStiffness_quad_form_factor (EI1 L1 EI2 L2 : ℝ)
     (w : Fin 3 → ℝ) :
     w ⬝ᵥ (supportedStiffness EI1 L1 EI2 L2 *ᵥ w)
@@ -527,5 +538,236 @@ theorem continuousBeamStiffness_mulVec_rotation
   continuousBeamStiffness_mulVec_rotation_of
     beamStiffness_mulVec_translation
     beamStiffness_mulVec_rotation EI1 L1 EI2 L2
+
+/-! ## D. Two-span nodal exactness -/
+
+/-- Global nodal data `(v0, θ0, v1, θ1, v2, θ2)` read from the two span fields: span 1 at nodes 0
+and 1, span 2 at node 2. Derivatives are `0` where the field is not differentiable. -/
+noncomputable def continuousBeamNodalData (L1 L2 : ℝ)
+    (y1 y2 : ℝ → ℝ) : Fin 6 → ℝ :=
+  ![y1 0, iteratedDeriv 1 y1 0, y1 L1, iteratedDeriv 1 y1 L1,
+    y2 L2, iteratedDeriv 1 y2 L2]
+
+/-- Assembled consistent load vector of the two uniform
+span loads. -/
+noncomputable def continuousBeamLoadVector (w1 L1 w2 L2 : ℝ) :
+    Fin 6 → ℝ :=
+  spanOneGatherᵀ *ᵥ uniformLoadVector w1 L1
+    + spanTwoGatherᵀ *ᵥ uniformLoadVector w2 L2
+
+/-- The free-rotation components of scattered element end
+forces are the three nodal moment sums. -/
+lemma supportInjection_transpose_scatter (e1 e2 : Fin 4 → ℝ) :
+    supportInjectionᵀ *ᵥ (spanOneGatherᵀ *ᵥ e1 + spanTwoGatherᵀ *ᵥ e2)
+      = ![e1 1, e1 3 + e2 1, e2 3] := by
+  ext i
+  fin_cases i <;>
+    simp [supportInjection, spanOneGather, spanTwoGather, Matrix.mulVec,
+      dotProduct, Fin.sum_univ_six, Fin.sum_univ_four, Pi.add_apply]
+
+/-- With deflection and slope continuity at node 1, the
+gathered nodal data are the two element end-data
+vectors. -/
+lemma gather_continuousBeamNodalData {L1 L2 : ℝ} {y1 y2 : ℝ → ℝ}
+    (hv : y1 L1 = y2 0)
+    (hθ : iteratedDeriv 1 y1 L1 = iteratedDeriv 1 y2 0) :
+    spanOneGather *ᵥ continuousBeamNodalData L1 L2 y1 y2 = beamEndData L1 y1
+      ∧ spanTwoGather *ᵥ continuousBeamNodalData L1 L2 y1 y2
+        = beamEndData L2 y2 := by
+  constructor
+  · ext i
+    fin_cases i <;>
+      simp [spanOneGather, continuousBeamNodalData, beamEndData, Matrix.mulVec,
+        dotProduct, Fin.sum_univ_six]
+  · ext i
+    fin_cases i <;>
+      simp [spanTwoGather, continuousBeamNodalData, beamEndData, Matrix.mulVec,
+        dotProduct, Fin.sum_univ_six, hv, hθ]
+
+/-- The exact slopes inject to the global nodal data under
+simple supports. -/
+private lemma supportInjection_mulVec_nodalSlopes
+    {L1 L2 : ℝ} {y1 y2 : ℝ → ℝ}
+    (hs0 : y1 0 = 0) (hs1 : y1 L1 = 0) (hs2 : y2 L2 = 0) :
+    supportInjection
+        *ᵥ ![iteratedDeriv 1 y1 0, iteratedDeriv 1 y1 L1, iteratedDeriv 1 y2 L2]
+      = continuousBeamNodalData L1 L2 y1 y2 := by
+  ext i
+  fin_cases i <;>
+    simp [supportInjection, continuousBeamNodalData, Matrix.mulVec,
+      dotProduct, Fin.sum_univ_three, hs0, hs1, hs2]
+
+/-- Conditional form: the exact nodal slopes solve the
+supported finite-element system, given the canonical
+quartic end-force identity. -/
+private lemma supportedStiffness_mulVec_nodalSlopes_of
+    (hquartic : ∀ {EI L w : ℝ}, 0 < EI → 0 < L → ∀ {y : ℝ → ℝ} {a b c d e : ℝ},
+      (∀ x : ℝ, y x = a + b * x + c * x ^ 2 + d * x ^ 3 + e * x ^ 4) →
+      (∀ x ∈ Set.Icc 0 L, EI * iteratedDeriv 4 y x = w) →
+      beamEndForces EI L y
+        = beamStiffness EI L *ᵥ beamEndData L y - uniformLoadVector w L)
+    {EI1 L1 w1 EI2 L2 w2 : ℝ} (hEI1 : 0 < EI1) (hL1 : 0 < L1)
+    (hEI2 : 0 < EI2) (hL2 : 0 < L2)
+    {y1 y2 : ℝ → ℝ} {a1 b1 c1 d1 e1 a2 b2 c2 d2 e2 : ℝ}
+    (hy1 : ∀ x : ℝ, y1 x = a1 + b1 * x + c1 * x ^ 2 + d1 * x ^ 3 + e1 * x ^ 4)
+    (hy2 : ∀ x : ℝ, y2 x = a2 + b2 * x + c2 * x ^ 2 + d2 * x ^ 3 + e2 * x ^ 4)
+    (hload1 : ∀ x ∈ Set.Icc 0 L1, EI1 * iteratedDeriv 4 y1 x = w1)
+    (hload2 : ∀ x ∈ Set.Icc 0 L2, EI2 * iteratedDeriv 4 y2 x = w2)
+    (hv : y1 L1 = y2 0)
+    (hθ : iteratedDeriv 1 y1 L1 = iteratedDeriv 1 y2 0)
+    (hs0 : y1 0 = 0) (hs1 : y1 L1 = 0) (hs2 : y2 L2 = 0)
+    (m : Fin 3 → ℝ)
+    (hm0 : beamEndForces EI1 L1 y1 1 = m 0)
+    (hm1 : beamEndForces EI1 L1 y1 3 + beamEndForces EI2 L2 y2 1 = m 1)
+    (hm2 : beamEndForces EI2 L2 y2 3 = m 2) :
+    supportedStiffness EI1 L1 EI2 L2
+        *ᵥ ![iteratedDeriv 1 y1 0, iteratedDeriv 1 y1 L1, iteratedDeriv 1 y2 L2]
+      = supportInjectionᵀ *ᵥ continuousBeamLoadVector w1 L1 w2 L2 + m := by
+  have hSu := supportInjection_mulVec_nodalSlopes hs0 hs1 hs2
+  have hg := gather_continuousBeamNodalData (L2 := L2) hv hθ
+  have hq1 := hquartic hEI1 hL1 hy1 hload1
+  have hq2 := hquartic hEI2 hL2 hy2 hload2
+  have hB1 : beamStiffness EI1 L1 *ᵥ beamEndData L1 y1
+      = beamEndForces EI1 L1 y1 + uniformLoadVector w1 L1 :=
+    sub_eq_iff_eq_add.mp hq1.symm
+  have hB2 : beamStiffness EI2 L2 *ᵥ beamEndData L2 y2
+      = beamEndForces EI2 L2 y2 + uniformLoadVector w2 L2 :=
+    sub_eq_iff_eq_add.mp hq2.symm
+  have hmeq : ![beamEndForces EI1 L1 y1 1,
+      beamEndForces EI1 L1 y1 3 + beamEndForces EI2 L2 y2 1,
+      beamEndForces EI2 L2 y2 3] = m := by
+    ext i
+    fin_cases i <;> simp [hm0, hm1, hm2]
+  have hK1 : (spanOneGatherᵀ * beamStiffness EI1 L1 * spanOneGather)
+        *ᵥ continuousBeamNodalData L1 L2 y1 y2
+      = spanOneGatherᵀ *ᵥ (beamEndForces EI1 L1 y1 + uniformLoadVector w1 L1) := by
+    rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hg.1, hB1]
+  have hK2 : (spanTwoGatherᵀ * beamStiffness EI2 L2 * spanTwoGather)
+        *ᵥ continuousBeamNodalData L1 L2 y1 y2
+      = spanTwoGatherᵀ *ᵥ (beamEndForces EI2 L2 y2 + uniformLoadVector w2 L2) := by
+    rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hg.2, hB2]
+  have hK : continuousBeamStiffness EI1 L1 EI2 L2
+        *ᵥ continuousBeamNodalData L1 L2 y1 y2
+      = (spanOneGatherᵀ *ᵥ beamEndForces EI1 L1 y1
+          + spanTwoGatherᵀ *ᵥ beamEndForces EI2 L2 y2)
+        + (spanOneGatherᵀ *ᵥ uniformLoadVector w1 L1
+          + spanTwoGatherᵀ *ᵥ uniformLoadVector w2 L2) := by
+    unfold continuousBeamStiffness
+    rw [Matrix.add_mulVec, hK1, hK2, Matrix.mulVec_add, Matrix.mulVec_add,
+      add_add_add_comm]
+  unfold supportedStiffness continuousBeamLoadVector
+  rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hSu, hK, Matrix.mulVec_add,
+    supportInjection_transpose_scatter, hmeq, add_comm]
+
+/-- The exact nodal slopes of two quartic span solutions
+solve the supported finite-element system, for positive
+rigidities and lengths, quartic spans with `EI * y'''' = w` on
+each span, deflection and slope continuous at the middle node,
+zero deflection at the three supports, and `m` the nodal moments
+of the span end forces. -/
+theorem supportedStiffness_mulVec_nodalSlopes
+    {EI1 L1 w1 EI2 L2 w2 : ℝ} (hEI1 : 0 < EI1) (hL1 : 0 < L1)
+    (hEI2 : 0 < EI2) (hL2 : 0 < L2)
+    {y1 y2 : ℝ → ℝ} {a1 b1 c1 d1 e1 a2 b2 c2 d2 e2 : ℝ}
+    (hy1 : ∀ x : ℝ, y1 x = a1 + b1 * x + c1 * x ^ 2 + d1 * x ^ 3 + e1 * x ^ 4)
+    (hy2 : ∀ x : ℝ, y2 x = a2 + b2 * x + c2 * x ^ 2 + d2 * x ^ 3 + e2 * x ^ 4)
+    (hload1 : ∀ x ∈ Set.Icc 0 L1, EI1 * iteratedDeriv 4 y1 x = w1)
+    (hload2 : ∀ x ∈ Set.Icc 0 L2, EI2 * iteratedDeriv 4 y2 x = w2)
+    (hv : y1 L1 = y2 0)
+    (hθ : iteratedDeriv 1 y1 L1 = iteratedDeriv 1 y2 0)
+    (hs0 : y1 0 = 0) (hs1 : y1 L1 = 0) (hs2 : y2 L2 = 0)
+    (m : Fin 3 → ℝ)
+    (hm0 : beamEndForces EI1 L1 y1 1 = m 0)
+    (hm1 : beamEndForces EI1 L1 y1 3 + beamEndForces EI2 L2 y2 1 = m 1)
+    (hm2 : beamEndForces EI2 L2 y2 3 = m 2) :
+    supportedStiffness EI1 L1 EI2 L2
+        *ᵥ ![iteratedDeriv 1 y1 0, iteratedDeriv 1 y1 L1, iteratedDeriv 1 y2 L2]
+      = supportInjectionᵀ *ᵥ continuousBeamLoadVector w1 L1 w2 L2 + m :=
+  supportedStiffness_mulVec_nodalSlopes_of
+    @quartic_end_force_identity
+    hEI1 hL1 hEI2 hL2 hy1 hy2 hload1 hload2 hv hθ hs0 hs1 hs2
+    m hm0 hm1 hm2
+
+/-- Conditional nodal exactness, given the canonical
+quartic identity, positive definiteness, and unique
+supported response. -/
+private lemma continuousBeam_nodal_exact_of
+    (hquartic : ∀ {EI L w : ℝ}, 0 < EI → 0 < L → ∀ {y : ℝ → ℝ} {a b c d e : ℝ},
+      (∀ x : ℝ, y x = a + b * x + c * x ^ 2 + d * x ^ 3 + e * x ^ 4) →
+      (∀ x ∈ Set.Icc 0 L, EI * iteratedDeriv 4 y x = w) →
+      beamEndForces EI L y
+        = beamStiffness EI L *ᵥ beamEndData L y - uniformLoadVector w L)
+    (hposDef : ∀ {EI1 L1 EI2 L2 : ℝ}, 0 < EI1 → 0 < L1 → 0 < EI2 → 0 < L2 →
+      (supportedStiffness EI1 L1 EI2 L2).PosDef)
+    (hexu : ∀ {EI1 L1 EI2 L2 : ℝ}, (supportedStiffness EI1 L1 EI2 L2).PosDef →
+      ∀ f : Fin 3 → ℝ, ∃! w : Fin 3 → ℝ, supportedStiffness EI1 L1 EI2 L2 *ᵥ w = f)
+    {EI1 L1 w1 EI2 L2 w2 : ℝ} (hEI1 : 0 < EI1) (hL1 : 0 < L1)
+    (hEI2 : 0 < EI2) (hL2 : 0 < L2)
+    {y1 y2 : ℝ → ℝ} {a1 b1 c1 d1 e1 a2 b2 c2 d2 e2 : ℝ}
+    (hy1 : ∀ x : ℝ, y1 x = a1 + b1 * x + c1 * x ^ 2 + d1 * x ^ 3 + e1 * x ^ 4)
+    (hy2 : ∀ x : ℝ, y2 x = a2 + b2 * x + c2 * x ^ 2 + d2 * x ^ 3 + e2 * x ^ 4)
+    (hload1 : ∀ x ∈ Set.Icc 0 L1, EI1 * iteratedDeriv 4 y1 x = w1)
+    (hload2 : ∀ x ∈ Set.Icc 0 L2, EI2 * iteratedDeriv 4 y2 x = w2)
+    (hv : y1 L1 = y2 0)
+    (hθ : iteratedDeriv 1 y1 L1 = iteratedDeriv 1 y2 0)
+    (hs0 : y1 0 = 0) (hs1 : y1 L1 = 0) (hs2 : y2 L2 = 0)
+    (m : Fin 3 → ℝ)
+    (hm0 : beamEndForces EI1 L1 y1 1 = m 0)
+    (hm1 : beamEndForces EI1 L1 y1 3 + beamEndForces EI2 L2 y2 1 = m 1)
+    (hm2 : beamEndForces EI2 L2 y2 3 = m 2)
+    {θ : Fin 3 → ℝ}
+    (hFE : supportedStiffness EI1 L1 EI2 L2 *ᵥ θ
+      = supportInjectionᵀ *ᵥ continuousBeamLoadVector w1 L1 w2 L2 + m) :
+    spanOneGather *ᵥ (supportInjection *ᵥ θ) = beamEndData L1 y1
+      ∧ spanTwoGather *ᵥ (supportInjection *ᵥ θ) = beamEndData L2 y2 := by
+  have hT2 := supportedStiffness_mulVec_nodalSlopes_of hquartic hEI1 hL1 hEI2 hL2
+    hy1 hy2 hload1 hload2 hv hθ hs0 hs1 hs2 m hm0 hm1 hm2
+  have hex := hexu (hposDef hEI1 hL1 hEI2 hL2)
+    (supportInjectionᵀ *ᵥ continuousBeamLoadVector w1 L1 w2 L2 + m)
+  have heq : θ
+      = ![iteratedDeriv 1 y1 0, iteratedDeriv 1 y1 L1, iteratedDeriv 1 y2 L2] :=
+    hex.unique hFE hT2
+  have hSu := supportInjection_mulVec_nodalSlopes hs0 hs1 hs2
+  have hg := gather_continuousBeamNodalData (L2 := L2) hv hθ
+  rw [heq, hSu]
+  exact hg
+
+/-- Main result: for the simply supported two-span beam, with
+positive rigidities and lengths, quartic spans with
+`EI * y'''' = w` on each span, deflection and slope continuous at
+the middle node, zero deflection at the three supports, and `m`
+the nodal moments of the span end forces, every solution of the
+supported finite-element system has the exact end data of both
+quartic spans. The deflection
+entries are support zeros; the nontrivial content is the
+three rotations. This is exactness for the linear
+small-deflection model and asserts nothing about the
+interior field. -/
+theorem continuousBeam_nodal_exact
+    {EI1 L1 w1 EI2 L2 w2 : ℝ} (hEI1 : 0 < EI1) (hL1 : 0 < L1)
+    (hEI2 : 0 < EI2) (hL2 : 0 < L2)
+    {y1 y2 : ℝ → ℝ} {a1 b1 c1 d1 e1 a2 b2 c2 d2 e2 : ℝ}
+    (hy1 : ∀ x : ℝ, y1 x = a1 + b1 * x + c1 * x ^ 2 + d1 * x ^ 3 + e1 * x ^ 4)
+    (hy2 : ∀ x : ℝ, y2 x = a2 + b2 * x + c2 * x ^ 2 + d2 * x ^ 3 + e2 * x ^ 4)
+    (hload1 : ∀ x ∈ Set.Icc 0 L1, EI1 * iteratedDeriv 4 y1 x = w1)
+    (hload2 : ∀ x ∈ Set.Icc 0 L2, EI2 * iteratedDeriv 4 y2 x = w2)
+    (hv : y1 L1 = y2 0)
+    (hθ : iteratedDeriv 1 y1 L1 = iteratedDeriv 1 y2 0)
+    (hs0 : y1 0 = 0) (hs1 : y1 L1 = 0) (hs2 : y2 L2 = 0)
+    (m : Fin 3 → ℝ)
+    (hm0 : beamEndForces EI1 L1 y1 1 = m 0)
+    (hm1 : beamEndForces EI1 L1 y1 3 + beamEndForces EI2 L2 y2 1 = m 1)
+    (hm2 : beamEndForces EI2 L2 y2 3 = m 2)
+    {θ : Fin 3 → ℝ}
+    (hFE : supportedStiffness EI1 L1 EI2 L2 *ᵥ θ
+      = supportInjectionᵀ *ᵥ continuousBeamLoadVector w1 L1 w2 L2 + m) :
+    spanOneGather *ᵥ (supportInjection *ᵥ θ) = beamEndData L1 y1
+      ∧ spanTwoGather *ᵥ (supportInjection *ᵥ θ) = beamEndData L2 y2 :=
+  continuousBeam_nodal_exact_of
+    @quartic_end_force_identity
+    @supportedStiffness_posDef
+    @supportedStiffness_existsUnique
+    hEI1 hL1 hEI2 hL2 hy1 hy2 hload1 hload2 hv hθ hs0 hs1 hs2
+    m hm0 hm1 hm2 hFE
 
 end Mechanics.EulerBernoulli

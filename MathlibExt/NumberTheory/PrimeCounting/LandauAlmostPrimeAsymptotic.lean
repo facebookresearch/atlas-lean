@@ -43,8 +43,10 @@ attribute [local instance] Classical.propDecidable
 
 
 open Classical in
-/-- Counting function for Landau's theorem on almost primes: the number of
-`n ∈ [1, x]` with exactly `k` prime factors counted with multiplicity.
+/-- **Counting almost primes.** For natural numbers $k$ and $x$, $\pi_k(x)$ is the number of
+integers $n$ with $1 \le n \le x$ that have exactly $k$ prime factors, counted with multiplicity.
+This is the counting function in Landau's theorem on almost primes.
+
 Source: Rafael Jakimczuk, "Functions of Slow Increase and Integer Sequences,"
 Journal of Integer Sequences 13 (2010),
 `https://cs.uwaterloo.ca/journals/JIS/VOL13/Jakimczuk/jakimczuk8.tex`,
@@ -1998,9 +2000,11 @@ private theorem lapThetaSumIsEquivalent (k : ℕ) (hk : 1 ≤ k) :
     mul_le_mul_of_nonneg_right hcardR hK1nn
   linarith [e1, hcardK, hTK]
 
-/-- Landau's theorem on `k`-almost primes: the counting function
-`almostPrimeCounting k x` is asymptotically equivalent to
-`x * (log log x) ^ (k - 1) / ((k - 1)! * log x)`.
+/-- **Landau's theorem on almost primes.** Let $k \ge 1$ be a natural number and, for a natural
+number $x$, let $\pi_k(x)$ be the number of integers $n$ with $1 \le n \le x$ that have exactly
+$k$ prime factors, counted with multiplicity. Then, as the natural number $x$ tends to infinity,
+$$\pi_k(x) \sim \frac{x \, (\log \log x)^{k-1}}{(k-1)! \, \log x}.$$
+
 Source: Rafael Jakimczuk, "Functions of Slow Increase and Integer Sequences,"
 Journal of Integer Sequences 13 (2010),
 `https://cs.uwaterloo.ca/journals/JIS/VOL13/Jakimczuk/jakimczuk8.tex`,

@@ -41,7 +41,7 @@ vertices of its pair in one diamond row.
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-! ### The vertex numbering -/
 

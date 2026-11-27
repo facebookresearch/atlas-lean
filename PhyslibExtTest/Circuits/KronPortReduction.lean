@@ -156,7 +156,7 @@ example : schurComplement !![(3 : ℝ)] !![1, 2] !![2, 1; 1, 3] = !![8 / 5] := b
   ext i j
   fin_cases i; fin_cases j
   simp [schurComplement, Matrix.inv_def, Matrix.adjugate_fin_two, Matrix.det_fin_two_of,
-    vecMul, dotProduct, Fin.sum_univ_two]
+    vecMul, dotProduct, Fin.sum_univ_two, -Matrix.transpose_of]
   norm_num
 
 /-- The swapped network has the same reduced port equation

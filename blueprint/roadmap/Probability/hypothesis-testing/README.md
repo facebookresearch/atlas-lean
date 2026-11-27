@@ -41,6 +41,7 @@ These procedures base inference on counts, ranks or random reassignments of the 
 - [Split conformal prediction](split-conformal-prediction/README.md)
 - [Full conformal prediction](full-conformal-prediction/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)
+- [Exact binomial tests and the Clopper–Pearson interval](exact-binomial-tests-and-the-clopper-pearson-int/README.md)
 - [Conformal prediction under covariate shift](conformal-prediction-under-covariate-shift/README.md)
 
 ## Other topics in hypothesis testing

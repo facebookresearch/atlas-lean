@@ -21,10 +21,10 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.IntervalNumberAtMostKWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ interval graph is a 2-interval graph (give each vertex its interval twice), so t
 NP-hard; ISGCI records it as NP-complete on 2-interval graphs, citing Bodlaender and Jansen.
 
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question counts edges), reused as in
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question counts edges), reused as in
 `SimpleMaxCutDegreeThreeWanted`; the restriction adds to `WellFormed` that
 `Cslib.Complexity.Karp.edgeGraph` is a 2-interval graph, the repository's
 `IntervalNumberAtMostK.IsMultipleIntervalGraph 2` (each vertex gets two closed intervals, possibly

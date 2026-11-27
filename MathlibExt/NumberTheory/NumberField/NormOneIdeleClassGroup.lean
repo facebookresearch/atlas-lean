@@ -51,15 +51,23 @@ namespace NumberField.TopologicalIdeleGroup
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- Principal ideles viewed inside the norm-one ideles. -/
+/-- **Principal ideles of norm one.** For a number field $K$, this is the subgroup of the group
+$I_K^1$ of ideles of $K$ with adelic norm $1$ consisting of the principal ideles, that is, of the
+elements of $I_K^1$ that are images of elements of $K^\times$ under the diagonal embedding. -/
 public def normOnePrincipalIdeles : Subgroup (normOneIdeles K) :=
   (principalIdeles (NumberField.RingOfIntegers K) K).subgroupOf (normOneIdeles K)
 
-/-- The norm-one idele class group `C_K^1 := I_K^1 / K^×`. -/
+/-- **Norm-one idele class group.** For a number field $K$, the norm-one idele class group
+$C_K^1 = I_K^1 / K^\times$ is the quotient of the group $I_K^1$ of ideles of $K$ with adelic norm
+$1$ by its subgroup of principal ideles, the images of the elements of $K^\times$ under the
+diagonal embedding. -/
 public abbrev NormOneIdeleClassGroup :=
   (normOneIdeles K) ⧸ (normOnePrincipalIdeles K)
 
-/-- The class of a principal idele in the norm-one idele class group is trivial. -/
+/-- **Principal ideles are trivial in the norm-one idele class group.** Let $K$ be a number field.
+For every $x \in K^\times$, the principal idele of $x$, viewed as an element of the group $I_K^1$
+of ideles of $K$ with adelic norm $1$, has trivial class in the norm-one idele class group
+$C_K^1 = I_K^1 / K^\times$. -/
 @[simp]
 public theorem normOne_mk_principalEmbedding (x : Kˣ) :
     QuotientGroup.mk (s := normOnePrincipalIdeles K)

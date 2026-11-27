@@ -24,9 +24,10 @@ the Chebyshev psi function against the inner-variable main term `y / φ(q)`.
 
 namespace MetaMathlibExt.NumberTheory.PrimeCounting
 
-/-- The residue-class error of the Chebyshev psi function at level `y` for the
-residue `a` modulo `q`, measured against the inner-variable main term
-`y / φ(q)`.
+/-- **Residue-class error of Chebyshev's function.** For natural numbers $y$, $q$ and $a$, the
+residue-class error is $E(y; q, a) = \left|\psi(y; q, a) - y/\varphi(q)\right|$, where
+$\psi(y; q, a)$ is Chebyshev's function in the residue class of $a$ modulo $q$ and $\varphi$ is
+Euler's totient function.
 
 Source: S. Baier and L. Zhao, *Bombieri-Vinogradov Type Theorem for Sparse Sets
 of Moduli*, arXiv:math/0602116, classical theorem display (1.1). -/
@@ -35,8 +36,9 @@ public noncomputable def bombieriVinogradovResidueError (y q a : ℕ) : ℝ :=
     (y : ℝ) / (Nat.totient q : ℝ)|
 
 open Classical in
-/-- The maximal residue-class error at level `y` over the reduced residues
-`a < q`, with default zero when there are none.
+/-- **Maximal residue-class error.** For natural numbers $y$ and $q$, $E^{\ast}(y; q)$ is the
+maximum of the residue-class error $E(y; q, a)$ over the natural numbers $a < q$ coprime to $q$,
+and $0$ if there is no such $a$.
 
 Source: S. Baier and L. Zhao, *Bombieri-Vinogradov Type Theorem for Sparse Sets
 of Moduli*, arXiv:math/0602116, inner maximum of display (1.1). -/
@@ -45,8 +47,9 @@ public noncomputable def bombieriVinogradovMaxResidueError (y q : ℕ) : ℝ :=
     fun a => bombieriVinogradovResidueError y q a).max.unbotD 0
 
 open Classical in
-/-- The maximal residue-class error over all levels `y ≤ x` for the modulus
-`q`, with default zero.
+/-- **Maximal residue-class error up to a level.** For natural numbers $x$ and $q$,
+$E^{\ast\ast}(x; q)$ is the maximum of the maximal residue-class error $E^{\ast}(y; q)$ over the
+natural numbers $y \le x$.
 
 Source: S. Baier and L. Zhao, *Bombieri-Vinogradov Type Theorem for Sparse Sets
 of Moduli*, arXiv:math/0602116, maximum over `y ≤ x` in display (1.1). -/
@@ -55,10 +58,12 @@ public noncomputable def bombieriVinogradovMaxUpToError (x q : ℕ) : ℝ :=
     fun y => bombieriVinogradovMaxResidueError y q).max.unbotD 0
 
 open Classical in
-/-- The Bombieri–Vinogradov sum: the previous maximum summed over positive
-moduli `q` with `(q : ℝ) ≤ √x / (log x) ^ (A + 5)`. The enumeration over
-`Finset.range (x + 1)` is nonbinding for sufficiently large `x`, since the
-theorem is eventual.
+/-- **Bombieri–Vinogradov sum.** For a natural number $x$ and a real number $A$, the
+Bombieri–Vinogradov sum $S(x, A)$ is the sum of the maximal residue-class error
+$E^{\ast\ast}(x; q)$ up to $x$ over the integers $q$ with $1 \le q \le x$ and
+$q \le \sqrt{x} / (\log x)^{A + 5}$.
+
+When $A > -5$ and $x \ge 3$, the condition $q \le x$ follows from the other one.
 
 Source: S. Baier and L. Zhao, *Bombieri-Vinogradov Type Theorem for Sparse Sets
 of Moduli*, arXiv:math/0602116, outer sum of display (1.1). -/
@@ -67,10 +72,16 @@ public noncomputable def bombieriVinogradovSum (x : ℕ) (A : ℝ) : ℝ :=
     if 0 < q ∧ (q : ℝ) ≤ Real.sqrt (x : ℝ) / (Real.log (x : ℝ)) ^ (A + 5)
     then bombieriVinogradovMaxUpToError x q else 0
 
-/-- For every `A > 0`, the Bombieri–Vinogradov sum is eventually bounded by
-`C * x / (log x) ^ A` for some constant `C > 0`. The main term inside the
-maximum is the authoritative inner-variable term `y / φ(q)`, not an
-`x`-dependent logarithmic-integral term.
+/-- **Bombieri–Vinogradov theorem.** Let $\psi(y; q, a)$ denote Chebyshev's function in the
+residue class of $a$ modulo $q$, and let $\varphi$ be Euler's totient function. For a natural
+number $x$ and a real number $A$, let $S(x, A)$ be the sum, over the integers $q$ with
+$1 \le q \le x$ and $q \le \sqrt{x} / (\log x)^{A + 5}$, of the maximum of
+$\left|\psi(y; q, a) - y/\varphi(q)\right|$ over the natural numbers $y \le x$ and $a < q$
+coprime to $q$. Then for every real number $A > 0$ there are a real number $C > 0$ and a natural
+number $x_0$ such that every natural number $x \ge x_0$ satisfies $S(x, A) \le C x / (\log x)^A$.
+
+The main term $y/\varphi(q)$ depends on the inner variable $y$; it is not a
+logarithmic-integral term depending on $x$.
 
 Source: S. Baier and L. Zhao, *Bombieri-Vinogradov Type Theorem for Sparse Sets
 of Moduli*, arXiv:math/0602116, classical theorem display (1.1), source lines

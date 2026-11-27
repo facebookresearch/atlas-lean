@@ -18,7 +18,7 @@ plays no role.
 
 ## Background
 
-- Noncrossing partitions:
+- [Noncrossing partitions](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-partitions-and-the-refinement-order/noncrossing-partition.md):
   the index set $NC(n)$ of the moment-cumulant formula.
 
 ## Sources

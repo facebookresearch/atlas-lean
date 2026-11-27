@@ -1,0 +1,3 @@
+# Decorated edge whose route passes through an interior micro point
+
+For $L \in \mathbb{N}$ and a [micro point](ons-dec-micro-point.md) $z$ with cell $p$ and offset $o$, the corridor edge is: $\{(p, 0), (p + s(0), 2)\}$ for $o = (7, 4)$; $\{(p + s(2), 0), (p, 2)\}$ for $o = (0, 4), (1, 4)$; $\{(p, 1), (p + s(1), 3)\}$ for $o = (4, 7)$; $\{(p + s(3), 1), (p, 3)\}$ for $o = (4, 0), (4, 1)$; $c_{p,0}$ for $o = (6, 5), (6, 6), (5, 6)$; $c_{p,1}$ for $o = (3, 6), (2, 6), (2, 5)$; $c_{p,2}$ for $o = (2, 3), (2, 2), (3, 2)$; and $c_{p,0}$ for every other offset. Here $c_{p,i} = \{(p, i), (p, i + 1)\}$, $i \in \{0, 1, 2\}$, is the [chain edge](ons-dec-chain-edge.md) at $p$.

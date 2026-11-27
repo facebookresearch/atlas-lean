@@ -154,9 +154,20 @@ private theorem adicAbv_not_isEquiv_infinitePlace
   simp only [max_self] at hle
   linarith
 
-/-- Finite-target weak approximation at the finite and real places of a modulus.
+/-- **Weak approximation with a finite target and prescribed signs.** Let $K$ be a number field
+and $\mathfrak m$ a modulus of $K$, with finite part $\mathfrak m_0$ (a nonzero ideal of
+$\mathcal O_K$) and infinite part $\mathfrak m_\infty$ (a finite set of real places of $K$). For
+a nonzero prime $\mathfrak p$ of $\mathcal O_K$ write $v_{\mathfrak p}$ for the
+$\mathfrak p$-adic valuation on $K$ (with $v_{\mathfrak p}(0) = \infty$) and $e_{\mathfrak p}$
+for the exponent of $\mathfrak p$ in $\mathfrak m_0$; for a real place $w$ write
+$\sigma_w : K \to \mathbb R$ for its real embedding. Let $P$ be any set of places in
+$\mathfrak m_\infty$, and let $a \in K$ be nonzero with $v_{\mathfrak p}(a) = 0$ for every
+nonzero prime $\mathfrak p$ dividing $\mathfrak m_0$. Then there is a nonzero $x \in K$ such
+that $v_{\mathfrak p}(x) = 0$ and $v_{\mathfrak p}(x - a) \ge e_{\mathfrak p}$ for every nonzero
+prime $\mathfrak p$ dividing $\mathfrak m_0$, and such that for every $w \in \mathfrak m_\infty$,
+$\sigma_w(x) > 0$ if $w \in P$ and $\sigma_w(x) < 0$ if $w \notin P$.
 
-Source mapping toward ATLAS N406, Theorem 21.8, Section 21.3
+Source: mapping toward ATLAS N406, Theorem 21.8, Section 21.3
 (`weak_approx_coprime_sign_finitePart`, lines 2255--2568): the finite target `a`
 is lifted at source lines 2267--2275 with supported valuation-one hypothesis at
 2277--2292; the finite/infinite index family below is at 2314--2385;
@@ -356,10 +367,17 @@ theorem exists_ne_zero_with_target_and_sign
     · intro w hw
       exact (hsupp (Or.inr ⟨w, hw⟩)).elim
 
-/-- Simultaneous weak approximation at the finite and real places of a modulus.
+/-- **Weak approximation with prescribed signs at a modulus.** Let $K$ be a number field and
+$\mathfrak m$ a modulus of $K$, with finite part $\mathfrak m_0$ (a nonzero ideal of
+$\mathcal O_K$) and infinite part $\mathfrak m_\infty$ (a finite set of real places of $K$); for
+a real place $w$ write $\sigma_w : K \to \mathbb R$ for its real embedding. For every set $P$ of
+places in $\mathfrak m_\infty$ there is a nonzero $x \in K$ whose $\mathfrak p$-adic valuation
+is $0$ for every nonzero prime $\mathfrak p$ of $\mathcal O_K$ dividing $\mathfrak m_0$, and such
+that for every $w \in \mathfrak m_\infty$, $\sigma_w(x) > 0$ if $w \in P$ and $\sigma_w(x) < 0$
+if $w \notin P$.
 
-Retained API: the `a = 1` specialization of
-`exists_ne_zero_with_target_and_sign`. -/
+This is the special case of weak approximation with a finite target and prescribed signs in
+which the target is $1$. -/
 theorem exists_ne_zero_with_valuation_one_and_sign
     (m : Modulus K)
     (pos : {w : RealPlace K // w ∈ m.infinitePart} → Prop) :

@@ -18,7 +18,7 @@ Cambridge Philosophical Society 93 (1983), 9-23, doi:10.1017/S030500410006028X.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GraphThicknessWanted

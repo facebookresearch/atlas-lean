@@ -33,7 +33,11 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.TheoryOfComputation.CoCStrongNormalizationWanted`
 namespace. Mathematical
-statements are unchanged. Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui
+statements are unchanged. The inlined system came from
+`LeanEval.ProgramVerification.CoCSystem` at the same pin. The operational
+prefix and the now-proved `step_polyId_app` are re-exported from
+`CSLibExt.Languages.LambdaCalculus.CoC.Reduction`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui
 Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets'
 (2010).
 -/
@@ -42,6 +46,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Init
+public import CSLibExt.Languages.LambdaCalculus.CoC.Reduction
+public import CSLibExt.Languages.LambdaCalculus.CoC.Typing
 
 @[expose] public section
 
@@ -49,96 +55,10 @@ namespace MathlibExt.TheoryOfComputation.CoCStrongNormalizationWanted
 namespace ProgramVerification
 namespace CoCStrongNormalization
 
-/-- Sorts: an impredicative `Prop` and a predicative hierarchy `Type 0`, `Type 1`, ... -/
-inductive Srt where
-  | prop : Srt
-  | type : Nat → Srt
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Terms, with de Bruijn variables. -/
-inductive Tm where
-  | var : Nat → Tm
-  | srt : Srt → Tm
-  | app : Tm → Tm → Tm
-  /-- `lam A b` is `λ (x : A). b`. -/
-  | lam : Tm → Tm → Tm
-  /-- `pi A B` is `Π (x : A). B`. -/
-  | pi : Tm → Tm → Tm
-  deriving DecidableEq, Repr, Inhabited
-
-/-- `lift d c t` adds `d` to every free variable of `t` at index `c` or above. -/
-def lift (d c : Nat) : Tm → Tm
-  | .var i => if i < c then .var i else .var (i + d)
-  | .srt s => .srt s
-  | .app f a => .app (lift d c f) (lift d c a)
-  | .lam A b => .lam (lift d c A) (lift d (c + 1) b)
-  | .pi A B => .pi (lift d c A) (lift d (c + 1) B)
-
-/-- `subst k u t` replaces variable `k` of `t` by `u`, decrementing the variables above `k`. -/
-def subst (k : Nat) (u : Tm) : Tm → Tm
-  | .var i => if i < k then .var i else if i = k then lift k 0 u else .var (i - 1)
-  | .srt s => .srt s
-  | .app f a => .app (subst k u f) (subst k u a)
-  | .lam A b => .lam (subst k u A) (subst (k + 1) u b)
-  | .pi A B => .pi (subst k u A) (subst (k + 1) u B)
-
-/-- One step of beta reduction, under any context. -/
-inductive Step : Tm → Tm → Prop where
-  | beta (A b a : Tm) : Step (.app (.lam A b) a) (subst 0 a b)
-  | appFun {f f' : Tm} (a : Tm) : Step f f' → Step (.app f a) (.app f' a)
-  | appArg (f : Tm) {a a' : Tm} : Step a a' → Step (.app f a) (.app f a')
-  | lamTy {A A' : Tm} (b : Tm) : Step A A' → Step (.lam A b) (.lam A' b)
-  | lamBody (A : Tm) {b b' : Tm} : Step b b' → Step (.lam A b) (.lam A b')
-  | piDom {A A' : Tm} (B : Tm) : Step A A' → Step (.pi A B) (.pi A' B)
-  | piCod (A : Tm) {B B' : Tm} : Step B B' → Step (.pi A B) (.pi A B')
-
-/-- Beta conversion: the equivalence closure of `Step`. -/
-inductive Conv : Tm → Tm → Prop where
-  | refl (t : Tm) : Conv t t
-  | fwd {t u v : Tm} : Conv t u → Step u v → Conv t v
-  | bwd {t u v : Tm} : Conv t u → Step v u → Conv t v
-
-/-- `Ax s s'` says that the sort `s` is itself typed by the sort `s'`. -/
-inductive Ax : Srt → Srt → Prop where
-  | prop : Ax .prop (.type 0)
-  | type (i : Nat) : Ax (.type i) (.type (i + 1))
-
-/--
-`Rl s₁ s₂ s₃` says a `Π` whose domain lives in `s₁` and whose codomain lives in `s₂` itself
-lives in `s₃`. The first constructor is the impredicativity of `Prop`.
--/
-inductive Rl : Srt → Srt → Srt → Prop where
-  | prop (s : Srt) : Rl s .prop .prop
-  | type (i j : Nat) : Rl (.type i) (.type j) (.type (max i j))
-  | propType (i : Nat) : Rl .prop (.type i) (.type i)
-
-mutual
-
-/-- Well-formedness of a context; the head of the list is the most recent binding. -/
-inductive Wf : List Tm → Prop where
-  | nil : Wf []
-  | cons {Γ : List Tm} {A : Tm} {s : Srt} : Wf Γ → Typing Γ A (.srt s) → Wf (A :: Γ)
-
-/-- The typing judgement. -/
-inductive Typing : List Tm → Tm → Tm → Prop where
-  | srt {Γ : List Tm} {s s' : Srt} : Wf Γ → Ax s s' → Typing Γ (.srt s) (.srt s')
-  | var {Γ : List Tm} {i : Nat} {A : Tm} :
-      Wf Γ → Γ[i]? = some A → Typing Γ (.var i) (lift (i + 1) 0 A)
-  | pi {Γ : List Tm} {A B : Tm} {s₁ s₂ s₃ : Srt} :
-      Typing Γ A (.srt s₁) → Typing (A :: Γ) B (.srt s₂) → Rl s₁ s₂ s₃ →
-      Typing Γ (.pi A B) (.srt s₃)
-  | lam {Γ : List Tm} {A B b : Tm} {s : Srt} :
-      Typing Γ (.pi A B) (.srt s) → Typing (A :: Γ) b B →
-      Typing Γ (.lam A b) (.pi A B)
-  | app {Γ : List Tm} {f a A B : Tm} :
-      Typing Γ f (.pi A B) → Typing Γ a A →
-      Typing Γ (.app f a) (subst 0 a B)
-  | conv {Γ : List Tm} {t A B : Tm} {s : Srt} :
-      Typing Γ t A → Typing Γ B (.srt s) → Conv A B → Typing Γ t B
-
-end
-
-/-- `t` is strongly normalizing: there is no infinite chain of `Step`s out of `t`. -/
+/-- **Strongly normalizing terms.** The strongly normalizing terms are defined inductively: a term
+$t$ is strongly normalizing when every term to which $t$ reduces in one beta step is strongly
+normalizing. Equivalently, classically, there is no infinite chain of one-step beta reductions
+starting from $t$. -/
 def SN (t : Tm) : Prop := Acc (fun u v => Step v u) t
 
 end CoCStrongNormalization
@@ -221,60 +141,42 @@ namespace CoCStrongNormalization
 
 /-! ## The problem -/
 
-/--
-Anti-vacuity guard: the polymorphic identity `λ (A : Prop). λ (x : A). x` has type
-`Π (A : Prop). Π (x : A). A`. This is typable only because `Prop` is impredicative.
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
-of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
-leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
--/
-public theorem_wanted typing_polyId :
-    Typing [] (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
-      (.pi (.srt .prop) (.pi (.var 0) (.var 1)))
-
-/--
-Anti-vacuity guard: applying the polymorphic identity to `False` exercises application typing.
-Here `False` is encoded as `Π (P : Prop). P`.
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
-of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
-leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
--/
-public theorem_wanted typing_polyId_app :
-    Typing []
-      (.app
-        (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
-        (.pi (.srt .prop) (.var 0)))
-      (.pi (.pi (.srt .prop) (.var 0)) (.pi (.srt .prop) (.var 0)))
-
-/- Anti-vacuity guard: the same application takes its expected beta step. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
-Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
-leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
-public theorem_wanted step_polyId_app :
-    Step
-      (.app
-        (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
-        (.pi (.srt .prop) (.var 0)))
-      (.lam (.pi (.srt .prop) (.var 0)) (.var 0))
-
 /- Types are preserved by reduction. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+/--
+**Subject reduction.** Let $\Gamma$ be a context and $t$, $t'$, $A$ terms of the calculus
+of constructions with universes. If $t$ has type $A$ in $\Gamma$, that is
+$\Gamma \vdash t : A$, and $t$ reduces to $t'$ in one step of beta reduction (anywhere
+inside $t$), then $\Gamma \vdash t' : A$.
+
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
 Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
-leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+-/
 public theorem_wanted subject_reduction (Γ : List Tm) (t t' A : Tm) :
     Typing Γ t A → Step t t' → Typing Γ t' A
 
 /- Every well-typed term is strongly normalizing. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+/--
+**Strong normalization of CCω.** Every well-typed term is strongly normalizing: if
+$\Gamma \vdash t : A$ for some context $\Gamma$ and some term $A$, then $t$ is strongly
+normalizing.
+
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
 Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
-leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+-/
 public theorem_wanted strong_normalization (Γ : List Tm) (t A : Tm) :
     Typing Γ t A → SN t
 
 /- The system is logically consistent: `Π (P : Prop). P` is not inhabited. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+/--
+**Consistency of CCω.** No closed term has type $\Pi (P : \mathrm{Prop}).\, P$: there is no term
+$t$ with $\vdash t : \Pi (P : \mathrm{Prop}).\, P$ in the empty context.
+
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
 Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
-leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+-/
 public theorem_wanted consistency : ¬ ∃ t : Tm, Typing [] t (.pi (.srt .prop) (.var 0))
 
 end CoCStrongNormalization

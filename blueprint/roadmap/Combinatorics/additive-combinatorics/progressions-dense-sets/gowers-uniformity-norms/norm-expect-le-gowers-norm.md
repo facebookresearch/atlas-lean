@@ -6,7 +6,7 @@ For the indicator of a set $A$ of density $\delta$ this says $\|1_A\|_{U^d} \ge 
 
 ## Background
 
-- Sidorenko's inequality for the four-cycle, graphon form: the case $d = 2$ is the four-cycle case of Sidorenko's inequality for the sum graph of $A$, the symmetric kernel $W(x, y) = 1_A(x + y)$ on $G \times G$ (a step graphon), whose four-cycle density is $\|1_A\|_{U^2}^4$ and whose edge density is $\delta$.
+- [Sidorenko's inequality for the four-cycle, graphon form](../../../../GraphTheory/extremal-graph-theory/sidorenko-s-conjecture/graphon-hom-density-cycle-graph-four-ge.md): the case $d = 2$ is the four-cycle case of Sidorenko's inequality for the sum graph of $A$, the symmetric kernel $W(x, y) = 1_A(x + y)$ on $G \times G$ (a step graphon), whose four-cycle density is $\|1_A\|_{U^2}^4$ and whose edge density is $\delta$.
 
 ## Sources
 

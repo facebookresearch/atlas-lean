@@ -10,6 +10,20 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Optimality of stationary policies](optimality-of-stationary-policies/README.md)
 - [Stochastic shortest path problems](stochastic-shortest-path-problems/README.md)
 
+- [Markov decision processes](markov-decision-processes/README.md)
+- [Partially observable planning](partially-observable-planning/README.md)
+- [STRIPS planning complexity](strips-planning-complexity/README.md)
+- [Sampling-based motion planning](sampling-based-motion-planning/README.md)
+- [Combinatorial motion planning](motion-planning/README.md)
+- [Simulated annealing](simulated-annealing/README.md)
+- [Constraint satisfaction: consistency and width](constraint-satisfaction-consistency-and-width/README.md)
+- [Search problems and uninformed search](search-problems-and-uninformed-search/README.md)
+- [Monte Carlo tree search](monte-carlo-tree-search/README.md)
+- [Trajectory generation and time scaling](trajectory-generation-and-time-scaling/README.md)
+- [Feedback plans and navigation functions](feedback-plans-and-navigation-functions/README.md)
+
 ## Related topics
 
-- Reinforcement learning theory
+- [Reinforcement learning theory](../machine-learning/reinforcement-learning/README.md)
+
+- [Behavior trees](behavior-trees/README.md)

@@ -5,6 +5,7 @@
 - [The canonical map to the product of completions is injective](completion-tensor-product-map-injective.md)
 - [The canonical map to the product of completions is bijective](completion-tensor-product-map-bijective.md)
 - [Base change to a finite completion as a product of completions](completion-tensor-product-alg-equiv.md)
+- [Base change of the ring of integers to a finite completion](ring-of-integers-completion-tensor-product.md)
 - [Tensor product decomposition at a finite place](completion-tensor-product-right-alg-equi.md)
 - [Coordinate law for the tensor product decomposition](completion-tensor-product-right-alg-equi-2.md)
 - [Tensor product decomposition at a finite place over the base field](completion-tensor-product-right-alg-equi-3.md)

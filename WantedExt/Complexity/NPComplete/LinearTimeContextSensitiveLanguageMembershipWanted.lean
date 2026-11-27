@@ -21,7 +21,7 @@ Sciences 5 (1971), 397-429, doi:10.1016/S0022-0000(71)80025-9 (time-bounded gram
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Languages.ContextSensitive.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

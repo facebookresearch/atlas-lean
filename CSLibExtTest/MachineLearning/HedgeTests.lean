@@ -68,4 +68,17 @@ example (η : ℝ) (hη : 0 < η) (ls : List (Fin 5 → ℝ)) (hb : Nonneg ls) (
 #print axioms total_weights_le
 #print axioms algLoss_le_sq
 
+/-- The one-round fixture has second moment `1/2 ≤ 1 = T`. -/
+example (η : ℝ) : algSq η [round1] (fun _ => 1) ≤ [round1].length := by
+  refine algSq_le_length (by norm_num) _ _ (fun _ => one_pos) ?_
+  intro ℓ hℓ i
+  simp only [List.mem_singleton] at hℓ
+  subst hℓ
+  fin_cases i <;> simp [round1]
+
+example (ls : List (Fin 5 → ℝ)) (hb : Bounded ls) (hT : 0 < ls.length) (i : Fin 5) :
+    algLoss (√(log 5 / ls.length)) ls (fun _ => 1) - expertLoss i ls ≤
+      2 * √(ls.length * log 5) := by
+  simpa using regret_le_two_sqrt ls hb hT (by norm_num) i
+
 end Cslib.MachineLearning.Hedge

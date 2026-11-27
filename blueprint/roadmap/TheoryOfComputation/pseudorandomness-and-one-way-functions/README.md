@@ -7,6 +7,13 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 - [Yao's XOR lemma](yao-s-xor-lemma/README.md)
 - [Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP](nisan-wigderson.md)
 - [One-way functions imply P ≠ NP](owf-implies-p-ne-np.md)
+- [Hard-Core Predicates, Goldreich–Levin Decoding and Generator Stretch](hard-core-predicates-and-stretch/README.md)
+- [Inaccessible Entropy and Universal One-Way Hashing](inaccessible-entropy-and-universal-one-way-hashing/README.md)
+- [Locally Decodable Codes](locally-decodable-codes/README.md)
+- [Meta-Complexity and One-Way Functions](meta-complexity-and-one-way-functions/README.md)
+- [Pseudoentropy Pairs and Holenstein's Generator Construction](pseudoentropy-pairs-and-holenstein-construction/README.md)
+- [Space-Bounded and Small-Bias Generators](space-bounded-and-small-bias-generators/README.md)
+- [Transformations and Separations of One-Way Functions](one-way-function-transformations/README.md)
 
 ## Related topics
 
@@ -14,3 +21,4 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 - [Cryptography](../../ComputerScience/cryptography/README.md): the constructions built on these
   foundations: pseudorandom functions, semantically secure encryption (Goldwasser–Micali) and
   zero-knowledge proofs.
+- [Derandomization](derandomization/README.md)

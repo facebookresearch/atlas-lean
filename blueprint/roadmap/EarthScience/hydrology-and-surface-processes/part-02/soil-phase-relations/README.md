@@ -1,0 +1,16 @@
+# Soil phase relations
+
+- [Void ratio of a soil element](void-ratio.md)
+- [Porosity of a soil element](porosity.md)
+- [Porosity in terms of the void ratio](porosity-eq-void-ratio-div-one-add-void.md)
+- [Porosity is nonnegative](porosity-nonneg.md)
+- [Porosity is less than one](porosity-lt-one.md)
+- [Bulk unit weight from the soil phase relations](bulk-unit-weight.md)
+- [Submerged unit weight of a saturated soil](submerged-unit-weight.md)
+- [Submerged unit weight is the saturated one minus that of water](submerged-eq-sat-sub-water.md)
+- [Positive submerged unit weight exactly for specific gravity above one](submerged-pos-iff.md)
+- [Degree of saturation of a soil element](degree-of-saturation.md)
+- [Gravimetric water content](gravimetric-water-content.md)
+- [Specific gravity of the soil solids](specific-gravity.md)
+- [Saturation times void ratio is water content times specific gravity](saturation-mul-void-ratio.md)
+- [The degree of saturation lies between zero and one](degree-of-saturation-mem-icc.md)

@@ -15,9 +15,10 @@ M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), MAXIMUM CU
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 
 @[expose] public section
@@ -42,30 +43,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
-abbrev MaxCutInstance := ℕ × List (ℕ × ℕ) × ℕ
+/-- **MAXIMUM CUT is NP-complete.** The decision problem MAXIMUM CUT lies in NP, and every
+decision problem in NP has a polynomial-time many-one reduction to MAXIMUM CUT.
 
-/-- Well-formedness of an instance. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- A cut with at least `K` edges. -/
-def MaxCutFeasible
-    (i : MaxCutInstance) : Prop :=
-  ∃ S : Finset ℕ, (∀ v ∈ S, v < i.1) ∧
-    ∃ cut : List (ℕ × ℕ), cut.Sublist i.2.1 ∧ i.2.2 ≤ cut.length ∧
-      ∀ e ∈ cut, (e.1 ∈ S ∧ e.2 ∉ S) ∨ (e.1 ∉ S ∧ e.2 ∈ S)
-
-open Classical in
-/-- MAXIMUM CUT as a decision problem over bitstrings. -/
-noncomputable def maxCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutFeasible i)
-  | none => false
-
-/-- **MAXIMUM CUT is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), MAXIMUM CUT. -/
 public theorem_wanted maxCut_npComplete :
     maxCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

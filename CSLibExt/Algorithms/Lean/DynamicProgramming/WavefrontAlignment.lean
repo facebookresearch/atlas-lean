@@ -141,7 +141,7 @@ private theorem aux_fuel (P : LinearPenalties) (xs ys : List α) (s f₁ f₂ : 
     (hf₁ : s + 1 ≤ f₁) (hf₂ : s + 1 ≤ f₂) (k : ℤ) :
     wavefrontAux P xs ys f₁ s k = wavefrontAux P xs ys f₂ s k := by
   induction s using Nat.strong_induction_on generalizing f₁ f₂ k with
-  | h s ih =>
+  | ind s ih =>
     obtain ⟨f₁, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : f₁ ≠ 0)
     obtain ⟨f₂, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : f₂ ≠ 0)
     by_cases hs : s = 0
@@ -540,7 +540,7 @@ private theorem max_property (a b : Option ℤ) (R : ℤ → Prop)
 private theorem sound_good (P : LinearPenalties) (xs ys : List α) (s : ℕ)
     (k h : ℤ) (hw : wavefront P xs ys s k = some h) : Good P xs ys s k h := by
   induction s using Nat.strong_induction_on generalizing k h with
-  | h s ih =>
+  | ind s ih =>
     rw [recurrence] at hw
     by_cases hs : s = 0
     · subst s

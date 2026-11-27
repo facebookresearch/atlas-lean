@@ -1,6 +1,6 @@
 # Minimax property of the Chebyshev polynomials
 
-Among monic real polynomials of degree $n$, $2^{1-n}T_n$ has the least maximum modulus on $[-1, 1]$, namely $2^{1-n}$, and it is the only one (Chebyshev). This extremal fact is behind the Chebyshev convergence bounds of Krylov methods, such as the conjugate gradient bound, and behind the choice of Chebyshev points for interpolation.
+Among monic real polynomials of degree $n$, $2^{1-n}T_n$ has the least maximum modulus on $[-1, 1]$, namely $2^{1-n}$, and it is the only one (Chebyshev). This extremal fact is behind the Chebyshev convergence bounds of Krylov methods, such as the [conjugate gradient bound](../../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/README.md), and behind the choice of Chebyshev points for interpolation.
 
 - [Monic Chebyshev polynomial](chebyshev-monic.md)
 - [The monic Chebyshev polynomial is monic](chebyshev-monic-monic.md)

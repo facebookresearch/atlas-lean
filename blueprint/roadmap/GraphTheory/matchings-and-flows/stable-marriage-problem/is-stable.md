@@ -7,7 +7,7 @@ $(m, w) \in M \times W$ is a blocking pair for $\mu$.
 
 ## Background
 
-- Lattice of stable matchings: the structure of the set of stable matchings.
+- [Lattice of stable matchings](../../../GameTheory/matching-markets/lattice-of-stable-matchings/README.md): the structure of the set of stable matchings.
 
 ## Sources
 

@@ -1,0 +1,3 @@
+# Wired placement gives shift homogeneity on all-open events
+
+Let $d \in \mathbb{N}$, $0 < p < 1$ and $g \in \mathbb{Z}^d$. If the [wired placement hypothesis](lmc-wired-placement.md) holds for $g$, then $\phi^1_{p,2}(O_s) = \phi^1_{p,2}(O_{s - g})$ for every finite set $s$ of unordered pairs of sites, where $O_s$ is the event that every pair of the finite set $s$ is open, $s - g$ is the translate of $s$ by $-g$, and $\phi^1_{p,2}$ is the [wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures).

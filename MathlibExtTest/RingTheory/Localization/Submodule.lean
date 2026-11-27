@@ -14,11 +14,11 @@ public import Mathlib.RingTheory.Int.Basic
 @[expose] public section
 
 /-- The ideal `(3)` in `ℤ` is prime. -/
-instance : (Ideal.span {(3 : ℤ)}).IsPrime :=
+private instance : (Ideal.span {(3 : ℤ)}).IsPrime :=
   Ideal.isPrime_span_singleton_of_prime (Int.prime_iff_natAbs_prime.mpr Nat.prime_three)
 
 /-- The ideal `(2)` in `ℤ` is prime. -/
-instance : (Ideal.span {(2 : ℤ)}).IsPrime :=
+private instance : (Ideal.span {(2 : ℤ)}).IsPrime :=
   Ideal.isPrime_span_singleton_of_prime (Int.prime_iff_natAbs_prime.mpr Nat.prime_two)
 
 /-- The maximal-ideal intersection at `span ℤ {1}` in `ℚ`. -/

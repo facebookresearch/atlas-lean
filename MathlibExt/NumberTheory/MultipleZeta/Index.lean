@@ -39,43 +39,59 @@ representations, and Hoffman blocks in a two-letter free monoid.
 
 namespace MetaMathlibExt.MultipleZeta
 
-/-- An index is an ordered finite sequence of positive natural numbers,
-permitting the empty sequence, packaged as compositions over all total
-weights. Source clause D1 (`2608.10675:D01`, `2307.09867:D01`). -/
+/-- **Multiple-zeta index.** An index is a finite sequence $(k_1, \ldots, k_r)$ of positive
+integers with $r \ge 0$, so the empty sequence is allowed. It is represented as a natural
+number $n$ together with a composition of $n$, that is, a sequence of positive integers with
+sum $n$.
+
+Source: clause D1 (`2608.10675:D01`, `2307.09867:D01`). -/
 def Index : Type :=
   Σ _n : Nat, Composition _n
 
-/-- Entries of an index in source order. Source clause D2
-(`2608.10675:D01`, `2307.09867:D01`). -/
+/-- **Entries of an index.** The entries of an index $(k_1, \ldots, k_r)$ form the list
+$[k_1, \ldots, k_r]$ of its terms, in order.
+
+Source: clause D2 (`2608.10675:D01`, `2307.09867:D01`). -/
 def Index.entries : Index → List Nat
   | ⟨_, c⟩ => c.blocks
 
-/-- Weight of an index: the sum of its entries. Source clause D3
-(`2307.09867:D01`). -/
+/-- **Weight of an index.** The weight of an index $(k_1, \ldots, k_r)$ is the sum
+$k_1 + \cdots + k_r$ of its entries.
+
+Source: clause D3 (`2307.09867:D01`). -/
 def Index.weight : Index → Nat
   | ⟨n, _⟩ => n
 
-/-- Depth of an index: the number of entries. Source clause D4
-(`2608.10675:D01`, `2307.09867:D01`). -/
+/-- **Depth of an index.** The depth of an index $(k_1, \ldots, k_r)$ is its number of
+entries $r$.
+
+Source: clause D4 (`2608.10675:D01`, `2307.09867:D01`). -/
 def Index.depth : Index → Nat
   | ⟨_, c⟩ => Composition.length c
 
-/-- Height of an index: the number of entries at least two. Source clause D5
-(`2307.09867:D01`). -/
+/-- **Height of an index.** The height of an index $(k_1, \ldots, k_r)$ is the number of
+positions $i$ with $1 \le i \le r$ and $k_i \ge 2$.
+
+Source: clause D5 (`2307.09867:D01`). -/
 def Index.height : Index → Nat
   | ⟨_, c⟩ => (c.blocks.filter (· ≥ 2)).length
 
-/-- Admissibility: the index is nonempty and its first entry is at least two.
-Source clause D6 (`2307.09867:D01`). -/
+/-- **Admissible index.** An index $(k_1, \ldots, k_r)$ is admissible when it is nonempty
+($r \ge 1$) and its first entry satisfies $k_1 \ge 2$.
+
+Source: clause D6 (`2307.09867:D01`). -/
 def Index.IsAdmissible : Index → Prop
   | ⟨_, c⟩ =>
     match c.blocks with
     | [] => False
     | h :: _ => 2 ≤ h
 
-/-- Admissibility predicate for multiple-zeta indices in decreasing summation
-order. A list is admissible when it is nonempty, every entry is positive, and
-the first entry is at least two. Source `2307.09867:D01`. -/
+/-- **Admissible list.** A list $[k_1, \ldots, k_r]$ of natural numbers is admissible when it
+is nonempty ($r \ge 1$), $k_1 \ge 2$, and $k_i > 0$ for every $i$ with $2 \le i \le r$.
+
+This is the admissibility condition for multiple-zeta indices in decreasing summation order.
+
+Source: `2307.09867:D01`. -/
 def IsAdmissible : List ℕ → Prop
   | [] => False
   | h :: t => 2 ≤ h ∧ ∀ x ∈ t, 0 < x
@@ -89,7 +105,8 @@ theorem isAdmissible_cons_iff (h : ℕ) (t : List ℕ) :
     IsAdmissible (h :: t) ↔ 2 ≤ h ∧ ∀ x ∈ t, 0 < x := by
   rfl
 
-/-- The bundled and list formulations of admissibility agree. -/
+/-- **Admissibility of an index via its entries.** An index is admissible if and only if the
+list of its entries is an admissible list. -/
 theorem Index.isAdmissible_iff (index : Index) :
     index.IsAdmissible ↔ MetaMathlibExt.MultipleZeta.IsAdmissible index.entries := by
   rcases index with ⟨_, c⟩
@@ -103,14 +120,18 @@ theorem Index.isAdmissible_iff (index : Index) :
         simpa [hblocks] using List.mem_cons_of_mem h hx
       · exact fun h => h.1
 
-/-- Hoffman block word `z_k = x ^ (k - 1) * y` for positive `k` in
-`FreeMonoid Bool`, with `false` representing `x` and `true` representing `y`.
-Source `2307.09867:D05`. -/
+/-- **Hoffman block.** For a positive integer $k$, the Hoffman block $z_k = x^{k-1} y$ is the
+word in the free monoid on two letters $x$ and $y$ consisting of $k - 1$ copies of $x$ followed
+by one $y$.
+
+The free monoid is taken on the booleans, with false standing for $x$ and true for $y$.
+
+Source: `2307.09867:D05`. -/
 def hoffmanBlock (k : PNat) : FreeMonoid Bool :=
   FreeMonoid.ofList (List.replicate (k.val - 1) false ++ [true])
 
-/-- Reading a Hoffman block as a list recovers `k - 1` copies of `x` followed
-by one `y`. -/
+/-- **Hoffman block as a list.** For every positive integer $k$, the list of letters of the
+Hoffman block $z_k$ consists of $k - 1$ copies of $x$ (false) followed by one $y$ (true). -/
 @[simp]
 theorem toList_hoffmanBlock (k : PNat) :
     FreeMonoid.toList (hoffmanBlock k) =

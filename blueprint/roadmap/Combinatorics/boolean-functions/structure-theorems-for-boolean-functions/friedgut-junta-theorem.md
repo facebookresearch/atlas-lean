@@ -20,8 +20,8 @@ $u > 1/10$, and then $4u^3 9^{\lceil 2u\rceil} \le e^{19u + 16} \le e^{180 u}$.
 - [Corollary 9.12: stable influences of Boolean functions](stable-influence-third-le.md):
   the proof of Theorem 9.28 sums Corollary 9.12, $\mathrm{Inf}^{(1/3)}_i[f] \le \mathrm{Inf}_i[f]^{3/2}$,
   over the coordinates of small influence.
-- Fourier formula for influence:
+- [Fourier formula for influence](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-influence-eq-sum-sq.md):
   used to rewrite the stable influences in the Fourier basis.
-- Low total influence implies low-degree spectral concentration:
+- [Low total influence implies low-degree spectral concentration](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/spectral-structure-of-boolean-functions/sum-sq-card-gt-le-of-pos.md):
   the junta theorem is Theorem 9.28 with $k = \mathbf{I}[f]/\varepsilon$, which the source justifies by
   this "Markov argument" (Proposition 3.2).

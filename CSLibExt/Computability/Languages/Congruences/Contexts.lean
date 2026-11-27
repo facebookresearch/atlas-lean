@@ -33,7 +33,10 @@ universe u v
 
 variable {Symbol : Type u} {Carrier : Type v}
 
-/-- Insert a word between fixed left and right contexts before testing language membership. -/
+/-- **Context quotient.** Let $L$ be a language over an alphabet $A$ and let $u, v$ be words over
+$A$. The context quotient of $L$ by $(u, v)$ is the language
+$u^{-1} L v^{-1} = \{x \in A^* \mid uxv \in L\}$ of words that land in $L$ when placed between
+$u$ and $v$. -/
 def contextQuotient (L : Language Symbol) (left right : List Symbol) : Language Symbol :=
   {x | left ++ x ++ right ∈ L}
 
@@ -65,8 +68,10 @@ theorem contextQuotient_eq_left_right (L : Language Symbol) (left right : List S
   ext x
   simp [contextQuotient, rightQuotient, List.append_assoc]
 
-/-- Nested contexts compose by appending left contexts in application order and right contexts in
-the reverse order. -/
+/-- **Composing context quotients.** Let $L$ be a language over an alphabet $A$, and for words
+$u, v$ over $A$ write $u^{-1} L v^{-1} = \{x \mid uxv \in L\}$. Then for all words
+$u_1, v_1, u_2, v_2$ over $A$,
+$u_2^{-1} (u_1^{-1} L v_1^{-1}) v_2^{-1} = (u_1 u_2)^{-1} L (v_2 v_1)^{-1}$. -/
 theorem contextQuotient_contextQuotient (L : Language Symbol)
     (outerLeft outerRight innerLeft innerRight : List Symbol) :
     contextQuotient (contextQuotient L outerLeft outerRight) innerLeft innerRight =
@@ -75,13 +80,19 @@ theorem contextQuotient_contextQuotient (L : Language Symbol)
   simp only [mem_contextQuotient]
   simp [List.append_assoc]
 
-/-- The accepting subset obtained by surrounding an image with two fixed context images. -/
+/-- **Accepting set for a context quotient.** Let $\varphi \colon A^* \to M$ be a monoid morphism
+from the free monoid on an alphabet $A$ to a monoid $M$, let $P \subseteq M$, and let $u, v$ be
+words over $A$. The accepting set for the context $(u, v)$ is
+$\{m \in M \mid \varphi(u)\, m\, \varphi(v) \in P\}$. -/
 def contextAccept [Monoid Carrier] (morphism : FreeMonoid Symbol →* Carrier)
     (accept : Set Carrier) (left right : List Symbol) : Set Carrier :=
   {m | morphism (FreeMonoid.ofList left) * m * morphism (FreeMonoid.ofList right) ∈ accept}
 
-/-- Every algebraic recognizer recognizes all fixed two-sided context quotients without changing
-its carrier or morphism. -/
+/-- **Recognizers recognize context quotients.** Let $\varphi \colon A^* \to M$ be a monoid
+morphism from the free monoid on an alphabet $A$ to a monoid $M$ that recognizes a language $L$
+over $A$ through $P \subseteq M$, that is, a word $x$ lies in $L$ exactly when $\varphi(x) \in P$.
+Then for all words $u, v$ over $A$, $\varphi$ recognizes the context quotient
+$\{x \mid uxv \in L\}$ through the set $\{m \in M \mid \varphi(u)\, m\, \varphi(v) \in P\}$. -/
 theorem Recognizes.contextQuotient [Monoid Carrier] {L : Language Symbol}
     {morphism : FreeMonoid Symbol →* Carrier} {accept : Set Carrier}
     (hrec : Recognizes L morphism accept) (left right : List Symbol) :
@@ -96,8 +107,12 @@ theorem Recognizes.contextQuotient [Monoid Carrier] {L : Language Symbol}
   rw [hrec, FreeMonoid.ofList_append, FreeMonoid.ofList_append, map_mul, map_mul,
     FreeMonoid.ofList_toList]
 
-/-- The syntactic monoid of a context quotient is a quotient of a submonoid of the original
-syntactic monoid. -/
+/-- **The canonical map to the syntactic monoid of a context quotient.** Let $L$ be a language
+over an alphabet $A$, let $u, v$ be words over $A$, and write
+$u^{-1} L v^{-1} = \{x \mid uxv \in L\}$. Let $\eta$ be the syntactic morphism of $L$ and
+$\eta'$ the syntactic morphism of $u^{-1} L v^{-1}$. This is the monoid morphism from the image
+of $\eta$ to the syntactic monoid of $u^{-1} L v^{-1}$ that sends $\eta(x)$ to $\eta'(x)$ for
+every word $x$ over $A$. -/
 noncomputable def contextQuotientToSyntactic (L : Language Symbol) (left right : List Symbol) :
     MonoidHom.mrange (syntacticMorphism L) →* SyntacticMonoid (contextQuotient L left right) :=
   recognizerImageToSyntactic (syntacticMorphism L)
@@ -111,8 +126,11 @@ theorem contextQuotientToSyntactic_surjective (L : Language Symbol)
     (contextAccept (syntacticMorphism L) (syntacticAccept L) left right)
     ((recognizes_syntacticMorphism L).contextQuotient left right)
 
-/-- Whenever both quotients are explicitly finite, a context quotient cannot have a larger
-syntactic monoid than the image of the original syntactic morphism. -/
+/-- **Size bound for the syntactic monoid of a context quotient.** Let $L$ be a language over an
+alphabet $A$, let $u, v$ be words over $A$, and write $u^{-1} L v^{-1} = \{x \mid uxv \in L\}$
+for the context quotient. If the image of the syntactic morphism of $L$ and the syntactic monoid
+of $u^{-1} L v^{-1}$ are both finite, then the syntactic monoid of $u^{-1} L v^{-1}$ has at most
+as many elements as the image of the syntactic morphism of $L$. -/
 theorem card_syntacticMonoid_contextQuotient_le_mrange (L : Language Symbol)
     (left right : List Symbol)
     [Fintype (MonoidHom.mrange (syntacticMorphism L))]
@@ -121,7 +139,9 @@ theorem card_syntacticMonoid_contextQuotient_le_mrange (L : Language Symbol)
       Fintype.card (MonoidHom.mrange (syntacticMorphism L)) :=
   Fintype.card_le_of_surjective _ (contextQuotientToSyntactic_surjective L left right)
 
-/-- Finite syntactic monoids are closed under inserting words into fixed contexts. -/
+/-- **Context quotients preserve finiteness of the syntactic monoid.** Let $L$ be a language over
+an alphabet $A$ whose syntactic monoid is finite. Then for all words $u, v$ over $A$, the
+syntactic monoid of the context quotient $u^{-1} L v^{-1} = \{x \mid uxv \in L\}$ is finite. -/
 theorem finite_syntacticMonoid_contextQuotient (L : Language Symbol) (left right : List Symbol)
     [Finite (SyntacticMonoid L)] :
     Finite (SyntacticMonoid (contextQuotient L left right)) :=
@@ -129,15 +149,19 @@ theorem finite_syntacticMonoid_contextQuotient (L : Language Symbol) (left right
     (contextAccept (syntacticMorphism L) (syntacticAccept L) left right)
     ((recognizes_syntacticMorphism L).contextQuotient left right)
 
-/-- Regular languages are closed under fixed two-sided contexts. -/
+/-- **Regular languages are closed under context quotients.** If $L$ is a regular language over
+an alphabet $A$, then for all words $u, v$ over $A$, the context quotient
+$u^{-1} L v^{-1} = \{x \mid uxv \in L\}$ is regular. -/
 theorem IsRegular.contextQuotient {L : Language Symbol} (hL : L.IsRegular)
     (left right : List Symbol) : (contextQuotient L left right).IsRegular := by
   rw [Cslib.Language.isRegular_iff_finite_syntacticMonoid] at hL ⊢
   let _ : Finite (SyntacticMonoid L) := hL
   exact finite_syntacticMonoid_contextQuotient L left right
 
-/-- Syntactic equivalence is equivalently agreement of the two words in every fixed context
-quotient. -/
+/-- **Syntactic equivalence via context quotients.** Let $L$ be a language over an alphabet $A$.
+Two words $x, y$ over $A$ are syntactically equivalent for $L$ if and only if, for all words
+$u, v$ over $A$, $x$ lies in the context quotient $u^{-1} L v^{-1} = \{w \mid uwv \in L\}$
+exactly when $y$ does. -/
 theorem syntacticRel_iff_mem_contextQuotient (L : Language Symbol)
     (x y : FreeMonoid Symbol) :
     syntacticRel L x y ↔

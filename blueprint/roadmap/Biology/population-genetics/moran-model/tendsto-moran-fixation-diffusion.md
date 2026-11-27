@@ -1,0 +1,3 @@
+# Diffusion limit of the Moran fixation probability
+
+For every real $\sigma$ and every real $x \ge 0$, the [fixation probability](moran-fixation.md) of the Moran process with $N$ individuals, mutant relative fitness $r_N = 1 + \sigma/N$ and initial count $\lfloor xN \rfloor$ tends, as the natural number $N$ tends to infinity, to Kimura's fixation probability $u(\sigma/2, x)$, where $u(s, x) = (1 - e^{-2sx})/(1 - e^{-2s})$ for $s \ne 0$ and $u(0, x) = x$. This limit is $(1 - e^{-\sigma x})/(1 - e^{-\sigma})$ for $\sigma \ne 0$ ([closed form](kimura-fixation-half.md)) and $x$ for $\sigma = 0$. The initial frequency is meaningful in $[0, 1]$, but the limit holds for every $x \ge 0$.

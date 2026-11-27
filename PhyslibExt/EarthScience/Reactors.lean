@@ -49,8 +49,8 @@ outlet.
 
 namespace EarthScience
 
-/-- CSTR: for `V*c' = Q*(cin-c) - k*V*c`, i.e. `c' = (Q/V)*(cin-c) - k*c`,
-the solution `c(t) = cstar + (c0-cstar)*exp(-(Q/V+k)*t)` with
+/-- CSTR: for `V > 0`, `Q > 0`, `k ≥ 0` and `V*c' = Q*(cin-c) - k*V*c`, i.e.
+`c' = (Q/V)*(cin-c) - k*c`, the solution `c(t) = cstar + (c0-cstar)*exp(-(Q/V+k)*t)` with
 `cstar = Q*cin/(Q+k*V)` satisfies the ODE at every `t`. -/
 theorem cstr_hasDerivAt (V Q k cin c0 t : ℝ) (hV : 0 < V) (hQ : 0 < Q) (hk : 0 ≤ k) :
     HasDerivAt (fun t => Q * cin / (Q + k * V) +
@@ -68,8 +68,8 @@ theorem cstr_hasDerivAt (V Q k cin c0 t : ℝ) (hV : 0 < V) (hQ : 0 < Q) (hk : 0
   field_simp
   ring
 
-/-- CSTR steady state: `cstar = Q*cin/(Q+k*V)` makes the right-hand side
-`(Q/V)*(cin-cstar) - k*cstar` vanish. -/
+/-- CSTR steady state: for `V > 0`, `Q > 0` and `k ≥ 0`, `cstar = Q*cin/(Q+k*V)` makes the
+right-hand side `(Q/V)*(cin-cstar) - k*cstar` vanish. -/
 theorem cstr_steady_state (V Q k cin : ℝ) (hV : 0 < V) (hQ : 0 < Q) (hk : 0 ≤ k) :
     (Q / V) * (cin - Q * cin / (Q + k * V)) - k * (Q * cin / (Q + k * V)) = 0 := by
   have hV0 : V ≠ 0 := ne_of_gt hV

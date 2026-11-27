@@ -113,7 +113,7 @@ free measures in `p` on `(p_c, p)` (`hmono`) and `θ⁰ = θ¹` off a countable 
 lemma frp_free_percolation_above_pc_of_countable_agreement
     (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hpc : fkPc d q < p) (bad : Set ℝ) (hbad : bad.Countable)
-    (hmono : ∀ {p' : ℝ} (hp' : 0 < p') (hp1' : p' < 1), fkPc d q < p' →
+    (hmono : ∀ {p' : ℝ} (hp' : 0 < p') (hp1' : p' < 1), fkPc d q < p' → p' < p →
       (freeInfiniteVolume d hp' hp1' hq : Measure (ConfigSpace (Sym2 (Site d))))
         ≼ (freeInfiniteVolume d hp hp1 hq : Measure (ConfigSpace (Sym2 (Site d)))))
     (hagree : ∀ {p' : ℝ} (hp' : 0 < p') (hp1' : p' < 1), fkPc d q < p' →
@@ -129,7 +129,7 @@ lemma frp_free_percolation_above_pc_of_countable_agreement
   have hp1' : p' < 1 := hp'I.2.trans hp1
   have hpc' : fkPc d q < p' := lt_of_le_of_lt (le_max_left _ _) hp'I.1
   exact frp_free_percolation_above_pc d hp hp1 hq hp' hp1' hpc'
-    (hmono hp' hp1' hpc') (hagree hp' hp1' hpc' hp'bad)
+    (hmono hp' hp1' hpc' hp'I.2) (hagree hp' hp1' hpc' hp'bad)
 
 end FK
 

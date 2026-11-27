@@ -14,7 +14,7 @@ maximizes and the algorithm player minimizes.
 
 ## Informally uses
 
-- Von Neumann's minimax theorem: Arora and Barak derive Yao's lemma from it, for the game in which one player picks an input and the other an algorithm.
+- [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md): Arora and Barak derive Yao's lemma from it, for the game in which one player picks an input and the other an algorithm.
 
 ## Sources
 

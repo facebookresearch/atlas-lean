@@ -49,7 +49,9 @@ open scoped Computability
 open Nat.Partrec (Code)
 open Encodable Denumerable
 
-/-- The characteristic function of a set of naturals: `1` on members, `0` elsewhere. -/
+/-- **Characteristic function of a set of naturals.** The characteristic function of a set $p$ of
+natural numbers is the partial function $\mathbb{N} \rightharpoonup \mathbb{N}$ that is defined at
+every $n$, with value $1$ if $n \in p$ and value $0$ otherwise. -/
 noncomputable def charFun (p : ℕ → Prop) : ℕ →. ℕ :=
   open Classical in fun n ↦ Part.some (if p n then 1 else 0)
 
@@ -67,7 +69,9 @@ theorem one_mem_charFun {p : ℕ → Prop} {n : ℕ} : 1 ∈ charFun p n ↔ p n
 theorem zero_mem_charFun {p : ℕ → Prop} {n : ℕ} : 0 ∈ charFun p n ↔ ¬p n := by
   by_cases h : p n <;> simp [charFun_of_pos, charFun_of_neg, h]
 
-/-- **A set is decidable iff its characteristic function is partial recursive.** -/
+/-- **A set is decidable iff its characteristic function is partial recursive.** A set $p$ of
+natural numbers is decidable (computable as a predicate) if and only if its characteristic function
+is partial recursive. -/
 theorem computablePred_iff_partrec_charFun {p : ℕ → Prop} :
     ComputablePred p ↔ Partrec (charFun p) := by
   classical
@@ -82,7 +86,9 @@ theorem computablePred_iff_partrec_charFun {p : ℕ → Prop} :
       fun n ↦ ?_⟩
     by_cases h : p n <;> simp [h]
 
-/-- **Decidability transfers down Turing reducibility.** -/
+/-- **Decidability transfers down Turing reducibility.** Let $p$ and $q$ be sets of natural numbers
+such that the characteristic function of $p$ is Turing reducible to the characteristic function of
+$q$. If $q$ is decidable, then $p$ is decidable. -/
 theorem ComputablePred.of_turingReducible {p q : ℕ → Prop} (h : charFun p ≤ᵀ charFun q)
     (hq : ComputablePred q) : ComputablePred p :=
   computablePred_iff_partrec_charFun.mpr <| partrec_iff_forall_turingReducible.mpr fun _ ↦
@@ -93,7 +99,9 @@ theorem TM2Decidable.of_turingReducible {p q : ℕ → Prop} (h : charFun p ≤�
   tm2Decidable_iff_computablePred.mpr
     (ComputablePred.of_turingReducible h (tm2Decidable_iff_computablePred.mp hq))
 
-/-- The halting set: the numbers of codes that halt on `0`. -/
+/-- **Halting set.** Fix the standard bijective numbering $n \mapsto c_n$ of the codes of partial
+recursive functions $\mathbb{N} \rightharpoonup \mathbb{N}$. The halting set is the set of natural
+numbers $n$ such that the partial recursive function with code $c_n$ is defined at $0$. -/
 def haltingSet (n : ℕ) : Prop := ((ofNat Code n).eval 0).Dom
 
 theorem not_computablePred_haltingSet : ¬ComputablePred haltingSet := fun h ↦
@@ -104,12 +112,17 @@ theorem not_computablePred_haltingSet : ¬ComputablePred haltingSet := fun h ↦
     simp only [haltingSet, ofNat_encode] at this
     simp [this])
 
-/-- **The halting set is not Turing reducible to a decidable set.** -/
+/-- **The halting set is not Turing reducible to a decidable set.** For every decidable set $q$ of
+natural numbers, the characteristic function of the halting set is not Turing reducible to the
+characteristic function of $q$. -/
 theorem not_turingReducible_halting {q : ℕ → Prop} (hq : ComputablePred q) :
     ¬charFun haltingSet ≤ᵀ charFun q := fun h ↦
   not_computablePred_haltingSet (ComputablePred.of_turingReducible h hq)
 
-/-- **Many-one reducibility implies Turing reducibility.** -/
+/-- **Many-one reducibility implies Turing reducibility.** If $p$ and $q$ are sets of natural
+numbers and $p$ is many-one reducible to $q$, that is, there is a computable
+$f : \mathbb{N} \to \mathbb{N}$ with $n \in p \iff f(n) \in q$ for all $n$, then the characteristic
+function of $p$ is Turing reducible to the characteristic function of $q$. -/
 theorem turingReducible_of_manyOneReducible {p q : ℕ → Prop} (h : p ≤₀ q) :
     charFun p ≤ᵀ charFun q := by
   obtain ⟨f, hf, hpq⟩ := h
@@ -121,7 +134,9 @@ theorem turingReducible_of_manyOneReducible {p q : ℕ → Prop} (h : p ≤₀ q
   · rw [charFun_of_pos h, charFun_of_pos ((hpq n).mp h)]
   · rw [charFun_of_neg h, charFun_of_neg (mt (hpq n).mpr h)]
 
-/-- **Every set is Turing equivalent to its complement.** -/
+/-- **Every set is Turing equivalent to its complement.** For every set $p$ of natural numbers,
+the characteristic function of the complement $\mathbb{N} \setminus p$ and the characteristic
+function of $p$ are Turing equivalent: each is Turing reducible to the other. -/
 theorem turingEquivalent_charFun_not (p : ℕ → Prop) : charFun (fun n ↦ ¬p n) ≡ᵀ charFun p := by
   have hsub : Nat.Partrec fun m : ℕ ↦ (Part.some (1 - m) : Part ℕ) :=
     Partrec.nat_iff.mp (Primrec.nat_sub.comp (Primrec.const 1) Primrec.id).to_comp.partrec
@@ -132,9 +147,12 @@ theorem turingEquivalent_charFun_not (p : ℕ → Prop) : charFun (fun n ↦ ¬p
   · by_cases h : p n <;> simp [charFun_of_pos, charFun_of_neg, h]
   · by_cases h : p n <;> simp [charFun_of_pos, charFun_of_neg, h]
 
-/-- The complement of the halting set is not many-one reducible to it: the halting set is
-recognizable and its complement is not. Together with `turingEquivalent_charFun_not`, Turing
-reducibility is strictly coarser than many-one reducibility. -/
+/-- **The complement of the halting set is not many-one reducible to it.** There is no computable
+function $f : \mathbb{N} \to \mathbb{N}$ such that, for every $n$, $n$ is outside the halting set
+if and only if $f(n)$ is in the halting set.
+
+The halting set is recognizable and its complement is not. Since every set is Turing equivalent to
+its complement, Turing reducibility is strictly coarser than many-one reducibility. -/
 theorem not_manyOneReducible_not_halting : ¬(fun n ↦ ¬haltingSet n) ≤₀ haltingSet := by
   intro h
   have hre : TM2Recognizable haltingSet :=

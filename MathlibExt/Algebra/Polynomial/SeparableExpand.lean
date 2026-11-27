@@ -46,9 +46,12 @@ namespace Polynomial
 
 variable {K : Type*} [Field K]
 
-/-- Corollary 4.5, existence: every irreducible polynomial is the
-expansion of an irreducible separable polynomial by a power of the
-characteristic. -/
+/-- **Irreducible polynomials are expansions of separable irreducibles.** Let $K$ be a field
+of characteristic $p$ (with $p = 0$ in characteristic zero) and let $f \in K[x]$ be irreducible.
+Then there exist $n \in \mathbb{N}$ and an irreducible separable polynomial $g \in K[x]$ such
+that $f(x) = g(x^{p^n})$, where $0^0 = 1$.
+
+Source: ATLAS NumberTheoryI, Corollary 4.5 (existence). -/
 theorem exists_irreducible_separable_expand_eq {f : K[X]}
     (hf : Irreducible f) :
     ∃ (n : ℕ) (g : K[X]),
@@ -67,7 +70,13 @@ theorem exists_irreducible_separable_expand_eq {f : K[X]}
     have : CharZero K := CharP.charP_to_charZero K
     exact ⟨0, f, hf, hf.separable, by rw [pow_zero, expand_one]⟩
 
-/-- Corollary 4.5, uniqueness: the pair `(n, g)` is determined by `f`. -/
+/-- **The separable irreducible underlying an irreducible polynomial is unique.** Let $K$ be a
+field of characteristic $p$ (with $p = 0$ in characteristic zero) and let $f \in K[x]$ be
+irreducible. If $n_1, n_2 \in \mathbb{N}$ and irreducible separable polynomials
+$g_1, g_2 \in K[x]$ satisfy $f(x) = g_1(x^{p^{n_1}})$ and $f(x) = g_2(x^{p^{n_2}})$, where
+$0^0 = 1$, then $n_1 = n_2$ and $g_1 = g_2$.
+
+Source: ATLAS NumberTheoryI, Corollary 4.5 (uniqueness). -/
 theorem unique_irreducible_separable_expand_eq {f : K[X]}
     (hf : Irreducible f) {n₁ n₂ : ℕ} {g₁ g₂ : K[X]}
     (h₁ : Irreducible g₁ ∧ g₁.Separable ∧
@@ -104,7 +113,14 @@ theorem unique_irreducible_separable_expand_eq {f : K[X]}
     rw [pow_zero, expand_one] at hgf₁ hgf₂
     rw [hgf₁, hgf₂]
 
-/-- Corollary 4.5, existence and uniqueness combined. -/
+/-- **Irreducible polynomials are uniquely expansions of separable irreducibles.** Let $K$ be a
+field of characteristic $p$ (with $p = 0$ in characteristic zero, and $0^0 = 1$) and let
+$f \in K[x]$ be irreducible. Then there exist $n \in \mathbb{N}$ and an
+irreducible separable polynomial $g \in K[x]$ with $f(x) = g(x^{p^n})$, and for every
+$n' \in \mathbb{N}$ and every irreducible separable polynomial $g' \in K[x]$ with
+$f(x) = g'(x^{p^{n'}})$ we have $n' = n$ and $g' = g$.
+
+Source: ATLAS NumberTheoryI, Corollary 4.5. -/
 theorem exists_unique_irreducible_separable_expand_eq {f : K[X]}
     (hf : Irreducible f) :
     ∃ (n : ℕ) (g : K[X]),

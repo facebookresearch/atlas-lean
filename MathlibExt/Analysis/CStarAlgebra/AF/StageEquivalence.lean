@@ -1,0 +1,187 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.AF.StageMatrix
+public import MathlibExt.Analysis.CStarAlgebra.Projection.Intertwiner
+public import Mathlib.Analysis.CStarAlgebra.Hom
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+
+/-!
+# Eventual stage reflection of projection equivalence
+
+Projections in two original stages of an increasing dense closed C-star
+exhaustion are Murray--von Neumann equivalent in one common later stage
+when their actual ambient images are equivalent. The proof approximates
+the given ambient witness, compresses it by the actual stage projections,
+and constructs native inverse factors from the resulting small defects.
+No completion, projection lift or K0 equivalence is an input model field.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Set
+open scoped CStarAlgebra
+
+namespace CStarAlgebra
+
+universe uA uN
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+variable {n : Type uN} [Fintype n]
+
+/-- **Projection equivalence occurs at a later stage.** Let `A` be a nonunital complex C*-algebra and
+let `Aₖ ⊆ A`, for `k ∈ ℕ`, be increasing closed nonunital star subalgebras whose union is
+norm-dense. For a finite matrix index type `n`, suppose projections `p ∈ Mₙ(Aᵢ)` and `q ∈ Mₙ(Aⱼ)`
+become Murray-von Neumann equivalent in `Mₙ(A)`. There is `k ≥ i,j` at which their inclusions into
+`Mₙ(Aₖ)` are Murray-von Neumann equivalent. Matrix norms are inherited from the C*-algebras. -/
+theorem exists_later_stage_murrayVonNeumannEquivalent
+    (stage : ℕ → NonUnitalStarSubalgebra ℂ A)
+    [∀ k, IsClosed (stage k : Set A)] (hmono : Monotone stage)
+    (hdense : Dense (⋃ k, (stage k : Set A))) {i j : ℕ}
+    (p : StarProjection (CStarMatrix n n (stage i)))
+    (q : StarProjection (CStarMatrix n n (stage j)))
+    (hpq : StarProjection.MurrayVonNeumannEquivalent
+      (StarProjection.map
+        (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage i))) p)
+      (StarProjection.map
+        (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage j))) q)) :
+    ∃ (k : ℕ) (hik : i ≤ k) (hjk : j ≤ k),
+      StarProjection.MurrayVonNeumannEquivalent
+        (StarProjection.map
+          (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebra.inclusion (hmono hik))) p)
+        (StarProjection.map
+          (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebra.inclusion (hmono hjk))) q) := by
+  classical
+  letI : PartialOrder A := CStarAlgebra.spectralOrder A
+  letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : ∀ k, NonUnitalCStarAlgebra (stage k) := fun k =>
+    NonUnitalStarSubalgebra.nonUnitalCStarAlgebra (stage k)
+  let P : StarProjection (CStarMatrix n n A) := StarProjection.map
+    (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage i))) p
+  let Q : StarProjection (CStarMatrix n n A) := StarProjection.map
+    (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage j))) q
+  change StarProjection.MurrayVonNeumannEquivalent P Q at hpq
+  obtain ⟨v, hpv, hqv⟩ := hpq
+  have hvP : v * (P : CStarMatrix n n A) = v :=
+    StarProjection.mul_source_projection_eq P v hpv
+  have hQv : (Q : CStarMatrix n n A) * v = v :=
+    StarProjection.target_projection_mul_eq Q v hqv
+  have hvnorm : ‖v‖ ≤ 1 := StarProjection.norm_intertwiner_le_one P v hpv
+  have hPnorm : ‖(P : CStarMatrix n n A)‖ ≤ 1 :=
+    IsStarProjection.norm_le _ P.property
+  have hQnorm : ‖(Q : CStarMatrix n n A)‖ ≤ 1 :=
+    IsStarProjection.norm_le _ Q.property
+  obtain ⟨t, w, hw⟩ := exists_stage_matrix_near stage hmono hdense v (1 / 10) (by norm_num)
+  have hwₙₐ : ‖v - CStarMatrix.mapₙₐ
+      (NonUnitalStarSubalgebraClass.subtype (stage t)) w‖ < 1 / 10 := by
+    simpa only [CStarMatrix.mapₙₐ_apply, CStarMatrix.mapₗ_apply] using hw
+  let k := max (max i j) t
+  have hik : i ≤ k := (le_max_left i j).trans (le_max_left (max i j) t)
+  have hjk : j ≤ k := (le_max_right i j).trans (le_max_left (max i j) t)
+  have htk : t ≤ k := le_max_right (max i j) t
+  let : PartialOrder (stage k) := CStarAlgebra.spectralOrder (stage k)
+  let : StarOrderedRing (stage k) := CStarAlgebra.spectralOrderedRing (stage k)
+  let B := CStarMatrix n n (stage k)
+  let pk : StarProjection B := StarProjection.map
+    (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebra.inclusion (hmono hik))) p
+  let qk : StarProjection B := StarProjection.map
+    (CStarMatrix.mapₙₐ (NonUnitalStarSubalgebra.inclusion (hmono hjk))) q
+  let wk : B := CStarMatrix.mapₙₐ (NonUnitalStarSubalgebra.inclusion (hmono htk)) w
+  let ι : B →⋆ₙₐ[ℂ] CStarMatrix n n A :=
+    CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage k))
+  have hpk : ι (pk : B) = (P : CStarMatrix n n A) := by
+    apply CStarMatrix.ext
+    intro a b
+    rfl
+  have hqk : ι (qk : B) = (Q : CStarMatrix n n A) := by
+    apply CStarMatrix.ext
+    intro a b
+    rfl
+  have hwk : ι wk = CStarMatrix.mapₙₐ
+      (NonUnitalStarSubalgebraClass.subtype (stage t)) w := by
+    apply CStarMatrix.ext
+    intro a b
+    rfl
+  have hιinj : Function.Injective ι := by
+    intro x y hxy
+    apply CStarMatrix.ext
+    intro a b
+    apply Subtype.ext
+    exact congrArg (fun z : CStarMatrix n n A => z a b) hxy
+  have hι : Isometry ι := NonUnitalStarAlgHom.isometry ι hιinj
+  have hnorm (z : B) : ‖ι z‖ = ‖z‖ := by
+    simpa only [map_zero, dist_zero_right] using hι.dist_eq z 0
+  let x : B := (qk : B) * wk * (pk : B)
+  have hxP : x * (pk : B) = x := by
+    simp only [x, mul_assoc, pk.property.isIdempotentElem.eq]
+  have hQx : (qk : B) * x = x := by
+    simp only [x, ← mul_assoc, qk.property.isIdempotentElem.eq]
+  have hcompress : ι x - v =
+      (Q : CStarMatrix n n A) * (ι wk - v) * (P : CStarMatrix n n A) := by
+    change ι ((qk : B) * wk * (pk : B)) - v = _
+    rw [map_mul, map_mul, hqk, hpk, mul_sub, sub_mul, hQv, hvP]
+  have hwnear : ‖ι wk - v‖ < 1 / 10 := by
+    rw [hwk, norm_sub_rev]
+    exact hwₙₐ
+  let d := ‖ι x - v‖
+  have hd0 : 0 ≤ d := norm_nonneg _
+  have hd : d < 1 / 10 := by
+    calc
+      d = ‖(Q : CStarMatrix n n A) * (ι wk - v) * (P : CStarMatrix n n A)‖ :=
+        congrArg norm hcompress
+      _ ≤ ‖(Q : CStarMatrix n n A)‖ * ‖ι wk - v‖ * ‖(P : CStarMatrix n n A)‖ :=
+        (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_right (norm_mul_le _ _) (norm_nonneg _))
+      _ ≤ 1 * ‖ι wk - v‖ * ‖(P : CStarMatrix n n A)‖ :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_right hQnorm (norm_nonneg _)) (norm_nonneg _)
+      _ ≤ 1 * ‖ι wk - v‖ * 1 :=
+        mul_le_mul_of_nonneg_left hPnorm (by positivity)
+      _ = ‖ι wk - v‖ := by simp only [one_mul, mul_one]
+      _ < 1 / 10 := hwnear
+  have hxnorm : ‖ι x‖ ≤ d + 1 := by
+    calc
+      ‖ι x‖ = ‖(ι x - v) + v‖ := by rw [sub_add_cancel]
+      _ ≤ ‖ι x - v‖ + ‖v‖ := norm_add_le _ _
+      _ ≤ d + 1 := add_le_add le_rfl hvnorm
+  have hsmall : d * (d + 2) < 1 := by
+    calc
+      d * (d + 2) ≤ d * 3 := mul_le_mul_of_nonneg_left (by linarith) hd0
+      _ < (1 / 10 : ℝ) * 3 := mul_lt_mul_of_pos_right hd (by norm_num)
+      _ < 1 := by norm_num
+  have hleft : ‖(pk : B) - star x * x‖ < 1 := by
+    calc
+      _ = ‖ι ((pk : B) - star x * x)‖ := (hnorm _).symm
+      _ = ‖star (ι x) * ι x - star v * v‖ := by
+        rw [map_sub, map_mul, map_star, hpk, hpv, norm_sub_rev]
+      _ ≤ d * (‖ι x‖ + ‖v‖) := StarProjection.norm_star_mul_self_sub_le (ι x) v
+      _ ≤ d * (d + 2) := mul_le_mul_of_nonneg_left (by linarith) hd0
+      _ < 1 := hsmall
+  have hright : ‖(qk : B) - x * star x‖ < 1 := by
+    have hbound : ‖ι x * star (ι x) - v * star v‖ ≤ d * (‖ι x‖ + ‖v‖) := by
+      simpa only [star_star, ← star_sub, norm_star] using
+        StarProjection.norm_star_mul_self_sub_le (star (ι x)) (star v)
+    calc
+      _ = ‖ι ((qk : B) - x * star x)‖ := (hnorm _).symm
+      _ = ‖ι x * star (ι x) - v * star v‖ := by
+        rw [map_sub, map_mul, map_star, hqk, hqv, norm_sub_rev]
+      _ ≤ d * (‖ι x‖ + ‖v‖) := hbound
+      _ ≤ d * (d + 2) := mul_le_mul_of_nonneg_left (by linarith) hd0
+      _ < 1 := hsmall
+  exact ⟨k, hik, hjk, StarProjection.murrayVonNeumannEquivalent_of_approximate_intertwiner
+    pk qk x hxP hQx hleft hright⟩
+
+end CStarAlgebra

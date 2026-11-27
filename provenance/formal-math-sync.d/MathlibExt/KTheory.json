@@ -1,0 +1,6 @@
+{
+  "rows": [
+    {"path": "MathlibExt/KTheory/Waldhausen/K0/Basic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d3d87a72a1094110e92936ac7da573c599208d14fc07ee60a89710252862c76b", "rationale": "ATLAS imports the original weak-equivalence and cofiber quotient and documents lift uniqueness. It ports the construction and instance uses to the explicitly weaker WaldhausenCategoryWithoutGluing interface without changing the relations.", "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0", "upstream_sha256": "ca09c4b78ec0cbdd90d987cd3f302f46ad63756c2ee0a7bf2e796851dadeb730"},
+    {"path": "MathlibExt/KTheory/Waldhausen/K0/WaldhausenExactFunctor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "de5bdabf4323be0e1b4cd93a9454cb9d2c6355e9008b65347ccb9c705a9478e7", "rationale": "ATLAS ports the induced map to WaldhausenCategoryWithoutGluing, makes the representative-dependent construction private, and proves naturality of the universal coefficient lift along the induced map on isomorphism classes.", "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0", "upstream_sha256": "3c56a84c7166cb5d0162c0f9488ccb37542837402c99371e6dc34c65c7113e54"}
+  ]
+}

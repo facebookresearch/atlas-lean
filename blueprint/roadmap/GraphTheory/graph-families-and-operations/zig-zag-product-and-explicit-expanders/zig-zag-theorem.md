@@ -14,5 +14,5 @@ With $G$ big and $H$ small, the product keeps $G$'s size up to the factor $D_1$,
 
 - [Squaring squares the spectral parameter](is-ndlambda-graph-square.md): the other operation of
   the iteration, which improves expansion at the cost of degree.
-- Undirected ST-connectivity is in L (Reingold):
+- [Undirected ST-connectivity is in L (Reingold)](../../../TheoryOfComputation/polynomial-time-problems/undirected-s-t-connectivity/ustcon-in-l.md):
   the best-known application.

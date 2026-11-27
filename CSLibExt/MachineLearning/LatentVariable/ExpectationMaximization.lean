@@ -64,13 +64,16 @@ variable {Θ X Z : Type*} [Fintype Z]
 
 /-! ## Gibbs' inequality -/
 
-/-- A probability distribution on the finite latent space. -/
+/-- **Probability distributions on a finite latent space.** A function $q : Z \to \mathbb{R}$ on a
+finite set $Z$ is a probability distribution when $q(z) \ge 0$ for every $z \in Z$ and
+$\sum_{z \in Z} q(z) = 1$. -/
 def IsDist (q : Z → ℝ) : Prop := (∀ z, 0 ≤ q z) ∧ ∑ z, q z = 1
 
-/-- **Gibbs' inequality**, in the form behind the evidence lower bound: for positive weights `p`
-and a distribution `q`, `∑ q (log p - log q) ≤ log ∑ p`. This is MathlibExt's log-sum inequality
-`Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div` with `∑ q = 1`; terms with `q z = 0`
-contribute `0` on both sides. -/
+/-- **Gibbs' inequality (evidence lower bound form).** Let $Z$ be a finite set, let
+$p : Z \to \mathbb{R}$ satisfy $p(z) > 0$ for all $z$, and let $q$ be a probability distribution
+on $Z$. Then $\sum_{z \in Z} q(z) (\log p(z) - \log q(z)) \le \log \sum_{z \in Z} p(z)$.
+
+This is the log-sum inequality with $\sum_{z} q(z) = 1$; terms with $q(z) = 0$ contribute $0$. -/
 theorem sum_mul_log_sub_le {p q : Z → ℝ} (hp : ∀ z, 0 < p z) (hq : IsDist q) :
     ∑ z, q z * (log (p z) - log (q z)) ≤ log (∑ z, p z) := by
   obtain ⟨hq0, hq1⟩ := hq
@@ -85,7 +88,12 @@ theorem sum_mul_log_sub_le {p q : Z → ℝ} (hp : ∀ z, 0 < p z) (hq : IsDist 
   simp only [hterm, Finset.sum_neg_distrib] at h
   linarith
 
-/-- Equality in Gibbs' inequality at `q = p / ∑ p`. -/
+/-- **Equality case of Gibbs' inequality.** Let $Z$ be a finite nonempty set, let
+$p : Z \to \mathbb{R}$ satisfy $p(z) > 0$ for all $z$, and write $P = \sum_{z \in Z} p(z)$. Then
+
+$$\sum_{z \in Z} \frac{p(z)}{P} \left(\log p(z) - \log \frac{p(z)}{P}\right) = \log P,$$
+
+that is, the bound of Gibbs' inequality is attained at the distribution $q = p / P$. -/
 theorem sum_div_mul_log_sub {p : Z → ℝ} (hp : ∀ z, 0 < p z) [Nonempty Z] :
     ∑ z, p z / (∑ z', p z') * (log (p z) - log (p z / ∑ z', p z')) = log (∑ z, p z) := by
   have hPpos : 0 < ∑ z', p z' := Finset.sum_pos (fun z _ => hp z) Finset.univ_nonempty
@@ -101,34 +109,57 @@ theorem sum_div_mul_log_sub {p : Z → ℝ} (hp : ∀ z, 0 < p z) [Nonempty Z] :
 
 variable {N : ℕ}
 
-/-- The marginal `p_θ(x) = ∑ z, p_θ(x, z)` of a joint model `p` with finite latent space `Z`. -/
+/-- **Marginal of a latent-variable model.** For a joint model $p$ assigning a real number
+$p_\theta(x, z)$ to each parameter $\theta$, observation $x$ and latent value $z$ in a finite
+latent space $Z$, the marginal is $p_\theta(x) = \sum_{z \in Z} p_\theta(x, z)$. -/
 def marginal (p : Θ → X → Z → ℝ) (θ : Θ) (x : X) : ℝ := ∑ z, p θ x z
 
-/-- The log-likelihood `ℓ(θ) = ∑ n, log p_θ(xₙ)` of the data `xs`. -/
+/-- **Log-likelihood of a latent-variable model.** For a joint model $p$ with finite latent space
+$Z$ and data $x_0, \dots, x_{N-1}$, the log-likelihood at the parameter $\theta$ is
+$\ell(\theta) = \sum_{n < N} \log p_\theta(x_n)$, where
+$p_\theta(x) = \sum_{z \in Z} p_\theta(x, z)$ is the marginal. -/
 noncomputable def logLik (p : Θ → X → Z → ℝ) (xs : Fin N → X) (θ : Θ) : ℝ :=
   ∑ n, log (marginal p θ (xs n))
 
-/-- The posterior `p_θ(z | x) = p_θ(x, z) / p_θ(x)` (the E-step). -/
+/-- **Posterior of a latent-variable model.** For a joint model $p$ with finite latent space $Z$,
+the posterior of the latent value $z$ given the observation $x$ at the parameter $\theta$ is
+$p_\theta(z \mid x) = p_\theta(x, z) / p_\theta(x)$, where
+$p_\theta(x) = \sum_{z' \in Z} p_\theta(x, z')$ is the marginal (the quotient is read as $0$
+when the marginal is $0$). Computing it is the E-step of expectation-maximization. -/
 noncomputable def posterior (p : Θ → X → Z → ℝ) (θ : Θ) (x : X) (z : Z) : ℝ :=
   p θ x z / marginal p θ x
 
-/-- The evidence lower bound of per-point latent distributions `q`:
-`∑ n, ∑ z, q n z (log p_θ(xₙ, z) - log q n z)`. -/
+/-- **Evidence lower bound of latent distributions.** Let $Z$ be a finite set, let
+$p_\theta(x, z)$ be real numbers indexed by parameters $\theta$, observations $x$ and latent values
+$z \in Z$, and let $x_1, \dots, x_N$ be data. For a parameter $\theta$ and functions
+$q_1, \dots, q_N : Z \to \mathbb{R}$ (one latent distribution per data point), the evidence lower
+bound is $\sum_{n=1}^N \sum_{z \in Z} q_n(z) \bigl(\log p_\theta(x_n, z) - \log q_n(z)\bigr)$. -/
 noncomputable def elbo (p : Θ → X → Z → ℝ) (xs : Fin N → X) (θ : Θ) (q : Fin N → Z → ℝ) : ℝ :=
   ∑ n, ∑ z, q n z * (log (p θ (xs n) z) - log (q n z))
 
-/-- The EM objective `Q(θ' | θ) = ∑ n, ∑ z, p_θ(z | xₙ) log p_θ'(xₙ, z)` (maximized in the
-M-step). -/
+/-- **The EM objective.** Let $Z$ be a finite set, let $p_\theta(x, z)$ be real numbers indexed by
+parameters $\theta$, observations $x$ and latent values $z \in Z$, let $x_1, \dots, x_N$ be data,
+and write $p_\theta(z \mid x) = p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ for the posterior.
+For parameters $\theta'$ and $\theta$, the EM objective is
+$Q(\theta' \mid \theta) = \sum_{n=1}^N \sum_{z \in Z} p_\theta(z \mid x_n) \log p_{\theta'}(x_n, z)$
+(maximized over $\theta'$ in the M-step). -/
 noncomputable def emQ (p : Θ → X → Z → ℝ) (xs : Fin N → X) (θ' θ : Θ) : ℝ :=
   ∑ n, ∑ z, posterior p θ (xs n) z * log (p θ' (xs n) z)
 
-/-- The entropy of the posteriors, `-∑ n, ∑ z, p_θ(z | xₙ) log p_θ(z | xₙ)`. -/
+/-- **Posterior entropy.** For a joint model $p$ with finite latent space $Z$, data
+$x_0, \dots, x_{N-1}$ and a parameter $\theta$, the posterior entropy is
+$-\sum_{n < N} \sum_{z \in Z} p_\theta(z \mid x_n) \log p_\theta(z \mid x_n)$, where
+$p_\theta(z \mid x)$ is the posterior of $z$ given $x$. -/
 noncomputable def postEntropy (p : Θ → X → Z → ℝ) (xs : Fin N → X) (θ : Θ) : ℝ :=
   -∑ n, ∑ z, posterior p θ (xs n) z * log (posterior p θ (xs n) z)
 
 variable {p : Θ → X → Z → ℝ}
 
-/-- The posterior is a distribution. -/
+/-- **Posteriors are probability distributions.** Let $Z$ be a nonempty finite set and let
+$p_\theta(x, z)$ be real numbers indexed by parameters $\theta$, observations $x$ and latent values
+$z \in Z$, with $p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$. For every parameter $\theta$ and
+observation $x$, the posterior $z \mapsto p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ is a
+probability distribution on $Z$: its values are nonnegative and sum to $1$. -/
 theorem isDist_posterior [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (θ : Θ) (x : X) :
     IsDist (posterior p θ x) := by
   have hpos : 0 < marginal p θ x := Finset.sum_pos (fun z _ => hp θ x z) Finset.univ_nonempty
@@ -137,24 +168,63 @@ theorem isDist_posterior [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (θ : Θ) 
   rw [← Finset.sum_div]
   exact div_self hpos.ne'
 
-/-- **The evidence lower bound**: for every choice of latent distributions, `elbo ≤ ℓ`. -/
+/-- **The evidence lower bound.** Let $Z$ be a finite set, let $p_\theta(x, z)$ be real numbers
+indexed by parameters $\theta$, observations $x$ and latent values $z \in Z$, with
+$p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$, and let $x_1, \dots, x_N$ be data. For every
+parameter $\theta$ and all probability distributions $q_1, \dots, q_N$ on $Z$,
+$$
+\sum_{n=1}^N \sum_{z \in Z} q_n(z) \bigl(\log p_\theta(x_n, z) - \log q_n(z)\bigr) \le
+\sum_{n=1}^N \log \sum_{z \in Z} p_\theta(x_n, z),
+$$
+that is, the evidence lower bound of $q_1, \dots, q_N$ at $\theta$ is at most the log-likelihood
+of the data at $\theta$. Terms with $q_n(z) = 0$ count as $0$. -/
 theorem elbo_le_logLik (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X) (θ : Θ)
     {q : Fin N → Z → ℝ} (hq : ∀ n, IsDist (q n)) : elbo p xs θ q ≤ logLik p xs θ :=
   Finset.sum_le_sum fun n _ => sum_mul_log_sub_le (fun z => hp θ (xs n) z) (hq n)
 
-/-- **The bound is tight at the posterior**: `elbo(θ, p_θ(· | x)) = ℓ(θ)`. -/
+/-- **The bound is tight at the posterior.** Let $Z$ be a nonempty finite set, let
+$p_\theta(x, z)$ be real numbers indexed by parameters $\theta$, observations $x$ and latent values
+$z \in Z$, with $p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$, and let $x_1, \dots, x_N$ be data.
+For every parameter $\theta$, the posteriors
+$q_n(z) = p_\theta(z \mid x_n) = p_\theta(x_n, z) / \sum_{z' \in Z} p_\theta(x_n, z')$ satisfy
+$$
+\sum_{n=1}^N \sum_{z \in Z} q_n(z) \bigl(\log p_\theta(x_n, z) - \log q_n(z)\bigr) =
+\sum_{n=1}^N \log \sum_{z \in Z} p_\theta(x_n, z),
+$$
+that is, the evidence lower bound at $\theta$ of the posteriors equals the log-likelihood of the
+data at $\theta$. -/
 theorem elbo_posterior [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X) (θ : Θ) :
     elbo p xs θ (fun n => posterior p θ (xs n)) = logLik p xs θ :=
   Finset.sum_congr rfl fun n _ => sum_div_mul_log_sub fun z => hp θ (xs n) z
 
-/-- The ELBO at the posterior of `θ` splits as `Q(θ' | θ)` plus the posterior entropy. -/
+/-- **The ELBO at the posterior is the EM objective plus the entropy.** Let $Z$ be a finite set,
+let $p_\theta(x, z)$ be real numbers indexed by parameters $\theta$, observations $x$ and latent
+values $z \in Z$, let $x_1, \dots, x_N$ be data, and write
+$p_\theta(z \mid x) = p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ for the posterior,
+$Q(\theta' \mid \theta) = \sum_{n=1}^N \sum_{z \in Z} p_\theta(z \mid x_n) \log p_{\theta'}(x_n, z)$
+for the EM objective and
+$H(\theta) = -\sum_{n=1}^N \sum_{z \in Z} p_\theta(z \mid x_n) \log p_\theta(z \mid x_n)$ for the
+entropy of the posteriors. For all parameters $\theta'$ and $\theta$, the evidence lower bound at
+$\theta'$ of the posteriors $q_n = p_\theta(\cdot \mid x_n)$ satisfies
+$$
+\sum_{n=1}^N \sum_{z \in Z} q_n(z) \bigl(\log p_{\theta'}(x_n, z) - \log q_n(z)\bigr) =
+Q(\theta' \mid \theta) + H(\theta),
+$$
+that is, it splits as the EM objective $Q(\theta' \mid \theta)$ plus the posterior entropy. -/
 theorem elbo_posterior_eq (xs : Fin N → X) (θ' θ : Θ) :
     elbo p xs θ' (fun n => posterior p θ (xs n)) = emQ p xs θ' θ + postEntropy p xs θ := by
   simp only [elbo, emQ, postEntropy, mul_sub, Finset.sum_sub_distrib]
   ring
 
-/-- **The EM inequality**: the likelihood gains at least as much as `Q(· | θ)`:
-`ℓ(θ') - ℓ(θ) ≥ Q(θ' | θ) - Q(θ | θ)`. -/
+/-- **The EM inequality.** Let $Z$ be a nonempty finite set, let $p_\theta(x, z)$ be real numbers
+indexed by parameters $\theta$, observations $x$ and latent values $z \in Z$, with
+$p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$, and let $x_1, \dots, x_N$ be data. Write
+$p_\theta(z \mid x) = p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ for the posterior,
+$Q(\theta' \mid \theta) = \sum_{n=1}^N \sum_{z \in Z} p_\theta(z \mid x_n) \log p_{\theta'}(x_n, z)$
+for the EM objective and $\ell(\theta) = \sum_{n=1}^N \log \sum_{z \in Z} p_\theta(x_n, z)$ for the
+log-likelihood. For all parameters $\theta'$ and $\theta$,
+$Q(\theta' \mid \theta) - Q(\theta \mid \theta) \le \ell(\theta') - \ell(\theta)$: the
+log-likelihood gains at least as much as $Q(\cdot \mid \theta)$. -/
 theorem emQ_sub_le_logLik_sub [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X)
     (θ' θ : Θ) : emQ p xs θ' θ - emQ p xs θ θ ≤ logLik p xs θ' - logLik p xs θ := by
   have h1 := elbo_le_logLik hp xs θ' (q := fun n => posterior p θ (xs n))
@@ -163,16 +233,30 @@ theorem emQ_sub_le_logLik_sub [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (xs :
   rw [elbo_posterior_eq] at h1 h2
   linarith
 
-/-- **The EM theorem**: a step that does not decrease `Q(· | θ)` does not decrease the
-likelihood. -/
+/-- **The EM theorem.** Let $Z$ be a nonempty finite set, let $p_\theta(x, z)$ be real numbers
+indexed by parameters $\theta$, observations $x$ and latent values $z \in Z$, with
+$p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$, and let $x_1, \dots, x_N$ be data. Write
+$p_\theta(z \mid x) = p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ for the posterior,
+$Q(\theta' \mid \theta) = \sum_{n=1}^N \sum_{z \in Z} p_\theta(z \mid x_n) \log p_{\theta'}(x_n, z)$
+for the EM objective and $\ell(\theta) = \sum_{n=1}^N \log \sum_{z \in Z} p_\theta(x_n, z)$ for the
+log-likelihood. For parameters $\theta$ and $\theta'$, if
+$Q(\theta \mid \theta) \le Q(\theta' \mid \theta)$, then $\ell(\theta) \le \ell(\theta')$: a step
+that does not decrease $Q(\cdot \mid \theta)$ does not decrease the log-likelihood. -/
 theorem logLik_le_of_emQ_le [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X)
     {θ' θ : Θ} (h : emQ p xs θ θ ≤ emQ p xs θ' θ) : logLik p xs θ ≤ logLik p xs θ' := by
   have := emQ_sub_le_logLik_sub hp xs θ' θ
   linarith
 
-/-- **EM iterates have monotone likelihood**: for any M-step `M` with
-`Q(M θ | θ) ≥ Q(θ | θ)` (in particular a maximizer of `Q(· | θ)`, or a generalized-EM step), the
-log-likelihood is monotone along `θ₀, M θ₀, M (M θ₀), …`. -/
+/-- **EM iterates have monotone likelihood.** Let $Z$ be a nonempty finite set, let
+$p_\theta(x, z)$ be real numbers indexed by parameters $\theta$, observations $x$ and latent values
+$z \in Z$, with $p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$, and let $x_1, \dots, x_N$ be data.
+Write $p_\theta(z \mid x) = p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ for the posterior,
+$Q(\theta' \mid \theta) = \sum_{n=1}^N \sum_{z \in Z} p_\theta(z \mid x_n) \log p_{\theta'}(x_n, z)$
+for the EM objective and $\ell(\theta) = \sum_{n=1}^N \log \sum_{z \in Z} p_\theta(x_n, z)$ for the
+log-likelihood. Let $M$ be a map on parameters, with $k$-th iterate $M^k$ ($M^0$ the identity),
+such that $Q(M\theta \mid \theta) \ge Q(\theta \mid \theta)$ for every $\theta$ (in particular if
+$M\theta$ maximizes $Q(\cdot \mid \theta)$, or $M$ is a generalized-EM step). Then for every
+$\theta_0$ the sequence $k \mapsto \ell(M^k \theta_0)$ is nondecreasing. -/
 theorem logLik_iterate_monotone [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X)
     {M : Θ → Θ} (hM : ∀ θ, emQ p xs θ θ ≤ emQ p xs (M θ) θ) (θ₀ : Θ) :
     Monotone fun k => logLik p xs (M^[k] θ₀) := by

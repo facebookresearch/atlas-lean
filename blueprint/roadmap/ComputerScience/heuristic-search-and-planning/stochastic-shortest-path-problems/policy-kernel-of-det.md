@@ -6,4 +6,4 @@ The policy kernel is row-stochastic when the MDP is stochastic; the transition m
 
 ## Background
 
-- Stochastic policies and discounted occupancy: where the policy kernel and the Dirac policy are defined.
+- [Stochastic policies and discounted occupancy](../../machine-learning/reinforcement-learning/stochastic-policies-and-discounted-occupancy/README.md): where the policy kernel and the Dirac policy are defined.

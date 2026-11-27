@@ -20,10 +20,7 @@ of all abelian groups?
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Group.Subgroup.Basic
-public import Mathlib.Data.Set.Card
-public import Mathlib.GroupTheory.FreeGroup.Basic
-public import Mathlib.GroupTheory.QuotientGroup.Defs
+public import MathlibExt.GroupTheory.TestRankNonabelianVarietyKourovka16Problem87
 
 @[expose] public section
 
@@ -41,59 +38,6 @@ variety is abelian when all its groups are abelian, periodic when some exponent 
 its groups, and equal to the variety of all abelian groups when its groups are exactly the abelian
 groups (groups taken in `Type`). One target per part.
 -/
-
-/-- A group `G` satisfies the laws `W ⊆ FreeGroup ℕ`: every law takes the value `1` under every
-substitution of elements of `G` for the variables. The variety defined by `W` is the class of
-these groups. -/
-def SatisfiesLaws (W : Set (FreeGroup ℕ)) (G : Type*) [Group G] : Prop :=
-  ∀ w ∈ W, ∀ φ : FreeGroup ℕ →* G, φ w = 1
-
-/-- The verbal subgroup of `FreeGroup (Fin r)` for the laws `W`: the normal closure of all values
-`φ w` of laws under homomorphisms `φ : FreeGroup ℕ →* FreeGroup (Fin r)`. -/
-abbrev verbalSubgroup (W : Set (FreeGroup ℕ)) (r : ℕ) : Subgroup (FreeGroup (Fin r)) :=
-  Subgroup.normalClosure {x | ∃ w ∈ W, ∃ φ : FreeGroup ℕ →* FreeGroup (Fin r), φ w = x}
-
-/-- The free `r`-generator group `G_r` of the variety defined by `W`. -/
-abbrev RelativelyFreeGroup (W : Set (FreeGroup ℕ)) (r : ℕ) : Type :=
-  FreeGroup (Fin r) ⧸ verbalSubgroup W r
-
-/-- A test set of `G`: every endomorphism of `G` that is the identity on `S` is an automorphism. -/
-def IsTestSet {G : Type*} [Group G] (S : Set G) : Prop :=
-  ∀ f : G →* G, (∀ s ∈ S, f s = s) → Function.Bijective f
-
-/-- `G` has test rank `r`: the minimum of the cardinalities of the test sets of `G` is `r`. -/
-def HasTestRank (G : Type*) [Group G] (r : ℕ) : Prop :=
-  (∃ S : Set G, IsTestSet S ∧ S.encard = r) ∧ ∀ S : Set G, IsTestSet S → (r : ℕ∞) ≤ S.encard
-
-/-- Kourovka 16.87(a) (E. I. Timoshenko): if the free `r`-generator group of a variety has test
-rank `r` for every `r ≥ 1`, then the variety is abelian. -/
-def testRankVarietyAbelian : Prop :=
-  ∀ W : Set (FreeGroup ℕ), (∀ r : ℕ, 1 ≤ r → HasTestRank (RelativelyFreeGroup W r) r) →
-    ∀ (G : Type) [Group G], SatisfiesLaws W G → ∀ a b : G, a * b = b * a
-
-/-- Kourovka 16.87(b) (E. I. Timoshenko): if, moreover, the variety is not periodic (no exponent
-`n > 0` holds in all its groups), then it is the variety of all abelian groups. -/
-def testRankNonperiodicVarietyAllAbelian : Prop :=
-  ∀ W : Set (FreeGroup ℕ), (∀ r : ℕ, 1 ≤ r → HasTestRank (RelativelyFreeGroup W r) r) →
-    (¬ ∃ n : ℕ, 0 < n ∧ ∀ (G : Type) [Group G], SatisfiesLaws W G → ∀ g : G, g ^ n = 1) →
-      ∀ (G : Type) [Group G], (SatisfiesLaws W G ↔ ∀ a b : G, a * b = b * a)
-
-/--
-Resolved false: Kinyon and Urban (Section 3.23, Proposition 3.9) show that for a prime `p` the free
-groups of every rank `r ≥ 1` in the variety defined by `[[x, y], z] = 1` and `[x, y]^p = 1` have
-test rank `r`, while the variety is not abelian since it contains `UT₃(𝔽_p)`. The Kourovka Notebook
-(21st issue) answers 16.87(a) "No" (AI solution confirmed by E. I. Timoshenko). Source: E. I.
-Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I. Timoshenko); resolution: M. Kinyon and J.
-Urban (with Codex gpt-6-astra), Results on problems from the Kourovka Notebook, preprint, version 4
-(19 September 2026), Section 3.23 (Problem 16.87): the variety M_p defined by [[x, y], z] = 1 and
-[x, y]^p = 1 (p prime) is nonabelian (it contains UT_3(F_p)) and nonperiodic (it contains Z), and
-Proposition 3.9 shows that its free group of rank r has test rank r for every r ≥ 1; the Kourovka
-Notebook (21st issue) marks 16.87 solved (a), b) No, it is not true in both cases; AI solution
-confirmed by E. I. Timoshenko),
-https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf.
--/
-public theorem_wanted testRankVarietyAbelian_refuted : ¬ testRankVarietyAbelian
 
 /--
 Resolved false: the same variety (`[[x, y], z] = 1`, `[x, y]^p = 1`, `p` prime) is not periodic

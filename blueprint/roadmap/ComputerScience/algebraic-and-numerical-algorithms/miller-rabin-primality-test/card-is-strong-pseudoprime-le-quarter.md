@@ -1,7 +1,7 @@
 # Rabin's 1/4 bound for strong pseudoprimes
 
 Let $n > 1$ be odd and not prime. Then $n$ is a
-strong pseudoprime to at most $\lfloor (n - 1)/4 \rfloor$ of the
+[strong pseudoprime](../../../NumberTheory/primes-primality/primality-tests-pseudoprimes/strong-pseudoprimes/is-strong-pseudoprime.md) to at most $\lfloor (n - 1)/4 \rfloor$ of the
 bases $a = 1, \dots, n - 1$: writing $n - 1 = 2^t u$ with $u$ odd, at most $\lfloor (n - 1)/4 \rfloor$
 of these $a$ satisfy $a^u \equiv 1$ or $a^{2^i u} \equiv -1 \pmod n$ for some $i < t$. So one
 uniformly random base exposes $n$ as composite with probability at least $3/4$.
@@ -37,7 +37,7 @@ negation defines strong pseudoprimes, and the one counted here.
 
 ## Background
 
-- Monier's formula for the number of strong pseudoprime bases:
+- [Monier's formula for the number of strong pseudoprime bases](../../../NumberTheory/primes-primality/primality-tests-pseudoprimes/strong-pseudoprimes/card-strong-pseudoprime-bases.md):
   the exact count, from which the $1/4$ bound can also be read off.
 
 ## Sources

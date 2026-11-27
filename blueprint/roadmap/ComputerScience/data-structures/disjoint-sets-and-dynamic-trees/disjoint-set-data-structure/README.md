@@ -63,6 +63,7 @@ Tarjan and van Leeuwen prove the bound $O(n + m\,\alpha(m + n, n))$ (J. ACM 31(2
 - [Rank lemma for linking by rank (roots)](two-pow-rank-le-class-size.md)
 - [Ranks are at most $\lfloor \log_2 n \rfloor$](rank-le-log.md)
 - [Find paths have at most $\lfloor \log_2 n \rfloor$ edges](iterate-parent-log.md)
+- [Rank bounds for union-find built by the public operations](reachable-state-rank-bounds-for-canonical-union/README.md)
 - [Set-union operations](op.md)
 - [Length of a find path](find-path-length.md)
 - [Find paths are short under union by rank](find-path-length-le-log.md)

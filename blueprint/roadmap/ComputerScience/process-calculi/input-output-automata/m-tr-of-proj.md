@@ -1,0 +1,3 @@
+# Pasting executions of the components of a composition
+
+Let $A_1$ and $A_2$ be [input/output automata](ioautomaton.md) with [strongly compatible](strongly-compatible.md) signatures and $A_1 \| A_2$ their [composition](compose-automata.md). Let $\beta$ be a finite sequence of actions each of which is an action of $A_1$ or of $A_2$, and let $s = (s_1, s_2)$ be a state of the composition. If $\beta|\mathrm{sig}(A_1)$ labels a finite execution of $A_1$ from $s_1$ to $t_1$ and $\beta|\mathrm{sig}(A_2)$ labels a finite execution of $A_2$ from $s_2$ to $t_2$, then $\beta$ labels a finite execution of $A_1 \| A_2$ from $s$ to $(t_1, t_2)$.

@@ -26,10 +26,10 @@ doi:10.1007/978-1-4684-2001-2_9 (JOB SEQUENCING, the unconstrained problem, an a
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.WeightedTardyJobsWanted
+public import CSLibExt.Computability.Complexity.Karp.WeightedTardyJobs
 
 @[expose] public section
 
@@ -52,7 +52,8 @@ measure is the number of tasks of `S` completed by their deadlines. The compendi
 the tardy-weight bound of the instance and the bound of the decision version `K`; here the
 second one is `J`.
 
-The tasks, the bound `K` and the schedule reuse `WeightedTardyJobsWanted` (SEQUENCING TO
+The tasks, the bound `K` and the schedule reuse `WeightedTardyJobs`
+(`CSLibExt.Computability.Complexity.Karp.WeightedTardyJobs`; SEQUENCING TO
 MINIMIZE TARDY TASK WEIGHT, [SS3]): a task is a triple (length, deadline, weight), a schedule is
 an ordering of the task indices processed without idle time, and `WeightedTardy` is the total
 weight of the tasks completing after their deadlines. `S` is a list of task indices (a repeated
@@ -71,7 +72,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the tasks (length, deadline, weight) and the tardy-weight bound `K`
-(`WeightedTardyJobsWanted`'s instance), the subset `S`, and the bound `J`. -/
+(`WeightedTardyJobs`'s instance), the subset `S`, and the bound `J`. -/
 abbrev ConstrainedSequencingInstance := WeightedTardyJobsInstance × List ℕ × ℕ
 
 /-- One task's effect on (elapsed time, number of tasks of `S` completed by their deadlines). -/

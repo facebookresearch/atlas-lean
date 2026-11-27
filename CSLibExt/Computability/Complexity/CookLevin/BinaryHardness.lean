@@ -39,7 +39,13 @@ open MetaMathlibExt ComplexityTheory Cslib.Complexity.DenseSAT Cslib.Complexity.
     (Family.denseClause V ls).length = V := by
   simp [Family.denseClause]
 
-/-- Every clause of the Cook-Levin formula is dense over the same variables. -/
+/-- **Every clause of the Cook–Levin formula has one slot per variable.** Let $E$ be an encoding
+of a machine $M$, let $x$ and $Y$ be lists of input symbols of $M$, let $a$ be a symbol of its
+output stack, and let $m, T \in \mathbb{N}$. Put $H = m + (T + 1)d + 1$, where $d$ is the window
+depth of $M$. Then every clause of the Cook–Levin formula $\Phi(E, x, Y, a, m, T)$ is a dense
+clause of length $(T + 1)(A + K H g)$, the number of variables of the layout of $E$ at time bound
+$T$ and height $H$, where $A$, $K$ and $g$ are the label/state block size, the number of stacks
+and the number of symbol codes of that layout. -/
 theorem Phi_length {M : FinTM2} (E : Enc M) (x Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (m T : ℕ) :
     ∀ c ∈ Phi E x Ys acc m T, c.length = E.layout.numVars T (capH m T (depth M)) := by
   simp [Phi, Enc.accFamily, Enc.accCode, Enc.accCell, Shift.shFamily, Shift.shBlk,
@@ -47,13 +53,18 @@ theorem Phi_length {M : FinTM2} (E : Enc M) (x Ys : List (M.Γ M.k₀)) (acc : M
     Enc.initPre, Enc.initTail]
   aesop
 
-/-- The translation to the binary encoding is polynomial-time. -/
+/-- **The dense-to-binary translation is polynomial-time in the canonical encoding.** The
+translation of bit strings from the dense CNF encoding to the binary-index CNF encoding, as a
+function on all bit strings, is polynomial-time computable with respect to the canonical
+bitstring encoding of bit lists. -/
 theorem isPolyTime_binConv : IsPolyTime ToBinary.binConv := by
   obtain ⟨h⟩ := tm2ComputableInPolyTime_comp DecodeBits.computable ToBinary.computable
   have h2 := tm2ComputableInPolyTime_comp h EncodeBits.computable
   exact h2
 
-/-- **Every NP problem reduces to `satDec`** (binary-index CNF-SAT). -/
+/-- **Every NP problem reduces to binary-index CNF-SAT.** Every decision problem $L$ in NP has a
+polynomial-time many-one reduction to the language of bit strings that encode a satisfiable CNF
+formula in the binary-index encoding. -/
 theorem satDec_npHard (L : DecisionProblem) (hL : L ∈ NP) :
     Cslib.CookLevin.PolyManyOneRed L Cslib.CookLevin.satDec := by
   obtain ⟨p, R, ⟨V₀⟩, hLR⟩ := hL
@@ -70,9 +81,11 @@ theorem satDec_npHard (L : DecisionProblem) (hL : L ∈ NP) :
     ToBinary.satDec_encodeCNF]
   rw [ToBinary.cnfSat_binCNF_iff (Phi_length _ _ _ _ _ _), SAT, decodeCNF_encodeCNF]
 
-/-- **Cook-Levin for `satDec`, given a polynomial-time verifier**: with `satDec_npHard`, it reduces
-to polynomial-time computability of the verifier `satVerifier` of
-`CSLibExt/Computability/SatTimeM.lean` (proved in `SatVerifier.Machine.isPolyTime_satVerifier`). -/
+/-- **Cook–Levin for binary-index CNF-SAT, given a polynomial-time verifier.** If the Boolean
+result of the SAT verifier, as a function of pairs (formula code, assignment), is computable in
+polynomial time, then the language of bit strings that encode a satisfiable CNF formula in the
+binary-index encoding is in NP, and every decision problem in NP has a polynomial-time many-one
+reduction to it. -/
 theorem cook_levin_SAT_np_complete_of_isPolyTime
     (h : IsPolyTime fun xw => (Cslib.CookLevin.satVerifier xw).ret) :
     Cslib.CookLevin.satDec ∈ NP ∧

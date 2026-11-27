@@ -44,12 +44,27 @@ Clause list (every hypothesis, side condition, and quantifier domain):
 12. Formalized as a Prop-valued definition; resolved true, asserted by `conjecture_holds` below.
 -/
 
-/-- Product set A·A for A ⊆ SL₂(Fₚ) [AIM-COMBINATORICS-0241, Problem 3.4, aim-combinatorics-notes.json notes[240]]. -/
+/-- **Product set of a finite set.** For a finite subset $A$ of a type with a multiplication, the
+product set $A \cdot A$ is the finite set $\{ab : a, b \in A\}$ of all products of two elements
+of $A$.
+
+Source: AIM-COMBINATORICS-0241, Problem 3.4, aim-combinatorics-notes.json notes[240]. -/
 @[nolint defsWithUnderscore]
 def AIMCombinatorics0241_prodSet {G : Type*} [Mul G] [DecidableEq G] (A : Finset G) : Finset G :=
   Finset.image₂ (· * ·) A A
 
-/-- Two-step product growth question in SL₂(Fₚ) [AIM-COMBINATORICS-0241, Problem 3.4, aim-combinatorics-notes.json notes[240], https://aimath.org/WWN/additivecomb/additivecomb.pdf]. -/
+/-- **Two-step product growth in $\mathrm{SL}_2(\mathbb{F}_p)$ (AIM Problem 3.4).** The statement
+that for every real $C \ge 1$ there are a real $\delta > 0$ and a natural number $P_0$ such that
+for every prime $p \ge P_0$ and every finite subset $A$ of $\mathrm{SL}_2(\mathbb{F}_p)$, where
+$\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$, with $C^{-1} p^{5/2} \le |A| \le C p^{5/2}$, the product
+set $A \cdot A = \{ab : a, b \in A\}$ satisfies $|A \cdot A| > p^{5/2 + \delta}$.
+
+This is a large-$p$ reading of the question of Green, after Venkatesh: if
+$A \subseteq \mathrm{SL}_2(\mathbb{F}_p)$ satisfies $|A| \sim p^{5/2}$, does it follow that
+$|A \cdot A| > p^{5/2 + \delta}$?
+
+Source: AIM-COMBINATORICS-0241, Problem 3.4, aim-combinatorics-notes.json notes[240],
+https://aimath.org/WWN/additivecomb/additivecomb.pdf. -/
 noncomputable def conjecture : Prop :=
   ∀ C : ℝ, 1 ≤ C →
     ∃ δ : ℝ, 0 < δ ∧
@@ -60,10 +75,18 @@ noncomputable def conjecture : Prop :=
           Real.rpow (p : ℝ) (5 / 2 + δ) < ((AIMCombinatorics0241_prodSet A).card : ℝ))
 
 /--
-Resolved true: Resolved true: every nontrivial representation of SL_2(F_p) has dimension >=
-(p-1)/2, and the Gowers / Babai-Nikolov-Pyber product-mixing bound |AB| >= |G|/(1 +
-|G|^2/(m|A||B|)) gives |AA| >> p^3 for |A| comparable to p^{5/2}. This answers AIM
-additive-combinatorics Problem 3.4 (Green, after Venkatesh) for every delta < 1/2. Source: N.
+**Sets of size about $p^{5/2}$ in $\mathrm{SL}_2(\mathbb{F}_p)$ grow under multiplication.** For
+every real $C \ge 1$ there are a real $\delta > 0$ and a natural number $P_0$ such that for every
+prime $p \ge P_0$ and every finite subset $A$ of $\mathrm{SL}_2(\mathbb{F}_p)$, where
+$\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$, with $C^{-1} p^{5/2} \le |A| \le C p^{5/2}$, the product
+set $A \cdot A = \{ab : a, b \in A\}$ satisfies $|A \cdot A| > p^{5/2 + \delta}$.
+
+Every nontrivial representation of $\mathrm{SL}_2(\mathbb{F}_p)$ has dimension at least
+$(p-1)/2$, and the product-mixing bound of Gowers and Babai–Nikolov–Pyber then gives
+$|A \cdot A| \gg p^3$ for such $A$, so every $\delta < 1/2$ works. This answers AIM
+additive-combinatorics Problem 3.4 (Green, after Venkatesh).
+
+Source: N.
 Nikolov and L. Pyber, Product decompositions of quasirandom groups and a Jordan type theorem,
 arXiv:math/0703343, https://arxiv.org/abs/math/0703343. Moved from
 `OpenConjectures/Combinatorics/SL2TwoStepProductGrowth`.

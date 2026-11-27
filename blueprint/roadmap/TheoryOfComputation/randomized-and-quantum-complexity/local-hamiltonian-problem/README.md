@@ -11,3 +11,5 @@
 - [Yes-instances of the 2-local Hamiltonian problem](local-ham-yes.md)
 - [No-instances of the 2-local Hamiltonian problem](local-ham-no.md)
 - [The 2-local Hamiltonian problem is QMA-complete](local-hamiltonian-qma-complete.md)
+
+- [Quantum PCP conjecture](quantum-pcp-conjecture.md)

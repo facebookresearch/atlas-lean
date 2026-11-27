@@ -1,0 +1,3 @@
+# Crossing masses converge to the mass of percolation
+
+Let $d \in \mathbb{N}$ and let $\mu$ be a finite measure on configurations of $\mathbb{Z}^d$ (assignments of open/closed states to all unordered pairs of sites). Then $\mu(\mathrm{Cross}_n) \to \mu(|C(0)| = \infty)$ as $n \to \infty$ (masses of events, which may exceed $1$ unless $\mu$ is a probability measure), where $\mathrm{Cross}_n$ is the event that the origin is joined by an open path to some site outside $\Lambda_{n-1}$ ($n - 1$ truncated at $0$) and $\{|C(0)| = \infty\}$ is the event that the open cluster of the origin is infinite.

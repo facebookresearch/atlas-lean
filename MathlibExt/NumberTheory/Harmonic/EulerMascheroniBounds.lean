@@ -33,7 +33,8 @@ sequences: `Hₙ - log (n + 1) < γ < Hₙ - log n`, whose gap is
 
 namespace Real
 
-/-- The logarithm grows by at most `1 / ⌊x⌋₊` between `⌊x⌋₊` and `x`. -/
+/-- **Logarithm gap between a real number and its floor.** For every real $x \ge 1$, the floor
+$\lfloor x \rfloor$ of $x$ satisfies $\log x - \log \lfloor x \rfloor \le 1/\lfloor x \rfloor$. -/
 theorem log_sub_log_floor_le {x : ℝ} (hx : 1 ≤ x) :
     Real.log x - Real.log (⌊x⌋₊ : ℝ) ≤ 1 / (⌊x⌋₊ : ℝ) := by
   have hn_pos : (0 : ℝ) < (⌊x⌋₊ : ℝ) := by
@@ -52,7 +53,9 @@ theorem log_sub_log_floor_le {x : ℝ} (hx : 1 ≤ x) :
           (show (0 : ℝ) < 1 + 1 / (⌊x⌋₊ : ℝ) by positivity)
         linarith
 
-/-- The centered harmonic error at an integer is at most `1 / n`. -/
+/-- **Explicit harmonic error bound at integers.** Let $H_n = \sum_{k=1}^{n} 1/k$ be the $n$-th
+harmonic number and $\gamma$ the Euler–Mascheroni constant. For every natural number $n \ge 1$,
+$|H_n - \log n - \gamma| \le 1/n$. -/
 theorem abs_harmonic_sub_log_sub_eulerMascheroniConstant_le {n : ℕ} (hn : 1 ≤ n) :
     |(harmonic n : ℝ) - Real.log n - Real.eulerMascheroniConstant| ≤ 1 / n := by
   have hn_ne : n ≠ 0 := by omega
@@ -71,7 +74,9 @@ theorem abs_harmonic_sub_log_sub_eulerMascheroniConstant_le {n : ℕ} (hn : 1 �
   rw [abs_le]
   constructor <;> linarith [show (0 : ℝ) ≤ 1 / (n : ℝ) by positivity]
 
-/-- The centered harmonic error at `⌊x⌋₊` is at most `2 / x` for `x ≥ 2`. -/
+/-- **Explicit harmonic error bound at real arguments.** Let $H_n = \sum_{k=1}^{n} 1/k$ be the
+$n$-th harmonic number and $\gamma$ the Euler–Mascheroni constant. For every real $x \ge 2$,
+with $\lfloor x \rfloor$ the floor of $x$, $|H_{\lfloor x \rfloor} - \log x - \gamma| \le 2/x$. -/
 theorem abs_harmonic_floor_sub_log_sub_eulerMascheroniConstant_le {x : ℝ} (hx : 2 ≤ x) :
     |(harmonic ⌊x⌋₊ : ℝ) - Real.log x - Real.eulerMascheroniConstant| ≤ 2 / x := by
   have hx1 : 1 ≤ x := by linarith

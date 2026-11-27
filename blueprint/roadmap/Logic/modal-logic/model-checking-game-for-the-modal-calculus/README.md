@@ -112,3 +112,6 @@
 - [Terminal losing positions are not won by the even player](frag-pos-not-mem-winning-region-of-termi.md)
 - [The fragment game's winning region is contained in Wins](fragment-canonical-to-wins.md)
 - [Wins is the winning region of the fragment game](fragment-wins-iff-winning-region.md)
+
+- [Fundamental theorem of the μ-calculus model-checking game](fundamental-theorem-of-the-calculus-model.md)
+- [Approximants and signatures for the modal μ-calculus](approximants-and-signatures-for-the-modal.md)

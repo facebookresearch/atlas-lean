@@ -18,23 +18,29 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Narayana number `N(n, k)` for positive `n` and `k` (concept
-`jis_sem_6a8b07ab7f79ed673976aec8`; source statements
-`jis_5e63e8dec0bd7e8127ff4261` and `jis_6939ec31631161285ec502bd`). -/
+/-- **Narayana number.** For positive integers $n$ and $k$, the Narayana number $N(n, k)$ is the
+natural number $\lfloor \binom{n}{k}\binom{n}{k-1} / n \rfloor$.
+
+Source: concept `jis_sem_6a8b07ab7f79ed673976aec8`; source statements
+`jis_5e63e8dec0bd7e8127ff4261` and `jis_6939ec31631161285ec502bd`. -/
 def narayana (n k : {n : ℕ // 0 < n}) : ℕ :=
   (Nat.choose n.val k.val * Nat.choose n.val (k.val - 1)) / n.val
 
-/-- Defining formula for the Narayana number (concept
-`jis_sem_6a8b07ab7f79ed673976aec8`; source statements
-`jis_5e63e8dec0bd7e8127ff4261` and `jis_6939ec31631161285ec502bd`). -/
+/-- **Defining formula for the Narayana number.** For positive integers $n$ and $k$, the Narayana
+number $N(n, k)$ satisfies $N(n, k) = \lfloor \binom{n}{k}\binom{n}{k-1} / n \rfloor$.
+
+Source: concept `jis_sem_6a8b07ab7f79ed673976aec8`; source statements
+`jis_5e63e8dec0bd7e8127ff4261` and `jis_6939ec31631161285ec502bd`. -/
 theorem narayana_eq (n k : {n : ℕ // 0 < n}) :
     narayana n k
       = (Nat.choose n.val k.val * Nat.choose n.val (k.val - 1)) / n.val :=
   rfl
 
-/-- Equivalent second formula for the Narayana number (concept
-`jis_sem_6a8b07ab7f79ed673976aec8`; source statements
-`jis_5e63e8dec0bd7e8127ff4261` and `jis_6939ec31631161285ec502bd`). -/
+/-- **Second formula for the Narayana number.** For positive integers $n$ and $k$, the Narayana
+number $N(n, k)$ satisfies $N(n, k) = \lfloor \binom{n-1}{k-1}\binom{n}{k-1} / k \rfloor$.
+
+Source: concept `jis_sem_6a8b07ab7f79ed673976aec8`; source statements
+`jis_5e63e8dec0bd7e8127ff4261` and `jis_6939ec31631161285ec502bd`. -/
 theorem narayana_eq_second (n k : {n : ℕ // 0 < n}) :
     narayana n k
       = (Nat.choose (n.val - 1) (k.val - 1) * Nat.choose n.val (k.val - 1))

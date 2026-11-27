@@ -32,9 +32,12 @@ import Mathlib.Tactic.Ring
 section
 namespace MathlibExt.Geometry.Convex.ColorfulCaratheodoryWanted
 
-/-- Bárány's colorful Carathéodory theorem, finite-dimensional form: given
-`m = finrank + 1` finite classes each with `0` in its convex hull, some
-transversal has `0` in its convex hull.
+/-- **Colorful Carathéodory theorem in finite-dimensional inner product spaces.** Let $V$ be a
+finite-dimensional real inner product space of dimension $n$, and let $S_0, \dots, S_n$ be
+finite subsets of $V$ such that $0$ lies in the convex hull of each $S_l$. Then there are
+points $t_0 \in S_0, \dots, t_n \in S_n$ such that $0$ lies in the convex hull of
+$\{t_0, \dots, t_n\}$.
+
 Source: I. Barany, Discrete Math. 40 (1982), 141-152, DOI 10.1016/0012-365X(82)90115-7. -/
 theorem colorful_caratheodory_finrank
     {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V]
@@ -300,11 +303,14 @@ theorem colorful_caratheodory_finrank
       exact hk
 
 /--
-Any d+1 finite sets containing origin in their convex hull admit a colorful transversal.
-See `exists_colorful_mem_convexHull` for arbitrary sets.
-Source: I. Barany, Discrete Math. 40 (1982), 141-152, DOI 10.1016/0012-365X(82)90115-7.
+**Colorful Carathéodory theorem for finite sets.** Let $d \ge 0$ and let $S_0, \dots, S_d$ be
+finite subsets of the Euclidean space $\mathbb{R}^d$ such that the origin lies in the convex hull
+of each $S_i$. Then there are points $c_0 \in S_0, \dots, c_d \in S_d$ such that the origin lies
+in the convex hull of $\{c_0, \dots, c_d\}$.
 
 Proves `Wanted` entry `colorful_caratheodory`.
+
+Source: I. Barany, Discrete Math. 40 (1982), 141-152, DOI 10.1016/0012-365X(82)90115-7.
 -/
 theorem colorful_caratheodory
     {d : ℕ}
@@ -327,10 +333,11 @@ theorem colorful_caratheodory
   exact ⟨fun i => (t i : EuclideanSpace ℝ (Fin d)),
     fun i => (hfin i).mem_toFinset.mp (t i).property, ht⟩
 
-/-- Colorful Carathéodory theorem for arbitrary color classes: if each of `d + 1` sets in
-`ℝ^d` has the origin in its convex hull, some choice of one point from each set has the
-origin in its convex hull. Reduces to `colorful_caratheodory` through finite subsets
-witnessing each convex-hull membership.
+/-- **Colorful Carathéodory theorem.** Let $d \ge 0$ and let $S_0, \dots, S_d$ be subsets of the
+Euclidean space $\mathbb{R}^d$ such that the origin lies in the convex hull of each $S_i$. Then
+there are points $c_0 \in S_0, \dots, c_d \in S_d$ such that the origin lies in the convex hull of
+$\{c_0, \dots, c_d\}$.
+
 Source: I. Barany, Discrete Math. 40 (1982), 141-152, DOI 10.1016/0012-365X(82)90115-7. -/
 theorem exists_colorful_mem_convexHull
     {d : ℕ}

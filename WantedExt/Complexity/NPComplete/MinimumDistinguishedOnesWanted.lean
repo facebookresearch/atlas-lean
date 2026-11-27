@@ -22,7 +22,7 @@ NP-complete).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -45,8 +45,8 @@ version is immediate: with `Z = ∅` and `K = 0` it asks whether a formula with 
 literals per clause is satisfiable, which Karp (1972) proved NP-complete.
 
 The variables are `0, …, n - 1`; `Z` is listed (without repetition) and `X` is the rest. The
-formula uses the repository's `Cslib.Logic.PL.CNF` (a clause is a list of literals
-`(variable, polarity)`) with its semantics `Cslib.Logic.PL.CNF.Satisfies`.
+formula uses the repository's `Cslib.Logic.LegacyPL.CNF` (a clause is a list of literals
+`(variable, polarity)`) with its semantics `Cslib.Logic.LegacyPL.CNF.Satisfies`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -61,7 +61,7 @@ reduction from every language in `NP`
 
 /-- An instance: the number `n` of variables, the list of distinguished variables `Z`, the
 clauses, and the bound `K`. -/
-abbrev MinimumDistinguishedOnesInstance := ℕ × List ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MinimumDistinguishedOnesInstance := ℕ × List ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance: `Z` lists distinct variables below `n`, and every clause
 has at most 3 literals, all over variables below `n`. -/
@@ -73,7 +73,7 @@ def WellFormed (i : MinimumDistinguishedOnesInstance) : Prop :=
 of `Z` to true. -/
 def MinimumDistinguishedOnesFeasible (i : MinimumDistinguishedOnesInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2.2.1 ∧
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2.2.1 ∧
     (i.2.1.filter fun z => assign.getD z false).length ≤ i.2.2.2
 
 open Classical in

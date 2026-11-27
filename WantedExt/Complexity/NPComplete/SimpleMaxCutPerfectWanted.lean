@@ -28,11 +28,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -66,7 +66,7 @@ is perfect, so the binary vertex count does not make the problem succinct (isola
 change the answer either).
 
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`MaxCutWanted`, whose question counts edges), reused as in `MaxCutSplitGraphsWanted`; the
+(`MaxCutDefs`, whose question counts edges), reused as in `MaxCutSplitGraphsWanted`; the
 restriction adds that `Cslib.Complexity.Karp.edgeGraph` is perfect, and `0 < K`, to
 `WellFormed`.
 

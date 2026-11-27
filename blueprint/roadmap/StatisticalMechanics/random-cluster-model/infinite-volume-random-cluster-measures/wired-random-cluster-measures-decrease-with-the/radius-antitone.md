@@ -1,0 +1,3 @@
+# Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_k$ in $\Lambda_{k+j}$ is nonincreasing in $j$
+
+For $d, k \in \mathbb{N}$ and $0 < p < 1$, the map $j \mapsto \phi^1_{k+j}(0 \leftrightarrow \partial\Lambda_k)$ is nonincreasing, where $\phi^1_{m}$ is the [wired box measure](../finite-and-infinite-volume-fk-measures-on-d/wired-finite-measure.md) on $\Lambda_m = \{-m, \dots, m\}^d$ at parameters $(p, 2)$ and $\{0 \leftrightarrow \partial\Lambda_k\}$ is the [box-boundary connection event](../box-boundary-connection-probabilities-for-the-wi/box-bdry-conn-event.md) (the origin joined to $\partial\Lambda_k$ by open edges of $\Lambda_k$, where $\partial\Lambda_k = \Lambda_k \setminus \Lambda_{k-1}$ for $k \ge 1$ and $\partial\Lambda_0 = \emptyset$).

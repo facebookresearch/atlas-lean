@@ -22,6 +22,6 @@ voting rules.
 
 ## Background
 
-- Sheppard's arcsine formula:
+- [Sheppard's arcsine formula](../../../Probability/distributions/continuous/multivariate-normal-distribution/sheppard-formula/sheppard-quadrant-probability-arcsine.md):
   Sheppard's Formula gives the value $\frac{2}{\pi} \arcsin\rho$ of the limit of
   $\mathrm{Stab}_\rho[\mathrm{Maj}_n]$.

@@ -6,6 +6,7 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Communication lower bounds](communication-lower-bounds/README.md)
 - [Binary polynomial arithmetic on bitvectors](binary-polynomial-arithmetic-on-bitvectors/README.md)
 - [Fast Fourier transform](fast-fourier-transform/README.md)
+- [Fixed-width binary encodings](fixed-width-binary-encodings/README.md)
 - [Floating-point rounding](floating-point-rounding/README.md)
 - [Horner's method](horner-s-method/README.md)
 - [Karatsuba algorithm](karatsuba-algorithm/README.md)
@@ -15,3 +16,4 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Rounding error analysis](rounding-error-analysis/README.md)
 - [Solving linear congruences](solving-linear-congruences/README.md)
 - [Strassen algorithm](strassen-algorithm/README.md)
+- [Lattice basis reduction](lattice-basis-reduction/README.md)

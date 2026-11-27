@@ -1,6 +1,6 @@
 # Rounding error analysis
 
-Rounding error analysis bounds the error of an algorithm run in floating point, from the model $\mathrm{fl}(a \mathbin{\mathrm{op}} b) = (a \mathbin{\mathrm{op}} b)(1 + \delta)$, $|\delta| \le u$, of [floating-point rounding](../floating-point-rounding/README.md). Its central notion is backward stability: an algorithm is backward stable if its computed result is the exact result for slightly perturbed data. The error of a backward stable algorithm is then at most its backward error times the condition number of the problem.
+Rounding error analysis bounds the error of an algorithm run in floating point, from the model $\mathrm{fl}(a \mathbin{\mathrm{op}} b) = (a \mathbin{\mathrm{op}} b)(1 + \delta)$, $|\delta| \le u$, of [floating-point rounding](../floating-point-rounding/README.md). Its central notion is backward stability: an algorithm is backward stable if its computed result is the exact result for slightly perturbed data. The error of a backward stable algorithm is then at most its backward error times the [condition number](../../../LinearAlgebra/matrix-decompositions/perturbation-theory-for-linear-systems/README.md) of the problem.
 
 A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative to $\sum_i |x_i y_i|$, so a floating-point matrix product satisfies $|\mathrm{fl}(AB) - AB| \le \gamma_n |A|\,|B|$ entrywise. The same analysis applied to the Doolittle formulas shows that Gaussian elimination computes the exact LU factors of $A + E$ with $|E| \le \gamma_n |\hat L|\,|\hat U|$: with the two triangular solves, the computed solution of $Ax = b$ solves $(A + F)\hat x = b$ with $|F| \le (3\gamma_n + \gamma_n^2)|\hat L|\,|\hat U|$, so Gaussian elimination is backward stable when $|\hat L|\,|\hat U|$ is not much larger than $A$, which partial pivoting achieves in practice. For Cholesky factorization $|L|\,|L^T|$ is always bounded by the largest diagonal entry of $A$, so no pivoting is needed. The statements follow J. W. Demmel's Math 221 notes, which give the bounds to first order in the machine precision; the exact $\gamma_n$ forms are those of N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed., SIAM, 2002.
 - [Forward error of the floating-point dot product](abs-dot-fl-sub-le.md)
@@ -34,7 +34,21 @@ A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative t
 - [Vector as a sequence](vec-seq.md)
 - [Splitting a sum at its last nonzero term](sum-fin-eq-sum-range-add.md)
 - [Backward stability of Gaussian elimination, $\gamma_{3n}$ form](exists-add-mul-vec-eq-of-is-fl-lu-gamma.md)
+- [Element growth in Gaussian elimination with partial pivoting](growth-in-gaussian-elimination-with-partial-pivoting.md)
 - [$3\gamma_n + \gamma_n^2 \le \gamma_{3n}$](three-mul-gamma-add-sq-le-gamma.md)
+- [Certified enclosure for a rounded recursive log-likelihood sum](abs-rsum-sub-sum-le.md)
+
+## Forward and backward error
+
+- [Forward error bounded by condition times backward error](forward-error-bounded-by-condition-times-backward-error.md)
+- [Forward error, backward error and conditioning interface](forward-error-backward-error-and-conditioning-interface.md)
+
+## Compensated summation and iterative refinement
+
+- [Mixed-precision iterative refinement: error recursion and limiting accuracy](mixed-precision-iterative-refinement-convergence-contract.md)
+- [Accurate summation and dot product (Sum2 / Dot2 / DotK)](accurate-summation-and-dot-product.md)
+- [Kahan compensated summation error bound](kahan-compensated-summation-error-bound.md)
+- [Pairwise (tree) summation and reduction-order contracts](pairwise-summation-and-reduction-order-contracts.md)
 
 ## Related topics
 

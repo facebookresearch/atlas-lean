@@ -22,5 +22,5 @@ For $X \sim \mathcal N(\mu, \sigma^2)$, Gaussian integration by parts gives Stei
 ## Related topics
 
 - [Empirical Bayes and Tweedie's formula](../../bayesian-statistics/empirical-bayes-and-tweedie-s-formula/README.md): the Bayes rule that the James–Stein estimator imitates, and Tweedie's formula for general priors.
-- Lande's selection gradient: Stein's lemma in quantitative genetics, where it turns the covariance of trait and fitness into the mean fitness gradient.
+- [Lande's selection gradient](../../../Biology/quantitative-genetics/lande-s-selection-gradient/README.md): Stein's lemma in quantitative genetics, where it turns the covariance of trait and fitness into the mean fitness gradient.
 - [Bootstrap and the Mallows metric](../bootstrap-and-the-mallows-metric/README.md): Efron's other approach to frequentist accuracy; the results above do not depend on it.

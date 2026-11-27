@@ -40,7 +40,17 @@ universe u
 
 variable {Base : Type u}
 
-/-- The typing judgment `Γ | S ⊢ t : T` (TAPL Figure 13-1). -/
+/-- **Typing judgment for the lambda calculus with references.** The judgment
+$\Gamma \mid S \vdash t : T$ (TAPL Figure 13-1), where the context $\Gamma$ lists the types of
+the free de Bruijn variables (index $0$ first) and the store typing $S$ lists the types of the
+locations $0, 1, \ldots$, is the least relation closed under the following rules, in which
+$t : T$ abbreviates $\Gamma \mid S \vdash t : T$. A variable $x$ has type $T$ if $\Gamma$
+assigns $T$ to index $x$. If $t$ has type $T_2$ in the context $\Gamma$ extended by $T_1$ at
+index $0$ (with the same $S$), then $\lambda{:}T_1.\, t : T_1 \to T_2$. If $t_1 : T_1 \to T_2$
+and $t_2 : T_1$, then $t_1\, t_2 : T_2$. The term $\mathtt{unit}$ has type $\mathrm{Unit}$. A
+location $l$ has type $\mathrm{Ref}\, T$ if $S$ assigns $T$ to $l$. If $t : T$, then
+$\mathrm{ref}\, t : \mathrm{Ref}\, T$. If $t : \mathrm{Ref}\, T$, then $!t : T$. If
+$t_1 : \mathrm{Ref}\, T$ and $t_2 : T$, then $t_1 := t_2$ has type $\mathrm{Unit}$. -/
 inductive HasType : List (Ty Base) → List (Ty Base) → Term Base → Ty Base → Prop
   | var {Γ S : List (Ty Base)} {x : Nat} {T : Ty Base} (hx : Γ[x]? = some T) :
       HasType Γ S (.var x) T
@@ -63,9 +73,15 @@ inductive HasType : List (Ty Base) → List (Ty Base) → Term Base → Ty Base 
       (ht₁ : HasType Γ S t₁ (.ref T)) (ht₂ : HasType Γ S t₂ T) :
       HasType Γ S (.assign t₁ t₂) .unit
 
-/-- A store is well typed, `Γ | S ⊢ μ` (TAPL Definition 13.5.1): it has one
-entry per location of `S`, and the entry at each location is a value of the
-type `S` assigns to it. -/
+/-- **Well-typed stores.** Let $\Gamma$ be a variable context and $S$ a store typing. A store
+$\mu$, a list of terms whose entry at index $l$ is the contents of location $l$, is well typed
+under $\Gamma$ and $S$, written $\Gamma \mid S \vdash \mu$, when $\mu$ and $S$ have the same
+length and, for every location $l$ less than this length, the entry of $\mu$ at $l$ is a value
+that has, under $\Gamma$ and $S$, the type that $S$ assigns to $l$.
+
+Stores here are lists of terms rather than of values, so each entry is required to be a value.
+
+Source: TAPL Definition 13.5.1. -/
 def StoreTyped (Γ S : List (Ty Base)) (μ : List (Term Base)) : Prop :=
   List.Forall₂ (fun v T => v.Value ∧ HasType Γ S v T) μ S
 
@@ -76,7 +92,11 @@ variable {Γ S : List (Ty Base)} {μ : List (Term Base)}
 theorem length_eq (h : StoreTyped Γ S μ) : μ.length = S.length :=
   List.Forall₂.length_eq h
 
-/-- Every location the store typing knows holds a value of the right type. -/
+/-- **Well-typed stores hold a typed value at every location.** Let $\Gamma$ be a typing
+context, $S$ a store typing, and $\mu$ a store (a list of terms, whose entry at index $l$ is
+the contents of location $l$) that is well typed, $\Gamma \mid S \vdash \mu$. If $S$ assigns
+type $T$ to location $l$, then $\mu$ has an entry $v$ at location $l$, $v$ is a value, and
+$\Gamma \mid S \vdash v : T$. -/
 theorem exists_of_getElem? {l : Nat} {T : Ty Base} (h : StoreTyped Γ S μ)
     (hl : S[l]? = some T) : ∃ v, μ[l]? = some v ∧ v.Value ∧ HasType Γ S v T := by
   have hlt : l < S.length := (List.getElem?_eq_some_iff.mp hl).1
@@ -92,8 +112,9 @@ namespace HasType
 
 variable {Γ S : List (Ty Base)} {v : Term Base}
 
-/-- Canonical forms for function types: a value of type `T₁ → T₂` is an
-abstraction with parameter type `T₁`. -/
+/-- **Canonical forms for function types.** For every context $\Gamma$ and store typing $S$, if
+$v$ is a value and $\Gamma \mid S \vdash v : T_1 \to T_2$, then $v$ is an abstraction
+$\lambda{:}T_1.\, t$ with parameter type $T_1$, for some body $t$. -/
 theorem lam_of_value {T₁ T₂ : Ty Base} (hv : v.Value) (h : HasType Γ S v (.arr T₁ T₂)) :
     ∃ body, v = .lam T₁ body := by
   cases hv with
@@ -103,8 +124,9 @@ theorem lam_of_value {T₁ T₂ : Ty Base} (hv : v.Value) (h : HasType Γ S v (.
   | unit => cases h
   | loc l => cases h
 
-/-- Canonical forms for reference types: a value of type `Ref T` is a
-location that the store typing assigns type `T`. -/
+/-- **Canonical forms for reference types.** For every context $\Gamma$ and store typing $S$, if
+$v$ is a value and $\Gamma \mid S \vdash v : \mathrm{Ref}\, T$, then $v$ is a location $l$ to
+which $S$ assigns type $T$. -/
 theorem loc_of_value {T : Ty Base} (hv : v.Value) (h : HasType Γ S v (.ref T)) :
     ∃ l, v = .loc l ∧ S[l]? = some T := by
   cases hv with
@@ -114,14 +136,16 @@ theorem loc_of_value {T : Ty Base} (hv : v.Value) (h : HasType Γ S v (.ref T)) 
       cases h with
       | loc hl => exact ⟨l, rfl, hl⟩
 
-/-- Canonical forms for `Unit`: the only value of type `Unit` is `unit`. -/
+/-- **Canonical forms for the unit type.** For every context $\Gamma$ and store typing $S$, if
+$v$ is a value and $\Gamma \mid S \vdash v : \mathrm{Unit}$, then $v = \mathtt{unit}$. -/
 theorem unit_of_value (hv : v.Value) (h : HasType Γ S v .unit) : v = .unit := by
   cases hv with
   | lam T body => cases h
   | unit => rfl
   | loc l => cases h
 
-/-- Base types have no values. -/
+/-- **No value has a base type.** For every context $\Gamma$, store typing $S$ and base type
+$b$, there is no value $v$ with $\Gamma \mid S \vdash v : b$. -/
 theorem not_value_base {b : Base} (hv : v.Value) (h : HasType Γ S v (.base b)) : False := by
   cases hv <;> cases h
 

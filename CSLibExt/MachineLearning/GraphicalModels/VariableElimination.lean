@@ -49,7 +49,13 @@ open Finset
 
 variable {α : Type*}
 
-/-- A pairwise model on a tree with vertices `0, …, n` in topological order. -/
+/-- **Pairwise model on a tree.** For a type $\alpha$ of values and $n \in \mathbb{N}$, a pairwise
+tree model on the vertices $0, \dots, n$ consists of a parent $p(k + 1) \in \{0, \dots, k\}$ for
+each vertex $k + 1$ with $k < n$ (so vertex $0$ is the root and every vertex comes after its
+parent), a unary factor $\varphi_i : \alpha \to \mathbb{R}$ for each vertex $i \le n$, and for each
+$k < n$ a pairwise factor $\psi_k(a, b) \in \mathbb{R}$ on the edge between vertex $k + 1$ and its
+parent, defined for all $a, b \in \alpha$, where $a$ is the value at vertex $k + 1$ and $b$ the
+value at its parent. -/
 structure TreeModel (α : Type*) (n : ℕ) where
   /-- The parent of vertex `k + 1`, among the vertices `0, …, k`. -/
   par : (k : Fin n) → Fin (k + 1)
@@ -61,23 +67,43 @@ structure TreeModel (α : Type*) (n : ℕ) where
 namespace TreeModel
 variable {n : ℕ}
 
-/-- The parent of vertex `k + 1`, as a vertex. -/
+/-- **Parent of a vertex.** In a pairwise tree model on the vertices $0, \dots, n$, for $k < n$ the
+parent of vertex $k + 1$ is the parent recorded by the model, an element of $\{0, \dots, k\}$,
+regarded as one of the vertices $0, \dots, n$. -/
 def parent (m : TreeModel α n) (k : Fin n) : Fin (n + 1) :=
   ⟨m.par k, by have := (m.par k).2; have := k.2; omega⟩
 
-/-- The unnormalized weight of an assignment: the product of all factors. -/
+/-- **Weight of an assignment in a tree model.** Let $\alpha$ be a type and let $m$ be a pairwise
+model on a tree with vertices $0, \dots, n$, with unary factors $\varphi_i : \alpha \to \mathbb{R}$
+for each vertex $i$, and with factor $\psi_k : \alpha \times \alpha \to \mathbb{R}$ on the edge
+between vertex $k + 1$ and its parent $p(k + 1)$ for each $k < n$. The unnormalized weight of an
+assignment $x : \{0, \dots, n\} \to \alpha$ is the real number
+$$w(x) = \prod_{i=0}^{n} \varphi_i(x_i) \cdot \prod_{k=0}^{n-1} \psi_k(x_{k+1}, x_{p(k+1)}),$$
+the product of all factors evaluated at $x$. -/
 noncomputable def weight (m : TreeModel α n) (x : Fin (n + 1) → α) : ℝ :=
   (∏ i, m.unary i (x i)) * ∏ k, m.pair k (x k.succ) (x (m.parent k))
 
-/-- The parent of the last vertex, as a vertex of the smaller tree. -/
+/-- **Parent of the last vertex.** In a pairwise tree model on the vertices $0, \dots, n + 1$, this
+is the parent of the last vertex $n + 1$, regarded as one of the vertices $0, \dots, n$ of the tree
+with the last vertex removed. -/
 def lastParent (m : TreeModel α (n + 1)) : Fin (n + 1) :=
   ⟨m.par (Fin.last n), by have := (m.par (Fin.last n)).2; simp at this; omega⟩
 
-/-- The message from the last vertex to its parent. -/
+/-- **Message from the last vertex.** Let $\alpha$ be finite and consider a pairwise tree model on
+the vertices $0, \dots, n + 1$ with unary factors $\varphi_i$ and pairwise factors $\psi_k$. The
+message from the last vertex $n + 1$ to its parent is the function $\mu : \alpha \to \mathbb{R}$
+given by $\mu(a) = \sum_{b \in \alpha} \psi_n(b, a) \, \varphi_{n+1}(b)$, where $\psi_n$ is the
+factor of the edge between vertex $n + 1$ and its parent. -/
 noncomputable def message [Fintype α] (m : TreeModel α (n + 1)) (a : α) : ℝ :=
   ∑ b, m.pair (Fin.last n) b a * m.unary (Fin.last (n + 1)) b
 
-/-- Sum out the last vertex: multiply its message into the unary factor of its parent. -/
+/-- **Eliminating the last vertex of a tree model.** Let $\alpha$ be finite, let $m$ be a pairwise
+tree model on the vertices $0, \dots, n + 1$ with parents $p$, unary factors $\varphi_i$ and
+pairwise factors $\psi_k$, and let $\mu$ be the message from the last vertex $n + 1$ to its
+parent $q = p(n + 1)$. Eliminating the last vertex gives the pairwise tree model on the vertices
+$0, \dots, n$ in which vertex $k + 1$ has parent $p(k + 1)$ and edge factor $\psi_k$ for each
+$k < n$, and whose unary factors are $\varphi'_q(a) = \varphi_q(a) \, \mu(a)$ and
+$\varphi'_i = \varphi_i$ for every vertex $i \le n$ with $i \ne q$. -/
 noncomputable def eliminate [Fintype α] (m : TreeModel α (n + 1)) :
     TreeModel α n where
   par k := m.par k.castSucc
@@ -114,8 +140,12 @@ theorem eliminate_weight [Fintype α] (m : TreeModel α (n + 1))
   simp only [eliminate, prod_mul_distrib, prod_ite_eq', mem_univ, ↓reduceIte]
   ring
 
-/-- **One step of variable elimination**: summing out the last vertex preserves every weighted sum
-of a function of the root. -/
+/-- **One step of variable elimination.** Let $\alpha$ be finite, let $m$ be a pairwise tree model
+on the vertices $0, \dots, n + 1$ with weight $w$, and let $m'$ be the model on the vertices
+$0, \dots, n$ obtained from $m$ by eliminating the last vertex, with weight $w'$. Then for every
+function $g : \alpha \to \mathbb{R}$ we have $\sum_x w(x) \, g(x_0) = \sum_y w'(y) \, g(y_0)$,
+where $x$ ranges over all assignments $\{0, \dots, n + 1\} \to \alpha$ and $y$ over all
+assignments $\{0, \dots, n\} \to \alpha$. -/
 theorem sum_weight_mul_eliminate [Fintype α] (m : TreeModel α (n + 1)) (g : α → ℝ) :
     ∑ x, m.weight x * g (x 0) = ∑ y, m.eliminate.weight y * g (y 0) := by
   rw [sum_snoc]
@@ -124,14 +154,22 @@ theorem sum_weight_mul_eliminate [Fintype α] (m : TreeModel α (n + 1)) (g : α
     Fin.snoc_castSucc (α := fun _ => α) b y 0
   simp only [hroot, ← sum_mul, weight_snoc, ← mul_sum, eliminate_weight, message]
 
-/-- The unnormalized marginal of the root computed by variable elimination: eliminate the vertices
-from the last one down, then read off the root's unary factor. -/
+/-- **Root message of a tree model.** Let $\alpha$ be finite. The root message of a pairwise tree
+model $m$ on the vertices $0, \dots, n$ is the function $r_m : \alpha \to \mathbb{R}$ defined by
+recursion on $n$: if $n = 0$, it is the unary factor of the root $0$; if $m$ is a model on the
+vertices $0, \dots, n + 1$, it is $r_{m'}$, where $m'$ is the model on the vertices $0, \dots, n$
+obtained from $m$ by eliminating the last vertex.
+
+By variable elimination, $r_m(a)$ is the unnormalized marginal of the root at $a$. -/
 noncomputable def rootMessage [Fintype α] : {n : ℕ} → TreeModel α n → α → ℝ
   | 0, m => m.unary 0
   | _ + 1, m => rootMessage m.eliminate
 
-/-- **Variable elimination is exact**: for every function `g` of the root value,
-`∑ x, weight x * g (x 0) = ∑ a, rootMessage a * g a`. -/
+/-- **Variable elimination is exact.** Let $\alpha$ be finite and let $m$ be a pairwise tree model
+on the vertices $0, \dots, n$ with weight $w$ and root message $r : \alpha \to \mathbb{R}$. Then
+for every function $g : \alpha \to \mathbb{R}$ of the root value,
+$\sum_x w(x) \, g(x_0) = \sum_{a \in \alpha} r(a) \, g(a)$, where $x$ ranges over all assignments
+$\{0, \dots, n\} \to \alpha$. -/
 theorem sum_weight_mul_eq [Fintype α] :
     ∀ {n : ℕ} (m : TreeModel α n) (g : α → ℝ),
       ∑ x, m.weight x * g (x 0) = ∑ a, m.rootMessage a * g a
@@ -142,12 +180,20 @@ theorem sum_weight_mul_eq [Fintype α] :
     rw [sum_weight_mul_eliminate, sum_weight_mul_eq m.eliminate g]
     rfl
 
-/-- Variable elimination computes the partition function. -/
+/-- **Variable elimination computes the partition function.** Let $\alpha$ be finite and let $m$
+be a pairwise tree model on the vertices $0, \dots, n$ with weight $w$ and root message
+$r : \alpha \to \mathbb{R}$. Then the partition function of $m$ is the total root message:
+$\sum_x w(x) = \sum_{a \in \alpha} r(a)$, where $x$ ranges over all assignments
+$\{0, \dots, n\} \to \alpha$. -/
 theorem partition_eq [Fintype α] {n : ℕ} (m : TreeModel α n) :
     ∑ x, m.weight x = ∑ a, m.rootMessage a := by
   simpa using m.sum_weight_mul_eq fun _ => 1
 
-/-- Variable elimination computes the unnormalized marginal of the root. -/
+/-- **Variable elimination computes the unnormalized root marginal.** Let $\alpha$ be finite and
+let $m$ be a pairwise tree model on the vertices $0, \dots, n$ with weight $w$ and root message
+$r : \alpha \to \mathbb{R}$. Then for every $a \in \alpha$ the unnormalized marginal of the root
+at $a$ equals $r(a)$, that is, $\sum_x w(x) = r(a)$, where $x$ ranges over the assignments
+$\{0, \dots, n\} \to \alpha$ with $x_0 = a$. -/
 theorem rootMarginal_eq [Fintype α] [DecidableEq α] {n : ℕ} (m : TreeModel α n) (a : α) :
     ∑ x with x 0 = a, m.weight x = m.rootMessage a := by
   have h := m.sum_weight_mul_eq fun b => if b = a then 1 else 0

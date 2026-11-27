@@ -33,18 +33,22 @@ the formal-conjectures statement `ErdosProblems/109.lean` (equivalent; no code i
 
 open Pointwise
 
-/-- Erdős Problem 109 (the Erdős sumset conjecture): every `A ⊆ ℕ` of positive upper density
-contains `B + C` for some infinite `B, C ⊆ ℕ`. -/
+/-- **Erdős Problem 109 (the Erdős sumset conjecture).** The upper density of a set
+$A \subseteq \mathbb{N}$ is $\limsup_{N \to \infty} \lvert A \cap \{0, \dots, N - 1\} \rvert / N$.
+This is the statement that every set $A \subseteq \mathbb{N}$ of positive upper density contains
+$B + C = \{b + c \mid b \in B, c \in C\}$ for some infinite sets $B, C \subseteq \mathbb{N}$. -/
 def sumsetInPositiveUpperDensity : Prop :=
   ∀ A : Set ℕ, 0 < A.upperDensity → ∃ B C : Set ℕ, B.Infinite ∧ C.Infinite ∧ B + C ⊆ A
 
-/--
-Resolved true: Moreira, Richter and Robertson proved that every `A ⊆ ℕ` of positive upper density
-contains `B + C` with `B, C` infinite; erdosproblems.com/109 lists the problem as proved, with a
-formal proof in plby/lean-proofs (`Erdos109.lean`). Source: T. F. Bloom, Erdős Problems, Problem
-#109, https://www.erdosproblems.com/109 (status PROVED (LEAN)); resolution: J. Moreira, F. K.
-Richter and D. Robertson, A proof of a sumset conjecture of Erdős, Ann. of Math. (2) (2019),
-605-652, main theorem (erdosproblems.com/109),
+/-- **Moreira–Richter–Robertson theorem (the Erdős sumset conjecture).** The upper density of a
+set $A \subseteq \mathbb{N}$ is
+$\limsup_{N \to \infty} \lvert A \cap \{0, \dots, N - 1\} \rvert / N$. Every set
+$A \subseteq \mathbb{N}$ of positive upper density contains
+$B + C = \{b + c \mid b \in B, c \in C\}$ for some infinite sets $B, C \subseteq \mathbb{N}$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #109, https://www.erdosproblems.com/109 (status
+PROVED (LEAN)); resolution: J. Moreira, F. K. Richter and D. Robertson, A proof of a sumset
+conjecture of Erdős, Ann. of Math. (2) (2019), 605-652, main theorem (erdosproblems.com/109),
 https://github.com/plby/lean-proofs/blob/8822f7ddef30fadbd92e1c6ab4ed897af356af5e/src/latest/ErdosProblems/Erdos109.lean#L9074.
 -/
 public theorem_wanted sumsetInPositiveUpperDensity_holds : sumsetInPositiveUpperDensity

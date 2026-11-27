@@ -20,7 +20,7 @@ Applications of Satisfiability Testing (SAT 2006)*, Lecture Notes in Computer Sc
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -36,8 +36,8 @@ INSTANCE: a CNF formula `C` that is linear: any two distinct clauses of `C` have
 variable in common (`|V(c₁) ∩ V(c₂)| ≤ 1` for `c₁ ≠ c₂`).
 QUESTION: is `C` satisfiable?
 
-The formula is a `Cslib.Logic.PL.CNF` (a list of clauses, each a list of literals `(v, b)`, the
-literal `v` when `b = true` and `¬v` when `b = false`) over the variables `0, …, n - 1`. The
+The formula is a `Cslib.Logic.LegacyPL.CNF` (a list of clauses, each a list of literals `(v, b)`,
+the literal `v` when `b = true` and `¬v` when `b = false`) over the variables `0, …, n - 1`. The
 formula is a set of clauses and each clause a set of literals on distinct variables: the literals
 of a clause are listed with strictly increasing variables (so no literal repeats and no
 complementary pair occurs), and no clause is listed twice. A clause with a complementary pair is
@@ -57,7 +57,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the number `n` of variables and the CNF formula (its clauses). -/
-abbrev LinearSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev LinearSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- The variables of a clause. -/
 def vars (c : List (ℕ × Bool)) : List ℕ := c.map Prod.fst
@@ -72,7 +72,7 @@ def WellFormed (i : LinearSatInstance) : Prop :=
 /-- A satisfying truth assignment. -/
 def LinearSatFeasible (i : LinearSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- LINEAR SAT as a decision problem over bitstrings. -/

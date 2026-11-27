@@ -1,5 +1,7 @@
 # Arithmetical hierarchy
 
+- [The arithmetical class $\Sigma_n$](is-sigma.md)
+- [The arithmetical class $\Pi_n$](is-pi.md)
 - [The class Δₙ of the arithmetical hierarchy](is-delta.md)
 - [Computable predicates are closed under computable precomposition](computable-pred-comp.md)
 - [The first projection of the pairing function is computable](computable-unpair-fst.md)

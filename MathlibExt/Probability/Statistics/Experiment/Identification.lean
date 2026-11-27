@@ -30,24 +30,6 @@ namespace MathlibExt.Probability.Statistics.Experiment.Identification
 variable {ι : Type*}
 variable [Fintype ι]
 
-private lemma sum_powersetCard_ite_mem [DecidableEq ι] (n₁ : ℕ) (i : ι) :
-    (∑ S ∈ univ.powersetCard n₁, (if i ∈ S then (1 : ℝ) else 0)) * (Fintype.card ι) =
-      (Fintype.card ι).choose n₁ * n₁ := by
-  rw [sum_boole]
-  rcases Nat.eq_zero_or_pos n₁ with rfl | hn
-  · simp
-  have hcard := card_filter_powersetCard_subset {i} univ n₁ (by simp) (by simp; omega)
-  simp only [singleton_subset_iff, card_singleton, card_univ] at hcard
-  rw [hcard]
-  obtain ⟨N, hN⟩ : ∃ N, Fintype.card ι = N + 1 :=
-    ⟨Fintype.card ι - 1, (Nat.succ_pred_eq_of_pos (Fintype.card_pos_iff.2 ⟨i⟩)).symm⟩
-  obtain ⟨k, rfl⟩ : ∃ k, n₁ = k + 1 := ⟨n₁ - 1, (Nat.succ_pred_eq_of_pos hn).symm⟩
-  rw [hN]
-  simp only [Nat.add_sub_cancel]
-  have := Nat.add_one_mul_choose_eq N k
-  rw [mul_comm]
-  exact_mod_cast this
-
 set_option linter.unusedDecidableInType false in
 /-- Design-based ATE identification: under complete randomization with both arms
 nonempty, the observation law over fixed potential-outcome schedules identifies

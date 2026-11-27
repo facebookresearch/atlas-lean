@@ -19,7 +19,7 @@ Completeness under parsimonious reductions would fail unless $P = NP$, because d
 
 - [The 0-1 permanent counts perfect matchings](permanent-boole-eq-card.md): the reading of this
   theorem as the $\#P$-completeness of counting perfect matchings in bipartite graphs.
-- General matching is in P (Edmonds' blossom algorithm):
+- [General matching is in P (Edmonds' blossom algorithm)](../../polynomial-time-problems/matching-in-general-graphs/matching-in-p.md):
   the decision counterpart is in polynomial time, which is what makes this completeness result
   surprising.
 

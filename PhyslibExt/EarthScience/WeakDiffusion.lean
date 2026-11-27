@@ -54,6 +54,8 @@ hence agreement on `[0,1]` through the integral representations.
 - `EarthScience.WeakH10`: the `H¹₀(0,1)` structure used by the statement.
 - `EarthScience.weak_diffusion_exists_unique`: existence and uniqueness of
   the weak solution in `H¹₀(0,1)`.
+- `EarthScience.weak_diffusion_ibp`: integration by parts for the primitive
+  of an `L²` function against a `WeakH10` test function.
 
 ## iii. Table of contents
 
@@ -394,7 +396,7 @@ f s`. Both `F` and `v.toFun` are absolutely continuous on `[0,1]`, with
 derivatives `f` and `v.weakDeriv` almost everywhere, so Mathlib's
 integration by parts for absolutely continuous functions applies; the
 boundary terms vanish because `v 0 = v 1 = 0`. -/
-private lemma weak_diffusion_ibp
+lemma weak_diffusion_ibp
     {f : ℝ → ℝ} (hf : MemLp f 2 (volume.restrict (Set.Icc 0 1)))
     (v : WeakH10) :
     ∫ x in (0 : ℝ)..1, (∫ s in (0 : ℝ)..x, f s) * v.weakDeriv x

@@ -32,16 +32,22 @@ Provenance for the `(q, r)`-Dowling polynomial and number:
   `3e6c2cf946c933cf36388d5da99293ed8f39d50de0024290beb39f94ccaa5c5d`.
 -/
 
-/-- The `(q, r)`-Dowling polynomial associated to a fixed family `W` of
-`(q, r)`-Whitney coefficients of the second kind. -/
+/-- **$(q, r)$-Dowling polynomial.** Let $R$ be a semiring and let $W(n, k) \in R$ for all
+natural numbers $n$ and $k$ (intended to be the $(q, r)$-Whitney numbers of the second kind, but
+any family is allowed). For a natural number $n$, the $(q, r)$-Dowling polynomial of $W$ at $n$ is
+the polynomial $\sum_{k=0}^{n} W(n, k)\, x^k$ in $R[x]$. -/
 noncomputable def qrDowlingPolynomial (W : ℕ → ℕ → R) (n : ℕ) : Polynomial R :=
   ∑ k ∈ Finset.range (n + 1), Polynomial.C (W n k) * Polynomial.X ^ k
 
-/-- The `(q, r)`-Dowling number is the associated polynomial evaluated at `1`. -/
+/-- **$(q, r)$-Dowling number.** Let $R$ be a semiring and let $W(n, k) \in R$ for all natural
+numbers $n$ and $k$. For a natural number $n$, the $(q, r)$-Dowling number of $W$ at $n$ is the
+value at $x = 1$ of the $(q, r)$-Dowling polynomial $\sum_{k=0}^{n} W(n, k)\, x^k$ of $W$. -/
 noncomputable def qrDowlingNumber (W : ℕ → ℕ → R) (n : ℕ) : R :=
   Polynomial.eval 1 (qrDowlingPolynomial W n)
 
-/-- A `(q, r)`-Dowling number is the sum of its Whitney coefficients. -/
+/-- **$(q, r)$-Dowling numbers as sums of coefficients.** Let $R$ be a semiring and let
+$W(n, k) \in R$ for all natural numbers $n$ and $k$. For every natural number $n$, the
+$(q, r)$-Dowling number of $W$ at $n$ equals $\sum_{k=0}^{n} W(n, k)$. -/
 theorem qrDowlingNumber_eq_sum (W : ℕ → ℕ → R) (n : ℕ) :
     qrDowlingNumber W n = ∑ k ∈ Finset.range (n + 1), W n k := by
   rw [qrDowlingNumber, qrDowlingPolynomial, Polynomial.eval_finsetSum]

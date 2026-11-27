@@ -31,4 +31,16 @@ example (h2 : ∀ s : List (ZMod 2), s.length = 2 → ¬ IsWeightedZeroSumFree {
     (h1 : IsWeightedZeroSumFree {1} [(1 : ZMod 2)]) : weightedDavenport {1} (ZMod 2) = 2 :=
   le_antisymm (weightedDavenport_le h2) (Order.add_one_le_of_lt (lt_weightedDavenport h1))
 
+/-- Equal divisor and dividend: the outer denominator is `1`. -/
+example : (5 : ℕ) ⌈/⌉ ((5 : ℕ) ⌈/⌉ (5 - 1) - 1) = 5 :=
+  ceilDiv_ceilDiv_sub_one_sub_one_of_dvd 5 5 (by decide) (by decide) (by decide)
+
+/-- Smallest divisor `m = 2`: the inner denominator is `1`. -/
+example : (8 : ℕ) ⌈/⌉ ((8 : ℕ) ⌈/⌉ (2 - 1) - 1) = 2 :=
+  ceilDiv_ceilDiv_sub_one_sub_one_of_dvd 2 8 (by decide) (by decide) (by decide)
+
+/-- Proper divisor with a nonintegral inner quotient and an exact outer quotient. -/
+example : (8 : ℕ) ⌈/⌉ ((8 : ℕ) ⌈/⌉ (4 - 1) - 1) = 4 :=
+  ceilDiv_ceilDiv_sub_one_sub_one_of_dvd 4 8 (by decide) (by decide) (by decide)
+
 end MetaMathlibExt

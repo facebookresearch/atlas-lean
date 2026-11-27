@@ -161,13 +161,22 @@ private lemma total_edge_weight_sum_any {n : Nat}
 
 universe u
 
-/-- The chosen root has no parent. -/
+/-- **The root has no parent in Prim's algorithm.** Let $W$ be a linearly ordered type with a
+zero element, let $D$ be a directed adjacency structure on the vertices $0, \dots, n-1$, let $w$
+assign a weight in $W$ to every unordered pair of vertices, not necessarily distinct, and let
+$r$ be a vertex. In the output of Prim's algorithm on $D$, $w$ and $r$, the vertex $r$ has no
+parent. -/
 public theorem prim_root {W : Type u} [LinearOrder W] [Zero W] {n : Nat}
     (graph : DirectedAdjacency (Fin n)) (weight : Sym2 (Fin n) → W) (root : Fin n) :
     (prim graph weight root).ret[root] = none :=
   Cslib.Algorithms.Lean.Prim.prim_root_parent graph weight root
 
-/-- Every returned parent is an inspected graph neighbor. -/
+/-- **Parents returned by Prim's algorithm are adjacency-list neighbors.** Let $W$ be a linearly
+ordered type with a zero element, let $D$ be a directed adjacency structure on the vertices
+$0, \dots, n-1$ with adjacency lists $A(u)$, let $w$ assign a weight in $W$ to every unordered
+pair of vertices, not necessarily distinct, and let $r$ be a vertex. For all vertices $u$ and
+$v$, if Prim's algorithm on $D$, $w$ and $r$ returns $u$ as the parent of $v$, then $v$ occurs
+in $A(u)$. -/
 public theorem prim_parent_edge {W : Type u} [LinearOrder W] [Zero W] {n : Nat}
     (graph : DirectedAdjacency (Fin n)) (weight : Sym2 (Fin n) → W) (root : Fin n) :
     ∀ u v : Fin n, (prim graph weight root).ret[v] = some u →
@@ -175,16 +184,32 @@ public theorem prim_parent_edge {W : Type u} [LinearOrder W] [Zero W] {n : Nat}
   intro u v hp
   exact Cslib.Algorithms.Lean.Prim.prim_parent_edges graph weight root v u hp
 
-/-- On a connected undirected graph, the returned parent edges form a spanning tree, for any
-linearly ordered weights. -/
+/-- **Prim's algorithm returns a tree.** Let $W$ be a linearly ordered type with a zero element,
+let $G$ be a connected simple graph on the vertices $0, \dots, n-1$, let $D$ be a directed
+adjacency structure on the same vertices with adjacency lists $A(u)$ such that for all vertices
+$u$ and $v$, $v$ occurs in $A(u)$ exactly when $u$ and $v$ are adjacent in $G$, let $w$ assign
+a weight in $W$ to every unordered pair of vertices, not necessarily distinct, and let $r$ be a
+vertex. Let $T$ be the simple graph on the vertices $0, \dots, n-1$ in which two distinct
+vertices are adjacent when one of them is the parent of the other in the output of Prim's
+algorithm on $D$, $w$ and $r$. Then $T$ is a tree. -/
 public theorem prim_isTree {W : Type u} [LinearOrder W] [Zero W] {n : Nat}
     (graph : DirectedAdjacency (Fin n)) (G : SimpleGraph (Fin n)) (weight : Sym2 (Fin n) → W)
     (root : Fin n) (hadj : ∀ u v : Fin n, v ∈ graph.adjacency u ↔ G.Adj u v) (hG : G.Connected) :
     (SimpleGraph.fromRel fun u v : Fin n => (prim graph weight root).ret[v] = some u).IsTree :=
   Cslib.Algorithms.Lean.Prim.prim_parent_graph_isTree graph weight root G hG hadj
 
-/-- On a connected undirected graph, the returned parent edges form a minimum spanning tree.
-Weights are arbitrary signed real numbers, including ties. -/
+/-- **Prim's algorithm returns a minimum spanning tree.** Let $G$ be a connected simple graph on
+the vertices $0, \dots, n-1$, let $D$ be a directed adjacency structure on the same vertices with
+adjacency lists $A(u)$ such that for all vertices $u$ and $v$, $v$ occurs in $A(u)$ exactly when
+$u$ and $v$ are adjacent in $G$, let $w$ assign a real weight $w(e)$ to every unordered pair $e$
+of vertices, not necessarily distinct, and let $r$ be a vertex. Let $T$ be the simple graph on
+the vertices $0, \dots, n-1$ in which two distinct vertices are adjacent when one of them is the
+parent of the other in the output of Prim's algorithm on $D$, $w$ and $r$, and write $E(H)$ for
+the edge set of a graph $H$. Then every edge of $T$ is an edge of $G$, $T$ is a tree, and every
+graph $H$ on the vertices $0, \dots, n-1$ that is a tree and whose edges are all edges of $G$
+satisfies $\sum_{e \in E(T)} w(e) \le \sum_{e \in E(H)} w(e)$.
+
+Weights are arbitrary signed real numbers, and ties are allowed. -/
 public theorem prim_minimum_spanningTree {n : Nat} (graph : DirectedAdjacency (Fin n))
     (G : SimpleGraph (Fin n))
     (weight : Sym2 (Fin n) → ℝ) (root : Fin n) : by

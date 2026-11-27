@@ -1,6 +1,6 @@
 # Fourier expansion of the Gowers $U^2$ inner product
 
-Let $G$ be a finite abelian group; $\psi$ ranges over its characters, the homomorphisms $G \to \mathbb{C}^\times$, and $\mathbb{E}$ denotes an average over $G$. With the discrete Fourier transform $\hat f(\psi) = \sum_x \psi(x) f(x)$,
+Let $G$ be a finite abelian group; $\psi$ ranges over its characters, the homomorphisms $G \to \mathbb{C}^\times$, and $\mathbb{E}$ denotes an average over $G$. With the [discrete Fourier transform](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-fun.md) $\hat f(\psi) = \sum_x \psi(x) f(x)$,
 
 $$|G|^4 \langle f_{00}, f_{10}, f_{01}, f_{11} \rangle = \sum_{\psi} \hat f_{11}(\psi)\,\hat f_{00}(\psi)\,\overline{\hat f_{01}(\psi)}\,\overline{\hat f_{10}(\psi)}.$$
 

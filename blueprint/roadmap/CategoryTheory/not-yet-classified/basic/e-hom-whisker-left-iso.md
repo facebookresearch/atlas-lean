@@ -1,0 +1,5 @@
+# E Hom Whisker Left Iso
+
+Left enriched-hom whiskering by an isomorphism is an isomorphism.
+This is `Iso.eHomCongr V (Iso.refl X) e` with the identity factors removed
+from the morphisms so that both projections reduce to whiskering.

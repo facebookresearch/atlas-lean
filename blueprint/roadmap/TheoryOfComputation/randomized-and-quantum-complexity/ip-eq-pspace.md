@@ -8,13 +8,13 @@ machines in polynomial space.
 
 ## Informally uses
 
-- TQBF is PSPACE-complete:
+- [TQBF is PSPACE-complete](../completeness-other-classes/true-quantified-boolean-formulas/tqbf-pspace-complete.md):
   the interactive proof is given for true quantified Boolean formulas, and every problem in PSPACE
   reduces to them.
 
 ## Background
 
-- Zero-knowledge proofs:
+- [Zero-knowledge proofs](../../ComputerScience/cryptography/signatures-and-protocols/zero-knowledge-proofs/README.md):
   interactive proofs were introduced by Goldwasser, Micali and Rackoff together with zero knowledge;
   the graph-isomorphism protocol there is a three-message example.
 - [Goldwasser–Sipser theorem](goldwasser-sipser-theorem/README.md): private and public coins give

@@ -1,0 +1,17 @@
+# Finite-state CCS agents
+
+- [Sum of prefixes](sum-of.md)
+- [Transitions of a sum of prefixes](step-sum-of-iff.md)
+- [Realization of a code-level transition system](realizes.md)
+- [Constants listing their transitions realize them](constant.md)
+- [Code-level parallel composition](par-steps.md)
+- [Parallel composition preserves realization](parallel.md)
+- [Boolean restriction test](allowed-b.md)
+- [Code-level restriction](restrict-steps.md)
+- [Restriction preserves realization](restriction.md)
+- [Forward certificate check](forward-check.md)
+- [Backward certificate check](backward-check.md)
+- [Weak-bisimulation certificate check](cert-check.md)
+- [Certificate checks give weak bisimilarity](weakly-bisimilar-of-cert-check.md)
+- [Direct check of the root condition](root-check.md)
+- [Certificate checks give rooted observation congruence](rooted-weakly-bisimilar-of-cert-check.md)

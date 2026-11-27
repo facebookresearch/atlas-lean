@@ -81,7 +81,7 @@ namespace Cslib.Crypto.Identification
 
 open Finset Cslib.Crypto.Framework
 
-/-- A **Sigma protocol** (three-move public-coin protocol) for the relation `Rel`:
+/-- **A Sigma protocol** (three-move public-coin protocol) for the relation `Rel`:
 statements in `X`, witnesses in `W`, prover coins in `K`, commitments in `Cm`, challenges in `Ch`
 and responses in `Z`. The identification schemes of Katz and Lindell, Section 12.5, have this
 shape. -/
@@ -99,20 +99,20 @@ namespace SigmaProtocol
 
 variable {X W K Cm Ch Z : Type*} (P : SigmaProtocol X W K Cm Ch Z)
 
-/-- **Completeness**: for every statement–witness pair in the relation, all prover coins and all
-challenges, the honest transcript is accepted. -/
+/-- **Completeness of a Sigma protocol**: for every statement–witness pair in the relation, all
+prover coins and all challenges, the honest transcript is accepted. -/
 def Complete : Prop :=
   ∀ x w, P.Rel x w → ∀ k e, P.verify x (P.commit x w k) e (P.respond x w k e) = true
 
-/-- **Special soundness** with extractor `ext`: from two accepting transcripts `(a, e, z)` and
-`(a, e', z')` for `x` with the same commitment and different challenges, `ext x a e z e' z'` is a
-witness for `x`. -/
+/-- **Special soundness of a Sigma protocol** with extractor `ext`: from two accepting transcripts
+`(a, e, z)` and `(a, e', z')` for `x` with the same commitment and different challenges,
+`ext x a e z e' z'` is a witness for `x`. -/
 def SpecialSound (ext : X → Cm → Ch → Z → Ch → Z → W) : Prop :=
   ∀ x a e z e' z', e ≠ e' → P.verify x a e z = true → P.verify x a e' z' = true →
     P.Rel x (ext x a e z e' z')
 
-/-- Special soundness: a statement with two accepting transcripts that share a commitment and
-differ in the challenge has a witness. -/
+/-- **A witness from two accepting transcripts**: a statement with two accepting transcripts that
+share a commitment and differ in the challenge has a witness. -/
 theorem exists_witness_of_verify_of_verify {ext : X → Cm → Ch → Z → Ch → Z → W}
     (hP : P.SpecialSound ext) {x : X} {a : Cm} {e e' : Ch} {z z' : Z} (he : e ≠ e')
     (h₁ : P.verify x a e z = true) (h₂ : P.verify x a e' z' = true) : ∃ w, P.Rel x w :=
@@ -122,11 +122,12 @@ section Transcripts
 
 variable [Fintype K] [Nonempty K] [Fintype Ch] [Nonempty Ch]
 
-/-- The honest transcript for the statement `x`, the witness `w`, coins `k` and challenge `e`. -/
+/-- **The honest transcript** for the statement `x`, the witness `w`, coins `k` and the challenge
+`e`. -/
 def honestTranscript (x : X) (w : W) (ke : K × Ch) : Cm × Ch × Z :=
   (P.commit x w ke.1, ke.2, P.respond x w ke.1 ke.2)
 
-/-- The distribution of honest transcripts: uniform prover coins and a uniform challenge (an
+/-- **The distribution of honest transcripts**: uniform prover coins and a uniform challenge (an
 honest verifier). -/
 noncomputable def transcript (x : X) (w : W) : PMF (Cm × Ch × Z) :=
   (Cslib.Probability.PMF.uniformOfFintype (K × Ch)).map (P.honestTranscript x w)
@@ -144,8 +145,9 @@ def StatHVZK (sim : X → PMF (Cm × Ch × Z)) (ε : ℝ) : Prop :=
   ∀ x w, P.Rel x w → ∀ D : Cm × Ch × Z → Bool,
     advantage ((P.transcript x w).map D) ((sim x).map D) ≤ ε
 
-/-- The honest commitment–response distribution for the statement `x`, the witness `w` and a
-**fixed** challenge `e`: uniform prover coins `k`, output `(commit x w k, respond x w k e)`. -/
+/-- **The honest transcript for a fixed challenge**: the honest commitment–response distribution
+for the statement `x`, the witness `w` and a **fixed** challenge `e`: uniform prover coins `k`,
+output `(commit x w k, respond x w k e)`. -/
 noncomputable def challengeTranscript (x : X) (w : W) (e : Ch) : PMF (Cm × Z) :=
   (Cslib.Probability.PMF.uniformOfFintype K).map fun k => (P.commit x w k, P.respond x w k e)
 
@@ -157,7 +159,7 @@ only constrains a uniform challenge; `SpecialHVZK.hvzk` derives `HVZK` from it. 
 def SpecialHVZK (sim : X → Ch → PMF (Cm × Z)) : Prop :=
   ∀ x w, P.Rel x w → ∀ e, P.challengeTranscript x w e = sim x e
 
-/-- The uniform-challenge simulator built from a per-challenge simulator `sim`: draw a uniform
+/-- **The uniform-challenge simulator** built from a per-challenge simulator `sim`: draw a uniform
 challenge `e`, then `(a, z) ← sim x e`, and output `(a, e, z)`. -/
 noncomputable def uniformChallengeSim (sim : X → Ch → PMF (Cm × Z)) (x : X) :
     PMF (Cm × Ch × Z) :=
@@ -179,13 +181,15 @@ theorem SpecialHVZK.hvzk {P : SigmaProtocol X W K Cm Ch Z} {sim : X → Ch → P
   rw [← h x w hw e, challengeTranscript, PMF.map_comp, PMF.map_comp]
   rfl
 
-/-- Perfect honest-verifier zero knowledge is statistical zero knowledge with error `0`. -/
+/-- **Perfect HVZK is statistical HVZK with error `0`**: perfect honest-verifier zero knowledge is
+statistical zero knowledge with error `0`. -/
 theorem HVZK.statHVZK_zero {P : SigmaProtocol X W K Cm Ch Z} {sim : X → PMF (Cm × Ch × Z)}
     (h : P.HVZK sim) : P.StatHVZK sim 0 := by
   intro x w hw D
   rw [h x w hw, advantage, sub_self, abs_zero]
 
-/-- Under completeness, every transcript in the support of the honest distribution is accepted. -/
+/-- **Honest transcripts are accepted**: under completeness, every transcript in the support of the
+honest distribution is accepted. -/
 theorem verify_of_mem_support_transcript (hP : P.Complete) {x : X} {w : W} (hw : P.Rel x w)
     {t : Cm × Ch × Z} (ht : t ∈ (P.transcript x w).support) :
     P.verify x t.1 t.2.1 t.2.2 = true := by
@@ -193,8 +197,9 @@ theorem verify_of_mem_support_transcript (hP : P.Complete) {x : X} {w : W} (hw :
   obtain ⟨ke, -, rfl⟩ := ht
   exact hP x w hw ke.1 ke.2
 
-/-- Under completeness and perfect honest-verifier zero knowledge, for a statement with a witness
-every simulated transcript is accepted, although the simulator never sees the witness. -/
+/-- **Simulated transcripts are accepted**: under completeness and perfect honest-verifier zero
+knowledge, for a statement with a witness every simulated transcript is accepted, although the
+simulator never sees the witness. -/
 theorem verify_of_mem_support_sim (hP : P.Complete) {sim : X → PMF (Cm × Ch × Z)}
     (hZK : P.HVZK sim) {x : X} {w : W} (hw : P.Rel x w) {t : Cm × Ch × Z}
     (ht : t ∈ (sim x).support) : P.verify x t.1 t.2.1 t.2.2 = true :=
@@ -208,7 +213,7 @@ section Soundness
 
 variable {R : Type*} [Fintype R] [Nonempty R] [Fintype Ch] [Nonempty Ch]
 
-/-- The experiment of a cheating prover for the statement `x` with coins in `R`: from its coins
+/-- **The experiment of a cheating prover** for the statement `x` with coins in `R`: from its coins
 `r` it sends the commitment `a r`; on the uniform challenge `e` it answers `z r e`; the
 experiment outputs whether the verifier accepts. -/
 noncomputable def cheatGame (x : X) (a : R → Cm) (z : R → Ch → Z) : PMF Bool :=
@@ -262,7 +267,7 @@ open Cslib.Crypto.PublicKey
 
 variable {G : Type*} [CommGroup G] [DecidableEq G]
 
-/-- The **Schnorr identification protocol** as a Sigma protocol (Katz and Lindell, Section 12.5,
+/-- **The Schnorr identification protocol as a Sigma protocol** (Katz and Lindell, Section 12.5,
 Figure 12.2): statements are group elements `y` with `y ^ q = 1`, witnesses are discrete
 logarithms `x` with `g ^ x = y`, the prover's coins and the challenge are in `ZMod q`, the
 commitment is `g ^ k`, the answer is `r x + k`, and the verifier checks `Schnorr.Accepts`
@@ -274,7 +279,7 @@ def sigma (q : ℕ) (g : G) :
   respond _ x k r := respond x k r
   verify y I r s := decide (gpow g s * (gpow y.1 r)⁻¹ = I)
 
-/-- The **per-challenge Schnorr simulator**: for the challenge `r`, a uniform answer `s` and the
+/-- **The per-challenge Schnorr simulator**: for the challenge `r`, a uniform answer `s` and the
 commitment `g ^ s * (y ^ r)⁻¹`, computed from the statement `y` alone. It is `Schnorr.simulate`
 with the challenge fixed to `r`. -/
 noncomputable def sigmaSimAt (q : ℕ) [NeZero q] (g : G) (y : {y : G // y ^ q = 1}) (r : ZMod q) :
@@ -283,32 +288,34 @@ noncomputable def sigmaSimAt (q : ℕ) [NeZero q] (g : G) (y : {y : G // y ^ q =
 
 variable {q : ℕ} {g : G}
 
-/-- The Sigma-protocol verifier is `Schnorr.Accepts`. -/
+/-- **The Schnorr Sigma-protocol verifier** is `Schnorr.Accepts`. -/
 theorem sigma_verify_eq_true_iff {y : {y : G // y ^ q = 1}} {I : G} {r s : ZMod q} :
     (sigma q g).verify y I r s = true ↔ Accepts g y.1 I r s :=
   decide_eq_true_iff
 
-/-- **Completeness** of Schnorr as a Sigma protocol, from `Schnorr.accepts_honest`. -/
+/-- **Completeness of Schnorr as a Sigma protocol**, from `Schnorr.accepts_honest`. -/
 theorem sigma_complete [NeZero q] (hg : g ^ q = 1) : (sigma q g).Complete := by
   rintro ⟨y, hy⟩ x rfl k r
   exact sigma_verify_eq_true_iff.2 (accepts_honest hg x k r)
 
-/-- The Schnorr extractor `(s - s') / (r - r')`, which ignores the statement and the commitment. -/
+/-- **The Schnorr extractor** `(s - s') / (r - r')`, which ignores the statement and the
+commitment. -/
 def sigmaExtract {q : ℕ} (_y : {y : G // y ^ q = 1}) (_I : G) (r s r' s' : ZMod q) : ZMod q :=
   extract r s r' s'
 
-/-- **Special soundness** of Schnorr as a Sigma protocol, from `Schnorr.extract_spec`. -/
+/-- **Special soundness of Schnorr as a Sigma protocol**, from `Schnorr.extract_spec`. -/
 theorem sigma_specialSound [Fact q.Prime] (hg : g ^ q = 1) :
     (sigma q g).SpecialSound sigmaExtract := by
   rintro ⟨y, hy⟩ I r s r' s' hrr h₁ h₂
   exact extract_spec hg hy hrr (sigma_verify_eq_true_iff.1 h₁) (sigma_verify_eq_true_iff.1 h₂)
 
-/-- The honest transcripts of the Sigma protocol are those of `Schnorr.transcript`. -/
+/-- **Honest Schnorr transcripts**: the honest transcripts of the Sigma protocol are those of
+`Schnorr.transcript`. -/
 theorem sigma_transcript [NeZero q] (y : {y : G // y ^ q = 1}) (x : ZMod q) :
     (sigma q g).transcript y x = transcript g x :=
   rfl
 
-/-- **Perfect honest-verifier zero knowledge** of Schnorr as a Sigma protocol, with the simulator
+/-- **Perfect honest-verifier zero knowledge of Schnorr as a Sigma protocol**, with the simulator
 `Schnorr.simulate`, from `Schnorr.transcript_eq_simulate`. -/
 theorem sigma_hvzk [NeZero q] (hg : g ^ q = 1) :
     (sigma q g).HVZK fun y => simulate g y.1 := by
@@ -316,7 +323,7 @@ theorem sigma_hvzk [NeZero q] (hg : g ^ q = 1) :
   rw [sigma_transcript]
   exact transcript_eq_simulate hg x
 
-/-- **Perfect special honest-verifier zero knowledge** of Schnorr as a Sigma protocol, with the
+/-- **Perfect special honest-verifier zero knowledge of Schnorr as a Sigma protocol**, with the
 per-challenge simulator `sigmaSimAt`: for every challenge `r`, the prover's answer `r x + k` is
 uniform when `k` is, and the commitment `g ^ k` is then `g ^ s * (y ^ r)⁻¹`. -/
 theorem sigma_specialHVZK [NeZero q] (hg : g ^ q = 1) :

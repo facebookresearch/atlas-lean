@@ -41,21 +41,31 @@ simply reducible groups, is not a proposition and is not stated.
 
 open CategoryTheory MonoidalCategory
 
-/-- `G` is simply reducible: all irreducible complex characters of `G` are real-valued, and the
-tensor product of any two irreducible complex representations contains every irreducible
-representation with multiplicity at most one (the multiplicity of `U` in `V ⊗ W` being
-`dim Hom_G(U, V ⊗ W)`). -/
+/-- **Simply reducible group.** A group $G$ is simply reducible when the character of every
+irreducible finite-dimensional complex representation of $G$ is real-valued, and for all
+irreducible finite-dimensional complex representations $U$, $V$ and $W$ of $G$, the space
+$\mathrm{Hom}_G(U, V \otimes W)$ of $G$-equivariant linear maps from $U$ to the tensor product
+$V \otimes W$ has complex dimension at most $1$.
+
+For finite $G$, by Maschke's and Schur's theorems this dimension is the multiplicity of $U$ in
+$V \otimes W$, so the second condition says that $V \otimes W$ has no repeated irreducible
+constituents. -/
 def IsSimplyReducible (G : Type) [Group G] : Prop :=
   (∀ V : FDRep ℂ G, Simple V → ∀ g : G, (V.character g).im = 0) ∧
     ∀ V W U : FDRep ℂ G, Simple V → Simple W → Simple U → Module.finrank ℂ (U ⟶ V ⊗ W) ≤ 1
 
-/-- Kourovka 11.94 (S. P. Strunkov): every finite simply reducible group is soluble. -/
+/-- **Solubility of finite simply reducible groups (Kourovka 11.94).** The statement, asked by
+S. P. Strunkov as Kourovka Problem 11.94, that every finite simply reducible group is soluble. -/
 def simplyReducibleSoluble : Prop :=
   ∀ (G : Type) [Group G] [Finite G], IsSimplyReducible G → Group.IsSolvable G
 
 /--
-Resolved true: Kazarin and Chankov prove that every finite simply reducible group is soluble; the
-Kourovka Archive answers 11.94 "Yes, it is". Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**Finite simply reducible groups are soluble.** Every finite simply reducible group is soluble;
+that is, the statement of Kourovka Problem 11.94 holds.
+
+This was proved by Kazarin and Chankov; the Kourovka Archive answers 11.94 "Yes, it is".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Archive of Solved Problems, Problem 11.94 (S. P. Strunkov); resolution: L. S. Kazarin and E. I.
 Chankov, Sb. Math. 201, no. 5 (2010), 655-668, Kourovka Archive, Problem 11.94: "Yes, it is",

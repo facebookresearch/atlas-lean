@@ -6,4 +6,4 @@ For a stochastic MDP, the same matrix is the policy kernel of the Dirac (determi
 
 ## Background
 
-- Stochastic policies and discounted occupancy: the policy kernel of a stochastic policy, row-stochastic for stochastic MDPs.
+- [Stochastic policies and discounted occupancy](../../machine-learning/reinforcement-learning/stochastic-policies-and-discounted-occupancy/README.md): the policy kernel of a stochastic policy, row-stochastic for stochastic MDPs.

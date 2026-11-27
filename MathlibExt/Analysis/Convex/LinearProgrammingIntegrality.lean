@@ -44,7 +44,7 @@ theorem IsTotallyUnimodular.exists_int_vec_of_basic_feasible {m n : ℕ}
     intro _ i
     refine ⟨i, -1, ?_⟩
     ext j
-    simp [one_apply, Pi.single_apply, eq_comm]
+    simp [Matrix.one_apply, Pi.single_apply, eq_comm]
     split_ifs <;> simp
   exact (haug.submatrix rows id).exists_int_vec hdet
     (fun i => Sum.elim b (fun _ => 0) (rows i)) htight

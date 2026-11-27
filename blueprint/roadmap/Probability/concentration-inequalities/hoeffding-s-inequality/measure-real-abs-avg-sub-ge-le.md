@@ -12,7 +12,7 @@ This is the per-predictor step of the uniform deviation bound for a finite class
 
 ## Background
 
-- Uniform deviation of the empirical risk over a finite class: background, the application in statistical learning theory, a union bound of this inequality over the predictors.
+- [Uniform deviation of the empirical risk over a finite class](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/measure-real-exists-abs-empirical-risk-s.md): background, the application in statistical learning theory, a union bound of this inequality over the predictors.
 
 ## Sources
 

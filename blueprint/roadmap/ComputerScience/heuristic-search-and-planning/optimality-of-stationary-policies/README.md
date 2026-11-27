@@ -20,5 +20,5 @@ Markov policies choose a decision rule at each stage, possibly a different one e
 
 - [Value iteration](../value-iteration/README.md)
 - [Policy iteration](../policy-iteration/README.md)
-- Stochastic policies and discounted occupancy
+- [Stochastic policies and discounted occupancy](../../machine-learning/reinforcement-learning/stochastic-policies-and-discounted-occupancy/README.md)
 - [Optimal stopping and the Snell envelope](../../../Probability/martingales/optimal-stopping-and-the-snell-envelope/README.md): backward induction for optimal stopping, the stop-or-continue case of the finite-horizon DP algorithm.

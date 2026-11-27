@@ -18,7 +18,7 @@ Computer and System Sciences 20 (1980), 50-58, doi:10.1016/0022-0000(80)90004-5.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

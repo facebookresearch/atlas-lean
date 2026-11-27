@@ -23,7 +23,7 @@ first `N` pairs. The same limit holds for the oracle statistic with known means 
 variances, so fitting the means and variances costs the contrast no degree of freedom.
 
 This is the domain-independent API used, for example, by the Cochran–Armitage trend
-test (`MathlibExt.Biology.StatisticalGenetics.AssociationTests.CochranArmitage`), where
+test (`Domains.Biology.StatisticalGenetics.AssociationTests.CochranArmitage`), where
 the statistic is `N r²` for genotype score and case indicator.
 
 ## Main results

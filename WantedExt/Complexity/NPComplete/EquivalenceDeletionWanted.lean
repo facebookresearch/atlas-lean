@@ -22,7 +22,7 @@ Garey and Johnson (1979), [ND16]).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -50,8 +50,8 @@ equivalences are unsatisfied exactly when some cut has at least `J` edges.
 
 Variables are `0, …, n - 1`. A literal is a pair `(x, b)` of a variable and a polarity, as in
 `CSLibExt.Logics.Propositional.CNF` (`b = true` is `x`, `b = false` is `¬x`), and is true under
-an assignment exactly when `Cslib.Logic.PL.CNFLiteral.Satisfies` holds. `C` is a list (repeated
-equivalences count separately). At most `K` equivalences are unsatisfied exactly when some
+an assignment exactly when `Cslib.Logic.LegacyPL.CNFLiteral.Satisfies` holds. `C` is a list
+(repeated equivalences count separately). At most `K` equivalences are unsatisfied exactly when some
 sublist of `C` that omits at most `K` of its entries consists of satisfied equivalences.
 
 Encoding: the instance is decoded from a bitstring with the repository's
@@ -75,8 +75,8 @@ def WellFormed (i : EquivalenceDeletionInstance) : Prop :=
 
 /-- The equivalence `l₁ ≡ l₂` is satisfied: both literals have the same truth value. -/
 def EquivSatisfied (assignment : ℕ → Bool) (e : (ℕ × Bool) × (ℕ × Bool)) : Prop :=
-  (Cslib.Logic.PL.CNFLiteral.Satisfies assignment e.1 ↔
-    Cslib.Logic.PL.CNFLiteral.Satisfies assignment e.2)
+  (Cslib.Logic.LegacyPL.CNFLiteral.Satisfies assignment e.1 ↔
+    Cslib.Logic.LegacyPL.CNFLiteral.Satisfies assignment e.2)
 
 /-- Some truth assignment leaves at most `K` equivalences unsatisfied. -/
 def EquivalenceDeletionFeasible (i : EquivalenceDeletionInstance) : Prop :=

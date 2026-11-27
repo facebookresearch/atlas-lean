@@ -1,0 +1,3 @@
+# INTERSECTION GRAPH FOR RECTANGLES ON A GRID as a decision problem
+
+The decision problem INTERSECTION GRAPH FOR RECTANGLES ON A GRID accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(n, E, M, N)$, to an instance that is well-formed for INTERSECTION GRAPH FOR SEGMENTS ON A GRID (the edge list describes a simple graph on $n$ vertices (no repeated edges in either orientation, no loops, endpoints in range), and $M, N > 0$) and feasible for INTERSECTION GRAPH FOR RECTANGLES ON A GRID. It rejects every bitstring that does not decode to such an instance.

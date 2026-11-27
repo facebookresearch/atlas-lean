@@ -22,7 +22,7 @@ proof still applies:
 
 ## Informally uses
 
-- Randomized communication complexity of disjointness: the public-coin $\Omega(n)$ bound that the one-way protocol above must respect.
+- [Randomized communication complexity of disjointness](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-disj-fn-ge.md): the public-coin $\Omega(n)$ bound that the one-way protocol above must respect.
 
 ## Background
 

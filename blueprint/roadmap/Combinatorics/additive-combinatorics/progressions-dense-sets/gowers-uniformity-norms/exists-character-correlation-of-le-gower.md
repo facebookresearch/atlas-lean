@@ -9,7 +9,7 @@ This is Proposition 2.7 of Gowers (2010), stated there for $c > 0$; the case $c 
 ## Informally uses
 
 - [The $U^2$ norm is the $\ell^4$ norm of the Fourier transform](gowers-norm-two-eq.md): the first step, $c^2 \le \|\hat f\|_4^2$.
-- Plancherel formula on a finite abelian group: in $\|\hat f\|_4^2 \le \|\hat f\|_\infty \|\hat f\|_2 \le \|\hat f\|_\infty$ the last step is Parseval, $\|\hat f\|_2 = \|f\|_2 \le 1$.
+- [Plancherel formula on a finite abelian group](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-plancherel.md): in $\|\hat f\|_4^2 \le \|\hat f\|_\infty \|\hat f\|_2 \le \|\hat f\|_\infty$ the last step is Parseval, $\|\hat f\|_2 = \|f\|_2 \le 1$.
 
 ## Sources
 

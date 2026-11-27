@@ -151,7 +151,8 @@ self-consistent bound with `φ < 1` are summable with sum at most `|S|/(1 - φ)`
 inputs; the unconditional statement is `ising_sharp_phase_transition`. -/
 lemma ising_sharpness {V : Type*} (origin : V) (β_c : ℝ) (hβc : 0 < β_c)
     (m : ℝ → ℝ) (corr : V → V → ℝ)
-    (hdiff : ∀ β ∈ Set.Ici β_c, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
+    (hcont : ContinuousOn (fun β => (m β) ^ 2) (Set.Ici β_c))
+    (hdiff : ∀ β ∈ Set.Ioi β_c, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
     (hineq : ∀ β ∈ Set.Ioi β_c, (2 / β) * (1 - (m β) ^ 2) ≤ deriv (fun β => (m β) ^ 2) β)
     (hzero : m β_c = 0) (hmnonneg : ∀ β ∈ Set.Ici β_c, 0 ≤ m β)
     (hcorr_nonneg : ∀ x z, 0 ≤ corr x z)
@@ -162,7 +163,7 @@ lemma ising_sharpness {V : Type*} (origin : V) (β_c : ℝ) (hβc : 0 < β_c)
     (Summable (corr origin) ∧ (∑' x, corr origin x) ≤ (cardS : ℝ) / (1 - φ)) := by
   refine ⟨?_, ?_⟩
   · intro β hβ
-    exact StatMech.Sharpness.meanfield_lower_bound β_c hβc m hdiff hineq hzero hmnonneg hβ.le
+    exact StatMech.Sharpness.meanfield_lower_bound β_c hβc m hcont hdiff hineq hzero hmnonneg hβ.le
   · exact finite_susceptibility origin corr hcorr_nonneg cardS φ hφ0 hφ1 hsimon
 
 end IsingSharp

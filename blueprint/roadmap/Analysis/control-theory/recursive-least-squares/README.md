@@ -39,12 +39,16 @@ as well.
 - [Convergence rate of recursive least squares under martingale-difference noise](rls-error-sq-le-log-div-lambda-min.md)
 - [Logarithmic regret of the least-squares adaptive predictor](rls-regret-sum-le-log.md)
 
+## Shared stochastic energy estimate for recursive least squares
+
+- [Joint stochastic energy and prediction-error bound for recursive least squares](rls-energy-add-half-sum-le-log.md)
+
 ## Related topics
 
-- Least squares, ridge and lasso regression: the batch problem that the recursion solves; its ridge closed form is used by the identification with ridge regression.
+- [Least squares, ridge and lasso regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md): the batch problem that the recursion solves; its ridge closed form is used by the identification with ridge regression.
 - [Linear least squares](../../../LinearAlgebra/matrix-decompositions/linear-least-squares/README.md): the same normal equations solved by matrix factorisations instead of rank-one updates.
-- Kalman filter: RLS is the Kalman filter for the constant state $\theta_{k+1} = \theta_k$ observed through $y_{k+1} = \varphi_k^\top \theta_k + v_{k+1}$ with unit noise variance, $P_k$ playing the role of the covariance.
-- Linear quadratic regulator: Recht's dynamic programming pages; adaptive linear-quadratic control combines least-squares estimates of the system with the Riccati feedback by certainty equivalence.
+- [Kalman filter](../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/README.md): RLS is the Kalman filter for the constant state $\theta_{k+1} = \theta_k$ observed through $y_{k+1} = \varphi_k^\top \theta_k + v_{k+1}$ with unit noise variance, $P_k$ playing the role of the covariance.
+- [Linear quadratic regulator](../../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md): Recht's dynamic programming pages; adaptive linear-quadratic control combines least-squares estimates of the system with the Riccati feedback by certainty equivalence.
 - [Optimality of stationary policies](../../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/README.md): Bertsekas's dynamic programming, the optimisation side of feedback design when the model is known.
 - [Martingales and optional stopping](../../../Probability/martingales/README.md): the martingale convergence and estimation theorems on which the stochastic convergence theory rests.
 - [Capability and limits of feedback](../capability-and-limits-of-feedback/README.md): what feedback, adaptive or not, can achieve for uncertain systems.

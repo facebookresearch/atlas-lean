@@ -6,7 +6,7 @@ satisfiable formula has an ultimately periodic model $u v^\omega$ (not stated se
 
 ## Informally uses
 
-- Lasso characterization of Büchi nonemptiness:
+- [Lasso characterization of Büchi nonemptiness](../../../TheoryOfComputation/omega-automata-and-games/emptiness-of-b-chi-automata/language-nonempty-iff-has-lasso.md):
   the automaton has finitely many states.
 - [Büchi automaton accepts exactly the satisfying words](mem-buchi-iff.md).
 

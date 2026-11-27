@@ -1,0 +1,73 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+
+/-!
+# Operator norm on a subspace containing the operator and adjoint ranges
+
+Restriction to a subspace containing both ranges preserves the original
+operator norm. The upper bound is literal restriction. For the lower bound,
+apply the restricted operator to the adjoint range and use the C-star square
+identity. This applies to the actual essential restriction of an integrated
+covariant operator, without a faithful or nondegenerate representation input.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace ContinuousLinearMap
+
+universe uH
+
+variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- Let `H` be a complete complex inner-product space, let `T : H →L[ℂ] H` be continuous and linear,
+and let `P` be a complex submodule of `H`. Assume that both `T` and its adjoint take every
+vector into `P`.
+
+A subspace containing an operator and adjoint ranges preserves its exact operator norm. -/
+theorem norm_domRestrict_codRestrict_eq_of_range_star (T : H →L[ℂ] H) (P : Submodule ℂ H)
+    (hRange : ∀ ξ : H, T ξ ∈ P) (hStarRange : ∀ ξ : H, star T ξ ∈ P) :
+    ‖(T.domRestrict P).codRestrict P (fun ξ => hRange ξ)‖ = ‖T‖ := by
+  let R : P →L[ℂ] P := (T.domRestrict P).codRestrict P (fun ξ => hRange ξ)
+  change ‖R‖ = ‖T‖
+  apply le_antisymm
+  · apply R.opNorm_le_bound (norm_nonneg T)
+    intro ξ
+    change ‖T (ξ : H)‖ ≤ ‖T‖ * ‖(ξ : H)‖
+    exact T.le_opNorm (ξ : H)
+  · have hSquare : ‖T‖ * ‖T‖ ≤ ‖R‖ * ‖T‖ := by
+      calc
+        ‖T‖ * ‖T‖ = ‖T * star T‖ := (CStarRing.norm_self_mul_star : ‖T * star T‖ = ‖T‖ * ‖T‖).symm
+        _ ≤ ‖R‖ * ‖T‖ := by
+          apply (T * star T).opNorm_le_bound (mul_nonneg (norm_nonneg R) (norm_nonneg T))
+          intro ξ
+          let η : P := ⟨star T ξ, hStarRange ξ⟩
+          change ‖T (star T ξ)‖ ≤ (‖R‖ * ‖T‖) * ‖ξ‖
+          calc
+            ‖T (star T ξ)‖ = ‖R η‖ := rfl
+            _ ≤ ‖R‖ * ‖η‖ := R.le_opNorm η
+            _ ≤ ‖R‖ * (‖T‖ * ‖ξ‖) := by
+              apply mul_le_mul_of_nonneg_left _ (norm_nonneg R)
+              change ‖star T ξ‖ ≤ ‖T‖ * ‖ξ‖
+              simpa only [norm_star] using (star T).le_opNorm ξ
+            _ = (‖R‖ * ‖T‖) * ‖ξ‖ := (mul_assoc _ _ _).symm
+    by_cases hZero : ‖T‖ = 0
+    · simpa only [hZero] using norm_nonneg R
+    · have hPos : 0 < ‖T‖ := lt_of_le_of_ne (norm_nonneg T) (Ne.symm hZero)
+      exact (mul_le_mul_iff_left₀ hPos).mp hSquare
+
+end ContinuousLinearMap

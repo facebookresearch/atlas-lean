@@ -10,7 +10,7 @@ Measured with $\ell_\infty$ bounds on the subgradients, the dimension enters onl
 
 ## Background
 
-- The $\sqrt{T}$ regret bound of Hedge: the same update run online, with regret $2\sqrt{T \log n}$ for losses in $[0, 1]$, proved there by the potential argument.
+- [The $\sqrt{T}$ regret bound of Hedge](../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/regret-le-two-sqrt.md): the same update run online, with regret $2\sqrt{T \log n}$ for losses in $[0, 1]$, proved there by the potential argument.
 
 ## Sources
 

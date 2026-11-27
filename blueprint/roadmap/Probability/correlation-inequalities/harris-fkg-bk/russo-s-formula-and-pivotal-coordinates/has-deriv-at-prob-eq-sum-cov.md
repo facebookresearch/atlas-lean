@@ -10,8 +10,8 @@ Unlike [Russo's formula](has-deriv-at-prob-eq-sum-pivotal-prob.md) in its pivota
 
 - [Russo's formula](deriv-prob-eq-sum-pivotal-prob.md): the pivotal form for increasing events (Proposition 2.7 of the lecture notes); for an increasing event the covariance with $\omega_e$ equals $p(1 - p)$ times the probability that $e$ is pivotal.
 - [Russo's formula, covariance form for increasing events](../../../percolation/phase-transition/sharp-thresholds-from-influences/russo-formula.md): the special case this result generalises.
-- Influence of a coordinate on the Boolean cube: the influences of Boolean-function analysis at $p = 1/2$; for a monotone function the covariance term of coordinate $e$ is, up to normalisation, its influence.
-- Covariance under a product weight: the covariance used by the OSSS inequality, the other route to sharpness.
+- [Influence of a coordinate on the Boolean cube](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-influence.md): the influences of Boolean-function analysis at $p = 1/2$; for a monotone function the covariance term of coordinate $e$ is, up to normalisation, its influence.
+- [Covariance under a product weight](../../../../Combinatorics/boolean-functions/osss-inequality-for-decision-trees/cov.md): the covariance used by the OSSS inequality, the other route to sharpness.
 
 ## Sources
 

@@ -12,7 +12,7 @@ coordinate density ratios directly; both arguments rest on the same pointwise bo
 
 ## Informally uses
 
-- Shifting the Laplace density: the coordinatewise density ratio bound, whose product over the coordinates is the source's proof.
+- [Shifting the Laplace density](../../../Probability/distributions/continuous/laplace-distribution/laplace-pdfreal-le-exp-mul.md): the coordinatewise density ratio bound, whose product over the coordinates is the source's proof.
 
 ## Sources
 

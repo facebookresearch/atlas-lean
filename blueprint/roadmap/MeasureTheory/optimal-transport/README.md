@@ -5,8 +5,8 @@ Couplings of probability measures, transport costs, existence of optimal couplin
 - [Kantorovich duality](kantorovich-duality/README.md)
 - [Monge–Kantorovich existence theorem](monge-kantorovich-existence-theorem/README.md)
 - [Wasserstein distances](wasserstein-distances/README.md)
-- [Brenier's theorem](brenier.md)
-- [Displacement convexity](displacement-convexity/README.md)
+- [Brenier's theorem](brenier-s-theorem/README.md)
+- [McCann's condition for displacement convexity](displacement-convexity/README.md)
 - [Wasserstein gradient flows and the JKO scheme](wasserstein-gradient-flows-and-the-jko-scheme/README.md)
 
 ## Related topics

@@ -1,0 +1,3 @@
+# Kac-Ward bucket: walks through a dart, not its reverse
+
+Let $L \ge 1$, $x, \omega \in \mathbb{C}$, a dart $e$ of the torus $T_L = (\mathbb{Z}/L\mathbb{Z})^2$, and $n \in \mathbb{N}$. The bucket is the sum of the loop weights under $K$ of all sequences $(v_0, \dots, v_n)$ of $n + 1$ darts that contain the dart $e$ but not its reverse. Here $K$ is the [Kac–Ward matrix](../kac-ward-matrices/ons-kwmat.md) of the torus $T_L = (\mathbb{Z}/L\mathbb{Z})^2$ with parameters $x, \omega$, the loop weight of a cyclic sequence $(v_0, \dots, v_n)$ under a matrix $\Lambda$ is $\prod_{k=0}^{n} \Lambda(v_k, v_{k+1})$, indices mod $n + 1$, and the reverse of a dart $(p, \mu)$ is $(p + s(\mu), \mu + 2)$, with $s(\mu)$ the unit step of direction $\mu$.

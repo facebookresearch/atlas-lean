@@ -8,7 +8,7 @@ the supremum over all probability distributions $\mu$ on $X \times Y$.
 
 ## Informally uses
 
-- Von Neumann's minimax theorem: Rao and Yehudayoff prove Theorem 3.3 from it (their Theorem 3.4), for the game whose rows are deterministic protocols and whose columns are inputs.
+- [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md): Rao and Yehudayoff prove Theorem 3.3 from it (their Theorem 3.4), for the game whose rows are deterministic protocols and whose columns are inputs.
 - [Distributional complexity is at most randomized complexity](dist-complexity-le-rand-complexity.md): the easy inequality, by averaging over the protocols in the support.
 
 ## Background

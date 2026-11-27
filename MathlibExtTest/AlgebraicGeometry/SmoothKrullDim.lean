@@ -27,3 +27,9 @@ example (R S : Type*) [CommRing R] [CommRing S] [Algebra R S]
 example {K : Type*} [Field K] {B : Type*} [CommRing B] [Algebra K B] (n : ℕ)
     [Algebra.IsStandardSmoothOfRelativeDimension n K B] : ringKrullDim B ≤ n :=
   ringKrullDim_le_of_isStandardSmoothOfRelativeDimension (K := K) (B := B) n
+
+-- Consumer with the original binders.
+example {K : Type u} [Field K] {X : Scheme.{u}} (f : X ⟶ Spec (CommRingCat.of K))
+    (n : ℕ) [SmoothOfRelativeDimension n f] [Nonempty X] :
+    (n : WithBot ℕ∞) ≤ topologicalKrullDim X :=
+  AlgebraicGeometry.SmoothOfRelativeDimension.le_topologicalKrullDim f n

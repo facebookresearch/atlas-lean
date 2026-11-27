@@ -6,3 +6,4 @@ Algorithms that act on a request sequence without knowing the future, and compet
 - [List update problem](list-update-problem/README.md)
 - [Online bipartite matching](online-bipartite-matching/README.md)
 - [Ski rental problem](ski-rental-problem/README.md)
+- [Paging and k server](paging-and-k-server/README.md)

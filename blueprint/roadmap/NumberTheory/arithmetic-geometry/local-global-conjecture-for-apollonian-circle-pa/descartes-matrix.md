@@ -7,5 +7,5 @@ $v^{\mathsf T} M v = 2(a^2 + b^2 + c^2 + d^2) - (a + b + c + d)^2$.
 
 ## Related topics
 
-- Descartes form:
+- [Descartes form](../../../Geometry/euclidean-geometry/circles-and-conics/apollonian-group/descartes-form.md):
   the same quadratic form, for quadruples over any commutative ring.

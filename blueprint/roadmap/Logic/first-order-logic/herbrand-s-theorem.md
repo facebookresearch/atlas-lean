@@ -1,0 +1,8 @@
+# Herbrand's theorem
+
+Let $L$ be a first-order language that has at least one ground term, and let $\varphi(x)$ be a quantifier-free formula of $L$ with one free variable $x$. If the sentence $\exists x\, \varphi$ holds in every nonempty $L$-structure, then there are finitely many ground terms $t_1, \dots, t_r$ of $L$ such that the disjunction $\varphi(t_1) \vee \dots \vee \varphi(t_r)$ holds in every nonempty $L$-structure. The hypothesis on ground terms excludes languages without constant symbols, which have no ground terms at all, although $\exists x\, \varphi$ can still hold in every nonempty structure there, for example $\exists x\, (x = x)$ in the language of pure equality; the usual remedy is to add a fresh constant symbol to the language. This page states the special case with one existential quantifier, no universal quantifiers and no axioms, in which the instantiating terms are ground. Buss states the general form for a theory $T$ axiomatized by universal formulas and a sentence $\forall \bar x\, \exists \bar y\, A(\bar x, \bar y)$ with $A$ quantifier-free: if $T$ proves it, then there are tuples of terms $\bar t_1(\bar x), \dots, \bar t_r(\bar x)$, which may contain the universally bound variables $\bar x$, such that $T$ proves $\forall \bar x\, \bigl(A(\bar x, \bar t_1(\bar x)) \vee \dots \vee A(\bar x, \bar t_r(\bar x))\bigr)$.
+
+## Sources
+
+- S. R. Buss, "An introduction to proof theory", in S. R. Buss (ed.), *Handbook of Proof Theory*, Elsevier, 1998, Chapter I, Section 2.5.1, Herbrand's theorem and the remarks on instances that follow it, <https://www.math.ucsd.edu/~sbuss/ResearchWeb/handbookI/ChapterI.pdf>
+- J. Herbrand, *Recherches sur la théorie de la démonstration*, thesis, University of Paris, 1930

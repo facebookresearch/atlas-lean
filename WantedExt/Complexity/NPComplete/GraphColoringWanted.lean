@@ -16,10 +16,11 @@ number); R. M. Karp, "Reducibility among combinatorial problems" (1972).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
 
 @[expose] public section
 
@@ -42,33 +43,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
-abbrev GraphColoringInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : GraphColoringInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
+/-- **GRAPH COLORING is NP-complete.** The decision problem GRAPH COLORING belongs to NP, and
+every decision problem $L$ in NP has a polynomial-time many-one reduction to GRAPH COLORING.
 
-
-/-- Well-formedness of an instance. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- A proper coloring with at most `K` colors. -/
-def GraphColoringFeasible
-    (i : GraphColoringInstance) : Prop :=
-  (Graph i).Colorable i.2.2
-
-open Classical in
-/-- GRAPH COLORING as a decision problem over bitstrings. -/
-noncomputable def graphColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoringFeasible i)
-  | none => false
-
-/-- **GRAPH COLORING is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), GRAPH COLORING (chromatic number); R. M. Karp, "Reducibility among
 combinatorial problems" (1972). -/
 public theorem_wanted graphColoring_npComplete :

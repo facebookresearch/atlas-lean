@@ -55,7 +55,7 @@ such backward steps gives a solution through `y` on all of `ℝ` inside the ω-l
 
 The application to reversible Michaelis–Menten kinetics, convergence of every solution to the
 equilibrium of its compatibility class, is in
-`MathlibExt.Biology.Dynamics.ReversibleMichaelisMenten.LaSalle`.
+`Domains.Biology.Dynamics.ReversibleMichaelisMenten.LaSalle`.
 
 ## Scope
 

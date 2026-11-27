@@ -35,8 +35,9 @@ namespace Cslib.Complexity.SatVerifier.Lookup
 
 open Turing MetaMathlibExt TM2Program Function
 
-/-- Stacks: the query `T`, the table `B`, the stash `S`, the comparison scratch stacks `A`, `C`,
-and the value `V`. -/
+/-- **Stacks of the lookup machine.** The lookup machine has six stacks: the query stack $T$, the
+table stack $B$, the stash $S$, the two scratch stacks $A$ and $C$ used for comparisons, and the
+value stack $V$. -/
 inductive K | T | B | S | A | C | V
   deriving DecidableEq
 
@@ -44,7 +45,10 @@ instance : Fintype K where
   elems := ⟨↑[K.T, .B, .S, .A, .C, .V], by decide⟩
   complete := fun k => by cases k <;> decide
 
-/-- Labels. `cmp b` and `put b` serve a live entry with value `b`. -/
+/-- **Labels of the lookup machine.** The lookup machine has the labels $\mathsf{init}$,
+$\mathsf{scan}$, $\mathsf{cmp}(b)$ and $\mathsf{put}(b)$ for each bit $b$, $\mathsf{rstT}$,
+$\mathsf{rstB}$, $\mathsf{mvN}$, $\mathsf{back}$, $\mathsf{mark}$ and $\mathsf{done}$. The labels
+$\mathsf{cmp}(b)$ and $\mathsf{put}(b)$ serve a live table entry with value $b$. -/
 inductive Lab
   | init | scan | cmp (b : Bool) | put (b : Bool) | rstT | rstB | mvN | back | mark | done
   deriving DecidableEq
@@ -58,12 +62,19 @@ instance : Fintype Lab where
     | put b => cases b <;> decide
     | _ => decide
 
-/-- Pop the top of `a`, push the symbol `x` on `b`, go to `f x`. -/
+/-- **Moving a symbol between stacks.** For stacks $a$ and $b$, a symbol $x$ and a map $f$ from
+symbols to labels, this machine instruction pops the top of $a$ (if any), pushes $x$ onto $b$ and
+goes to the label $f(x)$. -/
 def mvSym (a b : K) (x : Sym) (f : Sym → Lab) : TM2.Stmt (fun _ : K => Sym) Lab Bool :=
   .pop a (fun s _ => s) <| .push b (fun _ => x) <| .goto fun _ => f x
 
-/-- Move a table marker (`dead` or `val b`) from the top of `a` to `b` and go to `f` of it; on an
-empty stack (or another symbol, which the invariants rule out) go to `e`. -/
+/-- **Moving a table marker between stacks.** For stacks $a$ and $b$, a label $e$ and a map $f$
+from symbols to labels, this machine instruction does the following: if the top of $a$ is a table
+marker $y$ (that is, $\mathsf{dead}$ or $\mathsf{val}(c)$ for a bit $c$), it pops $y$ from $a$,
+pushes it onto $b$ and goes to $f(y)$; if $a$ is empty or has another symbol on top, it goes to
+$e$ and leaves the stacks unchanged.
+
+The invariants of the lookup machine rule out another symbol on top of $a$. -/
 def mvMark (a b : K) (e : Lab) (f : Sym → Lab) : TM2.Stmt (fun _ : K => Sym) Lab Bool :=
   .peek a (fun _ (o : Option Sym) => decide (o = none)) <| .branch id (.goto fun _ => e) <|
   .peek a (fun _ (o : Option Sym) => decide (o = some .dead)) <|
@@ -73,12 +84,29 @@ def mvMark (a b : K) (e : Lab) (f : Sym → Lab) : TM2.Stmt (fun _ : K => Sym) L
   .peek a (fun _ (o : Option Sym) => decide (o = some (.val false))) <|
     .branch id (mvSym a b (.val false) f) (.goto fun _ => e)
 
-/-- Where the scan continues after moving a marker: compare for `val b`, else move the name. -/
+/-- **Next label of the lookup scan.** The label at which the lookup scan continues after moving
+a marker symbol $x$: the comparison label $\mathsf{cmp}(b)$ if $x$ is the value marker
+$\mathsf{val}(b)$, and the name-moving label $\mathsf{mvN}$ for every other symbol. -/
 def scanNext : Sym → Lab
   | .val b => .cmp b
   | _ => .mvN
 
-/-- The lookup program. -/
+/-- **The lookup program.** The lookup machine works on the stacks $T$, $B$, $S$, $A$, $C$ and
+$V$ and acts at each label as follows. At $\mathsf{init}$ it pushes the bit symbol of false onto
+$V$ and goes to $\mathsf{scan}$. At $\mathsf{scan}$, if the top of $B$ is a table marker it moves
+that marker onto $S$ and goes to $\mathsf{cmp}(b)$ if the marker is $\mathsf{val}(b)$ and to
+$\mathsf{mvN}$ if it is $\mathsf{dead}$; if $B$ is empty or has another symbol on top it goes to
+$\mathsf{back}$. At $\mathsf{cmp}(b)$ it compares the bit blocks on top of $T$ and $B$: while
+both tops are equal bits it pops them, pushes that bit symbol onto $A$ and onto $C$ and stays at
+$\mathsf{cmp}(b)$; when both blocks end together it goes to $\mathsf{put}(b)$, and on a mismatch
+(different bits, or one block ending first) it goes to $\mathsf{rstT}$ without popping. At
+$\mathsf{put}(b)$ it pops $V$, pushes the bit symbol of $b$ onto $V$ and goes to
+$\mathsf{rstT}$. At $\mathsf{rstT}$, $\mathsf{rstB}$, $\mathsf{mvN}$ and $\mathsf{back}$ it moves
+the bit block on top of $A$ onto $T$, of $C$ onto $B$, of $B$ onto $S$ and of $S$ onto $B$
+respectively, staying at the label while the top is a bit and then going to $\mathsf{rstB}$,
+$\mathsf{mvN}$, $\mathsf{scan}$ and $\mathsf{mark}$ respectively. At $\mathsf{mark}$, if the top
+of $S$ is a table marker it moves that marker onto $B$ and goes to $\mathsf{back}$; if $S$ is
+empty or has another symbol on top it goes to $\mathsf{done}$. At $\mathsf{done}$ it halts. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .init => .push .V (fun _ => Sym.bit false) (.goto fun _ => .scan)
   | .scan => mvMark .B .S .back scanNext
@@ -91,10 +119,13 @@ def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .mark => mvMark .S .B .done fun _ => .back
   | .done => .halt
 
-/-- The start label. -/
+/-- **Start label of the lookup machine.** The lookup program starts at its initialization label
+$\mathsf{init}$. -/
 def start : Lab := .init
 
-/-- The six stacks, by name. -/
+/-- **Stack contents of the lookup machine.** For lists of symbols $t$, $b$, $s$, $a$, $c$, $v$,
+the assignment of contents to the six stacks of the lookup machine that gives $T$ the list $t$,
+$B$ the list $b$, $S$ the list $s$, $A$ the list $a$, $C$ the list $c$ and $V$ the list $v$. -/
 def stk (t b s a c v : List Sym) : ∀ _ : K, List Sym
   | .T => t
   | .B => b
@@ -136,6 +167,8 @@ theorem stk_ext {St : ∀ _ : K, List Sym} {t b s a c v : List Sym} (hT : St .T 
 
 /-! ### Name blocks and table entries -/
 
+/-- **A name bit reads as itself.** For every bit $b$, the name-bit symbol for $b$ reads as the
+bit $b$. -/
 theorem bit?_bit (b : Bool) : Sym.bit? (.bit b) = some b := rfl
 
 theorem bit_of_bit? (x : Sym) (b : Bool) (h : Sym.bit? x = some b) : Sym.bit b = x := by
@@ -174,6 +207,11 @@ theorem liveVal_val (n : List Bool) (b : Bool) (post : List Ent) (q : List Bool)
 
 /-! ### Single steps -/
 
+/-- **Initialization step of the lookup machine.** Let $t$ and $b$ be lists of symbols and $v$ a
+bit. In exactly one step, the lookup program goes from the label $\mathsf{init}$ with internal bit
+$v$, stack $T$ holding $t$, stack $B$ holding $b$ and the stacks $S$, $A$, $C$, $V$ empty, to the
+label $\mathsf{scan}$ with internal bit $v$, the same contents of $T$, $B$, $S$, $A$ and $C$, and
+stack $V$ holding the single symbol name bit false. -/
 theorem init_run (t b : List Sym) (v : Bool) :
     Run prog 1 ⟨some .init, v, stk t b [] [] [] []⟩
       ⟨some .scan, v, stk t b [] [] [] [Sym.bit false]⟩ :=
@@ -210,8 +248,17 @@ theorem put_run (b : Bool) (t bb s a c : List Sym) (x : Sym) (v : Bool) :
 
 /-! ### One table entry -/
 
-/-- After a comparison that moved the common prefix `c`: restore the query (`A → T`) and the
-name (`C → B`), then move the name onto the stash. -/
+/-- **Restoring and stashing after a comparison in the lookup machine.** Let $q$, $n$, $c$ be
+lists of bits such that $c$ is a prefix of both the reverse of $q$ and the reverse of $n$; let
+$R$, $r$, $s$, $w$ be lists of symbols with $r$ empty or starting with a symbol other than a name
+bit; and for a list of bits $x$ write $\bar x$ for the list of its bits as name bits. Suppose the
+lookup program is at label $\mathsf{rstT}$, with any internal bit, and its stacks are: $T$ holds
+the reverse of $\bar q$ with its first $|c|$ symbols removed, followed by $R$; $B$ holds the
+reverse of $\bar n$ with its first $|c|$ symbols removed, followed by $r$; $S$ holds $s$; $A$ and
+$C$ both hold the reverse of $\bar c$; and $V$ holds $w$. Then after exactly
+$2(|c| + 1) + (|n| + 1)$ steps the program is at label $\mathsf{scan}$, with some internal bit,
+where $T$ holds the reverse of $\bar q$ followed by $R$, $B$ holds $r$, $S$ holds $\bar n$
+followed by $s$, $A$ and $C$ are empty, and $V$ holds $w$. -/
 theorem tail_run (q n c : List Bool) (hcq : c <+: q.reverse) (hcn : c <+: n.reverse)
     (R r s w : List Sym) (hr : EndsBitBlock Sym.bit? r) (v : Bool) :
     ∃ v', Run prog (2 * (c.length + 1) + (n.length + 1))
@@ -251,7 +298,15 @@ theorem tail_run (q n c : List Bool) (hcq : c <+: q.reverse) (hcn : c <+: n.reve
   subst e₃
   exact ⟨v₃, (h₁.trans (h₂.trans h₃)).of_eq (by simp only [List.length_reverse]; omega)⟩
 
-/-- A live entry `(n, some b)`: compare, update `V` on a match, restore, move the name. -/
+/-- **Serving a live table entry.** Write stack contents top first, and for a list of bits $u$ let
+$\overrightarrow{u}$ be its bit symbols in order and $\overleftarrow{u}$ the same symbols in
+reverse order. Let $q$ and $n$ be lists of bits, $b$ and $x$ bits, $s$ a list of symbols, and $R$,
+$r$ lists of symbols each empty or topped by a symbol that is not a bit. From label
+$\mathsf{cmp}(b)$ with any internal state, $\overleftarrow{q}R$ on $T$, $\overleftarrow{n}r$ on
+$B$, $s$ on $S$, the stacks $A$ and $C$ empty and the bit symbol of $x$ alone on $V$, the lookup
+program reaches, in at most $4|n| + 5$ steps, label $\mathsf{scan}$ with some internal state,
+$\overleftarrow{q}R$ on $T$, $r$ on $B$, $\overrightarrow{n}s$ on $S$, the stacks $A$ and $C$
+empty and on $V$ alone the bit symbol of $b$ if $n = q$ and of $x$ otherwise. -/
 theorem cmp_run (q : List Bool) (R : List Sym) (hR : EndsBitBlock Sym.bit? R) (n : List Bool)
     (b x : Bool) (r s : List Sym) (hr : EndsBitBlock Sym.bit? r) (v : Bool) :
     ∃ v', RunLe prog (4 * n.length + 5)
@@ -288,8 +343,18 @@ theorem cmp_run (q : List Bool) (R : List Sym) (hR : EndsBitBlock Sym.bit? R) (n
     obtain ⟨v₃, h₃⟩ := tail_run q n c hcq hcn R r s [Sym.bit x] hr v₁
     exact ⟨v₃, (h₁.trans h₃).le (by omega)⟩
 
-/-- One scan iteration: the top entry `e` of `B` moves to the stash and `V` becomes
-`liveVal (e :: post) q`. -/
+/-- **One scan step of the lookup.** Write stack contents top first; for a list of bits $u$ let
+$\overleftarrow{u}$ be its bit symbols in reverse order; for a list $E$ of table entries let
+$\tau(E)$ be the symbols of its entries in reading order (each entry's name bits, then its marker)
+and $\mathrm{val}_E(q)$ the value of the first live entry of $E$ named $q$, or false if there is
+none. Let $q$ be a list of bits, $e = (n, m)$ a table entry, $E$ a list of entries, $eE$ the list
+$E$ with $e$ prepended, and $R$, $r$ lists of symbols each empty or topped by a symbol that is not
+a bit. From label $\mathsf{scan}$ with any internal state, $\overleftarrow{q}R$ on $T$, the marker
+of $e$ above $\overleftarrow{n}r$ on $B$, $\tau(E)$ on $S$, the stacks $A$ and $C$ empty and the
+bit symbol of $\mathrm{val}_E(q)$ alone on $V$, the lookup program reaches, in at most
+$4|n| + 6$ steps, label $\mathsf{scan}$ with some internal state, $\overleftarrow{q}R$ on $T$, $r$
+on $B$, $\tau(eE)$ on $S$, the stacks $A$ and $C$ empty and the bit symbol of
+$\mathrm{val}_{eE}(q)$ alone on $V$. -/
 theorem entry_run (q : List Bool) (R : List Sym) (hR : EndsBitBlock Sym.bit? R) (e : Ent)
     (r : List Sym) (hr : EndsBitBlock Sym.bit? r) (post : List Ent) (v : Bool) :
     ∃ v', RunLe prog (4 * e.1.length + 6)
@@ -329,8 +394,18 @@ theorem entry_run (q : List Bool) (R : List Sym) (hR : EndsBitBlock Sym.bit? R) 
 
 /-! ### The two loops -/
 
-/-- The scan: with the entries of `post` already on the stash, scanning `tblStk pre` moves all
-of `pre` there too and leaves `liveVal (pre ++ post) q` on `V`. -/
+/-- **The scan loop of the lookup machine.** Let $q$ be a list of bits, let $R$ be a list of
+symbols that is empty or starts with a symbol other than a name bit, and let $pre$ and $post$ be
+lists of table entries; the live value of $q$ in an entry list is the value of its first entry
+named $q$ that has a value, or false if there is none. Suppose the lookup program is at label
+$\mathsf{scan}$, with any internal bit, and its stacks are: $T$ holds the bits of $q$ as name
+bits, last bit on top, above $R$; $B$ holds the table stack of $pre$, of length $\ell$; $S$ holds
+the symbols of the entries of $post$ in reading order, first entry on top; $A$ and $C$ are empty;
+and $V$ holds the single name bit carrying the live value of $q$ in $post$. Then within
+$6\ell + 1$ steps the program reaches label $\mathsf{back}$, with some internal bit, where $B$ is
+empty, $S$ holds the symbols of the entries of $pre$ followed by $post$ in reading order, first
+entry on top, $V$ holds the single name bit carrying the live value of $q$ in $pre$ followed by
+$post$, and $T$, $A$ and $C$ are unchanged. -/
 theorem scan_loop (q : List Bool) (R : List Sym) (hR : EndsBitBlock Sym.bit? R)
     (pre : List Ent) :
     ∀ (post : List Ent) (v : Bool), ∃ v', RunLe prog (6 * (tblStk pre).length + 1)
@@ -351,8 +426,14 @@ theorem scan_loop (q : List Bool) (R : List Sym) (hR : EndsBitBlock Sym.bit? R)
       simp only [List.length_cons, List.length_append, List.length_reverse, List.length_map]
       omega
 
-/-- Moving back: with `tblStk pre` on `B` and the entries of `post` on the stash, the machine
-moves them all back, so that `B` holds `tblStk (pre ++ post)`, and halts at `done`. -/
+/-- **The return loop of the lookup machine.** Let $t$ and $w$ be lists of symbols, let $pre$ and
+$post$ be lists of table entries, and let $m$ be the total number of symbols of the entries of
+$post$. Suppose the lookup program is at label $\mathsf{back}$, with any internal bit, and its
+stacks are: $T$ holds $t$; $B$ holds the table stack of $pre$; $S$ holds the symbols of the
+entries of $post$ in reading order, first entry on top; $A$ and $C$ are empty; and $V$ holds $w$.
+Then within $2m + 2$ steps the program reaches label $\mathsf{done}$, with some internal bit,
+where $B$ holds the table stack of the entry list $pre$ followed by $post$, the stacks $S$, $A$
+and $C$ are empty, and $T$ and $V$ still hold $t$ and $w$. -/
 theorem back_loop (T w : List Sym) (post : List Ent) :
     ∀ (pre : List Ent) (v : Bool), ∃ v', RunLe prog (2 * (post.flatMap entToks).length + 2)
       ⟨some .back, v, stk T (tblStk pre) (post.flatMap entToks) [] [] w⟩
@@ -397,10 +478,15 @@ theorem back_loop (T w : List Sym) (post : List Ent) :
 
 /-! ### The lookup machine -/
 
-/-- **Lookup.** From the query block `(q.map .bit).reverse` on `T` (above a rest `R` that ends
-the block) and the table `tblStk es` on `B`, with `S`, `A`, `C`, `V` empty, the machine reaches
-`done` within `8 · |tblStk es| + 4` steps with `bit (liveVal es q)` on `V` and every other stack
-as it started. -/
+/-- **Correctness of the SAT-verifier lookup machine.** Let $q$ be a list of bits, $es$ a list of
+table entries and $R$ a list of symbols that is empty or starts with a symbol other than a name
+bit. Suppose the stacks of the lookup machine are as follows: $T$ holds the bits of $q$ as name
+bits, last bit on top, above $R$; $B$ holds the table stack of $es$, of length $\ell$; and $S$,
+$A$, $C$ and $V$ are empty. Then the lookup program, started at its start label with any
+internal bit, reaches the label $\mathsf{done}$ within $8\ell + 4$ steps, with some internal bit;
+there $V$ holds the single name bit carrying the live value of $q$ in $es$ (the value of the
+first entry of $es$ named $q$ that has a value, or false if there is none), and every other
+stack is as it started. -/
 theorem run (q : List Bool) (es : List Ent) (R : List Sym) (hR : R.head?.bind Sym.bit? = none)
     (v : Bool) (St : ∀ _ : K, List Sym) (hT : St .T = (q.map Sym.bit).reverse ++ R)
     (hB : St .B = tblStk es) (hS : St .S = []) (hA : St .A = []) (hC : St .C = [])

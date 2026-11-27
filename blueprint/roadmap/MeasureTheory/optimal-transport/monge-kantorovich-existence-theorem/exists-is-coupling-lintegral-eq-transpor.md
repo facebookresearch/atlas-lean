@@ -5,7 +5,7 @@ probability measures $\mu, \nu$ on $X$ there is a coupling $\pi$ of $\mu$ and $\
 
 $$\int d(x, y)^p \, d\pi(x, y) = \inf_{\pi'} \int d(x, y)^p \, d\pi'(x, y),$$
 
-so the infimum defining the [Wasserstein distance](../wasserstein-distances/wasserstein.md) is
+so the infimum defining the [Wasserstein distance](../wasserstein-distances/wasserstein-distance/wasserstein.md) is
 attained. It is the [existence theorem](exists-is-coupling-forall-lintegral-le.md) for the continuous
 cost $d^p$.
 

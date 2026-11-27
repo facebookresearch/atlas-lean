@@ -2196,12 +2196,6 @@ private theorem rc_caseC2_seg_per {V : Type*} [Finite V] [DecidableEq V]
     exact rc_R'_agree_cycle R _ j hjm x p hxj t ht
   exact hfin
 
-private theorem rc_update_iterate_one {V : Type*} [DecidableEq V]
-    (R : V → V) (x p v : V) :
-    (Function.update R x p)^[1] v = Function.update R x p v := by
-  rw [show (1 : ℕ) = Nat.succ 0 from rfl, Function.iterate_succ_apply',
-    Function.iterate_zero_apply]
-
 private theorem rc_update_agree_upto {V : Type*} [DecidableEq V]
     (R : V → V) (x w v : V) (N : ℕ)
     (havoid : ∀ s : ℕ, s < N → R^[s] v ≠ x) :
@@ -2491,7 +2485,7 @@ private theorem rc_caseA_offorbit {V : Type*} [Fintype V] [DecidableEq V]
     have e1 : (Function.update R x p)^[L] x =
         (Function.update R x p)^[L - 1] ((Function.update R x p) x) := by
       conv_lhs => rw [hdec]
-      rw [Function.iterate_add_apply, rc_update_iterate_one]
+      rw [Function.iterate_add_apply, Function.iterate_one]
     rw [e1, hRx, hagree_p]
   have hnper : R^[L - 1] p ∉ Function.periodicPts R := by
     intro hmem
@@ -2648,7 +2642,7 @@ private theorem rc_caseC2_oncycle_le {V : Type*} [Finite V] [DecidableEq V]
         rw [← heq, eR']
         exact Function.iterate_succ_apply' R t _
   have hstep : (Function.update R x p)^[1] (R^[L - 1] q) = rc_root R q := by
-    rw [rc_update_iterate_one]
+    rw [Function.iterate_one]
     have hne : R^[L - 1] q ≠ x := by
       intro hcon
       exact hnper_q (by rw [hcon]; exact hxper)
@@ -2946,7 +2940,7 @@ private theorem rc_bunch_of_lexmax {V : Type*} [Fintype V] [DecidableEq V]
           have e : (Function.update R b v)^[N] b =
               (Function.update R b v)^[N - 1] ((Function.update R b v) b) := by
             conv_lhs => rw [hdec]
-            rw [Function.iterate_add_apply, rc_update_iterate_one]
+            rw [Function.iterate_add_apply, Function.iterate_one]
           rw [e, hRb']
           exact hagree_v (N - 1)
         have hperNv : R^[N - 1] v ∈ Function.periodicPts R :=
@@ -3377,7 +3371,7 @@ private theorem rc_B3_height {V : Type*} [Fintype V] [DecidableEq V]
             (Function.update R c u)^[Nb - 1]
               ((Function.update R c u) (R^[L - 1] p)) := by
           conv_lhs => rw [hdec]
-          rw [Function.iterate_add_apply, rc_update_iterate_one]
+          rw [Function.iterate_add_apply, Function.iterate_one]
         rw [hRb] at e
         rw [hNb_eq] at e
         exact e.symm
@@ -3426,7 +3420,7 @@ private theorem rc_B3_height {V : Type*} [Fintype V] [DecidableEq V]
           have f2 := Function.iterate_add_apply (Function.update R c u)
             1 Nq (R^[L - 1] q)
           rw [Nat.add_comm 1 Nq] at f2
-          rw [rc_update_iterate_one] at f1 f2
+          rw [Function.iterate_one] at f1 f2
           rw [hR'zq] at f1
           rw [hNq_eq] at f2
           rw [hR'zq] at f2
@@ -3831,7 +3825,20 @@ private theorem rc_exists_sync_recolor {k : ℕ} {V : Type*} [Finite V] [Nonempt
 
 end RoadColoring
 
-/-- Road coloring theorem, in the form with `[Finite V]` instead of `[Fintype V]`. -/
+/-- **Road coloring theorem for a finite vertex type.** Let $V$ be a finite nonempty set and let
+$\to$ be a relation on $V$, viewed as a directed graph on $V$ without parallel edges (loops
+allowed). Suppose that the graph is strongly connected (for all $u, v \in V$ there is a directed
+walk, possibly of length $0$, from $u$ to $v$), aperiodic (for every integer $d > 1$ there is a
+closed directed walk of positive length not divisible by $d$), and of constant positive
+out-degree (there is $k > 0$ such that every vertex has exactly $k$ out-neighbours). Then there
+exist a natural number $\ell$ and a map $\delta : V \times \{0, \dots, \ell - 1\} \to V$ such that
+for every $v \in V$ the map $c \mapsto \delta(v, c)$ is a bijection from $\{0, \dots, \ell - 1\}$
+onto the out-neighbours of $v$, together with a word $c_1 \cdots c_m$ over $\{0, \dots, \ell - 1\}$
+and a vertex $r$ such that following the labels $c_1, \dots, c_m$ in order from any vertex $v$
+ends at $r$.
+
+This form only assumes that $V$ is finite, as a property, rather than being given a finite set of
+all its elements as data. -/
 theorem roadColoring' :
     ∀ {V : Type*} [Finite V] [Nonempty V]
       (Adj : V → V → Prop),
@@ -3864,13 +3871,20 @@ theorem roadColoring' :
   exact ⟨k, RoadColoring.rc_recolor delta sigma, (hrecol sigma).1,
     (hrecol sigma).2.1, (hrecol sigma).2.2, word, r, hsync⟩
 
-/-- Road coloring theorem (statement `road-coloring-s1`, canonical name "Road coloring theorem"):
-A finite strongly connected aperiodic directed graph with constant out-degree
-admits a synchronizing edge-coloring (a coloring making some word reset the automaton).
-Digraphs are modeled via relations, colorings as labelings, and synchronizing words
-as reset sequences. Source: https://en.wikipedia.org/wiki/Road_coloring_theorem
+/-- **Road coloring theorem.** Let $V$ be a finite nonempty set and let $\to$ be a relation
+on $V$, viewed as a directed graph on $V$ without parallel edges (loops allowed). Suppose that the
+graph is strongly connected (for all $u, v \in V$ there is a directed walk, possibly of length $0$,
+from $u$ to $v$), aperiodic (for every integer $d > 1$ there is a closed directed walk of positive
+length not divisible by $d$), and of constant positive out-degree (there is $k > 0$ such that
+every vertex has exactly $k$ out-neighbours). Then there exist a natural number $\ell$ and a map
+$\delta : V \times \{0, \dots, \ell - 1\} \to V$ such that for every $v \in V$ the map
+$c \mapsto \delta(v, c)$ is a bijection from $\{0, \dots, \ell - 1\}$ onto the out-neighbours of
+$v$, together with a word $c_1 \cdots c_m$ over $\{0, \dots, \ell - 1\}$ and a vertex $r$ such
+that following the labels $c_1, \dots, c_m$ in order from any vertex $v$ ends at $r$.
 
 Proves `Wanted` entry `roadColoring`.
+
+Source: https://en.wikipedia.org/wiki/Road_coloring_theorem
 -/
 theorem roadColoring :
     ∀ {V : Type*} [Fintype V] [Nonempty V]

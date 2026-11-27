@@ -675,9 +675,9 @@ private theorem dpc_exists_disjoint_of_small_sets
     exact (hs _).diff (hUmeas j)
   · intro a b hab
     rcases lt_or_gt_of_ne hab with h | h
-    · exact (Set.disjoint_left.mpr (fun x hxC hxU => hxC.2 hxU)).mono le_rfl
+    · exact (Set.disjoint_left.mpr (by exact fun x hxC hxU => hxC.2 hxU)).mono le_rfl
         (hsub a b h)
-    · exact ((Set.disjoint_left.mpr (fun x hxC hxU => hxC.2 hxU)).mono le_rfl
+    · exact ((Set.disjoint_left.mpr (by exact fun x hxC hxU => hxC.2 hxU)).mono le_rfl
         (hsub b a h)).symm
   · intro j
     have hle := hsmall j
@@ -1103,7 +1103,8 @@ private theorem dpc_uniformIntegrable_of_isCompact_closure_Lp
       rw [Lp.norm_def, ENNReal.ofReal_toReal hne]
     rw [← h1, ENNReal.ofNNReal_toNNReal]
     exact ENNReal.ofReal_le_ofReal (hnorm i)
-  refine ⟨?_, hbound⟩
+  obtain ⟨C, hC⟩ := hbound
+  refine ⟨?_, (iSup_le hC).trans_lt ENNReal.coe_lt_top⟩
   rw [unifIntegrable_iff']
   intro ε hε
   by_contra hnot
@@ -1221,15 +1222,20 @@ private theorem dpc_uniformIntegrable_of_isCompact_closure_Lp
   exact (lt_irrefl ε) ((hlt (ψ k)).trans (hk.trans_lt hhalf))
 
 /--
-On a finite measure space, a family `f : ι → α → ℝ` with `MemLp 1` is uniformly integrable
-`UniformIntegrable f 1 μ` iff its image in `WeakSpace ℝ (Lp ℝ 1 μ)` has weakly compact closure,
-i.e. relative weak compactness in `L¹`. Source: N. Dunford and B. J. Pettis,
+**Dunford–Pettis weak compactness criterion.** Let $\mu$ be a finite measure on a measurable
+space $\alpha$ and let $(f_i)_{i \in \iota}$ be a family of integrable real functions on $\alpha$.
+The family is uniformly integrable, meaning that it is bounded in $L^1(\mu)$ and that for every
+$\varepsilon > 0$ there is $\delta > 0$ with $\int_s |f_i| \, d\mu \le \varepsilon$ for every $i$
+and every measurable set $s$ with $\mu(s) \le \delta$, if and only if the closure of the set of
+classes $\{[f_i] : i \in \iota\}$ in the weak topology of $L^1(\mu)$ is weakly compact.
+
+Proves `Wanted` entry `dunford_pettis_compactness`.
+
+Source: N. Dunford and B. J. Pettis,
 Linear Operations on Summable Functions, Trans. Amer. Math. Soc. 47 (1940), 323–392,
 DOI 10.1090/S0002-9947-1940-0002020-4, criterion for weak compactness in `L¹`;
 Dunford-Schwartz IV; Lean states finite-measure real `L¹` specialization with weak-space
 closure characterization.
-
-Proves `Wanted` entry `dunford_pettis_compactness`.
 -/
 public theorem dunford_pettis_compactness
     {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]

@@ -54,15 +54,14 @@ namespace MetaMathlibExt
 
 universe u
 
-/-- Multigraded Poincaré polynomial: the raw coefficient family
-`multigradedPoincareCoefficients data`, packaged as an
-`AddMonoidAlgebra` element over homological degree times multidegree.
-
-This is conditional on the finite terminating resolution: every
-homogeneous basis index type is finite (`finiteBasis`), and those types
-are empty above `bound` (`emptyAbove`). Edge 6 turns exactly these two
-hypotheses into finite support; the polynomial adds no further
-mathematics. -/
+/-- **Multigraded Poincaré polynomial.** Let $K$ be a field, let $R = K[x_1, \dots, x_n]$, let
+$M$ be a multigraded $R$-module, and let $D$ be base-change data for a multigraded free
+resolution $F_\bullet$ of $M$ in which $F_i$ has a homogeneous basis indexed by a finite set
+$\iota_i$, with $\iota_i$ empty for every $i > b$ for a fixed $b \in \mathbb{N}$. The
+multigraded Poincaré polynomial of $D$ is the element of the monoid algebra
+$\mathbb{N}[\mathbb{N} \times \mathbb{Z}^n]$ whose coefficient at $(i, \alpha)$ is the
+multigraded Betti number $\beta_{i,\alpha}(D)$ of $D$ in homological degree $i$ and multidegree
+$\alpha$; the hypotheses on the $\iota_i$ make these coefficients finitely supported. -/
 public noncomputable def multigradedPoincarePolynomial {K : Type u} [Field K] {n : ℕ}
     {M : Type u} [AddCommGroup M]
     [Module (MvPolynomial (Fin n) K) M] [Module K M]
@@ -83,9 +82,13 @@ public noncomputable def multigradedPoincarePolynomial {K : Type u} [Field K] {n
     unfold Function.HasFiniteSupport at h
     exact h))
 
-/-- Coefficient equation: evaluating the Poincaré polynomial at
-`(i, α)` returns exactly the edge-3 Betti number
-`multigradedBettiNumber data α i`. -/
+/-- **Coefficients of the multigraded Poincaré polynomial.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, let $M$ be a multigraded $R$-module, and let $D$ be base-change data
+for a multigraded free resolution $F_\bullet$ of $M$ in which $F_i$ has a homogeneous basis
+indexed by a finite set $\iota_i$, with $\iota_i$ empty for every $i > b$ for a fixed
+$b \in \mathbb{N}$. For every $i \in \mathbb{N}$ and $\alpha \in \mathbb{Z}^n$, the coefficient
+at $(i, \alpha)$ of the multigraded Poincaré polynomial of $D$ is the multigraded Betti number
+$\beta_{i,\alpha}(D)$ of $D$ in homological degree $i$ and multidegree $\alpha$. -/
 public theorem multigradedPoincarePolynomial_coeff {K : Type u} [Field K] {n : ℕ}
     {M : Type u} [AddCommGroup M]
     [Module (MvPolynomial (Fin n) K) M] [Module K M]

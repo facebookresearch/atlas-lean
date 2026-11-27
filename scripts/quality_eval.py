@@ -44,7 +44,7 @@ from typing import Any, Callable
 # Dynamic dictionaries are necessary at the boundary to the upstream JSON schemas.
 Row = dict[str, Any]
 UPSTREAM_COMMIT = "0f3f1778e65c3118ffb9bf4644e55b2b406abede"
-ATLAS_ROOTS = ("MathlibExt", "CSLibExt", "PhyslibExt")
+ATLAS_ROOTS = ("MathlibExt", "CSLibExt", "PhyslibExt", "Domains")
 MATHLIB_EXCLUDED = {"Tactic", "Util", "Lean", "Testing", "Deprecated"}
 INDICATORS = ("unnecessary-hypotheses", "duplicates-mathlib-inclusive", "repeated-proof-machinery")
 RUNNER_BYTES = Path(__file__).read_bytes()
@@ -1160,9 +1160,9 @@ def report(args: argparse.Namespace) -> None:
              f"Judge: `{summary['model']}`, effort `{label_manifest['effort']}`, label `{args.label}`.", "",
              f"Scope: maintained {', '.join(manifest['scope']['atlas'])}; no WantedExt, tests, legacy Atlas or v1.",
              "Each flag is an AI judge claim, not a verified mathematical defect.", "",
-             "CSLibExt and PhyslibExt duplicates mean Mathlib/Batteries/Lean-core duplicates only; "
-             "CSLib and Physlib (including PhyslibAlpha and QuantumInfo) redundancy is not measured.",
-             "CSLibExt and PhyslibExt have no domain-matched control. No composite Atlas quality score is computed.", "",
+             "CSLibExt, PhyslibExt and Domains duplication rates count matches in Mathlib, Batteries or Lean core only; "
+             "CSLib, Physlib (including PhyslibAlpha and QuantumInfo) and other domain libraries are not duplicate targets.",
+             "CSLibExt, PhyslibExt and Domains have no domain-matched control. No composite Atlas quality score is computed.", "",
              "| Indicator / root / visibility | Flagged / judged / sampled | Flag rate | Wilson 95% interval | Partial reviews |",
              "|---|---:|---:|---:|---:|"]
     for name, cell in summary["cells"].items():

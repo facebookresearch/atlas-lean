@@ -28,6 +28,8 @@ p-value is the fraction of the orbit at least as extreme as the observed statist
 * `isValidPValue_permutationPValue`: the permutation p-value is valid,
   `μ {p ≤ α} ≤ α` for every `α ∈ [0, 1]` (Lehmann and Romano 2005, §15.2;
   Hemerik and Goeman 2018).
+* `measure_eq_card_div_of_ae_card_filter_smul_mem_eq`: under an invariant law, if almost every
+  `ω` is moved into a set `A` by exactly `c` group elements, then `μ A = c / |G|`.
 
 The version with `B` random group elements, `p = (1 + #{b | T(g_b • ω) ≥ T(ω)}) / (B + 1)`
 (Phipson and Smyth 2010), is `isValidPValue_monteCarloPermutationPValue` in
@@ -146,5 +148,34 @@ theorem isValidPValue_permutationPValue (μ : Measure Ω) [IsProbabilityMeasure 
             ENNReal.ofReal_natCast, mul_comm]
   exact (ENNReal.mul_le_mul_iff_right (by exact_mod_cast hN.ne') (ENNReal.natCast_ne_top N)).1
     hle
+
+open Classical in
+/-- **Averaging over an invariant finite group.** If the law `μ` is invariant under the action of a
+finite group `G`, and for `μ`-almost every `ω` exactly `c` group elements `g` move `ω` into the
+measurable set `A`, then `μ A = c / |G|`. Summing `μ (g⁻¹ • A) = μ A` over `G` turns `|G| μ A`
+into the integral of the number of such `g`. -/
+theorem measure_eq_card_div_of_ae_card_filter_smul_mem_eq (μ : Measure Ω) [IsProbabilityMeasure μ]
+    [SMulInvariantMeasure G Ω μ] (hsmul : ∀ g : G, Measurable fun ω : Ω => g • ω)
+    {A : Set Ω} (hA : MeasurableSet A) {c : ℕ}
+    (hc : ∀ᵐ ω ∂μ, (Finset.univ.filter fun g : G => g • ω ∈ A).card = c) :
+    μ A = (c : ENNReal) / Fintype.card G := by
+  have hSh : ∀ g : G, MeasurableSet ((fun ω => g • ω) ⁻¹' A) := fun g => hsmul g hA
+  have hsum : (Fintype.card G : ENNReal) * μ A =
+      ∫⁻ ω, ∑ g : G, ((fun ω => g • ω) ⁻¹' A).indicator (fun _ => (1 : ENNReal)) ω ∂μ := by
+    rw [lintegral_finsetSum _ fun g _ => (measurable_const.indicator (hSh g))]
+    simp_rw [lintegral_indicator_const (hSh _), one_mul,
+      SMulInvariantMeasure.measure_preimage_smul _ hA]
+    simp
+  have hpt : (fun ω => ∑ g : G, ((fun ω => g • ω) ⁻¹' A).indicator (fun _ => (1 : ENNReal)) ω)
+      =ᵐ[μ] fun _ => (c : ENNReal) := by
+    filter_upwards [hc] with ω hω
+    rw [← hω, Finset.card_filter]
+    push_cast
+    refine Finset.sum_congr rfl fun g _ => ?_
+    by_cases hg : g • ω ∈ A <;> simp [hg]
+  rw [lintegral_congr_ae hpt, lintegral_const, measure_univ, mul_one] at hsum
+  have hG : (Fintype.card G : ENNReal) ≠ 0 := by exact_mod_cast Fintype.card_pos.ne'
+  rw [ENNReal.eq_div_iff hG (ENNReal.natCast_ne_top _)]
+  exact hsum
 
 end MathlibExt.Probability.Statistics.MultipleTesting

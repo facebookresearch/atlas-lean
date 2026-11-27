@@ -1,0 +1,5 @@
+# SECOND-ORDER COPELAND MANIPULATION (unique winner) is NP-complete
+
+An instance is a set $C$ of candidates, a distinguished $p \in C$, and a list $V$ of sincere votes, each a strict total order on $C$. The question is whether some strict total order on $C$ for one additional voter makes $p$ the unique second-order Copeland winner of the election with votes $V$ and that order: every other candidate has a smaller Copeland score than $p$, or the same Copeland score and a smaller second-order score. Here the Copeland score of $a$ is the number of pairwise majority contests $a$ wins minus the number it loses, and the second-order score of $a$ is the sum of the Copeland scores of the candidates $a$ defeats.
+
+With instances encoded as bitstrings and malformed encodings rejected, this decision problem is in NP, and every problem in NP reduces to it by a polynomial-time many-one reduction (Bartholdi, Tovey and Trick, "The computational difficulty of manipulating an election", Social Choice and Welfare 6 (1989), Theorems 2 and 3).

@@ -26,14 +26,24 @@ multiplicity is counted by indices, rather than after converting the family to a
 thereby losing repeated residue classes.
 -/
 
-/-- Number of indexed residue classes containing `z`. -/
+/-- **Multiplicity of an indexed system of residue classes.** Given $k \in \mathbb{N}$, moduli
+$m_0, \dots, m_{k-1} \in \mathbb{N}$ and residues $r_0, \dots, r_{k-1} \in \mathbb{Z}$, the
+multiplicity of an integer $z$ is the number of indices $i < k$ with $z \equiv r_i \pmod{m_i}$.
+
+Indices are counted separately, so a residue class listed several times is counted that many
+times; a modulus $m_i = 0$ makes the condition $z = r_i$. -/
 public def indexedCoverMultiplicity {k : ℕ} (moduli : Fin k → ℕ)
     (residues : Fin k → ℤ) (z : ℤ) : ℕ :=
   (Finset.univ.filter fun i => z ≡ residues i [ZMOD (moduli i : ℤ)]).card
 
-/-- An indexed system is an exact `M`-cover of `target` when each point of `target` lies in
-exactly `M` indexed classes and each point outside `target` lies in none. The source's systems
-have at least two classes and positive moduli. -/
+/-- **Exact covers by residue classes.** Let $k \in \mathbb{N}$, let
+$m_0, \dots, m_{k-1} \in \mathbb{N}$ be moduli and $r_0, \dots, r_{k-1} \in \mathbb{Z}$ residues,
+and let $M \in \mathbb{N}$ and $T \subseteq \mathbb{Z}$. The system of residue classes
+$r_i \bmod m_i$ is an exact $M$-cover of $T$ when $k \ge 2$, every $m_i$ is positive, every
+$z \in T$ satisfies $z \equiv r_i \pmod{m_i}$ for exactly $M$ indices $i < k$, and every integer
+$z \notin T$ satisfies $z \equiv r_i \pmod{m_i}$ for no index $i < k$.
+
+Indices are counted separately, so a residue class listed several times counts that many times. -/
 public def IsExactCoverOf {k : ℕ} (moduli : Fin k → ℕ) (residues : Fin k → ℤ)
     (M : ℕ) (target : Set ℤ) : Prop :=
   2 ≤ k ∧ (∀ i, 0 < moduli i) ∧

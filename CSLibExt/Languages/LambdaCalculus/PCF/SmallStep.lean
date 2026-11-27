@@ -37,7 +37,18 @@ open scoped CslibStlc
 
 namespace Tm
 
-/-- One step of call-by-name reduction of closed terms. -/
+/-- **Call-by-name reduction step of PCF.** Write $\underline{n}$ for the numeral
+$\mathrm{succ}^n\,\mathrm{zero}$, and $b[a]$ for the result of substituting the closed term $a$
+for the bound variable of an abstraction body $b$. One-step call-by-name reduction $t \to t'$
+between closed PCF terms of the same type is the least relation closed under these rules:
+$f\,a \to f'\,a$ whenever $f \to f'$; $(\lambda b)\,a \to b[a]$, without evaluating $a$;
+$\mathrm{succ}\,t \to \mathrm{succ}\,t'$, $\mathrm{pred}\,t \to \mathrm{pred}\,t'$ and
+$\mathrm{ifz}\,t\,s_1\,s_2 \to \mathrm{ifz}\,t'\,s_1\,s_2$ whenever $t \to t'$;
+$\mathrm{pred}\,\mathrm{zero} \to \mathrm{zero}$ and
+$\mathrm{pred}\,\underline{n+1} \to \underline{n}$ for every natural number $n$;
+$\mathrm{ifz}\,\mathrm{zero}\,s_1\,s_2 \to s_1$ and
+$\mathrm{ifz}\,\underline{n+1}\,s_1\,s_2 \to s_2$ for every natural number $n$; and
+$\mathrm{fix}\,t \to t\,(\mathrm{fix}\,t)$. -/
 inductive Step : {A : Ty} → Tm [] A → Tm [] A → Prop
   | appLeft {A B : Ty} {f f' : Tm [] (A ⇒ B)} {a : Tm [] A} (h : Step f f') :
       Step (.app f a) (.app f' a)
@@ -52,10 +63,15 @@ inductive Step : {A : Ty} → Tm [] A → Tm [] A → Prop
   | ifzSucc (n : Nat) {s₁ s₂ : Tm [] .nat} : Step (.ifz (numeral (n + 1)) s₁ s₂) s₂
   | fix {A : Ty} {t : Tm [] (A ⇒ A)} : Step (.fix t) (.app t (.fix t))
 
-/-- Reduction in any number of steps. -/
+/-- **Multi-step call-by-name reduction of PCF.** For closed PCF terms $t$ and $t'$ of the same
+type, $t \to^* t'$ holds when $t$ reduces to $t'$ in finitely many, possibly zero, one-step
+call-by-name reductions; that is, $\to^*$ is the reflexive transitive closure of one-step
+reduction. -/
 abbrev Steps {A : Ty} : Tm [] A → Tm [] A → Prop := Relation.ReflTransGen Step
 
-/-- Numerals are normal forms. -/
+/-- **PCF numerals are normal forms.** For every natural number $n$, the closed numeral
+$\mathrm{succ}^n\,\mathrm{zero}$ of type nat does not reduce: there is no closed term $t'$ such
+that $\mathrm{succ}^n\,\mathrm{zero}$ reduces to $t'$ in one call-by-name step. -/
 theorem numeral_not_step (n : Nat) {t' : Tm [] .nat} : ¬ Step (numeral n) t' := by
   induction n generalizing t' with
   | zero => intro h; cases h
@@ -64,7 +80,9 @@ theorem numeral_not_step (n : Nat) {t' : Tm [] .nat} : ¬ Step (numeral n) t' :=
       cases h with
       | succ h' => exact ih h'
 
-/-- Values are normal forms. -/
+/-- **PCF values are normal forms.** If $v$ is a closed PCF value of type $A$ (an abstraction or a
+numeral), then there is no closed term $t'$ such that $v$ reduces to $t'$ in one call-by-name
+step. -/
 theorem Value.not_step {A : Ty} {v t' : Tm [] A} (hv : v.Value) : ¬ Step v t' := by
   cases hv with
   | lam => intro h; cases h
@@ -88,7 +106,9 @@ theorem step_ifz_numeral_succ {n : Nat} {s₁ s₂ t : Tm [] .nat}
   | ifzZero => simp [numeral] at hx
   | ifzSucc m => rfl
 
-/-- Reduction is deterministic. -/
+/-- **Determinism of PCF call-by-name reduction.** One-step call-by-name reduction of closed PCF
+terms is deterministic: if a closed term $t$ of type $A$ reduces in one step to $t_1$ and also
+reduces in one step to $t_2$, then $t_1 = t_2$. -/
 theorem Step.deterministic {A : Ty} {t t₁ t₂ : Tm [] A} (h₁ : Step t t₁) (h₂ : Step t t₂) :
     t₁ = t₂ := by
   induction h₁ with
@@ -145,7 +165,9 @@ theorem ifz {t t' s₁ s₂ : Tm [] .nat} (h : Steps t t') :
 
 end Steps
 
-/-- Big-step evaluation is reduction to a value. -/
+/-- **Big-step evaluation implies reduction in PCF.** Let $t$ and $v$ be closed PCF terms of
+type $A$. If $t$ evaluates to $v$ in the big-step call-by-name semantics, then $t$ reduces to
+$v$ in finitely many (possibly zero) call-by-name steps. -/
 theorem Eval.steps {A : Ty} {t v : Tm [] A} (h : Eval t v) : Steps t v := by
   induction h with
   | lam => exact .refl
@@ -158,7 +180,9 @@ theorem Eval.steps {A : Ty} {t v : Tm [] A} (h : Eval t v) : Steps t v := by
   | app _ _ ihf ihb => exact ((Steps.appLeft ihf).tail .beta).trans ihb
   | fix _ ih => exact Relation.ReflTransGen.head .fix ih
 
-/-- A step backwards preserves big-step evaluation. -/
+/-- **Backward reduction preserves evaluation in PCF.** Let $t$, $t'$ and $v$ be closed PCF terms
+of type $A$. If $t$ reduces to $t'$ in one call-by-name step and $t'$ evaluates to $v$ in the
+big-step call-by-name semantics, then $t$ evaluates to $v$. -/
 theorem Step.eval {A : Ty} {t t' v : Tm [] A} (hstep : Step t t') (heval : Eval t' v) :
     Eval t v := by
   induction hstep with
@@ -187,13 +211,17 @@ theorem Step.eval {A : Ty} {t t' v : Tm [] A} (hstep : Step t t') (heval : Eval 
   | ifzSucc n => exact .ifzSucc (Eval.numeral (n + 1)) heval
   | fix => exact .fix heval
 
-/-- Reduction to a value is big-step evaluation. -/
+/-- **Reduction to a value implies big-step evaluation in PCF.** Let $t$ and $v$ be closed PCF
+terms of type $A$. If $t$ reduces to $v$ in finitely many (possibly zero) call-by-name steps and
+$v$ is a value, then $t$ evaluates to $v$ in the big-step call-by-name semantics. -/
 theorem Steps.eval {A : Ty} {t v : Tm [] A} (h : Steps t v) (hv : v.Value) : Eval t v := by
   induction h using Relation.ReflTransGen.head_induction_on with
   | refl => exact Eval.of_value hv
   | head hstep _ ih => exact hstep.eval ih
 
-/-- Big-step evaluation coincides with reduction to a value. -/
+/-- **Big-step evaluation agrees with small-step reduction in PCF.** For closed PCF terms $t$ and
+$v$ of type $A$, $t$ evaluates to $v$ in the big-step call-by-name semantics if and only if $t$
+reduces to $v$ in finitely many (possibly zero) call-by-name steps and $v$ is a value. -/
 theorem eval_iff_steps {A : Ty} {t v : Tm [] A} : Eval t v ↔ Steps t v ∧ v.Value :=
   ⟨fun h => ⟨h.steps, h.value⟩, fun ⟨h, hv⟩ => h.eval hv⟩
 

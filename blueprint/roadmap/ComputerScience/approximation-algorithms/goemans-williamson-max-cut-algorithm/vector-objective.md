@@ -10,7 +10,7 @@ Gram matrix $Y$ with unit diagonal; this is how (P) becomes a semidefinite progr
 
 ## Background
 
-- Theta function of a graph:
+- [Theta function of a graph](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/README.md):
   the Lovász theta function, defined by vector labelings in the same way, is the other basic
   semidefinite relaxation in combinatorial optimization (Goemans, *Math. Programming* 79 (1997),
   §3 and §5).

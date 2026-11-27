@@ -22,11 +22,11 @@ Table 1 (HAM CIRC on CLAW-FREE: N).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ INSTANCE: a claw-free graph `G = (V, E)` (no induced `K₁,₃`). QUESTION: does
 Hamiltonian circuit?
 
 This is HAMILTONIAN CIRCUIT ([GT37], stated on `main` as
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`) restricted to claw-free graphs.
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`) restricted to claw-free graphs.
 Johnson's 1985 table (NP-completeness column 16) and its 2022 revision list it as NP-complete:
 Bertossi (1981) proves HAMILTONIAN CIRCUIT NP-complete for line graphs (stated on `main` as
 `LineGraphHamiltonianCircuitWanted`), and every line graph is claw-free. The instance type, the

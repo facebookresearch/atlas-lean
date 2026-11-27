@@ -20,7 +20,7 @@ doi:10.1145/800133.804355 (Theorem 13).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -39,7 +39,7 @@ INSTANCE: a graph `G = (V, E)` with no vertex degree exceeding 3 and no triangle
 positive integer `K ≤ |E|`. QUESTION: is there a subset `E' ⊆ E` with `|E'| ≥ K` such that
 `G' = (V, E')` is bipartite?
 
-This is BIPARTITE SUBGRAPH (Garey and Johnson [GT25]; on `main` as the equivalent `MaxCutWanted`)
+This is BIPARTITE SUBGRAPH (Garey and Johnson [GT25]; on `main` as the equivalent `MaxCutDefs`)
 restricted as in the [GT25] comment, which credits the restriction to [Yannakakis, 1978b].
 Yannakakis (1978), Theorem 13: "The edge-deletion 'bipartite' (simple max-cut) problem on cubic
 graphs is NP-complete". Triangles are then removed by replacing every edge `uv` of a cubic graph by

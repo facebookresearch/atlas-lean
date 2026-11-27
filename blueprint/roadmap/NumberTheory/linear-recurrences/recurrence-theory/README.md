@@ -17,3 +17,6 @@ C-finite, P-recursive and MC-finite sequences, Binet formulas, Skolem–Mahler�
 - [Second-order recurrences from seed triples](second-order-recurrences-from-seed-triples/README.md)
 - [Binet formula for second-order linear recurrences](binet-closed-form-second-order.md)
 - [Skolem–Mahler–Lech theorem](skolem-mahler-lech.md)
+
+- [The Skolem problem](the-skolem-problem.md)
+- [Skolem sets and universal Skolem sets](skolem-sets-and-universal-skolem-sets.md)

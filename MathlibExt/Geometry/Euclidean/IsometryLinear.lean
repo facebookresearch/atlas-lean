@@ -36,8 +36,10 @@ the results here hold for every `n` and are not used in that classification.
   linear map (`IsLinearMap ℝ f`).
 -/
 
-/-- Every isometry of Euclidean space is affine: it is its linear part plus
-its value at `0`. -/
+/-- **Isometries of Euclidean space are affine.** For every natural number $n$, every
+isometry $f$ of the Euclidean space $\mathbb{R}^n$ is affine: there is a linear map
+$A : \mathbb{R}^n \to \mathbb{R}^n$, the linear part of $f$, such that $f(x) = A x + f(0)$
+for every $x \in \mathbb{R}^n$. -/
 theorem isometry_apply_eq_linear_apply_add_map_zero {n : ℕ}
     (f : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
     (hf : Isometry f) (x : EuclideanSpace ℝ (Fin n)) :
@@ -45,7 +47,10 @@ theorem isometry_apply_eq_linear_apply_add_map_zero {n : ℕ}
   have key := congr_fun hf.affineIsometryOfStrictConvexSpace.toAffineMap.decomp x
   simpa using key
 
-/-- An isometry of Euclidean space that fixes `0` is a linear map. -/
+/-- **Isometries of Euclidean space fixing the origin are linear.** For every natural
+number $n$, if $f$ is an isometry of the Euclidean space $\mathbb{R}^n$ with $f(0) = 0$, then
+$f$ is $\mathbb{R}$-linear: $f(x + y) = f(x) + f(y)$ and $f(c x) = c f(x)$ for all
+$x, y \in \mathbb{R}^n$ and $c \in \mathbb{R}$. -/
 theorem isometry_isLinearMap_of_map_zero {n : ℕ}
     (f : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n))
     (hf : Isometry f) (hf0 : f 0 = 0) :

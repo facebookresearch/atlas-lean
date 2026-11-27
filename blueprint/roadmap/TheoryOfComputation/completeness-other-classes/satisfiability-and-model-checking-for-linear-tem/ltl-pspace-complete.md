@@ -19,9 +19,9 @@ theorem applies.
 
 ## Background
 
-- LTL satisfiability is Büchi nonemptiness:
+- [LTL satisfiability is Büchi nonemptiness](../../../Logic/temporal-logic/model-checking-for-linear-temporal-logic/satisfiable-iff-language-ne-bot.md):
   the reduction behind the upper bound for satisfiability.
-- Vardi–Wolper translation with an exponential state bound:
+- [Vardi–Wolper translation with an exponential state bound](../../../Logic/temporal-logic/model-checking-for-linear-temporal-logic/exists-buchi-card-le.md):
   the exponential automaton.
 - [The model checking, satisfiability and validity problems of the linear modal μ-calculus are PSPACE-complete](../satisfiability-and-model-checking-for-the-linear/linear-mu-calculus-pspace-complete.md):
   the same result for the linear-time μ-calculus, stated in the same format.

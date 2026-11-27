@@ -10,7 +10,7 @@ Applied to $A = \hat\Sigma - \Sigma$, with $B_k(\hat\Sigma) - B_k(\Sigma) = B_k(
 
 ## Informally uses
 
-- Schur's test for the matrix operator norm: inequality (A2).
+- [Schur's test for the matrix operator norm](../../../Analysis/operator-theory/integral-and-multiplication/schur-test/norm-matrix-l2-le.md): inequality (A2).
 
 ## Sources
 

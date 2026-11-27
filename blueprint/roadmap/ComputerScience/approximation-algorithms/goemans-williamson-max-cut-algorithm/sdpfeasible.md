@@ -6,7 +6,7 @@ value is the relaxation bound $\mathrm{SDP}$ of the survey.
 
 ## Background
 
-- Theta function of a graph:
+- [Theta function of a graph](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/README.md):
   the theta body of Grötschel, Lovász and Schrijver is defined by the same kind of positive
   semidefinite constraint.
 

@@ -56,10 +56,17 @@ private lemma affindep_unique {u v : EuclideanSpace ℝ (Fin 2)} (hu : u ≠ 0)
     · exact False.elim (hb h)
     · exact hind _ (sub_eq_zero.mp h).symm
 
-/-- Menelaus's theorem with only the hypotheses the argument uses: if `ABC` is a
-nondegenerate triangle and `D`, `E`, `F` are given on the sidelines `BC`, `CA`, `AB` by the
-signed ratios `BD`, `DC`, `CE`, `EA`, `AF`, `FB`, then `F` lies on line `DE` iff
-`(AF / FB) * (BD / DC) * (CE / EA) = -1`. `menelaus` is the source-shaped form. -/
+/-- **Menelaus's theorem, general form.** Let $A$, $B$, $C$ be points of the Euclidean plane
+$\mathbb{R}^2$ with $A \ne B$ and $C$ not on the line $AB$. Let $D$, $E$, $F$ be points and
+let $\alpha, \alpha', \beta, \beta', \gamma, \gamma'$ be real numbers with
+$F - A = \alpha (B - A)$, $B - F = \alpha' (B - A)$, $D - B = \beta (C - B)$,
+$C - D = \beta' (C - B)$, $E - C = \gamma (A - C)$, $A - E = \gamma' (A - C)$, and
+$\alpha', \beta', \gamma' \ne 0$. Then $F$ lies on the line through $D$ and $E$ if and only if
+$\frac{\alpha}{\alpha'} \cdot \frac{\beta}{\beta'} \cdot \frac{\gamma}{\gamma'} = -1$.
+
+The numbers $\alpha, \alpha', \beta, \beta', \gamma, \gamma'$ are the signed ratios $AF/AB$,
+$FB/AB$, $BD/BC$, $DC/BC$, $CE/CA$, $EA/CA$, so the product is the classical signed ratio
+product $\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA}$. -/
 theorem menelaus_general {A B C D E F : EuclideanSpace ℝ (Fin 2)} {AF FB BD DC CE EA : ℝ}
     (hnc : ¬ ∃ t : ℝ, AffineMap.lineMap A B t = C) (hAB : A ≠ B)
     (hFAv : F - A = AF • (B - A)) (hBFv : B - F = FB • (B - A))
@@ -204,13 +211,24 @@ theorem menelaus_general {A B C D E F : EuclideanSpace ℝ (Fin 2)} {AF FB BD DC
       rw [rhs, ← htα, ← htβ, ← lhs]
     rw [hFt, add_sub_cancel]
 
-/-- Menelaus's theorem (statement ID menelaus-s1): a transversal meets the sidelines
-of triangle `ABC` in collinear points iff the signed ratio product is `-1`.
-See https://en.wikipedia.org/wiki/Menelaus%27s_theorem.
-It follows from `menelaus_general`; the three `lineMap` incidence hypotheses (implied by the
-ratio equations), `B ≠ C` and `A ≠ C` (implied by non-collinearity), and
-`D ≠ B`, `D ≠ C`, `E ≠ C`, `E ≠ A`, `F ≠ A`, `F ≠ B` are unused and keep the source's shape.
+/-- **Menelaus's theorem.** Let $A$, $B$, $C$ be pairwise distinct points of the Euclidean plane
+$\mathbb{R}^2$ with $C$ not on the line $AB$. Let $D$, $E$, $F$ be points on the lines $BC$, $CA$
+and $AB$ respectively, with $D \ne B$, $D \ne C$, $E \ne C$, $E \ne A$, $F \ne A$ and $F \ne B$.
+Let $\alpha, \alpha', \beta, \beta', \gamma, \gamma'$ be real numbers with
+$F - A = \alpha (B - A)$, $B - F = \alpha' (B - A)$, $D - B = \beta (C - B)$,
+$C - D = \beta' (C - B)$, $E - C = \gamma (A - C)$, $A - E = \gamma' (A - C)$, and
+$\alpha', \beta', \gamma' \ne 0$. Then $F$ lies on the line through $D$ and $E$ if and only if
+$\frac{\alpha}{\alpha'} \cdot \frac{\beta}{\beta'} \cdot \frac{\gamma}{\gamma'} = -1$.
+
+The numbers $\alpha, \alpha', \beta, \beta', \gamma, \gamma'$ are the signed ratios $AF/AB$,
+$FB/AB$, $BD/BC$, $DC/BC$, $CE/CA$, $EA/CA$, so the product is the classical signed ratio
+product $\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA}$. The incidence hypotheses,
+$B \ne C$, $A \ne C$ and the conditions that $D$, $E$, $F$ avoid the vertices follow from the
+other hypotheses or are not needed; they keep the shape of the classical statement.
+
 Proves `Wanted` entry `menelaus`.
+
+Source: https://en.wikipedia.org/wiki/Menelaus%27s_theorem (statement menelaus-s1).
 -/
 theorem menelaus :
     ∀ (A B C D E F : EuclideanSpace ℝ (Fin 2)) (AF FB BD DC CE EA : ℝ),

@@ -26,7 +26,7 @@ verifier host puts it in NP (`col3Dec_mem_NP`), so it is NP-complete (`col3Dec_n
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
+open Cslib.CookLevin Cslib.Logic.LegacyPL MetaMathlibExt.ComplexityTheory
 
 /-- **The 3-COLOR verifier as a host component.** The component machine whose stacks are the
 seven stacks $X, W, N, P, T, U, V$ of the 3-COLOR verifier machine, listed in that order and each

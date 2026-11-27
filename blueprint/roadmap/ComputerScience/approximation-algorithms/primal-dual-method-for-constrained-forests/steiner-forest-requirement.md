@@ -11,7 +11,7 @@ $T$ the Steiner tree problem (their Table 1).
 
 ## Background
 
-- Steiner tree:
+- [Steiner tree](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/steiner-tree/README.md):
   NP-completeness of the special case with one terminal set.
 
 ## Sources

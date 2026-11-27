@@ -5,7 +5,7 @@ exactly one endpoint in $S$. The maximum of this quantity over all $S$ is the MA
 
 ## Background
 
-- MAXIMUM CUT is NP-complete:
+- [MAXIMUM CUT is NP-complete](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/maximum-cut/max-cut-np-complete.md):
   the decision version of the problem whose optimum is the largest cut weight; this is why one
   approximates it.
 

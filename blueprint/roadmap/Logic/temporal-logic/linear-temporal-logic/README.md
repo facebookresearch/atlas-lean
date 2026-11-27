@@ -36,6 +36,12 @@
 - [Decoding a token list](decode-list.md)
 - [Decoding inverts the token encoding](decode-list-tokens.md)
 
+## Linear temporal logic on runs
+
+- [Satisfaction of LTL formulas on runs](satisfies-2.md)
+- [Satisfaction at a position of a run](satisfies-at-2.md)
+- [Expansion law for until on runs](until-expansion-2.md)
+
 ## Related topics
 
 - [Büchi automata for a fragment of linear temporal logic](../b-chi-automata-for-a-fragment-of-linear-temporal/README.md): direct automata for invariants, recurrence, persistence and a safety fragment.

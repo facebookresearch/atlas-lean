@@ -1,0 +1,3 @@
+# Derivative marginals of a convex pressure agree off a countable set
+
+Let $E$ be a finite set, $\Omega = \{0, 1\}^E$, $e \in E$, and let $g : \mathbb{R} \to \mathbb{R}$ be convex. For each $p \in \mathbb{R}$ let $\mu_p, \nu_p : \Omega \to \mathbb{R}$, and write $\mu(\omega_e = 1) = \sum_{\omega : \omega_e = 1} \mu(\omega)$. If $\mu_p(\omega_e = 1) = g'_-(p)$ and $\nu_p(\omega_e = 1) = g'_+(p)$ for every $p$, where $g'_-$ and $g'_+$ are the [left](pressure-left-deriv.md) and [right derivatives](pressure-right-deriv.md) of $g$, then the set $\{p \in \mathbb{R} : \mu_p(\omega_e = 1) \ne \nu_p(\omega_e = 1)\}$ is countable.
