@@ -27,7 +27,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -49,7 +49,7 @@ Papadimitriou and Szwarcfiter use it as the source problem of their grid-graph r
 in NP is immediate (the circuit is a certificate).
 
 The instance, the graph and the question are those of HAMILTONIAN CIRCUIT
-(`HamiltonianCycleUndirectedWanted`), reused unchanged: a vertex count `n` and an edge list on
+(`HamiltonianCycleUndirectedDefs`), reused unchanged: a vertex count `n` and an edge list on
 `Fin n` (`HamiltonianCycleUndirected.HamiltonianCycleUndirectedInstance`,
 `HamiltonianCycleUndirected.Graph`), the parent's well-formedness
 (`HamiltonianCycleUndirected.WellFormed`: `0 < n` and a simple edge list), and the question

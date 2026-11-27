@@ -1,0 +1,3 @@
+# Weight of a job in TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME
+
+An instance of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME has the same data as an instance of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, TOTAL TARDINESS: a tuple $(m, M, J, A, K)$ of a number $m$ of machines, a list $M$ of stage machine sets, a list $J$ of jobs, each given as a pair of a list of processing times and one natural number, a list $A$ of chain arcs, and a bound $K$. The weight $w_j$ of job $j$, a position of $J$, is the natural number listed after its processing times, the second component of the pair at position $j$ of $J$.
