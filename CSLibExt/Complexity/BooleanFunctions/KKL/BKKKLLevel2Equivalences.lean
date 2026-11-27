@@ -28,8 +28,6 @@ open scoped BigOperators
 open Finset
 open Real Set
 
-set_option linter.style.longLine false
-
 namespace StatMech.Probability
 
 open StatMech StatMech.OSSS
