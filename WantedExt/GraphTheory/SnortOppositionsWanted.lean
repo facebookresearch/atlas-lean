@@ -218,26 +218,6 @@ Proposition 3.6). -/
 public theorem_wanted snortSecondPlayerWins_of_isOpposable [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsOpposable G) : SnortSecondPlayerWins G
 
-/-- **Gluing oppositions of blocks.** Let $G$ be a graph, let $p$ be a map from its vertices to
-an index set, with blocks $B_i = \{v : p(v) = i\}$, and let $f$ be a map from the vertices of $G$
-to themselves. Suppose that for every index $i$ there is an opposition of the subgraph of $G$
-induced on $B_i$ that agrees with $f$ on $B_i$, and that for all vertices $u, w$ with
-$p(u) \neq p(w)$ we have $uw \in E(G) \iff f(u)f(w) \in E(G)$ and
-$uf(w) \in E(G) \iff f(u)w \in E(G)$. Then $G$ is opposable.
-
-Since $uf(u)$ and $wf(w)$ are non-edges, the second condition says that the four vertices
-$u, f(u), w, f(w)$ induce $C_4$, $2K_2$ or $4K_1$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 2. -/
-public theorem_wanted isOpposable_of_blocks {ι : Type*} (G : SimpleGraph V) (p : V → ι)
-    (f : V → V)
-    (hf : ∀ i, ∃ φ : G.induce {v | p v = i} ≃g G.induce {v | p v = i},
-      IsOpposition _ φ ∧ ∀ x, (φ x : V) = f x)
-    (hpair : ∀ u w, p u ≠ p w →
-      (G.Adj u w ↔ G.Adj (f u) (f w)) ∧ (G.Adj u (f w) ↔ G.Adj (f u) w)) :
-    IsOpposable G
-
 /-- **Fireworks preserve second-player wins in Snort.** Let $G$ be a finite simple graph and let
 $(u, v)$ be a response pair of $G$ whose distance in $G$ is at least $3$ (infinite distance,
 when $u$ and $v$ lie in different components, is allowed). If the second player wins Snort on
