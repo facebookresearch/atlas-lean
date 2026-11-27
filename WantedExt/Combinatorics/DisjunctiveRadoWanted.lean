@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.Combinatorics.DisjunctiveRado
+public import MathlibExt.Combinatorics.DisjunctiveRadoMultiples
 public import MathlibExt.Combinatorics.DisjunctiveRadoParity
 public import MathlibExt.Combinatorics.DisjunctiveRadoSingleton
 
@@ -44,16 +45,6 @@ theorem_wanted isLeast_disjRadoSet_single (a m : ℕ) (c : ℤ) (ha : 3 ≤ a) (
     (hc : (m = 3 ∧ c ≤ -((a : ℤ) * (a - 3) / 2)) ∨
       (4 ≤ m ∧ c < -(((a : ℤ) + m - 3 + 3) * (a - 2)))) :
     IsLeast (disjRadoSet m a {c}) ((((a : ℤ) + m - 3 + 3) * ((a : ℤ) + m - 3 - c) + 1).toNat)
-
-/-- **Theorem 5**: for `4 ≤ m ≤ a` and `c_j = k_j (a + m - 3)` with
-`1 < k_j ≤ a + m - 2`, `R(c₁, c₂) = min {k₁, k₂}`.
-
-Source: Srashti Dwivedi and Amitabha Tripathi, "On the Two-Color Disjunctive
-Rado Number for the Equations `∑_{i=1}^{m-2} x_i + a x_{m-1} - x_m = c_j`,
-`j = 1, 2`", INTEGERS 25 (2025), Article A108, Theorem 5. -/
-theorem_wanted isLeast_disjRadoSet_multiples (a m k₁ k₂ : ℕ) (hm : 4 ≤ m) (hma : m ≤ a)
-    (hk₁ : 1 < k₁) (hk₁' : k₁ ≤ a + m - 2) (hk₂ : 1 < k₂) (hk₂' : k₂ ≤ a + m - 2) :
-    IsLeast (disjRadoSet m a {(k₁ : ℤ) * (a + m - 3), (k₂ : ℤ) * (a + m - 3)}) (min k₁ k₂)
 
 /-- **Theorem 6**: let `a ≥ 3`, `m ≥ 4` have the same parity, `a' = a + m - 3` and
 `c₁ < -(a' + 3)(a - 2)`. For `c₂ ≤ c₁` (the range covered by the paper's four

@@ -1,6 +1,6 @@
 # Explicit inversions of the PAC-Bayes-kl bound
 
-In the setting of the PAC-Bayes-kl bound, let $q = \mathbb{E}_Q L_S$ and let $c$ be either (a) $c = (\mathrm{KL}(Q\,\|\,P) + \ln((m+1)/\delta))/m$ for a binary loss and any $m \ge 1$, or (b) $c = (\mathrm{KL}(Q\,\|\,P) + \ln(2\sqrt m/\delta))/m$ for a loss with values in $[0,1]$ and $m \ge 8$. With probability at least $1-\delta$, every posterior $Q$ with $\mathrm{KL}(Q\,\|\,P) < \infty$ satisfies each of:
+In the setting of the PAC-Bayes-kl bound (a measurable hypothesis space $\Theta$, a prior probability measure $P$ on $\Theta$ fixed before the sample and a jointly measurable loss), let $q = \mathbb{E}_Q L_S$ and let $c$ be either (a) $c = (\mathrm{KL}(Q\,\|\,P) + \ln((m+1)/\delta))/m$ for a binary loss and any $m \ge 1$, or (b) $c = (\mathrm{KL}(Q\,\|\,P) + \ln(2\sqrt m/\delta))/m$ for a loss with values in $[0,1]$ and $m \ge 8$. With probability at least $1-\delta$, every posterior probability measure $Q$ on $\Theta$ with $\mathrm{KL}(Q\,\|\,P) < \infty$, possibly depending on $S$, satisfies each of:
 
 1. (Pinsker form) $\mathbb{E}_Q L_D \le q + \sqrt{c/2}$, that is, the McAllester-type bound with denominator $2m$;
 2. (sharp fast rate) $\mathbb{E}_Q L_D \le q + c + \sqrt{c^2 + 2qc}$;
@@ -18,7 +18,6 @@ Each case gives $\mathrm{kl}(q\,\|\,\mathbb{E}_Q L_D) \le c$: case (a) is the PA
 
 ## Proof depends on
 
-- [Binary Pinsker inequality on the closed interval](../../../../../InformationTheory/information-inequalities/binary-pinsker-of-mem-icc.md)
 - [Lower bounds and inversions of the binary relative entropy](../../../../../InformationTheory/information-inequalities/binary-relative-entropy/binary-kl-lower-bounds-and-inversions.md)
 
 ## Sources
