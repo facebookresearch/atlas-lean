@@ -144,8 +144,9 @@ variable {K : Type*} [Field K]
 
 /-- The substitution `f(t) ↦ f(ζ ^ (a * b) * t ^ (a * a))` of Laurent series: twist by
 `ζ ^ (a * b)`, then expand `t ↦ t ^ (a * a)`. When `ζ = e^(2πi/ℓ)`, `a * d = ℓ` and
-`t ^ ℓ = q`, it sends the `q`-expansion of `j(τ)` to the expansion in `t` of `j(στ)` for
-`σ = !![a, b; 0, d]` (D. A. Cox, *Primes of the Form x² + ny²*, 3rd ed., 2022, (11.13)). -/
+`t = e^(2πiτ/ℓ)` (so `t ^ ℓ = q`), it sends the `q`-expansion of `j(τ)` to the expansion in `t`
+of `j(στ)` for `σ = !![a, b; 0, d]` (D. A. Cox, *Primes of the Form x² + ny²*, 3rd ed., 2022,
+p. 180, (11.13)). -/
 def cosetSubst (ζ : Kˣ) (a b : ℕ) [NeZero a] : LaurentSeries K →+* LaurentSeries K :=
   haveI : NeZero (a * a) := ⟨Nat.mul_ne_zero (NeZero.ne a) (NeZero.ne a)⟩
   (qExpand K (a * a)).comp (qTwist (ζ ^ (a * b)))
