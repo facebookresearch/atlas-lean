@@ -4,7 +4,7 @@ Run the renaming step of [translation to SSA form](translation-to-static-single-
 
 $$\mathrm{TopAfter}(V, X) = \mathrm{TopAfter}(V, \mathrm{idom}(Y)).$$
 
-**Proof idea.** Assume $X \ne \mathrm{idom}(Y)$, the other case being trivial. No node with $Y$ in its dominance frontier assigns to a variable derived from $V$. By the [local test](../local-test-for-dominance-frontiers.md), $X$ does not, so $\mathrm{TopAfter}(V, X)$ is inherited from the first strict dominator $U$ of $X$ that does. Then $Y \notin \mathrm{DF}(U)$, and since $U$ dominates the predecessor $X$ of $Y$, $U$ strictly dominates $Y$. Every $Z$ strictly between $U$ and $\mathrm{idom}(Y)$ in the dominator tree also dominates $X$, so it does not assign to such a variable, and both sides equal $\mathrm{TopAfter}(V, U)$.
+**Proof idea.** Assume $X \ne \mathrm{idom}(Y)$, the other case being trivial. No node with $Y$ in its dominance frontier assigns to a variable derived from $V$. By the [local test](../local-test-for-dominance-frontiers.md), $X$ does not, so $\mathrm{TopAfter}(V, X)$ is inherited from the first strict dominator $U$ of $X$ that does. Then $Y \notin \mathrm{DF}(U)$, and since $U$ dominates the predecessor $X$ of $Y$, $U$ strictly dominates $Y$. Every node $Z$ after $U$ on the dominator-tree path from $U$ down to $\mathrm{idom}(Y)$, $\mathrm{idom}(Y)$ itself included, also dominates $X$, so it does not assign to such a variable, and both sides equal $\mathrm{TopAfter}(V, U)$.
 
 ## Depends on
 

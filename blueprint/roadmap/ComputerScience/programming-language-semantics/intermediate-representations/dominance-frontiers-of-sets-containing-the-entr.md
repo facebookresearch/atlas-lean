@@ -9,6 +9,7 @@ with the [dominance frontier](dominance-frontiers.md) $\mathrm{DF}$ and the [joi
 **Proof.** Let $X \in S$ and $Y \in \mathrm{DF}(X)$. There is a path from $X$ to $Y$ all of whose nodes before $Y$ are dominated by $X$, and a path from the entry to $Y$ none of whose nodes before $Y$ is dominated by $X$. These paths converge at $Y$.
 
 The hypothesis on the entry is needed: if the entry $E$ had a predecessor $A$ with an edge $A \to E$, then $E \in \mathrm{DF}(\{E\})$ while $J(\{E\}) = \emptyset$.
+
 ## Depends on
 
 - [Converging paths and join sets](converging-paths-and-join-sets.md)

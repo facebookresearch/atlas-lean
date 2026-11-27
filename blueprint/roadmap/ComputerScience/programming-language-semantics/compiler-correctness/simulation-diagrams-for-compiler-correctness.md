@@ -20,4 +20,4 @@ If $\sim$ is a *lock-step simulation*, meaning that $S_1 \sim S_2$ and $G_1 \vda
 
 ## Sources
 
-- X. Leroy, "A formally verified compiler back-end", *Journal of Automated Reasoning* 43(4):363–446, 2009, <https://xavierleroy.org/publi/compcert-backend.pdf>, Sections 2.1, 3.5 and 3.7, Definitions 10 and 12, Theorems 3 and 4 and Figure 4
+- X. Leroy, "A formally verified compiler back-end", *Journal of Automated Reasoning* 43(4):363–446, 2009, <https://xavierleroy.org/publi/compcert-backend.pdf>, Sections 2.1, 3.5 and 3.7, Definitions 10 and 12, Theorems 3 and 4 and Figure 4. The condition on initial states, that every initial state of $P_1$ is related to some initial state of $P_2$, follows the CompCert Coq development; Section 3.7 states it as "if initial$(P_1, S_1)$ and initial$(P_2, S_2)$, then $S_1 \sim S_2$", which holds vacuously when $P_2$ has no initial state.
