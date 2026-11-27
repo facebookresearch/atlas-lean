@@ -6,7 +6,7 @@ $$\dot x_{ih}=x_{ih}\bigl(f_{ih}(x)-\bar f_i(x)\bigr),\qquad \dot x_{ih}=x_{ih}\
 
 A *mutation equilibrium* for $M$ is a rest point $x^M$ of the RMD.
 
-**Definition.** A connected compact set $X\subseteq\Delta$ is a *mutation limit* if for **every** $c\in\operatorname{int}\Delta$ there is a sequence of mutation equilibria $x^{M}$, $M\to0$, converging to a point of $X$, and no proper subset of $X$ has this property. It is *attracting* if, for every $c$ and every such sequence converging into $X$, the $x^M$ are asymptotically stable for all sufficiently small $M$.
+**Definition.** A connected compact set $X\subseteq\Delta$ is a *mutation limit* if for **every** $c\in\operatorname{int}\Delta$ there is a sequence of mutation equilibria $x^{M}$, $M\to0$, converging to a point of $X$, and no proper connected compact subset of $X$ has this property. It is *attracting* if, for every $c$ and every such sequence converging into $X$, the $x^M$ are asymptotically stable for all sufficiently small $M$.
 
 **Results.**
 1. For every $M>0$ and $c$ the RMD has an interior rest point; every mutation equilibrium is an $M$-equilibrium of the game ($f_{ih}(x^M)-\bar f_i(x^M)<M$), so every accumulation point as $M\to0$ is a Nash equilibrium.
