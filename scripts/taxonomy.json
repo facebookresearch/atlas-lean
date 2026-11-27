@@ -1632,6 +1632,7 @@
   "CSLibExt/Crypto/Framework/GenericGroup/Shoup": {"to": "ComputerScience/cryptography/security-games", "title": "Generic-group lower bounds"},
   "CSLibExt/Crypto/Framework/LazySampling": {"to": "ComputerScience/cryptography/security-games", "title": "Lazy sampling and the PRP/PRF switching lemma"},
   "CSLibExt/Crypto/Framework/Oracle": {"to": "ComputerScience/cryptography/security-games", "title": "Oracle algorithms"},
+  "CSLibExt/Crypto/Framework/Rewinding": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Zero knowledge and arguments"},
   "CSLibExt/Crypto/Hash/Birthday": {"to": "ComputerScience/cryptography/hash-functions", "title": "Birthday bound"},
   "CSLibExt/Crypto/Hash/BoundedUniversalHashing": {"to": "ComputerScience/cryptography/hash-functions", "title": "Hash functions"},
   "CSLibExt/Crypto/Hash/MerkleDamgard": {"to": "ComputerScience/cryptography/hash-functions", "title": "Merkle–Damgård construction"},

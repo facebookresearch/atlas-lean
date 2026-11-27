@@ -22178,6 +22178,7 @@
 "Cslib.Crypto.Framework.sigAdvantage": "64c96935ce7273a2",
 "Cslib.Crypto.Framework.sigGame": "d0aaea908f1fd40f",
 "Cslib.Crypto.Framework.simulate": "14839964445c5d11",
+"Cslib.Crypto.Framework.sq_sub_div_card_le_winProb_rewind": "509fa7121bbc8361",
 "Cslib.Crypto.Framework.tcrAdvantage": "db825d4620f81570",
 "Cslib.Crypto.Framework.tcrAdvantage_eq_collAdvantage": "15f13b0770715e3e",
 "Cslib.Crypto.Framework.tcrGame": "bf1d45d4ec73bb98",
