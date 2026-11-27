@@ -1,6 +1,6 @@
-# Exists is Unit entry in column
+# A unit entry in every invertible column over a local ring
 
-Every column of `GL n R` over a commutative local ring contains a unit entry.
-
-Uses `(j,j)` entry of `g⁻¹ * g = 1`, `Matrix.mul_apply`, `IsLocalRing.exists_of_isUnit_sum`
-and `IsUnit.mul_iff` via `isUnit_of_mul_isUnit_right`.
+Let R be a
+commutative local ring and n a finite nonempty index type with decidable equality.
+For g∈GL n R and j∈n, there exists i∈n such that the matrix entry gᵢⱼ is a unit
+of R.

@@ -14,11 +14,14 @@ module
 public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.ElementaryDiagonal
 import Mathlib.Tactic.NoncommRing
 
-/-! # The rank-one Dennis--Stein matrix identity
+/-!
+# The rank-one Dennis--Stein matrix identity
 
-The four elementary factors in the Dennis--Stein word multiply to the
-standard six-factor torus word.  The calculation is valid over an arbitrary
-ring: the two coefficients are only required to commute.
+Over an arbitrary ring, let `r` and `s` commute and suppose `1 - r * s`
+is the value of a unit `u`. The four-factor Dennis--Stein elementary word,
+whose coefficients use `u⁻¹`, equals the standard six-factor torus word.
+The identity holds at any two distinct coordinates of a finite matrix
+index set and does not require the whole ring to be commutative.
 -/
 
 @[expose] public section
@@ -128,10 +131,10 @@ private theorem elementary_dennisStein_finTwo
           Matrix (Fin 2) (Fin 2) R) := by
       simp only [Units.val_mul, h_upper, h_lower]
 
-/-- The rank-one Dennis--Stein identity for arbitrary distinct coordinates.
-
-If `r` and `s` commute and the unit `u` has value `1 - r * s`, then the
-four-factor Dennis--Stein elementary word is the six-factor torus word. -/
+/-- Over an arbitrary ring on a finite matrix index set, let `i` and `j`
+be distinct. If `r` and `s` commute and the unit `u` has value `1 - r * s`,
+then the four-factor Dennis--Stein elementary word, using `u⁻¹`, equals
+the six-factor torus word. -/
 theorem elementary_dennisStein (i j : ι) [DecidableEq ι] [Fintype ι]
     (hij : i ≠ j) (r s : R) (hrs : Commute r s) (u : Rˣ)
     (hu : (u : R) = 1 - r * s) :

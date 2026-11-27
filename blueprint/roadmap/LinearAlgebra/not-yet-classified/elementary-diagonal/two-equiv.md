@@ -1,3 +1,5 @@
-# Two Equiv
+# Two marked indices as two singleton summands
 
-Equivalence between `Fin 1 ⊕ Fin 1` and `{k // k = i ∨ k = j}` for distinct `i j`.
+Let ι be an index type with
+decidable equality and i,j∈ι with i≠j. The union of these two indices is
+equivalent to Fin 1⊕Fin 1. No field or finiteness assumption is required.

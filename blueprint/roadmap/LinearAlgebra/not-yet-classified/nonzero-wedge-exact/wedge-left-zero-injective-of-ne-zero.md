@@ -1,3 +1,5 @@
-# Wedge Left zero injective of ne zero
+# Injectivity of degree-zero exterior multiplication
 
-The zero-degree exterior multiplication by a genuine nonzero vector is injective.
+Let K be a field,
+M a K-vector space, and w∈M with w≠0. Left exterior multiplication by w
+from ⋀^0 M to ⋀^1 M is injective.

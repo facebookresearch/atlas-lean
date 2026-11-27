@@ -35,21 +35,25 @@ namespace exteriorPower
 variable (R : Type u) [CommRing R]
 variable (M : Type v) [AddCommGroup M] [Module R M]
 
-/-- Left exterior multiplication by a vector between consecutive exterior
-powers. -/
+/-- **Left exterior multiplication over a commutative ring.** Let R be a commutative
+ring, M an R-module whose addition is an abelian group, m∈M, and n∈ℕ.
+The R-linear map wedgeLeft R M m n sends x∈⋀^n M to m∧x∈⋀^(n+1) M. -/
 def wedgeLeft (m : M) (n : ℕ) :
     (⋀[R]^n M) →ₗ[R] (⋀[R]^(n + 1) M) :=
   alternatingMapLinearEquiv ((ιMulti R (n + 1)).curryLeft m)
 
-/-- Left multiplication prepends the fixed vector to a pure exterior word. -/
+/-- **Wedge prepends a vector to a pure exterior product.** Let R be a commutative
+ring, M an R-module with abelian-group addition, m∈M, n∈ℕ, and a : Fin n→M.
+Left multiplication sends the pure exterior word a to the word with m prepended. -/
 @[simp]
 theorem wedgeLeft_apply_ιMulti (m : M) (n : ℕ) (a : Fin n → M) :
     wedgeLeft R M m n (ιMulti R n a) =
       ιMulti R (n + 1) (Matrix.vecCons m a) := by
   simp [wedgeLeft]
 
-/-- The ambient exterior-algebra value of `wedgeLeft` is multiplication by
-the exterior generator. -/
+/-- **Left wedge agrees with multiplication in the exterior algebra.** Let R be a
+commutative ring, M an R-module with abelian-group addition, m∈M, n∈ℕ, and
+x∈⋀^n M. In ExteriorAlgebra R M, the image of wedgeLeft R M m n x is ι(m)*x. -/
 theorem wedgeLeft_apply_coe (m : M) (n : ℕ) (a : ⋀[R]^n M) :
     (wedgeLeft R M m n a : ExteriorAlgebra R M) =
       ExteriorAlgebra.ι R m * (a : ExteriorAlgebra R M) := by
@@ -71,7 +75,9 @@ theorem wedgeLeft_apply_coe (m : M) (n : ℕ) (a : ⋀[R]^n M) :
     congr 1
   exact LinearMap.congr_fun h a
 
-/-- Left exterior multiplication is natural under a linear map. -/
+/-- **Naturality of left exterior multiplication.** Let R be a commutative ring,
+M and N R-modules with abelian-group addition, f : M→ₗ[R] N, m∈M, and n∈ℕ.
+The induced exterior maps satisfy (⋀^(n+1) f)(m∧x)=f(m)∧(⋀^n f)(x). -/
 theorem map_comp_wedgeLeft
     {N : Type*} [AddCommGroup N] [Module R N]
     (f : M →ₗ[R] N) (m : M) (n : ℕ) :
@@ -89,8 +95,10 @@ theorem map_comp_wedgeLeft
   · rfl
   · rfl
 
-/-- Cartan's identity for contraction and left exterior multiplication in
-positive source degree. -/
+/-- **Cartan contraction identity over a commutative ring.** Let R be a commutative
+ring, M an R-module with abelian-group addition, φ : M→ₗ[R] R, m∈M, and n∈ℕ.
+On ⋀^(n+1) M, left contraction and exterior multiplication satisfy
+ι_φ∘(m∧·)+(m∧·)∘ι_φ=φ(m)•id. No normalization of φ or nonzero condition on m is assumed. -/
 theorem contractLeft_comp_wedgeLeft_add_wedgeLeft_comp_contractLeft
     (x : Module.Dual R M) (m : M) (n : ℕ) :
     (contractLeft R M x (n + 1)).comp (wedgeLeft R M m (n + 1)) +
@@ -107,7 +115,9 @@ theorem contractLeft_comp_wedgeLeft_add_wedgeLeft_comp_contractLeft
     contractLeft_apply_coe, CliffordAlgebra.contractLeft_ι_mul]
   exact sub_add_cancel _ _
 
-/-- Degree-zero endpoint of Cartan's contraction identity. -/
+/-- **Degree-zero contraction and wedge identity.** Let R be a commutative ring,
+M an R-module with abelian-group addition, φ : M→ₗ[R] R, and m∈M.
+On ⋀^0 M, contracting after left exterior multiplication by m equals φ(m)•id. -/
 theorem contractLeft_comp_wedgeLeft_zero
     (x : Module.Dual R M) (m : M) :
     (contractLeft R M x 0).comp (wedgeLeft R M m 0) =

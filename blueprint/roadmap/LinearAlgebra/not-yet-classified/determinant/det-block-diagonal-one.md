@@ -1,4 +1,5 @@
-# Det block Diagonal One
+# An identity block preserves determinant
 
-Determinant of `blockDiagonalOne` is the original determinant,
-via `det_fromBlocks_zero₂₁` and `det_one`.
+Let R be a commutative ring and
+n,m finite index types with decidable equality. For g∈GL n R, adjoining an
+identity block on m gives det(blockDiagonalOne n m R g)=det(g).

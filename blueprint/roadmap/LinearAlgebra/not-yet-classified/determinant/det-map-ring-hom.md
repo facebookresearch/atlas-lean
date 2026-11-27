@@ -1,3 +1,5 @@
-# Det map Ring Hom
+# Determinant commutes with a ring homomorphism
 
-Determinant commutes with `mapRingHom` via `RingHom.map_det`.
+Let R and S be commutative
+rings, n a finite index type with decidable equality, f : R→+* S, and g∈GL n R.
+Then det(mapRingHom f g) is the image of the unit det(g) under f.

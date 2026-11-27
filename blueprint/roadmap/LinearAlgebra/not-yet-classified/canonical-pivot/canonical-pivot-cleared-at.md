@@ -1,3 +1,5 @@
 # Canonical Pivot Cleared At
 
-Clearing at column `c` using bottommost pivot.
+For an invertible matrix over a division ring indexed by a finite
+linear order, clear column `c` about its greatest nonzero row. The column
+is isolated; the pivot row is also isolated when `c` is least.

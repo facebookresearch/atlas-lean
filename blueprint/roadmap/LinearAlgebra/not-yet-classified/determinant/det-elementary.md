@@ -1,3 +1,5 @@
-# Det elementary
+# An elementary transvection has determinant one
 
-Determinant of an elementary matrix is `1`, via `det_transvection_of_ne`.
+Let R be a commutative ring,
+n a finite index type with decidable equality, i,j∈n with i≠j, and a∈R.
+The elementary matrix I+aEᵢⱼ in GL n R has determinant one.

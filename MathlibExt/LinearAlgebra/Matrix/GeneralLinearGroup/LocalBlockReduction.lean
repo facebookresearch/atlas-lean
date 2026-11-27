@@ -15,7 +15,21 @@ public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.BlockElementary
 public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.LocalPivot
 public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 
-/-! Elementary local block reduction via the Schur complement. -/
+/-!
+# Schur complements and elementary reduction over local rings
+
+For an invertible finite block matrix `g = [[A, B], [C, D]]` over a
+commutative ring with `D` invertible, the Schur complement
+`A - B * D⁻¹ * C` is invertible. Upper and lower block-elementary factors
+clear `g` to the block diagonal matrix with that complement and `D`.
+
+Over a commutative local ring, an invertible matrix indexed by a finite set
+plus one distinguished coordinate can first be moved by elementary
+operations so that its distinguished diagonal entry is a unit. It then
+admits two-sided elementary reduction to an invertible block on the finite
+set and an invertible one-dimensional block. Their determinants multiply
+to the determinant of the original matrix.
+-/
 
 @[expose] public section
 
@@ -30,7 +44,9 @@ variable {α β : Type*} [DecidableEq α] [DecidableEq β]
   [Fintype α] [Fintype β]
 variable {R : Type*} [CommRing R]
 
-/-- Schur complement `A - B * D⁻¹ * C` is a unit. -/
+/-- For an invertible block matrix over a commutative ring with finite
+block index sets and an invertible lower-right block `D`, the Schur
+complement `A - B * D⁻¹ * C` is invertible. -/
 theorem isUnit_schurComplement₂₂
     (g : GL (α ⊕ β) R) [Invertible g.val.toBlocks₂₂] :
     IsUnit
@@ -51,7 +67,9 @@ theorem isUnit_schurComplement₂₂
     (Matrix.isUnit_fromBlocks_iff_of_invertible₂₂).mp
       h_isUnit_fromBlocks
 
-/-- Bundled Schur complement unit `S = A - B D⁻¹ C`. -/
+/-- Bundle the invertible Schur complement `A - B * D⁻¹ * C` of an
+invertible finite block matrix over a commutative ring whose lower-right
+block `D` is invertible. -/
 noncomputable def schurComplement₂₂Unit
     (g : GL (α ⊕ β) R) [Invertible g.val.toBlocks₂₂] : GL α R :=
   (isUnit_schurComplement₂₂ g).unit
@@ -64,7 +82,10 @@ theorem coe_schurComplement₂₂Unit
         g.val.toBlocks₁₂ * ⅟(g.val.toBlocks₂₂) * g.val.toBlocks₂₁ :=
   IsUnit.unit_spec (isUnit_schurComplement₂₂ g)
 
-/-- Clearing off-diagonal blocks gives block-diagonal Schur form. -/
+/-- For an invertible finite block matrix over a commutative ring with
+invertible lower-right block `D`, multiply on the left by the upper block
+factor with entry `-B * D⁻¹` and on the right by the lower block factor
+with entry `-D⁻¹ * C`. The result is `diag(A - B * D⁻¹ * C, D)`. -/
 theorem upper_mul_mul_lower_eq_blockDiagonal_schur
     (g : GL (α ⊕ β) R) [Invertible g.val.toBlocks₂₂] :
     BlockElementary.upperUnit (-(g.val.toBlocks₁₂ * ⅟(g.val.toBlocks₂₂))) *
@@ -206,7 +227,11 @@ section LocalFinOne
 variable {α : Type*} [DecidableEq α] [Fintype α]
 variable {R : Type*} [CommRing R] [IsLocalRing R]
 
-/-- Local block reduction for `GL (α ⊕ Fin 1)` over a local ring. -/
+/-- Over a commutative local ring, every invertible matrix indexed by
+a finite set `α` plus one distinguished coordinate admits elementary
+left and right factors that make it block diagonal, with an invertible
+`α` block and an invertible scalar block. The two block determinants
+multiply to the determinant of the original matrix. -/
 theorem exists_elementary_blockReduction_finOne
     (g : GL (α ⊕ Fin 1) R) :
     ∃ (eL eR : GL (α ⊕ Fin 1) R) (s : GL α R) (p : GL (Fin 1) R),

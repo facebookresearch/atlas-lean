@@ -1,3 +1,6 @@
-# Wedge Left exact of ne zero
+# Exact exterior sequence for a nonzero vector
 
-The genuine left-wedge sequence is exact in every positive degree, including infinite-dimensional modules.
+Let K be a field, M a K-vector
+space, and w∈M with w≠0. For every n∈ℕ, the sequence
+⋀^n M → ⋀^(n+1) M → ⋀^(n+2) M, whose maps are left exterior multiplication
+by w, is exact. No finite-dimensional hypothesis is required.

@@ -1,5 +1,15 @@
 # Permutation Bilinear Schur Tits Cocycle
 
+Let `A` be an abelian multiplicative group, `B` an abelian additive group,
+and `b` a skew bicharacter from `A` to `B`. The raw Tits formula on
+`Aⁿ ⋊ Sₙ` is defined for every `eps : A`. Its normalization and cocycle
+theorems assume `eps * eps = 1`.
+
+Adding the permutation Schur cocycle uses a coefficient `z : B` with
+`2 • z = 0`. Under the same involution hypothesis on `eps`, both formulas
+give normalized central cocycles with coefficient group `Multiplicative B`
+and hence the central extensions constructed here.
+
 - [Tits Monomial Add Cocycle](tits-monomial-add-cocycle.md)
 - [Schur Tits Monomial Add Cocycle](schur-tits-monomial-add-cocycle.md)
 
