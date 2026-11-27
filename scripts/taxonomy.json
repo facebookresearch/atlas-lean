@@ -2111,6 +2111,7 @@
   "CSLibExt/MachineLearning/ClassificationCalibration": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Classification-calibrated losses"},
   "CSLibExt/MachineLearning/Discriminative/ExponentialFamily": {"to": "Probability/statistical-estimation", "title": "Exponential families"},
   "CSLibExt/MachineLearning/Factorization/NMF": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Non-negative matrix factorization"},
+  "CSLibExt/MachineLearning/Fairness/PredictiveParity": {"to": "ComputerScience/machine-learning", "title": "Algorithmic fairness"},
   "CSLibExt/MachineLearning/FiniteSampleExpressivity": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Finite-sample expressivity of ReLU networks"},
   "CSLibExt/MachineLearning/GaussianProcessMarginalLikelihood": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Gaussian process regression"},
   "CSLibExt/MachineLearning/GaussianProcessRegression": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Gaussian process regression"},
