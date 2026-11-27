@@ -34,52 +34,6 @@ public theorem_wanted count_euclidPPosition_calkinWilfRow :
       ∀ k, 3 * ((calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2) : ℤ) =
         2 ^ k + 2 * (-1) ^ k
 
-/-- **Number of arch tops in a row of the Calkin–Wilf tree.** For $k \ge 2$ let $T_k$ be the
-number of vertices of row $k$ of the Calkin–Wilf tree of the form $(2m+n)/(m+n)$ with $m/n$ a
-P-position of Euclid in row $k - 2$. Then $3T_k = 2^{k-2} + 2(-1)^k$, that is,
-$T_k = 2^{k-2}/3 + 2(-1)^k/3$.
-
-The vertex $(2m+n)/(m+n)$ is the son's daughter of $m/n$, the left top of the arch below $m/n$;
-the daughter's son $(m+n)/(m+2n)$ is the right top, so $T_k$ counts the arches whose tops lie in
-row $k$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 4.7. -/
-public theorem_wanted count_arch_tops_calkinWilfRow (k : ℕ) (hk : 2 ≤ k) :
-    3 * (((calkinWilfRow k).countP fun p => (calkinWilfRow (k - 2)).any fun V =>
-        euclidPPosition V.1 V.2 && p == (2 * V.1 + V.2, V.1 + V.2)) : ℤ) =
-      2 ^ (k - 2) + 2 * (-1) ^ k
-
-/-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and
-$F_{j+2} = F_{j+1} + F_j$. Call a pair $(a, b)$ of natural numbers a P-position when the Euclid
-P-position test returns true at $(a, b)$, read it as the vertex $a/b$ of the Calkin–Wilf tree, and
-let $s(a/b) = a/(a+b)$ be its son and $d(a/b) = (a+b)/b$ its daughter; write $s^k$ and $d^k$ for
-the $k$-fold iterates. Let $n \ge 1$ and $k \ge 0$, and let $V = F_{2n-1}/F_{2n-2}$. Then $V$ is a
-P-position, its son's daughter $d(s(V))$ is $F_{2n+1}/F_{2n}$, and its daughter's son $s(d(V))$
-is $F_{2n}/(F_{2n} + F_{2n-2})$. The vertex $L = d(s^k((F_{2n+1} - F_{2n})/F_{2n}))$ is a
-P-position whose numerator is $F_{2n+1} + kF_{2n-1}$ and whose denominator is
-$F_{2n+1} + (k-1)F_{2n-1}$, and the vertex $R = s(d^k(F_{2n}/F_{2n-2}))$ is the P-position
-$(F_{2n} + kF_{2n-2})/(F_{2n} + (k+1)F_{2n-2})$.
-
-Here $L$ and $R$ are level $k$ (level $0$ the top) of the left and right branches of the arch
-topped by $d(s(V))$ and $s(d(V))$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 5.2. -/
-public theorem_wanted fibonacci_arch_positions (n k : ℕ) (hn : 1 ≤ n) :
-    let F : ℕ → ℕ := fun j => Nat.fib (j + 1)
-    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
-    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
-    let V := (F (2 * n - 1), F (2 * n - 2))
-    let L := t (s^[k] (F (2 * n + 1) - F (2 * n), F (2 * n)))
-    let R := s (t^[k] (F (2 * n), F (2 * n - 2)))
-    euclidPPosition V.1 V.2 = true ∧ t (s V) = (F (2 * n + 1), F (2 * n)) ∧
-      s (t V) = (F (2 * n), F (2 * n) + F (2 * n - 2)) ∧
-      ((L.1 : ℤ) = F (2 * n + 1) + k * F (2 * n - 1) ∧
-        (L.2 : ℤ) = F (2 * n + 1) + (k - 1) * F (2 * n - 1) ∧ euclidPPosition L.1 L.2 = true) ∧
-      (R = (F (2 * n) + k * F (2 * n - 2), F (2 * n) + (k + 1) * F (2 * n - 2)) ∧
-        euclidPPosition R.1 R.2 = true)
-
 /-- **Positions of a Calkin–Wilf row with maximal optimal play in Euclid.** For every $k \ge 0$,
 the number of positions in row $k$ of the Calkin–Wilf tree whose Smith remoteness in the Euclid
 game is $k$ equals $2^{k/2}$ if $k$ is even and $2^{(k+1)/2}$ if $k$ is odd.

@@ -137,6 +137,25 @@ private theorem classCount_subsingleton {n : ℕ} [Subsingleton (Fin n)]
     exact exists_congr fun f => and_congr_right fun hf => by rw [hsingle f hf, eq_comm]
   exact (congrArg Set.ncard hclasses).trans (Set.ncard_image_of_injective _ Set.singleton_injective)
 
+-- At arity zero, both constant functions contribute to the sum.
+example : boolFunClassCount (n := 0) IsBoolFunVarPermEquiv (fun _ => True) = 2 := by
+  rw [boolFunClassCount_varPerm_eq_sum_nondegenerate (fun _ _ => True)
+    (fun _ _ _ _ => Iff.rfl) 0, Finset.sum_range_one, classCount_subsingleton]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable the sum has separate zero- and one-variable contributions, even when
+-- restricting to functions that vanish at the all-false input.
+example :
+    boolFunClassCount (n := 1) IsBoolFunVarPermEquiv (fun f => f (fun _ => false) = false) =
+      boolFunClassCount (n := 0) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ f (fun _ => false) = false) +
+      boolFunClassCount (n := 1) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ f (fun _ => false) = false) := by
+  rw [boolFunClassCount_varPerm_eq_sum_nondegenerate (fun _ f => f (fun _ => false) = false)
+    (fun _ _ _ _ => Iff.rfl) 1, Finset.sum_range_succ, Finset.sum_range_one]
+
 -- At arity zero, both constants contribute non-degenerate classes and the factor is one.
 example : boolFunClassCount (n := 0) IsBoolFunVarPermEquiv
     (fun f => IsNondegenerateBoolFun f ∧ IsUnateBoolFun f) = 2 := by
@@ -178,3 +197,47 @@ example :
   · exact ⟨Equiv.swap 0 1, by decide⟩
 
 end MetaMathlibExt.boolFunClassCount_varPerm_unate_le
+
+-- With no variables, both constant functions are non-degenerate.
+example :
+    Nat.card {f : (Fin 0 → Bool) → Bool // IsNondegenerateBoolFun f ∧ IsUnateBoolFun f} = 2 := by
+  rw [(card_unate_boolFun_relations 0).1, pow_zero, one_mul]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable, the identity is the only balanced monotone function.
+example : Nat.card {f : (Fin 1 → Bool) → Bool //
+    IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ 1} ≤ 2 := by
+  refine (card_unate_boolFun_relations 1).2.2.2.trans ?_
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- There are no balanced functions on zero variables: the domain has odd cardinality.
+example :
+    boolFunClassCount (n := 0) IsBoolFunNNEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ (0 : ℕ)) = 0 ∧
+      boolFunClassCount (n := 0) IsBoolFunNPNEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ (0 : ℕ)) = 0 := by
+  have hnone : (fun f : (Fin 0 → Bool) → Bool => Monotone f ∧ 2 * boolFunWeight f = 2 ^ (0 : ℕ)) =
+      fun _ => False := by
+    funext f
+    apply propext
+    simp only [pow_zero, iff_false]
+    rintro ⟨_, hw⟩
+    omega
+  obtain ⟨hNN, hNPN⟩ := boolFunClassCount_balanced_unate_eq_monotone 0
+  rw [hnone] at hNN hNPN
+  exact ⟨hNN.trans (boolFunClassCount_false _), hNPN.trans (boolFunClassCount_false _)⟩
+
+-- At arity two, the two clauses apply to the relations with and without input permutations.
+example :
+    boolFunClassCount (n := 2) IsBoolFunNNEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 4) =
+        boolFunClassCount (n := 2) IsBoolFunNNEquiv
+          (fun f => Monotone f ∧ 2 * boolFunWeight f = 4) ∧
+      boolFunClassCount (n := 2) IsBoolFunNPNEquiv
+        (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 4) =
+        boolFunClassCount (n := 2) IsBoolFunNPNEquiv
+          (fun f => Monotone f ∧ 2 * boolFunWeight f = 4) :=
+  boolFunClassCount_balanced_unate_eq_monotone 2

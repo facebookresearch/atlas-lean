@@ -23,7 +23,7 @@ private theorem exactSource (F : Type) [Field F] [NumberField F] :
   NumberField.adelicKernelLocalFiniteness F
 
 /-- The same statement at an arbitrary universe level. -/
-public theorem exactSource_universe (F : Type u) [Field F] [NumberField F] :
+private theorem exactSource_universe (F : Type u) [Field F] [NumberField F] :
     AdelicKernelLocalFiniteness F :=
   NumberField.adelicKernelLocalFiniteness F
 

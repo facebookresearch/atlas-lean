@@ -92,21 +92,6 @@ public theorem_wanted overcubicTripleCount_congruences_odd_args (n α : ℕ) :
       overcubicTripleCount (72 * n + 57) ≡ 0 [ZMOD 8] ∧
       overcubicTripleCount (8 * 9 ^ (α + 2) * n + 33 * 9 ^ (α + 1)) ≡ 0 [ZMOD 8]
 
-/-- **Overcubic partition triples of $24n+1$ modulo $4$.** For $k \ge 1$ let
-$f_k = \prod_{j \ge 1} (1 - q^{kj})$, and let $\mathrm{bt}(m)$ be the number of overcubic
-partition triples of $m$, the coefficient of $q^m$ in $f_4^3 / (f_1^6 f_2^3)$. For every natural
-number $n$, $\mathrm{bt}(24n+1) \equiv 2 c_n \pmod 4$, where $c_n$ is the coefficient of $q^n$
-in $f_1$; equivalently, $\sum_{n \ge 0} \mathrm{bt}(24n+1) q^n \equiv 2 f_1 \pmod 4$
-coefficientwise.
-
-This is the case $\alpha = 0$ of the paper's statement.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Theorem 2,
-eq. (7), case `α = 0` (`integers-2024-A80-thm-2`). -/
-public theorem_wanted overcubicTripleCount_twentyFour_mul_add_one (n : ℕ) :
-    overcubicTripleCount (24 * n + 1) ≡ 2 * coeff n (𝔣 1) [ZMOD 4]
-
 /-- **Congruences for overcubic partition triples at arguments congruent to 2 modulo 4.** Let
 $\mathrm{bt}(n)$ be the number of overcubic partition triples of $n$. For all natural numbers $n$
 and $\alpha$, both $\mathrm{bt}(16n+14)$ and $\mathrm{bt}(16n+10)$ are divisible by $16$; each of

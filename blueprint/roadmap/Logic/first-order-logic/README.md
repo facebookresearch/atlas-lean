@@ -14,3 +14,7 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Kripke completeness of intuitionistic first-order logic](kripke-completeness-of-intuitionistic-first-order-logic.md)
 
 - [Automated deduction](automated-deduction/README.md)
+- [Term rewriting](term-rewriting/README.md)
+- [Equational logic](equational-logic/README.md)
+- [Superposition](superposition/README.md)
+- [Herbrand's theorem](herbrand-s-theorem.md)

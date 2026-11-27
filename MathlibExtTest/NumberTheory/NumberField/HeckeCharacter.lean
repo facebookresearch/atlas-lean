@@ -47,7 +47,7 @@ example (v : HeightOneSpectrum (𝓞 ℚ)) :
 /-- Consumer in the standard restricted-product idele topology: characters
 on `TopologicalIdeleGroup`, continuous for that topology, are determined by
 their values on the local uniformizer ideles outside a finite set. -/
-theorem exactSourceTopological
+private theorem exactSourceTopological
     (K : Type*) [Field K] [NumberField K]
     (ψ₁ ψ₂ : NumberField.TopologicalIdeleGroup (𝓞 K) K →* ℂˣ)
     (hψ₁ : Continuous ψ₁)

@@ -127,7 +127,8 @@ class BumpCacheWorkflowTest(unittest.TestCase):
         # runner; the warm-up's 64-core runner has the memory to build them with the rest.
         build, warm = job(self.ci, "build"), job(self.warm, "warm")
         self.assertEqual(len(heavy_modules(build)), 1, "ci.yml's build job moved its memory-heavy list; update this test")
-        self.assertIn("    runs-on: ubuntu-24.04\n", build, "ci.yml's build job left the standard runner")
+        self.assertIn("    runs-on: ${{ github.event_name == 'merge_group' && '16-core-ubuntu' || 'ubuntu-24.04' }}\n",
+                      build, "ci.yml's build job runs pull requests and pushes on the standard runner")
         self.assertIn("    runs-on: 64-core-ubuntu\n", warm)
         self.assertEqual(heavy_modules(self.warm), [], "a serial heavy step leaves the 64-core runner idle")
         self.assertNotIn("swapon", self.warm)

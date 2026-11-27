@@ -39,7 +39,7 @@ Geom. 17 (1982). See also Freedman-Quinn, *Topology of 4-Manifolds*, Princeton 1
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
