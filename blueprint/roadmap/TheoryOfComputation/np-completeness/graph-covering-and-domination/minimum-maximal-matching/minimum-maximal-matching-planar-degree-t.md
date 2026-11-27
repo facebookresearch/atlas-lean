@@ -1,0 +1,3 @@
+# The decision problem MINIMUM MAXIMAL MATCHING on planar graphs of maximum degree 3
+
+MINIMUM MAXIMAL MATCHING on planar graphs of maximum degree 3 as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for MINIMUM MAXIMAL MATCHING on planar graphs of maximum degree 3](well-formed-2.md) (a well-formed MINIMUM MAXIMAL MATCHING instance whose graph is planar with maximum degree at most $3$) and feasible for MINIMUM MAXIMAL MATCHING. The feasibility test is the unrestricted problem's; the restriction to MINIMUM MAXIMAL MATCHING on planar graphs of maximum degree 3 comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.
