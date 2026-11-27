@@ -2,6 +2,28 @@
 
 - [BQP is contained in PP](bqp-subset-pp.md)
 - [BQP is contained in PSPACE](bqp-subset-pspace.md)
+- [Signed numerator of an encoded rational](rat-num.md)
+- [Cofactor of an entry](entry-cofactor.md)
+- [Scaled entry](entry-num-at.md)
+- [Scaled gate entry](gate-entry-num.md)
+- [Cleared-denominator amplitude](amp-num.md)
+- [End of a computational path](path-end.md)
+- [Weight of a computational path](path-num.md)
+- [Output sign](out-sign.md)
+- [Accept-minus-reject path-pair gap](path-pair-gap.md)
+- [Accepting cleared weight](acc-weight.md)
+- [Basis index in a padded register](q-num-of-lt-two-pow-add.md)
+- [Basis index of the BQP initial state](bqp-init-index.md)
+- [Gate entries times the gate denominator](gate-matrix-mul-gate-denom.md)
+- [Cleared and path-sum amplitudes](amp-num-eq-amp-sum-mul.md)
+- [Integer path expansion](amp-num-eq-sum-path-num.md)
+- [Gap as a signed sum of squared moduli](path-pair-gap-eq-sum-out-sign-norm.md)
+- [Explicit scaled acceptance](accept-prob-scaled-eq-acc-weight.md)
+- [Integer gap identity](path-pair-gap-eq-two-mul-acc-weight-sub.md)
+- [Gap and acceptance probability](path-pair-gap-eq.md)
+- [Sign lemma](sign-path-pair-gap.md)
+- [Positive gap and acceptance above one half](path-pair-gap-pos-iff.md)
+- [BQP form of the sign lemma](exists-path-pair-gap-of-mem-bqp.md)
 - [BPP is contained in BQP](bpp-subset-bqp.md)
 
 - [Gottesman–Knill theorem](gottesmanknill-theorem.md)
@@ -16,6 +38,8 @@
 - [Bridge between circuit state vectors and density-operator state models](bridge-between-circuit-state-vectors-and-density-operators.md)
 - [Polynomial-time languages are in BQP with error zero](polynomial-time-languages-are-in-bqp-with-error-zero.md)
 - [Gaussian-rational gates of the exact Toffoli decomposition](gaussian-rational-gates-of-the-exact-toffoli-decomposition.md)
+- [Verifiable Quantum Advantage from Random Oracles](unstructured-verifiable-quantum-advantage/README.md)
+- [Witness-Preserving QMA Amplification, QCMA and Black-Box Groups](witness-preserving-amplification-and-black-box-groups/README.md)
 
 ## Related topics
 
