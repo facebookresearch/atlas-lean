@@ -132,5 +132,6 @@
 - [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
 ## Networks: the tree of blobs
 - [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)
 - [Nested fragmentation processes](nested-fragmentation-processes/README.md)
 - [Nested Kingman coalescent](nested-kingman-coalescent/README.md)

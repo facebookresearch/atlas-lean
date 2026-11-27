@@ -38,32 +38,6 @@ set_option autoImplicit false
 
 namespace MetaMathlibExt
 
-/-- The sign `sgn(α) = (-1)^{|α| - ℓ(α)}` of a composition `α`, given as its list of parts.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.2. -/
-def hockeyCompositionSign (α : List ℕ) : ℤ :=
-  (-1) ^ (α.sum - α.length)
-
-/-- `sgn((2)) = -1` and `sgn((3, 1)) = 1`.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.2. -/
-theorem hockeyCompositionSign_small :
-    hockeyCompositionSign [2] = -1 ∧ hockeyCompositionSign [3, 1] = 1 := by
-  decide
-
-/-- For a composition `α = (a, t…)` with `a ≥ 2`, each of `α^→ = (a + 1, t…)`,
-`α^↑ = (2, a, t…)` and `α^↙` (`(a - 1, t…)` if `a > 2`, `(t…)` if `a = 2`) has sign `-sgn(α)`.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Proposition 1 (`jis-2025-25.7.7-prop-1`). -/
-theorem_wanted hockeyCompositionSign_ops (a : ℕ) (t : List ℕ) (ha : 2 ≤ a)
-    (ht : ∀ b ∈ t, 0 < b) :
-    hockeyCompositionSign ((a + 1) :: t) = -hockeyCompositionSign (a :: t) ∧
-      hockeyCompositionSign (2 :: a :: t) = -hockeyCompositionSign (a :: t) ∧
-      hockeyCompositionSign (if 2 < a then (a - 1) :: t else t) = -hockeyCompositionSign (a :: t)
-
 /-- The set `𝒞(k, r)` of compositions of some `j ≤ k` with every part in `[2, r + 1]`, as lists
 of parts.
 
