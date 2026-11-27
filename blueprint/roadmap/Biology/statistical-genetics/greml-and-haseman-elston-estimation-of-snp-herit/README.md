@@ -77,3 +77,5 @@
 ## Further topics
 
 - [Sparse two-stage SNP heritability estimation](sparse-two-stage-snp-heritability-estimation/README.md)
+- [ARG-based variance-component analysis](arg-based-variance-component-analysis/README.md)
+- [Pleiotropic shared heritability](pleiotropic-shared-heritability/README.md)

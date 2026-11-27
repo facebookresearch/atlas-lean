@@ -23,13 +23,14 @@ J. Robinson's definition of `ℤ` in `ℚ` (*J. Symbolic Logic* 14 (1949), Theor
 lemmas about rational representations by ternary quadratic forms (pp. 107–108). Capital letters
 denote rationals and small letters integers, and `(k / p)` is the Legendre symbol.
 
-* `Rat.Robinson.lemma_one_only_if`: for a prime `p ≡ 3 (mod 4)`, if `X ^ 2 + Y ^ 2 - p Z ^ 2`
-  represents a nonzero rational `M`, then `M` is not of the form `p k S ^ 2` with `(k / p) = 1`
-  nor `k S ^ 2` with `k ≡ p (mod 8)`. This is the "only if" half of Lemma 1.
-* `Rat.Robinson.lemma_two_only_if`: for odd primes `p ≡ 1 (mod 4)` and `q` with `(q / p) = -1`,
-  if `X ^ 2 + q Y ^ 2 - p Z ^ 2` represents a nonzero rational `M`, then `M` is not of the form
-  `p k S ^ 2` with `(k / p) = -1` nor `q k S ^ 2` with `(k / q) = -1`. This is the "only if" half
-  of Lemma 2.
+* `Rat.Robinson.lemma_one` (Lemma 1): for a prime `p ≡ 3 (mod 4)`, `X ^ 2 + Y ^ 2 - p Z ^ 2`
+  represents a nonzero rational `M` exactly when `M` is not of the form `p k S ^ 2` with
+  `(k / p) = 1` nor `k S ^ 2` with `k ≡ p (mod 8)`; its "only if" half is
+  `Rat.Robinson.lemma_one_only_if`.
+* `Rat.Robinson.lemma_two` (Lemma 2): for odd primes `p ≡ 1 (mod 4)` and `q` with
+  `(q / p) = -1`, `X ^ 2 + q Y ^ 2 - p Z ^ 2` represents a nonzero rational `M` exactly when `M`
+  is not of the form `p k S ^ 2` with `(k / p) = -1` nor `q k S ^ 2` with `(k / q) = -1`; its
+  "only if" half is `Rat.Robinson.lemma_two_only_if`.
 * `Rat.Robinson.lemma_three` (Lemma 3): for a prime `p ≡ 3 (mod 4)`,
   `2 + p M ^ 2 + p Z ^ 2 = X ^ 2 + Y ^ 2` is solvable in rationals exactly when the denominator of
   `M` is odd and prime to `p`.
@@ -45,13 +46,12 @@ The "only if" halves of Lemmas 1 and 2 are local obstructions, at `p` and `2`, a
 They are proved by descent: a solution in integers with the last variable nonzero would have all
 its coordinates divisible by the prime. Robinson states Lemmas 1 and 2 as special cases of
 Hasse's theorem on rational representations by quadratic forms; their "if" halves are cases of the
-Hasse–Minkowski theorem for quaternary forms. For the representations that Lemmas 3 and 4 need,
-the proof of `exists_sq_add_mul_sq_sub_mul_sq_eq` follows the classical reduction of the
-quaternary case to the ternary one: an auxiliary prime `r` from Dirichlet's theorem
-(`Nat.forall_exists_prime_gt_and_eq_mod`) is represented both by `X ^ 2 + a Y ^ 2` and by
-`m₀ U ^ 2 + p V ^ 2`, where `m = t ^ 2 m₀` with `m₀` squarefree, by Legendre's theorem
+Hasse–Minkowski theorem for quaternary forms. They are proved here by the classical reduction of
+the quaternary case to the ternary one: an auxiliary number `T`, a prime `r` from Dirichlet's
+theorem (`Nat.forall_exists_prime_gt_and_eq_mod`) times a fixed factor, is represented both by
+`X ^ 2 + a Y ^ 2` and by a binary form attached to the target, by Legendre's theorem
 (`Int.exists_ternary_eq_zero_iff`), and quadratic reciprocity for Jacobi symbols makes the
-congruence conditions compatible.
+congruence conditions compatible. Lemmas 3 and 4 use only `exists_sq_add_mul_sq_sub_mul_sq_eq`.
 
 ## References
 
@@ -225,10 +225,7 @@ Lemma 1, p. 107, states: "If `p` is a prime `≡ 3 (mod 4)` then `X² + Y² − 
 nonzero rational number `M`, if and only if `M` is not of the form `pk·S²` with `(k/p) = 1` or
 `k·S²` with `k ≡ p (mod 8)`." Capital letters denote rationals and small letters integers
 (p. 106). This theorem is the "only if" half: the conditions are the obstructions at `p` and at
-`2`, proved here by descent. The converse is a case of the Hasse–Minkowski theorem for
-representations by ternary forms. The case used in Lemma 3 is `exists_sq_add_mul_sq_sub_mul_sq_eq`
-with `a = 1`: it covers the positive integers `m` prime to `p` with `m ≡ 2 (mod 4)`, or `m` odd
-and `(p / m) = (m / p)`. -/
+`2`, proved here by descent. The whole lemma is `lemma_one`. -/
 theorem lemma_one_only_if {p : ℕ} [Fact p.Prime] (hp : p % 4 = 3) {M : ℚ} (hM : M ≠ 0)
     (h : ∃ X Y Z : ℚ, X ^ 2 + Y ^ 2 - p * Z ^ 2 = M) :
     (¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = 1) ∧
@@ -263,10 +260,7 @@ then `X² + qY² − pZ²` represents a nonzero rational number `M` if and only 
 form `pk·S²` with `(k/p) = −1` or `qk·S²` with `(k/q) = −1`." Capital letters denote rationals and
 small letters integers (p. 106). This theorem is the "only if" half: the conditions are the
 obstructions at `p` and at `q`, proved here by descent, with quadratic reciprocity for
-`(p / q) = (q / p)`. The converse is a case of the Hasse–Minkowski theorem for representations by
-ternary forms. The case used in Lemma 4 is `exists_sq_add_mul_sq_sub_mul_sq_eq` with `a = q`: it
-covers the positive integers `m` prime to `p` and `q` with `m ≡ 2 (mod 4)`, or `m` odd and
-`(p / m) = (m / p)`. -/
+`(p / q) = (q / p)`. The whole lemma is `lemma_two`. -/
 theorem lemma_two_only_if {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hp : p % 4 = 1) (hq : q ≠ 2)
     (hqp : legendreSym p q = -1) {M : ℚ} (hM : M ≠ 0)
     (h : ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = M) :
@@ -808,6 +802,1297 @@ theorem lemma_four {p q : ℕ} [hpf : Fact p.Prime] [hqf : Fact q.Prime] (hp : p
       · exact Or.inr ⟨hodd, jacobiSym.quadratic_reciprocity_one_mod_four hp hodd⟩
     exact exists_sq_add_mul_sq_sub_mul_sq_eq (a := q) (p := p) (m := m) hp2 hqq.prime.squarefree
       (hqq.odd_of_ne_two hq) hqp' ((Nat.Prime.coprime_iff_not_dvd hqq).mpr hqm) hm0 hpm h2
+
+/-! ### Tools for the "if" halves of Lemmas 1 and 2 -/
+
+/-- An auxiliary prime in three residue classes modulo pairwise coprime moduli (Dirichlet's
+theorem and the Chinese remainder theorem). -/
+private theorem exists_prime_modEq {n₁ n₂ n₃ c₁ c₂ c₃ : ℕ} (h12 : n₁.Coprime n₂)
+    (h13 : n₁.Coprime n₃) (h23 : n₂.Coprime n₃) (hc₁ : c₁.Coprime n₁) (hc₂ : c₂.Coprime n₂)
+    (hc₃ : c₃.Coprime n₃) (hn₁ : 0 < n₁) (hn₂ : 0 < n₂) (hn₃ : 0 < n₃) (N : ℕ) :
+    ∃ r : ℕ, r.Prime ∧ N < r ∧ r ≡ c₁ [MOD n₁] ∧ r ≡ c₂ [MOD n₂] ∧ r ≡ c₃ [MOD n₃] := by
+  obtain ⟨R₁, hR₁a, hR₁b⟩ := Nat.chineseRemainder h12 c₁ c₂
+  obtain ⟨R, hR₁, hR₃⟩ := Nat.chineseRemainder (Nat.Coprime.mul_left h13 h23) R₁ c₃
+  have hRa : R ≡ c₁ [MOD n₁] := (hR₁.of_mul_right n₂).trans hR₁a
+  have hRb : R ≡ c₂ [MOD n₂] := (hR₁.of_mul_left n₁).trans hR₁b
+  have : NeZero (n₁ * n₂ * n₃) := ⟨by positivity⟩
+  have hunit : IsUnit (R : ZMod (n₁ * n₂ * n₃)) := by
+    rw [ZMod.isUnit_iff_coprime]
+    refine Nat.Coprime.mul_right (Nat.Coprime.mul_right ?_ ?_) ?_
+    · rw [Nat.Coprime, hRa.gcd_eq]; exact hc₁
+    · rw [Nat.Coprime, hRb.gcd_eq]; exact hc₂
+    · rw [Nat.Coprime, hR₃.gcd_eq]; exact hc₃
+  obtain ⟨r, hrN, hr, hrR⟩ := Nat.forall_exists_prime_gt_and_eq_mod hunit N
+  have hrL : r ≡ R [MOD n₁ * n₂ * n₃] := (ZMod.natCast_eq_natCast_iff r R _).mp hrR
+  exact ⟨r, hr, hrN, ((hrL.of_mul_right n₃).of_mul_right n₂).trans hRa,
+    ((hrL.of_mul_right n₃).of_mul_left n₁).trans hRb, (hrL.of_mul_left (n₁ * n₂)).trans hR₃⟩
+
+/-- Squares modulo coprime moduli combine into a square modulo their product. -/
+private theorem exists_sq_modEq_mul {c m n : ℤ} (h : IsCoprime m n)
+    (hm : ∃ x : ℤ, x ^ 2 ≡ c [ZMOD m]) (hn : ∃ y : ℤ, y ^ 2 ≡ c [ZMOD n]) :
+    ∃ z : ℤ, z ^ 2 ≡ c [ZMOD m * n] := by
+  obtain ⟨x, hx⟩ := hm
+  obtain ⟨y, hy⟩ := hn
+  have hgcd : m.natAbs.Coprime n.natAbs := Int.isCoprime_iff_gcd_eq_one.mp h
+  obtain ⟨u, v, huv⟩ := h
+  set z := x * (v * n) + y * (u * m) with hz
+  refine ⟨z, (Int.modEq_and_modEq_iff_modEq_mul hgcd).mp ⟨?_, ?_⟩⟩
+  · have : z ≡ x [ZMOD m] := by
+      rw [Int.modEq_iff_dvd]; exact ⟨u * (x - y), by rw [hz]; linear_combination (-x) * huv⟩
+    exact (this.pow 2).trans hx
+  · have : z ≡ y [ZMOD n] := by
+      rw [Int.modEq_iff_dvd]; exact ⟨v * (y - x), by rw [hz]; linear_combination (-y) * huv⟩
+    exact (this.pow 2).trans hy
+
+/-- Every integer is a square modulo `2`. -/
+private theorem exists_sq_modEq_two (c : ℤ) : ∃ x : ℤ, x ^ 2 ≡ c [ZMOD 2] := by
+  refine ⟨c, ?_⟩
+  have h := (ZMod.intCast_eq_intCast_iff (c ^ 2) c 2).mp (by
+    push_cast
+    generalize (c : ZMod 2) = t
+    revert t
+    decide)
+  exact_mod_cast h
+
+/-- `c u ^ 2 = ℓ c' v ^ 2` forces `u = v = 0` when the prime `ℓ` divides neither `c` nor `c'`:
+the exponent of `ℓ` is even on the left and odd on the right. -/
+private theorem eq_zero_of_mul_sq_eq_mul_sq {ℓ : ℕ} [hℓ : Fact ℓ.Prime] {c c' u v : ℤ}
+    (hc : ¬(ℓ : ℤ) ∣ c) (hc' : ¬(ℓ : ℤ) ∣ c') (h : c * u ^ 2 = ℓ * c' * v ^ 2) :
+    u = 0 ∧ v = 0 := by
+  have hc0 : c ≠ 0 := by rintro rfl; exact hc (dvd_zero _)
+  have hc'0 : c' ≠ 0 := by rintro rfl; exact hc' (dvd_zero _)
+  have hℓ0 : (ℓ : ℤ) ≠ 0 := by exact_mod_cast hℓ.out.ne_zero
+  by_cases hu : u = 0
+  · subst hu
+    refine ⟨rfl, ?_⟩
+    have : (ℓ : ℤ) * c' * v ^ 2 = 0 := by rw [← h]; ring
+    exact pow_eq_zero_iff (n := 2) two_ne_zero |>.mp
+      ((mul_eq_zero.mp this).resolve_left (mul_ne_zero hℓ0 hc'0))
+  · exfalso
+    have hv : v ≠ 0 := by
+      rintro rfl
+      have : c * u ^ 2 = 0 := by rw [h]; ring
+      exact (mul_ne_zero hc0 (pow_ne_zero 2 hu)) this
+    have := congrArg (padicValInt ℓ) h
+    rw [padicValInt.mul hc0 (pow_ne_zero 2 hu), padicValInt.mul (mul_ne_zero hℓ0 hc'0)
+      (pow_ne_zero 2 hv), padicValInt.mul hℓ0 hc'0, sq, sq, padicValInt.mul hu hu,
+      padicValInt.mul hv hv, padicValInt.self hℓ.out.one_lt, padicValInt.eq_zero_of_not_dvd hc,
+      padicValInt.eq_zero_of_not_dvd hc'] at this
+    omega
+
+/-- Legendre's theorem for `A x ^ 2 + B y ^ 2 = T z ^ 2` with `B, T > 0` and `A x ^ 2 + B y ^ 2`
+anisotropic: the congruence conditions give a solution with `z ≠ 0`. -/
+private theorem exists_of_legendre' {A B T : ℤ} (hA0 : A ≠ 0) (hB : 0 < B) (hT : 0 < T)
+    (hA : Squarefree A) (hB' : Squarefree B) (hT' : Squarefree T) (hAB : IsCoprime A B)
+    (hBT : IsCoprime B T) (hAT : IsCoprime A T)
+    (haniso : ∀ x y : ℤ, A * x ^ 2 + B * y ^ 2 = 0 → x = 0 ∧ y = 0)
+    (h1 : ∃ x : ℤ, x ^ 2 ≡ -(A * B) [ZMOD T]) (h2 : ∃ x : ℤ, x ^ 2 ≡ A * T [ZMOD B])
+    (h3 : ∃ x : ℤ, x ^ 2 ≡ B * T [ZMOD A]) :
+    ∃ x y z : ℤ, z ≠ 0 ∧ A * x ^ 2 + B * y ^ 2 = T * z ^ 2 := by
+  have hiff := Int.exists_ternary_eq_zero_iff hA0 hB.ne' (neg_ne_zero.mpr hT.ne') hA hB'
+    (by rw [← Int.squarefree_natAbs, Int.natAbs_neg, Int.squarefree_natAbs]; exact hT')
+    hAB hBT.neg_right hAT.neg_right (fun h => by have := h.2.2; omega)
+    (fun h => by have := h.2.1; omega)
+  obtain ⟨x, y, z, hne, h⟩ := hiff.mpr ⟨by
+      obtain ⟨x, hx⟩ := h1
+      exact ⟨x, Int.modEq_neg.mpr hx⟩, by
+      obtain ⟨x, hx⟩ := h2
+      exact ⟨x, by simpa using hx⟩, by
+      obtain ⟨x, hx⟩ := h3
+      exact ⟨x, by simpa using hx⟩⟩
+  refine ⟨x, y, z, ?_, by linear_combination h⟩
+  rintro rfl
+  obtain ⟨hx, hy⟩ := haniso x y (by linear_combination h)
+  exact hne ⟨hx, hy, rfl⟩
+
+/-- A nonzero rational number is `m₀ S ^ 2` with `m₀` a squarefree integer. -/
+private theorem exists_squarefree_mul_sq {M : ℚ} (hM : M ≠ 0) :
+    ∃ (m₀ : ℤ) (S : ℚ), Squarefree m₀ ∧ S ≠ 0 ∧ M = m₀ * S ^ 2 := by
+  set N : ℤ := M.num * M.den with hN
+  have hN0 : N ≠ 0 := mul_ne_zero (Rat.num_ne_zero.mpr hM) (by exact_mod_cast M.den_nz)
+  obtain ⟨m, t, hm, ht, htm, hsq⟩ := Nat.sq_mul_squarefree_of_pos (Int.natAbs_pos.mpr hN0)
+  refine ⟨N.sign * m, t / M.den, ?_, ?_, ?_⟩
+  · rw [← Int.squarefree_natAbs, Int.natAbs_mul, Int.natAbs_sign_of_ne_zero hN0, one_mul,
+      Int.natAbs_natCast]
+    exact hsq
+  · exact div_ne_zero (by exact_mod_cast ht.ne') (by exact_mod_cast M.den_nz)
+  · have hd : (M.den : ℚ) ≠ 0 := by exact_mod_cast M.den_nz
+    have h1z : N = N.sign * ((t ^ 2 * m : ℕ) : ℤ) := by
+      rw [htm]; exact (Int.sign_mul_natAbs N).symm
+    have h1 : (N : ℚ) = N.sign * (t ^ 2 * m : ℕ) := by
+      exact_mod_cast congrArg (Int.cast : ℤ → ℚ) h1z
+    have h2 : (N : ℚ) = M * M.den ^ 2 := by
+      rw [hN]; push_cast; rw [← Rat.mul_den_eq_num]; ring
+    field_simp
+    rw [← h2, h1]
+    push_cast
+    ring
+
+/-- Two representations of an auxiliary number `T` combine into a representation of `A`. -/
+private theorem exists_of_combine {a κ A B T x y z u v w : ℤ} (hz : z ≠ 0) (hu : u ≠ 0)
+    (h1 : x ^ 2 + a * y ^ 2 = T * z ^ 2) (h2 : A * u ^ 2 + B * v ^ 2 = κ * T * w ^ 2) :
+    ∃ X Y Z : ℚ, (A : ℚ) = κ * (X ^ 2 + a * Y ^ 2) - B * Z ^ 2 := by
+  refine ⟨x * w / (z * u), y * w / (z * u), v / u, ?_⟩
+  have hzq : (z : ℚ) ≠ 0 := by exact_mod_cast hz
+  have huq : (u : ℚ) ≠ 0 := by exact_mod_cast hu
+  have h1' : (x : ℚ) ^ 2 + a * (y : ℚ) ^ 2 = T * (z : ℚ) ^ 2 := by exact_mod_cast h1
+  have h2' : (A : ℚ) * (u : ℚ) ^ 2 + B * (v : ℚ) ^ 2 = κ * T * (w : ℚ) ^ 2 := by
+    exact_mod_cast h2
+  field_simp
+  linear_combination (z : ℚ) ^ 2 * h2' - κ * (w : ℚ) ^ 2 * h1'
+
+/-! ### The "if" half of Lemma 1 -/
+
+/-- A squarefree integer is `± 2 ^ e m₁` with `e ≤ 1` and `m₁` odd. -/
+private theorem exists_two_pow_mul_odd {m₀ : ℤ} (hm₀ : Squarefree m₀) :
+    ∃ e m₁ : ℕ, e ≤ 1 ∧ Odd m₁ ∧ m₀.natAbs = 2 ^ e * m₁ := by
+  have hn : Squarefree m₀.natAbs := Int.squarefree_natAbs.mpr hm₀
+  rcases Nat.even_or_odd m₀.natAbs with ⟨k, hk⟩ | h
+  · refine ⟨1, k, le_rfl, ?_, by omega⟩
+    rcases Nat.even_or_odd k with ⟨j, rfl⟩ | h
+    · exact absurd (hn 2 ⟨j, by omega⟩) (by decide)
+    · exact h
+  · exact ⟨0, m₀.natAbs, Nat.zero_le _, h, by ring⟩
+
+/-- For `r ≡ 1 (mod 4)`, the Jacobi symbol `(m / r)` depends only on `|m|`. -/
+private theorem jacobiSym_eq_natAbs {m : ℤ} {r : ℕ} (hr : r % 4 = 1) :
+    jacobiSym m r = jacobiSym m.natAbs r := by
+  rcases Int.natAbs_eq m with h | h
+  · conv_lhs => rw [h]
+  · conv_lhs => rw [h]
+    rw [neg_eq_neg_one_mul, jacobiSym.mul_left, jacobiSym.at_neg_one (Nat.odd_iff.mpr (by omega)),
+      ZMod.χ₄_nat_mod_four, hr]
+    simp
+
+/-- `(2 ^ e m₁ / r) = (2 / r) ^ e (m₁ / r)` for odd `r`. -/
+private theorem jacobiSym_two_pow_mul {e m₁ r : ℕ} (hr : Odd r) :
+    jacobiSym ((2 ^ e * m₁ : ℕ) : ℤ) r = ZMod.χ₈ (r : ZMod 8) ^ e * jacobiSym m₁ r := by
+  rw [Nat.cast_mul, jacobiSym.mul_left, Nat.cast_pow, jacobiSym.pow_left, Nat.cast_ofNat,
+    jacobiSym.at_two hr]
+
+/-- Quadratic reciprocity for a prime `p ≡ 3 (mod 4)` and an odd `m`. -/
+private theorem jacobiSym_recip_three {p m : ℕ} (hp : p % 4 = 3) (hm : Odd m) :
+    jacobiSym p m = (if m % 4 = 3 then -1 else 1) * jacobiSym m p := by
+  rcases Nat.odd_mod_four_iff.mp (Nat.odd_iff.mp hm) with h | h
+  · rw [ite_eq_right (by omega), one_mul, jacobiSym.quadratic_reciprocity_one_mod_four h
+      (Nat.odd_iff.mpr (by omega))]
+  · rw [ite_eq_left h, jacobiSym.quadratic_reciprocity_three_mod_four hp h]; ring
+
+/-- For a prime `p ≡ 3 (mod 4)`, `(m / p) = ± (|m| / p)`, with the sign of `m`. -/
+private theorem jacobiSym_eq_sign_natAbs {m : ℤ} {p : ℕ} (hp : p % 4 = 3) :
+    jacobiSym m p = (if m < 0 then -1 else 1) * jacobiSym m.natAbs p := by
+  rcases lt_or_ge m 0 with h | h
+  · rw [ite_eq_left h]
+    have : m = -1 * (m.natAbs : ℤ) := by omega
+    conv_lhs => rw [this]
+    rw [jacobiSym.mul_left, jacobiSym.at_neg_one (Nat.odd_iff.mpr (by omega)),
+      ZMod.χ₄_nat_mod_four, hp]
+    rfl
+  · rw [ite_eq_right (not_lt.mpr h), one_mul]
+    congr 1
+    omega
+
+/-- The natural residue of an integer modulo `n > 0`. -/
+private theorem natRes_modEq (m : ℤ) {n : ℕ} (hn : 0 < n) :
+    (((m % n).toNat : ℕ) : ℤ) ≡ m [ZMOD n] := by
+  rw [Int.toNat_of_nonneg (Int.emod_nonneg _ (by omega))]
+  exact Int.mod_modEq m n
+
+/-- The natural residue modulo a prime `p` of an integer prime to `p` is prime to `p`. -/
+private theorem natRes_coprime {p : ℕ} (hp : p.Prime) {m : ℤ} (h : ¬(p : ℤ) ∣ m) :
+    ((m % p).toNat : ℕ).Coprime p := by
+  have h0 : ((m % p).toNat : ℤ) = m % p :=
+    Int.toNat_of_nonneg (Int.emod_nonneg _ (by exact_mod_cast hp.ne_zero))
+  refine ((Nat.Prime.coprime_iff_not_dvd hp).mpr fun hd => h ?_).symm
+  have h1 : (p : ℤ) ∣ m % p := by rw [← h0]; exact Int.natCast_dvd_natCast.mpr hd
+  have h2 := dvd_add (Int.mod_modEq m p).dvd h1
+  simpa using h2
+
+/-- An odd prime `r ≡ 1 (mod 4)` is a value of `x ^ 2 + y ^ 2` times a nonzero square. -/
+private theorem exists_norm_one {r : ℕ} (hr : r.Prime) (hr4 : r % 4 = 1) :
+    ∃ x y z : ℤ, z ≠ 0 ∧ x ^ 2 + 1 * y ^ 2 = r * z ^ 2 := by
+  have : Fact r.Prime := ⟨hr⟩
+  obtain ⟨x, y, z, hz, h⟩ := exists_of_legendre' (A := 1) (B := 1) (T := r) one_ne_zero one_pos
+    (by exact_mod_cast hr.pos) squarefree_one squarefree_one
+    (Int.squarefree_natCast.mpr hr.prime.squarefree) isCoprime_one_left isCoprime_one_left
+    isCoprime_one_left (fun x y h => by
+      constructor <;> nlinarith [sq_nonneg x, sq_nonneg y, sq_eq_zero_iff (a := x),
+        pow_eq_zero_iff (n := 2) (a := y) two_ne_zero])
+    (exists_sq_modEq_of_legendreSym_eq_one (by
+      rw [mul_one, legendreSym_neg_one_of_mod_four_eq_one hr4]))
+    ⟨0, Int.modEq_one⟩ ⟨0, Int.modEq_one⟩
+  exact ⟨x, y, z, hz, by linear_combination h⟩
+
+/-- An odd prime `r ≡ 1 (mod 4)`: `2 r` is a value of `x ^ 2 + y ^ 2` times a nonzero square. -/
+private theorem exists_norm_two {r : ℕ} (hr : r.Prime) (hr4 : r % 4 = 1) :
+    ∃ x y z : ℤ, z ≠ 0 ∧ x ^ 2 + 1 * y ^ 2 = (2 * r : ℤ) * z ^ 2 := by
+  have : Fact r.Prime := ⟨hr⟩
+  have hr2 : IsCoprime (2 : ℤ) r := by
+    rw [Int.isCoprime_iff_gcd_eq_one]
+    exact_mod_cast (Nat.coprime_two_left.mpr (Nat.odd_iff.mpr (by omega)))
+  have hsq : Squarefree (2 * r : ℤ) := by
+    rw [← Int.squarefree_natAbs]
+    have : (2 * (r : ℤ)).natAbs = 2 * r := by omega
+    rw [this, Nat.squarefree_mul_iff]
+    exact ⟨Nat.coprime_two_left.mpr (Nat.odd_iff.mpr (by omega)), Nat.prime_two.prime.squarefree,
+      hr.prime.squarefree⟩
+  obtain ⟨x, y, z, hz, h⟩ := exists_of_legendre' (A := 1) (B := 1) (T := 2 * r) one_ne_zero
+    one_pos (by have := hr.pos; omega) squarefree_one squarefree_one hsq isCoprime_one_left
+    isCoprime_one_left isCoprime_one_left (fun x y h => by
+      constructor <;> nlinarith [sq_nonneg x, sq_nonneg y, sq_eq_zero_iff (a := x),
+        pow_eq_zero_iff (n := 2) (a := y) two_ne_zero])
+    (exists_sq_modEq_mul hr2 (exists_sq_modEq_two _) (exists_sq_modEq_of_legendreSym_eq_one (by
+      rw [mul_one, legendreSym_neg_one_of_mod_four_eq_one hr4])))
+    ⟨0, Int.modEq_one⟩ ⟨0, Int.modEq_one⟩
+  exact ⟨x, y, z, hz, by linear_combination h⟩
+
+/-- A prime that does not divide an integer is coprime to it. -/
+private theorem isCoprime_of_not_dvd {p : ℕ} (hp : p.Prime) {m : ℤ} (h : ¬(p : ℤ) ∣ m) :
+    IsCoprime (p : ℤ) m := by
+  rw [Int.isCoprime_iff_gcd_eq_one, Int.gcd_eq_natAbs, Int.natAbs_natCast]
+  exact (Nat.Prime.coprime_iff_not_dvd hp).mpr fun h' => h (Int.ofNat_dvd_left.mpr h')
+
+/-- A prime larger than `|m|` does not divide `m ≠ 0`. -/
+private theorem not_dvd_of_lt {r : ℕ} {m : ℤ} (hm : m ≠ 0) (h : m.natAbs < r) : ¬(r : ℤ) ∣ m :=
+  fun hd => by
+    have := Nat.le_of_dvd (Int.natAbs_pos.mpr hm) (Int.ofNat_dvd_left.mp hd)
+    omega
+
+/-- From `r ≡ p` modulo `m₁` and modulo `2 ^ e` (`e ≤ 1`, both odd) to `r ≡ p` modulo
+`m = ± 2 ^ e m₁`. -/
+private theorem modEq_of_modEq_odd {r p e m₁ : ℕ} {m : ℤ} (he1 : e ≤ 1) (hm₁ : Odd m₁)
+    (habs : m.natAbs = 2 ^ e * m₁) (hr : Odd r) (hp : Odd p) (h : r ≡ p [MOD m₁]) :
+    (r : ℤ) ≡ p [ZMOD m] := by
+  have h2 : r ≡ p [MOD 2 ^ e * m₁] := by
+    refine (Nat.modEq_and_modEq_iff_modEq_mul
+      (Nat.Coprime.pow_left e (Nat.coprime_two_left.mpr hm₁))).mp ⟨?_, h⟩
+    interval_cases e
+    · exact Nat.modEq_one
+    · rw [pow_one, Nat.ModEq, Nat.odd_iff.mp hr, Nat.odd_iff.mp hp]
+  rw [← habs] at h2
+  have h3 := Int.natCast_modEq_iff.mpr h2
+  rw [Int.modEq_iff_dvd] at h3 ⊢
+  exact Int.natAbs_dvd.mp h3
+
+/-- Case `p ∤ m₀` with `m₀` even or `m₀ ≡ 1 (mod 4)`: an auxiliary prime `r ≡ 1 (mod 4)`. -/
+private theorem lemma_one_if_A1 {p : ℕ} [hpf : Fact p.Prime] (hp : p % 4 = 3) {m₀ : ℤ}
+    {e m₁ : ℕ} (hm₀ : Squarefree m₀) (hpm : ¬(p : ℤ) ∣ m₀) (he1 : e ≤ 1) (hm₁ : Odd m₁)
+    (habs : m₀.natAbs = 2 ^ e * m₁) (h4 : e = 1 ∨ m₀ % 4 = 1) :
+    ∃ X Y Z : ℚ, (m₀ : ℚ) = 1 * (X ^ 2 + 1 * Y ^ 2) - p * Z ^ 2 := by
+  have hpp := hpf.out
+  have hpodd : Odd p := Nat.odd_iff.mpr (by omega)
+  have hm₀0 : m₀ ≠ 0 := hm₀.ne_zero
+  have hpm₁ : p.Coprime m₁ := (Nat.Prime.coprime_iff_not_dvd hpp).mpr fun h =>
+    hpm (Int.ofNat_dvd_left.mpr (habs ▸ Dvd.dvd.mul_left h _))
+  have hpm₀ : IsCoprime (p : ℤ) m₀ := isCoprime_of_not_dvd hpp hpm
+  have hJ1 : jacobiSym p m₁ = 1 ∨ jacobiSym p m₁ = -1 :=
+    jacobiSym.eq_one_or_neg_one (by rw [Int.gcd_natCast_natCast]; exact hpm₁)
+  have hJ2 : jacobiSym m₀ p = 1 ∨ jacobiSym m₀ p = -1 :=
+    jacobiSym.eq_one_or_neg_one (by
+      have := Int.isCoprime_iff_gcd_eq_one.mp hpm₀.symm; exact this)
+  -- the residue of `r` modulo `8`
+  obtain ⟨c, hc4, hc8, hc⟩ : ∃ c : ℕ, c % 4 = 1 ∧ c < 8 ∧
+      ZMod.χ₈ (c : ZMod 8) ^ e * jacobiSym p m₁ * jacobiSym m₀ p = 1 := by
+    rcases h4 with rfl | h4
+    · rcases hJ1 with h1 | h1 <;> rcases hJ2 with h2 | h2
+      · exact ⟨1, rfl, by norm_num, by rw [h1, h2]; decide⟩
+      · exact ⟨5, rfl, by norm_num, by rw [h1, h2]; decide⟩
+      · exact ⟨5, rfl, by norm_num, by rw [h1, h2]; decide⟩
+      · exact ⟨1, rfl, by norm_num, by rw [h1, h2]; decide⟩
+    · refine ⟨1, rfl, by norm_num, ?_⟩
+      have he : e = 0 := by
+        by_contra he
+        have : e = 1 := by omega
+        subst this
+        omega
+      subst he
+      rw [pow_zero, one_mul] at habs
+      rw [pow_zero, one_mul, jacobiSym_recip_three hp hm₁, jacobiSym_eq_sign_natAbs (m := m₀) hp,
+        habs]
+      have hsq : jacobiSym m₁ p ^ 2 = 1 :=
+        jacobiSym.sq_one (by rw [Int.gcd_natCast_natCast]; exact hpm₁.symm)
+      rcases lt_or_ge m₀ 0 with hneg | hpos
+      · rw [ite_eq_left hneg, ite_eq_left (by omega)]; linear_combination hsq
+      · rw [ite_eq_right (not_lt.mpr hpos), ite_eq_right (by omega)]; linear_combination hsq
+  -- the auxiliary prime
+  have hc8' : Nat.Coprime c 8 := by
+    rcases (by omega : c = 1 ∨ c = 5) with rfl | rfl <;> decide
+  have hres : ((m₀ % p).toNat : ℕ).Coprime p := natRes_coprime hpp hpm
+  obtain ⟨r, hr, hrN, hr8, hrp, hrm⟩ := exists_prime_modEq (n₁ := 8) (n₂ := p) (n₃ := m₁)
+    (c₁ := c) (c₂ := (m₀ % p).toNat) (c₃ := p)
+    (Nat.coprime_comm.mp ((show (8 : ℕ) = 2 ^ 3 by norm_num) ▸
+      Nat.Coprime.pow_right 3 (Nat.coprime_two_right.mpr hpodd)))
+    (Nat.coprime_comm.mp ((show (8 : ℕ) = 2 ^ 3 by norm_num) ▸
+      Nat.Coprime.pow_right 3 (Nat.coprime_two_right.mpr hm₁))) hpm₁ hc8' hres hpm₁ (by norm_num)
+    hpp.pos hm₁.pos (p + m₀.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hr8' : r % 8 = c := by rw [hr8, Nat.mod_eq_of_lt hc8]
+  have hr4 : r % 4 = 1 := by omega
+  have hrodd : Odd r := Nat.odd_iff.mpr (by omega)
+  have hrpZ : (r : ℤ) ≡ m₀ [ZMOD p] :=
+    (Int.natCast_modEq_iff.mpr hrp).trans (natRes_modEq m₀ hpp.pos)
+  have hrm₀ : (r : ℤ) ≡ p [ZMOD m₀] := modEq_of_modEq_odd he1 hm₁ habs hrodd hpodd hrm
+  have hpr : p ≠ r := by omega
+  -- `r` is represented by `X ^ 2 + Y ^ 2`
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_one hr hr4
+  -- `r` is represented by `m₀ U ^ 2 + p V ^ 2`
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := m₀) (B := p) (T := r) hm₀0
+    (by exact_mod_cast hpp.pos) (by exact_mod_cast hr.pos) hm₀
+    (Int.squarefree_natCast.mpr hpp.prime.squarefree)
+    (Int.squarefree_natCast.mpr hr.prime.squarefree) hpm₀.symm
+    (Nat.Coprime.isCoprime ((Nat.coprime_primes hpp hr).mpr hpr))
+    (isCoprime_of_not_dvd hr (not_dvd_of_lt hm₀0 (by omega))).symm
+    (fun x y h => eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := -m₀) (c' := 1)
+      (fun h' => hpm (dvd_neg.mp h')) (not_dvd_unit (Or.inl rfl)) (by linear_combination -h))
+    (exists_sq_modEq_of_legendreSym_eq_one (by
+      rw [jacobiSym.legendreSym.to_jacobiSym, neg_eq_neg_one_mul, jacobiSym.mul_left,
+        jacobiSym.mul_left, jacobiSym.at_neg_one hrodd, ZMod.χ₄_nat_mod_four, hr4,
+        jacobiSym_eq_natAbs hr4, habs, jacobiSym_two_pow_mul hrodd, ZMod.χ₈_nat_mod_eight, hr8',
+        jacobiSym.quadratic_reciprocity_one_mod_four' hm₁ hr4, jacobiSym_congr_left hrm,
+        jacobiSym.quadratic_reciprocity_one_mod_four' hpodd hr4, jacobiSym.mod_left (r : ℤ),
+        show (r : ℤ) % p = m₀ % p from hrpZ, ← jacobiSym.mod_left]
+      have h1 : ZMod.χ₄ ((1 : ℕ) : ZMod 4) = 1 := by decide
+      rw [h1]
+      linear_combination hc))
+    ⟨m₀, by
+      calc m₀ ^ 2 = m₀ * m₀ := sq _
+        _ ≡ m₀ * r [ZMOD p] := hrpZ.symm.mul_left _⟩
+    ⟨p, by
+      calc (p : ℤ) ^ 2 = p * p := sq _
+        _ ≡ p * r [ZMOD m₀] := hrm₀.symm.mul_left _⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    exact hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := r) (c' := 1)
+      (by exact_mod_cast fun h => hpr ((Nat.prime_dvd_prime_iff_eq hpp hr).mp h))
+      (not_dvd_unit (Or.inl rfl)) (u := w) (v := v) (by linear_combination -huvw)).1
+  exact exists_of_combine (κ := 1) (A := m₀) (B := p) (T := r) (u := u) (v := v) (w := w) hz hu
+    hxyz (by linear_combination huvw)
+
+/-- `2 r` is squarefree for an odd prime `r`. -/
+private theorem squarefree_two_mul_prime {r : ℕ} (hr : r.Prime) (hr2 : Odd r) :
+    Squarefree (2 * r : ℤ) := by
+  rw [← Int.squarefree_natAbs]
+  have : (2 * (r : ℤ)).natAbs = 2 * r := by omega
+  rw [this, Nat.squarefree_mul_iff]
+  exact ⟨Nat.coprime_two_left.mpr hr2, Nat.prime_two.prime.squarefree, hr.prime.squarefree⟩
+
+/-- Half of `m + 1` is invertible modulo an odd `m`. -/
+private theorem half_coprime {m : ℕ} (hm : Odd m) : ((m + 1) / 2).Coprime m :=
+  Nat.coprime_of_mul_modEq_one 2 (by
+    have : (m + 1) / 2 * 2 = m + 1 := by obtain ⟨k, rfl⟩ := hm; omega
+    rw [this, Nat.ModEq, Nat.add_mod_left])
+
+/-- Case `p ∤ m₀`, `m₀ ≡ 3 (mod 4)`: the auxiliary number is `2 r`. -/
+private theorem lemma_one_if_A2 {p : ℕ} [hpf : Fact p.Prime] (hp : p % 4 = 3) {m₀ : ℤ}
+    {m₁ : ℕ} (hm₀ : Squarefree m₀) (hpm : ¬(p : ℤ) ∣ m₀) (hm₁ : Odd m₁)
+    (habs : m₀.natAbs = m₁) (h4 : m₀ % 4 = 3) (h8 : ¬m₀ ≡ p [ZMOD 8]) :
+    ∃ X Y Z : ℚ, (m₀ : ℚ) = 1 * (X ^ 2 + 1 * Y ^ 2) - p * Z ^ 2 := by
+  have hpp := hpf.out
+  have hpodd : Odd p := Nat.odd_iff.mpr (by omega)
+  have hm₀0 : m₀ ≠ 0 := hm₀.ne_zero
+  have hm₀odd : Odd m₀ := Int.odd_iff.mpr (by omega)
+  have hpm₁ : p.Coprime m₁ := (Nat.Prime.coprime_iff_not_dvd hpp).mpr fun h =>
+    hpm (Int.ofNat_dvd_left.mpr (habs ▸ h))
+  have hpm₀ : IsCoprime (p : ℤ) m₀ := isCoprime_of_not_dvd hpp hpm
+  set h₂ : ℕ := (p + 1) / 2 with hh₂
+  have h₂p : 2 * h₂ = p + 1 := by obtain ⟨k, hk⟩ := hpodd; omega
+  have hpmh : ¬(p : ℤ) ∣ m₀ * h₂ := by
+    intro h
+    rcases (Nat.prime_iff_prime_int.mp hpp).dvd_or_dvd h with h | h
+    · exact hpm h
+    · have := Nat.le_of_dvd (by omega) (Int.natCast_dvd_natCast.mp h); omega
+  obtain ⟨r, hr, hrN, hr8, hrp, hrm⟩ := exists_prime_modEq (n₁ := 8) (n₂ := p) (n₃ := m₁)
+    (c₁ := 1) (c₂ := ((m₀ * h₂) % p).toNat) (c₃ := p * ((m₁ + 1) / 2))
+    (Nat.coprime_comm.mp ((show (8 : ℕ) = 2 ^ 3 by norm_num) ▸
+      Nat.Coprime.pow_right 3 (Nat.coprime_two_right.mpr hpodd)))
+    (Nat.coprime_comm.mp ((show (8 : ℕ) = 2 ^ 3 by norm_num) ▸
+      Nat.Coprime.pow_right 3 (Nat.coprime_two_right.mpr hm₁))) hpm₁ (by norm_num)
+    (natRes_coprime hpp hpmh) (Nat.Coprime.mul_left hpm₁ (half_coprime hm₁)) (by norm_num) hpp.pos
+    hm₁.pos (p + m₀.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hr4 : r % 4 = 1 := by
+    have : r % 8 = 1 := hr8
+    omega
+  have hrodd : Odd r := Nat.odd_iff.mpr (by omega)
+  have hpr : p ≠ r := by omega
+  -- `2 r ≡ m₀ (mod p)` and `2 r ≡ p (mod m₁)`
+  have h2rp : (2 * r : ℤ) ≡ m₀ [ZMOD p] := by
+    have h1 := (Int.natCast_modEq_iff.mpr hrp).trans (natRes_modEq (m₀ * h₂) hpp.pos)
+    have h2 := h1.mul_left 2
+    have h3 : (2 : ℤ) * (m₀ * h₂) = m₀ + p * m₀ := by
+      have : (2 * h₂ : ℤ) = p + 1 := by exact_mod_cast h₂p
+      linear_combination m₀ * this
+    rw [h3] at h2
+    exact h2.trans (Int.modEq_iff_dvd.mpr ⟨-m₀, by ring⟩)
+  have h2rm : 2 * r ≡ p [MOD m₁] := by
+    have h2 := hrm.mul_left 2
+    have h3 : 2 * (p * ((m₁ + 1) / 2)) = p + m₁ * p := by
+      have : 2 * ((m₁ + 1) / 2) = m₁ + 1 := by obtain ⟨k, rfl⟩ := hm₁; omega
+      calc 2 * (p * ((m₁ + 1) / 2)) = p * (2 * ((m₁ + 1) / 2)) := by ring
+        _ = p + m₁ * p := by rw [this]; ring
+    rw [h3] at h2
+    exact h2.trans (by rw [Nat.ModEq, Nat.add_mul_mod_self_left])
+  have h2rm₀ : (2 * r : ℤ) ≡ p [ZMOD m₀] := by
+    have h1 := Int.natCast_modEq_iff.mpr h2rm
+    push_cast at h1
+    rw [Int.modEq_iff_dvd] at h1 ⊢
+    exact Int.natAbs_dvd.mp (habs ▸ h1)
+  -- `2 r` is represented by `X ^ 2 + Y ^ 2`
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_two hr hr4
+  -- `2 r` is represented by `m₀ U ^ 2 + p V ^ 2`
+  have hrm₀ : IsCoprime m₀ (r : ℤ) :=
+    (isCoprime_of_not_dvd hr (not_dvd_of_lt hm₀0 (by omega))).symm
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := m₀) (B := p) (T := 2 * r) hm₀0
+    (by exact_mod_cast hpp.pos) (by have := hr.pos; omega) hm₀
+    (Int.squarefree_natCast.mpr hpp.prime.squarefree) (squarefree_two_mul_prime hr hrodd)
+    hpm₀.symm (IsCoprime.mul_right (Int.isCoprime_two_right.mpr (by exact_mod_cast hpodd))
+      (Nat.Coprime.isCoprime ((Nat.coprime_primes hpp hr).mpr hpr)))
+    (IsCoprime.mul_right (Int.isCoprime_two_right.mpr hm₀odd) hrm₀)
+    (fun x y h => eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := -m₀) (c' := 1)
+      (fun h' => hpm (dvd_neg.mp h')) (not_dvd_unit (Or.inl rfl)) (by linear_combination -h))
+    (exists_sq_modEq_mul (Int.isCoprime_two_left.mpr (by exact_mod_cast hrodd))
+      (exists_sq_modEq_two _) (exists_sq_modEq_of_legendreSym_eq_one (by
+        have hJm : jacobiSym r m₁ = ZMod.χ₈ (m₁ : ZMod 8) * jacobiSym p m₁ := by
+          have h1 := jacobiSym_congr_left h2rm
+          rw [Nat.cast_mul, jacobiSym.mul_left, Nat.cast_ofNat, jacobiSym.at_two hm₁] at h1
+          rw [← h1, ← mul_assoc, ← sq]
+          have : ZMod.χ₈ (m₁ : ZMod 8) ^ 2 = 1 := by
+            rw [ZMod.χ₈_nat_mod_eight]
+            rcases Nat.odd_mod_four_iff.mp (Nat.odd_iff.mp hm₁) with h | h <;>
+              rcases (by omega : m₁ % 8 = 1 ∨ m₁ % 8 = 3 ∨ m₁ % 8 = 5 ∨ m₁ % 8 = 7) with
+                h' | h' | h' | h' <;> rw [h'] <;> decide
+          rw [this, one_mul]
+        have hJp : jacobiSym r p = ZMod.χ₈ (p : ZMod 8) * jacobiSym m₀ p := by
+          have h1 : jacobiSym (2 * r : ℤ) p = jacobiSym m₀ p := by
+            rw [jacobiSym.mod_left, show (2 * r : ℤ) % p = m₀ % p from h2rp,
+              ← jacobiSym.mod_left]
+          rw [jacobiSym.mul_left, jacobiSym.at_two hpodd] at h1
+          rw [← h1, ← mul_assoc, ← sq]
+          have : ZMod.χ₈ (p : ZMod 8) ^ 2 = 1 := by
+            rw [ZMod.χ₈_nat_mod_eight]
+            rcases (by omega : p % 8 = 3 ∨ p % 8 = 7) with h' | h' <;> rw [h'] <;> decide
+          rw [this, one_mul]
+        have hsq : jacobiSym m₁ p ^ 2 = 1 :=
+          jacobiSym.sq_one (by rw [Int.gcd_natCast_natCast]; exact hpm₁.symm)
+        have hχ : ZMod.χ₈ (m₁ : ZMod 8) * ZMod.χ₈ (p : ZMod 8) = -1 := by
+          rw [ZMod.χ₈_nat_mod_eight, ZMod.χ₈_nat_mod_eight p]
+          have h8' : m₀ % 8 ≠ (p : ℤ) % 8 := h8
+          rcases Int.natAbs_eq m₀ with he | he <;> rw [habs] at he <;>
+            rcases (by omega : (m₁ % 8 = 3 ∧ p % 8 = 7) ∨ (m₁ % 8 = 7 ∧ p % 8 = 3) ∨
+              (m₁ % 8 = 5 ∧ p % 8 = 7) ∨ (m₁ % 8 = 1 ∧ p % 8 = 3)) with
+              ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> rw [h1, h2] <;> decide
+        have hsign : jacobiSym p m₁ * jacobiSym m₀ p = -1 := by
+          rw [jacobiSym_recip_three hp hm₁, jacobiSym_eq_sign_natAbs (m := m₀) hp, habs]
+          rcases lt_or_ge m₀ 0 with hneg | hpos
+          · rw [ite_eq_left hneg, ite_eq_right (by omega)]; linear_combination -hsq
+          · rw [ite_eq_right (not_lt.mpr hpos), ite_eq_left (by omega)]; linear_combination -hsq
+        rw [jacobiSym.legendreSym.to_jacobiSym, neg_eq_neg_one_mul, jacobiSym.mul_left,
+          jacobiSym.mul_left, jacobiSym.at_neg_one hrodd, ZMod.χ₄_nat_mod_four, hr4,
+          jacobiSym_eq_natAbs hr4, habs, jacobiSym.quadratic_reciprocity_one_mod_four' hm₁ hr4,
+          jacobiSym.quadratic_reciprocity_one_mod_four' hpodd hr4, hJm, hJp]
+        have h1 : ZMod.χ₄ ((1 : ℕ) : ZMod 4) = 1 := by decide
+        rw [h1]
+        linear_combination (ZMod.χ₈ (m₁ : ZMod 8) * ZMod.χ₈ (p : ZMod 8)) * hsign - hχ)))
+    ⟨m₀, by
+      calc m₀ ^ 2 = m₀ * m₀ := sq _
+        _ ≡ m₀ * (2 * r) [ZMOD p] := h2rp.symm.mul_left _⟩
+    ⟨p, by
+      calc (p : ℤ) ^ 2 = p * p := sq _
+        _ ≡ p * (2 * r) [ZMOD m₀] := h2rm₀.symm.mul_left _⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    refine hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := 2 * r) (c' := 1) ?_
+      (not_dvd_unit (Or.inl rfl)) (u := w) (v := v) (by linear_combination -huvw)).1
+    intro h
+    rcases (Nat.prime_iff_prime_int.mp hpp).dvd_or_dvd h with h | h
+    · have := Int.le_of_dvd (by norm_num) h; omega
+    · exact hpr ((Nat.prime_dvd_prime_iff_eq hpp hr).mp (Int.natCast_dvd_natCast.mp h))
+  exact exists_of_combine (κ := 1) (A := m₀) (B := p) (T := 2 * r) (u := u) (v := v) (w := w)
+    hz hu hxyz (by linear_combination huvw)
+
+/-- `p r` is squarefree for distinct primes `p`, `r`, and so is `p (2 r)` when both are odd. -/
+private theorem squarefree_prime_mul {p r : ℕ} (hp : p.Prime) (hr : r.Prime) (hpr : p ≠ r) :
+    Squarefree (p * r : ℤ) := by
+  rw [← Int.squarefree_natAbs]
+  have : ((p : ℤ) * r).natAbs = p * r := by rw [Int.natAbs_mul]; simp
+  rw [this, Nat.squarefree_mul_iff]
+  exact ⟨(Nat.coprime_primes hp hr).mpr hpr, hp.prime.squarefree, hr.prime.squarefree⟩
+
+private theorem squarefree_prime_mul_two_mul {p r : ℕ} (hp : p.Prime) (hr : r.Prime)
+    (hpr : p ≠ r) (hp2 : Odd p) (hr2 : Odd r) : Squarefree (p * (2 * r) : ℤ) := by
+  rw [← Int.squarefree_natAbs]
+  have : ((p : ℤ) * (2 * r)).natAbs = p * (2 * r) := by
+    rw [show ((p : ℤ) * (2 * r)) = ((p * (2 * r) : ℕ) : ℤ) by push_cast; ring, Int.natAbs_natCast]
+  rw [this, Nat.squarefree_mul_iff, Nat.squarefree_mul_iff]
+  exact ⟨Nat.Coprime.mul_right (Nat.coprime_two_right.mpr hp2)
+    ((Nat.coprime_primes hp hr).mpr hpr), hp.prime.squarefree, Nat.coprime_two_left.mpr hr2,
+    Nat.prime_two.prime.squarefree, hr.prime.squarefree⟩
+
+/-- `m x ^ 2 + y ^ 2` is anisotropic for a squarefree `m ≠ -1`. -/
+private theorem aniso_one {m : ℤ} (hm : Squarefree m) (hm1 : m ≠ -1) (x y : ℤ)
+    (h : m * x ^ 2 + 1 * y ^ 2 = 0) : x = 0 ∧ y = 0 := by
+  rcases lt_or_ge m 0 with hneg | hpos
+  · have h2 : 2 ≤ (-m).natAbs := by omega
+    obtain ⟨ℓ, hℓ, hℓd⟩ := Nat.exists_prime_and_dvd (show (-m).natAbs ≠ 1 by omega)
+    have : Fact ℓ.Prime := ⟨hℓ⟩
+    obtain ⟨c', hc'⟩ : (ℓ : ℤ) ∣ -m := Int.ofNat_dvd_left.mpr hℓd
+    have hc'ℓ : ¬(ℓ : ℤ) ∣ c' := by
+      rintro ⟨d, rfl⟩
+      have : (ℓ : ℤ) * ℓ ∣ m := ⟨-d, by linear_combination -hc'⟩
+      exact hℓ.one_lt.ne' (by
+        have := Int.isUnit_iff_natAbs_eq.mp (hm (ℓ : ℤ) this)
+        simpa using this)
+    obtain ⟨hy, hx⟩ := eq_zero_of_mul_sq_eq_mul_sq (ℓ := ℓ) (c := 1) (c' := c') (u := y) (v := x)
+      (not_dvd_unit (Or.inl rfl)) hc'ℓ (by linear_combination h + x ^ 2 * hc')
+    exact ⟨hx, hy⟩
+  · have hm0 : 0 < m := lt_of_le_of_ne hpos (Ne.symm hm.ne_zero)
+    have hx : x ^ 2 = 0 := by nlinarith [sq_nonneg x, sq_nonneg y]
+    have hy : y ^ 2 = 0 := by nlinarith [sq_nonneg x, sq_nonneg y]
+    exact ⟨pow_eq_zero_iff (n := 2) two_ne_zero |>.mp hx,
+      pow_eq_zero_iff (n := 2) two_ne_zero |>.mp hy⟩
+
+/-- Case `m₀ = p m'` with `m'` even or `m' ≡ 3 (mod 4)`: the auxiliary number is `p r`. -/
+private theorem lemma_one_if_B1 {p : ℕ} [hpf : Fact p.Prime] (hp : p % 4 = 3) {m' : ℤ}
+    {e m₁ : ℕ} (hm' : Squarefree m') (hpm : ¬(p : ℤ) ∣ m') (hJ : legendreSym p m' = -1)
+    (hm1 : m' ≠ -1) (he1 : e ≤ 1) (hm₁ : Odd m₁) (habs : m'.natAbs = 2 ^ e * m₁)
+    (h4 : e = 1 ∨ m' % 4 = 3) :
+    ∃ X Y Z : ℚ, (m' : ℚ) = p * (X ^ 2 + 1 * Y ^ 2) - 1 * Z ^ 2 := by
+  have hpp := hpf.out
+  have hpodd : Odd p := Nat.odd_iff.mpr (by omega)
+  have hm0 : m' ≠ 0 := hm'.ne_zero
+  have hpm₁ : p.Coprime m₁ := (Nat.Prime.coprime_iff_not_dvd hpp).mpr fun h =>
+    hpm (Int.ofNat_dvd_left.mpr (habs ▸ Dvd.dvd.mul_left h _))
+  have hJ' : jacobiSym m' p = -1 := by rw [← jacobiSym.legendreSym.to_jacobiSym]; exact hJ
+  have hJ1 : jacobiSym p m₁ = 1 ∨ jacobiSym p m₁ = -1 :=
+    jacobiSym.eq_one_or_neg_one (by rw [Int.gcd_natCast_natCast]; exact hpm₁)
+  obtain ⟨c, hc4, hc8, hc⟩ : ∃ c : ℕ, c % 4 = 1 ∧ c < 8 ∧
+      ZMod.χ₈ (c : ZMod 8) ^ e * jacobiSym p m₁ = 1 := by
+    rcases h4 with rfl | h4
+    · rcases hJ1 with h1 | h1
+      · exact ⟨1, rfl, by norm_num, by rw [h1]; decide⟩
+      · exact ⟨5, rfl, by norm_num, by rw [h1]; decide⟩
+    · refine ⟨1, rfl, by norm_num, ?_⟩
+      have he : e = 0 := by
+        by_contra he
+        have : e = 1 := by omega
+        subst this
+        omega
+      subst he
+      rw [pow_zero, one_mul] at habs
+      rw [pow_zero, one_mul, jacobiSym_recip_three hp hm₁]
+      rw [jacobiSym_eq_sign_natAbs (m := m') hp, habs] at hJ'
+      rcases lt_or_ge m' 0 with hneg | hpos
+      · rw [ite_eq_left hneg] at hJ'; rw [ite_eq_right (by omega)]; linear_combination -hJ'
+      · rw [ite_eq_right (not_lt.mpr hpos)] at hJ'; rw [ite_eq_left (by omega)]
+        linear_combination -hJ'
+  have hc8' : Nat.Coprime c 8 := by
+    rcases (by omega : c = 1 ∨ c = 5) with rfl | rfl <;> decide
+  obtain ⟨r, hr, hrN, hr8, hrm, -⟩ := exists_prime_modEq (n₁ := 8) (n₂ := m₁) (n₃ := 1)
+    (c₁ := c) (c₂ := p) (c₃ := 0)
+    (Nat.coprime_comm.mp ((show (8 : ℕ) = 2 ^ 3 by norm_num) ▸
+      Nat.Coprime.pow_right 3 (Nat.coprime_two_right.mpr hm₁))) (Nat.coprime_one_right _)
+    (Nat.coprime_one_right _) hc8' hpm₁ (Nat.coprime_one_right _) (by norm_num) hm₁.pos one_pos
+    (p + m'.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hr8' : r % 8 = c := by rw [hr8, Nat.mod_eq_of_lt hc8]
+  have hr4 : r % 4 = 1 := by omega
+  have hrodd : Odd r := Nat.odd_iff.mpr (by omega)
+  have hpr : p ≠ r := by omega
+  have hrm' : (r : ℤ) ≡ p [ZMOD m'] := modEq_of_modEq_odd he1 hm₁ habs hrodd hpodd hrm
+  have hprC : IsCoprime (p : ℤ) r := Nat.Coprime.isCoprime ((Nat.coprime_primes hpp hr).mpr hpr)
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_one hr hr4
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := m') (B := 1) (T := p * r) hm0 one_pos
+    (by have := hpp.pos; have := hr.pos; positivity) hm' squarefree_one
+    (squarefree_prime_mul hpp hr hpr) isCoprime_one_right isCoprime_one_left
+    (IsCoprime.mul_right (isCoprime_of_not_dvd hpp hpm).symm
+      (isCoprime_of_not_dvd hr (not_dvd_of_lt hm0 (by omega))).symm)
+    (aniso_one hm' hm1)
+    (exists_sq_modEq_mul hprC
+      (exists_sq_modEq_of_legendreSym_eq_one (by
+        rw [mul_one, neg_eq_neg_one_mul, legendreSym.mul,
+          legendreSym_neg_one_of_mod_four_eq_three hp, hJ]
+        norm_num))
+      (exists_sq_modEq_of_legendreSym_eq_one (by
+        rw [mul_one, jacobiSym.legendreSym.to_jacobiSym, neg_eq_neg_one_mul, jacobiSym.mul_left,
+          jacobiSym.at_neg_one hrodd, ZMod.χ₄_nat_mod_four, hr4, jacobiSym_eq_natAbs hr4, habs,
+          jacobiSym_two_pow_mul hrodd, ZMod.χ₈_nat_mod_eight, hr8',
+          jacobiSym.quadratic_reciprocity_one_mod_four' hm₁ hr4, jacobiSym_congr_left hrm]
+        have h1 : ZMod.χ₄ ((1 : ℕ) : ZMod 4) = 1 := by decide
+        rw [h1]
+        linear_combination hc)))
+    ⟨0, Int.modEq_one⟩
+    ⟨p, by
+      calc (p : ℤ) ^ 2 = p * p := sq _
+        _ ≡ p * r [ZMOD m'] := hrm'.symm.mul_left _
+        _ = 1 * (p * r) := by ring⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    exact hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := 1) (c' := r) (u := v) (v := w)
+      (not_dvd_unit (Or.inl rfl))
+      (by exact_mod_cast fun h => hpr ((Nat.prime_dvd_prime_iff_eq hpp hr).mp h))
+      (by linear_combination huvw)).2
+  exact exists_of_combine (κ := p) (A := m') (B := 1) (T := r) (u := u) (v := v) (w := w) hz hu
+    hxyz (by linear_combination huvw)
+
+/-- Case `m₀ = p m'` with `m' ≡ 5 (mod 8)`: the auxiliary number is `2 p r`. -/
+private theorem lemma_one_if_B2 {p : ℕ} [hpf : Fact p.Prime] (hp : p % 4 = 3) {m' : ℤ}
+    {m₁ : ℕ} (hm' : Squarefree m') (hpm : ¬(p : ℤ) ∣ m') (hJ : legendreSym p m' = -1)
+    (hm₁ : Odd m₁) (habs : m'.natAbs = m₁) (h8 : m' % 8 = 5) :
+    ∃ X Y Z : ℚ, (m' : ℚ) = p * (X ^ 2 + 1 * Y ^ 2) - 1 * Z ^ 2 := by
+  have hpp := hpf.out
+  have hpodd : Odd p := Nat.odd_iff.mpr (by omega)
+  have hm0 : m' ≠ 0 := hm'.ne_zero
+  have hm'odd : Odd m' := Int.odd_iff.mpr (by omega)
+  have hpm₁ : p.Coprime m₁ := (Nat.Prime.coprime_iff_not_dvd hpp).mpr fun h =>
+    hpm (Int.ofNat_dvd_left.mpr (habs ▸ h))
+  have hJ' : jacobiSym m' p = -1 := by rw [← jacobiSym.legendreSym.to_jacobiSym]; exact hJ
+  obtain ⟨r, hr, hrN, hr8, hrm, -⟩ := exists_prime_modEq (n₁ := 8) (n₂ := m₁) (n₃ := 1)
+    (c₁ := 1) (c₂ := p * ((m₁ + 1) / 2)) (c₃ := 0)
+    (Nat.coprime_comm.mp ((show (8 : ℕ) = 2 ^ 3 by norm_num) ▸
+      Nat.Coprime.pow_right 3 (Nat.coprime_two_right.mpr hm₁))) (Nat.coprime_one_right _)
+    (Nat.coprime_one_right _) (by norm_num) (Nat.Coprime.mul_left hpm₁ (half_coprime hm₁))
+    (Nat.coprime_one_right _) (by norm_num) hm₁.pos one_pos (p + m'.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hr4 : r % 4 = 1 := by
+    have : r % 8 = 1 := hr8
+    omega
+  have hrodd : Odd r := Nat.odd_iff.mpr (by omega)
+  have hpr : p ≠ r := by omega
+  have h2rm : 2 * r ≡ p [MOD m₁] := by
+    have h2 := hrm.mul_left 2
+    have h3 : 2 * (p * ((m₁ + 1) / 2)) = p + m₁ * p := by
+      have : 2 * ((m₁ + 1) / 2) = m₁ + 1 := by obtain ⟨k, rfl⟩ := hm₁; omega
+      calc 2 * (p * ((m₁ + 1) / 2)) = p * (2 * ((m₁ + 1) / 2)) := by ring
+        _ = p + m₁ * p := by rw [this]; ring
+    rw [h3] at h2
+    exact h2.trans (by rw [Nat.ModEq, Nat.add_mul_mod_self_left])
+  have h2rm' : (2 * r : ℤ) ≡ p [ZMOD m'] := by
+    have h1 := Int.natCast_modEq_iff.mpr h2rm
+    push_cast at h1
+    rw [Int.modEq_iff_dvd] at h1 ⊢
+    exact Int.natAbs_dvd.mp (habs ▸ h1)
+  have hp2r : IsCoprime (p : ℤ) (2 * r) :=
+    IsCoprime.mul_right (Int.isCoprime_two_right.mpr (by exact_mod_cast hpodd))
+      (Nat.Coprime.isCoprime ((Nat.coprime_primes hpp hr).mpr hpr))
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_two hr hr4
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := m') (B := 1) (T := p * (2 * r)) hm0
+    one_pos (by have := hpp.pos; have := hr.pos; positivity) hm' squarefree_one
+    (squarefree_prime_mul_two_mul hpp hr hpr hpodd hrodd) isCoprime_one_right isCoprime_one_left
+    (IsCoprime.mul_right (isCoprime_of_not_dvd hpp hpm).symm (IsCoprime.mul_right
+      (Int.isCoprime_two_right.mpr hm'odd)
+      (isCoprime_of_not_dvd hr (not_dvd_of_lt hm0 (by omega))).symm))
+    (aniso_one hm' (by omega))
+    (exists_sq_modEq_mul hp2r
+      (exists_sq_modEq_of_legendreSym_eq_one (by
+        rw [mul_one, neg_eq_neg_one_mul, legendreSym.mul,
+          legendreSym_neg_one_of_mod_four_eq_three hp, hJ]
+        norm_num))
+      (exists_sq_modEq_mul (Int.isCoprime_two_left.mpr (by exact_mod_cast hrodd))
+        (exists_sq_modEq_two _) (exists_sq_modEq_of_legendreSym_eq_one (by
+          have hJm : jacobiSym r m₁ = ZMod.χ₈ (m₁ : ZMod 8) * jacobiSym p m₁ := by
+            have h1 := jacobiSym_congr_left h2rm
+            rw [Nat.cast_mul, jacobiSym.mul_left, Nat.cast_ofNat, jacobiSym.at_two hm₁] at h1
+            rw [← h1, ← mul_assoc, ← sq]
+            have : ZMod.χ₈ (m₁ : ZMod 8) ^ 2 = 1 := by
+              rw [ZMod.χ₈_nat_mod_eight]
+              rcases (by omega : m₁ % 8 = 1 ∨ m₁ % 8 = 3 ∨ m₁ % 8 = 5 ∨ m₁ % 8 = 7) with
+                h' | h' | h' | h' <;> rw [h'] <;> decide
+            rw [this, one_mul]
+          have hfin : ZMod.χ₈ (m₁ : ZMod 8) * jacobiSym p m₁ = 1 := by
+            rw [jacobiSym_recip_three hp hm₁]
+            rw [jacobiSym_eq_sign_natAbs (m := m') hp, habs] at hJ'
+            rw [ZMod.χ₈_nat_mod_eight]
+            rcases Int.natAbs_eq m' with he | he <;> rw [habs] at he
+            · rw [ite_eq_right (show ¬m' < 0 by omega), one_mul] at hJ'
+              rw [ite_eq_right (show ¬m₁ % 4 = 3 by omega), one_mul, show m₁ % 8 = 5 by omega, hJ']
+              decide
+            · rw [ite_eq_left (show m' < 0 by omega)] at hJ'
+              rw [ite_eq_left (show m₁ % 4 = 3 by omega), show m₁ % 8 = 3 by omega]
+              have h1 : jacobiSym m₁ p = 1 := by linear_combination -hJ'
+              rw [h1]
+              decide
+          rw [mul_one, jacobiSym.legendreSym.to_jacobiSym, neg_eq_neg_one_mul, jacobiSym.mul_left,
+            jacobiSym.at_neg_one hrodd, ZMod.χ₄_nat_mod_four, hr4, jacobiSym_eq_natAbs hr4, habs,
+            jacobiSym.quadratic_reciprocity_one_mod_four' hm₁ hr4, hJm, hfin]
+          decide))))
+    ⟨0, Int.modEq_one⟩
+    ⟨p, by
+      calc (p : ℤ) ^ 2 = p * p := sq _
+        _ ≡ p * (2 * r) [ZMOD m'] := h2rm'.symm.mul_left _
+        _ = 1 * (p * (2 * r)) := by ring⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    refine hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := 1) (c' := 2 * r) (u := v) (v := w)
+      (not_dvd_unit (Or.inl rfl)) ?_ (by linear_combination huvw)).2
+    intro h
+    rcases (Nat.prime_iff_prime_int.mp hpp).dvd_or_dvd h with h | h
+    · have := Int.le_of_dvd (by norm_num) h; omega
+    · exact hpr ((Nat.prime_dvd_prime_iff_eq hpp hr).mp (Int.natCast_dvd_natCast.mp h))
+  exact exists_of_combine (κ := p) (A := m') (B := 1) (T := 2 * r) (u := u) (v := v) (w := w)
+    hz hu hxyz (by linear_combination huvw)
+
+/-- The "if" half of Robinson's Lemma 1. -/
+private theorem lemma_one_if {p : ℕ} [hpf : Fact p.Prime] (hp : p % 4 = 3) {M : ℚ} (hM : M ≠ 0)
+    (h1 : ¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = 1)
+    (h2 : ¬∃ (k : ℤ) (S : ℚ), M = k * S ^ 2 ∧ k ≡ p [ZMOD 8]) :
+    ∃ X Y Z : ℚ, X ^ 2 + Y ^ 2 - p * Z ^ 2 = M := by
+  have hpp := hpf.out
+  obtain ⟨m₀, S, hsq, hS, rfl⟩ := exists_squarefree_mul_sq hM
+  suffices H : ∃ X Y Z : ℚ, X ^ 2 + Y ^ 2 - p * Z ^ 2 = m₀ by
+    obtain ⟨X, Y, Z, h⟩ := H
+    exact ⟨S * X, S * Y, S * Z, by linear_combination S ^ 2 * h⟩
+  have h2' : ¬m₀ ≡ p [ZMOD 8] := fun h => h2 ⟨m₀, S, rfl, h⟩
+  by_cases hpm : (p : ℤ) ∣ m₀
+  · obtain ⟨m', rfl⟩ := hpm
+    have hm' : Squarefree m' := hsq.of_mul_right
+    have hpm' : ¬(p : ℤ) ∣ m' := by
+      rintro ⟨d, rfl⟩
+      have := hsq (p : ℤ) ⟨d, by ring⟩
+      exact (Nat.prime_iff_prime_int.mp hpp).not_isUnit this
+    have hJ : legendreSym p m' = -1 := by
+      rcases legendreSym.eq_one_or_neg_one p (a := m') (by
+        rw [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd]; exact hpm') with h | h
+      · exact absurd ⟨m', S, by push_cast; ring, h⟩ h1
+      · exact h
+    suffices H : ∃ X Y Z : ℚ, (m' : ℚ) = p * (X ^ 2 + 1 * Y ^ 2) - 1 * Z ^ 2 by
+      obtain ⟨X, Y, Z, h⟩ := H
+      exact ⟨p * X, p * Y, Z, by push_cast; linear_combination (-(p : ℚ)) * h⟩
+    by_cases hm1 : m' = -1
+    · exact ⟨0, 0, 1, by rw [hm1]; push_cast; ring⟩
+    obtain ⟨e, m₁, he1, hm₁, habs⟩ := exists_two_pow_mul_odd hm'
+    by_cases h4 : e = 1 ∨ m' % 4 = 3
+    · exact lemma_one_if_B1 hp hm' hpm' hJ hm1 he1 hm₁ habs h4
+    · have he : e = 0 := by omega
+      subst he
+      rw [pow_zero, one_mul] at habs
+      have hodd : m' % 2 = 1 := by
+        rcases Int.natAbs_eq m' with h | h <;> rw [habs] at h <;>
+          · have := Nat.odd_iff.mp hm₁; omega
+      have h8 : m' % 8 = 5 := by
+        by_contra h8
+        have : m' % 8 = 1 := by omega
+        refine h2' (Int.modEq_iff_dvd.mpr ?_)
+        obtain ⟨t, ht⟩ : (8 : ℤ) ∣ m' - 1 := by omega
+        exact ⟨-(p * t), by linear_combination (-(p : ℤ)) * ht⟩
+      exact lemma_one_if_B2 hp hm' hpm' hJ hm₁ habs h8
+  · obtain ⟨e, m₁, he1, hm₁, habs⟩ := exists_two_pow_mul_odd hsq
+    suffices H : ∃ X Y Z : ℚ, (m₀ : ℚ) = 1 * (X ^ 2 + 1 * Y ^ 2) - p * Z ^ 2 by
+      obtain ⟨X, Y, Z, h⟩ := H
+      exact ⟨X, Y, Z, by linear_combination -h⟩
+    by_cases h4 : e = 1 ∨ m₀ % 4 = 1
+    · exact lemma_one_if_A1 hp hsq hpm he1 hm₁ habs h4
+    · have he : e = 0 := by omega
+      subst he
+      rw [pow_zero, one_mul] at habs
+      have hodd : m₀ % 2 = 1 := by
+        rcases Int.natAbs_eq m₀ with h | h <;> rw [habs] at h <;>
+          · have := Nat.odd_iff.mp hm₁; omega
+      exact lemma_one_if_A2 hp hsq hpm hm₁ habs (by omega) h2'
+
+/-- **Robinson's Lemma 1.** Let `p` be a prime with `p ≡ 3 (mod 4)` and let `M` be a nonzero
+rational number. Then `X ^ 2 + Y ^ 2 - p Z ^ 2 = M` has a solution in rational numbers `X, Y, Z`
+if and only if `M` is of neither of the forms `p k S ^ 2` with `(k / p) = 1` and `k S ^ 2` with
+`k ≡ p (mod 8)`, where `k` is an integer and `S` a rational number.
+
+J. Robinson, "Definability and decision problems in arithmetic", *J. Symbolic Logic* 14 (1949),
+Lemma 1, p. 107: "If `p` is a prime `≡ 3 (mod 4)` then `X² + Y² − pZ²` represents a nonzero
+rational number `M`, if and only if `M` is not of the form `pk·S²` with `(k/p) = 1` or `k·S²` with
+`k ≡ p (mod 8)`." Capital letters denote rationals and small letters integers (p. 106). Robinson
+states it without proof, as a special case of a theorem of Hasse (p. 107). The "only if" half is
+`lemma_one_only_if`. For the "if" half, write `M = m₀ S ^ 2` with `m₀` a squarefree integer; an
+auxiliary prime `r ≡ 1 (mod 4)` from Dirichlet's theorem, with `T = r`, `2 r`, `p r` or `2 p r`
+according to `p ∣ m₀` and the class of `m₀` modulo `8`, is represented both by `X ^ 2 + Y ^ 2` and,
+by Legendre's theorem, by a binary form attached to `m₀`. -/
+theorem lemma_one {p : ℕ} [Fact p.Prime] (hp : p % 4 = 3) {M : ℚ} (hM : M ≠ 0) :
+    (∃ X Y Z : ℚ, X ^ 2 + Y ^ 2 - p * Z ^ 2 = M) ↔
+      (¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = 1) ∧
+        ¬∃ (k : ℤ) (S : ℚ), M = k * S ^ 2 ∧ k ≡ p [ZMOD 8] :=
+  ⟨lemma_one_only_if hp hM, fun h => lemma_one_if hp hM h.1 h.2⟩
+
+/-! ### Robinson's Lemma 2: sufficiency of the conditions -/
+
+/-- `exists_prime_modEq` with the residue classes given by integers. -/
+private theorem exists_prime_intModEq {n₁ n₂ n₃ : ℕ} {c₁ c₂ c₃ : ℤ} (h12 : n₁.Coprime n₂)
+    (h13 : n₁.Coprime n₃) (h23 : n₂.Coprime n₃) (hc₁ : IsCoprime c₁ n₁) (hc₂ : IsCoprime c₂ n₂)
+    (hc₃ : IsCoprime c₃ n₃) (hn₁ : 0 < n₁) (hn₂ : 0 < n₂) (hn₃ : 0 < n₃) (N : ℕ) :
+    ∃ r : ℕ, r.Prime ∧ N < r ∧ (r : ℤ) ≡ c₁ [ZMOD n₁] ∧ (r : ℤ) ≡ c₂ [ZMOD n₂] ∧
+      (r : ℤ) ≡ c₃ [ZMOD n₃] := by
+  have key : ∀ {c : ℤ} {n : ℕ}, 0 < n → IsCoprime c n →
+      ((c % n).toNat : ℤ) = c % n ∧ (c % n).toNat.Coprime n := by
+    intro c n hn hc
+    have h0 : 0 ≤ c % n := Int.emod_nonneg c (by exact_mod_cast hn.ne')
+    have he : ((c % n).toNat : ℤ) = c % n := Int.toNat_of_nonneg h0
+    refine ⟨he, Nat.isCoprime_iff_coprime.mp ?_⟩
+    rw [he, Int.emod_def]
+    obtain ⟨u, v, huv⟩ := hc
+    exact ⟨u, v + u * (c / n), by linear_combination huv⟩
+  have conv : ∀ {r : ℕ} {c : ℤ} {n : ℕ}, ((c % n).toNat : ℤ) = c % n →
+      r ≡ (c % n).toNat [MOD n] → (r : ℤ) ≡ c [ZMOD n] := by
+    intro r c n he h
+    refine (Int.natCast_modEq_iff.mpr h).trans ?_
+    rw [he]
+    exact Int.mod_modEq c n
+  obtain ⟨e₁, h₁⟩ := key hn₁ hc₁
+  obtain ⟨e₂, h₂⟩ := key hn₂ hc₂
+  obtain ⟨e₃, h₃⟩ := key hn₃ hc₃
+  obtain ⟨r, hr, hrN, hr₁, hr₂, hr₃⟩ := exists_prime_modEq h12 h13 h23 h₁ h₂ h₃ hn₁ hn₂ hn₃ N
+  exact ⟨r, hr, hrN, conv e₁ hr₁, conv e₂ hr₂, conv e₃ hr₃⟩
+
+/-- The Jacobi symbol `(a / b)` depends only on the class of the odd number `b` modulo
+`4 |a|`. -/
+private theorem jacobiSym_congr_right {a : ℤ} {b c : ℕ} (hb : Odd b) (hc : Odd c)
+    (h : (b : ℤ) ≡ c [ZMOD (4 * a.natAbs : ℕ)]) : jacobiSym a b = jacobiSym a c := by
+  have h' : b % (4 * a.natAbs) = c % (4 * a.natAbs) := Int.natCast_modEq_iff.mp h
+  rw [jacobiSym.mod_right a hb, jacobiSym.mod_right a hc, h']
+
+/-- The Legendre symbol `(a / ℓ)` depends only on the class of `a` modulo `ℓ`. -/
+private theorem legendreSym_congr {ℓ : ℕ} [Fact ℓ.Prime] {a b : ℤ} (h : a ≡ b [ZMOD ℓ]) :
+    legendreSym ℓ a = legendreSym ℓ b := by
+  rw [legendreSym.mod, h.eq, ← legendreSym.mod]
+
+/-- A prime does not divide a different prime. -/
+private theorem not_dvd_of_prime_ne {ℓ r : ℕ} (hℓ : ℓ.Prime) (hr : r.Prime) (h : ℓ ≠ r) :
+    ¬(ℓ : ℤ) ∣ r := by
+  rw [Int.natCast_dvd_natCast]
+  exact fun hd => h ((Nat.prime_dvd_prime_iff_eq hℓ hr).mp hd)
+
+/-- `4 a` is prime to an odd prime `ℓ` not dividing `a`. -/
+private theorem coprime_four_mul {a ℓ : ℕ} (hℓ : ℓ.Prime) (hℓ2 : ℓ ≠ 2) (h : ¬ℓ ∣ a) :
+    (4 * a).Coprime ℓ := by
+  refine Nat.Coprime.mul_left ?_ ((Nat.Prime.coprime_iff_not_dvd hℓ).mpr h).symm
+  rw [show (4 : ℕ) = 2 ^ 2 by norm_num]
+  exact Nat.Coprime.pow_left 2 ((Nat.coprime_primes Nat.prime_two hℓ).mpr (Ne.symm hℓ2))
+
+/-- In a squarefree integer `ℓ k`, the prime `ℓ` does not divide `k`. -/
+private theorem not_dvd_of_squarefree_mul {ℓ : ℕ} (hℓ : ℓ.Prime) {k : ℤ}
+    (h : Squarefree ((ℓ : ℤ) * k)) : ¬(ℓ : ℤ) ∣ k := by
+  rintro ⟨c, rfl⟩
+  exact (Nat.prime_iff_prime_int.mp hℓ).not_isUnit (h ℓ ⟨c, by ring⟩)
+
+/-- A Legendre symbol of an integer prime to `ℓ` that is not `-1` is `1`. -/
+private theorem legendreSym_eq_one_of_ne {ℓ : ℕ} [Fact ℓ.Prime] {k : ℤ} (hk : ¬(ℓ : ℤ) ∣ k)
+    (h : legendreSym ℓ k ≠ -1) : legendreSym ℓ k = 1 :=
+  (legendreSym.eq_one_or_neg_one ℓ (by rwa [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd])).resolve_right h
+
+/-- The square of the Legendre symbol of an integer prime to `ℓ` is `1`. -/
+private theorem legendreSym_mul_self {ℓ : ℕ} [Fact ℓ.Prime] {k : ℤ} (hk : ¬(ℓ : ℤ) ∣ k) :
+    legendreSym ℓ k * legendreSym ℓ k = 1 := by
+  rcases legendreSym.eq_one_or_neg_one ℓ (a := k)
+    (by rwa [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd]) with h | h <;> rw [h] <;> norm_num
+
+/-- `(-q / r) = 1` for odd primes `q` and `r` with `r ≡ 1 (mod q)`, and `r ≡ 1` or
+`r ≡ q (mod 4)`. -/
+private theorem legendreSym_neg_eq_one {q r : ℕ} [hq : Fact q.Prime] [hr : Fact r.Prime]
+    (hq2 : q ≠ 2) (hr2 : r ≠ 2) (hrq : (r : ℤ) ≡ 1 [ZMOD q]) (hr4 : r % 4 = 1 ∨ r % 4 = q % 4) :
+    legendreSym r (-q) = 1 := by
+  have hqo : Odd q := hq.out.odd_of_ne_two hq2
+  have hro : Odd r := hr.out.odd_of_ne_two hr2
+  have hJ : jacobiSym r q = 1 := by
+    rw [← jacobiSym.legendreSym.to_jacobiSym, legendreSym_congr hrq, legendreSym.at_one]
+  rw [neg_eq_neg_one_mul, legendreSym.mul, jacobiSym.legendreSym.to_jacobiSym r q]
+  by_cases h1 : r % 4 = 1
+  · rw [legendreSym_neg_one_of_mod_four_eq_one h1,
+      jacobiSym.quadratic_reciprocity_one_mod_four' hqo h1, hJ, one_mul]
+  · have h3 : r % 4 = 3 := by have := Nat.odd_iff.mp hro; omega
+    have h3' : q % 4 = 3 := by omega
+    rw [legendreSym_neg_one_of_mod_four_eq_three h3,
+      jacobiSym.quadratic_reciprocity_three_mod_four h3' h3, hJ]
+    norm_num
+
+/-- A prime `r ≠ q` with `r ≡ 1 (mod q)` and `(-q / r) = 1` is represented by
+`x ^ 2 + q y ^ 2` (Legendre's theorem). -/
+private theorem exists_norm_eq {q r : ℕ} [hq : Fact q.Prime] [hr : Fact r.Prime] (hqr : q ≠ r)
+    (hrq : (r : ℤ) ≡ 1 [ZMOD q]) (hneg : legendreSym r (-q) = 1) :
+    ∃ x y z : ℤ, z ≠ 0 ∧ x ^ 2 + q * y ^ 2 = r * z ^ 2 := by
+  obtain ⟨x, y, z, hz, h⟩ := exists_of_legendre (A := 1) (B := q) (r := r) one_pos hq.out.pos
+    hr.out squarefree_one hq.out.prime.squarefree (Nat.coprime_one_left q)
+    (Nat.coprime_one_left r) ((Nat.coprime_primes hq.out hr.out).mpr hqr)
+    (exists_sq_modEq_of_legendreSym_eq_one (by simpa using hneg))
+    ⟨1, by simpa using hrq.symm⟩ ⟨0, Int.modEq_one⟩
+  exact ⟨x, y, z, hz, by simpa using h⟩
+
+/-- Case `p ∤ m`, `q ∤ m` of the "if" half of Lemma 2, for a squarefree integer `m`: a prime
+`r ≡ p (mod 4 |m|)`, `r ≡ m (mod p)`, `r ≡ 1 (mod q)` is represented by `X ^ 2 + q Y ^ 2` and
+by `m U ^ 2 + p V ^ 2`. -/
+private theorem lemma_two_if_coprime {p q : ℕ} [hpf : Fact p.Prime] [hqf : Fact q.Prime]
+    (hp : p % 4 = 1) (hq : q ≠ 2) (hpq : p ≠ q) {m : ℤ} (hm : Squarefree m)
+    (hpm : ¬(p : ℤ) ∣ m) (hqm : ¬(q : ℤ) ∣ m) :
+    ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = m := by
+  have hpp := hpf.out
+  have hqq := hqf.out
+  have hm0 : m ≠ 0 := hm.ne_zero
+  have hp2 : p ≠ 2 := by omega
+  have hpo : Odd p := hpp.odd_of_ne_two hp2
+  have h4p := coprime_four_mul hpp hp2 (fun h => hpm (Int.natCast_dvd.mpr h))
+  have h4q := coprime_four_mul hqq hq (fun h => hqm (Int.natCast_dvd.mpr h))
+  obtain ⟨r, hr, hrN, hr₁, hr₂, hr₃⟩ := exists_prime_intModEq (n₁ := 4 * m.natAbs) (n₂ := p)
+    (n₃ := q) (c₁ := p) (c₂ := m) (c₃ := 1) h4p h4q ((Nat.coprime_primes hpp hqq).mpr hpq)
+    (Nat.isCoprime_iff_coprime.mpr h4p.symm) ((isCoprime_of_not_dvd hpp hpm).symm)
+    isCoprime_one_left
+    (by have := Int.natAbs_pos.mpr hm0; omega) hpp.pos hqq.pos (p + q + m.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hp2' := hpp.two_le
+  have hrp : p ≠ r := by omega
+  have hrq : q ≠ r := by omega
+  have hr2 : r ≠ 2 := by omega
+  have hro : Odd r := hr.odd_of_ne_two hr2
+  have hr4 : r % 4 = 1 := by
+    have h := (hr₁.of_dvd (by push_cast; exact dvd_mul_right 4 _) : (r : ℤ) ≡ p [ZMOD 4]).eq
+    omega
+  have hrm : (r : ℤ) ≡ p [ZMOD m] :=
+    hr₁.of_dvd (by push_cast; exact Dvd.dvd.mul_left ((dvd_abs m m).mpr dvd_rfl) 4)
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_eq hrq hr₃
+    (legendreSym_neg_eq_one hq hr2 hr₃ (Or.inl hr4))
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := m) (B := p) (T := r) hm0
+    (by exact_mod_cast hpp.pos) (by exact_mod_cast hr.pos) hm
+    (Int.squarefree_natCast.mpr hpp.squarefree) (Int.squarefree_natCast.mpr hr.squarefree)
+    ((isCoprime_of_not_dvd hpp hpm).symm)
+    (Nat.isCoprime_iff_coprime.mpr ((Nat.coprime_primes hpp hr).mpr hrp))
+    ((isCoprime_of_not_dvd hr (not_dvd_of_lt hm0 (by omega))).symm)
+    (fun x y h => eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := -m) (c' := 1) (by rwa [dvd_neg])
+      (not_dvd_unit (Or.inl rfl)) (by linear_combination -h))
+    (exists_sq_modEq_of_legendreSym_eq_one (by
+      rw [show -(m * (p : ℤ)) = -1 * m * p by ring, legendreSym.mul, legendreSym.mul,
+        legendreSym_neg_one_of_mod_four_eq_one hr4, jacobiSym.legendreSym.to_jacobiSym r m,
+        jacobiSym_congr_right hro hpo hr₁, ← jacobiSym.legendreSym.to_jacobiSym p m,
+        jacobiSym.legendreSym.to_jacobiSym r p, jacobiSym.quadratic_reciprocity_one_mod_four hp hro,
+        ← jacobiSym.legendreSym.to_jacobiSym p r, legendreSym_congr hr₂, one_mul]
+      exact legendreSym_mul_self hpm))
+    ⟨m, by rw [sq]; exact (hr₂.mul_left m).symm⟩
+    ⟨p, by rw [sq]; exact (hrm.mul_left p).symm⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    exact hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := r) (c' := 1)
+      (not_dvd_of_prime_ne hpp hr hrp) (not_dvd_unit (Or.inl rfl)) (u := w) (v := v)
+      (by linear_combination -huvw)).1
+  obtain ⟨X, Y, Z, h⟩ := exists_of_combine (a := q) (κ := 1) (A := m) (B := p) (T := r) (v := v)
+    (w := w) hz hu hxyz (by linear_combination huvw)
+  refine ⟨X, Y, Z, ?_⟩
+  push_cast at h
+  linear_combination -h
+
+/-- Case `m = p k` with `p ∤ k`, `q ∤ k` and `(k / p) = 1` of the "if" half of Lemma 2: for
+`k ≠ -1`, a prime `r ≡ p (mod 4 |k|)`, `r ≡ 1 (mod q)` is represented by `X ^ 2 + q Y ^ 2`, and
+`p r` by `k U ^ 2 + V ^ 2`. -/
+private theorem lemma_two_if_dvd_left {p q : ℕ} [hpf : Fact p.Prime] [hqf : Fact q.Prime]
+    (hp : p % 4 = 1) (hq : q ≠ 2) {k : ℤ} (hk : Squarefree k)
+    (hpk : ¬(p : ℤ) ∣ k) (hqk : ¬(q : ℤ) ∣ k) (hkp : legendreSym p k = 1) :
+    ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = p * k := by
+  by_cases hk1 : k = -1
+  · subst hk1
+    exact ⟨0, 0, 1, by push_cast; ring⟩
+  have hpp := hpf.out
+  have hqq := hqf.out
+  have hk0 : k ≠ 0 := hk.ne_zero
+  have hp2 : p ≠ 2 := by omega
+  have hpo : Odd p := hpp.odd_of_ne_two hp2
+  have h4p := coprime_four_mul hpp hp2 (fun h => hpk (Int.natCast_dvd.mpr h))
+  have h4q := coprime_four_mul hqq hq (fun h => hqk (Int.natCast_dvd.mpr h))
+  obtain ⟨r, hr, hrN, hr₁, hr₃, -⟩ := exists_prime_intModEq (n₁ := 4 * k.natAbs) (n₂ := q)
+    (n₃ := 1) (c₁ := p) (c₂ := 1) (c₃ := 1) h4q (Nat.coprime_one_right _)
+    (Nat.coprime_one_right _) (Nat.isCoprime_iff_coprime.mpr h4p.symm) isCoprime_one_left
+    isCoprime_one_left (by have := Int.natAbs_pos.mpr hk0; omega) hqq.pos one_pos
+    (p + q + k.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hp2' := hpp.two_le
+  have hrp : p ≠ r := by omega
+  have hrq : q ≠ r := by omega
+  have hr2 : r ≠ 2 := by omega
+  have hro : Odd r := hr.odd_of_ne_two hr2
+  have hr4 : r % 4 = 1 := by
+    have h := (hr₁.of_dvd (by push_cast; exact dvd_mul_right 4 _) : (r : ℤ) ≡ p [ZMOD 4]).eq
+    omega
+  have hrk : (r : ℤ) ≡ p [ZMOD k] :=
+    hr₁.of_dvd (by push_cast; exact Dvd.dvd.mul_left ((dvd_abs k k).mpr dvd_rfl) 4)
+  have hnegp : legendreSym p (-k) = 1 := by
+    rw [neg_eq_neg_one_mul, legendreSym.mul, legendreSym_neg_one_of_mod_four_eq_one hp, hkp,
+      mul_one]
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_eq hrq hr₃
+    (legendreSym_neg_eq_one hq hr2 hr₃ (Or.inl hr4))
+  have hpr : IsCoprime (p : ℤ) r :=
+    Nat.isCoprime_iff_coprime.mpr ((Nat.coprime_primes hpp hr).mpr hrp)
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := k) (B := 1) (T := p * r) hk0 one_pos
+    (by have := hpp.pos; have := hr.pos; positivity) hk squarefree_one
+    (by
+      have := Int.squarefree_natCast.mpr (Nat.squarefree_mul_iff.mpr
+        ⟨(Nat.coprime_primes hpp hr).mpr hrp, hpp.squarefree, hr.squarefree⟩)
+      push_cast at this
+      exact this)
+    isCoprime_one_right isCoprime_one_left
+    (((isCoprime_of_not_dvd hpp hpk).symm).mul_right
+      ((isCoprime_of_not_dvd hr (not_dvd_of_lt hk0 (by omega))).symm))
+    (aniso_one hk hk1)
+    (by
+      refine exists_sq_modEq_mul hpr (exists_sq_modEq_of_legendreSym_eq_one ?_)
+        (exists_sq_modEq_of_legendreSym_eq_one ?_)
+      · rw [mul_one]; exact hnegp
+      · rw [mul_one, jacobiSym.legendreSym.to_jacobiSym,
+          jacobiSym_congr_right hro hpo (by rw [Int.natAbs_neg]; exact hr₁),
+          ← jacobiSym.legendreSym.to_jacobiSym]
+        exact hnegp)
+    ⟨0, Int.modEq_one⟩
+    ⟨p, by rw [one_mul, sq]; exact (hrk.mul_left p).symm⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    exact hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := 1) (c' := r) (not_dvd_unit (Or.inl rfl))
+      (not_dvd_of_prime_ne hpp hr hrp) (u := v) (v := w)
+      (by linear_combination huvw)).2
+  obtain ⟨X, Y, Z, h⟩ := exists_of_combine (a := q) (κ := p) (A := k) (B := 1) (T := r) (v := v)
+    (w := w) hz hu hxyz (by linear_combination huvw)
+  refine ⟨p * X, p * Y, Z, ?_⟩
+  push_cast at h
+  linear_combination (-(p : ℚ)) * h
+
+/-- Case `m = q k` with `p ∤ k`, `q ∤ k` and `(k / q) = 1` of the "if" half of Lemma 2: a prime
+`r ≡ p q (mod 4 |k|)`, `r ≡ k (mod p)`, `r ≡ 1 (mod q)` is represented by `X ^ 2 + q Y ^ 2` and
+by `k U ^ 2 + p q V ^ 2`. -/
+private theorem lemma_two_if_dvd_right {p q : ℕ} [hpf : Fact p.Prime] [hqf : Fact q.Prime]
+    (hp : p % 4 = 1) (hq : q ≠ 2) (hpq : p ≠ q) {k : ℤ} (hk : Squarefree k)
+    (hpk : ¬(p : ℤ) ∣ k) (hqk : ¬(q : ℤ) ∣ k) (hkq : legendreSym q k = 1) :
+    ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = q * k := by
+  have hpp := hpf.out
+  have hqq := hqf.out
+  have hk0 : k ≠ 0 := hk.ne_zero
+  have hp2 : p ≠ 2 := by omega
+  have hpo : Odd p := hpp.odd_of_ne_two hp2
+  have hqo : Odd q := hqq.odd_of_ne_two hq
+  have : NeZero p := ⟨hpp.ne_zero⟩
+  have : NeZero q := ⟨hqq.ne_zero⟩
+  have h4p := coprime_four_mul hpp hp2 (fun h => hpk (Int.natCast_dvd.mpr h))
+  have h4q := coprime_four_mul hqq hq (fun h => hqk (Int.natCast_dvd.mpr h))
+  obtain ⟨r, hr, hrN, hr₁, hr₂, hr₃⟩ := exists_prime_intModEq (n₁ := 4 * k.natAbs) (n₂ := p)
+    (n₃ := q) (c₁ := p * q) (c₂ := k) (c₃ := 1) h4p h4q ((Nat.coprime_primes hpp hqq).mpr hpq)
+    ((Nat.isCoprime_iff_coprime.mpr h4p.symm).mul_left (Nat.isCoprime_iff_coprime.mpr h4q.symm))
+    ((isCoprime_of_not_dvd hpp hpk).symm) isCoprime_one_left
+    (by have := Int.natAbs_pos.mpr hk0; omega) hpp.pos hqq.pos (p + q + k.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hp2' := hpp.two_le
+  have hrp : p ≠ r := by omega
+  have hrq : q ≠ r := by omega
+  have hr2 : r ≠ 2 := by omega
+  have hro : Odd r := hr.odd_of_ne_two hr2
+  have hr4 : r % 4 = q % 4 := by
+    have h := (hr₁.of_dvd (by push_cast; exact dvd_mul_right 4 _) : (r : ℤ) ≡ p * q [ZMOD 4])
+    have hp4 : (p : ℤ) ≡ 1 [ZMOD 4] := by
+      unfold Int.ModEq
+      omega
+    have h' := (h.trans (hp4.mul_right q)).eq
+    rw [one_mul] at h'
+    omega
+  have hrk : (r : ℤ) ≡ p * q [ZMOD k] :=
+    hr₁.of_dvd (by push_cast; exact Dvd.dvd.mul_left ((dvd_abs k k).mpr dvd_rfl) 4)
+  have hneg := legendreSym_neg_eq_one hq hr2 hr₃ (Or.inr hr4)
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_eq hrq hr₃ hneg
+  have hcop : ∀ {a b : ℕ}, a.Prime → b.Prime → a ≠ b → IsCoprime (a : ℤ) b := fun ha hb hab =>
+    Nat.isCoprime_iff_coprime.mpr ((Nat.coprime_primes ha hb).mpr hab)
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := k) (B := p * q) (T := r) hk0
+    (by have := hpp.pos; have := hqq.pos; positivity) (by exact_mod_cast hr.pos) hk
+    (by
+      have := Int.squarefree_natCast.mpr (Nat.squarefree_mul_iff.mpr
+        ⟨(Nat.coprime_primes hpp hqq).mpr hpq, hpp.squarefree, hqq.squarefree⟩)
+      push_cast at this
+      exact this)
+    (Int.squarefree_natCast.mpr hr.squarefree)
+    (((isCoprime_of_not_dvd hpp hpk).symm).mul_right ((isCoprime_of_not_dvd hqq hqk).symm))
+    ((hcop hpp hr hrp).mul_left (hcop hqq hr hrq))
+    ((isCoprime_of_not_dvd hr (not_dvd_of_lt hk0 (by omega))).symm)
+    (fun x y h => eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := -k) (c' := q) (by rwa [dvd_neg])
+      (not_dvd_of_prime_ne hpp hqq hpq) (by linear_combination -h))
+    (exists_sq_modEq_of_legendreSym_eq_one (by
+      rw [show -(k * ((p : ℤ) * q)) = -(q : ℤ) * k * p by ring, legendreSym.mul, legendreSym.mul,
+        hneg, jacobiSym.legendreSym.to_jacobiSym r k,
+        jacobiSym_congr_right (c := p * q) hro (hpo.mul hqo) (by push_cast at hr₁ ⊢; exact hr₁),
+        jacobiSym.mul_right, ← jacobiSym.legendreSym.to_jacobiSym p k,
+        ← jacobiSym.legendreSym.to_jacobiSym q k, hkq, jacobiSym.legendreSym.to_jacobiSym r p,
+        jacobiSym.quadratic_reciprocity_one_mod_four hp hro,
+        ← jacobiSym.legendreSym.to_jacobiSym p r, legendreSym_congr hr₂, one_mul, mul_one]
+      exact legendreSym_mul_self hpk))
+    (exists_sq_modEq_mul (hcop hpp hqq hpq) ⟨k, by rw [sq]; exact (hr₂.mul_left k).symm⟩
+      (exists_sq_modEq_of_legendreSym_eq_one (by
+        rw [legendreSym.mul, hkq, legendreSym_congr hr₃, legendreSym.at_one, mul_one])))
+    ⟨p * q, by rw [sq]; exact (hrk.mul_left _).symm⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    exact hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := r) (c' := q)
+      (not_dvd_of_prime_ne hpp hr hrp) (not_dvd_of_prime_ne hpp hqq hpq) (u := w) (v := v)
+      (by linear_combination -huvw)).1
+  obtain ⟨X, Y, Z, h⟩ := exists_of_combine (a := q) (κ := 1) (A := k) (B := p * q) (T := r)
+    (v := v) (w := w) hz hu hxyz (by linear_combination huvw)
+  refine ⟨q * Y, X, q * Z, ?_⟩
+  push_cast at h
+  linear_combination (-(q : ℚ)) * h
+
+/-- Case `m = p q k` with `p ∤ k`, `q ∤ k`, `(k / p) = -1` and `(k / q) = -1` of the "if" half
+of Lemma 2: a prime `r ≡ p q (mod 4 |k|)`, `r ≡ 1 (mod q)` is represented by `X ^ 2 + q Y ^ 2`,
+and `p r` by `k U ^ 2 + q V ^ 2`. -/
+private theorem lemma_two_if_dvd_both {p q : ℕ} [hpf : Fact p.Prime] [hqf : Fact q.Prime]
+    (hp : p % 4 = 1) (hq : q ≠ 2) (hqp : legendreSym p q = -1) (hpq : p ≠ q) {k : ℤ}
+    (hk : Squarefree k) (hpk : ¬(p : ℤ) ∣ k) (hqk : ¬(q : ℤ) ∣ k) (hkp : legendreSym p k = -1)
+    (hkq : legendreSym q k = -1) :
+    ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = p * q * k := by
+  have hpp := hpf.out
+  have hqq := hqf.out
+  have hk0 : k ≠ 0 := hk.ne_zero
+  have hp2 : p ≠ 2 := by omega
+  have hpo : Odd p := hpp.odd_of_ne_two hp2
+  have hqo : Odd q := hqq.odd_of_ne_two hq
+  have : NeZero p := ⟨hpp.ne_zero⟩
+  have : NeZero q := ⟨hqq.ne_zero⟩
+  have h4p := coprime_four_mul hpp hp2 (fun h => hpk (Int.natCast_dvd.mpr h))
+  have h4q := coprime_four_mul hqq hq (fun h => hqk (Int.natCast_dvd.mpr h))
+  obtain ⟨r, hr, hrN, hr₁, hr₃, -⟩ := exists_prime_intModEq (n₁ := 4 * k.natAbs) (n₂ := q)
+    (n₃ := 1) (c₁ := p * q) (c₂ := 1) (c₃ := 1) h4q (Nat.coprime_one_right _)
+    (Nat.coprime_one_right _)
+    ((Nat.isCoprime_iff_coprime.mpr h4p.symm).mul_left (Nat.isCoprime_iff_coprime.mpr h4q.symm))
+    isCoprime_one_left isCoprime_one_left (by have := Int.natAbs_pos.mpr hk0; omega) hqq.pos
+    one_pos (p + q + k.natAbs)
+  have : Fact r.Prime := ⟨hr⟩
+  have hp2' := hpp.two_le
+  have hrp : p ≠ r := by omega
+  have hrq : q ≠ r := by omega
+  have hr2 : r ≠ 2 := by omega
+  have hro : Odd r := hr.odd_of_ne_two hr2
+  have hr4 : r % 4 = q % 4 := by
+    have h := (hr₁.of_dvd (by push_cast; exact dvd_mul_right 4 _) : (r : ℤ) ≡ p * q [ZMOD 4])
+    have hp4 : (p : ℤ) ≡ 1 [ZMOD 4] := by
+      unfold Int.ModEq
+      omega
+    have h' := (h.trans (hp4.mul_right q)).eq
+    rw [one_mul] at h'
+    omega
+  have hrk : (r : ℤ) ≡ p * q [ZMOD k] :=
+    hr₁.of_dvd (by push_cast; exact Dvd.dvd.mul_left ((dvd_abs k k).mpr dvd_rfl) 4)
+  have hneg := legendreSym_neg_eq_one hq hr2 hr₃ (Or.inr hr4)
+  obtain ⟨x, y, z, hz, hxyz⟩ := exists_norm_eq hrq hr₃ hneg
+  have hcop : ∀ {a b : ℕ}, a.Prime → b.Prime → a ≠ b → IsCoprime (a : ℤ) b := fun ha hb hab =>
+    Nat.isCoprime_iff_coprime.mpr ((Nat.coprime_primes ha hb).mpr hab)
+  have hpq' : legendreSym q p = -1 := by
+    rw [legendreSym.quadratic_reciprocity_one_mod_four hp hq, hqp]
+  obtain ⟨u, v, w, hw, huvw⟩ := exists_of_legendre' (A := k) (B := q) (T := p * r) hk0
+    (by exact_mod_cast hqq.pos) (by have := hpp.pos; have := hr.pos; positivity) hk
+    (Int.squarefree_natCast.mpr hqq.squarefree)
+    (by
+      have := Int.squarefree_natCast.mpr (Nat.squarefree_mul_iff.mpr
+        ⟨(Nat.coprime_primes hpp hr).mpr hrp, hpp.squarefree, hr.squarefree⟩)
+      push_cast at this
+      exact this)
+    ((isCoprime_of_not_dvd hqq hqk).symm) ((hcop hqq hpp hpq.symm).mul_right (hcop hqq hr hrq))
+    (((isCoprime_of_not_dvd hpp hpk).symm).mul_right
+      ((isCoprime_of_not_dvd hr (not_dvd_of_lt hk0 (by omega))).symm))
+    (fun x y h => eq_zero_of_mul_sq_eq_mul_sq (ℓ := q) (c := -k) (c' := 1) (by rwa [dvd_neg])
+      (not_dvd_unit (Or.inl rfl)) (by linear_combination -h))
+    (by
+      refine exists_sq_modEq_mul (hcop hpp hr hrp) (exists_sq_modEq_of_legendreSym_eq_one ?_)
+        (exists_sq_modEq_of_legendreSym_eq_one ?_)
+      · rw [show -(k * (q : ℤ)) = -1 * k * q by ring, legendreSym.mul, legendreSym.mul,
+          legendreSym_neg_one_of_mod_four_eq_one hp, hkp, hqp]
+        norm_num
+      · rw [show -(k * (q : ℤ)) = -(q : ℤ) * k by ring, legendreSym.mul, hneg,
+          jacobiSym.legendreSym.to_jacobiSym r k,
+          jacobiSym_congr_right (c := p * q) hro (hpo.mul hqo) (by push_cast at hr₁ ⊢; exact hr₁),
+          jacobiSym.mul_right, ← jacobiSym.legendreSym.to_jacobiSym p k,
+          ← jacobiSym.legendreSym.to_jacobiSym q k, hkp, hkq]
+        norm_num)
+    (exists_sq_modEq_of_legendreSym_eq_one (by
+      rw [legendreSym.mul, legendreSym.mul, hkq, hpq', legendreSym_congr hr₃, legendreSym.at_one]
+      norm_num))
+    ⟨p * q, by
+      calc ((p : ℤ) * q) ^ 2 = q * p * (p * q) := by ring
+        _ ≡ q * p * r [ZMOD k] := (hrk.mul_left _).symm
+        _ = q * (p * r) := by ring⟩
+  have hu : u ≠ 0 := by
+    rintro rfl
+    exact hw (eq_zero_of_mul_sq_eq_mul_sq (ℓ := p) (c := q) (c' := r)
+      (not_dvd_of_prime_ne hpp hqq hpq) (not_dvd_of_prime_ne hpp hr hrp) (u := v) (v := w)
+      (by linear_combination huvw)).2
+  obtain ⟨X, Y, Z, h⟩ := exists_of_combine (a := q) (κ := p) (A := k) (B := q) (T := r)
+    (v := v) (w := w) hz hu hxyz (by linear_combination huvw)
+  refine ⟨p * q * Y, p * X, q * Z, ?_⟩
+  push_cast at h
+  linear_combination (-(p : ℚ) * q) * h
+
+/-- **Robinson's Lemma 2, sufficiency of the conditions.** Let `p` and `q` be odd primes with
+`p ≡ 1 (mod 4)` and `(q / p) = -1`, and let `M` be a nonzero rational number of neither of the
+forms `p k S ^ 2` with `(k / p) = -1` and `q k S ^ 2` with `(k / q) = -1`. Then
+`X ^ 2 + q Y ^ 2 - p Z ^ 2 = M` has a solution in rational numbers `X, Y, Z`.
+
+Write `M = m S ^ 2` with `m` a squarefree integer. According as `p` and `q` divide `m`, an
+auxiliary prime `r` from Dirichlet's theorem is represented both by `X ^ 2 + q Y ^ 2` and, up to
+the factor `p` in the cases `p ∣ m`, by a binary form attached to `m`, by Legendre's theorem. -/
+private theorem lemma_two_if {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hp : p % 4 = 1) (hq : q ≠ 2)
+    (hqp : legendreSym p q = -1) {M : ℚ} (hM : M ≠ 0)
+    (h1 : ¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = -1)
+    (h2 : ¬∃ (k : ℤ) (S : ℚ), M = q * k * S ^ 2 ∧ legendreSym q k = -1) :
+    ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = M := by
+  have hpp : p.Prime := Fact.out
+  have hqq : q.Prime := Fact.out
+  have hpq : p ≠ q := by
+    rintro rfl
+    rw [(legendreSym.eq_zero_iff p p).mpr (by simp)] at hqp
+    norm_num at hqp
+  obtain ⟨m, S, hm, hS, rfl⟩ := exists_squarefree_mul_sq hM
+  suffices H : ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = m by
+    obtain ⟨X, Y, Z, h⟩ := H
+    exact ⟨S * X, S * Y, S * Z, by linear_combination S ^ 2 * h⟩
+  have h1' : ∀ k : ℤ, m = p * k → legendreSym p k ≠ -1 := fun k hk hl =>
+    h1 ⟨k, S, by rw [hk]; push_cast; ring, hl⟩
+  have h2' : ∀ k : ℤ, m = q * k → legendreSym q k ≠ -1 := fun k hk hl =>
+    h2 ⟨k, S, by rw [hk]; push_cast; ring, hl⟩
+  have hqp' : ¬(q : ℤ) ∣ p := not_dvd_of_prime_ne hqq hpp hpq.symm
+  by_cases hpm : (p : ℤ) ∣ m <;> by_cases hqm : (q : ℤ) ∣ m
+  · obtain ⟨k₁, rfl⟩ := hpm
+    obtain ⟨k, rfl⟩ := ((Nat.prime_iff_prime_int.mp hqq).dvd_or_dvd hqm).resolve_left hqp'
+    have hk : Squarefree k := hm.of_mul_right.of_mul_right
+    have hpk : ¬(p : ℤ) ∣ k := fun h =>
+      not_dvd_of_squarefree_mul hpp hm (dvd_mul_of_dvd_right h _)
+    have hqk : ¬(q : ℤ) ∣ k := not_dvd_of_squarefree_mul hqq hm.of_mul_right
+    have hkp : legendreSym p k = -1 := by
+      have := legendreSym_eq_one_of_ne (fun h => hpk ((Nat.prime_iff_prime_int.mp hpp).dvd_or_dvd
+        h |>.resolve_left (not_dvd_of_prime_ne hpp hqq hpq))) (h1' (q * k) rfl)
+      rw [legendreSym.mul, hqp] at this
+      linear_combination -this
+    have hkq : legendreSym q k = -1 := by
+      have := legendreSym_eq_one_of_ne (fun h => hqk ((Nat.prime_iff_prime_int.mp hqq).dvd_or_dvd
+        h |>.resolve_left hqp')) (h2' (p * k) (by ring))
+      rw [legendreSym.mul, legendreSym.quadratic_reciprocity_one_mod_four hp hq, hqp] at this
+      linear_combination -this
+    obtain ⟨X, Y, Z, h⟩ := lemma_two_if_dvd_both hp hq hqp hpq hk hpk hqk hkp hkq
+    exact ⟨X, Y, Z, by rw [h]; push_cast; ring⟩
+  · obtain ⟨k, rfl⟩ := hpm
+    have hpk := not_dvd_of_squarefree_mul hpp hm
+    have hqk : ¬(q : ℤ) ∣ k := fun h => hqm (dvd_mul_of_dvd_right h _)
+    obtain ⟨X, Y, Z, h⟩ := lemma_two_if_dvd_left hp hq hm.of_mul_right hpk hqk
+      (legendreSym_eq_one_of_ne hpk (h1' k rfl))
+    exact ⟨X, Y, Z, by rw [h]; push_cast; ring⟩
+  · obtain ⟨k, rfl⟩ := hqm
+    have hqk := not_dvd_of_squarefree_mul hqq hm
+    have hpk : ¬(p : ℤ) ∣ k := fun h => hpm (dvd_mul_of_dvd_right h _)
+    obtain ⟨X, Y, Z, h⟩ := lemma_two_if_dvd_right hp hq hpq hm.of_mul_right hpk hqk
+      (legendreSym_eq_one_of_ne hqk (h2' k rfl))
+    exact ⟨X, Y, Z, by rw [h]; push_cast; ring⟩
+  · exact lemma_two_if_coprime hp hq hpq hm hpm hqm
+
+/-- **Robinson's Lemma 2.** Let `p` and `q` be odd primes with `p ≡ 1 (mod 4)` and
+`(q / p) = -1`, and let `M` be a nonzero rational number. Then `X ^ 2 + q Y ^ 2 - p Z ^ 2 = M`
+has a solution in rational numbers `X, Y, Z` if and only if `M` is of neither of the forms
+`p k S ^ 2` with `(k / p) = -1` and `q k S ^ 2` with `(k / q) = -1`, where `k` is an integer and
+`S` a rational number. (That `p` is odd follows from `p ≡ 1 (mod 4)`.)
+
+J. Robinson, "Definability and decision problems in arithmetic", *J. Symbolic Logic* 14 (1949),
+Lemma 2, p. 108: "If `p` and `q` are odd primes with `p ≡ 1 (mod 4)` and `(q/p) = −1`, then
+`X² + qY² − pZ²` represents a nonzero rational number `M` if and only if `M` is not of the form
+`pk·S²` with `(k/p) = −1` or `qk·S²` with `(k/q) = −1`." Capital letters denote rationals and small
+letters integers (p. 106). Robinson states it without proof, as a special case of a theorem of
+Hasse (p. 107). The "only if" half is `lemma_two_only_if`. For the "if" half, write
+`M = m₀ S ^ 2` with `m₀` a squarefree integer; an auxiliary prime `r` from Dirichlet's theorem,
+with `T = r` or `p r` according to `p ∣ m₀`, is represented both by `X ^ 2 + q Y ^ 2` and, by
+Legendre's theorem, by a binary form attached to `m₀`. -/
+theorem lemma_two {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hp : p % 4 = 1) (hq : q ≠ 2)
+    (hqp : legendreSym p q = -1) {M : ℚ} (hM : M ≠ 0) :
+    (∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = M) ↔
+      (¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = -1) ∧
+        ¬∃ (k : ℤ) (S : ℚ), M = q * k * S ^ 2 ∧ legendreSym q k = -1 :=
+  ⟨lemma_two_only_if hp hq hqp hM, fun h => lemma_two_if hp hq hqp hM h.1 h.2⟩
 
 end Rat.Robinson
 

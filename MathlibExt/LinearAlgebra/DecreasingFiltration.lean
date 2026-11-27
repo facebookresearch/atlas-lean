@@ -16,9 +16,9 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Decreasing filtrations of vector spaces and their Hodge numbers
 
-A filtered vector space in the sense of Fontaine–Ouyang is a vector space `V` over a field `K`
-together with a decreasing, separated and exhaustive `ℤ`-indexed filtration `(Fil^i V)_{i ∈ ℤ}`
-by subspaces. Its Hodge number is `t_H(V) = ∑_{i ∈ ℤ} i · dim_K gr^i V`, where
+A filtered vector space in the sense of Fontaine–Ouyang is a finite-dimensional vector space `V`
+over a field `K` together with a decreasing, separated and exhaustive `ℤ`-indexed filtration
+`(Fil^i V)_{i ∈ ℤ}` by subspaces. Its Hodge number is `t_H(V) = ∑_{i ∈ ℤ} i · dim_K gr^i V`, where
 `gr^i V = Fil^i V / Fil^(i+1) V`. Here `t_H` is defined directly by this formula (Fontaine–Ouyang,
 Proposition 8.37); `DecreasingFiltration.hodgeNumber_of_finrank_eq_one` recovers their
 Definition 8.36 (1) in dimension one.
@@ -31,25 +31,27 @@ Definition 8.36 (1) in dimension one.
 * `DecreasingFiltration.hodgeNumber`: the Hodge number `t_H(V) = ∑ᵢ i · dim_K gr^i V`.
 * `DecreasingFiltration.single`: the filtration with a single jump.
 * `DecreasingFiltration.comap`: the filtration induced along an injective linear map.
-* `DecreasingFiltration.map`: the quotient filtration along a surjective linear map.
+* `DecreasingFiltration.map`: the quotient filtration along a surjective linear map from a
+  finite-dimensional space.
 
 ## Main results
 
 * `DecreasingFiltration.exists_fil_eq_bot`, `DecreasingFiltration.exists_fil_eq_top`: on a
   finite-dimensional space the filtration reaches `0` and `V`.
-* `DecreasingFiltration.hodgeNumber_eq_sum`: if `a ≤ b`, `Fil^a V = V` and `Fil^b V = 0`, then
-  `t_H(V) = a · dim_K V + ∑_{a < i < b} dim_K Fil^i V`.
+* `DecreasingFiltration.hodgeNumber_eq_sum`: if `V` is finite-dimensional, `a ≤ b`, `Fil^a V = V`
+  and `Fil^b V = 0`, then `t_H(V) = a · dim_K V + ∑_{a < i < b} dim_K Fil^i V`.
 * `DecreasingFiltration.hodgeNumber_of_finrank_eq_one`: in dimension one, `t_H(V)` is the
   integer `i` with `Fil^i V = V` and `Fil^(i+1) V = 0`; in dimension zero it is `0`
   (`DecreasingFiltration.hodgeNumber_eq_zero_of_finrank_eq_zero`).
 * `DecreasingFiltration.hodgeNumber_eq_add_of_exact`: the Hodge number is additive in short exact
-  sequences, with the induced filtration on the kernel and the quotient filtration on the
-  cokernel.
+  sequences of finite-dimensional spaces, with the induced filtration on the kernel and the
+  quotient filtration on the cokernel.
 * `DecreasingFiltration.hodgeNumber_le_of_le`, `DecreasingFiltration.eq_of_le_of_hodgeNumber_le`:
-  the Hodge number is monotone in the filtration, and two comparable filtrations with the same
-  Hodge number are equal.
-* `DecreasingFiltration.comap_map_eq_map_comap`: induced and quotient filtrations commute across
-  a commutative square.
+  on a finite-dimensional space, the Hodge number is monotone in the filtration, and two
+  comparable filtrations with the same Hodge number are equal.
+* `DecreasingFiltration.comap_map_eq_map_comap`: induced and quotient filtrations of
+  finite-dimensional spaces commute across a commutative square `q ∘ j = j' ∘ q'` with `j`, `j'`
+  injective, `q`, `q'` surjective and `ker q ≤ range j`.
 
 ## References
 
@@ -71,7 +73,8 @@ variable {K : Type*} [Field K] {V W U V' V'' W'' : Type*}
 /-- A decreasing, separated and exhaustive `ℤ`-indexed filtration of the `K`-module `V` by
 `K`-submodules `Fil^i V`: `Fil^j V ≤ Fil^i V` whenever `i ≤ j`, `⨅ i, Fil^i V = ⊥` (so
 `⋂ᵢ Fil^i V = 0`) and `⨆ i, Fil^i V = ⊤` (so `⋃ᵢ Fil^i V = V`, the family being directed).
-This is a filtered vector space in the sense of Fontaine–Ouyang, §6.2.4. -/
+For a finite-dimensional `V`, this is a filtered vector space in the sense of Fontaine–Ouyang,
+§6.2.4. -/
 structure DecreasingFiltration (K V : Type*) [Field K] [AddCommGroup V] [Module K V] where
   /-- The `i`-th step `Fil^i V`. -/
   Fil : ℤ → Submodule K V
