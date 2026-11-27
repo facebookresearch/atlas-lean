@@ -15,6 +15,7 @@ Repeatedly find a $\phi$-sparse cut $(S,\bar S)$ in a current cluster, put the e
 
 - [Directed phi-expanders, phi-sparse directed cuts, and phi-expanding terminal edge sets](directed-phi-expanders.md)
 - [Acyclic condensation](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/strongly-connected-components/condensation-acyclic.md)
+- [Embedding an expander with low vertex congestion certifies directed vertex expansion](vertex-expansion-by-low-congestion-embedding.md)
 
 ## Sources
 

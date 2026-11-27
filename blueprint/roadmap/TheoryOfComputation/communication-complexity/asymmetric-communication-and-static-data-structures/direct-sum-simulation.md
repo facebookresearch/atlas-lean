@@ -1,10 +1,10 @@
 # Direct-sum simulation of many parallel queries
 
-If a static problem has a cell-probe structure with $S$ cells of $w$ bits and query time $t$, then for every $k \le S$, answering $k$ queries in parallel against the same input yields a protocol in which Alice sends $O\!\left(k t \log_2 \frac{S}{k}\right)$ bits and Bob sends $k t w$ bits, in $t$ rounds.
+If a static problem has a cell-probe structure with $S$ cells of $w$ bits and query time $t$, then for every $1 \le k \le S$, answering $k$ queries in parallel against the same input yields a protocol of $t$ exchanges ($2t$ messages) in which Alice sends $t \left\lceil \log_2 \binom{S}{k} \right\rceil$ bits and Bob sends $k t w$ bits, after which Alice knows all $k$ answers. For $k \le S/2$ this is $O\!\left(k t \log_2 \frac{S}{k}\right)$ bits for Alice, but not near $k = S$: at $k = S - 1$, $\log_2 \binom{S}{k} = \log_2 S$ while $k \log_2 \frac{S}{k} = O(1)$.
 
 ## Proof sketch
 
-In round $j$, Alice needs the contents of the $j$-th probed cell of each of her $k$ queries, a set of at most $k$ cells among $S$; she encodes this set in $\log_2 \binom{S}{k} = O\!\left(k \log_2 \frac{S}{k}\right)$ bits instead of $k \log_2 S$ bits, and Bob returns the $k$ contents. Over $t$ rounds this costs $O(kt\log_2\frac{S}{k})$ bits for Alice.
+In round $j$, Alice needs the contents of the $j$-th probed cell of each of her $k$ queries, a set of at most $k$ cells among $S$; she pads it to exactly $k$ cells and sends its index among the $\binom{S}{k}$ such sets, $\left\lceil \log_2 \binom{S}{k} \right\rceil$ bits instead of $k \lceil \log_2 S \rceil$, and Bob returns the $k$ contents in a fixed order. Over $t$ exchanges this costs $t \left\lceil \log_2 \binom{S}{k} \right\rceil$ bits for Alice, after which she can finish every query.
 
 ## Depends on
 

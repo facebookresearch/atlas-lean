@@ -6,11 +6,11 @@ For every partial concept class $H \subseteq \{0,1,\star\}^X$ the following are 
 - $H$ is PAC learnable in the realizable setting;
 - $H$ is agnostically PAC learnable.
 
-When $\mathrm{VC}(H) = d$, the realizable sample complexity is $O\big((d + \log(1/\delta))/\varepsilon\big)$ up to a logarithmic factor in $1/\varepsilon$, and the optimal bound $\Theta\big((d + \log(1/\delta))/\varepsilon\big)$ is attained by aggregated one-inclusion-graph predictors.
+When $\mathrm{VC}(H) = d$, majority votes of one-inclusion-graph predictors trained on prefixes of the sample have error at most $9.64\big(d/n + \log(2/\delta)/n\big)$ with probability at least $1-\delta$, so $H$ is learnable from $O\big((d + \log(1/\delta))/\varepsilon\big)$ examples. This is an upper bound for each class, optimal only in the worst case: for every $d \ge 1$ some class of VC dimension $d$ needs $\Omega\big((d + \log(1/\delta))/\varepsilon\big)$ examples for $\varepsilon, \delta$ below absolute constants, while a particular class can need far fewer (the two constants on one point need a single example).
 
 ## Proof sketch
 
-Necessity follows from the usual shattering lower bound applied to a shattered set. For sufficiency, uniform convergence and ERM are unavailable, so one uses the one-inclusion graph predictor on the projection of $H$ to the sample plus the test point; the partial class projected to $n+1$ points has a one-inclusion graph orientation with out-degree at most $d$, which gives expected error $d/(n+1)$, and confidence boosting gives the high-probability bound. The agnostic case reduces to the realizable case by sample compression of size $\tilde O(d \log n)$.
+Necessity follows from the usual shattering lower bound applied to a shattered set. For sufficiency, uniform convergence and ERM are unavailable, so one uses the one-inclusion graph predictor on the projection of $H$ to the sample plus the test point; the partial class projected to $n+1$ points has a one-inclusion graph orientation with out-degree at most $d$, which gives expected error $d/(n+1)$, and confidence boosting gives a high-probability bound, though not the optimal one; aggregating the predictors trained on prefixes and converting their leave-one-out bound into a high-probability bound gives the optimal upper bound. The agnostic case reduces to the realizable case by sample compression of size $\tilde O(d \log n)$.
 
 ## Depends on
 
@@ -21,8 +21,9 @@ Necessity follows from the usual shattering lower bound applied to a shattered s
 
 - [Shattering lower bound for PAC learning](../../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 - [Haussler-Littlestone-Warmuth expected error bound for the one-inclusion predictor](../../../sample-complexity-and-combinatorial-dimensions/packing-and-one-inclusion-graphs/one-inclusion-predictor-error-bound.md)
+- [Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners](../optimal-pac-learners-beyond-uniform-convergence/leave-one-out-to-high-probability.md)
 
 ## Sources
 
 - N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444, Definition 2 and Theorem 3.
-- I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167.
+- I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167, Corollary 2.10.

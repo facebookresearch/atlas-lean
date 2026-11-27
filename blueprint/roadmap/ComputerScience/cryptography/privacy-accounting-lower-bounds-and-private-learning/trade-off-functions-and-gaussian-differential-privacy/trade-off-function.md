@@ -6,7 +6,7 @@ $$
 T(P, Q)(\alpha) = \inf\{\beta_\phi : \alpha_\phi \le \alpha\}, \qquad \alpha \in [0,1],
 $$
 
-the smallest type II error achievable at type I error at most $\alpha$. The infimum is attained by likelihood ratio tests: dominate $P$ and $Q$ by $\mu = P + Q$, take densities $p, q$, and for each $\alpha$ choose a threshold $k$ and a randomization on $\{q = kp\}$ giving a test $\varphi^\star$ with $\mathbb{E}_P[\varphi^\star] = \alpha$, which is most powerful by the Neyman–Pearson lemma. For functions $f, g$ on $[0,1]$ write $f \ge g$ if $f(\alpha) \ge g(\alpha)$ for all $\alpha$; larger trade-off functions mean the two distributions are harder to distinguish, and $T(P, P)(\alpha) = 1 - \alpha$.
+the smallest type II error achievable at type I error at most $\alpha$. The infimum is attained by likelihood ratio tests: dominate $P$ and $Q$ by $\mu = P + Q$ and take densities $p, q$. For $\alpha \in (0,1]$ choose a finite threshold $k \ge 0$ and a randomization on $\{q = kp\}$ giving a test $\varphi^\star$ that rejects on $\{q > kp\}$ and has $\mathbb{E}_P[\varphi^\star] = \alpha$ (at $\alpha = 1$, $k = 0$ with full randomization, so the test always rejects); it is most powerful by the Neyman–Pearson lemma. At $\alpha = 0$ no finite threshold need work (for two normal distributions with different means every finite $k$ gives positive size); the optimal test has threshold $k = +\infty$ and rejects exactly on $\{p = 0 < q\}$, a $P$-null set, since a test of size $0$ vanishes $\mu$-almost everywhere on $\{p > 0\}$. For functions $f, g$ on $[0,1]$ write $f \ge g$ if $f(\alpha) \ge g(\alpha)$ for all $\alpha$; larger trade-off functions mean the two distributions are harder to distinguish, and $T(P, P)(\alpha) = 1 - \alpha$.
 
 ## Proof depends on
 

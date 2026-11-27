@@ -16,6 +16,7 @@ Membership in coNP: a violating $\ell$-cohesive group is a short certificate. Ha
 
 - [Proportional approval voting satisfies extended justified representation](pav-satisfies-ejr.md)
 - [Marginal contributions of a committee under proportional approval voting sum to the number of represented voters](pav-marginal-contribution-identity.md)
+- [BALANCED BICLIQUE is NP-complete](../../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/balanced-biclique/balanced-biclique-np-complete.md)
 
 ## Sources
 

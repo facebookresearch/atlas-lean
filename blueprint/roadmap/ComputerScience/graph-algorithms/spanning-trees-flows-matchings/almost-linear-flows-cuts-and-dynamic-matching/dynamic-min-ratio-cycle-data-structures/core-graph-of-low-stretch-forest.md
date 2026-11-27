@@ -1,6 +1,6 @@
 # Core graph of a low-stretch forest with stretched lengths and tree-shifted gradients
 
-Let $(T, F, \widetilde{\mathrm{str}})$ be a low-stretch forest of $G$ with lengths $\boldsymbol{\ell}$ and gradients $\mathbf{g}$, where $T$ is a fixed tree that need not remain a subgraph of a dynamic $G$. The core graph $\mathcal{C}(G, F)$ has the vertex and edge set of the contraction $G/F$ of every component of $F$ to its root. For $e = (u, v) \in E(G)$ with image $\hat{e}$ its length and gradient are
+Let $(T, F, \widetilde{\mathrm{str}})$ be a low-stretch forest of $G$ with lengths $\boldsymbol{\ell}$ on $E(G)$, where $T$ is a fixed tree that need not remain a subgraph of a dynamic $G$, and let the gradients $\mathbf{g}$ be supported on $E(G) \cup E(T)$: an edge of $T$ deleted from $G$ keeps its gradient, which still enters the tree term below. The core graph $\mathcal{C}(G, F)$ has the vertex and edge set of the contraction $G/F$ of every component of $F$ to its root. For $e = (u, v) \in E(G)$ with image $\hat{e}$ its length and gradient are
 
 $$
 \boldsymbol{\ell}^{\mathcal{C}(G,F)}_{\hat{e}} = \widetilde{\mathrm{str}}_e\,\boldsymbol{\ell}_e, \qquad \mathbf{g}^{\mathcal{C}(G,F)}_{\hat{e}} = \mathbf{g}_e + \langle\mathbf{g}, \mathbf{p}(T[v, u])\rangle,

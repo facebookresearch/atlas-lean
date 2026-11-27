@@ -1,12 +1,12 @@
 # Fractional spanning tree packings and the packing value
 
-Let $G = (V, E, w)$ be a connected undirected graph with positive weights and let $\mathcal{T}$ be the set of its spanning trees. A *tree packing* is a function $y : \mathcal{T} \to \mathbb{R}_{\ge 0}$ such that
+Let $G = (V, E, w)$ be a connected undirected graph with $|V| \ge 2$ and positive weights and let $\mathcal{T}$ be the set of its spanning trees. A *tree packing* is a function $y : \mathcal{T} \to \mathbb{R}_{\ge 0}$ such that
 
 $$
 \sum_{T \in \mathcal{T} \,:\, e \in E(T)} y_T \le w(e) \quad \text{for every } e \in E.
 $$
 
-Its *value* is $\sum_{T} y_T$, and the *packing number* $\tau(G)$ is the maximum value of a tree packing. For unweighted multigraphs an integral packing is a family of edge-disjoint spanning trees.
+Its *value* is $\sum_{T} y_T$, and the *packing number* $\tau(G)$ is the maximum value of a tree packing; it is finite and attained because $|V| \ge 2$ gives every spanning tree an edge, whereas for $|V| = 1$ the edgeless tree could carry unbounded weight. For unweighted multigraphs an integral packing is a family of edge-disjoint spanning trees.
 
 ## Depends on
 

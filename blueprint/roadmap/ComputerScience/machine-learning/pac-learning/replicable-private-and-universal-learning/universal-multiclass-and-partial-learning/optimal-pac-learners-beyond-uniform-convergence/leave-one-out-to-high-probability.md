@@ -12,7 +12,7 @@ $$
 \frac{4}{3n} \sum_{t = n/4}^{n-1} R_P\big(\hat f(\cdot; S_{\le t})\big) \le 4.82\Big(\frac{M_n}{n} + \frac{1}{n}\log\frac{2}{\delta}\Big).
 $$
 
-For classification, a majority vote over these prefix predictors therefore has error at most $9.64\big(M_n/n + \log(2/\delta)/n\big)$. Applied to the one-inclusion graph predictor of a binary class of VC dimension $d$ (where $M_n \le d$) this gives the optimal bound $9.64\big(d/n + \log(2/\delta)/n\big)$ without uniform convergence; the same holds for multiclass classes in terms of the one-inclusion hypergraph density and for partial concept classes in terms of their VC dimension, which determines the optimal sample complexity of partial classes.
+For classification, a majority vote over these prefix predictors therefore has error at most $9.64\big(M_n/n + \log(2/\delta)/n\big)$. Applied to the one-inclusion graph predictor of a binary class of VC dimension $d$ (where $M_n \le d$) this gives the optimal bound $9.64\big(d/n + \log(2/\delta)/n\big)$ without uniform convergence; for a multiclass class $H \subseteq Y^X$ with a finite label set $Y$, the one-inclusion hypergraph predictor has $M_n \le \lceil \mu_H(n) \rceil$, where $\mu_H(n)$ is the largest maximum density of a one-inclusion hypergraph of $H$ projected to $n$ points, and the majority vote has error at most $9.64\big(\lceil \mu_H(n) \rceil/n + \log(2/\delta)/n\big)$. For a partial concept class of VC dimension $d$ the modified one-inclusion predictor again has $M_n \le d$, which gives the bound $9.64\big(d/n + \log(2/\delta)/n\big)$, matching the worst-case lower bound for partial classes of VC dimension $d$ up to constants.
 
 ## Proof sketch
 

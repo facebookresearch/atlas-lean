@@ -12,7 +12,7 @@ $$
 \Pr\big[\,\big|\|\Pi x\|_2^2 - \|x\|_2^2\big| > \varepsilon\|x\|_2^2\,\big] < \delta .
 $$
 
-Thus $\Pi x$ is computed in time $O(s\,\|x\|_0)$, where $\|x\|_0$ is the number of nonzero coordinates, and the number of rows is optimal by the Jayram–Woodruff bound. Two constructions work: each column chooses $s$ distinct rows at random, or the rows are split into $s$ blocks of size $m/s$ with one nonzero per block, with signs and positions drawn from $O(\log(1/\delta))$-wise independent hash families.
+Thus $\Pi x$ is computed in time $O(s\,\|x\|_0)$, where $\|x\|_0$ is the number of nonzero coordinates, and, for $\varepsilon$ and $\delta$ below an absolute constant and large dimension $d$ (polynomially larger than $\varepsilon^{-2}\log(1/\delta)$, the regime of the Jayram–Woodruff lower bound), the number of rows is optimal up to a constant factor. For small $d$ it is not: when $d \le \varepsilon^{-2}\log(1/\delta)$ the identity map already uses only $d$ rows, and at $d = 1$ a single row suffices. Two constructions work: each column chooses $s$ distinct rows at random, or the rows are split into $s$ blocks of size $m/s$ with one nonzero per block, with signs and positions drawn from $O(\log(1/\delta))$-wise independent hash families.
 
 ## Proof sketch
 
@@ -20,6 +20,7 @@ Write $\|\Pi x\|_2^2 - \|x\|_2^2 = \frac{1}{s}\sum_{r}\sum_{i \ne j} \eta_{r,i}\
 
 ## Proof depends on
 
+- [Omega(eps^-2 log(1/delta)) lower bounds for distinct elements and Johnson-Lindenstrauss with failure probability delta](../optimal-distinct-elements-and-lp-sampling/distinct-elements-lower-bound-with-failure-probability.md)
 - [Khintchine inequality](../../../../Probability/concentration-inequalities/khintchine-inequality.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
 
@@ -27,4 +28,4 @@ Write $\|\Pi x\|_2^2 - \|x\|_2^2 = \frac{1}{s}\sum_{r}\sum_{i \ne j} \eta_{r,i}\
 
 - Daniel M. Kane, Jelani Nelson, "Sparser Johnson-Lindenstrauss Transforms", J. ACM 61 (2014), arXiv:1012.1577.
 - Michael B. Cohen, T. S. Jayram, Jelani Nelson, "Simple Analyses of the Sparse Johnson-Lindenstrauss Transform", SOSA (2018).
-- T. S. Jayram, David P. Woodruff, "Optimal Bounds for Johnson-Lindenstrauss Transforms and Streaming Problems with Sub-Constant Error", SODA (2011); ACM Trans. Algorithms (2013).
+- T. S. Jayram, David P. Woodruff, "Optimal Bounds for Johnson-Lindenstrauss Transforms and Streaming Problems with Sub-Constant Error", SODA (2011); ACM Trans. Algorithms (2013), Section 4.3.

@@ -16,10 +16,12 @@ The likelihood ratio of $\mathrm{Lap}(\Delta,b)$ to $\mathrm{Lap}(0,b)$ is monot
 
 - [f-differential privacy](f-differential-privacy.md)
 - [Laplace mechanism](../../laplace-and-exponential-mechanisms/laplace-mechanism.md)
+- [Tradeoff lower bound of approximate differential privacy](../../hypothesis-testing-characterization-of-different/f-eps-delta.md)
 
 ## Proof depends on
 
 - [The Laplace mechanism is differentially private](../../laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
+- [Neyman–Pearson lemma](../../../../Probability/hypothesis-testing/neyman-pearson-dominated-two-simple.md)
 
 ## Sources
 

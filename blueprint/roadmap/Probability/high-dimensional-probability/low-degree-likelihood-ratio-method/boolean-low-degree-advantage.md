@@ -15,6 +15,11 @@ The characters form an orthonormal basis of $L^2(\mathbb{Q})$, and the coefficie
 ## Depends on
 
 - [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
+- [Fourier character on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/cube-chi.md)
+
+## Proof depends on
+
+- [Plancherel identity on the subsets of a finite set](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-plancherel.md)
 
 ## Sources
 

@@ -5,7 +5,7 @@ Consider ordered linear probing with tombstones and uniformly random hashing, wi
 1. With the classical rebuild window $R = n/(2x)$ insertions and a hovering workload at load factor $1 - 1/x$, the expected amortized time per insertion is $\tilde{O}(x^{1.5})$; if all insertions and deletions are on distinct keys it is $\Omega(x^{1.5}\sqrt{\lg\lg x})$; queries take expected time $O(x)$ (Theorem 1).
 2. With rebuild window $R = n/\lg^{c} x$ insertions for a sufficiently large constant $c$, and any sequence of operations that never brings the load factor above $1 - 1/x$, the expected amortized cost of each insertion is $\tilde{O}(x)$ and the expected cost of each query or deletion is $O(x)$ (Theorem 2). For every choice of $R$ some sequence of operations takes amortized time $\omega(x)$ per operation.
 
-Both beat the $\Theta(x^2)$ insertion cost of insertion-only linear probing at the same load factor.
+Both beat insertion-only linear probing at the same load factor $\alpha = 1 - 1/x$, whose expected insertion (unsuccessful-search) cost tends to $\frac12(1 + x^2) = \Theta(x^2)$, while its expected successful-search cost tends to $\frac12(1 + x)$.
 
 ## Proof sketch
 
@@ -18,7 +18,8 @@ Deletions leave tombstones at hash-random positions that later insertions reuse.
 
 ## Proof depends on
 
-- [Primary clustering: insertion-only linear probing costs $\Theta(x^2)$](primary-clustering-quadratic-cost.md)
+- [Expected cost of an unsuccessful linear-probing search at a fixed load factor](../analysis-of-linear-probing/tendsto-insertion-cost.md)
+- [Expected cost of a successful linear-probing search at a fixed load factor](../analysis-of-linear-probing/tendsto-successful-search-cost.md)
 
 ## Sources
 

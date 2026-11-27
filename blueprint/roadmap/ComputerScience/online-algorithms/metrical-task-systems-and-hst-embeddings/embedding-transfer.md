@@ -10,6 +10,7 @@ The algorithm's cost under $d$ is at most its cost under $d_T$ by domination, he
 
 - [Metrical task systems](metrical-task-system.md)
 - [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
+- [Probabilistic embedding of a metric into dominating tree metrics](../../randomized-algorithms/sketching-streaming-and-sublinear-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/probabilistic-embeddings-into-dominating-trees.md)
 
 ## Sources
 

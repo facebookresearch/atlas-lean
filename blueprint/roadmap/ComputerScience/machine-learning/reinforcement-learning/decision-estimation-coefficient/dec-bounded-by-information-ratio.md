@@ -6,7 +6,7 @@ $$
 \mathrm{inf}^{H}_{\gamma}(\mathcal{M}) = \sup_{\mu \in \Delta(\mathcal{M} \times \Pi)} \inf_{p \in \Delta(\Pi)} \Big\{ \mathbb{E}_{\pi \sim p}\mathbb{E}_{(M, \pi^\star) \sim \mu}\big[f^M(\pi^\star) - f^M(\pi)\big] - \gamma\,\mathbb{E}_{\pi \sim p}\mathbb{E}_{z \mid \pi}\big[D_H^2\big(\mu^{\mathrm{po}}(\cdot; \pi, z), \mu^{\mathrm{pr}}\big)\big] \Big\},
 $$
 
-so the information term measures how much observing $(\pi, z)$ updates the law of the comparator. Then for all $\gamma > 0$,
+where $D_H^2(P, Q) = \int \big(\sqrt{dP/d\nu} - \sqrt{dQ/d\nu}\big)^2\, d\nu = 2\, d_{\mathrm{Hell}}(P, Q)^2$ is the unnormalized squared Hellinger distance of the source's Eq. (3), twice the square of the linked Hellinger distance $d_{\mathrm{Hell}}$; so the information term measures how much observing $(\pi, z)$ updates the law of the comparator. Then for every fixed $\gamma > 0$, with $\mathrm{dec}_\gamma$ the decision-estimation coefficient at parameter $\gamma$ (defined with the same $D_H^2$),
 
 $$
 \mathrm{inf}^{H}_{\gamma}(\mathcal{M}) \;\le\; \mathrm{dec}_\gamma\big(\mathrm{co}(\mathcal{M})\big) \;\le\; \mathrm{inf}^{H}_{\gamma/4}(\mathcal{M}).

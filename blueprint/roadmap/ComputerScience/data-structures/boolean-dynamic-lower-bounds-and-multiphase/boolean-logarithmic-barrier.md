@@ -6,6 +6,8 @@ Before 2018 the strongest cell-probe lower bound for any explicit dynamic Boolea
 
 - [Dynamic two-dimensional range parity](range-parity-problem.md)
 - [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
+- [Patrascu-Demaine logarithmic cell-probe lower bound for dynamic connectivity](../disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/patrascu-demaine-connectivity-lower-bound.md)
+- [Larsen's lower bound for dynamic range counting](../cell-sampling-and-range-counting-lower-bounds/dynamic-range-counting-lower-bound.md)
 
 ## Sources
 

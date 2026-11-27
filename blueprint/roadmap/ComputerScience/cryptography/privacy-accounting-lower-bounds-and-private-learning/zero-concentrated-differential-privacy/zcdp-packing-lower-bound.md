@@ -19,6 +19,7 @@ By group privacy, $D_\alpha(M(S_i) \| M(S_j)) \le \ell^2\rho\alpha$ for all pair
 ## Proof depends on
 
 - [Group privacy for zCDP scales quadratically](zcdp-group-privacy.md)
+- [Fano's inequality, general form](../../../../InformationTheory/information-inequalities/fano-s-inequality/fano-inequality-general.md)
 
 ## Sources
 

@@ -7,6 +7,7 @@ The *run-length FM-index* of a text $T$ with $r$ BWT runs stores the BWT as the 
 - [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
 - [Burrows–Wheeler transform](../burrows-wheeler-transform-and-fm-index/bwt.md)
 - [FM-index backward search](../burrows-wheeler-transform-and-fm-index/backward-search.md)
+- [Rank of a letter in a prefix of the last column](../burrows-wheeler-transform-and-fm-index/rank.md)
 
 ## Sources
 

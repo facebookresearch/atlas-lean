@@ -1,6 +1,6 @@
 # Time optimality of succinct dynamic rank/select
 
-For $U = n^{O(1)}$ and $w = \Theta(\log U)$, the $O(1 + \log n/\log\log U) = O(\log n / \log \log n)$ operation time of the succinct dynamic rank/select dictionary with sub-linear redundancy is optimal, regardless of space, among cell-probe structures whose updates take $(\log n)^{O(1)}$ amortized probes.
+For $n \le U/2$, $U = n^{O(1)}$ and $w = \Theta(\log U)$, the $O(1 + \log n/\log\log U) = O(\log n / \log \log n)$ operation time of the succinct dynamic rank/select dictionary with sub-linear redundancy is optimal, regardless of space, among cell-probe structures whose updates take $(\log n)^{O(1)}$ amortized probes. The condition $n \le U/2$ is needed: at $n = U$ every key is present and rank is trivial.
 
 ## Proof sketch
 

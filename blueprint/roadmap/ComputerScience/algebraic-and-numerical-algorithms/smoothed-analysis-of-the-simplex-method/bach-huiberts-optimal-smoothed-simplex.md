@@ -8,13 +8,13 @@ $$
 
 and there is a simplex method (a three-phase semi-random shadow vertex method) whose expected number of pivot steps on smoothed programs is $O\big(R(n + d, d, \sigma')\big)$ with the clipped noise level $\sigma' = \min\{\sigma, 1/\sqrt{d\ln n}, 1/(d^{3/2}\ln d)\}$. The additive $d^3\log(n)^2$ term and the clipping are part of the bound: for noise levels up to $\sigma = 1$ they cannot be absorbed into the $\sigma^{-1/2}$ term uniformly in $d$ and $n$.
 
-Conversely, let $d \ge 2$ and let $\sigma > 0$ satisfy the small-noise condition $\sigma\sqrt{\ln(4/\sigma)} \le 1/(2600\,d)$, and take $n = \lfloor (4/\sigma)^d \rfloor$. There are $\bar A, \bar b$ with rows of $(\bar A, \bar b)$ of norm at most $1$ such that, when $A, b$ have independent Gaussian entries with means $\bar A, \bar b$ and variance $\sigma^2$, with probability at least $1 - n^{-d}$ the polyhedron $\{x : Ax \le b\}$ has combinatorial diameter at least
+Conversely, let $d \ge 2$ and let $0 < \sigma \le 1$ satisfy the small-noise condition $\sigma\sqrt{\ln(4/\sigma)} \le 1/(2600\,d)$, and take $n = \lfloor (4/\sigma)^d \rfloor$. There are $\bar A, \bar b$ with rows of $(\bar A, \bar b)$ of norm at most $1$ such that, when $A, b$ have independent Gaussian entries with means $\bar A, \bar b$ and variance $\sigma^2$, with probability at least $1 - n^{-d}$ the polyhedron $\{x : Ax \le b\}$ has combinatorial diameter at least
 
 $$
 \frac{(d-1)^{1/2}}{24\sqrt{\sigma\sqrt{\ln(4/\sigma)}}} = \Omega\!\left(\sigma^{-1/2} d^{1/2} \ln(4/\sigma)^{-1/4}\right),
 $$
 
-and for every nonzero objective its maximizing and minimizing vertices are at least this far apart. In particular $R(\lfloor (4/\sigma)^d \rfloor, d, \sigma) \ge \sqrt{d-1}\,/\big(96\sqrt{\sigma\sqrt{\ln(4/\sigma)}}\big)$, so any bound on shadow path lengths of the form $\mathrm{poly}(d, \sigma^{-1}, \log n)$ has a term of order at least $\sigma^{-1/2}$: up to polylogarithmic factors, the noise dependence $\sigma^{-1/2}$ is optimal.
+and for every nonzero objective its maximizing and minimizing vertices are at least this far apart. In particular $R(\lfloor (4/\sigma)^d \rfloor, d, \sigma) \ge \sqrt{d-1}\,/\big(96\sqrt{\sigma\sqrt{\ln(4/\sigma)}}\big)$, so any bound on shadow path lengths of the form $\mathrm{poly}(d, \sigma^{-1}, \log n)$ has a term of order at least $\sigma^{-1/2}$: up to polylogarithmic factors, the noise dependence $\sigma^{-1/2}$ is optimal. The bound $\sigma \le 1$ is needed: for $\sigma$ just below $4$ the factor $\ln(4/\sigma)$ is close to $0$, so the small-noise condition holds, while $\lfloor (4/\sigma)^d \rfloor = 1$ and the polyhedron has no vertices.
 
 ## Proof sketch
 

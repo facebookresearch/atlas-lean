@@ -10,6 +10,10 @@ Fix a key; the number of other keys in its bin is binomial with $n - 1$ trials a
 
 - [Front-yard and back-yard hash table design](front-yard-back-yard-paradigm.md)
 
+## Proof depends on
+
+- [Multiplicative Chernoff bounds for independent [0,1]-valued scores](../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
+
 ## Sources
 
 - Michael A. Bender, Alex Conway, Martín Farach-Colton, William Kuszmaul, Guido Tagliavini, "Iceberg Hashing: Optimizing Many Hash-Table Criteria at Once", Journal of the ACM 70(6) (2023), arXiv:2109.04548.

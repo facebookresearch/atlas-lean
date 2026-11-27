@@ -18,7 +18,7 @@ A first batch of samples contains every $(v-\varepsilon)$-heavy hitter with high
 
 ## Proof depends on
 
-- [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
+- [Replicable bounded-mean and coin-bias estimation](../../../replicable-learning/replicable-mean-estimation.md)
 
 ## Sources
 

@@ -6,7 +6,7 @@ $$
 \|x - y\|_2 \le \|f(x) - f(y)\|_2 \le (1 + \varepsilon)\|x - y\|_2 \quad \text{for all } x \in X \text{ and all } y \in \mathbb{R}^d .
 $$
 
-So distances from the terminals $X$ to every point of space are preserved with the same dimension bound $O(\varepsilon^{-2}\log n)$ as in the Johnson–Lindenstrauss lemma, improving the earlier terminal bound $O(\varepsilon^{-4}\log n)$; the map is necessarily nonlinear.
+So distances from the terminals $X$ to every point of space are preserved with the same dimension bound $O(\varepsilon^{-2}\log n)$ as in the Johnson–Lindenstrauss lemma, improving the earlier terminal bound $O(\varepsilon^{-4}\log n)$. When $m < d$ the map is necessarily nonlinear (indeed not affine): a linear or affine map into fewer dimensions has a nonzero direction $v$ with $f(x + v) = f(x)$, which violates the lower bound for a terminal $x$ and $y = x + v$. When $C\varepsilon^{-2}\log n \ge d$ the identity map already works.
 
 ## Proof sketch
 

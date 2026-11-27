@@ -14,7 +14,7 @@ $$
 h(\mathbf{f}) \le \min_{\mathbf{B}^{\top}\mathbf{f}^* = \mathbf{d}} h(\mathbf{f}^*) + \exp(-\log^{C} m).
 $$
 
-The algorithm succeeds with high probability. This covers flows whose edge costs are sums of $\widetilde{O}(1)$ terms $w|x|^p$ with $p \le \widetilde{O}(1)$ and $w \in [0, \exp(\log^{O(1)} m)]$, entropy-regularized optimal transport, and, through its dual, matrix scaling of a nonnegative matrix with polynomially bounded nonzero entries so that all row and column sums are within $\exp(-\log^{C} n)$ of $1$.
+The algorithm succeeds with high probability. This covers flows whose edge costs are sums of $\widetilde{O}(1)$ terms $w|x|^p$ with $p \le \widetilde{O}(1)$ and $w \in [0, \exp(\log^{O(1)} m)]$, entropy-regularized optimal transport, and, through its dual, matrix scaling: given a nonnegative $n \times n$ matrix $A$ whose nonzero entries lie in $[n^{-O(1)}, n^{O(1)}]$ and whose support contains a perfect matching, positive diagonal matrices $X, Y$ such that all row and column sums of $XAY$ are within $\exp(-\log^{C} n)$ of $1$ are found in $\mathrm{nnz}(A)^{1+o(1)}$ time. The support condition is necessary: for $\mathrm{diag}(1, 0)$ the second row sum of $XAY$ is always $0$, and in general the dual flow problem, which sends one unit out of every row and into every column along the support, then has no feasible flow, so such an instance is reported infeasible.
 
 ## Proof sketch
 

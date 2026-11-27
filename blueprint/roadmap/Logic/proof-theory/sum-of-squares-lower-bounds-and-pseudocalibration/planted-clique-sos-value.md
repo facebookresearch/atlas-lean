@@ -11,6 +11,7 @@ over degree-$d$ pseudo-expectations on $\{0,1\}^n$ satisfying $x_i x_j = 0$ for 
 ## Depends on
 
 - [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
+- [Planted clique model, search and detection problems](../../../GraphTheory/random-graphs/planted-clique/planted-clique-model.md)
 
 ## Sources
 

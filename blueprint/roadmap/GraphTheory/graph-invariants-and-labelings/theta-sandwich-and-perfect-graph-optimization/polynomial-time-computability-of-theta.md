@@ -23,6 +23,7 @@ The theta body $\mathrm{TH}(G)$ lies in $[0, 1]^V$ and contains the indicator ve
 - [Theta is the maximum of the coordinate sum over the theta body](../theta-function-of-a-graph/lovasz-theta-eq-s-sup-th.md)
 - [Well-described polyhedra, centered convex bodies and the strong and weak oracle problems](well-described-polyhedra-and-oracle-problems.md)
 - [Orthogonal labeling of a graph](../theta-function-of-a-graph/is-orthogonal-labeling.md)
+- [Stable sets lie in the theta body](../theta-function-of-a-graph/char-vec-mem-th.md)
 
 ## Sources
 

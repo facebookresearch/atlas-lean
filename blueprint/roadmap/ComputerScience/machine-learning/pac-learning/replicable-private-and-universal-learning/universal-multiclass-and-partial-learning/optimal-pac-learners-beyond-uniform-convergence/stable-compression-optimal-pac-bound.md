@@ -6,7 +6,7 @@ $$
 \mathrm{er}_D\big(\rho(\kappa(S))\big) < \frac{2}{n - 2k}\Big(k \ln 4 + \ln\frac{1}{\delta}\Big),
 $$
 
-with no $\log n$ factor, unlike the classical compression bound. Examples include the support vector machine for halfspaces, the closure algorithm for intersection-closed classes, and maximum classes (which gives proper sample complexity $\Theta((d + \log(1/\delta))/\varepsilon)$ for maximum classes of VC dimension $d$).
+with no $\log n$ factor, unlike the classical compression bound. Examples include the support vector machine for halfspaces, the closure algorithm for intersection-closed classes, and maximum classes, which have proper stable compression schemes of size $d$; this gives proper sample complexity $\Theta((d + \log(1/\delta))/\varepsilon)$ for every maximum class of VC dimension $d$ with at least three concepts (the paper's standing assumption $|H| \ge 3$; a class of two concepts, such as the two constants on one point, is learned from a single example for all $\varepsilon, \delta$), the lower bound holding for $\varepsilon$ and $\delta$ below absolute constants.
 
 ## Proof sketch
 

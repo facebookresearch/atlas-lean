@@ -10,7 +10,7 @@ Greedy is *input-revealing*: its execution log partially reveals the structure o
 
 - [Geometric Greedy (Greedy Future)](../geometric-view-of-bst-access/geometric-greedy.md)
 - [Inverse Ackermann function of Tarjan and van Leeuwen](../../disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/inverse-ackermann-tv-l.md)
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [Classical pattern containment in a sequence](../../../../Combinatorics/permutations/permutation-patterns/cyclic-pattern-avoiding-stack-sorting/contains-pattern-seq.md)
 
 ## Proof depends on
 

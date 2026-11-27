@@ -1,7 +1,6 @@
 # Random-Walk Insertion for d-ary Cuckoo Hashing
 
 - [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
-- [Hall's condition for valid cuckoo assignments](hall-condition-for-cuckoo-assignments.md)
 - [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
 - [Sharp load thresholds for d-ary cuckoo hashing](cuckoo-load-threshold.md)
 - [A geometric tail bound gives constant expected walk length](geometric-tail-gives-constant-mean.md)

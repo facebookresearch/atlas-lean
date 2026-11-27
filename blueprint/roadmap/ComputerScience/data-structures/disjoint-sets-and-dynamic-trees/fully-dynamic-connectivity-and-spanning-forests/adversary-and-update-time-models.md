@@ -4,13 +4,14 @@ Let $\mathcal{A}$ be a randomized dynamic algorithm processing an online sequenc
 
 1. *Oblivious adversary*: the whole sequence $(\sigma_t)_t$ is fixed before $\mathcal{A}$ draws its random bits; guarantees are required for each fixed sequence.
 2. *Adaptive adversary*: $\sigma_t$ may be any function of all outputs of $\mathcal{A}$ at steps $1, \dots, t-1$; guarantees must hold for all such strategies. Deterministic algorithms are automatically adaptive-robust.
-3. *Worst-case* update time $u$: every single update finishes within time $u$ (w.h.p., i.e. with probability at least $1 - n^{-c}$ for a constant $c$ of our choice, when randomized). *Amortized* update time $u$: every prefix of $t$ updates takes total time at most $t \cdot u$.
+3. *Worst-case* update time $u$: every single update takes time at most $u$. *Amortized* update time $u$: every prefix of $t$ updates takes total time at most $t \cdot u$. These quantify over operations, not over random bits: for a randomized algorithm each bound is further stated as *deterministic* (it holds for every outcome of the random bits), *expected* (the expected time of each update, respectively of each prefix, is at most $u$, respectively $t \cdot u$) or *w.h.p.* (it holds with probability at least $1 - n^{-c}$ for a constant $c$ of our choice).
 4. *Las Vegas*: outputs are always correct and only the running time is random; *Monte Carlo*: running time is bounded and outputs are correct w.h.p.
 
 ## Depends on
 
 - [Dynamic graph problems](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
 - [Amortized cost of an operation](../../amortized-analysis/amortized-cost.md)
+- [Las Vegas and Monte Carlo algorithms](../../../randomized-algorithms/probabilistic-analysis-tools/las-vegas-and-monte-carlo-algorithms.md)
 
 ## Sources
 

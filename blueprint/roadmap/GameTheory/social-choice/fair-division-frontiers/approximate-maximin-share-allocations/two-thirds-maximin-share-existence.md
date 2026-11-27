@@ -13,6 +13,7 @@ Normalize the agent under consideration to $\mu_i = 1$. Give any good worth at l
 ## Proof depends on
 
 - [Valid reduction rules preserving maximin shares of the remaining agents](valid-reductions-maximin-share.md)
+- [Envy-cycle elimination yields EF1 allocations for monotone valuations](../../envy-free-division-protocols/envy-cycle-elimination-yields-ef1-allocations-for-monotone-valuations.md)
 
 ## Sources
 

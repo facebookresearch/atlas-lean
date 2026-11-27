@@ -12,6 +12,7 @@ Every BWT run boundary $i$ ($\mathrm{BWT}[i-1] \ne \mathrm{BWT}[i]$) makes $\mat
 - [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
 - [Size $z$ of the greedy LZ77 factorization](../string-attractors-and-repetitiveness-measures/lz77-factorization-size.md)
 - [String attractors](../string-attractors-and-repetitiveness-measures/string-attractor.md)
+- [Substring complexity $\delta$](../string-attractors-and-repetitiveness-measures/substring-complexity.md)
 
 ## Proof depends on
 

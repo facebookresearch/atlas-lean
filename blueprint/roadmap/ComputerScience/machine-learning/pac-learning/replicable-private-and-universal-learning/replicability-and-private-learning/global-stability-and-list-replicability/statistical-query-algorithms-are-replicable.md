@@ -4,7 +4,7 @@ A randomized algorithm $A(S; r)$ taking an i.i.d. sample $S$ from a distribution
 
 ## Proof sketch
 
-Answer the $j$-th query with the replicable rounding procedure at replicability level $\rho/q$ using shared randomness $r_j$ and fresh samples. If two runs agree on the answers to the first $j-1$ queries, they ask the same $j$-th query, and the answers agree except with probability $\rho/q$; a union bound over the $q$ queries gives $\rho$-replicability, and each query costs $\tilde O(q^2/(\tau^2\rho^2))$ samples.
+Answer the $j$-th query $\psi_j : X \to [0,1]$ by replicable bounded-mean estimation of $\mathbb{E}_D[\psi_j]$ at replicability level $\rho/q$, with grid width $w = \tau$, deviation $t = \tau\rho/(6q)$, shift range $N \ge 3q/\rho$, shared randomness $r_j$ and fresh samples; the rounding moves the estimate by at most $\tau/2$, and Hoeffding's inequality sets the sample size. If two runs agree on the answers to the first $j-1$ queries, they ask the same $j$-th query, and the answers agree except with probability $\rho/q$; a union bound over the $q$ queries gives $\rho$-replicability, and each query costs $\tilde O(q^2/(\tau^2\rho^2))$ samples.
 
 ## Depends on
 
@@ -13,7 +13,7 @@ Answer the $j$-th query with the replicable rounding procedure at replicability 
 
 ## Proof depends on
 
-- [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
+- [Replicable bounded-mean and coin-bias estimation](../../../replicable-learning/replicable-mean-estimation.md)
 
 ## Sources
 

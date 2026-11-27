@@ -14,6 +14,10 @@ with volumes measured in $G$. A *$(\phi, \epsilon)$-expander decomposition* is a
 - [Edge expansion of a vertex set](../../../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/untitled.md)
 - [(phi, epsilon)-expander decompositions of an undirected graph](../../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/phi-epsilon-expander-decomposition.md)
 
+## Proof depends on
+
+- [Every graph has a phi-expander decomposition with O(phi m log m) crossing edges](../../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/existence-of-expander-decompositions.md)
+
 ## Sources
 
 - Thatchaphol Saranurak, "A Simple Deterministic Algorithm for Edge Connectivity", SOSA (2021), arXiv:2008.08575.

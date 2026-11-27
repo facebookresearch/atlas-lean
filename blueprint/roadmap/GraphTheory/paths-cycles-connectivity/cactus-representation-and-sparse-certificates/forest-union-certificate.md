@@ -1,6 +1,6 @@
 # Unions of the first k forests are k-edge-connectivity certificates
 
-For every undirected multigraph $G$ with $n$ vertices, every forest decomposition $F_1, F_2, \dots$ of $G$ and every $k \ge 1$, the subgraph $G_k = F_1 \cup \dots \cup F_k$ is a $k$-edge-connectivity certificate of $G$ and has at most $k(n-1)$ edges. In particular $G_k$ preserves every cut of size less than $k$ exactly, and $\lambda(G_k) \ge \min\{\lambda(G), k\}$.
+For every undirected multigraph $G$ with $n \ge 1$ vertices, every forest decomposition $F_1, F_2, \dots$ of $G$ and every $k \ge 1$, the subgraph $G_k = F_1 \cup \dots \cup F_k$ is a $k$-edge-connectivity certificate of $G$ and has at most $k(n-1)$ edges. In particular $G_k$ preserves every cut of size less than $k$ exactly, and $\lambda(G_k) \ge \min\{\lambda(G), k\}$.
 
 ## Proof sketch
 

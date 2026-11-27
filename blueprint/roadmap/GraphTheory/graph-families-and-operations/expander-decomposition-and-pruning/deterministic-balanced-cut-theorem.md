@@ -1,12 +1,12 @@
 # Deterministic almost-linear-time balanced cut with high-conductance certificates
 
-There is a deterministic algorithm that, given an $n$-vertex $m$-edge undirected graph $G$ and a parameter $1 \le r \le O(\log n)$, computes a $(\log m)^{r^2}$-approximation for Minimum Balanced Cut in time
+There is a deterministic algorithm that, given an $n$-vertex $m$-edge undirected graph $G$ and a parameter $1 \le r \le O(\log n)$, computes a bi-criteria $(\log m)^{r^2}$-approximation for Minimum Balanced Cut in time
 
 $$
 O\bigl(m^{1 + O(1/r) + o(1)} \cdot (\log m)^{O(r^2)}\bigr).
 $$
 
-More strongly, given a target value, it either returns a balanced cut whose value is within that approximation factor of the target, or certifies that no balanced cut of the target value exists by exhibiting a large subgraph of $G$ of high conductance. In particular one obtains a $(\log m)^{1/\epsilon}$-approximation in time $m^{1 + O(1/\sqrt{\epsilon})}$ for every constant $\epsilon > 0$, and deterministic algorithms with similar guarantees for Sparsest Cut and Lowest-Conductance Cut.
+More precisely, given a target value $\eta$, it either returns a partition $(A, B)$ of $V$ with $\mathrm{vol}_G(A), \mathrm{vol}_G(B) \ge \mathrm{vol}_G(V)/4$ and $|E_G(A, B)| \le (\log m)^{r^2} \cdot \eta$, or certifies that every partition $(A, B)$ of $V$ with $\mathrm{vol}_G(A), \mathrm{vol}_G(B) \ge \mathrm{vol}_G(V)/3$ has $|E_G(A, B)| > \eta$. The returned cut is only $\tfrac14$-balanced while the certificate concerns $\tfrac13$-balanced cuts; the certificate is a set $A$ with $\mathrm{vol}_G(A) \ge 3\,\mathrm{vol}_G(V)/4$ such that $G[A]$ has high conductance. In particular one obtains a $(\log m)^{1/\epsilon}$-approximation in time $m^{1 + O(1/\sqrt{\epsilon})}$ for every constant $\epsilon > 0$, and deterministic algorithms with similar guarantees for Sparsest Cut and Lowest-Conductance Cut.
 
 ## Proof sketch
 

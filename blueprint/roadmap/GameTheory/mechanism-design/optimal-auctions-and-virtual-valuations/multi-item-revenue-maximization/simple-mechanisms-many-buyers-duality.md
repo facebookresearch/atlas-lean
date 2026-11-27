@@ -10,6 +10,7 @@ Choose a canonical flow that, for each buyer, routes from types with high value 
 
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
 - [Optimal auctions for regular distributions](../remaining-clauses-of-optimal-auctions-for-regular-distributi.md)
+- [Bayesian incentive compatibility](../../revelation-principle/is-bayes-incentive-compatible.md)
 
 ## Proof depends on
 

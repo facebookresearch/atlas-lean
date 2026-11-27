@@ -9,6 +9,8 @@ A treap is strongly history independent: given its random weight function, the t
 ## Depends on
 
 - [Information-theoretic space bound and redundancy of a dictionary](../../hashing/stable-and-tiny-pointer-hash-tables/information-theoretic-space-and-redundancy.md)
+- [Dynamic ordered dictionary with rank and select](dynamic-ordered-dictionary-with-rank.md)
+- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Sources
 

@@ -10,6 +10,7 @@ Extend the Cai–Devanur–Weinberg duality framework to subadditive buyers to o
 
 - [XOS set functions, demand queries and value queries](../../contracts-and-rational-cryptography/combinatorial-and-multi-agent-contracts/xos-functions-demand-and-value-queries.md)
 - [Bayesian incentive compatibility](../../revelation-principle/is-bayes-incentive-compatible.md)
+- [Dominant-strategy incentive compatibility](../../revelation-principle/is-dominant-strategy-incentive-compatibl.md)
 
 ## Proof depends on
 

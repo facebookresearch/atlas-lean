@@ -8,7 +8,7 @@ Let $f(n)$ be the maximum number of ones, and partition a $P$-avoiding matrix in
 
 ## Depends on
 
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [Classical pattern containment in a sequence](../../../../Combinatorics/permutations/permutation-patterns/cyclic-pattern-avoiding-stack-sorting/contains-pattern-seq.md)
 
 ## Sources
 

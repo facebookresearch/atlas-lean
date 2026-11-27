@@ -6,7 +6,7 @@ $$
 \sum_{v \in \mathrm{range}(p)} \Big| \mathbb{E}_{(x,y) \sim D}\big[c(x)\,(y - v)\,\mathbf{1}[p(x) = v]\big] \Big| \le \alpha \quad \text{for every } c \in \mathcal{C},
 $$
 
-that is, $p$ is multiaccurate with respect to $\mathcal{C}$ on every level set of $p$ simultaneously, with the errors on the level sets added up. Taking $\mathcal{C} = \{1\}$ recovers (weighted $\ell_1$) calibration $\mathbb{E}\,\big|\mathbb{E}[y \mid p(x)] - p(x)\big| \le \alpha$; other common variants bound the per-level error relative to $\Pr[p(x) = v]$ or use the $\ell_\infty$ maximum over levels, and they are polynomially related.
+that is, $p$ is multiaccurate with respect to $\mathcal{C}$ on every level set of $p$ simultaneously, with the errors on the level sets added up. Taking $\mathcal{C} = \{1\}$ recovers (weighted $\ell_1$) calibration $\mathbb{E}\,\big|\mathbb{E}[y \mid p(x)] - p(x)\big| \le \alpha$; other common variants bound the per-level error relative to $\Pr[p(x) = v]$ or use the $\ell_\infty$ maximum over levels. A relative per-level bound $|\mathbb{E}[c(x)(y - v) \mid p(x) = v]| \le \alpha$ for every level implies the sum above is at most $\alpha$, and the maximum over levels of the summands is within a factor $|\mathrm{range}(p)|$ of their sum. The converse to the relative variant holds only above a mass cutoff: the sum bound $\alpha$ gives relative error at most $\alpha/\eta$ on each level with $\Pr[p(x) = v] \ge \eta$ and nothing on lighter levels, since a level of mass $\eta$ can have relative error $1$ while contributing only $\eta$ to the sum; relative definitions, such as that of Hébert-Johnson, Kim, Reingold and Rothblum, therefore exempt level sets of small mass.
 
 ## Depends on
 

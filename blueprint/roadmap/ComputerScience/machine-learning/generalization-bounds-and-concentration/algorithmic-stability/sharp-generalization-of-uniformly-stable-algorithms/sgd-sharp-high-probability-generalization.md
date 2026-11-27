@@ -6,13 +6,13 @@ $$
 g_S(z) = \mathbb{E}_{\mathrm{SGD}}\big[\ell(w_T, z) \mid S\big]
 $$
 
-changes by at most $\gamma = \frac{2L^2}{n}\sum_{t=1}^T \eta_t$ at every $z$ when one example of $S$ is replaced. Consequently, for every $\delta \in (0,1)$, with probability at least $1-\delta$ over $S$,
+changes by at most $\gamma = \frac{2L^2}{n}\sum_{t=1}^T \eta_t$ at every $z$ when one example of $S$ is replaced. Consequently, for an i.i.d. sample $S \sim D^n$ and every $\delta \in (0,1)$, with probability at least $1-\delta$ over $S$,
 
 $$
 \Big| \mathbb{E}_{z}\big[g_S(z)\big] - \frac{1}{n}\sum_{i=1}^n g_S(z_i) \Big| \lesssim \frac{L^2 \sum_{t \le T} \eta_t}{n} \log n \log\frac{e}{\delta} + B\sqrt{\frac{\log(e/\delta)}{n}} ,
 $$
 
-that is, the generalization gap $\mathbb{E}_{\mathrm{SGD}}[R(w_T) - R_{\mathrm{emp}}(w_T) \mid S]$ averaged over SGD's randomness satisfies this bound. Logarithms of the confidence parameter are floored at $1$, as in the sharp stability bound. With $\eta_t = \eta$ and $T = n$ steps (one pass) the right-hand side is $O\big(L^2 \eta \log n \log(e/\delta) + B\sqrt{\log(e/\delta)/n}\big)$. The statement does not bound the gap of a single realised output $w_T$; that would need additional control of SGD's internal randomness.
+where $\mathbb{E}_z$ is over a fresh draw $z \sim D$ independent of $S$; that is, the generalization gap $\mathbb{E}_{\mathrm{SGD}}[R(w_T) - R_{\mathrm{emp}}(w_T) \mid S]$ averaged over SGD's randomness satisfies this bound. Logarithms of the confidence parameter are floored at $1$, as in the sharp stability bound. With $\eta_t = \eta$ and $T = n$ steps (one pass) the right-hand side is $O\big(L^2 \eta \log n \log(e/\delta) + B\sqrt{\log(e/\delta)/n}\big)$. The i.i.d. assumption is needed: a sample of $n$ copies of one fair bit gives gap $\tfrac12$ at stability zero. The statement does not bound the gap of a single realised output $w_T$; that would need additional control of SGD's internal randomness.
 
 ## Proof sketch
 

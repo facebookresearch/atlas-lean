@@ -3,10 +3,10 @@
 Let $G = (V, E, w)$ be a directed or undirected graph with $n$ vertices, $m$ edges and integer weights $w(e) \in [1, W]$, with a fixed source $s \in V$, undergoing an online sequence of edge deletions (or, in the vertex-decremental version, vertex deletions). For $\varepsilon > 0$, a *decremental $(1+\varepsilon)$-approximate SSSP* data structure maintains estimates $\tilde d(v)$ with
 
 $$
-\mathrm{dist}_G(s, v) \le \tilde d(v) \le (1 + \varepsilon)\,\mathrm{dist}_G(s, v) \quad \text{for all } v \in V
+\mathrm{dist}_G(s, v) \le \tilde d(v) \le (1 + \varepsilon)\,\mathrm{dist}_G(s, v) \quad \text{for all } v \in V \text{ reachable from } s \text{ in } G
 $$
 
-after every deletion. *Distance queries* return $\tilde d(v)$; *path queries* return an $s$-$v$ path of length at most $(1+\varepsilon)\mathrm{dist}_G(s, v)$. Cost is the *total update time* over the whole deletion sequence, plus query time. Against an adaptive adversary, deletions may depend on all returned estimates and paths.
+after every deletion, where $G$ is the current graph, and $\tilde d(v) = \infty$, meaning that $v$ is reported unreachable, for every other remaining vertex $v$. *Distance queries* return $\tilde d(v)$; *path queries* return, for $v$ reachable from $s$, an $s$-$v$ path in $G$ of length at most $(1+\varepsilon)\mathrm{dist}_G(s, v)$, and report that no path exists otherwise. Cost is the *total update time* over the whole deletion sequence, plus query time. Against an adaptive adversary, deletions may depend on all returned estimates and paths.
 
 ## Depends on
 

@@ -13,6 +13,7 @@ Part 1 holds because matched colors are distinct inside $K$ and available with r
 ## Depends on
 
 - [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
+- [Sparse-dense decomposition of graphs of maximum degree Delta into sparse vertices and almost-cliques](sparse-dense-decomposition-of-bounded-degree-graphs.md)
 
 ## Proof depends on
 

@@ -6,7 +6,7 @@ $$
 O\Big(\frac{\log(1/\delta)}{\varepsilon^{2}} + \log n\Big)
 $$
 
-bits of space. Combined with the matching lower bound, this settles the space complexity of distinct elements in all of $n$, $\varepsilon$ and $\delta$. The same work solves *strong tracking*, where the estimate must be a $(1 \pm \varepsilon)$-approximation of the number of distinct elements seen so far simultaneously at every time of the stream, in $O\big(\varepsilon^{-2}(\log\log n + \log(1/\delta)) + \log n\big)$ bits, which is also optimal.
+bits of space. The same work solves *strong tracking*, where the estimate must be a $(1 \pm \varepsilon)$-approximation of the number of distinct elements seen so far simultaneously at every time of the stream, in $O\big(\varepsilon^{-2}(\log\log n + \log(1/\delta)) + \log n\big)$ bits, and proves an $\Omega(\varepsilon^{-2}\log\log n)$ lower bound for strong tracking with constant failure probability. Both upper bounds are optimal in the regime of the matching lower bounds, which for estimation is $\Omega(\varepsilon^{-2}\log(1/\delta) + \log n)$ for $\varepsilon$ and $\delta$ below an absolute constant and $n$ polynomially larger than $\varepsilon^{-2}\log(1/\delta)$. They are not optimal for every $\varepsilon$: for $\varepsilon < 1/n$ an exact $n$-bit bitmap of the elements seen so far answers every query, at every time, with fewer than $\varepsilon^{-2}$ bits.
 
 ## Proof sketch
 
@@ -19,8 +19,9 @@ Taking the median of $\log(1/\delta)$ independent copies multiplies the $\log n$
 
 ## Proof depends on
 
+- [Chernoff bound for expander walks](../../../../GraphTheory/graph-families-and-operations/expander-graphs/chernoff-bound-expander-walk.md)
 - [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
 
 ## Sources
 
-- Jarosław Błasiok, "Optimal streaming and tracking distinct elements with high probability", SODA (2018); ACM Trans. Algorithms 16 (2020), arXiv:1804.01642.
+- Jarosław Błasiok, "Optimal streaming and tracking distinct elements with high probability", SODA (2018); ACM Trans. Algorithms 16 (2020), arXiv:1804.01642, Theorems 4, 6 and 8.

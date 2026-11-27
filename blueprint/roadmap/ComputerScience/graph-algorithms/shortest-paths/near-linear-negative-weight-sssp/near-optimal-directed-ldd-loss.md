@@ -1,10 +1,10 @@
 # Directed low-diameter decompositions with loss O(log n log log n)
 
-For directed graphs with $n$ vertices, $m$ edges and nonnegative weights, and every $D>0$:
+Let $G$ be a directed graph with $n$ vertices, $m$ edges and positive edge lengths (polynomially bounded for the algorithms), and let $D\ge 1$. A directed LDD of $G$ with loss $L$ is a probability distribution over edge sets $S$ such that every strongly connected component of $G\setminus S$ has weak diameter at most $D$ and $\Pr[e\in S]\le L\,w(e)/D$ for every edge $e$. Then:
 
-1. there exists a weak directed LDD that deletes each edge $e$ with probability $O\big(\frac{w(e)}{D}\log n\log\log n\big)$, which is within an $O(\log\log n)$ factor of the known lower bound $\Omega(\log n)$ on the overhead;
-2. such an LDD can be computed deterministically in time $\tilde O(m\,\mathrm{poly}(D))$ and by a randomized algorithm in near-linear time $\tilde O(m)$;
-3. an LDD with loss $O(\log n\log\log n)$ can be computed in expected time $O((m+n\log\log n)\log n\log\log n)$, succeeding with high probability.
+1. there exists a directed LDD with loss $O(\log n\log\log n)$, which is within an $O(\log\log n)$ factor of the known lower bound $\Omega(\log n)$ on the loss;
+2. a deterministic algorithm computes in time $\tilde O(m\,\mathrm{poly}(D))$ the support of such an LDD: an explicit list of $O(D\log n)$ edge sets, each with the weak-diameter property, whose uniform distribution has loss $O(\log n\log\log n)$; and a randomized algorithm samples one edge set from an LDD with loss $O(\log n\log\log n)$ in expected time $\tilde O(m)$, its analysis adding $1/\mathrm{poly}(n)$ to each cutting probability for rare invalid answers of a subroutine;
+3. an LDD with loss $O(\log n\log\log n)$ can be sampled in expected time $O((m+n\log\log n)\log n\log\log n)$, succeeding with high probability.
 
 ## Proof sketch
 

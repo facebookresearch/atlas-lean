@@ -2,7 +2,7 @@
 
 Let $(G, S)$ be a D1LC instance on $n$ vertices in which every list $S(v)$ has exactly $\deg(v) + 1$ colors, let $\pi : V \to \{1, \dots, n\}$ be a uniformly random bijection, and set $\ell(v) = \min\big(\deg(v) + 1, \lceil 40\, n \ln n / \pi(v) \rceil\big)$ (the distribution of $\ell$ depends only on $V$ and the degrees). If every vertex $v$ independently samples a uniformly random subset $L(v) \subseteq S(v)$ of size $\ell(v)$, then with high probability over $\pi$ and the samples, the greedy algorithm that processes the vertices in decreasing order of $\pi(v)$ and gives each vertex any color of $L(v)$ not used by its already colored neighbors finds a proper list coloring of $G$ from the lists $L(v)$.
 
-For $(\Delta + 1)$-coloring the same holds with $\ell(v) = \min\big(\Delta + 1, \lceil 40\, n \ln n/\pi(v)\rceil\big)$ and lists $L(v)$ sampled from $\{1, \dots, \Delta + 1\}$, by first sampling $\deg(v) + 1$ colors of $\{1, \dots, \Delta + 1\}$ as $S(v)$ and sampling inside it. Since $\sum_v \ell(v) = O(n\log^2 n)$ deterministically, this yields semi-streaming, sublinear-time and massively parallel $(\Delta + 1)$-coloring algorithms of the same quality as the symmetric theorem up to polylogarithmic factors, with greedy post-processing.
+For $(\Delta + 1)$-coloring the same holds with $\ell(v) = \min\big(\Delta + 1, \lceil 40\, n \ln n/\pi(v)\rceil\big)$ and $L(v)$ a uniformly random $\ell(v)$-subset of $\{1, \dots, \Delta + 1\}$. Since $\ell(v)$ may exceed $\deg(v) + 1$ (an isolated vertex has $\deg(v) + 1 = 1$), $L(v)$ is not sampled inside a $(\deg(v) + 1)$-list; instead it is generated in three steps: draw a uniformly random $(\deg(v) + 1)$-subset $S(v)$ of $\{1, \dots, \Delta + 1\}$, draw a uniformly random subset $L'(v) \subseteq S(v)$ of size $\min(\ell(v), \deg(v) + 1)$, and top it up with $\ell(v) - |L'(v)|$ further colors drawn uniformly from $\{1, \dots, \Delta + 1\} \setminus L'(v)$. The result is a uniformly random $\ell(v)$-subset, and the D1LC statement applied to the lists $S(v)$ and samples $L'(v) \subseteq L(v)$ shows that greedy succeeds. Since $\sum_v \ell(v) = O(n\log^2 n)$ deterministically, this yields semi-streaming, sublinear-time and massively parallel $(\Delta + 1)$-coloring algorithms of the same quality as the symmetric theorem up to polylogarithmic factors, with greedy post-processing.
 
 ## Proof sketch
 
@@ -11,6 +11,8 @@ When $v$ is processed, only its already processed neighbors, those with larger $
 ## Depends on
 
 - [The (deg + 1)-list-coloring problem (D1LC)](degree-plus-one-list-coloring.md)
+- [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](../semi-streaming-matching-and-vertex-cover/semi-streaming-graph-model.md)
+- [The massively parallel computation model](../../../parallel-algorithms/massively-parallel-computation-graph-algorithms/massively-parallel-computation-model.md)
 
 ## Proof depends on
 
@@ -20,4 +22,4 @@ When $v$ is processed, only its already processed neighbors, those with larger $
 
 ## Sources
 
-- Sepehr Assadi, Helia Yazdanyar, "Simple Sublinear Algorithms for (Delta+1) Vertex Coloring via Asymmetric Palette Sparsification", SOSA (2025); TheoretiCS 5 (2026), Article 3, arXiv:2502.17629.
+- Sepehr Assadi, Helia Yazdanyar, "Simple Sublinear Algorithms for (Delta+1) Vertex Coloring via Asymmetric Palette Sparsification", SOSA (2025); TheoretiCS 5 (2026), Article 3, arXiv:2502.17629, Theorem 3.1 and Corollary 3.5.

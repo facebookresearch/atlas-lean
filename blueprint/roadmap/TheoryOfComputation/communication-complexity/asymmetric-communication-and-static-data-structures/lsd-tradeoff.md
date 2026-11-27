@@ -1,6 +1,6 @@
 # Communication lower bound for lopsided set disjointness
 
-Fix $\delta > 0$. In every bounded-error randomized protocol for $\mathrm{LSD}_{N, B}$, either Alice sends at least $\delta N \log_2 B$ bits or Bob sends at least $N B^{1 - O(\delta)}$ bits. The tradeoff is tight up to constants in the exponent: Alice can send her whole set using $N \log_2 B$ bits, and Bob can send his whole set using $NB$ bits.
+There is an absolute constant $\delta_0 \in (0, 1)$ such that for every fixed $0 < \delta \le \delta_0$, in every bounded-error randomized protocol for $\mathrm{LSD}_{N, B}$, either Alice sends at least $\delta N \log_2 B$ bits or Bob sends at least $N B^{1 - O(\delta)}$ bits, where the constant in $O(\delta)$ is absolute and the bound is asymptotic in $N$ and $B$ (Pătraşcu, Theorem 4). The same holds for blocked $\mathrm{LSD}_{N,B}$, since the hard distribution of the proof is supported on blocked inputs. A bound on $\delta$ is needed: for blocked inputs with $B = 2$ and $\delta = 2$, Alice can send her whole set with $N < \delta N \log_2 B$ bits while Bob sends nothing. The tradeoff is tight up to constants in the exponent: in blocked $\mathrm{LSD}$ Alice can send her whole set using $N \lceil \log_2 B \rceil$ bits, and Bob can send his whole set using $NB$ bits.
 
 ## Proof sketch
 

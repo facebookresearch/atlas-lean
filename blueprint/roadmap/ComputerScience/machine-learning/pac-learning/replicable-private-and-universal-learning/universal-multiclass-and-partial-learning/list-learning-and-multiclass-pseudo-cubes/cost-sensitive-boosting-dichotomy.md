@@ -1,6 +1,6 @@
 # Cost-sensitive boosting dichotomy for binary classification
 
-Let $Y = \{-1,+1\}$ and let $w = (w_+, w_-) \in (0,1]^2$ be the costs of a false negative and a false positive, so that the cost-sensitive loss of $h$ under $D$ is $L^w_D(h) = w_+ \Pr[h(x) = -1, y = +1] + w_- \Pr[h(x) = +1, y = -1]$. Call a learner a $(w,z)$-learner for a class $F$ if on every $F$-realizable $D$ it outputs, from enough samples, hypotheses with $L^w_D(h) \le z + \varepsilon$ for every $\varepsilon > 0$. Then for every $z \ge 0$ exactly one of the following holds:
+Let $Y = \{-1,+1\}$ and let $w = (w_+, w_-) \in (0,1]^2$ be the costs of a false negative and a false positive, so that the cost-sensitive loss of $h$ under $D$ is $L^w_D(h) = w_+ \Pr[h(x) = -1, y = +1] + w_- \Pr[h(x) = +1, y = -1]$. Call a learner $A$ a $(w,z)$-learner for a class $F$ if there is a single sample-size function $m_0 : (0,1)^2 \to \mathbb{N}$, uniform over targets and distributions, such that for every $f \in F$, every distribution $D$ over $X$ and every $\varepsilon, \delta \in (0,1)$, on $m_0(\varepsilon,\delta)$ i.i.d. examples from $D$ labelled by $f$ it returns a predictor $h$ with $L^w_D(h) \le z + \varepsilon$ with probability at least $1 - \delta$ over the sample and the learner's internal coins. Then for every $z \ge 0$ exactly one of the following holds:
 
 - every $(w,z)$-learner, for every class $F \subseteq Y^X$, can be boosted to a $(w,0)$-learner;
 - there is a single random guess (a data-independent randomized constant hypothesis) that is a $(w,z)$-learner for every class.

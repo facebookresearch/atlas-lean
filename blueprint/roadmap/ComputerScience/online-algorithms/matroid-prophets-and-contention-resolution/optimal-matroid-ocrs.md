@@ -13,6 +13,7 @@ Lee and Singla write the existence of a $c$-selectable scheme as an exponential-
 ## Proof depends on
 
 - [Kleinberg–Weinberg: every matroid admits a $1/2$ prophet inequality](matroid-prophet-half.md)
+- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
 
 ## Sources
 

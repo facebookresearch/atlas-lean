@@ -1,12 +1,12 @@
 # High-probability generalization of uniformly stable algorithms with a single logarithmic factor
 
-Let $A$ be a learning algorithm that is $\gamma$-uniformly stable (replacing one of $n$ examples changes the loss of the output on every point by at most $\gamma$) with loss bounded by $L$. Then for every $\delta \in (0,1)$, with probability at least $1-\delta$ over the sample $S$,
+Let $A$ be a learning algorithm that is $\gamma$-uniformly stable (replacing one of $n$ examples changes the loss of the output on every point by at most $\gamma$) with a loss taking values in $[0, L]$, and let $S = (Z_1, \dots, Z_n) \sim D^n$ be an i.i.d. sample. Then for every $\delta \in (0,1)$, with probability at least $1-\delta$ over $S$,
 
 $$
 \big| R(A_S) - R_{\mathrm{emp}}(A_S) \big| \lesssim \gamma \log n \log\frac{e}{\delta} + L \sqrt{\frac{\log(e/\delta)}{n}},
 $$
 
-where $R$ and $R_{\mathrm{emp}}$ are the population and empirical risks and $\lesssim$ hides an absolute constant. Logarithms of the confidence parameter follow the convention of Bousquet, Klochkov and Zhivotovskiy (§2.1), which floors them at $1$: $\log(e/\delta) = 1 + \log(1/\delta)$ lies between $\max\{1, \log(1/\delta)\}$ and twice it, so the right-hand side stays bounded away from $0$ as $\delta \to 1$. This improves the Bousquet–Elisseeff bound $O(\gamma\sqrt{n\log(e/\delta)} + L\sqrt{\log(e/\delta)/n})$ and removes a $\log n$ factor from the Feldman–Vondrák bound.
+where $R(h) = \mathbb{E}_{Z \sim D}[\ell(h, Z)]$ is the population risk over a fresh draw $Z \sim D$ independent of $S$, $R_{\mathrm{emp}}$ is the empirical risk on $S$, and $\lesssim$ hides an absolute constant. Without independence the bound fails: $n$ copies of one fair bit give gap $\tfrac12$ at stability zero. Logarithms of the confidence parameter follow the convention of Bousquet, Klochkov and Zhivotovskiy (§2.1), which floors them at $1$: $\log(e/\delta) = 1 + \log(1/\delta)$ lies between $\max\{1, \log(1/\delta)\}$ and twice it, so the right-hand side stays bounded away from $0$ as $\delta \to 1$. This improves the Bousquet–Elisseeff bound $O(\gamma\sqrt{n\log(e/\delta)} + L\sqrt{\log(e/\delta)/n})$ and removes a $\log n$ factor from the Feldman–Vondrák bound.
 
 ## Proof sketch
 

@@ -6,7 +6,7 @@ $$
 \mathrm{dec}^{c}_{\varepsilon}(\mathcal{M}, \bar M) = \inf_{p \in \Delta(\Pi)} \sup_{M \in \mathcal{M}} \Big\{ \mathbb{E}_{\pi \sim p}\big[f^M(\pi_M) - f^M(\pi)\big] \;:\; \mathbb{E}_{\pi \sim p} D_H^2\big(M(\pi), \bar M(\pi)\big) \le \varepsilon^2 \Big\},
 $$
 
-with value $0$ when some $p$ leaves no $M$ satisfying the constraint, and $\mathrm{dec}^c_\varepsilon(\mathcal{M}) = \sup_{\bar M \in \mathrm{co}(\mathcal{M})} \mathrm{dec}^c_\varepsilon(\mathcal{M} \cup \{\bar M\}, \bar M)$. If every model in $\mathcal{M}$ has rewards in $[0,1]$, then for every $T \ge 1$ and every $T$-round algorithm,
+where $D_H^2(P, Q) = \int \big(\sqrt{dP/d\nu} - \sqrt{dQ/d\nu}\big)^2\, d\nu = 2\, d_{\mathrm{Hell}}(P, Q)^2$ is the unnormalized squared Hellinger distance, twice the square of the linked Hellinger distance $d_{\mathrm{Hell}}$, as in the offset DEC; the value is $0$ when some $p$ leaves no $M$ satisfying the constraint, and $\mathrm{dec}^c_\varepsilon(\mathcal{M}) = \sup_{\bar M \in \mathrm{co}(\mathcal{M})} \mathrm{dec}^c_\varepsilon(\mathcal{M} \cup \{\bar M\}, \bar M)$. If every model in $\mathcal{M}$ has rewards in $[0,1]$, then for every $T \ge 1$ and every $T$-round algorithm,
 
 $$
 \sup_{M \in \mathcal{M}} \mathbb{E}^{M}[\mathrm{Reg}_T] \ge T\Big(\tfrac18\,\mathrm{dec}^c_{\varepsilon}(\mathcal{M}) - 6\varepsilon - \tfrac1T\Big), \qquad \varepsilon = \frac{1}{24\sqrt{T}} .

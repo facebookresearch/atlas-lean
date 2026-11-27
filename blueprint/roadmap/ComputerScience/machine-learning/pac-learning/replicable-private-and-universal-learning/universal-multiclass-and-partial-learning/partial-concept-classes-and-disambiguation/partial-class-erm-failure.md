@@ -1,6 +1,6 @@
 # Empirical risk minimization fails for partial concept classes
 
-There is a partial concept class $H$ with $\mathrm{VC}(H) = 1$ such that for every total class $\bar H \subseteq \{0,1\}^X$ some empirical risk minimizer for $\bar H$ is not a PAC learner for $H$. Moreover, there is a partial class $H$ with $\mathrm{VC}(H) = 1$ such that every learning algorithm that outputs only total concepts has an image (the set of all hypotheses it ever outputs) of infinite VC dimension.
+There is a partial concept class $H$ with $\mathrm{VC}(H) = 1$ such that for every total class $\bar H \subseteq \{0,1\}^X$ some empirical risk minimizer for $\bar H$ is not a PAC learner for $H$. Moreover, there is a partial class $H$ with $\mathrm{VC}(H) = 1$ such that every algorithm that PAC learns $H$ and outputs only total concepts has an image (the set of all hypotheses it ever outputs) of infinite VC dimension.
 
 ## Proof sketch
 

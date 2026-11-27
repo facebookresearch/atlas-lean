@@ -1,6 +1,6 @@
 # Sequential Phragmén satisfies proportional justified representation
 
-An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. Sequential Phragmén builds a committee in $k$ rounds. All voters start with load $0$; in each round, for every candidate $c$ not yet chosen with approving voters $N_c = \{ i : c \in A_i \} \ne \emptyset$, let $s_c = \bigl(1 + \sum_{i \in N_c} \ell_i\bigr)/\lvert N_c \rvert$; a candidate with minimum $s_c$ is added and every $i \in N_c$ receives the new load $\ell_i := s_c$. The output always provides PJR, can be computed in polynomial time, and in general does not provide EJR.
+An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. Assume, as Brill, Freeman, Janson and Lackner do, that every candidate is approved by at least one voter: $N_c = \{ i : c \in A_i \} \ne \emptyset$ for every $c \in C$. Without this the rule is not defined for all $k$ (with a single approved candidate and $k = 2$ no second candidate has a well-defined $s_c$). Sequential Phragmén builds a committee in $k$ rounds. All voters start with load $0$; in each round, for every candidate $c$ not yet chosen, let $s_c = \bigl(1 + \sum_{i \in N_c} \ell_i\bigr)/\lvert N_c \rvert$; a candidate with minimum $s_c$ is added and every $i \in N_c$ receives the new load $\ell_i := s_c$. The output always provides PJR, can be computed in polynomial time, and in general does not provide EJR.
 
 ## Proof sketch
 
@@ -9,6 +9,7 @@ Suppose a group $N'$ with $\lvert N' \rvert \ge \ell n/k$ and at least $\ell$ co
 ## Depends on
 
 - [Proportional justified representation](proportional-justified-representation.md)
+- [Extended justified representation](extended-justified-representation.md)
 
 ## Sources
 

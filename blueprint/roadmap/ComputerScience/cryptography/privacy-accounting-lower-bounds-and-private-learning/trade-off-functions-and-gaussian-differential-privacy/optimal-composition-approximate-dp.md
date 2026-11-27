@@ -23,6 +23,7 @@ The argument is pairwise. Fix a pair of neighbouring datasets $D_0, D_1$. For ea
 - [Differential privacy](../../differential-privacy/differentially-private.md)
 - [f-differential privacy](f-differential-privacy.md)
 - [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
+- [Tradeoff lower bound of approximate differential privacy](../../hypothesis-testing-characterization-of-different/f-eps-delta.md)
 
 ## Proof depends on
 

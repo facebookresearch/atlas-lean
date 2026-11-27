@@ -10,6 +10,7 @@ Start from the exponential-size revenue linear program over all $2^n$ types, rel
 
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
 - [$\#P$-complete functions](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
+- [Bayesian incentive compatibility](../../revelation-principle/is-bayes-incentive-compatible.md)
 
 ## Sources
 

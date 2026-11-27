@@ -15,6 +15,7 @@ The proof shows a more refined communication bound: if the edges are split among
 
 ## Proof depends on
 
+- [RANKING is (1 - 1/e)-competitive](../../../online-algorithms/ranking-and-adwords/ranking-is-competitive.md)
 - [Ruzsa-Szemerédi graphs: edge sets partitioned into large induced matchings](ruzsa-szemeredi-graphs.md)
 - [Yao's minimax principle](../../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 

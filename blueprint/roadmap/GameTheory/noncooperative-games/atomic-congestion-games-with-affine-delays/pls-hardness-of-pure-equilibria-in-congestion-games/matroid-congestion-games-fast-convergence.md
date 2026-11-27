@@ -15,6 +15,8 @@ Replace every delay value $d_r(i)$ by its rank among the at most $nm$ delay valu
 ## Proof depends on
 
 - [Finite improvement property](../../potential-games/well-founded-improving-move.md)
+- [Rosenthal's potential](../../potential-games/potential.md)
+- [Rosenthal's theorem](../../potential-games/is-exact-potential-potential.md)
 
 ## Sources
 

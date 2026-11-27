@@ -1,6 +1,6 @@
 # Finite Littlestone dimension implies private learnability
 
-Every class $H$ of Littlestone dimension $d < \infty$ has, for every $\alpha > 0$, a realizable learner on $m = 2^{2^{d+2}+1} 4^{d+1} \lceil 2^{d+2}/\alpha \rceil$ samples that outputs some hypothesis of error at most $\alpha$ with probability at least $\big((d+1) 2^{2^d+1}\big)^{-1}$, and hence, for all $\varepsilon, \delta \in (0,1)$ and $\alpha, \beta \in (0, 1/2)$, an $(\varepsilon,\delta)$-differentially private PAC learner with sample complexity
+Every class $H$ of Littlestone dimension $1 \le d < \infty$ has, for every $\alpha > 0$, a globally stable realizable learner $G$ on $m = 2^{2^{d+2}+1} 4^{d+1} \lceil 2^{d+2}/\alpha \rceil$ samples: for every realizable distribution $D$ there is one fixed hypothesis $f_D$, depending on $D$ but not on the sample, with error at most $\alpha$ and $\Pr_{S \sim D^m,\,G}[G(S) = f_D] \ge \big((d+1) 2^{2^d+1}\big)^{-1}$. Merely outputting some accurate hypothesis with that probability would not suffice, since different samples could produce different accurate hypotheses and no output would recur. (A class of Littlestone dimension $0$ contains a single hypothesis and is trivially learnable.) Hence, for all $\varepsilon, \delta \in (0,1)$ and $\alpha, \beta \in (0, 1/2)$, an $(\varepsilon,\delta)$-differentially private PAC learner with sample complexity
 
 $$
 O\!\left(\frac{2^{\tilde O(2^d)} + \log(1/(\beta\delta))}{\alpha\, \varepsilon}\right).

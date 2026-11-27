@@ -4,7 +4,7 @@ Let $G=(V,E)$ be a connected graph on $n$ vertices and $\lambda \in \mathbb{R}_{
 
 ## Proof sketch
 
-By the matrix-tree theorem $g_{\mu_\lambda}(z)$ is proportional to $\det\big(\sum_{e}\lambda_e z_e\,b_e b_e^{\top}\big)$ restricted to the complement of one vertex coordinate, where $b_e$ is the signed incidence vector. A determinant $\det(\sum_i z_i A_i)$ with positive semidefinite $A_i$ is real stable (Borcea-Branden), and positive rescaling of variables preserves stability. Stable homogeneous polynomials with nonnegative coefficients are Lorentzian.
+By the weighted matrix-tree theorem $g_{\mu_\lambda}(z)$ is proportional to $\det\big(\sum_{e}\lambda_e z_e\,b_e b_e^{\top}\big)$ restricted to the complement of one vertex coordinate, where $b_e$ is the signed incidence vector. A determinant $\det(\sum_i z_i A_i)$ with positive semidefinite $A_i$ is real stable (Borcea-Branden), and positive rescaling of variables preserves stability. Stable homogeneous polynomials with nonnegative coefficients are Lorentzian.
 
 ## Depends on
 
@@ -15,6 +15,7 @@ By the matrix-tree theorem $g_{\mu_\lambda}(z)$ is proportional to $\det\big(\su
 ## Proof depends on
 
 - [Kirchhoff's matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/kirchhoff-matrix-tree.md)
+- [Weighted matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/weighted-matrix-tree.md)
 - [Stable polynomials are Lorentzian](../../../Combinatorics/matroid-theory/lorentzian-polynomials/stable-mem-l.md)
 - [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
 

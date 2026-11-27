@@ -18,6 +18,7 @@ The cut constraint for $S=\{u,v\}$ implies $x_{uv} \le 1$. The indicator vector 
 
 - [The ellipsoid method finds a point](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/ellipsoid-run-finds-point.md)
 - [Stoer-Wagner in O(n^3) word-RAM time](../../graph-algorithms/spanning-trees-flows-matchings/deterministic-global-minimum-cuts/stoer-wagner-word-ram.md)
+- [Grotschel-Lovasz-Schrijver equivalence of separation and optimization](../../../GraphTheory/graph-invariants-and-labelings/theta-sandwich-and-perfect-graph-optimization/separation-optimization-equivalence.md)
 
 ## Sources
 

@@ -9,7 +9,7 @@ Combine $\mathrm{cost}_{\mathcal{A}}(X) \le c\,\mathrm{OPT}(X)$ with $\mathrm{OP
 ## Depends on
 
 - [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [Classical pattern containment in a sequence](../../../../Combinatorics/permutations/permutation-patterns/cyclic-pattern-avoiding-stack-sorting/contains-pattern-seq.md)
 
 ## Proof depends on
 

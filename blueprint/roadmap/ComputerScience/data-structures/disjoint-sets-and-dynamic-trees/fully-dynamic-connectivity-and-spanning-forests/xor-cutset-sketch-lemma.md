@@ -1,6 +1,6 @@
 # XOR sketches recover a single edge of a vertex cut
 
-Give each edge $e$ of a graph on $V = \{1, \dots, n\}$ a distinct name $\mathrm{id}(e) \in \{0, 1\}^{2\lceil \log_2 n \rceil}$ (the concatenated endpoints), and for $v \in V$ let $x(v) = \bigoplus_{e \ni v} \mathrm{id}(e)$, the bitwise XOR over incident edges. Then for every $S \subseteq V$,
+Let $G$ be a simple loopless graph on $V = \{1, \dots, n\}$. Give each edge $e = \{u, v\}$ with $u < v$ the name $\mathrm{id}(e) \in \{0, 1\}^{2\lceil \log_2 n \rceil}$ formed by concatenating the $\lceil \log_2 n \rceil$-bit binary encodings of $u - 1$ and $v - 1$ (the label $n$ itself would need $\lceil \log_2 n \rceil + 1$ bits when $n$ is a power of two), so distinct edges get distinct names. For $v \in V$ let $x(v) = \bigoplus_{e \ni v} \mathrm{id}(e)$, the bitwise XOR over incident edges. Then for every $S \subseteq V$,
 
 $$
 \bigoplus_{v \in S} x(v) = \bigoplus_{e \in E(S, V \setminus S)} \mathrm{id}(e).

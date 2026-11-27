@@ -1,6 +1,6 @@
 # Deterministic fully dynamic low-stretch spanning trees with subpolynomial update time
 
-There is a deterministic data structure that, given a dynamic $n$-vertex graph undergoing insertions and deletions of edges with integral lengths bounded by $\exp(\log^{O(1)} n)$, maintains a spanning tree of average stretch $n^{o(1)}$ in worst-case $n^{o(1)}$ time per update. The tree is kept in memory with $n^{o(1)}$ amortized recourse per update, and the changes can be output explicitly in amortized $n^{o(1)}$ time per update.
+There is a deterministic data structure that, given a dynamic $n$-vertex graph that stays connected after every update, undergoing insertions and deletions of edges with positive integral lengths bounded by $\exp(\log^{O(1)} n)$, maintains a spanning tree of average stretch $n^{o(1)}$ in worst-case $n^{o(1)}$ time per update. Connectivity is needed for a spanning tree to exist, since deleting a bridge leaves none, and positive lengths make the stretch well defined. The tree is kept in memory with $n^{o(1)}$ amortized recourse per update, and the changes can be output explicitly in amortized $n^{o(1)}$ time per update.
 
 ## Proof sketch
 

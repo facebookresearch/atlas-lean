@@ -1,6 +1,6 @@
 # Root-to-leaf paths in the recursive layout touch $O(\log_L N)$ lines
 
-For every line length $L \ge 2$, every root-to-leaf path of a complete binary tree on $N$ nodes stored in the van Emde Boas layout touches at most $4\lceil \log_L N\rceil + O(1)$ cache lines; hence a search costs $O(\log_L N)$ cache misses in the ideal-cache model for every $L$ simultaneously.
+For every line length $L \ge 2$, every root-to-leaf path of a complete binary tree on $N$ nodes stored in the van Emde Boas layout touches at most $4\lceil \log_L N\rceil + O(1)$ cache lines; hence a search costs $O(1 + \log_L N)$ cache misses in the ideal-cache model for every $L$ simultaneously. The additive $1$ cannot be dropped: for $L > N$ the first, cold read of the root is already a miss while $\log_L N < 1$.
 
 ## Proof sketch
 
@@ -14,4 +14,4 @@ Consider the coarsest level of the recursion at which the subtrees have height $
 ## Sources
 
 - Harald Prokop, "Cache-Oblivious Algorithms", Master's thesis, Massachusetts Institute of Technology (1999).
-- Michael A. Bender, Erik D. Demaine, Martín Farach-Colton, "Cache-Oblivious B-Trees", SIAM Journal on Computing 35(2) (2005); FOCS (2000).
+- Michael A. Bender, Erik D. Demaine, Martín Farach-Colton, "Cache-Oblivious B-Trees", SIAM Journal on Computing 35(2) (2005); FOCS (2000), Lemma 2.2.

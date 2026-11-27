@@ -1,12 +1,12 @@
 # Tight O(1/sqrt(T)) last-iterate convergence of extragradient and optimistic gradient
 
-Let $F$ be monotone and $L$-Lipschitz on a compact convex set $\mathcal{Z}$ of diameter $D$, with a solution $z^\star$ of the variational inequality. For the extragradient method with any constant step size $\eta \in (0, 1/L)$, started at $z_1$, the last iterate satisfies
+Let $F$ be monotone and $L$-Lipschitz on a compact convex set $\mathcal{Z}$ of diameter $D$, with a solution $z^\star$ of the variational inequality. For the extragradient method with any constant step size $\eta \in (0, 1/L)$, started at $z_0$, the last iterate $z_T$ after $T \ge 1$ updates satisfies
 
 $$
-\mathrm{Gap}(z_T) \le \frac{3 D\, \lVert z_1 - z^\star \rVert}{\eta \sqrt{T} \sqrt{1 - \eta^2 L^2}},
+\mathrm{Gap}(z_T) \le \frac{3 D\, \lVert z_0 - z^\star \rVert}{\eta \sqrt{T} \sqrt{1 - \eta^2 L^2}},
 $$
 
-and the same bound holds for its tangent residual with $D$ omitted. For optimistic gradient descent-ascent with any constant step size $\eta \in (0, 1/(2L))$, the base iterate (written $w_T$ in the definition of the method) satisfies $\mathrm{Gap}(w_T) \le D D_0 / \bigl(\eta \sqrt{T} \sqrt{1 - 4\eta^2 L^2}\bigr)$, where $D_0$ is of the order of the larger of the distance from the initial base point to $z^\star$ and the distance between the two initial points.
+and the same bound holds for its tangent residual with $D$ omitted. For optimistic gradient descent-ascent with any constant step size $\eta \in (0, 1/(2L))$, started from an initial base point and an initial extrapolated point, whose operator value drives the first update, the base iterate after $T \ge 1$ updates (written $w_T$ in the definition of the method) satisfies $\mathrm{Gap}(w_T) \le D D_0 / \bigl(\eta \sqrt{T} \sqrt{1 - 4\eta^2 L^2}\bigr)$, where $D_0$ is of the order of the larger of the distance from the initial base point to $z^\star$ and the distance between the two initial points.
 
 In particular, when all players of a smooth monotone game with arbitrary compact convex action sets run either method, the last iterate is an $O(1/\sqrt T)$-approximate Nash equilibrium, matching the lower bound for this class of methods.
 

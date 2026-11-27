@@ -5,7 +5,9 @@ Let $G=(V,E,w)$ be a directed graph with nonnegative weights and let $D>0$. A *w
 1. (sparse hitting) for every $e\in E$, $\Pr[e\in S]\le O\big(\rho\, w(e)/D+n^{-c}\big)$ for a constant $c\ge 1$ fixed in advance (the events need not be independent);
 2. (weak diameter) every strongly connected component $C$ of $G\setminus S$ satisfies $\mathrm{dist}_G(u,v)\le D$ for all $u,v\in C$.
 
-The decomposition is *strong* if moreover $\mathrm{dist}_{G\setminus S}(u,v)\le D$ for all $u,v$ in a common strongly connected component of $G\setminus S$. The quantity $\rho$ is also called the *loss* of the decomposition.
+The decomposition is *strong* if moreover $\mathrm{dist}_{G\setminus S}(u,v)\le D$ for all $u,v$ in a common strongly connected component of $G\setminus S$.
+
+This is the definition of Bringmann, Cassis and Fischer, whose sparse-hitting bound allows the additive $n^{-c}$ term. The stronger notion of Bringmann, Fischer, Haeupler and Latypov, a directed LDD *with loss $L$*, is stated for positive weights and $D\ge 1$: it is a probability distribution over edge sets $S\subseteq E$ with the weak-diameter property 2 and the pure bound $\Pr[e\in S]\le L\,w(e)/D$ for every $e\in E$, with no additive term.
 
 ## Depends on
 

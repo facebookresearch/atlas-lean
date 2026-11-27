@@ -15,6 +15,7 @@ An edge $\{i, j\}$ with both endpoints in $S$ contributes $+1$ through $a_i$ and
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
+- [Edges of a cut](../../../approximation-algorithms/primal-dual-method-for-constrained-forests/cut-edges.md)
 
 ## Proof depends on
 

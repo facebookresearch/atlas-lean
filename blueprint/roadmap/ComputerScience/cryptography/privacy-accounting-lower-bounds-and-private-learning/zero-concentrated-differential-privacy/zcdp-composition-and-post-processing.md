@@ -13,6 +13,7 @@ Rényi divergence satisfies the chain rule $D_\alpha(P_{Y_1Y_2} \| Q_{Y_1Y_2}) \
 ## Proof depends on
 
 - [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](gaussian-mechanism-zcdp.md)
+- [Post-processing, adaptive composition and conversion for Rényi differential privacy](../../renyi-differential-privacy/renyi-dp-composition-and-conversion.md)
 
 ## Sources
 

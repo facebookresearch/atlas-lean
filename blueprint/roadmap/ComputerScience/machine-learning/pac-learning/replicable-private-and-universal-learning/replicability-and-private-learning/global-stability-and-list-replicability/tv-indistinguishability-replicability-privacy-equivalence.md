@@ -4,7 +4,8 @@ A randomized algorithm $A(S; r)$ taking an i.i.d. sample $S$ from a distribution
 
 - every $n$-sample $\rho$-replicable rule is $n$-sample $\rho$-TV indistinguishable;
 - on a countable domain, every $n$-sample $\rho$-TV indistinguishable rule has an equivalent rule (with the same output distribution on every sample) that is $n$-sample $\tfrac{2\rho}{1+\rho}$-replicable, obtained by coupling the two output distributions through shared randomness;
-- a class $H \subseteq \{0,1\}^X$ is learnable by an accurate TV indistinguishable rule if it is learnable by a weakly accurate $(0.1, 1/(n^2 \log n))$-differentially private learner, and on countable domains TV indistinguishable learnability implies $(\varepsilon,\delta)$-private learnability for all $\varepsilon, \delta$.
+- for $\gamma \in (0, 1/2)$, if a class $H \subseteq \{0,1\}^X$ is learnable by an $n$-sample $(\tfrac12 - \gamma, \tfrac12 - \gamma)$-accurate (error at most $\tfrac12 - \gamma$ with probability at least $\tfrac12 + \gamma$) $(0.1, 1/(n^2 \log n))$-differentially private learner, then for all $\alpha, \beta, \rho \in (0,1)$ it is learnable by an $(\alpha, \beta)$-accurate $\rho$-TV indistinguishable rule;
+- on a countable domain, if $H$ is learnable by an $(\alpha, \beta)$-accurate $\rho$-TV indistinguishable learner with $\rho \in (0,1)$, $\alpha \in (0, \tfrac12)$ and $\beta \in \big(0, \tfrac{1-\rho}{1+\rho}\big)$, then for all $\alpha', \beta', \varepsilon, \delta \in (0,1)$ it is learnable by an $(\alpha + \alpha', \beta')$-accurate $(\varepsilon,\delta)$-differentially private learner.
 
 Consequently, for every domain, $H$ is replicably learnable if and only if it is learnable by an approximately differentially private algorithm, if and only if $H$ has finite Littlestone dimension.
 

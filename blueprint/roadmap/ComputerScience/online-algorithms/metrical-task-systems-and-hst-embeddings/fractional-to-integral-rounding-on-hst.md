@@ -10,6 +10,7 @@ Maintain a distribution over integral configurations whose marginals at each sub
 
 - [Hierarchically separated trees](hierarchically-separated-tree.md)
 - [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
+- [Fractional k-server on a tree](../randomized-k-server-by-mirror-descent/fractional-k-server-polytope.md)
 
 ## Sources
 

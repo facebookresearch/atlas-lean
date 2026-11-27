@@ -6,7 +6,7 @@ $$
 \lvert P \rvert = \tilde O\!\left(\sqrt{n/\varepsilon}\right).
 $$
 
-More generally, with $h(d) = d \cdot R(d)$ for the rainbow cycle number $R$, a $(1 - \varepsilon)$-EFX partial allocation exists with $O\bigl(n / (\varepsilon\, h^{-1}(n/\varepsilon))\bigr)$ unallocated goods. The bound $R(d) \le d^4 + d$ gives $\lvert P \rvert \le 64 (n/\varepsilon)^{4/5}$, achievable in polynomial time, and a modification of that algorithm also guarantees a $2e^{1/e} \approx 2.88$-approximation of the maximum Nash welfare; the bound $R(d) = O(d \log d)$ gives the displayed estimate.
+More generally, with $h(d) = d \cdot R(d)$ for the rainbow cycle number $R$, a $(1 - \varepsilon)$-EFX partial allocation exists with $O\bigl(n / (\varepsilon\, h^{-1}(n/\varepsilon))\bigr)$ unallocated goods. The bound $R(d) \le d^4 + d$ gives $\lvert P \rvert \le 64 (n/\varepsilon)^{4/5}$, achievable in polynomial time, and a modification of that algorithm also outputs an allocation whose Nash social welfare $\mathrm{NSW}(X) = \bigl(\prod_{i=1}^n v_i(X_i)\bigr)^{1/n}$, the geometric mean of the agents' values, is at least $1/(2e^{1/e})$ times its maximum over complete allocations, that is, a $2e^{1/e} \approx 2.88$-approximation of the maximum Nash social welfare; the bound $R(d) = O(d \log d)$ gives the displayed estimate, again in polynomial time and with the same Nash social welfare guarantee.
 
 ## Proof sketch
 
@@ -17,6 +17,7 @@ Maintain a $(1-\varepsilon)$-EFX partial allocation with an acyclic envy graph a
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 - [Rainbow cycle number](rainbow-cycle-number.md)
 - [Nash Welfare](../../../not-yet-classified/part-01/indivisible/nash-welfare.md)
+- [Approximation ratio for the Nash social welfare objective](../nash-welfare-fairness-guarantees/nash-social-welfare-approximation-ratio.md)
 
 ## Proof depends on
 

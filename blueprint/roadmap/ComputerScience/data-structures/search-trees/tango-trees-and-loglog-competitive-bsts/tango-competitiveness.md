@@ -14,6 +14,7 @@ Summing the per-access bound gives cost $O((\sum_t k_t + m)(1 + \log\log n)) = O
 ## Proof depends on
 
 - [Cost of a tango-tree access](tango-access-cost.md)
+- [Preferred-child changes are counted by the interleave bound](preferred-child-changes-equal-interleave.md)
 - [Wilber's first lower bound](../wilber-and-funnel-lower-bounds/wilber-first-bound.md)
 
 ## Sources

@@ -1,7 +1,6 @@
 # Global Stability, List Replicability and Replicable Statistics
 
 - [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
-- [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
 - [Global stability parameter equals the reciprocal list replicability number](global-stability-equals-reciprocal-list-replicability.md)
 - [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
 - [Replicable stochastic bandit policies with near-optimal regret](replicable-bandit-policies.md)

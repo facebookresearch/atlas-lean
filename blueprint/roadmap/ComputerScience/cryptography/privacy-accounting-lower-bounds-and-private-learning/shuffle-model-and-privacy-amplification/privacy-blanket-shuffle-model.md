@@ -6,7 +6,7 @@ $$
 \varepsilon = O\!\left((1 \wedge \varepsilon_0)\, e^{\varepsilon_0} \sqrt{\frac{\log(1/\delta)}{n}}\right),
 $$
 
-which extends earlier shuffle amplification to a wider range of $\varepsilon_0$; a more general mechanism-dependent bound in terms of the privacy amplification random variables of $R$ and the blanket count $\mathrm{Bin}(n, \gamma)$ gives sharper numbers for specific randomizers. As an application, real summation in the single-message shuffle model admits a protocol with mean squared error $O_{\varepsilon,\delta}(n^{1/3})$, whereas local protocols have mean squared error $\Theta(n)$, and a matching lower bound shows that mean squared error $\Omega(n^{1/3})$ is necessary for single-message protocols.
+which extends earlier shuffle amplification to a wider range of $\varepsilon_0$; a more general mechanism-dependent bound in terms of the privacy amplification random variables of $R$ and the blanket count $\mathrm{Bin}(n, \gamma)$ gives sharper numbers for specific randomizers. As an application, consider summation of real inputs $x_i \in [0,1]$ in the single-message shuffle model, with accuracy measured by the worst-case mean squared error over all inputs. For $0 < \varepsilon \le 1$ and $0 < \delta < 1/2$ there is an $(\varepsilon,\delta)$-differentially private protocol with worst-case mean squared error $O\big(n^{1/3}\log^{2/3}(1/\delta)/\varepsilon^{4/3}\big)$ (Theorem 4.1), and every $(\varepsilon,\delta)$-differentially private single-message protocol with such $\delta$ has worst-case mean squared error $\Omega(n^{1/3})$, with a constant depending on $\varepsilon$ (Theorem 4.2). So for fixed $\varepsilon$ and $\delta$ in these ranges the optimal worst-case mean squared error is $\Theta(n^{1/3})$, whereas local protocols have mean squared error $\Theta(n)$.
 
 ## Proof sketch
 
@@ -22,4 +22,4 @@ Decompose the output law as a common part plus a data-dependent remainder; condi
 
 ## Sources
 
-- B. Balle, J. Bell, A. Gascon, K. Nissim, "The Privacy Blanket of the Shuffle Model", CRYPTO (2019), arXiv:1903.02837, Lemmas 5.1–5.3, Theorem 5.3, Corollary 5.3.1 and Section 4.
+- B. Balle, J. Bell, A. Gascon, K. Nissim, "The Privacy Blanket of the Shuffle Model", CRYPTO (2019), arXiv:1903.02837, Lemmas 5.1–5.3, Theorem 5.3, Corollary 5.3.1, Section 4 and Theorems 4.1 and 4.2.

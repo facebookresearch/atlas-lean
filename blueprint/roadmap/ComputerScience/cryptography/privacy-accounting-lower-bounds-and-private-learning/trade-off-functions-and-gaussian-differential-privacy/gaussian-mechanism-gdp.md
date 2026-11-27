@@ -1,6 +1,6 @@
 # The Gaussian mechanism is exactly Gaussian differentially private
 
-Let $q : \mathcal{X}^n \to \mathbb{R}^d$ have $\ell_2$-sensitivity $\Delta = \sup_{S \sim S'} \|q(S) - q(S')\|_2$, and let $M(S) = q(S) + \sigma Z$ with $Z \sim \mathcal{N}(0, I_d)$. Then $M$ is $\mu$-GDP with $\mu = \Delta/\sigma$, and this is tight: if the sensitivity is attained, the trade-off function of some neighbouring pair equals $G_{\Delta/\sigma}$.
+Let $q : \mathcal{X}^n \to \mathbb{R}^d$ have $\ell_2$-sensitivity $\Delta = \sup_{S \sim S'} \|q(S) - q(S')\|_2$, assume $\Delta < \infty$, and let $M(S) = q(S) + \sigma Z$ with $\sigma > 0$ and $Z \sim \mathcal{N}(0, I_d)$. Then $M$ is $\mu$-GDP with $\mu = \Delta/\sigma$, and this is tight: if the sensitivity is attained, the trade-off function of some neighbouring pair equals $G_{\Delta/\sigma}$.
 
 ## Proof sketch
 

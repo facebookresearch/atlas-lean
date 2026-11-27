@@ -4,10 +4,10 @@ For some $\gamma_{\mathrm{MRC}} = \exp(O(\log^{167/168} m\log\log m))$ there is 
 
 1. initializes in $m\gamma_{\mathrm{MRC}}$ time and processes each update in amortized $\gamma_{\mathrm{MRC}}$ time;
 2. maintains a forest that embeds into $G$ with vertex and edge congestion at most $\gamma_{\mathrm{MRC}}$;
-3. after each update outputs a circulation $\mathbf{c}$ represented by $\gamma_{\mathrm{MRC}}$ forest paths and $\gamma_{\mathrm{MRC}}$ off-tree edges with
+3. after each update reports that no cycle exists when $G$ is a forest, whose only circulation is $\mathbf{0}$, and otherwise outputs a nonzero circulation $\mathbf{c}$ represented by $\gamma_{\mathrm{MRC}}$ forest paths and $\gamma_{\mathrm{MRC}}$ off-tree edges with
 
 $$
-\frac{\langle\mathbf{g}, \mathbf{c}\rangle}{\|\mathbf{L}\mathbf{c}\|_1} \le \frac{1}{\gamma_{\mathrm{MRC}}}\cdot\min_{\mathbf{B}^{\top}\mathbf{\Delta} = \mathbf{0}}\frac{\langle\mathbf{g}, \mathbf{\Delta}\rangle}{\|\mathbf{L}\mathbf{\Delta}\|_1}.
+\frac{\langle\mathbf{g}, \mathbf{c}\rangle}{\|\mathbf{L}\mathbf{c}\|_1} \le \frac{1}{\gamma_{\mathrm{MRC}}}\cdot\min_{\mathbf{B}^{\top}\mathbf{\Delta} = \mathbf{0},\ \mathbf{\Delta} \ne \mathbf{0}}\frac{\langle\mathbf{g}, \mathbf{\Delta}\rangle}{\|\mathbf{L}\mathbf{\Delta}\|_1}.
 $$
 
 ## Proof sketch

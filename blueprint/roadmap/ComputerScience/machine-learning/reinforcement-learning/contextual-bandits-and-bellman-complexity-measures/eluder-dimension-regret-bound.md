@@ -6,7 +6,13 @@ $$
 \mathrm{BayesRegret}(T) \le 1 + \big(\dim_E(\mathcal{F}, T^{-1}) + 1\big) C + 4\sqrt{\dim_E(\mathcal{F}, T^{-1})\, \beta^*_T(\mathcal{F}, \alpha, \delta)\, T}
 $$
 
-for all $\alpha > 0$ and $\delta \le 1/(2T)$, where $\beta^*_T$ is a least-squares confidence radius of order $\sigma^2 \log(N(\mathcal{F}, \alpha, \|\cdot\|_\infty)/\delta)$ plus a discretization term; for finite $\mathcal{F}$ the last term is at most $8\sigma\sqrt{2 \dim_E(\mathcal{F}, T^{-1}) \log(2|\mathcal{F}|T)\, T}$. The same width analysis bounds the regret of optimistic (UCB) algorithms built from these confidence sets. For $d$-dimensional linear models this gives Bayesian regret $O(d\sqrt{T}\log T)$, matching the best bounds for linear bandits, and for generalized linear models it improves earlier results. Moreover, any UCB regret bound expressed through confidence sets transfers to a Bayesian regret bound for posterior sampling.
+for all $\alpha > 0$ and $\delta \le 1/(2T)$, where $\beta^*_T$ is a least-squares confidence radius of order $\sigma^2 \log(N(\mathcal{F}, \alpha, \|\cdot\|_\infty)/\delta)$ plus a discretization term; the last term is not uniform in $\delta$, since $\beta^*_T$ grows like $\log(1/\delta)$ as $\delta \to 0$. Separately, for finite $\mathcal{F}$ and all $T$,
+
+$$
+\mathrm{BayesRegret}(T) \le 1 + \big(\dim_E(\mathcal{F}, T^{-1}) + 1\big) C + 8\sigma\sqrt{2 \dim_E(\mathcal{F}, T^{-1}) \log(2|\mathcal{F}|T)\, T}.
+$$
+
+The same width analysis bounds the regret of optimistic (UCB) algorithms built from these confidence sets. For $d$-dimensional linear models this gives Bayesian regret $O(d\sqrt{T}\log T)$, matching the best bounds for linear bandits, and for generalized linear models it improves earlier results. Moreover, any UCB regret bound expressed through confidence sets transfers to a Bayesian regret bound for posterior sampling.
 
 ## Proof sketch
 

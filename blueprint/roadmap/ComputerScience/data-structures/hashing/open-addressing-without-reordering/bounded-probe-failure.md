@@ -1,6 +1,6 @@
 # Failure probability of a bounded number of uniform probes
 
-Let $B$ be a subarray in which an $\varepsilon$ fraction of the slots is free, and let a key make $k$ independent uniform probes into $B$ while $B$ is unchanged. All $k$ probes hit occupied slots with probability exactly $(1 - \varepsilon)^k \le e^{-\varepsilon k}$, and the expected index of the first free probe, conditioned on success within $k$ probes, is at most $\varepsilon^{-1}$.
+Let $B$ be a subarray in which an $\varepsilon$ fraction of the slots is free, with $0 < \varepsilon \le 1$, and let a key make $k \ge 1$ independent uniform probes into $B$ while $B$ is unchanged. All $k$ probes hit occupied slots with probability exactly $(1 - \varepsilon)^k \le e^{-\varepsilon k}$, and the expected index of the first free probe, conditioned on success within $k$ probes, is at most $\varepsilon^{-1}$. Both conditions are needed for the last claim: at $\varepsilon = 0$ or $k = 0$ success has probability zero and the conditional expectation is undefined.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # A partial class of VC dimension one with no finite-VC disambiguation
 
-For every $n$ there is a partial concept class $H_n \subseteq \{0,1,\star\}^{[n]}$ with $\mathrm{VC}(H_n) = 1$ and teaching dimension at most $2$ such that every disambiguation $\bar H$ of $H_n$ has size at least $n^{(\log n)^{1 - o(1)}}$; consequently $\mathrm{LD}(\bar H) \ge \mathrm{VC}(\bar H) \ge (\log n)^{1 - o(1)}$. Taking a disjoint union over $n$ gives a partial class $H_\infty$ on a countable domain with $\mathrm{VC}(H_\infty) = 1$ every disambiguation of which has infinite VC dimension. In particular, there are learnable partial classes that are not captured by any learnable total class.
+For every $n$ there is a partial concept class $H_n \subseteq \{0,1,\star\}^{[n]}$ with $\mathrm{VC}(H_n) = 1$ and threshold dimension $\mathrm{TD}(H_n) \le 2$ (no points $x_1, x_2, x_3$ and concepts $h_1, h_2, h_3 \in H_n$ satisfy $h_i(x_j) = \mathbb{1}[i \le j]$ for all $i, j$) such that every disambiguation $\bar H$ of $H_n$ has size at least $n^{(\log n)^{1 - o(1)}}$; consequently $\mathrm{LD}(\bar H) \ge \mathrm{VC}(\bar H) \ge (\log n)^{1 - o(1)}$. Taking a disjoint union over $n$ gives a partial class $H_\infty$ on a countable domain with $\mathrm{VC}(H_\infty) = 1$ and $\mathrm{TD}(H_\infty) \le 2$ every disambiguation of which has infinite VC dimension. In particular, there are learnable partial classes that are not captured by any learnable total class.
 
 ## Proof sketch
 

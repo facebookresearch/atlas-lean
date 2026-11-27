@@ -8,7 +8,7 @@ In a preorder sequence with root $x_1$, all keys smaller than $x_1$ precede all 
 
 ## Depends on
 
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [Classical pattern containment in a sequence](../../../../Combinatorics/permutations/permutation-patterns/cyclic-pattern-avoiding-stack-sorting/contains-pattern-seq.md)
 - [The pattern $231$](../../../../Combinatorics/permutations/permutation-patterns/permutations-counted-by-odd-indexed-fibonacci-nu/pat231.md)
 - [Deque and traversal conjectures for splay trees](../distribution-sensitive-bst-bounds/deque-and-traversal-conjectures.md)
 

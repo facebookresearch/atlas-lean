@@ -6,7 +6,7 @@ $$
 r \ge N e^{-c\sqrt{\ln N}}.
 $$
 
-Explicitly: if $A \subseteq \{1, \dots, N\}$ contains no non-trivial three-term arithmetic progression, then the bipartite graph with sides $L = R = \{1, \dots, 3N\}$ and matchings $M_x = \{(x + a, \, x + 2a) : a \in A\}$ for $x \in \{1, \dots, N\}$ is an $(|A|, N)$-Ruzsa–Szemerédi graph.
+Explicitly: if $A \subseteq \{1, \dots, N\}$ is nonempty and contains no non-trivial three-term arithmetic progression, then the bipartite graph with sides $L = R = \{1, \dots, 3N\}$ and matchings $M_x = \{(x + a, \, x + 2a) : a \in A\}$ for $x \in \{1, \dots, N\}$ is an $(|A|, N)$-Ruzsa–Szemerédi graph. Nonemptiness is needed because an $(r, t)$-Ruzsa–Szemerédi graph has $r \ge 1$, while $A = \emptyset$ would give empty matchings; Behrend's set is nonempty for every $N \ge 1$.
 
 ## Proof sketch
 

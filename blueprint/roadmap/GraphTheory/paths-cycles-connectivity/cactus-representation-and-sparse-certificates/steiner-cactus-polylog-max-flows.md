@@ -1,6 +1,6 @@
 # Steiner cactus and hypercactus with polylogarithmically many max-flows
 
-There is a randomized (Monte Carlo) algorithm that, given an undirected weighted graph $G$ with $m$ edges and a terminal set $R \subseteq V$ with $|R| \ge 2$, computes an $R$-Steiner cactus of $G$ in $\tilde O(\mathrm{MaxFlow}(O(m)))$ time with probability $1 - n^{-c}$, where $\mathrm{MaxFlow}(m)$ is the time of maximum flow on a graph with $m$ edges. Analogously, for a weighted hypergraph of total size $p = \sum_e |e|$ and a terminal set, a Steiner hypercactus is computed in $\tilde O(\mathrm{MaxFlow}(O(p)))$ time. With almost-linear maximum flow both constructions run in almost-linear time.
+There is a randomized (Monte Carlo) algorithm that, given a connected undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and positive edge weights (the input assumption of He-Huang-Saranurak, Section 2) and a terminal set $R \subseteq V$ with $|R| \ge 2$, computes an $R$-Steiner cactus of $G$ in $\tilde O(\mathrm{MaxFlow}(O(m)))$ time with probability $1 - n^{-c}$, where $\mathrm{MaxFlow}(m)$ is the time of maximum flow on a graph with $m$ edges. Analogously, for a connected hypergraph with positive hyperedge weights, total size $p = \sum_e |e|$ and a terminal set of at least two vertices, a Steiner hypercactus is computed in $\tilde O(\mathrm{MaxFlow}(O(p)))$ time. With almost-linear maximum flow both constructions run in almost-linear time.
 
 ## Proof sketch
 

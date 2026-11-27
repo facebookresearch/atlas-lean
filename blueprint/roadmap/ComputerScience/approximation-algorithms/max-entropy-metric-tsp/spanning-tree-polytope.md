@@ -6,7 +6,17 @@ $$
 P_{\mathrm{ST}}(G)=\{z \in \mathbb{R}_{\ge 0}^{E} : z(E)=n-1,\ z(E(S)) \le |S|-1 \ \text{for all}\ \emptyset \ne S \subsetneq V\}.
 $$
 
-Edmonds showed that $P_{\mathrm{ST}}(G)$ is the convex hull of the indicator vectors $\mathbf{1}_T$ of the spanning trees $T$ of $G$: it is the base polytope of the graphic matroid of $G$, whose bases are the spanning trees, and the proof shows by linear programming duality that the matroid greedy algorithm produces integral optimal primal and dual solutions. Consequently, for every cost vector $c \in \mathbb{R}^E$, the minimum cost of a spanning tree equals $\min\{c^{\top}z : z \in P_{\mathrm{ST}}(G)\}$.
+Edmonds showed that $P_{\mathrm{ST}}(G)$ is the convex hull of the indicator vectors $\mathbf{1}_T$ of the spanning trees $T$ of $G$; it is the base polytope of the graphic matroid of $G$, whose bases are the spanning trees. Consequently, for every cost vector $c \in \mathbb{R}^E$, the minimum cost of a spanning tree equals $\min\{c^{\top}z : z \in P_{\mathrm{ST}}(G)\}$.
+
+## Proof sketch
+
+Every $\mathbf{1}_T$ lies in $P_{\mathrm{ST}}(G)$: $|T| = n-1$, and $T \cap E(S)$ is a forest on the vertex set $S$, so it has at most $|S|-1$ edges. For the converse, let $r(F) = n - \kappa(F)$ for $F \subseteq E$, where $\kappa(F)$ is the number of connected components of $(V,F)$. Every $z \in P_{\mathrm{ST}}(G)$ satisfies $z(F) \le r(F)$: if $S_1, \dots, S_\kappa$ are the vertex sets of the components of $(V,F)$, then $F \subseteq \bigcup_j E(S_j)$, so $z \ge 0$ and the constraints give $z(F) \le \sum_j z(E(S_j)) \le \sum_j (|S_j|-1) = r(F)$, where $z(E(V)) = z(E) = n-1$ is used if some $S_j = V$, and $E(S_j) = \emptyset$ if $|S_j| = 1$. Now fix $c \in \mathbb{R}^E$, order the edges as $e_1, \dots, e_m$ with $c(e_1) \le \dots \le c(e_m)$, and let $E_i = \{e_1, \dots, e_i\}$, $E_0 = \emptyset$. The greedy algorithm that scans $e_1, \dots, e_m$ and keeps $e_i$ exactly when it joins two components of the edges kept so far returns a spanning tree $T$ with $|T \cap E_i| = r(E_i)$ for every $i$, since by induction the kept edges among $E_i$ have the same components as $E_i$; hence $r(E_i) - r(E_{i-1})$ is $1$ if $e_i \in T$ and $0$ otherwise. Summation by parts, with $c(e_i) - c(e_{i+1}) \le 0$, $z(E_i) \le r(E_i)$ and $z(E_m) = n-1 = r(E_m)$, gives for every $z \in P_{\mathrm{ST}}(G)$
+
+$$
+c^{\top}z = \sum_{i=1}^{m-1}\big(c(e_i) - c(e_{i+1})\big)\,z(E_i) + c(e_m)\,z(E_m) \ge \sum_{i=1}^{m-1}\big(c(e_i) - c(e_{i+1})\big)\,r(E_i) + c(e_m)\,r(E_m) = c(T).
+$$
+
+So the linear program and the spanning trees have the same minimum for every $c$. This alone does not exclude fractional vertices; separation does. The set $Q = \mathrm{conv}\{\mathbf{1}_T\}$ is nonempty (as $G$ is connected), compact, convex and contained in $P_{\mathrm{ST}}(G)$. If some $z^* \in P_{\mathrm{ST}}(G)$ were outside $Q$, strict separation of $z^*$ from $Q$ would give $c$ with $c^{\top}z^* < \min_{y \in Q} c^{\top}y = \min_T c(T)$, contradicting the inequality above. Hence $P_{\mathrm{ST}}(G) = Q$.
 
 ## Depends on
 
@@ -14,8 +24,7 @@ Edmonds showed that $P_{\mathrm{ST}}(G)$ is the convex hull of the indicator vec
 
 ## Proof depends on
 
-- [Optimality of the matroid greedy algorithm](../../greedy-algorithms-and-matroids/matroid-greedy-algorithm/matroid-greedy-optimal.md)
-- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
+- [Strict separation of a point from a closed convex set](../../../Analysis/banach-spaces/duality-and-weak-topologies/hahn-banach-theorem/strict-separation-of-a-point-from-a-closed-convex-set.md)
 
 ## Sources
 

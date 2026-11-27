@@ -12,9 +12,6 @@ The algorithm follows the cut-repeatedly meta-algorithm for decompositions, whos
 - [Dynamic graph problems](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
 - [Las Vegas and Monte Carlo algorithms](../../../ComputerScience/randomized-algorithms/probabilistic-analysis-tools/las-vegas-and-monte-carlo-algorithms.md)
 - [Directed phi-expanders, phi-sparse directed cuts, and phi-expanding terminal edge sets](directed-phi-expanders.md)
-
-## Proof depends on
-
 - [Every directed graph has a phi-expander decomposition whose backward edges number O(phi m log m)](directed-expander-decomposition-existence.md)
 
 ## Sources

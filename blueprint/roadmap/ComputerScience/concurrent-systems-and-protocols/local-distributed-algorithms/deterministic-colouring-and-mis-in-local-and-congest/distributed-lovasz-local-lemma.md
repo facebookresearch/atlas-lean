@@ -15,6 +15,7 @@ Moser–Tardos resamples, in each round, the variables of a maximal independent 
 
 - [Sinkless orientation and Delta-colouring of trees separate randomness from determinism](../lcl-problems-and-the-locality-landscape/sinkless-orientation-randomized-deterministic-separation.md)
 - [Luby's maximal independent set algorithm](../luby-s-maximal-independent-set-algorithm.md)
+- [Parallel Moser-Tardos algorithm: logarithmically many rounds](../../../approximation-algorithms/moser-tardos-algorithmic-local-lemma/parallel-moser-tardos.md)
 
 ## Sources
 

@@ -16,6 +16,10 @@ $$
 
 - [Spanning tree polytope of a connected graph](spanning-tree-polytope.md)
 
+## Proof depends on
+
+- [Weighted matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/weighted-matrix-tree.md)
+
 ## Sources
 
 - Arash Asadpour, Michel X. Goemans, Aleksander Madry, Shayan Oveis Gharan, Amin Saberi, "An O(log n/log log n)-Approximation Algorithm for the Asymmetric Traveling Salesman Problem", Operations Research (2017).

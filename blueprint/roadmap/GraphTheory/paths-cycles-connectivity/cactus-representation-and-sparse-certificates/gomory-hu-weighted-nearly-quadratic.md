@@ -1,6 +1,6 @@
 # Gomory-Hu trees of weighted graphs in nearly quadratic time
 
-There is a randomized (Monte Carlo) algorithm that, given an undirected graph with $n$ vertices and positive integer edge weights bounded by $n^{O(1)}$, computes a cut-equivalent tree in $\tilde O(n^2)$ time with probability $1 - n^{-c}$. This is the first subcubic algorithm for all-pairs max-flow in general weighted graphs; under the hypothesis that all-pairs shortest paths requires $n^{3 - o(1)}$ time, it separates all-pairs max-flow from all-pairs shortest paths.
+There is a randomized (Monte Carlo) algorithm that, given a connected undirected graph with $n$ vertices and positive integer edge weights bounded by $n^{O(1)}$, computes a cut-equivalent tree in $\tilde O(n^2)$ time with probability $1 - n^{-c}$ (vertices in different components of a disconnected graph have minimum cut $0$, which no positive tree weight represents, so such a graph is handled component by component). This is the first subcubic algorithm for all-pairs max-flow in general weighted graphs; under the hypothesis that all-pairs shortest paths requires $n^{3 - o(1)}$ time, it separates all-pairs max-flow from all-pairs shortest paths.
 
 ## Proof sketch
 

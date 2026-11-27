@@ -1,6 +1,6 @@
 # Relative greedy algorithms for weighted tree augmentation
 
-Fix a WTAP instance, which may be assumed shadow-complete: for every link $\ell$ and distinct $v_1,v_2$ on $P_\ell$, the link $v_1v_2$ (a shadow of $\ell$) is present with weight $w(\ell)$. Root the tree at a vertex $r$; an up-link is a link one of whose endpoints lies on the tree path from $r$ to the other endpoint. For a set $U$ of up-links and $C \subseteq L$ let
+Fix a WTAP instance, which may be assumed shadow-complete: for every link $\ell$ and distinct $v_1,v_2$ on $P_\ell$, a link $v_1v_2$ (a shadow of $\ell$) of weight $w(\ell)$ is present. Shadows are added as separate copies labelled by their origin $\ell$, so shadows of different links with the same endpoints are parallel links that may have different weights (keeping only the cheapest copy, with its origin, is equivalent); a selected shadow is finally replaced by its origin without changing the weight. Root the tree at a vertex $r$; an up-link is a link one of whose endpoints lies on the tree path from $r$ to the other endpoint. For a set $U$ of up-links and $C \subseteq L$ let
 
 $$
 \mathrm{Drop}_U(C)=\Big\{u \in U : P_u \subseteq \bigcup_{\ell \in C}P_\ell\Big\}

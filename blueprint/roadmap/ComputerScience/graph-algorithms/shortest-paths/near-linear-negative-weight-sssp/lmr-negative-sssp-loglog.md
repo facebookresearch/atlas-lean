@@ -1,6 +1,6 @@
 # Negative-weight SSSP in O((m + n log log n) log(nW) log n log log n) time
 
-There is a randomized algorithm that, given a directed graph with $n$ vertices, $m$ edges, integer weights $w(e)\ge -W$, where $W$ is the largest absolute value of a negative weight, and a source $s$, succeeds with high probability and either computes a shortest-path tree from $s$ or, if a negative cycle exists, outputs one, in time
+There is a randomized algorithm that, given a directed graph with $n$ vertices, $m$ edges, integer weights $w(e)\ge -W$ for an integer $W\ge 2$, an upper bound on the absolute value of every negative weight (also when there is none), and a source $s$, succeeds with high probability and either computes a shortest-path tree from $s$ or, if a negative cycle exists, outputs one, in time
 
 $$
 O\big((m+n\log\log n)\log(nW)\log n\log\log n\big).

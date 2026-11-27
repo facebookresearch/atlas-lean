@@ -14,6 +14,7 @@ Extend the champion relation from single unallocated goods to sets of goods, all
 
 - [EFX with bounded charity: fewer than n goods left unallocated](efx-with-bounded-charity.md)
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
+- [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
 
 ## Sources
 

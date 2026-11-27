@@ -17,6 +17,7 @@ For gross substitutes, the optimal contract is one of the critical values; enume
 
 - [Gross-substitutes success functions have polynomially many critical values](gross-substitutes-polynomially-many-critical-values.md)
 - [With a binary outcome, contracts paying only on success are without loss](binary-outcome-pay-on-success.md)
+- [SUBSET-SUM is NP-complete](../../../../TheoryOfComputation/np-completeness/number-and-packing-problems/subset-sum/part-06/subset-sum-dec-np-complete.md)
 
 ## Sources
 

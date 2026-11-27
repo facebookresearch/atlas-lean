@@ -1,6 +1,6 @@
 # Pătraşcu–Viola lower bound for succinct rank
 
-In the cell-probe model with cells of $w \ge \log_2 n$ bits, every data structure that answers $\mathrm{Rank}$ queries, or $\mathrm{Select}$ queries, on an array of $n$ bits by probing at most $t$ cells uses at least $n + n / w^{O(t)}$ bits of space. The lower bound extends to sparse arrays. For $w = \Theta(\log n)$ it matches Pătraşcu's succincter upper bound $n + n/((\log n)/t)^t$ up to the difference between $(\log n)^t$ and $((\log n)/t)^t$, which is immaterial for $t \le (\log n)^{1-\varepsilon}$.
+In the cell-probe model with cells of $w \ge \log_2 n$ bits, every data structure that answers $\mathrm{Rank}$ queries, or $\mathrm{Select}$ queries, on an array of $n$ bits by probing at most $t$ cells uses at least $n + n / w^{O(t)}$ bits of space (Theorem 1.1). For $w = \Theta(\log n)$ this bound matches Pătraşcu's succincter upper bound $n + n/((\log n)/t)^t$ up to the difference between $(\log n)^t$ and $((\log n)/t)^t$, which is immaterial for $t \le (\log n)^{1-\varepsilon}$. For an array of $n$ bits containing exactly $m$ ones, the same model with $w \ge \log_2 n$ requires at least $\log_2 \binom{n}{m} + m/w^{O(t)}$ bits (Theorem 1.2).
 
 ## Proof sketch
 

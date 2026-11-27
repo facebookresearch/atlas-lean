@@ -1,7 +1,6 @@
 # Matroid Prophet Inequalities and Online Contention Resolution
 
 - [Matroid prophet inequality](matroid-prophet-problem.md)
-- [k-fold matroid unions](k-fold-matroid-union.md)
 - [Kleinberg–Weinberg: every matroid admits a $1/2$ prophet inequality](matroid-prophet-half.md)
 - [Online contention resolution schemes](online-contention-resolution.md)
 - [Large girth does not improve matroid prophet ratios](large-girth-does-not-help.md)

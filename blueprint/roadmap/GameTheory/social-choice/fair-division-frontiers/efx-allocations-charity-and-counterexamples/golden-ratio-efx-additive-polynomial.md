@@ -16,6 +16,7 @@ A preprocessing step fixes an ordering $\ell$ of the agents by letting each agen
 
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
 - [Round-robin allocation is envy-free up to one good](../../../cooperative-games/fair-division-of-indivisible-goods/round-robin-allocation-is-ef1.md)
+- [Envy-cycle elimination yields EF1 allocations for monotone valuations](../../envy-free-division-protocols/envy-cycle-elimination-yields-ef1-allocations-for-monotone-valuations.md)
 
 ## Sources
 

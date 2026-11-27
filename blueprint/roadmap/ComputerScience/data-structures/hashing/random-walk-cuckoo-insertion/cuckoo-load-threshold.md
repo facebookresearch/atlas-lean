@@ -4,15 +4,11 @@ For each $d \ge 3$ let $\xi_d > 0$ be the unique solution of $d = \frac{\xi(e^{\
 
 ## Proof sketch
 
-Validity is the orientability of a random $d$-uniform hypergraph whose vertices are slots and whose hyperedges are keys. Peeling a vertex of degree at most one together with its hyperedge preserves orientability in both directions, so an assignment exists if and only if the $2$-core satisfies Hall's condition: every set $F$ of hyperedges of the core spans at least $|F|$ vertices. The core's numbers of vertices and hyperedges are computed from the fixed point $\xi_d$ of a Poisson branching recursion. Above $c_d^*$ the whole core has more hyperedges than vertices, so Hall's condition fails. Below $c_d^*$ the whole core has fewer hyperedges than vertices, but this alone does not control its subsets: a hypergraph can have as many vertices as hyperedges and still contain a set of hyperedges spanning fewer vertices. Fountoulakis and Panagiotou add a probabilistic step showing that, with probability $1 - o(1)$, no set of hyperedges of the core spans fewer vertices than its size, which yields the stated threshold.
+Validity is the orientability of a random $d$-uniform hypergraph whose vertices are slots and whose hyperedges are keys. Peeling a vertex of degree at most one together with its hyperedge preserves orientability in both directions, so an assignment exists if and only if the $2$-core satisfies Hall's condition: every set $F$ of hyperedges of the core spans at least $|F|$ vertices. This is Hall's marriage theorem for the bipartite incidence graph between hyperedges (keys) and vertices (slots), in which a matching saturating the keys is exactly an assignment. The core's numbers of vertices and hyperedges are computed from the fixed point $\xi_d$ of a Poisson branching recursion. Above $c_d^*$ the whole core has more hyperedges than vertices, so Hall's condition fails. Below $c_d^*$ the whole core has fewer hyperedges than vertices, but this alone does not control its subsets: a hypergraph can have as many vertices as hyperedges and still contain a set of hyperedges spanning fewer vertices. Fountoulakis and Panagiotou add a probabilistic step showing that, with probability $1 - o(1)$, no set of hyperedges of the core spans fewer vertices than its size, which yields the stated threshold.
 
 ## Depends on
 
 - [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
-
-## Proof depends on
-
-- [Hall's condition for valid cuckoo assignments](hall-condition-for-cuckoo-assignments.md)
 
 ## Sources
 

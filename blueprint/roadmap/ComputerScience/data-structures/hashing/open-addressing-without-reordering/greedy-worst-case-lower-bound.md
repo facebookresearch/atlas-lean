@@ -17,6 +17,7 @@ For greedy tables the expected insertion costs $q_j$ are nondecreasing in $j$, s
 
 - [Funnel hashing: squared-logarithmic worst-case probes for a greedy table](funnel-hashing-bounds.md)
 - [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
+- [Yao's theorem: uniform hashing is amortized-optimal among greedy tables](yao-uniform-hashing-optimality.md)
 
 ## Sources
 

@@ -6,7 +6,7 @@ $$
 \sigma = \frac{2L\sqrt{T}}{n\sqrt{2\rho}}, \qquad \rho + 2\sqrt{\rho\log(1/\delta)} = \varepsilon, \qquad \text{so that } \sigma = O\Big(\frac{L\sqrt{T\log(1/\delta)}}{n\varepsilon}\Big) \text{ for } \varepsilon \le \log(1/\delta),
 $$
 
-(by zCDP composition) the algorithm is $(\varepsilon,\delta)$-differentially private, and with step size $\eta = D/\sqrt{T(L^2 + d\sigma^2)}$ its expected excess empirical risk is $O\big(D\sqrt{(L^2 + d\sigma^2)/T}\big) = O\big(LD/\sqrt{T} + LD\sqrt{d\log(1/\delta)}/(\varepsilon n)\big)$, which with $T \gtrsim (\varepsilon n)^2/(d\log(1/\delta))$ gives the optimal private ERM rate.
+(by zCDP composition) the algorithm is $(\varepsilon,\delta)$-differentially private, and with step size $\eta = D/\sqrt{T(L^2 + d\sigma^2)}$ its expected excess empirical risk is $O\big(D\sqrt{(L^2 + d\sigma^2)/T}\big) = O\big(LD/\sqrt{T} + LD\sqrt{d\log(1/\delta)}/(\varepsilon n)\big)$, which with $T \gtrsim (\varepsilon n)^2/(d\log(1/\delta))$ is $O\big(LD\sqrt{d\log(1/\delta)}/(\varepsilon n)\big)$. This is a utility upper bound only, not an optimality claim: for very small $\delta$ it can be worse than what a pure $\varepsilon$-differentially private algorithm achieves (for $d = \varepsilon = 1$ and $\delta = e^{-n^2}$ it is of order $LD$, while pure private ERM attains $O(LD/n)$).
 
 ## Proof sketch
 

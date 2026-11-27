@@ -15,6 +15,7 @@ The structure keeps a Holm–de Lichtenberg–Thorup style hierarchy: edges have
 
 - [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
 - [Holm-de Lichtenberg-Thorup: deterministic polylogarithmic amortized connectivity and MSF](hdt-amortized-connectivity.md)
+- [Patrascu-Demaine logarithmic cell-probe lower bound for dynamic connectivity](patrascu-demaine-connectivity-lower-bound.md)
 
 ## Sources
 

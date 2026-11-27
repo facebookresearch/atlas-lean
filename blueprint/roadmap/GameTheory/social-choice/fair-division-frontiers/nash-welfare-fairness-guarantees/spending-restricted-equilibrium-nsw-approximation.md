@@ -9,6 +9,7 @@ Scale each agent's values so that $v_i(g) = p_g$ on her maximum bang-per-buck go
 ## Depends on
 
 - [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
+- [Maximum bang-per-buck allocation supported by prices](../market-equilibria-for-fair-and-efficient-allocation/maximum-bang-per-buck-allocation.md)
 
 ## Sources
 

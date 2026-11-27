@@ -1,6 +1,6 @@
 # Gomory-Hu trees in almost-linear time: all-pairs max-flow reduces to single-pair max-flow
 
-There is a randomized (Monte Carlo) algorithm that, given an undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and integer weights in $\{1, \dots, W\}$ with $W \le n^{O(1)}$, computes a cut-equivalent tree of $G$ in $m^{1+o(1)}$ time with probability $1 - n^{-c}$. Consequently there is a data structure with randomized $m^{1+o(1)}$ preprocessing time that answers the maximum flow value (and a minimum cut) for any query pair $s, t$ in $\tilde O(1)$ time, and all-pairs max-flow has the same time complexity as single-pair max-flow up to a subpolynomial factor.
+There is a randomized (Monte Carlo) algorithm that, given a connected undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and integer weights in $\{1, \dots, W\}$ with $W \le n^{O(1)}$, computes a cut-equivalent tree of $G$ in $m^{1+o(1)}$ time with probability $1 - n^{-c}$. Connectivity is needed because vertices in different components have minimum cut $0$, which no positive tree weight represents; a disconnected graph is handled component by component, with value $0$ for pairs in different components. Consequently there is a data structure with randomized $m^{1+o(1)}$ preprocessing time that answers the maximum flow value (and a minimum cut) for any query pair $s, t$ in $\tilde O(1)$ time, and all-pairs max-flow has the same time complexity as single-pair max-flow up to a subpolynomial factor.
 
 ## Proof sketch
 

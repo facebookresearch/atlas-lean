@@ -14,6 +14,7 @@ The upper bound holds since the working-set bound is invariant under relabeling 
 
 ## Proof depends on
 
+- [Working-set theorem for splay trees](../splay-tree-locality-theorems/working-set-theorem.md)
 - [Wilber's second lower bound](../wilber-and-funnel-lower-bounds/wilber-second-bound.md)
 
 ## Sources

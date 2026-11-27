@@ -1,6 +1,6 @@
 # No stopping rule beats $\beta$ for i.i.d. values
 
-For every $\varepsilon > 0$ there is $n$ and an i.i.d. instance $X_1, \dots, X_n$ such that every stopping rule $\tau$ satisfies $\mathbb{E}[X_\tau] \le (\beta + \varepsilon)\,\mathbb{E}[\max_i X_i]$, where $\beta \approx 0.745$ is the Hill–Kertz constant.
+For every $\varepsilon > 0$ there is $n$ and an i.i.d. instance of nonnegative $X_1, \dots, X_n$ with $0 < \mathbb{E}[\max_i X_i] < \infty$ such that every stopping rule $\tau$ satisfies $\mathbb{E}[X_\tau] \le (\beta + \varepsilon)\,\mathbb{E}[\max_i X_i]$, where $\beta \approx 0.745$ is the Hill–Kertz constant.
 
 ## Proof sketch
 

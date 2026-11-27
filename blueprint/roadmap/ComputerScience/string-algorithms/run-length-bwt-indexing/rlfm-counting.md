@@ -10,6 +10,7 @@ Backward search updates $sp \leftarrow C[c] + \mathrm{rank}_c(\mathrm{BWT}, sp -
 
 - [Run-length FM-index](run-length-fm-index.md)
 - [FM-index backward search](../burrows-wheeler-transform-and-fm-index/backward-search.md)
+- [The word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Proof depends on
 

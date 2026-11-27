@@ -1,6 +1,6 @@
 # Pătraşcu's succincter rank and select
 
-For every $t \ge 1$, on a RAM with cells of $\Omega(\log n)$ bits, an array of $n$ bits can be stored in $n + n / \left(\frac{\log n}{t}\right)^{t} + \tilde{O}(n^{3/4})$ bits so that rank and select queries take $O(t)$ time. More generally, an array of $u$ bits containing $n$ ones fits in $\log_2 \binom{u}{n} + u/\left(\frac{\log u}{t}\right)^t + \tilde{O}(u^{3/4})$ bits with the same query time.
+For every $t \ge 1$, on a RAM with cells of $\Omega(\log n)$ bits, an array of $n$ bits can be stored in $n + n / \left(\frac{\log n}{t}\right)^{t} + \tilde{O}(n^{3/4})$ bits so that rank and select queries take $O(t)$ time. More generally, on a RAM with cells of $\Omega(\log u)$ bits, an array of $u$ bits containing $n$ ones fits in $\log_2 \binom{u}{n} + u/\left(\frac{\log u}{t}\right)^t + \tilde{O}(u^{3/4})$ bits with the same query time (Theorem 2). For sparse arrays the cell size is measured against the length $u$, not against the number $n$ of ones.
 
 ## Proof sketch
 

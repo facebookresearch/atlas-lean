@@ -5,6 +5,7 @@ For an access sequence $X = (x_1, \dots, x_m)$ and a time $t$, the *funnel* of $
 ## Depends on
 
 - [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
+- [Point set of an access sequence and touched set of a BST execution](../geometric-view-of-bst-access/access-point-set.md)
 
 ## Sources
 

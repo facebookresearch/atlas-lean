@@ -11,6 +11,7 @@ By the minimax theorem, a $\gamma$-realizable sample is labelled correctly by a 
 - [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [Disambiguations of partial concept classes](disambiguation.md)
 - [The weighted majority vote](../../../../online-learning-and-boosting/boosting-and-the-minimax-theorem/weighted-vote.md)
+- [Assouad's dual VC dimension bound](../../../sample-complexity-and-combinatorial-dimensions/vc-sample-complexity-and-epsilon-nets/assouad-dual-vc-dimension-bound.md)
 
 ## Proof depends on
 

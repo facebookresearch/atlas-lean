@@ -1,12 +1,12 @@
 # Replicable policy estimation in discounted tabular MDPs with a generative model
 
-Consider a discounted Markov decision process with $N$ state-action pairs and discount $\gamma$, accessed through a generative model. Call an algorithm $\rho$-replicable if two executions on independent samples with the same internal randomness output the same policy with probability at least $1 - \rho$. There is an efficient $\rho$-replicable algorithm that outputs an $\varepsilon$-optimal policy with probability $1-\delta$ using
+Consider a discounted Markov decision process with $N$ state-action pairs and discount $\gamma$, accessed through a generative model. Call an algorithm $\rho$-replicable if two executions on independent samples with the same internal randomness output the same policy with probability at least $1 - \rho$. For $\varepsilon, \rho \in (0,1)$ and $\delta \in (0, \rho/3)$ there is an efficient locally random $\rho$-replicable algorithm (each output coordinate uses only its own independent random string) that outputs an $\varepsilon$-optimal policy with probability $1-\delta$ using
 
 $$
 \tilde O\!\left(\frac{N^3 \log(1/\delta)}{(1-\gamma)^5 \varepsilon^2 \rho^2}\right)
 $$
 
-samples, and every deterministic $\rho$-replicable algorithm needs $\Omega\big(N^3 / ((1-\gamma)^3 \varepsilon^2 \rho^2)\big)$ samples. Relaxing replicability to TV indistinguishability improves the sample complexity to $\tilde O\big(N^2 \log(1/\delta)/((1-\gamma)^5 \varepsilon^2 \rho^2)\big)$. Replicable variants of parallel value iteration and of R-max in the episodic setting also exist.
+samples. Conversely, every deterministic $\rho$-replicable algorithm that outputs a randomized policy $\pi$ with $|V^\pi(s) - V^\star(s)| \le \varepsilon$ for every state $s$ with probability at least $1 - \delta/12$, for $\delta = 1/4$, needs $\Omega\big(N^3 / ((1-\gamma)^3 \varepsilon^2 \rho^2)\big)$ samples; the accuracy requirement is essential, since a fixed constant policy is replicable with zero samples. Relaxing replicability to TV indistinguishability improves the sample complexity to $\tilde O\big(N^2 \log(1/\delta)/((1-\gamma)^5 \varepsilon^2 \rho^2)\big)$ for $\delta \in (0, \rho/5)$, and coupling the outputs of that algorithm through shared randomness gives a $\rho$-replicable algorithm, no longer locally random, with the same $\tilde O(N^2)$ dependence for $\delta \in (0, \rho/4)$. Replicable variants of parallel value iteration and of R-max in the episodic setting also exist.
 
 ## Proof sketch
 
@@ -26,5 +26,5 @@ Estimate each transition and reward to accuracy $\varepsilon(1-\gamma)^2$ with r
 
 ## Sources
 
-- A. Karbasi, G. Velegkas, L. F. Yang, F. Zhou, "Replicability in Reinforcement Learning", NeurIPS (2023), arXiv:2305.19562, Definitions 2.8 and 2.10, Theorem 3.1, Corollary 3.2 and the lower bound and TV-indistinguishability results summarized in the abstract.
+- A. Karbasi, G. Velegkas, L. F. Yang, F. Zhou, "Replicability in Reinforcement Learning", NeurIPS (2023), arXiv:2305.19562, Definitions 2.8, 2.10 and B.4, Theorem 3.1, Corollary 3.2, Corollaries 4.4 and 4.10 and Theorem D.11.
 - E. Eaton, M. Hussing, M. Kearns, J. Sorrell, "Replicable Reinforcement Learning", NeurIPS (2023), arXiv:2305.15284.

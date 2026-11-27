@@ -5,7 +5,7 @@ Let $G$ be a restricted graph with source $s$ and $n$ vertices, $m$ edges, and l
 1. (progress) with high probability, every strongly connected component $C$ of $G\setminus S$ satisfies $|C|\le\frac34|V(G)|$ or $\kappa(G[C\cup\{s\}])\le\kappa/2$;
 2. (sparse hitting) for every shortest $s$-$v$ path $P$ in $G$, $\mathbb{E}[|P\cap S|]=O(\log n)$.
 
-Consequently $|V|\cdot\kappa$ drops by a constant factor when recursing on the components of $G\setminus S$, so the recursion has depth $O(\log n)$, and Restricted SSSP can be solved in $O((m+n\log\log n)\log^2 n)$ time.
+Consequently, whenever the progress property holds, $|C|\cdot\kappa_C\le\frac34|V|\cdot\kappa$ for the bound $\kappa_C$ passed to the recursive call on each component $C$ of $G\setminus S$ ($\kappa_C=\kappa$ if $|C|\le\frac34|V|$ and $\kappa_C=\kappa/2$ otherwise); starting from $\kappa=n$, a valid bound since $\kappa(G)\le n-1$ for simple paths, the recursion then has depth $O(\log(n\kappa))=O(\log n)$, and Restricted SSSP can be solved in expected time $O((m+n\log\log n)\log^2 n)$, or in that worst-case time with error probability $\frac12$ by stopping after twice the expected time.
 
 ## Proof sketch
 

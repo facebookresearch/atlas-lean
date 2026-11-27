@@ -17,6 +17,7 @@ Maintain an integral MBB-supported allocation with prices, and perform local tra
 - [MBB-supported price envy-freeness up to one good implies EF1](mbb-pef1-implies-ef1.md)
 - [Price envy-freeness up to one good](price-envy-freeness-up-to-one-good.md)
 - [Maximum bang-per-buck allocation supported by prices](maximum-bang-per-buck-allocation.md)
+- [First welfare theorem: price-supported allocations are fractionally Pareto optimal](first-welfare-theorem-mbb-fpo.md)
 
 ## Sources
 

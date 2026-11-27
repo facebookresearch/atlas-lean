@@ -1,6 +1,6 @@
 # Thue–Morse words separate $\gamma$ from $b$
 
-For the Thue–Morse words $t_n$ of length $2^n$, defined by $t_0 = \mathtt{a}$ and $t_{n+1} = t_n \overline{t_n}$, where the bar exchanges $\mathtt{a}$ and $\mathtt{b}$, the smallest bidirectional macro scheme has size exactly $b(t_n) = n + 2$ for every $n \ge 2$, while $\gamma(t_n) = 4$ for $n \ge 4$. Therefore there are infinite families of strings with $\gamma = O(1)$ and $b = \Theta(\log N)$ for length $N$, so $\gamma$ and $b$ are not equivalent up to constant factors; more generally, for every $\gamma \ge 4$ there are string families with attractor size $\gamma$ and $b = \Theta(\gamma\log(N/\gamma))$.
+For the Thue–Morse words $t_n$ of length $2^n$, defined by $t_0 = \mathtt{a}$ and $t_{n+1} = t_n \overline{t_n}$, where the bar exchanges $\mathtt{a}$ and $\mathtt{b}$ (the Thue–Morse blocks with $0, 1$ renamed $\mathtt{a}, \mathtt{b}$), the smallest bidirectional macro scheme has size exactly $b(t_n) = n + 2$ for every $n \ge 2$, while $\gamma(t_n) = 4$ for $n \ge 4$. Therefore there are infinite families of strings with $\gamma = O(1)$ and $b = \Theta(\log N)$ for length $N$, so $\gamma$ and $b$ are not equivalent up to constant factors; more generally, for every $\gamma \ge 4$ there are string families with attractor size $\gamma$ and $b = \Theta(\gamma\log(N/\gamma))$.
 
 ## Proof sketch
 
@@ -10,6 +10,7 @@ The upper bound is by induction with the morphism $\mu(\mathtt{a}) = \mathtt{ab}
 
 - [String attractors](string-attractor.md)
 - [Grammar size $g$ and bidirectional macro scheme size $b$](grammar-and-macro-measures.md)
+- [Thue–Morse blocks](../../../Combinatorics/combinatorics-on-words/morphic-sturmian-words/thue-morse-sequence-and-its-generalizations/thue-morse-block.md)
 
 ## Proof depends on
 

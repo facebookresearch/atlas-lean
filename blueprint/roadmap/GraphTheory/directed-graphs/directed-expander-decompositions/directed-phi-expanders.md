@@ -6,7 +6,7 @@ $$
 \min\{|E(S,\bar S)|,|E(\bar S,S)|\}<\phi\cdot\min\{\mathrm{vol}(S),\mathrm{vol}(\bar S)\},
 $$
 
-and $G$ is a *(directed) $\phi$-expander* if it has no $\phi$-sparse cut. Thus a directed expander must expand in both directions across every cut. For a set of *terminal edges* $F\subseteq E$, define $\deg_F(v)$ as the number of edges of $F$ incident to $v$ and $\mathrm{vol}_F(S)=\sum_{v\in S}\deg_F(v)$; $G$ is a *$\phi$-expander with respect to $F$* if no cut $S$ has $\min\{|E(S,\bar S)|,|E(\bar S,S)|\}<\phi\min\{\mathrm{vol}_F(S),\mathrm{vol}_F(\bar S)\}$. The set $F$ is *$\phi$-expanding in $G$* if every strongly connected component of $G$ is a $\phi$-expander with respect to the edges of $F$ inside it.
+and $G$ is a *(directed) $\phi$-expander* if it has no $\phi$-sparse cut. Thus a directed expander must expand in both directions across every cut. For a set of *terminal edges* $F\subseteq E$, define $\deg_F(v)$ as the number of edges of $F$ incident to $v$ and $\mathrm{vol}_F(S)=\sum_{v\in S}\deg_F(v)$; $G$ is a *$\phi$-expander with respect to $F$* if no cut $S$ has $\min\{|E(S,\bar S)|,|E(\bar S,S)|\}<\phi\min\{\mathrm{vol}_F(S),\mathrm{vol}_F(\bar S)\}$. The set $F$ is *$\phi$-expanding in $G$* if for every strongly connected component $C$ of $G$ there is no cut $\emptyset\ne S\subsetneq C$ with $\min\{|E(S,C\setminus S)|,|E(C\setminus S,S)|\}<\phi\min\{\mathrm{vol}_F(S),\mathrm{vol}_F(C\setminus S)\}$, where $\deg_F$, and hence $\mathrm{vol}_F$, is still taken in $G$: it also counts the edges of $F$ that leave $C$.
 
 ## Depends on
 

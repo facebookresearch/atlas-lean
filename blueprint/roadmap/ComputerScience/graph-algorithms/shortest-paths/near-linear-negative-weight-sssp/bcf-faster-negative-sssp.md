@@ -4,13 +4,13 @@ Let $G$ be a directed graph with $n$ vertices, $m$ edges, integer weights $w(e)\
 
 1. either compute a shortest-path tree from $s$ or find a negative cycle in $G$;
 2. compute $\mathrm{dist}_G(s,v)\in\mathbb{Z}\cup\{\pm\infty\}$ for all $v$, even when negative cycles exist;
-3. find a cycle $C$ minimizing the mean weight $w(C)/|C|$.
+3. find a cycle $C$ minimizing the mean weight $w(C)/|C|$, or report that $G$ has no cycle.
 
 Moreover, there is a strong directed low-diameter decomposition with overhead $O(\log^3 n)$ computable in time $O((m+n\log\log n)\log^2 n)$ with high probability.
 
 ## Proof sketch
 
-Restricted SSSP is solved in $O((m+n\log\log n)\log^2 n)$ by recursive decomposition. If the minimum weight exceeds $-3k$, rounding $w(e)$ to $\lceil w(e)/k\rceil+1$ produces a restricted graph whose distances, multiplied by $k$, give a price function making the minimum weight exceed $-2k$; with $k=\lfloor W/3\rfloor$ and $W\ge 24$ this raises the most negative weight from $-W$ to at least $-\frac34 W$, and merging this scaling with probability boosting costs only an $O(\log(nW))$ factor overall. Negative cycles are found by solving the Threshold problem, the least additive shift removing all negative cycles, with a noisy-binary-search procedure analysed by drift analysis; minimum cycle mean follows by Lawler's reduction, which Karp's $O(mn)$ characterization previously handled only in strongly polynomial time.
+Restricted SSSP is solved in $O((m+n\log\log n)\log^2 n)$ by recursive decomposition. If $G$ has no negative cycle and its minimum weight exceeds $-3k$ for an integer $k\ge 1$, rounding $w(e)$ to $\lceil w(e)/k\rceil+1$ and adding a new source with weight-$0$ edges to all vertices produces a restricted graph whose distances from that source, multiplied by $k$, give a price function making the minimum weight exceed $-2k$; with $k=\lfloor W/3\rfloor+1$ and $W\ge 24$ this raises the most negative weight from $-W$ to above $-2k \ge -\frac23 W-2 \ge -\frac34 W$, and merging this scaling with probability boosting costs only an $O(\log(nW))$ factor overall. Negative cycles are found by solving the Threshold problem, the least additive shift removing all negative cycles, with a noisy-binary-search procedure analysed by drift analysis; minimum cycle mean follows by Lawler's reduction, which Karp's $O(mn)$ characterization previously handled only in strongly polynomial time.
 
 ## Depends on
 

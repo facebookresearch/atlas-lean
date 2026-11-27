@@ -1,10 +1,10 @@
 # Chen-Goranci-Henzinger-Peng-Saranurak: dynamic cuts, distances and resistances via vertex sparsifiers
 
-For undirected graphs with $n$ vertices and $m$ edges, the vertex-sparsifier framework gives:
+For undirected graphs with $n$ vertices and $m$ edges, the vertex-sparsifier framework gives the following. Except for the incremental shortest-path structure, which is deterministic, the algorithms are randomized, answer correctly with high probability, and, unless stated otherwise, assume an oblivious adversary.
 
-1. a fully dynamic algorithm approximating all-pairs maximum flow and minimum cut values within a nearly logarithmic factor in $\tilde O(n^{2/3})$ amortized time per operation against an oblivious adversary, and in $\tilde O(m^{3/4})$ time against an adaptive adversary;
-2. an incremental data structure maintaining $O(1)$-approximate shortest paths in $n^{o(1)}$ time per operation, and fully dynamic approximate all-pairs shortest paths and transshipment in $\tilde O(n^{2/3 + o(1)})$ amortized time per operation;
-3. a fully dynamic algorithm approximating all-pairs effective resistances within $1 + \varepsilon$ in $\tilde O(n^{2/3 + o(1)}\varepsilon^{-O(1)})$ amortized update time.
+1. For capacity ratio $\mathrm{poly}(n)$, a fully dynamic algorithm returning $\tilde O(\log n)$-approximate maximum-flow / minimum-cut values between query pairs $s, t$ in $O(m^{2/3}\log^7 n)$ amortized update time and $\tilde O(m^{2/3})$ query time; for polynomially bounded capacities and against an adaptive adversary, in $\tilde O(m^{3/4})$ amortized update and query time.
+2. For all integers $\ell, r \ge 1$ and some constant $c > 0$, an incremental all-pairs shortest-path structure on weighted graphs maintaining $(2r-1)^\ell$-approximate distances in $O(\ell c^{\ell-1} r^\ell m^{1/(\ell+1)} n^{\ell/r}\log^{\ell-1} n)$ worst-case update time and $\ell$ times that worst-case query time, so that stretch is traded against time; and a fully dynamic structure returning $\tilde O(\log n)$-approximate distances between query pairs in $O(n^{2/3+o(1)})$ amortized update and query time.
+3. For every integer $d \ge 1$, $\varepsilon \in (0, 1)$ and weight ratio $\mathrm{poly}(n)$, a fully dynamic algorithm returning $(1 + 2d\varepsilon)$-approximate effective resistances between query pairs in $O(n^{2/3+1/(3d+3)}\varepsilon^{-(2d+4)}\log^{2d+11} n)$ amortized update time and $O(n^{2/3+1/(3d+3)}\varepsilon^{-(2d+2)}\log^{9d+10} n)$ query time.
 
 ## Proof sketch
 

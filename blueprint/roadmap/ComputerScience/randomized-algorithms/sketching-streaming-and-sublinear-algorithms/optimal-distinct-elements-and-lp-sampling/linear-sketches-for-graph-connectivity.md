@@ -1,6 +1,6 @@
 # Ahn-Guha-McGregor linear sketches recover a spanning forest from dynamic graph streams
 
-There is a distribution over linear sketches of the edge-indicator vector of an $n$-vertex graph, of total size $O(n \log^3 n)$ bits, from which a spanning forest of the final graph (hence its connected components) can be computed with high probability, for any dynamic graph stream fixed independently of the sketch's randomness. Analogous linear sketches with $O(n\,\mathrm{polylog}\,n)$ bits decide $k$-edge-connectivity for constant $k$ and bipartiteness, and approximate the minimum spanning tree weight within any constant factor.
+There is a distribution over linear sketches of the edge-indicator vector of an $n$-vertex graph, of total size $O(n \log^3 n)$ bits, from which a spanning forest of the final graph (hence its connected components) can be computed with high probability, for any dynamic graph stream fixed independently of the sketch's randomness. Analogous linear sketches with $O(n\,\mathrm{polylog}\,n)$ bits decide $k$-edge-connectivity for constant $k$ and bipartiteness. For edge weights in $[1, W]$, running the connectivity sketch on the subgraphs of edges of weight at most $(1 + \varepsilon)^i$ for each of the $\lceil\log_{1+\varepsilon} W\rceil$ thresholds approximates the minimum spanning tree weight within a factor $1 + \varepsilon$; when $W = \mathrm{poly}(n)$ this is a single-pass algorithm in $O(\varepsilon^{-1} n \log^3 n)$ space, and for larger $W$ the number of thresholds grows with $\log W$.
 
 ## Proof sketch
 
@@ -20,5 +20,5 @@ For each vertex $v$ keep $O(\log n)$ independent $L_0$-sampler sketches of $a_v$
 
 ## Sources
 
-- Kook Jin Ahn, Sudipto Guha, Andrew McGregor, "Analyzing Graph Structure via Linear Measurements", SODA (2012).
+- Kook Jin Ahn, Sudipto Guha, Andrew McGregor, "Analyzing Graph Structure via Linear Measurements", SODA (2012), Section 3.4 and Theorem 3.4.
 - Hossein Jowhari, Mert Sağlam, Gábor Tardos, "Tight Bounds for Lp Samplers, Finding Duplicates in Streams, and Related Problems", PODS (2011), arXiv:1012.4889.

@@ -1,6 +1,6 @@
 # Multiplicative weights give k low-stretch forests that are good on average for every edge
 
-There is a deterministic algorithm that, given an $m$-edge graph $G$ with lengths $\boldsymbol{\ell}$ and an integer $k \ge 1$, computes in $\widetilde{O}(mk)$ time $k$ dynamic low-stretch forests $(T_j, F_j, \widetilde{\mathrm{str}}^j)_{j=0}^{k-1}$ with fixed stretch overestimates such that for every edge $e$
+There is a deterministic algorithm that, given an $m$-edge graph $G$ with lengths $\boldsymbol{\ell}$ and an integer $k \ge 1$, computes in $\widetilde{O}(mk)$ time $k$ dynamic low-stretch forests (see *Dynamic low-stretch forests with stable stretch overestimates*) $(T_j, F_j, \widetilde{\mathrm{str}}^j)_{j=0}^{k-1}$ with fixed stretch overestimates such that for every edge $e$
 
 $$
 \frac{1}{k}\sum_{j=0}^{k-1}\widetilde{\mathrm{str}}^j_e \le O(\log^7 n).
@@ -15,9 +15,6 @@ Run multiplicative weights over edges: start with $\mathbf{v} = \mathbf{1}$, bui
 ## Depends on
 
 - [Stretch of an edge with respect to a rooted spanning forest](rooted-forest-edge-stretch.md)
-
-## Proof depends on
-
 - [Dynamic low-stretch forests with stable stretch overestimates](dynamic-low-stretch-forest.md)
 
 ## Sources

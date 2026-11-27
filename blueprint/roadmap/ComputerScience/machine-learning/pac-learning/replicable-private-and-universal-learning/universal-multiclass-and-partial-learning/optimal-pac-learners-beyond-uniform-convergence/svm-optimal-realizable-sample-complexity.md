@@ -1,6 +1,6 @@
 # Optimal realizable sample complexity of the hard-margin support vector machine
 
-For homogeneous halfspaces in $\mathbb{R}^n$ in the realizable setting, the hard-margin support vector machine (which outputs the maximum-margin separator of the sample) is a PAC learner with sample complexity
+For affine halfspaces $\{x : \langle w, x\rangle + b \ge 0\}$ in $\mathbb{R}^n$, $n \ge 1$, in the realizable setting, the hard-margin support vector machine (which outputs the maximum-margin separator of the sample) is a PAC learner with sample complexity
 
 $$
 \Theta\!\left(\frac{n}{\varepsilon} + \frac{1}{\varepsilon}\log\frac{1}{\delta}\right).
@@ -10,7 +10,7 @@ This resolves a question of Vapnik and Chervonenkis (1974) and gives the first p
 
 ## Proof sketch
 
-The support vector machine is a stable compression scheme: its output is determined by at most $n$ support vectors and does not change when non-support examples are removed. Stable compression schemes of size $k$ have risk below $\tfrac{2}{n-2k}(k\ln 4 + \ln(1/\delta))$ with probability at least $1-\delta$, which gives the upper bound without the extra logarithmic factor. The matching lower bound is the standard PAC lower bound for VC dimension $n$.
+The support vector machine is a stable compression scheme: its output is determined by at most $n+1$ support vectors and does not change when non-support examples are removed. Stable compression schemes of size $k$ have, from $m > 2k$ examples, risk below $\tfrac{2}{m-2k}(k\ln 4 + \ln(1/\delta))$ with probability at least $1-\delta$; with $k = n+1$ this gives the upper bound without the extra logarithmic factor. The matching lower bound is the standard PAC lower bound for the VC dimension $n+1$ of affine halfspaces in $\mathbb{R}^n$.
 
 ## Depends on
 

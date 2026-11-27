@@ -6,7 +6,13 @@ $$
 z_{t+1/2} = z_t + \tfrac{1}{t+2}(z_0 - z_t) - \eta F(z_t), \qquad z_{t+1} = z_t + \tfrac{1}{t+2}(z_0 - z_t) - \eta F(z_{t+1/2}),
 $$
 
-with constant step size $\eta \in (0, 1/(8L)]$, satisfies $\lVert F(z_T) \rVert^2 = O\bigl(L^2 \lVert z_0 - z^\star \rVert^2 / T^2\bigr)$ (with $\eta = 1/(8L)$, $\lVert F(z_T) \rVert^2 \le 260 L^2 \lVert z_0 - z^\star \rVert^2 / (T + 1)^2$), i.e. the last iterate converges at rate $O(1/T)$ in operator norm, which is optimal, already for smooth convex-concave minimax problems, among deterministic first-order methods whose iterates lie in the span of the observed gradients; thus anchoring beats the $\Omega(1/\sqrt T)$ barrier of non-anchored extragradient and optimistic methods.
+with constant step size $\eta \in (0, 1/(8L)]$, satisfies for every $T \ge 0$
+
+$$
+\lVert F(z_T) \rVert^2 \le \frac{4(1 + \eta L + \eta^2 L^2)}{\eta^2 (1 + \eta L)} \cdot \frac{\lVert z_0 - z^\star \rVert^2}{(T + 1)^2}.
+$$
+
+The multiplier grows like $4/\eta^2$ as $\eta \to 0$, so the rate is $O\bigl(L^2 \lVert z_0 - z^\star \rVert^2 / T^2\bigr)$ only for step sizes $\eta = \Theta(1/L)$; the choice $\eta = 1/(8L)$ gives $\lVert F(z_T) \rVert^2 \le 260 L^2 \lVert z_0 - z^\star \rVert^2 / (T + 1)^2$. With such a step size the last iterate converges at rate $O(1/T)$ in operator norm, which is optimal, already for smooth convex-concave minimax problems, among deterministic first-order methods whose iterates lie in the span of the observed gradients; thus anchoring beats the $\Omega(1/\sqrt T)$ barrier of non-anchored extragradient and optimistic methods.
 
 ## Proof sketch
 
@@ -16,6 +22,7 @@ Construct a Lyapunov function of the form $a_t \lVert F(z_t)\rVert^2 + b_t \lang
 
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
 - [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
+- [Last iterates of p-SCLI methods converge no faster than 1/sqrt(T)](last-iterate-lower-bound-sqrt-t.md)
 
 ## Sources
 

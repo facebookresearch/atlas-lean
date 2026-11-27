@@ -9,7 +9,7 @@ Berendsohn, Kozma and Opler construct an offline solution, in the arborally sati
 ## Depends on
 
 - [Pattern-avoidance conjecture for binary search trees](pattern-avoidance-conjecture.md)
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [Classical pattern containment in a sequence](../../../../Combinatorics/permutations/permutation-patterns/cyclic-pattern-avoiding-stack-sorting/contains-pattern-seq.md)
 - [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Proof depends on

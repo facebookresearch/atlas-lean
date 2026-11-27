@@ -1,6 +1,6 @@
 # Multiaccuracy is the Trevisan–Tulsiani–Vadhan regularity lemma
 
-Let $F$ be a class of functions $X \to [-1,1]$, $\mu$ a distribution on $X$, and $g : X \to [0,1]$ arbitrary. For every $\alpha > 0$ there is a function $h : X \to [0,1]$ computed by a circuit of size $\mathrm{poly}(\log|X|, 1/\alpha)$ with $O(1/\alpha^2)$ oracle gates for members of $F$ such that
+Let $X$ be a finite domain whose elements are encoded as bit strings of length $\lceil \log_2 |X| \rceil$ (the circuit inputs), $F$ a class of functions $X \to [-1,1]$, $\mu$ a distribution on $X$, and $g : X \to [0,1]$ arbitrary. For every $\alpha > 0$ there is a function $h : X \to [0,1]$ computed by a circuit on these encoded inputs of size $\mathrm{poly}(\log|X|, 1/\alpha)$ with $O(1/\alpha^2)$ oracle gates for members of $F$ such that
 
 $$
 \big| \mathbb{E}_{x \sim \mu}[f(x)(g(x) - h(x))] \big| \le \alpha \quad \text{for all } f \in F .

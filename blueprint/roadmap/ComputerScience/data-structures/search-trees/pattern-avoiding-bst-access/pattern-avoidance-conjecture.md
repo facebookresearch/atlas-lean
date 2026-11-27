@@ -4,7 +4,7 @@ The *pattern-avoidance conjecture* (Chalermsook, Goswami, Kozma, Mehlhorn and Sa
 
 ## Depends on
 
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [Classical pattern containment in a sequence](../../../../Combinatorics/permutations/permutation-patterns/cyclic-pattern-avoiding-stack-sorting/contains-pattern-seq.md)
 - [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Sources

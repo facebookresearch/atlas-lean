@@ -11,6 +11,11 @@ A *negative sandwich* is a triple $(x,U,y)$ with $x,y\in V$ and $U\subseteq N$ s
 ## Depends on
 
 - [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
+
+## Proof depends on
+
+- [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](../near-linear-negative-weight-sssp/price-function-distance-shift.md)
 
 ## Sources
 

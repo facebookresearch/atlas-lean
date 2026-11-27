@@ -1,6 +1,6 @@
 # The weakly correlated moment bound is sharp up to a logarithm
 
-In the regime $p \le n$, the moment inequality for weakly correlated sums cannot be improved beyond the $\log n$ factor using only the parameters $M$, $\beta$, $n$ and $p$ (Bousquet, Klochkov and Zhivotovskiy, Proposition 9): there is an absolute constant $\kappa > 0$ such that for all $n$ and $\beta, M \ge 0$ there are i.i.d. Rademacher signs $Z_1, \dots, Z_n$ and functions $g_1, \dots, g_n : \{-1, 1\}^n \to \mathbb{R}$ satisfying the three hypotheses (conditional bound $M$, conditional mean zero given the other coordinates, bounded differences $\beta$ off the diagonal) with
+In the regime $p \le n$, the moment inequality for weakly correlated sums cannot be improved beyond the $\log n$ factor using only the parameters $M$, $\beta$, $n$ and $p$ (Bousquet, Klochkov and Zhivotovskiy, Proposition 9): there is an absolute constant $\kappa > 0$ such that for all $n$ and $\beta, M \ge 0$ there are i.i.d. Rademacher signs $Z_1, \dots, Z_n$ and functions $g_1, \dots, g_n : \{-1, 1\}^n \to \mathbb{R}$ satisfying the three hypotheses of *Moment inequality for sums of weakly correlated functions* (conditional bound $M$, conditional mean zero given the other coordinates, bounded differences $\beta$ off the diagonal) with
 
 $$
 \Big\| \sum_{i=1}^n g_i(Z) \Big\|_p \gtrsim p n \beta + M\sqrt{pn} \qquad \text{for every } \kappa \le p \le n .
@@ -15,9 +15,6 @@ Following Appendix B of the source, take $g_i(Z) = M Z_i + \frac{\beta}{2} Z_i \
 ## Depends on
 
 - [Uniform stability](../is-uniformly-stable.md)
-
-## Proof depends on
-
 - [Moment inequality for sums of weakly correlated functions](weakly-correlated-sum-moment-inequality.md)
 
 ## Sources

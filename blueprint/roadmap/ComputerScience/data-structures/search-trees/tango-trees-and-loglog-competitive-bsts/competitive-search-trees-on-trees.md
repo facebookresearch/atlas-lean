@@ -10,6 +10,10 @@ Bose, Cardinal, Iacono, Koumoutsos and Langerman first generalize the interleave
 
 - [Search trees on trees](search-trees-on-trees.md)
 
+## Proof depends on
+
+- [Link-cut trees take logarithmic amortized time](../../disjoint-sets-and-dynamic-trees/link-cut-tree/link-cut-trees-take-logarithmic-amortized-time.md)
+
 ## Sources
 
 - Prosenjit Bose, Jean Cardinal, John Iacono, Grigorios Koumoutsos, Stefan Langerman, "Competitive Online Search Trees on Trees", SODA (2020); ACM Transactions on Algorithms 19(3) (2023), arXiv:1908.00848.
