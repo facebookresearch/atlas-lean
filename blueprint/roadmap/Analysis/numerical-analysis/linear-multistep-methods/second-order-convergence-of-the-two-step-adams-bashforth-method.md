@@ -11,9 +11,15 @@ $\max_{0 \le n \le N}|Y_n - y(t_n)| \le Ch^2$ with $C$ independent of $h$.
 
 ## Expansion
 
-A good expansion bounds the local truncation error by Taylor's theorem, proves zero-stability from the roots $1$ and $0$ of the first
-characteristic polynomial, and combines them in a discrete Gronwall argument. Backward differentiation formulas, A-stability and Dahlquist's
-barriers are separate nodes.
+The order and zero-stability of the method, and the convergence theorem for scalar equations with its $O(h^p)$ error bound, are pages linked
+below. A good expansion adds the vector-valued form of the error bound for perturbed linear difference equations, for $\mathbb{R}^d$-valued
+sequences in any norm, so that the convergence theorem applies to systems.
+
+## Proof depends on
+
+- [Orders, error constants and stability intervals of the Adams methods](adams-methods/orders-and-stability-intervals-of-adams-methods.md)
+- [The two-step Adams–Bashforth method is zero-stable](adams-methods/two-step-adams-bashforth-method-is-zero-stable.md)
+- [Dahlquist equivalence theorem](dahlquist-equivalence-theorem.md)
 
 ## Sources
 

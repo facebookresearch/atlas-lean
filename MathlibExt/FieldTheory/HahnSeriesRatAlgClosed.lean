@@ -138,7 +138,7 @@ private theorem evalEdgeForm_coeff (f : (HahnSeries ℚ K)[X]) (γ : ℚ) (k : �
   rw [Finset.sum_eq_single k]
   · simp
   · intro j _ hj
-    simp only [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_neg (Ne.symm hj), mul_zero]
+    simp only [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, ite_eq_right (Ne.symm hj), mul_zero]
   · intro h
     exact absurd (Finset.mem_range.mpr (Nat.lt_succ_of_le hk)) h
 
@@ -254,9 +254,9 @@ private theorem eval_sub_eval_eq_sum_taylor (f : (HahnSeries ℚ K)[X]) (r h : H
   rw [← Finset.add_sum_erase _ (fun j => (Polynomial.taylor r f).coeff j * h ^ j) h0mem,
     ← Finset.add_sum_erase _
       (fun j => if j = 0 then 0 else (Polynomial.taylor r f).coeff j * h ^ j) h0mem]
-  rw [pow_zero, mul_one, add_sub_cancel_left, if_pos rfl, zero_add]
+  rw [pow_zero, mul_one, add_sub_cancel_left, ite_eq_left rfl, zero_add]
   refine Finset.sum_congr rfl fun j hj => ?_
-  rw [if_neg (Finset.ne_of_mem_erase hj)]
+  rw [ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 private def KaplanskySlope (f : (HahnSeries ℚ K)[X]) (r r' : HahnSeries ℚ K) : Prop :=
   ∀ j, 1 ≤ j → j ≤ f.natDegree →
@@ -280,7 +280,7 @@ private theorem KaplanskySlope.addVal_eval_le {f : (HahnSeries ℚ K)[X]} {r r' 
     refine (HahnSeries.addVal ℚ K).map_le_sum fun j hj => ?_
     rcases Nat.eq_zero_or_pos j with rfl | hpos
     · simp
-    · rw [if_neg hpos.ne', (HahnSeries.addVal ℚ K).map_mul, (HahnSeries.addVal ℚ K).map_pow]
+    · rw [ite_eq_right hpos.ne', (HahnSeries.addVal ℚ K).map_mul, (HahnSeries.addVal ℚ K).map_pow]
       exact h j hpos (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))
   calc HahnSeries.addVal ℚ K (f.eval r)
       ≤ min (HahnSeries.addVal ℚ K (f.eval r)) (HahnSeries.addVal ℚ K (f.eval r' - f.eval r)) :=
@@ -315,7 +315,7 @@ private theorem exists_addVal_taylor_coeff_of_addVal_eval_lt {f : (HahnSeries �
     refine (HahnSeries.addVal ℚ K).map_lt_sum (ne_of_lt (lt_of_lt_of_le hlt le_top)) fun j hj => ?_
     rcases Nat.eq_zero_or_pos j with rfl | hpos
     · simpa using lt_of_lt_of_le hlt le_top
-    · rw [if_neg hpos.ne', (HahnSeries.addVal ℚ K).map_mul, (HahnSeries.addVal ℚ K).map_pow,
+    · rw [ite_eq_right hpos.ne', (HahnSeries.addVal ℚ K).map_mul, (HahnSeries.addVal ℚ K).map_pow,
         show r - r' = -(r' - r) by ring, (HahnSeries.addVal ℚ K).map_neg]
       exact habs j hpos (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))
   rw [show r' + (r - r') = r by ring] at hsum
@@ -494,7 +494,7 @@ private theorem kaplanskyLimitCoeff_eq {C : Set (HahnSeries ℚ K)} (hC : IsChai
     {a : HahnSeries ℚ K} (ha : a ∈ C) {g : ℚ} (hga : KaplanskyBelowSlope f a g) :
     kaplanskyLimitCoeff (f := f) C g = a.coeff g := by
   unfold kaplanskyLimitCoeff
-  rw [dif_pos ⟨a, ha, hga⟩]
+  rw [dite_eq_left ⟨a, ha, hga⟩]
   obtain ⟨hb, hgb⟩ := (⟨a, ha, hga⟩ : ∃ a ∈ C, KaplanskyBelowSlope f a g).choose_spec
   exact kaplanskyChain_coeff_eq hC hb ha hgb hga
 
@@ -506,7 +506,7 @@ private theorem kaplanskyLimitCoeff_isPWO_support {C : Set (HahnSeries ℚ K)}
   intro s hanti hs
   have hf0 : kaplanskyLimitCoeff (f := f) C (s 0) ≠ 0 := hs 0
   have hex : ∃ a ∈ C, KaplanskyBelowSlope f a (s 0) := by
-    by_contra hnone; rw [kaplanskyLimitCoeff, dif_neg hnone] at hf0; exact hf0 rfl
+    by_contra hnone; rw [kaplanskyLimitCoeff, dite_eq_right hnone] at hf0; exact hf0 rfl
   obtain ⟨a₀, ha₀, hga₀⟩ := hex
 
   have hsk : ∀ k, s k ∈ a₀.support := by

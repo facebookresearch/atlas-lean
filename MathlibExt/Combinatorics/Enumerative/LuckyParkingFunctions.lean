@@ -8,11 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Rat.Defs
+public import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Card
@@ -1125,6 +1126,21 @@ private lemma park_card_eq_catalan_aux : ∀ n m, m ≤ n →
 private lemma park_card_eq_catalan (n : ℕ) :
     Fintype.card (Park n) = catalan n :=
   park_card_eq_catalan_aux n n (Nat.le_refl n)
+
+/-- The number of nondecreasing maps `f : Fin n → Fin n` with `f k ≤ k` for all `k` and
+`f i = i` is `catalan i.val * catalan (n - i.val)`. Split just before `i` and subtract `i`
+from the indices and values in the second block. If `i = 0`, the first block is the unique
+empty map. -/
+theorem card_monotone_le_id_eq_self (n : ℕ) (i : Fin n) :
+    Nat.card { f : Fin n → Fin n // Monotone f ∧ (∀ k, f k ≤ k) ∧ f i = i } =
+      catalan i.val * catalan (n - i.val) := by
+  let e : { f : Fin n → Fin n // Monotone f ∧ (∀ k, f k ≤ k) ∧ f i = i } ≃ Fiber n i :=
+    { toFun := fun ⟨f, hm, hb, hi⟩ => ⟨⟨f, hm, fun k => Fin.le_def.mp (hb k)⟩, hi⟩
+      invFun := fun ⟨⟨f, hm, hb⟩, hi⟩ => ⟨f, hm, fun k => Fin.le_def.mpr (hb k), hi⟩
+      left_inv := fun _ => rfl
+      right_inv := fun _ => rfl }
+  rw [Nat.card_congr (e.trans (fiberEquiv n i)), Nat.card_eq_fintype_card,
+    Fintype.card_prod, park_card_eq_catalan, park_card_eq_catalan]
 
 private lemma ratio_of_catalan (n : ℕ) (hn : 0 < n)
     (Cn : ℕ) (hCn : 0 < Cn)
