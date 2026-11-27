@@ -190,18 +190,21 @@ private theorem part_appendLast_last (P : SetPartition n) :
   ext x
   refine Fin.lastCases ?_ (fun x => ?_) x <;> simp [appendLast, mem_part_label]
 
--- A crossing cannot use a new last point that is alone in its block. This also applies
--- after merging two old singleton blocks.
+-- A crossing cannot use the last point unless one of its block mates has at least
+-- one point between them. This covers both a singleton and a terminal adjacent pair.
 private theorem crossing_of_append {R : Fin (n + 1) → Fin (n + 1) → Prop}
     {S : Fin n → Fin n → Prop} (old : ∀ x y : Fin n, R x.castSucc y.castSucc ↔ S x y)
-    (last : ∀ x, R x (Fin.last n) → x = Fin.last n)
+    (last : ∀ x, x.val + 1 < n → ¬ R x (Fin.last n))
     (h : ∃ a b c d, a < b ∧ b < c ∧ c < d ∧ R a c ∧ R b d ∧ ¬ R a b) :
     ∃ a b c d, a < b ∧ b < c ∧ c < d ∧ S a c ∧ S b d ∧ ¬ S a b := by
   obtain ⟨a, b, c, d, hab, hbc, hcd, hac, hbd, hne⟩ := h
   have hd : d.val < n := by
-    by_contra! h
+    by_contra! hd
     have he : d = Fin.last n := Fin.ext (by simp; omega)
-    exact (hbc.trans hcd).ne ((last b (he ▸ hbd)).trans he.symm)
+    have hgap : b.val + 1 < n := by
+      simp only [Fin.lt_def] at hbc hcd
+      omega
+    exact last b hgap (he ▸ hbd)
   let d' := d.castLT hd
   let c' := c.castLT (Nat.lt_trans hcd hd)
   let b' := b.castLT (Nat.lt_trans hbc c'.isLt)
@@ -214,10 +217,11 @@ private noncomputable def appendLastNCP (P : _root_.NoncrossingPartition n) :
   ⟨appendLast P.val, by
     intro h
     apply P.property
-    refine crossing_of_append (fun x y => ?_) (fun x hx => ?_) h
+    refine crossing_of_append (fun x y => ?_) (fun x hgap hx => ?_) h
     · simp only [part_appendLast_castSucc, Finset.map_inj]
     · rw [part_eq_iff_mem, part_appendLast_last, mem_singleton] at hx
-      exact hx⟩
+      subst x
+      simp at hgap⟩
 
 private theorem isMarriageableSingles_appendLast {P : SetPartition n}
     (hP : IsMarriageableSingles P) : IsMarriageableSingles (appendLast P) := by
@@ -227,11 +231,13 @@ private theorem isMarriageableSingles_appendLast {P : SetPartition n}
   · simp [part_appendLast_castSucc, hj]
   · intro h
     apply hnc
-    refine crossing_of_append (fun x y => ?_) (fun x hx => ?_) h
+    refine crossing_of_append (fun x y => ?_) (fun x hgap hx => ?_) h
     · simp only [mergedSameBlock, part_appendLast_castSucc, Finset.map_inj]
       simp only [← Fin.castSuccEmb_apply, Finset.mem_map']
     · rcases hx with he | ⟨-, hlast⟩
-      · rwa [part_eq_iff_mem, part_appendLast_last, mem_singleton] at he
+      · rw [part_eq_iff_mem, part_appendLast_last, mem_singleton] at he
+        subst x
+        simp at hgap
       · rw [part_appendLast_castSucc, part_appendLast_castSucc, hi, hj] at hlast
         rcases hlast with hlast | hlast
         · exact (Fin.castSucc_ne_last i (mem_singleton.mp hlast).symm).elim
@@ -426,38 +432,22 @@ private theorem comp_endLabels {α β : Type*} (g : α → β) (f : Fin n → α
   funext x
   induction x using endCases <;> simp
 
-private theorem not_crossing_endLabels_fresh {α : Type*} {f : Fin n → α} {a b : α}
-    (hf : ¬ LabelCrossing f) (ha : ∀ x, f x ≠ a) (hb : ∀ x, f x ≠ b) :
-    ¬ LabelCrossing (endLabels f a b) := by
-  have hgap (x y : Fin (n + 2)) (hxy : x.val + 1 < y.val)
-      (h : endLabels f a b x = endLabels f a b y) : y.val < n := by
-    induction y using endCases with
-    | ho y => exact y.isLt
-    | ha =>
-      induction x using endCases with
-      | ho x => exact (ha x (by simpa using h)).elim
-      | ha => simp only [Fin.val_castSucc, Fin.val_last] at hxy; omega
-      | hb => simp only [Fin.val_castSucc, Fin.val_last] at hxy; omega
-    | hb =>
-      induction x using endCases with
-      | ho x => exact (hb x (by simpa using h)).elim
-      | ha => simp only [Fin.val_castSucc, Fin.val_last] at hxy; omega
-      | hb => simp only [Fin.val_last] at hxy; omega
-  rintro ⟨x, y, z, w, hxy, hyz, hzw, hxz, hyw, hne⟩
-  simp only [Fin.lt_def] at hxy hyz hzw
-  have hw := hgap y w (by omega) hyw
-  let w' := w.castLT hw
-  let z' := z.castLT (Nat.lt_trans hzw hw)
-  let y' := y.castLT (Nat.lt_trans hyz z'.isLt)
-  let x' := x.castLT (Nat.lt_trans hxy y'.isLt)
-  have hval (v : Fin (n + 2)) (hv : v.val < n) :
-      endLabels f a b v = f (v.castLT hv) := by
-    have h : keepOld (v.castLT hv) = v := Fin.ext rfl
-    exact (congrArg (endLabels f a b) h.symm).trans (endLabels_old ..)
-  exact hf ⟨x', y', z', w', hxy, hyz, hzw,
-    (hval x _).symm.trans (hxz.trans (hval z _)),
-    (hval y _).symm.trans (hyw.trans (hval w _)),
-    fun h => hne ((hval x _).trans (h.trans (hval y _).symm))⟩
+-- Remove the new endpoints one at a time. The second endpoint can share the first
+-- endpoint's label, but the two points are adjacent, so neither can be in a crossing.
+private theorem crossing_of_fresh_endLabels {α : Type*} {f : Fin n → α} {a b : α}
+    (ha : ∀ x, f x ≠ a) (hb : ∀ x, f x ≠ b) (h : LabelCrossing (endLabels f a b)) :
+    LabelCrossing f := by
+  have hprefix : LabelCrossing (Fin.lastCases a f) := by
+    refine crossing_of_append (fun x y => by simp [endLabels]) (fun x hgap hx => ?_) h
+    induction x using endCases with
+    | ho x => exact hb x (by simpa using hx)
+    | ha => simp at hgap
+    | hb => simp at hgap
+  refine crossing_of_append (fun x y => by simp) (fun x hgap hx => ?_) hprefix
+  refine Fin.lastCases ?_ (fun y => ?_) x hgap hx
+  · simp
+  · intro _ hy
+    exact ha y (by simpa using hy)
 
 private theorem singleton_endLabels_old {α : Type*} {f : Fin n → α} {a b : α} {i : Fin n}
     (hi : ∀ x, f x = f i → x = i) (ha : a ≠ f i) (hb : b ≠ f i) :
@@ -490,9 +480,9 @@ private theorem labelMarriageable_endLabels_fresh {α : Type*} [DecidableEq α]
     singleton_endLabels_old hi (ha i).symm (hb i).symm,
     singleton_endLabels_old hj (ha j).symm (hb j).symm, ?_⟩
   simp only [endLabels_old, comp_endLabels]
-  exact not_crossing_endLabels_fresh hc
+  exact fun h => hc (crossing_of_fresh_endLabels
     (fun x => joinLabel_ne_of_ne (ha x) (ha i).symm (ha j).symm)
-    (fun x => joinLabel_ne_of_ne (hb x) (hb i).symm (hb j).symm)
+    (fun x => joinLabel_ne_of_ne (hb x) (hb i).symm (hb j).symm) h)
 
 private theorem labelMarriageable_endLabels_distinct_fresh {α : Type*} [DecidableEq α]
     {f : Fin n → α} (h : ¬ LabelCrossing f) {a b : α}
@@ -506,8 +496,8 @@ private theorem labelMarriageable_endLabels_distinct_fresh {α : Type*} [Decidab
     simp [joinLabel, ha x, hb x]
   rw [hjoin]
   have hn : ¬ LabelCrossing (some ∘ f) := by simpa [LabelCrossing] using h
-  exact not_crossing_endLabels_fresh hn
-    (fun x => by simp [joinLabel]) (fun x => by simp [joinLabel])
+  exact fun h => hn (crossing_of_fresh_endLabels
+    (fun x => by simp [joinLabel]) (fun x => by simp [joinLabel]) h)
 
 -- Duplicating the last label is a monotone pullback. A fresh label on the final point
 -- cannot occur in an alternating pair, so the existing single-point crossing lemma applies.
@@ -525,11 +515,11 @@ private theorem not_crossing_endLabels_attach {α : Type*} {f : Fin n → α}
   change ¬ LabelCrossing F
   intro h
   have hprefix : LabelCrossing (f ∘ contractLast hn) := by
-    apply crossing_of_append (fun x y => by simp [hproj]) (fun x hx => ?_) h
+    refine crossing_of_append (fun x y => by simp [hproj]) (fun x hgap hx => ?_) h
     induction x using endCases with
-    | ho x => exact (hb x (by simpa [F] using hx)).elim
-    | ha => exact (hb k (by simpa [F] using hx)).elim
-    | hb => rfl
+    | ho x => exact hb x (by simpa [F] using hx)
+    | ha => exact hb k (by simpa [F] using hx)
+    | hb => simp at hgap
   apply hf
   exact crossing_map_of_monotone (contractLast hn) (contractLast_monotone hn)
     (S := fun _ => True) (fun _ _ _ _ => Iff.rfl) (fun _ _ _ _ => ⟨trivial, trivial⟩) hprefix
@@ -783,8 +773,8 @@ private noncomputable def appendFreshSingletons (P : _root_.NoncrossingPartition
   have hnc := (labelPartition_noncrossing_iff (blockTag P.val)).mp
     (by rw [blockTag_partition]; exact P.property)
   exact buildEnd P.val (Sum.inr false) (Sum.inr true)
-    (not_crossing_endLabels_fresh hnc (fun _ => by simp [blockTag])
-      (fun _ => by simp [blockTag]))
+    (fun h => hnc (crossing_of_fresh_endLabels (fun _ => by simp [blockTag])
+      (fun _ => by simp [blockTag]) h))
     (labelMarriageable_endLabels_distinct_fresh hnc (fun _ => by simp [blockTag])
       (fun _ => by simp [blockTag]) (by simp))
 
@@ -841,27 +831,26 @@ private noncomputable def boundaryExtension (hn : 0 < n) (a b : Bool)
     MarriageableNCP (n + 2) := by
   have hnc := (labelPartition_noncrossing_iff (blockTag P.val)).mp
     (by rw [blockTag_partition]; exact P.property)
-  apply buildEnd P.val (nearTag P.val hn a b) (farTag P.val hn a b)
-  · cases a <;> cases b <;> simp only [nearTag, farTag, Bool.not_false, Bool.not_true,
-      Bool.true_and, Bool.false_and, Bool.false_eq_true, ite_false, ite_true]
-    · exact not_crossing_endLabels_fresh hnc (fun _ => by simp [blockTag])
-        (fun _ => by simp [blockTag])
-    · exact not_crossing_endLabels_attach hn hnc (fun _ => by simp [blockTag])
-    · exact (endLabels_attach_first hn (fun _ => by simp [blockTag])).1 hnc
-    · exact not_crossing_endLabels_fresh hnc (fun _ => by simp [blockTag])
-        (fun _ => by simp [blockTag])
-  · cases a <;> cases b <;>
-      simp only [nearTag, farTag, Bool.not_false, Bool.not_true, Bool.true_and, Bool.false_and,
-        Bool.false_eq_true, ite_false, ite_true, false_and, and_false, false_or, true_and,
-        true_or] at hp ⊢
-    · exact labelMarriageable_endLabels_fresh ((labelMarriageable_iff _).mpr
-        (by rwa [blockTag_partition])) (fun _ => by simp [blockTag]) (fun _ => by simp [blockTag])
-    · exact labelMarriageable_endLabels_attach hn ((labelMarriageable_iff _).mpr
-        (by rwa [blockTag_partition])) (fun _ => by simp [blockTag])
-    · exact (endLabels_attach_first hn (fun _ => by simp [blockTag])).2
-        ((labelMarriageable_iff _).mpr (by rwa [blockTag_partition]))
-    · exact labelMarriageable_endLabels_distinct_fresh hnc (fun _ => by simp [blockTag])
-        (fun _ => by simp [blockTag]) (by simp)
+  have hm (h : IsMarriageableSingles P.val) : LabelMarriageable (blockTag P.val) :=
+    (labelMarriageable_iff _).mpr (by rwa [blockTag_partition])
+  have fresh (x : Fin n) (b : Bool) : blockTag P.val x ≠ Sum.inr b := by simp [blockTag]
+  cases a <;> cases b <;>
+    simp only [Bool.false_eq_true, false_and, and_false, false_or] at hp
+  · exact buildEnd P.val (Sum.inr false) (Sum.inr false)
+      (fun h => hnc (crossing_of_fresh_endLabels (fresh · false) (fresh · false) h))
+      (labelMarriageable_endLabels_fresh (hm hp) (fresh · false) (fresh · false))
+  · exact buildEnd P.val (blockTag P.val ⟨n - 1, by omega⟩) (Sum.inr true)
+      (not_crossing_endLabels_attach hn hnc (fresh · true))
+      (labelMarriageable_endLabels_attach hn (hm hp) (fresh · true))
+  · have h := endLabels_attach_first hn (fresh · false)
+    exact buildEnd P.val (Sum.inr false) (blockTag P.val ⟨0, hn⟩) (h.1 hnc) (h.2 (hm hp))
+  · exact appendFreshSingletons P
+
+private theorem boundaryExtension_val (hn : 0 < n) (a b : Bool)
+    (P : _root_.NoncrossingPartition n) (hp) :
+    (boundaryExtension hn a b P hp).val.val =
+      labelPartition (endLabels (blockTag P.val) (nearTag P.val hn a b) (farTag P.val hn a b)) := by
+  cases a <;> cases b <;> rfl
 
 private def extensionShape : Option Bool → Bool × Bool
   | none => (false, false)
@@ -884,8 +873,9 @@ private theorem extensionShape_ne_both (x : Option Bool) : extensionShape x ≠ 
 
 private theorem restrict_boundaryExtension (hn : 0 < n) (a b : Bool)
     (P : _root_.NoncrossingPartition n) (hP) :
-    (boundaryExtension hn a b P hP).val.val.comap keepOld = P.val :=
-  restrict_endLabels P.val _ _
+    (boundaryExtension hn a b P hP).val.val.comap keepOld = P.val := by
+  rw [boundaryExtension_val]
+  exact restrict_endLabels P.val _ _
 
 private noncomputable def fourExtensions (hn : 0 < n) :
     _root_.NoncrossingPartition n ⊕ (Option Bool × MarriageableNCP n) → MarriageableNCP (n + 2)
@@ -900,9 +890,8 @@ private theorem boundaryExtension_shape_eq (hn : 0 < n) (a b c d : Bool)
   have help₂ := (endLabels_has_shape P.val hn a b).2
   have help₃ := (endLabels_has_shape Q.val hn c d).1
   have help₄ := (endLabels_has_shape Q.val hn c d).2
-  have he : (labelPartition (endLabels (blockTag P.val) (nearTag P.val hn a b)
-      (farTag P.val hn a b))) = labelPartition (endLabels (blockTag Q.val) (nearTag Q.val hn c d)
-      (farTag Q.val hn c d)) := congrArg (fun R : MarriageableNCP (n + 2) => R.val.val) h
+  have he := congrArg (fun R : MarriageableNCP (n + 2) => R.val.val) h
+  simp only [boundaryExtension_val] at he
   rw [he] at help₁ help₂
   exact Prod.ext (by cases a <;> cases c <;> simp_all) (by cases b <;> cases d <;> simp_all)
 
