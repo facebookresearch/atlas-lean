@@ -15,4 +15,6 @@
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
 - [Antibody escape maps from deep mutational scanning](antibody-escape-maps-from-deep-mutational-scanning/README.md)
+- [Coevolutionary Potts landscapes of protein families](coevolutionary-potts-landscapes-of-protein-families/README.md)
+- [Neutral indel model](neutral-indel-model/README.md)
 - [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)

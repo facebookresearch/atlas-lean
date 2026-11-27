@@ -14,6 +14,7 @@ public import WantedExt.NumberTheory.Digits.PermutipleWanted
 public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero
 public import MathlibExt.NumberTheory.Digits.PermutipleStringsPermutipleEdgeResidueLe
 public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsCarriesOfIsMotherGraphEdge
+public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsIsPermutipleStringIffIsLEulerian
 
 /-!
 # A multigraph characterization of permutiple strings (Holt)
@@ -43,18 +44,6 @@ public theorem_wanted permutiple_graph_isUnion_motherGraphCycles (n b : ℕ) (hn
     (j : Fin (k + 1)) :
     IsMotherGraphEdge n b (d j) (d (σ j)) ∧
       Relation.ReflTransGen (fun u v => ∃ i, d i = u ∧ d (σ i) = v) (d (σ j)) (d j)
-
-/-- **$L$-Eulerian criterion for permutiple strings.** Let $1 < n < b$ and let $I$ be a
-multiset of cycles of the $(n, b)$-mother graph, with multiset union of cycle edges $C_I$
-and multi-image union $\Delta_I$. Then $\Delta_I$ is $L$-Eulerian if and only if there is
-an $(n, b)$-permutiple string $s$ whose multiset of entries is $C_I$.
-
-Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
-INTEGERS 25 (2025), Article A111, Corollary 2 (`integers-2025-A111-cor-2`). -/
-public theorem_wanted exists_isPermutipleString_iff_isLEulerian (n b : ℕ) (hn : 1 < n) (hnb : n < b)
-    (cs : Multiset (List ℕ)) (hcs : ∀ vs ∈ cs, IsMotherGraphCycle n b vs) :
-    (∃ s : List (ℕ × ℕ), (s : Multiset (ℕ × ℕ)) = cycleUnion cs ∧ IsPermutipleString n b s) ↔
-      IsLEulerian (multiImageUnion n b cs)
 
 end
 
