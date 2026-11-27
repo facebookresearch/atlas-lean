@@ -1,4 +1,4 @@
-# Exact value-query count of submodular greedy
+# Value-query complexity of submodular greedy
 
 On a ground set of $n$ elements with budget $k \le n$, the cardinality-constrained greedy algorithm, which in each of its $k$ rounds queries the value of the current set extended by each remaining candidate and adds a best one, makes $O(kn)$ value queries against every value oracle.
 

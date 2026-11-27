@@ -1,4 +1,4 @@
-# Chu-Liu/Edmonds in O(n^3) word-RAM time
+# Chu-Liu/Edmonds runs in O(mn) time
 
 In the unit-cost model, the contraction algorithm of Chu-Liu and Edmonds computes a minimum-cost spanning in-arborescence rooted at a given vertex $r$ of a digraph with $n$ vertices, $m$ arcs and arc costs, when one exists, in $O(mn)$ time: each contraction step takes $O(m)$ time and reduces the number of vertices by at least one.
 
@@ -14,7 +14,6 @@ Faster implementations: Tarjan's implementation of Edmonds' algorithm runs in $O
 
 - [The Chu-Liu/Edmonds algorithm](chu-liu-edmonds-algorithm.md)
 - [Spanning arborescences and branchings](spanning-arborescences-and-branchings.md)
-- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Proof depends on
 

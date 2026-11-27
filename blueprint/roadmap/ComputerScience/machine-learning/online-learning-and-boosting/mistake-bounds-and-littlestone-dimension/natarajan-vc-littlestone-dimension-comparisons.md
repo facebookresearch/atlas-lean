@@ -1,4 +1,4 @@
-# Natarajan dimension is at most the Littlestone dimension, which is at most the domain size
+# VC dimension is at most Littlestone dimension and mistake-bound comparisons
 
 Let $C$ be a class of functions $X \to Y$. Then $\mathrm{Ndim}(C) \le \mathrm{Ldim}(C)$; for Boolean classes this gives $\mathrm{VCdim}(C) \le \mathrm{Ldim}(C) = \mathrm{opt}(C)$. In particular infinite Natarajan or VC dimension forces infinite Littlestone dimension.
 

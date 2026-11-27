@@ -1,4 +1,4 @@
-# Deterministic forecasters have calibration error at least 1/2 against an adaptive adversary
+# Deterministic forecasters have calibration error at least 1/4 against an adaptive adversary
 
 Let $f$ be a deterministic forecasting rule that maps each finite binary history to a probability forecast in $[0,1]$. Against the adaptive adversary that sets the outcome $X_t = 1$ if the forecast $f_t = f(X_1, \ldots, X_{t-1})$ for round $t$ is at most $0.5$ and $X_t = 0$ otherwise, the calibration score after $t$ rounds
 

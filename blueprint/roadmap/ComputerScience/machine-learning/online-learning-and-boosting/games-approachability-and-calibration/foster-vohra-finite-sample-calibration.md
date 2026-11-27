@@ -1,4 +1,4 @@
-# Foster-Vohra forecaster: expected calibration error at most $1/(2K) + 2\sqrt{(K+1)/T}$
+# Finite-sample calibration via Blackwell approachability and online gradient descent
 
 Fix $K \ge 1$ and forecasts on the grid $\{0, 1/K, \ldots, 1\}$. For a binary outcome sequence and forecasts $i_t/K$, the empirical $\ell_1$ calibration error is $C_T = \frac1T\sum_{k=0}^{K} \big|\sum_{t<T:\ i_t = k} (y_t - k/K)\big|$, the $\ell_1$ norm of the calibration vector $c_T \in \mathbb{R}^{K+1}$ with coordinates $c_T(k) = \frac1T\sum_{t<T:\ i_t = k} (y_t - k/K)$. There is an explicit randomized forecaster which in each round draws $i_t$ from a distribution $w_t$ supported on at most two adjacent grid points, computed from the current iterate of online gradient descent on the cube $[-1,1]^{K+1}$ run on the past expected payoffs (an approachability strategy for the $\ell_1$ ball of radius $1/(2K)$), such that against every adaptive adversary choosing $y_t$ from the past forecasts, the expected calibration vector $\bar c_T = \frac1T\sum_{t<T} u(w_t, y_t)$, where $u(w, y)_k = w(k)\,(y - k/K)$, satisfies
 
