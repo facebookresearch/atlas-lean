@@ -12,6 +12,7 @@ It is undecidable whether an untyped λ-term can be decorated with type annotati
 
 - [The calculus λP](the-calculus-lambda-p.md)
 - [β-reduction](../../untyped-lambda-calculus/beta-reduction-and-confluence/beta-reduction.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

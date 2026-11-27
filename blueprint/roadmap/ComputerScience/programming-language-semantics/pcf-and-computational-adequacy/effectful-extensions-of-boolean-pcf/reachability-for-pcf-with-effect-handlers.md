@@ -27,6 +27,7 @@ In particular reachability for $\vdash_{\mathrm{st}}$-typable finitary PCF with 
 ## Depends on
 
 - [Boolean PCF and its reachability problem](boolean-pcf-and-its-reachability-problem.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -38,4 +39,4 @@ A program in $\mathit{MM}^n$ implements an $(n+1)$-state two-register Minsky mac
 
 ## Sources
 
-- Ryunosuke Endo and Tachio Terauchi, "Reachability is Decidable for ATM-Typable Finitary PCF with Effect Handlers", Programming Languages and Systems, Lecture Notes in Computer Science, pp. 67–87, Springer, 2025, <https://doi.org/10.1007/978-981-95-3585-9_4>; the syntax and semantics figures and the definition of reachability in Section 2, the theorem on the class $\mathit{MM}$ with its definition in the subsection "Number of Active Effect Handlers Does Not Capture Decidability" of Section 3, and its proof in the appendix of arXiv:2508.12572v2 (the copy read), <https://arxiv.org/abs/2508.12572v2>.
+- Ryunosuke Endo and Tachio Terauchi, "Reachability is Decidable for ATM-Typable Finitary PCF with Effect Handlers", Programming Languages and Systems, Lecture Notes in Computer Science, pp. 67–87, Springer, 2025, <https://doi.org/10.1007/978-981-95-3585-9_4>; the syntax and semantics figures, Definition 1 (reachability) and Theorems 1 and 2 (the decidable and undecidable cases recalled from earlier work) in Section 2, Theorem 3 (decidability for ATM-typable programs) and Theorem 7 (the class $\mathit{MM}$) with its definition in the subsection "Number of Active Effect Handlers Does Not Capture Decidability" of Section 3, and the proof of Theorem 7 in the appendix of arXiv:2508.12572v2 (the copy read), <https://arxiv.org/abs/2508.12572v2>.

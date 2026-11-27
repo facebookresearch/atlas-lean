@@ -26,4 +26,4 @@ All base types are finite, so Boolean PCF is a finitary language; its reachabili
 
 ## Sources
 
-- Naoki Kobayashi, "On Decidable and Undecidable Extensions of Simply Typed Lambda Calculus", *Proceedings of the ACM on Programming Languages* 9(POPL), 2025, pp. 1136–1166, <https://doi.org/10.1145/3704875>; read as arXiv:2411.06086v2, <https://arxiv.org/abs/2411.06086v2>: the subsection "Boolean PCF" (syntax, typing and reduction rules, the definition of the reachability problem and the remarks after it) of that version.
+- Naoki Kobayashi, "On Decidable and Undecidable Extensions of Simply Typed Lambda Calculus", *Proceedings of the ACM on Programming Languages* 9(POPL), 2025, pp. 1136–1166, <https://doi.org/10.1145/3704875>; read as arXiv:2411.06086v2, <https://arxiv.org/abs/2411.06086v2>: Section 2.1 (Boolean PCF: syntax, typing and reduction rules) and Definition 2.1 (the reachability problem) with the remarks after it, in the numbering of that version.

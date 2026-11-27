@@ -9,6 +9,7 @@ Type checking for DFuzz, the linear indexed type system for differential privacy
 ## Depends on
 
 - [PCF terms](../../programming-language-semantics/pcf-and-computational-adequacy/tm.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

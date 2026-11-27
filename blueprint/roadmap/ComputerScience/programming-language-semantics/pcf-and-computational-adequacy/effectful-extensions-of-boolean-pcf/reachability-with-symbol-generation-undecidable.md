@@ -7,6 +7,7 @@ Boolean PCF extended with a primitive that generates fresh symbols and an equali
 ## Depends on
 
 - [Boolean PCF and its reachability problem](boolean-pcf-and-its-reachability-problem.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,4 +19,4 @@ The encoding of a Minsky machine represents numbers by symbols. A symbol $\ell_{
 
 ## Sources
 
-- Naoki Kobayashi, "On Decidable and Undecidable Extensions of Simply Typed Lambda Calculus", *Proceedings of the ACM on Programming Languages* 9(POPL), 2025, pp. 1136–1166, <https://doi.org/10.1145/3704875>; read as arXiv:2411.06086v2, <https://arxiv.org/abs/2411.06086v2>: the subsection "Extension with Symbol Generation" of the section "Undecidable Extensions of Boolean PCF", its theorem and encoding, of that version.
+- Naoki Kobayashi, "On Decidable and Undecidable Extensions of Simply Typed Lambda Calculus", *Proceedings of the ACM on Programming Languages* 9(POPL), 2025, pp. 1136–1166, <https://doi.org/10.1145/3704875>; read as arXiv:2411.06086v2, <https://arxiv.org/abs/2411.06086v2>: Theorem 3.2 in Section 3.3 ("Extension with Symbol Generation") with its encoding, in the numbering of that version.

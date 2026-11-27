@@ -32,6 +32,8 @@ $\mathcal H$ is the theory extending $\lambda\beta$ by $M = \Omega$ for all clos
 
 The source's earlier work shows that $\lambda\beta$ closed under the $\omega$-rule is not recursively enumerable (true $\Pi^0_2$ sentences reduce to it) and not even arithmetical.
 
+A good expansion links the $\Pi^1_1$-completeness of well-founded recursive trees (Rogers; Theorem 8.1 of the source) and Barendregt's construction of the terms $B_0$, $B_1$ (Lemmas 8.2–8.4 of the source), which have no pages on main yet.
+
 ## Sources
 
-- Benedetto Intrigila and Richard Statman, "Solution of a Problem of Barendregt on Sensible λ-Theories", *Logical Methods in Computer Science* 2(4), Paper 5, 2006, <https://doi.org/10.2168/LMCS-2(4:5)2006>; arXiv:cs/0609080v2, <https://arxiv.org/abs/cs/0609080v2>: Definition 2.1 (equality in $\mathcal H\omega$), Section 3, the theorems of Section 8 ("Barendregt's Construction") and its final corollary, numbered 8.7.
+- Benedetto Intrigila and Richard Statman, "Solution of a Problem of Barendregt on Sensible λ-Theories", *Logical Methods in Computer Science* 2(4), Paper 5, 2006, <https://doi.org/10.2168/LMCS-2(4:5)2006>; read in arXiv:cs/0609080v2, <https://arxiv.org/abs/cs/0609080v2>: Definition 2.1 (equality in $\mathcal H\omega$), Section 3, and Theorem 8.1, Lemmas 8.2–8.4, Theorems 8.5 and 8.6 and Corollary 8.7 of Section 8 ("Barendregt's Construction"), in the numbering of that version.

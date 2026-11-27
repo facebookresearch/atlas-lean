@@ -29,4 +29,4 @@ Bounded quantification $\forall X \le B.\,A$ of $F_{<:}$ becomes $\forall X{:}\b
 
 ## Sources
 
-- Sandro Stucki and Paolo G. Giarrusso, "A Theory of Higher-Order Subtyping with Type Intervals", *Proceedings of the ACM on Programming Languages* 5(ICFP), Article 69, 2021, 30 pages, <https://doi.org/10.1145/3473574>; read as the extended version arXiv:2107.01883v1, <https://arxiv.org/abs/2107.01883v1>: Section 2 ("Subtyping with Type Intervals") and Section 3 ("The Declarative System"), Figures "Syntax of F-omega-int" and the declarative kinding and subtyping rules, of that version.
+- Sandro Stucki and Paolo G. Giarrusso, "A Theory of Higher-Order Subtyping with Type Intervals", *Proceedings of the ACM on Programming Languages* 5(ICFP), Article 69, 2021, 30 pages, <https://doi.org/10.1145/3473574>; read as the extended version arXiv:2107.01883v1, <https://arxiv.org/abs/2107.01883v1>: Section 2 ("Subtyping with Type Intervals") and Section 3 ("The Declarative System"), with Fig. 1 (syntax) and Figs. 3 and 4 (the declarative kinding and subtyping rules), in the numbering of that version.

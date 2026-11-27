@@ -9,6 +9,7 @@ The source credits the original undecidability result to Dal Lago and Ghyselen (
 ## Depends on
 
 - [Boolean PCF and its reachability problem](boolean-pcf-and-its-reachability-problem.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ Dal Lago and Ghyselen showed that model checking an extension of Boolean PCF wit
 
 ## Sources
 
-- Naoki Kobayashi, "On Decidable and Undecidable Extensions of Simply Typed Lambda Calculus", *Proceedings of the ACM on Programming Languages* 9(POPL), 2025, pp. 1136–1166, <https://doi.org/10.1145/3704875>; read as arXiv:2411.06086v2, <https://arxiv.org/abs/2411.06086v2>: the subsection "An Extension with Algebraic Effects and Handlers" (its typing and reduction rules and the encodings of Minsky machines with shallow and with deep handlers) of the section "Undecidable Extensions of Boolean PCF" of that version.
+- Naoki Kobayashi, "On Decidable and Undecidable Extensions of Simply Typed Lambda Calculus", *Proceedings of the ACM on Programming Languages* 9(POPL), 2025, pp. 1136–1166, <https://doi.org/10.1145/3704875>; read as arXiv:2411.06086v2, <https://arxiv.org/abs/2411.06086v2>: Section 3.2 ("An Extension with Algebraic Effects and Handlers": typing and reduction rules), the encodings of Minsky machines with shallow and with deep handlers in Sections 3.2.1 and 3.2.2, and Remark 3.3, in the numbering of that version; the two undecidability results there are stated without numbers.

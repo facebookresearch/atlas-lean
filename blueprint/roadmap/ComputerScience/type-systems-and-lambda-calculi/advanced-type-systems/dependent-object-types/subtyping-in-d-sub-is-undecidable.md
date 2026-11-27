@@ -7,6 +7,7 @@ No algorithm decides, given a context and two types of the calculus $D_{<:}$, wh
 ## Depends on
 
 - [The calculus D<:](the-calculus-d-sub.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
