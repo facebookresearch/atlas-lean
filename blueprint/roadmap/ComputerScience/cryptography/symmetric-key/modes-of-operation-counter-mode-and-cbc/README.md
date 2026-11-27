@@ -12,7 +12,7 @@
 - [Ctr Decrypt ctr Encrypt](ctr-decrypt-ctr-encrypt.md)
 - [Counter mode](ctr-scheme.md)
 - [Correctness of counter mode](ctr-scheme-correct.md)
-- [Query Vec](query-vec.md)
+- [Querying a vector of points](query-vec.md)
 - [Run query Vec](run-query-vec.md)
 - [Ctr Enc Q](ctr-enc-q.md)
 - [Run ctr Enc Q](run-ctr-enc-q.md)
