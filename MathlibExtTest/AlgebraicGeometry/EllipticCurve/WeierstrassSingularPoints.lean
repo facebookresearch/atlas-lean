@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.WeierstrassSingularPoints
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import Mathlib.FieldTheory.RatFunc.AsPolynomial
+public import Mathlib.Algebra.Field.ZMod
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
@@ -92,5 +94,72 @@ example : (cuspidal.map (algebraMap ℚ Qbar)).IsCusp 0 0 ∧
 example : ¬ (∀ P : Fin 3 → Qbar, P ≠ 0 → (nodal.map (algebraMap ℚ Qbar)).toProjective.Equation P →
       (nodal.map (algebraMap ℚ Qbar)).toProjective.Nonsingular P) :=
   fun h ↦ ((singular_points_of_weierstrass_cubic (K := Qbar) nodal).1.1 h) nodal_Δ
+
+/-- The curve `y² = x³ - x²` over `ℚ`, whose origin is a node with tangent lines `y = ± i x`
+defined only over `ℚ(i)`. -/
+private def nodalIrrational : WeierstrassCurve ℚ :=
+  ⟨0, -1, 0, 0, 0⟩
+
+/-- No line with rational coefficients is tangent to `y² = x³ - x²` at the origin. -/
+example : ¬ ∃ c d : ℚ, nodalIrrational.IsTangentLine 0 0 c d := by
+  rintro ⟨c, d, -, hcd, g, hg⟩
+  rw [homogeneousComponent_two_polynomialAt] at hg
+  have h := congrArg (MvPolynomial.eval ![d, -c]) hg
+  simp only [quadraticPart, nodalIrrational, map_add, map_sub, map_mul, map_pow,
+    MvPolynomial.eval_C, MvPolynomial.eval_X, Matrix.cons_val_zero, Matrix.cons_val_one] at h
+  have h2 : c ^ 2 + d ^ 2 = 0 := by linear_combination h
+  rcases hcd with hc | hd
+  · exact hc (by nlinarith [sq_nonneg c, sq_nonneg d])
+  · exact hd (by nlinarith [sq_nonneg c, sq_nonneg d])
+
+/-- Over `ℚ̄`, the origin of `y² = x³ - x²` is a node. -/
+example : (nodalIrrational.map (algebraMap ℚ Qbar)).IsNode 0 0 := by
+  have he : (nodalIrrational.map (algebraMap ℚ Qbar)).toAffine.Equation 0 0 := by
+    rw [Affine.equation_iff]; simp [nodalIrrational]
+  have hns : ¬ (nodalIrrational.map (algebraMap ℚ Qbar)).toAffine.Nonsingular 0 0 := by
+    rw [Affine.nonsingular_iff]; simp [nodalIrrational]
+  refine isNode_of_singular _ he hns ?_
+  rw [map_c₄]
+  have : nodalIrrational.c₄ = 16 := by norm_num [nodalIrrational, c₄, b₂, b₄]
+  rw [this]
+  norm_num
+
+/-- The origin of `y² = x³ - x` is a nonsingular point, so no line is tangent there at a double
+point: in particular `Y = 0`, although `Y` divides the degree-two part `Y²`, is not a tangent
+line. -/
+example : ¬ smooth.IsTangentLine 0 0 0 1 := by
+  rintro ⟨hdp, -⟩
+  have hns := ((isDoublePoint_iff _ 0 0).1 hdp).2
+  apply hns
+  rw [Affine.nonsingular_iff, Affine.equation_iff]
+  simp [smooth]
+
+local instance : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+
+local notation "F₂t" => RatFunc (ZMod 2)
+
+/-- The curve `y² = x³ + t x²` over `𝔽₂(t)`. -/
+private noncomputable def cuspidalCharTwo : WeierstrassCurve F₂t :=
+  ⟨0, RatFunc.X, 0, 0, 0⟩
+
+/-- Over an algebraic closure of `𝔽₂(t)`, the origin of `y² = x³ + t x²` is a cusp, with the
+double tangent line `Y + √t X = 0`. -/
+example : (cuspidalCharTwo.map (algebraMap F₂t (AlgebraicClosure F₂t))).IsCusp 0 0 := by
+  have he : (cuspidalCharTwo.map (algebraMap F₂t (AlgebraicClosure F₂t))).toAffine.Equation
+      0 0 := by
+    rw [Affine.equation_iff]; simp [cuspidalCharTwo]
+  have hns : ¬ (cuspidalCharTwo.map
+      (algebraMap F₂t (AlgebraicClosure F₂t))).toAffine.Nonsingular 0 0 := by
+    rw [Affine.nonsingular_iff]; simp [cuspidalCharTwo]
+  refine isCusp_of_singular _ he hns ?_
+  rw [map_c₄]
+  have h16 : (16 : F₂t) = 0 := by
+    have : algebraMap (ZMod 2) F₂t 16 = 0 := by
+      rw [show (16 : ZMod 2) = 0 by decide, map_zero]
+    simpa only [map_ofNat] using this
+  have : cuspidalCharTwo.c₄ = 0 := by
+    simp only [cuspidalCharTwo, c₄, b₂, b₄]
+    linear_combination RatFunc.X ^ 2 * h16
+  rw [this, map_zero]
 
 end MathlibExtTest.AlgebraicGeometry.EllipticCurve.WeierstrassSingularPoints

@@ -39,7 +39,8 @@ For a Weierstrass curve `W` over a field and an affine point `(x₀, y₀)`, fol
   of the degree-two part.
 * `WeierstrassCurve.lineIntersectionNumber`: the intersection number of a line through the
   point with the curve, as the order of vanishing of the restriction of `f` to the line.
-* `WeierstrassCurve.IsNode`, `WeierstrassCurve.IsCusp`: nodes and cusps.
+* `WeierstrassCurve.IsNode`, `WeierstrassCurve.IsCusp`: nodes and cusps, for curves over an
+  algebraically closed field, where every tangent line is defined over the field.
 * `WeierstrassCurve.IsSingularPoint`, `WeierstrassCurve.IsProjectiveNode`,
   `WeierstrassCurve.IsProjectiveCusp`: the projective versions.
 
@@ -164,14 +165,17 @@ def IsDoublePoint (x₀ y₀ : F) : Prop :=
     homogeneousComponent 1 (W.polynomialAt x₀ y₀) = 0 ∧
     homogeneousComponent 2 (W.polynomialAt x₀ y₀) ≠ 0
 
-/-- The line `c(X - x₀) + d(Y - y₀) = 0` (with `(c, d) ≠ 0`) is a *tangent line* at the double
-point `(x₀, y₀)`: its linear form `c(X - x₀) + d(Y - y₀)` divides the degree-two part `f₂`
-(Milne, *Elliptic Curves*, Chapter I, §1, p. 8: the tangent lines are the lines `Lᵢ = 0` for the
-linear factors `Lᵢ` of `f_m`, here `m = 2`). A line is recorded by its coefficient vector
+/-- The line `c(X - x₀) + d(Y - y₀) = 0`, with `(c, d) ≠ 0` and coefficients in `F`, is a
+*tangent line* at the double point `(x₀, y₀)`: `(x₀, y₀)` is a double point
+(`WeierstrassCurve.IsDoublePoint`), and the linear form `c(X - x₀) + d(Y - y₀)` divides the
+degree-two part `f₂` (Milne, *Elliptic Curves*, Chapter I, §1, p. 8: at a singular point of
+multiplicity `m`, the tangent lines are the lines `Lᵢ = 0` for the linear factors `Lᵢ` of `f_m`
+over an algebraic closure, here `m = 2`). Over a field that is not algebraically closed, this
+captures only the tangent lines defined over `F`. A line is recorded by its coefficient vector
 `(c, d)`, which is determined by the line up to a nonzero scalar; accordingly, in `IsNode` and
 `IsCusp` two tangent lines `(c, d)` and `(c', d')` are distinct when `c * d' - d * c' ≠ 0`. -/
 def IsTangentLine (x₀ y₀ c d : F) : Prop :=
-  (c ≠ 0 ∨ d ≠ 0) ∧
+  W.IsDoublePoint x₀ y₀ ∧ (c ≠ 0 ∨ d ≠ 0) ∧
     C c * X 0 + C d * X 1 ∣ homogeneousComponent 2 (W.polynomialAt x₀ y₀)
 
 /-- The intersection number at `(x₀, y₀)` of the line `c(X - x₀) + d(Y - y₀) = 0` with the
@@ -187,15 +191,19 @@ noncomputable def lineIntersectionNumber (x₀ y₀ c d : F) : ℕ :=
     (aeval ![Polynomial.C x₀ + Polynomial.C d * Polynomial.X,
       Polynomial.C y₀ - Polynomial.C c * Polynomial.X] W.affineMvPolynomial)
 
-/-- `(x₀, y₀)` is a *node*: a double point with two distinct tangent lines
-(Milne, *Elliptic Curves*, Chapter I, §1, p. 8: a node is an ordinary double point). -/
-def IsNode (x₀ y₀ : F) : Prop :=
+/-- For a Weierstrass curve over an algebraically closed field `F`, `(x₀, y₀)` is a *node*: a
+double point with two distinct tangent lines (Milne, *Elliptic Curves*, Chapter I, §1, p. 8: a
+node is an ordinary double point, the tangent lines being taken over an algebraic closure). The
+field is required to be algebraically closed, so that every tangent line is defined over it. -/
+def IsNode [IsAlgClosed F] (x₀ y₀ : F) : Prop :=
   W.IsDoublePoint x₀ y₀ ∧ ∃ c d c' d' : F, W.IsTangentLine x₀ y₀ c d ∧
     W.IsTangentLine x₀ y₀ c' d' ∧ c * d' - d * c' ≠ 0
 
-/-- `(x₀, y₀)` is a *cusp*: a double point with only one tangent line `L`, and
-`I(P, L ∩ C) = 3` (Milne, *Elliptic Curves*, Chapter I, §1, Remark 1.12, p. 11). -/
-def IsCusp (x₀ y₀ : F) : Prop :=
+/-- For a Weierstrass curve over an algebraically closed field `F`, `(x₀, y₀)` is a *cusp*: a
+double point with only one tangent line `L`, and `I(P, L ∩ C) = 3` (Milne, *Elliptic Curves*,
+Chapter I, §1, Remark 1.12, p. 11). The field is required to be algebraically closed, so that
+every tangent line is defined over it. -/
+def IsCusp [IsAlgClosed F] (x₀ y₀ : F) : Prop :=
   W.IsDoublePoint x₀ y₀ ∧ ∃ c d : F, W.IsTangentLine x₀ y₀ c d ∧
     (∀ c' d' : F, W.IsTangentLine x₀ y₀ c' d' → c * d' - d * c' = 0) ∧
     W.lineIntersectionNumber x₀ y₀ c d = 3
@@ -292,8 +300,9 @@ theorem isNode_of_singular [IsAlgClosed F] {x₀ y₀ : F} (he : W.toAffine.Equa
     intro h
     rw [W.c₄_eq_of_singular he hns, ← hdisc, h] at hc
     simp at hc
-  refine ⟨(W.isDoublePoint_iff _ _).2 ⟨he, hns⟩, -α, 1, W.a₁ + α, 1,
-    ⟨Or.inr one_ne_zero, ?_⟩, ⟨Or.inr one_ne_zero, ?_⟩, ?_⟩
+  have hdp := (W.isDoublePoint_iff _ _).2 ⟨he, hns⟩
+  refine ⟨hdp, -α, 1, W.a₁ + α, 1,
+    ⟨hdp, Or.inr one_ne_zero, ?_⟩, ⟨hdp, Or.inr one_ne_zero, ?_⟩, ?_⟩
   · rw [homogeneousComponent_two_polynomialAt, W.quadraticPart_eq_mul hα]
     exact dvd_mul_right _ _
   · rw [homogeneousComponent_two_polynomialAt, W.quadraticPart_eq_mul hα]
@@ -316,10 +325,11 @@ theorem isCusp_of_singular [IsAlgClosed F] {x₀ y₀ : F} (he : W.toAffine.Equa
   rw [Affine.equation_iff] at he'
   have hns' := hns
   simp only [Affine.nonsingular_iff, he, true_and, not_or, not_not] at hns'
-  refine ⟨(W.isDoublePoint_iff _ _).2 ⟨he, hns⟩, -α, 1, ⟨Or.inr one_ne_zero, ?_⟩, ?_, ?_⟩
+  have hdp := (W.isDoublePoint_iff _ _).2 ⟨he, hns⟩
+  refine ⟨hdp, -α, 1, ⟨hdp, Or.inr one_ne_zero, ?_⟩, ?_, ?_⟩
   · rw [homogeneousComponent_two_polynomialAt, W.quadraticPart_eq_mul hα]
     exact dvd_mul_right _ _
-  · rintro c' d' ⟨-, g, hg⟩
+  · rintro c' d' ⟨-, -, g, hg⟩
     rw [homogeneousComponent_two_polynomialAt] at hg
     have hq := congrArg (eval ![d', -c']) hg
     simp only [quadraticPart, map_add, map_sub, map_mul, map_pow, eval_C, eval_X,
@@ -463,16 +473,18 @@ not a nonsingular point in the sense of `WeierstrassCurve.Projective.Nonsingular
 def IsSingularPoint (P : Fin 3 → F) : Prop :=
   P ≠ 0 ∧ W.toProjective.Equation P ∧ ¬ W.toProjective.Nonsingular P
 
-/-- `P` is a node of the projective cubic: `P` lies in the affine chart `Z ≠ 0` and
+/-- For a Weierstrass curve over an algebraically closed field `F`, `P` is a node of the
+projective cubic: `P` lies in the affine chart `Z ≠ 0` and
 `(P 0 / P 2, P 1 / P 2)` is a node of the affine curve (as in Milne, *Elliptic Curves*,
 Chapter II, §3, p. 57, where nodes and cusps of plane cubics are read off in an affine chart). -/
-def IsProjectiveNode (P : Fin 3 → F) : Prop :=
+def IsProjectiveNode [IsAlgClosed F] (P : Fin 3 → F) : Prop :=
   P 2 ≠ 0 ∧ W.IsNode (P 0 / P 2) (P 1 / P 2)
 
-/-- `P` is a cusp of the projective cubic: `P` lies in the affine chart `Z ≠ 0` and
+/-- For a Weierstrass curve over an algebraically closed field `F`, `P` is a cusp of the
+projective cubic: `P` lies in the affine chart `Z ≠ 0` and
 `(P 0 / P 2, P 1 / P 2)` is a cusp of the affine curve (as in Milne, *Elliptic Curves*,
 Chapter II, §3, p. 57). -/
-def IsProjectiveCusp (P : Fin 3 → F) : Prop :=
+def IsProjectiveCusp [IsAlgClosed F] (P : Fin 3 → F) : Prop :=
   P 2 ≠ 0 ∧ W.IsCusp (P 0 / P 2) (P 1 / P 2)
 
 /-- A singular point of the projective cubic is not on the line `Z = 0`. -/
@@ -564,8 +576,8 @@ theorem map_nonsingular_iff_Δ_ne_zero :
 
 /-- **Singular points of Weierstrass cubics, part 2, over `F̄`.** Let `W` be a Weierstrass
 curve over a field `F` with `Δ = 0`, and `K` an algebraically closed field containing `F`.
-Then `C_K` has exactly one singular point `S` (up to scaling), `S ≠ (0 : 1 : 0)`, and every
-singular point is a node if `c₄ ≠ 0` and a cusp if `c₄ = 0`.
+Then `C_K` has exactly one singular point `S` (up to scaling), `S ≠ (0 : 1 : 0)`, and `S` is a
+node if `c₄ ≠ 0` and a cusp if `c₄ = 0`.
 
 Nodes and cusps are in the sense of Milne, *Elliptic Curves*, 2nd ed., Chapter I, §1, p. 8
 (multiplicity, tangent lines, a node is an ordinary double point) and Remark 1.12, p. 11

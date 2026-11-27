@@ -17,8 +17,9 @@ import Mathlib.Tactic.LinearCombination
 Let `W` be a Weierstrass curve over a field `F` and let `C = (u, r, s, t)` be a variable change.
 Substituting `x = u² x' + r` and `y = u³ y' + u² s x' + t` into the Weierstrass polynomial
 `f_W = y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆` gives `u⁶ f_{C • W}(x', y')`
-(`WeierstrassCurve.Affine.evalEval_polynomial_variableChange`), and its partial derivatives
-`P_W = 2y + a₁ x + a₃` and `Q_W = 3x² + 2a₂ x + a₄ - a₁ y` become `u³ P_{C • W}` and
+(`WeierstrassCurve.Affine.evalEval_polynomial_variableChange`), and the partial
+derivatives `P_W = 2y + a₁ x + a₃ = ∂f_W/∂y` and `Q_W = 3x² + 2a₂ x + a₄ - a₁ y = -∂f_W/∂x`
+become `u³ P_{C • W}` and
 `u⁴ Q_{C • W} + s u³ P_{C • W}` (`WeierstrassCurve.Affine.evalEval_partials_variableChange`).
 When the discriminant of `W` is nonzero, `P_W` and `Q_W` generate the unit ideal of the affine
 coordinate ring `F[x, y] / (f_W)`
@@ -107,7 +108,8 @@ theorem evalEval_polynomial_variableChange (W : WeierstrassCurve F) (C : Variabl
 
 /-- **The partial derivatives of the Weierstrass polynomial after a variable change.** Let `F` be
 a field, let `W` be a Weierstrass curve over `F` with coefficients `a₁, a₂, a₃, a₄, a₆`, and write
-`P_W(x, y) = 2y + a₁ x + a₃` and `Q_W(x, y) = 3x² + 2a₂ x + a₄ - a₁ y` in `F[x, y]`. Let
+`P_W(x, y) = 2y + a₁ x + a₃` and `Q_W(x, y) = 3x² + 2a₂ x + a₄ - a₁ y` in `F[x, y]`; they are
+`∂f_W/∂y` and `-∂f_W/∂x` for `f_W = y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆`. Let
 `C = (u, r, s, t)` be a variable change, with `u ∈ Fˣ` and `r, s, t ∈ F`, and let `W' = C • W`.
 Then, in `F[x', y']`, with `x = u² x' + r` and `y = u³ y' + u² s x' + t`,
 `P_W(x, y) = u³ P_{W'}(x', y')` and `Q_W(x, y) = u⁴ Q_{W'}(x', y') + s u³ P_{W'}(x', y')`.
@@ -184,8 +186,9 @@ namespace CoordinateRing
 Let `F` be a field and let `W` be a Weierstrass curve over `F` with coefficients
 `a₁, a₂, a₃, a₄, a₆` and discriminant `Δ_W ≠ 0`. Let
 `A_W = F[x, y] / (y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆)` be its affine coordinate ring.
-Then the classes of `P_W = 2y + a₁ x + a₃` and `Q_W = 3x² + 2a₂ x + a₄ - a₁ y` generate the unit
-ideal of `A_W`: there are `p, q ∈ A_W` with `p P_W + q Q_W = 1`.
+Then the classes of `P_W = 2y + a₁ x + a₃` and `Q_W = 3x² + 2a₂ x + a₄ - a₁ y` (that is,
+`∂f/∂y` and `-∂f/∂x` for the defining polynomial `f`) generate the unit ideal of `A_W`: there
+are `p, q ∈ A_W` with `p P_W + q Q_W = 1`.
 
 Here `A_W` is `WeierstrassCurve.Affine.CoordinateRing`, `P_W` is
 `WeierstrassCurve.Affine.polynomialY` and `Q_W` is `-WeierstrassCurve.Affine.polynomialX`.
