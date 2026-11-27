@@ -8,3 +8,5 @@ Arithmetic of polynomials in one indeterminate: coefficients and monomials, degr
 - [No pair of polynomial-ring identifications swaps a variable and its power](false-of-apply-eq-x-pow-of-apply-eq-x.md)
 - [Polynomials in one variable over a semiring](polynomial-ring.md)
 - [Values of a rational polynomial at multiples of high powers](exists-eval-eq-coeff-zero-add-pow-mul.md)
+- [Irreducibility from a cycle on all but one root](irreducible-of-cycle-on-other-roots.md)
+- [Laurent polynomials over a unique factorization domain](unique-factorization-monoid.md)
