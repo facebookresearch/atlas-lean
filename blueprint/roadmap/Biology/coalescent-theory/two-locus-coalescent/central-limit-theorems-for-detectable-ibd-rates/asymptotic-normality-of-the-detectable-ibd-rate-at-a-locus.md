@@ -16,7 +16,7 @@ with $\bar Y$, $\tilde{\bar Z}$ defined analogously. The indicators are identica
 2. $n = o(Nw)$ (the sample is small relative to the scaled population size, so covariances between indicators are negligible);
 3. $\mathbb{E}\big[Z_{a,b} Z_{-a,b} \mid Z_{-a,b}\big] \ge 0$ for every pair, where $Z_{-a,b}$ is the sum of all other centred indicators.
 
-The same holds for $\tilde{\bar Z}$ (segments overlapping the locus), whose two-, three- and four-haplotype covariances are $O((Nw)^{-1})$, $O((Nw)^{-2})$ and $O((Nw)^{-3})$. If $Nw = C_1 n^{C_2}$ with $1 < C_2 < 2$, the error of the normal approximation is of order $\max(n^{1-C_2}, n^{C_2-2})$, smallest ($n^{-1/2}$) at $C_2 = 3/2$. For $\ell$ independent equally sized population samples, the vector of standardized rates converges to $N_\ell(0, I_\ell)$ under the same conditions, so affine contrasts such as a case–control difference of IBD rates are asymptotically normal.
+The same holds for $\tilde{\bar Z}$ (segments overlapping the locus), whose two-, three- and four-haplotype covariances are $O((Nw)^{-1})$, $O((Nw)^{-2})$ and $O((Nw)^{-3})$. If $Nw = C_1 n^{C_2}$ with $1 < C_2 < 2$, the error of the normal approximation is of order $\max(n^{1-C_2}, n^{C_2-2})$, smallest ($n^{-1/2}$) at $C_2 = 3/2$. For $\ell$ disjoint samples of $n$ haplotypes each from the same population (dependent through their shared genealogy), the vector of standardized rates converges to $N_\ell(0, I_\ell)$ under the same conditions, so affine contrasts such as a case–control difference of IBD rates are asymptotically normal.
 
 ## Depends on
 

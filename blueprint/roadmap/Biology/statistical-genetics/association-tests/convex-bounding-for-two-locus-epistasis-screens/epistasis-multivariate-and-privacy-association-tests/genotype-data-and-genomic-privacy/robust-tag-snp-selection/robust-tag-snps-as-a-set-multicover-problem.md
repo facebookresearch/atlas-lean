@@ -13,7 +13,7 @@ A haplotype block is an $N \times K$ matrix $M$ with $M[k, j] \in \{1, 2\}$ the 
 - greedily picking the SNP that covers the most still-deficient demand units gives a $\ln\frac{(m+1)K(K-1)}{2}$-approximation;
 - iterated LP relaxation with randomized rounding gives an $O(m\ln K)$-approximation.
 
-**Theorem 5.** Choosing the fewest additional SNPs to make a given tag set robust (MATS) is also NP-hard.
+**Theorem 5.** Given tag SNPs $C_{tag}$ genotyped in a sample with missing calls, choosing the fewest auxiliary SNPs from $C - C_{tag}$, where $C$ is the set of all $N$ SNPs of the block, that distinguish every pair of patterns left ambiguous by the missing calls (MATS) is NP-hard.
 
 ## Depends on
 
