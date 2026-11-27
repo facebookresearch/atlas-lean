@@ -1,3 +1,3 @@
 # Equivalence of propositions in a theory
 
-`A` and `B` are T-equivalent if `T.equiv A B` is nonempty.
+For a theory $T$, propositions $A$ and $B$ are equivalent in $T$ when $T$ derives both $\{A\} \vdash B$ and $\{B\} \vdash A$.
