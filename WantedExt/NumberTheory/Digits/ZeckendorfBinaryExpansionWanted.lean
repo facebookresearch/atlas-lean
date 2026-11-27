@@ -1011,8 +1011,7 @@ Proposition 2 (`integers-2025-A25-prop-2`). -/
 public theorem_wanted isEquivalent_subcollectionCount_div_rpow_deltaStar {L L' : List ℕ}
     (hp : IsPeriodicZeckendorfPair L L') {Q Q' : ℕ → ℝ} (hQ : IsLStarFundamentalSequence L Q)
     (hQ' : IsLStarFundamentalSequence L' Q') {H H' : ℕ → ℕ} (hmono : StrictMono H)
-    (hpos : ∀ k, 0 < H k)
-    (hbij : Set.BijOn (zeckendorfEval H) (periodicZeckendorfCollection L) Set.univ)
+    (hpos : ∀ k, 0 < H k) (hbij : Set.BijOn (zeckendorfEval H) (periodicZeckendorfCollection L) Set.univ)
     (hmono' : StrictMono H') (hpos' : ∀ k, 0 < H' k)
     (hbij' : Set.BijOn (zeckendorfEval H') (periodicZeckendorfCollection L') Set.univ) {α α' : ℝ}
     (hα : Filter.Tendsto (fun n => (H n : ℝ) * Q 0 ^ n) Filter.atTop (nhds α))
