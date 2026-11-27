@@ -1,6 +1,6 @@
 # The union of disks deformation retracts to the alpha shape
 
-Let $S \subset \mathbb{R}^2$ be a finite set in general position and $\alpha > 0$. The α-shape $|K(\alpha)|$ is contained in the union of disks $U(\alpha)$ and is a deformation retract of it; in particular $U(\alpha)$ and $K(\alpha)$ have the same homotopy type, and $\mathbb{R}^2 \setminus U(\alpha)$ and $\mathbb{R}^2 \setminus |K(\alpha)|$ have the same number of bounded components. The homotopy equivalence follows from the Nerve Theorem, because the regions $R_i(\alpha)$ are convex.
+Let $S \subset \mathbb{R}^2$ be a finite set in general position (no three on a line and no four on a circle) and $\alpha > 0$. The α-shape $|K(\alpha)|$ is contained in the union of disks $U(\alpha)$ and is a deformation retract of it; in particular $U(\alpha)$ and $K(\alpha)$ have the same homotopy type, and $\mathbb{R}^2 \setminus U(\alpha)$ and $\mathbb{R}^2 \setminus |K(\alpha)|$ have the same number of bounded components. The homotopy equivalence follows from the Nerve Theorem, because the regions $R_i(\alpha)$ are convex.
 
 ## Depends on
 

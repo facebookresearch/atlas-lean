@@ -4,7 +4,7 @@ Let $W \subseteq \mathbb{R}^n$ and let $T$ be an algebraic computation tree of c
 
 $$C(W) \ge \frac{\log_2 N - n \log_2 3}{1 + \log_2 3}, \qquad N = \max\{\#W, \#(\mathbb{R}^n \setminus W)\},$$
 
-where $\#$ counts connected components; thus $C(W) = \Omega(\log N - n)$.
+where $\#$ counts connected components; that is, $C(W) \ge a \log_2 N - b\,n$ with $a = 1/(1 + \log_2 3)$ and $b = \log_2 3/(1 + \log_2 3)$.
 
 ## Depends on
 

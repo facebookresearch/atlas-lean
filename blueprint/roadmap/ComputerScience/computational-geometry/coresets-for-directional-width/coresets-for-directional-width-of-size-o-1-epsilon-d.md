@@ -1,6 +1,6 @@
 # Coresets for directional width of size O(1/ε^d)
 
-Let $P$ be a set of $n$ points in $\mathbb{R}^d$, for fixed $d$, and $0 < \varepsilon < 1$. In $O(n)$ time one can compute an $\varepsilon$-coreset of $P$ for directional width of size $O(1/\varepsilon^d)$: after a linear transformation that makes $P$ fat, which preserves ratios of directional widths, overlay a grid of cubes of diameter proportional to $\varepsilon$ and keep one point from each nonempty cube.
+Let $P$ be a set of $n$ points in $\mathbb{R}^d$, for fixed $d$, that is not contained in a hyperplane (so $n \ge d + 1$), and $0 < \varepsilon < 1$. In $O(n)$ time one can compute an $\varepsilon$-coreset of $P$ for directional width of size $O(1/\varepsilon^d)$: after a linear transformation that makes $P$ fat, which preserves ratios of directional widths, overlay a grid of cubes of diameter proportional to $\varepsilon$ and keep one point from each nonempty cube.
 
 ## Depends on
 

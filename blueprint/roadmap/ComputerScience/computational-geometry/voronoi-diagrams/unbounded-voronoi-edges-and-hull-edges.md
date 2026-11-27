@@ -5,8 +5,10 @@ Let $P$ be a finite set of points in $\mathbb{R}^2$, not all on one line, and $p
 ## Depends on
 
 - [Voronoi diagram of a planar point set](voronoi-diagram.md)
+- [Convex hull of a finite planar point set](../convex-hull-algorithms/convex-hull-of-a-finite-planar-point-set.md)
 
-## Informally uses
+
+## Related topics
 
 - [Unbounded Voronoi cells and the convex hull](unbounded-voronoi-cells-and-the-convex-hull.md)
 

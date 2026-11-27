@@ -7,7 +7,8 @@ A *violator space* is a pair $(H, \mathrm{cl})$ of a finite set $H$ of *constrai
 
 A constraint $f$ *violates* $X$ if $f \in \mathrm{cl}(X)$. A *basis* of $X$ is a set $B \subseteq X$ with $\mathrm{cl}(B) = \mathrm{cl}(X)$ such that $\mathrm{cl}(B') \ne \mathrm{cl}(B)$ for every proper subset $B' \subsetneq B$. The *combinatorial dimension* is the largest size of a basis. Violator spaces extend LP-type problems to settings without an objective function. For example, for a set $H$ of segments in the plane, let $\mathrm{cl}(X)$ be the set of segments that meet the interior of the trapezoid containing the origin in the vertical decomposition of the arrangement of $X \subseteq H$; this is a violator space whose bases have at most four segments.
 
-## Informally uses
+
+## Related topics
 
 - [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md)
 

@@ -2,7 +2,8 @@
 
 A *weighted site* is a pair $(p, w)$ of a point $p \in \mathbb{R}^d$ and a real weight $w$. The *power* of a point $x$ with respect to $(p, w)$ is $\|x - p\|^2 - w$; when $w > 0$ it is the power of $x$ with respect to the sphere with centre $p$ and radius $\sqrt w$. For finitely many weighted sites $(p_1, w_1), \dots, (p_n, w_n)$, the *power cell* of $(p_i, w_i)$ is the set of points whose power with respect to $(p_i, w_i)$ is at most their power with respect to every other site, and the *power diagram* is the subdivision of $\mathbb{R}^d$ into power cells. The points of equal power with respect to two sites with distinct centres form a hyperplane (the *power line* of two circles in the plane), so the power cells are convex polyhedra, possibly empty. With all weights equal it is the Voronoi diagram.
 
-## Informally uses
+
+## Depends on
 
 - [Voronoi diagram of a planar point set](voronoi-diagram.md)
 
