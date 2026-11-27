@@ -1,13 +1,15 @@
 # Bafna–Minzer / Dikstein–Dinur characterization of low-soundness direct product testing
 
-Let $X$ be a $d$-dimensional $\lambda$-local spectral expander with $\lambda$ sufficiently small in terms of $\delta > 0$ and $d$ sufficiently large in terms of $\delta$. Then the following are equivalent up to polynomial losses in the parameters.
+Let $X$ be a $d$-dimensional $\lambda$-local spectral expander with $\lambda$ sufficiently small and $d$ sufficiently large. Bafna and Minzer (Theorem 1.9; necessity in Theorem 3.1, sufficiency in Theorem 4.1 and Remark 4.2) give a qualitative characterization of low-soundness direct product testing on $X(k)$ in terms of **weak unique-games coboundary expansion** of the graphs $G_t[X]$ on $t$-faces:
 
-1. The $2$-query direct product test on $X(k)$ is sound with soundness $\delta$: every $F : X(k) \to \{0,1\}^k$ that passes with probability at least $\delta$ is $\operatorname{poly}(\delta)$-correlated with a direct product function on a $\operatorname{poly}(\delta)$-fraction of faces.
-2. Links of $X$ (and of suitable faces) satisfy unique-games coboundary expansion with coefficients $S_m$, $m \le \operatorname{poly}(1/\delta)$, with expansion constant depending only on $\delta$.
+1. **Sufficiency (Theorem 4.1):** If the graphs $G_t[X]$ for all $t \le r$ (with $r = \exp(\operatorname{poly}(1/\delta))$, $\xi = \operatorname{poly}(\delta)$, and $d > \operatorname{poly}(k)\exp(1/\delta)$) satisfy weak unique-games coboundary expansion over $S_m$ (for $(1-\xi)$-strongly triangle-consistent instances), then the $2$-query direct product test on $X(k)$ is sound at acceptance $\delta$: every $F : X(k) \to \{0,1\}^k$ passing with probability at least $\delta$ agrees with a global direct product function on a $\operatorname{poly}(\delta)$-fraction of faces up to small error.
+2. **Necessity (Theorem 3.1):** Conversely, if some $G_t[X]$ fails weak unique-games coboundary expansion over $S_m$ with parameter $\xi$, then there is an ensemble passing the direct product test with probability at least $1/m - O(\sqrt{\xi})$ that is far from every direct product function (ordinary non-weak UG coboundary expansion of links is not claimed to be necessary, and the two directions are not equivalent up to polynomial parameter losses).
+
+Independently, Dikstein and Dinur (STOC 2024, Lemma 1.2 and Theorem 1.3) characterize low-soundness agreement testing on high-dimensional expanders through absence of connected covers together with swap-cosystolic expansion.
 
 ## Proof sketch
 
-For the direction from coboundary expansion to soundness, a successful ensemble induces on each link a partial matching of local list-decoding candidates, that is, an $S_m$-valued $1$-cochain whose triangle holonomies are mostly trivial; coboundary expansion trivializes the cochain, which glues local candidates into a global direct product function. Conversely, a nontrivial almost-cocycle produces a cover-like ensemble that passes the test while being far from any direct product.
+For sufficiency, a passing ensemble induces on the $t$-face graphs $G_t[X]$ a partial matching of local list-decoding candidates that forms a $(1-\xi)$-strongly triangle-consistent $S_m$-valued $1$-cochain; weak UG coboundary expansion trivializes it, gluing local candidates into a global direct product function. Conversely, a strongly triangle-consistent $S_m$-cochain on $G_t[X]$ with no approximate global trivialization induces a cover-like ensemble passing the test with probability $1/m - O(\sqrt{\xi})$ while remaining far from any direct product.
 
 ## Depends on
 
@@ -19,5 +21,5 @@ For the direction from coboundary expansion to soundness, a successful ensemble 
 
 ## Sources
 
-- M. Bafna, D. Minzer, "Characterizing direct product testing via coboundary expansion", STOC (2024), arXiv:2308.09668.
-- Y. Dikstein, I. Dinur, "Agreement theorems for high dimensional expanders in the small soundness regime: the role of covers", arXiv:2308.09582 (2023), ECCC TR23-119.
+- M. Bafna, D. Minzer, "Characterizing direct product testing via coboundary expansion", STOC (2024), arXiv:2308.09668 (Definitions 1.4, 1.7, 1.8, Theorems 1.9, 3.1, 4.1, Remark 4.2).
+- Y. Dikstein, I. Dinur, "Agreement theorems for high dimensional expanders in the small soundness regime: the role of covers", STOC (2024), arXiv:2308.09582, ECCC TR23-119 (Lemma 1.2, Theorem 1.3).

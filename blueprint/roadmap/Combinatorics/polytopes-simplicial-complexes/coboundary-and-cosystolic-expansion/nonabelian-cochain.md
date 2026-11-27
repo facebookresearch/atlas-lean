@@ -8,7 +8,7 @@ $$
 \Pr_{\{u,v,w\} \sim \Pi_2}\bigl[(\delta f)(u,v,w) \ne 1\bigr] \ge \beta \cdot \min_{h} \Pr_{\{u,v\} \sim \Pi_1}\bigl[f(u,v) \ne h(u)h(v)^{-1}\bigr].
 $$
 
-**Unique-games coboundary expansion** asks for this simultaneously for all symmetric groups $\Gamma = S_m$, $m \ge 1$, with $\beta$ independent of $m$.
+**Unique-games coboundary expansion** (Bafna–Minzer, Definition 1.4) asks for this simultaneously for all symmetric groups $\Gamma = S_m$, $m \ge 1$, with $\beta$ independent of $m$. **Weak unique-games coboundary expansion** (Bafna–Minzer, Definition 1.8) relaxes the requirement to cochains that are $(1-\xi)$-*strongly* triangle-consistent (rather than arbitrary $1$-cochains), asking for an approximate global trivialization; Bafna and Minzer note that ordinary (non-weak) UG coboundary expansion may not be necessary for low-soundness direct product testing, whereas the weak condition on the $t$-face graphs $G_t[X]$ is both necessary and sufficient.
 
 ## Depends on
 
