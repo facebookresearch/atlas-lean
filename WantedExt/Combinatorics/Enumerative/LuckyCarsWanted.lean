@@ -47,9 +47,11 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarCountByCar
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarPrescriptions
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarsIncreasing
 
 set_option autoImplicit false
 
@@ -100,20 +102,6 @@ theorem_wanted q_boundary_values (n : ℕ) (hn : 1 ≤ n)
         ((n + 1 : ℚ)) ^ ((n : ℤ) - i.val - 2) *
           ((n : ℚ)) ^ ((i.val : ℤ) - 1) * (2 * n - i.val)
 
-/-- **Number of parking functions in which a given car is lucky.** Number cars and spots
-$0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which
-car $i$ prefers spot $j$ and parks there. Then for every $n$ and every car $i < n$,
-$$\sum_{j=0}^{n-1} q_n(i, j) = (n + 1 - i)(n + 1)^{n-2},$$
-an identity in $\mathbb{Q}$ (for $n = 1$ the exponent is $-1$). The left side is the number of
-parking functions of length $n$ in which car $i$ is lucky; in the paper's one-based numbering
-the count for the $i$-th car is $(n + 2 - i)(n + 1)^{n-2}$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Corollary 10. -/
-theorem_wanted sum_q_eq (n : ℕ) (i : Fin n) :
-    (∑ j : Fin n, (q n i j : ℚ)) =
-      (n + 1 - i.val : ℚ) * ((n + 1 : ℚ)) ^ ((n : ℤ) - 2)
-
 /-- **Number of parking functions in which the second spot is lucky.** Number cars and spots
 $0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which
 car $i$ prefers spot $j$ and parks there. Then for every $n \ge 2$, in $\mathbb{Q}$,
@@ -127,21 +115,6 @@ theorem_wanted sum_q_second_spot (n : ℕ) (hn : 2 ≤ n) :
     (∑ i : Fin n, (q n i ⟨1, hn⟩ : ℚ)) =
       3 / 4 * ((n + 1 : ℚ)) ^ (n - 1) -
         1 / 4 * ((n : ℚ) - 1) ^ (n - 1)
-
-/-- **Increasing lucky-car counts (Lemma 18).** Number the cars and spots $0, \dots, n-1$, let
-$q^{\mathrm{inc}}_n(i, j)$ be the number of weakly increasing parking functions of length $n$ in
-which car $i$ prefers spot $j$ and is lucky, and let $C_m$ be the $m$-th Catalan number. For all
-$i, j \in \{0, \dots, n-1\}$, $q^{\mathrm{inc}}_n(i, j) = C_i \, C_{n-i}$ if $i = j$, and
-$q^{\mathrm{inc}}_n(i, j) = 0$ otherwise.
-
-In the one-based indexing of the source the diagonal value reads $C_{i-1} C_{n-i+1}$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Lemma 18. -/
-theorem_wanted qInc_eq (n : ℕ) (i j : Fin n) :
-    qInc n i j =
-      if i = j then catalan i.val * catalan (n - i.val)
-      else 0
 
 /-- **Decreasing lucky-car counts (Lemma 22).** Number the cars and spots $0, \dots, n-1$, and let
 $q^{\mathrm{dec}}_n(i, j)$ be the number of weakly decreasing parking functions of length $n$ in
