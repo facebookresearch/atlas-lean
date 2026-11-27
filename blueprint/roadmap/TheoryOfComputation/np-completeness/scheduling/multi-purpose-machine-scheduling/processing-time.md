@@ -1,0 +1,3 @@
+# Processing time of an operation in a stage shop with arbitrary processing times
+
+An instance of a stage shop with arbitrary processing times, as in MULTI-PURPOSE MACHINE FLOW SHOP WITH THREE JOBS, MAKESPAN, is a tuple $(m, M, J, K)$ of a number $m$ of machines, a list $M = [\mu_1, \dots, \mu_r]$ of stage machine sets given as lists of machine indices, a list $J$ of jobs, each a list of natural-number processing times, and a bound $K$. The processing time $p_{js}$ of the operation of job $j$ in stage $s$ is the entry at position $s$ of the list at position $j$ of $J$, and $0$ when that list has no entry at position $s$. That every job lists exactly one processing time per stage is a condition of a well-formed instance, not of this definition.

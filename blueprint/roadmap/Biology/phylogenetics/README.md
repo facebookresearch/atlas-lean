@@ -29,9 +29,10 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
-
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 ## [Random trees and phylogenetic networks](random-trees-and-phylogenetic-networks/README.md)
-
 - [Beta-splitting evolutionary trees](random-trees-and-phylogenetic-networks/beta-splitting-evolutionary-trees/README.md)
 - [Ford's alpha-model of tree shapes](random-trees-and-phylogenetic-networks/fords-alpha-model-of-tree-shapes/README.md)
 - [Quartet balance index of random trees](random-trees-and-phylogenetic-networks/quartet-balance-index-of-random-trees/README.md)

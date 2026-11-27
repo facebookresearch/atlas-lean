@@ -24,9 +24,10 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
-
+- [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
+- [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
+- [Phenotype-structured population models](phenotype-structured-population-models/README.md)
 ## [Evolutionary games, harvesting and chemostats](evolutionary-games-harvesting-and-chemostats/README.md)
-
 - [Adaptive dynamics with phenotypic plasticity](evolutionary-games-harvesting-and-chemostats/adaptive-dynamics-with-phenotypic-plasticity/README.md)
 - [Adaptive prey switching with a linear preference tradeoff](evolutionary-games-harvesting-and-chemostats/adaptive-prey-switching-with-a-linear-preference-tradeoff/README.md)
 - [Continual evolution from fast and slow feedbacks](evolutionary-games-harvesting-and-chemostats/continual-evolution-from-fast-and-slow-feedbacks/README.md)
@@ -43,9 +44,7 @@ Differential-equation and matrix models of population growth, structure, species
 - [Optimal harvesting of age-structured populations](evolutionary-games-harvesting-and-chemostats/optimal-harvesting-of-age-structured-populations/README.md)
 - [Stochastic optimal harvesting with quadratic effort cost](evolutionary-games-harvesting-and-chemostats/stochastic-optimal-harvesting-with-quadratic-effort-cost/README.md)
 - [Sustainable singular harvesting in random environments](evolutionary-games-harvesting-and-chemostats/sustainable-singular-harvesting-in-random-environments/README.md)
-
 ## [Structured, stochastic and vector population dynamics](structured-stochastic-and-vector-population-dynamics/README.md)
-
 - [Density-dependent age-structured populations on patches](structured-stochastic-and-vector-population-dynamics/density-dependent-age-structured-populations-on-patches/README.md)
 - [Discretely observed linear birth–death processes](structured-stochastic-and-vector-population-dynamics/discretely-observed-linear-birth-death-processes/README.md)
 - [Malthus parameter under individual variability](structured-stochastic-and-vector-population-dynamics/malthus-parameter-under-individual-variability/README.md)

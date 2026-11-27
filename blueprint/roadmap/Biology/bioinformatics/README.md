@@ -24,9 +24,14 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
-
+- [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
+- [Collinear block detection](collinear-block-detection/README.md)
+- [Count splitting for latent variable inference](count-splitting-for-latent-variable-inference/README.md)
+- [DNA sample contamination](dna-sample-contamination/README.md)
+- [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
+- [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
+- [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
 ## [Combinatorics of RNA structures, permutations and words](combinatorics-of-rna-structures-permutations-and-words/README.md)
-
 - [Abstract shapes of RNA pseudoknot structures](combinatorics-of-rna-structures-permutations-and-words/abstract-shapes-of-rna-pseudoknot-structures/README.md)
 - [De Bruijn sequences](combinatorics-of-rna-structures-permutations-and-words/de-bruijn-sequences/README.md)
 - [Degree statistics of Gibbs random trees](combinatorics-of-rna-structures-permutations-and-words/degree-statistics-of-gibbs-random-trees/README.md)
