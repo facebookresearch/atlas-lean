@@ -10,6 +10,8 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Hybrid incompatibilities](hybrid-incompatibilities/README.md)
 - [Sexual selection and genetic conflict](sexual-selection-and-genetic-conflict/README.md)
 - [Prestige-biased cultural transmission](prestige-biased-cultural-transmission/README.md)
+- [Adaptive introgression with linked deleterious alleles](adaptive-introgression-with-linked-deleterious-alleles/README.md)
+- [Fitness-class dynamics with mutation](fitness-class-dynamics-with-mutation/README.md)
 - [Selection on seed-bank formation](selection-on-seed-bank-formation/README.md)
 - [Genetic contribution of advantaged ancestors](genetic-contribution-of-advantaged-ancestors/README.md)
 - [Ancestral learning graphs](ancestral-learning-graphs/README.md)

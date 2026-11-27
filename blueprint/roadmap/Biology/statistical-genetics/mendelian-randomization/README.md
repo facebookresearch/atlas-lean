@@ -62,4 +62,6 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 - [Selection bias in two-sample Mendelian randomization](selection-bias-in-two-sample-mendelian-randomization/README.md)
 - [Time-varying Mendelian randomization](time-varying-mendelian-randomization/README.md)
 - [Winner's-curse-free Mendelian randomization](winner-s-curse-free-mendelian-randomization/README.md)
+## Correlated cis-instruments
+- [Cis-Mendelian randomization with correlated instruments](cis-mendelian-randomization-with-correlated-instruments/README.md)
 - [Point identification under a budget of invalid instruments](point-identification-under-a-budget-of-invalid-instruments.md)
