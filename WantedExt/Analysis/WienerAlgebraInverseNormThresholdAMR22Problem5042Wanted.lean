@@ -46,16 +46,18 @@ def InverseBoundedBy (δ M : ℝ) : Prop :=
     (∀ z ∈ Metric.ball (0 : ℂ) 1, HasSum (fun n => b n * z ^ n) (∑' n, a n * z ^ n)⁻¹) →
     ∀ N : ℕ, ∑ n ∈ Finset.range N, ‖b n‖ ≤ M
 
-/-- `M = ∑ |bₙ|` can be bounded in terms of `δ`: one constant `M`, depending on `δ` only, bounds
-the inverse coefficients at level `δ` (`InverseBoundedBy δ M`) for every eligible `f` at once. -/
+/-- `∑ |bₙ|` can be bounded in terms of `δ`: one constant `M`, depending on `δ` only, satisfies
+`∑ |bₙ| ≤ M` for every eligible `f` at once (`InverseBoundedBy δ M`), while the norm `∑ |bₙ|`
+itself varies with `f`. -/
 def InverseBounded (δ : ℝ) : Prop :=
   ∃ M : ℝ, InverseBoundedBy δ M
 
 /-- Hayman–Lingham Problem 5.42 (H. S. Shapiro), answered in Nikolski's normalization: the infimum
-of those `δ > 0` for which `M = ∑ |bₙ|` can be bounded in terms of `δ` (`InverseBounded δ`: one
-`M` for every eligible `f` at once, not one per `f`) is `1 / 2`. The order of quantifiers matters:
-for a single `f` with `|f| ≥ δ > 0` on the disc, `1 / f` always has absolutely summable
-coefficients by Wiener's lemma, so a bound depending on `f` would change the question. -/
+of those `δ > 0` for which the norms `∑ |bₙ|` can be bounded in terms of `δ` (`InverseBounded δ`:
+`∑ |bₙ| ≤ M_δ` for every eligible `f`, with one `M_δ` for all of them, not one per `f`) is `1 / 2`.
+The order of quantifiers matters: for a single `f ∈ W₊` with `|f| ≥ δ > 0` on the disc, `1 / f`
+always has absolutely summable coefficients by Wiener's lemma, so a bound depending on `f` would
+change the question. -/
 def criticalDeltaIsOneHalf : Prop :=
   sInf {δ : ℝ | 0 < δ ∧ InverseBounded δ} = 1 / 2
 

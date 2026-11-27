@@ -46,7 +46,7 @@ def IsRegular (Gamma : Set ℂ) : Prop :=
 `γ '' [a, b]` of a compact interval under a map `γ` continuous on `[a, b]` (with `a > b` the empty
 set, and with `a = b` a point). The compact interval matters: the whole real line satisfies the
 length bound and is a continuous image of `ℝ`, but it is not compact, so it is not a regular
-curve. -/
+curve in this encoding. -/
 def IsRegularCurve (Gamma : Set ℂ) : Prop :=
   IsRegular Gamma ∧
     ∃ (a b : ℝ) (γ : ℝ → ℂ), ContinuousOn γ (Set.Icc a b) ∧

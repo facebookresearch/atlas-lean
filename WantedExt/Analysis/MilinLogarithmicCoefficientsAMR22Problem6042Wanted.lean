@@ -34,10 +34,12 @@ The class `S` is `IsNormalizedUnivalent` (`WantedExt.Analysis.UnivalentClassSSha
 Problem 6.78): `f` holomorphic and injective on the open unit disc with `f 0 = 0` and `f' 0 = 1`.
 The logarithmic coefficients are given by a holomorphic `L` on the disc with `L 0 = 0`,
 `exp (L z) = f z / z` for `z ≠ 0` (a branch of `log(f(z)/z)` through the removable extension at
-`0`) and `L z = 2 ∑ γ (k+1) z^(k+1)`; such `L` and `γ` exist and are unique for `f ∈ S`, so
-quantifying over them states the inequality for the actual coefficients. The target is Milin's
-inequality (6.4) for every `f ∈ S`, which answers both sub-questions (real coefficients,
-close-to-convex) since those classes lie in `S`.
+`0`) and `L z = 2 ∑ γ (k+1) z^(k+1)`; for `f ∈ S` such `L` and `γ` exist, and the restriction of
+`L` to the disc and the coefficients `γ k` for `k ≥ 1` are unique (`γ 0` is unconstrained, and `L`
+is constrained only on the disc), so quantifying over them states the inequality for the actual
+coefficients. The target is Milin's inequality, the displayed conjecture of Problem 6.42, for every
+`f ∈ S`, which answers both sub-questions (real coefficients, close-to-convex) since those classes
+lie in `S`.
 -/
 
 open MathlibExt.Analysis.UnivalentClassSShared
@@ -52,8 +54,8 @@ def IsLogCoeffs (f : ℂ → ℂ) (γ : ℕ → ℂ) : Prop :=
     (∀ z ∈ Metric.ball (0 : ℂ) 1, z ≠ 0 → Complex.exp (L z) = f z / z) ∧
     ∀ z ∈ Metric.ball (0 : ℂ) 1, HasSum (fun k : ℕ => 2 * γ (k + 1) * z ^ (k + 1)) (L z)
 
-/-- Milin's conjecture (Hayman–Lingham Problem 6.42, inequality (6.4)): for every `f ∈ S` with
-logarithmic coefficients `γ` and every `N ≥ 1`,
+/-- Milin's conjecture (the displayed conjecture of Hayman–Lingham Problem 6.42): for every
+`f ∈ S` with logarithmic coefficients `γ` and every `N ≥ 1`,
 `∑_{n=1}^{N} ∑_{k=1}^{n} k |γ k|² ≤ ∑_{n=1}^{N} ∑_{k=1}^{n} 1 / k`. -/
 def milinConjecture : Prop :=
   ∀ (f : ℂ → ℂ) (γ : ℕ → ℂ), IsNormalizedUnivalent f → IsLogCoeffs f γ → ∀ N : ℕ, 1 ≤ N →

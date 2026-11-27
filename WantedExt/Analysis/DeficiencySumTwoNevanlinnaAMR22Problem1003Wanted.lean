@@ -41,17 +41,19 @@ noncomputable def nevanlinnaT (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   ValueDistribution.characteristic f ⊤ r
 
 /-- The Nevanlinna deficiency `δ(a, f) = liminf_{r → ∞} m(r, a) / T(r, f)` of `a ∈ ℂ ∪ {∞}`,
-with the quotient computed in `ℝ` (`x / 0 = 0`) and the real `liminf`, which has no meaning of its
-own when the quotient is not eventually bounded. For a nonconstant meromorphic `f`, `T(r, f) → ∞`
-and `0 ≤ m(r, a) ≤ T(r, f) + O(1)`, so this is the classical deficiency, in `[0, 1]`; for a
-constant `f` (for instance `f = 0`) the value is fixed by these conventions. -/
+with the quotient computed in `ℝ` (`x / 0 = 0`) and the real `liminf`; a real-valued `liminf`
+cannot represent an infinite lower limit. For `f` meromorphic and not equal to a constant off a
+set without accumulation points, `T(r, f) → ∞` and `0 ≤ m(r, a) ≤ T(r, f) + O(1)`, so this is the
+classical deficiency, in `[0, 1]`; for `f` equal to a constant off such a set (for instance
+`f = 0`) the value is fixed by these conventions. -/
 noncomputable def deficiency (f : ℂ → ℂ) (a : WithTop ℂ) : ℝ :=
   Filter.liminf (fun r : ℝ => ValueDistribution.proximity f a r / nevanlinnaT f r) Filter.atTop
 
 /-- The order `ρ = limsup_{r → ∞} log T(r, f) / log r` of `f`, in `EReal` (so it may be `⊤`),
-with the quotient computed in `ℝ` (`log 0 = 0`, `x / 0 = 0`). For a nonconstant meromorphic `f`,
-`T(r, f) → ∞`, so these conventions affect only bounded `r` and this is the classical order; for a
-constant `f` the value is fixed by the conventions. -/
+with the quotient computed in `ℝ` (`log 0 = 0`, `x / 0 = 0`). For `f` meromorphic and not equal
+to a constant off a set without accumulation points, `T(r, f) → ∞`, so these conventions affect
+only bounded `r` and this is the classical order; for `f` equal to a constant off such a set the
+value is fixed by the conventions. -/
 noncomputable def order (f : ℂ → ℂ) : EReal :=
   Filter.limsup (fun r : ℝ => ((Real.log (nevanlinnaT f r) / Real.log r : ℝ) : EReal)) Filter.atTop
 
