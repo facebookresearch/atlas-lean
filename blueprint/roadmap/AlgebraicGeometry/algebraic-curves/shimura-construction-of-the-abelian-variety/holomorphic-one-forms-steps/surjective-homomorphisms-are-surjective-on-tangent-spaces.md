@@ -41,6 +41,6 @@ This node is still to be broken down. A good expansion states and links:
 - J. S. Milne, *Algebraic Groups: The theory of group schemes of finite type over a field*, Cambridge Studies in
   Advanced Mathematics 170, Cambridge University Press, 2017; author's version
   <https://www.jmilne.org/math/Books/iAG2017.pdf>, page numbers of that version: Proposition 1.63 and its proof,
-  pp. 25–26 (for a surjective homomorphism $\varphi$ of group varieties, $(d\varphi)_e$ is surjective if and only if the
+  p. 25 (for a surjective homomorphism $\varphi$ of group varieties, $(d\varphi)_e$ is surjective if and only if the
   kernel of $\varphi$ is smooth); Corollary 8.39, p. 158 ("Every algebraic group over a field of characteristic zero is
   smooth").

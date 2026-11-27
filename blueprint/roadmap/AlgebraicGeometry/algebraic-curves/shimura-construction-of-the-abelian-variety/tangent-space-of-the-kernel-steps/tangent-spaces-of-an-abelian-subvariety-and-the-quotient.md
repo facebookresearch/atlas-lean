@@ -48,7 +48,7 @@ This node is still to be broken down. A good expansion states and links:
 - J. S. Milne, *Algebraic Groups: The theory of group schemes of finite type over a field*, Cambridge Studies in
   Advanced Mathematics 170, Cambridge University Press, 2017; author's version
   <https://www.jmilne.org/math/Books/iAG2017.pdf>, page numbers of that version: proof of Proposition 1.63,
-  pp. 25–26 (the exact sequence $0 \to \mathrm{Tgt}_e(N) \to \mathrm{Tgt}_e(G) \to \mathrm{Tgt}_e(H)$ for the kernel $N$ of a
+  p. 25 (the exact sequence $0 \to \mathrm{Tgt}_e(N) \to \mathrm{Tgt}_e(G) \to \mathrm{Tgt}_e(H)$ for the kernel $N$ of a
   surjective homomorphism $G \to H$ of group varieties, from the dual numbers, and $\dim G = \dim N + \dim H$); 10.14,
   p. 190 (an exact sequence $e \to G' \to G \to G''$ of algebraic groups gives an exact sequence
   $0 \to \mathrm{Lie}(G') \to \mathrm{Lie}(G) \to \mathrm{Lie}(G'')$).
