@@ -18,6 +18,9 @@ finishing with $P(X) = \sum_n f(X_L, n) T_{n,\mathrm{End}}$ and $t_{i,j}(X) = \s
 
 ## Depends on
 
+- [Backward probabilities](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/backward.md)
+- [One Baum-Welch step](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/baum-welch-algorithm/em-step.md)
+- [The expected transitions from forward-backward](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/baum-welch-algorithm/trans-count-eq.md)
 - [Forward value of a sequence under a profile HMM](../../sequence-alignment/profile-hidden-markov-models/forward.md)
 
 ## Expansion

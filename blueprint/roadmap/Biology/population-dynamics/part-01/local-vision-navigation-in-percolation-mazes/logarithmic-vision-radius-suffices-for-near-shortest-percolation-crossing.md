@@ -9,6 +9,8 @@ Consider bond percolation on $\mathbb{Z}^2$ with edge-open probability $p > p_c 
 
 ## Depends on
 
+- [Critical probability of the square lattice](../../../../Probability/percolation/phase-transition/critical-probability-of-the-square-lattice/pc-two-eq-half.md)
+- [Percolation critical probability](../../../../Probability/percolation/phase-transition/percolation-probability-and-critical-point/pc.md)
 - [Critical bond percolation measure on the square lattice](../../../../Probability/percolation/crossings/russo-seymour-welsh-theory/russo-seymour-welsh-bounds-for-critical-bond-per/critical-bond-measure.md)
 
 ## Expansion
