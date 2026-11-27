@@ -120,24 +120,6 @@ theorem decoded_snd_list_length_le {α β : Type}
   simp only [List.length_append, length_delimit]
   omega
 
-/-- The size bound on each encoded element includes its delimiter in the
-total size of the encoded list. -/
-theorem encoded_list_length_le {α : Type} [BitstringEncoding α]
-    (xs : List α) (b : Nat) (h : ∀ a ∈ xs, (bitEncode a).length ≤ b) :
-    (bitEncode xs).length ≤ xs.length * (2 * b + 1) := by
-  induction xs with
-  | nil =>
-    change 0 ≤ 0 * _
-    exact Nat.zero_le _
-  | cons a xs ih =>
-    have ha := h a (by simp)
-    have ht := ih (fun v hv => h v (by simp [hv]))
-    change (delimit (bitEncode a) ++ bitEncode xs).length ≤ _
-    simp only [List.length_append, length_delimit, List.length_cons]
-    calc
-      _ ≤ (2 * b + 1) + xs.length * (2 * b + 1) := Nat.add_le_add (by omega) ht
-      _ = _ := by rw [Nat.add_mul, Nat.one_mul, Nat.add_comm]
-
 /-- The middle list of a right-associated triple is raw-input bounded.
 Used for TSP matrix rows and SET COVER set occurrences. -/
 theorem decoded_middle_list_length_le {α β γ : Type}

@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Complexity.Parameterized.Identity
-import CSLibExt.Computability.Complexity.PolynomialEncoding.Bounds
 public import Mathlib.Data.List.Dedup
 public import Mathlib.Data.List.FinRange
 
@@ -40,17 +39,6 @@ def vertices (n : ℕ) (edges : List (ℕ × ℕ)) : List ℕ :=
 
 theorem vertices_nodup (n : ℕ) (edges : List (ℕ × ℕ)) : (vertices n edges).Nodup :=
   List.nodup_dedup _
-
-/-- Compact inputs have at most two choices per recorded edge, plus the singleton fallback. -/
-theorem vertices_length_le (n : ℕ) (edges : List (ℕ × ℕ)) :
-    (vertices n edges).length ≤ 2 * edges.length + 1 := by
-  unfold vertices
-  apply (List.dedup_sublist _).length_le.trans
-  have h := List.length_filter_le (fun x : ℕ => decide (x < n))
-    (edges.map Prod.fst ++ edges.map Prod.snd)
-  simp only [List.length_append, List.length_map] at h
-  simp only [List.length_append, List.length_range]
-  omega
 
 private theorem mem_vertices_iff {n v : ℕ} {edges : List (ℕ × ℕ)} :
     v ∈ vertices n edges ↔ v < n ∧
@@ -453,107 +441,6 @@ theorem reduce_correct (x : List Bool) (k : ℕ) :
       refine ⟨a, ha, hw,?_⟩
       rw [hev a ha] at hout
       simpa using hout
-
-/-- The exact gate order includes all input gates, one gate per forbidden pair and two gates
-for the Boolean output. -/
-theorem exclusionCircuit_length (m : ℕ) (pairs : List (ℕ × ℕ)) :
-    (exclusionCircuit m pairs).length = m + pairs.length + 2 := by
-  simp [exclusionCircuit, Nat.add_assoc]
-
-private theorem forbiddenPairs_length (vs : List ℕ) (edges : List (ℕ × ℕ)) :
-    (forbiddenPairs vs edges).length ≤ vs.length * vs.length := by
-  unfold forbiddenPairs
-  apply (List.length_filter_le _ _).trans_eq
-  simp [List.product, List.length_flatMap, List.map_const']
-
-/-- Every explicit reference and gate arity is bounded by the number of gates; in particular
-the final OR has an explicitly emitted list of at most that many predecessors. -/
-private theorem exclusionCircuit_fields {m b : ℕ} (pairs : List (ℕ × ℕ))
-    (h : ∀ p ∈ pairs, p.1 < m ∧ p.2 < m) (hb : m + pairs.length + 2 ≤ b) (hc : 4 ≤ b) :
-    ∀ g ∈ exclusionCircuit m pairs, g.1 ≤ b ∧ g.2.length ≤ b ∧ ∀ v ∈ g.2, v ≤ b := by
-  intro g hg
-  simp only [exclusionCircuit, List.mem_append, List.mem_map, List.mem_range,
-    List.mem_cons, List.not_mem_nil, or_false] at hg
-  rcases hg with ((⟨i, hi, rfl⟩ | ⟨p, hp, rfl⟩) | rfl | rfl)
-  · simp; omega
-  · have := h p hp
-    simp only [List.length_cons, List.length_nil, List.mem_cons, List.not_mem_nil, or_false]
-    grind
-  · refine ⟨hc, ?_, ?_⟩
-    · simp [outputs]; omega
-    · intro v hv
-      obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hv
-      have := List.mem_range.mp hi
-      omega
-  · simp; omega
-
-open MetaMathlibExt.BitstringEncoding
-
-private theorem nat_length_le_self (n : ℕ) : (bitEncode n).length ≤ n := by
-  rw [MetaMathlibExt.BinaryNatEncoding.length_bitEncode]
-  exact Nat.size_le.mpr n.lt_two_pow_self
-
-private theorem length_encodePair {α β : Type} [MetaMathlibExt.BitstringEncoding α]
-    [MetaMathlibExt.BitstringEncoding β] (x : α) (y : β) :
-    (bitEncode (x, y)).length = 2*(bitEncode x).length + 1 + (bitEncode y).length := by
-  change (delimit (bitEncode x) ++ bitEncode y).length = _
-  simp [length_delimit]
-
-private theorem length_encodeCircuit_le (n b : ℕ) (C : List WCGate)
-    (hn : n ≤ b) (hc : C.length ≤ b)
-    (h : ∀ g ∈ C, g.1 ≤ b ∧ g.2.length ≤ b ∧ ∀ i ∈ g.2, i ≤ b) :
-    (bitEncode (n, C)).length ≤ 2*b+1 + b * (2*(2*b+1 + b*(2*b+1))+1) := by
-  have hgate (g : WCGate) (hg : g ∈ C) :
-      (bitEncode g).length ≤ 2*b+1 + b*(2*b+1) := by
-    obtain ⟨hk, hl, hi⟩ := h g hg
-    have hkind := (nat_length_le_self _).trans hk
-    have href := (Cslib.Complexity.PolynomialEncoding.encoded_list_length_le g.2 b
-      (fun i h => (nat_length_le_self i).trans (hi i h))).trans (Nat.mul_le_mul_right _ hl)
-    change (bitEncode (g.1, g.2)).length ≤ _
-    rw [length_encodePair]
-    omega
-  have hC := (Cslib.Complexity.PolynomialEncoding.encoded_list_length_le C _ hgate).trans
-    (Nat.mul_le_mul_right _ hc)
-  have hN := (nat_length_le_self _).trans hn
-  rw [length_encodePair]
-  omega
-
-/-- Polynomial upper bound on the actual serialized output on every raw input, including
-noncanonical binary encodings and parse failures. This only bounds output size. -/
-theorem reduce_output_size :
-    ∃ p : Polynomial ℕ, ∀ x, (reduce x).length ≤ p.eval x.length := by
-  let v : Polynomial ℕ := 2 * Polynomial.X + 2
-  let b := v + v*v + 4
-  let field := 2*b + 1
-  refine ⟨field + b*(2*(field + b*field)+1), ?_⟩
-  intro x
-  let V := 2*x.length+2
-  let B := V+V*V+4
-  change (reduce x).length ≤ (field + b*(2*(field + b*field)+1)).eval x.length
-  have he : (field + b*(2*(field + b*field)+1)).eval x.length =
-      2*B+1 + B*(2*(2*B+1+B*(2*B+1))+1) := by
-    simp [field, b, v, B, V, Polynomial.eval_add, Polynomial.eval_mul]
-  rw [he]
-  unfold reduce
-  cases hd : bitDecode (α := ℕ × List (ℕ × ℕ)) x with
-  | none =>
-    change 1 ≤ _
-    omega
-  | some z =>
-    obtain ⟨n, edges⟩ := z
-    let vs := vertices n edges
-    let ps := forbiddenPairs vs edges
-    have hedges := Cslib.Complexity.PolynomialEncoding.decoded_snd_list_length_le hd
-    have hv : vs.length ≤ V := by
-      have := vertices_length_le n edges
-      dsimp [vs, V]; omega
-    have hq : ps.length ≤ V * V := (forbiddenPairs_length ..).trans (Nat.mul_le_mul hv hv)
-    have htot : vs.length + ps.length + 2 ≤ B := by dsimp [B]; omega
-    have hvalid : ∀ p ∈ ps, p.1 < vs.length ∧ p.2 < vs.length := by
-      rintro ⟨i, j⟩ h
-      exact ((mem_forbiddenPairs ..).mp h).1
-    exact length_encodeCircuit_le vs.length B _ (by omega) (by rwa [exclusionCircuit_length])
-      (exclusionCircuit_fields ps hvalid htot (by dsimp [B]; omega))
 
 /-- A polynomial-time machine for the encoded transformation completes the membership
 direction, preserving the original weight and using the fixed circuit depth three. -/

@@ -69,7 +69,7 @@ private theorem represented_range {D T : Type} {e : D → Bits} {r : T → Bits}
 private theorem family_encoding (f : CircuitNormalMachine.Family) :
     CircuitNormalMachine.familyWord f = frames (frames (frames Lit)) f := by
   simp [CircuitNormalMachine.familyWord, NormalFormMachine.mapFamily,
-    NormalFormMachine.encodeFamily, NormalFormMachine.encodeFormula, NormalFormMachine.frames,
+    NormalFormMachine.encodeFamily, NormalFormMachine.encodeFormula,
     frames, Function.comp_def, List.map_map]
   rfl
 
@@ -132,7 +132,8 @@ private theorem compact_bounds {p : Bits × ℕ} {n : ℕ} {C : List WCGate}
       exact ⟨Support.labels_length_le m p.2 gates, (min_le_right _ _).trans (by omega)⟩
     · simp [Support.compact, hx, hk, hnil] at h
 
-/-- The target clique size is a computable function of the source weight up to this bound. -/
+/-- For fixed circuit depth, a computable function of the source weight bounds
+the target clique size. -/
 theorem parameter_le (d : ℕ) (p : Bits × ℕ) :
     (reduce d p).2 ≤ (p.2 + 1) ^ max 2 (2 * 2^d) := by
   unfold reduce stage

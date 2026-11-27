@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import CSLibExt.Computability.Complexity.PolynomialEncoding.Comprehension
+public import CSLibExt.Computability.Complexity.PolynomialEncoding.Represented
 
 /-!
 # Polynomial-time normal-form gate operations
@@ -27,14 +27,14 @@ open MetaMathlibExt BitstringEncoding ComplexityTheory
 open Cslib.Complexity.PolynomialEncoding.BitScan Cslib.Complexity.PolynomialEncoding.Comprehension
 
 local notation "Word" => List Bool
+local notation "frameWords" => frames id
 
-/-- A sequence of self-delimiting rows. -/
-def frames (xs : List Word) : Word := xs.flatMap delimit
-
-@[simp] private theorem rows_frames (xs : List Word) : rowsOf (frames xs) = xs := rowsOf_frames xs
+@[simp] private theorem rows_frames (xs : List Word) : rowsOf (frameWords xs) = xs := by
+  simpa only [frames, List.map_id] using rowsOf_frames xs
 
 @[simp] private theorem frames_append (xs ys : List Word) :
-    frames (xs ++ ys) = frames xs ++ frames ys := List.flatMap_append
+    frameWords (xs ++ ys) = frameWords xs ++ frameWords ys := by
+  simp [frames]
 
 /-- Apply a word operation to every pair of rows and frame each result. The
 input to each call consists of the left row followed by the right row. -/
@@ -52,11 +52,11 @@ theorem polyCross {op : Word → Word} (hop : IsPolyTime op) : IsPolyTime (cross
   simpa only [Function.comp_def, hd_pack, tl_pack] using polyFlatMap hl hr inner
 
 private theorem cross_frames (op : Word → Word) (xs ys : List Word) :
-    cross op (pack (frames xs) (frames ys)) =
-      frames (xs.flatMap fun x => ys.map fun y => op (pack x y)) := by
+    cross op (pack (frameWords xs) (frameWords ys)) =
+      frameWords (xs.flatMap fun x => ys.map fun y => op (pack x y)) := by
   simp [cross, frames, List.flatMap_map, List.flatMap_assoc]
 
-/-- A variable label and its polarity can be represented by an arbitrary literal word. -/
+/-- A clause is a disjunction of literals, each encoded as a word. -/
 abbrev Clause := List Word
 
 /-- The clauses of one alternative. -/
@@ -66,10 +66,10 @@ abbrev Formula := List Clause
 abbrev Family := List Formula
 
 /-- Serialize a formula together with all its clauses. -/
-def encodeFormula (p : Formula) := frames (p.map frames)
+def encodeFormula (p : Formula) := frameWords (p.map frameWords)
 
 /-- Serialize a family together with all its alternatives. -/
-def encodeFamily (a : Family) := frames (a.map encodeFormula)
+def encodeFamily (a : Family) := frameWords (a.map encodeFormula)
 
 def merge (w : Word) := hd w ++ tl w
 
@@ -90,7 +90,7 @@ def binaryAnd {L : Type*} (a b : FamilyOf L) : FamilyOf L := a.flatMap fun p => 
 def binaryOr {L : Type*} (a b : FamilyOf L) : FamilyOf L := a.flatMap fun p => b.map (distribute p)
 
 private theorem merge_clause (c e : Clause) :
-    merge (pack (frames c) (frames e)) = frames (c ++ e) := by simp [merge]
+    merge (pack (frameWords c) (frameWords e)) = frameWords (c ++ e) := by simp [merge]
 
 private theorem merge_formula (p q : Formula) :
     merge (pack (encodeFormula p) (encodeFormula q)) = encodeFormula (p ++ q) := by
@@ -129,7 +129,7 @@ theorem polyManyAnd : IsPolyTime manyAnd := by
   simpa only [Function.comp_def, hd_pack] using h
 
 private theorem manyOr_correct (args : List Family) :
-    manyOr (frames (args.map encodeFamily)) = encodeFamily args.flatten := by
+    manyOr (frameWords (args.map encodeFamily)) = encodeFamily args.flatten := by
   induction args with
   | nil => rfl
   | cons a args ih =>
@@ -138,7 +138,7 @@ private theorem manyOr_correct (args : List Family) :
       congrArg (encodeFamily a ++ ·) ih
 
 private theorem manyAnd_correct (args : List Formula) :
-    manyAnd (frames (args.map fun p => encodeFamily [p])) = encodeFamily [args.flatten] := by
+    manyAnd (frameWords (args.map fun p => encodeFamily [p])) = encodeFamily [args.flatten] := by
   have head (p : Formula) : hd (encodeFamily [p]) = encodeFormula p := by
     change hd (pack _ []) = _
     simp
@@ -176,9 +176,9 @@ private theorem empty_pack (a b : Word) : (pack a b).isEmpty = false := by
   cases a <;> rfl
 
 private theorem frames_cons (a : Word) (xs : List Word) :
-    frames (a :: xs) = pack a (frames xs) := rfl
+    frameWords (a :: xs) = pack a (frameWords xs) := rfl
 
-private theorem frames_nil : frames [] = [] := rfl
+private theorem frames_nil : frameWords [] = [] := rfl
 
 /-- The list operations realized by `combine`. At a large conjunction the first
 alternative of each child is sufficient when each child is a singleton. -/
@@ -196,7 +196,7 @@ private theorem head_family (a : Family) : hd (encodeFamily a) = encodeFormula (
   | cons p a => exact hd_pack _ _
 
 private theorem manyAnd_first (args : List Family) :
-    manyAnd (frames (args.map encodeFamily)) =
+    manyAnd (frameWords (args.map encodeFamily)) =
       encodeFamily [((args.map (·.headD [])).flatten)] := by
   have h := manyAnd_correct (args.map (·.headD []))
   apply Eq.trans _ h
@@ -206,7 +206,7 @@ private theorem manyAnd_first (args : List Family) :
 /-- Decoding the machine's gate output gives exactly the list of alternatives specified by
 `combineFamilies`, for any fan-in. -/
 theorem combine_correct (conjunction : Bool) (xs : List Family) :
-    combine conjunction (frames (xs.map encodeFamily)) =
+    combine conjunction (frameWords (xs.map encodeFamily)) =
       encodeFamily (combineFamilies conjunction xs) := by
   match xs with
   | [] => rfl
@@ -215,11 +215,11 @@ theorem combine_correct (conjunction : Bool) (xs : List Family) :
     cases conjunction <;>
       simp [combine, combineFamilies, frames_cons, frames_nil, empty_pack, and_correct, or_correct]
   | a :: b :: c :: tail =>
-    have hm : (frames (((a :: b :: c :: tail) : List Family).map encodeFamily)).isEmpty = false :=
-      empty_pack _ _
-    have h₁ : (tl (frames (((a :: b :: c :: tail) : List Family).map encodeFamily))).isEmpty =
+    have hm : (frameWords (((a :: b :: c :: tail) : List Family).map encodeFamily)).isEmpty =
+        false := empty_pack _ _
+    have h₁ : (tl (frameWords (((a :: b :: c :: tail) : List Family).map encodeFamily))).isEmpty =
         false := by simp [frames_cons, empty_pack]
-    have h₂ : (tl (tl (frames ((a :: b :: c :: tail).map encodeFamily)))).isEmpty = false :=
+    have h₂ : (tl (tl (frameWords ((a :: b :: c :: tail).map encodeFamily)))).isEmpty = false :=
       by simp [frames_cons, empty_pack]
     unfold combine
     simp only [hm, h₁, h₂, Bool.false_eq_true, ite_false]
@@ -343,9 +343,10 @@ theorem mapFamily_combine {L T : Type*} (f : L → T) (b : Bool) (args : List (F
 
 /-- An operator acting on any literal type has the same machine certificate after serialization. -/
 theorem combine_encoded {L : Type*} (f : L → Word) (b : Bool) (args : List (FamilyOf L)) :
-    combine b (frames (args.map (fun a => encodeFamily (mapFamily f a)))) =
+    combine b (frames (fun a => encodeFamily (mapFamily f a)) args) =
       encodeFamily (mapFamily f (combineFamilies b args)) := by
   rw [mapFamily_combine]
-  simpa only [List.map_map, Function.comp_def] using combine_correct b (args.map (mapFamily f))
+  simpa only [frames, List.map_map, Function.comp_def, id_eq] using
+    combine_correct b (args.map (mapFamily f))
 
 end MetaMathlibExt.Complexity.KeyTheorems.Parameterized.NormalFormMachine

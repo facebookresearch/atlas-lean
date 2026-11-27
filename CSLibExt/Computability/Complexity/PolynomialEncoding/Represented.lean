@@ -26,8 +26,8 @@ open MetaMathlibExt BitstringEncoding ComplexityTheory BitScan
 
 local notation "Bits" => List Bool
 
-/-- Rows of a list under the stated element representation. -/
-def frames {α : Type} (e : α → Bits) (xs : List α) : Bits := (xs.map e).flatMap delimit
+/-- Encode each list element and concatenate its delimited word in list order. -/
+def frames {α : Type*} (e : α → Bits) (xs : List α) : Bits := (xs.map e).flatMap delimit
 
 theorem frames_encode {α : Type} [BitstringEncoding α] (xs : List α) :
     frames bitEncode xs = bitEncode xs := by
@@ -41,19 +41,11 @@ def pair {α β : Type} (a : α → Bits) (b : β → Bits) (p : α × β) := pa
 def Represented {α : Type} (e f : α → Bits) : Prop :=
   ∃ run : Bits → Bits, IsPolyTime run ∧ ∀ a, run (e a) = f a
 
-theorem polyId : IsPolyTime (fun x : Bits => x) := by
-  let s (_ : Unit) (b : Bool) : Unit × Bits := ((), [b])
-  have hh (x : Bits) : scan s (fun _ => []) () x = x := by
-    induction x with
-    | nil => rfl
-    | cons b x ih => simp [scan, s, ih]
-  exact (funext hh) ▸ polyScan s (fun _ => []) ()
-
 namespace Represented
 
 variable {α β γ : Type} {e : α → Bits} {r : β → Bits} {f g h : α → Bits}
 
-theorem input (e : α → Bits) : Represented e e := ⟨id, polyId, fun _ => rfl⟩
+theorem input (e : α → Bits) : Represented e e := ⟨id, polyWordId, fun _ => rfl⟩
 
 theorem const (e : α → Bits) (s : Bits) : Represented e (fun _ => s) :=
   ⟨_, polyConst s, fun _ => rfl⟩
@@ -127,7 +119,7 @@ theorem flatMap {rows : α → List β} {body : β × α → Bits}
     Represented e (fun a => (rows a).flatMap (fun b => body (b, a))) := by
   obtain ⟨sf, pf, ef⟩ := rs
   obtain ⟨sg, pg, eg⟩ := bs
-  refine ⟨_, polyFlatMap pf polyId pg, ?_⟩
+  refine ⟨_, polyFlatMap pf polyWordId pg, ?_⟩
   intro a
   simp only [ef, frames, rowsOf_frames]
   rw [List.flatMap_map]

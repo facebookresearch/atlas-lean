@@ -20,8 +20,8 @@ representation used by weighted satisfiability.
 
 namespace MetaMathlibExt.Complexity.KeyTheorems.Parameterized.NormalForm
 
-/-- The decidable syntactic checks in weighted circuit satisfiability, including
-dead gates and out-of-bounds references. -/
+/-- Check the weft and depth of every gate, including gates unreachable from the output.
+Every reference in a NOT, AND or OR gate must point to a strictly earlier gate. -/
 def validCircuit (t d : ℕ) (C : List WCGate) : Bool :=
   ((List.finRange C.length).all fun i => C[i].2.all fun j =>
     decide ((C[i].1 = 2 ∨ C[i].1 = 3 ∨ C[i].1 = 4) → j < i.val)) &&

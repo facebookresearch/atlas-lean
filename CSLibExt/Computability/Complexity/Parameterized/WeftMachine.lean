@@ -11,6 +11,7 @@ public import CSLibExt.Computability.Complexity.Parameterized.Weft
 public import CSLibExt.Computability.Complexity.Parameterized.Identity
 import CSLibExt.Computability.Complexity.PolynomialEncoding.IndexRange
 public import CSLibExt.Computability.Complexity.PolynomialEncoding.BitOperations
+import CSLibExt.Computability.Complexity.PolynomialEncoding.Comprehension
 import CSLibExt.Computability.Complexity.PolynomialEncoding.ListParts
 
 /-!
@@ -28,6 +29,7 @@ namespace MetaMathlibExt.Complexity.KeyTheorems.Parameterized
 open BitstringEncoding ComplexityTheory
 open Cslib.Complexity.PolynomialEncoding
 open Cslib.Complexity.PolynomialEncoding.BitScan
+open Cslib.Complexity.PolynomialEncoding.Comprehension (polyConst)
 
 local notation "Bits" => List Bool
 
@@ -145,25 +147,6 @@ private theorem flag_frames_incomplete (ps : List Bits) (r : Bits) (hn : r ≠ [
       rw [scan_frames]
       exact flag_incomplete r h false (Or.inl hn) (some true)
 
-private def constStep (_ : Unit) (_ : Bool) : Unit × Bits := ((), [])
-
-private theorem polyConst (c : Bits) : IsPolyTime (fun _ : Bits => c) := by
-  have h : scan constStep (fun _ => c) () = fun _ => c := by
-    funext w
-    induction w with
-    | nil => rfl
-    | cons b w ih => exact ih
-  exact h ▸ polyScan constStep (fun _ => c) ()
-
-private theorem polyId : IsPolyTime (fun x : Bits => x) := by
-  let step (_ : Unit) (b : Bool) : Unit × Bits := ((), [b])
-  have h : scan step (fun _ => []) () = fun x => x := by
-    funext w
-    induction w with
-    | nil => rfl
-    | cons b w ih => exact congrArg (b :: ·) ih
-  exact h ▸ polyScan step (fun _ => []) ()
-
 def keepStep : Option Bool → Bool → Option Bool × Bits
   | none, b => (some b, [])
   | some keep, b => (some keep, if keep then [b] else [])
@@ -215,7 +198,7 @@ def promoteWeftWord (x : Bits) : Bits :=
 /-- The W-hierarchy promotion is computed by polynomial-time TM2 machines
 on the canonical input and output representations. -/
 theorem isPolyTime_promoteWeftWord : IsPolyTime promoteWeftWord :=
-  polyAppend polyId ((polyAppend (polyScan (frameStep false) frameEnd (none, none))
+  polyAppend polyWordId ((polyAppend (polyScan (frameStep false) frameEnd (none, none))
     ((polyScan (frameStep true) (fun _ => []) (none, none)).comp polyExtra)).comp
     (polyScan keepStep (fun _ => []) none))
 

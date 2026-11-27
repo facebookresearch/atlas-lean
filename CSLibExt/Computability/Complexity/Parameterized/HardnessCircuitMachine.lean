@@ -214,7 +214,7 @@ theorem represented_gate {n : α → ℕ} {prev : α → List Node} {g : α → 
     apply h.transport
     intro x
     simp [familyWord, NormalFormMachine.encodeFamily, NormalFormMachine.encodeFormula,
-      NormalFormMachine.mapFamily, NormalFormMachine.frames, literal, N]
+      NormalFormMachine.mapFamily, frames, literal, N]
   have inRange := reprLT hfirst hn
   have hconst := (reprEqNat hfirst (cn 1)).cond yes no
   have arg := reprSide (!pos) (represented_getD nodeWord falseNode hp hfirst)

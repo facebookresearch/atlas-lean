@@ -246,9 +246,8 @@ private theorem repCompact :
   intro p
   by_cases h : p.2 ≤ p.1.1 <;> simp [compactOut, h]
 
-/-- The actual support compression in the circuit-to-clique candidate is
-polynomial time on canonical input pairs, even when their internal circuit
-encoding is malformed or noncanonical. -/
+/-- Support compression runs in polynomial time on encoded circuit–weight pairs,
+including pairs whose circuit field is malformed or noncanonical. -/
 theorem isPolyTime_compact : IsPolyTime compact := by
   let cm := CodecMachine.nat.prod ((CodecMachine.nat.prod CodecMachine.nat.list).list)
   have ht := cm.isPolyTime_decodeFirst compactOut (([], 0) : Bits × ℕ) repCompact
@@ -257,12 +256,5 @@ theorem isPolyTime_compact : IsPolyTime compact := by
   cases h : bitDecode (α := ℕ × List WCGate) p.1 with
   | none => simp [compact, h]
   | some q => rcases q with ⟨n,C⟩; simp [compact, compactOut, h]
-
-/-- Support compression is a parameter-nonincreasing FPT reduction on each
-weighted-satisfiability source problem, with an ordinary polynomial-time machine. -/
-theorem compact_reduction (t d : ℕ) :
-    FPTReduces (WeightedCircuitSat t d) (WeightedCircuitSat t d) :=
-  (FPTReduces.refl _).postcomp_poly isPolyTime_compact id Computable.id
-    (fun x k => compact_weight_le (x, k)) (compact_correct t d)
 
 end MetaMathlibExt.Complexity.KeyTheorems.Parameterized.Support

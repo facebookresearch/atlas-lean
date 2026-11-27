@@ -91,8 +91,8 @@ theorem FPT.reduces_of_nontrivial {P Q : ParamProblem} (hP : FPT P)
   rw [hcorrect]
   cases h : D (x, k) <;> simp [select, h, hy, hn]
 
-/-- FPT lies in every weft level. Two constant circuits on zero variables,
-both asked at weight zero, suffice. -/
+/-- FPT lies in every weft level. At weight zero on zero variables, the constant-true
+circuit supplies a yes-instance and the empty gate list supplies a no-instance. -/
 theorem FPT.mem_wLevel {P : ParamProblem} (hP : FPT P) (t : ℕ) : P ∈ WLevel t := by
   let yes := bitEncode ((0, [(1, [1])]) : ℕ × List WCGate)
   let no := bitEncode ((0, []) : ℕ × List WCGate)
