@@ -10,3 +10,5 @@ Register (URM), counter and RAM machines, and theorems that Turing machines and 
 - [Nondeterministic Turing machines](nondeterministic-turing-machines/README.md)
 - [Unlimited register machines](unlimited-register-machines/README.md)
 - [Counter and combinator models](counter-and-combinator-models/README.md)
+- [Tag systems](tag-systems/README.md)
+- [Cellular automata](cellular-automata/README.md)
