@@ -13,7 +13,6 @@ public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.GameTheory.EuclidGameCalkinWilf
 public import MathlibExt.GameTheory.SmithRemoteness
-public import MathlibExt.GameTheory.EuclidGameCalkinWilfCountArchTopsCalkinWilfRow
 
 namespace MetaMathlibExt
 

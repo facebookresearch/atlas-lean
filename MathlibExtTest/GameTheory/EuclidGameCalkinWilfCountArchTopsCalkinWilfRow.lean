@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.GameTheory.EuclidGameCalkinWilfCountArchTopsCalkinWilfRow
+import MathlibExt.GameTheory.EuclidGameCalkinWilf
 
 /-!
 # Tests for counts of Calkin–Wilf arch tops
