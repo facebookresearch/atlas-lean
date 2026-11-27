@@ -28,7 +28,6 @@
 - [Second stress invariant](stress-invariant2.md)
 - [Third stress invariant](stress-invariant3.md)
 - [Trace is invariant under orthogonal conjugation](trace-conjugate.md)
-- [The first stress invariant is frame-independent](stress-invariant1-conjugate.md)
 - [The second stress invariant is frame-independent](stress-invariant2-conjugate.md)
 - [The third stress invariant is frame-independent](stress-invariant3-conjugate.md)
 - [Mean Stress](mean-stress.md)
@@ -57,7 +56,7 @@
 
 ## D. Small strain, true strain, and true stress
 
-- [Displacement Gradient](displacement-gradient.md)
+- [Displacement gradient: the Jacobian matrix](../../../Analysis/real-functions/multivariable-calculus/jacobian-matrix/jacobian-matrix.md)
 - [Small strain tensor](small-strain.md)
 - [The small strain tensor is symmetric](small-strain-symmetric.md)
 - [Entries of the small strain tensor](small-strain-apply.md)

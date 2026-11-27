@@ -10,9 +10,7 @@
 ## B. Uniform axial load and uniform distributed torque
 
 - [Axial Displacement](axial-displacement.md)
-- [Twist Angle](twist-angle.md)
 - [Displacement of a uniformly loaded fixed-fixed bar](eq-on-axial-displacement.md)
-- [Twist of a uniformly loaded fixed-fixed shaft](eq-on-twist-angle.md)
 - [Scaled bar displacement solves the unit Dirichlet problem](is-classical-solution-axial-displacement.md)
 - [Uniform-load displacement solves the fixed-fixed bar problem](is-fixed-fixed-solution-axial-displaceme.md)
 - [Uniform-torque twist angle solves the fixed-fixed shaft problem](is-fixed-fixed-solution-twist-angle.md)
