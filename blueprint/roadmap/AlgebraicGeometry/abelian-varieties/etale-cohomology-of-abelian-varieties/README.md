@@ -8,6 +8,7 @@ Galois action, is
 [The ℓ-adic H¹ of an abelian variety is the dual of its Tate module, Galois-equivariantly](../../not-yet-classified/h1-linear-equiv-dual-tate-module.md).
 
 - [Multiplication by n as a Galois covering](multiplication-by-n-as-a-galois-covering.md)
+- [Homomorphisms of abelian varieties are determined by their action on Tate modules](homomorphisms-of-abelian-varieties-and-tate-modules.md)
 - [Torsion in the Picard group of an abelian variety](torsion-in-the-picard-group.md)
 - [First étale cohomology of an abelian variety with finite coefficients](first-etale-cohomology-with-finite-coefficients.md)
 - [The ℓ-adic first cohomology of an abelian variety is the dual of its Tate module](l-adic-first-cohomology-and-the-tate-module.md)

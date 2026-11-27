@@ -9,7 +9,7 @@ Write $A_n(k)$ for the group of points of $A(k)$ killed by $n$.
    $A \times A_n(k) \to A \times_{n_A, A, n_A} A$, $(a, x) \mapsto (a, a + x)$, is an isomorphism.
 2. Let $\pi_1(A, 0)$ be the
    [étale fundamental group](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md)
-   at the geometric point over $0$. The fibre of $n_A$ over $0$ is $A_n(k)$, and
+   at a geometric point over $0$. The fibre of $n_A$ over $0$ is $A_n(k)$, and
    $\rho_n(\gamma) = \gamma \cdot 0$ defines a continuous homomorphism
    $\rho_n \colon \pi_1(A, 0) \to A_n(k)$, which is surjective. For $m \mid n$,
    $\rho_m = (n/m) \rho_n$.

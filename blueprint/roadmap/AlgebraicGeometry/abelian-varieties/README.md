@@ -5,7 +5,6 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Abelian scheme](abelian-scheme.md)
 - [Rigidity lemma](rigidity-lemma.md)
 - [Homomorphisms of abelian schemes and commutativity](homomorphisms-of-abelian-schemes.md)
-- [Homomorphisms of abelian varieties are determined by their action on Tate modules](homomorphisms-of-abelian-varieties-and-tate-modules.md)
 - [Theorem of the cube, theorem of the square and the seesaw principle](theorem-of-the-cube.md)
 - [Abelian varieties are projective](abelian-varieties-are-projective.md)
 - [Flatness and étaleness criteria for homomorphisms of group schemes](flatness-and-etaleness-criteria-for-group-schemes.md)

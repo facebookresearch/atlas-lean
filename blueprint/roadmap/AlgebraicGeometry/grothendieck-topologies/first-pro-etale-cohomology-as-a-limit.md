@@ -41,6 +41,12 @@ This node is still to be broken down. A good expansion states and links:
   (Stacks Project, Tag 07KY) and the vanishing of $R^1\varprojlim$ on Mittag-Leffler systems (Tag
   07KW).
 
+## Depends on
+
+- [Continuous Module Sheaf](../not-yet-classified/continuous-adic-coefficients/continuous-module-sheaf.md),
+  for the sheaf $\hat{\mathbb{Z}}_\ell$, the sheaf $U \mapsto C(U, M)$ on the small pro-étale site for
+  $M = \mathbb{Z}_\ell$
+
 ## Sources
 
 - B. Bhatt and P. Scholze, *The pro-étale topology for schemes*, arXiv:1309.1198v2, <https://arxiv.org/abs/1309.1198v2>: Lemma 4.2.12, p. 30; Proposition 5.6.2 and its proof, p. 41; Lemma 6.8.2 (1) and its proof,

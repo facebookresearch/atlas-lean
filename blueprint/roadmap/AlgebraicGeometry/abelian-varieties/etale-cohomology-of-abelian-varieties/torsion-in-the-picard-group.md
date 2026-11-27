@@ -26,7 +26,7 @@ $n$-torsion over the separably closed field $k$ has $n^{2g}$ points.
 
 - [Dual abelian variety](../dual-abelian-variety.md), for $A^\vee(k) = \operatorname{Pic}^0(A)$ and
   $\dim A^\vee = \dim A$ (its item 1), and for $\varphi_L$ (its item 2)
-- [Homomorphisms of abelian varieties are determined by their action on Tate modules](../homomorphisms-of-abelian-varieties-and-tate-modules.md),
+- [Homomorphisms of abelian varieties are determined by their action on Tate modules](homomorphisms-of-abelian-varieties-and-tate-modules.md),
   for the torsion-freeness of $\operatorname{Hom}(A, A^\vee)$ (its item 2)
 - [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the $n^{2g}$ points of
   $A^\vee$ killed by $n$ (its item 3)
