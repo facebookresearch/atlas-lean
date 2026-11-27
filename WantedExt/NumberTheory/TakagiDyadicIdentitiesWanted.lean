@@ -42,15 +42,6 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- **$D$-nodes and $S$-nodes of a full binary tree.** Let $t$ be a full binary tree with $n$
-leaves and let $a$ be the number of $S$-nodes of $t$. Then the number of $D$-nodes of $t$ is
-$n - 1 - a$ (subtraction of natural numbers, truncated at $0$).
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 5 (`jis-2024-24.2.7-lem-5`). -/
-public theorem_wanted treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes (t : BinaryTree Unit) :
-    treeDNodes t = t.numLeaves - 1 - treeSNodes t
-
 /-- **The Takagi function at dyadic rationals counts D-nodes (Coronado et al.).** Let $k$ and $r$
 be natural numbers with $r \le 2^k$. Write $\tau(r / 2^k)$ for the Takagi value of the dyadic
 presentation $r / 2^k$, and $\delta(n)$ for the number of $D$-nodes of the divide-and-conquer

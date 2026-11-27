@@ -7,6 +7,7 @@ If no four points of $P$ lie on a common circle, then $P$ has exactly one Delaun
 ## Depends on
 
 - [Delaunay triangulation](delaunay-triangulation.md)
+- [The Delaunay graph is dual to the Voronoi diagram](the-delaunay-graph-is-dual-to-the-voronoi-diagram.md)
 
 ## Proof depends on
 
