@@ -1,16 +1,16 @@
 # Datalog queries are equivalent to infinitary unions of conjunctive queries
 
-An infinitary union of conjunctive queries over a schema $\mathbf S$ is a possibly infinite disjunction
-$\bigvee_{i \in N} \varphi_i(\bar x)$ of conjunctive queries over $\mathbf S$ with the same free variables $\bar x$, in which a disjunct may also
+An infinitary union of conjunctive queries over a schema $\mathbf S$ is a disjunction
+$\bigvee_{i \in N} \varphi_i(\bar x)$ over a possibly empty or infinite index set $N$ of conjunctive queries over $\mathbf S$ with the same free variables $\bar x$, in which a disjunct may also
 contain equality atoms $y = z$ between two variables and $y = a$ between a variable and a constant, free variables
 included, evaluated on
-a database $D$ as the union of the answer sets $\varphi_i(D)$.
+a database $D$ as the union of the answer sets $\varphi_i(D)$; the empty disjunction denotes the empty relation.
 
 **Proposition.** For every Datalog query $q = (P, R)$ over a schema $\mathbf S$ whose rule heads contain only variables,
 each occurring in the rule body (Definition 35.1 of the first source), there is an infinitary union of conjunctive
 queries $q' = \varphi(\bar x)$ over $\mathbf S$ whose constants are those of $P$ and with $q \equiv q'$. The disjuncts can be
 taken to be the conjunctive queries over $\mathbf S$ obtained from the rules for $R$ by repeatedly unfolding intensional
-atoms with rules of $P$, that is, the expansion trees of $P$. Both kinds of equality atom are needed: for the head-safe
+atoms with rules of $P$, that is, the expansion trees of $P$; when there is none, as for $Q() \mathrel{:-} Q()$, the union is empty. Both kinds of equality atom are needed: for the head-safe
 rules $T(x, x) \mathrel{:-} E(x)$ and $Q(x) \mathrel{:-} T(x, c)$ the unfolding of $Q$ is $E(x) \wedge x = c$, and for
 $Q(x, x) \mathrel{:-} E(x)$ and $Q(x, y) \mathrel{:-} S(x, y)$ it is $(E(x) \wedge x = y) \vee S(x, y)$.
 
