@@ -29,6 +29,14 @@ only, and scoped to those synced files, so a pull request fails only if it touch
   first parent;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
+In the sharded layout (schema 2) each row lives in one of two files under the ledger directory:
+its legacy shard (`<library>.json` for a library's root modules, `<library>/<first directory>.json`
+below them) or its own module file (`<library>/<module path>.lean.json`, which holds just that
+row). A row recorded in both, or in any other file, fails, and so does a symlink at any depth.
+Rows are compared by path, wherever they live. The writers move every row they touch into its
+module file and delete a legacy shard they empty, so that two pull requests that edit
+neighbouring rows no longer touch neighbouring lines of one file.
+
 A pull request that changes or deletes a synced or diverged file records that with
 `--record-divergence` or `--retire`; neither needs a Formal-Math checkout. `scripts/sync_formal_math.py` regenerates the
 manifest from a Formal-Math checkout and uses the header parser defined here.
@@ -349,10 +357,26 @@ def shard_path(manifest_path: Path, path: str) -> Path:
     if (len(parts) < 2 or parts[0] not in ROOTS or not path.endswith(".lean")
             or any(part in ("", ".", "..") for part in parts)):
         raise ValueError(f"invalid source path: {path!r}")
+    if any(part.endswith(".lean") for part in parts[:-1]):  # its shard would be named like a module file
+        raise ValueError(f"invalid source path: {path!r} has a directory named like a Lean file")
     directory = shard_directory(manifest_path)
     if len(parts) == 2:
         return directory / f"{parts[0]}.json"
     return directory / parts[0] / f"{parts[1]}.json"
+
+
+def module_path(manifest_path: Path, path: str) -> Path:
+    """A row's own module file, `<library>/<module path>.lean.json`, which holds only that row.
+    No legacy shard name ends in `.lean.json`: `shard_path` rejects a directory named `X.lean`."""
+    shard_path(manifest_path, path)  # the same validation
+    return shard_directory(manifest_path) / f"{path}.json"
+
+
+def module_rows(manifest_path: Path, manifest: dict, files) -> set[str]:
+    """The paths whose rows the ledger files `files` keep in module files."""
+    if manifest["schema_version"] != SHARDED_SCHEMA_VERSION:
+        return set()
+    return {row["path"] for row in manifest["rows"] if module_path(manifest_path, row["path"]) in files}
 
 
 def unique_fields(pairs: list[tuple[str, object]]) -> dict:
@@ -364,8 +388,9 @@ def unique_fields(pairs: list[tuple[str, object]]) -> dict:
     return result
 
 
-def manifest_documents(manifest_path: Path, manifest: dict) -> dict[Path, str]:
-    """Serialize the logical ledger to its on-disk layout without changing any row."""
+def manifest_documents(manifest_path: Path, manifest: dict, modules=frozenset()) -> dict[Path, str]:
+    """Serialize the logical ledger to its on-disk layout without changing any row: a row whose
+    path is in `modules` to its module file, any other to its legacy shard."""
     version = manifest["schema_version"]
     if version == SCHEMA_VERSION:
         return {manifest_path: dump_manifest(manifest)}
@@ -373,7 +398,8 @@ def manifest_documents(manifest_path: Path, manifest: dict) -> dict[Path, str]:
         raise ValueError(f"unsupported manifest schema_version: {version!r}")
     groups: dict[Path, list[dict]] = {}
     for row in manifest["rows"]:
-        groups.setdefault(shard_path(manifest_path, row["path"]), []).append(row)
+        home = module_path if row["path"] in modules else shard_path
+        groups.setdefault(home(manifest_path, row["path"]), []).append(row)
     header = {key: value for key, value in manifest.items() if key != "rows"}
     documents = {manifest_path: json.dumps(header, indent=2, ensure_ascii=False, sort_keys=True) + "\n"}
     for shard, rows in sorted(groups.items()):
@@ -397,20 +423,29 @@ def parse_manifest(manifest_path: Path, header: str, shards: dict[Path, str]) ->
         return manifest
     if "rows" in manifest:
         raise ValueError("sharded manifest metadata must not contain inline rows")
-    all_rows = []
+    all_rows: list[dict] = []
+    homes: dict[str, Path] = {}
     for shard, text in sorted(shards.items()):
         try:
             document = json.loads(text, object_pairs_hook=unique_fields)
             if not (isinstance(document, dict) and set(document) == {"rows"}
                     and isinstance(document["rows"], list) and document["rows"]):
                 raise ValueError("expected a nonempty rows list and no shard-local metadata")
+            module = shard.name.endswith(".lean.json")
+            if module and len(document["rows"]) != 1:
+                raise ValueError("a module file holds exactly one row")
+            home = module_path if module else shard_path
             paths = []
             for row in document["rows"]:
-                if not isinstance(row, dict) or shard_path(manifest_path, row.get("path")) != shard:
+                if not isinstance(row, dict) or home(manifest_path, row.get("path")) != shard:
                     raise ValueError(f"row belongs in another shard: {row!r}")
                 paths.append(row["path"])
             if paths != sorted(set(paths)):
                 raise ValueError("shard rows must be sorted and unique")
+            for path in paths:
+                if path in homes:
+                    raise ValueError(f"{path} is recorded in two files, here and in {homes[path]}")
+                homes[path] = shard
             all_rows.extend(document["rows"])
         except ValueError as error:
             raise ValueError(f"{shard}: {error}") from error
@@ -418,34 +453,45 @@ def parse_manifest(manifest_path: Path, header: str, shards: dict[Path, str]) ->
 
 
 def worktree_shards(manifest_path: Path) -> dict[Path, str]:
-    """Read only the two fixed levels of the ledger directory, never through symlinks."""
+    """Read every file below the ledger directory, at any depth, never through symlinks."""
     directory = shard_directory(manifest_path)
     if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
         raise ValueError(f"{directory}: shard directory is not a real directory")
     if not directory.exists():
         return {}
     shards = {}
-    for entry in sorted(directory.iterdir()):
-        if entry.is_symlink():
-            raise ValueError(f"{entry}: shard path must not go through a symlink")
-        files = sorted(entry.iterdir()) if entry.is_dir() else [entry]
-        for shard in files:
-            if shard.is_symlink():
-                raise ValueError(f"{shard}: shard path must not go through a symlink")
-            if not shard.is_file() or shard.suffix != ".json":
-                raise ValueError(f"{shard}: expected a regular JSON shard file")
-            shards[shard] = shard.read_text(encoding="utf-8")
+
+    def read(folder: Path) -> None:  # in sorted order, depth first, so the first problem is reported
+        for entry in sorted(folder.iterdir()):
+            if entry.is_symlink():
+                raise ValueError(f"{entry}: shard path must not go through a symlink")
+            if entry.is_dir():
+                read(entry)
+            elif not entry.is_file() or entry.suffix != ".json":
+                raise ValueError(f"{entry}: expected a regular JSON shard file")
+            else:
+                shards[entry] = entry.read_text(encoding="utf-8")
+    read(directory)
     return shards
 
 
-def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | None = None) -> None:
-    """Write the ledger, or just the shards owning the edited paths."""
-    documents = manifest_documents(manifest_path, manifest)
-    if paths is not None and manifest["schema_version"] == SHARDED_SCHEMA_VERSION:
-        targets = {shard_path(manifest_path, path) for path in paths}
-        documents = {target: text for target, text in documents.items() if target in targets}
-    # Validate and stage every changed file before replacing any ledger document.
-    changes: dict[Path, tuple[bytes, bytes | None, int]] = {}
+def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | None = None,
+                   modules=frozenset()) -> None:
+    """Write the ledger, or just the files that the edited paths leave and enter.
+
+    In the sharded layout a row whose path is in `modules` goes to its module file, and so does
+    every edited path; a legacy shard left without rows is deleted. Either every file changes or,
+    on failure, none does."""
+    sharded = manifest["schema_version"] == SHARDED_SCHEMA_VERSION
+    if paths is not None and sharded:
+        modules = set(modules) | set(paths)
+    documents: dict[Path, str | None] = dict(manifest_documents(manifest_path, manifest, modules))
+    if paths is not None and sharded:
+        targets = {home(manifest_path, path) for path in paths for home in (shard_path, module_path)}
+        documents = {target: documents.get(target) for target in targets
+                     if target in documents or target.exists()}  # None: an emptied legacy shard
+    # Validate and stage every changed file before replacing or deleting any ledger document.
+    changes: dict[Path, tuple[bytes | None, bytes | None, int]] = {}
     for target, text in documents.items():
         absolute = target.absolute()
         if symlinked_component(Path(absolute.anchor), absolute):
@@ -453,7 +499,7 @@ def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | No
         if target.exists() and not target.is_file():
             raise ValueError(f"{target}: expected a regular manifest file")
         original = target.read_bytes() if target.exists() else None
-        data = text.encode("utf-8")
+        data = None if text is None else text.encode("utf-8")
         if data != original:
             mode = stat.S_IMODE(target.stat().st_mode) if original is not None else 0o644
             changes[target] = data, original, mode
@@ -461,14 +507,17 @@ def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | No
         return
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     staging = Path(tempfile.mkdtemp(prefix=".formal-math-write-", dir=manifest_path.parent))
-    staged: dict[Path, tuple[Path, Path | None]] = {}
+    staged: dict[Path, tuple[Path | None, Path | None]] = {}
     replaced: list[Path] = []
+    created: list[Path] = []  # directories made for new module files, removed again on failure
     keep_backups = False
     try:
         for index, (target, (data, original, mode)) in enumerate(changes.items()):
-            new = staging / f"{index}.new"
-            new.write_bytes(data)
-            new.chmod(mode)
+            new = None
+            if data is not None:
+                new = staging / f"{index}.new"
+                new.write_bytes(data)
+                new.chmod(mode)
             backup = None
             if original is not None:
                 backup = staging / f"{index}.old"
@@ -478,8 +527,14 @@ def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | No
         recovery = {str(target): str(backup) for target, (_, backup) in staged.items()}
         (staging / "targets.json").write_text(json.dumps(recovery), encoding="utf-8")
         for target in sorted(staged, key=lambda target: (target == manifest_path, target)):
-            target.parent.mkdir(parents=True, exist_ok=True)
-            os.replace(staged[target][0], target)
+            new = staged[target][0]
+            if new is None:
+                target.unlink()
+            else:
+                missing = [parent for parent in target.parents if not parent.exists()]
+                target.parent.mkdir(parents=True, exist_ok=True)
+                created.extend(missing)
+                os.replace(new, target)
             replaced.append(target)
     except BaseException as error:
         failures = []
@@ -492,6 +547,11 @@ def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | No
                     os.replace(backup, target)
             except OSError as rollback_error:
                 failures.append(f"{target}: {rollback_error}")
+        for directory in sorted(created, key=lambda path: len(path.parts), reverse=True):
+            try:
+                directory.rmdir()
+            except OSError as rollback_error:
+                failures.append(f"{directory}: {rollback_error}")
         if failures:
             keep_backups = True
             raise OSError(f"ledger rollback failed: {'; '.join(failures)}; backups in {staging}") from error
@@ -637,6 +697,7 @@ def load_revision(
         return None, [f"cannot read the manifest tree at {revision}"]
     documents = {}
     try:
+        entries = []
         for line in listing.split("\0"):
             if not line:
                 continue
@@ -644,18 +705,48 @@ def load_revision(
             mode, kind, oid = entry.split()
             if mode not in ("100644", "100755") or kind != "blob":
                 raise ValueError(f"{name}: expected a regular manifest file")
-            contents = git(root, "cat-file", "blob", oid)
-            if contents is None:
-                raise ValueError(f"{name}: Git blob is missing")
-            documents[Path(name)] = contents
-        if not documents:
+            entries.append((name, oid))
+        if not entries:
             return None, []
+        contents = git_blobs(root, [oid for _, oid in entries])
+        for index, (name, _) in enumerate(entries):
+            if contents is None or contents[index] is None:
+                raise ValueError(f"{name}: Git blob is missing")
+            documents[Path(name)] = contents[index].decode("utf-8")
         if header not in documents:
             raise ValueError(f"{header}: missing manifest metadata file")
         manifest = parse_manifest(header, documents.pop(header), documents)
         return manifest, metadata_problems(manifest)
     except ValueError as error:
         return None, [f"{revision}:{manifest_path}: cannot read manifest: {error}"]
+
+
+def git_blobs(root: Path, oids: list[str]) -> list[bytes | None] | None:
+    """The contents of `oids` from one `git cat-file --batch` (None for an object that is missing
+    or not a blob), or None if git fails: one process for the whole ledger, not one per file."""
+    try:
+        done = subprocess.run(["git", "-C", str(root), "cat-file", "--batch"], capture_output=True,
+                              input="".join(f"{oid}\n" for oid in oids).encode(), timeout=120)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if done.returncode != 0:
+        return None
+    data, position, contents = done.stdout, 0, []
+    for _ in oids:
+        end = data.find(b"\n", position)
+        if end < 0:
+            return None
+        header = data[position:end].split()
+        position = end + 1
+        if len(header) == 3 and header[2].isdigit():  # "<oid> <type> <size>", the contents, a newline
+            size = int(header[2])
+            if data[position + size:position + size + 1] != b"\n":
+                return None
+            contents.append(data[position:position + size] if header[1] == b"blob" else None)
+            position += size + 1
+        else:  # "<oid> missing"
+            contents.append(None)
+    return contents
 
 
 def last_committed_text(root: Path, path: str) -> str | None:
@@ -965,7 +1056,8 @@ def split_by_domain(root: Path, manifest_path: Path) -> int:
 
 
 def edit(root: Path, manifest_path: Path, paths: list[str], new_row, create: bool = False) -> int:
-    """Apply `new_row(old_row, path) -> row` to each path's row and rewrite the manifest.
+    """Apply `new_row(old_row, path) -> row` to each path's row and rewrite the manifest. In the
+    sharded layout each edited row moves to its module file; other rows stay where they are.
 
     With `create`, a path without a row starts from an empty row (a tracked file's new path)."""
     manifest, problems = load(manifest_path)
@@ -993,7 +1085,8 @@ def edit(root: Path, manifest_path: Path, paths: list[str], new_row, create: boo
         return 1
     manifest["rows"] = [rows[path] for path in sorted(rows)]
     try:
-        write_manifest(manifest_path, manifest, paths=paths)
+        modules = module_rows(manifest_path, manifest, worktree_shards(manifest_path))
+        write_manifest(manifest_path, manifest, paths=paths, modules=modules)
     except (OSError, ValueError) as error:
         print(f"cannot update {manifest_path}: {error}", file=sys.stderr)
         return 1

@@ -8,20 +8,28 @@
     scripts/bump/bump_branch.py merge-main [--main REF] [--no-commit] [--adjacent]
         Merge main into the checked-out bump branch with a merge commit (never a rebase,
         so the bump commit stays exactly what pinned_bump.py produced) and resolve
-        provenance row by row, in either layout. A merge across the sharding cutover needs
-        a manual provenance resolution. With --adjacent, a conflict where
-        one side rewrote one whole doc comment and the other changed the one line next to
-        it (a non-blank line with no `/-` or `-/`) is merged too. Other conflicts are left
-        for you: resolve them, `git add` them, then run `resolve-manifest`. Before committing,
-        the merge is checked with scripts/check_formal_math_sync.py against main, on the exact
-        tree that would be committed. Build before pushing either way.
+        provenance row by row, in either layout. When a sharded ledger file conflicts, or
+        both sides changed the ledger, the whole ledger is merged by path, since a row can
+        sit in its legacy shard on one side and in its module file on the other; a merged row
+        goes to its module file if either side keeps it there, and is removed from the
+        legacy shard. It refuses to start while the ledger directory has untracked files,
+        and saves every ledger file it deletes. A merge across the sharding cutover needs a
+        manual provenance resolution. With --adjacent, a conflict where one side rewrote one
+        whole doc comment and the other changed the one line next to it (a non-blank line
+        with no `/-` or `-/`) is merged too. Other conflicts are left for you: resolve them,
+        `git add` them, then run `resolve-manifest`. Before committing, the merge is checked
+        with scripts/check_formal_math_sync.py against main, on the exact tree that would be
+        committed. Build before pushing either way.
 
     scripts/bump/bump_branch.py resolve-manifest [--no-commit] [--adjacent] [--regenerate]
-        Finish a merge that `merge-main` left open. It replaces only conflicted provenance
-        files, and only the file `git merge` left or its own unedited draft. After merging
+        Finish a merge that `merge-main` left open. It replaces only provenance files
+        that are as `git merge` left them or its own unedited drafts: the conflicted ones,
+        and in the sharded layout the ledger files a moved row leaves or enters. After merging
         main yourself, or to throw away your edits, pass --regenerate (the replaced files
-        are saved first). Use --check-only to validate a fully staged merge, including one
-        across the sharding cutover, without resolving conflicts or committing.
+        are saved first); in a merge that merge-main started it still never removes a file
+        created since the merge, nor rewrites a clean file edited since. Use --check-only to
+        validate a fully staged merge, including one across the sharding cutover, without
+        resolving conflicts or committing.
 
     scripts/bump/bump_branch.py breakage LOG [--main REF] [--since REV]
         Read a failed `lake build` log and list each failing module with the main pull
@@ -661,35 +669,83 @@ def merge_uses_shards(ours: str, theirs: str, *, in_progress: bool = False) -> b
 
 
 def merge_provenance_file(path: str) -> tuple[str, dict[str, int], list[str]]:
-    """Merge one conflicted physical document using the actual Git index stages."""
-    header = Path(MANIFEST)
-    target = Path(path)
-    shard = target != header
+    """Merge the conflicted monolithic manifest using the actual Git index stages."""
     entries = stage_entries(path)
-    if (not shard and set(entries) != {1, 2, 3}) or any(
-        mode not in ("100644", "100755") for mode in entries.values()
-    ):
+    if set(entries) != {1, 2, 3} or any(mode not in ("100644", "100755") for mode in entries.values()):
         raise Stop(f"{path}: unsupported index stages; resolve and stage it by hand")
-
-    # A shard has no metadata of its own. Parse each blob with a synthetic v2 header;
-    # an absent shard contributes no rows (including in an add/add conflict).
-    shard_header = json.dumps({"schema_version": fms.SHARDED_SCHEMA_VERSION})
     manifests = []
     try:
         for stage in (1, 2, 3):
-            text = show(f":{stage}:{path}") if stage in entries else None
-            if text is None and (not shard or stage in entries):
+            text = show(f":{stage}:{path}")
+            if text is None:
                 raise ValueError(f"cannot read stage {stage}")
-            if shard:
-                shards = {target: text} if text is not None else {}
-                manifests.append(fms.parse_manifest(header, shard_header, shards))
-            else:
-                manifests.append(fms.parse_manifest(header, text, {}))
+            manifests.append(fms.parse_manifest(Path(MANIFEST), text, {}))
         merged, counts, problems = merge_manifest_data(*manifests, versions=file_versions)
-        documents = fms.manifest_documents(header, merged)
-        return documents[target], counts, problems
+        return fms.dump_manifest(merged), counts, problems
     except (ValueError, KeyError, TypeError) as error:
         raise Stop(f"{path}: {error}; resolve and stage it by hand") from error
+
+
+def ledger_files(revision: str) -> set[Path]:
+    """The files of the sharded ledger directory at `revision`."""
+    directory = fms.shard_directory(Path(MANIFEST)).as_posix()
+    listing = git("ls-tree", "-r", "-z", "--name-only", revision, "--", directory).stdout
+    return {Path(name) for name in listing.split("\0") if name}
+
+
+def tracked_ledger() -> list[str]:
+    """The ledger files in the index, unmerged ones included; never an untracked file."""
+    directory = fms.shard_directory(Path(MANIFEST)).as_posix()
+    return sorted({name for name in git("ls-files", "-z", "--", MANIFEST, directory).stdout.split("\0") if name})
+
+
+def ledger_changed(a: str, b: str) -> bool:
+    directory = fms.shard_directory(Path(MANIFEST)).as_posix()
+    return git("diff", "--quiet", a, b, "--", MANIFEST, directory, check=False).returncode != 0
+
+
+def merge_ledger() -> tuple[dict[str, str | None], dict[str, int], list[str], dict[str, dict]]:
+    """Merge the whole sharded ledger row by row, keyed by path, whichever file holds each row.
+
+    The merge base, the bump (HEAD) and main (MERGE_HEAD) are read from their commits, so a row
+    that one side moved into its module file and the other side edited in its legacy shard is
+    still one row. A merged row goes to its module file if either side keeps it there, so rows
+    never move back to a legacy shard; otherwise it stays in its legacy shard. Returns
+    the ledger files whose rows in the worktree differ from that layout (None: delete the file),
+    the counts and the problems of `merge_manifest_data`, and the merged rows by path."""
+    header = Path(MANIFEST)
+    head, main = rev("HEAD"), merge_head()
+    base = git("merge-base", head, main).stdout.strip()
+    sides = []
+    for revision in (base, head, main):
+        manifest = provenance_at(revision)
+        if manifest is None:
+            raise Stop(f"no provenance ledger at {revision[:12]}; resolve the merge by hand")
+        paths = {row["path"] for row in manifest["rows"]}
+        sides.append((manifest, paths, fms.module_rows(header, manifest, ledger_files(revision))))
+    merged, counts, problems = merge_manifest_data(*(side[0] for side in sides), versions=file_versions)
+    # A module file is fixed by the row's path, so the two sides cannot disagree on it. A row that
+    # neither side has (both removed it: a problem) keeps the base's file.
+    (_, _, base_modules), (_, bump_paths, bump_modules), (_, main_paths, main_modules) = sides
+    modules = bump_modules | main_modules | (base_modules - bump_paths - main_paths)
+    try:
+        documents = {path.as_posix(): text for path, text in fms.manifest_documents(header, merged, modules).items()}
+        current = {path: (REPO / path).read_text(encoding="utf-8") for path in tracked_ledger()
+                   if (REPO / path).is_file() and not (REPO / path).is_symlink()}
+    except (OSError, ValueError) as error:
+        raise Stop(f"cannot lay out the merged provenance: {error}") from error
+
+    def parsed(text: str) -> object:
+        try:
+            return json.loads(text)
+        except ValueError:
+            return None  # conflict markers, say
+
+    # A file is rewritten only if its rows change, never merely to reformat it.
+    changes: dict[str, str | None] = {path: text for path, text in documents.items()
+                                      if path not in current or parsed(current[path]) != json.loads(text)}
+    changes.update({path: None for path in current if path not in documents})
+    return changes, counts, problems, rows_by_path(merged)
 
 
 def provenance_rows(manifest: dict | None, revision: str) -> dict[str, dict]:
@@ -769,6 +825,44 @@ def check_parent_rows(tree: str, bump: str, main: str) -> None:
         raise Stop(f"the staged merge changes inherited provenance; no commit was made:\n{listed}")
 
 
+def two_files_advice() -> str:
+    """How to finish a staged merge that keeps a row in two ledger files."""
+    copies: dict[str, list[str]] = {}
+    for path in tracked_ledger():
+        try:
+            rows = json.loads((REPO / path).read_text(encoding="utf-8")).get("rows") or []
+        except (OSError, ValueError, AttributeError):
+            continue
+        for row in rows:
+            if isinstance(row, dict) and isinstance(row.get("path"), str):
+                copies.setdefault(row["path"], []).append(path)
+    doubled = {path: files for path, files in sorted(copies.items()) if len(files) > 1}
+    state = load_state()
+    if "preimages" not in state:
+        return ("The merge keeps a row in two files. This merge was not started by merge-main, so "
+                "`resolve-manifest --regenerate` rewrites every ledger file that differs from the merged ledger, "
+                "your edits included (each file is saved first): run it with --no-commit and review the result.")
+    theirs = sorted({file for files in doubled.values() for file in files
+                     if signature(file) not in known_signatures(state, file)})
+    if theirs:
+        listed = []
+        for path, files in doubled.items():
+            versions = {file: json.dumps(rows[path], sort_keys=True) for file, rows in
+                        ((file, {row["path"]: row for row in json.loads((REPO / file).read_text(encoding="utf-8"))["rows"]
+                                 if isinstance(row, dict)}) for file in files)}
+            listed.append(f"  {path}: {', '.join(files)}")
+            if len(set(versions.values())) > 1:  # keeping either copy would drop the other's change
+                listed.append("    the copies differ; keep one row with both sides' changes:")
+                listed += [f"    {file}: {row}" for file, row in versions.items()]
+        listed_text = "\n".join(listed)
+        return (f"The merge keeps a row in two files, and {', '.join(theirs)} was edited or created since the "
+                "merge, so resolve-manifest leaves it alone: keep one copy of each row below, delete the other, "
+                f"run `git add -A provenance/`, and run resolve-manifest again.\n{listed_text}")
+    return ("The merge keeps a row in two files. Run `resolve-manifest --regenerate --no-commit`: it moves each "
+            "such row to its module file, saves every file it replaces, and leaves files edited or created since "
+            "the merge as they are; review the result, run `git add -A provenance/`, then run resolve-manifest.")
+
+
 def check_candidate() -> None:
     """Check inherited records from both parents and run the canonical checker against main."""
     if unmerged_paths():
@@ -777,7 +871,12 @@ def check_candidate() -> None:
         raise Stop("some tracked files differ from what is staged; `git add` or restore them first")
     bump, main = rev("HEAD"), merge_head()
     tree = git("write-tree").stdout.strip()
-    check_parent_rows(tree, bump, main)
+    try:
+        check_parent_rows(tree, bump, main)
+    except Stop as stop:
+        if "recorded in two files" not in str(stop):
+            raise
+        raise Stop(f"{stop}\n{two_files_advice()}") from None
     candidate = git(
         "commit-tree", tree, "-p", bump, "-p", main, "-m", "candidate merge"
     ).stdout.strip()
@@ -836,11 +935,31 @@ def signature(path: str) -> str | None:
     return f"{fms.sha256(target.read_bytes())}:{'755' if executable else '644'}"
 
 
-def record_preimages() -> None:
+def record_preimages(sharded: bool = False) -> None:
     """Remember every conflicted file exactly as `git merge` left it, mode included: the tool
-    replaces such a file only while it is still that, never once someone has changed it."""
-    preimages = {path: signature(path) for path in unmerged_paths()}
+    replaces such a file only while it is still that, never once someone has changed it. In the
+    sharded layout every ledger file counts, conflicted or not, since a row can move between files."""
+    paths = unmerged_paths() + (tracked_ledger() if sharded else [])
+    preimages = {path: signature(path) for path in paths}
     save_state({"preimages": {path: sig for path, sig in preimages.items() if sig}, "drafts": {}})
+
+
+def known_signatures(state: dict, path: str) -> set:
+    """What `path` was after `git merge` and after this tool last wrote it, as far as recorded: a
+    file that was never recorded matches nothing, so a person's deletion counts as an edit."""
+    return {record[path] for record in (state.get("preimages", {}), state.get("drafts", {})) if path in record}
+
+
+def ledger_untouched() -> bool:
+    """Whether every ledger file is still as merge-main's `git merge` left it or as this tool last
+    wrote it: until a person changes one, the tool may merge the ledger again."""
+    state = load_state()
+    if "preimages" not in state:
+        return False  # a merge started without merge-main
+    directory = fms.shard_directory(Path(MANIFEST))
+    ledger = set(tracked_ledger()) | {path for path in {**state["preimages"], **state.get("drafts", {})}
+                                      if path == MANIFEST or Path(path).is_relative_to(directory)}
+    return all(signature(path) in known_signatures(state, path) for path in ledger)
 
 
 def untouched(path: str) -> bool:
@@ -849,16 +968,30 @@ def untouched(path: str) -> bool:
     return bool(recorded) and signature(path) == recorded
 
 
-def write_draft(path: str, merged: str, regenerate: bool, *, sharded: bool) -> bool:
-    """Replace only Git's original conflicted file or an unedited draft, unless asked."""
+def save_backup(data: bytes) -> Path:
+    """Save `data` in a new file in the git directory, never over an earlier backup."""
+    stem, attempt = f"bump-branch-manifest-{time.time_ns()}", 0
+    while True:
+        backup = git_path(f"{stem}-{attempt}.json" if attempt else f"{stem}.json")
+        try:
+            with open(backup, "xb") as out:
+                out.write(data)
+            return backup
+        except FileExistsError:
+            attempt += 1
+
+
+def write_draft(path: str, merged: str | None, regenerate: bool, *, sharded: bool) -> bool:
+    """Replace (or, for None, delete) only Git's original file or an unedited draft, unless asked."""
     target, state = REPO / path, load_state()
     if fms.symlinked_component(REPO, target) or (target.exists() and not target.is_file()):
         raise Stop(f"{path}: expected a regular file with no symlinked components")
-    data = merged.encode("utf-8")
+    data = None if merged is None else merged.encode("utf-8")
     current = target.read_bytes() if target.exists() else None
     drafts = state.get("drafts", {})
     known = {state.get("preimages", {}).get(path), drafts.get(path)} - {None}
     sig = signature(path)
+    saved = False
     # Keep the legacy shortcut of deleting the monolithic draft to start over.
     # In the sharded layout treat a missing file as a manual edit unless asked.
     if sig not in known and (current is not None or sharded):
@@ -870,10 +1003,13 @@ def write_draft(path: str, merged: str, regenerate: bool, *, sharded: bool) -> b
                   "to replace it (any existing file is saved first).")
             return False
         if not same and current is not None:
-            backup = git_path(f"bump-branch-manifest-{time.time_ns()}.json")
-            backup.write_bytes(current)
-            print(f"{path}: the version it replaces is saved as {backup}")
-    if current != data:
+            saved = True
+            print(f"{path}: the version it replaces is saved as {save_backup(current)}")
+    if current != data and data is None:
+        if not saved:  # a deleted file is always saved first
+            print(f"{path}: deleted; it is saved as {save_backup(current)}")
+        target.unlink()
+    elif current != data:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
     save_state({**state, "drafts": {**drafts, path: signature(path)}})
@@ -914,20 +1050,93 @@ def finish_merge(commit: bool, adjacent: bool, regenerate: bool, *, sharded: boo
             print(f"  {path}")
         return 3
     manual = False
-    for path in sorted(provenance):
-        merged, counts, problems = merge_provenance_file(path)
-        if not write_draft(path, merged, regenerate, sharded=sharded):
+    head, main = rev("HEAD"), merge_head()
+    base = git("merge-base", head, main).stdout.strip() if sharded else ""
+    # A clean merge can still leave a row in two files (one side added it to a legacy shard, the
+    # other to its module file): merge the ledger whenever both sides changed it, until a person
+    # changes a ledger file, and always while one is conflicted.
+    if sharded and (provenance or (ledger_changed(base, head) and ledger_changed(base, main)
+                                   and (regenerate or ledger_untouched()))):
+        changes, counts, problems, merged_rows = merge_ledger()
+        state = load_state()
+        written, unverified, blocked, unreadable = [], [], set(), []
+        # A ledger file someone created or edited since merge-main's merge is theirs: it stays as it is,
+        # and a row it holds that differs from the merged row is theirs to finish, with its other file.
+        theirs = {}
+        for path in changes:
+            now, known = signature(path), known_signatures(state, path)
+            if path not in provenance and known and now not in known:
+                theirs[path] = "edited"
+            elif path not in provenance and not known and now is not None and "preimages" in state:
+                theirs[path] = "created"
+        for path, how in sorted(theirs.items()):
+            manual = manual or how == "created"
+            print(f"{path}: {how} since the merge, so it is left as it is" + (
+                "; once the ledger is resolved, stage all of it with `git add -A provenance/`" if how == "created" else ""))
+            if not (REPO / path).exists():
+                continue  # deleted by hand: check_candidate reports the rows it held
+            try:
+                kept = {row["path"]: row for row in json.loads((REPO / path).read_text(encoding="utf-8"))["rows"]}
+                homes = {row_path: {home(Path(MANIFEST), row_path).as_posix() for home in (fms.shard_path, fms.module_path)}
+                         for row_path in kept}
+            except (OSError, ValueError, KeyError, TypeError):
+                unreadable.append(path)
+                continue
+            for row_path, row in sorted(kept.items()):
+                if merged_rows.get(row_path) != row:
+                    if (homes[row_path] - {path}) & set(changes):
+                        problems.append(f"{row_path}: {path}, {how} since the merge, holds another row than the "
+                                        "merged one; finish the row by hand")
+                    else:  # no other file would change: a deliberate edit
+                        problems.append(f"{row_path}: {path}, {how} since the merge, holds another row than the "
+                                        "merged one, and that edit is kept as it is: it needs only "
+                                        "`git add -A provenance/` and a plain resolve-manifest")
+                    blocked |= homes[row_path] - {path}
+        if unreadable:  # its rows are unknown, so no other file can be laid out safely
             manual = True
-            continue
+            print(f"{', '.join(unreadable)} changed since the merge and cannot be read as a ledger file: fix it, "
+                  "then run resolve-manifest again. No ledger file was written.")
+        for path, merged in sorted(changes.items()) if not unreadable else []:
+            if path in theirs or path in blocked:
+                continue
+            if path not in provenance and not known_signatures(state, path) and signature(path) is not None \
+                    and not regenerate:
+                unverified.append(path)
+                continue
+            if write_draft(path, merged, regenerate or path not in provenance, sharded=sharded):
+                written.append(path)
+            else:
+                manual = True
+        if unverified:
+            manual = True
+            print(f"{len(unverified)} ledger file(s) that git merged cleanly need changes, but this merge "
+                  "was not started by merge-main: run resolve-manifest --regenerate to rewrite them "
+                  "(each is saved first).")
         if problems:
             manual = True
-            print(f"{path}: provenance entries to finish by hand:")
+            print("provenance entries to finish by hand:")
             for problem in problems:
                 print(f"  {problem}")
-            continue
-        git("add", "--", path)
-        print(f"{path}: {counts['main']} row(s) from main, {counts['bump']} from the bump, "
-              f"{counts['both']} changed on both sides re-recorded")
+        elif not manual:
+            if written or provenance:
+                git("add", "--", *sorted(set(written) | provenance))
+            print(f"provenance: {counts['main']} row(s) from main, {counts['bump']} from the bump, "
+                  f"{counts['both']} changed on both sides re-recorded; {len(written)} file(s) written")
+    elif not sharded:
+        for path in sorted(provenance):
+            merged, counts, problems = merge_provenance_file(path)
+            if not write_draft(path, merged, regenerate, sharded=sharded):
+                manual = True
+                continue
+            if problems:
+                manual = True
+                print(f"{path}: provenance entries to finish by hand:")
+                for problem in problems:
+                    print(f"  {problem}")
+                continue
+            git("add", "--", path)
+            print(f"{path}: {counts['main']} row(s) from main, {counts['bump']} from the bump, "
+                  f"{counts['both']} changed on both sides re-recorded")
     if manual:
         print(f"Once all provenance files parse, you can use {CHECKER} --record-divergence "
               "or --retire. Stage the resolved files and run resolve-manifest again.")
@@ -952,10 +1161,13 @@ def merge_main(main_ref: str, commit: bool, adjacent: bool = False) -> int:
         print(f"{main_ref} is already merged")
         return 0
     sharded = merge_uses_shards("HEAD", main)
+    directory = fms.shard_directory(Path(MANIFEST)).as_posix()
+    if sharded and git("status", "--porcelain", "--untracked-files=all", "--", directory).stdout.strip():
+        raise Stop(f"{directory} has untracked files, such as a new module file: commit or remove them first")
     proc = git("merge", "--no-ff", "--no-commit", main, check=False)
     if proc.returncode != 0 and not unmerged_paths():
         raise Stop(f"git merge failed:\n{proc.stdout.strip()}\n{proc.stderr.strip()}")
-    record_preimages()
+    record_preimages(sharded)
     return finish_merge(commit, adjacent, regenerate=False, sharded=sharded)
 
 

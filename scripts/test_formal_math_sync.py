@@ -12,6 +12,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import random
 import subprocess
 import sys
 import tempfile
@@ -30,6 +31,103 @@ FRESH = c.META + "\n" + "".join(f"theorem fresh{i} : {i} = {i} := rfl\n" for i i
 NOTICE = "/-\nPortions of this file are adapted from: example (Apache 2.0).\n-/"
 THIRD_PARTY = "/-\nCopyright 2026 The Formal Conjectures Authors.\n\nLicensed under the Apache License, Version 2.0.\n-/\n"
 COMMIT = "a" * 40
+
+
+# The ledger reader of scripts/check_formal_math_sync.py before module files, copied verbatim from
+# main at fb8c4aede3115a245cf1c18fb54d7af0b2fb63bf: what its `load` runs to read a ledger tree.
+BASE_READER = r'''
+import json
+from pathlib import Path
+
+SCHEMA_VERSION = 1
+SHARDED_SCHEMA_VERSION = 2
+ROOTS = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "WantedExt")
+
+
+def shard_directory(manifest_path: Path) -> Path:
+    """The sibling directory containing the v2 ledger's row files."""
+    return manifest_path.with_suffix(".d")
+
+
+def shard_path(manifest_path: Path, path: str) -> Path:
+    """Route a source path by library and first directory, with separate root modules."""
+    if not isinstance(path, str) or "\\" in path or "\x00" in path:
+        raise ValueError(f"invalid source path: {path!r}")
+    parts = path.split("/")
+    if (len(parts) < 2 or parts[0] not in ROOTS or not path.endswith(".lean")
+            or any(part in ("", ".", "..") for part in parts)):
+        raise ValueError(f"invalid source path: {path!r}")
+    directory = shard_directory(manifest_path)
+    if len(parts) == 2:
+        return directory / f"{parts[0]}.json"
+    return directory / parts[0] / f"{parts[1]}.json"
+
+
+def unique_fields(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key {key!r}")
+        result[key] = value
+    return result
+
+
+def parse_manifest(manifest_path: Path, header: str, shards: dict[Path, str]) -> dict:
+    """Assemble one logical ledger from either format, rejecting ambiguous storage."""
+    manifest = json.loads(header, object_pairs_hook=unique_fields)
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest is not a JSON object")
+    version = manifest.get("schema_version")
+    if type(version) is not int or version not in (SCHEMA_VERSION, SHARDED_SCHEMA_VERSION):
+        raise ValueError(f"unsupported schema_version: {version!r}")
+    if version == SCHEMA_VERSION:
+        if shards:
+            raise ValueError("monolithic manifest has a shard directory with files")
+        if not isinstance(manifest.get("rows"), list):
+            raise ValueError("manifest has no rows list")
+        return manifest
+    if "rows" in manifest:
+        raise ValueError("sharded manifest metadata must not contain inline rows")
+    all_rows = []
+    for shard, text in sorted(shards.items()):
+        try:
+            document = json.loads(text, object_pairs_hook=unique_fields)
+            if not (isinstance(document, dict) and set(document) == {"rows"}
+                    and isinstance(document["rows"], list) and document["rows"]):
+                raise ValueError("expected a nonempty rows list and no shard-local metadata")
+            paths = []
+            for row in document["rows"]:
+                if not isinstance(row, dict) or shard_path(manifest_path, row.get("path")) != shard:
+                    raise ValueError(f"row belongs in another shard: {row!r}")
+                paths.append(row["path"])
+            if paths != sorted(set(paths)):
+                raise ValueError("shard rows must be sorted and unique")
+            all_rows.extend(document["rows"])
+        except ValueError as error:
+            raise ValueError(f"{shard}: {error}") from error
+    return {**manifest, "rows": sorted(all_rows, key=lambda row: row["path"])}
+
+
+def worktree_shards(manifest_path: Path) -> dict[Path, str]:
+    """Read only the two fixed levels of the ledger directory, never through symlinks."""
+    directory = shard_directory(manifest_path)
+    if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
+        raise ValueError(f"{directory}: shard directory is not a real directory")
+    if not directory.exists():
+        return {}
+    shards = {}
+    for entry in sorted(directory.iterdir()):
+        if entry.is_symlink():
+            raise ValueError(f"{entry}: shard path must not go through a symlink")
+        files = sorted(entry.iterdir()) if entry.is_dir() else [entry]
+        for shard in files:
+            if shard.is_symlink():
+                raise ValueError(f"{shard}: shard path must not go through a symlink")
+            if not shard.is_file() or shard.suffix != ".json":
+                raise ValueError(f"{shard}: expected a regular JSON shard file")
+            shards[shard] = shard.read_text(encoding="utf-8")
+    return shards
+'''
 
 
 def write(root: Path, rel: str, text: str) -> None:
@@ -953,7 +1051,7 @@ class ShardedLedgerTest(unittest.TestCase):
         self.record(second)
         right = self.commit("record topology source")
         for revision, lean_path in ((left, first), (right, second)):
-            shard = c.shard_path(Path(c.MANIFEST), lean_path).as_posix()
+            shard = c.module_path(Path(c.MANIFEST), lean_path).as_posix()  # a new row's own file
             self.assertEqual(set(run_git(self.root, "diff", "--name-only", sharded, revision).splitlines()),
                              {lean_path, shard})
         run_git(self.root, "merge", "--no-edit", "algebra")
@@ -995,12 +1093,360 @@ class ShardedLedgerTest(unittest.TestCase):
         invalid = self.commit("symlink shard fixture")
         self.assertIn("expected a regular manifest file", c.load_revision(self.root, invalid)[1][0])
 
+    def test_a_directory_named_like_a_lean_file_is_rejected(self) -> None:
+        path = "MathlibExt/X.lean/Y.lean"  # its legacy shard would be named like a module file
+        with self.assertRaisesRegex(ValueError, "named like a Lean file"):
+            c.shard_path(self.manifest, path)
+        self.convert()
+        legacy = c.shard_directory(self.manifest) / "MathlibExt" / "X.lean.json"
+        legacy.parent.mkdir(parents=True, exist_ok=True)
+        legacy.write_text(c.dump_manifest({"rows": [{"path": path, "disposition": "retired"}]}), encoding="utf-8")
+        self.assertIn("named like a Lean file", c.load(self.manifest)[1][0])
+        legacy.unlink()
+        write(self.root, path, FRESH)
+        code, out = quiet(c.main, ["--root", str(self.root), "--record-divergence", path, "--rationale", "why",
+                                   "--backport", "pending"])
+        self.assertEqual(code, 1, out)
+        self.assertIn("named like a Lean file", out)
+
     def test_copy_protection_spans_shards(self) -> None:
         self.convert()
         target = self.root / "MathlibExt/Topology/Copied.lean"
         target.parent.mkdir()
         target.write_bytes((self.root / "MathlibExt/Identical.lean").read_bytes())
         self.assertTrue(any("exact copy of tracked" in problem for problem in c.check(self.root, self.manifest)[0]))
+
+
+class ModuleFileTest(unittest.TestCase):
+    """A row lives in its legacy shard or in its own module file; writers move the rows they touch."""
+
+    commit, convert, record = ShardedLedgerTest.commit, ShardedLedgerTest.convert, ShardedLedgerTest.record
+
+    def setUp(self) -> None:
+        ShardedLedgerTest.setUp(self)
+        self.sharded = self.convert()
+
+    def files(self) -> set[str]:
+        return {path.relative_to(self.root).as_posix() for path in c.worktree_shards(self.manifest)}
+
+    def move_to_module(self, path: str) -> Path:
+        """Move one row by hand, unchanged, from its legacy shard to its module file."""
+        ledger, _ = c.load(self.manifest)
+        modules = c.module_rows(self.manifest, ledger, c.worktree_shards(self.manifest)) | {path}
+        documents = c.manifest_documents(self.manifest, ledger, modules)
+        shard = c.shard_path(self.manifest, path)
+        if shard not in documents:
+            shard.unlink()
+        for target, text in documents.items():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text, encoding="utf-8")
+        return c.module_path(self.manifest, path)
+
+    def test_either_location_passes_and_both_fail(self) -> None:
+        ledger, _ = c.load(self.manifest)
+        module = self.move_to_module("MathlibExt/Identical.lean")
+        self.assertEqual(module.name, "Identical.lean.json")
+        self.assertEqual(json.loads(module.read_text())["rows"], [self.row(ledger, "MathlibExt/Identical.lean")])
+        self.assertEqual(c.load(self.manifest), (ledger, []))
+        self.assertEqual(c.check(self.root, self.manifest)[0], [])
+        both = c.manifest_documents(self.manifest, ledger)[c.shard_path(self.manifest, "MathlibExt/Identical.lean")]
+        c.shard_path(self.manifest, "MathlibExt/Identical.lean").write_text(both, encoding="utf-8")
+        self.assertIn("MathlibExt/Identical.lean is recorded in two files", c.load(self.manifest)[1][0])
+        code, out = quiet(c.main, ["--root", str(self.root)])
+        self.assertEqual(code, 1, out)
+        self.assertIn("recorded in two files", out)
+
+    @staticmethod
+    def row(ledger: dict, path: str) -> dict:
+        return next(row for row in ledger["rows"] if row["path"] == path)
+
+    def test_edits_and_retirements_move_records_and_new_records_go_to_module_files(self) -> None:
+        before = self.files()
+        write(self.root, "CSLibExt/Diverged.lean", c.META + "\ndef y : Nat := 4\n")
+        write(self.root, "MathlibExt/Identical.lean", c.META + BODY + "\n-- fix\n")
+        self.record("CSLibExt/Diverged.lean")  # the only row of its legacy shard
+        self.record("MathlibExt/Identical.lean")  # one of three
+        os.remove(self.root / "MathlibExt/Kept.lean")
+        self.assertEqual(quiet(c.main, ["--root", str(self.root), "--retire", "MathlibExt/Kept.lean"])[0], 0)
+        self.record("CSLibExtTest/Local.lean")  # a new row
+        legacy, module = c.shard_directory(Path(c.MANIFEST)), c.module_path
+        self.assertEqual(self.files() - before, {module(Path(c.MANIFEST), path).as_posix() for path in (
+            "CSLibExt/Diverged.lean", "MathlibExt/Identical.lean", "MathlibExt/Kept.lean", "CSLibExtTest/Local.lean")})
+        self.assertEqual(before - self.files(), {(legacy / "CSLibExt.json").as_posix()})  # emptied: deleted
+        shard = json.loads(c.shard_path(self.manifest, "MathlibExt/Attributed.lean").read_text())
+        self.assertEqual([row["path"] for row in shard["rows"]], ["MathlibExt/Attributed.lean"])
+        ledger, problems = c.load(self.manifest)
+        self.assertEqual(problems, [])
+        self.assertEqual(self.row(ledger, "MathlibExt/Kept.lean")["disposition"], "retired")
+        self.assertEqual(c.check(self.root, self.manifest)[0], [])
+        self.assertEqual(c.base_problems(self.root, self.manifest, self.sharded), ([], []))
+        # A module file stays put when its row is edited again, and nothing else moves.
+        before = {path: path.read_bytes() for path in c.worktree_shards(self.manifest)}
+        write(self.root, "CSLibExt/Diverged.lean", c.META + "\ndef y : Nat := 5\n")
+        self.record("CSLibExt/Diverged.lean")
+        after = {path: path.read_bytes() for path in c.worktree_shards(self.manifest)}
+        self.assertEqual({path for path in after if after[path] != before.get(path)} | (before.keys() - after.keys()),
+                         {c.module_path(self.manifest, "CSLibExt/Diverged.lean")})
+
+    def test_a_failed_move_restores_every_file(self) -> None:
+        ledger, _ = c.load(self.manifest)
+        before = {path: path.read_bytes() for path in c.worktree_shards(self.manifest)}
+        moved = ["CSLibExt/Diverged.lean", "MathlibExtTest/Behind.lean"]  # each the only row of its shard
+        original_replace = os.replace
+        calls = 0
+
+        def replace(source, target) -> None:
+            nonlocal calls
+            calls += 1
+            if calls == 2:  # after the first move deleted its legacy shard
+                raise OSError("simulated replacement failure")
+            original_replace(source, target)
+
+        with mock.patch.object(c.os, "replace", side_effect=replace):
+            with self.assertRaisesRegex(OSError, "simulated replacement failure"):
+                c.write_manifest(self.manifest, ledger, paths=moved)
+        self.assertEqual({path: path.read_bytes() for path in c.worktree_shards(self.manifest)}, before)
+        for path in moved:  # the directories made for the new module files are gone too
+            self.assertFalse(c.module_path(self.manifest, path).parent.exists(), path)
+        c.write_manifest(self.manifest, ledger, paths=moved)
+        self.assertEqual(c.load(self.manifest), (ledger, []))
+        self.assertEqual(c.module_rows(self.manifest, ledger, c.worktree_shards(self.manifest)), set(moved))
+
+    def test_misplacement_and_symlinks_are_rejected_at_any_depth(self) -> None:
+        module = self.move_to_module("MathlibExt/Identical.lean")
+        text = module.read_text()
+        cases = {
+            "MathlibExt/Algebra/Identical.lean.json": (text, "row belongs in another shard"),
+            "MathlibExt/Identical/Deep.lean.json": (text, "row belongs in another shard"),
+            "MathlibExt/Algebra/Deep.json": (text, "row belongs in another shard"),
+            "MathlibExt/Two.lean.json": (c.dump_manifest({"rows": [json.loads(text)["rows"][0]] * 2}),
+                                         "a module file holds exactly one row"),
+        }
+        for rel, (contents, expected) in cases.items():
+            with self.subTest(rel=rel):
+                target = c.shard_directory(self.manifest) / rel
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(contents, encoding="utf-8")
+                self.assertIn(expected, c.load(self.manifest)[1][0])
+                target.unlink()
+                self.assertEqual(c.load(self.manifest)[1], [])
+        elsewhere = Path(self.temp.name) / "elsewhere"
+        elsewhere.mkdir()
+        os.replace(module, elsewhere / module.name)
+        module.symlink_to(elsewhere / module.name)  # a symlinked module file, two levels down
+        self.assertIn("must not go through a symlink", c.load(self.manifest)[1][0])
+        invalid = self.commit("symlinked module file")
+        self.assertIn("expected a regular manifest file", c.load_revision(self.root, invalid)[1][0])
+        module.unlink()
+        deep = c.shard_directory(self.manifest) / "MathlibExt" / "Deep"
+        deep.symlink_to(elsewhere, target_is_directory=True)  # a symlinked directory
+        self.assertIn("must not go through a symlink", c.load(self.manifest)[1][0])
+
+    def test_batch_read_matches_the_per_file_read(self) -> None:
+        for path in ("MathlibExt/Identical.lean", "WantedExt/Retired.lean"):
+            self.move_to_module(path)
+        head = self.commit("two module files")
+        listing = run_git(self.root, "ls-tree", "-r", "--name-only", head, "--", c.MANIFEST,
+                          c.shard_directory(Path(c.MANIFEST)).as_posix()).splitlines()
+        self.assertEqual(len(listing), 6)  # the retired row's legacy shard is gone
+        per_file = {Path(name): run_git(self.root, "show", f"{head}:{name}") for name in listing}
+        expected = c.parse_manifest(Path(c.MANIFEST), per_file.pop(Path(c.MANIFEST)), per_file)
+        self.assertEqual(c.load_revision(self.root, head), (expected, []))
+        self.assertEqual(c.load(self.manifest), (expected, []))
+        oids = run_git(self.root, "rev-parse", f"{head}:{c.MANIFEST}", f"{head}^{{tree}}").split()
+        self.assertEqual(c.git_blobs(self.root, [oids[0], "0" * 40, oids[1], oids[0]]),
+                         [(self.root / c.MANIFEST).read_bytes(), None, None, (self.root / c.MANIFEST).read_bytes()])
+
+    def test_the_batch_read_checks_each_object_ends_where_git_says(self) -> None:
+        oid = "1" * 40
+
+        def answer(output: bytes) -> list | None:
+            done = subprocess.CompletedProcess([], 0, output, b"")
+            with mock.patch.object(c.subprocess, "run", return_value=done):
+                return c.git_blobs(self.root, [oid, oid])
+
+        good = f"{oid} blob 3\n".encode() + b"abc\n"
+        self.assertEqual(answer(good + f"{oid} missing\n".encode()), [b"abc", None])
+        self.assertIsNone(answer(f"{oid} blob 3\n".encode() + b"abcd" + good))  # no newline after the object
+        self.assertIsNone(answer(good))  # an answer cut short
+
+    def test_the_base_comparison_works_across_a_move(self) -> None:
+        self.move_to_module("MathlibExt/Identical.lean")
+        moved = self.commit("move a row unchanged")
+        self.assertEqual(c.base_problems(self.root, self.manifest, self.sharded), ([], []))
+        self.assertEqual(c.load_revision(self.root, moved), c.load_revision(self.root, self.sharded))
+        write(self.root, "MathlibExt/Attributed.lean", c.META + BODY + "\n-- fix\n")
+        self.record("MathlibExt/Attributed.lean")
+        self.assertEqual(c.base_problems(self.root, self.manifest, self.sharded), ([], []))
+        c.module_path(self.manifest, "MathlibExt/Identical.lean").unlink()
+        problems = c.base_problems(self.root, self.manifest, moved)[0]
+        self.assertTrue(any("MathlibExt/Identical.lean: row removed" in p for p in problems), problems)
+
+    def test_neighbouring_edits_written_as_module_files_merge_cleanly(self) -> None:
+        names = [f"MathlibExt/Algebra/{name}.lean" for name in ("A", "B", "C")]
+        for name in names:
+            write(self.root, name, FRESH.replace("fresh", name[-6].lower()))
+            self.record(name)
+        for name in names:  # a base with three neighbouring rows in one legacy shard
+            self.move_to_legacy(name)
+        base = self.commit("three neighbouring rows")
+        shard = c.shard_path(self.manifest, names[1])
+        self.assertEqual([row["path"] for row in json.loads(shard.read_text())["rows"]], names)
+
+        def edit(branch: str, path: str, *, in_place: bool, start: str = base) -> str:
+            run_git(self.root, "switch", "-qc", branch, start)
+            write(self.root, path, (self.root / path).read_text() + f"-- {branch}\n")
+            if in_place:  # what the writers did before module files
+                ledger, _ = c.load(self.manifest)
+                self.row_of(ledger, path).update(published_sha256=c.sha256((self.root / path).read_bytes()),
+                                                 rationale=f"Reviewed {branch}")
+                c.write_manifest(self.manifest, ledger)
+            else:
+                self.assertEqual(quiet(c.main, ["--root", str(self.root), "--record-divergence", path,
+                                                "--rationale", f"Reviewed {branch}", "--backport", "pending"])[0], 0)
+            return self.commit(branch)
+
+        # Two pull requests that edit the neighbouring rows A and B used to conflict in the shard.
+        edit("old-a", names[0], in_place=True)
+        edit("old-b", names[1], in_place=True)
+        conflict = subprocess.run(["git", "-C", str(self.root), "-c", "user.name=t", "-c", "user.email=t@t",
+                                   "merge", "--no-edit", "old-a"], capture_output=True, text=True)
+        self.assertNotEqual(conflict.returncode, 0)
+        self.assertIn(shard.relative_to(self.root).as_posix(), run_git(self.root, "diff", "--name-only",
+                                                                        "--diff-filter=U"))
+        run_git(self.root, "merge", "--abort")
+        # Once both rows are module files (the first edit of each moved it there), the same two
+        # edits merge cleanly.
+        run_git(self.root, "switch", "-qc", "migrated", base)
+        for path in names[:2]:
+            self.move_to_module(path)
+        migrated = self.commit("A and B were edited once already")
+        edit("new-a", names[0], in_place=False, start=migrated)
+        edit("new-b", names[1], in_place=False, start=migrated)
+        run_git(self.root, "merge", "--no-edit", "new-a")
+        self.assertEqual(c.check(self.root, self.manifest)[0], [])
+        self.assertEqual(c.base_problems(self.root, self.manifest, base), ([], []))
+        self.assertEqual(c.module_rows(self.manifest, c.load(self.manifest)[0], c.worktree_shards(self.manifest)),
+                         set(names[:2]))
+        self.assertEqual([row["path"] for row in json.loads(shard.read_text())["rows"]], names[2:])
+
+    @staticmethod
+    def row_of(ledger: dict, path: str) -> dict:
+        return next(row for row in ledger["rows"] if row["path"] == path)
+
+    def move_to_legacy(self, path: str) -> None:
+        """Put a row back in its legacy shard by hand, unchanged (how every row starts)."""
+        ledger, _ = c.load(self.manifest)
+        modules = c.module_rows(self.manifest, ledger, c.worktree_shards(self.manifest)) - {path}
+        c.module_path(self.manifest, path).unlink()
+        for target, text in c.manifest_documents(self.manifest, ledger, modules).items():
+            target.write_text(text, encoding="utf-8")
+
+
+class LegacyReaderTest(unittest.TestCase):
+    """The checker before module files refused them, so a tree whose CI passed under it has none.
+    On generated trees without module files (legacy shards only, at the two levels it read), this
+    reader and the frozen old one (BASE_READER) must give the same verdict, the same kind of
+    problem, and the same ledger."""
+
+    KINDS = ("symlink", "not a real directory", "regular JSON shard file", "belongs in another shard",
+             "sorted and unique", "nonempty rows list", "duplicate JSON key", "invalid source path")
+    HEADER = {"lean_toolchain": "leanprover/lean4:v4.36.0", "roots": list(c.ROOTS), "schema_version": 2,
+              "upstream": {"commit": COMMIT, "repository": c.UPSTREAM_REPOSITORY}}
+
+    def setUp(self) -> None:
+        self.old: dict = {}
+        exec(compile(BASE_READER, "BASE_READER", "exec"), self.old)
+
+    def verdict(self, worktree_shards, parse_manifest, manifest: Path) -> tuple[str, dict | None]:
+        try:
+            ledger = parse_manifest(manifest, manifest.read_text(encoding="utf-8"), worktree_shards(manifest))
+        except ValueError as error:  # a JSONDecodeError too
+            return next((kind for kind in self.KINDS if kind in str(error)), "malformed JSON"), None
+        return "ok", ledger
+
+    def tree(self, rng, root: Path) -> None:
+        """A sharded ledger with every row in its legacy shard, then zero to two random mutations."""
+        manifest = root / c.MANIFEST
+        write(root, c.MANIFEST, json.dumps(self.HEADER, indent=2) + "\n")
+        directory = c.shard_directory(manifest)
+        files: dict[str, object] = {}
+        for _ in range(rng.randint(0, 8)):
+            parts = [rng.choice(c.ROOTS[:3])] + rng.choice([[], ["Algebra"], ["Topology"], ["Algebra", "Sub"]])
+            path = "/".join(parts + [rng.choice("ABCD") + ".lean"])
+            rows = files.setdefault(c.shard_path(manifest, path).relative_to(directory).as_posix(), [])
+            if all(row["path"] != path for row in rows):
+                rows.append({"path": path, "disposition": "retired"})
+        for rows in files.values():
+            rows.sort(key=lambda row: row["path"])
+        links = []
+        for _ in range(rng.choice((0, 1, 1, 2))):
+            names = sorted(files)
+            name = rng.choice(names) if names else "MathlibExt.json"
+            rows = files.get(name) if isinstance(files.get(name), list) else []
+            other = rng.choice(["MathlibExt.json", "CSLibExt.json", "MathlibExt/Algebra.json",
+                                "WantedExt/Topology.json", "WantedExt.json"])
+            mutation = rng.choice(["misplace", "copy", "repeat", "unsort", "empty", "metadata", "syntax", "key",
+                                   "string row", "no path", "bad path", "not JSON", "link file", "link folder"])
+            if mutation == "misplace" and rows:
+                files.setdefault(other, [])
+                if isinstance(files[other], list):
+                    files[other].append(rows.pop())
+                if not rows:
+                    del files[name]
+            elif mutation == "copy" and rows and isinstance(files.setdefault(other, []), list):
+                files[other].append(dict(rows[0]))
+            elif mutation == "repeat" and rows:
+                rows.append(dict(rows[-1]))
+            elif mutation == "unsort" and len(rows) > 1:
+                rows.reverse()
+            elif mutation == "empty":
+                files[name] = []
+            elif mutation == "metadata":
+                files[name] = json.dumps({"rows": rows, "note": 1})
+            elif mutation == "syntax":
+                files[name] = "{"
+            elif mutation == "key":
+                files[name] = '{"rows": [], "rows": []}'
+            elif mutation == "string row":
+                files[name] = json.dumps({"rows": rows + ["MathlibExt/A.lean"]})
+            elif mutation == "no path" and rows:
+                rows.append({"disposition": "retired"})
+            elif mutation == "bad path":
+                files.setdefault("MathlibExt.json", [])
+                if isinstance(files["MathlibExt.json"], list):
+                    files["MathlibExt.json"].insert(0, {"path": "Outside/A.lean", "disposition": "retired"})
+            elif mutation == "not JSON":
+                files[rng.choice(["notes.txt", "MathlibExt/notes.md"])] = "notes"
+            elif mutation in ("link file", "link folder"):
+                links.append((name, mutation))
+        for name, contents in files.items():
+            text = contents if isinstance(contents, str) else c.dump_manifest({"rows": contents})
+            (directory / name).parent.mkdir(parents=True, exist_ok=True)
+            (directory / name).write_text(text, encoding="utf-8")
+        for name, mutation in links:
+            target = directory / name
+            if mutation == "link folder" and "/" in name:
+                target = target.parent
+            if target.exists() and not target.is_symlink():
+                outside = root / f"outside-{len(list(root.iterdir()))}"
+                os.replace(target, outside)
+                target.symlink_to(outside, target_is_directory=outside.is_dir())
+
+    def test_trees_without_module_files_get_the_old_verdicts(self) -> None:
+        rng = random.Random(20261127)
+        kinds = set()
+        for number in range(300):
+            with self.subTest(tree=number), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                self.tree(rng, root)
+                manifest = root / c.MANIFEST
+                self.assertFalse(any(path.name.endswith(".lean.json") for path in root.rglob("*")))
+                old = self.verdict(self.old["worktree_shards"], self.old["parse_manifest"], manifest)
+                new = self.verdict(c.worktree_shards, c.parse_manifest, manifest)
+                self.assertEqual(new, old)
+                kinds.add(old[0])
+        self.assertGreaterEqual(len(kinds), 9, kinds)  # the generator reaches most kinds of problem
 
 
 class SyncTest(unittest.TestCase):
@@ -1117,6 +1563,32 @@ class SyncTest(unittest.TestCase):
         self.assertEqual(self.sync("--report", str(report_path))[0], 1)
         self.assertFalse(report_path.exists())
         self.assertEqual({target: target.read_bytes() for target in docs}, docs)
+
+    def test_sync_keeps_rows_where_they_are_and_puts_new_rows_in_module_files(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        path = self.atlas / c.MANIFEST
+        self.assertEqual(quiet(c.main, ["--root", str(self.atlas), "--split-by-domain"])[0], 0)
+        write(self.atlas, "MathlibExt/Same.lean", c.META + "\n" + BODY + "-- fix\n")
+        self.assertEqual(quiet(c.main, ["--root", str(self.atlas), "--record-divergence", "MathlibExt/Same.lean",
+                                        "--rationale", "fix", "--backport", "pending"])[0], 0)
+        before = set(c.worktree_shards(path))
+        new = "MathlibExt/Algebra/Fresh.lean"
+        write(self.fm, new, UPSTREAM)
+        run_git(self.fm, "add", "-A")
+        run_git(self.fm, "commit", "-qm", "three")
+        write(self.atlas, new, c.META + "\n" + BODY)
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        self.assertEqual(set(c.worktree_shards(path)) - before, {c.module_path(path, new)})
+        self.assertEqual(before - set(c.worktree_shards(path)), set())
+        ledger, problems = c.load(path)
+        self.assertEqual(problems, [])
+        self.assertEqual(c.module_rows(path, ledger, c.worktree_shards(path)), {"MathlibExt/Same.lean", new})
+        self.assertEqual(self.rows_of(ledger)[new]["disposition"], "identical")
+        self.assertEqual(c.check(self.atlas, path)[0], [])
+
+    @staticmethod
+    def rows_of(ledger: dict) -> dict[str, dict]:
+        return {row["path"]: row for row in ledger["rows"]}
 
     def test_fails_closed_then_classifies_and_verifies(self) -> None:
         report_path = self.atlas.parent / "report.md"

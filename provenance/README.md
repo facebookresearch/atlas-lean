@@ -9,17 +9,36 @@ reviewed ATLAS pull requests, and Formal-Math never depends on ATLAS.
 ## Storage layout
 
 The checker supports monolithic schema 1 and domain-sharded schema 2. Schema 2 keeps the shared
-metadata and the single upstream pin in `formal-math-sync.json`, without inline rows. Rows live
-in `formal-math-sync.d/<library>/<first-directory>.json`; a Lean file directly under a library
-uses `formal-math-sync.d/<library>.json`. For example, `MathlibExt/AlgebraicTopology/Foo.lean`
-belongs to `formal-math-sync.d/MathlibExt/AlgebraicTopology.json`. Each shard contains just a
-nonempty `rows` list, sorted by the same path key. There is no shard index to edit when a
-new domain gains its first row.
+metadata and the single upstream pin in `formal-math-sync.json`, without inline rows. Each row
+lives in exactly one of two files under `formal-math-sync.d/`:
 
-Ordinary divergence and retirement commands write only the owning shards. Changes in unrelated
-domains no longer contend for one file. Within a domain, reconcile competing changes by row;
-never discard the other branch's records. Global pin updates still need coordination. The
-checker validates the whole logical ledger together, including cross-domain copies and renames.
+- its legacy shard, `<library>/<first-directory>.json`, or `<library>.json` for a Lean file
+  directly under a library. For example, `MathlibExt/AlgebraicTopology/Foo.lean` belongs to
+  `formal-math-sync.d/MathlibExt/AlgebraicTopology.json`. A shard contains just a nonempty
+  `rows` list, sorted by the same path key;
+- its module file, named after the Lean file with `.json` appended:
+  `formal-math-sync.d/MathlibExt/AlgebraicTopology/Foo.lean.json`. It contains a `rows` list
+  with just that row, in the same schema. No shard name ends in `.lean.json`.
+
+A row recorded in both files, or in any other file, fails, and so does a symlink at any depth of
+`formal-math-sync.d/`. There is no index to edit when a row or a domain gets its first file.
+
+`--record-divergence` and `--retire` move every row they touch into its module file, write only
+the files that row leaves and enters, and delete a legacy shard they empty; if a write fails, the
+ledger is left as it was. A sync keeps every existing row in the file it is in and writes each new
+row to its module file. Nothing moves the other rows, so the legacy shards empty as their rows are
+edited, without a bulk migration. The checker validates the whole logical ledger together,
+including cross-domain copies and renames, and compares it with the base by path, wherever a
+row lives.
+
+Rows are sorted by path, one per line, so two pull requests that edit neighbouring rows of one
+shard change neighbouring lines, and git cannot merge them: on open pull requests in November
+2026 that was about 62% of the textual conflicts on the ledger. A row in its module file is
+merged on its own. The other conflicts come from two pull requests editing the same row, which no
+layout avoids; reconcile them by row, and never discard the other branch's records. Global pin
+updates still need coordination. The checker before module files reads only two levels of
+`formal-math-sync.d/` and rejects a ledger that has them, so a branch that predates them must
+merge `main` before it can run the check.
 
 The layout conversion is made in a dedicated PR from current `main`, after outstanding
 monolithic edits have been reconciled:
