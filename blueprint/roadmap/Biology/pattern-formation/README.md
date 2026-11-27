@@ -12,6 +12,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Continuum models of tumour-induced angiogenesis](continuum-models-of-tumour-induced-angiogenesis/README.md)
 - [Hybrid alignment–chemotaxis particle models](hybrid-alignment-chemotaxis-particle-models/README.md)
 - [Hydrodynamic limit of chemotactic zero-range processes](hydrodynamic-limit-of-chemotactic-zero-range-processes/README.md)
 - [Morphoelastic homogenization of plant tissue growth](morphoelastic-homogenization-of-plant-tissue-growth/README.md)

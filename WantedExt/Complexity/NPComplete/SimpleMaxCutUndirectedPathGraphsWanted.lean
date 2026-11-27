@@ -28,7 +28,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -45,7 +45,7 @@ QUESTION: is there a partition of `V` into two sets with at least `K` edges betw
 
 This is SIMPLE MAX CUT (MAX CUT with all edge weights one) restricted to undirected path graphs,
 which Bodlaender and Jansen prove NP-complete. The instance, the simple-edge-list conditions and
-the question are those of MAXIMUM CUT (`MaxCutWanted`, whose question counts edges), reused as in
+the question are those of MAXIMUM CUT (`MaxCutDefs`, whose question counts edges), reused as in
 `MaxCutSplitGraphsWanted`; the restriction adds to `WellFormed` that
 `Cslib.Complexity.Karp.edgeGraph` is an undirected path graph, and `0 < K`.
 
