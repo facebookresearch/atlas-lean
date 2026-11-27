@@ -29,6 +29,7 @@
 
 - [LDSC-SEG contrast](sigma2-sub-sigma2-eq.md)
 
-## Standardized annotation effect size
+## Partitioning loci by pleiotropy and annotation
 
+- [Joint pleiotropic and epigenomic partitioning](joint-pleiotropic-and-epigenomic-partitioning/README.md)
 - [Standardized annotation effect size $\tau^*$ in stratified LD-score regression](standardized-annotation-effect-size.md)

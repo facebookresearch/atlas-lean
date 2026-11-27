@@ -77,6 +77,8 @@
 ## Further topics
 
 - [Sparse two-stage SNP heritability estimation](sparse-two-stage-snp-heritability-estimation/README.md)
+- [ARG-based variance-component analysis](arg-based-variance-component-analysis/README.md)
+- [Pleiotropic shared heritability](pleiotropic-shared-heritability/README.md)
 - [GREML converges to a negative heritability when genetic similarity lowers phenotypic variance](negative-limiting-greml-heritability-under-phenotypic-repulsion.md)
 - [Bias from truncating or discarding negative heritability estimates](truncation-bias-of-nonnegative-heritability-estimates.md)
 - [Partitioned GREML with several relationship matrices](partitioned-greml-with-several-relationship-matrices.md)
