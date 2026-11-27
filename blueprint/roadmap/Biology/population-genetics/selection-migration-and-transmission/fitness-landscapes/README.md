@@ -8,5 +8,6 @@
 - [Shifting-balance theory](shifting-balance-theory.md)
 - [Boltzmann-averaged free energy of a conformational ensemble](boltzmann-averaged-free-energy-of-a-conformational-ensemble.md)
 - [Ensemble epistasis between mutations that are additive within each conformation](ensemble-epistasis-from-conformational-reweighting.md)
+- [Recombination and peak jumping](recombination-and-peak-jumping/README.md)
 - [Greedy adaptation versus valley crossing in the sequential-fixation regime](greedy-adaptation-versus-valley-crossing-in-the-sequential-fixation-regime.md)
 - [Valley-crossing probability against a sweeping uphill mutation](valley-crossing-probability-against-a-sweeping-uphill-mutation.md)

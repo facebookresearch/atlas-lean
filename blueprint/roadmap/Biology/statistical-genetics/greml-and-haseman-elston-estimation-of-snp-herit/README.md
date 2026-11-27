@@ -74,7 +74,8 @@
 - [Closed form is the unique REML maximizer for positive class means](is-max-on-reml-log-lik-two-level-reml.md)
 - [The closed-form REML estimator is unbiased when both eigenvalues occur](integral-two-level-reml.md)
 
-## Related variance-component methods
+## Further topics
 
+- [Sparse two-stage SNP heritability estimation](sparse-two-stage-snp-heritability-estimation/README.md)
 - [ARG-based variance-component analysis](arg-based-variance-component-analysis/README.md)
 - [Pleiotropic shared heritability](pleiotropic-shared-heritability/README.md)

@@ -47,6 +47,7 @@
 
 - [Many-locus variance components and the covariance of relatives](many-locus-variance-components-and-covariance-of.md)
 
-## Chiasma interference
+## Further topics
 
+- [Best-fit population simulation](best-fit-population-simulation/README.md)
 - [Gamma renewal model of chiasma interference](gamma-renewal-model-of-chiasma-interference/README.md)

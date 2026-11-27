@@ -31,7 +31,5 @@
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
-
-## Heterogeneous environments
-
+- [Punctuated evolution in the weak-mutation limit](punctuated-evolution-in-the-weak-mutation-limit/README.md)
 - [Moran process in heterogeneous environments](moran-process-in-heterogeneous-environments/README.md)
