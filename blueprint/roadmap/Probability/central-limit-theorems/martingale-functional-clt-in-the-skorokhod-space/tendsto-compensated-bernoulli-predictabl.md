@@ -1,0 +1,3 @@
+# Limit of the predictable quadratic variation of the compensated Bernoulli process
+
+For every real $p$ and $t \ge 0$, $p(1-p)\lfloor n t\rfloor/n \to p(1-p)\, t$ as $n \to \infty$. The statement is a limit of floors and does not mention the process. When $p \in [0, 1]$ and the increments are $0$–$1$ with conditional success probability $p$ given the past, the left side is the predictable quadratic variation of the [compensated Bernoulli counting process](compensated-bernoulli-step.md) at time $t$; for $p$ outside $[0, 1]$ there is no such reading, since for $p = 2$ the left side is negative for $t \ge 1/n$.

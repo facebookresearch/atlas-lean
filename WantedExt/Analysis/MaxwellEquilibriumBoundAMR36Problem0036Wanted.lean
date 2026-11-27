@@ -39,8 +39,11 @@ encodes the same equilibrium set through the explicit field `∑ a_k (y - x_k)/�
 is not importable from WantedExt, so the set is defined here through the derivative of `u`.
 -/
 
-/-- The Newtonian potential `u(y) = ∑_k a_k / |y - x_k|` of charges `a_k` at points `x_k` of
-`ℝ³`. -/
+/-- The Newtonian potential `u(y) = ∑_k a_k / |y - x_k|` of charges `a_k` at points `x_k` of `ℝ³`,
+defined at every `y` with division by zero read as `0`: at a charge's own location its summand is
+`0`. Off the charges it is the classical Newtonian potential; at a charge location its value is not
+a limit of the potential (for a single positive charge the value there is `0`, while the potential
+tends to `+∞` near it). The equilibrium set excludes the charge locations. -/
 noncomputable def potential {n : ℕ} (a : Fin n → ℝ) (x : Fin n → EuclideanSpace ℝ (Fin 3))
     (y : EuclideanSpace ℝ (Fin 3)) : ℝ :=
   ∑ k, a k / ‖y - x k‖

@@ -1,6 +1,7 @@
 # Fundamental solutions of the Laplacian
 
 - [The Newtonian kernel is harmonic away from the origin](harmonic-on-nhd-one-div-norm-pow-sub-two.md)
+- [The function 1/|x| is harmonic on ℝ³ away from the origin](laplacian-inv-norm-eq-zero.md)
 - [Laplacian comp linear Isometry Equiv](laplacian-comp-linear-isometry-equiv.md)
 - [Harmonic At comp linear Isometry Equiv iff](harmonic-at-comp-linear-isometry-equiv-i.md)
 - [Harmonic On Nhd log norm of finrank eq two](harmonic-on-nhd-log-norm-of-finrank-eq-t.md)

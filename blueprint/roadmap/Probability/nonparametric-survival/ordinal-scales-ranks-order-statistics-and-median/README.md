@@ -1,0 +1,16 @@
+# Ordinal scales: ranks, order statistics and medians
+
+- [Group-mean recoding](group-mean-recode.md)
+- [The group-mean recoding fixes 0](group-mean-recode-zero.md)
+- [The group-mean recoding sends 1 to 2](group-mean-recode-one.md)
+- [The group-mean recoding fixes 3](group-mean-recode-three.md)
+- [Pooled sample of the mean-reversal example](group-mean-x.md)
+- [First group of the mean-reversal example](group-mean-a.md)
+- [Second group of the mean-reversal example](group-mean-b.md)
+- [Group A mean in the reversal example](group-mean-mean-a.md)
+- [Group B mean in the reversal example](group-mean-mean-b.md)
+- [Recoded group A mean in the reversal example](group-mean-recode-mean-a.md)
+- [Recoded group B mean in the reversal example](group-mean-recode-mean-b.md)
+- [Competition ranks in the reversal example](group-mean-ranks.md)
+- [Ranks are invariant under strictly increasing maps](sample-rank-comp-of-strict-mono.md)
+- [Monotone recoding can reverse a group-mean comparison](exists-strict-mono-reverses-group-mean.md)
