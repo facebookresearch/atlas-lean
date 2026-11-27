@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.NumberTheory.FermatNumberSquareFactors
+public import MathlibExt.NumberTheory.FermatNumberWarrenBray
 public import MathlibExt.NumberTheory.GeneralizedFermatFactorCount
 public import MathlibExt.NumberTheory.GeneralizedFermatGCD
 public import MathlibExt.NumberTheory.GeneralizedFermatPeriod
@@ -43,17 +44,6 @@ is proved in `MathlibExt.NumberTheory.JakobczykFermatNotPowPowModEqOneOfLt`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Warren–Bray congruence for prime divisors of Fermat numbers.** Let $F_n = 2^{2^n} + 1$ be
-the $n$-th Fermat number. For every $n \ge 2$ and every odd prime $p$ dividing $F_n$, we have
-$2^{(p-1)/2} \equiv 1 \pmod{F_n}$. This result is due to Warren and Bray (1967).
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Theorem 2 (`integers-2026-A77-thm-2`), citing
-Warren and Bray. -/
-public theorem_wanted two_pow_half_modEq_one_fermatNumber {n p : ℕ} (hn : 2 ≤ n)
-    (hp : p.Prime) (hp2 : p ≠ 2) (hdvd : p ∣ Nat.fermatNumber n) :
-    2 ^ ((p - 1) / 2) ≡ 1 [MOD Nat.fermatNumber n]
 
 end
 
