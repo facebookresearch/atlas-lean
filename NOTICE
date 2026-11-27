@@ -413,3 +413,18 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+
+Nonunital commutator Lie source attribution
+-----------------------------------------
+
+Source snapshot: fairinternal/formal-math at 9a495da20622876d4a72852b4de7e0921e976bc0.
+The source authorship notice below is retained for this contributed module.
+This attribution does not change applicable license terms.
+
+Files:
+  MathlibExt/Algebra/Lie/OfNonUnitalAssociative.lean
+
+/-
+Author: @toskua
+-/
