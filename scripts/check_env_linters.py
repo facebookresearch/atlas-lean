@@ -148,6 +148,9 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
 COMPONENT = r"(?:«[^«»\n]+»|[^\W\d][\w'!?]*)"
 NAME = rf"{COMPONENT}(?:\.{COMPONENT})*"
 MODIFIERS = r"(?:private|protected|public|noncomputable|nonrec|partial|unsafe|scoped|local|meta)"
+# An attribute group, whose arguments may hold brackets (`@[aesop safe (rule_sets := [X])]`; strings
+# are blanked by then).
+ATTRIBUTE = r"@\[(?:[^\[\]]|\[[^\[\]]*\])*\]"
 # A `module` file starts with this keyword (comments are blanked by then).
 MODULE_HEADER = re.compile(r"\s*module\b")
 # Batteries' wanted statements, each a private placeholder `def` of its name.
@@ -158,18 +161,18 @@ DECLARATION_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "structure
                      "inductive", "opaque", "axiom", "example", *WANTED_KINDS,
                      "irreducible_def", "alias")
 COMMAND = re.compile(
-    r"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?P<attributes>(?:@\[[^\]]*\]\s*)*)"
+    rf"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?P<attributes>(?:{ATTRIBUTE}\s*)*)"
     rf"(?P<modifiers>(?:{MODIFIERS}\s+)*)"
     rf"(?P<kind>namespace|section|end|mutual|{'|'.join(DECLARATION_KINDS)})\b",
     re.MULTILINE)
 # The kinds whose body can declare `where` and `let rec` helpers, named `<declaration>.<helper>`.
 HELPER_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "opaque", "irreducible_def")
 # A `where` helper's line: attributes, then its name.
-HELPER = re.compile(rf"[ \t]*(?:@\[[^\]]*\][ \t]*)*(?P<name>{NAME})(?=[\s:({{\[⦃|]|$)")
+HELPER = re.compile(rf"[ \t]*(?:{ATTRIBUTE}[ \t]*)*(?P<name>{NAME})(?=[\s:({{\[⦃|]|$)")
 # Words that can start a line among `where` helpers without declaring one.
 NOT_HELPERS = frozenset({"termination_by", "decreasing_by", "deriving", "where", "with"})
 # Each declaration of a `let rec` may have a doc comment (blanked) and attributes before its name.
-LET_REC_ATTRIBUTES = r"(?:@\[[^\]]*\]\s*)*"
+LET_REC_ATTRIBUTES = rf"(?:{ATTRIBUTE}\s*)*"
 LET_REC = re.compile(rf"\blet[ \t]+rec\s+{LET_REC_ATTRIBUTES}(?P<name>{NAME})")
 LET_DECL = re.compile(rf"\s*{LET_REC_ATTRIBUTES}(?P<name>{NAME})")
 NAME_RE = re.compile(NAME)
@@ -180,7 +183,7 @@ KEYWORDS = frozenset({"let", "have", "show", "from", "fun", "match", "with", "if
                       "termination_by", "decreasing_by", "nomatch", "nofun"})
 OPENERS, CLOSERS = "([{⟨⦃", ")]}⟩⦄"
 # What may stand between the start of a declaration's range and its keyword.
-PREFIX = re.compile(rf"\s+|@\[[^\]]*\]|{MODIFIERS}\b|set_option\s+\S+\s+\S+\s+in\b")
+PREFIX = re.compile(rf"\s+|{ATTRIBUTE}|{MODIFIERS}\b|set_option\s+\S+\s+\S+\s+in\b")
 NAME_AT = re.compile(rf"\s*(?P<name>{NAME})")
 # An instance's name, after an optional priority; an anonymous instance has none.
 INSTANCE_NAME = re.compile(r"\s*(?:\(priority\s*:=[^)]*\)\s*)?(?P<name>" + NAME
@@ -341,14 +344,17 @@ def let_rec_siblings(code: str, start: int, stop: int) -> list[tuple[str, int, i
 
 def let_decl_name(code: str, start: int, stop: int) -> tuple[str, int, int] | None:
     """The name that starts the declaration of a `let rec` at `start`, if one does: after any
-    attributes, a name that is not a keyword, binders (names or bracketed groups), then `:` or
-    `:=` (not `::`)."""
+    attributes, a name that is not a keyword, then binders (names or bracketed groups) and `:` or
+    `:=` (not `::`) on the name's line. That keeps a tactic's arguments, as in `exists k, n`
+    followed by `generalize h : k = y` on the next line, from reading as a declaration `n`."""
     name = LET_DECL.match(code, start, stop)
     if name is None or name.group("name") in KEYWORDS:
         return None
     pos, depth = name.end(), 0
     while pos < stop:
         char = code[pos]
+        if char == "\n" and depth == 0:
+            return None
         if char in OPENERS:
             depth += 1
         elif char in CLOSERS:
