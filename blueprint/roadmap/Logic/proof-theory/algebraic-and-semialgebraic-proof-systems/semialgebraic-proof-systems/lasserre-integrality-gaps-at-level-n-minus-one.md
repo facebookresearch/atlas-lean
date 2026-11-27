@@ -15,7 +15,7 @@ with $d = 0$ if $m = 0$ and $d = 1$ otherwise; it has an integrality gap when it
 1. If $\mathbb{P}$ is a 0/1 integer linear program and $\mathrm{LAS}_{n-1}(\mathbb{P})$ has an integrality gap, then all constraints of $\mathbb{P}$ (after removing those satisfied by every integral point) are SVC constraints. More precisely, a gap exists if and only if there are values $y^N_I > 0$ ($I \subseteq N$) with $\sum_I y^N_I = 1$ such that for each $\ell$ there is exactly one $K_\ell$ with $g_\ell(x_{K_\ell}) y^N_{K_\ell} < 0$, $g_\ell(x_J) y^N_J > 0$ for all $J \ne K_\ell$, $\sum_I 1/(g_\ell(x_I) y^N_I) \le 0$, and $\sum_I y^N_I f(x_I)$ is below the integral optimum.
 2. If $\mathbb{P}$ is unconstrained and $f$ has an integrality gap at level $n-1$, then $f$ is a multivariate polynomial of degree $n$; in particular no $k$-ary Boolean CSP with $k < n$ has a gap at level $n-1$.
 
-## Expansion
+## Proof sketch
 
 At level $n$ the moment matrix is congruent to the diagonal matrix of the values $y^N_I = \sum_{H \subseteq N \setminus I} (-1)^{|H|} y_{H \cup I}$, which then form a probability distribution on $\{0,1\}^n$; at level $n-1$ the relevant matrices differ from a diagonal matrix by a rank-one matrix, and an eigenvalue analysis of these almost diagonal matrices gives the conditions. Consequences: $n$ levels are needed to detect that a polytope given by exponentially many SVC constraints contains no integer point (the earlier example of Grigoriev needed $\lfloor n/2 \rfloor$ levels), and a simple Min Knapsack instance has an unbounded integrality gap at level $n-1$, improving Cheung's $1 + 1/n$. The degree-$n$ statement uses Fourier analysis on $\{-1,1\}^n$.
 

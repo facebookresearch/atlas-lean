@@ -16,9 +16,9 @@ $$
 
 By the functional lower bound method this gives the same lower bound, over the same field, for multilinear constant-depth IPS refutations of $\sum_{i,j,k,\ell} z_{ijk\ell} x_i x_j x_k x_\ell - \beta$ together with the Boolean axioms.
 
-## Expansion
+## Proof sketch
 
-This improves the exponent of the multilinear lower bound of Govindasamy, Hakoniemi and Tzameret for the same instance from $1/(2^{2\Delta} - 1)$ to $1/2^{2\Delta - 1}$. A partial assignment maps the instance to a knapsack polynomial over a balanced word of degree at most $4$; the circuit is expanded to a formula of size $s^{O(\Delta)}$, homogenization gives a homogeneous formula of product-depth $2\Delta$ for a degree slice, and a lower bound for the affine-projections-of-partials measure, in the framework of Amireddy, Garg, Kayal, Saha and Thankey adapted to functional lower bounds, finishes the argument with $d = \lfloor \log n \rfloor$. The instance does have small constant-depth refutations, but only of individual degree $O(n^3)$, obtained by substituting the gadget into the depth-3 refutations of plain knapsack. The full version of the paper extends the theorem to every individual degree $\delta$, with $\delta^2$ entering the denominator of the exponent.
+This improves the exponent of the multilinear lower bound of Govindasamy, Hakoniemi and Tzameret for the same instance from $1/(2^{2\Delta} - 1)$ to $1/2^{2\Delta - 1}$. A partial assignment maps the instance to a knapsack polynomial over a balanced word of degree at most $4$; the circuit is expanded to a formula of size $s^{O(\Delta)}$, homogenization gives a homogeneous formula of product-depth $2\Delta$ for a degree slice, and a lower bound for the affine-projections-of-partials measure, in the framework of Amireddy, Garg, Kayal, Saha and Thankey adapted to functional lower bounds, finishes the argument with $d = \lfloor \log n \rfloor$. The instance has a small constant-depth refutation of individual degree $O(n^3)$, obtained by substituting the gadget into the depth-3 refutations of plain knapsack. The cited version states the theorem for every individual degree $\delta$, with $\delta^2$ entering the denominator of the exponent; this page records the case $\delta = 1$.
 
 ## Depends on
 

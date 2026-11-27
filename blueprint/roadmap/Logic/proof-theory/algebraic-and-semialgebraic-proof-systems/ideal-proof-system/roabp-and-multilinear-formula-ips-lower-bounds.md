@@ -16,7 +16,7 @@ in $\mathbb{F}[x_1, \dots, x_{2n}, z_1, \dots, z_{\binom{2n}{2}}]$ is unsatisfia
 
 **Contrast.** If $\mathrm{char}(\mathbb{F}) > n$ and $\beta \in \mathbb{F} \setminus \{0, \dots, n\}$, the plain subset-sum system $\sum_{i=1}^n x_i - \beta, \vec{x}^2 - \vec{x}$ has explicit $\mathrm{poly}(n)$-size refutations in roABP-$\mathrm{IPS}_{\mathrm{LIN}}$ and in depth-3 multilinear-formula-$\mathrm{IPS}_{\mathrm{LIN}}$.
 
-## Expansion
+## Proof sketch
 
 Unsatisfiability holds because on Boolean inputs the sum is an integer in $\{0, \dots, \binom{2n}{2}\}$. By the functional lower bound method it suffices to lower-bound every polynomial agreeing with $1/(\sum_{i<j} z_{i,j} x_i x_j - \beta)$ on the cube. Pushing the $\vec{z}$ variables into the fraction field, the tight degree bound for $1/(\sum_i x_i - \beta)$ lifts to a coefficient-dimension lower bound of $2^n$ across any balanced partition of the $\vec{x}$ variables; this gives width $2^n$ for roABPs in every order, and, through the Raz and Raz-Yehudayoff lower bounds for full-rank polynomials, the multilinear-formula bounds. For multilinear formulas the lower bound covers full IPS because multilinear refutations are automatically linear in the single non-Boolean placeholder. The subset-sum upper bound uses that $p(t) = \prod_{k=0}^n (t - k)$ vanishes on $\sum_i x_i$ over the cube while $p(\beta) \ne 0$.
 
@@ -30,4 +30,4 @@ Unsatisfiability holds because on Boolean inputs the sum is an integer in $\{0, 
 
 ## Sources
 
-- Michael A. Forbes, Amir Shpilka, Iddo Tzameret, Avi Wigderson, "Proof complexity lower bounds from algebraic circuit complexity", *31st Computational Complexity Conference (CCC 2016)*, LIPIcs 50, 2016, https://doi.org/10.4230/LIPIcs.CCC.2016.32; numbering of arXiv:1606.05050v1 (Corollaries 5.14 and 5.15, Corollary 4.13, Proposition 4.14).
+- Michael A. Forbes, Amir Shpilka, Iddo Tzameret, Avi Wigderson, "Proof complexity lower bounds from algebraic circuit complexity", *31st Computational Complexity Conference (CCC 2016)*, LIPIcs 50, 2016, https://doi.org/10.4230/LIPIcs.CCC.2016.32; numbering of arXiv:1606.05050v1 (Corollaries 5.14 and 5.15; subset-sum upper bounds, Corollary 4.18 and Proposition 4.19).

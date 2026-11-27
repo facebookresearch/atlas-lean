@@ -6,13 +6,14 @@ Linear IPS over formulas polynomially simulates Frege and linear IPS over circui
 
 **Depth-preserving simulation.** For any $d = d(n)$, depth-$(d+2)$ $\mathrm{IPS}_{\mathbb{F}_p}$ p-simulates depth-$d$ Frege proofs with unbounded fan-in $\lor$, $\neg$ and $\mathrm{MOD}_p$ connectives.
 
-## Expansion
+## Proof sketch
 
 The first simulation goes back to Pitassi's 1996 algebraic system, which is p-equivalent to Hilbert-like IPS; her proof that this system simulates Polynomial Calculus and Frege extends to Extended Frege. That argument does not preserve depth, so the depth-preserving result is proved separately. The proof is given for $p = 2$, the other primes being analogous, and works with a sequent-calculus formalization of $\mathrm{AC}^0[2]$-Frege (a small modification of the one of Maciel and Pitassi) whose lines are cedents $\Gamma \rightarrow \Delta$ of $\{\lor, \neg, \mathrm{MOD}_p\}$-formulas of depth at most $d$, with axioms $A \rightarrow A$, $\lor() \rightarrow$ and $\rightarrow \neg \oplus()$; each line is translated into a polynomial and each rule into a bounded-depth circuit step, and nothing in the argument uses that $d$ is constant.
 
 ## Depends on
 
 - [Linear and circuit-restricted Ideal Proof Systems](linear-and-restricted-ideal-proof-systems.md)
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
 
 ## Proof depends on
 

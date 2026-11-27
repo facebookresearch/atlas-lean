@@ -18,13 +18,13 @@ $$
 
 and $\tilde{\mathbb{E}}[x_S] = \sum_{T} \widehat{\tilde{\mathbb{E}}[x_S]}(T) \, \chi_T(G)$, extended linearly to all multilinear polynomials of degree at most $d$.
 
-## Expansion
+## Proof sketch
 
 The motivation is Bayesian: a computationally bounded party cannot tell $G(n, 1/2)$ from the planted model, so its best-effort estimates of conditional expectations should be calibrated against the planted distribution on simple tests. Pseudo-calibration implies that every simple strong constraint (a function vanishing on all $\omega$-cliques) has pseudo-expectation $0$, and also many weak constraints, for example that a high-degree vertex is more likely to be in the clique. Earlier planted clique pseudo-expectations satisfied the strong constraints but violate such weak ones already at degree four, while for random 3-XOR pseudo-calibration reproduces Grigoriev's construction. For the truncated moments, simple tests whose coefficients have degree at most $\tau$ in the edge indicators are fooled exactly, $\tilde{\mathbb{E}}[1]$ and $\tilde{\mathbb{E}}[\sum_i x_i]$ equal $1$ and $\omega$ up to factors $1 \pm n^{-\Omega(\epsilon)}$ with high probability, and $\tilde{\mathbb{E}}[x_S] = 0$ whenever $S$ is not a clique of $G$. Positivity of the moment matrix is the hard part and is proved by an approximate factorization over ribbons and graphical matrices.
 
 ## Depends on
 
-None.
+- [Planted clique model, search and detection problems](../../../../GraphTheory/random-graphs/planted-clique/planted-clique-model.md)
 
 ## Proof depends on
 

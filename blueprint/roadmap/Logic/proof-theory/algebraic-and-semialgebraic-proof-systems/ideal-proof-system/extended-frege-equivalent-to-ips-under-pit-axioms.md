@@ -15,7 +15,7 @@ Fix a standard Boolean encoding $[C]$ of constant-free algebraic circuits, of si
 
 **Corollary.** For any $d$: if some family of tautologies has no polynomial-size $\mathrm{AC}^0[p]$-Frege proofs and $\mathrm{AC}^0[p]$-Frege has polynomial-size proofs of the (depth-$d$) PIT axioms for some $K$, then $\mathrm{VNP}_{\mathbb{F}_p}$ does not have polynomial-size (depth-$d$) algebraic circuits.
 
-## Expansion
+## Proof sketch
 
 IPS verification is randomized, so the usual equivalence between simulating a system and proving its soundness is adapted: using $K$ one builds a polynomial-size Boolean circuit $\mathrm{Proof}_{\mathrm{IPS}}([C], [\varphi])$ that checks $K([C(\vec{x}, \vec{0})])$ and $K([1 - C(\vec{x}, \vec{Q}^{\varphi}(\vec{x}))])$ for the polynomial translation $\vec{Q}^{\varphi}$ of a 3CNF $\varphi$. Efficient EF proofs of the propositional soundness statement for IPS give the simulation, and these soundness proofs follow from efficient EF proofs of the four PIT axioms. Since IPS p-simulates Extended Frege unconditionally, the simulation in the other direction gives equivalence. The corollary combines the scaled-down theorem with the fact that IPS lower bounds give $\mathrm{VP} \ne \mathrm{VNP}$.
 
@@ -26,6 +26,7 @@ IPS verification is randomized, so the usual equivalence between simulating a sy
 ## Proof depends on
 
 - [IPS simulates Frege, Extended Frege and bounded-depth Frege with modular gates](ips-simulates-frege-systems.md)
+- [IPS lower bounds imply VP ≠ VNP](ips-lower-bounds-imply-vp-neq-vnp.md)
 
 ## Sources
 

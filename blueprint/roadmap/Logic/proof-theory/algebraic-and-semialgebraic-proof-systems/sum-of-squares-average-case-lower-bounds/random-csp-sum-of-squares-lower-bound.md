@@ -24,13 +24,13 @@ $$
 
 Here $\epsilon = o(1)$ always and $\epsilon = O(1/\sqrt{n})$ when $\Delta = n^{\Omega(1)}$. Both theorems hold for predicates over alphabets of size $q > 2$ with no change in parameters.
 
-## Expansion
+## Proof sketch
 
 In particular constant-degree, hence polynomial-time, SoS needs $\tilde{\Omega}(n^{(t+1)/2})$ constraints to $(\delta_P(t) + o(1))$-refute, and with Lee-Raghavendra-Steurer the same holds for every polynomial-size SDP relaxation. Algorithms of Allen-O'Donnell-Witmer and Raghavendra-Rao-Schramm show the three-way trade-off among density, degree and refutation strength is tight up to lower-order factors. The pseudo-expectation is defined from planted distributions on closures of small subgraphs of the factor graph, using that a random factor graph satisfies a plausibility assumption about its small subgraphs (proved by expansion), and positive semidefiniteness is shown separately. The result subsumes all previously known lower bounds for semialgebraic refutation of random CSPs, including those for $k$-XOR and $k$-SAT.
 
 ## Depends on
 
-None.
+- [Sums-of-Squares proof system](../sums-of-squares-proof-system.md)
 
 ## Proof depends on
 

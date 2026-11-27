@@ -13,13 +13,14 @@ For a graph $G$ on $[n]$ and parameters $d, \omega$, a **degree-$d$ pseudo-distr
 
 **Theorem.** There is an absolute constant $c$ such that for every $d = d(n)$ and large enough $n$, the SoS relaxation of the planted clique problem has integrality gap at least $n^{1/2 - c(d/\log n)^{1/2}}$. Equivalently, there is a constant $c$ such that if $\omega \le n^{1/2 - c(d/\log n)^{1/2}}$, then with high probability over $G \sim G(n, 1/2)$ there is a degree-$d$ pseudo-distribution $\tilde{\mathbb{E}}_G$ satisfying constraints 1 to 6.
 
-## Expansion
+## Proof sketch
 
 The bound is nearly tight, since polynomial-time algorithms find planted cliques of size $\epsilon\sqrt{n}$, and it improves the earlier degree-dependent bounds of Meka-Potechin-Wigderson, Deshpande-Montanari and Hopkins et al. Integrality gaps are negative results for the refutation variant (certifying that $G(n,1/2)$ has no $\omega$-clique) and also defeat the natural SoS algorithm for the decision variant. The pseudo-distribution is built from the truncated pseudo-calibrated moments; the clique constraints hold exactly, normalization and size hold up to factors $1 \pm n^{-\Omega(\epsilon)}$ before rescaling, and positivity is proved by approximately factoring the moment matrix through vertex separators of ribbons and bounding the norms of graphical matrices.
 
 ## Depends on
 
-None.
+- [Planted clique model, search and detection problems](../../../../GraphTheory/random-graphs/planted-clique/planted-clique-model.md)
+- [Sums-of-Squares proof system](../sums-of-squares-proof-system.md)
 
 ## Proof depends on
 

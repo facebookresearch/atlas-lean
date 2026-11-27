@@ -12,4 +12,6 @@ The Ideal Proof System, its linear and circuit-restricted subsystems, its simula
 - [IPS lower bounds imply VP ≠ VNP](ips-lower-bounds-imply-vp-neq-vnp.md)
 - [IPS simulates Frege, Extended Frege and bounded-depth Frege with modular gates](ips-simulates-frege-systems.md)
 - [Linear and circuit-restricted Ideal Proof Systems](linear-and-restricted-ideal-proof-systems.md)
+- [Linearization of IPS refutations](linearization-of-ips-refutations.md)
+- [Polynomial calculus line count is p-equivalent to Hilbert-like determinantal IPS](pc-line-count-equivalent-to-hilbert-like-determinantal-ips.md)
 - [roABP and multilinear-formula IPS lower bounds for lifted subset sum](roabp-and-multilinear-formula-ips-lower-bounds.md)

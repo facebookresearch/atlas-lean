@@ -11,7 +11,7 @@ A super-polynomial lower bound on Hilbert-like IPS proofs of any family of tauto
 
 Together with the fact that polynomial-size constant-free IPS proofs of all tautologies over any field would give $\mathrm{NP} \subseteq \mathrm{coMA}$ (Merlin guesses the proof, Arthur checks both defining identities by randomized PIT), this yields: if $\mathrm{NP} \not\subseteq \mathrm{coMA}$, then $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$ for every ring $R$.
 
-## Expansion
+## Proof sketch
 
 Write the unsatisfiable CNF as $\kappa_1 \wedge \dots \wedge \kappa_m$ and translate $\kappa_i$ to the product $C_i(\vec{x})$ of factors $b(f, x) = fx + (1-f)(1-x)$, so $C_i(\vec{e}) = 1$ exactly when $\vec{e}$ falsifies $\kappa_i$. Start from the identity
 
@@ -30,10 +30,15 @@ whose summand is a polynomial-size constant-depth formula using only the constan
 ## Depends on
 
 - [Linear and circuit-restricted Ideal Proof Systems](linear-and-restricted-ideal-proof-systems.md)
+- [Polynomial calculus](../polynomial-calculus.md)
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
+- [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
+- [The class MA (Merlin–Arthur)](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/ma.md)
+- [The class coMA](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/co-ma.md)
 
 ## Proof depends on
 
-None.
+- [Polynomial calculus line count is p-equivalent to Hilbert-like determinantal IPS](pc-line-count-equivalent-to-hilbert-like-determinantal-ips.md)
 
 ## Sources
 

@@ -12,7 +12,7 @@ which a $\{0,1\}$-assignment satisfies over $\mathbb{Q}$ exactly when it satisfi
 
 **Theorem.** If $\mathbb{E}$ is unsatisfiable, then $\mathcal{S}(\mathbb{E})$ has an LS refutation of degree $6$ and size polynomial in $n$ and $m$.
 
-## Expansion
+## Proof sketch
 
 Write $\mathbb{E}$ as $Ax = b$. Unsatisfiability means that $b$ is not in the column space of $A$ over $\mathbb{Z}_2$, so some sum of equations gives $0 = 1$. The refutation follows this Gaussian elimination, representing each derived parity constraint by inequalities about linear forms and using earlier techniques of Grigoriev, Hirsch and Pasechnik for reasoning about gaps of the form $(-\infty, c] \cup [c+1, +\infty)$ with quadratic inequalities; this keeps the degree bounded by $6$ while the size stays polynomial. The argument extends to $3\mathrm{LIN}(\mathbb{Z}_p)$ for primes $p$. By the CSP gap theorem, Polynomial Calculus over the reals, Sherali-Adams and Sums-of-Squares need linear degree on such systems, so bounded-degree LS is a proof system closed under the standard CSP reductions that goes beyond bounded width.
 

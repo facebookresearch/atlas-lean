@@ -10,13 +10,14 @@ $$
 \Omega\left( \frac{n}{\Delta^{2/(k-2)} \cdot \log \Delta} \right) .
 $$
 
-## Expansion
+## Proof sketch
 
 Ben-Sasson and Impagliazzo had proved an $\Omega(n)$ degree bound for random 3-CNFs over fields of characteristic different from $2$ with binomial techniques and conjectured the same in characteristic $2$; the non-binomial method settles it. A random $\Delta n \times n$ matrix whose rows are independent random $k$-subsets of $[n]$ is, with probability $1 - o(1)$, an $(\Omega(n/\Delta^{2/(k-c-2)}), k, c)$-expander for any $0 < c < k - 2$ when $\Delta = o(n^{(k-c-2)/2})$. Each clause polynomial has maximal immunity, so the degree lower bound $rc/2$ for maximal immunity on expanders applies; choosing $c = 1/\ln(\Delta + 2)$ gives the stated bound. For constant $k$ and constant $\Delta$ the degree bound is linear in $n$, so the size-degree relation turns it into an $\exp(\Omega(n))$ size lower bound for polynomial calculus resolution.
 
 ## Depends on
 
-None.
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
+- [Polynomial calculus](../polynomial-calculus.md)
 
 ## Proof depends on
 

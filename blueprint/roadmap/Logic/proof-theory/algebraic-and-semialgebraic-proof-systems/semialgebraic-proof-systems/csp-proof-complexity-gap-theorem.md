@@ -11,13 +11,18 @@ A finite relational structure $B$ (the constraint language) defines $\mathrm{CSP
 
 Case 1 happens exactly when $B$ has bounded width. Consequently the following are equivalent: $B$ has bounded width; constant-width resolution refutations; sublinear-width resolution refutations; polynomial-size resolution refutations; sublinear-exponential-size resolution refutations; bounded-depth polynomial-size Frege refutations; bounded-depth subexponential-size Frege refutations; constant-degree SA, SOS and real PC refutations; sublinear-degree SA, SOS and real PC refutations.
 
-## Expansion
+## Proof sketch
 
 The key ingredient is closure under reductions: the classes of constraint languages with efficient refutations in bounded-depth Frege, in algebraic systems and in semialgebraic systems are closed under pp-interpretations, homomorphic equivalence and adding constants. By the algebraic characterization of unbounded width of Barto-Kozik and Bulatov, a language without bounded width reduces, through these operations, from systems of linear equations over a nontrivial finite Abelian group, and the known lower bounds for such systems (via Ben-Sasson's bounded-depth Frege results, Buss-Grigoriev-Impagliazzo-Pitassi for polynomial calculus and Chan for SOS) transfer to $\mathrm{CSP}(B)$. Bounded width gives constant-width resolution through the correspondence between local consistency, existential pebble games and resolution width. Lovász-Schrijver is not covered by the dichotomy: bounded-degree LS refutes linear equations over $\mathbb{Z}_2$.
 
 ## Depends on
 
 - [Sherali-Adams proof system](sherali-adams-proof-system.md)
+- [Polynomial calculus](../polynomial-calculus.md)
+- [Sums-of-Squares proof system](../sums-of-squares-proof-system.md)
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
+- [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Width of a derivation](../../../propositional-logic/resolution-size-and-width/derivation-width.md)
 
 ## Proof depends on
 

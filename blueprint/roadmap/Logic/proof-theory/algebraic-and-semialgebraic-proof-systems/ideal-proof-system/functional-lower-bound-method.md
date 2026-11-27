@@ -9,7 +9,7 @@ Let $f \in \mathbb{F}[x_1, \dots, x_n]$ be such that the system $f(\vec{x}), x_1
 
 **Degree instance.** Let $n \ge 1$, $\mathrm{char}(\mathbb{F}) > n$ and $\beta \in \mathbb{F} \setminus \{0, \dots, n\}$. If $g \in \mathbb{F}[\vec{x}]$ satisfies $g(\vec{x}) (\sum_i x_i - \beta) = 1 \bmod \vec{x}^2 - \vec{x}$, then $\deg g \ge n$; the earlier bound of Impagliazzo, Pudlák and Sgall was $\lceil n/2 \rceil + 1$, and the tight value $n$ is what the lifted lower bounds need.
 
-## Expansion
+## Proof sketch
 
 For part 1, a refutation $C = g(\vec{x}) y + \sum_i h_i(\vec{x}) z_i$ gives $g = C(\vec{x}, 1, \vec{0}) \in \mathcal{C}$ and $g f \equiv 1$ modulo the Boolean axioms, so $g = 1/f$ on the cube, a contradiction. For part 2 write $C = C_1(\vec{x}, \vec{z}) y + C_0(\vec{x}, \vec{z})$; the refutation conditions force $C_0(\vec{x}, \vec{0}) = 0$ and $C_1(\vec{x}, \vec{0}) f \equiv 1$, while $C_1(\vec{x}, \vec{0}) = C(\vec{x}, 1, \vec{0}) - C(\vec{x}, 0, \vec{0}) \in \mathcal{D}$; a multilinear $C$ has degree at most one in $y$ automatically. The method needs only one non-Boolean axiom, so as stated it does not encode systems arising from 3CNFs.
 

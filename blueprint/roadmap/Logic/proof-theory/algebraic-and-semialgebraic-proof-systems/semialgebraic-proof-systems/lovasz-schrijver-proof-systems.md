@@ -16,7 +16,7 @@ and the semialgebraic axioms $X_i \ge 0$, $\bar{X}_i \ge 0$, $1 - X_i \ge 0$, $1
 
 Size is the number of symbols needed to write the polynomials as explicit sums of monomials, degree the maximum total degree in the proof, and **rank** the maximum nesting depth of multiplications by a variable; because of cancellations the degree can be much smaller than the rank.
 
-## Expansion
+## Proof sketch
 
 Sherali-Adams and positive semidefinite Sherali-Adams are the static subsystems of LS and LS+ in which all multiplications precede all additions, and an LS proof of degree $d$ and rank $k$ converts into an SA proof of degree $d + k$ by reordering the rules. Each positive semidefinite SA proof converts into a Sums-of-Squares proof of twice the degree by replacing multiplication by $X$ with multiplication by $X^2$ and subtracting a multiple of $X^2 - X$. Sherali-Adams and Sums-of-Squares of sublinear degree cannot refute all unsatisfiable systems of linear equations over $\mathbb{Z}_2$, whereas bounded-degree LS simulates Gaussian elimination over $\mathbb{Z}_2$ in polynomial size.
 

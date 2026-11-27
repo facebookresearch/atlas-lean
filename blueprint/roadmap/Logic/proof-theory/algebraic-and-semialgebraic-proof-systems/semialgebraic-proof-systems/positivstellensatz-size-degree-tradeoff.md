@@ -18,13 +18,13 @@ $$
 
 **Corollary.** If $d$ is the minimum degree and $s$ the minimum monomial size of PS refutations of $Q$ of product-width at most $w$, and $d \ge kw + 4$, then $s \ge \exp((d - kw - 4)^2/(32(n+1)))$.
 
-## Expansion
+## Proof sketch
 
-The proof follows the standard structure of degree-reduction lemmas for other proof systems, but because PS proofs are static the unrestricting lemmas are harder; it is handled by a tight duality theorem for degree-bounded proofs with respect to cut-off functions, built on vector spaces with an order unit. Applications: Tseitin formulas on constant-degree expanders need SOS monomial size $2^{\epsilon n}$, the knapsack equations $2x_1 + \dots + 2x_n = k$ for odd $k$ need size $2^{\epsilon k^2/n}$, and random 3-XOR and 3-SAT instances inherit exponential bounds from Grigoriev and Schoenebeck's linear degree lower bounds. The analogous statement for Sherali-Adams is the bound $O(\sqrt{n \log s} + \deg(\mathcal{P}))$ on degree recorded with the [Sherali-Adams proof system](sherali-adams-proof-system.md), and for polynomial calculus the Impagliazzo-Pudlák-Sgall relation.
+The proof follows the standard structure of degree-reduction lemmas for other proof systems, but because PS proofs are static the unrestricting lemmas are harder; it is handled by a tight duality theorem for degree-bounded proofs with respect to cut-off functions, built on vector spaces with an order unit. Applications: Tseitin formulas on constant-degree expanders need SOS monomial size $2^{\epsilon n}$, the knapsack equations $2x_1 + \dots + 2x_n = k$ for odd $k$ need size $2^{\epsilon k^2/n}$, and random 3-XOR and 3-SAT instances inherit exponential bounds from Grigoriev and Schoenebeck's linear degree lower bounds. For polynomial calculus the analogous statement is the Impagliazzo-Pudlák-Sgall relation. For Sherali-Adams a bound $O(\sqrt{n \log s} + \deg(\mathcal{P}))$ was claimed earlier, but Atserias and Hakoniemi note that the claim was made without proof and that the published sketch cannot be completed, so the [Sherali-Adams proof system](sherali-adams-proof-system.md) page does not assert it.
 
 ## Depends on
 
-None.
+- [Sums-of-Squares proof system](../sums-of-squares-proof-system.md)
 
 ## Proof depends on
 
@@ -32,4 +32,4 @@ None.
 
 ## Sources
 
-- Albert Atserias, Tuomas Hakoniemi, "Size-degree trade-offs for sums-of-squares and Positivstellensatz proofs", *34th Computational Complexity Conference (CCC 2019)*, LIPIcs 137, 2019, https://doi.org/10.4230/LIPIcs.CCC.2019.24; numbering of arXiv:1811.01351v2 (Theorem 1, Corollaries 1 to 4, Theorem 2, Sections 2 and 5).
+- Albert Atserias, Tuomas Hakoniemi, "Size-degree trade-offs for sums-of-squares and Positivstellensatz proofs", *34th Computational Complexity Conference (CCC 2019)*, LIPIcs 137, 2019, https://doi.org/10.4230/LIPIcs.CCC.2019.24; numbering of arXiv:1811.01351v2 (Theorem 1, Corollaries 1 to 4, Theorem 2, Sections 2 and 5, footnote 1).

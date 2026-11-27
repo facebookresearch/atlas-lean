@@ -12,13 +12,14 @@ The first condition says that $C$ lies in the ideal of $\mathbb{F}[\vec{x}, \vec
 
 For propositional proof complexity one adds the Boolean axioms with their own placeholders: an IPS refutation of $f_1, \dots, f_m$ over $\{0,1\}^n$ is a circuit $C(\vec{x}, \vec{y}, \vec{z})$ with $C(\vec{x}, \vec{0}, \vec{0}) = 0$ and $C(\vec{x}, f_1(\vec{x}), \dots, f_m(\vec{x}), x_1^2 - x_1, \dots, x_n^2 - x_n) = 1$.
 
-## Expansion
+## Proof sketch
 
 By the weak Nullstellensatz, a certificate exists exactly when the system has no common root over $\overline{\mathbb{F}}$, so IPS is sound and complete. The two defining conditions are polynomial identities, so an IPS proof is verified by polynomial identity testing, which runs in randomized polynomial time. The key difference from rule-based algebraic systems such as Nullstellensatz and Polynomial Calculus is that intermediate gates of an IPS proof need not compute polynomials in the ideal $\langle F_1, \dots, F_m \rangle$; only the final certificate is constrained, so an IPS proof is an ordinary algebraic circuit and depth-reduction and other circuit transformations apply to proof size directly. Previously studied algebraic systems are complexity measures on certificates of special shape; for instance Nullstellensatz degree is the least degree of a certificate of the form $\sum_i y_i G_i(\vec{x})$.
 
 ## Depends on
 
-None.
+- [Arithmetic circuit](../../../../TheoryOfComputation/algebraic-complexity/arithmetic-circuits/arithmetic-circuit.md)
+- [Valiant's VP versus VNP conjecture](../../../../TheoryOfComputation/algebraic-complexity/valiant-s-vp-versus-vnp-conjecture.md)
 
 ## Proof depends on
 

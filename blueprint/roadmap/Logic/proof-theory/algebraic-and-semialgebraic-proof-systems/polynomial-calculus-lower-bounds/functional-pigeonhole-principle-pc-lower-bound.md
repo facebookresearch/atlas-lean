@@ -8,13 +8,14 @@ Let $G = (U \,\dot\cup\, V, E)$ be bipartite, with pigeons $U$ and holes $V$, an
 
 **Corollary.** Every polynomial calculus or polynomial calculus resolution refutation of the standard CNF encoding of $\mathrm{FPHP}^{n+1}_n$ has size $\exp(\Omega(n))$.
 
-## Expansion
+## Proof sketch
 
 Put the hole and functionality axioms into $\mathcal{E}$, the pigeon axioms as singletons into $\mathcal{U}$, and for each hole $v$ let $V_v = \{x_{u',v'} : u' \in N(v), v' \in N(u')\}$. Setting all of $V_v$ false respects $\mathcal{E}$, and the assignment putting $x_{u,v}$ true and the rest of $V_v$ false $\mathcal{E}$-respectfully satisfies the pigeon axiom of $u$, so the clustered graph is isomorphic to $G$ with all neighbours respectful and is an $(s, \delta, 0, \mathcal{E})$-expander of overlap at most $d$; the generalized degree theorem applies, and the size-degree relation gives the size bound. The corollary follows by restricting $\mathrm{FPHP}^{n+1}_n$ to a good expander of left degree $3$, since restrictions do not increase refutation size. This answered an open question of Razborov; Onto-FPHP is easy for polynomial calculus while FPHP and Onto-PHP are hard.
 
 ## Depends on
 
-None.
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
+- [Polynomial calculus](../polynomial-calculus.md)
 
 ## Proof depends on
 
