@@ -46,8 +46,25 @@ root validation with:
 scripts/check.sh
 ```
 
-The existing `Atlas/` developments and archived `v1/` release are not part of
-this root build. They retain their own build configuration.
+The [CPython listsort model](CSLibExt/Algorithms/Sorting/CPythonListsort/README.md)
+is integrated into `CSLibExt`, with kernel-checked proof layers and asserting
+regression clients in `CSLibExtTest`. It uses the root toolchain rather than an
+independent package; its original source and verification provenance are retained.
+
+The [Formal Conjectures migration record](docs/provenance/formal-conjectures-migration.md)
+links the seven mathematical developments moved into `MathlibExt`, the
+existing A022030 proof reused there, and the absolutely-maximally-entangled-state
+development in `PhyslibExt`, with their tests and source-statement comparisons.
+
+Remaining `Atlas/` development material and the archived `v1/` release are not
+part of this root build. `v1/` retains its original build configuration.
+[`Atlas/StatisticalMechanics/`](Atlas/StatisticalMechanics/MIGRATED.md) and
+[`Atlas/CDISProbability/`](Atlas/CDISProbability/README.md) retain their source
+and provenance paths while their destinations or archival dispositions are
+tracked in [#5408](https://github.com/facebookresearch/atlas-lean/issues/5408)
+and the [remaining-Atlas record](docs/provenance/remaining-atlas.md).
+That issue stays open until every remaining directory is accounted for and
+`Atlas/` is retired as a development directory.
 
 ## Dependency explorer
 

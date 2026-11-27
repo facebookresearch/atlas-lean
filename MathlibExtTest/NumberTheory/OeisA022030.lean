@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`FormalConjectures/OEIS/22030.lean` (Formal Conjectures):
+Copyright The Formal Conjectures Authors.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Formal Conjectures Authors.
+Adapted portion: the recurrence statement in the source-faithfulness example.
+-/
+
 module
 
 import MathlibExt.NumberTheory.OeisA022030
@@ -15,7 +25,12 @@ import MathlibExt.NumberTheory.OeisA022030
 open MathlibExt.NumberTheory.OeisA022030Wanted
 
 -- The first terms, from the alternating ceiling and floor steps.
-example : a 2 = 63 ∧ a 3 = 249 ∧ a 4 = 984 ∧ a 5 = 3889 ∧ a 6 = 15370 := by decide
+example : a 0 = 4 ∧ a 1 = 16 ∧ a 2 = 63 ∧ a 3 = 249 ∧ a 4 = 984 ∧ a 5 = 3889 ∧
+    a 6 = 15370 := by decide
+
+-- The statement in Formal Conjectures, using the same sequence from the canonical module.
+example (n : ℕ) (hn : 4 ≤ n) : a n = 4 * a (n - 1) - a (n - 3) + a (n - 4) :=
+  conjecture_holds n hn
 
 -- The first ceiling step is tight: `16 ^ 2 - 4 * 63 = 4 = a 0`, so `a 2 = 63` is the largest
 -- integer below `16 ^ 2 / 4 = 64`.

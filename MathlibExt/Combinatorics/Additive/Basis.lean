@@ -16,6 +16,7 @@ limitations under the License.
 module
 
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic
+public import Mathlib.Algebra.Group.Pointwise.Set.BigOperators
 public import Mathlib.Order.Filter.Cofinite
 
 @[expose] public section
@@ -27,6 +28,11 @@ Ported from `FormalConjecturesForMathlib/Combinatorics/Additive/Basis.lean`
 in google-deepmind/formal-conjectures (asymptotic-basis fragment only; the
 source states the multiplicative version with `@[to_additive]`, here the
 additive version is written directly).
+
+## Main statements
+
+- `Set.isAsymptoticAddBasisOfOrder_iff_sum`: the order-`n` asymptotic basis
+  property, unfolded to an explicit `n`-term decomposition.
 -/
 
 open Filter
@@ -69,5 +75,17 @@ def IsWeakAddBasisOfOrder (A : Set M) (n : ℕ) : Prop := ∀ a, ∃ m ≤ n, a 
 basis if there is a natural number $n$ such that $A$ is a weak additive basis of order $n$, that
 is, every element of $M$ is a sum of at most $n$ (not necessarily distinct) elements of $A$. -/
 def IsWeakAddBasis (A : Set M) : Prop := ∃ n, A.IsWeakAddBasisOfOrder n
+
+/-- In an additive commutative monoid `M`, `A` is an asymptotic additive basis of order `n`
+exactly when all but finitely many `a : M` can be written as a sum `a = a₁ + ... + aₙ` of
+exactly `n` elements of `A`, repetitions allowed (for `n = 0`, the empty sum `0`).
+
+Ported from `isAsymptoticMulBasisOfOrder_iff_prod` of the same source file
+(stated there multiplicatively with `@[to_additive]`). -/
+lemma isAsymptoticAddBasisOfOrder_iff_sum {A : Set M} {n : ℕ} :
+    IsAsymptoticAddBasisOfOrder A n ↔ ∀ᶠ a in cofinite, ∃ (f : Fin n → M) (_ : ∀ i, f i ∈ A),
+      ∑ i, f i = a := by
+  have := Set.mem_finsetSum (t := .univ) (f := fun _ : Fin n ↦ A)
+  simp_all [IsAsymptoticAddBasisOfOrder]
 
 end Set

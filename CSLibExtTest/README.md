@@ -56,3 +56,27 @@ lake env lean -DwarningAsError=true CSLibExtTest/Algorithms/Lean/DataStructures/
 lake env lean -DwarningAsError=true CSLibExtTest/Computability/Languages/ContextFreeCYKTests.lean
 lake env lean -DwarningAsError=true CSLibExtTest/Computability/CookLevinTests.lean
 ```
+
+## CPython listsort model regressions
+
+The [CPython listsort production API](../CSLibExt/Algorithms/Sorting/CPythonListsort/README.md)
+is integrated into `CSLibExt.Algorithms.Sorting.CPythonListsort` on the root
+toolchain. Its matching tests are under
+`CSLibExtTest.Algorithms.Sorting.CPythonListsort`.
+
+The twelve formerly compiler-evaluated theorem leaves are asserting `IO Unit`
+checks of the same concrete predicates and expected results. They introduce no
+theorem axioms and are not production proof dependencies. Other kernel-checked
+boundary examples retain their propositions in the matching test modules.
+These execution witnesses do not themselves prove correspondence to the pinned
+C implementation; source excerpts and the original transcription-review record
+remain separate evidence with the documented claim boundary.
+
+Build and execute the clients with:
+
+```sh
+lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/test_verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_citations.py
+```

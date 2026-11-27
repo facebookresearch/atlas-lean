@@ -1371,8 +1371,7 @@ def generate(titles: dict | None = None, dependency_file: Path | None = None, re
         ("v2 tests (MathlibExtTest, CSLibExtTest, PhyslibExtTest, DomainsTest)", "OUT", "Tests and diagnostics rather than mathematical results."),
         # No file counts: the Pages build leaves Atlas/ out of its checkout.
         ("Atlas/StatisticalMechanics", "MAPPED", "Standalone Lean files; no roadmap articles yet."),
-        ("Atlas/FC", "MAPPED", "Standalone Lean files; no roadmap articles yet."),
-        ("Atlas/CPythonListsort", "OUT", "Maintained as its own Autoform blueprint inside Atlas/CPythonListsort."),
+        ("Atlas/CDISProbability", "OUT", "Standalone Lake project with its own course roadmap in Atlas/CDISProbability/roadmap."),
     ]
     root = ROADMAP / "README.md"
     files[root] = render_roadmap_root(taxonomy, subjects, previous(root))

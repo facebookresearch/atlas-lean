@@ -1,0 +1,51 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeAtCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.FoundNewRunCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ListSortCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.GallopCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.BinarysortSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.CountRunSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.ListSortTrace
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeForceCollapseSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeTreeCost
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.ReverseSliceSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.BinarysortCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.CountRunCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.DescendingRunInvariant
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeHiCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeMovementCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.OriginRelabelEquivariance
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.PendingRunCorrectness
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ScanRemainder
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.StableMerge
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Equivalence.MinrunResults
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeHi
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemorySafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.PowerSortCostRegression
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.AccessTrace
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.FoundNewRunSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeAtSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeGetmemStorageValid
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeHiSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeLoSafety
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPermutation
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Policy.StackPowers
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.FoundNewRun
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.ListSortImpl
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeForceCollapse
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.SortSlice
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.TempStorageInvariant
+
+/-! Regression clients for the CPython listsort model. -/

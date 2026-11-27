@@ -1,0 +1,1790 @@
+{
+ "original_source_head": "3c125aebefc3eff1c1c2375a835176d8a958e10e",
+ "file_dispositions": [
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort.lean",
+   "sha256": "6ea6cb1ef322ba1c504805cf14ef488cbe93b86e5e553baa239c3a634692f745",
+   "original_atlas_path": "Atlas/CPythonListsort/Code.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/AccessTrace.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/AccessTrace.lean",
+   "sha256": "f06bc73be71802c0aeae294f0415b2da2e618a481be6b800c7a674cc6c69a988",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/AccessTrace.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/AlphabeticCostBound.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/AlphabeticCostBound.lean",
+   "sha256": "5d16448671b426c7ec6355e9bcd2216b4262e852a6f6820602acfbf207e6bee7",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/AlphabeticCostBound.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/BinarysortSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/BinarysortSafety.lean",
+   "sha256": "643079b82e9217e4ccf91061fd3e4274bda2d6976842f43f8c141fa801df2fdc",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/BinarysortSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/CountRunSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/CountRunSafety.lean",
+   "sha256": "0a251cbc0a4459726d4e1878b246faf5d38456b2c9210118ae3fef8cec7c4987",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/CountRunSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/FoundNewRunSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/FoundNewRunSafety.lean",
+   "sha256": "3fdd021c270a6d70b289fe7f3194d746a48d86ef5bdfda2dad74aa801e60f438",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/FoundNewRunSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/GallopCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/GallopCorrectness.lean",
+   "sha256": "bc67e837cf4d014675256b879109824b149dd002a01544d25fa9401bd986f7d4",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/GallopCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/GallopLeftSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/GallopLeftSafety.lean",
+   "sha256": "031647929e546dd2208ce98d12b070afce8c0354a21639a4072ac1bc486012bc",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/GallopLeftSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/GallopRightSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/GallopRightSafety.lean",
+   "sha256": "8aaa258c9d2fffd3b17ae508ea29207edd1b3656b3ce74cead446d6163e02e2d",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/GallopRightSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/GallopSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/GallopSafety.lean",
+   "sha256": "082186faed8149901261b62f883cc53ed6fb3a0c8d0c30de206e2da23ee000f1",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/GallopSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortCollapseCost.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortCollapseCost.lean",
+   "sha256": "97066d52f1951f2814096ce6fb38b601423c2a801d9fa73cbe0edbe8c9028700",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortCollapseCost.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortCostBound.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortCostBound.lean",
+   "sha256": "295d7030c94e58ce81a540a14f0036e4f1eef1c50c375f05d9d0a3436d1f39eb",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortCostBound.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortInputMode.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortInputMode.lean",
+   "sha256": "02274ba1d2f6f1ede4a18f52520656dc784f3c25b6e354b8472cea5e2f951623",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortInputMode.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortLocalBounds.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortLocalBounds.lean",
+   "sha256": "1d8cbc5099e0e3ea9d43f478aaa72bb0b8e7975108662237ea1c4e4525dcfccf",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortLocalBounds.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortMergePolicy.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortMergePolicy.lean",
+   "sha256": "5c990d1f379059d6fcf38f00793e7eae77f9273637869d0f240afce52e726f59",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortMergePolicy.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortPolicyBridge.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortPolicyBridge.lean",
+   "sha256": "214f567c9779c10d1ed0aceb3884aa0b770c1ea870ead7de1c1484c76b7835e2",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortPolicyBridge.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortPolicyEndpoints.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortPolicyEndpoints.lean",
+   "sha256": "7e82b05c056ee63f997e09f519144ac6aa98e80a4e32480c8ff9d5ffaf643731",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortPolicyEndpoints.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortSafety.lean",
+   "sha256": "53f63a0f77059d2b6f63875b7c9c26b841ab13cbc93b70ed4c7643e5354b691e",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortScanPolicy.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortScanPolicy.lean",
+   "sha256": "7d6fadb9b474c71da7936ffe55c98024dfa71d3a60da6233be99bbbecb4b6a4f",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortScanPolicy.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortScanReached.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortScanReached.lean",
+   "sha256": "bdd7c2391f2c5350be3d9f18d02361d6c18996f307939c1beeb3a4600dcb1e71",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortScanReached.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortSupport.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortSupport.lean",
+   "sha256": "5d7e45517b1cbb6060d8a1b059edb6c0ff5946112d0d56030d563aa267ff2efc",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortSupport.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortTermination.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortTermination.lean",
+   "sha256": "2ce9a271edf4b3d61c624237fef86259fcedb4e87e979b381a597d9d7430c91c",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortTermination.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ListSortTrace.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ListSortTrace.lean",
+   "sha256": "5828195bfb02d1e9594452a763663fec66e54ae87ba62cb306eaece2b9834550",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ListSortTrace.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeAtSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeAtSafety.lean",
+   "sha256": "9c11c720581433ebadb8fecbb12098177c7e2491dd28dd15202c4b960c38b199",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeAtSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeCost.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeCost.lean",
+   "sha256": "e0e9d3976cbc4ed2f01f09c272b7bb9eb341a6cc1e29617e70d6de0cc8f16639",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeCost.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeForceCollapseSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeForceCollapseSafety.lean",
+   "sha256": "631eaf2159a730d48875b34c421b2adf25e775e8dbd926b0089d4d3a9fa6c786",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeForceCollapseSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeGetmemRequestBound.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeGetmemRequestBound.lean",
+   "sha256": "331921fcd8940cbbdaca1d2d621fb050978ff8ca79ba2160a953f239fdbd1775",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeGetmemRequestBound.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeGetmemStorageValid.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeGetmemStorageValid.lean",
+   "sha256": "c7e97a33233c565acf12cad10b08ccaa74b76dd7f5f9857ff28ab9afd4099ee5",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeGetmemStorageValid.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeHiSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeHiSafety.lean",
+   "sha256": "84337ec385d60eb7663952df54188ade989553cea094cb278b3b6b2399df20e9",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeHiSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeLoSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeLoSafety.lean",
+   "sha256": "92f5300fa71010a4971dbfd996e592da226b1cff8e3203f8cc085e571e2c8921",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeLoSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeMemcpyProvenance.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemcpyProvenance.lean",
+   "sha256": "be778b305d4a74ec31ad7591ffe572fc3666c9b239e9aea4e127cd82698c816b",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeMemcpyProvenance.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeMemoryLifecycle.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemoryLifecycle.lean",
+   "sha256": "8c77bc0c552efbaa85ee70f844cec1cda5682603153d8bf64bed48ddc575d0cb",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeMemoryLifecycle.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeMemorySafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemorySafety.lean",
+   "sha256": "7e45b683eeb8053bf3d4c2fdf355a3adec1fba03d1915a972ae86d6afe5783c5",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeMemorySafety.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemorySafety.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergePolicyReplay.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergePolicyReplay.lean",
+   "sha256": "9df6d8df81d25299db7d36e584ac111a6a7cb82b37e30b4cdeaf1ef51c17f2fd",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergePolicyReplay.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeTracePrimitives.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeTracePrimitives.lean",
+   "sha256": "c7d72241c937a89628f8394d6182616109c00c5015c04e0e5ab82845fbc12834",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeTracePrimitives.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/MergeTreeCost.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/MergeTreeCost.lean",
+   "sha256": "d0674ab3aef0f6c4ba5f8b0c6f41055f2503d06a0001a1edd44cde9fc6cf60bd",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/MergeTreeCost.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/Order.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/Order.lean",
+   "sha256": "ba35192627157d2cbe4eceff4bbfc8722438def69921a25a530958547cdd902a",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/Order.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/PowerEntropyBound.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/PowerEntropyBound.lean",
+   "sha256": "ec9bd9f9dd0ed282158840c46a5e5f94c171366844496d4faa1ca0ac9e94e75c",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/PowerEntropyBound.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/PowerSortCostRegression.lean",
+   "destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/PowerSortCostRegression.lean",
+   "sha256": "d1982b2360108252724eb86aff74b85bd2d684a0e25664ae210a48f56a619eee",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/PowerSortCostRegression.lean",
+   "disposition": "test fixture and asserting execution"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/PowerSortPolicyCost.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/PowerSortPolicyCost.lean",
+   "sha256": "8014dd4910d75c8343055b87993505fae6a4ad51eb0c5a05a13d19d14c705cc0",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/PowerSortPolicyCost.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/PowerTreeEntropy.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/PowerTreeEntropy.lean",
+   "sha256": "f87e529c6755e478f75e306a045c1a5bac66565a408368c51d062b0cca6a7c02",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/PowerTreeEntropy.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ReverseSliceSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ReverseSliceSafety.lean",
+   "sha256": "fded94c4c811c84b7c0bf84af4c8eebcc0f69d28bf447197df5ac6b6a135bed2",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ReverseSliceSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/ScanPowerForestInvariant.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/ScanPowerForestInvariant.lean",
+   "sha256": "db932a37cb38aef00b9248e3c125b90669bde48eb10f394b96f5f141f3beba61",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/ScanPowerForestInvariant.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/SortSliceSafety.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/SortSliceSafety.lean",
+   "sha256": "657d70b811549f386e76571db30ac57c01a5444d219a216f329993afc8b59082",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/SortSliceSafety.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/TempStorageLiveness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/TempStorageLiveness.lean",
+   "sha256": "360571b4e9be946af3799e60c4e8906b7e047affdade5b900cae4b1b8bd4e422",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/TempStorageLiveness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/TopLevelErasure.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/TopLevelErasure.lean",
+   "sha256": "6813d39a799d198d816ad03490105ebb53c6dfe87146d12b063d67d8aa4e0a2e",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/TopLevelErasure.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/TopLevelErasureForceCollapse.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/TopLevelErasureForceCollapse.lean",
+   "sha256": "f7ea74dc884257f7d4aa98102be876fbb6ff42fe2c749adde97701081c3da388",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/TopLevelErasureForceCollapse.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/TopLevelErasureFound.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/TopLevelErasureFound.lean",
+   "sha256": "d252c8a4da3ed554443a04d64c4a72ed0316e15237c680bf2790f17d11915461",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/TopLevelErasureFound.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Assembly/TopLevelErasureHi.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Assembly/TopLevelErasureHi.lean",
+   "sha256": "8cbea4cfe49c11987dfce456fcc3a4c5fb96b925e58e99f218ee1197b91c9158",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Assembly/TopLevelErasureHi.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/BinarysortCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/BinarysortCorrectness.lean",
+   "sha256": "1fd99753f2f45b47831f88bc4ec91239b82fb8f64595ea573f5a4f22f23770dc",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/BinarysortCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/CountRunCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/CountRunCorrectness.lean",
+   "sha256": "deaf3c9ef503763def33a5bdd7ca7a9f430066a61a645fa1aa6f19ea58678ab2",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/CountRunCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/DescendingRunInvariant.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/DescendingRunInvariant.lean",
+   "sha256": "b014a11b1a51321d30ca259da478b703c72213021584ec16534a85b36042b39c",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/DescendingRunInvariant.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/DescendingRunNormalization.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/DescendingRunNormalization.lean",
+   "sha256": "23d733f4aa0576d4a99ac7f6cd58ea994df6fcbef7389850253358a49a41e7b4",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/DescendingRunNormalization.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/EntrySnapshotPermutation.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/EntrySnapshotPermutation.lean",
+   "sha256": "1668de8b1945ef5a6893c354a2e4c99b1fd8dca875c00bfebdfadad1ece0b0d7",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/EntrySnapshotPermutation.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/FoundNewRunCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/FoundNewRunCorrectness.lean",
+   "sha256": "04d1c9c4fa84295f2b7f954cc18e2a64f7f24cad5b175464a5c956e74e9e03f5",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/FoundNewRunCorrectness.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/FoundNewRunCorrectness.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ListSortCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ListSortCorrectness.lean",
+   "sha256": "bc84276e1ece33c98ca75d2f366ee984cc2d14ba790399df1089094e215778ae",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ListSortCorrectness.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ListSortCorrectness.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeAtCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeAtCorrectness.lean",
+   "sha256": "0a3d792dfb3b0769bb92270dced6fab84ddfdce2877c222c97cf0952bdb1a207",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeAtCorrectness.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeAtCorrectness.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeAtCorrectnessSupport.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeAtCorrectnessSupport.lean",
+   "sha256": "7c5374ac010334494da6e74037b657e6d61ada83d593186f4792addd0a67221a",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeAtCorrectnessSupport.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeForceCollapseCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeForceCollapseCorrectness.lean",
+   "sha256": "32b93df46254bf00bd8503255e00e4497e3b8794cf219e2b9a871f4fbd4f0bec",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeForceCollapseCorrectness.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeForceCollapseCorrectness.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeHiCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeHiCorrectness.lean",
+   "sha256": "615719f62eba47445bfee5ef3344acf35f8debcba1f1abcaf2b4ba4939d6a3e4",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeHiCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeHiInvariant.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeHiInvariant.lean",
+   "sha256": "cf62438e1ca6141e5c6708c143b9ad90eb7a4c45e406780c3e6b5263d7f352f9",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeHiInvariant.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeLoCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoCorrectness.lean",
+   "sha256": "b8b30d196288dd22a65f7e9ff8f079d48d235973725663ee1c8483cf2a9dfdd5",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeLoCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeLoInvariant.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoInvariant.lean",
+   "sha256": "2a74d02a03799204b729f50aa88ee0b766f07087b1fe7aea35d764cdf6785f96",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeLoInvariant.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeLoRegressionKernel.lean",
+   "destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeLoRegressionKernel.lean",
+   "sha256": "96b4382672d7f55c58dee8ebb653f4afe48eae3df229570a23b0cb55bd5381a3",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeLoRegressionKernel.lean",
+   "disposition": "test fixture and kernel-checked regressions"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeMovementCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeMovementCorrectness.lean",
+   "sha256": "218285becc3f318360d1c2560df89f2ee1fd157e06f90140e527a4995984aa42",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeMovementCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeSemanticPre.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeSemanticPre.lean",
+   "sha256": "35810f459e3e9abe6526c9a1a314990bc3e6770bee52572d390ff910f196e0e6",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeSemanticPre.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/MergeTargetConsistency.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/MergeTargetConsistency.lean",
+   "sha256": "8a15080322ff936b4c94311f5250541fecbaa510a5575365bce213faa42bcf4b",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/MergeTargetConsistency.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/OccurrenceErasure.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/OccurrenceErasure.lean",
+   "sha256": "13f07aa76d2cb7b448e4f4f7cb3c3294fd36e82be4dde9ba51aa46efd7fa59e3",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/OccurrenceErasure.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/OccurrenceErasureMerges.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/OccurrenceErasureMerges.lean",
+   "sha256": "f1fd779fd40efa5ee51fe4a8926468db3fd08b346baaf651c5e13bae1322e56c",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/OccurrenceErasureMerges.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/OccurrenceErasureScan.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/OccurrenceErasureScan.lean",
+   "sha256": "558e3a6d1c7ffff6b87d2e4514a34d4aa94312181ea2fae86cf6cd6123ed8a23",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/OccurrenceErasureScan.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/OriginRelabelEquivariance.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/OriginRelabelEquivariance.lean",
+   "sha256": "8d2f80e263b7bd25cbbf15077310a39a4e3b419a57801da7ad4c0b239c5d0ed0",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/OriginRelabelEquivariance.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/OriginRelabelMerges.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/OriginRelabelMerges.lean",
+   "sha256": "b8f13421c76b4ff0068ebb3f7081ade95770d9354a320c2747a82f6a8c0c24c6",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/OriginRelabelMerges.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/OriginRelabelScan.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/OriginRelabelScan.lean",
+   "sha256": "a678270b9045837a7ade2ca66f08f43c890f177239361c423f183581d0f719b5",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/OriginRelabelScan.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/PendingRunCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/PendingRunCorrectness.lean",
+   "sha256": "e0f3687125236e030853eb0d9216b363b3506f236629720a057111c318ce6967",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/PendingRunCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ReverseModeAlgebra.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ReverseModeAlgebra.lean",
+   "sha256": "45df891d320612e5edea44d65d38c42d4f18a18763698e16861a87f0141ee817",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ReverseModeAlgebra.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ReverseModeCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ReverseModeCorrectness.lean",
+   "sha256": "b93defdbe50a2b781507b10420ee714184d4b5785e37aeb0daed2b3a3753186a",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ReverseModeCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ReverseRangeSupport.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ReverseRangeSupport.lean",
+   "sha256": "3ac13a9ae69797d42f356ee6de41f28224f970dab479bb43f01bc45703cdc99f",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ReverseRangeSupport.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ReverseScanTransport.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ReverseScanTransport.lean",
+   "sha256": "49778a027cfc146617b5e546a90882d3feb06a284fc2b715bc3b22b2ef49ba24",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ReverseScanTransport.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ReverseSliceCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ReverseSliceCorrectness.lean",
+   "sha256": "509f824c2cb543c568420734c71b5e390665c72fb8ef577caa257d09ab8aa8c8",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ReverseSliceCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ScanCorrectnessSupport.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ScanCorrectnessSupport.lean",
+   "sha256": "933a3a5a82d4394ec1d3ba4ed17f6b8de76e4922ce6a19e072ad96af32a17de7",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ScanCorrectnessSupport.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ScanLoopCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ScanLoopCorrectness.lean",
+   "sha256": "6af0e1c20081cfed62a9307d49bc1a9285d54b4123176c4e0e273a1434375d6b",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ScanLoopCorrectness.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ScanRemainder.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ScanRemainder.lean",
+   "sha256": "a7f3842572ec43ff1f64e9f5ded8d50d24ce80eb8ccfce1b050c05528ea66b54",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ScanRemainder.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ScanStepCorrectness.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ScanStepCorrectness.lean",
+   "sha256": "a0091540b5a1076d14a139df416e9a9bee68f7444c1a61beb352fe6b0d86d0d9",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ScanStepCorrectness.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ScanStepCorrectness.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/ScanStepSupport.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/ScanStepSupport.lean",
+   "sha256": "e55bde52f74eebe96f75a55c26f0c32d7df43dd4979e69a79a57819d8dab7c71",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/ScanStepSupport.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/SortSliceRange.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/SortSliceRange.lean",
+   "sha256": "a867d713bb7ea432b66ae75f66c15c95e29446674e689e1b722975d55c127598",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/SortSliceRange.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Correctness/StableMerge.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Correctness/StableMerge.lean",
+   "sha256": "351497d17a66c5e1a25b598da3e036706883fa2d3d92a62d83fbe2411168948f",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Correctness/StableMerge.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Equivalence/Minrun.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Equivalence/Minrun.lean",
+   "sha256": "8b7e1d224e110a593dcd819d268ac18df9360de65763e9d55f50c3e5e3bc0277",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Equivalence/Minrun.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Equivalence/MinrunResults.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Equivalence/MinrunResults.lean",
+   "sha256": "d4b3108365494a7a478d8d492f1b460eb030d71b1e6aae96658a051195a117dc",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Equivalence/MinrunResults.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Equivalence/Powerloop.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Equivalence/Powerloop.lean",
+   "sha256": "5d73384f91b9092aa42ae6c49fb36b0bea734aff8274bd5fa7699c89ca86718e",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Equivalence/Powerloop.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Equivalence/PowerloopResults.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Equivalence/PowerloopResults.lean",
+   "sha256": "cb82afb358ec92470c423975463a1dfacff88aa7468aaab799af750536cbc41e",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Equivalence/PowerloopResults.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/BoundaryPowerGeometry.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/BoundaryPowerGeometry.lean",
+   "sha256": "b220e8632f31b526b8e77e30b8cea84b4e53ca554f1fc177b39699a140b1763f",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/BoundaryPowerGeometry.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/FoundNewRunPreservation.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/FoundNewRunPreservation.lean",
+   "sha256": "91e4342353f3f4cab7fc1fa27a723014338cf3e7b4624f611312f36f017112af",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/FoundNewRunPreservation.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/MergeAtPreservation.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/MergeAtPreservation.lean",
+   "sha256": "7de0fe719a77c83e8af3ca9376d72ac082857e89d6516dc4e46c603f6161f073",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/MergeAtPreservation.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/MergeForceCollapsePreservation.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/MergeForceCollapsePreservation.lean",
+   "sha256": "44418b7428833e165236b73f83a13fd2879ef57320b5072407614c85a3ef6e5c",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/MergeForceCollapsePreservation.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/MergeTopPowerPreservation.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/MergeTopPowerPreservation.lean",
+   "sha256": "2a04f1fca1661a1ba0f71bdf12e3565b11d27bb28b6bd0f47f900fb89712a0c0",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/MergeTopPowerPreservation.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/PendingLayout.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/PendingLayout.lean",
+   "sha256": "aa5445ef31294ea0d7a99ce075c3ac7b10959b88ac4851a347cb127cfaa73738",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/PendingLayout.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/PushRunPreservation.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/PushRunPreservation.lean",
+   "sha256": "ebb591396003c0854b151631e3ad1f155c0d2b1c59b4cc6442991d0569da9aea",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/PushRunPreservation.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/StackDepth.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/StackDepth.lean",
+   "sha256": "f210ead56966e934970b47367f40bcdacbb9b77d9ad944bb9bc7c66b3f7e3d01",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/StackDepth.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Policy/StackPowers.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Policy/StackPowers.lean",
+   "sha256": "3e99aa253848c22421ea347dea6f025d128fa4c977da186adb7744ae73270439",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Policy/StackPowers.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/Binarysort.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/Binarysort.lean",
+   "sha256": "caf50af95fab3ef70316fa4e40adee84976436374486e5e4d915ec8a2a600130",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/Binarysort.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/Comparator.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/Comparator.lean",
+   "sha256": "c12d05a74796f2dbe8873b5ef4bfd8c9a2b431b9edd06d91c33f0e336b66ed50",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/Comparator.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/CountRun.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/CountRun.lean",
+   "sha256": "7086e26e8ddf03fb09e47a9cfeee3d2378c70bfcb8032d441b554569deddaa42",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/CountRun.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/FoundNewRun.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/FoundNewRun.lean",
+   "sha256": "c8d8a619c943e46c0809fb968f391b534023ec4f2bc0e527d422bd9702c3d862",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/FoundNewRun.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/Gallop.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/Gallop.lean",
+   "sha256": "f9268715b4d6400a0c4bd9a65dc831b1a3d782c537a7e9f6c4978398811063ef",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/Gallop.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/ListSortImpl.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/ListSortImpl.lean",
+   "sha256": "dbda089363dbebeab9651458433b139a6b519d47cc2ee41ee963d367993622a7",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/ListSortImpl.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeAt.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeAt.lean",
+   "sha256": "88cfb79e4589f0a231e8e58b55a76422fd8e771a79e7b06690dbb86413c49ac4",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeAt.lean",
+   "disposition": "production source with concrete fixtures and regression leaves moved to tests",
+   "test_destination": "CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeAt.lean"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeForceCollapse.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeForceCollapse.lean",
+   "sha256": "e32b1936b37c1031ca0876cb64d5dffe3c72cc455f79a836a3f8d142d9c4edf9",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeForceCollapse.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeHi.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeHi.lean",
+   "sha256": "258e13c926a69edbfb4b289635a7e45ef4a984725dd787c2a3020633f60eb90a",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeHi.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeInitStorage.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeInitStorage.lean",
+   "sha256": "e41d7438bc8cdffcc3c5cdf6b7f784b4683f44db2ddeeeeca6da36465f8b1e30",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeInitStorage.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeLo.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeLo.lean",
+   "sha256": "d934470842e568ff3c1c131bd7ae0e206eaca6d95197c36047f744921933b726",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeLo.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeMemory.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeMemory.lean",
+   "sha256": "b8a4c2c11d584a96be97111e86a69e12cdbacb06fc93e1e010bb53cbd215a721",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeMemory.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/MergeState.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/MergeState.lean",
+   "sha256": "24187b2e540f34a41b7d7ba3ccc73c31f22261bbadf43535ce2397d72a04ff1a",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/MergeState.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/Minrun.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/Minrun.lean",
+   "sha256": "2c00f3c14f871df922ff6908aeda551bc1b6968eda7cb11d5a433afd00e5e664",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/Minrun.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/Powerloop.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/Powerloop.lean",
+   "sha256": "6bd8f6967ef2ef6d1f9c0fa1aa95c47bfb36ee33f971cd4245be4baced306f9b",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/Powerloop.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/ReverseSlice.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/ReverseSlice.lean",
+   "sha256": "4fb1a09cb377e26961526429a70a9a314bc832db7bf2baf135a9511c79c03edf",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/ReverseSlice.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/SortSlice.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/SortSlice.lean",
+   "sha256": "79724f39fc3ebf71adbcb14866430559ba954cacbc94d8011ed21a6600fca5ec",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/SortSlice.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/TempStorageInvariant.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/TempStorageInvariant.lean",
+   "sha256": "ab6102ff6d17bce9aa11f48510948c0eaa740867ffa20796f513707221f65e5b",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/TempStorageInvariant.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/Code/Transcription/Word.lean",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/Transcription/Word.lean",
+   "sha256": "643dd9820a1397a0604cb18ccc08ed64a68a394dfa4690908a7e89f039e55317",
+   "original_atlas_path": "Atlas/CPythonListsort/Code/Transcription/Word.lean",
+   "disposition": "root production source"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/README.md",
+   "sha256": "a492bcc67269b46b08cf594d3386fd1413f935352d7715f0213e94e8a57c38b8",
+   "original_atlas_path": "Atlas/CPythonListsort/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/lake-manifest.json",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/standalone-build-4.33.1/lake-manifest.json.snapshot",
+   "sha256": "8de8ee08086b4d01e6a4034c08f46845be27f78385efde71ef284aaf38f3b77e",
+   "original_atlas_path": "Atlas/CPythonListsort/lake-manifest.json",
+   "disposition": "historical standalone build snapshot; not active root configuration"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/lakefile.toml",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/standalone-build-4.33.1/lakefile.toml.snapshot",
+   "sha256": "d7ca9de88bddcd0e06b08acd740d89500b4090f5ac96e63fc1caf033c0ba3460",
+   "original_atlas_path": "Atlas/CPythonListsort/lakefile.toml",
+   "disposition": "historical standalone build snapshot; not active root configuration"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/lean-toolchain",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/standalone-build-4.33.1/lean-toolchain.snapshot",
+   "sha256": "3aac669c7a910ec2389f4e4f921b605adf6ebf2d1e0c9b9cd0be4d33f3f5db71",
+   "original_atlas_path": "Atlas/CPythonListsort/lean-toolchain",
+   "disposition": "historical standalone build snapshot; not active root configuration"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/README.md",
+   "sha256": "332779640d68f233a26ed599ce80131454fb4f39af80cff7c60845f8dc3fa127",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/README.md",
+   "sha256": "e70743d7f96e206a13c3d201460de2f279a5be2b84b5515f851eb15e226c4361",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/README.md",
+   "sha256": "c8f4a43254b25d39e81b4877a7cdaf2c5d8a3e5e097598990f69728e7d6bb8e1",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/binarysort-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/binarysort-correct.md",
+   "sha256": "f5020846341bc981df977d8da7df2bc3d75eb9352cd9524b3757ea237c523ea8",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/binarysort-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/count-run-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/count-run-correct.md",
+   "sha256": "ef1767da4802ffa30aab7e02acaf434101ed1714338fb097b9d6f0d79d6df623",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/count-run-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/entry-snapshot-permutation.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/entry-snapshot-permutation.md",
+   "sha256": "eaa41cc59f2341740729667a0f779bec6f5ae3091f0597fa07d5805bfb2decc4",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/entry-snapshot-permutation.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/README.md",
+   "sha256": "c2e2eddbfbcdaff92f62160568aa709df77bc520a2c4c1dd9cff9563ae1881ac",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/merge-origin-equivariance.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/merge-origin-equivariance.md",
+   "sha256": "9b927ca3ed89faf5acb3e8d6c167582507f7c3c9f467e486e7c0ee6c7de5c5a0",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/merge-origin-equivariance.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-merges.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-merges.md",
+   "sha256": "725073c015772855e957073018ba4232741b44933c82bba429eb2fa029808462",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-merges.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-primitives.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-primitives.md",
+   "sha256": "57cfd508e261dc081283fd1cd14a9dc9aebacbb69d3fcc6f35157aa82e6c4c4a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-primitives.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-scan.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-scan.md",
+   "sha256": "355406263cf264f7f4afa155a490ed8c439c50db6790e03c3f8122daf4ac5259",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/occurrence-erasure-scan.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/origin-relabel-equivariance.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/origin-relabel-equivariance.md",
+   "sha256": "de9e2f780c01942845aa71a0c4f87d0e955eae8eb3cf4396cb67896e2445213a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/origin-relabel-equivariance.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/equivariance/scan-origin-equivariance.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/equivariance/scan-origin-equivariance.md",
+   "sha256": "97c29fddb6b33aaf131affbad8943eaa8b82a823fbe941063225d54cb6f2444b",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/equivariance/scan-origin-equivariance.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/force-collapse-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/force-collapse-correct.md",
+   "sha256": "a8b85b8f75148d37b07d2f303f7082827e43aa0f845251e28528a3f3781951d2",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/force-collapse-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/gallop-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/gallop-correct.md",
+   "sha256": "822e0015bae7839e763d879b516c5ee031f9b2cd18984466011df6935d17aeff",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/gallop-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/gallop-right-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/gallop-right-correct.md",
+   "sha256": "0f4b268e7b2335892d597b7e586c3ce8f567f4a9657483aea74a788426fe8744",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/gallop-right-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/listsort-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/listsort-correct.md",
+   "sha256": "28caa008fdb72dc028ef680d397c50862605f5661754b7513b34103ee7445acb",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/listsort-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/merge-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/merge-correct.md",
+   "sha256": "04d66f61879c0173c216b340bcd85dc726eece63fe1f91858be26c94aa54c882",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/merge-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/merge-hi-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/merge-hi-correct.md",
+   "sha256": "df782c4103ef631f22f936cab10dae59104a6ee65c2d73e7f402fc7c9d9a31a0",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/merge-hi-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/merge-lo-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/merge-lo-correct.md",
+   "sha256": "7a84384a279e68c2257cf26fc7d2f5a50aef6f330d29f20aecf613b3267ffc7c",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/merge-lo-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/order-and-stability.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/order-and-stability.md",
+   "sha256": "1d17128b5dbdc0dee5368e5d71094f8dd1bc9ad21ce1b55e1912752481cd8f84",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/order-and-stability.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/pending-run-correctness.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/pending-run-correctness.md",
+   "sha256": "151d782afee4f5bccadc9f78e6c307c15b4c1c7ddf3f7f785c9117d9037481b1",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/pending-run-correctness.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/reverse-mode-algebra.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/reverse-mode-algebra.md",
+   "sha256": "9c163cf9275717a28f82c834ab600950759dd1414d4c7a1dd8fc7d37a4158872",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/reverse-mode-algebra.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/reverse-mode-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/reverse-mode-correct.md",
+   "sha256": "dcc4fb050be1579cbe1988218c2e97eaa82e29aec474469331b8f7e8f78cbbbf",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/reverse-mode-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/reverse-scan-transport.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/reverse-scan-transport.md",
+   "sha256": "b164e79617e7880b564b68f6015454e40eaa5f761fdfbd2a28c6fdbbdf5804cf",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/reverse-scan-transport.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/reverse-slice-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/reverse-slice-correct.md",
+   "sha256": "dec054bfcd9a36ad66338aee9e59786a5729deca5157a906f6b4e4867c3d6cc2",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/reverse-slice-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/scan-loop-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/scan-loop-correct.md",
+   "sha256": "dd02b90d2b5912985efb262ec54b8736311d638c89921152850dc86c5421bb9d",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/scan-loop-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/scan-remainder-matches.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/scan-remainder-matches.md",
+   "sha256": "06fc67b65ef726a85793d8c64bea39ceb6065fa7c9156d4b7801af2927103fd4",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/scan-remainder-matches.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/scan-step-correct.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/scan-step-correct.md",
+   "sha256": "e66354b00feb12d8a807f8dc3117a9af6656849a1282821f9a7ba36d025751e4",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/scan-step-correct.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/sorted-spec.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/sorted-spec.md",
+   "sha256": "4864260b07913c368c8ab3540bfdc5308b63fcfe9767d7da049bf167b8f2df5c",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/sorted-spec.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/correctness/stable-spec.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/correctness/stable-spec.md",
+   "sha256": "07bd312c83cfabece3e164f217f7bb2e043e16339a8a12f05cdcf496f1b8dcbc",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/correctness/stable-spec.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/README.md",
+   "sha256": "fdf7f97612017779cbae9a4af6d893b08076683f89e92b0cde352fecf5a1d05b",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/access-trace.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/access-trace.md",
+   "sha256": "150258533e6302b8a31e304b7f9e2e5daa692a1795bd419241b6996188dddeff",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/access-trace.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/binarysort-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/binarysort-safe.md",
+   "sha256": "864276e9c3cc45bb173dc60a079264556982531f878f1043dfeda9d152d0d334",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/binarysort-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/count-run-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/count-run-safe.md",
+   "sha256": "4b2d9e20460b805cab338efea59a0a49ea56b2dc5e5d0879d9b49702dbfae9ab",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/count-run-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/found-new-run-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/found-new-run-safe.md",
+   "sha256": "753e89abfadfc117954b10ee926d631c6981737fe5725b2e38e1aaf466f6d712",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/found-new-run-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/gallop-left-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/gallop-left-safe.md",
+   "sha256": "85eb779fb461bdc6867634c04850af9f3414a7ed4cef024fb25264fb0fcd6b95",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/gallop-left-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/gallop-right-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/gallop-right-safe.md",
+   "sha256": "9bca96df9900e9d2e9a406fa8440d1372794d5da4e4fc044ebb4f3c0a53ba763",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/gallop-right-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/listsort-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/listsort-safe.md",
+   "sha256": "60cd1ae507986a78460fa384d82cbab2787c33db388267b66080acae03812c93",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/listsort-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/local-bounds.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/local-bounds.md",
+   "sha256": "9ccb96ca7609ddbe23c935ef0719c3c8366176190f45e4a98b49d0fe4ebbb2d7",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/local-bounds.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-at-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-at-safe.md",
+   "sha256": "1162cb91ad04df257f974543ebd7bdb375bdd3bf1d54f26abb430efe81b4b7ed",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-at-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-force-collapse-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-force-collapse-safe.md",
+   "sha256": "eb1e870256b25a0d6ec65e691d1aa67efe9e572757822bc6507bfaee531a02b1",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-force-collapse-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-freemem-storage-valid.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-freemem-storage-valid.md",
+   "sha256": "725595e40ba98779a8834620ffd1a9483bee6433236da72e1b3aee44f50df900",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-freemem-storage-valid.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-getmem-request-bound.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-getmem-request-bound.md",
+   "sha256": "0c64ecff286ef2d01592022de5e688a61a506905c4104c495c69ae7c9f69a51c",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-getmem-request-bound.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-getmem-storage-valid.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-getmem-storage-valid.md",
+   "sha256": "756577cda687f55430248737948ee99ab7853dbb3e64cac830b6de5e9c540952",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-getmem-storage-valid.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-hi-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-hi-safe.md",
+   "sha256": "a474dc626141d3b163f106569da5a0ab21aa8181887ba440954c2f0041c951da",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-hi-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-init-storage-valid.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-init-storage-valid.md",
+   "sha256": "361514ca01dcf1e7aa75721e4990112d9579ea9821eb32317e849d7e884673d1",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-init-storage-valid.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-lo-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-lo-safe.md",
+   "sha256": "15c5ec8eacdc3f0bf24848358475fe1e17f0c7a1d25dc279410715763ffc2f04",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-lo-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-memcpy-provenance.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-memcpy-provenance.md",
+   "sha256": "ae941cda7c985f2d5655a2716817702924a7f70e0debc50a5edcfb187bca8166",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-memcpy-provenance.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-memory-event-validity.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-memory-event-validity.md",
+   "sha256": "534f189f424eda07e678186e75a9b4ddacdbc86e98d606371565a49a54b0097c",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-memory-event-validity.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-memory-lifecycle.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-memory-lifecycle.md",
+   "sha256": "79e01ab1f1dfa684ec7144fb6e1c689933489f6311ea227111be79bc31563af6",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-memory-lifecycle.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/merge-memory-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/merge-memory-safe.md",
+   "sha256": "8e4295c2863a83bf684bc2facf2d1d00c1e231759b58ce7415f0fa44617e1b36",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/merge-memory-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/reverse-slice-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/reverse-slice-safe.md",
+   "sha256": "57edc7056020445a9051f2063dac4aeeeec26d246ddfe205e628acb3b5d8e459",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/reverse-slice-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/sortslice-safe.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/sortslice-safe.md",
+   "sha256": "7cba1b2cca6fa8edac1aaf3116dc848cd518d187e0eaee3783f7ba3fd68c5d3d",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/sortslice-safe.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/temp-storage-liveness.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/temp-storage-liveness.md",
+   "sha256": "29ffd36a0d1d8eaad2fa7bbc0ce35ea6b111736ce40b9e0fcaa6ccf84fb469ba",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/temp-storage-liveness.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/safety/termination.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/safety/termination.md",
+   "sha256": "92dc2e4d4a7103eddfef29e7bfb6ca3a9409552fc7f17a6cfce3a03a78ed8d40",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/safety/termination.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/stretch/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/stretch/README.md",
+   "sha256": "9608172dc8fb2a2fd4e4e72bc8b77b47006e05cccdfbb9eb7bd51a8578db3ab0",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/stretch/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/stretch/cost-bound.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/stretch/cost-bound.md",
+   "sha256": "f3a9fbad8a43f99c9d06295531867a497383032ea232c48600b9113e369b40c4",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/stretch/cost-bound.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/stretch/merge-cost.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/stretch/merge-cost.md",
+   "sha256": "c74c8470749facc68330dbcb7aa3d1478b3bba513eaca2b1f725b674c7bbf79f",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/stretch/merge-cost.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/assembly/stretch/merge-tree.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/assembly/stretch/merge-tree.md",
+   "sha256": "8ba35b5ab6d19bc952694360f83ac838c24a2acaf4aeb10aeaefad7d9aa57d8a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/assembly/stretch/merge-tree.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/README.md",
+   "sha256": "9c27ffd235a7287bb12fc71ac49bdcc14ad84a98d8d614de4925a04156df90bb",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/minrun-exponent-characterization.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/minrun-exponent-characterization.md",
+   "sha256": "87788b784e094cba67d762afd2d41548beff62e8bdff75726429192d05d526f5",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/minrun-exponent-characterization.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/minrun-init-equivalence.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/minrun-init-equivalence.md",
+   "sha256": "c8506a8e82730662cfa162544f2ce873f4b6f06fcca69cf7f2593dc4479cd9a6",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/minrun-init-equivalence.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/minrun-next-equivalence.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/minrun-next-equivalence.md",
+   "sha256": "a674c2744d0b279626a2f17233f7ba4a63707e082b4d8644025a6f2f728288f6",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/minrun-next-equivalence.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/minrun-output-range.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/minrun-output-range.md",
+   "sha256": "fcb53293e92a05ff582e5e609efdf3cc09c8833858a669156b4adc9e32234be7",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/minrun-output-range.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/minrun-prefix-sum.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/minrun-prefix-sum.md",
+   "sha256": "fad259cc306302304100bfa504c8dd088737d44c8109cb3b2b48615ab3ce62ce",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/minrun-prefix-sum.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/minrun-sequence.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/minrun-sequence.md",
+   "sha256": "038f8086ce50ebc4627902f2b4c4a8dfe78ea0e567be0785d8e82cb434a7c34f",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/minrun-sequence.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-equivalence.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-equivalence.md",
+   "sha256": "25d470c32176115650a6300805eccf9194b9e6f62c6de12db85c8a4af2b26a02",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-equivalence.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-input-bounds.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-input-bounds.md",
+   "sha256": "1dd3f2013737d9338c7312f8a9149c19639e23175d518da93f96dbf620319a7a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-input-bounds.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-nat-result.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-nat-result.md",
+   "sha256": "b877cda4a088ec85f2741ca0cd080c8e56f73c5010ec0241b714705821894d39",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-nat-result.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-nat-spec.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-nat-spec.md",
+   "sha256": "60167aa1c411b5c46366d25542e0f072429b76cbf7fcda31b208ec6d997373a9",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-nat-spec.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-result.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-result.md",
+   "sha256": "9cc8567d92ce823151adc6e60635696297e6edf9a6319ea28faa3fd76c4f7875",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-result.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-trace-safety.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-trace-safety.md",
+   "sha256": "00235b6236d2185a0d9d4622e897918aa34088b472c732f8b3dbcd9760be47dd",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-trace-safety.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/bit-equivalence/powerloop-trace-spec.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/bit-equivalence/powerloop-trace-spec.md",
+   "sha256": "262eeafe33eb8373d95c0efdb50b88b833bf3429c89be06a766ac44d87218863",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/bit-equivalence/powerloop-trace-spec.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/README.md",
+   "sha256": "98d6b42f7f52be284520cdc0fd2746e7809af325420fed0513a9de03e5bcf4e5",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/boundary-power-geometry.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/boundary-power-geometry.md",
+   "sha256": "796405a2684127fa938acae07bc04307a6db59374252901ee162a08aebb841df",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/boundary-power-geometry.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/force-collapse-preservation.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/force-collapse-preservation.md",
+   "sha256": "f4fcbcf75641ea6105417efc333c73a80f2e523bd40997be7ecde17ef5ed6222",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/force-collapse-preservation.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/found-new-run-preservation.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/found-new-run-preservation.md",
+   "sha256": "ccf4d96bae7fca6ca0dff9b71a8be62625e000a9c413cf4c3d33896a03b72b19",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/found-new-run-preservation.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/merge-at-preservation.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/merge-at-preservation.md",
+   "sha256": "57a2c326e921045f8d7933799207e475b261773eb3df7df8b3f6ec15af649703",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/merge-at-preservation.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/merge-top-power-preservation.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/merge-top-power-preservation.md",
+   "sha256": "339a57967dfab345e3398a07c07ffff895e7cf0ee0f2b0801b3338a9b83e6210",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/merge-top-power-preservation.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/pending-layout.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/pending-layout.md",
+   "sha256": "3ae9fe25498ad54cf2e7c044635d19382d120a962492f22eb690fe2e85f6e614",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/pending-layout.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/power-range.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/power-range.md",
+   "sha256": "e65126d47427ace59eefba8285cddbed256d6ffafd75d34707d94f110fecf956",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/power-range.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/push-run-preservation.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/push-run-preservation.md",
+   "sha256": "2342f2baace1f219f37e026694b341797c19c0177195934ccaffdb2a744e558e",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/push-run-preservation.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/stack-depth.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/stack-depth.md",
+   "sha256": "8407d2ae3966543f28a4e8a0242a60df473b3143d2fe15e762d054b4ffd3b701",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/stack-depth.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/policy/stack-powers.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/policy/stack-powers.md",
+   "sha256": "693ca654fac79a97af8c887c628112c354f952d5f7816ef7f77cf0ec4119b9df",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/policy/stack-powers.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/README.md",
+   "sha256": "5ebd63bbd6e1cbf8e0a7d7f90ee2b53e6cd5ceb1da5e112a9aac7047e90d4311",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/binarysort.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/binarysort.md",
+   "sha256": "a2f5eca3fd12357154d92e86615e9e7aa6292aa019629edc5e56d3af480b67d0",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/binarysort.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/comparator-model.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/comparator-model.md",
+   "sha256": "114f05763b1193bffeb50272dc9780b427bf79af537745b2c62d64b635bc5ee5",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/comparator-model.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/count-run.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/count-run.md",
+   "sha256": "e8aac841fca85e7a2affdbcf5e6ffddec8b048769e0579b90620b7245921ce8c",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/count-run.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/found-new-run.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/found-new-run.md",
+   "sha256": "76f7e646983029c8e7e3d5cefc2708ddaadccdb2966c520553a91e999c9637dd",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/found-new-run.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/gallop-left.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/gallop-left.md",
+   "sha256": "2b5c6a0c4a5d7e363cf3b4bce5e0c37373dd95363339109e7ff92848a4103e49",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/gallop-left.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/gallop-right.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/gallop-right.md",
+   "sha256": "7a7e01cf734b29589d7ec7ca3fc0c0f379111cfadc98b9b050e6c90c90d9a11a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/gallop-right.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/list-sort-impl.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/list-sort-impl.md",
+   "sha256": "e6fa2d79a868179708bb288d4a43e553df70763f3b01311f8608e0a34c4abf4f",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/list-sort-impl.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-at.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-at.md",
+   "sha256": "65fdd5929dee43f43eb2cbe6f2947c38c6fe4f6a0dce51c7f709763046b3ea2e",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-at.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-force-collapse.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-force-collapse.md",
+   "sha256": "1fba844ddaa58e559f39ffa35b0601943118e7571bed4d956a1d86dd02d5e29d",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-force-collapse.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-freemem.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-freemem.md",
+   "sha256": "ab9e8320f5d064d7bc8e8461de79fd2c3427f75915878cdd1a5caff58740440a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-freemem.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-getmem.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-getmem.md",
+   "sha256": "ed6098625d162b695232aa1014d2653dcff6f9ace90176d01b5887347a24ae91",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-getmem.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-hi.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-hi.md",
+   "sha256": "d453d5bac2f7b3568e9cce89ad7a24b1581e9a15619907f2a319a1a886cc07f8",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-hi.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-init-minrun.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-init-minrun.md",
+   "sha256": "9aba96b4e5ecb504a9c1a06d73ae95b2a06cf38e0821e3a8722a0eead8cc14ba",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-init-minrun.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-init-storage.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-init-storage.md",
+   "sha256": "ee8309b82a695a6c3f9ad571266c8136d96b8a7e2da25283f1bafab47e39a7ea",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-init-storage.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-lo.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-lo.md",
+   "sha256": "8dbc7c364c54757d86bf02c597add7391c60c8667c98f37280f3d68332bfb7eb",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-lo.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/merge-state.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/merge-state.md",
+   "sha256": "819b343c5d0fa47a2c6e038a9146b365c80cd26151eeabb054380b68af03521a",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/merge-state.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/minrun-next.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/minrun-next.md",
+   "sha256": "fe828c26c2da2aa6d76efe958fe8d8f7d51227a864b1c01ad01ab6140fd79ccc",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/minrun-next.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/powerloop.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/powerloop.md",
+   "sha256": "5464627ad3da6a95ba5234eb2c03c6799f1f11c71179eda2a65a04bdb5f58811",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/powerloop.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/reverse-slice.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/reverse-slice.md",
+   "sha256": "806d719570413be830fedd09d8e91d28569527cb7922bb59bd7073e931943099",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/reverse-slice.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/sortslice-primitives.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/sortslice-primitives.md",
+   "sha256": "cd3372184363e00e67a1b4ab250394b3e9b8057a651fbd6412826da552fb1c6b",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/sortslice-primitives.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/temp-storage-invariant.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/temp-storage-invariant.md",
+   "sha256": "fd4d6b940c98cd8af086060c948e4c1e338efc85de52f29cd7dc959d3e7e2555",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/temp-storage-invariant.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/roadmap/transcription/word-model.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/roadmap/transcription/word-model.md",
+   "sha256": "9957d317a7bb224d46a29d99486f7b506647e7ea90849aa0edb5db8bf0a4a4dd",
+   "original_atlas_path": "Atlas/CPythonListsort/roadmap/transcription/word-model.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/README.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/README.md",
+   "sha256": "5277ec2d192425e23e2c2d97eb5754cf219aecbd166be8efd7da078a649c6452",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/README.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/listobject-excerpts.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/listobject-excerpts.md",
+   "sha256": "f3f025ef349e33a1b018eddf85d810dc0f7fc31155c4acdd6210a0ef5f9e3f82",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/listobject-excerpts.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/listsort.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/listsort.md",
+   "sha256": "8eb4589d55d9d3a940192a0ed466dc3b360b69f6b3b529d22984ae192b9be1a8",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/listsort.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/mathlib-prior-art.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/mathlib-prior-art.md",
+   "sha256": "87679fb68a7e159449a1af38267d0f1a9e70377f968bbed34edeaeffa995ca92",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/mathlib-prior-art.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/munro-wild-powersort-notes.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/munro-wild-powersort-notes.md",
+   "sha256": "9de927d355e41d8cf6d12aeb08709ff06e4c7ac79b4b1495d8992fc2bce946c3",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/munro-wild-powersort-notes.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/munro-wild-powersort.pdf",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/munro-wild-powersort.pdf",
+   "sha256": "edf79f9d25bb654edcc631b0b7883e0a37140a3674556f16382fab100ddeb54b",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/munro-wild-powersort.pdf",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/toplevel-theorems.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/toplevel-theorems.md",
+   "sha256": "e2d84f5bd7e03886148df7f286250979b4f736842e69aae23226f224bf72098e",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/toplevel-theorems.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/sources/upstream-pins.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/sources/upstream-pins.md",
+   "sha256": "79752b0824e7c4614261a116cda978318b1aa1a5c316eb0dac7cbe0d2edd483d",
+   "original_atlas_path": "Atlas/CPythonListsort/sources/upstream-pins.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/verify/VERIFY.md",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/verify/VERIFY.md",
+   "sha256": "1b5645ce55f6fabe2f00596589651bdbaa9ff0e7d67a4d03e7da3b75cf623547",
+   "original_atlas_path": "Atlas/CPythonListsort/verify/VERIFY.md",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/verify/verify_excerpts.py",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py",
+   "sha256": "6a38938a3bb78ad78705e3d2a2755d1ccafe5503b9b2e9ba7f29d97d4ed32d95",
+   "original_atlas_path": "Atlas/CPythonListsort/verify/verify_excerpts.py",
+   "disposition": "retained source/provenance/documentation"
+  },
+  {
+   "source": "FormalizedSoftware/CPythonListsort/verify/verify_trust_boundary.py",
+   "destination": "CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py",
+   "sha256": "52368f217ee62a832c0f3be735708008251470c7bc4b02f55dfc910b0340273c",
+   "original_atlas_path": "Atlas/CPythonListsort/verify/verify_trust_boundary.py",
+   "disposition": "retained source/provenance/documentation"
+  }
+ ],
+ "runtime_regressions": [
+  {
+   "name": "listSortScan_long_run_no_extension_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness",
+   "original_proposition": "(minrunNext scanStepNoExtensionState.minrunState).result.toNat = 32 \u2227\n      (countRun? scanStepNoExtensionState scanStepNoExtensionState.data 24 40).map\n        (fun counted => counted.length) = some 40 \u2227\n      (listSortScanTraced? 1 scanStepNoExtensionState 24 40 false 64).trace.pushDepths =\n        [2] \u2227\n      (listSortScan? 1 scanStepNoExtensionState 24 40 false 64).map\n        (fun result =>\n          (result.returnCode, result.fuelExhausted,\n            result.state.pending.toList.map (fun run =>\n              (run.base, run.len.toNat)),\n            decide (result.state.data = scanStepNoExtensionSlice))) =\n        some (0, false, [(0, 64)], true)",
+   "original_proposition_sha256": "e037e101663e555e89c85501334e9762718c462b6fecb0ccd0d0a4f515743fad",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSortScan_policy_merge_then_push_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness",
+   "original_proposition": "(countRun? scanStepPolicyMergeState scanStepPolicyMergeState.data 2 1).map\n        (fun counted => counted.length) = some 1 \u2227\n      (listSortScanTraced? 1 scanStepPolicyMergeState 2 1 false 3).trace.pushDepths =\n        [2] \u2227\n      (listSortScan? 1 scanStepPolicyMergeState 2 1 false 3).map\n        (fun result =>\n          (result.returnCode, result.fuelExhausted,\n            result.state.pending.toList.map (fun run =>\n              (run.base, run.len.toNat)),\n            result.state.data.entries.toList.map (fun entry =>\n              (entry.key.value, entry.key.origin)))) =\n        some (0, false, [(0, 3)], [(1, 1), (2, 0), (3, 2)])",
+   "original_proposition_sha256": "37d33b6fb1e6c65590e799847917bced26684cf61e13485e129ac59ff7228c7c",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "mergeAt_slide_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt",
+   "original_proposition": "(mergeAt? mergeAtSlideExampleState 0).map\n        (fun result =>\n          (result.returnCode, result.fuelExhausted,\n            result.state.pending.toList)) =\n      some\n        (0, false,\n          [{ base := 0, len := 2, power := some 4 },\n           { base := 2, len := 1, power := none }])",
+   "original_proposition_sha256": "b58c292761428fc01f5b5c9547d0888c2e2ccf09787251e236c3094c90cc6d5a",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "foundNewRunLoop_taken_merge_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.FoundNewRunCorrectness",
+   "original_proposition": "(foundNewRunLoop? 2 foundNewRunTakenMergeState 2).map\n        (fun result => result.returnCode) = some 0 \u2227\n      (foundNewRunLoop? 2 foundNewRunTakenMergeState 2).map\n        (fun result => result.fuelExhausted) = some false \u2227\n      (foundNewRunLoop? 2 foundNewRunTakenMergeState 2).map\n        (fun result => result.state.pending.toList.map fun run =>\n          (run.base, run.len.toNat, run.power)) =\n        some [(0, 2, some 2)] \u2227\n      (foundNewRunLoop? 2 foundNewRunTakenMergeState 2).map\n        (fun result => result.state.data.entries.toList.map fun entry =>\n          (entry.key.value, entry.key.origin)) =\n        some [(1, 1), (2, 0), (3, 2)]",
+   "original_proposition_sha256": "a0c7a43e4bb9499ac19aabc25d0bde46b68f475ecc75f7d30fafaea01f5af7a8",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSort_powerSort_cost_rotation_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.PowerSortCostRegression",
+   "original_proposition": "powerSortCostRegressionInput.entries.size = 256 \u2227\n      (initialMergeState\n        (fun left right : Nat => decide (left < right)) false\n        powerSortCostRegressionInput).1.mr_e = 3 \u2227\n      (listSortImplTraced? (fun left right : Nat => decide (left < right))\n        false false powerSortCostRegressionInput).result.map\n          (fun result => (result.returnCode, result.fuelExhausted)) =\n        some (0, false) \u2227\n      powerSortCostRegressionTrace =\n        powerSortCostRegressionScanEvents ++\n          powerSortCostRegressionCollapseEvents \u2227\n      PolicyEvent.formedLengths powerSortCostRegressionTrace =\n        [32, 33, 83, 36, 32, 32, 8] \u2227\n      policyBoundaryPowers { base := 0, len := 256 }\n          (PolicyEvent.formedSpans powerSortCostRegressionTrace) =\n        [3, 2, 1, 2, 3, 4] \u2227\n      (replayPolicyEvents? { base := 0, len := 256 }\n          powerSortCostRegressionScanEvents).map openForestLengths =\n        some [148, 36, 32, 32, 8] \u2227\n      (replayPolicyEvents? { base := 0, len := 256 }\n          powerSortCostRegressionScanEvents).map\n            (fun forest => policyBoundaryPowers { base := 0, len := 256 }\n              (forest.map SpannedMergeTree.span)) =\n        some [1, 2, 3, 4] \u2227\n      PolicyEvent.logicalMergeCost powerSortCostRegressionScanEvents = 213 \u2227\n      PolicyEvent.logicalMergeCosts\n          powerSortCostRegressionCollapseEvents = [40, 68, 108, 256] \u2227\n      PolicyEvent.logicalMergeCost\n          powerSortCostRegressionCollapseEvents = 472 \u2227\n      PolicyEvent.logicalMergeCost powerSortCostRegressionTrace = 685 \u2227\n      topPairCompletionMergeCosts [148, 36, 32, 32, 8] =\n        [40, 72, 108, 256] \u2227\n      topPairCompletionCost [148, 36, 32, 32, 8] = 476 \u2227\n      213 + 476 = 689 \u2227\n      213 + 472 = 685",
+   "original_proposition_sha256": "bb8fb3f4c1ec375403cf1d30e100e7bcc85d169d91b79303f2f8c90258fc903e",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "mergeAt_thirdLast_slide_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeAtCorrectness",
+   "original_proposition": "(mergeAt? mergeAtThirdLastSlideRegressionState 0).map\n        (fun result =>\n          (result.returnCode, result.fuelExhausted,\n            result.state.pending.toList)) =\n      some\n        (0, false,\n          [{ base := 0, len := 2, power := some 4 },\n           { base := 2, len := 1, power := none }])",
+   "original_proposition_sha256": "82e58243a4566528c82714e0b4c613772d3651bc0bb4b80dbc3a8158f154e2e0",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSort_forward_keyed_duplicate_exact_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ListSortCorrectness",
+   "original_proposition": "(listSort? (occurrenceComparator correctnessRegressionLt) false\n        reverseKeyedDuplicateInput.withOccurrenceKeys).map\n        correctnessRegressionView =\n      some\n        { returnCode := 0\n          fuelExhausted := false\n          entries :=\n            [(1, 1, some 10), (1, 2, some 11),\n             (2, 0, some 20), (2, 3, some 21)] }",
+   "original_proposition_sha256": "d7f3519a1f3559947695642245a3affbfa861b0971b56c0ebc69c55ffbdad53b",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSort_reverse_keyed_duplicate_exact_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.ListSortCorrectness",
+   "original_proposition": "(listSort? (occurrenceComparator correctnessRegressionLt) true\n        reverseKeyedDuplicateInput.withOccurrenceKeys).map\n        correctnessRegressionView =\n      some\n        { returnCode := 0\n          fuelExhausted := false\n          entries :=\n            [(2, 0, some 20), (2, 3, some 21),\n             (1, 1, some 10), (1, 2, some 11)] }",
+   "original_proposition_sha256": "3770ed28fa8e89018ed85855e2624e6ca29c1330c2ad97199178ac2157f7fbde",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "mergeForceCollapse_threeRun_equalKey_payload_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness",
+   "original_proposition": "(mergeForceCollapse? forceCollapseCorrectnessRegressionState).map\n        forceCollapseCorrectnessRegressionView =\n      some forceCollapseCorrectnessRegressionExpected",
+   "original_proposition_sha256": "01de6f0355171457116772a79f526c80c7acd22f793bbe8527f8db431916e6ca",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSort_mergeMemory_lo_event_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemorySafety",
+   "original_proposition": "MergeMemoryRegression.directions MergeMemoryRegression.loInput = [.lo]",
+   "original_proposition_sha256": "4b6f6a07b5897ff5b22763becab5f981227f30a010577678961b41a88fb59322",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSort_mergeMemory_hi_event_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemorySafety",
+   "original_proposition": "MergeMemoryRegression.directions MergeMemoryRegression.hiInput = [.hi]",
+   "original_proposition_sha256": "2bde73caf5b41b0120eb504ff4bac4c1f9fcc9c1f688aded9171febf50f23c62",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  },
+  {
+   "name": "listSort_mergeMemory_released_growth_regression",
+   "test_module": "CSLibExtTest.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemorySafety",
+   "original_proposition": "MergeMemoryRegression.growthSummaries =\n      [(some .inline, .heap, 129), (none, .heap, 129),\n        (some .released, .heap, 258)]",
+   "original_proposition_sha256": "610fe0edaf2ff06cb0d5b3cad92fdc73342eebb5e883fd4732f1f286bffb0133",
+   "disposition": "asserting IO check; not a theorem or proof dependency"
+  }
+ ],
+ "issue": "https://github.com/facebookresearch/atlas-lean/issues/5408",
+ "declaration_namespace": "CPythonListsort",
+ "production_module_prefix": "CSLibExt.Algorithms.Sorting.CPythonListsort",
+ "root_toolchain": "leanprover/lean4:v4.36.0",
+ "validation_status": "Historical root-integration audit at cd19cd9a8ad251eee36827ace55d18c64f858ab6 (before the fixed-fixture relocation): 117 production modules and 30 test modules built on Lean 4.36.0 with pinned Mathlib, and their joint compiled policy audit found no violation. Use VERIFY.md for the current production and test aggregates, the ten trust-boundary verifier tests, and the citation checks. The current test aggregate includes the mirrored fixed-input checks and executes the twelve asserting IO regressions through #eval. The historical pinned-source reproduction verified the two exported excerpts. None of these checks establishes that the Lean model refines the pinned C."
+}
