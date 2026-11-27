@@ -126,22 +126,14 @@ def fci_FrameCompat (Φ : Site 2 → Site 2) : Prop :=
   ∀ f g : Site 2, (hypercubicLattice 2).Adj f g →
     crossEdge (sharedPrimalEdge f g) = s(Φ f, Φ g)
 
-theorem fci_face_adj_left (a b : ℤ) :
-    (hypercubicLattice 2).Adj ![a, b] ![a - 1, b] := by
-  simp [hypercubicLattice_adj, Fin.sum_univ_two]
-
-theorem fci_face_adj_right (a b : ℤ) :
-    (hypercubicLattice 2).Adj ![a, b] ![a + 1, b] := by
-  simp [hypercubicLattice_adj, Fin.sum_univ_two]
-
 /-- The rotated dual is not the face dual up to relabelling: the quarter turns of the edges
 separating face `(0,0)` from its left and right neighbors share no vertex, so `Φ (0,0)` cannot
 lie on both. -/
 theorem fci_no_frameChangeIso : ¬ ∃ Φ : Site 2 → Site 2, fci_FrameCompat Φ := by
   rintro ⟨Φ, hΦ⟩
-  have hL := hΦ ![0, 0] ![0 - 1, 0] (fci_face_adj_left 0 0)
+  have hL := hΦ ![0, 0] ![0 - 1, 0] (latAdj_left 0 0)
   rw [fdd_dualEdge_leftSide] at hL
-  have hR := hΦ ![0, 0] ![0 + 1, 0] (fci_face_adj_right 0 0)
+  have hR := hΦ ![0, 0] ![0 + 1, 0] (latAdj_right 0 0)
   rw [fdd_dualEdge_rightSide] at hR
   have hmemL : Φ ![0, 0] ∈ s(![(-0 : ℤ), 0], ![-(0 + 1), 0]) := by
     rw [hL]; exact Sym2.mem_mk_left _ _

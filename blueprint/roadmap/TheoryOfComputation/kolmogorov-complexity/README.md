@@ -19,4 +19,5 @@ Algorithmic information content of individual strings: universal description met
 - [Incompressible strings, and Kolmogorov complexity is not computable](incompressible-strings-and-kolmogorov-complexity/README.md)
 - [Upper semicomputability of Kolmogorov complexity, and incompressible strings](upper-semicomputability-of-kolmogorov-complexity/README.md)
 - [Time-Bounded Kolmogorov Complexity and Meta-Complexity](time-bounded-kolmogorov-complexity/README.md)
+- [Probabilistic Kolmogorov Complexity and Symmetry of Information](probabilistic-kolmogorov-and-symmetry-of-information/README.md)
 - [Prefix Complexity, Symmetry of Information and Algorithmic Randomness](prefix-complexity-and-algorithmic-randomness/README.md)

@@ -38,6 +38,8 @@
 - [Bridge between circuit state vectors and density-operator state models](bridge-between-circuit-state-vectors-and-density-operators.md)
 - [Polynomial-time languages are in BQP with error zero](polynomial-time-languages-are-in-bqp-with-error-zero.md)
 - [Gaussian-rational gates of the exact Toffoli decomposition](gaussian-rational-gates-of-the-exact-toffoli-decomposition.md)
+- [Verifiable Quantum Advantage from Random Oracles](unstructured-verifiable-quantum-advantage/README.md)
+- [Witness-Preserving QMA Amplification, QCMA and Black-Box Groups](witness-preserving-amplification-and-black-box-groups/README.md)
 - [Quantum Circuit Models](quantum-circuit-models/README.md)
 
 ## Related topics

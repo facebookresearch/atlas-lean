@@ -13,6 +13,7 @@ Functions from {0,1}^n to {0,1}: counting monotone, self-dual and unate Boolean 
 - [Self-dual monotone Boolean functions](self-dual-monotone-boolean-functions/README.md)
 - [Unate and monotone Boolean functions](unate-and-monotone-boolean-functions/README.md)
 - [Structure theorems for Boolean functions](structure-theorems-for-boolean-functions/README.md)
+- [Global Hypercontractivity and Sharp Thresholds](global-hypercontractivity-and-sharp-thresholds/README.md)
 - [Fourier Analysis of Majority, Tribes and Threshold Functions](majority-tribes-and-threshold-functions/README.md)
 - [Hypercontractivity and Small-Set Expansion](hypercontractivity-and-small-set-expansion/README.md)
 - [Influences, Isoperimetry and Elections](influences-isoperimetry-and-elections/README.md)
