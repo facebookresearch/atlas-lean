@@ -79,10 +79,15 @@ def IsNegBaseGood (b : ℤ) (T : Finset ℤ) : Prop :=
 
 end
 
--- The extra unit on negative inputs handles the step from `-1` to `1`.
-private def digitRank (a : ℤ) : ℕ := 2 * a.natAbs + if a < 0 then 1 else 0
+/-- **Rank for the negative-base digit recursion.** For an integer $a$, the rank of $a$ is
+$2|a| + 1$ if $a < 0$ and $2|a|$ otherwise. The extra unit on negative inputs makes the rank
+decrease in the step from $-1$ to its quotient $1$. -/
+@[expose] public def digitRank (a : ℤ) : ℕ := 2 * a.natAbs + if a < 0 then 1 else 0
 
-private theorem digitRank_lt {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B)
+/-- **The rank decreases along the negative-base digit recursion.** Let $B \ge 2$, $d$ and $q$ be
+integers with $0 \le d < B$ and $-Bq + d \ne 0$. Then the rank of $q$ is less than the rank of
+$-Bq + d$. -/
+public theorem digitRank_lt {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B)
     (ha : -B * q + d ≠ 0) : digitRank q < digitRank (-B * q + d) := by
   set a := -B * q + d with ea
   have haq : (a.natAbs : ℤ) = |a| := Int.natCast_natAbs a
@@ -153,7 +158,10 @@ private theorem digitSumAux_stable {B : ℤ} (hB : 2 ≤ B) {f g : ℕ} {a : ℤ
     simp only [negBaseSqDigitSumAux, ite_eq_right ha]
     rw [ih (show digitRank q ≤ f by omega) (show digitRank q ≤ g by omega)]
 
-private theorem digitSum_cons {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B) :
+/-- **Digit recurrence for the negative-base digit-square sum.** Let $B \ge 2$, $d$ and $q$ be
+integers with $0 \le d < B$. Then the sum of the squares of the base-$(-B)$ digits of $-Bq + d$ is
+$d^2$ plus the sum of the squares of the base-$(-B)$ digits of $q$. -/
+public theorem digitSum_cons {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B) :
     negBaseSqDigitSum (-B) (-B * q + d) = d ^ 2 + negBaseSqDigitSum (-B) q := by
   let a := -B * q + d
   have hb : -B ≠ 0 := by omega
@@ -452,8 +460,13 @@ public theorem exists_negBaseSqDigitSum_congr (b : ℤ) (hb : b ≤ -12) (heven 
     rw [hvqr]
     ring
 
-private theorem digitSum_zero (B : ℤ) : negBaseSqDigitSum (-B) 0 = 0 := by
-  exact digitSumAux_zero B _
+/-- **The digit-square sum of zero.** For every integer $b$, the base-$b$ digit-square sum $S_{2,b}$
+satisfies $S_{2,b}(0) = 0$.
+
+Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
+Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
+public theorem negBaseSqDigitSum_zero (b : ℤ) : negBaseSqDigitSum b 0 = 0 := by
+  simp [negBaseSqDigitSum, negBaseSqDigitSumAux]
 
 private theorem digitSum_pos {B : ℤ} (hB : 2 ≤ B) (a : ℤ) (ha : a ≠ 0) :
     0 < negBaseSqDigitSum (-B) a := by
@@ -468,7 +481,7 @@ private theorem digitSum_pos {B : ℤ} (hB : 2 ≤ B) (a : ℤ) (ha : a ≠ 0) :
       (congrArg (negBaseSqDigitSum (-B)) he.symm).trans (digitSum_cons hB hd₀ hdB)
     rw [hs]
     by_cases hq : a / (-B) = 0
-    · rw [hq, digitSum_zero, add_zero]
+    · rw [hq, negBaseSqDigitSum_zero, add_zero]
       apply sq_pos_of_ne_zero
       intro hd
       simp [hq, hd] at he
@@ -488,7 +501,7 @@ private theorem digitSum_append {B : ℤ} (hB : 2 ≤ B) (m : ℕ) (a x : ℤ)
       have := Int.natAbs_eq_zero (a := a)
       unfold digitRank at ha
       omega
-    simp [haz, digitSum_zero]
+    simp [haz, negBaseSqDigitSum_zero]
   | succ m ih =>
     let q := a / (-B)
     let d := a % (-B)
@@ -512,7 +525,7 @@ private theorem digitSum_append {B : ℤ} (hB : 2 ≤ B) (m : ℕ) (a x : ℤ)
 private theorem exists_digitSum_eq_nat {B : ℤ} (hB : 2 ≤ B) (n : ℕ) :
     ∃ x : ℤ, 0 ≤ x ∧ negBaseSqDigitSum (-B) x = n := by
   induction n with
-  | zero => exact ⟨0, le_rfl, digitSum_zero B⟩
+  | zero => exact ⟨0, le_rfl, negBaseSqDigitSum_zero (-B)⟩
   | succ n ih =>
     obtain ⟨x, hx, hs⟩ := ih
     refine ⟨(-B) ^ 2 * x + 1, add_nonneg (mul_nonneg (sq_nonneg _) hx) zero_le_one, ?_⟩
@@ -530,7 +543,7 @@ private theorem isNegBaseGood_of_image_digitSum {B : ℤ} (hB : 2 ≤ B) (T : Fi
   rw [Int.toNat_of_nonneg hn.le] at hs
   have hxpos : 0 < x := by
     by_contra! hx'
-    rw [show x = 0 by omega, digitSum_zero] at hs
+    rw [show x = 0 by omega, negBaseSqDigitSum_zero] at hs
     omega
   -- Take an even number of low digits so that the common shift is positive.
   have hpow : 0 < (-B) ^ (2 * m) := by
