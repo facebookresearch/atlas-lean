@@ -18,7 +18,8 @@ import Mathlib.Order.RelIso.Basic
 /-!
 # Normal forms of Type 3 exact covering system digraphs
 
-Translation by a multiple of three gives first offset `0` or `1`.
+After swapping the rules or reflecting the vertices if needed, choose a vertex translation
+`n ↦ n + k` so that adding `3*k` to both offsets makes the first one `0` or `1`.
 Reflection, swapping and translation make the second offset positive when necessary.
 
 Statements from Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and
