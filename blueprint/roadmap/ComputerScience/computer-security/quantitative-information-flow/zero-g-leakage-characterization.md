@@ -10,10 +10,6 @@ is then also a best prior guess: $E_g(w^\star) \ge E_g(w)$ for all $w$.
 
 - [g-leakage and g-capacity](g-leakage-and-g-capacity.md)
 
-## Proof depends on
-
-- [g-leakage is nonnegative](g-leakage-is-nonnegative.md)
-
 ## Sources
 
 - M. S. Alvim, K. Chatzikokolakis, C. Palamidessi and G. Smith, "Measuring information leakage using generalized gain functions", *Proceedings of the 25th IEEE Computer Security Foundations Symposium (CSF 2012)*, copy at <https://www.chatzi.org/papers/csf12_gleakage.pdf>: Section IV-B, Theorem 4.2 and its proof.
