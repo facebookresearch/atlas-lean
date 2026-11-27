@@ -53,35 +53,6 @@ public theorem_wanted IsArithmeticalStructure.coconut_tfae {p s : ℕ}
             ≤ (r (.inl ⟨i + 2, hi⟩) : ℤ) - r (.inl ⟨i + 1, by omega⟩),
       StrictMono fun i : Fin p => r (.inl i)].TFAE
 
-/-- **Characterization of smooth coconut structures.** Let $p \ge 1$ and let $(d, r)$ be an
-arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$ and
-leaves $\ell_1, \dots, \ell_s$ adjacent to $v_p$. Then $(d, r)$ is smooth if and only if
-$r(\ell_j) < r(v_p)$ for every $j$ and $r(v_1) < r(v_2) < \dots < r(v_p)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 2
-(`integers-2025-A82-lem-2`). -/
-public theorem_wanted IsArithmeticalStructure.isSmoothCoconut_iff {p s : ℕ}
-    {d r : Fin p ⊕ Fin s → ℕ} (hp : 0 < p)
-    (h : IsArithmeticalStructure (coconutTree p s) d r) :
-    IsSmoothCoconut p s d r ↔
-      (∀ j, r (.inr j) < r (.inl ⟨p - 1, by omega⟩)) ∧ StrictMono fun i : Fin p => r (.inl i)
-
-/-- **Arithmetical structures on a one-leaf coconut tree with a non-smoothable leaf.** For every
-integer $p \ge 1$, the number of arithmetical structures $(d, r)$ on the coconut tree
-$\mathrm{CT}(p, 1)$, which is the path on $p + 1$ vertices, whose leaf $\ell_1$ has
-$d_{\ell_1} \ne 1$ (so that the leaf cannot be smoothed) is $C_p - C_{p-1}$, where $C_n$
-denotes the $n$-th Catalan number.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 5
-(`integers-2025-A82-prop-5`). -/
-public theorem_wanted ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one {p : ℕ}
-    (hp : 1 ≤ p) :
-    Set.ncard {x : (Fin p ⊕ Fin 1 → ℕ) × (Fin p ⊕ Fin 1 → ℕ) |
-      IsArithmeticalStructure (coconutTree p 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1}
-      = catalan p - catalan (p - 1)
-
 /-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
 $a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
 that the only natural number dividing $c$ and all of $a_1, \dots, a_s$ is $1$. Write $CT(p, s)$ for

@@ -26,20 +26,22 @@ codebook, the key, the pirate's word and the accusation.
 `Feasible` is the set F(C_S) of feasible words of Bun, Ullman and Vadhan, `ErrorRobustFeasible`
 their relaxed set F_β(C_S) written without division, and `MarkingFeasible` the marking condition
 of Tardos; `feasible_iff_markingFeasible` and `errorRobustFeasible_zero_iff` relate the three.
-The security predicates bound the error probabilities of the tracing game for nonempty coalitions
-of size at most `c`: `IsFingerprintingSecure` and `IsErrorRobustFingerprintingSecure` bound
-completeness and soundness separately, after Definitions 3.1, 3.3 and 3.12 of Bun, Ullman and
-Vadhan, and `IsFingerprintingSecureCombined` bounds the combined failure of Vadhan's
+The security predicate `IsBUVFingerprintingSecure` bounds completeness and soundness by the same
+`ξ ∈ (0, 1]` for every coalition, as in Definition 3.1 of Bun, Ullman and Vadhan.
+For nonempty coalitions of size at most `c`, `IsFingerprintingSecure` and
+`IsErrorRobustFingerprintingSecure` bound the two errors separately, after their Definitions 3.1,
+3.3 and 3.12, and `IsFingerprintingSecureCombined` bounds the combined failure of Vadhan's
 Definition 5.17 and Tardos's Definition 1.1. Codebook generation from a bias vector
 (`bernoulliPMF`, `biasCodebookPMF`, `pmfIID`, `genFromBiasVectorDist`, `genFromIIDBiasDist`) and
 linear accusation (`tardosWeight`, `tardosScore`, `TardosAccuses`) follow Tardos's construction.
 
 ## Implementation notes
 
-* Coalitions are nonempty and of size at most `c`, as in Tardos's Definition 1.1, while Bun,
-  Ullman and Vadhan quantify over every coalition, the empty one included, in Definitions 3.1
-  and 3.3, and over coalitions with `n - 1 ≤ |S|` in Definition 3.12. So `IsFingerprintingSecure`
-  is weaker than their Definition 3.1, even for `c = n` and equal errors.
+* `IsBUVFingerprintingSecure` includes the empty coalition and requires `0 < ξ ≤ 1`.
+  It implies `IsFingerprintingSecure` for `c = n` and equal errors, but not conversely.
+  The other security predicates only test nonempty coalitions of size at most `c`, as in
+  Tardos's Definition 1.1. Bun, Ullman and Vadhan quantify over every coalition in
+  Definition 3.3 as well, and over coalitions with `n - 1 ≤ |S|` in Definition 3.12.
 * Biases are points of Mathlib's `unitInterval`, and bias distributions are discrete (`PMF`);
   Tardos draws his biases from a continuous distribution.
 * The bias generators emit the bias vector as the key. A code whose tracing also reads the
@@ -310,6 +312,30 @@ def IsFingerprintingSecure {n d : ℕ} {Key : Type*}
   0 ≤ γ ∧ 0 ≤ ξ ∧
     ∀ (S : Finset (Fin n)), S.Nonempty → S.card ≤ c → ∀ (P : Pirate n d S),
       completenessErrorProb FC S P ≤ γ ∧ soundnessErrorProb FC S P ≤ ξ
+
+/-- **Fingerprinting security against every coalition.** An $(n, d)$ fingerprinting code has
+security $\xi$ in the sense of Bun, Ullman and Vadhan if $0 < \xi \le 1$ and, for every coalition
+$S \subseteq [n]$, including the empty coalition, and every possibly randomized pirate of $S$,
+both $\Pr[w \in F(C_S) \wedge a = \bot]$ and $\Pr[a \in [n] \setminus S]$ are at most $\xi$.
+The pirate sees only $C_S$ and need not output a feasible word. The probabilities are over the
+random choices of the generator, the pirate and tracing. The trace output $a$ is a user index or
+$\bot$ (`none`, no accusation), and the shared key can hold the codebook for tracing to read.
+Both $n$ and $d$ may be zero; when $d = 0$, feasibility is vacuous.
+
+Source: M. Bun, J. Ullman and S. Vadhan, *Fingerprinting codes and the price of approximate
+differential privacy*, SIAM J. Comput. 47(5), 2018, arXiv:1311.3158v3, Definition 3.1. -/
+def IsBUVFingerprintingSecure {n d : ℕ} {Key : Type*}
+    (FC : FingerprintingCode n d Key) (ξ : ℝ) : Prop :=
+  0 < ξ ∧ ξ ≤ 1 ∧
+    ∀ (S : Finset (Fin n)) (P : Pirate n d S),
+      completenessErrorProb FC S P ≤ ξ ∧ soundnessErrorProb FC S P ≤ ξ
+
+/-- Security $\xi$ in the sense of Bun, Ullman and Vadhan implies security for nonempty
+coalitions of size at most $n$, with both error bounds equal to $\xi$. -/
+theorem IsBUVFingerprintingSecure.isFingerprintingSecure {n d : ℕ} {Key : Type*}
+    {FC : FingerprintingCode n d Key} {ξ : ℝ} (h : IsBUVFingerprintingSecure FC ξ) :
+    IsFingerprintingSecure FC n ξ ξ :=
+  ⟨h.1.le, h.1.le, fun S _ _ P => h.2.2 S P⟩
 
 /-- **Error-robust fingerprinting security.** A fingerprinting code is secure against coalitions of
 size at most $c$, robustly to a $\beta$ fraction of errors, with completeness error $\gamma$ and
