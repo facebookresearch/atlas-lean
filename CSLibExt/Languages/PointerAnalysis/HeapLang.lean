@@ -159,7 +159,8 @@ theorem Step.seq_iff {first second : Stmt} {store : Store} {heap : Heap}
       subst hsucc
       exact Step.seqStep hstep
 
-/-- Operational-semantics adapter for the heap language. -/
+/-- The heap language as an operational semantics with unit labels: its steps are `Step`, and a
+configuration is final when its statement is `skip`. -/
 def opsem : OpSem Config Unit where
   lts := { Tr := fun x _ y => Step x y }
   Final := fun c => c.1 = .skip
@@ -170,7 +171,7 @@ def opsem : OpSem Config Unit where
     subst hfinal
     cases hstep
 
-/-- Adapter single steps coincide with `Step`. -/
+/-- Single steps of `opsem` coincide with `Step`. -/
 theorem opsem_step_iff {x y : Config} :
     OpSem.Step opsem x y ↔ Step x y := by
   constructor
@@ -180,7 +181,7 @@ theorem opsem_step_iff {x y : Config} :
   · intro hstep
     exact ⟨(), hstep⟩
 
-/-- Adapter multi-steps coincide with `Steps`. -/
+/-- Multi-steps of `opsem` coincide with `Steps`. -/
 theorem opsem_steps_iff {x y : Config} :
     OpSem.Steps opsem x y ↔ Steps x y := by
   rw [(OpSem.steps_iff_reflTransGen opsem)]
@@ -216,7 +217,7 @@ theorem Step.deterministic {x y z : Config} :
       have heq := ih hsub2
       simp_all
 
-/-- The adapter semantics is deterministic. -/
+/-- The operational semantics `opsem` is deterministic. -/
 theorem opsem_deterministic : OpSem.Deterministic opsem := by
   intro x y z h1 h2
   exact Step.deterministic (opsem_step_iff.mp h1) (opsem_step_iff.mp h2)
