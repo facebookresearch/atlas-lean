@@ -12,5 +12,6 @@ Sequential containers and their amortized costs: linked lists (singly, doubly, s
 - [Singly linked list](singly-linked-list/README.md)
 - [Stack with multipop](stack-with-multipop/README.md)
 - [Two-list queue](two-list-queue/README.md)
+- [Ropes](ropes/README.md)
 - [Dynamic Arrays, Stacks and Queues with Cost Certificates](word-ram-dynamic-arrays-and-stacks/README.md)
 - [Retroactive Data Structures](retroactive-data-structures/README.md)

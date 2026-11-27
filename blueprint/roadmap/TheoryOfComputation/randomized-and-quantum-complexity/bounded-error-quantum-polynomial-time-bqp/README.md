@@ -25,7 +25,6 @@
 - [Positive gap and acceptance above one half](path-pair-gap-pos-iff.md)
 - [BQP form of the sign lemma](exists-path-pair-gap-of-mem-bqp.md)
 - [BPP is contained in BQP](bpp-subset-bqp.md)
-
 - [Gottesman–Knill theorem](gottesmanknill-theorem.md)
 - [Polynomial-time uniform generator of gate approximants](polynomial-time-uniform-generator-of-gate-approximants.md)
 - [Certified rational approximation of cos/sin(2 pi / 2^k) and 1/sqrt 2](certified-rational-approximation-of-cos-sin-and-1-sqrt-2.md)
@@ -40,6 +39,7 @@
 - [Gaussian-rational gates of the exact Toffoli decomposition](gaussian-rational-gates-of-the-exact-toffoli-decomposition.md)
 - [Verifiable Quantum Advantage from Random Oracles](unstructured-verifiable-quantum-advantage/README.md)
 - [Witness-Preserving QMA Amplification, QCMA and Black-Box Groups](witness-preserving-amplification-and-black-box-groups/README.md)
+- [Repeated measurement of an isometry on entangled inputs](tensor-power-isometry-entangled-inputs.md)
 - [Quantum Circuit Models](quantum-circuit-models/README.md)
 
 ## Related topics

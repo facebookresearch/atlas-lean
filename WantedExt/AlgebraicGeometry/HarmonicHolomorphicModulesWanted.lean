@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphic
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSectionCalculus
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable
 
 /-!
@@ -26,6 +27,8 @@ The holomorphic coefficient sheaf condition
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`,
 `holomorphic_cotangent_sheaf_condition` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition`,
+`holomorphic_cotangent_section_calculus` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSectionCalculus`,
 `harmonic_holomorphic_kernel_sheaf_condition` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition`,
 and `pluriharmonic_higgs_integrable` is proved in
@@ -48,10 +51,6 @@ open scoped Manifold ContDiff
 
 variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
   {r : ℕ}
-
-/-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
-theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
-  CotangentSectionCalculus (n := n) (M := M)
 
 /-- The actual integrable bar connection admits new local holomorphic frames. -/
 def_wanted pluriharmonic_local_holomorphic_frame [T2Space M] [SecondCountableTopology M]
