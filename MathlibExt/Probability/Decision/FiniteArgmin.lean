@@ -44,8 +44,8 @@ namespace ProbabilityTheory
 
 /-- **Measurable Bayes actions over a finite action space.** If the action space is finite and
 nonempty and each section `θ ↦ ℓ θ y` of the loss is measurable, a measurable minimizer of the
-posterior expected loss exists. Ties go to the first minimizer in an enumeration of the
-actions. -/
+posterior expected loss exists. The statement is existential; the proof's witness breaks ties
+toward the first minimizer in an enumeration of the actions. -/
 theorem hasArgminEstimator_of_finite
     {Θ 𝓧 𝓨 : Type*} [MeasurableSpace Θ] [MeasurableSpace 𝓧] [MeasurableSpace 𝓨]
     [StandardBorelSpace Θ] [Nonempty Θ] [Finite 𝓨] [Nonempty 𝓨]

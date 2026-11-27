@@ -15,27 +15,13 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Quandle
+public import MathlibExt.Algebra.VirtualQuandle
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Equiv Quandles
-
-/-- **Isomorphism of virtual racks.** Write $x \triangleleft y$ for the operation of a rack. A
-virtual rack $(R, f)$ is a rack $R$ together with a rack automorphism $f$ of $R$, its virtual
-structure. Let $R_1$ and $R_2$ be racks and let $f_1$ and $f_2$ be permutations of $R_1$ and
-$R_2$. Then $(R_1, f_1)$ and $(R_2, f_2)$ are isomorphic when there is a bijection
-$\psi \colon R_1 \to R_2$ such that $\psi(x \triangleleft y) = \psi(x) \triangleleft \psi(y)$
-for all $x, y \in R_1$ and $\psi(f_1(x)) = f_2(\psi(x))$ for all $x \in R_1$.
-
-The definition does not require $f_1$ and $f_2$ to be rack automorphisms; for virtual racks it
-is the usual notion of isomorphism.
-
-Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer
-Sequences 28 (2025), Article 25.8.4, Section 2.2 (virtual rack isomorphisms). -/
-def VirtualRackIso {R₁ R₂ : Type*} [Rack R₁] [Rack R₂] (f₁ : Perm R₁) (f₂ : Perm R₂) : Prop :=
-  ∃ ψ : R₁ ≃ R₂, (∀ x y, ψ (x ◃ y) = ψ x ◃ ψ y) ∧ ∀ x, ψ (f₁ x) = f₂ (ψ x)
 
 /-- **Number of isomorphism classes of virtual racks on a rack.** For a rack $R$, let
 $\operatorname{Aut} R$ be its group of rack automorphisms; a virtual structure on $R$ is an
@@ -52,22 +38,6 @@ Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal o
 Sequences 28 (2025), Article 25.8.4, Section 3.2.2 (the invariant `v(R)`). -/
 noncomputable def virtualRackClassCount (R : Type*) [Rack R] : ℕ :=
   Nat.card (Quot fun f g : rackAut R => VirtualRackIso (f : Perm R) (g : Perm R))
-
-/-- **Affine permutations of the dihedral quandle.** For a natural number $n$, an element
-$a \in \mathbb{Z}/n\mathbb{Z}$ and a unit $u \in (\mathbb{Z}/n\mathbb{Z})^\times$, $T_{a,u}$ is the
-affine map $x \mapsto a + u x$ of $\mathbb{Z}/n\mathbb{Z}$, viewed as a permutation of the
-dihedral quandle $R_n$ (the set $\mathbb{Z}/n\mathbb{Z}$ with $x \triangleleft y = 2x - y$).
-
-Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer
-Sequences 28 (2025), Article 25.8.4, Section 2.2 (virtual structures on the dihedral quandle). -/
-def dihedralAffinePerm (n : ℕ) (a : ZMod n) (u : (ZMod n)ˣ) : Perm (Quandle.Dihedral n) :=
-  show Perm (ZMod n) from
-  { toFun := fun x => a + (u : ZMod n) * x
-    invFun := fun x => ((u⁻¹ : (ZMod n)ˣ) : ZMod n) * (x - a)
-    left_inv := fun x => by
-      simp only [add_sub_cancel_left, Units.inv_mul_cancel_left]
-    right_inv := fun x => by
-      simp only [Units.mul_inv_cancel_left, add_sub_cancel] }
 
 /-- **Reflexivity of virtual rack isomorphism.** For every rack $R$ and every permutation $f$ of
 $R$, the pair $(R, f)$ is isomorphic to itself in the sense of virtual rack isomorphism. The
@@ -140,21 +110,6 @@ Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal o
 Sequences 28 (2025), Article 25.8.4, Proposition 14 (`jis-2025-25.8.4-prop-14`). -/
 public theorem_wanted virtualRackIso_iff_isConj {R : Type*} [Rack R] (f₁ f₂ : rackAut R) :
     VirtualRackIso (f₁ : Perm R) (f₂ : Perm R) ↔ IsConj f₁ f₂
-
-/-- **Isomorphism of affine virtual dihedral quandles.** Let $n > 0$, let $R_n$ be the dihedral
-quandle on $\mathbb{Z}/n\mathbb{Z}$ (with $x \triangleleft y = 2x - y$), and for
-$a \in \mathbb{Z}/n\mathbb{Z}$ and $u \in (\mathbb{Z}/n\mathbb{Z})^\times$ let $T_{a,u}$ be the
-permutation $x \mapsto a + u x$ of $R_n$. For all $a, b \in \mathbb{Z}/n\mathbb{Z}$ and
-$u, v \in (\mathbb{Z}/n\mathbb{Z})^\times$, the virtual racks $(R_n, T_{a,u})$ and
-$(R_n, T_{b,v})$ are isomorphic if and only if $u = v$ and $b = y a + (1 - u) x$ for some
-$x \in \mathbb{Z}/n\mathbb{Z}$ and $y \in (\mathbb{Z}/n\mathbb{Z})^\times$.
-
-Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer
-Sequences 28 (2025), Article 25.8.4, Proposition 21 (`jis-2025-25.8.4-prop-21`). -/
-public theorem_wanted dihedral_virtualRackIso_iff (n : ℕ) (hn : 0 < n) (a b : ZMod n)
-    (u v : (ZMod n)ˣ) :
-    VirtualRackIso (dihedralAffinePerm n a u) (dihedralAffinePerm n b v) ↔
-      u = v ∧ ∃ x : ZMod n, ∃ y : (ZMod n)ˣ, b = (y : ZMod n) * a + (1 - (u : ZMod n)) * x
 
 /-- **Conjugacy in the holomorph of $\mathbb{Z}/n\mathbb{Z}$.** Let $n > 0$, let
 $A = \mathbb{Z}/n\mathbb{Z}$, and write $(a, u)$ for the element of the holomorph
