@@ -1131,6 +1131,7 @@
 {"page": "Physics/not-yet-classified/part-04/finite-state/is-normalized", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/is-normalized", "article_id": "af_c272e06a88b2426f1b036486"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/born-prob", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/born-prob", "article_id": "af_b8b6732cadf23683422121a1"}
 {"page": "ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs", "to": "GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs", "article_id": "af_dec166353a4ec8cdd3025548"}
+{"statement": "af_d756082e4b921363c706d2a7", "page": "ComputerScience/machine-learning/diffusion-and-flow-generative-models/polynomial-sampling-guarantees-for-score-based-diffusion-mod", "replaced_by": "af_d5cd3cb115123d8fe3a4d8a9"}
 {"statement": "af_de013c2dc65039f74902bfe8", "page": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety", "replaced_by": "af_a3c0fc7ffd0123bc784df77f"}
 {"statement": "af_bf754ace465a43c2778c4075", "page": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/homogeneous-space-description-of-the-cassels-tate-pairing", "replaced_by": "af_ff607b648063bb19cbea1a50"}
 {"statement": "af_5446f617c75915c2023e9487", "page": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/nondegeneracy-of-the-cassels-tate-pairing", "replaced_by": "af_5aeeb245cb3fe2b27accf245"}
