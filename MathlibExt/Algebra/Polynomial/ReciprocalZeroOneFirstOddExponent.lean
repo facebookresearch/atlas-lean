@@ -30,7 +30,7 @@ The proof compares coefficients in the congruence `f(x^2) ≡ f(x) f(-x) (mod 4)
 `map_comp_sq_eq_mul`. Comparing the coefficients of `x^(2t)` shows that the first positive
 exponent of `f` is odd. Since `f` is reciprocal, the leading coefficient of `f_o` then forces
 `m ≥ l` and places that exponent at `l`. Next, the coefficient of `x^(2l)` is `1` and the
-other even exponents below `2l` are absent; with the symmetry of `f`, this leaves `m = l` or
+positive even exponents below `2l` are absent; with the symmetry of `f`, this leaves `m = l` or
 `m ≥ 2l`. In the boundary case `m = l`, the symmetry of `f` gives
 `f = 1 + x^l + x^(2l)`; in the boundary case `m = 2l`, one more comparison of coefficients
 gives `f = 1 + x^l + x^(2l) + x^(3l) + x^(4l)`. These divide `x^(3l) - 1` and `x^(5l) - 1`,
@@ -171,7 +171,7 @@ private theorem odd_of_first (h0 : a 0 = 1) {s : ℕ} (hs0 : 0 < s) (hs : a s = 
     exact absurd key (by decide)
   · exact h
 
-/-- Below `2 * l` only the exponent `2 * l` itself is even and present. -/
+/-- The positive even exponents strictly below `2 * l` are absent, and `2 * l` is present. -/
 private theorem even_coeffs (ha : ∀ i, a i = 0 ∨ a i = 1) (h0 : a 0 = 1) {l : ℕ} (hl : Odd l)
     (hlow : ∀ i, 0 < i → i < l → a i = 0) (hal : a l = 1) :
     (∀ t, 0 < t → t < l → a (2 * t) = 0) ∧ a (2 * l) = 1 := by
