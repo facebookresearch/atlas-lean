@@ -25,4 +25,4 @@ Fast birth and death pin the density to $h_{\mathrm{eq}}$ (a Katzenberger-type s
 
 ## Sources
 
-- Ankit Gupta, "The Fleming-Viot limit of an interacting spatial population with fast density regulation", *Electronic Journal of Probability* 17 (2012), <https://doi.org/10.1214/EJP.v17-1964>; preprint arXiv:1204.2909, <https://doi.org/10.48550/arXiv.1204.2909>. Numbering of the arXiv version: Section 2 (density regulation mechanism, Assumption on $\theta$, basic and extended models, Propositions 2.4 and 2.5, generators $\mathbf A_0$–$\mathbf A_3$, resampling rate, Theorem 2.6), Section 4 (Propositions 4.6–4.8), Appendix Lemma 1.1.
+- Ankit Gupta, "The Fleming-Viot limit of an interacting spatial population with fast density regulation", *Electronic Journal of Probability* 17 (2012), <https://doi.org/10.1214/EJP.v17-1964>; preprint arXiv:1204.2909, <https://doi.org/10.48550/arXiv.1204.2909>. Numbering of the arXiv version: Section 2 (density regulation mechanism, Assumption on $\theta$, basic and extended models, Propositions 2.4 and 2.5, generators $\mathbf A_0$–$\mathbf A_3$, resampling rate, Theorem 2.6), Section 4 (Propositions 4.6–4.8), Appendix (Lemma A.1).

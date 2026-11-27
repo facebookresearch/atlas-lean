@@ -1,12 +1,12 @@
 # Generalized Descartes rule and sign-change complexity of population size families
 
-**Setting.** Under the coalescent with deterministic relative population size $\eta:\mathbb R_{\ge 0}\to\mathbb R_+$, pairs of lineages coalesce at rate $1/\eta(t)$. Let $R_\eta(t)=\int_0^t \eta(x)^{-1}dx$ and let $\widetilde\eta(\tau)=\eta(R_\eta^{-1}(\tau))$ be the size as a function of cumulative coalescence intensity. The expected time to the first coalescence among $m$ lineages is the Laplace transform of $\widetilde\eta$:
+**Setting.** Under the coalescent with deterministic relative population size $\eta:\mathbb R_{\ge 0}\to\mathbb R_+$, pairs of lineages coalesce at rate $1/\eta(t)$. Let $R_\eta(t)=\int_0^t \eta(x)^{-1}dx$ and let $\widetilde\eta(\tau)=\eta(R_\eta^{-1}(\tau))$ be the size as a function of cumulative coalescence intensity. When $R_\eta(\infty)=\infty$, as for every history considered below, the expected time to the first coalescence among $m$ lineages is the Laplace transform of $\widetilde\eta$:
 
 $$c_m = \mathbb{E}\bigl[T_{m,m}\bigr] = \int_0^\infty \widetilde\eta(\tau)\,e^{-\binom{m}{2}\tau}\,d\tau .$$
 
 **Lemma 1.** The expected sample frequency spectrum of a sample of size $n$ determines $c_2,\dots,c_n$ up to a common positive factor.
 
-For a right-continuous function $g : [a, \infty) \to \mathbb{R}$, let $\sigma(g)$ denote its sign-variation count, the supremum of the $k \ge 0$ for which there exist $a \le t_0 < t_1 < \dots < t_k$ with $g(t_{i-1}) g(t_i) < 0$ for all $1 \le i \le k$ (for $a = 0$ this is the count of the Laplace sign-variation bound page linked below). The sign-change complexity of a family $\mathcal F$ of positive continuous size functions $f$ with $\widetilde f(\tau) \le M_f e^{c_f \tau}$ for some constants $M_f$ and $c_f < 1$ is
+For a right-continuous function $g : [a, \infty) \to \mathbb{R}$, let $\sigma(g)$ denote its sign-variation count, the supremum of the $k \ge 0$ for which there exist $a \le t_0 < t_1 < \dots < t_k$ with $g(t_{i-1}) g(t_i) < 0$ for all $1 \le i \le k$ (for $a = 0$ this is the count of the Laplace sign-variation bound page linked below). The sign-change complexity of a family $\mathcal F$ of positive continuous size functions $f$ with $R_f(\infty)=\infty$ and $\widetilde f(\tau) \le M_f e^{c_f \tau}$ for some constants $M_f$ and $c_f < 1$ is
 
 $$\mathcal S(\mathcal F) = \sup\bigl\{\sigma\bigl(\widetilde f_1(\cdot)-\widetilde f_2(\cdot-a)\bigr) : f_1,f_2\in\mathcal F,\ a\ge 0\bigr\},$$
 

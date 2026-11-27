@@ -32,4 +32,4 @@ As $\mu \to 0$ with $\mu_{BA}/\mu_{AB} = k$ fixed, the stationary distribution c
 
 ## Sources
 
-- Marc Harper, "The inherent randomness of evolving populations", *Physical Review E* 89 (2014), 032709, <https://doi.org/10.1103/PhysRevE.89.032709>; preprint arXiv:1303.1890, <https://doi.org/10.48550/arXiv.1303.1890>. Numbering of the arXiv version: Section 2 (Moran process, mutation regimes, entropy rate; Theorems 1 and 2) and Section 3.
+- Marc Harper, "The inherent randomness of evolving populations", *Physical Review E* 89 (2014), 032709, <https://doi.org/10.1103/PhysRevE.89.032709>; preprint arXiv:1303.1890, <https://doi.org/10.48550/arXiv.1303.1890>. Numbering of the arXiv version: Section 1.1 (Moran process, mutation regimes), Section 1.3 (entropy rate), Section 2.1 (Theorems 1 and 2) and Section 3.

@@ -21,8 +21,6 @@ so $Q_{ij}(\infty) = x_iy_j$ (panmixia in the limit).
 
 4. (Symmetric $2\times 2$ case.) If $k = 2$, $\pi_{12} = \pi_{21}$ and $x_1 = y_1 \in (0,1)$, then $Q_{12}(\infty) < x_1(1-x_1)$ (homogamy), $= x_1(1-x_1)$ (panmixia) or $> x_1(1-x_1)$ (heterogamy) according as $\pi_{11} + \pi_{22}$ is $>$, $=$ or $<$ $2\pi_{12}$.
 
-The fluctuations $(Q^{(n)} - nQ)/\sqrt n$ converge weakly to a Gaussian process $V$ solving $V_{ij}(t) = W_{ij}(Q_{ij}(t)) + \sum_{i'j'}\int_0^t \partial_{i'j'}F_{ij}(Q(s))\,V_{i'j'}(s)\,ds$ with independent standard Brownian motions $W_{ij}$.
-
 ## Depends on
 
 - [Fine balance characterization of panmixia in the stochastic encounter-mating model](fine-balance-characterization-of-panmixia-in-encounter-mating.md)
@@ -34,4 +32,4 @@ The rescaled jump rates are $nF^{(n)}_{ij}(n^{-1}Q^{(n)})$, so $Q^{(n)}_{ij}(t) 
 
 ## Sources
 
-- Onur Gün, Atilla Yilmaz, "Fluid limit for the Poisson encounter-mating model", *Advances in Applied Probability* 49 (2017), 1201–1229, <https://doi.org/10.1017/apr.2017.39>; preprint arXiv:1411.7220, <https://doi.org/10.48550/arXiv.1411.7220>. Numbering of the arXiv version: Theorem 2.1, Lemma 2.3, Theorem 2.5, Theorem 2.7, Theorem 3.1, Theorem 3.3, Theorem 4.1.
+- Onur Gün, Atilla Yilmaz, "Fluid limit for the Poisson encounter-mating model", *Advances in Applied Probability* 49 (2017), 1201–1229, <https://doi.org/10.1017/apr.2017.39>; preprint arXiv:1411.7220, <https://doi.org/10.48550/arXiv.1411.7220>. Numbering of the latest arXiv version, which carries the published title: Theorem 2.1, Lemma 2.3, Theorem 2.5, Theorem 3.1, Theorem 3.3, Theorem 4.1.

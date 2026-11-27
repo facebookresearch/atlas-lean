@@ -6,7 +6,7 @@ $$
 \|\eta_a-\eta_b\|_{1,T}=\int_0^T|\eta_a(t)-\eta_b(t)|\,dt .
 $$
 
-Let $\mathcal M_{I,J}$ be the bottleneck family of $2^J$ piecewise-constant histories (identical for the first $I$ epochs, minimum size $\varepsilon$ attained in epoch $I$ of duration $t_b$, then nondecreasing steps of size $0$ or $\delta$ at change points spaced $t_a$ apart), and $\mathcal M^M_{I,J}=\{\eta\in\mathcal M_{I,J}:\|\eta\|_\infty<M\}$.
+For $\varepsilon,\delta>0$ let $\mathcal M_{I,J}(\varepsilon,\delta)$ be the bottleneck family of $2^J$ piecewise-constant histories (identical for the first $I$ epochs, minimum size $\varepsilon$ attained in epoch $I$ of duration $t_b$, then nondecreasing steps of size $0$ or $\delta$ at change points spaced $t_a$ apart), with $I$, $t_b$ and $t_a$ fixed. A fixed such family has distinct SFS distributions, so its minimax risk tends to $0$ exponentially fast in $s$; the bounds below hold for the families taken over all step sizes and bottleneck sizes, which the proofs choose depending on $s$. Let $\mathcal M_{I,J}=\bigcup_{\delta>0}\mathcal M_{I,J}(\varepsilon,\delta)$ for a given $\varepsilon$, and $\mathcal M^M_{I,J}=\{\eta\in\bigcup_{\varepsilon,\delta>0}\mathcal M_{I,J}(\varepsilon,\delta):\|\eta\|_\infty<M\}$.
 
 **Theorem (non-asymptotic bound).** If $J>8$ and $T\ge t_{I+J-1}+t_a$, then
 
@@ -36,7 +36,7 @@ The minimax rate is therefore at best $1/\log s$, exponentially slower than the 
 
 ## Expansion
 
-Fano's method: if $r$ hypotheses are pairwise $\alpha_r$-separated in the loss and have pairwise KL divergence at most $\beta_r$ per observation, then any estimator from $s$ observations has worst-case risk at least $\frac{\alpha_r}{2}\big(1-\frac{s\beta_r+\log2}{\log r}\big)$. By the Varshamov–Gilbert bound, $\mathcal M_{I,J}$ contains $r\ge2^{J/8}$ histories whose step patterns differ in at least $J/8$ positions, giving $L_1$ separation of order $J\delta t_a$, while the KL divergence is at most $J(\delta/\varepsilon)e^{-t_b/\varepsilon}$. Choosing $\delta$ proportional to $\varepsilon e^{t_b/\varepsilon}/s$ keeps $s\beta_r$ below a fraction of $\log r$ and yields the first bound. For bounded histories, $\delta$ cannot exceed $M$; taking the bottleneck size $\varepsilon$ of order $t_b/\log s$ makes $\varepsilon e^{t_b/\varepsilon}/s$ of order one and gives the $t_bt_a/\log s$ rate. Taking $J$ proportional to $(T-t_I)/t_a$ gives the corollary.
+Fano's method: if $r$ hypotheses are pairwise $\alpha_r$-separated in the loss and have pairwise KL divergence at most $\beta_r$ per observation, then any estimator from $s$ observations has worst-case risk at least $\frac{\alpha_r}{2}\big(1-\frac{s\beta_r+\log2}{\log r}\big)$. By the Varshamov–Gilbert bound, $\mathcal M_{I,J}$ contains $r\ge2^{J/8}$ histories whose step patterns differ in at least $J/8$ positions, giving $L_1$ separation of order $J\delta t_a$, while the KL divergence is at most $J(\delta/\varepsilon)e^{-t_b/\varepsilon}$. Choosing $\delta=(J-8)\log2\cdot(\varepsilon/s)e^{t_b/\varepsilon}/(16J)$ keeps $s\beta_r$ below a fraction of $\log r$ and yields the first bound. For bounded histories, $\delta$ cannot exceed $M$; taking the bottleneck size $\varepsilon$ of order $t_b/\log s$ makes $\varepsilon e^{t_b/\varepsilon}/s$ of order one and gives the $t_bt_a/\log s$ rate. Taking $J$ proportional to $(T-t_I)/t_a$ gives the corollary.
 
 ## Sources
 

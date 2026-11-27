@@ -26,4 +26,4 @@ The label order turns the selection asymmetry into a monotone coupling: lumping 
 
 ## Sources
 
-- Sandra Kluth, Ellen Baake, "The Moran model with selection: fixation probabilities, ancestral lines, and an alternative particle representation", *Theoretical Population Biology* 90 (2013), 104–112, <https://doi.org/10.1016/j.tpb.2013.09.009>; preprint arXiv:1306.2772, <https://doi.org/10.48550/arXiv.1306.2772>. Numbering of the arXiv version: Section 2 (model), Section 4 (labelled Moran model, Theorem 1), Section 5 (defining events, Proposition 1 and the conditional ancestor law), Section 6 (Algorithm 1).
+- Sandra Kluth, Ellen Baake, "The Moran model with selection: fixation probabilities, ancestral lines, and an alternative particle representation", *Theoretical Population Biology* 90 (2013), 104–112, <https://doi.org/10.1016/j.tpb.2013.09.009>; preprint arXiv:1306.2772, <https://doi.org/10.48550/arXiv.1306.2772>. Numbering of the arXiv version: Section 2 (model), Section 4 (labelled Moran model, Theorem 1), Section 4.2 (defining events, Proposition 1 and the conditional ancestor law), Section 6 (Algorithm 1).

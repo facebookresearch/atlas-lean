@@ -12,10 +12,10 @@ with $\alpha \in (0,\infty)$ and $L$ slowly varying (write $\mu \in \Gamma_\alph
 2. if $\alpha \in (\tfrac12, 1)$, then $\mathbb P(A(v) \cap A(w) \neq \emptyset) = 1$ but $\mathbb E[\tau] = \infty$;
 3. if $\alpha > 1$, then $\mathbb P(A(v) \cap A(w) \neq \emptyset) = 1$ and $\mathbb E[\tau]/N \to (\mathbb E_\mu \eta)^2$ as $N \to \infty$.
 
-**Theorem (equilibrium correlations).** Let the forward process be started in the equilibrium $\lambda^p_N$ with type frequency $p$, and let $Y_N(i)$ be the type of an individual in generation $i$. Then $\mathbb E[Y_N(i)] = p$ for all $i$, and:
+**Theorem (equilibrium correlations).** Let the forward process be started in the equilibrium $\lambda^p_N$ with type frequency $p$, let $X_{i,k}$ be the type of individual $k$ in generation $i$, let $Y_N(i) = N^{-1}\sum_{k=1}^N \mathbf 1\{X_{i,k} = a\}$ be the frequency of type $a$ in generation $i$, and for an individual $v$ in generation $i_v$ let $Y_v = \mathbf 1\{X_v = a\}$. Then $\mathbb E[Y_N(i)] = p$ for all $i$, and:
 
 - if $\alpha > \tfrac12$, $\mathrm{Cov}(Y_N(0), Y_N(i)) = p(1-p)$ for all $i$ and $N$, i.e. the equilibrium is a mixture of the two monomorphic states;
-- if $\alpha \in (0,\tfrac12)$, $\mathrm{Cov}(Y_N(v), Y_N(w)) = p(1-p)\,\dfrac{\sum_{n\ge0} q_n q_{n + i_v - i_w}}{N + \sum_{n\ge1} q_n^2}$ for $v \neq w$, the covariance vanishes as $N\to\infty$, while the correlation has a limit $C(i) \in (0,1)$ with $C(i) \asymp i^{2\alpha - 1} L(i)$ as $i \to \infty$.
+- if $\alpha \in (0,\tfrac12)$, $\mathrm{Cov}(Y_v, Y_w) = p(1-p)\,\dfrac{\sum_{n\ge0} q_n q_{n + i_v - i_w}}{N + \sum_{n\ge1} q_n^2}$ for individuals $v \neq w$, so $\mathrm{Cov}(Y_N(0), Y_N(i))$ vanishes as $N\to\infty$, while the correlation $\mathrm{Corr}(Y_N(0), Y_N(i))$ has a limit $C(i) \in (0,1)$ with $C(i) \asymp i^{2\alpha - 1} L(i)$ as $i \to \infty$.
 
 Thus genetic variability can be maintained without mutation when the seed bank is heavy enough ($\alpha < 1/2$), and fixation still occurs but with infinite mean time when $1/2 < \alpha < 1$.
 
@@ -29,4 +29,4 @@ Two ancestral lines meet only when both renewal processes visit the same generat
 
 ## Sources
 
-- Jochen Blath, Adrián González Casanova, Noemi Kurt, Dario Spanò, "The ancestral process of long term seed bank models", published as "The Ancestral Process of Long-Range Seed Bank Models", *Journal of Applied Probability* 50 (2013), 741–759, <https://doi.org/10.1239/jap/1378401233>; preprint arXiv:1203.5202, <https://doi.org/10.48550/arXiv.1203.5202>. Numbering of the arXiv version: Section 2 (definition of $\Gamma_\alpha$, Theorem 2.2, Theorem 2.7), Section 3 (Lemmas 3.6 and 3.7), Section 4 (Proposition 4.2).
+- Jochen Blath, Adrián González Casanova, Noemi Kurt, Dario Spanò, "The ancestral process of long term seed bank models", published as "The Ancestral Process of Long-Range Seed Bank Models", *Journal of Applied Probability* 50 (2013), 741–759, <https://doi.org/10.1239/jap/1378401233>; preprint arXiv:1203.5202, <https://doi.org/10.48550/arXiv.1203.5202>. Numbering of the arXiv version: Section 2 (definition of $\Gamma_\alpha$, Theorem 2.2, Theorem 2.7), Section 3 (Lemmas 3.6 and 3.7), Appendix A (Proposition A.2).

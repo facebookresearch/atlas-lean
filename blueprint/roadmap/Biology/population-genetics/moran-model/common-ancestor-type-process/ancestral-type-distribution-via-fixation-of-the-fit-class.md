@@ -14,7 +14,7 @@ $$(\lambda_k + \mu_k)\,h^N_k = \lambda_k h^N_{k+1} + \mu_k h^N_{k-1} + k u_N\nu_
 
 2. (Closed form.) With $\chi^n_\ell = \prod_{i=\ell}^{n}\lambda_i/\mu_i$ and $K = \sum_{n=0}^{N-1}\chi^n_1$ (empty products equal $1$), for $1 \le k \le N-1$,
 
-$$\psi^N_{N-k} = \frac{1}{K}\,\frac{k(N-k)}{\mu_{N-k}}\,\frac{s_N}{N}\sum_{\ell=0}^{N-k-1}\ \sum_{n=N-k}^{N-1}(n - \ell)\,\chi^\ell_1\,\chi^n_{N-k+1}.$$
+$$\psi^N_{N-k} = \frac{1}{K}\,\frac{k(N-k)}{\mu_{N-k}}\,\frac{s_N}{N^2}\sum_{\ell=0}^{N-k-1}\ \sum_{n=N-k}^{N-1}(n - \ell)\,\chi^\ell_1\,\chi^n_{N-k+1}.$$
 
 3. (Diffusion limit.) If $N u_N \to \theta \in (0,\infty)$, $N s_N \to \sigma \in [0,\infty)$ and $k_N/N \to x$, then $\psi^N_{k_N} \to \psi(x)$, where $\psi$ is the unique solution of Taylor's boundary value problem
 
@@ -32,8 +32,8 @@ where $\pi_X(x) \propto x^{\theta\nu_0 - 1}(1-x)^{\theta\nu_1 - 1}e^{\sigma x}$ 
 
 ## Expansion
 
-Follow forward in time the descendants, of both types, of the $k$ fit individuals together with the type count. First-step analysis on the next event gives item 1: a neutral birth or death moves $k$ by one while keeping the tagged set; a mutation of a fit individual to type $1$ removes it from the fit count but its descendants stay tagged, and a mutation of an unfit individual to type $0$ adds an untagged fit individual, which explains the two correction terms with the per-individual fixation probabilities. Substituting $h = k/N + \psi$ cancels the neutral part and leaves the source term $\tfrac{k(N-k)}{N}s_N$, i.e. $\psi^N$ is carried by selective reproduction events. Reindexing from $k = N$ downwards gives a first-order recursion for $\psi^N_{N-k}$ solved by the product weights $\chi$, which are the birth–death stationary weights. Rescaling the difference equation gives Taylor's ODE, and the closed form gives the limit.
+Follow forward in time the descendants, of both types, of the $k$ fit individuals together with the type count. First-step analysis on the next event gives item 1: a neutral birth or death moves $k$ by one while keeping the tagged set; a mutation of a fit individual to type $1$ removes it from the fit count but its descendants stay tagged, and a mutation of an unfit individual to type $0$ adds an untagged fit individual, which explains the two correction terms with the per-individual fixation probabilities. Substituting $h = k/N + \psi$ cancels the neutral part and leaves the source term $\tfrac{k(N-k)}{N^2}s_N$, i.e. $\psi^N$ is carried by selective reproduction events. Reindexing from $k = N$ downwards gives a first-order recursion for $\psi^N_{N-k}$ solved by the product weights $\chi$, which are the birth–death stationary weights. Rescaling the difference equation gives Taylor's ODE, and the closed form gives the limit.
 
 ## Sources
 
-- Sandra Kluth, Thiemo Hustedt, Ellen Baake, "The common ancestor process revisited", *Bulletin of Mathematical Biology* 75 (2013), 2003–2027, <https://doi.org/10.1007/s11538-013-9871-0>; preprint arXiv:1305.5939, <https://doi.org/10.48550/arXiv.1305.5939>. Numbering of the arXiv version: Section 2 (model), Section 3 (Taylor's boundary value problem, solution and $\alpha$), Section 4: difference equation for $h^N$, Lemma 2, Theorem 1, Theorem 3.
+- Sandra Kluth, Thiemo Hustedt, Ellen Baake, "The common ancestor process revisited", *Bulletin of Mathematical Biology* 75 (2013), 2003–2027, <https://doi.org/10.1007/s11538-013-9871-0>; preprint arXiv:1305.5939, <https://doi.org/10.48550/arXiv.1305.5939>. Numbering of the arXiv version: Section 2 (model), Section 3 (Taylor's boundary value problem, solution and $\alpha$), Section 4 (difference equation for $h^N$, Lemma 2, Theorem 1), Appendix (Theorem 3).

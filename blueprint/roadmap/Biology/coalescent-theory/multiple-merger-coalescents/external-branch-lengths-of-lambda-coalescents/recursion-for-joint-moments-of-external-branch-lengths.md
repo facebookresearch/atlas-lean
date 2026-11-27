@@ -22,4 +22,4 @@ Condition on the first jump, which occurs after an exponential time $T$ with rat
 
 ## Sources
 
-- Jean-Stéphane Dhersin, Martin Möhle, "On the external branches of coalescents with multiple collisions", *Electronic Journal of Probability* 18 (2013), <https://doi.org/10.1214/EJP.v18-2286>; preprint arXiv:1209.3380, <https://doi.org/10.48550/arXiv.1209.3380>. Numbering of the arXiv version: Section 1 (rates (1.1)–(1.2), Theorem 1.1), Section 2 (proof of Theorem 1.1).
+- Jean-Stéphane Dhersin, Martin Möhle, "On the external branches of coalescents with multiple collisions", *Electronic Journal of Probability* 18 (2013), <https://doi.org/10.1214/EJP.v18-2286>; preprint arXiv:1209.3380, <https://doi.org/10.48550/arXiv.1209.3380>. Numbering of the arXiv version: Section 1 (rates (1)–(2), Theorem 1.1), Section 2 (proof of Theorem 1.1).

@@ -10,9 +10,9 @@
 
 $$\mathbb E\big[H_{\mathcal A}(Z_t) \mid Z_0 = z\big] = \mathbb E\big[H_{\Sigma_t}(z) \mid \Sigma_0 = \mathcal A\big].$$
 
-**Limits.** In the deterministic limit $N \to \infty$, the partitioning process converges to a process of *progressive refinements* that only splits blocks, with rate $r_{\mathcal J}$ for splitting $A_j$ into $\mathcal J$; it stays among ordered (interval) partitions and recovers the solution of the deterministic recombination equation. In the diffusion limit, with time scaled by $N$, it converges to a process that both splits and merges blocks.
+**Limits.** In the deterministic limit $N \to \infty$, the partitioning process converges to a process of *progressive refinements* that only splits blocks, with rate $r_{\mathcal J}$ for splitting $A_j$ into $\mathcal J$; started from an ordered (interval) partition it stays among ordered partitions and recovers the solution of the deterministic recombination equation. In the diffusion limit, with time scaled by $N$, it converges to a process that both splits and merges blocks.
 
-Applied to $\mathcal A = \{A_1,A_2\}$, the duality gives the expected linkage disequilibria in the finite population through absorption probabilities of the dual chain.
+Through the closed linear system it implies, $\frac{d}{dt}\mathbb E\big[H_{\mathcal A}(Z_t)\big] = \sum_{\mathcal B}\Theta_{\mathcal A\mathcal B}\,\mathbb E\big[H_{\mathcal B}(Z_t)\big]$, the duality gives the expected linkage disequilibria in the finite population.
 
 ## Expansion
 
@@ -20,4 +20,4 @@ Backward in time, a site set carried by one ancestor is cut by a crossover into 
 
 ## Sources
 
-- Mareike Esser, Sebastian Probst, Ellen Baake, "Partitioning, duality, and linkage disequilibria in the Moran model with recombination", *Journal of Mathematical Biology* 73 (2016), 161–197, <https://doi.org/10.1007/s00285-015-0936-6>; preprint arXiv:1502.05194, <https://doi.org/10.48550/arXiv.1502.05194>. Numbering of the arXiv version: Section 4 (model, recombinators, Definition 1), Section 5 (partitioning process, Propositions 1–2), Section 6 (sampling functions, Proposition 3), Section 7 (Theorem 1).
+- Mareike Esser, Sebastian Probst, Ellen Baake, "Partitioning, duality, and linkage disequilibria in the Moran model with recombination", *Journal of Mathematical Biology* 73 (2016), 161–197, <https://doi.org/10.1007/s00285-015-0936-6>; preprint arXiv:1502.05194, <https://doi.org/10.48550/arXiv.1502.05194>. Numbering of the arXiv version: Section 3 (model, recombinators, Definition 1), Section 4 (partitioning process, Propositions 1–2), Section 5 (sampling functions, Proposition 3), Section 6 (duality, Theorem 1), Section 7 (linkage disequilibria).

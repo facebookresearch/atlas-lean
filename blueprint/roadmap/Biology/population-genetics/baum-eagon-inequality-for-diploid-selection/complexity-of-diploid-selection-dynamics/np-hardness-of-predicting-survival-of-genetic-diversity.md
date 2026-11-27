@@ -10,6 +10,10 @@ Let $A$ be the symmetric positive fitness matrix of a single-locus, $n$-allele d
 
 Item 3 rests on the observation that when every diagonal entry is dominated (each homozygote is less fit than some heterozygote carrying the same allele) every pure fixed point is linearly unstable, so almost every orbit converges to a mixed fixed point; this generalizes Kalmus's heterozygote-advantage condition for two alleles.
 
+## Depends on
+
+- [Stability hierarchy for fixed points of diploid selection](stability-hierarchy-of-fixed-points-of-diploid-selection.md)
+
 ## Expansion
 
 The reduction is from $k$-Clique. From a graph $G$ on $n$ vertices one builds a symmetric $2n \times 2n$ matrix whose first block is derived from the adjacency matrix, whose second block has a large diagonal, with coupling $k-1$ between vertex $i$ and its copy $n+i$ and small negative entries elsewhere; then $G$ has a clique of size $k$ iff the game has a mixed strict Nash stable strategy, and the support of such a strategy identifies a clique. Positivity is then restored by adding a constant to every entry, which does not change the sets of Nash stable and strict Nash stable strategies. Because Nash stability equals linear stability and strict Nash stability implies asymptotic stability, the same construction transfers hardness to the dynamics. The random-landscape bound follows by computing the probability that every diagonal entry of an i.i.d. matrix is dominated.

@@ -28,4 +28,4 @@ Well-posedness is proved for the martingale problem on $\mathbb S_\xi$ using bou
 
 ## Sources
 
-- P. Pfaffelhuber, P. R. Staab, A. Wakolbinger, "Muller's ratchet with compensatory mutations", *The Annals of Applied Probability* 22 (2012), 2108–2132, <https://doi.org/10.1214/11-AAP836>; preprint arXiv:1108.4059, <https://doi.org/10.48550/arXiv.1108.4059>. Numbering of the arXiv version: Section 1 (system $(\ast)$, Theorems 1 and 2), Section 4 (Proposition 4.1, Lemma 4.2, Proposition 4.4), Section 5 (Propositions 5.1 and 5.2, Corollary 5.3).
+- P. Pfaffelhuber, P. R. Staab, A. Wakolbinger, "Muller's ratchet with compensatory mutations", *The Annals of Applied Probability* 22 (2012), 2108–2132, <https://doi.org/10.1214/11-AAP836>; preprint arXiv:1108.4059, <https://doi.org/10.48550/arXiv.1108.4059>. Numbering of the arXiv version: Section 1 (system $(\ast)$), Section 3 (Theorems 1 and 2), Section 4 (Proposition 4.4, Lemma 4.5, Proposition 4.8), Section 5 (Propositions 5.2 and 5.3, Corollary 5.4).

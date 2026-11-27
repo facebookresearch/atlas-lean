@@ -1,6 +1,6 @@
 # Empirical covariance of mean coalescence times across genomic windows
 
-**Setting.** As in the [genealogical reading of $f_4$](genealogical-interpretation-of-the-f4-statistic.md), the genealogy is fixed and mutations form a Poisson process under the infinite-sites model with per-site rate $\mu_\ell$. For two pairs of sampled chromosomes $(x_1,x_2)$ and $(y_1,y_2)$ let $t_x(\ell)$ be the number of ancestors from whom exactly one of $x_1,x_2$ inherits at site $\ell$ (the tree length between them), and likewise $t_y(\ell)$. Split the genome into disjoint windows $W_1,\dots,W_n$ and set
+**Setting.** As in the [genealogical reading of $f_4$](genealogical-interpretation-of-the-f4-statistic.md), the genealogy is fixed and mutations form a Poisson process under the infinite-sites model with per-site rate $\mu_\ell$. For two pairs of sampled chromosomes $(x_1,x_2)$ and $(y_1,y_2)$ let $t_x(\ell)$ be the number of ancestors from whom exactly one of $x_1,x_2$ inherits at site $\ell$ (the tree length between them), and likewise $t_y(\ell)$. Split the genome of $G$ sites into $n$ disjoint windows $W_1,\dots,W_n$ of equal length $|W|=G/n$ that cover it, and set
 
 $$\overline{\mu t}_{k,x}=\frac{1}{|W_k|}\sum_{\ell\in W_k}\mu_\ell\,t_x(\ell), \qquad \overline{\overline{\mu t}}_x=\frac{1}{G}\sum_{\ell=1}^{G}\mu_\ell\,t_x(\ell),$$
 
@@ -14,15 +14,13 @@ satisfies
 
 $$\mathbb{E}\bigl[C_{x,y}\bigr]=\frac{1}{n}\sum_{k=1}^{n}\bigl(\overline{\mu t}_{k,x}-\overline{\overline{\mu t}}_x\bigr)\bigl(\overline{\mu t}_{k,y}-\overline{\overline{\mu t}}_y\bigr),$$
 
-and, with $\epsilon=\max_k\max(\overline{\mu t}_{k,x},\overline{\mu t}_{k,y})$ and $|W|=\max_k|W_k|$,
-
-$$\operatorname{Var}\bigl[C_{x,y}\bigr]\le\frac{\epsilon^{3}}{n\,|W|}.$$
+the empirical covariance of the window means, centred at the genome means (which here equal the averages of the window means).
 
 So the covariance across windows of mean (mutation-scaled) times to the most recent common ancestor of two pairs is estimable without a demographic model. By contrast, the variance of single-site coalescence times cannot be estimated without modelling recombination-induced dependence between sites.
 
 ## Expansion
 
-$N_k(x)$ is the Poisson integral of the path indicator of $x_1,x_2$ restricted to $W_k$, so $\mathbb{E}N_k(x)=|W_k|\overline{\mu t}_{k,x}$. For $j\neq k$ the counts are independent and $\mathbb{E}Z_{jk}$ is the product of the window means. Within a window, $N_j(x)$ and $N_j(y)$ share the mutations falling on branches separating both pairs; their covariance is exactly $\mathbb{E}N_j(x,y)$ by Campbell's covariance formula, so subtracting $N_j(x,y)$ removes the Poisson noise term and leaves the product of means. Averaging the diagonal minus the row averages yields the empirical covariance. The variance bound follows from the general moment formula for Poisson integrals (Lemma 3), with the resulting terms bounded through $\epsilon$ in the appendix.
+$N_k(x)$ is the Poisson integral of the path indicator of $x_1,x_2$ restricted to $W_k$, so $\mathbb{E}N_k(x)=|W_k|\overline{\mu t}_{k,x}$. For $j\neq k$ the counts are independent and $\mathbb{E}Z_{jk}$ is the product of the window means. Within a window, $N_j(x)$ and $N_j(y)$ share the mutations falling on branches separating both pairs; their covariance is exactly $\mathbb{E}N_j(x,y)$ by Campbell's covariance formula, so subtracting $N_j(x,y)$ removes the Poisson noise term and leaves the product of means. Averaging the diagonal minus the row averages yields the empirical covariance. For the variance, the general moment formula for Poisson integrals (Lemma 3) expands $\operatorname{Var}[C_{x,y}]$ into terms of several orders in the window means; the source's appendix keeps only those of order $\epsilon^3/(n|W|)$, with $\epsilon=\max_k\max(\overline{\mu t}_{k,x},\overline{\mu t}_{k,y})$, as an order-of-magnitude estimate for windows carrying many mutations ($\epsilon|W|$ large). It is not a bound in general: for $n=2$, all window means equal to $\epsilon$ and pairs whose separating paths share no branch, $\operatorname{Var}[C_{x,y}]=\epsilon^2/(4|W|^2)$, which exceeds $\epsilon^3/(2|W|)$ when $\epsilon|W|<1/2$.
 
 ## Depends on
 

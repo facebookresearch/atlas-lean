@@ -1,6 +1,6 @@
 # Identifiability of piecewise-exponential demographies from the frequency spectrum
 
-**Setting.** Let $\mathcal M_K(\mathcal F)$ be the population size histories with at most $K$ pieces, each piece $f_i(t-t_{i-1})$ on $[t_{i-1},t_i)$ taken from a family $\mathcal F$, as in the [sign-change complexity framework](generalized-descartes-rule-and-sign-change-complexity.md). Three families are considered: constant sizes $\mathcal F_c$ ($f(t)=\nu$), exponential sizes $\mathcal F_e$ ($f(t)=\nu e^{\beta t}$, $\beta\in\mathbb R$), and generalized-exponential sizes $\mathcal F_g$ solving $df/dt=\beta f^{\gamma}$, $f(0)=\nu$, with $\gamma\ge 0$ (super-exponential growth for $\gamma<1$). Let $c_m$ be the [expected time to the first coalescence](../first-coal-mean.md) among $m$ lineages.
+**Setting.** Let $\mathcal M_K(\mathcal F)$ be the population size histories with at most $K$ pieces, each piece $f_i(t-t_{i-1})$ on $[t_{i-1},t_i)$ taken from a family $\mathcal F$, as in the [sign-change complexity framework](generalized-descartes-rule-and-sign-change-complexity.md). Three families are considered, each restricted to members that meet the hypothesis of that framework ($R_f(\infty)=\infty$ and $\widetilde f(\tau)\le M_fe^{c_f\tau}$ with $c_f<1$): constant sizes $\mathcal F_c$ ($f(t)=\nu>0$), non-growing exponential sizes $\mathcal F_e$ ($f(t)=\nu e^{\beta t}$ with $\nu>0$, $\beta\le 0$), and non-growing generalized-exponential sizes $\mathcal F_g$ solving $df/dt=\beta f^{\gamma}$, $f(0)=\nu>0$, with $\beta\le 0$ and $\gamma\ge 1$, which stay positive for all $t\ge0$ and satisfy $\widetilde f\le\nu$. A growing exponential piece ($\beta>0$) has $R_f(\infty)=1/(\nu\beta)<\infty$ and an unbounded $\widetilde f$ on $[0,1/(\nu\beta))$, so it is excluded: for the one-piece histories $e^t$ and $2e^t$, with positive probability no coalescence ever happens and the $c_m$ do not separate them. Let $c_m$ be the [expected time to the first coalescence](../first-coal-mean.md) among $m$ lineages.
 
 **Corollaries 7–9.** The map $\eta\mapsto(c_2,\dots,c_n)$ is injective
 
@@ -18,7 +18,7 @@ These follow from the general bound $n\ge 2K+(2K-1)\mathcal S(\mathcal F)$ with 
 
 $$n\ge 2(2K-1)\bigl(1+\mathcal S(\mathcal F)\bigr).$$
 
-So for piecewise-exponential histories with $K$ epochs, a sample of $4K-1$ sequences already fixes the history up to the joint scaling of time and size from the unfolded spectrum, and $4(2K-1)$ sequences suffice from the folded one.
+So for piecewise-exponential histories with $K$ non-growing epochs, a sample of $4K-1$ sequences already fixes the history up to the joint scaling of time and size from the unfolded spectrum, and $4(2K-1)$ sequences suffice from the folded one.
 
 ## Expansion
 
@@ -32,4 +32,4 @@ The expected spectrum determines the $c_m$ up to one common factor (Lemma 1), an
 
 ## Sources
 
-- A. Bhaskar and Y. S. Song, "Descartes' rule of signs and the identifiability of population demographic models from genomic variation data", Annals of Statistics 42 (2014), 2469–2493, <https://doi.org/10.1214/14-AOS1264>; preprint arXiv:1309.5056, <https://doi.org/10.48550/arXiv.1309.5056>, Section 2 (Corollaries 7–9, Lemma 10, Theorems 11–12, folded-spectrum definition) and Section 3 (proofs, including the sign-change complexities of the exponential and generalized-exponential families).
+- A. Bhaskar and Y. S. Song, "Descartes' rule of signs and the identifiability of population demographic models from genomic variation data", Annals of Statistics 42 (2014), 2469–2493, <https://doi.org/10.1214/14-AOS1264>; preprint arXiv:1309.5056, <https://doi.org/10.48550/arXiv.1309.5056>, Section 2 (Corollaries 7–9, Lemma 10, Theorems 11–12, folded-spectrum definition) and Section 3 (proofs, including the sign-change complexities of the exponential and generalized-exponential families). Bhaskar and Song also cover growing pieces, by defining $\widetilde f$ on $R_f(\mathbb R_{\ge0})$ (their Definition 4); this page states only the non-growing case, which the linked framework covers.
