@@ -16,15 +16,14 @@ public import CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLTruncation
 # The summed BKKKL inequality: the OR witness, and refutations
 
 Exact two-bit OR computations at `p = 9/10` showing the summed inequality holds there
-(`sbk_summed_holds_at_OR`) and the summed form at `p = 1/2` (`mfp2_master_half_via_perCoord`); the
+(`sbk_summed_holds_at_OR`; at `p = 1/2` it is `hcq_smallDelta_p_half`); the
 engine integral identities. Refutations: `pro_PBiasedMaster` and
 `bkt_lowDegreeMasterResidue` fail for `q > 9/10`. The summed inequality survives where
 the per-coordinate estimate fails (`sbk_summed_survives_percoord_fails`).
 
 ## Main results
 
-* `sbk_summed_holds_at_OR`, `mfp2_master_half_via_perCoord`: the summed inequality at the witness
-  and at `p = 1/2`.
+* `sbk_summed_holds_at_OR`: the summed inequality at the witness.
 * `sbk_pBiasedMaster_false`, `sbk_lowDegreeMasterResidue_false`: the refutations.
 * `sbk_engine_integral_eq`, `sbk_engine_integral_damped`: engine integral identities.
 -/
