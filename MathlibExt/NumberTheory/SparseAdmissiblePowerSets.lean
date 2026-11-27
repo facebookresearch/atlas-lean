@@ -27,7 +27,7 @@ arbitrarily sparse infinite subsets with no prime translate.
 Theorem 1 of Desmond Weisenberg, *Sparse Admissible Sets and a Problem of Erdős and Graham*,
 INTEGERS 24 (2024), Article A89 (the set `S` read from arXiv:2405.12310v2). Its closing
 consequence, the refutation of Erdős Problem 429, is `erdos429_refuted` in
-`WantedExt/NumberTheory/ErdosProblem429Wanted.lean`.
+`MathlibExt/NumberTheory/ErdosProblem429.lean`.
 -/
 
 namespace MetaMathlibExt

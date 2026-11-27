@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Group.Nat
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.NumberTheory.QuadraticForms.GaussClassNumberBound
 public import WantedExt.NumberTheory.QuadraticForms.KroneckerFormSumsWanted
 
 /-!
@@ -35,20 +36,6 @@ public theorem_wanted terai_ten_fifteen_five_eq_one_one_two {m x y z : ℕ} (hm 
     (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     (h : (10 * m ^ 2 + 1) ^ x + (15 * m ^ 2 - 1) ^ y = (5 * m) ^ z) :
     x = 1 ∧ y = 1 ∧ z = 2
-
-/-- **Hua's class number bound.** For every positive integer $D$, the Gauss class number
-$h(-4D)$, the number of primitive, reduced, positive definite binary quadratic forms of
-discriminant $-4D$, satisfies $h(-4D) < \frac{4}{\pi} \sqrt{D} \log(2e\sqrt{D})$, where $\log$ is
-the natural logarithm.
-
-The source quotes this bound from Hua's textbook for the class number of positive binary
-quadratic forms; it is read here as the primitive (Gauss) class number.
-
-Source: Kalyan Chakraborty and Meenu Sharma, *A Note on Terai's Conjecture Related to Exponential
-Diophantine Equations*, INTEGERS 26 (2026), Article A67, Theorem 3 (`integers-2026-A67-thm-3`). -/
-public theorem_wanted gaussClassNumber_neg_four_mul_lt (D : ℕ) (hD : 0 < D) :
-    (gaussClassNumber (-4 * D) : ℝ) <
-      4 / Real.pi * Real.sqrt D * Real.log (2 * Real.exp 1 * Real.sqrt D)
 
 end
 
