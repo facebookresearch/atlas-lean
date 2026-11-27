@@ -13,8 +13,10 @@ import MathlibExt.NumberTheory.Padics.PotentiallySemistable
 definitions unfold as stated, the conditions over the abstract rings `B_cris` and `B_st` agree
 with the conditions over the subrings of `B_dR`, the basis form of admissibility over `B_st` (or
 over the abstract `B_st`) implies potential semistability, the trivial representation is de Rham,
-crystalline, semistable and potentially semistable, and a matrix representation defined over a
-finite extension `E` of `ℚ_p` is potentially semistable when `Eⁿ` is. -/
+crystalline, semistable and potentially semistable, a matrix representation defined over a
+finite extension `E` of `ℚ_p` is potentially semistable when `Eⁿ` is, the bundled Galois actions
+have the expected coercions, and, as `B_dR` is regular, the comparison map for `B_dR` is
+injective and the forms of being de Rham agree. -/
 
 open PadicComplexInt Representation
 
@@ -113,3 +115,30 @@ example {n : ℕ} (E : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensio
     (ρE : Gal(PadicAlgCl p/ℚ_[p]) →* GL (Fin n) E) (h : (ofGL ℚ_[p] ρE).IsDeRham ⊥) :
     PadicAlgCl.IsDeRham ((Matrix.GeneralLinearGroup.map (algebraMap E (PadicAlgCl p))).comp ρE) :=
   ⟨E, inferInstance, ρE, fun _ => rfl, h⟩
+
+-- The bundled Galois actions on `B_dR` and `B_st ⊆ B_dR` have the expected coercions.
+example (σ : Gal(PadicAlgCl p/ℚ_[p])) (x : 𝔹) : galoisBDeRhamHom p σ x = galoisBDeRham p σ x :=
+  rfl
+
+example (σ τ : Gal(PadicAlgCl p/ℚ_[p])) (x : bSt p) :
+    galoisBSt p (σ * τ) x = galoisBSt p σ (galoisBSt p τ x) := by
+  rw [← coe_galoisBStHom, map_mul, AlgHom.mul_apply]
+
+-- `B_dR` is regular: the comparison map is injective, `dim D_dR(V) ≤ dim V`, and a
+-- finite-dimensional `V` whose comparison map is an isomorphism has a basis of invariant vectors.
+example (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
+    Function.Injective (ρ.comparison (galoisBDeRham p) K.fixingSubgroup) :=
+  (isRegularPeriodRing_galoisBDeRhamHom p K.fixingSubgroup).comparison_injective ρ
+
+example [FiniteDimensional ℚ_[p] V] (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
+    Module.finrank (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup)
+      (ρ.periods (galoisBDeRham p) K.fixingSubgroup) ≤ Module.finrank ℚ_[p] V :=
+  (isRegularPeriodRing_galoisBDeRhamHom p K.fixingSubgroup).finrank_periods_le ρ
+
+example [FiniteDimensional ℚ_[p] V] (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p))
+    (h : Function.Bijective (ρ.comparison (galoisBDeRham p) K.fixingSubgroup)) :
+    ρ.HasFixedBasis (galoisBDeRham p) K.fixingSubgroup :=
+  (ρ.isDeRham_iff_hasFixedBasis K).1 ((ρ.isDeRham_iff_comparison_bijective K).2 h)

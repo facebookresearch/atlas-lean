@@ -18,7 +18,7 @@ Licensed under the Apache License, Version 2.0.
 
 module
 
-public import MathlibExt.RepresentationTheory.AdmissibleRepresentation
+public import MathlibExt.RepresentationTheory.AdmissibleRepresentation.Regular
 public import MathlibExt.RingTheory.Perfectoid.SemistablePeriodRingAbstract
 
 /-!
@@ -48,6 +48,16 @@ same conditions over the abstract rings are equivalent (`Representation.isCrysta
 (`PadicComplexInt.bSt_eq_adjoin_of_generators`), neither does potential semistability. The basis
 form of admissibility over `B_st` implies potential semistability
 (`Representation.isPotentiallySemistable_of_hasFixedBasis`).
+
+The actions of `Gal(ℚ̄_p/ℚ_p)` on `B_dR`, `B_cris` and `B_st` are monoid homomorphisms
+(`PadicComplexInt.galoisBDeRhamHom`, `PadicComplexInt.galoisBCrisHom`,
+`PadicComplexInt.galoisBStHom`). As `B_dR` is a field, it is `(ℚ_p, G_K)`-regular
+(`PadicComplexInt.isRegularPeriodRing_galoisBDeRhamHom`; Exposé III, Proposition 1.6.1 p. 125),
+so the dimension, basis and comparison forms of `B_dR`-admissibility agree (Exposé III, §1.5): a
+finite-dimensional `V` is de Rham over `K` if and only if `B_dR ⊗_{ℚ_p} V` has a `B_dR`-basis of
+`G_K`-invariant vectors, if and only if the comparison map `α_V` is an isomorphism
+(`Representation.isDeRham_iff_hasFixedBasis`, `Representation.isDeRham_iff_comparison_bijective`).
+The regularity of `B_cris` and `B_st` is not proved here.
 
 For a representation `ρ : G →* GL_n(ℚ̄_p)`, potential semistability means that `ρ` is defined over a
 finite extension `E` of `ℚ_p` inside `ℚ̄_p` and the `ℚ_[p]`-representation `Eⁿ` is potentially
@@ -90,6 +100,61 @@ abbrev galoisBCris : Gal(PadicAlgCl p/ℚ_[p]) → bCris p →ₐ[ℚ_[p]] bCris
 /-- The action of `Gal(ℚ̄_p/ℚ_p)` on `B_st ⊆ B_dR`. -/
 abbrev galoisBSt : Gal(PadicAlgCl p/ℚ_[p]) → bSt p →ₐ[ℚ_[p]] bSt p :=
   galoisSubalgebra p (bSt p) fun σ _ hx => galoisBDeRham_mem_bSt p σ hx
+
+/-- **The action of `Gal(ℚ̄_p/ℚ_p)` on `B_dR`, as a monoid homomorphism**, with coercion
+`galoisBDeRham p` (`PadicComplexInt.galoisBDeRham_one`, `PadicComplexInt.galoisBDeRham_mul`). -/
+def galoisBDeRhamHom : Gal(PadicAlgCl p/ℚ_[p]) →* (𝔹 →ₐ[ℚ_[p]] 𝔹) where
+  toFun := galoisBDeRham p
+  map_one' := galoisBDeRham_one p
+  map_mul' := galoisBDeRham_mul p
+
+/-- The coercion of `galoisBDeRhamHom p` is `galoisBDeRham p`. -/
+@[simp]
+theorem coe_galoisBDeRhamHom : ⇑(galoisBDeRhamHom p) = galoisBDeRham p :=
+  rfl
+
+/-- The action of `Gal(ℚ̄_p/ℚ_p)` on a Galois stable `ℚ_[p]`-subalgebra `B` of `B_dR`, as a monoid
+homomorphism with coercion `galoisSubalgebra p B hB`. -/
+def galoisSubalgebraHom (B : Subalgebra ℚ_[p] 𝔹)
+    (hB : ∀ (σ : Gal(PadicAlgCl p/ℚ_[p])), ∀ x ∈ B, galoisBDeRham p σ x ∈ B) :
+    Gal(PadicAlgCl p/ℚ_[p]) →* (B →ₐ[ℚ_[p]] B) where
+  toFun := galoisSubalgebra p B hB
+  map_one' := AlgHom.ext fun x => Subtype.ext (by simp)
+  map_mul' σ τ := AlgHom.ext fun x => Subtype.ext (by simp [galoisBDeRham_mul])
+
+/-- The coercion of `galoisSubalgebraHom p B hB` is `galoisSubalgebra p B hB`. -/
+@[simp]
+theorem coe_galoisSubalgebraHom (B : Subalgebra ℚ_[p] 𝔹)
+    (hB : ∀ (σ : Gal(PadicAlgCl p/ℚ_[p])), ∀ x ∈ B, galoisBDeRham p σ x ∈ B) :
+    ⇑(galoisSubalgebraHom p B hB) = galoisSubalgebra p B hB :=
+  rfl
+
+/-- **The action of `Gal(ℚ̄_p/ℚ_p)` on `B_cris ⊆ B_dR`, as a monoid homomorphism**, with coercion
+`galoisBCris p`. -/
+def galoisBCrisHom : Gal(PadicAlgCl p/ℚ_[p]) →* (bCris p →ₐ[ℚ_[p]] bCris p) :=
+  galoisSubalgebraHom p (bCris p) fun σ _ hx => galoisBDeRham_mem_bCris p σ hx
+
+/-- The coercion of `galoisBCrisHom p` is `galoisBCris p`. -/
+@[simp]
+theorem coe_galoisBCrisHom : ⇑(galoisBCrisHom p) = galoisBCris p :=
+  rfl
+
+/-- **The action of `Gal(ℚ̄_p/ℚ_p)` on `B_st ⊆ B_dR`, as a monoid homomorphism**, with coercion
+`galoisBSt p`. -/
+def galoisBStHom : Gal(PadicAlgCl p/ℚ_[p]) →* (bSt p →ₐ[ℚ_[p]] bSt p) :=
+  galoisSubalgebraHom p (bSt p) fun σ _ hx => galoisBDeRham_mem_bSt p σ hx
+
+/-- The coercion of `galoisBStHom p` is `galoisBSt p`. -/
+@[simp]
+theorem coe_galoisBStHom : ⇑(galoisBStHom p) = galoisBSt p :=
+  rfl
+
+/-- **`B_dR` is regular** (Fontaine, Exposé III, Proposition 1.6.1 p. 125): `B_dR` is a field
+(`PadicComplexInt.instFieldBDeRham`), so it is `(ℚ_p, H)`-regular for every subgroup `H` of
+`Gal(ℚ̄_p/ℚ_p)`, such as `G_K = Gal(ℚ̄_p/K)`. -/
+theorem isRegularPeriodRing_galoisBDeRhamHom (H : Subgroup Gal(PadicAlgCl p/ℚ_[p])) :
+    Representation.IsRegularPeriodRing (galoisBDeRhamHom p) H :=
+  Representation.isRegularPeriodRing_of_isField (Field.toIsField 𝔹) _ H
 
 end PadicComplexInt
 
@@ -160,6 +225,26 @@ theorem isPotentiallySemistable_of_hasFixedBasis [FiniteDimensional ℚ_[p] V]
     ρ.IsPotentiallySemistable := by
   obtain ⟨K, hK, hb⟩ := h
   exact ⟨K, hK, hb.isAdmissible⟩
+
+/-- **De Rham representations, basis form** (Fontaine, Exposé III, §1.5 and Proposition 1.6.1
+p. 125): since `B_dR` is regular, a finite-dimensional `V` is de Rham over `K` if and only if
+`B_dR ⊗_{ℚ_p} V` has a `B_dR`-basis of `G_K`-invariant vectors. -/
+theorem isDeRham_iff_hasFixedBasis [FiniteDimensional ℚ_[p] V]
+    (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
+    ρ.IsDeRham K ↔ ρ.HasFixedBasis (galoisBDeRham p) K.fixingSubgroup :=
+  (isRegularPeriodRing_galoisBDeRhamHom p K.fixingSubgroup).isAdmissible_iff_hasFixedBasis ρ
+
+/-- **De Rham representations, comparison form** (Fontaine, Exposé III, §1.5 and
+Proposition 1.6.1 p. 125): since `B_dR` is regular, a finite-dimensional `V` is de Rham over `K`
+if and only if the comparison map `α_V : B_dR ⊗_{B_dR^{G_K}} D_dR(V) → B_dR ⊗_{ℚ_p} V` is an
+isomorphism, where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+theorem isDeRham_iff_comparison_bijective [FiniteDimensional ℚ_[p] V]
+    (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
+    ρ.IsDeRham K ↔ Function.Bijective (ρ.comparison (galoisBDeRham p) K.fixingSubgroup) :=
+  IsRegularPeriodRing.isAdmissible_iff_comparison_bijective
+    (isRegularPeriodRing_galoisBDeRhamHom p _) ρ
 
 end Representation
 
