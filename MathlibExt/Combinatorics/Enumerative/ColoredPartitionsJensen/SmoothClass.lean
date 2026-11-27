@@ -24,7 +24,7 @@ import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 * gluing: `exists_contDiff_eqOn` (a function `C^n` on `(x₀, ∞)` agrees on `[x₁, ∞)`, `x₁ > x₀`,
   with a
-  globally `C^n` one, by a smooth cutoff), and from it the half-line forms of R1:
+  globally `C^n` one, by a smooth cutoff), and from it the half-line forms of the reduction:
   `exists_fwdDiff_iter_eq_iteratedDeriv_of_contDiffOn`, `hasLogRatioExpansion_of_smooth_model'`,
   `eventually_card_roots_of_smooth_model'`, `eventually_card_roots_of_InS`;
 * closure: `InS.congr` (equality on a half-line), `InS.mono` (`β ≤ β'`), `InS.of_le` (`d' ≤ d`),

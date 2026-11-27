@@ -17,10 +17,10 @@ import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Tactic.IntervalCases
 
 /-!
-# Rung R1: the log-ratio expansion from finite differences
+# The log-ratio expansion from finite differences
 
-GORZ's hypothesis (15) only looks at `j = 0, …, d`, and on those points every function of `j` is a
-polynomial of degree `≤ d` in `j` (Gregory–Newton). So (15) holds with **zero** interpolation
+The log-ratio expansion only looks at `j = 0, …, d`, and on those points every function of `j` is a
+polynomial of degree `≤ d` in `j` (Gregory–Newton). So it holds with **zero** interpolation
 error as soon as the forward differences of `L n = log α(n)` have the right sizes:
 
 * `hasLogRatioExpansion_of_fwdDiff`: `δ → 0`, `δ > 0` eventually,
@@ -108,7 +108,7 @@ theorem isBigO_pow_pow_of_le {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0)
       simp only; rw [← pow_add, Nat.sub_add_cancel h]
   · exact Eventually.of_forall fun n => one_mul _
 
-/-- **Rung R1, interpolation step.** Finite-difference bounds on `L = log α` give the GORZ
+/-- **Interpolation step.** Finite-difference bounds on `L = log α` give the GORZ
 log-ratio expansion. The second difference fixes `δ` (`Δ²L ≈ −2δ²`), the higher ones are
 `o(δ^k)`, and
 the Newton interpolant on `0, …, d` matches `log(α(n+j)/α(n))` exactly. -/
@@ -328,7 +328,7 @@ theorem fwdDiff_iter_log_split (α : ℕ → ℝ) (Λ : ℝ → ℝ) (k n : ℕ)
 
 /-! ### From a smooth model -/
 
-/-- **Rung R1, smooth-model form.** Let `log α(n) = Λ(n) + ε(n)` where `Λ` is `C^d` on `ℝ`,
+/-- **Smooth-model form.** Let `log α(n) = Λ(n) + ε(n)` where `Λ` is `C^d` on `ℝ`,
 `|Λ^{(k)}(x)| ≤ C x^{β−k}` for `2 ≤ k ≤ d` and `Λ''(x) ≤ −c x^{β−2}` for large `x`, with
 `0 < β < 2`, `c > 0`, and `ε(n) = o(n^{(β−2)d/2})`. Then `α` has the log-ratio expansion in
 degree `d`, with `δ(n)² = −Δ²Λ(n)/2 ≍ n^{β−2}`. -/
