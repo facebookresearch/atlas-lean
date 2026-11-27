@@ -6,7 +6,9 @@ Let $1 \le h \le k$. Let LRU run with a fast memory of $k$ pages, starting from 
 
 With $k = 2h$ the bound gives $F_{\mathrm{LRU}}(s) \le 2 F_{\mathrm{MIN}}(s) + h$.
 
-The additive term $h$ reflects that the two fast memories may start with different pages, so that LRU may fault $h$ times before MIN faults at all. If LRU's fast memory initially contains all the pages in MIN's fast memory and no others more recently used, as when both start empty, the additive term can be dropped.
+The additive term $h$ reflects that the two fast memories may start with different pages, so that LRU may fault $h$ times before MIN faults at all. Suppose that $c$ is a fast memory for LRU, that is, it has at most $k$ pages and no repetition, and that it contains all the pages of $c_0$ and no others more recently used, so that its first $|c_0|$ entries are the pages of $c_0$. Then the additive term can be dropped: $(k - h + 1) F_{\mathrm{LRU}}(s) \le k F_{\mathrm{MIN}}(s)$. This covers the case where both start empty.
+
+Unlike the bound with the additive term, which holds for any list $c$, this one is stated only for such a fast memory: for a list with a repeated page, containing exactly the pages of $c_0$ is not enough. With $k = 3$, $h = 2$, distinct pages $a$, $b$ and $x$, $c = (a, a, b)$, $c_0 = \{a, b\}$ and $s = (x, b)$, serving $x$ faults, puts $x$ in front and keeps the first three entries, $(x, a, a)$, so LRU faults again on $b$, while MIN faults only on $x$; then $(k - h + 1) F_{\mathrm{LRU}}(s) = 4 > 3 = k F_{\mathrm{MIN}}(s)$.
 
 ## Sources
 
