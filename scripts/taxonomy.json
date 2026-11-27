@@ -13648,6 +13648,7 @@
   "MathlibExt/NumberTheory/LargeZsigmondyPrimesHomogenizedCyclotomicMemIcc": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
   "MathlibExt/NumberTheory/LaurentCartierCongruence": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Constant terms of powers of Laurent polynomials"},
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotients": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
+  "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotientsFrobenius": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotientsLaurentSubConvergentOrder": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesConvergentProperties": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LcmDenseSets": {"to": "NumberTheory/additive-number-theory", "title": "Reciprocal lcm sums of integer sets"},
