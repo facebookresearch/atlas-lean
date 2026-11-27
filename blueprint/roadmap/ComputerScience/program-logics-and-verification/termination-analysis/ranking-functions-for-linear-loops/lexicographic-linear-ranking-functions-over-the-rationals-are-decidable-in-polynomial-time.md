@@ -2,18 +2,16 @@
 
 The problem $\mathrm{LexLinRF}(\mathbb{Q})$, whether a rational multipath [linear-constraint loop](linear-constraint-loops.md) has a [lexicographic-linear ranking function](lexicographic-linear-ranking-functions.md) in the permissive sense in which components need only be nonnegative up to the component that ranks a transition, is decidable in polynomial time. A polynomial-time procedure based on linear programming decides whether a *weak* LLRF exists, one whose components may decrease by any positive amount, and every weak LLRF can be turned into an LLRF.
 
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- Feasibility and optimization of rational linear programs in polynomial time (proof prerequisite)
-- The construction turning a weak LLRF into an LLRF (proof prerequisite)
-
 ## Depends on
 
 - [Lexicographic-linear ranking functions](lexicographic-linear-ranking-functions.md)
 - [The complexity class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 - [Linear-constraint loops](linear-constraint-loops.md)
+
+## Proof depends on
+
+- [Weak LLRFs yield LLRFs over the rationals](weak-llrfs-yield-llrfs-over-the-rationals.md)
+- [Linear programs are solvable in polynomial time](../../../../Geometry/convex-geometry/polynomial-time-linear-programming/linear-programs-are-solvable-in-polynomial-time.md)
 
 ## Sources
 
