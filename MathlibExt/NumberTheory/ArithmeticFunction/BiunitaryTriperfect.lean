@@ -40,6 +40,10 @@ import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
   `∑ i ∈ range (m + 1), 1 / p ^ i`. Reindexing `σ**(p ^ e)` by the distance below the highest
   exponent writes the normalized sum as a geometric progression with at most the middle term
   omitted.
+* `factorization_two_ne_six_of_biunitaryTriperfect`: a positive integer `N` with `σ**(N) = 3N`
+  and `3 ≤ N.factorization 3` does not have `N.factorization 2 = 6` (Lemma 11). Since
+  `σ**(2 ^ 6) = 7 * 17`, both `7` and `17` divide `N`, and lower bounds for the normalized sums
+  `σ**(p ^ e) / p ^ e` at the primes `2, 3, 5, 7, 13, 17` then push `σ**(N) / N` above `3`.
 * `two_pow_card_primeFactors_dvd_sigmaBiunitary_of_odd`: for every odd natural number `n`,
   `2 ^ ω(n)` divides `σ**(n)`, where `ω(n)` is the number of distinct prime factors of `n`. The
   biunitary divisor sum is multiplicative, and its value at an odd prime power is even.
@@ -562,6 +566,328 @@ private theorem le_of_mod_eq_one {q t : ℕ} (hq : q.Prime) (hmod : q % t = 1) :
       rw [heq, Nat.mod_self] at hmod
       exact (one_ne_zero hmod.symm).elim
   · exact hge
+
+private theorem sigmaBiunitary_ordProj_dvd (N p : ℕ) (hN : N ≠ 0) (hp : p.Prime) :
+    sigmaBiunitary (p ^ N.factorization p) ∣ sigmaBiunitary N := by
+  have h := dvd_sigmaBiunitary_of_exact (n := ordCompl[p] N)
+    ((Nat.coprime_ordCompl hp hN).pow_left (N.factorization p))
+  rwa [Nat.ordProj_mul_ordCompl_eq_self N p] at h
+
+private theorem sigmaBiunitary_ratio_prod_le (s : Finset ℕ) (N : ℕ) (hN : N ≠ 0)
+    (hs : ∀ p ∈ s, p.Prime) :
+    ∏ p ∈ s, ((sigmaBiunitary (p ^ N.factorization p) : ℚ) / (p : ℚ) ^ N.factorization p) ≤
+      (sigmaBiunitary N : ℚ) / N := by
+  induction s using Finset.induction_on generalizing N with
+  | empty =>
+    simp only [prod_empty]
+    rw [le_div_iff₀ (by exact_mod_cast hN.bot_lt), one_mul]
+    exact_mod_cast sigmaBiunitary_ge_self (Nat.one_le_iff_ne_zero.mpr hN)
+  | @insert p s hp ih =>
+    have hprime := hs p (mem_insert_self p s)
+    have hM : ordCompl[p] N ≠ 0 := (Nat.ordCompl_pos p hN).ne'
+    have hfac (q : ℕ) (hq : q ∈ s) : (ordCompl[p] N).factorization q = N.factorization q := by
+      rw [Nat.factorization_ordCompl, Finsupp.erase_ne (ne_of_mem_of_not_mem hq hp)]
+    have hprod : (∏ q ∈ s, ((sigmaBiunitary (q ^ (ordCompl[p] N).factorization q) : ℚ) /
+        (q : ℚ) ^ (ordCompl[p] N).factorization q)) =
+        ∏ q ∈ s, ((sigmaBiunitary (q ^ N.factorization q) : ℚ) /
+          (q : ℚ) ^ N.factorization q) := by
+      apply prod_congr rfl
+      intro q hq
+      rw [hfac q hq]
+    have hsplit : (sigmaBiunitary N : ℚ) / N =
+        ((sigmaBiunitary (p ^ N.factorization p) : ℚ) / (p : ℚ) ^ N.factorization p) *
+          ((sigmaBiunitary (ordCompl[p] N) : ℚ) / ((ordCompl[p] N : ℕ) : ℚ)) := by
+      rw [div_mul_div_comm]
+      have hmul := sigmaBiunitary_mul_of_coprime ((Nat.coprime_ordCompl hprime hN).pow_left
+        (N.factorization p))
+      rw [Nat.ordProj_mul_ordCompl_eq_self N p] at hmul
+      rw [← Nat.cast_pow, ← Nat.cast_mul, ← Nat.cast_mul,
+        Nat.ordProj_mul_ordCompl_eq_self N p, ← hmul]
+    rw [prod_insert hp, hsplit]
+    have hpos : (0 : ℚ) < p := by exact_mod_cast hprime.pos
+    apply mul_le_mul_of_nonneg_left _ (div_nonneg (Nat.cast_nonneg _) (le_of_lt (pow_pos hpos _)))
+    rw [← hprod]
+    exact ih (ordCompl[p] N) hM (fun q hq => hs q (mem_insert_of_mem hq))
+
+private theorem sigmaBiunitary_ratio_list_bound (N : ℕ) (hN : N ≠ 0)
+    (hσ : sigmaBiunitary N = 3 * N) (l : List (ℕ × ℚ))
+    (hl : (l.map Prod.fst).Nodup) (hp : ∀ x ∈ l, x.1.Prime)
+    (hb0 : ∀ x ∈ l, 0 ≤ x.2)
+    (hb : ∀ x ∈ l, x.2 ≤ (sigmaBiunitary (x.1 ^ N.factorization x.1) : ℚ) /
+      (x.1 : ℚ) ^ N.factorization x.1) : (l.map Prod.snd).prod ≤ 3 := by
+  have hl' := List.Nodup.of_map Prod.fst hl
+  rw [← List.prod_toFinset Prod.snd hl']
+  have hi : Set.InjOn Prod.fst (l.toFinset : Set (ℕ × ℚ)) := by
+    intro x hx y hy heq
+    exact (List.nodup_map_iff_inj_on hl').mp hl x (List.mem_toFinset.mp hx)
+      y (List.mem_toFinset.mp hy) heq
+  have hle := Finset.prod_le_prod₀ (fun x hx => hb0 x (List.mem_toFinset.mp hx))
+    (fun x hx => hb x (List.mem_toFinset.mp hx))
+  apply hle.trans
+  rw [← Finset.prod_image (f := fun p : ℕ => (sigmaBiunitary (p ^ N.factorization p) : ℚ) /
+    (p : ℚ) ^ N.factorization p) hi]
+  have h := sigmaBiunitary_ratio_prod_le (l.toFinset.image Prod.fst) N hN (by
+    intro p hp'
+    obtain ⟨x, hx, rfl⟩ := mem_image.mp hp'
+    exact hp x (List.mem_toFinset.mp hx))
+  simpa [hσ, hN] using h
+
+-- `σ**(3 ^ f) / 3 ^ f ≥ 1066/729` for `f ≥ 3`, `f ≠ 4`: at `f = 3` it is `40/27`, and for
+-- `f ≥ 5` Lemma 3 at `p = m = 3` compares it with `σ**(3 ^ 6) / 3 ^ 6 = 1066/729`.
+private theorem sigmaBiunitary_three_ratio (f : ℕ) (hf : 3 ≤ f) (hf4 : f ≠ 4) :
+    (1066 / 729 : ℚ) ≤ (sigmaBiunitary (3 ^ f) : ℚ) / (3 : ℚ) ^ f := by
+  rcases (by omega : f = 3 ∨ 5 ≤ f) with rfl | hf5
+  · norm_num [sigmaBiunitary_twentySeven]
+  · have h6 := sigmaBiunitary_prime_pow_eq_sum (p := 3) (g := 6) (by decide) (by decide)
+    norm_num [Finset.sum_range_succ] at h6
+    have h := (sigmaBiunitary_prime_pow_div_ge_of_two_mul_sub_one_le 3 3 f (by decide)
+      (by decide) (by omega)).1
+    norm_num [h6] at h
+    linarith
+
+private theorem sigmaBiunitary_prod_dvd (s : Finset ℕ) (N : ℕ) (hN : N ≠ 0)
+    (hs : ∀ p ∈ s, p.Prime) :
+    ∏ p ∈ s, sigmaBiunitary (p ^ N.factorization p) ∣ sigmaBiunitary N := by
+  induction s using Finset.induction_on generalizing N with
+  | empty => simp
+  | @insert p s hp ih =>
+    have hprime := hs p (mem_insert_self p s)
+    have hM : ordCompl[p] N ≠ 0 := (Nat.ordCompl_pos p hN).ne'
+    have hprod : (∏ q ∈ s, sigmaBiunitary (q ^ (ordCompl[p] N).factorization q)) =
+        ∏ q ∈ s, sigmaBiunitary (q ^ N.factorization q) := by
+      apply prod_congr rfl
+      intro q hq
+      rw [Nat.factorization_ordCompl, Finsupp.erase_ne (ne_of_mem_of_not_mem hq hp)]
+    have hmul := sigmaBiunitary_mul_of_coprime ((Nat.coprime_ordCompl hprime hN).pow_left
+      (N.factorization p))
+    rw [Nat.ordProj_mul_ordCompl_eq_self N p] at hmul
+    rw [prod_insert hp, hmul, ← hprod]
+    exact Nat.mul_dvd_mul dvd_rfl
+      (ih (ordCompl[p] N) hM (fun q hq => hs q (mem_insert_of_mem hq)))
+
+private theorem sigmaBiunitary_divisibility_list (N : ℕ) (hN : N ≠ 0)
+    (l : List (ℕ × ℕ)) (hl : (l.map Prod.fst).Nodup) (hp : ∀ x ∈ l, x.1.Prime)
+    (hd : ∀ x ∈ l, x.2 ∣ sigmaBiunitary (x.1 ^ N.factorization x.1)) :
+    (l.map Prod.snd).prod ∣ sigmaBiunitary N := by
+  have hl' := List.Nodup.of_map Prod.fst hl
+  rw [← List.prod_toFinset Prod.snd hl']
+  have hi : Set.InjOn Prod.fst (l.toFinset : Set (ℕ × ℕ)) := by
+    intro x hx y hy heq
+    exact (List.nodup_map_iff_inj_on hl').mp hl x (List.mem_toFinset.mp hx)
+      y (List.mem_toFinset.mp hy) heq
+  apply (prod_dvd_prod_of_dvd Prod.snd (fun x => sigmaBiunitary (x.1 ^ N.factorization x.1))
+    (fun x hx => hd x (List.mem_toFinset.mp hx))).trans
+  rw [← Finset.prod_image (f := fun p : ℕ => sigmaBiunitary (p ^ N.factorization p)) hi]
+  exact sigmaBiunitary_prod_dvd (l.toFinset.image Prod.fst) N hN (by
+    intro p hp'
+    obtain ⟨x, hx, rfl⟩ := mem_image.mp hp'
+    exact hp x (List.mem_toFinset.mp hx))
+
+private theorem two_dvd_sigmaBiunitary_odd_prime_pow (p e : ℕ) (hp : p.Prime)
+    (hp2 : p ≠ 2) (he : 0 < e) : 2 ∣ sigmaBiunitary (p ^ e) :=
+  even_iff_two_dvd.mp (even_sigmaBiunitary_of_odd_pos ((hp.eq_two_or_odd'.resolve_left hp2).pow)
+    (Nat.one_lt_pow he.ne' hp.one_lt))
+
+private theorem sigmaBiunitary_prime_pow_two (p : ℕ) (hp : p.Prime) :
+    sigmaBiunitary (p ^ 2) = p ^ 2 + 1 := by
+  rw [sigmaBiunitary_prime_pow_eq_sum hp (by decide)]
+  simp [Finset.sum_range_succ, add_comm]
+
+private theorem sigmaBiunitary_sixtyFour : sigmaBiunitary (2 ^ 6) = 119 := by
+  have h := sigmaBiunitary_prime_pow_eq_sum (p := 2) (g := 6) (by decide) (by decide)
+  norm_num [Finset.sum_range_succ] at h
+  exact h
+
+private theorem prime_dvd_of_sigmaBiunitary_prime_pow (N p q : ℕ) (hN : N ≠ 0)
+    (hσ : sigmaBiunitary N = 3 * N) (hp : p.Prime) (hq : q.Prime) (hq3 : q ≠ 3)
+    (hd : q ∣ sigmaBiunitary (p ^ N.factorization p)) : q ∣ N := by
+  have h := hd.trans (sigmaBiunitary_ordProj_dvd N p hN hp)
+  rw [hσ] at h
+  exact (hq.dvd_mul.mp h).resolve_left
+    (fun hqdiv => hq3 ((Nat.dvd_prime (by decide : Nat.Prime 3)).mp hqdiv |>.resolve_left
+      hq.ne_one))
+
+private theorem factorization_seven_eq_two (N : ℕ) (hN : N ≠ 0)
+    (hσ : sigmaBiunitary N = 3 * N)
+    (h2 : (sigmaBiunitary (2 ^ N.factorization 2) : ℚ) /
+      (2 : ℚ) ^ N.factorization 2 = 119 / 64)
+    (h3 : (112 / 81 : ℚ) ≤ (sigmaBiunitary (3 ^ N.factorization 3) : ℚ) /
+      (3 : ℚ) ^ N.factorization 3)
+    (h7pos : 0 < N.factorization 7) (h17pos : 0 < N.factorization 17) :
+    N.factorization 7 = 2 := by
+  have bound := sigmaBiunitary_ratio_list_bound N hN hσ
+  by_contra hne7
+  have h7 : (8 / 7 : ℚ) ≤ (sigmaBiunitary (7 ^ N.factorization 7) : ℚ) /
+      (7 : ℚ) ^ N.factorization 7 := by
+    convert (sigmaBiunitary_prime_pow_div_ge 7 (N.factorization 7)
+      (by decide) h7pos).2.1 hne7 using 1
+    norm_num
+  by_cases he17 : N.factorization 17 = 2
+  · have h5dvd : 5 ∣ N := prime_dvd_of_sigmaBiunitary_prime_pow N 17 5 hN hσ
+      (by decide) (by decide) (by decide) (by
+        rw [he17, sigmaBiunitary_prime_pow_two 17 (by decide)]
+        decide)
+    have h5pos : 0 < N.factorization 5 := (Nat.Prime.dvd_iff_one_le_factorization
+      (by decide : Nat.Prime 5) hN).mp h5dvd
+    have h5 : (26 / 25 : ℚ) ≤ (sigmaBiunitary (5 ^ N.factorization 5) : ℚ) /
+        (5 : ℚ) ^ N.factorization 5 := by
+      convert (sigmaBiunitary_prime_pow_div_ge 5 (N.factorization 5)
+        (by decide) h5pos).1 using 1
+      norm_num
+    have h := bound [(2, 119 / 64), (3, 112 / 81), (5, 26 / 25), (7, 8 / 7)]
+      (by decide) (by decide) (by norm_num [List.mem_cons]) (by
+        intro x hx
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+        rcases hx with rfl | rfl | rfl | rfl
+        · exact h2.ge
+        · exact h3
+        · exact h5
+        · exact h7)
+    norm_num at h
+  · have h17 : (18 / 17 : ℚ) ≤ (sigmaBiunitary (17 ^ N.factorization 17) : ℚ) /
+        (17 : ℚ) ^ N.factorization 17 := by
+      convert (sigmaBiunitary_prime_pow_div_ge 17 (N.factorization 17)
+        (by decide) h17pos).2.1 he17 using 1
+      norm_num
+    have h := bound [(2, 119 / 64), (3, 112 / 81), (7, 8 / 7), (17, 18 / 17)]
+      (by decide) (by decide) (by norm_num [List.mem_cons]) (by
+        intro x hx
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+        rcases hx with rfl | rfl | rfl | rfl
+        · exact h2.ge
+        · exact h3
+        · exact h7
+        · exact h17)
+    norm_num at h
+
+/-- **No biunitary triperfect number divisible by $27$ is exactly divisible by $2^6$.** Let $N$
+be a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
+$\sigma^{**}$ is the biunitary divisor sum. If $3^3$ divides $N$, then the exact power of $2$
+dividing $N$ is not $2^6$.
+
+Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
+Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 11 (`jis-2025-25.4.5-lem-11`). -/
+public theorem factorization_two_ne_six_of_biunitaryTriperfect (N : ℕ) (hN : 0 < N)
+    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
+    N.factorization 2 ≠ 6 := by
+  intro he
+  have h2 : (sigmaBiunitary (2 ^ N.factorization 2) : ℚ) /
+      (2 : ℚ) ^ N.factorization 2 = 119 / 64 := by
+    rw [he, sigmaBiunitary_sixtyFour]
+    norm_num
+  have h3 : (112 / 81 : ℚ) ≤ (sigmaBiunitary (3 ^ N.factorization 3) : ℚ) /
+      (3 : ℚ) ^ N.factorization 3 := by
+    have h := (sigmaBiunitary_prime_pow_div_ge 3 (N.factorization 3) (by decide) (by omega)).2.2 hf
+    norm_num at h
+    exact h
+  have h7dvd : 7 ∣ N := prime_dvd_of_sigmaBiunitary_prime_pow N 2 7 hN.ne' hσ
+    (by decide) (by decide) (by decide) (by rw [he, sigmaBiunitary_sixtyFour]; decide)
+  have h17dvd : 17 ∣ N := prime_dvd_of_sigmaBiunitary_prime_pow N 2 17 hN.ne' hσ
+    (by decide) (by decide) (by decide) (by rw [he, sigmaBiunitary_sixtyFour]; decide)
+  have h7pos : 0 < N.factorization 7 := (Nat.Prime.dvd_iff_one_le_factorization
+    (by decide : Nat.Prime 7) hN.ne').mp h7dvd
+  have h17pos : 0 < N.factorization 17 := (Nat.Prime.dvd_iff_one_le_factorization
+    (by decide : Nat.Prime 17) hN.ne').mp h17dvd
+  have bound := sigmaBiunitary_ratio_list_bound N hN.ne' hσ
+  have divides := sigmaBiunitary_divisibility_list N hN.ne'
+  have he7 := factorization_seven_eq_two N hN.ne' hσ h2 h3 h7pos h17pos
+  have h25sigma : 25 ∣ sigmaBiunitary N := by
+    apply dvd_trans _ (sigmaBiunitary_ordProj_dvd N 7 hN.ne' (by decide))
+    rw [he7, sigmaBiunitary_prime_pow_two 7 (by decide)]
+    decide
+  have h25 : 25 ∣ N := (by decide : Nat.Coprime 25 3).dvd_of_dvd_mul_left (hσ ▸ h25sigma)
+  have h5ge : 2 ≤ N.factorization 5 :=
+    (Nat.Prime.pow_dvd_iff_le_factorization (by decide : Nat.Prime 5) hN.ne').mp h25
+  have h5even : 2 ∣ sigmaBiunitary (5 ^ N.factorization 5) :=
+    two_dvd_sigmaBiunitary_odd_prime_pow 5 _ (by decide) (by decide) (by omega)
+  have h17even : 2 ∣ sigmaBiunitary (17 ^ N.factorization 17) :=
+    two_dvd_sigmaBiunitary_odd_prime_pow 17 _ (by decide) (by decide) h17pos
+  have hf4 : N.factorization 3 ≠ 4 := by
+    intro hf4
+    have h := divides [(3, 16), (7, 2), (5, 2), (17, 2)] (by decide) (by decide) (by
+      intro x hx
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with rfl | rfl | rfl | rfl
+      · rw [hf4]
+        change 16 ∣ sigmaBiunitary (3 ^ 4)
+        rw [sigmaBiunitary_prime_pow_eq_sum (by decide : Nat.Prime 3) (by decide)]
+        norm_num [Finset.sum_range_succ]
+      · rw [he7, sigmaBiunitary_prime_pow_two 7 (by decide)]
+        decide
+      · exact h5even
+      · exact h17even)
+    norm_num only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil,
+      Prod.snd, mul_one] at h
+    have hσ0 : sigmaBiunitary N ≠ 0 := by
+      rw [hσ]
+      exact mul_ne_zero (by decide) hN.ne'
+    have hle := (Nat.Prime.pow_dvd_iff_le_factorization (k := 7) Nat.prime_two hσ0).mp h
+    rw [hσ, Nat.factorization_mul (by decide) hN.ne', Finsupp.add_apply] at hle
+    norm_num [he, Nat.factorization_eq_zero_of_not_dvd (by decide : ¬ (2 : ℕ) ∣ 3)] at hle
+  have h3' := sigmaBiunitary_three_ratio (N.factorization 3) hf hf4
+  have h7 : (sigmaBiunitary (7 ^ N.factorization 7) : ℚ) /
+      (7 : ℚ) ^ N.factorization 7 = 50 / 49 := by
+    rw [he7, sigmaBiunitary_prime_pow_two 7 (by decide)]
+    norm_num
+  have he5 : N.factorization 5 = 2 := by
+    by_contra hne5
+    have h5 : (6 / 5 : ℚ) ≤ (sigmaBiunitary (5 ^ N.factorization 5) : ℚ) /
+        (5 : ℚ) ^ N.factorization 5 := by
+      convert (sigmaBiunitary_prime_pow_div_ge 5 (N.factorization 5)
+        (by decide) (by omega)).2.1 hne5 using 1
+      norm_num
+    have h := bound [(2, 119 / 64), (3, 1066 / 729), (7, 50 / 49), (5, 6 / 5)]
+      (by decide) (by decide) (by norm_num [List.mem_cons]) (by
+        intro x hx
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+        rcases hx with rfl | rfl | rfl | rfl
+        · exact h2.ge
+        · exact h3'
+        · exact h7.ge
+        · exact h5)
+    norm_num at h
+  have h13dvd : 13 ∣ N := prime_dvd_of_sigmaBiunitary_prime_pow N 5 13 hN.ne' hσ
+    (by decide) (by decide) (by decide) (by
+      rw [he5, sigmaBiunitary_prime_pow_two 5 (by decide)]
+      decide)
+  have h13pos : 0 < N.factorization 13 := (Nat.Prime.dvd_iff_one_le_factorization
+    (by decide : Nat.Prime 13) hN.ne').mp h13dvd
+  have he13 : N.factorization 13 ≠ 2 := by
+    intro he13
+    have h := divides [(7, 25), (13, 5)] (by decide) (by decide) (by
+      intro x hx
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with rfl | rfl
+      · rw [he7, sigmaBiunitary_prime_pow_two 7 (by decide)]
+        decide
+      · rw [he13, sigmaBiunitary_prime_pow_two 13 (by decide)]
+        decide)
+    norm_num only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil,
+      Prod.snd, mul_one] at h
+    have hd : 125 ∣ N := (by decide : Nat.Coprime 125 3).dvd_of_dvd_mul_left (hσ ▸ h)
+    have hle := (Nat.Prime.pow_dvd_iff_le_factorization (k := 3)
+      (by decide : Nat.Prime 5) hN.ne').mp hd
+    omega
+  have h5 : (sigmaBiunitary (5 ^ N.factorization 5) : ℚ) /
+      (5 : ℚ) ^ N.factorization 5 = 26 / 25 := by
+    rw [he5, sigmaBiunitary_prime_pow_two 5 (by decide)]
+    norm_num
+  have h13 : (14 / 13 : ℚ) ≤ (sigmaBiunitary (13 ^ N.factorization 13) : ℚ) /
+      (13 : ℚ) ^ N.factorization 13 := by
+    convert (sigmaBiunitary_prime_pow_div_ge 13 (N.factorization 13)
+      (by decide) h13pos).2.1 he13 using 1
+    norm_num
+  have h := bound [(2, 119 / 64), (3, 1066 / 729), (7, 50 / 49), (5, 26 / 25), (13, 14 / 13)]
+    (by decide) (by decide) (by norm_num [List.mem_cons]) (by
+      intro x hx
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with rfl | rfl | rfl | rfl | rfl
+      · exact h2.ge
+      · exact h3'
+      · exact h7.ge
+      · exact h5.ge
+      · exact h13)
+  norm_num at h
 
 private theorem exists_prime_ge_seven_dvd_sigmaBiunitary_prime_pow_aux {p g : ℕ}
     (hp : p.Prime) (hodd : p ≠ 2) (hg : 4 ≤ g) :

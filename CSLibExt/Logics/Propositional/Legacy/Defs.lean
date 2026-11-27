@@ -32,8 +32,8 @@ public import Mathlib.Order.TypeTags
 instance whenever `Atom` does, and a `Top` whenever `Atom` is inhabited.
 - `Theory` : set of `Proposition`.
 - `IsIntuitionistic` : a theory is intuitionistic if it contains the principle of explosion.
-- `IsClassical` : an intuitionistic theory is classical if it further contains double negation
-elimination.
+- `IsClassical` : a theory is classical if it derives double negation elimination; it need not
+be intuitionistic beforehand, since explosion follows (`instIsIntuitionisticOfIsClassical`).
 - `Proposition.subst` : replace `atom x` in a `A : Proposition Atom` with `f x`, for a function
   `f : Atom → Proposition Atom'`. This induces a monad structure on `Proposition`, with
   `pure := Proposition.atom`. `Theory` is a functor, by mapping each proposition `A ∈ T` to
@@ -131,7 +131,9 @@ lemma efq_mem_ipl [Bot Atom] (A : Proposition Atom) : (⊥ → A) ∈ IPL Atom :
 def intuitionisticCompletion (T : Theory Atom) : Theory (WithBot Atom) :=
   (WithBot.some <$> T) ∪ IPL (WithBot Atom)
 
-/-- Classical logic further adds double negation elimination. -/
+/-- Classical propositional logic: the double-negation-elimination instances `¬¬A → A`
+alone. `CPL` does not contain the explosion instances of `IPL`; explosion is derivable
+from it (`instIsIntuitionisticOfIsClassical`). -/
 abbrev CPL (Atom : Type u) [Bot Atom] : Theory Atom := {¬¬A → A | A : Proposition Atom}
 
 omit [DecidableEq Atom] in
