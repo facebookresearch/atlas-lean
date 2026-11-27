@@ -174,7 +174,10 @@ HELPER_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "opaque", "irre
 HELPER = re.compile(rf"[ \t]*(?:@\[[^\]]*\][ \t]*)*(?P<name>{NAME})(?=[\s:({{\[⦃|]|$)")
 # Words that can start a line among `where` helpers without declaring one.
 NOT_HELPERS = frozenset({"termination_by", "decreasing_by", "deriving", "where", "with"})
-LET_REC = re.compile(rf"\blet[ \t]+rec[ \t]+(?P<name>{NAME})")
+# Each declaration of a `let rec` may have a doc comment (blanked) and attributes before its name.
+LET_REC_ATTRIBUTES = r"(?:@\[[^\]]*\]\s*)*"
+LET_REC = re.compile(rf"\blet[ \t]+rec\s+{LET_REC_ATTRIBUTES}(?P<name>{NAME})")
+LET_DECL = re.compile(rf"\s*{LET_REC_ATTRIBUTES}(?P<name>{NAME})")
 NAME_RE = re.compile(NAME)
 # Words that cannot name a declaration of a `let rec`.
 KEYWORDS = frozenset({"let", "have", "show", "from", "fun", "match", "with", "if", "then", "else",
@@ -343,9 +346,10 @@ def let_rec_siblings(code: str, start: int, stop: int) -> list[tuple[str, int, i
 
 
 def let_decl_name(code: str, start: int, stop: int) -> tuple[str, int, int] | None:
-    """The name that starts the declaration of a `let rec` at `start`, if one does: a name that
-    is not a keyword, binders (names or bracketed groups), then `:` or `:=` (not `::`)."""
-    name = NAME_AT.match(code, start, stop)
+    """The name that starts the declaration of a `let rec` at `start`, if one does: after any
+    attributes, a name that is not a keyword, binders (names or bracketed groups), then `:` or
+    `:=` (not `::`)."""
+    name = LET_DECL.match(code, start, stop)
     if name is None or name.group("name") in KEYWORDS:
         return None
     pos, depth = name.end(), 0
