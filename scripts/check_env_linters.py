@@ -66,7 +66,8 @@ from lean_changes import (ROOT, AggregatorError, ChangedFile, add_common_argumen
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (?P<text>.*)$")
 UNPLACED = re.compile(r"^#check (?P<text>.*)$")
 HEADER = re.compile(r"^/- The `(?P<linter>[^`]+)` linter reports:")
-MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")  # as Lean prints it, with «» where needed
+# A module's name, as Lean prints it (with «» where needed), as `ChangedFile.lean_module` spells it.
+MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")
 # The linters print one of these when they have linted the modules.
 FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
 
@@ -139,7 +140,7 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
         elif module_line := MODULE.match(line):
             finish()
             current = None
-            module = unquote_name(module_line.group("module"))
+            module = module_line.group("module")
         elif not line.strip() or line.startswith(("-- ", "/-")):
             finish()
             current = None
@@ -261,15 +262,16 @@ def is_word_at(code: str, offset: int, word: str) -> bool:
 
 
 def helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
-    """The `where` and `let rec` helpers that `code[start:stop]`, a declaration, declares.
+    """The `where` and `let rec` helpers that `code[start:stop]`, a declaration, declares, each
+    named, as Lean names it, after the helpers whose values hold it (`go.inner` for a
+    `let rec inner` in the value of a `where` helper `go`), with the offset of its name.
 
     `where` declares helpers after a body (`:= ...`, or match alternatives `| ...`), and
     structure fields when it comes straight after the signature (`instance : C where x := 0`);
-    only the first are helpers.
+    only the first are helpers, and a `let rec` in a field's value is the declaration's own.
     """
-    found = [(match.group("name"), match.start("name"))
-             for match in LET_REC.finditer(code, start, stop)]
     body = False
+    where = None
     for offset, char in top_level(code, start, stop):
         if code.startswith(":=", offset):
             body = True
@@ -277,9 +279,61 @@ def helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
             body = True
         elif char == "w" and is_word_at(code, offset, "where"):
             if body:
-                found += where_helpers(code, offset + len("where"), stop)
+                where = offset
             break
+    if where is None:
+        return let_recs(code, start, stop)
+    found = let_recs(code, start, where)
+    named = where_helpers(code, where + len("where"), stop)
+    for number, (name, offset) in enumerate(named):
+        # A helper's value runs to the line of the next one.
+        end = code.rfind("\n", 0, named[number + 1][1]) + 1 if number + 1 < len(named) else stop
+        found.append((name, offset))
+        found += let_recs(code, offset + len(name), end, (name,))
     return found
+
+
+def let_recs(code: str, start: int, stop: int,
+             outer: tuple[str, ...] = ()) -> list[tuple[str, int]]:
+    """The `let rec` helpers in `code[start:stop]`, which is in the value of the helpers
+    `outer`, each named after those and the `let rec`s whose values hold it, as Lean names them
+    (`a.b` for a `let rec b` in the value of a `let rec a`), with the offset of its name."""
+    found: list[tuple[str, int]] = []
+    pos = start
+    while match := LET_REC.search(code, pos, stop):
+        name = (*outer, match.group("name"))
+        value_end = min(let_rec_end(code, match, stop), stop)
+        found.append((".".join(name), match.start("name")))
+        found += let_recs(code, match.end(), value_end, name)
+        pos = max(value_end, match.end())
+    return found
+
+
+def let_rec_end(code: str, match: re.Match[str], stop: int) -> int:
+    """Where the value of the `let rec` that `match` found ends, before the body that it scopes
+    over: at the first `;` on its line outside brackets, or else after the lines below it that
+    are indented deeper than its `let`."""
+    line_start = code.rfind("\n", 0, match.start()) + 1
+    column = match.start() - line_start
+    line_end = code.find("\n", match.end(), stop)
+    if line_end < 0:
+        line_end = stop
+    for offset, char in top_level(code, match.end(), line_end):
+        if char == ";":
+            return offset
+    end = line_end
+    pos = line_end + 1
+    while pos < stop:
+        next_end = code.find("\n", pos, stop)
+        if next_end < 0:
+            next_end = stop
+        text = code[pos:next_end]
+        if text.strip():
+            if len(text) - len(text.lstrip()) <= column:
+                break
+            end = next_end
+        pos = next_end + 1
+    return end
 
 
 def where_helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
@@ -500,7 +554,7 @@ def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, So
         return Placement(file.path, finding.line, finding.col, new)
     # No position: the nearest enclosing declaration that a changed file declares.
     for path, file in files.items():
-        if finding.module is not None and file.module != finding.module:
+        if finding.module is not None and file.lean_module != finding.module:
             continue
         index = indexes[path]
         for candidate in enclosing(finding.declaration):
@@ -577,7 +631,7 @@ def main() -> int:
     kept: list[tuple[Finding, Placement]] = []
     existing = elsewhere = 0
     unplaced: list[Finding] = []
-    changed_modules = {file.module for file in changed}
+    changed_modules = {file.lean_module for file in changed}
     for finding in findings:
         placement = place(finding, files, indexes, base)
         if placement is None:

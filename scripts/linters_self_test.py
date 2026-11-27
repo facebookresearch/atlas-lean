@@ -38,6 +38,7 @@ module
 
 theorem lintersProbeCollision : 7 = 7 := rfl
 """
+# The files that the self-test creates, and deletes again.
 PROBES = (PROBE, PRIVATE_PROBE)
 # The exceptions file of scripts/lint_declarations.lean (and runLinter). The probe commit adds
 # entries, and the self-test puts the file back as it was. An entry names one declaration, so
@@ -194,6 +195,21 @@ def git(*args: str) -> str:
                           text=True).stdout.strip()
 
 
+def reserve(paths: tuple[Path, ...]) -> bool:
+    """Create each of `paths`, empty and new, so that the probes never write through a file or
+    a link already there; `False`, creating none, if one is there."""
+    created: list[Path] = []
+    for path in paths:
+        try:
+            (ROOT / path).open("x").close()
+        except FileExistsError:
+            for done in created:
+                (ROOT / done).unlink()
+            return False
+        created.append(path)
+    return True
+
+
 def commit(text: str, message: str, nolints: list | None = None) -> str:
     """Commit the probe module, and the private probe and `nolints` as the exceptions file if
     `nolints` is given."""
@@ -276,15 +292,18 @@ def main() -> int:
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
         parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
-    if any((ROOT / probe).exists() for probe in PROBES) or \
-            git("diff", "--cached", "--name-only") or \
+    if git("diff", "--cached", "--name-only") or \
             git("status", "--porcelain", "--", str(NOLINTS)):
-        print(f"A probe module exists, changes are staged or {NOLINTS} has local changes; "
-              "not running.", file=sys.stderr)
+        print(f"Changes are staged or {NOLINTS} has local changes; not running.",
+              file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
     had_nolints = (ROOT / NOLINTS).exists()
     nolints = json.loads((ROOT / NOLINTS).read_text()) if had_nolints else []
+    if not reserve(PROBES):
+        print(f"A file or link is at {' or '.join(map(str, PROBES))}; not running.",
+              file=sys.stderr)
+        return 1
     try:
         first = commit(PROBE_TEXT, "linters self-test: probe module", nolints + PROBE_NOLINTS)
         ok = run_checks(start, 0)
