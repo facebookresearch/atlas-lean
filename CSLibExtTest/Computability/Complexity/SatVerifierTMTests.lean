@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.SatVerifierTM
 
 namespace Cslib.Complexity.SatVerifier.Machine.Tests
 
-open Turing Cslib.CookLevin Cslib.Logic.PL
+open Turing Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- Step a `TM2` program until it halts, with fuel. -/
 private def runF {K : Type} [DecidableEq K] {Γ : K → Type} {Λ σ : Type}

@@ -1,4 +1,4 @@
 # Generalized eigenvalues of max and min matrices
 
-- [Generalized eigenvalues of a MAX matrix to a MIN matrix](det-max-matrix-sub-x-smul-min-matrix.md)
-- [Cauchy interlacing for generalized eigenvalues](generalized-eigenvalue-interlacing.md)
+- [Generalized eigenvalues of a MAX matrix with respect to a MIN matrix](max-and-min-matrices/README.md)
+- [Cauchy interlacing for generalized eigenvalues](cauchy-interlacing-for-generalized-eigenvalues/README.md)

@@ -9,20 +9,21 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.SetTheory.Determinacy.GaleStewart
+public import MathlibExt.SetTheory.Determinacy.BaireProperty
+public import MathlibExt.SetTheory.Determinacy.PerfectSet
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Topology.Baire.BaireMeasurable
-public import Mathlib.Topology.Perfect
 
 /-!
 # Regularity of sets of reals from determinacy (wanted)
 
 Determinacy of a class of sets of reals makes its members regular: they have the perfect set
 property (Davis), the property of Baire (Banach–Mazur, Oxtoby) and are measurable for every
-σ-finite Borel measure (Mycielski–Świerczkowski). We record these for a family `Γ` of subsets of
-Baire space `ℕ^ℕ` that is closed under preimages by Borel maps `ℕ^ℕ → ℕ^ℕ` and all of whose members
-are determined.
+σ-finite Borel measure (Mycielski–Świerczkowski). Davis's theorem is proved in
+`MathlibExt.SetTheory.Determinacy.PerfectSet` and the property of Baire in
+`MathlibExt.SetTheory.Determinacy.BaireProperty`. We record the remaining result, measurability,
+for a family `Γ` of subsets of Baire space `ℕ^ℕ` that is closed under preimages by Borel maps
+`ℕ^ℕ → ℕ^ℕ` and all of whose members are determined.
 
 **Exact hypotheses.** Moschovakis (*Descriptive Set Theory*, 2nd ed., AMS 2009, 6A.12, 6A.16 and
 6A.18) states these results for an adequate pointclass `Λ` closed under Borel (`Δ¹₁`)
@@ -59,27 +60,6 @@ open MeasureTheory
 namespace MathlibExt.SetTheory.DeterminacyWanted
 
 open MathlibExt.SetTheory.Determinacy
-
-/-- **Davis's perfect set theorem from determinacy.** Let `Γ` be a family of subsets of Baire
-space `ℕ^ℕ`, closed under preimages by Borel maps `ℕ^ℕ → ℕ^ℕ`, all of whose members are
-determined. Then every member of `Γ` is countable or contains a non-empty perfect set
-(M. Davis, *Infinite games of perfect information*, Ann. of Math. Stud. 52 (1964); Moschovakis,
-*Descriptive Set Theory*, 2nd ed., AMS 2009, 6A.10–6A.12; Woodin, *The continuum hypothesis,
-Part I*, Notices AMS 48 (2001)). -/
-theorem_wanted countable_or_exists_perfect_of_determined {Γ : Set (Set (ℕ → ℕ))}
-    (hΓ : ∀ f : (ℕ → ℕ) → ℕ → ℕ, Measurable f → ∀ B ∈ Γ, f ⁻¹' B ∈ Γ)
-    (hdet : ∀ B ∈ Γ, Determined B) {S : Set (ℕ → ℕ)} (hS : S ∈ Γ) :
-    S.Countable ∨ ∃ P ⊆ S, P.Nonempty ∧ Perfect P
-
-/-- **Property of Baire from determinacy.** Let `Γ` be a family of subsets of Baire space
-`ℕ^ℕ`, closed under preimages by Borel maps `ℕ^ℕ → ℕ^ℕ`, all of whose members are determined.
-Then every member of `Γ` has the property of Baire (S. Banach and S. Mazur, Problem 43 of the
-Scottish Book; J. C. Oxtoby, *The Banach–Mazur game and Banach category theorem*, Ann. of Math.
-Stud. 39 (1957); Moschovakis, *Descriptive Set Theory*, 2nd ed., AMS 2009, 6A.13–6A.16). -/
-theorem_wanted baireMeasurableSet_of_determined {Γ : Set (Set (ℕ → ℕ))}
-    (hΓ : ∀ f : (ℕ → ℕ) → ℕ → ℕ, Measurable f → ∀ B ∈ Γ, f ⁻¹' B ∈ Γ)
-    (hdet : ∀ B ∈ Γ, Determined B) {S : Set (ℕ → ℕ)} (hS : S ∈ Γ) :
-    BaireMeasurableSet S
 
 /-- **Measurability from determinacy.** Let `Γ` be a family of subsets of Baire space `ℕ^ℕ`,
 closed under preimages by Borel maps `ℕ^ℕ → ℕ^ℕ`, all of whose members are determined. Then every

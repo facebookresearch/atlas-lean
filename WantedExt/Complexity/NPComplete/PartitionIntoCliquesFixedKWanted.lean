@@ -23,10 +23,10 @@ Theoretical Computer Science 1 (1976), 237-267, doi:10.1016/0304-3975(76)90059-1
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -51,7 +51,7 @@ comment).
 
 `K` is fixed, not part of the input: the decision problem is `partitionIntoCliquesFixedKDec k`,
 and the theorem holds for every `k ≥ 3`. The instance, the graph and the question are those of
-`PartitionIntoCliquesWanted`, reused unchanged; the restriction adds to the parent's
+`PartitionIntoCliquesDefs`, reused unchanged; the restriction adds to the parent's
 well-formedness (simple edge list, `0 < K ≤ |V|`) that the bound in the instance is the fixed `k`,
 as in `FixedKColorabilityWanted`.
 

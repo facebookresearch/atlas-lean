@@ -14,6 +14,7 @@ public import Physlib.ClassicalMechanics.RigidBody.AngularMomentum
 public import Physlib.ClassicalMechanics.RigidBody.AngularVelocity
 public import Physlib.ClassicalMechanics.RigidBody.KineticEnergy
 public import PhyslibExt.Units.EngineeringFrames
+import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.ContDiff.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Bilinear
@@ -30,8 +31,9 @@ import MathlibExt.LinearAlgebra.CrossProduct
 
 The acceleration of a point in a frame that rotates at a variable rate and translates, derived
 from Physlib's rigid-body angular velocity, the angular momentum of a rigid body in motion about
-its centre of mass, Euler's equations as the body form of the rotational balance law, and a
-constructed torque-driven rotation about a fixed principal axis.
+its centre of mass, Euler's equations as the body form of the rotational balance law, a
+constructed torque-driven rotation about a fixed principal axis, and the torque-free precession of
+the body angular velocity of an axisymmetric body.
 
 ## i. Overview
 
@@ -76,6 +78,14 @@ This torque port delivers the shaft power `τ_B · ω_B = I_zz α θ'`, the rate
 kinetic energy. For `I_zz > 0` and `α ≠ 0` the torque is nonzero and the sign-flipped torque
 fails. This is existence for this driven example only.
 
+Without torque, an axisymmetric body with principal inertias `I_⊥, I_⊥, I₃` has the body angular
+velocity `ω_B(t) = (A cos (ν t), A sin (ν t), ω₃)` with `ν = (I₃ - I_⊥) ω₃ / I_⊥`: the transverse
+part turns about the symmetry axis at the rate `ν` while the axial spin stays constant. It solves
+Euler's equations `I ω_B' + ω_B × (I ω_B) = 0` with `I = diag(I_⊥, I_⊥, I₃)`; at `t = 0` its
+gyroscopic term is `(0, (I_⊥ - I₃) A ω₃, 0)`, nonzero for `I_⊥ ≠ I₃` and `A ω₃ ≠ 0`, and for
+positive inertias `euler_solve_iff` recovers its angular acceleration from zero torque. It is a
+body angular velocity only: no attitude with this angular velocity is constructed.
+
 Model inputs (hypotheses of the module):
 
 * `R` (entry by entry), `o` and `x_B` are `C²` on an open set of times containing the interval
@@ -92,7 +102,9 @@ Model inputs (hypotheses of the module):
 * the rotational balance law `dL_COM/dt = τ_I` is assumed, not derived from internal forces;
   squared magnitudes are dot products, since the norm of `Fin 3 → ℝ` is the supremum norm;
 * the constructed rotation takes a mass distribution with diagonal inertia about its centre of
-  mass at the origin of body coordinates, and a fixed rotation axis.
+  mass at the origin of body coordinates, and a fixed rotation axis;
+* the torque-free precession is stated in principal body axes, with `I_⊥ > 0` (the denominator of
+  the rate `ν`) and, where Euler's equations are solved, `I₃ > 0`.
 
 Non-goals: fictitious forces and the equations of motion in the moving frame, existence of motions
 for a general torque history (section F constructs one driven example), attitude
@@ -123,6 +135,10 @@ parametrizations and reconstruction, and any empirical adequacy or system safety
   satisfies and the shaft power it delivers.
 - `fixedAxisMotion_torque_ne_zero`, `fixedAxisMotion_neg_torque` : a nonzero angular acceleration
   needs a nonzero torque, and the sign-flipped torque fails.
+- `axisymmetricPrecession`, `axisymmetricPrecession_euler` : the torque-free precession of the body
+  angular velocity of an axisymmetric body.
+- `axisymmetricPrecession_gyroscopic_ne_zero`, `axisymmetricPrecession_euler_solve` : its nonzero
+  gyroscopic term, and the Euler port recovering its angular acceleration from zero torque.
 
 ## iii. Table of contents
 
@@ -136,14 +152,16 @@ parametrizations and reconstruction, and any empirical adequacy or system safety
   - E.1. Private helpers
   - E.2. Euler's equations and torque-free motion
 - F. A constructed torque-driven rotation about a fixed principal axis
+- G. Torque-free axisymmetric precession
 
 ## iv. References
 
 - L. D. Landau and E. M. Lifshitz, *Mechanics*, Sections 31, 32, 34, 36, 37 and 39 (angular
   velocity; the angular momentum of a rigid body about its centre of mass and about a fixed point;
-  the equations of motion of a rigid body; Euler's equations; the asymmetrical top, whose free
-  rotation conserves the energy and the squared angular momentum; motion in a non-inertial frame
-  of reference, with the translational, Euler, Coriolis and centrifugal terms).
+  the equations of motion of a rigid body; Euler's equations, with the free rotation of a
+  symmetrical top; the asymmetrical top, whose free rotation conserves the energy and the squared
+  angular momentum; motion in a non-inertial frame of reference, with the translational, Euler,
+  Coriolis and centrifugal terms).
 - H. Goldstein, C. Poole and J. Safko, *Classical Mechanics*, 3rd edition, 2002, Sections 4.9
   and 4.10 (rate of change of a vector; the Coriolis effect) and Sections 5.1 to 5.3, 5.5 and 5.6
   (angular momentum and the inertia tensor; the parallel-axis theorem; Euler's equations in body
@@ -337,8 +355,9 @@ end Helpers
 
 /-! ### A.2. The transport law -/
 
-/-- Transport law: a vector with time-dependent body components `u` has inertial components
-`R u`, and `d(R u)/dt = R (u' + ω_B × u)`, with `ω_B` the body angular velocity of the motion. -/
+/-- Transport law: at a time where `R` and `u` are differentiable, a vector with time-dependent body
+components `u` has inertial components `R u`, and `d(R u)/dt = R (u' + ω_B × u)`, with `ω_B` the
+body angular velocity of the motion. -/
 lemma deriv_bodyToInertialVec (M : RigidBodyMotion 3) (u : Time → Fin 3 → ℝ) (t : Time)
     (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hu : DifferentiableAt ℝ u t) :
     ∂ₜ (fun s => bodyToInertialVec (M.orientation s) (u s)) t =
@@ -361,8 +380,9 @@ lemma deriv_deriv_bodyToInertial (M : RigidBodyMotion 3) (o xB : Time → Fin 3 
           M.bodyAngularVelocity t ⨯₃ (M.bodyAngularVelocity t ⨯₃ xB t)) := by
   exact deriv_deriv_bodyToInertial_aux M o xB hU (contDiffOn_orientation_of_entries M hR) ho hx ht
 
-/-- Constant rate and fixed origin recover the existing constant-rate contract: with
-`ω_B = Ω` on `U` and the origin fixed at `o₀`, the acceleration has body components
+/-- Constant rate and fixed origin recover the existing constant-rate contract: for `R` (entrywise)
+and `x_B` of class `C²` on the open set `U`, with `ω_B = Ω` on `U` and the origin fixed at `o₀`,
+the acceleration has body components
 `a + 2 Ω × v + Ω × (Ω × r)` for `r = x_B`, `v = x_B'`, `a = x_B''`, the right side of
 `EarthScience.rotating_acceleration_decomposition`, with no transport law assumed. -/
 lemma deriv_deriv_bodyToInertial_of_const (M : RigidBodyMotion 3) (o₀ : Fin 3 → ℝ)
@@ -699,8 +719,9 @@ lemma euler_solve_iff {I : Matrix (Fin 3) (Fin 3) ℝ} (hI : I.PosDef) (ω a τB
   · intro h
     rw [h, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv I hdet, Matrix.one_mulVec, sub_add_cancel]
 
-/-- For a positive-definite inertia tensor about the centre of mass the balance law determines the
-body angular acceleration: at every `t ∈ U`, `dL_COM/dt = τ_I` exactly when
+/-- For `c = 0`, `R` of class `C²` entrywise on the open set `U` and a positive-definite inertia
+tensor about the centre of mass, the balance law determines the body angular acceleration: at
+every `t ∈ U`, `dL_COM/dt = τ_I` exactly when
 `ω_B' = I_B⁻¹ (Rᵀ τ_I - ω_B × (I_B ω_B))`. -/
 lemma deriv_comAngularMomentum_eq_iff_deriv_bodyAngularVelocity (M : RigidBodyMotion 3)
     {U : Set Time} (hU : IsOpen U)
@@ -725,7 +746,8 @@ lemma comAngularMomentum_dotProduct_self (M : RigidBodyMotion 3) (t : Time)
   rw [(comAngularMomentum_eq M t hR hc).2]
   exact bodyToInertialVec_dotProduct (M.orientation t) _ _
 
-/-- Torque-free consequence for the kinetic energy: if `dL_COM/dt = 0` at `t ∈ U`, the rotational
+/-- Torque-free consequence for the kinetic energy: for `c = 0` and `R` of class `C²` entrywise on
+the open set `U`, if `dL_COM/dt = 0` at `t ∈ U`, the rotational
 kinetic energy `ω_B · (I_B ω_B) / 2` (Physlib's `rotationalKineticEnergy` of the body-fixed
 distribution, the rotational part of the total kinetic energy) has derivative zero at `t`. -/
 lemma hasFDerivAt_rotationalKineticEnergy_of_torqueFree (M : RigidBodyMotion 3) {U : Set Time}
@@ -767,7 +789,8 @@ lemma hasFDerivAt_rotationalKineticEnergy_of_torqueFree (M : RigidBodyMotion 3) 
   rw [hL0] at h
   exact h
 
-/-- Torque-free consequence for the angular momentum: if `dL_COM/dt = 0` at `t ∈ U`, the squared
+/-- Torque-free consequence for the angular momentum: for `c = 0` and `R` of class `C²` entrywise
+on the open set `U`, if `dL_COM/dt = 0` at `t ∈ U`, the squared
 Euclidean norm `(I_B ω_B) · (I_B ω_B)` of the body angular momentum has derivative zero at `t`. -/
 lemma hasFDerivAt_angularMomentum_normSq_of_torqueFree (M : RigidBodyMotion 3) {U : Set Time}
     (hU : IsOpen U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
@@ -798,8 +821,9 @@ lemma hasFDerivAt_angularMomentum_normSq_of_torqueFree (M : RigidBodyMotion 3) {
   rw [hL0] at hL
   exact hL
 
-/-- Conservation on a preconnected open set of times: torque-free motion keeps the rotational
-kinetic energy and the squared norm `|I_B ω_B|² = |L_COM|²` of the angular momentum constant. -/
+/-- Conservation on a preconnected open set `U` of times on which `R` is `C²` entrywise, for
+`c = 0`: if `dL_COM/dt = 0` on `U`, the rotational kinetic energy and the squared norm
+`|I_B ω_B|² = |L_COM|²` of the angular momentum are constant on `U`. -/
 lemma torqueFree_conserved (M : RigidBodyMotion 3) {U : Set Time} (hU : IsOpen U)
     (hU' : IsPreconnected U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
     (hc : M.centerOfMass = 0) (hfree : ∀ s ∈ U, ∂ₜ (comAngularMomentum M) s = 0) {s t : Time}
@@ -844,7 +868,8 @@ noncomputable def fixedAxisMotion (B : RigidBody 3) (ω₀ α : ℝ) : RigidBody
   orientation := fun t => ⟨rotZ (fixedAxisAngle ω₀ α t), rotZ_mem_specialOrthogonalGroup _⟩
 
 /-- The torque port of the fixed-axis motion: the body torque `τ_B = (0, 0, I_zz α)` about the
-centre of mass, which drives the constant angular acceleration `α`. -/
+centre of mass, which, for a body with inertia `diag(I_xx, I_yy, I_zz)` about its centre of mass,
+drives the constant angular acceleration `α`. -/
 noncomputable def fixedAxisTorque (Izz α : ℝ) : Fin 3 → ℝ := ![0, 0, Izz * α]
 
 /-- The angle `θ(t) = ω₀ t + α t² / 2` as a curve on `ℝ` has the rate `ω₀ + α t`. -/
@@ -1011,8 +1036,9 @@ lemma deriv_comAngularMomentum_fixedAxisMotion {B : RigidBody 3} (hc : B.centerO
     ext i
     fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three, fixedAxisTorque]
 
-/-- The torque port delivers the shaft power `P = τ ω` about the axis: the rotational kinetic
-energy `T = ω_B · (I_B ω_B) / 2 = I_zz θ'² / 2` is differentiable with rate
+/-- The torque port delivers the shaft power `P = τ ω` about the axis: for `c = 0` and inertia
+`diag(I_xx, I_yy, I_zz)` about it, the rotational kinetic energy
+`T = ω_B · (I_B ω_B) / 2 = I_zz θ'² / 2` is differentiable with rate
 `τ_B · ω_B = I_zz α θ'`, the coordinate of the typed shaft power of the torque `I_zz α` at the
 angular velocity `θ'`. -/
 lemma fixedAxisMotion_power_port {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ixx Iyy Izz : ℝ}
@@ -1059,8 +1085,9 @@ lemma fixedAxisMotion_power_port {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ix
     exact Time.deriv_comp_toRealCLE_of_hasDerivAt _ t _ hγ
   · rw [shaftPower_val, hP, (deriv_fixedAxisAngle ω₀ α t).1]
 
-/-- A nonzero angular acceleration needs a nonzero torque: for `I_zz > 0` and `α ≠ 0` the port
-torque, the body angular acceleration and the rate of change `dL_COM/dt` are nonzero. -/
+/-- A nonzero angular acceleration needs a nonzero torque: for `c = 0`, inertia
+`diag(I_xx, I_yy, I_zz)` about it, `I_zz > 0` and `α ≠ 0` the port torque, the body angular
+acceleration and the rate of change `dL_COM/dt` are nonzero. -/
 lemma fixedAxisMotion_torque_ne_zero {B : RigidBody 3} (hc : B.centerOfMass = 0)
     {Ixx Iyy Izz : ℝ} (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz])
     (hIzz : 0 < Izz) {ω₀ α : ℝ} (hα : α ≠ 0) (t : Time) :
@@ -1077,8 +1104,9 @@ lemma fixedAxisMotion_torque_ne_zero {B : RigidBody 3} (hc : B.centerOfMass = 0)
     rw [h1, h2]
     exact hτ
 
-/-- A sign-flipped torque fails: for `I_zz > 0` and `α ≠ 0`, the constructed motion satisfies
-neither Euler's equations nor the balance law with the torque `-τ_B`. -/
+/-- A sign-flipped torque fails: for `c = 0`, inertia `diag(I_xx, I_yy, I_zz)` about it, `I_zz > 0`
+and `α ≠ 0`, the constructed motion satisfies neither Euler's equations nor the balance law with
+the torque `-τ_B`. -/
 lemma fixedAxisMotion_neg_torque {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ixx Iyy Izz : ℝ}
     (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz]) (hIzz : 0 < Izz)
     {ω₀ α : ℝ} (hα : α ≠ 0) (t : Time) :
@@ -1099,5 +1127,102 @@ lemma fixedAxisMotion_neg_torque {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ix
     exact hne
   · rw [h1, h2]
     exact hne
+
+/-! ## G. Torque-free axisymmetric precession -/
+
+/-- The precession rate `ν = (I₃ - I_⊥) ω₃ / I_⊥` of torque-free axisymmetric motion with
+transverse principal inertia `I_⊥`, axial principal inertia `I₃` and axial spin `ω₃`. With
+`a / 0 = 0` it is `0` when `I_⊥ = 0`; the intended domain is `I_⊥ > 0`. -/
+noncomputable def axisymmetricPrecessionRate (Iperp I₃ ω₃ : ℝ) : ℝ := (I₃ - Iperp) * ω₃ / Iperp
+
+/-- The body angular velocity `ω_B(t) = (A cos (ν t), A sin (ν t), ω₃)` of torque-free
+axisymmetric motion, with transverse amplitude `A`, axial spin `ω₃` and precession rate
+`ν = axisymmetricPrecessionRate I_⊥ I₃ ω₃`. It solves the torque-free Euler equations for
+`I_⊥ > 0`; no attitude with this angular velocity is constructed. -/
+noncomputable def axisymmetricPrecession (Iperp I₃ A ω₃ : ℝ) (t : Time) : Fin 3 → ℝ :=
+  ![A * Real.cos (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val),
+    A * Real.sin (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val), ω₃]
+
+/-- The witness is differentiable, with `ω_B'(t) = (-A ν sin (ν t), A ν cos (ν t), 0)`. -/
+lemma deriv_axisymmetricPrecession (Iperp I₃ A ω₃ : ℝ) (t : Time) :
+    DifferentiableAt ℝ (axisymmetricPrecession Iperp I₃ A ω₃) t ∧
+      ∂ₜ (axisymmetricPrecession Iperp I₃ A ω₃) t =
+        ![-(A * axisymmetricPrecessionRate Iperp I₃ ω₃ *
+            Real.sin (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val)),
+          A * axisymmetricPrecessionRate Iperp I₃ ω₃ *
+            Real.cos (axisymmetricPrecessionRate Iperp I₃ ω₃ * t.val), 0] := by
+  set ν := axisymmetricPrecessionRate Iperp I₃ ω₃ with hν
+  have hl : HasDerivAt (fun x : ℝ => ν * x) ν t.val := by
+    simpa using (hasDerivAt_id t.val).const_mul ν
+  have hc : HasDerivAt (fun x : ℝ => A * Real.cos (ν * x))
+      (-(A * ν * Real.sin (ν * t.val))) t.val :=
+    (((Real.hasDerivAt_cos (ν * t.val)).comp t.val hl).const_mul A).congr_deriv (by ring)
+  have hs : HasDerivAt (fun x : ℝ => A * Real.sin (ν * x))
+      (A * ν * Real.cos (ν * t.val)) t.val :=
+    (((Real.hasDerivAt_sin (ν * t.val)).comp t.val hl).const_mul A).congr_deriv (by ring)
+  have hγ : HasDerivAt (fun x : ℝ => ![A * Real.cos (ν * x), A * Real.sin (ν * x), ω₃])
+      ![-(A * ν * Real.sin (ν * t.val)), A * ν * Real.cos (ν * t.val), 0] t.val := by
+    rw [hasDerivAt_pi]
+    intro i
+    fin_cases i
+    · simpa using hc
+    · simpa using hs
+    · simpa using hasDerivAt_const t.val ω₃
+  refine ⟨?_, ?_⟩
+  · exact hγ.differentiableAt.comp t Time.toRealCLE.differentiableAt
+  · exact Time.deriv_comp_toRealCLE_of_hasDerivAt _ t _ hγ
+
+/-- Euler's equations without torque: for `I_⊥ > 0` and the axisymmetric inertia
+`I = diag(I_⊥, I_⊥, I₃)`, the witness satisfies `I ω_B' + ω_B × (I ω_B) = 0` at every time. -/
+lemma axisymmetricPrecession_euler {Iperp : ℝ} (hIperp : 0 < Iperp) (I₃ A ω₃ : ℝ) (t : Time) :
+    Matrix.diagonal ![Iperp, Iperp, I₃] *ᵥ ∂ₜ (axisymmetricPrecession Iperp I₃ A ω₃) t +
+        axisymmetricPrecession Iperp I₃ A ω₃ t ⨯₃
+          (Matrix.diagonal ![Iperp, Iperp, I₃] *ᵥ axisymmetricPrecession Iperp I₃ A ω₃ t) =
+      0 := by
+  rw [(deriv_axisymmetricPrecession Iperp I₃ A ω₃ t).2]
+  have hne : Iperp ≠ 0 := ne_of_gt hIperp
+  ext i
+  fin_cases i <;>
+    simp [axisymmetricPrecession, axisymmetricPrecessionRate, Matrix.mulVec_diagonal,
+      cross_apply] <;>
+    field_simp <;>
+    ring
+
+/-- The gyroscopic term at `t = 0`: `ω_B(0) = (A, 0, ω₃)`, `I ω_B(0) = (I_⊥ A, 0, I₃ ω₃)` and
+`ω_B(0) × (I ω_B(0)) = (0, (I_⊥ - I₃) A ω₃, 0)`. -/
+lemma axisymmetricPrecession_gyroscopic_zero (Iperp I₃ A ω₃ : ℝ) :
+    axisymmetricPrecession Iperp I₃ A ω₃ 0 ⨯₃
+        (Matrix.diagonal ![Iperp, Iperp, I₃] *ᵥ axisymmetricPrecession Iperp I₃ A ω₃ 0) =
+      ![0, (Iperp - I₃) * (A * ω₃), 0] := by
+  ext i
+  fin_cases i <;>
+    simp [axisymmetricPrecession, Time.zero_val, Matrix.mulVec_diagonal, cross_apply]
+  ring
+
+/-- The gyroscopic term is nonzero at `t = 0` when `I_⊥ ≠ I₃` and `A ω₃ ≠ 0`. -/
+lemma axisymmetricPrecession_gyroscopic_ne_zero {Iperp I₃ A ω₃ : ℝ} (hne : Iperp ≠ I₃)
+    (hAω : A * ω₃ ≠ 0) :
+    axisymmetricPrecession Iperp I₃ A ω₃ 0 ⨯₃
+        (Matrix.diagonal ![Iperp, Iperp, I₃] *ᵥ axisymmetricPrecession Iperp I₃ A ω₃ 0) ≠ 0 := by
+  rw [axisymmetricPrecession_gyroscopic_zero]
+  intro h
+  have h1 := congrFun h 1
+  simp only [Matrix.cons_val_one, Matrix.cons_val_zero, Pi.zero_apply] at h1
+  exact mul_ne_zero (sub_ne_zero.mpr hne) hAω h1
+
+/-- The witness tests the Euler port of the torque-balance section: for positive inertias,
+`I = diag(I_⊥, I_⊥, I₃)` is positive definite, and the angular acceleration that
+`euler_solve_iff` determines without torque, `I⁻¹ (0 - ω_B × (I ω_B))`, is the witness's own
+`ω_B'`. -/
+lemma axisymmetricPrecession_euler_solve {Iperp I₃ : ℝ} (hIperp : 0 < Iperp) (hI₃ : 0 < I₃)
+    (A ω₃ : ℝ) (t : Time) :
+    (Matrix.diagonal ![Iperp, Iperp, I₃]).PosDef ∧
+      ∂ₜ (axisymmetricPrecession Iperp I₃ A ω₃) t = (Matrix.diagonal ![Iperp, Iperp, I₃])⁻¹ *ᵥ
+        (0 - axisymmetricPrecession Iperp I₃ A ω₃ t ⨯₃
+          (Matrix.diagonal ![Iperp, Iperp, I₃] *ᵥ axisymmetricPrecession Iperp I₃ A ω₃ t)) := by
+  have hpos : (Matrix.diagonal ![Iperp, Iperp, I₃]).PosDef :=
+    Matrix.PosDef.diagonal fun i => by fin_cases i <;> simp [hIperp, hI₃]
+  refine ⟨hpos, ?_⟩
+  exact (euler_solve_iff hpos _ _ 0).mp (axisymmetricPrecession_euler hIperp I₃ A ω₃ t)
 
 end Mechanics.RigidMotionPorts

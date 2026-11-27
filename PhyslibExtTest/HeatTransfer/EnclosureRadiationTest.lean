@@ -9,6 +9,7 @@ module
 
 import PhyslibExt.HeatTransfer.EnclosureRadiation
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -30,12 +31,17 @@ These are elaboration and non-vacuity checks, not new results.
 - The aperture fixture is a black enclosure, and deleting the aperture node is not.
 - With emissivities `1/2` the two-surface radiosities solve the gray equations uniquely and the
   net powers are two fifths of the black ones; with emissivities `1` the black values return.
+- In the infinite-plane idealization, two parallel gray plates of area `2` with emissivities
+  `(1/2, 1/4)` at `(400, 300)` exchange `7000000000 * σ`, the closed form, and the flux is half
+  of it; at equal temperatures both radiosities are the blackbody value and nothing is
+  exchanged; the plates' view factors are not an enclosure for the unequal areas `(1, 2)`.
 
 ## iii. Table of contents
 
 - A. Two-surface enclosure
 - B. Aperture as an environment node
 - C. Gray two-surface enclosure
+- D. Parallel gray plates: the infinite-plane idealization
 
 ## iv. References
 
@@ -251,5 +257,88 @@ example (σ : ℝ) :
   refine ⟨existsUnique_isRadiosity hE hε hε₁ σ _, ?_, sum_grayNetPower_eq_zero hE _⟩
   rw [grayNetPower_eq_emitted_sub_absorbed hE hJ 0]
   simp [Fin.sum_univ_two]
+
+/-! ## D. Parallel gray plates: the infinite-plane idealization -/
+
+/- Idealized gray plates (unit view factors, no edge loss) of area `2` with emissivities
+`ε = (1/2, 1/4)` at `T = (400, 300)`: the radiosities `J = (22100000000 * σ, 18600000000 * σ)`
+solve the equations, the net power leaving the hotter plate is `7000000000 * σ`, equal to
+`parallelPlatePower σ 2 (1/2) (1/4) 400 300`, and the flux is half of it, `3500000000 * σ`. -/
+example (σ : ℝ) :
+    IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![400, 300]
+        ![22100000000 * σ, 18600000000 * σ] ∧
+      grayNetPower (fun _ : Fin 2 => (2 : ℝ)) parallelPlateViewFactor
+          ![22100000000 * σ, 18600000000 * σ] 0 = 7000000000 * σ ∧
+      parallelPlatePower σ 2 (1 / 2) (1 / 4) 400 300 = 7000000000 * σ ∧
+      parallelPlatePower σ 2 (1 / 2) (1 / 4) 400 300 / 2 = 3500000000 * σ := by
+  have h3 : parallelPlatePower σ 2 (1 / 2) (1 / 4) 400 300 = 7000000000 * σ := by
+    unfold parallelPlatePower
+    field_simp
+    ring
+  refine ⟨?_, ?_, h3, ?_⟩
+  · intro i
+    fin_cases i <;> simp [Fin.sum_univ_two, parallelPlateViewFactor] <;> ring
+  · unfold grayNetPower
+    simp [Fin.sum_univ_two, parallelPlateViewFactor]
+    ring
+  · rw [h3]
+    ring
+
+/- Equilibrium fixture: at equal temperatures `T = (300, 300)`, with the same plates, both
+radiosities are the blackbody value `σ * 300 ^ 4 = 8100000000 * σ` and both net powers are
+zero. -/
+example (σ : ℝ) :
+    IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![300, 300]
+        ![8100000000 * σ, 8100000000 * σ] ∧
+      grayNetPower (fun _ : Fin 2 => (2 : ℝ)) parallelPlateViewFactor
+          ![8100000000 * σ, 8100000000 * σ] 0 = 0 ∧
+      grayNetPower (fun _ : Fin 2 => (2 : ℝ)) parallelPlateViewFactor
+          ![8100000000 * σ, 8100000000 * σ] 1 = 0 := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro i
+    fin_cases i <;> simp [Fin.sum_univ_two, parallelPlateViewFactor] <;> ring
+  · unfold grayNetPower
+    simp [Fin.sum_univ_two, parallelPlateViewFactor]
+  · unfold grayNetPower
+    simp [Fin.sum_univ_two, parallelPlateViewFactor]
+
+/- Through `grayNetPower_parallelPlates` the radiosities of the gray plates give the closed form,
+and by `parallelPlatePower_ne_zero` the exchange at `T = (400, 300)` is nonzero for `σ > 0`. -/
+example (σ : ℝ) (hσ : 0 < σ) :
+    grayNetPower (fun _ : Fin 2 => (2 : ℝ)) parallelPlateViewFactor
+      ![22100000000 * σ, 18600000000 * σ] 0 ≠ 0 := by
+  have hJ : IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![400, 300]
+      ![22100000000 * σ, 18600000000 * σ] := by
+    intro i
+    fin_cases i <;> simp [Fin.sum_univ_two, parallelPlateViewFactor] <;> ring
+  rw [grayNetPower_parallelPlates (A := 2) (fun i => by fin_cases i <;> norm_num)
+    (fun i => by fin_cases i <;> norm_num) hJ]
+  exact parallelPlatePower_ne_zero hσ two_pos (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/- By `existsUnique_isRadiosity_parallelPlates` the radiosities of the gray plates are the only
+solution of the two plate equations. -/
+example (σ : ℝ) (J : Fin 2 → ℝ)
+    (hJ : IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![400, 300] J) :
+    J = ![22100000000 * σ, 18600000000 * σ] := by
+  have h0 : IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![400, 300]
+      ![22100000000 * σ, 18600000000 * σ] := by
+    intro i
+    fin_cases i <;> simp [Fin.sum_univ_two, parallelPlateViewFactor] <;> ring
+  exact (existsUnique_isRadiosity_parallelPlates (fun i => by fin_cases i <;> norm_num)
+    (fun i => by fin_cases i <;> norm_num) σ ![400, 300]).unique hJ h0
+
+/- At equal temperatures every radiosity solution of the plates exchanges no power
+(`grayNetPower_parallelPlates_eq_zero_of_temp_eq`). -/
+example (σ : ℝ) (J : Fin 2 → ℝ)
+    (hJ : IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![300, 300] J) :
+    grayNetPower (fun _ : Fin 2 => (2 : ℝ)) parallelPlateViewFactor J 0 = 0 :=
+  grayNetPower_parallelPlates_eq_zero_of_temp_eq (fun i => by fin_cases i <;> norm_num)
+    (fun i => by fin_cases i <;> norm_num) hJ (by norm_num)
+
+/- Invalid: the plates' view factors with the unequal areas `(1, 2)` of section A violate
+reciprocity, so they are not an enclosure (`not_isBlackEnclosure_parallelPlates_of_area_ne`). -/
+example : ¬ IsBlackEnclosure (![1, 2] : Fin 2 → ℝ) parallelPlateViewFactor :=
+  not_isBlackEnclosure_parallelPlates_of_area_ne (by norm_num)
 
 end HeatTransfer.EnclosureRadiation

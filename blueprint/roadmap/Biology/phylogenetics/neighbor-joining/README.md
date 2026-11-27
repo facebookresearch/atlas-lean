@@ -37,3 +37,20 @@
 - [The path metric on a partition into sides](exists-split-system-of-partition.md)
 - [Neighbor joining is exact on tree metrics](nj-run-splits.md)
 - [Neighbor joining forms the splits of a tree when every join forms a side](nj-run-splits-of-join.md)
+
+## Bridge between neighbor-joining trees and unrooted binary trees
+
+- [Binary phylogenetic trees as unrooted binary trees](to-unrooted-binary-tree.md)
+- [Round trip from neighbor joining](to-unrooted-binary-tree-label.md)
+- [Unrooted binary trees as binary phylogenetic trees](is-binary-phylogenetic-tree-of-unrooted.md)
+- [Round trip from unrooted trees](to-unrooted-binary-tree-iso.md)
+- [Round trip from unrooted trees, reversed](iso-to-unrooted-binary-tree.md)
+- [Deleting an edge of a tree](reachable-delete-edges-iff-dist-lt.md)
+- [Neighbor-joining sides are split sides](side-eq-edge-side.md)
+- [Split sides are neighbor-joining sides](edge-side-eq-side.md)
+- [Neighbor-joining split family](side-splits.md)
+- [Splits correspondence](side-splits-eq-edge-splits.md)
+
+- [Buneman split index and split weights of a tree metric](buneman-split-index-and-split-weights-of-a-tree.md)
+- [Pairwise compatible splits determine a unique unrooted X-tree](pairwise-compatible-splits-determine-a-unique-un.md)
+- [Split decomposition of a tree metric and uniqueness of lengths](split-decomposition-of-a-tree-metric-and-uniquen.md)

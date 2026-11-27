@@ -26,7 +26,7 @@ law of order one as `n, p → ∞` with `n / p → γ ≥ 1`.
 
 This is the null distribution that Patterson, Price and Reich use to decide how many principal
 components of a genotype matrix are significant; the decision rule itself is proved, conditional
-on this approximation, in `MathlibExt.Biology.StatisticalGenetics.Eigenstrat`.
+on this approximation, in `Domains.Biology.StatisticalGenetics.Eigenstrat`.
 
 ## Main statements
 

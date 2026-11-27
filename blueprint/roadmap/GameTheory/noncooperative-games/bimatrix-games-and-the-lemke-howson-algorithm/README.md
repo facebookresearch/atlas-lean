@@ -8,6 +8,11 @@ A bimatrix game is a two-player game given by a payoff matrix for each player. T
 - [Pure best responses of player 2](best-responses-2.md)
 - [Nondegenerate bimatrix game](is-nondegenerate.md)
 - [A nondegenerate bimatrix game has an odd number of Nash equilibria](odd-ncard-is-bimatrix-nash.md)
+- [Polyhedral Theory of Bimatrix Games](bimatrix-polyhedral-theory/README.md)
+
+- [Correctness of support enumeration for bimatrix games](correctness-of-support-enumeration-for-bimatrix-games.md)
+- [Abstract labeled-vertex graph for complementary pivoting](abstract-labeled-vertex-graph-for-complementary-pivoting.md)
+- [Classification of Nash equilibria of 2×2 games](equilibria-of-two-by-two-games.md)
 
 ## Related topics
 

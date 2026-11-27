@@ -19,7 +19,7 @@ https://www.nikoli.co.jp/en/puzzles/nagareru/ and https://www.nikoli.co.jp/ja/pu
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Hasse

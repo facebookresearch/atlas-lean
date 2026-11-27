@@ -1,0 +1,18 @@
+# Reservoir storage capacity by the sequent-peak method
+
+- [Spill-capped storage is capacity minus the storage deficit](storage-eq-capacity-sub-required-storage.md)
+- [Storage is feasible exactly when capacity covers the worst deficit](storage-feasible-iff.md)
+- [Signed deficits of a release and inflow record](deficit-list.md)
+- [Sequent-peak storage deficit after t steps](required-storage-at.md)
+- [Storage deficit at the end of the horizon](terminal-storage-deficit.md)
+- [Net deficit over a final window of steps](suffix-deficit-sum.md)
+- [Worst required storage over the horizon](worst-required-storage.md)
+- [No storage deficit before the first step](required-storage-at-zero.md)
+- [The terminal deficit is the storage deficit after all n steps](terminal-storage-deficit-eq-at-length.md)
+- [The empty window has zero net deficit](suffix-deficit-sum-self.md)
+- [One-step update of the storage deficit](required-storage-at-succ.md)
+- [The storage deficit is the walk maximum of the reversed deficits](required-storage-at-eq-walk-max-reverse.md)
+- [Every final-window net deficit is at most the storage deficit](suffix-deficit-sum-le-required-storage-a.md)
+- [Some final window attains the storage deficit](exists-suffix-deficit-sum-eq-required-st.md)
+- [The storage deficit is nonnegative](required-storage-at-nonneg.md)
+- [The worst required storage is the largest storage deficit](required-storage-at-le-worst-and-exists.md)

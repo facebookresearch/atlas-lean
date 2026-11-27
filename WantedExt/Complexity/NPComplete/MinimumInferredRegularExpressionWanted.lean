@@ -19,7 +19,7 @@ Control 39 (1978), 337-350, doi:10.1016/S0019-9958(78)90683-6.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Languages.KleeneConverse
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

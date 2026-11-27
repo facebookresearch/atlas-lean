@@ -22,20 +22,24 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Falling `k`-binomial transform of a sequence:
-`b n = ∑ i ∈ range (n + 1), C(n, i) * k ^ (n - i) * a i`.
+/-- **Falling k-binomial transform.** For an integer $k$ and an integer sequence $(a_i)_{i \ge 0}$,
+the falling $k$-binomial transform of $a$ is the integer sequence $(b_n)_{n \ge 0}$ given by
+$$b_n = \sum_{i=0}^{n} \binom{n}{i} k^{n-i} a_i.$$
 
-Source statement `jis_f80f56d96d180cdfb88089a0`, concept
+Source: statement `jis_f80f56d96d180cdfb88089a0`, concept
 `jis_sem_435054dc88f9efa6e6529e6a`. -/
 def fallingKBinomialTransform (k : ℤ) (a : ℕ → ℤ) (n : ℕ) : ℤ :=
   ∑ i ∈ Finset.range (n + 1), (Nat.choose n i : ℤ) * k ^ (n - i) * a i
 
-/-- Binomial transform of a sequence, the `k = 1` case of
-`fallingKBinomialTransform`. -/
+/-- **Binomial transform.** The binomial transform of an integer sequence $(a_i)_{i \ge 0}$ is the
+falling k-binomial transform of $a$ with $k = 1$, the sequence whose $n$-th term is
+$\sum_{i=0}^{n} \binom{n}{i} 1^{n-i} a_i$. -/
 def binomialTransform (a : ℕ → ℤ) (n : ℕ) : ℤ :=
   fallingKBinomialTransform 1 a n
 
-/-- The `k = 1` falling `k`-binomial transform has the usual binomial sum. -/
+/-- **Binomial transform as a binomial sum.** For every integer sequence $(a_i)_{i \ge 0}$ and
+every $n \in \mathbb{N}$, the $n$-th term of the binomial transform of $a$ equals
+$\sum_{i=0}^{n} \binom{n}{i} a_i$. -/
 theorem binomialTransform_eq_sum (a : ℕ → ℤ) (n : ℕ) :
     binomialTransform a n =
       ∑ i ∈ Finset.range (n + 1), (Nat.choose n i : ℤ) * a i := by

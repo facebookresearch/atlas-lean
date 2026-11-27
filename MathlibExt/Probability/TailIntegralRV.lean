@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import MathlibExt.Probability.RegularVariationKaramata
 import Mathlib.MeasureTheory.Integral.Layercake
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -87,27 +88,6 @@ open scoped Topology ENNReal NNReal
 namespace MathlibExt.Probability.TailIntegralRV
 
 open MathlibExt.Probability.RegularVariation
-
-/-- Ratio form of the canonical regular-variation predicate. Positivity is only
-needed eventually, as in the canonical definition. -/
-private theorem rv_ratio_tendsto {T : ℝ → ℝ} {ρ : ℝ}
-    (hT : IsRegularlyVarying T ρ) {c : ℝ} (hc : 0 < c) :
-    Tendsto (fun x => T (c * x) / T x) atTop (𝓝 (c ^ ρ)) := by
-  obtain ⟨L, hL, hEv⟩ := hT
-  have hmul : Tendsto (fun x : ℝ => c * x) atTop atTop :=
-    Filter.Tendsto.const_mul_atTop hc tendsto_id
-  have hEv2 : ∀ᶠ x in atTop, T (c * x) = (c * x) ^ ρ * L (c * x) :=
-    hmul.eventually hEv
-  have hEq : ∀ᶠ x in atTop, T (c * x) / T x = c ^ ρ * (L (c * x) / L x) := by
-    filter_upwards [hEv, hEv2, hL.1, eventually_gt_atTop (0 : ℝ)]
-      with x hx hx2 hLpos hxpos
-    have hLx : L x ≠ 0 := ne_of_gt hLpos
-    have hxr : x ^ ρ ≠ 0 := ne_of_gt (Real.rpow_pos_of_pos hxpos ρ)
-    rw [hx, hx2, Real.mul_rpow hc.le hxpos.le]
-    field_simp
-  refine Filter.Tendsto.congr' (Filter.EventuallyEq.symm hEq) ?_
-  have h := (hL.2 c hc).const_mul (c ^ ρ)
-  simpa using h
 
 /-- **Potter's lower bound** for antitone functions with a ratio limit: for every
 `δ > 0` there are `D > 0` and `Y` such that `D * x ^ (ρ - δ) ≤ W x` for all
@@ -603,7 +583,7 @@ theorem tailIntegral_tendsto {μ : Measure ℝ} [IsProbabilityMeasure μ] {α : 
   have hCpos : ∀ᶠ x in atTop, 0 < combinedTail μ x := hRV.eventually_pos
   have hCratio : ∀ d : ℝ, 0 < d →
       Tendsto (fun x => combinedTail μ (d * x) / combinedTail μ x)
-        atTop (𝓝 (d ^ (-α))) := fun d hd => rv_ratio_tendsto hRV hd
+        atTop (𝓝 (d ^ (-α))) := fun d hd => hRV.ratio_tendsto hd
   have hCInt : ∀ a b : ℝ, a ≤ b → IntervalIntegrable (combinedTail μ) volume a b :=
     fun a b hab => intervalIntegrable_of_antitone_bdd hCanti hCnn hCbdd hab
   have hRInt : ∀ a b : ℝ, a ≤ b → IntervalIntegrable (rightTail μ) volume a b :=

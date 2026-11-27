@@ -37,13 +37,21 @@ log N → 1/4`, equivalent; no code imported).
 
 open Filter
 
-/-- `A` is non-averaging: no `a ∈ A` is the arithmetic mean of a nonempty set `S ⊆ A \ {a}`
-(equivalently, of at least two distinct elements of `A`). -/
+/-- **Non-averaging sets.** A finite set $A$ of natural numbers is non-averaging if no $a \in A$ is
+the arithmetic mean of a nonempty set $S \subseteq A \setminus \{a\}$, that is,
+$\sum_{s \in S} s \ne |S| \cdot a$ for every $a \in A$ and every nonempty
+$S \subseteq A \setminus \{a\}$.
+
+Equivalently, no element of $A$ is the arithmetic mean of at least two distinct elements of $A$. -/
 def IsNonAveraging (A : Finset ℕ) : Prop :=
   ∀ a ∈ A, ∀ S ⊆ A.erase a, S.Nonempty → ∑ s ∈ S, s ≠ S.card * a
 
-/-- Erdős Problem 186: the largest non-averaging subset of `{1, …, N}` has size `N^{1/4 + o(1)}`:
-for every `ε > 0` and all large `N` its size lies between `N^{1/4 - ε}` and `N^{1/4 + ε}`. -/
+/-- **Erdős Problem 186 on non-averaging sets.** For every $\varepsilon > 0$ and every sufficiently
+large $N$, the largest non-averaging subset of $\{1, \dots, N\}$ has size between
+$N^{1/4 - \varepsilon}$ and $N^{1/4 + \varepsilon}$: some non-averaging subset of
+$\{1, \dots, N\}$ has at least $N^{1/4 - \varepsilon}$ elements, and every non-averaging subset
+of $\{1, \dots, N\}$ has at most $N^{1/4 + \varepsilon}$ elements. In short, the largest
+non-averaging subset of $\{1, \dots, N\}$ has size $N^{1/4 + o(1)}$. -/
 def nonAveragingMaxSizeQuarterExponent : Prop :=
   ∀ ε : ℝ, 0 < ε → ∀ᶠ N : ℕ in atTop,
     (∃ A : Finset ℕ, A ⊆ Finset.Icc 1 N ∧ IsNonAveraging A ∧
@@ -52,8 +60,15 @@ def nonAveragingMaxSizeQuarterExponent : Prop :=
       (A.card : ℝ) ≤ (N : ℝ) ^ ((1 : ℝ) / 4 + ε)
 
 /--
-Resolved true: Bosznay constructed non-averaging subsets of `{1, …, N}` of size `≫ N^{1/4}`, and
-Pham and Zakharov proved the matching upper bound `N^{1/4 + o(1)}`, so `F(N) = N^{1/4 + o(1)}`.
+**Pham–Zakharov theorem on non-averaging sets.** For every $\varepsilon > 0$ and every
+sufficiently large $N$, some non-averaging subset of $\{1, \dots, N\}$ has at least
+$N^{1/4 - \varepsilon}$ elements, and every non-averaging subset of $\{1, \dots, N\}$ has at most
+$N^{1/4 + \varepsilon}$ elements. Thus the largest non-averaging subset of $\{1, \dots, N\}$ has
+size $N^{1/4 + o(1)}$.
+
+Bosznay constructed non-averaging subsets of $\{1, \dots, N\}$ of size $\gg N^{1/4}$, and Pham and
+Zakharov proved the matching upper bound $N^{1/4 + o(1)}$.
+
 Source: T. F. Bloom, Erdős Problems, Problem #186, https://www.erdosproblems.com/186 (status
 SOLVED); resolution: H. T. Pham and D. Zakharov, Sharp bound for the Erdős-Straus non-averaging set
 problem, Geom. Funct. Anal. 35 (2025), 1712-1738, arXiv:2410.14624 (upper bound); Á. P. Bosznay, On

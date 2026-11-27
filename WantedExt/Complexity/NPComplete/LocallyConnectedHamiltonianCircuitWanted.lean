@@ -19,13 +19,13 @@ locally connected graphs with bounded vertex degree", Discrete Applied Mathemati
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -45,7 +45,7 @@ Gordon, Orlovich, Potts and Strusevich (2011, abstract): "we prove that problem 
 for the locally connected graphs with Δ(G) ⩽ 7 is NP-complete".
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n`, `n > 0`, given by an edge list; a Hamiltonian circuit needs at least three vertices).
 The restriction adds that every vertex has degree at most `7` (`SimpleGraph.degree`) and that
 every neighbourhood induces a connected graph: `G.induce (G.neighborSet v)` is

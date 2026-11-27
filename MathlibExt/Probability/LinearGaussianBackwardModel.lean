@@ -20,9 +20,8 @@ In the structural equation `Y = φ X + N` with the noise `N` independent of the 
 `X` and `N` are Gaussian there is a *backward* model `X = ψ Y + Ñ` with `Ñ` independent of `Y`:
 the joint law of `(X, Y)` does not reveal the causal direction. This is the "if" direction of
 the characterization of reversible linear additive noise models (Peters, Mooij, Janzing and
-Schölkopf, Proposition 13, after Shimizu et al. 2006); its "only if" direction, which needs
-the Darmois–Skitovich theorem, is
-`WantedExt.ComputerScience.LinearNonGaussianIdentifiabilityWanted`.
+Schölkopf, Proposition 13, after Shimizu et al. 2006). The "only if" direction is proved in
+`MathlibExt.Probability.LinearNonGaussianIdentifiability`.
 
 The coefficient is the regression coefficient `ψ = Cov(X, Y) / Var(Y)`: `(X - ψ Y, Y)` is a
 linear image of the jointly Gaussian pair `(X, N)`, hence jointly Gaussian, and its two

@@ -24,8 +24,10 @@ namespace MathlibExt.Combinatorics.SimpleGraph.EdgeColoringWanted
 Records Vizing and König edge-coloring theorems.
 -/
 
-/-- A proper edge coloring: distinct edges incident at a common vertex
-receive different colors. -/
+/-- **Proper edge coloring.** Let $G$ be a simple graph on $V$. An edge labeling $C$ of $G$ with
+colors in $K$ is a proper edge coloring when any two distinct edges of $G$ that share a vertex
+receive different colors: whenever a vertex $v$ is adjacent to $w_1$ and to $w_2$ with
+$w_1 \ne w_2$, the edges $v w_1$ and $v w_2$ have different colors under $C$. -/
 def IsProperEdgeColoring {V K : Type*} {G : _root_.SimpleGraph V}
     (C : G.EdgeLabeling K) : Prop :=
   ∀ {v w₁ w₂ : V} (h₁ : G.Adj v w₁) (h₂ : G.Adj v w₂), w₁ ≠ w₂ →
@@ -513,11 +515,16 @@ theorem multigraph_bounded_color.{u, v} (d : ℕ) (A B : Type u) (E : Type v)
     exact Sum.inl_injective hsub
 
 /--
-Every finite bipartite graph has edge chromatic number equal to its maximum degree.
-Source: D. Konig, Theorie der endlichen und unendlichen Graphen, Akademische Verlagsgesellschaft
-(1936).
+**König's line coloring theorem.** Every finite bipartite simple graph $G$ has a proper edge
+coloring with $\Delta(G)$ colors, where $\Delta(G)$ is the maximum degree of $G$.
+
+Since every proper edge coloring of $G$ needs at least $\Delta(G)$ colors, the edge chromatic
+number of $G$ equals $\Delta(G)$.
 
 Proves `Wanted` entry `konig_line_coloring`.
+
+Source: D. Konig, Theorie der endlichen und unendlichen Graphen, Akademische Verlagsgesellschaft
+(1936).
 -/
 theorem konig_line_coloring :
     ∀ {V : Type*} (G : _root_.SimpleGraph V) [Fintype V] [DecidableRel G.Adj],
@@ -711,15 +718,22 @@ theorem konig_line_coloring :
       have hloop : G.Adj v v := hvw2 ▸ h₂
       exact (G.loopless.irrefl v) hloop
 
-/-- Properness for total colorings of unordered pairs (used to avoid
-dependent `EdgeLabeling` domains while the graph changes). Canonical form
-shared by the Vizing and greedy developments. -/
+/-- **Proper coloring of unordered pairs.** Let $G$ be a simple graph on $V$. A map $c$ that
+assigns a color in $K$ to every unordered pair of elements of $V$ is a proper coloring of
+unordered pairs for $G$ when, for all vertices $x, y, z$ such that $x$ is adjacent to both $y$ and
+$z$ and $y \ne z$, the pairs $\{x, y\}$ and $\{x, z\}$ receive different colors under $c$.
+
+Only pairs that are edges of $G$ are constrained, so the same map $c$ can be compared across
+different graphs on $V$. -/
 def IsProperSym2Coloring {V K : Type*} (G : _root_.SimpleGraph V)
     (c : Sym2 V → K) : Prop :=
   ∀ {x y z : V}, G.Adj x y → G.Adj x z → y ≠ z →
     c (Sym2.mk x y) ≠ c (Sym2.mk x z)
 
-/-- Bridge from `Sym2` colorings to `EdgeLabeling`. -/
+/-- **Proper colorings of unordered pairs restrict to proper edge colorings.** Let $G$ be a
+simple graph on $V$ and let $c$ assign a color in $K$ to every unordered pair of elements of $V$.
+If $c$ is a proper coloring of unordered pairs for $G$, then the edge labeling of $G$ that gives
+each edge $e$ the color $c(e)$ is a proper edge coloring of $G$. -/
 theorem isProperEdgeColoring_of_isProperSym2Coloring {V K : Type*}
     {G : _root_.SimpleGraph V} {c : Sym2 V → K}
     (hc : IsProperSym2Coloring G c) :
@@ -727,7 +741,10 @@ theorem isProperEdgeColoring_of_isProperSym2Coloring {V K : Type*}
   intro v w₁ w₂ h₁ h₂ hne
   exact hc h₁ h₂ hne
 
-/-- Properness is monotone in the graph. -/
+/-- **Proper colorings of unordered pairs pass to subgraphs.** Let $G$ and $H$ be simple graphs
+on $V$ such that every edge of $H$ is an edge of $G$. If a map $c$ from unordered pairs of
+elements of $V$ to $K$ is a proper coloring of unordered pairs for $G$, then it is also a proper
+coloring of unordered pairs for $H$. -/
 theorem IsProperSym2Coloring.mono {V K : Type*}
     {G H : _root_.SimpleGraph V}
     {c : Sym2 V → K} (hc : IsProperSym2Coloring G c) (hle : H ≤ G) :

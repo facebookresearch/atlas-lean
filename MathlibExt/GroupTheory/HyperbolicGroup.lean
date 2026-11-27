@@ -46,21 +46,23 @@ namespace Group
 
 variable {G : Type*} [Group G]
 
-/-- A group `G` is word-hyperbolic if it admits a finite generating family `P` whose word metric
-`Group.Generators.normedGroup` makes `G` a Gromov `δ`-hyperbolic space for some `δ`. -/
+/-- **Word-hyperbolic groups.** A group $G$ is word-hyperbolic if there are a finite index set
+$\iota$ and a family $(s_i)_{i \in \iota}$ of elements generating $G$ such that $G$, equipped with
+the word metric of this generating family, is $\delta$-hyperbolic for some real number $\delta$. -/
 def IsHyperbolic (G : Type*) [Group G] : Prop :=
   ∃ (ι : Type) (_ : Finite ι) (P : Group.Generators G ι) (δ : ℝ),
     @Metric.IsDeltaHyperbolic G P.normedGroup.toMetricSpace.toPseudoMetricSpace δ
 
-/-- A word-hyperbolic group is finitely generated. -/
+/-- **Word-hyperbolic groups are finitely generated.** Every word-hyperbolic group is finitely
+generated. -/
 theorem IsHyperbolic.fg (h : IsHyperbolic G) : Group.FG G := by
   obtain ⟨ι, hι, P, _, _⟩ := h
   letI := hι
   rw [Group.fg_iff]
   exact ⟨Set.range P.val, P.closure_eq_top, Set.finite_range P.val⟩
 
-/-- A trivial (subsingleton) group is word-hyperbolic, witnessed by the empty generating family and
-`δ = 0`. -/
+/-- **The trivial group is word-hyperbolic.** Every trivial group is word-hyperbolic: the empty
+family generates it, and its word metric is $0$-hyperbolic. -/
 theorem IsHyperbolic.of_subsingleton (G : Type*) [Group G] [Subsingleton G] : IsHyperbolic G := by
   refine ⟨Empty, inferInstance, ⟨Empty.elim, Subsingleton.elim _ _⟩, 0, le_refl 0, fun w x y z => ?_⟩
   rw [Subsingleton.elim x w, Subsingleton.elim y w, Subsingleton.elim z w, min_self, sub_zero]

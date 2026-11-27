@@ -13,7 +13,7 @@ public import Cslib.Foundations.RelationAlgebra.Representation
 /-!
 # Diagonal tests and relational verification
 
-Assertions embed into CSLib's `SquareRelations` as restricted diagonals.
+Assertions embed into CSLib's relation algebra of `SetRel` as restricted diagonals.
 Composition is in execution order and the order is relation inclusion.
 Test negation is complement relative to identity, not full relation
 complement. Verification inequalities, absorption and absence of bad exits
@@ -30,12 +30,12 @@ namespace Cslib.RelationAlgebra
 variable {World : Type*}
 
 /-- The diagonal relation restricted to an assertion. -/
-def testSet (P : Set World) : SquareRelations World :=
+def testSet (P : Set World) : SetRel World World :=
   {(s, t) | s = t ∧ s ∈ P}
 
 /-- Membership in a diagonal test. -/
 @[simp] theorem mem_testSet {P : Set World} {s t : World} :
-    testSet P (s, t) ↔ s = t ∧ s ∈ P := Iff.rfl
+    (s, t) ∈ testSet P ↔ s = t ∧ s ∈ P := Iff.rfl
 
 /-- A test is a subidentity, not an arbitrary relation. -/
 theorem testSet_le_one (P : Set World) : testSet P ≤ 1 :=
@@ -56,11 +56,11 @@ theorem testSet_le_one (P : Set World) : testSet P ≤ 1 :=
 /-- The verification inequality is precisely universal partial
 correctness: every execution from `P` ends in `Q`. -/
 theorem test_mul_le_mul_test_iff (P Q : Set World)
-    (R : SquareRelations World) :
+    (R : SetRel World World) :
     testSet P * R ≤ R * testSet Q ↔ P ⊆ SetRel.core R Q := by
   constructor
   · intro h s hP t hR
-    have hleft : (testSet P * R) (s, t) := ⟨s, ⟨rfl, hP⟩, hR⟩
+    have hleft : (s, t) ∈ testSet P * R := ⟨s, ⟨rfl, hP⟩, hR⟩
     obtain ⟨u, hRu, hut, hQ⟩ := h hleft
     subst t
     exact hQ
@@ -70,12 +70,12 @@ theorem test_mul_le_mul_test_iff (P Q : Set World)
 /-- A postcondition can be absorbed on the right exactly when it holds
 on every execution starting in the precondition. -/
 theorem test_mul_eq_test_mul_test_iff (P Q : Set World)
-    (R : SquareRelations World) :
+    (R : SetRel World World) :
     testSet P * R = testSet P * R * testSet Q ↔
       P ⊆ SetRel.core R Q := by
   constructor
   · intro h s hP t hR
-    have hin : (testSet P * R) (s, t) := ⟨s, ⟨rfl, hP⟩, hR⟩
+    have hin : (s, t) ∈ testSet P * R := ⟨s, ⟨rfl, hP⟩, hR⟩
     rw [h] at hin
     obtain ⟨u, _, hut, hQ⟩ := hin
     subst t
@@ -93,13 +93,13 @@ theorem test_mul_eq_test_mul_test_iff (P Q : Set World)
 /-- Classically, verification means that no execution from `P` can
 reach the complement of `Q`. -/
 theorem test_mul_test_compl_eq_bot_iff (P Q : Set World)
-    (R : SquareRelations World) :
+    (R : SetRel World World) :
     testSet P * R * testSet Qᶜ = ⊥ ↔ P ⊆ SetRel.core R Q := by
   classical
   constructor
   · intro h s hP t hR
     by_contra hQ
-    have hbad : (testSet P * R * testSet Qᶜ) (s, t) :=
+    have hbad : (s, t) ∈ testSet P * R * testSet Qᶜ :=
       ⟨t, ⟨s, ⟨rfl, hP⟩, hR⟩, rfl, hQ⟩
     rw [h] at hbad
     exact hbad

@@ -19,7 +19,7 @@ For `φ` holomorphic on an open set `Ω` containing a path `γ` that is differen
 time, `∫_{φ ∘ γ} f(w) dw = ∫_γ f(φ(z)) φ′(z) dz` (`Complex.curveIntegral_map'_eq_comp_mul_deriv`).
 Almost-everywhere differentiability covers piecewise differentiable curves, which may have corners.
 Contour integrals are Mathlib's `curveIntegral` of the 1-form `f z • ContinuousLinearMap.id ℂ ℂ`, as
-in `WantedExt/Analysis/Complex/ContourIntegralWanted.lean`, and `φ ∘ γ` is `Path.map'`.
+in `MathlibExt/Analysis/Complex/ContourIntegral.lean`, and `φ ∘ γ` is `Path.map'`.
 
 Mathlib's `curveIntegral` has reversal, concatenation, segments and linearity, but no change of
 variables. The proof rewrites both sides as interval integrals and applies the chain rule at almost

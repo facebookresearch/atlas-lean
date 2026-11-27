@@ -42,8 +42,16 @@ private theorem exp_hasSum_aux (t : ℝ) :
   simp only [NormedSpace.expSeries_apply_eq_div] at h
   rwa [← Real.exp_eq_exp_ℝ] at h
 
-/-- The exponential generating function of a sequence's binomial transform is
-its exponential generating function multiplied by `exp`.
+/-- **Exponential generating function of the binomial transform.** Let $(a_n)_{n \ge 0}$ and
+$(b_n)_{n \ge 0}$ be real sequences with $b_n = \sum_{k=0}^{n} \binom{n}{k} a_k$ for every $n$,
+and let $A : \mathbb{R} \to \mathbb{R}$ be any function. For every real number $t$, if the series
+$\sum_{n \ge 0} a_n t^n / n!$ converges absolutely with sum $A(t)$, then the series
+$\sum_{n \ge 0} b_n t^n / n!$ converges absolutely with sum $e^t A(t)$.
+
+The formulation is pointwise: convergence of the exponential generating function of $a$ is
+assumed only at the point $t$ under consideration.
+
+Proves `Wanted` entry `exponentialGeneratingFunction_binomialTransform`.
 
 Source: Ayhan Dil, Veli Kurt, and Mehmet Cenkci, *Algorithms for Bernoulli
 and Related Polynomials*, Journal of Integer Sequences 10 (2007), Article
@@ -51,13 +59,6 @@ and Related Polynomials*, Journal of Integer Sequences 10 (2007), Article
 Proposition `prop2` (proof attributed to Seidel), lines 221-233; the
 binomial-transform relation `a_0^n = Σᵢ C(n,i) a_i^0` is equation (8)/(9),
 lines 188-199.
-
-`b` is the binomial transform of `a`, `A` its exponential generating
-function, and the conclusion is the EGF of `b`. The formulation is pointwise:
-it assumes convergence of the EGF of `a` only at the argument `t` under
-consideration.
-
-Proves `Wanted` entry `exponentialGeneratingFunction_binomialTransform`.
 -/
 theorem exponentialGeneratingFunction_binomialTransform
     (a b : ℕ → ℝ)

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
-public import MathlibExt.OperationsResearch.Inventory.StockFlow
+public import Mathlib.Basic.NNReal.Basic
 public import PhyslibExt.Mechanics.PropulsionPorts
 
 /-!
@@ -22,9 +22,8 @@ resources are never added to one another.
 ## i. Overview
 
 `stock s₀ flow i t` is the initial stock `s₀ i` plus the actual cumulative sum of the first `t`
-flows of resource `i`. With zero lead time, gains as receipts and draws as demands, the
-step-by-step trace of the backlogged stock-flow model `Inventory.stockTrace` reproduces this
-stock at every prefix, and the model's conservation identity gives the terminal accounting.
+flows of resource `i`. `Domains.OperationsResearch.Inventory.MissionLedger` relates these
+prefix stocks to the inventory model and proves the corresponding terminal accounting.
 `PrefixFeasible lo hi r s₀ flow N` checks every resource at every prefix `t ≤ N`, start and end
 included: the floor raised by the reserve, `lo i + r i ≤ stock`, and the capacity
 `stock ≤ hi i`. Reserves are nonnegative, so feasibility never certifies a stock below the
@@ -60,10 +59,9 @@ statements only: no trajectory and no transfer optimality.
 
 ## ii. Key results
 
-- `stock_eq_stockTrace`: prefix stocks are the zero-lead-time stock-flow trace.
-- `terminal_accounting`: the final stock is the initial stock plus all gains minus all draws.
 - `PrefixFeasible.terminal`: the prefix check contains the terminal check.
-- `PrefixFeasible.lo_le_stock`: a feasible schedule never goes below the floor.
+- `PrefixFeasible.lo_le_stock`: a feasible schedule never goes below the floor at a prefix
+  `t ≤ N`.
 - `prefixFeasible_iff_reserve_deducted_once`: the reserve in the floor is one deduction from
   the initial stock.
 - `stock_reserve_every_step`: a per-step reserve deduction removes the reserve `t` times.
@@ -89,9 +87,6 @@ statements only: no trajectory and no transfer optimality.
   phase checked; the delta-v budget as a sum of burn magnitudes).
 - G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, Wiley, 2017, chapter 4
   (the ideal rocket equation and staging).
-- P. H. Zipkin, *Foundations of Inventory Management*, backorder model (stock-flow recursion).
-- `MathlibExt.OperationsResearch.Inventory.StockFlow`: the stock-flow trace and the
-  conservation identity reused here.
 - `PhyslibExt.Mechanics.PropulsionPorts`: the ideal velocity increment
   `velocity_increment_eq_log` and the staged accounting `staged_velocity_increment` reused here.
 -/
@@ -146,37 +141,6 @@ lemma stock_succ (s₀ : ι → ℝ) (flow : ι → ℕ → ℝ) (i : ι) (t : �
   rw [Finset.sum_range_succ]
   ring
 
-/-- Every prefix stock is the step-by-step trace of the backlogged stock-flow model with
-zero lead time, the gains as receipts and the draws as demands. -/
-lemma stock_eq_stockTrace (s₀ : ι → ℝ) (flow : ι → ℕ → ℝ) (i : ι) (t : ℕ) :
-    stock s₀ flow i t =
-      Inventory.stockTrace (s₀ i) 0 Fin.elim0 (gains flow i) (draws flow i) t := by
-  induction t with
-  | zero => rw [stock_zero, Inventory.stockTrace_zero]
-  | succ t ih =>
-    rw [stock_succ, ih, Inventory.stockTrace_succ, Inventory.receipt_zero_lead]
-    have h : flow i t = ((gains flow i t : NNReal) : ℝ) - ((draws flow i t : NNReal) : ℝ) := by
-      simp only [gains, draws]
-      rw [Real.coe_toNNReal', Real.coe_toNNReal']
-      rcases le_total 0 (flow i t) with h | h
-      · rw [max_eq_left h, max_eq_right (by linarith : -flow i t ≤ 0)]; ring
-      · rw [max_eq_right h, max_eq_left (by linarith : 0 ≤ -flow i t)]; ring
-    rw [h]
-    ring
-
-/-- Terminal accounting: the final stock is the initial stock plus all gains minus all draws
-(the conservation identity of the stock-flow model at zero lead time). -/
-lemma terminal_accounting (s₀ : ι → ℝ) (flow : ι → ℕ → ℝ) (i : ι) (N : ℕ) :
-    stock s₀ flow i N =
-      s₀ i + ∑ k ∈ range N, (gains flow i k : ℝ) - ∑ k ∈ range N, (draws flow i k : ℝ) := by
-  rw [stock_eq_stockTrace]
-  have hcons := Inventory.conservation (s₀ i) 0 Fin.elim0 (gains flow i) (draws flow i) N
-  rw [Inventory.pipelineTotal_zero] at hcons
-  have huniv : (Finset.univ : Finset (Fin 0)) = ∅ := by simp
-  rw [huniv, Finset.sum_empty] at hcons
-  simp only [add_zero] at hcons
-  linarith
-
 /-! ## C. Prefix bounds and the reserve -/
 
 /-- The prefix check contains the terminal check. -/
@@ -185,8 +149,8 @@ lemma PrefixFeasible.terminal {lo hi s₀ : ι → ℝ} {r : ι → NNReal} {flo
     lo i + r i ≤ s₀ i + ∑ k ∈ range N, flow i k ∧ s₀ i + ∑ k ∈ range N, flow i k ≤ hi i := by
   exact h i N le_rfl
 
-/-- A prefix-feasible schedule never takes a stock below its floor, because the reserve is
-nonnegative. -/
+/-- A prefix-feasible schedule never takes a stock below its floor at a prefix `t ≤ N`, because the
+reserve is nonnegative. -/
 lemma PrefixFeasible.lo_le_stock {lo hi s₀ : ι → ℝ} {r : ι → NNReal} {flow : ι → ℕ → ℝ}
     {N : ℕ} (h : PrefixFeasible lo hi r s₀ flow N) (i : ι) {t : ℕ} (ht : t ≤ N) :
     lo i ≤ stock s₀ flow i t := by
@@ -262,7 +226,9 @@ def AdmissibleStageMasses (m₀ m₁ : ℕ → ℝ) (n : ℕ) : Prop :=
   (∀ k < n, 0 < m₁ k ∧ m₁ k ≤ m₀ k) ∧ ∀ k, k + 1 < n → m₀ (k + 1) ≤ m₁ k
 
 /-- The ideal velocity increment `ve log (m₀ k / m₁ k)` of burn `k`, from its start mass `m₀ k` to
-its end mass `m₁ k` at the exhaust speed `ve`. Read for admissible (positive) stage masses. -/
+its end mass `m₁ k` at the exhaust speed `ve`. Read for admissible (positive) stage masses; with the
+conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|` it is `0` when `m₀ k = 0` or `m₁ k = 0`,
+and `ve log |m₀ k / m₁ k|` for masses of opposite signs. -/
 noncomputable def stageIncrement (ve : ℝ) (m₀ m₁ : ℕ → ℝ) (k : ℕ) : ℝ :=
   ve * Real.log (m₀ k / m₁ k)
 
@@ -413,12 +379,12 @@ lemma remaining_fraction_burns {fuel : ℝ → ℝ → ℝ} {ve : ℝ} (hzero : 
   | zero => simp [hzero]
   | succ n ih => rw [prod_range_succ, ih, sum_range_succ, hcomp]
 
-/-- **Fuel follows the cost, not the net change.** For a consumed-fraction functional that
-consumes nothing on a zero burn, composes burns at the exhaust speed `ve` and is monotone in
-delta-v: the burns consume `fuel ve (cost)`, the net change would give the smaller
-`fuel ve ‖net‖`, and a cost within the budget `B` consumes at most `fuel ve B`. No sign condition
-on `ve` is needed: the cost is a sum of norms, nonnegative for every `ve`, which only indexes the
-supplied functional. -/
+/-- **Fuel follows the cost, not the net change.** For a consumed-fraction functional that consumes
+nothing on a zero burn, composes burns at the exhaust speed `ve` and is monotone in delta-v: the
+burns consume `fuel ve (cost)`, the net change would give at most as much,
+`fuel ve ‖net‖ ≤ fuel ve (cost)`, and a cost within the budget `B` consumes at most `fuel ve B`. No
+sign condition on `ve` is needed: the cost is a sum of norms, nonnegative for every `ve`, which only
+indexes the supplied functional. -/
 lemma fuel_burnCost {E : Type*} [SeminormedAddCommGroup E] {fuel : ℝ → ℝ → ℝ} {ve B : ℝ}
     (hzero : fuel ve 0 = 0)
     (hcomp : ∀ d₁ d₂, (1 - fuel ve d₁) * (1 - fuel ve d₂) = 1 - fuel ve (d₁ + d₂))

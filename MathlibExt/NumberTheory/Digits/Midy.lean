@@ -16,10 +16,13 @@ import Mathlib.Algebra.Order.Ring.Star
 
 namespace MetaMathlibExt
 
-/-- Midy's theorem with only the hypotheses the argument uses: if a prime `p` divides
-`10 ^ (2 * n) - 1` but not `10 ^ n - 1`, the two `n`-digit halves of `(10 ^ (2 * n) - 1) / p`
-sum to `10 ^ n - 1`. `midy_theorem` is the source-shaped form, which assumes the repetend period
-of `1 / p` is exactly `2 * n`. -/
+/-- **Midy's theorem, general form.** Let $p$ be a prime and $n$ a natural number such that $p$
+divides $10^{2n} - 1$ but does not divide $10^n - 1$. Let $Q = (10^{2n} - 1)/p$ and write
+$Q = 10^n H + L$ with $0 \le L < 10^n$, so that $L$ is the number formed by the last $n$ decimal
+digits of $Q$ and $H$ the number formed by the remaining digits. Then $H + L = 10^n - 1$.
+
+Midy's theorem in its usual form, where the decimal period of $1/p$ is exactly $2n$, is the
+special case in which $p$ does not divide $10^m - 1$ for any $0 < m < 2n$. -/
 theorem midy_theorem_general {p n : ℕ} (hp : Nat.Prime p)
     (hdiv : p ∣ 10 ^ (2 * n) - 1) (hnot : ¬p ∣ 10 ^ n - 1) :
     Nat.ofDigits 10 (List.take n (Nat.digits 10 ((10 ^ (2 * n) - 1) / p))) +
@@ -92,12 +95,18 @@ theorem midy_theorem_general {p n : ℕ} (hp : Nat.Prime p)
   omega
 
 set_option linter.unusedVariables false in
-/-- Midy's theorem (https://en.wikipedia.org/wiki/Midy%27s_theorem, statement `midy-s1`):
-a prime `p ≠ 2, 5` whose repetend period of `1 / p` in base 10 is even, `2 * n`,
-splits into two `n`-digit halves summing to `10 ^ n - 1`.
-It follows from `midy_theorem_general`, which needs `hmin` only at `m = n`; the hypotheses
-`h2` and `h5` are unused and keep the source's shape.
+/-- **Midy's theorem.** Let $p \ne 2, 5$ be a prime and $n \ge 1$ an integer such that $p$ divides
+$10^{2n} - 1$ and does not divide $10^m - 1$ for any $0 < m < 2n$, that is, the decimal period of
+$1/p$ is $2n$. Let $Q = (10^{2n} - 1)/p$, whose decimal expansion padded with leading zeros to
+$2n$ digits is the repetend of $1/p$, and write $Q = 10^n H + L$ with $0 \le L < 10^n$, so that
+$H$ and $L$ are the two $n$-digit halves of the repetend. Then $H + L = 10^n - 1$.
+
+The proof uses neither $p \ne 2, 5$ nor the minimality of the period beyond $p \nmid 10^n - 1$;
+see Midy's theorem, general form.
+
 Proves `Wanted` entry `midy_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Midy%27s_theorem, statement `midy-s1`.
 -/
 theorem midy_theorem {p n : ℕ} (hp : Nat.Prime p) (h2 : p ≠ 2)
     (h5 : p ≠ 5) (hn : 0 < n) (hdiv : p ∣ 10 ^ (2 * n) - 1)

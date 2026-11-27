@@ -17,12 +17,12 @@ doi:10.1016/0166-218X(90)90065-K.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.Domination
 public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -48,7 +48,7 @@ polynomial time. `K ≤ |V|` follows the convention of Garey and Johnson: for `K
 is trivially no.
 
 The instance, the graph and the simple-graph condition are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]: `DominatingSet.DominatingSetInstance`,
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]: `DominatingSet.DominatingSetInstance`,
 a vertex count `n`, vertices `Fin n`, an edge list and the bound `K`; `DominatingSet.Graph`;
 `DominatingSet.WellFormed`); only the question differs. Domination is `SimpleGraph.IsDominating` of
 `MathlibExt.Combinatorics.SimpleGraph.Domination`, and minimality is Mathlib's `Minimal`

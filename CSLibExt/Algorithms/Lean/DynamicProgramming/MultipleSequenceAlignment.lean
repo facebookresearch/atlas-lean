@@ -52,23 +52,29 @@ section MSA
 
 variable (σ : α → α → ℤ) (gap : ℤ)
 
-/-- A multiple alignment of `k` sequences: a list of columns, each assigning
-every row either a letter or a gap. -/
+/-- **Multiple alignments.** A multiple alignment with $k$ rows over an alphabet $\alpha$ is a
+finite list of columns, each of which assigns to every row $i \in \{0, \dots, k-1\}$ either a
+letter of $\alpha$ or a gap. No condition ties the rows to given sequences. -/
 abbrev MSAlignment (k : ℕ) (α : Type*) := List (Fin k → Option α)
 
-/-- A multiple alignment is valid when no column is all gaps and every row
-filters to its sequence. -/
+/-- **Valid multiple alignment.** A multiple alignment $A$ of $k$ rows is a valid multiple
+alignment of sequences $s_0, \dots, s_{k-1}$ when no column of $A$ consists only of gaps and, for
+every $i < k$, deleting the gaps from row $i$ of $A$ gives $s_i$. -/
 def IsMSAlignment {k : ℕ} (seqs : Fin k → List α) (A : MSAlignment k α) : Prop :=
   (∀ col ∈ A, ∃ i, col i ≠ none) ∧
     ∀ i, (A.map fun col => col i).filterMap id = seqs i
 
-/-- The induced pairwise alignment of rows `i` and `j`: the two rows, with
-columns that are gaps in both rows dropped. -/
+/-- **Induced pairwise alignment.** Given a multiple alignment $A$ of $k$ sequences and rows
+$i, j < k$, the pairwise alignment induced by $A$ on rows $i$ and $j$ is obtained by keeping, for
+each column $c$ of $A$ in order, the pair $(c_i, c_j)$, and dropping the columns in which both
+$c_i$ and $c_j$ are gaps. -/
 def inducedPair {k : ℕ} (A : MSAlignment k α) (i j : Fin k) : Alignment α :=
   A.filterMap (fun col =>
     if (col i).isSome || (col j).isSome then some (col i, col j) else none)
 
-/-- The induced pairwise alignment has no `(none, none)` column. -/
+/-- **Induced alignments have no all-gap column.** For a multiple alignment $A$ of $k$ sequences
+and rows $i, j < k$, no column of the pairwise alignment induced by $A$ on rows $i$ and $j$ is a
+gap in both rows. -/
 theorem inducedPair_ne_none_none {k : ℕ} {A : MSAlignment k α} {i j : Fin k}
     {c : Option α × Option α} (hc : c ∈ inducedPair A i j) :
     c ≠ (none, none) := by
@@ -86,7 +92,10 @@ theorem inducedPair_ne_none_none {k : ℕ} {A : MSAlignment k α} {i j : Fin k}
   · simp only [hcond, Bool.false_eq_true, if_false] at hcol
     exact absurd hcol.symm (Option.some_ne_none _)
 
-/-- The first row of the induced alignment is the first sequence. -/
+/-- **Letters of the first row of an induced alignment.** For a multiple alignment $A$ of $k$
+sequences and rows $i, j < k$, deleting the gaps from the first row of the pairwise alignment
+induced by $A$ on rows $i$ and $j$ gives the same sequence as deleting the gaps from row $i$ of
+$A$. -/
 theorem inducedPair_filterMap_fst {k : ℕ} {A : MSAlignment k α} {i j : Fin k} :
     (inducedPair A i j).filterMap Prod.fst =
       (A.map fun col => col i).filterMap id := by
@@ -100,7 +109,10 @@ theorem inducedPair_filterMap_fst {k : ℕ} {A : MSAlignment k α} {i j : Fin k}
       | some b => simp [hi, hj]
   | some a => simp [hi]
 
-/-- The second row of the induced alignment is the second sequence. -/
+/-- **Letters of the second row of an induced alignment.** For a multiple alignment $A$ of $k$
+sequences and rows $i, j < k$, deleting the gaps from the second row of the pairwise alignment
+induced by $A$ on rows $i$ and $j$ gives the same sequence as deleting the gaps from row $j$ of
+$A$. -/
 theorem inducedPair_filterMap_snd {k : ℕ} {A : MSAlignment k α} {i j : Fin k} :
     (inducedPair A i j).filterMap Prod.snd =
       (A.map fun col => col j).filterMap id := by
@@ -114,7 +126,9 @@ theorem inducedPair_filterMap_snd {k : ℕ} {A : MSAlignment k α} {i j : Fin k}
       | some b => simp [hi, hj]
   | some a => simp [hi]
 
-/-- The induced pairwise alignment is a valid pairwise alignment. -/
+/-- **Induced pairwise alignments are valid.** Let $A$ be a valid multiple alignment of sequences
+$s_0, \dots, s_{k-1}$. Then for all rows $i, j < k$, the pairwise alignment induced by $A$ on rows
+$i$ and $j$ is a valid pairwise alignment of $s_i$ and $s_j$. -/
 theorem inducedPair_isAlignment {k : ℕ} {seqs : Fin k → List α}
     {A : MSAlignment k α} (hA : IsMSAlignment seqs A) (i j : Fin k) :
     IsAlignment (inducedPair A i j) (seqs i) (seqs j) := by
@@ -124,16 +138,26 @@ theorem inducedPair_isAlignment {k : ℕ} {seqs : Fin k → List α}
   · rw [inducedPair_filterMap_fst, hA.2 i]
   · rw [inducedPair_filterMap_snd, hA.2 j]
 
-/-- The unordered pairs of rows, as a finset. -/
+/-- **Pairs of rows.** For $k \in \mathbb{N}$, the finite set of all pairs $(i, j)$ with
+$i, j \in \{0, \dots, k-1\}$ and $i < j$, so that each unordered pair of distinct rows appears
+exactly once. -/
 def pairFinset (k : ℕ) : Finset (Fin k × Fin k) :=
   Finset.univ.filter (fun p => p.1 < p.2)
 
-/-- The sum-of-pairs score of one column: the sum over unordered row pairs of
-the pairwise column score. -/
+/-- **Sum-of-pairs score of a column.** Let $\sigma$ assign an integer score to each pair of
+letters and let $g$ be an integer gap score. For a column $c$ of a multiple alignment of $k$
+sequences, which gives each row $r < k$ either a letter or a gap $c_r$, the sum-of-pairs score of
+$c$ is $\sum_{i < j < k} s(c_i, c_j)$, where $s$ is the pairwise column score: $\sigma(a, b)$ for
+letters $a$ and $b$, $g$ for a letter against a gap, and $0$ for two gaps. -/
 def columnSP {k : ℕ} (col : Fin k → Option α) : ℤ :=
   ∑ p ∈ pairFinset k, columnScore σ gap (col p.1, col p.2)
 
-/-- The sum-of-pairs score of a multiple alignment. -/
+/-- **Sum-of-pairs score.** Fix a score $\sigma(a, b) \in \mathbb{Z}$ for each pair of letters
+$a, b$ and a gap score $g \in \mathbb{Z}$. For two entries $x, y$, each a letter or a gap, let
+$s(x, y) = \sigma(x, y)$ if both are letters, $s(x, y) = g$ if exactly one is a gap, and
+$s(x, y) = 0$ if both are gaps. The sum-of-pairs score of a multiple alignment $A$ of $k$
+sequences is the sum, over the columns $c$ of $A$, of $\sum_{0 \le i < j < k} s(c_i, c_j)$,
+where $c_i$ is the entry of $c$ in row $i$. -/
 def msaScore {k : ℕ} (A : MSAlignment k α) : ℤ :=
   (A.map (fun col => columnSP σ gap col)).sum
 
@@ -147,7 +171,11 @@ private theorem sum_map_finset_sum {k : ℕ} (A : MSAlignment k α)
   | cons col A' ih =>
       simp only [List.map_cons, List.sum_cons, Finset.sum_add_distrib, ih]
 
-/-- The induced pairwise score is the column sum of that pair's scores. -/
+/-- **Score of an induced pairwise alignment.** Let $\sigma$ assign an integer score to each
+pair of letters and let $g$ be an integer gap score. For a multiple alignment $A$ of $k$
+sequences and rows $i, j < k$, the score (with respect to $\sigma$ and $g$) of the pairwise
+alignment induced by $A$ on rows $i$ and $j$ equals the sum, over all columns $c$ of $A$, of the
+column score of the pair $(c_i, c_j)$. -/
 theorem alignmentScore_inducedPair {k : ℕ} {A : MSAlignment k α} (i j : Fin k) :
     alignmentScore σ gap (inducedPair A i j) =
       (A.map (fun col => columnScore σ gap (col i, col j))).sum := by
@@ -198,7 +226,10 @@ theorem alignmentScore_inducedPair {k : ℕ} {A : MSAlignment k α} (i j : Fin k
           rw [e1, escore, ih]
           simp [List.map_cons, List.sum_cons]
 
-/-- **The SP score is the sum of the induced pairwise scores.** -/
+/-- **The SP score is the sum of the induced pairwise scores.** Let $\sigma$ assign an integer
+score to each pair of letters and let $g$ be an integer gap score. For every multiple alignment
+$A$ of $k$ sequences, the sum-of-pairs score of $A$ equals the sum, over all pairs of rows
+$i < j < k$, of the score of the pairwise alignment induced by $A$ on rows $i$ and $j$. -/
 theorem msaScore_eq_sum_induced {k : ℕ} {A : MSAlignment k α} :
     msaScore σ gap A =
       ∑ p ∈ pairFinset k, alignmentScore σ gap (inducedPair A p.1 p.2) := by
@@ -208,7 +239,13 @@ theorem msaScore_eq_sum_induced {k : ℕ} {A : MSAlignment k α} :
   intro p _
   rw [alignmentScore_inducedPair]
 
-/-- The SP score is at most the sum of the pairwise optima. -/
+/-- **The sum-of-pairs score is bounded by the pairwise optima.** Fix a score
+$\sigma(a, b) \in \mathbb{Z}$ for each pair of letters $a, b$ of an alphabet $\alpha$ and a gap
+score $g \in \mathbb{Z}$. Let $s_0, \dots, s_{k-1}$ be sequences over $\alpha$ and let $A$ be a
+valid multiple alignment of them: no column of $A$ consists only of gaps, and deleting the gaps
+from row $i$ of $A$ leaves $s_i$. Then the sum-of-pairs score of $A$ under $\sigma$ and $g$ is at
+most $\sum_{0 \le i < j < k} \mathrm{NW}(s_i, s_j)$, where $\mathrm{NW}(s_i, s_j)$ is the optimal
+global (Needleman–Wunsch) alignment score of $s_i$ and $s_j$ under $\sigma$ and $g$. -/
 theorem msaScore_le_sum_nwScore {k : ℕ} {seqs : Fin k → List α}
     {A : MSAlignment k α} (hA : IsMSAlignment seqs A) :
     msaScore σ gap A ≤
@@ -219,8 +256,13 @@ theorem msaScore_le_sum_nwScore {k : ℕ} {seqs : Fin k → List α}
   exact alignmentScore_le_nwScore σ gap _ _ (inducedPair A p.1 p.2)
     (inducedPair_isAlignment hA p.1 p.2)
 
-/-- A multiple alignment exists for every family of sequences, by induction on
-the total length: peel the head of one nonempty sequence. -/
+/-- **Every family of sequences has a multiple alignment.** For every natural number $n$ and
+every family of $k$ sequences $s_0, \dots, s_{k-1}$ whose lengths sum to at most $n$, there is a
+valid multiple alignment of $s_0, \dots, s_{k-1}$.
+
+The bound $n$ is the parameter of the induction in the proof, which removes the first letter of
+one nonempty sequence; taking $n$ to be the total length shows that every finite family of
+sequences has a valid multiple alignment. -/
 theorem exists_isMSAlignment : ∀ (n : ℕ) {k : ℕ} (seqs : Fin k → List α),
     (∑ i, (seqs i).length) ≤ n → ∃ A, IsMSAlignment seqs A := by
   intro n

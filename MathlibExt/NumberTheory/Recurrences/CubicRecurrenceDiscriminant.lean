@@ -28,19 +28,25 @@ namespace MetaMathlibExt
 
 /-! # Cubic-recurrence discriminant divisibility -/
 
-/-- The cubic whose three roots are `R * (γᵢ + γᵢ⁻¹)` in the
-Roettger–Williams construction. -/
+/-- **Root condition for the Roettger–Williams cubic.** For integers $S_1, S_2, R$ and a complex
+number $\gamma$, put $\rho = R(\gamma + \gamma^{-1})$ (with the convention $0^{-1} = 0$) and
+$S_3 = RS_1^2 - 2RS_2 - 4R^3$. The root condition holds when $\rho$ is a root of the cubic
+$x^3 - S_1x^2 + S_2x - S_3$, that is, when $\rho^3 - S_1\rho^2 + S_2\rho - S_3 = 0$. -/
 def cubicRecurrenceRootCondition (S₁ S₂ R : ℤ) (γ : ℂ) : Prop :=
   let ρ := (R : ℂ) * (γ + γ⁻¹)
   let S₃ : ℤ := R * S₁ ^ 2 - 2 * R * S₂ - 4 * R ^ 3
   ρ ^ 3 - (S₁ : ℂ) * ρ ^ 2 + (S₂ : ℂ) * ρ - (S₃ : ℂ) = 0
 
-/-- A pair of integer sequences satisfying the source's explicit algebraic
-definitions. The witnesses `γ₁, γ₂, γ₃` are the distinct nonunit parameters
-whose product is one and whose associated `R * (γᵢ + γᵢ⁻¹)` values are the
-three roots of the source cubic. The equations then determine every value of
-`U` and `W`; the `U` equation is denominator-cleared and starts at `n = 1`,
-while `U 0 = 0` is specified separately. -/
+/-- **Cubic recurrence pair.** Integer sequences $U$ and $W$ form a cubic recurrence pair for
+integers $S_1, S_2, R$ when there are pairwise distinct complex numbers $\gamma_1, \gamma_2,
+\gamma_3$, each different from $1$, with $\gamma_1\gamma_2\gamma_3 = 1$, such that each
+$\gamma_i$ satisfies the cubic recurrence root condition for $(S_1, S_2, R)$, $U_0 = 0$,
+$U_n(1 - \gamma_1)(1 - \gamma_2)(1 - \gamma_3) = R^{n-1}(1 - \gamma_1^n)(1 - \gamma_2^n)
+(1 - \gamma_3^n)$ for every $n \ge 1$, and
+$W_n = R^n\bigl((1 + \gamma_1^n)(1 + \gamma_2^n)(1 + \gamma_3^n) - 2\bigr)$ for every $n \ge 0$.
+
+These equations determine every value of $U$ and $W$; the equation for $U_n$ is the source's
+formula with its denominator $(1 - \gamma_1)(1 - \gamma_2)(1 - \gamma_3)$ cleared. -/
 def IsCubicRecurrencePair
     (S₁ S₂ R : ℤ) (U W : ℕ → ℤ) : Prop :=
   ∃ γ₁ γ₂ γ₃ : ℂ,
@@ -60,7 +66,9 @@ def IsCubicRecurrencePair
         (R : ℂ) ^ n *
           ((1 + γ₁ ^ n) * (1 + γ₂ ^ n) * (1 + γ₃ ^ n) - 2)
 
-/-- The source discriminant sequence `Dₙ = gcd(Wₙ - 6Rⁿ, Uₙ)`. -/
+/-- **Cubic-recurrence discriminant sequence.** For an integer $R$ and integer sequences $U$ and
+$W$, the discriminant sequence is $D_n = \gcd(W_n - 6R^n, U_n)$ for $n \ge 0$: the greatest
+common divisor of the natural numbers $|W_n - 6R^n|$ and $|U_n|$. -/
 def cubicRecurrenceDiscriminant (R : ℤ) (U W : ℕ → ℤ) (n : ℕ) : ℕ :=
   Nat.gcd (W n - 6 * R ^ n).natAbs (U n).natAbs
 
@@ -597,13 +605,16 @@ private theorem W_aux (x y rr : ℂ)
   exact ⟨val qA, hqInt, hvaleq⟩
 
 /--
-For the source cubic-recurrence discriminant sequence, each positive-index
-term divides every positive multiple-index term.
+**Divisibility of the cubic-recurrence discriminants.** Let $S_1, S_2, R$ be integers, let $U$
+and $W$ be integer sequences forming a cubic recurrence pair for $(S_1, S_2, R)$, and let
+$D_n = \gcd(W_n - 6R^n, U_n)$ be their discriminant sequence. Then for all integers $n \ge 1$
+and $m \ge 1$, $D_n$ divides $D_{nm}$.
+
+Proves `Wanted` entry `cubicRecurrenceDiscriminant_dvd_mul`.
+
 Source: E. L. Roettger and H. C. Williams, "Some Arithmetic Properties of Certain
 Sequences", Journal of Integer Sequences 18 (2015), Article 15.6.2, Theorem `Dndivis`,
 line 269, <https://cs.uwaterloo.ca/journals/JIS/VOL18/Roettger/roettger4.tex>.
-
-Proves `Wanted` entry `cubicRecurrenceDiscriminant_dvd_mul`.
 -/
 theorem cubicRecurrenceDiscriminant_dvd_mul
     (S₁ S₂ R : ℤ) (U W : ℕ → ℤ)

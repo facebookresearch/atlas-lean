@@ -1,0 +1,8 @@
+{
+  "rows": [
+    {"path": "MathlibExt/Logic/Diophantine.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e8890bc221ce87c81d90b73d00b042b7b2e7c85b8fdf68dba19e8d7d46d5b8b1", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "0f9a2b33323762756e5d5d30491e63920b29aaf41a7353f932e7374e38090c99"},
+    {"path": "MathlibExt/Logic/GodelRosserAbstractSchema.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "17c92fdd2df2f6562b3aaa69e7c511fb95fd762128b085b673ac3c973462d504", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "5f4fc3fc80f84850ac25325f8c5c913af01b44979b23c1f581551c1da1d453e0"},
+    {"path": "MathlibExt/Logic/HilbertBernaysLob.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "fdadeffa52f3b714bca229935bf24418bbe6b667c1837a12bc7449cc25c6ceef", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "3d458e67aade84ee2eab0df1f86598d3a124386233373bf73b4d8c6c509854c1"},
+    {"path": "MathlibExt/Logic/Relation/FiniteReachability.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "023fe0e8b92ccd1fc44f2f8b4621871e87e106eb0e41eb72f6ca823eea0aba91", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "f6299a314eef910eb1b21f26ab04c8a938611f4d50d55c6faf32b78ece2aba1e"}
+  ]
+}

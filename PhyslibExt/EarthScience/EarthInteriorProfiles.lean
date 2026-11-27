@@ -84,8 +84,8 @@ theorem density_gradient_with_gravity {G m r ρ φ dp drho : ℝ} (_hr : 0 < r) 
   rw [eq_div_iff hφ]
   linarith
 
-/-- For positive density, gravity and seismic parameter, the density
-gradient is negative: density decreases outward. -/
+/-- For positive density, gravity and seismic parameter, the Adams-Williamson density
+gradient `drho = -ρ * g / φ` is negative: density decreases outward. -/
 theorem density_gradient_negative {ρ g φ drho : ℝ} (hρ : 0 < ρ) (hg : 0 < g)
     (hφ : 0 < φ) (h : drho = -ρ * g / φ) : drho < 0 := by
   rw [h]

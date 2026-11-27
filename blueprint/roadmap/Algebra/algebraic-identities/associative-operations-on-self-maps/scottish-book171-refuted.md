@@ -1,15 +1,15 @@
-# Scottish Book Problem 171 is false
+# Associativity and permutation invariance do not force composition
 
-Not every associative, permutation-invariant operation
-on self-maps is composition: there are a set $A$, an operation $U$ that assigns to any two maps
-$f, g \colon A \to A$ a map $U(f, g) \colon A \to A$ and is both associative (condition (1) of
-Problem 171) and invariant under permutations of $A$ (condition (2)), and maps
-$f, g \colon A \to A$ with $U(f, g) \ne f \circ g$, where $(f \circ g)(x) = f(g(x))$.
+There are a set $A$, an associative operation $U$ on self-maps of $A$ that is invariant under
+conjugation by permutations of $A$, and self-maps $f, g$ for which $U(f, g) \ne f \circ g$.
 
-Reverse composition $U(f, g) = g \circ f$ and the two projections $U(f, g) = f$ and
-$U(f, g) = g$ satisfy (1) and (2) but are not composition in general. The typescript's
-parenthetical $(U(f,g) \ne 1)$ is of unclear meaning and is not read as excluding these
-counterexamples.
+For example, on $A = \{0, 1\}$ take the left projection $U(f,g) = f$. It is associative and
+commutes with conjugation. If $f$ is the identity and $g$ exchanges the two points, then
+$U(f,g)$ is the identity, whereas $f \circ g = g$.
+
+This is a counterexample to the implication from the two numbered conditions of Scottish Book
+Problem 171 alone. It does not address any extra restriction from the typescript's parenthetical
+$(U(f,g) \ne 1)$.
 
 ## Sources
 

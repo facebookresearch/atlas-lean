@@ -104,8 +104,8 @@ flux `|q|` from one box to the other along one branch and back along the other, 
 upwind (donor-box) salinities each box receives `|q|` times the other box's salinity and loses
 `|q|` times its own, whatever the sign of `q`:
 `V1 * S1' = |q| * S2 - |q| * S1 + F1` and `V2 * S2' = |q| * S1 - |q| * S2 + F2`. The volumes
-stay fixed, and the total salt `V1 * S1 + V2 * S2` changes only through the external forcing
-`F1 + F2`. -/
+`V1, V2 > 0` stay fixed, and the total salt `V1 * S1 + V2 * S2` changes only through the external
+forcing `F1 + F2`. -/
 theorem overturning_total_salt_deriv {V1 V2 q F1 F2 : ℝ} {S1 S2 : ℝ → ℝ} {t : ℝ}
     (hV1 : 0 < V1) (hV2 : 0 < V2)
     (h1 : HasDerivAt S1 ((|q| * S2 t - |q| * S1 t) / V1 + F1 / V1) t)
@@ -122,7 +122,8 @@ theorem overturning_total_salt_deriv {V1 V2 q F1 F2 : ℝ} {S1 S2 : ℝ → ℝ}
   exact h
 
 /-- One directed upwind edge between the boxes (generic scalar transport, not the closed
-overturning loop): box 1 loses `q * S1` if `q >= 0` (flow 1 to 2) and gains `-q * S2` if
+overturning loop), for volumes `V1, V2 > 0`: box 1 loses `q * S1` if `q >= 0` (flow 1 to 2) and
+gains `-q * S2` if
 `q < 0` (flow 2 to 1), and conversely for box 2. The volume flux `|q|` carried by the edge is
 assumed to return by a salt-free path, so the volumes stay fixed and only this salt flux
 crosses between the boxes; in the closed loop `overturning_total_salt_deriv` the return branch
@@ -143,7 +144,8 @@ theorem one_edge_upwind_total_salt_deriv {V1 V2 q F1 F2 : ℝ} {S1 S2 : ℝ → 
   exact h
 
 /-- Flow-reversal boundary `q = 0`: there is no advective exchange (in the closed loop and on
-a single edge alike), so the total salt changes only through `F1 + F2`. -/
+a single edge alike), so for volumes `V1, V2 > 0` the total salt changes only through
+`F1 + F2`. -/
 theorem overturning_total_salt_deriv_zero_q {V1 V2 F1 F2 : ℝ} {S1 S2 : ℝ → ℝ} {t : ℝ}
     (hV1 : 0 < V1) (hV2 : 0 < V2)
     (h1 : HasDerivAt S1 (F1 / V1) t)

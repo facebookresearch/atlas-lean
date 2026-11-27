@@ -1,0 +1,151 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Category.Basic
+public import MathlibExt.Analysis.CStarAlgebra.IdealQuotient
+public import Mathlib.CategoryTheory.NatTrans
+
+/-!
+# Actual C-star algebra and closed-ideal pairs
+
+Objects are real algebras with real closed two-sided ideals. Morphisms are
+actual ideal-preserving nonunital star homomorphisms. No relative group,
+norm or excision conclusion is stored in this category.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+universe u
+
+open CategoryTheory
+
+/-- A genuine closed-ideal pair. -/
+structure CStarPairCat : Type (u + 1) where
+  /-- The actual ambient algebra, with its existing C-star dictionary. -/
+  algebra : NonUnitalCStarAlgCat.{u}
+  /-- The distinguished closed two-sided star ideal of the ambient algebra. -/
+  ideal : ClosedStarIdeal algebra
+
+namespace CStarPairCat
+
+/-- An actual homomorphism preserving the distinguished ideal. -/
+@[ext]
+structure Hom (P Q : CStarPairCat.{u}) where
+  /-- The underlying nonunital star homomorphism of the actual algebras. -/
+  hom : P.algebra →⋆ₙₐ[ℂ] Q.algebra
+  ideal_mem : Set.MapsTo hom P.ideal Q.ideal
+
+instance category : Category.{u} CStarPairCat.{u} where
+  Hom := Hom
+  id P :=
+    { hom := NonUnitalStarAlgHom.id ℂ P.algebra
+      ideal_mem := fun _ hx => hx }
+  comp f g :=
+    { hom := g.hom.comp f.hom
+      ideal_mem := fun _ hx => g.ideal_mem (f.ideal_mem hx) }
+  id_comp := by
+    intro P Q f
+    apply Hom.ext
+    ext a
+    rfl
+  comp_id := by
+    intro P Q f
+    apply Hom.ext
+    ext a
+    rfl
+  assoc := by
+    intro P Q R T f g h
+    apply Hom.ext
+    ext a
+    rfl
+
+@[ext]
+theorem hom_ext {P Q : CStarPairCat.{u}} {f g : P ⟶ Q}
+    (h : f.hom = g.hom) : f = g :=
+  Hom.ext h
+
+/-- The actual ambient algebra of a pair. -/
+def forget : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj P := P.algebra
+  map f := f.hom
+  map_id _P := rfl
+  map_comp _f _g := rfl
+
+/-- The pair (A,A), with its actual whole ideal. -/
+def diagonal : NonUnitalCStarAlgCat.{u} ⥤ CStarPairCat.{u} where
+  obj A := ⟨A, ClosedStarIdeal.top A⟩
+  map f :=
+    { hom := f
+      ideal_mem := fun _ _ => ClosedStarIdeal.mem_top _ }
+  map_id A := by
+    apply Hom.ext
+    rfl
+  map_comp f g := by
+    apply Hom.ext
+    rfl
+
+/-- The literal distinguished ideal, with its inherited C-star structure. -/
+def idealObject (P : CStarPairCat.{u}) : NonUnitalCStarAlgCat.{u} := by
+  letI : NonUnitalCStarAlgebra P.ideal.carrier :=
+    NonUnitalStarSubalgebra.nonUnitalCStarAlgebra P.ideal.carrier
+      (h_closed := P.ideal.isClosed)
+  exact NonUnitalCStarAlgCat.of P.ideal.carrier
+
+/-- Restrict an actual ideal-preserving map to the actual ideal. -/
+def idealMap {P Q : CStarPairCat.{u}} (f : P ⟶ Q) :
+    idealObject P ⟶ idealObject Q :=
+  NonUnitalStarAlgHom.codRestrict
+    (f.hom.comp (NonUnitalStarSubalgebraClass.subtype P.ideal.carrier))
+    Q.ideal.carrier (fun x => f.ideal_mem x.property)
+
+@[simp]
+theorem idealMap_apply {P Q : CStarPairCat.{u}} (f : P ⟶ Q)
+    (x : P.ideal.carrier) :
+    ((idealMap f : P.ideal.carrier →⋆ₙₐ[ℂ] Q.ideal.carrier) x).val =
+      f.hom (x : P.algebra) := by
+  rfl
+
+/-- Send a pair to its actual ideal and a morphism to its restriction. -/
+def idealFunctor : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj := idealObject
+  map := idealMap
+  map_id P := by
+    apply NonUnitalCStarAlgCat.hom_ext
+    intro x
+    apply Subtype.ext
+    rfl
+  map_comp f g := by
+    apply NonUnitalCStarAlgCat.hom_ext
+    intro x
+    apply Subtype.ext
+    rfl
+
+/-- The real ideal inclusions, natural in ideal-preserving homomorphisms. -/
+def idealInclusion : NatTrans idealFunctor.{u} forget.{u} where
+  app P := NonUnitalStarSubalgebraClass.subtype P.ideal.carrier
+  naturality {P Q} f := by
+    apply NonUnitalCStarAlgCat.hom_ext
+    intro x
+    rfl
+
+/-- The natural pair map (A,J)→(A,A) is the ambient identity. -/
+def fullInclusion : NatTrans (𝟭 CStarPairCat.{u}) (forget ⋙ diagonal) where
+  app P :=
+    { hom := NonUnitalStarAlgHom.id ℂ P.algebra
+      ideal_mem := fun _ _ => ClosedStarIdeal.mem_top _ }
+  naturality {P Q} f := by
+    apply Hom.ext
+    ext a
+    rfl
+
+@[simp]
+theorem fullInclusion_apply (P : CStarPairCat.{u}) (a : P.algebra) :
+    Hom.hom (P := P) (Q := diagonal.obj (forget.obj P))
+      (fullInclusion.app P) a = a := by
+  rfl
+
+end CStarPairCat

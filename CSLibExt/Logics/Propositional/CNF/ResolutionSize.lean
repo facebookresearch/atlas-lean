@@ -36,7 +36,7 @@ optimality or tree-versus-DAG separation is claimed.
 
 namespace Cslib
 namespace Logic
-namespace PL
+namespace LegacyPL
 namespace CNF
 
 variable {φ : CNF} {C : CNFClause} {l : List CNFClause}
@@ -272,6 +272,6 @@ theorem TreeDerivation.exists_dag (d : TreeDerivation φ C) :
       omega
 
 end CNF
-end PL
+end LegacyPL
 end Logic
 end Cslib

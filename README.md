@@ -6,16 +6,18 @@
 
 <p align="center">
   <a href="https://github.com/facebookresearch/atlas-lean/actions/workflows/ci.yml"><img src="https://github.com/facebookresearch/atlas-lean/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" /></a>
-  <a href="https://github.com/leanprover/lean4/releases/tag/v4.35.0"><img src="https://img.shields.io/badge/Lean-v4.35.0-blue" alt="Lean v4.35.0" /></a>
+  <a href="https://github.com/leanprover/lean4/releases/tag/v4.36.0"><img src="https://img.shields.io/badge/Lean-v4.36.0-blue" alt="Lean v4.36.0" /></a>
 </p>
 
 > [!NOTE]
-> **ATLAS V2 is live.** The original release is preserved in [`v1/`](v1/).
+> **ATLAS V2 is live.** Explore the interactive graph at
+> [facebookresearch.github.io/atlas-lean](https://facebookresearch.github.io/atlas-lean/).
+> The original release is preserved in [`v1/`](v1/).
 
 ## About ATLAS
 
 ATLAS provides reusable formal building blocks for human- and machine-assisted
-theorem proving across mathematics, theoretical computer science, and physics.
+theorem proving across mathematics, theoretical computer science, physics, and applied domains.
 
 The project was generated with
 [AutoformBot](https://github.com/facebookresearch/autoform-bot), an
@@ -23,7 +25,7 @@ autoformalization pipeline for developing Lean libraries at scale.
 
 ## Formalized libraries
 
-The root Lake package is limited to seven libraries:
+The root Lake package is organized into the following libraries:
 
 | Directory | Purpose |
 | --- | --- |
@@ -33,6 +35,8 @@ The root Lake package is limited to seven libraries:
 | [`CSLibExtTest/`](CSLibExtTest/README.md) | Tests and diagnostics for `CSLibExt` |
 | [`PhyslibExt/`](PhyslibExt/README.md) | Reusable, fully proved physics developments built on Physlib |
 | [`PhyslibExtTest/`](PhyslibExtTest/README.md) | Tests and diagnostics for `PhyslibExt` |
+| [`Domains/`](Domains/README.md) | Proved domain models: [biology](Domains/Biology/), [economics and finance](Domains/Economics/), [operations research](Domains/OperationsResearch/), [materials science](Domains/MaterialsScience/), [chemistry](Domains/Chemistry/), [transport](Domains/Transport/), and [urban planning](Domains/Urban/) |
+| [`DomainsTest/`](DomainsTest/README.md) | Tests and diagnostics for domain models |
 | [`WantedExt/`](WantedExt/README.md) | Established results whose Lean implementation or proof is deferred |
 
 Repository checks live in [`scripts/`](scripts/README.md). Run the complete

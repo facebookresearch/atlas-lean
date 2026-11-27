@@ -20,3 +20,14 @@
 - [Loss probability of the chain](tendsto-mat-pow-moran-matrix-zero.md)
 - [Closed form of Kimura's fixation probability](kimura-fixation-half.md)
 - [Diffusion limit of the Moran fixation probability](tendsto-moran-fixation-diffusion.md)
+
+- [Minimum fixation probability of the Moran process on graphs](minimum-fixation-probability-on-graphs.md)
+- [Worst-case absorption time of the Moran process on graphs](worst-case-absorption-time-on-graphs.md)
+
+- [Fixation probability in a frequency-dependent Moran process](frequency-dependent-moran-fixation-product-formu.md)
+- [The one-third rule for weak selection in the Moran process](one-third-rule-under-weak-selection.md)
+- [Weak-selection fixation probabilities in structured populations](weak-selection-fixation-probabilities/README.md)
+- [Neutral Moran genealogy as a relabeled Cannings model](moran-model-genealogy-per-step-c-2-n-2-and-time.md)
+- [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
+
+- [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)

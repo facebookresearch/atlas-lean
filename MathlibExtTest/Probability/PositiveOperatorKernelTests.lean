@@ -8,13 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.PopulationGenetics.Diffusion.TransitionKernel
+public import MathlibExt.Probability.PositiveOperatorKernel
+import Mathlib.Topology.UnitInterval
 
 /-!
 # Tests for positive-operator Markov kernels
 
-The probes cover identity and non-identity operators, the order of noncommuting composition,
-and the actual Wright–Fisher transition law on the allele-frequency interval.
+The probes cover identity, non-identity and noncommuting composition.
 -/
 
 @[expose] public section
@@ -25,8 +25,6 @@ open scoped ProbabilityTheory unitInterval
 namespace MathlibExt.Probability.PositiveOperatorKernelTest
 
 open MathlibExt.Probability.PositiveOperatorKernel
-open MathlibExt.Biology.PopulationGenetics.Diffusion.WrightFisherSemigroup
-open MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
 
 /-- Averaging against the Dirac mass at `a`: every input function is sent to its constant value at
 `a`. This is a non-identity positive unital operator whose transition forgets the starting point. -/
@@ -97,33 +95,5 @@ example : (fixedPointAveragingOperator 0).comp (fixedPointAveragingOperator 1) �
   intro h
   have h' := congrArg (fun T => T (ContinuousMap.mk (fun y : I => (y : ℝ)) (by fun_prop)) 0) h
   simp at h'
-
-/-- One-half as a point of the Wright–Fisher allele-frequency interval. -/
-noncomputable def halfFrequency : I := ⟨1 / 2, by constructor <;> norm_num⟩
-
-/-- Every Wright–Fisher transition from one-half has probability mass one. -/
-example (t : ℝ) : wfTransitionKernel t halfFrequency Set.univ = 1 :=
-  measure_univ
-
-/-- At time zero, the actual Wright–Fisher transition from one-half is Dirac. -/
-example : wfTransitionKernel 0 halfFrequency = Measure.dirac halfFrequency :=
-  wfTransitionKernel_zero_apply halfFrequency
-
-/-- The documented nonpositive-time convention gives the identity kernel. -/
-example : wfTransitionKernel (-1) = (Kernel.id : Kernel I I) :=
-  wfTransitionKernel_of_nonpos (by norm_num)
-
-/-- The Chapman–Kolmogorov law specializes to concrete positive times on the interval. -/
-example : wfTransitionKernel (1 + 2) = wfTransitionKernel 2 ∘ₖ wfTransitionKernel 1 := by
-  exact wfTransitionKernel_add (by norm_num) (by norm_num)
-
-/-- The actual Wright–Fisher transition from `1/2` has the block-counting moment formula. -/
-example {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
-    ∫ y, ((Polynomial.X ^ n : Polynomial ℝ).toContinuousMapOn I) y ∂
-        wfTransitionKernel t halfFrequency =
-      ∑ k : Fin (n + 1),
-        NormedSpace.exp (t • blockCountingGenerator n) (Fin.last n) k *
-          (halfFrequency : ℝ) ^ (k : ℕ) :=
-  integral_wfTransitionKernel_X_pow ht n halfFrequency
 
 end MathlibExt.Probability.PositiveOperatorKernelTest

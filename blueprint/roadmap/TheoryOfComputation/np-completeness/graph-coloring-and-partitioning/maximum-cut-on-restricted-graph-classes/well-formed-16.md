@@ -1,0 +1,3 @@
+# Well-formed instances of MAXIMUM CUT ON STRONGLY CHORDAL GRAPHS
+
+An instance $(n, E, K)$ is well-formed for MAXIMUM CUT ON STRONGLY CHORDAL GRAPHS when it is a well-formed MAXIMUM CUT instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$ is strongly chordal (no cycle $C_k$ with $k \ge 4$ is an induced subgraph, and every cycle of even length at least $6$ has an odd chord: an edge between the vertices at positions $i < j$ of the cycle with $j - i$ odd, $j - i \ge 3$ and $j - i + 3$ at most the cycle length), and $K > 0$.

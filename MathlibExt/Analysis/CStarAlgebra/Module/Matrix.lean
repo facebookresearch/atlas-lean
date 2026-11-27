@@ -1,0 +1,365 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable
+public import MathlibExt.Analysis.CStarAlgebra.Module.Standard
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+
+/-!
+# Matrices acting on finite standard right C-star modules
+
+Matrices act on finite standard right modules by the column formula
+
+`(M x) i = ∑ j, M i j * x j`.
+
+This is the source-order right-module action.  It is not Mathlib's raw
+row-vector action `CStarMatrix.toCLM M`, which reverses multiplication for
+noncommutative coefficients.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open scoped BigOperators CStarModule.Right RightActions
+
+namespace CStarModule
+
+namespace AdjointableOperator
+
+universe uB uι uκ
+
+variable {B : Type uB} {ι : Type uι} {κ : Type uκ}
+variable [Fintype ι] [Fintype κ]
+variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+  [StarOrderedRing Bᵐᵒᵖ]
+
+/-- Let B be a possibly nonunital complex C-star algebra, with finite row and column index types,
+possibly empty. Consider the finite standard right B-modules with their coefficient-valued sum
+inner products. A rectangular matrix acts on coefficient vectors by the column formula,
+summing M(i,j)x(j) over the column index. -/
+def rightMatrixFun (M : CStarMatrix ι κ B)
+    (x : CStarModule.Right.FiniteStandard B κ) :
+    CStarModule.Right.FiniteStandard B ι :=
+  (WithCStarModule.equiv Bᵐᵒᵖ (ι → B)).symm
+    fun i ↦ ∑ j, M i j * x j
+
+omit [Fintype ι] [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ] in
+@[simp]
+theorem rightMatrixFun_apply (M : CStarMatrix ι κ B)
+    (x : CStarModule.Right.FiniteStandard B κ) (i : ι) :
+    rightMatrixFun M x i = ∑ j, M i j * x j :=
+  rfl
+
+/-- Let B be a possibly nonunital complex C-star algebra, with finite row and column index types,
+possibly empty. Consider the finite standard right B-modules with their coefficient-valued sum
+inner products. The column matrix action is a complex-linear map between the two finite
+standard modules. -/
+def rightMatrixLinearMap (M : CStarMatrix ι κ B) :
+    CStarModule.Right.FiniteStandard B κ →ₗ[ℂ]
+      CStarModule.Right.FiniteStandard B ι where
+  toFun := rightMatrixFun M
+  map_add' x y := by
+    apply (WithCStarModule.equiv Bᵐᵒᵖ (ι → B)).injective
+    ext i
+    simp [rightMatrixFun, mul_add, Finset.sum_add_distrib]
+  map_smul' c x := by
+    apply (WithCStarModule.equiv Bᵐᵒᵖ (ι → B)).injective
+    ext i
+    simp [rightMatrixFun, mul_smul_comm, Finset.smul_sum]
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Let B be a possibly nonunital complex C-star algebra, with finite row and column index types,
+possibly empty. Consider the finite standard right B-modules with their coefficient-valued sum
+inner products. The column matrix action is bounded for the Hilbert-module norms on the finite
+standard modules. -/
+def rightMatrixCLM (M : CStarMatrix ι κ B) :
+    CStarModule.Right.FiniteStandard B κ →L[ℂ]
+      CStarModule.Right.FiniteStandard B ι := by
+  let f : CStarModule.Right.FiniteStandard B κ →ₗ[ℂ]
+      CStarModule.Right.FiniteStandard B ι := rightMatrixLinearMap M
+  refine LinearMap.mkContinuous
+    (E := CStarModule.Right.FiniteStandard B κ)
+    (F := CStarModule.Right.FiniteStandard B ι)
+    f (∑ i, ∑ j, ‖M i j‖) ?_
+  intro x
+  change ‖rightMatrixLinearMap M x‖ ≤
+    (∑ i, ∑ j, ‖M i j‖) * ‖x‖
+  calc
+        ‖rightMatrixLinearMap M x‖ ≤
+            ∑ i, ‖rightMatrixLinearMap M x i‖ :=
+          CStarModule.Right.finite_norm_le_sum _
+        _ ≤ ∑ i, ∑ j, ‖M i j * x j‖ := by
+          apply Finset.sum_le_sum
+          intro i _
+          exact norm_sum_le _ _
+        _ ≤ ∑ i, ∑ j, ‖M i j‖ * ‖x j‖ := by
+          gcongr
+          exact norm_mul_le _ _
+        _ ≤ ∑ i, ∑ j, ‖M i j‖ * ‖x‖ := by
+          gcongr
+          exact CStarModule.Right.finite_norm_apply_le_norm x _
+        _ = (∑ i, ∑ j, ‖M i j‖) * ‖x‖ := by
+          simp only [Finset.sum_mul]
+
+@[simp]
+theorem rightMatrixCLM_apply (M : CStarMatrix ι κ B)
+    (x : CStarModule.Right.FiniteStandard B κ) (i : ι) :
+    rightMatrixCLM M x i = ∑ j, M i j * x j := by
+  rw [rightMatrixCLM]
+  rfl
+
+/-- Let B be a possibly nonunital complex C-star algebra, with finite row and column index types,
+possibly empty. Consider the finite standard right B-modules with their coefficient-valued sum
+inner products. The rectangular column matrix action is adjointable, and its adjoint is the
+column action of the conjugate-transpose matrix. -/
+def rightMatrix (M : CStarMatrix ι κ B) :
+    AdjointableOperator B
+      (CStarModule.Right.FiniteStandard B κ)
+      (CStarModule.Right.FiniteStandard B ι) where
+  toContinuousLinearMap := rightMatrixCLM M
+  adjoint := rightMatrixCLM M.conjTranspose
+  isAdjointPair' := (isAdjointPair_iff_adjoint_inner _ _).2 <| by
+    intro x y
+    calc
+      CStarModule.rightInner (B := B) (rightMatrixCLM M x) y =
+          ∑ i, star (rightMatrixCLM M x i) * y i :=
+        CStarModule.Right.finite_rightInner _ _
+      _ = ∑ j, star (x j) * rightMatrixCLM M.conjTranspose y j := by
+        simp only [rightMatrixCLM_apply, star_sum, star_mul,
+          CStarMatrix.conjTranspose_apply, Finset.sum_mul,
+          Finset.mul_sum, mul_assoc]
+        rw [Finset.sum_comm]
+      _ = CStarModule.rightInner (B := B) x
+          (rightMatrixCLM M.conjTranspose y) :=
+        (CStarModule.Right.finite_rightInner _ _).symm
+
+@[simp low]
+theorem rightMatrix_apply (M : CStarMatrix ι κ B)
+    (x : CStarModule.Right.FiniteStandard B κ) (i : ι) :
+    rightMatrix M x i = ∑ j, M i j * x j :=
+  rightMatrixCLM_apply M x i
+
+@[simp]
+theorem rightMatrix_adjointOperator (M : CStarMatrix ι κ B) :
+    (rightMatrix M).adjointOperator = rightMatrix M.conjTranspose := by
+  ext x
+  rfl
+
+section Square
+
+variable {ι : Type uι} [Fintype ι]
+
+/-- Let B be a possibly nonunital complex C-star algebra, with finite row and column index types,
+possibly empty. Consider the finite standard right B-modules with their coefficient-valued sum
+inner products. Equality of indices is decidable. -/
+local instance matrixSquareIndexDecidableEq : DecidableEq ι := Classical.decEq ι
+
+/-- Let B be a possibly nonunital complex C-star algebra, with finite row and column index types,
+possibly empty. Consider the finite standard right B-modules with their coefficient-valued sum
+inner products. Square matrices act on the finite standard right B-module by a nonunital
+complex star algebra homomorphism. -/
+noncomputable def rightMatrixHom :
+    CStarMatrix ι ι B →⋆ₙₐ[ℂ]
+      End B (CStarModule.Right.FiniteStandard B ι) where
+  toFun := rightMatrix
+  map_zero' := by
+    ext x i
+    simp
+  map_add' M N := by
+    ext x i
+    simp [add_mul, Finset.sum_add_distrib]
+  map_smul' c M := by
+    ext x i
+    simp [Finset.smul_sum, smul_mul_assoc]
+  map_mul' M N := by
+    ext x i
+    change rightMatrix (M * N) x i =
+      rightMatrix M (rightMatrix N x) i
+    simp only [rightMatrix_apply, CStarMatrix.mul_apply,
+      Finset.sum_mul, mul_assoc]
+    rw [Finset.sum_comm]
+    simp only [Finset.mul_sum]
+  map_star' M := by
+    change rightMatrix M.conjTranspose =
+      (rightMatrix M).adjointOperator
+    exact (rightMatrix_adjointOperator M).symm
+
+@[simp]
+theorem rightMatrixHom_apply (M : CStarMatrix ι ι B)
+    (x : CStarModule.Right.FiniteStandard B ι) :
+    rightMatrixHom M x = (rightMatrix (B := B) M) x :=
+  rfl
+
+@[simp]
+theorem rightMatrix_finiteSingle (M : CStarMatrix ι ι B)
+    (j : ι) (b : B) (i : ι) :
+    rightMatrix M (CStarModule.Right.finiteSingle j b) i = M i j * b := by
+  classical
+  rw [rightMatrix_apply, Finset.sum_eq_single j]
+  · have hj : CStarModule.Right.finiteSingle j b j = b := by
+      simpa only [CStarModule.Right.finiteCoord_apply] using
+        (CStarModule.Right.finiteCoord_single_self (B := B) j b)
+    rw [hj]
+  · intro k _ hkj
+    have hk : CStarModule.Right.finiteSingle j b k = 0 := by
+      simpa only [CStarModule.Right.finiteCoord_apply] using
+        (CStarModule.Right.finiteCoord_single_ne (B := B) hkj b)
+    rw [hk, mul_zero]
+  · simp
+
+end Square
+
+section SquareUnital
+
+variable {B : Type uB} [CStarAlgebra B]
+variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+variable {ι : Type uι} [Fintype ι]
+
+/-- Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. Equality of indices is decidable. -/
+local instance matrixSquareUnitalIndexDecidableEq : DecidableEq ι := Classical.decEq ι
+
+@[simp]
+theorem rightMatrix_one :
+    rightMatrix (B := B) (1 : CStarMatrix ι ι B) =
+      (1 : End B (CStarModule.Right.FiniteStandard B ι)) := by
+  ext x i
+  change rightMatrix (B := B) (1 : CStarMatrix ι ι B) x i = x i
+  rw [rightMatrix_apply, Finset.sum_eq_single i]
+  · rw [CStarMatrix.one_apply_eq, one_mul]
+  · intro j _ hji
+    rw [CStarMatrix.one_apply_ne' hji, zero_mul]
+  · simp
+
+/-- Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. For unital B, the square-matrix action is a unital complex
+star algebra homomorphism. -/
+noncomputable def rightMatrixStarAlgHom :
+    CStarMatrix ι ι B →⋆ₐ[ℂ]
+      End B (CStarModule.Right.FiniteStandard B ι) where
+  toFun := rightMatrix
+  map_one' := rightMatrix_one
+  map_mul' := map_mul (rightMatrixHom (B := B) (ι := ι))
+  map_zero' := map_zero (rightMatrixHom (B := B) (ι := ι))
+  map_add' := map_add (rightMatrixHom (B := B) (ι := ι))
+  commutes' c := by
+    calc
+      rightMatrix (algebraMap ℂ (CStarMatrix ι ι B) c) =
+          rightMatrix (c • (1 : CStarMatrix ι ι B)) := by
+        rw [Algebra.algebraMap_eq_smul_one]
+      _ = c • rightMatrix (1 : CStarMatrix ι ι B) :=
+        map_smul (rightMatrixHom (B := B) (ι := ι)) c 1
+      _ = c • (1 : End B (CStarModule.Right.FiniteStandard B ι)) := by
+        rw [rightMatrix_one]
+      _ = algebraMap ℂ
+          (End B (CStarModule.Right.FiniteStandard B ι)) c :=
+        (Algebra.algebraMap_eq_smul_one c).symm
+  map_star' := map_star (rightMatrixHom (B := B) (ι := ι))
+
+/-- Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. For unital B, the finite square-matrix action is
+injective. -/
+theorem rightMatrixStarAlgHom_injective :
+    Function.Injective (rightMatrixStarAlgHom (B := B) (ι := ι)) := by
+  intro M N hMN
+  ext i j
+  have h := congrArg
+    (fun T : End B (CStarModule.Right.FiniteStandard B ι) ↦
+      T (CStarModule.Right.finiteSingle j 1) i) hMN
+  change rightMatrix M (CStarModule.Right.finiteSingle j 1) i =
+    rightMatrix N (CStarModule.Right.finiteSingle j 1) i at h
+  rw [rightMatrix_finiteSingle, rightMatrix_finiteSingle,
+    mul_one, mul_one] at h
+  exact h
+
+/-- Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. For unital B, every adjointable endomorphism of the finite
+standard module is the column action of its matrix of coefficients. -/
+theorem rightMatrixStarAlgHom_surjective :
+    Function.Surjective (rightMatrixStarAlgHom (B := B) (ι := ι)) := by
+  intro T
+  let M : CStarMatrix ι ι B :=
+    CStarMatrix.ofMatrix fun i j ↦
+      CStarModule.Right.finiteCoord i
+        (T (CStarModule.Right.finiteSingle j 1))
+  refine ⟨M, ?_⟩
+  apply AdjointableOperator.ext
+  intro x
+  ext i
+  change CStarModule.Right.finiteCoord i
+    (rightMatrixStarAlgHom M x) = CStarModule.Right.finiteCoord i (T x)
+  calc
+    CStarModule.Right.finiteCoord i (rightMatrixStarAlgHom M x) =
+        ∑ j, CStarModule.Right.finiteCoord i
+          (T (CStarModule.Right.finiteSingle j 1)) * x j := by
+      rfl
+    _ = ∑ j, CStarModule.Right.finiteCoord i
+        (T (CStarModule.Right.finiteSingle j (x j))) := by
+      apply Finset.sum_congr rfl
+      intro j _
+      calc
+        CStarModule.Right.finiteCoord i
+            (T (CStarModule.Right.finiteSingle j 1)) * x j =
+            CStarModule.Right.finiteCoord i
+              (T (CStarModule.Right.finiteSingle j 1) <• x j) := by
+          simpa only [CStarModule.Right.finiteCoord_apply] using
+            (CStarModule.Right.finite_right_smul_apply
+              (T (CStarModule.Right.finiteSingle j 1)) (x j) i).symm
+        _ = CStarModule.Right.finiteCoord i
+            (T (CStarModule.Right.finiteSingle j 1 <• x j)) := by
+          rw [T.map_right_smul]
+        _ = CStarModule.Right.finiteCoord i
+            (T (CStarModule.Right.finiteSingle j (x j))) := by
+          rw [CStarModule.Right.finiteSingle_right_smul, one_mul]
+    _ = CStarModule.Right.finiteCoord i
+        (∑ j, T (CStarModule.Right.finiteSingle j (x j))) := by
+      exact (_root_.map_sum (CStarModule.Right.finiteCoord (B := B) i)
+        (fun j ↦ T (CStarModule.Right.finiteSingle j (x j))) Finset.univ).symm
+    _ = CStarModule.Right.finiteCoord i
+        (T (∑ j, CStarModule.Right.finiteSingle j (x j))) := by
+      apply congrArg (CStarModule.Right.finiteCoord (B := B) i)
+      exact (_root_.map_sum T.toContinuousLinearMap
+        (fun j ↦ CStarModule.Right.finiteSingle j (x j)) Finset.univ).symm
+    _ = CStarModule.Right.finiteCoord i (T x) := by
+      rw [CStarModule.Right.finite_sum_single]
+
+/-- Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. For unital B, the column matrix action is a bijection onto
+the adjointable endomorphisms of the finite standard module. -/
+theorem rightMatrixStarAlgHom_bijective :
+    Function.Bijective (rightMatrixStarAlgHom (B := B) (ι := ι)) :=
+  ⟨rightMatrixStarAlgHom_injective,
+    rightMatrixStarAlgHom_surjective⟩
+
+/-- Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. For unital B, the finite square-matrix algebra and the
+adjointable endomorphism algebra of the finite standard module are star-algebra equivalent. -/
+noncomputable def rightMatrixStarAlgEquiv :
+    CStarMatrix ι ι B ≃⋆ₐ[ℂ]
+      End B (CStarModule.Right.FiniteStandard B ι) :=
+  StarAlgEquiv.ofBijective rightMatrixStarAlgHom
+    rightMatrixStarAlgHom_bijective
+
+@[simp]
+theorem rightMatrixStarAlgEquiv_apply
+    (M : CStarMatrix ι ι B)
+    (x : CStarModule.Right.FiniteStandard B ι) :
+    rightMatrixStarAlgEquiv M x = rightMatrix M x :=
+  rfl
+
+end SquareUnital
+
+end AdjointableOperator
+
+end CStarModule

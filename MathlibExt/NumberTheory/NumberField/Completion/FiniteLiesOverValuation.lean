@@ -60,7 +60,13 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L]
 variable (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L))
   [w.asIdeal.LiesOver v.asIdeal]
 
-/-- Completion extension of `valuation_liesOver`. -/
+/-- **Valuation of the image under the completion map.** Let $L/K$ be an extension of number
+fields, let $v$ be a finite place of $K$, given as a height-one prime of the ring of integers
+$\mathcal{O}_K$, let $w$ be a finite place of $L$ lying over $v$, and let $e$ be the ramification
+index of $w$ over $v$. Let $\iota : K_v \to L_w$ be the continuous ring homomorphism between the
+completions that extends $K \to L$. Then for every $x \in K_v$, the valuation of $\iota(x)$ on
+$L_w$ equals the $e$-th power of the valuation of $x$ on $K_v$, where both valuations are the
+multiplicative adic valuations extended to the completions. -/
 theorem valuation_adicCompletionMap (x : v.adicCompletion K) :
     Valued.v (adicCompletionMap v w x) =
       Valued.v x ^ v.asIdeal.ramificationIdx' w.asIdeal := by
@@ -93,7 +99,11 @@ theorem valuation_adicCompletionMap (x : v.adicCompletion K) :
   rw [Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal w.asIdeal v.ne_bot]
   exact (valuation_liesOver L v w k).symm
 
-/-- The canonical completion map preserves integrality. -/
+/-- **The completion map preserves integrality.** Let $L/K$ be an extension of number fields, let
+$v$ be a finite place of $K$, given as a height-one prime of the ring of integers $\mathcal{O}_K$,
+and let $w$ be a finite place of $L$ lying over $v$. The continuous ring homomorphism
+$K_v \to L_w$ between the completions that extends $K \to L$ maps every element of the ring of
+integers of $K_v$ into the ring of integers of $L_w$. -/
 theorem adicCompletionMap_mem_integers (x : v.adicCompletion K)
     (hx : x ∈ v.adicCompletionIntegers K) :
     adicCompletionMap v w x ∈ w.adicCompletionIntegers L := by
@@ -104,7 +114,12 @@ theorem adicCompletionMap_mem_integers (x : v.adicCompletion K)
   rw [mem_adicCompletionIntegers, valuation_adicCompletionMap v w]
   exact hpow
 
-/-- Canonical restricted map between adic integer rings. -/
+/-- **Restriction of the completion map to the rings of integers.** Let $L/K$ be an extension of
+number fields, let $v$ be a finite place of $K$, given as a height-one prime of the ring of
+integers $\mathcal{O}_K$, and let $w$ be a finite place of $L$ lying over $v$. Let $K_v$ and $L_w$
+be the completions, with rings of integers $\mathcal{O}_v$ and $\mathcal{O}_w$. The continuous
+ring homomorphism $K_v \to L_w$ extending $K \to L$ restricts to a ring homomorphism
+$\mathcal{O}_v \to \mathcal{O}_w$. -/
 noncomputable def adicCompletionIntegersMap :
     v.adicCompletionIntegers K →+* w.adicCompletionIntegers L where
   toFun x := ⟨adicCompletionMap v w x.val, adicCompletionMap_mem_integers v w x.val x.property⟩

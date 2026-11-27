@@ -1,0 +1,269 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Radical
+
+/-!
+# Left adjointable maps on algebraic internal tensors
+
+An actual adjointable right-module map on the first factor induces a
+complex-linear map on the ordinary, balanced and radical tensor carriers.
+Its actual adjoint induces the paired map in the reverse direction.
+
+These are algebraic quotient maps. No norm, completeness, completed
+operator or supplied tensor-model witness is introduced. The source is
+Blackadar, K-Theory for Operator Algebras, second edition (1998), 13.5.1
+and the following paragraph describing F tensor 1. Allowing different
+first-factor carriers is the rectangular version of the same formula.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped TensorProduct RightActions
+
+namespace CStarModule.InternalTensorProduct
+
+universe uB₁ uB₂ uE₁ uF₁ uG₁ uE₂
+
+variable {B₁ : Type uB₁} [NonUnitalCStarAlgebra B₁] [PartialOrder B₁ᵐᵒᵖ]
+variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
+variable [SMul B₁ᵐᵒᵖ E₁] [CStarModule B₁ᵐᵒᵖ E₁]
+variable {F₁ : Type uF₁} [NormedAddCommGroup F₁] [NormedSpace ℂ F₁]
+variable [SMul B₁ᵐᵒᵖ F₁] [CStarModule B₁ᵐᵒᵖ F₁]
+
+section Raw
+
+variable {E₂ : Type uE₂} [AddCommGroup E₂] [Module ℂ E₂]
+
+/-- The ordinary complex tensor map induced by the given first-factor operator. -/
+def rawLeftMap (L : AdjointableOperator B₁ E₁ F₁) :
+    AlgebraicTensor E₁ E₂ →ₗ[ℂ] AlgebraicTensor F₁ E₂ :=
+  TensorProduct.map L.toContinuousLinearMap.toLinearMap LinearMap.id
+
+/-- The raw map has the literal first-factor pure value. -/
+@[simp]
+theorem rawLeftMap_tmul (L : AdjointableOperator B₁ E₁ F₁)
+    (x : E₁) (y : E₂) :
+    rawLeftMap L (x ⊗ₜ[ℂ] y) = (L x) ⊗ₜ[ℂ] y := by
+  simp only [rawLeftMap, TensorProduct.map_tmul, LinearMap.id_apply,
+    ContinuousLinearMap.coe_coe, AdjointableOperator.coe_toContinuousLinearMap]
+
+end Raw
+
+variable {B₂ : Type uB₂} [NonUnitalCStarAlgebra B₂] [PartialOrder B₂ᵐᵒᵖ]
+variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
+variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
+
+/-- The given adjointable map sends every defining balance relation into
+the target balancing span. Its right linearity is derived, not assumed. -/
+theorem balancingSpan_rawLeftMap
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) :
+    balancingSpan (E₁ := E₁) φ ≤
+      (balancingSpan (E₁ := F₁) φ).comap (rawLeftMap (E₂ := E₂) L) := by
+  apply Submodule.span_le.2
+  rintro _ ⟨⟨x, b, y⟩, rfl⟩
+  change rawLeftMap L (balanceRelation φ x b y) ∈ balancingSpan (E₁ := F₁) φ
+  simpa only [balanceRelation, map_sub, rawLeftMap_tmul,
+    AdjointableOperator.map_right_smul] using balanceRelation_mem φ (L x) b y
+
+/-- The actual first-factor adjoint gives the raw tensor adjoint identity. -/
+theorem rawLeftMap_inner_adjoint
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁)
+    (z : AlgebraicTensor E₁ E₂) (w : AlgebraicTensor F₁ E₂) :
+    rawInner φ (rawLeftMap L z) w =
+      rawInner φ z (rawLeftMap L.adjointOperator w) := by
+  induction z using TensorProduct.inductionOn with
+  | tmul x u =>
+    induction w using TensorProduct.inductionOn with
+    | tmul y v =>
+      simp only [rawLeftMap_tmul, rawInner_tmul_tmul,
+        AdjointableOperator.adjoint_inner, AdjointableOperator.adjointOperator_apply]
+    | add w w' hw hw' =>
+      simp only [map_add, hw, hw']
+  | add z z' hz hz' =>
+    simp only [map_add, LinearMap.add_apply, hz, hz']
+
+/-- First-factor maps commute with the genuine second-factor right action. -/
+theorem rawLeftMap_rawRightSMul
+    (L : AdjointableOperator B₁ E₁ F₁) (b : B₂)
+    (z : AlgebraicTensor E₁ E₂) :
+    rawLeftMap L (rawRightSMul b z) =
+      rawRightSMul b (rawLeftMap L z) := by
+  induction z using TensorProduct.inductionOn with
+  | tmul x y => simp only [rawRightSMul_tmul, rawLeftMap_tmul]
+  | add z w hz hw => simp only [map_add, hz, hw]
+
+/-- The actual map between the two balanced algebraic quotient carriers. -/
+def balancedLeftMap
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) :
+    BalancedTensor (E₁ := E₁) φ →ₗ[ℂ] BalancedTensor (E₁ := F₁) φ :=
+  (balancingSpan (E₁ := E₁) φ).mapQ (balancingSpan (E₁ := F₁) φ)
+    (rawLeftMap L) (balancingSpan_rawLeftMap φ L)
+
+/-- Every raw representative has the computed balanced image. -/
+theorem balancedLeftMap_mkQ
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) (z : AlgebraicTensor E₁ E₂) :
+    balancedLeftMap φ L ((balancingSpan (E₁ := E₁) φ).mkQ z) =
+      (balancingSpan (E₁ := F₁) φ).mkQ (rawLeftMap L z) := by
+  simp only [balancedLeftMap, Submodule.mkQ_apply, Submodule.mapQ_apply]
+
+/-- Balanced pure tensors have the printed first-factor value. -/
+@[simp]
+theorem balancedLeftMap_pure
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) (x : E₁) (y : E₂) :
+    balancedLeftMap φ L (balancedPure φ x y) = balancedPure φ (L x) y := by
+  simp only [balancedPure, balancedLeftMap_mkQ, rawLeftMap_tmul]
+
+/-- Both balanced quotient descents preserve the actual adjoint identity. -/
+theorem balancedLeftMap_inner_adjoint
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁)
+    (z : BalancedTensor (E₁ := E₁) φ) (w : BalancedTensor (E₁ := F₁) φ) :
+    balancedInner φ (balancedLeftMap φ L z) w =
+      balancedInner φ z (balancedLeftMap φ L.adjointOperator w) := by
+  obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective z
+  obtain ⟨w, rfl⟩ := (balancingSpan (E₁ := F₁) φ).mkQ_surjective w
+  simpa only [balancedLeftMap_mkQ, balancedInner_mkQ_mkQ] using
+    rawLeftMap_inner_adjoint φ L z w
+
+/-- The balanced map is right-coefficient linear for the computed actions. -/
+theorem balancedLeftMap_balancedRightSMul
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) (b : B₂)
+    (z : BalancedTensor (E₁ := E₁) φ) :
+    balancedLeftMap φ L (balancedRightSMul φ b z) =
+      balancedRightSMul φ b (balancedLeftMap φ L z) := by
+  obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective z
+  simpa only [balancedLeftMap_mkQ, balancedRightSMul_mkQ] using
+    congrArg (balancingSpan (E₁ := F₁) φ).mkQ
+      (rawLeftMap_rawRightSMul L b z)
+
+/-- The actual adjoint identity sends the source radical into the target
+radical. No positivity, self-null criterion or norm estimate is required. -/
+theorem radicalSpace_balancedLeftMap
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) :
+    radicalSpace (E₁ := E₁) φ ≤
+      (radicalSpace (E₁ := F₁) φ).comap (balancedLeftMap φ L) := by
+  intro z hz
+  change balancedLeftMap φ L z ∈ radicalSpace (E₁ := F₁) φ
+  apply (mem_radicalSpace_iff φ _).mpr
+  intro w
+  rw [balancedLeftMap_inner_adjoint]
+  exact (mem_radicalSpace_iff φ z).mp hz _
+
+/-- The genuine complex-linear map between the two actual radical quotients. -/
+def radicalLeftMap
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) :
+    RadicalTensor (E₁ := E₁) φ →ₗ[ℂ] RadicalTensor (E₁ := F₁) φ :=
+  (radicalSpace (E₁ := E₁) φ).mapQ (radicalSpace (E₁ := F₁) φ)
+    (balancedLeftMap φ L) (radicalSpace_balancedLeftMap φ L)
+
+/-- Every balanced representative has its computed radical image. -/
+theorem radicalLeftMap_mkQ
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) (z : BalancedTensor (E₁ := E₁) φ) :
+    radicalLeftMap φ L ((radicalSpace (E₁ := E₁) φ).mkQ z) =
+      (radicalSpace (E₁ := F₁) φ).mkQ (balancedLeftMap φ L z) := by
+  simp only [radicalLeftMap, Submodule.mkQ_apply, Submodule.mapQ_apply]
+
+/-- The radical image of a pure tensor is the source first-factor formula. -/
+theorem radicalLeftMap_pure
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) (x : E₁) (y : E₂) :
+    radicalLeftMap φ L
+        ((radicalSpace (E₁ := E₁) φ).mkQ (balancedPure φ x y)) =
+      (radicalSpace (E₁ := F₁) φ).mkQ (balancedPure φ (L x) y) := by
+  simp only [radicalLeftMap_mkQ, balancedLeftMap_pure]
+
+/-- The two actual quotient maps induced by L and its adjoint are paired
+by the descended radical form; no completed output operator is assumed. -/
+theorem radicalLeftMap_inner_adjoint
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁)
+    (z : RadicalTensor (E₁ := E₁) φ) (w : RadicalTensor (E₁ := F₁) φ) :
+    radicalInner φ (radicalLeftMap φ L z) w =
+      radicalInner φ z (radicalLeftMap φ L.adjointOperator w) := by
+  obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective z
+  obtain ⟨w, rfl⟩ := (radicalSpace (E₁ := F₁) φ).mkQ_surjective w
+  simpa only [radicalLeftMap_mkQ, radicalInner_mkQ_mkQ] using
+    balancedLeftMap_inner_adjoint φ L z w
+
+/-- The radical map preserves the genuine right coefficient action. -/
+theorem radicalLeftMap_radicalRightSMul
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (L : AdjointableOperator B₁ E₁ F₁) (b : B₂)
+    (z : RadicalTensor (E₁ := E₁) φ) :
+    radicalLeftMap φ L (radicalRightSMul φ b z) =
+      radicalRightSMul φ b (radicalLeftMap φ L z) := by
+  obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective z
+  simpa only [radicalLeftMap_mkQ, radicalRightSMul_mkQ] using
+    congrArg (radicalSpace (E₁ := F₁) φ).mkQ
+      (balancedLeftMap_balancedRightSMul φ L b z)
+
+/-- The actual identity induces the identity on the radical carrier. -/
+@[simp]
+theorem radicalLeftMap_id
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
+    radicalLeftMap (E₁ := E₁) φ AdjointableOperator.id = LinearMap.id := by
+  apply LinearMap.ext
+  intro q
+  obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective q
+  obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective z
+  induction z using TensorProduct.inductionOn with
+  | tmul x y =>
+    simp only [radicalLeftMap_mkQ, balancedLeftMap_mkQ, rawLeftMap_tmul,
+      AdjointableOperator.id_apply, LinearMap.id_apply]
+  | add z w hz hw =>
+    simp only [map_add, LinearMap.id_apply, hz, hw]
+
+/-- Composition is induced in its actual order on the radical quotient. -/
+theorem radicalLeftMap_comp
+    {G₁ : Type uG₁} [NormedAddCommGroup G₁] [NormedSpace ℂ G₁]
+    [SMul B₁ᵐᵒᵖ G₁] [CStarModule B₁ᵐᵒᵖ G₁]
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (S : AdjointableOperator B₁ F₁ G₁) (L : AdjointableOperator B₁ E₁ F₁) :
+    radicalLeftMap φ (S.comp L) =
+      (radicalLeftMap φ S).comp (radicalLeftMap φ L) := by
+  apply LinearMap.ext
+  intro q
+  obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective q
+  obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective z
+  induction z using TensorProduct.inductionOn with
+  | tmul x y =>
+    simp only [radicalLeftMap_mkQ, balancedLeftMap_mkQ, rawLeftMap_tmul,
+      LinearMap.comp_apply, AdjointableOperator.comp_apply]
+  | add z w hz hw =>
+    simp only [map_add, LinearMap.comp_apply, hz, hw]
+
+/-- The actual zero input operator induces the zero radical map. -/
+@[simp]
+theorem radicalLeftMap_zero
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
+    radicalLeftMap φ (0 : AdjointableOperator B₁ E₁ F₁) = 0 := by
+  apply LinearMap.ext
+  intro q
+  obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective q
+  obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective z
+  induction z using TensorProduct.inductionOn with
+  | tmul x y =>
+    simp only [radicalLeftMap_mkQ, balancedLeftMap_mkQ, rawLeftMap_tmul,
+      AdjointableOperator.zero_apply, TensorProduct.zero_tmul, map_zero,
+      LinearMap.zero_apply]
+  | add z w hz hw =>
+    simp only [map_add, LinearMap.zero_apply, hz, hw, zero_add]
+
+end CStarModule.InternalTensorProduct

@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.Statistics.MultipleTesting.Knockoff
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import MathlibExt.Probability.Statistics.MultipleTesting.KnockoffFDR
 
 /-!
 # False discovery rate control by the knockoff filter
@@ -25,10 +24,9 @@ i.i.d. fair coins independent of `|W|` (Barber–Candès Lemma 1; Candès et al.
 probabilistic argument showing that any statistics with that sign property give FDR control
 (Barber–Candès Theorems 1-2; Candès et al. Theorem 3.4, whose proof "is the same as that of
 Theorems 1 and 2 in [Barber–Candès], since all we need is that the null statistics have signs
-distributed as i.i.d. coin flips"). The statements below are the second part, with the sign
+distributed as i.i.d. coin flips"). The statement below concerns modified FDR control, with the sign
 property written as invariance of the law of `W` under flipping the signs of any set of null
-statistics (`flipSigns`), which is how both lemmas are proved. Their proofs (a supermartingale
-and optional-stopping argument) are deferred.
+statistics (`flipSigns`), which is how both lemmas are proved.
 -/
 
 @[expose] public section
@@ -38,23 +36,6 @@ open MathlibExt.Probability.Statistics.MultipleTesting
 open MathlibExt.Probability.Statistics.MultipleTesting.Knockoff
 
 namespace MathlibExt.Probability.KnockoffFDRWanted
-
-/-- **FDR control by knockoff+.** Let `W : Ω → ℝ^p` be measurable statistics on a probability
-space and `H0` the set of null variables, and suppose that flipping the signs of any set `S ⊆ H0`
-of null statistics leaves the law of `W` unchanged. Then for `0 ≤ q ≤ 1` the knockoff+ selection
-`Ŝ = {j : W_j ≥ T₊}` has false discovery rate `E[|Ŝ ∩ H0| / (|Ŝ| ∨ 1)] ≤ q`.
-
-Source: R. F. Barber and E. J. Candès, *Controlling the false discovery rate via knockoffs*,
-Ann. Statist. 43 (2015) 2055-2085, arXiv:1404.5609, Theorem 2, through Lemma 1 (i.i.d. signs for
-the nulls), which is the only property of `W` its proof uses; E. Candès, Y. Fan, L. Janson and
-J. Lv, *Panning for gold: model-X knockoffs for high dimensional controlled variable selection*,
-J. R. Statist. Soc. B 80 (2018), arXiv:1610.02351, Theorem 3.4 (knockoff+ part) with Lemma 3.3. -/
-theorem_wanted integral_falseDiscoveryProportion_knockoffSelection_one_le {Ω : Type*}
-    [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {p : ℕ} {W : Ω → Fin p → ℝ}
-    (hW : Measurable W) (H0 : Finset (Fin p))
-    (hflip : ∀ S ⊆ H0, μ.map (fun ω => flipSigns S (W ω)) = μ.map W) {q : ℝ} (hq0 : 0 ≤ q)
-    (hq1 : q ≤ 1) :
-    ∫ ω, falseDiscoveryProportion H0 (knockoffSelection 1 q (W ω)) ∂μ ≤ q
 
 /-- **Modified FDR control by knockoff.** Under the hypotheses of
 `integral_falseDiscoveryProportion_knockoffSelection_one_le`, for `0 < q ≤ 1` the knockoff

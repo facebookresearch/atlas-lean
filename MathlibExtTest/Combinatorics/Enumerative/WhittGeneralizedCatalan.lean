@@ -37,4 +37,14 @@ example (n : ℕ) : whittGeneralizedCatalan 2 (n + 1) =
     ∑ k ∈ Finset.range (n + 1), (1 - (k : ℚ) / ((n : ℚ) + 1)) * ((n + k).choose k : ℚ) * 2 ^ k :=
   whittGeneralizedCatalan_succ 2 n
 
+example : whittGeneralizedCatalan 2 1 + whittGeneralizedCatalan 2 2 = 4 := by
+  have h := whittGeneralizedCatalan_two_add_succ 1 (by decide)
+  norm_num [catalan_one] at h ⊢
+  exact h
+
+example : whittGeneralizedCatalan 2 3 + whittGeneralizedCatalan 2 4 = 80 := by
+  have h := whittGeneralizedCatalan_two_add_succ 3 (by decide)
+  norm_num [catalan_three] at h ⊢
+  exact h
+
 end MetaMathlibExt

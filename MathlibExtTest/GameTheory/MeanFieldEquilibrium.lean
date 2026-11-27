@@ -48,9 +48,7 @@ example : ¬ IsMeanFieldEquilibrium crowd (Pi.single 0 1) := by
   simp [crowd] at this
   linarith
 
-/-- The hypothesis of the wanted existence theorem
-(`WantedExt.GameTheory.MeanFieldEquilibriumWanted`) is satisfiable: crowd aversion is
-`1`-Lipschitz for the `ℓ¹` distance. -/
+/-- Crowd aversion is `1`-Lipschitz for the `ℓ¹` distance. -/
 example : ∀ m₁ m₂ : Fin 2 → ℝ, ∀ y, |crowd m₁ y - crowd m₂ y| ≤ 1 * ∑ z, |m₁ z - m₂ z| :=
   fun m₁ m₂ y => by
     rw [one_mul]

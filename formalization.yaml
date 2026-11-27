@@ -1,0 +1,355 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+#
+# Project metadata in the formalization.yaml v0.4 format
+# (https://github.com/mathlib-initiative/formalization.yaml), with the stricter
+# conventions of the Palomar registry: human authors and maintainers only, and
+# Palomar's source types and classification codes.
+#
+# It describes the live ATLAS library: the root Lake package and its libraries.
+# The archived first release in v1/ and the developments in Atlas/ are outside
+# the root build. Counts and versions are left out on purpose: the library
+# changes daily, and the source tree, lean-toolchain, lake-manifest.json and CI
+# already record them.
+
+version: "v0.4"
+
+project:
+  name: "ATLAS"
+  description: >-
+    ATLAS is a Lean 4 library of formalized mathematics, with extensions to
+    theoretical computer science, physics and applied models. It builds on
+    Mathlib, CSLib and Physlib. Much of it was imported or ported from existing
+    formalizations, chiefly the Formal-Math source snapshot recorded under
+    provenance/, and it grows through pull requests in which AI agents write
+    most of the Lean, while contributors direct the work and review some of the
+    changes. MathlibExt extends Mathlib; CSLibExt holds computer-science
+    developments; PhyslibExt holds physics built on Physlib; Domains holds proved
+    models from biology, economics and finance, operations research, materials
+    science, chemistry, transport and urban planning; WantedExt records
+    statements, definitions and instances whose Lean proofs or constructions are
+    still to be written, including established results and open conjectures.
+    A blueprint gives statements informal pages, linked to their Lean
+    declarations and dependencies. Principal results include Hasse's bound on
+    the number of points of an elliptic curve over a finite field; the Anderson
+    paving form of the Kadison–Singer problem, through the
+    Marcus–Spielman–Srivastava theorem; Kingman's subadditive ergodic theorem;
+    and the sharpness of the phase transition, following Duminil-Copin and
+    Tassion, for Bernoulli bond percolation on ℤ^d and for the nearest-neighbour
+    Ising model on ℤ^d (d ≥ 2).
+  # ATLAS contributors: the primary authors and Co-authored-by people of the
+  # non-merge commits that touch the Lean sources of the live libraries,
+  # counted once per commit after merging aliases, in decreasing order of
+  # commits as counted on 23 November 2026 (ties alphabetical); the Git history
+  # is authoritative. Imported or adapted work is credited under
+  # related_formalizations, in provenance/ and, where the credit is available,
+  # in the files themselves. AI systems are credited under automation, not here.
+  authors:
+    - "Adam Kiezun"
+    - "Vivien Cabannes"
+    - "Jack McCarthy"
+    - "emd"
+    - "June Kim"
+    - "Tsutomu Okano"
+    - "George Morris"
+    - "Zibo Yang"
+    - "Robert Joseph"
+    - "Hugues Van Assel"
+    - "Brian Hepler"
+    - "Zhi Han"
+    - "Paul-Antoine Bonin"
+    - "adamdeinhardt2-spec"
+    - "LUOLINGc325"
+  responsible_maintainers:
+    - "Vivien Cabannes"
+  # The root LICENSE is the Apache License 2.0, preceded by a notice that the
+  # codebase is not intended for developing ML models; v1/ keeps its own license.
+  license: "Apache-2.0"
+
+classification:
+  arxiv: ["math.NT", "math.FA", "math.DS", "math.PR", "math-ph", "math.CO", "cs.LO", "cs.DS"]
+  msc2020: ["68V20", "11G20", "46L05", "37A30", "60K35", "82B43", "82B20"]
+
+sources:
+  - title: "Mathematical literature cited by individual statements"
+    type: "other"
+    relationship: "formalizes"
+    note: >-
+      ATLAS formalizes established, widely known results. Apart from code
+      adapted from other formalizations (see related_formalizations), agents
+      write the Lean from their general mathematical knowledge rather than
+      from particular texts. Docstrings and blueprint pages cite published
+      sources for attribution and for checking statements. The entries below
+      are the published sources of the main results listed under status.
+  - title: "Zur Theorie der abstrakten elliptischen Funktionenkörper III. Die Struktur des Meromorphismenrings. Die Riemannsche Vermutung."
+    authors: ["Helmut Hasse"]
+    id: "https://doi.org/10.1515/crll.1936.175.193"
+    type: "paper"
+    location: "J. Reine Angew. Math. 175 (1936), 193–208"
+    relationship: "formalizes"
+    note: >-
+      Hasse's bound. The Lean proof follows Manin's elementary argument, given
+      in the next two entries, instead of Hasse's.
+  - title: "On cubic congruences to a prime modulus"
+    authors: ["Yu. I. Manin"]
+    type: "paper"
+    location: >-
+      Izv. Akad. Nauk SSSR Ser. Mat. 20 (1956), 673–678; English translation in
+      Amer. Math. Soc. Transl. (2) 13 (1960), 1–7
+    relationship: "formalizes"
+    note: "The elementary proof of Hasse's bound, which the Lean proof follows in odd characteristic."
+  - title: "A supplement to Manin's proof of the Hasse inequality"
+    authors: ["Jasbir S. Chahal", "Afzal Soomro", "Jaap Top"]
+    id: "https://doi.org/10.1216/RMJ-2014-44-5-1457"
+    type: "paper"
+    location: "Rocky Mountain J. Math. 44 (2014), 1457–1470"
+    relationship: "formalizes"
+    note: "Manin's argument in characteristic two, which the Lean proof follows there."
+  - title: "Interlacing families II: Mixed characteristic polynomials and the Kadison–Singer problem"
+    authors: ["Adam W. Marcus", "Daniel A. Spielman", "Nikhil Srivastava"]
+    id: "https://doi.org/10.4007/annals.2015.182.1.8"
+    type: "paper"
+    location: "Ann. of Math. 182 (2015), 327–350"
+    relationship: "formalizes"
+    note: >-
+      The mixed characteristic polynomial bound, from which the Lean proof
+      derives Anderson paving through Timotin's projection-dilation reduction.
+  - title: "The ergodic theory of subadditive stochastic processes"
+    authors: ["J. F. C. Kingman"]
+    id: "https://doi.org/10.1111/j.2517-6161.1968.tb00749.x"
+    type: "paper"
+    location: "J. Roy. Statist. Soc. Ser. B 30 (1968), 499–510"
+    relationship: "formalizes"
+    note: "Kingman's subadditive ergodic theorem."
+  - title: "Kingman's subadditive ergodic theorem"
+    authors: ["J. M. Steele"]
+    type: "paper"
+    location: "Ann. Inst. H. Poincaré Probab. Statist. 25 (1989), 93–98"
+    relationship: "formalizes"
+    note: "The filling-scheme proof that the Lean proof of Kingman's theorem follows."
+  - title: "A new proof of the sharpness of the phase transition for Bernoulli percolation and the Ising model"
+    authors: ["Hugo Duminil-Copin", "Vincent Tassion"]
+    id: "https://doi.org/10.1007/s00220-015-2480-z"
+    type: "paper"
+    location: "Comm. Math. Phys. 343 (2016), 725–745"
+    relationship: "formalizes"
+    note: >-
+      Both Lean sharpness proofs follow this paper. For percolation, sharpness
+      was first proved by Menshikov and by Aizenman and Barsky, and the
+      mean-field lower bound by Chayes and Chayes; for the Ising model,
+      sharpness was first proved by Aizenman, Barsky and Fernández, and this
+      paper improves the constant in the mean-field lower bound.
+  - title: "Coincidence of critical points in percolation problems"
+    authors: ["M. V. Menshikov"]
+    type: "paper"
+    location: "Dokl. Akad. Nauk SSSR 288 (1986), 1308–1311; English translation in Soviet Math. Dokl. 33 (1986), 856–859"
+    relationship: "background"
+  - title: "Sharpness of the phase transition in percolation models"
+    authors: ["Michael Aizenman", "David J. Barsky"]
+    id: "https://doi.org/10.1007/BF01212322"
+    type: "paper"
+    location: "Comm. Math. Phys. 108 (1987), 489–526"
+    relationship: "background"
+  - title: "The mean field bound for the order parameter of Bernoulli percolation"
+    authors: ["J. T. Chayes", "L. Chayes"]
+    type: "paper"
+    location: >-
+      Percolation theory and ergodic theory of infinite particle systems
+      (Minneapolis, 1984–1985), IMA Vol. Math. Appl. 8, Springer, New York,
+      1987, 49–71
+    relationship: "background"
+  - title: "The phase transition in a general class of Ising-type models is sharp"
+    authors: ["Michael Aizenman", "David J. Barsky", "Roberto Fernández"]
+    id: "https://doi.org/10.1007/BF01007515"
+    type: "paper"
+    location: "J. Stat. Phys. 47 (1987), 343–374"
+    relationship: "background"
+  - title: "Formalizing Mathematics at Scale"
+    authors:
+      - "Ahmad Rammal"
+      - "Niket Patel"
+      - "Fabian Gloeckle"
+      - "Amaury Hayat"
+      - "Julia Kempe"
+      - "Remi Munos"
+      - "Charles Arnal"
+      - "Vivien Cabannes"
+    id: "https://arxiv.org/abs/2605.29955"
+    type: "paper"
+    relationship: "background"
+    note: >-
+      Describes AutoformBot and the first ATLAS release, which v1/ preserves.
+
+related_formalizations:
+  - id: "Formal-Math source snapshot (provenance/formal-math-sync.json)"
+    relationship: "adapts"
+    note: >-
+      About half of the files of MathlibExt, CSLibExt, WantedExt and their test
+      libraries, including the Hasse and Kadison–Singer developments, came from
+      Formal-Math, a source snapshot maintained at Meta that includes
+      third-party work. The manifest provenance/formal-math-sync.json records
+      each tracked path's status, upstream hashes where available and the
+      reasons for divergences; provenance/README.md describes the scheme. Code
+      provenance and the available author credits are recorded across that
+      manifest and the files' headers and module documentation.
+  - id: "https://github.com/facebookresearch/atlas-lean/tree/main/Atlas/StatisticalMechanics"
+    relationship: "adapts"
+    note: >-
+      The Kingman, percolation-sharpness and Ising-sharpness results, with the
+      modules they depend on, were ported from this archived development to the
+      root libraries; its MIGRATED.md maps the ported source files to their
+      root modules.
+  - id: "https://github.com/leanprover-community/mathlib4"
+    relationship: "builds-on"
+    note: >-
+      Lake dependency. MathlibExt extends Mathlib; BACKPORTS.md records the
+      Mathlib-derived code it maintains.
+  - id: "https://github.com/leanprover/cslib"
+    relationship: "builds-on"
+    note: "Lake dependency of CSLibExt."
+  - id: "https://github.com/leanprover-community/physlib"
+    relationship: "builds-on"
+    note: "Lake dependency of PhyslibExt."
+  - id: "https://github.com/anthropics/fermats-last-theorem"
+    relationship: "adapts"
+    note: >-
+      Several hundred MathlibExt files adapt declarations from this project and
+      name their source files in attribution headers.
+  - id: "https://github.com/facebookresearch/atlas-lean/tree/main/v1"
+    relationship: "other"
+    note: >-
+      The first ATLAS release, generated with AutoformBot from open-access
+      textbooks, archived in v1/ under its own license.
+
+status:
+  scope: >-
+    The root Lake package: MathlibExt, CSLibExt, PhyslibExt, Domains and
+    WantedExt, with their test libraries. MathlibExt, CSLibExt, PhyslibExt and
+    Domains hold completed proofs: CI rejects sorry, admit, native_decide and
+    custom axioms there, and its axiom audit allows only propext,
+    Classical.choice and Quot.sound. WantedExt records requested statements,
+    definitions and instances, including established results and open
+    conjectures (the abc conjecture, for example), as Batteries'
+    theorem_wanted, def_wanted and instance_wanted placeholders: they neither
+    prove nor assume their statements and add no axiom or sorry. The archived
+    v1/ release and the Atlas/ developments are outside the root build and
+    outside these counts.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "MathlibExt.AlgebraicGeometry.EllipticCurve.HasseBoundWanted.hasse_bound"
+      file: "MathlibExt/AlgebraicGeometry/EllipticCurve/HasseBound.lean"
+      sorry_count: 0
+      note: >-
+        For an elliptic curve over a finite field with q elements and N points,
+        including the point at infinity: (q + 1 - N)² ≤ 4q in ℤ.
+    - declaration: "MathlibExt.Analysis.CStarAlgebra.KadisonSingerWanted.kadison_singer_paving"
+      file: "MathlibExt/Analysis/CStarAlgebra/KadisonSinger.lean"
+      sorry_count: 0
+      note: >-
+        For every ε > 0 there is r > 0 such that for every n and every
+        Hermitian complex n × n matrix A with zero diagonal and operator norm at
+        most 1, some colouring of the indices with r colours gives
+        ‖P_j A P_j‖ ≤ ε for every colour j, where P_j is the diagonal projection
+        onto the indices of colour j. This finite-dimensional paving statement
+        is known to be equivalent to the Kadison–Singer problem; the
+        equivalence is not formalized here.
+    - declaration: "StatMech.KingmanSigned.kingman_ae_general"
+      file: "MathlibExt/Dynamics/Ergodic/KingmanSigned.lean"
+      sorry_count: 0
+      note: >-
+        Let T preserve a finite measure and let X be a subadditive cocycle over
+        T, with each X n integrable. If inf_n (∫ X n) / n > -∞, then X n / n
+        converges almost everywhere. No sign condition is assumed. Invariance
+        and integrability of the limit are stated separately, for nonnegative
+        cocycles.
+    - declaration: "StatMech.Percolation.sharp_phase_transition"
+      file: "MathlibExt/Probability/Percolation/SharpnessTheorem.lean"
+      sorry_count: 0
+      note: >-
+        Bernoulli bond percolation on ℤ^d, d ≥ 1: p̃_c = p_c; the one-arm
+        probability decays exponentially for every p with a finite set S ∋ 0
+        such that φ_p(S) < 1; and θ(p) ≥ (p - p_c)/(p(1 - p_c)) for
+        p_c < p < 1, a range that is empty when d = 1. The companion
+        StatMech.Percolation.sharp_phase_transition_pc gives the exponential
+        decay for every p < p_c.
+    - declaration: "StatMech.Sharpness.ising_sharp_phase_transition"
+      file: "PhyslibExt/CondensedMatter/IsingModel/Sharpness/IsingSharpnessTheorem.lean"
+      sorry_count: 0
+      note: >-
+        Nearest-neighbour Ising model on ℤ^d, d ≥ 2: for β ≥ β_c the
+        magnetization is at least √(1 - (β_c/β)²); for 0 ≤ β < β_c the
+        plus-state two-point function is summable and decays exponentially in
+        the ℓ¹ distance.
+
+automation:
+  methods:
+    - method: "autonomous"
+      models: []
+      framework: "AutoformBot and other agent pipelines"
+      tool_setup: >-
+        Agent pipelines, including AutoformBot
+        (https://github.com/facebookresearch/autoform-bot), pick formalization
+        targets, such as WantedExt entries and, since November 2026, the
+        blueprint's ready statements; they write the Lean and open pull
+        requests, which an automated Codex review checks (see review).
+      cost:
+        spend_usd: "not tracked publicly"
+      prompting_notes: >-
+        CONTRIBUTING.md describes how people and agents pick tasks from the
+        blueprint's list of ready statements.
+    - method: "agent"
+      models: ["Claude Opus 5.5", "Muse Spark 1.3"]
+      framework: "Coding agents such as Claude Code, OpenAI Codex and Meta's Muse agents"
+      tool_setup: >-
+        Contributors direct coding agents for imports, ports, proofs, refactors,
+        reviews and wiki work. Codex is the primary Git author of a few commits.
+  spend_usd: "not tracked publicly"
+  notes: >-
+    The archived v1 release was generated by AutoformBot from open-access
+    textbooks (see the paper above). The root libraries started in October 2026
+    from imports and ports of existing formalizations, chiefly the Formal-Math
+    snapshot, and grow through agent-written pull requests. AI agents wrote
+    most of the Lean code; the models are not recorded for most commits.
+    Co-authored-by trailers name Claude or Codex on some: most Claude trailers
+    name Claude Opus 5.5, and the Codex trailers name no model. File headers
+    and commit messages also credit Meta's Muse agents and the Muse Spark 1.3
+    model. People choose the targets, run the pipelines, review some of the
+    changes and maintain the repository.
+
+fidelity:
+  divergences: >-
+    The Lean statements come from imported formalizations, ports and
+    agent-written code (see related_formalizations and provenance/), and not
+    every statement has been checked by a person against its source. Known
+    discrepancies with a source may be recorded in docstrings, in blueprint
+    pages or in held annotations in blueprint/links; the notes on the main
+    results above summarize their scope. WantedExt states its entries without
+    proofs: some are open conjectures, and some requested statements are known
+    to need correction rather than proof.
+
+review:
+  status: "agent-reviewed"
+  reviewers:
+    - "OpenAI Codex, the automated pull-request reviewer in .github/workflows/codex.yml"
+    - "The code owners in .github/CODEOWNERS, for changes to the wiki"
+  notes: >-
+    Pull requests from the repository's members and trusted contributors get an
+    automated Codex review against REVIEWING.md, and in practice most are merged
+    once it approves and the required CI checks pass: the Lean build with its
+    axiom audit and library policy, repository integrity, source diagnostics and
+    the pin guard. Wiki changes normally need a code owner's approval;
+    CONTRIBUTING.md describes the exception for sync-generated changes.
+    Maintainers review some pull requests themselves, but there is no
+    systematic human review of the mathematics.
+
+alignment:
+  note: >-
+    The blueprint (blueprint/roadmap, with annotations in blueprint/links)
+    gives statements informal pages linked to their Lean declarations. The
+    explorer at https://facebookresearch.github.io/atlas-lean/ renders it.
+
+acknowledgements: >-
+  ATLAS builds on Mathlib, Batteries, CSLib and Physlib. The provenance of
+  imported or adapted code, and the author credits available for it, are
+  recorded in provenance/ and in the headers and documentation of the files.

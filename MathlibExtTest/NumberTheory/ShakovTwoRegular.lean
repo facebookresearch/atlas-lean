@@ -1,0 +1,37 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import Mathlib.Tactic.NormNum
+import MathlibExt.NumberTheory.ShakovTwoRegular
+
+open MathlibExt.NumberTheory.ShakovTwoRegularWanted
+
+-- The dummy term is zero, and index one is the only positive index in the zero fiber.
+example : shakovSeq 0 = 0 := by norm_num [shakovSeq.eq_1]
+
+example (n : ℕ) : (1 ≤ n ∧ shakovSeq n = 0) ↔ n = 1 := by
+  obtain ⟨_, F, hF, hcard⟩ := fiber_card 0
+  have hsubset : ({1} : Finset ℕ) ⊆ F :=
+    Finset.singleton_subset_iff.mpr ((hF 1).2 (by norm_num [shakovSeq.eq_2]))
+  have heq := Finset.eq_of_subset_of_card_le hsubset (by rw [hcard]; decide)
+  simpa [← heq] using (hF n).symm
+
+-- The four divisors of ten give these four indices, spanning two levels of the tree.
+example (n : ℕ) : (1 ≤ n ∧ shakovSeq n = 3) ↔ n ∈ ({5, 6, 8, 15} : Finset ℕ) := by
+  obtain ⟨_, F, hF, hcard⟩ := fiber_card 3
+  have hsubset : ({5, 6, 8, 15} : Finset ℕ) ⊆ F := by
+    intro k hk
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hk
+    rcases hk with rfl | rfl | rfl | rfl <;>
+      exact (hF _).2 (by
+        norm_num [shakovSeq.eq_2, shakovSeq.eq_3, shakovSeq.eq_4, shakovSeq.eq_5])
+  have heq := Finset.eq_of_subset_of_card_le hsubset (by rw [hcard]; decide)
+  rw [heq]
+  exact (hF n).symm

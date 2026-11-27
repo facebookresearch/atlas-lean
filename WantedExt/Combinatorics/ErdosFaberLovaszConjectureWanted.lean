@@ -57,31 +57,35 @@ open Filter
 
 variable {V : Type*}
 
-/-- We define a `Hypergraph` on a type of vertices `V` to be a set of sets of `V`
-(an edge of a `Hypergraph` is a subset of `V`). -/
+/-- **Hypergraph.** A hypergraph on a type $V$ of vertices is a set of subsets of $V$; its elements
+are the edges of the hypergraph. Edges may be empty, and no finiteness condition is imposed. -/
 abbrev Hypergraph (V : Type*) := Set (Set V)
 
-/-- An `α`-coloring of a hypergraph `𝓗` is a map from the edges of `𝓗` (its elements)
-to `α`, such that any two distinct edges which share a vertex are mapped to distinct colors. -/
+/-- **Edge coloring of a hypergraph.** Let $\mathcal{H}$ be a hypergraph on a vertex type $V$ and
+let $\alpha$ be a type. An $\alpha$-coloring of $\mathcal{H}$ is a map $c$ from the set of edges of
+$\mathcal{H}$ to $\alpha$ such that $c(e_1) \ne c(e_2)$ for any two distinct edges $e_1$ and $e_2$
+of $\mathcal{H}$ that have a vertex in common. -/
 structure Hypergraph.Coloring (α : Type*) (𝓗 : Hypergraph V) where
   /-- The labeling of a hypergraph coloring. -/
   labels : 𝓗 → α
   isColoring (e₁ e₂ : 𝓗) (h : e₁ ≠ e₂) (h' : (e₁ ∩ e₂ : Set V).Nonempty) : labels e₁ ≠ labels e₂
 
-/-- We say that a hypergraph `𝓗` is linear if any two distinct edges share at most one vertex. -/
+/-- **Linear hypergraph.** A hypergraph $\mathcal{H}$ is linear if any two distinct edges of
+$\mathcal{H}$ have at most one vertex in common. -/
 def Hypergraph.IsLinear (𝓗 : Hypergraph V) :=
   𝓗.Pairwise fun e₁ e₂ ↦ (e₁ ∩ e₂).Subsingleton
 
-/-- We define the chromatic index of a hypergraph `𝓗` to be the smallest natural number `n` such
-that there exists a `(Fin n)`-coloring of `𝓗` (a coloring using `n` colors). -/
+/-- **Chromatic index of a hypergraph.** The chromatic index of a hypergraph $\mathcal{H}$ is the
+least natural number $n$ such that $\mathcal{H}$ has a coloring with colors in
+$\{0, 1, \dots, n-1\}$, and $0$ if there is no such $n$. -/
 noncomputable def Hypergraph.chromaticIndex (𝓗 : Hypergraph V) : ℕ :=
   sInf {n : ℕ | Nonempty (𝓗.Coloring (Fin n))}
 
 /--
-Statement of Theorem 1.1:
+**Erdős–Faber–Lovász conjecture for sufficiently many vertices.** For every sufficiently large
+natural number $n$, every linear hypergraph on the vertex set $\{0, 1, \dots, n-1\}$ has chromatic
+index at most $n$.
 
-For sufficiently large `n : ℕ`, every linear hypergraph on `n` vertices has chromatic index
-at most `n`.
 Source: D. Y. Kang, T. Kelly, D. Kühn, A. Methuku, and D. Osthus, `A proof of the Erdős–Faber–Lovász conjecture`, Annals of Math, 198 (2) 2023. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2023-198-2-ErdosFaberLovaszConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_erdos_faber_lovasz_conjecture`.
 -/
 public theorem_wanted theorem_1_1 :

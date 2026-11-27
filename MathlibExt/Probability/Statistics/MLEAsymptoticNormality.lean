@@ -186,8 +186,9 @@ theorem tendstoInDistribution_score {ν : Measure 𝓧} {p : ℝ → 𝓧 → �
   simpa [hmean', Z] using h
 
 open Set in
-/-- Second-order Taylor bound from a bound `m` on the second derivative on a ball. -/
-private theorem abs_sub_sub_mul_deriv_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
+/-- If `f` and `deriv f` are differentiable on `ball θ₀ δ` and `|deriv (deriv f)| ≤ m` there, then
+for `θ` in the ball, `|f θ - f θ₀ - (θ - θ₀) * deriv f θ₀| ≤ m * (θ - θ₀) ^ 2`. -/
+theorem abs_sub_sub_mul_deriv_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
     (hf : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ f t)
     (hf' : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (deriv f) t)
     (hm : ∀ t ∈ Metric.ball θ₀ δ, |deriv (deriv f) t| ≤ m) (hθ : θ ∈ Metric.ball θ₀ δ) :

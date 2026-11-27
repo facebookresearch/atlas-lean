@@ -51,14 +51,17 @@ namespace Acoustics
 
 /-- Effective power transmission coefficient over patches `s`: total
 transmitted over total incident power, as the `Finset.centerMass`
-weighted average of the coefficients with weights `I i * A i`. -/
+weighted average of the coefficients with weights `I i * A i`. With the
+convention `0⁻¹ = 0` it is `0` when the total weight `∑ i ∈ s, I i * A i` is `0`,
+for example for an empty `s`. Physically `I i > 0`, `A i > 0` and
+`0 < tau i ≤ 1`; the definition takes any real values. -/
 noncomputable def effectivePowerTransmission {ι : Type*} (I A tau : ι → ℝ)
     (s : Finset ι) : ℝ :=
   s.centerMass (fun i => I i * A i) tau
 
 /-- The center-mass coefficient is the transmitted/incident power
 quotient, unconditionally (both sides are zero when the total incident
-weight is zero). -/
+weight is zero, by `0⁻¹ = 0` on the left and `x / 0 = 0` on the right). -/
 theorem effectivePowerTransmission_eq {ι : Type*} (I A tau : ι → ℝ)
     (s : Finset ι) :
     effectivePowerTransmission I A tau s
@@ -66,9 +69,10 @@ theorem effectivePowerTransmission_eq {ι : Type*} (I A tau : ι → ℝ)
   simp only [effectivePowerTransmission, Finset.centerMass, smul_eq_mul,
     div_eq_inv_mul]
 
-/-- Under uniform incident intensity `I0 > 0`, the effective coefficient
-is the area-weighted average `(∑ i, A i * tau i) / (∑ i, A i)`. No
-positivity of areas or nonemptiness is needed for this identity. -/
+/-- Under uniform incident intensity `I0 > 0` on the patches of `s`, the effective coefficient is
+the area-weighted average `(∑ i ∈ s, A i * tau i) / (∑ i ∈ s, A i)`. No positivity of areas or
+nonemptiness is needed for this identity: when `∑ i ∈ s, A i = 0` both sides are `0`, with the
+convention `x / 0 = 0`. -/
 theorem effectivePowerTransmission_eq_of_uniform {ι : Type*}
     (I A tau : ι → ℝ) (s : Finset ι) {I0 : ℝ} (hI0 : 0 < I0)
     (hI : ∀ i : ι, i ∈ s → I i = I0) :

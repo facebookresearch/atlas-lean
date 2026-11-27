@@ -37,6 +37,20 @@
 - [Sterbenz's lemma in a bounded format](is-float-in-sub.md)
 - [Floating-point subtraction is exact under Sterbenz's condition](fl-sub-eq-sub.md)
 
+## Error-free transformations
+
+- [Error-free transformation of a product via fused multiply-add](error-free-transformation-of-a-product-via-fused-multiply-ad.md)
+- [Error-free transformation of a sum (TwoSum, FastTwoSum)](error-free-transformation-of-a-sum.md)
+- [Veltkamp splitting of a floating-point number](veltkamp-splitting.md)
+- [Dekker's error-free product without a fused multiply-add](dekker-two-product.md)
+
+## IEEE arithmetic, double rounding and compilation
+
+- [Total IEEE-style operation semantics with special values and exceptions](total-ieee-style-operation-semantics-with-special-values-and.md)
+- [Double rounding through an extended precision](double-rounding-through-an-extended-precision.md)
+- [Semantics preservation of floating-point compilation](semantics-preservation-of-floating-point-compilation.md)
+- [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
+
 ## Related topics
 
 - [Rounding error analysis](../rounding-error-analysis/README.md): error bounds for dot products, matrix products and LU factorization built on the relative error bound of $\mathrm{fl}$.

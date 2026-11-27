@@ -1,0 +1,13 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/InformationTheory/ConditionalEntropy.lean", "disposition": "identical", "published_sha256": "c4e42933b45c4da5a9fa2c11bceb5aa72ce5795530128f98b6379470a5b4bb34", "upstream_sha256": "a1b20486532e56f60ec7db281e645ae1c7726ff56de6559f3200fcf94be2da46"},
+    {"path": "MathlibExtTest/InformationTheory/FiniteChannelSimulation.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c720433524276e5e33e22f22616e99ba9b758eef762023e1dbc05bb8d07e1612", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0)", "upstream_sha256": "92dac285dfc1ba62c3c6c34e2dec6aa2827cacaac070ab447a81d1ddf21a565c"},
+    {"path": "MathlibExtTest/InformationTheory/FiniteEntropy.lean", "disposition": "identical", "published_sha256": "ce105ce30309ddc83de77ef7ba7dbbf461f140ad34894e6df42fd5aa608497a1", "upstream_sha256": "cdd7c0c732426ca42d766f6a2db91a06079fb52c030d46554d7b7e8512246a56"},
+    {"path": "MathlibExtTest/InformationTheory/HammingBall.lean", "disposition": "identical", "published_sha256": "e21dc89c2610bcb0e8b24dd869cb8ad441eae2aec96546c01f67ea91588d509c", "upstream_sha256": "758ec4b69e48630298a60fae69709292b8f6c8d625339e74ed20522e33168455"},
+    {"path": "MathlibExtTest/InformationTheory/HammingExpansion.lean", "disposition": "identical", "published_sha256": "c32c7142e90fd02f23843e47862f2ff937301a4249de1678242bab7f9bdc7481", "upstream_sha256": "f2af8e6e35329156527789def78ece3262cc699df6ac9235a2f755c416ab6c58"},
+    {"path": "MathlibExtTest/InformationTheory/KraftMcMillan.lean", "disposition": "identical", "published_sha256": "77f0bf44f18cdb4bfaaba815c974739bd11446bdb20fb4e8919bdafb94ed3c2e", "upstream_sha256": "f9718bb518d669e884cdc14ca0ce1ae22fafa05f24d5f0a2129d3dbf65741643"},
+    {"path": "MathlibExtTest/InformationTheory/LogSum.lean", "disposition": "identical", "published_sha256": "e79b57b89bcd17168e63ae0b625fe7a6ea4f4a1ffb0aa94f04ec3405ff66d3c5", "upstream_sha256": "7884c622bb2a4e789dde4f25628b79b6295f4d567a84ed8bda8f3c9018ac4790"},
+    {"path": "MathlibExtTest/InformationTheory/PrefixFree.lean", "disposition": "identical", "published_sha256": "3372cf9fd634041ae13eeaf50c25d8c72bc906495cfb90d10b3308ccd6f20f42", "upstream_sha256": "4925b71f419d3c4a5e7fd817393437ff27f803b4933b55685f30da1ab1fad796"},
+    {"path": "MathlibExtTest/InformationTheory/Shearer.lean", "disposition": "identical", "published_sha256": "a5d7717a43ff620e119896a221c3490462d356b6bce3b3f4798f4ce73a86d370", "upstream_sha256": "9906bf833deb9e51e0e4dad5988ace0d243069d637a54197d982c5df4d49368d"}
+  ]
+}

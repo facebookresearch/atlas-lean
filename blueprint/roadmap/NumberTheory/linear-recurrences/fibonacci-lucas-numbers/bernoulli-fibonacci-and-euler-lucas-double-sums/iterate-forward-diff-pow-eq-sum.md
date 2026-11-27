@@ -7,8 +7,8 @@ $k$-fold iterate (the identity when $k = 0$). For all real numbers $r$ and $x$ a
 numbers $k$ and $n$, applying $\Delta_r^k$ to the function $y \mapsto y^n$ and evaluating at $x$
 gives $\sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} (x + rj)^n$.
 
-The paper states this for nonzero complex $r$ and positive $k$; the identity above holds for
-every real $r$ and every natural number $k$, including $k = 0$.
+The paper states this for nonzero complex $r$ and positive $k$; here $r$ is real and $k = 0$ is
+allowed.
 
 ## Sources
 

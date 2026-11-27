@@ -18,7 +18,7 @@ CONNECTIVES, p. 261, comment: remains NP-complete even if `|C| = 2` (reference: 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectivesWanted

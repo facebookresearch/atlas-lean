@@ -55,14 +55,18 @@ namespace MathlibExt.Probability.RegularVariation
 ### Slowly varying functions
 -/
 
-/-- `L : ℝ → ℝ` is *slowly varying* (at infinity) if it is eventually positive at infinity
-and `L (c * x) / L x → 1` as `x → ∞` for every `c > 0`. -/
+/-- **Slowly varying function.** A function $L : \mathbb{R} \to \mathbb{R}$ is slowly varying (at
+infinity) if $L(x) > 0$ for all sufficiently large $x$ and, for every real $c > 0$,
+$L(cx) / L(x) \to 1$ as $x \to \infty$. -/
 def IsSlowlyVarying (L : ℝ → ℝ) : Prop :=
   (∀ᶠ x in atTop, 0 < L x) ∧
   ∀ c : ℝ, 0 < c → Tendsto (fun x => L (c * x) / L x) atTop (𝓝 1)
 
-/-- A positive function with a positive finite limit at infinity is slowly
-varying: the ratio of the function at `c * x` and at `x` tends to `a / a = 1`. -/
+/-- **Functions with a positive limit are slowly varying.** Let $L : \mathbb{R} \to \mathbb{R}$ and
+$a > 0$. If $L(x) > 0$ for all sufficiently large $x$ and $L(x) \to a$ as $x \to \infty$, then
+$L$ is slowly varying.
+
+Indeed, for every $c > 0$ the ratio $L(cx) / L(x)$ tends to $a / a = 1$. -/
 theorem IsSlowlyVarying.of_tendsto {L : ℝ → ℝ} {a : ℝ}
     (hpos : ∀ᶠ x in atTop, 0 < L x) (hlim : Tendsto L atTop (𝓝 a)) (ha : 0 < a) :
     IsSlowlyVarying L := by
@@ -74,17 +78,20 @@ theorem IsSlowlyVarying.of_tendsto {L : ℝ → ℝ} {a : ℝ}
   rw [div_self ha.ne'] at h4
   convert h4 using 1
 
-/-- The constant function `1` is slowly varying. -/
+/-- **The constant function one is slowly varying.** The constant function $x \mapsto 1$ on
+$\mathbb{R}$ is slowly varying. -/
 theorem isSlowlyVarying_one : IsSlowlyVarying (fun _ => (1 : ℝ)) := by
   refine ⟨Filter.Eventually.of_forall (fun _ => one_pos), fun c _ => ?_⟩
   simp
 
-/-- A positive constant function is slowly varying. -/
+/-- **Positive constants are slowly varying.** For every real $c > 0$, the constant function
+$x \mapsto c$ on $\mathbb{R}$ is slowly varying. -/
 theorem isSlowlyVarying_const {c : ℝ} (hc : 0 < c) : IsSlowlyVarying (fun _ => c) := by
   refine ⟨Filter.Eventually.of_forall (fun _ => hc), fun d _ => ?_⟩
   simp [div_self hc.ne']
 
-/-- Slowly varying functions are closed under multiplication. -/
+/-- **Products of slowly varying functions.** If $L_1, L_2 : \mathbb{R} \to \mathbb{R}$ are
+slowly varying, then so is their pointwise product $x \mapsto L_1(x) L_2(x)$. -/
 theorem IsSlowlyVarying.mul {L₁ L₂ : ℝ → ℝ}
     (h₁ : IsSlowlyVarying L₁) (h₂ : IsSlowlyVarying L₂) :
     IsSlowlyVarying (fun x => L₁ x * L₂ x) := by
@@ -97,8 +104,8 @@ theorem IsSlowlyVarying.mul {L₁ L₂ : ℝ → ℝ}
     filter_upwards with x
     exact div_mul_div_comm _ _ _ _
 
-/-- Slowly varying functions are closed under multiplication by a positive
-constant. -/
+/-- **Positive multiples of slowly varying functions.** If $L : \mathbb{R} \to \mathbb{R}$ is slowly
+varying and $c > 0$, then $x \mapsto c L(x)$ is slowly varying. -/
 theorem IsSlowlyVarying.const_mul {L : ℝ → ℝ} (hL : IsSlowlyVarying L) {c : ℝ}
     (hc : 0 < c) : IsSlowlyVarying (fun x => c * L x) := by
   refine ⟨?_, fun d hd => ?_⟩
@@ -110,8 +117,9 @@ theorem IsSlowlyVarying.const_mul {L : ℝ → ℝ} (hL : IsSlowlyVarying L) {c 
     rw [heq]
     exact hL.2 d hd
 
-/-- `fun x ↦ 1 + (1 + x)⁻¹` is slowly varying: it tends to the positive limit
-`1` at infinity. -/
+/-- **The function $1 + (1 + x)^{-1}$ is slowly varying.** The function
+$x \mapsto 1 + (1 + x)^{-1}$ on $\mathbb{R}$ is slowly varying; it tends to the positive limit $1$
+at infinity. -/
 theorem isSlowlyVarying_one_add_inv :
     IsSlowlyVarying (fun x : ℝ => 1 + (1 + x)⁻¹) := by
   apply IsSlowlyVarying.of_tendsto (by
@@ -125,7 +133,9 @@ theorem isSlowlyVarying_one_add_inv :
     exact tendsto_inv_atTop_zero.comp h1
   simpa using tendsto_const_nhds.add h
 
-/-- Slow variation is preserved by changing the function on an eventually avoided set. -/
+/-- **Slow variation is preserved by eventual equality.** Let $f, g : \mathbb{R} \to \mathbb{R}$.
+If $f$ is slowly varying and $f(x) = g(x)$ for all sufficiently large $x$, then $g$ is slowly
+varying. -/
 theorem IsSlowlyVarying.of_eventuallyEq {f g : ℝ → ℝ}
     (hf : IsSlowlyVarying f) (hfg : f =ᶠ[atTop] g) : IsSlowlyVarying g := by
   refine ⟨?_, fun c hc => ?_⟩
@@ -144,20 +154,24 @@ theorem IsSlowlyVarying.of_eventuallyEq {f g : ℝ → ℝ}
 ### Regularly varying functions
 -/
 
-/-- `f` is *regularly varying* with index `ρ` if it can be written as
-`f x = x ^ ρ * L x` eventually as `x → ∞`, where `L` is slowly varying. -/
+/-- **Regularly varying function.** A function $f : \mathbb{R} \to \mathbb{R}$ is regularly varying
+with index $\rho \in \mathbb{R}$ if there is a slowly varying function
+$L : \mathbb{R} \to \mathbb{R}$ such that $f(x) = x^{\rho} L(x)$ for all sufficiently large $x$. -/
 def IsRegularlyVarying (f : ℝ → ℝ) (ρ : ℝ) : Prop :=
   ∃ L : ℝ → ℝ, IsSlowlyVarying L ∧ ∀ᶠ x in atTop, f x = x ^ ρ * L x
 
-/-- The power function `x ↦ x ^ ρ` is regularly varying of index `ρ`, with
-slowly varying factor `1`. -/
+/-- **Powers are regularly varying.** For every real number $\rho$, the function $x \mapsto x^\rho$
+on $\mathbb{R}$ is regularly varying with index $\rho$.
+
+The slowly varying factor can be taken to be the constant function $1$. -/
 theorem isRegularlyVarying_rpow (ρ : ℝ) :
     IsRegularlyVarying (fun x : ℝ => x ^ ρ) ρ := by
   refine ⟨fun _ => 1, isSlowlyVarying_one, Filter.Eventually.of_forall fun x => ?_⟩
   simp
 
-/-- Regularly varying functions are closed under multiplication, with indices
-adding. -/
+/-- **Products of regularly varying functions.** If $f : \mathbb{R} \to \mathbb{R}$ is regularly
+varying with index $\rho$ and $g : \mathbb{R} \to \mathbb{R}$ is regularly varying with index
+$\sigma$, then the pointwise product $fg$ is regularly varying with index $\rho + \sigma$. -/
 theorem IsRegularlyVarying.mul {f g : ℝ → ℝ} {ρ σ : ℝ}
     (hf : IsRegularlyVarying f ρ) (hg : IsRegularlyVarying g σ) :
     IsRegularlyVarying (f * g) (ρ + σ) := by
@@ -168,8 +182,9 @@ theorem IsRegularlyVarying.mul {f g : ℝ → ℝ} {ρ σ : ℝ}
   simp only [Pi.mul_apply]
   rw [hfx, hgx, mul_mul_mul_comm, ← Real.rpow_add hx]
 
-/-- Regularly varying functions are closed under multiplication by a positive
-constant. -/
+/-- **Positive multiples of regularly varying functions.** If $f : \mathbb{R} \to \mathbb{R}$ is
+regularly varying with index $\rho$ and $c > 0$, then $x \mapsto c f(x)$ is regularly varying
+with index $\rho$. -/
 theorem IsRegularlyVarying.const_mul {f : ℝ → ℝ} {ρ : ℝ}
     (hf : IsRegularlyVarying f ρ) {c : ℝ} (hc : 0 < c) :
     IsRegularlyVarying (fun x => c * f x) ρ := by
@@ -179,12 +194,15 @@ theorem IsRegularlyVarying.const_mul {f : ℝ → ℝ} {ρ : ℝ}
   rw [hx]
   ring
 
-/-- A positive constant multiple of a power function is regularly varying. -/
+/-- **Positive multiples of powers are regularly varying.** For real numbers $c > 0$ and $\rho$, the
+function $x \mapsto c x^\rho$ on $\mathbb{R}$ is regularly varying with index $\rho$. -/
 theorem isRegularlyVarying_const_mul_rpow {c ρ : ℝ} (hc : 0 < c) :
     IsRegularlyVarying (fun x : ℝ => c * x ^ ρ) ρ :=
   (isRegularlyVarying_rpow ρ).const_mul hc
 
-/-- Regular variation is preserved under eventual equality at infinity. -/
+/-- **Regular variation is preserved by eventual equality.** Let $f, g : \mathbb{R} \to \mathbb{R}$
+and $\rho \in \mathbb{R}$. If $f$ is regularly varying with index $\rho$ and $f(x) = g(x)$ for
+all sufficiently large $x$, then $g$ is regularly varying with index $\rho$. -/
 theorem IsRegularlyVarying.of_eventuallyEq {f g : ℝ → ℝ} {ρ : ℝ}
     (hf : IsRegularlyVarying f ρ) (hfg : f =ᶠ[atTop] g) :
     IsRegularlyVarying g ρ := by
@@ -193,7 +211,8 @@ theorem IsRegularlyVarying.of_eventuallyEq {f g : ℝ → ℝ} {ρ : ℝ}
   filter_upwards [hfg, hev] with x hfx hfx'
   rw [← hfx, hfx']
 
-/-- A regularly varying function is eventually positive. -/
+/-- **Regularly varying functions are eventually positive.** If $f : \mathbb{R} \to \mathbb{R}$ is
+regularly varying with some index $\rho$, then $f(x) > 0$ for all sufficiently large $x$. -/
 theorem IsRegularlyVarying.eventually_pos {f : ℝ → ℝ} {ρ : ℝ}
     (hf : IsRegularlyVarying f ρ) : ∀ᶠ x in atTop, 0 < f x := by
   obtain ⟨L, hL, hev⟩ := hf
@@ -205,16 +224,26 @@ theorem IsRegularlyVarying.eventually_pos {f : ℝ → ℝ} {ρ : ℝ}
 ### Tails of a measure on `ℝ`
 -/
 
-/-- The real projection of `μ(Ioi x)`; it is the right-tail mass when `μ` is finite. -/
+/-- **Right tail of a measure.** For a measure $\mu$ on $\mathbb{R}$ and $x \in \mathbb{R}$,
+the right tail of $\mu$ at $x$ is the real number $\mu((x, \infty))$ when
+$\mu((x, \infty)) < \infty$, and $0$ when $\mu((x, \infty)) = \infty$.
+
+For a finite measure $\mu$ it is the mass of the open half-line $(x, \infty)$. -/
 def rightTail (μ : Measure ℝ) (x : ℝ) : ℝ := (μ (Set.Ioi x)).toReal
 
-/-- The real projection of the strict left tail `μ(Iio(-x))`, with mass interpretation
-for finite measures. -/
+/-- **Left tail of a measure.** For a measure $\mu$ on $\mathbb{R}$ and a real $x$, the left tail of
+$\mu$ at $x$ is the real number $\mu((-\infty, -x))$, where an infinite value is sent to $0$.
+
+For a finite measure it is the mass of the strict left tail $(-\infty, -x)$. -/
 def leftTail (μ : Measure ℝ) (x : ℝ) : ℝ := (μ (Set.Iio (-x))).toReal
 
-/-- The sum of the strict right and left real-valued tail projections.
-For a finite measure and `0 ≤ x`, this equals `μ {y | x < |y|}` as a real number.
-At negative thresholds the two sets can overlap, so this is not the absolute-tail mass. -/
+/-- **Combined tail of a measure.** For a measure $\mu$ on $\mathbb{R}$ and a real number $x$,
+the combined tail of $\mu$ at $x$ is the real number $\mu((x, \infty)) + \mu((-\infty, -x))$,
+where each of the two measures is converted from $[0, \infty]$ to a real number, an infinite
+value becoming $0$.
+
+For a finite measure and $x \ge 0$ this equals $\mu(\{y : |y| > x\})$. At negative thresholds
+the two intervals can overlap, so the combined tail is not the mass of the absolute tail. -/
 def combinedTail (μ : Measure ℝ) (x : ℝ) : ℝ := rightTail μ x + leftTail μ x
 
 theorem combinedTail_apply (μ : Measure ℝ) (x : ℝ) :
@@ -230,7 +259,9 @@ theorem leftTail_nonneg (μ : Measure ℝ) (x : ℝ) : 0 ≤ leftTail μ x :=
 theorem combinedTail_nonneg (μ : Measure ℝ) (x : ℝ) : 0 ≤ combinedTail μ x :=
   add_nonneg (rightTail_nonneg μ x) (leftTail_nonneg μ x)
 
-/-- The right tail is at most `1` for a probability measure. -/
+/-- **The right tail of a probability measure is at most one.** For every probability measure
+$\mu$ on $\mathbb{R}$ and every $x \in \mathbb{R}$, the right tail of $\mu$ at $x$ is at most
+$1$. -/
 theorem rightTail_le_one (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) :
     rightTail μ x ≤ 1 := by
   have h : μ (Set.Ioi x) ≤ 1 := by
@@ -240,7 +271,8 @@ theorem rightTail_le_one (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) 
     (ENNReal.toReal_le_toReal (measure_ne_top μ _) ENNReal.one_ne_top).2 h
   simpa [rightTail] using hle
 
-/-- The left tail is at most `1` for a probability measure. -/
+/-- **The left tail of a probability measure is at most one.** For every probability measure $\mu$
+on $\mathbb{R}$ and every real $x$, the left tail of $\mu$ at $x$ is at most $1$. -/
 theorem leftTail_le_one (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) :
     leftTail μ x ≤ 1 := by
   have h : μ (Set.Iio (-x)) ≤ 1 := by
@@ -250,39 +282,50 @@ theorem leftTail_le_one (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) :
     (ENNReal.toReal_le_toReal (measure_ne_top μ _) ENNReal.one_ne_top).2 h
   simpa [leftTail] using hle
 
-/-- The combined tail is at most `2` for a probability measure. -/
+/-- **The combined tail of a probability measure is at most two.** For every probability measure
+$\mu$ on $\mathbb{R}$ and every real number $x$, the combined tail of $\mu$ at $x$ satisfies
+$\mu((x, \infty)) + \mu((-\infty, -x)) \le 2$. -/
 theorem combinedTail_le_two (μ : Measure ℝ) [IsProbabilityMeasure μ] (x : ℝ) :
     combinedTail μ x ≤ 2 := by
   calc combinedTail μ x = rightTail μ x + leftTail μ x := rfl
     _ ≤ 1 + 1 := add_le_add (rightTail_le_one μ x) (leftTail_le_one μ x)
     _ = 2 := by norm_num
 
-/-- The right tail is antitone in the threshold. -/
+/-- **The right tail of a finite measure is antitone.** Let $\mu$ be a finite measure on
+$\mathbb{R}$. If $x \le y$, then the right tail of $\mu$ at $y$ is at most the right tail of
+$\mu$ at $x$. -/
 theorem rightTail_antitone (μ : Measure ℝ) [IsFiniteMeasure μ] :
     Antitone (rightTail μ) := by
   intro a b hab
   exact ENNReal.toReal_mono (measure_ne_top μ _)
     (measure_mono (Set.Ioi_subset_Ioi hab))
 
-/-- The left tail is antitone in the threshold. -/
+/-- **Monotonicity of the left tail.** For every finite measure $\mu$ on $\mathbb{R}$, the left tail
+of $\mu$ is antitone in the threshold: if $a \le b$, then
+$\mu((-\infty, -b)) \le \mu((-\infty, -a))$. -/
 theorem leftTail_antitone (μ : Measure ℝ) [IsFiniteMeasure μ] :
     Antitone (leftTail μ) := by
   intro a b hab
   exact ENNReal.toReal_mono (measure_ne_top μ _)
     (measure_mono (Set.Iio_subset_Iio (neg_le_neg hab)))
 
-/-- The combined tail is antitone in the threshold. -/
+/-- **The combined tail is antitone.** Let $\mu$ be a finite measure on $\mathbb{R}$ and write
+$T(x) = \mu((x, \infty)) + \mu((-\infty, -x))$ for its combined tail at a real number $x$. Then
+$T$ is antitone: $T(b) \le T(a)$ whenever $a \le b$. -/
 theorem combinedTail_antitone (μ : Measure ℝ) [IsFiniteMeasure μ] :
     Antitone (combinedTail μ) := by
   intro a b hab
   exact add_le_add (rightTail_antitone μ hab) (leftTail_antitone μ hab)
 
-/-- The right tail is dominated by the combined tail. -/
+/-- **The right tail is at most the combined tail.** For every measure $\mu$ on $\mathbb{R}$ and
+every $x \in \mathbb{R}$, the right tail of $\mu$ at $x$ is at most the combined tail of $\mu$
+at $x$. -/
 theorem rightTail_le_combinedTail (μ : Measure ℝ) (x : ℝ) :
     rightTail μ x ≤ combinedTail μ x :=
   le_add_of_nonneg_right (leftTail_nonneg μ x)
 
-/-- The left tail is dominated by the combined tail. -/
+/-- **The left tail is at most the combined tail.** For every measure $\mu$ on $\mathbb{R}$ and
+every real $x$, the left tail of $\mu$ at $x$ is at most the combined tail of $\mu$ at $x$. -/
 theorem leftTail_le_combinedTail (μ : Measure ℝ) (x : ℝ) :
     leftTail μ x ≤ combinedTail μ x :=
   le_add_of_nonneg_left (rightTail_nonneg μ x)
@@ -346,19 +389,25 @@ private theorem tendsto_leftTail_nat (μ : Measure ℝ) [IsFiniteMeasure μ] :
       ENNReal.zero_ne_top).2 h
   simpa [leftTail] using h2
 
-/-- The right tail of a finite measure tends to `0` at infinity. -/
+/-- **The right tail of a finite measure vanishes at infinity.** For every finite measure $\mu$
+on $\mathbb{R}$, the right tail $\mu((x, \infty))$, taken as a real number, tends to $0$ as
+$x \to \infty$. -/
 theorem tendsto_rightTail_atTop (μ : Measure ℝ) [IsFiniteMeasure μ] :
     Tendsto (rightTail μ) atTop (𝓝 0) :=
   tendsto_atTop_of_antitone_of_tendsto_nat (rightTail_nonneg μ) (rightTail_antitone μ)
     (tendsto_rightTail_nat μ)
 
-/-- The left tail of a finite measure tends to `0` at infinity. -/
+/-- **The left tail of a finite measure vanishes at infinity.** For every finite measure $\mu$
+on $\mathbb{R}$, the left tail $\mu((-\infty, -x))$, taken as a real number, tends to $0$ as
+$x \to \infty$. -/
 theorem tendsto_leftTail_atTop (μ : Measure ℝ) [IsFiniteMeasure μ] :
     Tendsto (leftTail μ) atTop (𝓝 0) :=
   tendsto_atTop_of_antitone_of_tendsto_nat (leftTail_nonneg μ) (leftTail_antitone μ)
     (tendsto_leftTail_nat μ)
 
-/-- The combined tail of a finite measure tends to `0` at infinity. -/
+/-- **The combined tail of a finite measure vanishes at infinity.** For every finite measure
+$\mu$ on $\mathbb{R}$, the combined tail $\mu((x, \infty)) + \mu((-\infty, -x))$, with both
+masses taken as real numbers, tends to $0$ as $x \to \infty$. -/
 theorem tendsto_combinedTail_atTop (μ : Measure ℝ) [IsFiniteMeasure μ] :
     Tendsto (combinedTail μ) atTop (𝓝 0) := by
   have h := (tendsto_rightTail_atTop μ).add (tendsto_leftTail_atTop μ)
@@ -369,17 +418,22 @@ theorem tendsto_combinedTail_atTop (μ : Measure ℝ) [IsFiniteMeasure μ] :
 ### Tail balance
 -/
 
-/-- Tail balance for a finite measure requires an eventually positive combined real tail
-and a ratio limit. For probability measures this expresses `P(X > x) / P(|X| > x) → p`.
-Finiteness prevents infinite source tails from collapsing through `toReal`; eventual
-positivity prevents totalized division from accepting an eventual `0 / 0`. -/
+/-- **Tail balance.** Let $\mu$ be a finite measure on $\mathbb{R}$ and $p$ a real number. Write
+$R(x) = \mu((x, \infty))$ for the right tail and $T(x) = \mu((x, \infty)) + \mu((-\infty, -x))$
+for the combined tail of $\mu$. The measure $\mu$ has tail balance $p$ when $0 \le p \le 1$,
+$T(x) > 0$ for all sufficiently large $x$, and $R(x) / T(x) \to p$ as $x \to \infty$.
+
+For the law of a random variable $X$ this says $P(X > x) / P(|X| > x) \to p$. Eventual
+positivity of $T$ rules out an eventual $0 / 0$. -/
 def HasTailBalance (μ : Measure ℝ) [IsFiniteMeasure μ] (p : ℝ) : Prop :=
   0 ≤ p ∧ p ≤ 1 ∧
   (∀ᶠ x in atTop, 0 < combinedTail μ x) ∧
   Tendsto (fun x => rightTail μ x / combinedTail μ x) atTop (𝓝 p)
 
-/-- An eventually zero right tail has balance zero when the combined tail remains
-positive eventually. -/
+/-- **Tail balance zero from a vanishing right tail.** Let $\mu$ be a finite measure on
+$\mathbb{R}$. If $\mu((x, \infty)) = 0$ for all sufficiently large $x$ and the combined tail
+$\mu((x, \infty)) + \mu((-\infty, -x))$ is positive for all sufficiently large $x$, then $\mu$ has
+tail balance $0$. -/
 theorem hasTailBalance_zero_of_eventually_rightTail_eq_zero (μ : Measure ℝ) [IsFiniteMeasure μ]
     (h : ∀ᶠ x in atTop, rightTail μ x = 0)
     (hdenom : ∀ᶠ x in atTop, 0 < combinedTail μ x) : HasTailBalance μ 0 := by
@@ -389,7 +443,9 @@ theorem hasTailBalance_zero_of_eventually_rightTail_eq_zero (μ : Measure ℝ) [
     rw [hx, zero_div]
   exact (tendsto_congr' hev).2 tendsto_const_nhds
 
-/-- An eventually zero denominator cannot define tail balance. -/
+/-- **Eventually vanishing combined tail rules out tail balance.** Let $\mu$ be a finite measure
+on $\mathbb{R}$ and let $p \in \mathbb{R}$. If the combined tail of $\mu$ at $x$ equals $0$ for
+all sufficiently large $x$, then $\mu$ does not have tail balance $p$. -/
 theorem not_hasTailBalance_of_eventually_combinedTail_eq_zero (μ : Measure ℝ) [IsFiniteMeasure μ]
     (p : ℝ)
     (hzero : ∀ᶠ x in atTop, combinedTail μ x = 0) : ¬ HasTailBalance μ p := by
@@ -398,7 +454,11 @@ theorem not_hasTailBalance_of_eventually_combinedTail_eq_zero (μ : Measure ℝ)
   rw [hz] at hpos
   exact (lt_irrefl (0 : ℝ)) hpos
 
-/-- Every Dirac mass has eventually zero combined tail, so has no tail-balance parameter. -/
+/-- **Dirac masses have no tail balance.** For every $a \in \mathbb{R}$ and every
+$p \in \mathbb{R}$, the Dirac measure $\delta_a$ at $a$ does not have tail balance $p$.
+
+The combined tail of $\delta_a$ vanishes at every threshold $x \ge |a|$, so the eventual
+positivity required by tail balance fails. -/
 theorem not_hasTailBalance_dirac (a p : ℝ) : ¬ HasTailBalance (Measure.dirac a) p := by
   apply not_hasTailBalance_of_eventually_combinedTail_eq_zero
   filter_upwards [eventually_ge_atTop |a|] with x hx

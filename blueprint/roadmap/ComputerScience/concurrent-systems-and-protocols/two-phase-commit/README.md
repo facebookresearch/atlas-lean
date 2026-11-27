@@ -20,7 +20,9 @@
 - [A committed participant has a committed coordinator](part-committed-coord-committed.md)
 - [A committed coordinator has no aborted participant](coord-committed-part-not-aborted.md)
 - [An aborted coordinator has no committed participant](coord-aborted-part-not-committed.md)
+- [Atomic Commitment and Termination Detection](atomic-commitment-and-termination-detection/README.md)
 
 ## Related topics
 
 - [FLP impossibility](../flp-impossibility/README.md): by the theorem of Fischer, Lynch and Paterson, every asynchronous commit protocol has a "window of vulnerability" in which the delay or crash of a single process can make it wait forever.
+- [Atomic commitment and blocking of two-phase commit](atomic-commitment-and-blocking-of-two-phase.md)

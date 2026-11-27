@@ -39,24 +39,34 @@ conjugation is immaterial as `x` ranges over `G`).
 
 open scoped Pointwise
 
-/-- A subgroup `A` of `G` is `G`-permutable (Kourovka 17.112): for every subgroup `B` of `G` some
-conjugate `B^x` of `B` permutes with `A`, that is, `A B^x = B^x A`. -/
+/-- **$G$-permutable subgroups.** A subgroup $A$ of a group $G$ is $G$-permutable when for every
+subgroup $B$ of $G$ there is $x \in G$ such that $A B^x = B^x A$, where $B^x = x B x^{-1}$ is the
+conjugate of $B$ by $x$ and the products are products of subsets of $G$. -/
 def IsGPermutable {G : Type*} [Group G] (A : Subgroup G) : Prop :=
   ∀ B : Subgroup G, ∃ x : G,
     (A : Set G) * (B.map (MulAut.conj x).toMonoidHom : Set G) =
       (B.map (MulAut.conj x).toMonoidHom : Set G) * (A : Set G)
 
-/-- Kourovka 17.37 (A. F. Vasil'ev, A. N. Skiba): there is `n` such that for every `m > n` the
-alternating group `A_m` has no `A_m`-permutable subgroups other than `1` and `A_m` (which are
-always `A_m`-permutable). -/
+/-- **Kourovka Problem 17.37 on permutable subgroups of alternating groups.** This proposition
+asserts that there is a natural number $n$ such that for every $m > n$, every $A_m$-permutable
+subgroup of the alternating group $A_m$ is either the trivial subgroup or $A_m$ itself. Here a
+subgroup $A$ of a group $G$ is $G$-permutable when for every subgroup $B$ of $G$ there is $x \in G$
+with $A B^x = B^x A$, where $B^x = x B x^{-1}$ is the conjugate of $B$ by $x$ and products of
+subgroups are products of subsets of $G$.
+
+The trivial subgroup and $A_m$ itself are always $A_m$-permutable. -/
 def alternatingGroupNoProperPermutableSubgroups : Prop :=
   ∃ n : ℕ, ∀ m : ℕ, n < m → ∀ A : Subgroup (alternatingGroup (Fin m)),
     IsGPermutable A → A = ⊥ ∨ A = ⊤
 
 /--
-Resolved true: Yang and Galt prove that there is `N` such that for every `n ≥ N` the alternating
-group `A_n` has no `A_n`-permutable subgroups other than `1` and `A_n` (as stated by Zhang); the
-Kourovka Notebook (21st issue) answers 17.37 "Yes, there is". Source: E. I. Khukhro and V. D.
+**Permutable subgroups of large alternating groups are trivial or the whole group.** There is a
+natural number $n$ such that for every $m > n$, every $A_m$-permutable subgroup of the alternating
+group $A_m$ is either the trivial subgroup or $A_m$ itself. Here a subgroup $A$ of a group $G$ is
+$G$-permutable when for every subgroup $B$ of $G$ there is $x \in G$ with $A B^x = B^x A$, where
+$B^x = x B x^{-1}$.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Problem 17.37 (A. F. Vasil'ev, A. N. Skiba); resolution: N. Yang and A.
 Galt, Bull. Malays. Math. Sci. Soc. (2) 46 (2023), no. 5, Paper no. 177, as stated in S. Zhang,

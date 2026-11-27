@@ -2,6 +2,7 @@
 
 - [Integer matrix with integral spectrum](has-integral-spectrum.md)
 - [The Kourovka 19.50(a) integrality claim](involution-cayley-graph-integral.md)
+- [Cayley graphs on normal sets of involutions are integral](has-integral-spectrum-adj-matrix-mul-cay.md)
 - [The 3-cycles (1 2 k)](three-cycles-one-two.md)
 - [The Kourovka 19.50(b) integrality claim](alternating-three-cycle-cayley-graph-int.md)
 - [Cayley graphs on normal sets of involutions are integral](involution-cayley-graph-integral-holds.md)

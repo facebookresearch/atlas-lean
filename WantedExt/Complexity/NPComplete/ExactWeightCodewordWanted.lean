@@ -21,7 +21,7 @@ Theory 24 (1978), 384-386, doi:10.1109/TIT.1978.1055873.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DecodingOfLinearCodesWanted

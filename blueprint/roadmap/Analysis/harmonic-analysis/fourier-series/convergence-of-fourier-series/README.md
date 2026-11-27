@@ -6,3 +6,5 @@
 - [Dirichlet's theorem on pointwise convergence of Fourier series](dirichlet-pointwise.md)
 - [Fejér's theorem](fejer.md)
 - [Carleson's theorem](carleson-ae-tendsto.md)
+- [Fourier series of a square-integrable function converge in L²](fourier-series-converges-in-l2.md)
+- [Parseval's identity on the circle](parseval-identity-on-the-circle.md)

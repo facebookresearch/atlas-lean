@@ -30,7 +30,7 @@ finitely many (`finite_basic`), and the minimum is attained at one of them
 (`exists_basic_optimal`).
 
 These results are stated for a general real module `E` and were moved here
-from `MathlibExt.Biology.Dynamics.FluxBalanceValue`, which uses them for the
+from `Domains.Biology.Dynamics.FluxBalanceValue`, which uses them for the
 flux balance dual.
 -/
 
@@ -47,7 +47,7 @@ variable {ι E : Type*} [Finite ι] [AddCommGroup E] [Module ℝ E]
 /-- `z` is a basic point for the linear map `L`: the only kernel direction of `L` that vanishes
 wherever `z` vanishes is `0`.
 
-Moved from `MathlibExt.Biology.Dynamics.FluxBalanceValue`. -/
+Moved from `Domains.Biology.Dynamics.FluxBalanceValue`. -/
 def IsBasicPt (L : (ι → ℝ) →ₗ[ℝ] E) (z : ι → ℝ) : Prop :=
   ∀ d : ι → ℝ, L d = 0 → (∀ i, z i = 0 → d i = 0) → d = 0
 
@@ -83,7 +83,7 @@ private theorem exists_pos_nonneg_add_sub {z d : ι → ℝ} (hz : 0 ≤ z)
 /-- A linear objective that attains its minimum on `{z ≥ 0 | L z = c}` attains it at a basic
 point.
 
-Moved from `MathlibExt.Biology.Dynamics.FluxBalanceValue`. -/
+Moved from `Domains.Biology.Dynamics.FluxBalanceValue`. -/
 theorem exists_basic_optimal (L : (ι → ℝ) →ₗ[ℝ] E) (φ : (ι → ℝ) →ₗ[ℝ] ℝ) (c : E)
     {z : ι → ℝ} (hz : 0 ≤ z) (hLz : L z = c)
     (hopt : ∀ z' : ι → ℝ, 0 ≤ z' → L z' = c → φ z ≤ φ z') :
@@ -173,7 +173,7 @@ theorem exists_basic_optimal (L : (ι → ℝ) →ₗ[ℝ] E) (φ : (ι → ℝ)
 
 /-- There are finitely many basic points of `{z ≥ 0 | L z = c}`.
 
-Moved from `MathlibExt.Biology.Dynamics.FluxBalanceValue`. -/
+Moved from `Domains.Biology.Dynamics.FluxBalanceValue`. -/
 theorem finite_basic (L : (ι → ℝ) →ₗ[ℝ] E) (c : E) :
     {z : ι → ℝ | 0 ≤ z ∧ L z = c ∧ IsBasicPt L z}.Finite := by
   classical

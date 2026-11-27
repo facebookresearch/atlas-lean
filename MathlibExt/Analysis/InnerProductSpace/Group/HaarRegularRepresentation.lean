@@ -1,0 +1,136 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Function.LpSpace.DomAct.Continuous
+public import Mathlib.MeasureTheory.Measure.Haar.Basic
+public import MathlibExt.Analysis.CStarAlgebra.PointNormAction.CovariantRepresentation
+
+/-!
+# The Haar left regular representation
+
+Left translation acts on the actual Haar `L²` space through the existing
+measure-preserving domain action. The resulting unitaries have continuous
+vector orbits for a regular Haar measure. No countability or nonzero
+Hilbert-space hypothesis is required.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open MeasureTheory
+
+namespace StronglyContinuousUnitaryRepresentation
+
+noncomputable section
+
+universe uG uH
+
+variable (G : Type uG) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
+  [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
+variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
+variable (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The Haar left regular representation on the `L²(G,H)` carrier. -/
+def haarLeftRegular : StronglyContinuousUnitaryRepresentation G (Lp H 2 μ) := by
+  let e (g : G) : Lp H 2 μ ≃ₗᵢ[ℂ] Lp H 2 μ :=
+    { toFun := fun ξ => DomMulAct.mk g⁻¹ • ξ
+      invFun := fun ξ => DomMulAct.mk g • ξ
+      left_inv := fun ξ => by
+        simpa only [DomMulAct.mk_inv] using smul_inv_smul (DomMulAct.mk g) ξ
+      right_inv := fun ξ => by
+        simpa only [DomMulAct.mk_inv] using inv_smul_smul (DomMulAct.mk g) ξ
+      map_add' := fun ξ η => smul_add _ ξ η
+      map_smul' := fun c ξ => smul_comm _ c ξ
+      norm_map' := fun ξ => DomMulAct.norm_smul_Lp _ ξ }
+  refine
+    { toMonoidHom :=
+        { toFun := fun g => Unitary.linearIsometryEquiv.symm (e g)
+          map_one' := ?_
+          map_mul' := ?_ }
+      continuous_orbit := ?_ }
+  · apply Subtype.ext
+    apply ContinuousLinearMap.ext
+    intro ξ
+    change DomMulAct.mk ((1 : G)⁻¹) • ξ = ξ
+    simp only [inv_one, DomMulAct.mk_one, one_smul]
+  · intro g h
+    apply Subtype.ext
+    apply ContinuousLinearMap.ext
+    intro ξ
+    change DomMulAct.mk ((g * h)⁻¹) • ξ =
+      DomMulAct.mk g⁻¹ • (DomMulAct.mk h⁻¹ • ξ)
+    apply Lp.ext
+    have hwhole := DomMulAct.smul_Lp_ae_eq (DomMulAct.mk ((g * h)⁻¹)) ξ
+    have houter := DomMulAct.smul_Lp_ae_eq (DomMulAct.mk g⁻¹) (DomMulAct.mk h⁻¹ • ξ)
+    have hinner := DomMulAct.smul_Lp_ae_eq (DomMulAct.mk h⁻¹) ξ
+    have hpres : MeasurePreserving (fun x : G => g⁻¹ * x) μ μ :=
+      measurePreserving_smul g⁻¹ μ
+    have hquasi : QuasiMeasurePreserving (fun x : G => g⁻¹ * x) μ μ :=
+      hpres.quasiMeasurePreserving
+    have hcomposed := hquasi.ae_eq_comp hinner
+    filter_upwards [hwhole, houter, hcomposed] with x h₁ h₂ h₃
+    change (DomMulAct.mk (g * h)⁻¹ • ξ) x = ξ ((g * h)⁻¹ * x) at h₁
+    change (DomMulAct.mk g⁻¹ • (DomMulAct.mk h⁻¹ • ξ)) x =
+      (DomMulAct.mk h⁻¹ • ξ) (g⁻¹ * x) at h₂
+    change (DomMulAct.mk h⁻¹ • ξ) (g⁻¹ * x) = ξ (h⁻¹ * (g⁻¹ * x)) at h₃
+    rw [h₁, h₂, h₃]
+    simp only [mul_inv_rev, mul_assoc]
+  · intro ξ
+    let : Fact ((2 : ENNReal) ≠ ⊤) := ⟨ENNReal.ofNat_ne_top⟩
+    change Continuous (fun g : G => DomMulAct.mk g⁻¹ • ξ)
+    exact (DomMulAct.continuous_mk.comp continuous_inv).smul continuous_const
+
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The full operator action is the existing inverse domain action. -/
+@[simp]
+theorem haarLeftRegular_apply (g : G) (ξ : Lp H 2 μ) :
+    (haarLeftRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) ξ =
+      DomMulAct.mk g⁻¹ • ξ :=
+  rfl
+
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The Haar function representatives translate by `g⁻¹` almost everywhere. -/
+theorem haarLeftRegular_ae_eq (g : G) (ξ : Lp H 2 μ) :
+    (haarLeftRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) ξ =ᵐ[μ]
+      fun t : G => ξ (g⁻¹ * t) := by
+  exact DomMulAct.smul_Lp_ae_eq (DomMulAct.mk g⁻¹) ξ
+
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The adjoint is the inverse left translation. -/
+theorem star_haarLeftRegular (g : G) :
+    star (haarLeftRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) =
+      (haarLeftRegular G μ H g⁻¹ : Lp H 2 μ →L[ℂ] Lp H 2 μ) := by
+  have h := congrArg (fun u : unitary (Lp H 2 μ →L[ℂ] Lp H 2 μ) =>
+    (u : Lp H 2 μ →L[ℂ] Lp H 2 μ))
+      ((haarLeftRegular G μ H).toMonoidHom.map_inv g).symm
+  exact h
+
+end
+
+end StronglyContinuousUnitaryRepresentation

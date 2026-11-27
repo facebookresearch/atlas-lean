@@ -957,9 +957,13 @@ private lemma harm_eq_harmonic_cast (n : ℕ) : harm n = ((harmonic n : ℚ) : �
     rw [harm_succ, harmonic_succ, ih, Rat.cast_add, Rat.cast_inv, Rat.cast_natCast]
 
 /--
-For `|x| < 1 / 4`, the generating function of the products of the Catalan numbers and
-harmonic numbers, stated with the standard `catalan` and `harmonic` APIs.
-This is the canonical form of `catalan_harmonic_generating_function` below.
+**Generating function of Catalan–harmonic products.** Let $C_n$ be the $n$th Catalan number and
+$H_n = \sum_{k=1}^{n} 1/k$ the $n$th harmonic number, so that $H_0 = 0$. For every real number
+$x$ with $|x| < 1/4$,
+$$
+\sum_{n=0}^{\infty} C_n H_n x^{n+1} = \log 2 + \sqrt{1-4x}\,\log\bigl(2\sqrt{1-4x}\bigr) -
+\bigl(1 + \sqrt{1-4x}\bigr)\log\bigl(1 + \sqrt{1-4x}\bigr).
+$$
 -/
 theorem catalan_harmonic_generating_function_canonical
     (x : ℝ) (hx : |x| < 1 / 4) :
@@ -984,16 +988,24 @@ theorem catalan_harmonic_generating_function_canonical
   exact hFGx
 
 /--
-For `|x| < 1 / 4`, the generating function of the products of the Catalan numbers and
-harmonic numbers has the stated logarithmic closed form.
+**Catalan–harmonic generating function with explicit coefficients.** For every real number $x$
+with $|x| < 1/4$,
+$$
+\sum_{n=1}^{\infty} \frac{\binom{2n}{n}}{n+1} \Bigl(\sum_{k=1}^{n} \frac{1}{k}\Bigr) x^{n+1} =
+\log 2 + \sqrt{1-4x}\,\log\bigl(2\sqrt{1-4x}\bigr) -
+\bigl(1 + \sqrt{1-4x}\bigr)\log\bigl(1 + \sqrt{1-4x}\bigr).
+$$
+
+Here $\binom{2n}{n}/(n+1)$ is the $n$th Catalan number (the division is exact) and
+$\sum_{k=1}^{n} 1/k$ is the $n$th harmonic number.
+
+Proves `Wanted` entry `catalan_harmonic_generating_function`.
 
 Source: Hongwei Chen, "Interesting Series Associated with Central Binomial
 Coefficients, Catalan Numbers and Harmonic Numbers," Journal of Integer Sequences
 19 (2016), Article 16.1.5, Corollary (label eq:c_gf), lines 156–160,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Chen/chen21.tex; obtained there by
 integrating the central-binomial harmonic generating function.
-
-Proves `Wanted` entry `catalan_harmonic_generating_function`.
 -/
 theorem catalan_harmonic_generating_function
     (x : ℝ) (hx : |x| < 1 / 4) :

@@ -18,8 +18,8 @@ The executable Gale–Shapley algorithm (`gsMatching`) computes, for every prefe
 `Fin n`, the man-optimal stable matching. Read as a rule from stated profiles to matchings, it is
 the mechanism of Roth's Theorem 5 (A. E. Roth, "The economics of matching: stability and
 incentives", *Mathematics of Operations Research* 7(4) (1982), 617–628, Theorem 5 and its proof
-in §5, which uses this "repeated proposal procedure"). In particular the hypothesis of the wanted
-statement `isTruthfulDominantForMan_of_isManOptimalStable`
+in §5, which uses this "repeated proposal procedure"). In particular the hypothesis of
+the theorem `isTruthfulDominantForMan_of_isManOptimalStable`
 (`MathlibExt.GameTheory.Matching.StableMechanismIncentivesWanted`) is satisfiable.
 -/
 

@@ -45,10 +45,11 @@ namespace MetaMathlibExt
 
 universe u
 
-/-- For one fixed multigraded free resolution, the multigraded Betti number is
-independent of the certified component-presentation package: any two
-`MultigradedBaseChange` presentations give the same `multigradedBettiNumber`
-in every multidegree `α` and homological index `i`.
+/-- **Betti numbers do not depend on the choice of base change data.** Let $K$ be a field,
+let $R = K[x_1, \dots, x_n]$, and let $M$ be a $\mathbb{Z}^n$-graded $R$-module with a fixed
+multigraded free resolution $P_\bullet \to M$. Any two choices of multigraded base change
+data for $P_\bullet$ define the same multigraded Betti numbers, in every multidegree
+$\alpha \in \mathbb{Z}^n$ and every homological index $i \in \mathbb{N}$.
 
 Source: Benjamin Braun and Brian Davis, “Antichain Simplices,”
 Journal of Integer Sequences 23 (2020),

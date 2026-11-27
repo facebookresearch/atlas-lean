@@ -39,7 +39,7 @@ NP-complete (`cliqueDec_npComplete`, `indSetDec_npComplete`, `vertexCoverDec_npC
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
+open Cslib.CookLevin Cslib.Logic.LegacyPL MetaMathlibExt.ComplexityTheory
 
 instance KGMap.instFintypeΓ (k : KGMap.K) : Fintype (KGMap.Γ k) := by
   cases k <;> infer_instance

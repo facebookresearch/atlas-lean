@@ -54,7 +54,7 @@ theorem edge_potential :
   funext u
   fin_cases u <;>
     simp [laplacian, orientedIncidence, Matrix.mulVec, dotProduct, Matrix.mul_apply,
-      Matrix.diagonal, Fin.sum_univ_two]
+      Matrix.diagonal, Fin.sum_univ_two, -Matrix.transpose_of]
 
 /-- Hence the effective resistance across the edge is `1/3`, the reciprocal conductance. -/
 example :

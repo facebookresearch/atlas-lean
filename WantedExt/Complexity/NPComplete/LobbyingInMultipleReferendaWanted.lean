@@ -20,7 +20,7 @@ OPTIMAL LOBBYING; Section 4.2: the W[2]-hardness "implies NP-hardness of OL").
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
@@ -38,8 +38,10 @@ lobby's desired outcome), and a positive integer `b`. QUESTION: is there a choic
 `E` (`b` voters) that can be changed so that in each column of the resulting matrix a strict
 majority vote yields the outcome targeted by the lobby?
 
-A strict majority vote on an issue yields "yes" when more than half of the `m` voters vote
-"yes" (`m < 2 · #yes`), and "no" otherwise. The matrix is given by its rows, each a list of `n`
+Following the source, the lobby needs a strict majority for its target on every issue: more
+than half of the `m` voters vote the targeted outcome (`m < 2 · #target`); a tie is a strict
+majority for neither outcome. (`majorityOutcome` is the yes-majority outcome, which reads a tie
+as "no"; feasibility does not use it.) The matrix is given by its rows, each a list of `n`
 Booleans, so the instance lists all `m · n` entries; "a choice of `b` rows" presupposes
 `b ≤ m`, which `WellFormed` records.
 
@@ -81,12 +83,14 @@ def majorityOutcome {m n : ℕ} (F : Fin m → Fin n → Bool) (j : Fin n) : Boo
 def WellFormed (i : LobbyingInMultipleReferendaInstance) : Prop :=
   (∀ row ∈ i.1, row.length = i.2.1.length) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1.length
 
-/-- Some choice of `b` rows can be changed so that every issue's strict majority outcome is the
-target: a set `S` of `b` voters and new votes `F` agreeing with `E` outside `S`. -/
+/-- Some choice of `b` rows can be changed so that every issue has a strict majority for the
+target: a set `S` of `b` voters and new votes `F` agreeing with `E` outside `S` such that, on
+every issue `j`, more than half of the voters vote `Z[j]`. A tie is not a strict majority for
+either outcome. -/
 def LobbyingInMultipleReferendaFeasible (i : LobbyingInMultipleReferendaInstance) : Prop :=
   ∃ S : Finset (Voter i), S.card = i.2.2 ∧
     ∃ F : Voter i → Issue i → Bool, (∀ r, r ∉ S → ∀ j, F r j = vote i r j) ∧
-      ∀ j, majorityOutcome F j = target i j
+      ∀ j, i.1.length < 2 * (Finset.univ.filter fun r => F r j = target i j).card
 
 open Classical in
 /-- LOBBYING IN MULTIPLE REFERENDA as a decision problem over bitstrings. -/

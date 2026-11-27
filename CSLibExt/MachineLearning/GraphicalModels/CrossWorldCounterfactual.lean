@@ -42,7 +42,9 @@ This is a self-contained two-node interface. The general finite SCMs of
 (`FiniteSCM.doNode`, `FiniteSCM.doSet`) and conditional counterfactual probabilities
 (`FiniteSCM.counterfactualProb`), which relate the factual world to one intervened world at the
 same noise value. A joint over two intervened worlds, such as `P(Y_1 = 1, Y_0 = 0)` here, is not
-defined there; unifying `BinarySCM` with `FiniteSCM` is future work.
+defined there; `ProbabilitiesOfCausation.lean` unifies the two interfaces through the
+counterfactual law `CfLaw` (`BinarySCM.cfLaw`, `FiniteSCM.cfLaw` and the two-world
+`FiniteSCM.jointCounterfactualProb`).
 
 ## References
 

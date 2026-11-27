@@ -70,7 +70,7 @@ to the content key and value maps only: the positional key is a separate map.
 
 ## Informally uses
 
-- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-product.md):
+- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-matrix-product/rank-of-a-product.md):
   mathematical prerequisite, the rank bounds through the shared factor and for the absorbed
   per-head matrix.
 - [Attention logits as bilinear forms](attention-logits-as-bilinear-forms.md): builds on, since

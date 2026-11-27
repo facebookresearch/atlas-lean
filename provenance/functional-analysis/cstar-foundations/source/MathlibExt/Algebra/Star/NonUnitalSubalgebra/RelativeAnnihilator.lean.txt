@@ -1,0 +1,170 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Algebra.NonUnitalSubalgebra.RelativeAnnihilator
+public import Mathlib.Algebra.Star.NonUnitalSubalgebra
+
+/-!
+# Star-stable relative annihilators
+
+The intersection of the algebraic left and right relative annihilators is
+star stable when both the modulus and the tested subalgebra are star stable.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace NonUnitalStarSubalgebra
+
+universe uR uA
+
+variable {R : Type uR} {A : Type uA}
+variable [CommSemiring R] [NonUnitalSemiring A] [Module R A]
+variable [IsScalarTower R A A] [SMulCommClass R A A] [StarRing A]
+
+/-- Elements which annihilate `D` on both sides modulo `I`. -/
+def annihilatorModulo
+    (I D : NonUnitalStarSubalgebra R A)
+    [I.toNonUnitalSubalgebra.IsTwoSided] :
+    NonUnitalStarSubalgebra R A where
+  carrier := {x |
+    x ∈ I.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A) ∧
+      x ∈ I.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A)}
+  zero_mem' := by
+    exact ⟨(I.toNonUnitalSubalgebra.leftAnnihilatorModulo
+        (D : Set A)).zero_mem,
+      (I.toNonUnitalSubalgebra.rightAnnihilatorModulo
+        (D : Set A)).zero_mem⟩
+  add_mem' := by
+    intro x y hx hy
+    exact ⟨(I.toNonUnitalSubalgebra.leftAnnihilatorModulo
+        (D : Set A)).add_mem hx.1 hy.1,
+      (I.toNonUnitalSubalgebra.rightAnnihilatorModulo
+        (D : Set A)).add_mem hx.2 hy.2⟩
+  mul_mem' := by
+    intro x y hx hy
+    exact ⟨(I.toNonUnitalSubalgebra.leftAnnihilatorModulo
+        (D : Set A)).mul_mem hx.1 hy.1,
+      (I.toNonUnitalSubalgebra.rightAnnihilatorModulo
+        (D : Set A)).mul_mem hx.2 hy.2⟩
+  smul_mem' := by
+    intro r x hx
+    exact ⟨(I.toNonUnitalSubalgebra.leftAnnihilatorModulo
+        (D : Set A)).smul_mem r hx.1,
+      (I.toNonUnitalSubalgebra.rightAnnihilatorModulo
+        (D : Set A)).smul_mem r hx.2⟩
+  star_mem' := by
+    intro x hx
+    constructor
+    · rw [NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff]
+      intro d hd
+      have h :=
+        (NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff
+          I.toNonUnitalSubalgebra (D : Set A) x).1 hx.2
+          (star d) (D.star_mem' hd)
+      have hs := I.star_mem' h
+      simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
+        NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
+    · rw [NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff]
+      intro d hd
+      have h :=
+        (NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff
+          I.toNonUnitalSubalgebra (D : Set A) x).1 hx.1
+          (star d) (D.star_mem' hd)
+      have hs := I.star_mem' h
+      simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
+        NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
+
+/-- Literal left/right-intersection membership. This useful characteristic is
+not a simp rule because the expanded multiplication formula is the simp normal
+form. -/
+theorem mem_annihilatorModulo_iff_sides
+    (I D : NonUnitalStarSubalgebra R A)
+    [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
+    x ∈ I.annihilatorModulo D ↔
+      x ∈ I.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A) ∧
+        x ∈ I.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A) :=
+  Iff.rfl
+
+/-- Fully expanded membership, chosen as the simp normal form. -/
+@[simp]
+theorem mem_annihilatorModulo_iff
+    (I D : NonUnitalStarSubalgebra R A)
+    [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
+    x ∈ I.annihilatorModulo D ↔
+      (∀ d ∈ D, x * d ∈ I) ∧ ∀ d ∈ D, d * x ∈ I :=
+  Iff.rfl
+
+/-- Star exchanges left relative annihilation with right relative
+annihilation. -/
+theorem star_mem_rightAnnihilatorModulo_iff
+    (I D : NonUnitalStarSubalgebra R A)
+    [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
+    star x ∈ I.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A) ↔
+      x ∈ I.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A) := by
+  constructor
+  · intro hx
+    rw [NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff]
+    intro d hd
+    have h :=
+      (NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff
+        I.toNonUnitalSubalgebra (D : Set A) (star x)).1 hx
+        (star d) (D.star_mem' hd)
+    have hs := I.star_mem' h
+    simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
+      NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
+  · intro hx
+    rw [NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff]
+    intro d hd
+    have h :=
+      (NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff
+        I.toNonUnitalSubalgebra (D : Set A) x).1 hx
+        (star d) (D.star_mem' hd)
+    have hs := I.star_mem' h
+    simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
+      NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
+
+/-- Star exchanges right relative annihilation with left relative
+annihilation. -/
+theorem star_mem_leftAnnihilatorModulo_iff
+    (I D : NonUnitalStarSubalgebra R A)
+    [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
+    star x ∈ I.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A) ↔
+      x ∈ I.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A) := by
+  constructor
+  · intro hx
+    rw [NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff]
+    intro d hd
+    have h :=
+      (NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff
+        I.toNonUnitalSubalgebra (D : Set A) (star x)).1 hx
+        (star d) (D.star_mem' hd)
+    have hs := I.star_mem' h
+    simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
+      NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
+  · intro hx
+    rw [NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff]
+    intro d hd
+    have h :=
+      (NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff
+        I.toNonUnitalSubalgebra (D : Set A) x).1 hx
+        (star d) (D.star_mem' hd)
+    have hs := I.star_mem' h
+    simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
+      NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
+
+/-- The two-sided modulus is contained in its relative annihilator. -/
+theorem le_annihilatorModulo
+    (I D : NonUnitalStarSubalgebra R A)
+    [I.toNonUnitalSubalgebra.IsTwoSided] :
+    I ≤ I.annihilatorModulo D := by
+  intro x hx
+  rw [mem_annihilatorModulo_iff]
+  exact ⟨fun d _hd => NonUnitalSubalgebra.IsTwoSided.mul_mem_right hx d,
+    fun d _hd => NonUnitalSubalgebra.IsTwoSided.mul_mem_left d hx⟩
+
+end NonUnitalStarSubalgebra

@@ -99,13 +99,11 @@ open Matrix intervalIntegral
 namespace Mechanics.EulerBernoulli
 
 
-/-- Beam-element stiffness matrix for a prismatic Euler-Bernoulli
-element with flexural rigidity `EI` and length `L`, in the nodal
-coordinates `(v1, θ1, v2, θ2)` (deflections and rotations at the
-two ends), with the conjugate end-force sign convention:
-`K = (EI / L^3)` times the classical coefficient matrix. The
-definition is the totalized formula; no positivity is asserted by
-the definition itself. -/
+/-- Beam-element stiffness matrix for a prismatic Euler-Bernoulli element with flexural rigidity
+`EI` and length `L`, in the nodal coordinates `(v1, θ1, v2, θ2)` (deflections and rotations at the
+two ends), with the conjugate end-force sign convention: `K = (EI / L^3)` times the classical
+coefficient matrix. The definition is the totalized formula; no positivity is asserted by the
+definition itself. At `L = 0` it is the zero matrix (`x / 0 = 0`). -/
 noncomputable def beamStiffness (EI L : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
   (EI / L ^ 3) • !![12, 6 * L, -12, 6 * L;
     6 * L, 4 * L ^ 2, -6 * L, 2 * L ^ 2;
@@ -136,9 +134,9 @@ theorem beamStiffness_mulVec_rotation (EI L : ℝ) :
   fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_four] <;> ring
 
 /-- Curvature energy as a quadratic form: `d ⬝ᵥ (K *ᵥ d)` (twice
-the strain energy) equals
-`(EI / L^3) * (12 * (v1 - v2)^2 + 12 * L * (v1 - v2) * (θ1 + θ2)
-+ 4 * L^2 * (θ1^2 + θ1 * θ2 + θ2^2))`. -/
+the strain energy) equals `(EI / L^3) * Q` with
+`Q = 12 * (v1 - v2)^2 + 12 * L * (v1 - v2) * (θ1 + θ2) + 4 * L^2 * (θ1^2 + θ1 * θ2 + θ2^2)`.
+At `L = 0` both sides are `0` (`x / 0 = 0`). -/
 theorem beamStiffness_quad_form (EI L : ℝ) (d : Fin 4 → ℝ) :
     d ⬝ᵥ (beamStiffness EI L *ᵥ d)
       = (EI / L ^ 3) * (12 * (d 0 - d 2) ^ 2
@@ -148,10 +146,10 @@ theorem beamStiffness_quad_form (EI L : ℝ) (d : Fin 4 → ℝ) :
   simp [Matrix.mulVec, dotProduct, Fin.sum_univ_four]
   ring
 
-/-- The beam-stiffness quadratic form factors into two squares:
-with end data `d = (v1, θ1, v2, θ2)`, twice the strain energy is
-`(EI / L^3)` times
-`12 * ((v1 - v2) + (L / 2) * (θ1 + θ2))^2 + L^2 * (θ1 - θ2)^2`. -/
+/-- The beam-stiffness quadratic form factors into two squares: with end data
+`d = (v1, θ1, v2, θ2)`, twice the strain energy is `(EI / L^3)` times
+`12 * ((v1 - v2) + (L / 2) * (θ1 + θ2))^2 + L^2 * (θ1 - θ2)^2`. At `L = 0` both sides are `0`
+(`x / 0 = 0`). -/
 theorem beamStiffness_quad_form_factor (EI L : ℝ) (d : Fin 4 → ℝ) :
     d ⬝ᵥ (beamStiffness EI L *ᵥ d)
       = (EI / L ^ 3) * (12 * ((d 0 - d 2) + (L / 2) * (d 1 + d 3)) ^ 2
@@ -229,19 +227,17 @@ theorem beamStiffness_mulVec_eq_zero_iff {EI L : ℝ} (hEI : 0 < EI)
 
 /-! ## B. Six-DOF local frame block -/
 
-/-- Two-node axial stiffness matrix with axial rigidity `EA` and
-length `L`, in coordinates `(u1, u2)`: `(EA / L) * [[1, -1],
-[-1, 1]]`. The definition is the totalized formula. -/
+/-- Two-node axial stiffness matrix with axial rigidity `EA` and length `L`, in coordinates
+`(u1, u2)`: `(EA / L) * [[1, -1], [-1, 1]]`. The definition is the totalized formula: at `L = 0` it
+is the zero matrix. -/
 noncomputable def axialStiffness (EA L : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   (EA / L) • !![1, -1; -1, 1]
 
-/-- Six-DOF local frame-element stiffness matrix, in the fixed
-ordering `(u1, v1, θ1, u2, v2, θ2)`: axial displacement,
-transverse deflection, and rotation at end 1, then the same three
-coordinates at end 2. It combines the axial block
-`axialStiffness` on `(u1, u2)` with the bending block
-`beamStiffness` on `(v1, θ1, v2, θ2)`, with no axial-bending
-coupling. The definition is the totalized formula. -/
+/-- Six-DOF local frame-element stiffness matrix, in the fixed ordering `(u1, v1, θ1, u2, v2, θ2)`:
+axial displacement, transverse deflection, and rotation at end 1, then the same three coordinates at
+end 2. It combines the axial block `axialStiffness` on `(u1, u2)` with the bending block
+`beamStiffness` on `(v1, θ1, v2, θ2)`, with no axial-bending coupling. The definition is the
+totalized formula: at `L = 0` it is the zero matrix. -/
 noncomputable def frameStiffness (EA EI L : ℝ) :
     Matrix (Fin 6) (Fin 6) ℝ :=
   !![EA / L, 0, 0, -EA / L, 0, 0;
@@ -256,9 +252,9 @@ noncomputable def frameStiffness (EA EI L : ℝ) :
       -6 * EI / L ^ 2, 4 * EI / L]
 
 /-- The frame-element quadratic form (twice the strain energy)
-factors as the axial square plus the two bending squares:
-`(EA / L) * (u2 - u1)^2 + (EI / L^3) * (12 * ((v1 - v2)
-+ (L / 2) * (θ1 + θ2))^2 + L^2 * (θ1 - θ2)^2)`. -/
+factors as the axial square `(EA / L) * (u2 - u1)^2` plus the two bending squares
+`(EI / L^3) * (12 * ((v1 - v2) + (L / 2) * (θ1 + θ2))^2 + L^2 * (θ1 - θ2)^2)`.
+At `L = 0` both sides are `0` (`x / 0 = 0`). -/
 theorem frameStiffness_quad_form_factor (EA EI L : ℝ)
     (d : Fin 6 → ℝ) :
     d ⬝ᵥ (frameStiffness EA EI L *ᵥ d)
@@ -459,16 +455,15 @@ lemma uniformLoadVector_entries_hermite {w L : ℝ} (hL : L ≠ 0) :
   · simpa [uniformLoadVector] using h.2.2.1
   · simpa [uniformLoadVector] using h.2.2.2
 
-/-- End data `(y(0), y'(0), y(L), y'(L))` of a deflection field
-`y` on the element `[0, L]`. -/
+/-- End data `(y(0), y'(0), y(L), y'(L))` of a deflection field `y` on the element `[0, L]`.
+Derivatives are `0` where `y` is not differentiable. -/
 noncomputable def beamEndData (L : ℝ) (y : ℝ → ℝ) : Fin 4 → ℝ :=
   ![y 0, iteratedDeriv 1 y 0, y L, iteratedDeriv 1 y L]
 
-/-- Conjugate end-force vector of a deflection field `y`, in
-the nodal order `(v1, θ1, v2, θ2)`, for the sign conventions
-`M = -EI * y''` and `V = M' = -EI * y'''`:
-`(EI * y'''(0), -EI * y''(0), -EI * y'''(L), EI * y''(L))`,
-i.e. `(-V(0), M(0), V(L), -M(L))`. -/
+/-- Conjugate end-force vector of a deflection field `y`, in the nodal order `(v1, θ1, v2, θ2)`, for
+the sign conventions `M = -EI * y''` and `V = M' = -EI * y'''`:
+`(EI * y'''(0), -EI * y''(0), -EI * y'''(L), EI * y''(L))`, i.e. `(-V(0), M(0), V(L), -M(L))`.
+Derivatives are `0` where the function is not differentiable. -/
 noncomputable def beamEndForces (EI L : ℝ) (y : ℝ → ℝ) :
     Fin 4 → ℝ :=
   ![EI * iteratedDeriv 3 y 0, -EI * iteratedDeriv 2 y 0,

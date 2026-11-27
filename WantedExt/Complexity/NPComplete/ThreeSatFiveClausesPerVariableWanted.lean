@@ -25,7 +25,7 @@ jump from trivial to NP-complete", SIAM J. Comput. 22 (1993), 203-210, doi:10.11
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -42,9 +42,9 @@ INSTANCE: a set `U` of variables and a collection `C` of clauses over `U` such t
 either `u` or `ū`.
 QUESTION: is there a satisfying truth assignment for `C`?
 
-Formulas are CSLib's `Cslib.Logic.PL.CNF` (a clause is a list of literals `(variable, sign)`, a
-formula a list of clauses) with satisfaction `Cslib.Logic.PL.CNF.Satisfies`, in the encoding of
-`WantedExt.Complexity.NPComplete.BoundedOccurrenceThreeSatWanted`: the variables are
+Formulas are `Cslib.Logic.LegacyPL.CNF` (a clause is a list of literals `(variable, sign)`, a
+formula a list of clauses) with satisfaction `Cslib.Logic.LegacyPL.CNF.Satisfies`, in the encoding
+of `WantedExt.Complexity.NPComplete.BoundedOccurrenceThreeSatWanted`: the variables are
 `0, …, n - 1` and a truth assignment is a list of `n` truth values. A clause is a set of
 literals, so `|c| = 3` says that the clause lists three distinct literals. A clause contains `u`
 or `ū` when one of its literals is on `u`; clauses are counted along the list `C`.
@@ -66,7 +66,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the number `n` of variables and the CNF formula (its clauses). -/
-abbrev ThreeSatFiveClausesPerVariableInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev ThreeSatFiveClausesPerVariableInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance: every clause consists of three distinct literals on
 variables `< n`, and every variable `u < n` lies in at most five clauses. -/
@@ -77,7 +77,7 @@ def WellFormed (i : ThreeSatFiveClausesPerVariableInstance) : Prop :=
 /-- A satisfying truth assignment for the variables `0, …, n - 1`. -/
 def ThreeSatFiveClausesPerVariableFeasible (i : ThreeSatFiveClausesPerVariableInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- 3-SATISFIABILITY with at most five clauses per variable as a decision problem over

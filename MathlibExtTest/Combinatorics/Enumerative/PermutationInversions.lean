@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.PermutationInversions
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for inversions of a random permutation
@@ -51,5 +52,19 @@ example : permInversionCount (finRotate 3) = 2 := by decide
 example : ∑ σ : Equiv.Perm (Fin 3), 2 ^ permInversionCount σ =
     ∏ k ∈ Finset.range 3, ∑ i ∈ Finset.range (k + 1), 2 ^ i := by
   decide
+
+open Polynomial in
+/-- The empty permutation contributes the constant polynomial `1`. -/
+example : ∑ σ : Equiv.Perm (Fin 0), (X : ℕ[X]) ^ permInversionCount σ = 1 := by
+  simpa using sum_X_pow_permInversionCount (n := 0)
+
+open Polynomial in
+/-- The six permutations of `Fin 3` give coefficients `1, 2, 2, 1`. -/
+example : ∑ σ : Equiv.Perm (Fin 3), (X : ℕ[X]) ^ permInversionCount σ =
+    1 + 2 * X + 2 * X ^ 2 + X ^ 3 := by
+  rw [sum_X_pow_permInversionCount (n := 3)]
+  simp only [Finset.prod_range_succ, Finset.prod_range_zero, Finset.sum_range_succ,
+    Finset.sum_range_zero]
+  ring
 
 end MetaMathlibExt.Test.PermutationInversions

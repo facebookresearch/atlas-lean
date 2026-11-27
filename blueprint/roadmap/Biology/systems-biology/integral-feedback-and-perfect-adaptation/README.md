@@ -2,9 +2,7 @@
 
 ## Linear time-invariant systems
 
-- [Single-input single-output linear time-invariant system](linear-system.md)
-- [Vector field of a linear time-invariant system](field.md)
-- [Output of a linear time-invariant system](output.md)
+See [single-input single-output linear systems](../../../Analysis/control-theory/README.md#single-input-single-output-linear-systems) in Analysis.
 
 ## Perfect adaptation and integral feedback
 
@@ -21,3 +19,6 @@
 ## Robustness
 
 - [Integral feedback gives robust perfect adaptation](output-eq-zero-of-integral-feedback.md)
+
+- [The integral-feedback loop as a linear system and its equilibrium](the-integral-feedback-loop-as-a-linear-system-and-its-equilibrium.md)
+- [Exponential perfect adaptation of the integral-feedback loop](exponential-perfect-adaptation-of-the-integral-feedback-loop.md)

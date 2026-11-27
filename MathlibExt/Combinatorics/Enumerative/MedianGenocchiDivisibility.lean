@@ -11,6 +11,7 @@ module
 public import MathlibExt.Combinatorics.Enumerative.MedianGenocchiNumber
 import MathlibExt.Combinatorics.Enumerative.EulerSeidelMatrix
 import MathlibExt.NumberTheory.GenocchiBernoulli
+import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Int.ModEq
 import Mathlib.Tactic.FieldSimp
@@ -691,17 +692,6 @@ private theorem mgen_sum_range_add_three {R : Type*} [AddCommMonoid R]
   simp only [zero_add, Nat.reduceAdd]
   ac_rfl
 
-private theorem mgen_sum_modEq_zero {s : Finset ℕ} {f : ℕ → ℤ} {m : ℤ}
-    (h : ∀ k ∈ s, f k ≡ 0 [ZMOD m]) :
-    (∑ k ∈ s, f k) ≡ 0 [ZMOD m] := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih =>
-      rw [Finset.sum_insert ha]
-      exact (h a (Finset.mem_insert_self a s)).add
-        (ih (fun k hk => h k (Finset.mem_insert_of_mem hk)))
-
 private theorem mgenQuotient_modEq_first_columns (n : ℕ) (hn : 2 ≤ n) :
     mgenQuotient n ≡
       (-1 : ℤ) ^ (n + 1) +
@@ -713,7 +703,7 @@ private theorem mgenQuotient_modEq_first_columns (n : ℕ) (hn : 2 ≤ n) :
       f 0 + f 1 + f 2 + ∑ k ∈ Finset.range (n - 2), f (k + 3) := by
     rw [mgenQuotient, hlen, mgen_sum_range_add_three]
   have htail : (∑ k ∈ Finset.range (n - 2), f (k + 3)) ≡ 0 [ZMOD 6] := by
-    apply mgen_sum_modEq_zero
+    apply Int.ModEq.sum_zero
     intro k _
     rw [Int.modEq_zero_iff_dvd]
     have hdNat : 6 ∣ mgenFactor (k + 3) := mgen_factor_six_dvd (k + 3) (by omega)
@@ -779,21 +769,20 @@ private theorem mgenQuotient_mod_six (n : ℕ) (hn : 1 ≤ n) :
     norm_num [mgenQuotient, mgenNormalizedLS, mgenFactor,
       Finset.sum_range_succ, Int.ModEq]
 
-/-- For `n ≥ 1`, `H_(2n+3)` is divisible by `2^n`, and the quotient is
-congruent modulo `6` to `1` for odd `n` and to `4` for even `n`.
+/-- **Divisibility of the median Genocchi numbers.** Let $H_{2m+1}$ denote the odd-indexed median
+Genocchi values, with the signs given by their defining sum, so that $H_5 = 2$, $H_7 = -8$ and
+$H_9 = 56$. For every natural number $n \ge 1$ there is an integer $z$ with $H_{2n+3} = 2^n z$,
+and $z \equiv 1 \pmod 6$ if $n$ is odd, while $z \equiv 4 \pmod 6$ if $n$ is even.
 
-This records the divisibility theorem from Kwang-Wu Chen, *An Interesting Lemma
-for Regular C-fractions*, Journal of Integer Sequences 6 (2003), Article 03.4.8:
-<https://cs.uwaterloo.ca/journals/JIS/VOL6/Chen/chen50.tex>.
+Proof: The antisymmetry of the Euler–Seidel matrix of the Genocchi numbers writes $H_{2n+3}$ as
+an alternating sum of Legendre–Stirling numbers times $k!\,(k+1)!$. Pulling a power of two out of
+each term gives the factor $2^n$; in the remaining sum every term from the fourth on is divisible
+by $6$, which gives the residue. The divisibility and residue arguments are Chen's, applied to
+this finite sum instead of his continued fraction.
 
+Source: Kwang-Wu Chen, *An Interesting Lemma for Regular C-fractions*, Journal of Integer
+Sequences 6 (2003), Article 03.4.8: <https://cs.uwaterloo.ca/journals/JIS/VOL6/Chen/chen50.tex>.
 Proves `Wanted` entry `medianGenocchiOdd_divisibility`.
-
-Proof: The antisymmetry of the Euler-Seidel matrix of the Genocchi numbers writes
-`H_(2n+3)` as an alternating sum of Legendre-Stirling numbers times `k! (k+1)!`.
-Pulling a power of two out of each term gives the factor `2^n`; in the remaining
-sum every term from the fourth on is divisible by 6, which gives the residue.
-The divisibility and residue arguments are Chen's, applied to this finite sum
-instead of his continued fraction.
 -/
 theorem medianGenocchiOdd_divisibility (n : ℕ) (hn : 1 ≤ n) :
     ∃ z : ℤ, medianGenocchiOdd (n + 1) = (2 : ℚ) ^ n * z ∧

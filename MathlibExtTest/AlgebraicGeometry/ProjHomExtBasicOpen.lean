@@ -16,7 +16,7 @@ open CategoryTheory AlgebraicGeometry HomogeneousLocalization
 
 universe u v
 
-theorem exactSource
+private theorem exactSource
     {A : Type u} {σ : Type v} [CommRing A] [SetLike σ A] [AddSubgroupClass σ A]
     (𝒜 : ℕ → σ) [GradedRing 𝒜] {W : Scheme.{u}} (a b : W ⟶ Proj 𝒜)
     (h : ∀ w : W, ∃ (n : ℕ) (r : A) (hn : 0 < n) (hr : r ∈ 𝒜 n)

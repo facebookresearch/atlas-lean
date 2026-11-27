@@ -18,7 +18,7 @@ AND/OR GRAPH SOLUTION (p. 283), comment "Remains NP-complete even if w(a) = 1 fo
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MinimumWeightAndOrGraphSolutionWanted

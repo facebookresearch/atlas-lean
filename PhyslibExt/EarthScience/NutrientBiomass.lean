@@ -59,7 +59,7 @@ assumed).
   nutrient-phytoplankton-zooplankton models in nitrogen units, in which uptake moves
   nitrogen from the nutrient pool to phytoplankton and losses return it, so the balances
   sum to zero and total nitrogen is conserved.
-- `MathlibExt.Biology.Dynamics.MichaelisMenten` (`mmRate`, `mmRate_lt`,
+- `Domains.Biology.Dynamics.MichaelisMenten` (`mmRate`, `mmRate_lt`,
   `mmRate_nonneg_and_le`) for the Michaelis-Menten uptake law and its bounds.
 -/
 
@@ -80,8 +80,9 @@ theorem nutrient_biomass_conservation {N B : ℝ → ℝ} {u : ℝ → ℝ} {r :
   rw [hsum] at h
   exact h
 
-/-- Boundary case: at zero nutrient, with `u(0) = 0`, the derivative of biomass is
-`-r * B t` (respiration only) and the derivative of nutrient is `r * B t`. These are
+/-- Boundary case: if at `t` the nutrient `N` and the biomass `B` have the derivatives of the
+closed nutrient-biomass model, `N t = 0` (zero nutrient) and `u(0) = 0`, then the derivative of
+biomass is `-r * B t` (losses only) and the derivative of nutrient is `r * B t`. These are
 identities for all real `r` and `B t`; no sign is asserted. -/
 lemma nutrient_biomass_zero_nutrient {N B : ℝ → ℝ} {u : ℝ → ℝ} {r : ℝ} {t : ℝ}
     (hu0 : u 0 = 0) (hNt : N t = 0)

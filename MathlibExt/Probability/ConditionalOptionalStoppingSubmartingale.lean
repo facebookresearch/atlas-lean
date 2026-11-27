@@ -198,6 +198,13 @@ private theorem integral_predictablePart (hsub : Submartingale f ℱ μ) (n : �
     (integrable_predictablePart hsub n)] at h1
   linarith [h1, hMt_int]
 
+omit [IsProbabilityMeasure μ] in
+/-- A uniformly integrable family has a uniform `L¹` bound in `ℝ≥0`. -/
+private theorem exists_eLpNorm_le_of_uniformIntegrable {g : ℕ → Ω → ℝ}
+    (hg : UniformIntegrable g 1 μ) : ∃ R : ℝ≥0, ∀ n, eLpNorm (g n) 1 μ ≤ R :=
+  ⟨_, fun n => (le_iSup (fun i => eLpNorm (g i) 1 μ) n).trans_eq
+    (ENNReal.coe_toNNReal hg.iSup_eLpNorm_lt.ne).symm⟩
+
 /-- The `L¹` norm of the predictable part is bounded by the uniform
 integrability bound of `f` plus `|∫ f 0|`. -/
 private theorem eLpNorm_predictablePart_le (hsub : Submartingale f ℱ μ)
@@ -259,16 +266,17 @@ uniformly bounded, so `Submartingale.memLp_limitProcess` applies. -/
 private theorem integrable_limitProcess_predictablePart (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) :
     Integrable (ℱ.limitProcess (predictablePart f ℱ μ) μ) μ := by
-  obtain ⟨R, hR⟩ := hui.2
+  obtain ⟨R, hR⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   exact ((submartingale_predictablePart hsub).memLp_limitProcess
-    (fun n => eLpNorm_predictablePart_le_nnreal hsub hR n)).integrable le_rfl
+    ((iSup_le (eLpNorm_predictablePart_le_nnreal hsub hR)).trans_lt
+      ENNReal.coe_lt_top)).integrable le_rfl
 
 /-- The predictable part of a uniformly integrable submartingale is
 uniformly integrable: it is dominated by its integrable limit. -/
 private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) :
     UniformIntegrable (predictablePart f ℱ μ) 1 μ := by
-  obtain ⟨R, hR⟩ := hui.2
+  obtain ⟨R, hR⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   set A := predictablePart f ℱ μ
   set Alim := ℱ.limitProcess A μ
   have hAlim_int : Integrable Alim μ := integrable_limitProcess_predictablePart hsub hui
@@ -279,7 +287,7 @@ private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ
     intro n
     have hconv : ∀ᵐ ω ∂μ, Tendsto (fun n => A n ω) atTop (𝓝 (Alim ω)) :=
       (submartingale_predictablePart hsub).ae_tendsto_limitProcess
-        (fun m => eLpNorm_predictablePart_le_nnreal hsub hR m)
+        ((iSup_le (eLpNorm_predictablePart_le_nnreal hsub hR)).trans_lt ENNReal.coe_lt_top)
     have hmono : ∀ᵐ ω ∂μ, Monotone (fun n => A n ω) :=
       hsub.monotone_predictablePart
     filter_upwards [hconv, hmono, hsub.predictablePart_nonneg] with ω hω hmonoω hnnω
@@ -290,7 +298,8 @@ private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ
     exact ENNReal.ofReal_le_ofReal hleω
   refine ⟨(hUI_const.1).ae_mono (fun n => (integrable_predictablePart hsub n).aestronglyMeasurable)
     hle, ?_⟩
-  refine ⟨((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|).toNNReal, fun n => ?_⟩
+  refine (iSup_le fun n => ?_).trans_lt
+    (ENNReal.coe_lt_top (r := ((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|).toNNReal))
   rw [ENNReal.coe_toNNReal
     (ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top, ENNReal.ofReal_ne_top⟩)]
   exact eLpNorm_predictablePart_le hsub hR n
@@ -301,7 +310,7 @@ private theorem uniformIntegrable_martingalePart (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) :
     Martingale (martingalePart f ℱ μ) ℱ μ ∧
       UniformIntegrable (martingalePart f ℱ μ) 1 μ := by
-  obtain ⟨R, hR⟩ := hui.2
+  obtain ⟨R, hR⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   set A := predictablePart f ℱ μ
   set Mt := martingalePart f ℱ μ
   have hMt_mart : Martingale Mt ℱ μ :=
@@ -312,9 +321,9 @@ private theorem uniformIntegrable_martingalePart (hsub : Submartingale f ℱ μ)
       funext n ω
       simp [Mt, A, martingalePart]
     rw [hMt_eq]
-    refine ⟨(hui.1).sub (hA_UI.1) le_rfl, ?_⟩
-    refine ⟨((R : ℝ≥0∞) + ((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|)).toNNReal,
-      fun n => ?_⟩
+    refine ⟨(hui.1).sub (hA_UI.1), ?_⟩
+    refine (iSup_le fun n => ?_).trans_lt (ENNReal.coe_lt_top
+      (r := ((R : ℝ≥0∞) + ((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|)).toNNReal))
     rw [ENNReal.coe_toNNReal (ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top,
       ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top, ENNReal.ofReal_ne_top⟩⟩)]
     have hsub_le : eLpNorm ((f - A) n) 1 μ ≤ eLpNorm (f n) 1 μ + eLpNorm (A n) 1 μ := by
@@ -358,7 +367,7 @@ private theorem stoppedValueAtTop_decomp (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) {τ : Ω → WithTop ℕ} :
     stoppedValueAtTop f τ =ᵐ[μ] stoppedValueAtTop (martingalePart f ℱ μ) τ +
       stoppedValueAtTop (predictablePart f ℱ μ) τ := by
-  obtain ⟨R, hR⟩ := hui.2
+  obtain ⟨R, hR⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   obtain ⟨hMt_mart, hMt_UI⟩ := uniformIntegrable_martingalePart hsub hui
   have hMt_conv : ∀ᵐ ω ∂μ, Tendsto (fun n => martingalePart f ℱ μ n ω) atTop
       (𝓝 (ℱ.limitProcess (martingalePart f ℱ μ) μ ω)) :=
@@ -366,7 +375,7 @@ private theorem stoppedValueAtTop_decomp (hsub : Submartingale f ℱ μ)
   have hA_conv : ∀ᵐ ω ∂μ, Tendsto (fun n => predictablePart f ℱ μ n ω) atTop
       (𝓝 (ℱ.limitProcess (predictablePart f ℱ μ) μ ω)) :=
     (submartingale_predictablePart hsub).ae_tendsto_limitProcess
-      (fun m => eLpNorm_predictablePart_le_nnreal hsub hR m)
+      ((iSup_le (eLpNorm_predictablePart_le_nnreal hsub hR)).trans_lt ENNReal.coe_lt_top)
   have h := stoppedValueAtTop_add hMt_conv hA_conv (τ := τ)
   rwa [martingalePart_add_predictablePart ℱ μ f] at h
 
@@ -375,13 +384,14 @@ integrable: it is dominated by its integrable limit. -/
 private theorem integrable_stoppedValueAtTop_predictablePart (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) {τ : Ω → WithTop ℕ} (hτ : IsStoppingTime ℱ τ) :
     Integrable (stoppedValueAtTop (predictablePart f ℱ μ) τ) μ := by
-  obtain ⟨R, hR⟩ := hui.2
+  obtain ⟨R, hR⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   set A := predictablePart f ℱ μ
   set Alim := ℱ.limitProcess A μ
   have hAlim_int : Integrable Alim μ := integrable_limitProcess_predictablePart hsub hui
   have hA_sub : Submartingale A ℱ μ := submartingale_predictablePart hsub
   have hconv : ∀ᵐ ω ∂μ, Tendsto (fun n => A n ω) atTop (𝓝 (Alim ω)) :=
-    hA_sub.ae_tendsto_limitProcess (fun m => eLpNorm_predictablePart_le_nnreal hsub hR m)
+    hA_sub.ae_tendsto_limitProcess
+      ((iSup_le (eLpNorm_predictablePart_le_nnreal hsub hR)).trans_lt ENNReal.coe_lt_top)
   have hstop_conv : ∀ᵐ ω ∂μ, Tendsto (fun n => stoppedProcess A τ n ω) atTop
       (𝓝 (stoppedValueAtTop A τ ω)) :=
     tendsto_stoppedProcess_to_stoppedValueAtTop hconv
@@ -427,13 +437,14 @@ private theorem predictablePart_stoppedValueAtTop_le_condExp (hsub : Submartinga
     (hLM : L ≤ M) :
     stoppedValueAtTop (predictablePart f ℱ μ) L ≤ᵐ[μ]
       μ[stoppedValueAtTop (predictablePart f ℱ μ) M | hL.measurableSpace] := by
-  obtain ⟨R, hR⟩ := hui.2
+  obtain ⟨R, hR⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   set A := predictablePart f ℱ μ
   set Alim := ℱ.limitProcess A μ
   have hAlim_int : Integrable Alim μ := integrable_limitProcess_predictablePart hsub hui
   have hA_sub : Submartingale A ℱ μ := submartingale_predictablePart hsub
   have hconv : ∀ᵐ ω ∂μ, Tendsto (fun n => A n ω) atTop (𝓝 (Alim ω)) :=
-    hA_sub.ae_tendsto_limitProcess (fun m => eLpNorm_predictablePart_le_nnreal hsub hR m)
+    hA_sub.ae_tendsto_limitProcess
+      ((iSup_le (eLpNorm_predictablePart_le_nnreal hsub hR)).trans_lt ENNReal.coe_lt_top)
   have hgood : ∀ᵐ ω ∂μ, Monotone (fun n => A n ω) ∧ (∀ n, 0 ≤ A n ω) ∧
       Tendsto (fun n => A n ω) atTop (𝓝 (Alim ω)) := by
     filter_upwards [hsub.monotone_predictablePart, hsub.predictablePart_nonneg, hconv]

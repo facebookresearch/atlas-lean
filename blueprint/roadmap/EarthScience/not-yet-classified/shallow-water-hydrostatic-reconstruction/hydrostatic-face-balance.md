@@ -1,0 +1,3 @@
+# Wet-bed reconstructed face balance
+
+Consider the hydrostatic reconstruction at a face between a left cell $(h_L, u_L)$ on bed $z_L$ and a right cell $(h_R, u_R)$ on bed $z_R$: reconstructed depths are $h' = \max(0, h + z - \max(z_L, z_R))$, the interface flux is the numerical flux at the reconstructed states, and the left (right) flux adds the momentum correction $g h_L^2/2 - g h_L'^2/2$ ($g h_R^2/2 - g h_R'^2/2$). Assume the numerical flux is consistent on wet states, $\mathcal F((h, hu), (h, hu)) = (hu, hu^2 + gh^2/2)$ for every $h > 0$, and the face is a wet lake at rest: $h_L + z_L = h_R + z_R = \eta$, $\max(z_L, z_R) < \eta$, and $h_L u_L = h_R u_R = 0$. Then the momentum component of the left flux equals $g h_L^2/2$ and that of the right flux equals $g h_R^2/2$.

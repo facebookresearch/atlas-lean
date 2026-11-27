@@ -474,7 +474,7 @@ theorem volume_wignerSeitzCell (Λ : BravaisLattice) :
       (ZSpan.isAddFundamentalDomain Λ.basis volume), volume_fundamentalDomain]
 
 /-- The first Brillouin zone: the Wigner–Seitz cell of the reciprocal lattice. -/
-def firstBrillouinZone (Λ : BravaisLattice) : Set (EuclideanSpace ℝ (Fin 3)) :=
+noncomputable def firstBrillouinZone (Λ : BravaisLattice) : Set (EuclideanSpace ℝ (Fin 3)) :=
   Λ.reciprocal.wignerSeitzCell
 
 /-- The first Brillouin zone is a fundamental domain for the translations by reciprocal lattice

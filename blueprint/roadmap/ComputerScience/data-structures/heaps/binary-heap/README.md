@@ -3,6 +3,7 @@
 - [Parent index in a level-order binary tree](heap-parent.md)
 - [Left child index in a level-order binary tree](heap-left.md)
 - [Right child index in an array-backed binary tree](heap-right.md)
+- [Heap Parent lt](heap-parent-lt.md)
 - [The parent of a valid nonroot index is valid](heap-parent-lt-size.md)
 - [Heap order on a level-order array](heap-ordered.md)
 - [Arrays ready for sift-up](sift-up-ready.md)
@@ -74,3 +75,4 @@
 - [Sift-down from a node without children costs nothing](time-sift-down-of-smaller-child-none.md)
 - [Sift-down from a leaf costs nothing](time-sift-down-of-heap-left-ge.md)
 - [Sift-down from an invalid index costs nothing](time-sift-down-of-size-le.md)
+- [Bottom-up heap construction takes linear time](bottom-up-heap-construction-takes-linear-time.md)

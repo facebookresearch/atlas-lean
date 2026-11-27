@@ -24,7 +24,10 @@ namespace DirichletCharacter
 
 variable {R : Type*} [CommMonoidWithZero R] {n : ℕ} [NeZero n]
 
-/-- The level of a primitive character inducing `χ` is the conductor. -/
+/-- **The level of a primitive inducer is the conductor.** Let $R$ be a commutative monoid with
+zero, let $n \ge 1$ and $d$ be natural numbers with $d \mid n$, and let $\chi$ be a Dirichlet
+character of level $n$ with values in $R$. If $\chi'$ is a primitive Dirichlet character of
+level $d$ whose change of level to $n$ is $\chi$, then $d$ equals the conductor of $\chi$. -/
 public theorem conductor_eq_of_isPrimitive_changeLevel {d : ℕ}
     {χ' : DirichletCharacter R d} (χ : DirichletCharacter R n)
     (hprim : χ'.IsPrimitive) (hd : d ∣ n)
@@ -34,8 +37,11 @@ public theorem conductor_eq_of_isPrimitive_changeLevel {d : ℕ}
   rw [h] at hcond
   exact hprim'.symm.trans hcond.symm
 
-/-- An inducer of `χ`, transported to the conductor level, is the canonical
-primitive character. -/
+/-- **An inducer at the conductor level is the primitive character.** Let $R$ be a commutative
+monoid with zero, let $n \ge 1$ and $d$ be natural numbers with $d \mid n$, and let $\chi$ be a
+Dirichlet character of level $n$ with values in $R$ whose conductor is $d$. If $\chi'$ is a
+Dirichlet character of level $d$ whose change of level to $n$ is $\chi$, then $\chi'$ is the
+primitive character associated to $\chi$. -/
 public theorem eq_primitiveCharacter_of_changeLevel_eq {d : ℕ}
     {χ' : DirichletCharacter R d} (χ : DirichletCharacter R n)
     (hlev : d = χ.conductor) (hd : d ∣ n)
@@ -48,8 +54,13 @@ public theorem eq_primitiveCharacter_of_changeLevel_eq {d : ℕ}
     rw [h, hcanon]
   exact changeLevel_injective hd heq
 
-/-- The canonical primitive character is primitive, induces `χ`, and every
-primitive inducer of `χ` agrees with it after transport to the conductor. -/
+/-- **Existence and uniqueness of the primitive character inducing a Dirichlet character.** Let
+$R$ be a commutative monoid with zero, let $n \ge 1$, and let $\chi$ be a Dirichlet character of
+level $n$ with values in $R$. The primitive character associated to $\chi$, whose level is the
+conductor of $\chi$, is primitive, and its change of level to $n$ is $\chi$. Moreover, if
+$\chi'$ is a primitive Dirichlet character of some level $d$ with $d \mid n$ whose change of level
+to $n$ is $\chi$, then $d$ is the conductor of $\chi$ and $\chi'$ is the primitive character
+associated to $\chi$. -/
 public theorem primitiveCharacter_isPrimitive_and_unique (χ : DirichletCharacter R n) :
     χ.primitiveCharacter.IsPrimitive ∧
       changeLevel (conductor_dvd_level χ) χ.primitiveCharacter = χ ∧

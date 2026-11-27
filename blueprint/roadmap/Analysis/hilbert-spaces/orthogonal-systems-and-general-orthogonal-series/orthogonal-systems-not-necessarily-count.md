@@ -18,4 +18,4 @@ separable Hilbert spaces.
 
 ## Sources
 
-- S. Mazur, Problem 51 of the Scottish Book; A. M. Plichko and V. Razenkov, On three problems from the Scottish Book connected with orthogonal systems, Colloq. Math. 70 (1996), 227-234, Section 3; see the commentary in R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).
+- S. Mazur, Problem 51 of the Scottish Book; A. Plichko and A. Razenkov, [On three problems from the Scottish Book connected with orthogonal systems](https://doi.org/10.4064/cm-70-2-227-234), Colloq. Math. 70 (1996), 227–234, Section 3, Proposition 4 and the paragraph after its proof; see the commentary in R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).

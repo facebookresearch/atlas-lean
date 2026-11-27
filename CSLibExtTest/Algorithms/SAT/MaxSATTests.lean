@@ -30,7 +30,7 @@ formula the one-half bound needs two satisfied positions and so forces
 
 namespace CSLibExtTest.Algorithms.SAT.MaxSAT
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.MaxSAT
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.MaxSAT
 
 /-- The clause `x₀ ∨ x₁ ∨ ¬x₂` over three variables. -/
 def c₀ : Finset (Lit 3) := {(0, true), (1, true), (2, false)}

@@ -1,0 +1,16 @@
+# Witt Quotient Action Models
+
+- [Raw Left Action](raw-left-action.md)
+- [Loop Groups](loop-groups.md)
+- [Positive Groups](positive-groups.md)
+- [Loop Descent](loop-descent.md)
+- [Positive Descent](positive-descent.md)
+- [Loop Group Sheaf](loop-group-sheaf.md)
+- [Positive Group Sheaf](positive-group-sheaf.md)
+- [Group Inclusion](group-inclusion.md)
+- [Quotient Unit](quotient-unit.md)
+- [Sheaf Left Action](sheaf-left-action.md)
+- [Quotient Actions](quotient-actions.md)
+- [Positive Action](positive-action.md)
+- [Positive Action unit](positive-action-unit.md)
+- [Positive Action associative](positive-action-associative.md)

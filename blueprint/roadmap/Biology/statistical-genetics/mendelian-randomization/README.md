@@ -40,22 +40,13 @@
 - [Ratio with a Gaussian denominator has infinite first moment](lintegral-enorm-div-eq-top.md)
 - [Ratio of independent normal variables is not integrable](not-integrable-div-gaussian.md)
 
+## Median-based estimators robust to invalid instruments
+
+- [Simple median Mendelian randomization estimator](simple-median-mr-estimator.md)
+- [Weighted median Mendelian randomization estimator](weighted-median-mr-estimator.md)
+- [Consistency of the weighted median MR estimator under a valid-weight margin](weighted-median-mr-consistency-under-a-valid-weight-margin.md)
+- [Penalized weighted median Mendelian randomization estimator](penalized-weighted-median-mr-estimator.md)
+
 ## Potential outcomes and the local average treatment effect
 
-- [Compliance types of Angrist, Imbens and Rubin](compliance-type.md)
-- [Compliance type of a pair of potential treatments](compliance-type-2.md)
-- [Potential-outcomes model with binary instrument and treatment](potential-outcomes.md)
-- [Observed treatment in a potential-outcomes model](observed-treatment.md)
-- [Observed outcome in a potential-outcomes model](observed-outcome.md)
-- [Compliance type of a unit](type.md)
-- [Compliers in a potential-outcomes model](compliers.md)
-- [Independence assumption for an instrument](independence.md)
-- [Exclusion restriction for an instrument](exclusion.md)
-- [Monotonicity assumption (no defiers)](monotonicity.md)
-- [Mean of a variable within an instrument arm](arm-mean.md)
-- [Observed treatment as a 0-1 real variable](treated.md)
-- [Wald instrumental-variable estimand](wald-estimand.md)
-- [First stage: treatment-rate difference equals complier share](arm-mean-treated-sub.md)
-- [Reduced form: outcome difference is the complier-weighted effect](arm-mean-outcome-sub.md)
-- [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
-- [Local average treatment effect theorem](wald-estimand-eq-late.md)
+See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.

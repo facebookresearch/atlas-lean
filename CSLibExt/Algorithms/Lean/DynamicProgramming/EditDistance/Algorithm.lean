@@ -38,7 +38,18 @@ private lemma referenceDistance_nil_right [BEq α] (source : List α) :
     referenceDistance source [] = source.length := by
   cases source <;> simp [referenceDistance]
 
-/-- Compute unit-cost edit distance and one deterministic minimum-cost script. -/
+/-- **Edit distance algorithm.** Given lists $s = s_1 \cdots s_m$ and $t = t_1 \cdots t_n$ over a
+type with a Boolean equality test, the algorithm fills a table $D(i, j)$ for $0 \le i \le m$ and
+$0 \le j \le n$ by $D(0, j) = j$, $D(i, 0) = i$ and
+$D(i, j) = \min(D(i-1, j-1) + c_{ij}, D(i-1, j) + 1, D(i, j-1) + 1)$ for $i, j \ge 1$,
+where $c_{ij}$ is $0$ if the test reports $s_i = t_j$ and $1$ otherwise. It then walks back
+from $(m, n)$ to $(0, 0)$: on the boundary it deletes the remaining $s_i$ or inserts the
+remaining $t_j$; otherwise it takes a move attaining the minimum, preferring the diagonal move
+(a keep of $s_i$ if the test reports $s_i = t_j$, else a substitution of $t_j$ for $s_i$),
+then a deletion of $s_i$, then an insertion of $t_j$. It returns the distance $D(m, n)$
+together with the edit script of the chosen moves in left-to-right order. Each of the
+$(m + 1)(n + 1)$ table entries is charged as one cell transition and each emitted operation
+as one reconstruction step. -/
 public def editDistance {α : Type u} [BEq α] (source target : List α) :
     TimeM EditDistanceCost (EditDistanceResult α) :=
   let diagonalCost (sourceValue targetValue : α) : Nat :=
@@ -871,18 +882,24 @@ private lemma Executes.eq_of_cost_zero {script : EditScript α} {source target :
   | insert h ih => simp [EditScript.cost, EditStep.cost] at hcost
   | substitute h ih => simp [EditScript.cost, EditStep.cost] at hcost
 
-/-- The returned script executes on the source and produces the target. -/
+/-- **Correctness of the returned edit script.** For lists $s$ and $t$ over a type whose Boolean
+equality test agrees with equality, the edit script returned by the edit distance algorithm on
+$s$ and $t$ transforms $s$ into $t$. -/
 theorem editDistance_script_applies [BEq α] [LawfulBEq α] (source target : List α) :
     (editDistance source target).ret.script.Transforms source target := by
   exact executes_apply (editDistance_script_facts source target).1
 
-/-- The returned script's unit cost is the reported distance. -/
+/-- **The returned edit script realizes the distance.** For lists $s$ and $t$ over a type with a
+Boolean equality test, the unit cost of the edit script returned by the edit distance algorithm
+on $s$ and $t$ equals the distance it returns. -/
 theorem editDistance_script_cost [BEq α] (source target : List α) :
     (editDistance source target).ret.script.cost =
       (editDistance source target).ret.distance :=
   (editDistance_script_metrics source target).1
 
-/-- No valid edit script costs less than the reported distance. -/
+/-- **Minimality of the computed edit distance.** Let $s$ and $t$ be lists over a type whose
+Boolean equality test agrees with equality. Every edit script that transforms $s$ into $t$ has
+unit cost at least the distance returned by the edit distance algorithm on $s$ and $t$. -/
 theorem editDistance_minimal [BEq α] [LawfulBEq α]
     (source target : List α) (script : EditScript α) :
     script.Transforms source target →
@@ -893,26 +910,34 @@ theorem editDistance_minimal [BEq α] [LawfulBEq α]
   rw [scriptCost_reverse] at hbound
   simpa [editDistance_value source target] using hbound
 
-/-- Distance from the empty list is the target length. -/
+/-- **Edit distance from the empty list.** For every list $t$ over a type with a Boolean equality
+test, the distance returned by the edit distance algorithm from the empty list to $t$ is the
+length of $t$. -/
 theorem editDistance_nil_left [BEq α] (target : List α) :
     (editDistance [] target).ret.distance = target.length := by
   rw [editDistance_value]
   simp [referenceDistance]
 
-/-- Distance to the empty list is the source length. -/
+/-- **Edit distance to the empty list.** For every list $s$ over a type with a Boolean equality
+test, the distance returned by the edit distance algorithm from $s$ to the empty list is the
+length of $s$. -/
 theorem editDistance_nil_right [BEq α] (source : List α) :
     (editDistance source []).ret.distance = source.length := by
   rw [editDistance_value]
   simp only [List.reverse_nil]
   rw [referenceDistance_nil_right, List.length_reverse]
 
-/-- Every list has distance zero from itself. -/
+/-- **Edit distance of a list to itself.** For every list $s$ over a type whose Boolean equality
+test agrees with equality, the distance returned by the edit distance algorithm from $s$ to $s$
+is $0$. -/
 theorem editDistance_self [BEq α] [LawfulBEq α] (source : List α) :
     (editDistance source source).ret.distance = 0 := by
   rw [editDistance_value]
   exact referenceDistance_self source.reverse
 
-/-- Unit-cost edit distance is zero exactly for equal lists. -/
+/-- **Edit distance vanishes only on equal lists.** For lists $s$ and $t$ over a type whose
+Boolean equality test agrees with equality, the distance returned by the dynamic-programming
+edit distance algorithm on $s$ and $t$ is $0$ if and only if $s = t$. -/
 theorem editDistance_eq_zero_iff [BEq α] [LawfulBEq α] (source target : List α) :
     (editDistance source target).ret.distance = 0 ↔ source = target := by
   constructor
@@ -922,25 +947,35 @@ theorem editDistance_eq_zero_iff [BEq α] [LawfulBEq α] (source target : List �
   · rintro rfl
     exact editDistance_self source
 
-/-- The table recursion charges exactly one transition per prefix pair. -/
+/-- **Table cost of the edit distance algorithm.** For lists $s$ and $t$ over a type with a
+Boolean equality test, write $|s|$ and $|t|$ for their lengths. The number of table-cell
+transitions charged by the dynamic-programming edit distance algorithm on $s$ and $t$ is exactly
+$(|s| + 1)(|t| + 1)$, one per pair of a prefix of $s$ and a prefix of $t$. -/
 theorem editDistance_cellTransitions [BEq α] (source target : List α) :
     (editDistance source target).time.cellTransitions =
       (source.length + 1) * (target.length + 1) := by
   exact congrArg EditDistanceCost.cellTransitions (editDistance_time_spec source target)
 
-/-- Reconstruction charges exactly one step per emitted operation. -/
+/-- **Reconstruction cost of the edit distance algorithm.** For lists $s$ and $t$ over a type with
+a Boolean equality test, the number of reconstruction steps charged by the edit distance
+algorithm on $s$ and $t$ equals the length of the edit script it returns. -/
 theorem editDistance_reconstructionSteps [BEq α] (source target : List α) :
     (editDistance source target).time.reconstructionSteps =
       (editDistance source target).ret.script.length := by
   exact congrArg EditDistanceCost.reconstructionSteps (editDistance_time_spec source target)
 
-/-- Reconstruction emits at most one operation per consumed or produced symbol. -/
+/-- **Reconstruction cost bound for edit distance.** For lists $s$ and $t$ over a type with a
+Boolean equality test, write $|s|$ and $|t|$ for their lengths. The number of reconstruction
+steps charged by the edit distance algorithm on $s$ and $t$ is at most $|s| + |t|$. -/
 theorem editDistance_reconstructionSteps_le [BEq α] (source target : List α) :
     (editDistance source target).time.reconstructionSteps ≤ source.length + target.length := by
   rw [editDistance_reconstructionSteps]
   exact (editDistance_script_metrics source target).2.1
 
-/-- Total charged events are all table cells plus all reconstructed operations. -/
+/-- **Running time of the edit distance algorithm.** For lists $s$ and $t$ over a type with a
+Boolean equality test, the total number of events charged by the edit distance algorithm on $s$
+and $t$, that is its cell transitions plus its reconstruction steps, equals
+$(|s| + 1)(|t| + 1) + k$, where $k$ is the length of the edit script it returns. -/
 theorem editDistance_time [BEq α] (source target : List α) :
     (editDistance source target).time.total =
       (source.length + 1) * (target.length + 1) +

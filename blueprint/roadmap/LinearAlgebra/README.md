@@ -17,10 +17,14 @@ Numerical linear algebra in the sense of Trefethen and Bau sits under matrix dec
 
 The accuracy and cost of these algorithms are analysed in three steps. [Perturbation theory](matrix-decompositions/perturbation-theory-for-linear-systems/README.md) measures the sensitivity of the problem by the condition number $\kappa(A) = \|A\|\,\|A^{-1}\|$, which bounds the relative change of the solution of $Ax = b$ under relative changes of $A$ and $b$ and is the reciprocal of the relative distance to the singular matrices. [Rounding error analysis](../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md) shows that an algorithm is backward stable, as Gaussian elimination is when $|\hat L|\,|\hat U|$ stays comparable to $A$; error is then at most about condition number times backward error. Finally, [communication lower bounds](../ComputerScience/algebraic-and-numerical-algorithms/communication-lower-bounds/README.md) show that classical matrix multiplication and the factorizations built on it must move $\Omega(n^3/\sqrt{M})$ words through a fast memory of $M$ words, a consequence of the [Loomis–Whitney inequality](../Combinatorics/extremal-set-theory/loomis-whitney-and-brascamp-lieb-inequalities/README.md). For nonsymmetric eigenvalue problems the [Bauer–Fike theorem](../Analysis/operator-theory/eigenvalue-inequalities/bauer-fike-theorem/README.md) plays the role of the condition number bound.
 
+- [Bases and dimension](bases-and-dimension/README.md)
 - [Linear maps and duality](linear-maps-and-duality/README.md)
+- [Matrices and matrix algebra](matrix-algebra/README.md)
 - [Eigenvalues and canonical forms](eigenvalues-and-canonical-forms/README.md)
 - [Matrix decompositions and linear systems](matrix-decompositions/README.md)
 - [Determinants and matrix identities](determinants-and-matrix-identities/README.md)
 - [Positive definite matrices and matrix inequalities](positive-definite-matrices/README.md)
 - [Bilinear and quadratic forms](bilinear-and-quadratic-forms/README.md)
+- [Tensor products and multilinear algebra](multilinear-algebra/README.md)
 - [Special matrices](special-matrices/README.md)
+- [Not yet classified](not-yet-classified/README.md)

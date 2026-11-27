@@ -7,7 +7,7 @@ Both sides are real numbers: the left side because $e^{A+B}$ is positive definit
 
 Golden proved it for nonnegative definite $A, B$ and Thompson for all Hermitian $A, B$, both in 1965 (Forrester and Thompson, introduction). For commuting $A$ and $B$ it is an equality; for noncommuting ones it can be strict.
 
-The usual proof combines the Lie–Trotter product formula $e^{A+B} = \lim_m (e^{A/m} e^{B/m})^m$ with the inequality $|\operatorname{tr}(XY)^{2^k}| \le \operatorname{tr}(X^2 Y^2)^{2^{k-1}}$ for positive $X, Y$.
+The usual proof combines the Lie–Trotter product formula $e^{A+B} = \lim_m (e^{A/m} e^{B/m})^m$ with the inequality $|\operatorname{tr}((XY)^{2^k})| \le \operatorname{tr}((X^2 Y^2)^{2^{k-1}})$ for positive $X, Y$.
 
 ## Background
 

@@ -1,6 +1,6 @@
 # Traveling wave solves the Fisher–KPP equation
 
-Let $D, r, c \in \mathbb{R}$ with $D \ne 0$, and let $(U, U')$ be a [traveling-wave profile](is-wave-profile.md) of speed $c$. For all real $x$ and $t$ there
+Let $D, r, c \in \mathbb{R}$ with $D \ne 0$, and let $(U, U')$ be a [traveling-wave profile](../../../Analysis/ordinary-differential-equations/is-wave-profile.md) of speed $c$. For all real $x$ and $t$ there
 is a number $U''$ such that $y \mapsto U'(y - ct)$ has derivative $U''$ at $y = x$ and
 
 $$-c\,U'(x - ct) = D\,U'' + r\,U(x - ct)\bigl(1 - U(x - ct)\bigr).$$

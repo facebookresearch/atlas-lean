@@ -46,11 +46,9 @@ DOI 10.1002/j.1538-7305.1948.tb01338.x and
 10.1002/j.1538-7305.1948.tb00917.x.
 -/
 
-/-- A code is prefix-free if distinct source symbols have no prefix relation.
-
-Compatibility alias for the production predicate
-`MathlibExt.InformationTheory.IsPrefixFree`, which both Shannon bounds and the
-proved Kraft–McMillan theorem share. -/
+/-- **Prefix-free code (Shannon source coding).** A code $c$ assigning to each element of $\alpha$
+a finite word over $\beta$ is prefix-free when, for all distinct $a_1, a_2 \in \alpha$, the word
+$c(a_1)$ is not a prefix of the word $c(a_2)$. This is the general notion of a prefix-free code. -/
 abbrev IsPrefixFree {α β : Type*} (code : α → List β) : Prop :=
   MathlibExt.InformationTheory.IsPrefixFree code
 
@@ -141,11 +139,18 @@ private theorem expected_of_ceil {α : Type*} [Fintype α]
               rw [← Finset.sum_div, Finset.sum_neg_distrib, hp_sum]
 
 /--
-Any injective uniquely decodable code has expected length at least its base-q entropy.
-Source: C. E. Shannon, Bell Syst. Tech. J. 27 (1948), 379-423 and 623-656, DOI
-10.1002/j.1538-7305.1948.tb01338.x.
+**Shannon source coding lower bound.** Let $\alpha$ and $\beta$ be finite types with
+$q = |\beta| \ge 2$, and let $p : \alpha \to \mathbb{R}$ satisfy $p(a) > 0$ for every $a \in \alpha$
+and $\sum_{a \in \alpha} p(a) = 1$. Let $c$ assign to each $a \in \alpha$ a finite word $c(a)$ over
+$\beta$, of length $|c(a)|$, such that $c$ is injective and its set of codewords is uniquely
+decodable: any two finite lists of codewords with the same concatenation are equal. Then the
+expected length $\sum_{a \in \alpha} p(a)\,|c(a)|$ is at least the base-$q$ entropy
+$-\left(\sum_{a \in \alpha} p(a) \log p(a)\right) / \log q$, where $\log$ is the natural logarithm.
 
 Proves `Wanted` entry `shannon_source_coding_lower_bound`.
+
+Source: C. E. Shannon, Bell Syst. Tech. J. 27 (1948), 379-423 and 623-656, DOI
+10.1002/j.1538-7305.1948.tb01338.x.
 -/
 theorem shannon_source_coding_lower_bound
     {α β : Type*} [Fintype α] [Fintype β]
@@ -254,11 +259,18 @@ theorem shannon_source_coding_lower_bound
   linarith
 
 /--
-There exists a prefix-free code with expected length less than entropy plus one.
-Source: C. E. Shannon, Bell Syst. Tech. J. 27 (1948), 379-423 and 623-656, DOI
-10.1002/j.1538-7305.1948.tb01338.x.
+**Shannon source coding upper bound.** Let $\alpha$ and $\beta$ be finite types with
+$q = |\beta| \ge 2$, and let $p : \alpha \to \mathbb{R}$ satisfy $p(a) > 0$ for every $a \in \alpha$
+and $\sum_{a \in \alpha} p(a) = 1$. Then there is a prefix-free code $c$ assigning to each
+$a \in \alpha$ a finite word $c(a)$ over $\beta$, of length $|c(a)|$, whose expected length
+$\sum_{a \in \alpha} p(a)\,|c(a)|$ is strictly less than
+$-\left(\sum_{a \in \alpha} p(a) \log p(a)\right) / \log q + 1$, where $\log$ is the natural
+logarithm.
 
 Proves `Wanted` entry `shannon_source_coding_upper_bound`.
+
+Source: C. E. Shannon, Bell Syst. Tech. J. 27 (1948), 379-423 and 623-656, DOI
+10.1002/j.1538-7305.1948.tb01338.x.
 -/
 theorem shannon_source_coding_upper_bound
     {α β : Type*} [Fintype α] [Fintype β]

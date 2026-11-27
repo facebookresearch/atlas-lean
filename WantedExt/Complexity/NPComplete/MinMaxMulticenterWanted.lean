@@ -18,7 +18,7 @@ p-centers", SIAM Journal on Applied Mathematics 37 (1979), 513-538, doi:10.1137/
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
@@ -97,9 +97,10 @@ def OnGraph (i : MinMaxMulticenterInstance) (p : Fin i.1 × Fin i.1 × ℝ) : Pr
   (p.1 = p.2.1 ∧ p.2.2 = 0) ∨
     ((Graph i).Adj p.1 p.2.1 ∧ 0 ≤ p.2.2 ∧ p.2.2 ≤ edgeLength i s(p.1, p.2.1))
 
-/-- The shortest-path distance from vertex `v` to the point `p = (a, b, t)` is at most `r`: some
-walk reaches `a` with total length plus `t` at most `r`, or reaches `b` with total length plus
-`l({a, b}) - t` at most `r`. -/
+/-- Some walk from `v` reaches `a` with total length plus `t` at most `r`, or reaches `b` with
+total length plus `l({a, b}) - t` at most `r`, for any triple `p = (a, b, t)`. When `p` is a
+point on the graph (`OnGraph`), as feasibility checks separately, this says the shortest-path
+distance from `v` to `p` is at most `r`. -/
 def DistLE (i : MinMaxMulticenterInstance) (v : Fin i.1) (p : Fin i.1 × Fin i.1 × ℝ)
     (r : ℝ) : Prop :=
   (∃ W : (Graph i).Walk v p.1, (walkLength i W : ℝ) + p.2.2 ≤ r) ∨

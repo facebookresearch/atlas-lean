@@ -16,7 +16,7 @@ Geometry 23 (2000), 73-110, doi:10.1007/PL00009492, Theorem 4.1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MinimumAreaPolygonalizationWanted

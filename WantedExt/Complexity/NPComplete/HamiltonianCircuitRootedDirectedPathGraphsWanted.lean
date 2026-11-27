@@ -24,10 +24,10 @@ trees", Discrete Mathematics 13 (1975), 237-249, doi:10.1016/0012-365X(75)90021-
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 public import WantedExt.Complexity.NPComplete.RootedDirectedPathGraphCompletionWanted
 
 @[expose] public section
@@ -56,7 +56,7 @@ Hamiltonian circuit is a polynomial certificate (a yes-instance has `n ≤ |E|`)
 directed path graphs are recognized in polynomial time (Gavril).
 
 The instance, the graph and the question are those of HAMILTONIAN CIRCUIT
-(`HamiltonianCycleUndirectedWanted`), reused unchanged as in
+(`HamiltonianCycleUndirectedDefs`), reused unchanged as in
 `HamiltonianCircuitDirectedPathGraphsWanted`: a vertex count `n` and an edge list on `Fin n`,
 the parent's well-formedness (`0 < n` and a simple edge list), and the question
 `HamiltonianCycleUndirected.HamiltonianCycleUndirectedFeasible` (`3 ≤ n` and Mathlib's

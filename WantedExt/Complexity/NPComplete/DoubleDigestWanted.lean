@@ -22,7 +22,7 @@ approximability in the presence of noisy data", COCOON 2003, Lecture Notes in Co
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.List.Sort

@@ -1,0 +1,45 @@
+name: Page problem
+description: A page, or its Lean declaration, does not state what its source states.
+title: "[Page] "
+labels: ["bug", "math graph"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Lean checks proofs, not whether a statement means what was intended.
+        A page with no Lean link is checked against its source alone.
+        [Mathematical faithfulness](https://github.com/facebookresearch/atlas-lean/blob/main/REVIEWING.md#mathematical-faithfulness)
+        lists what to compare. Search the open issues first.
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The page's address on the site, or its article id (`af_…`).
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: Problem
+      options:
+        - The page and its linked Lean declaration state different things
+        - The statement does not match its source
+        - The Lean statement is false, vacuous or tautological
+        - A citation, a dependency or the prose is wrong
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: >-
+        Quote what differs and say how: a hypothesis added, dropped or
+        strengthened, another domain, a wrong constant. A counterexample helps.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: The edition or version and the theorem number you compared with, if any.

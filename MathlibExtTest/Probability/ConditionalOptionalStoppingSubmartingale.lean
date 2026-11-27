@@ -86,25 +86,25 @@ example {f : ℕ → Ω → ℝ}
 
 omit [MeasurableSpace Ω] in
 /-- Finite zero stopping retains the original initial value. -/
-theorem characterization_stopped_zero (f : ℕ → Ω → ℝ) :
+private theorem characterization_stopped_zero (f : ℕ → Ω → ℝ) :
     stoppedValueAtTop f (fun _ => (0 : WithTop ℕ)) = f 0 := rfl
 
 omit [MeasurableSpace Ω] in
 /-- Finite one stopping retains the value after one step. -/
-theorem characterization_stopped_one (f : ℕ → Ω → ℝ) :
+private theorem characterization_stopped_one (f : ℕ → Ω → ℝ) :
     stoppedValueAtTop f (fun _ => (1 : WithTop ℕ)) = f 1 := rfl
 
 omit [MeasurableSpace Ω] in
 /-- The infinite branch of a signed nonzero constant process is that constant. -/
-theorem characterization_negative_constant_infinity :
+private theorem characterization_negative_constant_infinity :
     stoppedValueAtTop (fun _ : ℕ => fun _ : Ω => (-3 : ℝ)) (fun _ => ⊤) =
       fun _ => (-3 : ℝ) :=
   stoppedValueAtTop_const (-3) _
 
 /-- A bounded deterministic process with a genuine strict increase. -/
-def boundedStep (n : ℕ) (_ : Ω) : ℝ := if n = 0 then -2 else 1
+private def boundedStep (n : ℕ) (_ : Ω) : ℝ := if n = 0 then -2 else 1
 
-theorem boundedStep_submartingale : Submartingale boundedStep ℱ μ := by
+private theorem boundedStep_submartingale : Submartingale boundedStep ℱ μ := by
   refine ⟨?_, ?_, ?_⟩
   · intro n
     exact stronglyMeasurable_const
@@ -120,7 +120,7 @@ theorem boundedStep_submartingale : Submartingale boundedStep ℱ μ := by
   · intro n
     exact integrable_const _
 
-theorem boundedStep_uniformIntegrable : UniformIntegrable (boundedStep : ℕ → Ω → ℝ) 1 μ := by
+private theorem boundedStep_uniformIntegrable : UniformIntegrable (boundedStep : ℕ → Ω → ℝ) 1 μ := by
   let g : Bool → Ω → ℝ := fun b _ => if b then -2 else 1
   have hfinite : UniformIntegrable g 1 μ :=
     uniformIntegrable_finite le_rfl ENNReal.one_ne_top (fun _ => memLp_const _)
@@ -128,12 +128,13 @@ theorem boundedStep_uniformIntegrable : UniformIntegrable (boundedStep : ℕ →
     funext n ω
     simp [g, boundedStep]
   rw [← heq]
-  obtain ⟨hunif, C, hC⟩ := hfinite
-  exact ⟨hunif.comp (fun n : ℕ => decide (n = 0)), C, fun n => hC _⟩
+  obtain ⟨hunif, hbdd⟩ := hfinite
+  exact ⟨hunif.comp (fun n : ℕ => decide (n = 0)),
+    (iSup_le fun n => le_iSup (fun b => eLpNorm (g b) 1 μ) _).trans_lt hbdd⟩
 
 omit [MeasurableSpace Ω] in
 /-- The bounded strict process converges to one in the infinite branch. -/
-theorem characterization_boundedStep_infinity :
+private theorem characterization_boundedStep_infinity :
     stoppedValueAtTop (boundedStep : ℕ → Ω → ℝ) (fun _ => ⊤) = fun _ => (1 : ℝ) := by
   funext ω
   change limUnder atTop (fun n => boundedStep n ω) = 1
@@ -144,13 +145,13 @@ theorem characterization_boundedStep_infinity :
   exact ht.limUnder_eq
 
 /-- The strict submartingale has literal expectations minus two and one. -/
-theorem characterization_strict_integrals :
+private theorem characterization_strict_integrals :
     (∫ ω, stoppedValueAtTop (boundedStep : ℕ → Ω → ℝ) (fun _ => (0 : WithTop ℕ)) ω ∂μ) = -2 ∧
     (∫ ω, stoppedValueAtTop (boundedStep : ℕ → Ω → ℝ) (fun _ => (1 : WithTop ℕ)) ω ∂μ) = 1 := by
   norm_num [stoppedValueAtTop, stoppedValue, boundedStep]
 
 /-- The original conditional theorem applies to a nonmartingale process across zero and one. -/
-theorem characterization_strict_conditional :
+private theorem characterization_strict_conditional :
     stoppedValueAtTop (boundedStep : ℕ → Ω → ℝ) (fun _ => (0 : WithTop ℕ)) ≤ᵐ[μ]
       μ[stoppedValueAtTop boundedStep (fun _ => (1 : WithTop ℕ)) |
         (isStoppingTime_const ℱ (0 : ℕ)).measurableSpace] :=

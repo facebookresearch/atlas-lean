@@ -32,21 +32,28 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A node is retained when it is a pivot or precedes some pivot. -/
+/-- **Retained node.** Let $V$ be a set, let $P$ be a predicate on $V$ (the pivot nodes) and let
+$\prec$ be a binary relation on $V$. A node $v \in V$ is retained with respect to $P$ and $\prec$
+if $P(v)$ holds or there is a node $w \in V$ with $P(w)$ and $v \prec w$. -/
 def isYoungRetained {V : Type _} (pivot : V → Prop)
     (precedes : V → V → Prop) (v : V) : Prop :=
   pivot v ∨ ∃ w, pivot w ∧ precedes v w
 
-/-- Characteristic lemma for retention: a node is retained exactly when it is
-a pivot or precedes some pivot. -/
+/-- **Characterization of retained nodes.** Let $V$ be a set, let $P$ be a predicate on $V$ and
+let $\prec$ be a binary relation on $V$. A node $v \in V$ is retained with respect to $P$ and
+$\prec$ if and only if $P(v)$ holds or there is a node $w \in V$ with $P(w)$ and $v \prec w$. -/
 @[simp]
 theorem isYoungRetained_iff {V : Type _} (pivot : V → Prop)
     (precedes : V → V → Prop) (v : V) :
     isYoungRetained pivot precedes v ↔ pivot v ∨ ∃ w, pivot w ∧ precedes v w :=
   Iff.rfl
 
-/-- The Young graph: restrict a labeled directed graph to retained nodes and
-to edges whose source and target are both retained. -/
+/-- **Young graph of a labeled directed graph.** Let $G$ be a labeled directed graph with vertex
+set $V$, edge set $E$ and label set $L$, let $P$ be a predicate on $V$ and let $\prec$ be a binary
+relation on $V$. The Young graph of $G$ with respect to $P$ and $\prec$ is the labeled directed
+graph with label set $L$ whose vertices are the vertices of $G$ that are retained with respect to
+$P$ and $\prec$, whose edges are the edges of $G$ whose source and target are both retained, and
+in which each edge has the same source, target and label as in $G$. -/
 def youngGraph {V E L : Type _} (G : LabeledDigraph V E L)
     (pivot : V → Prop) (precedes : V → V → Prop) :
     LabeledDigraph { v : V // isYoungRetained pivot precedes v }
@@ -54,8 +61,11 @@ def youngGraph {V E L : Type _} (G : LabeledDigraph V E L)
         isYoungRetained pivot precedes (G.tgt e) } L :=
   G.restrict (isYoungRetained pivot precedes)
 
-/-- The source of an edge in the Young graph: the ambient source, viewed in
-the retained subtype. -/
+/-- **Source of an edge in the Young graph.** Let $G$ be a labeled directed graph, let $P$ be a
+predicate on its vertices, let $\prec$ be a binary relation on its vertices, and let $e$ be an
+edge of $G$ whose source and target are both retained with respect to $P$ and $\prec$, viewed as
+an edge of the Young graph of $G$ with respect to $P$ and $\prec$. The source of $e$ in the Young
+graph, viewed as a vertex of $G$, is the source of $e$ in $G$. -/
 @[simp]
 theorem youngGraph_src {V E L : Type _} (G : LabeledDigraph V E L)
     (pivot : V → Prop) (precedes : V → V → Prop)
@@ -64,8 +74,11 @@ theorem youngGraph_src {V E L : Type _} (G : LabeledDigraph V E L)
     ((youngGraph G pivot precedes).src e).val = G.src e.val :=
   rfl
 
-/-- The target of an edge in the Young graph: the ambient target, viewed in
-the retained subtype. -/
+/-- **Target of an edge in the Young graph.** Let $G$ be a labeled directed graph, let $P$ be a
+predicate on its vertices, let $\prec$ be a binary relation on its vertices, and let $e$ be an
+edge of $G$ whose source and target are both retained with respect to $P$ and $\prec$, viewed as
+an edge of the Young graph of $G$ with respect to $P$ and $\prec$. The target of $e$ in the Young
+graph, viewed as a vertex of $G$, is the target of $e$ in $G$. -/
 @[simp]
 theorem youngGraph_tgt {V E L : Type _} (G : LabeledDigraph V E L)
     (pivot : V → Prop) (precedes : V → V → Prop)
@@ -74,7 +87,11 @@ theorem youngGraph_tgt {V E L : Type _} (G : LabeledDigraph V E L)
     ((youngGraph G pivot precedes).tgt e).val = G.tgt e.val :=
   rfl
 
-/-- The label of an edge in the Young graph is its ambient label. -/
+/-- **Label of an edge in the Young graph.** Let $G$ be a labeled directed graph, let $P$ be a
+predicate on its vertices, let $\prec$ be a binary relation on its vertices, and let $e$ be an
+edge of $G$ whose source and target are both retained with respect to $P$ and $\prec$, viewed as
+an edge of the Young graph of $G$ with respect to $P$ and $\prec$. The label of $e$ in the Young
+graph is its label in $G$. -/
 @[simp]
 theorem youngGraph_label {V E L : Type _} (G : LabeledDigraph V E L)
     (pivot : V → Prop) (precedes : V → V → Prop)

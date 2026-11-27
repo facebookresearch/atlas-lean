@@ -53,12 +53,19 @@ open Finset
 variable (α : Type*) [Fintype α] [Nonempty α] (q : ℕ)
 
 open Classical in
-/-- The collision experiment: `q` independent uniform samples from `α` (a uniform function
-`Fin q → α`); the outcome is `true` when two samples coincide. -/
+/-- **The collision experiment.** For a nonempty finite set $\alpha$ and a natural number $q$, the
+collision experiment is the probability distribution on $\{\mathrm{true}, \mathrm{false}\}$
+obtained by drawing a function $s \colon \{0, \dots, q - 1\} \to \alpha$ uniformly at random
+(equivalently, $q$ independent uniform samples $s(0), \dots, s(q - 1)$ from $\alpha$) and
+outputting true exactly when $s$ is not injective, that is, when $s(i) = s(j)$ for some
+$i \ne j$. -/
 noncomputable def collisionGame : PMF Bool :=
   (Cslib.Probability.PMF.uniformOfFintype (Fin q → α)).map fun s => !decide (Function.Injective s)
 
-/-- The probability that `q` independent uniform samples from `α` contain a collision. -/
+/-- **Collision probability.** For a nonempty finite set $\alpha$ and a natural number $q$, the
+collision probability is the probability, as a real number, that the collision experiment with
+$q$ samples from $\alpha$ outputs true, that is, that $q$ independent uniform samples from
+$\alpha$ contain two equal samples at distinct positions. -/
 noncomputable def collisionProb : ℝ := (collisionGame α q true).toReal
 
 omit [Nonempty α] in
@@ -82,7 +89,10 @@ private theorem card_filter_injective [DecidableEq α] :
   rw [← Fintype.card_subtype, Fintype.card_congr (Equiv.subtypeInjectiveEquivEmbedding _ _),
     Fintype.card_embedding_eq, Fintype.card_fin]
 
-/-- **The exact collision probability**: `1 - N (N - 1) ⋯ (N - q + 1) / N ^ q`. -/
+/-- **The exact collision probability.** Let $\alpha$ be a nonempty finite set with $N$ elements
+and $q$ a natural number. The probability that $q$ independent uniform samples from $\alpha$
+contain a collision equals $1 - N (N - 1) \cdots (N - q + 1) / N^q$, where the product
+$N (N - 1) \cdots (N - q + 1)$ has $q$ factors (it is $1$ for $q = 0$ and $0$ for $q > N$). -/
 theorem collisionProb_eq :
     collisionProb α q =
       1 - ((Fintype.card α).descFactorial q : ℝ) / (Fintype.card α : ℝ) ^ q := by
@@ -142,8 +152,11 @@ private theorem collisionProb_le_one : collisionProb α q ≤ 1 := by
   rw [collisionProb_eq, sub_le_self_iff]
   positivity
 
-/-- **Birthday upper bound**: the collision probability is at most `q (q - 1) / (2 N)`, which
-implies Katz and Lindell's Lemma A.15 (the bound `q ^ 2 / (2 N)`). -/
+/-- **Birthday upper bound.** Let $\alpha$ be a nonempty finite set with $N$ elements and $q$ a
+natural number. The probability that $q$ independent uniform samples from $\alpha$ contain a
+collision is at most $q (q - 1) / (2 N)$.
+
+This implies Katz and Lindell's Lemma A.15, which states the bound $q^2 / (2 N)$. -/
 theorem collisionProb_le :
     collisionProb α q ≤ q * (q - 1) / (2 * Fintype.card α) := by
   have hN : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
@@ -165,8 +178,9 @@ theorem collisionProb_le :
     have hq1 : (Fintype.card α : ℝ) ≤ q - 1 := by linarith
     nlinarith [mul_le_mul hq' hq1 (by positivity) (by positivity)]
 
-/-- **Birthday lower bound, exponential form**:
-`1 - exp (-q (q - 1) / (2 N)) ≤ collisionProb α q`. -/
+/-- **Birthday lower bound, exponential form.** Let $\alpha$ be a nonempty finite set with $N$
+elements and $q$ a natural number. The probability that $q$ independent uniform samples from
+$\alpha$ contain a collision is at least $1 - \exp(-q (q - 1) / (2 N))$. -/
 theorem one_sub_exp_le_collisionProb :
     1 - Real.exp (-(q * (q - 1) / (2 * Fintype.card α))) ≤ collisionProb α q := by
   have hN : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
@@ -185,7 +199,9 @@ theorem one_sub_exp_le_collisionProb :
     rw [collisionProb_eq, hD, Nat.cast_zero, zero_div, sub_zero]
     linarith [Real.exp_pos (-(q * (q - 1) / (2 * Fintype.card α)))]
 
-/-- With `x = q (q - 1) / (2 N)`, the collision probability is at least `x / (1 + x)`. -/
+/-- **Birthday lower bound, rational form.** Let $\alpha$ be a nonempty finite set with $N$
+elements, $q$ a natural number, and $x = q (q - 1) / (2 N)$. The probability that $q$ independent
+uniform samples from $\alpha$ contain a collision is at least $x / (1 + x)$. -/
 theorem div_one_add_le_collisionProb :
     (q * (q - 1) / (2 * Fintype.card α)) / (1 + q * (q - 1) / (2 * Fintype.card α)) ≤
       collisionProb α q := by
@@ -203,9 +219,12 @@ theorem div_one_add_le_collisionProb :
   have : x / (1 + x) = 1 - 1 / (1 + x) := by field_simp; ring
   linarith
 
-/-- **Birthday lower bound**: if `q (q - 1) ≤ 2 N`, the collision probability is at least
-`q (q - 1) / (4 N)`. This strengthens Katz and Lindell's Lemma A.16, whose hypothesis
-`q ≤ √(2 N)` implies `q (q - 1) ≤ 2 N` (`collisionProb_ge_of_le_sqrt`). -/
+/-- **Birthday lower bound.** Let $\alpha$ be a nonempty finite set with $N$ elements and $q$ a
+natural number with $q (q - 1) \le 2 N$. The probability that $q$ independent uniform samples
+from $\alpha$ contain a collision is at least $q (q - 1) / (4 N)$.
+
+This strengthens Katz and Lindell's Lemma A.16, whose hypothesis $q \le \sqrt{2 N}$ implies
+$q (q - 1) \le 2 N$. -/
 theorem collisionProb_ge (h : (q : ℝ) * (q - 1) ≤ 2 * Fintype.card α) :
     q * (q - 1) / (4 * Fintype.card α) ≤ collisionProb α q := by
   have hN : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
@@ -232,21 +251,29 @@ private theorem mul_sub_one_le_of_le_sqrt (h : (q : ℝ) ≤ Real.sqrt (2 * Fint
     (Real.le_sqrt (by positivity) (by positivity)).mp h
   nlinarith [(Nat.cast_nonneg q : (0 : ℝ) ≤ q)]
 
-/-- **Birthday lower bound as stated in Katz and Lindell** (2nd ed., Lemma A.16: "say
-`q ≤ √(2N)` elements are chosen uniformly and independently ... at least `q (q - 1) / (4N)`"):
-if `q ≤ √(2 N)`, the collision probability is at least `q (q - 1) / (4 N)`. -/
+/-- **Birthday lower bound as stated in Katz and Lindell.** Let $\alpha$ be a nonempty finite set
+with $N$ elements and $q$ a natural number with $q \le \sqrt{2 N}$. The probability that $q$
+independent uniform samples from $\alpha$ contain a collision is at least $q (q - 1) / (4 N)$.
+
+This is Lemma A.16 of Katz and Lindell (2nd ed.): "say $q \le \sqrt{2N}$ elements are chosen
+uniformly and independently ... at least $q (q - 1) / (4N)$". -/
 theorem collisionProb_ge_of_le_sqrt (h : (q : ℝ) ≤ Real.sqrt (2 * Fintype.card α)) :
     q * (q - 1) / (4 * Fintype.card α) ≤ collisionProb α q :=
   collisionProb_ge α q (mul_sub_one_le_of_le_sqrt α q h)
 
-/-- The birthday lower bound under the hypothesis `q ≤ √N`, which implies `q ≤ √(2 N)`. -/
+/-- **Birthday lower bound for at most square-root many samples.** Let $\alpha$ be a nonempty
+finite set with $N$ elements and $q$ a natural number with $q \le \sqrt{N}$. The probability that
+$q$ independent uniform samples from $\alpha$ contain a collision is at least
+$q (q - 1) / (4 N)$. -/
 theorem collisionProb_ge_of_le_sqrt_card (h : (q : ℝ) ≤ Real.sqrt (Fintype.card α)) :
     q * (q - 1) / (4 * Fintype.card α) ≤ collisionProb α q :=
   collisionProb_ge_of_le_sqrt α q (h.trans (Real.sqrt_le_sqrt (by
     have : (0 : ℝ) ≤ Fintype.card α := Nat.cast_nonneg _
     linarith)))
 
-/-- **Even odds**: if `2 N ≤ q (q - 1)`, a collision has probability at least `1/2`. -/
+/-- **Even odds of a collision.** Let $\alpha$ be a nonempty finite set with $N$ elements and $q$ a
+natural number with $2 N \le q (q - 1)$. The probability that $q$ independent uniform samples from
+$\alpha$ contain a collision is at least $1/2$. -/
 theorem half_le_collisionProb (h : 2 * (Fintype.card α : ℝ) ≤ q * (q - 1)) :
     1 / 2 ≤ collisionProb α q := by
   have hN : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos

@@ -16,7 +16,7 @@ Computational Geometry 45(4) (2011), 701-722, doi:10.1007/s00454-011-9342-z.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
@@ -77,7 +77,8 @@ noncomputable def l1Dist (a b : ℝ × ℝ) : ℝ :=
   |a.1 - b.1| + |a.2 - b.2|
 
 /-- `w` is a rectilinear path in the set `U`: consecutive points share a coordinate, and the
-segment between them lies in `U`. -/
+segment between them lies in `U`. Only consecutive pairs are tested, so a one-point list `[p]`
+is a rectilinear path in every set, even one that does not contain `p`. -/
 def IsRectilinearPathIn (U : Set (ℝ × ℝ)) (w : List (ℝ × ℝ)) : Prop :=
   w.IsChain fun a b => (a.1 = b.1 ∨ a.2 = b.2) ∧ segment ℝ a b ⊆ U
 
@@ -89,9 +90,11 @@ noncomputable def pathLength (w : List (ℝ × ℝ)) : ℝ :=
 def WellFormed (i : MinimumManhattanNetworkInstance) : Prop :=
   0 < i.2
 
-/-- Some list `N` of axis-parallel segments of total length at most `L` contains, for all points
-`p, q` of `T`, a rectilinear path from `p` to `q` whose length is the `L₁` distance of `p` and
-`q`. -/
+/-- Some list `N` of axis-parallel segments of total length at most `L` has, for all points
+`p, q` of `T`, a rectilinear path from `p` to `q` in the union of its segments whose length is
+the `L₁` distance of `p` and `q`. For `p = q` the one-point path qualifies whether or not `p`
+lies on a segment of `N`; the network graph is read with every terminal as a vertex, isolated
+ones included, so it may differ from the union of its segments. -/
 def MinimumManhattanNetworkFeasible (i : MinimumManhattanNetworkInstance) : Prop :=
   ∃ N : List ((ℝ × ℝ) × (ℝ × ℝ)),
     (∀ s ∈ N, s.1.1 = s.2.1 ∨ s.1.2 = s.2.2) ∧

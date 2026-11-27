@@ -1,0 +1,15 @@
+# Adic Rational Ring Models
+
+- [Is Annular](is-annular.md)
+- [Fraction](fraction.md)
+- [Definition Algebra](definition-algebra.md)
+- [Definition Algebra singleton denominator](definition-algebra-singleton-denominator.md)
+- [Completion Ideal](completion-ideal.md)
+- [Completed Definition](completed-definition.md)
+- [Completed Denominator](completed-denominator.md)
+- [Rational Ring](rational-ring.md)
+- [Coefficient](coefficient.md)
+- [Coefficient denominator](coefficient-denominator.md)
+- [Integral Fraction](integral-fraction.md)
+- [Rational Fraction](rational-fraction.md)
+- [Fraction relation](fraction-relation.md)

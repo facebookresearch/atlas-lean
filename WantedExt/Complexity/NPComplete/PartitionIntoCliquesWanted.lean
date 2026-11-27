@@ -20,11 +20,12 @@ J. W. Thatcher (eds.), *Complexity of Computer Computations*, Plenum Press
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -53,34 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev PartitionIntoCliquesInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PartitionIntoCliquesInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |V| = n`. -/
-def WellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- The vertices split into at most `K` cliques: for some `k ≤ K` there is a partition into
-blocks `c⁻¹(j)`, `j : Fin k`, each of which is a clique of the graph. -/
-def PartitionIntoCliquesFeasible (i : PartitionIntoCliquesInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ c : Fin i.1 → Fin k, ∀ j : Fin k, (Graph i).IsClique {v | c v = j}
-
-open Classical in
-/-- PARTITION INTO CLIQUES as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES is NP-complete.** Source: Garey and Johnson (1979), [GT15];
 Karp (1972). -/

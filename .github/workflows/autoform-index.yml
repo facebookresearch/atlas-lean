@@ -71,6 +71,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -94,7 +95,7 @@ jobs:
 
       - name: Build the indexed libraries
         if: steps.tag.outputs.tagged == 'false'
-        run: lake build MathlibExt CSLibExt PhyslibExt WantedExt
+        run: lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
       - name: Install Autoform
         if: steps.tag.outputs.tagged == 'false'
@@ -107,7 +108,7 @@ jobs:
 
       - name: Write the index
         if: steps.tag.outputs.tagged == 'false'
-        run: autoform library index . --lib MathlibExt --lib CSLibExt --lib PhyslibExt --lib WantedExt --timeout 3600
+        run: autoform library index . --lib MathlibExt --lib CSLibExt --lib PhyslibExt --lib Domains --lib WantedExt --timeout 3600
 
       # The index digests the pin files as they are now; the tag must carry the same bytes.
       - name: Check that only the index changed

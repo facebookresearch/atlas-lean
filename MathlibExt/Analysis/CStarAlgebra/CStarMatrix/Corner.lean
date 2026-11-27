@@ -1,0 +1,91 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+import Mathlib.Data.Matrix.Basis
+
+/-!
+# Single corners in C-star matrix algebras
+
+This file bundles the map that places an element in one selected diagonal
+entry of a finite matrix algebra.  The map is nonunital, including when the
+coefficient algebra is unital.
+-/
+
+@[expose] public section
+
+namespace CStarMatrix
+
+universe u
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `i₀ : ι`. The single diagonal corner selected by `i₀`, bundled as a nonunital complex
+star-algebra homomorphism.
+-/
+def cornerEmbedding
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (i₀ : ι) : A →⋆ₙₐ[ℂ] CStarMatrix ι ι A where
+  toFun a := CStarMatrix.ofMatrix (Matrix.single i₀ i₀ a)
+  map_zero' := by
+    apply CStarMatrix.ext
+    intro i j
+    simp
+  map_add' a b := by
+    apply CStarMatrix.ext
+    intro i j
+    by_cases h : i₀ = i ∧ i₀ = j
+    · rcases h with ⟨rfl, rfl⟩
+      simp only [CStarMatrix.ofMatrix_apply,
+        Matrix.single_apply_same, CStarMatrix.add_apply]
+    · simp [h]
+  map_smul' z a := by
+    apply CStarMatrix.ext
+    intro i j
+    by_cases h : i₀ = i ∧ i₀ = j
+    · rcases h with ⟨rfl, rfl⟩
+      simp
+    · simp [h]
+  map_mul' a b := by
+    change CStarMatrix.ofMatrix (Matrix.single i₀ i₀ (a * b)) =
+      CStarMatrix.ofMatrix (Matrix.single i₀ i₀ a) *
+        CStarMatrix.ofMatrix (Matrix.single i₀ i₀ b)
+    exact (Matrix.single_mul_single_same (c := a) i₀ i₀ i₀ b).symm
+  map_star' a := by
+    apply CStarMatrix.ext
+    intro i j
+    by_cases h : i₀ = i ∧ i₀ = j
+    · rcases h with ⟨rfl, rfl⟩
+      simp only [CStarMatrix.ofMatrix_apply,
+        Matrix.single_apply_same, CStarMatrix.star_apply]
+    · have h' : ¬(i₀ = j ∧ i₀ = i) := by
+        intro h'
+        exact h ⟨h'.2, h'.1⟩
+      simp [CStarMatrix.star_apply, h, h']
+
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `i₀ : ι`, `a : A` and `i` and `j : ι`. Exact entry action of the selected diagonal
+corner.
+-/
+@[simp]
+theorem cornerEmbedding_apply
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (i₀ : ι) (a : A) (i j : ι) :
+    cornerEmbedding i₀ a i j =
+      if i₀ = i ∧ i₀ = j then a else 0 :=
+  rfl
+
+end CStarMatrix
+
+end

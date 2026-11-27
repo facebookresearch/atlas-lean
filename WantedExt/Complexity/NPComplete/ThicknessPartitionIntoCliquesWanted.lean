@@ -24,11 +24,11 @@ graphs: NP-complete, citing F. Berman, D. S. Johnson, F. T. Leighton, P. W. Shor
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ Fix `k`. INSTANCE: a graph `G = (V, E)` of thickness at most `k` and a positive 
 `K ≤ |V|`. QUESTION: can `V` be partitioned into at most `K` disjoint sets each of which induces
 a clique?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to graphs of
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to graphs of
 thickness at most `k`. Planar graphs are exactly the graphs of thickness at most `1`, and
 Cerioli et al. (2008) prove PARTITION INTO CLIQUES NP-complete already for planar cubic graphs
 (the repository's `PartitionIntoCliquesCubicPlanarWanted`). A planar graph has thickness at most
@@ -50,7 +50,7 @@ Cerioli et al. (2008) prove PARTITION INTO CLIQUES NP-complete already for plana
 planar and the thickness-`k` entries (`k` fixed) as NP-complete.
 
 The instance, its well-formedness (simple edge list, `0 < K ≤ |V|`) and the question are those of
-`PartitionIntoCliquesWanted` (`PartitionIntoCliques.PartitionIntoCliquesInstance`;
+`PartitionIntoCliquesDefs` (`PartitionIntoCliques.PartitionIntoCliquesInstance`;
 `PartitionIntoCliques.PartitionIntoCliquesFeasible`: for some `k' ≤ K`, a map to `Fin k'` whose
 blocks are cliques, Mathlib's `SimpleGraph.IsClique`).
 

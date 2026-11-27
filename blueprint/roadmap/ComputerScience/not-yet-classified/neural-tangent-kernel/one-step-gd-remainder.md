@@ -1,0 +1,3 @@
+# One gradient-descent step: NTK prediction with remainder
+
+Let $F: \mathbb{R}^P \to \mathbb{R}^n$ be $C^2$, $y \in \mathbb{R}^n$, $L(\theta) = \frac12 \lVert F(\theta) - y\rVert^2$, $\eta$ real and $\theta^+ = \theta - \eta \nabla L(\theta)$. If $\beta \ge 0$ and $\lVert D^2 F(\theta')(u, v)\rVert \le \beta \lVert u\rVert \lVert v\rVert$ for all $\theta'$ on the segment $[\theta, \theta^+]$, then $\lVert F(\theta^+) - F(\theta) + \eta K(\theta)(F(\theta) - y)\rVert \le \frac{\beta}{2} \eta^2 \lVert \nabla L(\theta)\rVert^2$, where $K(\theta) = J J^\top$ is the empirical neural tangent kernel and $J$ the Jacobian of $F$ at $\theta$.

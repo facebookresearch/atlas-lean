@@ -63,9 +63,15 @@ private theorem orderPair_time {α : Type u} [LinearOrder α] (a b : α) :
       let hi' := if hi < pair.2 then pair.2 else hi
       scanPairs lo' hi' xs
 
-/-- Compute both extrema with a shared comparison for each fresh pair.
-Odd inputs seed both extrema with their first element without a comparison;
-positive even inputs initialize them by ordering the first pair once. -/
+/-- **Simultaneous minimum and maximum.** Given a list $xs$ over a linearly ordered type, the
+paired algorithm returns no result when $xs$ is empty and otherwise returns a pair (a candidate
+minimum and a candidate maximum), counting one unit of time for each comparison of elements. On a
+one-element list $[a]$ it returns $(a, a)$ without a comparison. On a longer list of odd length
+both candidates start at the first element without a comparison; on a list of even length they
+start at the smaller and the larger of the first two elements, found with one comparison. The
+remaining elements are then taken in consecutive pairs: one comparison orders the pair, its smaller
+member replaces the candidate minimum if it is strictly smaller (one comparison), and its larger
+member replaces the candidate maximum if it is strictly larger (one comparison). -/
 public def minMax {α : Type u} [LinearOrder α] (xs : List α) :
     TimeM Nat (Option (α × α)) :=
   match xs with
@@ -119,7 +125,10 @@ private theorem scanPairs_time_even {α : Type u} [LinearOrder α] (lo hi : α)
 
 @[expose] public section
 
-/-- The paired scan returns the canonical minimum and maximum of the original list. -/
+/-- **Correctness of the simultaneous minimum and maximum algorithm.** For every list $xs$ over a
+linearly ordered type, the simultaneous minimum and maximum algorithm returns no result on $xs$
+when $xs$ is empty, and returns the pair $(\min xs, \max xs)$ of the least and greatest elements
+of $xs$ otherwise. -/
 theorem minMax_ret {α : Type u} [LinearOrder α] (xs : List α) :
     (minMax xs).ret = xs.min?.bind (fun lo => xs.max?.map (fun hi => (lo, hi))) := by
   cases xs with
@@ -131,13 +140,18 @@ theorem minMax_ret {α : Type u} [LinearOrder α] (xs : List α) :
           by_cases h : (xs.length + 1 + 1) % 2 = 1 <;>
             simp [minMax, h, scanPairs_ret, orderPair_ret, List.min?, List.max?]
 
-/-- Empty input is exactly the case without extrema. -/
+/-- **The min–max algorithm returns no result exactly on the empty list.** For every list $xs$
+over a linearly ordered type, the simultaneous minimum and maximum algorithm returns no result on
+$xs$ if and only if $xs$ is empty. -/
 theorem minMax_eq_none_iff {α : Type u} [LinearOrder α] (xs : List α) :
     (minMax xs).ret = none ↔ xs = [] := by
   rw [minMax_ret]
   cases xs <;> simp [List.min?, List.max?]
 
-/-- Both returned extrema occur in the input and bound all its members. -/
+/-- **Characterization of the min–max output.** For every list $xs$ over a linearly ordered type
+and all elements $lo$ and $hi$ of that type, the simultaneous minimum and maximum algorithm returns
+the pair $(lo, hi)$ on $xs$ if and only if $lo$ and $hi$ both belong to $xs$, $lo \le x$ for every
+$x$ in $xs$, and $x \le hi$ for every $x$ in $xs$. -/
 theorem minMax_eq_some_iff {α : Type u} [LinearOrder α] (xs : List α) (lo hi : α) :
     (minMax xs).ret = some (lo, hi) ↔
       lo ∈ xs ∧ hi ∈ xs ∧ (∀ x ∈ xs, lo ≤ x) ∧ (∀ x ∈ xs, x ≤ hi) := by
@@ -151,17 +165,22 @@ theorem minMax_eq_some_iff {α : Type u} [LinearOrder α] (xs : List α) (lo hi 
     exact ⟨lo, List.min?_eq_some_iff.mpr ⟨hlo, hlower⟩,
       hi, List.max?_eq_some_iff.mpr ⟨hhi, hupper⟩, rfl, rfl⟩
 
-/-- Empty input performs no element comparisons. -/
+/-- **The min–max algorithm on the empty list.** On the empty list, the simultaneous minimum and
+maximum algorithm returns no result and makes no comparisons. -/
 @[simp] theorem minMax_nil {α : Type u} [LinearOrder α] :
     minMax ([] : List α) = pure none := by
   ext <;> simp [minMax]
 
-/-- One element seeds both extrema without comparing elements. -/
+/-- **The min–max algorithm on a one-element list.** For every element $a$ of a linearly ordered
+type, on the list $[a]$ the simultaneous minimum and maximum algorithm returns the pair $(a, a)$
+and makes no comparisons. -/
 @[simp] theorem minMax_singleton {α : Type u} [LinearOrder α] (a : α) :
     minMax [a] = pure (some (a, a)) := by
   ext <;> simp [minMax]
 
-/-- Odd inputs use a free first-element seed and compare each remaining pair three times. -/
+/-- **Comparisons of the min–max algorithm on odd-length lists.** For every natural number $k$ and
+every list of length $2k + 1$ over a linearly ordered type, the simultaneous minimum and maximum
+algorithm makes exactly $3k$ comparisons. -/
 theorem minMax_time_odd {α : Type u} [LinearOrder α] (xs : List α) (k : Nat)
     (hlen : xs.length = 2 * k + 1) : (minMax xs).time = 3 * k := by
   cases xs with
@@ -180,7 +199,9 @@ theorem minMax_time_odd {α : Type u} [LinearOrder α] (xs : List α) (k : Nat)
             omega
           simp [minMax, hpar, scanPairs_time_even a a (b :: xs) k htail]
 
-/-- Positive even inputs save two comparisons by initializing from one ordered pair. -/
+/-- **Comparisons of the min–max algorithm on even-length lists.** For every natural number
+$k \ge 1$ and every list of length $2k$ over a linearly ordered type, the simultaneous minimum and
+maximum algorithm makes exactly $3k - 2$ comparisons. -/
 theorem minMax_time_even {α : Type u} [LinearOrder α] (xs : List α) (k : Nat)
     (hlen : xs.length = 2 * k) (hk : 1 ≤ k) : (minMax xs).time = 3 * k - 2 := by
   cases xs with
@@ -200,7 +221,10 @@ theorem minMax_time_even {α : Type u} [LinearOrder α] (xs : List α) (k : Nat)
           rw [scanPairs_time_even _ _ xs (k - 1) htail]
           omega
 
-/-- The same run uses exactly `ceil (3 * length / 2) - 2` comparisons when nonempty.
+/-- **Comparison count of the simultaneous minimum and maximum algorithm.** For every list of
+length $n$ over a linearly ordered type, the simultaneous minimum and maximum algorithm makes no
+comparisons when $n = 0$ and exactly $\lceil 3n/2 \rceil - 2$ comparisons when $n \ge 1$.
+
 This counts element-order decisions, not full RAM instructions or comparator bit complexity. -/
 theorem minMax_time {α : Type u} [LinearOrder α] (xs : List α) :
     (minMax xs).time =

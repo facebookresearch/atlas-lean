@@ -23,7 +23,7 @@ arXiv:1308.4534, Section 1.1.1 and Definition 1 (MM-stability), Section 1.2, The
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

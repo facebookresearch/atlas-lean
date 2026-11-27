@@ -34,4 +34,26 @@ example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasur
   integral_sq_sub_condExp_comap_le hX hY (h := fun t => 2 * t) (by fun_prop)
     (hX2.const_mul 2)
 
+-- Equality case over the trivial σ-algebra: a constant prediction attains the
+-- mean's mean squared error if and only if it is almost everywhere the mean.
+example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {Y : Ω → ℝ}
+    (hY : MemLp Y 2 μ) (c : ℝ) :
+    (∫ ω, (Y ω - c) ^ 2 ∂μ) = ∫ ω, (Y ω - ∫ ω', Y ω' ∂μ) ^ 2 ∂μ ↔
+      (fun _ => c) =ᵐ[μ] fun _ => ∫ ω', Y ω' ∂μ := by
+  have h := integral_sq_sub_condExp_eq_iff (m := ⊥) bot_le hY (memLp_const c)
+    stronglyMeasurable_const
+  simpa [condExp_bot] using h
+
+-- Hence a constant prediction at least as good as the mean must be the mean.
+example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {Y : Ω → ℝ}
+    (hY : MemLp Y 2 μ) (c : ℝ)
+    (hle : (∫ ω, (Y ω - c) ^ 2 ∂μ) ≤ ∫ ω, (Y ω - ∫ ω', Y ω' ∂μ) ^ 2 ∂μ) :
+    (fun _ => c) =ᵐ[μ] fun _ => ∫ ω', Y ω' ∂μ := by
+  have h := ae_eq_condExp_of_integral_sq_sub_le (m := ⊥) bot_le hY (memLp_const c)
+    stronglyMeasurable_const (by simpa [condExp_bot] using hle)
+  simpa [condExp_bot] using h
+
+#print axioms integral_sq_sub_condExp_eq_iff
+#print axioms ae_eq_condExp_of_integral_sq_sub_le
+
 end MathlibExtTest.BestPredictor

@@ -32,6 +32,7 @@ have the same cut-rank function and the same rank-width.
 * `SimpleGraph.localComplement_localComplement`: `G * v * v = G`.
 * `SimpleGraph.cutRank`: the cut-rank function over `ZMod 2`.
 * `SimpleGraph.cutRank_compl`: `ρ_G(V ∖ X) = ρ_G(X)`.
+* `SimpleGraph.cutRank_inter_add_cutRank_union_le`: cut-rank is submodular.
 * `SimpleGraph.cutRank_localComplement`: `ρ_{G * v}(X) = ρ_G(X)`.
 * `SimpleGraph.cutRank_top_le_one`: complete graphs have cut-rank at most one.
 * `SimpleGraph.LocallyEquivalent`, `SimpleGraph.IsVertexMinor`.
@@ -133,6 +134,98 @@ theorem cutRank_compl (X : Set V) : G.cutRank Xᶜ = G.cutRank X := by
   rw [key]
   convert (Matrix.rank_submatrix (Matrix.transpose A) (Equiv.refl _) e).trans
     (Matrix.rank_transpose A) using 2
+
+/-- Row vectors for which both the vector and its product with `A` vanish outside `X`. -/
+private def cutKernel (A : Matrix V V (ZMod 2)) (X : Set V) :
+    Submodule (ZMod 2) (V → ZMod 2) :=
+  let S := Submodule.pi Xᶜ (fun _ => (⊥ : Submodule (ZMod 2) (ZMod 2)))
+  S ⊓ S.comap A.vecMulLinear
+
+private theorem mem_cutKernel {A : Matrix V V (ZMod 2)} {X : Set V} {v : V → ZMod 2} :
+    v ∈ cutKernel A X ↔ (∀ i ∉ X, v i = 0) ∧ (∀ i ∉ X, A.vecMulLinear v i = 0) := by
+  simp only [cutKernel, Submodule.mem_inf, Submodule.mem_comap, Submodule.mem_pi,
+    Submodule.mem_bot, Set.mem_compl_iff]
+
+open Classical in
+/-- Restriction to `X` identifies the supported vectors with the left kernel of the cut matrix. -/
+private theorem rank_cut_add_finrank_cutKernel (A : Matrix V V (ZMod 2)) (X : Set V) :
+    (A.submatrix (fun i : X => (i : V)) (fun j : ↥Xᶜ => (j : V))).rank +
+      Module.finrank (ZMod 2) (cutKernel A X) = X.ncard := by
+  classical
+  let B := A.submatrix (fun i : X => (i : V)) (fun j : ↥Xᶜ => (j : V))
+  let restrict := LinearMap.funLeft (ZMod 2) (ZMod 2) (Subtype.val : X → V)
+  have hvecMul (v : V → ZMod 2) (hv : ∀ j ∉ X, v j = 0) (i : ↥Xᶜ) :
+      B.vecMulLinear (restrict v) i = A.vecMulLinear v i := by
+    change ∑ j : X, v j * A j i = ∑ j : V, v j * A j i
+    calc
+      ∑ j : X, v j * A j i = ∑ j ∈ X.toFinset, v j * A j i :=
+        (Finset.sum_subtype X.toFinset (fun _ => Set.mem_toFinset) (fun j => v j * A j i)).symm
+      _ = ∑ j : V, v j * A j i :=
+        Finset.sum_subset (Finset.subset_univ _) fun j _ hj => by
+          rw [hv j (fun h => hj (Set.mem_toFinset.mpr h)), zero_mul]
+  let f : cutKernel A X →ₗ[ZMod 2] B.vecMulLinear.ker :=
+    (restrict.domRestrict _).codRestrict _ fun v => by
+      rw [LinearMap.mem_ker]
+      funext i
+      exact (hvecMul v (mem_cutKernel.mp v.property).1 i).trans
+        ((mem_cutKernel.mp v.property).2 i i.property)
+  have hf : Function.Bijective f := by
+    constructor
+    · intro v w h
+      apply Subtype.ext
+      funext j
+      by_cases hj : j ∈ X
+      · exact congrArg (fun x : B.vecMulLinear.ker => x.val ⟨j, hj⟩) h
+      · rw [(mem_cutKernel.mp v.property).1 j hj, (mem_cutKernel.mp w.property).1 j hj]
+    · intro w
+      let v (j : V) : ZMod 2 := if h : j ∈ X then w.val ⟨j, h⟩ else 0
+      have hv (j : V) (hj : j ∉ X) : v j = 0 := dite_eq_right hj
+      have hrestrict : restrict v = w.val := by
+        funext j
+        exact dite_eq_left j.property
+      refine ⟨⟨v, mem_cutKernel.mpr ⟨hv, fun i hi => ?_⟩⟩, Subtype.ext hrestrict⟩
+      rw [← hvecMul v hv ⟨i, hi⟩, hrestrict]
+      exact congrFun (LinearMap.mem_ker.mp w.property) ⟨i, hi⟩
+  have hnull := B.vecMulLinear.finrank_range_add_finrank_ker
+  rw [range_vecMulLinear, ← Matrix.rank_eq_finrank_span_row,
+    Module.finrank_fintype_fun_eq_card, ← Nat.card_eq_fintype_card, Nat.card_coe_set_eq] at hnull
+  rw [(LinearEquiv.ofBijective f hf).finrank_eq]
+  exact hnull
+
+/-- **Cut-rank is submodular.** For every finite graph `G` and vertex sets `X, Y`,
+`ρ_G(X ∩ Y) + ρ_G(X ∪ Y) ≤ ρ_G(X) + ρ_G(Y)` (Oum and Seymour, *Approximating clique-width and
+branch-width*, J. Combin. Theory Ser. B 96 (2006), Corollary 6.2, second statement, from the
+submodularity of ranks of submatrices, Proposition 6.1). -/
+theorem cutRank_inter_add_cutRank_union_le (G : SimpleGraph V) (X Y : Set V) :
+    G.cutRank (X ∩ Y) + G.cutRank (X ∪ Y) ≤ G.cutRank X + G.cutRank Y := by
+  classical
+  let A := G.adjMatrix (ZMod 2)
+  have vanish_inter (v : V → ZMod 2) : (∀ i ∉ X ∩ Y, v i = 0) ↔
+      (∀ i ∉ X, v i = 0) ∧ (∀ i ∉ Y, v i = 0) := by
+    simp only [Set.mem_inter_iff, not_and_or, or_imp, forall_and]
+  have hInter : cutKernel A (X ∩ Y) = cutKernel A X ⊓ cutKernel A Y := by
+    ext v
+    simp only [Submodule.mem_inf, mem_cutKernel, vanish_inter]
+    tauto
+  have mono {S T : Set V} (h : S ⊆ T) : cutKernel A S ≤ cutKernel A T := by
+    intro v hv
+    obtain ⟨hv, hAv⟩ := mem_cutKernel.mp hv
+    exact mem_cutKernel.mpr ⟨fun i hi => hv i (fun h' => hi (h h')),
+      fun i hi => hAv i (fun h' => hi (h h'))⟩
+  have hUnion : cutKernel A X ⊔ cutKernel A Y ≤ cutKernel A (X ∪ Y) :=
+    sup_le (mono Set.subset_union_left) (mono Set.subset_union_right)
+  have hdim := Submodule.finrank_sup_add_finrank_inf_eq (cutKernel A X) (cutKernel A Y)
+  have hle := Submodule.finrank_mono hUnion
+  rw [← hInter] at hdim
+  -- The nullities are supermodular, while cardinality is modular.
+  have hcard := Set.ncard_inter_add_ncard_union X Y
+  have hnull (S : Set V) : G.cutRank S + Module.finrank (ZMod 2) (cutKernel A S) = S.ncard :=
+    rank_cut_add_finrank_cutKernel A S
+  have hX := hnull X
+  have hY := hnull Y
+  have hI := hnull (X ∩ Y)
+  have hU := hnull (X ∪ Y)
+  omega
 
 omit [Fintype V] in
 /-- The `x, y` entry of the adjacency matrix over `ZMod 2`. -/

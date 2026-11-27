@@ -255,11 +255,6 @@ open ParenInternal
 
 variable [BEq V] [Hashable V] [LawfulBEq V]
 
-omit [BEq V] [Hashable V] [LawfulBEq V] in
-private theorem treeAncestor_reverse' (l : List (V × V)) (a d : V) :
-    TreeAncestor l.reverse a d ↔ TreeAncestor l a d := by
-  simp [TreeAncestor, ParentRel]
-
 /-- **Ancestors by interval nesting.** In the whole-graph traversal `dfsAll adj`, `u` is an
 ancestor of `v` in the depth-first forest if and only if `u` is discovered no later than `v` and
 finishes no earlier than `v`: `pre(u) ≤ pre(v)` and `post(v) ≤ post(u)` for the indices in
@@ -293,7 +288,7 @@ theorem dfsAll_treeAncestor_iff (adj : DirectedAdjacency V) (u v : V) :
       · simp [hnoact] at hx
       · exact hx
     rw [dfsAll, ← hfin] at hpre hpost ⊢
-    simp only [finish, treeAncestor_reverse'] at hpre hpost ⊢
+    simp only [finish, treeAncestor_reverse] at hpre hpost ⊢
     by_contra hnuv
     have hne : u ≠ v := fun e => hnuv (e ▸ .refl)
     have hlt : numS final u < numS final v := by

@@ -16,7 +16,7 @@ Mathematics 72 (1997), 141-154, doi:10.1016/S0166-218X(96)00041-8.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

@@ -1,0 +1,17 @@
+# Continuous Adic Compact Supports
+
+- [Adic Abelian Sheaf](adic-abelian-sheaf.md)
+- [Boundary Kernel Functor](boundary-kernel-functor.md)
+- [Closed Compactification](closed-compactification.md)
+- [Actual Coefficient](actual-coefficient.md)
+- [Compact Support Coefficient](compact-support-coefficient.md)
+- [Compact Support Cohomology](compact-support-cohomology.md)
+- [Compact Coefficient Map](compact-coefficient-map.md)
+- [Integral Compact Support](integral-compact-support.md)
+- [Finite Compact Support](finite-compact-support.md)
+- [Compact Transition](compact-transition.md)
+- [Compact Reduction](compact-reduction.md)
+- [Compact Reductions Commute](compact-reductions-commute.md)
+- [Compact Finite Limit](compact-finite-limit.md)
+- [Compact Support Limit Comparison](compact-support-limit-comparison.md)
+- [Compactly supported ℓ-adic cohomology as a limit of finite levels](compact-support-limit-comparison-bijecti.md)

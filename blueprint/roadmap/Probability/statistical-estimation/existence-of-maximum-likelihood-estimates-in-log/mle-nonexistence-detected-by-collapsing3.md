@@ -1,0 +1,3 @@
+# Detecting nonexistence of the MLE by collapsing
+
+For an $I \times J \times K$ contingency table $n$ of counts, the maximum likelihood estimate under the no three-way interaction model exists if some table with strictly positive real entries has the same two-way margins as $n$. A collapsing to a $2 \times 2 \times 2$ table merges the three levels of each variable into two nonempty classes and adds the corresponding cells. The conjecture (AIM computational algebraic statistics list, Conjecture 8) is that for every $3 \times 3 \times 3$ table the estimate fails to exist if and only if it fails to exist for some collapsing of the table.

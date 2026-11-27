@@ -1,0 +1,3 @@
+# Conditional binomial law in the fixed-total model
+
+Let $\mu$ be a probability measure and $X_0, X_1, \dots$ independent measurable random variables with values in a finite set, with $P(X_k = i) = p_i$ for all $k$ and $i$, where every $p_i \ge 0$. Fix categories $a \ne b$, a sample size $n$ and $d \in \mathbb N$, and let $C_a$ and $C_b$ count the indices $k < n$ with $X_k = a$ and $X_k = b$. If $P(C_a + C_b = d) > 0$, then conditionally on $C_a + C_b = d$, the count $C_a$ has law $\operatorname{Bin}(d, p_a/(p_a + p_b))$, with success probability $0$ when $p_a + p_b = 0$, by the convention $x/0 = 0$.

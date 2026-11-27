@@ -23,11 +23,11 @@ doi:10.1016/S0167-5060(08)70743-X, Theorem 4(f) (KNAPSACK reduces to
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -50,7 +50,7 @@ NP-complete for arbitrary release times (see previous problem)". With `<` empty 
 constraints are vacuous and are not part of the instance. Release times and their constraint
 `σ(t) ≥ r(t)` are those of [SS1]; a one-processor schedule is Garey and Johnson's [SS1] notion
 (a one-to-one `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying `σ(t) ≥ σ(t') + l(t')`), the predicate
-`IsOneProcessorSchedule` reused from `SequencingToMinimizeWeightedTardinessWanted`.
+`IsOneProcessorSchedule` reused from `SequencingToMinimizeWeightedTardinessDefs`.
 
 Hardness: Lenstra, Rinnooy Kan and Brucker (Theorem 4(f)) reduce KNAPSACK to this problem with
 bound `0`, and the case `K = 0` is [SS1], NP-complete in the strong sense. [SS2] requires
