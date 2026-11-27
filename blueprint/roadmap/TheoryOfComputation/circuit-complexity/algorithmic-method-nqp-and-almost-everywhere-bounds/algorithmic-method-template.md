@@ -1,16 +1,16 @@
 # The algorithmic method template: non-trivial algorithms imply lower bounds
 
-Let $\mathcal{C}$ be a circuit class closed under $\mathrm{AND}$, $\mathrm{OR}$ and projections. If there is a non-trivial derandomization algorithm for $\mathcal{C}$ circuits of size $2^{n^{\varepsilon}}$ for every $\varepsilon > 0$ (equivalently for the composition $\mathrm{AND}_{O(1)} \circ \mathcal{C}$), then
+Let $\mathcal{C}$ be a typical circuit class (evaluatable in deterministic polynomial time and closed under negation and conjunctions, as in Murray–Williams §1.1), and let $\varepsilon \in (0, 1)$. If $\mathrm{GapCUnsat}$ on $n$-input, $2^{n^{\varepsilon}}$-size $\mathcal{C}$-circuits is solvable in nondeterministic time $O(2^{n - n^{\varepsilon}})$, then for every $k \ge 1$ there is $c \ge 1$ such that $\mathrm{NTIME}[2^{\log^{c k^4/\varepsilon} n}]$ does not have $2^{\log^k n}$-size $\mathcal{C}$-circuits; in particular,
 
 $$
-\mathrm{NQP} \not\subseteq \mathcal{C}.
+\mathrm{NQP} \not\subseteq \mathcal{C}\text{-}\mathrm{SIZE}[2^{\operatorname{polylog}(n)}].
 $$
 
-With non-trivial algorithms only for polynomial-size circuits the conclusion is $\mathrm{NEXP} \not\subseteq \mathcal{C}$.
+With a non-trivial ($2^n / n^{\omega(1)}$-time) satisfiability or derandomization algorithm only for polynomial-size $\mathcal{C}$-circuits (or $\mathrm{AND}_3 \circ \mathcal{C}$ / suitable composition), Williams's theorem yields $\mathrm{NEXP} \not\subseteq \mathcal{C}\text{-}\mathrm{SIZE}[\operatorname{poly}(n)]$.
 
 ## Proof sketch
 
-Suppose $\mathrm{NQP} \subseteq \mathcal{C}$. By the easy witness lemma for $\mathrm{NQP}$, every $\mathrm{NQP}$ verifier has $\mathcal{C}$-circuit witnesses. Given a language in $\mathrm{NTIME}[2^{\log^{k} n}]$ hard for smaller nondeterministic time by the hierarchy theorem, reduce it to succinct $3$-SAT via short PCPs with projection queries, guess $\mathcal{C}$-circuits for a witness and for the PCP proof, and use the non-trivial derandomization to check the PCP verifier composed with these circuits, achieving a nondeterministic speed-up that contradicts the nondeterministic time hierarchy.
+Suppose $\mathrm{NQP} \subseteq \mathcal{C}\text{-}\mathrm{SIZE}[2^{\log^k n}]$. By the easy witness lemma for $\mathrm{NQP}$ (together with circuit evaluation lying in $\mathrm{P} \subseteq \mathrm{NQP}$), every $\mathrm{NQP}$ verifier has quasi-polynomial-size $\mathcal{C}$-circuit witnesses. Given a language in $\mathrm{NTIME}[2^{\log^{c k^4/\varepsilon} n}]$ hard for smaller nondeterministic time by the nondeterministic time hierarchy, reduce it to succinct $3$-SAT via short PCPs with projection queries, guess quasi-polynomial-size $\mathcal{C}$-circuits for a witness and for the PCP proof, and apply the $O(2^{n - n^{\varepsilon}})$-time $\mathrm{GapCUnsat}$ algorithm to the composed circuit; the exponential saving absorbs the guessed witness-circuit description and contradicts the nondeterministic time hierarchy.
 
 ## Depends on
 
