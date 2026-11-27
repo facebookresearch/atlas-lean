@@ -8,11 +8,11 @@ By the previous theorem $G$ is $2\varepsilon$-biased with $2\varepsilon < 1$, an
 
 ## Depends on
 
-- [Read-once branching programs and space-bounded pseudorandom generators](space-bounded-pseudorandom-generators.md)
+- [Read-once branching program and space-bounded pseudorandom generator](../space-bounded-and-small-bias-generators/read-once-branching-programs-and-space-bounded-prgs.md)
 
 ## Proof depends on
 
-- [Space-bounded pseudorandom generators are 2ε-biased](space-bounded-prgs-are-small-bias.md)
+- [Space-bounded pseudorandom generators are small-bias generators](../space-bounded-and-small-bias-generators/space-bounded-prgs-are-small-bias.md)
 - [Stretch limits for low-degree and linear small-bias generators](../small-bias-spaces/small-bias-generator-stretch-limits.md)
 
 ## Sources

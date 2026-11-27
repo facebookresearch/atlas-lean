@@ -13,7 +13,7 @@ By Shannon's counting argument some function $h$ has $C(h)>2^n/n$. Change a cons
 ## Proof depends on
 
 - [Changing one value changes circuit complexity by at most 2n + 3](one-point-update-changes-complexity-by-2n-plus-3.md)
-- [Shannon: most Boolean functions need exponential circuits](../../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
+- [Shannon's sharp counting bound: almost all functions need more than 2^n/n gates](shannon-sharp-circuit-size-lower-bound.md)
 
 ## Sources
 

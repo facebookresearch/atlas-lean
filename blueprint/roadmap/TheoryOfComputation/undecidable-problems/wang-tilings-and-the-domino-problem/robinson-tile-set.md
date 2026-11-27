@@ -8,7 +8,7 @@ Local recognizability: on a fixed parity class of corners, each supertile bounda
 
 ## Depends on
 
-- [Wang tiles and tilings of the plane](wang-tiles.md)
+- [Wang tiles and valid tilings](../wang-tiles/wang-tiles-and-valid-tilings.md)
 
 ## Proof depends on
 

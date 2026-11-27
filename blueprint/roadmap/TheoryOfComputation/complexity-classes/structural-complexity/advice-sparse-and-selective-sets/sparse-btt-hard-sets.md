@@ -19,5 +19,5 @@ Use the left set of SAT (partial assignments lexicographically left of the large
 
 ## Sources
 
-- Vikraman Arvind, Johannes Köbler and Martin Mundhenk, "On Bounded Truth-Table, Conjunctive, and Randomized Reductions to Sparse Sets", Universität Ulm, report 92-01, 1992.
+- Vikraman Arvind, Johannes Köbler and Martin Mundhenk, "On Bounded Truth-Table, Conjunctive, and Randomized Reductions to Sparse Sets", 12th Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 1992), Lecture Notes in Computer Science 652, 1992.
 - Mitsunori Ogiwara and Osamu Watanabe, "On Polynomial-Time Bounded Truth-Table Reducibility of NP Sets to Sparse Sets", SIAM Journal on Computing 20(3), 1991.

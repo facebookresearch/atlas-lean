@@ -13,7 +13,7 @@ Each variable gets a diamond-shaped row traversed left-to-right (true) or right-
 
 ## Proof depends on
 
-- [Directed Hamiltonian path without prescribed endpoints is NP-complete](../../np-completeness/further-np-complete-variants/directed-hamiltonian-path-any-endpoints.md)
+- [DIRECTED HAMILTONIAN PATH is NP-complete](../../np-completeness/paths-cycles-and-subgraphs/hamiltonian-path-in-directed-graphs/directed-hamiltonian-path-np-complete.md)
 
 ## Sources
 

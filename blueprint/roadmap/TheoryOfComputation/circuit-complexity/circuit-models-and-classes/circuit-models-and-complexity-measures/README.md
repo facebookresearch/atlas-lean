@@ -11,6 +11,7 @@
 - [Register evaluation of straight-line programs is black pebbling](register-evaluation-equals-black-pebbling.md)
 - [Tseitin encoding of a Boolean circuit](tseitin-encoding-of-a-circuit.md)
 - [Counting functions with small De Morgan circuits](counting-functions-with-small-circuits.md)
+- [Shannon's sharp counting bound: almost all functions need more than 2^n/n gates](shannon-sharp-circuit-size-lower-bound.md)
 - [Changing one value changes circuit complexity by at most 2n + 3](one-point-update-changes-complexity-by-2n-plus-3.md)
 - [Sahai–Vadhan polarization lemma for circuit samplers](sahai-vadhan-polarization-lemma.md)
 - [The Zhegalkin basis and multiplicative complexity](zhegalkin-basis-and-multiplicative-complexity.md)

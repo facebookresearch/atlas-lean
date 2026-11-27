@@ -12,5 +12,4 @@ The coefficient of $\chi_S$ in the restriction to a face is $\sum_{T \supseteq S
 
 ## Sources
 
-- G. Midrijanis, "Exact Quantum Query Complexity for Total Boolean Functions", arXiv:quant-ph/0403168, 2004.
-- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014.
+- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014, Proposition 3.21.

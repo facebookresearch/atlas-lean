@@ -14,4 +14,4 @@ In a time block the heads move at most $b$ cells, so the window is determined by
 ## Sources
 
 - John Hopcroft, Wolfgang Paul and Leslie Valiant, "On Time Versus Space", Journal of the ACM 24(2), 1977.
-- Ryan Williams, "Simulating Time With Square-Root Space", arXiv:2502.17779, 2025.
+- Ryan Williams, "Simulating Time With Square-Root Space", Proceedings of the 57th Annual ACM Symposium on Theory of Computing (STOC 2025), 2025.

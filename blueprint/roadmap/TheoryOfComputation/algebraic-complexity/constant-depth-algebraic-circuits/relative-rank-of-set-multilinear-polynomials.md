@@ -8,4 +8,4 @@ Let $f$ be set-multilinear on blocks $X_1,\dots,X_d$ with $|X_i|=2^{|w_i|}$ for 
 
 ## Sources
 
-- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", Electronic Colloquium on Computational Complexity, 2021.
+- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", 62nd IEEE Symposium on Foundations of Computer Science (FOCS 2021), 2021.

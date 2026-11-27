@@ -12,4 +12,4 @@ Simulate a linear-space (single-tape) Turing machine: letters encode tape symbol
 
 ## Sources
 
-- Marcin Wrochna, "Reconfiguration in bounded bandwidth and treedepth", arXiv:1405.0847, 2014, Theorem 3.
+- Marcin Wrochna, "Reconfiguration in bounded bandwidth and tree-depth", Journal of Computer and System Sciences 93, 2018.

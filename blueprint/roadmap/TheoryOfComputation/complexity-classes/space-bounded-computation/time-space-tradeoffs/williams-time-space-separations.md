@@ -24,5 +24,5 @@ By the square-root simulation, $\mathsf{DTIME}(t)\subseteq\mathsf{DSPACE}(s')$ w
 
 ## Sources
 
-- Ryan Williams, "Simulating Time With Square-Root Space", arXiv:2502.17779, 2025.
+- Ryan Williams, "Simulating Time With Square-Root Space", Proceedings of the 57th Annual ACM Symposium on Theory of Computing (STOC 2025), 2025.
 - Richard E. Stearns, Juris Hartmanis and Philip M. Lewis II, "Hierarchies of Memory Limited Computations", Proceedings of the 6th Annual Symposium on Switching Circuit Theory and Logical Design, 1965.

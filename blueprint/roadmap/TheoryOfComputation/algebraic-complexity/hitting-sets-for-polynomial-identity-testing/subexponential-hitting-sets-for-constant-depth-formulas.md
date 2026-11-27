@@ -18,6 +18,6 @@ Use the Kabanets–Impagliazzo generator with the IMM-based hard polynomial of L
 
 ## Sources
 
-- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", Electronic Colloquium on Computational Complexity, 2021.
+- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", 62nd IEEE Symposium on Foundations of Computer Science (FOCS 2021), 2021.
 - Chi-Ning Chou, Mrinal Kumar, Noam Solomon, "Closure Results for Polynomial Factorization", Theory of Computing, 2019.
-- Somnath Bhattacharjee, Mrinal Kumar, Shanthanu S. Rai et al., "Closure under factorization from a result of Furstenberg", 2025.
+- Somnath Bhattacharjee, Mrinal Kumar, Shanthanu S. Rai et al., "Closure under factorization from a result of Furstenberg", 58th Annual ACM Symposium on Theory of Computing (STOC 2026), 2026.

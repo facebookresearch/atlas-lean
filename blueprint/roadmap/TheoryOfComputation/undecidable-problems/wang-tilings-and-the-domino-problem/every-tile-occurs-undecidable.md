@@ -8,11 +8,11 @@ $T$ tiles the plane iff some nonempty sub-palette $T'\subseteq T$ has every tile
 
 ## Depends on
 
-- [Wang tiles and tilings of the plane](wang-tiles.md)
+- [Seeded and every-tile-occurs variants of the tiling problem](wang-tiles.md)
 
 ## Proof depends on
 
-- [Berger: the domino problem is undecidable](domino-problem-undecidable.md)
+- [The tiling problem is undecidable](../wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Sources
 

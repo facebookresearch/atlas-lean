@@ -1,10 +1,10 @@
-# Monotone cyclic shift needs qn log2 n - O(qn) gates
+# Monotone cyclic shift needs Ω(n log n) gates
 
-For all $n,q,m$, every control code $\alpha$ and every monotone circuit computing the monotone cyclic shift operator $S_{q,\alpha}$, the number of binary gates is at least $q\sum_{t=1}^{n}\lceil\log_2 t\rceil\ge qn\log_2 n-qn$.
+There is a constant $c>0$ such that for all $n\ge 2$, every monotone circuit computing the monotone cyclic shift operator $S_{1,\alpha}$ on $n$ Boolean inputs with the one-hot control code $\alpha(k)=e_k$ (so $m=n$ and output $j$ is $\bigvee_k(c_k\wedge x_{j-k\bmod n})$) has at least $c\,n\log_2 n$ binary gates. Since a circuit of $O(n\log n)$ gates computes it, its monotone complexity is $\Theta(n\log n)$.
 
 ## Proof sketch
 
-Each output bit must be able to receive each of the $n$ input bits of its column under some control; in a monotone circuit with antichain controls the paths carrying different data bits to one output cannot be merged without a gate, and a counting argument over the binary tree structure of these paths gives $\lceil\log_2 t\rceil$ gates per bit and position.
+With the control set to $e_k$, a monotone circuit for the shift must carry each input $x_i$ to the output $i+k\bmod n$ along a path of gates, for every $k$. A counting argument over these paths for all $n$ shifts at once shows that the gates cannot be shared enough to avoid $\Omega(\log n)$ gates per input on average.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ Each output bit must be able to receive each of the $n$ input bits of its column
 
 ## Sources
 
-- A. V. Chashkin, "On the Complexity of a Cyclic Shift of a Set of Real Numbers", Diskretnaya Matematika i Prilozheniya (Diskretnyi Analiz i Issledovanie Operatsii, Ser. 1), 2006.
 - Edmund A. Lamagna, John E. Savage, "Combinational Complexity of Some Monotone Functions", Proceedings of the 15th Annual Symposium on Switching and Automata Theory (SWAT 1974), 1974.
+- Nicholas Pippenger, Leslie G. Valiant, "Shifting Graphs and Their Applications", Journal of the ACM 23(3), 1976.

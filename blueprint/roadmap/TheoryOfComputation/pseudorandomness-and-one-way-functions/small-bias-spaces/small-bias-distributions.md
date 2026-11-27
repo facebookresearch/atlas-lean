@@ -10,6 +10,7 @@ which equals $2^n$ times the Fourier–Walsh coefficient of the mass function of
 
 ## Depends on
 
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Fourier–Walsh coefficient under the uniform measure](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-fourier-coeff.md)
 - [Uniform distribution on a finite type](../../../Probability/distributions/discrete/discrete-uniform-distribution/uniform-fintype.md)
 

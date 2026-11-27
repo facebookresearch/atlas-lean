@@ -8,7 +8,7 @@ König's lemma on the finitely branching tree of tilings of growing centred squa
 
 ## Depends on
 
-- [Wang tiles and tilings of the plane](wang-tiles.md)
+- [Wang tiles and valid tilings](../wang-tiles/wang-tiles-and-valid-tilings.md)
 
 ## Sources
 

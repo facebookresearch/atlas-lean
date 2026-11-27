@@ -12,7 +12,7 @@ Lupanov's local coding: split the truth table into strips of $s\approx n-3\log n
 
 ## Proof depends on
 
-- [Shannon: most Boolean functions need exponential circuits](../../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
+- [Shannon's sharp counting bound: almost all functions need more than 2^n/n gates](../../circuit-models-and-classes/circuit-models-and-complexity-measures/shannon-sharp-circuit-size-lower-bound.md)
 
 ## Sources
 

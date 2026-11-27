@@ -8,7 +8,7 @@ Row $k$ of the tiling spells the tape at time $k$; colours on vertical edges car
 
 ## Depends on
 
-- [Wang tiles and tilings of the plane](wang-tiles.md)
+- [Seeded and every-tile-occurs variants of the tiling problem](wang-tiles.md)
 - [Halting of a single-tape machine](../../computability/halting-problem-for-single-tape-turing-machines/tm0-halts-on.md)
 
 ## Sources

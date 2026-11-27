@@ -1,6 +1,6 @@
 # The Zhegalkin basis and multiplicative complexity
 
-The *Zhegalkin basis* is $\{\oplus,\wedge,1\}$: binary exclusive or, binary conjunction and the constant $1$. It is functionally complete, since $\neg x = x\oplus 1$, $x\vee y = x\oplus y\oplus (x\wedge y)$, and every De Morgan circuit is simulated gate by gate. The *multiplicative complexity* $M(f)$ of a Boolean function (or of a system of Boolean functions) $f$ is the least number of $\wedge$ gates in a circuit over $\{\oplus,\wedge,1\}$ computing $f$, with $\oplus$ gates and constants free and depth and fan-out unrestricted. Equivalently, over any basis of fan-in at most two, $M(f)$ is the least number of non-affine gates.
+The *Zhegalkin basis* is $\{\oplus,\wedge,1\}$: binary exclusive or, binary conjunction and the constant $1$. It is functionally complete, since $\neg x = x\oplus 1$, $x\vee y = x\oplus y\oplus (x\wedge y)$, and every De Morgan circuit is simulated gate by gate. The *multiplicative complexity* $M(f)$ of a Boolean function (or of a system of Boolean functions) $f$ is the least number of $\wedge$ gates in a circuit over $\{\oplus,\wedge,1\}$ computing $f$, with $\oplus$ gates and constants free and depth and fan-out unrestricted. Equivalently, $M(f)$ is the least number of non-affine gates in a circuit over the full binary basis $B_2$.
 
 ## Depends on
 

@@ -9,7 +9,7 @@ Reduce the every-tile-occurs tiling problem: from a palette build a finite relat
 ## Depends on
 
 - [Relation algebras and representability](relation-algebra-representability.md)
-- [Wang tiles and tilings of the plane](wang-tiles.md)
+- [Seeded and every-tile-occurs variants of the tiling problem](wang-tiles.md)
 
 ## Proof depends on
 

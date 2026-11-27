@@ -12,4 +12,4 @@ For $x$, follow the chain of preimages $x, g^{-1}(x), f^{-1}(g^{-1}(x)),\dots$; 
 
 ## Sources
 
-- Leonard Berman and Juris Hartmanis, "On Isomorphisms and Density of NP and Other Complete Sets", Department of Computer Science, Cornell University, report TR75-260, 1975, Section III, Theorem 1.
+- Leonard Berman and Juris Hartmanis, "On Isomorphisms and Density of NP and Other Complete Sets", SIAM Journal on Computing 6(2), 1977.

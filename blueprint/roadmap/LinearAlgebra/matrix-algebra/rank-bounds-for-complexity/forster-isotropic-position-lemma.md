@@ -13,4 +13,4 @@ Choose weights $c_x = e^{t_x}$ maximizing $\log\det\bigl(\sum_x c_x u_xu_x^{T}\b
 ## Sources
 
 - Jürgen Forster, "A Linear Lower Bound on the Unbounded Error Probabilistic Communication Complexity", Journal of Computer and System Sciences, 2002.
-- Noga Alon, Shay Moran, Amir Yehudayoff, "Sign Rank versus VC Dimension", 2016.
+- Noga Alon, Shay Moran, Amir Yehudayoff, "Sign Rank versus VC Dimension", 29th Conference on Learning Theory (COLT 2016), 2016.

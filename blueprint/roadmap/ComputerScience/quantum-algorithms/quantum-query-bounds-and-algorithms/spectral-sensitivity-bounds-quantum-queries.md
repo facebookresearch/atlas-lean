@@ -1,10 +1,8 @@
-# Spectral sensitivity lower-bounds quantum queries, and D(f) = O(Q(f)⁴)
+# Spectral sensitivity lower-bounds quantum queries, and D(f) = O(Q(f)⁶)
 
-Every $T$-query algorithm computing a total Boolean function $f$ with error $\varepsilon \le 1/2$ satisfies $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\lambda(f) \le 2T$. Combined with $\deg(f) \le \lambda(f)^2$ this gives $\deg(f) \le 1296\, Q_{1/3}(f)^2$; with Midrijanis's bound $D(f) \le \deg(f)\, bs(f)$ and $bs(f) = O(Q(f)^2)$,
+Every $T$-query algorithm computing a total Boolean function $f$ with error $\varepsilon \le 1/2$ satisfies $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\lambda(f) \le 2T$. Combined with $\deg(f) \le \lambda(f)^2$ this gives $\deg(f) \le 1296\, Q_{1/3}(f)^2$; with $D(f) \le \deg(f)^2\, bs(f)$ and $bs(f) = O(Q(f)^2)$,
 
-$$D(f) = O\big(Q_{1/3}(f)^4\big),$$
-
-the Aaronson–Ben-David–Kothari–Rao–Tal theorem.
+$$D(f) = O\big(Q_{1/3}(f)^6\big).$$
 
 ## Proof sketch
 
@@ -22,6 +20,7 @@ Spectral sensitivity is a spectral adversary bound with $\Gamma$ the adjacency m
 - [Degree is at most the square of spectral sensitivity](../../../TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/degree-at-most-spectral-sensitivity-squared.md)
 - [Polynomial method for quantum query complexity](../quantum-query-lower-bounds/polynomial-method-for-quantum-query-complexity.md)
 - [Nisan–Szegedy: block sensitivity is at most quadratic in degree and approximate degree](../../../TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/nisan-szegedy-bounds.md)
+- [Certificate complexity, degree and decision-tree depth](../../../TheoryOfComputation/communication-complexity/query-and-communication-measures/certificate-complexity-degree-and-decision-tree.md)
 
 ## Sources
 

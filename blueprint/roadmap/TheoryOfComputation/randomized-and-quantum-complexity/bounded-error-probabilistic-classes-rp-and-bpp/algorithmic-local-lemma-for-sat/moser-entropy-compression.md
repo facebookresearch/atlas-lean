@@ -1,10 +1,10 @@
 # Entropy compression: Moser's algorithm runs in linear expected resamplings
 
-Let $\varphi$ be an exact $k$-CNF formula with $m$ clauses on $n$ variables in which every clause shares a variable with fewer than $2^{k-3}$ other clauses. Then on a tape of independent fair coin flips, Moser's algorithm performs at least $t$ resamplings with probability at most $2^{m+t(\log_2 d+2-k)}\le 2^{m-t}$; in particular it terminates almost surely after $O(m)$ resamplings in expectation, and $\varphi$ is satisfiable.
+Let $\varphi$ be an exact $k$-CNF formula with $m$ clauses on $n$ variables in which every clause shares a variable with at most $d$ other clauses, where $d+1\le 2^{k-3}$. Then on a tape of independent fair coin flips, Moser's algorithm performs at least $t$ resamplings with probability at most $2^{m+t(\log_2(d+1)+2-k)}\le 2^{m-t}$; in particular it terminates almost surely after $O(m)$ resamplings in expectation, and $\varphi$ is satisfiable.
 
 ## Proof sketch
 
-Encode a run with $t$ resamplings by its final assignment ($n$ bits) and an execution log of at most $m + t(\log_2 d + 2)$ bits, where $d < 2^{k-3}$ bounds the number of clauses sharing a variable with a given clause, that records the recursion tree; from these the $n + tk$ random bits consumed can be reconstructed. So at most $2^{n+m+t(\log_2 d+2)}$ of the $2^{n+tk}$ prefixes of the tape lead to $t$ resamplings, and $\log_2 d+2-k<-1$.
+Encode a run with $t$ resamplings by its final assignment ($n$ bits) and an execution log of at most $m + t(\log_2(d+1) + 2)$ bits that records the recursion tree (each step names which of the at most $d+1$ clauses sharing a variable with the current clause, the clause itself included, is fixed next); from these the $n + tk$ random bits consumed can be reconstructed. So at most $2^{n+m+t(\log_2(d+1)+2)}$ of the $2^{n+tk}$ prefixes of the tape lead to $t$ resamplings, and $\log_2(d+1)+2-k\le-1$.
 
 ## Depends on
 

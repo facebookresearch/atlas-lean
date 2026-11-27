@@ -15,3 +15,4 @@
 - [Query measures of threshold functions](query-measures-of-threshold-functions.md)
 - [The approximate degree of OR is Θ(√n)](approximate-degree-of-or.md)
 - [Polynomial bounds in terms of sensitivity: bs ≤ 2s⁴ and C ≤ 2s⁵](certificate-and-decision-tree-bounds-in-sensitivity.md)
+- [Decision-tree depth is at most certificate complexity times block sensitivity](decision-tree-depth-certificate-block-sensitivity.md)

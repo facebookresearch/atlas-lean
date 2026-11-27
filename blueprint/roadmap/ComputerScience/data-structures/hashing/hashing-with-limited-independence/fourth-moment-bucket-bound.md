@@ -3,7 +3,7 @@
 Let $h : U \to [r]$ be drawn from a 5-wise independent family, let $S \subseteq U$ with $|S| = n$ and maximum load $\bar\alpha = n / r < 1$, let $Q \subseteq [r]$ with $|Q| = q$, let $d > 0$ and fix $x \in U \setminus S$. Then
 
 $$
-\Pr\left[\,|\{y \in S : h(y) \in h(x) + Q\}| \ge \bar\alpha q + d\,\right] < \frac{4 \bar\alpha q^2}{d^4}.
+\Pr\left[\,|\{y \in S : h(y) \in h(x) + Q\}| \ge \bar\alpha q + d\,\right] \le \frac{4 \bar\alpha q^2}{d^4}.
 $$
 
 ## Proof sketch

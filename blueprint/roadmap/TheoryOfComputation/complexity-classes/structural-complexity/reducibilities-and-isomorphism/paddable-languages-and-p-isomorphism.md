@@ -9,4 +9,4 @@ Languages $A,B$ are **p-isomorphic** if there is a bijection $h$ of instances wi
 
 ## Sources
 
-- Leonard Berman and Juris Hartmanis, "On Isomorphisms and Density of NP and Other Complete Sets", Department of Computer Science, Cornell University, report TR75-260, 1975.
+- Leonard Berman and Juris Hartmanis, "On Isomorphisms and Density of NP and Other Complete Sets", SIAM Journal on Computing 6(2), 1977.
