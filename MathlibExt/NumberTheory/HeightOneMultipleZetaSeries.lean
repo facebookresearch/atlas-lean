@@ -9,15 +9,27 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.Combinatorics.Enumerative.Stirling
+public import Mathlib.NumberTheory.Harmonic.Defs
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 import Mathlib.Analysis.PSeries
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import MathlibExt.Combinatorics.Enumerative.StirlingAscPochhammer
 
 /-!
-# Shifted alternating series of height one multiple zeta values
+# Series of height one multiple zeta values
 
 The shifted alternating series of height one multiple zeta values converges to a weighted
-integral of the multiple Hurwitz zeta function.
+integral of the multiple Hurwitz zeta function. The generalized Goldbach series and its
+alternating counterpart are evaluated by subtracting a beta kernel before summing over the depth.
+
+## References
+
+* Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24 (2024),
+  Article A43, pp. 1–14, Theorems 2 and 4. For Theorem 2 we use the finite expansions of
+  (2.3), (2.8) and (2.18)–(2.19), summing directly at the two boundary points instead of
+  taking the meromorphic limit in the paper.
 -/
 
 namespace MetaMathlibExt
@@ -460,6 +472,315 @@ public theorem tendsto_alternating_heightOneMultipleZeta_integral (k : ℤ) (hk 
     apply intervalIntegral.integral_congr
     intro r _
     simp [hurwitzSeries_eq, q]
+
+-- The finite generating function for the elementary symmetric sums in one row.
+private lemma hasSum_harmonicCoeff_mul_pow (a : ℕ) (t : ℝ) :
+    HasSum (fun j => harmonicCoeff a j * t ^ j) (pochCoeff (1 + t) a) := by
+  have hp : (∏ i ∈ Icc 1 a, (t / (i : ℝ) + 1)) = pochCoeff (1 + t) a := by
+    induction a with
+    | zero => simp [pochCoeff]
+    | succ a ih =>
+      rw [prod_Icc_succ_top (by omega : 1 ≤ a + 1), ih, pochCoeff_step, Nat.cast_add, Nat.cast_one]
+      field_simp
+      ring
+  have hprod : ∑ j ∈ range (a + 1), harmonicCoeff a j * t ^ j =
+      ∏ i ∈ Icc 1 a, (t / (i : ℝ) + 1) := by
+    rw [prod_add]
+    simp only [prod_const_one, mul_one]
+    rw [sum_powerset]
+    simp only [Nat.card_Icc, Nat.add_sub_cancel]
+    apply sum_congr rfl
+    intro j _
+    rw [harmonicCoeff, sum_mul]
+    apply sum_congr rfl
+    intro T hT
+    simp only [div_eq_mul_inv, prod_mul_distrib, prod_const, (mem_powersetCard.mp hT).2,
+      mul_comm, one_pow, one_mul]
+  rw [← hp, ← hprod]
+  exact hasSum_sum_of_ne_finset_zero (fun j hj => by
+    rw [harmonicCoeff, powersetCard_eq_empty.mpr (by simpa using hj), sum_empty, zero_mul])
+
+-- At b = k - 1, the beta column weights give the subtracted constant. Subtract
+-- them within each row before taking either infinite sum.
+private noncomputable def goldbachKernel (b a : ℕ) : ℝ :=
+  1 / ((a : ℝ) + 1) ^ (b + 2) - weight a b / b.factorial
+
+private lemma weight_div_factorial (a b : ℕ) :
+    weight a b / b.factorial = (a.factorial : ℝ) / (a + (b + 2)).factorial := by
+  rw [weight, betaKernel, show a + (b + 2) = a + b + 1 + 1 by omega,
+    Nat.factorial_succ (a + b + 1)]
+  push_cast
+  field_simp
+  ring
+
+private lemma goldbachKernel_nonneg (b a : ℕ) : 0 ≤ goldbachKernel b a := by
+  have h (n : ℕ) : ((a : ℝ) + 1) ^ n * a.factorial ≤ (a + n).factorial := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      change ((a : ℝ) + 1) ^ (n + 1) * a.factorial ≤ ((a + n + 1).factorial : ℝ)
+      rw [Nat.factorial_succ, Nat.cast_mul, pow_succ, mul_right_comm,
+        mul_comm ((a + n + 1 : ℕ) : ℝ)]
+      refine (mul_le_mul_of_nonneg_right ih (by positivity)).trans ?_
+      apply mul_le_mul_of_nonneg_left _ (by positivity)
+      push_cast
+      linarith [Nat.cast_nonneg (α := ℝ) n]
+  rw [goldbachKernel, sub_nonneg, weight_div_factorial, div_le_div_iff₀ (by positivity)
+    (by positivity), one_mul, mul_comm]
+  exact h (b + 2)
+
+private lemma hasSum_goldbach_column (b j : ℕ) (e : ℝ) :
+    HasSum (fun a => goldbachKernel b a * (harmonicCoeff a j * (e * ((b : ℝ) + 1)) ^ j))
+      (e ^ j * (((b : ℝ) + 1) ^ j * moment j b - 1 / (((b + 1).factorial : ℝ) * (b + 1)))) := by
+  have h := ((hasSum_moment j b).sub ((hasSum_harmonic_weight j b).div_const
+    (b.factorial : ℝ))).mul_right ((e * ((b : ℝ) + 1)) ^ j)
+  convert h using 1
+  · ext a
+    unfold goldbachKernel
+    ring
+  · rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one, mul_pow, pow_add, pow_two]
+    field_simp
+
+private lemma hasSum_goldbach_columns (b : ℕ) {e s : ℝ} (he : |e| = 1)
+    (hplus : Summable (fun a => goldbachKernel b a * pochCoeff (1 + ((b : ℝ) + 1)) a))
+    (hs : HasSum (fun a => goldbachKernel b a * pochCoeff (1 + e * ((b : ℝ) + 1)) a) s) :
+    HasSum (fun j => e ^ j * (((b : ℝ) + 1) ^ j * moment j b -
+      1 / (((b + 1).factorial : ℝ) * (b + 1)))) s := by
+  let F (t : ℝ) (a j : ℕ) := goldbachKernel b a * (harmonicCoeff a j * t ^ j)
+  have hr (t : ℝ) (a : ℕ) : HasSum (F t a) (goldbachKernel b a * pochCoeff (1 + t) a) :=
+    (hasSum_harmonicCoeff_mul_pow a t).mul_left (goldbachKernel b a)
+  let k : ℝ := b + 1
+  have hnonneg a j : 0 ≤ F k a j :=
+    mul_nonneg (goldbachKernel_nonneg b a) (mul_nonneg (harmonicCoeff_nonneg a j) (by positivity))
+  have hpos : Summable (Function.uncurry (F k)) :=
+    (summable_prod_of_nonneg (fun ij => hnonneg ij.1 ij.2)).2
+      ⟨fun a => (hr k a).summable, by simpa only [(hr _ _).tsum_eq] using hplus⟩
+  have hF : Summable (Function.uncurry (F (e * k))) := hpos.of_norm_bounded fun ⟨a, j⟩ => by
+    change |F (e * k) a j| ≤ F k a j
+    simp only [F, abs_mul, abs_pow, he, one_mul, abs_of_nonneg (goldbachKernel_nonneg b a),
+      abs_of_nonneg (harmonicCoeff_nonneg a j), abs_of_nonneg (show 0 ≤ k by positivity), le_refl]
+  have hcols := hF.prod_symm.hasSum.prod_fiberwise (hasSum_goldbach_column b · e)
+  have hrows := hF.hasSum.prod_fiberwise (hr (e * k))
+  change HasSum _ (∑' ij, Function.uncurry (F (e * k)) ((Equiv.prodComm ℕ ℕ) ij)) at hcols
+  rwa [(Equiv.prodComm ℕ ℕ).tsum_eq (Function.uncurry (F (e * k))), hrows.unique hs] at hcols
+
+private lemma hasSum_reciprocal_sub (k : ℕ) :
+    HasSum (fun a : ℕ => 1 / ((a : ℝ) + 1) - 1 / ((a : ℝ) + 1 + k)) (harmonic k : ℝ) := by
+  let r (i a : ℕ) : ℝ := 1 / ((a : ℝ) + i + 1)
+  have h (i : ℕ) : HasSum (fun a => r i a - r i (a + 1)) (r i 0) := by
+    refine hasSum_difference (g := r i) (fun a => ?_) (fun _ => rfl) ?_
+    · unfold r
+      push_cast
+      apply sub_nonneg.mpr (one_div_le_one_div_of_le (by positivity) (by linarith))
+    · have hlim : Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (𝓝 0) :=
+        tendsto_one_div_add_atTop_nhds_zero_nat
+      simpa [r, Function.comp_def, Nat.cast_add] using hlim.comp (tendsto_add_atTop_nat i)
+  convert hasSum_sum (s := range k) (fun i _ => h i) using 1
+  · ext a
+    convert (sum_range_sub' (fun i => r i a) k).symm using 1
+    · simp [r, add_right_comm]
+    · apply sum_congr rfl
+      intro i _
+      simp only [r, Nat.cast_add, Nat.cast_one]
+      ring
+  · simp [harmonic, r, one_div]
+
+private lemma pochCoeff_nat_succ (k a : ℕ) :
+    pochCoeff ((k : ℝ) + 1) a = ((k + a).factorial : ℝ) / (k.factorial * a.factorial) := by
+  rw [pochCoeff, ← div_div]
+  congr 1
+  exact (eq_div_iff (by positivity)).2 (by rw [mul_comm, factorial_mul_ascPochhammer])
+
+private noncomputable def zetaSeries (n : ℕ) : ℝ := ∑' a : ℕ, 1 / ((a : ℝ) + 1) ^ n
+
+private lemma hasSum_zetaSeries (n : ℕ) (hn : 1 < n) :
+    HasSum (fun a : ℕ => 1 / ((a : ℝ) + 1) ^ n) (zetaSeries n) := by
+  have h := (summable_nat_add_iff (f := fun a : ℕ => 1 / (a : ℝ) ^ n) 1).2
+    (Real.summable_one_div_nat_pow.mpr hn)
+  simpa only [zetaSeries, Nat.cast_add, Nat.cast_one] using h.hasSum
+
+private lemma zetaSeries_cast (n : ℕ) (hn : 1 < n) : (zetaSeries n : ℂ) = riemannZeta n := by
+  have h : 1 < (n : ℂ).re := by exact_mod_cast hn
+  rw [zeta_eq_tsum_one_div_nat_add_one_cpow h, zetaSeries, Complex.ofReal_tsum]
+  simp only [Complex.cpow_natCast, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_pow,
+    Complex.ofReal_add, Complex.ofReal_natCast]
+
+-- At +k the leading term of the rising factorial cancels the harmonic tail of the
+-- beta kernel, leaving a summable difference and the lower-degree zeta terms.
+private lemma hasSum_goldbach_rows_pos (b : ℕ) :
+    let k := b + 1
+    HasSum (fun a => goldbachKernel b a * pochCoeff (1 + ((b : ℝ) + 1)) a)
+      (1 / (k.factorial : ℝ) *
+        ((∑ m ∈ range k, (k.stirlingFirst m : ℝ) * zetaSeries (k + 1 - m)) +
+          (harmonic k : ℝ))) := by
+  let k := b + 1
+  have hz := hasSum_sum (s := range k) (fun m hm =>
+    (hasSum_zetaSeries (k + 1 - m) (by have := mem_range.mp hm; omega)).mul_left
+      (k.stirlingFirst m : ℝ))
+  refine ((hz.add (hasSum_reciprocal_sub k)).mul_left (1 / (k.factorial : ℝ))).congr_fun ?_
+  intro a
+  let x : ℝ := a + 1
+  have he : 1 + ((b : ℝ) + 1) = (k : ℝ) + 1 := by simp [k, add_comm]
+  have hpos : pochCoeff ((k : ℝ) + 1) a =
+      (ascPochhammer ℝ k).eval x / k.factorial := by
+    rw [pochCoeff_nat_succ, mul_comm (k.factorial : ℝ), ← div_div, add_comm k a]
+    congr 1
+    symm
+    exact (eq_div_iff (by positivity)).2 (by dsimp [x]; rw [mul_comm, factorial_mul_ascPochhammer])
+  have hbeta : (weight a b / b.factorial) * pochCoeff ((k : ℝ) + 1) a =
+      (1 / (k.factorial : ℝ)) * (1 / (x + k)) := by
+    rw [weight_div_factorial, pochCoeff_nat_succ, add_comm k a,
+      show a + (b + 2) = (a + k) + 1 by rfl, Nat.factorial_succ]
+    push_cast
+    dsimp only [x]
+    field_simp
+    ring
+  have hp (m : ℕ) (hm : m ≤ k + 1) :
+      x ^ m / x ^ (k + 1) = 1 / x ^ (k + 1 - m) := by
+    conv_lhs => rw [← Nat.sub_add_cancel hm, pow_add]
+    have hx : x ≠ 0 := by dsimp [x]; positivity
+    field_simp
+  rw [he, goldbachKernel, sub_mul, hbeta, hpos, ← Nat.sum_stirlingFirst_mul_pow,
+    sum_range_succ, Nat.stirlingFirst_self, Nat.cast_one, one_mul]
+  change 1 / x ^ (k + 1) *
+      (((∑ m ∈ range k, (k.stirlingFirst m : ℝ) * x ^ m) + x ^ k) / k.factorial) -
+      (1 / (k.factorial : ℝ)) * (1 / (x + k)) = _
+  have hsum :
+      ((∑ m ∈ range k, (k.stirlingFirst m : ℝ) * x ^ m) + x ^ k) / x ^ (k + 1) =
+        (∑ m ∈ range k, (k.stirlingFirst m : ℝ) * (1 / x ^ (k + 1 - m))) + 1 / x := by
+    rw [add_div, sum_div, hp k (by omega), show k + 1 - k = 1 by omega, pow_one]
+    congr 1
+    apply sum_congr rfl
+    intro m hm
+    rw [mul_div_assoc, hp m (by have := mem_range.mp hm; omega)]
+  rw [show 1 / x ^ (k + 1) *
+      (((∑ m ∈ range k, (k.stirlingFirst m : ℝ) * x ^ m) + x ^ k) / k.factorial) =
+      (1 / (k.factorial : ℝ)) *
+        (((∑ m ∈ range k, (k.stirlingFirst m : ℝ) * x ^ m) + x ^ k) / x ^ (k + 1)) by ring,
+    hsum]
+  ring
+
+private lemma pochCoeff_neg_nat (b a : ℕ) :
+    pochCoeff (-(b : ℝ)) a = (-1) ^ a * (b.choose a : ℝ) := by
+  rw [pochCoeff, ascPochhammer_eval_neg_eq_descPochhammer, mul_div_assoc,
+    ← Nat.cast_choose_eq_descPochhammer_div]
+
+private lemma pochCoeff_neg_nat_eq_zero {b a : ℕ} (h : b < a) : pochCoeff (-(b : ℝ)) a = 0 := by
+  simp [pochCoeff_neg_nat, Nat.choose_eq_zero_of_lt h]
+
+-- The negative boundary has finite row support. The signed beta contribution
+-- telescopes by the same kernel recurrence as the nonnegative beta sums.
+private lemma hasSum_goldbach_beta_neg (b : ℕ) :
+    HasSum (fun a => (weight a b / b.factorial) * pochCoeff (-(b : ℝ)) a)
+      (1 / (2 * ((b + 1).factorial : ℝ) * ((b : ℝ) + 1))) := by
+  let g a := pochCoeff (-(b : ℝ)) a * betaKernel a b / (2 * (b.factorial : ℝ) * ((b : ℝ) + 1))
+  have hstep (a : ℕ) : g a - g (a + 1) = (weight a b / b.factorial) * pochCoeff (-(b : ℝ)) a := by
+    dsimp only [g]
+    rw [pochCoeff_step, betaKernel_step, weight]
+    field_simp
+    ring
+  have hg0 : g 0 = 1 / (2 * ((b + 1).factorial : ℝ) * ((b : ℝ) + 1)) := by
+    simp only [g, pochCoeff_neg_nat, pow_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
+      one_mul, betaKernel_zero, Nat.factorial_succ, Nat.cast_mul, Nat.cast_add]
+    field_simp
+  have hz : g (b + 1) = 0 := by simp [g, pochCoeff_neg_nat_eq_zero (Nat.lt_succ_self b)]
+  rw [← hg0, ← sub_zero (g 0), ← hz, ← sum_range_sub']
+  simp_rw [hstep]
+  exact hasSum_sum_of_ne_finset_zero (fun a ha => by
+    rw [pochCoeff_neg_nat_eq_zero (by simpa using ha), mul_zero])
+
+private lemma hasSum_goldbach_dirichlet_neg (b : ℕ) :
+    let k := b + 1
+    HasSum (fun a : ℕ => (1 / ((a : ℝ) + 1) ^ (b + 2)) * pochCoeff (-(b : ℝ)) a)
+      ((∑ i ∈ Icc 1 k, (-1 : ℝ) ^ (i - 1) * (k.choose i : ℝ) / (i : ℝ) ^ k) / k) := by
+  let k := b + 1
+  have hfin : HasSum (fun a : ℕ => (1 / ((a : ℝ) + 1) ^ (b + 2)) * pochCoeff (-(b : ℝ)) a)
+      (∑ a ∈ range k, (1 / ((a : ℝ) + 1) ^ (b + 2)) * pochCoeff (-(b : ℝ)) a) :=
+    hasSum_sum_of_ne_finset_zero (fun a ha => by
+      rw [pochCoeff_neg_nat_eq_zero (by simpa [k] using ha), mul_zero])
+  convert hfin using 1
+  rw [sum_div, show Icc 1 k = Ico 1 (k + 1) by ext i; simp, sum_Ico_eq_sum_range,
+    Nat.add_sub_cancel]
+  apply sum_congr rfl
+  intro a _
+  simp only [Nat.cast_add, Nat.cast_one, pochCoeff_neg_nat]
+  rw [Nat.add_comm 1 a, Nat.add_sub_cancel, add_comm (1 : ℝ) (a : ℝ)]
+  have hc : (k : ℝ) * (b.choose a : ℝ) = (k.choose (a + 1) : ℝ) * ((a : ℝ) + 1) := by
+    exact_mod_cast Nat.add_one_mul_choose_eq b a
+  have hx : (a : ℝ) + 1 ≠ 0 := by positivity
+  have hk : (k : ℝ) ≠ 0 := by dsimp [k]; positivity
+  rw [← Nat.cast_succ (R := ℝ) b]
+  change (-1 : ℝ) ^ a * (k.choose (a + 1) : ℝ) / ((a : ℝ) + 1) ^ k / k =
+    (1 / ((a : ℝ) + 1) ^ (k + 1)) * ((-1) ^ a * (b.choose a : ℝ))
+  rw [div_div, pow_succ _ k, div_mul_eq_mul_div, one_mul]
+  apply (div_eq_div_iff (mul_ne_zero (pow_ne_zero _ hx) hk)
+    (mul_ne_zero (pow_ne_zero _ hx) hx)).2
+  linear_combination -((-1 : ℝ) ^ a * ((a : ℝ) + 1) ^ k) * hc
+
+private lemma hasSum_goldbach_rows_neg (b : ℕ) :
+    let k := b + 1
+    HasSum (fun a => goldbachKernel b a * pochCoeff (-(b : ℝ)) a)
+      ((∑ i ∈ Icc 1 k, (-1 : ℝ) ^ (i - 1) * (k.choose i : ℝ) / (i : ℝ) ^ k) / k -
+        1 / (2 * (k.factorial : ℝ) * (k : ℝ))) := by
+  simpa only [goldbachKernel, sub_mul, Nat.cast_add, Nat.cast_one] using
+    (hasSum_goldbach_dirichlet_neg b).sub (hasSum_goldbach_beta_neg b)
+
+private lemma hasSum_goldbach_ofReal (b : ℕ) {e s : ℝ}
+    (h : HasSum (fun j : ℕ => e ^ j * (((b : ℝ) + 1) ^ j * moment j b -
+      1 / (((b + 1).factorial : ℝ) * (b + 1)))) s) :
+    HasSum (fun j : ℕ => (e : ℂ) ^ j * (((b + 1 : ℕ) : ℂ) ^ j *
+      heightOneMultipleZeta (((b + 1 : ℕ) : ℂ) + 1) j -
+      1 / (((b + 1).factorial : ℂ) * ((b + 1 : ℕ) : ℂ)))) (s : ℂ) := by
+  refine (Complex.hasSum_ofReal.mpr h).congr_fun fun j => ?_
+  simp only [Complex.ofReal_mul, Complex.ofReal_pow, Complex.ofReal_sub, Complex.ofReal_add,
+    Complex.ofReal_natCast, Complex.ofReal_one, Complex.ofReal_div, moment_eq, Nat.cast_add,
+    Nat.cast_one]
+  rw [add_assoc (b : ℂ) 1 1, show (1 : ℂ) + 1 = ((2 : ℕ) : ℂ) by norm_num]
+
+/-- **Generalized Goldbach series for height one multiple zeta values.** Let $k \ge 1$ be an
+integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
+Riemann zeta function, $c(k, m)$ for the unsigned Stirling numbers of the first kind,
+$H_k = \sum_{i=1}^{k} 1/i$ for the $k$-th harmonic number and
+$H_{k,k} = \sum_{i=1}^{k} (-1)^{i-1} \binom{k}{i} i^{-k}$ for the Roman harmonic number. Then the
+series $\sum_{j \ge 0} \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
+sum $\frac{1}{k!} \bigl(\sum_{m=0}^{k-1} c(k, m) \, \zeta(k + 1 - m) + H_k\bigr)$, and the series
+$\sum_{j \ge 0} (-1)^j \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
+sum $\frac{H_{k,k}}{k} - \frac{1}{2 \, k! \, k}$.
+
+Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
+(2024), Article A43, Theorem 2 (`integers-2024-A43-thm-2`). -/
+public theorem hasSum_heightOneMultipleZeta_goldbach (k : ℕ) (hk : 1 ≤ k) :
+    HasSum (fun j : ℕ => (k : ℂ) ^ j * heightOneMultipleZeta ((k : ℂ) + 1) j -
+        1 / ((k.factorial : ℂ) * k))
+      (1 / (k.factorial : ℂ) *
+        (∑ m ∈ Finset.range k, (k.stirlingFirst m : ℂ) * riemannZeta ((k : ℂ) + 1 - m) +
+          (harmonic k : ℂ))) ∧
+    HasSum (fun j : ℕ => (-1) ^ j * ((k : ℂ) ^ j * heightOneMultipleZeta ((k : ℂ) + 1) j -
+        1 / ((k.factorial : ℂ) * k)))
+      (((∑ i ∈ Finset.Icc 1 k, (-1 : ℚ) ^ (i - 1) * (k.choose i : ℚ) / (i : ℚ) ^ k) / k -
+        1 / (2 * (k.factorial : ℚ) * k) : ℚ) : ℂ) := by
+  obtain ⟨b, rfl⟩ : ∃ b : ℕ, k = b + 1 := ⟨k - 1, by omega⟩
+  have hpos := hasSum_goldbach_rows_pos b
+  have hsign : 1 + (-1 : ℝ) * ((b : ℝ) + 1) = -(b : ℝ) := by ring
+  have hneg := hasSum_goldbach_rows_neg b
+  rw [← hsign] at hneg
+  constructor
+  · have h := hasSum_goldbach_ofReal b <| hasSum_goldbach_columns b (e := 1) (by norm_num)
+      hpos.summable (by simpa only [one_mul] using hpos)
+    simp only [Complex.ofReal_one, one_pow, one_mul] at h
+    convert h using 1
+    simp only [Complex.ofReal_mul, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_natCast,
+      Complex.ofReal_add, Complex.ofReal_sum, Complex.ofReal_ratCast]
+    congr 2
+    apply sum_congr rfl
+    intro m hm
+    have hlt := mem_range.mp hm
+    rw [zetaSeries_cast _ (by omega), Nat.cast_sub (by omega)]
+    push_cast
+    rfl
+  · have h := hasSum_goldbach_ofReal b <|
+      hasSum_goldbach_columns b (e := -1) (by norm_num) hpos.summable hneg
+    convert h using 1 <;> (push_cast; rfl)
 
 end
 

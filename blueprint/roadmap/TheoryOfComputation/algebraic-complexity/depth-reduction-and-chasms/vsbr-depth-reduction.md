@@ -1,6 +1,6 @@
 # Valiant–Skyum–Berkowitz–Rackoff depth reduction
 
-Let $f \in \mathbb{F}[x_1, \dots, x_n]$ have degree $d$ and be computed by an arithmetic circuit of size $s$. Then $f$ is computed by an arithmetic circuit of size $\operatorname{poly}(s, d)$ and depth $O(\log d \cdot \log s)$ with fan-in two gates; equivalently, by a circuit of size $\operatorname{poly}(s, d)$ and depth $O(\log d)$ in which addition gates have unbounded fan-in and multiplication gates have fan-in two. In particular $\mathrm{VP}$ is contained in the class of families computed by polynomial-size circuits of depth $O(\log^2 n)$.
+Let $f \in \mathbb{F}[x_1, \dots, x_n]$ have degree $d$ and be computed by an arithmetic circuit of size $s$. Then $f$ is computed by a circuit of size $\operatorname{poly}(s, d)$ and depth $O(\log d)$ in which addition gates have unbounded fan-in and multiplication gates have fan-in two, and hence, replacing each addition gate by a binary tree, by an arithmetic circuit of size $\operatorname{poly}(s, d)$ and depth $O(\log d \cdot (\log s + \log d))$ with fan-in two gates. The depth is $O(\log d \cdot \log s)$ when $d \le \operatorname{poly}(s)$. In particular $\mathrm{VP}$ is contained in the class of families computed by polynomial-size circuits of depth $O(\log^2 n)$.
 
 ## Proof sketch
 

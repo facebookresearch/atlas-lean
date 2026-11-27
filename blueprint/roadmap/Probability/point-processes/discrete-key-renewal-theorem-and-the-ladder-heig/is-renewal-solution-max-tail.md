@@ -1,0 +1,3 @@
+# Ladder decomposition of the maximum
+
+Let $X_0, X_1, \dots$ be i.i.d. integer-valued random variables on a probability space, with score walk $S$, maximum $M = \sup_n S_n$, first strict ascending ladder epoch $\tau_+$ and ladder-height law $g$. With no drift or moment assumption, the tail of the maximum solves the discrete renewal equation $\mathbb{P}(M > k) = \mathbb{P}(\tau_+ < \infty, S_{\tau_+} > k) + \sum_{j \le k} g_j\, \mathbb{P}(M > k - j)$ for every $k$. The proof splits $\{M > k\}$ over the events $\{\tau_+ = n, S_n = j\}$, which depend on the first $n$ scores; after time $n$ the walk restarts independently with the same law.
