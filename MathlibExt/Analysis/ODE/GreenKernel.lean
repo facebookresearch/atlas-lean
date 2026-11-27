@@ -77,7 +77,9 @@ theorem kernel_of_lt {u v C : ℝ → ℝ} {x y : ℝ} (hxy : y < x) :
   unfold kernel
   rw [ite_eq_right (not_le.mpr hxy)]
 
-/-- The diagonal value is given by the left branch. -/
+/-- On the diagonal, the two-solution Green kernel takes its left-branch value:
+`kernel u v C y y = C y * u y` for every `y`, where `kernel u v C x y` is `C y * u x` for
+`x ≤ y` and `C y * (u y / v y) * v x` for `y < x`. -/
 theorem kernel_self {u v C : ℝ → ℝ} {y : ℝ} :
     kernel u v C y y = C y * u y :=
   kernel_of_le le_rfl

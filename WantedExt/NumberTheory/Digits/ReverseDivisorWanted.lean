@@ -47,6 +47,8 @@ public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarIffDv
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarOfDvd
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorExistsDvdReverseDigitsMul
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorPalindromeHasPropertyPStar
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorInfiniteDvdReverseDigitsMul
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorNoPStar
 
 set_option autoImplicit false
 
@@ -91,30 +93,6 @@ Integer Divides the Reverse of Any of Its Multiples?",
 Lemma 2. -/
 theorem_wanted not_hasPropertyPStar_basic_nine (k : ℕ) (hk : 2 ≤ k) :
     ¬ HasPropertyPStar (11 * (10 ^ k - 1))
-
-/-- **No reverse divisor has property $P^*$.** If $n$ is a reverse divisor, then $n$ does not have
-the property $P^*$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 4. -/
-theorem_wanted not_hasPropertyPStar_of_isReverseDivisor (n : ℕ)
-    (h : IsReverseDivisor n) :
-    ¬ HasPropertyPStar n
-
-/-- **Infinitely many multiples with divisible reversal.** Let $n$ be a natural number not
-divisible by $10$, and suppose that $n$ divides the decimal reversal of $k_0 n$ for some natural
-number $k_0 \ge 1$. Then there are infinitely many natural numbers $k \ge 1$ such that $n$
-divides the decimal reversal of $k n$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 6. -/
-theorem_wanted infinite_dvd_reverseDigits_mul (n : ℕ)
-    (h10 : ¬ 10 ∣ n)
-    (h : ∃ k₀ : ℕ, 1 ≤ k₀ ∧ n ∣ Nat.reverseDigits 10 (k₀ * n)) :
-    Set.Infinite
-      {k : ℕ | 1 ≤ k ∧ n ∣ Nat.reverseDigits 10 (k * n)}
 
 /-- **Lemma 3**: a non-basic reverse divisor `n` with
 quotient `9` begins and ends with the same block
