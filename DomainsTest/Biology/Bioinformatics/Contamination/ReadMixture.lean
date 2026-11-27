@@ -12,7 +12,7 @@ public import Domains.Biology.Bioinformatics.Contamination.ReadMixture
 
 @[expose] public section
 
-open MathlibExt.Biology.Bioinformatics.Contamination
+open Domains.Biology.Bioinformatics.Contamination.ReadMixture
 open MathlibExt.Biology.PopulationGenetics
 open scoped NNReal ENNReal
 

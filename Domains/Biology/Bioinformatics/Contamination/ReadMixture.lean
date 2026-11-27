@@ -44,7 +44,7 @@ covering a finite set of biallelic sites (Jun et al. 2012, Equations 1 and 2).
 * `likelihood s pop b α`: the sequence-only likelihood `L(α)` (Equation 2), where both genotypes
   have the Hardy–Weinberg law `hwGenotype (pop i)`.
 * `arrayGenotypeProb G r`: the prior `P(g | G) = ∑_ε P(g | ε; G) P(ε)` of the target's genotype
-  given its array genotype `G` and genotyping-error probability `r`.
+  given its array genotype `G` and genotyping-error probability `r`, a law for `0 ≤ r ≤ 1`.
 * `arrayLikelihood s pop G r b α`: the likelihood with array genotypes of the target
   (Equation 1).
 
@@ -72,19 +72,16 @@ covering a finite set of biallelic sites (Jun et al. 2012, Equations 1 and 2).
 
 open scoped NNReal ENNReal
 
-namespace MathlibExt.Biology.Bioinformatics.Contamination
+namespace Domains.Biology.Bioinformatics.Contamination.ReadMixture
 
 open MathlibExt.Biology.PopulationGenetics
 
 /-! ### Sites and base calls -/
 
-/- The definitions that the docstrings of `callProb`, `hwGenotype`, `likelihoodWithPriors`,
-`likelihood` and `arrayGenotypeProb` state in full have plain comments rather than docstrings, so
-that they get no pages of their own. -/
-
--- A biallelic site covered by sequencing reads: two distinct alleles `ref` and `alt` among the
--- bases `Fin 4` (order `A, C, G, T`), the number `depth` of reads covering the site, and the
--- phred base quality `quality j` of the base call of read `j`.
+/-- A **biallelic site covered by sequencing reads**: two distinct alleles `ref` and `alt` among
+the bases `Fin 4` (order `A, C, G, T`), the number `depth` of reads covering the site, and the
+phred base quality `quality j` of the base call of read `j`, on the phred scale
+`Q = -10 log₁₀ p` of the probability `p` that the call is wrong (`phredErrorProb`). -/
 structure Site where
   /-- The reference allele. -/
   ref : Fin 4
@@ -94,20 +91,26 @@ structure Site where
   ref_ne_alt : ref ≠ alt
   /-- The number of reads covering the site. -/
   depth : ℕ
-  /-- The phred base quality of the base call of each read. -/
+  /-- The phred base quality of the base call of each read, on the phred scale. -/
   quality : Fin depth → ℝ≥0
 
--- The phred error probability `10^(-Q/10)` of a base call of phred quality `Q`.
+/-- The **phred error probability** `10^(-Q/10)` of a base call of phred base quality `Q`: the
+phred scale is `Q = -10 log₁₀ p` for the probability `p` that the call is wrong, so quality `10`
+means `p = 1/10` and quality `20` means `p = 1/100`. It lies in `[0, 1]`
+(`phredErrorProb_nonneg`, `phredErrorProb_le_one`). -/
 noncomputable def phredErrorProb (Q : ℝ≥0) : ℝ := (10 : ℝ) ^ (-(Q : ℝ) / 10)
 
--- The law of the sequencing-error indicator `e` (`true` for an error) of a base call of phred
--- quality `Q`: `P(e = 1) = 10^(-Q/10)` and `P(e = 0) = 1 - 10^(-Q/10)`.
+/-- The **law of the sequencing-error indicator** `e` (`true` for an error) of a base call of phred
+base quality `Q`: `P(e = 1) = 10^(-Q/10)` and `P(e = 0) = 1 - 10^(-Q/10)` (`phredErrorProb`).
+It is a probability law for every `Q : ℝ≥0` (`errorProb_nonneg`, `sum_errorProb`). -/
 noncomputable def errorProb (Q : ℝ≥0) (e : Bool) : ℝ :=
   if e then phredErrorProb Q else 1 - phredErrorProb Q
 
--- The probability that a read carrying allele `a` is called as base `b`, given its
--- sequencing-error indicator `e`: without an error the call is `a`, and an error is equally likely
--- to produce each of the three other bases.
+/-- The **probability that a read carrying allele `a` is called as base `b`**, among the bases
+`Fin 4`, given its sequencing-error indicator `e` (`true` for an error): without an error the call
+is `a`, and an error is equally likely to produce each of the three other bases, with probability
+`1/3` each. For each `a` and `e` it is a probability law on `b` (`alleleCallProb_nonneg`,
+`sum_alleleCallProb`). -/
 noncomputable def alleleCallProb (a : Fin 4) (e : Bool) (b : Fin 4) : ℝ :=
   if e then (if b = a then 0 else 1 / 3) else (if b = a then 1 else 0)
 
@@ -156,7 +159,8 @@ theorem sum_callProb (s : Site) (g : Fin 3) (e : Bool) : ∑ b, callProb s g e b
 
 /-! ### Hardy–Weinberg genotype law -/
 
--- The number of copies of the alternative allele (`true`) in an ordered genotype.
+/-- The **genotype of an ordered pair of alleles** at a biallelic site, as the number `0`, `1` or
+`2` of copies of the alternative allele `true` (the reference allele is `false`). -/
 def altCount : Bool × Bool → Fin 3
   | (false, false) => 0
   | (true, false) => 1
@@ -210,11 +214,12 @@ of the target and `π₂ i` of the contaminant at each site `s i`,
 where `b i j` is the base call of read `j` at site `s i`, `P(b | g, e)` is `callProb`, and the
 sequencing-error indicator of read `j` has `P(eᵢⱼ = 1) = 10^(-Qᵢⱼ/10)` and
 `P(eᵢⱼ = 0) = 1 - 10^(-Qᵢⱼ/10)` for the phred quality `Qᵢⱼ = (s i).quality j` of its call
-(`errorProb`). This is the likelihood of the model in which the sites are independent, the two
+(`errorProb`). For `α ∈ [0, 1]` and genotype priors `π₁ i` and `π₂ i` that are probability
+vectors, this is the likelihood of the model in which the sites are independent, the two
 genotypes `g₁, g₂` of a site are independent with laws `π₁ i` and `π₂ i`, and, conditionally on
 the genotype pair of their site, the reads are independent, each read's error indicator is
 independent of everything else, and its base call is drawn from the two-sample mixture
-`(1 - α) P(b | g₁, e) + α P(b | g₂, e)`. With the array-genotype laws `arrayGenotypeProb` of the
+`(1 - α) P(b | g₁, e) + α P(b | g₂, e)`. With the array-genotype priors `arrayGenotypeProb` of the
 target and of a study individual `k` as `π₁` and `π₂` it is the source's likelihood `L(α, k)`,
 which the source maximises over `(α, k)` to find the most likely contaminating sample. -/
 noncomputable def likelihoodWithPriors (s : ι → Site) (π₁ π₂ : ι → Fin 3 → ℝ)
@@ -247,29 +252,34 @@ noncomputable def likelihood (s : ι → Site) (pop : ι → PMF (Bool × Bool))
   likelihoodWithPriors s (fun i g => (hwGenotype (pop i) g).toReal)
     (fun i g => (hwGenotype (pop i) g).toReal) b α
 
--- The law of the genotyping-error indicator `ε` (`true` for an error) of an array genotype with
--- genotyping-error probability `r`: `P(ε = 1) = r` and `P(ε = 0) = 1 - r`.
+/-- The **law of the genotyping-error indicator** `ε` (`true` for an error) of an array genotype
+with genotyping-error probability `r`: `P(ε = 1) = r` and `P(ε = 0) = 1 - r`. It is a probability
+law when `0 ≤ r ≤ 1`. -/
 def genotypingErrorProb (r : ℝ) (ε : Bool) : ℝ := if ε then r else 1 - r
 
--- The probability `P(g | ε; G)` that the true genotype is `g` given the array genotype `G` and
--- the genotyping-error indicator `ε`: without a genotyping error it is `G`, and on a genotyping
--- error it is each of the two genotypes other than `G` with probability `1/2`.
+/-- The **true genotype given an array genotype and a genotyping-error indicator**: the
+probability `P(g | ε; G)` that the true genotype is `g` given the array genotype `G` and the
+genotyping-error indicator `ε` (`true` for an error), genotypes being the number of copies of the
+alternative allele. Without a genotyping error the true genotype is `G`; on a genotyping error it
+is each of the two genotypes other than `G` with probability `1/2`. -/
 noncomputable def genotypeGivenArray (G : Fin 3) (ε : Bool) (g : Fin 3) : ℝ :=
   if ε then (if g = G then 0 else 1 / 2) else (if g = G then 1 else 0)
 
-/-- The **genotype prior given an array genotype**: the law
-`P(g | G) = ∑_{ε ∈ {0, 1}} P(g | ε; G) P(ε)` of the true genotype `g` (the number of copies of the
-alternative allele) of an individual whose array genotype is `G`, marginalised over a binary
-genotyping-error indicator `ε` with `P(ε = 1) = r` (`genotypingErrorProb`). Without a genotyping
-error the true genotype is `G`; on a genotyping error it is each of the two genotypes other than `G`
-with probability `1/2` (`genotypeGivenArray`). -/
+/-- The **genotype prior given an array genotype**: `P(g | G) = ∑_{ε ∈ {0, 1}} P(g | ε; G) P(ε)`
+for the true genotype `g` (the number of copies of the alternative allele) of an individual whose
+array genotype is `G`, marginalised over a binary genotyping-error indicator `ε` with
+`P(ε = 1) = r` and `P(ε = 0) = 1 - r` (`genotypingErrorProb`). Without a genotyping error the true
+genotype is `G`; on a genotyping error it is each of the two genotypes other than `G` with
+probability `1/2` (`genotypeGivenArray`). For `0 ≤ r ≤ 1` it is a probability law on `g`
+(`arrayGenotypeProb_nonneg`, `sum_arrayGenotypeProb`). -/
 noncomputable def arrayGenotypeProb (G : Fin 3) (r : ℝ) (g : Fin 3) : ℝ :=
   ∑ ε : Bool, genotypeGivenArray G ε g * genotypingErrorProb r ε
 
 /-- The **read-mixture likelihood with array genotypes of the target** (Jun et al. 2012,
 Equation 1): the sequence-only likelihood `likelihood` with the prior of the target's genotype at
 site `i` replaced by `arrayGenotypeProb (G i) (r i)`, its law given the array genotype `G i` and
-the genotyping-error probability `r i`. The contaminant's genotype keeps the Hardy–Weinberg law
+the genotyping-error probability `r i`, where the model takes `0 ≤ r i ≤ 1`. The contaminant's
+genotype keeps the Hardy–Weinberg law
 `hwGenotype (pop i)`. `arrayLikelihood_eq` writes it with the sum over the genotyping-error
 indicator inside the product over sites, as the source does. -/
 noncomputable def arrayLikelihood (s : ι → Site) (pop : ι → PMF (Bool × Bool)) (G : ι → Fin 3)
@@ -456,4 +466,4 @@ theorem arrayLikelihood_eq (s : ι → Site) (pop : ι → PMF (Bool × Bool)) (
   refine Finset.sum_congr rfl fun ε _ => ?_
   ring
 
-end MathlibExt.Biology.Bioinformatics.Contamination
+end Domains.Biology.Bioinformatics.Contamination.ReadMixture
