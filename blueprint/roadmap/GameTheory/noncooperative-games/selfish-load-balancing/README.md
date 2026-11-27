@@ -12,6 +12,8 @@ Selfish agents each place one task on one of $m$ identical machines and want the
 - [A single task bounds every makespan](weight-le-makespan.md)
 - [Price of anarchy for pure equilibria on identical machines (multiplicative form)](succ-mul-makespan-le.md)
 - [Price of anarchy for pure equilibria on identical machines](makespan-le-of-is-pure-nash.md)
+- [Load Balancing: Mixed Equilibria](load-balancing-mixed-equilibria/README.md)
+- [Load Balancing: Pure Equilibria](load-balancing-pure-equilibria/README.md)
 
 ## Related topics
 

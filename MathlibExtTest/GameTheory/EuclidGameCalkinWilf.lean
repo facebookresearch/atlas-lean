@@ -96,3 +96,22 @@ example (c d k : ℕ) (hc : 0 < c) (hcd : c < d) :
   intro s t
   rw [h₁, h₂]
   ring
+
+-- At the root and level zero the left denominator uses the coefficient `-1`.
+example : euclidPPosition 1 1 = true ∧ euclidPPosition 3 2 = true ∧
+    euclidPPosition 2 3 = true ∧ (2 : ℤ) = 3 + (0 - 1) * 1 := by
+  obtain ⟨hV, _, _, ⟨_, hden, hL⟩, _, hR⟩ := fibonacci_arch_positions 1 0 (by decide)
+  exact ⟨hV, hL, hR, hden⟩
+
+-- At level two of the next arch, check both tops and the asymmetric branch coordinates.
+example :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let L := t (s^[2] (3, 5))
+    let R := s (t^[2] (5, 2))
+    t (s (3, 2)) = (8, 5) ∧ s (t (3, 2)) = (5, 7) ∧
+      (L.1 : ℤ) = 14 ∧ (L.2 : ℤ) = 11 ∧ euclidPPosition L.1 L.2 = true ∧
+      R = (9, 11) ∧ euclidPPosition R.1 R.2 = true := by
+  obtain ⟨_, hTopL, hTopR, ⟨hNum, hDen, hL⟩, hPairR, hR⟩ :=
+    fibonacci_arch_positions 2 2 (by decide)
+  exact ⟨hTopL, hTopR, hNum, hDen, hL, hPairR, hR⟩

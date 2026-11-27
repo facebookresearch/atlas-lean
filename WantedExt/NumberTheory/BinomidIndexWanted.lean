@@ -23,6 +23,8 @@ public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 public import MathlibExt.NumberTheory.BinomidIndexAdd
 public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
+public import MathlibExt.NumberTheory.BinomidIndexApplyPeriodEqApplyZero
+public import MathlibExt.NumberTheory.BinomidIndexBinomidShiftImageInterEqZero
 
 namespace MetaMathlibExt
 
@@ -41,18 +43,6 @@ public theorem_wanted isLexMinimalExtensionOf_periodic_of_monotoneOn {m : ℕ}
     (hm : 0 < m) {e : ℕ → ℕ} (he : MonotoneOn e (Set.Iio m)) :
     IsLexMinimalExtensionOf (fun i => e (i % m)) m
 
-/-- **A lex-minimal extension periodic from its second entry is periodic.** Let
-$\eta = (e_1, e_2, \dots)$ be a lex-minimal extension and let $p \ge 1$. If $e_{i+p} = e_i$
-for every $i \ge 2$, then $e_{1+p} = e_1$, so the whole sequence $\eta$ is periodic with
-period $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 4
-(`integers-2024-A53-prop-4`). -/
-public theorem_wanted IsLexMinimalExtension.apply_period_eq_apply_zero {η : ℕ → ℕ}
-    (hη : IsLexMinimalExtension η) {p : ℕ} (hp : 0 < p)
-    (hper : ∀ i, 1 ≤ i → η (i + p) = η i) : η p = η 0
-
 /-- **Periodic binomid indices are lex-minimal extensions.** If an infinite binomid index
 $e = (e_1, e_2, \dots)$ is periodic, that is, there is $p \ge 1$ with $e_{i+p} = e_i$ for all
 $i$, then $e$ is a lex-minimal extension: it is the lex-minimal extension of
@@ -64,20 +54,6 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 5
 public theorem_wanted isLexMinimalExtension_of_periodic {η : ℕ → ℕ}
     (hη : IsBinomidIndex η) {p : ℕ} (hp : 0 < p) (hper : ∀ i, η (i + p) = η i) :
     IsLexMinimalExtension η
-
-/-- **Distinct shifts of lex-minimal extensions meet only in zero.** Let $L$ be the set of
-lex-minimal extensions, and for a natural number $l$ let $\sigma^l$ be the right shift that
-prepends $l$ zeros to a sequence. For natural numbers $l \neq m$,
-$\sigma^l(L) \cap \sigma^m(L) = \{(0, 0, 0, \dots)\}$: the only sequence in both images is
-the zero sequence.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 6
-(`integers-2024-A53-prop-6`). -/
-public theorem_wanted binomidShift_image_inter_eq_zero {l m : ℕ} (hlm : l ≠ m) :
-    binomidShift l '' {η | IsLexMinimalExtension η}
-        ∩ binomidShift m '' {η | IsLexMinimalExtension η}
-      = {fun _ => 0}
 
 /-- **Primes divide all inner Fibonomial coefficients of infinitely many rows.** Let $F_n$ be
 the Fibonacci numbers and $F_n! = F_1 F_2 \cdots F_n$ the Fibonacci factorial. For every prime

@@ -153,7 +153,7 @@ lemma ons_exists_decPortChainWalk
     rw [show s((site, (1 : Fin 4)), (site, (0 : Fin 4))) =
       s((site, (0 : Fin 4)), (site, (1 : Fin 4))) from Sym2.eq_swap]
     ext edge
-    simp <;> tauto
+    simp; tauto
   · refine ⟨.cons (ons_decGraph_adj21 L site) .nil, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainEdge]
   · refine ⟨.nil, ?_⟩
@@ -172,7 +172,7 @@ lemma ons_exists_decPortChainWalk
     rw [show s((site, (1 : Fin 4)), (site, (0 : Fin 4))) =
       s((site, (0 : Fin 4)), (site, (1 : Fin 4))) from Sym2.eq_swap]
     ext edge
-    simp [ons_decChainEdge] <;> tauto
+    simp [ons_decChainEdge]; tauto
   · refine ⟨.cons (ons_decGraph_adj32 L site)
       (.cons (ons_decGraph_adj21 L site) .nil), ?_⟩
     simp [ons_decChainPathEdges, ons_decChainEdge]
@@ -181,7 +181,7 @@ lemma ons_exists_decPortChainWalk
     rw [show s((site, (2 : Fin 4)), (site, (1 : Fin 4))) =
       s((site, (1 : Fin 4)), (site, (2 : Fin 4))) from Sym2.eq_swap]
     ext edge
-    simp <;> tauto
+    simp; tauto
   · refine ⟨.cons (ons_decGraph_adj32 L site) .nil, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainEdge]
   · refine ⟨.nil, ?_⟩
@@ -234,7 +234,7 @@ lemma ons_exists_decPortChainPath
     rw [show s((site, (1 : Fin 4)), (site, (0 : Fin 4))) =
       s((site, (0 : Fin 4)), (site, (1 : Fin 4))) from Sym2.eq_swap]
     ext edge
-    simp <;> tauto
+    simp; tauto
   · refine ⟨.cons (ons_decGraph_adj21 L site) .nil, by simp, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainEdge]
   · refine ⟨.nil, by simp, ?_⟩
@@ -253,7 +253,7 @@ lemma ons_exists_decPortChainPath
     rw [show s((site, (1 : Fin 4)), (site, (0 : Fin 4))) =
       s((site, (0 : Fin 4)), (site, (1 : Fin 4))) from Sym2.eq_swap]
     ext edge
-    simp [ons_decChainEdge] <;> tauto
+    simp [ons_decChainEdge]; tauto
   · refine ⟨.cons (ons_decGraph_adj32 L site)
       (.cons (ons_decGraph_adj21 L site) .nil), by simp, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainEdge]
@@ -262,7 +262,7 @@ lemma ons_exists_decPortChainPath
     rw [show s((site, (2 : Fin 4)), (site, (1 : Fin 4))) =
       s((site, (1 : Fin 4)), (site, (2 : Fin 4))) from Sym2.eq_swap]
     ext edge
-    simp <;> tauto
+    simp; tauto
   · refine ⟨.cons (ons_decGraph_adj32 L site) .nil, by simp, ?_⟩
     simp [ons_decChainPathEdges, ons_decChainEdge]
   · refine ⟨.nil, by simp, ?_⟩

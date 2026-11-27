@@ -1,0 +1,3 @@
+# Jobs of a two-machine stage shop with due dates
+
+An instance of a two-machine stage shop with due dates, as in TWO-MACHINE MULTI-PURPOSE MACHINE OPEN SHOP, MAXIMUM LATENESS, is a tuple $(M, J, d, (y^+, y^-))$ of a list $M = [\mu_1, \dots, \mu_r]$ of stage machine sets, each a list of natural numbers (in a well-formed instance, machine indices $0$ and $1$), a list $J$ of jobs, each a list of natural-number processing times, a list $d$ of due dates, and a pair of natural numbers standing for the bound $y = y^+ - y^-$ on the maximum lateness. Its jobs are the positions $0, \dots, n-1$ of the list $J$, where $n$ is the length of $J$.
