@@ -50,6 +50,8 @@
 ## Further topics
 
 - [Best-fit population simulation](best-fit-population-simulation/README.md)
+- [Estimating recombination from haplotype frequency paths](estimating-recombination-from-haplotype-frequency-paths/README.md)
+- [Recombination equations and labelled partitioning duality](recombination-equations-and-labelled-partitioning-duality/README.md)
 - [General multi-parent recombination equation](general-multi-parent-recombination-equation/README.md)
 - [Moment closure in the Moran model with recombination](moment-closure-in-the-moran-model-with-recombination/README.md)
 - [Moran model with single-crossover recombination](moran-model-with-single-crossover-recombination/README.md)

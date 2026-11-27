@@ -25,4 +25,10 @@
 - [Blackwell–MacQueen urn](../../../Probability/bayesian-statistics/blackwell-macqueen-urn/README.md): the ties among draws from a Dirichlet process follow the Chinese restaurant process.
 - [Dirichlet process](../../../Probability/bayesian-statistics/dirichlet-process/README.md): the random measure whose draws, through their ties, produce the Chinese restaurant process.
 - [Indian buffet process](../../../Probability/bayesian-statistics/indian-buffet-process/README.md): the analogue for latent feature models.
+
+## Further topics
+
+- [Ewens–Pitman large deviations](ewens-pitman-large-deviations/README.md)
+- [Martingale limit theorems for the Ewens–Pitman model](martingale-limit-theorems-for-the-ewens-pitman-model/README.md)
+- [Yule process with immigration](yule-process-with-immigration/README.md)
 - [Expected allelic partition of splitting trees](expected-allelic-partition-of-splitting-trees/README.md)

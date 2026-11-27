@@ -75,3 +75,5 @@
 - [Moment duality of the two-locus Wright–Fisher diffusion](moment-duality-of-the-two-locus-wright-fisher-diffusion/README.md)
 ## Identity by descent along the genome
 - [Central limit theorems for detectable IBD rates](central-limit-theorems-for-detectable-ibd-rates/README.md)
+- [Ancestral recombination graph under loose linkage](ancestral-recombination-graph-under-loose-linkage/README.md)
+- [Linked coalescence times under partial selfing](linked-coalescence-times-under-partial-selfing/README.md)
