@@ -17,6 +17,7 @@ public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.ArithmeticFunction.CoprimalityDensityIndependentSet
 public import MathlibExt.NumberTheory.ArithmeticFunction.CoprimalityIndicatorMultiplicativity
 public import MathlibExt.NumberTheory.ArithmeticFunction.TothPairwiseNonCoprimeTuples
+public import MathlibExt.NumberTheory.ArithmeticFunction.TothPairwiseNonCoprimeTuplesCoprimalityDensityEqVertexCoverProduct
 
 /-!
 # Tóth, k-tuples with pairwise non-coprime components — wishlist
@@ -31,6 +32,9 @@ the real-`x` statements.
 
 Theorem 2 of the paper (Ushiroya's mean-value theorem) is already in
 `MathlibExt/NumberTheory/ArithmeticFunction/WintnerMeanValueMultivariable.lean`.
+The vertex-cover product formula for the coprimality density,
+`coprimalityDensity_eq_vertex_cover_product`, is proved in
+`MathlibExt/NumberTheory/ArithmeticFunction/TothPairwiseNonCoprimeTuplesCoprimalityDensityEqVertexCoverProduct.lean`.
 `MathlibExt/NumberTheory/ArithmeticFunction/EulerProductMeanValue.lean` proves Theorem 3
 only under coordinatewise multiplicativity, which is stronger than the source's; the
 source-strength Theorem 3 is `euler_product_mean_value_of_coprime_prod` below.
@@ -174,27 +178,6 @@ public theorem_wanted coprimalityDensity_eq_prime_power_product {k : ℕ} (hk : 
       ∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ)) ^ k *
         ∑' ν : Fin k → ℕ, (coprimalityIndicator E (fun i => (p : ℕ) ^ ν i) : ℝ) /
           ((p : ℕ) : ℝ) ^ (∑ i, ν i)
-
-/-- **Vertex-cover Euler product for the coprimality density.** Let $k \ge 2$, let $E$ be a set of
-pairs $(a, b)$ with $1 \le a < b \le k$, let $G$ be the graph on $\{1, \dots, k\}$ with edge set
-$E$, and let $A_G$ be its coprimality density. Let $J \subseteq \{1, \dots, k\}$ be a vertex cover
-of $G$, that is, every edge of $E$ has an endpoint in $J$. For $L \subseteq J$ let $N(L)$ be the
-set of vertices adjacent to some vertex of $L$. Then
-$$A_G = \prod_p \sum_{L} \left(\frac{1}{p}\right)^{|L|}
-\left(1 - \frac{1}{p}\right)^{|J \setminus L| + |N(L) \setminus J|},$$
-where the product runs over all primes $p$ and the sum over all independent sets $L \subseteq J$
-of $G$, that is, subsets of $J$ such that no edge of $E$ has both endpoints in $L$.
-
-Source: László Tóth, *On the Asymptotic Density of k-tuples of Positive
-Integers with Pairwise Non-Coprime Components*, Journal of Integer Sequences 27
-(2024), Article 24.8.5, Theorem 9 (`jis-2024-24.8.5-thm-9`). -/
-public theorem_wanted coprimalityDensity_eq_vertex_cover_product {k : ℕ} (hk : 2 ≤ k)
-    (E : Finset (Fin k × Fin k)) (hE : ∀ e ∈ E, e.1 < e.2)
-    (J : Finset (Fin k)) (hJ : ∀ e ∈ E, e.1 ∈ J ∨ e.2 ∈ J) :
-    coprimalityDensity E =
-      ∏' p : Nat.Primes, ∑ L ∈ J.powerset.filter (fun L => ∀ e ∈ E, ¬ (e.1 ∈ L ∧ e.2 ∈ L)),
-        (1 / ((p : ℕ) : ℝ)) ^ L.card * (1 - 1 / ((p : ℕ) : ℝ)) ^
-          ((J \ L).card + ((univ.filter fun i => ∃ l ∈ L, (l, i) ∈ E ∨ (i, l) ∈ E) \ J).card)
 
 /-- **Asymptotic count of tuples with exactly $r$ coprime pairs.** Let $k \ge 2$ and $r \ge 0$.
 For a set $E$ of pairs $(a, b)$ with $0 \le a < b < k$, let $A_E$ be the coprimality density of
