@@ -21,7 +21,17 @@ import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 
 Reducing the triangular theta series `f` modulo `p` turns the sum of `p` consecutive powers
 into a power of `f` times `(f - 1) ^ (p - 1)`. Since `f` has constant coefficient `1`, the
-coefficients of this sum below degree `p - 1` vanish.
+coefficients of this sum below degree `p - 1` vanish. The prime-shift congruence lets us
+use the same window for negative exponents and deduce a criterion for nonvanishing.
+
+## References
+
+- Mateus Alegri and David Christopher, *On Formulas, Recurrences, and Congruences for
+  Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS 26 (2026),
+  Article A93, pp. 1–10, Theorems 4, 6 and 8.
+- S. Sriram and A. David Christopher, *Congruences and integral roots of D’Arcais polynomials*,
+  Research in Number Theory 10 (2024), Article 9, Theorem 2.8, cited by Alegri and Christopher
+  for the positive-window congruence.
 -/
 
 namespace MetaMathlibExt
@@ -78,20 +88,11 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 public noncomputable def sumOfTriangularRepCount (k : ℤ) (n : ℕ) : ℤ :=
   PowerSeries.coeff n ((isUnit_triangularThetaSeries.unit ^ k : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
 
-set_option linter.unusedVariables false in
-/-- **Prime divisibility of triangular representation numbers persists under prime shifts.** For an
-integer $k$, let $t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$ and $k \ge 1$ be natural numbers and let $p$
-be a prime with $p \ge n + 1$. If $p$ divides $t_k(n)$, then $p$ divides $t_{k+rp}(n)$ for every
-integer $r$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 4 (`integers-2026-A93-thm-4`). -/
-public theorem sumOfTriangularRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n)
-    (hk : 1 ≤ k) (hp : p.Prime) (hpn : n + 1 ≤ p)
-    (h : (p : ℤ) ∣ sumOfTriangularRepCount k n) (r : ℤ) :
-    (p : ℤ) ∣ sumOfTriangularRepCount (k + r * p) n := by
+-- In the quotient by `(X ^ p)` the reduced theta unit has order dividing `p`.
+private theorem sumOfTriangularRepCount_cast_add_mul_prime {n p : ℕ} (hp : p.Prime)
+    (hpn : n < p) (k r : ℤ) :
+    (sumOfTriangularRepCount (k + r * p) n : ZMod p) =
+      (sumOfTriangularRepCount k n : ZMod p) := by
   let _ : Fact p.Prime := ⟨hp⟩
   let _ : CharP (PowerSeries (ZMod p)) p :=
     charP_of_injective_ringHom (PowerSeries.C_injective (R := ZMod p)) p
@@ -109,16 +110,32 @@ public theorem sumOfTriangularRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n
     rw [← map_pow, ← (Ideal.Quotient.mk I).map_one, Ideal.Quotient.eq, Ideal.mem_span_singleton]
     simpa only [sub_pow_char, one_pow] using pow_dvd_pow_of_dvd hX p
   -- Equality of the truncated powers applies to integer shifts, since v is a unit.
-  have hshift : v ^ ((k : ℤ) + r * p) = v ^ (k : ℤ) := by
+  have hshift : v ^ (k + r * p) = v ^ k := by
     rw [zpow_add, mul_comm r, zpow_mul, zpow_natCast v p, hv, one_zpow, mul_one]
   simp only [v, ← map_zpow] at hshift
   have hcoeff := Ideal.Quotient.eq.mp (congrArg Units.val hshift)
-  change reduce (↑(u ^ ((k : ℤ) + r * p))) - reduce (↑(u ^ (k : ℤ))) ∈ I at hcoeff
+  change reduce (↑(u ^ (k + r * p))) - reduce (↑(u ^ k)) ∈ I at hcoeff
   rw [Ideal.mem_span_singleton, PowerSeries.X_pow_dvd_iff] at hcoeff
-  have heq := hcoeff n (Nat.lt_of_succ_le hpn)
-  rw [map_sub, PowerSeries.coeff_map, PowerSeries.coeff_map, sub_eq_zero] at heq
+  have heq := hcoeff n hpn
+  rwa [map_sub, PowerSeries.coeff_map, PowerSeries.coeff_map, sub_eq_zero] at heq
+
+set_option linter.unusedVariables false in
+/-- **Prime divisibility of triangular representation numbers persists under prime shifts.** For an
+integer $k$, let $t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where
+$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$ and $k \ge 1$ be natural numbers and let $p$
+be a prime with $p \ge n + 1$. If $p$ divides $t_k(n)$, then $p$ divides $t_{k+rp}(n)$ for every
+integer $r$.
+
+Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
+Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
+26 (2026), Article A93, Theorem 4 (`integers-2026-A93-thm-4`). -/
+public theorem sumOfTriangularRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n)
+    (hk : 1 ≤ k) (hp : p.Prime) (hpn : n + 1 ≤ p)
+    (h : (p : ℤ) ∣ sumOfTriangularRepCount k n) (r : ℤ) :
+    (p : ℤ) ∣ sumOfTriangularRepCount (k + r * p) n := by
   apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mp
-  exact heq.trans ((ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr h)
+  rw [sumOfTriangularRepCount_cast_add_mul_prime hp (Nat.lt_of_succ_le hpn)]
+  exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr h
 
 set_option linter.unusedVariables false in
 /-- **Window congruence for sums of triangular numbers.** For an integer $k$, let $t_k(n)$ be the
@@ -174,6 +191,51 @@ public theorem sum_sumOfTriangularRepCount_window {n p : ℕ} (hn : 1 ≤ n)
       rw [hgeom]
       exact PowerSeries.X_pow_dvd_iff.mp
         (dvd_mul_of_dvd_right (pow_dvd_pow_of_dvd hX (p - 1)) _) n (Nat.lt_of_succ_le hpn)
+
+/-- **Window criterion for representability by triangular numbers.** For an integer $k$, let
+$t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$.
+Let $n \ge 1$ and let $p$ be an odd prime with $p - 1 \ge n + 1$. For every integer $s$, if $p$ does
+not divide $\sum_{i=1}^{p-1} t_{s-i}(n)$, then $t_s(n) \ne 0$.
+
+Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
+Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
+26 (2026), Article A93, Theorem 8 (`integers-2026-A93-thm-8`). -/
+public theorem sumOfTriangularRepCount_ne_zero_of_window {n p : ℕ} (hn : 1 ≤ n)
+    (hp : p.Prime) (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) (s : ℤ)
+    (h : ¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfTriangularRepCount (s - i) n) :
+    sumOfTriangularRepCount s n ≠ 0 := by
+  intro hs
+  apply h
+  -- Shift the full window to a representative at least `p` before applying the congruence.
+  let t : ℤ := (p : ℤ) + s % p
+  have hp0 : (0 : ℤ) < p := by exact_mod_cast hp.pos
+  have ht : (p : ℤ) ≤ t := by
+    have hrem := Int.emod_nonneg s (ne_of_gt hp0)
+    dsimp [t]
+    omega
+  have hshift (i : ℕ) : t - i = (s - i) + (1 - s / (p : ℤ)) * p := by
+    dsimp [t]
+    rw [sub_mul, one_mul]
+    have hdiv := Int.emod_add_ediv_mul s (p : ℤ)
+    omega
+  have hwindow : (p : ℤ) ∣ ∑ i ∈ Finset.range p, sumOfTriangularRepCount (s - i) n := by
+    apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mp
+    have htwindow := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr
+      (sum_sumOfTriangularRepCount_window hn hp hp2 hpn ht)
+    rw [Int.cast_sum] at htwindow ⊢
+    calc
+      ∑ i ∈ Finset.range p, (sumOfTriangularRepCount (s - i) n : ZMod p) =
+          ∑ i ∈ Finset.range p, (sumOfTriangularRepCount (t - i) n : ZMod p) := by
+        refine Finset.sum_congr rfl fun i _ => ?_
+        rw [hshift i, sumOfTriangularRepCount_cast_add_mul_prime hp (by omega : n < p)]
+      _ = 0 := htwindow
+  have hrange : Finset.range p = insert 0 (Finset.Icc 1 (p - 1)) := by
+    ext i
+    simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]
+    have := hp.pos
+    omega
+  rw [hrange, Finset.sum_insert (by simp), Nat.cast_zero, sub_zero, hs, zero_add] at hwindow
+  exact hwindow
 
 end
 

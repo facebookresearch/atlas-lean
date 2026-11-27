@@ -1,10 +1,10 @@
 # Oliveira–Santhanam: infinitely-often pseudodeterministic construction of primes in subexponential time
 
-Unconditionally, there is an infinite sequence $p_1<p_2<\cdots$ of primes and a randomized zero-error algorithm $A$ running in expected subexponential time such that, for each $n$, on input $1^{|p_n|}$ the algorithm outputs $p_n$. That is, primes have an infinitely-often pseudodeterministic construction in subexponential time; the construction is explicit although the proof is non-constructive about which case of the underlying dichotomy holds.
+Unconditionally, for every constant $\varepsilon > 0$ there exist an infinite sequence $p_1<p_2<\cdots$ of primes and a randomized zero-error algorithm $A$ running in expected time $O(2^{m^{\varepsilon}})$ on inputs of length $m$ such that, for each $n$, on input $1^{|p_n|}$ the algorithm outputs $p_n$ with probability $1$ (Oliveira–Santhanam, Theorem 1; this proof establishes existence of $A$ non-constructively without exhibiting which branch of the dichotomy holds). Separately (Theorem 3), there is an **explicit** bounded-error pseudodeterministic algorithm running in subexponential time that outputs a canonical prime $q_n$ with probability $1 - o(1)$ on infinitely many lengths satisfying $|q_{n+1}| < |q_n|^k$ (for a constant $k$), which does not strictly subsume Theorem 1 because it has bounded error rather than zero error.
 
 ## Proof sketch
 
-Apply the hitting-set dichotomy to the dense easy property of primes. In the first case, scanning a pseudodeterministically produced hitting set with the AKS test and outputting the first prime gives a canonical prime on all large lengths. In the second case, deterministically enumerating a subexponential-time hitting set and outputting its first prime works on infinitely many lengths. Further properties of the tradeoff are used to merge the two cases into one explicit algorithm.
+Apply the hitting-set dichotomy to the dense easy property of primes. In the first case, scanning a pseudodeterministically produced hitting set with the AKS test and outputting the first prime gives a canonical prime on all large lengths. In the second case, deterministically enumerating a subexponential-time hitting set and outputting its first prime works on infinitely many lengths. Because the proof does not determine which case holds, Theorem 1 yields a non-constructive zero-error algorithm; a separate bounded-error win-win yields the explicit algorithm of Theorem 3.
 
 ## Depends on
 

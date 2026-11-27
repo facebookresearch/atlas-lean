@@ -19,6 +19,8 @@ import Mathlib.Tactic.FinCases
 total `6 * k - 1` in which every pile has at most `4 * k` pebbles.
 `pebbling_completeThree_isN_of_le` gives a winning move at the odd totals
 `6 * k - 2 * ℓ + 1` under bounds on the largest and smallest piles.
+`pebbling_completeThree_isP_of_le` shows that a position of even total in the stated range is a
+P-position if no pile exceeds half the total.
 
 `pebbling_completeThree_isP_twoKAddThree` gives the single-pile P-position with
 `2 * k + 3` pebbles for positive `k`.
@@ -37,6 +39,8 @@ total `6 * k - 1` in which every pile has at most `4 * k` pebbles.
   *Characterizing Winning Positions in the Impartial Two-Player Pebbling Game on Complete Graphs*,
   Journal of Integer Sequences 24 (2021), Article 21.6.4, pp. 1–10, §1, for the original
   `(2:1)` game credited in §1 of Barker et al.
+  (<https://cs.uwaterloo.ca/journals/JIS/VOL24/Wong/wong31.pdf>).
+  Theorem 1(b), p. 3, gives the earlier parity result for the `(2:1)` game on `K_3`.
 * Elwyn R. Berlekamp, John H. Conway, and Richard K. Guy, *Winning Ways for Your Mathematical
   Plays*, Vol. 1, CRC Press (2001), for the impartial-game background cited in §1 of Barker et al.
 -/
@@ -71,6 +75,22 @@ private theorem isP_of_half_total (k : ℕ) (hk : 0 < k) (m : ℕ) (hm : m ≤ 3
     exact ih (by omega) c (by omega) (by simpa only [hcap, Nat.add_sub_cancel] using hcmax)
 
 end pebbling_completeThree_isN_of_le_fourK
+
+/-- **Pebbling on the triangle: total 6k-2ℓ with no pile above half is a P-position.** Let $k$ be
+a positive integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a
+move removes $k+1$ pebbles from one vertex and adds $k$ pebbles to another. Let $\ell$ be a
+natural number with $\ell \le 2k - 1$. Every position with $6k - 2\ell$ pebbles in total in which
+every pile is at most $3k - \ell$ is a P-position.
+
+Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
+Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
+Article 24.5.8, Lemma 8. -/
+public theorem pebbling_completeThree_isP_of_le (k ℓ : ℕ) (hk : 0 < k)
+    (hℓ : ℓ + 1 ≤ 2 * k) (a : Fin 3 → ℕ) (hsum : ∑ i, a i = 6 * k - 2 * ℓ)
+    (hmax : ∀ i, a i ≤ 3 * k - ℓ) :
+    IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a := by
+  exact pebbling_completeThree_isN_of_le_fourK.isP_of_half_total k hk (3 * k - ℓ)
+    (Nat.sub_le _ _) a (by omega) hmax
 
 /-- **Pebbling on the triangle: a single pile of 2k+3 pebbles is a P-position.** Let $k$ be a
 positive integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a

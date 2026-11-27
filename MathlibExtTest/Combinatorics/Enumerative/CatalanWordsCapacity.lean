@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Data.Fin.VecNotation
 import MathlibExt.Combinatorics.Enumerative.CatalanWordsCapacity
 
@@ -76,3 +77,31 @@ example : (catalanCapacityDist 5 3).eval 0 = 7 := by
 example (n : ℕ) (hn : 2 ≤ n) : (catalanCapacityDist n n).eval 0 = 1 := by
   rw [catalanCapacityDist_eval_zero n n hn le_rfl]
   simp
+
+-- The three constant boundary values hold at the shortest nonempty length.
+example : catalanCapacityDist 1 1 = 1 ∧ catalanMaxEndCapacityDist 1 1 = 1 :=
+  ⟨(catalanCapacityDist_boundary 1 (by decide)).2.1,
+    (catalanCapacityDist_boundary 1 (by decide)).2.2.1⟩
+
+-- The append-one identity starts at length two.
+example : catalanCapacityDist 2 1 = 1 := by
+  have hwords : catalanWords 1 = {![1]} := by decide
+  have hzero : wordCapacity ![1] = 0 := by decide
+  rw [(catalanCapacityDist_boundary 2 (by decide)).1 (by decide), capacityDist, hwords,
+    sum_singleton, hzero, pow_zero]
+
+-- Appending 1 preserves the positive-degree term from 1212, whereas the bounded class only
+-- contains the all-ones word.
+example : (catalanCapacityDist 5 1).coeff 1 = 1 ∧ catalanMaxEndCapacityDist 5 1 = 1 := by
+  have h := catalanCapacityDist_boundary 5 (by decide)
+  refine ⟨?_, h.2.2.1⟩
+  rw [h.1 (by decide), capacityDist, finsetSum_coeff]
+  simp only [coeff_X_pow]
+  have hwords : (catalanWords 4).filter (fun w => 1 = wordCapacity w) = {![1, 2, 1, 2]} := by
+    decide
+  rw [← sum_filter, hwords, sum_singleton]
+
+-- At the other endpoint the increasing word is counted once, with or without the bound.
+example : catalanCapacityDist 4 4 = 1 ∧ catalanMaxEndCapacityDist 4 4 = 1 :=
+  ⟨(catalanCapacityDist_boundary 4 (by decide)).2.1,
+    (catalanCapacityDist_boundary 4 (by decide)).2.2.2⟩

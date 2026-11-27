@@ -103,20 +103,6 @@ theorem wesleyWords_first_ten :
 
 /-! ## Statements -/
 
-/-- **The Fibonacci numbers have degree of accessibility at most $3$.** The positive Fibonacci set
-$\{1, 2, 3, 5, 8, \dots\}$ is not $r$-accessible for any natural number $r \ge 4$. Moreover, some
-coloring of the positive integers with four colors admits no monochromatic $4$-term
-diffsequence with differences in the positive Fibonacci set: there are no positive integers
-$x_0, x_1, x_2, x_3$ of one color such that $x_{i+1} - x_i$ is a positive Fibonacci number for
-$i = 0, 1, 2$.
-
-Source: William J. Wesley, *Improved Ramsey-Type Theorems for Fibonacci Numbers and Other
-Sequences*, INTEGERS 25 (2025), Article A29, Theorem 1 (`integers-2025-A29-thm-1`). -/
-public theorem_wanted fibonacciSet_degreeOfAccessibility_le_three :
-    (∀ r, 4 ≤ r → ¬ IsRAccessible r positiveFibonacciSet) ∧
-    ∃ c : ℕ+ → Fin 4, ¬ ∃ x : Fin 4 → ℕ+,
-      IsMonochromatic c x ∧ IsDDiffSequence positiveFibonacciSet (fun i => ((x i : ℕ) : ℤ))
-
 /-- **Arithmetic progressions with Fibonacci gaps are not $2$-regular.** There is a coloring of the
 positive integers with two colors that admits no monochromatic $5$-term arithmetic progression
 with gap in the positive Fibonacci set $\{1, 2, 3, 5, 8, \dots\}$, that is, no positive integers

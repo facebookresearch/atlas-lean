@@ -12,9 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HyperLeonardo
+public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
-public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 
 /-!
 # Hyper-Leonardo numbers
@@ -67,31 +67,6 @@ public theorem_wanted hyperLeonardo_recurrence (r : ℕ) :
       ((n + r).choose r : ℕ) +
         ∑ j ∈ Finset.Ico 1 r, (j * (n + r - j).choose (r - j) : ℕ)) ∧
     hyperLeonardo r 0 = 1 ∧ hyperLeonardo r 1 = r + 1
-
-/-- **Recurrence across consecutive orders of hyper-Leonardo numbers.** For all natural numbers
-$r \ge 1$ and $n \ge 1$, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
-$Le^{(r)}_n = Le^{(r)}_{n-1} + Le^{(r-1)}_n$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 3, Equation (4)
-(`integers-2026-A48-prop-3`). -/
-public theorem_wanted hyperLeonardo_succ_succ (r n : ℕ) :
-    hyperLeonardo (r + 1) (n + 1) = hyperLeonardo (r + 1) n + hyperLeonardo r (n + 1)
-
-/-- **Consecutive hyper-Leonardo numbers of order one.** For every natural number $n$, the
-hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
-$Le^{(1)}_{n+1} = Le^{(1)}_n + L_{1,n+1}$, where $L_{1,n}$ is the generalized Leonardo number
-with $k = 1$, that is, the Leonardo number $Le_n$.
-
-This is the case $r = 1$ of the recurrence $Le^{(r)}_n = Le^{(r)}_{n-1} + Le^{(r-1)}_n$. The
-extracted text of the source reads $Le^{(1)}_n = Le_{n-1} + Le_n$, which fails at $n = 2$, where
-$Le^{(1)}_2 = 5$ but $Le_1 + Le_2 = 4$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Corollary 1, Equation (5)
-(`integers-2026-A48-cor-1`). -/
-public theorem_wanted hyperLeonardo_one_succ (n : ℕ) :
-    hyperLeonardo 1 (n + 1) = hyperLeonardo 1 n + genLeonardo 1 (n + 1)
 
 /-- **The convolution of log-concave sequences is log-concave.** Let $(x_n)_{n \ge 0}$ and
 $(y_n)_{n \ge 0}$ be sequences of positive real numbers that are log-concave, that is,

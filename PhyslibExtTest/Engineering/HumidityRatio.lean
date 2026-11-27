@@ -79,7 +79,7 @@ example : humidityRatio
   totalHumidityRatio_update (![0] : Fin 1 → Fin 2) ![1] ![0]
     (m := ![3, 1]) (s := ![1, 0]) (r := 0)
     (by funext v; fin_cases v <;>
-      simp [incidence_mulVec] <;> norm_num)
+      simp [incidence_mulVec]; norm_num)
     (by norm_num)
 
 /-- Changing dry air is not the constant shortcut: vapor and

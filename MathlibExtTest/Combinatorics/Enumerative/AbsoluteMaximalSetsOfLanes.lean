@@ -25,3 +25,13 @@ example : IsAbsoluteMaximalSetOfLanes ({(0, 2), (2, 0), (1, 1), (3, 3)} :
 example :
     let S : Finset (Fin 4 × Fin 4) := {(0, 0), (1, 1), (2, 3), (3, 2)}
     IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S := by decide
+
+-- One entry does not admit two distinct U-turns to exchange.
+example : (Finset.univ.filter fun S : Finset (Fin 1 × Fin 1) =>
+    IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S).card = 0 :=
+  (card_nonabsolute_maximalSetsOfLanes 1).trans (marriageableSinglesCount_of_le_one le_rfl)
+
+-- At size two, just the set of both U-turns admits an exchange.
+example : marriageableSinglesCount 2 = 1 := by
+  rw [← card_nonabsolute_maximalSetsOfLanes]
+  decide
