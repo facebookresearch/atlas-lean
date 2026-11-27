@@ -42,6 +42,7 @@ operators is universal; the conversion needs its own page.
 - [Magic-state injection](magic-state-injection.md): the $H$-type branch
 - [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md): the stabilizer octahedron gives no advantage
 - [Clifford operations with magic states are universal](clifford-operations-with-magic-states-are-universal.md): universality for the ideal H-type resource
+- [Transversal $T$ preserves the fifteen-qubit code](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md): the logical action used by the $H$-type subroutine
 
 ## Sources
 

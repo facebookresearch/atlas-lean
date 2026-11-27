@@ -22,4 +22,4 @@ De Moor write the generators as columns, $\Gamma$ stacked above $I$.
 ## Sources
 
 - M. Hein, J. Eisert and H. J. Briegel, *Multiparty entanglement in graph states*, Phys. Rev. A 69 (2004), 062311, arXiv:quant-ph/0307130, Section II, equations (6)–(7) (the correlation operators $K_G^{(a)}$ and the graph state $|G\rangle$) and the equivalent description by Ising interactions (controlled-$Z$ gates) on $|+\rangle^{\otimes n}$.
-- M. Van den Nest, J. Dehaene and B. De Moor, *Graphical description of the action of local Clifford transformations on graph states*, Phys. Rev. A 69 (2004), 022316, arXiv:quant-ph/0308151, Section II (generator matrix $(\Gamma \mid I)$ of a graph state).
+- M. Van den Nest, J. Dehaene and B. De Moor, *Graphical description of the action of local Clifford transformations on graph states*, Phys. Rev. A 69 (2004), 022316, arXiv:quant-ph/0308151, Section II (generator matrix of a graph state with $\Gamma$ stacked above $I$, one generator per column).

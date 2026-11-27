@@ -8,8 +8,7 @@ For $W \in SU(2)$ with $A, B, C$ as in the [$ABC$ decomposition](abc-decompositi
 $\wedge_1(W)$ is obtained by applying $C$ to the target, a CNOT, $B$ to the target, a CNOT and $A$ to the target: the
 target receives $ABC = I$ when the control is $0$ and $AXBXC = W$ when it is $1$. Such a network with $A, B, C \in SU(2)$
 simulates $\wedge_1(W)$ only if $W \in SU(2)$. A general unitary is $U = e^{i\delta} W$ with $W \in SU(2)$, and
-$\wedge_1(e^{i\delta} I)$ is the single-qubit phase gate $\operatorname{diag}(1, e^{i\delta})$ on the control; merging it
-with the other single-qubit gates gives the count.
+$\wedge_1(e^{i\delta} I)$ is the single-qubit phase gate $\operatorname{diag}(1, e^{i\delta})$ on the control; adding this gate on the control gives the count, the three target gates remaining.
 
 ## Depends on
 

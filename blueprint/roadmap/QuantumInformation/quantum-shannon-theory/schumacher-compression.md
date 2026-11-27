@@ -23,6 +23,7 @@ a scheme exists for only finitely many $n$.
 - [AEP and typical sets (finite iid)](../../InformationTheory/source-coding/remaining-clauses-of-aep-and-typical-sets.md)
 - [Typical subspace](typical-subspace.md)
 - [Small-projector converse lemma](small-projector-converse-lemma.md)
+- [Purification and unitary equivalence of purifications](../quantum-foundations/purification-and-unitary-equivalence-of-purifications.md): the entanglement fidelity does not depend on the purification
 
 ## Sources
 

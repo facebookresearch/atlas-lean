@@ -22,6 +22,7 @@ unitaries induce only finitely many distinct operators on the code.
 ## Proof depends on
 
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../../RepresentationTheory/lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md): the exponential image contains a neighbourhood of the identity, so the subgroup it generates is open and equals the identity component
+- [The logical unitaries in a compact Lie group form a Lie subgroup](logical-unitaries-in-a-lie-group-form-a-lie-subgroup.md): the identity component is a connected Lie subgroup of finite index
 
 ## Sources
 
