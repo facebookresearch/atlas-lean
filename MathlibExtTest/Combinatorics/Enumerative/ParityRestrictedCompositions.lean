@@ -12,6 +12,22 @@ import MathlibExt.Combinatorics.Enumerative.ParityRestrictedCompositions
 
 open MetaMathlibExt
 
+-- The empty composition is counted for every negative odd shift.
+example (j : ℕ) : kArndtTotalCount (-(2 * j + 1 : ℤ)) 0 = 1 := by
+  rw [kArndtTotalCount_neg_odd]
+  simp [evenOrSmallOddCompositionCount]
+
+-- For shift −1 the correction first counts the empty composition at weight three.
+example : kArndtTotalCount (-1) 3 = 3 :=
+  (kArndtTotalCount_neg_odd 0 3).trans (by decide)
+
+-- The three thresholds in Hopkins and Tangboonduangjit's Table 6.
+example : kArndtTotalCount (-1) 5 = 10 ∧ kArndtTotalCount (-3) 5 = 15 ∧
+    kArndtTotalCount (-5) 5 = 16 :=
+  ⟨(kArndtTotalCount_neg_odd 0 5).trans (by decide),
+    (kArndtTotalCount_neg_odd 1 5).trans (by decide),
+    (kArndtTotalCount_neg_odd 2 5).trans (by decide)⟩
+
 -- At the least valid weight neither correction is active.
 example : (evenOrSmallOddCompositionCount 1 3 : ℤ) = 4 ∧
     (oddOrSmallEvenCompositionCount 1 3 : ℤ) = 4 := by

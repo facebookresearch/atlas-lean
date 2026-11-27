@@ -14,9 +14,8 @@ converge to a common limit. Here $(1 - z^i)^{-1/i^s} = \exp(-i^{-s} \log(1 - z^i
 $\hat\Phi_i(z)^{-\zeta(s)/i^s} = \exp(-\zeta(s) \, i^{-s} \sum_\omega \log(1 - z\omega))$, where
 $\log$ is the principal branch of the logarithm.
 
-The exponent $-\zeta(s)/i^s$ follows arXiv:2511.16975, Theorem 2.2. The INTEGERS record shows
-$-\zeta(s)/i$; with that exponent the right side would equal $1$ by the constancy of
-$\prod_{n \ge 1} \hat\Phi_n(z)^{-1/n}$, while the left side does not.
+The published Theorem 2 and arXiv:2511.16975, Theorem 2.2, both use the exponent
+$-\zeta(s)/i^s$.
 
 ## Sources
 

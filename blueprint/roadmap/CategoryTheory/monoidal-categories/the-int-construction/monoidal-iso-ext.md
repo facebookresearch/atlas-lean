@@ -1,0 +1,3 @@
+# Monoidal isomorphisms out of Int are determined by their restriction
+
+Let $C$ be a symmetric monoidal category with a symmetric trace $T$, let $\mathrm{Int}(T)$ be its [Int construction](README.md), whose objects are pairs $X = (X^+, X^-)$ of objects of $C$, and let $J : C \to \mathrm{Int}(T)$, $J(A) = (A, \mathbf{1})$, be the embedding. Let $D$ be a monoidal category, $F, G : \mathrm{Int}(T) \to D$ strong monoidal functors, and $e, i : F \cong G$ monoidal natural isomorphisms. If $e_{J(A)} = i_{J(A)}$ for every object $A$ of $C$, equivalently if the restrictions of $e$ and $i$ along $J$ are equal, then $e = i$. The target $D$ need not be rigid or symmetric.

@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.FunctionFieldMultiplicityIteratedDerivSubIsBigOOfUniformApprox
 
 /-!
 # Prime factors with given multiplicity in h-free and h-full polynomials (statements)
@@ -758,33 +759,6 @@ public theorem_wanted omegaMult_hFree_secondMoment_asymptotic
     (fun n : ℕ => hFreeMoment F h k 2 n -
         (hFreeOmegaMultSum F h k ^ 2 - hFreeOmegaMultSqSum F h k + hFreeOmegaMultSum F h k))
       =O[atTop] (fun n : ℕ => (Fintype.card F : ℝ) ^ ((n : ℝ) / k - n + ε * n))
-
-/-- **Derivatives at $z = 1$ of uniform approximations.** Let $r > 0$, let $D$ be the open disk of
-radius $r$ centred at $1$ in $\mathbb{C}$, and let $f$ and $G_n$ ($n \in \mathbb{N}$) be complex
-functions analytic on $D$. Suppose there is a real constant $C$ such that
-$|G_n(z) - f(z)\, n^{z-1}| \le C\, n^{\operatorname{Re} z - 2}$ for all $n \ge 1$ and all
-$z \in D$. Then for every $k \in \mathbb{N}$ and every $\varepsilon > 0$, as $n \to \infty$,
-
-$$G_n^{(k)}(1) - \frac{d^k}{dz^k}\big(f(z)\, n^{z-1}\big)\Big|_{z=1} = O(n^{\varepsilon - 1}).$$
-
-This is the paper's Lemma 1, a corrected version of Lalín and Zhang's Lemma 3.2; Equation (11) is
-the case $k = 1$. The paper's "analytic at $z = 1$" with an error term "in a neighborhood of
-$z = 1$" is read as analyticity on a fixed disk on which the bound holds with one constant for all
-$n \ge 1$.
-
-Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
-h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
-Lemma 1 (`integers-2025-A9-lem-1`). -/
-public theorem_wanted iteratedDeriv_sub_isBigO_of_uniform_approx
-    (G : ℕ → ℂ → ℂ) (f : ℂ → ℂ) (r : ℝ) (hr : 0 < r)
-    (hG : ∀ n, AnalyticOnNhd ℂ (G n) (Metric.ball 1 r))
-    (hf : AnalyticOnNhd ℂ f (Metric.ball 1 r))
-    (hbound : ∃ C : ℝ, ∀ n : ℕ, 1 ≤ n → ∀ z ∈ Metric.ball (1 : ℂ) r,
-      ‖G n z - f z * (n : ℂ) ^ (z - 1)‖ ≤ C * (n : ℝ) ^ (z.re - 2))
-    (k : ℕ) (ε : ℝ) (hε : 0 < ε) :
-    (fun n : ℕ => iteratedDeriv k (G n) 1 -
-        iteratedDeriv k (fun z => f z * (n : ℂ) ^ (z - 1)) 1)
-      =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
 /-- **Selberg–Delange theorem for function fields.** Let $q > 1$ and $A > 0$ be real numbers,
 and let $B_z(n)$ and $C_z(n)$ be complex numbers, for $z \in \mathbb{C}$ and integers $n \ge 0$,

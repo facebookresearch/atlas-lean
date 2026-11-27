@@ -17,7 +17,8 @@ The Leonardo `p`-numbers `𝓛_{p,n}` (`1` on `[0, p]`, `𝓛_{p,n} = 𝓛_{p,n-
 are the generalized Leonardo `p`-numbers `leonardoPK p p` of
 `WantedExt.NumberTheory.LeonardoPWanted`. Propositions 3, 4 and 5 of the paper are the
 `k = p` cases of `leonardoPK_eq`, `sum_leonardoPK` and `sum_leonardoPK_stride` there, and
-are not restated.
+are not restated. The theorem `card_leonardoPTilings` is proved in
+`MathlibExt.NumberTheory.LeonardoPTilingsCardLeonardoPTilings`, and is not restated.
 
 The tiling and sequence definitions in `MathlibExt.NumberTheory.LeonardoPTilings` include the
 Lucas `p`-numbers `lucasP`, the Lucas-Leonardo `p`-numbers `lucasLeonardoP`,
@@ -39,26 +40,16 @@ public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoPTilings
 public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
+public import MathlibExt.NumberTheory.LucasLeonardoPPrefixSum
+public import MathlibExt.NumberTheory.LucasLeonardoPStrideSum
 public import WantedExt.NumberTheory.LeonardoPWanted
+public import MathlibExt.NumberTheory.LeonardoPTilingsCardLeonardoPTilings
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open MathlibExt.NumberTheory.LeonardoPWanted
-
-/-- **Counting Leonardo $p$-tilings.** For all natural numbers $p \ge 1$ and $n$, let $K_{p,n}$ be
-the set of linear tilings of an $n$-board by squares (length $1$), $p$-minos (length $p + 1$) and
-at most one $p$-tile, which comes in one of $p$ colors, has length at least $p + 1$ and can only
-be the initial piece. Then the number of tilings in $K_{p,n}$ equals the Leonardo $p$-number
-$\mathcal{L}_{p,n}$, the generalized Leonardo $p$-number $\mathcal{L}_{p,k}(n)$ at $k = p$:
-$\mathcal{L}_{p,n} = 1$ for $n \le p$ and
-$\mathcal{L}_{p,n} = \mathcal{L}_{p,n-1} + \mathcal{L}_{p,n-p-1} + p$ for $n > p$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 1. -/
-public theorem_wanted card_leonardoPTilings (p n : ℕ) (hp : 1 ≤ p) :
-    (Nat.card (leonardoPTilings p n) : ℤ) = leonardoPK p p n
 
 /-- **Homogeneous recurrence for the Leonardo $p$-numbers.** Let $p \ge 1$ and write
 $\mathcal{L}_{p,n}$ for the Leonardo $p$-number $\mathcal{L}_{p,p}(n)$, the generalized Leonardo
@@ -74,17 +65,6 @@ public theorem_wanted leonardoPK_self_homogeneous (p : ℕ) (hp : 1 ≤ p) :
         leonardoPK p p (n - 1) + leonardoPK p p (n - p) - leonardoPK p p (n - 2 * p - 1)) ∧
     (∀ i, i ≤ p → leonardoPK p p i = 1) ∧
     (∀ j, 1 ≤ j → j ≤ p → leonardoPK p p (p + j) = (j : ℤ) + 1 + j * p)
-
-/-- **Binomial addition formula for hyper Leonardo $p$-numbers.** For natural numbers $p \ge 1$,
-$n \ge 1$, $m \ge 1$ and $k \ge m$, the hyper Leonardo $p$-numbers satisfy
-$$\mathcal{L}^{(k)}_{p,n+m} = \sum_{i=0}^{m} \binom{m}{i} \mathcal{L}^{(k-i)}_{p,n+i}.$$
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 9. -/
-public theorem_wanted hyperLeonardoP_add (p n m k : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n)
-    (hm : 1 ≤ m) (hmk : m ≤ k) :
-    hyperLeonardoP p (n + m) k =
-      ∑ i ∈ Finset.range (m + 1), (m.choose i : ℤ) * hyperLeonardoP p (n + i) (k - i)
 
 /-- **Leonardo p-numbers split into incomplete and hyper parts.** For natural numbers $p \ge 1$,
 $n > p$ and $k \ge 1$, let $N = n + (p + 1)k$. Then
@@ -126,26 +106,6 @@ Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Nu
 Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 13. -/
 public theorem_wanted lucasLeonardoP_eq_lucasP (p n : ℕ) (hp : 1 ≤ p) :
     lucasLeonardoP p n = ((p : ℤ) + 1) * lucasP p n - p
-
-/-- **Sum of the Lucas-Leonardo p-numbers.** For every natural number $p \ge 1$ and every natural
-number $n$, the Lucas-Leonardo $p$-numbers $R_{p,m}$ satisfy
-$\sum_{i=0}^{n} R_{p,i} = R_{p,n+p+1} - p(n + 1) - 1$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 15. -/
-public theorem_wanted sum_lucasLeonardoP (p n : ℕ) (hp : 1 ≤ p) :
-    ∑ i ∈ Finset.range (n + 1), lucasLeonardoP p i =
-      lucasLeonardoP p (n + p + 1) - p * ((n : ℤ) + 1) - 1
-
-/-- **Sum of the Lucas-Leonardo p-numbers at multiples of $p + 1$.** For every natural number
-$p \ge 1$ and every natural number $n$, the Lucas-Leonardo $p$-numbers $R_{p,m}$ satisfy
-$\sum_{i=0}^{n} R_{p,(p+1)i} = R_{p,(p+1)n+1} - p(n - p - 1)$, an identity of integers.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 16. -/
-public theorem_wanted sum_lucasLeonardoP_stride (p n : ℕ) (hp : 1 ≤ p) :
-    ∑ i ∈ Finset.range (n + 1), lucasLeonardoP p ((p + 1) * i) =
-      lucasLeonardoP p ((p + 1) * n + 1) - p * ((n : ℤ) - p - 1)
 
 /-- **Recurrence for incomplete Lucas-Leonardo p-numbers.** For natural numbers $p \ge 1$,
 $n > p + 1$ and $k \le \lfloor n/(p+1) \rfloor$, the incomplete Lucas-Leonardo $p$-numbers

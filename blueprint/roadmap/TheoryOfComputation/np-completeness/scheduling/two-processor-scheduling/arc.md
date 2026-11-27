@@ -1,0 +1,3 @@
+# Chain arcs of an instance of TWO-PROCESSOR FLOW-SHOP SCHEDULING WITH CHAIN PRECEDENCE CONSTRAINTS
+
+An instance of TWO-PROCESSOR FLOW-SHOP SCHEDULING WITH CHAIN PRECEDENCE CONSTRAINTS is a pair of a FLOW-SHOP SCHEDULING instance $(m, T, D)$, whose jobs are the positions $0, \dots, n-1$ of the list $T$ of task-length lists, and a list $A$ of pairs of natural numbers. Job $j$ is the immediate predecessor of job $k$ when the pair $(j, k)$ occurs in $A$. That arcs name jobs, that no two arcs share a tail or a head, and that the arcs have no cycle are conditions of a well-formed instance, not of this definition.

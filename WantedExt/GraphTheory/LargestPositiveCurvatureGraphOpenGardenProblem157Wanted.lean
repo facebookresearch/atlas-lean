@@ -73,7 +73,9 @@ def dartsAt (v : V) : Finset G.Dart :=
 noncomputable def numFaces (ρ : Equiv.Perm G.Dart) : ℚ :=
   ∑ d : G.Dart, (1 : ℚ) / faceSize G ρ d
 
-/-- The embedding is in the sphere: `G` is connected and `|V| - |E| + |F| = 2`. -/
+/-- The raw Euler test for the dart permutation `ρ`: `G` is connected and `|V| - |E| + |F| = 2`,
+with `|F|` counted by `numFaces`. It describes an embedding in the sphere only when `ρ` is a
+rotation system (`IsRotationSystem`), which the test does not check. -/
 def IsSpherical (ρ : Equiv.Perm G.Dart) : Prop :=
   G.Connected ∧ (Fintype.card V : ℚ) - (Fintype.card G.Dart : ℚ) / 2 + numFaces G ρ = 2
 
