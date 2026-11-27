@@ -38,6 +38,7 @@ public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+public import MathlibExt.Algebra.Polynomial.ReciprocalEvenOddDecomposition
 public import MathlibExt.Algebra.Polynomial.ReciprocalZeroOneFirstOddExponent
 public import MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition
 
@@ -48,31 +49,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.Algebra.PalindromicZeroOneWanted
-
-/-- **Even–odd decomposition of a reciprocal polynomial.** Let $h \in \mathbb{Z}[x]$ be an
-irreducible reciprocal polynomial of degree $2k$ such that $h \ne g(x^2)$ for every
-$g \in \mathbb{Z}[x]$. Then there is exactly one $h_e \in \mathbb{Z}[x]$ for which there is
-exactly one $h_o \in \mathbb{Z}[x]$ for which there is exactly one natural number $\ell$
-such that $h_e$ and $h_o$ are reciprocal, $\ell$ is odd and positive, $\deg h_e = k$,
-$\deg h_o = \max(k - \ell, 0)$, $h(x) = h_e(x^2) + x^\ell h_o(x^2)$ and
-$h_e(0)\,h_o(0) \ne 0$.
-
-Since $\ell$ is odd, $h_e(x^2)$ is the even part of $h$, and $h_o(0) \ne 0$ then determines
-$\ell$ and $h_o$; so this amounts to a unique triple $(h_e, h_o, \ell)$.
-
-Source: Pradipto Banerjee and Amit Kundu, "On an
-Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", INTEGERS 24 (2024),
-Article A71, Lemma 1. -/
-theorem_wanted existsUnique_evenOdd_reciprocal (h : ℤ[X]) (k : ℕ)
-    (hirr : Irreducible h) (hrec : IsReciprocalPoly h)
-    (hdeg : h.natDegree = 2 * k)
-    (hnsq : ¬ ∃ g : ℤ[X], h = g.comp (X ^ 2)) :
-    ∃! he : ℤ[X], ∃! ho : ℤ[X], ∃! l : ℕ,
-      IsReciprocalPoly he ∧ IsReciprocalPoly ho ∧ Odd l ∧ 0 < l ∧
-        he.natDegree = k ∧ ho.natDegree = k - l ∧
-        h = he.comp (X ^ 2) + X ^ l * ho.comp (X ^ 2) ∧
-        he.eval 0 * ho.eval 0 ≠ 0
 
 /-- **Even–odd decomposition of a reciprocal 0,1-polynomial.** Let $f \in \mathbb{Z}[x]$ be
 an irreducible reciprocal $0,1$-polynomial of degree $2m$ such that $f(x^2)$ is not
