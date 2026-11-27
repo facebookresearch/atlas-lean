@@ -1,0 +1,16 @@
+# Diagonal partial operators on maximal weighted-coefficient domains
+
+- [Linear weighted coordinates of a Hilbert-basis vector](diagonal-coordinate-linear-map.md)
+- [Value of a weighted basis coordinate](diagonal-coordinate-linear-map-apply.md)
+- [Maximal square-summability domain of a diagonal operator](unbounded-diagonal-domain.md)
+- [Domain membership by summability of weighted coefficients](mem-unbounded-diagonal-domain-iff.md)
+- [Square-summable weighted-coordinate map on the diagonal domain](unbounded-diagonal-lp.md)
+- [Coordinate of the diagonal domain's weighted vector](unbounded-diagonal-lp-apply.md)
+- [Diagonal partial linear operator on the full weighted domain](unbounded-diagonal.md)
+- [Domain of the diagonal partial map](unbounded-diagonal-domain-2.md)
+- [Basis reconstruction of a diagonal partial-map value](unbounded-diagonal-apply.md)
+- [Weighted basis coefficient of the diagonal output](unbounded-diagonal-repr-apply.md)
+- [Norm-convergent Hilbert series of the diagonal operator](unbounded-diagonal-has-sum.md)
+- [Series formula for a diagonal partial operator](unbounded-diagonal-eq-tsum.md)
+- [Zero diagonal weights give the whole domain](unbounded-diagonal-domain-zero.md)
+- [Zero diagonal weights give zero output](unbounded-diagonal-zero-apply.md)

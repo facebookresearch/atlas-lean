@@ -1,0 +1,111 @@
+{
+  "schema": "atlas.mathlibext-current-export-provenance.v1",
+  "file_count": 332,
+  "original_source_lines": 54889,
+  "snapshot_manifest": "provenance/functional-analysis/operator-measure-linear/source-snapshot/manifest.json",
+  "historical_ledgers_retained": [
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-01.jsonl",
+      "sha256": "261cd33b31012a70e5b8bb879a8f39fab4bcd61777724cc6d5f1422444664305",
+      "bytes": 35405
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-02.jsonl",
+      "sha256": "f1f04cc66dab331f60b50e0e7a861010ab5cfa21e38dd7f51e6ae9cb266210e9",
+      "bytes": 35161
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-03.jsonl",
+      "sha256": "d318f35950b6a9b82ba7e7ca8200d8d80e5340b4e918263b932304936a3382cc",
+      "bytes": 35134
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-04.jsonl",
+      "sha256": "ad64fee6110270011447cfcb8b6da6e94e0fa88b603946ab236106f8574db437",
+      "bytes": 34815
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-05.jsonl",
+      "sha256": "7e3a8e71a04a11a36f49397cc332b89766fd177305b37b01c724f956c7a6f744",
+      "bytes": 35431
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-06.jsonl",
+      "sha256": "ddb3d69680613af9ffaa7c9880d102b2846c5f3fbba5b4df15f50b33ff3f8554",
+      "bytes": 34539
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/files-07.jsonl",
+      "sha256": "8032f0d6d62652a23ed7937db70bf4574fd4544b2fb630fdd5e6eacdad828f4a",
+      "bytes": 33255
+    }
+  ],
+  "snapshot_files_retained": [
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/manifest.json",
+      "sha256": "b515eb0c5a422b586604b33754a891273e6985c4e22e044be72a15f1634d409a",
+      "bytes": 125814
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0001.jsonl",
+      "sha256": "f9d28889211e6c78b67554f4cf48e5d27034adc3f1f6d62522ebbaef2ecb0e2d",
+      "bytes": 549680
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0002.jsonl",
+      "sha256": "bbec905719632e7b2c775374d330215a4e0c7d642027555f947bb8cbb25e6531",
+      "bytes": 412814
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0003.jsonl",
+      "sha256": "6a21686eff101b26fa82accb612a28d31fe9b0de2ad5afb812118bc55718fc8e",
+      "bytes": 411153
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0004.jsonl",
+      "sha256": "232e86a532e9a37db37e1cd607742296928656cbf0a83bae740611e326be8bd5",
+      "bytes": 497225
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0005.jsonl",
+      "sha256": "2b45150722dbcf8794d62f9c1c6dfa3eabdcd9f59dc5935cf7285506d471cb26",
+      "bytes": 481268
+    },
+    {
+      "path": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0006.jsonl",
+      "sha256": "027ac46be7a8c20afaa5325004bc3b6cb27df28b912292802fb5ee980fc77769",
+      "bytes": 154946
+    }
+  ],
+  "current_record_files": [
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-01.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-02.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-03.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-04.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-05.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-06.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/current-review/files-07.jsonl"
+  ],
+  "central_override_paths": [
+    "MathlibExt/LinearAlgebra/Alternating/RestrictScalars.lean",
+    "MathlibExt/LinearAlgebra/TensorProduct/Balanced.lean",
+    "MathlibExt/LinearAlgebra/TensorProduct/Balanced/Actions.lean"
+  ],
+  "installed_source_files": 332,
+  "historical_original_source_files": 348,
+  "transferred_source_files": 16,
+  "transfer_custody_file": "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/transferred-exports.jsonl",
+  "transfer_component_custody_files": [
+    "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/fourier-transferred-exports.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/quadratic-transferred-exports.jsonl"
+  ],
+  "quadratic_graph_identity_custody": {
+    "original_statement_IDs": 35,
+    "original_navigation_IDs": 5,
+    "private_retention_only": true,
+    "destination_graph_assignment": false,
+    "future_identity_mapping_must_be_explicit": true
+  },
+  "installed_original_source_lines": 51187,
+  "transferred_original_source_lines": 3702
+}

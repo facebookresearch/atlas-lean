@@ -1,0 +1,8 @@
+# Finite tensor product map has a bounded factor-completion estimate
+
+Let `X,Y` be
+locally compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν`
+on `borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ
+⊗[ℂ] Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. there exists `C∈ℝ` with `‖F(z)‖≤C‖A(z)‖` for every
+algebraic compact-support tensor; the norm equality permits `C=1`.

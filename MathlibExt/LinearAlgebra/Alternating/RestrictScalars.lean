@@ -13,10 +13,11 @@ module
 public import Mathlib.LinearAlgebra.Alternating.Basic
 
 /-!
-# Restriction of scalars for alternating maps
+# Scalar restriction of alternating maps
 
-An alternating map over an algebra is also alternating over the base ring
-when the source and target scalar actions form scalar towers.
+Let R be a commutative semiring, S an R-algebra, and M,N modules over both R and S with
+compatible scalar towers r•x=(algebraMap R S r)•x. An S-alternating map on M indexed by any
+type I is R-alternating with the same values.
 -/
 
 @[expose] public section
@@ -35,7 +36,12 @@ variable {N : Type z} [AddCommMonoid N] [Module R N] [Module S N]
   [IsScalarTower R S N]
 variable {ι : Type*}
 
-/-- Restrict the scalars of an alternating map along an algebra. -/
+/-- **Alternating map over the base semiring.**
+
+Let R be a commutative semiring, S a semiring with an R-algebra structure, and M,N additive
+commutative monoids with compatible R,S-module structures. For an S-alternating map f:M^I→N,
+restrictScalars f is the R-alternating map with value f(v) for every family v:I→M.
+-/
 def restrictScalars (f : M [⋀^ι]→ₗ[S] N) : M [⋀^ι]→ₗ[R] N :=
   { f.toMultilinearMap.restrictScalars R with
     map_eq_zero_of_eq' := f.map_eq_zero_of_eq }

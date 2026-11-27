@@ -1,0 +1,15 @@
+# Square-summable vector coefficients of bounded operators
+
+- [Square-summable sequences in a normed group](vector-sequence.md)
+- [Diagonal action of a bounded Hilbert operator](diagonal.md)
+- [Coordinates of a diagonal operator action](diagonal-apply.md)
+- [Operator norm bound for the diagonal action](diagonal-norm-le.md)
+- [Additivity of diagonal action on a vector sequence](action-add.md)
+- [Complex scaling of diagonal sequence action](action-smul.md)
+- [Norm of a bounded operator acting on a vector sequence](action-norm-le.md)
+- [Bounded operator evaluation on a vector sequence](action.md)
+- [Coordinates of operator evaluation on a sequence](action-apply.md)
+- [Bounded functional of square-summable matrix coefficients](coefficient.md)
+- [Convergence of a square-summable matrix-coefficient series](coefficient-summable.md)
+- [Series formula for a bounded operator coefficient](coefficient-apply.md)
+- [Norm estimate for an infinite matrix coefficient](coefficient-bound.md)

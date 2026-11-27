@@ -1,0 +1,18 @@
+# Dual transposes and the two Arens extensions
+
+- [Bounded dual transpose of a bilinear map](dual-bilinear.md)
+- [Evaluation of the dual bilinear transpose](dual-bilinear-apply.md)
+- [Norm bound for a dual bilinear transpose](norm-dual-bilinear-le.md)
+- [Norm of a transposed coefficient functional](norm-dual-bilinear-apply-le.md)
+- [First Arens extension of a bounded bilinear map](arens-first.md)
+- [Second Arens extension of a bounded bilinear map](arens-second.md)
+- [Nested coefficient formula for the first Arens extension](arens-first-apply.md)
+- [Nested coefficient formula for the second Arens extension](arens-second-apply.md)
+- [Bilinear norm of the first Arens extension](norm-arens-first-le.md)
+- [Bilinear norm of the second Arens extension](norm-arens-second-le.md)
+- [Pointwise norm bound for the first Arens extension](norm-arens-first-apply-le.md)
+- [Pointwise norm bound for the second Arens extension](norm-arens-second-apply-le.md)
+- [First Arens extension on evaluation vectors](arens-first-inclusion.md)
+- [Second Arens extension on evaluation vectors](arens-second-inclusion.md)
+- [Weak-star continuity in the first Arens variable](continuous-arens-first-weak-dual-left.md)
+- [Weak-star continuity in the second Arens variable](continuous-arens-second-weak-dual-right.md)

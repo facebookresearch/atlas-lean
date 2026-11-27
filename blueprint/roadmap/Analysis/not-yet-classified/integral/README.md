@@ -1,0 +1,16 @@
+# Bounded spectral integrals and simple-function approximations
+
+- [Bounded sesquilinear form of a spectral integral](spectral-integral-form.md)
+- [Bounded operator integral of a measurable function](spectral-integral.md)
+- [Scalar coefficient identity of the spectral integral](inner-spectral-integral-apply.md)
+- [Supremum-norm bound for spectral integration](norm-spectral-integral-le.md)
+- [Contractive linear map of bounded spectral integration](spectral-integral-clm.md)
+- [Difference bound for bounded spectral integrals](norm-spectral-integral-sub-le.md)
+- [Metric contraction of spectral integration](dist-spectral-integral-le.md)
+- [Finite projection sum of a measurable simple function](simple-spectral-integral.md)
+- [Spectral integral equals its finite simple-function sum](spectral-integral-of-simple-func.md)
+- [Spectral integral of a scalar indicator](spectral-integral-indicator-const.md)
+- [Spectral integral of a characteristic function](spectral-integral-indicator.md)
+- [Strict error bound from a uniform simple approximation](norm-spectral-integral-sub-simple-spectr.md)
+- [Finite-sum approximation of a bounded spectral integral](exists-simple-spectral-integral-norm-sub.md)
+- [Uniqueness of continuous spectral integration from finite sums](spectral-integral-clm-unique.md)

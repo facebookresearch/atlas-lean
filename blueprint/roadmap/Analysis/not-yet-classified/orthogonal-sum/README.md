@@ -26,3 +26,7 @@
 ## Diagonal Algebra
 
 - [Block Diagonal Star Alg Hom](block-diagonal-star-alg-hom.md)
+
+## Strong Fredholm orthogonal block sums
+
+- [Fredholm block diagonal on two-norm sums](is-fredholm-block-diagonal.md)

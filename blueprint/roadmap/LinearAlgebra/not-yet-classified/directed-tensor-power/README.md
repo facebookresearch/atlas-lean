@@ -1,0 +1,17 @@
+# Positive tensor powers of a directed module system
+
+- [Positive tensor-power module object](positive-tensor-power-module-obj.md)
+- [Positive tensor-power carrier](positive-tensor-power.md)
+- [Zero-indexed positive power as a tensor-unit factor](positive-tensor-power-zero-equiv.md)
+- [Successor positive power split into its last factor](positive-tensor-power-succ-equiv.md)
+- [Positive tensor-power map of a linear map](positive-tensor-power-map.md)
+- [Positive tensor powers preserve identities](positive-tensor-power-map-id.md)
+- [Positive tensor powers preserve composition](positive-tensor-power-map-comp.md)
+- [Positive tensor-power equivalence induced by a module equivalence](positive-tensor-power-congr.md)
+- [Naturality of the zero positive-power identification](positive-tensor-power-zero-equiv-natural.md)
+- [Naturality of the last-factor positive-power split](positive-tensor-power-succ-equiv-natural.md)
+- [Stage transition in a positive tensor-power system](positive-tensor-power-transition.md)
+- [Successor split respects a tensor-power stage transition](positive-tensor-power-succ-equiv-transit.md)
+- [Direct limit of a positive tensor-power system](positive-tensor-power-direct-limit-equiv.md)
+- [Tensor-power limit equivalence on a stage representative](positive-tensor-power-direct-limit-equiv-2.md)
+- [Eventual zero in a positive tensor-power system](exists-eq-zero-of-positive-tensor-power.md)

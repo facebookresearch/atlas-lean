@@ -1,0 +1,15 @@
+# Eliminating a vertex with two neighbors
+
+- [The retained matrix for two-neighbor elimination](degree-two-pivot.md)
+- [Forward substitution at two neighbors](degree-two-rhs.md)
+- [Back substitution at two neighbors](degree-two-lift.md)
+- [The two-neighbor factor column](degree-two-column.md)
+- [Two-neighbor elimination as a rank-one correction](degree-two-pivot-eq-sub-rank-one.md)
+- [Residual after two-neighbor back substitution](degree-two-lift-residual.md)
+- [Restriction of two-neighbor back substitution](degree-two-lift-restrict.md)
+- [Energy of a two-neighbor lifted error](degree-two-lift-error-energy.md)
+- [Row sum at a two-neighbor pivot](degree-two-pivot-surplus.md)
+- [Retained row sums after two-neighbor elimination](degree-two-pivot-row-sum.md)
+- [Preservation of diagonal dominance with two neighbors](degree-two-pivot-preserves-sddm.md)
+- [The two-neighbor matrix factorization](degree-two-pivot-factor.md)
+- [Support of the two-neighbor factor column](degree-two-column-support-card.md)

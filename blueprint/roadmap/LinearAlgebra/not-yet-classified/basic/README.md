@@ -65,3 +65,22 @@
 - [Map sub sub add eq](map-sub-sub-add-eq.md)
 - [Tensor Tensor Tensor Comm comm tmul comm](tensor-tensor-tensor-comm-comm-tmul-comm.md)
 - [Nontrivial right](nontrivial-right.md)
+
+## Partial semilinear maps over genuine semirings and additive monoids
+
+- [Semilinear value map on a submodule](semilinear-pmap.md)
+- [Function on the partial semilinear domain](to-fun.md)
+- [Semilinear and function views of a partial map agree](apply-to-fun.md)
+- [Domain and values determine a partial semilinear map](ext-2.md)
+- [Equality criterion for partial semilinear maps](ext-iff.md)
+- [Restriction of a partial semilinear domain](dom-restrict.md)
+- [Domain of a restricted partial map](dom-restrict-domain.md)
+- [Value preserved by partial-domain restriction](dom-restrict-apply.md)
+- [Partial ring map in the semilinear presentation](of-linear-pmap.md)
+- [Semilinear partial map in the ring presentation](to-linear-pmap.md)
+- [Ring partial map recovered after both presentations](to-linear-pmap-of-linear-pmap.md)
+- [Semilinear partial map recovered after both presentations](of-linear-pmap-to-linear-pmap.md)
+- [Domain preserved on entry to the semilinear presentation](domain-of-linear-pmap.md)
+- [Domain preserved on entry to the ring presentation](domain-to-linear-pmap.md)
+- [Values preserved on entry to the semilinear presentation](of-linear-pmap-apply.md)
+- [Values preserved on entry to the ring presentation](to-linear-pmap-apply.md)

@@ -61,5 +61,7 @@
 - [Hilbert–Schmidt norm of a rank-one matrix](hs-norm-sq-hs-rank-one.md)
 - [Canonical Hilbert–Schmidt norm equals the matrix norm](canonical-hs-norm-sq-eq-of-real-matrix.md)
 - [Canonical Hilbert–Schmidt norm of the constructed operator](canonical-hs-norm-sq-hs-operator.md)
+- [Square-summable operator coefficients in a Hilbert basis](actual-square-summable-operator-coefficients-rel/README.md)
+- [Finite-rank range trace and Hilbert–Schmidt functions](actual-bounded-finite-rank-carriers-and-range-tr/README.md)
 - [The Hilbert–Schmidt norm of a finite-rank operator is controlled by its operator norm](exists-hs-norm-le-mul-op-norm-of-finite.md)
 - [The Hilbert–Schmidt norm bounds an operator on unit vectors](norm-apply-le-hs-norm-of-norm-eq-one.md)

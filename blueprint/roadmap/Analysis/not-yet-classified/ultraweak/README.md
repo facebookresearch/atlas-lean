@@ -1,0 +1,16 @@
+# Evaluation topology and weak-star realization of a von Neumann algebra
+
+- [Evaluation pairing with the normal-functional Banach space](normal-functional-pairing.md)
+- [Value of the normal-functional evaluation pairing](normal-functional-pairing-apply.md)
+- [Normal-functional evaluation separates algebra elements](normal-functional-pairing-injective.md)
+- [Von Neumann algebra with its evaluation-induced topology](ultraweak.md)
+- [Linear identification of the ultraweak and normed algebra](ultraweak-linear-equiv.md)
+- [Underlying value of an ultraweak algebra element](ultraweak-linear-equiv-apply.md)
+- [Star-algebra identification of the ultraweak copy](ultraweak-star-alg-equiv.md)
+- [Agreement of the ultraweak algebra identifications](ultraweak-star-alg-equiv-apply.md)
+- [Continuity of a normal evaluation](ultraweak-eval-continuous.md)
+- [Normal evaluations test continuity into the ultraweak algebra](ultraweak-continuous-iff.md)
+- [Normal evaluations test ultraweak convergence](ultraweak-tendsto-iff.md)
+- [Ultraweak algebra as the weak-star dual of its normal-functionals](ultraweak-weak-dual-homeomorph.md)
+- [Evaluation of the weak-star realization](ultraweak-weak-dual-homeomorph-apply.md)
+- [Continuous identity from operator norm to ultraweak topology](continuous-to-ultraweak.md)

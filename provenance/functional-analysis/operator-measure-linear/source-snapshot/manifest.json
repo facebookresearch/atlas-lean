@@ -1,0 +1,3182 @@
+{
+  "schema": "atlas.mathlibext-source-snapshot.v1",
+  "library": "MathlibExt",
+  "encoding": "UTF-8 JSON Lines with literal source_text strings; standard JSON escaping only",
+  "source_version": "This immutable pre-adaptation source version is identified by the listed file and chunk SHA256 hashes.",
+  "file_count": 348,
+  "original_source_lines": 54889,
+  "original_bytes": 2379621,
+  "chunks": [
+    {
+      "file": "part-0001.jsonl",
+      "sha256": "f9d28889211e6c78b67554f4cf48e5d27034adc3f1f6d62522ebbaef2ecb0e2d",
+      "bytes": 549680,
+      "rows": 64
+    },
+    {
+      "file": "part-0002.jsonl",
+      "sha256": "bbec905719632e7b2c775374d330215a4e0c7d642027555f947bb8cbb25e6531",
+      "bytes": 412814,
+      "rows": 64
+    },
+    {
+      "file": "part-0003.jsonl",
+      "sha256": "6a21686eff101b26fa82accb612a28d31fe9b0de2ad5afb812118bc55718fc8e",
+      "bytes": 411153,
+      "rows": 64
+    },
+    {
+      "file": "part-0004.jsonl",
+      "sha256": "232e86a532e9a37db37e1cd607742296928656cbf0a83bae740611e326be8bd5",
+      "bytes": 497225,
+      "rows": 64
+    },
+    {
+      "file": "part-0005.jsonl",
+      "sha256": "2b45150722dbcf8794d62f9c1c6dfa3eabdcd9f59dc5935cf7285506d471cb26",
+      "bytes": 481268,
+      "rows": 64
+    },
+    {
+      "file": "part-0006.jsonl",
+      "sha256": "027ac46be7a8c20afaa5325004bc3b6cb27df28b912292802fb5ee980fc77769",
+      "bytes": 154946,
+      "rows": 28
+    }
+  ],
+  "files": [
+    {
+      "original_path": "MathlibExt/Algebra/Ring/GeneratingTuples.lean",
+      "original_sha256": "47cd67da3bb671d6ee4c05b54dec521a50cc79b93d85dceb8653a95bce0c8ae4",
+      "original_bytes": 4439,
+      "original_lines": 133,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Algebra/Star/CuntzFamily/Finite.lean",
+      "original_sha256": "2a4e7ad295123a215b9f7db92b74aea0a013009e72d6159bbff8ad64848399d0",
+      "original_bytes": 8037,
+      "original_lines": 190,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Algebra/Star/StarProjection/FiniteSum.lean",
+      "original_sha256": "09f518ec840e4fd068a9cea512e46c044925fddcb35dad8168582047b8350ef1",
+      "original_bytes": 1767,
+      "original_lines": 53,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Distribution/Scaling.lean",
+      "original_sha256": "3fdfff7dfc8ee783c4997f90411c35c391aee26b7e3a2c8098d52f46fc7e46be",
+      "original_bytes": 7339,
+      "original_lines": 165,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejer.lean",
+      "original_sha256": "435ba9837a411b4f87ab6cba1d0f47027fd9f4e66b28fd1030362b0cf9dc4419",
+      "original_bytes": 5982,
+      "original_lines": 117,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejerCoefficients.lean",
+      "original_sha256": "3f00130069a13d01af2ae54df3abf1723700ba25ad32cf57c1c39d9b43bf099b",
+      "original_bytes": 9563,
+      "original_lines": 196,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejerPairing.lean",
+      "original_sha256": "fdcc460882fc1bfaccf545c0de1595902060e7e729a8ad610109b969d055caaf",
+      "original_bytes": 12065,
+      "original_lines": 203,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejerPolynomial.lean",
+      "original_sha256": "a5bc64fbe06e5f618e6392de73cf5ad8f7f47b6be701252dcadc5a090a7f2eb0",
+      "original_bytes": 8406,
+      "original_lines": 164,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/DFTMatrix.lean",
+      "original_sha256": "0bcd3335a009eddb37174b5691acb18122719ba24118c71bd0b7b0c4276e608f",
+      "original_bytes": 26524,
+      "original_lines": 621,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/Pontryagin/IntegralData.lean",
+      "original_sha256": "f6e97866b9309d5228ecd4d2f0d27a1cc18aedc258def1739f33b5249a8eafdb",
+      "original_bytes": 1918,
+      "original_lines": 50,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/PontryaginDualIntegral.lean",
+      "original_sha256": "40d758cc9f8a4e94182c99cced3a6659032aedd6732a5d46d733d1ec179aa48d",
+      "original_bytes": 3726,
+      "original_lines": 90,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/RegularTwoFrame.lean",
+      "original_sha256": "96bf1650c5ce2a30b8658b2ff671cfafc6f10585c2a12b4609d9c8cff4a4e21d",
+      "original_bytes": 20955,
+      "original_lines": 515,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/FunctionalAnalysis/ContinuousMapRealDualJordan.lean",
+      "original_sha256": "eb27c5664169bb07f89098639ef9194487890e4b84ac9e85550b7a30c20042df",
+      "original_bytes": 21231,
+      "original_lines": 495,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Adjoint/OneSided.lean",
+      "original_sha256": "18fbd6be856af2744da620b040fd89ef92360ee132da9e4cf4464e5ac2df87dc",
+      "original_bytes": 2770,
+      "original_lines": 71,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/AntiunitaryConjugation.lean",
+      "original_sha256": "566759ab91b53716f2a61d0848d25637a1b1a3513f1fe7f670146bffee5de598",
+      "original_bytes": 1517,
+      "original_lines": 47,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/BilateralShift.lean",
+      "original_sha256": "e50283bb7db31e08ebd57a096f4858cac834ddb0d3d8a2268bf37fe3ee3ad7f1",
+      "original_bytes": 10369,
+      "original_lines": 296,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ClosedRangeProjection.lean",
+      "original_sha256": "ea069c163e320239cf3b307ebaef9166cef978ac2b92c3be115800d9b75d02df",
+      "original_bytes": 3311,
+      "original_lines": 87,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Complex/UnitVector.lean",
+      "original_sha256": "4a90ff402d4e4803fb59e1f6698096fd2811283ad91cddd448c85163bd8156c7",
+      "original_bytes": 1717,
+      "original_lines": 58,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Descent.lean",
+      "original_sha256": "ea0075542925f73febdde8629032d3e48f117ac223bf7959460bc9394128a171",
+      "original_bytes": 1967,
+      "original_lines": 46,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/FredholmModule.lean",
+      "original_sha256": "357ac322982e04a07af6f544d496fbcec09cb3b8402d944485887fa8df1ac00b",
+      "original_bytes": 11776,
+      "original_lines": 285,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/CharacterMultiplier.lean",
+      "original_sha256": "155b6fb67e31479cebc7ef4d6ae43818b99c54c28fa34bb735cbba404e12cb87",
+      "original_bytes": 7555,
+      "original_lines": 164,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/CharacterMultiplierContinuous.lean",
+      "original_sha256": "83460508b3370229edd08b58454e9ffc670b579474f7709a65484e1aca1ae8c7",
+      "original_bytes": 7656,
+      "original_lines": 147,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/DiagonalShear.lean",
+      "original_sha256": "b7ba71225e57597c0052df26cda89bf2752909ece01fcff5ec5a4082363909be",
+      "original_bytes": 10019,
+      "original_lines": 206,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct.lean",
+      "original_sha256": "425251e00ef171e8b63ebd29812261b78fac69b0ad1d070eb93ef5bf7191b805",
+      "original_bytes": 14779,
+      "original_lines": 309,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/Completion.lean",
+      "original_sha256": "ffbe0a47564d3b408ad4d13bab4741e0c4bfba0306559a463627992a2ac8a609",
+      "original_bytes": 17924,
+      "original_lines": 322,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/HFirst.lean",
+      "original_sha256": "4b81533958090a37cac136074a6655b98bcd1688a0a482aca427512a70f84953",
+      "original_bytes": 10517,
+      "original_lines": 206,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/Hilbert.lean",
+      "original_sha256": "70dff4e85ccd82005b25b4dfa85382036475dc1eca7872e4dee391c3935f7afd",
+      "original_bytes": 8157,
+      "original_lines": 158,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/Mixed.lean",
+      "original_sha256": "f8bd0980b595755f44ab5112e6638b713a5f69088c0fe82896d801c4133f9378",
+      "original_bytes": 14480,
+      "original_lines": 255,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/Sections.lean",
+      "original_sha256": "7edc3b4d404653dc6813fca04c610efdf33ad4e8b0e854e334d211ecfe968c38",
+      "original_bytes": 11030,
+      "original_lines": 227,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/Swap.lean",
+      "original_sha256": "92b1b5bbabdaa146a1f56f995472baa967a30c414fce77142ae9e667752ba468",
+      "original_bytes": 5556,
+      "original_lines": 121,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/RadonProduct/Unitary.lean",
+      "original_sha256": "92dea61fb1393da5bd89ccf6b7eeb0c84aa671388bb3bd636dc59d0e6ef080b6",
+      "original_bytes": 6777,
+      "original_lines": 133,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/TensorCharacterMultiplier.lean",
+      "original_sha256": "8d715fa2cf45989661c7d711be605e1f9231228be71d7ae1d2fc7371e4bf0174",
+      "original_bytes": 7763,
+      "original_lines": 146,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/TensorProduct.lean",
+      "original_sha256": "2421af6a85c4e63335691b147d0a57b080ffe5ec7d556227545f43251b3a3c08",
+      "original_bytes": 4047,
+      "original_lines": 91,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarRegularAbelianComparison.lean",
+      "original_sha256": "8954b1ff5539de343e290b7d90209d308cfae278f90004256aa71d8a74e49c67",
+      "original_bytes": 1829,
+      "original_lines": 53,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarRegularTensorCoordinates.lean",
+      "original_sha256": "3aaba4a40febe82edd04183a76dbefd915fd2498414f32240e79f090c8884ae0",
+      "original_bytes": 4638,
+      "original_lines": 98,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarRegularTensorRepresentation.lean",
+      "original_sha256": "1c16994e225f2df90e5772d1993e9400e0bb954b638b6c0ed1108db4b789c4ad",
+      "original_bytes": 6584,
+      "original_lines": 128,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarRightRegularPullback.lean",
+      "original_sha256": "68a45c68b6273337fbb7b4d07b4b50cab5506c5f94bf301617440cbfc1803490",
+      "original_bytes": 3534,
+      "original_lines": 86,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarRightRegularRepresentation.lean",
+      "original_sha256": "df2defaba89049a3f37e81d783835cbf7b9ac4e7bf55458fa6107c308142930a",
+      "original_bytes": 15802,
+      "original_lines": 332,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/HilbertSchmidt/BasisData.lean",
+      "original_sha256": "764565985be216ecc2a1219f842ab3f745e638e50c255a2281f20dfc052546eb",
+      "original_bytes": 3325,
+      "original_lines": 88,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/HilbertSchmidt/FiniteRankTrace.lean",
+      "original_sha256": "ee062728156c3fd0441a943b16a8a700c16fab33199637fac8f34b4015da33b3",
+      "original_bytes": 6993,
+      "original_lines": 148,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Matrix/Adjoint.lean",
+      "original_sha256": "8553df1c6f8b7f326c58215abb736522fd0ac59e41c1e5b53e441ccf9d9590ce",
+      "original_bytes": 2623,
+      "original_lines": 72,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Matrix/CStarAlgebra.lean",
+      "original_sha256": "a85c73b14626b3aa63d0bb8b0c33313b1e3d874daccb17051fcff52dd21651a9",
+      "original_bytes": 6565,
+      "original_lines": 154,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Matrix/Calkin.lean",
+      "original_sha256": "bc5223572dc38b42142a4372978fdc090ba7cb3d07f13f349364b0b8f7a80063",
+      "original_bytes": 12374,
+      "original_lines": 269,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/BasisCornerDensity.lean",
+      "original_sha256": "0c942830edf4dba057ec26f92ce2e5df29aef95769ab9024e988dfbdea7cda10",
+      "original_bytes": 7963,
+      "original_lines": 176,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/CalkinMatrixFold.lean",
+      "original_sha256": "6d2668d153b179e27e0007cd350b6c9e0923d12a6e4bfd304ee50c3aa0b9550a",
+      "original_bytes": 5582,
+      "original_lines": 121,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/CompactBasisCharacteristics.lean",
+      "original_sha256": "64de34f03efa16652699e399ddf27e3e88bfe1322e07acdfcd021e56d641da3b",
+      "original_bytes": 5645,
+      "original_lines": 134,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/CompactBasisEquivalence.lean",
+      "original_sha256": "485a2dd526f95f2fce0caff39519d442357a6dd3c177de1517a480a32db88e32",
+      "original_bytes": 11704,
+      "original_lines": 265,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/CompactCompletion.lean",
+      "original_sha256": "cc664a7264923c21a5351c0dae46bfc20e815ba3bd5d7ec8afbbd948776fde3f",
+      "original_bytes": 16723,
+      "original_lines": 365,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/CompactDirectLimit.lean",
+      "original_sha256": "9a5dfc32fb38168ca189dcaecc0533dbc767960a85e46bc246b8f3c2863719d6",
+      "original_bytes": 14517,
+      "original_lines": 312,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/FiniteCoordinateCorner.lean",
+      "original_sha256": "1b5ffc0c1f8ddc9be8b2345a989cb1214315ff49a957a850791a38a805b9a74e",
+      "original_bytes": 11331,
+      "original_lines": 245,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Operator/HilbertAmplification.lean",
+      "original_sha256": "c87723da938a336182abac9ab77c2821e2df8d822bd44a334fcc60138a02ee75",
+      "original_bytes": 14087,
+      "original_lines": 311,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/OperatorUltraweak/Algebra.lean",
+      "original_sha256": "433483fd330285a7131c8743353bfdc2a5e711895e5cd6fb1a17c4a376a1d910",
+      "original_bytes": 2214,
+      "original_lines": 49,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/OperatorUltraweak/Coefficients.lean",
+      "original_sha256": "fa18fad7f17a62a314ef0e71fcfa3b236c0333a1485e4d08d0688bac79999e57",
+      "original_bytes": 4448,
+      "original_lines": 98,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/OperatorUltraweak/Topology.lean",
+      "original_sha256": "68b4da668e8077884a247b851b86d6a49f12b861766e217a23fd2aaeaeabfd96",
+      "original_bytes": 3382,
+      "original_lines": 76,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/Basic.lean",
+      "original_sha256": "d7dca7bc46969073bee9b1e401cd1a39ffa41c38fc6bd103f6b5e1df785a1a7a",
+      "original_bytes": 14416,
+      "original_lines": 360,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureCoefficientBounds.lean",
+      "original_sha256": "b67993f66ada7473cbe1b883e25cbe06a0db76bd6ba79d371b2a353ec8600d41",
+      "original_bytes": 10035,
+      "original_lines": 196,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureCoefficients.lean",
+      "original_sha256": "c5fdb3242a76bcb8035afe36b83d117d68fc115a1c385e8eb894894c2b45cf99",
+      "original_bytes": 3281,
+      "original_lines": 64,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureContinuousProducts.lean",
+      "original_sha256": "4342440f1b64310c13940713922465ff7a75daf7ba40fa42c6f36f4e3ba9712e",
+      "original_bytes": 3493,
+      "original_lines": 68,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureDiagonal.lean",
+      "original_sha256": "aae761ec38baec868ebbe1236a38cd556d6812ccc60b19e7cfa88cd4dc9f4333",
+      "original_bytes": 10557,
+      "original_lines": 203,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureIndicatorIntegration.lean",
+      "original_sha256": "ec35d5e1c25024fb6f63c92b0b8d91c7c73407179f295b84d8b96ccae8bc5d02",
+      "original_bytes": 2831,
+      "original_lines": 65,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureOperatorCommutation.lean",
+      "original_sha256": "b6eb681c9c7741b1459f07d210efe7818ef11937234b388d78288a6552ff7581",
+      "original_bytes": 3223,
+      "original_lines": 65,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureOperatorLaws.lean",
+      "original_sha256": "f4a7453854755a3141c1827381d9d15fae1fc8e0365d606feb9fe9646d45a7b2",
+      "original_bytes": 4399,
+      "original_lines": 96,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureOperators.lean",
+      "original_sha256": "9fff3b84afc13c8dbd4189480414bebac0e1770f0f513aa7daf056960bb451c5",
+      "original_bytes": 5562,
+      "original_lines": 109,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureProjectionIntersection.lean",
+      "original_sha256": "c976804a97da2b4194aaf0b42bc2bdf6b64235d1e6df019d84e19159590afbf4",
+      "original_bytes": 13222,
+      "original_lines": 230,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureProjectionValued.lean",
+      "original_sha256": "142503ff83e1f1dde5d85d7617661e6c54ae3b5ecfd4ba316dc146e74ad35fb6",
+      "original_bytes": 4093,
+      "original_lines": 88,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureSesquilinearity.lean",
+      "original_sha256": "8bedf18d6b9593c1d83446fd9a965a4b17a72753801346e23bef7b309aeede56",
+      "original_bytes": 5083,
+      "original_lines": 104,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/CFCMeasureStrongAdditivity.lean",
+      "original_sha256": "0edd253338fc39f0fdcc38dca1eada04162f413527e08dad09609778cfcbb4fa",
+      "original_bytes": 2932,
+      "original_lines": 58,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/Constructions.lean",
+      "original_sha256": "83678ff2295fc6b370f6c5950983ee62ff31c2c32a5f2058927b20095229776b",
+      "original_bytes": 13372,
+      "original_lines": 369,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/ImaginaryPower.lean",
+      "original_sha256": "f59d670b533e141786955a1df969b65b39478f3c7bfaf856dab3c758c612f96f",
+      "original_bytes": 3505,
+      "original_lines": 82,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/Integral.lean",
+      "original_sha256": "37b3466cd0d4d58f7d29654306fcbec809fb3b22a2ccc761a2f8e99975a7a24b",
+      "original_bytes": 13996,
+      "original_lines": 316,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/IntegralRepresentation.lean",
+      "original_sha256": "b7e85f5f0f0d682614b24d520c9c52cc6aebce049924d7fc5e7374b650ff9184",
+      "original_bytes": 14125,
+      "original_lines": 317,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/Multiplication.lean",
+      "original_sha256": "3aa2596aebc8968195c4964a5d9f5125cca505e40c75958f45856e94d40687f1",
+      "original_bytes": 16904,
+      "original_lines": 385,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/OrthogonalStrongSum.lean",
+      "original_sha256": "a6f03d16e33f4a953f6b8c4555297d485f5971273f9c2514d71f7d57fac3548a",
+      "original_bytes": 1739,
+      "original_lines": 48,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/ProjectionValuedMeasure/ScalarMeasure.lean",
+      "original_sha256": "896acd4c42b8e7c17567175d017717168d3d98a81908d118fb6cc2458f729b2d",
+      "original_bytes": 9807,
+      "original_lines": 235,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Representation/RectangularSupportCompression.lean",
+      "original_sha256": "be0c05286f843617464234dd5b2b3c08df00bd5b9aec2dd5029bc3938a11729a",
+      "original_bytes": 5565,
+      "original_lines": 111,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/Representation/SupportCompression.lean",
+      "original_sha256": "60cfe9a413dea827ce0a60a07d6a164cd17cc2806ae62f44f86acdb11787d37a",
+      "original_bytes": 4790,
+      "original_lines": 114,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/TensorProduct/CompletionAdjoint.lean",
+      "original_sha256": "20b1a341535d41080b8b3d9e66014589feeb2970876a58f4fae33d875774d623",
+      "original_bytes": 2554,
+      "original_lines": 68,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/TensorProduct/CompletionMap.lean",
+      "original_sha256": "a7737bb65433c786935de26a4eb80943f38494d29b1f060f1e1c4c05ea04e546",
+      "original_bytes": 7049,
+      "original_lines": 166,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/TensorProduct/CyclicCompletion.lean",
+      "original_sha256": "a43e725fbd00b0e460c4c563da87084b48cc2eb759d8aa28640b9f66a08872a2",
+      "original_bytes": 4055,
+      "original_lines": 94,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/TensorProduct/InsideCompletion.lean",
+      "original_sha256": "52d22a57b1609cd2bec23b3efb2395095a31f97e9c8afd1faa6ef49d1f5f57d0",
+      "original_bytes": 7730,
+      "original_lines": 156,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/TensorProduct/OperatorFaithfulness.lean",
+      "original_sha256": "efb814c9f0ba2ac995e5b021dbb639de21a1bb46e770a152b715f77dd9d1f543",
+      "original_bytes": 4704,
+      "original_lines": 106,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/UnboundedDiagonal.lean",
+      "original_sha256": "6106a304d3cb6c94b3faffd9fe54fedf73220d3f3f1e67a34b7a079aea822a8e",
+      "original_bytes": 4977,
+      "original_lines": 117,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/UnilateralShift.lean",
+      "original_sha256": "a4b6289cd4bfb731b6cbcff1bd68036835b403e8e48624279983057514bf17a6",
+      "original_bytes": 21308,
+      "original_lines": 534,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Module/StrongDualStar.lean",
+      "original_sha256": "149a0f895d72fdfbf6e30c511bbc2b231fa581436740de1978f19708a56ab3de",
+      "original_bytes": 4769,
+      "original_lines": 111,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/ApproximationNumbers.lean",
+      "original_sha256": "66516f8bb31aec4e893e535574eb8dd8e1fe19af7af2f3d79a191b552b4abe27",
+      "original_bytes": 7086,
+      "original_lines": 155,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/ApproximationNumbersIdeal.lean",
+      "original_sha256": "cf1c1fe6ae69098ec3a9ccfad3b5c6b9f846a19fbb8b05893571da4fab00f70b",
+      "original_bytes": 6276,
+      "original_lines": 137,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Arens.lean",
+      "original_sha256": "f14fa632dd3b1ced582e801f0d7255b65d35ad35bef52e16f4778b2b0d9e2c22",
+      "original_bytes": 10976,
+      "original_lines": 226,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/ArensAlgebra.lean",
+      "original_sha256": "458b25d3234312d8a84a266c2190a20fbfe20cb80ed8d02ea3120c3c60b9475e",
+      "original_bytes": 12608,
+      "original_lines": 269,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/ArensStar.lean",
+      "original_sha256": "cb58afa3dd803fe614f9d749710653d4c1c6fe28c87424614878660c5003f177",
+      "original_bytes": 4069,
+      "original_lines": 102,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/ArensWeakDual.lean",
+      "original_sha256": "606851b45b3d10a38bff7f28674bb2c82f46c2af0f8920b63bca1e365508bdf2",
+      "original_bytes": 6480,
+      "original_lines": 141,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Compact/LeftRegularizer.lean",
+      "original_sha256": "fcedf73a377b194ffa85bd2247a8dce92517075f72d0282ce066a683fb7721b8",
+      "original_bytes": 7460,
+      "original_lines": 162,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Compact/Matrix.lean",
+      "original_sha256": "3b85fde87f14466e8fce01c79442b7766b33446037a936b6a1d48610a9445e9f",
+      "original_bytes": 4857,
+      "original_lines": 108,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Compact/OpenMap.lean",
+      "original_sha256": "4c01728ccd7a4ec9ed4db32121a8653df5ce19ff4adfe8c8bc15cd2573cc43cc",
+      "original_bytes": 1428,
+      "original_lines": 40,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Compact/Pi.lean",
+      "original_sha256": "8150660c218513a0429eb4e5f40466524831ef22295d12cc6c35a74aabf61a16",
+      "original_bytes": 2505,
+      "original_lines": 62,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/CompletionEquiv.lean",
+      "original_sha256": "e14b1bf0861a7cb323b7b2b4b400181a539aa88fd49661b6a39b8a60c73fe2b8",
+      "original_bytes": 4707,
+      "original_lines": 107,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/DualApproximatePreimage.lean",
+      "original_sha256": "140e900bccd0a7689d8a882c53ee1155bd43627335789f00ff256213c1d3c75b",
+      "original_bytes": 2872,
+      "original_lines": 74,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/DualLowerBound.lean",
+      "original_sha256": "6ef0d98bac22b76979644390465be6c22f3ee5ff7a4922166a6f1ccc33c2a404",
+      "original_bytes": 3258,
+      "original_lines": 81,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/DualSurjective.lean",
+      "original_sha256": "f31f234d777da45cd2ecb3e0d339f79804e3c408bc8a871385a0cd178362cfde",
+      "original_bytes": 4658,
+      "original_lines": 106,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/FiniteRank.lean",
+      "original_sha256": "58048cd5f11b9580f4cf5e9e539a585efc57bbf417b9494df55c293b917d4737",
+      "original_bytes": 1925,
+      "original_lines": 49,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Fredholm/CompactParametrix.lean",
+      "original_sha256": "a652829517fbaf192aa5afac849d5d96b1086824e48e0572bfc9dcf9b527325c",
+      "original_bytes": 7583,
+      "original_lines": 175,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Fredholm/OrthogonalSum.lean",
+      "original_sha256": "63689f67a165efda35aa5c72c438ba338d077fde92d7f168b0b7af62dbe8e882",
+      "original_bytes": 1816,
+      "original_lines": 49,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Fredholm/Prod.lean",
+      "original_sha256": "0aa7acf6c4ebd403bdd97160a9a03485b8472f73845d76281d6e5d6c06008b21",
+      "original_bytes": 4662,
+      "original_lines": 107,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Fredholm/RangeCompression.lean",
+      "original_sha256": "211f12ac2ab4435f66f1535ce13dbd62749b773340c59545acbda99a13fba1dc",
+      "original_bytes": 7154,
+      "original_lines": 162,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Normed/Operator/Fredholm/Transport.lean",
+      "original_sha256": "c7d8f28feb062dc5eb93696132f9b3e4d55beb92c5eff23200a00e46ffe09e31",
+      "original_bytes": 5019,
+      "original_lines": 123,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/SchwartzSpace/RapidSequence.lean",
+      "original_sha256": "2ef3a2f432141d694d46e3f1653d10b6fd8d9855dc22afbc04f23bd47533c48c",
+      "original_bytes": 14842,
+      "original_lines": 323,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/ConjugationPredual.lean",
+      "original_sha256": "808e3a43a5f5eb59c261de4e3934266455fd231af62633553318a4ebb0e2344e",
+      "original_bytes": 4317,
+      "original_lines": 93,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/DiagonalHaarWeylAlgebra.lean",
+      "original_sha256": "69872b0cce36d256107e2c9d03d13d3c115d12e3442cfffdcd823c5e8e93c9e3",
+      "original_bytes": 9050,
+      "original_lines": 176,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/FiniteLocalizedNormalFunctional.lean",
+      "original_sha256": "991743ff68fdf83056b47050c9cc2b8e88caa134ea9280992d1154ee185a480f",
+      "original_bytes": 2422,
+      "original_lines": 60,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/FiniteNormalApproximation.lean",
+      "original_sha256": "0b047c771b16fcea7820160dcb665d0315d025aa9505fc6c074856d61c378353",
+      "original_bytes": 3041,
+      "original_lines": 73,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/HaarWeylAlgebra.lean",
+      "original_sha256": "82ee5dfca0313ca945bfc9601d3afd3c24d9c0048f1073ca8c58187896bd0bd1",
+      "original_bytes": 7072,
+      "original_lines": 149,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/IsometryConjugation.lean",
+      "original_sha256": "4e2fb2e4368f168fd2d154a14046d4729161f17e986aaa07831efcf2542db962",
+      "original_bytes": 4209,
+      "original_lines": 102,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalVectorComparison.lean",
+      "original_sha256": "e406cef5acf610f62b621a0b67233f34efbacc35cfae7a0aa2e5e51cabb72e63",
+      "original_bytes": 11842,
+      "original_lines": 227,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalVectorDominatedProjection.lean",
+      "original_sha256": "84c4eae7c5be085c91179131ff82a8725bc955b28e072d9eed5445cc34050414",
+      "original_bytes": 5482,
+      "original_lines": 115,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalizedEvaluationKernel.lean",
+      "original_sha256": "4ae3c82506faf4ac820f9ae60a0b7faaa51bac20bfa1cde151a52e99df26eb0b",
+      "original_bytes": 3927,
+      "original_lines": 89,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalizedEvaluationRange.lean",
+      "original_sha256": "4758e78b80bd183879926cb721f9fd84753fd40c7b6cdb15fea94681b35260fc",
+      "original_bytes": 2501,
+      "original_lines": 62,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalizedEvaluationRangeBounded.lean",
+      "original_sha256": "ce5e6566920464bcab70920039163570d3d53e30e68f767a8958e2354d2933d1",
+      "original_bytes": 3124,
+      "original_lines": 76,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalizedNormalFunctional.lean",
+      "original_sha256": "799e8ad2ecde0bc7a7d6845a0fd87018e110d17f3c29e4483a009d1ea78d70d1",
+      "original_bytes": 2418,
+      "original_lines": 64,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/LocalizedVectorRealization.lean",
+      "original_sha256": "70febd9c296c7a24c10d99709bd3513dc785fe53309f806d3b8f3659a5081340",
+      "original_bytes": 2574,
+      "original_lines": 65,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MaximalLocalCutoffIdentity.lean",
+      "original_sha256": "c30ce394dd6eeedc405a38f4ce4e2b8fcd970958f875c99218268af4ee3d653e",
+      "original_bytes": 2919,
+      "original_lines": 74,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MaximalLocalCutoffProjection.lean",
+      "original_sha256": "c8713e1a8061cb8adbe730b22f2d80804088ca6e39d470623b5ec5acf62504d6",
+      "original_bytes": 3979,
+      "original_lines": 89,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MaximalLocalCutoffSupremum.lean",
+      "original_sha256": "e313d524da2be06248683ca5d6c0a65c262fad640436b8c5f76c1ae5d952b6d9",
+      "original_bytes": 5220,
+      "original_lines": 118,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MaximalLocalFiniteCutoffs.lean",
+      "original_sha256": "ce66a6b5fe285c1ce242a7ae42b1f5f8aa42b408cbab0719a308d290b5f8c443",
+      "original_bytes": 8855,
+      "original_lines": 185,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MaximalLocalProjectionAnnihilator.lean",
+      "original_sha256": "c99ed02eabc24bbd7a9d8b33d381c0c9b4694131fc305129878959621830d972",
+      "original_bytes": 3409,
+      "original_lines": 90,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MaximalLocalProjectionFamily.lean",
+      "original_sha256": "e7066d1aac25a31190ef073ec0a2acf1ac96f52fb9cc1be38bdaf3d9c11ab2b8",
+      "original_bytes": 3602,
+      "original_lines": 88,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/MultiplicationPredual.lean",
+      "original_sha256": "02909400760428ad84b032e07fa42b9d7c4ca179d85242fa63c5e49f17ba4738",
+      "original_bytes": 4339,
+      "original_lines": 94,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction.lean",
+      "original_sha256": "aaed339579351f093e7bb4b1baf8fc51ebd18545ea1bf37c7d719fa651f6297d",
+      "original_bytes": 4009,
+      "original_lines": 108,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CharacterAction.lean",
+      "original_sha256": "6e8e3c56ea3d00a597b33683bd4ce441174f306874ce3fa022368c0845853e54",
+      "original_bytes": 9827,
+      "original_lines": 197,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CharacterConjugation.lean",
+      "original_sha256": "c88afdc91954a7ca95522d840f94d632f87f8df02ec513040f6e339926a70a72",
+      "original_bytes": 6904,
+      "original_lines": 142,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CharacterCovariance.lean",
+      "original_sha256": "83124b3d816ca37837f323dafb5d0e854737d9f72023de052917d006c2012e8b",
+      "original_bytes": 5558,
+      "original_lines": 115,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CoefficientFaithfulness.lean",
+      "original_sha256": "ee30404932ae14dcef1ac1c3aa62b3989fe77009743acd459de562d9134c3093",
+      "original_bytes": 5151,
+      "original_lines": 113,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CoefficientNormality.lean",
+      "original_sha256": "99330419aaeb3adb7db5ba9dd5adc2ecf0e4350e0378de6be0200fe13d21ad77",
+      "original_bytes": 16357,
+      "original_lines": 304,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/Continuity.lean",
+      "original_sha256": "b9a5926cfe2cf3a8cc6c6070e9345a31b4620d337621150c3f98be053b74b699",
+      "original_bytes": 7160,
+      "original_lines": 149,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CrossedProductLp.lean",
+      "original_sha256": "8656c2973317df329eb1485f8cd1c3e86225a349829220ae30e4d893e5ed7a24",
+      "original_bytes": 6430,
+      "original_lines": 136,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CrossedProductTensor.lean",
+      "original_sha256": "da89dcfac7c3785423aedd6e9d1933065e0383ca29c5dfbaef6d22e63e75402f",
+      "original_bytes": 11007,
+      "original_lines": 201,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/CrossedProductTensorNormal.lean",
+      "original_sha256": "f23c94e07c59038371b5b1289588acb82ba8fa056d0f4f0b0c0f42647dee6994",
+      "original_bytes": 5074,
+      "original_lines": 109,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/DiagonalRadonCoefficient.lean",
+      "original_sha256": "3c6c6b519cc71b2a93cbfff83cb009c31b90b142dfbfb7ac217a96ac79995bce",
+      "original_bytes": 5631,
+      "original_lines": 121,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/DoubleCrossedProductTensor.lean",
+      "original_sha256": "838bbc58320dcb292b201eb45205f6c4817ae44c2de6c435d218d8c1766066e8",
+      "original_bytes": 4446,
+      "original_lines": 97,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/DoubleRadonModel.lean",
+      "original_sha256": "5b8c10e7c39c4fb03b20dcb37bb51e146172ef328e4ab8b41731f63850b00323",
+      "original_bytes": 23708,
+      "original_lines": 391,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/Pullback.lean",
+      "original_sha256": "f2e4943105d32788fd2186cf8bd0ff29fc346b1b1da8015902a0fba2b74bc043",
+      "original_bytes": 1382,
+      "original_lines": 46,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/RegularCoefficient.lean",
+      "original_sha256": "e481f1f304544cc720974ea706d758194f1dac8af0c248f241993f43942bfbc7",
+      "original_bytes": 7527,
+      "original_lines": 147,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/RegularCoefficientAlgebra.lean",
+      "original_sha256": "4a9480e92ddcd9d7edf60c284177b172ecf83c8026062994783680cf6e5e6161",
+      "original_bytes": 8026,
+      "original_lines": 179,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/SpatialCoefficient.lean",
+      "original_sha256": "83250d7179b00a89a9a440d2b02f169520e781958a703c97ec8879c4f33bbab6",
+      "original_bytes": 4504,
+      "original_lines": 106,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/TensorCharacterAction.lean",
+      "original_sha256": "619998be4b8e03ce6cad76c71d9dd269dcde54f6e8591174d7f57075a8682b19",
+      "original_bytes": 11471,
+      "original_lines": 193,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalAction/TensorCoefficient.lean",
+      "original_sha256": "c5d7ff00a48601abfe1dbb8720a19c0441344652f3ae778bebeed3df0c4a5628",
+      "original_bytes": 4402,
+      "original_lines": 94,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalEquiv.lean",
+      "original_sha256": "3b8fb55015e27ad83a8adc7f2e93d3aa9fb8a95dc5bada67579df012f2451e15",
+      "original_bytes": 12904,
+      "original_lines": 330,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalFunctional.lean",
+      "original_sha256": "c59384907eaf0d3950405f669a6e8b31469b5a8110dff5d45f304e7da0eb1e76",
+      "original_bytes": 4695,
+      "original_lines": 105,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom.lean",
+      "original_sha256": "3c1f042f13e2e6dce6fce046c9c62a315e3418f336ea5de12a105dde945affcc",
+      "original_bytes": 9288,
+      "original_lines": 235,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/ClosedRange.lean",
+      "original_sha256": "a9ef5a44ba03f8c2bc47e984f0d09e21958a97c169f5ed4a84cd4dc8cb5364d2",
+      "original_bytes": 2275,
+      "original_lines": 63,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/CompactBallImage.lean",
+      "original_sha256": "9531a57ac97a2a6fbae15d6eb4adefe99deccb89a06d6f25006b981c01a78132",
+      "original_bytes": 1516,
+      "original_lines": 43,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulBallEmbedding.lean",
+      "original_sha256": "ac420a4dd14091201a15b0b622fb4f5d3d37c601e25c2a74f6d0e59ae4838860",
+      "original_bytes": 2001,
+      "original_lines": 54,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulBallImage.lean",
+      "original_sha256": "72c250eb0fdf2976772f5fb0e6bb268e9502d2d528739e070fd9e94023db0a8c",
+      "original_bytes": 2609,
+      "original_lines": 66,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulBicommutantRange.lean",
+      "original_sha256": "c391057a8ce35a949ee30740223495a1065fb47a6eefe5345851c1696912f904",
+      "original_bytes": 2966,
+      "original_lines": 75,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulPredualDual.lean",
+      "original_sha256": "68388763d4f262c380230ff438bd85d5f7d9976c0c69d74b047a9498ad7a8343",
+      "original_bytes": 2267,
+      "original_lines": 54,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulPredualQuotient.lean",
+      "original_sha256": "74e364164109ae648b9a21820d1eb2b1c73389134be0caa2016632263e5b671a",
+      "original_bytes": 1924,
+      "original_lines": 51,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulUnitBallBicommutant.lean",
+      "original_sha256": "e53c8382d18af33125ca6fe89bce4014db07353abd6a3cf1f0023b18424fbcea",
+      "original_bytes": 4835,
+      "original_lines": 116,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/FaithfulWOTBall.lean",
+      "original_sha256": "9445c8e58a9fecf70e6302e36b3ac6b5ccf5de72e69f3e2aa8247b67938ca3ce",
+      "original_bytes": 3464,
+      "original_lines": 84,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/ImageEquiv.lean",
+      "original_sha256": "6c6960915d0ac73c349a25ef7dfc72d745cfd924f33c365b04f427ab16822322",
+      "original_bytes": 4932,
+      "original_lines": 109,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/ImageHom.lean",
+      "original_sha256": "d422c214da2d8be1a0754a447933188d22bcc4a8099c38208b137826ddd0cadc",
+      "original_bytes": 3438,
+      "original_lines": 84,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/ImageVonNeumannAlgebra.lean",
+      "original_sha256": "67e080eaeed8f1bcf65e1e4f5db9f6c97d32ae2e78e361cedd36239d72c7cd8f",
+      "original_bytes": 2513,
+      "original_lines": 71,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/PredualDualMap.lean",
+      "original_sha256": "39273c4fd0d6f5ba56a550085a2c71441af8d09da39efb0a5d70c4f114f42e59",
+      "original_bytes": 1667,
+      "original_lines": 47,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/RangeAnnihilator.lean",
+      "original_sha256": "c8138394db1f9c9bcb16c51ba93285a0bf2d1d9d20255deb44ed9c617b03c018",
+      "original_bytes": 3549,
+      "original_lines": 86,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/RangeHomeomorph.lean",
+      "original_sha256": "d6b1a8980ec2d39ec901a05170823a8118b0eaf9fde132b4eba34a379a9792ca",
+      "original_bytes": 3454,
+      "original_lines": 79,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/NormalHom/VectorFunctionalCriterion.lean",
+      "original_sha256": "0f6af87c0d216c48ae91c135925d331c195e65e11f62646257e33f120a3aa4f7",
+      "original_bytes": 2322,
+      "original_lines": 64,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveCutoffLocalization.lean",
+      "original_sha256": "0e944b7869c6ed4ceaf03f55dfd99d978bd237d4a03ec1753546c6279fbac492",
+      "original_bytes": 3214,
+      "original_lines": 73,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveCutoffProjection.lean",
+      "original_sha256": "7225590045f8ce1150980920a09359a3be203230aad53bd53b384c92d042f609",
+      "original_bytes": 6993,
+      "original_lines": 156,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveFunctionalLocalization.lean",
+      "original_sha256": "5155a2f58b11038ed385d49d1db14a70e3c601d52853f33810b587b58c049ebe",
+      "original_bytes": 7819,
+      "original_lines": 155,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveFunctionalProjectionResidual.lean",
+      "original_sha256": "72f36e1c9474847934f684fd04a025dd48ec7fd77f070b93ab005371191e9b14",
+      "original_bytes": 1802,
+      "original_lines": 49,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveLUBLimit.lean",
+      "original_sha256": "222189a4841871fa862a0e2aa23fd2125b682bf8e90e11acad4839aa74216a07",
+      "original_bytes": 7114,
+      "original_lines": 146,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveNormalFunctional.lean",
+      "original_sha256": "1bbe530c72ce5f30de6af8569aa8a904165ffc223c6d0c4e105eaa0a0386330e",
+      "original_bytes": 7810,
+      "original_lines": 184,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveOrderNormalMembership.lean",
+      "original_sha256": "c1f7e206a9fbf4c286d1cc3607f767e6218fec1d2c808b99abdd6d69b171433f",
+      "original_bytes": 7633,
+      "original_lines": 149,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveRangeProjection.lean",
+      "original_sha256": "8b42f67ce8e144cd2aae1a6626db5c8eb42c30f95d9435e732732b6fda4528e0",
+      "original_bytes": 3936,
+      "original_lines": 88,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/PositiveSupremum.lean",
+      "original_sha256": "433f1c141c86b4198a59a2fe51f58a9af3bc93b9c8b7dc83b8fa26b844234c72",
+      "original_bytes": 6266,
+      "original_lines": 132,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Predual.lean",
+      "original_sha256": "71b50d7787a876768576c98bc65af3d4b309b732cf5ca174774cc0478977be3a",
+      "original_bytes": 19633,
+      "original_lines": 394,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/ProjectionVectorDominator.lean",
+      "original_sha256": "aa8bb7680168909e405cbff1c323be5d3d79cfc0a5540fb76df80cda641817e6",
+      "original_bytes": 3269,
+      "original_lines": 96,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/RangeProjection.lean",
+      "original_sha256": "cb5b3965b3329356c7f94ae343c3713697bb6f03336184d5fe72c7b946f36658",
+      "original_bytes": 3383,
+      "original_lines": 87,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/TensorCommutant.lean",
+      "original_sha256": "0aed784dbe83505e2f8bf53d423fa872cf000cb659705dc4c6c6d5efd4559fad",
+      "original_bytes": 9025,
+      "original_lines": 178,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/TensorProduct.lean",
+      "original_sha256": "f04836522bf810fa71701c4c258a4b88ad0fbe04c6a3b30cf054d945618001b5",
+      "original_bytes": 5558,
+      "original_lines": 121,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UltrastrongStar.lean",
+      "original_sha256": "d47b6be0c81f6284861eee1c30ed8025de0bdaf6cc8fa2664618941ebc7633e1",
+      "original_bytes": 7145,
+      "original_lines": 153,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Ultraweak.lean",
+      "original_sha256": "65d852c30d76e7a04b3a12cab6bd28affb2923894f524750697999aee942226d",
+      "original_bytes": 12345,
+      "original_lines": 274,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UltraweakDual.lean",
+      "original_sha256": "a76ebd81b99b86742c632ab90d9edd197e39600f7428588aaa2a83cd6ad236cb",
+      "original_bytes": 1776,
+      "original_lines": 49,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UltraweakOrder.lean",
+      "original_sha256": "facb78ac24d5147cd41d32a3529e484af66f0b843816bd907c34b8cef05d82a0",
+      "original_bytes": 6056,
+      "original_lines": 132,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UltraweakWOT.lean",
+      "original_sha256": "bcb87d201d97879555f269108deec43c3716cdd32ba6c44b3879cfaef14d3cd7",
+      "original_bytes": 1649,
+      "original_lines": 49,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UnitaryAction.lean",
+      "original_sha256": "97065fda6b75b46ba14044ce728edfbd085c98da69219d1cb8efba8414b76eb7",
+      "original_bytes": 10211,
+      "original_lines": 224,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UnitaryConjugation.lean",
+      "original_sha256": "dfddbeb862b4f3b6f7849a2c18b10b3c7e418be9ba932b9bd69e03e7b8541d1b",
+      "original_bytes": 12176,
+      "original_lines": 265,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UniversalBidualExtension.lean",
+      "original_sha256": "668ee3d8f7937e83fce9e5883ebbdf5f853162e8e90d7a0aaa9258e88219c016",
+      "original_bytes": 17942,
+      "original_lines": 332,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/UniversalStateEnvelope.lean",
+      "original_sha256": "5a7eb59dcb2534d0f5c738fcaf5cba17736364e138a9a6147679343866886450",
+      "original_bytes": 2751,
+      "original_lines": 64,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight.lean",
+      "original_sha256": "f5204cd2078bc5e1b7c0f571172944ef4329445deee9a0479cca67177d8fb6dd",
+      "original_bytes": 3103,
+      "original_lines": 73,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSCoefficientOrderNormal.lean",
+      "original_sha256": "275324d7f605ab9d469862caa4931b4abdbc24725fb6c3d967c2af4acf16d0fe",
+      "original_bytes": 7868,
+      "original_lines": 165,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSFaithfulDomain.lean",
+      "original_sha256": "5019146eca0e15a4ed0e3f88dd2d8bcfb10a201cc9ec4336b020f94c4e565a68",
+      "original_bytes": 1610,
+      "original_lines": 48,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSImage.lean",
+      "original_sha256": "e1f32dab01cf8b60f82f053e08aba742b50362848ccf53316100a7d82c159145",
+      "original_bytes": 3744,
+      "original_lines": 80,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSInjective.lean",
+      "original_sha256": "cfb41294f38046f8e639cd0bc87046235e812d990bfebda1bb6ee24ce177296d",
+      "original_bytes": 4471,
+      "original_lines": 93,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSNormalCoefficients.lean",
+      "original_sha256": "371b74eca32629431b1d9949436c4eae5e049f1332ed95edfa2256cc82990750",
+      "original_bytes": 2411,
+      "original_lines": 62,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSNormalDiagonalFunctional.lean",
+      "original_sha256": "d50ebe8e8e246067c981e37159ad49ea2501cdcf0e54ef29121a1ec71dffa48e",
+      "original_bytes": 2840,
+      "original_lines": 67,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSNormalHom.lean",
+      "original_sha256": "710991e71c8c4a1e5562a08639cc766f5f220490ef1d94b4727c5d772a2e7c58",
+      "original_bytes": 2496,
+      "original_lines": 67,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/VonNeumannAlgebra/Weight/GNSNormalOffDiagonalFunctional.lean",
+      "original_sha256": "c803770f0b45b305c4ee91ced6a33cb67e8f6d2e8a6da8c201cf7ab38bc9a623",
+      "original_bytes": 2428,
+      "original_lines": 63,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/FieldTheory/Galois/TensorProductDecomposition.lean",
+      "original_sha256": "9b579e0ee25df8786c36633a6b7ddbe40b124b19dab57ca72df3d542cc663758",
+      "original_bytes": 5658,
+      "original_lines": 154,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Alternating/RestrictScalars.lean",
+      "original_sha256": "5b401458b70f896fcfacab5bd2d2f672764f0622d7e90121b1a18617c54ca183",
+      "original_bytes": 1179,
+      "original_lines": 44,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Basis/FiniteFiltration.lean",
+      "original_sha256": "16402c76ad5dbef8ae4bbfb29a5af470fddead0362c3ec9a668e3155d64273b9",
+      "original_bytes": 10241,
+      "original_lines": 267,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Basis/FiniteLattice.lean",
+      "original_sha256": "e6bf38b32949fc5dc20f3bf5c0dac7b8576a8c457c0a52e6df20d3b519cfd735",
+      "original_bytes": 2272,
+      "original_lines": 59,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Bilinear/IntComposition.lean",
+      "original_sha256": "d9ff5036a1dcb118dfb15a74e224973561dc5c177b1e01b3d9f3d6395c5147de",
+      "original_bytes": 3666,
+      "original_lines": 94,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Charpoly/DependentPi.lean",
+      "original_sha256": "20179efeb282f8875ff63b443b3df312b7d954972972eede854c6b0ab0f18ae0",
+      "original_bytes": 8522,
+      "original_lines": 211,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Charpoly/FiniteFiltration.lean",
+      "original_sha256": "a52b0cc5f8abc427dc608981695433d390f6310b00d46fe1520abf1b02ef6f66",
+      "original_bytes": 10406,
+      "original_lines": 234,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Charpoly/Lmul.lean",
+      "original_sha256": "ed9657b24935b268604b4a4645c494de6566a29d176f21eab0834207a8aa5022",
+      "original_bytes": 1658,
+      "original_lines": 48,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Charpoly/Quotient.lean",
+      "original_sha256": "487ccdcaac496edf78bc9038e6437d171a8f4cb602296a367644798b483392a2",
+      "original_bytes": 7226,
+      "original_lines": 166,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Charpoly/Tower.lean",
+      "original_sha256": "80120fc19e8d1d971d6c5774fbdabcfb8c06c7ae1d5afabdf5c7cfcb84a5ffef",
+      "original_bytes": 4321,
+      "original_lines": 105,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/CokernelLengthComposition.lean",
+      "original_sha256": "83acf16a31564365461de853d0993aaf366806f069c04e7d8512c9abfe1a7009",
+      "original_bytes": 7025,
+      "original_lines": 170,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/CokernelSchur.lean",
+      "original_sha256": "c50259e03e4384c4da729adc9ad7ed736efac0cf97b5149954d37d827829b399",
+      "original_bytes": 6592,
+      "original_lines": 143,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Complex/TensorProduct.lean",
+      "original_sha256": "960e6266109e9daffa793bdde059b9838e0b8cf3b1cb6ac89450b36556392c53",
+      "original_bytes": 6420,
+      "original_lines": 154,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/DFinsupp/FiniteSupportLinearMap.lean",
+      "original_sha256": "885592366b9c75124eee60376802553ef002e0a737d7d9e0a531877810bead2f",
+      "original_bytes": 2619,
+      "original_lines": 87,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/DFinsupp/Prod.lean",
+      "original_sha256": "064b1307ebb27c3f3844bec0d2216d98feb770457a65249661a9e0cbfebc948e",
+      "original_bytes": 3199,
+      "original_lines": 101,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/ColumnNormalization.lean",
+      "original_sha256": "dff103aca915a7df37b19f8360f23c28728720e924ad160e52236adff84d39de",
+      "original_bytes": 5322,
+      "original_lines": 159,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/DependentPi.lean",
+      "original_sha256": "f28e0553b9f551f9f280aefcd837b68b58ab0d3ae1473b8a969139e0b584e4f5",
+      "original_bytes": 8275,
+      "original_lines": 229,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/FiltrationUnipotent.lean",
+      "original_sha256": "98b90d18fbb4f24a1ea077b908a6a50baedb68127e71061dacd75b8241bd0e5a",
+      "original_bytes": 12925,
+      "original_lines": 331,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/FiniteFiltration.lean",
+      "original_sha256": "4cbbc4b7af6ebbe938a5bde2d8c499fa162e6ef030c0876902f3a879756eb36a",
+      "original_bytes": 8589,
+      "original_lines": 211,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/MapCoeffs.lean",
+      "original_sha256": "fcc5d1d0240035b9246626b5f41879d562d8e9995fec0674d4abbc34254f9050",
+      "original_bytes": 3441,
+      "original_lines": 110,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/QuotientBaseChange.lean",
+      "original_sha256": "ac4211043a96f70de7b56a4eb9797fe2621b30cad78ba7027a2ddf044c6222e9",
+      "original_bytes": 6572,
+      "original_lines": 172,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Determinant/ResidueCyclicShift.lean",
+      "original_sha256": "5e87778790c479c782214e3b759a279b98220f35ff7e27e457c92bfc60cdfe6c",
+      "original_bytes": 27663,
+      "original_lines": 662,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/DivisionRing/RankDivisibility.lean",
+      "original_sha256": "5112721ee9657d7e8780ffde5f581aa9c5917a01df1ab920c27c6b5d75718f6a",
+      "original_bytes": 4898,
+      "original_lines": 109,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/DivisionRing/RegularRepresentation.lean",
+      "original_sha256": "4e21b1b684fdeb069a0d3434d124c462180d74607146abd1b5342b5737656db0",
+      "original_bytes": 14198,
+      "original_lines": 348,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/LinearMap/Index.lean",
+      "original_sha256": "8a49fe78b70c24a0242e360a872c1e513bf405155cbb59d521495f34d893bfac",
+      "original_bytes": 2665,
+      "original_lines": 65,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/LinearMap/RetractComparison.lean",
+      "original_sha256": "90e3f410b7b6cbf439142259ecda9c9ee7c3c7c9d69dd6ec78afd69beece7a9b",
+      "original_bytes": 1774,
+      "original_lines": 53,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/LinearPMap/NaturalComposition.lean",
+      "original_sha256": "ffba5a019457d197379c5273ef94f72d07bc2b373965c5cfb1c76b6c2ef0c9a5",
+      "original_bytes": 2662,
+      "original_lines": 55,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/BirkhoffVonNeumann.lean",
+      "original_sha256": "77a7863dd7b7c7bb36c01df75d63e4986c7c14f60b7a8cb6c8d94fd655af9160",
+      "original_bytes": 2728,
+      "original_lines": 65,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/CokernelLength.lean",
+      "original_sha256": "a3f88ea694602a2bf3c8cbb3ca4f541199c30beabd0868626c34cf6abe198a99",
+      "original_bytes": 4835,
+      "original_lines": 114,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/CokernelReindex.lean",
+      "original_sha256": "ebda34538c12cdbe9d1bed3c7e574e6dadfa7832a7ce446cd16560aed087ae39",
+      "original_bytes": 2353,
+      "original_lines": 54,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/DiagonalPhase.lean",
+      "original_sha256": "6761e5e5f7997886f109c09953df333798dee010deda85570f623996b683d2a9",
+      "original_bytes": 7016,
+      "original_lines": 188,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/FinTwoHadamard.lean",
+      "original_sha256": "40755bf0301c9b6b7ed374e7159b1b60e941422e9c58abeee6df3d2bee4f9576",
+      "original_bytes": 3343,
+      "original_lines": 114,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/BlockUnipotent.lean",
+      "original_sha256": "899495a1e487175399b85ab881d0360478aa72ab1a7535ddfb69a8bb4df73239",
+      "original_bytes": 17485,
+      "original_lines": 365,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/Elementary.lean",
+      "original_sha256": "d086cdc163030f7c532114b1f8d4e3c31ac8aa826a06d1dc2293186e39613a18",
+      "original_bytes": 5718,
+      "original_lines": 158,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/ElementarySubgroup.lean",
+      "original_sha256": "d76783514922dd5c5277abbee80d70588e14e258dfe3563f20e818a1645b3972",
+      "original_bytes": 7402,
+      "original_lines": 203,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/Map.lean",
+      "original_sha256": "843447bbdcbd4690592ec3c8c3c4c69cc4fe88eacb47041314bd3cfb3da6170f",
+      "original_bytes": 4874,
+      "original_lines": 126,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/Product.lean",
+      "original_sha256": "f158d31569f23d203badfeb6d9d452795421596548c6bb4d27c9b2d474191223",
+      "original_bytes": 3637,
+      "original_lines": 122,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/Stabilization.lean",
+      "original_sha256": "29fd644df25fb734cbcdd06901a4c1250ca79b419a02c1d4141147b1942bbef5",
+      "original_bytes": 13077,
+      "original_lines": 303,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GeneralLinearGroup/Whitehead.lean",
+      "original_sha256": "014ebca5121cade3dfe785c00e120a5e4b00662264012e0ba16c2c11b26e1be3",
+      "original_bytes": 10468,
+      "original_lines": 232,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/GroundCoordinates.lean",
+      "original_sha256": "1e45441e8f6b77a1c6c7fdd6a3327b713f2a2a70a96456bad58b0ca9f07cf231",
+      "original_bytes": 5207,
+      "original_lines": 125,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/KroneckerRank.lean",
+      "original_sha256": "94f8453ff100fc56a6bfc9799ff27c56d1e0a790802711988cf1f67c9bcc6179",
+      "original_bytes": 2935,
+      "original_lines": 85,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/KroneckerSum.lean",
+      "original_sha256": "423365bc075cdff4abf3e08ea3641852455b7725f4fe83f4609b35351d159a39",
+      "original_bytes": 3627,
+      "original_lines": 97,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/MeanProjection.lean",
+      "original_sha256": "9608a5627b3845c26ac0e049276a6aaea355964dc2a564420c104f84b01e3b2f",
+      "original_bytes": 4579,
+      "original_lines": 123,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/NilpotentQuotient.lean",
+      "original_sha256": "d66ed52e5cf1947d84843853df10671560e247a485024ac9df77737307e65778",
+      "original_bytes": 3458,
+      "original_lines": 93,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/PermutationEntry.lean",
+      "original_sha256": "7ef7165165be9d654f642bc90f25a5e46ce72cedd5cce828a21151e24e8ec77c",
+      "original_bytes": 1699,
+      "original_lines": 50,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/Pfaffian.lean",
+      "original_sha256": "ff637bc11f19892e1b5781e3864ec5e939c13a2a8abf9c294eec4c1be8e3cb6e",
+      "original_bytes": 3437,
+      "original_lines": 93,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/PivotCokernel.lean",
+      "original_sha256": "3d92a8a7ce0aa289fdaaea0c4653eb3a38af4a996c8b4108619f2d346c21f49d",
+      "original_bytes": 5505,
+      "original_lines": 115,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/PivotElimination.lean",
+      "original_sha256": "bd6e21f59c2550c2a92bca57c9942dd87ad07bf9eda98cec747b6fb24c0ad744",
+      "original_bytes": 3907,
+      "original_lines": 88,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/PolarTwoUnitaries.lean",
+      "original_sha256": "ec4adfcaf4050fb24cdd1b1199f91060d110953b3ee402995f3aa9b27aa3ba01",
+      "original_bytes": 37663,
+      "original_lines": 775,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/SDDMDegreeOnePivot.lean",
+      "original_sha256": "949543b9461ab14544721ec02c020ec361043353655e9db3e8bdad0ebd4cf639",
+      "original_bytes": 19700,
+      "original_lines": 457,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/SDDMDegreeTwoPivot.lean",
+      "original_sha256": "5cfa321ab6ce63297d738bf0d1937d21a89f6287e75d230ce1e2cd417ac86449",
+      "original_bytes": 23569,
+      "original_lines": 521,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/SplitInvolution.lean",
+      "original_sha256": "fc4226aba66e6db68677314b6ba6b799bb806353ff30631c5144218c2196f9bb",
+      "original_bytes": 6937,
+      "original_lines": 179,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/Stable.lean",
+      "original_sha256": "43dda82043262d8b7cd130941a865daa0972a8f1684a38e6943e90dfca1cdd34",
+      "original_bytes": 6939,
+      "original_lines": 164,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/StableModule.lean",
+      "original_sha256": "750ae8e5abce9b3ed10defad459bd17a817cdde8146c65ed400d979c71ca8690",
+      "original_bytes": 9439,
+      "original_lines": 221,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/StableModule/Truncate.lean",
+      "original_sha256": "85f33e6b6d666a643751823a55c66dec09501a2bb2de4cf90aeee7d1a4234ccf",
+      "original_bytes": 1457,
+      "original_lines": 49,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/StarProjectionRank.lean",
+      "original_sha256": "e77636ddf1c4ffdfa2dd942c532e6c724a7ece3bd2f34122cc5760ef660318d0",
+      "original_bytes": 11865,
+      "original_lines": 294,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/TwoLevelHadamard.lean",
+      "original_sha256": "3fd1d5732cf1c350fa4125bea17e4467b665b720e09c95472cbf96be4efed8ed",
+      "original_bytes": 7622,
+      "original_lines": 179,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/UnitaryBlockDiagonal.lean",
+      "original_sha256": "710d2728eb4f2b95f7e55275ba0d5aecc93d8cef52ba13360784d03127388b00",
+      "original_bytes": 2636,
+      "original_lines": 74,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/UnitaryConjugation.lean",
+      "original_sha256": "c36b558930ba0784ec8d8a9c07b3c67cf9339d2078497407980d359f9b18c02a",
+      "original_bytes": 5059,
+      "original_lines": 133,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/UnitaryDiagonalization.lean",
+      "original_sha256": "3d264c8db658ecdf67ff48f94128d14ecd66de4a72b9a2aa3a8d466b97dd733a",
+      "original_bytes": 33994,
+      "original_lines": 764,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Matrix/ZeroExtension/Trace.lean",
+      "original_sha256": "3fbdfa5494b052a38de66a44ba63df1e5850ee6dff0096f4f90ccdadcc1e1fe6",
+      "original_bytes": 959,
+      "original_lines": 35,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/Blowup.lean",
+      "original_sha256": "11e02a358ee43e7c8991635dde224e318dd7b7882b5f63427cbc577dd103878c",
+      "original_bytes": 18338,
+      "original_lines": 445,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/DataReduction.lean",
+      "original_sha256": "985a65b563ebfeccef74325b9ae14696b7d6246f8f92f29376b7452e6d2feaa8",
+      "original_bytes": 13141,
+      "original_lines": 264,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/FirstExit.lean",
+      "original_sha256": "143ff3a5dfa0efe24835b61b733542837221dcc78a7059c96325d101dcbcb5ce",
+      "original_bytes": 25744,
+      "original_lines": 525,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/PencilRank.lean",
+      "original_sha256": "d8ab4df77f2e9e7336d33c981b235863622509ad1386f881c5d87bb4b0e7746d",
+      "original_bytes": 17450,
+      "original_lines": 379,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/RankBounds.lean",
+      "original_sha256": "1e710b6485482ed55cb6bf4b71010cc63ec60eb8971c312d8ac2b0225bc558f2",
+      "original_bytes": 6869,
+      "original_lines": 146,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/RankIncrement.lean",
+      "original_sha256": "76a2c144201d9e7dd22869e9e52ea489601a6142c2e6abceab974699949ea90a",
+      "original_bytes": 4462,
+      "original_lines": 102,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/MatrixSpace/Wong.lean",
+      "original_sha256": "cf87ffd937d3dae5c6256219adc4315543297e9b82cbc9e5624ac6bfce0b070d",
+      "original_bytes": 12266,
+      "original_lines": 273,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Multilinear/IteratedBilinear.lean",
+      "original_sha256": "22b081a48685f52a773d3da7751ab2490487a1302c20d111a93f87ef7b0d3de7",
+      "original_bytes": 4799,
+      "original_lines": 111,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/Multilinear/IteratedBilinearNaturality.lean",
+      "original_sha256": "e13a13a75d39352d97be0079925e384dc4151932cdcc4530e10ec7cd7695fa84",
+      "original_bytes": 2064,
+      "original_lines": 52,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/HalfDimensionalTotallyIsotropic.lean",
+      "original_sha256": "42204ff0e423871655894623105382bbf8dcd638f78305b62f31847fadd4c581",
+      "original_bytes": 11122,
+      "original_lines": 306,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/Pfister.lean",
+      "original_sha256": "64863e845198312f51eedca0d6b6b3d3662342d7191f53d01ce8c568d88e0937",
+      "original_bytes": 4159,
+      "original_lines": 127,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterIsotropicSubspace.lean",
+      "original_sha256": "9a8e401f764c50fd393de5c125ed71639db3b70677dac3c0dcbb653ed486e6f0",
+      "original_bytes": 2765,
+      "original_lines": 80,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterRoundness.lean",
+      "original_sha256": "b909510c7f51cabe7344d82956fb118e2c94308ef6bcb7c66aa92b4a300e297c",
+      "original_bytes": 3719,
+      "original_lines": 124,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterSuccessor.lean",
+      "original_sha256": "c937f5c65be9181e975b2119646f8dc46d3ce8267174c6a839ab0d5eac4cd1ac",
+      "original_bytes": 11147,
+      "original_lines": 330,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/QuadraticForm/Round.lean",
+      "original_sha256": "ad18ecf49b5b9145b2c8e466d394ca7ca5255a0f4e2cf310286bedeb1ccbad70",
+      "original_bytes": 9966,
+      "original_lines": 291,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/ScalarCokernelPi.lean",
+      "original_sha256": "b0280989ee80557cc7e9fbf6c2604bd22afa6bf3e14a067c3fd6270cbb04fee7",
+      "original_bytes": 5386,
+      "original_lines": 121,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/SemilinearPMap/Basic.lean",
+      "original_sha256": "61ef6bacccc40069001a83a3c512fafa78d3f1b36bc7b9c08e5057f472db01bd",
+      "original_bytes": 5460,
+      "original_lines": 132,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/SemilinearPMap/NaturalComposition.lean",
+      "original_sha256": "d03b88a92d4fa53df8b7474e848a7790c2c6a1385de6bc7ec4c96541ce032310",
+      "original_bytes": 3014,
+      "original_lines": 74,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/AlgebraTensorHom.lean",
+      "original_sha256": "b9bc567de3c20a1619e277152c330110b4fdc9175ce55cb86fa3ea79fba1107c",
+      "original_bytes": 1480,
+      "original_lines": 48,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/Balanced.lean",
+      "original_sha256": "029819567287ede735a882df5eb095ad115319f3c8858b076d1b4562418acac0",
+      "original_bytes": 12801,
+      "original_lines": 322,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/Balanced/Actions.lean",
+      "original_sha256": "43d8d81ad122c5a9e52f1eb0bf7c517e6f2f6dda55ee83c08eb1cd6df607c8f0",
+      "original_bytes": 9422,
+      "original_lines": 241,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/Balanced/GroundChange.lean",
+      "original_sha256": "6b9642191184f871fa5f57304681e76812d632803a4246144c4cc8fd8e412f49",
+      "original_bytes": 13425,
+      "original_lines": 318,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/Balanced/RightActions.lean",
+      "original_sha256": "b49e2b51c4d9e1db01135281a777e81a40e96ae9ef4bdf4581c4e6cd27e4a298",
+      "original_bytes": 9021,
+      "original_lines": 229,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/BalancedIntegralCancellation.lean",
+      "original_sha256": "f4193066c61269fdca27ee52f170def8f9d13cfd1e980a7aa8f6a108feb5d5e0",
+      "original_bytes": 10590,
+      "original_lines": 228,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/BasicCompat.lean",
+      "original_sha256": "1e398bf8655df9e216e85ab41b02e06d882d2bcbbd353d5169a3a4fcf1b75a2f",
+      "original_bytes": 3497,
+      "original_lines": 78,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/DirectLimit/Diagonal.lean",
+      "original_sha256": "6a697e1a2db163f329bc164afc9748e700916b9a3c7c8b8459977adc6846e06d",
+      "original_bytes": 18457,
+      "original_lines": 396,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/DirectedSystem.lean",
+      "original_sha256": "80a18cb2951dabe6cc3ca8d2de16caefd11c84d3850ac703f480839c89b1ff86",
+      "original_bytes": 3093,
+      "original_lines": 83,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/DirectedTensorPower.lean",
+      "original_sha256": "28294f70566f1a49491b1655432a435da8b2b91c6b53d75a921114dc052a6af4",
+      "original_bytes": 17657,
+      "original_lines": 437,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/FaithfullyFlatCech.lean",
+      "original_sha256": "2806d5d9ebed0a82a9b1e67590f3e1c1f6ae79e557579f6e2f27be06ccd539f8",
+      "original_bytes": 4698,
+      "original_lines": 102,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/HomFiniteFactor.lean",
+      "original_sha256": "c8f220166852d83b0534c7633fa48a310722680e3aa858213e12d15319119efa",
+      "original_bytes": 5188,
+      "original_lines": 127,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/HomFiniteFactorScalar.lean",
+      "original_sha256": "b2b7ee8fee99680847dfee3d34e8a384cb60b1b9601caa65401ef16e694471f9",
+      "original_bytes": 3027,
+      "original_lines": 73,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/HomInjective.lean",
+      "original_sha256": "3ca039aaad63774ca7cd7bf308b076026f7fb8332b26085cf73a335013103a10",
+      "original_bytes": 4205,
+      "original_lines": 112,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/KilledBy.lean",
+      "original_sha256": "256a678e129053a2e82e4c0337851dd80ccb4505f84388bf1e6cb144b172db1e",
+      "original_bytes": 1167,
+      "original_lines": 31,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/LiftedZModInteger.lean",
+      "original_sha256": "bfe2689616e5e23973702dca6a5d74e3d5b749562a2ce001a61834f110b4729b",
+      "original_bytes": 3127,
+      "original_lines": 76,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/MixedBaseChange.lean",
+      "original_sha256": "4a5c1164b3d257ffe6875165010b190f85e1fe3037e62f727a42e2b1c37f8cc3",
+      "original_bytes": 3853,
+      "original_lines": 86,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/ModuleMap.lean",
+      "original_sha256": "a6993fa06384bdf5acbbccd2082b86a44448afe4f0ee08fadd6dcc103feb3b8b",
+      "original_bytes": 4305,
+      "original_lines": 111,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/ModuleMapSemilinear.lean",
+      "original_sha256": "6e644762563bfa1edee6a3c9b22fd79395fb53c9bfd1712d3f47c6b9e50961a7",
+      "original_bytes": 8267,
+      "original_lines": 179,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/PiFiniteFactor.lean",
+      "original_sha256": "47fbf7973d51c321f8dd63956dc0c5983581f591c2701f0bbe98a96c2dbdeb68",
+      "original_bytes": 4886,
+      "original_lines": 121,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/PiFiniteFactorScalar.lean",
+      "original_sha256": "09d014562482d978c0212b863ca80c57b46fdcdcf3e547c7d6f363930f0a6c00",
+      "original_bytes": 2809,
+      "original_lines": 68,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/Quotient.lean",
+      "original_sha256": "b4653817ce68e09e07b95ac46d162a99356bd76856b893fa77d3473e57c78e79",
+      "original_bytes": 2651,
+      "original_lines": 79,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/RightExact.lean",
+      "original_sha256": "4274d7c1ad211ca1dd24853bfcc956fd48dbc68673a6d66389337f086067bdbc",
+      "original_bytes": 1835,
+      "original_lines": 45,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/SurjectiveScalarHom.lean",
+      "original_sha256": "b9d15a56d5340e99c1420b4369bddea01c4b07202fc87fc1dc2231d441c38022",
+      "original_bytes": 4456,
+      "original_lines": 100,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/TwoDirectedSystems.lean",
+      "original_sha256": "ec2f3b5417a05d21ce0ffcb6f179a7995990e215e73ba05bb981d0721ae9d1f3",
+      "original_bytes": 5105,
+      "original_lines": 128,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/ZModRestrict.lean",
+      "original_sha256": "412c1076131458a4d076d04051dd535004f2265c0eafef16d62d91276a8725a7",
+      "original_bytes": 5741,
+      "original_lines": 162,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/LinearAlgebra/TensorProduct/ZModRestrictNaturality.lean",
+      "original_sha256": "e09e7b3ac4fe5f3471e95ef3b6e7de0e3399a1ba461c69be784a511bc5662086",
+      "original_bytes": 1426,
+      "original_lines": 51,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Logic/Equiv/TwoPointSumCompl.lean",
+      "original_sha256": "58cac9239ee6773862498474b5247f1cf696674d061199e7d1c6aab733055aa8",
+      "original_bytes": 1944,
+      "original_lines": 72,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/BoundedMeasurable.lean",
+      "original_sha256": "d9a294a4313bf16d9130626090ab86b8bab2b30c6b006a6e6774916afcc60c2e",
+      "original_bytes": 12751,
+      "original_lines": 327,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/BoundedMeasurable/Continuous.lean",
+      "original_sha256": "b46da20bb59ea8e5ef654d8fdeae0577b8f2f8629d82d7bcd2881193f5fc3085",
+      "original_bytes": 2965,
+      "original_lines": 115,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/ContinuousIndicatorApproximation.lean",
+      "original_sha256": "fd8a16b45e832366762f44f4eac2507894b52a969835c4ec309a2a47159d13d4",
+      "original_bytes": 6445,
+      "original_lines": 131,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/L1L2Factorization.lean",
+      "original_sha256": "758e1448f778edebfffde2bf4b0b12a0da3805c3b1dd920e4a165e819d9957fc",
+      "original_bytes": 3074,
+      "original_lines": 83,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/L2Space/Multiplication.lean",
+      "original_sha256": "16c646efc822bac2160a58aa13c3cddfbaa825cee06ad6036d00e38905e16c9d",
+      "original_bytes": 7754,
+      "original_lines": 191,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/L2Space/RightTensorProduct.lean",
+      "original_sha256": "8c0370fc059fbd51ce1dd9cff09613c82c87e833e45521abf2fce0295629c0f5",
+      "original_bytes": 3528,
+      "original_lines": 87,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/L2Space/TensorMap.lean",
+      "original_sha256": "a57c5b407517fac8c0f58b6eb911b8ee8df2b33c67ec38a5b308c520969f94fc",
+      "original_bytes": 3695,
+      "original_lines": 80,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/L2Space/TensorProduct.lean",
+      "original_sha256": "9c3bcb4cdef475a36fc1459764c60d7c9eee01efbae806143a7504929caf67eb",
+      "original_bytes": 7379,
+      "original_lines": 154,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/L2Space/UnboundedMultiplication.lean",
+      "original_sha256": "22cdde81c6e6ed2d9a2a5a4cc20a3f0cca3cd8c948cce2f606fc2e4c1584d5c9",
+      "original_bytes": 5476,
+      "original_lines": 134,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Function/LpSpace/SupportedOn.lean",
+      "original_sha256": "5938838b242da67fc31e38b06545bcff4f3aabcf72c637432f7ad523a60da345",
+      "original_bytes": 3628,
+      "original_lines": 86,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Group/CountingHaar.lean",
+      "original_sha256": "e91e1a5b2ffec5082f50ea4e20c6f553a46c1202b9060f02075e853f89400beb",
+      "original_bytes": 3754,
+      "original_lines": 88,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Group/HaarRightTranslation.lean",
+      "original_sha256": "78187276339c99357b4a92110df9061e6cc6b11fbd357d34daa70b816eabe5c9",
+      "original_bytes": 1246,
+      "original_lines": 40,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Group/ModularCharacterAbelian.lean",
+      "original_sha256": "14eea6d563c766695a6d620051f4b1d98757253b1f876546740baa4ae708a1da",
+      "original_bytes": 1077,
+      "original_lines": 38,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Integral/CountingFiniteSupport.lean",
+      "original_sha256": "5a68687e27e339f1087dd7d72224e81f17cf5b106c5552f38aed2fdbd4f0c7e4",
+      "original_bytes": 2010,
+      "original_lines": 54,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Integral/RieszMarkovKakutani/CompactReal.lean",
+      "original_sha256": "b737020b4b9f138e0611d8d094855bbb559a54a7a7b98d30f68f8c8234938309",
+      "original_bytes": 6193,
+      "original_lines": 155,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Integral/RieszMarkovKakutani/Complex.lean",
+      "original_sha256": "9b8c264818ed0c2039408dd573f27fbbd1acecb0200e1591a3d9de1e653c5217",
+      "original_bytes": 30606,
+      "original_lines": 636,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Integral/RieszMarkovKakutani/SignedReal.lean",
+      "original_sha256": "d1db0fd55c76d39a70d993aeb54d4f43c3b0fed4c25b93fc4c9d047e9f7b039f",
+      "original_bytes": 19951,
+      "original_lines": 416,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RadonProduct.lean",
+      "original_sha256": "a0a4a24d2fd029d432592dadb6cb513656b90b7ae51b1f959a386c183b10c0a4",
+      "original_bytes": 5704,
+      "original_lines": 147,
+      "snapshot_file": "part-0005.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RadonProduct/CompactSupport.lean",
+      "original_sha256": "88ca14fe2e69cfca7ebb1f696766d219c2cf9e6545de269c4c71507eb9df6949",
+      "original_bytes": 6013,
+      "original_lines": 150,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RadonProduct/Fubini.lean",
+      "original_sha256": "1fd806eb323eca43c951d90f9ddbea5abcb3ba966bfe8b5b82bc11f466a02d3a",
+      "original_bytes": 2427,
+      "original_lines": 64,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RadonProduct/Haar.lean",
+      "original_sha256": "c29d3df9a63edb8c2ceb362d306516c39c4011e285933ab2612639e66e744d27",
+      "original_bytes": 5293,
+      "original_lines": 128,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RadonProduct/Swap.lean",
+      "original_sha256": "e2f4f287d9bf21e460438196c1ba3e704e1dafb758c5871b9ed81731c1ef6661",
+      "original_bytes": 2545,
+      "original_lines": 65,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RegularDominated.lean",
+      "original_sha256": "f03d9d48508f1c539141d2c7e8ff5ad0a1793a2f7147add4c69986f2e98151fd",
+      "original_bytes": 1995,
+      "original_lines": 60,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/Measure/RegularSignedMeasure.lean",
+      "original_sha256": "de5449ceb8084a399b4cb95b313920a6612c43e2bedf5d38c8fdd930e8b0bc72",
+      "original_bytes": 8642,
+      "original_lines": 217,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/VectorMeasure/ComplexIntegral.lean",
+      "original_sha256": "e7c35e5b8f0481d7cac977f275dcd3cbc5b9d78c8fafa4a48d0989af4ffe958d",
+      "original_bytes": 12686,
+      "original_lines": 255,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/MeasureTheory/VectorMeasure/RegularVariation.lean",
+      "original_sha256": "0406f01f808cca3f0bac169ede3182a70a4c13cc7d70085f56c1c863fdd6b956",
+      "original_bytes": 12900,
+      "original_lines": 296,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/ClosedSubgroupRetraction.lean",
+      "original_sha256": "6e48b230ea510593e11ce97eaf2cb69e89ab7385e0d36d8ac8289dea7f2f3cec",
+      "original_bytes": 4412,
+      "original_lines": 99,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/DiagonalShear.lean",
+      "original_sha256": "bfc2ee45c19541397db76e1810cfae3e79c8e7901b32e187d6593749961d8f4f",
+      "original_bytes": 3185,
+      "original_lines": 93,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/IdentityComponent.lean",
+      "original_sha256": "50abd8b0b185b8fdc82d1d37d394a3c13974b21b593e59ae2293162589d70e71",
+      "original_bytes": 1166,
+      "original_lines": 40,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/Matrix/GeneralLinearGroup.lean",
+      "original_sha256": "e28cf1c5794f3065d77d514a65788af11408bafbc0186220a2fb49dfe7e87d1a",
+      "original_bytes": 3029,
+      "original_lines": 76,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/Matrix/KernelPaddedCommutator.lean",
+      "original_sha256": "01883f51d041e67d52b6b043f0eb30ddefd6de52d40249278c64f82edbd2fde6",
+      "original_bytes": 13211,
+      "original_lines": 327,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/OpenNormalBelowOpen.lean",
+      "original_sha256": "389261a6fb82f853740e7fba886974d045826a68d33899dfa5c32df1adacf07e",
+      "original_bytes": 6080,
+      "original_lines": 186,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/OpenNormalComap.lean",
+      "original_sha256": "57b8bd39e148525ec4cd26d734fec7fa4766f76a4f46641b895df66467656b2d",
+      "original_bytes": 4677,
+      "original_lines": 138,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/ProfiniteCoset.lean",
+      "original_sha256": "bba677310d8bd33e72f37a1a503d802210a88b97ba6fcff4a5bf856ac292ebdb",
+      "original_bytes": 4165,
+      "original_lines": 116,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/ProfiniteCosetLimit.lean",
+      "original_sha256": "6c6753c536010544bc79424364c7a3cc3abe6813423b3581ecba2f238be2876c",
+      "original_bytes": 7635,
+      "original_lines": 206,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/ProfiniteCosetSection.lean",
+      "original_sha256": "cc9607d506a08013944ab596fc8aab851a266f01f7ae8f4f85e75c7e5561d1eb",
+      "original_bytes": 7848,
+      "original_lines": 204,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/ProfiniteCosetSectionNormal.lean",
+      "original_sha256": "8cba64761b3406a0b225d82244a30bc9b01cfbdceb7af3c1e7901c98db69764c",
+      "original_bytes": 2697,
+      "original_lines": 82,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/ProfiniteCosetSectionZorn.lean",
+      "original_sha256": "5d3232e49913f88e99e8a058d1a0a8001486bcbbc695f0df439bbc732967100e",
+      "original_bytes": 11041,
+      "original_lines": 326,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Group/Transversal.lean",
+      "original_sha256": "3628760722a6c9fbc245ac753de15ee711cd0e50f1cbf3e2c958a6ca72549d31",
+      "original_bytes": 2807,
+      "original_lines": 65,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/IsUniformGroup/CompleteNeighborhood.lean",
+      "original_sha256": "474c27dff976cbf2c85ff2f6cc54b9ee5acf96c94569d4e47c0a597232bcc382",
+      "original_bytes": 1051,
+      "original_lines": 31,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Matrix/LocallyCompact.lean",
+      "original_sha256": "33e98c780394bb86a436dbb2b74549c9cbf300f5020ea776087d606a7e13bbdc",
+      "original_bytes": 1523,
+      "original_lines": 48,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Module/Matrix.lean",
+      "original_sha256": "473b8e0cc9cdafd671dc746b0d395dfed1e12406466a51c0b85bb85405942a82",
+      "original_bytes": 7932,
+      "original_lines": 208,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Order/RealOpenUnitInterval.lean",
+      "original_sha256": "39678d08c389ca11bc640310b42ba1b63f0f210c801d47e9c647021977eea103",
+      "original_bytes": 1258,
+      "original_lines": 44,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/ProperAction/Compact.lean",
+      "original_sha256": "b5e4c0bf58285f0717c3c0fb1767e80f2401acfb8333e5d8a98c4093e0cf4a0d",
+      "original_bytes": 1143,
+      "original_lines": 37,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/Algebra/Ring/TopologicalStableRank.lean",
+      "original_sha256": "f38a1e83fef37569eeffa54b642e1332883a7f9793bde91e128e0bf4c11f375a",
+      "original_bytes": 4460,
+      "original_lines": 119,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Topology/LocalHomeomorph/ProfiniteSection.lean",
+      "original_sha256": "96b468a4529948afd810f51a21052f504889099e48178ca17a9791d957a20456",
+      "original_bytes": 3652,
+      "original_lines": 102,
+      "snapshot_file": "part-0006.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    }
+  ],
+  "adaptation_scope": "snapshot_adaptations concerns the archive bytes only; production adaptations are recorded separately in the batch provenance manifest."
+}

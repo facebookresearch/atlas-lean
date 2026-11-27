@@ -1,0 +1,7 @@
+# Norm bound for a CFC set coefficient form
+
+Let `H` be a complete complex Hilbert space
+and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K`, the bounded
+sesquilinear form `F_s(h,g)=μ_(g,h)(s)` has bilinear operator norm at most one.

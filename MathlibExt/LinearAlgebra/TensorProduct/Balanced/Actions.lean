@@ -6,7 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
+/-
+Author: @toskua
+-/
 module
 
 public import Mathlib.Algebra.Module.LinearMap.End
@@ -14,12 +16,15 @@ public import Mathlib.Algebra.Algebra.Tower
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced
 
 /-!
-# Outer actions on balanced tensor products
+# Left outer actions on a balanced tensor quotient
 
-An action on the first tensor factor descends to the balanced quotient when it commutes with
-the ground action and the balancing action. The descended action defines a module structure
-without requiring an algebra structure on the outer semiring. If the first-factor actions form
-a scalar tower over the ground ring, the quotient action has the corresponding compatibility.
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. The operators ℓ_s are k-linear and give a semiring homomorphism S→End_k(B),
+hence an S-module structure. If S is a k-algebra and Q has the compatible scalar tower, the
+quotient has the same k,S scalar compatibility.
 -/
 
 @[expose] public section
@@ -36,9 +41,12 @@ variable (k : Type u) (R : Type v) (Q : Type w) (N : Type z)
   [CommRing k] [Semiring R] [AddCommGroup Q] [AddCommGroup N]
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
 
-/--
-Pure balanced representatives determine an additive map, without a
-ground-module structure on its target.
+/-- **Pure balanced classes determine an additive map.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. For an additive commutative
+monoid P, additive maps F,G:B→P agreeing on every q⊠n are equal.
 -/
 theorem addHom_ext {P : Type t} [AddCommMonoid P]
     {f g : Balanced k R Q N →+ P}
@@ -69,11 +77,22 @@ variable (k : Type u) (R : Type v) (S : Type v') (Q : Type w) (N : Type z)
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
   [Module S Q] [SMulCommClass S k Q] [SMulCommClass S Rᵐᵒᵖ Q]
 
-/-- Endomorphism evaluation, with the scalar dictionaries. -/
+/-- **Evaluation of an outer-action endomorphism.**
+
+Let k be a commutative ring, S a semiring and Q a k-module and S-module with commuting scalar
+actions. For s∈S and q∈Q, Module.toModuleEnd k Q s q=s•q.
+-/
 theorem leftOperator_apply (s : S) (q : Q) :
     Module.toModuleEnd k Q s q = s • q := rfl
 
-/-- The operator preserves the balancing action. -/
+/-- **Outer operator preserves the right balancing action.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. For s∈S, r∈R and q∈Q, ℓ_s on the first factor satisfies s•(q·r)=(s•q)·r.
+-/
 theorem leftOperator_equivariant (s : S) :
     ∀ (r : R) (q : Q),
       (Module.toModuleEnd k Q s) (op r • q) =
@@ -82,12 +101,23 @@ theorem leftOperator_equivariant (s : S) :
   rw [leftOperator_apply, leftOperator_apply]
   exact smul_comm s (op r) q
 
-/-- The identity operator preserves the second factor's action. -/
+/-- **The identity map preserves the second-factor action.**
+
+Let k be a commutative ring, R a semiring and N a k-module and left R-module. For r∈R and n∈N,
+id_N(r•n)=r•id_N(n).
+-/
 theorem leftIdentity_equivariant :
     ∀ (r : R) (n : N), (LinearMap.id : N →ₗ[k] N) (r • n) =
       r • (LinearMap.id : N →ₗ[k] N) n := fun _ _ => rfl
 
-/-- Literal pure-generator value of the operator-induced balanced map. -/
+/-- **Balanced quotient value of an outer operator.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. The balanced map induced by q↦s•q and id_N sends q⊠n to (s•q)⊠n.
+-/
 theorem leftOperator_map_mk (s : S) (q : Q) (n : N) :
     map (Module.toModuleEnd k Q s) (LinearMap.id : N →ₗ[k] N)
         (leftOperator_equivariant k R S Q s) (leftIdentity_equivariant k R N)
@@ -97,7 +127,14 @@ theorem leftOperator_map_mk (s : S) (q : Q) (n : N) :
     (leftOperator_equivariant k R S Q s) (leftIdentity_equivariant k R N) q n
   exact h.trans (by rw [leftOperator_apply, LinearMap.id_apply])
 
-/-- The given outer action descends through the balancing quotient. -/
+/-- **Outer semiring representation on the balanced quotient.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. The semiring homomorphism leftAction k R S Q N:S→End_k(B) sends s to ℓ_s.
+-/
 def leftAction : S →+* Module.End k (Balanced k R Q N) where
   toFun s := map (Module.toModuleEnd k Q s) (LinearMap.id : N →ₗ[k] N)
     (leftOperator_equivariant k R S Q s) (leftIdentity_equivariant k R N)
@@ -132,9 +169,13 @@ theorem leftAction_mk (s : S) (q : Q) (n : N) :
     leftAction k R S Q N s (mk k R Q N q n) = mk k R Q N (s • q) n := by
   exact leftOperator_map_mk k R S Q N s q n
 
-/--
-Restriction of the endomorphism action gives the outer module, retaining the ground module on the
-quotient.
+/-- **Left outer module on a balanced quotient.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. The S-module structure leftModule k R S Q N is the action s•(q⊠n)=(s•q)⊠n.
 -/
 abbrev leftModule : Module S (Balanced k R Q N) :=
   Module.compHom (Balanced k R Q N) (leftAction k R S Q N)
@@ -146,7 +187,14 @@ theorem leftModule_smul_mk (s : S) (q : Q) (n : N) :
   change leftAction k R S Q N s (mk k R Q N q n) = _
   exact leftAction_mk k R S Q N s q n
 
-/-- Every computed outer scalar remains linear for the ground action. -/
+/-- **Outer and ground scalar actions commute on the quotient.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. For s∈S, c∈k and z∈B, ℓ_s(c•z)=c•ℓ_s(z).
+-/
 theorem leftSMulCommClass :
     letI := leftModule k R S Q N
     SMulCommClass S k (Balanced k R Q N) := by
@@ -159,7 +207,15 @@ theorem leftSMulCommClass :
 variable [Algebra k S] [hSQ : IsScalarTower k S Q]
 
 include hSQ in
-/-- Ground scalars act on the quotient through the ground action. -/
+/-- **Ground scalars in the outer algebra act as ground scalars.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. Assume S is a k-algebra and c•q=(algebraMap k S c)•q on Q. Then
+leftAction(algebraMap k S c)=c•id_B as k-linear endomorphisms.
+-/
 theorem leftAction_algebraMap (c : k) :
     leftAction k R S Q N (algebraMap k S c) =
       c • (1 : Module.End k (Balanced k R Q N)) := by
@@ -173,9 +229,14 @@ theorem leftAction_algebraMap (c : k) :
       ((mk k R Q N).map_smul c q)
 
 include hSQ in
-/--
-Compatibility of the first-factor actions gives the quotient scalar tower; no quotient
-compatibility is requested from the caller.
+/-- **Scalar tower for the left outer quotient action.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. If S is a k-algebra and the k,S actions on Q form a scalar tower, then
+c•(s•z)=((algebraMap k S c)*s)•z on B; the k-action agrees with restriction of the S-action.
 -/
 theorem leftScalarTower :
     letI := leftModule k R S Q N
@@ -201,7 +262,16 @@ variable {k : Type u} {R : Type v} {S : Type v'}
   [SMulCommClass S k Q] [SMulCommClass S Rᵐᵒᵖ Q]
   [SMulCommClass S k Q'] [SMulCommClass S Rᵐᵒᵖ Q']
 
-/-- The quotient map intertwines the computed outer actions. -/
+/-- **Balanced factor maps intertwine left outer actions.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. Let Q′,N′ have the corresponding structures and f:Q→Q′, g:N→N′ be k-linear,
+with f(q·r)=f(q)·r and g(r•n)=r•g(n). If f(s•q)=s•f(q), the induced balanced map F satisfies
+F∘ℓ_s=ℓ′_s∘F for every s∈S.
+-/
 theorem map_leftAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -213,7 +283,16 @@ theorem map_leftAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
   simp only [LinearMap.comp_apply, leftAction_mk, map_mk]
   rw [hfS]
 
-/-- The same ground-linear quotient map, now with constructed S-linearity. -/
+/-- **Outer-linear map induced on balanced quotients.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on Q with its action commuting with the k-action and right R-action. On B define
+ℓ_s(q⊠n)=(s•q)⊠n. Let Q′,N′ have the corresponding structures and f:Q→Q′, g:N→N′ be k-linear,
+with f(q·r)=f(q)·r and g(r•n)=r•g(n). If f is S-equivariant, mapLeft f g is the S-linear map
+between the left outer quotient modules, with pure value q⊠n↦f(q)⊠g(n).
+-/
 def mapLeft (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)

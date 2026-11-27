@@ -1,0 +1,15 @@
+# Bounded maps on Hilbert tensor completions
+
+- [Completed tensor map of two bounded operators](map-lcompletion.md)
+- [Completed tensor map on an algebraic tensor](map-lcompletion-coe.md)
+- [Pure tensor formula for a completed operator tensor](map-lcompletion-tmul.md)
+- [Product upper bound for the completed tensor operator norm](norm-map-lcompletion-le.md)
+- [Identity maps on the tensor completion](map-lcompletion-id-id.md)
+- [Zero in the first completed operator tensor factor](map-lcompletion-zero-left.md)
+- [Zero in the second completed operator tensor factor](map-lcompletion-zero-right.md)
+- [Additivity in the first completed operator tensor factor](map-lcompletion-add-left.md)
+- [Additivity in the second completed operator tensor factor](map-lcompletion-add-right.md)
+- [Scalar linearity in the first completed operator tensor factor](map-lcompletion-smul-left.md)
+- [Scalar linearity in the second completed operator tensor factor](map-lcompletion-smul-right.md)
+- [Factorwise composition of completed tensor operators](map-lcompletion-comp.md)
+- [Multiplication of completed tensor endomorphisms](map-lcompletion-mul.md)
