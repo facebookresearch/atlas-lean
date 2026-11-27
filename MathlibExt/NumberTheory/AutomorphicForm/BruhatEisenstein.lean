@@ -1,9 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
@@ -17,16 +19,11 @@ section_add_weylIntertwiningIntegral.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -35,17 +32,24 @@ public import MathlibExt.NumberTheory.AutomorphicForm.WeylIntertwiningIntegrable
 public import MathlibExt.NumberTheory.NumberField.AdelicPeriodization
 
 /-!
-# Constant term of the adelic Bruhat Eisenstein series
+# Box average of the Bruhat sum of an induced section
 
-Let `F` be a number field and `φ` a section of `GL(2, 𝔸_F)` induced from a pair of idele
-characters. Using the Bruhat decomposition `GL(2, F) = B(F) ∪ B(F) w N(F)`, the Eisenstein
-series of `φ` is, up to the left `B(F)`-invariance, the sum
-`bruhatEisenstein φ g = φ g + ∑' ξ : F, φ (w n(ξ) g)`.
+Let `F` be a number field and `φ` a function on `GL(2, 𝔸_F)`. The explicit Bruhat sum
+`bruhatEisenstein φ g = φ g + ∑' ξ : F, φ (w n(ξ) g)` evaluates `φ (γ g)` at the representatives
+`γ = 1` and `γ = w n(ξ)`, `ξ ∈ F`, of `B(F) \ GL(2, F)` given by the Bruhat decomposition
+`GL(2, F) = B(F) ∪ B(F) w N(F)`. Other representatives can give a different value unless `φ` is
+left `B(F)`-invariant, and `∑'` is `0` where the family is not summable. The sum is the classical
+Eisenstein series `∑_{γ ∈ B(F) \ GL(2, F)} φ (γ g)` when `φ` is induced from characters trivial
+on the principal ideles and that series converges; nothing here assumes either.
 
-The main result computes its constant term along the unipotent radical, normalised by the
-probability measure on the adelic fundamental box `adelicBox F`: for unitary inducing
-characters, a continuous section and `Re s > 1/2`, it equals
-`φ g + vol(adelicBox F)⁻¹ * M φ g`, where `M` is the Weyl intertwining integral.
+The main result computes the normalised box average of the Bruhat sum: the average of
+`bruhatEisenstein φ (n(x) g)` over `x` in the adelic fundamental box `adelicBox F`, against the
+additive Haar measure normalised to give the box volume one. Let `μ, ν` be unitary idele
+characters (the unitarity hypothesis is on `μ, ν`, not on the twists below), `Re s > 1/2`, and
+`φ` a continuous section induced from `(μ |·|^(s+1/2), ν |·|^(-(s+1/2)))`. Then the average is
+`φ g + vol(adelicBox F)⁻¹ * M φ g`, where `M` is the Weyl intertwining integral. The proof uses
+the invariance of `φ` under `N(𝔸_F)` and the integrability of the Weyl integrand; it does not show
+that the sum converges at every point.
 
 ## Main statements
 
@@ -66,8 +70,12 @@ section BruhatSum
 variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
   [IsFractionRing R K]
 
-/-- **Bruhat form of the Eisenstein series.** For a function `φ` on `GL(2, 𝔸_K)`, the identity
-coset contributes `φ g` and the big-cell cosets `w n(ξ)`, `ξ ∈ K`, contribute `φ (w n(ξ) g)`. -/
+/-- **Explicit Bruhat sum.** For a function `φ` on `GL(2, 𝔸_K)`,
+`bruhatEisenstein φ g = φ g + ∑' ξ : K, φ (w n(ξ) g)`: the values `φ (γ g)` at the representatives
+`γ = 1` and `γ = w n(ξ)`, `ξ ∈ K`, of `B(K) \ GL(2, K)`. Nothing is assumed about `φ`: other
+representatives can give a different value unless `φ` is left `B(K)`-invariant, and `∑'` is `0`
+where the family is not summable. When `φ` is left `B(K)`-invariant and the sum converges, this
+is the Eisenstein series `∑_{γ ∈ B(K) \ GL(2, K)} φ (γ g)`. -/
 def bruhatEisenstein (φ : AdelicGL2 R K → ℂ) (g : AdelicGL2 R K) : ℂ :=
   φ g + ∑' ξ : K, φ (adelicWeyl R K * unipotentGL2 (algebraMap K (AdeleRing R K) ξ) * g)
 
@@ -121,11 +129,13 @@ private theorem constantTerm_cond_adelicBox_eq (μ : Measure 𝔸) [μ.IsAddHaar
   simp only [Complex.real_smul, Complex.ofReal_inv]
   rw [mul_add, ← mul_assoc, inv_mul_cancel₀ hm, one_mul]
 
-/-- **Constant term of the Bruhat Eisenstein series.** For unitary idele characters `μ, ν`, a
-continuous section `φ` induced from `(μ |·|^(s+1/2), ν |·|^(-(s+1/2)))` and `Re s > 1/2`, the
-constant term of the Bruhat Eisenstein series of `φ`, taken against the normalised Haar measure on
-the adelic fundamental box, is `φ g` plus the reciprocal volume of the box times the Weyl
-intertwining integral. -/
+/-- **Box average of the Bruhat sum.** Let `μ, ν` be unitary idele characters (the unitarity
+hypothesis is on `μ, ν`, not on the twists), `Re s > 1/2`, and `φ` a continuous section induced
+from `(μ |·|^(s+1/2), ν |·|^(-(s+1/2)))`. The average of `bruhatEisenstein φ (n(x) g)` over `x` in
+the adelic fundamental box, against the additive Haar measure normalised to give the box volume
+one, is `φ g` plus the reciprocal volume of the box times the Weyl intertwining integral. When
+`μ, ν` are trivial on the principal ideles and the Eisenstein series of `φ` converges, this is the
+constant term of that series; neither is assumed. -/
 theorem constantTerm_bruhatEisenstein_eq_section_add_weylIntertwiningIntegral
     (μ ν : (AdeleRing (𝓞 F) F)ˣ →* ℂˣ)
     (hμ : IsUnitaryChar (𝓞 F) F μ) (hν : IsUnitaryChar (𝓞 F) F ν)

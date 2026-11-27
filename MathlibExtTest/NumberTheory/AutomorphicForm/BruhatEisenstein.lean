@@ -1,9 +1,6 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
 -/
 
 /-
@@ -13,8 +10,8 @@ section_add_weylIntertwiningIntegral.lean` and
 `Theorems/Thm_AutomorphicForm_weylIntertwiningIntegrand_integrable_of_re_gt_half.lean`
 in https://github.com/anthropics/fermats-last-theorem at commit
 6e837e75355538c7f80bab5b956861e86c4eacc2.
-Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
-The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
