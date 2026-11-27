@@ -18,6 +18,7 @@ Variants of SAT and CSP: 3SAT and the SAT-to-3SAT reduction, bounded-occurrence,
 - [Minimum 2-satisfiability](minimum-2-satisfiability/README.md)
 - [Minimum-ones 3-SAT](minimum-ones-3-sat/README.md)
 - [Monotone 3-SAT](monotone-3-sat/README.md)
+- [Most probable explanation in Bayesian networks](most-probable-explanation-in-bayesian-networks/README.md)
 - [Nash equilibria with constraints](nash-equilibria-with-constraints/README.md)
 - [Non-tautology of 3DNF](non-tautology-of-3dnf/README.md)
 - [Non-tautology](non-tautology/README.md)

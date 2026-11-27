@@ -1,3 +1,5 @@
-# Well-formed instances of PATH DISTINGUISHERS
+# Well-formed MINIMUM TEST SET with tests of size at most 2 instances
 
-Well-formedness of an instance of PATH DISTINGUISHERS: the arc list has no repeated arcs, its endpoints are vertices, and it has no loops; the digraph is acyclic; `s` and `t` are vertices; and `0 < K ≤ |A|`.
+Well-formedness of an instance: it is a well-formed MINIMUM TEST SET instance, every test is
+listed in increasing order and has at most two elements, no test is listed twice, and
+`0 < K ≤ |C|`.

@@ -1,12 +1,17 @@
 # Resource-constrained project scheduling
 
 - [Instances of resource-constrained project scheduling](rcpspinstance.md)
+- [Well-formed MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES) instances](well-formed-2.md)
+- [Instances of MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES)](multi-mode-rcpsp-feasibility-instance.md)
 - [Well-formed RCPSP instances](well-formed.md)
+- [Feasible MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES) instances](multi-mode-rcpsp-feasibility-feasible.md)
+- [The decision problem MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES)](multi-mode-rcpsp-feasibility-dec.md)
+- [MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES) is NP-complete](multi-mode-rcpsp-feasibility-np-complete.md)
 - [Feasible RCPSP instances](rcpspfeasible.md)
 - [Resource-constrained project scheduling as a decision problem](rcpsp-dec.md)
 - [RESOURCE-CONSTRAINED PROJECT SCHEDULING is NP-complete](rcpsp-np-complete.md)
 - [Instances of PROJECT SCHEDULING WITH RESOURCES AND TIME WINDOWS: FEASIBILITY](rcpsp-time-windows-feasibility-instance.md)
-- [Well-formed instances of PROJECT SCHEDULING WITH RESOURCES AND TIME WINDOWS: FEASIBILITY](well-formed-2.md)
+- [Well-formed instances of PROJECT SCHEDULING WITH RESOURCES AND TIME WINDOWS: FEASIBILITY](well-formed-3.md)
 - [In process in PROJECT SCHEDULING WITH RESOURCES AND TIME WINDOWS: FEASIBILITY](in-process.md)
 - [Feasible instances of PROJECT SCHEDULING WITH RESOURCES AND TIME WINDOWS: FEASIBILITY](rcpsp-time-windows-feasibility-feasible.md)
 - [PROJECT SCHEDULING WITH RESOURCES AND TIME WINDOWS: FEASIBILITY as a decision problem](rcpsp-time-windows-feasibility-dec.md)
