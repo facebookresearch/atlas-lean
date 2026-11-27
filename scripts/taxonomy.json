@@ -10763,6 +10763,7 @@
   "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCoverErase": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
   "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCoverInit": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
   "MathlibExt/Combinatorics/Additive/RainbowPowerDifference": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Rainbow-free colorings for x − y = z^k"},
+  "MathlibExt/Combinatorics/Additive/RainbowPowerDifferenceCycles": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Rainbow-free colorings for x − y = z^k"},
   "MathlibExt/Combinatorics/Additive/RepresentationCount": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
   "MathlibExt/Combinatorics/Additive/RestrictedSignedSumset": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Restricted signed sumsets"},
   "MathlibExt/Combinatorics/Additive/RestrictedSignedSumsetAPOneExtra": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Restricted signed sumsets"},
