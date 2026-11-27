@@ -500,6 +500,6 @@ theorem omegaH_eq_smul_hadamard :
   fin_cases i <;> fin_cases j <;>
     simp [complexOfGRatMatrix, omegaH, hadamard, toComplex_gaussRatEnc,
       exp_pi_div_four_I, Complex.ext_iff] <;>
-    ((first | rw [div_mul_div_comm, hsq] | skip); norm_num)
+    ((first | rw [div_mul_div_comm, hsq]); norm_num)
 
 end Cslib.Complexity.Classes.QuantumGates

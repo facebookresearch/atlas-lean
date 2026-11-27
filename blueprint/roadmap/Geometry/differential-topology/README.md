@@ -1,6 +1,6 @@
 # Differential topology
 
-Smooth manifolds and smooth maps between them: immersions, submersions, transversality, Morse theory, neighbourhood theorems and smooth structures.
+Smooth manifolds and smooth maps between them: immersions, submersions, transversality, Morse theory, neighbourhood theorems and smooth structures, the de Rham theorem, and Chern–Weil forms.
 
 - [Classification of one-manifolds](classification-of-one-manifolds/README.md)
 - [Groups of diffeomorphisms](diffeomorph/README.md)
