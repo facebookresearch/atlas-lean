@@ -12,6 +12,5 @@ Natural deduction for intuitionistic propositional logic and its two semantics: 
 - [Proper filters extend to prime filters](proper-filters-extend-to-prime-filters.md)
 - [Heyting algebra valuations are represented by Kripke models](heyting-algebras-embed-into-kripke-models.md)
 - [Kripke completeness of intuitionistic propositional logic](kripke-completeness-of-ipc.md)
-- [Kripke models on preorders reduce to partial orders](kripke-models-on-preorders-reduce-to-partial-orders.md)
 - [Disjunction property of intuitionistic propositional logic](disjunction-property-of-ipc.md)
 - [Finite rooted trees suffice for intuitionistic propositional logic](finite-rooted-trees-suffice-for-ipc.md)

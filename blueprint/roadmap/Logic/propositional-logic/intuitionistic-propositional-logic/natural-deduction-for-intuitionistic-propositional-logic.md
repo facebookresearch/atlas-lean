@@ -7,7 +7,7 @@ Formulas of intuitionistic propositional logic (IPC) are built from propositiona
 - ($\to$I) from $\Gamma, \varphi \vdash \psi$ infer $\Gamma \vdash \varphi \to \psi$; ($\to$E) from $\Gamma \vdash \varphi \to \psi$ and $\Gamma \vdash \varphi$ infer $\Gamma \vdash \psi$;
 - ($\bot$E) from $\Gamma \vdash \bot$ infer $\Gamma \vdash \varphi$.
 
-For an infinite set $\Gamma$, $\Gamma \vdash \varphi$ means $\Gamma_0 \vdash \varphi$ for some finite $\Gamma_0 \subseteq \Gamma$. Adding the axioms $\bot \to \psi$ (ex falso) to natural deduction without ($\bot$E), with $\bot$ a distinguished atom, gives the same derivable sequents. Derivability is closed under weakening and under substitution of formulas for variables.
+For an infinite set $\Gamma$, $\Gamma \vdash \varphi$ means $\Gamma_0 \vdash \varphi$ for some finite $\Gamma_0 \subseteq \Gamma$. Adding the axioms $\bot \to \psi$ (ex falso) to natural deduction without ($\bot$E), with $\bot$ a distinguished atom, gives the same derivable sequents: ($\bot$E) derives $\bot \to \psi$ by ($\to$I), and conversely from $\Gamma \vdash \bot$ the axiom $\bot \to \psi$ and ($\to$E) give $\Gamma \vdash \psi$. Derivability is closed under weakening and under substitution of formulas for variables.
 
 ## Sources
 

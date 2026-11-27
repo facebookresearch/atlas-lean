@@ -15,4 +15,4 @@ Hence every formula is equivalent to a formula in prenex form, computable by $\R
 
 ## Sources
 
-- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 3.5, prenex normal form (the reduction system $\Rightarrow_P$) and Theorem 3.9 (i), pp. 55–56. The termination argument is written out here.
+- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 3.5, prenex normal form (the reduction system $\Rightarrow_P$) and Theorem 3.9 (i), pp. 55–56, which states the closed case; the step-by-step equivalence for arbitrary formulas is the lemma behind it. The termination argument is written out here.
