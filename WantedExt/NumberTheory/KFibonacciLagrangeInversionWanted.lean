@@ -152,25 +152,6 @@ public theorem_wanted kFibonacci_eq_kFibonacciBinomialTruncation (k n : ℕ) (hk
     (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
     (F (n + k - 2) : ℚ) = kFibonacciBinomialTruncation k n
 
-/-- **Binomial-sum formula for the $k$-Fibonacci numbers.** Let $k \ge 2$ and let
-$(F_n)_{n \ge 0}$ be the $k$-Fibonacci sequence, given by $F_0 = \dots = F_{k-2} = 0$,
-$F_{k-1} = 1$ and $F_{m+k} = F_m + F_{m+1} + \dots + F_{m+k-1}$ for all $m \ge 0$. For integers
-$a$ and $j \ge 0$ write $\binom{a}{j} = a(a-1)\cdots(a-j+1)/j!$, and put $\binom{a}{-1} = 0$.
-Then for every $n \ge k$,
-$$F_n = 2^{n-k} \sum_{\ell=0}^{\lfloor (n-k+1)/(k+1) \rfloor} \left(\binom{(k+1)\ell+k-n-2}{\ell} -
-\binom{(k+1)\ell+k-n-2}{\ell-1}\right) 2^{-(k+1)\ell}.$$
-
-Source: Bakir Farhi, *Some Applications of the Lagrange Inversion Formula for the
-k-Fibonacci Numbers*, Journal of Integer Sequences 27 (2024), Article 24.1.1,
-Corollary 12 (`jis-2024-24.1.1-cor-12`). -/
-public theorem_wanted kFibonacci_eq_binomial_sum (k n : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n)
-    (F : ℕ → ℤ) (hF0 : ∀ i < k - 1, F i = 0) (hF1 : F (k - 1) = 1)
-    (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
-    (F n : ℚ) = 2 ^ (n - k) * ∑ ℓ ∈ Finset.range ((n - k + 1) / (k + 1) + 1),
-      ((Ring.choose (((k + 1) * ℓ + k : ℕ) - (n : ℤ) - 2) ℓ -
-        (if ℓ = 0 then 0 else Ring.choose (((k + 1) * ℓ + k : ℕ) - (n : ℤ) - 2) (ℓ - 1)) :
-          ℤ) : ℚ) / 2 ^ ((k + 1) * ℓ)
-
 end
 
 end MetaMathlibExt
