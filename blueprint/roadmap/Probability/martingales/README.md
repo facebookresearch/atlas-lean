@@ -8,6 +8,7 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
 - [One-period fundamental theorem of asset pricing](fundamental-theorem-of-asset-pricing/README.md)
 - [Martingale convergence theorem](martingale-convergence-theorems/README.md)
 - [Optimal stopping and the Snell envelope](optimal-stopping-and-the-snell-envelope/README.md)
+- [Finite-horizon optimal stopping on a binomial tree](finite-horizon-optimal-stopping-on-a-binomial-tree/README.md)
 - [Optional stopping theorem](optional-stopping-theorem/README.md)
 - [Secretary problem: the $1/e$ law](secretary-problem/README.md)
 - [Orthogonality of martingale increments](square-integrable-martingales/README.md)

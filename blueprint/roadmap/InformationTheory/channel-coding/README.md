@@ -19,5 +19,10 @@ rate below the mutual information.
 - [One-shot achievability (Shannon/Feinstein/DT bounds)](one-shot-achievability.md)
 - [Polar transform: channel combining/splitting conservation](polar-transform-channel-combining-splitting-conservation.md)
 - [Scalar Gaussian channel](scalar-gaussian-channel/README.md)
+
+- [Classical capacity of the generalized amplitude-damping channel](generalized-amplitude-damping-capacity.md)
+- [Trace reconstruction in the deletion channel](trace-reconstruction/README.md)
+
+- [Generalized amplitude-damping Kraus channel and finite codes](generalized-amplitude-damping-model.md)
 - [Polar Codes: Polarization Speed and Scaling Exponents](polarization-speed-and-scaling-exponents/README.md)
 - [Nearest-codeword decoding](nearest-codeword-decoding/README.md)

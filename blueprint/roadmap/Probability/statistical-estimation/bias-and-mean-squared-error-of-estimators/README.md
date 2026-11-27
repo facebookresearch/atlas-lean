@@ -32,3 +32,4 @@
 - [Variance of the stratified sample mean](variance-of-the-stratified-mean-estimator.md)
 - [A biased variance estimator with smaller mean squared error](biased-variance-estimator-with-smaller-mean-squared-error.md)
 - [Chebyshev confidence interval for the sample mean](chebyshev-sample-mean-interval-failure-b.md)
+- [Unbiasedness of the sample covariance](unbiasedness-of-the-sample-covariance/README.md)

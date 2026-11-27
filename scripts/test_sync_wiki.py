@@ -2007,6 +2007,43 @@ class Declarations(Vault):
         self.assertEqual(report["added"], ["Ext.gone -> Algebra/groups/gone-2.md"])
         self.assertFalse((wiki.ROADMAP / "Algebra/groups/gone.md").exists())
 
+    def test_a_fragment_s_addresses_are_retired_too(self) -> None:
+        # The logical ledger: the frozen file's rows, then each fragment's (docs/cards.md#move-ledger). A new
+        # declaration's page takes no address a fragment records, and a ledger that cannot be read is no empty one.
+        self.card_beside_a_folder()
+        scripts = wiki.ROOT / "scripts"
+        scripts.mkdir(exist_ok=True)
+        (scripts / "card-moves.jsonl").write_text("")
+        fragments = scripts / "card-moves.d"
+        fragments.mkdir()
+        (fragments / "20200101T000000Z-gone.jsonl").write_text(json.dumps(
+            {"statement": "af_000000000000000000000001", "page": "Algebra/groups/gone",
+             "replaced_by": "af_000000000000000000000002"}) + "\n")
+        (fragments / "20200102T000000Z-former.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/former", "to": "Algebra/groups/orders/old",
+             "article_id": "af_000000000000000000000003"}))
+        self.assertEqual(sync.retired_addresses(), {"Algebra/groups/gone", "Algebra/groups/former"})
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."),
+             declaration("Ext.gone", "gone", "Gone lemma", "Another statement.")],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.gone": None}))
+        self.assertEqual(report["added"], ["Ext.gone -> Algebra/groups/gone-2.md"])
+        for name, data, problem in (("notes.txt", "x\n", "scripts/card-moves.d/notes.txt: not a fragment"),
+                                    ("20200103T000000Z-empty.jsonl", "\n",
+                                     "scripts/card-moves.d/20200103T000000Z-empty.jsonl: no row"),
+                                    ("20201303T000000Z-month.jsonl", "{}\n", "20201303T000000Z is no UTC time")):
+            with self.subTest(name=name):
+                (fragments / name).write_text(data)
+                with self.assertRaises(ValueError) as refused:
+                    sync.retired_addresses()
+                self.assertIn(problem, str(refused.exception))
+                (fragments / name).unlink()
+        (scripts / "card-moves.jsonl").unlink()
+        with self.assertRaises(ValueError) as refused:
+            sync.retired_addresses()
+        self.assertIn("scripts/card-moves.jsonl is missing, and its fragments are no ledger without it",
+                      str(refused.exception))
+
     def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
         self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
         claim = self.page("Algebra/claim.md", "# Claim\n\nThe source's statement.\n")
@@ -3697,6 +3734,53 @@ class ScopedRows(Vault):
         sync.insert_rows(path, [self.about("Algebra/a.md")])
         self.assertEqual(path.read_text(), json.dumps(self.about("Algebra/a.md")) + "\n" + last)
 
+    def test_inserted_gives_the_bytes_insert_rows_writes_without_touching_the_links_file(self) -> None:
+        # The placement as a function of the text, for a tool that stages its writes (import_mathgraph): insert_rows
+        # writes exactly what it gives, for every kind of file, a file that is not there being the empty text. It
+        # neither reads nor writes the links file, which here holds other bytes, nor changes the rows it is given.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        added = [self.about(f"Algebra/{name}.md") for name in ("e", "a", "c", "d/z")]
+        given = json.dumps(added)
+        rows = [json.dumps(self.about(f"Algebra/{name}.md")) for name in ("b", "d/README", "d")]
+        for text in ("", *(separator.join(rows) + last for separator, last in
+                           (("\n", "\n"), ("\n", ""), ("\r\n", "\r\n"), ("\r\n", ""), ("\r", "\r"), ("\n", "\n\n")))):
+            with self.subTest(text=text):
+                path.write_bytes(json.dumps(self.about("Algebra/other.md")).encode("utf-8") + b"\n")
+                before = path.read_bytes(), path.stat().st_mtime_ns
+                expected = sync.inserted(text, added)
+                self.assertEqual((path.read_bytes(), path.stat().st_mtime_ns), before)
+                self.assertEqual(json.dumps(added), given)
+                if text:
+                    path.write_bytes(text.encode("utf-8"))
+                else:
+                    path.unlink()
+                sync.insert_rows(path, added)
+                self.assertEqual(path.read_bytes(), expected.encode("utf-8"))
+
+    def test_a_row_that_takes_its_subject_from_the_folder_defaults_is_placed_by_it(self) -> None:
+        # A row may take its subject from the links folder's defaults (_defaults.json), as Autoform merges them over
+        # each row: it is placed by that page, as every reader of the row sees it, so other defaults place the same
+        # rows otherwise, and inserted and insert_rows agree for each.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        inherited = '{"id": "af_000000000000000000000001"}'
+        explicit = json.dumps(self.about("Algebra/x.md"))
+        text = inherited + "\n" + explicit + "\n"
+        new = self.about("Algebra/c.md")
+        for default, lines in (("Algebra/a.md", [inherited, json.dumps(new), explicit]),
+                               ("Algebra/zz.md", [json.dumps(new), inherited, explicit])):
+            with self.subTest(default=default):
+                (sync.LINKS / "_defaults.json").write_text(json.dumps(
+                    {**sync.DEFAULTS, "subject": [{"type": "generic", "uri": f"../roadmap/{default}"}]}) + "\n")
+                self.assertEqual(sync.page_key(json.loads(inherited)), default)
+                self.assertEqual(sync.page_key(json.loads(explicit)), "Algebra/x.md")
+                placed = sync.inserted(text, [new])
+                self.assertEqual(placed, "".join(line + "\n" for line in lines))
+                path.write_text(text)
+                sync.insert_rows(path, [new])
+                self.assertEqual(path.read_text(), placed)
+
 
 class ScopedLayout(Vault):
     def test_a_scoped_run_passes_over_generate_wikis_parts_in_the_folders_it_makes(self) -> None:
@@ -3866,6 +3950,25 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(report["digests"], {"Ext.fresh": sync.digest("A new result.")})
         self.assertIn(f"  python3 scripts/sync_wiki.py declarations --base {self.base}\n", out)
         self.assertEqual(self.tree(), before)
+
+    def test_a_withheld_declaration_gets_no_page_and_keeps_its_digest(self) -> None:
+        # As a graph-sync batch withholds a declaration that may state a planned page a merged pull request names: no
+        # page, as for a held one, its digest written all the same; the check agrees only given the same list.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n"
+                         "/-- Another result. -/\ntheorem other : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--withhold", "Ext.fresh", "--withhold", "Ext.lagrange")
+        self.assertEqual(status, 0, err)
+        self.assertEqual((report["missing"], report["withheld"]), (["Ext.other"], ["Ext.fresh"]))
+        self.assertIn("Of them, those withheld, so with no page: 1\n  Ext.fresh\n", out)
+        roadmap = self.root / "blueprint" / "roadmap"
+        self.assertEqual(list(roadmap.rglob("fresh.md")), [])
+        self.assertTrue((roadmap / "Algebra/groups/group-basics/other.md").is_file())
+        state = json.loads((self.root / "scripts/wiki-sync.json").read_text())["docstrings"]
+        self.assertEqual(state["Ext.fresh"], sync.digest("A new result."))
+        status, out, err, report = self.run_sync("--check", "--withhold", "Ext.fresh")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), out + err)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], report["wiki_changes"]), (1, ["Ext.fresh"], "other"))
 
     def test_a_docstring_edit_rewrites_its_digest_and_names_its_page(self) -> None:
         self.groups(lagrange="The order of a subgroup divides the order of a finite group.")
@@ -4213,8 +4316,9 @@ class ScopedRun(unittest.TestCase):
         # Each graph file outside the pages, the links and the baseline makes the wiki changes not the sync's, with
         # or without a Lean change.
         for path in ("scripts/taxonomy.json", "scripts/card-moves.jsonl", "scripts/mathgraph-map.jsonl",
-                     "blueprint/atlas.json"):
+                     "blueprint/atlas.json", "scripts/card-moves.d/20200101T000000Z-move.jsonl"):
             target = self.root / path
+            target.parent.mkdir(exist_ok=True)
             kept = target.read_text() if target.is_file() else None
             target.write_text((kept or "") + "\n")
             status, out, err, report = self.run_sync("--check")
@@ -5063,7 +5167,9 @@ class ScopedRun(unittest.TestCase):
         outside = self.root.parent / f"{self.root.name}-outside"
         outside.write_text("")
         self.addCleanup(outside.unlink)
-        for link in ("blueprint/pages.json", "MathlibExt/Algebra/Linked.lean"):
+        (self.root / "scripts/card-moves.d").mkdir()
+        for link in ("blueprint/pages.json", "MathlibExt/Algebra/Linked.lean",
+                     "scripts/card-moves.d/20200101T000000Z-move.jsonl"):
             (self.root / link).symlink_to(outside)
             with patch.object(sync, "numbered_rows", side_effect=AssertionError("read the links")), \
                     patch.object(wiki, "generate", side_effect=AssertionError("read the Lean")):
@@ -5087,6 +5193,32 @@ class ScopedRun(unittest.TestCase):
             "blueprint/sources/data.json is a link: the sync reads and writes through none; put what it links to in its "
             "place"], "none", [], 1))
 
+
+    def test_a_link_among_the_move_ledger_s_fragments_stops_a_lean_only_change(self) -> None:
+        # The sync reads the move ledger's fragments (retired_addresses): a link the base already had there, the folder
+        # itself or an entry of it, stops even a change that touches none of them.
+        outside = self.root.parent / f"{self.root.name}-outside"
+        outside.mkdir()
+        self.addCleanup(shutil.rmtree, outside)
+        (outside / "20200101T000000Z-x.jsonl").write_text("{}\n")
+        fragments = self.root / "scripts/card-moves.d"
+        for name, make, link in (
+                ("the folder", lambda: fragments.symlink_to(outside), "scripts/card-moves.d"),
+                ("an entry", lambda: (fragments.mkdir(), (fragments / "20200101T000000Z-x.jsonl").symlink_to(
+                    outside / "20200101T000000Z-x.jsonl")), "scripts/card-moves.d/20200101T000000Z-x.jsonl")):
+            with self.subTest(name):
+                make()
+                self.base = self.commit(f"a link in the ledger: {name}")
+                self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+                status, out, err, report = self.run_sync("--check")
+                self.assertEqual((status, report["errors"]), (1, [
+                    f"{link} is a link: the sync reads and writes through none; put what it links to in its place"]))
+                self.groups()
+                if fragments.is_symlink():
+                    fragments.unlink()
+                else:
+                    shutil.rmtree(fragments)
+                self.base = self.commit("no link")
 
     def test_a_linked_site_configuration_stops_a_write_that_renders(self) -> None:
         # The renderer reads the site configuration, which the changes leave as it is: a link there stops the run too.
