@@ -118,7 +118,9 @@ noncomputable def hahnBound [MeasurableSpace Ω] (μ : Measure Ω) (X : Ω → �
 
 /-- The **augmented IPW score** with augmentation function `h`:
 `1_T Y / e(X) - 1_{Tᶜ} Y / (1 - e(X)) - (1_T - e(X)) h(X)`. With `h = 0` it is the IPW
-contrast; with `h = efficientAugmentation e m₀ m₁` it is the AIPW score. -/
+contrast; with `h = efficientAugmentation e m₀ m₁` it is the AIPW score where `e(X) ∉ {0, 1}`
+(`aipwScore_eq_augmentedIPWScore`, under overlap). Elsewhere the two can differ, since division
+by zero gives `0`. -/
 noncomputable def augmentedIPWScore (T : Set Ω) (X : Ω → 𝒳) (Y : Ω → ℝ) (e h : 𝒳 → ℝ) :
     Ω → ℝ := fun ω =>
   T.indicator (fun ω => Y ω / e (X ω)) ω - Tᶜ.indicator (fun ω => Y ω / (1 - e (X ω))) ω -
