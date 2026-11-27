@@ -1,0 +1,7 @@
+# Soundness of k-induction for reachable states
+
+Let $L$ be a labelled transition system with states $S$ and labels $\Lambda$, given by its transition relation $s \xrightarrow{\mu} t$. A sequence of states $(s_i)_{i \in \mathbb{N}}$ is a finite run of length $n$ when for every $i < n$ there is a label $\mu$ with $s_i \xrightarrow{\mu} s_{i+1}$; the states after index $n$ are unconstrained. A multistep transition $s \xrightarrow{\mu_1 \cdots \mu_n} t$ is a chain of transitions $s = s_0 \xrightarrow{\mu_1} s_1 \cdots \xrightarrow{\mu_n} s_n = t$ (for the empty list, $t = s$), and $t$ is reachable from $s$ when such a chain exists for some finite list of labels, possibly empty. Let $\mathrm{Init}$ and $P$ be predicates on $S$ and $k \in \mathbb{N}$, and assume the base case: for every sequence $(s_i)$ and every $n < k$, if $\mathrm{Init}(s_0)$ and $(s_i)$ is a finite run of length $n$, then $P(s_n)$; and the step case: for every sequence $(s_i)$ that is a finite run of length $k$ with $P(s_i)$ for all $i < k$, also $P(s_k)$. The step case ranges over all run prefixes, reachable from an initial state or not. Then every state $s$ reachable from some $s_0$ with $\mathrm{Init}(s_0)$ satisfies $P(s)$, including reachable states with no outgoing transitions.
+
+## Sources
+
+- M. Sheeran, S. Singh and G. Stålmarck, *Checking safety properties using induction and a SAT-solver*, Formal Methods in Computer-Aided Design (FMCAD 2000), LNCS 1954, Springer, 2000, pp. 127–144.

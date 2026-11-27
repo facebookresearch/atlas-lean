@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.FkPerfect
+import Mathlib.Tactic.NormNum
 
 /-! # Tests for `MathlibExt.NumberTheory.FkPerfect` -/
 
@@ -109,5 +110,51 @@ example : ¬ IsKLNearPerfect 2 3 5 :=
 example (k p : ℕ) (hp : p.Prime) : IsKLNearPerfect k 0 p := by
   refine ⟨1, one_dvd p, hp.one_lt, ?_⟩
   simp only [hp.sum_divisors, one_pow, zero_mul, add_zero]
+
+-- `18` is `[1, 1]`-near-perfect, and twice a power of `5` is never `[1, ℓ]`-near-perfect.
+example : IsKLNearPerfect 1 1 18 :=
+  (isKLNearPerfect_one_two_mul_prime_pow 3 2 1 (by decide) (by decide) (by decide)).1
+
+example (a l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect 1 l (2 * 5 ^ a) := by
+  intro h
+  have heq :=
+    (isKLNearPerfect_one_two_mul_prime_pow 5 a l (by decide) (by decide) hl).2 h
+  have hpow : (5 : ℕ) ^ a = 9 := by omega
+  cases a with
+  | zero => norm_num at hpow
+  | succ a =>
+    have hdiv : 5 ∣ (9 : ℕ) := by
+      rw [← hpow]
+      exact dvd_pow_self 5 (by omega)
+    norm_num at hdiv
+
+-- `3 ^ 1 * 5 ^ 2` is not deficient `F₂`-perfect: `1 + 2` is odd.
+example : ¬ IsDeficientFkPerfect 2 (3 ^ 1 * 5 ^ 2) :=
+  not_isDeficientFkPerfect_pow_mul_pow 2 3 5 1 2 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (Or.inl (by decide))
+
+-- `3 ^ 1 * 5 ^ 1` is not deficient `F₃`-perfect: both exponents are odd.
+example : ¬ IsDeficientFkPerfect 3 (3 ^ 1 * 5 ^ 1) :=
+  not_isDeficientFkPerfect_pow_mul_pow 3 3 5 1 1 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+    (Or.inr ⟨by decide, by decide⟩)
+
+-- A concrete instance with a positive exponent.
+example : ¬ IsDeficientFkPerfect 2 (3 ^ 5 * 5) :=
+  not_isDeficientFkPerfect_prime_pow_mul (k := 2) (p₁ := 3) (p₂ := 5) (a := 5)
+    (hk := by decide) (hp₁ := by decide) (hp₂ := by decide)
+    (ho₁ := ⟨1, rfl⟩) (ho₂ := ⟨2, rfl⟩) (hne := by decide)
+
+-- The zero exponent is included: `5 ^ 0 * 7` is the prime `7`.
+example : ¬ IsDeficientFkPerfect 3 (5 ^ 0 * 7) :=
+  not_isDeficientFkPerfect_prime_pow_mul (k := 3) (p₁ := 5) (p₂ := 7) (a := 0)
+    (hk := by decide) (hp₁ := by decide) (hp₂ := by decide)
+    (ho₁ := ⟨2, rfl⟩) (ho₂ := ⟨3, rfl⟩) (hne := by decide)
+
+-- Specialized to `3 ^ a * 5`, the statement holds for every exponent.
+example (a : ℕ) : ¬ IsDeficientFkPerfect 2 (3 ^ a * 5) :=
+  not_isDeficientFkPerfect_prime_pow_mul (k := 2) (p₁ := 3) (p₂ := 5) (a := a)
+    (hk := by decide) (hp₁ := by decide) (hp₂ := by decide)
+    (ho₁ := ⟨1, rfl⟩) (ho₂ := ⟨2, rfl⟩) (hne := by decide)
 
 end MathlibExtTest.NumberTheory.FkPerfect
