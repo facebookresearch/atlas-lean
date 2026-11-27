@@ -4,7 +4,7 @@ $\mathsf{CL}\subseteq\mathsf{LOSSY}\ (\subseteq\mathsf{ZPP})$. Consequently, if 
 
 ## Proof sketch
 
-For a $\mathsf{CL}$ machine $M$ and input $x$, the compress-or-compute map $(\tau,i)\mapsto(\pi,u)$ and its backward recovery are computed by polynomial-size circuits $C_x,D_x$ constructible in polynomial time, with $C_x$ dropping one bit. Any solution $z=(\tau,i)$ of the LossyCode instance $(C_x,D_x)$ is a content on which compression fails, which forces $M$ to halt within $2^{s+1}=\mathrm{poly}(n)$ steps from $\tau$; simulating $M$ on $\tau$ then yields $M(x)$.
+For a $\mathsf{CL}$ machine $M$ ($s = O(\log n)$) and input $x$, set $B = 1$ in Theorem 3.1: the worst-case polynomial-time subroutines $\mathrm{DetComp}_w(1, x)$ and $\mathrm{DetDecomp}_{w' \circ 0}(1, x)$ (using the reversible Euler-tour subroutines $\mathrm{DetWalk}$ and $\mathrm{DetRev}$) are computed by polynomial-size circuits $C_x$ (truncating the final zero bit to drop one bit) and $D_x$ constructible in polynomial time. Any solution $w^*$ of the LossyCode instance $(C_x, D_x)$ satisfies $D_x(C_x(w^*)) \ne w^*$, which means $\mathrm{DetComp}_{w^*}(1, x)$ did not compress $w^*$ and therefore returns $L(x)$ in worst-case polynomial time; simulating $\mathrm{DetComp}_{w^*}(1, x)$ then outputs $L(x)$.
 
 ## Depends on
 
