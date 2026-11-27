@@ -17,4 +17,7 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Reverse mathematics](reverse-mathematics.md)
 - [Craig interpolation for first-order logic](craig-interpolation-for-first-order-logic.md)
 - [Cut elimination for the classical sequent calculus LK](cut-elimination-for-the-classical-sequent-calculus.md)
+- [Automatability of Proof Systems](automatability-of-proof-systems/README.md)
+- [Resolution Separations and Supercritical Trade-offs](resolution-separations-and-supercritical-tradeoffs/README.md)
+- [Stabbing Planes and Semi-Algebraic Branching](stabbing-planes-and-semi-algebraic-branching/README.md)
 - [Sum-of-Squares Lower Bounds and Pseudocalibration](sum-of-squares-lower-bounds-and-pseudocalibration/README.md)
