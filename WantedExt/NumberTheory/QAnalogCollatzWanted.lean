@@ -15,41 +15,13 @@ public import MathlibExt.NumberTheory.QCollatzConjugacy
 public import MathlibExt.NumberTheory.QCollatzParityFlip
 public import MathlibExt.NumberTheory.QCollatzPerturbation
 public import MathlibExt.NumberTheory.QAnalogCollatzQCollatzFixedPointsAndTwoCycle
+public import MathlibExt.NumberTheory.QAnalogCollatzQCollatzOneOneAddXSqPolynomial
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open PowerSeries
-
-/-- **The $q$-Collatz map is conjugate to the $2$-adic $3x+1$ map.** Let $A$ and $B$ be odd
-power series in $\mathbb{F}_2[[q]]$ (constant term $1$), let $T_{A,B}$ be the $q$-analog of the
-$3x+1$ map on $\mathbb{F}_2[[q]]$, and let $T$ be the $3x+1$ map on the $2$-adic integers
-$\mathbb{Z}_2$. Then there is a bijection $h : \mathbb{Z}_2 \to \mathbb{F}_2[[q]]$ with
-$h^{-1}(T_{A,B}(h(x))) = T(x)$ for every $x \in \mathbb{Z}_2$.
-
-Source: Kenneth G. Monks, *On q-Analogs of the 3x+1 Dynamical System*, Journal of Integer
-Sequences 28 (2025), Article 25.6.8, Theorem 2 (`jis-2025-25.6.8-thm-2`). -/
-public theorem_wanted qCollatz_conjugate_twoAdicCollatz (A B : PowerSeries (ZMod 2))
-    (hA : constantCoeff A ≠ 0) (hB : constantCoeff B ≠ 0) :
-    ∃ h : ℤ_[2] ≃ PowerSeries (ZMod 2),
-      ∀ x, h.symm (qCollatz A B (h x)) = twoAdicCollatz x
-
-/-- **Polynomial orbits of $T_{1,1+q^2}$.** Let $T = T_{1,1+q^2}$ be the $q$-analog of the $3x+1$
-map with $A = 1$ and $B = 1 + q^2$. For every polynomial $p$ over $\mathbb{F}_2$, some iterate
-$T^k(p)$ with $k \ge 0$ lies in $\{0, 1 + q, 1, q\}$, the set formed by the fixed points $0$ and
-$1 + q$ of $T$ and its $2$-cycle $\{1, q\}$. Moreover, for every $x \in \mathbb{F}_2[[q]]$, $T(x)$
-is a polynomial if and only if $x$ is a polynomial.
-
-Source: Kenneth G. Monks, *On q-Analogs of the 3x+1 Dynamical System*, Journal of Integer
-Sequences 28 (2025), Article 25.6.8, Theorem 5 (`jis-2025-25.6.8-thm-5`). -/
-public theorem_wanted qCollatz_one_one_add_X_sq_polynomial :
-    (∀ p : Polynomial (ZMod 2), ∃ k : ℕ,
-      (qCollatz 1 (1 + X ^ 2))^[k] (p : PowerSeries (ZMod 2)) ∈
-        ({0, 1 + X, 1, X} : Set (PowerSeries (ZMod 2)))) ∧
-    ∀ x : PowerSeries (ZMod 2),
-      (∃ p : Polynomial (ZMod 2), qCollatz 1 (1 + X ^ 2) x = p) ↔
-        ∃ p : Polynomial (ZMod 2), x = p
 
 /-- **Parity vectors detect congruence modulo $q^{n+1}$.** Let $A, B \in \mathbb{F}_2[[q]]$ be odd
 (constant term $1$), let $\mathrm{PV}_{A,B}$ be the parity vector map of the $q$-analog $T_{A,B}$

@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.Beatty.FloorSubTwoIdentity
 public import MathlibExt.NumberTheory.Beatty.FloorTwoSubIdentity
 public import MathlibExt.NumberTheory.Beatty.SelfBetween
 public import MathlibExt.NumberTheory.Beatty.SelfBetweenIncrement
+public import MathlibExt.NumberTheory.Beatty.SkippingFiberIndicator
 public import MathlibExt.NumberTheory.BeattyDecompositionBeattyFloorFiberCardEqOrEqSucc
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
@@ -57,31 +58,6 @@ public theorem_wanted beatty_card_compl_between_isBeatty {α β : ℝ} (hirr : I
     ∃ r : ℝ, 0 < r ∧ r < 1 ∧ ∀ n : ℤ, 0 < n →
       ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
         beattySeq r n
-
-/-- **Multiplicities of Polanco's skipping sequence.** Let $k \ge 1$ be an integer, let
-$\alpha$ be an irrational real number with $(2k - 1)/k < \alpha < (2k + 1)/(k + 1)$, and let
-$\beta$ be a real number with $\alpha^{-1} + \beta^{-1} = 1$. Let
-$A = \{\lfloor j\alpha \rfloor : j \ge 1\}$ and, for each positive integer $n$, let $c_n$ be
-the number of elements of $A$ strictly between $\lfloor n\alpha \rfloor$ and
-$\lfloor n\beta \rfloor$. Let $f(x) = 2 - 1/x$, let $f^{k-1}$ be its $(k-1)$-fold iterate, and
-let $\delta = -1 + 1/f^{k-1}(\alpha - 1)$, that is,
-$\delta = -1 + 1/(2 - 1/(2 - \cdots - 1/(\alpha - 1)))$ with $k - 1$ twos. Then for every
-non-negative integer $m$, the number of positive integers $n$ with $c_n = m$ is $k$ if
-$m = \lfloor j\delta \rfloor$ for some integer $j \ge 1$, and $k - 1$ otherwise, where an
-infinite set is counted as having $0$ elements.
-
-For $k = 1$ this gives $\delta = 1/(\alpha - 1) - 1 = \beta - 2$, and the multiplicity is one
-or zero.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Lemma 6 (`integers-2025-A104-lem-6`). -/
-public theorem_wanted beatty_skipping_card_eq_add_indicator {α β : ℝ} {k : ℕ}
-    (hirr : Irrational α) (hk : 1 ≤ k) (hk1 : (2 * (k : ℝ) - 1) / k < α)
-    (hk2 : α < (2 * (k : ℝ) + 1) / ((k : ℝ) + 1)) (hαβ : α⁻¹ + β⁻¹ = 1) (m : ℕ) :
-    {n : ℤ | 0 < n ∧
-        (Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq α j | j > 0}).ncard = m}.ncard =
-      (k - 1) + {beattySeq (-1 + 1 / (fun x : ℝ ↦ 2 - 1 / x)^[k - 1] (α - 1)) j | j > 0}.indicator
-        (1 : ℤ → ℕ) m
 
 end
 
