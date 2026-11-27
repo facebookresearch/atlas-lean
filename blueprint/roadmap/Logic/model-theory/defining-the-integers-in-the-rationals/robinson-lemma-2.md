@@ -8,6 +8,8 @@ and $S$ a rational number:
 - $M = p \cdot k \cdot S^2$ with $\left(\frac{k}{p}\right) = -1$;
 - $M = q \cdot k \cdot S^2$ with $\left(\frac{k}{q}\right) = -1$.
 
+(That $p$ is odd follows from $p \equiv 1 \pmod 4$.)
+
 Here $\left(\frac{\cdot}{\cdot}\right)$ is the Legendre symbol, so the forms require $p \nmid k$
 and $q \nmid k$ respectively; the hypothesis $\left(\frac{q}{p}\right) = -1$ gives $q \neq p$.
 Robinson writes capital letters for rationals and small letters for integers (p. 106).
@@ -29,22 +31,6 @@ $\mathbb{Q}_\ell$ for $\ell \in \{p, q\}$ exactly when $M \notin pq \, (\mathbb{
 and the description of the squares of $\mathbb{Q}_\ell$ with
 $\left(\frac{q}{p}\right) = \left(\frac{p}{q}\right) = -1$ turns these two conditions into the two
 forms above.
-
-## Depends on
-
-- [Legendre symbol](../../../NumberTheory/congruences/power-residues-reciprocity/legendre-symbol-and-euler-s-criterion/legendre-symbol.md), for $\left(\frac{q}{p}\right)$, $\left(\frac{k}{p}\right)$ and $\left(\frac{k}{q}\right)$
-- [Prime number](../../../NumberTheory/primes-primality/prime-number.md), for the primes $p$ and $q$
-
-## Proof depends on
-
-- [Hasse–Minkowski theorem for representations of rationals](../../../NumberTheory/quadratic-forms-sums-of-squares/hasse-minkowski-representation.md), for the reduction to $\mathbb{R}$ and the fields $\mathbb{Q}_\ell$
-- [Representation by ternary quadratic forms over $\mathbb{Q}_p$ and $\mathbb{R}$](../../../NumberTheory/quadratic-forms-sums-of-squares/ternary-form-local-representation.md), for the local criterion and the isotropy test by a Hilbert symbol
-- [Formula for the $p$-adic Hilbert symbol at an odd prime](../../../NumberTheory/p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for $(-q, p)_p$ and $(-q, p)_q$
-- [Formula for the $2$-adic Hilbert symbol](../../../NumberTheory/p-adic-numbers/hilbert-symbol/dyadic-hilbert-symbol-formula.md), for $(-q, p)_2$
-- [Euler's criterion](../../../NumberTheory/congruences/power-residues-reciprocity/legendre-symbol-and-euler-s-criterion/euler-criterion.md), for $\left(\frac{-1}{p}\right) = 1$ and $\left(\frac{-q}{p}\right) = \left(\frac{-1}{p}\right)\left(\frac{q}{p}\right)$
-- [Unit diagonal forms in at least three variables over $\mathbb{Q}_p$ are isotropic for odd $p$](../../../NumberTheory/p-adic-numbers/hilbert-symbol/diagonal-unit-isotropic.md), for the isotropy of $f$ at the odd primes $\ell \notin \{p, q\}$
-- [Hensel's lemma with a derivative bound](../../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-of-two-mul-add-val-deriva.md), applied to $X^2 - u$ over the complete discrete valuation rings $\mathbb{Z}_p$ and $\mathbb{Z}_q$, for the squares of $\mathbb{Q}_p$ and $\mathbb{Q}_q$
-- [Quadratic reciprocity for a prime congruent to 1 modulo 4](../../../NumberTheory/congruences/power-residues-reciprocity/quadratic-reciprocity-one-mod-four.md), for $\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)$
 
 ## Sources
 
