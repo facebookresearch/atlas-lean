@@ -28,8 +28,8 @@ $$\phi_A = \frac{e^{\beta s} - 1}{e^{\beta s n} - 1}\quad(\beta s \ne 0).$$
 
 ## Depends on
 
-- [Fixation probability in a frequency-dependent Moran process](../../../population-genetics/moran-model/frequency-dependent-moran-fixation-product-formu.md)
-- [The one-third rule for weak selection in the Moran process](../../../population-genetics/moran-model/one-third-rule-under-weak-selection.md)
+- [Fixation probability in a frequency-dependent Moran process](../../../../../population-genetics/moran-model/frequency-dependent-moran-fixation-product-formu.md)
+- [The one-third rule for weak selection in the Moran process](../../../../../population-genetics/moran-model/one-third-rule-under-weak-selection.md)
 
 ## Expansion
 

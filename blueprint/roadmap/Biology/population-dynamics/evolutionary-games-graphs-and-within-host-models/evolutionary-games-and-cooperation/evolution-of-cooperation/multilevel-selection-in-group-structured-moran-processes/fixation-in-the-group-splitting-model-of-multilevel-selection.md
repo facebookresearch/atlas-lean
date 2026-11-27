@@ -35,11 +35,11 @@ For a prisoner's dilemma with benefit $b_0$ and cost $c_0$ of cooperation, the c
 ## Depends on
 
 - [Exponential payoff-to-fitness Moran process: exact fixation probabilities](exponential-payoff-to-fitness-moran-process-exact-fixation-probabilities.md)
-- [Fixation probability in a frequency-dependent Moran process](../../../population-genetics/moran-model/frequency-dependent-moran-fixation-product-formu.md)
+- [Fixation probability in a frequency-dependent Moran process](../../../../../population-genetics/moran-model/frequency-dependent-moran-fixation-product-formu.md)
 
 ## Proof depends on
 
-- [Moran fixation probability](../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
+- [Moran fixation probability](../../../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
 
 ## Expansion
 
