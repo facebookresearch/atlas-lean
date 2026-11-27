@@ -22,6 +22,7 @@ rate below the mutual information.
 - [Polar transform: channel combining/splitting conservation](polar-transform-channel-combining-splitting-conservation.md)
 
 - [Scalar Gaussian channel](scalar-gaussian-channel/README.md)
+- [Polar Codes: Polarization Speed and Scaling Exponents](polarization-speed-and-scaling-exponents/README.md)
 - [Scalar AWGN variational capacity bound](scalar-awgn-variational-capacity-bound/README.md)
 - [Binary symmetric channel capacity computation](binary-symmetric-channel-capacity-computation/README.md)
 - [Log-determinant mutual information of a Gaussian-input linear Gaussian channel](log-determinant-mutual-information-of-a-gaussian/README.md)
