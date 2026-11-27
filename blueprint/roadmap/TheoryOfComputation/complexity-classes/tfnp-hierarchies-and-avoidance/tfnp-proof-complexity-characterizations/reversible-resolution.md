@@ -6,7 +6,7 @@ $$
 C\lor x,\ C\lor\overline x\ \vdash\ C\qquad\text{and}\qquad C\ \vdash\ C\lor x,\ C\lor\overline x ,
 $$
 
-and each application **consumes** its premises: one occurrence of each premise is removed from the multiset and the conclusions are added. The refutation ends once an empty clause has been produced. Size and width are measured as for Resolution. RevRes is a sound restriction of Resolution, closely related to the MaxSAT resolution systems used by MaxSAT solvers, and it is $p$-simulated by unary Sherali–Adams, since the standard simulation of Resolution by Sherali–Adams applied to a RevRes proof yields coefficients bounded by the proof size. **RevResT** (Reversible Resolution with terminals) is a variant that additionally allows designated terminal clauses; it characterizes EOPL.
+and each application **consumes** its premises: one occurrence of each premise is removed from the multiset and the conclusions are added. The refutation ends once an empty clause has been produced. Size and width are measured as for Resolution. RevRes is a sound restriction of Resolution, closely related to the MaxSAT resolution systems used by MaxSAT solvers, and it is $p$-simulated by unary Sherali–Adams, since the standard simulation of Resolution by Sherali–Adams applied to a RevRes proof yields coefficients bounded by the proof size. **RevResT** (Reversible Resolution with terminals) is the restriction of RevRes in which every clause in the final multiset $C_t$ other than $\bot$ must be a weakening of a clause from $F$ (Göös et al., Definition 5); it characterizes EOPL.
 
 ## Depends on
 
