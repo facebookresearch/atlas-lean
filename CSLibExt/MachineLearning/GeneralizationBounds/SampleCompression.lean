@@ -32,7 +32,8 @@ private noncomputable def meanLoss {ι Z : Type*} [Fintype ι] (g : Z → ℝ) (
   (∑ i, g (S i)) / Fintype.card ι
 
 /-- The average loss on the indices not selected by the compression tuple `I`. Repeated
-entries in `I` remove the corresponding sample index only once. -/
+entries in `I` remove the corresponding sample index only once. The value is `0` if no
+unkept indices remain. -/
 noncomputable def compressionValidationRisk {Z H : Type*} {m k : ℕ} (L : H → Z → ℝ)
     (I : Fin k → Fin m) (S : Fin m → Z) (h : H) : ℝ :=
   let V := {i : Fin m // i ∉ Finset.univ.image I}
@@ -251,11 +252,15 @@ private theorem compressionBad_fixed {Z H : Type*} [MeasurableSpace Z] [Measurab
   nlinarith [mul_nonneg (sub_nonneg.mpr hc) hx.le]
 
 /-- **Bounded-loss sample compression** (Shalev-Shwartz and Ben-David, Theorem 30.2 and
-Corollary 30.3). With probability at least `1 - δ` over `m` independent examples, the bound
-holds simultaneously for every ordered tuple of `k` kept indices. Thus the tuple may be chosen
-from the entire sample. The validation risk uses every unkept index and the actual number of
-such indices, including when the kept tuple contains repetitions. If the validation loss is
-zero, only the linear term remains. -/
+Corollary 30.3). Let `S` consist of `m` independent draws from the probability law `D`, let
+`L` be a jointly measurable loss taking values in `[0, 1]`, and let `R` be a measurable
+reconstruction rule. Assume `1 ≤ k`, `2 * k ≤ m`, and `0 < δ < 1`. Set
+`c = k * log (m / δ) / m`, where `log` is the natural logarithm.
+
+With probability at least `1 - δ`, simultaneously for every ordered tuple `I` of `k`
+kept indices, the hypothesis `h = R (S ∘ I)` has expected loss `r` under `D` satisfying
+`r ≤ q + sqrt (4 * c * q) + 8 * c`, where `q` is its mean loss on the unkept indices.
+Repetition in `I` does not remove extra indices. In particular, `r ≤ 8 * c` when `q = 0`. -/
 theorem sampleCompression_generalization {Z H : Type*} [MeasurableSpace Z] [MeasurableSpace H]
     (D : Measure Z) [IsProbabilityMeasure D] {m k : ℕ} (hk : 1 ≤ k) (hm : 2 * k ≤ m)
     (L : H → Z → ℝ) (hL : Measurable fun hz : H × Z => L hz.1 hz.2)
