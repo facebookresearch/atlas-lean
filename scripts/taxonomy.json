@@ -1371,6 +1371,7 @@
   "CSLibExt/Computability/Automata/NA/PlainProduct": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Boolean closure of Büchi automata"},
   "CSLibExt/Computability/Automata/NA/RabinStreett": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Rabin and Streett automata"},
   "CSLibExt/Computability/Automata/PDA/Basic": {"to": "TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata", "title": "Pushdown automata"},
+  "CSLibExt/Computability/Automata/Transducers/CharacterizationSet": {"to": "ComputerScience/program-logics-and-verification", "title": "Testing and runtime verification"},
   "CSLibExt/Computability/Automata/Transducers/Sequential": {"to": "TheoryOfComputation/regular-languages/automata-and-expressions", "title": "Sequential transducers, Mealy and Moore machines"},
   "CSLibExt/Computability/Automata/TwoWayNA/TwoWayDFA": {"to": "TheoryOfComputation/regular-languages/automata-and-expressions", "title": "Two-way finite automata"},
   "CSLibExt/Computability/BusyBeaver": {"to": "TheoryOfComputation/computability", "title": "Busy beaver"},
