@@ -852,7 +852,10 @@ elif "/compare/" in path:
             nodes = [{"id": "Algebra", "kind": "scope", "status": "not_ready", "route": "../roadmap/Algebra/"},
                      {"id": "Algebra/a", "kind": "node", "status": "not_ready", "title": "A",
                       "route": "../roadmap/Algebra/index.html#a"},
-                     {"id": "Algebra/b", "kind": "node", "status": "can_state", "route": "../roadmap/Algebra/b.html"}]
+                     {"id": "Algebra/b", "kind": "node", "status": "can_state", "route": "../roadmap/Algebra/b.html"},
+                     # A node to expand without a usable route is still listed, with no page.
+                     {"id": "Algebra/c", "kind": "node", "status": "not_ready", "title": "C"},
+                     {"id": "Algebra/d", "kind": "node", "status": "not_ready", "title": "D", "route": 7}]
             index = root / "site-src" / "dependencies" / "index.json"
             index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": nodes}))
             script = step["run"]
@@ -862,12 +865,14 @@ elif "/compare/" in path:
             self.assertEqual(published, {"schema": next_task.GRAPH_SCHEMA, "commit": "c" * 40,
                                          "commit_date": "2026-11-27", "nodes": [
                                              {"node_id": "Algebra/a", "title": "A",
-                                              "page": "roadmap/Algebra/index.html#a"}]})
+                                              "page": "roadmap/Algebra/index.html#a"},
+                                             {"node_id": "Algebra/c", "title": "C", "page": None},
+                                             {"node_id": "Algebra/d", "title": "D", "page": None}]})
             # next_task.py reads what the step writes.
             with mock.patch.object(next_task, "request", lambda url: json.dumps(published).encode()):
                 self.assertEqual([item["node_id"] for item in next_task.load_graph({"commit": "c" * 40,
                                                                                     "commit_date": "2026-11-27"})],
-                                 ["Algebra/a"])
+                                 ["Algebra/a", "Algebra/c", "Algebra/d"])
             # An index with no node to expand gives an empty list.
             index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": [nodes[2]]}))
             result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)

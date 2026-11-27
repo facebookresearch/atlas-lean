@@ -644,7 +644,8 @@ jobs:
              then error("the index is not autoform-dag-search/v1 with a kind and a status for each node") else . end
              | {schema: "atlas-graph-tasks/v1", commit: $tasks[0].commit, commit_date: $tasks[0].commit_date,
                 nodes: [.nodes[] | select(.kind == "node" and .status == "not_ready")
-                        | {node_id: .id, title: .title, page: (.route | ltrimstr("../"))}]}
+                        | {node_id: .id, title: .title,
+                           page: (if (.route | type) == "string" then .route | ltrimstr("../") else null end)}]}
              | if any(.nodes[]; (.node_id | type) != "string" or (.node_id | test("\\S") | not))
                   or (.nodes | map(.node_id) | unique | length) != (.nodes | length)
                then error("the index marks a node to expand without an id, or one id twice") else . end' \
