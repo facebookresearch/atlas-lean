@@ -42,7 +42,8 @@ The hook adds:
   itself, its old page of its own if it is boxed, its old box if it has a page of its own, and no route ever
   redirects to itself. At the address of a folder that is gone, a notice page with a plain link to
   where the folder went and an element for each old anchor of its statements; at the old explorer page of a
-  folder that is gone, a notice like the ones render writes for live folders; and
+  folder that is gone, a notice like the ones render writes for live folders, and at that of a folder whose folder
+  page holds nothing below it any more, which keeps its own page, a notice leading to that page; and
   `javascripts/atlas-card-moves.js`, a table of every old address and where it leads, which the pages an old
   explorer link `#node=<old address>` can reach load first, and which rewrites that selection before the explorer
   starts. An old anchor that an element of its old page has now, such as a section heading, stays that
@@ -62,6 +63,7 @@ import re
 import stat
 import subprocess
 from collections import Counter, defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from html.parser import HTMLParser
@@ -235,10 +237,21 @@ class Pages:
         self.nodes: dict[str, Node] = {}
 
     def leaf(self, node_id: object) -> bool:
-        return isinstance(node_id, str) and node_id in self.entries and self.entries[node_id]["kind"] == "node"
+        """Whether render publishes ``node_id`` as a statement: a node of the index, but a folder's own page."""
+        return (isinstance(node_id, str) and node_id in self.entries and self.entries[node_id]["kind"] == "node"
+                and not self.folder_page(node_id))
 
     def folder(self, node_id: object) -> bool:
+        """Whether render publishes ``node_id`` as a folder of the explorer, a scope."""
         return isinstance(node_id, str) and node_id in self.entries and self.entries[node_id]["kind"] == "scope"
+
+    def folder_page(self, node_id: object) -> bool:
+        """Whether render publishes the folder ``node_id``'s own page: as a scope, or, for a folder whose folder page
+        holds nothing below it, plain or transparent, as a node whose route is that page (`<folder>/index.html`)."""
+        if not isinstance(node_id, str) or node_id not in self.entries:
+            return False
+        entry = self.entries[node_id]
+        return entry["kind"] == "scope" or (entry["kind"] == "node" and entry["path"] == f"{ROOT}/{node_id}/index.html")
 
     def __getitem__(self, node_id: str) -> Node:
         if node_id not in self.nodes:
@@ -575,7 +588,8 @@ def ancestors(address: str):
         yield address
 
 
-def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str]]) -> dict[tuple[str, str], str]:
+def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str]],
+            served: frozenset[str] = frozenset()) -> dict[tuple[str, str], str]:
     """Every address the ledger's history gave a statement page or a folder and the site no longer publishes, by
     kind (`page` or `folder`) and address, with the published statement or folder it leads to now.
 
@@ -601,8 +615,21 @@ def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str
     address then (release). So a fallback never follows a later or earlier holder of its parent's path. An address the
     rows lead to no published page or folder is an error. A retired statement's address that holds its replacement, a
     statement in place, is kept too, leading to itself: redirects() keeps only the route the replacement does not
-    have itself; held by another article, it is an error."""
-    where = {("page", node_id): node_id for node_id, entry in pages.entries.items() if entry["kind"] == "node"}
+    have itself; held by another article, it is an error.
+
+    A folder whose own page render publishes is there at every point of the replay: a scope, and a folder whose
+    folder page holds nothing below it, such as one left when everything below it moved away, which render indexes as
+    a node at its own page (Pages.folder_page), plain or transparent; and so is a folder of ``served``, whose folder
+    page the site source has, so that MkDocs serves it, though render's index does not list it. Each keeps its own
+    address, so no route is inferred or kept for it, and its page is never written over. A folder of either of the last
+    two kinds, a page-only folder, holds its own address but not those above it: the search for the gone folders above
+    an address a row leaves goes on past it (enclosed), so that a gone folder keeps a route though a page-only folder
+    is left below it. What is bound to a page-only folder that render indexes leads to its page, which the notices
+    link to and the explorer selects; what is bound to one of ``served``, which the explorer cannot select, leads where
+    the nearest folder above it whose page render publishes leads, an explorer fallback. A retired card's or
+    statement's final replacement may be a folder whose own page render publishes either way; one render publishes no
+    page for, of any kind, is an error."""
+    where = {("page", node_id): node_id for node_id in pages.entries if pages.leaf(node_id)}
     found: dict[tuple[str, str], str] = {}
     # The last addresses of retired statements, which may hold their replacement in place.
     retired_pages: set[str] = set()
@@ -621,7 +648,16 @@ def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str
 
     # The binding that holds each folder address at this point of the replay, the folders it holds by a fallback, and
     # the bindings that are fallbacks.
-    holding = {node_id: bind(endpoint=node_id) for node_id, entry in pages.entries.items() if entry["kind"] != "node"}
+    holding = {node_id: bind(endpoint=node_id) for node_id in pages.entries if pages.folder_page(node_id)}
+    # The bindings of the page-only folders: each holds its own address, and the search for gone folders above an
+    # address goes on past it (enclosed). A folder of ``served`` is bound, shallowest first, to what holds the nearest
+    # folder above it, so that what is bound to it leads to a page the explorer can select.
+    page_only = {number for node_id, number in holding.items() if not pages.folder(node_id)}
+    for folder in sorted(served - holding.keys(), key=lambda folder: (folder.count("/"), folder)):
+        above = next((above for above in ancestors(folder) if above in holding), None)
+        if above is not None:
+            holding[folder] = bind(holding[above])
+            page_only.add(holding[folder])
     inferred: set[str] = set()
     fallbacks: set[int] = set()
     # The binding that gives each old folder address its route, and the folders whose route a row said.
@@ -640,7 +676,8 @@ def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str
         need(article in replacements, f"{LEDGER}: a retired {what}'s replacements end at {article}, which {RECEIPT} "
              "does not list")
         kind, node = replacements[article]
-        need((kind == "folder" or what == "statement") and (pages.leaf(node) if kind == "page" else pages.folder(node)),
+        need((kind == "folder" or what == "statement")
+             and (pages.leaf(node) if kind == "page" else pages.folder_page(node)),
              f"{LEDGER}: a retired {what}'s replacements end at {article}, whose {kind} {node} the site does not "
              "publish")
         return node
@@ -648,7 +685,8 @@ def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str
     def enclosed(address: str) -> None:
         """The folders that held ``address`` at this point: one that is gone is bound to the nearest one above it that
         is not, a fallback, farthest first, so that each is bound to the one above it; the first fallback of a folder
-        whose route no row said is its route, until an earlier one."""
+        whose route no row said is its route, until an earlier one. A page-only folder binds the gone folders below
+        it, and the search goes on above it."""
         missing = []
         for above in ancestors(address):
             if above in holding:
@@ -659,7 +697,10 @@ def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str
                     inferred.add(folder)
                     if folder not in claimed:
                         route[folder] = source
-                return
+                if holding[above] not in page_only:
+                    return
+                missing = []
+                continue
             missing.append(above)
         raise CardDataError(f"{LEDGER}: {address} is in no published folder")
 
@@ -731,7 +772,7 @@ def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str
              f"{LEDGER}: the last address {page} of a retired statement is another article's")
     found.update({("folder", folder): resolve(number) for folder, number in route.items()})
     return {key: endpoint for key, endpoint in found.items()
-            if not (pages.leaf(key[1]) if key[0] == "page" else pages.folder(key[1]))
+            if not (pages.leaf(key[1]) if key[0] == "page" else pages.folder_page(key[1]) or key[1] in served)
             or (key[0] == "page" and key[1] in retired_pages)}
 
 
@@ -885,10 +926,43 @@ def moves_script(moves: dict[str, str]) -> str:
     )
 
 
+def left_address(row: tuple[str, ...]) -> str:
+    """The address a row of the ledger leaves: a move's old address, a retirement's last one."""
+    return row[1] if row[0] in ("page", "folder") else row[2]
+
+
+def served_folders(ledger: Ledger, pages: Pages, served_page: Callable[[str], bool]) -> frozenset[str]:
+    """The folders the history can ask about, one a row names or one above an address a row names, whose folder page
+    the site source has (``served_page``, from a folder's address) though render publishes no page of its own for it
+    (Pages.folder_page)."""
+    candidates: set[str] = set()
+    for row in ledger.rows:
+        for address in (row[1:3] if row[0] in ("page", "folder") else row[2:3]):
+            if row[0] in ("folder", "card"):
+                candidates.add(address)
+            candidates.update(ancestors(address))
+    return frozenset(folder for folder in candidates
+                     if folder != ROOT and not pages.folder_page(folder) and served_page(folder))
+
+
+def routes(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str]],
+           served_page: Callable[[str], bool]) -> tuple[dict[tuple[str, str], str], frozenset[str]]:
+    """history() of the ledger, with the folders of served_folders, and those folders: what redirects() keeps, and
+    what scripts/cards.py's check of a change says of an emptied folder whose folder page it removes."""
+    served = served_folders(ledger, pages, served_page)
+    return history(ledger, pages, replacements, served), served
+
+
 def redirects(site: Site, ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str]], docs: Path) -> None:
-    """The redirects of the move ledger, added to ``site``, all from one resolution of its history, with the live
-    article each retirement ends at from ``replacements``."""
-    found = history(ledger, pages, replacements)
+    """The redirects of the move ledger, added to ``site``, all from one resolution of its history (routes), with the
+    live article each retirement ends at from ``replacements``. A folder whose folder page the site source ``docs``
+    has is there (history()), and its page, which MkDocs publishes from that source, is never written over: it takes
+    the old anchors of the statements that left it. A page-only folder, whose folder page holds nothing below it any
+    more, has no explorer page of its own; its old explorer page, if the site source has none, leads to its page, which
+    loads the explorer's rewrite table as the pages of the folders above an old address do. No explorer link is
+    rewritten for an address render publishes now, whatever holds it."""
+    found, served = routes(ledger, pages, replacements,
+                           lambda folder: (docs / ROOT / folder / "README.md").is_file())
     # A statement's old route was its box on its folder's page or a page of its own, by whether it had a
     # declaration kind then; the ledger does not say which, and a statement credited or uncredited since has another
     # route now. So every old address of a statement keeps both: its old anchor and a notice at `<address>.html`.
@@ -905,10 +979,10 @@ def redirects(site: Site, ledger: Ledger, pages: Pages, replacements: dict[str, 
         page = f"{ROOT}/{address}.html"
         if target.path != page:
             site.files[source_path(page)] = notice(page, href(page, target), [])
-        if pages.folder(folder):
-            folder_page = pages[folder].path
-            if (target.path, target.fragment) != (folder_page, slug):
-                site.anchors.setdefault(folder_page, []).append((slug, moved_element(slug, folder_page, target)))
+        folder_page = (pages[folder].path if pages.folder_page(folder)
+                       else f"{ROOT}/{folder}/index.html" if folder in served else None)
+        if folder_page is not None and (target.path, target.fragment) != (folder_page, slug):
+            site.anchors.setdefault(folder_page, []).append((slug, moved_element(slug, folder_page, target)))
     # A folder that is gone: a notice with an element for each old anchor of its statements, and its old explorer
     # page, as render writes those of the live folders.
     for (kind, folder), endpoint in sorted(found.items()):
@@ -921,20 +995,32 @@ def redirects(site: Site, ledger: Ledger, pages: Pages, replacements: dict[str, 
         if not (docs / scope).exists():
             explorer = f"dependencies/scopes/{folder}.html"
             site.files[scope] = notice(explorer, href(explorer, pages[endpoint]), [])
-    # An explorer link names a node, and one that leads to its own node needs no rewrite.
-    served = {key: endpoint for key, endpoint in found.items() if key[1] != endpoint}
-    if served:
+    # A page-only folder above an address a row leaves held what left it, so render wrote its explorer page then, and
+    # writes none now: that old address leads to the folder's own page, the document that survives.
+    for folder in sorted({above for row in ledger.rows for above in ancestors(left_address(row))}):
+        if folder == ROOT or pages.folder(folder) or not (pages.folder_page(folder) or folder in served):
+            continue
+        scope = f"dependencies/scopes/{folder}.md"
+        if not (docs / scope).exists():
+            explorer = f"dependencies/scopes/{folder}.html"
+            target = pages[folder] if pages.folder_page(folder) else Node(True, f"{ROOT}/{folder}/index.html", "", "")
+            site.files[scope] = notice(explorer, href(explorer, target), [])
+    # An explorer link names a node: one that leads to its own node needs no rewrite, and one naming a node render
+    # publishes now, whatever holds that address, is that node's and is never rewritten.
+    rewritten = {key: endpoint for key, endpoint in found.items() if key[1] != endpoint and key[1] not in pages.entries}
+    if rewritten:
         # A statement and a folder beside it with its name share one node, and the statement's way is kept.
-        table = {address: endpoint for (kind, address), endpoint in sorted(served.items()) if kind == "folder"}
-        table.update({address: endpoint for (kind, address), endpoint in sorted(served.items()) if kind == "page"})
+        table = {address: endpoint for (kind, address), endpoint in sorted(rewritten.items()) if kind == "folder"}
+        table.update({address: endpoint for (kind, address), endpoint in sorted(rewritten.items()) if kind == "page"})
         site.files[SCRIPT] = moves_script(table)
-        # The pages an old explorer link reaches: the published folders above each old address (render's notices for
-        # old explorer pages lead there) and where each folder that is gone leads.
-        landing = {endpoint for (kind, _), endpoint in served.items() if kind == "folder"}
-        for _, address in served:
-            landing.update(folder for folder in ancestors(address) if pages.folder(folder))
-        for folder in sorted(landing):
-            page = pages[folder].path
+        # The pages an old explorer link reaches: the own page of each folder above each old address, a scope's or a
+        # page-only folder's (render's notices for old explorer pages lead to the one, this hook's to the other), and
+        # where each folder that is gone leads.
+        landing = {pages[endpoint].path for (kind, _), endpoint in rewritten.items() if kind == "folder"}
+        for _, address in rewritten:
+            landing.update(pages[folder].path if pages.folder_page(folder) else f"{ROOT}/{folder}/index.html"
+                           for folder in ancestors(address) if pages.folder_page(folder) or folder in served)
+        for page in sorted(landing):
             source = posixpath.relpath(SCRIPT, posixpath.dirname(page))
             site.head[page] = f'<script src="{attribute(quote(source, safe="/"))}"></script>'
     for path in [*site.files, STYLE]:

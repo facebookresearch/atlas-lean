@@ -66,6 +66,7 @@ own row links no Lean declaration; they are data only, and nothing else here rea
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -917,7 +918,8 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                                   "`## Background` a card links another card only through its main statement")
     for cycle in cycles(teaching):
         warnings.append("`## Background` links go round: " + " -> ".join(node_id(path / "README.md") for path in cycle))
-    errors += check_moves(annotations, cards, base_ledger, dependencies is not None, base_annotations, renames)
+    errors += check_moves(annotations, cards, base_ledger, dependencies is not None, base_annotations, renames,
+                          notes=warnings)
     pin = mathlib_pin()
     for folder, card in cards.items():
         readme = folder / "README.md"
@@ -1030,24 +1032,26 @@ class LiveFolders:
 
 def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: card_moves.BaseLedger | None = None,
                 required: bool = False, base_annotations: dict[Path, dict] | None = None,
-                renames: list[tuple[str, str]] | None = None, files: card_moves.Files | None = None) -> list[str]:
+                renames: list[tuple[str, str]] | None = None, files: card_moves.Files | None = None,
+                notes: list[str] | None = None) -> list[str]:
     """The errors of the move ledger: the frozen scripts/card-moves.jsonl and the fragments of scripts/card-moves.d/,
     read as one logical ledger (scripts/card_moves.py), each row named by its file and line. First the rules among
     the rows that need no other file, card_moves.check's, which the required check of every change runs on its own
     (`python scripts/card_moves.py check`): with ``base``, the base commit's ledger, they hold the ledger to it
     (base_problems, stamp_problems, guard, the guard's live folders being this checkout's, LiveFolders). Then each
     chain against the tree: a moved page or folder is no longer at its old path, and no page or folder of another
-    article holds that address; a page ends at a live statement page and a folder at a live folder page with that id,
-    or at a card a retirement row then replaces; a retired card is no card any more, its id no page's, and what
-    replaces it is one; a page ends at the address a statement's retirement row records for it, its id no page's or
-    folder's any more, and its replacements end at a live statement page or folder page, through any retirement on
+    article holds that address (each error names the row that moves it: a page or folder still there, or made again
+    there, would hide the redirect); a page ends at a live statement page and a folder at a live folder page with
+    that id, or at a card a retirement row then replaces; a retired card is no card any more, its id no page's, and
+    what replaces it is one; a page ends at the address a statement's retirement row records for it, its id no page's
+    or folder's any more, and its replacements end at a live statement page or folder page, through any retirement on
     the way; and no live page or folder of another article holds a retired address (a page or folder page with no id
     is another article's), but for the final replacement. ``required`` (the strict check): the frozen file must
     exist. With ``base_annotations``, the base commit's rows, and ``renames``, the roadmap files Git finds renamed
     since (old and new path below roadmap/), the rows of the fragments the base does not have, in the ledger's order,
-    account for every change since the base (reconcile), the base's rows being published history. ``files``: the
-    ledger's files as the caller read them (the moves command reads them once, to check and hash the same bytes),
-    instead of the checkout's."""
+    account for every change since the base (reconcile), the base's rows being published history; reconcile's
+    advisory notes go to ``notes``, which check reports as warnings. ``files``: the ledger's files as the caller read
+    them (the moves command reads them once, to check and hash the same bytes), instead of the checkout's."""
     errors: list[str] = []
     if files is None:
         try:
@@ -1097,14 +1101,17 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: ca
         return at
 
     ids_at = {node_id(page): annotation.get("id") for page, annotation in annotations.items() if page.is_file()}
+    # The row that moves each address, which a message about the address names: an address moves once.
+    moved_by = {(row.kind, row.left): row.where for row in rows if row.kind in ("page", "folder")}
     for kind, chain in chains.items():
         for old in sorted(chain):
             here = (wiki.ROADMAP / (f"{old}/README.md" if kind == "folder" else f"{old}.md"))
             other = (wiki.ROADMAP / (f"{old}.md" if kind == "folder" else f"{old}/README.md"))
+            # A page or folder at an address a row leaves, still there or made again, would hide its redirect.
             if here.is_file():
-                errors.append(f"{MOVES}: the {kind} {old} moved but is still there")
+                errors.append(f"{moved_by.get((kind, old), MOVES)}: the {kind} {old} moved but is still there")
             elif other.is_file() and ids_at.get(old) != chain[old][1]:
-                errors.append(f"{MOVES}: {old} moved as a {kind}, and another article's "
+                errors.append(f"{moved_by.get((kind, old), MOVES)}: {old} moved as a {kind}, and another article's "
                               f"{'page' if kind == 'folder' else 'folder'} now holds the address")
             # Followed to its end, the article it ends as, unless the moves go round (card_moves.check).
             seen, at, article_id = {old}, *chain[old]
@@ -1166,9 +1173,19 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: ca
             data = base.data.get(path, current.get(path))
             if data is not None:
                 published_rows += [row for row in parse_ledger_rows(data) if isinstance(row, dict)]
+        cache: list[tuple[dict | None, str | None]] = []
+
+        def route_of(folder: str) -> tuple[str | None, str | None]:
+            """Where the site hook leads the old address of ``folder`` on the checkout (site_routes, once), and None;
+            or None and why that cannot be told."""
+            if not cache:
+                cache.append(site_routes(files, annotations))
+            found, problem = cache[0]
+            return (None, problem) if found is None else (found.get(("folder", folder)), None)
+
         errors += reconcile(base_annotations, annotations, cards,
                             [row for row in rows if ledger.fresh is None or row.path in ledger.fresh], published_rows,
-                            retired, finals, renames or [], statements, successors, ledger.hint)
+                            retired, finals, renames or [], statements, successors, ledger.hint, rows, notes, route_of)
     return errors
 
 
@@ -1210,12 +1227,106 @@ def articles(annotations: dict[Path, dict], live: bool) -> list[Article]:
     return found
 
 
+_HOOK: list = []
+
+
+def site_hook():
+    """hooks/card_pages.py beside this script's folder, which MkDocs loads by path: the module, loaded once, or None
+    when it cannot be loaded."""
+    if not _HOOK:
+        try:
+            path = Path(__file__).resolve().parent.parent / "hooks" / "card_pages.py"
+            spec = importlib.util.spec_from_file_location("atlas_cards_site_hook", path)
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = module
+            spec.loader.exec_module(module)
+        except Exception:  # noqa: BLE001 - said by the caller: what the hook does cannot be told
+            module = None
+        _HOOK.append(module)
+    return _HOOK[0]
+
+
+def roadmap_markdown(top: Path | None = None):
+    """The roadmap's Markdown files below ``top`` (the whole roadmap by default) that pinned Autoform reads, as it
+    finds them (graph.py, _discover_nodes): every regular `*.md` file, with hidden directories and hidden files, whose
+    names start with a dot, left out at any depth; as pairs of the directory, relative to the roadmap (`.` for the
+    roadmap itself), and the file's name."""
+    for directory, folders, names in os.walk(top or wiki.ROADMAP):
+        folders[:] = [name for name in folders if not name.startswith(".")]
+        here = Path(directory).relative_to(wiki.ROADMAP).as_posix()
+        for name in names:
+            if (name.endswith(".md") and not name.startswith(".")
+                    and stat.S_ISREG(os.lstat(Path(directory) / name).st_mode)):
+                yield here, name
+
+
+def render_index(root: str = "roadmap") -> dict[str, dict]:
+    """Render's search index of the checkout's roadmap as pinned Autoform writes it, by id, with each entry's kind and
+    a folder page's document, the entries hooks/card_pages.py's Pages reads: the roadmap's own scope (``root``); a node
+    for each page, any `<address>.md` that roadmap_markdown finds but a folder page; and for each folder with a folder
+    page, a scope when anything is below it, a page or another folder page at any depth, or else a node whose document
+    is the folder's own page, plain or transparent alike. Directories without a folder page, and hidden ones with all
+    they hold, have no entry."""
+    entries = {root: {"kind": "scope", "path": f"{root}/index.html", "fragment": "", "title": root}}
+    filled: set[str] = set()
+    folders: list[str] = []
+    for here, name in roadmap_markdown():
+        if name == "README.md":
+            if here != ".":
+                folders.append(here)
+                filled.update(card_moves.ancestors(here))
+            continue
+        node = name[:-3] if here == "." else f"{here}/{name[:-3]}"
+        entries[node] = {"kind": "node", "path": f"{root}/{node}.html", "fragment": "", "title": node}
+        filled.update(card_moves.ancestors(node))
+    for folder in folders:
+        entries[folder] = {"kind": "scope" if folder in filled else "node", "path": f"{root}/{folder}/index.html",
+                           "fragment": "", "title": folder}
+    return entries
+
+
+def site_routes(files: card_moves.Files, annotations: dict[Path, dict]) -> tuple[dict | None, str | None]:
+    """The routes the site hook keeps for the ledger ``files`` once the checkout is built: hooks/card_pages.py's own
+    routes (history()), with render's index as render_index gives it, the site source being the roadmap, and each
+    retirement's final replacement where the annotations put it; by kind and old address, the page or folder each
+    leads to, and None; or None and why they cannot be told."""
+    hook = site_hook()
+    if hook is None:
+        return None, "the site hook, hooks/card_pages.py, cannot be loaded"
+    replacements = {annotation["id"]: ("folder" if page.name == "README.md" else "page", node_id(page))
+                    for page, annotation in annotations.items()
+                    if isinstance(annotation.get("id"), str) and page.is_file()}
+    try:
+        ledger = hook.read_ledger([(path, data.decode("utf-8")) for path, data in files])
+        found, _ = hook.routes(ledger, hook.Pages(render_index(hook.ROOT)), replacements,
+                               lambda folder: (wiki.ROADMAP / folder / "README.md").is_file())
+    except Exception as error:  # noqa: BLE001 - said, not raised: the ledger's own errors are reported apart
+        return None, str(error) if isinstance(error, hook.CardDataError) else f"{type(error).__name__}: {error}"
+    return found, None
+
+
+def emptied(address: str) -> bool:
+    """Whether the folder ``address`` holds no page at any depth in the checkout: no file a page row can name (a
+    `<address>.md` other than a folder page, `README.md`, that pinned Autoform reads, roadmap_markdown), whatever folder
+    pages are left below it. A hidden file or a file in a hidden directory is no page. A folder that is not there holds
+    none; a folder that holds only folders, each holding pages, holds pages."""
+    folder = wiki.ROADMAP / address
+    try:
+        if not stat.S_ISDIR(os.lstat(folder).st_mode):
+            return True
+    except OSError:
+        return True
+    return not any(name != "README.md" for _, name in roadmap_markdown(folder))
+
+
 def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict], cards: dict[Path, Card],
               fresh: list[card_moves.LedgerRow], published_rows: list[dict], retired: dict[str, tuple[str, str]],
               finals: dict[str, str | None], renames: list[tuple[str, str]],
               statements: dict[str, tuple[str, str]] | None = None,
               successors: dict[str, str | None] | None = None,
-              hint: Callable[[card_moves.LedgerRow], str] = lambda row: "") -> list[str]:
+              hint: Callable[[card_moves.LedgerRow], str] = lambda row: "",
+              rows: list[card_moves.LedgerRow] | None = None, notes: list[str] | None = None,
+              route_of: Callable[[str], tuple[str | None, str | None]] | None = None) -> list[str]:
     """Every change of address or identity since the base commit, against the rows added since (``fresh``: the rows
     of the fragments the base does not have, in the ledger's order; ``published_rows``, the base's), with one map of
     who owns what. An article of the base is found in the checkout by its `id`; one without an `id` by its
@@ -1229,7 +1340,16 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     ``successors``, the live article each one's replacements end at). Afterwards every article stands where the rows
     leave it and keeps its `id`, or is a statement page the rows retire; an address that changed hands is a retired
     card's or statement's, held by its final replacement; and every card of the base that is no card any more has
-    its retirement. A failing row of a fragment ends with what ``hint`` says of it (check_moves)."""
+    its retirement. A failing row of a fragment ends with what ``hint`` says of it (check_moves).
+
+    A plain folder of the base (no card) that is gone with no row of its own is no error when its folder page is
+    removed, the file itself, not its annotation row alone; no other article, page or folder, holds its address, nor
+    any file there; the folder is emptied, holding no page at any depth (emptied); a row of the whole ledger ``rows``
+    (the frozen file's and every fragment's, published or new) leaves an address below it; and the site hook keeps a
+    route for its old address, as ``route_of`` replays the ledger on the checkout with the hook's own history()
+    (site_routes). An advisory note in ``notes`` then says where that route leads, as a row says it or as the hook
+    infers it, in the ledger's order. Otherwise it stays an error: another article holding its address is said; with
+    no row below it, its old address leads nowhere only when the hook has no route for it either."""
     statements, successors = statements or {}, successors or {}
     errors: list[str] = []
     base, head = articles(base_annotations, live=False), articles(annotations, live=True)
@@ -1352,6 +1472,53 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
                 del owner[("page", row["page"])]
 
     # Every article of the base stands where the rows leave it, or is gone with its retirement.
+    every_row = fresh if rows is None else rows
+
+    def removed(old: Article) -> str | None:
+        """For an article of the base gone with no row moving or retiring it: its error, or None for a folder whose
+        folder page may go, an advisory note then saying where its old address leads."""
+        address, known = old.address, old.id or "no id"
+        generic = (f"{MOVES}: {address} ({known}) is gone, and no row moves it; an article keeps its address or moves "
+                   "with its row")
+        # A card goes by its retirement, and a folder page left in place, its annotation row deleted, is not gone.
+        if old.kind != "folder" or old.card or os.path.lexists(wiki.ROADMAP / address / "README.md"):
+            return generic
+        occupant = head_at.get(("page", address)) or head_at.get(("folder", address))
+        if occupant is not None or os.path.lexists(wiki.ROADMAP / f"{address}.md"):
+            final = finals.get(old.id) if old.id in retired else successors.get(old.id)
+            if occupant is not None and occupant.id is not None and occupant.id in (old.id, final):
+                return generic
+            holder = ("an article with no id" if occupant is None or occupant.id is None
+                      else f"another article's {occupant.kind}")
+            return (f"{MOVES}: {address} ({known}) is gone, and no row moves it; {holder} now holds its address, which "
+                    "changes hands only by a retirement, to its final replacement")
+        if not emptied(address):
+            return generic
+        below = [row for row in every_row if row.left.startswith(f"{address}/")]
+        route, problem = route_of(address) if route_of is not None else (None, "the site hook's routes are not given")
+        if problem is not None:
+            return (f"{MOVES}: {address} ({known}) is emptied and its folder page is gone, but where the site hook "
+                    f"would lead its old address cannot be told: {problem}")
+        if not below:
+            if route is not None:
+                return generic
+            return (f"{MOVES}: {address} ({known}) is emptied and its folder page is gone, but no row leaves an "
+                    "address below it and none moves or retires it, so its old address would lead nowhere: add the row "
+                    "of the statement that moved out of it, or keep its folder page")
+        if route is None:
+            return (f"{MOVES}: {address} ({known}) is emptied and its folder page is gone, but the site hook's replay "
+                    f"of the ledger keeps no route for its old address, though {below[-1].where} leaves an address "
+                    "below it: keep its folder page")
+        said = [row for row in every_row if row.kind in ("folder", "card") and row.left == address]
+        more = f" and {len(below) - 1} more" if len(below) > 1 else ""
+        how = (f"as {said[-1].where} says" if said else
+               "the route the site hook infers from the ledger in its order, from the rows that leave addresses below "
+               f"it ({below[-1].where}{more})")
+        if notes is not None:
+            notes.append(f"{MOVES}: {address} ({known}) is emptied and its folder page is gone; its old address will "
+                         f"lead to {route}, {how}")
+        return None
+
     for old in base:
         new = match.get(id(old))
         moved_to = where[id(old)]
@@ -1368,9 +1535,10 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
             elif expected is None and new.id is not None and new.id in used:
                 errors.append(f"{MOVES}: {new.address} took {new.id}, which another article had")
         elif moved_to == (old.kind, old.address) and not gone:
-            # Gone, and no row moves it: its old address would lead nowhere, and could be taken by another.
-            errors.append(f"{MOVES}: {old.address} ({old.id or 'no id'}) is gone, and no row moves it; an article "
-                          "keeps its address or moves with its row")
+            # Gone, and no row moves it: its old address would lead nowhere, and could be taken by another; unless it
+            # is the folder page of an emptied folder whose old address the site hook keeps a route for (removed).
+            if (error := removed(old)) is not None:
+                errors.append(error)
         elif moved_to != (old.kind, old.address) and not gone:
             landed = head_at.get(moved_to)
             if landed is None:

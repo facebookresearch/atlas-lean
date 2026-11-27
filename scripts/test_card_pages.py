@@ -814,6 +814,190 @@ class RedirectTests(unittest.TestCase):
         self.assertTrue(shown.endswith('</div><h2 id="idea">Idea</h2></div>'))
 
 
+def node_folder(node_id: str, title: str | None = None, transparent: bool = False) -> dict:
+    """An index entry of a folder whose folder page holds nothing below it, as pinned render writes one: a node at
+    the folder's own page, plain or transparent."""
+    return {"id": node_id, "kind": "node", "route": f"../roadmap/{node_id}/index.html",
+            "title": title or node_id.rsplit("/", 1)[-1], "scope": node_id.rsplit("/", 1)[0], "status": "planned",
+            "result": False, **({"navigation": "transparent"} if transparent else {})}
+
+
+class LeftoverFolderPageTests(unittest.TestCase):
+    """A folder page left in the site source when everything below it moved away, which render indexes as a node at the
+    folder's own page, plain or transparent (as TheoryOfComputation/not-yet-classified/part-03/part-18 was left), or
+    does not index at all, is there: it keeps its own address and its page, so no route is inferred or kept for it,
+    and its old explorer page, which render no longer writes, leads to its page. The search for gone folders above an
+    address a row leaves goes on past it. What is bound to a folder render indexes leads to its page; what is bound to
+    one it does not index leads to the nearest folder render publishes above it (history()). Deleted, the same folder
+    is gone, and its inferred route is kept."""
+
+    LINKS = {"_defaults.json": b'{"object": {"type": "lean", "uri": "../.."}}\n'}
+    BASE = [leaf(f"{T}/s/x"), leaf(f"{T}/s/y"), leaf(f"{T}/keep")]
+    # The folder p/q moved to s with its page x, as a folder row moves a folder alone.
+    ROWS = [{"folder": f"{T}/p/q", "to": f"{T}/s", "article_id": af(1)},
+            {"page": f"{T}/p/q/x", "to": f"{T}/s/x", "article_id": af(10)}]
+    SHAPES = {"plain": lambda folder: [node_folder(folder)],
+              "transparent": lambda folder: [node_folder(folder, None, True)], "unindexed": lambda folder: []}
+
+    def assembled(self, rows: list[dict], sources: tuple[str, ...] = (), entries: list[dict] | None = None,
+                  replacements: dict[str, dict[str, str]] | None = None,
+                  absent: tuple[str, ...] = ()) -> tuple[card_pages.Site, str | None]:
+        """What the hook adds, and why it keeps no moved address, on a checkout whose ledger is ``rows``, with the
+        receipt of that commit giving ``replacements``, render's index of BASE and ``entries`` but the folders
+        ``absent``, which have no folder page, and the folder pages ``sources`` in the site source."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            git = ["git", "-C", str(root), "-c", "user.name=Test", "-c", "user.email=test@example.com"]
+            subprocess.run([*git, "init", "-q"], check=True)
+            subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "fixture"], check=True)
+            commit = subprocess.run([*git, "rev-parse", "HEAD"], check=True, capture_output=True,
+                                    text=True).stdout.strip()
+            text = ledger(*rows)
+            made = receipt(commit, text, {}, self.LINKS, replacements=replacements)
+            nodes = index(*self.BASE, *(entries or []))
+            nodes["nodes"] = [entry for entry in nodes["nodes"] if entry["id"] not in absent]
+            files = {"site-src/dependencies/index.json": json.dumps(nodes).encode(),
+                     "scripts/card-moves.jsonl": text.encode(), "build/card-moves.json": json.dumps(made).encode(),
+                     **{f"blueprint/links/{name}": data for name, data in self.LINKS.items()},
+                     **{f"site-src/roadmap/{folder}/README.md": b"# Left\n" for folder in sources}}
+            for path, content in files.items():
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_bytes(content)
+            site, _, unkept = card_pages.assemble(root, root / "site-src")
+            return site, unkept
+
+    @staticmethod
+    def link(text: str) -> str:
+        return text.split('<p><a href="', 1)[1].split('"', 1)[0]
+
+    def test_a_page_only_folder_keeps_its_page_and_its_old_explorer_page_leads_there(self) -> None:
+        # The shape #9947 left: p keeps its folder page, with nothing below it. The site keeps both rows' addresses; p's
+        # page keeps p's, with no route and no notice over it; its old explorer page leads to its page, render writing
+        # none now. Both reader forms of the gone folder's address, <folder>/ and <folder>/index.html, are its notice's
+        # (README.md in the site source), and a page's old address is its notice at <page>.html.
+        for shape, entries in self.SHAPES.items():
+            with self.subTest(shape):
+                site, unkept = self.assembled(self.ROWS, (f"{T}/p",), entries(f"{T}/p"))
+                self.assertIsNone(unkept)
+                self.assertEqual(site.addresses, 2)
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/p/q": f"{T}/s", f"{T}/p/q/x": f"{T}/s/x"})
+                self.assertNotIn(f"roadmap/{T}/p/README.md", site.files)
+                self.assertEqual(self.link(site.files[f"dependencies/scopes/{T}/p.md"]),
+                                 "../../../../../roadmap/A/f/t/p/index.html")
+                self.assertEqual(self.link(site.files[f"roadmap/{T}/p/q/README.md"]), "../../s/index.html")
+                self.assertEqual(self.link(site.files[f"roadmap/{T}/p/q/x.md"]), "../../s/index.html#x")
+
+    def test_an_old_explorer_link_through_a_page_only_folder_is_rewritten(self) -> None:
+        # The only row moves the page p/x out of p, whose folder page stays with nothing below it. A bookmark of p's old
+        # explorer page with #node=A/f/t/p/x reaches p's page through its notice, which keeps the fragment; p's page
+        # loads the explorer's rewrite table, which leads x to s/x and leaves p, a live node, as it is.
+        rows = [{"page": f"{T}/p/x", "to": f"{T}/s/x", "article_id": af(10)}]
+        for shape, entries in self.SHAPES.items():
+            with self.subTest(shape):
+                site, unkept = self.assembled(rows, (f"{T}/p",), entries(f"{T}/p"))
+                self.assertIsNone(unkept)
+                alias = site.files[f"dependencies/scopes/{T}/p.md"]
+                self.assertEqual(self.link(alias), "../../../../../roadmap/A/f/t/p/index.html")
+                self.assertIn("if(!e&&!to.hash)to.hash=location.hash", alias)
+                self.assertEqual(site.head[f"roadmap/{T}/p/index.html"],
+                                 '<script src="../../../../../javascripts/atlas-card-moves.js"></script>')
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/p/x": f"{T}/s/x"})
+                self.assertNotIn(f"roadmap/{T}/p/README.md", site.files)
+
+    def test_the_same_folder_page_deleted_is_inferred_and_kept(self) -> None:
+        # The shape of #10866: p's folder page is gone too, and p leads to its nearest published folder, t.
+        site, unkept = self.assembled(self.ROWS)
+        self.assertIsNone(unkept)
+        self.assertEqual(site.addresses, 3)
+        self.assertEqual(RedirectTests.moves(site), {f"{T}/p": T, f"{T}/p/q": f"{T}/s", f"{T}/p/q/x": f"{T}/s/x"})
+        self.assertEqual(self.link(site.files[f"roadmap/{T}/p/README.md"]), "../index.html")
+
+    def test_what_is_bound_to_a_page_only_folder(self) -> None:
+        # Below p: the gone folder g, which no row speaks of, held the page x. Indexed, p is where g leads; unindexed,
+        # the explorer cannot select it, and g leads to t, the nearest folder render publishes. The page y that left p
+        # itself keeps its old anchor on p's page; a folder row into p leads where g does.
+        rows = [{"page": f"{T}/p/g/x", "to": f"{T}/s/x", "article_id": af(10)},
+                {"page": f"{T}/p/y", "to": f"{T}/s/y", "article_id": af(11)}]
+        for shape, entries in self.SHAPES.items():
+            with self.subTest(shape):
+                target = T if shape == "unindexed" else f"{T}/p"
+                site, unkept = self.assembled(rows, (f"{T}/p",), entries(f"{T}/p"))
+                self.assertIsNone(unkept)
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/p/g": target, f"{T}/p/g/x": f"{T}/s/x",
+                                                             f"{T}/p/y": f"{T}/s/y"})
+                notice = site.files[f"roadmap/{T}/p/g/README.md"]
+                self.assertEqual(self.link(notice), "../../index.html" if shape == "unindexed" else "../index.html")
+                self.assertEqual(RedirectTests.elements(notice), [("x", "../../s/index.html#x")])
+                anchors = "".join(element for _, element in site.anchors[f"roadmap/{T}/p/index.html"])
+                self.assertEqual(RedirectTests.elements(anchors), [("y", "../s/index.html#y")])
+                self.assertNotIn(f"roadmap/{T}/p/README.md", site.files)
+                site, unkept = self.assembled([{"folder": f"{T}/w", "to": f"{T}/p", "article_id": af(2)}], (f"{T}/p",),
+                                              entries(f"{T}/p"))
+                self.assertIsNone(unkept)
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/w": target})
+
+    def test_a_gone_folder_above_a_page_only_folder_keeps_a_route(self) -> None:
+        # e's folder page is gone and q's stays, holding nothing below it, as the page e/q/x left: the search for gone
+        # folders goes on past q, so e keeps a route, to t, with its notice, its old explorer page and the explorer's
+        # rewrite; q keeps its page and its old explorer page leads there. With q's folder page gone too, both lead
+        # to t.
+        rows = [{"page": f"{T}/e/q/x", "to": f"{T}/s/x", "article_id": af(10)}]
+        for shape, entries in self.SHAPES.items():
+            with self.subTest(shape):
+                site, unkept = self.assembled(rows, (f"{T}/e/q",), entries(f"{T}/e/q"), absent=(f"{T}/e",))
+                self.assertIsNone(unkept)
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/e": T, f"{T}/e/q/x": f"{T}/s/x"})
+                self.assertEqual(self.link(site.files[f"roadmap/{T}/e/README.md"]), "../index.html")
+                self.assertEqual(self.link(site.files[f"dependencies/scopes/{T}/e.md"]),
+                                 "../../../../../roadmap/A/f/t/index.html")
+                self.assertEqual(self.link(site.files[f"dependencies/scopes/{T}/e/q.md"]),
+                                 "../../../../../../roadmap/A/f/t/e/q/index.html")
+                self.assertNotIn(f"roadmap/{T}/e/q/README.md", site.files)
+        site, unkept = self.assembled(rows)
+        self.assertIsNone(unkept)
+        self.assertEqual(RedirectTests.moves(site), {f"{T}/e": T, f"{T}/e/q": T, f"{T}/e/q/x": f"{T}/s/x"})
+
+    def test_a_gone_folder_below_a_page_only_folder_leads_to_it(self) -> None:
+        # The mirror: q's folder page is gone and e's stays, holding nothing below it. Indexed, e is where q leads.
+        rows = [{"page": f"{T}/e/q/x", "to": f"{T}/s/x", "article_id": af(10)}]
+        for shape, entries in self.SHAPES.items():
+            with self.subTest(shape):
+                site, unkept = self.assembled(rows, (f"{T}/e",), entries(f"{T}/e"))
+                self.assertIsNone(unkept)
+                target = T if shape == "unindexed" else f"{T}/e"
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/e/q": target, f"{T}/e/q/x": f"{T}/s/x"})
+                self.assertEqual(self.link(site.files[f"roadmap/{T}/e/q/README.md"]),
+                                 "../../index.html" if shape == "unindexed" else "../index.html")
+                self.assertNotIn(f"roadmap/{T}/e/README.md", site.files)
+
+    def test_no_explorer_link_is_rewritten_for_an_address_render_publishes(self) -> None:
+        # A statement page holds the address of the folder e that the page e/x left: e's old folder page leads to t,
+        # but the explorer's #node=A/f/t/e is the live statement's, and is never rewritten.
+        site, unkept = self.assembled([{"page": f"{T}/e/x", "to": f"{T}/s/x", "article_id": af(10)}], (),
+                                      [leaf(f"{T}/e", own_page=True)])
+        self.assertIsNone(unkept)
+        self.assertEqual(RedirectTests.moves(site), {f"{T}/e/x": f"{T}/s/x"})
+        self.assertEqual(self.link(site.files[f"roadmap/{T}/e/README.md"]), "../index.html")
+
+    def test_a_retirement_may_be_replaced_by_a_page_only_folder(self) -> None:
+        # The statement old is retired for the folder p, whose folder page holds nothing below it once the page p/e
+        # left: render indexes p as a node at its page, which is where old leads; the unrelated move is kept too.
+        rows = [{"statement": af(11), "page": f"{T}/old", "replaced_by": af(41)},
+                {"page": f"{T}/p/e", "to": f"{T}/s/y", "article_id": af(10)}]
+        replacements = {af(41): {"kind": "folder", "node": f"{T}/p"}}
+        for shape in ("plain", "transparent"):
+            with self.subTest(shape):
+                site, unkept = self.assembled(rows, (f"{T}/p",), self.SHAPES[shape](f"{T}/p"), replacements)
+                self.assertIsNone(unkept)
+                self.assertEqual(RedirectTests.moves(site), {f"{T}/old": f"{T}/p", f"{T}/p/e": f"{T}/s/y"})
+                self.assertEqual(self.link(site.files[f"roadmap/{T}/old.md"]), "p/index.html")
+        # A replacement render publishes no page for, unindexed or absent, still keeps no moved address.
+        for sources in ((f"{T}/p",), ()):
+            site, unkept = self.assembled(rows, sources, [], replacements)
+            self.assertEqual(unkept, f"{card_pages.LEDGER}: a retired statement's replacements end at {af(41)}, whose "
+                                     f"folder {T}/p the site does not publish")
+
+
 class ReceiptTests(unittest.TestCase):
     """The moved addresses are kept only with the ledger check's receipt of this commit, of its ledger and of its
     annotations, which places each card the history leads to; card data, which they never need, is shown only when its
@@ -1558,6 +1742,43 @@ class SiteBuildTests(unittest.TestCase):
         self.assertIn('<p class="atlas-moved" id="main">', topic)
         self.assertIn('href="../../../../stylesheets/atlas-cards.css"', topic)
         self.assertNotIn("atlas-card\"", site[f"roadmap/{T}/c/index.html"].decode())
+
+    def test_an_old_explorer_bookmark_through_a_page_only_folder_is_rewritten_in_the_built_site(self) -> None:
+        # The only row moves the page p/x out of p, whose folder page stays with nothing below it, indexed as a node at
+        # its own page. In the built site, the bookmark dependencies/scopes/A/f/t/p.html#node=A/f/t/p/x runs its
+        # notice's script to p's own page with the fragment, and p's page loads the rewrite table, which selects
+        # where x went: the alias's script, then the table, run as the browser runs them.
+        docs = self.root / "site-src"
+        source, index_file = docs / f"roadmap/{T}/p/README.md", docs / "dependencies/index.json"
+        saved = index_file.read_text(encoding="utf-8")
+        source.parent.mkdir(parents=True)
+        self.addCleanup(shutil.rmtree, source.parent)
+        self.addCleanup(index_file.write_text, saved, encoding="utf-8")
+        source.write_text(self.READING.format(id=f"{T}/p", body="# Page-only P\n"), encoding="utf-8")
+        nodes = json.loads(saved)
+        nodes["nodes"].append(node_folder(f"{T}/p", "Page-only P"))
+        index_file.write_text(json.dumps(nodes), encoding="utf-8")
+        site = self.build("mkdocs.yml", None, ledger({"page": f"{T}/p/x", "to": f"{T}/c/main", "article_id": af(10)}),
+                          cards={})
+        page = site[f"roadmap/{T}/p/index.html"].decode()
+        self.assertIn("Page-only P", page)
+        self.assertNotIn('class="bp-moved"', page)
+        self.assertIn('<script src="../../../../../javascripts/atlas-card-moves.js"></script></head>', page)
+        alias = site[f"dependencies/scopes/{T}/p.html"].decode()
+        script = next(part for part in alias.split("<script>")[1:] if "location.replace(" in part).split("</script>")[0]
+        harness = (
+            "const vm = require('node:vm'), start = new URL(process.argv[1]); let landing;\n"
+            "vm.runInNewContext(process.argv[2], {URL, decodeURIComponent, document: {getElementById: () => null},\n"
+            "  location: {href: start.href, hash: start.hash,\n"
+            "             replace: (to) => { landing = new URL(to, start.href); }}});\n"
+            "vm.runInNewContext(process.argv[3], {URLSearchParams, location: landing, history: {state: null,\n"
+            "  replaceState: (state, title, to) => { landing = new URL(to, landing); }}});\n"
+            "console.log(JSON.stringify([landing.pathname, new URLSearchParams(landing.hash.slice(1)).get('node')]));")
+        start = f"https://example.invalid/site/dependencies/scopes/{T}/p.html#node={T}/p/x"
+        table = site["javascripts/atlas-card-moves.js"].decode()
+        result = subprocess.run(["node", "-e", harness, start, script, table], capture_output=True, text=True,
+                                check=True)
+        self.assertEqual(json.loads(result.stdout), [f"/site/roadmap/{T}/p/index.html", f"{T}/c/main"])
 
     def test_card_data_of_this_commit_is_shown(self) -> None:
         site = self.build("mkdocs.yml", self.data())
