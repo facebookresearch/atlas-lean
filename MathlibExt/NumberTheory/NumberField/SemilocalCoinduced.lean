@@ -154,8 +154,9 @@ theorem exists_above (v : HeightOneSpectrum (𝓞 E)) :
     exact v.ne_bot (by rw [← hWv, Ideal.under_bot])
   exact ⟨⟨W, hWmax.isPrime, hW0⟩, hWv⟩
 
-/-- **Chosen finite place above a finite place.** A choice, made with `Classical.choose`, of a
-nonzero prime `w` of `𝓞 K` lying over the finite place `v` of `E` (see `comap_above`). -/
+/-- **Chosen finite place above a finite place.** Let `E` be a number field and `K/E` a field
+extension. A choice, made with `Classical.choose`, of a nonzero prime `w` of `𝓞 K` lying over the
+finite place `v` of `E` (see `comap_above`). -/
 noncomputable def above (v : HeightOneSpectrum (𝓞 E)) : HeightOneSpectrum (𝓞 K) := (exists_above E K
   v).choose
 
@@ -910,28 +911,32 @@ namespace NumberField.FiniteSIdele
 
 variable (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
-/-- **Decomposition group at the chosen place above a finite place.** The decomposition group in
-`K ≃ₐ[E] K` of the chosen place `PlaceAbove.above E K v` above the finite place `v` of `E`. -/
+/-- **Decomposition group at the chosen place above a finite place.** Let `K/E` be an extension of
+number fields and `v` a finite place of `E`. The decomposition group in `K ≃ₐ[E] K` of the chosen
+place `PlaceAbove.above E K v` above `v`. -/
 noncomputable abbrev D (v : HeightOneSpectrum (𝓞 E)) : Subgroup (K ≃ₐ[E] K) :=
   NumberField.PlaceDecomp.decomp E K (NumberField.PlaceAbove.above E K v)
 
 section local_modules
 
-/-- **Local units at the chosen place above a finite place.** The units of the completion
-`w.adicCompletion K` at `w = PlaceAbove.above E K v`, written additively, as a `ℤ`-linear
-representation of the decomposition group `D E K v` acting on the completion. -/
+/-- **Local units at the chosen place above a finite place.** Let `K/E` be an extension of number
+fields and `v` a finite place of `E`. The units of the completion `w.adicCompletion K` at
+`w = PlaceAbove.above E K v`, written additively, as a `ℤ`-linear representation of the
+decomposition group `D E K v` acting on the completion. -/
 noncomputable abbrev localUnits (v : HeightOneSpectrum (𝓞 E)) : Rep ℤ (D E K v) :=
   Rep.ofMulDistribMulAction (D E K v) ((NumberField.PlaceAbove.above E K v).adicCompletion K)ˣ
 
-/-- **Local integer units at the chosen place above a finite place.** The units of the integers
-`w.adicCompletionIntegers K` at `w = PlaceAbove.above E K v`, written additively, as a
-`ℤ`-linear representation of `D E K v`. -/
+/-- **Local integer units at the chosen place above a finite place.** Let `K/E` be an extension of
+number fields and `v` a finite place of `E`. The units of the integers `w.adicCompletionIntegers K`
+at `w = PlaceAbove.above E K v`, written additively, as a `ℤ`-linear representation of
+`D E K v`. -/
 noncomputable abbrev localIntegerUnits (v : HeightOneSpectrum (𝓞 E)) : Rep ℤ (D E K v) :=
   Rep.ofMulDistribMulAction (D E K v) ((NumberField.PlaceAbove.above E K v).adicCompletionIntegers
     K)ˣ
 
-/-- The inclusion of the integer units into the units of the completion at the chosen place above
-`v`, as a morphism of representations of `D E K v`. -/
+/-- Let `K/E` be an extension of number fields and `v` a finite place of `E`. The inclusion of the
+integer units into the units of the completion at the chosen place above `v`, as a morphism of
+representations of `D E K v`. -/
 noncomputable def integerUnitsToUnits (v : HeightOneSpectrum (𝓞 E)) : localIntegerUnits E K v ⟶
   localUnits E K v :=
   Rep.ofHom ⟨(Units.map ((NumberField.PlaceAbove.above E K v).adicCompletionIntegers
@@ -1170,8 +1175,9 @@ open scoped NumberField.InfPlaceDecomp
 
 variable (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
-/-- **Chosen infinite place above an infinite place.** A choice, made with `Classical.choose`, of
-an infinite place of `K` restricting to the infinite place `v` of `E` (see `comap_above`). -/
+/-- **Chosen infinite place above an infinite place.** Let `K/E` be an extension of number fields.
+A choice, made with `Classical.choose`, of an infinite place of `K` restricting to the infinite
+place `v` of `E` (see `comap_above`). -/
 noncomputable def above (v : InfinitePlace E) : InfinitePlace K :=
   (InfinitePlace.comap_surjective (k := E) (K := K) v).choose
 
