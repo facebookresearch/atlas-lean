@@ -10,3 +10,4 @@
 - [Hahn–Banach distance formula](inf-dist-eq-s-sup-norm-apply.md)
 - [Separation of convex bodies at positive distance](convex-bodies-separated-by-hyperplane.md)
 - [Hahn–Banach separation of an open convex set from a disjoint convex set](hahn-banach-separation.md)
+- [Strict separation of a point from a closed convex set](strict-separation-of-a-point-from-a-closed-convex-set.md)

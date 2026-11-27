@@ -10,6 +10,10 @@ module
 
 import MathlibExt.GroupTheory.AbelianImagesUltraproducts
 import Mathlib.Algebra.Group.Pi.Hom
+import Mathlib.Basic.Finite.Prod
+import Mathlib.Data.Fintype.Perm
+import Mathlib.Data.ZMod.Basic
+import Mathlib.GroupTheory.Perm.Basic
 
 open MathlibExt.GroupTheory.AbelianImagesUltraproductsKourovka20Problem13Wanted
 
@@ -34,3 +38,19 @@ example (U : Ultrafilter ℕ) (hU : (U : Filter ℕ) ≤ Filter.cofinite)
   apply Subgroup.subset_normalClosure
   have hxy : ∀ᶠ i in (U : Filter ℕ), x i = y i := hU (Filter.eventually_cofinite.mpr h)
   exact hxy.mono fun i hi => show (x i)⁻¹ * y i = 1 by simp [hi]
+
+-- The input product can have nonabelian factors: project onto the cyclic component
+-- in coordinate zero of a product of copies of C₂ × S₃.
+example : ∃ (J : Type) (H : J → Type) (_ : ∀ j, CommGroup (H j)),
+    (∀ j, Finite (H j)) ∧ ∃ ψ : (∀ j, H j) →* Multiplicative (ZMod 2),
+      Function.Surjective ψ := by
+  let A := Multiplicative (ZMod 2)
+  have : Finite A := Finite.of_equiv (ZMod 2) Multiplicative.ofAdd
+  let G (_ : ℕ) := A × Equiv.Perm (Fin 3)
+  have (i : ℕ) : Finite (G i) := by
+    change Finite (A × Equiv.Perm (Fin 3))
+    infer_instance
+  let φ : (∀ i, G i) →* A :=
+    (MonoidHom.fst A (Equiv.Perm (Fin 3))).comp (Pi.evalMonoidHom G 0)
+  exact abelianImageOfProductOfFiniteIsImageOfAbelianProduct_holds A ℕ G
+    ⟨φ, fun a => ⟨fun _ => (a, 1), rfl⟩⟩
