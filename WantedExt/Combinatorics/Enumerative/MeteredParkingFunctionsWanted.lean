@@ -127,14 +127,6 @@ public theorem_wanted meteredParkingCount_one_recursion (n : ℕ) :
         (meteredParkingCount 1 (m + 1) n : ℤ) =
           n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n
 
-/-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
-number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
-public theorem_wanted meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
-    meteredParkingCount 1 3 n = n ^ 3 - 2 * n
-
 /-- **Metered parking functions in which every car is lucky.** Let $m \ge 2$, $n \ge 2$ and
 $t \le m - 1$. The number of $t$-metered $(m, n)$-parking functions in which every car parks in
 its preferred spot is $n(n-1)\cdots(n-t+1) \cdot (n-t)^{m-t}$, where the falling factorial
