@@ -22,11 +22,10 @@ $$S_2 := \frac{a_1}{e_0} \;<\; S^* \;<\; S_3 := \Big(\frac{a_2}{d_2}\Big)^{1/r},
 
 with $S^*$ a root of the remaining prey equation in this window. The number of such roots depends on the Allee threshold $L$.
 3. Varying the Allee threshold $L$, the predator-free equilibrium undergoes a transcritical bifurcation and the coexistence equilibrium undergoes Hopf and saddle-node bifurcations (at the Routh–Hurwitz boundary $\Omega_1\Omega_2 = \Omega_3$, respectively $\Omega_3 = 0$, of its characteristic polynomial $\lambda^3 + \Omega_1\lambda^2 + \Omega_2\lambda + \Omega_3$).
-4. For parameter sets with a stable coexistence state, decreasing the aggregation exponent below a critical $r^* \in (0,1)$ drives the infected prey extinct, $I(t) \to 0$.
 
 ## Expansion
 
-Nonnegativity follows because each right-hand side vanishes on the corresponding coordinate face; boundedness uses a weighted total-biomass Lyapunov function whose decay needs predators to convert less biomass than they consume ($d_2 < d_0$, $d_3 < d_1$). Setting $\dot I = 0$ and $\dot P = 0$ with $I, P > 0$ gives the linear expressions for $P^*$ and $I^*$ in terms of $S^*$, and positivity yields the window. Because $S^r$ has infinite derivative at $0$, the vector field is not Lipschitz on $\{S = 0\}$, which allows extinction in finite time when the Allee effect is strong; small $r$ (strong herding) shields susceptibles, lowers $S^*$ below $S_2 = a_1/e_0$, and removes the disease.
+Nonnegativity follows because each right-hand side vanishes on the corresponding coordinate face; boundedness uses a weighted total-biomass Lyapunov function whose decay needs predators to convert less biomass than they consume ($d_2 < d_0$, $d_3 < d_1$). Setting $\dot I = 0$ and $\dot P = 0$ with $I, P > 0$ gives the linear expressions for $P^*$ and $I^*$ in terms of $S^*$, and positivity yields the window. Because $S^r$ has infinite derivative at $0$, the vector field is not Lipschitz on $\{S = 0\}$, which allows extinction in finite time when the Allee effect is strong; small $r$ (strong herding) shields susceptibles and can lower $S$ below $S_2 = a_1/e_0$, where $\dot I < 0$. The source illustrates this for one specific parameter set with a weak Allee effect and initial data converging to a stable coexistence state (its Theorem 6.1 and Figure 6): below a critical exponent $r^* \in (0,1)$ the infected prey go extinct, $I(t) \to 0$. This is an existence statement for that example, observed numerically, not a result for all parameters, and it is not part of the theorem above.
 
 ## Sources
 

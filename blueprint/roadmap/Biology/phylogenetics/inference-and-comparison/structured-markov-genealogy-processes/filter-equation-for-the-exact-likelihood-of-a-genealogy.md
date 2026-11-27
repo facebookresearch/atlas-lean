@@ -22,10 +22,6 @@ Then the likelihood of the pruned genealogy is $\mathcal L(\mathcal P)=\int w(T,
 
 **Special cases.** The constant-size Moran model gives the Kingman coalescent likelihood, and the linear birth–death–sampling process gives the closed-form birth–death likelihood; general nonlinear compartmental models (SIR, SEIR, multi-host) fall in the same framework.
 
-## Depends on
-
-- [Coalescents](../../../coalescent-theory/coalescents/README.md)
-
 ## Expansion
 
 Given the population history, each event picks which of the existing lineages are its offspring uniformly among those of the right demes; the probability that it is compatible with the observed genealogy, i.e. that exactly the genealogy's emerging lineages are among the $r^u$ produced and none of the other $\ell-s$ lineages are, is the hypergeometric-type binomial ratio. Theorem 1 multiplies these factors over events, and Theorem 2 integrates out the history: $w(t,\cdot)$ is the unnormalized density of $X_t$ jointly with the genealogy observed up to $t$, a Kolmogorov forward equation reweighted by $\phi_u$. Non-locality of genealogies in time is resolved because the factors depend only on the current lineage counts. For nonlinear models the filter equation is solved numerically, for example by particle (sequential Monte Carlo) methods.

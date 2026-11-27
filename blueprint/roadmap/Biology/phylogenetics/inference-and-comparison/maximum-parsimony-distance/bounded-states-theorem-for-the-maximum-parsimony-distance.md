@@ -8,7 +8,7 @@ A character is *convex* on $T$ if $\ell(T, \chi) = |\chi(X)| - 1$, i.e. each sta
 
 **Theorem.**
 1. *(Improved bounded states theorem.)* Every pair with $d_{\mathrm{MP}}(T_1, T_2) \ge 1$ admits an optimal convex character with at most $2\, d_{\mathrm{MP}}(T_1, T_2)$ states, improving the earlier bound $7\, d_{\mathrm{MP}}(T_1, T_2) - 5$.
-2. *(Lower bound.)* For every $r \ge 1$ there are binary trees $T_1, T_2$ on $n = 4r$ leaves with $d_{\mathrm{MP}}(T_1, T_2) = r$ such that some character convex on $T_1$ or $T_2$ with exactly $r + 1$ states attains the distance, while every character with fewer states gives a difference $< r$. Hence $k + 1$ states are sometimes necessary.
+2. *(Lower bound.)* For every $r \ge 1$ there are binary trees $T_1, T_2$ on $n = 4r$ leaves with $d_{\mathrm{MP}}(T_1, T_2) = r$ such that some character convex on $T_1$ or $T_2$ with exactly $r + 1$ states attains the distance, while every character with at most $r$ states that is convex on $T_1$ or on $T_2$ gives a difference $< r$. Hence an optimal *convex* character sometimes needs $d_{\mathrm{MP}} + 1$ states.
 
 ## Depends on
 

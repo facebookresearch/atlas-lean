@@ -10,7 +10,15 @@ with mass-action kinetics.
 
 **Theorem.** Neither $\mathcal{G}_1$ nor $\mathcal{G}_2$, nor any network obtained from them by making some or all reversible reactions irreversible, admits a Hopf bifurcation, for any choice of positive rate constants and total amounts.
 
-**Reduction lemma.** More generally, if a network contains a motif $X_1+X_2\rightleftharpoons X_3\to c+\delta X_2$ ($\delta\in\{0,1\}$) in which $X_3$ occurs nowhere else (together with further structural hypotheses), and the reduced characteristic polynomial of the network with the reverse reaction $X_3\to X_1+X_2$ removed has no purely imaginary roots for any convex parameters, then neither the reduced nor the original network admits a Hopf bifurcation.
+**Reduction lemma (Theorem 3.4 and its corollary).** Let $G$ be a mass-action network satisfying
+
+- (A1) $G$ contains a motif $X_1+X_2\rightleftharpoons X_3\to c+\delta X_2$ with $X_1,X_2,X_3$ distinct species, $\delta\in\{0,1\}$ and $c$ a complex;
+- (A2) $X_3$ appears in no other reaction;
+- (A3) $c$ does not involve $X_1$, $X_2$ or $X_3$;
+- (A4) $X_1$ is not a reactant of any reaction outside the motif;
+- (A5) if other reactions involve $X_2$: (a) when $\delta=1$, any reaction outside the motif with $X_2$ in its product has $X_2$ as a catalyst and does not have $X_1$ in its product; (b) when $\delta=0$, reactions outside the motif have $X_2$ only in their products.
+
+Let $G'$ be $G$ with the reverse reaction $X_3\to X_1+X_2$ removed. Then every reduced characteristic polynomial of the Jacobian of $G$ in convex parameters $(h,\ell)$ is also one of $G'$; hence if no reduced characteristic polynomial of $G'$ has a pair of purely imaginary roots, neither $G$ nor $G'$ admits a Hopf bifurcation.
 
 ## Expansion
 

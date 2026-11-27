@@ -8,12 +8,12 @@ with $\lambda_j$ the eigenvalues of the generator restricted to the unobservable
 
 **Theorem.**
 
-1. A model whose parameters are determined (up to finitely many solutions) by the distribution necessarily returns to $s=N$.
+1. Call a model *solvable* if (i) its transition graph is strongly connected, (ii) it has exactly $2N-1$ transition rate parameters, and (iii) the equations relating the rates to $(A_j,\lambda_j)$ have unique solutions up to discrete symmetries on an open domain of dimension $2N-1$. A solvable model necessarily returns to $s=N$. (The hypothesis matters: the chain $1\to2\to3$ with rates $a,b$ and return $3\to1$, $N=2$, has $s=1$ and $(a,b)$ determined up to swapping, but only two rates, so it is not solvable in this sense.)
 2. For the unbranched chain there is an algorithm producing rational functions $F_n^{\pm}$ with rational coefficients such that
 
 $$k_n^{+} = F_n^{+}(A_1,\dots,A_{N-1},\lambda_1,\dots,\lambda_N), \qquad k_n^{-} = F_n^{-}(A_1,\dots,A_{N-1},\lambda_1,\dots,\lambda_N),$$
 
-so all transition rates are uniquely identifiable from the waiting-time distribution.
+and $k_N=-\sum_jA_j\lambda_j$. So, on the open dense set where all rates are nonzero and the $\lambda_j$ are distinct, all transition rates are uniquely identifiable from the waiting-time distribution.
 3. All solvable models generating the same phase-type distribution share the same lifetime of state $N$ and the same stationary probability of state $N$, so these quantities are model-independent.
 
 ## Expansion
@@ -22,4 +22,4 @@ Vieta's formulas relate the elementary symmetric functions of the $\lambda_j$ to
 
 ## Sources
 
-- O. Radulescu, D. Grigoriev, M. Seiss, M. Douaihy, "Identifying Markov chain models from time-to-event data: an algebraic approach", *Bulletin of Mathematical Biology* 87(1) (2024), 11, Sections 2–4, Propositions 2, 5 and 16 and Theorem 11, <https://doi.org/10.1007/s11538-024-01385-y> (preprint arXiv:2311.03593).
+- O. Radulescu, D. Grigoriev, M. Seiss, M. Douaihy, "Identifying Markov chain models from time-to-event data: an algebraic approach", *Bulletin of Mathematical Biology* 87(1) (2024), 11, Sections 2–4, Definition 4, Propositions 2, 5 and 16, Theorem 11 and Remark 12, <https://doi.org/10.1007/s11538-024-01385-y> (preprint arXiv:2311.03593).

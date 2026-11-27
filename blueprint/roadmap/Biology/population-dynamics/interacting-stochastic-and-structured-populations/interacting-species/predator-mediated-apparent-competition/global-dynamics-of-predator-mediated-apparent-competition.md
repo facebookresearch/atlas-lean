@@ -15,7 +15,17 @@ with $\theta_0=0$ iff $\alpha_1=\alpha_2$. Equilibria include the predator-free 
 2. If $\theta_0<\theta<L$, the unique coexistence equilibrium $P_*$ is globally asymptotically stable.
 3. If $\theta\ge L$, the predator-free equilibrium $E_{uv}$ is globally asymptotically stable.
 
-**Theorem 2.2 (Holling type II).** For saturating responses, analogous thresholds in $\theta$ (with $L_i=\beta_i\gamma_iK_i/(1+\gamma_ih_iK_i)$) give global stability of a semi-coexistence state for small mortality, of the coexistence state $Q_*$ in an intermediate window under explicit parameter conditions, and of $E_{uv}$ for $\theta\ge L$.
+**Theorem 2.2 (Holling type II).** Let $f_i(s)=\gamma_is/(1+\gamma_ih_is)$, so $L_i=\beta_i\gamma_iK_i/(1+\gamma_ih_iK_i)$, and put $\lambda_i=1/(\gamma_ih_i)$. For $0<\theta<L_1$ the semi-coexistence state $Q_1=(u_{Q_1},0,w_{Q_1})$ has
+
+$$u_{Q_1}=\frac{\theta}{(\beta_1-h_1\theta)\gamma_1},\qquad w_{Q_1}=\frac{\beta_1(L_1-\theta)}{\gamma_1f_1(K_1)(\beta_1-h_1\theta)^2},$$
+
+and $Q_2=(0,v_{Q_2},w_{Q_2})$ is given symmetrically for $0<\theta<L_2$. Let $(u_0,v_0,w_0)$ be the initial data.
+1. If $0<\theta<L_1$ and $(K_1,K_2)\in\Lambda_1:=\{K_1\le\lambda_1+u_{Q_1},\ K_2/f_2(K_2)\le w_{Q_1}\}$, with equality in the second condition allowed only when $v_0\le K_2$, then $Q_1$ is globally asymptotically stable.
+2. If $0<\theta<L_2$ and $(K_1,K_2)\in\Lambda_2:=\{K_2\le\lambda_2+v_{Q_2},\ K_1/f_1(K_1)\le w_{Q_2}\}$, with equality in the second condition allowed only when $u_0\le K_1$, then $Q_2$ is globally asymptotically stable.
+3. If $0<\theta<L$, a coexistence equilibrium $Q_*=(u_*,v_*,w_*)$ exists, and $(K_1,K_2)\in\Lambda_*:=\{K_1\le\lambda_1+u_*,\ K_2\le\lambda_2+v_*\}$, then $Q_*$ is globally asymptotically stable.
+4. If $\theta\ge L$, $E_{uv}$ is globally asymptotically stable.
+
+The sets $\Lambda_1,\Lambda_2,\Lambda_*$ are mutually disjoint; for $(K_1,K_2)$ outside their union and $0<\theta<L$ the global dynamics are left open, and a coexistence equilibrium need not exist for $\theta<L$.
 
 ## Expansion
 
@@ -23,4 +33,4 @@ For $\theta\ge L$ the predator cannot grow even when both prey are at carrying c
 
 ## Sources
 
-- Y. Lou, W. Tao, Z.-A. Wang, "Effects and biological consequences of the predator-mediated apparent competition I: ODE models", *Journal of Mathematical Biology* 91(5) (2025), 47, Theorem 2.1, Theorem 2.2, Section 5, <https://doi.org/10.1007/s00285-025-02286-x> (preprint arXiv:2502.00410).
+- Y. Lou, W. Tao, Z.-A. Wang, "Effects and biological consequences of the predator-mediated apparent competition I: ODE models", *Journal of Mathematical Biology* 91(5) (2025), 47, Theorem 2.1, Theorem 2.2 and Remark 2.2, Table 1, Section 5, <https://doi.org/10.1007/s00285-025-02286-x> (preprint arXiv:2502.00410).

@@ -34,10 +34,6 @@ $$\tilde a_3=-d_1d_2d_3,\quad \tilde a_2=d_1d_2J_{33}+d_2d_3J_{11}+d_3d_1J_{22},
 
 satisfy (P1).
 
-## Depends on
-
-- [Turing patterns and diffusion-driven instability](../turing-patterns-and-diffusion-driven-instability/README.md)
-
 ## Expansion
 
 The characteristic polynomial of $J(k^2)$ is $\lambda^3-c_2\lambda^2+c_1\lambda-c_0$ with $c_2=\mathrm{tr}J(k^2)<0$. By Routh–Hurwitz, with $c_2<0$ a real positive root exists iff $c_0=\det J(k^2)>0$, and a complex pair with positive real part iff $c_1>0$ and $c_2c_1>c_0$. As functions of $y=k^2$, $\det J(y)=\tilde a_3y^3+\dots+\tilde a_0$ and $c_2c_1-c_0=g(y)$ are cubics and $c_1=h(y)$ is a quadratic, with signs at $0$ and $\infty$ fixed by stability of the kinetics and positivity of the $d_i$. The theorem is then the elementary question of when a cubic, or a cubic and a quadratic simultaneously, are positive somewhere on $(0,\infty)$, answered by the location of the cubic's local maximum.

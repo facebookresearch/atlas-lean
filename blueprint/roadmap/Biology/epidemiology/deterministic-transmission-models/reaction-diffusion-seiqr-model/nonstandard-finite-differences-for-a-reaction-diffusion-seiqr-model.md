@@ -1,4 +1,4 @@
-# Positivity-preserving nonstandard finite differences for a reaction–diffusion SEIQR model
+# Nonstandard finite differences for a reaction–diffusion SEIQR model
 
 **Model.** On a bounded domain $\Omega \subset \mathbb{R}^2$ with homogeneous Neumann boundary conditions, susceptible, exposed, infected, quarantined and recovered densities evolve by
 
@@ -20,11 +20,13 @@ $$\psi_i \in W^{1,2}(0,T;L^2(\Omega)) \cap L^2(0,T;H^2(\Omega)) \cap L^\infty(0,
 
 $$\phi_\ell(k) = k\Big(1 - 4\lambda_\ell\frac{k}{h^2} - k\mu - g_\ell(k)\Big)^{-1}, \qquad g_S = k(\beta_1E^n_{j,l} + \beta_2I^n_{j,l}),\ g_E = k\delta,\ g_I = k\gamma,\ g_Q = k(\alpha + \rho),\ g_R = 0.$$
 
-Under the step restrictions $|k\mu + g_\ell(k)| < |1 - 4r\lambda_\ell|$, the scheme is consistent of order $1$ in time and $2$ in space, and its explicit update writes each new value as a nonnegative combination of old values and positive sources, so positivity and boundedness are preserved, which standard explicit schemes can violate.
+Under the step restrictions $|k\mu + g_\ell(k)| < |1 - 4r\lambda_\ell|$, $\ell \in \{S,E,I,Q,R\}$, the scheme is consistent of order $1$ in time and $2$ in space.
+
+The theorem claims consistency only. With this denominator the scheme is the standard explicit finite-difference method, so neither stability nor positivity is unconditional (the source says so after the theorem): the absolute-value restriction allows the coefficient $1 - 4r\lambda_\ell - k\mu - g_\ell(k)$ of the old value in the update to be negative, and any positivity statement for this scheme needs $1 - 4r\lambda_\ell - k\mu - g_\ell(k) \ge 0$.
 
 ## Expansion
 
-Global existence follows from local existence for semilinear parabolic systems together with a priori bounds: the total population $N = S + E + I + Q + R$ satisfies a linear reaction–diffusion inequality with source $\Lambda$ and decay $\mu$, bounding all components in $L^\infty$, and maximal regularity then gives the Sobolev estimates. Mickens-type NSFD design puts negative (loss) terms implicitly and positive terms explicitly, so that, for example, $S^{n+1}_{j,l}(1 + k\mu + g_S) = S^n_{j,l} + k(\text{diffusion} + \Lambda + \rho Q^n)$ keeps $S^{n+1} \ge 0$; the nonstandard denominator absorbs the diffusion stencil weight $4r\lambda_\ell$. Taylor expansion of the scheme around the exact solution gives the local truncation error $O(k + h^2)$.
+Global existence follows from local existence for semilinear parabolic systems together with a priori bounds: the total population $N = S + E + I + Q + R$ satisfies a linear reaction–diffusion inequality with source $\Lambda$ and decay $\mu$, bounding all components in $L^\infty$, and maximal regularity then gives the Sobolev estimates. Mickens-type NSFD design puts negative (loss) terms implicitly and positive terms explicitly, which, with the plain time step, keeps the scheme positive under natural step conditions; the denominator $\phi_\ell$ above is chosen instead to restore first-order consistency in time, which the nonlocal discretization of the Laplacian loses, and it gives up that positivity. Taylor expansion of the scheme around the exact solution gives the local truncation error $O(k + h^2)$.
 
 ## Sources
 

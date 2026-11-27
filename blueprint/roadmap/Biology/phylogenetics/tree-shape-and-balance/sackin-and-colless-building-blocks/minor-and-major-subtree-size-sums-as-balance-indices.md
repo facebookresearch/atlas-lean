@@ -18,7 +18,7 @@ and $\Delta_{CS} = C - S = -2N_b$, $\Delta_{SC} = S - C = 2N_b$. An *imbalance i
 $$\Delta_{CS}(T) \;\ge\; \sum_{j=1}^{k_n - 1} 2^j\,\breve s(2^{-j} n) + 2^{k_n} - n(k_n + 1),$$
 
 tight and attained by every Colless-minimal tree; the minimal values $d_n$ satisfy $d_0 = d_1 = 0$, $d_{2n} = 2d_n - 2n$ and $d_{2n+1} = d_{n+1} + d_n - 2n$.
-4. $T$ minimizes $\Delta_{CS}$ (equivalently maximizes $N_b$) iff at every inner vertex the pair $(n_{v_a}, n_{v_b})$ is a Colless partition or an echelon partition; the echelon tree is always such a minimizer.
+4. Call $(n_a, n_b)$ with $n_a \ge n_b$, $n_a + n_b = n$ a *Colless partition* of $n$ if joining a Colless-minimal tree on $n_a$ leaves and one on $n_b$ leaves at a new root gives a Colless-minimal tree on $n$ leaves, and call $(2^{k_n-1},\, n - 2^{k_n-1})$, $k_n = \lceil\log_2 n\rceil$, the *echelon partition* of $n$. The *echelon tree* $T^{be}_n$ is defined recursively: $T^{be}_1$ is a single vertex, and for $n > 1$ its two maximal pending subtrees are the fully balanced tree $T^{fb}_{k_n-1}$ on $2^{k_n-1}$ leaves and $T^{be}_{n-2^{k_n-1}}$, so its root split is the echelon partition. Then $T$ minimizes $\Delta_{CS}$ (equivalently maximizes $N_b$) iff at every inner vertex $v$ the pair $(n_{v_a}, n_{v_b})$ is a Colless partition or the echelon partition of $n_v$; in particular the echelon tree is always such a minimizer.
 5. $T$ minimizes $N_a$ iff $T$ minimizes the Colless index.
 6. $N_a$, $N_b$, $\Delta_{CS}$, $\Delta_{SC}$ are local, binary recursive tree shape statistics computable in $O(n)$ time.
 

@@ -8,7 +8,11 @@
 
 - For every non-trivial process, $\tau$ is unbounded: its right endpoint is $+\infty$.
 - If $r<1$, the law of $\tau$, being integer-valued, belongs to no max-domain of attraction of an extreme value distribution.
-- Under the hypotheses, the maxima of independent copies of $\tau$ are asymptotically squeezed between the Gumbel laws $\exp\{-e^{-\theta k}\}$ and $\exp\{-e^{-\theta(k+1)}\}$, for all $k\ge1$.
+- Under the hypotheses, with $F_\tau$ the distribution function of $\tau$ (so $F_\tau^m$ is that of the maximum of $m$ independent copies), the shifted maxima are squeezed between two Gumbel laws: for all $k\ge1$,
+
+$$\exp\{-e^{-\theta k}\} \le \liminf_{m\to\infty} F_\tau^m(k+1+m), \qquad \limsup_{m\to\infty} F_\tau^m(k+1+m) \le \exp\{-e^{-\theta(k+1)}\}.$$
+
+  The shift by $m$ is needed: since $\tau$ is unbounded, $F_\tau(k)^m \to 0$ for every fixed $k$.
 - Consequently $\tau=\lfloor X\rfloor$ for a continuous random variable $X$ in the Gumbel domain of attraction, with $\mathbb P(\tau>k)=1-F_X(k)$, so by the Pickands–Balkema–de Haan theorem the excesses of $X$ over a high threshold are approximately exponential, and $\mathbb P(\tau>k)$ for large $k$ can be estimated by a peaks-over-threshold fit.
 
 ## Expansion

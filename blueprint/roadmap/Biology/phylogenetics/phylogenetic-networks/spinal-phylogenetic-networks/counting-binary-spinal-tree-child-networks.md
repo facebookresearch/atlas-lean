@@ -10,7 +10,11 @@ $$S_{n,|\mathcal{C}|} = 2^{\binom{|\mathcal{C}|-2}{2}}\bigl(|\mathcal{C}|^n - (|
 
 $$|\mathcal{STC}_{n,k}| = \frac{n!\,(n-2+k)!\,(n-1+3k)}{2^{k+1}\,k!\,(n-1-k)!},$$
 
-equivalently $n!\,|B_{n-1,k}| - \tfrac{n!}{2}|B_{n-2,k}|$ for the auxiliary cover classes $B_{m,k}$ of the source, with $|\mathcal{STC}_{1,k}| = 1$. Summing over $0 \le k \le n-1$ gives all binary spinal TCNs, and $|\mathcal{STCS}_n| = \sum_k |B_{n-1,k}|$ counts their unlabelled shapes. For binary spinal stack-free networks,
+with $|\mathcal{STC}_{1,k}| = 1$. Equivalently $|\mathcal{STC}_{n,k}| = n!\,|B_{n-1,k}| - \tfrac{n!}{2}|B_{n-2,k}|$, where $B_{m,k}$ is the set of partitions of $[m+k]$ into $m-k$ singletons and $k$ pairs, so that
+
+$$|B_{m,k}| = \frac{(m+k)!}{2^k\,(m-k)!\,k!}\quad(0\le k\le m),\qquad |B_{m,k}| = 0\ \ (k>m)$$
+
+(the Bessel-polynomial coefficients), with $|B_{0,0}| = 1$ (the empty partition). The source sets $|B_{0,k}| = 0$ for all $k$; at $n=2$, $k=0$ that gives $2$, whereas the closed formula, and the single cherry, give $1$. Summing over $0 \le k \le n-1$ gives all binary spinal TCNs, and $|\mathcal{STCS}_n| = \sum_k |B_{n-1,k}|$ counts their unlabelled shapes. For binary spinal stack-free networks,
 
 $$|\mathcal{SSF}_{n,k}| = n!\,S_2(n-1+k,\,n-1) - \tfrac{n!}{2}\,S_2(n-2+k,\,n-2),$$
 

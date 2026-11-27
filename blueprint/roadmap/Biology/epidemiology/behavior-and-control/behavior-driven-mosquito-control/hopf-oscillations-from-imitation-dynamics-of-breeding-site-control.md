@@ -19,7 +19,11 @@ $$N = \frac{\nu_L\, r b}{(\nu_L + \mu_L)\mu_A}, \qquad \alpha = \frac{m\nu_L}{\m
 $$E_{05} = \left(\frac{\mu_A r_c}{r_d m \nu_L},\ \frac{r_c}{r_d m},\ \frac{K_{v_{\max}} - \frac{\mu_A r_c}{r_d m\nu_L(1 - 1/N)}}{K_{v_{\max}} - K_{v_{\min}}}\right)$$
 
 exists iff $N > 1$ and $\alpha K_{v_{\min}}(1 - 1/N) \le r_c/r_d \le \alpha K_{v_{\max}}(1 - 1/N)$.
-3. *(Stability and Hopf bifurcation.)* The Routh–Hurwitz quantity $a_2a_1 - a_0$ at $E_{05}$ is a quadratic $f(x) = x^2 - Bx + C$ in $x = r_c/r_d$. If $B^2 < 4C$, $E_{05}$ is stable on its whole existence interval; if $B^2 \ge 4C$ it is stable except between the roots $x_1 \le x_2$ of $f$, and for $B^2 > 4C$ a Hopf bifurcation occurs at
+3. *(Stability and Hopf bifurcation.)* The Routh–Hurwitz quantity $a_2a_1 - a_0$ at $E_{05}$ has the sign of the quadratic $f(x) = x^2 - Bx + C$ in $x = r_c/r_d$, where
+
+$$B = \alpha\Big(1 - \frac1N\Big)\big(K_{v_{\max}} + K_{v_{\min}}\big),\qquad C = \alpha^2\Big(1 - \frac1N\Big)^2K_{v_{\max}}K_{v_{\min}} + Q\,\alpha\big(K_{v_{\max}} - K_{v_{\min}}\big)\Big(1 - \frac1N\Big),\qquad Q = \frac{\mu_A^2 + rb\nu_L}{k\mu_Ar_d}.$$
+
+ If $B^2 < 4C$, $E_{05}$ is stable on its whole existence interval; if $B^2 \ge 4C$ it is stable except between the roots $x_1 \le x_2$ of $f$, and for $B^2 > 4C$ a Hopf bifurcation occurs at
 
 $$\frac{r_c}{r_d} = \alpha\,\frac{K_{v_{\max}} + K_{v_{\min}}}{2}\Big(1 - \frac1N\Big) \pm \frac{\sqrt{B^2 - 4C}}{2}.$$
 
@@ -35,4 +39,4 @@ With $w$ frozen, the mosquito subsystem is a stage-structured logistic model wit
 
 ## Sources
 
-- M. R. Rahman, C. Kottegoda and L. M. Stolerman, "Oscillatory Regimes in a Game-Theoretic Model for Mosquito Population Dynamics under Breeding Site Control", *Mathematical Biosciences* 402 (2026), 109831, Propositions 1, 2 and Theorems 1–4, <https://doi.org/10.1016/j.mbs.2026.109831> (preprint arXiv:2601.05222).
+- M. R. Rahman, C. Kottegoda and L. M. Stolerman, "Oscillatory Regimes in a Game-Theoretic Model for Mosquito Population Dynamics under Breeding Site Control", *Mathematical Biosciences* 402 (2026), 109831, Propositions 1, 2, Theorems 1–4 and Eqs. (8)–(9), <https://doi.org/10.1016/j.mbs.2026.109831> (preprint arXiv:2601.05222).

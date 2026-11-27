@@ -6,5 +6,5 @@ Infinitesimal homeostasis is the vanishing of the derivative of an output variab
 - [Appendage and structural homeostasis subnetworks](appendage-and-structural-homeostasis-subnetworks.md)
 - [Homeostasis in networks with multiple input nodes and multiple inputs](homeostasis-in-networks-with-multiple-inputs.md)
 - [Core equivalence classes of three-node homeostasis networks](core-equivalence-classes-of-three-node-homeostasis-networks.md)
-- [Infinitesimal homeostasis and the homeostasis matrix](homeostasis-matrix-and-infinitesimal-homeostasis.md)
+- [Core reduction and homeostasis types of input-output networks](core-reduction-and-homeostasis-types-of-input-output-networks.md)
 - [Homeostasis matrix and the GRN–PRN correspondence](homeostasis-matrix-and-the-grn-prn-correspondence.md)

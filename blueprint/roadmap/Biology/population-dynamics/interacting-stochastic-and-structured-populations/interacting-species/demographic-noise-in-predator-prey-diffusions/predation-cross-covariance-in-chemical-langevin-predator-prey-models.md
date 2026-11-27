@@ -13,7 +13,17 @@ so the drift sees only first stoichiometric moments while the covariance sees se
 
 Drift equivalence therefore does not imply covariance equivalence: the sign and presence of predator–prey cross-covariance is decided by whether prey loss and predator gain happen in the same event.
 
-**Theorem 7.1 and Proposition 7.2 (well-posedness).** If the drift and diffusion coefficients are locally Lipschitz on compacts of $D$, the SDE $dX=b(X)\,dt+\sigma(X)\,dW$ with $\sigma\sigma^{\mathsf T}=a$ has a unique maximal strong solution that cannot explode in the interior before reaching the boundary of $D$; if in addition a $C^2$ barrier function $V_b$ blowing up at $\partial D$ satisfies a Lyapunov drift bound, the solution stays in $D$ for all time.
+**Theorem 7.1 and Proposition 7.2 (well-posedness).** Consider $dX=b(X)\,dt+\Sigma(X)\,dW$ with $\Sigma\Sigma^{\mathsf T}=a$ and generator $LV=\nabla V\cdot b+\tfrac12\operatorname{tr}(a\nabla^2V)$. Assume
+
+- (A1) on every precompact $K\Subset D$ the coefficients $b$ and $\Sigma$ are Lipschitz and bounded;
+- (A2) there are $V_\infty\in C^2(D;[0,\infty))$ and $C>0$ with $LV_\infty\le C(1+V_\infty)$ on $D$ and $V_\infty(x)\to\infty$ as $\|x\|\to\infty$ in $D$.
+
+Then from every $x_0\in D$ there is a unique maximal strong solution with lifetime $\tau^*\in(0,\infty]$, and $\mathbb P(\tau^*<\infty,\ \tau^*<\tau_{\partial D})=0$: if the lifetime is finite, the solution reaches (or approaches) $\partial D$ at $\tau^*$. Without (A2) this fails: $dN=N^2\,dt$, $dP=0$ has locally Lipschitz coefficients but explodes at $t=1$ from $(N_0,P_0)=(1,1)$ inside $D$. If moreover there is $V_b\in C^2(D;[0,\infty))$ with
+
+- (B1) $V_b(x)\to\infty$ as $x\to\partial D$ within $D$, and
+- (B2) $LV_b\le C_b(1+V_b)$ on every set $K_n$ of an exhaustion of $D$ by compacts, with one constant $C_b>0$ for all $n$,
+
+then $\mathbb P(\tau_{\partial D}<\infty)=0$, so the solution is global and stays in $D$ for all time.
 
 ## Expansion
 

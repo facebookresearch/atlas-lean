@@ -1,6 +1,6 @@
 # Nondegenerate reaction networks have generically finite, nonsingular steady states
 
-**Setting.** A reaction network with $n$ species and $m$ reactions under power-law (generalized mass-action) kinetics has stoichiometric matrix $N \in \mathbb{R}^{n\times m}$, kinetic exponent matrix $M \in \mathbb{R}^{n \times m}$ and rate constants $\kappa \in \mathbb{R}^m_{>0}$, so $\dot x = N(\kappa \circ x^M)$ with $x^M = (x^{M_{\cdot 1}}, \dots, x^{M_{\cdot m}})$. The rows of $L \in \mathbb{R}^{d\times n}$ span the left kernel of $N$ (conservation laws $Lx = b$). Positive steady states with total amounts $b$ are the positive zeros $\mathbb{V}_{>0}(F_{\kappa,b})$ of
+**Setting.** A reaction network with $n$ species and $m$ reactions under power-law (generalized mass-action) kinetics has stoichiometric matrix $N \in \mathbb{R}^{n\times m}$, integer kinetic exponent matrix $M \in \mathbb{Z}^{n \times m}$ (the source assumes integer exponents and notes that rational exponents reduce to this case; Theorem B(iii) is not defined for real exponents) and rate constants $\kappa \in \mathbb{R}^m_{>0}$, so $\dot x = N(\kappa \circ x^M)$ with $x^M = (x^{M_{\cdot 1}}, \dots, x^{M_{\cdot m}})$. The rows of $L \in \mathbb{R}^{d\times n}$ span the left kernel of $N$ (conservation laws $Lx = b$). Positive steady states with total amounts $b$ are the positive zeros $\mathbb{V}_{>0}(F_{\kappa,b})$ of
 
 $$F_{\kappa,b}(x) = \begin{pmatrix} N(\kappa\circ x^M) \\ Lx - b\end{pmatrix}.$$
 

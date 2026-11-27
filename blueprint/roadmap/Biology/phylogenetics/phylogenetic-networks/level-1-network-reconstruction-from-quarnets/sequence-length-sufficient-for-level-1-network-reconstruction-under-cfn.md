@@ -2,15 +2,19 @@
 
 **CFN model on a network.** Let $N$ be a binary rooted phylogenetic level-1 network on $n$ taxa. Each site evolves on a displayed tree chosen by picking, independently at every reticulation, an incoming edge $e$ with inheritance probability $\gamma(e) \in (0,1)$; along the chosen tree the binary state flips across each non-reticulation edge $e$ with probability $p(e) \in (0, \tfrac12)$, with a uniform root state (Cavender-Farris-Neyman model). Write $\theta(e) = 1 - 2p(e)$. On a tree path with edges $e_1,\dots,e_m$ the endpoints differ with probability $\tfrac12\big(1 - \prod_i \theta(e_i)\big)$.
 
-**Network parameters.** $\mathrm{depth}(N)$ is the largest, over displayed trees $T$ and edges $e = (v_1,v_2)$ of $T$, of the shortest topological distance from $v_i$ to a leaf after deleting $e$; $lc(N)$ is the maximum cycle length. Let $\gamma_{\min}$, $\gamma_{\max}$ be the extreme inheritance probabilities and $s_{\max}$ a constant determined by the mutation and inheritance probabilities (it grows as the $\gamma$ approach $0$ or $1$).
+**Network parameters.** $\mathrm{depth}(N)$ is the largest, over displayed trees $T$ and edges $e = (v_1,v_2)$ of $T$, of the shortest topological distance from $v_i$ to a leaf after deleting $e$; $lc(N)$ is the maximum cycle length. Let $\gamma_{\min}$, $\gamma_{\max}$ be the extreme inheritance probabilities. For each reticulation edge $e$ put $g(e)=\frac{\gamma(e)}{1-\gamma(e)}\cdot\frac{\log\min_{e'}\theta(e')}{\log\max_{e'}\theta(e')}>0$ and define $s(e)>\tfrac12$ by
 
-**Dyadic closure method.** From $k$ aligned sites compute pairwise Hamming dissimilarities; for a width threshold $w$, infer the quartet profile of every four-taxon set whose pairwise dissimilarities are all below $w$ with a four-point-type rule for level-1 quartet profiles; apply the dyadic closure; and, over thresholds $w$ ranging through the observed dissimilarities, return the network built from a closure that is complete and consistent, which is $\overline N$ (the network with 2-cycles, 3-cycles and the reticulation vertices of 4-cycles suppressed, which is all quartet profiles can determine).
+$$g(e)+\epsilon=\begin{cases}\dfrac{2s(e)^2-7s(e)}{2s(e)^2+s(e)-1}&\text{if }g(e)<1,\\[2ex]\dfrac{4s(e)^3+4s(e)^2-s(e)-1}{12s(e)^2+4s(e)+1}&\text{otherwise,}\end{cases}$$
+
+for a fixed sufficiently small $\epsilon>0$; $s_{\max}$ is the largest value of $s$ over the reticulation edges. It grows as the inheritance probabilities approach $0$ or $1$.
+
+**Dyadic closure method.** From $k$ aligned sites compute pairwise Hamming dissimilarities $h^{ij}$ and transform them to $d_{ij}=-\tfrac12\log(1-2h^{ij})$; for a width threshold $w$, run the *L1QPC* rule on every four-taxon set $\{x_i,x_j,x_k,x_l\}$ whose pairwise dissimilarities are all at most $w$, labelled so that $d_{ij}+d_{kl}\le d_{il}+d_{jk}\le d_{ik}+d_{jl}$: with $\Delta_1=(d_{il}+d_{jk})-(d_{ij}+d_{kl})$ and $\Delta_2=(d_{ik}+d_{jl})-(d_{il}+d_{jk})$, output all three trivial quartet profiles if $\Delta_1=\Delta_2$, the quartet tree $x_ix_j|x_kx_l$ if $\Delta_1>\Delta_2$, and the 4-cycle profile $(x_ix_jx_kx_l)$ if $\Delta_1<\Delta_2$; apply the dyadic closure; and, over thresholds $w$ ranging through the observed dissimilarities, return the network built from a closure that is complete and consistent, which is $\overline N$ (the network with 2-cycles, 3-cycles and the reticulation vertices of 4-cycles suppressed, which is all quartet profiles can determine).
 
 **Theorem (Section 5).** If $k$ sites evolve under the CFN model on $N$, the dyadic closure method returns $\overline N$ with probability $1 - o(1)$ provided
 
 $$k > \frac{c \log n}{\Big(1 - \max_{e} \theta(e)^{\min\{\gamma_{\min},\, 1-\gamma_{\max}\}/s_{\max}}\Big)^2 \Big(\min_{e} \theta(e)\Big)^{2(\mathrm{depth}(N) + lc(N))}}$$
 
-for a fixed constant $c$ (equivalently, whenever all inheritance probabilities lie in an interval determined by $k$ and the mutation probabilities).
+for a fixed constant $c$.
 
 **Corollary (Section 5).** With fixed inheritance probabilities, mutation probabilities bounded away from $0$ and $\tfrac12$ by constants, bounded cycle length and $\mathrm{depth}(N) = O(\log\log n)$, a polylogarithmic sequence length $k = \mathrm{polylog}(n)$ suffices. If $\mathrm{depth}(N)$ and $lc(N)$ are bounded, $k = O(\log n)$ suffices; if they grow logarithmically, a polynomial length suffices.
 

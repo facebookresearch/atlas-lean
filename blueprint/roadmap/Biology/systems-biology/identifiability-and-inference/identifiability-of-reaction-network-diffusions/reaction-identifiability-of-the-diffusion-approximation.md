@@ -12,19 +12,17 @@ so its law is determined by the drift and diffusion matrix. $\mathcal{N}$ is *re
 $$\bigl\{\bigl(y'-y,\ (y'-y)(y'-y)^{\top}\bigr) : y \to y' \in \mathcal{R}\bigr\}$$
 
 are linearly independent.
-2. $\mathcal{N}$ and $\mathcal{N}'$ are unconfoundable iff they have different source complexes, or the same source complexes and for every source $y$ the open cones
+2. $\mathcal{N}$ and $\mathcal{N}'$ are unconfoundable iff they have different source complexes, or the same source complexes and for **some** source $y$ the open cones
 
 $$\operatorname{Cone}_{\mathcal{R}}(y) = \Bigl\{\sum_{y\to y'\in\mathcal{R}}\alpha_{y\to y'}\bigl(y'-y,(y'-y)(y'-y)^{\top}\bigr) : \alpha > 0\Bigr\}$$
 
-and $\operatorname{Cone}_{\mathcal{R}'}(y)$ are disjoint.
+and $\operatorname{Cone}_{\mathcal{R}'}(y)$ are disjoint. (The source's Theorem 3.3(2) says "for every source complex"; that is sufficient but not necessary. Matching laws requires, monomial by monomial, a common point of the two cones at every source $y$, and the rate constants at different sources can be chosen independently, so confoundability means that the cones meet at every source, and unconfoundability that they are disjoint at some source.)
 
-**Linear conjugacy.** Two networks have linearly conjugate SDEs for some rate constants iff there is $G = DP$ ($D$ positive diagonal, $P$ a permutation) relating their source complexes and generalized cones accordingly.
+**Linear conjugacy (Theorem 3.7).** There are rate constants for which $(\mathcal N,\kappa)$ and $(\mathcal N',\kappa')$ are linearly conjugate with respect to their SDEs (a linear bijection $h$ of $\mathbb R^n_{>0}$ carries the stopped solutions of one to those of the other, started at $h(x)$) iff there is $G = DP$, with $D$ a positive diagonal matrix and $P$ a permutation matrix, such that $\mathcal N$ and $\mathcal N'$ have the same complexes up to the permutation $P$ and, for every source complex $y$ of $\mathcal N$,
+
+$$\operatorname{Cone}_{\mathcal R}(y)\cap\operatorname{Cone}^G_{\mathcal R'}(y)\ne\emptyset,\qquad \operatorname{Cone}^G_{\mathcal R'}(y)=\Bigl\{\sum_{y\to y'\in\mathcal R'}\alpha_{y\to y'}\bigl(G(y'-y),\,G(y'-y)(y'-y)^{\top}G^{\top}\bigr):\alpha>0\Bigr\}.$$
 
 Because the diffusion matrix adds second-moment information, networks that are confoundable as deterministic ODEs can be identifiable as SDEs, while networks whose generalized reaction vectors are dependent keep non-identifiable rate constants.
-
-## Depends on
-
-- [Non-explosivity of complex-balanced stochastic reaction networks](../../stochastic-reaction-networks/non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
 
 ## Expansion
 

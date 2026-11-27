@@ -12,10 +12,6 @@ $$v_c^2<\frac{\delta}{\beta_vK(\alpha-\delta E_p)}\qquad(\alpha>\delta E_p),$$
 
 so pathogen persistence (endemicity) requires vector competence above $\sqrt{\delta/(\beta_vK(\alpha-\delta E_p))}$.
 
-## Depends on
-
-- [Lotka–Volterra predator–prey model](../../../population-dynamics/lotka-volterra-predator-prey-model/README.md)
-
 ## Expansion
 
 At $(v_cK,0)$ the pathogen's per-capita growth rate is $\alpha\beta_vv_c\cdot v_cK/(1+\beta_vv_cE_p\cdot v_cK)-\delta$, which is negative iff $v_c^2\beta_vK(\alpha-\delta E_p)<\delta$; the prey equation is logistic, so the boundary equilibrium is then a stable node. Global stability follows because $S_v\le v_cK$ asymptotically and the pathogen's per-capita rate is increasing in $S_v$, hence eventually negative. Above the threshold a coexistence (endemic) equilibrium appears, whose dependence on $v_c$ and $\delta$ the paper explores numerically.

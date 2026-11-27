@@ -14,7 +14,15 @@ $$\mathbb P(e_{i_1}\cap\dots\cap e_{i_K}\ne\emptyset)=\sum_{\emptyset\ne\mathbf 
 
 $K=2$ gives the edge probability of the association network.
 
-**Single sites.** With $p_{\mathbf x}(n)$ the $n$-step transition probability, the first-arrival law $q_{\mathbf x}(n)=\mathbb P(\tau_{\mathbf x}=n)$ solves the renewal equation $p_{\mathbf x}(n)=\sum_{k=1}^nq_{\mathbf x}(k)\,p_{\mathbf 0}(n-k)$, and $Q_{\{\mathbf x\}}(T)=\mathbb P(\tau_{\mathbf x}\le T)$ is an explicit finite combination $\sum_h b_{m-h}\,p_{\mathbf x}(2h)$ (or with $2h+1$, by parity of $\mathbf x$) with universal coefficients $b_h$. Multi-site first-visit laws satisfy analogous recursive convolution identities over the order in which sites are first reached.
+**Single sites.** With $p_{\mathbf x}(n)$ the $n$-step transition probability, the first-arrival law $q_{\mathbf x}(n)=\mathbb P(\tau_{\mathbf x}=n)$ solves the renewal equation $p_{\mathbf x}(n)=\sum_{k=1}^nq_{\mathbf x}(k)\,p_{\mathbf 0}(n-k)$, explicitly: with $a_0=1$ and
+
+$$a_{2k}=\sum_{k_1+\dots+k_j=k}(-1)^j\,p_{\mathbf 0}(2k_1)\cdots p_{\mathbf 0}(2k_j)\qquad(k\ge1),$$
+
+the sum running over all compositions of $k$ into positive parts ($j$ the number of parts), $q_{\mathbf x}(2m)=\sum_{k=0}^{m-1}a_{2k}\,p_{\mathbf x}(2m-2k)$ for $\mathbf x$ with $x_1+x_2$ even and $q_{\mathbf x}(2m+1)=\sum_{k=0}^{m-1}a_{2k}\,p_{\mathbf x}(2m+1-2k)$ for $x_1+x_2$ odd (and $q_{\mathbf x}(n)=0$ otherwise or when $n<|x_1|+|x_2|$). Consequently $Q_{\{\mathbf x\}}(T)=\mathbb P(\tau_{\mathbf x}\le T)$ equals
+
+$$\sum_{h=1}^mb_{m-h}\,p_{\mathbf x}(2h)\quad(x_1+x_2\text{ even},\ m=\lfloor T/2\rfloor),\qquad \sum_{h=1}^mb_{m-h}\,p_{\mathbf x}(2h+1)\quad(x_1+x_2\text{ odd},\ m=\lfloor (T-1)/2\rfloor),$$
+
+with the universal, nonnegative coefficients $b_h=\sum_{k=0}^ha_{2k}$.
 
 ## Expansion
 

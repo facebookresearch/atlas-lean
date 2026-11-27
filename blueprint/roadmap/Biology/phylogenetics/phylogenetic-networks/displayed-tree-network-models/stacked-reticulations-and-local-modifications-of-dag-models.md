@@ -8,7 +8,13 @@
 
 **Theorem (stacked reticulations).** Suppose $G$ has an edge $b \to c$ with $b$ of outdegree 1 and $X_b$ hidden, and let $G'$ contract it (each $a \to b$ becomes $a \to c$). If $TM$ is multiplicatively closed, closed under convex combinations and splittable, then the displayed tree models on $G$ and $G'$ have the same distribution family, also when all reticulation probabilities are required positive.
 
-**Propositions (2-blobs).** A non-root 2-blob (a biconnected piece with one edge in and one out) whose vertices are hidden can be replaced by a single edge, and a root 2-blob by a cherry from a new hidden root, without changing the model. Hence stacked reticulations and 2-blobs are not identifiable from leaf distributions.
+**Propositions (2-blobs).** Let $B$ be the vertex set of a 2-blob (a biconnected piece of the underlying graph), with every $X_b$, $b \in B$, hidden.
+
+1. *Non-root 2-blob*, entered by $a \to b_1$ and left by $b_2 \to c$: if $TM$ is multiplicatively closed, closed under convex combinations and splittable, deleting $B$ and adding the edge $a \to c$ gives the same family of distributions.
+2. *Root 2-blob*, with sinks $b_1, b_2$ and edges $b_1 \to c_1$, $b_2 \to c_2$ out of it; $G'$ deletes $B \setminus \{b_1,b_2\}$ and adds a hidden root $a$ with edges $a \to b_1$, $a \to b_2$. If $TM$ is multiplicatively closed, closed under marginal convex combinations, and root unidentifiable with the root distributions $RD$ (for every $M^1 \in TM$, $\pi^1 \in RD$ there are $M^2 \in TM$, $\pi^2 \in RD$ with $M^1(x_b \mid x_a)\pi^1(x_a) = M^2(x_a \mid x_b)\pi^2(x_b)$ for all $x_a, x_b$), then every distribution from $G$ is a distribution from $G'$.
+3. *Partial converse for a root 2-blob*: if $TM$ is splittable and contains matrices arbitrarily close to the identity, every distribution from $G'$ is a limit of distributions from $G$.
+
+So a stacked reticulation and a non-root 2-blob are invisible in the leaf distributions, and a root 2-blob is invisible up to closure: when each model is semialgebraic and $TM$ is multiplicatively closed, closed under marginal convex combinations, time reversible and splittable, the model of $G$ is contained in that of $G'$ and has the same topological closure (the source's remark after Proposition 5.7). Whether the two models coincide for a root 2-blob is left open.
 
 ## Expansion
 
@@ -16,4 +22,4 @@ Locally, a stacked pair of reticulations composes two mixtures of transition mat
 
 ## Sources
 
-- S. Sullivant, "Phylogenetic network models as graphical models", *Bulletin of Mathematical Biology* 88(8) (2026), 136, Section 3, Propositions 3.8-3.12, Theorem 4.4, Theorem 5.1 and Propositions 5.4, 5.6, <https://doi.org/10.1007/s11538-026-01695-3> (preprint arXiv:2507.23056).
+- S. Sullivant, "Phylogenetic network models as graphical models", *Bulletin of Mathematical Biology* 88(8) (2026), 136, Section 3, Propositions 3.8-3.12, Theorem 4.4, Theorem 5.1 and Propositions 5.4, 5.6, 5.7 and Definition 5.5, <https://doi.org/10.1007/s11538-026-01695-3> (preprint arXiv:2507.23056).

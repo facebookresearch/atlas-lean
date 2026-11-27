@@ -14,7 +14,19 @@ Noncompliance spreads by contact at rate $\mu$ and is abandoned at rate $\nu$; r
 
 $$\mathscr R_0(s, s^*) = \frac{\beta}{\gamma + \delta}\left( s\Bigl[(1-\alpha)^2 + \frac{\alpha(1-\alpha)\mu s^*}{\gamma + \delta + \nu + \mu s^*}\Bigr] + s^*\Bigl[1 - \frac{\alpha \nu}{\gamma + \delta + \nu + \mu s^*}\Bigr]\right).$$
 
-For $\xi = 0$ the disease-free equilibria are $x_1 = (b/\delta, 0, 0, 0, 0, 0)$ and, when $b/\delta > (\delta + \nu)/\mu$, $x_2$ with $s = (\delta + \nu)/\mu$, $s^* = b/\delta - (\delta+\nu)/\mu$ (a noncompliance-endemic, disease-free state). If $b/\delta < (\delta + \nu)/\mu$, $x_1$ is locally asymptotically stable when $\mathscr R_0(b/\delta, 0) < 1$ and unstable when $> 1$; if $b/\delta > (\delta+\nu)/\mu$ the analogous statement holds for $x_2$ with $\mathscr R_0(s, s^*)$. With multiplicative white noise on $\beta$ and $\mu$, the stochastic system has a unique global nonnegative solution, and exponential mean-square stability of the disease-free state holds under a noise-corrected threshold $\mathscr R_0^\sigma < 1$ together with $\frac{b}{\delta} + \frac{\sigma_\mu^2}{2\mu}\bigl(\frac{b}{\delta}\bigr)^2 < \frac{\nu + \delta}{\mu}$.
+For $\xi = 0$ the disease-free equilibria are $x_1 = (b/\delta, 0, 0, 0, 0, 0)$ and, when $b/\delta > (\delta + \nu)/\mu$, $x_2$ with $s = (\delta + \nu)/\mu$, $s^* = b/\delta - (\delta+\nu)/\mu$ (a noncompliance-endemic, disease-free state). If $b/\delta < (\delta + \nu)/\mu$, $x_1$ is locally asymptotically stable when $\mathscr R_0(b/\delta, 0) < 1$ and unstable when $> 1$; if $b/\delta > (\delta+\nu)/\mu$ the analogous statement holds for $x_2$ with $\mathscr R_0(s, s^*)$. **Stochastic model.** Perturb $\beta$ and $\mu$ by a scalar Brownian motion $W$ with intensities $\sigma_\beta, \sigma_\mu \ge 0$, with noise terms proportional to the class they act on: the drifts are those above, and the diffusion coefficients (multiplying $dW$) are
+
+$$\begin{aligned}
+dS&: -\sigma_\beta(1-\alpha)^2SI - \sigma_\mu SS^*, & dS^*&: -\sigma_\beta S^*I^* + \sigma_\mu SS^*,\\
+dI&: \sigma_\beta(1-\alpha)^2SI - \sigma_\mu II^*, & dI^*&: \sigma_\beta S^*I^* + \sigma_\mu II^*,\\
+dR&: -\sigma_\mu RR^*, & dR^*&: \sigma_\mu RR^*.
+\end{aligned}$$
+
+For positive initial data this system has a unique global nonnegative solution almost surely. For $\xi = 0$ define the noise-corrected threshold at $x_1$,
+
+$$\mathscr R_0^\sigma\Bigl(\frac b\delta, 0\Bigr) = \frac{\beta\frac b\delta(1-\alpha)^2 + \frac{\sigma_\beta^2}{2}\bigl(\frac b\delta\bigr)^2(1-\alpha)^4}{\gamma + \delta}.$$
+
+If $\mathscr R_0^\sigma(b/\delta, 0) < 1$ and $\frac{b}{\delta} + \frac{\sigma_\mu^2}{2\mu}\bigl(\frac{b}{\delta}\bigr)^2 < \frac{\nu + \delta}{\mu}$, the fully compliant disease-free state $x_1$ is exponentially mean-square stable for the stochastic system.
 
 ## Expansion
 
@@ -22,4 +34,4 @@ Only $I$ and $I^*$ generate new infections, so the infection subsystem is two-di
 
 ## Sources
 
-- C. Parkinson, W. Wang, "A Compartmental Model for Epidemiology with Human Behavior and Stochastic Effects", *Mathematical Biosciences* 392 (2026), 109588, Proposition 2.4, Theorems 2.3, 2.5, 3.1 and 4.2, <https://doi.org/10.1016/j.mbs.2025.109588> (preprint arXiv:2507.01046).
+- C. Parkinson, W. Wang, "A Compartmental Model for Epidemiology with Human Behavior and Stochastic Effects", *Mathematical Biosciences* 392 (2026), 109588, Proposition 2.4, Theorems 2.3 and 2.5, system (3.1), Theorem 3.1, threshold (4.2) and Theorem 4.2, <https://doi.org/10.1016/j.mbs.2025.109588> (preprint arXiv:2507.01046).

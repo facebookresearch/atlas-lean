@@ -9,7 +9,7 @@
 
 **Theorem (Wnt signaling models).**
 1. The embedded networks of the Lee (mono-stationary) and Feinberg (multi-stationary) Wnt models with respect to their common species are dynamically equivalent under mass action, except for one inflow reaction, via an $S$-extending network operation; hence they are proximately equivalent.
-2. The mass-action embedded Schmitz network transforms into the MacLean embedded subnetwork without the outflows $A_4 \to 0$, $A_5 \to 0$, a generalized mass-action system that is mass action in $14$ of $19$ reactions, and the transformation is the identity on $11$ of the $15$ Schmitz reactions.
+2. The mass-action embedded Schmitz network transforms into the subnetwork $\mathscr{N}_{MEA} \setminus \{A_4 \to 0,\ A_5 \to 0\}$ of the *augmented* MacLean embedded network $\mathscr{N}_{MEA} := \mathscr{N}_{ME} \cup \{A_1 \rightleftarrows 2A_1\}$ (the MacLean embedded network with the two reactions $A_1 \to 2A_1$, $2A_1 \to A_1$ added), a generalized mass-action system that is mass action in $14$ of $19$ reactions, and the transformation is the identity on $11$ of the $15$ Schmitz reactions.
 
 So the mono- versus multi-stationary distinction between Lee and Feinberg is carried by species outside the common core, while Feinberg and MacLean admit no comparable correspondence.
 

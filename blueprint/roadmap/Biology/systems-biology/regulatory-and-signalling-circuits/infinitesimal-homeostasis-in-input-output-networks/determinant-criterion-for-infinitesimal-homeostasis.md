@@ -30,4 +30,5 @@ Differentiate $F(X(\mathcal{I}),\mathcal{I})\equiv 0$ to get $J\,X'(\mathcal{I})
 
 ## Sources
 
-- Xinni Lin, Fernando Antoneli, Yangyang Wang, "Automated Classification of Homeostasis Structure in Input-Output Networks", *Bulletin of Mathematical Biology* 88(7) (2026), 113, Definition 2.2 and Lemma 2.3 (Section 2.1), <https://doi.org/10.1007/s11538-026-01679-3> (preprint arXiv:2603.08882). The factorization and core-network facts are recalled there from Wang, Huang, Antoneli and Golubitsky (2021) and Madeira and Antoneli (2022).
+- Xinni Lin, Fernando Antoneli, Yangyang Wang, "Automated Classification of Homeostasis Structure in Input-Output Networks", *Bulletin of Mathematical Biology* 88(7) (2026), 113, Definition 2.2 and Lemma 2.3 (Section 2.1), <https://doi.org/10.1007/s11538-026-01679-3> (preprint arXiv:2603.08882).
+- F. Antoneli, M. Golubitsky, J. Jin, I. Stewart, "Homeostasis in input-output networks: structure, classification and applications", *Mathematical Biosciences* 384 (2025), 109435, Theorems 2.3 and 3.1, <https://doi.org/10.1016/j.mbs.2025.109435> (preprint arXiv:2405.03861). The factorization and core-network facts are recalled there from Wang, Huang, Antoneli and Golubitsky (2021) and Madeira and Antoneli (2022).

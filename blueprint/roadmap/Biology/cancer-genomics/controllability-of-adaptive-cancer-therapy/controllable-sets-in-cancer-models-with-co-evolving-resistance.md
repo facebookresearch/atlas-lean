@@ -4,14 +4,25 @@
 
 $$\dot u=\varepsilon\,k(n)\,\partial_u\big(b(u,\alpha)-c(u)n\big),\qquad \dot n=n\big(b(u,\alpha)-c(u)n\big).$$
 
-Here $b$ is a smooth trait- and dose-dependent growth rate, $c(u)$ a trait-dependent competition coefficient, $\varepsilon=\mu\sigma^2/2$ a small evolutionary rate (mutation fraction times mutational variance, canonical-equation scaling), and $k(n)$ a $C^1$ rate function vanishing only at extinction ($k^{-1}(0)=\{0\}$, $k'(0)>0$). For each constant dose the equilibria $(x,a)$ form a set $\mathcal P_A$ of trait-size pairs where selection vanishes, partitioned by the sign of $a_\star'(u)$ into stable nodes, saddles and isolated non-hyperbolic points. The input range is **hyperbolic** if all equilibria of the extreme vector fields $a_\pm$ are hyperbolic. A set $K$ is **controllable** if every point of $K$ can be steered to every other point of $K$ by some admissible dose schedule.
+Here $\varepsilon=\mu\sigma^2$ is a small evolutionary rate (mutation fraction times mutational variance, canonical-equation scaling), $c:\mathbb R\to(0,\infty)$ is a smooth competition coefficient, and the hypotheses are:
+
+- **H1.** $k$ is $C^1$, $k^{-1}(0)=\{0\}$ and $k'(0)>0$ (the trait evolves only while cells are present);
+- **H2.** $b(u,a)=b_0(u)-a\,b_1(u)$ with $b_0,b_1$ smooth, $b_1(u)>0$ and $b_1'(u)<0$ (log-kill, with efficacy decreasing in resistance);
+- **H3.** $c'(u)/c(u)>b_1'(u)/b_1(u)$ for all $u$ (fitness maxima shift toward higher resistance as the dose increases);
+- **H4.** the fitness landscape $h(u,a)=b(u,a)/c(u)$ has finitely many critical points in $u$, each isolated, for every $a$, and $h(u,a)\to-\infty$ as $|u|\to\infty$ for all $a\ge0$.
+
+The *cemetery* (cure) set is $E=\{(u,0):u\in\mathbb R\}$, a line of equilibria by H1. Let $\Gamma(x_0)$ be the reachable set from $x_0=(u_0,n_0)$ under piecewise-constant doses in $A$ and $\tilde\Gamma(x_0)$ that of the reduced system, obtained by dividing $\dot n$ by $k(n)/n$, for which $E$ is no longer invariant; the set of *curable* states is $S=\{x_0:\tilde\Gamma(x_0)\cap E\ne\emptyset\}$. By H2–H3 the equilibria with $n>0$ form the graph
+
+$$\mathcal P=\{(x,a):\ a=a_\star(u),\ n=h_\star(u)\},\qquad h_\star(u)=h(u,a_\star(u)),$$
+
+of a smooth function of $u$ ($a_\star(u)$ is the dose at which $u$ is a critical point of $h(\cdot,a)$); the feasible equilibria are $\mathcal P_A=\{(x,a)\in\mathcal P:a\in A\}$. Points with $a_\star'(u)>0$ are stable nodes, with $a_\star'(u)<0$ saddles, and with $a_\star'(u)=0$ isolated non-hyperbolic points. The input range is **hyperbolic** if all equilibria of the extreme vector fields $a_\pm$ are hyperbolic. A set $K$ is **controllable** if every point of $K$ can be steered to every other point of $K$ by some admissible dose schedule.
 
 **Theorem (controllable sets).** Let $A$ be hyperbolic and $\varepsilon>0$ sufficiently small. For each connected component of feasible equilibria:
 1. if both endpoints are stable nodes $(p_\pm,a_\pm)$, the curve $\Omega_1$ formed by the $a_+$-orbit from $p_-$ and the $a_-$-orbit from $p_+$ encloses a set in which the reachable set of every point is the whole enclosed set; it is thus controllable and also forward invariant (once entered it cannot be left under any schedule);
 2. if both endpoints are saddles, a simple closed curve $\Omega_2$ inside their stable and unstable manifolds encloses a controllable set, which trajectories can leave;
 3. if one endpoint is a stable node and the other a saddle (for the same extreme dose), a curve $\Omega_3$ built from an orbit and the saddle's invariant manifolds encloses a controllable set.
 
-These statements hold for the system without the cure set $E$; if $\Omega_j$ avoids the cure set, they hold for the full system.
+These statements hold for the reduced system; if $\Omega_j$ avoids the cure set $E$, they hold for the full system.
 
 **Theorem (limit sets).** For hyperbolic $A$ and small $\varepsilon$, every solution starting outside the set $S$ of curable states, under any piecewise-constant dose schedule, converges in Hausdorff semi-distance to the closure of one of these controllable sets $\operatorname{enc}\Omega_j$, $j\in\{1,2,3\}$. So the controllable sets completely determine the long-term behaviour of all trajectories for which cure is unattainable.
 

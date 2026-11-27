@@ -12,9 +12,9 @@ $$\lambda\,\limsup_{n\to\infty}\bigl(k^{(n)}_{xx}\bigr)^{1/n} > 1, \qquad\text{s
 
 $\Phi(x,x\mid\lambda)$ being the first-return generating function of the mean matrix.
 
-**Theorem (global survival).** $\lambda_w(x) \ge 1/\liminf_n\bigl(\sum_y k^{(n)}_{xy}\bigr)^{1/n}$, so the process dies out a.s. below this value; if the discrete-time counterpart is an $\mathcal{F}$-BRW, global survival from $x$ holds iff $\lambda > 1/\liminf_n\bigl(\sum_y k^{(n)}_{xy}\bigr)^{1/n}$.
+**Theorem (global survival).** $\lambda_w(x) \ge 1/\liminf_n\bigl(\sum_y k^{(n)}_{xy}\bigr)^{1/n}$, so the process dies out a.s. below this value; if the discrete-time counterpart (the generation-by-generation BRW with mean matrix $\lambda K$) is an $\mathcal{F}$-BRW, meaning that there are a finite set $Y$ and a surjection $g:X\to Y$ such that the expected offspring placed in each class, $\sum_{z\in g^{-1}(j)}k_{xz}$, depends only on $(g(x),j)$ (transitive and quasi-transitive BRWs are examples), global survival from $x$ holds iff $\lambda > 1/\liminf_n\bigl(\sum_y k^{(n)}_{xy}\bigr)^{1/n}$.
 
-**Local modifications.** If $\lambda_w < \lambda_s$ and $(X,\mathcal{R})$ is a local modification of $(X,\mathcal{R}^*)$, then $\lambda_w^* \le \lambda_w$, with equality when $\lambda_w^* < \lambda_s^*$. An irreducible ageing BRW with a pure global survival phase cannot be a local modification of an irreducible quasi-transitive one without such a phase.
+**Local modifications.** In this part the ageing BRWs are *irreducible*: for all $x,y\in X$ there is $n$ with $k^{(n)}_{xy}>0$, so $\lambda_s$ and $\lambda_w$ do not depend on $x$. An ageing BRW $(X,\mathcal{R})$ with rates $\mathcal R=(r_{xy})$ is a *local modification* of $(X,\mathcal{R}^*)$ if the set $\{x\in X:\ r_{xy}\ne r^*_{xy}\text{ for some }y\}$ is finite. If $\lambda_w<\lambda_s$ and $(X,\mathcal{R})$ is a local modification of $(X,\mathcal{R}^*)$, then (1) $\lambda_w^*\le\lambda_w$; (2) if $\lambda_w^*<\lambda_s^*$, then $\lambda_w^*=\lambda_w$; (3) if $\lambda_s^*\le\lambda_w$, then $\lambda_w^*=\lambda_s^*\le\lambda_w$, and if $\lambda_s^*>\lambda_w$, then $\lambda_w^*=\lambda_w<\lambda_s^*$. So an irreducible ageing BRW with a pure global survival phase ($\lambda_w<\lambda_s$) cannot be a local modification of an irreducible quasi-transitive one without such a phase.
 
 ## Expansion
 
@@ -22,4 +22,4 @@ Ageing changes the timing of births but, because lifetimes are Exp(1), each indi
 
 ## Sources
 
-- D. Bertacchi, E. Montanaro, F. Zucca, "Branching random walks with ageing", *Mathematics* 14(6) (2026), 1088, definition and Eq. (1mom-ageing) of Section 2, Theorems 3.1-3.3, Theorems 4.2 and 4.7, Corollary 4.8, <https://doi.org/10.3390/math14061088> (preprint arXiv:2602.22783).
+- D. Bertacchi, E. Montanaro, F. Zucca, "Branching random walks with ageing", *Mathematics* 14(6) (2026), 1088, definition and first-moment matrix of Section 2, Theorems 3.1-3.3, Definition 4.1, Theorems 4.2 and 4.7, Corollary 4.8, <https://doi.org/10.3390/math14061088> (preprint arXiv:2602.22783).

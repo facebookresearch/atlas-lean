@@ -22,7 +22,7 @@ Thus, from a Gaussian initial fluctuation $\xi(0)$, the LNA distribution of $X(t
 
 ## Depends on
 
-- [Stochastic reaction networks](../../stochastic-reaction-networks/README.md)
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
 
 ## Expansion
 

@@ -14,17 +14,13 @@ with diffusion rates $d^\pm>0$.
 
 **Theorem.** Assume SA together with
 
-- $\mathbf M^-$: $(f^-)'<0$ on $[K^-,K^+]$, or alternatively $\mathbf{C1}^-$, $\mathbf{C2}^-$ (the mirror conditions on the left);
+- $\mathbf M^-$: $(f^-)'<0$ on $[K^-,K^+]$, or alternatively (Theorem 2) the pair $\mathbf{C1}^-$: $(\sqrt{G^-})''\le0$ on $(K^-,K^+)$ and $\mathbf{C2}^-$: $\big(G^-/((G^-)')^2\big)''\ge0$ on $(K^-,K^+)$, where $G^-(u)=F^-(u)-F^-(K^+)$ (positive on $(K^-,K^+)$); these are not the naive mirror images of $\mathbf{C1}^+$, $\mathbf{C2}^+$, since $F^-$ enters through its difference from the value at $K^+$;
 - $\mathbf{C1}^+$: $(\sqrt{F^+})''\le0$ on $(K^-,K^+)$;
 - $\mathbf{C2}^+$: $\big(F^+/((F^+)')^2\big)''\ge0$ on $(K^-,K^+)$.
 
 Then the problem has a unique positive solution.
 
 **Generalized logistic growth.** For Richards growth $f^\pm(u)=r^\pm u\big(1-(u/K^\pm)^{p^\pm}\big)$ with $K^-<K^+$, SA, $\mathbf M^-$ and $\mathbf{C1}^+$ always hold, and $\mathbf{C2}^+$ holds for all $K^-\in(0,K^+)$ iff $p^+\ge1$. So logistic growth ($p^\pm=1$) gives a unique positive steady state.
-
-## Depends on
-
-- [Logistic growth equation](../../../logistic-growth-equation/README.md)
 
 ## Expansion
 

@@ -12,10 +12,6 @@ the smallest gap between the largest and second-largest coordinate over circuits
 
 **Statement.** For every matroid $M$, the safety radius of the tropical projection $\pi_M$ onto $\mathcal U_M$ is exactly $1/2$. In particular, projecting a dissimilarity vector whose entries are within $w_{\min}/2$ of those of an ultrametric of a binary equidistant tree recovers that tree's topology.
 
-## Depends on
-
-- [Atteson's theorem on neighbor joining](../../atteson-s-theorem-on-neighbor-joining/README.md)
-
 ## Expansion
 
 The tropical distance from $w$ in the relative interior of a maximal cone $K$ to the boundary of $K$ equals $w_{\min}$: one must close the gap between the top two coordinates on some circuit. A perturbation in the open cube of half-width $w_{\min}/2$ moves $w$ by tropical distance less than $w_{\min}$, and non-expansivity of $\pi_M$ (with $\pi_M w = w$) keeps $\pi_M(w + \epsilon)$ within that distance of $w$, hence inside $K$. A perturbation raising the second-largest and lowering the largest coordinate on the critical circuit by $w_{\min}/2$ each reaches the boundary, so $1/2$ cannot be improved.

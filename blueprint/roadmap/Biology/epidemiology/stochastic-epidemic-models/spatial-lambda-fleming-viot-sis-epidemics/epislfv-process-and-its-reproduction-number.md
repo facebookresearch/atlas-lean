@@ -28,10 +28,6 @@ $$\lim_{t\to\infty}\mathbb E\big[\langle\mathbf 1_{\mathbb R^d},1-\omega_{M_t}\r
 
 so the total expected infected mass vanishes.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Expansion
 
 Duality: the $k$-point moments $\mathbb E\int\psi(x_1,\dots,x_k)\prod_j\omega_{M_t}(x_j)\,dx$ equal expectations over an ancestral process of infected lineages, a spatial branching process in which a lineage covered by an event branches into the lineages of the sampled parent while recoveries kill lineages at rate $\gamma$; this gives uniqueness, and existence follows from a quenched construction driven by a space-time Poisson point process of events. The expected infected mass $m_t$ satisfies $m_t'\le(\gamma\mathrm R_0-\gamma)\,m_t$ because each infected point lies in events at total rate $\int uV_r\,\nu$, which gives exponential decay when $\mathrm R_0<1$. The candidate $\mathrm R_0$ is conjectured to be a sharp threshold at $1$, as in non-spatial SIS.

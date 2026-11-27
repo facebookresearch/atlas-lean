@@ -12,7 +12,11 @@ $$E_+ = \Bigl(\frac{g^{-1}\bigl(f^{-1}(\gamma)\bigr)}{\gamma},\ \gamma\Bigr),$$
 
 which exists and is positive iff $R_0 > 1$. Both equilibria are independent of the kernel $K$.
 
-**Proposition.** Under the source's standing condition relating its two rate parameters, $E_0$ is locally asymptotically stable when $R_0 < 1$ and unstable when $R_0 > 1$, whatever the memory kernel.
+**Proposition.** Take the gamma memory kernel
+
+$$K(s) = \frac{\mu^\alpha s^{\alpha-1}e^{-\mu s}}{\Gamma(\alpha)}, \qquad s \ge 0,\ \alpha, \mu > 0$$
+
+(mean delay $\alpha/\mu$), and pose the system on history spaces weighted by $w(\theta) = e^{\rho\theta}$, $\theta \le 0$, with $\rho > 0$ ($wI_t$ continuous and vanishing at $-\infty$, $\beta_t$ integrable against $w$), so that stability is decided by the characteristic roots with $\Re\lambda > -\rho$. If $\rho < \mu$, then $E_0$ is locally asymptotically stable when $R_0 < 1$ and unstable when $R_0 > 1$, for every such gamma kernel: its characteristic equation is $\lambda + \gamma - \beta_0 = 0$.
 
 The kernel matters for $E_+$: the source finds, analytically for selected kernels and numerically in general, that the endemic equilibrium can lose stability as the memory kernel varies, producing sustained, behavior-induced epidemic waves. Pseudospectral approximation of the delay equation by ODEs, which extends the linear chain trick beyond Erlang kernels, makes these bifurcations numerically computable.
 
@@ -22,4 +26,4 @@ At equilibrium the information index equals $g(\beta^* I^*)$ and must make $f$ r
 
 ## Sources
 
-- A. Andò, S. De Reggi, F. Scarabel, R. Vermiglio, "Behavior-induced oscillations in epidemic outbreaks with distributed memory: beyond the linear chain trick using numerical methods", *Mathematical Biosciences and Engineering* 23(1) (2026), 76–96, system (model), Eq. (EEeq) and Proposition 3.1, <https://doi.org/10.3934/mbe.2026004> (preprint arXiv:2511.21199).
+- A. Andò, S. De Reggi, F. Scarabel, R. Vermiglio, "Behavior-induced oscillations in epidemic outbreaks with distributed memory: beyond the linear chain trick using numerical methods", *Mathematical Biosciences and Engineering* 23(1) (2026), 76–96, system (2.1), kernel (2.3), weight (2.4), the equilibrium equations of Section 3 and Proposition 3.1, <https://doi.org/10.3934/mbe.2026004> (preprint arXiv:2511.21199).

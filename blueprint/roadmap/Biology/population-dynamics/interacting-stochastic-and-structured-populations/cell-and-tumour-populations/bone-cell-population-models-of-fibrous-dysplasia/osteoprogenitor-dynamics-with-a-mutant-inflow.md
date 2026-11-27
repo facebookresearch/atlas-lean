@@ -12,10 +12,6 @@ Here $\rho,\rho_m$ are proliferation rates in a shared niche of capacity $1$, $\
 
 **Healthy bone equilibrium.** If $\rho<\alpha$, the healthy bone model has a unique nonnegative equilibrium, and it is uniformly asymptotically stable.
 
-## Depends on
-
-- [Logistic growth equation](../../../logistic-growth-equation/README.md)
-
 ## Expansion
 
 Boundedness follows because the right side of each progenitor equation is a downward parabola in its own variable, with linear and constant coefficients bounded once the occupancy satisfies $\mu M<1$; the osteoclast equation is linear and the osteocyte equation is dissipative. In the healthy model, $\rho<\alpha$ means differentiation outpaces self-renewal, so progenitors are maintained by the regulated inflow and the osteocyte–osteoclast loop settles at a unique balance. With a mutant inflow $\tau_m>0$ and $\rho_m$ not small, mutants have no differentiation outflow and also recruit wild-type cells by phenocopying, so the numerical study shows mutant and phenocopying progenitors becoming the main populations even for a small mutant departure fraction.

@@ -20,7 +20,7 @@ The disease-free equilibrium is locally stable if $R_0<1$ and unstable if $R_0>1
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

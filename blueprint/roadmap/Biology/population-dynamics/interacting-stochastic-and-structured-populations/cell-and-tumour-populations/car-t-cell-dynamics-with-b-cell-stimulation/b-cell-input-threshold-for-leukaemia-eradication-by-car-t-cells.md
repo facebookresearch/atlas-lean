@@ -16,10 +16,6 @@ $P_2$ and $P_3$ undergo a transcritical bifurcation: for $I_0>I_0^{\mathrm{crit}
 
 **Theorem (oscillations).** At $I_0=0$ the coexistence equilibrium has a subcritical Hopf bifurcation with first Lyapunov coefficient $l_1=\tau_C^{3/2}\rho_C^2/(3\sqrt{\rho_L})>0$, so unstable periodic orbits appear for small $I_0>0$. Trajectories follow an almost heteroclinic cycle between equilibria, with successive leukaemia maxima that explain apparent remission followed by relapse; their size depends on the initial tumour burden.
 
-## Depends on
-
-- [Lotka-Volterra predator-prey model](../../../lotka-volterra-predator-prey-model/README.md)
-
 ## Expansion
 
 At $P_1$ the Jacobian is triangular, with eigenvalues $\rho_L$, $-1/\tau_B$ and $\rho_CI_0(1+\tau_B/\tau_I)-1/\tau_C$; the last changes sign at the first threshold, where the CAR T-cell compartment can invade the B-cell-only state, creating $P_2$. Along the cure branch, the leukaemia eigenvalue $\rho_L-\alpha C_2$ crosses zero exactly when $P_3$ leaves the positive orthant, giving $I_0^{\mathrm{crit}}$. Without B-cell input ($I_0=0$) the reduced system is a Lotka-Volterra-like predator-prey loop between CAR T cells and leukaemic cells with a neutral centre, which the input perturbs into weakly unstable oscillations, hence the near-heteroclinic relapse dynamics.

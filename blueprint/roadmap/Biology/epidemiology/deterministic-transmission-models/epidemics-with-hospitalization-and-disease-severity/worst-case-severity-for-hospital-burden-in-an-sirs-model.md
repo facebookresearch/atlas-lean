@@ -20,10 +20,6 @@ $$\tilde\theta=\frac{\gamma_C}{\gamma_C-\gamma_I}\Big(1-\sqrt{\frac{\gamma_I}{\b
 
 which lies in $(0,\theta^*)$ when $\gamma_I<\beta<\gamma_C$. So a more severe disease can produce fewer total hospitalizations: removing severe cases from transmission suppresses spread. If $\gamma_I=\gamma_C$, $\mathcal R_0=\beta/\gamma$ and $\tilde\theta=1$. If instead $\gamma_I>\gamma_C$, $\mathcal R_0$ increases with $\theta$ and $\tilde\theta=1$ always.
 
-## Depends on
-
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-
 ## Expansion
 
 With $a=\beta/\gamma_I$ and $b=\beta/\gamma_C$, $\mathcal R_0=a-(a-b)\theta$ and $f'(\theta)=1-a/\mathcal R_0^2$, so the interior critical point solves $\mathcal R_0(\tilde\theta)=\sqrt a$, giving $\tilde\theta=(a-\sqrt a)/(a-b)$, which equals the stated formula and is below $1$ iff $b<\sqrt a$, i.e. $\beta<\gamma_C^2/\gamma_I$. The slow waning rate $\varepsilon$ makes the system two-timescale. Fast epidemic waves (with the constant of motion $\log S-\mathcal R_0(S+I+C)$ when $\gamma_I=\gamma_C$, giving final sizes $S_\infty\in(0,1/\mathcal R_0)$) alternate with slow replenishment of susceptibles, analyzed by geometric singular perturbation theory, including a delayed loss of stability. Simulations of the first wave show that its cost-maximizing severity is close to the equilibrium value $\tilde\theta$. The same model describes partial self-quarantine of symptomatic cases.

@@ -4,7 +4,7 @@
 
 $$\dot x = x(1-x-y) - \frac{\theta xy}{\alpha+y}, \qquad \dot y = r y(1-x-y) + \frac{\theta xy}{\alpha+y} - \gamma y,$$
 
-with logistic growth sharing a common carrying capacity, saturating infection with maximal rate $\theta>0$ and half-saturation $\alpha>0$, growth rate $r>0$ of infected cells and virus-induced death rate $\gamma>0$ of infected cells.
+with logistic growth sharing a common carrying capacity, saturating infection with maximal rate $\theta>0$ and half-saturation $\alpha>0$, relative growth rate $0<r<1$ of infected cells ($r=r_2/r_1$, infected cells growing more slowly than uninfected ones) and virus-induced death rate $\gamma>0$ of infected cells. The hypothesis $r<1$ is used throughout the proofs; without it the regimes below can overlap (for $r=3$, $\gamma=1$, $\alpha=10$, $\theta=7$ both conditions in item 3 for $(1,0)$ and for the infected-only state hold).
 
 **Theorem.** The system has no closed orbits in $\mathbb{R}^2_+$, and:
 

@@ -18,7 +18,7 @@ The projection $(x;z)\mapsto x$ is a $2^n$-to-1 surjection $V_{\mathbb R}(J)\to 
 
 ## Depends on
 
-- [Chemical reaction network theory](../../chemical-reaction-network-theory/README.md)
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
 
 ## Expansion
 

@@ -6,7 +6,14 @@ $$\psi^\mu_{\mathbf T}(s_1,\dots,s_r,\pi)=\pi_1\psi^\mu_{T_1}(s_1)+\dots+\pi_r\p
 
 Tree parameters are generically identifiable on a class of tuples if, for generic parameters, equality of two mixture distributions forces $\mathbf T'=\sigma\cdot\mathbf T$ for a permutation $\sigma$; continuous parameters are generically identifiable if moreover $s'_i=s_{\sigma(i)}$ and $\pi'_i=\pi_{\sigma(i)}$. Let $\mathcal T(r,n,k)$ be the set of $r$-tuples of $n$-leaf binary trees for which there is one leaf tripartition $A|B|C$ with $|A|\ge|B|\ge|C|$ and $|B|\ge k$ that is induced by an inner vertex of every $T_i$.
 
-**Theorem.** Suppose $\mu$ on $\kappa>2$ states is standard (generically identifiable on single trees, containing the identity, and containing two transition matrices with suitably independent columns), has the rank property $RP(r,k)$ (stacking the leaf-given-root conditional matrices of $r$ generic $k$-leaf tree distributions gives full row rank $\kappa r$), the extended rank property $ERP(r,k)$, and the No Shuffling Property (rows of single-leaf flattenings from different mixture components cannot be recombined into a distribution of the model unless they come from one component), and $r\le\kappa^{k-1}$, $n\ge 2k+1$. Then both tree parameters and continuous parameters of the mixture are generically identifiable on $\mathcal T(r,n,k)$.
+For a distribution $P$ on $n$ leaves and a split $A|B$ of the leaves, $\mathrm{Flat}_{A|B}(P)$ is the $\kappa^{|A|}\times\kappa^{|B|}$ matrix of joint probabilities with rows indexed by states on $A$ and columns by states on $B$; write $[n-1]=\{1,\dots,n-1\}$. The model $\mu$ has:
+
+- the **rank property** $RP(r,n)$ if for any $n$-leaf trees $T_1,\dots,T_r$ and generic $P_i\in\mathcal M^\mu_{T_i}$ the $\kappa^{n-1}\times r\kappa$ matrix $\big[\mathrm{Flat}_{[n-1]|n}(P_1)\ \cdots\ \mathrm{Flat}_{[n-1]|n}(P_r)\big]$ has rank $r\kappa$ (full column rank);
+- the **extended rank property** $ERP(r,n)$ if for any $(n+1)$-leaf tree $T_1$ not containing the split $[n-1]|\{n,n+1\}$, any $n$-leaf trees $T_2,\dots,T_r$ and generic $P_i\in\mathcal M^\mu_{T_i}$, the matrix $\big[\mathrm{Flat}_{[n-1]|\{n,n+1\}}(P_1)\ \mathrm{Flat}_{[n-1]|n}(P_2)\ \cdots\ \mathrm{Flat}_{[n-1]|n}(P_r)\big]$ has rank $(r-1)\kappa+\kappa^2$;
+- the property of being **standard** if it is generically identifiable on trees, contains the identity matrix, and contains two transition matrices $M_1,M_2$ such that any two columns of $M_1$, or one column of $M_1$ and one of $M_2$, are linearly independent;
+- the **No Shuffling Property** if for any trees $T_1,\dots,T_r$ with $n\ge3$ leaves, generic $P_i\in\mathcal M^\mu_{T_i}$ and generic $\pi\in\Delta^{r-1}$, whenever $\kappa$ (not necessarily distinct) columns of $\big[\pi_1\mathrm{Flat}_{[n-1]|n}(P_1)\ \cdots\ \pi_r\mathrm{Flat}_{[n-1]|n}(P_r)\big]$ form, as a tensor, a distribution in $\mathcal M^\mu_T$ for some tree $T$, all of them come from the same $P_i$.
+
+**Theorem.** Suppose $\mu$ on $\kappa>2$ states is standard, has $RP(r,k)$, $ERP(r,k)$ and the No Shuffling Property, and $r\le\kappa^{k-1}$, $n\ge 2k+1$. Then both tree parameters and continuous parameters of the mixture are generically identifiable on $\mathcal T(r,n,k)$.
 
 **Corollary.** For the Jukes-Cantor, Kimura 2- and 3-parameter, strand symmetric and general Markov models, if $n\ge 2k+1$ and $r\le 2^k-k$ then tree and continuous parameters of $r$-tree mixtures are generically identifiable on $\mathcal T(r,n,k)$. Thus the number of identifiable mixture components grows exponentially in the number of leaves.
 
@@ -16,4 +23,4 @@ At the shared vertex the mixture distribution, viewed as a three-way tensor inde
 
 ## Sources
 
-- Bryson Kagy, Seth Sullivant, "Identifiability of Large Phylogenetic Mixtures for Many Phylogenetic Model Structures", *Bulletin of Mathematical Biology* 88(11) (2026), 211, Theorem 2.5 and Corollary 2.6, <https://doi.org/10.1007/s11538-026-01782-5> (preprint arXiv:2508.05832).
+- Bryson Kagy, Seth Sullivant, "Identifiability of Large Phylogenetic Mixtures for Many Phylogenetic Model Structures", *Bulletin of Mathematical Biology* 88(11) (2026), 211, Theorem 2.5, Corollary 2.6 and Definitions 6.1, 6.2, 6.4 and 6.6, <https://doi.org/10.1007/s11538-026-01782-5> (preprint arXiv:2508.05832).

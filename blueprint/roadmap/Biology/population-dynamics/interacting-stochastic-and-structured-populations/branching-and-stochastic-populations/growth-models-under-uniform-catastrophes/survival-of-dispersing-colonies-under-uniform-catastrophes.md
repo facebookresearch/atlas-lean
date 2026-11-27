@@ -15,7 +15,15 @@ For $d = 2$ this reads $4\ln(1 + \lambda/2) < \lambda$, and then
 
 $$\psi_2 = \min\Big\{1, \frac{\ln(\lambda+1)}{\lambda + \ln(\lambda+1) - 4\ln(1 + \lambda/2)}\Big\};$$
 
-for $d = 3$ it reads $\tfrac92\ln(1 + \lambda/3) < \lambda$, and $\psi_3$ is the explicit root of a quadratic. The critical rate $\lambda_d = \inf\{\lambda : C_d(\lambda) \text{ survives}\}$ decreases in $d$ toward $2$.
+for $d = 3$ it reads $\tfrac92\ln(1 + \lambda/3) < \lambda$, and then, with
+
+$$a = \frac{\ln(1+\lambda)}{\lambda}, \qquad b = \frac{1}{2\lambda}\ln\Big(1 + \frac{2\lambda}{3}\Big), \qquad c = \frac1\lambda\ln\Big(1 + \frac\lambda3\Big),$$
+
+$\psi_3$ is the smallest nonnegative root of $(a - 9b + 9c - 1)s^2 - (1 + 2a - 9b)s + a = 0$ (capped at $1$), namely
+
+$$\psi_3 = \min\Big\{1, \frac{1 + 2a - 9b - \sqrt{(1 - 9b)^2 + 4a(2 - 9c)}}{2(a - 9b + 9c - 1)}\Big\}.$$
+
+The source's Theorem 2.5 prints $+\sqrt{\cdots}$; that root is negative in the supercritical regime (for $\lambda = 10$ the two roots are about $-1.93$ and $0.349$), so the extinction probability is the root with $-\sqrt{\cdots}$. The critical rate $\lambda_d = \inf\{\lambda : C_d(\lambda) \text{ survives}\}$ decreases in $d$ toward $2$.
 2. $C_\ast(\lambda)$ survives if and only if $\lambda > 2$; then $\psi_\ast$ is the smallest nonnegative solution $s$ of $\ln\big(1 + \lambda(1-s)\big) = \lambda s(1-s)$. For $\lambda \le 2$,
 
 $$\mathbb{E}[\tau_\ast] = \frac1\lambda\int_0^\lambda \frac{x^2}{\lambda\ln(1+x) - x(\lambda - x)}\,dx .$$

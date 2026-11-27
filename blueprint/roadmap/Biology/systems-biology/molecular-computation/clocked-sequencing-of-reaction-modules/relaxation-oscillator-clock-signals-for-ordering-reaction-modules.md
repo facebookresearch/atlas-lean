@@ -24,7 +24,7 @@ satisfies $\lim_{\alpha,\beta\to0}R(b,\alpha,\beta)=\infty$ for every $b>0$ when
 
 ## Depends on
 
-- [Chemical reaction network theory](../../chemical-reaction-network-theory/README.md)
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
 
 ## Expansion
 

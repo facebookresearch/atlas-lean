@@ -6,9 +6,15 @@
 
 $$\mathbb E\mathbf N = \bar{\mathbf N}_0 + \rho\, B D_\xi F\, \mathbb E\xi + \frac12 B\sum_{i,j}\frac{\partial^2 F}{\partial N_i\partial N_j}[\mathrm{Cov}\,\mathbf N]_{ij} + \frac{\rho^2}{2} B\sum_{i,j}\frac{\partial^2 F}{\partial\xi_i\partial\xi_j}\big([\mathrm{Cov}\,\xi]_{ij} + \mathbb E\xi_i\,\mathbb E\xi_j\big) + R_2 + O(\rho^3),$$
 
-where $R_2$ collects the remaining second-order terms (the quadratic term in $B D_\xi F\,\mathbb E\xi$ and the mixed population-noise derivatives), and the stationary covariance solves the discrete Lyapunov equation
+where, with $m = B D_\xi F\,\mathbb E\xi$ and all derivatives at $(\bar{\mathbf N}_0, \bar e)$,
 
-$$\mathrm{vec}(\mathrm{Cov}\,\mathbf N) = (I - D_N F \otimes D_N F)^{-1}(D_\xi F \otimes D_\xi F)\,\mathrm{vec}(\mathrm{Cov}\,\xi).$$
+$$R_2 = \frac{\rho^2}{2} B\sum_{i,j}\frac{\partial^2 F}{\partial N_i\partial N_j}\,m_i m_j + \rho^2 B\sum_{i,j}\frac{\partial^2 F}{\partial N_i\partial\xi_j}\,(\mathbb E\xi)_j\, m_i ,$$
+
+and, to leading order, the stationary covariance solves the discrete Lyapunov equation
+
+$$\mathrm{vec}(\mathrm{Cov}\,\mathbf N) = \rho^2\,(I - D_N F \otimes D_N F)^{-1}(D_\xi F \otimes D_\xi F)\,\mathrm{vec}(\mathrm{Cov}\,\xi).$$
+
+The source prints the covariance equation without the factor $\rho^2$; it is needed, since $e = \bar e + \rho\xi$ enters only through $\rho\xi$. In one dimension, $F(N,e) = aN + e$ with $|a| < 1$ and $\mathrm{Var}\,\xi = \sigma^2$ has $\mathrm{Var}\,N = \rho^2\sigma^2/(1-a^2)$. So $\mathrm{Cov}\,\mathbf N = O(\rho^2)$, and the second term of $\mathbb E\mathbf N$ is of order $\rho^2$.
 
 For centered noise ($\mathbb E\xi = 0$) the first-order term vanishes and the noise-induced change $\mathbb E\mathbf N - \bar{\mathbf N}_0$ is of order $\rho^2$, with a sign set by the curvature of $F$ and by the covariances among growth rates, carrying capacities and dispersal rates.
 
@@ -16,7 +22,7 @@ For centered noise ($\mathbb E\xi = 0$) the first-order term vanishes and the no
 
 ## Expansion
 
-The expansion is a stochastic analogue of the delta method: write $\mathbf N = \bar{\mathbf N}_0 + \rho\mathbf X$, Taylor-expand $F$ to second order around $(\bar{\mathbf N}_0, \bar e)$, take expectations under the stationary law, and solve the resulting linear equations, which involve $(I - D_N F)^{-1}$ because $\bar{\mathbf N}_0$ is a stable fixed point (all eigenvalues of $D_N F$ inside the unit disc). The covariance equation is the stationary covariance of the linearized recursion $\mathbf X(t+1) = D_N F\,\mathbf X(t) + D_\xi F\,\xi(t)$. Small noise cannot produce a negative metapopulation growth rate: convergence to a measure near $\bar{\mathbf N}_0$ is incompatible with extinction, so $M > 0$ (Remark A.1). The two-patch formulas show that the covariance between, for example, growth rate and dispersal decides whether noise increases or decreases the total population.
+The expansion is a stochastic analogue of the delta method: write $\mathbf N = \bar{\mathbf N}_0 + \rho\mathbf X$, Taylor-expand $F$ to second order around $(\bar{\mathbf N}_0, \bar e)$, take expectations under the stationary law, and solve the resulting linear equations, which involve $(I - D_N F)^{-1}$ because $\bar{\mathbf N}_0$ is a stable fixed point (all eigenvalues of $D_N F$ inside the unit disc). The covariance equation is $\rho^2$ times the stationary covariance of the linearized recursion $\mathbf X(t+1) = D_N F\,\mathbf X(t) + D_\xi F\,\xi(t)$, as $\mathrm{Cov}\,\mathbf N = \rho^2\,\mathrm{Cov}\,\mathbf X$. Small noise cannot produce a negative metapopulation growth rate: convergence to a measure near $\bar{\mathbf N}_0$ is incompatible with extinction, so $M > 0$ (Remark A.1). The two-patch formulas show that the covariance between, for example, growth rate and dispersal decides whether noise increases or decreases the total population.
 
 ## Depends on
 
@@ -24,4 +30,4 @@ The expansion is a stochastic analogue of the delta method: write $\mathbf N = \
 
 ## Sources
 
-- A. Hening, S. Sabharwal, "Population size in stochastic multi-patch ecological models", *Journal of Mathematical Biology* 92(3) (2026), 43, Remark 2.7, Section 4 (Theorem 4.1), Appendix A (Assumption A.1, Theorems A.1 and A.2, Remark A.1), <https://doi.org/10.1007/s00285-026-02365-7> (preprint arXiv:2511.19743).
+- A. Hening, S. Sabharwal, "Population size in stochastic multi-patch ecological models", *Journal of Mathematical Biology* 92(3) (2026), 43, Remark 2.7, Section 4 (Theorem 4.1, Eq. (26)), Appendix A (Assumption A.1, Theorems A.1 and A.2, Remark A.1), <https://doi.org/10.1007/s00285-026-02365-7> (preprint arXiv:2511.19743).
