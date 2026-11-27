@@ -18,7 +18,9 @@ import Mathlib.Data.Nat.Squarefree
 
 In the coordinates `n = u * v ^ 2` with `u` squarefree, square-splitting convolution is
 ordinary Dirichlet convolution in each variable. This identifies convolution by an inverse
-of the constant-one function with the inverse of the divisor-sum operator.
+of the constant-one function with the inverse of the divisor-sum operator, and transfers
+commutativity, associativity and the identity law from Dirichlet convolution; distributivity
+over addition is proved directly from the defining sum.
 -/
 
 namespace MetaMathlibExt
@@ -153,5 +155,71 @@ public theorem squareSplit_moebius_inversion (m : ArithmeticFunction ℂ)
     exact h u hu
   · rintro rfl
     exact (cancel_conv _ _ _ h).symm
+
+/-- **Ring axioms for the square-splitting convolution.** For all complex arithmetic functions
+$f$, $g$ and $h$, the square-splitting convolution $\star$ satisfies $f \star g = g \star f$,
+$(f \star g) \star h = f \star (g \star h)$, $f \star (g + h) = f \star g + f \star h$ and
+$\varepsilon \star f = f$, where $\varepsilon$ is the arithmetic function with $\varepsilon(1) = 1$
+and $\varepsilon(n) = 0$ for $n \ne 1$.
+
+With pointwise addition, these identities make the complex arithmetic functions a commutative ring
+under $\star$ with identity $\varepsilon$.
+
+Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
+A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 2
+(`integers-2026-A56-thm-2`). -/
+public theorem squareSplitConv_commRing_axioms (f g h : ArithmeticFunction ℂ) :
+    squareSplitConv f g = squareSplitConv g f ∧
+      squareSplitConv (squareSplitConv f g) h = squareSplitConv f (squareSplitConv g h) ∧
+      squareSplitConv f (g + h) = squareSplitConv f g + squareSplitConv f h ∧
+      squareSplitConv 1 f = f := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · apply ArithmeticFunction.ext
+    intro n
+    obtain ⟨v, u, rfl, hu⟩ := exists_sq_mul_squarefree n
+    rw [mul_comm (v ^ 2)]
+    change inCoords (squareSplitConv f g) u v = inCoords (squareSplitConv g f) u v
+    have hcomm : inCoords (squareSplitConv f g) u = inCoords (squareSplitConv g f) u := by
+      rw [inCoords_conv f g hu, inCoords_conv g f hu]
+      exact DFunLike.congr_fun (mul_comm (inCoords f) (inCoords g)) u
+    exact DFunLike.congr_fun hcomm v
+  · apply ArithmeticFunction.ext
+    intro n
+    obtain ⟨v, u, rfl, hu⟩ := exists_sq_mul_squarefree n
+    rw [mul_comm (v ^ 2)]
+    change inCoords (squareSplitConv (squareSplitConv f g) h) u v =
+      inCoords (squareSplitConv f (squareSplitConv g h)) u v
+    have hL : inCoords (squareSplitConv (squareSplitConv f g) h) u =
+        ((inCoords f * inCoords g) * inCoords h) u := by
+      rw [inCoords_conv _ _ hu]
+      exact mul_congr_squarefree (fun _ hw => inCoords_conv f g hw) (fun _ _ => rfl) hu
+    have hR : inCoords (squareSplitConv f (squareSplitConv g h)) u =
+        (inCoords f * (inCoords g * inCoords h)) u := by
+      rw [inCoords_conv _ _ hu]
+      exact mul_congr_squarefree (fun _ _ => rfl) (fun _ hw => inCoords_conv g h hw) hu
+    rw [hL, hR]
+    exact DFunLike.congr_fun
+      (DFunLike.congr_fun (mul_assoc (inCoords f) (inCoords g) (inCoords h)) u) v
+  · apply ArithmeticFunction.ext
+    intro n
+    by_cases hn : n = 0
+    · subst hn
+      simp
+    · rw [show (squareSplitConv f g + squareSplitConv f h) n =
+          squareSplitConv f g n + squareSplitConv f h n from rfl,
+        squareSplitConv_apply f (g + h) hn, squareSplitConv_apply f g hn,
+        squareSplitConv_apply f h hn, ← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intro d _
+      rw [show (g + h) (n / d) = g (n / d) + h (n / d) from rfl, mul_add]
+  · apply ArithmeticFunction.ext
+    intro n
+    obtain ⟨v, u, rfl, hu⟩ := exists_sq_mul_squarefree n
+    rw [mul_comm (v ^ 2)]
+    change inCoords (squareSplitConv 1 f) u v = inCoords f u v
+    have hone : inCoords (squareSplitConv 1 f) u = inCoords f u := by
+      rw [inCoords_conv _ _ hu, inCoords_one]
+      exact DFunLike.congr_fun (one_mul (inCoords f)) u
+    exact DFunLike.congr_fun hone v
 
 end MetaMathlibExt
