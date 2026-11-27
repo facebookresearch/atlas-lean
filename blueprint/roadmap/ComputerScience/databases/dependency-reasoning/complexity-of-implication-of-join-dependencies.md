@@ -12,12 +12,12 @@ proofs credited in that book's bibliographic notes for Chapter 8 and cites them 
 
 ## Depends on
 
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Multivalued and join dependencies; 4NF](../dependencies-and-the-chase/multivalued-and-join-dependencies-4nf.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
 ## Proof depends on
 
-- [Chasing tableau queries with functional and join dependencies](chasing-tableau-queries-with-functional-and-join-dependencie.md)
+- [Chasing tableau queries with functional and join dependencies](../dependencies-and-the-chase/chasing-tableau-queries-with-functional-and-join-dependencie.md)
 
 ## Sources
 

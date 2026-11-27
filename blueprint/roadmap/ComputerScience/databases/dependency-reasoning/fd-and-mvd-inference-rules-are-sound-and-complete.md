@@ -16,7 +16,7 @@ multivalued dependencies depends on $U$, which is why MVD0 mentions it.
 
 ## Depends on
 
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Multivalued and join dependencies; 4NF](../dependencies-and-the-chase/multivalued-and-join-dependencies-4nf.md)
 - [Derivability with Armstrong's axioms](../functional-dependencies/derives.md)
 - [Entailment of functional dependencies](../functional-dependencies/entails.md)
 

@@ -16,7 +16,7 @@ of conjunctive queries by taking $\Sigma$ empty.
 
 ## Proof depends on
 
-- [Containment of tableau queries under functional and join dependencies via the chase](../dependencies-and-the-chase/containment-under-fds-and-jds-via-the-chase.md)
+- [Containment of tableau queries under functional and join dependencies via the chase](../dependency-reasoning/containment-under-fds-and-jds-via-the-chase.md)
 - [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
 - [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
 

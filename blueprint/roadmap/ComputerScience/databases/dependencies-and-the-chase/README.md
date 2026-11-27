@@ -1,23 +1,12 @@
 # Dependencies and the chase
 
 - [Chasing tableau queries with functional and join dependencies](chasing-tableau-queries-with-functional-and-join-dependencie.md)
-- [Containment of tableau queries under functional and join dependencies via the chase](containment-under-fds-and-jds-via-the-chase.md)
-- [Inference rules for functional and multivalued dependencies are sound and complete](fd-and-mvd-inference-rules-are-sound-and-complete.md)
-- [Inference rules for multivalued dependencies alone are sound and complete](mvd-inference-rules-are-sound-and-complete.md)
-- [Complexity of implication of join dependencies](complexity-of-implication-of-join-dependencies.md)
-- [A join dependency is acyclic if and only if it is equivalent to a set of multivalued dependencies](acyclic-join-dependencies-are-equivalent-to-sets-of-mvds.md)
 - [Satisfaction of an inclusion dependency](inclusion-dependencies-and-finite-implication.md)
-- [Implication of inclusion dependencies is PSPACE-complete](implication-of-inclusion-dependencies-is-pspace-complete.md)
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
-- [Implication of full dependencies is decidable](implication-of-full-dependencies-is-decidable.md)
-- [Implication of embedded dependencies is undecidable](implication-of-embedded-dependencies-is-undecidable.md)
 - [Weakly acyclic dependencies have polynomially bounded chase](weakly-acyclic-dependencies-have-polynomially-bounded-chase.md)
 - [Finite and unrestricted implication of functional and inclusion dependencies](finite-and-unrestricted-implication-of-functional-and-inclusion.md)
 - [Successful terminating chases yield universal models](successful-terminating-chases-yield-universal-models.md)
 - [Data exchange: universal solutions and certain answers of UCQs](data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
-- [The core of the universal solutions in data exchange](core-of-the-universal-solutions.md)
-- [The core of the universal solutions is computable in polynomial time for target egds](core-of-universal-solutions-in-polynomial-time.md)
-- [Certain answers on universal solutions are the null-free answers on the core](certain-answers-on-universal-solutions-via-the-core.md)
 - [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
 
 ## Instances and projection inclusion

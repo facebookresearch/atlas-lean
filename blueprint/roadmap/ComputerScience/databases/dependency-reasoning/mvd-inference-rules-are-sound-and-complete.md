@@ -8,7 +8,7 @@ $F$ satisfies $\sigma$.
 ## Depends on
 
 - [Inference rules for functional and multivalued dependencies are sound and complete](fd-and-mvd-inference-rules-are-sound-and-complete.md)
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Multivalued and join dependencies; 4NF](../dependencies-and-the-chase/multivalued-and-join-dependencies-4nf.md)
 
 ## Proof depends on
 
