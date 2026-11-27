@@ -2,7 +2,7 @@
 
 - [Stages of a process in test-and-set consensus](stage.md)
 - [Global state of test-and-set consensus](state.md)
-- [The other process in test-and-set consensus](other.md)
+- [The other process in a two-process system](../peterson-s-mutual-exclusion-algorithm/other.md)
 - [Two-process consensus protocol from test-and-set](step.md)
 - [Initial state of test-and-set consensus](init.md)
 - [Test-and-set consensus as a labelled transition system](lts.md)

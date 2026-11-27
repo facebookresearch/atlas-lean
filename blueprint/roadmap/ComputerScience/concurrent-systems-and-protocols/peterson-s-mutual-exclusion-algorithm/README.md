@@ -2,7 +2,7 @@
 
 - [Stages of a process in Peterson's algorithm](stage.md)
 - [States of Peterson's algorithm](state.md)
-- [The other process in Peterson’s algorithm](other.md)
+- [The other process in a two-process system](other.md)
 - [Steps of Peterson's algorithm](step.md)
 - [Initial states of Peterson's algorithm](init.md)
 - [Reachable states of Peterson's algorithm](reachable.md)
