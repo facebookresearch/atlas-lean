@@ -13,6 +13,13 @@ For the [spill everywhere problem](the-spill-everywhere-problem.md) without hole
 
 - [Totally unimodular systems have integral vertices](../../../Geometry/convex-geometry/total-dual-integrality/totally-unimodular-systems-have-integral-vertices.md)
 
+## Expansion
+
+This page becomes ready once these prerequisites of part 2 are stated, each a proof prerequisite:
+
+- a $0/1$ matrix with the consecutive-ones property in each column, such as the point-interval incidence matrix of a family of intervals, is totally unimodular (cited by Bouchez, Darte and Rastello to Berge in the proof of Theorem 2);
+- linear programs with rational data can be solved in polynomial time (for instance by the ellipsoid method of Khachiyan, 1979).
+
 ## Sources
 
 - F. Bouchez, A. Darte and F. Rastello, "On the complexity of spill everywhere under SSA form", *Proceedings of the 2007 ACM SIGPLAN/SIGBED Conference on Languages, Compilers, and Tools for Embedded Systems (LCTES 2007)*, ACM, 2007, pp. 103–112, doi:10.1145/1254766.1254782, author copy with the same theorem numbering arXiv:0710.3642v1 <https://arxiv.org/abs/0710.3642>, Section 3: Theorem 1 (furthest first, after Belady's furthest-use strategy) and Theorem 2 (the totally unimodular formulation, pointed out by Gavril and Yannakakis) with their proofs.

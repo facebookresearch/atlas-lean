@@ -1,6 +1,6 @@
 # Dyck reachability on bidirected graphs in almost-linear time
 
-Let $k$ be fixed and let $G$ be a bidirected $\Sigma_k$-labeled graph, in the sense of [Dyck reachability](dyck-reachability.md), with $n$ nodes and $m \ge n$ edges. The partition of the nodes into maximal Dyck SCCs, which represents the set of all Dyck-reachable pairs without enumerating it, can be computed in time $O(m + n \cdot \alpha(n))$ and space $O(m)$, where $\alpha$ is the inverse Ackermann function. The algorithm first merges the two endpoints of every $\epsilon$-labeled edge, in linear time. Next, in a linear-time pass, wherever a node has two outgoing edges with the same closing parenthesis it merges their targets and keeps one edge, leaving $O(n)$ edges. It then repeatedly merges, with a disjoint-set structure, the targets of two edges labeled with the same closing parenthesis that leave one current class. Without the first step two nodes joined by opposite $\epsilon$-edges, which form one Dyck SCC, would stay apart, since no closing-parenthesis edge leaves them.
+Let $k$ be fixed and let $G$ be a bidirected $\Sigma_k$-labeled graph, in the sense of [Dyck reachability](dyck-reachability.md), with $n$ nodes and $m \ge n$ edges. The partition of the nodes into maximal Dyck SCCs, which represents the set of all Dyck-reachable pairs without enumerating it, can be computed in time $O(m + n \cdot \alpha(n))$ and space $O(m)$, where $\alpha(n) = \alpha(n, n)$ for the two-argument inverse Ackermann function of the [union-find bound](../../../data-structures/disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/run-empty-cost-le-inverse-ackermann.md). The algorithm first merges the two endpoints of every $\epsilon$-labeled edge, in linear time. Next, in a linear-time pass, wherever a node has two outgoing edges with the same closing parenthesis it merges their targets and keeps one edge, leaving $O(n)$ edges. It then repeatedly merges, with a disjoint-set structure linked by rank with path compression, the targets of two edges labeled with the same closing parenthesis that leave one current class. Without the first step two nodes joined by opposite $\epsilon$-edges, which form one Dyck SCC, would stay apart, since no closing-parenthesis edge leaves them.
 
 ## Depends on
 
@@ -8,6 +8,7 @@ Let $k$ be fixed and let $G$ be a bidirected $\Sigma_k$-labeled graph, in the se
 
 ## Proof depends on
 
+- [Tarjan–van Leeuwen bound for union by rank with path compression](../../../data-structures/disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/run-empty-cost-le-inverse-ackermann.md)
 - [Dyck reachability on bidirected graphs is symmetric](dyck-reachability-on-bidirected-graphs-is-symm.md)
 
 ## Sources
