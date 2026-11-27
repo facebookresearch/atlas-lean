@@ -11,8 +11,6 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Multiset.Sort
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 public import MathlibExt.Combinatorics.Enumerative.Partition.LitCellsDecreasing
 public import MathlibExt.Combinatorics.Enumerative.Partition.LitCellsIncreasing
@@ -31,7 +29,8 @@ take these reductions, stated in the paper's text, as the definitions:
 * weakly increasing order (proof of Proposition 1): lit cells = largest part + number of
   parts − number of distinct parts (`litCellsIncreasing`);
 * weakly increasing order, nodes (proof of Proposition 2): lit nodes = largest part + number
-  of parts − 1 (`litNodesIncreasing`; `0` for the empty partition);
+  of parts − 1 (`0` for the empty partition), defined by `litNodesIncreasing` in
+  `MathlibExt.Combinatorics.Enumerative.Partition.LitCellsIncreasing`;
 * weakly decreasing order `x_1 ≥ x_2 ≥ ⋯` (Section 5, via Prodinger's bijection
   `x_i ↦ x_i + i - 1`): lit cells = `max_i (x_i + i - 1)` (`litCellsDecreasing`).
 
@@ -39,25 +38,14 @@ take these reductions, stated in the paper's text, as the definitions:
 `s` parts fitting under the staircase `r, r - 1, …, r - s + 1`, i.e. with `x_i ≤ r - i + 1`,
 and `T_q(r) = ∑_{s=0}^{r} t[r, s]` (`trianglePartitionSeries r`, Definition 1). The Gaussian
 binomial `[M, k]_q` is `MathlibExt.gaussBinom X M k`, and `P(q) = ∑ p(n) qⁿ`. Generating
-functions are integer power series; the Lambert series `∑_{i ≥ 1} q^i / (1 - q^i)` are sums in
-the coefficientwise topology.
+functions are integer power series.
 -/
 
 open PowerSeries
-open scoped PowerSeries.WithPiTopology
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Lit nodes of a one-part partition.** For every natural number $n \ge 1$, the one-part
-partition $(n)$ of $n$ has exactly $n$ lit nodes.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit nodes). -/
-public theorem litNodesIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
-    litNodesIncreasing (Nat.Partition.indiscrete n) = n := by
-  simp [litNodesIncreasing, hn]
 
 /-- **Lit cells of a one-part decreasing bargraph.** For every natural number $n \ge 1$, the
 partition $(n)$ of $n$ with a single part has $n$ lit cells as a weakly decreasing bargraph.

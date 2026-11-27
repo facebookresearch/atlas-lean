@@ -30,7 +30,7 @@ Ferrers diagrams.
   Proposition 1, equation (5), and Proposition 2, equation (7).
 
 The lit-node proof reuses the coefficient count `coeff_total_parts` and the conjugation
-argument from `total_lit_cells`, both in this module.
+lemma `sum_largest_parts_eq_sum_card`, both in this module.
 -/
 
 open PowerSeries
@@ -67,6 +67,15 @@ Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit cells
 public theorem litCellsIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
     litCellsIncreasing (Nat.Partition.indiscrete n) = n := by
   simp [litCellsIncreasing, hn]
+
+/-- **Lit nodes of a one-part partition.** For every natural number $n \ge 1$, the one-part
+partition $(n)$ of $n$ has exactly $n$ lit nodes.
+
+Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
+Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit nodes). -/
+public theorem litNodesIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
+    litNodesIncreasing (Nat.Partition.indiscrete n) = n := by
+  simp [litNodesIncreasing, hn]
 
 namespace litCellsIncreasing_generatingFunction
 
