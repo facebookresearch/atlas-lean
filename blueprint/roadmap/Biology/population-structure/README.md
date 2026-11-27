@@ -30,3 +30,7 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
+- [Ancestry-adjusted linkage disequilibrium](ancestry-adjusted-linkage-disequilibrium/README.md)
+- [Chromosome-painting coancestry and fineSTRUCTURE](chromopainter-coancestry-and-finestructure/README.md)
+- [STRUCTURE Bayesian clustering of multilocus genotypes](structure-bayesian-clustering/README.md)
+- [Population structure and eigenanalysis](eigenanalysis-of-population-structure/README.md)

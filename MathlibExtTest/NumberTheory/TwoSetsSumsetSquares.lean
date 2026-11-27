@@ -64,6 +64,23 @@ example : PairwiseSumsSquares ![0, 0, 0, 225] ![0, 0, 0, (64 : ℚ)] := by
   norm_num at h
   exact h
 
+-- At (m, q, r) = (2, 1, 3) the entries of each quadruple of (5.9) are distinct, and the three
+-- nonzero offsets are negative.
+example : PairwiseSumsSquares
+    ![5625000000, 5270760000, 5002025625, 8649000000]
+    ![0, -4964510000, -4829760000, (-3024000000 : ℚ)] := by
+  have h := pairwiseSumsSquares_quadruple_family59 2 1 3
+  norm_num at h
+  exact h
+
+-- A non-integral m gives rational entries; at q = r the third offset vanishes.
+example : PairwiseSumsSquares
+    ![2117025 / 262144, 99225 / 262144, 4149369 / 16777216, 11025 / 262144]
+    ![0, 64141 / 1048576, 0, (131625 / 16384 : ℚ)] := by
+  have h := pairwiseSumsSquares_quadruple_family59 (1 / 2) 1 1
+  norm_num at h
+  exact h
+
 -- Scaling by k = 2 clears the denominators, and the shift t = 3 makes an entry negative.
 example : PairwiseSumsSquares ![-2, 22] ![3, (27 : ℤ)] := by
   have hab : PairwiseSumsSquares ![1 / 4, 25 / 4] ![0, (6 : ℚ)] := by

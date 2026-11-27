@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.NativeKummerFlatModels
+public import MathlibExt.AlgebraicGeometry.NativeKummerFlatModelsRegularSections
 
 /-!
 # Native Kummer-flat chart and fine/saturated base-change requests
@@ -32,9 +33,6 @@ open _root_.CategoryTheory _root_.CategoryTheory.Limits
 open MathlibExt.AlgebraicGeometry
 open EtaleLogSchemes EtaleLogDiagrams EtaleLogNativeCategory
 open KatoChartCoefficientModels NativeKummerFlatModels
-
-/-- Ordinary regular-function descent for the specified native etale unit. -/
-public theorem_wanted regularSections : RegularSectionComparisons
 
 variable [InverseImageTheory.{0}] [N : NativeCategoryModel.{0}]
 

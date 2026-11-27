@@ -11,20 +11,38 @@ module
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 import Mathlib.GroupTheory.Perm.Centralizer
 import Mathlib.Dynamics.PeriodicPts.Lemmas
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.Complex.AbelLimit
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.NumberTheory.Harmonic.Bounds
 
 /-!
-# Higher moments of the smallest cycle of a random permutation
+# Moments of the smallest cycle of a random permutation
 
 `MetaMathlibExt.smallest_cycle_moment_asymp` gives a power-saving error bound for the
-Buchstab integral approximation to each moment of order at least two.
+Buchstab integral approximation to each moment of order at least two, and
+`MetaMathlibExt.smallest_cycle_mean_asymp` shows that the mean is asymptotic to
+`e^{-γ} log n`.
 
 Marking the cycle through a point gives a recurrence for the probability that all cycles
 have length at least `k`. Comparing this recurrence with the integrated Buchstab equation
 gives a pointwise estimate. Integrating the estimate against the moment weight yields
 the exponent `1 / 4`.
+
+The proof for the mean does not use the Buchstab function. For fixed `k`, the same
+recurrence shows that the increments of the tail probabilities have generating function
+`exp (-∑_{1 ≤ j < k} x^j / j)` on `(-1, 1)`, and Abel's limit theorem identifies the limit of
+the tail probabilities with `e^{-H_{k-1}}`. The recurrence also bounds the `m`-th increment by
+`e^3 e^{-m/k}`, so the convergence is fast as long as `k ≤ n / (3 log n)`; the remaining tail
+probabilities are at most `1 / k`. Hence the mean differs from `∑_{k ≤ n} e^{-H_{k-1}}`, which is
+asymptotic to `e^{-γ} log n`, by `O(log log n)`.
 -/
 
 open Function Equiv Equiv.Perm Finset
@@ -708,5 +726,633 @@ public theorem smallest_cycle_moment_asymp (ω : ℝ → ℝ)
     _ ≤ ℓ * (n : ℝ) ^ (ℓ - 1) * (18 * (n : ℝ) ^ (-(1 / 4) : ℝ)) :=
       mul_le_mul_of_nonneg_left (integral_error hω₁ hω₂ hn hℓ) (by positivity)
     _ = _ := by ring
+
+end MetaMathlibExt
+
+namespace MetaMathlibExt.smallest_cycle_mean_asymp
+
+open MetaMathlibExt.smallest_cycle_moment_asymp
+open Filter Topology Real Asymptotics
+
+/-! ### A sequence satisfying the tail recurrence
+
+Throughout, `p : ℕ → ℝ` takes values in `[0, 1]`, `p 0 = 1`, and
+`n p(n) = ∑_{j ≤ n - k} p(j)` for some `k ≥ 1`. -/
+
+/-- The increments of a sequence: `incr p 0 = p 0` and `incr p (n + 1) = p (n + 1) - p n`. -/
+private noncomputable def incr (p : ℕ → ℝ) : ℕ → ℝ
+  | 0 => p 0
+  | n + 1 => p (n + 1) - p n
+
+private theorem sum_incr (p : ℕ → ℝ) (n : ℕ) : ∑ i ∈ range (n + 1), incr p i = p n := by
+  induction n with
+  | zero => simp [incr]
+  | succ n ih => rw [sum_range_succ, ih, incr]; ring
+
+variable {k : ℕ} {p : ℕ → ℝ}
+
+/-- Differencing the recurrence `n p(n) = ∑_{j ≤ n - k} p(j)`. -/
+private theorem rec_succ (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j)
+    (n : ℕ) :
+    (n + 1 : ℝ) * p (n + 1) = n * p n + if k ≤ n + 1 then p (n + 1 - k) else 0 := by
+  have h1 := hrec (n + 1)
+  push_cast at h1
+  rw [h1, hrec n]
+  split_ifs with h
+  · rw [show n + 1 + 1 - k = (n + 1 - k) + 1 by omega, sum_range_succ]
+  · rw [show n + 1 + 1 - k = 0 by omega, show n + 1 - k = 0 by omega]; simp
+
+private theorem incr_succ (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j)
+    (n : ℕ) :
+    (n + 1 : ℝ) * incr p (n + 1) = (if k ≤ n + 1 then p (n + 1 - k) else 0) - p n := by
+  rw [incr, mul_sub, rec_succ hrec n]; ring
+
+/-- A window of `k - 1` consecutive increments telescopes. -/
+private theorem window_sum (p : ℕ → ℝ) (n q : ℕ) :
+    ∑ j ∈ range q, (if j ≤ n then incr p (n - j) else 0) =
+      p n - if q ≤ n then p (n - q) else 0 := by
+  induction q with
+  | zero => simp
+  | succ q ih =>
+    rw [sum_range_succ, ih]
+    by_cases hq : q + 1 ≤ n
+    · rw [ite_eq_left (by omega : q ≤ n), ite_eq_left (by omega : q ≤ n), ite_eq_left hq,
+        show n - q = (n - (q + 1)) + 1 by omega, incr]
+      ring
+    · by_cases hq' : q ≤ n
+      · obtain rfl : q = n := by omega
+        simp [incr]
+      · rw [ite_eq_right hq', ite_eq_right hq', ite_eq_right hq]; ring
+
+/-- The increments satisfy `(n + 1) a(n + 1) = -∑_{j < k - 1, j ≤ n} a(n - j)`. -/
+private theorem incr_rec (hk : 0 < k)
+    (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j) (n : ℕ) :
+    (n + 1 : ℝ) * incr p (n + 1) =
+      -∑ j ∈ range (k - 1), (if j ≤ n then incr p (n - j) else 0) := by
+  rw [incr_succ hrec, window_sum]
+  by_cases h : k ≤ n + 1
+  · rw [ite_eq_left h, ite_eq_left (by omega), show n + 1 - k = n - (k - 1) by omega]; ring
+  · rw [ite_eq_right h, ite_eq_right (by omega)]; ring
+
+private theorem abs_incr_le (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n) (hle : ∀ n, p n ≤ 1)
+    (m : ℕ) : |incr p m| ≤ 1 := by
+  cases m with
+  | zero => simp [incr, h0]
+  | succ n =>
+    simp only [incr]
+    rw [abs_le]; constructor <;> linarith [hnn n, hnn (n + 1), hle n, hle (n + 1)]
+
+/-- Strong induction on the recurrence: once `m` exceeds `N ≥ ∑_{j < k - 1} x^(j+1)`, the
+weighted increments `|a(m)| x^m` cannot exceed their earlier maximum. -/
+private theorem incr_bound (hk : 0 < k) (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j)
+    {x : ℝ} (hx : 1 ≤ x) {N : ℕ} (hN : ∑ j ∈ range (k - 1), x ^ (j + 1) ≤ N) (m : ℕ) :
+    |incr p m| * x ^ m ≤ x ^ N := by
+  induction m using Nat.strong_induction_on with
+  | _ m ih =>
+    by_cases hm : m < N ∨ m = 0
+    · calc |incr p m| * x ^ m ≤ 1 * x ^ m := by
+            gcongr; exact abs_incr_le h0 hnn hle m
+        _ ≤ x ^ N := by
+          rw [one_mul]
+          rcases hm with hm | rfl
+          · exact pow_le_pow_right₀ hx hm.le
+          · simpa using one_le_pow₀ hx
+    · have hNm : N ≤ m := by omega
+      obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
+      have hn1 : (0 : ℝ) < n + 1 := by positivity
+      have key : (n + 1 : ℝ) * (|incr p (n + 1)| * x ^ (n + 1)) ≤ (n + 1 : ℝ) * x ^ N := by
+        calc (n + 1 : ℝ) * (|incr p (n + 1)| * x ^ (n + 1))
+            = |(n + 1 : ℝ) * incr p (n + 1)| * x ^ (n + 1) := by
+              rw [abs_mul, abs_of_pos hn1]; ring
+          _ = |∑ j ∈ range (k - 1), (if j ≤ n then incr p (n - j) else 0)| *
+                x ^ (n + 1) := by
+              rw [incr_rec hk hrec, abs_neg]
+          _ ≤ (∑ j ∈ range (k - 1), |if j ≤ n then incr p (n - j) else 0|) *
+                x ^ (n + 1) := by
+              gcongr; exact abs_sum_le_sum_abs _ _
+          _ = ∑ j ∈ range (k - 1), |if j ≤ n then incr p (n - j) else 0| *
+                x ^ (n + 1) := by
+              rw [sum_mul]
+          _ ≤ ∑ j ∈ range (k - 1), x ^ N * x ^ (j + 1) := by
+              apply sum_le_sum
+              intro j _
+              split_ifs with hj
+              · calc |incr p (n - j)| * x ^ (n + 1)
+                    = (|incr p (n - j)| * x ^ (n - j)) * x ^ (j + 1) := by
+                      rw [mul_assoc, ← pow_add]; congr 2; omega
+                  _ ≤ x ^ N * x ^ (j + 1) := by
+                      gcongr
+                      exact ih (n - j) (by omega)
+              · simp only [abs_zero, zero_mul]; positivity
+          _ = x ^ N * ∑ j ∈ range (k - 1), x ^ (j + 1) := by rw [mul_sum]
+          _ ≤ x ^ N * N := by gcongr
+          _ ≤ x ^ N * (n + 1) := by
+              gcongr
+              exact_mod_cast hNm
+          _ = (n + 1 : ℝ) * x ^ N := by ring
+      exact le_of_mul_le_mul_left key hn1
+
+/-- With `x = e^{1/k}` and `N = 3k`: the increments decay like `e^{-m/k}`. -/
+private theorem incr_exp_bound (hk : 0 < k) (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j) (m : ℕ) :
+    |incr p m| ≤ exp 3 * exp (-1 / k) ^ m := by
+  have hk' : (0 : ℝ) < k := by exact_mod_cast hk
+  have hx : 1 ≤ exp (1 / k) := one_le_exp (by positivity)
+  have hN : ∑ j ∈ range (k - 1), exp (1 / k) ^ (j + 1) ≤ ((3 * k : ℕ) : ℝ) := by
+    calc ∑ j ∈ range (k - 1), exp (1 / k) ^ (j + 1) ≤ ∑ j ∈ range (k - 1), (3 : ℝ) := by
+          apply sum_le_sum
+          intro j hj
+          have hj' : j + 1 ≤ k := by simp only [mem_range] at hj; omega
+          rw [← exp_nat_mul]
+          calc exp (((j + 1 : ℕ) : ℝ) * (1 / k)) ≤ exp 1 := by
+                apply exp_le_exp.mpr
+                rw [mul_one_div, div_le_one hk']
+                exact_mod_cast hj'
+            _ ≤ 3 := by linarith [exp_one_lt_d9]
+      _ ≤ ((3 * k : ℕ) : ℝ) := by
+          rw [sum_const, card_range, nsmul_eq_mul]
+          have : ((k - 1 : ℕ) : ℝ) ≤ k := by exact_mod_cast Nat.sub_le k 1
+          push_cast; linarith
+  have h := incr_bound hk h0 hnn hle hrec hx hN m
+  have hx3 : exp (1 / k) ^ (3 * k) = exp 3 := by
+    rw [← exp_nat_mul]; congr 1; push_cast; field_simp
+  have hxm : exp (1 / k) ^ m * exp (-1 / k) ^ m = 1 := by
+    rw [← mul_pow, ← exp_add, neg_div, add_neg_cancel, exp_zero, one_pow]
+  rw [hx3] at h
+  calc |incr p m| = |incr p m| * exp (1 / k) ^ m * exp (-1 / k) ^ m := by
+        rw [mul_assoc, hxm, mul_one]
+    _ ≤ exp 3 * exp (-1 / k) ^ m := by gcongr
+
+private theorem hasSum_series (hnn : ∀ n, 0 ≤ p n) (hle : ∀ n, p n ≤ 1) {x : ℝ}
+    (hx : |x| < 1) : HasSum (fun n ↦ p n * x ^ n) (∑' n, p n * x ^ n) := by
+  apply Summable.hasSum
+  refine Summable.of_norm_bounded (summable_geometric_of_lt_one (abs_nonneg x) hx) fun n ↦ ?_
+  rw [Real.norm_eq_abs, abs_mul, abs_pow]
+  have : |p n| ≤ 1 := abs_le.mpr ⟨by linarith [hnn n], hle n⟩
+  calc |p n| * |x| ^ n ≤ 1 * |x| ^ n := by gcongr
+    _ = |x| ^ n := one_mul _
+
+private theorem hasSum_incr_series (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) {x : ℝ} (hx : |x| < 1) :
+    HasSum (fun n ↦ incr p n * x ^ n) ((1 - x) * ∑' n, p n * x ^ n) := by
+  have hF := hasSum_series hnn hle hx
+  apply (hasSum_nat_add_iff' 1).mp
+  have h1 := (hasSum_nat_add_iff' 1).mpr hF
+  convert h1.sub (hF.mul_left x) using 1
+  · ext n; simp only [incr]; ring
+  · simp [incr, h0]; ring
+
+/-- The derivative series of `∑ a(n) x^n` is `-(1 - x^(k-1)) ∑ p(n) x^n`. -/
+private theorem hasSum_incr_deriv (hk : 0 < k) (hnn : ∀ n, 0 ≤ p n) (hle : ∀ n, p n ≤ 1)
+    (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j) {x : ℝ} (hx : |x| < 1) :
+    HasSum (fun n ↦ incr p n * (n * x ^ (n - 1)))
+      (-(1 - x ^ (k - 1)) * ∑' n, p n * x ^ n) := by
+  have hF := hasSum_series hnn hle hx
+  have hS : HasSum (fun n ↦ (if k ≤ n + 1 then p (n + 1 - k) else 0) * x ^ n)
+      (x ^ (k - 1) * ∑' n, p n * x ^ n) := by
+    apply (hasSum_nat_add_iff' (k - 1)).mp
+    have hz : (∑ i ∈ range (k - 1), (if k ≤ i + 1 then p (i + 1 - k) else 0) * x ^ i) =
+        0 := by
+      apply sum_eq_zero
+      intro i hi
+      simp only [mem_range] at hi
+      rw [ite_eq_right (by omega), zero_mul]
+    rw [hz, sub_zero]
+    convert hF.mul_left (x ^ (k - 1)) using 1
+    ext n
+    rw [ite_eq_left (by omega), show n + (k - 1) + 1 - k = n by omega, pow_add]
+    ring
+  apply (hasSum_nat_add_iff' 1).mp
+  convert hS.sub hF using 1
+  · ext n
+    have h := incr_succ hrec n
+    rw [show n + 1 - 1 = n by omega]
+    push_cast
+    rw [← mul_assoc, mul_comm (incr p (n + 1)), h]
+    ring
+  · simp; ring
+
+/-- Termwise differentiation of a power series with bounded coefficients. -/
+private theorem hasDerivAt_series {c : ℕ → ℝ} (hc : ∀ n, |c n| ≤ 1) {x : ℝ}
+    (hx : |x| < 1) : HasDerivAt (fun y ↦ ∑' n, c n * y ^ n) (∑' n, c n * (n * x ^ (n - 1))) x := by
+  obtain ⟨r, hxr, hr1⟩ := exists_between hx
+  have hr0 : 0 < r := (abs_nonneg x).trans_lt hxr
+  have hsum : Summable (fun n : ℕ ↦ (n : ℝ) * r ^ (n - 1)) := by
+    have := (summable_pow_mul_geometric_of_norm_lt_one 1 (r := r)
+      (by rwa [Real.norm_eq_abs, abs_of_pos hr0])).mul_left r⁻¹
+    refine this.congr (fun n ↦ ?_)
+    rcases n with _ | n
+    · simp
+    · rw [pow_one, pow_succ, show n + 1 - 1 = n by omega]
+      field_simp
+  have hbound : ∀ (n : ℕ) (y : ℝ), y ∈ Set.Ioo (-r) r →
+      ‖c n * ((n : ℝ) * y ^ (n - 1))‖ ≤ (n : ℝ) * r ^ (n - 1) := by
+    intro n y hy
+    rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_pow, Nat.abs_cast]
+    have hy' : |y| ≤ r := abs_le.mpr ⟨hy.1.le, hy.2.le⟩
+    calc |c n| * (n * |y| ^ (n - 1)) ≤ 1 * (n * r ^ (n - 1)) := by gcongr; exact hc n
+      _ = _ := one_mul _
+  have hs0 : Summable (fun n : ℕ ↦ c n * (0 : ℝ) ^ n) := by
+    apply summable_of_ne_finset_zero (s := {0})
+    intro n hn
+    simp only [mem_singleton] at hn
+    simp [hn]
+  exact hasDerivAt_tsum_of_isPreconnected (𝕜 := ℝ) (F := ℝ)
+    (g := fun n z ↦ c n * z ^ n) (g' := fun n y ↦ c n * ((n : ℝ) * y ^ (n - 1)))
+    (u := fun n : ℕ ↦ (n : ℝ) * r ^ (n - 1)) (t := Set.Ioo (-r) r) (y₀ := 0) (y := x)
+    hsum isOpen_Ioo isPreconnected_Ioo (fun n y _ ↦ (hasDerivAt_pow n y).const_mul (c n))
+    hbound ⟨by linarith, hr0⟩ hs0
+    ⟨by linarith [neg_abs_le x], by linarith [le_abs_self x]⟩
+
+/-- The polynomial `∑_{j < k - 1} x^(j+1)/(j+1)`; its value at `1` is the harmonic number
+`H_{k-1}`. -/
+private noncomputable def poly (k : ℕ) (x : ℝ) : ℝ :=
+  ∑ j ∈ range (k - 1), x ^ (j + 1) / (j + 1)
+
+private theorem hasDerivAt_poly (k : ℕ) (x : ℝ) :
+    HasDerivAt (poly k) (∑ j ∈ range (k - 1), x ^ j) x := by
+  unfold poly
+  apply HasDerivAt.fun_sum
+  intro j _
+  convert (hasDerivAt_pow (j + 1) x).div_const ((j : ℝ) + 1) using 1
+  push_cast
+  field_simp
+
+/-- On `(-1, 1)` the increments have generating function `exp (-poly k x)`: the product
+`(∑ a(n) y^n) exp (poly k y)` has derivative zero. -/
+private theorem incr_series_eq (hk : 0 < k) (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j)
+    {x : ℝ} (hx : |x| < 1) :
+    ∑' n, incr p n * x ^ n = exp (-poly k x) := by
+  let G : ℝ → ℝ := fun y ↦ (∑' n, incr p n * y ^ n) * exp (poly k y)
+  have hG : ∀ y ∈ Set.Ioo (-1 : ℝ) 1, HasDerivAt G 0 y := by
+    intro y hy
+    have hy' : |y| < 1 := abs_lt.mpr hy
+    have h1 := hasDerivAt_series (abs_incr_le h0 hnn hle) hy'
+    rw [(hasSum_incr_deriv hk hnn hle hrec hy').tsum_eq] at h1
+    have h3 := h1.mul (hasDerivAt_poly k y).exp
+    convert h3 using 1
+    rw [(hasSum_incr_series h0 hnn hle hy').tsum_eq]
+    have hgeom := mul_neg_geom_sum y (k - 1)
+    linear_combination (-(∑' n, p n * y ^ n) * exp (poly k y)) * hgeom
+  have hconst : G x = G 0 :=
+    IsOpen.is_const_of_deriv_eq_zero isOpen_Ioo isPreconnected_Ioo
+      (fun y hy ↦ (hG y hy).differentiableAt.differentiableWithinAt)
+      (fun y hy ↦ (hG y hy).deriv) (abs_lt.mp hx) ⟨by norm_num, by norm_num⟩
+  have hA0 : ∑' n, incr p n * (0 : ℝ) ^ n = 1 := by
+    rw [tsum_eq_single 0 (fun n hn ↦ by simp [hn])]
+    simp [incr, h0]
+  have hP0 : poly k 0 = 0 := by simp [poly]
+  simp only [G, hA0, hP0, exp_zero, mul_one] at hconst
+  rw [exp_neg]
+  exact eq_inv_of_mul_eq_one_left hconst
+
+private theorem summable_abs_incr (hk : 0 < k) (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j) :
+    Summable (fun m ↦ |incr p m|) := by
+  have hk' : (0 : ℝ) < k := by exact_mod_cast hk
+  have hr : exp (-1 / k) < 1 :=
+    exp_lt_one_iff.mpr (by rw [neg_div]; exact neg_neg_of_pos (by positivity))
+  refine Summable.of_nonneg_of_le (fun m ↦ abs_nonneg _) (incr_exp_bound hk h0 hnn hle hrec) ?_
+  exact (summable_geometric_of_lt_one (exp_pos _).le hr).mul_left _
+
+/-- Abel's limit theorem identifies the sum of the increments, the limit of `p`, with
+`e^{-H_{k-1}}`. -/
+private theorem hasSum_incr_limit (hk : 0 < k) (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j) :
+    HasSum (incr p) (exp (-(harmonic (k - 1) : ℝ))) := by
+  have hs : Summable (incr p) := (summable_abs_incr hk h0 hnn hle hrec).of_abs
+  have hL := hs.hasSum
+  have habel := Real.tendsto_tsum_powerSeries_nhdsWithin_lt hL.tendsto_sum_nat
+  have hev : (fun x : ℝ ↦ ∑' n, incr p n * x ^ n) =ᶠ[𝓝[<] 1] fun x ↦ exp (-poly k x) := by
+    filter_upwards [Ioo_mem_nhdsLT (show (0 : ℝ) < 1 by norm_num)] with x hx
+    exact incr_series_eq hk h0 hnn hle hrec (abs_lt.mpr ⟨by linarith [hx.1], hx.2⟩)
+  have hcont : Tendsto (fun x ↦ exp (-poly k x)) (𝓝[<] 1) (𝓝 (exp (-poly k 1))) := by
+    have : Continuous (fun x ↦ exp (-poly k x)) := by unfold poly; fun_prop
+    exact this.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
+  have heq := tendsto_nhds_unique (habel.congr' hev) hcont
+  have hP1 : poly k 1 = harmonic (k - 1) := by
+    simp [poly, harmonic]
+  rw [heq, hP1] at hL
+  exact hL
+
+/-- The rate of convergence of `p(n)` to `e^{-H_{k-1}}`, uniform in `k`. -/
+private theorem limit_rate (hk : 0 < k) (h0 : p 0 = 1) (hnn : ∀ n, 0 ≤ p n)
+    (hle : ∀ n, p n ≤ 1) (hrec : ∀ n : ℕ, n * p n = ∑ j ∈ range (n + 1 - k), p j) (n : ℕ) :
+    |p n - exp (-(harmonic (k - 1) : ℝ))| ≤ exp 3 * k * exp (-(n / k : ℝ)) := by
+  have hk' : (0 : ℝ) < k := by exact_mod_cast hk
+  have hL := hasSum_incr_limit hk h0 hnn hle hrec
+  have hsplit := hL.summable.sum_add_tsum_nat_add (n + 1)
+  rw [hL.tsum_eq, sum_incr] at hsplit
+  set r := exp (-1 / k) with hr
+  have hr0 : 0 ≤ r := (exp_pos _).le
+  have hr1 : r < 1 :=
+    exp_lt_one_iff.mpr (by rw [neg_div]; exact neg_neg_of_pos (by positivity))
+  have hb := incr_exp_bound hk h0 hnn hle hrec
+  have habs : Summable (fun i ↦ |incr p (i + (n + 1))|) :=
+    (summable_nat_add_iff (n + 1)).mpr (summable_abs_incr hk h0 hnn hle hrec)
+  have hgeo : Summable (fun i : ℕ ↦ exp 3 * r ^ (i + (n + 1))) := by
+    simp_rw [pow_add]
+    exact ((summable_geometric_of_lt_one hr0 hr1).mul_right _).mul_left _
+  have h1 : |p n - exp (-(harmonic (k - 1) : ℝ))| = |∑' i, incr p (i + (n + 1))| := by
+    rw [← hsplit, sub_add_cancel_left, abs_neg]
+  rw [h1]
+  have hrn : r ^ n = exp (-(n / k : ℝ)) := by
+    rw [hr, ← exp_nat_mul]; congr 1; ring
+  have hkey : r * (1 - r)⁻¹ ≤ k := by
+    rw [← div_eq_mul_inv, div_le_iff₀ (by linarith)]
+    have h2 : r * exp (1 / k) = 1 := by rw [hr, ← exp_add, neg_div, neg_add_cancel, exp_zero]
+    have h3 : r * (1 + 1 / k) ≤ 1 := by
+      calc r * (1 + 1 / k) ≤ r * exp (1 / k) := by
+            gcongr; linarith [add_one_le_exp (1 / (k : ℝ))]
+        _ = 1 := h2
+    have h4 : r * (k + 1) = k * (r * (1 + 1 / k)) := by field_simp
+    nlinarith
+  have habs' : Summable (fun i ↦ ‖incr p (i + (n + 1))‖) := by
+    simpa only [Real.norm_eq_abs] using habs
+  calc |∑' i, incr p (i + (n + 1))| ≤ ∑' i, |incr p (i + (n + 1))| := by
+        have := norm_tsum_le_tsum_norm (f := fun i ↦ incr p (i + (n + 1))) habs'
+        simpa only [Real.norm_eq_abs] using this
+    _ ≤ ∑' i, exp 3 * r ^ (i + (n + 1)) :=
+        habs.tsum_le_tsum (fun i ↦ hb (i + (n + 1))) hgeo
+    _ = exp 3 * r ^ (n + 1) * (1 - r)⁻¹ := by
+        simp_rw [pow_add]
+        rw [tsum_mul_left, tsum_mul_right, tsum_geometric_of_lt_one hr0 hr1]; ring
+    _ = exp 3 * r ^ n * (r * (1 - r)⁻¹) := by ring
+    _ ≤ exp 3 * r ^ n * k := by gcongr
+    _ = exp 3 * k * exp (-(n / k : ℝ)) := by rw [hrn]; ring
+
+/-- The asymptotic for any family `P k n` with the properties of the tail probabilities: the mean
+`∑_{k ≤ n} P k n` differs from `∑_{k ≤ n} e^{-H_{k-1}}` by `O(log log n)`. -/
+private theorem mean_asymp_of_tails (P : ℕ → ℕ → ℝ) (E : ℕ → ℝ)
+    (hE : ∀ n, 1 ≤ n → E n = ∑ j ∈ range n, P (j + 1) n)
+    (h0 : ∀ k, 0 < k → P k 0 = 1)
+    (hnn : ∀ k n, 0 < k → 0 ≤ P k n) (hle : ∀ k n, 0 < k → P k n ≤ 1)
+    (hbd : ∀ k n, 0 < k → k ≤ n → P k n ≤ 1 / k)
+    (hrec : ∀ k n : ℕ, 0 < k → (n : ℝ) * P k n = ∑ j ∈ range (n + 1 - k), P k j) :
+    Tendsto (fun n ↦ E n / (exp (-eulerMascheroniConstant) * log n)) atTop (𝓝 1) := by
+  set c := exp (-eulerMascheroniConstant) with hc
+  have hc0 : 0 < c := exp_pos _
+  have hlog : Tendsto (fun n : ℕ ↦ log (n : ℝ)) atTop atTop :=
+    tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
+  -- Two bounds for each term.
+  have hterm : ∀ n j, j < n → |P (j + 1) n - exp (-(harmonic j : ℝ))| ≤
+      min (exp 3 * (j + 1) * exp (-(n / (j + 1) : ℝ))) (1 / (j + 1)) := by
+    intro n j hj
+    have hj1 : 0 < j + 1 := Nat.succ_pos j
+    apply le_min
+    · have := limit_rate (k := j + 1) (p := P (j + 1)) hj1 (h0 _ hj1)
+        (fun m ↦ hnn _ m hj1) (fun m ↦ hle _ m hj1) (fun m ↦ hrec _ m hj1) n
+      simpa using this
+    · have hb := hbd (j + 1) n hj1 hj
+      have hp := hnn (j + 1) n hj1
+      have he : exp (-(harmonic j : ℝ)) ≤ 1 / (j + 1) := by
+        rw [exp_neg, one_div]
+        apply inv_anti₀ (by positivity)
+        have := log_add_one_le_harmonic j
+        push_cast at this
+        calc ((j : ℝ) + 1) = exp (log (j + 1)) := (exp_log (by positivity)).symm
+          _ ≤ exp (harmonic j) := exp_le_exp.mpr this
+      have he0 : 0 < exp (-(harmonic j : ℝ)) := exp_pos _
+      push_cast at hb
+      rw [abs_le]; constructor <;> linarith
+  -- The error bound, splitting at `n / (3 log n)`.
+  have herr : ∀ n : ℕ, 3 ≤ n → |E n - ∑ j ∈ range n, exp (-(harmonic j : ℝ))| ≤
+      exp 3 + 1 + log 3 + log (log n) := by
+    intro n hn
+    have hn0 : (0 : ℝ) < n := by positivity
+    have hn3 : (3 : ℝ) ≤ n := by exact_mod_cast hn
+    have hlogn : 1 ≤ log (n : ℝ) := by
+      rw [le_log_iff_exp_le hn0]; linarith [exp_one_lt_d9]
+    set K : ℝ := n / (3 * log n) with hK
+    have hK0 : 0 < K := by positivity
+    have hKn : K ≤ n := by
+      rw [hK, div_le_iff₀ (by positivity)]; nlinarith
+    set M := ⌊K⌋₊ with hM
+    have hMK' : (M : ℝ) ≤ K := Nat.floor_le hK0.le
+    have hMn : M ≤ n := by exact_mod_cast hMK'.trans hKn
+    have hMK : K < M + 1 := Nat.lt_floor_add_one K
+    have hbound : ∀ j ∈ range n, |P (j + 1) n - exp (-(harmonic j : ℝ))| ≤
+        exp 3 / (n : ℝ) ^ 2 + if M ≤ j then 1 / ((j : ℝ) + 1) else 0 := by
+      intro j hj
+      rw [mem_range] at hj
+      have ht := hterm n j hj
+      split_ifs with hjM
+      · have := ht.trans (min_le_right _ _)
+        linarith [show 0 ≤ exp 3 / (n : ℝ) ^ 2 by positivity]
+      · have hj1 : ((j : ℝ) + 1) ≤ K := by
+          have : ((j + 1 : ℕ) : ℝ) ≤ M := by exact_mod_cast (by omega : j + 1 ≤ M)
+          push_cast at this
+          linarith
+        have hj0 : (0 : ℝ) < j + 1 := by positivity
+        have hexp : exp (-(n / (j + 1) : ℝ)) ≤ 1 / (n : ℝ) ^ 3 := by
+          have h1 : 3 * log n ≤ n / (j + 1) := by
+            rw [le_div_iff₀ hj0]
+            calc 3 * log n * (j + 1) ≤ 3 * log n * K := by gcongr
+              _ = n := by rw [hK]; field_simp
+          calc exp (-(n / (j + 1) : ℝ)) ≤ exp (-(3 * log n)) := exp_le_exp.mpr (by linarith)
+            _ = 1 / (n : ℝ) ^ 3 := by
+              rw [exp_neg, show 3 * log (n : ℝ) = log ((n : ℝ) ^ 3) by
+                  rw [log_pow]; push_cast; ring, exp_log (by positivity), one_div]
+        have hjn : (j : ℝ) + 1 ≤ n := by exact_mod_cast hj
+        calc |P (j + 1) n - exp (-(harmonic j : ℝ))|
+            ≤ exp 3 * (j + 1) * exp (-(n / (j + 1) : ℝ)) := ht.trans (min_le_left _ _)
+          _ ≤ exp 3 * n * (1 / (n : ℝ) ^ 3) := by gcongr
+          _ = exp 3 / (n : ℝ) ^ 2 + 0 := by field_simp; ring
+    have hH : ∀ m, (harmonic m : ℝ) = ∑ j ∈ range m, 1 / ((j : ℝ) + 1) := by
+      intro m; simp [harmonic]
+    have hsum_ite : ∑ j ∈ range n, (if M ≤ j then 1 / ((j : ℝ) + 1) else 0) =
+        (harmonic n : ℝ) - harmonic M := by
+      rw [hH, hH, ← sum_range_add_sum_Ico _ hMn, ← sum_range_add_sum_Ico _ hMn]
+      have h1 : ∑ j ∈ range M, (if M ≤ j then 1 / ((j : ℝ) + 1) else 0) = 0 :=
+        sum_eq_zero (fun j hj ↦ ite_eq_right (by rw [mem_range] at hj; omega))
+      have h2 : ∑ j ∈ Ico M n, (if M ≤ j then 1 / ((j : ℝ) + 1) else 0) =
+          ∑ j ∈ Ico M n, 1 / ((j : ℝ) + 1) :=
+        sum_congr rfl (fun j hj ↦ ite_eq_left (mem_Ico.mp hj).1)
+      rw [h1, h2]
+      ring
+    have hHn := harmonic_le_one_add_log n
+    have hHM := log_add_one_le_harmonic M
+    have hlogM : log K ≤ log ((M + 1 : ℕ) : ℝ) := by
+      apply log_le_log hK0; push_cast; linarith
+    have hlogK : log K = log n - log 3 - log (log n) := by
+      rw [hK, log_div (by positivity) (by positivity), log_mul (by norm_num) (by positivity)]
+      ring
+    calc |E n - ∑ j ∈ range n, exp (-(harmonic j : ℝ))|
+        = |∑ j ∈ range n, (P (j + 1) n - exp (-(harmonic j : ℝ)))| := by
+          rw [hE n (by omega), sum_sub_distrib]
+      _ ≤ ∑ j ∈ range n, |P (j + 1) n - exp (-(harmonic j : ℝ))| :=
+          abs_sum_le_sum_abs _ _
+      _ ≤ ∑ j ∈ range n,
+            (exp 3 / (n : ℝ) ^ 2 + if M ≤ j then 1 / ((j : ℝ) + 1) else 0) :=
+          sum_le_sum hbound
+      _ = exp 3 / n + ((harmonic n : ℝ) - harmonic M) := by
+          rw [sum_add_distrib, hsum_ite, sum_const, card_range, nsmul_eq_mul]
+          field_simp
+      _ ≤ exp 3 + 1 + log 3 + log (log n) := by
+          have : exp 3 / n ≤ exp 3 := div_le_self (exp_pos _).le (by linarith)
+          linarith
+  -- The error is `o(log n)`.
+  have hi : (fun n : ℕ ↦ E n - ∑ j ∈ range n, exp (-(harmonic j : ℝ))) =o[atTop]
+      (fun n : ℕ ↦ log (n : ℝ)) := by
+    have hB : (fun n : ℕ ↦ exp 3 + 1 + log 3 + log (log (n : ℝ))) =o[atTop]
+        (fun n : ℕ ↦ log (n : ℝ)) := by
+      have h1 : (fun _ : ℕ ↦ exp 3 + 1 + log 3) =o[atTop] (fun n : ℕ ↦ log (n : ℝ)) :=
+        isLittleO_const_left.2 (Or.inr (tendsto_norm_atTop_atTop.comp hlog))
+      have h2 : (fun n : ℕ ↦ log (log (n : ℝ))) =o[atTop] (fun n : ℕ ↦ log (n : ℝ)) :=
+        isLittleO_log_id_atTop.comp_tendsto hlog
+      exact h1.add h2
+    refine IsBigO.trans_isLittleO ?_ hB
+    refine IsBigO.of_bound 1 ?_
+    filter_upwards [eventually_ge_atTop 3] with n hn
+    rw [one_mul, Real.norm_eq_abs, Real.norm_eq_abs]
+    exact (herr n hn).trans (le_abs_self _)
+  -- `∑ exp (-H_j)` is asymptotic to `e^{-γ} H_n`.
+  have hii : (fun n : ℕ ↦ ∑ j ∈ range n, exp (-(harmonic j : ℝ)) - c * harmonic n)
+      =o[atTop] (fun n : ℕ ↦ (harmonic n : ℝ)) := by
+    have hratio : Tendsto (fun j : ℕ ↦ ((j : ℝ) + 1) * exp (-(harmonic j : ℝ)) - c)
+        atTop (𝓝 0) := by
+      have h := (continuous_exp.tendsto _).comp (Real.tendsto_harmonic_sub_log_add_one.neg)
+      rw [← sub_self c]
+      apply Tendsto.sub_const
+      refine h.congr (fun j ↦ ?_)
+      simp only [Function.comp_apply]
+      rw [neg_sub, exp_sub, exp_log (by positivity), exp_neg, div_eq_mul_inv]
+    have hf : (fun j : ℕ ↦ exp (-(harmonic j : ℝ)) - c * (1 / ((j : ℝ) + 1))) =o[atTop]
+        (fun j : ℕ ↦ 1 / ((j : ℝ) + 1)) := by
+      have := ((isLittleO_one_iff ℝ).mpr hratio).mul_isBigO
+        (isBigO_refl (fun j : ℕ ↦ 1 / ((j : ℝ) + 1)) atTop)
+      refine this.congr' ?_ ?_
+      · filter_upwards with j
+        field_simp
+      · filter_upwards with j
+        simp
+    have hH : ∀ m, (harmonic m : ℝ) = ∑ j ∈ range m, 1 / ((j : ℝ) + 1) := by
+      intro m; simp [harmonic]
+    have htend : Tendsto (fun n ↦ ∑ i ∈ range n, 1 / ((i : ℝ) + 1)) atTop atTop := by
+      refine tendsto_atTop_mono (fun n ↦ ?_)
+        (tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)))
+      rw [← hH]
+      exact log_add_one_le_harmonic n
+    have hs := hf.sum_range (fun j ↦ by positivity) htend
+    refine hs.congr' ?_ ?_
+    · filter_upwards with n
+      rw [sum_sub_distrib, ← mul_sum, hH]
+    · filter_upwards with n
+      rw [hH]
+  -- `H_n` is asymptotic to `log n`.
+  have hiii : (fun n : ℕ ↦ (harmonic n : ℝ) - log n) =o[atTop]
+      (fun n : ℕ ↦ log (n : ℝ)) :=
+    (Real.tendsto_harmonic_sub_log.isBigO_one ℝ).trans_isLittleO
+      ((isLittleO_one_left_iff ℝ).mpr (tendsto_norm_atTop_atTop.comp hlog))
+  have hHO : (fun n : ℕ ↦ (harmonic n : ℝ)) =O[atTop] (fun n : ℕ ↦ log (n : ℝ)) := by
+    have := hiii.isBigO.add (isBigO_refl (fun n : ℕ ↦ log (n : ℝ)) atTop)
+    exact this.congr_left (fun n ↦ by ring)
+  have hiv : (fun n : ℕ ↦ E n - c * log n) =o[atTop] (fun n : ℕ ↦ log (n : ℝ)) := by
+    have := (hi.add (hii.trans_isBigO hHO)).add (hiii.const_mul_left c)
+    exact this.congr_left (fun n ↦ by ring)
+  have hdiv := hiv.tendsto_div_nhds_zero
+  have hlim : Tendsto (fun n : ℕ ↦ 1 + ((E n - c * log n) / log n) / c) atTop
+      (𝓝 1) := by
+    simpa using tendsto_const_nhds.add (hdiv.div_const c)
+  refine hlim.congr' ?_
+  filter_upwards [eventually_ge_atTop 2] with n hn
+  have hlogpos : 0 < log (n : ℝ) := log_pos (by exact_mod_cast hn)
+  field_simp
+  ring
+
+/-! ### The tail probabilities of the smallest cycle -/
+
+/-- The tail recurrence `n p(n) = ∑_{j ≤ n - k} p(j)`, read off from `tail_rec`. -/
+private theorem tail_rec_range (k n : ℕ) (hk : 0 < k) :
+    (n : ℝ) * tail k n = ∑ j ∈ range (n + 1 - k), tail k j := by
+  have h := sum_range_reflect (fun d ↦ if k ≤ d then tail k (n - d) else 0) (n + 1)
+  rw [tail_rec k n hk, ← h, ← sum_range_add_sum_Ico _ (Nat.sub_le (n + 1) k)]
+  rw [sum_eq_zero (s := Ico (n + 1 - k) (n + 1)) (fun j hj ↦ ?_), add_zero]
+  · refine sum_congr rfl (fun j hj ↦ ?_)
+    rw [mem_range] at hj
+    rw [ite_eq_left (by omega)]
+    congr 1
+    omega
+  · rw [mem_Ico] at hj
+    exact ite_eq_right (by omega)
+
+private theorem tail_nonneg (k n : ℕ) : 0 ≤ tail k n := by
+  unfold tail
+  positivity
+
+private theorem tail_le_one (k n : ℕ) (hk : 0 < k) : tail k n ≤ 1 := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · rw [tail_zero]
+  by_cases hkn : k ≤ n
+  · have hk' : (1 : ℝ) ≤ k := by exact_mod_cast hk
+    exact (tail_bound k n hk hkn).trans (by rw [div_le_one (by positivity)]; exact hk')
+  · rw [tail_lt k n hn (by omega)]
+    norm_num
+
+/-- The mean of the smallest cycle length is the sum of the tail probabilities. -/
+private theorem mean_eq_sum_tail (n : ℕ) (hn : 1 ≤ n) :
+    (∑ σ : Perm (Fin n), ((⨅ x, minimalPeriod σ x : ℕ) : ℝ)) / (n.factorial : ℝ) =
+      ∑ j ∈ range n, tail (j + 1) n := by
+  classical
+  have hX (σ : Perm (Fin n)) : ((⨅ x, minimalPeriod σ x : ℕ) : ℝ) =
+      ∑ j ∈ range n, if HasLongCycles (j + 1) σ then (1 : ℝ) else 0 := by
+    have h1 : 1 ≤ ⨅ x, minimalPeriod σ x := (long_iff hn σ).mp fun x ↦
+      minimalPeriod_pos_of_mem_periodicPts (σ.injective.mem_periodicPts x)
+    have h2 : ⨅ x, minimalPeriod σ x ≤ n :=
+      (ciInf_le (OrderBot.bddBelow _) (⟨0, hn⟩ : Fin n)).trans (by
+        simpa using (minimalPeriod_le_card (f := (σ : _ → _)) (x := (⟨0, hn⟩ : Fin n))))
+    have hc (j : ℕ) : (if HasLongCycles (j + 1) σ then (1 : ℝ) else 0) =
+        if j + 1 ≤ ⨅ x, minimalPeriod σ x then 1 else 0 := by
+      by_cases h : j + 1 ≤ ⨅ x, minimalPeriod σ x
+      · rw [ite_eq_left ((long_iff hn σ).mpr h), ite_eq_left h]
+      · rw [ite_eq_right (fun h' ↦ h ((long_iff hn σ).mp h')), ite_eq_right h]
+    rw [sum_congr rfl fun j _ ↦ hc j, ← sum_filter, sum_const, nsmul_eq_mul, mul_one]
+    have hf : (range n).filter (fun j ↦ j + 1 ≤ ⨅ x, minimalPeriod σ x) =
+        range (⨅ x, minimalPeriod σ x) := by
+      ext j
+      simp only [mem_filter, mem_range]
+      omega
+    rw [hf, card_range]
+  simp_rw [hX]
+  rw [sum_comm, sum_div]
+  refine sum_congr rfl fun j _ ↦ ?_
+  simp [tail, countLong, Nat.card_eq_fintype_card, Fintype.card_subtype]
+
+/-- The mean smallest cycle length, with `e^{-γ} log n` in the denominator. -/
+private theorem mean_tendsto :
+    Tendsto (fun n : ℕ ↦
+      ((∑ σ : Perm (Fin n), ((⨅ x, minimalPeriod σ x : ℕ) : ℝ)) /
+          (n.factorial : ℝ)) / (exp (-eulerMascheroniConstant) * log n)) atTop (𝓝 1) :=
+  mean_asymp_of_tails (fun k n ↦ tail k n) _ mean_eq_sum_tail (fun k _ ↦ tail_zero k)
+    (fun k n _ ↦ tail_nonneg k n) (fun k n hk ↦ tail_le_one k n hk)
+    (fun k n hk hkn ↦ tail_bound k n hk hkn) (fun k n hk ↦ tail_rec_range k n hk)
+
+end MetaMathlibExt.smallest_cycle_mean_asymp
+
+namespace MetaMathlibExt
+open smallest_cycle_mean_asymp
+
+open Real
+
+/-- **Mean length of the smallest cycle of a random permutation.** For $n \ge 1$ let $X_n$ be the
+length of the smallest cycle of a uniformly random permutation of $\{1, \dots, n\}$. Then
+$\mathbb{E}(X_n) / (e^{-\gamma} \log n) \to 1$ as $n \to \infty$, where $\gamma$ is the
+Euler–Mascheroni constant.
+
+The paper states this as $\mathbb{E}(X_n) = e^{-\gamma} \log n \, (1 + O(h(n)/\log n))$ for some
+$h(n) = o(\log n)$, which is equivalent.
+
+Source: Claude Gravel and Daniel Panario, *Evaluating the Generalized Buchstab
+Function and Revisiting the Variance of the Distribution of the Smallest
+Components of Combinatorial Objects*, INTEGERS 24 (2024), Article A7, Theorem 1
+(`integers-2024-A7-thm-1`). -/
+public theorem smallest_cycle_mean_asymp :
+    Filter.Tendsto (fun n : ℕ =>
+      ((∑ σ : Equiv.Perm (Fin n), ((⨅ x, Function.minimalPeriod σ x : ℕ) : ℝ)) /
+          (n.factorial : ℝ)) / (Real.exp (-eulerMascheroniConstant) * Real.log n))
+      Filter.atTop (nhds 1) :=
+  mean_tendsto
 
 end MetaMathlibExt
