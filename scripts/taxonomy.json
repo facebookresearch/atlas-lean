@@ -15223,6 +15223,7 @@
   "MathlibExt/RingTheory/PowerSeries/PowerRecursionZPow": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
   "MathlibExt/RingTheory/PowerSeries/RationalityDescent": {"to": "Algebra/polynomials", "title": "Binomial convolutions of rational power series"},
   "MathlibExt/RingTheory/PowerSeries/RegularLocalRing": {"to": "RingTheory/local-rings", "title": "Regular local rings"},
+  "MathlibExt/RingTheory/PowerSeries/SeriesDivisorCalculus": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
   "MathlibExt/RingTheory/PowerSeries/SeriesDivisorInverseConvolution": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
   "MathlibExt/RingTheory/PowerSeries/SeriesDivisorPowRecursion": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
   "MathlibExt/RingTheory/PowerSeries/SeriesDivisorProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
