@@ -148,7 +148,8 @@ def Theory.equiv.mp {A B : Proposition Atom} (e : T.equiv A B) : T⇓({A} ⊢ B)
 /-- Reverse direction of an equivalence. -/
 def Theory.equiv.mpr {A B : Proposition Atom} (e : T.equiv A B) : T⇓({B} ⊢ A) := e.2
 
-/-- `A` and `B` are T-equivalent if `T.equiv A B` is nonempty. -/
+/-- `A` and `B` are equivalent in `T` when `T` derives both `{A} ⊢ B` and `{B} ⊢ A`, that is,
+when `T.equiv A B` is nonempty. -/
 def Theory.Equiv (A B : Proposition Atom) := Nonempty (T.equiv A B)
 
 @[inherit_doc]

@@ -22,6 +22,8 @@ public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 public import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
 public import MathlibExt.NumberTheory.WolstenholmePairedBinomialCongruence
 public import MathlibExt.NumberTheory.WolstenholmePolynomialParts
+public import MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeOfNormLe
+public import MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeZpowValuation
 
 /-!
 # Extensions of Wolstenholme's theorem by binomial coefficients
@@ -33,8 +35,12 @@ A rational congruence `x ≡ y (mod p^s)` (both sides `p`-integral) is written
 multiple harmonic sum `H_{p-1}(1, 1) = ∑_{1 ≤ i < j ≤ p-1} 1 / (i j)` is written
 out with a strict inner range. Where the modulus is `p^{s + v_p(B)}` with an integer
 `B`, the congruence is `X = 0 ∨ (B ≠ 0 ∧ s + padicValRat p B ≤ padicValRat p X)`, so
-`B = 0` (`v_p(B) = ∞`) demands equality. The higher `p`-adic mean value theorem is stated
-over `K = ℚ_p` for an ultrametric normed `ℚ_p`-space `B`.
+`B = 0` (`v_p(B) = ∞`) demands equality. The higher `p`-adic mean value theorem
+`norm_sub_taylor_le_zpow_valuation`, stated over `K = ℚ_p` for an ultrametric normed
+`ℚ_p`-space `B`, is proved in
+`MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeZpowValuation`. The theorem
+`norm_sub_taylor_le_of_norm_le` is proved in
+`MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeOfNormLe`.
 -/
 
 namespace MetaMathlibExt
@@ -79,64 +85,6 @@ public theorem_wanted choose_mul_prime_prime_harmonic_congr (p t : ℕ) (hp : p.
         5 ≤ padicValRat p (B - (T + T ^ 2 * (T - 1) * p * H1)))
 
 /-! ### Higher `p`-adic mean value theorem -/
-
-/-- **Higher $p$-adic mean value theorem.** Let $p$ be a prime, let $|\cdot|$ be the $p$-adic
-absolute value on $\mathbb{Q}_p$, and let $B$ be a normed vector space over $\mathbb{Q}_p$ whose
-norm is ultrametric. Let $N$ and $m$ be natural numbers with $1 \le m \le p$, let
-$f(t) = \sum_{j<N} a_j t^j$ be a polynomial with coefficients $a_j \in B$, and let
-$t, h \in \mathbb{Q}_p$ with $|t| \le 1$. Suppose that $|h| \le p^{-1/(p-m)}$ if $m < p$, that
-$|h| \le p^{-1/p}$ if $m = p$, and that $C \ge 0$ is a real number with
-$\|j(j-1)\cdots(j-m+1) \, a_j\| \le C$ for every $j < N$. Then
-$$\Big\| f(t+h) - \sum_{q<m} \sum_{q \le j < N} \binom{j}{q} t^{j-q} h^q a_j \Big\| \le
-\Big| \frac{h^m}{m} \Big| \, C.$$
-
-The inner sum $\sum_{q \le j < N} \binom{j}{q} t^{j-q} a_j$ is $f^{(q)}(t)/q!$, and the least
-admissible $C$ is the sup of the norms of the coefficients of $f^{(m)}$.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Theorem 1
-(`integers-2026-A32-thm-1`). -/
-public theorem_wanted norm_sub_taylor_le_of_norm_le {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] [IsUltrametricDist B] (N m : ℕ) (a : ℕ → B)
-    (t h : ℚ_[p]) (C : ℝ) (ht : ‖t‖ ≤ 1) (hm : 1 ≤ m) (hmp : m ≤ p)
-    (hh₁ : m < p → ‖h‖ ≤ (p : ℝ) ^ (-(1 / ((p : ℝ) - m))))
-    (hh₂ : m = p → ‖h‖ ≤ (p : ℝ) ^ (-(1 / (p : ℝ))))
-    (hC₀ : 0 ≤ C) (hC : ∀ j ∈ Finset.range N, ‖j.descFactorial m • a j‖ ≤ C) :
-    ‖∑ j ∈ Finset.range N, (t + h) ^ j • a j -
-        ∑ q ∈ Finset.range m, ∑ j ∈ Finset.range N,
-          ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • a j‖ ≤
-      ‖h ^ m / (m : ℚ_[p])‖ * C
-
-/-- **Congruence form of the higher $p$-adic mean value theorem.** Let $p$ be a prime, let
-$|\cdot|$ be the $p$-adic absolute value on $\mathbb{Q}_p$, and let $B$ be a normed vector space
-over $\mathbb{Q}_p$ whose norm is ultrametric. Let $N$ and $m$ be natural numbers with
-$1 \le m \le p$, let $f(t) = \sum_{j<N} a_j t^j$ with $a_j \in B$, let $t, h \in \mathbb{Q}_p$
-with $|t| \le 1$, and let $w$ be a real number with
-$\|j(j-1)\cdots(j-m+1) \, a_j\| \le p^{-w}$ for every $j < N$. Write
-$$R = \Big\| f(t+h) - \sum_{q<m} \sum_{q \le j < N} \binom{j}{q} t^{j-q} h^q a_j \Big\|$$
-and let $v_p(h)$ be the $p$-adic valuation of $h$, taken to be $0$ when $h = 0$. Then
-$R \le p^{-(m v_p(h) + w)}$ if $m < p$ and $v_p(h) \ge 1/(p-m)$;
-$R \le p^{-(p v_p(h) + w - 1)}$ if $m = p$ and $v_p(h) \ge 1/p$; and $R = 0$ if $h = 0$.
-
-Reading a congruence modulo $p^v$ in $B$ as norm at most $p^{-v}$, the first two bounds say
-$f(t+h) \equiv \sum_{q<m} f^{(q)}(t) h^q / q!$ modulo $p^{m v_p(h) + w}$ and
-$p^{p v_p(h) + w - 1}$ respectively.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Theorem 2
-(`integers-2026-A32-thm-2`). -/
-public theorem_wanted norm_sub_taylor_le_zpow_valuation {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] [IsUltrametricDist B] (N m : ℕ) (a : ℕ → B)
-    (t h : ℚ_[p]) (w : ℝ) (ht : ‖t‖ ≤ 1) (hm : 1 ≤ m) (hmp : m ≤ p)
-    (hC : ∀ j ∈ Finset.range N, ‖j.descFactorial m • a j‖ ≤ (p : ℝ) ^ (-w)) :
-    let R : ℝ := ‖∑ j ∈ Finset.range N, (t + h) ^ j • a j -
-        ∑ q ∈ Finset.range m, ∑ j ∈ Finset.range N,
-          ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • a j‖
-    (m < p → 1 / ((p : ℝ) - m) ≤ h.valuation →
-        R ≤ (p : ℝ) ^ (-((m : ℝ) * h.valuation + w))) ∧
-      (m = p → 1 / (p : ℝ) ≤ h.valuation →
-        R ≤ (p : ℝ) ^ (-((p : ℝ) * h.valuation + w - 1))) ∧
-      (h = 0 → R = 0)
 
 /-! ### The general congruence for `binom(np, kp)` -/
 
