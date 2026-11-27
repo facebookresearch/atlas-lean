@@ -17,6 +17,7 @@ by the [result for conjunctive views](finding-small-and-complete-rewritings-is-n
 - [Rewritings of conjunctive queries using views](rewritings-of-conjunctive-queries-using-views.md)
 - [Positive relational algebra = unions of conjunctive queries = positive existential calculus](../relational-calculus/positive-relational-algebra-unions-of-conjunctive-queries-po.md)
 - [The universal levels of the polynomial hierarchy](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pi-k.md)
+- [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
 
 ## Proof depends on
 
