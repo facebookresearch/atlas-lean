@@ -2083,6 +2083,7 @@
   "CSLibExt/Privacy/MeasureDifferentialPrivacy": {"to": "ComputerScience/cryptography", "title": "Measure differential privacy"},
   "CSLibExt/Privacy/PrivacyLoss": {"to": "ComputerScience/cryptography", "title": "Privacy-loss random variable and KL bound"},
   "CSLibExt/Privacy/RenyiDifferentialPrivacy": {"to": "ComputerScience/cryptography", "title": "Renyi differential privacy"},
+  "CSLibExt/Scheduling/ProjectNetwork/Slack": {"to": "ComputerScience/graph-algorithms/shortest-paths", "title": "Shortest paths"},
   "CSLibExt/Security/AccessControl/HRU/Basic": {"to": "ComputerScience/computer-security", "title": "Access control"},
   "CSLibExt/Security/InformationFlow/LowEquivalence": {"to": "ComputerScience/computer-security", "title": "Information flow"},
   "CSLibExt/Security/Unwinding": {"to": "ComputerScience/computer-security", "title": "Information flow"},
