@@ -13,7 +13,6 @@ The abstract configurations form a finite graph. Soundness: each abstract step i
 ## Proof depends on
 
 - [Inductive saturation characterizes well-nested reachability](well-nested-reachability-saturation.md)
-- [One hole is no hole: complete 1-hole-bounded runs are well-nested](one-hole-is-no-hole.md)
 
 ## Sources
 

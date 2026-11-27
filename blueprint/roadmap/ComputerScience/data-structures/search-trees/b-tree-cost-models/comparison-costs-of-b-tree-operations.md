@@ -16,6 +16,7 @@ Each operation compares keys only while scanning the nodes of one search path (t
 
 - [Comparison-query cost model](comparison-query-cost-model.md)
 - [B-trees of a given minimum degree](../b-tree/is-btree.md)
+- [Order queries in classic B-trees](order-queries-in-b-trees.md)
 
 ## Proof depends on
 

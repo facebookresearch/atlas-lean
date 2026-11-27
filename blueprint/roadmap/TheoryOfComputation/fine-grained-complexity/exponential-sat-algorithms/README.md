@@ -1,6 +1,5 @@
 # Exponential-Time Algorithms for k-SAT
 
-- [Exact MAX-SAT distributions from threshold counts](max-sat-score-distribution.md)
 - [Covering and partitioning branching rules for SAT](covering-and-partitioning-branching-rules.md)
 - [Forced variables with respect to an order](forced-variables.md)
 - [Unit propagation preserves models and terminates](unit-propagation-preserves-models.md)

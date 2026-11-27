@@ -1,14 +1,14 @@
 # Ambainis: relational adversary bound for non-Boolean input alphabets
 
-Let $f : D \to \beta$ with $D \subseteq \Sigma^N$, and let $R \subseteq D \times D$ be a nonempty relation between inputs with $f(x) \ne f(y)$. Suppose every $x$ in the left projection is related to at least $m$ inputs, every $y$ in the right projection to at least $m'$ inputs, and for every related pair $(x, y)$ and index $i$ with $x_i \ne y_i$, the product $\ell_{x,i} \ell'_{y,i}$ is at most $L$, where $\ell_{x,i}$ is the number of partners $y'$ of $x$ with $y'_i \ne x_i$ and $\ell'_{y,i}$ the number of partners $x'$ of $y$ with $x'_i \ne y_i$. Then every $T$-query value-oracle algorithm computing $f$ with error at most $\varepsilon$ on every input of $D$, where $0 \le \varepsilon < 1/2$, satisfies
+Let $f : D \to \beta$ with $D \subseteq \Sigma^N$ and $\beta$ finite, where the symbols of the finite alphabet $\Sigma$ are encoded as bit strings of a fixed length and queried through the value oracle $|i, a, w\rangle \mapsto |i, a \oplus x_i, w\rangle$. Let $X, Y \subseteq D$ be sets of inputs with $f(x) \ne f(y)$ for every $x \in X$ and every $y \in Y$, and let $R \subseteq X \times Y$ be such that every $x \in X$ is related to at least $m$ inputs $y \in Y$ and every $y \in Y$ to at least $m'$ inputs $x \in X$. For $(x, y) \in R$ and an index $i$ let $\ell_{x,i}$ be the number of $y' \in Y$ with $(x, y') \in R$ and $y'_i \ne x_i$, and $\ell'_{y,i}$ the number of $x' \in X$ with $(x', y) \in R$ and $x'_i \ne y_i$, and let $L$ be the maximum of $\ell_{x,i}\ell'_{y,i}$ over all $(x, y) \in R$ and all $i$ with $x_i \ne y_i$. Then for every fixed error $0 \le \varepsilon < 1/2$, every quantum query algorithm computing $f$ with error at most $\varepsilon$ on every input of $D$ makes
 
-$$\big(1 - 2\sqrt{\varepsilon(1 - \varepsilon)}\big)\sqrt{m m'} \le 2T\sqrt{L}.$$
+$$Q_\varepsilon(f) = \Omega\Big(\sqrt{mm'/L}\Big)$$
 
-Ambainis states this (Theorem 6) for the standard oracle $|i, a\rangle \mapsto |i, a \oplus x_i\rangle$ and an $\Omega(\sqrt{mm'/L})$ conclusion; his proof gives the displayed constant and uses only that the oracle acts on the query and value registers by a unitary depending on $x_i$ alone, so it holds verbatim for any unitary oracle family $\mathrm{step} : \Sigma \to U(\mathbb{C}^V)$ and any finite set of outcomes.
+queries.
 
 ## Proof sketch
 
-Run the algorithm on the superposition of inputs giving weight $1/\sqrt{2|X|}$ to each left input and $1/\sqrt{2|Y|}$ to each right input, and track $S_t = \sum_{(x,y) \in R} |(\rho_t)_{xy}|$ for the reduced density matrix $\rho_t$ on the input register. Then $S_0 \ge \sqrt{mm'}/2$, and distinguishing $f(x) \ne f(y)$ with error $\varepsilon$ forces $S_0 - S_T \ge (1 - 2\sqrt{\varepsilon(1-\varepsilon)}) S_0$. One query changes only entries with $x_i \ne y_i$ for the queried $i$, and positive semidefiniteness with the weights $\sqrt{\ell'_{y,i}/\ell_{x,i}}$ bounds the change per query by $\sqrt{L}$.
+Run the algorithm on the superposition giving weight $1/\sqrt{2|X|}$ to each $x \in X$ and $1/\sqrt{2|Y|}$ to each $y \in Y$, and track $S_t = \sum_{(x,y) \in R} |(\rho_t)_{xy}|$ for the reduced density matrix $\rho_t$ on the input register after $t$ queries. Distinguishing $f(x) \ne f(y)$ with error $\varepsilon$ forces $S_0 - S_T \ge (1 - 2\sqrt{\varepsilon(1-\varepsilon)}) S_0$. One query changes only entries with $x_i \ne y_i$ for the queried $i$, and positive semidefiniteness with the weights $\sqrt{\ell'_{y,i}/\ell_{x,i}}$ bounds the change per query by $\sqrt{L}$; since $X$ and $Y$ are disjoint (no input lies in both, as $f(x) \ne f(y)$), the diagonal of $\rho$ over $X \cup Y$ has trace one. (Derived, not stated by Ambainis: since $|R| \ge \max(m|X|, m'|Y|) \ge \sqrt{mm'|X||Y|}$, $S_0 \ge \sqrt{mm'}/2$, and the argument gives the explicit form $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\sqrt{mm'} \le 2T\sqrt{L}$ for every $T$-query algorithm.)
 
 ## Depends on
 
@@ -16,4 +16,4 @@ Run the algorithm on the superposition of inputs giving weight $1/\sqrt{2|X|}$ t
 
 ## Sources
 
-- A. Ambainis, "Quantum Lower Bounds by Quantum Arguments", Journal of Computer and System Sciences 64(4), 2002, Lemma 1 and Theorem 6 with its proof.
+- A. Ambainis, "Quantum Lower Bounds by Quantum Arguments", Proceedings of the 32nd ACM Symposium on Theory of Computing (STOC 2000); journal version Journal of Computer and System Sciences 64(4), 2002; arXiv:quant-ph/0002066: Section 2 (the oracle and its extension to larger alphabets) and Theorem 6 with its proof.

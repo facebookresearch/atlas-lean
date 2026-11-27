@@ -14,4 +14,4 @@ Fewer than $2^{-(p+1)}\cdot2^{2p}=2^{p-1}$ coin strings $rs$ make $A$ err on $x$
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 6.11 (numbering of the 2007 public draft; there the no-instances are all pairs $(x,r)$ with $x\notin S$, a subset of the no-instances used here).
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Section 6.1.3.2 ("Relating BPP to RP"), the paragraph "An illustration" preceding the proof of Theorem 6.9: for an algorithm using $2p'(|x|)$ coins with error below $2^{-(p'(|x|)+1)}$, every $x \in S$ has $\Pr_{r'}[(\forall r'')\,A'(x, r'r'') = 1] > 1/2$, every $x \notin S$ and every $r'$ have $\Pr_{r''}[A'(x, r'r'') = 1] < 1/2$, and $x \mapsto (x, r')$ is a one-sided error randomized Karp-reduction to a coRP promise problem; numbering of the 2007 public draft on the author's homepage. Exercise 6.11 there (supplementary) asks for the details; its no-instances are all pairs $(x,r)$ with $x\notin S$, a subset of the no-instances used here.

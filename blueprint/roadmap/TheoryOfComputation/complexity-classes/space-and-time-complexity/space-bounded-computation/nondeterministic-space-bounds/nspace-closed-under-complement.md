@@ -6,7 +6,7 @@ $$
 \mathsf{NSPACE}(s)=\mathsf{coNSPACE}(s),
 $$
 
-where the machines use at most $c_1 s(n)+c_2$ work cells along every computation prefix and every branch halts. No space-constructibility is assumed.
+where, as on the linked page and in the convention Immerman uses, a nondeterministic machine has space complexity $s$ when no sequence of choices lets it scan more than $c_1 s(n)+c_2$ work cells on inputs of length $n$. No space-constructibility is assumed.
 
 ## Proof sketch
 

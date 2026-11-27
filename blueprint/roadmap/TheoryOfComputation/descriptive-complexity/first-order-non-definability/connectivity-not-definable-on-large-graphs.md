@@ -12,7 +12,8 @@ The step-two graph on $\{0,\dots,n-1\}$ with an edge between the second and the 
 
 ## Proof depends on
 
-- [Parity transfer from linear orders to graph properties](parity-transfer-from-linear-orders.md)
+- [Graphs defined by a first-order formula](graphs-defined-by-a-formula.md)
+- [First-order definable classes of finite linear orders are finite or cofinite](../ehrenfeucht-fraisse-games/even-not-definable-on-linear-orders.md)
 
 ## Sources
 

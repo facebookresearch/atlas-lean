@@ -1,6 +1,6 @@
 # The bit sum lemma
 
-There is a first-order formula $\mathrm{BSUM}(x, y)$ over $\{\le, \mathrm{BIT}\}$ such that on every canonically ordered universe, $\mathrm{BSUM}(x,y)$ holds iff $y$ is the number of $1$ bits in the binary expansion of $x$; such a $y$ always exists and is unique. More generally first-order logic with $\mathrm{BIT}$ can count up to polylogarithmic quantities by packing small numbers into the bits of single elements.
+There is a first-order formula $\mathrm{BSUM}(x, y)$ over $\{\le, \mathrm{BIT}\}$ such that on every canonically ordered universe, $\mathrm{BSUM}(x,y)$ holds iff $y$ is the number of $1$ bits in the binary expansion of $x$; such a $y$ always exists and is unique.
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ Pack partial sums of a balanced binary tree over the $O(\log n)$ bit positions i
 ## Sources
 
 - N. Immerman, Descriptive Complexity, Springer, 1999.
-- D. A. M. Barrington, N. Immerman and H. Straubing, "On Uniformity within NC¹", Journal of Computer and System Sciences 41(3), 274–306, 1990.
+- D. A. M. Barrington, N. Immerman and H. Straubing, "On Uniformity within NC¹", Journal of Computer and System Sciences 41(3), 274–306, 1990, Lemma 8.2.

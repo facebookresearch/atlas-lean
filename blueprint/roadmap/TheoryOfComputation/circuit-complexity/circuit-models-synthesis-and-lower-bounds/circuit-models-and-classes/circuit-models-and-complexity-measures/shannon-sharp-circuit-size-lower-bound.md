@@ -10,6 +10,10 @@ Count circuits up to relabelling of their gates. A circuit with $s\ge n$ gates i
 
 - [Circuit complexity, binary cost and formula leaf size](circuit-complexity-and-formula-leaf-size.md)
 
+## Proof depends on
+
+- [Counting functions with small De Morgan circuits](counting-functions-with-small-circuits.md)
+
 ## Sources
 
 - Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal 28(1), 59–98, 1949.

@@ -14,6 +14,6 @@ A resolution step on $v$ from $A \vee v$ and $B \vee \neg v$ is simulated by mul
 
 ## Sources
 
-- M. Alekhnovich, E. Ben-Sasson, A. A. Razborov and A. Wigderson, "Space Complexity in Propositional Calculus", SIAM Journal on Computing 31(4), 1184–1211, 2002: Section 4 (definition of PCR and Lemma 4.1).
+- M. Alekhnovich, E. Ben-Sasson, A. A. Razborov and A. Wigderson, "Space Complexity in Propositional Calculus", SIAM Journal on Computing 31(4), 1184–1211, 2002: Section 4 (definition of PCR; simulation of resolution width by PCR degree).
 - S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, Section 7.5.3 and Figure 7.13.
 - M. Clegg, J. Edmonds and R. Impagliazzo, "Using the Groebner Basis Algorithm to Find Proofs of Unsatisfiability", Proceedings of the 28th ACM Symposium on Theory of Computing (STOC), 1996.

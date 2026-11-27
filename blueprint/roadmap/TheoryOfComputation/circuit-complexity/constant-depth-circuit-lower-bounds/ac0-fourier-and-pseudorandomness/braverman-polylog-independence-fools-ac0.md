@@ -10,7 +10,7 @@ then $|\mathbb{E}_\mu[F]-\mathbb{E}[F]|<0.82^{s}\cdot 15m$ for every Boolean fun
 
 ## Proof sketch
 
-Take Braverman's real approximator $f$ of degree $(s\log m)^d$, which agrees with $F$ outside an error set whose indicator $E$ is itself computed by a small circuit of depth below $d+3$ and has small mass under both the uniform distribution and $\mu$. Replace $E$ by its low-degree LMN approximation $\tilde E$ and set $f'=f\cdot(1-\tilde E)$; this gives a one-sided low-degree approximator of $F$ that is close to $F$ in $\ell_2$ and agrees with it on most of the mass of both distributions. Low-degree polynomials have equal expectations under $\mu$ and uniform, which bounds the fooling error.
+Take Braverman's real approximator $f$ of degree $1 + s\lceil\log_2 K\rceil$ (at depth $d$, degree $O((s\log m)^d)$), which agrees with $F$ whenever a one-sided error flag $E$ computed by a small circuit of depth below $d+3$ outputs $0$ and has small mass under both the uniform distribution and $\mu$. Replace $E$ by its low-degree LMN approximation $\tilde E$ and set $f'=f\cdot(1-\tilde E)$; this gives a one-sided low-degree approximator of $F$ that is close to $F$ in $\ell_2$ and agrees with it on most of the mass of both distributions. Low-degree polynomials have equal expectations under $\mu$ and uniform, which bounds the fooling error.
 
 ## Depends on
 

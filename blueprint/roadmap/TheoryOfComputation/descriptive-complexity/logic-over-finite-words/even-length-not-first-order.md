@@ -4,7 +4,7 @@ Over every nonempty finite alphabet, the language of words of even length is reg
 
 ## Proof sketch
 
-A first-order sentence about words over $\{a\}$ is a sentence about finite linear orders, whose definable classes are finite or cofinite, so EVEN is not definable; for larger alphabets restrict to words over one letter. Not star-free follows because star-free languages are first-order definable.
+A first-order sentence about words over $\{a\}$ is a sentence about finite linear orders, whose definable classes are finite or cofinite, so EVEN is not definable; for larger alphabets restrict to words over one letter (Straubing and Weil state the case of an arbitrary alphabet as a consequence of their characterization of the first-order definable languages). Not star-free follows because star-free languages are first-order definable.
 
 ## Depends on
 
@@ -20,5 +20,6 @@ A first-order sentence about words over $\{a\}$ is a sentence about finite linea
 ## Sources
 
 - L. Libkin, Elements of Finite Model Theory, Springer, 2004.
+- H. Straubing and P. Weil, "An Introduction to Finite Automata and Their Connection to Logic", in D. D'Souza and P. Shankar (eds.), Modern Applications of Automata Theory, World Scientific, 2012; arXiv:1011.6491, Example 1.15 (over an arbitrary alphabet $A$, the MSO sentence defining the words of even length, and that this language cannot be described by a first-order formula).
 - R. McNaughton and S. Papert, Counter-Free Automata, MIT Press, 1971.
 - W. Thomas, "Languages, Automata, and Logic", in Handbook of Formal Languages, Vol. 3, Springer, 389–455, 1997.

@@ -9,6 +9,7 @@ With $d = (3^n - 1)/2$ the Hanf radius of rank-$n$ formulas, $r = 3d + 1$. Isomo
 ## Depends on
 
 - [Gaifman graphs, distance and neighborhoods](gaifman-graphs-and-neighborhoods.md)
+- [Quantifier rank and rank-$n$ equivalence](../finite-structures-and-definability/quantifier-rank.md)
 
 ## Proof depends on
 

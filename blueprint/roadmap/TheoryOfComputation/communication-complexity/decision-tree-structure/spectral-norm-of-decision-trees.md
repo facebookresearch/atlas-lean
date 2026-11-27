@@ -17,7 +17,7 @@ Sum over reachable leaf subcubes rather than recursing on subtrees: the linked t
 
 ## Proof depends on
 
-- [Leaf counts of decision trees: depth, rank and decision lists](leaf-counts-depth-rank-and-decision-lists.md)
+- [Leaf counts of decision trees: depth and decision lists](leaf-counts-depth-rank-and-decision-lists.md)
 - [Integer-valued decision trees of depth k have Fourier coefficients in 2^{-k}ℤ](decision-tree-fourier-granularity.md)
 
 ## Sources

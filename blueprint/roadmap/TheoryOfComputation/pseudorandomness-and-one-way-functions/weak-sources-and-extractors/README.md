@@ -3,7 +3,7 @@
 - [k-sources, (k, ε)-sources and flat sources](weak-random-sources.md)
 - [Coalition influence and resilient functions](resilient-functions.md)
 - [Every k-source is a mixture of flat k-sources](k-sources-are-mixtures-of-flat-sources.md)
-- [Pointwise min-entropy chain rule and uniform lifting](pointwise-min-entropy-chain-rule.md)
+- [Min-entropy chain rule for conditioning on a variable with few values](pointwise-min-entropy-chain-rule.md)
 - [Seeded randomness extractors](seeded-randomness-extractors.md)
 - [Two-source extractors](two-source-extractors.md)
 - [Resilient functions extract from non-oblivious bit-fixing sources](resilient-functions-extract-from-nobf-sources.md)

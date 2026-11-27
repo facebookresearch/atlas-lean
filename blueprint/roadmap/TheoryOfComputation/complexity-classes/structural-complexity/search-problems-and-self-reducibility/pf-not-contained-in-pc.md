@@ -1,6 +1,6 @@
 # PF contains search problems outside PC
 
-There is a polynomially bounded relation $R$ whose search problem is solvable in polynomial time ($R\in\mathsf{PF}$) but which is not polynomial-time decidable, so $R\notin\mathsf{PC}$.
+$\mathsf{PF}$ contains (unnatural) search problems that are not in $\mathsf{PC}$; that is, $\mathsf{PF}\not\subseteq\mathsf{PC}$. Since members of $\mathsf{PF}$ are polynomially bounded relations, such a relation is not decidable in polynomial time.
 
 ## Proof sketch
 
@@ -13,4 +13,4 @@ Let $R=\{(x,1): x\in H\}\cup\{(x,0): x\in\{0,1\}^*\}$ for an undecidable $H$ suc
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 2.1.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Section 2.1.1.2 ("PF contains (unnatural) problems that are not in PC") and Section 2.1.3 ("PF is not contained in PC"), with Exercise 2.1.

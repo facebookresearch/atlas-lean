@@ -10,7 +10,7 @@ In particular, with $R = o(n)$ in this range the dictionary wastes $o(1)$ bits p
 
 ## Proof sketch
 
-Information is conserved down the tree: the bits of a node's children, together with the routing information implicit in which child stores a key, add up to the node's share of $\log_2\binom{U}{n} + n\log_2 V$, up to slack terms. Each leaf wastes at most three bits, and the slack of storage tables, waiting lists, rounding and seeds sums to $O(R)$ over the whole tree.
+Information is conserved down the tree: the bits of a node's children, together with the routing information implicit in which child stores a key, add up to the node's share of $\log_2\binom{U}{n} + n\log_2 V$, up to slack terms. Each leaf wastes $O(1)$ bits, and the slack of storage tables, waiting lists, rounding and seeds sums to $O(R)$ over the whole tree.
 
 ## Depends on
 
@@ -19,7 +19,7 @@ Information is conserved down the tree: the bits of a node's children, together 
 
 ## Proof depends on
 
-- [A full minimap wastes at most three bits](full-minimap-wastes-three-bits.md)
+- [A leaf minimap wastes a constant number of bits](full-minimap-wastes-three-bits.md)
 - [Existence of good seed assignments for the dictionary tree](good-seed-existence.md)
 - [Padding entropy and seed sizes in the dictionary tree](padding-entropy-and-seed-sizes.md)
 

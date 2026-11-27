@@ -13,7 +13,7 @@ Necessity: each class is a clone, so a family inside one generates only members 
 
 ## Proof depends on
 
-- [Generated operations are exactly those computed by formulas](generated-operations-are-formula-definable.md)
+- [Operations computed by circuits over a family lie in its generated clone](generated-operations-are-formula-definable.md)
 - [Functional completeness](../../functional-completeness/exists-eval-bool-eq.md)
 
 ## Sources

@@ -12,6 +12,6 @@
 - [Tseitin encoding of a Boolean circuit](tseitin-encoding-of-a-circuit.md)
 - [Counting functions with small De Morgan circuits](counting-functions-with-small-circuits.md)
 - [Shannon's sharp counting bound: almost all functions need more than 2^n/n gates](shannon-sharp-circuit-size-lower-bound.md)
-- [Changing one value changes circuit complexity by at most 2n + 3](one-point-update-changes-complexity-by-2n-plus-3.md)
+- [Adding one true point raises B2 and U2 circuit complexity by at most n](one-point-update-changes-complexity-by-2n-plus-3.md)
 - [The Zhegalkin basis and multiplicative complexity](zhegalkin-basis-and-multiplicative-complexity.md)
 - [The circuit size hierarchy](circuit-size-hierarchy-theorem.md)

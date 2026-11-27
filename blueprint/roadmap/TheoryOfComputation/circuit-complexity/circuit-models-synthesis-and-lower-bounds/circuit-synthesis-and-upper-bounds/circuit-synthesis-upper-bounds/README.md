@@ -13,4 +13,4 @@
 - [Threshold functions by quadratic-size De Morgan circuits](threshold-functions-by-quadratic-circuits.md)
 - [Yablonskii's formula upper bound for parity](yablonskii-formula-upper-bound-for-parity.md)
 - [Lupanov's upper bound for De Morgan formulas](lupanov-formula-upper-bound.md)
-- [Shannon-type synthesis: every function has circuits of size 27·2^n/n](shannon-synthesis-27-two-to-the-n-over-n.md)
+- [Shannon-type synthesis: every function has circuits of size 12·2^n/n + o(2^n/n)](shannon-synthesis-27-two-to-the-n-over-n.md)

@@ -8,7 +8,6 @@ The loop's output is a product of independent uniform draws, one per entry (a wo
 
 ## Depends on
 
-- [Word-RAM resamplable hash family](word-ram-resamplable-hash-family.md)
 - [Bit-packed array on the Word RAM](bit-packed-array.md)
 - [Randomized word RAM](../../../../sorting-and-searching/word-ram-integer-algorithms/randomized-word-ram.md)
 

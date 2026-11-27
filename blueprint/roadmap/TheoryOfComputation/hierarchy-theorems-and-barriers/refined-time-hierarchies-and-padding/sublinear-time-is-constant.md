@@ -1,10 +1,10 @@
 # Sublinear deterministic time equals constant time
 
-If a deterministic multi-tape machine, whose input head starts on the first input symbol and moves at most one cell per step and which is not given the input length separately, halts within $t(n)=o(n)$ steps on every input of length $n$, then it halts within a constant number of steps on all inputs. Consequently, for $t=o(n)$, $\mathsf{DTIME}(t)=\mathsf{DTIME}(1)$ on binary words: every such language is determined by a bounded prefix of the input.
+Let $M$ be a deterministic multi-tape Turing machine with a read-only input tape, and say that $M$ runs in time $T(n)$ if it makes at most $T(n)$ steps on every input of length $n$. If $M$ runs in time $T(n)$ and $T(n_0)<n_0+1$ for some $n_0$, then $M$ runs in constant time: it never reads the $(n_0+1)$-st input symbol, so it makes at most $T(n_0)$ steps on every input of length at least $n_0$. In particular every such machine running in time $t(n)=o(n)$ runs in constant time, so $\mathsf{DTIME}(t)=\mathsf{DTIME}(1)$ for $t=o(n)$: every such language is determined by a bounded prefix of the input.
 
 ## Proof sketch
 
-Pick $n_1$ with $t(n)+1<n$ for all $n\ge n_1$, and let $T=\max\{t(n): n<n_1\}$. Let $w$ be an input on which the machine runs for $\tau$ steps; its input head visits only positions $1,\dots,\tau+1$. If $|w|<n_1$ then $\tau\le T$. Otherwise $\tau\le t(|w|)<|w|-1$, so the prefix $u$ of $w$ of length $\tau+1$ is proper and the run on $u$ is identical, taking $\tau=|u|-1$ steps; $|u|\ge n_1$ would give $\tau\le t(|u|)<|u|-1$, so $|u|<n_1$ and again $\tau\le T$. This is the argument of Goldreich's Exercise 4.3 (the set of inputs that are read entirely is finite).
+Let $T_w$ be the maximum number of steps on inputs of length $n_0$, attained at $w$. Since $T_w\le T(n_0)<n_0+1$, the input head (which starts on the first input symbol and moves at most one cell per step) never reaches position $n_0+1$, so every input with prefix $u$ of length $n_0$ is processed exactly as $u$ is, in at most $T_w$ steps; inputs shorter than $n_0$ are finitely many. For $t=o(n)$, any $n_0$ with $t(n_0)<n_0+1$ works.
 
 ## Depends on
 
@@ -12,4 +12,5 @@ Pick $n_1$ with $t(n)+1<n$ for all $n\ge n_1$, and let $T=\max\{t(n): n<n_1\}$. 
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 4.3 (published by Cambridge University Press, 2008).
+- David Gajser, "Verifying Time Complexity of Deterministic Turing Machines", arXiv:1307.3648v2, 2014 (published in Theoretical Computer Science 600, 86–97, 2015), Section 2 (model and "runs in time"), Lemma 3.1 and its proof, and the proof of Theorem 3.4 ("a Turing machine that runs in time $T(n)$ such that $T(n_0)<n_0+1$ for some $n_0\in\mathbb{N}$, runs in constant time").
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 4.3 (supplementary).

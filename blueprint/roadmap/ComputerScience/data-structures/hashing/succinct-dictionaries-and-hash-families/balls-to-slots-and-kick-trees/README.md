@@ -6,7 +6,7 @@
 - [Local query router by binary prefix trie](local-query-router.md)
 - [Mini-array with unary delimiters](mini-array-with-unary-delimiters.md)
 - [Multi-tier full cubbies with a tail cubby](multi-tier-cubbies.md)
-- [Probe complexity of k-kick trees under 3-wise independence](probe-complexity-of-k-kick-trees.md)
+- [Probe complexity of k-kick trees](probe-complexity-of-k-kick-trees.md)
 - [Bit-packed slot tables for kick-tree dictionaries](bit-packed-kick-tree-slot-tables.md)
 - [Universal key-quotienting permutation](universal-key-quotienting-permutation.md)
 - [Capacity arithmetic of tier merges](capacity-arithmetic-of-tier-merges.md)

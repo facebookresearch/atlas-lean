@@ -1,16 +1,16 @@
 # Constant-depth algebraic circuits for IMM need superpolynomial size
 
-Over every field there is an absolute constant $c\ge1$ such that the following holds. Let $d,k,\Delta\ge1$ with $k\ge10d$ and $2^k\le n$. Every unbounded fan-in arithmetic circuit of product-depth at most $\Delta$ with $s\ge2$ nodes computing $\mathrm{IMM}_{n,d}$ satisfies
+Over every field, if $d = o(\log n)$, then every unbounded fan-in arithmetic circuit of product-depth at most $\Delta$ computing the iterated matrix multiplication polynomial $\mathrm{IMM}_{n,d}$ needs
 
 $$
-\bigl(s\cdot d^{d}\cdot 2^{k}\bigr)^{c\Delta}\ \ge\ 2^{k\left(d^{1/(4^\Delta-1)}/20-1/2\right)} .
+n^{\Theta\left(d^{1/(F_{2\Delta+2}-1)}/\Delta\right)}
 $$
 
-Hence for every constant product-depth $\Delta$ and every $c'$, for all large $n$, every such circuit computing $\mathrm{IMM}_{n,d}$ with $d=\lfloor\log_2\lfloor\log_2n\rfloor\rfloor$ has more than $n^{c'}$ nodes.
+nodes (size), where $F_k$ is the $k$-th Fibonacci number ($F_0 = 0$, $F_1 = F_2 = 1$). Hence for every constant product-depth $\Delta$, if $d = d(n)$ tends to infinity with $d = o(\log n)$, such circuits have superpolynomial size.
 
 ## Proof sketch
 
-Restrict to $\mathrm{IMM}_{2^k,d}$ by setting variables to $0$. Set-multilinearize over any field: this gives a set-multilinear circuit of product-depth at most $2\Delta$ and size $\mathrm{poly}(s,\Theta(d/\ln d)^d)\le(s\,d^d)^{O(1)}$. Substitute linear forms to pass to the word polynomial $P_w$ of the greedy $k$-unbiased word (size grows by a factor at most $2^k+2$), unfold the result into a set-multilinear formula (the exponent grows by a factor $O(\Delta)$), and apply the set-multilinear lower bound at product-depth $2\Delta$, where $d^{1/(2^{2\Delta}-1)}=d^{1/(4^\Delta-1)}$. For constant $\Delta$ and $k=\lfloor\log_2n\rfloor$, the right side is $n^{\Omega(d^{1/(4^\Delta-1)})}$ while $d^d=n^{o(1)}$.
+Restrict to a word polynomial of $\mathrm{IMM}$ by setting variables to constants. Set-multilinearize over any field: Forbes shows by gate simulation that a circuit of size $s$ and product-depth $\Delta$ yields a set-multilinear circuit of product-depth $2\Delta$ and size $\mathrm{poly}(s,\Theta(d/\ln d)^d)$, and that the Limaye–Srinivasan–Tavenas argument, which over fields of characteristic $0$ or greater than $d$ first homogenizes, goes through over every field. The set-multilinear lower bound for $\mathrm{IMM}$ then gives the stated size, with the improved parameters of Bhargav, Dutta and Saxena. (Derived, not stated in this form by the sources: tracking the constants gives an absolute constant $c \ge 1$ such that for $d,k,\Delta\ge1$ with $k\ge10d$ and $2^k\le n$ every such circuit with $s\ge2$ nodes satisfies $\bigl(s\cdot d^{d}\cdot 2^{k}\bigr)^{c\Delta} \ge 2^{k(d^{1/(4^\Delta-1)}/20-1/2)}$.)
 
 ## Depends on
 
@@ -24,5 +24,5 @@ Restrict to $\mathrm{IMM}_{2^k,d}$ by setting variables to $0$. Set-multilineari
 
 ## Sources
 
+- Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), LIPIcs 300, 2024, Theorem 10 (stated in Section 2.1 as the Main Theorem) and Corollary 27.
 - Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", 62nd IEEE Symposium on Foundations of Computer Science (FOCS 2021), 2021, Corollary 4 (over fields of characteristic $0$ or greater than $d$).
-- Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), LIPIcs 300, 2024, Theorem 10 and Corollary 27 (over every field).

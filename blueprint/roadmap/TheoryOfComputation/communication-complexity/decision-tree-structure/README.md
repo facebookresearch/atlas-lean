@@ -2,9 +2,8 @@
 
 - [Canonical decision tree of a restricted DNF](canonical-decision-tree-of-a-restricted-dnf.md)
 - [Functions computed by depth-d trees have Fourier degree at most d and total influence at most d](decision-tree-depth-bounds-fourier-degree.md)
-- [Leaf counts of decision trees: depth, rank and decision lists](leaf-counts-depth-rank-and-decision-lists.md)
+- [Leaf counts of decision trees: depth and decision lists](leaf-counts-depth-rank-and-decision-lists.md)
 - [Decision trees of depth t give DNFs and CNFs of width t](decision-trees-give-narrow-dnfs-and-cnfs.md)
-- [Restrictions and post-processing do not increase decision tree complexity](restrictions-do-not-increase-decision-tree-complexity.md)
 - [Graph connectivity is evasive](graph-connectivity-is-evasive.md)
 - [Rivest–Vuillemin parity criterion for evasiveness](rivest-vuillemin-parity-criterion.md)
 - [Nonconstant symmetric functions are evasive](nonconstant-symmetric-functions-are-evasive.md)

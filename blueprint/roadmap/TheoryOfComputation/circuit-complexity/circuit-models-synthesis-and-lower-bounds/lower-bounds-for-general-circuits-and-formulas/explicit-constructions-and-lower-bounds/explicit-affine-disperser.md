@@ -10,7 +10,7 @@ where $\mathrm{Sym}_t$ is the $t$-th elementary symmetric polynomial. Arithmetic
 
 ## Proof sketch
 
-Ben-Sasson and Kopparty show that if $f_N$ were constant on an affine subspace of dimension above $6N^{4/5}$, then, after a change of variables, a sum of products of subspace polynomials restricted to that space would have too many roots for its degree; their main structural lemma on images of subspace polynomials rules this out. Explicitness follows from Shoup's deterministic construction of the irreducible polynomial.
+Ben-Sasson and Kopparty derive Theorem 2.2 from their trace-disperser theorem (Theorem 7.3); every nonzero $\mathbb{F}_2$-linear $\pi$ has the form $z\mapsto\mathrm{Tr}(\mu z)$ with $\mu\ne0$. They show that if $f_N$ were constant on an affine subspace of dimension above $6N^{4/5}$, then, after a change of variables, a sum of products of subspace polynomials restricted to that space would have too many roots for its degree; their main structural lemma on images of subspace polynomials rules this out. Explicitness follows from Shoup's deterministic construction of the irreducible polynomial.
 
 ## Depends on
 
@@ -18,6 +18,7 @@ Ben-Sasson and Kopparty show that if $f_N$ were constant on an affine subspace o
 
 ## Proof depends on
 
+- [Ben-Sasson–Kopparty: the trace of an elementary symmetric polynomial is an affine disperser](../../../../pseudorandomness-and-one-way-functions/weak-sources-and-extractors/affine-dispersers/ben-sasson-kopparty-trace-disperser.md)
 - [Shoup: deterministic construction of irreducible polynomials over GF(2)](../../../../polynomial-time-problems/exact-algebraic-and-combinatorial-algorithms/shoup-irreducible-polynomials.md)
 
 ## Sources

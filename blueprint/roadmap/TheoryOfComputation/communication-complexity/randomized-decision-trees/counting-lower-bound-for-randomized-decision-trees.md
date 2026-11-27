@@ -12,7 +12,7 @@ Each supported tree has at most $2^q$ leaves, so it is correct on at most $2^q$ 
 
 ## Proof depends on
 
-- [Leaf counts of decision trees: depth, rank and decision lists](../decision-tree-structure/leaf-counts-depth-rank-and-decision-lists.md)
+- [Leaf counts of decision trees: depth and decision lists](../decision-tree-structure/leaf-counts-depth-rank-and-decision-lists.md)
 
 ## Sources
 

@@ -1,10 +1,10 @@
 # Tseitin encoding of a Boolean circuit
 
-Let $C$ be a De Morgan circuit with inputs $x_1,\dots,x_n$ and gates $w_1,\dots,w_s$ of fan-in at most two. The *Tseitin formula* $T(C)$ is the CNF over the variables $x_1,\dots,x_n,w_1,\dots,w_s$ containing, for each gate $w=\mathrm{op}(a,b)$, the at most four clauses of width at most three expressing $w\leftrightarrow \mathrm{op}(a,b)$, and the unit clause asserting the output. Then for every assignment $x$ to the inputs, $T(C)$ has a satisfying extension if and only if $C(x)=1$, and that extension is unique (it assigns each $w_j$ its value on $x$). Hence $C$ is satisfiable iff $T(C)$ is, and $|T(C)|=O(s)$.
+Let $C$ be a De Morgan circuit with inputs $x_1,\dots,x_n$, gates $w_1,\dots,w_s$ of fan-in at most two, and one output gate. The *Tseitin formula* $T(C)$ is the CNF with one variable for every node of $C$ (the inputs $x_1,\dots,x_n$ and the gate variables $w_1,\dots,w_s$) containing, for each gate $w=\mathrm{op}(a,b)$ (or $w=\neg a$), clauses of width at most three equivalent to the condition $w\leftrightarrow \mathrm{op}(a,b)$ (respectively $w\leftrightarrow\neg a$), and the unit clause asserting the output variable. Then $T(C)$ is satisfiable if and only if $C$ is satisfiable, and $T(C)$ has $O(s)$ clauses.
 
 ## Proof sketch
 
-The gate clauses force every gate variable to equal the value of its gate, by induction along the topological order; the output clause then asserts $C(x)=1$.
+For an AND gate $w=a\wedge b$ the clauses are $(\neg w\vee a)$, $(\neg w\vee b)$ and $(w\vee\neg a\vee\neg b)$ (Arora and Barak list four clauses of width three); OR gates are dual, and a NOT gate $w=\neg a$ contributes $(w\vee a)\wedge(\neg w\vee\neg a)$. So there are at most $4s+1$ clauses. Derived here, by induction along a topological order: on every assignment satisfying the gate clauses each gate variable equals the value of its gate on the input part $x$; hence for each input $x$ the formula $T(C)$ has a satisfying extension of $x$ if and only if $C(x)=1$, and that extension is unique.
 
 ## Depends on
 
@@ -15,4 +15,4 @@ The gate clauses force every gate variable to equal the value of its gate, by in
 ## Sources
 
 - G. S. Tseitin, "On the Complexity of Derivation in Propositional Calculus", Automation of Reasoning: 2: Classical Papers on Computational Logic 1967–1970, 1983.
-- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
+- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007 (Section 6.7, Lemma 6.32 and its proof, p. 6.12).

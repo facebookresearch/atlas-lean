@@ -1,8 +1,6 @@
 # Sensitivity, Certificates and Degree
 
-- [Adjacent-pair block functions: sensitivity Θ(√n), block sensitivity Θ(n)](adjacent-pair-sensitivity-separation.md)
 - [Approximate degree of a Boolean function](approximate-degree-of-a-boolean-function.md)
-- [Certificates compose under binary operations](certificates-compose-under-binary-operations.md)
 - [Faces parallel to a maximal Fourier support are nonconstant](faces-parallel-to-maximal-fourier-support.md)
 - [Minsky–Papert symmetrization](minsky-papert-symmetrization.md)
 - [One-sided sensitivity, block sensitivity and certificate complexity](one-sided-complexity-measures.md)
@@ -14,5 +12,5 @@
 - [Degree is at most the square of spectral sensitivity](degree-at-most-spectral-sensitivity-squared.md)
 - [Query measures of threshold functions](query-measures-of-threshold-functions.md)
 - [The approximate degree of OR is Θ(√n)](approximate-degree-of-or.md)
-- [Polynomial bounds in terms of sensitivity: bs ≤ 2s⁴ and C ≤ 2s⁵](certificate-and-decision-tree-bounds-in-sensitivity.md)
+- [Certificate complexity is polynomially bounded by sensitivity](certificate-and-decision-tree-bounds-in-sensitivity.md)
 - [Decision-tree depth is at most certificate complexity times block sensitivity](decision-tree-depth-certificate-block-sensitivity.md)

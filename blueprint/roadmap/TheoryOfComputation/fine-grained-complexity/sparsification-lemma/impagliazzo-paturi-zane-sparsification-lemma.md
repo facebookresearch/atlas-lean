@@ -13,7 +13,6 @@ Run the sparsification branching (heart child or petal child at a heavy heart) u
 ## Proof depends on
 
 - [Sparsification children cover the solutions](sparsification-children-cover-solutions.md)
-- [Branch length bound in the sparsification tree](branch-length-bound-in-sparsification.md)
 
 ## Sources
 

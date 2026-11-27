@@ -10,6 +10,7 @@ Upper bounds: replace isomorphic neighborhoods of whole tuples by $r$-similarity
 
 - [Hanf equivalence](hanf-equivalence.md)
 - [Gaifman graphs, distance and neighborhoods](gaifman-graphs-and-neighborhoods.md)
+- [Quantifier rank and rank-$n$ equivalence](../finite-structures-and-definability/quantifier-rank.md)
 
 ## Proof depends on
 

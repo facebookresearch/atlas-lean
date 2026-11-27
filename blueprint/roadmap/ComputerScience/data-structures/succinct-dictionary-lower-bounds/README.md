@@ -1,7 +1,6 @@
 # Cell-Probe Lower Bounds for Dynamic Succinct Dictionaries
 
 - [Hard operation distributions for dynamic dictionaries](hard-operation-distributions.md)
-- [Integer and real information-theoretic bounds differ by at most n + 1 bits](integer-and-real-information-bounds.md)
 - [Uniform marginals of the hard dictionary distributions](uniform-marginals-of-the-hard-distributions.md)
 - [Every exact dynamic dictionary makes linearly many probes on the hard distribution](linear-base-lower-bound.md)
 - [Meta-operation tree and probe attribution](meta-operation-tree.md)

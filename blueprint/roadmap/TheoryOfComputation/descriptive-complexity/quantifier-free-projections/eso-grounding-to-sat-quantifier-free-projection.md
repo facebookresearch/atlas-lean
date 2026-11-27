@@ -1,6 +1,6 @@
 # Ordered ESO sentences ground to SAT by quantifier-free projections
 
-Let $\Phi = \exists R_1 \cdots R_m\, \varphi$ be an existential second-order sentence over $\sigma$ together with the strict order $<$. Then the ordered query defined by $\Phi$ reduces to SAT by a quantifier-free projection (without $\mathrm{BIT}$): the projection builds a CNF structure whose variables are the tuples of the relation variables and of Tseitin-style subformula instances of $\varphi$, and whose clauses express the first-order matrix locally. Consequently SAT is complete for $\mathrm{NP}$ under quantifier-free projections on ordered structures, as are 3-SAT, IndependentSet, Clique, VertexCover and 3-colorability; all six are therefore also NP-complete under logspace reductions, and each ordered version is polynomial-time interreducible with its usual string version.
+Let $\Phi = \exists R_1 \cdots R_m\, \varphi$ be an existential second-order sentence over $\sigma$ together with the strict order $<$. Then the ordered query defined by $\Phi$ reduces to SAT by a quantifier-free projection (without $\mathrm{BIT}$): the projection builds a CNF structure whose variables are the tuples of the relation variables and of Tseitin-style subformula instances of $\varphi$, and whose clauses express the first-order matrix locally. Consequently SAT is complete for $\mathrm{NP}$ under quantifier-free projections on ordered structures, as are IndependentSet, Clique, VertexCover and 3-colorability; all five are therefore also NP-complete under logspace reductions, and each ordered version is polynomial-time interreducible with its usual string version.
 
 ## Proof sketch
 
@@ -17,7 +17,6 @@ Put $\varphi$ in prenex form, introduce a propositional variable for each ground
 ## Proof depends on
 
 - [Immerman-Landau: first-order and quantifier-free projection reducibilities are preorders refining FO reducibility](../first-order-projections/projection-reducibility-is-a-preorder.md)
-- [Ordered SAT reduces to 3-SAT by a BIT-free quantifier-free projection](sat-to-3sat-quantifier-free-projection.md)
 - [Ordered SAT reduces to independent set, clique and vertex cover by quantifier-free projections](sat-to-independent-set-quantifier-free-projection.md)
 - [Ordered SAT reduces to 3-colorability by a quantifier-free projection](sat-to-3col-quantifier-free-projection.md)
 - [Fagin's theorem: NP is existential second-order logic](../fagin-s-theorem/fagin.md)

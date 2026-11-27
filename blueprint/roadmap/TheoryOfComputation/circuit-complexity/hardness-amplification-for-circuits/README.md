@@ -6,5 +6,4 @@
 - [Values of a hard function on independent samples look random](values-of-a-hard-function-on-samples.md)
 - [Impagliazzo's hard-core lemma](impagliazzo-hard-core-lemma.md)
 - [Worst-case to average-case hardness by local list decoding](worst-case-to-average-case-by-local-list-decoding.md)
-- [Random functions are hard on average](random-functions-are-hard-on-average.md)
 - [Optimal inner-product approximation with m nonlinear gates](optimal-inner-product-approximation-with-m-and-gates.md)

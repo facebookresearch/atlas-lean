@@ -12,7 +12,7 @@ Start from the better of the two constant functions, which agrees with $f$ on at
 
 ## Proof depends on
 
-- [Changing one value changes circuit complexity by at most 2n + 3](../circuit-models-and-complexity-measures/one-point-update-changes-complexity-by-2n-plus-3.md)
+- [Adding one true point raises B2 and U2 circuit complexity by at most n](../circuit-models-and-complexity-measures/one-point-update-changes-complexity-by-2n-plus-3.md)
 
 ## Sources
 

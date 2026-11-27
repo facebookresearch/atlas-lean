@@ -1,10 +1,10 @@
-# Retroactivity by reset and replay
+# Retroactivity by the rollback method
 
-Every data structure $D$ yields a retroactive version that, after each timeline edit, stores the edited timeline, resets $D$ to its initial state and replays the whole timeline. This implementation is correct: after every admissible edit, the backend's state is the edited timeline replayed from the initial state. If every ordinary operation of $D$ costs at most $c$, an edit on a timeline of length $m$ costs the edit and reset primitives plus at most $c \cdot m$, i.e. $O(m)$ overhead per edit; this is the baseline that efficient retroactive structures improve on. Demaine, Iacono and Langerman's rollback method replays only the last $r$ operations for an edit $r$ operations in the past, in $O(r\,T(n))$ time for worst-case operation time $T(n)$, and they show that some data structure with $O(1)$-time operations needs $\Omega(r)$ time per retroactive update or query in the history-dependent algebraic-computation-tree, integer-RAM and generalized real-RAM models, and $\Omega(\sqrt{r / \log r})$ amortized time in the cell-probe model.
+Every RAM data structure whose operations each take $T(n)$ worst-case time has a partially retroactive version that supports its operations in the present in $O(T(n))$ time and retroactive edits in $O(r\,T(n))$ time, where $r$ is the number of operations after the time of the edit (Demaine, Iacono and Langerman, Theorem 1). This is the *rollback method*: the structure logs every change each operation makes so that the change can be reversed; for an edit at a time followed by $r$ operations it rolls back those $r$ operations, applies the edit as if it were the present, and re-performs the $r$ operations, which may now act differently. After every admissible edit, the resulting state is that of the edited timeline. This is the baseline that efficient retroactive structures improve on: some data structure with $O(1)$-time operations needs $\Omega(r)$ time, worst case and amortized, for retroactive updates or queries in the history-dependent algebraic-computation-tree, integer-RAM and generalized real-RAM models (Theorem 2), and $\Omega(\sqrt{r / \log r})$ amortized time in the cell-probe model (Theorem 3).
 
 ## Proof sketch
 
-Correctness is immediate by induction on the replay. The cost counts one call per replayed operation, each bounded by $c$.
+Correctness holds because rolling back $r$ operations restores the state before them and re-performing them after the edit replays the edited timeline from that state. Each rolled-back or re-performed operation changes at most $O(T(n))$ memory cells, so an edit costs $O(r\,T(n))$. Derived, not stated in this form by the source: resetting to the initial state and replaying the whole edited timeline of length $m$ instead is the case $r = m$, with $O(m\,T(n))$ time per edit.
 
 ## Depends on
 
@@ -12,4 +12,4 @@ Correctness is immediate by induction on the replay. The cost counts one call pe
 
 ## Sources
 
-- E. D. Demaine, J. Iacono and S. Langerman, "Retroactive Data Structures", ACM Transactions on Algorithms 3(2), Article 13, 2007.
+- E. D. Demaine, J. Iacono and S. Langerman, "Retroactive Data Structures", ACM Transactions on Algorithms 3(2), Article 13, 2007 (Section 3: Theorems 1, 2 and 3).

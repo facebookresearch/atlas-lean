@@ -19,10 +19,12 @@ Alice knows $C_{\mathrm{bef}}$ and the key sequences, Bob knows only the inserti
 - [Hard operation distributions for dynamic dictionaries](hard-operation-distributions.md)
 - [Deterministic dynamic cell-probe scheme](../cell-probe-complexity/deterministic-cell-probe-scheme.md)
 - [Information-theoretic space bound for dictionaries](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/information-theoretic-dictionary-space.md)
+- [Separating set and set-separator code](../../../InformationTheory/source-coding/prefix-free-compression-bounds/set-separator-code.md)
 
 ## Proof depends on
 
 - [Counting bound for cell-probe trees](../cell-probe-complexity/counting-bound-for-cell-probe-trees.md)
+- [Distributional prefix-free set-separator codes of linear expected length](../../../InformationTheory/source-coding/prefix-free-compression-bounds/distributional-prefix-free-separator-code.md)
 
 ## Sources
 

@@ -20,5 +20,5 @@ Represent the sign of a gap by a low-degree rational function (Newman's approxim
 ## Sources
 
 - Richard Beigel, Nick Reingold and Daniel A. Spielman, "PP Is Closed under Intersection", Journal of Computer and System Sciences 50(2), 1995.
-- Lance Fortnow and Nick Reingold, "PP Is Closed under Truth-Table Reductions", Information and Computation 124(1), 1996, Theorem 5.4.
+- Lance Fortnow and Nick Reingold, "PP Is Closed under Truth-Table Reductions", Information and Computation 124(1), 1996, Theorem 6.2.
 - Lance Fortnow, "Counting Complexity", Complexity Theory Retrospective II, 1997, Theorem 4.14.

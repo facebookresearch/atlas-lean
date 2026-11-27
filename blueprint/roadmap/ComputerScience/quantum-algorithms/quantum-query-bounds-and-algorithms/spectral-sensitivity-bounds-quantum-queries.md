@@ -1,12 +1,12 @@
 # Spectral sensitivity lower-bounds quantum queries, and D(f) = O(Q(f)⁶)
 
-Every $T$-query algorithm computing a total Boolean function $f$ with error $\varepsilon \le 1/2$ satisfies $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\lambda(f) \le 2T$. Combined with $\deg(f) \le \lambda(f)^2$ (Huang) this gives $\deg(f) \le 1296\, Q_{1/3}(f)^2$, using $1 - 2\sqrt{2}/3 \ge 1/18$; with $D(f) \le \deg(f)^2\, bs(f)$ and $bs(f) = O(Q(f)^2)$,
+For every Boolean function $f$, the spectral sensitivity is at most the bounded-error quantum query complexity up to a constant factor, $\lambda(f) = O(Q(f))$; hence, by $\deg(f) \le \lambda(f)^2$, every total Boolean function satisfies $\deg(f) = O(Q(f)^2)$. For every total Boolean function
 
-$$D(f) = O\big(Q_{1/3}(f)^6\big).$$
+$$D(f) = O\big(Q(f)^6\big).$$
 
 ## Proof sketch
 
-Spectral sensitivity is a spectral adversary bound with $\Gamma$ the adjacency matrix of the sensitivity graph, for which $\|\Gamma \circ D_i\| \le 1$, and the spectral adversary bound has constant $(1 - 2\sqrt{\varepsilon(1-\varepsilon)})/2$. Nisan–Szegedy and the polynomial method give $bs(f) \le 6\widetilde{\deg}(f)^2 \le 24\, Q_{1/3}(f)^2$. (Aaronson et al. obtain the stronger $D(f) = O(Q(f)^4)$ by combining their bound with an unrefereed result of Midrijanis.)
+Spectral sensitivity is a spectral adversary bound: taking $\Gamma$ to be the adjacency matrix of the sensitivity graph gives $\|\Gamma\| = \lambda(f)$ and $\|\Gamma \circ D_i\| \le 1$, so $\lambda(f) \le \mathrm{SA}(f) = O(Q(f))$ by Barnum–Saks–Szegedy. The sixth-power relation between $D(f)$ and $Q(f)$ for total functions is the classical consequence of Nisan, Nisan–Szegedy and Beals et al. (polynomial method). (Derived, not stated in this form by the sources: the spectral adversary bound has constant $(1 - 2\sqrt{\varepsilon(1-\varepsilon)})/2$, so every $T$-query algorithm with error $\varepsilon \le 1/2$ satisfies $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\lambda(f) \le 2T$; with $1 - 2\sqrt{2}/3 \ge 1/18$ this gives $\deg(f) \le 1296\, Q(f)^2$, and with $D(f) \le \deg(f)^2\, bs(f)$ and $bs(f) \le 6\widetilde{\deg}(f)^2 \le 24\, Q(f)^2$ it gives the sixth-power bound again. Aaronson et al. obtain the stronger $D(f) = O(Q(f)^4)$ by combining $\deg(f) = O(Q(f)^2)$ with an unrefereed result of Midrijanis.)
 
 ## Depends on
 
@@ -24,6 +24,6 @@ Spectral sensitivity is a spectral adversary bound with $\Gamma$ the adjacency m
 
 ## Sources
 
-- S. Aaronson, S. Ben-David, R. Kothari, S. Rao and A. Tal, "Degree vs. Approximate Degree and Quantum Implications of Huang's Sensitivity Theorem", STOC 2021, Lemma 9 and Theorem 3.
+- S. Aaronson, S. Ben-David, R. Kothari, S. Rao and A. Tal, "Degree vs. Approximate Degree and Quantum Implications of Huang's Sensitivity Theorem", Proceedings of the 53rd ACM Symposium on Theory of Computing (STOC 2021); arXiv:2010.12629: Equation (2) (the known relation $D(f) = O(Q(f)^6)$ for total functions), Theorem 3 and Lemma 9.
 - H. Huang, "Induced Subgraphs of Hypercubes and a Proof of the Sensitivity Conjecture", Annals of Mathematics 190(3), 2019.
 - H. Barnum, M. Saks and M. Szegedy, "Quantum Query Complexity and Semi-Definite Programming", 18th IEEE Conference on Computational Complexity (CCC 2003), 2003.

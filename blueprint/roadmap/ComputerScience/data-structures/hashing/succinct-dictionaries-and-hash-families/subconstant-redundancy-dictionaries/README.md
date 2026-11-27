@@ -6,7 +6,7 @@
 - [Minimap of a fixed-capacity leaf](minimap-of-a-leaf.md)
 - [Rounds and relocations of multi-round circle matching](rounds-and-relocations-of-circle-matching.md)
 - [Bucket-load concentration for Feistel routing](feistel-routing-concentration.md)
-- [A full minimap wastes at most three bits](full-minimap-wastes-three-bits.md)
+- [A leaf minimap wastes a constant number of bits](full-minimap-wastes-three-bits.md)
 - [Multi-level dictionary tree with subconstant wasted bits](multi-level-dictionary-tree.md)
 - [Bijective multi-level coordinate routing](bijective-multi-level-routing.md)
 - [Root-to-leaf query and quotient-recovering deletion](query-and-deletion-in-the-tree.md)

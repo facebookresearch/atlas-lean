@@ -1,6 +1,6 @@
 # Self-reducible search problems (Goldreich's PC and PF)
 
-For a relation $R\subseteq\{0,1\}^*\times\{0,1\}^*$ let $S_R=\{x:\exists y\,(x,y)\in R\}$. $R\in\mathsf{PC}$ ('polynomially checkable', the class $\mathsf{FNP}$) if $R$ is polynomially bounded and decidable in polynomial time; $R\in\mathsf{PF}$ if there is a polynomial-time function that, on every $x$, outputs some $y$ with $(x,y)\in R$ when $x\in S_R$ and a failure symbol otherwise. $R$ is **self-reducible** if its search problem is solvable in polynomial time with oracle access to the decision problem $S_R$; oracle access to the prefix-extension problem $\{(x,u):\exists v\,(x,uv)\in R\}$ always suffices for $R\in\mathsf{PC}$, so it is the decision problem $S_R$ that matters. SAT with its usual witness relation is self-reducible, and so is every $R\in\mathsf{PC}$ whose decision problem $S_R$ is $\mathsf{NP}$-complete, since the prefix-extension problem is in $\mathsf{NP}$ and hence Karp-reduces to $S_R$.
+For a relation $R\subseteq\{0,1\}^*\times\{0,1\}^*$ let $S_R=\{x:\exists y\,(x,y)\in R\}$. $R\in\mathsf{PC}$ ('polynomially checkable', the class $\mathsf{FNP}$) if $R$ is polynomially bounded and decidable in polynomial time; $R\in\mathsf{PF}$ if $R$ is polynomially bounded and there is a polynomial-time function that, on every $x$, outputs some $y$ with $(x,y)\in R$ when $x\in S_R$ and a failure symbol otherwise. $R$ is **self-reducible** if its search problem is solvable in polynomial time with oracle access to the decision problem $S_R$; oracle access to the prefix-extension problem $\{(x,u):\exists v\,(x,uv)\in R\}$ always suffices for $R\in\mathsf{PC}$, so it is the decision problem $S_R$ that matters. SAT with its usual witness relation is self-reducible, and so is every $R\in\mathsf{PC}$ whose decision problem $S_R$ is $\mathsf{NP}$-complete, since the prefix-extension problem is in $\mathsf{NP}$ and hence Karp-reduces to $S_R$.
 
 ## Depends on
 
@@ -10,4 +10,4 @@ For a relation $R\subseteq\{0,1\}^*\times\{0,1\}^*$ let $S_R=\{x:\exists y\,(x,y
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Definitions 2.9 and 2.14.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Definitions 2.1, 2.2, 2.3 and 2.14 (PF requires polynomially bounded relations), Proposition 2.15 and Theorem 2.16, in the numbering of the author's 2006 draft.

@@ -3,7 +3,7 @@
 - [Permutation branching programs of bounded width](permutation-branching-programs.md)
 - [Threshold gates and the basis of threshold circuits](threshold-gates-and-threshold-circuits.md)
 - [Polynomial-size circuits for the rank over GF(2)](circuits-for-rank-over-gf2.md)
-- [Parity in depth two with n + 1 threshold gates](parity-in-depth-two-threshold-circuits.md)
+- [Parity in depth-two threshold circuits of linear size](parity-in-depth-two-threshold-circuits.md)
 - [The AC, TC and AC[q] hierarchies](ac-tc-and-acq-hierarchies.md)
 - [Carry-save addition and logarithmic-depth bit counting](carry-save-addition-and-bit-counting.md)
 - [MOD_q gates from majority gates: AC^i[q] is contained in TC^i](mod-q-from-majority-gates.md)

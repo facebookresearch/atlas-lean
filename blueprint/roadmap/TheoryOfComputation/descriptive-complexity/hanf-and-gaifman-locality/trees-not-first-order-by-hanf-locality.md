@@ -9,6 +9,7 @@ All elements of long cycles and of the interiors of long paths have isomorphic n
 ## Depends on
 
 - [Isomorphism-closed classes and first-order definability on finite structures](../finite-structures-and-definability/first-order-definable-classes.md)
+- [Quantifier rank and rank-$n$ equivalence](../finite-structures-and-definability/quantifier-rank.md)
 
 ## Proof depends on
 

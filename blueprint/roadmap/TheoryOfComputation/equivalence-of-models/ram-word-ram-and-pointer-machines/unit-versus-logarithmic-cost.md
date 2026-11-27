@@ -1,10 +1,10 @@
 # Repeated squaring separates unit-cost and logarithmic-cost RAM time
 
-A RAM with multiplication computes $k\mapsto 2^{2^{k}}$ by repeated squaring in $O(k)$ instructions under the **unit-cost** measure (one unit per instruction), whereas under the **logarithmic-cost** measure (each instruction charged the bit lengths of its operands) any computation producing $2^{2^k}$ costs at least $2^{k}$. Hence unit cost with multiplication is not polynomially related to logarithmic cost or to Turing-machine time; for additive RAMs (no multiplication) the two measures are polynomially related.
+On a RAM with multiplication, the repeated-squaring program ($r \leftarrow 2$, then $n$ times $r \leftarrow r^2$, return $r = 2^{2^n}$) runs in $n$ steps under the **uniform (unit-cost)** model, in which every operation takes time $1$, but in time $1 + 2 + 4 + \dots + 2^n = 2^{n+1} - 1 = \Theta(2^n)$ under the **logarithmic-cost** model, in which the time of a step is the bit length of the largest operand involved; its space is $O(1)$ registers under the uniform model and $O(2^n)$ bits under the logarithmic model. For RAMs without multiplication (additive RAMs), time under the two measures is polynomially related.
 
 ## Proof sketch
 
-The loop squares a register $k$ times; the result has $2^{k}+1$ bits, and writing it costs at least its length under logarithmic cost.
+The loop squares a register $n$ times; after squaring $i$ times the register holds $2^{2^i}$, whose bit length is $2^i + 1$. (Derived.) Since writing $2^{2^n}$ already costs at least its length $2^n + 1$ under logarithmic cost, any computation producing it costs at least $2^n$, so unit cost with multiplication is not polynomially related to logarithmic cost or to Turing-machine time.
 
 ## Depends on
 
@@ -12,4 +12,5 @@ The loop squares a register $k$ times; the result has $2^{k}+1$ bits, and writin
 
 ## Sources
 
-- Stephen A. Cook and Robert A. Reckhow, "Time Bounded Random Access Machines", Journal of Computer and System Sciences 7(4), 1973.
+- E. W. Mayr and H. Räcke, Efficient Algorithms and Data Structures (EADS), lecture slides, Technische Universität München, winter semester 2012/13, Part II "Foundations", Section 4 "Modelling Issues", slides 26–27 (uniform and logarithmic cost models; Example 2, RepeatedSquaring).
+- Stephen A. Cook and Robert A. Reckhow, "Time Bounded Random Access Machines", Journal of Computer and System Sciences 7(4), 1973, Theorem 2 (additive RAMs).
