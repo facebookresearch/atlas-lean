@@ -15,14 +15,16 @@ import MathlibExt.Combinatorics.Matroid.MatroidIntersection
 /-!
 # The stopping certificate for matroid intersection
 
-When no joining path exists, the vertices that can reach the sink set form the first
-part of a tight rank cut. The proof finds bases of both parts from the current set;
+For matroids on a common full finite ground and a common independent set with no joining path,
+the vertices that can reach the sink set form the first part of a tight rank cut.
+The proof finds bases of both parts from the current set;
 Edmonds' weak bound then gives optimality. Successive shortest-path toggles from the empty
 set terminate. The run is a relation, not an implementation of an independence oracle or
 a shortest-path search.
 
 Source: M. X. Goemans, MIT 18.438, Lecture 11, “Matroid Intersection” (22 October 2009,
-scribe Jacob Steinhardt), Definition 3 and Theorem 4, pp. 11-3–11-4.
+scribe Jacob Steinhardt), Definition 3 (p. 11-3) and the augmenting-path proof of Theorem 4
+(pp. 11-3–11-4; stopping certificate on p. 11-4; statement on p. 11-2).
 -/
 
 @[expose] public section
@@ -38,7 +40,8 @@ variable {α : Type*} (M N : Matroid α) (I : Set α)
 /-- The algorithm stops precisely when there is no walk between the two sets of endpoints. -/
 def Terminal : Prop := ¬ ∃ n p, Joins M N I n p
 
-/-- All vertices from which some sink can be reached, including the sinks themselves. -/
+/-- All vertices from which a directed exchange walk reaches an outside vertex addable to `I`
+in `N`. Each such addable vertex reaches itself by a walk of length zero. -/
 def canReachSink : Set α := {u | ∃ v ∈ addable N I, ReflTransGen (Arc M N I) u v}
 
 /-- A relational augmentation: choose any minimum-length joining walk and toggle its vertices. -/
@@ -74,9 +77,12 @@ private theorem basis_on_side {U : Set α} (hI : M.Indep I) (hU : U ⊆ M.E)
   have hyI := (M.fundCircuit_subset_insert x I hyC).resolve_left hyx
   exact ⟨hyI, backward ⟨hyI, hxI, (hI.mem_fundCircuit_iff hcl hxI).1 hyC⟩ hx⟩
 
-/-- On a common full finite ground, the stopping set `U` and its complement have bases
-`I ∩ U` and `I ∖ U` in the respective matroids. Their ranks sum to the size of `I`, which
-therefore has maximum cardinality among all common independent sets. -/
+/-- Let `M` and `N` both have the whole finite type as ground set, and let `I` be independent in
+both. Suppose there is no directed exchange walk from `addable M I` to `addable N I`. Let `U`
+consist of all vertices from which some vertex of `addable N I` can be reached, including the
+addable vertices themselves. The rank of `U` in `M` is the size of `I ∩ U`, and the rank of its
+complement in `N` is the size of `I ∖ U`. These ranks sum to the size of `I`, so no common
+independent set has larger cardinality. -/
 theorem Terminal.certificate [Finite α] (stop : Terminal M N I) (hM : M.Indep I) (hN : N.Indep I)
     (groundM : M.E = univ) (groundN : N.E = univ) :
     let U := canReachSink M N I
@@ -119,8 +125,9 @@ private theorem Step.correct [Finite α] (s : Step M N I J) (hM : M.Indep I) (hN
   obtain ⟨_, _, hp, rfl⟩ := s
   exact hp.augment hM hN
 
-/-- Every sequence of shortest-path choices from a common independent set terminates:
-each step reduces the number of ground elements not currently selected. -/
+/-- Let `M` and `N` be matroids on a finite type and let `I` be independent in both. There is no
+infinite sequence of shortest joining path augmentations starting at `I`: each step decreases the
+number of elements of the type outside the current set. -/
 theorem accessible [Finite α] (hM : M.Indep I) (hN : N.Indep I) :
     Acc (fun J I ↦ Step M N I J) I := by
   induction I using (measure (fun K : Set α ↦ Nat.card α - K.ncard)).wf.induction with
@@ -143,8 +150,11 @@ private theorem exists_terminal (acc : Acc (fun J I ↦ Step M N I J) I) :
     obtain ⟨J, run, hJ⟩ := ih K s
     exact ⟨J, run.head s, hJ⟩
 
-/-- Starting at the empty set, a finite run along genuine shortest paths reaches a maximum
-common independent set with a tight rank certificate from its own exchange graph. -/
+/-- Let `M` and `N` be matroids whose ground sets are both the whole finite type. From the empty
+set there exists a finite run of shortest joining path augmentations to a common independent set
+`I` with no joining walk. Let `U` be the vertices that can reach `addable N I` in the final graph.
+The rank of `U` in `M` plus the rank of its complement in `N` equals the size of `I`, and `I` has
+maximum cardinality among all common independent sets. -/
 theorem exists_run_from_empty [Finite α] (groundM : M.E = univ) (groundN : N.E = univ) :
     ∃ I, ReflTransGen (Step M N) ∅ I ∧ Terminal M N I ∧ M.Indep I ∧ N.Indep I ∧
       (M.eRk (canReachSink M N I) + N.eRk (canReachSink M N I)ᶜ = I.encard) ∧

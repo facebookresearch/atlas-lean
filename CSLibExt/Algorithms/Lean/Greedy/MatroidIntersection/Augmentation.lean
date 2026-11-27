@@ -26,8 +26,9 @@ exchange arc would skip part of the path. Thus each successive exchange preserve
 Reversing the walk gives the other matroid's conclusion.
 
 Source: M. X. Goemans, *Advanced Combinatorial Optimization*, MIT 18.438, Lecture 11,
-“Matroid Intersection” (22 October 2009, scribe Jacob Steinhardt), Definition 3 and proof of
-Theorem 4, pp. 11-3–11-4. The lecture uses a unique matching and a fresh element instead.
+“Matroid Intersection” (22 October 2009, scribe Jacob Steinhardt), Definition 3 (p. 11-3) and the
+augmenting-path proof of Theorem 4 (pp. 11-3–11-4; statement on p. 11-2). The lecture uses a unique
+matching and a fresh element instead.
 -/
 
 @[expose] public section
@@ -42,11 +43,13 @@ variable {α : Type*} (M N : Matroid α) (I : Set α)
 /-- Outside vertices individually addable in one matroid. -/
 def addable : Set α := {x | x ∉ I ∧ M.Indep (insert x I)}
 
-/-- Exchanging the inside vertex `y` for the outside vertex `x` preserves independence.
-The two vertices are distinct, so inserting `x` and then deleting `y` is `I − y + x`. -/
+/-- `Exchange M I y x` means that `y ∈ I`, `x ∉ I`, and replacing `y` by `x` in `I` gives
+an independent set in `M`. -/
 def Exchange (y x : α) : Prop := y ∈ I ∧ x ∉ I ∧ M.Indep (insert x I \ {y})
 
-/-- An arc of the directed matroid-intersection exchange graph. -/
+/-- For `y ∈ I` and `x ∉ I`, the exchange graph has the arc `y → x` if replacing `y` by `x`
+gives an independent set in `M`, and the arc `x → y` if it gives an independent set in `N`.
+There are no other arcs. -/
 def Arc (u v : α) : Prop := Exchange M I u v ∨ Exchange N I v u
 
 /-- The first `n + 1` entries of `p` give a directed walk of `n` arcs; later entries are ignored. -/
@@ -207,8 +210,10 @@ private theorem Shortest.prefix [Finite α] (h : Shortest M N I n p) (hI : M.Ind
           exact ⟨hJ', hc'.trans hc⟩
       · exact (hout er.1).elim
 
-/-- Toggling all vertices of any globally shortest joining path gains one element and
-preserves independence in both matroids, including when the path consists of one vertex. -/
+/-- Let `M` and `N` be matroids on a finite type and let `I` be independent in both. Choose a
+walk of minimum length among all directed walks from any vertex of `addable M I` to any vertex of
+`addable N I`. The symmetric difference of `I` with its vertex set is independent in both matroids
+and has cardinality `I.ncard + 1`. A shared endpoint gives a one-vertex walk of length zero. -/
 theorem Shortest.augment [Finite α] (h : Shortest M N I n p) (hM : M.Indep I) (hN : N.Indep I) :
     M.Indep (I ∆ vertices n p) ∧ N.Indep (I ∆ vertices n p) ∧
       (I ∆ vertices n p).ncard = I.ncard + 1 := by
