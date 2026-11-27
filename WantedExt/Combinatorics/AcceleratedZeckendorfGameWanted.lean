@@ -11,6 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Combinatorics.AcceleratedZeckendorfGame
+public import MathlibExt.Combinatorics.AcceleratedZeckendorfGameAccelZeckGameLowerBound
+public import MathlibExt.Combinatorics.AcceleratedZeckendorfGameFibonacci
 
 /-!
 # The Accelerated Zeckendorf Game
@@ -69,43 +71,6 @@ Article milleretal04072023, Theorem 1.4. -/
 public theorem_wanted accelZeckGame_sharp_lower_bound (n : ℕ) (hn : 1 ≤ n) :
     (∀ L g, IsAccelZeckGame n L g → Nat.greatestFib n - 2 ≤ L) ∧
       ∃ g, IsAccelZeckGame n (Nat.greatestFib n - 2) g
-
-/-- **Lower bound on the length of an Accelerated Zeckendorf Game.** Index the Fibonacci numbers
-as $F_1 = 1$, $F_2 = 2$, $F_{i+1} = F_i + F_{i-1}$. Let $n \ge 1$ and let $F_k$ be the largest
-Fibonacci number with $F_k \le n$, the largest term of the Zeckendorf decomposition of $n$. Then
-every complete Accelerated Zeckendorf Game on $n$ (a sequence of moves from $n$ copies of $F_1$
-to a state from which no move is possible) has at least $k - 1$ moves.
-
-Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
-Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
-Article milleretal04072023, Lemma 2.1. -/
-public theorem_wanted accelZeckGame_lower_bound (n : ℕ) (hn : 1 ≤ n) (L : ℕ)
-    (g : ℕ → ℕ →₀ ℕ) (hg : IsAccelZeckGame n L g) :
-    Nat.greatestFib n - 2 ≤ L
-
-/-- **Sharp lower bound for the Accelerated Zeckendorf Game on a Fibonacci number.** Index the
-Fibonacci numbers as $F_1 = 1$, $F_2 = 2$, $F_{i+1} = F_i + F_{i-1}$, and let $k \ge 1$. Every
-complete Accelerated Zeckendorf Game on $F_k$ (a sequence of moves from $F_k$ copies of $F_1$ to
-a state from which no move is possible) has at least $k - 1$ moves, and some complete game on
-$F_k$ has exactly $k - 1$ moves.
-
-Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
-Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
-Article milleretal04072023, Lemma 2.3. -/
-public theorem_wanted accelZeckGame_sharp_lower_bound_fib (k : ℕ) (hk : 1 ≤ k) :
-    (∀ L g, IsAccelZeckGame (Nat.fib (k + 1)) L g → k - 1 ≤ L) ∧
-      ∃ g, IsAccelZeckGame (Nat.fib (k + 1)) (k - 1) g
-
-/-- **Unique winning first move.** For every $n$, if the state consisting of $n$ copies of $F_1$
-is winning, then exactly one state reachable from it in one move is losing: when the first
-player has a winning strategy in the game on $n$, exactly one first move preserves it.
-
-Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
-Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
-Article milleretal04072023, Proposition 1.5. -/
-public theorem_wanted accelZeck_unique_winning_first_move (n : ℕ)
-    (h : AccelZeckWinning (Finsupp.single 1 n)) :
-    ∃! t, AccelZeckMove (Finsupp.single 1 n) t ∧ AccelZeckLosing t
 
 /-- **Accelerated Zeckendorf Game: Conjecture 1.7 in its first five cases.** Index the Fibonacci
 numbers as $F_1 = 1$, $F_2 = 2$, $F_{i+1} = F_i + F_{i-1}$. Let $n$ be such that the state
