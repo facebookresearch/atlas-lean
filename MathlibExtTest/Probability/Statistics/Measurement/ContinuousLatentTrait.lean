@@ -28,13 +28,16 @@ private noncomputable def twoClassModel : ContinuousLatentTrait (Fin 2) where
     (Measure.isProbabilityMeasure_map_iff measurable_classAbility.aemeasurable).2 inferInstance⟩
   curve _ θ := if θ ≤ 0 then 0 else 1
   measurable_curve _ :=
-    Measurable.ite (measurableSet_le measurable_id measurable_const) measurable_const measurable_const
+    Measurable.ite (measurableSet_le measurable_id measurable_const)
+      measurable_const measurable_const
   curve_nonneg _ θ := by split_ifs <;> norm_num
   curve_le_one _ θ := by split_ifs <;> norm_num
 
--- Each class makes both items deterministic. After mixing, the items need not be independent.
+-- The mixture puts equal mass on the two diagonal patterns and zero on a mixed pattern.
+-- Both items are marginally fair, but the joint true mass is 1 / 2 rather than 1 / 4.
 example : twoClassModel.responseLaw.real {fun _ => true} = 1 / 2 ∧
-    twoClassModel.responseLaw.real {fun i => i == 0} = 0 := by
+    twoClassModel.responseLaw.real {fun i => i == 0} = 0 ∧
+    twoClassModel.responseLaw.real {fun _ => false} = 1 / 2 := by
   classical
   have h := twoClassModel.responseLaw_eq_finite_mixture classLaw classAbility
     measurable_classAbility rfl
