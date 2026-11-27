@@ -9,16 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Geometry.Polytope.Faces
+public import MathlibExt.Geometry.Polytope.Balinski
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
-public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
 # Graphs of convex polytopes: wanted statements
 
-Balinski's theorem (the graph of a `d`-polytope is `d`-connected) and Steinitz's theorem (the
-graphs of 3-polytopes are the planar 3-connected graphs).
+Steinitz's theorem characterizes the graphs of 3-polytopes as the planar 3-connected graphs.
 -/
 
 @[expose] public section
@@ -26,16 +23,6 @@ graphs of 3-polytopes are the planar 3-connected graphs).
 open MathlibExt.Geometry.Polytope
 
 namespace MathlibExt.Geometry.Polytope.GraphWanted
-
-/-- **Balinski's theorem.** The graph of a polytope `P = conv s` of dimension `d` is
-`d`-connected: it has more than `d` vertices and stays connected after deleting any fewer than
-`d` vertices (M. L. Balinski, 1961; G. M. Ziegler, *Lectures on Polytopes*, GTM 152,
-Theorem 3.14, as cited in Ziegler, "Convex polytopes: extremal constructions and f-vector shapes",
-IAS/Park City Math. Ser. 14 (2004), Section 1.2, arXiv:math/0411400v2). The polytope must be
-nonempty. -/
-theorem_wanted balinski {n d : ℕ} (s : Finset (EuclideanSpace ℝ (Fin n))) (hs : s.Nonempty)
-    (hd : dim s = d) :
-    @SimpleGraph.IsVertexConnected _ (extremePoints_finite s).fintype d (graph s)
 
 /-- **Steinitz's theorem.** A finite simple graph is the graph of a 3-dimensional convex polytope
 if and only if it is planar and 3-connected. Here "graph of a 3-polytope" means isomorphic to

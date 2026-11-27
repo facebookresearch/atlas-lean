@@ -20,8 +20,9 @@ import Mathlib.Tactic.NormNum
 
 The two-state chain with all transition probabilities `1/2` mixes in one step (`Pᵗ = P` has rows
 equal to `π` for `t ≥ 1`), so the hypotheses of Lemma 7 hold with `τ = 1`; its conclusion
-`Pᵗ(x, y) = 1/2 ≥ 1/16` is checked. The same hypotheses are those of the wanted Theorem 8
-(`WantedExt.Probability.MulticommodityFlowWanted`), so they are jointly satisfiable; the direct
+`Pᵗ(x, y) = 1/2 ≥ 1/16` is checked. The same hypotheses are those of Theorem 8
+(`MathlibExt.Probability.MulticommodityFlowWanted.exists_multicommodityFlow_load_le_sixteen_mul`),
+so they are jointly satisfiable; the direct
 flow `γ x y = [y]` has load `1/4 ≤ 16 · 1 · Q(0, 1) = 4`. The hypotheses of the chain
 Cheeger inequality hold on the same chain with `Φ = 1/2`.
 -/

@@ -41,8 +41,9 @@ flow has every load at most `ρ` times the edge capacity `Q(u, v) = π(u) P(u, v
 * `div_eight_le_pow_apply`: **Sinclair's Lemma 7**. If `P` is stochastic and reversible with
   respect to a positive probability vector `π`, and every row of `Pᵗ` is within total variation
   `1/4` of `π` for all `t ≥ τ`, then `Pᵗ(x, y) ≥ π(y)/8` for all `t ≥ 2τ` and all `x, y`.
-  This is the key step of Theorem 8 (resistance at most `16 τ`), recorded as wanted in
-  `WantedExt.Probability.MulticommodityFlowWanted`.
+  This is the key step of Theorem 8 (resistance at most `16 τ`), proved as
+  `MathlibExt.Probability.MulticommodityFlowWanted.exists_multicommodityFlow_load_le_sixteen_mul`
+  in `MathlibExt.Probability.MulticommodityFlowRapidMixing`.
 * `div_eight_le_pow_apply_of_isMixedAt`: Lemma 7 from `IsMixedAt P π τ`, using
   `PoincareMixing.isMixedAt_mono` (being `1/4`-mixed persists).
 
