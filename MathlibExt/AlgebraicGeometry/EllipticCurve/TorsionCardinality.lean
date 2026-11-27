@@ -9,9 +9,10 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`
-and
-`P2M/Sol/S_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`
+`Theorems/Thm_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`,
+`P2M/Sol/S_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`,
+`Theorems/Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff.lean`, and
+`P2M/Sol/S_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -54,6 +55,7 @@ import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialMulFormula
 
 @[expose] public section
 
@@ -1862,33 +1864,6 @@ through the division polynomials `ΨSq` and `preΨ`, separates the cases
 -/
 
 
-section PortTorsionSmulFormulaEngine
-
-namespace Deep
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-section Engine
-
-variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve.Affine F)
-
-omit [DecidableEq F] in
-
-private theorem sub_negY_sq_eq_Ψ₂Sq_eval {x y : F} (e : W.Equation x y) :
-    (y - W.negY x y) ^ 2 = (WeierstrassCurve.Ψ₂Sq W).eval x := by
-  rw [equation_iff] at e
-  simp only [negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
-    WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-end Engine
-
-end Deep
-
-end PortTorsionSmulFormulaEngine
-
 section PortGenNetIdentities
 
 namespace Deep
@@ -2560,7 +2535,7 @@ private theorem exists_double_fiber_card [W.IsElliptic] {n : ℕ} (hodd : Odd n)
     have hyne : y₀ ≠ (W.baseChange K).toAffine.negY x y₀ := by
       intro hy
       refine key_Ψ₂ x hx ?_
-      have hsq := sub_negY_sq_eq_Ψ₂Sq_eval ((W.baseChange K).toAffine) hy₀
+      have hsq := sq_sub_negY_eq_eval_Ψ₂Sq hy₀
       rw [← hsq, ← hy, sub_self]
       ring
     rw [Finset.card_image_of_injective _ (fun a b hab => (Prod.ext_iff.mp hab).2)]
@@ -3170,3 +3145,11 @@ public theorem WeierstrassCurve.card_torsion_of_isAlgClosed
   change P ∈ Submodule.torsionBy ℤ (W⁄K).Point (n : ℤ) ↔ P ∈ Deep.Gen.nTorsion W (K := K) n
   rw [Submodule.mem_torsionBy_iff, natCast_zsmul]
   rfl
+
+/-- A nonsingular affine point is `n`-torsion exactly when the `n`-th division polynomial `ψ n`
+vanishes at it. -/
+public theorem WeierstrassCurve.Affine.Point.smul_some_eq_zero_iff {F : Type*} [Field F]
+    [DecidableEq F] (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y)
+    (n : ℤ) :
+    n • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ (W.ψ n).evalEval x y = 0 :=
+  WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ W h n
