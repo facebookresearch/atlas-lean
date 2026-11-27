@@ -14,3 +14,7 @@
 - [X sets Y's score: equalizer strategies](equalizer-score.md)
 - [In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y](exists-strategy-fixing-score.md)
 - [X cannot fix her own score](own-score-singular.md)
+- [Adaptive dynamics of payoff-linear strategies](adaptive-dynamics-of-payoff-linear-strategies.md)
+- [Linear characterization of ZD strategies in public goods games](linear-characterization-of-zd-strategies-in-public-goods-games.md)
+- [Payoffs in groups of zero-determinant strategists](payoffs-in-groups-of-zero-determinant-strategists.md)
+- [Zero-determinant strategies in multiplayer social dilemmas](zero-determinant-strategies-in-multiplayer-social-dilemmas.md)

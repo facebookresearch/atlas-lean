@@ -8,3 +8,4 @@
 - [Snyder's `S`](ratio-dominant-recessive.md)
 - [Snyder's `R`](ratio-dominant-dominant.md)
 - [Snyder's ratios](snyder-ratios.md)
+- [Genotype–allele equilibria under sex-linked segregation and the SDpop mixture](sex-linked-segregation-mixture-model.md)

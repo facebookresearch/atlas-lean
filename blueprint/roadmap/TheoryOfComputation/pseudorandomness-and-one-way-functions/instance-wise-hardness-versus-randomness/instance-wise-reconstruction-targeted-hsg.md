@@ -1,8 +1,8 @@
 # Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit
 
-Let $f\colon\{0,1\}^n\to\{0,1\}^n$ be computed by logspace-uniform circuits of size $T=T(n)$ and depth $d=d(n)$, and let $M=M(n)$ be an output length. There is a deterministic algorithm $H$ that on input $x\in\{0,1\}^n$ prints a set $H_x\subseteq\{0,1\}^M$, and a probabilistic oracle algorithm $R$, with the following guarantee for **each fixed** $x$: if $D$ is any algorithm with $\Pr_{r\in\{0,1\}^M}[D(x,r)=1]\ge 1/2$ and $D(x,s)=0$ for all $s\in H_x$, then $R^{D(x,\cdot)}(x)$ outputs $f(x)$ with probability at least $2/3$ in time $(d+n)\cdot\mathrm{poly}(M)$ (plus the time of the oracle calls). The set $H_x$ is printed in time $2^{O(\log^2 T/\log M)}$, which is polynomial in $T$ whenever $M\ge T^{\Omega(1)}$.
+Let $f\colon\{0,1\}^n\to\{0,1\}^n$ be computed by logspace-uniform circuits of size $T=T(n)$ and depth $d=d(n)$, and let $M=M(n)$ be an output length with $c\log T\le M<T^{1/c}$, where $c>1$ is a universal constant. There is a deterministic algorithm $H$ that on input $x\in\{0,1\}^n$ prints a set $H_x\subseteq\{0,1\}^M$, and a probabilistic oracle algorithm $R$, with the following guarantee for **each fixed** $x$: if $D$ is any deterministic algorithm with $\Pr_{r\in\{0,1\}^M}[D(x,r)=1]\ge 1/2$ and $D(x,s)=0$ for all $s\in H_x$, then $R^{D(x,\cdot)}(x)$ outputs $f(x)$ with probability at least $1-1/M$ in time $(d+n^{c})\cdot\mathrm{poly}(M)$ (plus the time of the oracle calls). The set $H_x$ is printed in time $2^{O(\log^2 T/\log M)}$, which is polynomial in $T$ whenever $M\ge T^{\Omega(1)}$.
 
-Consequently, if $f$ is hard for probabilistic time $(d+n)\cdot\mathrm{poly}(M)$ on the input $x$, then $H_x$ hits every dense property that a probabilistic algorithm with access to $x$ recognizes in time $\mathrm{poly}(M)$.
+Consequently, if $f$ is hard for probabilistic time $(d+n^{c})\cdot\mathrm{poly}(M)$ on the input $x$, then $H_x$ hits every dense property that a deterministic algorithm with access to $x$ decides in time $\mathrm{poly}(M)$.
 
 ## Proof sketch
 

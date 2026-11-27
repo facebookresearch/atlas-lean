@@ -205,20 +205,6 @@ public def SatisfiesIDPNecessary {n : ℕ} (q : Fin n → ℕ) : Prop :=
 
 /-! ## Theorems 1--9 -/
 
-/-- **Reflexivity criterion for weighted projective simplices.** Let $q = (q_1, \dots, q_n)$ be
-natural-number weights with $q_i \ge 1$ for every $i$. The weighted projective simplex with
-weights $q$ is reflexive if and only if $q_i$ divides $1 + \sum_{j=1}^n q_j$ for every $i$.
-
-Reflexivity here is the geometric, height-by-height notion rather than a divisibility condition,
-so the statement relates two independently defined properties.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 1. -/
-public theorem_wanted reflexive_iff_weight_dvd {n : ℕ} (q : Fin n → ℕ)
-    (hq : ∀ i, 1 ≤ q i) :
-    IsReflexive (weightedSimplex q) ↔ ∀ i, q i ∣ 1 + ∑ j, q j
-
 /-- **Reflexivity criterion in support form.** Let $d \ge 1$, let $r_1, \dots, r_d$ be pairwise
 distinct natural numbers with $r_i \ge 1$, and let $x_1, \dots, x_d$ be natural numbers with
 $x_i \ge 1$. Let $q = (r_1^{x_1}, \dots, r_d^{x_d})$ be the weight vector in which each $r_i$ is

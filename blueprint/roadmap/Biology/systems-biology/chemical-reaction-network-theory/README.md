@@ -2,8 +2,7 @@
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
 
-## Subtopics
-
+- [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
 - [Absolute concentration robustness and integral feedback](absolute-concentration-robustness-and-integral-feedback/README.md)
 - [Hamiltonian structure of chemical reaction rate equations](hamiltonian-structure-of-chemical-reaction-rate-equations/README.md)
 - [Hill coefficients of multisite binding](hill-coefficients-of-multisite-binding/README.md)
