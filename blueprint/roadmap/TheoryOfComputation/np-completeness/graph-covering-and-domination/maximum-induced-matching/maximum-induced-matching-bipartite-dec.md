@@ -1,0 +1,3 @@
+# The decision problem INDUCED MATCHING ON BIPARTITE GRAPHS
+
+INDUCED MATCHING ON BIPARTITE GRAPHS as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for INDUCED MATCHING ON BIPARTITE GRAPHS](well-formed-2.md) (a well-formed MAXIMUM INDUCED MATCHING instance whose graph is bipartite, with $K > 0$) and feasible for MAXIMUM INDUCED MATCHING. The feasibility test is the unrestricted problem's; the restriction to INDUCED MATCHING ON BIPARTITE GRAPHS comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.

@@ -142,6 +142,63 @@ private lemma fibStepGF_sub_succ (m : ℕ) :
   apply X_mul_cancel
   linear_combination fibStepGF (m + 1) * hm - fibStepGF m * hs
 
+/-- **A product identity for three consecutive Fibonacci step generating functions.** Let
+$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
+$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
+$F^{(k)}_n$. Then
+$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} = X^m F^{(m)} F^{(m+2)} - F^{(m+1)} + F^{(m)}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Theorem 24. -/
+theorem fibStepGF_triple_consecutive (m : ℕ)
+    (hm : 1 ≤ m) :
+    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
+        fibStepGF (m + 2) =
+      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) -
+        fibStepGF (m + 1) + fibStepGF m := by
+  by_cases h : m = 0
+  · subst m
+    exact (Nat.not_succ_le_zero 0 hm).elim
+  symm
+  calc
+    _ = X ^ m * fibStepGF m * fibStepGF (m + 2) +
+        (fibStepGF m - fibStepGF (m + 1)) := by ring
+    _ = X ^ m * fibStepGF m * (fibStepGF (m + 2) - fibStepGF (m + 1)) := by
+      rw [fibStepGF_sub_succ m]
+      ring
+    _ = _ := by
+      rw [← neg_sub (fibStepGF (m + 1)) (fibStepGF (m + 2)), fibStepGF_sub_succ (m + 1),
+        show 2 * m + 1 = m + (m + 1) by omega, pow_add]
+      ring
+
+/-- **A product identity for four consecutive Fibonacci step generating functions.** Let
+$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
+$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
+$F^{(k)}_n$. Then
+$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} F^{(m+3)} =
+X^m F^{(m)} F^{(m+2)} F^{(m+3)} - F^{(m+1)} F^{(m+3)} + F^{(m)} F^{(m+3)}.$$
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Theorem 31. -/
+theorem fibStepGF_quadruple_consecutive (m : ℕ)
+    (hm : 1 ≤ m) :
+    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
+        fibStepGF (m + 2) * fibStepGF (m + 3) =
+      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) *
+          fibStepGF (m + 3) -
+        fibStepGF (m + 1) * fibStepGF (m + 3) +
+        fibStepGF m * fibStepGF (m + 3) := by
+  by_cases h : m = 0
+  · subst m
+    exact (Nat.not_succ_le_zero 0 hm).elim
+  rw [show 2 * m + 1 = m + (m + 1) by omega, pow_add]
+  -- Multiply the two consecutive differences by the remaining factors and cancel.
+  linear_combination
+    -(fibStepGF (m + 3)) * fibStepGF_sub_succ m +
+      X ^ m * fibStepGF m * fibStepGF (m + 3) * fibStepGF_sub_succ (m + 1)
+
 /-- **Convolution of the Fibonacci and tribonacci numbers.** Write $F_n$ and $T_n$ for the
 Fibonacci and tribonacci numbers, that is, the Fibonacci $m$-step numbers $F^{(m)}_n$ for
 $m = 2, 3$ ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later term is the sum of the $m$ terms

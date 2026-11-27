@@ -22,7 +22,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 

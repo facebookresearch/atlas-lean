@@ -12,6 +12,22 @@ import MathlibExt.Combinatorics.Enumerative.MeteredParkingFunctions
 
 open MetaMathlibExt
 
+-- The third car moves exactly two spots, attaining the displacement bound.
+example : 3 ≤ (1 : ℕ) + 2 :=
+  (meteredOutcome_displacement_le (t := 2) (![1, 1, 1] : Fin 3 → Fin 4) 2).1 3 (by decide)
+
+-- A repeat preference for the last spot fails at the exact threshold.
+example : 4 ≤ (3 : ℕ) + 1 :=
+  (meteredOutcome_displacement_le (t := 1) (![3, 3] : Fin 2 → Fin 4) 1).2 (by decide)
+
+-- With meter zero previous arrivals do not block even the last spot.
+example : meteredOutcome 0 3 [2, 2, 0] = [some 2, some 2, some 0] := by decide
+
+-- A meter longer than the whole list remembers every prior arrival.
+example : meteredOutcome 5 3 [0, 0, 0] = [some 0, some 1, some 2] := by decide
+
+example : meteredOutcome 2 0 [] = [] := by decide
+
 -- At the meter threshold the third arrival fails, even though the fourth can park.
 example : meteredOutcome 2 2 [0, 0, 0, 0] = [some 0, some 1, none, some 0] := by decide
 
