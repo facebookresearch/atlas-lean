@@ -190,13 +190,13 @@ theorem complexOfGRatMatrix_onHigh (U : Matrix (Fin 2) (Fin 2) GRat) :
     simp [h, toComplex_gaussRatEnc_zero, complexOfGRatMatrix,
       Matrix.one_apply]
 
-/-- Atlas decoding of a low embedding. -/
+/-- Decoding the entry list of the low embedding of `U` gives the Kronecker product `U ⊗ 1`. -/
 theorem matrixOfEntries_onLow (U : Matrix (Fin 2) (Fin 2) GRat) :
     matrixOfEntries (entriesOf (onLow U)) =
       Matrix.kronecker (complexOfGRatMatrix U) 1 := by
   rw [matrixOfEntries_entriesOf, complexOfGRatMatrix_onLow]
 
-/-- Atlas decoding of a high embedding. -/
+/-- Decoding the entry list of the high embedding of `U` gives the Kronecker product `1 ⊗ U`. -/
 theorem matrixOfEntries_onHigh (U : Matrix (Fin 2) (Fin 2) GRat) :
     matrixOfEntries (entriesOf (onHigh U)) =
       Matrix.kronecker 1 (complexOfGRatMatrix U) := by
@@ -401,7 +401,8 @@ theorem vDagGate_unitary :
       Complex.ext_iff, Matrix.mul_apply, Matrix.star_apply,
       Fin.sum_univ_two, Matrix.one_apply]
 
-/-- Entry lists for the exported spectator embeddings. -/
+/-- The entry list of the phase-shifted Hadamard gate on the low qubit, the identity on the
+high one; the entry lists of the other spectator embeddings follow. -/
 def omegaHLowEntries : List (RatEnc × RatEnc) := entriesOf (onLow omegaH)
 def omegaHHighEntries : List (RatEnc × RatEnc) := entriesOf (onHigh omegaH)
 def sLowEntries : List (RatEnc × RatEnc) := entriesOf (onLow sGate)
@@ -413,7 +414,8 @@ def xHighEntries : List (RatEnc × RatEnc) := entriesOf (onHigh xGate)
 def zLowEntries : List (RatEnc × RatEnc) := entriesOf (onLow zGate)
 def zHighEntries : List (RatEnc × RatEnc) := entriesOf (onHigh zGate)
 
-/-- Entry lists for the exported controlled gates. -/
+/-- The entry list of the controlled-NOT gate with the low qubit as control; the entry lists
+of the other controlled gates follow. -/
 def cnotLowEntries : List (RatEnc × RatEnc) := entriesOf (ctrlLow xGate)
 def cnotHighEntries : List (RatEnc × RatEnc) := entriesOf (ctrlHigh xGate)
 def controlledOmegaHLowEntries : List (RatEnc × RatEnc) :=

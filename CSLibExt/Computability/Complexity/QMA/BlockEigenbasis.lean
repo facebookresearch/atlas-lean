@@ -237,7 +237,7 @@ noncomputable def productEigenbasis {m : ℕ}
       rw [← pow_mul, mul_comm]
     exact ge_of_eq (h_ind.span_eq_top_of_card_eq_finrank hcard))
 
-/-- The product eigenbasis has the displayed vectors. -/
+/-- The vector of the product eigenbasis at `j` is the product eigenvector for `j`. -/
 theorem productEigenbasis_apply {k m : ℕ}
     {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ}
     (hQ : Q.IsHermitian) (j : Fin k → Fin (2 ^ m)) :
