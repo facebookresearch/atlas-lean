@@ -13,12 +13,15 @@ Deicyde/diophantine-z-q (https://github.com/Deicyde/diophantine-z-q), commit
 `e9956cda4174c060ff85f5a6ddc7e4003e63fdd3`:
 
 * the statements `AxSenTate` and `TateTwistInvariants` of Tate's two theorems over finite
-  extensions of `ℚ_p`, the comparison `galois_smul_eq_cpAct` of two constructions of the Galois
-  action on `ℂ_p`, and the passage `eigenvector_of_twisted_fixed` from twisted invariants to
-  eigenvectors of the cyclotomic character:
+  extensions of `ℚ_p` (`ZInQKernel/OneProof/H/TailS.lean`), the comparison
+  `galois_smul_eq_cpAct` of two constructions of the Galois action on `ℂ_p`
+  (`ZInQKernel/Contrib/CloudB3W11AxCompletion/GaloisAction.lean`), and the passage
+  `eigenvector_of_twisted_fixed` from twisted invariants to eigenvectors of the cyclotomic
+  character (`ZInQKernel/Contrib/CloudB3W11TwistDescent/TateAdapter.lean`):
   Copyright 2026 the contributors to Deicyde/diophantine-z-q.
   Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-* the closedness `isClosed_range_fieldToCp` of a finite extension of `ℚ_p` in `ℂ_p`:
+* the closedness `isClosed_range_fieldToCp` of a finite extension of `ℚ_p` in `ℂ_p`
+  (`ZInQKernel/Contrib/CloudB3W11AxCompletion/AlgebraicDescent.lean`):
   Copyright 2026 the contributors to Deicyde/diophantine-z-q.
   Copyright (c) 2026 Jack McCarthy. All rights reserved.
   Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
