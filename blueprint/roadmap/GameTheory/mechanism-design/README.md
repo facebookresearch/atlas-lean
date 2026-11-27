@@ -9,6 +9,7 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Optimal auctions and virtual valuations](optimal-auctions-and-virtual-valuations/README.md)
 - [Vickrey–Clarke–Groves mechanisms](vickrey-clarke-groves-mechanisms/README.md)
 - [Myerson–Satterthwaite theorem](myerson-satterthwaite.md)
+- [Bilateral trade](bilateral-trade/README.md)
 - [Screening with two types](screening-with-two-types/README.md)
 - [Bilateral trade impossibility (dominant-strategy form)](bilateral-trade-impossibility.md)
 - [Characterization of proper scoring rules](characterization-of-proper-scoring-rules.md)
