@@ -12,11 +12,9 @@ $\mu t.\, s \to t =_R \mu t.\, s \to (s \to t)$, which the congruence generated 
 
 - [Recursive types and their tree expansions](recursive-types-and-their-tree-expansions.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- Unique solutions of systems of contractive type equations up to the rules above, used in the completeness direction (proof prerequisite; not yet stated as a page)
+- [Solutions of systems of type equations](solutions-of-systems-of-type-equations.md)
 
 ## Sources
 

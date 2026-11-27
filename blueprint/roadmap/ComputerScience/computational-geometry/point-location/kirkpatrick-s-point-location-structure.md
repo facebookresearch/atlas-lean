@@ -9,6 +9,7 @@ Let $T_0$ be a triangulation of the plane by a planar straight-line graph with $
 ## Proof depends on
 
 - [Low-degree independent sets in maximal planar graphs](low-degree-independent-sets-in-maximal-planar-graphs.md)
+- [Triangulation theorem for simple polygons](../polygons-and-triangulations/triangulation-theorem-for-simple-polygons.md)
 
 ## Sources
 

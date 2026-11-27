@@ -41,7 +41,7 @@ theorem scalarMRACEnergy_hasDerivAt
     {a b lam gamma r : ℝ} (hb : b ≠ 0) (hγ : 0 < gamma)
     {x xm ahat : ℝ → ℝ} {t : ℝ}
     (hx : HasDerivAt x
-      (a * x t + b * ((- ahat t * x t - lam * x t + r) / b)) t)
+      (a * x t + b * ((-ahat t * x t - lam * x t + r) / b)) t)
     (hxm : HasDerivAt xm (-lam * xm t + r) t)
     (hahat : HasDerivAt ahat (gamma * (x t - xm t) * x t) t) :
     HasDerivAt
