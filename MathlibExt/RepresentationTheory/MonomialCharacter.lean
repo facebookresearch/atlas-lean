@@ -1,13 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Theorems/Thm_ClassFunction_exists_trace_eq_sum_induced_linearCharacter_of_
 normal_comm_of_pow_prime_pow_mem.lean`
@@ -17,16 +19,11 @@ normal_comm_of_pow_prime_pow_mem.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -52,11 +49,12 @@ representation `ρ : G →* GL (Fin n) ℂ` is a sum of characters induced from 
 `ψ i : H i →* ℂˣ` of subgroups `H i`.
 
 The proof is by induction on `|G| + dim V`. If `ρ(G)` is abelian, the representation splits
-into common eigenspaces. Otherwise, there is an abelian normal subgroup `B ≥ A` whose image is
-not central, and `V` decomposes into weight spaces for `B`, permuted by `G`. If the action on
-the weights with nonzero weight space is not transitive, `V` splits into two proper
-subrepresentations; if it is transitive, `V` is induced from a weight space of the
-stabilizer of a weight, a proper subgroup.
+into common eigenspaces. Otherwise, there is a normal subgroup `B ≥ A` whose image `ρ(B)` is
+abelian but not contained in the center of `ρ(G)` (`B` itself need not be abelian), and `V`
+decomposes into weight spaces for `B`, permuted by `G`. If the action on the weights with
+nonzero weight space is not transitive, `V` splits into two proper subrepresentations; if it
+is transitive, `V` is induced from a weight space of the stabilizer of a weight, a proper
+subgroup.
 
 ## Main result
 
