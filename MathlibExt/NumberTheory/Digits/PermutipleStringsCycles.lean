@@ -51,6 +51,8 @@ public theorem permutiple_graph_isUnion_motherGraphCycles (n b : ℕ) (hn : 1 �
     IsMotherGraphEdge n b (d j) (d (σ j)) ∧
       Relation.ReflTransGen (fun u v => ∃ i, d i = u ∧ d (σ i) = v) (d (σ j)) (d j) := by
   refine ⟨⟨hp.1 j, hp.1 (σ j), permutiple_edge_residue_le n b hn d σ hp j⟩, ?_⟩
+  -- The return-path argument adapts `isPermutipleString_inputs_isUnion_motherGraphCycles`
+  -- from `PermutipleStrings.lean`.
   -- Reachability on digit positions is closed under σ, hence also under its inverse.
   let reachable (i : Fin (k + 1)) :=
     Relation.ReflTransGen (fun u v => ∃ a, d a = u ∧ d (σ a) = v) (d (σ j)) (d i)
