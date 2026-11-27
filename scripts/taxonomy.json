@@ -2069,6 +2069,7 @@
   "CSLibExt/MachineLearning/AdaBoost": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "AdaBoost"},
   "CSLibExt/MachineLearning/ArchetypalAnalysis": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Archetypal analysis"},
   "CSLibExt/MachineLearning/Backpropagation": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Backpropagation"},
+  "CSLibExt/MachineLearning/Bandit/CanonicalModel": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Multi-armed bandits"},
   "CSLibExt/MachineLearning/Bayesian/Basic": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Bayes' rule"},
   "CSLibExt/MachineLearning/Bayesian/BetaBernoulliFeatures": {"to": "Probability/bayesian-statistics", "title": "Indian buffet process"},
   "CSLibExt/MachineLearning/Bayesian/BetaBinomial": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Conjugate priors"},
