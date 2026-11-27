@@ -10,9 +10,6 @@ module
 
 public import MathlibExt.NumberTheory.Rat.Place
 public import Mathlib.Analysis.AbsoluteValue.Equivalence
-public import Mathlib.Data.Nat.Factorization.Defs
-public import Mathlib.Data.Nat.Prime.Basic
-public import Mathlib.Data.Rat.Lemmas
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
@@ -20,14 +17,14 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 /-!
 # Local-global facts about the rationals
 
-Two inputs to the proof of the Hasse–Minkowski theorem over `ℚ`, stated with the places
-`Rat.Place` and completions `Rat.Place.CompletedField` of `ℚ`:
+Two inputs to the proof of the Hasse–Minkowski theorem over `ℚ`:
 
 * `Rat.isSquare_of_isSquare_real_of_forall_isSquare_padic`: a rational number that is a square in
-  `ℝ` and in every `ℚ_[p]` is a square in `ℚ`; the arithmetic core is
-  `Rat.isSquare_of_pos_of_forall_even_padicValRat`.
+  `ℝ` and in every `ℚ_[p]` is a square in `ℚ`. Its arithmetic core is Mathlib's
+  `Rat.isSquare_iff_even_factorization`.
 * `Rat.Place.exists_forall_norm_sub_lt` and `Rat.Place.denseRange_embedding_pi`: weak
-  approximation for `ℚ`, the density of `ℚ` in a finite product of its completions.
+  approximation for `ℚ`, the density of `ℚ` in a finite product of its completions, stated with
+  the places `Rat.Place` and completions `Rat.Place.CompletedField` of `ℚ`.
 
 Sources: A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT, Fall 2013, lecture
 notes, Lecture 11, Theorem 11.7, p. 2, and the case `n = 2` of the proof of Theorem 11.12, p. 4;
@@ -39,47 +36,13 @@ public section
 
 namespace Rat
 
-/-- **A positive rational number with even valuations is a square.** Let $r \in \mathbb{Q}$ with
-$r > 0$, and suppose that the $p$-adic valuation $v_p(r)$ is even for every prime $p$. Then $r$
-is a square in $\mathbb{Q}$.
-
-Source: A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT, Fall 2013, lecture
-notes, Lecture 11, proof of Theorem 11.12, case $n = 2$, p. 4. -/
-theorem isSquare_of_pos_of_forall_even_padicValRat {r : ℚ} (hr : 0 < r)
-    (h : ∀ p : ℕ, p.Prime → Even (padicValRat p r)) : IsSquare r := by
-  have hnum : 0 < r.num := Rat.num_pos.mpr hr
-  have hval : ∀ p : ℕ, p.Prime → padicValRat p r =
-      (r.num.natAbs.factorization p : ℤ) - (r.den.factorization p : ℤ) := by
-    intro p hp
-    rw [padicValRat_def, Nat.factorization_def _ hp, Nat.factorization_def _ hp]
-    simp [padicValInt]
-  have key : ∀ p : ℕ, p.Prime →
-      Even (r.num.natAbs.factorization p) ∧ Even (r.den.factorization p) := by
-    intro p hp
-    have he := h p hp
-    rw [hval p hp] at he
-    by_cases hpn : p ∣ r.num.natAbs
-    · have hpd : ¬p ∣ r.den := fun hpd =>
-        Nat.Prime.not_coprime_iff_dvd.mpr ⟨p, hp, hpn, hpd⟩ r.reduced
-      rw [Nat.factorization_eq_zero_of_not_dvd hpd] at he ⊢
-      exact ⟨by simpa using he, ⟨0, rfl⟩⟩
-    · rw [Nat.factorization_eq_zero_of_not_dvd hpn] at he ⊢
-      exact ⟨⟨0, rfl⟩, by simpa using he⟩
-  have hsqn : IsSquare r.num.natAbs :=
-    Nat.isSquare_iff_even_factorization.mpr fun p hp => (key p hp).1
-  have hsqd : IsSquare r.den :=
-    Nat.isSquare_iff_even_factorization.mpr fun p hp => (key p hp).2
-  refine Rat.isSquare_iff.mpr ⟨?_, hsqd⟩
-  obtain ⟨m, hm⟩ := hsqn
-  exact ⟨m, by rw [← Int.natAbs_of_nonneg hnum.le, hm]; push_cast; ring⟩
-
 /-- **A rational number that is a square at every place is a square.** Let $r \in \mathbb{Q}$. If
 $r$ is a square in $\mathbb{R}$ and in $\mathbb{Q}_p$ for every prime $p$, then $r$ is a square in
 $\mathbb{Q}$.
 
-For $r \neq 0$: being a square in $\mathbb{R}$, $r > 0$, and being a square in $\mathbb{Q}_p$, $r$
-has even $p$-adic valuation, so `Rat.isSquare_of_pos_of_forall_even_padicValRat` applies; $r = 0$
-is a square.
+Being a square in $\mathbb{R}$, $r \geq 0$. For $r \neq 0$, being a square in $\mathbb{Q}_p$, $r$
+has even $p$-adic valuation $v_p(r)$, so Mathlib's `Rat.isSquare_iff_even_factorization`
+applies; $r = 0$ is a square.
 
 Source: A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT, Fall 2013, lecture
 notes, Lecture 11, proof of Theorem 11.12, case $n = 2$, p. 4. -/
@@ -87,11 +50,11 @@ theorem isSquare_of_isSquare_real_of_forall_isSquare_padic {r : ℚ} (hreal : Is
     (hpadic : ∀ (p : ℕ) [Fact p.Prime], IsSquare (r : ℚ_[p])) : IsSquare r := by
   rcases eq_or_ne r 0 with rfl | hr0
   · exact ⟨0, by simp⟩
-  have hpos : 0 < r := by
+  have hnonneg : 0 ≤ r := by
     obtain ⟨s, hs⟩ := hreal
     have h0 : (0 : ℝ) ≤ r := by rw [hs]; exact mul_self_nonneg s
-    exact lt_of_le_of_ne (by exact_mod_cast h0) (Ne.symm hr0)
-  refine isSquare_of_pos_of_forall_even_padicValRat hpos fun p hp => ?_
+    exact_mod_cast h0
+  refine Rat.isSquare_iff_even_factorization.mpr ⟨hnonneg, fun p hp => ?_⟩
   have : Fact p.Prime := ⟨hp⟩
   obtain ⟨s, hs⟩ := hpadic p
   have hs0 : s ≠ 0 := by

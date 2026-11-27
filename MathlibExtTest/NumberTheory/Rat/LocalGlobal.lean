@@ -28,10 +28,6 @@ example (r : ℚ) (hr : ¬IsSquare r) :
   simp only [not_or, not_exists, not_not] at h
   exact hr (isSquare_of_isSquare_real_of_forall_isSquare_padic h.1 fun p _ => h.2 p ‹_›)
 
--- `1` has all valuations even, so the arithmetic core gives that it is a square.
-example : IsSquare (1 : ℚ) :=
-  isSquare_of_pos_of_forall_even_padicValRat one_pos fun p _ => by simp
-
 -- Weak approximation at the infinite place and the place `2`.
 example (x : (v : ({.infinite, .finite ⟨2, Nat.prime_two⟩} : Finset Place)) → CompletedField v.1) :
     ∃ q : ℚ, ∀ v, ‖embedding v.1 q - x v‖ < 1 / 1000 :=

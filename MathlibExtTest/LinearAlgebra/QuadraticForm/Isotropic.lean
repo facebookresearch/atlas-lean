@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.LinearAlgebra.QuadraticForm.Isotropic
+import Mathlib.LinearAlgebra.QuadraticForm.Basis
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -45,5 +46,21 @@ example {K V : Type*} [Field K] [AddCommGroup V] [Module K V] [Invertible (2 : K
     {Q : QuadraticForm K V} (hQ : Q.Nondegenerate) {v : V} (hv : v ≠ 0) (hQv : Q v = 0) :
     Function.Surjective Q :=
   fun c => QuadraticMap.Nondegenerate.exists_apply_eq_of_isotropic hQ hv hQv c
+
+-- A concrete nondegenerate isotropic form, so the hypotheses are satisfiable: `x² - y²` on `ℚ²`
+-- is nondegenerate (its radical is `0`, as no weight vanishes) and vanishes at `(1, 1)`.
+example (c : ℚ) : ∃ w : Fin 2 → ℚ, QuadraticMap.weightedSumSquares ℚ ![(1 : ℚ), -1] w = c := by
+  let _ : Invertible (2 : ℚ) := invertibleOfNonzero two_ne_zero
+  have hQ : (QuadraticMap.weightedSumSquares ℚ ![(1 : ℚ), -1]).Nondegenerate := by
+    rw [QuadraticMap.nondegenerate_iff_radical_eq_bot, QuadraticForm.radical_weightedSumSquares]
+    have hempty : {i : Fin 2 | ![(1 : ℚ), -1] i = 0} = ∅ := by
+      ext i
+      fin_cases i <;> simp
+    rw [hempty]
+    simp [Pi.spanSubset]
+  refine hQ.exists_apply_eq_of_isotropic (v := ![1, 1]) ?_ ?_ c
+  · intro h
+    simpa using congrFun h 0
+  · simp [QuadraticMap.weightedSumSquares_apply, Fin.sum_univ_two]
 
 end MathlibExtTest.QuadraticFormIsotropic
