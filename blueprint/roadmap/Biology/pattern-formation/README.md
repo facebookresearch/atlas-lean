@@ -12,6 +12,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Continuum models of tumour-induced angiogenesis](continuum-models-of-tumour-induced-angiogenesis/README.md)
 - [Bayesian parameter identification for Turing systems](bayesian-parameter-identification-for-turing-systems/README.md)
 - [Cellular Potts model](cellular-potts-model/README.md)
 - [Reaction–diffusion waves of blood coagulation](reaction-diffusion-waves-of-blood-coagulation/README.md)
