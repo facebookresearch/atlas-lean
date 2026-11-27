@@ -126,7 +126,7 @@ private theorem star_dotProduct_mulVec_self_eq_re {n : Type*} [Fintype n]
   rw [him] at hre
   simpa using hre.symm
 
-/-- expectations are real -/
+/-- If `Q` is Hermitian, the threshold operator is Hermitian for every threshold `T`. -/
 theorem thresholdOp_isHermitian {k m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ : Q.IsHermitian) (T : ℝ) : (thresholdOp k Q T).IsHermitian := by
   have hblock : ∀ b ∈ Finset.univ.filter (fun b : Fin k → Bool => T ≤ acceptCount b),
       (thresholdBlockOp Q b).IsHermitian := by
@@ -167,12 +167,15 @@ theorem thresholdOp_mulVec_productEigenvector {k m : ℕ} {Q : Matrix (Fin (2 ^ 
   · simp only [ite_eq_left hb]
   · simp only [ite_eq_right hb, Complex.ofReal_sub, Complex.ofReal_one]
 
-/-- convex weights sum to the Atlas squared norm (Parseval) -/
+/-- Parseval: the weights `‖⟪v_j, Ψ⟫‖²` over the product eigenbasis sum to the squared norm
+of `Ψ`. -/
 theorem sum_norm_sq_inner_productEigenbasis {k m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ : Q.IsHermitian) (Ψ : Fin (2 ^ (k * m)) → ℂ) : ∑ j : Fin k → Fin (2 ^ m), ‖inner ℂ (productEigenbasis hQ k j) (WithLp.toLp 2 Ψ)‖ ^ 2 = sqNorm Ψ := by
   rw [(productEigenbasis hQ k).sum_sq_norm_inner_right (WithLp.toLp 2 Ψ)]
   exact norm_toLp_sq Ψ
 
-/-- canonical acceptance bullet 1: convex-combination identity for ANY (entangled) k-block state -/
+/-- For Hermitian `Q` and every `k`-block vector `Ψ`, entangled or not, the quadratic form of the
+threshold operator is `∑ j, ‖⟪v_j, Ψ⟫‖² * tailWeight (λ_j) T` over the product eigenvectors `v_j`
+with eigenvalue tuples `λ_j`; the combination is convex when `Ψ` is a unit vector. -/
 theorem star_dotProduct_thresholdOp_mulVec {k m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ : Q.IsHermitian) (T : ℝ) (Ψ : Fin (2 ^ (k * m)) → ℂ) : star Ψ ⬝ᵥ (thresholdOp k Q T *ᵥ Ψ) = ∑ j : Fin k → Fin (2 ^ m), ((‖inner ℂ (productEigenbasis hQ k j) (WithLp.toLp 2 Ψ)‖ ^ 2 * tailWeight (fun i => hQ.eigenvalues (j i)) T : ℝ) : ℂ) := by
   have hT : (thresholdOp k Q T).IsHermitian := thresholdOp_isHermitian hQ T
   have hLHS : star Ψ ⬝ᵥ (thresholdOp k Q T *ᵥ Ψ)
@@ -224,7 +227,7 @@ theorem star_dotProduct_thresholdOp_mulVec {k m : ℕ} {Q : Matrix (Fin (2 ^ m))
   rw [hF1, hF2, hnorm, Complex.ofReal_mul, ← hmul]
   ring
 
-/-- 0 ≤ Q ≤ I gives Bernoulli parameters (contract budget line: eigenvalue bounds from 0 ≤ Q ≤ I) -/
+/-- If `Q` and `1 - Q` are positive semidefinite, every eigenvalue of `Q` lies in `[0, 1]`. -/
 theorem eigenvalues_mem_Icc_of_posSemidef {m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ0 : Q.PosSemidef) (hQ1 : (1 - Q).PosSemidef) (j : Fin (2 ^ m)) : hQ0.isHermitian.eigenvalues j ∈ Set.Icc (0 : ℝ) 1 := by
   rw [Set.mem_Icc]
   refine ⟨hQ0.eigenvalues_nonneg j, ?_⟩
@@ -254,7 +257,7 @@ theorem eigenvalues_mem_Icc_of_posSemidef {m : ℕ} {Q : Matrix (Fin (2 ^ m)) (F
   rw [← heig] at hnn'
   linarith
 
-/-- tails are probabilities -/
+/-- If every `μ i` lies in `[0, 1]`, the tail weight lies in `[0, 1]` for every threshold. -/
 theorem tailWeight_mem_Icc {k : ℕ} {μ : Fin k → ℝ} (hμ : ∀ i, μ i ∈ Set.Icc (0 : ℝ) 1) (T : ℝ) : tailWeight μ T ∈ Set.Icc (0 : ℝ) 1 := by
   have hfactor : ∀ (b : Fin k → Bool) (i : Fin k),
       0 ≤ (if b i then μ i else 1 - μ i) := by
@@ -393,7 +396,9 @@ theorem tailWeight_eq_poissonBinomialTail {k : ℕ} (μ : Fin k → ℝ) (T : �
     exact hbi.symm
   rw [hregroup, hexpand]
 
-/-- entangled-witness reduction: acceptance ≤ worst product-eigenvalue tail (the exponential bound on that tail is the residual) -/
+/-- For Hermitian `Q`, a unit vector `Ψ` and a bound `B` on `tailWeight (λ_j) T` for every
+eigenvalue tuple `λ_j`, the real part of the quadratic form of the threshold operator is at
+most `B`. -/
 theorem re_star_dotProduct_thresholdOp_mulVec_le {k m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ : Q.IsHermitian) (T B : ℝ) (Ψ : Fin (2 ^ (k * m)) → ℂ) (hΨ : sqNorm Ψ = 1) (hB : ∀ j : Fin k → Fin (2 ^ m), tailWeight (fun i => hQ.eigenvalues (j i)) T ≤ B) : (star Ψ ⬝ᵥ (thresholdOp k Q T *ᵥ Ψ)).re ≤ B := by
   have hmain := star_dotProduct_thresholdOp_mulVec hQ T Ψ
   have hre : (star Ψ ⬝ᵥ (thresholdOp k Q T *ᵥ Ψ)).re
@@ -410,7 +415,8 @@ theorem re_star_dotProduct_thresholdOp_mulVec_le {k m : ℕ} {Q : Matrix (Fin (2
           Finset.sum_le_sum (fun j _ => mul_le_mul_of_nonneg_left (hB j) (sq_nonneg _))
       _ = B := by rw [← Finset.sum_mul, sum_norm_sq_inner_productEigenbasis, hΨ, one_mul]
 
-/-- product-witness identity (completeness side), via merged blockExpectation_blockProd; the lower-tail bound is the residual -/
+/-- For Hermitian `Q` and a unit vector `ψ`, the quadratic form of the threshold operator at the
+product vector `ψ ⊗ ⋯ ⊗ ψ` is `tailWeight (p, …, p) T` with `p = Re ⟪ψ, Q ψ⟫`. -/
 theorem star_dotProduct_thresholdOp_mulVec_blockProd_const {k m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ : Q.IsHermitian) (T : ℝ) (ψ : Fin (2 ^ m) → ℂ) (hψ : sqNorm ψ = 1) : star (blockProd (fun _ : Fin k => ψ)) ⬝ᵥ (thresholdOp k Q T *ᵥ blockProd (fun _ : Fin k => ψ)) = ((tailWeight (fun _ : Fin k => (star ψ ⬝ᵥ (Q *ᵥ ψ)).re) T : ℝ) : ℂ) := by
   have he : star ψ ⬝ᵥ (Q *ᵥ ψ) = (((star ψ ⬝ᵥ (Q *ᵥ ψ)).re : ℝ) : ℂ) :=
     star_dotProduct_mulVec_self_eq_re hQ ψ
