@@ -41,3 +41,4 @@
 ## Thue systems
 
 - [The word problem of a Thue system](thue-wp.md)
+- [Bottom-up rewriting systems](bottom-up-rewriting-systems/README.md)

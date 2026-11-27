@@ -12,3 +12,6 @@ space–time diagrams of one-dimensional cellular automata, and the reductions f
 - [The tiling problem for NW-deterministic tile sets is undecidable](the-tiling-problem-for-nw-deterministic-tile-sets.md)
 - [The finite tiling problem is undecidable](the-finite-tiling-problem-is-undecidable.md)
 - [The tile set SNAKES and its plane-filling property](the-tile-set-snakes.md)
+- [Combinatorial substitutions](combinatorial-substitutions/README.md)
+- [Deciding the winner of the two-player domino game on the plane is undecidable](deciding-the-winner-of-the-two-player-domino-gam.md)
+- [The domino problem is undecidable for Wang tile sets of parameter 43](domino-problem-for-tile-sets-of-parameter-43.md)
