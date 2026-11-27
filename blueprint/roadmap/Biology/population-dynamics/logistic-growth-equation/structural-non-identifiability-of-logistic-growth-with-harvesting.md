@@ -8,7 +8,7 @@ $$\frac{dC}{dt} = \lambda C\Bigl(1 - \frac{C}{K}\Bigr) - d\,C, \qquad C(0) = C_0
 
 $$C(t) = \frac{\kappa\, C_0}{C_0 + (\kappa - C_0)\, e^{-\Lambda t}}.$$
 
-Hence the trajectory $t \mapsto C(t)$ depends on $(\lambda, d, K)$ only through $(\Lambda, \kappa)$, and for fixed $C_0$ the map $(\lambda, d, K) \mapsto C(\cdot)$ is constant on each curve $\{(\lambda, \lambda - \Lambda, \kappa\lambda/\Lambda) : \lambda > \max(0, \Lambda)\}$. The parameters $\lambda$, $d$ and $K$ are therefore not structurally identifiable from noise-free observations of $C$ on any time set, while $(\Lambda, \kappa)$ is identifiable from observations at three distinct times when $C$ is not constant. The long-time behaviour is $C(t) \to \kappa$ if $\lambda > d$ and $C(t) \to 0$ if $\lambda < d$.
+Hence the trajectory $t \mapsto C(t)$ depends on $(\lambda, d, K)$ only through $(\Lambda, \kappa)$, and for fixed $C_0$ the map $(\lambda, d, K) \mapsto C(\cdot)$ is constant on each curve $\{(\lambda, \lambda - \Lambda, \kappa\lambda/\Lambda) : \lambda > \max(0, \Lambda)\}$. The parameters $\lambda$, $d$ and $K$ are therefore not structurally identifiable from noise-free observations of $C$ on any time set, while $(\Lambda, \kappa)$ is identifiable from observations at three distinct times when $C$ is not constant. The long-time behaviour is $C(t) \to \kappa$ if $\lambda > d$ and $C(t) \to 0$ if $\lambda < d$. This corrects the source as printed after its Eq. (5), "C(t) → K as t → ∞ if λ > d": in the source's own solution (5), $e^{-\Lambda t} \to 0$ when $\Lambda = \lambda - d > 0$, so $C(t) \to \kappa C_0/C_0 = \kappa = K(\lambda - d)/\lambda$, which is less than $K$ because $d > 0$.
 
 ## Depends on
 

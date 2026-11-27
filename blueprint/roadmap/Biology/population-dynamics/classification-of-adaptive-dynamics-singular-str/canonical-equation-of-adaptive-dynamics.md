@@ -16,7 +16,7 @@ A rare mutant $y$ in this resident population has invasion fitness $f(y; x) = b(
 
 $$e^{-CK} \ll u_K \ll \frac{1}{K \log K} \qquad \text{for every } C > 0,$$
 
-start from the monomorphic population $(\gamma_K/K)\,\delta_{x_0}$, where the $\mathbb N$-valued random variables $\gamma_K$ are such that $\gamma_K/K$ converges in law to a positive random variable and is bounded in $L^1$, and observe the process on the mutation time scale $t/(K u_K)$. Assume moreover that invasion implies fixation, in the following form: for every $x \in \mathcal X$, Lebesgue-almost every $y \in \mathcal X$ satisfies either $f(y; x) < 0$, or $f(y; x) > 0$ and $f(x; y) < 0$. Then the resident trait converges, in the sense of finite-dimensional distributions, to the Markov jump process that jumps from $x$ to $x + h$ at rate
+start from the monomorphic population $(\gamma_K/K)\,\delta_{x_0}$, where the $\mathbb N$-valued random variables $\gamma_K$ are such that $\gamma_K/K$ converges in law to a constant $\gamma > 0$ and is bounded in $L^1$, and observe the process on the mutation time scale $t/(K u_K)$. Assume moreover that invasion implies fixation, in the following form: for every $x \in \mathcal X$, Lebesgue-almost every $y \in \mathcal X$ satisfies either $f(y; x) < 0$, or $f(y; x) > 0$ and $f(x; y) < 0$. Then the resident trait converges, in the sense of finite-dimensional distributions, to the Markov jump process that jumps from $x$ to $x + h$ at rate
 
 $$\mu(x)\, b(x)\, \bar n(x)\, \frac{[f(x+h; x)]_+}{b(x+h)}\, m(x,h)\, dh,$$
 

@@ -20,6 +20,8 @@ $$c \sim -\frac{1}{\sqrt{2(\kappa+1)}}\qquad(\kappa \to -1^{+}).$$
 
 Receding waves therefore require $-1 < \kappa < 0$, and the front becomes a boundary layer of width $O(1/|c|)$ at the moving edge.
 
+This corrects the source as printed in two places. Equations (31)–(35) of arXiv:2008.00662v3 pose the inner problem on "$-\infty < \zeta < 0$", with far conditions "$U_0 \to 1$ as $\zeta \to -\infty$" and $U_1, U_2 \to 0$ as $\zeta \to -\infty$; but $\zeta = zc$ with $z < 0$ and $c < 0$ gives $\zeta > 0$, the limit $z \to -\infty$ is $\zeta \to +\infty$, and the source's own solution (36), $U_0 = 1 - e^{-\zeta}$, tends to $1$ only as $\zeta \to +\infty$. Sections 1 and 4 print "$c \sim 2^{-1}(\kappa + 1)^{-1/2}$ as $\kappa \to -1^+$"; but the source's (43), $\kappa = -1 + \frac{1}{2c^2} + O(c^{-4})$, gives $c^2 \sim \frac{1}{2(\kappa+1)}$, that is $|c| \sim 2^{-1/2}(\kappa+1)^{-1/2}$, and $c < 0$ for receding waves fixes the sign.
+
 ## Depends on
 
 - [Invading and receding Fisher–Stefan travelling waves](fisher-stefan-travelling-waves.md)
