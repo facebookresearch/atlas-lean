@@ -1,6 +1,6 @@
 # Heterogeneity inflates the number of risk genes inferred from recurrent mutations
 
-Let a disorder have $K$ risk genes among those sequenced, let gene $k$ have per-trio de novo mutation probability $m_k$ and let $N$ trios be sequenced. If a risk gene is hit by de novo events at rate $\lambda_k = 2 N m_k \gamma_k$ with $\gamma_k$ its relative risk, and the events in each gene form an independent Poisson count, the number $R$ of **multiple-hit** genes, risk genes carrying at least two independent de novo events, has expectation
+Let a disorder have $K$ risk genes among those sequenced, let gene $k$ have per-generation, per-chromosome de novo mutation probability $m_k$ and let $N$ trios be sequenced. If a risk gene is hit by de novo events at rate $\lambda_k = 2 N m_k \gamma_k$ with $\gamma_k$ its relative risk, and the events in each gene form an independent Poisson count, the number $R$ of **multiple-hit** genes, risk genes carrying at least two independent de novo events, has expectation
 
 $$\mathbb{E} R = \sum_{k=1}^{K} \Pr(\mathrm{Poisson}(\lambda_k) \ge 2) = \sum_{k=1}^{K} g(\lambda_k), \qquad g(\lambda) = 1 - e^{-\lambda}(1 + \lambda).$$
 

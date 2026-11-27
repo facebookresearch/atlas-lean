@@ -3,7 +3,6 @@
 Statistical methods for genome-wide association studies, heritability estimation from summary statistics, fine-mapping, Mendelian randomization and gene constraint scores.
 
 - [Association tests](association-tests/README.md)
-- [Functional interpretation of association signals](functional-interpretation-of-association-signals/README.md)
 - [Bayesian fine-mapping and colocalization](bayesian-fine-mapping-and-colocalization/README.md)
 - [Bernstein's triple-allele law for the ABO blood groups](bernstein-s-triple-allele-law-for-the-abo-blood/README.md)
 - [BOLT-LMM mixed-model association](bolt-lmm-mixed-model-association/README.md)
