@@ -18,8 +18,10 @@ public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeAddSub
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeTwoPow
+public import MathlibExt.NumberTheory.FermatPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprime
 public import MathlibExt.NumberTheory.StrongPseudoprimeBaseCount
+public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePart
 public import MathlibExt.NumberTheory.StrongPseudoprimeZPowNeg
 
 /-!
@@ -37,17 +39,6 @@ stated; see the source audit table.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of Fermat pseudoprime bases (Monier; Baillie–Wagstaff).** Let $n > 1$ be a
-composite natural number. Then the number of integers $b$ with $1 \le b < n$ such that $n$ is a
-Fermat pseudoprime to the base $b$, that is, $b^{n-1} \equiv 1 \pmod{n}$, equals
-$\prod_p \gcd(n - 1, p - 1)$, where $p$ runs over the distinct prime divisors of $n$.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Theorem 2 (`integers-2024-A23-thm-2`). -/
-public theorem_wanted card_fermatPsp_bases_eq_prod_gcd {n : ℕ} (hn : 1 < n) (hcomp : ¬n.Prime) :
-    {b : ℕ | 1 ≤ b ∧ b < n ∧ Nat.FermatPsp n b}.ncard =
-      ∏ p ∈ n.primeFactors, Nat.gcd (n - 1) (p - 1)
 
 /-- **Products of two distinct primes have a square number of Fermat pseudoprime bases.** Let
 $p$ and $q$ be distinct primes. Then the number of integers $b$ with $1 \le b < pq$ such that
@@ -112,23 +103,6 @@ public theorem_wanted hasDensity_zero_strongPseudoprime_bases_conditions_fail :
         (sInf ((fun p => (p - 1).factorization 2) '' (n.primeFactors : Set ℕ)) = 1 ∨
           n.primeFactors.card = 1) ∧
         ((∃ p : ℕ, p.Prime ∧ p ∣ n ∧ p % 4 = 3) ∨ IsPrimePow n))} 0
-
-/-- **Composite divisors of primitive parts without their intrinsic factor are strong
-pseudoprimes.** Let $b > 1$ and $m > 2$ be natural numbers, and let $\Phi_j$ denote the $j$-th
-cyclotomic polynomial. If a composite natural number $c > 1$ divides
-$\Phi_m(b) / \gcd(\Phi_m(b), m)$ or $\Phi_{2m}(b) / \gcd(\Phi_{2m}(b), m)$, then $c$ is a strong
-pseudoprime to the base $b$.
-
-Here $\Phi_m(b)$ and $\Phi_{2m}(b)$ are the primitive parts of $b^m - 1$ and $b^m + 1$, and
-dividing by the greatest common divisor with $m$ removes the intrinsic prime factor, if any.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Theorem 5 (`integers-2024-A23-thm-5`). -/
-public theorem_wanted isStrongPseudoprime_of_dvd_primitivePart {b m c : ℕ} (hb : 1 < b)
-    (hm : 2 < m) (hc : 1 < c) (hcomp : ¬c.Prime) :
-    let Φ : ℕ → ℤ := fun j => (Polynomial.cyclotomic j ℤ).eval (b : ℤ)
-    ((c : ℤ) ∣ Φ m / (Int.gcd (Φ m) m : ℤ) ∨ (c : ℤ) ∣ Φ (2 * m) / (Int.gcd (Φ (2 * m)) m : ℤ)) →
-      IsStrongPseudoprime c b
 
 /-- **Composite divisors of primitive parts without the intrinsic factor are strong pseudoprimes to
 every power of the base.** Let $b > 1$ and $m > 2$ be natural numbers, write $\Phi_j(b)$ for the
