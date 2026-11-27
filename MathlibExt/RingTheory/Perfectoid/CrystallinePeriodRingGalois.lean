@@ -235,13 +235,13 @@ theorem toBDeRhamPlus_galoisCrystallineCompletion
   have hσ := exists_map_eq_mul hgen σ
   obtain ⟨f, hf, rfl⟩ := hx
   obtain ⟨c, hc⟩ := hσ
-  have hw := algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_eq_zero_of_ker_eq_span hgen)
+  have hw := algebraMap_mem_ker_of_ker_eq_span hgen
   have hf' := rescale_mem_restrictedPowerSeries p c (map_mem_restrictedPowerSeries p
     (WittVector.map (PreTilt.map p (integralGalois p σ).toRingHom)) hf)
   refine (congrArg (toBDeRhamPlus hgen)
     (galoisCrystallineCompletion_ofRestricted hgen σ hc hf hf')).trans <|
-    (toBDeRhamPlus_ofRestricted hgen hw hf').trans <|
-    Eq.trans ?_ ((congrArg (galoisBDeRhamPlus p σ) (toBDeRhamPlus_ofRestricted hgen hw hf)).trans
+    (toBDeRhamPlus_ofRestricted hgen hf').trans <|
+    Eq.trans ?_ ((congrArg (galoisBDeRhamPlus p σ) (toBDeRhamPlus_ofRestricted hgen hf)).trans
       (galoisBDeRhamPlus_evalBDeRhamPlus p σ hw _)).symm
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun k => ?_
   rw [coeff_dividedPowerSeries_mul_pow, PowerSeries.coeff_map, galoisLocalization_coeff_mul_pow, hc,
@@ -294,12 +294,12 @@ the image of `A_cris = CrystallineCompletion p w` in `B_dR^+` is `aCris p`. -/
 theorem range_toBDeRhamPlus_eq_aCris {w : 𝔸}
     (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w}) :
     (toBDeRhamPlus hgen).range = aCris p := by
-  have hw := algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_eq_zero_of_ker_eq_span hgen)
+  have hw := algebraMap_mem_ker_of_ker_eq_span hgen
   have hξ := algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p)
   obtain ⟨u, hu⟩ := exists_eq_xi_mul_unit hgen
   refine SetLike.coe_injective ?_
-  rw [aCris, RingHom.coe_range, RingHom.coe_range, range_toBDeRhamPlus hgen hw,
-    range_toBDeRhamPlus (ker_fontaineTheta_eq_span_xi p) hξ]
+  rw [aCris, RingHom.coe_range, RingHom.coe_range, range_toBDeRhamPlus hgen,
+    range_toBDeRhamPlus (ker_fontaineTheta_eq_span_xi p)]
   ext y
   constructor
   · rintro ⟨f, hf, rfl⟩
@@ -317,8 +317,7 @@ theorem mem_aCris_iff {y : 𝔹⁺} :
       y = evalBDeRhamPlus p (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p))
         (dividedPowerSeries p f) := by
   rw [aCris, ← SetLike.mem_coe, RingHom.coe_range,
-    range_toBDeRhamPlus (ker_fontaineTheta_eq_span_xi p)
-      (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p))]
+    range_toBDeRhamPlus (ker_fontaineTheta_eq_span_xi p)]
   rfl
 
 /-- The image of `W(𝓞_ℂ_[p]♭)` in `B_dR^+` lies in `A_cris`. -/
