@@ -206,12 +206,12 @@ theorem binaryCostRule_gaussian_eq_matchedFilterRule {ι : Type} [Fintype ι] [D
       rw [hlog, Real.exp_log hABpos]
   by_cases h1c : A * MetaMathlibExt.multivariateGaussianPDFReal s0 R y <
       B * MetaMathlibExt.multivariateGaussianPDFReal s1 R y
-  · rw [if_pos h1c, if_pos (hlt.mp h1c)]
-  · rw [if_neg h1c, if_neg (fun h => h1c (hlt.mpr h))]
+  · rw [ite_eq_left h1c, ite_eq_left (hlt.mp h1c)]
+  · rw [ite_eq_right h1c, ite_eq_right (fun h => h1c (hlt.mpr h))]
     by_cases h2c : B * MetaMathlibExt.multivariateGaussianPDFReal s1 R y =
         A * MetaMathlibExt.multivariateGaussianPDFReal s0 R y
-    · rw [if_pos h2c, if_pos (heq.mp h2c)]
-    · rw [if_neg h2c, if_neg (fun h => h2c (heq.mpr h))]
+    · rw [ite_eq_left h2c, ite_eq_left (heq.mp h2c)]
+    · rw [ite_eq_right h2c, ite_eq_right (fun h => h2c (heq.mpr h))]
 
 /-! ## C. Bayes optimality -/
 
@@ -375,11 +375,11 @@ lemma matchedFilterRule_of_eq {ι : Type} [Fintype ι] [DecidableEq ι]
   simp only [matchedFilterRule]
   rw [hstat, hthr]
   by_cases h1c : Real.log (pi0 * (C10 - C00) / (pi1 * (C01 - C11))) < 0
-  · rw [if_pos h1c, if_pos (hlt.mp h1c)]
-  · rw [if_neg h1c, if_neg (fun h => h1c (hlt.mpr h))]
+  · rw [ite_eq_left h1c, ite_eq_left (hlt.mp h1c)]
+  · rw [ite_eq_right h1c, ite_eq_right (fun h => h1c (hlt.mpr h))]
     by_cases h2c : (0:ℝ) = Real.log (pi0 * (C10 - C00) / (pi1 * (C01 - C11)))
-    · rw [if_pos h2c, if_pos (heq.mp h2c)]
-    · rw [if_neg h2c, if_neg (fun h => h2c (heq.mpr h))]
+    · rw [ite_eq_left h2c, ite_eq_left (heq.mp h2c)]
+    · rw [ite_eq_right h2c, ite_eq_right (fun h => h2c (heq.mpr h))]
 
 /-! ## F. Validation -/
 
@@ -444,8 +444,8 @@ private lemma log_four_thirds_gt : (-1/2 : ℝ) < Real.log (4/3 : ℝ) := by
 private lemma fin_one_inv : !![(1:ℝ)]⁻¹ = !![(1:ℝ)] := by
   have hRS : !![(1:ℝ)] * !![(1:ℝ)] = 1 := by
     ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_one, Matrix.one_apply] <;> norm_num
+    fin_cases i; fin_cases j;
+      simp [Matrix.mul_apply, Fin.sum_univ_one, Matrix.one_apply]
   have hU : IsUnit !![(1:ℝ)].det := Matrix.isUnit_det_of_right_inverse hRS
   have hSR : !![(1:ℝ)]⁻¹ * !![(1:ℝ)] = 1 := by
     apply Matrix.nonsing_inv_mul
@@ -511,11 +511,11 @@ lemma matchedFilterRule_fin_one_example (tie : Bool) :
   · simp only [matchedFilterRule]
     rw [fin_one_stat_zero, fin_one_threshold]
     have hlt : Real.log (2 / 9) + 1 / 2 < (0:ℝ) := by linarith [log_two_ninths_lt]
-    rw [if_pos hlt]
+    rw [ite_eq_left hlt]
   · simp only [matchedFilterRule]
     rw [fin_one_stat_neg_two, fin_one_threshold]
     have hgt : (-2:ℝ) < Real.log (2 / 9) + 1 / 2 := by linarith [log_two_ninths_gt]
-    rw [if_neg (not_lt.mpr hgt.le), if_neg (ne_of_lt hgt)]
+    rw [ite_eq_right (not_lt.mpr hgt.le), ite_eq_right (ne_of_lt hgt)]
 
 /-- **Flipped cost index changes the threshold.** Transposing `C01` and `C10` in the `n = 1`
 fixture (`C01 = 2`, `C10 = 4`, still `C00 < C10`, `C11 < C01`) moves the threshold from
@@ -535,7 +535,7 @@ lemma matchedFilterRule_fin_one_flipped_example (tie : Bool) :
   simp only [matchedFilterRule]
   rw [fin_one_stat_zero, fin_one_threshold_flipped]
   have hpos : (0:ℝ) < Real.log (4 / 3) + 1 / 2 := by linarith [log_four_thirds_gt]
-  rw [if_neg (not_lt.mpr hpos.le), if_neg (ne_of_lt hpos)]
+  rw [ite_eq_right (not_lt.mpr hpos.le), ite_eq_right (ne_of_lt hpos)]
 
 /-- Inverse of the `n = 2` fixture covariance. -/
 private lemma fin_two_Rinv :
@@ -613,13 +613,13 @@ lemma matchedFilterRule_fin_two_example (tie : Bool) :
   refine ⟨?_, ?_, ?_⟩
   · simp only [matchedFilterRule]
     rw [fin_two_stat_true, fin_two_threshold]
-    rw [if_pos (by norm_num : (1/3:ℝ) < 2/3)]
+    rw [ite_eq_left (by norm_num : (1/3:ℝ) < 2/3)]
   · simp only [matchedFilterRule]
     rw [fin_two_stat_tie, fin_two_threshold]
-    rw [if_neg (by norm_num : ¬(1/3:ℝ) < 1/3), if_pos (rfl : (1/3:ℝ) = 1/3)]
+    rw [ite_eq_right (by norm_num : ¬(1/3:ℝ) < 1/3), ite_eq_left (rfl : (1/3:ℝ) = 1/3)]
   · simp only [matchedFilterRule]
     rw [fin_two_stat_false, fin_two_threshold]
-    rw [if_neg (by norm_num : ¬(1/3:ℝ) < 0), if_neg (by norm_num : ¬(0:ℝ) = 1/3)]
+    rw [ite_eq_right (by norm_num : ¬(1/3:ℝ) < 0), ite_eq_right (by norm_num : ¬(0:ℝ) = 1/3)]
 
 /-- **`n = 2`, equal means.** `s0 = s1 = (1, 1)`, `R = [[2, 1], [1, 2]]`, `pi0 = 1/4`,
 `pi1 = 3/4`, `C00 = 0`, `C01 = 4`, `C10 = 2`, `C11 = 1`: `pi0 (C10 - C00) = 1/2 < 9/4 =
@@ -631,5 +631,5 @@ lemma matchedFilterRule_fin_two_equal_means_example (tie : Bool)
   have hrule := matchedFilterRule_of_eq (toLp 2 ![1, 1]) (!![(2:ℝ), 1; 1, 2]) (1 / 4) (3 / 4)
     (by norm_num) (by norm_num) 0 4 2 1 (by norm_num) (by norm_num) tie y
   rw [show toLp 2 ![(1:ℝ), 1] = toLp 2 ![1, 1] from rfl, hrule,
-    if_pos (by norm_num : (1/4:ℝ) * (2 - 0) < (3/4) * (4 - 1))]
+    ite_eq_left (by norm_num : (1/4:ℝ) * (2 - 0) < (3/4) * (4 - 1))]
 end PhyslibExt.Instrumentation.GaussianMatchedDecision

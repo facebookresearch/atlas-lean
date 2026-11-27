@@ -25,8 +25,8 @@ namespace MathlibExt.Analysis.ParabolicLiouvilleCriticalExponentOWR1050Problem01
 
 /-!
 Source: P. Quittner, in Topological and Variational Methods for Differential Equations, Oberwolfach
-Reports 2 (2005), no. 29, pp. 1649-1650, Conjecture 1, DOI 10.4171/OWR/2005/29. UnsolvedMath record
-UM-30000261 (`OWR-1050-012`), dataset ulamai/UnsolvedMath v1.8.0.
+Reports 2 (2005), no. 3 (Report 29/2005), pp. 1649-1650, Conjecture 1, DOI 10.4171/OWR/2005/29.
+UnsolvedMath record UM-30000261 (`OWR-1050-012`), dataset ulamai/UnsolvedMath v1.8.0.
 
 A positive classical solution is read as a function `u (x, t) > 0` that is `C²` in `(x, t)` and
 satisfies the equation at every point. Quittner's theorem excludes the larger class of positive
@@ -53,14 +53,14 @@ def positiveSolutionIffSupercritical : Prop :=
 
 /--
 Resolved true: the source notes that the equation has positive (bounded radial) steady states
-exactly when `p (N - 2) ≥ N + 2`, and Quittner proved (Theorem 1) that for `1 < p < p_S`, i.e. `p (N
-- 2) < N + 2`, it has no positive classical solution on `ℝ^N × ℝ`, with no boundedness, symmetry or
-decay assumption. Source: P. Quittner, in Topological and Variational Methods for Differential
-Equations, Oberwolfach Reports 2 (2005), no. 29, pp. 1649-1650, Conjecture 1, DOI
-10.4171/OWR/2005/29; resolution: P. Quittner, Optimal Liouville theorems for superlinear parabolic
-problems, Duke Math. J. 170 (2021), arXiv:2003.13223, Theorem 1: for 1 < p < p_S (that is, p(n - 2)
-< n + 2) and n ≥ 1, u_t - Δu = u^p in ℝⁿ × ℝ has no positive classical solution; the source notes
-that (3) has positive steady states if and only if p(N - 2) ≥ N + 2,
+exactly when `p (N - 2) ≥ N + 2`, and Quittner proved (Theorem 1) that for `1 < p < p_S`, i.e.
+`p (N - 2) < N + 2`, it has no positive classical solution on `ℝ^N × ℝ`, with no boundedness,
+symmetry or decay assumption. Source: P. Quittner, in Topological and Variational Methods for
+Differential Equations, Oberwolfach Reports 2 (2005), no. 3 (Report 29/2005), pp. 1649-1650,
+Conjecture 1, DOI 10.4171/OWR/2005/29; resolution: P. Quittner, Optimal Liouville theorems for
+superlinear parabolic problems, Duke Math. J. 170 (2021), arXiv:2003.13223, Theorem 1: for 1 < p <
+p_S (that is, p(n - 2) < n + 2) and n ≥ 1, u_t - Δu = u^p in ℝⁿ × ℝ has no positive classical
+solution; the source notes that (3) has positive steady states if and only if p(N - 2) ≥ N + 2,
 https://arxiv.org/abs/2003.13223.
 -/
 public theorem_wanted positiveSolutionIffSupercritical_holds : positiveSolutionIffSupercritical

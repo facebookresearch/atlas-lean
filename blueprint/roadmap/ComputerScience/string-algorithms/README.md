@@ -18,3 +18,4 @@ Exact pattern matching (naive, finite automaton, Knuth-Morris-Pratt, Boyer-Moore
 - [Lempel-Ziv Parsings](lempel-ziv-parsings/README.md)
 - [Linear-Time String Transforms on the Word RAM](linear-time-string-transforms-on-the-word-ram/README.md)
 - [Palindromes, LCP Arrays and Multi-Pattern Matching](palindromes-lcp-arrays-and-multipattern-matching/README.md)
+- [Shortest common superstring](shortest-common-superstring/README.md)
