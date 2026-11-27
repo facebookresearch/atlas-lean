@@ -1,8 +1,6 @@
 # Hexagonal Slither Link
 
 - [Instances of HEXAGONAL SLITHER LINK](hexagonal-slither-link-instance.md)
-- [Number of columns of a hexagonal grid](width.md)
-- [Number of hexagons per column](height.md)
 - [Hexagon clues](clue.md)
 - [Sides](sides.md)
 - [Graph](graph.md)
