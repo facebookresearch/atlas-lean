@@ -27,7 +27,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -45,7 +45,7 @@ job-shop schedule for `J` in which every task of a job starts exactly when the p
 that job finishes (no wait), and whose total completion time `∑_{j ∈ J} C_j` is at most `K`,
 `C_j` being the time the last task of `j` finishes?
 
-This is `J3|pᵢⱼ = 1; no-wait|∑ Cᵢ`: JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`) with
+This is `J3|pᵢⱼ = 1; no-wait|∑ Cᵢ`: JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`) with
 `m = 3`, unit task lengths, the no-wait condition, and the deadline replaced by a bound `K` on the
 total completion time (Sriskandarajah and Ladet's `n/3/J, no-wait, pᵢⱼ = 1/F`, `F` the total
 flow time, which with all jobs available at time `0` is `∑ Cᵢ`). The instance type
