@@ -15,7 +15,7 @@ Stack $\hat X = (\hat X_1^\top, \hat X_2^\top)^\top \in \mathbb{R}^N$ and estima
 
 $$\hat\beta = (\hat X^\top \hat X)^{-1} \hat X^\top Y .$$
 
-Repeating over many random splits and taking the median estimate improves robustness to a particular split.
+Repeating over $L$ random splits improves robustness to a particular split: the estimate is the average $\hat\beta = \frac1L\sum_{l=1}^L \hat\beta_l$ of the per-split estimates, and the per-split p-values are combined by the Cauchy combination rule, $T = \frac1L\sum_{l=1}^L \tan\big((\tfrac12 - p_l)\pi\big)$ and $p = \tfrac12 - \arctan(T)/\pi$.
 
 **Theorem.** With a 2-fold random split, the MR-SPLIT estimator is at least as efficient as the cross-fitting estimator that combines cross-fitted composite instruments (CFMR):
 
