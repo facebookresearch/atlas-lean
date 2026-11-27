@@ -18,6 +18,7 @@ The corollary also holds for discrete random variables with finite or countably 
 
 - [Joint entropy](../shearer-s-entropy-inequality/shearer-full-entropy.md)
 - [Shannon entropy](../../entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -10,17 +10,14 @@ $$
 
 The network is *solvable* if for some $q \ge 2$ there are such messages and signals satisfying every coding constraint.
 
-**Theorem (Li).**
+**Theorem (Li).** It is undecidable, given a network, whether it is solvable (Theorem 22 of the source).
 
-1. It is undecidable, given a network, whether it is solvable (Theorem 22 of the source).
-2. For every fixed $c \ge 2$ it is undecidable, given a network, whether it is solvable with alphabet size $q = c^m$ for some $m \ge 1$, that is, with messages and signals that are blocks of symbols from an alphabet of size $c$ (Theorem 23).
-3. Let $q_{\max}(m)$ be the largest minimum alphabet size of a solvable network with at most $m$ nodes, $m$ edges and $m$ source messages. There is no computable function $f$ with $q_{\max}(m) = O(f(m))$ (Corollary 30).
-
-Network coding for multiple unicast networks, and index coding, are undecidable as well, through known reductions to them. Earlier, Kühne and Yashfe proved that the existence of a vector linear network code is undecidable.
+The source also proves that for every fixed $c \ge 2$ it is undecidable, given a network, whether it is solvable with alphabet size $q = c^m$ for some $m \ge 1$, that is, with messages and signals that are blocks of symbols from an alphabet of size $c$ (Theorem 23). Writing $q_{\max}(m)$ for the largest minimum alphabet size of a solvable network with at most $m$ nodes, $m$ edges and $m$ source messages, there is no computable function $f$ with $q_{\max}(m) = O(f(m))$ (Corollary 30). Network coding for multiple unicast networks, and index coding, are undecidable as well, through known reductions to them. Earlier, Kühne and Yashfe proved that the existence of a vector linear network code is undecidable.
 
 ## Depends on
 
 - [Directed multigraph](../../../Biology/bioinformatics/omnitigs-and-safe-walks-in-genome-assembly/multigraph.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,7 +25,7 @@ None.
 
 ## Expansion
 
-The proof reduces the uniform word problem for finite groups, which is undecidable by a theorem of Slobodskoi. A network of Dougherty, Freiling and Zeger forces its signals to carry the structure of an abelian group, finite groups are embedded in the automorphism group of an abelian group through their left regular representation, and subnetworks enforce the action of each automorphism, so that the network is solvable exactly when the given relations fail to imply the given equation in some finite group. Clause 3 follows from clause 1 by the observation of Rasala Lehman that a computable bound on the alphabet size would give a decision procedure by exhaustive search. Slobodskoi's theorem and the network constructions have no page here.
+The proof reduces the uniform word problem for finite groups, which is undecidable by a theorem of Slobodskoi. A network of Dougherty, Freiling and Zeger forces its signals to carry the structure of an abelian group, finite groups are embedded in the automorphism group of an abelian group through their left regular representation, and subnetworks enforce the action of each automorphism, so that the network is solvable exactly when the given relations fail to imply the given equation in some finite group. Corollary 30 follows from Theorem 22 by the observation of Rasala Lehman that a computable bound on the alphabet size would give a decision procedure by exhaustive search. Slobodskoi's theorem and the network constructions have no page here.
 
 ## Sources
 

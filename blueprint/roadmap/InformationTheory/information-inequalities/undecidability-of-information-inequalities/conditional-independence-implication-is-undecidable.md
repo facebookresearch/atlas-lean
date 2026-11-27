@@ -17,6 +17,7 @@ The theorem also holds for discrete random variables with finite or countably in
 ## Depends on
 
 - [Conditional independence for a finite weight](../../../Probability/random-fields/conditional-independence-on-finite-configuration/cond-indep.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

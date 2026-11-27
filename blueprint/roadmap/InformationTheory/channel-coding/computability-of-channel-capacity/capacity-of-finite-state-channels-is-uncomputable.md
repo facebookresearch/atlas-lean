@@ -4,16 +4,14 @@ No algorithm approximates the capacity of finite-state channels with rational tr
 
 Let finite-state channels in product form and their capacity be as in [Finite-state channels and their capacity](finite-state-channels.md). Consider channels with a fixed, known initial state, rational transition probabilities $p(y \mid x, s')$ and $q(s \mid x, s')$, binary output and information stable behavior, so that the capacity is the limit of the mutual information rate.
 
-**Theorem (Elkouss and Pérez-García).**
+**Theorem (Elkouss and Pérez-García).** Any function that, on input the probability assignments $\{p(y \mid x, s'), q(s \mid x, s')\}$ of an information stable finite-state channel $\mathbf{N}$ with $10$ input symbols and $62$ states, outputs a rational number $c$ with $|C(\mathbf{N}) - c| \le 1/5$ is uncomputable (Main Result 1 of the source).
 
-1. Any function that, on input the probability assignments $\{p(y \mid x, s'), q(s \mid x, s')\}$ of an information stable finite-state channel $\mathbf{N}$ with $10$ input symbols and $62$ states, outputs a rational number $c$ with $|C(\mathbf{N}) - c| \le 1/5$ is uncomputable (Main Result 1 of the source).
-2. For every rational $\lambda \in (0, 1]$ there is an explicit family $\mathcal{S}_\lambda$ of such channels, each with capacity $\ge \lambda$ or $\le \lambda/2$, for which it is undecidable, given $\mathbf{N} \in \mathcal{S}_\lambda$, which of the two holds (Main Result 2).
-
-The same holds for any larger numbers of input symbols and states, for example $4$ input bits, $1$ output bit and $6$ bits of memory, and for every more general class of channels with memory.
+The source derives this from a stronger statement: for every rational $\lambda \in (0, 1]$ there is an explicit family $\mathcal{S}_\lambda$ of such channels, each with capacity $\ge \lambda$ or $\le \lambda/2$, for which it is undecidable, given $\mathbf{N} \in \mathcal{S}_\lambda$, which of the two holds (Main Result 2); Main Result 1 is the case $\lambda = 1$. The same holds for any larger numbers of input symbols and states, for example $4$ input bits, $1$ output bit and $6$ bits of memory, and for every more general class of channels with memory.
 
 ## Depends on
 
 - [Finite-state channels and their capacity](finite-state-channels.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

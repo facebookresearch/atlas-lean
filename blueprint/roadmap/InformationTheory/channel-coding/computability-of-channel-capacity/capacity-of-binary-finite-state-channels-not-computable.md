@@ -4,12 +4,9 @@ As a function of the computable transition probabilities, the capacity of finite
 
 Let finite-state channels in product form, $p(y, s \mid x, s') = p(y \mid x, s')\, q(s \mid x, s')$, and their capacity $C(\{p, q, s_0\})$ be as in [Finite-state channels and their capacity](finite-state-channels.md). A real number is *computable* if some algorithm produces rationals $r_n$ with $|x - r_n| < 2^{-n}$ for all $n$; let $\mathcal{P}_c, \mathcal{Q}_c$ be the sets of conditional distributions $p, q$ all of whose values are computable reals. A function on computable inputs is *Banach–Mazur computable* if it maps every computable sequence of computable inputs to a computable sequence of computable reals; every function computed by an algorithm acting on representations of its inputs (Borel computable) is Banach–Mazur computable.
 
-**Theorem (Boche, Schaefer and Poor).** Let $|\mathcal{X}|, |\mathcal{Y}|, |\mathcal{S}| \ge 2$.
+**Theorem (Boche, Schaefer and Poor).** For all $|\mathcal{X}|, |\mathcal{Y}|, |\mathcal{S}| \ge 2$, the capacity function $C(\{p, q, s_0\}) : \mathcal{P}_c \times \mathcal{Q}_c \times \mathcal{S} \to \mathbb{R}$ is not Banach–Mazur computable (Theorem 19 of the source); in particular no algorithm computes the capacity from the channel parameters.
 
-1. The capacity function $C(\{p, q, s_0\}) : \mathcal{P}_c \times \mathcal{Q}_c \times \mathcal{S} \to \mathbb{R}$ is not Banach–Mazur computable (Theorem 19 of the source); in particular no algorithm computes the capacity from the channel parameters.
-2. For some initial state $s_0$ there are no computable sequences $(F_N)$ and $(G_N)$ of computable continuous functions of $(p, q)$ with $F_N \le C(\{p, q, s_0\}) \le G_N$ and both converging pointwise to $C(\{p, q, s_0\})$ (Theorem 26).
-
-The capacity function is moreover discontinuous (Theorem 32), so it has no single-letter formula as the maximum of a continuous function over a fixed compact set (Theorem 33); for channels whose lower and upper capacities coincide the capacity of each computable channel is a computable real number (Theorem 29).
+The source also shows that for some initial state $s_0$ there are no computable sequences $(F_N)$ and $(G_N)$ of computable continuous functions of $(p, q)$ with $F_N \le C(\{p, q, s_0\}) \le G_N$ and both converging pointwise to $C(\{p, q, s_0\})$ (Theorem 26). The capacity function is moreover discontinuous (Theorem 32), so it has no single-letter formula as the maximum of a continuous function over a fixed compact set (Theorem 33); for channels whose lower and upper capacities coincide the capacity of each computable channel is a computable real number (Theorem 29).
 
 ## Depends on
 
@@ -21,7 +18,7 @@ The capacity function is moreover discontinuous (Theorem 32), so it has no singl
 
 ## Expansion
 
-For binary alphabets the proof takes a channel that is noiseless in state $0$ and a binary symmetric channel with crossover probability $\epsilon \in (0, 1/2)$ in state $1$, and state dynamics depending on a parameter, so that the capacity jumps according to whether a computable sequence of parameters is zero. Feeding in a recursively enumerable, non-recursive set $\mathcal{A} \subseteq \mathbb{N}$, whose existence is the undecidability of the halting problem, would give an algorithm deciding membership in $\mathcal{A}$ if the capacity were Banach–Mazur computable. Larger alphabets embed the binary case. Clause 2 follows from clause 1 by Corollary 11 of the source: when an increasing and a decreasing computable sequence of computable continuous functions have a common limit, that limit is a computable continuous function, hence Banach–Mazur computable. These constructions have no pages.
+For binary alphabets the proof takes a channel that is noiseless in state $0$ and a binary symmetric channel with crossover probability $\epsilon \in (0, 1/2)$ in state $1$, and state dynamics depending on a parameter, so that the capacity jumps according to whether a computable sequence of parameters is zero. Feeding in a recursively enumerable, non-recursive set $\mathcal{A} \subseteq \mathbb{N}$, whose existence is the undecidability of the halting problem, would give an algorithm deciding membership in $\mathcal{A}$ if the capacity were Banach–Mazur computable. Larger alphabets embed the binary case. Theorem 26 follows from Theorem 19 by Corollary 11 of the source: when an increasing and a decreasing computable sequence of computable continuous functions have a common limit, that limit is a computable continuous function, hence Banach–Mazur computable. These constructions have no pages.
 
 ## Sources
 

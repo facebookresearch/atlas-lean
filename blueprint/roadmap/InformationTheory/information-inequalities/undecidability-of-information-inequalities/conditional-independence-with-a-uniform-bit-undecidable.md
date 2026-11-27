@@ -4,17 +4,15 @@ No algorithm decides whether finitely many conditional independence statements c
 
 For random variables $X_1, \dots, X_n$ with finite support and $A \subseteq \{1, \dots, n\}$ write $X_A$ for the subtuple; the statement $I(X_A; X_B \mid X_C) = 0$ says that $X_A$ and $X_B$ are [conditionally independent](../../../Probability/random-fields/conditional-independence-on-finite-configuration/cond-indep.md) given $X_C$, in terms of [conditional mutual information](../../entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md).
 
-**Theorem (Li).**
+**Theorem (Li).** It is undecidable, given $n$, $m$ and $A_j, B_j, C_j \subseteq \{1, \dots, n\}$ for $j = 1, \dots, m$, whether there are random variables $X_1, \dots, X_n$ with finite support such that $I(X_{A_j}; X_{B_j} \mid X_{C_j}) = 0$ for all $j$ and $X_1$ is uniformly distributed on two values (Theorem 2 of the source).
 
-1. It is undecidable, given $n$, $m$ and $A_j, B_j, C_j \subseteq \{1, \dots, n\}$ for $j = 1, \dots, m$, whether there are random variables $X_1, \dots, X_n$ with finite support such that $I(X_{A_j}; X_{B_j} \mid X_{C_j}) = 0$ for all $j$ and $X_1$ is uniformly distributed on two values (Theorem 2 of the source).
-2. For every fixed integer $r \ge 2$ it is undecidable, given such data, whether $I(X_{A_j}; X_{B_j} \mid X_{C_j}) = 0$ for all $j$ together with $|\mathrm{supp}\, X_1| \le r$ implies $H(X_1) = 0$ (Corollary 3), and this remains undecidable when the sets $A_j, B_j, C_j$ are pairwise disjoint for each $j$ and the conclusion is $I(X_1; X_2) = 0$ (Corollary 5).
-
-Without any cardinality constraint, the conditional independence implication problem was later shown undecidable by the same author: [conditional independence implication is undecidable](conditional-independence-implication-is-undecidable.md) (IEEE Trans. Inform. Theory 69 (2023) 3493–3510). If every variable has bounded cardinality the implication problem is decidable.
+The source deduces that for every fixed integer $r \ge 2$ it is undecidable, given such data, whether $I(X_{A_j}; X_{B_j} \mid X_{C_j}) = 0$ for all $j$ together with $|\mathrm{supp}\, X_1| \le r$ implies $H(X_1) = 0$ (Corollary 3), and that this remains undecidable when the sets $A_j, B_j, C_j$ are pairwise disjoint for each $j$, $n \ge 2$, and the conclusion is $I(X_1; X_2) = 0$ (Corollary 5). Without any cardinality constraint, the conditional independence implication problem was later shown undecidable by the same author: [conditional independence implication is undecidable](conditional-independence-implication-is-undecidable.md) (IEEE Trans. Inform. Theory 69 (2023) 3493–3510). If every variable has bounded cardinality the implication problem is decidable.
 
 ## Depends on
 
 - [Conditional independence for a finite weight](../../../Probability/random-fields/conditional-independence-on-finite-configuration/cond-indep.md)
 - [Conditional mutual information of a finite joint law](../../entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
