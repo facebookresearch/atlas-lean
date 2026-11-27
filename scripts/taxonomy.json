@@ -18220,7 +18220,6 @@
   "WantedExt/TheoryOfComputation/BlumUnion": {"to": "TheoryOfComputation/hierarchy-theorems-and-barriers", "title": "The McCreight–Meyer union theorem"},
   "WantedExt/TheoryOfComputation/BuchiArithmeticDecidabilityWanted": {"to": "TheoryOfComputation/decision-procedures", "title": "Decidability of Büchi arithmetic"},
   "WantedExt/TheoryOfComputation/BuchiComplementationWanted": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Rank-based Büchi complementation with an explicit state bound"},
-  "WantedExt/TheoryOfComputation/BuchiLinearEmptinessWanted": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Emptiness of Büchi automata"},
   "WantedExt/TheoryOfComputation/BusyBeaverWanted": {"to": "TheoryOfComputation/computability", "title": "Busy beaver"},
   "WantedExt/TheoryOfComputation/CSGToLBA": {"to": "TheoryOfComputation/context-sensitive-languages", "title": "From context-sensitive grammars to linear bounded automata"},
   "WantedExt/TheoryOfComputation/CSLMembership": {"to": "TheoryOfComputation/context-sensitive-languages", "title": "Decidability of context-sensitive membership"},
