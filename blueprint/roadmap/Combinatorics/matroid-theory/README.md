@@ -24,4 +24,5 @@ degree one.
 - [Stable polynomials](../../Algebra/zeros-of-polynomials/stable-polynomials/README.md): the
   homogeneous stable polynomials with nonnegative coefficients are Lorentzian.
 - [Tropical varieties](../../AlgebraicGeometry/varieties-and-projective-geometry/tropical-varieties/README.md):
+- [Representability of matroids](representability-of-matroids/README.md)
   the Bergman fan of a matroid is a tropical linear space.
