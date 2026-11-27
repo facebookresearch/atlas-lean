@@ -38,6 +38,7 @@ public import MathlibExt.NumberTheory.SZumkellerHarmonicMeanSqLeOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
 public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
+public import MathlibExt.NumberTheory.SZumkellerCardUnitaryDivisorsOfIsUnitarySZumkeller
 public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
 public import MathlibExt.NumberTheory.SZumkellerEightLeCardPrimeFactorsOfIsSZumkellerOdd
 public import MathlibExt.NumberTheory.SZumkellerTwelveLeCardDivisorsOfIsSZumkeller
@@ -64,19 +65,6 @@ Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 8. -/
 public theorem_wanted le_of_isSZumkeller_odd_three_dvd (n : ℕ) (h : IsSZumkeller n)
     (ho : Odd n) (h3 : 3 ∣ n) : 12442607161209225 ≤ n
-
-/-- **Unitary divisor counts of unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
-number and let $q$ be the least unitary divisor of $n$ greater than $1$. If $q = 2$, then $n$ has
-more than $2^6$ unitary divisors; if $q = 3$ or $q = 4$, then $n$ has more than $2^2$ unitary
-divisors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 12. -/
-public theorem_wanted card_unitaryDivisors_of_isUnitarySZumkeller (n q : ℕ)
-    (h : IsUnitarySZumkeller n) (hq : IsLeast {d | d ∈ Nat.unitaryDivisors n ∧ 1 < d} q) :
-    (q = 2 → 2 ^ 6 < (Nat.unitaryDivisors n).card) ∧
-      (q = 3 → 2 ^ 2 < (Nat.unitaryDivisors n).card) ∧
-      (q = 4 → 2 ^ 2 < (Nat.unitaryDivisors n).card)
 
 end
 
