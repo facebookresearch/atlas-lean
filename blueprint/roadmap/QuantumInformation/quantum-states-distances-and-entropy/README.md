@@ -9,3 +9,4 @@
 - [Peres PPT necessary condition](peres-ppt-necessary-condition.md)
 - [Separable states: convexity, entangled mixed states and Schmidt rank one](remaining-clauses-of-separable-states.md)
 - [Trace distance: metric, operational form and contractivity](remaining-clauses-of-trace-distance-and-contractivity.md)
+- [Shadow Tomography and Classical Shadows](classical-shadows-and-shadow-tomography/README.md)

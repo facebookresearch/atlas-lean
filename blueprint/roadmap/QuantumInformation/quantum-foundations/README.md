@@ -21,3 +21,4 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)
 
 - [Exact universality of CNOT and single-qubit gates](exact-universality-of-cnot-and-single-qubit-gates.md)
+- [Tsirelson's Problem and the Connes Embedding Conjecture](tsirelson-problem-and-connes-embedding/README.md)
