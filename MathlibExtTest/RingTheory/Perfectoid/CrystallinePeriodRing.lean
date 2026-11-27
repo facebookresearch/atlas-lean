@@ -40,7 +40,34 @@ example : PadicComplexInt.toBDeRhamPlus (PadicComplexInt.ker_fontaineTheta_eq_sp
       (PadicComplexInt.algebraMap_mem_ker_fontaineThetaInvertP p
         (PadicComplexInt.fontaineTheta_xi p))
       (PadicComplexInt.dividedPowerSeries p 1) :=
-  PadicComplexInt.toBDeRhamPlus_ofRestricted _ _ _
+  PadicComplexInt.toBDeRhamPlus_ofRestricted _ _
+
+-- A generator of the kernel of `θ` lies in the kernel of `θ` with `p` inverted.
+example : algebraMap 𝔸 (Localization.Away (p : 𝔸)) (PadicComplexInt.xi p) ∈
+    RingHom.ker (fontaineThetaInvertP 𝓞_ℂ_[p] p) :=
+  PadicComplexInt.algebraMap_mem_ker_of_ker_eq_span
+    (PadicComplexInt.ker_fontaineTheta_eq_span_xi p)
+
+-- The image is the set of values at `ξ` of the divided-power series of the restricted series.
+example : Set.range (PadicComplexInt.toBDeRhamPlus
+      (PadicComplexInt.ker_fontaineTheta_eq_span_xi p)) =
+    {y | ∃ f ∈ PadicComplexInt.restrictedPowerSeries p,
+      y = PadicComplexInt.evalBDeRhamPlus p
+        (PadicComplexInt.algebraMap_mem_ker_fontaineThetaInvertP p
+          (PadicComplexInt.fontaineTheta_xi p))
+        (PadicComplexInt.dividedPowerSeries p f)} :=
+  PadicComplexInt.range_toBDeRhamPlus _
+
+-- Fontaine's theorem at `ξ` needs only that `ξ` generates the kernel of `θ`.
+example : ∃ j : PadicComplexInt.CrystallineCompletion p (PadicComplexInt.xi p) →+*
+      BDeRhamPlus 𝓞_ℂ_[p] p, Function.Injective j ∧
+      Set.range j = {y | ∃ f ∈ PadicComplexInt.restrictedPowerSeries p,
+        y = PadicComplexInt.evalBDeRhamPlus p
+          (PadicComplexInt.algebraMap_mem_ker_fontaineThetaInvertP p
+            (PadicComplexInt.fontaineTheta_xi p))
+          (PadicComplexInt.dividedPowerSeries p f)} :=
+  (PadicComplexInt.exists_injective_crystallineCompletion_bDeRhamPlus
+    (PadicComplexInt.ker_fontaineTheta_eq_span_xi p)).imp fun _ h => ⟨h.1, h.2.2⟩
 
 example : ∃ j : PadicComplexInt.CrystallineCompletion p (PadicComplexInt.xi p) →+*
       BDeRhamPlus 𝓞_ℂ_[p] p, Function.Injective j :=
