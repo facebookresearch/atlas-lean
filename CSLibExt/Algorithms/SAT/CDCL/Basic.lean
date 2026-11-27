@@ -62,7 +62,7 @@ correctness of satisfiable answers are out of scope.
 - `not_cnfSat_of_reachable_nil_mem`, `not_cnfSat_of_reachable_conflict_nil`: a reachable state
   that has learned the empty clause, or whose conflict clause is empty, refutes the input.
 - `not_cnfSat_of_reachable_conflict`: a reachable state in conflict whose trail has no
-  decision refutes the input; CDCL reports unsatisfiability on such a conflict.
+  decision refutes the input, so it is sound to report unsatisfiability in such a state.
 
 ## References
 
@@ -123,8 +123,9 @@ structure State where
 /-- The initial state: an empty trail, no learned clauses, and no conflict. -/
 def State.initial : State := ⟨[], [], none⟩
 
-/-- Resolve a reason clause containing `literal` with a conflict clause containing the
-complement of `literal`, on the variable of `literal`. -/
+/-- Resolve `reason` with `conflict` on the variable of `literal`: drop the pivot from the reason
+and its complement from the conflict, keeping order and multiplicity; the reason comes first for a
+positive pivot and the conflict first for a negative one. Total: no occurrence is required. -/
 def resolveOn : Nat × Bool → CNFClause → CNFClause → CNFClause
   | (x, true), reason, conflict => CNFClause.resolvent x reason conflict
   | (x, false), reason, conflict => CNFClause.resolvent x conflict reason
@@ -157,8 +158,8 @@ inductive Step (F : CNF) : State → State → Prop
   | decide {trail : List TrailEntry} {learned : CNF} {literal : Nat × Bool}
       (hvar : literal.1 ∈ F.vars) (hfree : ¬Assigns trail literal.1) :
       Step F ⟨trail, learned, none⟩ ⟨.decided literal :: trail, learned, none⟩
-  /-- Unit propagation: every literal of a current clause other than `literal` is false on the
-  trail, and the variable of `literal` is unassigned. -/
+  /-- Unit propagation: `literal ∈ clause` for a current clause, every literal of the clause other
+  than `literal` is false on the trail, and the variable of `literal` is unassigned. -/
   | propagate {trail : List TrailEntry} {learned : CNF} {clause : CNFClause}
       {literal : Nat × Bool} (hclause : clause ∈ F ++ learned) (hlit : literal ∈ clause)
       (hrest : ∀ m ∈ clause, m ≠ literal → Falsifies trail m)
@@ -180,11 +181,11 @@ inductive Step (F : CNF) : State → State → Prop
       {reason conflict : CNFClause} (hcompl : (literal.1, !literal.2) ∉ conflict) :
       Step F ⟨.propagated literal reason :: trail, learned, some conflict⟩
         ⟨trail, learned, some conflict⟩
-  /-- Backjump: learn the conflict clause, cut the trail back to a suffix `kept` on which every
-  literal of the clause other than `literal` is false and the variable of `literal` is
-  unassigned, and propagate `literal` with the learned clause as its reason. The conflict
-  clause comes from the input or learned clauses by `resolve` steps, so it is
-  resolution-derivable from the input (`Invariant.conflict`). -/
+  /-- Backjump: for `literal`, a literal of the conflict clause, learn the conflict clause, cut
+  the trail back to a suffix `kept` on which every literal of the clause other than `literal` is
+  false and the variable of `literal` is unassigned, and propagate `literal` with the learned
+  clause as its reason. The conflict clause comes from the input or learned clauses by `resolve`
+  steps, so it is resolution-derivable from the input (`Invariant.conflict`). -/
   | backjump {dropped kept : List TrailEntry} {learned : CNF} {conflict : CNFClause}
       {literal : Nat × Bool} (hlit : literal ∈ conflict)
       (hrest : ∀ m ∈ conflict, m ≠ literal → Falsifies kept m)
@@ -365,7 +366,7 @@ theorem not_cnfSat_of_reachable_conflict_nil {F : CNF} {s : State}
   CNF.not_cnfSat_of_resolutionDerivable_nil ((invariant_of_reachable h).conflict [] hs).1
 
 /-- **Soundness of CDCL**: a reachable state in conflict whose trail has no decision refutes
-the input formula. CDCL reports unsatisfiability on such a conflict. -/
+the input formula. It is therefore sound to report unsatisfiability in this state. -/
 theorem not_cnfSat_of_reachable_conflict {F : CNF} {s : State} {C : CNFClause}
     (h : Relation.ReflTransGen (Step F) State.initial s) (hs : s.conflict = some C)
     (hdec : ∀ literal, TrailEntry.decided literal ∉ s.trail) : ¬CNFSat F := by

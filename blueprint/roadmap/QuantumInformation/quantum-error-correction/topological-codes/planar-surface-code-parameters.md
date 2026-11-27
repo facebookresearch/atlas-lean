@@ -18,7 +18,7 @@ the two rough (respectively smooth) boundaries, and the stabilizer distance crit
 ## Proof depends on
 
 - [Pauli operators commute exactly when their symplectic product vanishes](../stabilizer-formalism/pauli-operators-commute-iff-symplectic-product-vanishes.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md)
 
 ## Sources

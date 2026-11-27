@@ -27,11 +27,13 @@ Science and Computational Biology, Cambridge University Press, 1997, Ch. 1.
 
 namespace Cslib.Bioinformatics.Assembly.StringOverlap
 
-/-- `OverlapMatch a b k`: `k` is a valid overlap length for `a`, `b`. -/
+/-- `OverlapMatch a b k`: `k ≤ min |a| |b|` and the length-`k` suffix of `a` equals the length-`k`
+prefix of `b`. -/
 def OverlapMatch {α : Type*} [DecidableEq α] (a b : List α) (k : Nat) : Prop :=
   k ≤ a.length ∧ k ≤ b.length ∧ a.drop (a.length - k) = b.take k
 
-/-- Search candidate overlap lengths `0 .. n`, largest first. -/
+/-- The greatest `k ≤ n` with `OverlapMatch a b k`, searching from `n` down; `0` if none is
+positive. -/
 def overlapAux {α : Type*} [DecidableEq α] (a b : List α) : Nat → Nat
   | 0 => 0
   | (n + 1) =>
@@ -232,7 +234,8 @@ def mergeLenStep {α : Type*} [DecidableEq α] (p : List α × Nat) (s : List α
     List α × Nat :=
   (merge p.1 s, p.2 + s.length - overlap p.1 s)
 
-/-- The tracked length equals the actual folded length. -/
+/-- Starting from `(init, init.length)`, the tracked length equals the length of the fold of
+`merge` from `init`. -/
 theorem foldl_mergeLenStep_snd {α : Type*} [DecidableEq α] (l : List (List α)) :
     ∀ (init : List α),
       (l.foldl mergeLenStep (init, init.length)).2 =

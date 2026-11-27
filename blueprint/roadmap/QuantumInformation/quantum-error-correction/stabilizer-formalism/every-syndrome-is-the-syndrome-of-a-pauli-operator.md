@@ -21,7 +21,7 @@ orthogonal and fill the $2^n$-dimensional space, so the code has dimension $2^{n
 
 ## Background
 
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

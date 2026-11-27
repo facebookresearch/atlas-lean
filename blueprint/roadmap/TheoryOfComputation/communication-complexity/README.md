@@ -3,6 +3,7 @@
 Yao's two-party model: deterministic protocols as trees, the rectangle lemma, fooling-set and rank lower bounds, the deterministic complexity of equality, the log-rank conjecture, and randomized protocols with public or private coins (Newman's theorem). Yao's minimax principle for randomized algorithms in general goes to Randomized, interactive and quantum complexity.
 
 - [Deterministic communication protocols](deterministic-communication-protocols/README.md)
+- [Fooling sets and rectangle covers](fooling-sets-and-rectangle-covers/README.md)
 - [Randomized communication protocols](randomized-communication-protocols/README.md)
 - [Randomized and DAG-like Lifting](randomized-and-dag-like-lifting/README.md)
 

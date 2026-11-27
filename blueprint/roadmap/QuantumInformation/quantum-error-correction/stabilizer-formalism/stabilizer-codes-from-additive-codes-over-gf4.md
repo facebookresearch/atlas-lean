@@ -33,7 +33,7 @@ $\mathrm{GF}(4)$; Calderbank, Rains, Shor and Sloane state it with $|C| = 2^k$ a
 ## Proof depends on
 
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

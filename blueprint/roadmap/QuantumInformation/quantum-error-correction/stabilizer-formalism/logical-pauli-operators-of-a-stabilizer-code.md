@@ -21,7 +21,7 @@ maximal commuting set and choose $\bar X_i$ by symplectic Gram–Schmidt, so tha
 
 - [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md)
 - [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Proof depends on
 

@@ -6,8 +6,6 @@ Topics added since this subject's fields were last revised.
 
 - [AEP](part-01/aep/README.md)
 - [AWGNConverse](part-01/awgnconverse/README.md)
-- [Bounded Distance BSC](part-01/bounded-distance-bsc/README.md)
-- [Codec Instances](part-01/codec-instances/README.md)
 - [Gaussian Channel Log Det](part-01/gaussian-channel-log-det/README.md)
 - [Gaussian Distortion Converse](part-01/gaussian-distortion-converse/README.md)
 - [Gaussian Distortion Feasibility](part-01/gaussian-distortion-feasibility/README.md)

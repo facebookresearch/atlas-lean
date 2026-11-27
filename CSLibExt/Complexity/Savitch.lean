@@ -72,8 +72,8 @@ def reachIn (R : C → C → Prop) [DecidableRel R] : ℕ → C → C → Bool
   | 0, x, y => decide (x = y ∨ R x y)
   | k + 1, x, y => decide (∃ z, reachIn R k x z = true ∧ reachIn R k z y = true)
 
-/-- Soundness: if the Savitch predicate accepts, a path of length
-at most `2 ^ k` exists. -/
+/-- Soundness: if the Savitch predicate accepts `(x, y)` at level `k`, a path from `x` to `y` of
+at most `2 ^ k` steps of `R` exists. -/
 theorem reachIn_sound {R : C → C → Prop} [DecidableRel R]
     (k : ℕ) (x y : C) (h : reachIn R k x y = true) :
     ∃ n ≤ 2 ^ k, Relation.RelatesInSteps R x y n := by
@@ -91,8 +91,8 @@ theorem reachIn_sound {R : C → C → Prop} [DecidableRel R]
       have hpow : 2 ^ (k + 1) = 2 ^ k * 2 := pow_succ 2 k
       exact ⟨n1 + n2, by omega, p1.trans p2⟩
 
-/-- Completeness: if a path of length at most `2 ^ k` exists,
-the Savitch predicate accepts. -/
+/-- Completeness: if a path from `x` to `y` of at most `2 ^ k` steps of `R` exists, the Savitch
+predicate accepts `(x, y)` at level `k`. -/
 theorem reachIn_complete {R : C → C → Prop} [DecidableRel R]
     (k : ℕ) {x y : C} {n : ℕ} (hn : n ≤ 2 ^ k)
     (hpath : Relation.RelatesInSteps R x y n) :

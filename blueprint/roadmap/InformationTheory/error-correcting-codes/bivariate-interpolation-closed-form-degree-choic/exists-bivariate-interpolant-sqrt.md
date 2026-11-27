@@ -1,0 +1,3 @@
+# A bivariate interpolant of degree about the square root of 2(k − 1)n
+
+Over a field, for any `n` points `(α_i, y_i)` and `k ≥ 2`, there is a nonzero bivariate polynomial `Q` of `(1, k - 1)`-weighted degree at most `⌈√(2 (k - 1) n)⌉` with `Q(α_i, y_i) = 0` for every `i`. The degree $\lceil\sqrt{2(k-1)n}\rceil$ satisfies, with multiplicity $r = 1$ and weight $k - 1$, the condition $n\binom{r+1}{2} < l(l+2)/(2(k-1))$ of V. Guruswami and M. Sudan, [*Improved Decoding of Reed–Solomon and Algebraic-Geometry Codes*](https://people.csail.mit.edu/madhu/papers/1998/venkat-journ.pdf), Lemma 6; for $n = 0$ the statement is trivial.

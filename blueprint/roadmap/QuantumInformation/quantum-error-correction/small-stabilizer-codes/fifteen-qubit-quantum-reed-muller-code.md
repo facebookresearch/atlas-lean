@@ -20,7 +20,7 @@ distance $3$, the least weight of a Hamming codeword outside $L_2$.
 - [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
 - [Linear code](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md)
 - [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 - [CSS codeword](../css-codes/codeword.md)
 - [Logical Pauli operators of a stabilizer code](../stabilizer-formalism/logical-pauli-operators-of-a-stabilizer-code.md)
 

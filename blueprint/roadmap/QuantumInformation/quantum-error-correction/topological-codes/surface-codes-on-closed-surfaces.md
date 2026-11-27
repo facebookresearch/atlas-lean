@@ -26,7 +26,7 @@ exponent $2$), generalising the
 ## Informally uses
 
 - [Logical operators of the toric code](logical-operators-of-the-toric-code.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

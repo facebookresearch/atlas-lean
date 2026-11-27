@@ -2,6 +2,7 @@
 
 Functions from {0,1}^n to {0,1}: counting monotone, self-dual and unate Boolean functions and Dedekind numbers, enumeration of k-SAT functions, noise stability and juntas, and parity and small-bias counts over finite fields.
 
+- [Certificates from decision-tree computation paths](certificates-from-decision-tree-computation-path/README.md)
 - [Dedekind numbers](dedekind-numbers/README.md)
 - [Enumeration of k-SAT functions](enumeration-of-k-sat-functions/README.md)
 - [Junta approximation of monotone Boolean functions](junta-approximation-of-monotone-boolean-function/README.md)

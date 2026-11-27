@@ -1,0 +1,3 @@
+# Resolution on a literal
+
+For a literal $\ell = (x, p)$ and clauses $R$ (the reason) and $C$ (the conflict), given as lists of literals, the resolvent is a total operation on lists: for a positive pivot ($p$ true) it is $R$ with every occurrence of $(x, \mathrm{true})$ removed, followed by $C$ with every occurrence of $(x, \mathrm{false})$ removed; for a negative pivot it is $C$ with every $(x, \mathrm{true})$ removed followed by $R$ with every $(x, \mathrm{false})$ removed. Order and multiplicity are preserved, and the result is defined even when the pivot does not occur. The [derivability theorem](resolution-derivable-resolve-on.md) needs $\ell \in R$ and its complement in $C$.

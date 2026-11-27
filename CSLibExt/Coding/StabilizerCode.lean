@@ -27,7 +27,8 @@ namespace Cslib.CodingTheory.StabilizerCode
 
 set_option autoImplicit false
 
-/-- The `j`-th signed Pauli generator. -/
+/-- The `j`-th generator `c j • X^(a j) Z^(b j)`, a Pauli operator scaled by an arbitrary complex
+number. -/
 noncomputable def generator {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ) (j : Fin r) :
     Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   c j • pauli (a j) (b j)
@@ -37,7 +38,9 @@ noncomputable def groupElem {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : 
     (T : Finset (Fin r)) : Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   (List.ofFn fun j => if j ∈ T then generator a b c j else 1).prod
 
-/-- The stabilizer group as a finset of subset products. -/
+/-- The finite set of distinct index-ordered subset products of the generators; it is the group
+they generate when the generators are commuting involutions (the stabilizer group of a nonzero
+code needs in addition that `-1` is not in it). -/
 noncomputable def stabilizerGroup {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ) :
     Finset (Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ) := by
   classical
@@ -48,7 +51,8 @@ noncomputable def codeSpace {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : 
     Submodule ℂ ((Fin n → ZMod 2) → ℂ) :=
   ⨅ j, LinearMap.ker (Matrix.toLin' (generator a b c j) - LinearMap.id)
 
-/-- The group-average projector onto the code space. -/
+/-- The average of the distinct subset products of the generators; for commuting involutions it
+is the orthogonal projector onto the code space. -/
 noncomputable def codeProjector {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ) :
     Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   ((stabilizerGroup a b c).card : ℂ)⁻¹ • ∑ s ∈ stabilizerGroup a b c, s
@@ -70,7 +74,7 @@ private theorem ofFn_prod_mul {M : Type*} [Monoid M] {r : ℕ} (f g h : Fin r �
       ih _ _ _ (fun i => hp i.succ) (fun i j => hc i.succ j.succ)
     rw [Commute.mul_mul_mul_comm hmid _ _, hp 0, hIH]
 
-/-- Subset products multiply by symmetric difference. -/
+/-- For commuting involutive generators, subset products multiply by symmetric difference. -/
 theorem groupElem_mul {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k)) (T T' : Finset (Fin r)) :
@@ -666,7 +670,8 @@ private theorem trace_pauli_eq_zero_of_ne {n : ℕ} (A B : Fin n → ZMod 2)
       exact hsum
     · exact hcase A hA0
 
-/-- Independent generators give `2 ^ r` distinct products. -/
+/-- Commuting involutive generators with linearly independent binary labels give `2 ^ r`
+distinct products. -/
 theorem card_stabilizerGroup {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k))
@@ -689,7 +694,7 @@ theorem card_stabilizerGroup {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c :
   rw [hG, Finset.card_image_of_injective _ hinj, Finset.card_univ, Fintype.card_finset,
     Fintype.card_fin]
 
-/-- The code projector is Hermitian. -/
+/-- For commuting involutive generators, the code projector is Hermitian. -/
 theorem conjTranspose_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k)) :
@@ -710,7 +715,7 @@ theorem conjTranspose_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 
   congr 1
   exact Finset.sum_congr rfl (fun s hs => hH s hs)
 
-/-- The code projector is idempotent. -/
+/-- For commuting involutive generators, the code projector is idempotent. -/
 theorem codeProjector_mul_self {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k)) :
@@ -743,7 +748,7 @@ theorem codeProjector_mul_self {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c
     _ = ((stabilizerGroup a b c).card : ℂ)⁻¹ * 1 := by rw [inv_mul_cancel₀ hN]
     _ = ((stabilizerGroup a b c).card : ℂ)⁻¹ := mul_one _
 
-/-- The code projector projects onto the code space. -/
+/-- For commuting involutive generators, the range of the code projector is the code space. -/
 theorem range_toLin'_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k)) :
@@ -817,7 +822,8 @@ theorem range_toLin'_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2
     rw [← hPy]
     exact LinearMap.mem_range.mpr ⟨y, rfl⟩
 
-/-- Commuting independent signed Pauli generators number at most `n`. -/
+/-- Commuting involutive generators with linearly independent binary labels number at most
+`n`. -/
 theorem le_of_linearIndependent {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k))
@@ -857,7 +863,8 @@ theorem le_of_linearIndependent {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {
   rw [Fintype.card_fin] at hdual
   omega
 
-/-- The trace of the code projector is `2 ^ (n - r)`. -/
+/-- For commuting involutive generators with linearly independent binary labels, the trace of
+the code projector is `2 ^ (n - r)`. -/
 theorem trace_codeProjector {n r : ℕ} {a b : Fin r → Fin n → ZMod 2} {c : Fin r → ℂ}
     (hsq : ∀ j, generator a b c j * generator a b c j = 1)
     (hcomm : ∀ j k, Commute (generator a b c j) (generator a b c k))

@@ -14,7 +14,7 @@ is not a CSS code.
 ## Depends on
 
 - [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 - [Logical Pauli operators of a stabilizer code](../stabilizer-formalism/logical-pauli-operators-of-a-stabilizer-code.md)
 - [CSS codeword](../css-codes/codeword.md)
 
