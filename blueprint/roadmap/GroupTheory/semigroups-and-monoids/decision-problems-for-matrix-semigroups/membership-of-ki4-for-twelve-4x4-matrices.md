@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-The proof follows Bell and Potapov's coding of the Post correspondence problem, with words of a free group represented by $2 \times 2$ integer matrices, applied to a Claus instance, so that the instance has a solution exactly when a product of generators equals $kI_4$ (Theorems 15 and 16 of the source). The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). Neither result has a page on main; a good expansion links both.
+The proof follows Bell and Potapov's coding of the Post correspondence problem, with words of a free group represented by $2 \times 2$ integer matrices, applied to a Claus instance, so that the instance has a solution exactly when a product of generators equals $kI_4$ (Theorems 15 and 16 of the source). The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). A good expansion links both.
 
 ## Sources
 

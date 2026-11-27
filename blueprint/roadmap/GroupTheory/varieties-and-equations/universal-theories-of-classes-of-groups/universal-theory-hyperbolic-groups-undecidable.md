@@ -17,12 +17,12 @@ By contrast, the universal theory of each single hyperbolic group is decidable (
 
 ## Proof depends on
 
-- [The universal theory of groups of a fixed large odd composite exponent is undecidable](universal-theory-torsion-classes-undecidable.md)
+None.
 
 ## Expansion
 
-Every hyperbolic group is residually torsion of bounded exponent (from Olshanskii's results), so $\mathrm{Th}_\forall(\mathcal{T}) \subseteq \mathrm{Th}_\forall(\mathcal{H})$ for the class $\mathcal{T}$ of torsion groups, and $\mathrm{Th}_\forall(\mathcal{H}) \subseteq \mathrm{Th}_\forall(\mathcal{F})$ for finite groups; Slobodskoi's lemma (any theory between these two is undecidable) gives clause 1. For clause 2 the source takes a lacunary hyperbolic group into which every hyperbolic group embeds; lacunary hyperbolic groups satisfy every universal sentence true in all hyperbolic groups, so the two universal theories coincide.
+Every hyperbolic group is residually torsion of bounded exponent (Ivanov and Olshanskii), so by the source's Lemma 3.2 $\mathrm{Th}_\forall(\mathcal{T}) \subseteq \mathrm{Th}_\forall(\mathcal{H})$ for the class $\mathcal{T}$ of torsion groups, and $\mathrm{Th}_\forall(\mathcal{H}) \subseteq \mathrm{Th}_\forall(\mathcal{F})$ for the class $\mathcal{F}$ of finite groups, since finite groups are hyperbolic. Slobodskoi's lemma (Lemma 3.1 of the source: every theory $T$ with $\mathrm{Th}_\forall(\mathcal{T}) \subseteq T \subseteq \mathrm{Th}_\forall(\mathcal{F})$ is undecidable) gives clause 1. For clause 2 the source takes a lacunary hyperbolic group $G$ into which every hyperbolic group embeds (Proposition 3.5), so $\mathrm{Th}_\forall(G) \subseteq \mathrm{Th}_\forall(\mathcal{H})$, and Lemma 3.2 with Theorem 3.3 gives $\mathrm{Th}_\forall(\mathcal{H}) \subseteq \mathrm{Th}_\forall(G)$ for every lacunary hyperbolic group. A good expansion links pages for Slobodskoi's lemma, the residual torsion of hyperbolic groups and the embedding of all hyperbolic groups into one lacunary hyperbolic group.
 
 ## Sources
 
-- D. Osin, "On the universal theory of torsion and lacunary hyperbolic groups", Groups – Complexity – Cryptology 1 (2009), no. 2 (the publisher metadata records no page range), https://doi.org/10.1515/GCC.2009.311; read in arXiv:0903.3978v2 (Theorem 1.3 of arXiv:0903.3978v2).
+- D. Osin, "On the universal theory of torsion and lacunary hyperbolic groups", Groups – Complexity – Cryptology 1 (2009), no. 2 (the publisher metadata records no page range), https://doi.org/10.1515/GCC.2009.311; read in arXiv:0903.3978v2 (Theorem 1.3, Lemmas 3.1 and 3.2, Theorem 3.3 and Proposition 3.5 of arXiv:0903.3978v2).

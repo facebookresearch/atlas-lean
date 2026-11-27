@@ -8,6 +8,7 @@ Let $F$ be a free group of infinite rank $\varkappa$. The source proves that the
 
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 
 ## Proof depends on
 
@@ -15,7 +16,7 @@ None.
 
 ## Expansion
 
-The source interprets, inside $\mathrm{Aut}(F)$ by first-order formulas, the second-order logic of the cardinal $\varkappa$, which in particular interprets arithmetic; a structure that interprets the ring of integers has undecidable first-order theory, because the first-order theory of $(\mathbb{Z}, +, \cdot)$ is undecidable (a classical result of Church and Gödel with no page here).
+The source interprets, inside $\mathrm{Aut}(F)$ by first-order formulas, the second-order logic of the cardinal $\varkappa$, which in particular interprets arithmetic; a structure that interprets the ring of integers has undecidable first-order theory, because the first-order theory of $(\mathbb{Z}, +, \cdot)$ is undecidable (a classical result of Church and Gödel).
 
 ## Sources
 

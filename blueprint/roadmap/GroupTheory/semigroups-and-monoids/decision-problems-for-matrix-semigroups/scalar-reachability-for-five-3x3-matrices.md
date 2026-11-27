@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-The proof starts from the zero-in-the-corner construction for a Claus instance $(h, g)$ over $b_1, \dots, b_7$, in the stricter form asking for a solution $b_1 w b_7$ with $w \in \{b_2, \dots, b_6\}^+$ nonempty: the corner entry $(M_1 M_{j_2} \cdots M_{j_{i-1}} M_7)_{11}$ vanishes exactly for solutions. Moving the matrices $M_1$ and $M_7$ of the first and last letters into the vectors $x = (1, 0, 0) M_1$ and $y = M_7 (1, 0, 0)^{\mathsf{T}}$ leaves the five generators $M_2, \dots, M_6$ and the scalar $0$. The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). Neither result has a page on main; a good expansion links both.
+The proof starts from the zero-in-the-corner construction for a Claus instance $(h, g)$ over $b_1, \dots, b_7$, in the stricter form asking for a solution $b_1 w b_7$ with $w \in \{b_2, \dots, b_6\}^+$ nonempty: the corner entry $(M_1 M_{j_2} \cdots M_{j_{i-1}} M_7)_{11}$ vanishes exactly for solutions. Moving the matrices $M_1$ and $M_7$ of the first and last letters into the vectors $x = (1, 0, 0) M_1$ and $y = M_7 (1, 0, 0)^{\mathsf{T}}$ leaves the five generators $M_2, \dots, M_6$ and the scalar $0$. The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). A good expansion links both.
 
 ## Sources
 

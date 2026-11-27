@@ -11,6 +11,7 @@ By contrast, the first-order theory of non-abelian free groups is decidable (Kha
 - [Group](../../group-basics/group.md)
 - [Center of a group](../../group-basics/group-center.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ None.
 
 ## Expansion
 
-The main theorem of the source is that $\Gamma$ is bi-interpretable with the ring $\mathbb{Z}$ (Theorem 1.2). In particular $\Gamma$ interprets the ring of integers, and the first-order theory of every structure that interprets the ring of integers is undecidable, since the theory of $(\mathbb{Z}, +, \cdot)$ is undecidable (a classical result of Church and Gödel with no page here).
+The main theorem of the source is that $\Gamma$ is bi-interpretable with the ring $\mathbb{Z}$ (Theorem 1.2). In particular $\Gamma$ interprets the ring of integers, and the first-order theory of every structure that interprets the ring of integers is undecidable, since the theory of $(\mathbb{Z}, +, \cdot)$ is undecidable (a classical result of Church and Gödel).
 
 ## Sources
 

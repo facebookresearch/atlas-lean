@@ -6,7 +6,7 @@ An equation with constants over a group $G$ is $w(x_1, \dots, x_k) = 1$ with $w$
 
 The same method gives a finitely generated abelian-by-cyclic group $\mathcal{A} \rtimes \mathbb{Z}$ and elements $h_1, \dots, h_m$ such that it is undecidable, given $h_0$, whether there are $g_0, \dots, g_m$ with $(g_0 h_0 g_0^{-1})(g_1 h_1 g_1^{-1}) \cdots (g_m h_m g_m^{-1}) = 1$ (Theorem 1.4); so solving a single quadratic (spherical) equation is undecidable in this group, answering a problem of Lysenok and Ushakov.
 
-By contrast, systems of quadratic equations are decidable in $A \wr \mathbb{Z}$ and in $\mathrm{BS}(1, p)$ (results recalled in the source).
+By contrast, systems of quadratic equations are decidable in $A \wr \mathbb{Z}$ for every finitely generated abelian group $A$, and in $\mathrm{BS}(1, p)$ (results recalled in the source).
 
 ## Depends on
 

@@ -7,7 +7,7 @@ Let $N(p, q)$ be the free nilpotent group of step (class) $p \ge 2$ and rank $q 
 1. $\mathcal{EP}$ is undecidable in $N(2, q)$ for every $q \ge 2$, in particular in $H(\mathbb{Z})$ (Theorem 4);
 2. $\mathcal{EP}$ is undecidable in every free nilpotent group of step at least $3$ (Proposition 6).
 
-By contrast, there is an algorithm deciding any single equation in $H(\mathbb{Z})$, and more generally in every two-step nilpotent group with rank-one commutator subgroup (Theorem 3). Earlier results recalled in the source: Roman'kov exhibited a four-step nilpotent group of rank six with undecidable $\mathcal{EP}$, and $\mathcal{EP}$ is undecidable in $N(2, q)$ for $q$ large (Durnev) and in $N(3, 2)$ (Truss).
+By contrast, there is an algorithm deciding any single equation in $H(\mathbb{Z})$, and more generally in every finitely generated two-step nilpotent group whose commutator subgroup has rank one, that is, is virtually $\mathbb{Z}$ (Theorem 3). Earlier results recalled in the source: Roman'kov exhibited a four-step nilpotent group with undecidable $\mathcal{EP}$, and $\mathcal{EP}$ is undecidable in $N(2, q)$ for $q$ large (Durnev) and in $N(3, 2)$ (Truss).
 
 ## Depends on
 

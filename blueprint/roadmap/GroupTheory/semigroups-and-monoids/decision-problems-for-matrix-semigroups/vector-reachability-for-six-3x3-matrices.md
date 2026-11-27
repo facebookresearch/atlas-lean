@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-For a Claus instance $(h, g)$ over $b_1, \dots, b_7$, the start vector is $u = (\sigma(h(b_1)), \sigma(g(b_1)), 1)$, the generators are the encodings $\gamma(h(b_i), g(b_i))$ for $i = 2, \dots, 6$ and the encoding of $b_7$ multiplied by a fixed matrix $A$ that subtracts the two word codes, so that the zero vector is reached exactly when the instance has a solution. The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). Neither result has a page on main; a good expansion links both.
+For a Claus instance $(h, g)$ over $b_1, \dots, b_7$, the start vector is $u = (\sigma(h(b_1)), \sigma(g(b_1)), 1)$, the generators are the encodings $\gamma(h(b_i), g(b_i))$ for $i = 2, \dots, 6$ and the encoding of $b_7$ multiplied by a fixed matrix $A$ that subtracts the two word codes, so that the zero vector is reached exactly when the instance has a solution. The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). A good expansion links both.
 
 ## Sources
 

@@ -17,6 +17,7 @@ The case of deficiency one, $|R| = |A| - 1$, is left open in the source; there, 
 - [Metabelian groups](../../geometric-group-theory/permutation-stability/metabelian.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
+- [Varieties of groups](../axiomatizable-classes-of-groups/is-variety.md)
 
 ## Proof depends on
 
@@ -24,7 +25,7 @@ The case of deficiency one, $|R| = |A| - 1$, is left open in the source; there, 
 
 ## Expansion
 
-For clause 1, the 2-nilpotent quotient $G/\gamma_3(G)$ has the presentation $\langle A \mid R \rangle_{\mathcal{N}_2}$, again of full rank and deficiency at least two, so $\mathbb{Z}$ is interpretable by equations in $G/\gamma_3(G)$ by the nilpotent result (Theorem 3.8 of arXiv:2006.06371v1, quoting Garreta, Miasnikov and Ovchinnikov). In a finitely generated metabelian group every verbal subgroup has finite width, so $\gamma_3(G)$ is definable by equations and $G/\gamma_3(G)$ is interpretable in $G$ (Proposition 3.9); by transitivity $\mathbb{Z}$ is interpretable in $G$, and the undecidability of $\mathcal{D}(\mathbb{Z})$ gives clause 1. For clause 2, $G$ is virtually abelian by the structure theorem for full-rank metabelian presentations (Theorem 1.1), and the Diophantine problem of a finitely generated virtually abelian group is decidable (Ershov). A good expansion links the finite width of verbal subgroups of finitely generated metabelian groups (Romankov) and Ershov's decidability theorem for virtually abelian groups, which have no pages.
+For clause 1, the 2-nilpotent quotient $G/\gamma_3(G)$ has the presentation $\langle A \mid R \rangle_{\mathcal{N}_2}$, again of full rank and deficiency at least two, so $\mathbb{Z}$ is interpretable by equations in $G/\gamma_3(G)$ by the nilpotent result (Theorem 3.8 of arXiv:2006.06371v1, quoting Garreta, Miasnikov and Ovchinnikov). In a finitely generated metabelian group every verbal subgroup has finite width, so $\gamma_3(G)$ is definable by equations and $G/\gamma_3(G)$ is interpretable in $G$ (Proposition 3.9); by transitivity $\mathbb{Z}$ is interpretable in $G$, and the undecidability of $\mathcal{D}(\mathbb{Z})$ gives clause 1. For clause 2, $G$ is virtually abelian by the structure theorem for full-rank metabelian presentations (Theorem 1.1), and the Diophantine problem of a finitely generated virtually abelian group is decidable (Ershov). A good expansion links the finite width of verbal subgroups of finitely generated metabelian groups (Romankov) and Ershov's decidability theorem for virtually abelian groups.
 
 ## Sources
 

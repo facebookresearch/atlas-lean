@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-Collins's proof starts from computably enumerable sets of the given degrees and builds a finitely presented group from them with the embedding techniques of combinatorial group theory (free products with amalgamation, HNN extensions and embeddings of recursively presented groups into finitely presented ones), controlling the degrees of the word and conjugacy problems along the way; none of these tools has a page here. The case $W = 0$, $C = 0'$ gives a finitely presented group with solvable word problem and unsolvable conjugacy problem.
+Collins's proof starts from computably enumerable sets of the given degrees and builds a finitely presented group from them with the embedding techniques of combinatorial group theory (free products with amalgamation, HNN extensions and embeddings of recursively presented groups into finitely presented ones), controlling the degrees of the word and conjugacy problems along the way. The case $W = 0$, $C = 0'$ gives a finitely presented group with solvable word problem and unsolvable conjugacy problem.
 
 ## Sources
 

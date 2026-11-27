@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-Words over a three-letter alphabet are encoded by an injective map $\sigma$ into the integers, and pairs of words $(u, v)$ by $3 \times 3$ integer matrices built from $3^{|u|}$, $3^{|v|}$, $\sigma(u)$ and $\sigma(v)$, so that products of matrices encode concatenations of pairs and a suitable entry of a product vanishes exactly when the two encoded words are equal. The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). Neither result has a page on main; a good expansion links both.
+Words over a three-letter alphabet are encoded by an injective map $\sigma$ into the integers, and pairs of words $(u, v)$ by $3 \times 3$ integer matrices built from $3^{|u|}$, $3^{|v|}$, $\sigma(u)$ and $\sigma(v)$, so that products of matrices encode concatenations of pairs and a suitable entry of a product vanishes exactly when the two encoded words are equal. The proof reduces the Post correspondence problem restricted to Claus instances, whose undecidability for seven letters the source derives from a three-rule semi-Thue system with undecidable individual word problem (Matiyasevich and Sénizergues) through Claus's construction (Theorems 3, 5 and 6 of the source). A good expansion links both.
 
 ## Sources
 
