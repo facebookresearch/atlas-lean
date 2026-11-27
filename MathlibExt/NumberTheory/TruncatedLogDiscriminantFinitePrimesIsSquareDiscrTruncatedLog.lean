@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.TruncatedLogDiscriminant
 import all MathlibExt.NumberTheory.TruncatedLogDiscriminant
+import MathlibExt.Analysis.Complex.EnestromKakeya
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.FieldTheory.Finite.Basic
@@ -216,31 +217,8 @@ private lemma dvd_excR_of_resultant_eq_zero {m q : ℕ} (hq : q.Prime) (hm : 1 �
   rw [hdegeq, h0, mul_zero] at hR
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hR
 
-private noncomputable def auxPolyC (m : ℕ) : ℂ[X] :=
-  C ((m : ℂ)⁻¹) + ∑ j ∈ Finset.Icc 1 (m - 1), C ((j : ℂ)⁻¹) * X ^ j
-
-private noncomputable def remPolyC (m : ℕ) : ℂ[X] :=
-  ∑ j ∈ Finset.Icc 2 (m - 1), C ((((j * (j - 1) : ℕ)) : ℂ)⁻¹) * X ^ j
-
 private noncomputable def redPolyC (m : ℕ) : ℂ[X] :=
   ∑ i ∈ Finset.Icc 1 m, C ((i : ℂ)⁻¹) * X ^ i
-
-private lemma auxPolyC_coeff (m j : ℕ) :
-    (auxPolyC m).coeff j =
-      if j = 0 then ((m : ℂ)⁻¹) else if j ≤ m - 1 then ((j : ℂ)⁻¹) else 0 := by
-  classical
-  by_cases h0 : j = 0
-  · subst j
-    simp [auxPolyC, coeff_X_pow, mul_ite, Finset.mem_Icc]
-  · obtain ⟨k, rfl⟩ : ∃ k, j = k + 1 := ⟨j - 1, by omega⟩
-    simp [auxPolyC, coeff_X_pow, mul_ite, Finset.mem_Icc]
-
-private lemma remPolyC_coeff (m j : ℕ) :
-    (remPolyC m).coeff j =
-      if 2 ≤ j ∧ j ≤ m - 1 then ((((j * (j - 1) : ℕ)) : ℂ)⁻¹) else 0 := by
-  classical
-  simp only [remPolyC, finsetSum_coeff, coeff_C_mul, coeff_X_pow, mul_ite, mul_one,
-    mul_zero, Finset.sum_ite_eq, Finset.mem_Icc]
 
 private lemma redPolyC_coeff (m j : ℕ) :
     (redPolyC m).coeff j =
@@ -252,183 +230,42 @@ private lemma redPolyC_coeff (m j : ℕ) :
   · have hj : 1 ≤ j := by omega
     simp [redPolyC, coeff_X_pow, mul_ite, Finset.mem_Icc, h0, hj]
 
-private lemma aux_key_identity {m : ℕ} (hm : 2 ≤ m) :
-    (1 - X) * auxPolyC m = (1 - X) * C ((m : ℂ)⁻¹) + X - C ((((m - 1 : ℕ)) : ℂ)⁻¹)
-      - remPolyC m + C ((((m - 1 : ℕ)) : ℂ)⁻¹) * (1 - X ^ m) := by
-  have hmC : (m : ℂ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
-  have hm1C : (((m - 1 : ℕ)) : ℂ) ≠ 0 := by exact_mod_cast (by omega : m - 1 ≠ 0)
-  ext j
-  simp only [sub_mul, one_mul, coeff_sub, coeff_add, auxPolyC_coeff, remPolyC_coeff,
-    coeff_X, coeff_one, coeff_X_pow, coeff_C, coeff_C_mul]
-  cases j with
-  | zero =>
-    simp only [coeff_X_mul_zero, ↓reduceIte, sub_zero]
-    split_ifs
-    all_goals (first | (exfalso; omega) | (field_simp; ring))
-  | succ k =>
-    have hk10 : k + 1 ≠ 0 := by omega
-    by_cases hk0 : k = 0
-    · subst k
-      simp only [coeff_X_mul, coeff_C, auxPolyC_coeff, hk10, ↓reduceIte]
-      split_ifs
-      all_goals (first | (exfalso; omega) | (field_simp; ring))
-    · have hkC : (k : ℂ) ≠ 0 := by exact_mod_cast hk0
-      have hk1C : ((k + 1 : ℕ) : ℂ) ≠ 0 := by exact_mod_cast hk10
-      have hkkC : ((((k + 1) * k : ℕ)) : ℂ) ≠ 0 := by
-        exact_mod_cast Nat.mul_ne_zero (by omega) hk0
-      have e : k + 1 - 1 = k := by omega
-      simp only [coeff_X_mul, coeff_C, auxPolyC_coeff, hk10, hk0, e, ↓reduceIte]
-      split_ifs
-      all_goals field_simp
-      all_goals try push_cast
-      all_goals (first | (exfalso; omega) | (rw [(by omega : m - 1 = k)]; ring) | ring)
-
-private lemma sum_inv_mul_pred {m : ℕ} (hm : 2 ≤ m) :
-    ∑ j ∈ Finset.Icc 2 (m - 1), ((((j * (j - 1) : ℕ)) : ℝ)⁻¹)
-      = 1 - ((((m - 1 : ℕ)) : ℝ)⁻¹) := by
-  induction m, hm using Nat.le_induction with
-  | base =>
-    have h21 : (2:ℕ) - 1 = 1 := by decide
-    rw [h21]
-    have hempty : Finset.Icc 2 (1:ℕ) = ∅ := by decide
-    rw [hempty, Finset.sum_empty]
-    norm_num
-  | succ n hn ih =>
-    have e2 : n + 1 - 1 = n := Nat.add_sub_cancel n 1
-    rw [e2]
-    have e : n = (n - 1) + 1 := (Nat.sub_add_cancel (by omega : 1 ≤ n)).symm
-    conv_lhs => rw [e]
-    rw [Finset.sum_Icc_succ_top (by omega : 2 ≤ (n - 1) + 1), ih, ← e]
-    have hnC : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
-    have hn1C : ((n - 1 : ℕ) : ℝ) ≠ 0 := by exact_mod_cast (by omega : n - 1 ≠ 0)
-    have hnnC : (((n * (n - 1) : ℕ)) : ℝ) ≠ 0 := by
-      exact_mod_cast Nat.mul_ne_zero (by omega) (by omega)
-    have hsub : (((n - 1 : ℕ)) : ℝ) = (n : ℝ) - 1 := by
-      rw [Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one]
-    field_simp
+private lemma redPolyC_ne_zero_of_pow {m : ℕ} (hm : 2 ≤ m) {θ : ℂ} (hpow : θ ^ m = 1) :
+    (redPolyC m).eval θ ≠ 0 := by
+  obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
+  have hn : 1 ≤ n := by omega
+  have hnorm : ‖θ‖ = 1 := Complex.norm_eq_one_of_pow_eq_one hpow (by omega)
+  have hθ : θ ≠ 0 := by
+    rintro rfl
+    simp at hnorm
+  -- `redPolyC (n + 1) = X * Q`, where `Q` has the coefficients `1 / (k + 1)` for `k ≤ n`.
+  let a : Fin (n + 1) → ℝ := fun k => ((k : ℕ) + 1 : ℝ)⁻¹
+  have hpos : ∀ k, 0 < a k := fun k => by positivity
+  have heval : (redPolyC (n + 1)).eval θ =
+      θ * (∑ k : Fin (n + 1), C ((a k : ℝ) : ℂ) * X ^ (k : ℕ)).eval θ := by
+    rw [redPolyC, eval_finsetSum, eval_finsetSum, sum_Icc_eq_range, Finset.mul_sum,
+      ← Fin.sum_univ_eq_sum_range]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    simp only [a, eval_mul, eval_C, eval_pow, eval_X]
     push_cast
-    rw [hsub]
     ring
-
-private lemma aux_ne_zero_of_pow {m : ℕ} (hm : 2 ≤ m) {θ : ℂ}
-    (hpow : θ ^ m = 1) (hne : θ ≠ 1) : (auxPolyC m).eval θ ≠ 0 := by
-  intro h0
-  have hmC : (m : ℂ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
-  have hm1C : (((m - 1 : ℕ)) : ℂ) ≠ 0 := by exact_mod_cast (by omega : m - 1 ≠ 0)
-  have hmR : (0:ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
-  have hm1R : (0:ℝ) < ((m - 1 : ℕ) : ℝ) := by exact_mod_cast (by omega : 0 < m - 1)
-  have hnorm1 : ‖θ‖ = 1 := Complex.norm_eq_one_of_pow_eq_one hpow (by omega : m ≠ 0)
-  set c : ℝ := ((m - 1 : ℕ) : ℝ) * (m : ℝ)⁻¹ with hc_def
-  set d : ℝ := (m : ℝ)⁻¹ * (((m - 1 : ℕ) : ℝ)⁻¹) with hd_def
-  have hc0 : 0 < c := by
-    rw [hc_def]
-    exact mul_pos hm1R (inv_pos.mpr hmR)
-  have hd0 : 0 < d := by
-    rw [hd_def]
-    exact mul_pos (inv_pos.mpr hmR) (inv_pos.mpr hm1R)
-  have hident := congrArg (Polynomial.eval θ) (aux_key_identity hm)
-  simp only [eval_sub, eval_add, eval_mul, eval_pow, eval_X, eval_C, eval_one] at hident
-  rw [h0, mul_zero, hpow, sub_self, mul_zero] at hident
-  have hrem : (remPolyC m).eval θ =
-      (1 - θ) * ((m : ℂ)⁻¹) + θ - ((((m - 1 : ℕ)) : ℂ)⁻¹) := by
-    linear_combination hident
-  have hrem2 : (remPolyC m).eval θ = ((c : ℝ) : ℂ) * θ - (((d : ℝ)) : ℂ) := by
-    rw [hrem, hc_def, hd_def]
+  rw [heval]
+  refine mul_ne_zero hθ fun hQ => ?_
+  -- Every adjacent ratio `(k + 2) / (k + 1)` exceeds one, so every zero of `Q` has norm
+  -- greater than one by the Eneström–Kakeya theorem.
+  have hlow := (MathlibExt.Analysis.Complex.EnestromKakeya.enestrom_kakeya_zero_localization
+    hn a hpos θ hQ).1
+  rw [hnorm] at hlow
+  have hgt : ∀ y ∈ Finset.image (fun k : Fin n => a k.castSucc / a k.succ) Finset.univ,
+      1 < y := by
+    intro y hy
+    obtain ⟨k, -, rfl⟩ := Finset.mem_image.mp hy
+    rw [one_lt_div (hpos _)]
+    simp only [a, Fin.val_castSucc, Fin.val_succ]
+    rw [inv_lt_inv₀ (by positivity) (by positivity)]
     push_cast
-    have hsubC : ((((m - 1 : ℕ))) : ℂ) = (m : ℂ) - 1 := by
-      rw [Nat.cast_sub (by omega : 1 ≤ m), Nat.cast_one]
-    field_simp
-    rw [hsubC]
-    ring
-  have hcd_eq : c - d = 1 - ((((m - 1 : ℕ)) : ℝ)⁻¹) := by
-    rw [hc_def, hd_def]
-    have e1 : (m : ℝ) ≠ 0 := hmR.ne'
-    have e2 : (((m - 1 : ℕ)) : ℝ) ≠ 0 := hm1R.ne'
-    have hsubR : (((m - 1 : ℕ)) : ℝ) = (m : ℝ) - 1 := by
-      rw [Nat.cast_sub (by omega : 1 ≤ m), Nat.cast_one]
-    field_simp
-    rw [hsubR]
-    ring
-  have hle : ‖(remPolyC m).eval θ‖ ≤ 1 - ((((m - 1 : ℕ)) : ℝ)⁻¹) := by
-    have heval : (remPolyC m).eval θ =
-        ∑ j ∈ Finset.Icc 2 (m - 1), ((((j * (j - 1) : ℕ)) : ℂ)⁻¹) * θ ^ j := by
-      rw [remPolyC, eval_finsetSum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [eval_mul, eval_C, eval_pow, eval_X]
-    rw [heval]
-    calc ‖∑ j ∈ Finset.Icc 2 (m - 1), ((((j * (j - 1) : ℕ)) : ℂ)⁻¹) * θ ^ j‖
-        ≤ ∑ j ∈ Finset.Icc 2 (m - 1), ‖((((j * (j - 1) : ℕ)) : ℂ)⁻¹) * θ ^ j‖ :=
-          norm_sum_le _ _
-      _ = ∑ j ∈ Finset.Icc 2 (m - 1), ((((j * (j - 1) : ℕ)) : ℝ)⁻¹) := by
-          apply Finset.sum_congr rfl
-          intro j _
-          rw [norm_mul, norm_inv, Complex.norm_natCast, norm_pow, hnorm1, one_pow, mul_one]
-      _ = 1 - ((((m - 1 : ℕ)) : ℝ)⁻¹) := sum_inv_mul_pred hm
-  have hge : c - d ≤ ‖((c : ℝ) : ℂ) * θ - ((d : ℝ) : ℂ)‖ := by
-    have h := norm_sub_norm_le (((c:ℝ):ℂ) * θ) (((d:ℝ):ℂ))
-    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hc0, hnorm1, mul_one,
-      Complex.norm_real, Real.norm_eq_abs, abs_of_pos hd0] at h
-    exact h
-  have heq : ‖((c : ℝ) : ℂ) * θ - ((d : ℝ) : ℂ)‖ = c - d := by
-    have h2 : ‖(remPolyC m).eval θ‖ = ‖((c : ℝ) : ℂ) * θ - ((d : ℝ) : ℂ)‖ := by rw [hrem2]
-    linarith [hle, hge, hcd_eq, h2]
-  have hsq : ‖((c : ℝ) : ℂ) * θ - ((d : ℝ) : ℂ)‖ ^ 2 = (c - d) ^ 2 := by rw [heq]
-  rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply] at hsq
-  simp only [Complex.sub_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    Complex.sub_im, Complex.mul_im, zero_mul, sub_zero, add_zero] at hsq
-  have hnormθ2 : θ.re * θ.re + θ.im * θ.im = 1 := by
-    have h := congrArg (· ^ 2) hnorm1
-    rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply] at h
-    simpa using h
-  have hexpand : (c * θ.re - d) * (c * θ.re - d) + (c * θ.im) * (c * θ.im) - (c - d) ^ 2
-      = 2 * c * d * (1 - θ.re) + c ^ 2 * ((θ.re * θ.re + θ.im * θ.im) - 1) := by ring
-  have h0' : (c * θ.re - d) * (c * θ.re - d) + (c * θ.im) * (c * θ.im) - (c - d) ^ 2 = 0 := by
-    rw [hsq]; ring
-  rw [h0', hnormθ2] at hexpand
-  simp only [sub_self, mul_zero, add_zero] at hexpand
-  have hcd0 : 2 * c * d ≠ 0 := by positivity
-  have hre1 : θ.re = 1 := by
-    have h10 : 1 - θ.re = 0 := (mul_eq_zero.mp hexpand.symm).resolve_left hcd0
     linarith
-  have him0 : θ.im = 0 := by
-    have hI : θ.im * θ.im = 0 := by
-      have h := hnormθ2
-      rw [hre1] at h
-      linarith
-    rcases mul_eq_zero.mp hI with h | h <;> exact h
-  have hθ1 : θ = 1 := by
-    apply Complex.ext
-    · simpa using hre1
-    · simpa using him0
-  exact hne hθ1
-
-private lemma redPolyC_ne_zero_of_pow {m : ℕ} (hm : 2 ≤ m) {θ : ℂ}
-    (hpow : θ ^ m = 1) (hne : θ ≠ 1) : (redPolyC m).eval θ ≠ 0 := by
-  have hred : (redPolyC m).eval θ = (auxPolyC m).eval θ := by
-    have e1 : (redPolyC m).eval θ = ∑ i ∈ Finset.Icc 1 m, (((i : ℂ)⁻¹) * θ ^ i) := by
-      rw [redPolyC, eval_finsetSum]
-      apply Finset.sum_congr rfl
-      intro i _
-      rw [eval_mul, eval_C, eval_pow, eval_X]
-    have e2 : (auxPolyC m).eval θ
-        = ((m : ℂ)⁻¹) + ∑ j ∈ Finset.Icc 1 (m - 1), (((j : ℂ)⁻¹) * θ ^ j) := by
-      rw [auxPolyC, eval_add, eval_C, eval_finsetSum]
-      congr 1
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [eval_mul, eval_C, eval_pow, eval_X]
-    rw [e1, e2]
-    have hpeel : ∑ i ∈ Finset.Icc 1 m, (((i : ℂ)⁻¹) * θ ^ i)
-        = ∑ i ∈ Finset.Icc 1 (m - 1), (((i : ℂ)⁻¹) * θ ^ i)
-          + (((m : ℂ)⁻¹) * θ ^ m) := by
-      have e : m = (m - 1) + 1 := (Nat.sub_add_cancel (by omega : 1 ≤ m)).symm
-      conv_lhs => rw [e]
-      rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ (m - 1) + 1), ← e]
-    rw [hpeel, hpow, mul_one]
-    exact add_comm _ _
-  rw [hred]
-  exact aux_ne_zero_of_pow hm hpow hne
+  exact lt_irrefl _ (lt_of_lt_of_le ((Finset.lt_min'_iff _ _).mpr hgt) hlow)
 
 private lemma redPolyC_natDegree {m : ℕ} (hm : 1 ≤ m) : (redPolyC m).natDegree = m := by
   refine natDegree_eq_of_le_of_coeff_ne_zero ?_ ?_
@@ -496,7 +333,7 @@ private lemma excR_ne_zero {m : ℕ} (hm : 1 ≤ m) : excR m ≠ 0 := by
       rw [h1, heval1] at h0
       exact hmC h0
     by_cases hm2 : 2 ≤ m
-    · exact redPolyC_ne_zero_of_pow hm2 hpow hne
+    · exact redPolyC_ne_zero_of_pow hm2 hpow
     · have hm1 : m = 1 := by omega
       rw [hm1, pow_one] at hpow
       exact absurd hpow hne
