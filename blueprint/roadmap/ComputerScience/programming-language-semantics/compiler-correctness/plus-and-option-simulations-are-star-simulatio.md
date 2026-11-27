@@ -5,7 +5,7 @@ With the setting of [transition semantics and simulation relations](transition-s
 - $\sim$ is a *plus simulation* if $S_1 \sim S_2$ and $G_1 \vdash S_1 \xrightarrow{t} S_1'$ give $S_2'$ with $G_2 \vdash S_2 \xrightarrow{t}{}^{+} S_2'$ and $S_1' \sim S_2'$.
 - $\sim$ is an *option simulation* if $S_1 \sim S_2$ and $G_1 \vdash S_1 \xrightarrow{t} S_1'$ give either $S_2'$ with $G_2 \vdash S_2 \xrightarrow{t} S_2'$ and $S_1' \sim S_2'$, or $|S_1'| < |S_1|$, $t = \varepsilon$ and $S_1' \sim S_2$.
 
-Every lock-step simulation is a plus simulation, and every plus simulation and every option simulation is a star simulation. Hence each of them, together with the conditions on initial and final states, gives forward simulation for safe programs, as in [simulation diagrams](simulation-diagrams-for-compiler-correctness.md).
+Every lock-step simulation is a plus simulation, and every plus simulation and every option simulation is a star simulation. Hence the simulation-diagram theorem for star simulations applies to each of them, together with the conditions on initial and final states: it gives forward simulation for safe programs, the preservation of behaviors outside $\mathrm{Wrong}$.
 
 **Proof.** One transition is a nonempty sequence of transitions, and a stuttering step of an option simulation is a step of length zero with a decreasing measure.
 
