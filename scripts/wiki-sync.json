@@ -93059,6 +93059,7 @@
 "MetaMathlibExt.integral_inner_neg_gradient_eq_sub": "ae7a3e09b3babd63",
 "MetaMathlibExt.integral_irwinMeasure_succ": "8cc0be4338bcabf3",
 "MetaMathlibExt.integral_irwinMeasure_zero": "51a19097a0dafd19",
+"MetaMathlibExt.integral_queueOccupancy_eq_and_bounds": "3a4e66be0ade6102",
 "MetaMathlibExt.integral_sin_half_cpow": "2eaf6cfc7ec5b0b9",
 "MetaMathlibExt.integral_symmetricPeakValley_geometric": "2738f4e7e718dc5d",
 "MetaMathlibExt.intercept_theorem": "e07d0389d3ce946f",

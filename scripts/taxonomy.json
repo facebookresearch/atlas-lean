@@ -14817,6 +14817,7 @@
   "MathlibExt/Probability/ProkhorovSequential": {"to": "Probability/convergence-of-measures", "title": "Prokhorov's theorem"},
   "MathlibExt/Probability/Quantile": {"to": "Probability/distributions/distribution-functions", "title": "Quantile function and inverse transform sampling"},
   "MathlibExt/Probability/QuantileLink": {"to": "Probability/distributions/distribution-functions", "title": "Equipercentile linking"},
+  "MathlibExt/Probability/QueueOccupancyArea": {"to": "Probability/queueing-theory", "title": "Little's law"},
   "MathlibExt/Probability/RandomTranspositionLower": {"to": "Probability/random-walks", "title": "Random walks on finite groups"},
   "MathlibExt/Probability/RandomWalkDichotomy": {"to": "Probability/random-walks", "title": "Drift and oscillation of random walks"},
   "MathlibExt/Probability/RandomWalkFDD": {"to": "Probability/random-walks", "title": "Finite-dimensional distributions of the rescaled random walk"},
