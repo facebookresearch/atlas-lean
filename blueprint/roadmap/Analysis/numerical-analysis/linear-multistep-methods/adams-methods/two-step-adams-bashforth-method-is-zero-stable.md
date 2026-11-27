@@ -8,11 +8,11 @@ The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-st
 - [Zero-stability](../zero-stability.md)
 - [Truncation error and consistency of a linear multistep method](../truncation-error-and-consistency.md)
 - [Convergence of a linear multistep method](../convergence-of-a-linear-multistep-method.md)
+- [Root condition](../root-condition.md)
 
 ## Proof depends on
 
 - [Zero-stability and the root condition](../zero-stability-iff-root-condition.md)
-- [Root condition](../root-condition.md)
 - [Dahlquist equivalence theorem](../dahlquist-equivalence-theorem.md)
 
 ## Sources
