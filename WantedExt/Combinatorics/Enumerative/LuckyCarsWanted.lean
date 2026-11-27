@@ -51,6 +51,7 @@ public import MathlibExt.Combinatorics.Enumerative.LuckyCarCountByCar
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarPrescriptions
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarsIncreasing
 
 set_option autoImplicit false
 
@@ -114,21 +115,6 @@ theorem_wanted sum_q_second_spot (n : ℕ) (hn : 2 ≤ n) :
     (∑ i : Fin n, (q n i ⟨1, hn⟩ : ℚ)) =
       3 / 4 * ((n + 1 : ℚ)) ^ (n - 1) -
         1 / 4 * ((n : ℚ) - 1) ^ (n - 1)
-
-/-- **Increasing lucky-car counts (Lemma 18).** Number the cars and spots $0, \dots, n-1$, let
-$q^{\mathrm{inc}}_n(i, j)$ be the number of weakly increasing parking functions of length $n$ in
-which car $i$ prefers spot $j$ and is lucky, and let $C_m$ be the $m$-th Catalan number. For all
-$i, j \in \{0, \dots, n-1\}$, $q^{\mathrm{inc}}_n(i, j) = C_i \, C_{n-i}$ if $i = j$, and
-$q^{\mathrm{inc}}_n(i, j) = 0$ otherwise.
-
-In the one-based indexing of the source the diagonal value reads $C_{i-1} C_{n-i+1}$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Lemma 18. -/
-theorem_wanted qInc_eq (n : ℕ) (i j : Fin n) :
-    qInc n i j =
-      if i = j then catalan i.val * catalan (n - i.val)
-      else 0
 
 /-- **Decreasing lucky-car counts (Lemma 22).** Number the cars and spots $0, \dots, n-1$, and let
 $q^{\mathrm{dec}}_n(i, j)$ be the number of weakly decreasing parking functions of length $n$ in
