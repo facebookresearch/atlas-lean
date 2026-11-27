@@ -25,3 +25,4 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [The p-adic valuation of a product of nonzero integers is the sum of their p-adic valuations](p-adic-order-integer-additive.md)
 - [Power series identities over complete non-archimedean fields](power-series-identities-over-complete-nonarchimedean-fields.md)
 - [The field of p-adic numbers](p-adic-numbers.md)
+- [Compactly supported locally constant functions are invariant under an open subgroup of units](exists-is-open-subgroup-forall-apply-mul.md)

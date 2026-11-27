@@ -4,6 +4,7 @@ Derivatives of real functions of one real variable: mean-value and second-deriva
 
 - [Interchange of limits and derivatives](interchange-of-limits-and-derivatives/README.md)
 - [Local extrema and the second-derivative test](local-extrema-and-the-second-derivative-test/README.md)
+- [Taylor remainder bounds](taylor-remainder-bounds/README.md)
 - [A monotone differentiable function with discontinuous derivative](exists-monotone-differentiable-not-conti.md)
 - [A smooth function on the unit interval with some vanishing derivative at each point is a polynomial there](exists-polynomial-eq-of-forall-exists-it.md)
 - [An even $C^2$ function is a $C^1$ function of $x^2$](exists-cont-diff-on-comp-sq-of-even.md)

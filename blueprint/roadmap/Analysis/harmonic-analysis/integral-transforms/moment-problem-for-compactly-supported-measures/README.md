@@ -5,6 +5,7 @@ $\int x^k \, d\mu$, and moment growth of order $C R^{2k}$ forces support in $[-R
 give the uniqueness half of the moment method in probability; the semicircle law of random matrix
 theory is the motivating example.
 
+- [Hausdorff moment determinacy on \[0, 1\]](measure-eq-of-forall-integral-pow-eq.md)
 - [Moment bounds confine the support](measure-lt-abs-eq-zero-of-integral-pow-l.md)
 - [Compactly supported measures are determined by their moments](ext-of-forall-integral-pow-eq-of-compl-i.md)
 

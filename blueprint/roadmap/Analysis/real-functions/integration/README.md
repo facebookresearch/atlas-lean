@@ -17,3 +17,7 @@ The Riemann integral via tagged partitions, iterated-integral formulas, moments,
 - [Uniformly continuous integrable functions vanish at infinity](tendsto-cocompact-zero-of-integrable.md)
 - [Unit-window bound for the integral of $\sin(t^2)$](abs-integral-sin-sq-lt-inv.md)
 - [Change of variables in the Lebesgue integral on the line](change-of-variables-on-an-interval.md)
+
+- [Elementary derivatives and integrals](elementary-derivatives-and-integrals/README.md)
+
+- [Gaussian integrals with exponential weights](gaussian-integrals-with-exponential-weights/README.md)

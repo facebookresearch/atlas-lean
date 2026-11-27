@@ -6,3 +6,4 @@
 - [Nonlinear absorption of c₀ without a linear copy](nonlinear-c0-absorption-without-linear-c0.md)
 - [Reflexivity of Banach spaces finitely representable in a space of nontrivial Markov type](reflexivity-of-spaces-finitely-represented-in-markov-type.md)
 - [Tingley extension of a surjective sphere isometry](tingley-sphere-isometry-extension.md)
+- [Volumetric covering bound for Euclidean balls](euclidean-ball-net.md)

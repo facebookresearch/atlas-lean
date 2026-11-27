@@ -10,6 +10,7 @@ Exponential, logarithmic and trigonometric-type functions and their relatives: e
 - [Mittag-Leffler expansion of 1/(e^u − 1)](mittag-leffler-expansion-of-1-e-u-1/README.md)
 - [Modified Bessel functions of the first kind](modified-bessel-functions-of-the-first-kind/README.md)
 - [Sine integral](sine-integral/README.md)
+- [Taylor bounds for the complex exponential](taylor-bounds-for-the-complex-exponential/README.md)
 - [Exponential sums have full column rank](eq-zero-of-sum-mul-exp-eq-zero.md)
 - [Parametrization of the solutions of $x^y = y^x$ with $0 < y < x$](exists-parametrization-of-rpow-eq-rpow.md)
 - [The logistic function of the log odds](sigmoid-log-sub-log.md)

@@ -12,3 +12,4 @@ Fourier analysis on finite abelian groups and the Boolean cube: DFT and FFT, Pla
 - [Convolution theorem for the discrete Fourier transform](inv-dft-mul-dft.md)
 - [Spectral structure of Boolean functions](spectral-structure-of-boolean-functions/README.md)
 - [Structure factors of finite crystals](structure-factors-of-finite-crystals/README.md)
+- [Normalization of the discrete Fourier transform](normalization-of-the-discrete-fourier-transform/README.md)

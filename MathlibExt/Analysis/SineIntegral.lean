@@ -54,7 +54,8 @@ namespace MathlibExt.Analysis.SineIntegral
 
 open Real Set Filter Topology
 
-/-- The sine integral `Si z = ∫₀ᶻ sinc u du`, `sinc u = sin u / u` (Mathlib's `Real.sinc`). -/
+/-- The sine integral `Si z = ∫₀ᶻ sinc u du` for real `z`, with `sinc 0 = 1` and
+`sinc u = sin u / u` for `u ≠ 0` (Mathlib's `Real.sinc`). -/
 noncomputable def sineIntegral (z : ℝ) : ℝ := ∫ u in (0 : ℝ)..z, sinc u
 
 private theorem hasDerivAt_expSinAux (t u : ℝ) :

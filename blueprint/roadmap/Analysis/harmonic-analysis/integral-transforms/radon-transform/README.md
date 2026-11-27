@@ -1,5 +1,7 @@
 # Radon transform
 
+- [Euclidean Radon transform](euclidean-radon-transform.md)
+- [Sectional volumes of a set](sectional-volume.md)
 - [Radon transform on the plane](radon.md)
 - [One-dimensional Fourier transform](fourier1.md)
 - [Two-dimensional Fourier transform](fourier2.md)

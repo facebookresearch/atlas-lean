@@ -24,6 +24,7 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 - [Müntz–Szász theorem for integer exponents](muntz-szasz-nat.md)
 - [Runge's theorem](runge.md)
 - [Universal approximation theorem](universal-approximation.md)
+- [Vanishing of all Chebyshev U moments forces a function to vanish](eq-zero-on-ioo-of-forall-interval-integr.md)
 
 ## Related topics
 

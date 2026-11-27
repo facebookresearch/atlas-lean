@@ -17,6 +17,7 @@ Functions on R^n: partial derivatives, gradients, Jacobians, Hessians, implicit 
 - [Equal partial derivatives give a factor `x + y`, for a differentiable function](exists-continuous-mul-add-of-differentia.md)
 - [Equal partial derivatives give a factor $x+y$](exists-continuous-mul-add-of-fderiv-eq.md)
 - [Green's theorem](greens-theorem.md)
+- [Hessian bound on the error of the first-order model on a ball](hessian-error-certificate.md)
 - [Smooth functions vanishing on the axes are $O(|x|\,|y|)$ near the origin](exists-abs-le-mul-abs-mul-abs-of-cont-di.md)
 - [Taylor's theorem with little-o remainder in several variables](taylor-is-little-o-multivariable.md)
 - [Implicit function theorem](implicit-function-theorem.md)

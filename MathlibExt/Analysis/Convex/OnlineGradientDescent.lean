@@ -37,7 +37,7 @@ noncomputable def ogdIter {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 
   | t + 1 => proj (ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t))
 
 /-- Zinkevich's regret bound for projected online gradient descent:
-with a nonexpansive projection fixing the comparator `xstar`, and
+with step size `η > 0`, a nonexpansive projection fixing the comparator `xstar`, and
 subgradients satisfying the convexity inequality, the regret against
 `xstar` over `T` rounds is at most
 `‖x0 - xstar‖² / (2η) + (η / 2) ∑ ‖g t (x t)‖²`. -/

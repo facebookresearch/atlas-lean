@@ -5,3 +5,4 @@
 - [Scalar conductivity nonuniqueness for full weak boundary data](scalar-conductivity-nonuniqueness-for-full-boundary-data.md)
 - [Strict interior hot-spots bound on smooth simply connected planar domains](strict-hot-spots-on-simply-connected-planar-domains.md)
 - [Subcritical Hénon–Lane–Emden nonexistence off the origin](subcritical-henon-lane-emden-nonexistence.md)
+- [Regularity of domain boundaries](regularity-of-domain-boundaries/README.md)

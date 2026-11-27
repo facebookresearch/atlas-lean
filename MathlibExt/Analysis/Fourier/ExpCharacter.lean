@@ -37,9 +37,7 @@ namespace MetaMathlibExt
 noncomputable def expChar {d : ℕ} (lam x : EuclideanSpace ℝ (Fin d)) : ℂ :=
   Complex.exp (Complex.I * ↑(2 * Real.pi * @inner ℝ _ _ lam x))
 
-/-- Let Ω⊆ ℝᵈ have finite Lebesgue measure and λ ∈ ℝᵈ, then the function e^{2π i⟨λ,x ⟩} is in Lᵖ(Ω)
-for all finite p> 0.
--/
+/-- For `λ ∈ ℝᵈ`, the exponential character `x ↦ e^{2π i⟨λ, x⟩}` is continuous on `ℝᵈ`. -/
 lemma expChar_continuous {d : ℕ} (lam : EuclideanSpace ℝ (Fin d)) :
     Continuous (expChar lam) := by
   unfold expChar

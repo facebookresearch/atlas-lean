@@ -40,8 +40,9 @@ open scoped ContDiff
 
 namespace MathlibExt.Analysis.GaussianMoments
 
-/-- The `n`th Gaussian moment of a datum, with parameter pair `p = (a, b)`.
-The integral results below require `a > 0` and bounded measurable data. -/
+/-- The `n`th Gaussian moment of `f : ℝ → ℝ` at `p = (a, b)`:
+`∫ y, y ^ n * exp (-a * y ^ 2 + b * y) * f y`, which is `0` when the integrand is not
+integrable. The integral results below require `a > 0` and bounded measurable data. -/
 noncomputable def gaussianMoment (f : ℝ → ℝ) (n : ℕ) (p : ℝ × ℝ) : ℝ :=
   ∫ y, y ^ n * exp (-p.1 * y ^ 2 + p.2 * y) * f y
 
@@ -94,7 +95,8 @@ private theorem exists_integrable_bound {f : ℝ → ℝ} (hb : ∃ M, ∀ y, |f
           (pow_nonneg (abs_nonneg y) _)) (hM y) (abs_nonneg _) (by positivity)
       _ = B y := by dsimp [B]; ring
 
-/-- Every polynomial Gaussian moment is integrable for bounded measurable data. -/
+/-- Every polynomial Gaussian moment is integrable for bounded measurable data when
+`a = p.1 > 0`. -/
 theorem integrable_gaussianMoment {f : ℝ → ℝ} (hf : AEStronglyMeasurable f)
     (hb : ∃ M, ∀ y, |f y| ≤ M) (n : ℕ) {p : ℝ × ℝ} (hp : 0 < p.1) :
     Integrable (fun y => y ^ n * exp (-p.1 * y ^ 2 + p.2 * y) * f y) := by
@@ -143,8 +145,10 @@ private theorem norm_integrandFDeriv_le (f : ℝ → ℝ) (n : ℕ) (p : ℝ × 
       norm_add_le ((-integrand f (n + 2) p y) • ContinuousLinearMap.fst ℝ ℝ ℝ)
         (integrand f (n + 1) p y • ContinuousLinearMap.snd ℝ ℝ ℝ)
 
-/-- The joint derivative raises the moment order by two in the decay parameter
-(with a minus sign), and by one in the linear parameter. -/
+/-- For bounded measurable `f` and `p = (a, b)` with `a > 0`, the moment
+`gaussianMoment f n` is differentiable at `p`: the joint derivative raises the
+moment order by two in the decay parameter (with a minus sign), and by one in the
+linear parameter. -/
 theorem gaussianMoment_hasFDerivAt {f : ℝ → ℝ} (hf : AEStronglyMeasurable f)
     (hb : ∃ M, ∀ y, |f y| ≤ M) (n : ℕ) {p : ℝ × ℝ} (hp : 0 < p.1) :
     HasFDerivAt (gaussianMoment f n)

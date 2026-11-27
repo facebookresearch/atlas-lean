@@ -7,6 +7,7 @@ General bounded operators: Douglas lemma, direct sums, strong and weak operator 
 - [Douglas factorization lemma](douglas-factorization-lemma/README.md)
 - [Hypercyclic operators](hypercyclic-operators/README.md)
 - [Robertson–Schrödinger uncertainty relation](robertson-schr-dinger-uncertainty-relation/README.md)
+- [Schur multipliers](schur-multipliers/README.md)
 - [Uniform boundedness principle](uniform-boundedness-principle/README.md)
 - [Wold decomposition](wold-decomposition/README.md)
 - [A symmetric linear map from a Banach space to its dual is bounded](exists-bound-of-symmetric-linear-map-to.md)

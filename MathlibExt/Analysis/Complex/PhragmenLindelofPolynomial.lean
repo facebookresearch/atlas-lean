@@ -88,11 +88,12 @@ private theorem shift_mem_slitPlane {a : ℝ} (z : ℂ) (hza : a - 1 < z.re) :
 
 /-- **Phragmén–Lindelöf principle in a vertical strip, polynomial form.**
 
-If `f` is differentiable on the strip `a < re z < b` and continuous on its
-closure, has double-exponential interior growth of rate `< π / (b - a)`,
-and satisfies `‖f z‖ ≤ M * (1 + |im z|) ^ α` on both boundary lines, then
-`‖f z‖ ≤ C * M * (1 + |im z|) ^ α` throughout the closed strip, for a
-constant `C > 0` depending only on `a`, `b` and `α`. -/
+For real `a < b` and `α ≥ 0` there is a constant `C > 0`, depending only on
+`a`, `b` and `α`, with the following property. If `M ≥ 0`, `f` is differentiable
+on the strip `a < re z < b` and continuous on its closure, has double-exponential
+interior growth of rate `< π / (b - a)`, and satisfies
+`‖f z‖ ≤ M * (1 + |im z|) ^ α` on both boundary lines, then
+`‖f z‖ ≤ C * M * (1 + |im z|) ^ α` throughout the closed strip. -/
 public theorem exists_norm_le_mul_one_add_abs_im_rpow_of_vertical_strip
     (a b α : ℝ) (hab : a < b) (hα : 0 ≤ α) :
     ∃ C : ℝ, 0 < C ∧
