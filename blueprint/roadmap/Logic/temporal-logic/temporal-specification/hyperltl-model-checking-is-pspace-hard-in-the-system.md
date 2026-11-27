@@ -2,7 +2,7 @@
 
 **Theorem.** There is a fixed [HyperLTL](hyperltl.md) formula $\psi$ such that deciding, for a given Kripke structure $K$, whether $K$ satisfies $\psi$ is hard for
 [PSPACE](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pspace.md): model checking is PSPACE-hard in the size of the system. The formula comes from the encoding of SecLTL
-and has [alternation depth](hyperctl-star.md) $1$. For fixed formulas of alternation depth $0$ the problem is in NLOGSPACE in the size of the structure, by
+and has positive [alternation depth](hyperctl-star.md). For fixed formulas of alternation depth $0$ the problem is in NLOGSPACE in the size of the structure, by
 [the complexity of HyperCTL* model checking](model-checking-hyperctl-star-by-alternation-depth.md) with $k = 0$, so the hardness needs an alternation.
 
 ## Depends on

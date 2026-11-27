@@ -10,7 +10,8 @@ encrypt with known keys, decrypt with known keys and send messages, and generate
 
 For a protocol theory $T$, a ground term $S$ (the secret) and bounds $n$, $r$ and $k$, the scenario $(T, \mathcal M, S, n, r, k)$ belongs to the set $\mathrm{PA}$ of scenarios
 with an attack if some run of $T$ with the standard intruder reaches a state containing $M(S)$, such that at most $n$ protocol nonces, at most $r$ role instances and
-facts of size at most $k$ appear in the whole run, not only in its last state. The secrecy problems $S_{\mathrm{size}=k}$ (given $T, \mathcal M, S$, decide whether some $n, r$ give an attack with facts of size $k$),
+facts of size at most $k$ (counting symbol occurrences, as defined in
+[restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)) appear in the whole run, not only in its last state. The secrecy problems $S_{\mathrm{size}=k}$ (given $T, \mathcal M, S$, decide whether some $n, r$ give an attack with facts of size at most $k$),
 $S_{\mathrm{nonce}b}$ (given $T, \mathcal M, S, n, k$, decide whether some $r$ does), $S_{\mathrm{role}b}$ (given $T, \mathcal M, S, r, k$, decide whether some $n$ does) and
 $S_{\mathrm{nonce}b, \mathrm{size}=k}$ are defined accordingly.
 

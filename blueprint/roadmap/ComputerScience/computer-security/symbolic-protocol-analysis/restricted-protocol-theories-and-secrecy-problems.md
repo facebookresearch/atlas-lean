@@ -7,7 +7,8 @@ $T = I \cup R \cup A$ is in *restricted form* if $I$ is a finite set of ground f
 
 Let $\mathcal M$ be the [standard intruder theory](the-standard-dolev-yao-intruder-theory.md). The set $\mathrm{PA}$ of scenarios with an attack consists of the tuples
 $(T, \mathcal M, S, n, r, k)$, with $T$ in restricted form and $S$ a ground term (the secret), such that some run of $T$ with $\mathcal M$ reaches a state containing $M(S)$, and at most
-$n$ protocol nonces, at most $r$ role instances and only facts of size at most $k$ appear in the whole run, not only in its last state. The secrecy problems are:
+$n$ protocol nonces, at most $r$ role instances and only facts of size at most $k$ appear in the whole run, not only in its last state. The *size* $\|f\|$ of a fact is its number of symbol occurrences:
+one for the predicate, one for each occurrence of a function symbol and one for each occurrence of a variable or constant, so $\|P(f(a, b), c)\| = 5$. The secrecy problems are:
 $S_{\mathrm{size}=k}$ (given $T, \mathcal M, S$, is $(T, \mathcal M, S, n, r, k) \in \mathrm{PA}$ for some $n, r$?), $S_{\mathrm{nonce}b}$ (given $T, \mathcal M, S, n, k$, for some $r$?),
 $S_{\mathrm{role}b}$ (given $T, \mathcal M, S, r, k$, for some $n$?) and $S_{\mathrm{nonce}b, \mathrm{size}=k}$ (given $T, \mathcal M, S, n$, for some $r$?).
 
@@ -18,4 +19,4 @@ $S_{\mathrm{role}b}$ (given $T, \mathcal M, S, r, k$, for some $n$?) and $S_{\ma
 
 ## Sources
 
-- N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 5.1 (initialization by a finite set of ground facts and no rewrite rules, and Definitions 5.1–5.2, p. 280, with the conditions $i < k \le a$ and $j < \ell \le n$) and Section 5.2 (the set $\mathrm{PA}$, whose bounds apply to the whole run, and the secrecy problems).
+- N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 3.5, Definition 3.7 (the size of an atomic formula); Section 5.1 (initialization by a finite set of ground facts and no rewrite rules, and Definitions 5.1–5.2, p. 280, with the conditions $i < k \le a$ and $j < \ell \le n$) and Section 5.2 (the set $\mathrm{PA}$, whose bounds apply to the whole run, and the secrecy problems).
