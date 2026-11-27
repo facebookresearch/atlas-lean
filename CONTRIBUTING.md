@@ -479,9 +479,10 @@ included, makes it a graph PR in full.
   the sync writes, as above, **and Codex reviews it:**
   automatically for the repository's owners, members and collaborators and for
   forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
-  comments `@codex` for an advisory review. Agents produce graph changes faster
-  than people can check them, and a poor expansion spreads into every task
-  below it.
+  comments `@codex` for an advisory review. While Codex's review is not
+  required, [How PRs merge](#how-prs-merge) says what stands in. Agents produce
+  graph changes faster than people can check them, and a poor expansion spreads
+  into every task below it.
 
 ## How PRs merge
 
@@ -522,6 +523,36 @@ queues a READY PR with `enqueuePullRequest`, pinned to the head it checked. The
 rules that no check enforces. Never push to a queued PR. Take a PR out of the
 middle of the queue only when it is known to be bad. After a bump, check PRs
 again before you queue them.
+
+Codex's review job has reached no verdict on any pull request since 25 November
+2026, first because of a spending limit and then because of the size of its
+checkout. Until a maintainer removes this paragraph and the pointers to it,
+which ends that period, no pull request needs Codex's review. Each still needs
+an approval at its exact head, posted from an account attributable to a named
+person (their own account, or an app or agent account whose approval names the
+maintainer who runs it; not a workflow's or other shared login), by a
+maintainer, someone with write access, an agent one of them runs, or a reviewer
+the maintainers have vetted for it, who authored and committed none of its
+commits and is on no side that did (a person and the agents acting for them
+count as one side), besides every other approval this file requires. A NOT READY
+from preflight whose only failure is Codex's missing verdict does not hold such
+a pull request back, but `--enqueue` refuses it: a maintainer, or an agent a
+maintainer runs, queues it by hand, pinned to the approved head (its merge box,
+or `enqueuePullRequest` with `expectedHeadOid`), after checking that every other
+item of preflight passes and that no change request stands, and says in the pull
+request what was checked, which approval stands in for Codex's review, and why
+its reviewer is eligible, naming the maintainers' vetting when that is the
+reason. A Codex change request still blocks, even where preflight reports only a
+missing verdict. One from an earlier head clears when the approval at the exact
+head says how each of its findings was addressed; it may then be dismissed with
+a note that lists them, and once dismissed it no longer blocks. A Codex change
+request at the exact head is never dismissed, and one dismissed there still
+blocks until the approval this paragraph requires, at a later head, says how
+each of its findings was addressed. A change to this paragraph or its pointers
+also needs a maintainer's own approval at its exact head, never an agent's: an
+approving review from a maintainer on no side that authored or committed to it,
+or, on a pull request from that maintainer's own account, a comment the
+maintainer posts in person that approves the head by its full commit SHA.
 
 To queue a stack of pull requests (its branches must be in this repository), use
 the merge box of the highest PR you want to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
