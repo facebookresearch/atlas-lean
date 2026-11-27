@@ -18,6 +18,7 @@ public import MathlibExt.Combinatorics.Enumerative.EvenOddCompositions
 public import MathlibExt.Combinatorics.Enumerative.SignedResiduePartCompositions
 public import MathlibExt.Combinatorics.Enumerative.SignedLargePartCompositions
 public import MathlibExt.Combinatorics.Enumerative.SignedMinimumPartCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedResidueClassCompositions
 
 namespace MetaMathlibExt
 
@@ -81,20 +82,6 @@ public theorem_wanted sum_distincts_mod_two_mul_add_one_neg_one_pow_card (r n : 
             a % (2 * r + 1) = 0 ∨ a % (2 * r + 1) = r ∨ a % (2 * r + 1) = r + 1),
           (-1 : ℤ) ^ p.parts.card = 0)
 
-
-/-- **Signed count of residue-class compositions with parts at least $r - s$.** Let $r > s \ge 0$,
-let $k = r - s$ and let $n \ge 1$. Among the compositions of $n + k - 1$ whose parts are all at
-least $k$ and congruent to $k + s$ modulo $r$, the number with an odd number of parts minus the
-number with an even number of parts is $1$ if $n = s + 1$ and $0$ otherwise.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Corollary 12
-(`jis-2024-24.6.5-cor-12`). -/
-public theorem_wanted compositionOddMinusEven_parts_ge_modEq_sub (n r s : ℕ) (hn : 1 ≤ n)
-    (hsr : s < r) :
-    compositionOddMinusEven (n + (r - s) - 1)
-        (fun c => ∀ a ∈ c.blocks, r - s ≤ a ∧ a % r = (r - s + s) % r)
-      = if n = s + 1 then 1 else 0
 
 /-- **Signed count of residue-class compositions with parts at least $2r - s$.** Let $r > s \ge 0$,
 let $k = 2r - s$ and let $n \ge 1$. Among the compositions of $n + k - 1$ whose parts are all at

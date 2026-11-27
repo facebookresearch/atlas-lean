@@ -10,10 +10,11 @@ module
 
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Dynamics.NExpansionGaps
+import Mathlib.Data.List.Rotate
 import Mathlib.Tactic.IntervalCases
 
 /-!
-# The ideal periodic points decrease
+# Comparing ideal periodic points and their orbits
 
 This file proves that the purely periodic points of the ideal period words
 decrease as the word index grows: for `0 < α ≤ √N - 1`, if `x` and `y` in
@@ -25,10 +26,15 @@ smaller word index, and differ there in a way fixed by its parity; the
 determines the order of the points, and equal digit sequences determine
 equal points.
 
+Each ideal periodic point is also the least point in its orbit: compare the
+digit string of its word with each of its cyclic shifts.
+
 ## Main declarations
 
 * `MetaMathlibExt.idealPeriodWord_point_lt_iff`: the ideal periodic points
   decrease (de Jonge, Lemma 4).
+* `MetaMathlibExt.idealPeriodWord_point_le_orbit`: each ideal periodic point
+  is the least in its orbit (de Jonge, Lemma 5).
 
 Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26
 (2026), Article A75.
@@ -1022,7 +1028,7 @@ private theorem idealPeriodWord_point_lt_iff_eq_of_eq_digits {N : ℕ} (hN : 0 <
       have hdy : nExpansionDigit N α ((nExpansionMap N α)^[j] y) = 0 := by rw [← hd j, hd0]
       omega
     exact hne (hprop j (by rw [hux, hvy]))
-
+  -- A nonzero separation cannot stay bounded under two-step expansion.
   have hd0pos : 0 < |(nExpansionMap N α)^[0] x - (nExpansionMap N α)^[0] y| := by
     simpa using abs_pos.mpr (sub_ne_zero.mpr hne)
   have hdle : ∀ j, |(nExpansionMap N α)^[j] x - (nExpansionMap N α)^[j] y| ≤ 1 := by
@@ -1295,6 +1301,396 @@ public theorem idealPeriodWord_point_lt_iff {N : ℕ} {α : ℝ} (hα : 0 < α)
         exact absurd h (not_lt_of_gt hyx)
       · intro h
         exact absurd h (not_lt_of_gt hkl2)
+
+namespace IdealPeriodOrbit
+
+private def slotBlocks (b : Bool) : List (List ℕ) :=
+  if b then [[2, 1, 1], [2, 2]] else [[2, 2]]
+
+private def slotDigits (b : Bool) : List ℕ := (slotBlocks b).flatten
+
+private def digits (w : List Bool) : List ℕ := w.flatMap slotDigits
+
+-- The period-doubling substitution sends each bit `b` to `[true, !b]`.
+private def doubleSlots (w : List Bool) : List Bool := w.flatMap fun b => [true, !b]
+
+private def slots : ℕ → List Bool
+  | 0 => [true]
+  | n + 1 => doubleSlots (slots n)
+
+private theorem slots_rec (n : ℕ) :
+    slots (n + 2) = slots (n + 1) ++ slots n ++ slots n := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    change doubleSlots (slots (n + 2)) =
+      doubleSlots (slots (n + 1)) ++ doubleSlots (slots n) ++ doubleSlots (slots n)
+    rw [ih]
+    simp [doubleSlots, List.flatMap_append]
+
+private theorem digits_append (u v : List Bool) : digits (u ++ v) = digits u ++ digits v :=
+  List.flatMap_append
+
+private theorem digits_cons (b : Bool) (w : List Bool) :
+    digits (b :: w) = slotDigits b ++ digits w :=
+  rfl
+
+private theorem doubleSlots_length (w : List Bool) : (doubleSlots w).length = 2 * w.length := by
+  induction w with
+  | nil => rfl
+  | cons b w ih => simp [doubleSlots] at ih ⊢; omega
+
+private theorem slots_length_pos (n : ℕ) : 0 < (slots n).length := by
+  induction n with
+  | zero => decide
+  | succ n ih => rw [slots, doubleSlots_length]; omega
+
+private def cyclicGet {α : Type*} [Inhabited α] (w : List α) (i : ℕ) : α :=
+  w.getD (i % w.length) default
+
+private theorem cyclicGet_inside {α : Type*} [Inhabited α] {w : List α} {i : ℕ}
+    (hi : i < w.length) : cyclicGet w i = w[i] := by
+  rw [cyclicGet, Nat.mod_eq_of_lt hi, ← List.getElem_eq_getD (h := hi)]
+
+private theorem doubleSlots_pair (w : List Bool) {i : ℕ} (hi : i < w.length) :
+    (doubleSlots w).getD (2 * i) default = true ∧
+      (doubleSlots w).getD (2 * i + 1) default = !(w.getD i default) := by
+  induction w generalizing i with
+  | nil => simp at hi
+  | cons b w ih =>
+    cases i with
+    | zero => exact ⟨rfl, rfl⟩
+    | succ i =>
+      have h := ih (i := i) (by simpa using hi)
+      simpa [doubleSlots, show 2 * (i + 1) = 2 * i + 2 by omega,
+        show 2 * (i + 1) + 1 = (2 * i + 1) + 2 by omega] using h
+
+private theorem cyclicGet_doubleSlots (w : List Bool) (hw : 0 < w.length) (i : ℕ) :
+    cyclicGet (doubleSlots w) (2 * i) = true ∧
+      cyclicGet (doubleSlots w) (2 * i + 1) = !(cyclicGet w i) := by
+  have h₀ : 2 * i % (2 * w.length) = 2 * (i % w.length) := Nat.mul_mod_mul_left _ _ _
+  have h₁ : (2 * i + 1) % (2 * w.length) = 2 * (i % w.length) + 1 := by
+    rw [Nat.add_mod, h₀, Nat.mod_eq_of_lt (show 1 < 2 * w.length by omega)]
+    exact Nat.mod_eq_of_lt (by have := Nat.mod_lt i hw; omega)
+  simpa only [cyclicGet, doubleSlots_length, h₀, h₁] using
+    doubleSlots_pair w (Nat.mod_lt i hw)
+
+private theorem slots_head (n : ℕ) : ∃ w, slots n = true :: w := by
+  induction n with
+  | zero => exact ⟨[], rfl⟩
+  | succ n ih =>
+    obtain ⟨w, hw⟩ := ih
+    rw [slots, hw]
+    exact ⟨false :: doubleSlots w, rfl⟩
+
+private theorem slot_zero (n : ℕ) : cyclicGet (slots n) 0 = true := by
+  obtain ⟨w, hw⟩ := slots_head n
+  simp [hw, cyclicGet]
+
+-- The two substituted slots have total length 7 or 10, of the same parity as the
+-- original slot's length (5 or 2, respectively).
+private theorem digits_doubleSlots_length_mod_two (w : List Bool) :
+    (digits (doubleSlots w)).length % 2 = (digits w).length % 2 := by
+  induction w with
+  | nil => rfl
+  | cons b w ih =>
+    change (digits (true :: (!b) :: doubleSlots w)).length % 2 = (digits (b :: w)).length % 2
+    cases b <;> simp only [Bool.not_true, Bool.not_false, digits_cons, List.length_append] <;>
+      simp [slotDigits, slotBlocks] <;> omega
+
+private theorem take_doubleSlots (w : List Bool) (k : ℕ) :
+    (doubleSlots w).take (2 * k) = doubleSlots (w.take k) := by
+  induction w generalizing k with
+  | nil => simp [doubleSlots]
+  | cons b w ih =>
+    cases k with
+    | zero => rfl
+    | succ k =>
+      rw [show 2 * (k + 1) = 2 * k + 1 + 1 by omega]
+      change true :: (!b) :: (doubleSlots w).take (2 * k) =
+        true :: (!b) :: doubleSlots (w.take k)
+      rw [ih]
+
+-- Every nonzero shift of the slot word has a first mismatch, and the number of
+-- digits through the original mismatching slot is odd.
+private theorem slot_firstDiff (n : ℕ) {j : ℕ} (hj₀ : 0 < j) (hj : j < (slots n).length) :
+    ∃ k < (slots n).length,
+      (∀ i < k, cyclicGet (slots n) i = cyclicGet (slots n) (j + i)) ∧
+      cyclicGet (slots n) k ≠ cyclicGet (slots n) (j + k) ∧
+      (digits ((slots n).take (k + 1))).length % 2 = 1 := by
+  induction n generalizing j with
+  | zero => change j < 1 at hj; omega
+  | succ n ih =>
+    let w := slots n
+    have hw : 0 < w.length := slots_length_pos n
+    change j < (doubleSlots w).length at hj
+    rw [doubleSlots_length] at hj
+    change ∃ k < (doubleSlots w).length,
+      (∀ i < k, cyclicGet (doubleSlots w) i = cyclicGet (doubleSlots w) (j + i)) ∧
+      cyclicGet (doubleSlots w) k ≠ cyclicGet (doubleSlots w) (j + k) ∧
+      (digits ((doubleSlots w).take (k + 1))).length % 2 = 1
+    have hpair := cyclicGet_doubleSlots w hw
+    rcases (show ∃ s, j = 2 * s ∨ j = 2 * s + 1 from
+      ⟨j / 2, by omega⟩) with ⟨s, rfl | rfl⟩
+    · have hs : s < w.length := by omega
+      obtain ⟨k, hk, hagree, hne, hpar⟩ := ih (j := s) (by omega) hs
+      change k < w.length at hk
+      refine ⟨2 * k + 1, by rw [doubleSlots_length]; omega, ?_, ?_, ?_⟩
+      · intro i hi
+        rcases (show ∃ t, i = 2 * t ∨ i = 2 * t + 1 from ⟨i / 2, by omega⟩) with
+          ⟨t, rfl | rfl⟩
+        · rw [show 2 * s + 2 * t = 2 * (s + t) by omega, (hpair t).1, (hpair (s + t)).1]
+        · rw [show 2 * s + (2 * t + 1) = 2 * (s + t) + 1 by omega, (hpair t).2,
+            (hpair (s + t)).2, hagree t (by omega)]
+      · rw [show 2 * s + (2 * k + 1) = 2 * (s + k) + 1 by omega, (hpair k).2,
+          (hpair (s + k)).2]
+        simpa using hne
+      · rwa [show 2 * k + 1 + 1 = 2 * (k + 1) by omega, take_doubleSlots,
+          digits_doubleSlots_length_mod_two]
+    · have h0 : cyclicGet (doubleSlots w) 0 = true := (hpair 0).1
+      have h1 : cyclicGet (doubleSlots w) 1 = false := by
+        change cyclicGet (doubleSlots w) (2 * 0 + 1) = false
+        rw [(hpair 0).2, slot_zero]
+        rfl
+      have hshift1 : cyclicGet (doubleSlots w) (2 * s + 1 + 1) = true := by
+        rw [show 2 * s + 1 + 1 = 2 * (s + 1) by omega, (hpair (s + 1)).1]
+      have hprefix : (doubleSlots w).take 2 = [true, false] := by
+        obtain ⟨t, ht⟩ := slots_head n
+        change w = true :: t at ht
+        rw [ht]
+        rfl
+      by_cases hshift0 : cyclicGet (doubleSlots w) (2 * s + 1) = true
+      · refine ⟨1, by rw [doubleSlots_length]; omega, ?_, ?_, ?_⟩
+        · intro i hi
+          have : i = 0 := by omega
+          simp [this, h0, hshift0]
+        · rw [h1, hshift1]; decide
+        · rw [hprefix]; decide
+      · refine ⟨0, by rw [doubleSlots_length]; omega, by omega, ?_, ?_⟩
+        · simpa only [h0, Nat.add_zero] using Ne.symm hshift0
+        · have hprefix₁ := congrArg (List.take 1) hprefix
+          rw [List.take_take] at hprefix₁
+          change (doubleSlots w).take 1 = [true] at hprefix₁
+          rw [hprefix₁]; decide
+
+private theorem cyclicGet_rotate {α : Type*} [Inhabited α] (w : List α) (j i : ℕ) :
+    cyclicGet (w.rotate j) i = cyclicGet w (j + i) := by
+  cases w with
+  | nil => simp [cyclicGet]
+  | cons a w =>
+    have h : i % (a :: w).length < ((a :: w).rotate j).length := by
+      rw [List.length_rotate]
+      exact Nat.mod_lt _ (by simp)
+    conv_lhs => rw [cyclicGet, List.length_rotate, ← List.getElem_eq_getD (h := h),
+      List.getElem_rotate, List.getElem_eq_getD default, Nat.mod_add_mod, Nat.add_comm i j]
+    rfl
+
+-- Compare two periodic digit lists by the parity and direction of their first difference.
+private def DigitWins (u v : List ℕ) : Prop :=
+  ∃ k, (∀ i < k, cyclicGet u i = cyclicGet v i) ∧
+    ((Odd k ∧ cyclicGet u k < cyclicGet v k) ∨ (Even k ∧ cyclicGet v k < cyclicGet u k))
+
+private theorem digitWins_prefix (p u v : List ℕ) {a b : ℕ}
+    (h : (Odd p.length ∧ a < b) ∨ (Even p.length ∧ b < a)) :
+    DigitWins (p ++ a :: u) (p ++ b :: v) := by
+  have hleft : p.length < (p ++ a :: u).length := by simp
+  have hright : p.length < (p ++ b :: v).length := by simp
+  refine ⟨p.length, ?_, ?_⟩
+  · intro i hi
+    rw [cyclicGet_inside (hi.trans hleft), cyclicGet_inside (hi.trans hright),
+      List.getElem_append_left hi, List.getElem_append_left hi]
+  · simpa only [cyclicGet_inside hleft, cyclicGet_inside hright,
+      List.getElem_append_right (Nat.le_refl p.length), Nat.sub_self, List.getElem_cons_zero]
+      using h
+
+private theorem digitWins_of_slot (p u v : List Bool) {a b : Bool} (hne : a ≠ b)
+    (hpar : (digits (p ++ [a])).length % 2 = 1) :
+    DigitWins (digits (p ++ a :: u)) (digits (p ++ b :: v)) := by
+  rw [digits_append, digits_append, digits_cons, digits_cons]
+  rw [digits_append] at hpar
+  cases a <;> cases b
+  · exact (hne rfl).elim
+  · have h : Even (digits p ++ [2]).length := by
+      apply Nat.even_iff.mpr
+      simp [digits, slotDigits, slotBlocks] at hpar ⊢
+      omega
+    simpa [slotDigits, slotBlocks, List.append_assoc] using
+      digitWins_prefix (digits p ++ [2]) (digits u) (1 :: 2 :: 2 :: digits v)
+        (a := 2) (b := 1) (Or.inr ⟨h, by decide⟩)
+  · have h : Odd (digits p ++ [2]).length := by
+      apply Nat.odd_iff.mpr
+      simp [digits, slotDigits, slotBlocks] at hpar ⊢
+      omega
+    simpa [slotDigits, slotBlocks, List.append_assoc] using
+      digitWins_prefix (digits p ++ [2]) (1 :: 2 :: 2 :: digits u) (digits v)
+        (a := 1) (b := 2) (Or.inl ⟨h, by decide⟩)
+  · exact (hne rfl).elim
+
+private theorem digitWins_slot_rotate (n : ℕ) {j : ℕ} (hj₀ : 0 < j) (hj : j < (slots n).length) :
+    DigitWins (digits (slots n)) (digits ((slots n).rotate j)) := by
+  obtain ⟨k, hk, hagree, hne, hpar⟩ := slot_firstDiff n hj₀ hj
+  let u := slots n
+  let v := u.rotate j
+  have hk' : k < v.length := by simpa [v, u] using hk
+  have hp : u.take k = v.take k := by
+    apply List.ext_getElem
+    · simp [v, List.length_take]
+    · intro i hi hi'
+      rw [List.length_take, Nat.min_eq_left hk.le] at hi
+      rw [List.getElem_take, List.getElem_take, ← cyclicGet_inside (hi.trans hk),
+        ← cyclicGet_inside (hi.trans hk'), cyclicGet_rotate]
+      exact hagree i hi
+  have hab : u[k] ≠ v[k] := by
+    rw [← cyclicGet_inside hk, ← cyclicGet_inside hk', cyclicGet_rotate]
+    exact hne
+  have hu : u.take k ++ u[k] :: u.drop (k + 1) = u := by
+    rw [← List.drop_eq_getElem_cons hk, List.take_append_drop]
+  have hv : u.take k ++ v[k] :: v.drop (k + 1) = v := by
+    rw [hp, ← List.drop_eq_getElem_cons hk', List.take_append_drop]
+  have hpar' : (digits (u.take k ++ [u[k]])).length % 2 = 1 := by
+    rwa [← List.take_succ_eq_append_getElem hk]
+  change DigitWins (digits u) (digits v)
+  simpa only [hu, hv] using
+    digitWins_of_slot (u.take k) (u.drop (k + 1)) (v.drop (k + 1)) hab hpar'
+
+private theorem exists_slot_at (w : List Bool) {r : ℕ} (hr : r < (digits w).length) :
+    ∃ p b s q, w = p ++ b :: s ∧ r = (digits p).length + q ∧ q < (slotDigits b).length := by
+  induction w generalizing r with
+  | nil => simp [digits] at hr
+  | cons b w ih =>
+    by_cases h : r < (slotDigits b).length
+    · exact ⟨[], b, w, r, rfl, by simp [digits], h⟩
+    · rw [digits_cons, List.length_append] at hr
+      obtain ⟨p, c, s, q, hc, hq, hqc⟩ := ih (r := r - (slotDigits b).length) (by omega)
+      refine ⟨b :: p, c, s, q, congrArg (b :: ·) hc, ?_, hqc⟩
+      rw [digits_cons, List.length_append]
+      omega
+
+private theorem offSlot_prefix (b : Bool) (w : List Bool) {q : ℕ}
+    (hq₀ : 0 < q) (hq : q < (slotDigits b).length) :
+    (∃ v, (slotDigits b).drop q ++ digits w ++ (slotDigits b).take q = 1 :: v) ∨
+      (∃ v, (slotDigits b).drop q ++ digits w ++ (slotDigits b).take q = 2 :: 2 :: v) := by
+  have hnext : ∃ v, digits w ++ (slotDigits b).take q = 2 :: v := by
+    cases w with
+    | nil =>
+      obtain ⟨t, rfl⟩ : ∃ t, q = t + 1 := ⟨q - 1, by omega⟩
+      cases b <;> exact ⟨_, rfl⟩
+    | cons c w => cases c <;> exact ⟨_, rfl⟩
+  obtain ⟨v, hv⟩ := hnext
+  rw [List.append_assoc, hv]
+  cases b <;> norm_num [slotDigits, slotBlocks] at hq
+  · interval_cases q
+    exact Or.inr ⟨v, rfl⟩
+  · interval_cases q
+    · exact Or.inl ⟨_, rfl⟩
+    · exact Or.inl ⟨_, rfl⟩
+    · exact Or.inr ⟨_, rfl⟩
+    · exact Or.inr ⟨v, rfl⟩
+
+private theorem digitWins_rotate (n : ℕ) {r : ℕ} (hr₀ : 0 < r)
+    (hr : r < (digits (slots n)).length) :
+    DigitWins (digits (slots n)) ((digits (slots n)).rotate r) := by
+  obtain ⟨p, b, s, q, hw, hrq, hq⟩ := exists_slot_at (slots n) hr
+  have hrot : (digits (slots n)).rotate r = (digits (b :: (s ++ p))).rotate q := by
+    rw [hrq, ← List.rotate_rotate, hw, digits_append, List.rotate_append_length_eq,
+      ← digits_append, List.cons_append]
+  by_cases hq₀ : q = 0
+  · have hp : 0 < p.length := by
+      cases p with
+      | nil => simp [digits, hq₀] at hrq; omega
+      | cons a t => simp
+    have hplen : p.length < (slots n).length := by rw [hw]; simp
+    have hslotsRot : (slots n).rotate p.length = b :: (s ++ p) := by
+      rw [hw, List.rotate_append_length_eq, List.cons_append]
+    simpa only [hrot, hq₀, List.rotate_zero, hslotsRot] using digitWins_slot_rotate n hp hplen
+  · have hrot' : (digits (b :: (s ++ p))).rotate q =
+        (slotDigits b).drop q ++ digits (s ++ p) ++ (slotDigits b).take q := by
+      rw [digits_cons, List.rotate_eq_drop_append_take
+        (by rw [List.length_append]; omega), List.drop_append_of_le_length hq.le,
+        List.take_append_of_le_length hq.le]
+    obtain ⟨t, ht⟩ := slots_head n
+    rw [hrot, hrot']
+    rcases offSlot_prefix b (s ++ p) (by omega) hq with ⟨v, hv⟩ | ⟨v, hv⟩
+    · rw [hv, ht]
+      exact digitWins_prefix [] (1 :: 1 :: 2 :: 2 :: digits t) v (Or.inr ⟨by decide, by decide⟩)
+    · rw [hv, ht]
+      exact digitWins_prefix [2] (1 :: 2 :: 2 :: digits t) v (Or.inl ⟨by decide, by decide⟩)
+
+
+-- The period-doubling slot substitution satisfies the same concatenation
+-- recursion as the ideal period words, with the same two initial digit strings.
+private theorem digits_eq_flatten_slots (n : ℕ) :
+    digits (slots n) = (idealPeriodWord (n + 1)).flatten ∧
+      digits (slots (n + 1)) = (idealPeriodWord (n + 2)).flatten := by
+  induction n with
+  | zero => exact ⟨rfl, rfl⟩
+  | succ n ih =>
+    refine ⟨ih.2, ?_⟩
+    rw [slots_rec n, idealPeriodWord_point_lt_iff_flatten_rec (n := n + 1) (by omega),
+      digits_append, digits_append, ih.1, ih.2]
+
+end IdealPeriodOrbit
+
+open IdealPeriodOrbit in
+/-- **The ideal periodic point is the least point of its orbit.** Let $N$ be a natural number,
+let $\alpha$ be a real number with $0 < \alpha \le \sqrt N - 1$, and let $T_\alpha$ be the
+$N$-expansion map on $I_\alpha = [\alpha, \alpha + 1]$. Let $n \ge 1$, write $|d_n|$ for the
+length of the digit string of the ideal period word $d_n$, and let $x \in I_\alpha$ be such that
+for every $i \ge 0$ the digit of $T_\alpha^i(x)$ is entry $i \bmod |d_n|$ (counting from $0$) of
+that digit string, so that the expansion of $x$ is purely periodic with period word $d_n$. Then
+$x \le T_\alpha^j(x)$ for every $j \ge 0$.
+
+The source assumes Phase I; only the assumption $0 < \alpha \le \sqrt N - 1$ is kept here.
+
+Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
+A75, Lemma 5 (`integers-2026-A75-lem-5`). -/
+public theorem idealPeriodWord_point_le_orbit {N : ℕ} {α : ℝ} (hα : 0 < α)
+    (hαN : α ≤ Real.sqrt N - 1) {n : ℕ} (hn : 1 ≤ n) {x : ℝ} (hx : x ∈ Set.Icc α (α + 1))
+    (hxd : ∀ i, nExpansionDigit N α ((nExpansionMap N α)^[i] x) =
+      ((idealPeriodWord n).flatten.getD (i % (idealPeriodWord n).flatten.length) 0 : ℤ))
+    (j : ℕ) :
+    x ≤ (nExpansionMap N α)^[j] x := by
+  have hNreal : (0 : ℝ) < N := Real.sqrt_pos.mp (by linarith)
+  have hN : 0 < N := by exact_mod_cast hNreal
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+  let w := digits (slots m)
+  have hw : w = (idealPeriodWord (m + 1)).flatten := (digits_eq_flatten_slots m).1
+  have hwpos : 0 < w.length := by
+    rw [hw]
+    exact idealPeriodWord_point_lt_iff_flatten_length_pos (by omega)
+  let y := (nExpansionMap N α)^[j] x
+  have hy : y ∈ Set.Icc α (α + 1) :=
+    idealPeriodWord_point_lt_iff_iterate_mem_Icc hα hαN hx j
+  have hdx (i : ℕ) : nExpansionDigit N α ((nExpansionMap N α)^[i] x) =
+      (cyclicGet (α := ℕ) w i : ℤ) := by
+    simpa only [cyclicGet, hw, show (default : ℕ) = 0 from rfl] using hxd i
+  have hdy (i : ℕ) : nExpansionDigit N α ((nExpansionMap N α)^[i] y) =
+      (cyclicGet (α := ℕ) (w.rotate j) i : ℤ) := by
+    change nExpansionDigit N α ((nExpansionMap N α)^[i] ((nExpansionMap N α)^[j] x)) = _
+    rw [← Function.iterate_add_apply, Nat.add_comm i j, hdx, cyclicGet_rotate]
+  by_cases hj : j % w.length = 0
+  · have hrot : w.rotate j = w := by rw [← List.rotate_mod, hj, List.rotate_zero]
+    exact (idealPeriodWord_point_lt_iff_eq_of_eq_digits hN hα hαN hx hy
+      fun i => by rw [hdx, hdy, hrot]).le
+  · have hwin : DigitWins w (w.rotate (j % w.length)) :=
+      digitWins_rotate m (Nat.pos_of_ne_zero hj) (Nat.mod_lt j hwpos)
+    rw [List.rotate_mod] at hwin
+    obtain ⟨k, hagree, hcmp⟩ := hwin
+    have hagree' (i : ℕ) (hi : i < k) : nExpansionDigit N α ((nExpansionMap N α)^[i] x) =
+        nExpansionDigit N α ((nExpansionMap N α)^[i] y) := by
+      rw [hdx, hdy, hagree i hi]
+    rcases hcmp with ⟨hodd, hlt⟩ | ⟨heven, hlt⟩
+    · have hlt' : nExpansionDigit N α ((nExpansionMap N α)^[k] x) <
+          nExpansionDigit N α ((nExpansionMap N α)^[k] y) := by
+        rw [hdx, hdy]
+        exact_mod_cast hlt
+      exact ((idealPeriodWord_point_lt_iff_lt_of_first_diff hN hα hαN hx hy hagree' hlt').1 hodd).le
+    · have hlt' : nExpansionDigit N α ((nExpansionMap N α)^[k] y) <
+          nExpansionDigit N α ((nExpansionMap N α)^[k] x) := by
+        rw [hdx, hdy]
+        exact_mod_cast hlt
+      exact ((idealPeriodWord_point_lt_iff_lt_of_first_diff hN hα hαN hy hx
+        (fun i hi => (hagree' i hi).symm) hlt').2 heven).le
 
 end
 
