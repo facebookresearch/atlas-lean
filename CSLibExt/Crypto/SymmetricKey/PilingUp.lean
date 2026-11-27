@@ -134,7 +134,8 @@ theorem classical_filter_eq (α : Type*) (p : α → Prop) [DecidablePred p]
   ext x
   simp [Finset.mem_filter]
 
-/-- Pushforward weights of the xor under the product joint. -/
+/-- The probability that the exclusive or of independent bits `w i ~ p i` equals `b` is the sum,
+over the words `w` with `xorAll n w = b`, of `∏ i, p i (w i)`. -/
 theorem map_xorAll_apply (n : Nat) (p : Fin n → PMF Bool) (b : Bool) :
   ((jointPMF p).map (xorAll n)) b
   = ∑ w ∈ Finset.univ.filter (fun w => xorAll n w = b),
@@ -237,7 +238,8 @@ theorem correlation_xor (n : Nat) (p : Fin n → PMF Bool) :
     Finset.sum_congr rfl (fun w _ => prod_sign_mul_toReal n p w)
   rw [h1, sum_sign_mul_eq_sub]
 
-/-- Product of correlations in terms of biases. -/
+/-- The product of the correlations is `2 ^ n` times the product of the biases: `∏ i,
+correlation (p i) = 2 ^ n * ∏ i, bias (p i)`. -/
 theorem prod_correlation_eq_pow_mul_prod_bias (n : Nat) (p : Fin n → PMF Bool) :
   (∏ i, correlation (p i)) = (2 : Real) ^ n * (∏ i, bias (p i)) := by
   simp only [correlation_eq_two_mul_bias, Finset.prod_mul_distrib]
@@ -329,44 +331,46 @@ theorem depWeight_sum : (∑ b, depWeight b) = 1 := by
 noncomputable def depJoint : PMF (Bool × Bool) :=
   PMF.ofFintype depWeight depWeight_sum
 
-/-- Weight value on `(false, false)`. -/
+/-- The dependent weight at `(false, false)` is `1 / 2` as a real number. -/
 theorem depWeight_toReal_FF : (depWeight (false, false)).toReal = 1 / 2 := by
   simp [depWeight]
 
-/-- Weight value on `(true, true)`. -/
+/-- The dependent weight at `(true, true)` is `1 / 2` as a real number. -/
 theorem depWeight_toReal_TT : (depWeight (true, true)).toReal = 1 / 2 := by
   simp [depWeight]
 
-/-- Weight value on `(false, true)`. -/
+/-- The dependent weight at `(false, true)` is `0` as a real number. -/
 theorem depWeight_toReal_FT : (depWeight (false, true)).toReal = 0 := by
   simp [depWeight]
 
-/-- Weight value on `(true, false)`. -/
+/-- The dependent weight at `(true, false)` is `0` as a real number. -/
 theorem depWeight_toReal_TF : (depWeight (true, false)).toReal = 0 := by
   simp [depWeight]
 
-/-- Fiber of the first projection over `false`. -/
+/-- The pairs of bits with first coordinate `false` are exactly `{(false, false), (false,
+true)}`. -/
 theorem fiber_fst_false : Finset.univ.filter (fun p : Bool × Bool => p.1 = false)
   = {(false, false), (false, true)} := by decide
 
-/-- Fiber of the first projection over `true`. -/
+/-- The pairs of bits with first coordinate `true` are exactly `{(true, false), (true, true)}`. -/
 theorem fiber_fst_true : Finset.univ.filter (fun p : Bool × Bool => p.1 = true)
   = {(true, false), (true, true)} := by decide
 
-/-- Fiber of the second projection over `false`. -/
+/-- The pairs of bits with second coordinate `false` are exactly `{(false, false), (true,
+false)}`. -/
 theorem fiber_snd_false : Finset.univ.filter (fun p : Bool × Bool => p.2 = false)
   = {(false, false), (true, false)} := by decide
 
-/-- Fiber of the second projection over `true`. -/
+/-- The pairs of bits with second coordinate `true` are exactly `{(false, true), (true, true)}`. -/
 theorem fiber_snd_true : Finset.univ.filter (fun p : Bool × Bool => p.2 = true)
   = {(false, true), (true, true)} := by decide
 
-/-- Fiber of the xor over `false`. -/
+/-- The pairs of bits with exclusive or `false` are exactly `{(false, false), (true, true)}`. -/
 theorem fiber_xor_false :
   Finset.univ.filter (fun p : Bool × Bool => (p.1 ^^ p.2) = false)
   = {(false, false), (true, true)} := by decide
 
-/-- Fiber of the xor over `true`. -/
+/-- The pairs of bits with exclusive or `true` are exactly `{(false, true), (true, false)}`. -/
 theorem fiber_xor_true :
   Finset.univ.filter (fun p : Bool × Bool => (p.1 ^^ p.2) = true)
   = {(false, true), (true, false)} := by decide

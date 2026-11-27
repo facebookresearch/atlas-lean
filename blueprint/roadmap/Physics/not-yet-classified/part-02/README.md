@@ -5,7 +5,6 @@
 - [Conducting Plane Wave](conducting-plane-wave/README.md)
 - [Conduction Ports](conduction-ports/README.md)
 - [Control Bridge](control-bridge/README.md)
-- [Correlation Domains](correlation-domains/README.md)
 - [Cumulative Inventory](cumulative-inventory/README.md)
 - [Current Limited ACLift](current-limited-aclift/README.md)
 - [DACLevel Error](daclevel-error/README.md)

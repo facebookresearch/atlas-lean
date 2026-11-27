@@ -14,9 +14,11 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.NumberTheory.InfiniteRieselRepdigits
+public import MathlibExt.NumberTheory.InfiniteRieselRepintegers
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.RieselRepdigit101
 public import MathlibExt.NumberTheory.SierpinskiRepinteger18107
+public import MathlibExt.NumberTheory.SierpinskiRieselRepdigitsInfiniteSierpinskiRepdigits
 
 /-!
 # Further results on Sierpiński and Riesel repdigits, repintegers and repstrings
@@ -43,20 +45,6 @@ public theorem_wanted infinite_sierpinski_repintegers {k : ℕ} (hk : IsSierpins
     {S : Finset (ℕ × ℕ × ℕ)} (hS : IsSierpinskiCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
     {t : ℕ | 1 ≤ t ∧ IsSierpinskiNumber (repstring b k 0 t)}.Infinite
 
-/-- **Covering-produced Riesel numbers give infinitely many Riesel repintegers.** Let $k$ be a
-Riesel number that has Riesel covering data, so that $k$ is produced as a Riesel number by the
-covering system method. Then for every natural number $b \ge 2$ there are infinitely many $t \ge 1$
-such that the $b$-repinteger $k_b^{(t)} = k\,(b^{\ell t} - 1)/(b^{\ell} - 1)$, where $\ell$ is the
-number of base-$b$ digits of $k$ (so $k_b^{(t)}$ is $k$ written $t$ times in base $b$), is a Riesel
-number.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.4 (stated in record
-`integers-2026-A12-thm-3-3`). -/
-public theorem_wanted infinite_riesel_repintegers {k : ℕ} (hk : IsRieselNumber k)
-    {S : Finset (ℕ × ℕ × ℕ)} (hS : IsRieselCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
-    {t : ℕ | 1 ≤ t ∧ IsRieselNumber (repstring b k 0 t)}.Infinite
-
 /-- **Binary repintegers of 18107 that are Riesel numbers.** For every natural number
 $t \equiv 31 \pmod{56}$, the binary repinteger $18107_2^{(t)} = 18107\,(2^{15t} - 1)/(2^{15} - 1)$,
 whose binary expansion is that of $18107$ (fifteen binary digits) written $t$ times, is a Riesel
@@ -67,18 +55,6 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.6
 (`integers-2026-A12-thm-3-6`). -/
 public theorem_wanted isRieselNumber_repstring_18107 {t : ℕ} (ht : t ≡ 31 [MOD 56]) :
     IsRieselNumber (repstring 2 18107 0 t)
-
-/-- **Infinitely many Sierpiński repdigits in every base $b > 78557$.** Let $b > 78557$ be a
-natural number. Then there are infinitely many Sierpiński numbers of the form $k(b^t - 1)/(b - 1)$
-with $1 \le k < b$ and $t \ge 1$, that is, $b$-repdigits: the digit $k$ written $t$ times in
-base $b$.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.7
-(`integers-2026-A12-cor-3-7`). -/
-public theorem_wanted infinite_sierpinski_repdigits {b : ℕ} (hb : 78557 < b) :
-    {N : ℕ | ∃ k t : ℕ, 1 ≤ k ∧ k < b ∧ 1 ≤ t ∧ N = repstring b k 0 t ∧
-      IsSierpinskiNumber N}.Infinite
 
 /-- **Repdigits with digit 41 that are Sierpiński numbers.** Let $b$ and $t$ be natural numbers
 with $b \equiv 87 \pmod{11184810}$ and $t \equiv 59 \pmod{120}$. Then the base-$b$ repdigit

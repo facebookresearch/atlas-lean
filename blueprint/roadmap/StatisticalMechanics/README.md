@@ -1,6 +1,6 @@
 # Statistical Mechanics
 
-Statistical mechanics studies lattice models of interacting spins and bonds through Gibbs measures, partition functions, correlation inequalities, and phase transitions.
+Statistical mechanics studies lattice models of interacting spins and bonds through Gibbs measures, partition functions, correlation inequalities, and phase transitions, and dynamics driven out of equilibrium through fluctuation relations.
 
 Most of the subject follows the Ising model from a finite graph to the infinite lattice. On a finite graph the
 [Lee–Yang circle theorem](spin-models/lee-yang-circle-theorem/README.md) puts the zeros of the ferromagnetic partition
@@ -37,3 +37,4 @@ for the Ising model.
 - [Random currents and sharpness](random-currents-and-sharpness/README.md)
 - [Random-cluster model](random-cluster-model/README.md)
 - [Mean-field spin glasses](spin-glasses/README.md)
+- [Nonequilibrium fluctuation relations](nonequilibrium-fluctuation-relations/README.md)

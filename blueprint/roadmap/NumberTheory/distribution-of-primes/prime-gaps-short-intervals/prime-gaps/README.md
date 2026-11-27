@@ -20,3 +20,11 @@
 - [Negation of Vardi's prime-gap asymptotic](disproved-vardi.md)
 - [Vardi's prime-gap asymptotic is false](vardi-asymptotic-refuted.md)
 - [Erdős Problem 6 (increasing prime gaps)](conjecture-holds.md)
+- [Positive lower density of large consecutive prime gaps](positive-lower-density-of-large-gaps.md)
+- [Positive lower density of increases of the normalized prime sequence](positive-lower-density-of-prime-ratio-increases.md)
+- [Short translates avoiding primes](short-translates-avoiding-primes.md)
+
+- [Iterated-logarithmic lower bound for long prime gaps](iterated-logarithmic-lower-bound-for-long-gaps.md)
+- [Coefficient and truncation bounds for a simultaneous-root sieve](truncated-sieve-coefficient-estimates.md)
+- [Eventual coefficient estimates for the auxiliary prime product](eventual-coefficient-estimates-for-auxiliary-primes.md)
+- [Simultaneous residue hitting in a short interval](simultaneous-residue-hitting-in-a-short-interval.md)
