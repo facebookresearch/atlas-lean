@@ -134,11 +134,12 @@ def swapRegret (play loss : Fin T → K → ℝ) : ℝ :=
     Finset.univ.inf' Finset.univ_nonempty
       (fun δ : K → K => ∑ t, ∑ a, play t a * loss t (δ a))
 
-/-- Average regret: external regret divided by the horizon. The horizon
-must be positive. (C1 base defs) -/
-noncomputable def averageRegret [NeZero T] (play loss : Fin T → K → ℝ) : ℝ :=
+/-- Average regret: external regret divided by the horizon; for `T = 0` it is
+`0`, as `x / 0 = 0`. (C1 base defs) -/
+noncomputable def averageRegret (play loss : Fin T → K → ℝ) : ℝ :=
   externalRegret play loss / (T : ℝ)
 
+omit [DecidableEq K] in
 /-- Regret against any fixed distribution is at most external regret.
 (C2 base lemmas) -/
 theorem expectedLoss_sub_weightedCumulative_le_externalRegret
@@ -173,6 +174,7 @@ theorem externalRegret_le_swapRegret (play loss : Fin T → K → ℝ)
   rw [haStar]
   exact le_trans (Finset.inf'_le _ (Finset.mem_univ (fun _ => aStar))) (le_of_eq hEq)
 
+omit [DecidableEq K] in
 /-- Adding a per-round constant to every action's loss does not change external
 regret. (C2 base lemmas) -/
 theorem externalRegret_add_roundConst (play loss : Fin T → K → ℝ)

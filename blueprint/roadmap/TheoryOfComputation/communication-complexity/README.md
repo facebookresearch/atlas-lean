@@ -4,6 +4,7 @@ Yao's two-party model: deterministic protocols as trees, the rectangle lemma, fo
 
 - [Deterministic communication protocols](deterministic-communication-protocols/README.md)
 - [Randomized communication protocols](randomized-communication-protocols/README.md)
+- [Randomized and DAG-like Lifting](randomized-and-dag-like-lifting/README.md)
 
 ## Related topics
 
@@ -11,3 +12,4 @@ Yao's two-party model: deterministic protocols as trees, the rectangle lemma, fo
 - [Boolean circuit complexity](../circuit-complexity/README.md): a depth-$d$ circuit for $f$ gives a $d$-bit protocol for the Karchmer–Wigderson game of $f$, and conversely (Rao and Yehudayoff, Chapter 8 and Lemma 8.1), the route from communication to circuit-depth lower bounds.
 - [Randomized, interactive and quantum complexity](../randomized-and-quantum-complexity/README.md): randomized computation in the Turing-machine setting.
 - [Query and communication measures](query-and-communication-measures/README.md)
+- [NP-completeness of deterministic communication complexity](np-completeness-of-deterministic-communication-c/README.md)

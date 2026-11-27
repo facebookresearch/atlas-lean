@@ -153,4 +153,20 @@ theorem t4_exists_stationary_swap :
     simpa [qSwap, Fin.sum_univ_two] using h
   constructor <;> linarith
 
+/-- T5: the expected-loss decomposition needs no `DecidableEq` and no
+`Nonempty` instance on the actions. -/
+theorem t5_expectedLoss_eq_sum_scaled_no_instances {K : Type*} [Fintype K] {T : ℕ}
+    (q : Fin T → K → K → ℝ) (p loss : Fin T → K → ℝ) (hp : IsStationaryPlay q p) :
+    expectedLoss p loss = ∑ j, expectedLoss (fun t => q t j) (scaledLoss p loss j) :=
+  expectedLoss_eq_sum_scaled q p loss hp
+
+/-- T6: with no `DecidableEq` instance on the actions, a stationary play exists
+and its expected loss decomposes over the copies. -/
+theorem t6_exists_stationary_no_decidableEq {K : Type*} [Fintype K] [Nonempty K] {T : ℕ}
+    (q : Fin T → K → K → ℝ) (hq : ∀ t j, IsSimplex (q t j)) (loss : Fin T → K → ℝ) :
+    ∃ p : Fin T → K → ℝ, IsStationaryPlay q p ∧
+      expectedLoss p loss = ∑ j, expectedLoss (fun t => q t j) (scaledLoss p loss j) := by
+  obtain ⟨p, hp⟩ := exists_isStationaryPlay q hq
+  exact ⟨p, hp, expectedLoss_eq_sum_scaled q p loss hp⟩
+
 end MathlibExtTest.GameTheory.RegretBlumMansour

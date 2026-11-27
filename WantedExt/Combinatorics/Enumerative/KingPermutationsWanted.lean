@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.MvPolynomial.Rename
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.KingFlatPOPSymmetry
 public import MathlibExt.Combinatorics.Enumerative.KingPermutationPatterns
 public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 public import WantedExt.Combinatorics.Enumerative.OddFibonacciWanted
@@ -35,34 +36,6 @@ public theorem_wanted king_permutation_not_separable (n : ℕ) (hn : 2 ≤ n)
     (hking : ∀ i j : Fin n, (j : ℕ) = i + 1 →
       (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i) :
     HasPattern σ ![1, 3, 0, 2] ∨ HasPattern σ ![2, 0, 3, 1]
-
-/-- **King permutations.** A permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$ is a king permutation
-if adjacent entries never differ by exactly $1$: for every position $i$ with $i + 1 < n$, neither
-$\sigma(i + 1) = \sigma(i) + 1$ nor $\sigma(i) = \sigma(i + 1) + 1$. Equivalently,
-$|\sigma(i + 1) - \sigma(i)| > 1$ for all adjacent positions $i$ and $i + 1$.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1.3. -/
-def IsKingPerm {n : ℕ} (σ : Equiv.Perm (Fin n)) : Prop :=
-  ∀ i j : Fin n, (j : ℕ) = i + 1 → (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i
-
-/-- **Number of ascents of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
-written in one-line notation, $\operatorname{asc}(\sigma)$ is the number of positions $i$ with
-$i + 1 < n$ and $\sigma(i) < \sigma(i + 1)$.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
-def permAscentCount {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
-  (Finset.univ.filter fun i : Fin n => ∃ j : Fin n, (j : ℕ) = i + 1 ∧ σ i < σ j).card
-
-/-- **Number of descents of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
-written in one-line notation, $\operatorname{des}(\sigma)$ is the number of positions $i$ with
-$i + 1 < n$ and $\sigma(i + 1) < \sigma(i)$.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
-def permDescentCount {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
-  (Finset.univ.filter fun i : Fin n => ∃ j : Fin n, (j : ℕ) = i + 1 ∧ σ j < σ i).card
 
 /-- **Statistics of the permutation $123$.** The identity permutation of $\{0, 1, 2\}$, written
 $012$ in one-line notation and $123$ after shifting every value up by one, has two ascents, no
@@ -95,31 +68,6 @@ theorem permStats_revPerm_fin_three :
       permRightToLeftMinCount (Fin.revPerm : Equiv.Perm (Fin 3)) = 1 := by
   decide
 
-/-- **Containing a flat pattern with one bottom label.** Let $\sigma$ be a permutation of
-$\{0, 1, \dots, n - 1\}$ and let $j \in \{0, 1, 2, 3\}$. Then $\sigma$ contains the flat partially
-ordered pattern $P_{j+1}$ of size $4$, in which label $j + 1$ lies below the other three labels
-(which are mutually incomparable), if there are positions $i_0 < i_1 < i_2 < i_3$ such that
-$\sigma(i_j) < \sigma(i_m)$ for every $m \in \{0, 1, 2, 3\}$ with $m \neq j$.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1.1 and Table 1. -/
-def ContainsFlatPOPBelow {n : ℕ} (σ : Equiv.Perm (Fin n)) (j : Fin 4) : Prop :=
-  ∃ f : Fin 4 ↪o Fin n, ∀ m, m ≠ j → σ (f j) < σ (f m)
-
-/-- **Containing a flat pattern with one top label.** Let $\sigma$ be a permutation of
-$\{0, 1, \dots, n - 1\}$ and let $j \in \{0, 1, 2, 3\}$. Then $\sigma$ contains the flat partially
-ordered pattern $Q_{j+1}$ of size $4$, in which label $j + 1$ lies above the other three labels,
-if there are positions $i_0 < i_1 < i_2 < i_3$ such that $\sigma(i_m) < \sigma(i_j)$ for every
-$m \in \{0, 1, 2, 3\}$ with $m \neq j$.
-
-The pattern $Q_k$ is the complement of the pattern $P_k$ of Table 1, in which label $k$ lies
-below the other three labels.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1.1 and Table 1. -/
-def ContainsFlatPOPAbove {n : ℕ} (σ : Equiv.Perm (Fin n)) (j : Fin 4) : Prop :=
-  ∃ f : Fin 4 ↪o Fin n, ∀ m, m ≠ j → σ (f m) < σ (f j)
-
 /-- **Containing $P_{j+1}$ forces length at least $4$.** Let $\sigma$ be a permutation of
 $\{0, 1, \dots, n - 1\}$ and let $j \in \{0, 1, 2, 3\}$. If $\sigma$ contains the flat partially
 ordered pattern $P_{j+1}$ of size $4$, in which label $j + 1$ lies below the other three labels,
@@ -143,56 +91,6 @@ theorem four_le_of_containsFlatPOPAbove {n : ℕ} {σ : Equiv.Perm (Fin n)} {j :
     (h : ContainsFlatPOPAbove σ j) : 4 ≤ n := by
   obtain ⟨f, -⟩ := h
   simpa using Fintype.card_le_of_embedding f.toEmbedding
-
-open Classical in
-/-- **Generating function of king permutations avoiding $P_{j+1}$.** For $j \in \{0, 1, 2, 3\}$
-let $P_{j+1}$ be the flat partially ordered pattern of length $4$ whose element number $j + 1$
-lies below each of the other three: a permutation $\sigma$ contains $P_{j+1}$ if there are
-positions $i_0 < i_1 < i_2 < i_3$ with $\sigma(i_j) < \sigma(i_m)$ for every $m \ne j$. A king
-permutation is one in which adjacent entries never differ by exactly $1$; let $K_n(P_{j+1})$ be
-the set of king permutations of length $n$ that do not contain $P_{j+1}$. The generating function
-$A_{P_{j+1}}$ is the formal power series in $x$ with coefficients in $\mathbb{Z}[p, q, u, v]$
-$$
-A_{P_{j+1}}(x; p, q, u, v) = \sum_{n \ge 0} \sum_{\sigma \in K_n(P_{j+1})}
-x^n p^{\operatorname{asc}(\sigma)} q^{\operatorname{des}(\sigma)}
-u^{\operatorname{lmax}(\sigma)} v^{\operatorname{rmax}(\sigma)},
-$$
-where $\operatorname{asc}$, $\operatorname{des}$, $\operatorname{lmax}$ and $\operatorname{rmax}$
-count ascents, descents, left-to-right maxima and right-to-left maxima.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1.4. -/
-noncomputable def kingFlatPOPBelowGF (j : Fin 4) : PowerSeries (MvPolynomial (Fin 4) ℤ) :=
-  PowerSeries.mk fun n =>
-    ∑ σ ∈ Finset.univ.filter
-        (fun σ : Equiv.Perm (Fin n) => IsKingPerm σ ∧ ¬ ContainsFlatPOPBelow σ j),
-      MvPolynomial.X 0 ^ permAscentCount σ * MvPolynomial.X 1 ^ permDescentCount σ *
-        MvPolynomial.X 2 ^ permLeftToRightMaxCount σ * MvPolynomial.X 3 ^ permRightToLeftMaxCount σ
-
-open Classical in
-/-- **Generating function of king permutations avoiding $Q_{j+1}$.** For $j \in \{0, 1, 2, 3\}$
-let $Q_{j+1}$ be the flat partially ordered pattern of length $4$ whose element number $j + 1$
-lies above each of the other three: a permutation $\sigma$ contains $Q_{j+1}$ if there are
-positions $i_0 < i_1 < i_2 < i_3$ with $\sigma(i_m) < \sigma(i_j)$ for every $m \ne j$. A king
-permutation is one in which adjacent entries never differ by exactly $1$; let $K_n(Q_{j+1})$ be
-the set of king permutations of length $n$ that do not contain $Q_{j+1}$. The generating function
-$\bar A_{Q_{j+1}}$ is the formal power series in $x$ with coefficients in $\mathbb{Z}[p, q, s, t]$
-$$
-\bar A_{Q_{j+1}}(x; p, q, s, t) = \sum_{n \ge 0} \sum_{\sigma \in K_n(Q_{j+1})}
-x^n p^{\operatorname{asc}(\sigma)} q^{\operatorname{des}(\sigma)}
-s^{\operatorname{lmin}(\sigma)} t^{\operatorname{rmin}(\sigma)},
-$$
-where $\operatorname{asc}$, $\operatorname{des}$, $\operatorname{lmin}$ and $\operatorname{rmin}$
-count ascents, descents, left-to-right minima and right-to-left minima.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Section 1.4. -/
-noncomputable def kingFlatPOPAboveGF (j : Fin 4) : PowerSeries (MvPolynomial (Fin 4) ℤ) :=
-  PowerSeries.mk fun n =>
-    ∑ σ ∈ Finset.univ.filter
-        (fun σ : Equiv.Perm (Fin n) => IsKingPerm σ ∧ ¬ ContainsFlatPOPAbove σ j),
-      MvPolynomial.X 0 ^ permAscentCount σ * MvPolynomial.X 1 ^ permDescentCount σ *
-        MvPolynomial.X 2 ^ permLeftToRightMinCount σ * MvPolynomial.X 3 ^ permRightToLeftMinCount σ
 
 /-- **Constant term of $A_{P_{j+1}}$.** For every $j \in \{0, 1, 2, 3\}$, the coefficient of $x^0$
 in the generating function $A_{P_{j+1}}(x; p, q, u, v)$ of king permutations avoiding the flat
@@ -322,23 +220,6 @@ theorem_wanted kingFlatPOPBelowGF_three_eq_rename :
     kingFlatPOPBelowGF 3 =
       PowerSeries.map (MvPolynomial.rename
           ⇑(Equiv.swap 0 1 * Equiv.swap 2 3 : Equiv.Perm (Fin 4))).toRingHom
-        (kingFlatPOPBelowGF 0)
-
-/-- **The generating functions for $Q_1$ and $P_1$ differ by a change of variables.** Let $P_1$
-(respectively $Q_1$) be the flat partially ordered pattern of length $4$ whose first element lies
-below (respectively above) each of the other three. Let $A_{P_1}(x; p, q, u, v)$ be the
-generating function of king permutations avoiding $P_1$, in which $x$ marks length and $p$, $q$,
-$u$, $v$ mark ascents, descents, left-to-right maxima and right-to-left maxima, and let
-$\bar A_{Q_1}(x; p, q, s, t)$ be the generating function of king permutations avoiding $Q_1$, in
-which $s$ and $t$ mark left-to-right minima and right-to-left minima instead. Then
-$\bar A_{Q_1}(x; p, q, s, t) = A_{P_1}(x; q, p, s, t)$: the series $\bar A_{Q_1}$ is obtained
-from $A_{P_1}$ by exchanging $p$ with $q$ in every coefficient and writing $s$, $t$ for $u$, $v$.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Corollary 2. -/
-theorem_wanted kingFlatPOPAboveGF_zero_eq_rename :
-    kingFlatPOPAboveGF 0 =
-      PowerSeries.map (MvPolynomial.rename ⇑(Equiv.swap (0 : Fin 4) 1)).toRingHom
         (kingFlatPOPBelowGF 0)
 
 /-- **The king generating function avoiding $Q_4$.** Let $A_{P_1}(x, p, q, u, v)$ be the
