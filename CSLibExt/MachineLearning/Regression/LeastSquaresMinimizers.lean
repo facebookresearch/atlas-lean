@@ -11,6 +11,8 @@ module
 public import CSLibExt.MachineLearning.Regression.LeastSquares
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
+import MathlibExt.Probability.Statistics.LinearModel.FittedProjection
+
 /-!
 # The set of least-squares minimizers
 
@@ -20,8 +22,9 @@ When the design is injective, the unique coefficient vector is given by the inve
 formula. No rank or nonemptiness assumption is needed for the kernel or projection results.
 
 See Boyd and Vandenberghe, *Introduction to Applied Linear Algebra* (2018), §12.2, for the
-full-column-rank formula and orthogonality principle. For the rank-deficient case we use the
-existing characterization by the normal equations and the Gram-kernel identity.
+full-column-rank formula and orthogonality principle. We identify the residual sum of squares
+with the squared Euclidean residual norm and reuse the rank-free fitted-projection theorem.
+The normal equations provide the reference solution for the affine kernel description.
 -/
 
 @[expose] public section
@@ -39,22 +42,43 @@ variable {ι : Type*} [Fintype ι] {m : ℕ}
 def rssMinimizers (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) : Set (ι → ℝ) :=
   {θ | ∀ θ', rss X y θ ≤ rss X y θ'}
 
+private theorem mem_rssMinimizers_iff_fit_eq_projection [DecidableEq ι]
+    (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (θ : ι → ℝ) :
+    θ ∈ rssMinimizers X y ↔
+      WithLp.toLp 2 (X *ᵥ θ) =
+        (LinearMap.range X.toEuclideanLin).starProjection (WithLp.toLp 2 y) := by
+  let y₂ : EuclideanSpace ℝ (Fin m) := WithLp.toLp 2 y
+  have hsq (γ : ι → ℝ) :
+      rss X y γ = ‖y₂ - X.toEuclideanLin (WithLp.toLp 2 γ)‖ ^ 2 := by
+    rw [rss_eq_sum, EuclideanSpace.real_norm_sq_eq]
+    simp only [y₂, PiLp.sub_apply, Matrix.toLpLin_apply]
+  have hcompare (γ : ι → ℝ) :
+      rss X y θ ≤ rss X y γ ↔
+        ‖y₂ - X.toEuclideanLin (WithLp.toLp 2 θ)‖ ≤
+          ‖y₂ - X.toEuclideanLin (WithLp.toLp 2 γ)‖ := by
+    rw [hsq θ, hsq γ, sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
+  have hmin : θ ∈ rssMinimizers X y ↔ ∀ w : EuclideanSpace ℝ ι,
+      ‖y₂ - X.toEuclideanLin (WithLp.toLp 2 θ)‖ ≤ ‖y₂ - X.toEuclideanLin w‖ := by
+    constructor
+    · intro h w
+      simpa only [WithLp.toLp_ofLp] using (hcompare (WithLp.ofLp w)).mp (h (WithLp.ofLp w))
+    · intro h γ
+      exact (hcompare γ).mpr (h (WithLp.toLp 2 γ))
+  exact hmin.trans
+    ((MathlibExt.Probability.Statistics.LinearModel.least_squares_fitted_projection X y₂).1
+      (WithLp.toLp 2 θ))
+
 /-- Relative to a solution of the normal equations, a coefficient vector is minimizing exactly
 when it gives the same fitted values. -/
 theorem mem_rssMinimizers_iff_fit_eq {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ}
     {θ₀ : ι → ℝ} (h₀ : Xᵀ *ᵥ (X *ᵥ θ₀) = Xᵀ *ᵥ y) (θ : ι → ℝ) :
     θ ∈ rssMinimizers X y ↔ X *ᵥ θ = X *ᵥ θ₀ := by
-  change (∀ θ', rss X y θ ≤ rss X y θ') ↔ _
-  rw [rss_le_iff_normal]
+  classical
+  have hproj := (mem_rssMinimizers_iff_fit_eq_projection X y θ₀).mp (rss_le_of_normal h₀)
+  rw [mem_rssMinimizers_iff_fit_eq_projection, ← hproj]
   constructor
-  · intro h
-    have hk : θ - θ₀ ∈ LinearMap.ker (Xᵀ * X).mulVecLin := by
-      rw [LinearMap.mem_ker, mulVecLin_apply, ← mulVec_mulVec, mulVec_sub, mulVec_sub,
-        h, h₀, sub_self]
-    rw [ker_mulVecLin_transpose_mul_self] at hk
-    simpa only [LinearMap.mem_ker, mulVecLin_apply, mulVec_sub, sub_eq_zero] using hk
-  · intro h
-    rw [h, h₀]
+  · exact congrArg (WithLp.ofLp (p := 2))
+  · exact congrArg (WithLp.toLp 2)
 
 /-- **The set of least-squares minimizers.** Starting from any solution of the normal equations,
 translate the kernel of the design matrix by that solution to obtain all minimizers. -/
@@ -108,16 +132,7 @@ theorem fit_eq_starProjection_of_mem_rssMinimizers [DecidableEq ι]
     {X : Matrix (Fin m) ι ℝ} {y : Fin m → ℝ} {θ : ι → ℝ}
     (hθ : θ ∈ rssMinimizers X y) :
     WithLp.toLp 2 (X *ᵥ θ) =
-      (LinearMap.range X.toEuclideanLin).starProjection (WithLp.toLp 2 y) := by
-  symm
-  apply Submodule.eq_starProjection_of_mem_of_inner_eq_zero
-  · exact ⟨WithLp.toLp 2 θ, rfl⟩
-  · rintro _ ⟨v, rfl⟩
-    have hn := (normal_iff X y θ).mp ((rss_le_iff_normal X y θ).mp hθ)
-    have hdot : (X *ᵥ WithLp.ofLp v) ⬝ᵥ (y - X *ᵥ θ) = 0 := by
-      rw [mulVec_dotProduct_eq, hn, dotProduct_zero]
-    change ⟪WithLp.toLp 2 (y - X *ᵥ θ), WithLp.toLp 2 (X *ᵥ WithLp.ofLp v)⟫_ℝ = 0
-    simpa only [PiLp.inner_apply, RCLike.inner_apply, WithLp.ofLp_toLp, dotProduct, conj_trivial]
-      using hdot
+      (LinearMap.range X.toEuclideanLin).starProjection (WithLp.toLp 2 y) :=
+  (mem_rssMinimizers_iff_fit_eq_projection X y θ).mp hθ
 
 end Cslib.MachineLearning.LeastSquares
