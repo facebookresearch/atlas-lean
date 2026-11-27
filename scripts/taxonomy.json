@@ -13672,7 +13672,6 @@
   "MathlibExt/NumberTheory/NicomacheanAdjoinedProgression": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomacheanLargeTopGap": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomacheanTranslations": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
-  "MathlibExt/NumberTheory/NicomacheanTranslationsExistsGoldenRatioNicomacheanSequence": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomachusConvergents": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomachusCubeSums": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomachusGeneralization": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
