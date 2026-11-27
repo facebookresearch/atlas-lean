@@ -2,8 +2,8 @@
 
 The *standard intruder* is an [MSR theory](multiset-rewriting-with-existential-quantification.md) that models a Dolev–Yao attacker in two phases, with predicates $D(\cdot)$ for messages it
 can decompose, $M(\cdot)$ for its memory and $C(\cdot)$ for messages it can compose, over a sort $\mathrm{msg}$ of messages with pairing $\langle \cdot, \cdot\rangle$. For each
-network predicate $N_i$ its rules intercept a message, $N_i(\vec x) \to D(\vec x)$; decompose and remember, $D(\langle x, y\rangle) \to D(x), D(y)$ and $D(z) \to M(z)$; compose from
-memory, $M(x) \to C(x), M(x)$ and $C(x), C(y) \to C(\langle x, y\rangle)$; send, $C(\vec x) \to N_i(\vec x)$; and generate fresh data, $\to \exists x.\ M(x)$. With black-box encryption,
+network predicate $N_i$, whose argument list $\vec x$ is read by $D$ and $C$ as one message, the pairing of its fields (so a two-field predicate gives $D(\langle x, y\rangle)$), its rules intercept a message, $N_i(\vec x) \to D(\langle \vec x\rangle)$; decompose and remember, $D(\langle x, y\rangle) \to D(x), D(y)$ and $D(z) \to M(z)$; compose from
+memory, $M(x) \to C(x), M(x)$ and $C(x), C(y) \to C(\langle x, y\rangle)$; send, $C(\langle \vec x\rangle) \to N_i(\vec x)$; and generate fresh data, $\to \exists x.\ M(x)$. With black-box encryption,
 further rules decrypt a ciphertext in $D$ when the matching decryption key is in memory and encrypt in $C$ under any known encryption key.
 
 ## Depends on

@@ -10,8 +10,10 @@ $$\begin{aligned}
 &\{M/x\} \equiv \{N/x\} \text{ when } \Sigma \vdash M = N
 \end{aligned}$$
 
-(the rules Par-0, Par-A, Par-C, Repl, New-0, New-C, New-Par, Alias, Subst and Rewrite). Every closed extended process is structurally equivalent to
-$\nu\tilde n.(\{\tilde M/\tilde x\} \mid P)$ with $P$ a closed plain process, and every closed frame to $\nu\tilde n.\{\tilde M/\tilde x\}$.
+(the rules Par-0, Par-A, Par-C, Repl, New-0, New-C, New-Par, Alias, Subst and Rewrite). Every closed extended process $A$ is structurally equivalent to
+$\nu\tilde n.(\{\tilde M/\tilde x\} \mid P)$ with $P$ a closed plain process ($\mathrm{fv}(P) = \emptyset$), ground images ($\mathrm{fv}(\tilde M) = \emptyset$) and $\tilde n \subseteq \mathrm{fn}(\tilde M)$, and every closed
+frame $\varphi$ to $\nu\tilde n.\{\tilde M/\tilde x\}$ with $\mathrm{fv}(\tilde M) = \emptyset$ and $\tilde n \subseteq \mathrm{fn}(\tilde M)$; the variables $\tilde x$ are exactly the domain. For example, the closed frame
+$\{a/x\} \mid \{x/y\}$ is equivalent to $\{a/x\} \mid \{a/y\}$.
 
 ## Depends on
 
@@ -20,4 +22,4 @@ $\nu\tilde n.(\{\tilde M/\tilde x\} \mid P)$ with $P$ a closed plain process, an
 
 ## Sources
 
-- M. Abadi, B. Blanchet and C. Fournet, "The applied pi calculus: mobile values, new names, and secure communication", *Journal of the ACM* 65(1), 2018, arXiv:1609.03003v2, <https://arxiv.org/abs/1609.03003v2>: Section 2.2, the definition of equational theories (respecting sorts and non-trivial, with two different terms in each sort) and of structural equivalence, and the normal form of closed extended processes that follows it.
+- M. Abadi, B. Blanchet and C. Fournet, "The applied pi calculus: mobile values, new names, and secure communication", *Journal of the ACM* 65(1), 2018, arXiv:1609.03003v2, <https://arxiv.org/abs/1609.03003v2>: Section 2.2, the definition of equational theories (respecting sorts and non-trivial, with two different terms in each sort) and of structural equivalence, and the normal form of closed extended processes and closed frames that follows it ($\mathrm{fv}(P) = \mathrm{fv}(\tilde M) = \emptyset$ and $\tilde n \subseteq \mathrm{fn}(\tilde M)$).
