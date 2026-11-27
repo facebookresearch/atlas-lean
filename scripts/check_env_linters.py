@@ -321,6 +321,7 @@ def index_source(text: str) -> SourceIndex:
         name = name_match.group("name") if name_match else None
         modifiers = command.group("modifiers").split()
         exposes = re.search(r"\bexpose\b", command.group("attributes")) is not None
+        hides = re.search(r"\bno_expose\b", command.group("attributes")) is not None
         public_scope = bool(scopes) and scopes[-1][1]
         exposed_scope = bool(scopes) and scopes[-1][2]
         components = name.split(".") if name else []
@@ -408,9 +409,11 @@ def index_source(text: str) -> SourceIndex:
         elif kind in HELPER_KINDS:
             # In a `module` file a `where` or `let rec` helper is public only if its
             # declaration is and exposes its body: an `abbrev`, an instance, or a definition
-            # marked `@[expose]` or in an `@[expose]` section, but never a theorem's.
+            # marked `@[expose]` or in an `@[expose]` section, unless it is marked
+            # `@[no_expose]`, but never a theorem's. (An instance of a class of propositions
+            # does not expose its body either; the index cannot tell such a class.)
             exposed = (kind in ("abbrev", "instance") or exposes or exposed_scope) and \
-                kind not in ("theorem", "lemma")
+                not hides and kind not in ("theorem", "lemma")
             helper_private = private or (is_module and not exposed)
             for helper, offset in helpers(code, name_match.end(), stop):
                 index.add(f"{declared}.{unquote_name(helper)}", index.line_at(offset),
