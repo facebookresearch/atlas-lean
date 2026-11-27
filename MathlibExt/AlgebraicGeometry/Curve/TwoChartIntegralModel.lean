@@ -226,7 +226,7 @@ instance isOpenImmersion_fInf : IsOpenImmersion (fInf R F j) := by
 open subscheme of both. These hypotheses do not make its function field `F`: for `R = ℚ`,
 `F = ℚ(t)` and `j = 1` all three chart rings are `ℚ`, so the glued scheme is `Spec ℚ`. Over a field
 `K`, it is `AlgebraicCurve.CurveModel.glued K j` (`twoChartIntegralModel_eq_glued`), whose
-function field is `F` when `F` is finite and separable over `K(j)`
+function field is `F` when `F` is finite over `K(j)`
 (`AlgebraicCurve.CurveModel.gluedFunctionFieldEquiv`). -/
 public def _root_.AlgebraicCurve.TwoChartIntegralModel : Scheme.{u} :=
   pushout (fFin R F j) (fInf R F j)

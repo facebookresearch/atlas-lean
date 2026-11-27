@@ -102,11 +102,9 @@ example [Fact ((2 : ℚ) ≠ 0)] :
         Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk (Ideal.span {2}))) :=
   TwoChartIntegralModel.reductionι_toBase ℤ ℚ 2 _
 
-open IntermediateField in
 /-- Over a field, the two-chart scheme is `CurveModel.glued`, so the results proved for that model
-apply to it: for `L` finite and separable over `K(t)`, it is an integral scheme. -/
-example (K L : Type) [Field K] [Field L] [Algebra K L] (t : L) [Fact (t ≠ 0)]
-    [FiniteDimensional K⟮t⟯ L] [Algebra.IsSeparable K⟮t⟯ L] :
+apply to it; for instance, it is an integral scheme. -/
+example (K L : Type) [Field K] [Field L] [Algebra K L] (t : L) [Fact (t ≠ 0)] :
     AlgebraicGeometry.IsIntegral (AlgebraicCurve.TwoChartIntegralModel K L t) := by
   rw [TwoChartIntegralModel.twoChartIntegralModel_eq_glued]
   infer_instance
