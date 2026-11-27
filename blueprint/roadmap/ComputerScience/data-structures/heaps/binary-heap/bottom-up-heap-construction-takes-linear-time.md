@@ -25,5 +25,5 @@
 
 ## Sources
 
-- R. W. Floyd, *Algorithm 245: Treesort 3*, Communications of the ACM 7(12), 701 (1964), doi:10.1145/355588.365103: the procedure first sifts down the positions $\lfloor n/2 \rfloor, \dots, 2$ of the array $M[1:n]$, indexed from $1$ and ordered as a max-heap, and sifts down the root at the start of its sorting loop. The construction here is that pass for a min-heap indexed from $0$, with the root included.
+- R. W. Floyd, *Algorithm 245: Treesort 3*, Communications of the ACM 7(12), 701 (1964), doi:10.1145/355588.365103: the procedure first sifts down (its `siftup`) the positions $\lfloor n/2 \rfloor, \dots, 2$ of the array $M[1:n]$, indexed from $1$ and ordered as a max-heap, and sifts down the root at the start of its sorting loop. The construction here is that pass for a min-heap indexed from $0$, with the root included.
 - C. Zander, *Linear heap algorithm (buildheap)*, course notes, CSS 343, University of Washington Bothell, <https://courses.washington.edu/css343/zander/NotesProbs/heapcomplexity>: bottom-up construction does work bounded by the sum of node heights, and the theorem that a complete binary tree of height $h$ with $2^{h+1} - 1$ nodes has height sum $2^{h+1} - 1 - (h + 1)$, proved by subtracting $S$ from $2S$. The bounds for general $n$, with the identity $S = n - s_2(n)$, are written out here.

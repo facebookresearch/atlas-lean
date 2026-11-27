@@ -27,10 +27,10 @@ sift-down in `BinaryHeap.SiftDownCost`: the heights of an `n`-node tree sum to e
 `n` minus the binary digit sum of `n`, which makes the linear bound explicit.
 
 The construction is the first pass of R. W. Floyd's *Algorithm 245: Treesort 3*
-(Comm. ACM 7(12), 701, 1964), written here for a min-heap indexed from `0`. The analysis by the
-sum of node heights, and the exact sum `2^(h+1) - 1 - (h+1)` for a perfect tree of height `h`,
-follow C. Zander's course notes *Linear heap algorithm (buildheap)* (CSS 343, University of
-Washington Bothell).
+(Comm. ACM 7(12), 701, 1964), with the root included, written here for a min-heap indexed from
+`0`. The analysis by the sum of node heights, and the exact sum `2^(h+1) - 1 - (h+1)` for a
+perfect tree of height `h`, follow C. Zander's course notes *Linear heap algorithm (buildheap)*
+(CSS 343, University of Washington Bothell).
 -/
 
 @[expose] public section
