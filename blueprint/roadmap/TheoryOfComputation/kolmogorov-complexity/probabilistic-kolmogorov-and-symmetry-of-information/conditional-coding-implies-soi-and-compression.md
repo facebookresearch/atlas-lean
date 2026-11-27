@@ -1,6 +1,6 @@
 # Average-case conditional coding implies average-case symmetry of information and language compression
 
-For every polynomial-time samplable family $\{D_n\}$ of pairs, strong average-case conditional coding for $\{D_n\}$ and for its second marginal implies strong average-case symmetry of information for $\mathrm{pK}$ and strong average-case language compression for $\{D_n\}$; the analogous implications hold for the weak (non-negligible probability) versions.
+For every polynomial-time samplable family $\{D_n\}$ of pairs, strong average-case conditional coding for $\{D_n\}$ and for its second marginal implies strong average-case symmetry of information for $\mathrm{pK}$ and strong average-case language compression for $\{D_n\}$. For the weak versions (success probability at least $1/q(n)$ for some polynomial $q$), weak conditional coding for $\{D_n\}$ implies weak language compression for $\{D_n\}$; for symmetry of information the direct argument gives only the converse (weak symmetry of information implies weak conditional coding), and the forward implication holds only globally: if weak conditional coding holds for every samplable family, then weak symmetry of information holds for every samplable family, through the equivalence of all these statements with the non-existence of infinitely-often one-way functions.
 
 ## Proof sketch
 

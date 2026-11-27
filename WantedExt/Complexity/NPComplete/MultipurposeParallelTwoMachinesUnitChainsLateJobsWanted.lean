@@ -28,7 +28,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesUnitChainsMakespanWanted
 public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
 
