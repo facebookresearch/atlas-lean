@@ -11459,6 +11459,7 @@
   "MathlibExt/Combinatorics/Enumerative/SmarandachePermutationSequence": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Smarandache permutation sequence"},
   "MathlibExt/Combinatorics/Enumerative/SpiveyBellNumberAddition": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Spivey's Bell number formula"},
   "MathlibExt/Combinatorics/Enumerative/SpiveyPQBell": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Spivey's Bell number formula"},
+  "MathlibExt/Combinatorics/Enumerative/SquareGridFEven": {"to": "Combinatorics/tilings-board-placements", "title": "Tilings of grids, cylinders and tori up to symmetry"},
   "MathlibExt/Combinatorics/Enumerative/SquareGridR2Odd": {"to": "Combinatorics/tilings-board-placements", "title": "Tilings of grids, cylinders and tori up to symmetry"},
   "MathlibExt/Combinatorics/Enumerative/StableMatchingHellCouples": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
   "MathlibExt/Combinatorics/Enumerative/StableMatchingSequences": {"to": "GraphTheory/matchings-and-flows", "title": "Stable marriage problem"},
