@@ -38,6 +38,7 @@ public import MathlibExt.NumberTheory.TwoComplexityLowerBound
 public import MathlibExt.NumberTheory.TwoComplexitySum
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddTwoOfForm
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLPowAddPow
 
 set_option autoImplicit false
 
@@ -55,15 +56,6 @@ theorem_wanted logb_le_complexityL_le (l n : ℕ) (hl : 1 < l)
     (hln : l ∣ n) (hn : 1 ≤ n) :
     Real.logb l n ≤ (complexityL l n : ℝ) ∧
       (complexityL l n : ℝ) ≤ l * Real.logb l n - 1
-
-/-- **The $l$-complexity of $l^m + l^{m'}$.** Write $\|n\|_l$ for the $l$-complexity of $n$.
-For natural numbers $l > 1$ and $m \ge m' \ge 1$, $\|l^m + l^{m'}\|_l = m + 1$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Corollary 1. -/
-theorem_wanted complexityL_pow_add_pow (l m m' : ℕ)
-    (hl : 1 < l) (h : m' ≤ m) (hm' : 1 ≤ m') :
-    complexityL l (l ^ m + l ^ m') = m + 1
 
 /-- **The 2-complexity of a power of two and of a sum of two powers of two.** Write
 $\|n\|_2$ for the $2$-complexity of $n$. For all natural numbers $m_1$ and $m_2$ with
