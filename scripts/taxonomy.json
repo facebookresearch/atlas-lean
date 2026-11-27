@@ -12253,6 +12253,7 @@
   "MathlibExt/FieldTheory/Finite/OrderedPartitionCongruence": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PolynomialSumIdentity": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
+  "MathlibExt/FieldTheory/Finite/PowerSumCriterion": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PrimitivePolynomial": {"to": "FieldTheory/finite-fields", "title": "Primitive polynomials over finite fields"},
   "MathlibExt/FieldTheory/Finite/ShiftedPowerSumPermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Galois/Abelian": {"to": "FieldTheory/galois-theory", "title": "Intermediate fields of abelian extensions"},
