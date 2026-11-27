@@ -80,3 +80,4 @@
 
 - [Scott-continuous maps and least fixed points](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/README.md): the ω-complete partial orders, continuous function spaces and least fixed points that the denotational semantics uses.
 - [Models of the untyped lambda calculus](../models-of-the-untyped-lambda-calculus/README.md): Scott's graph model of the untyped calculus.
+- [Effectful extensions of Boolean PCF](effectful-extensions-of-boolean-pcf/README.md)

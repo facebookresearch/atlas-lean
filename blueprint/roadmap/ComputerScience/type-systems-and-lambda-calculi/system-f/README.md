@@ -12,3 +12,4 @@
 - [Erasure of call-by-value evaluation](the-call-by-value-erasure-bridge/README.md)
 - [Curry-style System F](curry-style-system-f/README.md)
 - [Full reduction and subject reduction for pure System F](full-reduction-and-subject-reduction-for-pure-sy/README.md)
+- [Atomic polymorphism](atomic-polymorphism/README.md)
