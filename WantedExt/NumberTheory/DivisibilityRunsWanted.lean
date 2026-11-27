@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.DivisibilityRuns
 public import MathlibExt.NumberTheory.GeneralizedTribonacciBasis
 public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciNumberEqFib
 public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountTwo
+public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountThree
 public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciGeneralizedTribonacciGrowthBounds
 
 namespace MetaMathlibExt
@@ -85,35 +86,6 @@ public theorem_wanted divRunCount_two_asymptotic :
     ∃ K : ℝ, ∀ B : ℕ, 2 ≤ B →
       |(divRunCount B 2 : ℝ) - 32 * (B : ℝ) ^ 3 * Real.log B ^ 2|
         ≤ K * (B : ℝ) ^ 3 * Real.log B
-
-/-- **Exact formula for the length-three run count.** For a natural number $B$, let $A_B(3)$ be
-the number of integer tuples $(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and
-$(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at least $3$, and for integers
-$m \ge 1$ let $d_B(m) = 2\lfloor B/m \rfloor + 1$. Then
-$$A_B(3) = \sum_{x, y} \left(d_B(|x|)\, d_B(|y|)\, d_B(|x+y|) - 1\right),$$
-where the sum runs over the integers $x, y \in [-B, B]$ with $x \ne 0$, $y \ne 0$ and
-$x + y \ne 0$, and also
-$$
-A_B(3) = 2 \sum_{m=1}^{B} \sum_{n=1}^{B} d_B(m)\, d_B(n)\, d_B(m+n) +
-4 \sum_{1 \le n < m \le B} d_B(m)\, d_B(n)\, d_B(m-n) - (4B^2 - 2B).
-$$
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 6
-(`integers-2026-A122-prop-6`). -/
-public theorem_wanted divRunCount_three (B : ℕ) :
-    ((divRunCount B 3 : ℤ)
-        = ∑ x ∈ Finset.Icc (-(B : ℤ)) B, ∑ y ∈ Finset.Icc (-(B : ℤ)) B,
-            if x ≠ 0 ∧ y ≠ 0 ∧ x + y ≠ 0 then
-              ((2 * (B / x.natAbs) + 1) * (2 * (B / y.natAbs) + 1)
-                * (2 * (B / (x + y).natAbs) + 1) - 1 : ℕ)
-            else 0) ∧
-    (divRunCount B 3 : ℤ)
-        = 2 * ∑ m ∈ Finset.Icc 1 B, ∑ n ∈ Finset.Icc 1 B,
-            ((2 * (B / m) + 1) * (2 * (B / n) + 1) * (2 * (B / (m + n)) + 1) : ℕ)
-          + 4 * ∑ m ∈ Finset.Icc 1 B, ∑ n ∈ Finset.Ico 1 m,
-            ((2 * (B / m) + 1) * (2 * (B / n) + 1) * (2 * (B / (m - n)) + 1) : ℕ)
-          - (4 * B ^ 2 - 2 * B)
 
 end
 
