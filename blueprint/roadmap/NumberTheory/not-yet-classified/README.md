@@ -26,3 +26,4 @@ Topics added since this subject's fields were last revised.
 - [Adelic Lift Exists](exists-is-adelic-lift-of.md)
 - [Eleven Pid](eleven-pid.md)
 - [Galois representations attached to normalized eigenforms](exists-galois-rep-charpoly-frob.md)
+- [Galois representations attached to weight-one eigenforms (Deligne–Serre)](exists-galois-rep-trace-det-frob-of-weig.md)
