@@ -1,10 +1,12 @@
 # Ordinary least squares
 
+- [Heteroskedasticity-robust covariance estimation](heteroskedasticity-robust-covariance-estimation/README.md)
+- [Saturated two-by-two regression](saturated-two-by-two-regression/README.md)
+- [Omitted-variable bias](omitted-variable-bias/README.md)
 - [Gauss–Markov: the BLUE covariance ordering in the classical linear model](gauss-markov-the-blue-covariance-ordering-in-the/README.md)
 - [Exact contrast t intervals and the one-sample specialization](exact-contrast-t-intervals-and-the-one-sample-sp/README.md)
 - [Linear hypotheses in the Gaussian linear model: the chi-square numerator](linear-hypotheses-in-the-gaussian-linear-model-t/README.md)
 - [Exact F and single-contrast T² inference in the Gaussian linear model](exact-f-and-single-contrast-t-2-inference-in-the/README.md)
-- [Asymptotic normality of OLS with i.i.d. rows](asymptotic-normality-of-ols-with-i-i-d-rows-atla/README.md)
 - [Random-design linear models, conditionally on the design](random-design-linear-models-conditionally-on-the/README.md)
 - [Unbiasedness of RSS/(n−k) in the Gaussian-free classical linear model](unbiasedness-of-rss-n-k-in-the-gaussian-free-cla/README.md)
 - [Exact t law for a single estimated coefficient (Atlas ST04.T03)](exact-t-law-for-a-single-estimated-coefficient-a/README.md)

@@ -4,4 +4,4 @@ For a linear mixed model $y = X\beta + Zu + e$ with real design matrices $X$ ($n
 
 $$L = GZ^\top V^{-1}(I - XB),$$
 
-with matrix inverses (zero when singular). Matrix inverses are taken as $0$ for singular matrices.
+with matrix inverses taken as $0$ for singular matrices.

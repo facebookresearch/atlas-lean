@@ -225,11 +225,13 @@ module-and-name row lean-facts gave no Lean link (the Lean index resolves it to 
 
 The workflow tests the card scripts and runs `rollup`, which checks first, in their own read-only job,
 `check the cards`, after `build the wiki` and from its `blueprint-dependencies` artifact; on a pull
-request it passes the base commit's ledger and annotations and Git's renames since that commit. A pull
-request runs it only when the site's build runs, as when the PR changes the wiki, either ledger or what builds
-and checks the site, and a merge group never does
+request it passes the base commit's ledger (its frozen file and fragments) and annotations and Git's renames since
+that commit. A pull request runs it only when the site's build runs, as when the PR changes the wiki, either ledger
+or what builds and checks the site, and a merge group never does
 ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)). It keeps
-`build/cards.json` as the `cards` artifact. The wiki job
+`build/cards.json` as the `cards` artifact. CI's required `check the graph` job checks the move ledger's integrity on
+every pull request and merge group, with `scripts/card_moves.py check`, and only `check the cards` reconciles the
+moves since the base with it ([Move ledger](#move-ledger)). The wiki job
 runs the site hook's tests (`scripts/test_card_pages.py`) with its other tests and leaves
 `scripts/test_cards.py` and the strict check of the content and its history to the card job; it runs
 `moves` once, for the moved addresses its site keeps, and `rollup` once, for the card data its site shows, each in
@@ -241,14 +243,14 @@ python scripts/sync_wiki.py lean-facts build/lean-dependencies.json --registry b
 python scripts/cards.py moves build/card-moves.json
 python scripts/cards.py rollup build/cards.json --dependencies build/lean-dependencies.json \
   --registry build/mathlib-registry.json \
-  [--base-ledger <the base commit's scripts/card-moves.jsonl> --base-links <its blueprint/links/> \
-   --renames <git diff --name-status -M BASE HEAD -- blueprint/roadmap>]
+  [--base-ledger <a folder with the base commit's card-moves.jsonl and card-moves.d/> \
+   --base-links <its blueprint/links/> --renames <git diff --name-status -M BASE HEAD -- blueprint/roadmap>]
 ```
 
 ## Move ledger
 
-`scripts/card-moves.jsonl` records, one JSON object per line, appended and never rewritten, every change
-that retires an address (paths are Autoform ids: below `roadmap/`, without `.md`):
+The move ledger records, one JSON object per line, never rewritten, every change that retires an address
+(paths are Autoform ids: below `roadmap/`, without `.md`):
 
 - a moved statement page: `{"page": "<old path>", "to": "<new path>", "article_id": "af_..."}`;
 - a moved or renamed folder that keeps its id: `{"folder": "<old path>", "to": "<new path>", "article_id": "af_..."}`;
@@ -261,52 +263,144 @@ that retires an address (paths are Autoform ids: below `roadmap/`, without `.md`
 A folder row moves the folder alone, its folder page and its address: each page and folder inside it that
 moves has its own row, so the history never depends on what the folder holds later. Renaming a folder `a` to
 `b` with its page `a/x` takes two rows, `a` to `b` and `a/x` to `b/x`; a page later added to `b` needs none.
+An ordinary page or annotation change needs no row.
 
-The ledger only grows: the rows the base commit published stay first and unchanged. The check follows
-every chain to its final live destination: the old path is gone; every hop keeps the id the chain
-started with, so an old address always leads, through the ledger, to its own article (the site has to
-serve these rows as redirects before a card change that moves a page is published); a page ends at a
-live statement page
-and a folder at a live folder page with that id (a card's or not), or at the card a retirement row
-records at that path; a card is retired once, its id is no card's or statement page's any more, and what replaces it is a
-live card; a statement is retired once, at the address its page rows leave it at, its page gone and its id no live
-page's or folder's any more, and what replaces it is a live statement page or folder page, reached through any
-statement or card retired on the way; nothing goes round. An address has one owner: it moves once, as a page or
-as a folder, or is the last address of retired cards or of retired statements, each replaced in place by the next
-in the ledger's order (two retirements there that are not are two owners, whatever their order), and no live page
-or folder of another article takes it (the final replacement may live at its address, and a
-declassified folder keeps its own); a page or folder page with no `id` is another article; a page `b.md` and a
-folder `b/` would share one address, so no change leaves both.
+The ledger has two parts, so that two changes that add rows write distinct files, which avoids the conflict Git finds
+when both append to the end of one file:
 
-`python scripts/cards.py moves OUTPUT.json` checks the ledger alone, as above, against the annotations and the
-roadmap as checked out, with no card or dependency check and no base: it certifies the present snapshot only,
-and that the ledger only grows and what changed since the base stay the strict check's. A missing ledger is an
-error, and so is a checkout with no commit to name; an empty ledger has no row. An id the ledger names must be
-the id of one article. Reading each input file once, it removes its output first and, only when the ledger is
-valid, writes its receipt, schema
-`atlas-card-moves/v2`, through a temporary file: `commit`, the commit checked; `ledger_sha256`, the sha256 of the
-ledger's bytes; `annotations_sha256`, a digest of the bytes of `blueprint/links/` it read, sha256 over each
-`*.jsonl` file and `_defaults.json`, in sorted order of name, as its name, a NUL, its length in bytes (`-` for a
-defaults file that is no regular file), a NUL and its bytes; `cards`, each card by id with its folder, listing
-only a card whose id is an article id no other article has and whose folder is an address as the ledger writes
-one (a path below `roadmap/` without `.md`, `.` or `..` parts), which the hook requires too, and `cards_complete`,
-whether that lists every card; and `replacements`, the live article each retirement's replacements end at, by
-id, with its kind (`page` or `folder`) and node, each at such an address, or there is no receipt.
-The digests bind the receipt to the inputs it checked, so that a receipt of other inputs is not taken for this
-one; they do not vouch for its contents, which come from the job that makes it.
+- `scripts/card-moves.jsonl`, frozen: the rows written before the ledger was split, which no change edits;
+- `scripts/card-moves.d/`, one fragment per change: a file named `<YYYYMMDDTHHMMSSZ>-<slug>.jsonl` with the UTC time
+  it was made, or one second after the latest fragment the checkout and base hold, if that is later, in ASCII
+  digits, and a slug of lowercase letters, digits and hyphens, holding at least one row. Every entry of the folder
+  is such a regular file, its stamp a real time; anything else is an error. A missing or empty folder holds no
+  fragment. The folder and the fragments, like the frozen file, are a real directory and regular files, never
+  symbolic links: every reader refuses a link, in the checkout or committed.
 
-Given the base commit's annotations and the files Git finds renamed since (`--base-links`, `--renames`),
-the check also reconciles every change since the base with one map of who owns what:
+The logical ledger is the frozen file's rows, then each fragment's, in byte order of their names, each file's rows
+in their order; each file is read on its own, line by line, so one with no final newline joins no rows. Every reader
+reads it so: `scripts/card_moves.py` for the scripts, which prints a revision's logical ledger one row a line
+(`python scripts/card_moves.py <revision>`), and a copy in the site hook. `python scripts/card_moves.py new-moves
+<slug>` writes an empty fragment named with the UTC time it was made, or one second after the latest fragment the
+checkout and base (`--base`, `origin/main` by default) hold, if that is later, so that it never starts out sorting
+before a fragment it knows: a change's rows go in it in the order they happened. Each helper refuses a base it
+cannot read in full, writing nothing: one whose folder of fragments holds a malformed entry, or that has no frozen
+file. Rows a branch appended to the frozen file before the split move into a new fragment with `new-moves <slug>
+--take-appended`, which restores the frozen file; it refuses unless the base's frozen file (`--base`, `origin/main`
+by default) starts the branch's, byte for byte. Neither writes over a file, nor through a link: each writes in the
+checkout it is run from, the Git top level of the current folder, and refuses before it writes unless the script run
+is that checkout's own `scripts/card_moves.py`, or when `scripts/` or `scripts/card-moves.d` is a link or no folder,
+or the fragment's name, or the frozen file it restores, is a link.
+
+A fragment may sort anywhere: its stamp orders it, and nothing forces it after the fragments of its base. A row
+comes after the rows it builds on: a move or retirement of an article builds on the move that put it at that
+address; a retirement in place builds on the retirement there that named it as the replacement; and a move into an
+address builds on the retirement there of an earlier occupant whose replacements lead to the article moving in,
+which freed the address for it, page or folder alike, since a page and a folder of one name share an address
+(retirements there of later occupants, which it handed the address to, are none of its prerequisites). A row before
+one it builds on is an error that names the fragment sorting after its own and how to order the two. Where nothing
+vouches for their order, two fragments must be independent: each new fragment (one the base commit lacks) and each
+fragment of the base that sorts after it, and each two new fragments. Neither may write what the other writes or
+reads. A fragment writes every address whose resolution its rows set (a move's old and new address, a retirement's
+last one), every id they move or retire, and every folder above an address they leave that the site's replay could
+find gone at that point and lead where its nearest enclosing folder leads: up to the first one that is live, that no
+folder row moves into, and whose address no page row or statement retirement names. It reads every folder above an
+address it writes, so that two moves under one folder are independent. A retirement's replacement is neither: it is
+resolved by id at the end, where the check follows every chain to its live owner, so that a retirement of x for y
+and one of y for z resolve x to z in either order, and one of y for x makes a loop the check refuses. Fragments that
+do not interact are meant to resolve alike in either order, which the tests check on sampled histories without
+proving it in general. Fragments that interact are refused:
+
+- a new fragment that sorts before an interacting fragment of the base is restamped with `python
+  scripts/card_moves.py new-moves --restamp <file>`, which renames a fragment the base lacks to the current time, or to
+  one second after the latest other fragment the checkout and base hold, if that is later, keeping its slug and
+  bytes, so that it sorts after every one of them, one stamped ahead of the clock or in the same second included (it
+  refuses a link as the other helpers do, and a fragment that is one);
+- two new fragments that interact go into one fragment, in the order the rows happened, or one change lands
+  first and the other is checked again with it in its base: a stamp orders fragments by name only, so no restamp
+  makes them independent.
+
+A new fragment's stamp is no more than an hour past the check's clock; no helper names one further ahead: each
+refuses then, writing nothing, and says when it can run. Nor does one name a fragment after one stamped 9999-12-31
+23:59:59, the last stamp a name can have: it refuses, writing nothing, naming that fragment and saying that waiting
+will not help. In the merge-group runs sampled when the ledger was split, each group's branch was built on the group
+before it, which is consistent with a fragment queued earlier being in the base of the ones after it; the guard does
+not rely on it, since it holds new fragments both to the published ones that sort after them and to each other.
+
+Against the base commit, the frozen file is the base's, byte for byte, and every fragment the base has is there
+under its name, unchanged: a published part is never edited, deleted, renamed or made another kind of file. A base
+whose ledger cannot be read is an error, never an empty ledger. The new fragments are the ones the base lacks, found
+by their paths, never by a count of rows.
+
+The check follows every chain to its final live destination: the old path is gone; every hop keeps the id the chain
+started with, so an old address always leads, through the ledger, to its own article (the site has to serve these
+rows as redirects before a card change that moves a page is published); a page ends at a live statement page and a
+folder at a live folder page with that id (a card's or not), or at the card a retirement row records at that path; a
+card is retired once, its id is no card's or statement page's any more, and what replaces it is a live card; a
+statement is retired once, at the address its page rows leave it at, its page gone and its id no live page's or
+folder's any more, and what replaces it is a live statement page or folder page, reached through any statement or
+card retired on the way; nothing goes round. An article moves into an address once, as a page or as a folder: a
+second move of it there, from another old address, would give it two histories, as it could not leave the address in
+between. An address has one owner: it moves once, as a page or as a folder, or is the last address of retired cards or
+of retired statements, each replaced in place by the next in the ledger's
+order (two retirements there that are not are two owners, whatever their order), and no live page or folder of
+another article takes it (the final replacement may live at its address, and a declassified folder keeps its own); a
+page or folder page with no `id` is another article; a page `b.md` and a folder `b/` would share one address, so no
+change leaves both.
+
+`python scripts/card_moves.py check [--base <commit>]` runs the part of these checks that needs no other file: each
+row's shape and the rules among the rows (an address moves once, as a page or as a folder, and is no retirement's
+once it moved; an article moves into an address once; the retirements at an address hand it on in place; no chain of
+moves or of replacements goes round, and every hop of a move keeps its article; each article has one history, its
+moves ending where its retirement says, as the kind it is retired as, or at one address if it is retired as neither;
+a card's replacements end at no retired statement and no page; what ends at a retired address is its final
+replacement; no two articles' moves end at one address, nor at one another moved away from, page and folder alike;
+every row comes after the rows it builds on), and, with `--base`, the base's frozen file and fragments unchanged,
+the stamp bound and the independence of the new fragments. It reads the ledger's files and, for the independence of
+the new fragments, which folders of `blueprint/roadmap/` the commit checked out has a folder page in, a regular
+file, from Git's tree entries alone, their names, modes and types: no file of the roadmap, and nothing else; it
+needs no package and writes nothing. CI's required `check the graph` job runs it on every pull request, with
+`--base` the merge commit's first parent, and on every merge group, with `--base` the group's base commit, and stops
+when that base cannot be read; a push to main and a manual run check the combined ledger alone, since a push carries
+fragments that merge groups checked, which may build on one another. What needs the rest of the tree is not
+required: `scripts/cards.py moves`, which the wiki job runs for the moved addresses its site keeps, also checks
+where each chain ends, what holds a moved or retired address and that an id names one article, and writes the
+receipt; `check the cards` also checks that every move since the base has its row; neither job gates a merge.
+
+`python scripts/cards.py moves OUTPUT.json` checks the ledger alone, as above: the required check's rules, then each
+chain against the annotations and the roadmap as checked out, with no card or dependency check. Without `--base` it
+certifies the present snapshot only. With `--base <commit>` it also holds the ledger to that commit's: the frozen
+file and the commit's fragments unchanged, and the new fragments independent, as above; it reads the base's ledger
+from Git's trees alone, the checkout's identical files standing for the base's. It does not replay the changes since
+that commit against the new fragments' rows: that reconciliation, below, is the strict check's alone. A missing
+frozen file is an error, and so is a checkout with no commit to name; an empty ledger has no row. An id the ledger
+names must be the id of one article. Reading each input file once, it removes its output first and, only when the
+ledger is valid, writes its receipt, the same with `--base` or without, schema `atlas-card-moves/v3`, through a
+temporary file: `commit`, the commit checked; `ledger_sha256`, a digest of the ledger's files it read, sha256 over
+each in logical order as its path in the repository, a NUL, its length in bytes in decimal, a NUL and its bytes;
+`annotations_sha256`, a digest of the bytes of `blueprint/links/` it read, sha256 over each `*.jsonl` file and
+`_defaults.json`, in sorted order of name, as its name, a NUL, its length in bytes (`-` for a defaults file that is
+no regular file), a NUL and its bytes; `cards`, each card by id with its folder, listing only a card whose id is an
+article id no other article has and whose folder is an address as the ledger writes one (a path below `roadmap/`
+without `.md`, `.` or `..` parts), which the hook requires too, and `cards_complete`, whether that lists every card;
+and `replacements`, the live article each retirement's replacements end at, by id, with its kind (`page` or
+`folder`) and node, each at such an address, or there is no receipt. The digests bind the receipt to the inputs it
+checked, so that a receipt of other inputs is not taken for this one; they do not vouch for its contents, which come
+from the job that makes it.
+
+Given the base commit's ledger, its annotations and the files Git finds renamed since (`--base-ledger`, a folder
+with the base's `card-moves.jsonl` and `card-moves.d/`, `--base-links` and `--renames`, which `check the cards`
+gives the strict check on a pull request), the check also reconciles every change since the base with one map of who
+owns what, the base's rows being published history:
 
 - an article of the base is found in the checkout by its `id`; one without an `id` by its address (an
   `id` given in place), else by its declaration when exactly one page credits it on each side, else by
   Git's rename of its file, which never overrides a known `id` or declaration; two articles never become
   one;
-- the rows added since are replayed in order: each moves what its old address holds at that point, with
-  that article's `id`, or, for an article that had none, an `id` no article of the base or of the ledger
-  ever had, and a folder row moves the folder alone; a retirement names the card's or the statement's address at
-  that point, and a statement it retires was a statement page of the base; once retired, the address is free, so
-  that the replacement may move in by a later row, never by an earlier one;
+- the rows of the new fragments are replayed in the ledger's order from the base: each moves what its old address
+  holds at that point, with that article's `id`, or, for an article that had none, an `id` no article of the base or
+  of the ledger ever had, and a folder row moves the folder alone; a retirement names the card's or the statement's
+  address at that point, and a statement it retires was a statement page of the base; once retired, the address is
+  free, so that the replacement may move in by a later row, never by an earlier one;
 - afterwards every article stands where the rows leave it and keeps its `id`: an article of the base that
   is gone, with no row moving or retiring it, is an error, since its old address would lead nowhere (a page that
   moved with its folder but has no row of its own included); a statement a row retires is matched by Git's rename
@@ -331,9 +425,9 @@ build/card-moves.json` after removing any earlier receipt ([Move ledger](#move-l
 code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a regression in it fails
 that job, as a change to any other part of the site does.
 
-`hooks/card_pages.py` keeps the moved addresses only with the ledger check's receipt: an `atlas-card-moves/v2`
-receipt of the commit being built whose digests are those of the ledger it reads, which must exist, and of
-`blueprint/links/` as it is now, which shows the receipt refers to the current inputs, and only when every address
+`hooks/card_pages.py` keeps the moved addresses only with the ledger check's receipt: an `atlas-card-moves/v3`
+receipt of the commit being built whose digests are those of the ledger's files it reads (the frozen file must
+exist, and every entry of `scripts/card-moves.d/` be a fragment) and of `blueprint/links/` as it is now, which shows the receipt refers to the current inputs, and only when every address
 resolves to a page the site publishes, a retired card's folder or statement's page that is gone leading to the
 folder or page the receipt gives its last replacement.
 They need no card data. The hook shows card data only when `build/cards.json` is an `atlas-cards/v1` rollup of the
@@ -348,7 +442,9 @@ When the hook shows neither, or has nothing to show, as on a commit with no card
 is byte for byte the page of a build without it. None of this fails the build, and none of it is silent: the build
 log says what is not shown and why, at INFO since `mkdocs build --strict` fails on a warning, and under GitHub
 Actions so do a workflow annotation (a warning for card data, an error for moved addresses) and a line of the job
-summary.
+summary. Blueprint Pages nonetheless publishes nothing when the moved addresses
+are not kept: a later step then fails `build the wiki`, on a pull request too,
+before the site is kept or uploaded, so the last published site stays.
 
 A card's folder page shows, before its first section, a block with:
 
@@ -368,14 +464,23 @@ A card's folder page shows, before its first section, a block with:
 The block is plain HTML, styled by `theme/stylesheets/atlas-cards.css`: a reader without JavaScript reads it
 as it is, and the explorer shows it in the page's reading.
 
-Every address the move ledger retired keeps leading to its page. The hook resolves them all at once, by
-replaying the ledger backwards from the pages the site publishes: each row's old address takes the place of
-its new one, so every address a statement or a folder ever had is followed through every row after it, in
-order. A folder row moves the folder alone, as the move ledger says, so no address is inferred from what a
-folder holds, and a page added to a folder after it moved gets no old address. A retired card's folder that is
-gone leads to the live card its replacements end at, a retired statement's page that is gone to the live statement
-page or folder page its replacements end at, each where the receipt places it, and a folder that is gone with no
-row of its own to where its nearest enclosing folder leads. The same resolution gives every route below.
+Every address the move ledger retired keeps leading to its page. The hook resolves them all at once, by replaying
+the ledger backwards from the pages the site publishes: each row's old address takes the place of its new one, so
+every address a statement or a folder ever had is followed through every row after it, in order. A folder row moves
+the folder alone, as the move ledger says, so no address is inferred from what a folder holds, and a page added to a
+folder after it moved gets no old address. A retired card's folder that is gone leads to the live card its
+replacements end at, a retired statement's page that is gone to the live statement page or folder page its
+replacements end at, each where the receipt places it, and a folder that is gone with no row of its own to where its
+nearest enclosing folder led at that point, a fallback. The replay keeps apart what held each folder address at each
+point of the history and the route each old folder address keeps. What a folder row or a card's retirement says of a
+folder is its route, whatever their order in the ledger, and no fallback replaces it; a folder that no row speaks of
+keeps the fallback taken first in the history. A fallback stays bound to what held the address above it when it was
+taken. A card's retirement says what the fallback in place at its folder leads to, and every fallback bound to that
+one, at any depth, follows, unless a folder that a row said or the site had at that point lies between. A folder
+row changes what holds its two addresses: a fallback taken below them after the change keeps what held the address
+then, and a gone folder below them that is used before the change takes its fallback again, from what held the
+address before it. So a fallback never follows a later or earlier holder of its parent's path. The same resolution
+gives every route below.
 
 Render publishes a statement with a declaration kind in a box on its folder's page, at
 `<folder>/index.html#<file name>`, a statement without one as a page of its own, `<path>.html`, and a folder at

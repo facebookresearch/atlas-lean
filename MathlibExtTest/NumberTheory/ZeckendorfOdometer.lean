@@ -84,3 +84,17 @@ example :
     (by decide) (by decide) (by intro j _ _; simp)
   exact ⟨(h 2 (by decide) (by decide)).trans (by decide),
     (h 3 (by decide) (by decide)).trans (by decide)⟩
+
+-- The lower digits have value F₅ + F₃ = 7. Adding F₅ - 1 = 4 carries into digit 6,
+-- while digit 7 stays zero and the alternating tail still starts at digit 8.
+example :
+    let x := fun i : ℕ => decide (i = 3 ∨ i = 5 ∨ (8 ≤ i ∧ i % 2 = 0))
+    zeckOdometer^[4] x 7 = false ∧ zeckOdometer^[4] x 8 = true := by
+  intro x
+  have hx : x ∈ zeckAdic := by
+    refine ⟨rfl, rfl, fun i => ?_⟩
+    simp only [x, decide_eq_false_iff_not]
+    omega
+  have h := zeckOdometer_iterate_high_digits hx (ℓ := 4) (r := 4) (by decide)
+    (by decide) (by decide) (by decide)
+  exact ⟨h 7 le_rfl, h 8 (by decide)⟩

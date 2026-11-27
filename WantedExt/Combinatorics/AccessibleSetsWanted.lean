@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.Combinatorics.AccessibleSets
 public import MathlibExt.Combinatorics.AccessibleSetsGrowth
+public import MathlibExt.Combinatorics.AccessibleSetsQuotients
 public import MathlibExt.Combinatorics.AccessibleSetsRecurrence
 public import MathlibExt.Combinatorics.EvenFibonacciAccessibility
 
@@ -59,13 +60,16 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted two_large_contains_multiples (D : Set ℕ) (h : IsRLarge 2 D) :
     ∀ m : ℕ, 0 < m → ∃ d ∈ D, m ∣ d
 
-/-- **Finite removal preserves $r$-largeness.** Let $r$ be a natural number. If a set
+/-- **Finite removal preserves $r$-largeness.** Let $r \ge 2$. If a set
 $D \subseteq \mathbb{N}$ is $r$-large and $F \subseteq \mathbb{N}$ is finite, then $D \setminus F$
 is $r$-large.
 
+The source states this for every $r$, but it fails for $r = 1$: $D = F = \{1\}$ is a
+counterexample, since $\{1\}$ is $1$-large and $\emptyset$ is not.
+
 Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
         Theorem 3. -/
-public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ)
+public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ) (hr : 2 ≤ r)
     (hD : IsRLarge r D) (hF : F.Finite) :
     IsRLarge r (D \ F)
 
@@ -126,16 +130,6 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted polynomial_range_large (p : Polynomial ℤ)
     (hlead : 0 < p.leadingCoeff) (hzero : p.eval 0 = 0) :
     IsLarge {d : ℕ | 0 < d ∧ ∃ n : ℕ+, p.eval (n : ℤ) = (d : ℤ)}
-
-/-- **Integral quotients of an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let
-$A$ be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{n \ge 1 : nd \in A\}$,
-that is, the positive integers of the form $a/d$ with $a \in A$, is $r$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 11(i). -/
-public theorem_wanted accessible_integral_quotients (A : Set ℕ) (d r : ℕ)
-    (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
-    IsRAccessible r {n : ℕ | 0 < n ∧ ∃ a ∈ A, a = n * d}
 
 /-- **A 2-coloring with no monochromatic 6-term progression with positive Fibonacci gap.** There
 is a coloring of the positive integers with two colors such that no 6-term arithmetic progression

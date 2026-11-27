@@ -13,3 +13,4 @@ and it is the $1/\sqrt{n}$ error rate of Monte Carlo estimation: halving the err
 ## Statements
 
 - [Variance of the sample mean of i.i.d. samples](variance-sample-mean-of-iid.md)
+- [Expectation of a sample mean with a common mean](integral-sample-mean.md)

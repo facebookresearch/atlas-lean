@@ -3,15 +3,18 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import os
 import re
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -20,7 +23,9 @@ from scripts import next_task
 ROOT = Path(__file__).resolve().parent.parent
 # The card files, whose presence in the build's list and on disk the card job's own test checks
 # (scripts/test_cards.py). On a PR, that job compares the move ledger with the base commit's, which main's runs cannot.
-CARD_INPUTS = ("scripts/cards.py", "scripts/card-moves.jsonl", "scripts/test_cards.py")
+CARD_INPUTS = ("scripts/cards.py", "scripts/card_moves.py", "scripts/card-moves.jsonl", "scripts/test_cards.py")
+# The folder of the move ledger's fragments, which the build lists before the first fragment lands.
+FRAGMENTS = "scripts/card-moves.d/**"
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
 GRAPH_SYNC = ROOT / ".github" / "workflows" / "graph-sync.yml"
 # The condition of every step and job that publishes: the repository opted in, and the `changes` job found a run of main
@@ -121,9 +126,10 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/dump_mathlib_dependencies.lean", "scripts/check_blueprint_site.py", "scripts/next_task.py",
             "scripts/build_mathlib_pages.py", "scripts/mathlib_link.py", "scripts/mathlib_pages.css",
             "scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh", "scripts/cards.py",
+            "scripts/card_moves.py",
             # Their tests.
             "scripts/test_generate_wiki_navigation.py", "scripts/test_generate_wiki_docstrings.py",
-            "scripts/test_sync_wiki.py", "scripts/test_import_mathgraph.py",
+            "scripts/test_sync_wiki.py", "scripts/test_graph_batch.py", "scripts/test_import_mathgraph.py",
             "scripts/test_extract_v2_lean_dependencies.py", "scripts/test_extract_mathlib_graph.py",
             "scripts/test_check_blueprint_site_navigation.py", "scripts/test_site_chrome.py",
             "scripts/test_blueprint_workflow.py", "scripts/test_blueprint_taxonomy.py",
@@ -135,7 +141,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
             # The wiki, and what only a PR's build can check: the two ledgers, which its checks compare with the base
             # commit's, the wiki's moves and card retirements since the base, which the card check compares with the
             # move ledger, and its Mathlib source links, which it checks strictly.
-            "scripts/mathgraph-map.jsonl", "scripts/card-moves.jsonl", "blueprint/**",
+            "scripts/mathgraph-map.jsonl", "scripts/card-moves.jsonl", FRAGMENTS, "blueprint/**",
         ))
         extract = next(step for step in jobs["mathlib"]["steps"] if step.get("name") == "Extract the Mathlib layer")
         self.assertIn("cp docs/mathlib-layer.md mathlib-graph/SCHEMA.md", extract["run"])
@@ -156,7 +162,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
         # the root has none of uv's Python toolchain files yet, and nothing is committed where the build writes.
         for path in paths:
             if path in CARD_INPUTS or path in ("lakefile.lean", ".python-version", ".python-versions", "uv.toml",
-                                               "pyproject.toml", ".venv/**", "scripts/__init__.py", *OUTPUTS):
+                                               "pyproject.toml", ".venv/**", "scripts/__init__.py", FRAGMENTS,
+                                               *OUTPUTS):
                 continue
             target = ROOT / path.removesuffix("/**")
             self.assertTrue(target.is_dir() if path.endswith("/**") else target.is_file(), path)
@@ -245,6 +252,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         built = [
             {"scripts/card-moves.jsonl": "{}\n{}\n"},
             {"scripts/card-moves.jsonl": "{}\n{}\n", "HEAD": "y\n"},
+            # A new fragment of the move ledger, and a file of its folder that is no fragment, which the checks refuse.
+            {"scripts/card-moves.d/20200101T000000Z-move.jsonl": "{}\n"},
+            {"scripts/card-moves.d/notes.txt": "y\n"},
             {"scripts/mathgraph-map.jsonl": "{}\n"},
             {"scripts/sync_wiki.py": "y\n"},
             {"scripts/sync_wiki.py": None},
@@ -344,6 +354,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(outputs["build"], "true")
         outputs, _, changed = self.decide("pull_request", base, [lean])
         self.assertEqual((len(changed), outputs["build"]), (400, "false"))
+        fragment = "scripts/card-moves.d/20200101T000000Z-move.jsonl"
+        outputs, _, changed = self.decide("pull_request", base, [{**lean, fragment: "{}\n"}])
+        self.assertEqual((len(changed), changed.index(fragment), outputs["build"]), (401, 400, "true"))
         # A ledger changed by an earlier commit of the PR than its last: the merge commit holds them all.
         outputs, _, changed = self.decide("pull_request", base, [{"scripts/card-moves.jsonl": "{}\n{}\n"},
                                                                  {"MathlibExt/A.lean": "z\n"}])
@@ -832,6 +845,63 @@ elif "/compare/" in path:
         self.assertEqual((keep["with"]["name"], keep["with"]["path"], keep["with"]["if-no-files-found"]),
                          ("tasks", "build/tasks.json", "error"))
 
+    def test_the_nodes_to_expand_are_published_with_the_task_lists_commit(self):
+        # CONTRIBUTING.md, Picking a task: graph-tasks.json, from the index the render wrote, after tasks.json and
+        # before MkDocs copies site-src/ into the site. Only `next_task.py --graph` needs it, so it cannot fail the job.
+        name = "List the nodes still to expand"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Keep the task list") + 1)
+        self.assertLess(names.index(name), names.index("Build the Markdown site"))
+        self.assertTrue(step["continue-on-error"])
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "build").mkdir()
+            (root / "site-src" / "dependencies").mkdir(parents=True)
+            (root / "build" / "tasks.json").write_text(json.dumps({"commit": "c" * 40, "commit_date": "2026-11-27"}))
+            nodes = [{"id": "Algebra", "kind": "scope", "status": "not_ready", "route": "../roadmap/Algebra/"},
+                     {"id": "Algebra/a", "kind": "node", "status": "not_ready", "title": "A",
+                      "route": "../roadmap/Algebra/index.html#a"},
+                     {"id": "Algebra/b", "kind": "node", "status": "can_state", "route": "../roadmap/Algebra/b.html"},
+                     # A node to expand without a usable route is still listed, with no page.
+                     {"id": "Algebra/c", "kind": "node", "status": "not_ready", "title": "C"},
+                     {"id": "Algebra/d", "kind": "node", "status": "not_ready", "title": "D", "route": 7}]
+            index = root / "site-src" / "dependencies" / "index.json"
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": nodes}))
+            script = step["run"]
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            published = json.loads((root / "site-src" / "graph-tasks.json").read_text())
+            self.assertEqual(published, {"schema": next_task.GRAPH_SCHEMA, "commit": "c" * 40,
+                                         "commit_date": "2026-11-27", "nodes": [
+                                             {"node_id": "Algebra/a", "title": "A",
+                                              "page": "roadmap/Algebra/index.html#a"},
+                                             {"node_id": "Algebra/c", "title": "C", "page": None},
+                                             {"node_id": "Algebra/d", "title": "D", "page": None}]})
+            # next_task.py reads what the step writes.
+            with mock.patch.object(next_task, "request", lambda url: json.dumps(published).encode()):
+                self.assertEqual([item["node_id"] for item in next_task.load_graph({"commit": "c" * 40,
+                                                                                    "commit_date": "2026-11-27"})],
+                                 ["Algebra/a", "Algebra/c", "Algebra/d"])
+            # An index with no node to expand gives an empty list.
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": [nodes[2]]}))
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads((root / "site-src" / "graph-tasks.json").read_text())["nodes"], [])
+            # Another format, a node without its kind or status, or a node to expand without an id, or one id twice,
+            # leaves no file.
+            for wrong in ({"nodes": nodes}, {"schema": "autoform-dag-search/v1", "nodes": "x"},
+                          {"schema": "autoform-dag-search/v1", "nodes": [{"id": "Algebra/c", "kind": "node"}]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [nodes[1], nodes[1]]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [dict(nodes[1], id=" ")]}):
+                (root / "site-src" / "graph-tasks.json").unlink(missing_ok=True)
+                index.write_text(json.dumps(wrong))
+                result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+                self.assertNotEqual(result.returncode, 0, wrong)
+                self.assertFalse((root / "site-src" / "graph-tasks.json").exists(), wrong)
+
     def run_task_step(self, output: str, status: int = 0, files: dict[str, str] | None = None):
         """Run the task step in a fixture checkout of *files*, with an Autoform that writes *output* and exits with
         *status*."""
@@ -983,11 +1053,18 @@ elif "/compare/" in path:
                     if word != "${base[@]}"]
 
         self.assertEqual(command(self.step(derive)["run"]), command(check))
-        # The ledger the base commit published must stay a prefix on a PR (the workflow runs in no merge group).
+        # The base commit's ledger, its frozen file and its fragments, against which the check holds the PR's (the
+        # workflow runs in no merge group; ci.yml's `check the graph` does). A frozen file the base lacks stops the
+        # step, never an empty ledger; an absent folder of fragments is none, a tree Git cannot read stops it.
         ledger = steps["Read the move ledger and annotations the base commit published"]
         self.assertIn("github.event.pull_request.base.sha", ledger["env"]["BASE"])
         self.assertNotIn("merge_group", ledger["env"]["BASE"])
-        self.assertIn('git show "$BASE:scripts/card-moves.jsonl"', ledger["run"])
+        self.assertIn('git show "$BASE:scripts/card-moves.jsonl" > build/base/scripts/card-moves.jsonl',
+                      ledger["run"])
+        self.assertNotIn(": >", ledger["run"])
+        self.assertIn('fragments="$(git ls-tree "$BASE" -- scripts/card-moves.d)"', ledger["run"])
+        self.assertIn('git archive "$BASE" scripts/card-moves.d | tar -x -C build/base', ledger["run"])
+        self.assertIn('echo "BASE_LEDGER=build/base/scripts"', ledger["run"])
         self.assertIn('git archive "$BASE" blueprint/links', ledger["run"])
         self.assertIn('echo "BASE_LINKS=build/base/blueprint/links"', ledger["run"])
         self.assertIn('diff --name-status -M "$BASE" HEAD -- blueprint/roadmap', ledger["run"])
@@ -1036,6 +1113,72 @@ elif "/compare/" in path:
         self.assertEqual((full["with"]["name"], full["with"]["path"]), ("blueprint-site-full", "site-full"))
         # A run of main, as the `changes` job decides, whether or not the site is published.
         self.assertEqual(full["if"], "needs.changes.outputs.main == 'true'")
+
+    def test_a_site_that_does_not_keep_the_moved_addresses_is_neither_kept_nor_published(self):
+        # The card pages hook keeps the move ledger's old addresses or only says why it cannot, and MkDocs builds the
+        # site without them. The step after the site's checks fails the job instead, on every build, a pull request's
+        # too, before the site is kept, packed or uploaded: no later step but the diagnostics runs, and neither do the
+        # Mathlib pages or the deployment, which need the job.
+        name = "Check that the site keeps the moved addresses"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Check routes, anchors, and article cards") + 1)
+        self.assertEqual(names.index("Keep dependency diagnostics"), names.index(name) + 1)
+        for later in ("Keep the built site", "Pack the site for GitHub Pages", "Check the packed site",
+                      "Upload Pages artifact"):
+            self.assertLess(names.index(name), names.index(later))
+        for key in ("if", "continue-on-error"):
+            self.assertNotIn(key, step)
+        for later in self.steps[names.index(name) + 2:]:
+            for function in ("always()", "failure()", "cancelled()"):
+                self.assertNotIn(function, later.get("if", ""), later["name"])
+        for job in ("mathlib-pages", "deploy"):
+            self.assertIn("wiki", self.workflow["jobs"][job]["needs"])
+            self.assertNotIn("always()", self.workflow["jobs"][job].get("if", ""))
+        # It checks the hook's own table against the hook's own ledger, the frozen file, and its fragments: a table is
+        # the hook's when it starts with the line the hook's moves_script writes first, which a file of that name from
+        # the theme, also copied into the site, would not.
+        hook = (ROOT / "hooks" / "card_pages.py").read_text()
+        table, ledger = (re.search(rf'(?m)^{constant} = "([^"]+)"$', hook).group(1)
+                         for constant in ("SCRIPT", "LEDGER"))
+        script = step["run"]
+        self.assertIn("set -euo pipefail", script)
+        self.assertIn(f"table={table}\n", script)
+        self.assertIn(f"[[ -f {ledger} ]]", script)
+        self.assertNotIn("${{", script)
+        header = re.search(r"(?m)^header='([^']*)'$", script).group(1)
+        written = re.search(r'(?s)\ndef moves_script\(.*?\n    return \(\n        "(.*?)\\n"', hook)
+        self.assertEqual(written.group(1), header)
+        row = '{"page": "A/old", "to": "A/new", "article_id": "af_' + "0" * 24 + '"}\n'
+        fragment = "scripts/card-moves.d/20261127T000000Z-move.jsonl"
+        made = header + "\n   rewritten to where the address leads before the explorer starts. */\n"
+        cases = [
+            # A row and the hook's table: the site keeps the moved addresses.
+            ({ledger: row, f"site/{table}": made}, 0),
+            # A row, and no table, an empty one, one that is not the hook's, as the theme's would be, or one from the
+            # site source, which the hook never replaces (it then keeps nothing).
+            ({ledger: row}, 1),
+            ({ledger: row, f"site/{table}": ""}, 1),
+            ({ledger: row, f"theme/{table}": "var moves = {};\n", f"site/{table}": "var moves = {};\n"}, 1),
+            ({ledger: row, f"site/{table}": made, f"site-src/{table}": made}, 1),
+            # A row in a fragment only.
+            ({ledger: "", fragment: row, f"site/{table}": made}, 0),
+            ({ledger: "", fragment: row}, 1),
+            # No row, blank lines aside: the hook writes no table.
+            ({ledger: ""}, 0),
+            ({ledger: "\n \t\n"}, 0),
+            # No frozen file is no empty ledger: the hook keeps nothing.
+            ({}, 1),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for files, expected in cases:
+                root = Path(tempfile.mkdtemp(dir=directory))
+                for path, text in files.items():
+                    (root / path).parent.mkdir(parents=True, exist_ok=True)
+                    (root / path).write_text(text)
+                run = subprocess.run(["bash", "-c", script], cwd=root, capture_output=True, text=True)
+                self.assertEqual(run.returncode, expected, (files, run.stdout, run.stderr))
+                self.assertEqual("::error title=Moved addresses not kept::" in run.stdout, bool(expected), run.stdout)
 
     def test_the_mathlib_pages_cannot_hold_back_the_site(self):
         # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the
@@ -1168,13 +1311,31 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main"):
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main",
+                  changed: str | None = None, event: str = "pull_request", lean: bool = True):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
-        and exits with *status*; returns the result, the job summary and the arguments uv got."""
+        and exits with *status*, in a repository whose HEAD changes the files *changed* names, beside a README and,
+        when *lean*, a Lean file, from the commit BASE names; with a git that fails when *changed* is None. Returns the
+        result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         (root / "bin").mkdir()
+        base = "b" * 40
+        if changed is None:
+            (root / "bin" / "git").write_text("#!/bin/sh\nexit 128\n")
+            (root / "bin" / "git").chmod(0o755)
+        else:
+            git = lambda *args: subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t",
+                                                *args], check=True, capture_output=True, text=True).stdout.strip()
+            git("init", "-q", "-b", "main")
+            git("commit", "-q", "--allow-empty", "-m", "base")
+            base = git("rev-parse", "HEAD")
+            for path in [*(["MathlibExt/Algebra/Changed.lean"] if lean else []), "README.md", *changed.split()]:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text("changed\n")
+            git("add", "-A")
+            git("commit", "-q", "-m", "change")
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
@@ -1184,9 +1345,10 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         summary = root / "summary.md"
         result = subprocess.run(
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
-            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
+            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": base,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch,
+                                      "EVENT": event})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
@@ -1237,6 +1399,72 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             self.assertIn(f"The check could not run (exit {status})", summary)
             self.assertNotIn("merge-base", summary)
 
+    def test_a_lean_change_or_a_merge_group_is_held_only_to_the_errors(self):
+        # A Lean pull request changes no graph file but links files, which it changes only for the declarations it
+        # renames, moves or removes, and a merge group holds others' changes: their missing pages are the next
+        # graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles), so the check passes and asks for no sync.
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        pages = '{"in_step": false, "errors": [], "missing": ["Ext.fresh"], "changed": ["Ext.edited (Algebra/edited.md)"]}'
+        for changed, event in (("", "pull_request"), ("blueprint/links/Algebra.jsonl", "pull_request"),
+                               ("blueprint/roadmap/Algebra/fresh.md", "merge_group")):
+            with self.subTest(changed=changed, event=event):
+                result, summary, _ = self.run_check(1, pages, changed=changed, event=event)
+                self.assertEqual(result.returncode, 0)
+                self.assertNotIn("::warning", result.stdout)
+                self.assertIn("the next graph-sync\nbatch writes its new declarations' pages", summary)
+                self.assertNotIn("merge-base", summary)
+                # The pages whose docstring changed are still listed, for the reviewer.
+                self.assertIn("for the reviewer to check", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+        # What the errors name is the change's to fix, by hand: the summary shows them alone, with no command that
+        # would write the sync's output.
+        errors = ('{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone", "two\\n```"], '
+                  '"changed": ["Ext.edited (Algebra/edited.md)"]}')
+        for event in ("pull_request", "merge_group"):
+            with self.subTest(event=event):
+                result, summary, _ = self.run_check(1, errors, changed="", event=event)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind",
+                              result.stdout)
+                self.assertIn("\n    blueprint/links/Algebra.jsonl:3 links Ext.gone\n    two\n    ```\n", summary)
+                self.assertIn("A Lean pull request runs no sync", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+                self.assertNotIn("In step: no", summary)
+                self.assertNotIn("error: a link", summary)
+                self.assertNotIn("merge-base", summary)
+        # A graph pull request, which changes other graph files (the links' defaults, a page count, or the move
+        # ledger, its frozen file or a fragment) or links files with no Lean, or a change git cannot read, is held to
+        # the sync.
+        for changed, lean in (("blueprint/links/Algebra.jsonl scripts/taxonomy.json", True),
+                              ("blueprint/links/_defaults.json", True), ("blueprint/roadmap/Algebra/fresh.md", True),
+                              ("blueprint/links/Algebra.jsonl scripts/card-moves.jsonl", True),
+                              ("blueprint/links/Algebra.jsonl scripts/card-moves.d/20261126T000000Z-retire.jsonl",
+                               True),
+                              ("blueprint/links/Algebra.jsonl", False), (None, True)):
+            with self.subTest(changed=changed, lean=lean):
+                result, summary, _ = self.run_check(1, pages, changed=changed, lean=lean)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::The graph is not in step", result.stdout)
+                self.assertIn('--base "$(git merge-base FETCH_HEAD HEAD)"', summary)
+                self.assertIn("    In step: no\n", summary)
+                self.assertNotIn("for the reviewer to check", summary)
+
+    def test_the_graph_files_it_reads_are_the_syncs(self):
+        # Whether a pull request is a graph pull request turns on the graph files it changes: the step names them as
+        # sync_wiki.py does (graph_file), blueprint/ and its GRAPH_FILES and GRAPH_FOLDERS, so that a new place for the
+        # graph's data, as the move ledger's fragments were, cannot be left out of the one and not the other.
+        tree = ast.parse((ROOT / "scripts" / "sync_wiki.py").read_text())
+        names = {target.id: ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign)
+                 for target in node.targets if isinstance(target, ast.Name)
+                 and target.id in ("GRAPH_FILES", "GRAPH_FOLDERS")}
+        self.assertEqual(set(names), {"GRAPH_FILES", "GRAPH_FOLDERS"})
+        run = self.steps["Check that the graph is in step with the Lean"]["run"].replace("\\\n", " ")
+        pathspec = re.search(r'changed="\$\(git diff --name-only --no-renames "\$BASE" HEAD -- ([^)]*)\)"', run)
+        self.assertIsNotNone(pathspec, run)
+        folders = [folder.rstrip("/") for folder in names["GRAPH_FOLDERS"]]
+        self.assertEqual(sorted(pathspec.group(1).split()), sorted(["blueprint", *names["GRAPH_FILES"], *folders]))
+
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's
         merge commit does, with the environment *env* gives for the main and merge commits; returns the result, what
@@ -1286,6 +1514,241 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         result, written, _, _ = self.find_base("workflow_dispatch", lambda main, merge: {"DISPATCH_BASE": "main"})
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(written, "")
+
+
+class MoveLedgerGateTests(unittest.TestCase):
+    """CI's required `check the graph` job checks the card move ledger's integrity as each pull request's merge commit
+    and each merge group combines it (docs/cards.md#move-ledger), with `scripts/card_moves.py check` alone: against the
+    commit it was made from, it fails only on a combined ledger whose rows break a rule among them, a changed frozen
+    file, a changed, renamed or deleted published fragment, or new fragments that interact. What needs the rest of the
+    tree, whether each move ends at a live page of its article and whether the moves since that commit have their rows,
+    is the card script's, in jobs that gate no merge. The step runs here as written, on fixture repositories that hold
+    no other script, with a `python3` that records its arguments."""
+
+    CI = ROOT / ".github" / "workflows" / "ci.yml"
+    G = "A"
+    ROW = '{"subject": [{"type": "generic", "uri": "../roadmap/%s"}], "id": "af_%024x"}\n'
+
+    @classmethod
+    def setUpClass(cls):
+        workflow = yaml.load(cls.CI.read_text(), Loader=yaml.BaseLoader)
+        cls.job = workflow["jobs"]["graph"]
+        cls.steps = {step.get("name"): step for step in cls.job["steps"]}
+        cls.gate = cls.steps["Check the move ledger"]
+
+    def test_the_gate_follows_the_autoform_check_and_needs_no_package(self):
+        names = list(self.steps)
+        self.assertEqual(names.index("Check the move ledger"),
+                         names.index("Check the declarations and dependencies") + 1)
+        checkout = self.job["steps"][0]
+        self.assertEqual(checkout["with"]["fetch-depth"], "2")
+        self.assertEqual(checkout["with"]["sparse-checkout"].split(), ["/*", "!/v1/", "!/Atlas/"])
+        # Required: no condition and no tolerated failure.
+        self.assertNotIn("if", self.gate)
+        self.assertNotIn("continue-on-error", self.gate)
+        # The standard library alone: no package, no Autoform, nothing written.
+        self.assertIn('python3 scripts/card_moves.py check "${base[@]}"', self.gate["run"])
+        for absent in ("uv ", "AUTOFORM", "cards.py", "RUNNER_TEMP"):
+            self.assertNotIn(absent, self.gate["run"])
+        self.assertEqual(self.gate["env"], {"EVENT": "${{ github.event_name }}",
+                                            "GROUP_BASE": "${{ github.event.merge_group.base_sha || '' }}",
+                                            "PYTHONDONTWRITEBYTECODE": "1"})
+
+    def git(self, root: Path, *arguments: str) -> str:
+        env = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1", "GIT_AUTHOR_NAME": "t",
+               "GIT_AUTHOR_EMAIL": "t@example.com", "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.com"}
+        return subprocess.run(["git", "-C", str(root), *arguments], check=True, capture_output=True, text=True,
+                              env=env).stdout
+
+    def repository(self) -> Path:
+        """A repository with scripts/card_moves.py and no other script, a small wiki, a frozen ledger, a published
+        fragment and Lean, on main."""
+        root = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, root)
+        (root / "scripts").mkdir()
+        shutil.copyfile(ROOT / "scripts" / "card_moves.py", root / "scripts" / "card_moves.py")
+        files = {"blueprint/roadmap/README.md": "# Roadmap\n\n- [A](A/README.md)\n",
+                 "blueprint/roadmap/A/README.md": "# A\n",
+                 "blueprint/links/_defaults.json": '{"object": {"type": "lean", "uri": "../.."}}\n',
+                 "MathlibExt/Basic.lean": "theorem t : True := trivial\n",
+                 "scripts/card-moves.jsonl": json.dumps({"page": "A/older", "to": "A/p", "article_id": f"af_{20:024x}"})
+                 + "\n",
+                 "scripts/card-moves.d/20260101T000000Z-q.jsonl": json.dumps(
+                     {"page": "A/old", "to": "A/q", "article_id": f"af_{21:024x}"}) + "\n"}
+        rows = ""
+        for number, name in ((20, "p"), (21, "q"), (22, "r")):
+            files[f"blueprint/roadmap/A/{name}.md"] = f"# {name}\n"
+            rows += self.ROW % (f"A/{name}.md", number)
+        files["blueprint/links/A.jsonl"] = self.ROW % ("A/README.md", 10) + rows
+        for path, text in files.items():
+            (root / path).parent.mkdir(parents=True, exist_ok=True)
+            (root / path).write_text(text)
+        self.git(root, "init", "-q", "-b", "main")
+        self.git(root, "add", "-A")
+        self.git(root, "commit", "-q", "-m", "base")
+        return root
+
+    def change(self, root: Path, files: dict[str, str | None], message: str = "change") -> str:
+        for path, text in files.items():
+            if text is None:
+                (root / path).unlink()
+            else:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text(text)
+        self.git(root, "add", "-A")
+        self.git(root, "commit", "-q", "-m", message)
+        return self.git(root, "rev-parse", "HEAD").strip()
+
+    def pull_request(self, root: Path, files: dict[str, str | None]) -> None:
+        """Main gains an unrelated commit; the pull request, from the base, changes ``files``; HEAD is GitHub's merge
+        commit, main's tip its first parent."""
+        base = self.git(root, "rev-parse", "HEAD").strip()
+        self.change(root, {"README.md": "main moved on\n"}, "main")
+        self.git(root, "checkout", "-q", "-b", "pr", base)
+        self.change(root, files)
+        self.git(root, "checkout", "-q", "main")
+        self.git(root, "merge", "-q", "--no-ff", "--no-edit", "pr")
+
+    def run_gate(self, root: Path, event: str, **env: str) -> tuple[int, str, list[str]]:
+        """The step's script as CI runs it, the Lean unreadable throughout: its status, its errors, and the arguments
+        `python3` got."""
+        tools = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, tools)
+        (tools / "python3").write_text("#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$UV_ARGUMENTS\"\n"
+                                       "exec \"$PYTHON\" \"$@\"\n")
+        (tools / "python3").chmod(0o755)
+        lean = root / "MathlibExt" / "Basic.lean"
+        lean.chmod(0)
+        try:
+            result = subprocess.run(["bash", "-c", self.gate["run"]], cwd=root, capture_output=True, text=True, env={
+                **os.environ, "PATH": f"{tools}{os.pathsep}{os.environ['PATH']}", "PYTHON": sys.executable,
+                "UV_ARGUMENTS": str(tools / "arguments"), "RUNNER_TEMP": str(tools), "AUTOFORM_REF": "0" * 40,
+                "EVENT": event, "GROUP_BASE": "", "BEFORE": "",
+                "PYTHONDONTWRITEBYTECODE": self.gate["env"]["PYTHONDONTWRITEBYTECODE"], **env})
+        finally:
+            lean.chmod(0o644)
+        arguments = (tools / "arguments").read_text().splitlines() if (tools / "arguments").exists() else []
+        return result.returncode, result.stderr, arguments
+
+    def assertUntouched(self, root: Path) -> None:
+        self.assertEqual(self.git(root, "status", "--porcelain", "--ignored", "--untracked-files=all"), "")
+
+    def test_a_pull_request_is_checked_against_its_merge_commit_s_first_parent(self):
+        unrelated = {
+            "Lean only": {"MathlibExt/Basic.lean": "theorem t : True := by trivial\n",
+                          "MathlibExt/New.lean": "theorem u : True := trivial\n"},
+            "a blueprint change touching no ledger endpoint": {
+                "blueprint/roadmap/A/s.md": "# s\n", "blueprint/roadmap/A/r.md": "# r, edited\n",
+                "blueprint/links/A.jsonl": None},
+            "a move in a fragment of its own": {
+                "blueprint/roadmap/A/r.md": None, "blueprint/roadmap/A/r2.md": "# r\n",
+                "scripts/card-moves.d/20260102T000000Z-r.jsonl": json.dumps(
+                    {"page": "A/r", "to": "A/r2", "article_id": f"af_{22:024x}"}) + "\n"},
+            # The moves since the base are `check the cards`'s to hold to the ledger, not this step's.
+            "a move with no row": {"blueprint/roadmap/A/r.md": None, "blueprint/roadmap/A/r2.md": "# r\n"},
+            "a page deleted with no row": {"blueprint/roadmap/A/r.md": None},
+            # Whether a move ends at a live page of its article needs the pages: the card script's, in the site build.
+            "a move ending at no live page": {"scripts/card-moves.d/20260102T000000Z-r.jsonl": json.dumps(
+                {"page": "A/r-old", "to": "A/nowhere", "article_id": f"af_{22:024x}"}) + "\n"},
+        }
+        for name, files in unrelated.items():
+            with self.subTest(name):
+                root = self.repository()
+                links = (root / "blueprint/links/A.jsonl").read_text()
+                if name.startswith("a blueprint"):
+                    files = {**files, "blueprint/links/A.jsonl": links + self.ROW % ("A/s.md", 23)}
+                if name.startswith("a move"):
+                    files = {**files, "blueprint/links/A.jsonl": links.replace("A/r.md", "A/r2.md")}
+                if name.startswith("a page deleted"):
+                    files = {**files, "blueprint/links/A.jsonl": links.replace(self.ROW % ("A/r.md", 22), "")}
+                self.pull_request(root, files)
+                status, errors, arguments = self.run_gate(root, "pull_request")
+                self.assertEqual((status, errors), (0, ""))
+                self.assertEqual(arguments[-2:], ["--base", self.git(root, "rev-parse", "HEAD^1").strip()])
+                self.assertUntouched(root)
+        published = "scripts/card-moves.d/20260101T000000Z-q.jsonl"
+        for name, files, message in (
+            ("a published fragment edited", {published: '{"page":"A/old","to":"A/q","article_id":"af_%024x"}\n' % 21},
+             f"{published}, a fragment of the base commit, changed"),
+            ("a published fragment deleted", {published: None}, f"{published}, a fragment of the base commit, is gone"),
+            ("a row appended to the frozen file", {"scripts/card-moves.jsonl": json.dumps(
+                {"page": "A/older", "to": "A/p", "article_id": f"af_{20:024x}"}) + "\n" + json.dumps(
+                {"page": "A/r-old", "to": "A/r", "article_id": f"af_{22:024x}"}) + "\n"},
+             "card-moves.jsonl is not the base commit's; it is frozen"),
+            ("an invalid combined ledger", {"scripts/card-moves.d/20260102T000000Z-r.jsonl": json.dumps(
+                {"page": "A/older", "to": "A/r", "article_id": f"af_{22:024x}"}) + "\n"},
+             "scripts/card-moves.d/20260102T000000Z-r.jsonl:1: A/older already moved"),
+        ):
+            with self.subTest(name):
+                root = self.repository()
+                self.pull_request(root, files)
+                status, errors, _ = self.run_gate(root, "pull_request")
+                self.assertEqual(status, 1)
+                self.assertIn(message, errors)
+                self.assertUntouched(root)
+        # A checkout without the merge commit's two parents names no base: the gate stops, loudly, rather than check
+        # the combined ledger alone. So does a checkout that is no merge commit at all.
+        stop = "HEAD is no merge commit with both of its parents here: the pull request's base cannot be read"
+        root = self.repository()
+        self.pull_request(root, {"MathlibExt/New.lean": "theorem u : True := trivial\n"})
+        shallow = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, shallow)
+        self.git(shallow, "clone", "-q", "--depth=1", f"file://{root}", "checkout")
+        status, errors, arguments = self.run_gate(shallow / "checkout", "pull_request")
+        self.assertEqual((status, errors.strip(), arguments), (1, stop, []))
+        root = self.repository()
+        status, errors, arguments = self.run_gate(root, "pull_request")
+        self.assertEqual((status, errors.strip(), arguments), (1, stop, []))
+
+    def test_a_merge_group_is_checked_against_its_base_and_a_push_as_combined(self):
+        root = self.repository()
+        base = self.git(root, "rev-parse", "HEAD").strip()
+        self.git(root, "checkout", "-q", "-b", "entry")
+        self.change(root, {"blueprint/roadmap/A/r.md": None, "blueprint/roadmap/A/r2.md": "# r\n",
+                           "blueprint/links/A.jsonl": (root / "blueprint/links/A.jsonl").read_text().replace(
+                               "A/r.md", "A/r2.md"),
+                           "scripts/card-moves.d/20260102T000000Z-r.jsonl": json.dumps(
+                               {"page": "A/r", "to": "A/r2", "article_id": f"af_{22:024x}"}) + "\n"})
+        self.git(root, "checkout", "-q", "main")
+        self.git(root, "merge", "-q", "--no-ff", "--no-edit", "entry")
+        status, errors, arguments = self.run_gate(root, "merge_group", GROUP_BASE=base)
+        self.assertEqual((status, errors, arguments[-2:]), (0, "", ["--base", base]))
+        # A group that names no base, or a base that cannot be fetched, stops the gate, loudly, before any check.
+        self.assertEqual(self.run_gate(root, "merge_group"), (1, "The merge group names no base commit\n", []))
+        status, errors, arguments = self.run_gate(root, "merge_group", GROUP_BASE="f" * 40)
+        self.assertEqual((status, arguments), (1, []))
+        self.assertTrue(errors.endswith(f"The merge group's base commit {'f' * 40} cannot be fetched\n"), errors)
+        status, errors, arguments = self.run_gate(root, "workflow_dispatch")
+        self.assertEqual((status, "--base" in arguments), (0, False))
+        self.assertUntouched(root)
+
+    def test_a_push_to_main_checks_the_combined_ledger_alone(self):
+        # Two queue entries, each checked in its merge group against the one before it, land in one push: the second
+        # fragment builds on the first, so against the commit the push replaced the two are new fragments that
+        # interact. The push checks the combined ledger alone and passes; held to that commit, they would be refused.
+        root = self.repository()
+        before = self.git(root, "rev-parse", "HEAD").strip()
+        links = (root / "blueprint/links/A.jsonl").read_text()
+        self.change(root, {"blueprint/roadmap/A/r.md": None, "blueprint/roadmap/A/r2.md": "# r\n",
+                           "blueprint/links/A.jsonl": links.replace("A/r.md", "A/r2.md"),
+                           "scripts/card-moves.d/20260102T000000Z-first.jsonl": json.dumps(
+                               {"page": "A/r", "to": "A/r2", "article_id": f"af_{22:024x}"}) + "\n"}, "first entry")
+        first = self.git(root, "rev-parse", "HEAD").strip()
+        self.change(root, {"blueprint/roadmap/A/r2.md": None, "blueprint/roadmap/A/r3.md": "# r\n",
+                           "blueprint/links/A.jsonl": links.replace("A/r.md", "A/r3.md"),
+                           "scripts/card-moves.d/20260103T000000Z-second.jsonl": json.dumps(
+                               {"page": "A/r2", "to": "A/r3", "article_id": f"af_{22:024x}"}) + "\n"}, "second entry")
+        # Each entry passed against the entry before it, as its merge group checked it.
+        self.assertEqual(self.run_gate(root, "merge_group", GROUP_BASE=first)[:2], (0, ""))
+        status, errors, arguments = self.run_gate(root, "push")
+        self.assertEqual((status, errors, "--base" in arguments), (0, "", False))
+        held = subprocess.run([sys.executable, "scripts/card_moves.py", "check", "--base", before], cwd=root,
+                              capture_output=True, text=True, env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+        self.assertEqual(held.returncode, 1)
+        self.assertIn("scripts/card-moves.d/20260102T000000Z-first.jsonl and "
+                      "scripts/card-moves.d/20260103T000000Z-second.jsonl, both new, touch the address A/r2",
+                      held.stderr)
+        self.assertUntouched(root)
 
 
 if __name__ == "__main__":

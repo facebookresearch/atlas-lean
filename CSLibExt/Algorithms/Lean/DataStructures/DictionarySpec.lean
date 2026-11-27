@@ -209,8 +209,9 @@ private theorem foldl_mayContain_of_mem {α : Type u} {m : Nat} (x : α)
     · exact ih _ hmem
 
 /-- Bloom filters with a fixed list of hash functions instantiate
-approximate membership: a filter represents the finite set built by its
-insertion history from the empty filter. -/
+approximate membership: a filter represents a finite set `s` when some list
+with set of entries `s` yields the filter by insertions from the empty filter.
+A filter does not determine a unique history or represented set. -/
 public def bloomSpec {α : Type u} [DecidableEq α] {m : Nat} (hashes : List (α → Fin m)) :
     ApproxMembershipSpec α (BloomFilter α m) where
   empty := BloomFilter.empty hashes

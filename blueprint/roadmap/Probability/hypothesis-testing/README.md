@@ -10,12 +10,9 @@ These methods keep testing valid when many hypotheses are tested at once, by con
 - [Bonferroni correction](bonferroni-correction/README.md)
 - [Holm–Bonferroni method](holm-bonferroni-method/README.md)
 - [Closed testing principle](closed-testing-principle/README.md)
-- [Conditional binomial tests](conditional-binomial-tests/README.md)
-- [Anytime-valid confidence sequences](anytime-valid-confidence-sequences/README.md)
 - [Benjamini–Hochberg procedure](benjamini-hochberg-procedure/README.md)
 - [Knockoff filter](knockoff-filter/README.md)
 - [Two-groups model and local false discovery rates](two-groups-model-and-local-false-discovery-rates/README.md)
-- [Two-sample t and variance-ratio F tests](two-sample-t-and-variance-ratio-f-tests/README.md)
 
 ## Neyman–Pearson and likelihood-based tests
 
@@ -23,7 +20,6 @@ These results compare hypotheses through their likelihoods: the Neyman–Pearson
 
 - [Neyman–Pearson lemma](neyman-pearson-dominated-two-simple.md)
 - [Monotone likelihood ratio](monotone-likelihood-ratio/README.md)
-- [Pearson's chi-square goodness-of-fit test](pearson-s-chi-square-goodness-of-fit-test/README.md)
 - [Score, Wald and likelihood-ratio tests](score-wald-and-likelihood-ratio-tests/README.md)
 - [Local power of the likelihood-ratio test](local-power-of-the-likelihood-ratio-test/README.md)
 - [Universal inference](universal-inference/README.md)
@@ -40,10 +36,8 @@ These procedures base inference on counts, ranks or random reassignments of the 
 
 - [Fisher's exact test](fisher-s-exact-test/README.md)
 - [Exact test for Hardy–Weinberg equilibrium](exact-test-for-hardy-weinberg-equilibrium/README.md)
-- [Exact-size Neyman–Pearson tests](exact-size-neyman-pearson-tests/README.md)
 - [Mann–Whitney statistic and ROC area](mann-whitney-statistic-and-roc-area/README.md)
 - [Permutation tests](permutation-tests/README.md)
-- [Power and sample size of the z test](power-and-sample-size-of-the-z-test/README.md)
 - [Split conformal prediction](split-conformal-prediction/README.md)
 - [Full conformal prediction](full-conformal-prediction/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)

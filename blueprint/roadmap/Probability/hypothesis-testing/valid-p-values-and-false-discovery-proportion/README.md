@@ -8,6 +8,8 @@
 - [False discovery proportion](false-discovery-proportion.md)
 - [False discovery proportion is nonnegative](false-discovery-proportion-nonneg.md)
 - [False discovery proportion is at most one](false-discovery-proportion-le-one.md)
+- [The step-up index is a qualifying index](step-up-index-mem.md)
+- [The step-up index as a finite supremum](step-up-index-eq-sup.md)
 - [Upper tail of a measure on the natural numbers](upper-tail.md)
 - [Exact upper-tail p-value](upper-tail-pvalue.md)
 - [Upper tails decrease with the cutoff](upper-tail-antitone.md)
@@ -20,6 +22,8 @@
 - [Survival-function p-values are valid](is-valid-pvalue-survival.md)
 - [Validity of a discrete upper-tail p-value](sum-upper-tail-le.md)
 - [Validity of the doubled two-sided p-value](is-valid-pvalue-two-sided.md)
+
+- [Confidence sets and test inversion](confidence-sets-and-test-inversion/README.md)
 
 ## Genomic control with an estimated inflation factor
 
