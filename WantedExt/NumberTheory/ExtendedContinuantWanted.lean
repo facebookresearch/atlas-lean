@@ -16,6 +16,9 @@ public import MathlibExt.NumberTheory.ExtendedContinuant
 public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
 public import MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms
 public import MathlibExt.NumberTheory.ExtendedContinuantSilentTermsTableOneModSix
+public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantBennett
+public import MathlibExt.NumberTheory.ExtendedContinuantConjugateContinuedFractionNotPurelyPeriodic
+public import MathlibExt.NumberTheory.ExtendedContinuantOneSilentTerms
 
 /-!
 # Extended continuants and bi-infinite periodic continued fractions
@@ -38,7 +41,9 @@ statements below keep only the strict-equivalence hypotheses on the convergents;
 periodicity and limit conditions of a BpCF (Definition 5) are not used by the paper's proofs
 and are dropped, so each statement applies to every bi-infinite integer sequence.
 The same applies to `MetaMathlibExt.oddSilent_terms`, which is in
-`MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms`.
+`MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms`, and to
+`MetaMathlibExt.oneSilent_terms`, which is proved in
+`MathlibExt.NumberTheory.ExtendedContinuantOneSilentTerms`.
 -/
 
 namespace MetaMathlibExt
@@ -61,60 +66,6 @@ public theorem_wanted extendedContinuant_bennett_nat (x : ℤ → ℤ) (k ℓ m 
         extendedContinuant x ((k : ℤ) - m - 2) m +
       ((m + k : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - m - 2) m *
         extendedContinuant x ((ℓ : ℤ) - k - 2) k = 0
-
-/-- **Bennett's continuant identity for all integer indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
-be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
-index $b$. For all integers $k$, $\ell$, $m$, $n$,
-$$(-1)^{k+\ell} K_{n-k-2}(x)_k K_{m-\ell-2}(x)_\ell +
-(-1)^{\ell+m} K_{n-\ell-2}(x)_\ell K_{k-m-2}(x)_m +
-(-1)^{m+k} K_{n-m-2}(x)_m K_{\ell-k-2}(x)_k = 0.$$
-
-This extends Bennett's identity from nonnegative to arbitrary integer indices.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 3. -/
-public theorem_wanted extendedContinuant_bennett (x : ℤ → ℤ) (k ℓ m n : ℤ) :
-    ((k + ℓ).negOnePow : ℤ) * extendedContinuant x (n - k - 2) k *
-        extendedContinuant x (m - ℓ - 2) ℓ +
-      ((ℓ + m).negOnePow : ℤ) * extendedContinuant x (n - ℓ - 2) ℓ *
-        extendedContinuant x (k - m - 2) m +
-      ((m + k).negOnePow : ℤ) * extendedContinuant x (n - m - 2) m *
-        extendedContinuant x (ℓ - k - 2) k = 0
-
-/-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
-integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
-$b$. Suppose that for every natural number $i$, $K_i(x)_0 = K_i(y)_0$,
-$K_{i-1}(x)_1 = K_{i-1}(y)_1$, $K_{-i-2}(x)_0 = K_i(z)_0$ and $K_{-i-3}(x)_1 = K_{i-1}(z)_1$.
-Then $x_n = y_n$ for every $n \ge 0$, $x_{-n} = -z_n$ for every $n \ge 1$, and $z_0 = 0$.
-
-In the paper's terms the hypotheses say that the raw convergents $k_i = K_i(x)_0 / K_{i-1}(x)_1$
-of $x$ are strictly equivalent (equal numerators and equal denominators) to the raw convergents
-$c_i$ of $y$, and $k_{-i-2}$ to the raw convergents $d_i$ of $z$, for all $i \ge 0$. The
-conclusion $z_0 = 0$ matches the paper's $0 < \bar\alpha < 1$ for the EA-generated SCF of the
-irrational $\bar\alpha$.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 5. -/
-public theorem_wanted oneSilent_terms (x y z : ℤ → ℤ)
-    (heast : ∀ i : ℕ, extendedContinuant x i 0 = extendedContinuant y i 0 ∧
-      extendedContinuant x ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
-    (hwest : ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - 2) 0 = extendedContinuant z i 0 ∧
-      extendedContinuant x (-(i : ℤ) - 3) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
-    (∀ n : ℕ, x n = y n) ∧ (∀ n : ℕ, 1 ≤ n → x (-(n : ℤ)) = -z n) ∧ z 0 = 0
-
-/-- **The conjugate continued fraction is not purely periodic.** Let $P$, $Q$ and $D$ be integers
-with $D > 0$ not a perfect square and $Q > 0$, and let $\bar\alpha = (P - \sqrt{D})/Q$. Then the
-simple continued fraction $[a_0; a_1, a_2, \dots]$ of $\bar\alpha$, which is infinite because
-$\bar\alpha$ is irrational, is not purely periodic: there is no integer $s \ge 1$ with
-$a_{n+s} = a_n$ for all $n \ge 0$. Here $a_0 = \lfloor \bar\alpha \rfloor$ is included.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Lemma 3. -/
-public theorem_wanted conjugate_continuedFraction_not_purelyPeriodic (P Q D : ℤ) (hD : 0 < D)
-    (hsq : ¬ IsSquare D) (hQ : 0 < Q) :
-    ¬ ∃ s : ℕ, 0 < s ∧ ∀ n : ℕ,
-      (GenContFract.IntFractPair.stream (((P : ℝ) - √(D : ℝ)) / Q) (n + s)).map (·.b) =
-        (GenContFract.IntFractPair.stream (((P : ℝ) - √(D : ℝ)) / Q) n).map (·.b)
 
 end
 
