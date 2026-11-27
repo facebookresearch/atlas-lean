@@ -32,4 +32,16 @@ example : ∃ x y z : ℕ, 3 ^ x + (5 * 5) ^ y = z ^ 2 := ⟨1, 0, 2, rfl⟩
 /-- The condition `p ≡ 1 (mod 4)` is needed: with `n = 1` and `p = 3`, `1^0 + 15^1 = 4^2`. -/
 example : ∃ x y z : ℕ, 1 ^ x + (5 * 3) ^ y = z ^ 2 := ⟨0, 1, 4, rfl⟩
 
+-- A nonprime parameter is allowed, even at the minimum positive modulus exponent.
+example (x y z : ℕ) : 5 ^ x + 17 ^ y ≠ z ^ 2 :=
+  five_pow_add_four_pow_mul_add_one_ne_sq 4 1 1 x y z (by decide)
+
+-- The parameters and both outer exponents can be zero.
+example (z : ℕ) : 2 ≠ z ^ 2 :=
+  five_pow_add_four_pow_mul_add_one_ne_sq 0 1 0 0 0 z (by decide)
+
+-- Without the positive modulus exponent, the obstruction fails.
+example : (5 ^ 1 : ℕ) ^ 1 + (4 ^ 0 * 3 + 1) ^ 1 = 3 ^ 2 := by
+  decide +kernel
+
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted

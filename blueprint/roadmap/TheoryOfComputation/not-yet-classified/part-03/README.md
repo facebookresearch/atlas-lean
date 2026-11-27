@@ -5,8 +5,3 @@
 - [Multiversion Serializability](part-07/multiversion-serializability/README.md)
 
 ## [Part 10 of 20](part-10/README.md)
-
-
-## [Part 18 of 20](part-18/README.md)
-
-- [Probabilistic](part-18/probabilistic/README.md)

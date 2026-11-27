@@ -1,0 +1,17 @@
+# Population Attributable Fraction
+
+- [Levin](levin.md)
+- [Miettinen](miettinen.md)
+- [Exposure Prevalence](exposure-prevalence.md)
+- [Observed Risk](observed-risk.md)
+- [Causal PAF](causal-paf.md)
+- [Risk Exposed](risk-exposed.md)
+- [Risk Unexposed](risk-unexposed.md)
+- [Crude RR](crude-rr.md)
+- [Exposed Standardized RR](exposed-standardized-rr.md)
+- [Total Standardized RR](total-standardized-rr.md)
+- [Case Prevalence](case-prevalence.md)
+- [Levin's formula without confounding](levin-crude-rr-eq-causal-paf.md)
+- [Levin equals Miettinen for the crude risk ratio](levin-eq-miettinen.md)
+- [Miettinen's formula under confounding](miettinen-exposed-rr-eq-causal-paf.md)
+- [Levin's formula with an adjusted risk ratio can disagree with the PAF](exists-levin-total-rr-ne-causal-paf.md)
