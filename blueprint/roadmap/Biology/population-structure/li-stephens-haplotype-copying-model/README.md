@@ -21,3 +21,4 @@
 - [The PAC likelihood is normalized but need not be exchangeable](product-of-approximate-conditionals-pac-likeliho.md)
 
 - [Diploid Li–Stephens model: collapsed forward step and imputed dosage as a posterior mean](diploid-li-stephens-phasing-and-genotype-imputat.md)
+- [Haplotype phasing and imputation](haplotype-phasing-and-imputation/README.md)
