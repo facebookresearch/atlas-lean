@@ -2,7 +2,7 @@
 
 Let $P$ be a [finite ground normal logic program](normal-logic-program.md). If $X$ and $Y$ are [stable models](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md) of $P$ and $X \subseteq Y$, then $X = Y$. So the stable models of a program form an antichain under inclusion.
 
-**Proof.** If $X \subseteq Y$, every rule deleted in forming the [reduct](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/reduct.md) $P^X$ is also deleted in forming $P^Y$, so $P^Y \subseteq P^X$. The least model of a definite program is monotone in the program, so $Y$, the least model of $P^Y$, is contained in $X$, the least model of $P^X$.
+**Proof.** If $X \subseteq Y$, every rule deleted in forming the [reduct](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/reduct.md) $P^X$ is also deleted in forming $P^Y$, so $P^Y \subseteq P^X$. The [least model](../../../ComputerScience/programming-language-semantics/effects-modules-and-logic-programming/least-herbrand-model-of-a-definite-logic-program.md) $X$ of $P^X$ is a model of the smaller program $P^Y$, so $Y$, the least model of $P^Y$, is contained in $X$.
 
 ## Depends on
 
@@ -12,6 +12,7 @@ Let $P$ be a [finite ground normal logic program](normal-logic-program.md). If $
 ## Proof depends on
 
 - [Gelfond–Lifschitz reduct](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/reduct.md)
+- [Least Herbrand model of a definite logic program](../../../ComputerScience/programming-language-semantics/effects-modules-and-logic-programming/least-herbrand-model-of-a-definite-logic-program.md)
 
 ## Sources
 
