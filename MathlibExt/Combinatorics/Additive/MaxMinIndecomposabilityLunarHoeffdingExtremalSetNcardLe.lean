@@ -39,7 +39,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-open Pointwise Filter Topology
 open MeasureTheory ProbabilityTheory
 
 /-- **Level counts of a lunar number.** Let $f$ be a lunar number of base $b$ and degree at most

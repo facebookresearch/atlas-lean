@@ -10,9 +10,6 @@ module
 
 import MathlibExt.Combinatorics.Additive.MaxMinIndecomposabilityLunarHoeffdingExtremalSetNcardLe
 import Mathlib.Tactic.NormNum
-import Mathlib.Algebra.Group.Pointwise.Finset.Basic
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 
 namespace MathlibExtTest.Combinatorics.Additive
 namespace MaxMinIndecomposabilityLunarHoeffdingExtremalSetNcardLe
