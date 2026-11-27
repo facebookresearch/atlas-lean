@@ -3,8 +3,12 @@
 Let `f` and `g` satisfy the hypotheses of Section 2.1
 (`StateFunction`: `f` smooth on `[0, 1]` with `f(0) = 0`, `f(1) = 1`, `f' > 0`, `f'' < 0`, and `g`
 its inverse), let `ε > 0` and `0 < φ < 1`, and assume no absorption, `f(1 - φ) + ε < 1`. Then the
-firing map `h = firingMap f g ε` has a derivative `d` at `φ` with `d < -1` (namely
-`d = -f'(1 - φ) / f'(h(φ))`, where `h(φ) ∈ (1 - φ, 1)`).
+firing map `h = firingMap f g ε` has a derivative `d` at `φ` with `d < -1`.
+
+The value of the derivative and the place of `h(φ)` are facts of the source's proof of Lemma 2.1,
+not part of this statement: its Eq. (2.3) gives `h'(φ) = -g'(ε + f(1 - φ)) / g'(f(1 - φ))`, which
+is `-f'(1 - φ) / f'(h(φ))` since `g' = 1 / (f' ∘ g)`, and there `h(φ) = g(ε + f(1 - φ))` lies in
+`(1 - φ, 1)` because `g` is increasing, `ε > 0` and `ε + f(1 - φ) < 1`.
 
 ## Sources
 

@@ -25,11 +25,16 @@ rotating frame), that `|α| < 1` is preserved (Eq. (9)), and that for the Lorent
 density `g_L(ω) = (Δ / π) / ((ω - ω₀)² + Δ²)` the self-consistency condition `r̄ = ∫ α g_L dω`
 closes at the pole `ω₀ - iΔ` when `α(·, t)` extends boundedly and holomorphically to the lower
 half-plane: then `r̄(t) = α(ω₀ - iΔ, t)` obeys the two-real-dimensional equation (14), which for
-`Λ = 0`, `Ω = ω₀` is Eq. (10), `ρ' = -(1 - K/2) ρ - (K/2) ρ³` for `ρ = |r|`. The angular density is
-Mathlib's Poisson kernel `poissonKernel` of the unit disk, and the Lorentzian density is the Cauchy
-density `ProbabilityTheory.cauchyPDFReal`. The printed closed-form solution Eq. (11) of the arXiv
-version is inconsistent with Eq. (10) and is not used. Attractivity of the manifold, non-Lorentzian
-frequency densities and finite-`N` statements are not claimed.
+`Λ = 0`, `Ω = ω₀` is Eq. (10), `ρ' = -(1 - K/2) ρ - (K/2) ρ³` for `ρ = |r|`. The invariance of the
+Lorentzian manifold is stated for the strict-real-boundary subclass `Admissible` of their invariant
+manifold, whose functions have modulus `< 1` on the real axis; the manifold itself (Section III)
+asks only `|α(ω, t)| ≤ 1` for real `ω` and contains their example `k e^{-iωc}` with `k = c = 1`,
+of modulus `1` on the whole real axis, whose angular distribution is a singular measure rather
+than a density. The angular density is Mathlib's Poisson kernel `poissonKernel` of the unit disk,
+and the Lorentzian density is the Cauchy density `ProbabilityTheory.cauchyPDFReal`. The printed
+closed-form solution Eq. (11) of the arXiv version is inconsistent with Eq. (10) and is not used.
+Attractivity of the manifold, non-Lorentzian frequency densities and finite-`N` statements are not
+claimed.
 
 Sources: E. Ott and T. M. Antonsen, "Low dimensional behavior of large systems of globally
 coupled oscillators", Chaos 18 (2008) 037113, Eqs. (4)–(10), (13)–(14), Sections III and IV.b
@@ -77,9 +82,12 @@ with `Δ = 1` centred at `ω₀`, with coupling `K` and drive `Λ` at frequency 
 noncomputable def orderField (K Λ Ω ω₀ : ℝ) (r : ℂ) : ℂ :=
   -(1 / 2) * ((starRingEnd ℂ) (K * r + Λ) * r ^ 2 - (K * r + Λ)) - (1 + I * (Ω - ω₀)) * r
 
-/-- An admissible function in the sense of Ott and Antonsen (Section III): bounded by `1` and
-continuous on the closed lower half-plane, holomorphic on the open lower half-plane, of modulus
-`< 1` on the real axis, and tending to `0` as `Im w → -∞`, uniformly in `Re w`. -/
+/-- The strict-real-boundary subclass of the functions on Ott and Antonsen's invariant manifold
+(Section III): bounded by `1` and continuous on the closed lower half-plane, holomorphic on the
+open lower half-plane, of modulus `< 1` on the real axis, and tending to `0` as `Im w → -∞`,
+uniformly in `Re w`. The manifold itself asks only `|α(ω, t)| ≤ 1` for real `ω`: their example
+`k e^{-iωc}` with `k = c = 1` is holomorphic, tends to `0` as `Im ω → -∞` and has modulus `1` on
+the real axis, so it lies on the manifold but not in this subclass. -/
 structure Admissible (β : ℂ → ℂ) : Prop where
   norm_le_one : ∀ w : ℂ, w.im ≤ 0 → ‖β w‖ ≤ 1
   continuousOn : ContinuousOn β {w | w.im ≤ 0}
@@ -102,9 +110,13 @@ theorem_wanted continuity_poissonDensity (ω Ω : ℝ) (F α : ℝ → ℂ) (t �
 
 /-- **Density and order-parameter moment** (Ott and Antonsen 2008, Eqs. (7)–(8)). For `‖α‖ < 1`
 the density `poissonDensity α` is nonnegative, has integral `1` over `[0, 2π]`, and its first
-moment `∫_0^{2π} poissonDensity α θ e^{iθ} dθ` equals `ᾱ`.
+moment `∫_0^{2π} poissonDensity α θ e^{iθ} dθ` equals `ᾱ`. The sentence after Eq. (8) prints
+`∫ dθ f = g(ω)/2π`; the unit mass of `f / g` stated here follows instead from Section II's
+normalization `∫_0^{2π} f dθ = g(ω)` and from the constant coefficient `g(ω)/(2π)` of the Fourier
+expansion of `f` before Eq. (6), whose other modes integrate to zero over `[0, 2π]`.
 
-Source: Ott and Antonsen (2008), Eqs. (7)–(8). -/
+Source: Ott and Antonsen (2008), Section II, the Fourier expansion before Eq. (6), and
+Eqs. (7)–(8). -/
 theorem_wanted poissonDensity_moments (α : ℂ) (hα : ‖α‖ < 1) :
     (∀ θ, 0 ≤ poissonDensity α θ) ∧ ∫ θ in (0 : ℝ)..2 * Real.pi, poissonDensity α θ = 1 ∧
       ∫ θ in (0 : ℝ)..2 * Real.pi, (poissonDensity α θ : ℂ) * exp (θ * I) = (starRingEnd ℂ) α
@@ -138,15 +150,16 @@ theorem_wanted integral_mul_lorentzian (ω₀ : ℝ) (Δ : ℝ≥0) (hΔ : 0 < �
     ∫ ω : ℝ, β ω * (cauchyPDFReal ω₀ Δ ω : ℂ) = β (ω₀ - (Δ : ℝ) * I)
 
 /-- **The Lorentzian ansatz manifold is invariant and closes on the order parameter** (Ott and
-Antonsen 2008, Sections III and IV.b and Eq. (14)). Let `K, Λ, Ω, ω₀` be real and let `α₀` be
-admissible (`Admissible`). Then there is a solution `r` of the order-parameter equation (14)
-(`r' = orderField K Λ Ω ω₀ r`, derivative within `[0, ∞)` at every `t ≥ 0`, one-sided at `0`)
-on `[0, ∞)` with `r 0 = conj (α₀ (ω₀ - i))`, such that:
+Antonsen 2008, Sections III and IV.b and Eq. (14)). Let `K, Λ, Ω, ω₀` be real and let `α₀` lie in
+the strict-real-boundary subclass `Admissible` of their invariant manifold (modulus `< 1` on the
+real axis, where the manifold allows modulus `≤ 1`). Then there is a solution `r` of the
+order-parameter equation (14) (`r' = orderField K Λ Ω ω₀ r`, derivative within `[0, ∞)` at every
+`t ≥ 0`, one-sided at `0`) on `[0, ∞)` with `r 0 = conj (α₀ (ω₀ - i))`, such that:
 * there is a family `α(w, t)` that, for each `w` with `Im w ≤ 0`, solves the ansatz equation
   `α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` (derivative within `[0, ∞)` at
   every `t ≥ 0`, one-sided at `0`) with `α(w, 0) = α₀ w`; and
-* every such family satisfies, for every `t ≥ 0`: `α(·, t)` is admissible, and
-  `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L = cauchyPDFReal ω₀ 1`
+* every such family satisfies, for every `t ≥ 0`: `α(·, t)` stays in the subclass `Admissible`,
+  and `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L = cauchyPDFReal ω₀ 1`
   with `Δ = 1` centred at `ω₀` (self-consistency, Eq. (7)).
 
 Source: Ott and Antonsen (2008), Sections III and IV.b and Eq. (14). -/
