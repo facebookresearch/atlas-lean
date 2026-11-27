@@ -12,6 +12,7 @@ The corollary holds because $\mathsf{S}$ is recursively enumerable and the class
 
 - [Positive relevant logics and Routley–Meyer frames](positive-relevant-logics-and-routley-meyer-frames.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

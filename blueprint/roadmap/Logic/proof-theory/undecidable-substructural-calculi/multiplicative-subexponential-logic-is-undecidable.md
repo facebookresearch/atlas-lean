@@ -6,17 +6,18 @@ Classical propositional multiplicative linear logic extended with one unrestrict
 
 Let $\Xi$ be the signature with labels $\{\infty,a,b\}$, unbounded labels $\{\infty\}$, and $\le$ the reflexive-transitive closure of $a\le\infty$ and $b\le\infty$; so $a$ and $b$ are incomparable linear labels below one unrestricted label.
 
-**Theorem (Chaudhuri).** Derivability of $\mathrm{MSEL}_\Xi$ sequents is recursively unsolvable.
+**Theorem (Chaudhuri).** Derivability of $\mathrm{MSEL}_\Xi$ sequents is recursively unsolvable (Corollary 12 of the source).
 
 Additives are not needed: the undecidability of multiplicative-additive exponential linear logic uses the additives, while here the two linear subexponentials take their place. Multiplicative linear logic without exponentials is decidable.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -24,4 +25,4 @@ A configuration of a two-register Minsky machine with state $q$ and register val
 
 ## Sources
 
-- K. Chaudhuri, "Undecidability of multiplicative subexponential logic", in *Proceedings of the Third International Workshop on Linearity (LINEARITY 2014)*, Electronic Proceedings in Theoretical Computer Science 176, pp. 1–8, 2015, doi:[10.4204/EPTCS.176.1](https://doi.org/10.4204/EPTCS.176.1); read in arXiv:1502.04769v1 ([arXiv](https://arxiv.org/abs/1502.04769v1)): the definition of subexponential signatures and of $\mathrm{MSEL}$, the signature $\Xi$, the encoding of configurations, and the undecidability corollary closing the section on the encoding.
+- K. Chaudhuri, "Undecidability of multiplicative subexponential logic", in *Proceedings of the Third International Workshop on Linearity (LINEARITY 2014)*, Electronic Proceedings in Theoretical Computer Science 176, pp. 1–8, 2015, doi:[10.4204/EPTCS.176.1](https://doi.org/10.4204/EPTCS.176.1); read in arXiv:1502.04769v1 ([arXiv](https://arxiv.org/abs/1502.04769v1)): Definition 1 (subexponential signatures) and the definition of $\mathrm{MSEL}$, Definition 3 (two-register machines), Definition 5 (the signature $\Xi$), Definitions 6 to 8 (the encoding), and Corollary 12.

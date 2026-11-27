@@ -15,6 +15,7 @@ By contrast, the variety of distributive residuated lattices with unit has a dec
 ## Depends on
 
 - [Logic of bunched implications](../logic-of-bunched-implications.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

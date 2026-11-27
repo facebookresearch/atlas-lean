@@ -14,6 +14,7 @@ The source proves the same for the modified versions of these calculi with cut e
 ## Depends on
 
 - [Morrill's calculi with brackets and a subexponential](morrill-s-calculi-with-brackets-and-a.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

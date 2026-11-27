@@ -9,6 +9,7 @@ Since ${!}\mathbf{L}^*$ is a conservative fragment of Morrill and Valentín's ca
 ## Depends on
 
 - [Lambek calculus with a relevant modality](lambek-calculus-with-a-relevant-modality.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

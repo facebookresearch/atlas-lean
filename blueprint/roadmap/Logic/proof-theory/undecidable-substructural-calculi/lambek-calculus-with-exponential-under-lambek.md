@@ -9,6 +9,7 @@ $\mathbf{EL}^-$ enjoys cut elimination (Theorem 2) and on sequents without $!$ d
 ## Depends on
 
 - [Derivability in the Lambek calculus](../../../TheoryOfComputation/np-completeness/strings-and-puzzles/lambek-calculus-derivability/derivable.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ The source also proves the same for the fragments without $\vee$ and without $\w
 ## Depends on
 
 - [Action logic and infinitary action logic](action-logic-and-infinitary-action-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

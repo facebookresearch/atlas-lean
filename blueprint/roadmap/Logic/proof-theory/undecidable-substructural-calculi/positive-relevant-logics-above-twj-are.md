@@ -15,6 +15,7 @@ The source notes that the upper bound may equally be taken to be the logic of th
 ## Depends on
 
 - [Positive relevant logics and Routley–Meyer frames](positive-relevant-logics-and-routley-meyer-frames.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ Equivalently, theoremhood in the extension of $\mathsf{FL_e}$ by the correspondi
 ## Depends on
 
 - [Simple and spineless equations over commutative residuated lattices](simple-and-spineless-equations-over.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

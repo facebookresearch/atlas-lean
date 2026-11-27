@@ -10,6 +10,7 @@ Since $\mathbf{ACT}_\omega$ is $\Pi^0_1$-complete (Buszkowski and Palka), the hy
 
 - [Action logic and infinitary action logic](action-logic-and-infinitary-action-logic.md)
 - [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
