@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.MeteredParkingDiagonalChoose
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredLuckyLaces
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
@@ -100,16 +101,6 @@ public theorem_wanted meteredParkingCount_one_recursion (n : ℕ) :
       ∀ m, 1 ≤ m → m ≤ n →
         (meteredParkingCount 1 (m + 1) n : ℤ) =
           n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n
-
-/-- **1-metered parking functions with as many cars as spots.** For every natural number
-$n > 2$, the number of $1$-metered $(n, n)$-parking functions is
-$$\mathrm{mpf}_{n,n}(1) = \sum_{k=0}^{n} (n-2)^{n-k} \binom{2n+1-k}{k}.$$
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 4 (`integers-2025-A73-cor-4`). -/
-public theorem_wanted meteredParkingCount_one_diag {n : ℕ} (hn : 2 < n) :
-    meteredParkingCount 1 n n =
-      ∑ k ∈ Finset.range (n + 1), (n - 2) ^ (n - k) * (2 * n + 1 - k).choose k
 
 /-- **Metered parking functions in which every car is lucky.** Let $m \ge 2$, $n \ge 2$ and
 $t \le m - 1$. The number of $t$-metered $(m, n)$-parking functions in which every car parks in
