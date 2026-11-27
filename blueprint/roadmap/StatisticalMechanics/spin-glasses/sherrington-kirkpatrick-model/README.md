@@ -25,6 +25,7 @@ Source: M. Talagrand, *The Parisi formula*, Ann. of Math. 163 (2006), 221–263,
 - [One step of the Parisi recursion](parisi-step.md)
 - [The Parisi recursion](parisi-recursion.md)
 - [The Parisi functional](parisi-functional.md)
+- [Guerra's replica-symmetry-breaking bound for the SK model at every system size](free-energy-le-parisi-functional.md)
 - [Guerra's replica-symmetry-breaking bound for the SK model](free-energy-le-parisi-functional-eventua.md)
 - [The Parisi formula for the SK model](tendsto-free-energy-parisi.md)
 
