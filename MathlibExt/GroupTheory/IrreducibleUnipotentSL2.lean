@@ -35,6 +35,20 @@ public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 import Mathlib.Tactic.Group
 import Mathlib.Tactic.NoncommRing
 
+/-!
+# Irreducible subgroups of `GL(2, ZMod p)` with a nontrivial unipotent
+
+For a prime `p`, a subgroup of `GL(2, ZMod p)` that leaves no line invariant and contains a
+nontrivial square-zero unipotent contains the image of `SL(2, ZMod p)`. The proof finds a basis in
+which the unipotent and its conjugate by an element of the subgroup are an upper and a lower
+transvection with nonzero entries. Their powers give every transvection in that basis, and
+Mathlib's `Matrix.SL2.transvection_induction` generates `SL(2, ZMod p)` from them.
+
+## Main statement
+
+* `SL2.range_toGL_le_of_irreducible_of_exists_unipotent`
+-/
+
 @[expose] public section
 
 open Matrix MatrixGroups Subgroup
@@ -239,8 +253,8 @@ private lemma conj_unipotent {g : GL (Fin 2) (ZMod p)} (h : GL (Fin 2) (ZMod p))
     noncomm_ring
   rw [key, hsq, hinv', mul_one, ← pow_two, hg, mul_zero, zero_mul]
 
-/-- **Irreducible subgroups with a unipotent contain `SL(2, ZMod p)`.** For a prime `p`, a
-subgroup of `GL(2, ZMod p)` that leaves no line invariant (an irreducible subgroup) and contains
+/-- **Irreducible subgroups with a nontrivial unipotent contain `SL(2, ZMod p)`.** For a prime `p`,
+a subgroup of `GL(2, ZMod p)` that leaves no line invariant (an irreducible subgroup) and contains
 a nontrivial square-zero unipotent contains the image of `SL(2, ZMod p)`. -/
 theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 2) (ZMod p)))
     (hirr : ∀ v : Fin 2 → ZMod p, v ≠ 0 → ∃ g ∈ H, ∀ c : ZMod p,
