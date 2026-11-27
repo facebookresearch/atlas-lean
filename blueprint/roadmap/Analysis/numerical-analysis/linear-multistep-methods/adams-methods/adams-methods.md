@@ -4,7 +4,7 @@ A [linear $k$-step method](../linear-multistep-method.md) whose first characteri
 
 $$\rho(z) = z^k - z^{k-1}$$
 
-is called an *Adams method*; it advances $y_{n+k} = y_{n+k-1} + h \sum_{j=0}^{k} \beta_j f_{n+j}$. Since the roots of $\rho$ are $1$ and $0$, every Adams method is [zero-stable](../zero-stability.md). The particular *Adams–Bashforth* and *Adams–Moulton* methods choose the $\beta_j$ by replacing $f(x, y(x))$ in $y(x_{n+k}) - y(x_{n+k-1}) = \int_{x_{n+k-1}}^{x_{n+k}} f(x, y(x))\,dx$ by its polynomial interpolant:
+is called an *Adams method*; it advances $y_{n+k} = y_{n+k-1} + h \sum_{j=0}^{k} \beta_j f_{n+j}$. Since the roots of $\rho$ are $1$ and, for $k \ge 2$, $0$, every Adams method is [zero-stable](../zero-stability.md). The particular *Adams–Bashforth* and *Adams–Moulton* methods choose the $\beta_j$ by replacing $f(x, y(x))$ in $y(x_{n+k}) - y(x_{n+k-1}) = \int_{x_{n+k-1}}^{x_{n+k}} f(x, y(x))\,dx$ by its polynomial interpolant:
 
 - the $k$-step Adams–Bashforth method interpolates at the $k$ nodes $x_n, \dots, x_{n+k-1}$, so $\beta_k = 0$, $\beta_j = \frac1h \int_{x_{n+k-1}}^{x_{n+k}} L_j(x)\,dx$ for the Lagrange basis $L_j$ of those nodes, and it is explicit;
 - the $k$-step Adams–Moulton method interpolates at the $k + 1$ nodes $x_n, \dots, x_{n+k}$, the new endpoint included, with $\beta_j$ defined in the same way, and it is implicit.
@@ -20,6 +20,7 @@ The orders are properties of these coefficients, not of $\rho$ alone: backward E
 - [Linear multistep method](../linear-multistep-method.md)
 - [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
 - [Zero-stability](../zero-stability.md)
+- [Evaluated Lagrange basis polynomial](../../../approximation-theory/lagrange-interpolation/eval-basis.md)
 
 ## Sources
 

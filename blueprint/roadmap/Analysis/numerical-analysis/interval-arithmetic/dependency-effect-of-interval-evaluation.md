@@ -4,7 +4,7 @@ When a variable occurs more than once in an expression, [interval evaluation](in
 
 $$E(I) = [a, b] - [a, b] = [a - b,\ b - a] \supsetneq \{0\},$$
 
-so the enclosure has width $2(b - a)$ while the range is a point.
+so the enclosure has length $2(b - a)$ while the range is a point.
 
 ## Depends on
 

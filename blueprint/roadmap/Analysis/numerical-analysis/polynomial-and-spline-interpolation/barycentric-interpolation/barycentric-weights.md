@@ -1,10 +1,10 @@
 # Barycentric weights
 
-Let $F$ be a field, $s$ a finite set of indices and $v : s \to F$ the nodes. The *barycentric weight* (Mathlib's nodal weight) of the node $v_i$, $i \in s$, is
+Let $F$ be a field, $\iota$ a type of indices, $s$ a finite set of indices and $v : \iota \to F$ the nodes. For every index $i \in \iota$, in $s$ or not, the *barycentric weight* (Mathlib's nodal weight) is
 
-$$w_i = \prod_{j \in s,\ j \ne i} (v_i - v_j)^{-1} .$$
+$$w_i = \prod_{j \in s,\ j \ne i} (v_i - v_j)^{-1},$$
 
-For distinct real nodes $x_0, \dots, x_n$ this is $w_j = 1/\prod_{k \ne j}(x_j - x_k)$.
+with the field convention $0^{-1} = 0$. So $w_i = 0$ when another node of $s$ coincides with $v_i$, and for $i \notin s$ the product runs over all of $s$. For distinct real nodes $x_0, \dots, x_n$ and $i \in s$ this is $w_j = 1/\prod_{k \ne j}(x_j - x_k)$.
 
 ## Sources
 

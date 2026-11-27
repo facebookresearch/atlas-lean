@@ -8,7 +8,7 @@ and, when $0 \notin Y$, $X \div Y = \{x / y : x \in X,\ y \in Y\}$. Each of thes
 
 $$[a,b] + [c,d] = [a + c,\ b + d], \qquad [a,b] - [c,d] = [a - d,\ b - c],$$
 
-and $[a,b] \times [c,d] = [\min P, \max P]$ for the set $P = \{ac, ad, bc, bd\}$ of endpoint products. Each operation is a set extension of the corresponding real operation: it contains $x \circ y$ for every $x \in X$ and $y \in Y$.
+and $[a,b] \times [c,d] = [\min P, \max P]$ for the set $P = \{ac, ad, bc, bd\}$ of endpoint products. Each operation is a set extension of the corresponding real operation: it contains $x \circ y$ for every $x \in X$ and $y \in Y$. Mathlib's `NonemptyInterval` addition and subtraction are defined by the endpoint formulas above; the set-image definitions, the product and the quotient of real intervals are not there.
 
 ## Depends on
 

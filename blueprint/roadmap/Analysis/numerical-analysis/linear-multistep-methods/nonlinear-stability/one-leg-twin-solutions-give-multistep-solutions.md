@@ -5,6 +5,8 @@ If $(y_n)_{n \ge 0}$ satisfies the [one-leg twin](one-leg-twin.md) $\rho(E) y_n 
 ## Depends on
 
 - [One-leg twin of a linear multistep method](one-leg-twin.md)
+- [G-stability](g-stability.md)
+- [Dissipative system](dissipative-system.md)
 
 ## Sources
 
