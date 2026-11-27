@@ -8,3 +8,5 @@
 - [Implication of full dependencies is decidable](implication-of-full-dependencies-is-decidable.md)
 - [Implication of inclusion dependencies is PSPACE-complete](implication-of-inclusion-dependencies-is-pspace-complete.md)
 - [Inference rules for multivalued dependencies alone are sound and complete](mvd-inference-rules-are-sound-and-complete.md)
+- [The chase for functional and inclusion dependencies](chase-for-functional-and-inclusion-dependencies/README.md)
+- [Guarded tuple-generating dependencies](guarded-tgds/README.md)
