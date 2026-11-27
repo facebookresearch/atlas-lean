@@ -38,4 +38,3 @@ linkage-disequilibrium tests, two-stage designs and differentially private relea
 - [Transfer learning for knockoff GWAS](transfer-learning-for-knockoff-gwas/README.md)
 - [Two-stage genome-wide association designs](two-stage-genome-wide-association-designs/README.md)
 - [Hierarchical error control for multitrait association](hierarchical-error-control-for-multitrait-association/README.md)
-- [Differentially private GWAS](differentially-private-gwas/README.md)

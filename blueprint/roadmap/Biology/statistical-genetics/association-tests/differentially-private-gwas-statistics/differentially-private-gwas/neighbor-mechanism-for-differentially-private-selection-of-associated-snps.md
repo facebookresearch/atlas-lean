@@ -42,13 +42,13 @@ by an integer rounding step.
 
 ## Depends on
 
-- [Differential privacy](../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
-- [The Laplace mechanism for vector-valued queries](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/laplace-mechanism-pi-differentially-priv.md)
+- [Differential privacy](../../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
+- [The Laplace mechanism for vector-valued queries](../../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/laplace-mechanism-pi-differentially-priv.md)
 
 ## Proof depends on
 
-- [The exponential mechanism is differentially private](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
-- [Adaptive composition of pure differential privacy](../../../../ComputerScience/cryptography/differential-privacy/comp-prod.md)
+- [The exponential mechanism is differentially private](../../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
+- [Adaptive composition of pure differential privacy](../../../../../ComputerScience/cryptography/differential-privacy/comp-prod.md)
 
 ## Expansion
 
