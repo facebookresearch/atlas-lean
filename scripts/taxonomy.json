@@ -11897,6 +11897,7 @@
   "MathlibExt/Combinatorics/StronglyMinimalCover": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Strong matchings and covers in hypergraphs"},
   "MathlibExt/Combinatorics/SulankeNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Sulanke arrays"},
   "MathlibExt/Combinatorics/SumsetSetsOfSizeK": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Possible sizes of h-fold sumsets"},
+  "MathlibExt/Combinatorics/SumsetSetsOfSizeKSumsetSizesInterIccOfIsAddTorsionFree": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Possible sizes of h-fold sumsets"},
   "MathlibExt/Combinatorics/SylverCoinage": {"to": "GameTheory/combinatorial-games", "title": "Sylver coinage"},
   "MathlibExt/Combinatorics/SylverCoinagePrimeOpening": {"to": "GameTheory/combinatorial-games", "title": "Sylver coinage"},
   "MathlibExt/Combinatorics/SymmetricFunctionsYoungTableaux": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Symmetric functions and skew Young tableaux"},
