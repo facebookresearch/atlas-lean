@@ -12,5 +12,5 @@
 - [Positivity of the denominator of Tajima's D](tajima-var-estimator-pos.md)
 - [Chebyshev test of neutrality](tajima-chebyshev-test.md)
 - [Level of the Chebyshev test](measure-tajima-chebyshev-test-le.md)
-- [Neutrality tests as normalized weight vectors on the spectrum](fay-wu-h-and-weighted-test-framework.md)
+- [Admissible weight contrasts and folded versions of neutrality tests](fay-wu-h-and-weighted-test-framework.md)
 - [Neutrality tests do not identify the cause of a rejection](tests-do-not-identify-the-evolutionary-cause.md)

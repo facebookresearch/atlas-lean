@@ -4,10 +4,11 @@ For Kingman's coalescent on $n$ labelled lineages, a complete genealogy consists
 
 $$\prod_{k=2}^n \frac{1}{\binom k2}\cdot \binom k2 e^{-\binom k2 t_k} = \prod_{k=2}^n e^{-\binom k2 t_k},$$
 
-each specified merger contributing rate $1$ and each interval its survival factor, and the $\prod_{k=2}^n \binom k2$ ranked labelled histories have equal probability. Under a variable population size with positive, locally integrable intensity $\lambda = 1/f$ and integrated intensity $\Lambda$ satisfying $\Lambda(t) \to \infty$ as $t \to \infty$ (Tavaré 2004, Section 2.4), the holding times have the joint density $\prod_{j=2}^n \binom j2 \lambda(s_j)\exp\bigl(-\binom j2(\Lambda(s_j) - \Lambda(s_{j+1}))\bigr)$ in the partial sums $s_j = t_n + \dots + t_j$, $s_{n+1} = 0$ (Tavaré 2004, equation (2.4.6)), and the jump chain is unchanged, so the density of a ranked labelled history with times is $\prod_{j=2}^n \lambda(s_j)\exp\bigl(-\binom j2(\Lambda(s_j) - \Lambda(s_{j+1}))\bigr)$. If instead $\Lambda$ is bounded, the same expressions are only subdensities: for $f(t) = e^t$ and $n = 2$ the holding-time density $e^{-t}\exp(-(1 - e^{-t}))$ has total mass $1 - e^{-1}$, and the remaining mass belongs to a genealogy that never completes. Summing over the rankings and labellings compatible with a tree gives the densities of unranked or unlabelled trees, which differ by the number of such rankings and labellings.
+each specified merger contributing rate $1$ and each interval its survival factor, and the $\prod_{k=2}^n \binom k2$ ranked labelled histories have equal probability. Under a variable population size with positive, locally integrable intensity $\lambda = 1/f$ and integrated intensity $\Lambda$ satisfying $\Lambda(t) \to \infty$ as $t \to \infty$ (Tavaré 2004, Section 2.4), the holding times have the density given by the [heterochronous Λ-coalescent likelihood](../../multiple-merger-coalescents/multiple-merger-coalescent-inference-of-effective-population-size/heterochronous-lambda-coalescent-likelihood-with-variable-effective-population-size.md) with merger measure $\delta_0$ (Kingman's coalescent), a single sampling time and $N_e = f$, and the jump chain is unchanged, so, in the partial sums $s_j = t_n + \dots + t_j$, $s_{n+1} = 0$, the density of a ranked labelled history with times is $\prod_{j=2}^n \lambda(s_j)\exp\bigl(-\binom j2(\Lambda(s_j) - \Lambda(s_{j+1}))\bigr)$. If instead $\Lambda$ is bounded, the same expressions are only subdensities: for $f(t) = e^t$ and $n = 2$ the holding-time density $e^{-t}\exp(-(1 - e^{-t}))$ has total mass $1 - e^{-1}$, and the remaining mass belongs to a genealogy that never completes. Summing over the rankings and labellings compatible with a tree gives the densities of unranked or unlabelled trees, which differ by the number of such rankings and labellings.
 
 ## Depends on
 
+- [Heterochronous Λ-coalescent likelihood with variable effective population size](../../multiple-merger-coalescents/multiple-merger-coalescent-inference-of-effective-population-size/heterochronous-lambda-coalescent-likelihood-with-variable-effective-population-size.md)
 - [Clock and epoch lengths of the variable-size coalescent](../../site-frequency-spectrum-under-variable-populatio/deterministic-coalescent-time-change.md)
 - [Number of ranked labeled histories](../../ranked-labeled-histories-of-coalescent-trees/card-ranked-history.md)
 - [Log-likelihood of one coalescent interval in the skyline model](../../skyline-plot-estimates-of-population-size/skyline-log-lik.md)
@@ -15,9 +16,8 @@ each specified merger contributing rate $1$ and each interval its survival facto
 ## Expansion
 
 1. The density of a ranked labelled history with holding times, from the independence of the jump chain and the holding times.
-2. The variable-size density from (2.4.6) under an unbounded cumulative rate, its form for piecewise-constant sizes, and the subdensity with mass at infinity when the cumulative rate is bounded.
+2. The variable-size density of a ranked labelled history from the holding-time density under an unbounded cumulative rate, its form for piecewise-constant sizes, and the subdensity with mass at infinity when the cumulative rate is bounded.
 3. Densities of unranked and unlabelled trees by summation over compatible rankings and labellings.
-4. Serial sampling, in which lineages enter at fixed times, as a separate statement.
 
 ## Sources
 

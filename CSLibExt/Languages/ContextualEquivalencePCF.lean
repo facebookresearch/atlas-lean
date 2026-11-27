@@ -31,7 +31,8 @@ namespace Cslib.Languages.ContextualEquivalence.PCF
 open Cslib.Languages.OperationalSemantics
 open Cslib.Languages.LambdaCalculus.PCF
 
-/-- Anchor adapter on closed ground PCF terms with unit labels. -/
+/-- Closed PCF terms of type `nat` as an operational semantics with unit labels: its steps are
+`Tm.Step` and its final configurations are the values `Tm.Value`. -/
 def pcfSem : OpSem (Tm [] Ty.nat) Unit where
   lts := { Tr := fun x _ y => Tm.Step x y }
   Final := Tm.Value

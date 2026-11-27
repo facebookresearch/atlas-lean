@@ -1,7 +1,6 @@
 # Coalescent likelihoods and sampling recursions
 
 - [The Griffiths–Tavaré sampling recursion](coalescent-sampling-recursion.md)
-- [Coalescent likelihood of a serially sampled genealogy](heterochronous-genealogy.md)
 - [Preferential sampling and the serial-sampling likelihood](serial-sampling-likelihood-versus-sampling-design.md)
 - [The genealogy-integrated likelihood](genealogy-integrated-likelihood.md)
 - [The density of a complete coalescent genealogy](complete-genealogy-density.md)

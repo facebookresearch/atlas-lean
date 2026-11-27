@@ -47,6 +47,8 @@
 
 - [Many-locus variance components and the covariance of relatives](many-locus-variance-components-and-covariance-of.md)
 
-## Further results
+## Further topics
 
+- [Best-fit population simulation](best-fit-population-simulation/README.md)
+## Further results
 - [Linked selection with recombination: background effects on fixation](linked-selection-and-hill-robertson-interference.md)

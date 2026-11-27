@@ -8,7 +8,7 @@ $\beta_1 = 0$ gives sampling times independent of $N_\gamma$ and $\beta_1 = 1$ a
 
 ## Depends on
 
-- [Coalescent likelihood of a serially sampled genealogy](heterochronous-genealogy.md)
+- [Heterochronous Λ-coalescent likelihood with variable effective population size](../../multiple-merger-coalescents/multiple-merger-coalescent-inference-of-effective-population-size/heterochronous-lambda-coalescent-likelihood-with-variable-effective-population-size.md)
 
 ## Expansion
 
