@@ -20,8 +20,9 @@ import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 # Sums involving a family of Jacobsthal polynomial squares
 
 We prove the reciprocal sums of shifted Fibonacci and Lucas polynomial squares.
-`tsum_gibonacciPoly_sq_sub_family_of_catalan` states the sum for either sequence with its Catalan
-constant, and `tsum_gibonacciPoly_sq_sub_family` specializes it to the two sequences.
+`hasSum_gibonacciPoly_sq_sub_family_of_catalan` shows that the series for either sequence, with
+its Catalan constant, converges to its closed form (`HasSum`), and
+`tsum_gibonacciPoly_sq_sub_family` gives the sums of its two specializations.
 
 Statements from Thomas Koshy and Zhenguang Gao, *Sums Involving a Family of Jacobsthal Polynomial
 Squares*, The Fibonacci Quarterly 62 (2024), Article koshy12202023.
@@ -47,20 +48,21 @@ local notation "𝔩" => generalizedFibonacciPolynomial 2 X X 1
 /-- **Reciprocal sums of shifted squares of the Fibonacci or Lucas polynomials, with the Catalan
 constant.** Let `x > 0`, let `g` be the Fibonacci polynomials `f_n` or the Lucas polynomials
 `l_n`, and let `C = g_1(x)^2 - g_0(x) g_2(x)` (`C = 1` for `f` and `C = -(x^2 + 4)` for `l`).
-For positive integers `k`, `p`, `r`, `t` with `t ≤ 2p` and `α = (x + √(x^2 + 4))/2`,
+For positive integers `k`, `p`, `r`, `t` with `t ≤ 2p` and `α = (x + √(x^2 + 4))/2`, the series
 `∑_{n ≥ 0} (-1)^{tk} C f_r(x) f_{2pk}(x) / (g_{(2pn+p+t)k}(x)^2 - (-1)^{tk} C f_{pk}(x)^2)`
-equals `g_{tk+r}(x)/g_{tk}(x) - α^r`. The proof shows that `g_n(x) > 0` for `n ≥ 1`, factors
-each denominator as `g_{(2pn+t)k}(x) g_{(2p(n+1)+t)k}(x)` with the Catalan identity, and
-telescopes. `tsum_gibonacciPoly_sq_sub_family` is the case `g = f`, `C = 1` together with the
-case `g = l`, `C = -(x^2 + 4)`. -/
-public theorem tsum_gibonacciPoly_sq_sub_family_of_catalan {x : ℝ} (hx : 0 < x) (g : ℕ → ℤ[X])
+converges to `g_{tk+r}(x)/g_{tk}(x) - α^r` (`HasSum`: the series is summable with this sum).
+The proof shows that `g_n(x) > 0` for `n ≥ 1`, factors each denominator as
+`g_{(2pn+t)k}(x) g_{(2p(n+1)+t)k}(x)` with the Catalan identity, and telescopes.
+`tsum_gibonacciPoly_sq_sub_family` takes the sums of the case `g = f`, `C = 1` and of the case
+`g = l`, `C = -(x^2 + 4)` from it. -/
+public theorem hasSum_gibonacciPoly_sq_sub_family_of_catalan {x : ℝ} (hx : 0 < x) (g : ℕ → ℤ[X])
     (C : ℝ) (hg : g = 𝔣 ∨ g = 𝔩) (hC : aeval x (g 1) * aeval x (g 1) -
       aeval x (g 0) * aeval x (g 2) = C)
     {k p r t : ℕ} (hk : 0 < k) (hp : 0 < p) (hr : 0 < r) (ht₀ : 0 < t) (ht : t ≤ 2 * p) :
-    ∑' n : ℕ, (-1) ^ (t * k) * C * aeval x (𝔣 r) * aeval x (𝔣 (2 * p * k)) /
+    HasSum (fun n : ℕ => (-1) ^ (t * k) * C * aeval x (𝔣 r) * aeval x (𝔣 (2 * p * k)) /
         (aeval x (g ((2 * p * n + p + t) * k)) ^ 2 -
-          (-1) ^ (t * k) * C * aeval x (𝔣 (p * k)) ^ 2) =
-      aeval x (g (t * k + r)) / aeval x (g (t * k)) - ((x + √(x ^ 2 + 4)) / 2) ^ r := by
+          (-1) ^ (t * k) * C * aeval x (𝔣 (p * k)) ^ 2))
+      (aeval x (g (t * k + r)) / aeval x (g (t * k)) - ((x + √(x ^ 2 + 4)) / 2) ^ r) := by
   let G (n : ℕ) := aeval x (g n)
   let F (n : ℕ) := aeval x (𝔣 n)
   have hG (n : ℕ) : G (n + 2) = x * G (n + 1) + 1 * G n := by
@@ -97,7 +99,6 @@ public theorem tsum_gibonacciPoly_sq_sub_family_of_catalan {x : ℝ} (hx : 0 < x
   have hsum := hasSum_gibonacciPoly_pow_ratio_telescoping g hg hx hk hr ht₀
     (m := 1) one_pos ht
   simp only [hprev, pow_one, one_mul] at hsum
-  apply HasSum.tsum_eq
   refine hsum.congr_fun fun n => ?_
   have he : 0 < e n := Nat.mul_pos (Nat.add_pos_right _ ht₀) hk
   have he' : 0 < e (n + 1) := by
@@ -153,11 +154,11 @@ public theorem tsum_gibonacciPoly_sq_sub_family {x : ℝ} (hx : 0 < x) {k p r t 
       aeval x (𝔩 (t * k + r)) / aeval x (𝔩 (t * k)) - ((x + √(x ^ 2 + 4)) / 2) ^ r := by
   constructor
   · simpa only [mul_one] using
-      tsum_gibonacciPoly_sq_sub_family_of_catalan hx 𝔣 1 (Or.inl rfl)
-        (by simp) hk hp hr ht₀ ht
+      (hasSum_gibonacciPoly_sq_sub_family_of_catalan hx 𝔣 1 (Or.inl rfl)
+        (by simp) hk hp hr ht₀ ht).tsum_eq
   · simpa only [pow_succ (-1 : ℝ) (t * k), mul_neg, mul_neg_one, neg_mul, sub_neg_eq_add,
       mul_assoc, one_mul] using
-      tsum_gibonacciPoly_sq_sub_family_of_catalan hx 𝔩 (-(x ^ 2 + 4)) (Or.inr rfl)
-        (by norm_num [generalizedFibonacciPolynomial, map_ofNat]; ring) hk hp hr ht₀ ht
+      (hasSum_gibonacciPoly_sq_sub_family_of_catalan hx 𝔩 (-(x ^ 2 + 4)) (Or.inr rfl)
+        (by norm_num [generalizedFibonacciPolynomial, map_ofNat]; ring) hk hp hr ht₀ ht).tsum_eq
 
 end MetaMathlibExt
