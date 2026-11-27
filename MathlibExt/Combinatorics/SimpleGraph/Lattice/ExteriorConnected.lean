@@ -82,13 +82,6 @@ theorem exc_reachable_compl_to_offSupport_walk (F : Set (Site 2)) {x y : Site 2}
   obtain ⟨v, _, hvw⟩ := List.mem_map.mp hw2
   rw [← hvw]; exact v.2
 
-/-- The site `(-(R + 1), 0)` lies outside the box `[-R, R]²`. -/
-theorem exc_farLeft_mem_exterior (R : ℕ) : (![-((R : ℤ) + 1), 0] : Site 2) ∈ exterior 2 R := by
-  refine ⟨0, ?_⟩
-  change R < ((-((R : ℤ) + 1))).natAbs
-  rw [show (-((R : ℤ) + 1)).natAbs = R + 1 by rw [Int.natAbs_eq_iff]; right; push_cast; ring]
-  omega
-
 /-- If `F` lies in the box `[-R, R]²`, every site outside the box is joined, by a lattice path
 avoiding `F`, to a site weakly left of every site of `F`. -/
 theorem exc_exterior_reaches_farLeft (F : Set (Site 2)) (R : ℕ) (hR : F ⊆ box 2 R)
@@ -96,7 +89,7 @@ theorem exc_exterior_reaches_farLeft (F : Set (Site 2)) (R : ℕ) (hR : F ⊆ bo
     ∃ z0 : Site 2, ∃ p : (hypercubicLattice 2).Walk z z0,
       (∀ w ∈ p.support, w ∉ F) ∧ (∀ q ∈ F, z0 0 ≤ q 0) := by
   set z0 : Site 2 := ![-((R : ℤ) + 1), 0] with hz0
-  have hz0ext : z0 ∈ exterior 2 R := exc_farLeft_mem_exterior R
+  have hz0ext : z0 ∈ exterior 2 R := axisFarLeft_mem_exterior R
   have hsub : exterior 2 R ⊆ Fᶜ := exterior_subset_compl F R hR
   have hreach := box_exterior_connected R (by norm_num) z z0 hz hz0ext
   have hreachF : ((hypercubicLattice 2).induce Fᶜ).Reachable ⟨z, hsub hz⟩ ⟨z0, hsub hz0ext⟩ := by
