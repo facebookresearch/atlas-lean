@@ -48,7 +48,7 @@ Proposition 1.4.2 p. 123): for every representation `V` of `G`,
   `S ⊗_F V` has a finite `S`-basis of `H`-fixed vectors
   (`Representation.IsRegularPeriodRing.isAdmissible_iff_hasFixedBasis`).
 
-So for a regular ring the three forms of admissibility of
+So for a regular ring and a finite-dimensional `V`, the three forms of admissibility of
 `MathlibExt.RepresentationTheory.AdmissibleRepresentation` agree. The injectivity is Fontaine's
 minimal relation argument (*op. cit.*, §1.6.2 p. 125), with coefficients in `S` rather than in a
 field, using (ii); the case of equality is his determinant argument (*op. cit.*, §1.4.3 p. 123),

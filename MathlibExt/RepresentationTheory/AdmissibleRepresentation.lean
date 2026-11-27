@@ -46,8 +46,9 @@ An intertwining map `f : V → W` induces the `E`-linear map `D_S(f) : D_S(V) �
 restriction of `S ⊗ f` (`Representation.periodsMap`); this makes `D_S` an additive functor, and
 `α` is natural in `V` (`Representation.comparison_comp_baseChange_periodsMap`).
 
-For a `(F, H)`-regular ring `S`, Fontaine shows that `dim_E D_S(V) ≤ dim_F V`, and calls `V`
-admissible when `α_V` is an isomorphism, which happens exactly when equality holds
+For a finite-dimensional `V` and an `(F, H)`-regular ring `S`, Fontaine shows that
+`dim_E D_S(V) ≤ dim_F V`, and calls `V` admissible when `α_V` is an isomorphism, which happens
+exactly when equality holds
 (*op. cit.*, §1.4.2 p. 123 and §1.5.1 p. 124; see
 `MathlibExt.RepresentationTheory.AdmissibleRepresentation.Regular`). We record two forms of
 admissibility, without assuming regularity:
