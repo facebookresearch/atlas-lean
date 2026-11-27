@@ -10,7 +10,10 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Theorems/Thm_AlgebraicGeometry_GeometricallyIrreducible_geometricallyConnected.lean` and
-`P2M/Sol/S_AlgebraicGeometry_GeometricallyIrreducible_geometricallyConnected.lean`
+`P2M/Sol/S_AlgebraicGeometry_GeometricallyIrreducible_geometricallyConnected.lean`,
+and
+`Theorems/Thm_AlgebraicGeometry_GeometricallyConnected_of_comp_of_surjective.lean` and
+`P2M/Sol/S_AlgebraicGeometry_GeometricallyConnected_of_comp_of_surjective.lean`
 in https://github.com/anthropics/fermats-last-theorem
 at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
@@ -30,12 +33,27 @@ module
 
 public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.AlgebraicGeometry.Geometrically.Connected
+import Mathlib.AlgebraicGeometry.PullbackCarrier
 
 /-!
-# Geometrically irreducible implies geometrically connected
+# Geometrically connected morphisms
 
-An irreducible space is connected, universally: the implication lifts to
-morphism properties via the universal quantifier over base change.
+Results on geometrically connected morphisms of schemes.
+
+## Main results
+
+- `AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected`: a
+  geometrically irreducible morphism is geometrically connected. An
+  irreducible space is connected, universally: the implication lifts to
+  morphism properties via the universal quantifier over base change.
+- `AlgebraicGeometry.GeometricallyConnected.connectedSpace_pullback`: an
+  instance saying that for a geometrically connected `f : X ⟶ Y`, a field `K`
+  and `k : Spec K ⟶ Y`, the geometric fiber `X ×[Y] Spec K` is a connected
+  space.
+- `AlgebraicGeometry.GeometricallyConnected.of_comp_of_surjective`: if
+  `f ≫ g` is geometrically connected and `f` is surjective, then `g` is
+  geometrically connected, since each geometric fiber of `g` is a continuous
+  surjective image of the corresponding fiber of `f ≫ g`.
 -/
 
 @[expose] public section
@@ -55,3 +73,33 @@ theorem AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected
   intro X' Y' g hg hI hS
   have : IrreducibleSpace X' := hg hI hS
   infer_instance
+
+/-- Every geometric fiber of a geometrically connected morphism is connected:
+for a geometrically connected `f : X ⟶ Y`, a field `K` and `k : Spec K ⟶ Y`,
+the pullback `X ×[Y] Spec K` is a connected space. As an instance, it lets
+typeclass search supply the connectedness of these fibers. -/
+instance AlgebraicGeometry.GeometricallyConnected.connectedSpace_pullback
+    {X Y : Scheme.{u}} (f : X ⟶ Y) [GeometricallyConnected f]
+    (K : Type u) [Field K] (k : Spec (.of K) ⟶ Y) :
+    ConnectedSpace ↥(Limits.pullback f k) :=
+  pullback_of_geometrically
+    GeometricallyConnected.geometrically_connectedSpace K k
+
+/-- Geometric connectedness of a composite `f ≫ g` descends to `g` when
+`f` is surjective: every geometric fiber of `g` is a continuous surjective
+image of the corresponding fiber of the composite. -/
+theorem AlgebraicGeometry.GeometricallyConnected.of_comp_of_surjective
+    {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
+    [GeometricallyConnected (f ≫ g)] [Surjective f] :
+    GeometricallyConnected g := by
+  refine ⟨geometrically_iff_of_isClosedUnderIsomorphisms.mpr fun K _ k ↦ ?_⟩
+  let φ : Limits.pullback (f ≫ g) k ⟶ Limits.pullback g k :=
+    Limits.pullback.map (f ≫ g) k g k f (𝟙 _) (𝟙 Z)
+      (Category.comp_id _) (by simp)
+  have : MorphismProperty.IsStableUnderComposition (@Surjective.{u}) :=
+    ⟨fun {X Y Z} f g hf hg => letI := hf; letI := hg; inferInstance⟩
+  have hφ : Surjective φ :=
+    MorphismProperty.pullbackMap (P := @Surjective.{u}) ‹Surjective f›
+      inferInstance rfl (Category.id_comp _).symm
+  rw [connectedSpace_iff_univ, ← hφ.surj.range_eq]
+  exact isConnected_range φ.continuous
