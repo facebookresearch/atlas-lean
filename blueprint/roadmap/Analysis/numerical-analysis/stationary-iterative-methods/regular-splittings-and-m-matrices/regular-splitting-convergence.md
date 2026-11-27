@@ -4,7 +4,7 @@ Let $(M, N)$ be a [regular splitting](regular-splitting.md) of a real $n \times 
 
 $$\rho(M^{-1}N) < 1 \iff A \text{ is nonsingular and } A^{-1} \text{ has nonnegative entries.}$$
 
-So for a [nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-nonsingular-mmatrix.md), whose inverse is nonnegative, every regular splitting, for instance the Jacobi splitting, gives a convergent iteration. The proof writes $A = M(I - G)$ with $G = M^{-1}N \ge 0$ and, for the converse, shows that $A^{-1}N = (I - G)^{-1} G$ is nonnegative, so that an eigenvector of $G$ for $\rho(G)$ gives $\rho(G)/(1 - \rho(G)) \ge 0$.
+So for a [nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-nonsingular-mmatrix.md), whose inverse is nonnegative, every regular splitting, for instance the Jacobi splitting, gives a convergent iteration. For $n = 0$ both sides hold, the empty matrix having spectral radius $0$. For $n \ge 1$ the proof writes $A = M(I - G)$ with $G = M^{-1}N \ge 0$ and, for the converse, shows that $A^{-1}N = (I - G)^{-1} G$ is nonnegative, so that an eigenvector of $G$ for $\rho(G)$ gives $\rho(G)/(1 - \rho(G)) \ge 0$.
 
 ## Depends on
 

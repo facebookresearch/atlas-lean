@@ -1,8 +1,8 @@
 # Perron eigenvector of a nonnegative matrix
 
-Let $B$ be a real $n \times n$ matrix with nonnegative entries, not necessarily irreducible. Then its spectral radius $\rho(B)$ is an eigenvalue of $B$, with an eigenvector $u \ne 0$ whose entries are all nonnegative.
+Let $n \ge 1$ and let $B$ be a real $n \times n$ matrix with nonnegative entries, not necessarily irreducible. Then its spectral radius $\rho(B)$ is an eigenvalue of $B$, with an eigenvector $u \ne 0$ whose entries are all nonnegative.
 
-This is the weak form of the Perron–Frobenius theorem; for irreducible $B$ the eigenvalue is simple and $u$ can be taken positive. It follows from the irreducible case applied to $B + \varepsilon E$, $E$ the all-ones matrix, and a limit as $\varepsilon \to 0$.
+This is the weak form of the Perron–Frobenius theorem; for irreducible $B$ the eigenvalue is simple and $u$ can be taken positive. It follows from the irreducible case applied to $B + \varepsilon E$, $E$ the all-ones matrix, and a limit as $\varepsilon \to 0$. The hypothesis $n \ge 1$ is needed: for $n = 0$ the only vector is $0$.
 
 ## Proof depends on
 

@@ -10,5 +10,5 @@ Interval arithmetic computes with sets of reals: each operation on intervals ret
 
 ## Related topics
 
-- [Fundamental theorem of interval arithmetic and the dependency effect](../fundamental-theorem-of-interval-arithmetic-and-the-dependenc.md): the planned node these pages expand; its width laws are still to be added.
+- [Fundamental theorem of interval arithmetic and the dependency effect](../fundamental-theorem-of-interval-arithmetic-and-the-dependenc.md): the parent node, whose expansion list also covers exactness for single occurrences and the width laws.
 - [Floating-point interval arithmetic with directed rounding is sound](../floating-point-interval-arithmetic-with-directed-rounding-is.md)

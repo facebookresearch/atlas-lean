@@ -10,9 +10,6 @@ The weights vary by factors at most $O(n)$, and an affine change of variable to 
 ## Depends on
 
 - [Barycentric weights](barycentric-weights.md)
-
-## Related topics
-
 - [Second barycentric formula](second-barycentric-formula.md)
 
 ## Sources

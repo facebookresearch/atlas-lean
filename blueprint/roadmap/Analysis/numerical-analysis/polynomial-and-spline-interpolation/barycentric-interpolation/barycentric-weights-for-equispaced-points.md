@@ -9,9 +9,6 @@ so after the factor is dropped, which leaves the [second barycentric formula](se
 ## Depends on
 
 - [Barycentric weights](barycentric-weights.md)
-
-## Related topics
-
 - [Second barycentric formula](second-barycentric-formula.md)
 
 ## Sources
