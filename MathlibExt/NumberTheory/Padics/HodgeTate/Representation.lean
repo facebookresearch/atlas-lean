@@ -24,8 +24,10 @@ semi-stables*, Astérisque 223 (1994), Exposé III, §3.7 pp. 141–142, we defi
   `D_HT(V) = (B_HT ⊗_{ℚ_p} V)^{G_K}` has dimension `dim_{ℚ_p} V` over `B_HT^{G_K} = K`;
 * `Representation.tateTwist`: the Tate twist `V(i) = V ⊗_{ℚ_p} ℚ_p(i)`, on which `σ` acts by
   `χ(σ)ⁱ ρ(σ)`, and `Representation.cyclotomic p`, the representation `ℚ_p(1)`;
-* `Representation.twistPeriods`: the `K`-vector space `(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}`;
-* `Representation.hodgeTateNumber`: the **Hodge–Tate numbers**
+* `Representation.twistPeriods`: the space `(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}`, a module over `ℂ_p^{G_K}`;
+* `Representation.hodgeTateNumber`: the **Hodge–Tate numbers**, the natural-number dimension
+  (`Module.finrank`, zero for infinite rank) of `(ℂ_p(-i) ⊗_{ℚ_p} V)^{G_K}` over `ℂ_p^{G_K}`; for
+  `K` finite over `ℚ_p` and `V` finite-dimensional, this is
   `hᵢ = dim_K (ℂ_p(-i) ⊗_{ℚ_p} V)^{G_K}` (Definition 6.6).
 
 ## Main results
@@ -58,8 +60,10 @@ As in `MathlibExt.RepresentationTheory.AdmissibleRepresentation`, a representati
 representation of `G` restricted to the subgroup `G_K`, no continuity is assumed, and the
 finite-dimensionality of `V` is part of `Representation.IsAdmissible`. The `K`-vector spaces
 `D_HT(V)` and `(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}` are modules over the rings of invariants `B_HT^{G_K}` and
-`ℂ_p^{G_K}`, which are the images of `K` (`PadicComplex.fixedSubalgebra_hodgeTateAction`,
-`PadicComplex.fixedSubalgebra_galoisAlgHom`); dimensions over `K` are taken over these rings.
+`ℂ_p^{G_K}`, which are the images of `K` when `K` is finite over `ℚ_p`
+(`PadicComplex.fixedSubalgebra_hodgeTateAction`, `PadicComplex.fixedSubalgebra_galoisAlgHom`);
+dimensions are taken over these rings, as natural numbers (`Module.finrank`), and they are the
+dimensions over `K` of Fontaine–Ouyang only for `K` finite over `ℚ_p` and `V` finite-dimensional.
 -/
 
 @[expose] public noncomputable section
@@ -137,9 +141,11 @@ theorem mem_twistPeriods {ρ : Representation ℚ_[p] (Galois p) V}
   rfl
 
 /-- **The Hodge–Tate numbers** of a representation `ρ` of `Gal(ℚ̄_p / ℚ_p)` on `V` over a subfield
-`K` of `ℚ̄_p` (Fontaine–Ouyang, Definition 6.6): `hᵢ = dim_K (ℂ_p(-i) ⊗_{ℚ_p} V)^{G_K}`, the
-dimension of `(ℂ_p(-i) ⊗_{ℚ_p} V)^{G_K}` over `ℂ_p^{G_K}`, which is `K` when `K` is finite over
-`ℚ_p` (`PadicComplex.fixedSubalgebra_galoisAlgHom`). With this convention `ℚ_p(1)` has `h₁ = 1`
+`K` of `ℚ̄_p`: `hᵢ` is the natural-number dimension (`Module.finrank`, zero for infinite rank)
+of `(ℂ_p(-i) ⊗_{ℚ_p} V)^{G_K}` over the field of invariants `ℂ_p^{G_K}`. For `K` finite over
+`ℚ_p`, `ℂ_p^{G_K} = K` (`PadicComplex.fixedSubalgebra_galoisAlgHom`), and for `V`
+finite-dimensional this is `hᵢ = dim_K (ℂ_p(-i) ⊗_{ℚ_p} V)^{G_K}` (Fontaine–Ouyang,
+Definition 6.6). With this convention `ℚ_p(1)` has `h₁ = 1`
 (`Representation.hodgeTateNumber_cyclotomic`); its Hodge–Tate weight in the convention of the
 literature on automorphic Galois representations is `-1`. -/
 def hodgeTateNumber (ρ : Representation ℚ_[p] (Galois p) V)

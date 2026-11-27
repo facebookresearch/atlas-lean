@@ -324,9 +324,9 @@ private theorem isUnit_single {k : ℤ} {c : ℂ_[p]} (hc : c ≠ 0) :
 
 /-- **Condition (ii) for `B_HT`**: for `K` finite over `ℚ_p` inside `ℚ̄_p`, an element of the
 fraction field of `B_HT` fixed by every `σ ∈ Gal(ℚ̄_p / K)` lies in `B_HT`. If `x = a / s`, then
-`(s_k σ(s) - χ(σ)ᵏ σ(s_k) s) x` also lies in `B_HT`, and its coefficient of `tᵏ` vanishes; so by
-induction on the number of nonzero coefficients of `s`, either `x ∈ B_HT` or every `σ s` is a
-multiple of `s`, and then `s` is a monomial, hence a unit. -/
+for `d = s_k σ(s) - χ(σ)ᵏ σ(s_k) s` the product `d x` lies in `B_HT`, and the coefficient of `tᵏ`
+in `d` vanishes; so by induction on the number of nonzero coefficients of the denominator, either
+`x ∈ B_HT` or every `σ s` is a multiple of `s`, and then `s` is a monomial, hence a unit. -/
 theorem mem_range_of_forall_fractionRingAction_eq (K : IntermediateField ℚ_[p] (PadicAlgCl p))
     [FiniteDimensional ℚ_[p] K] (x : FractionRing ℂ_[p][T;T⁻¹])
     (hx : ∀ σ ∈ K.fixingSubgroup, Representation.fractionRingAction (hodgeTateAction p) σ x = x) :
