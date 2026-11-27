@@ -44,8 +44,9 @@ noncomputable def cededLoss (d L ρ s : ℝ) : ℝ :=
 /-- The part of the loss not ceded to the layer. -/
 noncomputable def retainedLoss (d L ρ s : ℝ) : ℝ := s - cededLoss d L ρ s
 
-/-- A layer of nonnegative width is a scaled long call at `d` and short call at `d + L`.
-The identity itself needs no restriction on the loss, deductible or share. -/
+/-- For any real loss `s`, deductible `d`, share `ρ` and width `L ≥ 0`, the ceded loss equals
+`ρ * ((s - d)⁺ - (s - (d + L))⁺)`: a long call at `d` and a short call at `d + L`,
+both scaled by `ρ`. -/
 theorem cededLoss_eq_callSpread (d : ℝ) {L : ℝ} (hL : 0 ≤ L) (ρ s : ℝ) :
     cededLoss d L ρ s = ρ * (europeanCallPayoff s d - europeanCallPayoff s (d + L)) := by
   unfold cededLoss europeanCallPayoff
@@ -65,7 +66,8 @@ theorem cededLoss_bounds {d L ρ s : ℝ} (hd : 0 ≤ d) (hL : 0 ≤ L) (hρ₀ 
     _ ≤ europeanCallPayoff s d := min_le_left _ _
     _ ≤ s := hcall
 
-/-- Under the layer bounds, ceding the payment never leaves a negative retained loss. -/
+/-- If the loss `s`, deductible `d` and width `L` are nonnegative and the share `ρ ∈ [0, 1]`,
+then the retained loss `s - ρ * min ((s - d)⁺) L` is nonnegative. -/
 theorem retainedLoss_nonneg {d L ρ s : ℝ} (hd : 0 ≤ d) (hL : 0 ≤ L) (hρ₀ : 0 ≤ ρ)
     (hρ₁ : ρ ≤ 1) (hs : 0 ≤ s) : 0 ≤ retainedLoss d L ρ s :=
   sub_nonneg.mpr ((cededLoss_bounds hd hL hρ₀ hρ₁ hs).2.trans (min_le_left _ _))
@@ -83,20 +85,24 @@ noncomputable def stopLossTransform (μ : Measure Ω) (S : Ω → ℝ) (t : ℝ)
 
 variable {μ : Measure Ω} [IsFiniteMeasure μ] {S : Ω → ℝ}
 
-/-- An integrable loss has an integrable stop-loss payoff at every real retention. -/
+/-- If `μ` is a finite measure and the real-valued loss `S` is integrable with respect to `μ`,
+then for every real retention `t` the call payoff `ω ↦ (S ω - t)⁺` is integrable under `μ`. -/
 theorem integrable_callPayoff (hS : Integrable S μ) (t : ℝ) :
     Integrable (fun ω ↦ europeanCallPayoff (S ω) t) μ :=
   (hS.sub (integrable_const t)).pos_part
 
-/-- The scaled, capped payment on an integrable loss is integrable. -/
+/-- Let `S` be a real-valued loss integrable with respect to a finite measure `μ`.
+For real `d` and `ρ` and width `L ≥ 0`, the layer payment
+`ω ↦ ρ * min ((S ω - d)⁺) L` is integrable with respect to `μ`. -/
 theorem integrable_cededLoss (hS : Integrable S μ) (d : ℝ) {L : ℝ} (hL : 0 ≤ L) (ρ : ℝ) :
     Integrable (fun ω ↦ cededLoss d L ρ (S ω)) μ := by
   simp only [cededLoss_eq_callSpread d hL]
   exact ((integrable_callPayoff hS d).sub (integrable_callPayoff hS (d + L))).const_mul ρ
 
-/-- On a probability space, the expected layer payment is the share times the difference of
-stop-loss expectations at attachment and exhaustion. In fact any finite measure suffices;
-integrability of `S` ensures both call payoffs are integrable, even if the loss law has atoms. -/
+/-- Let `S` be real-valued and integrable under a finite measure `μ`. For real `d` and `ρ`
+and width `L ≥ 0`, write `π(t) = ∫ ω, (S ω - t)⁺ ∂μ`. Then
+`∫ ω, cededLoss d L ρ (S ω) ∂μ = ρ * (π(d) - π(d + L))`.
+When `μ` is a probability measure, this is the expected ceded payment. -/
 theorem integral_cededLoss (hS : Integrable S μ) (d : ℝ) {L : ℝ} (hL : 0 ≤ L) (ρ : ℝ) :
     ∫ ω, cededLoss d L ρ (S ω) ∂μ =
       ρ * (stopLossTransform μ S d - stopLossTransform μ S (d + L)) := by
