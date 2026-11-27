@@ -10,9 +10,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Dynamics.Ergodic.KolmogorovSinaiEntropy
-public import MathlibExt.Dynamics.Ergodic.BernoulliShift
+public import MathlibExt.Dynamics.Ergodic.BernoulliNonisomorphism
 public import Mathlib.Probability.ProductMeasure
-public import Mathlib.Probability.UniformOn
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.NumberTheory.Real.Irrational
@@ -33,9 +32,6 @@ The central theorems of Sinai's entropy theory, stated with the definitions of
   Proposition 4.7).
 * `ornstein_isomorphism`: Bernoulli schemes with equal entropy are isomorphic modulo null sets
   (Ornstein).
-* `not_isomorphic_bernoulli_uniform_three_two`: the `(1/3, 1/3, 1/3)` and `(1/2, 1/2)` Bernoulli
-  schemes are not isomorphic modulo null sets (Sarig, Proposition 4.6). It follows from
-  `ksEntropy_bernoulliShift` and the proved invariance `ksEntropy_eq_of_isIsomorphicMod0`.
 
 The Bernoulli scheme on a finite alphabet `S` with probability vector `p` is the one-sided left
 shift `MathlibExt.Dynamics.Ergodic.BernoulliShift.shift` on `ℕ → S` with the product measure
@@ -88,18 +84,6 @@ theorem_wanted ksEntropy_bernoulliShift {S : Type*} [Fintype S] [MeasurableSpace
     [MeasurableSingletonClass S] (p : Measure S) [IsProbabilityMeasure p] :
     ksEntropy (Measure.infinitePi fun _ : ℕ => p) (shift : (ℕ → S) → ℕ → S) =
       ENNReal.ofReal (∑ s, Real.negMulLog (p {s}).toReal)
-
-/-- **Kolmogorov's non-isomorphism of Bernoulli schemes.** The `(1/3, 1/3, 1/3)` and the
-`(1/2, 1/2)` Bernoulli schemes are not measure-theoretically isomorphic, even modulo null sets
-(`IsIsomorphicMod0`, the notion of O. Sarig, *Lecture Notes on Ergodic Theory*, Definition 1.3),
-because their entropies are `log 3 ≠ log 2` (Sarig, Proposition 4.6). Fixed and periodic points
-form null sets, so counting them proves nothing here: entropy is needed. -/
-theorem_wanted not_isomorphic_bernoulli_uniform_three_two :
-    ¬ IsIsomorphicMod0
-      (Measure.infinitePi fun _ : ℕ => ProbabilityTheory.uniformOn (Set.univ : Set (Fin 3)))
-      (shift : (ℕ → Fin 3) → ℕ → Fin 3)
-      (Measure.infinitePi fun _ : ℕ => ProbabilityTheory.uniformOn (Set.univ : Set (Fin 2)))
-      (shift : (ℕ → Fin 2) → ℕ → Fin 2)
 
 /-- **The irrational rotation has entropy zero.** For irrational `α`, the rotation
 `x ↦ x + α` of the circle `ℝ / ℤ` has Kolmogorov–Sinai entropy `0` with respect to the Haar

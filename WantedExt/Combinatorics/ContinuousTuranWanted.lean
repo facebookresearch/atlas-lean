@@ -19,7 +19,7 @@ of `[0, n]²`.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.ContinuousTuran
+public import MathlibExt.Combinatorics.ContinuousTuranGrid
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Analysis.Asymptotics.Theta
@@ -475,18 +475,6 @@ public theorem_wanted opx_grid_two_columns_isTheta {X Y : Finset ℝ} (hX : X.ca
     (hY : 2 ≤ Y.card) :
     (fun n : ℕ => opx n ((X : Set ℝ) ×ˢ (Y : Set ℝ))) =Θ[Filter.atTop]
       (fun n : ℕ => (n : ℝ) ^ (3 / 2 : ℝ))
-
-/-- **Continuous Turán number of a grid with three columns.** Let $X$ and $Y$ be finite sets of
-real numbers with $|X| = 3$ and $|Y| \ge 3$, and let $P = X \times Y$ be the grid with $3$ columns
-and $|Y|$ rows. Then $\operatorname{opx}(n, P) = \Theta(n^{5/3})$ as the natural number $n$ tends
-to infinity.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Corollary 3.7
-(`integers-2024-A1-cor-3-7`), second sentence. -/
-public theorem_wanted opx_grid_three_columns_isTheta {X Y : Finset ℝ} (hX : X.card = 3)
-    (hY : 3 ≤ Y.card) :
-    (fun n : ℕ => opx n ((X : Set ℝ) ×ˢ (Y : Set ℝ))) =Θ[Filter.atTop]
-      (fun n : ℕ => (n : ℝ) ^ (5 / 3 : ℝ))
 
 /-- **Almost linear bound for patterns with at most one point in each row.** Let
 $P \subseteq \mathbb{R}^2$ be a finite set whose points have pairwise distinct $y$-coordinates.

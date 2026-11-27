@@ -10,16 +10,17 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.RankWidthCliqueWidth
+public import MathlibExt.Combinatorics.SimpleGraph.RankWidthVertexMinor
 public import MathlibExt.Combinatorics.SimpleGraph.TreeDecomposition
 public import MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost
 
 /-!
 # Rank-width: wanted theorems
 
-Central theorems on rank-width whose proofs are deferred: vertex-minor monotonicity, the bound of
-rank-width by tree-width, and the excluded vertex-minor theorem. The upper bound on rank-width in
-terms of clique-width (Oum–Seymour) is in
-`MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost`.
+Central theorems on rank-width whose proofs are deferred: the bound of rank-width by tree-width,
+and the excluded vertex-minor theorem. The upper bound on rank-width in terms of clique-width
+(Oum–Seymour) is in `MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost`, and
+vertex-minor monotonicity is in `MathlibExt.Combinatorics.SimpleGraph.RankWidthVertexMinor`.
 
 ## References
 
@@ -36,14 +37,6 @@ terms of clique-width (Oum–Seymour) is in
 namespace SimpleGraph
 
 variable {V : Type*} [Fintype V]
-
-/-- **Rank-width does not increase under vertex-minors.** If `H` is a vertex-minor of the finite
-graph `G` and `G` has rank-width at most `k`, then so does `H` (Oum, *Rank-width and
-vertex-minors*, J. Combin. Theory Ser. B 95 (2005), Corollary 2.7, second statement: local
-complementation preserves cut-rank and vertex deletion does not increase it). -/
-theorem_wanted IsVertexMinor.hasRankWidthAtMost {W : Type*} [Fintype W] {H : SimpleGraph W}
-    {G : SimpleGraph V} (h : H.IsVertexMinor G) {k : ℕ} (hG : G.HasRankWidthAtMost k) :
-    H.HasRankWidthAtMost k
 
 /-- **Rank-width is at most tree-width plus one.** A finite graph of tree-width at most `k` has
 rank-width at most `k + 1` (Oum, *Rank-width: algorithmic and structural results*,
