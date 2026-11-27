@@ -1,6 +1,6 @@
 # Fortune's algorithm
 
-Let $P$ be a set of $n \ge 2$ distinct sites in $\mathbb{R}^2$. Fortune's plane sweep moves a horizontal sweep line downward and maintains the *beach line*, the $x$-monotone curve of points equidistant from the sweep line and the nearest site above it, which consists of parabolic arcs whose breakpoints trace the Voronoi edges; site events insert arcs and circle events, where an arc vanishes, create Voronoi vertices. It computes $\mathrm{Vor}(P)$ in $O(n \log n)$ time.
+Let $P$ be a set of $n \ge 2$ distinct sites in $\mathbb{R}^2$. Fortune's plane sweep moves a horizontal sweep line downward and maintains the *beach line*, the $x$-monotone curve of points equidistant from the sweep line and the nearest site above it, which consists of parabolic arcs whose breakpoints trace the Voronoi edges; site events insert arcs and circle events, where an arc vanishes, create Voronoi vertices (this description of the events assumes that no site arrives directly below a breakpoint of the beach line). It computes $\mathrm{Vor}(P)$ in $O(n \log n)$ time for every set of $n \ge 2$ distinct sites.
 
 ## Depends on
 

@@ -4,6 +4,10 @@ A *range space* is a pair $(X, R)$ of a set $X$ and a family $R$ of subsets of $
 
 The range space $(\mathbb{R}^2, \mathcal{D})$, where $\mathcal{D}$ is the family of closed disks, has VC dimension $3$: some three points are shattered, and no four points are.
 
+## Depends on
+
+- [ε-net and ε-sample of a range space](epsilon-net.md)
+
 ## Informally uses
 
 - [Empty circle characterization of Delaunay edges](../delaunay-triangulations/empty-circle-characterization-of-delaunay-edges.md)
