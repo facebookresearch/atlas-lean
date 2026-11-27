@@ -15,19 +15,19 @@ import MathlibExt.NumberTheory.QuadraticIrrationalCFClassification
 import Mathlib.Algebra.ContinuedFractions.Translations
 import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Seq.Basic
-import Mathlib.Tactic.LinearCombination
 import Mathlib.Data.ZMod.Defs
+import Mathlib.NumberTheory.Real.GoldenRatio
 import MathlibExt.NumberTheory.SymmetricContinuantParity
 import MathlibExt.NumberTheory.SymmetricConvergentDenParity
 
 /-!
 # Every parity pattern is realized by `(1 + √d) / 2` for odd period length
 
-For odd `l`, every parity pattern in `(ZMod 2) ^ (l / 2)` is realized by a symmetric
-block of positive integers with the prescribed parities, for which
-`(1 + √d) / 2 = [a₀; a₁, …, a_{l-1}, 2a₀ - 1]` for some natural numbers `d` and `a₀`
-with `d` not a perfect square. Hence the number of parity patterns that are not
-realized is `0`.
+For odd $l$, every parity pattern in $(\mathbb{Z}/2)^{(l-1)/2}$ is realized by a symmetric
+block $a_1, \dots, a_{l-1}$ of positive integers with the prescribed parities, for which
+$(1 + \sqrt{d})/2 = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0 - 1}]$ for some natural numbers
+$d$ and $a_0$ with $d$ not a perfect square; the overlined block repeats forever. Hence the
+number of parity patterns that are not realized is $0$.
 
 Statements from Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic
 Irrational Number with a Given Sequence*, INTEGERS 26 (2026), Article A69.
@@ -249,33 +249,15 @@ private theorem prepend (b : ℕ) {t : ℝ} (ht : 1 < t) :
       hfr, inv_inv]
 
 private theorem phi_gt_one : 1 < (1 + √((5 : ℕ) : ℝ)) / 2 := by
-  have h5 : (1 : ℝ) < √((5 : ℕ) : ℝ) := by
-    rw [← Real.sqrt_one]
-    apply Real.sqrt_lt_sqrt <;> norm_num
-  set s : ℝ := √((5 : ℕ) : ℝ)
-  linarith
+  rw [Nat.cast_ofNat]
+  exact Real.one_lt_goldenRatio
 
 private theorem phi_eq : (1 + √((5 : ℕ) : ℝ)) / 2 =
     1 + ((1 + √((5 : ℕ) : ℝ)) / 2)⁻¹ := by
-  set s : ℝ := √((5 : ℕ) : ℝ) with hs
-  have h5 : (1 : ℝ) < s := by
-    rw [hs, ← Real.sqrt_one]
-    apply Real.sqrt_lt_sqrt <;> norm_num
-  have hsq : ((1 + s) / 2) ^ 2 = (1 + s) / 2 + 1 := by
-    have h52 : s ^ 2 = ((5 : ℕ) : ℝ) := by
-      rw [hs]
-      exact Real.sq_sqrt (by norm_num)
-    linear_combination h52 / 4
-  have hne : (1 + s) / 2 ≠ 0 := by
-    have hgt : (1 : ℝ) < (1 + s) / 2 := by linarith
-    exact ne_of_gt (zero_lt_one.trans hgt)
-  have hY : ((1 + s) / 2)⁻¹ = (1 + s) / 2 - 1 := by
-    have hX : ((1 + s) / 2) * ((1 + s) / 2 - 1) = 1 := by linear_combination hsq
-    calc ((1 + s) / 2)⁻¹
-        = ((1 + s) / 2)⁻¹ * (((1 + s) / 2) * ((1 + s) / 2 - 1)) := by
-          rw [hX, mul_one]
-      _ = (1 + s) / 2 - 1 := by rw [← mul_assoc, inv_mul_cancel₀ hne, one_mul]
-  linarith
+  rw [Nat.cast_ofNat]
+  change Real.goldenRatio = 1 + Real.goldenRatio⁻¹
+  rw [Real.inv_goldenRatio]
+  linarith [Real.goldenRatio_add_goldenConj]
 
 private theorem phi_hasPeriodicCF (a : ℕ → ℕ) :
     HasPeriodicCF ((1 + √((5 : ℕ) : ℝ)) / 2) 1 a 1 (2 * 1 - 1) := by
