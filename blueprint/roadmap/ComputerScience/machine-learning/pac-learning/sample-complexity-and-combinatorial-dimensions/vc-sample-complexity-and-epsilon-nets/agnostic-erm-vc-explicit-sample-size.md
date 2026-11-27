@@ -22,7 +22,7 @@ Apply the Vapnik-Chervonenkis inequality at accuracy $\varepsilon/2$: on an $\va
 
 - [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
 - [Uniform convergence property and eps-representative samples](../../agnostic-pac-learning-and-uniform-convergence/uniform-convergence-property-and-eps-representative-samples.md)
-- [Growth function](../../../../not-yet-classified/growth-function/growth-function.md)
+- [Growth function](../growth-function-and-sauer-closed-form/growth-function.md)
 
 ## Proof depends on
 

@@ -15,7 +15,7 @@ The projection inequality gives $2\eta_t\langle g_t, x_t - u\rangle \le \|x_t - 
 
 ## Proof depends on
 
-- [Anytime regret of online gradient descent](../../../not-yet-classified/online-gradient-descent-anytime/ogd-regret-anytime.md)
+- [Anytime regret of online gradient descent](../anytime-online-gradient-descent/ogd-regret-anytime.md)
 
 ## Sources
 

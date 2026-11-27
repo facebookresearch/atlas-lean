@@ -14,7 +14,7 @@ A Natarajan-shattered set $\{w_1, \ldots, w_d\}$ with witness functions $f_0, f_
 ## Depends on
 
 - [Littlestone's theorem for arbitrary label sets: optimal mistake bound equals the multiclass Littlestone dimension](multiclass-littlestone-theorem.md)
-- [N-shattering](../../../not-yet-classified/natarajan/nshatters.md)
+- [N-shattering](../../pac-learning/sample-complexity-and-combinatorial-dimensions/natarajan-dimension-and-the-natarajan-lemma/nshatters.md)
 
 ## Proof depends on
 

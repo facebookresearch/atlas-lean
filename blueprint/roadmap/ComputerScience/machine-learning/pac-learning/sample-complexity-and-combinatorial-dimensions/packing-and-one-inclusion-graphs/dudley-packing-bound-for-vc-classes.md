@@ -14,12 +14,12 @@ A uniformly random $k$-tuple of positions fails to separate a fixed pair of $\va
 
 ## Depends on
 
-- [Growth function](../../../../not-yet-classified/growth-function/growth-function.md)
+- [Growth function](../growth-function-and-sauer-closed-form/growth-function.md)
 - [The VC dimension is at most the size of the ground set](../../../../../Combinatorics/extremal-set-theory/vc-dim-le-card.md)
 
 ## Proof depends on
 
-- [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
+- [Sauer bound for the growth function](../growth-function-and-sauer-closed-form/growth-function-le-sum.md)
 
 ## Sources
 
