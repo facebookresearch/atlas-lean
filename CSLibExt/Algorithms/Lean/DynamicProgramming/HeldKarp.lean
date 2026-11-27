@@ -35,9 +35,11 @@ type, whereas here costs are directed and the subproblems visit a subset of the 
 * `IsHamiltonianPath s S j L`: `s :: L` lists the cities of `S`, each once, and ends at `j`;
 * `minPathCost d s S j`: the least cost `C(S, j)` of such a path, in `WithTop R` (`⊤` if none);
 * `optimalTourCost d`: the least cost of a closed tour through every city exactly once;
-* `heldKarp_correct`: `C(S, j)` is attained, `C({s, j}, j) = d s j`, the recurrence
-  `C(S, j) = min_{i ∈ S \ {s, j}} C(S \ {j}, i) + d i j` for `|S| ≥ 3`, the optimal tour cost is
-  `min_{j ≠ s} C(V, j) + d j s`, and the table-filling algorithm `solve` returns it.
+* `heldKarp_correct`: for `s ∈ S` and `j ∈ S \ {s}`, `C(S, j)` is attained and, when `|S| ≥ 3`,
+  satisfies `C(S, j) = min_{i ∈ S \ {s, j}} C(S \ {j}, i) + d i j`; `C({s, j}, j) = d s j` for
+  `j ≠ s`; for at least two cities the optimal tour cost is `min_{j ≠ s} C(V, j) + d j s`, and on
+  a duplicate-free list of all cities other than `s` the table-filling algorithm `solve` returns
+  it in at most `n² 2ⁿ` steps, storing at most `n 2ⁿ` table entries.
 
 ## Cost model
 
@@ -54,6 +56,8 @@ cities there are at most `n² 2ⁿ` steps and `n 2ⁿ` entries.
 
 * M. Held and R. M. Karp, *A dynamic programming approach to sequencing problems*, J. SIAM 10
   (1962), doi:10.1137/0110015.
+* R. Bellman, *Dynamic programming treatment of the travelling salesman problem*, J. ACM 9
+  (1962), doi:10.1145/321105.321111.
 * D. Eppstein, *Exact TSP algorithm*, lecture notes, CS 163/265 Graph Algorithms, UC Irvine.
 -/
 
