@@ -7,8 +7,8 @@ definition and distributing conjunction over the resulting unions, is equivalent
 the views $V_R(x) \mathrel{:-} R(x)$ and $V_S(x) \mathrel{:-} S(x)$ it is $V_R(x) \vee V_S(x)$, which no single conjunctive
 query expresses. Deciding whether $Q$ has a complete rewriting using $\mathcal V$ is $\Pi_2^p$-complete, and it is
 $\Pi_2^p$-hard already when $Q$ is a single conjunctive query. The expansion of one conjunctive query over union-valued
-views can have exponentially many disjuncts, so the problem does not reduce to containment of two explicit unions of
-conjunctive queries. The 1995 paper that introduced the problem stated NP-completeness; the later analysis corrected
+views can have exponentially many disjuncts: writing out the expansion can take exponential space, so the NP bound
+for containment of two explicitly given unions does not give an NP upper bound in the original input size. The 1995 paper that introduced the problem stated NP-completeness; the later analysis corrected
 this. When $Q$ and every view are conjunctive queries the problem is NP-complete,
 by the [result for conjunctive views](finding-small-and-complete-rewritings-is-np-complete.md).
 
