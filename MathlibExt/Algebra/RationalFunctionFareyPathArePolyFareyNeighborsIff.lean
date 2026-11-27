@@ -394,26 +394,9 @@ private theorem unique_smaller_neighbor {n : ℕ} [DecidableEq (RatFunc F)] {w :
   simp [hm, hdc, z]
 
 private noncomputable def monicOfDegreeEquiv (t : ℕ) :
-    {m : F[X] // IsMonicOfDegree m t} ≃ (Fin t → F) :=
-  (Equiv.ofBijective (fun r : degreeLT F t =>
-    (⟨r.val + X ^ t, by
-      have hlt : r.val.degree < (X ^ t : F[X]).degree := by
-        rw [degree_X_pow]
-        exact mem_degreeLT.mp r.property
-      exact ⟨(natDegree_add_eq_right_of_degree_lt hlt).trans (natDegree_X_pow t),
-        (monic_X_pow t).add_of_right hlt⟩⟩ : {m : F[X] // IsMonicOfDegree m t})) (by
-    constructor
-    · intro r s h
-      exact Subtype.ext (add_right_cancel (congrArg Subtype.val h))
-    · intro m
-      have hp : m.val.degree = (X ^ t : F[X]).degree := by
-        rw [degree_eq_natDegree m.property.ne_zero, m.property.natDegree_eq, degree_X_pow]
-      have hlt : (m.val - X ^ t).degree < m.val.degree :=
-        degree_sub_lt_left hp m.property.ne_zero
-          (m.property.leadingCoeff_eq.trans (monic_X_pow t).leadingCoeff.symm)
-      have hr : m.val - X ^ t ∈ degreeLT F t := mem_degreeLT.mpr (by simpa [hp] using hlt)
-      exact ⟨⟨m.val - X ^ t, hr⟩, Subtype.ext (sub_add_cancel _ _)⟩)).symm.trans
-    (degreeLTEquiv F t).toEquiv
+    {m : F[X] // IsMonicOfDegree m t} ≃ (Fin t → F) := by
+  simpa only [isMonicOfDegree_iff', and_comm] using
+    ((monicEquivDegreeLT (R := F) t).trans (degreeLTEquiv F t).toEquiv)
 
 private noncomputable def largerNeighborEquiv {n t : ℕ} [DecidableEq (RatFunc F)]
     {w : F[X] × F[X]} (hw : w ∈ polyFareySeries n) (hq : 0 < w.2.natDegree)
