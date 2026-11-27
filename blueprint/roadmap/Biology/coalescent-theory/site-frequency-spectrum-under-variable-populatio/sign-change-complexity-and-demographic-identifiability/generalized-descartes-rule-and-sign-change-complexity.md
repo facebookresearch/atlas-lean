@@ -14,17 +14,15 @@ and $\mathcal S(\mathcal M_K(\mathcal F))=\sup_{\eta_1,\eta_2}\sigma(\widetilde\
 
 **Lemma 2.** $\mathcal S(\mathcal M_K(\mathcal F))\le (2K-2)+(2K-1)\,\mathcal S(\mathcal F)$, with equality for constant pieces, where $\mathcal S(\mathcal F_c)=0$.
 
-**Theorem 4 (generalized Descartes rule of signs).** If $f:\mathbb R_{\ge 0}\to\mathbb R$ is piecewise continuous, not identically zero, and has finitely many sign changes, then
-
-$$G(x)=\int_0^\infty f(t)\,e^{-tx}\,dt$$
-
-has at most $\sigma(f)$ real roots counted with multiplicity.
-
 **Theorem 5.** If $\mathcal S(\mathcal F)<\infty$ and $n\ge \mathcal S(\mathcal F)+2$, then $\eta\mapsto(c_2,\dots,c_n)$ is injective on $\mathcal F$.
 
 **Theorem 6.** If $\mathcal S(\mathcal F)<\infty$ and $n\ge 2K+(2K-1)\,\mathcal S(\mathcal F)$, then $\eta\mapsto(c_2,\dots,c_n)$ is injective on $\mathcal M_K(\mathcal F)$. For constant pieces this is [identifiability of $K$-piece piecewise-constant histories from $n\ge 2K$](../size-fn-eq-of-first-coal-mean-eq.md).
 
 The Myers–Fefferman–Patterson non-identifiable pair has a difference $\widetilde\eta_1-\widetilde\eta_2$ oscillating infinitely often near $\tau=0$, so it has infinite sign-change complexity and lies outside these theorems.
+
+## Proof depends on
+
+- [Sign-variation bound for Laplace transforms](../../../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/sign-variation-bound-for-laplace-transforms.md)
 
 ## Expansion
 
