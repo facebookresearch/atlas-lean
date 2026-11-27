@@ -9,18 +9,29 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
+public import Mathlib.Data.Set.Card
+public import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Polynomial.Degree.IsMonicOfDegree
 import Mathlib.Algebra.Polynomial.FieldDivision
+import Mathlib.RingTheory.Polynomial.Basic
 import Mathlib.Tactic.FieldSimp
 
 /-!
 # Neighbours in the polynomial Farey series
 
-This module defines the polynomial Farey series and its degree neighbours and proves
-the neighbour criterion in terms of a nonzero constant determinant.
+This module defines the polynomial Farey series and its degree neighbours, proves
+the neighbour criterion in terms of a nonzero constant determinant, and counts the
+neighbours of a given denominator degree over a prime field.
 
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Theorem 2.
+## References
+
+* Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
+  *An Interpretation of Continued Fractions and Farey Graphs in the Field of Rational Functions*,
+  INTEGERS 26 (2026), Article A3, pp. 1–14, Theorem 3 (neighbour count) and
+  Definitions 1–3 and Theorem 2 (the series and neighbour criterion).
+* William A. Webb, *The Farey Series of polynomials over a finite field*,
+  Elemente der Mathematik 41 (1986), pp. 6–11, Lemma 1 and Theorems 1 and 2.
+  This is the original source for the determinant parametrization and the two results above.
 -/
 
 namespace MetaMathlibExt
@@ -283,6 +294,212 @@ public theorem arePolyFareyNeighbors_iff [DecidableEq (RatFunc F)] (n : ℕ)
   · intro hdet
     refine ⟨directed_of_constant n z w hz hw ?_, directed_of_constant n w z hw hz hdet⟩
     simpa only [hswap, degree_neg] using hdet
+
+-- A nonzero constant determinant gives both properness and coprimality.
+private theorem mem_polyFareySeries_of_det {n : ℕ} {w z : F[X] × F[X]}
+    (hw : w ∈ polyFareySeries n) (hq : 0 < w.2.natDegree)
+    (hz : z.2.Monic) (hzn : z.2.natDegree ≤ n) {c : F} (hc : c ≠ 0)
+    (hdet : w.1 * z.2 - z.1 * w.2 = C c) : z ∈ polyFareySeries n := by
+  refine ⟨?_, hzn, ?_, hz⟩
+  · by_cases hz0 : z.1 = 0
+    · simpa [hz0] using bot_lt_iff_ne_bot.mpr (degree_ne_bot.mpr hz.ne_zero)
+    have hu : w.1.natDegree < w.2.natDegree := by
+      by_cases hu0 : w.1 = 0
+      · simpa [hu0] using hq
+      · exact natDegree_lt_natDegree hu0 hw.1
+    have heq : z.1 * w.2 = w.1 * z.2 - C c := by linear_combination -hdet
+    have hbound : (z.1 * w.2).natDegree ≤ max (w.1.natDegree + z.2.natDegree) 0 := by
+      rw [heq]
+      exact (natDegree_sub_le _ _).trans (max_le_max natDegree_mul_le (by simp))
+    rw [natDegree_mul hz0 hw.2.2.2.ne_zero] at hbound
+    exact degree_lt_degree (by omega)
+  · refine ⟨-C c⁻¹ * w.2, C c⁻¹ * w.1, ?_⟩
+    calc
+      _ = C c⁻¹ * (w.1 * z.2 - z.1 * w.2) := by ring
+      _ = 1 := by rw [hdet, ← map_mul, inv_mul_cancel₀ hc, map_one]
+
+private theorem neighbor_det {n : ℕ} [DecidableEq (RatFunc F)] {w z : F[X] × F[X]}
+    (hw : w ∈ polyFareySeries n) (hz : z ∈ polyFareySeries n)
+    (h : ArePolyFareyNeighbors n w z) : ∃ c : F, c ≠ 0 ∧ w.1 * z.2 - z.1 * w.2 = C c := by
+  have hd := (arePolyFareyNeighbors_iff n hw hz).mp h
+  refine ⟨_, ?_, eq_C_of_degree_eq_zero hd⟩
+  intro hc
+  have he := eq_C_of_degree_eq_zero hd
+  rw [hc, map_zero] at he
+  simp [he] at hd
+
+-- The determinant-one pair and the original pair are a basis for polynomial pairs.
+private theorem neighbor_coordinates {w z : F[X] × F[X]} {a b : F[X]} {c : F}
+    (hab : w.1 * b - a * w.2 = 1) (hdet : w.1 * z.2 - z.1 * w.2 = C c) :
+    ∃ m : F[X], z = (C c * a + m * w.1, C c * b + m * w.2) := by
+  refine ⟨b * z.1 - a * z.2, Prod.ext ?_ ?_⟩
+  · dsimp
+    linear_combination a * hdet - z.1 * hab
+  · dsimp
+    linear_combination b * hdet - z.2 * hab
+
+private theorem degree_scaled_lt_mul {v b m : F[X]} (hv : v ≠ 0) (hb : b.degree < v.degree)
+    (hm : m ≠ 0) (c : F) : (C c * b).degree < (m * v).degree := by
+  have hle : v.degree ≤ (m * v).degree := by
+    rw [degree_eq_natDegree hv, degree_eq_natDegree (mul_ne_zero hm hv), natDegree_mul hm hv]
+    exact WithBot.coe_le_coe.mpr (Nat.le_add_left _ _)
+  have hc : (C c * b).degree ≤ b.degree := by
+    simpa only [smul_eq_C_mul] using degree_smul_le c b
+  exact (hc.trans_lt hb).trans_le hle
+
+private theorem unique_smaller_neighbor {n : ℕ} [DecidableEq (RatFunc F)] {w : F[X] × F[X]}
+    (hw : w ∈ polyFareySeries n) (hq : 0 < w.2.natDegree) {a b : F[X]}
+    (hb : b.degree < w.2.degree) (hab : w.1 * b - a * w.2 = 1) :
+    ∃! z, z ∈ polyFareySeries n ∧ z.2.natDegree < w.2.natDegree ∧ ArePolyFareyNeighbors n w z := by
+  have hv := hw.2.2.2.ne_zero
+  have hb0 : b ≠ 0 := by
+    intro he
+    have h : a * w.2 = -1 := by rw [he, mul_zero, zero_sub, neg_eq_iff_eq_neg] at hab; exact hab
+    have ha0 : a ≠ 0 := by rintro rfl; simp at h
+    have hn := congrArg natDegree h
+    rw [natDegree_mul ha0 hv, natDegree_neg, natDegree_one] at hn
+    omega
+  have hbc := leadingCoeff_ne_zero.mpr hb0
+  let c := b.leadingCoeff⁻¹
+  have hc : c ≠ 0 := inv_ne_zero hbc
+  let z : F[X] × F[X] := (C c * a, C c * b)
+  have hzmonic : z.2.Monic := by
+    change (C c * b).leadingCoeff = 1
+    rw [leadingCoeff_mul, leadingCoeff_C, inv_mul_cancel₀ hbc]
+  have hzd : z.2.natDegree < w.2.natDegree := by
+    exact natDegree_lt_natDegree hzmonic.ne_zero (by simpa only [z, degree_C_mul hc] using hb)
+  have hzdet : w.1 * z.2 - z.1 * w.2 = C c := by
+    dsimp only [z, Prod.fst, Prod.snd]
+    linear_combination C c * hab
+  have hz := mem_polyFareySeries_of_det hw hq hzmonic (hzd.le.trans hw.2.1) hc hzdet
+  refine ⟨z, ⟨hz, hzd, (arePolyFareyNeighbors_iff n hw hz).mpr (by rw [hzdet, degree_C hc])⟩, ?_⟩
+  rintro y ⟨hy, hyd, hyn⟩
+  obtain ⟨d, hd, hdet⟩ := neighbor_det hw hy hyn
+  obtain ⟨m, rfl⟩ := neighbor_coordinates hab hdet
+  have hm : m = 0 := by
+    by_contra hm
+    change (C d * b + m * w.2).natDegree < w.2.natDegree at hyd
+    rw [natDegree_add_eq_right_of_degree_lt (degree_scaled_lt_mul hv hb hm d),
+      natDegree_mul hm hv] at hyd
+    omega
+  have hd' := hy.2.2.2.leadingCoeff
+  change (C d * b + m * w.2).leadingCoeff = 1 at hd'
+  rw [hm, zero_mul, add_zero, leadingCoeff_mul, leadingCoeff_C] at hd'
+  have hdc : d = c := by
+    calc
+      d = (d * b.leadingCoeff) * c := by
+        dsimp only [c]
+        rw [mul_assoc, mul_inv_cancel₀ hbc, mul_one]
+      _ = c := by rw [hd', one_mul]
+  simp [hm, hdc, z]
+
+private noncomputable def monicOfDegreeEquiv (t : ℕ) :
+    {m : F[X] // IsMonicOfDegree m t} ≃ (Fin t → F) :=
+  (Equiv.ofBijective (fun r : degreeLT F t =>
+    (⟨r.val + X ^ t, by
+      have hlt : r.val.degree < (X ^ t : F[X]).degree := by
+        rw [degree_X_pow]
+        exact mem_degreeLT.mp r.property
+      exact ⟨(natDegree_add_eq_right_of_degree_lt hlt).trans (natDegree_X_pow t),
+        (monic_X_pow t).add_of_right hlt⟩⟩ : {m : F[X] // IsMonicOfDegree m t})) (by
+    constructor
+    · intro r s h
+      exact Subtype.ext (add_right_cancel (congrArg Subtype.val h))
+    · intro m
+      have hp : m.val.degree = (X ^ t : F[X]).degree := by
+        rw [degree_eq_natDegree m.property.ne_zero, m.property.natDegree_eq, degree_X_pow]
+      have hlt : (m.val - X ^ t).degree < m.val.degree :=
+        degree_sub_lt_left hp m.property.ne_zero
+          (m.property.leadingCoeff_eq.trans (monic_X_pow t).leadingCoeff.symm)
+      have hr : m.val - X ^ t ∈ degreeLT F t := mem_degreeLT.mpr (by simpa [hp] using hlt)
+      exact ⟨⟨m.val - X ^ t, hr⟩, Subtype.ext (sub_add_cancel _ _)⟩)).symm.trans
+    (degreeLTEquiv F t).toEquiv
+
+private noncomputable def largerNeighborEquiv {n t : ℕ} [DecidableEq (RatFunc F)]
+    {w : F[X] × F[X]} (hw : w ∈ polyFareySeries n) (hq : 0 < w.2.natDegree)
+    (ht : w.2.natDegree + t ≤ n) {a b : F[X]} (hb : b.degree < w.2.degree)
+    (hab : w.1 * b - a * w.2 = 1) :
+    ({c : F // c ≠ 0} × {m : F[X] // IsMonicOfDegree m t}) ≃
+      {z // z ∈ polyFareySeries n ∧ z.2.natDegree = w.2.natDegree + t ∧
+        ArePolyFareyNeighbors n w z} := by
+  have hv := hw.2.2.2
+  let pair (c : F) (m : F[X]) := (C c * a + m * w.1, C c * b + m * w.2)
+  have hdet (c : F) (m : F[X]) : w.1 * (pair c m).2 - (pair c m).1 * w.2 = C c := by
+    dsimp only [pair, Prod.fst, Prod.snd]
+    linear_combination C c * hab
+  have hdegree (c : F) {m : F[X]} (hm : m ≠ 0) :
+      (pair c m).2.natDegree = w.2.natDegree + m.natDegree := by
+    change (C c * b + m * w.2).natDegree = _
+    rw [natDegree_add_eq_right_of_degree_lt (degree_scaled_lt_mul hv.ne_zero hb hm c),
+      natDegree_mul hm hv.ne_zero, add_comm]
+  have hlc (c : F) {m : F[X]} (hm : m ≠ 0) : (pair c m).2.leadingCoeff = m.leadingCoeff := by
+    change (C c * b + m * w.2).leadingCoeff = _
+    rw [leadingCoeff_add_of_degree_lt (degree_scaled_lt_mul hv.ne_zero hb hm c),
+      leadingCoeff_mul_monic hv]
+  refine Equiv.ofBijective (fun ⟨c, m⟩ => ⟨pair c m, ?_⟩) ⟨?_, ?_⟩
+  · have hm := m.property.ne_zero
+    have hmonic : (pair c m).2.Monic := (hlc c hm).trans m.property.leadingCoeff_eq
+    have hd := (hdegree c hm).trans (congrArg (w.2.natDegree + ·) m.property.natDegree_eq)
+    have hz := mem_polyFareySeries_of_det hw hq hmonic (hd.trans_le ht) c.property (hdet c m)
+    exact ⟨hz, hd, (arePolyFareyNeighbors_iff n hw hz).mpr (by rw [hdet, degree_C c.property])⟩
+  · rintro ⟨c, m⟩ ⟨d, k⟩ he
+    have he' : pair c m = pair d k := congrArg Subtype.val he
+    have hcd : (c : F) = d := by
+      apply C_injective
+      rw [← hdet c m, he', hdet]
+    have hmk := congrArg Prod.snd he'
+    change C c.val * b + m.val * w.2 = C d.val * b + k.val * w.2 at hmk
+    rw [hcd] at hmk
+    exact Prod.ext (Subtype.ext hcd)
+      (Subtype.ext (mul_right_cancel₀ hv.ne_zero (add_left_cancel hmk)))
+  · rintro ⟨z, hz, hzd, hzneigh⟩
+    obtain ⟨c, hc, hzc⟩ := neighbor_det hw hz hzneigh
+    obtain ⟨m, rfl⟩ := neighbor_coordinates hab hzc
+    change (pair c m).2.natDegree = w.2.natDegree + t at hzd
+    have hm : m ≠ 0 := by
+      rintro rfl
+      have hlt : (pair c 0).2.natDegree < w.2.natDegree :=
+        natDegree_lt_natDegree hz.2.2.2.ne_zero (by simp [pair, degree_C_mul hc, hb])
+      omega
+    have hmd : m.natDegree = t := Nat.add_left_cancel ((hdegree c hm).symm.trans hzd)
+    have hmonic : m.Monic := (hlc c hm).symm.trans hz.2.2.2.leadingCoeff
+    exact ⟨(⟨c, hc⟩, ⟨m, hmd, hmonic⟩), rfl⟩
+
+/-- **Number of neighbours of a polynomial Farey fraction.** Let $p$ be a prime, let
+$n \in \mathbb{N}$, and let $u / v$ be a fraction of the Farey series $\mathcal{F}_n$ over
+$\mathbb{F}_p$ with $q = \deg v \ge 1$. Then for every $t \in \mathbb{N}$ with $q + t \le n$,
+exactly $(p - 1) p^t$ fractions $h / k \in \mathcal{F}_n$ with $\deg k = q + t$ are neighbours
+of $u / v$ in $\mathcal{F}_n$, and exactly one fraction $h / k \in \mathcal{F}_n$ with
+$\deg k < q$ is a neighbour of $u / v$ in $\mathcal{F}_n$.
+
+Compared with the paper, $t$ is restricted to $q + t \le n$ (there are no fractions of larger
+degree in $\mathcal{F}_n$), the hypothesis $q \ge 1$ is added (for $0 / 1$ there is no neighbour
+of degree less than $0$), and the field is the prime field $\mathbb{F}_p$, the case of the
+paper's count $(p - 1) p^t$ and of its Example 2.
+
+Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
+*An Interpretation of Continued Fractions and Farey Graphs in the Field of
+Rational Functions*, INTEGERS 26 (2026), Article A3, Theorem 3 (`integers-2026-A3-thm-3`). -/
+public theorem polyFarey_neighbor_count (p : ℕ) [Fact p.Prime]
+    [DecidableEq (RatFunc (ZMod p))] (n : ℕ) {w : (ZMod p)[X] × (ZMod p)[X]}
+    (hw : w ∈ polyFareySeries (F := ZMod p) n) (hq : 1 ≤ w.2.natDegree) :
+    (∀ t : ℕ, w.2.natDegree + t ≤ n →
+      Set.ncard {z | z ∈ polyFareySeries (F := ZMod p) n ∧ z.2.natDegree = w.2.natDegree + t ∧
+        ArePolyFareyNeighbors (F := ZMod p) n w z} = (p - 1) * p ^ t) ∧
+      ∃! z, z ∈ polyFareySeries (F := ZMod p) n ∧ z.2.natDegree < w.2.natDegree ∧
+        ArePolyFareyNeighbors (F := ZMod p) n w z := by
+  obtain ⟨a, b, _, hb, hab⟩ := small_bezout w.1 w.2 hw.1 hw.2.2.2 hw.2.2.1 hq
+  refine ⟨?_, unique_smaller_neighbor hw hq hb hab⟩
+  intro t ht
+  let e := largerNeighborEquiv hw hq ht hb hab
+  have hc : Nat.card {c : ZMod p // c ≠ 0} = p - 1 := by
+    rw [Nat.card_eq_fintype_card, Fintype.card_subtype_compl (fun c : ZMod p => c = 0),
+      ZMod.card, Fintype.card_subtype_eq]
+  change Nat.card {z // z ∈ polyFareySeries n ∧ z.2.natDegree = w.2.natDegree + t ∧
+    ArePolyFareyNeighbors n w z} = _
+  rw [← Nat.card_congr e, Nat.card_prod, hc,
+    Nat.card_congr (monicOfDegreeEquiv (F := ZMod p) t), Nat.card_eq_fintype_card,
+    Fintype.card_pi_const, ZMod.card]
 
 end
 
