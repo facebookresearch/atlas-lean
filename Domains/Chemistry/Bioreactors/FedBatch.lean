@@ -21,9 +21,10 @@ import Mathlib.Topology.Order.IntermediateValue
 
 A fed-batch (semi-batch) bioreactor starts with volume `V₀ > 0` and is fed, with no outflow, at
 volumetric rate `F(t) ≥ 0` with medium of substrate concentration `S_in ≥ 0` and no biomass. With
-the feed as dense as the broth the volume obeys `V' = F`. Biomass `X` grows on the substrate `S`
-at the Monod rate `μ(S) = μ_m S / (K_s + S)` (`mmRate μm Ks` of Michaelis–Menten kinetics) and
-consumes `1 / Y` units of substrate per unit of biomass formed; there is no death or maintenance.
+the feed and the broth of the same constant density, the volume obeys `V' = F`. Biomass `X` grows
+on the substrate `S` at the Monod rate `μ(S) = μ_m S / (K_s + S)` (`mmRate μm Ks` of
+Michaelis–Menten kinetics) and consumes `1 / Y` units of substrate per unit of biomass formed;
+there is no death or maintenance.
 The species balances of the semi-batch reactor, `(V c)' = F c_in + R V`, divided by `V`, give
 
   `S' = (F / V) (S_in - S) - μ(S) X / Y`,   `X' = μ(S) X - (F / V) X`.
