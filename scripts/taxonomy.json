@@ -10212,6 +10212,7 @@
   "MathlibExt/Analysis/SpecificLimits/RootTest": {"to": "Analysis/sequences-and-series/convergence", "title": "Root test"},
   "MathlibExt/Analysis/SturmSeparation": {"to": "Analysis/ordinary-differential-equations", "title": "Sturm separation theorem"},
   "MathlibExt/Analysis/SpecificLimits/SumSinSqDivSq": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Sum of sin²(nδ)/n²"},
+  "MathlibExt/Analysis/SupremumOfSelectorProcesses": {"to": "Probability/high-dimensional-probability", "title": "Suprema of selector and empirical processes"},
   "MathlibExt/Analysis/Variational/EkelandCaristi": {"to": "Analysis/convex-analysis-and-variations", "title": "Ekeland variational principle"},
   "MathlibExt/Analysis/Variational/MinimizingMovement": {"to": "MeasureTheory/optimal-transport", "title": "Wasserstein gradient flows and the JKO scheme"},
   "MathlibExt/Analysis/Variational/MinimizingMovementContraction": {"to": "MeasureTheory/optimal-transport", "title": "Wasserstein gradient flows and the JKO scheme"},
