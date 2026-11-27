@@ -1,0 +1,29 @@
+# Every infinite finitely generated branch group has an SFT with no computable configuration
+
+Every infinite finitely generated branch group admits a nonempty subshift of finite type with nonzero Medvedev degree, that is, with no computable configuration; and every finitely generated group with such an SFT has undecidable domino problem.
+
+For a finitely generated group $G$, a $G$-subshift of finite type (SFT) is a set of configurations $A^G$ avoiding finitely many forbidden patterns; its Medvedev degree $m(X)$ measures the difficulty of computing a configuration, and $m(X) = 0$ exactly when $X$ contains a computable configuration (computed through the pullback to the free group on the generators). Then (source):
+
+1. every infinite and finitely generated [branch group](../branch-and-thompson-groups/maximal-subgroups-of-branch-groups/is-branch-group-2.md) $G$ admits a nonempty SFT with nonzero Medvedev degree; if $G$ is recursively presented, some SFT attains the maximal $\Pi^0_1$ Medvedev degree (Corollary 5.9);
+2. for every infinite finitely generated branch group with decidable word problem, the Medvedev degrees of SFTs are exactly all $\Pi^0_1$ Medvedev degrees (Corollary 5.7);
+3. if a finitely generated group $G$ admits a nonempty $G$-SFT $X$ with $m(X) > 0$, then the domino problem for $G$ is undecidable (Proposition 6.6).
+
+## Depends on
+
+- [Domino problem of a finitely generated group](domino-problem-of-a-group.md)
+- [Branch group](../branch-and-thompson-groups/maximal-subgroups-of-branch-groups/is-branch-group-2.md)
+- [Group](../../group-basics/group.md)
+- [Recursively presented group](../../orderable-groups/word-problem-for-orderable-groups/is-recursively-presented.md)
+- [Solvable word problem](../../presentations-and-decision-problems/word-problem-for-groups/word-problem-solvable.md)
+
+## Proof depends on
+
+None.
+
+## Expansion
+
+Every branch group is commensurable to a direct product of two infinite groups. For a direct product $H \times K$ of two infinite finitely generated groups, Seward's theorem gives a translation-like action of $\mathbb{Z}^2$ on $H \times K$, and the source's transference result for translation-like actions carries Simpson's classification for $\mathbb{Z}^2$ (nonempty $\mathbb{Z}^2$-SFTs attain exactly the $\Pi^0_1$ Medvedev degrees) to an $(H \times K)$-SFT of degree at least the maximal $\Pi^0_1$ degree (Theorem 5.8); commensurability preserves the degrees attained. For clause 3: a group with undecidable word problem has undecidable domino problem (a known result the source cites); otherwise, a decision procedure for the domino problem would compute a nested sequence of nonempty admissible pattern sets for $X$ and hence a computable configuration, contradicting $m(X) > 0$. Simpson's classification, Seward's theorem and the transference results have no pages here.
+
+## Sources
+
+- S. Barbieri and N. Carrasco-Vargas, "Medvedev degrees of subshifts on groups", Theoretical Computer Science 1086 (2026), article 116251, https://doi.org/10.1016/j.tcs.2026.116251; read in arXiv:2406.12777v2, whose numbering is used here (Corollaries 5.7 and 5.9, Theorem 5.8 and Proposition 6.6 of arXiv:2406.12777v2).

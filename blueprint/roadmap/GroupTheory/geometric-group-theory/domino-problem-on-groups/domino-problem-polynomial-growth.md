@@ -1,0 +1,29 @@
+# A group of polynomial growth has decidable domino problem exactly when it is virtually free
+
+A finitely generated virtually nilpotent group (equivalently, a group of polynomial growth) has decidable domino problem if and only if it is virtually free, that is, virtually cyclic or finite; the same holds for groups whose center contains a non-trivial finitely generated torsion-free subgroup.
+
+Then (source):
+
+1. for every finitely generated virtually nilpotent group $G$, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.1);
+2. for every finitely generated group $G$ whose center has a non-trivial, finitely generated, torsion-free subgroup, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.2).
+
+For instance, $\mathbb{Z} \times H$ satisfies the hypothesis of clause 2 for every finitely generated $H$. The source conjectures that a finitely generated group has decidable domino problem exactly when it is virtually free.
+
+## Depends on
+
+- [Domino problem of a finitely generated group](domino-problem-of-a-group.md)
+- [Group](../../group-basics/group.md)
+- [Polynomial growth with respect to a finite subset](../f-lner-sets-and-polynomial-growth/has-polynomial-growth.md)
+- [Center of a group](../../group-basics/group-center.md)
+
+## Proof depends on
+
+- [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+
+## Expansion
+
+If $G$ is not virtually free, the source finds a thick end in $G$ and, through an extension of a result of Halin, a structure resembling a half-grid; this reduces the domino problem of $\mathbb{Z}^2$ to that of $G$ (using Lemma 4.2 for groups with a central element of infinite order and Lemma 4.1 that undecidability passes from subgroups to the whole group). On finitely generated virtually free groups the domino problem is decidable, as the source recalls from work of Muller and Schupp and of Kuske and Lohrey; Halin's theorem, its extension and the decidability for virtually free groups have no pages here.
+
+## Sources
+
+- A. Ballier and M. Stein, "The domino problem on groups of polynomial growth", Groups, Geometry, and Dynamics 12 (2018), no. 1, 93–105, https://doi.org/10.4171/GGD/439; read in arXiv:1311.4222v4, whose numbering is used here (Theorems 1.1 and 1.2 and Lemmas 4.1 and 4.2 of arXiv:1311.4222v4).
