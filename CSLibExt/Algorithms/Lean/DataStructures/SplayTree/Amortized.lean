@@ -1019,30 +1019,6 @@ public theorem rotationsMax_eq_rotations [LinearOrder α] {t : BinaryTree α}
     rotationsMax t = rotations a t :=
   rotationsMax_eq_rotations_aux t.numNodes t (by omega) hOrd ha
 
-/-- **The maximum key splays to the root.** On a nonempty search tree, the maximum
-key `a` (at least every key of `t`) satisfies `splayMax t = splay a t`. -/
-public theorem exists_max_splay [LinearOrder α] {t : BinaryTree α}
-    (hOrd : BinarySearchTree.Ordered t) (ht : t ≠ .nil) :
-    ∃ a, (∀ y ∈ t, y ≤ a) ∧ splayMax t = splay a t := by
-  cases hsp : splayMax t with
-  | nil => exact absurd hsp (splayMax_ne_nil ht)
-  | node a l r =>
-      obtain ⟨hr, hin⟩ := splayMax_eq_node hsp
-      subst hr
-      have hmax : ∀ y ∈ t, y ≤ a := by
-        intro y hy
-        have hmem : y ∈ BinarySearchTree.inorder t := BinarySearchTree.mem_inorder.mpr hy
-        rw [← hin] at hmem
-        rw [List.mem_append, List.mem_singleton] at hmem
-        rcases hmem with hyl | rfl
-        · have hpair := BinarySearchTree.ordered_inorder hOrd
-          rw [← hin] at hpair
-          rw [List.pairwise_append] at hpair
-          obtain ⟨_, _, hmid⟩ := hpair
-          exact le_of_lt (hmid y hyl a (List.mem_singleton_self a))
-        · exact le_rfl
-      exact ⟨a, hmax, hsp.symm.trans (splay_max_eq_splay hOrd hmax)⟩
-
 /-- **Amortized cost of `splayMax` is at most `3 log₂ n + 1`.** Splaying the maximum
 to the root costs, in the amortized sense, at most `3 log₂ n + 1` on an `n`-node
 search tree in this file's rotation-based cost model (rotations, or 1 if none;

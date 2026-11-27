@@ -880,12 +880,11 @@ public theorem contains_eq_true_iff {α : Type u} [LinearOrder α]
 /--
 Splay the rightmost key to the root (Nipkow's `splay_max`, FDSA §21.1); when the
 tree is `Ordered`, the rightmost key is its maximum.
-The recursion descends two levels down the right spine per step; when the
-recursed subtree comes back empty, the single zig that carries its root
-up is applied instead. No ordering is needed: the operation only follows
-the right spine. The unreachable-looking empty branch of the match is
-needed because `splayMax rr = .nil` can only be discharged once
-`splayMax` is known to preserve nonemptiness (see `splayMax_ne_nil`).
+The recursion descends two levels down the right spine per step. No ordering
+is needed: the operation only follows the right spine. The `.nil` branch of
+the match is the zig case: it is taken exactly when `rr` is empty, so
+`splayMax rr = .nil`, and it rotates `rk` to the root (AFP's `CD = Leaf`
+branch); the other branch applies the two-level step when `rr` is nonempty.
 -/
 public def splayMax {α : Type u} : BinaryTree α → BinaryTree α
   | .nil => .nil
@@ -1150,8 +1149,8 @@ private theorem splay_bounds_aux {α : Type u} [LinearOrder α] {x : α} (n : Na
 
 /-- **Splay bounds.** In an ordered tree, every key in the left subtree
 of `splay x t` is `< x` and every key in the right subtree is `> x`.
-This is the crux lemma from which the `splayMax` and insertion
-correctness arguments follow. -/
+It is used for `inorder_nipkowInsert_of_not_mem`, which splices an absent
+key into the inorder traversal at its sorted position. -/
 public theorem splay_bounds {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
     {l : BinaryTree α} {a : α} {r : BinaryTree α} (hOrd : Ordered t)
     (hsp : splay x t = .node a l r) : All (· < x) l ∧ All (x < ·) r :=
@@ -1285,34 +1284,29 @@ public theorem splay_max_eq_splay {α : Type u} [LinearOrder α] {a : α}
     splayMax t = splay a t :=
   splay_max_eq_splay_aux t.numNodes t (by omega) hOrd hbound
 
-/-- **Some key splays to `splayMax`.** For a nonempty ordered tree,
-the maximum key splays to `splayMax t`; the empty tree is handled by
-any key. -/
-public theorem splay_max_eq_splay_ex {α : Type u} [LinearOrder α] [Nonempty α]
-    {t : BinaryTree α} (hOrd : Ordered t) : ∃ a, splayMax t = splay a t := by
-  cases t with
-  | nil => exact ⟨Classical.arbitrary α, rfl⟩
-  | node k l r =>
-    cases hsp : splayMax (.node k l r) with
-    | nil => exact absurd hsp (splayMax_ne_nil (by simp))
-    | node a' l' r' =>
-      obtain ⟨hr', hin⟩ := splayMax_eq_node hsp
-      refine ⟨a', ?_⟩
-      have hEq : splayMax (.node k l r) = splay a' (.node k l r) :=
-        splay_max_eq_splay (t := .node k l r) hOrd ?_
-      · rw [hsp] at hEq
-        exact hEq
-      · intro y hy
-        have hmem : y ∈ inorder (.node k l r) := mem_inorder.mpr hy
-        rw [← hin] at hmem
-        rw [List.mem_append, List.mem_singleton] at hmem
-        rcases hmem with hyl | rfl
-        · have hpair := ordered_inorder hOrd
-          rw [← hin] at hpair
-          rw [List.pairwise_append] at hpair
-          obtain ⟨_, _, hmid⟩ := hpair
-          exact le_of_lt (hmid y hyl a' (List.mem_singleton_self a'))
-        · exact le_rfl
+/-- **The maximum key splays to the root.** On a nonempty search tree, the maximum
+key `a` (at least every key of `t`) satisfies `splayMax t = splay a t`. -/
+public theorem exists_max_splay {α : Type u} [LinearOrder α] {t : BinaryTree α}
+    (hOrd : Ordered t) (ht : t ≠ .nil) :
+    ∃ a, (∀ y ∈ t, y ≤ a) ∧ splayMax t = splay a t := by
+  cases hsp : splayMax t with
+  | nil => exact absurd hsp (splayMax_ne_nil ht)
+  | node a l r =>
+    obtain ⟨hr, hin⟩ := splayMax_eq_node hsp
+    subst hr
+    have hmax : ∀ y ∈ t, y ≤ a := by
+      intro y hy
+      have hmem : y ∈ inorder t := mem_inorder.mpr hy
+      rw [← hin] at hmem
+      rw [List.mem_append, List.mem_singleton] at hmem
+      rcases hmem with hyl | rfl
+      · have hpair := ordered_inorder hOrd
+        rw [← hin] at hpair
+        rw [List.pairwise_append] at hpair
+        obtain ⟨_, _, hmid⟩ := hpair
+        exact le_of_lt (hmid y hyl a (List.mem_singleton_self a))
+      · exact le_rfl
+    exact ⟨a, hmax, hsp.symm.trans (splay_max_eq_splay hOrd hmax)⟩
 
 /--
 Delete a key by splaying (Nipkow's `delete`, FDSA §21.1): splay `x`
@@ -1574,7 +1568,7 @@ public theorem numNodes_delete_of_mem {α : Type u} [LinearOrder α] {x : α}
 
 /-- Deleting an absent key leaves the number of nodes unchanged. -/
 public theorem numNodes_delete_of_not_mem {α : Type u} [LinearOrder α] {x : α}
-    {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∉ t) :
+    {t : BinaryTree α} (hx : x ∉ t) :
     (delete x t).numNodes = t.numNodes := by
   cases hs : splay x t with
   | nil =>
@@ -1591,7 +1585,7 @@ public theorem numNodes_delete_of_not_mem {α : Type u} [LinearOrder α] {x : α
 
 /--
 Insert a key by splaying (Nipkow's `insert`, FDSA §21.1): splay `x` to the root;
-if it is there the tree is unchanged, otherwise `x` becomes the new root with the
+if it is there the splayed tree is returned, otherwise `x` becomes the new root with the
 splayed tree split around it. This is the book's formulation (splay, then rebuild
 around the new root). It computes the same tree as `SplayTree.insert`
 (`insert_eq_nipkowInsert`), which applies `split` to the splayed tree instead;
@@ -1781,71 +1775,9 @@ public theorem insert_eq_nipkowInsert {α : Type u} [LinearOrder α] (x : α) (t
     · rw [nipkowInsert_eq_of_gt hs hxa, split_node_gt (lt_asymm hxa) hxa, hr hxa]
 
 /-- Inserting a key adds exactly that key to structural membership. -/
-public theorem mem_nipkowInsert {α : Type u} [LinearOrder α] {x y : α} {t : BinaryTree α}
-    (hOrd : Ordered t) : y ∈ nipkowInsert x t ↔ y ∈ t ∨ y = x := by
-  cases hs : splay x t with
-  | nil =>
-    have ht : t = .nil := splay_eq_nil.mp hs
-    subst ht
-    rw [nipkowInsert_eq_of_nil hs]
-    constructor
-    · intro hy
-      rcases hy with hy | rfl | hy
-      · exact False.elim hy
-      · exact Or.inr rfl
-      · exact False.elim hy
-    · rintro (hy | rfl)
-      · exact False.elim hy
-      · exact Or.inr (Or.inl rfl)
-  | node a l r =>
-    obtain ⟨hbl, hbr⟩ := splay_bounds hOrd hs
-    rcases lt_trichotomy x a with hxa | hxa | hxa
-    · rw [nipkowInsert_eq_of_lt hs hxa]
-      constructor
-      · intro hy
-        rcases hy with hy | rfl | hy
-        · exact Or.inl (mem_splay.mp (by rw [hs]; exact Or.inl hy))
-        · exact Or.inr rfl
-        · rcases hy with hy | rfl | hy
-          · exact False.elim hy
-          · exact Or.inl (mem_splay.mp (by rw [hs]; exact Or.inr (Or.inl rfl)))
-          · exact Or.inl (mem_splay.mp (by rw [hs]; exact Or.inr (Or.inr hy)))
-      · rintro (hy | rfl)
-        · have hyt : y ∈ BinaryTree.node a l r := by
-            have h1 : y ∈ splay x t := mem_splay.mpr hy
-            rwa [hs] at h1
-          rcases hyt with hyl | hya | hyr
-          · exact Or.inl hyl
-          · exact Or.inr (Or.inr (Or.inr (Or.inl hya)))
-          · exact Or.inr (Or.inr (Or.inr (Or.inr hyr)))
-        · exact Or.inr (Or.inl rfl)
-    · rw [nipkowInsert_eq_of_eq hs hxa]
-      constructor
-      · intro hy
-        exact Or.inl (mem_splay.mp (by rw [hs]; exact hy))
-      · rintro (hy | rfl)
-        · have h1 : y ∈ splay x t := mem_splay.mpr hy
-          rwa [hs] at h1
-        · exact Or.inr (Or.inl hxa)
-    · rw [nipkowInsert_eq_of_gt hs hxa]
-      constructor
-      · intro hy
-        rcases hy with hy | rfl | hy
-        · rcases hy with hy | rfl | hy
-          · exact Or.inl (mem_splay.mp (by rw [hs]; exact Or.inl hy))
-          · exact Or.inl (mem_splay.mp (by rw [hs]; exact Or.inr (Or.inl rfl)))
-          · exact False.elim hy
-        · exact Or.inr rfl
-        · exact Or.inl (mem_splay.mp (by rw [hs]; exact Or.inr (Or.inr hy)))
-      · rintro (hy | rfl)
-        · have hyt : y ∈ BinaryTree.node a l r := by
-            have h1 : y ∈ splay x t := mem_splay.mpr hy
-            rwa [hs] at h1
-          rcases hyt with hyl | hya | hyr
-          · exact Or.inl (Or.inl hyl)
-          · exact Or.inl (Or.inr (Or.inl hya))
-          · exact Or.inr (Or.inr hyr)
-        · exact Or.inr (Or.inl rfl)
+public theorem mem_nipkowInsert {α : Type u} [LinearOrder α] {x y : α} {t : BinaryTree α} :
+    y ∈ nipkowInsert x t ↔ y ∈ t ∨ y = x := by
+  rw [← insert_eq_nipkowInsert, mem_insert, or_comm]
 
 /-- Insertion preserves the strict search-tree invariant. -/
 public theorem ordered_nipkowInsert {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
@@ -1864,7 +1796,7 @@ public theorem numNodes_nipkowInsert_of_mem {α : Type u} [LinearOrder α] {x : 
 
 /-- Inserting an absent key increases the number of nodes by one. -/
 public theorem numNodes_nipkowInsert_of_not_mem {α : Type u} [LinearOrder α] {x : α}
-    {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∉ t) :
+    {t : BinaryTree α} (hx : x ∉ t) :
     (nipkowInsert x t).numNodes = t.numNodes + 1 := by
   cases hs : splay x t with
   | nil =>

@@ -295,9 +295,9 @@ example : inorder (SplayTree.nipkowInsert 4 balanced) = [1, 2, 3, 4, 5, 6, 7] :=
 example : Ordered (SplayTree.nipkowInsert 0 balanced) :=
   SplayTree.ordered_nipkowInsert ordered_balanced
 
-example (x y : Nat) (t : BinaryTree Nat) (hOrd : Ordered t) :
+example (x y : Nat) (t : BinaryTree Nat) :
     y ∈ SplayTree.nipkowInsert x t ↔ y ∈ t ∨ y = x :=
-  SplayTree.mem_nipkowInsert hOrd
+  SplayTree.mem_nipkowInsert
 
 example : (SplayTree.nipkowInsert 0 balanced).numNodes = 8 := by decide
 
