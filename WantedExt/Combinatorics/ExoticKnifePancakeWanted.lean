@@ -16,7 +16,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Connected.Basic
 public import MathlibExt.Combinatorics.ConstrainedTIntersections
 public import MathlibExt.Combinatorics.ExoticKnifePancake
-public import MathlibExt.Combinatorics.ThreeArmedV
+public import MathlibExt.Combinatorics.ThreeChain
 
 /-!
 # Cutting a pancake with an exotic knife
@@ -33,21 +33,6 @@ connected components of its complement, `planeRegionCount K`. Rays are written
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Maximum region count for 3-chains.** For points $p, q \in \mathbb{R}^2$ and nonzero vectors
-$u, v \in \mathbb{R}^2$, the 3-chain is the union of the ray $\{p + s u : s \ge 0\}$, the segment
-$[p, q]$ and the ray $\{q + s v : s \ge 0\}$; the directions are arbitrary and the 3-chain may
-intersect itself. For every natural number $n$, the largest number of regions into which the
-union of $n$ 3-chains can divide the plane is $(9n^2 - 5n + 2)/2$.
-
-Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
-Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Theorem 1
-(`jis-2026-26.4.5-thm-1`), with the definition in the section *The k-chain*. -/
-public theorem_wanted isGreatest_planeRegionCount_threeChain (n : ℕ) :
-    IsGreatest {N : ℕ | ∃ (p q u v : Fin n → ℝ × ℝ), (∀ i, u i ≠ 0 ∧ v i ≠ 0) ∧
-        N = planeRegionCount (⋃ i, ((fun s : ℝ => p i + s • u i) '' Set.Ici 0 ∪
-          segment ℝ (p i) (q i) ∪ (fun s : ℝ => q i + s • v i) '' Set.Ici 0))}
-      ((9 * n ^ 2 - 5 * n + 2) / 2)
 
 /-- **Maximum region count for long-legged A's.** For a tip $c \in \mathbb{R}^2$, nonzero vectors
 $u_1, u_2 \in \mathbb{R}^2$ and reals $a, b > 0$, the long-legged A is the union of the rays
