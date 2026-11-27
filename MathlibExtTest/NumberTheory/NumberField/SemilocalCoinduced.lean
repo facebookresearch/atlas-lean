@@ -88,7 +88,7 @@ example (σ τ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) : (σ * τ) •
 example (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (π : K)
     (hπ : w.valuation K π = WithZero.exp (-1)) :
     (σ • w).valuation K (σ π) = WithZero.exp (-1) := by
-  rw [PlaceTransport.valuation_smul_apply, hπ]
+  rw [PlaceTransport.valuation_apply_of_smul_eq rfl, hπ]
 
 /-- On the image of `K`, an element of the decomposition group acts on the completion as
 itself. -/
@@ -117,13 +117,13 @@ example (w : HeightOneSpectrum (𝓞 K)) (σ τ : PlaceDecomp.decomp E K w)
     (u : (w.adicCompletion K)ˣ) :
     (((σ * τ) • u : (w.adicCompletion K)ˣ) : w.adicCompletion K) =
       σ • τ • (u : w.adicCompletion K) := by
-  rw [PlaceDecomp.coe_smul_units, mul_smul]
+  rw [Units.coe_smul, mul_smul]
 
 /-- The decomposition group action preserves the valuation, hence the integers, and on integer
 units it is the action on the completion. -/
 example (w : HeightOneSpectrum (𝓞 K)) (σ : PlaceDecomp.decomp E K w) (x : w.adicCompletion K) :
     Valued.v (σ • x) = Valued.v x :=
-  PlaceDecomp.valued_smul σ x
+  PlaceDecomp.valued_actRingEquiv σ x
 
 example (w : HeightOneSpectrum (𝓞 K)) (σ : PlaceDecomp.decomp E K w)
     (u : (w.adicCompletionIntegers K)ˣ) :
@@ -273,7 +273,7 @@ example (w : InfinitePlace K) (σ : InfPlaceDecomp.decomp E K w)
 example (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (u : w.Completionˣ) :
     ((InfinitePlaceTransport.transportUnits σ h u : w'.Completionˣ) : w'.Completion) =
       InfinitePlaceTransport.transport σ h (u : w.Completion) :=
-  InfinitePlaceTransport.coe_transportUnits σ h u
+  Units.coe_mapEquiv _ u
 
 end Infinite
 

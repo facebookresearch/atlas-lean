@@ -62,6 +62,7 @@ public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 import Mathlib.NumberTheory.RamificationInertia.Galois
 import Mathlib.RingTheory.Invariant.Basic
+import MathlibExt.NumberTheory.Padics.DecompositionSubgroup
 
 /-!
 # Semilocal coinduced modules of local units
@@ -190,60 +191,6 @@ theorem uniformContinuous_congr_of_forall_eq (v : Valuation K Γ₀) (f : K ≃+
   rw [Valuation.restrict_lt_iff_lt_embedding] at hx ⊢
   rwa [key]
 
-/-- In `WithZero (Multiplicative ℤ)` every `t < 1` satisfies `t ≤ exp (-1)`: the value group is
-discrete. -/
-theorem le_exp_neg_one_of_lt_one {t : WithZero (Multiplicative ℤ)} (ht : t < 1) : t ≤
-  WithZero.exp (-1) := by
-  rcases eq_or_ne t 0 with rfl | h0
-  · exact zero_le
-  · rw [← WithZero.exp_log h0] at ht ⊢
-    rw [← WithZero.exp_zero, WithZero.exp_lt_exp] at ht
-    rw [WithZero.exp_le_exp]
-    omega
-
-/-- A ring automorphism `f` of `K` such that the valuation `v` with values in
-`WithZero (Multiplicative ℤ)` is equivalent to `v ∘ f` preserves `v` exactly, `v (f x) = v x`,
-provided some element has valuation `exp (-1)`. -/
-theorem apply_eq_of_isEquiv_comap (v : Valuation K (WithZero (Multiplicative ℤ))) (f : K ≃+* K)
-    (hf : v.IsEquiv (v.comap (f : K →+* K))) (hπ : ∃ π : K,
-      v π = WithZero.exp (-1)) (x : K) : v (f x) = v x := by
-  have hle : ∀ a b : K, v a ≤ v b ↔ v (f a) ≤ v (f b) := fun a b => hf a b
-  have step1 : ∀ (g : K ≃+* K), (∀ a b : K, v a ≤ v b ↔ v (g a) ≤ v (g b)) → ∀ π : K,
-    v π = WithZero.exp (-1) →
-      v (g π) = WithZero.exp (-1) := by
-    intro g hg π hπ
-    have hπ1 : v π < 1 := by rw [hπ, ← WithZero.exp_zero, WithZero.exp_lt_exp]; omega
-    apply le_antisymm
-    · apply le_exp_neg_one_of_lt_one
-      have : ¬ v (g 1) ≤ v (g π) := fun h => (not_le.2 hπ1) (by simpa using (hg 1 π).2 h)
-      simpa using not_le.1 this
-    · have hy : v (g (g.symm π)) = WithZero.exp (-1) := by rw [g.apply_symm_apply, hπ]
-      have hy1 : v (g.symm π) < 1 := by
-        have : ¬ v (g 1) ≤ v (g (g.symm π)) := by
-          rw [map_one, map_one, hy, not_le, ← WithZero.exp_zero, WithZero.exp_lt_exp]; omega
-        have : ¬ v 1 ≤ v (g.symm π) := fun h => this ((hg _ _).1 h)
-        simpa using not_le.1 this
-      have := (hg (g.symm π) π).1 ((le_exp_neg_one_of_lt_one hy1).trans hπ.ge)
-      rwa [hy] at this
-  obtain ⟨π, hvπ⟩ := hπ
-  have hfπ : v (f π) = WithZero.exp (-1) := step1 f hle π hvπ
-  rcases eq_or_ne x 0 with rfl | hx
-  · simp
-  · set m : ℤ := WithZero.log (v x) with hm
-    have hvx : v x = WithZero.exp m := (WithZero.exp_log ((map_ne_zero v).2 hx)).symm
-    have hz : v (π ^ (-m)) = WithZero.exp m := by
-      rw [map_zpow₀, hvπ, ← WithZero.exp_zsmul]
-      congr 1
-      simp
-    have hfz : v (f (π ^ (-m))) = WithZero.exp m := by
-      rw [map_zpow₀, map_zpow₀, hfπ, ← WithZero.exp_zsmul]
-      congr 1
-      simp
-    have h1 : v (f x) ≤ v (f (π ^ (-m))) := (hle _ _).1 (by rw [hvx, hz])
-    have h2 : v (f (π ^ (-m))) ≤ v (f x) := (hle _ _).1 (by rw [hvx, hz])
-    rw [hvx]
-    exact le_antisymm (h1.trans hfz.le) (hfz.ge.trans h2)
-
 end general
 
 variable (E K : Type*) [Field E] [Field K] [NumberField K] [Algebra E K] (w : HeightOneSpectrum (𝓞
@@ -257,31 +204,19 @@ noncomputable abbrev decomp : Subgroup (K ≃ₐ[E] K) := ((w.valuation
 
 variable {E K w}
 
-/-- For `σ` in the decomposition group of `w`, the `w`-adic valuation is equivalent to its
-composite with `σ`. -/
-theorem isEquiv_comap_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
-    (w.valuation K).IsEquiv ((w.valuation K).comap (σ : K →+* K)) := by
-  rw [Valuation.isEquiv_iff_val_le_one]
-  intro x
-  rw [MulAction.mem_stabilizer_iff] at hσ
-  have : σ • x ∈ σ • (w.valuation K).valuationSubring ↔ x ∈ (w.valuation K).valuationSubring :=
-    ValuationSubring.smul_mem_pointwise_smul_iff
-  rw [hσ, Valuation.mem_valuationSubring_iff, Valuation.mem_valuationSubring_iff] at this
-  rw [Valuation.comap_apply]
-  exact this.symm
-
-/-- An element `σ` of the decomposition group of `w` preserves the `w`-adic valuation:
-`w.valuation K (σ x) = w.valuation K x`. -/
-theorem valuation_apply_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) (x : K) :
-    w.valuation K (σ x) = w.valuation K x :=
-  apply_eq_of_isEquiv_comap (w.valuation K) (σ : K ≃+* K) (isEquiv_comap_of_mem σ
-    hσ) (w.valuation_exists_uniformizer K) x
+-- `K` is algebraic over any subfield `E`, as it is algebraic over `ℚ`.
+private theorem isAlgebraic_of_numberField : Algebra.IsAlgebraic E K := by
+  have : CharZero E := RingHom.charZero (algebraMap E K)
+  exact Algebra.IsAlgebraic.tower_top (K := ℚ) (L := E) (A := K)
 
 /-- **Decomposition group elements are uniformly continuous at a finite place.** An element of the
 decomposition group of `w` is uniformly continuous for the `w`-adic uniformity on `K`. -/
 theorem uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
     UniformContinuous (WithVal.congr (w.valuation K) (w.valuation K) (σ : K ≃+* K)) :=
-  uniformContinuous_congr_of_forall_eq (w.valuation K) (σ : K ≃+* K) (valuation_apply_of_mem σ hσ)
+  have := isAlgebraic_of_numberField (E := E) (K := K)
+  uniformContinuous_congr_of_forall_eq (w.valuation K) (σ : K ≃+* K) fun x =>
+    (Valuation.isEquiv_valuation_valuationSubring _).eq_iff.mpr
+      (ValuationSubring.valuation_map_eq_of_mem_decompositionSubgroup _ hσ x)
 
 /-- **Decomposition group action on the completion at a finite place.** An element `σ` of the
 decomposition group of `w` extends by continuity to a ring automorphism of the completion
@@ -371,25 +306,21 @@ noncomputable def actHom : decomp E K w →* (w.adicCompletion K ≃+* w.adicCom
   map_one' := actRingEquiv_one
   map_mul' σ τ := actRingEquiv_mul σ τ
 
-/-- An element of the decomposition group acts on `WithVal (w.valuation K)`, a copy of `K`, as it
-acts on `K`. -/
-theorem smul_withVal_def (σ : decomp E K w) (y : WithVal (w.valuation K)) :
-    σ • y = WithVal.toVal (w.valuation K) ((σ : K ≃ₐ[E] K) y.ofVal) := rfl
-
 /-- The decomposition group of `w` acts on `WithVal (w.valuation K)` through its action on `K`
 (scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulActionWithVal : MulAction (decomp E K w) (WithVal (w.valuation
   K)) where
-  one_smul y := by rw [smul_withVal_def]; rfl
-  mul_smul σ τ y := by rw [smul_withVal_def, smul_withVal_def, smul_withVal_def]; rfl
+  one_smul y := by rw [WithVal.smul_right_def]; rfl
+  mul_smul σ τ y := by
+    rw [WithVal.smul_right_def, WithVal.smul_right_def, WithVal.smul_right_def]; rfl
 
 /-- The action of the decomposition group on `WithVal (w.valuation K)` is additive (scoped in
 `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instDistribMulActionWithVal : DistribMulAction (decomp E K
   w) (WithVal (w.valuation K)) where
-  smul_zero σ := by rw [smul_withVal_def]; simp
+  smul_zero σ := by rw [WithVal.smul_right_def]; simp
   smul_add σ x y := by
-    rw [smul_withVal_def, smul_withVal_def, smul_withVal_def]
+    rw [WithVal.smul_right_def, WithVal.smul_right_def, WithVal.smul_right_def]
     change WithVal.toVal _ ((σ : K ≃ₐ[E] K) (x.ofVal + y.ofVal)) = _
     rw [map_add]; rfl
 
@@ -429,11 +360,6 @@ noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction
   w) (w.adicCompletion K)ˣ :=
   Units.mulDistribMulActionRight
 
-/-- **The action on local units at a finite place.** The action on units of `w.adicCompletion K` is
-the action on the underlying element. -/
-theorem coe_smul_units (σ : decomp E K w) (u : (w.adicCompletion K)ˣ) : ((σ • u : (w.adicCompletion
-  K)ˣ) : w.adicCompletion K) = σ • (u : w.adicCompletion K) := rfl
-
 section integers
 
 open WithZeroTopology in
@@ -460,18 +386,16 @@ theorem valued_actRingEquiv (σ : decomp E K w) (x : w.adicCompletion K) : Value
     Valued.valuedCompletion_apply, Valued.valuedCompletion_apply, ← WithVal.apply_ofVal,
       ← WithVal.apply_ofVal,
     WithVal.congr_apply]
-  exact valuation_apply_of_mem (σ : K ≃ₐ[E] K) σ.2 a.ofVal
-
-/-- The scoped decomposition group action preserves the valuation of `w.adicCompletion K`. -/
-theorem valued_smul (σ : decomp E K w) (x : w.adicCompletion K) : Valued.v (σ • x) = Valued.v x :=
-  valued_actRingEquiv σ x
+  have := isAlgebraic_of_numberField (E := E) (K := K)
+  exact (Valuation.isEquiv_valuation_valuationSubring _).eq_iff.mpr
+    (ValuationSubring.valuation_map_eq_of_mem_decompositionSubgroup _ σ.2 a.ofVal)
 
 /-- The decomposition group action preserves the integers of the completion:
 `σ • x ∈ w.adicCompletionIntegers K ↔ x ∈ w.adicCompletionIntegers K`. -/
 theorem smul_mem_adicCompletionIntegers_iff (σ : decomp E K w) (x : w.adicCompletion K) :
     σ • x ∈ w.adicCompletionIntegers K ↔ x ∈ w.adicCompletionIntegers K := by
   rw [HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.mem_adicCompletionIntegers,
-    valued_smul]
+    smul_def, valued_actRingEquiv]
 
 /-- The decomposition group of `w` acts on the integers `w.adicCompletionIntegers K` by restricting
 its action on the completion (scoped in `NumberField.PlaceDecomp`). -/
@@ -626,12 +550,6 @@ theorem smul_mem_smul_asIdeal_pow_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectru
     MulSemiringAction.toRingEquiv_apply_symm_apply,
     inv_smul_smul]
 
-/-- **Inverting the Galois action on finite places.** If `σ • w = w'` for finite places of `K`, then
-`σ⁻¹ • w' = w`. -/
-theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w')
-  : σ⁻¹ • w' = w := by
-  rw [← h, inv_smul_smul]
-
 variable [NumberField K]
 
 /-- The Galois action carries valuations along: for `r ∈ 𝓞 K`, the `σ • w`-adic valuation of
@@ -651,9 +569,11 @@ theorem intValuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (�
       rw [hn, HeightOneSpectrum.intValuation_le_pow_iff_mem, ← smul_mem_smul_asIdeal_pow_iff σ,
         ← HeightOneSpectrum.intValuation_le_pow_iff_mem, hn]
 
-/-- For `x ∈ K`, the `σ • w`-adic valuation of `σ x` equals the `w`-adic valuation of `x`. -/
-theorem valuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (x : K) :
-    (σ • w).valuation K (σ x) = w.valuation K x := by
+/-- If `σ • w = w'`, then `w'.valuation K (σ x) = w.valuation K x` for every `x ∈ K`. -/
+theorem valuation_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w =
+  w') (x : K) :
+    w'.valuation K (σ x) = w.valuation K x := by
+  subst h
   obtain ⟨a, b, -, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 K) x
   have h1 : ∀ c : 𝓞 K, σ (algebraMap (𝓞 K) K c) = algebraMap (𝓞 K) K (σ • c) := fun c => rfl
   rw [map_div₀, map_div₀, map_div₀, h1, h1, HeightOneSpectrum.valuation_of_algebraMap,
@@ -661,13 +581,6 @@ theorem valuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K
     HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.valuation_of_algebraMap,
       intValuation_smul_apply,
     intValuation_smul_apply]
-
-/-- If `σ • w = w'`, then `w'.valuation K (σ x) = w.valuation K x` for every `x ∈ K`. -/
-theorem valuation_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w =
-  w') (x : K) :
-    w'.valuation K (σ x) = w.valuation K x := by
-  subst h
-  exact valuation_smul_apply σ w x
 
 /-- **Galois automorphisms are uniformly continuous between finite places.** If `σ • w = w'`, then
 `σ` is uniformly continuous from the `w`-adic to the `w'`-adic uniformity on `K`. -/
@@ -688,7 +601,7 @@ noncomputable def transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞
     (UniformSpace.Completion.mapRingEquiv (WithVal.congr (w.valuation K) (w'.valuation K) ((σ : K
       ≃ₐ[E] K) : K ≃+* K))
       (uniformContinuous_congr_of_smul_eq h).continuous
-      ((uniformContinuous_congr_of_smul_eq (inv_smul_eq_of_smul_eq h)).continuous.congr fun _ =>
+      ((uniformContinuous_congr_of_smul_eq (inv_smul_eq_iff.2 h.symm)).continuous.congr fun _ =>
         rfl))).trans
     (HeightOneSpectrum.adicCompletion.equiv K w').symm
 
@@ -904,7 +817,7 @@ private theorem NumberField.PlaceTransport.stabilizer_eq_decomp (E K : Type*) [F
     rw [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem, Valuation.mem_valuationSubring_iff,
       Valuation.mem_valuationSubring_iff, show σ⁻¹ • x = σ⁻¹ x from rfl,
       NumberField.PlaceTransport.valuation_apply_of_smul_eq
-        (NumberField.PlaceTransport.inv_smul_eq_of_smul_eq h)]
+        (inv_smul_eq_iff.2 h.symm)]
   · intro hσ
     have hσ' : σ⁻¹ ∈ NumberField.PlaceDecomp.decomp E K w := inv_mem hσ
     apply IsDedekindDomain.HeightOneSpectrum.ext
@@ -915,7 +828,9 @@ private theorem NumberField.PlaceTransport.stabilizer_eq_decomp (E K : Type*) [F
     have key : w.intValuation (σ⁻¹ • x) = w.intValuation x := by
       rw [← IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap (K := K),
         ← IsDedekindDomain.HeightOneSpectrum.valuation_of_algebraMap (K := K)]
-      exact NumberField.PlaceDecomp.valuation_apply_of_mem σ⁻¹ hσ' (algebraMap _ K x)
+      have := NumberField.PlaceDecomp.isAlgebraic_of_numberField (E := E) (K := K)
+      exact (Valuation.isEquiv_valuation_valuationSubring _).eq_iff.mpr
+        (ValuationSubring.valuation_map_eq_of_mem_decompositionSubgroup _ hσ' (algebraMap _ K x))
     exact Iff.of_eq (congrArg (· < (1 : WithZero (Multiplicative ℤ))) key)
 
 private theorem NumberField.PlaceTransport.under_smul (E K : Type*) [Field E] [Field K] [Algebra E
@@ -1034,22 +949,26 @@ end NumberField.FiniteSIdele
 
 open NumberField
 
-namespace NumberField.InfPlaceDecomp
+namespace NumberField.InfinitePlaceTransport
 
 section general
-variable {K : Type*} [Field K]
+variable {R S : Type*} [Field R] [Field S]
 
-/-- **Absolute-value-preserving automorphisms are uniformly continuous.** A ring automorphism `f` of
-`K` that preserves a real absolute value `v` is an isometry of `WithAbs v`, hence uniformly
-continuous. -/
-theorem uniformContinuous_congr_of_forall_eq (v : AbsoluteValue K ℝ) (f : K ≃+* K) (h : ∀ x,
-  v (f x) = v x) :
-    UniformContinuous (WithAbs.congr v v f) :=
-  (AddMonoidHomClass.isometry_of_norm (WithAbs.congr v v f) fun x => by
+/-- **Absolute-value-matching ring isomorphisms are uniformly continuous.** A ring isomorphism
+`f : R ≃+* S` with `v' (f x) = v x` for real absolute values `v` and `v'` is an isometry
+`WithAbs v → WithAbs v'`, hence uniformly continuous. -/
+theorem uniformContinuous_congr_of_forall_eq (v : AbsoluteValue R ℝ) (v' : AbsoluteValue S ℝ) (f : R
+  ≃+* S)
+    (h : ∀ x, v' (f x) = v x) : UniformContinuous (WithAbs.congr v v' f) :=
+  (AddMonoidHomClass.isometry_of_norm (WithAbs.congr v v' f) fun x => by
     rw [WithAbs.norm_eq_apply_ofAbs, WithAbs.norm_eq_apply_ofAbs, WithAbs.congr_apply]
     exact h _).uniformContinuous
 
 end general
+
+end NumberField.InfinitePlaceTransport
+
+namespace NumberField.InfPlaceDecomp
 
 variable (E K : Type*) [Field E] [Field K] [Algebra E K] (w : InfinitePlace K)
 
@@ -1071,7 +990,8 @@ the decomposition group of the infinite place `w` is uniformly continuous for th
 `w`. -/
 theorem uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
     UniformContinuous (WithAbs.congr w.1 w.1 (σ : K ≃+* K)) :=
-  uniformContinuous_congr_of_forall_eq w.1 (σ : K ≃+* K) (apply_of_mem σ hσ)
+  InfinitePlaceTransport.uniformContinuous_congr_of_forall_eq w.1 w.1 (σ : K ≃+* K)
+    (apply_of_mem σ hσ)
 
 /-- **Decomposition group action on the completion at an infinite place.** An element `σ` of the
 decomposition group of the infinite place `w` extends by continuity to a ring automorphism of
@@ -1164,24 +1084,20 @@ noncomputable def actHom : decomp E K w →* (w.Completion ≃+* w.Completion) w
   map_one' := actRingEquiv_one
   map_mul' σ τ := actRingEquiv_mul σ τ
 
-/-- An element of the decomposition group acts on `WithAbs w.1`, a copy of `K`, as it acts on
-`K`. -/
-theorem smul_withAbs_def (σ : decomp E K w) (y : WithAbs w.1) : σ • y = WithAbs.toAbs w.1 ((σ : K
-  ≃ₐ[E] K) y.ofAbs) := rfl
-
 /-- The decomposition group of the infinite place `w` acts on `WithAbs w.1` through its action on
 `K` (scoped in `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instMulActionWithAbs : MulAction (decomp E K w) (WithAbs w.1) where
-  one_smul y := by rw [smul_withAbs_def]; rfl
-  mul_smul σ τ y := by rw [smul_withAbs_def, smul_withAbs_def, smul_withAbs_def]; rfl
+  one_smul y := by rw [WithAbs.smul_right_def]; rfl
+  mul_smul σ τ y := by
+    rw [WithAbs.smul_right_def, WithAbs.smul_right_def, WithAbs.smul_right_def]; rfl
 
 /-- The action of the decomposition group on `WithAbs w.1` is additive (scoped in
 `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instDistribMulActionWithAbs : DistribMulAction (decomp E K w) (WithAbs
   w.1) where
-  smul_zero σ := by rw [smul_withAbs_def]; simp
+  smul_zero σ := by rw [WithAbs.smul_right_def]; simp
   smul_add σ x y := by
-    rw [smul_withAbs_def, smul_withAbs_def, smul_withAbs_def]
+    rw [WithAbs.smul_right_def, WithAbs.smul_right_def, WithAbs.smul_right_def]
     change WithAbs.toAbs _ ((σ : K ≃ₐ[E] K) (x.ofAbs + y.ofAbs)) = _
     rw [map_add]; rfl
 
@@ -1234,11 +1150,6 @@ noncomputable scoped instance instMulActionUnits : MulAction (decomp E K w) (w.C
 noncomputable scoped instance instSMulUnits : SMul (decomp E K w) (w.Completion)ˣ :=
   (instMulActionUnits (E := E) (K := K) (w := w)).toSMul
 
-/-- **The action on local units at an infinite place.** The action on units of `w.Completion` is the
-action on the underlying element. -/
-theorem coe_smul_units (σ : decomp E K w) (u : (w.Completion)ˣ) : ((σ • u : (w.Completion)ˣ)
-  : w.Completion) = σ • (u : w.Completion) := rfl
-
 variable (E K w) in
 /-- **Local units at an infinite place.** The units of the completion `w.Completion` at the
 infinite place `w`, written additively, as a `ℤ`-linear representation of the decomposition
@@ -1254,19 +1165,15 @@ open scoped NumberField.InfPlaceDecomp
 
 variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
-/-- **An infinite place above an infinite place.** Every infinite place `v` of `E` is the
-restriction of an infinite place `w` of `K`: `w.comap (algebraMap E K) = v`. -/
-theorem exists_above (v : InfinitePlace E) : ∃ w : InfinitePlace K, w.comap (algebraMap E K) = v :=
-  InfinitePlace.comap_surjective v
-
 /-- **Chosen infinite place above an infinite place.** A choice, made with `Classical.choose`, of
 an infinite place of `K` restricting to the infinite place `v` of `E` (see `comap_above`). -/
-noncomputable def above (v : InfinitePlace E) : InfinitePlace K := (exists_above E K v).choose
+noncomputable def above (v : InfinitePlace E) : InfinitePlace K :=
+  (InfinitePlace.comap_surjective (k := E) (K := K) v).choose
 
 /-- **The chosen infinite place restricts to the given place.** The chosen infinite place
 `above E K v` restricts to `v` on `E`. -/
 theorem comap_above (v : InfinitePlace E) : (above E K v).comap (algebraMap E K) = v
-  := (exists_above E K v).choose_spec
+  := (InfinitePlace.comap_surjective (k := E) (K := K) v).choose_spec
 
 end NumberField.ArchIdele
 
@@ -1274,33 +1181,12 @@ open NumberField
 
 namespace NumberField.InfinitePlaceTransport
 
-section general
-variable {R S : Type*} [Field R] [Field S]
-
-/-- **Absolute-value-matching ring isomorphisms are uniformly continuous.** A ring isomorphism
-`f : R ≃+* S` with `v' (f x) = v x` for real absolute values `v` and `v'` is an isometry
-`WithAbs v → WithAbs v'`, hence uniformly continuous. -/
-theorem uniformContinuous_congr_of_forall_eq (v : AbsoluteValue R ℝ) (v' : AbsoluteValue S ℝ) (f : R
-  ≃+* S)
-    (h : ∀ x, v' (f x) = v x) : UniformContinuous (WithAbs.congr v v' f) :=
-  (AddMonoidHomClass.isometry_of_norm (WithAbs.congr v v' f) fun x => by
-    rw [WithAbs.norm_eq_apply_ofAbs, WithAbs.norm_eq_apply_ofAbs, WithAbs.congr_apply]
-    exact h _).uniformContinuous
-
-end general
-
 variable {E K : Type*} [Field E] [Field K] [Algebra E K]
 
 /-- If `σ • w = w'` for infinite places of `K`, then `w' (σ x) = w x` for every `x ∈ K`. -/
 theorem apply_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') (x : K)
   : w' (σ x) = w x := by
   rw [← h, InfinitePlace.smul_apply, AlgEquiv.symm_apply_apply]
-
-/-- **Inverting the Galois action on infinite places.** If `σ • w = w'` for infinite places of `K`,
-then `σ⁻¹ • w' = w`. -/
-theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') : σ⁻¹ • w'
-  = w := by
-  rw [← h, inv_smul_smul]
 
 /-- **Galois automorphisms are uniformly continuous between infinite places.** If `σ • w = w'` for
 infinite places, then `σ` is uniformly continuous from `WithAbs w.1` to `WithAbs w'.1`. -/
@@ -1317,7 +1203,7 @@ noncomputable def transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : �
   (AbsoluteValue.Completion.equiv w.1).trans
     ((UniformSpace.Completion.mapRingEquiv (WithAbs.congr w.1 w'.1 ((σ : K ≃ₐ[E] K) : K ≃+* K))
       (uniformContinuous_congr_of_smul_eq h).continuous
-      ((uniformContinuous_congr_of_smul_eq (inv_smul_eq_of_smul_eq h)).continuous.congr fun _ =>
+      ((uniformContinuous_congr_of_smul_eq (inv_smul_eq_iff.2 h.symm)).continuous.congr fun _ =>
         rfl)).trans
     (AbsoluteValue.Completion.equiv w'.1).symm)
 
@@ -1332,14 +1218,6 @@ theorem transport_apply (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ �
   rw [transport, RingEquiv.trans_apply, RingEquiv.trans_apply,
     AbsoluteValue.Completion.equiv_symm_apply, AbsoluteValue.Completion.equiv_apply]
   rfl
-
-/-- On the underlying uniform-space completions, `transport σ h` is the completion map of `σ`. -/
-theorem toCompletion_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (x
-  : w.Completion) :
-    AbsoluteValue.Completion.toCompletion (transport σ h x)
-      = UniformSpace.Completion.map (WithAbs.congr w.1 w'.1 ((σ : K ≃ₐ[E] K) : K ≃+* K))
-        (AbsoluteValue.Completion.toCompletion x) := by
-  rw [transport_apply, AbsoluteValue.Completion.toCompletion_ofCompletion]
 
 /-- **Transport between infinite places on elements of the field.** On the image of `K`,
 `transport σ h` is `σ`: it sends the image of `x` in `w.Completion` to the image of `σ x` in
@@ -1367,12 +1245,6 @@ theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : 
 noncomputable abbrev transportUnits (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') :
     (w.Completion)ˣ ≃* (w'.Completion)ˣ :=
   Units.mapEquiv (transport σ h).toMulEquiv
-
-/-- `transportUnits σ h` agrees with `transport σ h` on underlying elements. -/
-theorem coe_transportUnits (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (u
-  : (w.Completion)ˣ) :
-    ((transportUnits σ h u : (w'.Completion)ˣ) : w'.Completion) = transport σ h (u : w.Completion)
-      := rfl
 
 end NumberField.InfinitePlaceTransport
 
@@ -1651,7 +1523,7 @@ private theorem transportUnits_eq_smul {w : HeightOneSpectrum (𝓞 K)} (d : Pla
   ext : 1
   change transport (d : K ≃ₐ[E] K) h (u : w.adicCompletion K) = ((d • u : (w.adicCompletion K)ˣ)
     : w.adicCompletion K)
-  rw [NumberField.PlaceTransport.transport_eq_actRingEquiv E K w d h, PlaceDecomp.coe_smul_units,
+  rw [NumberField.PlaceTransport.transport_eq_actRingEquiv E K w d h, Units.coe_smul,
     PlaceDecomp.smul_def]
 
 end general
@@ -1749,7 +1621,7 @@ private theorem transportUnits_eq_smul {w : InfinitePlace K} (d : InfPlaceDecomp
   ext : 1
   change transport (d : K ≃ₐ[E] K) h (u : w.Completion) = ((d • u : (w.Completion)ˣ) : w.Completion)
   rw [NumberField.InfinitePlaceTransport.transport_eq_actRingEquiv E K w d h,
-    InfPlaceDecomp.coe_smul_units,
+    Units.coe_smul,
     InfPlaceDecomp.smul_def]
 
 end general
