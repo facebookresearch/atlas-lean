@@ -1,6 +1,6 @@
 # Friedgut: coarse thresholds of graph properties are local
 
-Let $\mathcal{P}$ be a monotone graph property and $p = p(n)$ with $\mu_p(\mathcal{P}) \in [\varepsilon, 1 - \varepsilon]$. If $\mathcal{P}$ has a coarse threshold at $p$, in the sense that $p \cdot \frac{d}{dp}\mu_p(\mathcal{P}) \le C$ for a constant $C$, then $\mathcal{P}$ is approximated by a local property: for every $\delta > 0$ there is a monotone property $\mathcal{Q}$ defined by containing a member of a finite family of graphs of size $O_{C,\delta}(1)$ with $\mu_p(\mathcal{P} \triangle \mathcal{Q}) \le \delta$. Friedgut used this criterion to prove that $k$-SAT unsatisfiability has a sharp threshold (whose location may depend on $n$), and Achlioptas and Friedgut used it to prove the same for $k$-colourability.
+Let $\mathcal{P}$ be a monotone graph property on $n$ vertices and $p = p(n)$. If $\mathcal{P}$ has a coarse threshold at $p$, in the sense that $p \cdot \frac{d}{dp}\mu_p(\mathcal{P}) \le C$ for a constant $C$, then $\mathcal{P}$ is approximated by a local property: for every $\delta > 0$ there is a monotone graph property $\mathcal{Q}$, all of whose minimal graphs are balanced (no subgraph has larger average degree) and have at most $k(\delta, C)$ edges, with $\mu_p(\mathcal{P} \triangle \mathcal{Q}) \le \delta$; here $k(\delta, C)$ does not depend on $n$. Friedgut used this criterion to prove that $k$-SAT unsatisfiability has a sharp threshold (whose location may depend on $n$), and Achlioptas and Friedgut used it to prove the same for $k$-colourability.
 
 ## Proof sketch
 
@@ -17,5 +17,5 @@ By the Margulis-Russo formula, a coarse threshold means bounded total influence 
 
 ## Sources
 
-- E. Friedgut, "Sharp thresholds of graph properties, and the k-sat problem", Journal of the American Mathematical Society 12 (1999) 1017-1054.
+- E. Friedgut, "Sharp thresholds of graph properties, and the k-sat problem" (with an appendix by J. Bourgain), Journal of the American Mathematical Society 12 (1999) 1017-1054, Theorem 1.1.
 - D. Achlioptas, E. Friedgut, "A sharp threshold for k-colorability", Random Structures & Algorithms 14 (1999) 63-70.
