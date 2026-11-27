@@ -9807,7 +9807,6 @@
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook36": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook35": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook51": {"to": "Analysis/hilbert-spaces", "title": "Orthogonal systems and general orthogonal series"},
-  "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook55": {"to": "Analysis/banach-spaces", "title": "Polynomials on Banach spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook64": {"to": "Analysis/banach-spaces/duality-and-weak-topologies", "title": "Hahn–Banach theorem"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook65": {"to": "Analysis/banach-spaces", "title": "Symmetric hulls of nowhere dense convex sets"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook86": {"to": "Analysis/hilbert-spaces", "title": "Orthogonal systems and general orthogonal series"},

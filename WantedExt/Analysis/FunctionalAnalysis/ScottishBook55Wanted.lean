@@ -8,13 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import Mathlib.Topology.Algebra.Module.Multilinear.Basic
-public import Mathlib.Topology.Algebra.Module.Spaces.ContinuousLinearMap
 public import MathlibExt.Analysis.FunctionalAnalysis.ScottishBook55
 
-@[expose] public section
-
-namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook55Wanted
-
-end MathlibExt.Analysis.FunctionalAnalysis.ScottishBook55Wanted
+/-! Compatibility import for the original Scottish Book Problem 55 module. -/
