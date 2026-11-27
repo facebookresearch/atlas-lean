@@ -429,8 +429,9 @@ a field of `scripts/taxonomy.json` nor one the given proposals add.
 The full site, kept as the `blueprint-site-full` artifact, adds one page per
 Mathlib module of the layer, grouped by topic, and its statement boxes list the
 Mathlib declarations their Lean statement and proof use. GitHub Pages
-publishes it under its 1 GB limit with its pages stored gzipped, for the
-browser to inflate ([The GitHub Pages copy](#the-github-pages-copy)).
+publishes it under its 1 GB limit with its pages and the project map's data
+stored gzipped, for the browser to inflate
+([The GitHub Pages copy](#the-github-pages-copy)).
 [`mathlib-pages.md`](mathlib-pages.md) describes the
 pages and how an article links to a Mathlib declaration: to its source line at
 the pinned revision, with its exact name as the link's title, which
@@ -867,7 +868,10 @@ page is kept small. Readers with JavaScript browse with the explorer, which
 hides Material's header, sidebars and footer; the theme's layout serves readers
 without JavaScript and the explorer's fallback. `theme/partials/nav.html` lists
 Home, the sections above the page, the page's siblings and its own entries;
-each folder page lists its children too. `hooks/trim_pages.py` publishes the
+each folder page lists its children too. In a folder of more than 50 entries, a
+page's sidebar lists only the 50 entries around it, then a link to the folder
+page, which lists them all, so that a page's sidebar stops growing with its
+folder. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
 theme's indentation, `hooks/title_only_search.py` keeps one title record per
 page in the search index, and `hooks/card_pages.py` shows each card on its
@@ -1012,8 +1016,15 @@ the small page, at the same address and anchor. The explorer and the project
 map fetch the pages they show: the script answers their fetch of a stored page
 with the inflated page, so the other pages that run either, the home page,
 `coverage/index.html` and the standalone map `dependencies/map/index.html`,
-load it first in their head. Every other file, the explorer's data among them,
-is published as built.
+load it first in their head. The project map's data under
+`dependencies/map/data/`, its parts, `search.json` and `relations.json`, is
+stored gzipped too, as `FILE.gz` with nothing at its address: only the map
+fetches it, and the script answers that fetch with the inflated file. The
+map's `index.json` and every other file are published as built: the pages
+that run the explorer preload the map's `index.json`; pages link to
+`dependencies/index.json`, whose entries name the explorer's files under
+`dependencies/scopes/` and `dependencies/chapters/`; and tools outside the
+site read `tasks.json` and `publication.json`.
 
 ```sh
 python scripts/pack_pages_site.py pack site-full site-pages
@@ -1021,18 +1032,21 @@ python scripts/pack_pages_site.py check site-full site-pages
 ```
 
 `pack` writes the GitHub Pages copy. `check` requires every file of the site to
-come back from it byte for byte, as its copy, by inflating its stored page or
-by removing the script tag `pack` added, each small page to be the one `pack`
-writes, and the copy to have no other file. The wiki job packs and checks its
-site before uploading it; the Mathlib pages job does the same with the full
-site, on pull requests too. On the full site of 22 November 2026 (23,743 files,
-1,754,947,153 bytes), the 14,721 pages under `mathlib/` and `roadmap/` go from
-1,528,204,478 bytes to 180,894,934 bytes with their small pages: a copy of
-407,642,508 bytes in 38,465 files, whose Pages archive has 451,696,640 bytes.
-The wiki job's site of that day (13,450 files, 606,507,092 bytes) packs into
-280,517,674 bytes, a Pages archive of 305,725,440 bytes.
+come back from it byte for byte, as its copy, by inflating its stored copy or by
+removing the script tag `pack` added, each small page to be the one `pack`
+writes, each stored data file to have no plain copy and no page to link to,
+preload or load it, and the copy to have no other file. The wiki job packs and
+checks its site before uploading it; the Mathlib pages job does the same with
+the full site, on pull requests too. On the full site of 27 November 2026
+(39,342 files, 3,044,837,982 bytes), the 20,215 pages under `mathlib/` and
+`roadmap/` go from 2,449,502,501 bytes to 297,650,911 bytes with their small
+pages, and the map's 258 data files from 356,448,636 bytes to 30,076,853 bytes:
+a copy of 566,619,937 bytes in 59,558 files, whose Pages archive has 635,176,960
+bytes, against 961,556,480 bytes with the pages alone stored gzipped. The wiki
+job's site of that day (28,954 files, 1,705,855,924 bytes) packs into
+423,294,011 bytes, a Pages archive of 472,862,720 bytes.
 
-On GitHub Pages, these pages need JavaScript and a browser with
+On GitHub Pages, these pages and the map need JavaScript and a browser with
 `DecompressionStream`, which every major browser has had since 2023, to open.
 Without them, and for search engines that do not run JavaScript, a page is the
 small page, whose note says that it is stored compressed; the theme's layout

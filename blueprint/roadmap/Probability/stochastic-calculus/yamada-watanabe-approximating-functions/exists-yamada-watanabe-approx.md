@@ -1,0 +1,3 @@
+# Yamada–Watanabe approximating functions
+
+Let $h$ be continuous on $[0, \infty)$ and positive on $(0, \infty)$, with $\int_{(0, \varepsilon]} h(u)^{-2}\, du = \infty$ for every $\varepsilon > 0$. Then there are $1 = a_0 > a_1 > \dots > 0$ with $a_n \to 0$ and $\int_{a_{n+1}}^{a_n} h(u)^{-2}\, du = n + 1$, and even $C^2$ functions $\varphi_n$ with $\varphi_n(x) \to |x|$ for every $x$, $|\varphi_n'| \le 1$, $\varphi_n'' \ge 0$, $\varphi_n''(x) \le 2/((n+1)\, h(|x|)^2)$ for $x \ne 0$, and $\varphi_n''(x) \ne 0$ only when $a_{n+1} < |x| < a_n$; in particular $\varphi_n''(0) = 0$, which matters because $h$ may vanish at $0$.

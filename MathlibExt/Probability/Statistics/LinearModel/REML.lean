@@ -82,8 +82,12 @@ structure IsErrorContrast (X : Matrix m k ℝ) (A : Matrix r m ℝ) : Prop where
   card_add_card : Fintype.card r + Fintype.card k = Fintype.card m
 
 /-- The **restricted (REML) log-likelihood** of the error contrast `A` at covariance `V` and data
-`y`: the logarithm of the `N(0, A V Aᵀ)` density at `A y`. See `remlLogLik_eq` for the closed
-form when `A V Aᵀ` is positive definite. -/
+`y`: the logarithm of the centered Gaussian density formula `multivariateGaussianPDFReal 0` with
+matrix `A V Aᵀ`, evaluated at `A y`. When `A V Aᵀ` is positive definite (for example, `V`
+positive definite and `A Aᵀ` invertible), this is the log density of `N(0, A V Aᵀ)` at `A y`
+(`multivariateGaussian_eq_withDensity`). The definition takes no hypothesis on `A` or `V`: when
+`det (A V Aᵀ) ≤ 0` it is the junk value `log 0 = 0`. See `remlLogLik_eq` for the closed form
+when `A V Aᵀ` is positive definite. -/
 noncomputable def remlLogLik (A : Matrix r m ℝ) (V : Matrix m m ℝ) (y : m → ℝ) : ℝ :=
   Real.log (multivariateGaussianPDFReal 0 (A * V * Aᵀ) (toLp 2 (A *ᵥ y)))
 
@@ -122,8 +126,9 @@ section Law
 
 variable [DecidableEq m] {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- **Law of an error contrast**: if `y ~ N(X β, V)` and `A X = 0`, then `A y ~ N(0, A V Aᵀ)`,
-whatever `β` is. This is a statement about the law, not only the first two moments. -/
+/-- **Law of an error contrast**: if `y ~ N(X β, V)` with `V` positive semidefinite and
+`A X = 0`, then `A y ~ N(0, A V Aᵀ)`, whatever `β` is. This is a statement about the law, not
+only the first two moments. -/
 theorem hasLaw_errorContrast {X : Matrix m k ℝ} {A : Matrix r m ℝ} (hAX : A * X = 0)
     {V : Matrix m m ℝ} (hV : V.PosSemidef) (β : k → ℝ) {y : Ω → EuclideanSpace ℝ m}
     (hy : HasLaw y (multivariateGaussian (toLp 2 (X *ᵥ β)) V) μ) :
@@ -136,8 +141,8 @@ theorem hasLaw_errorContrast {X : Matrix m k ℝ} {A : Matrix r m ℝ} (hAX : A 
   rw [mulVec_mulVec, hAX, zero_mulVec, toLp_zero]
 
 omit [DecidableEq r] in
-/-- **Mean and covariance of an error contrast**: if `y ~ N(X β, V)` and `A X = 0`, then
-`𝔼[A y] = 0` and `Cov((A y) i, (A y) j) = (A V Aᵀ) i j`. -/
+/-- **Mean and covariance of an error contrast**: if `y ~ N(X β, V)` with `V` positive
+semidefinite and `A X = 0`, then `𝔼[A y] = 0` and `Cov((A y) i, (A y) j) = (A V Aᵀ) i j`. -/
 theorem integral_covariance_errorContrast {X : Matrix m k ℝ} {A : Matrix r m ℝ}
     (hAX : A * X = 0) {V : Matrix m m ℝ} (hV : V.PosSemidef) (β : k → ℝ)
     {y : Ω → EuclideanSpace ℝ m}
@@ -167,7 +172,11 @@ theorem hasLaw_errorContrast_withDensity {X : Matrix m k ℝ} {A : Matrix r m �
     (posDef_mul_mul_transpose hV hA.isUnit_mul_transpose)]
   exact hasLaw_errorContrast hA.mul_eq_zero hV.posSemidef β hy
 
-/-- `remlLogLik A V y` is the log density of `N(0, A V Aᵀ)` at the contrast vector `A y`. -/
+/-- `remlLogLik A V y` is the logarithm of the centered Gaussian density formula with matrix
+`A V Aᵀ` at the contrast vector `A y`, by definition and with no hypothesis on `A` or `V`. When
+`A V Aᵀ` is positive definite (for example, `V` positive definite and `A Aᵀ` invertible), this
+is the log density of `N(0, A V Aᵀ)` at `A y`; when `det (A V Aᵀ) ≤ 0` it is the junk value
+`log 0 = 0`. -/
 theorem remlLogLik_toEuclideanLin (A : Matrix r m ℝ) (V : Matrix m m ℝ)
     (y : EuclideanSpace ℝ m) :
     remlLogLik A V (ofLp y) =
@@ -213,8 +222,9 @@ theorem remlLogLik_mul_left {A : Matrix r m ℝ} {V : Matrix m m ℝ} (hS : (A *
   push_cast
   ring
 
-/-- **Argmax invariance**: under a change of contrast basis `B = Q A`, the restricted
-log-likelihoods of `A` and `B` have the same maximizers over every set of parameters. -/
+/-- **Argmax invariance**: if `A Aᵀ` is invertible and every `V θ` is positive definite, then
+under a change of contrast basis `B = Q A` with `Q` invertible, the restricted log-likelihoods
+of `A` and `B` have the same maximizers over every set of parameters. -/
 theorem isMaxOn_remlLogLik_mul_left_iff {Θ : Type*} {A : Matrix r m ℝ}
     (hA : IsUnit (A * Aᵀ)) {V : Θ → Matrix m m ℝ} (hV : ∀ θ, (V θ).PosDef)
     {Q : Matrix r r ℝ} (hQ : IsUnit Q.det) (y : m → ℝ) (s : Set Θ) (θ₀ : Θ) :
@@ -223,8 +233,9 @@ theorem isMaxOn_remlLogLik_mul_left_iff {Θ : Type*} {A : Matrix r m ℝ}
   simp only [isMaxOn_iff, remlLogLik_mul_left (posDef_mul_mul_transpose (hV _) hA) hQ,
     sub_le_sub_iff_right]
 
-/-- **Score invariance**: for a parameter in a normed space, the restricted log-likelihoods of
-`A` and `Q A` have the same derivatives, and one is differentiable exactly where the other is. -/
+/-- **Score invariance**: if `A Aᵀ` is invertible and every `V θ` is positive definite, then for a
+parameter in a normed space and `Q` invertible, the restricted log-likelihoods of `A` and `Q A`
+have the same derivatives, and one is differentiable exactly where the other is. -/
 theorem hasFDerivAt_remlLogLik_mul_left_iff {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {A : Matrix r m ℝ} (hA : IsUnit (A * Aᵀ)) {V : E → Matrix m m ℝ}
     (hV : ∀ θ, (V θ).PosDef) {Q : Matrix r r ℝ} (hQ : IsUnit Q.det) (y : m → ℝ)
@@ -234,7 +245,9 @@ theorem hasFDerivAt_remlLogLik_mul_left_iff {E : Type*} [NormedAddCommGroup E]
   simp only [remlLogLik_mul_left (posDef_mul_mul_transpose (hV _) hA) hQ]
   exact hasFDerivAt_sub_const_iff _
 
-/-- **Score invariance**, `fderiv` form. -/
+/-- **Score invariance**, `fderiv` form: if `A Aᵀ` is invertible, every `V θ` is positive
+definite and `Q` is invertible, then the restricted log-likelihoods of `Q A` and `A` have the
+same `fderiv`. -/
 theorem fderiv_remlLogLik_mul_left {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {A : Matrix r m ℝ} (hA : IsUnit (A * Aᵀ)) {V : E → Matrix m m ℝ} (hV : ∀ θ, (V θ).PosDef)
     {Q : Matrix r r ℝ} (hQ : IsUnit Q.det) (y : m → ℝ) :
