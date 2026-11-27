@@ -20,10 +20,10 @@ With `σₖ(n) = ∑_{d ∣ n} d^k`, the paper calls `n`
 some proper divisor `d` of `n`, and `[k,ℓ]`-near-perfect if
 `σₖ(n) - n^k - d^k = ℓn`; deficient/near `F_k`-perfect is
 the case `ℓ = 3` (with `k > 1`), and `F`-perfect variants
-are `k = 2`, `ℓ = 3`. Below these are
-`IsKLDeficientPerfect`/`IsKLNearPerfect` and the `With`
-variants fixing the divisor `d` (written additively to stay
-in `ℕ`). The paper's `ℓ` is a positive natural (its
+are `k = 2`, `ℓ = 3`. The imported `MathlibExt` modules
+define these as `IsKLDeficientPerfect`/`IsKLNearPerfect` and
+the `With` variants fixing the divisor `d` (written
+additively to stay in `ℕ`). The paper's `ℓ` is a positive natural (its
 Proposition 2 proof needs `ℓ ≥ 1`: at `ℓ = 0` every prime
 would be `[k,0]`-near-perfect with `d = 1`), so
 `[k,ℓ]`-statements carry `1 ≤ l` where the printed form
@@ -68,26 +68,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted prime_pow_not_fPerfect (p a : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect (p ^ a) ∧ ¬ IsNearFPerfect (p ^ a)
-
-/-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
-and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
-$\sigma_k(m) = \sum_{e \mid m} e^k$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and
-$d < p^a$) with $\sigma_k(p^a) = (p^a)^k + d^k + \ell p^a$ if and only if $2 \le a \le k$,
-$d = 1$ and $\ell = p^{k-a} \sum_{i=0}^{a-2} p^{ik}$.
-
-The source prints the conclusion $a = k$, which is false: for $p = 2$, $a = 2$, $k = 3$,
-$\ell = 2$, $d = 1$ one has $\sigma_3(4) = 73 = 4^3 + 1^3 + 2 \cdot 4$ with $a \ne k$. The
-printed form is the case $a = k$ of the identity $\sum_{i=1}^{a-1} p^{ik} = \ell p^a$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 4. -/
-theorem_wanted klNearPerfectWith_prime_pow_iff
-    (p a k l d : ℕ) (hp : p.Prime) (hk : 1 ≤ k) (hl : 1 ≤ l) :
-    KLNearPerfectWith k l (p ^ a) d ↔
-      2 ≤ a ∧ a ≤ k ∧ d = 1 ∧
-        l = p ^ (k - a) *
-          ∑ i ∈ Finset.range (a - 1), p ^ (i * k)
 
 /-- **$[k,\ell]$-deficient-perfect prime powers for $k \ge 2$.** Let $p$ be a prime and let $a$,
 $k$ and $\ell$ be natural numbers with $k \ge 2$. If $p^a$ is $[k,\ell]$-deficient-perfect, then
@@ -138,19 +118,6 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
 
-/-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
-a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
-$p_1^a p_2$ is not deficient $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 16. -/
-theorem_wanted not_isDeficientFkPerfect_prime_pow_mul
-    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) :
-    ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂)
-
 /-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
 an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
 
@@ -160,20 +127,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isDeficientFkPerfect_two_mul_pow
     (k p a : ℕ) (hk : 2 < k) (hp : p.Prime) (hpo : Odd p) :
     ¬ IsDeficientFkPerfect k (2 * p ^ a)
-
-/-- **No near $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
-$k > 1$, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural numbers such that
-$a + b$ is odd or both $a$ and $b$ are odd. Then $p_1^a p_2^b$ is not near $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 20. -/
-theorem_wanted not_isNearFkPerfect_pow_mul_pow
-    (k p₁ p₂ a b : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) (ha : 1 ≤ a) (hb : 1 ≤ b)
-    (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
-    ¬ IsNearFkPerfect k (p₁ ^ a * p₂ ^ b)
 
 /-- **No product of distinct odd primes is near $F_k$-perfect.** Let $k > 1$ and let $s$ be a
 finite set of odd primes. Then $\prod_{p \in s} p$ is not near $F_k$-perfect.
