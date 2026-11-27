@@ -1,6 +1,6 @@
 # Brakensiek-Dhar-Gopi-Zhang: random AG codes achieve capacity over constant-size fields
 
-For every $\varepsilon > 0$ there is $q_0 = 2^{O(1/\varepsilon^2)}$ such that for every $q \ge q_0$ and rate $R$, algebraic-geometry codes from suitable curves over $\mathbb{F}_q$ with randomly chosen evaluation points (of growing length $n$) are, with high probability, $\big(1 - R - \varepsilon, O(1/\varepsilon)\big)$-list decodable, giving the first algebraic code families over constant-size fields achieving list-decoding capacity with optimal list size.
+For every rational $\varepsilon, R \in (0, 1)$ with $R + \varepsilon < 1$, let $L = \lceil 2(1-R)/\varepsilon \rceil$. For every sufficiently large prime $p$ with $\log_2 p \gg_R 1/\varepsilon^2$ and every sufficiently large length $n$ with $Rn \in \mathbb{Z}$ for which there exists an integer $t$ satisfying $Rn/2 \ge p^t \ge Rn/4$, a random puncturing of the Garcia–Stichtenoth algebraic-geometry code $\mathrm{GS}(p, t, s)$ over $\mathbb{F}_{p^2}$ with $s = Rn + g(G_{p,t}) - 1$ is, with probability at least $1 - 2^{-Ln}$, a $(1 - R - \varepsilon, L)$ average-radius list-decodable $[n, Rn]$-code (Brakensiek–Dhar–Gopi–Zhang, Corollary 4.34; Theorem 1.3 gives the trade-off $(\frac{L}{L+1}(1-R-\varepsilon), L)$ over fields of size $\exp(O(L/\varepsilon))$). In particular, choosing a prime $p$ at this threshold gives constant field size $q = p^2 \le 2^{O_R(1/\varepsilon^2)}$. This gives the first proof that algebraic-geometry codes, by random puncturing, achieve list-decoding capacity, yielding linear codes over constant-size fields with list size $O(1/\varepsilon)$.
 
 ## Proof sketch
 
@@ -9,6 +9,9 @@ Generalize the GM-MDS machinery from polynomials to Riemann-Roch spaces of divis
 ## Depends on
 
 - [List-decodable code](../list-decoding/is-list-decodable.md)
+- [Linear code](../linear-codes/linear-code.md)
+- [Genus](../../../AlgebraicGeometry/not-yet-classified/coherent-curve-linear-series/genus.md)
+- [Prime number](../../../NumberTheory/primes-primality/prime-number.md)
 
 ## Proof depends on
 

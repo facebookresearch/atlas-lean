@@ -1,0 +1,3 @@
+# Each coordinate under a product weight has the common expectation
+
+Let $\alpha$ and $\iota$ be finite sets and $p : \alpha \to \mathbb{R}$ a weight with $\sum_a p(a) = 1$. Under the product weight $\omega \mapsto \prod_k p(\omega_k)$ on samples $\omega : \iota \to \alpha$, the expectation of $f(\omega_i)$ equals the $p$-expectation of $f$, for every coordinate $i$ and every $f : \alpha \to \mathbb{R}$. The product weight $\omega \mapsto \prod_i p(\omega_i)$ is the law of an i.i.d. sample only when $p$ is a probability law ($p \ge 0$ and $\sum_a p(a) = 1$); the identity itself is algebraic and does not use nonnegativity. For a probability law $p$ it says that each coordinate of an i.i.d. sample has law $p$.

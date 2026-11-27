@@ -37,6 +37,7 @@ Sinclair's geometric bounds on the spectral gap of a reversible Markov chain (A.
 - [Sinclair's Lemma 7](div-eight-le-pow-apply.md)
 - [Sinclair's Lemma 7 from a single mixing time](div-eight-le-pow-apply-of-is-mixed-at.md)
 - [Rapid mixing implies a low-congestion flow](exists-multicommodity-flow-load-le-sixte.md)
+- [Cheeger's inequality: the easy direction](cheeger-s-inequality-the-easy-direction/README.md)
 
 ## Related topics
 
