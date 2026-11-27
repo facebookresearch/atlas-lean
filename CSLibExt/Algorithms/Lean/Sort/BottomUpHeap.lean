@@ -21,6 +21,10 @@ value comparisons and array swaps; erasing the counters gives `bottomUpHeapSort`
 The main theorem bounds the comparisons by `2 * n * (Nat.log 2 n + 1)` for an input of length
 `n`: at most `2 * n` for the construction and at most `2 * Nat.log 2 n` for each of the `n`
 sift-downs from the root.
+
+Heapsort with bottom-up heap construction is R. W. Floyd's *Algorithm 245: Treesort 3*
+(Comm. ACM 7(12), 701, 1964), which sorts in place with a max-heap; here the heap is a min-heap
+and the extracted minima are collected in a list.
 -/
 
 @[expose] public section
