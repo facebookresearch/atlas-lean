@@ -37,7 +37,7 @@ public import Mathlib.Geometry.Manifold.ChartedSpace
 public import Mathlib.Geometry.Manifold.IsManifold.ExtChartAt
 public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.Topology.Connected.PathConnected
-public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluation
+public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationOrd
 
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.CauchyIntegral
@@ -197,8 +197,15 @@ theorem differentialCoeff_smul [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
     (by rw [mul_smul, v.differentialCoeff_smul_dCoord])
 
 /-- **Order of a differential at a place.** The order at `v` of the coefficient of `ω` with
-respect to the coordinate differential at `v`. -/
+respect to the coordinate differential at `v`. Since `Place.ord 0 = 0`, the zero differential has
+order `0` when the differentials are nontrivial (`ordDifferential_zero`), not an infinite order of
+vanishing. -/
 def ordDifferential [v.DCoordGenerates] (ω : Ω[F⁄K]) : ℤ := v.ord (v.differentialCoeff ω)
+
+@[simp]
+theorem ordDifferential_zero [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] :
+    v.ordDifferential (0 : Ω[F⁄K]) = 0 := by
+  rw [ordDifferential, v.differentialCoeff_zero, v.ord_zero]
 
 theorem ordDifferential_dCoord [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] :
     v.ordDifferential v.dCoord = 0 := by
@@ -221,10 +228,6 @@ theorem evalAt_zero (hv : v.IsRational) : v.evalAt hv (0 : F) = 0 := by
   rw [v.evalAt_of_mem hv (zero_mem _)]
   have h0 : (⟨(0 : F), zero_mem _⟩ : v.toValuationSubring) = 0 := rfl
   rw [h0, map_zero, ← map_zero (algebraMap K v.ResidueField), v.residueInv_algebraMap hv]
-
-theorem hasValueAt_evalAt (hv : v.IsRational) {f : F} (hf : f ∈ v.toValuationSubring) :
-    v.HasValueAt f (v.evalAt hv f) :=
-  (v.hasValueAt_iff_residue hf _).mpr (v.algebraMap_evalAt hv hf).symm
 
 /-! ### Readings in charts -/
 
