@@ -20,8 +20,11 @@ when `s_xx + s_yy > 0`. A continuously stable strategy (Eshel and Motro 1981; Es
 both ESS-stable and convergence-stable; an evolutionary branching point is convergence-stable
 but not ESS-stable. The diagonal identity and `branchingPoint` are proved in
 `Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoint`, where `fitnessGradient`,
-`sxx`, `sxy`, `syy` and `IsSingular` are also defined. The statements below are the local, generic
-(strict-inequality) cases, for invasion fitness of class `C²`.
+`sxx`, `sxy`, `syy` and `IsSingular` are also defined. The convergence-stability theorem
+`convergenceStable_iff_and_gradient` is proved in
+`Domains.Biology.Ecology.SingularStrategyClassificationConvergenceStableIffAndGradient`.
+The statements below are the local, generic (strict-inequality) cases, for invasion fitness of
+class `C²`.
 
 Sources: S. A. H. Geritz, É. Kisdi, G. Meszéna and J. A. J. Metz, "Evolutionarily singular
 strategies and the adaptive growth and branching of the evolutionary tree", Evol. Ecol. 12
@@ -35,22 +38,11 @@ public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Normed.Group.Constructions
 public import Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoint
+public import Domains.Biology.Ecology.SingularStrategyClassificationConvergenceStableIffAndGradient
 
 @[expose] public section
 
 namespace WantedExt.Biology.Ecology.SingularStrategyClassificationWanted
-
-/-- **Convergence stability** (Eshel 1983; Geritz et al. 1998, eq. (8)). For an invasion
-fitness `s` with singular strategy `x*`: `s_xy + s_yy < 0` iff `s_yy < s_xx` (all at
-`(x*, x*)`), and if `s_xy + s_yy < 0` then there is `δ > 0` such that every resident `x` with
-`0 < |x - x*| < δ` has fitness gradient pointing towards `x*`: `(x* - x) D(x) > 0`.
-
-Sources: Eshel (1983); Geritz et al. (1998), eq. (8). -/
-public theorem_wanted convergenceStable_iff_and_gradient {s : ℝ → ℝ → ℝ} {xs : ℝ}
-    (h : IsSingular s xs) :
-    (sxy s xs xs + syy s xs xs < 0 ↔ syy s xs xs < sxx s xs xs) ∧
-      (sxy s xs xs + syy s xs xs < 0 →
-        ∃ δ > 0, ∀ x, 0 < |x - xs| → |x - xs| < δ → 0 < (xs - x) * fitnessGradient s x)
 
 /-- **ESS-stability** (Geritz et al. 1998, eq. (5)). For an invasion fitness `s` with singular
 strategy `x*`: if `s_yy < 0` at `(x*, x*)`, there is `δ > 0` with `s x* y < 0` for every mutant
