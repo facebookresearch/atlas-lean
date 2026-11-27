@@ -31,7 +31,7 @@
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
-
+- [Punctuated evolution in the weak-mutation limit](punctuated-evolution-in-the-weak-mutation-limit/README.md)
 - [Copy number dynamics of genetic elements](copy-number-dynamics-of-genetic-elements/README.md)
 - [Moran models with heterogeneous resampling rates](moran-models-with-heterogeneous-resampling-rates/README.md)
 - [Stein's method approximations in population genetics](stein-method-approximations-in-population-genetics/README.md)

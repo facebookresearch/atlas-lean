@@ -132,6 +132,6 @@
 - [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
 ## Networks: the tree of blobs
 - [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)
-## Further topics
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)
 - [Ancestral configurations of gene trees](ancestral-configurations-of-gene-trees/README.md)
 - [Lattices of ancestral configurations](lattices-of-ancestral-configurations/README.md)
