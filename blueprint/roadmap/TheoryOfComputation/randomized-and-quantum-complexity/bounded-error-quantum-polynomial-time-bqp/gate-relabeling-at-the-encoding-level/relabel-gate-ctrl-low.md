@@ -8,5 +8,5 @@ entries of controlled-$U$ with the first qubit as control gives, as an equality 
 (positions and entry lists), the controlled gate with control $\pi(0)$ and target $\pi(1)$: the
 gate on $(\pi(0), \pi(1))$ with the same sixteen entries when $\pi(0) < \pi(1)$, and otherwise
 the gate on $(\pi(1), \pi(0))$ whose entry list is the sixteen row-major entries of controlled-$U$
-with the second qubit as control. The input must be exactly that list: a longer list with the same
-decoding encodes the same matrix but relabels to a different encoded gate.
+with the second qubit as control. Equality of decoded matrices alone is not enough: for the identity
+relabelling, appending one entry leaves the matrix unchanged but changes the resulting encoded gate.
