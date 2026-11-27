@@ -1127,24 +1127,94 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   `Measure.infinitePi` instead.
 - Third round (94 of 635 sources ported so far): no ported module was deleted or merged; each ported
   source has its own module.
-  Four ported declarations were retired inside their modules as duplicates of first-round
-  declarations with the same full type (definitions and instances with a definitionally equal
-  value); their users call the canonical declaration, and the pull-request description lists them
-  too (original → canonical):
-  - `StatMech.FK.feu_wiredIV_isErgodic` (from `Code/FK/FKLimitsErgodicUncond.lean`, in
-    `PhyslibExt.StatisticalMechanics.RandomCluster.WiredLimitErgodicity`) →
-    `StatMech.FK.cbk_wiredIV_isErgodic` (from `Code/FK/CrossBoxGeneralKeystone.lean`, in
-    `PhyslibExt.StatisticalMechanics.RandomCluster.WiredErgodicity`), which it only applied;
-  - `StatMech.Sharpness.abbEdgeEquiv`, defined as `sym2Congr`, and its simp lemma
-    `StatMech.Sharpness.abbEdgeEquiv_mk` (from `Code/Sharpness/ABBoundaryPhi.lean`, in
-    `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi`) →
-    `StatMech.Lattice.sym2Congr` and `StatMech.Lattice.sym2Congr_mk` (from
-    `Code/Lattice/PlanarDual.lean`, in `MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual`);
-  - `StatMech.FK.coord` (from `Code/FK/RussoDerivative.lean`, in
-    `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative`) → `StatMech.FK.coordR`
-    (from `Code/FK/RussoDerivativeBeta.lean`, in
-    `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivativeBeta`, which `RussoDerivative`
-    now imports), the same definition `if ω e then 1 else 0`.
+  Twenty-one ported declarations were retired inside their modules in favour of declarations already
+  in the root libraries or in Mathlib; their users call the replacement instead, and statements that
+  mentioned a retired definition now mention its replacement. Unlike other declarations deleted
+  inside surviving modules (last item below), they are listed here, grouped by how the replacement
+  relates to the original; the pull-request description lists them too (original → replacement):
+  - Same full type up to definitional equality (for definitions and instances, also a definitionally
+    equal value):
+    - `StatMech.FK.feu_wiredIV_isErgodic` (from `Code/FK/FKLimitsErgodicUncond.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.WiredLimitErgodicity`) →
+      `StatMech.FK.cbk_wiredIV_isErgodic` (from `Code/FK/CrossBoxGeneralKeystone.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.WiredErgodicity`), which it only applied;
+    - `StatMech.Sharpness.abbEdgeEquiv`, defined as `sym2Congr`, and its simp lemma
+      `StatMech.Sharpness.abbEdgeEquiv_mk` (from `Code/Sharpness/ABBoundaryPhi.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi`) →
+      `StatMech.Lattice.sym2Congr` and `StatMech.Lattice.sym2Congr_mk` (from
+      `Code/Lattice/PlanarDual.lean`, in `MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual`);
+    - `StatMech.FK.coord` (from `Code/FK/RussoDerivative.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative`) → `StatMech.FK.coordR` (from
+      `Code/FK/RussoDerivativeBeta.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivativeBeta`, which `RussoDerivative`
+      now imports), the same definition `if ω e then 1 else 0`;
+    - `StatMech.Walls.jbw_bdEdgeSet` (from `Code/Walls/jbwbridge.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap`) →
+      `StatMech.Lattice.bdEdgeSet2` (from `Code/Lattice/FaceRegion.lean`, in
+      `MathlibExt.Combinatorics.SimpleGraph.Lattice.FaceRegion`, which `BridgeGap` now imports), the
+      set of unordered pairs with exactly one endpoint in `S`;
+    - `StatMech.FK.closeAllOn` (from `Code/FK/CircuitLowerBound.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound`) → `StatMech.FK.projOff`
+      (from `Code/FK/FKDisjointBoxDomainMarkov.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainMarkov`); its lemmas
+      `StatMech.FK.closeAllOn_of_mem`, `StatMech.FK.closeAllOn_of_not_mem`,
+      `StatMech.FK.closeAllOn_setClosed` and `StatMech.FK.closeAllOn_setOpen` were removed with it
+      and have no replacement: the two commutation facts that were still used are now proved
+      locally;
+    - `StatMech.FK.agreeWeightSum` and its positivity lemma `StatMech.FK.agreeWeightSum_pos` (from
+      `Code/FK/CircuitLowerBound.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound`) → `StatMech.FK.inducedFkZ`
+      and `StatMech.FK.inducedFkZ_pos` (from `Code/FK/DomainMarkov.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.DomainMarkov`);
+    - `StatMech.FK.falseBoundary` and its `DecidablePred` instance
+      `StatMech.FK.instDecidablePredFalseBoundary` (from `Code/FK/OffCentreFreeDomination.lean`,
+      where both were private, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination`) →
+      `StatMech.FK.bdp_noBdry` and its instance `StatMech.FK.instDecidablePredBdp_noBdry` (from
+      `Code/FK/BulkDeviationProof.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance`), the same predicate
+      `fun _ => False`, with definitionally equal instances;
+  - Special cases of a more general declaration (the original statement is an instance of it):
+    - `StatMech.Sharpness.BackboneP2CoordinateReindex.edgeFinset_subset` (from
+      `Code/Sharpness/BackboneP2CoordinateReindex.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateReindex`) → Mathlib's
+      `SimpleGraph.edgeFinset_mono` (in `Mathlib.Combinatorics.SimpleGraph.Finite`), which needs
+      only `Fintype` instances on the two edge sets;
+    - `StatMech.FK.card_connectedComponent_antitone` (from `Code/FK/IndexedBoundaryCondition.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.IndexedBoundaryCondition`) → Mathlib's
+      `SimpleGraph.ConnectedComponent.card_le_card_of_le` (in
+      `Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite`), which needs only `[Finite V]`;
+  - Restatements of an existing declaration up to a coercion or a rearrangement (the original
+    statement follows from it by a short argument):
+    - `StatMech.Walls.jbw_mem_bdEdgeSet` (from `Code/Walls/jbwbridge.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap`) →
+      `StatMech.Lattice.mem_bdEdgeSet2` (from `Code/Lattice/FaceRegion.lean`, in
+      `MathlibExt.Combinatorics.SimpleGraph.Lattice.FaceRegion`), which states it for pairs
+      `s(x, y)` (for an arbitrary pair, membership in `bdEdgeSet2 S` is `bdEdge S` by `Iff.rfl`);
+    - `StatMech.FK.tendsto_probabilityMeasure_real_of_isClopen` (from `Code/FK/FreeDLRKernel.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRKernel`) → Mathlib's
+      `MeasureTheory.ProbabilityMeasure.tendsto_measure_of_isClopen_of_tendsto` (in
+      `Mathlib.MeasureTheory.Measure.Portmanteau`), which states the limit in `ℝ≥0`; the original
+      follows with `NNReal.tendsto_coe` and `ProbabilityMeasure.measureReal_eq_coe_coeFn`;
+    - `StatMech.FK.ocd_condFreeProb_innerRestrict_ge` (from `Code/FK/OffCentreFreeDomination.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination`) →
+      `StatMech.FK.bdp_condBcProb_innerRestrict_ge` (from `Code/FK/BulkDeviationProof.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance`), with the same
+      hypotheses and inequality, written with `≤` rather than `≥`, and with the two graphs and the
+      embedding as implicit rather than explicit arguments;
+    - `StatMech.FK.fkProb_fkgLattice` (from `Code/FK/PositiveAssociation.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.PositiveAssociation`) →
+      `StatMech.FK.fkProb_FKGLatticeCondition` (from `Code/FK/FKG.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FKG`), which states `FKGLatticeCondition`, the
+      same inequality with the right-hand factors in the other order;
+  - Definitions equal only extensionally, not definitionally (statements that used the original are
+    now stated with the replacement):
+    - `StatMech.Ising.kwg_deleteVertexGraph` (from `Code/Ising/KWGeometricDual.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.GeometricDual`) → Mathlib's
+      `SimpleGraph.deleteIncidenceSet` (in `Mathlib.Combinatorics.SimpleGraph.DeleteEdges`), the
+      same graph: its adjacency is `G.Adj x y ∧ x ≠ v ∧ y ≠ v` by
+      `SimpleGraph.deleteIncidenceSet_adj`; `kwg_minimalEven_nonOuter_reachable` and
+      `kwg_minimalEvenFinset_nonOuter_reachable` are now stated with it.
 - `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` (second round). The ported
   capstone's hypothesis unfolded to its advertised box-crossing conclusion, so it proved nothing
   beyond assuming the result; the module was removed during cleanup. The underlying RSW
