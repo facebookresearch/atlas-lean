@@ -25,7 +25,6 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.GibonacciPolynomialPowerSums
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
-public import MathlibExt.NumberTheory.GibonacciPolynomialEvenIndexOddShift
 
 namespace MetaMathlibExt
 
