@@ -10,10 +10,8 @@ module
 
 public import Mathlib.Data.Nat.Choose.Basic
 public import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
-import Mathlib.Data.Finset.Piecewise
-import Mathlib.Data.Finset.Sort
+import all MathlibExt.Combinatorics.Enumerative.BooleanFunctionInclusionExclusion
 import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Nat.Choose.Sum
 
 /-!
 # Counting Boolean functions by essential support
@@ -64,29 +62,7 @@ private theorem essentialSupport_lift (e : Fin m ↪ Fin n) (g : (Fin m → Bool
   · have hne (j : Fin m) : e j ≠ i := fun h => hi ⟨j, h⟩
     simp [IsBoolFunNondegenerateOn, update_comp_eq_of_forall_ne _ _ hne, hne]
 
-private theorem eq_of_agree_on_support (f : (Fin n → Bool) → Bool) (x y : Fin n → Bool)
-    (hxy : ∀ i ∈ essentialSupport f, x i = y i) : f x = f y := by
-  classical
-  -- Replace the coordinates outside the support one at a time.
-  have hreplace (s : Finset (Fin n)) (hs : ∀ i ∈ s, ¬ IsBoolFunNondegenerateOn f i) :
-      f (s.piecewise x y) = f y := by
-    induction s using Finset.induction_on with
-    | empty => simp
-    | insert i s hi ih =>
-      rw [piecewise_insert, ← ih (fun j hj => hs j (mem_insert_of_mem hj))]
-      rcases Bool.eq_or_eq_not (x i) (s.piecewise x y i) with h | h
-      · simp only [h, update_eq_self]
-      · rw [h]
-        exact (not_ne_iff.mp fun hn => hs i (mem_insert_self ..) ⟨_, hn⟩).symm
-  have h := hreplace (essentialSupport f)ᶜ fun i hi hnd =>
-    (mem_compl.mp hi) ((mem_essentialSupport f i).2 hnd)
-  have heq : (essentialSupport f)ᶜ.piecewise x y = x := by
-    funext i
-    by_cases hi : i ∈ essentialSupport f
-    · simp [hi, hxy i hi]
-    · simp [hi]
-  rwa [heq] at h
-
+open card_nondegenerate_boolFun_eq_alternating_sum (card_ignoring) in
 private theorem card_support_fiber (P : ∀ n : ℕ, ((Fin n → Bool) → Bool) → Prop)
     (hP : ∀ (m n : ℕ) (e : Fin m ↪ Fin n) (g : (Fin m → Bool) → Bool),
       P n (fun x => g (x ∘ e)) ↔ P m g)
@@ -94,45 +70,46 @@ private theorem card_support_fiber (P : ∀ n : ℕ, ((Fin n → Bool) → Bool)
     Nat.card {f : {f : (Fin n → Bool) → Bool // P n f} // essentialSupport f.val = s} =
       Nat.card {g : (Fin s.card → Bool) → Bool // IsNondegenerateBoolFun g ∧ P s.card g} := by
   classical
-  let e : Fin s.card ↪ Fin n := (s.orderEmbOfFin rfl).toEmbedding
-  have hrange : Set.range e = (s : Set (Fin n)) := s.range_orderEmbOfFin rfl
-  have hmap : univ.map e = s := by
-    ext i
-    simpa [Set.mem_range] using Set.ext_iff.mp hrange i
-  have hlift (g : (Fin s.card → Bool) → Bool) :
-      essentialSupport (fun x => g (x ∘ e)) = s ↔ IsNondegenerateBoolFun g := by
-    rw [essentialSupport_lift]
-    calc
-      (essentialSupport g).map e = s ↔ (essentialSupport g).map e = univ.map e :=
-        ⟨fun h => h.trans hmap.symm, fun h => h.trans hmap⟩
-      _ ↔ IsNondegenerateBoolFun g := by
-        simp [map_inj, eq_univ_iff_forall, mem_essentialSupport, IsNondegenerateBoolFun]
-  let extendInput (y : Fin s.card → Bool) : Fin n → Bool := Function.extend e y (fun _ => false)
-  have hrestrict (y : Fin s.card → Bool) : extendInput y ∘ e = y :=
-    funext fun i => e.injective.extend_apply y (fun _ => false) i
-  let lift (g : {g : (Fin s.card → Bool) → Bool // IsNondegenerateBoolFun g ∧ P s.card g}) :
-      {f : {f : (Fin n → Bool) → Bool // P n f} // essentialSupport f.val = s} :=
-    ⟨⟨fun x => g.val (x ∘ e), (hP _ _ e g.val).2 g.property.2⟩, (hlift g.val).2 g.property.1⟩
-  symm
-  apply Nat.card_eq_of_bijective lift
-  constructor
-  · intro g g' hg
-    apply Subtype.ext
-    funext y
-    have heq := congrArg (fun f => f.val.val (extendInput y)) hg
-    simpa only [lift, hrestrict] using heq
-  · rintro ⟨⟨f, hf⟩, hs⟩
-    have hrecover : (fun x => (f ∘ extendInput) (x ∘ e)) = f := by
-      funext x
-      apply eq_of_agree_on_support f (extendInput (x ∘ e)) x
+  -- Specifying the support size is invariant under adding dummy variables, so the same
+  -- restriction count applies to functions of property `P` with exactly `s.card` essential inputs.
+  let Q (k : ℕ) (f : (Fin k → Bool) → Bool) := P k f ∧ (essentialSupport f).card = s.card
+  have hQ (m k : ℕ) (e : Fin m ↪ Fin k) (g : (Fin m → Bool) → Bool) :
+      Q k (fun x => g (x ∘ e)) ↔ Q m g := by
+    simp only [Q, essentialSupport_lift, card_map, hP]
+  have hs (f : (Fin n → Bool) → Bool) :
+      essentialSupport f = s ↔ (essentialSupport f).card = s.card ∧
+        ∀ i ∈ sᶜ, ¬ IsBoolFunNondegenerateOn f i := by
+    constructor
+    · intro h
+      refine ⟨congrArg Finset.card h, fun i hi hnd => ?_⟩
+      exact (mem_compl.mp hi) (h ▸ (mem_essentialSupport f i).2 hnd)
+    · rintro ⟨hcard, hignore⟩
+      refine eq_of_subset_of_card_le ?_ hcard.ge
       intro i hi
-      have hir : i ∈ Set.range e := by simpa only [hrange, mem_coe, ← hs] using hi
-      obtain ⟨j, rfl⟩ := hir
-      exact congrFun (hrestrict (x ∘ e)) j
-    have hs' := (congrArg essentialSupport hrecover).trans hs
-    refine ⟨⟨f ∘ extendInput, (hlift _).1 hs', (hP _ _ e _).1 ?_⟩, ?_⟩
-    · rwa [hrecover]
-    · exact Subtype.ext (Subtype.ext hrecover)
+      by_contra his
+      exact hignore i (mem_compl.mpr his) ((mem_essentialSupport f i).1 hi)
+  have harity : n - sᶜ.card = s.card := by
+    rw [card_compl, Fintype.card_fin]
+    exact Nat.sub_sub_self (s.card_le_univ.trans_eq (Fintype.card_fin n))
+  calc
+    _ = Nat.card {f : {f : (Fin n → Bool) → Bool // Q n f} //
+          ∀ i ∈ sᶜ, ¬ IsBoolFunNondegenerateOn f.val i} := by
+      apply Nat.card_congr
+      refine (Equiv.subtypeSubtypeEquivSubtypeInter (P n) (fun f => essentialSupport f = s)).trans
+        ((Equiv.subtypeEquivRight fun f => ?_).trans
+          (Equiv.subtypeSubtypeEquivSubtypeInter (Q n) (fun f =>
+            ∀ i ∈ sᶜ, ¬ IsBoolFunNondegenerateOn f i)).symm)
+      simp only [Q, hs f, and_assoc]
+    _ = Nat.card {f : (Fin s.card → Bool) → Bool // Q s.card f} :=
+      (card_ignoring Q hQ sᶜ).trans
+        (congrArg (fun k => Nat.card {f : (Fin k → Bool) → Bool // Q k f}) harity)
+    _ = _ := by
+      apply Nat.card_congr
+      refine Equiv.subtypeEquivRight fun g => ?_
+      have hfull : (essentialSupport g).card = s.card ↔ IsNondegenerateBoolFun g := by
+        simpa only [Fintype.card_fin, eq_univ_iff_forall, mem_essentialSupport,
+          IsNondegenerateBoolFun] using (card_eq_iff_eq_univ (essentialSupport g))
+      exact and_comm.trans (and_congr hfull Iff.rfl)
 
 /-- **Counting Boolean functions by their non-degenerate restrictions.** Let $P$ be a property
 of Boolean functions on any number of variables that is invariant under renaming variables
