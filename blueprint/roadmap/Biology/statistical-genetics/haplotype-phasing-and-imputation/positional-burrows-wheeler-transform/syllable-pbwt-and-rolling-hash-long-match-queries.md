@@ -10,6 +10,10 @@
 
 **Lemma (match persistence).** Any $L$-site match covers at least $l = \lfloor (L - B + 1)/B \rfloor$ full syllables. Once a panel haplotype matching the query on the last $l$ syllables is found immediately above the query's virtual position in $a_k$, it stays immediately above the query until that match ends. Hence each potential long match can be reported exactly once.
 
+## Depends on
+
+- [PBWT prefix and divergence arrays and long-match conditioning sets](../../genomic-prediction-from-summary-statistics/haplotype-phasing-and-imputation/positional-burrows-wheeler-transform/pbwt-prefix-and-divergence-arrays-and-long-match-conditioning-sets.md)
+
 ## Expansion
 
 The PBWT sorts haplotypes by reversed prefixes so that sequences sharing the longest ongoing match with a given sequence form a contiguous block around it. Replacing sites by syllables keeps this property, because two haplotypes agree on a syllabic prefix exactly when they agree on the underlying binary prefix. Linkage disequilibrium makes few syllable values distinct at each position, so the dictionaries $r_k$ are small and the syllabic panel needs far less memory than the binary panel with its auxiliary arrays. A query is inserted virtually by binary search in $a_k$, using the hashes for $O(\log n)$ lexicographic comparisons; ongoing matches are found by scanning outward from the query's position until the last-$l$-syllable hash comparison fails, and their ends are located by binary search on hashes. Match boundaries are refined to single-site resolution with bit operations on the raw syllable values. On UK Biobank and 1000 Genomes data this cut memory by more than a factor of 100 compared with the previous fastest long-match query method.

@@ -39,7 +39,7 @@ A combination of predicted gene diversities with positive weights is the expecta
 
 ## Depends on
 
-- [Inbreeding, variance and eigenvalue effective population sizes](../effective-population-size-definitions.md)
+- [Inbreeding, variance and eigenvalue effective population sizes](../../../population-genetics/effective-population-size/effective-population-size-definitions.md)
 
 ## Proof depends on
 
