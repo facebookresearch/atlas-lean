@@ -11337,6 +11337,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterDistinctMonotone": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterPMResidueArmLeg": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterResidueArmLeg": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/GeneralizedCubicPartition": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Generalized cubic partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/KTupleRegularPartitions": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Tuples of ℓ-regular partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/Landau": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Landau's function"},
   "MathlibExt/Combinatorics/Enumerative/Partition/LevelFiveEulerDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Generalized Frobenius partitions"},
