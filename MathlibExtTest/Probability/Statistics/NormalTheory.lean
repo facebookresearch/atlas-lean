@@ -15,8 +15,9 @@ import MathlibExt.Probability.Statistics.NormalTheory
 
 Quantile facts at the Cauchy (`t_1`) and `F(1, 1)` boundary; the `t` median is `0`;
 two-sided coverage collapses to `0` at the threshold `c = 0` and for negative `c`; one-sided
-coverage at `c = 0` is `1/2`; the exact `95%` two-sided interval at `n = 2`; exact-size
-`F` test and `F` region at `(q, n - p) = (1, 1)`.
+coverage at `c = 0` is `1/2`; exact `95%` coverage at `n = 2`, including the paired fixture
+with within-pair dependence `(2 * z, z)`; exact-size `F` test and `F` region at
+`(q, n - p) = (1, 1)`.
 -/
 
 namespace ProbabilityTheory.NormalTheoryChecks

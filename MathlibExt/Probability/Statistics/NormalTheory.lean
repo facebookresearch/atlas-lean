@@ -43,6 +43,11 @@ freedom, `S² = ∑ (Xᵢ - X̄)² / (n - 1)`):
 * `one_sample_t_one_sided_coverage_eq`: with `c = cdfQuantile t_{n-1} (1 - α)`, each
   one-sided bound has coverage exactly `1 - α`.
 
+Paired `t` (mutually independent pairs, with differences of law `N(δ, v)`, `n ≥ 2`, `v ≠ 0`):
+* `paired_t_interval_coverage`: the pivot `√n (D̄ - δ) / S` has law `t_{n-1}`, with `S > 0`
+  almost surely. For `0 < α < 1`, the interval `D̄ ± c S/√n` has coverage exactly `1 - α`,
+  where `c = cdfQuantile t_{n-1} (1 - α/2)`. No independence within a pair is required.
+
 Linear-hypothesis `F` (fixed full-rank design, Gaussian errors with unknown `σ`,
 `(q, n - p)` degrees of freedom):
 * `fStatistic_measureReal_gt_eq`: under `H₀ : C β = γ`, `P(F > c) = 1 - F_{F(q,n-p)}(c)`.
@@ -58,6 +63,9 @@ The known-variance (`z`) interval is not treated here.
   (one-sample `t` interval via the pivot `√n (X̄ - μ) / S`) and §11.2 (the ANOVA `F` test).
 * G. A. F. Seber and A. J. Lee, *Linear Regression Analysis*, 2nd ed., Wiley (2003),
   Chapter 4 (the general linear-hypothesis `F` test) and Chapter 5 (`F` confidence regions).
+* V. Dinh, *MATH 450: Mathematical Statistics*, Lecture 24, “The paired t-test”,
+  University of Delaware (2019), <https://vucdinh.github.io/F20/lecture24.pdf>, for reducing
+  the paired interval to a one-sample procedure on the differences.
 -/
 
 @[expose] public section
