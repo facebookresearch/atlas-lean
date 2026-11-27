@@ -14,8 +14,11 @@ The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb 
 
 - $\lim_{\varepsilon\to0}\nu(s+\varepsilon,x)/\nu(s,x)=1$ for all $x\in[0,1]$;
 - for every $M\ge2$ and every $u$ with $s+u/\sqrt T\in\mathcal S$,
+
 $$\mathbb P^{(s)}_\nu\Bigl[\Bigl|\log\frac{\nu(s+u/\sqrt T,X_0)}{\nu(s,X_0)}\Bigr|>\tfrac1{48}\,\mathbb E^{(s)}[\xi(1-\xi)]\,|u|^2\Bigr]\le\frac{C_1}{|u|^M};$$
+
 - for every $R>0$ and all $u,v$ with $s+u/\sqrt T,\ s+v/\sqrt T\in\mathcal S$ and $|u|,|v|<R$,
+
 $$\int_0^1\Bigl|\nu\bigl(s+u/\sqrt T,x\bigr)^{1/2}-\nu\bigl(s+v/\sqrt T,x\bigr)^{1/2}\Bigr|^2\lambda(dx)\le C_2|u-v|^2 .$$
 
 All three hold when $\nu=f_s$, the stationary density. Let $\bar s_T$ be either $\hat s_T$ or $\tilde s_T$, and set

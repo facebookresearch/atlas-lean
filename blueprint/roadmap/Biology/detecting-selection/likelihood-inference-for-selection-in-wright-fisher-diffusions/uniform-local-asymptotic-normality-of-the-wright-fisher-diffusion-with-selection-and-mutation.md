@@ -16,9 +16,13 @@ $$\lim_{T\to\infty}\sup_{\vartheta\in\mathcal K}\mathbb P^{(\vartheta)}_\nu\Bigl
 
 1. (Uniform ergodicity.) For every initial law $\nu$ the diffusion is $\vartheta$-uniformly ergodic on $\mathbb R\times(0,\infty)^2$.
 2. (Uniform LAN.) Let $\Theta\subset\mathbb R\times[1,\infty)^2$ be open and bounded, and let the initial densities $\nu(\vartheta,\cdot)$ satisfy
+
 $$\lim_{|\varepsilon|\to0}\frac{\nu(\vartheta+\varepsilon,x)}{\nu(\vartheta,x)}=1\quad\text{for all }x\in[0,1],$$
+
 and, for some fixed $b\in(0,1)$ and every compact $\mathcal K\subset\Theta$, with a constant $C_{\mathcal K}>0$,
+
 $$\sup_{\vartheta=(s,\theta_1,\theta_2)\in\mathcal K}\Bigl\{\int_0^b\frac{\max\{e^{-s},1\}}{\theta_1-1}\int_x^b\xi^{-1}(1-\xi)^{-\theta_2}\,d\xi\,\nu(\vartheta,dx)+\int_b^1\frac{\max\{e^{s},1\}}{\theta_2+1}\int_b^x\xi^{-\max\{\theta_1,2\}}\,d\xi\,\nu(\vartheta,dx)\Bigr\}\le C_{\mathcal K}.$$
+
 Both conditions hold for $\nu=f_\vartheta$. Then the family $\{\mathbb P^{(\vartheta)}_\nu:\vartheta\in\Theta\}$ is uniformly locally asymptotically normal at rate $T^{-1/2}$. For $u\in\mathbb R^3$ with $\vartheta+u/\sqrt T\in\Theta$,
 
 $$\log\frac{d\mathbb P^{(\vartheta+u/\sqrt T)}_\nu}{d\mathbb P^{(\vartheta)}_\nu}(X^T)=\langle u,\Delta_T(\vartheta)\rangle-\tfrac12\langle I(\vartheta)u,u\rangle+r_T(\vartheta,u),$$

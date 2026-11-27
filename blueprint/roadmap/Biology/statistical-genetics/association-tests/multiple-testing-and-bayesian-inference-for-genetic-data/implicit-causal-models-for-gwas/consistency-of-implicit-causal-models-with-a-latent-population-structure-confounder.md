@@ -9,7 +9,9 @@ with $\epsilon\sim s(\cdot)$ i.i.d., per-SNP parameters $w_m$ with prior $p(w_m)
 $$p(\theta\mid\mathbf x,\mathbf y)=\int p(\mathbf z\mid\mathbf x,\mathbf y)\,p(\theta\mid\mathbf x,\mathbf y,\mathbf z)\,d\mathbf z .$$
 
 **Proposition (finite-dimensional global confounder).** Consider the global-confounder model
+
 $$\beta=f_\beta(\epsilon_\beta),\qquad x_n=f_x(\epsilon_{x,n},\beta\mid\phi),\qquad y_n=f_y(\epsilon_{y,n},x_n,\beta\mid\theta),\qquad n=1,\dots,N,$$
+
 with one confounder $\beta\in\mathbb R^d$ shared by all individuals, $d$ fixed, jointly independent noise and finite-dimensional parameters. Assume:
 
 1. the causal graph $\beta\to x_n$, $\beta\to y_n$, $x_n\to y_n$ is correct;
