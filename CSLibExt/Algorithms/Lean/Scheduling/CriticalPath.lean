@@ -99,11 +99,12 @@ open BellmanFord
   edges.map fun e => { source := e.target, target := e.source, weight := -e.weight }
 
 /-- Raw output of the forward run at `v`, negated back to durations: the longest `s`-to-`v`
-path weight (`earliestStart_spec`), `none` off the forward reachable set. Every feasible
-schedule puts `v` no earlier (`feasible_dominates_earliest`). When the forward run succeeds, `t` is
-reachable from `s`, the project is covered and durations are nonnegative, it is the earliest time
-of `v` over feasible schedules (`earliestSchedule_feasible`); these hypotheses are sufficient, not
-necessary. (`C3`) -/
+path weight (`earliestStart_spec`), `none` off the forward reachable set. Where it is defined,
+every feasible schedule puts `v` no earlier (`feasible_dominates_earliest`). When the forward run
+succeeds, `t` is reachable from `s`, the project is covered and durations are nonnegative, then
+for each model event `v` the returned value is the earliest feasible time at `v`
+(`earliestSchedule_feasible`); these hypotheses are sufficient, not necessary. Off the model
+events feasibility constrains no time, so a vertex there has no earliest feasible time. (`C3`) -/
 @[expose] public def earliestStart {n : Nat} (result : Distances n) (v : Fin n) :
     Option Int :=
   (result.distance.get v).map Neg.neg
@@ -167,7 +168,8 @@ model events feasibility gives no latest time. (`C6`) -/
     Prop :=
   earliestStart forward e.source = none ∨ longestToSink reverse e.target = none
 
-/-- Every activity occurrence lies on some source-to-sink path. (`C6`, `C9`) -/
+/-- Every activity occurrence lies on a directed walk from `s` to `t` (a simple path on a DAG):
+`s` reaches its source and its target reaches `t`. (`C6`, `C9`) -/
 @[expose] public def IsCovered {n : Nat} (edges : List (Edge n)) (s t : Fin n) : Prop :=
   ∀ e ∈ edges, (toDirectedAdjacency edges).Reachable s e.source ∧
     (toDirectedAdjacency edges).Reachable e.target t
