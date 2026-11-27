@@ -1,0 +1,3 @@
+# Tilted renewal limit for ladder tails (abstract form)
+
+Let $g$ be a nonnegative real sequence on $\mathbb{N}$ with $g_0 = 0$, and let $T$ solve $T_k = \sum_{j > k} g_j + \sum_{j \le k} g_j\, T_{k-j}$ for every $k$. Suppose $\theta > 0$ satisfies $\sum_j g_j e^{\theta j} = 1$ (unit tilted sum; $g$ itself need not sum to $1$), the support $\{k : g_k > 0\}$ has greatest common divisor $1$, and $\sum_j j\, g_j e^{\theta j}$ converges, with sum $\mu$. Then $e^{\theta k} T_k \to (1 - \sum_j g_j)/((e^\theta - 1)\, \mu)$. Applied to a score walk, with $g$ its ladder-height law and $T_k = \mathbb{P}(M > k)$, this is the Cramér–Lundberg asymptotic for the maximum $M$.

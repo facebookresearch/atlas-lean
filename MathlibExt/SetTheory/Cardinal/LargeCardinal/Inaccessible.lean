@@ -264,7 +264,7 @@ theorem Cardinal.IsInaccessible.exists_isStrongLimit_between.{u} {κ : Cardinal.
 
 -- Logic 561: Theorems about inaccessible cardinals (part II)
 
-   /-- The **regular cardinals below `κ`**, carried as initial ordinals — parallel to
+/-- The **regular cardinals below `κ`**, carried as initial ordinals — parallel to
 `inaccessibleBelow`, and definitionally the stationary set in `IsWeaklyMahlo`.
 Spelled with Mathlib's `Ordinal.IsInitial`.
 
