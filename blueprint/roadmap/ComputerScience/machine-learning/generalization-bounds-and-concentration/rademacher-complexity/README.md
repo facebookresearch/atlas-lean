@@ -53,6 +53,7 @@ risk bound that turns it into a generalization guarantee.
 - [The ramp is dominated by the margin error](ramp-le-indicator.md)
 - [The ramp $\rho_\theta$ is $1/\theta$-Lipschitz](lipschitz-with-ramp.md)
 - [The complexity term of the margin bound for voting classifiers](rademacher-complexity-ramp-costs-convex.md)
+- [Rademacher averages of a finite class](rademacher-finite-class.md)
 
 ## Related topics
 

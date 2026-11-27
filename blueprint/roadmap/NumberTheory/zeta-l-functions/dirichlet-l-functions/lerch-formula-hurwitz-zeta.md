@@ -36,11 +36,7 @@ differentiating at $s = 0$, with $\zeta(0) = \zeta(0, 1) = -\frac{1}{2}$ by the 
 $f(\tfrac{1}{2}) = -\frac{1}{2} \log 2$. As [$\Gamma(\tfrac{1}{2}) = \sqrt{\pi}$](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md),
 $f(1) = f(\tfrac{1}{2}) - \log \Gamma(\tfrac{1}{2}) = -\frac{1}{2} \log (2\pi)$.
 
-## Depends on
-
-This node has no prerequisites.
-
-## Proof depends on
+## Informally uses
 
 - [Euler–Maclaurin formula](../../../Analysis/asymptotic-analysis/euler-maclaurin-formula.md), of order $2$ on $[0, N]$, for the representation of $\zeta(s, a)$
 - [The Gamma function at $r + \tfrac12$ and at $\tfrac12 - r$](../../../Analysis/sequences-and-series/trigonometric-and-harmonic-series/series-from-n-rlund-s-digamma-identity/gamma-add-half-and-gamma-half-sub-nat.md), at $r = 0$, for $\Gamma(\tfrac{1}{2}) = \sqrt{\pi}$

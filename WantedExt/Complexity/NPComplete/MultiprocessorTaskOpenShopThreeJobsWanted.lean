@@ -27,7 +27,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -53,7 +53,7 @@ same time; in the open shop with multiprocessor tasks the tasks of a job have no
 but, as in every open shop, two tasks of one job are not processed at the same time. The instance
 data are those of the multiprocessor-task job shop `JMPT3|n=3|C_max`
 (`MultiprocessorTaskJobShopThreeJobsWanted`), i.e. of the multipurpose-machine job shop of
-`MultiPurposeJobShopThreeJobsWanted` (`MultiPurposeJobShopThreeJobs.MPMJobShopInstance`: the machine
+`MultiPurposeJobShopThreeJobsDefs` (`MultiPurposeJobShopThreeJobs.MPMJobShopInstance`: the machine
 count `m`, the jobs as lists of tasks `(p_jk, μ_jk)` with machines numbered `1, …, m`, and the
 bound), with its tasks `Operation`, processing times `opLength` and machine lists `eligible`, read
 as the sets `μ_jk` a task occupies; `MPMWellFormed m` with the instance's own machine count gives

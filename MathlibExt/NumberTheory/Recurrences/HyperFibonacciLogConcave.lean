@@ -17,13 +17,16 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Eventual log-concavity of hyper `p`-Fibonacci and hyper `p`-Lucas numbers
+# Eventual log-concavity of generalized hyper-Fibonacci numbers
 
-This module proves that the hyper `p`-Fibonacci numbers `F_{p,n}^{(r)}` and the hyper `p`-Lucas
-numbers `L_{p,n}^{(r)}` of order `r ≥ 1` are eventually positive and log-concave
-(`hyperPFibonacci_hyperPLucas_eventually_logConcave`), Corollary 11 of Abdelhak Taane,
+This module proves that the generalized hyper-Fibonacci numbers `W_{p,n}^{(r)}` of order `r ≥ 1`
+with `p ≥ 1`, `a ≥ 0` and `b > 0` are eventually positive and log-concave
+(`generalizedHyperFibonacci_eventually_logConcave`), Corollary 10 of Abdelhak Taane,
 Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of Toeplitz Matrices Involving
 Generalized Hyper-Fibonacci Numbers*, Journal of Integer Sequences 29 (2026), Article 26.2.5.
+In particular the hyper `p`-Fibonacci numbers `F_{p,n}^{(r)}` and the hyper `p`-Lucas numbers
+`L_{p,n}^{(r)}` of order `r ≥ 1` are eventually positive and log-concave
+(`hyperPFibonacci_hyperPLucas_eventually_logConcave`), Corollary 11 of the same paper.
 
 `W_{p,n}` is `generalizedPFibonacci p a b n` and `W_{p,n}^{(r)}` is
 `generalizedHyperFibonacci p a b r n`; the hyper `p`-Fibonacci and hyper `p`-Lucas numbers are
@@ -267,12 +270,24 @@ private theorem final_estimate (p P x y c d e u K Q : ℤ) (hp : 1 ≤ p) (hP : 
   have h6 : 0 ≤ P * p ^ 2 * e * u := by positivity
   linarith
 
-/-- Eventual positivity and log-concavity of `W_{p,n}^{(s+1)}` for `p ≥ 1`, `a ≥ 0`, `b > 0`. -/
-private theorem eventually_logConcave (hp : 1 ≤ p) (ha : 0 ≤ a) (hb : 0 < b) (s : ℕ) :
-    ∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci p a b (s + 1) n ∧
-      generalizedHyperFibonacci p a b (s + 1) n *
-          generalizedHyperFibonacci p a b (s + 1) (n + 2) ≤
-        generalizedHyperFibonacci p a b (s + 1) (n + 1) ^ 2 := by
+end hyperPFibonacci_hyperPLucas_eventually_logConcave
+
+open hyperPFibonacci_hyperPLucas_eventually_logConcave in
+/-- **Eventual log-concavity of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers
+with $p \ge 1$, $a \ge 0$ and $b > 0$, let $W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci
+numbers, and let $r \ge 1$ be a natural number. Then there is a natural number $N$ such that for
+every $n \ge N$ we have $W^{(r)}_{p,n} > 0$ and
+$W^{(r)}_{p,n} W^{(r)}_{p,n+2} \le (W^{(r)}_{p,n+1})^2$.
+
+Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
+Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
+Sequences 29 (2026), Article 26.2.5, Corollary 10 (`jis-2026-26.2.5-cor-10`). -/
+public theorem generalizedHyperFibonacci_eventually_logConcave (p a b : ℤ)
+    (hp : 1 ≤ p) (ha : 0 ≤ a) (hb : 0 < b) (r : ℕ) (hr : 1 ≤ r) :
+    ∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci p a b r n ∧
+      generalizedHyperFibonacci p a b r n * generalizedHyperFibonacci p a b r (n + 2) ≤
+        generalizedHyperFibonacci p a b r (n + 1) ^ 2 := by
+  obtain ⟨s, rfl⟩ : ∃ s, r = s + 1 := ⟨r - 1, by omega⟩
   refine ⟨2 + (4 * p * (p + 1) * s).natAbs + (b ^ 2 - a * (p * b + a)).natAbs,
     fun n hn => ?_⟩
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 2 := ⟨n - 2, by omega⟩
@@ -356,9 +371,6 @@ private theorem eventually_logConcave (hp : 1 ≤ p) (ha : 0 ≤ a) (hb : 0 < b)
   rw [← hD] at hfin
   linarith
 
-end hyperPFibonacci_hyperPLucas_eventually_logConcave
-
-open hyperPFibonacci_hyperPLucas_eventually_logConcave in
 /-- **Eventual log-concavity of hyper $p$-Fibonacci and hyper $p$-Lucas numbers.** Let
 $p \ge 1$ be an integer and $r \ge 1$ a natural number, and let $F_{p,n}^{(r)}$ and
 $L_{p,n}^{(r)}$ be the generalized hyper-Fibonacci numbers $W_{p,n}^{(r)}$ with initial values
@@ -378,9 +390,9 @@ public theorem hyperPFibonacci_hyperPLucas_eventually_logConcave (p : ℤ) (hp :
         generalizedHyperFibonacci p 0 1 r (n + 1) ^ 2) ∧
     (∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci p 2 p r n ∧
       generalizedHyperFibonacci p 2 p r n * generalizedHyperFibonacci p 2 p r (n + 2) ≤
-        generalizedHyperFibonacci p 2 p r (n + 1) ^ 2) := by
-  obtain ⟨s, rfl⟩ : ∃ s, r = s + 1 := ⟨r - 1, by omega⟩
-  exact ⟨eventually_logConcave hp le_rfl one_pos s,
-    eventually_logConcave hp zero_le_two (lt_of_lt_of_le one_pos hp) s⟩
+        generalizedHyperFibonacci p 2 p r (n + 1) ^ 2) :=
+  ⟨generalizedHyperFibonacci_eventually_logConcave p 0 1 hp le_rfl one_pos r hr,
+    generalizedHyperFibonacci_eventually_logConcave p 2 p hp zero_le_two
+      (lt_of_lt_of_le one_pos hp) r hr⟩
 
 end MetaMathlibExt

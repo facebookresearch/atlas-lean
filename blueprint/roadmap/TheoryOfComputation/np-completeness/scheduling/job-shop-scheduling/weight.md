@@ -1,0 +1,3 @@
+# Weight of a job in JOB SHOP WITH A FIXED NUMBER OF JOBS, WEIGHTED TARDINESS
+
+An instance of JOB SHOP WITH A FIXED NUMBER OF JOBS, WEIGHTED TARDINESS is a triple of a JOB-SHOP SCHEDULING instance $(m, J, K)$, whose list $J$ has one list of operations per job and whose last component is the bound $K$ on the total weighted tardiness; a list $T$ of triples $(r_j, d_j, w_j)$ of natural numbers; and a list of precedence pairs. The weight $w_j$ of job $j \in \{0, \dots, n-1\}$ is the third component of the triple at position $j$ of $T$. The value is $0$ when $T$ has no entry at position $j$; that $T$ has exactly one triple per job is a condition of a well-formed instance, not of this definition.

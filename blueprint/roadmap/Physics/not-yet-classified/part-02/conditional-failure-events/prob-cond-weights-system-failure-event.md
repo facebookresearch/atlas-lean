@@ -1,0 +1,5 @@
+# Single-epoch conditional failure probability
+
+Let $\Omega$ (scenarios) and $E$ (components) be finite. Component $i$ in scenario $\omega$ has damage $d_{0,i}(\omega) + r_i(\omega)\,s$ at time $s \ge 0$ and threshold $D_i(\omega)$. Let $S$ be an increasing set of working configurations in $\{0,1\}^E$, and let $F$ be the set of scenarios whose system lifetime (with component lifetimes the first times the damage reaches the threshold) is at most $t \ge 0$. A sensor on component $i_0$ reads $z(\omega) = g\,(d_{0,i_0}(\omega) + r_{i_0}(\omega)\,t) + b + \varepsilon(\omega)$, and $A = \{\omega : z_{\mathrm{lo}} \le z(\omega) \le z_{\mathrm{hi}}\}$. For weights $p$ write $P(X) = \sum_{\omega \in X} p(\omega)$, and let $p_A(\omega) = p(\omega)/P(A)$ for $\omega \in A$ and $0$ otherwise.
+
+If $r_i(\omega) \ge 0$ for all $i, \omega$, $g ≠ 0$, $p \ge 0$ and $P(A) > 0$, then $p_A \ge 0$, $\sum_\omega p_A(\omega) = 1$, $P_A(F) = P(A \cap F)/P(A)$, $P_A(F) \in [0, 1]$, and $\omega \in A \cap F$ if and only if $z_{\mathrm{lo}} \le z(\omega) \le z_{\mathrm{hi}}$ and the configuration $i \mapsto [\,d_{0,i}(\omega) + r_i(\omega)\,t < D_i(\omega)\,]$ is not in $S$.

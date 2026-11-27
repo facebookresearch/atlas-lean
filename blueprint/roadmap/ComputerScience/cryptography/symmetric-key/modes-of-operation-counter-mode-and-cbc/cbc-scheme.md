@@ -1,0 +1,3 @@
+# CBC mode
+
+Let the key space $K$ and the block space $X$ be finite and nonempty, let $X$ be an additive commutative group, and let $E$ be a [block cipher](block-cipher.md). CBC mode with $\ell$-block messages draws a key $k$ uniformly from $K$; to encrypt $m$ it draws an initial vector $\mathrm{iv}$ uniformly from $X$ and outputs the [CBC encryption](cbc-encrypt.md) $(\mathrm{iv}, c)$ of $m$ under the permutation $E_k$; it decrypts $(\mathrm{iv}, c)$ to `some` of the [unchaining](cbc-unchain.md) of $c$ from $\mathrm{iv}$ with the inverse permutation $E_k^{-1}$, so decryption never fails (Katz and Lindell, Section 3.6.2).
