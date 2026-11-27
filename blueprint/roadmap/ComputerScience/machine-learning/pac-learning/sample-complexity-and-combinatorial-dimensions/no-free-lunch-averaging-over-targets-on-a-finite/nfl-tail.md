@@ -1,0 +1,3 @@
+# No free lunch, tail form
+
+Let $X$ be a finite set with $|X| = 2m$ elements, $m \ge 1$, let $x_1, \dots, x_m$ be distinct points of $X$, and let $L$ be any learner, a map from labelled samples of size $m$ to hypotheses $X \to \{0, 1\}$. For a target $f : X \to \{0, 1\}$, let $\operatorname{err}(f)$ be the number of points of $X$ outside the sample at which the hypothesis $L((x_1, f(x_1)), \dots, (x_m, f(x_m)))$ differs from $f$. Then at least $\tfrac17 \cdot 2^{|X|}$ of the $2^{|X|}$ targets have $\operatorname{err}(f)/|X| > \tfrac18$: the error rate outside the sample, counted against all $2m$ points of $X$, exceeds $1/8$ for at least a $1/7$ fraction of the targets.

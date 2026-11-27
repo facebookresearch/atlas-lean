@@ -1,0 +1,3 @@
+# The P1 reconstruction is a hat multiple
+
+Consider a fixed-fixed bar of length $L$ and axial rigidity $EA$, discretized by the two-cell partition $\{0, \tfrac12, 1\}$ of $[0, 1]$ pulled back by $x/L$, with interior hat function $\varphi$ ($\varphi(0) = \varphi(1) = 0$, $\varphi(\tfrac12) = 1$, piecewise linear). Under a uniform load $q$, the physical stiffness is $K = 4EA/L$, the consistent load is $F = qL/2$, the physical P1 reconstruction is $u_h(x) = \alpha\,(I_h\hat u)(x/L)$ with $\alpha = qL^2/(2EA)$, $\hat u(\xi) = \xi(1 - \xi)$ and $I_h$ the nodal interpolant, and its interior coefficient is $c = u_h(L/2)$. If $L \ne 0$, then $u_h(x) = c\,\varphi(x/L)$ for every $x$. Division is total, with $a/0 = 0$: when $EA = 0$, $\alpha = c = 0$ and $u_h = 0$.
