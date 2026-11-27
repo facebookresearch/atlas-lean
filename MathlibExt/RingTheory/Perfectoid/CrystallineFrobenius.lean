@@ -31,9 +31,9 @@ p. 78). We show:
   (`PadicComplexInt.frobeniusLocalization_mem_finiteDividedPowers`; J.-M. Fontaine and Y. Ouyang,
   *Theory of p-adic Galois representations*, §7.1.3 p. 157). The induced map of `p`-adic
   completions is the Frobenius of `A_cris` (`PadicComplexInt.frobeniusCrystallineCompletion`;
-  Fontaine, *op. cit.*, §2.2.3 d) p. 77), and it commutes with the Galois action
-  (`PadicComplexInt.frobeniusCrystallineCompletion_galoisCrystallineCompletion`; Fontaine,
-  *op. cit.*, §2.3.1 p. 78).
+  Fontaine, *op. cit.*, §2.2.3 d) p. 77); for a generator `w` of `ker θ`, it commutes with the
+  Galois action (`PadicComplexInt.frobeniusCrystallineCompletion_galoisCrystallineCompletion`;
+  Fontaine, *op. cit.*, §2.3.1 p. 78).
 * `φ(log [ε]) = log [ε^p] = p log [ε]` in `A_cris = CrystallineCompletion p ξ` for `ε♯ = 1`
   (`PadicComplexInt.frobeniusCrystallineCompletion_logTeichmullerCrystalline`); for
   `ε = (1, ζ_p, ζ_{p²}, …)` this is `φ(t) = p t` (Fontaine, *op. cit.*, §2.3.4 p. 79;
