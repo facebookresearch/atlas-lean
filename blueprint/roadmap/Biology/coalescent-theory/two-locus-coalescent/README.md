@@ -61,3 +61,8 @@
 - [Two-locus Hudson simulator samples the two-locus ancestral process](two-locus-hudson-simulator-samples-the-two-locus.md)
 - [Two-locus coalescence times of a pair: a diagonal atom and an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
 - [Wiuf–Hein algorithm reproduces the joint law of local trees](wiuf-hein-algorithm-reproduces-the-joint-law-of.md)
+
+## Related topics
+
+- [Conditioned ancestral recombination graph dual](conditioned-ancestral-recombination-graph-dual/README.md)
+- [Two-locus sampling probabilities under variable population size](two-locus-sampling-probabilities-under-variable-population-size/README.md)

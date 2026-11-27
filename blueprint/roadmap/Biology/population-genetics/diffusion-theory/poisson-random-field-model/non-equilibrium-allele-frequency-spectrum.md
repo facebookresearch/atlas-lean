@@ -23,4 +23,4 @@ By Campbell's formula $\mathbb{E}\langle\mathcal{X}^N_t,f\rangle = N\theta\,\mat
 
 ## Sources
 
-- I. Kaj, C. F. Mugal, "The non-equilibrium allele frequency spectrum in a Poisson random field framework", arXiv:1512.04925 (2015), Section 2 (Poisson random field model; Propositions 1 and 2) and Section 3.1, Theorem 1. <https://doi.org/10.48550/arXiv.1512.04925>
+- Ingemar Kaj and Carina F. Mugal, *The non-equilibrium allele frequency spectrum in a Poisson random field framework*, Theor. Popul. Biol. 111 (2016), 51–64. <https://doi.org/10.1016/j.tpb.2016.06.003> Section 2 (Poisson random field model; Propositions 1 and 2) and Section 3.1, Theorem 1. Locators use the numbering of the preprint arXiv:1512.04925.

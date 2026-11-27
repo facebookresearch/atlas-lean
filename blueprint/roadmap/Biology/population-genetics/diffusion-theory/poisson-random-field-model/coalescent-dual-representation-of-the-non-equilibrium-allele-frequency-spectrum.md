@@ -22,4 +22,4 @@ Moment duality for the Wright–Fisher diffusion with selection, $\mathbb{E}^{\g
 
 ## Sources
 
-- I. Kaj, C. F. Mugal, "The non-equilibrium allele frequency spectrum in a Poisson random field framework", arXiv:1512.04925 (2015), Section 3.2 (duality representation; Kingman transition probabilities from Griffiths and Tavaré) and Corollary 1. <https://doi.org/10.48550/arXiv.1512.04925>
+- Ingemar Kaj and Carina F. Mugal, *The non-equilibrium allele frequency spectrum in a Poisson random field framework*, Theor. Popul. Biol. 111 (2016), 51–64. <https://doi.org/10.1016/j.tpb.2016.06.003> Section 3.2 (duality representation; Kingman transition probabilities from Griffiths and Tavaré) and Corollary 1. Locators use the numbering of the preprint arXiv:1512.04925.

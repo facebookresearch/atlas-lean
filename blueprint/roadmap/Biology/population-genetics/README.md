@@ -28,10 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Centred quadratic stochastic operators](centred-quadratic-stochastic-operators/README.md)
-- [Markov chain representation of mutation selection equilibria](markov-chain-representation-of-mutation-selection-equilibria/README.md)
-- [Pitman–Yor frequency spectrum](pitman-yor-frequency-spectrum/README.md)
-- [Rate of adaptation in asexual populations](rate-of-adaptation-in-asexual-populations/README.md)
-- [Reproductive isolation by mating preference and migration](reproductive-isolation-by-mating-preference-and-migration/README.md)
-- [SAS-CFF model with demography](sas-cff-model-with-demography/README.md)
-- [Speciation by mating preference](speciation-by-mating-preference/README.md)

@@ -9,3 +9,7 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Fitness landscapes](fitness-landscapes/README.md)
 - [Hybrid incompatibilities](hybrid-incompatibilities/README.md)
 - [Sexual selection and genetic conflict](sexual-selection-and-genetic-conflict/README.md)
+- [Centred quadratic stochastic operators](centred-quadratic-stochastic-operators/README.md)
+- [Reproductive isolation by mating preference and migration](reproductive-isolation-by-mating-preference-and-migration/README.md)
+- [SAS-CFF model with demography](sas-cff-model-with-demography/README.md)
+- [Speciation by mating preference](speciation-by-mating-preference/README.md)

@@ -43,8 +43,3 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
-- [Modified Egger intercept test for directional and correlated pleiotropy](modified-egger-intercept-test.md)
-- [Plug-in identification of receptor-modulated ligand effects](plug-in-identification-of-receptor-modulated-ligand-effects.md)
-- [Spike-and-slab Mendelian randomization for cell–cell communication](spike-and-slab-mendelian-randomization-for-cell-cell-communication.md)
-- [Summary statistics cannot distinguish nonlinearity from pleiotropy](summary-statistics-cannot-distinguish-nonlinearity-from-pleiotropy.md)
-- [Wald ratio as a weighted average derivative under a nonlinear dose-response](wald-ratio-as-weighted-average-derivative-under-nonlinear-dose-response.md)

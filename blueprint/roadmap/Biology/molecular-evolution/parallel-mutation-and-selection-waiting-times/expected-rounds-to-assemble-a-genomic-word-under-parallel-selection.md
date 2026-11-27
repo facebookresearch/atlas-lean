@@ -20,4 +20,4 @@ Each position is fixed at an independent geometric time with success probability
 
 ## Sources
 
-- Herbert S. Wilf, Warren J. Ewens, "There's plenty of time for evolution", arXiv (2010). Theorem 1 and the formula for $\beta(L)$. <https://doi.org/10.48550/arXiv.1010.5178>
+- Herbert S. Wilf and Warren J. Ewens, *There's plenty of time for evolution*, Proc. Natl. Acad. Sci. USA 107(52) (2010), 22454–22456. <https://doi.org/10.1073/pnas.1016207107> Theorem 1 and the formula for $\beta(L)$. Locators use the numbering of the preprint arXiv:1010.5178.

@@ -22,10 +22,14 @@ $$\eta(\mathbf 0)-\eta(\mathbf z_i-\mathbf z_j)=\|J(\mathbf z_i-\mathbf z_j)\|^2
 
 so $\hat d_{ij}=(\hat\eta_0-\hat\eta_{ij})^{1/2}$ consistently estimates the $J$-transformed distance for nearby pairs. Keeping only pairs with $\hat d_{ij}\le\tau$ and embedding the resulting local distance graph (e.g. by ISOMAP shortest paths and multidimensional scaling), then fixing $J$ with a few anchor individuals of known location, reconstructs ancestry coordinates without assuming a parametric form for $\eta$. The estimated locations and spatially smoothed allele frequencies are then used as covariates to correct population stratification in association tests.
 
+## Depends on
+
+- [Offspring genotype law under random union of gametes](../../population-genetics/hardy-weinberg-law/offspring.md)
+
 ## Expansion
 
 Conditional on the surfaces, $\mathbb E[(x_{i\ell}/2-\mu_\ell)(x_{j\ell}/2-\mu_\ell)]=\eta(\mathbf z_i-\mathbf z_j)$ for $i\ne j$, while for $i=j$ the binomial sampling adds a variance term that $x^2-x$ removes, which is why the diagonal uses $\hat\eta_0$. Independence across SNPs gives the $\sqrt{\log n/p}$ term by Hoeffding-type bounds and a union bound over pairs; replacing $\mu_\ell$ by $\hat\mu_\ell$ costs the $\sqrt{\kappa/n}$ and $1/n$ terms. PCA uses all pairwise covariances as if they were linear in distance, which distorts the map when $\eta$ decays nonlinearly; restricting to local pairs where the quadratic expansion is accurate avoids that bias.
 
 ## Sources
 
-- Anand Bhaskar, Adel Javanmard, Thomas A. Courtade, David Tse, "Novel probabilistic models of spatial genetic ancestry with applications to stratification correction in genome-wide association studies", arXiv:1610.07306 (2016): Section 3.1 (model), Supplementary Section 6.2 (algorithm, Theorem 1, local-distance step and ISOMAP embedding), Section 7 (association testing). <https://doi.org/10.48550/arXiv.1610.07306>
+- Anand Bhaskar, Adel Javanmard, Thomas A. Courtade and David Tse, *Novel probabilistic models of spatial genetic ancestry with applications to stratification correction in genome-wide association studies*, Bioinformatics 33(6) (2017), 879–885. <https://doi.org/10.1093/bioinformatics/btw720> Section 3.1 (model), Supplementary Section 6.2 (algorithm, Theorem 1, local-distance step and ISOMAP embedding), Section 7 (association testing). Locators use the numbering of the preprint arXiv:1610.07306.

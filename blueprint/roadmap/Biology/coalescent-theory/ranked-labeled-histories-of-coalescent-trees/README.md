@@ -25,3 +25,8 @@
 - [Each ranked labeled history has probability $2^{n-1} / (n!(n-1)!)$](random-joining-singleton.md)
 
 - [The common ancestor of a subsample is that of the whole sample with probability (n+1)(m−1)/((n−1)(m+1))](mrca-of-a-subsample-equals-sample-mrca-with-prob.md)
+
+## Related topics
+
+- [Cherries and pitchforks of ranked coalescent trees](cherries-and-pitchforks-of-ranked-coalescent-trees/README.md)
+- [Evolving Moran genealogy](evolving-moran-genealogy/README.md)

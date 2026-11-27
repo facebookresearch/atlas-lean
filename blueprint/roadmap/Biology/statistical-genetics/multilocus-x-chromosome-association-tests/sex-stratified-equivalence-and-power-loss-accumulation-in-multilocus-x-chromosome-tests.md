@@ -20,10 +20,16 @@ $$P(\chi^2_{3k,\alpha}, 3k, ck) - P(\chi^2_{k,\alpha}, k, ck) \to 1 \qquad (k \t
 
 so the robust test's power loss relative to a correctly specified additive test approaches one as the number of variants grows.
 
+## Depends on
+
+- [Wald's test](../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-wald-statistic.md)
+- [Rao's score test, known information](../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-score-statistic.md)
+- [Wilks' theorem (simple null)](../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-two-mul-log-like.md)
+
 ## Expansion
 
 Theorem 1 holds because $\mathcal{M}$ is a reparametrisation of fitting the two sexes separately: the columns $(\mathbf 1, S, X, XS)$ span the same space as $(\mathbf 1_f, \mathbf 1_m, X_f \oplus 0, 0 \oplus X_m)$, the likelihood factorises over sexes, and the null hypotheses correspond. Theorems 2 and 3 compare noncentral $\chi^2$ tails: with a normal approximation $(\chi^2_d - d - \nu)/\sqrt{2(d + 2\nu)}$, a threshold placed between the two critical values makes one test reject with probability tending to one and the other with probability tending to zero; for $3k$ versus $k$ degrees of freedom with the same $O(k)$ signal, the extra $2k$ null degrees of freedom shift the critical value by order $k$ while the signal grows at the same rate, which yields the window for $b$. The single-variant bound (a maximal loss of under 20%, known for the 3-df test) is therefore not the right guide for multilocus testing; the paper's remedy is to combine the classical and robust tests rather than replace one by the other.
 
 ## Sources
 
-- Ruilin Bai, Bo Chen, "X-chromosome Multilocus Association Studies for Common and Rare Variants", arXiv:2511.18948 (2025), Section 3 (Theorem 1, proof in Appendix A), Section 4 (Lemmas 1–2, Theorems 2 and 3), <https://doi.org/10.48550/arXiv.2511.18948>.
+- Ruilin Bai and Bo Chen, *X-chromosome multilocus association studies for common and rare variants*, J. Comput. Biol. (2026, published online 12 November 2026). <https://doi.org/10.1177/15578666261502459> Section 3 (Theorem 1, proof in Appendix A), Section 4 (Lemmas 1–2, Theorems 2 and 3). Locators use the numbering of the preprint arXiv:2511.18948.

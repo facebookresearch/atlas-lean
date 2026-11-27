@@ -18,10 +18,18 @@ holds, where $\lambda_1(P(t))$ is the smallest eigenvalue of $P(t)$.
 
 So a fitness peak is reached even when the G-matrix changes over time or is singular at times (genetic constraints in some directions), provided the smallest genetic variance is not integrable: the population cannot be permanently starved of variation in any direction.
 
+## Depends on
+
+- [Lande's gradient form of the response, genetic-covariance version](../lande-s-selection-gradient/selected-shift-breeding-eq-gradient-gene.md)
+
+## Proof depends on
+
+- [Lyapunov's direct method and Lyapunov's instability theorem](../../../Analysis/ordinary-differential-equations/lyapunov-s-direct-method/lyapunov-s-direct-method-and-lyapunov-s-instability-theorem.md)
+
 ## Expansion
 
 The function $V(x) = f(\bar x) - f(x)$ is positive near $\bar x$ (by H1) and nonincreasing along solutions, since $V'(t) = -\nabla f^\top P(t) \nabla f \le 0$ by positive semi-definiteness; this gives uniform stability. Moreover $V' \le -\lambda_1(P(t)) |\nabla f(x(t))|^2$. If a solution stayed in an annulus around $\bar x$, where $|\nabla f|$ is bounded below by (H2), integrating and using (H3) would force $V \to -\infty$, a contradiction; uniformity in the starting time follows because the estimate depends only on the integral of $\lambda_1$. For the basin, the sublevel structure of $f$ makes $E_{c,\bar x}$ positively invariant (solutions cannot cross the level set $f = c$ while $f$ is nondecreasing along them), and the same integral argument rules out accumulation away from $\bar x$ when no other critical points exist there.
 
 ## Sources
 
-- Benjamin J. Ridenhour, Jerry R. Ridenhour, "Stability of Equilibria in Modified-Gradient Systems", arXiv (2016). Section 2 (hypotheses H0-H3, Theorem 1) and Section 3 (Theorem 2). <https://doi.org/10.48550/arXiv.1608.04423>
+- Benjamin J. Ridenhour and Jerry R. Ridenhour, *Stability of equilibria in quantitative genetic models based on modified-gradient systems*, J. Biol. Dyn. 12(1) (2018), 39–50. <https://doi.org/10.1080/17513758.2017.1400598> Section 2 (hypotheses H0–H3, Theorem 1) and Section 3 (Theorem 2). Locators use the numbering of the preprint, titled *Stability of equilibria in modified-gradient systems*, arXiv:1608.04423.
