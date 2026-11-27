@@ -11,9 +11,33 @@ Portions of this file are adapted from:
 
 `Definitions/Def_NumberField_PlaceAbove.lean`,
 `Definitions/Def_NumberField_PlaceTransport.lean`,
+`Definitions/Def_NumberField_PlaceDecompositionAction.lean`,
+`Definitions/Def_NumberField_FiniteSIdeleModule.lean`,
+`Definitions/Def_NumberField_ArchimedeanIdeleModule.lean`,
+`Definitions/Def_NumberField_InfinitePlaceTransport.lean`,
 `Theorems/Thm_NumberField_FiniteSIdele_exists_addEquiv_coind_localUnits.lean`,
-`Theorems/Thm_NumberField_ArchIdele_exists_addEquiv_coind_localUnits.lean`
-and the corresponding files in `P2M/Sol/`
+`Theorems/Thm_NumberField_ArchIdele_exists_addEquiv_coind_localUnits.lean`,
+`Theorems/Thm_NumberField_PlaceTransport_transport_one.lean`,
+`Theorems/Thm_NumberField_PlaceTransport_transport_trans_transport.lean`,
+`Theorems/Thm_NumberField_PlaceTransport_transport_eq_actRingEquiv.lean`,
+`Theorems/Thm_NumberField_PlaceTransport_stabilizer_eq_decomp.lean`,
+`Theorems/Thm_NumberField_PlaceTransport_under_smul.lean`,
+`Theorems/Thm_NumberField_PlaceTransport_orbit_eq_setOf_under_eq.lean`,
+`Theorems/Thm_NumberField_InfinitePlaceTransport_transport_one.lean`,
+`Theorems/Thm_NumberField_InfinitePlaceTransport_transport_trans_transport.lean`,
+`Theorems/Thm_NumberField_InfinitePlaceTransport_transport_eq_actRingEquiv.lean`,
+`P2M/Sol/S_NumberField_FiniteSIdele_exists_addEquiv_coind_localUnits.lean`,
+`P2M/Sol/S_NumberField_ArchIdele_exists_addEquiv_coind_localUnits.lean`,
+`P2M/Sol/S_NumberField_PlaceTransport_transport_one.lean`,
+`P2M/Sol/S_NumberField_PlaceTransport_transport_trans_transport.lean`,
+`P2M/Sol/S_NumberField_PlaceTransport_transport_eq_actRingEquiv.lean`,
+`P2M/Sol/S_NumberField_PlaceTransport_stabilizer_eq_decomp.lean`,
+`P2M/Sol/S_NumberField_PlaceTransport_under_smul.lean`,
+`P2M/Sol/S_NumberField_PlaceTransport_orbit_eq_setOf_under_eq.lean`,
+`P2M/Sol/S_NumberField_InfinitePlaceTransport_transport_one.lean`,
+`P2M/Sol/S_NumberField_InfinitePlaceTransport_transport_trans_transport.lean`
+and
+`P2M/Sol/S_NumberField_InfinitePlaceTransport_transport_eq_actRingEquiv.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
