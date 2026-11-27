@@ -2,7 +2,7 @@
 
 For an elliptic curve $E$ over a number field $K$, the group $E(K)$ of $K$-rational points is a finitely generated abelian group by the Mordell–Weil theorem; its rank $\operatorname{rk} E(K)$ is the number of infinite cyclic factors in a decomposition of $E(K)$.
 
-Let $K$ be a number field and let $E$ be an elliptic curve over $K$: a smooth projective curve of genus one over $K$ with a distinguished $K$-rational point $O$, for example the projective closure of a nonsingular Weierstrass equation with $O$ the point at infinity. The set $E(K)$ of points of $E$ with coordinates in $K$ is an abelian group under the chord-and-tangent law with identity $O$. By the Mordell–Weil theorem it is finitely generated, so
+Let $K$ be a number field and let $E$ be an elliptic curve over $K$: a smooth projective curve of genus one over $K$ with a distinguished $K$-rational point $O$, for example the projective closure of a nonsingular Weierstrass equation with $O$ the point at infinity. The set $E(K)$ of points of $E$ with coordinates in $K$ is an abelian group, written additively, under the chord-and-tangent law with identity $O$. By the Mordell–Weil theorem it is finitely generated, so
 
 $$
 E(K) \cong E(K)_{\mathrm{tors}} \oplus \mathbb{Z}^{r}
@@ -22,11 +22,11 @@ Conventions:
 
 ## Depends on
 
-None.
+- [Abelian group](../../GroupTheory/group-basics/abelian-group.md)
 
 ## Proof depends on
 
-None.
+- [Fundamental theorem of finitely generated abelian groups, invariant factor form](../../GroupTheory/abelian-groups/structure-of-finitely-generated-abelian-groups/equiv-free-prod-direct-sum-invariant-fac.md)
 
 ## Expansion
 
