@@ -13,11 +13,8 @@ import Mathlib.Algebra.Homology.ComplexShape
 import Mathlib.Algebra.Homology.DerivedCategory.Basic
 import Mathlib.Algebra.Homology.Embedding.Extend
 import Mathlib.Algebra.Homology.Homotopy
-import Mathlib.Algebra.Module.RingHom
 import Mathlib.AlgebraicTopology.AlternatingFaceMapComplex
-import Mathlib.RingTheory.Derivation.Basic
-import Mathlib.RingTheory.Extension.Basic
-import Mathlib.RingTheory.Kaehler.Basic
+import Mathlib.RingTheory.Extension.Cotangent.Basic
 
 /-!
 # Independence of the obstruction class from the polynomial lift
@@ -42,165 +39,38 @@ open Opposite Simplicial
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- A lift lies over the augmentation on the degree-zero term. -/
-private theorem lift_aug {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L : PolynomialLift R Q) (t : R.algebra.obj (op ⦋0⦌)) :
-    algebraMap Q.Ring B (L.hom t) =
-      CommAlgCat.resolutionAugmentationHom k (CommAlgCat.of k B) R.algebra
-        R.augmentation (op ⦋0⦌) t :=
-  congrArg (fun f : R.algebra.obj (op ⦋0⦌) →ₐ[k] B => f t) L.over
+/-- The degree-zero term of the resolution as an extension of `B` along the augmentation. -/
+private abbrev degreeZeroExtension {k B : Type} [Field k] [CommRing B] [Algebra k B]
+    (R : PolynomialResolution k B) : Algebra.Extension.{0} k B :=
+  Algebra.Extension.ofSurjective (R.augmentation.app (op ⦋0⦌)).hom (R.surjective (op ⦋0⦌))
 
-/-- The difference of two lifts lands in the kernel. -/
-private theorem liftDiff_mem {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) (t : R.algebra.obj (op ⦋0⦌)) :
-    L.hom t - L'.hom t ∈ Q.ker := by
-  rw [RingHom.mem_ker, map_sub, lift_aug R Q L t, lift_aug R Q L' t, sub_self]
+/-- A polynomial lift as a morphism of extensions out of the degree-zero term. -/
+private def liftHom {k B : Type} [Field k] [CommRing B] [Algebra k B]
+    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B) (L : PolynomialLift R Q) :
+    (degreeZeroExtension R).Hom Q :=
+  Algebra.Extension.Hom.ofAlgHom L.hom
+    (AlgHom.ext fun t => congrArg (fun f : R.algebra.obj (op ⦋0⦌) →ₐ[k] B => f t) L.over)
 
-/-- The conormal module as a module over the degree-zero term via the augmentation. -/
-private noncomputable instance cotangentDegreeZeroModule {k B : Type} [Field k] [CommRing B]
-    [Algebra k B] (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B) :
-    Module (R.algebra.obj (op ⦋0⦌)) Q.Cotangent :=
-  Module.compHom Q.Cotangent
-    (CommAlgCat.resolutionAugmentationHom k (CommAlgCat.of k B) R.algebra R.augmentation
-      (op ⦋0⦌))
-
-/-- The scalar tower from `k` through the degree-zero term to the conormal module. -/
-private noncomputable instance cotangentTower {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B) :
-    IsScalarTower k (R.algebra.obj (op ⦋0⦌)) Q.Cotangent where
-  smul_assoc r p m := by
-    change (CommAlgCat.resolutionAugmentationHom k (CommAlgCat.of k B) R.algebra
-      R.augmentation (op ⦋0⦌)) (r • p) • m = algebraMap k B r •
-      ((CommAlgCat.resolutionAugmentationHom k (CommAlgCat.of k B) R.algebra
-        R.augmentation (op ⦋0⦌)) p • m)
-    have hcomm : (CommAlgCat.resolutionAugmentationHom k (CommAlgCat.of k B) R.algebra
-        R.augmentation (op ⦋0⦌)) (algebraMap k (R.algebra.obj (op ⦋0⦌)) r)
-        = algebraMap k B r :=
-      (R.augmentation.app (op ⦋0⦌)).hom.commutes r
-    rw [Algebra.smul_def, map_mul, hcomm, mul_smul]
-
-/-- The `Q.Ring`-action on the conormal module is through `algebraMap`. -/
-private theorem cotangent_qsmul {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (Q : Algebra.Extension.{0} k B) (c : Q.Ring) (m : Q.Cotangent) :
-    c • m = algebraMap Q.Ring B c • m := rfl
-
-/-- The `k`-action on the conormal module is through `algebraMap`. -/
-private theorem cotangent_ksmul {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (Q : Algebra.Extension.{0} k B) (r : k) (m : Q.Cotangent) :
-    r • m = algebraMap k B r • m := rfl
-
-/-- The difference of two lifts as an element of the kernel. -/
-private def liftDiffKer {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) (t : R.algebra.obj (op ⦋0⦌)) : Q.ker :=
-  ⟨L.hom t - L'.hom t, liftDiff_mem R Q L L' t⟩
-
-/-- The lift difference respects addition. -/
-private theorem liftDiffKer_add {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) (a b : R.algebra.obj (op ⦋0⦌)) :
-    liftDiffKer R Q L L' (a + b)
-      = liftDiffKer R Q L L' a + liftDiffKer R Q L L' b := by
-  ext
-  change L.hom (a + b) - L'.hom (a + b)
-    = (L.hom a - L'.hom a) + (L.hom b - L'.hom b)
-  rw [map_add, map_add]
-  ring
-
-/-- The difference of two lifts as a `k`-linear map into the conormal module. -/
-private def liftDiffLinearMap {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) : R.algebra.obj (op ⦋0⦌) →ₗ[k] Q.Cotangent where
-  toFun t := Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t)
-  map_add' a b := by
-    change Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' (a + b))
-      = Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' a)
-        + Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' b)
-    rw [liftDiffKer_add, map_add]
-  map_smul' r t := by
-    change Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' (r • t))
-      = r • Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t)
-    have hval : L.hom (r • t) - L'.hom (r • t)
-        = (algebraMap k Q.Ring r) • (L.hom t - L'.hom t) := by
-      rw [Algebra.smul_def, map_mul, map_mul, AlgHom.commutes, AlgHom.commutes,
-        smul_eq_mul, mul_sub]
-    have hker : liftDiffKer R Q L L' (r • t)
-        = (algebraMap k Q.Ring r) • liftDiffKer R Q L L' t := by
-      ext
-      exact hval
-    rw [hker, map_smul, cotangent_qsmul, cotangent_ksmul,
-      ← IsScalarTower.algebraMap_apply k Q.Ring B]
-
-/-- The value of the lift-difference map. -/
-private theorem liftDiffLinearMap_apply {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) (t : R.algebra.obj (op ⦋0⦌)) :
-    liftDiffLinearMap R Q L L' t
-      = Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t) := rfl
-
-/-- The `P₀`-action on a lift difference is through the lifted representative. -/
-private theorem liftDiff_smul {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) (a t : R.algebra.obj (op ⦋0⦌)) :
-    a • Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t)
-      = Algebra.Extension.Cotangent.mk ((L.hom a) • liftDiffKer R Q L L' t) := by
-  have hmap : Algebra.Extension.Cotangent.mk ((L.hom a) • liftDiffKer R Q L L' t)
-      = (L.hom a) • Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t) :=
-    map_smul _ _ _
-  have hQ : (L.hom a) • Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t)
-      = algebraMap Q.Ring B (L.hom a)
-        • Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t) := rfl
-  rw [hQ, lift_aug R Q L a] at hmap
-  exact hmap.symm
-
-/-- The difference of two lifts as a derivation into the conormal module. -/
-private def liftDiffDerivation {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) : Derivation k (R.algebra.obj (op ⦋0⦌)) Q.Cotangent where
-  toLinearMap := liftDiffLinearMap R Q L L'
-  map_one_eq_zero' := by
-    change liftDiffLinearMap R Q L L' 1 = 0
-    have hval : L.hom 1 - L'.hom 1 = 0 := by rw [map_one, map_one, sub_self]
-    have hker : liftDiffKer R Q L L' 1 = 0 := by
-      ext
-      exact hval
-    rw [liftDiffLinearMap_apply, hker, map_zero]
-  leibniz' a b := by
-    change liftDiffLinearMap R Q L L' (a * b)
-      = a • liftDiffLinearMap R Q L L' b + b • liftDiffLinearMap R Q L L' a
-    simp only [liftDiffLinearMap_apply]
-    rw [liftDiff_smul R Q L L' a b, liftDiff_smul R Q L L' b a, ← map_add,
-      Algebra.Extension.Cotangent.mk_eq_mk_iff_sub_mem]
-    have huv : (L.hom a - L'.hom a) * (L.hom b - L'.hom b) ∈ Q.ker ^ 2 := by
-      rw [pow_two]
-      exact Ideal.mul_mem_mul (liftDiff_mem R Q L L' a) (liftDiff_mem R Q L L' b)
-    have hval : ↑(liftDiffKer R Q L L' (a * b))
-          - ↑((L.hom a) • liftDiffKer R Q L L' b + (L.hom b) • liftDiffKer R Q L L' a)
-        = -((L.hom a - L'.hom a) * (L.hom b - L'.hom b)) := by
-      change L.hom (a * b) - L'.hom (a * b)
-          - (L.hom a • (L.hom b - L'.hom b) + L.hom b • (L.hom a - L'.hom a))
-        = -((L.hom a - L'.hom a) * (L.hom b - L'.hom b))
-      simp only [map_mul, smul_eq_mul]
-      ring
-    rw [hval]
-    exact neg_mem huv
-
-/-- The linear map out of the Kähler differentials induced by the lift difference. -/
-private def liftDiffLift {k B : Type} [Field k] [CommRing B] [Algebra k B]
+/-- The difference map of two lifts on `1 ⊗ ω`, over the degree-zero term. -/
+private def homotopyAdjoint {k B : Type} [Field k] [CommRing B] [Algebra k B]
     (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
     (L L' : PolynomialLift R Q) :
-    KaehlerDifferential k (R.algebra.obj (op ⦋0⦌)) →ₗ[R.algebra.obj (op ⦋0⦌)] Q.Cotangent :=
-  (liftDiffDerivation R Q L L').liftKaehlerDifferential
-
-/-- The induced map sends `d t` to the difference of the lifts. -/
-private theorem liftDiffLift_D {k B : Type} [Field k] [CommRing B] [Algebra k B]
-    (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
-    (L L' : PolynomialLift R Q) (t : R.algebra.obj (op ⦋0⦌)) :
-    liftDiffLift R Q L L' (KaehlerDifferential.D k _ t)
-      = Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t) :=
-  Derivation.liftKaehlerDifferential_comp_D _ _
+    ModuleCat.of (degreeZeroExtension R).Ring Ω[(degreeZeroExtension R).Ring⁄k] ⟶
+      (ModuleCat.restrictScalars (algebraMap (degreeZeroExtension R).Ring B)).obj
+        (ModuleCat.of B Q.Cotangent) :=
+  ModuleCat.ofHom
+    { toFun := fun ω => (liftHom R Q L).sub (liftHom R Q L') (1 ⊗ₜ ω)
+      map_add' := fun x y => by
+        change (liftHom R Q L).sub (liftHom R Q L') (1 ⊗ₜ (x + y)) =
+          (liftHom R Q L).sub (liftHom R Q L') (1 ⊗ₜ x) +
+            (liftHom R Q L).sub (liftHom R Q L') (1 ⊗ₜ y)
+        rw [TensorProduct.tmul_add, map_add]
+      map_smul' := fun a x => by
+        change (liftHom R Q L).sub (liftHom R Q L') (1 ⊗ₜ (a • x)) =
+          algebraMap (degreeZeroExtension R).Ring B a •
+            (liftHom R Q L).sub (liftHom R Q L') (1 ⊗ₜ x)
+        rw [← TensorProduct.smul_tmul, Algebra.smul_def, mul_one, ← map_smul,
+          TensorProduct.smul_tmul', smul_eq_mul, mul_one] }
 
 /-- The `B`-linear homotopy map out of the degree-zero cotangent term. -/
 private def homotopyMap' {k B : Type} [Field k] [CommRing B] [Algebra k B]
@@ -211,7 +81,7 @@ private def homotopyMap' {k B : Type} [Field k] [CommRing B] [Algebra k B]
   ModuleCat.ExtendRestrictScalarsAdj.HomEquiv.fromExtendScalars
     (CommAlgCat.resolutionAugmentationHom k (CommAlgCat.of k B) R.algebra R.augmentation
       (op ⦋0⦌))
-    (ModuleCat.ofHom (liftDiffLift R Q L L'))
+    (homotopyAdjoint R Q L L')
 
 /-- The homotopy map on a pure differential is the difference of the lifts. -/
 private theorem homotopyMap'_pure {k B : Type} [Field k] [CommRing B] [Algebra k B]
@@ -220,16 +90,10 @@ private theorem homotopyMap'_pure {k B : Type} [Field k] [CommRing B] [Algebra k
     homotopyMap' R Q L L'
         (CommAlgCat.resolutionCotangentTermDifferential k (CommAlgCat.of k B) R.algebra
           R.augmentation (op ⦋0⦌) t)
-      = Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t) := by
-  calc homotopyMap' R Q L L'
-          (CommAlgCat.resolutionCotangentTermDifferential k (CommAlgCat.of k B) R.algebra
-            R.augmentation (op ⦋0⦌) t)
-        = (1 : B) • ModuleCat.ofHom (liftDiffLift R Q L L')
-          (KaehlerDifferential.D k _ t) :=
-          ModuleCat.ExtendRestrictScalarsAdj.HomEquiv.fromExtendScalars_tmul _ _ _ _
-      _ = Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' t) := by
-          rw [one_smul]
-          exact liftDiffLift_D R Q L L' t
+      = Algebra.Extension.Cotangent.mk ((liftHom R Q L).subToKer (liftHom R Q L') t) := by
+  refine (ModuleCat.ExtendRestrictScalarsAdj.HomEquiv.fromExtendScalars_tmul _ _ _ _).trans ?_
+  rw [one_smul]
+  exact Algebra.Extension.Hom.sub_one_tmul (liftHom R Q L) (liftHom R Q L') t
 
 open AlgebraicTopology in
 /-- Read through `affineDegreeIso`, the differential of the affine complex is the
@@ -438,8 +302,10 @@ private theorem prevD_homotopyHom_zero {k B : Type} [Field k] [CommRing B] [Alge
 private theorem liftDiff_faceError {k B : Type} [Field k] [CommRing B] [Algebra k B]
     (R : PolynomialResolution k B) (Q : Algebra.Extension.{0} k B)
     (L L' : PolynomialLift R Q) (p : R.algebra.obj (op ⦋1⦌)) :
-    Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' (R.algebra.δ 0 p))
-        - Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' (R.algebra.δ 1 p))
+    Algebra.Extension.Cotangent.mk
+          ((liftHom R Q L).subToKer (liftHom R Q L') (R.algebra.δ 0 p))
+        - Algebra.Extension.Cotangent.mk
+          ((liftHom R Q L).subToKer (liftHom R Q L') (R.algebra.δ 1 p))
       = liftError R Q L p - liftError R Q L' p := by
   unfold liftError
   rw [← map_sub, ← map_sub]
@@ -509,8 +375,10 @@ private theorem homotopyBoundary_pure {k B : Type} [Field k] [CommRing B] [Algeb
             (CommAlgCat.resolutionCotangentTermDifferential k (CommAlgCat.of k B) R.algebra
               R.augmentation (op ⦋0⦌) (R.algebra.δ 1 p)) :=
           map_sub _ _ _
-      _ = Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' (R.algebra.δ 0 p))
-          - Algebra.Extension.Cotangent.mk (liftDiffKer R Q L L' (R.algebra.δ 1 p)) := by
+      _ = Algebra.Extension.Cotangent.mk
+            ((liftHom R Q L).subToKer (liftHom R Q L') (R.algebra.δ 0 p))
+          - Algebra.Extension.Cotangent.mk
+            ((liftHom R Q L).subToKer (liftHom R Q L') (R.algebra.δ 1 p)) := by
           rw [homotopyMap'_pure, homotopyMap'_pure]
       _ = liftError R Q L p - liftError R Q L' p :=
           liftDiff_faceError R Q L L' p
