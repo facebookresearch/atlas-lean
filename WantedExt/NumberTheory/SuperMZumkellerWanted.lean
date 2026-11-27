@@ -46,8 +46,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Factors
+public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.SuperMZumkeller
 public import MathlibExt.NumberTheory.SuperMZumkellerFactorization
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerFourNotKmPerfect
