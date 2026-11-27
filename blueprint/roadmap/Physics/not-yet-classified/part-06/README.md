@@ -11,4 +11,3 @@
 - [Periodic Yee Maxwell Bridge](periodic-yee-maxwell-bridge/README.md)
 - [Phasor Element Laws](phasor-element-laws/README.md)
 - [Physical Failure Events](physical-failure-events/README.md)
-- [Physical Galerkin Error](physical-galerkin-error/README.md)
