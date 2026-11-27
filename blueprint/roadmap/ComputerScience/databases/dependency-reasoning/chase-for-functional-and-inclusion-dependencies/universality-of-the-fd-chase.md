@@ -6,7 +6,7 @@ $S'$ a set of atoms that satisfies $\Sigma$. If $(S, \bar u) \to (S', \bar v)$ f
 $$\bigl(\mathrm{Chase}(S, \Sigma), h_{S, \Sigma}(\bar u)\bigr) \to (S', \bar v).$$
 
 So the chase result maps homomorphically to every set of atoms that satisfies $\Sigma$ and receives a homomorphism from
-$S$. The tableau version for functional and join dependencies is the [tableau chase](../chasing-tableau-queries-with-functional-and-join-dependencie.md).
+$S$. The tableau version for functional and join dependencies is the [tableau chase](../../dependencies-and-the-chase/chasing-tableau-queries-with-functional-and-join-dependencie.md).
 
 ## Depends on
 

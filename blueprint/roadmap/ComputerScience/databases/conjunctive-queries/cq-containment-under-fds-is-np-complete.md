@@ -18,9 +18,9 @@ of conjunctive queries by taking $\Sigma$ empty.
 
 - [Containment of tableau queries under functional and join dependencies via the chase](../dependency-reasoning/containment-under-fds-and-jds-via-the-chase.md)
 - [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
-- [The result of the chase for functional dependencies satisfies them](../dependencies-and-the-chase/chase-for-functional-and-inclusion-dependencies/the-result-of-the-fd-chase-satisfies-the-dependencies.md)
-- [The chase for functional dependencies runs in polynomial time](../dependencies-and-the-chase/chase-for-functional-and-inclusion-dependencies/the-fd-chase-runs-in-polynomial-time.md)
-- [Universality of the chase for functional dependencies](../dependencies-and-the-chase/chase-for-functional-and-inclusion-dependencies/universality-of-the-fd-chase.md)
+- [The result of the chase for functional dependencies satisfies them](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/the-result-of-the-fd-chase-satisfies-the-dependencies.md)
+- [The chase for functional dependencies runs in polynomial time](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/the-fd-chase-runs-in-polynomial-time.md)
+- [Universality of the chase for functional dependencies](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/universality-of-the-fd-chase.md)
 - [Homomorphism theorem for conjunctive queries with constants](cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
 - [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
 

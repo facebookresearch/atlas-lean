@@ -15,7 +15,7 @@ Every guarded set is weakly guarded. No labeled null of the chase occurs at a no
 
 ## Depends on
 
-- [Tuple- and equality-generating dependencies and the chase](../tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Sources

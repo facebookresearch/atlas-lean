@@ -1,7 +1,7 @@
 # The chase for inclusion dependencies
 
-Write an [inclusion dependency](../ind.md) as $\sigma = R[i_1, \dots, i_m] \subseteq P[j_1, \dots, j_m]$, $m \ge 1$, identifying
-the attributes of each relation with its positions, and read its [satisfaction](../inclusion-dependencies-and-finite-implication.md)
+Write an [inclusion dependency](../../dependencies-and-the-chase/ind.md) as $\sigma = R[i_1, \dots, i_m] \subseteq P[j_1, \dots, j_m]$, $m \ge 1$, identifying
+the attributes of each relation with its positions, and read its [satisfaction](../../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
 on sets of atoms and on databases whose relations may be infinite.
 
 For an atom $R(\bar u)$ in a set of atoms $S$, let $\mathrm{new}(\sigma, \bar u)$ be the atom $P(v_1, \dots, v_{\mathrm{ar}(P)})$
@@ -18,8 +18,8 @@ $\{R(a, b)\}$ under $R[2] \subseteq R[1]$ is infinite.
 
 ## Depends on
 
-- [Syntax of an inclusion dependency](../ind.md)
-- [Satisfaction of an inclusion dependency](../inclusion-dependencies-and-finite-implication.md)
+- [Syntax of an inclusion dependency](../../dependencies-and-the-chase/ind.md)
+- [Satisfaction of an inclusion dependency](../../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
 
 ## Sources
 
