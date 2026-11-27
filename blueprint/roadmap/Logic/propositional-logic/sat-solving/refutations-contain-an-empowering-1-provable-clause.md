@@ -1,6 +1,6 @@
 # Refutations contain an empowering 1-provable clause
 
-Let $\Delta$ be an unsatisfiable CNF formula that is 1-consistent, and let $\Pi$ be a resolution refutation of $\Delta$. Some clause of $\Pi$ is both [1-empowering and 1-provable](empowering-and-1-provable-clauses.md) with respect to $\Delta$.
+Let $\Delta$ be an unsatisfiable CNF formula that is 1-consistent, and let $\Pi$ be a resolution refutation of $\Delta$, without weakening. Some clause of $\Pi$ is both [1-empowering and 1-provable](empowering-and-1-provable-clauses.md) with respect to $\Delta$.
 
 ## Depends on
 

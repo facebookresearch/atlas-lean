@@ -24,4 +24,3 @@ Abstract reduction systems, confluence and termination, reduction and simplifica
 - [Knuth–Bendix ordering](knuth-bendix-ordering.md)
 - [The Knuth–Bendix ordering is a simplification ordering](kbo-is-a-simplification-ordering.md)
 - [Knuth–Bendix completion](completion/README.md)
-- [Termination](termination/README.md)
