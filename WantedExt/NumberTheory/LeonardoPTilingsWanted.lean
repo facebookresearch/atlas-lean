@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
 public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoPTilings
+public import MathlibExt.NumberTheory.LucasLeonardoPFromLucas
 public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
 public import MathlibExt.NumberTheory.LucasLeonardoPPrefixSum
 public import MathlibExt.NumberTheory.LucasLeonardoPStrideSum
@@ -65,17 +66,6 @@ public theorem_wanted leonardoPK_self_homogeneous (p : ℕ) (hp : 1 ≤ p) :
         leonardoPK p p (n - 1) + leonardoPK p p (n - p) - leonardoPK p p (n - 2 * p - 1)) ∧
     (∀ i, i ≤ p → leonardoPK p p i = 1) ∧
     (∀ j, 1 ≤ j → j ≤ p → leonardoPK p p (p + j) = (j : ℤ) + 1 + j * p)
-
-/-- **Binomial addition formula for hyper Leonardo $p$-numbers.** For natural numbers $p \ge 1$,
-$n \ge 1$, $m \ge 1$ and $k \ge m$, the hyper Leonardo $p$-numbers satisfy
-$$\mathcal{L}^{(k)}_{p,n+m} = \sum_{i=0}^{m} \binom{m}{i} \mathcal{L}^{(k-i)}_{p,n+i}.$$
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 9. -/
-public theorem_wanted hyperLeonardoP_add (p n m k : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n)
-    (hm : 1 ≤ m) (hmk : m ≤ k) :
-    hyperLeonardoP p (n + m) k =
-      ∑ i ∈ Finset.range (m + 1), (m.choose i : ℤ) * hyperLeonardoP p (n + i) (k - i)
 
 /-- **Leonardo p-numbers split into incomplete and hyper parts.** For natural numbers $p \ge 1$,
 $n > p$ and $k \ge 1$, let $N = n + (p + 1)k$. Then
@@ -108,15 +98,6 @@ Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Nu
 Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 12. -/
 public theorem_wanted card_lucasLeonardoBracelets (p n : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n) :
     (Nat.card (lucasLeonardoBracelets p n) : ℤ) = lucasLeonardoP p n
-
-/-- **Lucas-Leonardo $p$-numbers from Lucas $p$-numbers.** For every $p \ge 1$ and every
-natural number $n$, the Lucas-Leonardo $p$-number $R_{p,n}$ and the Lucas $p$-number $L_{p,n}$
-satisfy $R_{p,n} = (p + 1) L_{p,n} - p$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 13. -/
-public theorem_wanted lucasLeonardoP_eq_lucasP (p n : ℕ) (hp : 1 ≤ p) :
-    lucasLeonardoP p n = ((p : ℤ) + 1) * lucasP p n - p
 
 /-- **Recurrence for incomplete Lucas-Leonardo p-numbers.** For natural numbers $p \ge 1$,
 $n > p + 1$ and $k \le \lfloor n/(p+1) \rfloor$, the incomplete Lucas-Leonardo $p$-numbers

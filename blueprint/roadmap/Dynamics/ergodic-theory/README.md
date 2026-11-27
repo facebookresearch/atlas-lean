@@ -18,3 +18,6 @@ Ergodic theory studies measure-preserving transformations and their statistical 
 - [Multiple ergodic averages and recurrence](multiple-ergodic-averages-and-recurrence/README.md)
 - [Kolmogorov–Sinai entropy](kolmogorov-sinai-entropy/README.md)
 - [Poincaré recurrence theorem](ae-frequently-mem-of-mem.md)
+
+- [Simple Lebesgue spectrum on the smooth three-torus](simple-lebesgue-spectrum-on-the-three-torus.md)
+- [A finite-entropy system with no smooth positive-density model](finite-entropy-without-smooth-positive-density-model.md)
