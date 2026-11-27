@@ -10,14 +10,14 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
-public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientDerivatives
-public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
-public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaDoubleFactorial
-public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaDoubleFactorial
 
 namespace MetaMathlibExt
 
