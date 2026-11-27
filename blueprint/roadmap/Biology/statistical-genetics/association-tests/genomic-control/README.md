@@ -51,3 +51,4 @@
 
 - [Valid p-values and false discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/README.md): genomic control with the estimated factor λ̂, the mean of the squared scores; the λ̂-corrected statistic is never exactly χ²₁-calibrated, and, when the scores are almost surely not all zero, a nondegenerate one forces a negative covariance between two of the corrected statistics.
 - [Genomic-control inflation under case–control population divergence](genomic-control-inflation-under-case-control-population-divergence.md)
+- [Stratification inflation scales linearly with sample size](stratification-inflation-scales-linearly-with-sample-size.md)

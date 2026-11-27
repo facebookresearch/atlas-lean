@@ -1,0 +1,3 @@
+# Placements with prescribed occupied rows and columns
+
+Let $n, m, k$ be natural numbers and let $R \subseteq \{0, \dots, n-1\}$ be a set of rows and $C \subseteq \{0, \dots, m-1\}$ a set of columns of the $n \times m$ board. The number of $k$-element sets $s$ of cells of the board whose occupied rows $\{i : (i, j) \in s \text{ for some } j\}$ are exactly $R$ and whose occupied columns $\{j : (i, j) \in s \text{ for some } i\}$ are exactly $C$ equals $E_{|R|,|C|}(k)$, with $E_{a,b}(k)$ the number of $k$-element sets of cells of the $a \times b$ board that contain a cell in every row and a cell in every column.
