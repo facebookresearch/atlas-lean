@@ -140,3 +140,4 @@
 - [Time-dependent migration in the multispecies coalescent](time-dependent-migration-in-the-multispecies-coalescent/README.md)
 - [Ancestral configurations of gene trees](ancestral-configurations-of-gene-trees/README.md)
 - [Lattices of ancestral configurations](lattices-of-ancestral-configurations/README.md)
+- [TRAILS coalescent hidden Markov model on a three-species tree](trails-coalescent-hidden-markov-model-on-a-three-species-tree.md)
