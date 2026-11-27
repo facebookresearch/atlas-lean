@@ -122,11 +122,13 @@ jobs:
           fi
           # A Lean pull request changes Lean, and among the graph files at most links files; any other change,
           # links files alone included, and one git cannot read, is held to the sync, as a graph pull request.
+          # The graph files are blueprint/ and scripts/sync_wiki.py's GRAPH_FILES and GRAPH_FOLDERS.
           graph=yes
           if [[ "${EVENT:-}" == merge_group ]]; then
             graph=no
           elif changed="$(git diff --name-only --no-renames "$BASE" HEAD -- blueprint scripts/taxonomy.json \
-                            scripts/wiki-sync.json scripts/card-moves.jsonl scripts/mathgraph-map.jsonl)" \
+                            scripts/wiki-sync.json scripts/card-moves.jsonl scripts/card-moves.d \
+                            scripts/mathgraph-map.jsonl)" \
                && lean="$(git diff --name-only --no-renames "$BASE" HEAD -- '*.lean')"; then
             if [[ -n "$lean" ]] \
                && { [[ -z "$changed" ]] || ! grep -qvE '^blueprint/links/[^/]+[.]jsonl$' <<< "$changed"; }; then
