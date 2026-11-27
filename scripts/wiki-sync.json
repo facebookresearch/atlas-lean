@@ -46567,6 +46567,7 @@
 "MathlibExt.Analysis.Control.RecursiveLeastSquares.rlsInformation_mulVec_error_of_noiseFree": "36f1293fb9cbe631",
 "MathlibExt.Analysis.Control.RecursiveLeastSquares.rlsInformation_mulVec_rls_fst": "17deff2b23c44772",
 "MathlibExt.Analysis.Control.RecursiveLeastSquares.rlsStep": "e63b4c4b2886e003",
+"MathlibExt.Analysis.Control.RecursiveLeastSquares.rls_energy_add_half_sum_le_log": "61faeccd8daf6cd9",
 "MathlibExt.Analysis.Control.RecursiveLeastSquares.rls_error_sq_le": "b90ec5042a9ec26d",
 "MathlibExt.Analysis.Control.RecursiveLeastSquares.rls_fst_eq": "ed98de5521debf81",
 "MathlibExt.Analysis.Control.RecursiveLeastSquares.rls_snd_eq_inv": "d8deb964140c1051",
