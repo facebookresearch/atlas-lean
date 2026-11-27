@@ -1,4 +1,5 @@
-# Boundary LE embedding Down Nat iff
+# Boundary of the nonnegative homological truncation embedding
 
-The only boundary degree of the embedding `n ↦ -n` of `ComplexShape.down ℕ` into
-`ComplexShape.up ℤ` is `0`.
+For the complex-shape embedding `n ↦ -n` from `down ℕ` into
+`up ℤ`, a natural degree is a truncation boundary if and only if
+it is zero.

@@ -9,48 +9,31 @@ module
 This completed proof port retains the original Apache 2.0 license and author credit.
 Source: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/TauCeti/Algebra/Homology/Embedding/TruncLE.lean
 Original license: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/LICENSE
-Modifications: only module/namespace paths are adapted for Atlas.
-Mathematical operations, hypotheses and proof bodies are retained.
+Modifications: module paths are adapted for Atlas. The two truncation-component
+formulas are imported from the general homological-complex module; the remaining
+mathematical statements and maps are retained.
 -/
 
 public import Mathlib.Algebra.Homology.Embedding.Boundary
 public import Mathlib.Algebra.Homology.Embedding.TruncLEHomology
 public import Mathlib.Algebra.Homology.Embedding.ExtendHomology
+public import MathlibExt.Algebra.Homology.Embedding.PositiveTruncation
 
 /-!
-# Good truncation of complexes
+# Good truncation along an embedding of complex shapes
 
-Let `e : c.Embedding c'` be an embedding of complex shapes with `e.IsTruncLE`, and let `K` be a
-homological complex of shape `c'`.  Mathlib's canonical truncation `K.truncLE' e` agrees with the
-restriction `K.restriction e` away from the boundary of `e`, and has the cycles of `K` at the
-boundary; the comparison `K.truncLE'ToRestriction e` is a monomorphism in each degree.
+For a complex-shape embedding `e` of truncation type `IsTruncLE`,
+the canonical truncation of `K` agrees with its restriction away
+from the boundary and has cycles at the boundary. Its comparison
+into the restriction is degreewise mono. A map into the restriction
+factors through this comparison exactly when its boundary components
+are killed by the outgoing differentials.
 
-This file describes that comparison in each degree and proves the universal property it implies:
-a morphism `φ : A ⟶ K.restriction e` factors through `K.truncLE' e` as soon as each boundary
-component of `φ` is killed by the differential of `K`.
-
-For the embedding `ComplexShape.embeddingDownNat : n ↦ -n` of chain complexes indexed by `ℕ` into
-cochain complexes indexed by `ℤ`, the truncation `K.truncLE' embeddingDownNat` is the good
-truncation `τ_{≥ 0} K` in homological grading: its degree `n > 0` is `K^{-n}`, its degree `0` is
-the cycles `Z⁰ K`, and its homology in degree `n` is `H^{-n} K`.  The last section records the
-inclusion of each of its degrees into `K` and how it meets the differentials.
-`HomologicalComplex.truncLE'HomologyIso` gives the homology comparison for an arbitrary
-embedding of complex shapes, including boundary degrees, naturally in `K`.
-
-## Main definitions and results
-
-* `HomologicalComplex.truncLE'ToRestriction_f_eq_iso_hom_iso_inv` and
-  `HomologicalComplex.truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv`: the components of
-  `K.truncLE'ToRestriction e` away from and at the boundary.
-* `HomologicalComplex.truncLE'ToRestriction_f_comp_d`: at the boundary, the comparison is killed
-  by the differential of `K`.
-* `HomologicalComplex.liftTruncLE'`: the factorization of a morphism into `K.restriction e`
-  whose boundary components are killed by the differential, and
-  `HomologicalComplex.liftTruncLE'_truncLE'ToRestriction`, its defining property.
-* `ComplexShape.boundaryLE_embeddingDownNat_iff`: the boundary of `embeddingDownNat` is `0`.
-* `CochainComplex.truncLE'ToX`: the inclusion of degree `n` of `τ_{≥ 0} K` into `K^{-n}`, with
-  `CochainComplex.truncLE'ToX_d_succ` and `CochainComplex.truncLE'ToX_zero_d` for the
-  differentials.
+With a zero object and the displayed homologies, truncation preserves
+homology at all embedded degrees and is natural in `K`. For the
+embedding `n ↦ -n` from `down ℕ` to `up ℤ`, the chain truncation has
+`K^(-n)` for `n>0`, `Z⁰K` in degree zero, and inclusions compatible
+with the original integer cochain differentials.
 -/
 public section
 
@@ -62,49 +45,11 @@ variable {ι ι' : Type*} {c : ComplexShape ι} {c' : ComplexShape ι'}
   {C : Type*} [Category* C] [HasZeroMorphisms C]
   (K : HomologicalComplex C c') (e : c.Embedding c') [e.IsTruncLE] [∀ i', K.HasHomology i']
 
-/-- Away from the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` is the identity of
-`K.X i'` up to the canonical isomorphisms. -/
-lemma truncLE'ToRestriction_f_eq_iso_hom_iso_inv {i : ι} {i' : ι'} (hi' : e.f i = i')
-    (hi : ¬ e.BoundaryLE i) :
-    (K.truncLE'ToRestriction e).f i =
-      (K.truncLE'XIso e hi' hi).hom ≫ (K.restrictionXIso e hi').inv := by
-  -- Mathlib defines `truncLE'` and its comparison maps by dualizing `truncGE'`, so we dualize the
-  -- description of `restrictionToTruncGE'` away from the boundary.
-  have h := congrArg Quiver.Hom.unop
-    (K.op.restrictionToTruncGE'_f_eq_iso_hom_iso_inv e.op hi' (by simpa using hi))
-  subst hi'
-  refine h.trans ?_
-  simp only [restrictionXIso, eqToIso.hom, eqToIso.inv, unop_comp, eqToHom_unop]
-  -- `(K.truncLE'XIso e _ hi).hom` is by definition `(K.op.truncGE'XIso e.op _ _).inv.unop`.
-  rfl
-
-/-- At the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` is the inclusion of the
-cycles of `K`, up to the canonical isomorphisms. -/
-lemma truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv {i : ι} {i' : ι'} (hi' : e.f i = i')
-    (hi : e.BoundaryLE i) :
-    (K.truncLE'ToRestriction e).f i =
-      (K.truncLE'XIsoCycles e hi' hi).hom ≫ K.iCycles i' ≫ (K.restrictionXIso e hi').inv := by
-  have hi₀ : e.op.BoundaryGE i := by simpa using hi
-  -- Mathlib defines `truncLE'` and its comparison maps by dualizing `truncGE'`, so we dualize the
-  -- description of `restrictionToTruncGE'` at the boundary; pass through `opcyclesOpIso` first.
-  have h₁ : (K.opcyclesOpIso i').inv.unop ≫ K.iCycles i' = (K.op.pOpcycles i').unop := by
-    have h : K.op.pOpcycles i' ≫ (K.opcyclesOpIso i').hom = (K.iCycles i').op :=
-      (K.sc i').op_pOpcycles_opcyclesOpIso_hom
-    rw [← Quiver.Hom.unop_op (K.iCycles i'), ← h, ← unop_comp]
-    simp
-  have h₂ : (K.truncLE'XIsoCycles e hi' hi).hom ≫ K.iCycles i' =
-      (K.op.truncGE'XIsoOpcycles e.op hi' hi₀).inv.unop ≫ (K.op.pOpcycles i').unop :=
-    (Category.assoc _ _ _).trans (congrArg _ h₁)
-  have h₃ := congrArg Quiver.Hom.unop
-    (K.op.restrictionToTruncGE'_f_eq_iso_hom_pOpcycles_iso_inv e.op hi' hi₀)
-  rw [← Category.assoc, h₂]
-  subst hi'
-  refine h₃.trans ?_
-  simp only [restrictionXIso, eqToIso.hom, eqToIso.inv, unop_comp, Category.assoc]
-  exact (Category.assoc _ _ _).symm
-
-/-- At the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` lands in the cycles of `K`:
-it is killed by the differential of `K`. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. At a boundary degree `i`, identifying its image with `i′`,
+the component of the truncation comparison into `K(i′)` is killed
+by every outgoing differential `K(i′) → K(j′)`. -/
 @[reassoc (attr := simp)]
 lemma truncLE'ToRestriction_f_comp_d {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : e.BoundaryLE i)
     (j' : ι') :
@@ -120,7 +65,11 @@ variable {K e} {A : HomologicalComplex C c} (φ : A ⟶ K.restriction e)
 namespace liftTruncLE'
 
 open scoped Classical in
-/-- Auxiliary definition for `HomologicalComplex.liftTruncLE'`. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. For a map `φ : A → K|_e` whose boundary components are
+annihilated by the outgoing differentials of `K`, each component
+lifts to the truncation term, through its cycle object at a boundary. -/
 private noncomputable def f (i : ι) : A.X i ⟶ (K.truncLE' e).X i :=
   if hi : e.BoundaryLE i then
     K.liftCycles (φ.f i ≫ (K.restrictionXIso e rfl).hom) _ rfl (by simpa using hφ i hi _ rfl _) ≫
@@ -129,7 +78,11 @@ private noncomputable def f (i : ι) : A.X i ⟶ (K.truncLE' e).X i :=
     φ.f i ≫ (K.restrictionXIso e rfl).hom ≫ (K.truncLE'XIso e rfl hi).inv
 
 open scoped Classical in
-/-- `HomologicalComplex.liftTruncLE'.f` lifts the components of `φ`. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. The componentwise lift of such a boundary-annihilated
+`φ : A → K|_e` followed by the truncation comparison is the
+original component of `φ`. -/
 @[reassoc]
 private lemma f_comp (i : ι) : f φ hφ i ≫ (K.truncLE'ToRestriction e).f i = φ.f i := by
   by_cases hi : e.BoundaryLE i
@@ -140,16 +93,22 @@ private lemma f_comp (i : ι) : f φ hφ i ≫ (K.truncLE'ToRestriction e).f i =
 
 end liftTruncLE'
 
-/-- A morphism `φ : A ⟶ K.restriction e` whose components at the boundary of `e` are killed by
-the differential of `K` factors through the canonical truncation `K.truncLE' e`. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. A map `φ : A → K|_e` whose boundary components are killed
+by every outgoing differential factors as a complex map
+`A → τ_eK → K|_e`. -/
 noncomputable def liftTruncLE' : A ⟶ K.truncLE' e where
   f := liftTruncLE'.f φ hφ
   comm' i j _ := by
     rw [← cancel_mono ((K.truncLE'ToRestriction e).f j), Category.assoc, Category.assoc,
       ← (K.truncLE'ToRestriction e).comm, liftTruncLE'.f_comp_assoc, liftTruncLE'.f_comp, φ.comm]
 
-/-- The defining property of `HomologicalComplex.liftTruncLE'`; it determines the lift, since
-`K.truncLE'ToRestriction e` is a monomorphism. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. For a boundary-annihilated map `φ : A → K|_e`, its lift
+satisfies `lift(φ) ≫ (τ_eK → K|_e)=φ`. The degreewise monic
+comparison makes this factorization unique. -/
 @[reassoc (attr := simp)]
 lemma liftTruncLE'_truncLE'ToRestriction :
     liftTruncLE' φ hφ ≫ K.truncLE'ToRestriction e = φ := by
@@ -160,7 +119,12 @@ section Homology
 
 variable [HasZeroObject C]
 
-/-- The comparison of good truncation with extension by zero is natural. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. Suppose `C` has a zero object. For a complex map `φ : K → L`, with homology of `L` in
+every degree, the isomorphisms between the full good truncations
+and the zero extensions of `τ_eK,τ_eL` commute with the two
+truncation maps. -/
 @[reassoc]
 lemma truncLEIso_hom_naturality {L : HomologicalComplex C c'} [∀ i, L.HasHomology i]
     (φ : K ⟶ L) :
@@ -179,8 +143,10 @@ lemma truncLEIso_hom_naturality {L : HomologicalComplex C c'} [∀ i, L.HasHomol
 
 variable (K e)
 
-/-- Good truncation preserves homology at every degree of the embedded complex shape,
-including its boundary degrees. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. Suppose `C` has a zero object. For every source index `i`, including boundary indices,
+the canonical homology comparison is `H_i(τ_eK) ≅ H_(e(i))(K)`. -/
 noncomputable def truncLE'HomologyIso (i : ι) :
     (K.truncLE' e).homology i ≅ K.homology (e.f i) :=
   ((K.truncLE' e).extendHomologyIso e (j := i) rfl).symm ≪≫
@@ -189,7 +155,11 @@ noncomputable def truncLE'HomologyIso (i : ι) :
 
 variable {K e}
 
-/-- The homology comparison for good truncation is natural in the original complex. -/
+/-- Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. Suppose `C` has a zero object. For `φ : K → L`, with homology of `L` in every degree,
+the comparisons `H_i(τ_eK) ≅ H_(e(i))(K)` commute with the
+homology maps of the truncated and original complex maps. -/
 @[reassoc]
 lemma truncLE'HomologyIso_hom_naturality {L : HomologicalComplex C c'}
     [∀ i, L.HasHomology i] (φ : K ⟶ L) (i : ι) :
@@ -216,8 +186,9 @@ end HomologicalComplex
 
 namespace ComplexShape
 
-/-- The only boundary degree of the embedding `n ↦ -n` of `ComplexShape.down ℕ` into
-`ComplexShape.up ℤ` is `0`. -/
+/-- For the complex-shape embedding `n ↦ -n` from `down ℕ` into
+`up ℤ`, a natural degree is a truncation boundary if and only if
+it is zero. -/
 lemma boundaryLE_embeddingDownNat_iff (n : ℕ) :
     embeddingDownNat.BoundaryLE n ↔ n = 0 := by
   constructor
@@ -242,14 +213,19 @@ open ComplexShape HomologicalComplex
 variable {C : Type*} [Category* C] [HasZeroMorphisms C]
   (K : CochainComplex C ℤ) [∀ i, K.HasHomology i]
 
-/-- The inclusion of degree `n` of the good truncation `τ_{≥ 0} K = K.truncLE' embeddingDownNat`
-into `K^{-n}`: an isomorphism for `n > 0`, and the inclusion of the cycles for `n = 0`. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+cochain complex with homology in every degree. Let `τK` be its
+nonnegative chain truncation along `n ↦ -n`. The degree-`n` comparison `τK_n → K^(-n)` is an
+isomorphism for `n>0` and the cycle inclusion `Z⁰K → K⁰` for `n=0`. -/
 noncomputable def truncLE'ToX (n : ℕ) : (K.truncLE' embeddingDownNat).X n ⟶ K.X (-n) :=
   (K.truncLE'ToRestriction embeddingDownNat).f n ≫
     (K.restrictionXIso embeddingDownNat (embeddingDownNat_f n)).hom
 
-/-- `CochainComplex.truncLE'ToX` is the comparison with the restriction, followed by the
-identification of degree `n` of the restriction with `K^{-n}`. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+cochain complex with homology in every degree. Let `τK` be its
+nonnegative chain truncation along `n ↦ -n`. The inclusion `τK_n → K^(-n)` is the good-truncation
+comparison into the restricted complex followed by its degree-`n`
+coordinate identification with `K^(-n)`. -/
 lemma truncLE'ToX_def (n : ℕ) :
     K.truncLE'ToX n = (K.truncLE'ToRestriction embeddingDownNat).f n ≫
       (K.restrictionXIso embeddingDownNat (embeddingDownNat_f n)).hom := (rfl)
@@ -258,8 +234,10 @@ instance (n : ℕ) : Mono (K.truncLE'ToX n) := by
   rw [truncLE'ToX_def]
   infer_instance
 
-/-- The inclusions `CochainComplex.truncLE'ToX` commute with the differentials in positive
-degrees. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+cochain complex with homology in every degree. Let `τK` be its
+nonnegative chain truncation along `n ↦ -n`. The inclusions satisfy
+`t_(n+1) ≫ d_K^(-(n+1),-n) = d_τ^(n+1,n) ≫ t_n` for every `n`. -/
 @[reassoc]
 lemma truncLE'ToX_d_succ (n : ℕ) :
     K.truncLE'ToX (n + 1) ≫ K.d (-((n + 1 : ℕ) : ℤ)) (-(n : ℤ)) =
@@ -271,14 +249,21 @@ lemma truncLE'ToX_d_succ (n : ℕ) :
   rw [← reassoc_of% this]
   simp
 
-/-- Degree `0` of the good truncation lands in the cycles: it is killed by the differential. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+cochain complex with homology in every degree. Let `τK` be its
+nonnegative chain truncation along `n ↦ -n`. The degree-zero inclusion `Z⁰K → K⁰` is killed by every
+outgoing differential `K⁰ → K^j`. -/
 @[reassoc]
 lemma truncLE'ToX_zero_d (j : ℤ) : K.truncLE'ToX 0 ≫ K.d (-((0 : ℕ) : ℤ)) j = 0 := by
   rw [truncLE'ToX, Category.assoc]
   exact K.truncLE'ToRestriction_f_comp_d _ _ ((boundaryLE_embeddingDownNat_iff 0).2 rfl) j
 
 variable {K} in
-/-- The inclusions `CochainComplex.truncLE'ToX` are natural. -/
+/-- Let `C` be a category with zero morphisms and `K` an integer
+cochain complex with homology in every degree. Let `τK` be its
+nonnegative chain truncation along `n ↦ -n`. For an integer cochain map `f : K → L`, with homology
+of `L` in every degree, the truncated map and inclusions satisfy
+`(τf)_n ≫ t_L,n = t_K,n ≫ f^(-n)`. -/
 @[reassoc (attr := simp)]
 lemma truncLE'Map_f_truncLE'ToX {L : CochainComplex C ℤ} [∀ i, L.HasHomology i] (f : K ⟶ L)
     (n : ℕ) :

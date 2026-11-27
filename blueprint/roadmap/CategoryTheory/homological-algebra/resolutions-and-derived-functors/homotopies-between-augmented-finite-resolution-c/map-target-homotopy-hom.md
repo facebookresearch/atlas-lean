@@ -1,0 +1,7 @@
+# Components are unchanged by target transport of a comparison homotopy
+
+Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let B be abelian, j : P → B additive, and H : A → B additive and
+homology-preserving, with compatibility e : H ∘ i ≅ j. Every component h(n,m) of the original
+homotopy remains the same morphism in P under target transport.

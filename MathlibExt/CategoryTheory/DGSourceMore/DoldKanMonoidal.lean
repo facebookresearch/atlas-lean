@@ -18,48 +18,25 @@ public import MathlibExt.CategoryTheory.DGSourceMore.AlexanderWhitney
 public import MathlibExt.CategoryTheory.DGSourceMore.MonoidalFunctor
 
 /-!
-# The monoidal structure of the Dold–Kan correspondence
+# Monoidal structures in the Dold–Kan correspondence
 
-Let `C` be a preadditive monoidal category whose tensor product is additive in each variable
-(`CategoryTheory.MonoidalPreadditive C`), with finite coproducts and idempotent complete, for
-instance the category of modules over a commutative ring.  Mathlib's Dold–Kan equivalence
-`CategoryTheory.Idempotents.DoldKan.equivalence : SimplicialObject C ≌ ChainComplex C ℕ` has
-functor the normalized chains `N` and inverse `Γ`.  This file makes `N` oplax monoidal through
-the Alexander–Whitney map, and hence `Γ` lax monoidal as its right adjoint.  The lax structure
-of `Γ` is what composes the simplicial mapping objects `Γ(τ_{≥0} Hom(x, y))` of the simplicial
-enrichment of a differential graded category (J. Lurie, *Higher Algebra*, Construction 1.3.1.13).
+Let `C` be preadditive and idempotent complete with finite coproducts,
+and monoidal with biadditive tensor. Its Dold–Kan equivalence has
+normalized-chain functor `N` and inverse `Γ`. The normalization
+idempotent `P∞` on alternating-face chains splits through natural
+maps `i : N → C_*`, `p : C_* → N`, with `i ≫ p=id_N` and `p ≫ i=P∞`.
 
-The normalized chains `N X` are the direct summand of the alternating face map complex of `X`
-cut out by the idempotent `PInfty`, whose kernel is spanned by the degenerate simplices, with
-inclusion `CategoryTheory.Idempotents.DoldKan.inclusionN` and projection
-`CategoryTheory.Idempotents.DoldKan.PInftyToN`, bundled as the retract
-`CategoryTheory.Idempotents.DoldKan.retractN`.  For an abelian category `C` this summand is
-isomorphic to the normalized Moore complex
-(`AlgebraicTopology.DoldKan.N₁_iso_normalizedMooreComplex_comp_toKaroubi`).  The key point is
-that the Alexander–Whitney map of `CategoryTheory.SimplicialObject.alexanderWhitney` preserves
-degenerate chains
-(`CategoryTheory.SimplicialObject.QInfty_comp_alexanderWhitney_comp_tensorHom_PInfty`): every
-summand of the Alexander–Whitney map of a degenerate simplex has a degenerate front or back face.
-The comultiplication of the alternating face map complex therefore passes to the retract `N`
-(`CategoryTheory.Functor.OplaxMonoidal.ofRetract`).
-
-## Main definitions and results
-
-* `CategoryTheory.SimplicialObject.PInfty_comp_alexanderWhitney_comp_tensorHom_PInfty`: up to
-  the projection onto normalized chains, the Alexander–Whitney map only depends on normalized
-  chains.
-* `CategoryTheory.Idempotents.DoldKan.oplaxMonoidalN`: the Alexander–Whitney oplax monoidal
-  structure on the normalized chain functor `N`, with comultiplication
-  `CategoryTheory.Idempotents.DoldKan.N_δ` and counit `CategoryTheory.Idempotents.DoldKan.N_η`.
-* `CategoryTheory.Idempotents.DoldKan.laxMonoidalΓ`: the induced lax monoidal structure on the
-  Dold–Kan functor `Γ`, with unit `CategoryTheory.Idempotents.DoldKan.Γ_ε` and tensorator
-  `CategoryTheory.Idempotents.DoldKan.Γ_μ`.
+The Alexander–Whitney map followed by `P∞ ⊗ P∞` annihilates the
+degenerate complement. It therefore gives the oplax structure
+`N(A ⊗ B) → N(A) ⊗ N(B)`, with counit restricted from alternating-face
+chains. Its mate under `N ⊣ Γ` gives the lax structure
+`Γ(K) ⊗ Γ(L) → Γ(K ⊗ L)`. These constructions use no abelian-category
+hypothesis.
 
 ## References
 
 * C. Weibel, *An Introduction to Homological Algebra*, Section 8.5.
-* S. Schwede and B. Shipley, *Equivalences of monoidal model categories*, Algebr. Geom. Topol. 3
-  (2003).
+* S. Schwede and B. Shipley, *Equivalences of monoidal model categories*, Algebr. Geom. Topol. 3 (2003).
 * J. Lurie, *Higher Algebra*, Construction 1.3.1.13.
 -/
 
@@ -104,9 +81,12 @@ private lemma σ_comp_alexanderWhitney_f_comp_tensorHom_PInfty_f (n : ℕ) (i : 
       (SimplexCategory.not_mono_subinterval_comp_σ _ i (by omega) (by omega)),
       MonoidalPreadditive.tensor_zero, zero_comp]
 
-/-- **The Alexander–Whitney map preserves degenerate chains**: composed with the projection
-`PInfty ⊗ PInfty` onto normalized chains, it vanishes on the degenerate part `QInfty` of the
-chains of `A ⊗ B`. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and `A,B` simplicial objects. Write `P∞` for the
+normalization idempotent on alternating-face chains and `Q∞=1-P∞`
+for its degenerate complement. The composite `Q∞_(A⊗B) ≫ AW_(A,B) ≫ (P∞_A ⊗ P∞_B)`
+is zero: each Alexander–Whitney summand of a degenerate simplex
+has a degenerate front or back face. -/
 @[reassoc]
 lemma QInfty_comp_alexanderWhitney_comp_tensorHom_PInfty :
     QInfty ≫ alexanderWhitney A B ≫ (PInfty ⊗ₘ PInfty) = 0 := by
@@ -119,8 +99,13 @@ lemma QInfty_comp_alexanderWhitney_comp_tensorHom_PInfty :
     exact (degeneraciesVanish_succ_iff _).2
       (σ_comp_alexanderWhitney_f_comp_tensorHom_PInfty_f A B n)
 
-/-- The Alexander–Whitney map followed by the projection `PInfty ⊗ PInfty` onto normalized chains
-only depends on the normalized part of the chains of `A ⊗ B`. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and `A,B` simplicial objects. Write `P∞` for the
+normalization idempotent on alternating-face chains and `Q∞=1-P∞`
+for its degenerate complement. The equality
+`P∞_(A⊗B) ≫ AW_(A,B) ≫ (P∞_A ⊗ P∞_B) = AW_(A,B) ≫ (P∞_A ⊗ P∞_B)`
+shows that the projected Alexander–Whitney map depends only on the
+normalized source part. -/
 @[reassoc]
 lemma PInfty_comp_alexanderWhitney_comp_tensorHom_PInfty :
     PInfty ≫ alexanderWhitney A B ≫ (PInfty ⊗ₘ PInfty) =
@@ -132,8 +117,10 @@ lemma PInfty_comp_alexanderWhitney_comp_tensorHom_PInfty :
   exact h.trans (Category.id_comp _)
 
 variable (C) in
-/-- The projection `PInfty` onto normalized chains does not change the counit of the alternating
-face map complex functor, which lives in degree zero where `PInfty` is the identity. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts. On the constant simplicial unit, the normalization
+idempotent `P∞` followed by the alternating-face-chain counit equals
+that counit, since its nonzero component is in degree zero. -/
 lemma PInfty_comp_η_alternatingFaceMapComplex :
     PInfty ≫ Functor.OplaxMonoidal.η (alternatingFaceMapComplex C) =
       Functor.OplaxMonoidal.η (alternatingFaceMapComplex C) := by
@@ -168,14 +155,12 @@ private lemma PInfty_comp_counitIso_inv_app_N₁_obj_f (X : SimplicialObject C) 
   simp only [Functor.id_obj, N₁_obj_p] at h
   exact h
 
-/-- The inclusion of the normalized chains `N X` of the pseudoabelian Dold–Kan correspondence
-into the alternating face map complex of `X`, as the direct summand cut out by `PInfty`.
+/- N is obtained from N₁ through the inverse Karoubi equivalence; its counit identifies the underlying alternating-face complex with the idempotent summand. -/
 
-By definition `N = N₁ ⋙ (toKaroubiEquivalence _).inverse`, so `N.obj X` is the object of chain
-complexes corresponding to the formal direct summand `N₁.obj X` of the Karoubi envelope, whose
-underlying complex is the alternating face map complex of `X` with idempotent `PInfty`
-(`AlgebraicTopology.DoldKan.N₁_obj_p`); the counit of `toKaroubiEquivalence` identifies the two.
--/
+/-- Let `C` be preadditive and idempotent complete with finite
+coproducts. The normalized Dold–Kan chain functor has a natural
+inclusion `N(X) → C_*(X)` whose image is the direct summand cut out
+by the normalization idempotent `P∞`. -/
 def inclusionN : (N : SimplicialObject C ⥤ _) ⟶ alternatingFaceMapComplex C where
   app X := ((toKaroubiEquivalence (ChainComplex C ℕ)).counitIso.hom.app (N₁.obj X)).f
   naturality X Y f := by
@@ -185,8 +170,9 @@ def inclusionN : (N : SimplicialObject C ⥤ _) ⟶ alternatingFaceMapComplex C 
       reassoc_of% (counitIso_hom_app_N₁_obj_f_comp_PInfty X)] at h
     exact h
 
-/-- The projection of the alternating face map complex of `X` onto the normalized chains `N X`
-of the pseudoabelian Dold–Kan correspondence. -/
+/-- Let `C` be preadditive and idempotent complete with finite
+coproducts. The alternating-face chain functor has a natural
+projection `C_*(X) → N(X)` onto its summand defined by `P∞`. -/
 def PInftyToN : alternatingFaceMapComplex C ⟶ (N : SimplicialObject C ⥤ _) where
   app X := ((toKaroubiEquivalence (ChainComplex C ℕ)).counitIso.inv.app (N₁.obj X)).f
   naturality X Y f := by
@@ -209,7 +195,11 @@ private lemma PInftyToN_app (X : SimplicialObject C) :
     PInftyToN.app X = ((toKaroubiEquivalence (ChainComplex C ℕ)).counitIso.inv.app (N₁.obj X)).f :=
   rfl
 
-/-- The normalized chains are a retract of the alternating face map complex. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. For every simplicial `X`, inclusion followed by projection
+is the identity of `N(X)`: `i_X ≫ p_X=𝟙 N(X)`. -/
 @[reassoc (attr := simp)]
 lemma inclusionN_app_comp_PInftyToN_app (X : SimplicialObject C) :
     inclusionN.app X ≫ PInftyToN.app X = 𝟙 (N.obj X) := by
@@ -220,8 +210,11 @@ lemma inclusionN_app_comp_PInftyToN_app (X : SimplicialObject C) :
     Functor.asEquivalence_functor, toKaroubi_obj_p] at h
   exact h
 
-/-- The idempotent of the alternating face map complex cutting out the normalized chains is
-`PInfty`. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. For every simplicial `X`, projection followed by inclusion
+is the normalization idempotent on `C_*(X)`: `p_X ≫ i_X=P∞`. -/
 @[reassoc (attr := simp)]
 lemma PInftyToN_app_comp_inclusionN_app (X : SimplicialObject C) :
     PInftyToN.app X ≫ inclusionN.app X = PInfty := by
@@ -231,21 +224,32 @@ lemma PInftyToN_app_comp_inclusionN_app (X : SimplicialObject C) :
   simp only [Karoubi.comp_f, Karoubi.id_f, Functor.id_obj, N₁_obj_p] at h
   exact h
 
-/-- The projection onto normalized chains is unchanged by first applying `PInfty`. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. For every simplicial `X`, applying `P∞` before the
+projection to `N(X)` leaves that projection unchanged: `P∞ ≫ p_X=p_X`. -/
 @[reassoc (attr := simp)]
 lemma PInfty_comp_PInftyToN_app (X : SimplicialObject C) :
     PInfty ≫ PInftyToN.app X = PInftyToN.app X :=
   PInfty_comp_counitIso_inv_app_N₁_obj_f X
 
-/-- Normalized chains are fixed by `PInfty`. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. For every simplicial `X`, applying `P∞` after the inclusion
+of `N(X)` leaves that inclusion unchanged: `i_X ≫ P∞=i_X`. -/
 @[reassoc (attr := simp)]
 lemma inclusionN_app_comp_PInfty (X : SimplicialObject C) :
     inclusionN.app X ≫ PInfty = inclusionN.app X :=
   counitIso_hom_app_N₁_obj_f_comp_PInfty X
 
-/-- The normalized chain functor is a retract of the alternating face map complex functor, with
-inclusion `CategoryTheory.Idempotents.DoldKan.inclusionN` and projection
-`CategoryTheory.Idempotents.DoldKan.PInftyToN`. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. The natural inclusion and projection exhibit `N` as a
+retract of the alternating-face chain functor in the category of
+functors from simplicial objects to nonnegative chain complexes. -/
 def retractN : Retract (N : SimplicialObject C ⥤ _) (alternatingFaceMapComplex C) where
   i := inclusionN
   r := PInftyToN
@@ -253,12 +257,20 @@ def retractN : Retract (N : SimplicialObject C ⥤ _) (alternatingFaceMapComplex
     ext X : 2
     exact inclusionN_app_comp_PInftyToN_app X
 
-/-- The inclusion of the normalized chains retract. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. The inclusion map of the normalized-chain functor retract
+is the natural transformation `i : N → C_*`. -/
 @[simp]
 lemma retractN_i : (retractN (C := C)).i = inclusionN :=
   (rfl)
 
-/-- The projection of the normalized chains retract. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. The retraction map of the normalized-chain functor retract
+is the natural transformation `p : C_* → N`. -/
 @[simp]
 lemma retractN_r : (retractN (C := C)).r = PInftyToN :=
   (rfl)
@@ -269,25 +281,28 @@ attribute [local instance] HasFiniteBiproducts.of_hasFiniteCoproducts
 
 variable [MonoidalCategory C] [MonoidalPreadditive C]
 
-/-- **The Alexander–Whitney oplax monoidal structure on normalized chains**: the normalized
-chain functor `N` of the Dold–Kan correspondence is oplax monoidal, with comultiplication the
-Alexander–Whitney map restricted to normalized chains and projected back onto them
-(`CategoryTheory.Idempotents.DoldKan.N_δ`), and counit the counit of the alternating face map
-complex (the identity of `𝟙_ C` in degree zero) restricted to normalized chains
-(`CategoryTheory.Idempotents.DoldKan.N_η`). -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. Suppose `C` is monoidal with biadditive tensor. The Alexander–Whitney map descends to an oplax monoidal
+structure on `N`, with tensor comparison obtained by inclusion,
+Alexander–Whitney, and projection, and counit restricted from `C_*`. -/
 @[no_expose]
 instance oplaxMonoidalN : (N : SimplicialObject C ⥤ _).OplaxMonoidal :=
   Functor.OplaxMonoidal.ofRetract retractN
     (fun X Y ↦ by
       -- `PInfty ⊗ PInfty` is absorbed by the projection `PInftyToN ⊗ PInftyToN`
-      simpa [tensorHom_comp_tensorHom] using
+      simpa [MonoidalCategory.tensorHom_comp_tensorHom] using
         SimplicialObject.PInfty_comp_alexanderWhitney_comp_tensorHom_PInfty_assoc X Y
           (PInftyToN.app X ⊗ₘ PInftyToN.app Y))
     (by rw [retractN_i, retractN_r, PInftyToN_app_comp_inclusionN_app_assoc,
       SimplicialObject.PInfty_comp_η_alternatingFaceMapComplex])
 
-/-- The comultiplication of the normalized chain functor: the Alexander–Whitney map of the
-alternating face map complexes, restricted to and projected onto normalized chains. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. Suppose `C` is monoidal with biadditive tensor. For simplicial `X,Y`, the normalized tensor comparison is
+`δ_N(X,Y) = i_(X⊗Y) ≫ AW_(X,Y) ≫ (p_X ⊗ p_Y)`. -/
 @[simp]
 lemma N_δ (X Y : SimplicialObject C) :
     Functor.OplaxMonoidal.δ N X Y = inclusionN.app (X ⊗ Y) ≫
@@ -295,34 +310,46 @@ lemma N_δ (X Y : SimplicialObject C) :
   (Functor.OplaxMonoidal.ofRetract_δ _ _ _ X Y).trans (by
     rw [SimplicialObject.alternatingFaceMapComplex_δ, retractN_i, retractN_r])
 
-/-- The counit of the normalized chain functor: the counit of the alternating face map complex,
-the identity of `𝟙_ C` in degree zero, restricted to normalized chains. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. Suppose `C` is monoidal with biadditive tensor. The normalized counit is
+`η_N = i_(𝟙_Simp) ≫ η_(C_*)`, the restriction of the alternating-
+face-chain counit to the normalized summand. -/
 @[simp]
 lemma N_η :
     Functor.OplaxMonoidal.η (N : SimplicialObject C ⥤ _) =
       inclusionN.app (𝟙_ _) ≫ Functor.OplaxMonoidal.η (alternatingFaceMapComplex C) :=
   Functor.OplaxMonoidal.ofRetract_η _ _ _
 
-/-- On normalized chains, the comultiplication of `N` is the Alexander–Whitney map followed by
-the projection onto normalized chains. -/
+/-- Let `C` be preadditive, idempotent complete, and have finite
+coproducts. Let `N` be its normalized Dold–Kan chain functor,
+`C_*` the alternating-face chain functor, `i : N → C_*` the
+inclusion and `p : C_* → N` the projection. Suppose `C` is monoidal with biadditive tensor. For simplicial `X,Y`, inclusion of both target normalized
+factors gives
+`δ_N(X,Y) ≫ (i_X ⊗ i_Y) = i_(X⊗Y) ≫ AW_(X,Y) ≫ (P∞_X ⊗ P∞_Y)`. -/
 @[reassoc]
 lemma N_δ_comp_tensorHom_inclusionN_app (X Y : SimplicialObject C) :
     Functor.OplaxMonoidal.δ N X Y ≫ (inclusionN.app X ⊗ₘ inclusionN.app Y) =
       inclusionN.app (X ⊗ Y) ≫ SimplicialObject.alexanderWhitney X Y ≫ (PInfty ⊗ₘ PInfty) := by
-  rw [N_δ, Category.assoc, Category.assoc, tensorHom_comp_tensorHom,
+  rw [N_δ, Category.assoc, Category.assoc, MonoidalCategory.tensorHom_comp_tensorHom,
     PInftyToN_app_comp_inclusionN_app, PInftyToN_app_comp_inclusionN_app]
 
-/-- **The lax monoidal structure of the Dold–Kan functor** `Γ` from chain complexes to
-simplicial objects: it is the mate, along the Dold–Kan equivalence, of the Alexander–Whitney
-oplax monoidal structure of the normalized chain functor `N`
-(`CategoryTheory.Idempotents.DoldKan.Γ_ε` and `CategoryTheory.Idempotents.DoldKan.Γ_μ`). -/
+/-- Let `C` be preadditive, idempotent complete, and monoidal with
+biadditive tensor and finite coproducts. Let `N` and `Γ` be the
+normalized-chain and inverse functors of the Dold–Kan equivalence. The mate of the Alexander–Whitney oplax structure on `N`
+under `N ⊣ Γ` is a lax monoidal structure on `Γ`, with unit
+`𝟙_Simp → Γ(𝟙_Chain)` and tensorator
+`Γ(K) ⊗ Γ(L) → Γ(K ⊗ L)`. -/
 @[no_expose]
 instance laxMonoidalΓ : (Γ : ChainComplex C ℕ ⥤ _).LaxMonoidal :=
   letI : (equivalence (C := C)).functor.OplaxMonoidal := oplaxMonoidalN
   (equivalence (C := C)).toAdjunction.rightAdjointLaxMonoidal
 
-/-- The unit of the lax monoidal functor `Γ` is the transpose of the counit of `N` along the
-Dold–Kan equivalence. -/
+/-- Let `C` be preadditive, idempotent complete, and monoidal with
+biadditive tensor and finite coproducts. Let `N` and `Γ` be the
+normalized-chain and inverse functors of the Dold–Kan equivalence. The lax unit of `Γ` is the equivalence unit at the simplicial
+tensor unit followed by `Γ` of the normalized-chain counit `η_N`. -/
 lemma Γ_ε :
     Functor.LaxMonoidal.ε (Γ : ChainComplex C ℕ ⥤ _) =
       (equivalence (C := C)).unit.app (𝟙_ _) ≫ Γ.map (Functor.OplaxMonoidal.η N) :=
@@ -332,8 +359,12 @@ lemma Γ_ε :
   equivalence.toAdjunction.rightAdjointLaxMonoidal_ε.trans
     (equivalence.toAdjunction.homEquiv_unit _ _ _)
 
-/-- The tensorator of the lax monoidal functor `Γ` is the transpose of the comultiplication of
-`N` along the Dold–Kan equivalence. -/
+/-- Let `C` be preadditive, idempotent complete, and monoidal with
+biadditive tensor and finite coproducts. Let `N` and `Γ` be the
+normalized-chain and inverse functors of the Dold–Kan equivalence. For chain complexes `K,L`, the lax tensorator of `Γ` is
+the equivalence unit at `Γ(K) ⊗ Γ(L)`, followed by `Γ` of
+`δ_N(Γ(K),Γ(L))` and then the tensor of the equivalence counits
+`NΓ(K) → K`, `NΓ(L) → L`. -/
 lemma Γ_μ (K L : ChainComplex C ℕ) :
     Functor.LaxMonoidal.μ (Γ : ChainComplex C ℕ ⥤ _) K L =
       (equivalence (C := C)).unit.app (Γ.obj K ⊗ Γ.obj L) ≫

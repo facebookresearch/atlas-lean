@@ -24,48 +24,19 @@ public import MathlibExt.CategoryTheory.DGSourceMore.SimplexSubinterval
 public import MathlibExt.CategoryTheory.DGSource.MonoidalPreadditive
 
 /-!
-# The Alexander–Whitney map of simplicial objects
+# Alexander–Whitney maps of simplicial objects
 
-Let `C` be a preadditive monoidal category with finite coproducts, and let `A` and `B` be
-simplicial objects in `C`.  Their tensor product `A ⊗ B` is taken degreewise,
-`(A ⊗ B)ₙ = Aₙ ⊗ Bₙ`, with the tensor product of the structure maps.  The Alexander–Whitney map
-`CategoryTheory.SimplicialObject.alexanderWhitney A B` is the morphism of chain complexes from
-the alternating face map complex of `A ⊗ B` to the tensor product of the alternating face map
-complexes of `A` and of `B`.  In degree `n` it is
-`∑_{p + q = n} A(front p-face) ⊗ B(back q-face)`,
-where the front `p`-face of `⦋n⦌` is the inclusion of the vertices `0, …, p` and the back `q`-face
-is the inclusion of the vertices `p, …, n`, both given by Mathlib's
-`SimplexCategory.subinterval`.  The tensor product of chain complexes is Mathlib's monoidal
-structure on `ChainComplex C ℕ`, whose differential is `d (a ⊗ b) = d a ⊗ b + (-1)^p a ⊗ d b`
-for `a` of degree `p`.
+Let `C` be preadditive and monoidal with biadditive tensor and finite
+coproducts. For simplicial `A,B`, the Alexander–Whitney chain map
+`C_*(A ⊗ B) → C_*(A) ⊗ C_*(B)` uses alternating-face chains.
+In degree `n`, its `(p,n-p)` summand is the front face on vertices
+`0,…,p` in `A` tensored with the back face on `p,…,n` in `B`.
+The target tensor differential has second-factor sign `(-1)^p`.
 
-The simplicial chains of a product of simplicial sets are the case where `A` and `B` are free on
-the simplices of the factors (`SSet.alexanderWhitney`).  Singular chains with coefficients in a
-local coefficient system form a simplicial module that is not free on the simplices with a fixed
-coefficient object, which is why the construction is stated for arbitrary simplicial objects: the
-Alexander–Whitney diagonal of chains with local coefficients, along which cup and cap products
-with local coefficients are taken, is an instance of it.
-
-The Alexander–Whitney map is coassociative and counital, with counit the identity of `𝟙_ C` in
-degree zero, so it makes the alternating face map complex an oplax monoidal functor from
-simplicial objects with the degreewise tensor product to chain complexes.  On normalized chains,
-the mate of this structure along the Dold–Kan correspondence is the lax monoidal structure of the
-Dold–Kan functor from chain complexes to simplicial objects (J. Lurie, *Higher Algebra*,
-Construction 1.3.1.13), which underlies the simplicial enrichment of a differential graded
-category.
-
-## Main definitions and results
-
-* `CategoryTheory.SimplicialObject.alexanderWhitney`: the Alexander–Whitney chain map.
-* `CategoryTheory.SimplicialObject.alexanderWhitney_f`: its degree-`n` component.
-* `CategoryTheory.SimplicialObject.alexanderWhitney_naturality`: it is natural in both simplicial
-  objects.
-* `CategoryTheory.SimplicialObject.alexanderWhitney_coassoc`: it is coassociative.
-* `CategoryTheory.SimplicialObject.alternatingFaceMapComplexOplaxMonoidal`: the instance
-  `(alternatingFaceMapComplex C).OplaxMonoidal`, with comultiplication the
-  Alexander–Whitney map (`CategoryTheory.SimplicialObject.alternatingFaceMapComplex_δ`) and
-  counit the identity of `𝟙_ C` in degree zero
-  (`CategoryTheory.SimplicialObject.alternatingFaceMapComplex_η_f_zero`).
+The map is natural, coassociative under the simplicial and chain
+associators, and counital with the identity of the unit in degree zero.
+It gives an oplax monoidal structure on the alternating-face chain
+functor.
 
 ## References
 
@@ -95,9 +66,10 @@ variable [Preadditive C]
 variable [MonoidalCategory C] [MonoidalPreadditive C] [HasFiniteCoproducts C]
   (A B : SimplicialObject C)
 
-/-- The summand of the Alexander–Whitney map in degree `n` and bidegree `(p, q)`: the front
-`p`-face of `A` tensored with the back `q`-face of `B`, or zero if `p + q ≠ n`.  Indexing by an
-arbitrary pair keeps the summands of all bidegrees in one type. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. The Alexander–Whitney term in degree `n` and bidegree
+`(p,q)` is the front `p`-face tensored with the back `q`-face,
+followed by the tensor summand inclusion when `p+q=n`, and zero otherwise. -/
 private def alexanderWhitneyTerm (n p q : ℕ) :
     A _⦋n⦌ ⊗ B _⦋n⦌ ⟶
       ((alternatingFaceMapComplex C).obj A ⊗ (alternatingFaceMapComplex C).obj B).X n :=
@@ -172,11 +144,12 @@ private def alexanderWhitneyX (n : ℕ) :
       ((alternatingFaceMapComplex C).obj A ⊗ (alternatingFaceMapComplex C).obj B).X n :=
   ∑ pq ∈ Finset.antidiagonal n, alexanderWhitneyTerm A B n pq.1 pq.2
 
-/-- **The Alexander–Whitney map** of two simplicial objects, from the alternating face map
-complex of their degreewise tensor product to the tensor product of their alternating face map
-complexes.  In degree `n` it is the sum over `p + q = n` of the front `p`-face of `A` tensored
-with the back `q`-face of `B` (`CategoryTheory.SimplicialObject.alexanderWhitney_f`).  It is a
-morphism of chain complexes for the Koszul sign convention on the tensor product. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. The Alexander–Whitney map is
+`C_*(A ⊗ B) → C_*(A) ⊗ C_*(B)`, using degreewise simplicial tensor.
+Its degree-`n` component is the sum of front `p`-faces of `A` and
+back `q`-faces of `B` over `p+q=n`, with the two faces sharing vertex
+`p`. It is a chain map for the tensor differential sign `(-1)^p`. -/
 def alexanderWhitney :
     (alternatingFaceMapComplex C).obj (A ⊗ B) ⟶
       (alternatingFaceMapComplex C).obj A ⊗ (alternatingFaceMapComplex C).obj B where
@@ -205,11 +178,14 @@ def alexanderWhitney :
     refine Finset.sum_congr rfl fun pq hpq ↦ ?_
     exact alexanderWhitneyTerm_D A B n pq.1 pq.2 (Finset.mem_antidiagonal.mp hpq)
 
-/-- The degree-`n` component of the Alexander–Whitney map: the sum over `p ≤ n` of the front
-`p`-face of `A` tensored with the back `(n - p)`-face of `B`. -/
 -- The sum is typed as a morphism out of `Aₙ ⊗ Bₙ` rather than out of the degree-`n` term of the
 -- alternating face map complex, which is the same object only up to unfolding, so that composites
 -- with the summands can be rewritten.
+
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. In degree `n`, the map is the sum over `0≤p≤n` of the
+maps selecting vertices `0,…,p` in `A` and `p,…,n` in `B`,
+tensored and followed by the `(p,n-p)` chain-tensor inclusion. -/
 @[simp]
 lemma alexanderWhitney_f (n : ℕ) :
     (alexanderWhitney A B).f n =
@@ -225,7 +201,9 @@ lemma alexanderWhitney_f (n : ℕ) :
   exact Finset.sum_congr rfl fun p _ ↦ alexanderWhitneyTerm_of_eq _ _ _ _ _ (by omega)
 
 variable {A B} in
-/-- The Alexander–Whitney map is natural in both simplicial objects. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. For simplicial maps `f : A → A′`, `g : B → B′`, the square
+satisfies `C_*(f ⊗ g) ≫ AW_(A′,B′) = AW_(A,B) ≫ (C_*(f) ⊗ C_*(g))`. -/
 @[reassoc]
 lemma alexanderWhitney_naturality {A' B' : SimplicialObject C} (f : A ⟶ A') (g : B ⟶ B') :
     (alternatingFaceMapComplex C).map (f ⊗ₘ g) ≫ alexanderWhitney A' B' =
@@ -290,7 +268,8 @@ private lemma alexanderWhitneyTerm_whiskerRight_associator (n p c : ℕ) (h : p 
   dsimp only [alternatingFaceMapComplex_obj_X] at hα
   rw [alexanderWhitneyTerm_of_eq _ _ _ _ _ rfl, alexanderWhitneyTerm₃, dite_eq_left (by omega),
     comp_whiskerRight_assoc, hα]
-  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← tensorHom_id, tensorHom_comp_tensorHom,
+  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← tensorHom_id,
+    MonoidalCategory.tensorHom_comp_tensorHom,
     Category.comp_id]
   rw [Category.assoc, associator_naturality]
   simp only [Category.assoc, ← Functor.map_comp, ← op_comp,
@@ -309,14 +288,18 @@ private lemma alexanderWhitneyTerm_whiskerLeft (n a m : ℕ) (h : a + m = n) :
   refine Finset.sum_congr rfl fun bc hbc ↦ ?_
   obtain rfl : bc.1 + bc.2 = m := Finset.mem_antidiagonal.mp hbc
   rw [alexanderWhitneyTerm_of_eq _ _ _ _ _ rfl, alexanderWhitneyTerm₃, dite_eq_left h]
-  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← id_tensorHom, tensorHom_comp_tensorHom,
+  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← id_tensorHom,
+    MonoidalCategory.tensorHom_comp_tensorHom,
     Category.comp_id]
   simp only [← Functor.map_comp, ← op_comp,
     MathlibExt.DGSource.SimplexCategory.subinterval_comp_subinterval _ _ _ _ _ _ rfl, Nat.add_zero]
 
-/-- **Coassociativity of the Alexander–Whitney map**: the two ways of splitting a simplex into
-a front, a middle and a back face agree, up to the associators of simplicial objects and of
-chain complexes. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. For a third simplicial object `D`, applying `AW` to
+`(A ⊗ B,D)`, then to `(A,B)`, and then the chain associator equals
+mapping the simplicial associator, applying `AW` to `(A,B ⊗ D)`,
+and then to `(B,D)`. Both routes split into the same front, middle,
+and back faces. -/
 @[reassoc]
 lemma alexanderWhitney_coassoc :
     alexanderWhitney (A ⊗ B) D ≫ alexanderWhitney A B ▷ (alternatingFaceMapComplex C).obj D ≫
@@ -453,11 +436,11 @@ private lemma alexanderWhitney_whiskerLeft_counit :
 
 end Counit
 
-/-- **The Alexander–Whitney oplax monoidal structure** on the alternating face map complex
-functor: the comultiplication is the Alexander–Whitney map
-(`CategoryTheory.SimplicialObject.alternatingFaceMapComplex_δ`), and the counit is the identity
-of `𝟙_ C` in degree zero (`CategoryTheory.SimplicialObject.alternatingFaceMapComplex_η_f_zero`).
-Coassociativity is `CategoryTheory.SimplicialObject.alexanderWhitney_coassoc`. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts. The alternating-face chain functor is oplax monoidal:
+its tensor comparison is `AW : C_*(A ⊗ B) → C_*(A) ⊗ C_*(B)`,
+and its unit comparison is the identity of the base unit in degree
+zero, with zero target in positive degrees. -/
 @[no_expose]
 instance alternatingFaceMapComplexOplaxMonoidal :
     (alternatingFaceMapComplex C).OplaxMonoidal where
@@ -471,15 +454,19 @@ instance alternatingFaceMapComplexOplaxMonoidal :
   oplax_left_unitality := alexanderWhitney_counit_whiskerRight
   oplax_right_unitality := alexanderWhitney_whiskerLeft_counit
 
-/-- The comultiplication of the alternating face map complex functor is the Alexander–Whitney
-map. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. The tensor comparison of the alternating-face chain functor's
+oplax monoidal structure is the Alexander–Whitney map of `A,B`. -/
 @[simp]
 lemma alternatingFaceMapComplex_δ :
     Functor.OplaxMonoidal.δ (alternatingFaceMapComplex C) A B = alexanderWhitney A B :=
   (rfl)
 
-/-- The counit of the alternating face map complex functor is the identity of `𝟙_ C` in degree
-zero; in positive degrees its target is zero. -/
+/-- Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts. In degree zero, the oplax unit comparison of the
+alternating-face chain functor is the canonical identification of
+`𝟙_C` with the degree-zero term of the chain tensor unit. Its positive-
+degree target terms are zero. -/
 @[simp]
 lemma alternatingFaceMapComplex_η_f_zero :
     (Functor.OplaxMonoidal.η (alternatingFaceMapComplex C)).f 0 =

@@ -1,0 +1,15 @@
+# Scalar transport of relative lifting properties
+
+- [Relative projectivity agrees for direct and successive scalar restriction](is-relative-projective-restrict-comp-iff.md)
+- [Relative injectivity agrees for direct and successive scalar restriction](is-relative-injective-restrict-comp-iff.md)
+- [Composite-relative projectivity implies intermediate-relative projectivity](is-relative-projective-restrict-of-comp.md)
+- [Composite-relative injectivity implies intermediate-relative injectivity](is-relative-injective-restrict-of-comp.md)
+- [Intermediate induction counit splits for a composite-relative projective module](counit-is-split-epi-of-relative-projecti.md)
+- [Intermediate coextension unit retracts for a composite-relative injective module](unit-is-split-mono-of-relative-injective.md)
+- [Equal scalar maps give the same relative projectivity property](is-relative-projective-restrict-congr.md)
+- [Equal scalar maps give the same relative injectivity property](is-relative-injective-restrict-congr.md)
+- [Direct composite induction gives intermediate-relative projectivity](is-relative-projective-induced-comp.md)
+- [Iterated induction gives intermediate-relative projectivity](is-relative-projective-iterated-induced.md)
+- [Retracts of iterated induced modules retain intermediate-relative projectivity](is-relative-projective-retract-iterated.md)
+- [Composite coextension gives intermediate-relative injectivity](is-relative-injective-coextended-comp.md)
+- [Retracts of composite coextended modules retain intermediate-relative injectivity](is-relative-injective-retract-coextended.md)

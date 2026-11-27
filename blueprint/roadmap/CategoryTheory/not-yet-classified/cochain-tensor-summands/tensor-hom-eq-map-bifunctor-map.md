@@ -1,5 +1,8 @@
-# Tensor Hom eq map Bifunctor Map
+# Monoidal tensor morphism is the total bifunctor map
 
-In the monoidal category of homological complexes, `⊗ₘ` is the totalization of the two
-morphisms.  Mathlib defines `HomologicalComplex.monoidalCategory` this way, but states no lemma
-exposing it, so `HomologicalComplex.ι_tensorHom` does not apply to `⊗ₘ` without this rewrite.
+Let `C` be preadditive and monoidal with biadditive tensor,
+`I` an additive monoid with decidable equality, and `c` a complex
+shape on `I` with compatible tensor signs. Assume a zero object, all graded tensor coproducts, preservation
+of the coproducts used in both associations of triple tensors, and
+zero-object preservation by each functor `- ⊗ A`. For two complex maps, their monoidal tensor morphism is
+exactly the totalized degreewise map of the curried tensor bifunctor.

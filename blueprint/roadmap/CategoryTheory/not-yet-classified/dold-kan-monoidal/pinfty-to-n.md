@@ -1,4 +1,5 @@
-# PInfty To N
+# Natural projection onto normalized Dold–Kan chains
 
-The projection of the alternating face map complex of `X` onto the normalized chains `N X`
-of the pseudoabelian Dold–Kan correspondence.
+Let `C` be preadditive and idempotent complete with finite
+coproducts. The alternating-face chain functor has a natural
+projection `C_*(X) → N(X)` onto its summand defined by `P∞`.

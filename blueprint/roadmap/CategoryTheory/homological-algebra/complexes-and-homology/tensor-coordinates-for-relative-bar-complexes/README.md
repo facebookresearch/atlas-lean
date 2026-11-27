@@ -1,0 +1,16 @@
+# Tensor coordinates for relative Bar complexes
+
+- [Merging adjacent positions of an ordered word](merge-tuple.md)
+- [Separating the first position of a nonempty word](split-index.md)
+- [Singleton coordinate returns the first word position](split-index-symm-inl.md)
+- [Remainder coordinate returns its successor position](split-index-symm-inr.md)
+- [Splitting the first factor from a finite tensor power](split-power.md)
+- [Tensor coordinates for iterates of the tensor monad](power-coordinates.md)
+- [Empty-word coordinate isomorphism for the tensor monad](power-coordinates-zero.md)
+- [Recursive coordinate isomorphism for tensor-monad powers](power-coordinates-succ.md)
+- [Pure ordered word in a tensor-monad iterate](power-pure.md)
+- [First-factor formula for a pure tensor-monad word](power-pure-succ.md)
+- [Pure-word extensionality for tensor-monad iterates](power-pure-ext.md)
+- [Ordered coefficient-word coordinates for a relative bar level](bar-coordinates.md)
+- [Pure coefficient word in a relative bar level](bar-pure.md)
+- [Pure-word extensionality for a relative bar level](bar-pure-ext.md)

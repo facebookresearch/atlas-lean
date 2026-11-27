@@ -1,0 +1,18 @@
+# Long exact sequences from compatible injective resolutions
+
+- [Compatible injective horseshoe data for a short exact sequence](horseshoe-data.md)
+- [Short complex determined by the injective horseshoe lifts](diagram.md)
+- [Mapped injective horseshoe diagram](mapped.md)
+- [Degreewise splitting makes the resolution diagram short exact](diagram-short-exact.md)
+- [Additive functors preserve the split horseshoe short exact sequence](mapped-short-exact.md)
+- [Right-derived connecting map from compatible horseshoe data](delta.md)
+- [Five-arrow cohomology window of the mapped horseshoe](homology-sequence.md)
+- [Exactness of the mapped horseshoe cohomology window](homology-sequence-exact.md)
+- [Five-arrow right-derived window of the horseshoe](long-sequence.md)
+- [Resolution comparisons identify the cohomology and right-derived windows](sequence-iso.md)
+- [Exactness of the right-derived horseshoe window](long-sequence-exact.md)
+- [Morphism between compatible injective horseshoe data](hom.md)
+- [Mapped morphism of injective horseshoe diagrams](mapped-hom.md)
+- [Right-derived connecting maps are natural in horseshoe-data morphisms](delta-naturality.md)
+- [Morphism of the five-arrow right-derived windows](long-sequence-hom.md)
+- [Compatible horseshoe data with prescribed endpoint resolutions](of-endpoints.md)

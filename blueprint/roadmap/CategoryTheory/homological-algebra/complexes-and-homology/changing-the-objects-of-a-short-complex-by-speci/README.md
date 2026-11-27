@@ -1,0 +1,16 @@
+# Changing the objects of a short complex by specified isomorphisms
+
+- [Changing the three objects of a short complex](change-objects.md)
+- [The first arrow after changing short-complex objects](change-objects-f.md)
+- [The second arrow after changing short-complex objects](change-objects-g.md)
+- [The coordinate isomorphism of a short complex](change-objects-iso.md)
+- [Exactness under a change of short-complex objects](change-objects-exact-iff.md)
+- [Short exactness under a change of short-complex objects](change-objects-short-exact-iff.md)
+- [The induced map in changed short-complex coordinates](change-objects-map.md)
+- [The first component of a short-complex coordinate map](change-objects-map-2.md)
+- [The middle component of a short-complex coordinate map](change-objects-map-3.md)
+- [The last component of a short-complex coordinate map](change-objects-map-4.md)
+- [Naturality of the forward short-complex coordinate isomorphism](change-objects-iso-hom-naturality.md)
+- [Naturality of the inverse short-complex coordinate isomorphism](change-objects-iso-inv-naturality.md)
+- [Identity law for short-complex coordinate maps](change-objects-map-id.md)
+- [Composition law for short-complex coordinate maps](change-objects-map-comp.md)

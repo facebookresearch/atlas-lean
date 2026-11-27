@@ -1,0 +1,16 @@
+# Positive tails and homology
+
+- [Positive tail of a nonnegative chain complex](positive-tail.md)
+- [Restriction of a chain map to positive tails](positive-tail-map.md)
+- [Short-complex comparison in positive tail degrees](positive-tail-row-iso.md)
+- [Cokernel description of degree-zero tail homology](positive-tail-zero-data.md)
+- [Cokernel homology data when the degree-one differential vanishes](original-one-data.md)
+- [Degree-zero cokernel comparison between a tail and its original complex](positive-tail-zero-cokernel-iso.md)
+- [Cycle isomorphism for explicitly indexed positive-tail short complexes](positive-tail-explicit-cycles-iso.md)
+- [Homology isomorphism for explicitly indexed tail short complexes](positive-tail-explicit-homology-iso.md)
+- [Cycles of the positive tail are cycles one degree higher](positive-tail-cycles-iso.md)
+- [Homology of the positive tail is homology one degree higher](positive-tail-homology-iso.md)
+- [Cycle-inclusion identity for the positive-tail comparison](positive-tail-cycles-iso-i.md)
+- [Homology-projection identity for the positive-tail comparison](positive-tail-homology-iso-2.md)
+- [Naturality of positive-tail cycle isomorphisms](positive-tail-cycles-iso-naturality.md)
+- [Naturality of positive-tail homology isomorphisms](positive-tail-homology-iso-naturality.md)

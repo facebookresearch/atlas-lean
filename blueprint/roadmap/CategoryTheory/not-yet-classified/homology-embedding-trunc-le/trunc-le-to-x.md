@@ -1,4 +1,6 @@
-# Trunc LE'To X
+# Inclusion of a nonnegative truncation term into the original cochain complex
 
-The inclusion of degree `n` of the good truncation `τ_{≥ 0} K = K.truncLE' embeddingDownNat`
-into `K^{-n}`: an isomorphism for `n > 0`, and the inclusion of the cycles for `n = 0`.
+Let `C` be a category with zero morphisms and `K` an integer
+cochain complex with homology in every degree. Let `τK` be its
+nonnegative chain truncation along `n ↦ -n`. The degree-`n` comparison `τK_n → K^(-n)` is an
+isomorphism for `n>0` and the cycle inclusion `Z⁰K → K⁰` for `n=0`.

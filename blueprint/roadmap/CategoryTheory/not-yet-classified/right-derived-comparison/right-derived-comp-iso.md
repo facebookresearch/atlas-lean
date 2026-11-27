@@ -1,9 +1,6 @@
-# An exact functor may be pulled out of a right derived functor
+# Homology-preserving postcomposition of a right-derived functor
 
-If `E` is additive and
-preserves homology then `(F ⋙ E).rightDerived n ≅ F.rightDerived n ⋙ E`, naturally in the
-object of `A`.
-
-Both right derived functors are the chosen injective resolution followed by a functor on
-homotopy categories and then homology; the comparison is `Functor.mapHomotopyCategoryCompIso`
-followed by `mapHomotopyCategoryHomologyIso`.
+Let `A,B,B′` be abelian, with injective resolutions in `A`,
+`F : A → B` additive, and `E : B → B′` additive and preserving
+homology. There is a natural isomorphism
+`R^n(F ⋙ E) ≅ R^nF ⋙ E` in every degree `n`.

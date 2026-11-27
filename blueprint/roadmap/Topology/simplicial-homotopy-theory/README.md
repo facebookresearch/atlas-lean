@@ -21,3 +21,8 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [To Simplicial](to-simplicial/README.md)
 - [Data-level left extra degeneracy](extra-degeneracy.md)
 - [Kan complex](kan-complex.md)
+- [Alexander–Whitney front and back face interface](alexander-whitney-front-and-back-face-interface/README.md)
+- [Alternating-complex precomposition of coface isomorphisms](alternating-complex-precomposition-of-coface-iso/README.md)
+- [Associativity of front/back cosimplicial pairings](associativity-of-front-back-cosimplicial-pairing/README.md)
+- [Augmented Whiskering](augmented-whiskering/README.md)
+- [Coface comparisons, alternating complexes and conditional AW pairing transport](coface-comparisons-alternating-complexes-and-con/README.md)

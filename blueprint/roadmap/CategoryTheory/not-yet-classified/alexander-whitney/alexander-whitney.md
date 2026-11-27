@@ -1,7 +1,8 @@
-# The Alexander–Whitney map
+# Alexander–Whitney chain map for two simplicial objects
 
-**The Alexander–Whitney map** of two simplicial objects, from the alternating face map
-complex of their degreewise tensor product to the tensor product of their alternating face map
-complexes.  In degree `n` it is the sum over `p + q = n` of the front `p`-face of `A` tensored
-with the back `q`-face of `B` (`CategoryTheory.SimplicialObject.alexanderWhitney_f`).  It is a
-morphism of chain complexes for the Koszul sign convention on the tensor product.
+Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts, and let `A,B` be simplicial objects in `C`. The Alexander–Whitney map is
+`C_*(A ⊗ B) → C_*(A) ⊗ C_*(B)`, using degreewise simplicial tensor.
+Its degree-`n` component is the sum of front `p`-faces of `A` and
+back `q`-faces of `B` over `p+q=n`, with the two faces sharing vertex
+`p`. It is a chain map for the tensor differential sign `(-1)^p`.

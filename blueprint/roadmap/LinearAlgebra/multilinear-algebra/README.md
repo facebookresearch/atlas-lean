@@ -12,6 +12,7 @@ Multilinear and alternating maps, tensor products of modules and of families of 
 - [Exterior powers after adjoining a free rank-one summand](exterior-powers-after-adjoining-a-free-rank-one/README.md)
 - [Outer actions on balanced tensor products](outer-actions-on-balanced-tensor-products/README.md)
 - [Rank-one splittings of exterior powers](rank-one-splittings-of-exterior-powers/README.md)
+- [Tensor–Hom equivalences for additive maps](tensor-hom-equivalences-for-additive-maps/README.md)
 - [The first coordinate of a tensor power](the-first-coordinate-of-a-tensor-power/README.md)
 - [Base change for exterior contraction](contract-left-base-change.md)
 - [Restriction of scalars for alternating maps](restrict-scalars.md)

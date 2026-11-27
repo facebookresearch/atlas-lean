@@ -1,4 +1,7 @@
-# Lift Trunc LE'
+# Lifting a boundary-annihilated map to good truncation
 
-A morphism `φ : A ⟶ K.restriction e` whose components at the boundary of `e` are killed by
-the differential of `K` factors through the canonical truncation `K.truncLE' e`.
+Let `C` be a category with zero morphisms, `e : c → c′` a
+complex-shape embedding of truncation type `IsTruncLE`, and `K` a
+`c′`-shaped complex with homology in every degree. A map `φ : A → K|_e` whose boundary components are killed
+by every outgoing differential factors as a complex map
+`A → τ_eK → K|_e`.

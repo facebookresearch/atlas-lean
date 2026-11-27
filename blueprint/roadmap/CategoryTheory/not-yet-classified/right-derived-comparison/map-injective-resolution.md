@@ -1,4 +1,6 @@
-# Map Injective Resolution
+# Injective resolutions under a homology-preserving functor
 
-The image of an injective resolution under an additive functor which preserves homology and
-injective objects is an injective resolution of the image.
+Let `C`, `D` be preadditive categories with zero objects and with
+homology in `D`. If additive `F : C → D` preserves homology and
+injective objects, an injective resolution `I` of `Z ∈ C` maps to
+an injective resolution of `F(Z)` in `D`.

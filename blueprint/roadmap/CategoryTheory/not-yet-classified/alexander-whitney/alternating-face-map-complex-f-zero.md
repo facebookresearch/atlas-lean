@@ -1,4 +1,7 @@
-# Alternating Face Map Complex η f zero
+# Degree-zero unit comparison of the Alexander–Whitney structure
 
-The counit of the alternating face map complex functor is the identity of `𝟙_ C` in degree
-zero; in positive degrees its target is zero.
+Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts. In degree zero, the oplax unit comparison of the
+alternating-face chain functor is the canonical identification of
+`𝟙_C` with the degree-zero term of the chain tensor unit. Its positive-
+degree target terms are zero.

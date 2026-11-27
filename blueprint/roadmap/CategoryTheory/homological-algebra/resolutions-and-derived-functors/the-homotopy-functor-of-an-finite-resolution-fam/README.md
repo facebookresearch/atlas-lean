@@ -1,0 +1,16 @@
+# The homotopy functor of an finite-resolution family
+
+- [The finite-resolution functor to the homotopy category](finite-resolution-homotopy-functor.md)
+- [Objects of the finite-resolution homotopy functor](finite-resolution-homotopy-functor-obj.md)
+- [The resolving complex represented by a functor object](finite-resolution-homotopy-functor-obj-a.md)
+- [Terms represented by the finite-resolution functor](finite-resolution-homotopy-functor-obj-x.md)
+- [Differentials represented by the finite-resolution functor](finite-resolution-homotopy-functor-obj-d.md)
+- [Support bounds of represented finite-resolution functor objects](finite-resolution-homotopy-functor-obj-i.md)
+- [Morphisms of the finite-resolution homotopy functor](finite-resolution-homotopy-functor-map.md)
+- [Representatives of a finite-resolution functor morphism are homotopic](finite-resolution-homotopy-functor-map-o.md)
+- [The homotopy-category isomorphism of two finite resolutions](finite-resolution-comparison-iso.md)
+- [A natural comparison of two finite-resolution families](finite-resolution-homotopy-functor-compa.md)
+- [Forward components of the finite-resolution family comparison](finite-resolution-homotopy-functor-compa-2.md)
+- [Inverse components of the finite-resolution family comparison](finite-resolution-homotopy-functor-compa-3.md)
+- [A resolution family compares with itself by identity](finite-resolution-homotopy-functor-compa-4.md)
+- [Transitivity of finite-resolution family comparisons](finite-resolution-homotopy-functor-compa-5.md)

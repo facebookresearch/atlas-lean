@@ -1,0 +1,16 @@
+# Pointwise cochain shift and homology
+
+- [Existence of homology after a cochain shift](has-homology-shift.md)
+- [Cycles of a shifted cochain complex](shift-cycles-iso.md)
+- [Homology of a shifted cochain complex](shift-homology-iso.md)
+- [Shifted cycles comparison preserves inclusion](shift-cycles-iso-hom-i-cycles.md)
+- [Inverse shifted cycles comparison preserves inclusion](shift-cycles-iso-inv-i-cycles.md)
+- [Shift comparisons commute with the homology quotient](shift-homology-iso-homology.md)
+- [Naturality of the shifted cycles isomorphism](shift-cycles-iso-naturality.md)
+- [Naturality of the shifted homology isomorphism](shift-homology-iso-naturality.md)
+- [Boundary-kernel existence is preserved by shifting](has-kernel-homology-shift.md)
+- [Outgoing cycle-quotient existence is preserved by shifting](has-cokernel-i-cycles-shift.md)
+- [Boundary kernels under cochain shifts](shift-boundary-iso.md)
+- [Shifted boundary comparison preserves kernel inclusion](shift-boundary-iso-hom.md)
+- [Outgoing cycle quotients under cochain shifts](shift-outgoing-iso.md)
+- [Shifted outgoing comparison preserves quotient projection](shift-outgoing-iso-hom.md)

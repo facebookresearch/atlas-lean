@@ -1,0 +1,15 @@
+# Changing the objects of a homological complex
+
+- [Complex with changed degreewise objects](change-objects.md)
+- [Degree objects after coordinate change](change-objects-x.md)
+- [Conjugated differential after coordinate change](change-objects-d.md)
+- [Complex isomorphism to changed coordinates](change-objects-iso.md)
+- [Forward coordinate isomorphism in each degree](change-objects-iso-hom-f.md)
+- [Inverse coordinate isomorphism in each degree](change-objects-iso-inv-f.md)
+- [Complex maps in changed coordinates](change-objects-map.md)
+- [Degree formula for a changed-coordinate map](change-objects-map-f.md)
+- [Naturality of degreewise coordinate changes](change-objects-iso-hom-naturality.md)
+- [Identity map after changing coordinates](change-objects-map-id.md)
+- [Composition of maps in changed coordinates](change-objects-map-comp.md)
+- [A complex-valued functor in chosen coordinates](change-objects-functor.md)
+- [Natural isomorphism to a coordinate presentation](change-objects-functor-iso.md)

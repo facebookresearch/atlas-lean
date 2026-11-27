@@ -1,0 +1,18 @@
+# Raw cokernel generators in degree zero
+
+- [Cokernel precomposition is injective on homogeneous cochains](cokernel-precomp-injective.md)
+- [Degree-zero homogeneous generator on a shifted cokernel](cokernel-shift-generator.md)
+- [Projection and unshift recover the full homogeneous cochain](cokernel-shift-generator-recover.md)
+- [Uniqueness of the shifted cokernel generator from recovery](cokernel-shift-generator-unique.md)
+- [Independence of the vanishing witness for a cokernel-shift generator](cokernel-shift-generator-proof-irrel.md)
+- [Zero cochain has zero shifted-cokernel generator](cokernel-shift-generator-zero.md)
+- [Shifted cokernel generation commutes with degree-zero target composition](cokernel-shift-generator-comp.md)
+- [Projection-unshift reconstruction annihilates the source map](cokernel-shift-generator-reconstruction.md)
+- [Reconstruction followed by cokernel-shift generation is identity](cokernel-shift-generator-of-reconstructi.md)
+- [Additivity of shifted cokernel generation](cokernel-shift-generator-add.md)
+- [Negation of a shifted cokernel generator](cokernel-shift-generator-neg.md)
+- [Naturality of shifted cokernel generators under a commuting source square](cokernel-shift-generator-precomp.md)
+- [Signed differential recovery from a shifted cokernel generator](cokernel-shift-generator-recover-2.md)
+- [Degree-one differential recovery has the negative shift sign](cokernel-shift-generator-degree-one.md)
+- [Component recovery with the triangular integer shift sign](cokernel-shift-generator-recover-v.md)
+- [Degree-one component recovery is the negative shifted-cokernel value](cokernel-shift-generator-recover-v-degre.md)

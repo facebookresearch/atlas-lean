@@ -1,0 +1,16 @@
+# Directional left-derived comparison for exact source restriction
+
+- [Mapping a chain augmentation under an additive functor](map-chain-augmentation.md)
+- [Degree-zero component of a mapped chain augmentation](map-chain-augmentation-f-zero.md)
+- [Homology preservation carries chain augmentations to quasi-isomorphisms](map-chain-augmentation-quasi-iso.md)
+- [Source change preserves chain-augmentation squares](map-chain-augmentation-naturality.md)
+- [Complex composition preserves degree-zero opcycles augmentations](map-chain-augmentation-opcycles-composit.md)
+- [Complex composition preserves the degree-zero homology augmentation](map-chain-augmentation-homology-zero-com.md)
+- [Directional left-derived comparison from a supplied source resolution](left-derived-precomp-hom-with-resolution.md)
+- [Directional resolution-based comparison is natural in the object](left-derived-precomp-hom-with-resolution-2.md)
+- [Directional left-derived comparison is independent of the source resolution](left-derived-precomp-hom-with-resolution-3.md)
+- [Directional left-derived precomposition under homology preservation](left-derived-precomp-hom-of-preserves-ho.md)
+- [Directional left-derived components can use any source resolution](left-derived-precomp-hom-of-preserves-ho-2.md)
+- [Projective preservation identifies the directional comparison with the inverse isomorphism](left-derived-precomp-hom-of-preserves-ho-3.md)
+- [Directional degree-zero comparison preserves the augmentation](left-derived-precomp-hom-of-preserves-ho-4.md)
+- [Directional left-derived comparison is natural in the coefficient functor](left-derived-precomp-hom-of-preserves-ho-5.md)

@@ -21,59 +21,28 @@ module
 
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import MathlibExt.Algebra.Homology.HomologicalComplex.MapHomologyIso
+public import MathlibExt.CategoryTheory.Abelian.Injective.MapResolution
 public import Mathlib.CategoryTheory.Abelian.RightDerived
 public import Mathlib.CategoryTheory.Preadditive.Injective.Preserves
 
+/- The homotopy-category comparison is lifted through the quotient using homologyFunctorFactors, mapHomotopyCategoryFactors, and Quotient.natIsoLift. The partial left-homology comparison is assembled from ShortComplex.mapHomologyIso and its inverse naturality law rather than a global homology-functor isomorphism. -/
+
 /-!
-# Postcomposing a right derived functor with an exact functor
+# Homology-preserving postcomposition of right-derived functors
 
-Let `F : A ⥤ B` be an additive functor out of an abelian category with injective resolutions
-and let `E : B ⥤ B'` be an additive functor which preserves homology (for instance an exact
-functor).  This file constructs the natural isomorphism
+Let `A,B,B′` be abelian, with injective resolutions in `A`, and
+`F : A → B` additive. For additive homology-preserving `E : B → B′`,
+there is a natural isomorphism `R^n(F ⋙ E) ≅ R^nF ⋙ E`.
+Homology preservation also gives a comparison on homotopy categories.
+A natural isomorphism of additive functors induces one of their
+derived families.
 
-`(F ⋙ E).rightDerived n ≅ F.rightDerived n ⋙ E`
-
-of functors `A ⥤ B'`, together with the two intermediate comparisons it is built from.
-
-The objectwise form of this statement is folklore and appears in the Stacks formalization as
-`rightDerived_comp_iso_of_preservesHomology`; what is supplied here is the *natural* version,
-which is what is needed whenever the comparison has to be transported along a cocone — for
-instance when checking that a right derived functor commutes with a colimit.
-
-## Main definitions
-
-* `CategoryTheory.Functor.mapHomologicalComplexHomologyIso`: `E` commutes with the homology
-  functors on homological complexes.
-* `CategoryTheory.Functor.mapHomotopyCategoryHomologyIso`: the same on homotopy categories,
-  obtained by lifting the previous isomorphism through the quotient functor.
-* `CategoryTheory.Functor.rightDerivedCompIso`: the natural isomorphism
-  `(F ⋙ E).rightDerived n ≅ F.rightDerived n ⋙ E`.
-* `CategoryTheory.Functor.rightDerivedIsoOfNatIso`: a natural isomorphism of additive functors
-  induces one of their right derived functors.
-* `CategoryTheory.Functor.rightDerivedCompIsoOfPreservesLeftHomology`: the same comparison
-  under the weaker hypothesis that `E` preserve the left homology of the degree-`n` short
-  complexes of the chosen resolutions, which only holds on part of the source and is therefore
-  stated after restricting along a functor `P` onto the objects where it does.
-
-## Implementation notes
-
-`HomotopyCategory.homologyFunctor` and `HomotopyCategory.homologyFunctorFactors` are
-`irreducible` in Mathlib, so the homotopy-category comparison is assembled from
-`HomotopyCategory.homologyFunctorFactors` and `Functor.mapHomotopyCategoryFactors` rather
-than by unfolding; the lift through the quotient is `CategoryTheory.Quotient.natIsoLift`.
-
-At the level of homological complexes no work is needed beyond `ShortComplex`: the functors
-`E.mapHomologicalComplex c ⋙ HomologicalComplex.shortComplexFunctor B' c i` and
-`HomologicalComplex.shortComplexFunctor B c i ⋙ E.mapShortComplex` are definitionally equal,
-and `HomologicalComplex.homologyFunctorIso` is `Iso.refl`, so the whole comparison is
-`ShortComplex.homologyFunctorIso` whiskered on the left.
-
-`rightDerivedCompIsoOfPreservesLeftHomology` cannot be assembled that way: with homology
-preserved only at the short complexes of the chosen resolutions there is no comparison of the
-homology functors to whisker, so it is built component by component out of
-`ShortComplex.mapHomologyIso`, with `ShortComplex.mapHomologyIso_inv_naturality` for the
-naturality square. The two right derived functors are unfolded to the homology of the image of
-the chosen resolution, which is where those components live.
+For a functor `P : D → A`, it suffices to preserve left homology
+only at the degree-`n` short complexes of `F` applied to the chosen
+injective resolutions of `P(X)`: this gives
+`P ⋙ R^nF ⋙ E ≅ P ⋙ R^n(F ⋙ E)` on `D`.
+An additive homology- and injective-preserving source functor gives
+the complementary precomposition comparison on derived objects.
 -/
 
 @[expose] public noncomputable section
@@ -85,9 +54,10 @@ namespace CategoryTheory.Functor
 variable {A : Type*} [Category* A] [Abelian A] [HasInjectiveResolutions A]
   {B : Type*} [Category* B] [Abelian B] {B' : Type*} [Category* B'] [Abelian B']
 
-/-- A functor preserving homology commutes with the homology functors on homotopy
-categories.  The isomorphism is lifted through the quotient functor from
-`mapHomologicalComplexHomologyIso`. -/
+/-- Let `B,B′` be abelian and `E : B → B′` additive and preserving
+homology. For any complex shape `c` and index `i`, mapping by `E`
+then taking homology on the homotopy category is naturally isomorphic
+to taking homology first then applying `E`. -/
 def mapHomotopyCategoryHomologyIso (E : B ⥤ B') [E.Additive] [E.PreservesHomology]
     {ι : Type*} (c : ComplexShape ι) (i : ι) :
     E.mapHomotopyCategory c ⋙ HomotopyCategory.homologyFunctor B' c i ≅
@@ -100,13 +70,10 @@ def mapHomotopyCategoryHomologyIso (E : B ⥤ B') [E.Additive] [E.PreservesHomol
       mapHomologicalComplexHomologyIso E c i ≪≫
       (Functor.isoWhiskerRight (HomotopyCategory.homologyFunctorFactors B c i) E).symm)
 
-/-- **An exact functor may be pulled out of a right derived functor.**  If `E` is additive and
-preserves homology then `(F ⋙ E).rightDerived n ≅ F.rightDerived n ⋙ E`, naturally in the
-object of `A`.
-
-Both right derived functors are the chosen injective resolution followed by a functor on
-homotopy categories and then homology; the comparison is `Functor.mapHomotopyCategoryCompIso`
-followed by `mapHomotopyCategoryHomologyIso`. -/
+/-- Let `A,B,B′` be abelian, with injective resolutions in `A`,
+`F : A → B` additive, and `E : B → B′` additive and preserving
+homology. There is a natural isomorphism
+`R^n(F ⋙ E) ≅ R^nF ⋙ E` in every degree `n`. -/
 def rightDerivedCompIso (F : A ⥤ B) [F.Additive] (E : B ⥤ B') [E.Additive]
     [E.PreservesHomology] (n : ℕ) :
     (F ⋙ E).rightDerived n ≅ F.rightDerived n ⋙ E :=
@@ -115,7 +82,9 @@ def rightDerivedCompIso (F : A ⥤ B) [F.Additive] (E : B ⥤ B') [E.Additive]
         (HomotopyCategory.homologyFunctor B' _ n) ≪≫
       Functor.isoWhiskerLeft (F.mapHomotopyCategory _) (mapHomotopyCategoryHomologyIso E _ n))
 
-/-- A natural isomorphism of additive functors induces one of their right derived functors. -/
+/-- Let `A,B` be abelian, with injective resolutions in `A`, and
+`F,G : A → B` additive. A natural isomorphism `e : F ≅ G` induces
+a natural isomorphism `R^nF ≅ R^nG` in every degree `n`. -/
 def rightDerivedIsoOfNatIso {F G : A ⥤ B} [F.Additive] [G.Additive] (e : F ≅ G) (n : ℕ) :
     F.rightDerived n ≅ G.rightDerived n where
   hom := NatTrans.rightDerived e.hom n
@@ -123,16 +92,11 @@ def rightDerivedIsoOfNatIso {F G : A ⥤ B} [F.Additive] [G.Additive] (e : F ≅
   hom_inv_id := by rw [← NatTrans.rightDerived_comp, e.hom_inv_id, NatTrans.rightDerived_id]
   inv_hom_id := by rw [← NatTrans.rightDerived_comp, e.inv_hom_id, NatTrans.rightDerived_id]
 
-/-- **An exact functor may be pulled out of a right derived functor wherever it is exact on
-the resolution used.**  For `P : D ⥤ A` and additive `F : A ⥤ B`, `E : B ⥤ B'`, if `E`
-preserves the left homology of the degree-`n` short complex of `F` applied to the chosen
-injective resolution of `P.obj X` for every `X : D`, then
-`P ⋙ F.rightDerived n ⋙ E ≅ P ⋙ (F ⋙ E).rightDerived n`.
-
-This is the form of `rightDerivedCompIso` available when `E` is exact only on the objects
-reached by `P`; the degree-`n` right derived functor of `F` at `P.obj X` is the degree-`n`
-homology of `F` applied to that resolution, so preserving its left homology is all that the
-comparison uses. -/
+/-- Let `A,B,B′` be abelian, with injective resolutions in `A`,
+`D` a category, `P : D → A`, and `F : A → B`, `E : B → B′` additive.
+If `E` preserves left homology of each degree-`n` short complex in
+`F(I(P(X)))`, where `I(P(X))` is the chosen injective resolution,
+then `P ⋙ R^nF ⋙ E ≅ P ⋙ R^n(F ⋙ E)` naturally on `D`. -/
 def rightDerivedCompIsoOfPreservesLeftHomology {D : Type*} [Category* D] (P : D ⥤ A)
     (F : A ⥤ B) [F.Additive] (E : B ⥤ B') [E.Additive] (n : ℕ)
     (hE : ∀ X : D, E.PreservesLeftHomologyOf
@@ -159,21 +123,11 @@ def rightDerivedCompIsoOfPreservesLeftHomology {D : Type*} [Category* D] (P : D 
       ((HomologicalComplex.shortComplexFunctor B (ComplexShape.up ℕ) n).map
         ((F.mapHomologicalComplex (ComplexShape.up ℕ)).map ψ)) E
 
-/-- The image of an injective resolution under an additive functor which preserves homology and
-injective objects is an injective resolution of the image. -/
-noncomputable def mapInjectiveResolution {A' B'' : Type*} [Category* A'] [Category* B'']
-    [Abelian A'] [Abelian B''] (G : A' ⥤ B'') [G.Additive] [G.PreservesHomology]
-    [G.PreservesInjectiveObjects] {F : A'} (R : InjectiveResolution F) :
-    InjectiveResolution (G.obj F) where
-  cocomplex := (G.mapHomologicalComplex (.up ℕ)).obj R.cocomplex
-  injective n := G.injective_obj_of_injective (R.injective n)
-  ι := (HomologicalComplex.singleMapHomologicalComplex G (.up ℕ) 0).inv.app F ≫
-    (G.mapHomologicalComplex (.up ℕ)).map R.ι
-
-/-- **Precomposing with an exact functor which preserves injective objects.** For additive
-functors `G : A ⥤ B` and `H : B ⥤ C` with `G` preserving homology and injective objects, the
-right derived functors of `G ⋙ H` are those of `H` evaluated on `G`: an injective resolution of
-`F` is carried by `G` to an injective resolution of `G F`. -/
+/-- Let `A′,B″,C` be abelian, with injective resolutions in `A′,B″`,
+`G : A′ → B″`, `H : B″ → C` additive, and `G` preserving homology
+and injective objects. For `X : A′`, mapping an injective resolution
+by `G` gives the comparison
+`R^q(G ⋙ H)(X) ≅ R^qH(G(X))`. -/
 noncomputable def rightDerivedCompIsoOfPreservesInjectiveObjects
     {A' B'' C : Type*} [Category* A'] [Category* B''] [Category* C]
     [Abelian A'] [Abelian B''] [Abelian C]
