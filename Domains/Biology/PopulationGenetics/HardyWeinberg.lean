@@ -28,6 +28,9 @@ union of gametes the offspring genotype is a pair of independent gametes (`offsp
   is the product `p ⊗ p` of the parental allele frequencies `p = gamete G`.
 * `gamete_offspring`: allele frequencies are conserved.
 * `offspring_offspring`: Hardy–Weinberg proportions are an equilibrium.
+* `iidGenotype`, `iidGenotype_apply`, `gamete_iidGenotype`: the genotype law with independent
+  alleles of a given law `p`, its masses `p(a) p(b)`, and its allele frequencies `p`;
+  `offspring_eq_iidGenotype`: the offspring law is the case `p = gamete G`.
 * Two alleles (`A = Bool`, `true` = allele `A` with frequency `p`, `false` = allele `a` with
   frequency `q = 1 - p`): `freq_true_add_freq_false`, `offspring_true_true`
   (`P(AA) = p²`), `offspring_false_false` (`P(aa) = q²`), `offspring_heterozygote`
@@ -137,6 +140,61 @@ theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G :=
 of random mating are a fixed point of random mating. -/
 theorem offspring_offspring (G : PMF (A × A)) : offspring (offspring G) = offspring G := by
   rw [offspring, gamete_offspring, ← offspring]
+
+/-! ### Genotypes with independent alleles -/
+
+/-- The law of a genotype whose maternal and paternal alleles are drawn independently from the
+allele frequencies `p`. The offspring law is the case `p = gamete G`
+(`offspring_eq_iidGenotype`). -/
+noncomputable def iidGenotype (p : PMF A) : PMF (A × A) :=
+  p.bind fun a => p.map (Prod.mk a)
+
+/-- The two alleles of `iidGenotype p` are independent with law `p`: the genotype `(a, b)` has
+probability `p(a) p(b)`. -/
+theorem iidGenotype_apply (p : PMF A) (a b : A) : iidGenotype p (a, b) = p a * p b := by
+  classical
+  rw [iidGenotype, PMF.bind_apply, tsum_eq_single a]
+  · rw [PMF.map_apply, tsum_eq_single b]
+    · simp
+    · intro c hc
+      simp [Ne.symm hc]
+  · intro c hc
+    rw [PMF.map_apply]
+    simp [Ne.symm hc]
+
+/-- The offspring law under random union of gametes is the law of a genotype with independent
+alleles drawn from the parental allele frequencies `gamete G`. -/
+theorem offspring_eq_iidGenotype (G : PMF (A × A)) : offspring G = iidGenotype (gamete G) := rfl
+
+/-- The allele frequencies of a genotype with independent alleles of law `p` are `p`: the gamete
+law of `iidGenotype p` is `p`. -/
+theorem gamete_iidGenotype (p : PMF A) : gamete (iidGenotype p) = p := by
+  have key : ∀ a b : A,
+      transmit (a, b) = (PMF.uniformFintype Bool).bind fun c => PMF.pure (cond c a b) := by
+    intro a b
+    rfl
+  have h1 : ∀ a : A, (p.bind fun b => (PMF.uniformFintype Bool).bind fun c =>
+      PMF.pure (cond c a b)) = (PMF.uniformFintype Bool).bind fun c =>
+        p.bind fun b => PMF.pure (cond c a b) := fun a => PMF.bind_comm _ _ _
+  calc gamete (iidGenotype p)
+      = p.bind fun a => p.bind fun b => transmit (a, b) := by
+        change (p.bind fun a => p.map (Prod.mk a)).bind transmit = _
+        rw [PMF.bind_bind]
+        congr 1
+        funext a
+        rw [PMF.bind_map]
+        rfl
+    _ = (PMF.uniformFintype Bool).bind fun c =>
+          p.bind fun a => p.bind fun b => PMF.pure (cond c a b) := by
+        simp only [key, h1]
+        exact PMF.bind_comm _ _ _
+    _ = (PMF.uniformFintype Bool).bind fun _ => p := by
+        congr 1
+        funext c
+        cases c
+        · simp [PMF.bind_const, PMF.bind_pure]
+        · simp [PMF.bind_const, PMF.bind_pure]
+    _ = p := PMF.bind_const _ _
 
 /-! ### Two alleles
 

@@ -18,9 +18,9 @@ import Mathlib.Tactic.NormNum
 * The conditional mean `α p_B` at `AA` markers for population frequency `p_B = 1/4`, and the
   page's remark: when `B` is always the minor allele, with `f = 1/4`, the conditional mean is
   `α / 4`, not the minor-allele value `3 α / 10`.
-* Under the minor-allele model with `f = 1/4`: the likelihoods `9/16` and `1/16` of a called `AA`,
-  the posterior probability `9/10` that `B` is the minor allele, and the conditional mean
-  `3 α / 10`.
+* Under the minor-allele model with `f = 1/4`: the probabilities `9/16` and `1/16` that the
+  target's genotype, in `A`/`B` labels, is `AA`, the posterior probability `9/10` that `B` is the
+  minor allele, and the conditional mean `3 α / 10`.
 * A full-rank design of four homozygous markers, on which the regression recovers `α` from
   noiseless data and the null law of the `t` statistic is Student's `t` with one degree of
   freedom.
@@ -100,8 +100,8 @@ noncomputable def quarterMinor : PMF (Bool × Bool) := iidGenotype quarterB
 theorem gamete_quarterMinor_true : (gamete quarterMinor true).toReal = 1 / 4 := by
   rw [quarterMinor, gamete_iidGenotype, quarterB_true]
 
-/-- With minor allele frequency `f = 1/4`, a called `AA` has likelihood `(1 - f)² = 9/16` when `B`
-is the minor allele and `f² = 1/16` when `A` is. -/
+/-- With minor allele frequency `f = 1/4`, the target's genotype, in `A`/`B` labels, is `AA` with
+probability `(1 - f)² = 9/16` when `B` is the minor allele and `f² = 1/16` when `A` is. -/
 example : (callLikelihood quarterMinor true).real {(false, false)} = 9 / 16 ∧
     (callLikelihood quarterMinor false).real {(false, false)} = 1 / 16 := by
   have h := freq_true_add_freq_false quarterMinor
@@ -112,7 +112,7 @@ example : (callLikelihood quarterMinor true).real {(false, false)} = 9 / 16 ∧
   constructor <;> norm_num
 
 /-- With minor allele frequency `f = 1/4`, the posterior probability that `B` is the minor allele
-at a called `AA` is `(9/16) / (9/16 + 1/16) = 9/10`. -/
+when the target's genotype, in `A`/`B` labels, is `AA` is `(9/16) / (9/16 + 1/16) = 9/10`. -/
 example : (((callLikelihood quarterMinor)†(PMF.uniformFintype Bool).toMeasure)
     (false, false)).real {true} = 9 / 10 := by
   rw [posterior_callLikelihood_homA, gamete_quarterMinor_true]

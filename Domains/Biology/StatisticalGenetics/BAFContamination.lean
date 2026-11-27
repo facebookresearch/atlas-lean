@@ -21,9 +21,16 @@ genotype and the B allele frequency (BAF), the normalized relative intensity `I_
 of the `B` probe. Jun et al. (2012) estimate the fraction `α` of a DNA sample that comes from an
 unrelated contaminant from the BAF at markers called homozygous.
 
-Alleles are `Bool`, with `false` the allele `A` and `true` the allele `B`, and a genotype is an
+**Convention.** As in the source, the genotype call at a marker is taken to be the target's
+genotype in the array's `A`/`B` labels: calls are assumed correct, and every conditional mean and
+posterior below conditions on the target's genotype itself. A call made from the intensities of a
+contaminated sample can differ from it (by `baf_eq`, an `AA` target with a `BB` contaminant at
+`α = 3/10` has BAF `3/10`), and the statements below say nothing about such calls.
+
+Alleles are `Bool`, with `false` the allele `A` and `true` the allele `B`. A genotype is an
 ordered pair `g : Bool × Bool` of a maternal and a paternal allele, as in
-`MathlibExt.Biology.PopulationGenetics.HardyWeinberg`. When intensity is linear in DNA input and
+`MathlibExt.Biology.PopulationGenetics.HardyWeinberg`, whose two-allele lemmas use the opposite
+label (`true` is the allele `A` there). When intensity is linear in DNA input and
 a fraction `α` of the DNA comes from a contaminant of genotype `g₂`, a target of genotype `g₁` has
 BAF `(1 - α) n(g₁) / 2 + α n(g₂) / 2`, where `n(g)` is the number of copies of `B` in `g`
 (`baf_eq`).
@@ -56,9 +63,10 @@ above (`contaminationEstimate_integral_baf_cond`), and is unbiased under mean-ze
 target's genotype follows Hardy–Weinberg proportions. Alleles are then coded `true` for the minor
 allele and `false` for the major one, the population has genotype law `G` with minor allele
 frequency `f = gamete G true`, and the orientation `θ` (`true`: `B` is the minor allele) relabels
-them (`toAB`). The likelihood of a called `AA` is `(1 - f)²` when `B` is the minor allele and `f²`
-otherwise (`callLikelihood_true_homA`, `callLikelihood_false_homA`), so by Bayes' rule the
-posterior probability that `B` is the minor allele is `(1 - f)² / ((1 - f)² + f²)`
+them (`toAB`). Write `g` for the target's genotype in `A`/`B` labels. Then `g = AA` has
+probability `(1 - f)²` when `B` is the minor allele and `f²` otherwise
+(`callLikelihood_true_homA`, `callLikelihood_false_homA`), so by Bayes' rule the posterior
+probability that `B` is the minor allele given `g = AA` is `(1 - f)² / ((1 - f)² + f²)`
 (`posterior_callLikelihood_homA`), and
 
 * `E[BAF | g = AA] = α f (1 - f) / ((1 - f)² + f²)` (`integral_baf_cond_minorAllele`).
@@ -66,8 +74,9 @@ posterior probability that `B` is the minor allele is `(1 - f)² / ((1 - f)² + 
 ## Main definitions
 
 * `baf`: the BAF of a contaminated sample, from the probe intensities `intensityA`, `intensityB`.
-* `iidGenotype`, `markerLaw`: the law of a genotype with independent alleles of law `p`, and the
-  joint law of the target's and the contaminant's genotypes.
+* `markerLaw`: the joint law of the target's and the contaminant's genotypes, the contaminant's
+  with independent alleles of law `p` (`iidGenotype` of
+  `MathlibExt.Biology.PopulationGenetics.HardyWeinberg`).
 * `designMatrix`, `contaminationEstimate`, `contaminationTStatistic`: the regression of Equation 4.
 * `toAB`, `minorAlleleLaw`, `callLikelihood`: the minor-allele model.
 
@@ -125,37 +134,6 @@ theorem baf_eq (α : ℝ) (g₁ g₂ : Bool × Bool) :
   ring
 
 /-! ### Conditional means at homozygous markers -/
-
-/-- The law of a genotype whose two alleles are drawn independently from the allele frequencies
-`p` (`p false = p_A`, `p true = p_B`). For the gamete law `p = gamete G` of a population with
-genotype law `G` it is the offspring law `offspring G` (`offspring_eq_iidGenotype`). -/
-noncomputable def iidGenotype (p : PMF Bool) : PMF (Bool × Bool) :=
-  p.bind fun a => p.map (Prod.mk a)
-
-/-- The two alleles of `iidGenotype p` are independent with law `p`. -/
-theorem iidGenotype_apply (p : PMF Bool) (g : Bool × Bool) :
-    iidGenotype p g = p g.1 * p g.2 := by
-  obtain ⟨a, b⟩ := g
-  simp only [iidGenotype, PMF.bind_apply, PMF.map_apply, tsum_fintype, Fintype.sum_bool,
-    Prod.mk.injEq]
-  cases a <;> cases b <;> simp
-
-/-- The offspring law of the Hardy–Weinberg model is the law of a genotype with independent
-alleles drawn from the parental allele frequencies. -/
-theorem offspring_eq_iidGenotype (G : PMF (Bool × Bool)) :
-    offspring G = iidGenotype (gamete G) := rfl
-
-/-- The allele frequencies of a genotype with independent alleles of law `p` are `p`: the gamete
-law of `iidGenotype p` is `p`. -/
-theorem gamete_iidGenotype (p : PMF Bool) (a : Bool) : gamete (iidGenotype p) a = p a := by
-  have hs : p true + p false = 1 := by
-    have := p.tsum_coe
-    rwa [tsum_fintype, Fintype.sum_bool] at this
-  have h1 : p a * p true + p a * p false = p a := by rw [← mul_add, hs, mul_one]
-  have h2 : p true * p a + p false * p a = p a := by rw [← add_mul, hs, one_mul]
-  rw [gamete_apply]
-  simp only [iidGenotype_apply, Fintype.sum_bool]
-  rw [h1, h2, ← add_mul, ENNReal.inv_two_add_inv_two, one_mul]
 
 /-- The joint law of the target's genotype `g₁` and the contaminant's genotype `g₂` at a marker:
 `g₁` has law `T`, and the contaminant's two alleles are drawn independently of `g₁`, and of each
@@ -365,7 +343,7 @@ theorem contaminationEstimate_mulVec (c : ι → Bool) (pB : ι → ℝ)
 /-- **The regression of the conditional means recovers the contamination level**: if at each
 homozygous marker `i` the target's genotype has law `T i`, the contaminant's alleles are drawn
 from the allele frequencies `p i` (`markerLaw`) and the observed BAF is the conditional mean of the
-BAF given the target's call, then for a full-rank design the least-squares slope `α̂` of
+BAF given the target's genotype, then for a full-rank design the least-squares slope `α̂` of
 Equation 4 is exactly `α`. -/
 theorem contaminationEstimate_integral_baf_cond (α : ℝ) (c : ι → Bool)
     (T : ι → PMF (Bool × Bool)) (p : ι → PMF Bool) (hT : ∀ i, T i (c i, c i) ≠ 0)
@@ -430,8 +408,8 @@ minor allele and `false` for the major one, and the orientation `θ` is `true` w
 sits on the minor allele. `toAB θ x` is `true` when the allele `x` carries the label `B`. -/
 def toAB (θ x : Bool) : Bool := if θ then x else !x
 
-/-- The `A`/`B` genotype called for a genotype `g` coded by minor (`true`) and major (`false`)
-alleles, under the orientation `θ` (`true`: `B` is the minor allele). -/
+/-- A genotype `g`, coded by minor (`true`) and major (`false`) alleles, in the array's `A`/`B`
+labels under the orientation `θ` (`true`: `B` is the minor allele). -/
 def toABGenotype (θ : Bool) (g : Bool × Bool) : Bool × Bool := (toAB θ g.1, toAB θ g.2)
 
 /-- The minor-allele model of a marker, as a joint law of the orientation `θ` of the labels
@@ -466,7 +444,7 @@ private theorem minorAlleleLaw_apply (G : PMF (Bool × Bool))
 2012): if the label `B` sits on the minor allele with probability `1/2` independently of the
 genotypes, the target's genotype follows Hardy–Weinberg proportions and the contaminant's two
 alleles are drawn independently from the population allele frequencies (`minorAlleleLaw`), then at
-a marker called `AA`
+a marker where the target's genotype `g`, in `A`/`B` labels, is `AA`
 
 `E[BAF | g = AA] = α f (1 - f) / ((1 - f)² + f²)`,
 
@@ -500,9 +478,10 @@ theorem integral_baf_cond_minorAllele (α : ℝ) (G : PMF (Bool × Bool)) :
     have : ((1 - f) ^ 2 + f ^ 2) / 2 = 0 := by linear_combination hD
     linarith
 
-/-- The likelihood of the called genotype given the orientation `θ` of the labels (`true`: `B` is
-the minor allele), when the target's genotype, coded by minor and major alleles, follows the
-Hardy–Weinberg proportions `offspring G`. -/
+/-- The law of the target's genotype in the array's `A`/`B` labels, which is taken to be its
+genotype call, given the orientation `θ` of the labels (`true`: `B` is the minor allele), when the
+target's genotype, coded by minor and major alleles, follows the Hardy–Weinberg proportions
+`offspring G`. -/
 noncomputable def callLikelihood (G : PMF (Bool × Bool)) : Kernel Bool (Bool × Bool) :=
   Kernel.ofFunOfCountable fun θ => ((offspring G).map (toABGenotype θ)).toMeasure
 
@@ -511,29 +490,32 @@ instance (G : PMF (Bool × Bool)) : IsMarkovKernel (callLikelihood G) :=
     change IsProbabilityMeasure (((offspring G).map (toABGenotype θ)).toMeasure)
     infer_instance⟩
 
-/-- **Likelihood of a called `AA` when `B` is the minor allele**: if the target's genotype
-follows the Hardy–Weinberg proportions `offspring G`, then `P(g = AA | B minor) = (1 - f)²`, the
-proportion of the major homozygote, where `1 - f = gamete G false` is the major allele frequency. -/
+/-- **Probability that the target is `AA` when `B` is the minor allele**: if the target's
+genotype follows the Hardy–Weinberg proportions `offspring G`, then its genotype `g` in `A`/`B`
+labels satisfies `P(g = AA | B minor) = (1 - f)²`, the proportion of the major homozygote, where
+`1 - f = gamete G false` is the major allele frequency. -/
 theorem callLikelihood_true_homA (G : PMF (Bool × Bool)) :
     callLikelihood G true {(false, false)} = gamete G false ^ 2 := by
   change ((offspring G).map (toABGenotype true)).toMeasure {(false, false)} = _
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _), PMF.map_apply, tsum_fintype]
   simp [toABGenotype, toAB, offspring_apply, sq]
 
-/-- **Likelihood of a called `AA` when `A` is the minor allele**: if the target's genotype
-follows the Hardy–Weinberg proportions `offspring G`, then `P(g = AA | A minor) = f²`, the
-proportion of the minor homozygote, where `f = gamete G true` is the minor allele frequency. -/
+/-- **Probability that the target is `AA` when `A` is the minor allele**: if the target's
+genotype follows the Hardy–Weinberg proportions `offspring G`, then its genotype `g` in `A`/`B`
+labels satisfies `P(g = AA | A minor) = f²`, the proportion of the minor homozygote, where
+`f = gamete G true` is the minor allele frequency. -/
 theorem callLikelihood_false_homA (G : PMF (Bool × Bool)) :
     callLikelihood G false {(false, false)} = gamete G true ^ 2 := by
   change ((offspring G).map (toABGenotype false)).toMeasure {(false, false)} = _
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _), PMF.map_apply, tsum_fintype]
   simp [Fintype.sum_prod_type, toABGenotype, toAB, offspring_apply, sq]
 
-/-- **Posterior probability that `B` is the minor allele at a called `AA`** (Jun et al. 2012), by
-Bayes' rule: with the label `B` on the minor allele with prior probability `1/2` and the target's
-genotype in Hardy–Weinberg proportions, the posterior probability, under Mathlib's posterior
-kernel, that `B` is the minor allele given the call `g = AA` is
-`P(B minor | g = AA) = (1 - f)² / ((1 - f)² + f²)`, where `f` is the minor allele frequency. -/
+/-- **Posterior probability that `B` is the minor allele when the target is `AA`** (Jun et al.
+2012), by Bayes' rule: with the label `B` on the minor allele with prior probability `1/2` and the
+target's genotype in Hardy–Weinberg proportions, the posterior probability, under Mathlib's
+posterior kernel, that `B` is the minor allele given that the target's genotype `g`, in `A`/`B`
+labels, is `AA` is `P(B minor | g = AA) = (1 - f)² / ((1 - f)² + f²)`, where `f` is the minor
+allele frequency. -/
 theorem posterior_callLikelihood_homA (G : PMF (Bool × Bool)) :
     (((callLikelihood G)†(PMF.uniformFintype Bool).toMeasure) (false, false)).real {true} =
       (1 - (gamete G true).toReal) ^ 2 /
