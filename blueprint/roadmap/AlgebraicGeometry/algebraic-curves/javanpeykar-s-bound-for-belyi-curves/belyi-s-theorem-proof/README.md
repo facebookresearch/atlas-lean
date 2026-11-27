@@ -1,4 +1,4 @@
-# Proof of Belyi's theorem
+# Belyi's theorem
 
 Köck's proof that a curve over an algebraic closure of a number field has a Belyi map (the
 "only if" direction of Belyi's theorem in Köck's Theorem 3.3), for curves over $\bar K$: a finite
@@ -7,6 +7,7 @@ $\mathbb{Q}$ that moves the branch points to rational points, the reduction of f
 rational points to $\{0, 1, \infty\}$ with the polynomials $c \, z^m (1 - z)^n$, the branch locus
 of a composite, and the constancy of the degree.
 
+- [Belyi's theorem](belyi-s-theorem.md)
 - [A curve has a finite morphism to the projective line](finite-morphism-to-the-projective-line.md)
 - [Finitely many branch points in characteristic zero](branch-points-of-a-finite-morphism-of-curves.md)
 - [Branch locus of a composite](branch-locus-of-a-composite.md)

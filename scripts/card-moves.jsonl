@@ -1132,3 +1132,4 @@
 {"page": "Physics/not-yet-classified/part-04/finite-state/born-prob", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/born-prob", "article_id": "af_b8b6732cadf23683422121a1"}
 {"page": "ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs", "to": "GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs", "article_id": "af_dec166353a4ec8cdd3025548"}
 {"statement": "af_d756082e4b921363c706d2a7", "page": "ComputerScience/machine-learning/diffusion-and-flow-generative-models/polynomial-sampling-guarantees-for-score-based-diffusion-mod", "replaced_by": "af_d5cd3cb115123d8fe3a4d8a9"}
+{"statement": "af_7716b6340106839df031d9c7", "page": "AlgebraicGeometry/algebraic-curves/javanpeykar-s-bound-for-belyi-curves/belyi-s-theorem", "replaced_by": "af_d93e6d362056139b20dee9df"}

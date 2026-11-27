@@ -30,7 +30,7 @@ $J$ is isomorphic to $J(C)$ with its group law, and $h_F(J) = h_F(J(C)) = h_{\ma
 
 ## Informally uses
 
-- [Belyi's theorem](belyi-s-theorem.md), which gives every such curve a Belyi map, so that
+- [Belyi's theorem](belyi-s-theorem-proof/belyi-s-theorem.md), which gives every such curve a Belyi map, so that
   $\deg_B(X)$ is the degree of one; the statement takes this as its hypothesis
 - [Bost's lower bound for the Faltings height](../../abelian-varieties/stable-faltings-height/bost-lower-bound.md),
   for the lower bound (Javanpeykar's Lemma 2.4.4), applied to the Jacobian, of dimension $g$ by

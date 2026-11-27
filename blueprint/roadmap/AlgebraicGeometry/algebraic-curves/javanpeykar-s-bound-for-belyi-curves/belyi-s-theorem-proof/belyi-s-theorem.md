@@ -2,8 +2,8 @@
 
 Let $K$ be a number field and $C$ a curve over $K$, that is, a $K$-scheme that is proper, smooth
 of relative dimension $1$ and geometrically irreducible, and let $C_{\bar K}$ be its
-[base change to an algebraic closure](over-algebraic-closure.md) $\bar K$ of $K$. Then
-$C_{\bar K}$ has a [Belyi map of some degree](has-belyi-map-of-degree.md): a finite morphism
+[base change to an algebraic closure](../over-algebraic-closure.md) $\bar K$ of $K$. Then
+$C_{\bar K}$ has a [Belyi map of some degree](../has-belyi-map-of-degree.md): a finite morphism
 $C_{\bar K} \to \mathbb{P}^1_{\bar K}$ that is unramified over $\mathbb{P}^1_{\bar K} \setminus
 \{0, 1, \infty\}$ and has constant degree $d$ for some $d$.
 
@@ -12,7 +12,7 @@ over $\overline{\mathbb{Q}}$ a finite morphism $X \to \mathbb{P}^1_{\overline{\m
 ramified over at most three points; every such curve is $C_{\bar K}$ for a curve $C$ over a number
 field $K$, and an automorphism of $\mathbb{P}^1_{\bar K}$ that maps the branch points into
 $\{0, 1, \infty\}$ turns that morphism into a Belyi map of the same degree. So the
-[Belyi degree](belyi-degree.md) $\deg_B(X)$ is the least degree of a Belyi map of $X$.
+[Belyi degree](../belyi-degree.md) $\deg_B(X)$ is the least degree of a Belyi map of $X$.
 
 The proof follows Köck's proof of the "only if" direction of his Theorem 3.3. Choose a finite
 morphism $t' \colon C_{\bar K} \to \mathbb{P}^1_{\bar K}$; it is unramified outside a finite set
@@ -27,24 +27,24 @@ a composite of finite morphisms, and has constant degree.
 
 ## Depends on
 
-- [Base change to an algebraic closure](over-algebraic-closure.md)
-- [Belyi map of a given degree](has-belyi-map-of-degree.md)
+- [Base change to an algebraic closure](../over-algebraic-closure.md)
+- [Belyi map of a given degree](../has-belyi-map-of-degree.md)
 
 ## Proof depends on
 
-- [A curve has a finite morphism to the projective line](belyi-s-theorem-proof/finite-morphism-to-the-projective-line.md),
+- [A curve has a finite morphism to the projective line](finite-morphism-to-the-projective-line.md),
   for $t'$, applied to $C_{\bar K}$
-- [Finitely many branch points in characteristic zero](belyi-s-theorem-proof/branch-points-of-a-finite-morphism-of-curves.md),
+- [Finitely many branch points in characteristic zero](branch-points-of-a-finite-morphism-of-curves.md),
   for the finite set $S$
-- [Polynomial with rational critical values](belyi-s-theorem-proof/polynomial-with-rational-critical-values.md),
+- [Polynomial with rational critical values](polynomial-with-rational-critical-values.md),
   for $p$
-- [Branch points of a polynomial map of the projective line](belyi-s-theorem-proof/branch-points-of-a-polynomial-map.md),
+- [Branch points of a polynomial map of the projective line](branch-points-of-a-polynomial-map.md),
   for the branch points of $p$ and $p(\infty) = \infty$
-- [Moving finitely many rational points to $0$, $1$ and $\infty$](belyi-s-theorem-proof/three-point-reduction.md),
+- [Moving finitely many rational points to $0$, $1$ and $\infty$](three-point-reduction.md),
   for $q$
-- [Branch locus of a composite](belyi-s-theorem-proof/branch-locus-of-a-composite.md), for $p \circ t'$
+- [Branch locus of a composite](branch-locus-of-a-composite.md), for $p \circ t'$
   and $q \circ p \circ t'$
-- [A finite morphism of curves has constant degree](belyi-s-theorem-proof/degree-of-a-finite-morphism-of-curves.md),
+- [A finite morphism of curves has constant degree](degree-of-a-finite-morphism-of-curves.md),
   for the degree $d$ of $t$
 
 ## Sources
