@@ -181,31 +181,19 @@ theorem eq_zero_of_forall_eq_pow_mul_mem_aMax (x : 𝔹⁺)
 
 /-! ### Roots of an element of the tilt -/
 
-/-- The `p ^ n`-th root `(F^{-n} x)♯` of `x♯`, for `x` in the tilt of `𝓞_ℂ_[p]`. -/
-private def tiltRoot (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) : 𝓞_ℂ_[p] :=
-  PreTilt.untilt (((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm^[n]) x)
-
-private theorem tiltRoot_pow (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) :
-    tiltRoot p x n ^ p ^ n = x.untilt :=
-  PreTilt.untilt_iterate_frobeniusEquiv_symm_pow x n
-
-private theorem tiltRoot_succ_pow (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) :
-    tiltRoot p x (n + 1) ^ p = tiltRoot p x n := by
-  rw [tiltRoot, tiltRoot, Function.iterate_succ_apply', ← map_pow, frobeniusEquiv_symm_pow_p]
-
-private theorem tiltRoot_add_pow (x : PreTilt 𝓞_ℂ_[p] p) (j m : ℕ) :
-    tiltRoot p x (m + j) ^ p ^ m = tiltRoot p x j := by
+private theorem untiltRoot_add_pow (x : PreTilt 𝓞_ℂ_[p] p) (j m : ℕ) :
+    x.untiltRoot (m + j) ^ p ^ m = x.untiltRoot j := by
   induction m with
   | zero => simp
-  | succ m ih => rw [Nat.add_right_comm, pow_succ', pow_mul, tiltRoot_succ_pow, ih]
+  | succ m ih => rw [Nat.add_right_comm, pow_succ', pow_mul, PreTilt.untiltRoot_succ_pow, ih]
 
-private theorem tiltRoot_mul (x y : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) :
-    tiltRoot p (x * y) n = tiltRoot p x n * tiltRoot p y n := by
-  rw [tiltRoot, tiltRoot, tiltRoot, iterate_map_mul, map_mul]
+private theorem untiltRoot_mul (x y : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) :
+    (x * y).untiltRoot n = x.untiltRoot n * y.untiltRoot n := by
+  rw [PreTilt.untiltRoot, PreTilt.untiltRoot, PreTilt.untiltRoot, iterate_map_mul, map_mul]
 
-private theorem tiltRoot_npow (x : PreTilt 𝓞_ℂ_[p] p) (n c : ℕ) :
-    tiltRoot p (x ^ c) n = tiltRoot p x n ^ c := by
-  rw [tiltRoot, tiltRoot, iterate_map_pow, map_pow]
+private theorem untiltRoot_npow (x : PreTilt 𝓞_ℂ_[p] p) (n c : ℕ) :
+    (x ^ c).untiltRoot n = x.untiltRoot n ^ c := by
+  rw [PreTilt.untiltRoot, PreTilt.untiltRoot, iterate_map_pow, map_pow]
 
 /-- `(F^{-k} x) ^ (p ^ k) = x` in the tilt. -/
 private theorem iterate_frobeniusEquiv_symm_pow (k : ℕ) (x : PreTilt 𝓞_ℂ_[p] p) :
@@ -215,48 +203,7 @@ private theorem iterate_frobeniusEquiv_symm_pow (k : ℕ) (x : PreTilt 𝓞_ℂ_
   | succ k ih =>
     rw [Function.iterate_succ_apply', pow_succ', pow_mul, frobeniusEquiv_symm_pow_p, ih]
 
-/-- If the components of `x` in the tilt of `𝓞_ℂ_[p]` are the classes of `z n`, where
-`z (n + 1) ^ p = z n`, then `x♯ = z 0`. -/
-private theorem untilt_eq_of_coeff (z : ℕ → 𝓞_ℂ_[p]) (hz : ∀ n, z (n + 1) ^ p = z n)
-    (x : PreTilt 𝓞_ℂ_[p] p) (hx : ∀ n, PreTilt.coeff n x = Ideal.Quotient.mk _ (z n)) :
-    x.untilt = z 0 := by
-  have hpow : ∀ n, z n ^ p ^ n = z 0 := by
-    intro n
-    induction n with
-    | zero => simp
-    | succ n ih => rw [pow_succ', pow_mul, hz, ih]
-  rw [IsHausdorff.eq_iff_smodEq (I := span {(p : 𝓞_ℂ_[p])})]
-  intro n
-  rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow,
-    Ideal.mem_span_singleton]
-  have h1 : tiltRoot p x n - z n ∈ span {(p : 𝓞_ℂ_[p])} := by
-    rw [← Ideal.Quotient.eq, tiltRoot, PreTilt.mk_untilt_eq_coeff_zero,
-      PreTilt.coeff_iterate_frobeniusEquiv_symm, zero_add, hx]
-  have h2 := dvd_sub_pow_of_dvd_sub (Ideal.mem_span_singleton.mp h1) n
-  rw [tiltRoot_pow, hpow] at h2
-  exact (pow_dvd_pow _ n.le_succ).trans h2
-
 /-! ### Fontaine's `ε` generates `ℤ_p(1)` -/
-
-/-- The roots of unity `zetaPow p n`, as elements of `𝓞_ℂ_[p]`. -/
-private def zetaPowInt (n : ℕ) : 𝓞_ℂ_[p] :=
-  ⟨((zetaPow p n : PadicAlgCl p) : ℂ_[p]), (mem_iff_norm_le_one p _).mpr (norm_zetaPow p n).le⟩
-
-private theorem zetaPowInt_succ_pow (n : ℕ) : zetaPowInt p (n + 1) ^ p = zetaPowInt p n := by
-  apply Subtype.ext
-  change ((zetaPow p (n + 1) : PadicAlgCl p) : ℂ_[p]) ^ p = ((zetaPow p n : PadicAlgCl p) : ℂ_[p])
-  rw [PadicComplex.coe_eq, PadicComplex.coe_eq, ← map_pow, zetaPow_succ_pow]
-
-private theorem zetaPowInt_zero : zetaPowInt p 0 = 1 := by
-  apply Subtype.ext
-  change ((zetaPow p 0 : PadicAlgCl p) : ℂ_[p]) = 1
-  rw [zetaPow_zero, PadicComplex.coe_eq, map_one]
-
-private theorem zetaPowInt_one_ne_one : zetaPowInt p 1 ≠ 1 := fun h => by
-  have h1 : ((zetaPow p 1 : PadicAlgCl p) : ℂ_[p]) = 1 := congrArg Subtype.val h
-  rw [PadicComplex.coe_eq, ← map_one (algebraMap (PadicAlgCl p) ℂ_[p])] at h1
-  exact (isPrimitiveRoot_zetaPow_one p).ne_one hp.out.one_lt
-    ((algebraMap (PadicAlgCl p) ℂ_[p]).injective h1)
 
 /-- Fontaine's `ε = (1, ζ_p, ζ_{p²}, …)` generates `ℤ_p(1)`: `(ε^{1/p})♯ = ζ_p` is a primitive
 `p`-th root of unity. -/
@@ -272,39 +219,41 @@ theorem isPrimitiveRoot_untilt_frobeniusEquiv_symm_epsilon :
 /-! ### `log [ε] = a t` -/
 
 /-- For a generator `ε₀` of `ℤ_p(1)`, `(ε₀^{1/p^k})♯` is a primitive `p ^ k`-th root of unity. -/
-private theorem isPrimitiveRoot_tiltRoot {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε₀.untilt = 1)
+private theorem isPrimitiveRoot_untiltRoot {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε₀.untilt = 1)
     (hgen : IsPrimitiveRoot ((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm ε₀).untilt p) (k : ℕ) :
-    IsPrimitiveRoot (tiltRoot p ε₀ k) (p ^ k) := by
+    IsPrimitiveRoot (ε₀.untiltRoot k) (p ^ k) := by
   rcases k with _ | k
   · rw [pow_zero, IsPrimitiveRoot.one_right_iff]
     exact h₀
   · rw [IsPrimitiveRoot.iff_orderOf]
     apply orderOf_eq_prime_pow
-    · rw [tiltRoot_add_pow]
+    · rw [untiltRoot_add_pow]
       exact hgen.ne_one hp.out.one_lt
-    · rw [tiltRoot_pow]
+    · rw [PreTilt.untiltRoot_pow]
       exact h₀
 
 /-- For a generator `ε₀` of `ℤ_p(1)` and `ε♯ = 1`, `ε^{(k)} = (ε₀^{(k)})^b` with `b < p ^ k`. -/
-private theorem exists_pow_eq_tiltRoot {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε₀.untilt = 1)
+private theorem exists_pow_eq_untiltRoot {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε₀.untilt = 1)
     (hgen : IsPrimitiveRoot ((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm ε₀).untilt p)
     {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) (k : ℕ) :
-    ∃ b < p ^ k, tiltRoot p ε₀ k ^ b = tiltRoot p ε k := by
+    ∃ b < p ^ k, ε₀.untiltRoot k ^ b = ε.untiltRoot k := by
   have : NeZero (p ^ k) := ⟨pow_ne_zero _ hp.out.ne_zero⟩
-  exact (isPrimitiveRoot_tiltRoot p h₀ hgen k).eq_pow_of_pow_eq_one (by rw [tiltRoot_pow, h])
+  exact (isPrimitiveRoot_untiltRoot p h₀ hgen k).eq_pow_of_pow_eq_one
+    (by rw [PreTilt.untiltRoot_pow, h])
 
 /-- **`log [ε] = b log [ε₀] + p^k z` with `z ∈ A_max`**, when `ε^{(k)} = (ε₀^{(k)})^b` and
 `b ≤ p ^ k`: `ε ε₀^{p^k - b} = η^{p^k}` with `η♯ = 1`. -/
 private theorem exists_logTeichmuller_eq_add {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε₀.untilt = 1)
     {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) (k b : ℕ) (hbk : b ≤ p ^ k)
-    (hb : tiltRoot p ε₀ k ^ b = tiltRoot p ε k) :
+    (hb : ε₀.untiltRoot k ^ b = ε.untiltRoot k) :
     ∃ z ∈ aMax p, logTeichmuller p h = (b : 𝔹⁺) * logTeichmuller p h₀ + (p : 𝔹⁺) ^ k * z := by
   have hc0 : (ε₀ ^ (p ^ k - b)).untilt = 1 := by rw [map_pow, h₀, one_pow]
   have hx1 : (ε * ε₀ ^ (p ^ k - b)).untilt = 1 := by rw [map_mul, h, hc0, one_mul]
   have hη1 : ((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm^[k]
       (ε * ε₀ ^ (p ^ k - b))).untilt = 1 := by
-    change tiltRoot p (ε * ε₀ ^ (p ^ k - b)) k = 1
-    rw [tiltRoot_mul, tiltRoot_npow, ← hb, ← pow_add, Nat.add_sub_cancel' hbk, tiltRoot_pow, h₀]
+    change (ε * ε₀ ^ (p ^ k - b)).untiltRoot k = 1
+    rw [untiltRoot_mul, untiltRoot_npow, ← hb, ← pow_add, Nat.add_sub_cancel' hbk,
+      PreTilt.untiltRoot_pow, h₀]
   have hηp := iterate_frobeniusEquiv_symm_pow p k (ε * ε₀ ^ (p ^ k - b))
   have hηp1 : (((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm^[k]
       (ε * ε₀ ^ (p ^ k - b))) ^ p ^ k).untilt = 1 := by rw [hηp]; exact hx1
@@ -364,16 +313,16 @@ theorem exists_logTeichmuller_eq_mul {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε
     (hgen : IsPrimitiveRoot ((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm ε₀).untilt p)
     {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) :
     ∃ a : ℤ_[p], logTeichmuller p h = algebraMap ℚ_[p] 𝔹⁺ (a : ℚ_[p]) * logTeichmuller p h₀ := by
-  choose b hblt hb using exists_pow_eq_tiltRoot p h₀ hgen h
+  choose b hblt hb using exists_pow_eq_untiltRoot p h₀ hgen h
   have hcompat : ∀ k, b (k + 1) ≡ b k [MOD p ^ k] := by
     intro k
-    have hP := isPrimitiveRoot_tiltRoot p h₀ hgen k
-    have hfin : IsOfFinOrder (tiltRoot p ε₀ k) :=
+    have hP := isPrimitiveRoot_untiltRoot p h₀ hgen k
+    have hfin : IsOfFinOrder (ε₀.untiltRoot k) :=
       isOfFinOrder_iff_pow_eq_one.mpr ⟨p ^ k, pow_pos hp.out.pos k, hP.pow_eq_one⟩
     rw [hP.eq_orderOf]
     apply hfin.pow_eq_pow_iff_modEq.mp
-    rw [hb k, ← tiltRoot_succ_pow p ε k, ← hb (k + 1), ← tiltRoot_succ_pow p ε₀ k, ← pow_mul,
-      ← pow_mul, mul_comm]
+    rw [hb k, ← PreTilt.untiltRoot_succ_pow ε k, ← hb (k + 1),
+      ← PreTilt.untiltRoot_succ_pow ε₀ k, ← pow_mul, ← pow_mul, mul_comm]
   obtain ⟨a, ha⟩ := exists_sub_mem_span_pow p b hcompat
   refine ⟨a, sub_eq_zero.mp (eq_zero_of_forall_eq_pow_mul_mem_aMax p _ fun k => ?_)⟩
   obtain ⟨z, hz, hlog⟩ := exists_logTeichmuller_eq_add p h₀ h k (b k) (hblt k).le (hb k)
