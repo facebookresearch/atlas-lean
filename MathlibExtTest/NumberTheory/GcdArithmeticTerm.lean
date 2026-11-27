@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.GcdArithmeticTerm
 
 /-!
-# Boundary cases for the gcd-term sequence and the double-remainder formula
+# Boundary cases for the gcd-term sequence and the base-five formulas
 -/
 
 open MetaMathlibExt
@@ -42,6 +42,14 @@ example : gcdTermSeq 1 1 1 = 2 := by
   have h := (gcdTermSeq_natural_and_eq_gcd_add_one 1 1 le_rfl le_rfl).2
   norm_num at h
   exact h
+
+-- The denominator and modulus are smallest when both inputs are one.
+example : (125 : ℕ) / 16 % 5 = 2 := by
+  exact (gcd_add_one_eq_floor_div_mod_five 1 1 le_rfl le_rfl).symm
+
+-- These unequal inputs have a nontrivial gcd and distinct denominator factors.
+example : (5 : ℕ) ^ 112 / ((5 ^ 16 - 1) * (5 ^ 32 - 1)) % 5 ^ 8 = 3 := by
+  exact (gcd_add_one_eq_floor_div_mod_five 2 4 (by decide) (by decide)).symm
 
 -- Both inputs are minimal, so the two remainders are taken modulo 16 and 5.
 example : (-125 : ℤ) % 16 % 5 = 3 := by

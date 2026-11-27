@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.IterateRpow
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.MulLogUpperBound
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.TetrationIterateGamma
 public import MathlibExt.Data.Nat.Factorial.Iterate
 
 namespace MetaMathlibExt
@@ -136,21 +137,6 @@ public theorem_wanted exists_iterate_Gamma_eq_iterate_rpow {z b x : ℝ} (hz : 1
       Tendsto (fun n : ℕ => (fun y : ℝ => b ^ y)^[((n : ℤ) + ℓ).toNat] L /
           ((Real.Gamma^[n] x - 1) * Real.log (Real.Gamma^[n] x - 1)))
         atTop (𝓝 (1 / Real.log b))
-
-/-- **Tetrations as iterated Gamma values.** Let $z > 1$ be a real number with $\Gamma(z) = z$,
-and let $b > z$. Let $b \uparrow\uparrow n$ be the $n$-fold iterate of $y \mapsto b^y$ starting
-at $1$, and $\Gamma^n$ the $n$-fold iterate of $\Gamma$. Then there is a convergent sequence
-$(x_n)$ of real numbers, strictly decreasing from some index on, such that
-$b \uparrow\uparrow n = \Gamma^n(x_n)$ for every $n \ge 1$.
-
-The case $n = 0$ is excluded, as the paper defines power towers only for $n \ge 1$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of Integer
-Sequences 28 (2025), Article 25.2.8, Theorem 12 (`jis-2025-25.2.8-thm-12`). -/
-public theorem_wanted exists_tetration_eq_iterate_Gamma {z b : ℝ} (hz : 1 < z)
-    (hΓz : Real.Gamma z = z) (hb : z < b) :
-    ∃ x : ℕ → ℝ, (∀ n ≥ 1, (fun y : ℝ => b ^ y)^[n] 1 = Real.Gamma^[n] (x n)) ∧
-      (∃ L : ℝ, Tendsto x atTop (𝓝 L)) ∧ ∃ M : ℕ, StrictAntiOn x (Set.Ici M)
 
 end
 

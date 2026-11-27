@@ -10,6 +10,7 @@ module
 
 import MathlibExt.NumberTheory.LocallyNilpotentPolynomials
 import Mathlib.Algebra.Polynomial.Degree.Operations
+import Mathlib.Algebra.Polynomial.Degree.SmallDegree
 import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt Polynomial
@@ -92,3 +93,83 @@ example : IsWeaklyLocallyNilpotentAt (X + 1) 1 ∅ ∧ ¬ IsNilpotentAt (X + 1) 
     rw [locallyNilpotentAt_one_classification]
     exact Or.inr rfl
   exact ⟨h.2, not_isNilpotentAt_X_add_one⟩
+
+-- `2x + 2` lies in the second family at `0`, so it is locally nilpotent at `0` and its orbit
+-- `0, 2, 6, 14, …` never returns to `0`.
+example : IsWeaklyLocallyNilpotentAt (C 2 * X + C 2) 0 ∅ ∧ ¬ IsNilpotentAt (C 2 * X + C 2) 0 := by
+  have h : (C 2 * X + C 2 : ℤ[X]) ∈ {u : ℤ[X] | 0 < u.natDegree ∧
+      IsWeaklyLocallyNilpotentAt u 0 ∅ ∧ ¬ IsNilpotentAt u 0} := by
+    rw [locallyNilpotent_not_nilpotentAt_zero]
+    exact Or.inr ⟨2, 2, two_ne_zero, ⟨2, Nat.prime_two, dvd_rfl⟩, fun _ _ h => h, rfl⟩
+  exact h.2
+
+-- A polynomial of degree at least two that is locally nilpotent at `0` reaches `0`.
+example (u : ℤ[X]) (hdeg : 2 ≤ u.natDegree) (hu : IsWeaklyLocallyNilpotentAt u 0 ∅) :
+    IsNilpotentAt u 0 := by
+  by_contra hnil
+  have h : u ∈ {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 0 ∅ ∧
+      ¬ IsNilpotentAt u 0} := ⟨by omega, hu, hnil⟩
+  rw [locallyNilpotent_not_nilpotentAt_zero] at h
+  rcases h with ⟨b, -, rfl⟩ | ⟨a, b, -, -, -, rfl⟩
+  · rw [natDegree_X_add_C] at hdeg
+    omega
+  · have := natDegree_linear_le (a := a) (b := b)
+    omega
+
+-- The orbit `0, 1, 2, 5, 26, …` of `x ^ 2 + 1` stays positive, so by the corollary some prime
+-- divides none of its values (here `3`).
+example : ¬ IsWeaklyLocallyNilpotentAt (X ^ 2 + 1) 0 ∅ := by
+  intro hu
+  have hpos (n : ℕ) : 0 < (fun x => (X ^ 2 + 1 : ℤ[X]).eval x)^[n + 1] 0 := by
+    rw [Function.iterate_succ_apply']
+    simp only [eval_add, eval_pow, eval_X, eval_one]
+    positivity
+  have h : (X ^ 2 + 1 : ℤ[X]) ∈ {u : ℤ[X] | 0 < u.natDegree ∧
+      IsWeaklyLocallyNilpotentAt u 0 ∅ ∧ ¬ IsNilpotentAt u 0} := by
+    refine ⟨by rw [← C_1, natDegree_X_pow_add_C]; decide, hu, ?_⟩
+    rintro ⟨n, hn, h0⟩
+    obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_lt hn
+    rw [zero_add] at h0
+    exact (hpos n).ne' h0
+  rw [locallyNilpotent_not_nilpotentAt_zero] at h
+  rcases h with ⟨b, -, hb⟩ | ⟨a, b, -, -, -, hab⟩
+  · have h0 := congrArg (eval 0) hb
+    have h2 := congrArg (eval 2) hb
+    simp only [eval_add, eval_pow, eval_X, eval_one, eval_C] at h0 h2
+    omega
+  · have h0 := congrArg (eval 0) hab
+    have h1 := congrArg (eval 1) hab
+    have h2 := congrArg (eval (-1)) hab
+    simp only [eval_add, eval_mul, eval_pow, eval_X, eval_one, eval_C] at h0 h1 h2
+    omega
+
+-- In `3x + 2` the prime `3` divides the leading coefficient but not the constant term, so the
+-- orbit `0, 2, 8, 26, …` stays `≡ 2 (mod 3)` and the polynomial is not locally nilpotent at `0`.
+example : ¬ IsWeaklyLocallyNilpotentAt (C 3 * X + C 2) 0 ∅ := by
+  intro hu
+  have hpos (n : ℕ) : 0 < (fun x => (C 3 * X + C 2 : ℤ[X]).eval x)^[n + 1] 0 := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      rw [Function.iterate_succ_apply', eval_add, eval_mul, eval_C, eval_C, eval_X]
+      omega
+  have h : (C 3 * X + C 2 : ℤ[X]) ∈ {u : ℤ[X] | 0 < u.natDegree ∧
+      IsWeaklyLocallyNilpotentAt u 0 ∅ ∧ ¬ IsNilpotentAt u 0} := by
+    refine ⟨by rw [natDegree_linear (by decide)]; decide, hu, ?_⟩
+    rintro ⟨n, hn, h0⟩
+    obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_lt hn
+    rw [zero_add] at h0
+    exact (hpos n).ne' h0
+  rw [locallyNilpotent_not_nilpotentAt_zero] at h
+  rcases h with ⟨b, -, hb⟩ | ⟨a, b, -, -, hdvd, hab⟩
+  · have h0 := congrArg (eval 0) hb
+    have h1 := congrArg (eval 1) hb
+    simp only [eval_add, eval_mul, eval_X, eval_C] at h0 h1
+    omega
+  · have h0 := congrArg (eval 0) hab
+    have h1 := congrArg (eval 1) hab
+    simp only [eval_add, eval_mul, eval_X, eval_C] at h0 h1
+    obtain rfl : a = 3 := by omega
+    obtain rfl : b = 2 := by omega
+    have := hdvd 3 Nat.prime_three dvd_rfl
+    norm_num at this

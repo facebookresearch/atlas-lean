@@ -8,11 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Calculus.FDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Order.Monotone.Union
 import Mathlib.Tactic.Linarith
@@ -26,7 +28,9 @@ the next power, the defining sum for the sequence has constant increments.
 
 Campbell's interpolation is monotone on $[0, \infty)$. On the last unit interval before each power
 of ten it is an integral of a piecewise linear function, which is nonnegative because the
-sequence jumps at that power of ten by at least the previous power of ten.
+sequence jumps at that power of ten by at least the previous power of ten. The endpoint values
+of the integrand match the slopes of the adjoining affine pieces, giving differentiability
+on the positive half-line.
 -/
 
 namespace MetaMathlibExt
@@ -445,68 +449,166 @@ private theorem campbellF_of_log {x : ℝ} {k : ℕ} (hx : 10 < x) (hk : Nat.log
   have h₂ : ¬ x ≤ 10 := by linarith
   simp only [campbellF, h₁, h₂, hk, ite_false, Nat.add_sub_cancel]
 
--- On `[10^k, 10^(k+1) - 1]` Campbell's interpolation is affine with nonnegative slope.
-private theorem monotoneOn_block {k : ℕ} (hk : 1 ≤ k) :
-    MonotoneOn campbellF (Set.Icc ((10 : ℝ) ^ k) (10 ^ (k + 1) - 1)) := by
-  have hk10 := ten_le_pow hk
-  have hk10' : (10 : ℝ) ≤ 10 ^ k := by exact_mod_cast hk10
-  have hD : (0 : ℝ) < 9 * 10 ^ k - 1 := by linarith
-  have hy : (campbellH2 (10 ^ k) : ℝ) ≤ campbellH2 (10 ^ (k + 1) - 1) := by
-    have hn : ((10 ^ k : ℕ) : ℝ) ≤ ((10 ^ (k + 1) - 1 : ℕ) : ℝ) := Nat.cast_le.2 (by omega)
-    rw [Nat.cast_pow, Nat.cast_ofNat] at hn
-    rw [floor_campbellF_eq_campbellH2.h2_on_block hk10 (n := 10 ^ (k + 1) - 1) (by omega)
-      (by omega)]
-    nlinarith
-  refine MonotoneOn.congr (f₁ := fun x =>
-    (x * ((campbellH2 (10 ^ (k + 1) - 1) : ℝ) - campbellH2 (10 ^ k)) -
-      (campbellH2 (10 ^ k) + 10 ^ k * (campbellH2 (10 ^ (k + 1) - 1) : ℝ) -
-        10 ^ (k + 1) * campbellH2 (10 ^ k))) / (9 * 10 ^ k - 1)) ?_ ?_
-  · intro a _ b _ hab
-    dsimp only
-    gcongr
-  · intro x hx
-    rcases hx.1.eq_or_lt with h | h
-    · have hf := floor_campbellF_eq_campbellH2.2 (10 ^ k) hk10
-      push_cast at hf
-      rw [← h, hf, div_eq_iff hD.ne']
-      ring
-    · rw [campbellF_of_log (by linarith) (log_floor_eq h.le (by linarith [hx.2])),
-        ite_eq_left hx.2]
+end campbellF_monotoneOn
 
--- On `[10^(k+1) - 1, 10^(k+1)]` Campbell's interpolation is the integral of a nonnegative
--- function, and it reaches `h₂(10^(k+1))` at the right endpoint.
-private theorem monotoneOn_tail {k : ℕ} (hk : 1 ≤ k) :
-    MonotoneOn campbellF (Set.Icc ((10 : ℝ) ^ (k + 1) - 1) (10 ^ (k + 1))) := by
+namespace campbellF_differentiableOn
+
+open Set campbellF_monotoneOn
+
+-- On the closed affine part of a decade, the slope is the common increment of its integers.
+private theorem eqOn_block {k : ℕ} (hk : 1 ≤ k) :
+    EqOn campbellF (fun x => campbellH2 (10 ^ k) + (x - 10 ^ k) * 10 ^ k)
+      (Icc ((10 : ℝ) ^ k) (10 ^ (k + 1) - 1)) := by
+  have hk10 := ten_le_pow hk
+  have hp : (10 : ℝ) ≤ 10 ^ k := by exact_mod_cast hk10
+  intro x hx
+  rcases hx.1.eq_or_lt with h | h
+  · have hf := floor_campbellF_eq_campbellH2.2 (10 ^ k) hk10
+    push_cast at hf
+    simp [← h, hf]
+  rw [campbellF_of_log (hp.trans_lt h) (log_floor_eq h.le (by linarith [hx.2])),
+    ite_eq_left hx.2, floor_campbellF_eq_campbellH2.h2_on_block hk10
+      (n := 10 ^ (k + 1) - 1) (by omega) (by omega)]
+  rw [Nat.cast_sub (Nat.one_le_pow _ _ (by decide)), Nat.cast_pow, Nat.cast_ofNat, Nat.cast_one,
+    div_eq_iff (by linarith : (9 : ℝ) * 10 ^ k - 1 ≠ 0), pow_succ]
+  ring
+
+-- Including both endpoints lets the fundamental theorem of calculus give one-sided derivatives.
+private theorem eqOn_tail {k : ℕ} (hk : 1 ≤ k) :
+    EqOn campbellF (fun x => (campbellH2 (10 ^ (k + 1) - 1) : ℝ) +
+      ∫ t in ((10 : ℝ) ^ (k + 1) - 1)..x, campbellH3 (k + 1) t)
+      (Icc ((10 : ℝ) ^ (k + 1) - 1) (10 ^ (k + 1))) := by
   have hk10 := ten_le_pow hk
   have hk10' : (10 : ℝ) ≤ 10 ^ k := by exact_mod_cast hk10
   have hP : (10 : ℝ) ^ (k + 1) = 10 * 10 ^ k := by ring
-  have hc := continuous_campbellH3 k
-  refine MonotoneOn.congr (f₁ := fun x => (campbellH2 (10 ^ (k + 1) - 1) : ℝ) +
-    ∫ t in ((10 : ℝ) ^ (k + 1) - 1)..x, campbellH3 (k + 1) t) ?_ ?_
-  · intro x hx y hy hxy
-    dsimp only
-    have hsplit := intervalIntegral.integral_add_adjacent_intervals (a := (10 : ℝ) ^ (k + 1) - 1)
-      (b := x) (c := y) (μ := MeasureTheory.volume) (hc.intervalIntegrable _ _)
-      (hc.intervalIntegrable _ _)
-    have : 0 ≤ ∫ t in x..y, campbellH3 (k + 1) t :=
-      intervalIntegral.integral_nonneg hxy fun t ht =>
-        campbellH3_nonneg hk (by linarith [hx.1, ht.1]) (by linarith [hy.2, ht.2])
-    linarith
+  intro x hx
+  dsimp only
+  rcases hx.1.eq_or_lt with h | h
+  · have hcast : ((10 ^ (k + 1) - 1 : ℕ) : ℝ) = (10 : ℝ) ^ (k + 1) - 1 := by
+      rw [Nat.cast_sub (Nat.one_le_pow _ _ (by norm_num)), Nat.cast_pow, Nat.cast_ofNat,
+        Nat.cast_one]
+    rw [← h, intervalIntegral.integral_same, add_zero, ← hcast,
+      floor_campbellF_eq_campbellH2.2 _ (by omega)]
+  rcases hx.2.eq_or_lt with h' | h'
+  · rw [h', hP, integral_campbellH3 k, jump, ← hP,
+      show ((10 : ℝ) ^ (k + 1)) = ((10 ^ (k + 1) : ℕ) : ℝ) by push_cast; ring,
+      floor_campbellF_eq_campbellH2.2 _ (by omega)]
+    ring
+  · rw [campbellF_of_log (by linarith) (log_floor_eq (by linarith) h'),
+      ite_eq_right (not_le.2 h)]
+
+private theorem eqOn_initial_line :
+    EqOn campbellF (fun x => 10 * x - 90) (Icc (100 / 11) 10) := by
+  intro x hx
+  rcases hx.1.eq_or_lt with h | h
+  · rw [← h, campbellF, ite_eq_left le_rfl]
+    norm_num
+  · exact campbellF_of_mem h hx.2
+
+-- Record the left derivative at the endpoint so that another closed piece can be attached.
+private def DifferentiableUpTo (b d : ℝ) : Prop :=
+  (∀ x < b, DifferentiableAt ℝ campbellF x) ∧ HasDerivWithinAt campbellF d (Iic b) b
+
+private theorem extend {a b d : ℝ} {g : ℝ → ℝ} (hab : a < b) (ha : DifferentiableUpTo a d)
+    (hg : ∀ x ∈ Icc a b, HasDerivWithinAt campbellF (g x) (Icc a b) x) (heq : g a = d) :
+    DifferentiableUpTo b (g b) := by
+  constructor
   · intro x hx
-    dsimp only
-    rcases hx.1.eq_or_lt with h | h
-    · have hcast : ((10 ^ (k + 1) - 1 : ℕ) : ℝ) = (10 : ℝ) ^ (k + 1) - 1 := by
-        rw [Nat.cast_sub (Nat.one_le_pow _ _ (by norm_num)), Nat.cast_pow, Nat.cast_ofNat,
-          Nat.cast_one]
-      rw [← h, intervalIntegral.integral_same, add_zero, ← hcast,
-        floor_campbellF_eq_campbellH2.2 _ (by omega)]
-    rcases hx.2.eq_or_lt with h' | h'
-    · rw [h', hP, integral_campbellH3 k, jump, ← hP,
-        show ((10 : ℝ) ^ (k + 1)) = ((10 ^ (k + 1) : ℕ) : ℝ) by push_cast; ring,
-        floor_campbellF_eq_campbellH2.2 _ (by omega)]
+    rcases lt_trichotomy x a with h | rfl | h
+    · exact ha.1 x h
+    · have h := hg x ⟨le_rfl, hab.le⟩
+      rw [heq] at h
+      have hjoin := ha.2.union h
+      rw [Iic_union_Icc_eq_Iic hab.le] at hjoin
+      exact (hjoin.hasDerivAt (Iic_mem_nhds hx)).differentiableAt
+    · exact ((hg x ⟨h.le, hx.le⟩).hasDerivAt (Icc_mem_nhds h hx)).differentiableAt
+  · exact (hg b ⟨hab.le, le_rfl⟩).mono_of_mem_nhdsWithin (Icc_mem_nhdsLE hab)
+
+private theorem upTo_ten : DifferentiableUpTo 10 10 := by
+  have hexp (x : ℝ) (hx : x ≤ 100 / 11) :
+      HasDerivWithinAt campbellF (10 * Real.exp (100 / 89 * (11 * x - 100)))
+        (Iic (100 / 11)) x := by
+    have hexponent := (((hasDerivAt_id' x).const_mul 11).sub_const 100).const_mul (100 / 89)
+    have h := (hexponent.exp.const_mul (89 / 110)).add_const (1 / 10)
+    apply h.hasDerivWithinAt.congr_of_mem (fun t ht => ite_eq_left (show t ≤ 100 / 11 from ht)) hx
+      |>.congr_deriv
+    ring
+  have hcut : DifferentiableUpTo (100 / 11) 10 := by
+    refine ⟨fun x hx => ((hexp x hx.le).hasDerivAt (Iic_mem_nhds hx)).differentiableAt, ?_⟩
+    convert hexp (100 / 11) le_rfl using 1
+    norm_num
+  apply extend (g := fun _ => 10) (by norm_num) hcut _ rfl
+  intro x hx
+  have h := ((hasDerivAt_id' x).const_mul 10).sub_const 90
+  simpa using h.hasDerivWithinAt.congr_of_mem (fun t ht => eqOn_initial_line ht) hx
+
+private theorem upTo_pow (n : ℕ) : DifferentiableUpTo (10 ^ (n + 1)) (10 ^ (n + 1)) := by
+  induction n with
+  | zero => simpa using upTo_ten
+  | succ n ih =>
+    set k := n + 1
+    have hk : 1 ≤ k := Nat.le_add_left 1 n
+    have hP : (10 : ℝ) ^ (k + 1) = 10 * 10 ^ k := by ring
+    have hp : (1 : ℝ) ≤ 10 ^ k := one_le_pow₀ (by norm_num)
+    have hblock : DifferentiableUpTo (10 ^ (k + 1) - 1) (10 ^ k) := by
+      apply extend (g := fun _ => 10 ^ k) (by linarith) ih _ rfl
+      intro x hx
+      have h := (((hasDerivAt_id' x).sub_const (10 ^ k)).mul_const (10 ^ k)).const_add
+        (campbellH2 (10 ^ k) : ℝ)
+      simpa using h.hasDerivWithinAt.congr_of_mem (fun t ht => eqOn_block hk ht) hx
+    have htail (x : ℝ) (hx : x ∈ Icc (10 ^ (k + 1) - 1) (10 ^ (k + 1))) :
+        HasDerivWithinAt campbellF (campbellH3 (k + 1) x)
+          (Icc (10 ^ (k + 1) - 1) (10 ^ (k + 1))) x :=
+      (((continuous_campbellH3 k).integral_hasStrictDerivAt _ x).hasDerivAt.const_add
+        (campbellH2 (10 ^ (k + 1) - 1) : ℝ)).hasDerivWithinAt.congr_of_mem
+          (fun t ht => eqOn_tail hk ht) hx
+    have hleft : campbellH3 (k + 1) (10 ^ (k + 1) - 1) = 10 ^ k := by
+      rw [campbellH3_eq, hP, ite_eq_left (by linarith)]
       ring
-    · rw [campbellF_of_log (by linarith) (log_floor_eq (by linarith) h'),
-        ite_eq_right (not_le.2 h)]
+    have hright : campbellH3 (k + 1) (10 ^ (k + 1)) = 10 ^ (k + 1) := by
+      rw [campbellH3_eq, hP, ite_eq_right (by linarith)]
+      ring
+    simpa only [hright] using extend (by linarith) hblock htail hleft
+
+end campbellF_differentiableOn
+
+/-- **Differentiability of Campbell's interpolation.** Campbell's interpolation $f$ is
+differentiable at every real $x > 0$.
+
+Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
+Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 4
+(`jis-2026-26.3.4-lem-4`). -/
+theorem campbellF_differentiableOn : DifferentiableOn ℝ campbellF (Set.Ioi 0) := by
+  intro x _
+  obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt x (by norm_num : (1 : ℝ) < 10)
+  have hx := hn.trans_le (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 10) (Nat.le_succ n))
+  exact ((campbellF_differentiableOn.upTo_pow n).1 x hx).differentiableWithinAt
+
+namespace campbellF_monotoneOn
+
+open campbellF_differentiableOn
+
+private theorem monotoneOn_block {k : ℕ} (hk : 1 ≤ k) :
+    MonotoneOn campbellF (Set.Icc ((10 : ℝ) ^ k) (10 ^ (k + 1) - 1)) := by
+  apply MonotoneOn.congr _ (eqOn_block hk).symm
+  intro x _ y _ hxy
+  dsimp only
+  gcongr
+
+private theorem monotoneOn_tail {k : ℕ} (hk : 1 ≤ k) :
+    MonotoneOn campbellF (Set.Icc ((10 : ℝ) ^ (k + 1) - 1) (10 ^ (k + 1))) := by
+  have hP : (10 : ℝ) ^ (k + 1) = 10 * 10 ^ k := by ring
+  have hc := continuous_campbellH3 k
+  apply MonotoneOn.congr _ (eqOn_tail hk).symm
+  intro x hx y hy hxy
+  dsimp only
+  have hsplit := intervalIntegral.integral_add_adjacent_intervals (a := (10 : ℝ) ^ (k + 1) - 1)
+    (b := x) (c := y) (μ := MeasureTheory.volume) (hc.intervalIntegrable _ _)
+    (hc.intervalIntegrable _ _)
+  have : 0 ≤ ∫ t in x..y, campbellH3 (k + 1) t :=
+    intervalIntegral.integral_nonneg hxy fun t ht =>
+      campbellH3_nonneg hk (by linarith [hx.1, ht.1]) (by linarith [hy.2, ht.2])
+  linarith
 
 private theorem monotoneOn_Icc_zero_ten : MonotoneOn campbellF (Set.Icc 0 10) := by
   have h₁ : MonotoneOn campbellF (Set.Icc 0 (100 / 11)) := by
@@ -518,11 +620,7 @@ private theorem monotoneOn_Icc_zero_ten : MonotoneOn campbellF (Set.Icc 0 10) :=
     · intro a _ b _ hab
       dsimp only
       linarith
-    · intro x hx
-      rcases hx.1.eq_or_lt with h | h
-      · rw [← h, campbellF, ite_eq_left le_rfl]
-        norm_num
-      · rw [campbellF_of_mem h hx.2]
+    · exact eqOn_initial_line.symm
   rw [← Set.Icc_union_Icc_eq_Icc (b := 100 / 11) (by norm_num) (by norm_num)]
   exact h₁.union_right h₂ (isGreatest_Icc (by norm_num)) (isLeast_Icc (by norm_num))
 

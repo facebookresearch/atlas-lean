@@ -22,7 +22,8 @@ import Mathlib.Tactic.Linarith
 # The gcd-term sequence
 
 We bound the coefficients of the generating function by counting pairs on a natural-number
-antidiagonal. A finite geometric sum gives a double-remainder formula for the gcd in base five.
+antidiagonal. Finite geometric sums give quotient-remainder and double-remainder formulas for
+the gcd in base five.
 -/
 
 namespace MetaMathlibExt
@@ -232,6 +233,59 @@ private theorem reducedSum_modEq (q : ℤ) (a b : ℕ) (hb : 1 ≤ b) :
       simp [d, Nat.gcd_comm]
 
 end gcd_eq_neg_emod_emod_five_sub_two
+
+open gcd_eq_neg_emod_emod_five_sub_two in
+/-- **Arithmetic term for the gcd in base $5$.** For all natural numbers $a, b \ge 1$,
+$$
+\gcd(a, b) + 1 = \left\lfloor \frac{5^{ab(ab+a+b)}}{(5^{a^2 b} - 1)(5^{a b^2} - 1)} \right\rfloor
+\bmod 5^{ab},
+$$
+that is, $\gcd(a, b)$ is one less than the remainder of this floor modulo $5^{ab}$.
+
+Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
+Common Divisor*, INTEGERS 26 (2026), Article A96, Theorem 1. -/
+public theorem gcd_add_one_eq_floor_div_mod_five (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
+    Nat.gcd a b + 1 =
+      5 ^ (a * b * (a * b + a + b)) / ((5 ^ (a ^ 2 * b) - 1) * (5 ^ (a * b ^ 2) - 1)) %
+        5 ^ (a * b) := by
+  let q := (5 : ℤ) ^ (a * b)
+  let N := q ^ (a * b + a + b)
+  let D := (q ^ a - 1) * (q ^ b - 1)
+  let R := q ^ b + (q ^ a - 1) * reducedSum q a b
+  have hq : 2 * (b + 1 : ℤ) < q := by
+    have h := one_add_mul_le_pow (by norm_num : (-2 : ℤ) ≤ 4) (a * b)
+    have hab := Nat.le_mul_of_pos_left b ha
+    change _ < (1 + 4 : ℤ) ^ (a * b)
+    omega
+  have ⟨hpos, hlt⟩ := remainder_bounds ha hb hq
+  have hrem : N % D = R :=
+    (numerator_modEq q a b).eq.trans (Int.emod_eq_of_lt hpos.le hlt)
+  have hA : q ^ a ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hB : q ^ b ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hN : N ≡ 0 [ZMOD q] := Int.modEq_zero_iff_dvd.mpr (dvd_pow_self _ (by omega))
+  have hD : D ≡ 1 [ZMOD q] := by
+    simpa using (hA.sub_right 1).mul (hB.sub_right 1)
+  have hR : R ≡ -((a.gcd b : ℤ) + 1) [ZMOD q] := by
+    simpa using hB.add ((hA.sub_right 1).mul (reducedSum_modEq q a b hb))
+  -- The Euclidean division identity reduces to N / D + R ≡ 0 modulo q.
+  have hquot : N / D ≡ (a.gcd b : ℤ) + 1 [ZMOD q] := by
+    calc
+      N / D = 1 * (N / D) := (one_mul _).symm
+      _ ≡ D * (N / D) [ZMOD q] := hD.symm.mul_right _
+      _ = N - R := eq_sub_of_add_eq (by rw [← hrem, Int.mul_ediv_add_emod])
+      _ ≡ _ [ZMOD q] := by simpa using hN.sub hR
+  have hsmall : (a.gcd b : ℤ) + 1 < q := by
+    have hg := Nat.gcd_le_right a hb
+    omega
+  have hpowA : a ^ 2 * b = (a * b) * a := by ring
+  have hpowB : a * b ^ 2 = (a * b) * b := by ring
+  have hpow (n : ℕ) : 1 ≤ (5 : ℕ) ^ n := Nat.succ_le_of_lt (by positivity)
+  apply Int.ofNat_inj.mp
+  push_cast [Nat.cast_sub (hpow _), Int.natCast_ediv, Int.natCast_emod]
+  rw [hpowA, hpowB, pow_mul (5 : ℤ) (a * b) a, pow_mul (5 : ℤ) (a * b) b,
+    pow_mul (5 : ℤ) (a * b) (a * b + a + b)]
+  change _ = N / D % q
+  rw [hquot.eq, Int.emod_eq_of_lt (by positivity) hsmall]
 
 open gcd_eq_neg_emod_emod_five_sub_two in
 /-- **Second arithmetic term for the gcd in base $5$.** For all natural numbers $a, b \ge 1$,

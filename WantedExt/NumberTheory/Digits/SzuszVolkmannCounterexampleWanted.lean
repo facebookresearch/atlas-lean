@@ -55,14 +55,6 @@ public theorem_wanted campbellH1_sum_and_y_relations :
           10 ^ (ℓ - 1) ∧
         (campbellH2 (10 ^ ℓ) : ℤ) - campbellH2 (10 ^ ℓ - 1) = 10 ^ (2 * (ℓ / 2))
 
-/-- **Differentiability of Campbell's interpolation.** Campbell's interpolation $f$ is
-differentiable at every real $x > 0$.
-
-Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
-Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 4
-(`jis-2026-26.3.4-lem-4`). -/
-public theorem_wanted campbellF_differentiableOn : DifferentiableOn ℝ campbellF (Set.Ioi 0)
-
 /-- **Growth exponent of the derivative of Campbell's interpolation.** For Campbell's
 interpolation $f$, $\log f'(x) / \log x \to 1$ as $x \to \infty$ over the reals; that is,
 $\eta(f') = 1$, where $\eta(h) = \lim_{x \to \infty} \log h(x) / \log x$. Here $f'(x)$ is taken
