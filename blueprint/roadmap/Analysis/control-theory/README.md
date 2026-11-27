@@ -21,16 +21,8 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
 - [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
 - [Finite-horizon model predictive control](finite-horizon-model-predictive-control/README.md)
-- [Intersample displacement enclosure](intersample-displacement-le.md)
-- [Energy derivative for scalar model-reference adaptive control](scalar-mracenergy-has-deriv-at.md)
-- [Band-limited signals and sampling](band-limited-signals-and-sampling/README.md)
-- [Causal input–output operators](causal-input-output-operators/README.md)
-- [Linear-quadratic regulation](linear-quadratic-regulation/README.md)
 - [Mechanical systems and passivity](mechanical-systems-and-passivity/README.md)
 - [Signals and linear systems](signals-and-linear-systems/README.md)
-- [State-space systems](state-space-systems/README.md)
-- [Time-varying linear systems](time-varying-linear-systems/README.md)
-- [Transfer functions and realizations](transfer-functions-and-realizations/README.md)
 
 ## Single-input single-output linear systems
 
