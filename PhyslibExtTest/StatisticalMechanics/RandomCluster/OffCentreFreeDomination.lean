@@ -10,14 +10,16 @@ module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination
+public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination`
 
 For the identity embedding of the one-edge graph `⊤` on `Fin 2` into itself, `p = 1/2`, `q = 2`:
 * `bcProb_congr_boundary` for equal wirings;
-* `ocd_condFreeProb_innerRestrict_ge` for the increasing events `univ` and "the edge `s(0, 1)` is
-  open", conditionally on the all-closed outside configuration.
+* the conditional free domination `bdp_condBcProb_innerRestrict_ge` (`FreeTranslationInvariance`)
+  for the increasing events `univ` and "the edge `s(0, 1)` is open", conditionally on the
+  all-closed outside configuration.
 -/
 
 @[expose] public section
@@ -44,12 +46,13 @@ theorem edgeOpen_isIncreasing :
   exact top_le_iff.mp h
 
 -- Conditional free domination for the sure event.
-example := ocd_condFreeProb_innerRestrict_ge G2 G2 id Function.injective_id (fun _ _ => Iff.rfl)
-  (p := 1 / 2) (q := 2) (by norm_num) (by norm_num) one_le_two (fun _ => false) isUpperSet_univ
+example := bdp_condBcProb_innerRestrict_ge (Gin := G2) (Gout := G2) (ιV := id)
+  Function.injective_id (fun _ _ => Iff.rfl) (p := 1 / 2) (q := 2) (by norm_num) (by norm_num)
+  one_le_two (fun _ => false) isUpperSet_univ
 
 -- Conditional free domination for a single open edge.
-example := ocd_condFreeProb_innerRestrict_ge G2 G2 id Function.injective_id (fun _ _ => Iff.rfl)
-  (p := 1 / 2) (q := 2) (by norm_num) (by norm_num) one_le_two (fun _ => false)
-  edgeOpen_isIncreasing
+example := bdp_condBcProb_innerRestrict_ge (Gin := G2) (Gout := G2) (ιV := id)
+  Function.injective_id (fun _ _ => Iff.rfl) (p := 1 / 2) (q := 2) (by norm_num) (by norm_num)
+  one_le_two (fun _ => false) edgeOpen_isIncreasing
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.OffCentreFreeDomination

@@ -21,8 +21,8 @@ sourceless partition functions, and a sufficient condition for it.
 
 For `H ≤ G` and a path `p` of `H`, `shb_P3DomainResummation` is the cross-multiplied inequality
 `N_G(p) Z_H ≤ N_H(p) Z_G`. Since sourceless partition functions are positive, it is equivalent to
-`ρ_G(p) ≤ ρ_H(p)` (`shb_P3_support_iff_domainResummation`). It follows from a fiber bound
-`N_G(p) ≤ c N_H(p)` and a partition bound `c Z_H ≤ Z_G`
+`ρ_G(p) ≤ ρ_H(p)` (`shb_P3_support_iff_domainResummation`). For nonnegative couplings (`0 ≤ β`,
+`0 ≤ J`) it follows from a fiber bound `N_G(p) ≤ c N_H(p)` and a partition bound `c Z_H ≤ Z_G`
 (`shb_P3_support_of_fiber_partition_bounds`).
 
 Headline fidelity:
@@ -35,7 +35,8 @@ Headline fidelity:
 
 - `shb_P3DomainResummation` : the resummation form of P3
 - `shb_P3_support_iff_domainResummation` : P3 iff the resummation inequality
-- `shb_P3_support_of_fiber_partition_bounds` : P3 from a fiber bound and a partition bound
+- `shb_P3_support_of_fiber_partition_bounds` : P3 from a fiber bound and a partition bound, for
+  `0 ≤ β` and `0 ≤ J`
 
 ## iii. Table of contents
 
@@ -129,8 +130,8 @@ lemma shb_backboneNumSupport_nonneg
   · exact StatMech.Sharpness.weight_nonneg G β J hβ hJ _
   · exact le_rfl
 
-/-- P3 for the support-ordered backbone weight from a fiber bound `N_G(p) ≤ c N_H(p)` and a
-partition bound `c Z_H ≤ Z_G`. -/
+/-- For nonnegative couplings (`0 ≤ β`, `0 ≤ J`), P3 for the support-ordered backbone weight from
+a fiber bound `N_G(p) ≤ c N_H(p)` and a partition bound `c Z_H ≤ Z_G`. -/
 lemma shb_P3_support_of_fiber_partition_bounds
     (H G : SimpleGraph V) [DecidableRel H.Adj] [DecidableRel G.Adj]
     (hHG : H ≤ G) (β : ℝ) (J : Sym2 V → ℝ)

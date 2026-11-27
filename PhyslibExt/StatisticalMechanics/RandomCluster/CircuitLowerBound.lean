@@ -15,6 +15,7 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import MathlibExt.Probability.Configuration.ConfigSpace
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FiniteEnergy
+public import PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainMarkov
 public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 
 /-!
@@ -103,69 +104,17 @@ lemma fkWeight_setClosed_ge {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q
 
 /-! ## B. Closing a set of edges -/
 
-/-- Close every edge of `γ`, leaving the other coordinates unchanged. See also `projOff`
-(FKDisjointBoxDomainMarkov), the same definition, kept separate to avoid importing the
-infinite-volume modules here. -/
-noncomputable def closeAllOn (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
-    ConfigSpace (Sym2 V) := fun e => if e ∈ γ then false else ψ e
-
-omit [Fintype V] in
-@[simp] lemma closeAllOn_of_mem {γ : Finset (Sym2 V)} {e : Sym2 V} (he : e ∈ γ)
-    (ψ : ConfigSpace (Sym2 V)) : closeAllOn γ ψ e = false := by simp [closeAllOn, he]
-
-omit [Fintype V] in
-lemma closeAllOn_of_not_mem {γ : Finset (Sym2 V)} {e : Sym2 V} (he : e ∉ γ)
-    (ψ : ConfigSpace (Sym2 V)) : closeAllOn γ ψ e = ψ e := by simp [closeAllOn, he]
-
-omit [Fintype V] in
-lemma closeAllOn_setClosed {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
-    (ψ : ConfigSpace (Sym2 V)) :
-    closeAllOn γ (setClosed e ψ) = setClosed e (closeAllOn γ ψ) := by
-  funext x
-  by_cases hx : x = e
-  · subst hx; simp only [setClosed_self, closeAllOn, ite_eq_right he]
-  · rw [setClosed_of_ne hx]
-    simp only [closeAllOn]
-    by_cases hxg : x ∈ γ
-    · simp [hxg]
-    · rw [ite_eq_right hxg, ite_eq_right hxg, setClosed_of_ne hx]
-
-omit [Fintype V] in
-lemma closeAllOn_setOpen {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
-    (ψ : ConfigSpace (Sym2 V)) :
-    closeAllOn γ (setOpen e ψ) = setOpen e (closeAllOn γ ψ) := by
-  funext x
-  by_cases hx : x = e
-  · subst hx; simp only [setOpen_self, closeAllOn, ite_eq_right he]
-  · rw [setOpen_of_ne hx]
-    simp only [closeAllOn]
-    by_cases hxg : x ∈ γ
-    · simp [hxg]
-    · rw [ite_eq_right hxg, ite_eq_right hxg, setOpen_of_ne hx]
-
-/-- The total random-cluster weight of the configurations that agree with `ψ` off `γ`. -/
-noncomputable def agreeWeightSum (p q : ℝ) (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
-    ℝ :=
-  ∑ σ ∈ Finset.univ.filter (fun σ : ConfigSpace (Sym2 V) => ∀ e' ∉ γ, σ e' = ψ e'),
-    fkWeight G p q σ
-
-lemma agreeWeightSum_pos {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
-    (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
-    0 < agreeWeightSum G p q γ ψ := by
-  unfold agreeWeightSum
-  exact Finset.sum_pos (fun σ _ => fkWeight_pos G hp hp1 hq σ) ⟨ψ, by simp⟩
-
 lemma agreeWeightSum_insert (p q : ℝ) {e : Sym2 V} {γ : Finset (Sym2 V)} (he : e ∉ γ)
     (ψ : ConfigSpace (Sym2 V)) :
-    agreeWeightSum G p q (insert e γ) ψ
-      = agreeWeightSum G p q γ (setClosed e ψ) + agreeWeightSum G p q γ (setOpen e ψ) := by
+    inducedFkZ G p q (insert e γ) ψ
+      = inducedFkZ G p q γ (setClosed e ψ) + inducedFkZ G p q γ (setOpen e ψ) := by
   classical
-  unfold agreeWeightSum
+  unfold inducedFkZ
   rw [← Finset.sum_filter_add_sum_filter_not _ (fun σ => σ e = false)]
   congr 1
   · apply Finset.sum_congr ?_ (fun _ _ => rfl)
     ext σ
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    simp only [Finset.mem_filter, mem_condFibre, AgreesOff]
     constructor
     · rintro ⟨hfree, h0⟩
       intro e' he'
@@ -181,7 +130,7 @@ lemma agreeWeightSum_insert (p q : ℝ) {e : Sym2 V} {γ : Finset (Sym2 V)} (he 
         rwa [setClosed_self] at this
   · apply Finset.sum_congr ?_ (fun _ _ => rfl)
     ext σ
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Bool.not_eq_false]
+    simp only [Finset.mem_filter, mem_condFibre, AgreesOff, Bool.not_eq_false]
     constructor
     · rintro ⟨hfree, h1⟩
       intro e' he'
@@ -197,69 +146,81 @@ lemma agreeWeightSum_insert (p q : ℝ) {e : Sym2 V} {γ : Finset (Sym2 V)} (he 
         rwa [setOpen_self] at this
 
 lemma agreeWeightSum_empty (p q : ℝ) (ψ : ConfigSpace (Sym2 V)) :
-    agreeWeightSum G p q ∅ ψ = fkWeight G p q ψ := by
+    inducedFkZ G p q ∅ ψ = fkWeight G p q ψ := by
   classical
-  unfold agreeWeightSum
-  rw [show (Finset.univ.filter
-      (fun σ : ConfigSpace (Sym2 V) => ∀ e' ∉ (∅ : Finset (Sym2 V)), σ e' = ψ e')) = {ψ}
-      from ?_]
+  unfold inducedFkZ
+  rw [show condFibre (∅ : Finset (Sym2 V)) ψ = {ψ} from ?_]
   · simp
   · ext σ
-    simp only [Finset.notMem_empty, not_false_eq_true, forall_const, Finset.mem_filter,
-      Finset.mem_univ, true_and, Finset.mem_singleton]
+    simp only [mem_condFibre, AgreesOff, Finset.notMem_empty, not_false_eq_true, forall_const,
+      Finset.mem_singleton]
     constructor
     · intro h; funext e'; exact h e'
     · rintro rfl; intro e'; rfl
 
 lemma cFE_pow_mul_agreeWeightSum_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
-    cFE p q ^ γ.card * agreeWeightSum G p q γ ψ ≤ fkWeight G p q (closeAllOn γ ψ) := by
+    cFE p q ^ γ.card * inducedFkZ G p q γ ψ ≤ fkWeight G p q (projOff γ ψ) := by
   classical
   induction γ using Finset.induction generalizing ψ with
   | empty =>
     rw [Finset.card_empty, pow_zero, one_mul, agreeWeightSum_empty]
-    have : closeAllOn (∅ : Finset (Sym2 V)) ψ = ψ := by funext x; simp [closeAllOn]
+    have : projOff (∅ : Finset (Sym2 V)) ψ = ψ := by funext x; simp [projOff]
     rw [this]
   | @insert e γ he ih =>
     rw [Finset.card_insert_of_notMem he, pow_succ, agreeWeightSum_insert G p q he]
     have hcfe_nonneg : (0 : ℝ) ≤ cFE p q := (cFE_pos hp hp1 hq).le
     have ihc := ih (setClosed e ψ)
     have iho := ih (setOpen e ψ)
-    have hc : fkWeight G p q (closeAllOn γ (setClosed e ψ))
-        = fkWeight G p q (setClosed e (closeAllOn γ ψ)) := by rw [closeAllOn_setClosed he]
-    have ho : fkWeight G p q (closeAllOn γ (setOpen e ψ))
-        = fkWeight G p q (setOpen e (closeAllOn γ ψ)) := by rw [closeAllOn_setOpen he]
-    have htarget : closeAllOn (insert e γ) ψ = setClosed e (closeAllOn γ ψ) := by
+    have hc : projOff γ (setClosed e ψ) = setClosed e (projOff γ ψ) := by
       funext x
       by_cases hx : x = e
-      · subst hx; simp [closeAllOn, setClosed_self]
+      · subst hx; simp only [setClosed_self, projOff, ite_eq_right he]
       · rw [setClosed_of_ne hx]
-        simp only [closeAllOn, Finset.mem_insert, hx, false_or]
+        simp only [projOff]
+        by_cases hxg : x ∈ γ
+        · simp [hxg]
+        · rw [ite_eq_right hxg, ite_eq_right hxg, setClosed_of_ne hx]
+    have ho : projOff γ (setOpen e ψ) = setOpen e (projOff γ ψ) := by
+      funext x
+      by_cases hx : x = e
+      · subst hx; simp only [setOpen_self, projOff, ite_eq_right he]
+      · rw [setOpen_of_ne hx]
+        simp only [projOff]
+        by_cases hxg : x ∈ γ
+        · simp [hxg]
+        · rw [ite_eq_right hxg, ite_eq_right hxg, setOpen_of_ne hx]
+    have htarget : projOff (insert e γ) ψ = setClosed e (projOff γ ψ) := by
+      funext x
+      by_cases hx : x = e
+      · subst hx; simp [projOff, setClosed_self]
+      · rw [setClosed_of_ne hx]
+        simp only [projOff, Finset.mem_insert, hx, false_or]
     rw [htarget]
     calc cFE p q ^ γ.card * cFE p q
-            * (agreeWeightSum G p q γ (setClosed e ψ) + agreeWeightSum G p q γ (setOpen e ψ))
-        = cFE p q * (cFE p q ^ γ.card * agreeWeightSum G p q γ (setClosed e ψ)
-              + cFE p q ^ γ.card * agreeWeightSum G p q γ (setOpen e ψ)) := by ring
-      _ ≤ cFE p q * (fkWeight G p q (closeAllOn γ (setClosed e ψ))
-              + fkWeight G p q (closeAllOn γ (setOpen e ψ))) := by
+            * (inducedFkZ G p q γ (setClosed e ψ) + inducedFkZ G p q γ (setOpen e ψ))
+        = cFE p q * (cFE p q ^ γ.card * inducedFkZ G p q γ (setClosed e ψ)
+              + cFE p q ^ γ.card * inducedFkZ G p q γ (setOpen e ψ)) := by ring
+      _ ≤ cFE p q * (fkWeight G p q (projOff γ (setClosed e ψ))
+              + fkWeight G p q (projOff γ (setOpen e ψ))) := by
             apply mul_le_mul_of_nonneg_left _ hcfe_nonneg
             exact add_le_add ihc iho
-      _ = cFE p q * (fkWeight G p q (setClosed e (closeAllOn γ ψ))
-              + fkWeight G p q (setOpen e (closeAllOn γ ψ))) := by rw [hc, ho]
-      _ = cFE p q * (fkWeight G p q (setOpen e (closeAllOn γ ψ))
-              + fkWeight G p q (setClosed e (closeAllOn γ ψ))) := by ring
-      _ ≤ fkWeight G p q (setClosed e (closeAllOn γ ψ)) :=
-            fkWeight_setClosed_ge G hp hp1 hq e (closeAllOn γ ψ)
+      _ = cFE p q * (fkWeight G p q (setClosed e (projOff γ ψ))
+              + fkWeight G p q (setOpen e (projOff γ ψ))) := by rw [hc, ho]
+      _ = cFE p q * (fkWeight G p q (setOpen e (projOff γ ψ))
+              + fkWeight G p q (setClosed e (projOff γ ψ))) := by ring
+      _ ≤ fkWeight G p q (setClosed e (projOff γ ψ)) :=
+            fkWeight_setClosed_ge G hp hp1 hq e (projOff γ ψ)
 
 /-! ## C. Conditional lower bound -/
 
-/-- Conditionally on agreeing with `ψ` off `γ`, the probability that `γ` is all closed is at least
-`cFE(p, q)^{|γ|}`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, conditionally on agreeing with `ψ` off `γ`, the probability that
+`γ` is all closed is at least `cFE(p, q)^{|γ|}`. -/
 lemma cFE_pow_le_condClosedOn {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
-    cFE p q ^ γ.card ≤ fkWeight G p q (closeAllOn γ ψ) / agreeWeightSum G p q γ ψ := by
+    cFE p q ^ γ.card ≤ fkWeight G p q (projOff γ ψ) / inducedFkZ G p q γ ψ := by
   have hq0 : 0 < q := lt_of_lt_of_le one_pos hq
-  rw [le_div_iff₀ (agreeWeightSum_pos G hp hp1 hq0 γ ψ)]
+  rw [le_div_iff₀ (inducedFkZ_pos G hp hp1 hq0 γ ψ)]
   exact cFE_pow_mul_agreeWeightSum_le G hp hp1 hq γ ψ
 
 /-! ## D. Unconditional lower bound -/

@@ -14,11 +14,12 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.DlrInfiniteSandwich
 public import MathlibExt.Probability.Configuration.MonotoneLimit
 
 /-!
-# The free infinite-volume random-cluster measure satisfies the FK-DLR property
+# The free infinite-volume random-cluster measure is a mixture on centred boxes
 
-The free infinite-volume random-cluster measure on `ℤ^d` (`1 ≤ q`) is an FK-DLR measure: its
-marginal on each finite box is a mixture of boundary-condition measures whose boundary wirings
-are supported on the boundary clique.
+The free infinite-volume random-cluster measure on `ℤ^d` (`1 ≤ q`) has the centred-box mixture
+property `IsFKDLR`: its marginal on each centred box `Λ_n` is a convex mixture of
+boundary-condition measures whose boundary wirings lie below the boundary clique. This does not
+fix the conditional law given the configuration outside the box, as the DLR condition does.
 
 ## i. Overview
 
@@ -37,14 +38,15 @@ space of wirings and convergence on clopen sets. `freeInfiniteVolume_isFKDLR` an
   wiring mixture of boundary-condition measures.
 - `freeFiniteBox_marginal_specification` : the finite-box version, with wirings supported below
   the boundary clique.
-- `freeInfiniteVolume_isFKDLR` : the free infinite-volume measure satisfies the FK-DLR property.
+- `freeInfiniteVolume_isFKDLR` : the free infinite-volume measure has the centred-box mixture
+  property `IsFKDLR`.
 
 ## iii. Table of contents
 
 - A. The wiring distribution of the free outer measure
 - B. Marginals as wiring mixtures
 - C. Finite boxes
-- D. The FK-DLR property in infinite volume
+- D. The centred-box mixture property in infinite volume
 
 ## iv. References
 
@@ -155,23 +157,6 @@ lemma freeNestedWiringMeasure_real_singleton
     ENNReal.toReal_ofReal (freeNestedWiringWeight_nonneg Gout ιV hp hp1 hq C)]
 /-! ## B. Marginals as wiring mixtures -/
 
-/-- Weak convergence of probability measures gives convergence of the real measure of a clopen
-set. -/
-lemma tendsto_probabilityMeasure_real_of_isClopen
-    {α ι : Type*} [MeasurableSpace α] [TopologicalSpace α]
-    [OpensMeasurableSpace α] [HasOuterApproxClosed α]
-    {L : Filter ι} {μ : ProbabilityMeasure α} {μs : ι → ProbabilityMeasure α}
-    (hμ : Tendsto μs L (𝓝 μ)) {A : Set α} (hA : IsClopen A) :
-    Tendsto (fun i => (μs i : Measure α).real A) L
-      (𝓝 ((μ : Measure α).real A)) := by
-  have hnn := ProbabilityMeasure.tendsto_measure_of_isClopen_of_tendsto hμ hA
-  have hcoe := (NNReal.continuous_coe.tendsto _).comp hnn
-  have hreal : ∀ ν : ProbabilityMeasure α,
-      ((ν A : NNReal) : ℝ) = (ν : Measure α).real A := by
-    intro ν
-    rw [Measure.real, ← ProbabilityMeasure.ennreal_coeFn_eq_coeFn_toMeasure]
-    exact (ENNReal.coe_toReal _).symm
-  simpa only [Function.comp_def, hreal] using hcoe
 /-- The marginal of the free outer measure on the inner edges is the mixture, over induced
 wirings `C`, of the inner boundary-condition measures with wiring `C`. -/
 lemma freeNestedMarginal_eq_wiringMixture
@@ -392,10 +377,13 @@ lemma freeFiniteBox_marginal_specification {N m : ℕ}
       (boxVertInclLE d (le_of_lt hNm)) (dfi_boxVertInclLE_injective d _)
       (cbk_adjMatch _) hp hp1 (zero_lt_one.trans_le hq) A
 
-/-! ## D. The FK-DLR property in infinite volume -/
+/-! ## D. The centred-box mixture property in infinite volume -/
 
-/-- For `q ≥ 1`, the free infinite-volume random-cluster measure on `ℤ^d` satisfies the FK-DLR
-property. -/
+/-- For `0 < p < 1` and `q ≥ 1`, the free infinite-volume random-cluster measure on `ℤ^d` has the
+centred-box mixture property `IsFKDLR`: for every `n`, its marginal on the centred box `Λ_n` is a
+convex mixture of boundary-condition measures on `Λ_n` whose boundary graphs lie below the
+boundary clique of `Λ_n`. This does not fix the conditional law given the configuration outside
+`Λ_n`, as the DLR condition does. -/
 lemma freeInfiniteVolume_isFKDLR {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) :
     IsFKDLR d p q
@@ -420,9 +408,11 @@ lemma freeInfiniteVolume_isFKDLR {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
       Tendsto (fun k => freeNestedWiringWeight (boxGraph d (radius (τ k)))
         (boxVertInclLE d (le_of_lt (hradius (τ k)))) p q C) atTop
         (𝓝 (weight C)) := by
-    have hsingle := tendsto_probabilityMeasure_real_of_isClopen hwiring
-      (isClopen_discrete ({C} : Set (SimpleGraph (boxVerts d N))))
-    simpa only [wiringSeq, Function.comp_apply, weight,
+    have hsingle : Tendsto (fun k => ((wiringSeq (τ k) {C} : NNReal) : ℝ)) atTop
+        (𝓝 ((ν {C} : NNReal) : ℝ)) :=
+      NNReal.tendsto_coe.2 (ProbabilityMeasure.tendsto_measure_of_isClopen_of_tendsto hwiring
+        (isClopen_discrete ({C} : Set (SimpleGraph (boxVerts d N)))))
+    simpa only [wiringSeq, weight, ← ProbabilityMeasure.measureReal_eq_coe_coeFn,
       freeNestedWiringMeasure_real_singleton] using hsingle
   refine ⟨weight, ?_, ?_, ?_, ?_⟩
   · intro C

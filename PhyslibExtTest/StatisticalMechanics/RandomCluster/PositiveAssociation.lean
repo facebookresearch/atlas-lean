@@ -17,7 +17,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PositiveAssociation
 On the one-edge graph `⊤` on `Fin 2` at `p = 1/2`, `q = 2`:
 * `fkWeightNN_coe` (the `ℝ≥0` weight coerces to `fkWeight`);
 * `fk_fkgCondition`: the FKG lattice condition;
-* `fkProb_fkgLattice` at the all-closed and all-open configurations.
+* the lattice inequality `φ(a) φ(b) ≤ φ(a ⊓ b) φ(a ⊔ b)` at the all-closed and all-open
+  configurations, from `fkProb_FKGLatticeCondition` (`FKG`) and `mul_comm`.
 -/
 
 @[expose] public section
@@ -42,6 +43,7 @@ example := fk_fkgCondition G2 (p := 1 / 2) (q := 2) (by norm_num) (by norm_num) 
 example : fkProb G2 (1 / 2) 2 (fun _ => false) * fkProb G2 (1 / 2) 2 (fun _ => true) ≤
     fkProb G2 (1 / 2) 2 ((fun _ => false) ⊓ fun _ => true) *
       fkProb G2 (1 / 2) 2 ((fun _ => false) ⊔ fun _ => true) :=
-  fkProb_fkgLattice G2 (by norm_num) (by norm_num) one_le_two _ _
+  (fkProb_FKGLatticeCondition G2 (by norm_num) (by norm_num) one_le_two _ _).trans_eq
+    (mul_comm _ _)
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.PositiveAssociation

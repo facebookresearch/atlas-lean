@@ -45,7 +45,7 @@ example (A : Set (ConfigSpace (Sym2 (Fin 2))))
       (deriv (fun p => fkProbOf G2 p 2 A) p) p)
     (hcov : ∀ p ∈ Icc (1 / 4 : ℝ) (3 / 4), ((1 : ℕ) : ℝ) * 1
         * (fkProbOf G2 p 2 A * (1 - fkProbOf G2 p 2 A))
-      ≤ 1 * ∑ e ∈ G2.edgeFinset, fkCov G2 p 2 (A.indicator (fun _ => (1 : ℝ))) (coord e))
+      ≤ 1 * ∑ e ∈ G2.edgeFinset, fkCov G2 p 2 (A.indicator (fun _ => (1 : ℝ))) (coordR e))
     (hub : ∀ p ∈ Icc (1 / 4 : ℝ) (3 / 4), fkProbOf G2 p 2 A ≤ 1 - 1 / 2) :
     fkProbOf G2 (1 / 4) 2 A
       ≤ Real.exp (-(4 * ((1 : ℕ) : ℝ) * 1 * (1 / 2) / 1 * (3 / 4 - 1 / 4))) :=

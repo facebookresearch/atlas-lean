@@ -134,8 +134,9 @@ lemma boxRestrict_setClosed (N : ℕ) (eb : Sym2 (boxVerts d N))
 
 /-! ## B. Single-edge bounds in finite volume -/
 
-/-- Finite energy for opening one edge under the wired finite-volume measure:
-`cFE p q · φ(ω^e ∈ S) ≤ φ(S)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for opening one edge under the wired finite-volume
+measure `φ` of the box `Λ_m`: for `N ≤ m`, every edge `e` of `Λ_N` and every event `S` of `Λ_N`,
+`cFE p q · φ(ω^e ∈ S) ≤ φ(S)`, where `ω^e` is `ω` with `e` open. -/
 lemma wiredFinite_singleOpen_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -183,7 +184,9 @@ lemma wiredFinite_singleOpen_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_clique_eq_wiredFkProb] using hbound
 
-/-- Finite energy for opening one edge under the free finite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for opening one edge under the free finite-volume
+measure `φ` of the box `Λ_m`: for `N ≤ m`, every edge `e` of `Λ_N` and every event `S` of `Λ_N`,
+`cFE p q · φ(ω^e ∈ S) ≤ φ(S)`, where `ω^e` is `ω` with `e` open. -/
 lemma freeFinite_singleOpen_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -225,7 +228,9 @@ lemma freeFinite_singleOpen_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_bot_eq_fkProb] using hbound
 
-/-- Finite energy for closing one edge under the wired finite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for closing one edge under the wired finite-volume
+measure `φ` of the box `Λ_m`: for `N ≤ m`, every edge `e` of `Λ_N` and every event `S` of `Λ_N`,
+`cFE p q · φ(ω_e ∈ S) ≤ φ(S)`, where `ω_e` is `ω` with `e` closed. -/
 lemma wiredFinite_singleClosed_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -269,7 +274,9 @@ lemma wiredFinite_singleClosed_preimage_bound
   rw [hset] at hbound
   simpa only [Finset.card_singleton, pow_one, bcProb_clique_eq_wiredFkProb] using hbound
 
-/-- Finite energy for closing one edge under the free finite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for closing one edge under the free finite-volume
+measure `φ` of the box `Λ_m`: for `N ≤ m`, every edge `e` of `Λ_N` and every event `S` of `Λ_N`,
+`cFE p q · φ(ω_e ∈ S) ≤ φ(S)`, where `ω_e` is `ω` with `e` closed. -/
 lemma freeFinite_singleClosed_preimage_bound
     (N m : ℕ) (hNm : N ≤ m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -313,8 +320,9 @@ lemma freeFinite_singleClosed_preimage_bound
 
 /-! ## C. Cylinder bounds in infinite volume -/
 
-/-- Finite energy for opening one box edge under the wired infinite-volume measure, on box
-events. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for opening one box edge under the wired
+infinite-volume measure `φ`, on box events: for every edge `e` of `Λ_N` and every event `S` of
+`Λ_N`, `cFE p q · φ(ω^e ∈ S) ≤ φ(S)`, where `ω^e` is `ω` with `e` open. -/
 lemma wiredInfinite_singleOpen_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -336,8 +344,9 @@ lemma wiredInfinite_singleOpen_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact wiredFinite_singleOpen_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-/-- Finite energy for opening one box edge under the free infinite-volume measure, on box
-events. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for opening one box edge under the free
+infinite-volume measure `φ`, on box events: for every edge `e` of `Λ_N` and every event `S` of
+`Λ_N`, `cFE p q · φ(ω^e ∈ S) ≤ φ(S)`, where `ω^e` is `ω` with `e` open. -/
 lemma freeInfinite_singleOpen_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -359,8 +368,9 @@ lemma freeInfinite_singleOpen_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact freeFinite_singleOpen_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-/-- Finite energy for closing one box edge under the wired infinite-volume measure, on box
-events. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for closing one box edge under the wired
+infinite-volume measure `φ`, on box events: for every edge `e` of `Λ_N` and every event `S` of
+`Λ_N`, `cFE p q · φ(ω_e ∈ S) ≤ φ(S)`, where `ω_e` is `ω` with `e` closed. -/
 lemma wiredInfinite_singleClosed_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -381,8 +391,9 @@ lemma wiredInfinite_singleClosed_cylinder_bound
   filter_upwards [hphi.tendsto_atTop.eventually (eventually_ge_atTop N)] with n hn
   exact wiredFinite_singleClosed_preimage_bound N (phi n) hn hp hp1 hq eb S
 
-/-- Finite energy for closing one box edge under the free infinite-volume measure, on box
-events. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for closing one box edge under the free
+infinite-volume measure `φ`, on box events: for every edge `e` of `Λ_N` and every event `S` of
+`Λ_N`, `cFE p q · φ(ω_e ∈ S) ≤ φ(S)`, where `ω_e` is `ω` with `e` closed. -/
 lemma freeInfinite_singleClosed_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (eb : Sym2 (boxVerts d N))
@@ -437,8 +448,10 @@ lemma setPattern_insert_eq
       · rw [setClosed_of_ne hxe]
         simp [setPattern, hxI, hxe]
 
-/-- Finite energy for forcing a pattern on `I` under the wired infinite-volume measure, with
-constant `cFE p q ^ |I|`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for forcing a pattern under the wired
+infinite-volume measure `φ`, on box events: for every set `I` of edges of `Λ_N`, every pattern `η`
+on `I` and every event `S` of `Λ_N`, `cFE p q ^ |I| · φ(ω^η ∈ S) ≤ φ(S)`, where `ω^η` is `ω` with
+the pattern `η` forced on `I`. -/
 lemma wiredInfinite_pattern_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
@@ -506,8 +519,10 @@ lemma wiredInfinite_pattern_cylinder_bound
             mul_le_mul_of_nonneg_left hih hc
           _ ≤ _ := hclosed
 
-/-- Finite energy for forcing a pattern on `I` under the free infinite-volume measure, with
-constant `cFE p q ^ |I|`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for forcing a pattern under the free
+infinite-volume measure `φ`, on box events: for every set `I` of edges of `Λ_N`, every pattern `η`
+on `I` and every event `S` of `Λ_N`, `cFE p q ^ |I| · φ(ω^η ∈ S) ≤ φ(S)`, where `ω^η` is `ω` with
+the pattern `η` forced on `I`. -/
 lemma freeInfinite_pattern_cylinder_bound
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (boxVerts d N))) (eta : ConfigSpace ↥I)
@@ -636,8 +651,10 @@ lemma boxRestrictLE_setPattern {N M : ℕ} (hNM : N ≤ M)
       setPattern_of_not_mem eta he]
     rfl
 
-/-- Finite energy under the wired measure for a pattern on an inner box, on events of an
-outer box. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy under the wired infinite-volume measure `φ` for a
+pattern on an inner box, on events of an outer box: for `N ≤ M`, every set `I` of edges of `Λ_N`,
+every pattern `η` on `I` and every event `S` of `Λ_M`, `cFE p q ^ |I| · φ(ω^η ∈ S) ≤ φ(S)`, where
+`ω^η` is `ω` with `η` forced on the image of `I` in `Λ_M`. -/
 lemma wiredInfinite_innerPattern_outerCylinder_bound
     (N M : ℕ) (hNM : N ≤ M) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -653,8 +670,10 @@ lemma wiredInfinite_innerPattern_outerCylinder_bound
     (liftPatternFinset d hNM I) (liftPatternConfig d hNM I eta) S
   simpa [liftPatternFinset, Finset.card_map] using h
 
-/-- Finite energy under the free measure for a pattern on an inner box, on events of an outer
-box. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy under the free infinite-volume measure `φ` for a
+pattern on an inner box, on events of an outer box: for `N ≤ M`, every set `I` of edges of `Λ_N`,
+every pattern `η` on `I` and every event `S` of `Λ_M`, `cFE p q ^ |I| · φ(ω^η ∈ S) ≤ φ(S)`, where
+`ω^η` is `ω` with `η` forced on the image of `I` in `Λ_M`. -/
 lemma freeInfinite_innerPattern_outerCylinder_bound
     (N M : ℕ) (hNM : N ≤ M) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -688,8 +707,9 @@ lemma cylinder_eq_boxRestrict_preimage_extend
 
 /-! ## E. Bounds on full cylinders -/
 
-/-- Finite energy for opening any edge under the wired infinite-volume measure, on all
-measurable cylinders. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for opening any edge under the wired infinite-volume
+measure `φ`, on all measurable cylinders: for every edge `e` and every measurable cylinder `C`,
+`cFE p q · φ(ω^e ∈ C) ≤ φ(C)`, where `ω^e` is `ω` with `e` open. -/
 lemma wiredInfinite_singleOpen_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
@@ -726,8 +746,9 @@ lemma wiredInfinite_singleOpen_fullCylinder_bound
   rw [hpre, hCeq]
   exact wiredInfinite_singleOpen_cylinder_bound N hp hp1 hq eb T
 
-/-- Finite energy for opening any edge under the free infinite-volume measure, on all
-measurable cylinders. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for opening any edge under the free infinite-volume
+measure `φ`, on all measurable cylinders: for every edge `e` and every measurable cylinder `C`,
+`cFE p q · φ(ω^e ∈ C) ≤ φ(C)`, where `ω^e` is `ω` with `e` open. -/
 lemma freeInfinite_singleOpen_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
@@ -764,8 +785,9 @@ lemma freeInfinite_singleOpen_fullCylinder_bound
   rw [hpre, hCeq]
   exact freeInfinite_singleOpen_cylinder_bound N hp hp1 hq eb T
 
-/-- Finite energy for closing any edge under the wired infinite-volume measure, on all
-measurable cylinders. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for closing any edge under the wired infinite-volume
+measure `φ`, on all measurable cylinders: for every edge `e` and every measurable cylinder `C`,
+`cFE p q · φ(ω_e ∈ C) ≤ φ(C)`, where `ω_e` is `ω` with `e` closed. -/
 lemma wiredInfinite_singleClosed_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
@@ -802,8 +824,9 @@ lemma wiredInfinite_singleClosed_fullCylinder_bound
   rw [hpre, hCeq]
   exact wiredInfinite_singleClosed_cylinder_bound N hp hp1 hq eb T
 
-/-- Finite energy for closing any edge under the free infinite-volume measure, on all
-measurable cylinders. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for closing any edge under the free infinite-volume
+measure `φ`, on all measurable cylinders: for every edge `e` and every measurable cylinder `C`,
+`cFE p q · φ(ω_e ∈ C) ≤ φ(C)`, where `ω_e` is `ω` with `e` closed. -/
 lemma freeInfinite_singleClosed_fullCylinder_bound
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) (C : Set (ConfigSpace (Sym2 (Site d))))
@@ -975,7 +998,8 @@ lemma map_absolutelyContinuous_of_real_preimage_bound
 
 /-! ## G. Absolute continuity of edge modifications -/
 
-/-- Forcing an edge open preserves null sets of the wired infinite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, forcing an edge open preserves null sets of the wired
+infinite-volume measure. -/
 lemma wiredInfinite_setOpen_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
@@ -990,7 +1014,8 @@ lemma wiredInfinite_setOpen_absolutelyContinuous
     (setOpen e) (measurable_setOpen e) (cFE p q) (cFE_pos hp hp1 hq).le
     (wiredInfinite_singleOpen_fullCylinder_bound hp hp1 hq e) A hA
 
-/-- Forcing an edge open preserves null sets of the free infinite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, forcing an edge open preserves null sets of the free
+infinite-volume measure. -/
 lemma freeInfinite_setOpen_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
@@ -1005,7 +1030,8 @@ lemma freeInfinite_setOpen_absolutelyContinuous
     (setOpen e) (measurable_setOpen e) (cFE p q) (cFE_pos hp hp1 hq).le
     (freeInfinite_singleOpen_fullCylinder_bound hp hp1 hq e) A hA
 
-/-- Forcing an edge closed preserves null sets of the wired infinite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, forcing an edge closed preserves null sets of the wired
+infinite-volume measure. -/
 lemma wiredInfinite_setClosed_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
@@ -1020,7 +1046,8 @@ lemma wiredInfinite_setClosed_absolutelyContinuous
     (setClosed e) (measurable_setClosed e) (cFE p q) (cFE_pos hp hp1 hq).le
     (wiredInfinite_singleClosed_fullCylinder_bound hp hp1 hq e) A hA
 
-/-- Forcing an edge closed preserves null sets of the free infinite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, forcing an edge closed preserves null sets of the free
+infinite-volume measure. -/
 lemma freeInfinite_setClosed_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (e : Sym2 (Site d)) :
@@ -1079,7 +1106,8 @@ lemma setPattern_absolutelyContinuous_of_single
           (measurable_setPattern I etaI)] at htrans
         rwa [hfun]
 
-/-- Forcing a finite pattern preserves null sets of the wired infinite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, forcing a finite pattern preserves null sets of the wired
+infinite-volume measure. -/
 lemma wiredInfinite_setPattern_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (Site d))) (eta : ConfigSpace ↥I) :
@@ -1092,7 +1120,8 @@ lemma wiredInfinite_setPattern_absolutelyContinuous
     (fun e => wiredInfinite_setClosed_absolutelyContinuous (d := d) hp hp1 hq e)
     I eta
 
-/-- Forcing a finite pattern preserves null sets of the free infinite-volume measure. -/
+/-- For `0 < p < 1` and `q ≥ 1`, forcing a finite pattern preserves null sets of the free
+infinite-volume measure. -/
 lemma freeInfinite_setPattern_absolutelyContinuous
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 (Site d))) (eta : ConfigSpace ↥I) :

@@ -1039,8 +1039,15 @@ lemma residualVacuum_suffix_twoUnit_covariance
 
 /-! ## H. The componentwise toggle -/
 
-/-- Toggling the copy of `f` is a covariance between the full run and the active segment, and
-between the residual vacuum and the lifted residual run. -/
+/-- Let `e ≠ f` be edges of the domain graph whose canonical segments are active (`hactiveE`,
+`hactiveF`) and form a two-edge path (`hpath`), and suppose that the scan of the two-edge program,
+started at `d` with nothing accepted, admits `e` first on the odd bits of `twoUnitFlux e f`
+(`hfirst`). Then toggling the labeled copy `secondCopy` of `f` is a covariance
+(`BondwiseRunToggleCovariance`) on the sets of labeled copies of `twoUnitFlux e f`: for every such
+set `T`, the profile of `T` completes the full run `[e, f]` of the two-edge program iff the profile
+of `T ∆ {secondCopy}` lies in the active-segment fibre of `e`, and the profile of `T` lies in the
+residual vacuum after `e` iff the profile of `T ∆ {secondCopy}` lies in the lifted residual run
+`[f]` of the two-edge program. -/
 lemma twoUnit_componentwise_covariance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
@@ -1065,7 +1072,13 @@ lemma twoUnit_componentwise_covariance
       hactiveF hpath,
     residualVacuum_suffix_twoUnit_covariance d e f hne hactiveF⟩
 
-/-- The pair-event toggle on the two-unit flux. -/
+/-- The pair-event toggle on the two-unit flux. Under the hypotheses of
+`twoUnit_componentwise_covariance` (`e ≠ f`, `hfirst`, `hactiveE`, `hactiveF`, `hpath`), let `T` be
+any set of labeled copies of `twoUnitFlux e f` and `T' = T ∆ {secondCopy}`, where `secondCopy` is
+the labeled copy of `f`. Then the profile of `T` completes the full run `[e, f]` of the two-edge
+program and the profile of the copies outside `T` lies in the residual vacuum after `e` iff the
+profile of `T'` lies in the active-segment fibre of `e` and the profile of the copies outside `T'`
+lies in the lifted residual run `[f]` of the two-edge program. -/
 lemma twoUnit_pair_toggle
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)

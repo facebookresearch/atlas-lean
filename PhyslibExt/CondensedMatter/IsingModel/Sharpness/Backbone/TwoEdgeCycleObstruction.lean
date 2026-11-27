@@ -466,7 +466,7 @@ abbrev residualLe : residualGraph ≤ domain.graph :=
 /-- The restriction of a current to the residual graph. -/
 noncomputable def restrictResidual
     (p : domain.graph.edgeFinset → Nat) : residualGraph.edgeFinset → Nat :=
-  fun e => p ⟨e.1, edgeFinset_subset residualLe e.2⟩
+  fun e => p ⟨e.1, SimpleGraph.edgeFinset_mono residualLe e.2⟩
 
 lemma extendFlux_restrictResidual
     (p : domain.graph.edgeFinset → Nat) (hp : p headEdge = 0) :
@@ -536,7 +536,7 @@ lemma residual_complete_suffixEven :
         oddBit (unitFlux d'.graph residualSuffix e) := by
     intro e
     let ambient : domain.graph.edgeFinset :=
-      ⟨e.1, edgeFinset_subset residualLe e.2⟩
+      ⟨e.1, SimpleGraph.edgeFinset_mono residualLe e.2⟩
     rcases edge_cases ambient with hhead | hsuffix | hc₀ | hc₁ | hc₂
     · have hmem := e.2
       change e.1 ∈ residualGraph.edgeFinset at hmem

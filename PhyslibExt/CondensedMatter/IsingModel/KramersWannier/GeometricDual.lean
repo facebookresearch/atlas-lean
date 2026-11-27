@@ -1498,15 +1498,6 @@ noncomputable def kwg_faceSupportGraph {V E : Type*} (ends : E → Sym2 V) :
     exact ⟨hxy.symm, e, he.trans Sym2.eq_swap⟩
   loopless := ⟨fun x h => h.1 rfl⟩
 
-/-- The graph `G` with all edges at `v` removed. -/
-def kwg_deleteVertexGraph {V : Type*} (G : SimpleGraph V) (v : V) : SimpleGraph V where
-  Adj x y := G.Adj x y ∧ x ≠ v ∧ y ≠ v
-  symm := by
-    constructor
-    rintro x y ⟨hxy, hx, hy⟩
-    exact ⟨hxy.symm, hy, hx⟩
-  loopless := ⟨fun x h => G.irrefl h.1⟩
-
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
@@ -1517,9 +1508,9 @@ lemma kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
     {v w : V} (hvout : v ≠ outer) (hwout : w ≠ outer)
     (hvinc : ∃ e : E, kwg_incidentMod2 v (ends e))
     (hwinc : ∃ e : E, kwg_incidentMod2 w (ends e)) :
-    (kwg_deleteVertexGraph (kwg_faceSupportGraph ends) outer).Reachable v w := by
+    ((kwg_faceSupportGraph ends).deleteIncidenceSet outer).Reachable v w := by
   classical
-  let H := kwg_deleteVertexGraph (kwg_faceSupportGraph ends) outer
+  let H := (kwg_faceSupportGraph ends).deleteIncidenceSet outer
   let inC : V → Prop := fun z => z ≠ outer ∧ H.Reachable v z
   let S : Finset E := Finset.univ.filter fun e =>
     inC (ends e).out.1 ∨ inC (ends e).out.2
@@ -1541,7 +1532,7 @@ lemma kwg_minimalEven_nonOuter_reachable {V E : Type*} [Fintype V] [Fintype E]
       (hab : a ≠ b) (he : ends e = s(a, b)) : inC b := by
     refine ⟨hbout, ha.2.trans ?_⟩
     exact (show H.Adj a b from
-      ⟨⟨hab, e, he⟩, ha.1, hbout⟩).reachable
+      SimpleGraph.deleteIncidenceSet_adj.mpr ⟨⟨hab, e, he⟩, ha.1, hbout⟩).reachable
   have hSne : S.Nonempty := by
     obtain ⟨e, he⟩ := hvinc
     refine ⟨e, ?_⟩
@@ -1647,8 +1638,7 @@ lemma kwg_minimalEvenFinset_nonOuter_reachable {V E : Type*} [Fintype V]
     {v w : V} (hvout : v ≠ outer) (hwout : w ≠ outer)
     (hvinc : ∃ e ∈ F, kwg_incidentMod2 v (ends e))
     (hwinc : ∃ e ∈ F, kwg_incidentMod2 w (ends e)) :
-    (kwg_deleteVertexGraph
-      (kwg_faceSupportGraph (fun e : ↑F => ends e.1)) outer).Reachable v w := by
+    ((kwg_faceSupportGraph (fun e : ↑F => ends e.1)).deleteIncidenceSet outer).Reachable v w := by
   classical
   let emb : ↑F ↪ E := ⟨Subtype.val, Subtype.val_injective⟩
   let e0 : E := hne.choose
@@ -2066,7 +2056,8 @@ lemma kwg_isingZ_duality_of_cutMatching (P : PlanarZ2Subgraph)
 
 /-- **Kramers–Wannier duality** for a finite planar subgraph `P` of `ℤ²`: if `tanh β* = e^{-2β}`,
 the zero-field Ising partition function of the geometric dual at `β*` is an explicit multiple of
-that of `P` at `β`.
+that of `P` at `β`. Both partition functions have free boundary conditions; the vertices of the
+geometric dual are all faces of `P`, the outer face included.
 
 H. A. Kramers, G. H. Wannier, "Statistics of the two-dimensional ferromagnet. Part I", Phys. Rev. 60
 (1941). -/
