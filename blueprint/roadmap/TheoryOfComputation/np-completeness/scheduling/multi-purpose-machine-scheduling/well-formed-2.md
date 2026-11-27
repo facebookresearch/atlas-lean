@@ -1,3 +1,3 @@
 # Well-formed instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, LATE JOBS
 
-An instance $(m, \mu, J, A, K)$ is well-formed for TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, LATE JOBS when it is well-formed for the two-machine multiprocessor task open shop with chains and total tardiness ($m = 2$, well-formed environment, unit processing times, chain arcs) and there is at least one job.
+An instance $(m, \mu, J, A, K)$ is well-formed for TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, LATE JOBS when it is well-formed for the two-machine multiprocessor task open shop with chains and total tardiness and there is at least one job. That predicate requires $m = 2$, a well-formed machine environment, unit processing times, and chain arcs: the arc list $A$ has no repeated entry, every arc joins two job indices, no two distinct arcs share a tail or a head, and the arcs contain no cycle.
