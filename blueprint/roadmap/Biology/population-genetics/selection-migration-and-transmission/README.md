@@ -24,3 +24,4 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Selection on seed-bank formation](selection-on-seed-bank-formation/README.md)
 - [Genetic contribution of advantaged ancestors](genetic-contribution-of-advantaged-ancestors/README.md)
 - [Ancestral learning graphs](ancestral-learning-graphs/README.md)
+- [Selection, gene drives, and polygenic adaptation](selection-drives-and-polygenic-adaptation/README.md)

@@ -5,8 +5,8 @@ set $D$ of faces $p$ with $B_p X^e = -X^e B_p$, the faces containing an odd numb
 dual chain of $e$, the defects). Given $D$, the minimum-weight decoder chooses a set $e'$ of edges of least size whose
 set of odd faces is $D$, and applies $X^{e'}$; when several sets are minimal, one is chosen. Equivalently it pairs the
 defects by a minimum-weight perfect matching, the weight of a pair being their distance on the dual lattice, and joins
-each pair by a shortest dual path. Recovery succeeds when $e + e'$ is homologically trivial (the boundary of a set of faces), so that
-$X^{e + e'}$ lies in the stabilizer, and fails when its total homology class is nonzero; two parallel winding loops
+each pair by a shortest dual path. Recovery succeeds when $e + e'$, a cycle of the dual lattice, is homologically trivial (the coboundary of a set of
+vertices), so that $X^{e + e'}$ is a product of vertex operators and lies in the stabilizer, and fails when its total homology class is nonzero; two parallel winding loops
 together bound a strip and do not cause failure. Phase-flip errors are decoded in the
 same way using the vertex operators. When syndrome measurements are themselves faulty, a spatial matching of one round's defects
 no longer works, since a single wrong readout produces an isolated apparent defect. Dennis, Kitaev, Landahl and Preskill
