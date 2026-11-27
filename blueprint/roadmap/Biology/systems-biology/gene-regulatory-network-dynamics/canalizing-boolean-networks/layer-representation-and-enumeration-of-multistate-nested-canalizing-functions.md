@@ -20,7 +20,7 @@ For $p=2$ this reduces to the Boolean counts $8,64,736$ for $n=2,3,4$. For $p=3$
 
 **Generalization and permutation classes.** Over any finite field $\mathbb{F}_q$, allow the canalizing input sets to be arbitrary proper subsets. The same unique layer representation holds, and the count is obtained by replacing $p\to q$ and the $2(p-1)$ intervals by the $2^q-2$ proper subsets. Call two functions permutation equivalent if they differ by a permutation of the variables. The number of permutation-equivalence classes of generalized NCFs in $n$ variables is
 
-$$N=2^{n-1}(q-1)\,q^n\,(2^{q-1}-1)^n.$$
+The formula $N = 2^{n-1}(q-1)q^n(2^{q-1}-1)^n$ of Theorem 4.2 counts nested canalizing functions with a *fixed* variable order, not permutation equivalence classes (which are strictly fewer — e.g., 6 rather than 8 for $q=2, n=2$; Theorem 4.2 of arXiv:1304.3707 erroneously states this as the number of permutation classes).
 
 ## Expansion
 
