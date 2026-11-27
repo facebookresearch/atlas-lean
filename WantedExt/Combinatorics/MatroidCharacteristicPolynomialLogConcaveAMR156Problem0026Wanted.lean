@@ -36,9 +36,10 @@ polynomial of its cycle matroid up to a power of `λ`). The characteristic polyn
 `χ_M(λ) = ∑_{I ⊆ E} (-1)^{|I|} λ^{r(E) - r(I)}` (the definition used by Adiprasito–Huh–Katz), with
 ranks from Mathlib's `Matroid.eRk`; `w_k` is the absolute value of the coefficient of `λ^{r - k}`,
 `r = r(E)`, extended by `0` past the degree, and log-concavity is `w_{k-1} w_{k+1} ≤ w_k²` for `k ≥
-1`. Part (b) is implied by the existing entry `WantedExt/Combinatorics/StrongMasonWanted.lean`
-(`strong_mason_conjecture`, ultra-log-concavity of the independent-set numbers), so it is not
-restated; part (c) is still open (only top-heaviness is known) and is not formalized.
+1`. Part (b) is implied by `strong_mason_conjecture` in
+`MathlibExt/Combinatorics/Matroid/StrongMason.lean` (ultra-log-concavity of the independent-set
+numbers), so it is not restated; part (c) is still open (only top-heaviness is known) and is not
+formalized.
 -/
 
 /-- **Adiprasito–Huh–Katz theorem (Heron–Rota–Welsh conjecture).** For every finite matroid $M$

@@ -42,10 +42,4 @@ public def_wanted universalWittPDFrobenius
     (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [CharP R p]
     (hR : IsSemiperfect p R) (A : UniversalEnvelope p R) : HullFrobenius (A := A)
 
-/-- The induced Frobenius of A_cris uses the original quotient projections. -/
-public def_wanted completedWittPDFrobenius
-    (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [CharP R p]
-    (hR : IsSemiperfect p R) (A : UniversalEnvelope p R)
-    (F : HullFrobenius (A := A)) : CompletedFrobenius F
-
 end WantedExt.RingTheory.SemiperfectCrystallinePeriodRings

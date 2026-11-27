@@ -9,6 +9,7 @@ Not every matrix is diagonalizable, but over an algebraically closed field every
 ## Statements
 
 - [Jordan normal form](exists-jordan-normal-form-of-splits.md)
+- [Real Jordan form](real-jordan-form.md): the form over ℝ, with $2 \times 2$ blocks for pairs of complex eigenvalues
 - [Jordan block](jordan-block.md): the Jordan block
 - [Entries of a Jordan block](jordan-block-apply.md): entries of a Jordan block
 - [Jordan chain basis for an endomorphism with split characteristic polynomial](exists-jordan-basis-of-charpoly-splits.md): the form for endomorphisms: a basis of Jordan chains

@@ -32,3 +32,23 @@ example {K : Type*} [Field K] {T N p q : ℕ} {M : Matrix (Fin T) (Fin T) K}
   have hsub := Matrix.rank_submatrix_le
     (M.submatrix (Subtype.val : Set.Ici s → Fin T) (Subtype.val : Set.Iic s → Fin T)) r c
   exact hsub.trans (h.2 s)
+
+-- For state dimension one, the diagonal uses no transition, and the (1, 0) entry uses only A₁.
+example : IsSemiseparable (!![14, 0; 66, 55] : Matrix (Fin 2) (Fin 2) ℚ) 1 := by
+  refine isSemiseparable_of_sss ![!![13], !![3]] ![![2], ![5]] ![![7], ![11]] ?_
+  simp only [Fin.forall_fin_two]
+  decide +kernel
+
+-- The two noncommuting transitions give (2, 0) entry 2 in descending order, but 1 if reversed.
+example : IsSemiseparable (!![1, 0, 0; 1, 1, 0; 2, 1, 1] : Matrix (Fin 3) (Fin 3) ℚ) 2 := by
+  refine isSemiseparable_of_sss ![0, !![1, 1; 0, 1], !![1, 0; 1, 1]]
+    (fun _ => ![0, 1]) (fun _ => ![0, 1]) ?_
+  simp only [Fin.forall_fin_succ, Fin.forall_fin_zero, and_true]
+  decide +kernel
+
+-- A zero-dimensional state yields the zero matrix, even for nonempty time sets.
+example {K : Type*} [Field K] {T : ℕ} (A : Fin T → Matrix (Fin 0) (Fin 0) K)
+    (B C : Fin T → Fin 0 → K) : IsSemiseparable (0 : Matrix (Fin T) (Fin T) K) 0 := by
+  apply isSemiseparable_of_sss A B C
+  intro j i
+  split <;> simp [dotProduct]

@@ -86,4 +86,45 @@ public theorem letterPosition_le_of_run_le {w : ℕ → Bool} (hw : BothLettersI
   zify at ha_lower ha_upper hb_lower hb_upper b₀ b₀_le
   refine ⟨?_, ?_, ?_, ?_⟩ <;> linarith
 
+/-- **Linear bounds for words with bounded runs.** Let $w$ be an infinite binary word over the
+letters $a$ and $b$ in which both letters occur infinitely often, and let $c$ be a natural number
+such that every block of consecutive equal letters of $w$ has length at most $c$. Let $p_a(n)$
+and $p_b(n)$ be the positions (counting from $0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and
+let $r(n) = p_b(n) - p_a(n)$. Then for every $n \ge 1$, $p_a(n) \le (c+1)n - 1$,
+$p_b(n) \le (c+1)n - 1$ and $-cn \le r(n) \le cn$.
+
+Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
+Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 27
+(`jis-2025-25.1.5-cor-27`). -/
+public theorem letterPosition_le_of_run_le' {w : ℕ → Bool} (hw : BothLettersInfinite w)
+    {c : ℕ} (hc : ∀ i k, (∀ j < k, w (i + j) = w i) → k ≤ c) (n : ℕ) (hn : 1 ≤ n) :
+    (letterPosition w true n : ℤ) ≤ (c + 1) * n - 1 ∧
+      (letterPosition w false n : ℤ) ≤ (c + 1) * n - 1 ∧
+      -((c : ℤ) * n) ≤ relativePosition w n ∧ relativePosition w n ≤ c * n := by
+  have hc₀ : 0 ≤ (c : ℤ) := Int.natCast_nonneg c
+  cases h₀ : w 0 with
+  | true =>
+    obtain ⟨ha, hb, hlo, hhi⟩ := letterPosition_le_of_run_le hw h₀ hc n hn
+    exact ⟨by linarith, hb, by linarith, hhi⟩
+  | false =>
+    -- Complementing the word swaps the position functions and preserves the run bound.
+    let v (i : ℕ) := !(w i)
+    have hv : BothLettersInfinite v := ⟨by simpa [v] using hw.2, by simpa [v] using hw.1⟩
+    have hv₀ : v 0 = true := by simp [v, h₀]
+    have hbnd : ∀ i k, (∀ j < k, v (i + j) = v i) → k ≤ c := by
+      intro i k h
+      refine hc i k fun j hj => ?_
+      have he := congrArg Bool.not (h j hj)
+      simpa only [v, Bool.not_not] using he
+    have hpos (b : Bool) : letterPosition v b n = letterPosition w (!b) n := by
+      have hp : (fun i => v i = b) = (fun i => w i = !b) := by
+        funext i
+        apply propext
+        cases b <;> simp [v]
+      simp only [letterPosition, hp]
+    obtain ⟨ha, hb, hlo, hhi⟩ := letterPosition_le_of_run_le hv hv₀ hbnd n hn
+    simp only [relativePosition, hpos, Bool.not_true, Bool.not_false] at ha hb hlo hhi
+    unfold relativePosition
+    exact ⟨hb, by linarith, by linarith, by linarith⟩
+
 end MetaMathlibExt

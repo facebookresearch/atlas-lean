@@ -1,0 +1,3 @@
+# TWO-MACHINE MULTI-PURPOSE FLOW SHOP WITH UNIT TIMES AND CHAINS, MINIMIZING TOTAL TARDINESS as a decision problem
+
+The decision problem TWO-MACHINE MULTI-PURPOSE FLOW SHOP WITH UNIT TIMES AND CHAINS, MINIMIZING TOTAL TARDINESS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(\mu, d, A, K)$ (a list of lists of natural numbers, a list of natural numbers, a list of pairs and a natural number), to an instance that is well-formed (two-machine multi-purpose environment with nonempty stage sets, chain arcs) and feasible for TWO-MACHINE MULTI-PURPOSE FLOW SHOP WITH UNIT TIMES AND CHAINS, MINIMIZING TOTAL TARDINESS. It rejects every bitstring that does not decode to such an instance.
