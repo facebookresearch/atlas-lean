@@ -1,0 +1,107 @@
+# Beta-eta conversion and normalization by evaluation
+
+- [Normalization by evaluation identifies a beta-redex with its contractum](normalize-nf-beta.md)
+- [Normalized terms of a beta-redex and its contractum coincide](normalize-tm-beta.md)
+- [Normalization by evaluation identifies an eta-expansion with the function](normalize-nf-eta.md)
+- [Normalized terms of an eta-expansion and its function coincide](normalize-tm-eta.md)
+
+## Declarative beta-eta conversion
+
+- [Beta-eta conversion of simply typed terms](beta-eta-eq.md)
+- [Equal simply typed terms are beta-eta convertible](of-eq.md)
+- [Beta-eta conversion is preserved in function position](app-left.md)
+- [Beta-eta conversion is preserved in argument position](app-right.md)
+- [Beta-eta conversion is an equivalence relation](equivalence.md)
+- [Beta-eta conversion is preserved by typed one-hole contexts](context.md)
+- [Beta conversion holds inside every typed context](context-beta.md)
+- [Eta conversion holds inside every typed context](context-eta.md)
+- [Renaming preserves beta-eta conversion](rename.md)
+- [Substitution preserves beta-eta conversion](subst.md)
+- [Substituting pointwise beta-eta convertible substitutions gives convertible terms](subst-congr-right.md)
+- [Instantiation preserves beta-eta conversion of bodies](instantiate.md)
+- [Instantiation preserves beta-eta conversion of arguments](instantiate-arg.md)
+- [Instantiation is congruent for beta-eta conversion in body and argument](instantiate-congr.md)
+- [Beta-eta conversion is sound in every set-theoretic model](sem-eq.md)
+- [Beta-eta convertible terms are model-equal](model-eq.md)
+
+## Directed beta-eta reduction
+
+- [One-step beta-eta contraction of simply typed terms](beta-eta-step.md)
+- [A one-step beta-eta contraction is a beta-eta conversion](beta-eta-eq-2.md)
+- [Renaming preserves one-step beta-eta contraction](rename-2.md)
+- [Substitution preserves one-step beta-eta contraction](subst-2.md)
+- [Typed one-hole contexts preserve one-step beta-eta contraction](context-2.md)
+- [One-step beta-eta contraction is sound in every set-theoretic model](sem-eq-2.md)
+- [A one-step beta-eta contraction relates model-equal terms](model-eq-2.md)
+- [A root beta step inside a typed context is one beta-eta contraction](context-beta-2.md)
+- [A root eta step inside a typed context is one beta-eta contraction](context-eta-2.md)
+- [Multi-step beta-eta reduction of simply typed terms](beta-eta-steps.md)
+- [Multi-step beta-eta reduction implies beta-eta conversion](beta-eta-eq-3.md)
+- [Renaming preserves multi-step beta-eta reduction](rename-3.md)
+- [Substitution preserves multi-step beta-eta reduction](subst-3.md)
+- [Typed one-hole contexts preserve multi-step beta-eta reduction](context-3.md)
+- [Multi-step beta-eta reduction in function position](app-left-2.md)
+- [Multi-step beta-eta reduction in argument position](app-right-2.md)
+- [Multi-step beta-eta reduction under an abstraction](lam.md)
+- [Multi-step beta-eta reduction is sound in every set-theoretic model](sem-eq-3.md)
+- [Multi-step beta-eta reduction relates model-equal terms](model-eq-3.md)
+
+## Pointwise conversion of substitutions
+
+- [Pointwise beta-eta conversion of substitutions](sub-beta-eta-eq.md)
+- [Pointwise beta-eta conversion of substitutions is reflexive](refl.md)
+- [Pointwise beta-eta conversion of substitutions is symmetric](symm.md)
+- [Pointwise beta-eta conversion of substitutions is transitive](trans-2.md)
+- [Pointwise beta-eta conversion of substitutions is an equivalence relation](equivalence-2.md)
+- [Extending convertible substitutions by convertible terms preserves pointwise conversion](cons.md)
+- [Lifting under a binder preserves pointwise beta-eta conversion](lift.md)
+- [Renaming the codomain preserves pointwise beta-eta conversion](rename-4.md)
+- [Postcomposition preserves pointwise beta-eta conversion](comp-left.md)
+- [Precomposition preserves pointwise beta-eta conversion](comp-right.md)
+- [Composition of substitutions is congruent for pointwise beta-eta conversion](comp-congr.md)
+- [Pointwise beta-eta convertible substitutions are pointwise semantically equal](sub-sem-eq.md)
+- [Substitution is jointly congruent for beta-eta conversion](subst-congr.md)
+
+## Joinability
+
+- [Beta-eta joinability of simply typed terms](beta-eta-join.md)
+- [Beta-eta joinable terms are beta-eta convertible](beta-eta-eq-4.md)
+- [Renaming preserves beta-eta joinability](rename-5.md)
+- [Substitution preserves beta-eta joinability](subst-4.md)
+- [Typed one-hole contexts preserve beta-eta joinability](context-4.md)
+- [Beta-eta joinable terms are model-equal](model-eq-4.md)
+
+## Zigzag presentation of conversion
+
+- [Beta-eta zigzag conversion of simply typed terms](beta-eta-zigzag.md)
+- [A backward beta-eta contraction is a zigzag](of-step-symm.md)
+- [A beta-eta zigzag gives a beta-eta conversion](beta-eta-eq-5.md)
+- [Beta-eta zigzags in function position](app-left-3.md)
+- [Beta-eta zigzags in argument position](app-right-3.md)
+- [Beta-eta zigzags under an abstraction](lam-2.md)
+- [Every beta-eta conversion is a beta-eta zigzag](of-beta-eta-eq.md)
+- [Renaming preserves beta-eta zigzags](rename-6.md)
+- [Substitution preserves beta-eta zigzags](subst-5.md)
+- [Typed one-hole contexts preserve beta-eta zigzags](context-5.md)
+- [Beta-eta zigzags are sound in every set-theoretic model](sem-eq-4.md)
+- [Beta-eta zigzags relate model-equal terms](model-eq-5.md)
+- [Beta-eta conversion coincides with the equivalence closure of contraction](beta-eta-eq-iff-zigzag.md)
+
+## Pointwise zigzag conversion of substitutions
+
+- [Pointwise beta-eta zigzag conversion of substitutions](sub-beta-eta-zigzag.md)
+- [Pointwise zigzag conversion of substitutions is reflexive](refl-3.md)
+- [Pointwise zigzag conversion of substitutions is symmetric](symm-4.md)
+- [Pointwise zigzag conversion of substitutions is transitive](trans-4.md)
+- [Pointwise zigzag conversion of substitutions is an equivalence relation](equivalence-4.md)
+- [Extending zigzag-connected substitutions preserves pointwise zigzag conversion](cons-2.md)
+- [Lifting under a binder preserves pointwise zigzag conversion](lift-2.md)
+- [Renaming the codomain preserves pointwise zigzag conversion](rename-7.md)
+- [Postcomposition preserves pointwise zigzag conversion](comp-left-2.md)
+- [Precomposition preserves pointwise zigzag conversion](comp-right-2.md)
+- [Composition of substitutions is congruent for pointwise zigzag conversion](comp-congr-2.md)
+- [Pointwise zigzag-connected substitutions are pointwise beta-eta convertible](sub-beta-eta-eq-2.md)
+- [Pointwise beta-eta convertible substitutions are pointwise zigzag-connected](of-sub-beta-eta-eq.md)
+- [Substitution is jointly congruent for beta-eta zigzags](subst-congr-2.md)
+- [Substituting zigzag-connected substitutions into a fixed term](subst-pointwise-2.md)
+- [Pointwise beta-eta conversion of substitutions coincides with pointwise zigzag conversion](sub-beta-eta-eq-iff-zigzag.md)

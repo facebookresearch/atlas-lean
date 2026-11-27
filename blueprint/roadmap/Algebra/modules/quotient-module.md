@@ -1,0 +1,10 @@
+# Quotient module
+
+For a submodule $N$ of a left module $M$ over a ring $R$, the quotient group $M/N$ is a left $R$-module with $r(x + N) = rx + N$; this is well defined because $rN \subseteq N$. Mathlib provides exactly this module structure on the quotient, which is already formed as an additive group. Let $R$ be a ring, not necessarily commutative, $M$ a left $R$-module and $N$ a submodule of $M$. The quotient $M/N$ is the quotient of the additive group $M$ by its subgroup $N$: two elements $x, y \in M$ have the same class $[x] = [y]$ exactly when $x - y \in N$, and $[x] + [y] = [x + y]$. Mathlib's instance makes $M/N$ a left $R$-module with $r[x] = [rx]$ for $r \in R$ and $x \in M$. Since every element of $M/N$ is a class $[x]$, these formulas determine the module structure. The instance concerns modules over a ring, so $M$ is an additive group; it is not stated for modules over semirings. The quotient of an abelian group by a subgroup is the familiar additive part of the construction; the instance adds the scalar multiplication, which gives the familiar definition.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for equality of classes: $[x] = [y]$ if and only if $x - y \in N$: `Submodule.Quotient.eq`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/LinearAlgebra/Quotient/Defs.lean#L80-L81.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the sum of classes: `Submodule.Quotient.mk_add`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/LinearAlgebra/Quotient/Defs.lean#L139-L141.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for scalar multiples of classes: `Submodule.Quotient.mk_smul`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/LinearAlgebra/Quotient/Defs.lean#L112-L114.
