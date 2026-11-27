@@ -3,7 +3,9 @@
 How many edges or copies of a subgraph a graph can have while avoiding a forbidden structure: Turán and Zarankiewicz problems, saturation, and extremal graphs of given girth.
 
 - [Balanced subgraphs](balanced-subgraphs/README.md)
+- [Bipartite subgraphs and max cut](bipartite-subgraphs-and-max-cut/README.md)
 - [Books in graphs](books-in-graphs/README.md)
+- [Counting H-free graphs](counting-h-free-graphs/README.md)
 - [Erdős–Faudree triangle conjecture](erd-s-faudree-triangle-conjecture/README.md)
 - [Erdős–Stone theorem](erd-s-stone-theorem/README.md)
 - [Extremal graphs of girth five](extremal-graphs-of-girth-five/README.md)
@@ -11,12 +13,17 @@ How many edges or copies of a subgraph a graph can have while avoiding a forbidd
 - [Generalized Turán numbers](generalized-tur-n-numbers/README.md)
 - [Graph saturation](graph-saturation/README.md)
 - [Pentagons in triangle-free graphs](pentagons-in-triangle-free-graphs/README.md)
+- [Regular subgraphs](regular-subgraphs/README.md)
 - [Sidorenko's conjecture](sidorenko-s-conjecture/README.md)
 - [Triangle density and flag algebras](triangle-density-and-flag-algebras/README.md)
+- [Triangle-free graphs of small diameter](triangle-free-graphs-of-small-diameter/README.md)
 - [Turán density of complete graphs](tur-n-density-of-complete-graphs/README.md)
 - [Turán numbers of bipartite graphs](tur-n-numbers-of-bipartite-graphs/README.md)
 - [Turán numbers of cycles](tur-n-numbers-of-cycles/README.md)
 - [Turán problems in the hypercube](tur-n-problems-in-the-hypercube/README.md)
 - [Unique subgraphs](unique-subgraphs/README.md)
+- [Extremal number for one forbidden graph](extremal-number-for-one-forbidden-graph.md)
 - [Kővári–Sós–Turán bound](kovari-sos-turan.md)
 - [Monomial graphs of girth eight](monomial-graph-girth-eight-classificatio.md)
+
+- [Compactness of forbidden graph families](compactness-of-forbidden-families/README.md)

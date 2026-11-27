@@ -5,3 +5,5 @@
 - [Assignment testers](assignment-testers.md)
 - [Preprocessing a constraint graph into a regular expander](preprocessing-a-constraint-graph-into-a-regular.md)
 - [The Unique Games Conjecture](the-unique-games-conjecture.md)
+- [Binary 3SAT gap reduction to simple translation unique games](translation-unique-games-binary-sat-gap.md)
+- [Perfect-completeness gap for two-to-one projection games](perfect-completeness-two-to-one-game-gap.md)

@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.HigherOrderHarmonic
 public import MathlibExt.NumberTheory.WolstenholmeBinomialCongruence
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 public import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
+public import MathlibExt.NumberTheory.WolstenholmePairedBinomialCongruence
 public import MathlibExt.NumberTheory.WolstenholmePolynomialParts
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeOfNormLe
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeZpowValuation
@@ -78,44 +79,10 @@ public theorem_wanted choose_mul_prime_prime_harmonic_congr (p t : ℕ) (hp : p.
           (B - (T + (-T ^ 5 + 2 * T ^ 4 - T ^ 2) * p * H1 + T ^ 3 * (T - 1) ^ 2 * p ^ 2 * H11))) ∧
       (B - (T + (-T ^ 5 + 2 * T ^ 4 - T ^ 2) * p * H1 - T ^ 3 * (T - 1) ^ 2 / 2 * p ^ 2 * H2) = 0 ∨
         6 ≤ padicValRat p
-          (B - (T + (-T ^ 5 + 2 * T ^ 4 - T ^ 2) * p * H1 - T ^ 3 * (T - 1) ^ 2 / 2 * p ^ 2 * H2))) ∧
+          (B - (T + (-T ^ 5 + 2 * T ^ 4 - T ^ 2) * p * H1 -
+            T ^ 3 * (T - 1) ^ 2 / 2 * p ^ 2 * H2))) ∧
       (B - (T + T ^ 2 * (T - 1) * p * H1) = 0 ∨
         5 ≤ padicValRat p (B - (T + T ^ 2 * (T - 1) * p * H1)))
-
-/-- **Congruences modulo $p^7$ for $\binom{\alpha p - 1}{p - 1} \binom{(\alpha + 1)p - 1}{p - 1}$
-and $\binom{2p - 1}{p - 1}^{-1}$.** Let $p \ge 11$ be a prime and let $\alpha$ be an integer. For
-an integer $x$ and a natural number $r$ write $\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$, let
-$H_{p-1}^{(r)} = \sum_{j=1}^{p-1} 1/j^r$ be the harmonic number of order $r$, and let $v_p$ be the
-$p$-adic valuation on $\mathbb{Q}$. Put
-$$
-X = \binom{\alpha p - 1}{p - 1} \binom{(\alpha + 1)p - 1}{p - 1} - 1 +
-(\alpha p)^2 H_{p-1}^{(2)} - \frac{(\alpha p)^4}{2} \Big(\big(H_{p-1}^{(2)}\big)^2 -
-H_{p-1}^{(4)}\Big)
-$$
-and
-$$
-Y = \binom{2p - 1}{p - 1}^{-1} - 1 - p^2 H_{p-1}^{(2)} -
-\frac{p^4}{2} \Big(\big(H_{p-1}^{(2)}\big)^2 + H_{p-1}^{(4)}\Big).
-$$
-Then either $X = 0$ or $v_p(X) \ge 7$, and either $Y = 0$ or $v_p(Y) \ge 7$.
-
-The paper allows $\alpha \in \mathbb{Z}_p$; only integers $\alpha$ are covered here.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Theorem 13
-(`integers-2026-A32-thm-13`). -/
-public theorem_wanted ringChoose_mul_prime_sub_one_mul_congr (p : ℕ) (α : ℤ) (hp : p.Prime)
-    (hp11 : 11 ≤ p) :
-    let H2 : ℚ := higherHarmonic (p - 1) 2
-    let H4 : ℚ := higherHarmonic (p - 1) 4
-    let A : ℚ := α * p
-    let L : ℚ := ((Ring.choose (α * p - 1) (p - 1) : ℤ) : ℚ) *
-      ((Ring.choose ((α + 1) * p - 1) (p - 1) : ℤ) : ℚ)
-    let R : ℚ := ((2 * p - 1).choose (p - 1) : ℚ)⁻¹
-    (L - (1 - A ^ 2 * H2 + A ^ 4 / 2 * (H2 ^ 2 - H4)) = 0 ∨
-        7 ≤ padicValRat p (L - (1 - A ^ 2 * H2 + A ^ 4 / 2 * (H2 ^ 2 - H4)))) ∧
-      (R - (1 + (p : ℚ) ^ 2 * H2 + (p : ℚ) ^ 4 / 2 * (H2 ^ 2 + H4)) = 0 ∨
-        7 ≤ padicValRat p (R - (1 + (p : ℚ) ^ 2 * H2 + (p : ℚ) ^ 4 / 2 * (H2 ^ 2 + H4))))
 
 /-! ### Higher `p`-adic mean value theorem -/
 
