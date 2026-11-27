@@ -9,3 +9,6 @@
 - [Scale-invariant BFV: leveled FHE without modulus switching](bfv-scale-invariance.md)
 - [Noise management along a BGV modulus chain](bgv-modulus-chain.md)
 - [BGV: leveled fully homomorphic encryption without bootstrapping](bgv-leveled-fhe.md)
+- [Full-RNS BFV decryption with a correction modulus](full-rns-bfv-decryption.md)
+- [Invariant noise of a BFV ciphertext](bfv-invariant-noise.md)
+- [Invariant-noise identity for BFV modulus switching](bfv-modulus-switching-noise.md)
