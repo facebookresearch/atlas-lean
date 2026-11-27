@@ -1,5 +1,7 @@
 # Semistable reduction theorem for abelian varieties
 
+This node is still to be broken down: its statement is precise, but its proof is not.
+
 Let $k$ be a field with algebraic closure $\bar k$. The [split torus](split-torus.md) of rank $r$
 over $k$ is $\mathbb{G}_m^r = \operatorname{Spec} k[\mathbb{Z}^r]$, with the group law of the Hopf
 algebra $k[\mathbb{Z}^r]$. A [torus](is-torus.md) over $k$ is a group scheme $T$ over $k$ whose base
@@ -45,7 +47,8 @@ of $v$ to $K'$, and semistable reduction persists under such an extension of dis
 rings, since the identity component of the Néron model then commutes with base change (Conrad,
 Corollary 4.5) and an extension of an abelian variety by a torus stays one after extending the
 residue field. Conrad's Proposition 6.5 gives such a Galois extension directly: for $N \ge 3$ prime to
-the residue characteristic, $A$ acquires semistable reduction at all places of $K(A[N])$. Conrad
+the residue characteristic, $A$ acquires semistable reduction at every place of $K(A[N])$ lying above
+$v$. Conrad
 calls a smooth connected commutative $k$-group semi-abelian when its base change to $\bar k$ is an
 extension of an abelian variety by a torus, and says that $A$ has semistable reduction when
 $(\mathcal{A}_k)^0$ is semi-abelian; by his Theorem 3.1 the torus and the extension then descend to
@@ -76,7 +79,7 @@ Raynaud's description of the identity component of the Néron model of a Jacobia
 
 ## Expansion
 
-A good expansion follows Conrad and adds pages for the following, which the
+A good expansion states and links the following steps of Conrad's proof, which the
 [Néron model](../neron-model.md) node's expansion also plans:
 
 - the invariance of semistable reduction under isogenies (Proposition 4.1) and under products;

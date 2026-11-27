@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicGeometry.Group.Affine
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
@@ -35,7 +34,7 @@ Definition 2.10.
 
 @[expose] public noncomputable section
 
-namespace WantedExt.AlgebraicGeometry.SemistableReductionWanted
+namespace MathlibExt.AlgebraicGeometry.SemistableReduction
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory CategoryTheory.MonObj
 open CategoryTheory.CartesianMonoidalCategory
@@ -101,4 +100,4 @@ def HasSemistableReduction (R : Type u) [CommRing R] [IsDomain R] [IsDiscreteVal
     (j : G₀ ⟶ (specialFunctor R).obj N.model),
     IsIdentityComponent j ∧ IsExtensionOfAbelianVarietyByTorus G₀
 
-end WantedExt.AlgebraicGeometry.SemistableReductionWanted
+end MathlibExt.AlgebraicGeometry.SemistableReduction
