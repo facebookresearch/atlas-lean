@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS19
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundScherkUnpublished1955Holds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundYKLBMWKCZGS2026TTTDiscoverHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundS1958Holds
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundH2016Holds
 
 @[expose] public section
 
@@ -62,13 +63,6 @@ the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 1/
 
 Source: Erdős 1955; Optimization Problems, Constant 1b. -/
 def upperBound_E1955_half : Prop := C₁ᵦ ≤ (1 : ℝ) / 2
-
-/-- **Statement of Haugland's 2016 upper bound for the minimum-overlap constant.** The
-proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies
-$C_{1b} \le 0.380926$.
-
-Source: Haugland 2016; Optimization Problems, Constant 1b. -/
-def upperBound_H2016 : Prop := C₁ᵦ ≤ (380926 : ℝ) / 1000000
 
 /-- **AlphaEvolve upper bound for the minimum-overlap constant (statement).** The statement that
 the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380924$.
@@ -130,12 +124,6 @@ Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.385694$.
 Source: Haugland, unpublished 1993, recorded by Optimization Problems 1b. -/
 public theorem_wanted upperBound_Haugland_unpublished_1993_holds :
   upperBound_Haugland_unpublished_1993
-
-/-- **Haugland's 2016 upper bound for the minimum-overlap constant.** The continuous Erdős
-minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380926$.
-
-Source: Haugland 2016 and Optimization Problems 1b. -/
-public theorem_wanted upperBound_H2016_holds : upperBound_H2016
 
 /-- **AlphaEvolve upper bound for the minimum-overlap constant.** The continuous Erdős
 minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.380924$.
