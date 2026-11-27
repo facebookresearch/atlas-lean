@@ -18,7 +18,7 @@ $$h_{\mathrm{Fal}}(E/L) = \frac{1}{[L : \mathbb{Q}]} \Bigl( \log \# \bigl( \omeg
   - \frac{1}{2} \sum_{\sigma : L \to \mathbb{C}} \log \Bigl( \frac{i}{2} \int_{E_\sigma(\mathbb{C})} s \wedge \bar s \Bigr) \Bigr)$$
 
 for any nonzero $s \in \omega$; it does not depend on $s$. This is Faltings' original
-normalization, the one of the [stable Faltings height](../not-yet-classified/faltings-height/faltings-height.md)
+normalization, the one of the [stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md)
 in dimension one, but computed with the Néron model of $E$ over $L$ itself, with no extension of $L$.
 
 Let $\Delta_{E/L} \subseteq \mathcal{O}_L$ be the minimal discriminant ideal of $E/L$: its valuation
@@ -49,7 +49,7 @@ $\mathrm{SL}_2(\mathbb{Z})$, so the right-hand side does not depend on the choic
 $\tau_\sigma$.
 
 **Relation with the stable height.** Write $h_F(E)$ for the
-[stable Faltings height](../not-yet-classified/faltings-height/faltings-height.md). Then
+[stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md). Then
 $h_{\mathrm{Fal}}(E/L) \ge h_F(E)$, with equality if and only if $E$ has semistable reduction at every
 finite place of $L$. So $h_F(E) = h_{\mathrm{Fal}}(E/L')$ for any finite extension $L'/L$ over which
 $E$ has semistable reduction everywhere, and when $E$ has good reduction at every finite place of
@@ -120,7 +120,7 @@ $\mathbb{Z} + \mathbb{Z}\tau$ is $\operatorname{Im} \tau$.
 - [Semistable reduction theorem for abelian varieties](../abelian-varieties/semistable-reduction-theorem.md),
   for semistable reduction at a finite place, over the local ring, in the relation with the stable
   height
-- [Stable Faltings height](../not-yet-classified/faltings-height/faltings-height.md), for $h_F(E)$ and
+- [Stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md), for $h_F(E)$ and
   its normalization
 - [Jacobi's product formula for the discriminant of a lattice](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
   for $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2 = (2\pi)^{12} \eta(\tau)^{24}$
