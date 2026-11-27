@@ -51,8 +51,10 @@ inequality). `p_c` is MathlibExt's bond-percolation threshold `criticalProb`.
 
 open Filter Topology
 
-/-- The closed ball `B_G(v, r)` of radius `r` around `v` in the graph metric of `G`, as the induced
-subgraph on `{w | dist(v, w) ≤ r}`. -/
+/-- The induced subgraph on `{w | G.dist v w ≤ r}`. Mathlib's `SimpleGraph.dist` is `0` between
+vertices in different components, so every vertex outside the component of `v` is in this set; for
+connected `G` (as in `expanderLimitPercolationThreshold`) it is the closed ball `B_G(v, r)` of
+radius `r` around `v` in the graph metric. -/
 abbrev ball {V : Type*} (G : SimpleGraph V) (v : V) (r : ℕ) :
     SimpleGraph {w : V // G.dist v w ≤ r} :=
   G.induce {w : V | G.dist v w ≤ r}
@@ -60,21 +62,26 @@ abbrev ball {V : Type*} (G : SimpleGraph V) (v : V) (r : ℕ) :
 /-- Local convergence of graphs (Benjamini's `d_loc`, in the form Hutchcroft uses for transitive
 graphs): for every `r` there is `N` such that for all `n ≥ N`, every vertex `vₙ` of `Gₙ` and every
 vertex `v` of `G`, the ball of radius `r` around `vₙ` in `Gₙ` is isomorphic to the ball of radius
-`r` around `v` in `G` by an isomorphism sending `vₙ` to `v`. -/
+`r` around `v` in `G` by an isomorphism sending `vₙ` to `v`. These are the balls of `ball`, so
+for disconnected graphs they also contain the vertices outside the component of their centre. -/
 def ConvergesLocally {V : ℕ → Type*} (Gs : ∀ n, SimpleGraph (V n)) {W : Type*}
     (G : SimpleGraph W) : Prop :=
   ∀ r : ℕ, ∃ N : ℕ, ∀ n ≥ N, ∀ (vn : V n) (v : W),
     ∃ e : ball (Gs n) vn r ≃g ball G v r, (e ⟨vn, by simp⟩ : W) = v
 
-/-- The law of simple random walk on a locally finite graph started at `o` after `k` steps:
-`walkProb G o k y` is the probability that the walk is at `y` at time `k`. -/
+/-- `walkProb G o 0` is the indicator of `o`, and `walkProb G o (k + 1) y` sums
+`walkProb G o k x / deg x` over the neighbours `x` of `y`. When `o` has positive degree this is the
+law of simple random walk on the locally finite graph `G` started at `o`: `walkProb G o k y` is the
+probability that the walk is at `y` at time `k`. At an isolated root `o` no vertex has `o` as a
+neighbour, so every positive step has mass `0`. -/
 noncomputable def walkProb {V : Type*} [DecidableEq V] (G : SimpleGraph V) [G.LocallyFinite]
     (o : V) : ℕ → V → ℝ
   | 0 => fun y => if y = o then 1 else 0
   | k + 1 => fun y => ∑ x ∈ G.neighborFinset y, walkProb G o k x / G.degree x
 
-/-- The spectral radius `ρ(G) = lim sup_n p_{2n}(o, o)^{1/(2n)}` of simple random walk on `G`, seen
-from the root `o` (for transitive graphs it does not depend on the root). -/
+/-- `lim sup_n walkProb G o (2n) o ^ (1/(2n))`. When `o` has positive degree it is the spectral
+radius `ρ(G) = lim sup_n p_{2n}(o, o)^{1/(2n)}` of simple random walk on `G`, seen from the root
+`o` (for transitive graphs it does not depend on the root); at an isolated root it is `0`. -/
 noncomputable def spectralRadius {V : Type*} [DecidableEq V] (G : SimpleGraph V) [G.LocallyFinite]
     (o : V) : ℝ :=
   limsup (fun n : ℕ => walkProb G o (2 * n) o ^ ((1 : ℝ) / (2 * n))) atTop

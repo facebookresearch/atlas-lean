@@ -56,8 +56,10 @@ noncomputable def powerIterate {n : ℕ} (C : Matrix (Fin n) (Fin n) ℂ) (x₀ 
   | 0 => x₀
   | t + 1 => phaseProjection (C *ᵥ powerIterate C x₀ t)
 
-/-- `x₀` is a leading eigenvector of the Hermitian matrix `C`, scaled to `‖x₀‖₂ = √n`: it maximizes
-the Rayleigh quotient `x* C x` over the vectors with `‖x‖₂² = n`. -/
+/-- `x₀` satisfies `‖x₀‖₂² = n` and maximizes `x* C x` over the vectors with `‖x‖₂² = n`. For
+`n > 0` and Hermitian `C` this says that `x₀` is a leading eigenvector of `C` scaled to
+`‖x₀‖₂ = √n` (the maximizers of the Rayleigh quotient on that sphere); for `n = 0` the empty
+vector satisfies it, although a space of dimension `0` has no eigenvector. -/
 def IsScaledLeadingEigenvector {n : ℕ} (C : Matrix (Fin n) (Fin n) ℂ) (x₀ : Fin n → ℂ) : Prop :=
   ∑ k, ‖x₀ k‖ ^ 2 = n ∧ ∀ y : Fin n → ℂ, ∑ k, ‖y k‖ ^ 2 = n → quadForm C y ≤ quadForm C x₀
 

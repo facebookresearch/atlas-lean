@@ -39,11 +39,16 @@ it is at most `σ_*(X)`.
 open MeasureTheory ProbabilityTheory Matrix
 open scoped Matrix.Norms.L2Operator
 
-/-- `σ = ‖∑ₖ Aₖ²‖^{1/2}`, with the spectral norm. -/
+/-- `σ = ‖∑ₖ Aₖ²‖^{1/2}`, with the spectral norm, for arbitrary real `d × d` matrices `Aₖ`. For
+symmetric `Aₖ`, `∑ₖ Aₖ² = E[X²]` for the Gaussian series `X = ∑ₖ gₖ Aₖ`, so `σ` is its matrix
+variance (Bandeira, equation (36)). For nonsymmetric `Aₖ` it is not: the single coefficient
+`A = E₁₂` has `A² = 0`, while `E[(g A)(g A)ᵀ] = E₁₁`. -/
 noncomputable def sigma {d n : ℕ} (A : Fin n → Matrix (Fin d) (Fin d) ℝ) : ℝ :=
   Real.sqrt ‖∑ k, A k * A k‖
 
-/-- The weak variance `σ_* = max_{‖v‖ = 1} (∑ₖ (vᵀ Aₖ v)²)^{1/2}` (Bandeira, Definition 4.15). -/
+/-- `σ_* = sup_{‖v‖ = 1} (∑ₖ (vᵀ Aₖ v)²)^{1/2}` for arbitrary real `d × d` matrices `Aₖ` (`0` when
+`d = 0`). For symmetric `Aₖ` it is the weak variance of the Gaussian series `∑ₖ gₖ Aₖ` (Bandeira,
+Definition 4.15); for nonsymmetric `Aₖ` only the symmetric part of each `Aₖ` enters it. -/
 noncomputable def sigmaStar {d n : ℕ} (A : Fin n → Matrix (Fin d) (Fin d) ℝ) : ℝ :=
   ⨆ (v : Fin d → ℝ) (_ : ∑ i, v i ^ 2 = 1), Real.sqrt (∑ k, (v ⬝ᵥ (A k *ᵥ v)) ^ 2)
 

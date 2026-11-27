@@ -55,18 +55,25 @@ def killedOn {n : ℕ} (P : Matrix (Fin n) (Fin n) ℝ) (A : Finset (Fin n)) :
     Matrix (Fin n) (Fin n) ℝ :=
   fun y z => if y ∈ A ∨ z ∈ A then 0 else P y z
 
-/-- `P_x(τ_A > t)` for the chain with transition matrix `P` started at `x`, where
-`τ_A = min {s | X_s ∈ A}`: the probability that `X_0, …, X_t` all lie outside `A`. -/
+/-- `0` when `x ∈ A`, otherwise the row sum `∑ z, (killedOn P A ^ t) x z`, for an arbitrary real
+matrix `P`. When `P` is a transition matrix this is `P_x(τ_A > t)` for the chain started at `x`,
+where `τ_A = min {s | X_s ∈ A}`: the probability that `X_0, …, X_t` all lie outside `A`. -/
 noncomputable def notYetHit {n : ℕ} (P : Matrix (Fin n) (Fin n) ℝ) (A : Finset (Fin n))
     (x : Fin n) (t : ℕ) : ℝ :=
   if x ∈ A then 0 else ∑ z, (killedOn P A ^ t) x z
 
-/-- The expected hitting time `E_x[τ_A] = ∑_{t ≥ 0} P_x(τ_A > t)` (in `[0, ∞]`). -/
+/-- The sum `∑_{t ≥ 0} notYetHit P A x t` in `[0, ∞]`, where `ENNReal.ofReal` takes the positive
+part of each survival term before summing, so it is defined for an arbitrary real matrix `P`. For
+a transition matrix (nonnegative entries, rows summing to `1`) each term is `P_x(τ_A > t)` and the
+sum is the expected hitting time `E_x[τ_A] = ∑_{t ≥ 0} P_x(τ_A > t)`. -/
 noncomputable def expectedHittingTime {n : ℕ} (P : Matrix (Fin n) (Fin n) ℝ)
     (A : Finset (Fin n)) (x : Fin n) : ℝ≥0∞ :=
   ∑' t, ENNReal.ofReal (notYetHit P A x t)
 
-/-- `T(1/2) = max {E_x[τ_A] : x a state, A a set of states with π(A) ≥ 1/2}`. -/
+/-- The supremum of `expectedHittingTime P A x` over states `x` and sets `A` with
+`∑_{y ∈ A} π y ≥ 1/2` (`0` when no pair qualifies), for an arbitrary real matrix `P` and weights
+`π`. For a transition matrix `P` and a probability vector `π` it is
+`T(1/2) = max {E_x[τ_A] : x a state, A a set of states with π(A) ≥ 1/2}`. -/
 noncomputable def halfMassHittingTime {n : ℕ} (P : Matrix (Fin n) (Fin n) ℝ)
     (π : Fin n → ℝ) : ℝ≥0∞ :=
   ⨆ (x : Fin n) (A : Finset (Fin n)) (_ : (1 : ℝ) / 2 ≤ ∑ y ∈ A, π y),

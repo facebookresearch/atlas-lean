@@ -40,14 +40,21 @@ list's remark).
 
 open MeasureTheory ProbabilityTheory
 
-/-- The real random variable `X` (valued in `ℝ¹ = EuclideanSpace ℝ (Fin 1)`) has a density with
-respect to Lebesgue measure whose entropy integrand `f log f` is integrable. -/
+/-- `HasPDF X P volume` and integrability of `f log f` for `f x = (pdf X P volume x).toReal`: the
+law of `X` (valued in `ℝ¹ = EuclideanSpace ℝ (Fin 1)`) under `P` has a density `f` with respect to
+Lebesgue measure, a probability density when `P` is a probability measure, and the entropy
+integrand `f log f` is integrable. -/
 def HasFiniteEntropyDensity {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω)
     (X : Ω → EuclideanSpace ℝ (Fin 1)) : Prop :=
   HasPDF X P volume ∧
     Integrable (fun x => (pdf X P volume x).toReal * Real.log (pdf X P volume x).toReal) volume
 
-/-- The differential entropy `H(X) = -∫ f log f` of the density `f` of `X`. -/
+/-- `-∫ f log f` for `f x = (pdf X P volume x).toReal`, defined with no density assumption: `pdf`
+is the Radon–Nikodym derivative, with respect to Lebesgue measure, of the totalised pushforward
+`P.map X` (a Dirac mass at an arbitrary point when `X` is not almost everywhere measurable and
+`P ≠ 0`); that derivative is `0` without a Lebesgue decomposition, and `toReal` reads `∞` as `0`.
+When `HasPDF X P volume` holds, `f` is a density of the law of `X` under `P`, a probability density
+when `P` is a probability measure, and this is the differential entropy `H(X) = -∫ f log f`. -/
 noncomputable def entropy {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω)
     (X : Ω → EuclideanSpace ℝ (Fin 1)) : ℝ :=
   MathlibExt.Probability.IsotropicConstant.differentialEntropy fun x => (pdf X P volume x).toReal

@@ -46,9 +46,11 @@ def OnShortNontrivialCycle {V : Type*} (G : SimpleGraph V) (L : ℕ) (x : V) : P
   ∃ w : G.Walk x x, 0 < w.length ∧ w.length ≤ L ∧
     ∀ i : ℕ, 0 < i → i < w.length → w.getVert (i - 1) ≠ w.getVert (i + 1)
 
-/-- `G` is Ramanujan of degree `d`: the spectral radius `limsup_n p_n(o, o)^{1/n}` of simple random
-walk, with `p_n(o, o) = (number of closed walks of length n at o) / dⁿ`, equals `2 √(d - 1) / d`,
-the spectral radius of the `d`-regular tree. -/
+/-- The equality `limsup_n (walkCount G o o n / dⁿ)^{1/n} = 2 √(d - 1) / d`, with no hypothesis on
+`G`. When `G` is `d`-regular, `walkCount G o o n / dⁿ` is the return probability `p_n(o, o)` of
+simple random walk and the left side is its spectral radius; for `d ≥ 2` the right side is the
+spectral radius of the `d`-regular tree (for `d ≤ 1` it is `0`), and then the equality says that
+`G` is Ramanujan of degree `d`. -/
 def IsRamanujan {V : Type*} (G : SimpleGraph V) (d : ℕ) (o : V) : Prop :=
   Filter.limsup (fun n : ℕ => ((walkCount G o o n : ℝ) / (d : ℝ) ^ n) ^ ((1 : ℝ) / n))
       Filter.atTop = 2 * Real.sqrt ((d : ℝ) - 1) / d
