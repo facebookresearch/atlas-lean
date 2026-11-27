@@ -1,0 +1,5 @@
+# Erasure commutes with agreeing simultaneous substitutions
+
+The erasure of an intrinsically typed term (a term of type $A$ in a context $\Gamma$, a list of simple types) is the raw term obtained by replacing each variable by its de Bruijn index (its position in $\Gamma$, counting from $0$ at the front), keeping applications, and keeping each lambda's parameter type as annotation. Raw simultaneous substitution applies a map $\sigma : \mathbb{N} \to$ raw terms by $\mathrm{var}\,n \mapsto \sigma(n)$, homomorphically on applications, and $\mathrm{lam}\,A\,t \mapsto \mathrm{lam}\,A\,(t[\sigma^{\uparrow}])$, where $\sigma^{\uparrow}$ sends $0$ to $\mathrm{var}\,0$ and $n+1$ to $\sigma(n)$ renamed by the successor map. A typed substitution $\sigma$ from $\Gamma$ to $\Delta$ agrees with a raw substitution $s$ when the erasure of $\sigma(x)$ is $s(i_x)$ for every variable $x$, with $i_x$ the de Bruijn index of $x$.
+
+If $\sigma$ agrees with $s$, then for every term $t$ of type $A$ in $\Gamma$, the erasure of the typed substitution of $\sigma$ into $t$ equals the raw substitution of $s$ into the erasure of $t$.

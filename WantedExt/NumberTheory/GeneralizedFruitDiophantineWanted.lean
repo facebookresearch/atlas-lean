@@ -26,18 +26,6 @@ namespace MetaMathlibExt
 
 open NumberField Filter Topology
 
-/-- **Quotients by powers of a prime in $T_K$.** Let $K$ be a number field with ring of integers
-$\mathcal{O}_K$, and let $P \in T_K$, that is, $P$ is a prime ideal of $\mathcal{O}_K$ lying over
-$2$ with ramification index $1$ and inertia degree $1$ over $\mathbb{Z}$. Then for every $n \ge 1$
-the ring $\mathcal{O}_K / P^n$ is isomorphic to $\mathbb{Z} / 2^n \mathbb{Z}$.
-
-Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
-Number Fields*, INTEGERS 26 (2026), Article A21, Lemma 1 (`integers-2026-A21-lem-1`). -/
-public theorem_wanted ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow (K : Type*) [Field K]
-    [NumberField K] (P : Ideal (𝓞 K)) (hP : P ∈ twoUnramifiedDegreeOnePrimes K) (n : ℕ)
-    (hn : 1 ≤ n) :
-    Nonempty ((𝓞 K ⧸ P ^ n) ≃+* ZMod (2 ^ n))
-
 /-- **Unramified degree-one primes above $2$ in quadratic fields.** Let $t \ne 1$ be a squarefree
 integer, and let $K$ be a number field of degree $2$ over $\mathbb{Q}$ that contains an element
 $\alpha$ with $\alpha^2 = t$, so that $K = \mathbb{Q}(\sqrt{t})$. Then the set $T_K$ of prime
@@ -102,16 +90,6 @@ public theorem_wanted short_weierstrass_torsion_integral (W : WeierstrassCurve �
     (hm : 2 ≤ addOrderOf (WeierstrassCurve.Affine.Point.some x y h)) :
     ∃ a b : ℤ, x = a ∧ y = b
 
-/-- **The Weierstrass curve $E_\alpha$ of the generalized fruit equation.** For a commutative ring
-$R$ and $\alpha \in R$, $E_\alpha$ is the Weierstrass curve over $R$ with coefficients
-$a_1 = -\alpha$, $a_2 = a_3 = a_4 = 0$ and $a_6 = -(\alpha^2 + 5)$, that is, the curve
-$y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$.
-
-Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
-Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 4, Equation (4.1). -/
-public def fruitWeierstrassCurve {R : Type*} [CommRing R] (α : R) : WeierstrassCurve R :=
-  ⟨-α, 0, 0, 0, -(α ^ 2 + 5)⟩
-
 /-- **Discriminant of the curve $E_\alpha$.** For every commutative ring $R$ and every
 $\alpha \in R$, the Weierstrass curve $E_\alpha : y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$ over $R$
 has discriminant $\alpha^8 + 5\alpha^6 - 432\alpha^4 - 4320\alpha^2 - 10800$.
@@ -143,19 +121,6 @@ public theorem_wanted fruitWeierstrassCurve_not_isOfFinOrder_of_two_dvd (K : Typ
       (algebraMap (𝓞 K) K x) y)
     (hx : 2 ∣ x) (hfin : IsOfFinAddOrder (WeierstrassCurve.Affine.Point.some _ _ h)) :
     IsPrimePow (addOrderOf (WeierstrassCurve.Affine.Point.some _ _ h))
-
-/-- **Points of $E_\alpha(\mathbb{Q})$ with even numerator have infinite order.** Let $\alpha$ be an
-integer with $\alpha^8 + 5\alpha^6 - 432\alpha^4 - 4320\alpha^2 - 10800 \neq 0$, and let $E_\alpha$
-be the curve $y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$ over $\mathbb{Q}$. If
-$P = (x_0, y_0) \in E_\alpha(\mathbb{Q})$ is a point such that $x_0$, written in lowest terms, has
-even numerator, then $P$ has infinite order.
-
-Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
-Number Fields*, INTEGERS 26 (2026), Article A21, Corollary 3 (`integers-2026-A21-cor-3`). -/
-public theorem_wanted fruitWeierstrassCurve_rat_not_isOfFinOrder_of_two_dvd_num (α : ℤ)
-    (hα : α ^ 8 + 5 * α ^ 6 - 432 * α ^ 4 - 4320 * α ^ 2 - 10800 ≠ 0) (x y : ℚ)
-    (h : (fruitWeierstrassCurve (α : ℚ)).toAffine.Nonsingular x y) (hx : 2 ∣ x.num) :
-    ¬ IsOfFinAddOrder (WeierstrassCurve.Affine.Point.some x y h)
 
 end
 

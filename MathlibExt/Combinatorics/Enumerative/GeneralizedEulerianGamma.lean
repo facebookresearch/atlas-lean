@@ -162,27 +162,36 @@ private lemma subst_ok : HasSubst (base - 1) := by
   apply HasSubst.of_constantCoeff_zero'
   simp [const_base]
 
-private lemma const_gen (q : ℚ) : constantCoeff (gen q) = 1 := by
+private lemma const_binomial_subst (q : ℚ) {u : Series} (hu : constantCoeff u = 1) :
+    constantCoeff ((binomialSeries ℚ q).subst (u - 1)) = 1 := by
   change MvPowerSeries.constantCoeff _ = _
-  rw [gen, constantCoeff_subst_of_constantCoeff_zero]
+  rw [constantCoeff_subst_of_constantCoeff_zero]
   · simp
-  · change constantCoeff (base - 1) = 0
-    simp [const_base]
+  · change constantCoeff (u - 1) = 0
+    simp [hu]
 
-private lemma deriv_gen (q : ℚ) : derivative (gen q) = C q * slope * gen q := by
+private lemma const_gen (q : ℚ) : constantCoeff (gen q) = 1 :=
+  const_binomial_subst q const_base
+
+private lemma deriv_binomial_subst (q : ℚ) {u s : Series} (hu : HasSubst (u - 1))
+    (hd : derivative u = u * s) :
+    derivative ((binomialSeries ℚ q).subst (u - 1)) =
+      C q * s * (binomialSeries ℚ q).subst (u - 1) := by
   have h : binomialSeries ℚ q = binomialSeries ℚ (q - 1) * (1 + X) := by
     convert binomialSeries_add (A := ℚ) (q - 1) 1 using 1
     · rw [sub_add_cancel]
     · rw [← Nat.cast_one (R := ℚ), binomialSeries_nat, pow_one]
-  have hs : ((1 + X : Series).subst (base - 1) : Series) = base := by
-    rw [← coe_substAlgHom subst_ok, map_add, map_one, substAlgHom_X]
+  have hs : ((1 + X : Series).subst (u - 1) : Series) = u := by
+    rw [← coe_substAlgHom hu, map_add, map_one, substAlgHom_X]
     ring
-  unfold gen
-  rw [derivative_subst subst_ok, deriv_binomial, subst_mul subst_ok, subst_C,
-    map_sub, derivative_one, sub_zero, deriv_base]
-  conv_rhs => rw [h, subst_mul subst_ok, hs]
+  rw [derivative_subst hu, deriv_binomial, subst_mul hu, subst_C,
+    map_sub, derivative_one, sub_zero, hd]
+  conv_rhs => rw [h, subst_mul hu, hs]
   change C q * _ * _ = _
   ring
+
+private lemma deriv_gen (q : ℚ) : derivative (gen q) = C q * slope * gen q :=
+  deriv_binomial_subst q subst_ok deriv_base
 
 private lemma coefficient (q t : ℚ) (n : ℕ) :
     generalizedEulerianP q t (-1) 1 n = constantCoeff (derivative^[n] (gen q)) := by
@@ -257,17 +266,16 @@ private lemma deriv_prod {ι : Type} [DecidableEq ι] (s : Finset ι) (f : ι �
 -- Splitting an edge replaces it by a fall followed by a rise. Summing over the
 -- color of the new vertex gives the derivative of the original edge weight.
 private lemma insert_sum {α : Type} [Fintype α] (K : Kernel α)
-    (hfix : ∑ b, K.flat b b = slope)
     (hd : ∀ {m : ℕ} (i j : Fin m) a b,
       derivative (K.edge i j a b) = ∑ v, K.down a v * K.up v b)
     (q : ℚ) {n : ℕ} (w : Equiv.Perm (Fin n)) (c : Fin n → α) :
     ∑ p : Fin (n + 1), ∑ b : α,
         K.weight q (Equiv.Perm.decomposeFin.symm (p, w)) (Fin.cons b c) =
-      C q * slope * K.weight q w c + derivative (K.weight q w c) := by
+      C q * (∑ b, K.flat b b) * K.weight q w c + derivative (K.weight q w c) := by
   rw [Fin.sum_univ_succ]
   congr 1
   · simp_rw [fixed_insert]
-    rw [← Finset.sum_mul, ← Finset.mul_sum, hfix]
+    rw [← Finset.sum_mul, ← Finset.mul_sum]
   · rw [← Equiv.sum_comp w (fun j => ∑ b : α,
       K.weight q (Equiv.Perm.decomposeFin.symm (j.succ, w)) (Fin.cons b c))]
     simp_rw [split_insert]
@@ -278,12 +286,11 @@ private lemma insert_sum {α : Type} [Fintype α] (K : Kernel α)
       Finset.mul_sum]
     exact Finset.sum_congr rfl fun _ _ => by ring
 
-private lemma expand {α : Type} [Fintype α] (K : Kernel α)
-    (hfix : ∑ b, K.flat b b = slope)
+private lemma expand_derivatives {α : Type} [Fintype α] (K : Kernel α) (q : ℚ) (g : Series)
+    (hg : derivative g = C q * (∑ b, K.flat b b) * g)
     (hd : ∀ {m : ℕ} (i j : Fin m) a b,
-      derivative (K.edge i j a b) = ∑ v, K.down a v * K.up v b)
-    (q : ℚ) (n : ℕ) :
-    derivative^[n] (gen q) = gen q * ∑ w : Equiv.Perm (Fin n), ∑ c, K.weight q w c := by
+      derivative (K.edge i j a b) = ∑ v, K.down a v * K.up v b) (n : ℕ) :
+    derivative^[n] g = g * ∑ w : Equiv.Perm (Fin n), ∑ c, K.weight q w c := by
   classical
   induction n with
   | zero =>
@@ -291,7 +298,7 @@ private lemma expand {α : Type} [Fintype α] (K : Kernel α)
       simp [cycleQuotientCount_eq]
     simp [Kernel.weight, Finset.univ_unique, hc, Subsingleton.elim (default : Equiv.Perm (Fin 0)) 1]
   | succ n ih =>
-    rw [Function.iterate_succ_apply', ih, Derivation.leibniz, deriv_gen]
+    rw [Function.iterate_succ_apply', ih, Derivation.leibniz, hg]
     simp only [smul_eq_mul, map_sum]
     have splitColors (v : Equiv.Perm (Fin (n + 1))) :
         ∑ c, K.weight q v c = ∑ c : Fin n → α, ∑ b : α, K.weight q v (Fin.cons b c) := by
@@ -305,11 +312,19 @@ private lemma expand {α : Type} [Fintype α] (K : Kernel α)
     have hs (w : Equiv.Perm (Fin n)) :
         ∑ p : Fin (n + 1), ∑ c : Fin n → α, ∑ b : α,
             K.weight q (Equiv.Perm.decomposeFin.symm (p, w)) (Fin.cons b c) =
-          ∑ c, (C q * slope * K.weight q w c + derivative (K.weight q w c)) := by
+          ∑ c, (C q * (∑ b, K.flat b b) * K.weight q w c + derivative (K.weight q w c)) := by
       rw [Finset.sum_comm]
-      simp_rw [insert_sum K hfix hd]
+      simp_rw [insert_sum K hd]
     simp_rw [hs, Finset.sum_add_distrib, ← Finset.mul_sum]
     ring
+
+private lemma expand {α : Type} [Fintype α] (K : Kernel α)
+    (hfix : ∑ b, K.flat b b = slope)
+    (hd : ∀ {m : ℕ} (i j : Fin m) a b,
+      derivative (K.edge i j a b) = ∑ v, K.down a v * K.up v b)
+    (q : ℚ) (n : ℕ) :
+    derivative^[n] (gen q) = gen q * ∑ w : Equiv.Perm (Fin n), ∑ c, K.weight q w c :=
+  expand_derivatives K q (gen q) (by rw [hfix, deriv_gen]) hd n
 
 private noncomputable def signedKernel : Kernel Unit where
   up _ _ := slope - 1
@@ -522,6 +537,145 @@ theorem generalizedEulerianP_neg_one (q t : ℚ) (n : ℕ) :
       rintro ⟨_, he, hd⟩
       exact h ⟨by rw [he], hd⟩
     simp only [ite_eq_right h, ite_eq_right h', mul_zero]
+
+namespace generalizedEulerianP_eq_sum_perm
+
+open generalizedEulerianP_neg_one
+
+private noncomputable def expAt (a : ℚ) : Series := rescale a (exp ℚ)
+
+private lemma const_expAt (a : ℚ) : constantCoeff (expAt a) = 1 := by
+  rw [← coeff_zero_eq_constantCoeff_apply, expAt, coeff_rescale]
+  simp
+
+private lemma deriv_expAt (a : ℚ) : derivative (expAt a) = C a * expAt a := by
+  ext n
+  have h := congrArg (coeff n) (derivative_exp ℚ)
+  rw [coeff_derivative] at h
+  simp only [expAt, coeff_derivative, coeff_rescale, coeff_C_mul, pow_succ]
+  linear_combination a ^ n * a * h
+
+private noncomputable def den (x y : ℚ) : Series := C x * expAt y - C y * expAt x
+
+private noncomputable def base (x y : ℚ) : Series := C (x - y) * (den x y)⁻¹
+
+private noncomputable def slope (x y : ℚ) : Series := -derivative (den x y) * (den x y)⁻¹
+
+private lemma const_den (x y : ℚ) : constantCoeff (den x y) = x - y := by
+  simp [den, const_expAt]
+
+private lemma const_base {x y : ℚ} (hxy : x ≠ y) : constantCoeff (base x y) = 1 := by
+  simp [base, constantCoeff_inv, const_den, sub_ne_zero.mpr hxy]
+
+private lemma deriv_den (x y : ℚ) : derivative (den x y) = C (x * y) * (expAt y - expAt x) := by
+  simp only [den, map_sub, Derivation.leibniz, derivative_C, smul_eq_mul,
+    deriv_expAt, map_mul]
+  ring
+
+private lemma const_slope (x y : ℚ) : constantCoeff (slope x y) = 0 := by
+  simp [slope, deriv_den, const_expAt]
+
+-- Differentiating −den′/den uses the second-order equation for the two exponentials.
+private lemma deriv_slope {x y : ℚ} (hxy : x ≠ y) :
+    derivative (slope x y) = (slope x y + C y) * (slope x y + C x) := by
+  have hd : derivative (derivative (den x y)) =
+      C (x + y) * derivative (den x y) - C (x * y) * den x y := by
+    rw [deriv_den, den]
+    simp only [map_sub, Derivation.leibniz, derivative_C, smul_eq_mul, deriv_expAt,
+      map_add, map_mul]
+    ring
+  have hu := PowerSeries.mul_inv_cancel (den x y) (by rw [const_den]; exact sub_ne_zero.mpr hxy)
+  simp only [slope, Derivation.leibniz, map_neg, derivative_inv', hd, smul_eq_mul, map_add, map_mul]
+  linear_combination C x * C y * hu
+
+private lemma deriv_base (x y : ℚ) : derivative (base x y) = base x y * slope x y := by
+  simp only [base, slope, Derivation.leibniz, derivative_C, derivative_inv', smul_eq_mul]
+  ring
+
+private lemma const_series (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) :
+    constantCoeff (generalizedEulerianSeries q t x y) = 1 := by
+  change constantCoeff ((binomialSeries ℚ q).subst (base x y - 1) * expAt ((x + y) * q * t)) = 1
+  rw [map_mul, const_expAt, mul_one]
+  exact const_binomial_subst q (const_base hxy)
+
+private lemma deriv_series (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) :
+    derivative (generalizedEulerianSeries q t x y) =
+      C q * (slope x y + C ((x + y) * t)) * generalizedEulerianSeries q t x y := by
+  have hs : HasSubst (base x y - 1) := HasSubst.of_constantCoeff_zero' (by simp [const_base hxy])
+  have hb := deriv_binomial_subst q hs (deriv_base x y)
+  change derivative ((binomialSeries ℚ q).subst (base x y - 1) * expAt ((x + y) * q * t)) =
+    _ * _ * ((binomialSeries ℚ q).subst (base x y - 1) * expAt ((x + y) * q * t))
+  simp only [Derivation.leibniz, smul_eq_mul, hb, deriv_expAt, map_mul]
+  ring
+
+-- Splitting an edge inserts a fall and a rise. At z = 0 the slope vanishes, leaving
+-- the weights x, (x + y)t and y for a rise, a fixed point and a fall, respectively.
+private noncomputable def kernel (t x y : ℚ) : Kernel Unit where
+  up _ _ := slope x y + C x
+  flat _ _ := slope x y + C ((x + y) * t)
+  down _ _ := slope x y + C y
+
+private lemma card_falls {n : ℕ} (w : Equiv.Perm (Fin n)) :
+    (Finset.univ.filter fun i ↦ w i < i).card = excedanceCount n w⁻¹ := by
+  rw [excedanceCount, ← Fintype.card_subtype, ← Fintype.card_subtype]
+  exact Fintype.card_congr (w.subtypeEquiv fun i ↦ by simp)
+
+private lemma const_weight (q t x y : ℚ) {n : ℕ} (w : Equiv.Perm (Fin n)) :
+    constantCoeff ((kernel t x y).weight q w fun _ ↦ ()) =
+      q ^ cycleQuotientCount w * t ^ Fintype.card (Function.fixedPoints w) *
+        x ^ excedanceCount n w * y ^ excedanceCount n w⁻¹ *
+        (x + y) ^ Fintype.card (Function.fixedPoints w) := by
+  rw [Kernel.weight, map_mul, constantCoeff_C, map_prod]
+  have h (i : Fin n) : constantCoeff ((kernel t x y).factor w (fun _ ↦ ()) i) =
+      (if i < w i then x else 1) * (if w i < i then y else 1) *
+        (if w i = i then (x + y) * t else 1) := by
+    rcases lt_trichotomy i (w i) with hi | hi | hi
+    · simp [Kernel.factor, Kernel.edge, kernel, hi, hi.ne', hi.not_gt, const_slope]
+    · simp [Kernel.factor, Kernel.edge, kernel, ← hi, const_slope]
+    · simp [Kernel.factor, Kernel.edge, kernel, hi, hi.ne, hi.ne', hi.not_gt, const_slope]
+  have hfix : (Finset.univ.filter fun i ↦ w i = i).card = Fintype.card (Function.fixedPoints w) :=
+    (Fintype.card_subtype fun i ↦ w i = i).symm
+  simp_rw [h, Finset.prod_mul_distrib, Finset.prod_ite, Finset.prod_const_one, mul_one,
+    Finset.prod_const]
+  rw [card_falls, hfix, mul_pow]
+  change q ^ _ * (x ^ excedanceCount n w * y ^ _ * _) = _
+  ring
+
+private lemma coefficient (q t : ℚ) {x y : ℚ} (hxy : x ≠ y) (n : ℕ) :
+    generalizedEulerianP q t x y n =
+      ∑ w : Equiv.Perm (Fin n), constantCoeff ((kernel t x y).weight q w fun _ ↦ ()) := by
+  rw [generalizedEulerianP, ← constantCoeff_iterate_derivative,
+    expand_derivatives (kernel t x y) q (generalizedEulerianSeries q t x y)]
+  · simp [const_series q t hxy, map_sum]
+  · simpa [kernel] using deriv_series q t hxy
+  · intro m i j a b
+    simp only [Kernel.edge]
+    split_ifs <;> simp [kernel, deriv_slope hxy]
+
+end generalizedEulerianP_eq_sum_perm
+
+/-- **Permutation expansion of the generalized Eulerian polynomials.** Let $P_n(q, t; x, y)$ be
+the generalized Eulerian polynomial and let $S_n$ be the set of permutations of
+$\{0, 1, \dots, n-1\}$. For $w \in S_n$ write $\mathrm{cyc}(w)$ for the number of cycles of $w$
+(fixed points counted as cycles), $\mathrm{fix}(w)$ for the number of fixed points of $w$, and
+$\mathrm{exc}(w)$ for the number of excedances of $w$, the points $i$ with $w(i) > i$. Then for
+all rational numbers $q, t, x, y$ with $x \ne y$ and every $n \ge 0$,
+$$
+P_n(q, t; x, y) = \sum_{w \in S_n} q^{\mathrm{cyc}(w)} t^{\mathrm{fix}(w)} x^{\mathrm{exc}(w)}
+y^{\mathrm{exc}(w^{-1})} (x + y)^{\mathrm{fix}(w)}.
+$$
+
+Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2
+(`jis-2024-24.1.5-thm-2`). -/
+public theorem generalizedEulerianP_eq_sum_perm (q t x y : ℚ) (hxy : x ≠ y) (n : ℕ) :
+    generalizedEulerianP q t x y n =
+      ∑ w : Equiv.Perm (Fin n),
+        q ^ cycleQuotientCount w * t ^ Fintype.card (Function.fixedPoints w) *
+          x ^ excedanceCount n w * y ^ excedanceCount n w⁻¹ *
+          (x + y) ^ Fintype.card (Function.fixedPoints w) := by
+  rw [generalizedEulerianP_eq_sum_perm.coefficient q t hxy n]
+  exact Finset.sum_congr rfl fun w _ ↦ generalizedEulerianP_eq_sum_perm.const_weight q t x y w
 
 end
 

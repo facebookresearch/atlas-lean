@@ -1,0 +1,3 @@
+# Feasible instances of TWO-PROCESSOR UNIT-TIME JOB-SHOP TOTAL COMPLETION TIME WITH CHAINS
+
+An instance is feasible when there are start times one-to-one on the tasks of each processor, with a task starting after another task of the same processor starting no earlier than it finishes, each task of a job starting no earlier than the previous task of the job finishes, for every listed arc $(j, j')$ the first task of job $j'$ starting no earlier than the last task of job $j$ finishes, and the job completion times (finishing times of last tasks) summing to at most $K$. A job with no tasks has no first or last task, so an arc involving it imposes nothing and its completion time is unconstrained and can be taken to be $0$.

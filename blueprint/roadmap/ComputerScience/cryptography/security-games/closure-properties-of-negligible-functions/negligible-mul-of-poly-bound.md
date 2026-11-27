@@ -1,0 +1,3 @@
+# Products of negligible functions with polynomially bounded rational sequences
+
+Let $e, g : \mathbb{N} \to \mathbb{Q}$, let $e$ be negligible, and suppose there are a fixed $d \in \mathbb{N}$ and $N$ with $0 \le g(n) \le n^d$ for all $n \ge N$. Then $n \mapsto g(n) \, e(n)$ is negligible. Here $e : \mathbb{N} \to \mathbb{Q}$ is negligible when for every $c$ there is $N$ with $e(n) \le 1/n^c$ for all $n \ge N$; this is a one-sided bound, and $e$ itself need not be nonnegative. An eventually polynomially bounded multiplier extends the polynomial case of Katz and Lindell, Proposition 3.6; the real-valued counterpart is [products of negligible advantages with polynomially bounded real sequences](mul-of-poly-bound.md).
