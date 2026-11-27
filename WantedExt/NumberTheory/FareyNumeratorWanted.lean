@@ -47,6 +47,8 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.Farey
 public import MathlibExt.NumberTheory.FareyNumerator
 public import MathlibExt.NumberTheory.FareyNumeratorFormula
+public import MathlibExt.NumberTheory.FareyNumeratorPeriod
+public import MathlibExt.NumberTheory.FareyNumeratorPrimePow
 
 set_option autoImplicit false
 
@@ -110,29 +112,6 @@ INTEGERS 24 (2024), Article A63, Section 1 (the
 listing of `F_5`). -/
 theorem fareyRank_five_half : fareyRank 5 (1 / 2) = 4 := by
   decide +kernel
-
-/-- **Corollary 1**: for a prime `p` and positive `m`
-with `p ^ m ≤ n`,
-`N_n(p^m) = ⌈(n - p^m)(1 - 1/p)⌉`.
-
-Source: Rogelio Tomás García, "Farey Fractions with
-Equal Numerators and the Rank of Unit Fractions",
-INTEGERS 24 (2024), Article A63, Corollary 1. -/
-theorem_wanted fareyNumeratorCount_prime_pow (p m n : ℕ)
-    (hp : p.Prime) (hm : 0 < m) (hpn : p ^ m ≤ n) :
-    (fareyNumeratorCount n (p ^ m) : ℤ) =
-      ⌈((n : ℚ) - (p : ℚ) ^ m) * (1 - 1 / (p : ℚ))⌉
-
-/-- **Corollary 2**: for `0 < h < n` and `m ≥ 0`,
-`N_{n + m h}(h) = N_n(h) + m φ(h)`.
-
-Source: Rogelio Tomás García, "Farey Fractions with
-Equal Numerators and the Rank of Unit Fractions",
-INTEGERS 24 (2024), Article A63, Corollary 2. -/
-theorem_wanted fareyNumeratorCount_add_mul (h n m : ℕ)
-    (hh : 0 < h) (hhn : h < n) :
-    fareyNumeratorCount (n + m * h) h =
-      fareyNumeratorCount n h + m * Nat.totient h
 
 /-- **Corollary 3**: for `0 < h < n/2`,
 `N_n(2h) = N_n(h) - φ(h)` if `h` is even, and
