@@ -10926,6 +10926,7 @@
   "MathlibExt/Combinatorics/ConstrainedTIntersections": {"to": "Geometry/discrete-geometry", "title": "Pancake cutting with exotic knives"},
   "MathlibExt/Combinatorics/CubeNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/ContinuousTuran": {"to": "Geometry/discrete-geometry", "title": "Continuous Turán numbers of planar patterns"},
+  "MathlibExt/Combinatorics/ContinuousTuranMonotonicity": {"to": "Geometry/discrete-geometry", "title": "Continuous Turán numbers of planar patterns"},
   "MathlibExt/Combinatorics/CubeRotationNimCubeEdgeNimPPositions": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/DedekindAntichainCountErdosProblem497": {"to": "Combinatorics/boolean-functions", "title": "Dedekind numbers"},
   "MathlibExt/Combinatorics/DenseGridSquareErdosProblem658": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Squares in dense subsets of the grid"},
