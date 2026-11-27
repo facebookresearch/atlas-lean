@@ -14,6 +14,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import Mathlib.Topology.Instances.Rat
 public import MathlibExt.Combinatorics.Enumerative.Partition.TwoColorSevenPowerPartition
+public import MathlibExt.Combinatorics.Enumerative.Partition.TwoColorSevenPowerPartitionSevenPowDvdGarvanYEven
 
 open PowerSeries
 open scoped PowerSeries.WithPiTopology
@@ -108,18 +109,6 @@ public theorem_wanted huffing_eta_quotients_eq_sum_garvanM (i : ℕ) (hi : 1 ≤
       H (X ^ i * f 7 ^ (4 * i) * (f 1 ^ (4 * i))⁻¹) =
         ∑ j ∈ Finset.Icc 1 (7 * i + 4), (garvanM (4 * i) (i + j) : ℚ⟦X⟧) *
           (X ^ (7 * j) * f 49 ^ (4 * j) * (f 7 ^ (4 * j))⁻¹)
-
-/-- **7-adic bounds for the vectors $y^{(2k)}_\beta$.** Let $y^{(2k)}_\beta$ be the coefficient
-vectors for even powers of $7$, built from Garvan's vectors and matrix. For all $k, j \ge 1$ and
-$\beta \ge 0$, $7^{k + \beta + \lfloor (7j-7)/4 \rfloor}$ divides $y^{(2k)}_{2\beta+1,j}$ and
-$7^{k + \beta + 1 + \lfloor (7j-7)/4 \rfloor}$ divides $y^{(2k)}_{2\beta+2,j}$.
-
-Source: D. S. Gireesh, C. Shivashankar, and B. Hemanthkumar, *On 2-Color Partitions in Which
-the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), Article A94,
-Lemma 5 (`integers-2026-A94-lem-5`). -/
-public theorem_wanted seven_pow_dvd_garvanYEven (k β j : ℕ) (hk : 1 ≤ k) (hj : 1 ≤ j) :
-    7 ^ (k + β + (7 * j - 7) / 4) ∣ garvanYEven k (2 * β + 1) j ∧
-      7 ^ (k + β + 1 + (7 * j - 7) / 4) ∣ garvanYEven k (2 * β + 2) j
 
 /-- **7-adic bounds for the vectors $y^{(2k-1)}_\beta$.** Let $y^{(2k-1)}_\beta$ be the
 coefficient vectors for odd powers of $7$, built from Garvan's vectors and matrix. For all

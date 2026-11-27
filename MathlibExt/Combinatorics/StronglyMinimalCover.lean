@@ -17,6 +17,30 @@ import Mathlib.SetTheory.Cardinal.Basic
 
 Hollom and Randall Shaw's graph on the natural numbers refutes Aharoni's conjecture that every
 hypergraph with nonempty edges of bounded size has a strongly minimal vertex cover.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/StronglyMinimalCoverOpenGardenProblem690Wanted.lean`:
+
+Source: Open Problem Garden, Strong matchings and covers (node 690; R. Aharoni),
+http://www.openproblemgarden.org/op/strong_matchings_and_covers. UnsolvedMath record UM-00003304
+(`OPG-690`), dataset ulamai/UnsolvedMath v1.8.0.
+
+This module states the cover part of the conjecture. Its matching part is the statement
+`boundedEdgesStronglyMaximalMatching` of
+`WantedExt/Combinatorics/StronglyMaximalMatchingAMR29Problem0084Wanted.lean` (EGRES list), refuted
+by Hollom and Randall Shaw, Theorem 1.2; the page's second conjecture (the hypergraph of independent
+sets of a graph, meant as covering the vertex set by independent sets, i.e. strongly minimal
+colourings, refuted by their Theorem 1.5) is not formalized. The hypergraph is encoded as in that
+module: a set `E` of finite edges `Finset V`, with `V` and `E` possibly infinite; cardinalities are
+compared as cardinals. Edges are required to be nonempty: an empty edge meets no set, so a
+hypergraph with an empty edge has no cover at all.
+
+Current location: `WantedExt/Combinatorics/StronglyMaximalMatchingAMR29Problem0084Wanted.lean` has
+since been retired. The matching statement `boundedEdgesStronglyMaximalMatching`, with the
+hypergraph encoding it uses (`IsMatching`, `IsStronglyMaximal`), is now in
+`MathlibExt/Combinatorics/StronglyMaximalMatchingAMR29Problem0084.lean`, where
+`boundedEdgesStronglyMaximalMatching_refuted` refutes it.
 -/
 
 @[expose] public section

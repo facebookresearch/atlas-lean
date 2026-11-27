@@ -1,0 +1,3 @@
+# Algebraic second-branch pressure ratio of the normal-shock conditions
+
+For a ratio of specific heats $\gamma$ and $m = M_1^2$, the pressure ratio of the second algebraic root of the normal-shock conditions is $p_2/p_1 = \big(2\gamma m - (\gamma - 1)\big)/(\gamma + 1)$. These are algebraic ratios, defined for all real $\gamma$ and $m$ with the convention $x/0 = 0$. For $\gamma > 1$, $m \ge 0$ and a positive upstream state, the second root has positive pressure and temperature exactly when $m > (\gamma - 1)/(2\gamma)$, and the two roots coincide at $m = 1$; positivity alone does not make it a shock, and only $m > 1$ gives the compression shock that satisfies the entropy condition (for example, at $\gamma = 7/5$ and $M_1 = 1/4$ the pressure ratio is $-3/32$).

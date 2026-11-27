@@ -137,6 +137,25 @@ private theorem classCount_subsingleton {n : ℕ} [Subsingleton (Fin n)]
     exact exists_congr fun f => and_congr_right fun hf => by rw [hsingle f hf, eq_comm]
   exact (congrArg Set.ncard hclasses).trans (Set.ncard_image_of_injective _ Set.singleton_injective)
 
+-- At arity zero, both constant functions contribute to the sum.
+example : boolFunClassCount (n := 0) IsBoolFunVarPermEquiv (fun _ => True) = 2 := by
+  rw [boolFunClassCount_varPerm_eq_sum_nondegenerate (fun _ _ => True)
+    (fun _ _ _ _ => Iff.rfl) 0, Finset.sum_range_one, classCount_subsingleton]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable the sum has separate zero- and one-variable contributions, even when
+-- restricting to functions that vanish at the all-false input.
+example :
+    boolFunClassCount (n := 1) IsBoolFunVarPermEquiv (fun f => f (fun _ => false) = false) =
+      boolFunClassCount (n := 0) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ f (fun _ => false) = false) +
+      boolFunClassCount (n := 1) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ f (fun _ => false) = false) := by
+  rw [boolFunClassCount_varPerm_eq_sum_nondegenerate (fun _ f => f (fun _ => false) = false)
+    (fun _ _ _ _ => Iff.rfl) 1, Finset.sum_range_succ, Finset.sum_range_one]
+
 -- At arity zero, both constants contribute non-degenerate classes and the factor is one.
 example : boolFunClassCount (n := 0) IsBoolFunVarPermEquiv
     (fun f => IsNondegenerateBoolFun f ∧ IsUnateBoolFun f) = 2 := by
