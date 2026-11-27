@@ -14204,7 +14204,6 @@
   "MathlibExt/NumberTheory/SierpinskiMersenne": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SierpinskiRepinteger18107": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SierpinskiRieselRepdigits": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
-  "MathlibExt/NumberTheory/SierpinskiRieselRepdigitsInfiniteRieselRepunitsModTwoPow64SubOne": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SignedBinarySum": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Signed binary representations"},
   "MathlibExt/NumberTheory/SimsekNumber": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Simsek numbers"},
   "MathlibExt/NumberTheory/SixAndEightNonzeroSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
