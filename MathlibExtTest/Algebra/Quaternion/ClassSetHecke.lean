@@ -355,6 +355,225 @@ idelic embedding class set is nonempty. -/
 example : Nonempty (IdelicEmbeddingClassSet lipschitzOrder lipschitzI) :=
   ⟨⟨DoubleCoset.mk _ _ 1, 1, fun y _ => by simp, rfl⟩⟩
 
+/-! ### What the level, congruence, embedding and fibre conditions exclude
+
+An element of the finite adelic box of `Λ` is sent by a `ℚ`-linear functional with integer values
+on `Λ` to a finite adele that is integral at every place. So for the Lipschitz order a coordinate
+with denominator `p` puts `w ⊗ 1` outside the box at the `p`-adic place, and for `Λ = 0` every
+functional qualifies. -/
+
+/-- The `p`-adic place of `ℚ`. -/
+private abbrev padicPlace (p : ℕ) (hp : p.Prime) : HeightOneSpectrum (𝓞 ℚ) :=
+  Rat.HeightOneSpectrum.primesEquiv.symm ⟨p, hp⟩
+
+private theorem natCast_mem_padicPlace (p : ℕ) (hp : p.Prime) :
+    (p : 𝓞 ℚ) ∈ (padicPlace p hp).asIdeal := by
+  show (p : 𝓞 ℚ) ∈ (Ideal.span {((p : ℕ) : ℤ)}).map (Rat.IsIntegralClosure.intEquiv (𝓞 ℚ)).symm
+  have h := Ideal.mem_map_of_mem (Rat.IsIntegralClosure.intEquiv (𝓞 ℚ)).symm
+    (Ideal.mem_span_singleton_self ((p : ℕ) : ℤ))
+  rwa [map_natCast] at h
+
+private theorem functional_mem_adicCompletionIntegers {Λ : Submodule ℤ ℍ[ℚ, a, b]}
+    (f : ℍ[ℚ, a, b] →ₗ[ℚ] ℚ) (hf : ∀ z ∈ Λ, ∃ k : ℤ, f z = k)
+    {x : ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ} (hx : x ∈ Submodule.finiteAdeleBox Λ)
+    (v : HeightOneSpectrum (𝓞 ℚ)) :
+    TensorProduct.lid ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ) (f.rTensor (FiniteAdeleRing (𝓞 ℚ) ℚ) x) v ∈
+      v.adicCompletionIntegers ℚ := by
+  induction hx using AddSubgroup.closure_induction with
+  | mem x hx =>
+    obtain ⟨z, hz, c, hc, rfl⟩ := hx
+    obtain ⟨k, hk⟩ := hf z hz
+    rw [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, hk, Int.cast_smul_eq_zsmul]
+    exact zsmul_mem (hc v) k
+  | zero => rw [map_zero, map_zero]; exact zero_mem _
+  | add x y _ _ hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | neg x _ hx => rw [map_neg, map_neg]; exact neg_mem hx
+
+private theorem tmul_one_notMem_finiteAdeleBox {Λ : Submodule ℤ ℍ[ℚ, a, b]}
+    (f : ℍ[ℚ, a, b] →ₗ[ℚ] ℚ) (hf : ∀ z ∈ Λ, ∃ k : ℤ, f z = k) {w : ℍ[ℚ, a, b]}
+    (v : HeightOneSpectrum (𝓞 ℚ)) (hw : ((f w).den : 𝓞 ℚ) ∈ v.asIdeal) :
+    w ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ∉ Submodule.finiteAdeleBox Λ := by
+  intro h
+  have h2 := functional_mem_adicCompletionIntegers f hf h v
+  rw [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, ← Algebra.algebraMap_eq_smul_one,
+    FiniteAdeleRing.algebraMap_apply, HeightOneSpectrum.mem_adicCompletionIntegers,
+    HeightOneSpectrum.valuedAdicCompletion_eq_valuation', Rat.valuation_le_one_iff_den] at h2
+  exact h2 hw
+
+/-- Every functional has integer values on `0`. -/
+private theorem functional_int_on_bot (f : ℍ[ℚ, a, b] →ₗ[ℚ] ℚ) :
+    ∀ z ∈ (⊥ : Submodule ℤ ℍ[ℚ, a, b]), ∃ k : ℤ, f z = k := fun z hz =>
+  ⟨0, by rw [(Submodule.mem_bot ℤ).mp hz, map_zero, Int.cast_zero]⟩
+
+private theorem re_int_on_lipschitzOrder :
+    ∀ z ∈ lipschitzOrder, ∃ k : ℤ, QuaternionAlgebra.reₗ (-1) 0 (-1) z = k := fun _ hz => by
+  obtain ⟨m, n, p, r, rfl⟩ := exists_eq_mk_of_mem_lipschitzOrder hz
+  exact ⟨m, rfl⟩
+
+private theorem imI_int_on_lipschitzOrder :
+    ∀ z ∈ lipschitzOrder, ∃ k : ℤ, QuaternionAlgebra.imIₗ (-1) 0 (-1) z = k := fun _ hz => by
+  obtain ⟨m, n, p, r, rfl⟩ := exists_eq_mk_of_mem_lipschitzOrder hz
+  exact ⟨n, rfl⟩
+
+private theorem tmul_one_mem_lipschitzBox {w : ℍ[ℚ, -1, -1]} (hw : w ∈ lipschitzOrder) :
+    w ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ∈ Submodule.finiteAdeleBox lipschitzOrder :=
+  AddSubgroup.subset_closure ⟨w, hw, 1, fun _ => one_mem _, rfl⟩
+
+/-- The unit `1 + i` of `ℍ[ℚ, -1, -1]`, with inverse `(1 - i) / 2`. -/
+private def onePlusI : (ℍ[ℚ, -1, -1])ˣ :=
+  ⟨⟨1, 1, 0, 0⟩, ⟨1 / 2, -1 / 2, 0, 0⟩, by ext <;> norm_num [QuaternionAlgebra.mk_mul_mk],
+    by ext <;> norm_num [QuaternionAlgebra.mk_mul_mk]⟩
+
+/-- The unit `1 + 2j` of `ℍ[ℚ, -1, -1]`, with inverse `(1 - 2j) / 5`. -/
+private def onePlusTwoJ : (ℍ[ℚ, -1, -1])ˣ :=
+  ⟨⟨1, 0, 2, 0⟩, ⟨1 / 5, 0, -2 / 5, 0⟩, by ext <;> norm_num [QuaternionAlgebra.mk_mul_mk],
+    by ext <;> norm_num [QuaternionAlgebra.mk_mul_mk]⟩
+
+/-- The diagonal idele `h = 1 + i` is in the Hecke set at `2` of level `Λ`: `h` and
+`2 h⁻¹ = 1 - i` are integral, `h⁻¹ = (1 - i) / 2` and `h / 2` are not integral at `2`, and
+`h - 1 = i` lies in the box of `Λ`. It is not in the Hecke set of level `0`: `i ⊗ 1` is not in
+the zero box. -/
+example :
+    Submodule.finiteIdeleDiagonal ℍ[ℚ, -1, -1] onePlusI ∈
+        levelHeckeSet lipschitzOrder lipschitzOrder 2 ∧
+      Submodule.finiteIdeleDiagonal ℍ[ℚ, -1, -1] onePlusI ∉
+        levelHeckeSet lipschitzOrder ⊥ 2 := by
+  have hprime : Submodule.finiteIdeleDiagonal ℍ[ℚ, -1, -1] onePlusI ∈
+      primeHeckeSet lipschitzOrder 2 := by
+    rw [mem_primeHeckeSet_iff, ← map_inv, Submodule.val_finiteIdeleDiagonal_apply,
+      Submodule.val_finiteIdeleDiagonal_apply, TensorProduct.smul_tmul',
+      TensorProduct.smul_tmul']
+    refine ⟨tmul_one_mem_lipschitzBox (by simpa [onePlusI] using mem_lipschitzOrder_mk 1 1 0 0),
+      tmul_one_mem_lipschitzBox ?_, tmul_one_notMem_finiteAdeleBox _ re_int_on_lipschitzOrder
+        (padicPlace 2 Nat.prime_two) ?_,
+      tmul_one_notMem_finiteAdeleBox _ re_int_on_lipschitzOrder (padicPlace 2 Nat.prime_two) ?_⟩
+    · have h : ((2 : ℕ) : ℚ) • ((onePlusI⁻¹ : (ℍ[ℚ, -1, -1])ˣ) : ℍ[ℚ, -1, -1]) =
+          ⟨((1 : ℤ) : ℚ), ((-1 : ℤ) : ℚ), ((0 : ℤ) : ℚ), ((0 : ℤ) : ℚ)⟩ := by
+        ext <;> norm_num [onePlusI]
+      rw [h]
+      exact mem_lipschitzOrder_mk 1 (-1) 0 0
+    · have h : ((QuaternionAlgebra.reₗ (-1) 0 (-1)
+          ((onePlusI⁻¹ : (ℍ[ℚ, -1, -1])ˣ) : ℍ[ℚ, -1, -1])).den : 𝓞 ℚ) = (2 : ℕ) := by
+        norm_num [onePlusI]
+      rw [h]
+      exact natCast_mem_padicPlace 2 Nat.prime_two
+    · have h : ((QuaternionAlgebra.reₗ (-1) 0 (-1)
+          (((2 : ℕ) : ℚ)⁻¹ • (onePlusI : ℍ[ℚ, -1, -1]))).den : 𝓞 ℚ) = (2 : ℕ) := by
+        norm_num [onePlusI]
+      rw [h]
+      exact natCast_mem_padicPlace 2 Nat.prime_two
+  have hsub : (Submodule.finiteIdeleDiagonal ℍ[ℚ, -1, -1] onePlusI :
+        ℍ[ℚ, -1, -1] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) - 1 =
+      (⟨0, 1, 0, 0⟩ : ℍ[ℚ, -1, -1]) ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) := by
+    rw [Submodule.val_finiteIdeleDiagonal_apply, Algebra.TensorProduct.one_def,
+      ← TensorProduct.sub_tmul]
+    congr 1
+    ext <;> norm_num [onePlusI]
+  refine ⟨(mem_levelHeckeSet_iff _ _ _ _).mpr ⟨hprime, ?_⟩, fun h => ?_⟩
+  · rw [hsub]
+    exact tmul_one_mem_lipschitzBox (by simpa using mem_lipschitzOrder_mk 0 1 0 0)
+  · have h1 := ((mem_levelHeckeSet_iff _ _ _ _).mp h).2
+    rw [hsub] at h1
+    refine tmul_one_notMem_finiteAdeleBox ((1 / 2 : ℚ) • QuaternionAlgebra.imIₗ (-1) 0 (-1))
+      (functional_int_on_bot _) (padicPlace 2 Nat.prime_two) ?_ h1
+    have h : ((((1 / 2 : ℚ) • QuaternionAlgebra.imIₗ (-1) 0 (-1))
+        (⟨0, 1, 0, 0⟩ : ℍ[ℚ, -1, -1])).den : 𝓞 ℚ) = (2 : ℕ) := by
+      norm_num
+    rw [h]
+    exact natCast_mem_padicPlace 2 Nat.prime_two
+
+/-- `-1` stabilizes the finite adelic box of every `Λ`. -/
+private theorem neg_one_mem_finiteIdeleStabilizer (Λ : Submodule ℤ ℍ[ℚ, a, b]) :
+    (-1 : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈ Submodule.finiteIdeleStabilizer Λ := by
+  rw [Submodule.mem_finiteIdeleStabilizer_iff]
+  ext y
+  simp only [Set.mem_smul_set, Units.smul_def, Units.val_neg, Units.val_one, smul_eq_mul,
+    neg_one_mul, SetLike.mem_coe]
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    exact neg_mem hx
+  · intro hy
+    exact ⟨-y, neg_mem hy, neg_neg y⟩
+
+/-- `-1` stabilizes the box of `Λ` and the zero box, but it is not in the congruence subgroup of
+level `0`: for `x = 1`, `(-1) x - x = -2` is not in the zero box. -/
+example : (-1 : (ℍ[ℚ, -1, -1] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈
+      Submodule.finiteIdeleStabilizer lipschitzOrder ∧
+    (-1 : (ℍ[ℚ, -1, -1] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈
+      Submodule.finiteIdeleStabilizer (⊥ : Submodule ℤ ℍ[ℚ, -1, -1]) ∧
+    (-1 : (ℍ[ℚ, -1, -1] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∉ congruenceLevel lipschitzOrder ⊥ := by
+  refine ⟨neg_one_mem_finiteIdeleStabilizer _, neg_one_mem_finiteIdeleStabilizer _, fun h => ?_⟩
+  have h1 := ((mem_congruenceLevel_iff _ _ _).mp h).2.2 1 (by
+    rw [Algebra.TensorProduct.one_def]
+    exact tmul_one_mem_lipschitzBox lipschitzOrder_isOrder.one_mem)
+  have hval : ((-1 : (ℍ[ℚ, -1, -1] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) :
+        ℍ[ℚ, -1, -1] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ) * 1 - 1 =
+      (⟨-2, 0, 0, 0⟩ : ℍ[ℚ, -1, -1]) ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) := by
+    rw [Units.val_neg, Units.val_one, mul_one, Algebra.TensorProduct.one_def,
+      ← TensorProduct.neg_tmul, ← TensorProduct.sub_tmul]
+    congr 1
+    ext <;> norm_num
+  rw [hval] at h1
+  refine tmul_one_notMem_finiteAdeleBox ((1 / 4 : ℚ) • QuaternionAlgebra.reₗ (-1) 0 (-1))
+    (functional_int_on_bot _) (padicPlace 2 Nat.prime_two) ?_ h1
+  have h : ((((1 / 4 : ℚ) • QuaternionAlgebra.reₗ (-1) 0 (-1))
+      (⟨-2, 0, 0, 0⟩ : ℍ[ℚ, -1, -1])).den : 𝓞 ℚ) = (2 : ℕ) := by
+    norm_num
+  rw [h]
+  exact natCast_mem_padicPlace 2 Nat.prime_two
+
+/-- For the datum `i`, the diagonal idele `g = 1 + 2j` is not in the idelic embedding set:
+`i ⊗ 1` lies in the box, but `g⁻¹ i g = (-3i + 4k) / 5` is not integral at `5`. -/
+example : Submodule.finiteIdeleDiagonal ℍ[ℚ, -1, -1] onePlusTwoJ ∉
+    embeddingSetOrd lipschitzOrder lipschitzI := by
+  intro hg
+  have h := hg (lipschitzI.1 ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ))
+    (Subring.subset_closure (Or.inl rfl))
+  have hconj : ((onePlusTwoJ⁻¹ : (ℍ[ℚ, -1, -1])ˣ) : ℍ[ℚ, -1, -1]) * lipschitzI.1 *
+      (onePlusTwoJ : ℍ[ℚ, -1, -1]) = ⟨0, -3 / 5, 0, 4 / 5⟩ := by
+    ext <;> norm_num [lipschitzI, onePlusTwoJ, QuaternionAlgebra.mk_mul_mk]
+  rw [← map_inv, Submodule.val_finiteIdeleDiagonal_apply, Submodule.val_finiteIdeleDiagonal_apply,
+    Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, mul_one,
+    hconj] at h
+  refine tmul_one_notMem_finiteAdeleBox _ imI_int_on_lipschitzOrder
+    (padicPlace 5 Nat.prime_five) ?_ (h.mpr (tmul_one_mem_lipschitzBox
+      (by simpa [lipschitzI] using mem_lipschitzOrder_mk 0 1 0 0)))
+  have h5 : ((QuaternionAlgebra.imIₗ (-1) 0 (-1)
+      (⟨0, -3 / 5, 0, 4 / 5⟩ : ℍ[ℚ, -1, -1])).den : 𝓞 ℚ) = (5 : ℕ) := by
+    norm_num
+  rw [h5]
+  exact natCast_mem_padicPlace 5 Nat.prime_five
+
+private theorem one_mem_embeddingSetOrd {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ}
+    (d : EmbeddingDatum Λ t n) :
+    (1 : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈ embeddingSetOrd Λ d :=
+  fun y _ => by simp
+
+/-- The small double coset of `1` lies in the fibre over `1`. -/
+example {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d : EmbeddingDatum Λ t n) :
+    ∃ z : EmbeddingClassFibre Λ d 1,
+      z.1 = DoubleCoset.mk (quadUnitsDiagonal d) (Submodule.finiteIdeleStabilizer Λ) 1 :=
+  ⟨⟨_, 1, one_mem_embeddingSetOrd d, rfl, rfl⟩, rfl⟩
+
+/-- It lies over no `β` whose class in `Bˣ \ (B ⊗[ℚ] 𝔸_f)ˣ / Stab(Λ̂)` differs from that of `1`. -/
+example {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d : EmbeddingDatum Λ t n)
+    (β : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
+    (hβ : DoubleCoset.mk (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range
+        (Submodule.finiteIdeleStabilizer Λ) β ≠
+      DoubleCoset.mk (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range
+        (Submodule.finiteIdeleStabilizer Λ) 1) :
+    ¬ ∃ z : EmbeddingClassFibre Λ d β,
+      z.1 = DoubleCoset.mk (quadUnitsDiagonal d) (Submodule.finiteIdeleStabilizer Λ) 1 := by
+  rintro ⟨⟨q, x, -, hq, hxβ⟩, rfl⟩
+  obtain ⟨δ, hδ, s, hs, h1⟩ := DoubleCoset.eq.mp hq
+  exact hβ (hxβ.symm.trans (DoubleCoset.eq.mpr ⟨δ, (Subgroup.mem_inf.mp hδ).1, s, hs, h1⟩))
+
+/-- The adelic quadratic units are the units of the adelic quadratic subring. -/
+example {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d : EmbeddingDatum Λ t n) :
+    finiteIdeleQuadUnits d = (finiteAdeleQuadSubring d).toSubmonoid.units := by
+  ext u
+  exact (Submonoid.mem_units_iff _ u).symm
+
 end QuaternionAlgebra
 
 end
