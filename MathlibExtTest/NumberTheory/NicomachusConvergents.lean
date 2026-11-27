@@ -26,3 +26,19 @@ example :
 example : (-1 + Real.sqrt (11 - 10 / (3 + 2 * (nicomachusU 2 : ℝ)))) / 2 = 22 / 19 := by
   rw [← nicomachusAlpha_eq 2 (hk := by norm_num)]
   norm_num [nicomachusAlpha]
+
+-- The closed form gives zero for the empty interval, including the truncated triangular index.
+example (k : ℕ) (hk : 1 ≤ k) :
+    nicomachusTriangular (0 - 1) *
+      ((1 + ((0 : ℕ) : ℝ)) * (2 - 3 * ((0 : ℕ) : ℝ) ^ 2) / (3 * (3 + 2 * (nicomachusU k : ℝ))) +
+        (3 + 2 * ((0 : ℕ) : ℝ)) * nicomachusTriangular (0 - 1)) = 0 := by
+  rw [← sum_quadratic_mul_quadratic_eq k hk 0]
+  simp
+
+-- At the second convergent, compute the first nonzero partial sum directly from the quadratics.
+example :
+    nicomachusTriangular (2 - 1) *
+      ((1 + ((2 : ℕ) : ℝ)) * (2 - 3 * ((2 : ℕ) : ℝ) ^ 2) / (3 * (3 + 2 * (nicomachusU 2 : ℝ))) +
+        (3 + 2 * ((2 : ℕ) : ℝ)) * nicomachusTriangular (2 - 1)) = 2525 / 361 := by
+  rw [← sum_quadratic_mul_quadratic_eq 2 (by decide) 2]
+  norm_num [nicomachusAlpha, show Finset.Icc 1 2 = {1, 2} by decide, Finset.sum_insert]
