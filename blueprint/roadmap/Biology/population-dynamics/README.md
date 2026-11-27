@@ -2,9 +2,7 @@
 
 Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.
 
-- [Evolutionary dynamics on graphs](evolutionary-dynamics-on-graphs/README.md)
-- [Evolutionary games and cooperation](evolutionary-games-and-cooperation/README.md)
-- [Within-host, microbial and prebiotic population models](within-host-microbial-and-prebiotic-models/README.md)
+- [Evolutionary games, graph dynamics and within-host models](evolutionary-games-graphs-and-within-host-models/README.md)
 - [Classification of adaptive-dynamics singular strategies](classification-of-adaptive-dynamics-singular-str/README.md)
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
 - [Folk theorem of evolutionary game theory](folk-theorem-of-evolutionary-game-theory/README.md)
