@@ -100,3 +100,31 @@ example : generalizedEulerianP (-1 / 2) (1 / 3) 2 (-1 / 2) 3 = 23 / 64 := by
 -- With zero rise weight, the identity is the only surviving permutation.
 example : generalizedEulerianP (2 / 3) (-5 / 2) 0 (3 / 5) 3 = -1 := by
   norm_num [value_three]
+
+-- The normalization at degree zero forces the only gamma coefficient to be one.
+example : ∃ c : ℕ → ℕ → ℕ → ℕ, c 0 0 0 = 1 ∧
+    ∀ q t x y : ℚ, x ≠ y → generalizedEulerianP q t x y 0 = c 0 0 0 := by
+  obtain ⟨c, hc⟩ := generalizedEulerianP_gamma_nonneg 0
+  refine ⟨c, ?_, fun q t x y hxy ↦ by simpa using hc q t x y hxy⟩
+  have h : (c 0 0 0 : ℚ) = 1 := by
+    simpa [generalizedEulerianP_zero_left] using (hc 0 0 0 1 (by norm_num)).symm
+  exact_mod_cast h
+
+-- Every odd-degree basis term has a positive power of x + y.
+example (q t x : ℚ) (hx : x ≠ 0) (m : ℕ) : generalizedEulerianP q t x (-x) (2 * m + 1) = 0 := by
+  obtain ⟨c, hc⟩ := generalizedEulerianP_gamma_nonneg (2 * m + 1)
+  have hxy : x ≠ -x := fun h ↦ hx (by linarith)
+  rw [hc q t x (-x) hxy]
+  refine Finset.sum_eq_zero fun k hk ↦ ?_
+  have hp : 2 * m + 1 - 2 * k ≠ 0 := by
+    simp only [Finset.mem_range] at hk
+    omega
+  simp [zero_pow hp]
+
+-- In degree two, opposite weights isolate the top gamma polynomial, with sign −1.
+example : ∃ a b c : ℕ, ∀ q : ℚ,
+    generalizedEulerianP q 0 (-1) 1 2 = -((a : ℚ) + b * q + c * q ^ 2) := by
+  obtain ⟨c, hc⟩ := generalizedEulerianP_gamma_nonneg 2
+  refine ⟨c 1 0 0, c 1 1 0, c 1 2 0, fun q ↦ ?_⟩
+  rw [hc q 0 (-1) 1 (by norm_num)]
+  norm_num [Finset.sum_range_succ]
