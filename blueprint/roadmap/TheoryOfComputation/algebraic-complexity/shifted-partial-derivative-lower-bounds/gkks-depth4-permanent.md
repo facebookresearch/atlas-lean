@@ -1,6 +1,6 @@
 # Gupta–Kamath–Kayal–Saptharishi: depth-four lower bound for the permanent with bottom fan-in sqrt(n)
 
-Any homogeneous $\Sigma\Pi\Sigma\Pi^{[\sqrt{n}]}$ circuit computing the $n \times n$ determinant or permanent over a field of characteristic $0$ has size $2^{\Omega(\sqrt{n})}$. Since the determinant has homogeneous depth-four circuits of size $2^{O(\sqrt{n}\log n)}$ with bottom fan-in $\sqrt{n}$, the bound is tight up to the logarithmic factor in the exponent.
+Over any field $\mathbb{F}$, any homogeneous $\Sigma\Pi\Sigma\Pi^{[\sqrt{n}]}$ circuit computing the $n \times n$ determinant or permanent has size $2^{\Omega(\sqrt{n})}$ (more generally, any $\Sigma\Pi^{[O(n/t)]}\Sigma\Pi^{[t]}$ circuit computing $\det_n$ or $\mathrm{perm}_n$ over any field has top fan-in at least $\exp(\Omega(n/t))$). Since the determinant has homogeneous depth-four circuits of size $2^{O(\sqrt{n}\log n)}$ with bottom fan-in $\sqrt{n}$, the bound at $t = \sqrt{n}$ is tight up to the logarithmic factor in the exponent.
 
 ## Proof sketch
 
