@@ -19,28 +19,16 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Primorial
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
+public import MathlibExt.NumberTheory.RobinKanekoLagariasExpFiveDivLogBoundLt
+public import MathlibExt.NumberTheory.RobinKanekoLagariasExpHarmonicMulLogDivMonotoneOn
+public import MathlibExt.NumberTheory.HarmonicExtensionNatCast
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Topology Real
-
-/-- **The real extension of the harmonic numbers.** For a real number $x$, let
-
-$$H(x) = \int_0^1 \frac{t^x - 1}{t - 1}\,dt,$$
-
-where $t^x$ is the real power and the integral is the Lebesgue integral over $[0, 1]$, taken to be
-$0$ when the integrand is not integrable.
-
-This extends the harmonic numbers: $H(n) = 1 + \frac{1}{2} + \cdots + \frac{1}{n}$ for every
-natural number $n$.
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Section 3.1 (definition of `H(x)`). -/
-noncomputable def harmonicExtension (x : ℝ) : ℝ :=
-  ∫ t in (0 : ℝ)..1, (t ^ x - 1) / (t - 1)
 
 /-- **The real extension of the harmonic numbers vanishes at zero.** The real extension
 $H(x) = \int_0^1 \frac{t^x - 1}{t - 1}\,dt$ of the harmonic numbers satisfies $H(0) = 0$.
@@ -49,16 +37,6 @@ Source: Assani, Chester, and Paschal, INTEGERS 26 (2026), Article A86, Section 3
 `H(x)`). -/
 theorem harmonicExtension_zero : harmonicExtension 0 = 0 := by
   simp [harmonicExtension]
-
-/-- **The real extension agrees with the harmonic numbers.** Let
-$H(x) = \int_0^1 \frac{t^x - 1}{t - 1}\,dt$ for real $x$ be the real extension of the harmonic
-numbers. For every natural number $n$, $H(n) = H_n$, where $H_n = \sum_{i=1}^n 1/i$ is the
-$n$-th harmonic number.
-
-Source: Assani, Chester, and Paschal, INTEGERS 26 (2026), Article A86, Section 3.1 ("`H(n) = H_n`
-for all `n ∈ ℕ`"). -/
-public theorem_wanted harmonicExtension_natCast (n : ℕ) :
-    harmonicExtension n = harmonic n
 
 /-- **Rosser–Schoenfeld and Dusart bounds for the $k$-th prime.** Let $p_k$ be the $k$-th prime
 ($p_1 = 2$) and $\log$ the natural logarithm. For every natural number $k \ge 6$,
@@ -237,16 +215,6 @@ public theorem_wanted exp_harmonicExtension_mul_log_div_monotoneOn :
     MonotoneOn (fun x : ℝ => exp (harmonicExtension x) * log (harmonicExtension x) / x)
       (Set.Ici 4)
 
-/-- **Monotonicity of $e^{H_n} \log H_n / n$.** With $H_n = \sum_{i=1}^n 1/i$ the $n$-th harmonic
-number and $\log$ the natural logarithm, the sequence $e^{H_n} \log H_n / n$ is non-decreasing
-for $n \ge 1$: its value at $m$ is at most its value at $n$ whenever $1 \le m \le n$.
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Corollary 3
-(`integers-2026-A86-cor-3`). -/
-public theorem_wanted exp_harmonic_mul_log_div_monotoneOn :
-    MonotoneOn (fun n : ℕ => exp (harmonic n : ℝ) * log (harmonic n : ℝ) / n) (Set.Ici 1)
-
 /-- **A least counterexample to the Kaneko–Lagarias inequality is superabundant.** Let
 $\sigma(n)$ be the sum of the divisors of $n$, $H_n = 1 + \frac{1}{2} + \cdots + \frac{1}{n}$ the
 $n$-th harmonic number and $\log$ the natural logarithm. Let $n_0 > 60$ be a natural number for
@@ -364,16 +332,6 @@ public theorem_wanted exists_bound_mul_prod_sq_lt_exp_eulerMascheroni_mul_log_lo
             (Nat.nth Nat.Prime (ℓ - 1) : ℝ) ^ 2 / ((Nat.nth Nat.Prime (ℓ - 1) : ℝ) ^ 2 - 1) <
         exp eulerMascheroniConstant *
           log (log ((primorial (Nat.nth Nat.Prime k) : ℝ) / Nat.nth Nat.Prime (j - 1)))
-
-/-- **The factor $\hat C(k)$ is below $1.525$.** Let $\log$ be the natural logarithm. For every
-natural number $k \ge 13042$, with $L^-(k) = (k+1)(\log(k+1) + \log\log(k+1) - 1)$,
-$$\hat C(k) = \exp\Bigl(\frac{5}{\log L^-(k)}\Bigr) < 1.525.$$
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Lemma 5
-(`integers-2026-A86-lem-5`). -/
-public theorem_wanted exp_five_div_log_bound_lt (k : ℕ) (hk : 13042 ≤ k) :
-    exp (5 / log ((k + 1 : ℝ) * (log (k + 1) + log (log (k + 1)) - 1))) < 1.525
 
 
 /-- **Bounds for $\sigma(n)/n$ over primes avoiding $p_j$.** For $\ell \ge 1$ let $p_\ell$ be the
