@@ -251,19 +251,19 @@ theorem coordinateSquare_permutation (q n : ℕ) (a : Equiv.Perm (Fin q))
     cases c
     · simp only [coordinateSquare, coordinatePermutation, _root_.CategoryTheory.Functor.comp_obj,
         _root_.CategoryTheory.Functor.pi'_obj, Function.update_apply, Function.update_self, hi, gapSquareIndex,
-        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, if_pos, if_neg]
+        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, ite_eq_left, ite_eq_right]
       exact interval_eq_of_endpoints _ _ (congrArg Arrow.left hp.symm) (congrArg Arrow.right hp.symm)
     · simp only [coordinateSquare, coordinatePermutation, _root_.CategoryTheory.Functor.comp_obj,
         _root_.CategoryTheory.Functor.pi'_obj, Function.update_apply, Function.update_self, hi, gapSquareIndex,
-        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, if_pos, if_neg]
+        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, ite_eq_left, ite_eq_right]
       exact interval_eq_of_endpoints _ _ (congrArg Arrow.left hp.symm) rfl
     · simp only [coordinateSquare, coordinatePermutation, _root_.CategoryTheory.Functor.comp_obj,
         _root_.CategoryTheory.Functor.pi'_obj, Function.update_apply, Function.update_self, hi, gapSquareIndex,
-        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, if_pos, if_neg]
+        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, ite_eq_left, ite_eq_right]
       exact interval_eq_of_endpoints _ _ (congrArg Arrow.right hp.symm) (congrArg Arrow.right hp.symm)
     · simp only [coordinateSquare, coordinatePermutation, _root_.CategoryTheory.Functor.comp_obj,
         _root_.CategoryTheory.Functor.pi'_obj, Function.update_apply, Function.update_self, hi, gapSquareIndex,
-        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, if_pos, if_neg]
+        lowerIndex, upperIndex, twoValue, SquareCorner.coordinate, ite_eq_left, ite_eq_right]
       exact interval_eq_of_endpoints _ _ (congrArg Arrow.right hp.symm) rfl
   · have hx : i ≠ a.symm r := by
       intro he

@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.GameTheory.ExactSlowNimRemoteness
+public import MathlibExt.GameTheory.ExactSlowNimA0Moves
 public import MathlibExt.GameTheory.ExactSlowNimCritical
 public import WantedExt.Combinatorics.SlowANimWanted
 
@@ -59,30 +60,6 @@ Theorem 2. -/
 public theorem_wanted exactSlowNimMRuleLength_eq_smithRemoteness {k : ℕ} (hk : 0 < k)
     (x : Fin (k + 1) → ℕ) :
     exactSlowNimMRuleLength k x = SpragueGrundy.smithRemoteness (slowANimGame (k + 1) {k}) x
-
-/-- **Moves at a position supported by an (A0) basic vector (Lemma 2).** Let $k \ge 1$, let
-$B$ be the basic-vector value on $\mathbb{N}^{k+1}$, and let $x, z \in \mathbb{N}^{k+1}$ with
-$z \le x$ componentwise, where $z$ is a basic vector of type (A0) with parameter $B(x)$. Let $j$
-be a pile with $x_i > 0$ for every $i \ne j$, and let $x'$ be obtained from $x$ by removing one
-token from every pile other than $j$. Then $B(x') \le B(x) - 1$ and $B(x')$ is odd. Moreover, if
-$z_j < B(x)$, or if $z_j = B(x)$ and $z_i < \min(B(x), x_i)$ for some $i$, then
-$B(x') = B(x) - 1$. Here $B(x) - 1$ is truncated subtraction in $\mathbb{N}$.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Lemma 2. -/
-public theorem_wanted exactSlowNimBasicValue_of_supports_basicA0 {k : ℕ} (hk : 0 < k)
-    (x z : Fin (k + 1) → ℕ) (hzx : z ≤ x)
-    (hz : IsExactSlowNimBasicA0 k (exactSlowNimBasicValue k x) z) (j : Fin (k + 1))
-    (hj : ∀ i, i ≠ j → 0 < x i) :
-    exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j)) ≤
-        exactSlowNimBasicValue k x - 1 ∧
-      Odd (exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j))) ∧
-      (z j < exactSlowNimBasicValue k x ∨
-          (z j = exactSlowNimBasicValue k x ∧
-            ∃ i, z i < min (exactSlowNimBasicValue k x) (x i)) →
-        exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j)) =
-          exactSlowNimBasicValue k x - 1)
 
 /-- **Theorem 3 (Smith's remoteness of exact slow k-NIM is polynomial-time computable).** The map
 sending a list $(x_0, \dots, x_{n-1})$ of natural numbers of length $n$ to Smith's remoteness of
