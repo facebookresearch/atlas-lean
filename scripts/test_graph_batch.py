@@ -262,10 +262,10 @@ class Fields(unittest.TestCase):
 
 
 class Describe(unittest.TestCase):
-    def describe(self, plan=None, links=None, report=None, full=False) -> str:
+    def describe(self, plan=None, links=None, report=None, full=False, folders=()) -> str:
         with patch.object(batch, "changed_between", return_value=[]):
             return batch.describe("c" * 40, "b" * 40, "h" * 40, plan or batch.PlacementPlan(), report or {}, {},
-                                  links or batch.LinkPlan(), full=full)
+                                  links or batch.LinkPlan(), full=full, folders=folders)
 
     def test_the_pages_linked_already_fit_in_a_description(self) -> None:
         pointer = f"`python3 scripts/graph_batch.py verify {'c' * 40}`, run from a checkout of `main`, prints them all."
@@ -310,6 +310,9 @@ class Describe(unittest.TestCase):
                                            "`Ext.a`, which `main` had before this batch's base"),
                          "#N adds one documented declaration in its topic that could state it, …, which main had before "
                          "this batch's base")
+        # A declaration with no namespace is a page's own too.
+        self.assertEqual(batch.reason_kind("it holds `held_decl` back: relinking it is an editor's call"),
+                         "it holds … back: relinking it is an editor's call")
         self.assertEqual(batch.reason_kind("#9937, #10600 name it, and the batch does not choose between them"),
                          "#N name it, and the batch does not choose between them")
         self.assertEqual(batch.reason_kind("no row has this article id"), "no row has this article id")
@@ -351,9 +354,151 @@ class Describe(unittest.TestCase):
         self.assertTrue(f"### Placements\n\n1500 modules placed, too many to list here: {pointer}\n" in text)
         self.assertTrue("`Ext.name_0`, `Ext.name_1`, " in text and "`Ext.name_3999`\n" in text)
 
+    def test_the_folders_past_autoforms_limit(self) -> None:
+        pointer = f"`python3 scripts/graph_batch.py verify {'c' * 40}`, run from a checkout of `main`, prints them all."
+        self.assertNotIn("size limit", self.describe())
+        text = self.describe(folders=[batch.Folder("Algebra/groups/README.md", 25, 24, 24),
+                                      batch.Folder("Algebra/not-yet-classified/README.md", 99, 24, 97)])
+        self.assertIn("- 2 folders left past `autoform audit`'s size limit, for an editor to regroup.\n", text)
+        self.assertIn("### Folders past Autoform's size limit\n\nThe batch takes these folders past the number of "
+                      "articles `autoform audit` allows directly in one (`overfull-container`), or adds to them while "
+                      "they are past it already, counted as Autoform counts them. A batch is exactly what `make` writes, "
+                      "so an editor regroups each in a graph pull request "
+                      "([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)):\n\n"
+                      "- `Algebra/groups/README.md`: 25 articles, past its limit of 24 (24 before)\n"
+                      "- `Algebra/not-yet-classified/README.md`: 99 articles, past its limit of 24 (97 before)\n", text)
+        text = self.describe(folders=[batch.Folder(f"Algebra/folder-{number}/README.md", 30, 24, 0)
+                                      for number in range(1000)])
+        self.assertIn("### Folders past Autoform's size limit\n\n1000 folders past Autoform's size limit, too many to "
+                      f"list here: {pointer}\n", text)
+        self.assertLess(len(text), batch.BODY_LIMIT)
+
+    def test_a_description_still_too_long_gets_a_warning(self) -> None:
+        # As describe measures it, without the final line feed.
+        with patch.object(batch, "BODY_LIMIT", 100):
+            self.assertIn("still has 101 characters, more than a batch's description may hold (100), with every list "
+                          "that can give way given as a count", batch.body_warning("x" * 100 + "\n"))
+            self.assertIsNone(batch.body_warning("x" * 99 + "\n"))
+
+    def test_the_validation_line_names_the_links_and_the_withheld(self) -> None:
+        link = batch.Link("af_" + "1" * 24, "Algebra/a.md", "Ext.a", 7, "blueprint/links/Algebra.jsonl", {}, "theorem",
+                          "theorem")
+        text = self.describe(links=batch.LinkPlan(links=[link], left=[("af_" + "2" * 24, "Algebra/b.md", "why",
+                                                                      ["Ext.b", "Ext.c"])]))
+        self.assertIn("exactly what the sync writes once the 1 planned pages of the link plan are linked, withholding "
+                      "2 declarations.\n", text)
+        self.assertIn("exactly what the sync writes.\n", self.describe())
+
+
+class FolderSizes(unittest.TestCase):
+    def setUp(self) -> None:
+        self.root = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, self.root, True)
+        subprocess.run(["git", "-C", str(self.root), "init", "-q", "-b", "main"], check=True)
+
+    def commit(self, files: dict[str, str]) -> str:
+        for path, text in files.items():
+            (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+            (self.root / path).write_text(text)
+        for args in (["add", "-A"], ["commit", "-q", "-m", "files"]):
+            subprocess.run(["git", "-C", str(self.root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                           check=True)
+        return subprocess.run(["git", "-C", str(self.root), "rev-parse", "HEAD"], check=True, capture_output=True,
+                              text=True).stdout.strip()
+
+    def autoform_sizes(self) -> dict[str, tuple[int, int]]:
+        """What Autoform's graph loader and audit say of the working tree: how many articles each article that
+        contains any directly contains, with its `overfull-container` limit (autoform_cli.audit.audit_graph)."""
+        from autoform_cli import audit
+        from autoform_cli.graph import load_graph
+
+        graph = load_graph(self.root / "blueprint")
+        contained: dict[str, list[str]] = {}
+        for node in graph.nodes.values():
+            if node.parent is not None:
+                contained.setdefault(node.parent, []).append(node.id)
+        roadmap = (self.root / "blueprint" / "roadmap").resolve()
+        sizes = {}
+        for node_id, kids in contained.items():
+            node = graph.nodes[node_id]
+            if node.id == "roadmap" and node.parent is None and all(graph.nodes[kid].path.name == "README.md"
+                                                                    for kid in kids):
+                limit = audit._MAX_ROOT_CHILDREN
+            else:
+                limit = audit._MAX_MODULE_CHILDREN if node.navigation == "module" else audit._MAX_DIRECT_CHILDREN
+            sizes[node.path.relative_to(roadmap).as_posix()] = (len(kids), limit)
+        return sizes
+
+    def test_navigation_as_autoform_reads_it(self) -> None:
+        roadmap = "blueprint/roadmap"
+
+        def row(page: str, number: int, extensions: dict | None = None, **more) -> str:
+            return json.dumps({"subject": [{"type": "generic", "uri": f"../roadmap/{page}"}],
+                               "id": f"af_{number:024x}", **({"extensions": extensions} if extensions else {}),
+                               **more}) + "\n"
+
+        files = {f"{roadmap}/README.md": "# Roadmap\n", f"{roadmap}/Algebra/README.md": "# Algebra\n"}
+        for name in ("cased", "second", "declared", "front"):
+            files[f"{roadmap}/Algebra/{name}/README.md"] = f"# {name.capitalize()}\n"
+            files[f"{roadmap}/Algebra/{name}/x.md"] = "# X\n"
+        files[f"{roadmap}/Algebra/front/README.md"] = "---\nnavigation: Module\n---\n\n# Front\n"
+        # In another case; on a second row of the page; beside a declaration's kind, which voids it.
+        files["blueprint/links/Algebra.jsonl"] = (
+            row("Algebra/cased/README.md", 1, {"org.autoform": {"navigation": "Module"}})
+            + row("Algebra/second/README.md", 2) + row("Algebra/second/README.md", 3,
+                                                       {"org.autoform": {"navigation": "module"}})
+            + row("Algebra/declared/README.md", 4, {"org.autoform": {"navigation": "module"}}, kind="theorem"))
+        commit = self.commit(files)
+        with sync.relocated(root=self.root):
+            sizes = batch.folder_sizes(commit)
+        self.assertEqual(sizes, self.autoform_sizes())
+        self.assertEqual([sizes[f"Algebra/{name}/README.md"][1] for name in ("cased", "second", "declared", "front")],
+                         [120, 120, 24, 120])
+
+    def test_counted_as_autoform_counts(self) -> None:
+        roadmap, module = "blueprint/roadmap", {"org.autoform": {"navigation": "module"}}
+        first = self.commit({
+            f"{roadmap}/README.md": "# Roadmap\n", f"{roadmap}/Algebra/README.md": "# Algebra\n",
+            f"{roadmap}/Biology/README.md": "# Biology\n",
+            # Two pages, a subfolder with a folder page, which counts once, and the pages of a subfolder with none,
+            # which count here; a hidden page and a file that is no page do not count.
+            f"{roadmap}/Algebra/groups/README.md": "# Groups\n", f"{roadmap}/Algebra/groups/a.md": "# A\n",
+            f"{roadmap}/Algebra/groups/b.md": "# B\n", f"{roadmap}/Algebra/groups/sub/README.md": "# Sub\n",
+            f"{roadmap}/Algebra/groups/sub/c.md": "# C\n", f"{roadmap}/Algebra/groups/loose/d.md": "# D\n",
+            f"{roadmap}/Algebra/groups/loose/e.md": "# E\n", f"{roadmap}/Algebra/groups/.hidden.md": "# Hidden\n",
+            f"{roadmap}/Algebra/groups/notes.txt": "Notes.\n",
+            # A module's folder page, by its annotation, and by its frontmatter for one with no annotation.
+            f"{roadmap}/Algebra/mod/README.md": "# Mod\n", f"{roadmap}/Algebra/mod/x.md": "# X\n",
+            f"{roadmap}/Biology/front/README.md": "---\nnavigation: module\n---\n\n# Front\n",
+            f"{roadmap}/Biology/front/y.md": "# Y\n",
+            "blueprint/links/Algebra.jsonl": json.dumps({"subject": [{"type": "generic", "uri": (
+                "../roadmap/Algebra/mod/README.md")}], "id": "af_" + "1" * 24, "extensions": module}) + "\n"})
+        with sync.relocated(root=self.root):
+            self.assertEqual(batch.folder_sizes(first), {
+                "README.md": (2, 64), "Algebra/README.md": (2, 24), "Algebra/groups/README.md": (5, 24),
+                "Algebra/groups/sub/README.md": (1, 24), "Algebra/mod/README.md": (1, 120),
+                "Biology/README.md": (1, 24), "Biology/front/README.md": (1, 120)})
+            self.assertEqual(batch.folder_sizes(first), self.autoform_sizes())
+        # Twenty more pages take the topic's folder past its limit; a page right in the roadmap makes its folder page
+        # no subject index, with the limit any other page has; the module's folder stays within its own.
+        second = self.commit({f"{roadmap}/stray.md": "# Stray\n",
+                              **{f"{roadmap}/Algebra/groups/p{number}.md": "# P\n" for number in range(20)},
+                              **{f"{roadmap}/Algebra/mod/m{number}.md": "# M\n" for number in range(30)}})
+        self.assertEqual(self.autoform_sizes()["README.md"], (3, 24))
+        with sync.relocated(root=self.root):
+            self.assertEqual(batch.folder_sizes(second), self.autoform_sizes())
+            self.assertEqual(batch.overfull_folders(first, second),
+                             [batch.Folder("Algebra/groups/README.md", 25, 24, 5)])
+            # A folder past its limit already is listed only when the batch adds to it.
+            third = self.commit({f"{roadmap}/Algebra/groups/q.md": "# Q\n"})
+            self.assertEqual(batch.overfull_folders(second, third),
+                             [batch.Folder("Algebra/groups/README.md", 26, 24, 25)])
+            fourth = self.commit({f"{roadmap}/Algebra/mod/n.md": "# N\n"})
+            self.assertEqual(batch.overfull_folders(third, fourth), [])
+
 
 class LinkedRows(unittest.TestCase):
-    def test_a_linked_row_keeps_its_subject_id_and_origin(self) -> None:
+    def test_a_linked_row_keeps_its_subject_id_and_seed(self) -> None:
         seed = {"source": "mathgraph", "node": "mg_1", "revision": "r"}
         row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/a.md"}], "id": "af_" + "a" * 24,
                "extensions": {"org.atlas-wiki": {"kind": "theorem", "seed": seed,
@@ -1087,7 +1232,7 @@ class Batches(unittest.TestCase):
             ("far", "3"), ("s1", "4"), ("s2", "5"), ("held", "6"), ("kindless", "7"), ("field", "8"), ("part", "9"),
             ("unlisted", "f0"), ("extra", "0f"), ("twice", "ab"), ("mixed", "cd"), ("listed", "dc"), ("gapped", "fe"),
             ("renamed", "ef"), ("wgap", "ac"), ("vanish", "ca"), ("kept", "bd"), ("pre", "db"), ("shouty", "ae"),
-            ("fenced", "ea"), ("inst", "af"), ("bold", "fa"), ("dep", "b2"), ("proofdep", "b3"))}
+            ("fenced", "ea"), ("inst", "af"), ("bold", "fa"), ("dep", "b2"), ("proofdep", "b3"), ("moved", "b1"))}
         sylow, basics = "Algebra/groups/sylow-theorems", "Algebra/groups/group-basics"
         seed = {"source": "mathgraph", "node": "mg_1", "revision": "r"}
         self.planned(f"{sylow}/sylow-counting.md", a["one"], {"org.atlas-wiki": {
@@ -1146,6 +1291,7 @@ class Batches(unittest.TestCase):
         # may not record.
         self.planned(f"{sylow}/dep.md", a["dep"], depends=True)
         self.planned(f"{sylow}/proof-dep.md", a["proofdep"], proof="sylow.md")
+        self.planned(f"{sylow}/moved.md", a["moved"])
         groups, wanted = "MathlibExt/Algebra/Groups.lean", "WantedExt/Algebra/SylowWanted.lean"
         (self.root / groups).write_text((self.root / groups).read_text().replace(
             "end Ext", "theorem held_decl : True := trivial\n\nend Ext"))
@@ -1181,7 +1327,8 @@ class Batches(unittest.TestCase):
         # One declaration that may state either of two pages: neither.
         self.merge(10, lambda: self.add(wanted, "shared_thm"), f"Graph: {a['s1']} {a['s2']}\n")
         # Pages the batch does not link, as an editor's call: one that holds a declaration back, one that records no
-        # kind, one its folder page does not list, and one whose row holds more than a kind and an origin.
+        # kind, one its folder page does not list, and one whose row holds more than its kind, its counterparts and its
+        # seed.
         self.merge(11, lambda: self.add(groups, "held_fix"), f"Graph: {a['held']}\n")
         self.merge(12, lambda: self.add(wanted, "kindless_thm"), f"Graph: {a['kindless']}\n")
         self.merge(13, lambda: self.add(wanted, "unlisted_thm"), f"Graph: {a['unlisted']}\n")
@@ -1202,12 +1349,12 @@ class Batches(unittest.TestCase):
         self.merge(21, lambda: self.add(groups, "listed_thm"))
         self.bodies["21"] = {"body": f"- Graph: {a['listed']}\n",
                              "html": f'<ul dir="auto">\n<li>Graph: {a["listed"]}</li>\n</ul>'}
-        # A page whose own `## Depends on` links a planned page, which no Lean can record: not linked.
+        # A page whose own `## Depends on` links a planned page: not linked.
         self.merge(22, lambda: self.add(wanted, "gap_thm"), f"Graph: {a['gapped']}\n")
         # Two candidates as the merge added them, though later Lean takes one away: not linked.
         self.merge(23, lambda: (self.add(wanted, "ren_a"), self.add(wanted, "ren_b")), f"Graph: {a['renamed']}\n")
         self.merge(24, lambda: self.remove(wanted, "ren_b"))
-        # A wanted statement for a page whose proof needs a page not proved yet: not linked.
+        # A wanted statement for a page whose own `## Proof depends on` links a page: not linked.
         self.merge(25, lambda: self.add_text(wanted, "/-- wgap_stmt holds. -/\ntheorem_wanted wgap_stmt : True"),
                    f"Graph: {a['wgap']}\n")
         # The one candidate, renamed by a later pull request: not linked, and what it became gets no page.
@@ -1233,6 +1380,12 @@ class Batches(unittest.TestCase):
         # A word that is no article id, and a label in another case: notes, and the declarations get their pages.
         self.merge(36, lambda: self.add(groups, "odd_thm"), "Graph: af_ABC123, new\n")
         self.merge(37, lambda: self.add(groups, "cased_thm"), f"graph: af_{'e' * 24}\n")
+        # The one candidate, renamed into another module of the topic by a later pull request: not linked, and what it
+        # became gets no page.
+        self.merge(38, lambda: self.add(wanted, "mv_a"), f"Graph: {a['moved']}\n")
+        self.merge(39, lambda: (self.remove(wanted, "mv_a"),
+                                self.module("MathlibExt/Algebra/SylowMore.lean", ["mv_b"])),
+                   "Graph: new\nPlace: MathlibExt/Algebra/SylowMore -> Algebra/groups | Sylow theorems\n")
         text = self.description("--base", self.base)
         commit = self.git("rev-parse", "HEAD")
         rows = self.rows()
@@ -1251,7 +1404,7 @@ class Batches(unittest.TestCase):
         pages = {path.name for path in roadmap.rglob("*.md")}
         withheld = ["far_thm", "held_fix", "several_a", "several_b", "shared_thm", "two_a", "two_b", "kindless_thm",
                     "unlisted_thm", "extra_thm", "field_thm", "node_thm", "gap_thm", "ren_a", "wgap_stmt", "van_b",
-                    "shouty_thm", "fenced_thm", "inst_helper", "dep_thm", "proofdep_thm"]
+                    "shouty_thm", "fenced_thm", "inst_helper", "dep_thm", "proofdep_thm", "mv_b"]
         for name in ["count_one", "part_thm", "twice_b", "mixed_near", *withheld]:
             self.assertNotIn(name.replace("_", "-") + ".md", pages)
         for name in ("rings-thm.md", "edited-thm.md", "hidden-thm.md", "mismatch-thm.md", "twice-a.md", "mixed-far.md",
@@ -1261,8 +1414,9 @@ class Batches(unittest.TestCase):
         for name in ["count_one", "part_thm", "twice_b", "mixed_near", *withheld]:
             self.assertEqual(state[f"Ext.{name}"], sync.digest(f"{name} holds."))
         self.assertNotIn("van-a.md", pages)
-        self.assertIn("- 4 planned pages that merged pull requests' `Graph:` lines name linked to a declaration; 20 "
-                      "left for an editor, and 21 declarations that may state them given no page.", text)
+        self.assertNotIn("mv-a.md", pages)
+        self.assertIn("- 4 planned pages that merged pull requests' `Graph:` lines name linked to a declaration; 21 "
+                      "left for an editor, and 22 declarations that may state them given no page.", text)
         self.assertEqual((roadmap / sylow / "fenced.md").read_text(), "# Fenced\n\nFenced holds.\n\n```\n## Depends on\n"
                          "```\n\nMore prose.\n\n## Sources\n\n- A book.\n")
         for line in (f"- linked `{a['one']}` (kind `theorem`) to `Ext.count_one` (a Lean `theorem`), from #1's `Graph:` "
@@ -1304,8 +1458,8 @@ class Batches(unittest.TestCase):
                      f"`{a['proofdep']}` (`{sylow}/proof-dep.md`): #35 names it; its own dependency sections link 1 "
                      "page(s), such as `sylow.md`, and the batch cannot tell whether the declaration's Lean records them: "
                      "linking it is an editor's call; given no page: `Ext.proofdep_thm`",
-                     "#36: 1 word(s) of its `Graph:` line left out, such as `af_ABC123`: an article id is `af_` and 24 "
-                     "lower-case hexadecimal digits",
+                     "#36: 1 word(s) of its `Graph:` line that start like an article id left out: an article id is "
+                     "`af_` and 24 lower-case hexadecimal digits",
                      "#37: 1 line(s) labelled as a `Graph:` line in another case left out: only `Graph:` counts",
                      f"`{a['renamed']}` (`{sylow}/renamed.md`): #23 adds 2 documented declarations in its topic that "
                      "could state it; given no page: `Ext.ren_a`",
@@ -1325,7 +1479,10 @@ class Batches(unittest.TestCase):
                      "text",
                      f"`{a['vanish']}` (`{sylow}/vanish.md`): `Ext.van_a`, the one declaration in its topic that #26 "
                      "adds and that could state it, is gone or deprecated on `main` now, and the pull requests that took "
-                     "it away add these in its module; given no page: `Ext.van_b`",
+                     "it away add these in its topic; given no page: `Ext.van_b`",
+                     f"`{a['moved']}` (`{sylow}/moved.md`): `Ext.mv_a`, the one declaration in its topic that #38 "
+                     "adds and that could state it, is gone or deprecated on `main` now, and the pull requests that "
+                     "took it away add these in its topic; given no page: `Ext.mv_b`",
                      f"{a['kept']} (#29): it records no kind, so the batch cannot tell what sort of declaration states "
                      "it; #29 adds no candidate the batch would give a page\n",
                      "#28: its `Place:` and `Graph:` lines are left out: its description is not known",
@@ -1347,10 +1504,75 @@ class Batches(unittest.TestCase):
         self.addCleanup(written.unlink, True)
         result = self.tool("verify", commit, "--body", str(written))
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("once the 4 planned pages of the link plan are linked, withholding 21 declarations",
+        self.assertIn("once the 4 planned pages of the link plan are linked, withholding 22 declarations",
                       result.stdout)
         self.assertIn("The declarations it withholds, so with no page: Ext.dep_thm, Ext.extra_thm, Ext.far_thm, ",
                       result.stdout)
+        self.assertEqual(written.read_text(), text)
+
+    def test_what_replaced_a_candidate_is_withheld_for_any_page_left_unlinked(self) -> None:
+        sylow, wanted = "Algebra/groups/sylow-theorems", "WantedExt/Algebra/SylowWanted.lean"
+        kept, two, several = ("af_" + digits * 12 for digits in ("c1", "c2", "c3"))
+        self.planned(f"{sylow}/kept-renamed.md", kept, depends=True)
+        self.planned(f"{sylow}/two-renamed.md", two)
+        self.planned(f"{sylow}/several-renamed.md", several)
+        self.base = self.commit("planned pages")
+        # A page the batch keeps for an editor, whose one candidate a later pull request renames.
+        self.merge(1, lambda: self.add(wanted, "kr_a"), f"Graph: {kept}\n")
+        self.merge(2, lambda: (self.remove(wanted, "kr_a"), self.add(wanted, "kr_b")))
+        # A page two pull requests name, one of whose candidates a later pull request renames.
+        self.merge(3, lambda: self.add(wanted, "mr_a"), f"Graph: {two}\n")
+        self.merge(4, lambda: self.add(wanted, "mr_c"), f"Graph: {two}\n")
+        self.merge(5, lambda: (self.remove(wanted, "mr_a"), self.add(wanted, "mr_a2")))
+        # A page with two candidates in its topic, one of which a later pull request renames.
+        self.merge(6, lambda: (self.add(wanted, "ar_1"), self.add(wanted, "ar_2")), f"Graph: {several}\n")
+        self.merge(7, lambda: (self.remove(wanted, "ar_1"), self.add(wanted, "ar_3")))
+        text = self.description("--base", self.base)
+        pages = {path.name for path in (self.root / "blueprint/roadmap").rglob("*.md")}
+        for name in ("kr-b.md", "mr-a2.md", "mr-c.md", "ar-2.md", "ar-3.md"):
+            self.assertNotIn(name, pages)
+        for line in (f"- `{kept}` (`{sylow}/kept-renamed.md`): #1 names it; its own dependency sections link 1 page(s), "
+                     "such as `../sylow-theorems/sylow.md`, and the batch cannot tell whether the declaration's Lean "
+                     "records them: linking it is an editor's call; `Ext.kr_a` is gone or deprecated on `main` now, and "
+                     "the pull requests that took it away add `Ext.kr_b` in its topic; given no page: `Ext.kr_b`\n",
+                     f"- `{two}` (`{sylow}/two-renamed.md`): #3, #4 name it, and the batch does not choose between them; "
+                     "`Ext.mr_a` is gone or deprecated on `main` now, and the pull requests that took it away add "
+                     "`Ext.mr_a2` in its topic; given no page: `Ext.mr_a2`, `Ext.mr_c`\n",
+                     f"- `{several}` (`{sylow}/several-renamed.md`): #6 adds 2 documented declarations in its topic that "
+                     "could state it; `Ext.ar_1` is gone or deprecated on `main` now, and the pull requests that took it "
+                     "away add `Ext.ar_3` in its topic; given no page: `Ext.ar_2`, `Ext.ar_3`\n"):
+            with self.subTest(line=line):
+                self.assertIn(line, text)
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_the_folders_a_batch_takes_past_autoforms_limit(self) -> None:
+        # The folder of Sylow's theorems holds 24 articles; a module a pull request places in its topic takes it past.
+        folder = "Algebra/groups/sylow-theorems/README.md"
+        with sync.relocated(root=self.root):
+            have = batch.folder_sizes("HEAD")[folder][0]
+        for number in range(24 - have):
+            self.planned(f"Algebra/groups/sylow-theorems/filler-{number:02}.md", "af_" + "9e" * 11 + f"{number:02x}")
+        self.git("add", "-A")
+        self.git("commit", "-q", "--amend", "--no-edit")
+        self.base = self.git("rev-parse", "HEAD")
+        self.merge(1, lambda: self.module("MathlibExt/Algebra/SylowMore.lean", ["more_a", "more_b"]),
+                   "Graph: new\nPlace: MathlibExt/Algebra/SylowMore -> Algebra/groups | Sylow theorems\n")
+        text = self.description("--base", self.base)
+        commit = self.git("rev-parse", "HEAD")
+        with sync.relocated(root=self.root):
+            count, limit = batch.folder_sizes(commit)[folder]
+        self.assertEqual(limit, 24)
+        self.assertGreater(count, 24)
+        line = f"- `{folder}`: {count} articles, past its limit of 24 (24 before)\n"
+        self.assertIn("- 1 folders left past `autoform audit`'s size limit, for an editor to regroup.\n", text)
+        self.assertIn(line, text)
+        # verify lists it too, from main.
+        written = self.root.parent / f"{self.root.name}-verify-body.md"
+        self.addCleanup(written.unlink, True)
+        result = self.tool("verify", commit, "--body", str(written))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(line, result.stdout)
         self.assertEqual(written.read_text(), text)
 
     def test_verify_from_a_newer_main_keeps_the_link(self) -> None:
