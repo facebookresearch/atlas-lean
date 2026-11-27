@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.LucasnomialSum
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.LucasTetrahedralRecurrence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc
 
@@ -122,18 +123,6 @@ public theorem_wanted sum_cubes_specializations (n : ℕ) :
       ∑ k ∈ Finset.Icc 1 n, q ^ (2 * (n - k)) * ((1 - q ^ (2 * k)) / (1 - q ^ 2)) *
           ((1 - q ^ k) / (1 - q)) ^ 2 =
         ((1 - q ^ (n + 1)) * (1 - q ^ n) / ((1 - q) * (1 - q ^ 2))) ^ 2
-
-/-- **Recurrence for the Lucas tetrahedral numbers.** Let $(s, t)$ be nondegenerate Lucas
-parameters, and write $\{n\}_{s,t}$ for the Lucas brackets and $\binom{n}{k}_{s,t}$ for the
-Lucasnomial coefficients. For every natural number $n$,
-$$\binom{n+3}{3}_{s,t} = st\binom{n+2}{3}_{s,t} + \{n+1\}_{s,t}\binom{n+2}{2}_{s,t}.$$
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 7
-(`jis-2025-25.5.6-thm-7`). -/
-public theorem_wanted lucasTetrahedral_recurrence (P : LucasParameters) (n : ℕ) :
-    lucasnomial P (n + 3) 3 =
-      P.s * P.t * lucasnomial P (n + 2) 3 + lucasBracket P (n + 1) * lucasnomial P (n + 2) 2
 
 /-- **Lucas derivative.** For real numbers $\varphi$ and $\varphi'$, the Lucas derivative
 $D_{\varphi,\varphi'}$ sends a function $f : \mathbb{R} \to \mathbb{R}$ to the function whose

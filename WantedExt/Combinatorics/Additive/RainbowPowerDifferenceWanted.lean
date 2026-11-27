@@ -58,21 +58,6 @@ public theorem_wanted eq_zero_of_color_eq_color_zero_of_rainbowFree_powDiff
     (a : ZMod p) (ha : c a = c 0) : a = 0
 
 
-/-- **Power digraphs modulo a prime with three components.** Let $p$ be a prime and $k \ge 3$ an
-odd natural number, and let $G^k_p$ be the directed graph on $\mathbb{Z}/p\mathbb{Z}$ with an edge
-$a \to a^k$ from every vertex $a$. Its (weak) components are the classes of the equivalence
-relation "$a^{k^m} = b^{k^n}$ for some natural numbers $m, n$". Then $G^k_p$ has exactly three
-components if and only if $p - 1 = 2m$ for some natural number $m$ every prime factor of which
-divides $k$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Proposition 2
-(`integers-2024-A105-prop-2`). -/
-public theorem_wanted card_powMap_components_eq_three_iff_of_odd
-    (p k : ℕ) [Fact p.Prime] (hk : Odd k) (hk3 : 3 ≤ k) :
-    Nat.card (Quot fun a b : ZMod p => ∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) = 3 ↔
-      ∃ m : ℕ, p - 1 = 2 * m ∧ ∀ q : ℕ, q.Prime → q ∣ m → q ∣ k
-
 /-- **Upper density threshold for rainbow solutions of $x - y = z^k$.** Let $k \ge 2$ be an
 integer, let $s = \lfloor k / 2 \rfloor$ and $\delta = (4^s - 1) / (3 \cdot 4^s)$, and let $c$ be
 a coloring of the positive integers by three colors. Suppose that for each color $e$ there is
