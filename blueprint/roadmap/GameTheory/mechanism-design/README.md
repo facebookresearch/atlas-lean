@@ -28,6 +28,7 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Single-Parameter Auctions](single-parameter-auctions/README.md)
 - [Standard Proper Scoring Rules](standard-scoring-rules/README.md)
 - [Truthful Scheduling and Budget-Constrained Auctions](truthful-scheduling-and-budgets/README.md)
+- [Logarithmic market scoring rule (LMSR) cost-function market maker](logarithmic-market-scoring-rule-lmsr-cost-functi/README.md)
 
 ## Related topics
 

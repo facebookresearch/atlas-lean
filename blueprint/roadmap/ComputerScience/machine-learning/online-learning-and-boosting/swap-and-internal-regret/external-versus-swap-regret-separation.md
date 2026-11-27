@@ -14,7 +14,7 @@ Use an explicit periodic construction on three actions in which every fixed acti
 ## Depends on
 
 - [Regret against a family of modification rules; internal regret](modification-rule-regret-and-internal-regret.md)
-- [External regret is at most swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret-le-swap-regret.md)
+- [External regret is at most swap regret](../../../../GameTheory/noncooperative-games/external-and-swap-regret/external-regret-le-swap-regret.md)
 
 ## Sources
 

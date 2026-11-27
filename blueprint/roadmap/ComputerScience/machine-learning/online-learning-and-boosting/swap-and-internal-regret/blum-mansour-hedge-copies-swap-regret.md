@@ -14,12 +14,12 @@ By the Blum-Mansour reduction the swap regret is at most the sum of the copies' 
 
 ## Depends on
 
-- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [Swap regret](../../../../GameTheory/noncooperative-games/external-and-swap-regret/swap-regret.md)
 - [Existence of a stationary distribution](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-stationary.md)
 
 ## Proof depends on
 
-- [Black-box reduction from swap to external regret](../../../../GameTheory/not-yet-classified/part-02/regret-blum-mansour-bound/exists-stationary-play-swap-regret-le-ca.md)
+- [Black-box reduction from swap to external regret](../../../../GameTheory/noncooperative-games/blum-mansour-swap-regret-bound/exists-stationary-play-swap-regret-le-ca.md)
 - [The second-order Hedge bound](../hedge-algorithm/alg-loss-le-sq.md)
 
 ## Sources
