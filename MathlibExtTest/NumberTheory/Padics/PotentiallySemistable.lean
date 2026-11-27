@@ -16,9 +16,13 @@ over the abstract `B_st`) implies potential semistability, the trivial represent
 crystalline, semistable and potentially semistable, a matrix representation defined over a
 finite extension `E` of `ℚ_p` is potentially semistable when `Eⁿ` is, the bundled Galois actions
 have the expected coercions, and, as `B_dR` is regular, the comparison map for `B_dR` is
-injective and the forms of being de Rham agree. -/
+injective, the forms of being de Rham agree, de Rham representations are closed under
+subrepresentations, quotients, direct sums, tensor products and duals (so the dual and the tensor
+square of the trivial representation are de Rham), and on them `D_dR` is exact and faithful and
+Fontaine's maps for tensor products and duals are isomorphisms. -/
 
 open PadicComplexInt Representation
+open scoped TensorProduct
 
 variable {p : ℕ} [Fact p.Prime] {V : Type*} [AddCommGroup V] [Module ℚ_[p] V]
 
@@ -142,3 +146,79 @@ example [FiniteDimensional ℚ_[p] V] (ρ : Representation ℚ_[p] Gal(PadicAlgC
     (h : Function.Bijective (ρ.comparison (galoisBDeRham p) K.fixingSubgroup)) :
     ρ.HasFixedBasis (galoisBDeRham p) K.fixingSubgroup :=
   (ρ.isDeRham_iff_hasFixedBasis K).1 ((ρ.isDeRham_iff_comparison_bijective K).2 h)
+
+-- De Rham representations are closed under tensor products, duals and direct sums, over every
+-- `K`: for de Rham `V` and `W`, so are `V ⊗ W*`, `V × W`, every subrepresentation `U` of `V` and
+-- the quotient `V ⧸ U`.
+example {W : Type*} [AddCommGroup W] [Module ℚ_[p] W]
+    (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (σ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) W)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (hρ : ρ.IsDeRham K) (hσ : σ.IsDeRham K)
+    (U : Subrepresentation ρ) :
+    (ρ.tprod σ.dual).IsDeRham K ∧ (ρ.prod σ).IsDeRham K ∧ U.toRepresentation.IsDeRham K ∧
+      U.quotient.IsDeRham K :=
+  ⟨hρ.tprod hσ.dual, hρ.prod hσ, hρ.subrepresentation U, hρ.quotient U⟩
+
+-- The factors of a de Rham direct sum are de Rham: by `isDeRham_prod_iff`, or through the
+-- injective inclusion of the first factor and the surjective projection onto the second.
+example {W : Type*} [AddCommGroup W] [Module ℚ_[p] W]
+    (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (σ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) W)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (h : (ρ.prod σ).IsDeRham K) :
+    (ρ.IsDeRham K ∧ σ.IsDeRham K) ∧ ρ.IsDeRham K ∧ σ.IsDeRham K :=
+  ⟨isDeRham_prod_iff.1 h,
+    h.of_injective (f := IntertwiningMap.inl ℚ_[p] ρ σ) LinearMap.inl_injective,
+    h.of_surjective (IntertwiningMap.snd_surjective ρ σ)⟩
+
+-- The dual and the tensor square of the trivial representation on a finite-dimensional `V` are
+-- de Rham, and `D_dR` of the dual is the dual of `D_dR`.
+example [FiniteDimensional ℚ_[p] V] (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
+    (trivial ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V).dual.IsDeRham K ∧
+      ((trivial ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V).tprod
+        (trivial ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)).IsDeRham K ∧
+      Function.Bijective ((trivial ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V).periodsDual
+        (galoisBDeRham p) K.fixingSubgroup) := by
+  have h : (trivial ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V).IsDeRham K :=
+    HasFixedBasis.isAdmissible ⟨_, Algebra.TensorProduct.basis 𝔹 (Module.finBasis ℚ_[p] V),
+      fun i σ _ => by
+        rw [Algebra.TensorProduct.basis_apply, TensorProduct.map_tmul, AlgHom.toLinearMap_apply,
+          map_one, trivial_apply]⟩
+  exact ⟨h.dual, h.tprod h, h.periodsDual_bijective⟩
+
+-- `D_dR` maps `0 → U → V → V ⧸ U → 0` to a short exact sequence, for a subrepresentation `U` of a
+-- de Rham representation `V`.
+example (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (h : ρ.IsDeRham K) (U : Subrepresentation ρ) :
+    Function.Injective (periodsMap (galoisBDeRham p) K.fixingSubgroup U.subtype) ∧
+      Function.Exact (periodsMap (galoisBDeRham p) K.fixingSubgroup U.subtype)
+        (periodsMap (galoisBDeRham p) K.fixingSubgroup U.mkQ) ∧
+      Function.Surjective (periodsMap (galoisBDeRham p) K.fixingSubgroup U.mkQ) :=
+  h.shortExact_periodsMap U.subtype_injective U.mkQ_surjective U.exact_subtype_mkQ
+
+-- `D_dR` maps the exact sequence `V → V × W → W` to an exact sequence when `V` is de Rham, and is
+-- faithful on de Rham representations.
+example {W : Type*} [AddCommGroup W] [Module ℚ_[p] W]
+    (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (σ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) W)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (h : ρ.IsDeRham K) (f f' : ρ.IntertwiningMap σ)
+    (hf : periodsMap (galoisBDeRham p) K.fixingSubgroup f =
+      periodsMap (galoisBDeRham p) K.fixingSubgroup f') :
+    Function.Exact (periodsMap (galoisBDeRham p) K.fixingSubgroup (IntertwiningMap.inl ℚ_[p] ρ σ))
+        (periodsMap (galoisBDeRham p) K.fixingSubgroup (IntertwiningMap.snd ℚ_[p] ρ σ)) ∧
+      f = f' :=
+  ⟨h.exact_periodsMap fun x => ⟨fun hx => ⟨x.1, Prod.ext rfl hx.symm⟩, fun ⟨_, hy⟩ => hy ▸ rfl⟩,
+    h.eq_of_periodsMap_eq hf⟩
+
+-- The isomorphisms `D_dR(V) ⊗ D_dR(W) ≃ D_dR(V ⊗ W)` and `D_dR(V*) ≃ D_dR(V)*` are Fontaine's
+-- natural maps: the first sends `x ⊗ y` to the product of `x` and `y`.
+example {W : Type*} [AddCommGroup W] [Module ℚ_[p] W]
+    (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
+    (σ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) W)
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (hρ : ρ.IsDeRham K) (hσ : σ.IsDeRham K)
+    (x : ρ.periods (galoisBDeRham p) K.fixingSubgroup)
+    (y : σ.periods (galoisBDeRham p) K.fixingSubgroup)
+    (z : ρ.dual.periods (galoisBDeRham p) K.fixingSubgroup) :
+    (hρ.periodsTensorEquiv hσ (x ⊗ₜ y) : 𝔹 ⊗[ℚ_[p]] (V ⊗[ℚ_[p]] W)) =
+        tensorMul ℚ_[p] 𝔹 V W x y ∧
+      hρ.periodsDualEquiv z = ρ.periodsDual (galoisBDeRham p) K.fixingSubgroup z := by
+  simp
