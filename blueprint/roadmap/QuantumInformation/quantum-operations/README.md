@@ -24,3 +24,5 @@ Quantum operations and channels covers the physically allowed transformations of
 ## Research directions
 
 - [Quantum capacity of the depolarizing channel](quantum-capacity-of-the-depolarizing-channel.md)
+
+- [POVMs, Naimark Dilation and Measurement Readout](povms-and-measurement-readout/README.md)

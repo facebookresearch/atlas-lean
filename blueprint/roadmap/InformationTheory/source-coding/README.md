@@ -20,3 +20,4 @@ Lossless compression of information sources by variable-length codes, including 
 - [AEP and typical sets (finite iid)](remaining-clauses-of-aep-and-typical-sets.md)
 
 - [Gaussian rate-distortion function](gaussian-rate-distortion/README.md)
+- [Prefix-Free Compression Bounds](prefix-free-compression-bounds/README.md)

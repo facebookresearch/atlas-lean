@@ -6,4 +6,4 @@ put $t = \lfloor (n-k)/2 \rfloor$, and let $S$ be a solver for the key equations
 budget $t$. For every polynomial $p \in F[X]$ of degree less than $k$ and every error word
 $\varepsilon \in F^n$ with at most $t$ nonzero entries, the Berlekamp-Welch decoder with
 solver $S$, run on the received word
-$(p(\alpha_0) + \varepsilon_0, \dots, p(\alpha_{n-1}) + \varepsilon_{n-1})$, returns $p$. The same holds for the [Reed–Solomon codec](../hamming-crc-and-reed-solomon-codec-instances/encoding-3.md) on the received word as a list of length $n$.
+$(p(\alpha_0) + \varepsilon_0, \dots, p(\alpha_{n-1}) + \varepsilon_{n-1})$, returns $p$. The same holds for the [Reed–Solomon codec](../hamming-7-4-code/hamming-crc-and-reed-solomon-codec-instances/encoding-3.md) on the received word as a list of length $n$.
