@@ -33,3 +33,13 @@ example : twoColorMultiplePartitionCount 1 1 = 2 := by
 example :
     garvanYOdd 1 2 1 = 7 * garvanM 5 2 + 49 * garvanM 9 3 ∧
     garvanYEven 1 2 1 = 7 * garvanM 4 2 + 49 * garvanM 8 3 := by decide
+
+-- The bound is sharp in the first column of the first even vector.
+example : 49 ∣ garvanX 2 1 ∧ ¬ 343 ∣ garvanX 2 1 :=
+  ⟨(seven_pow_dvd_garvanX 1 1 (by decide) (by decide)).2.2.2, by decide⟩
+
+-- At the third column, the odd and even bounds differ by a factor of seven.
+example :
+    padicValNat 7 (garvanX 1 1) = 1 ∧ padicValNat 7 (garvanX 1 2) = 2 ∧
+      7 ^ 7 ∣ garvanX 5 3 ∧ 7 ^ 6 ∣ garvanX 4 3 :=
+  seven_pow_dvd_garvanX (k := 2) (j := 3) (hk := by decide) (hj := by decide)

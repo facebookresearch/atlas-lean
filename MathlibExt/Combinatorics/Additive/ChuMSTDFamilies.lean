@@ -220,6 +220,41 @@ public theorem chuFamilyKLT_mem {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 
     omega
 
 open scoped Pointwise in
+/-- **Differences in the Kumar–Mohan–Pandey sets (Lemma 1).** Let $k$, $l$, $t$ be positive
+integers, let $A = A_{k,l,t}$ be the Kumar–Mohan–Pandey set, and put $T = t(kl + l + 1)$. Then
+the difference set $A - A$ contains $4i$ and $1 + 4i$ for every integer $i$ with
+$1 \le i \le 1 + T$, and contains $3 + 4i$ for every integer $i$ with $0 \le i \le T$.
+
+Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
+Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 1 (`integers-2024-A32-lem-1`). -/
+public theorem chuFamilyKLT_mem_sub {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
+    (∀ i : ℕ, 1 ≤ i → i ≤ 1 + t * (k * l + l + 1) →
+        4 * (i : ℤ) ∈ chuFamilyKLT k l t - chuFamilyKLT k l t ∧
+          1 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t - chuFamilyKLT k l t) ∧
+      ∀ i : ℕ, i ≤ t * (k * l + l + 1) →
+        3 + 4 * (i : ℤ) ∈ chuFamilyKLT k l t - chuFamilyKLT k l t := by
+  let A := chuFamilyKLT k l t
+  let T := t * (k * l + l + 1)
+  change (∀ i : ℕ, 1 ≤ i → i ≤ 1 + T →
+      4 * (i : ℤ) ∈ A - A ∧ 1 + 4 * (i : ℤ) ∈ A - A) ∧
+    ∀ i : ℕ, i ≤ T → 3 + 4 * (i : ℤ) ∈ A - A
+  obtain ⟨hgrid, -, hlast⟩ := chuFamilyKLT_mem hk hl ht
+  change 4 + 4 * (T : ℤ) ∈ A at hlast
+  have hzero : (0 : ℤ) ∈ A := by
+    cases t <;> simp [A, chuFamilyKLT, List.replicate_succ, List.flatten_cons,
+      List.append_assoc, setOfConsecutiveDifferences_cons]
+  have hone : (1 : ℤ) ∈ A := by
+    simpa using hgrid 0 (Nat.zero_le _)
+  have sub_mem {a b c : ℤ} (ha : a ∈ A) (hb : b ∈ A) (h : a - b = c) : c ∈ A - A :=
+    h ▸ Finset.sub_mem_sub ha hb
+  constructor
+  · intro i _ hi
+    exact ⟨sub_mem (hgrid i hi) hone (by omega), sub_mem (hgrid i hi) hzero (by omega)⟩
+  · intro i hi
+    -- Subtract the grid point with reflected index `T - i` from the tail point.
+    exact sub_mem hlast (hgrid (T - i) (by change T - i ≤ 1 + T; omega)) (by omega)
+
+open scoped Pointwise in
 /-- **Elements of the sumset of the Chu family set.** Let $k$, $l$, $t$ be positive integers, let
 $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$, and let
 $T = t(kl + l + 1)$. Then $1 + 4i$ and $2 + 4i$ lie in $A + A$ for every integer $i$ with

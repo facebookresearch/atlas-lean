@@ -108,4 +108,40 @@ example {x : ℕ → Bool} (hx : x ∈ zeckAdic) (h6 : x 6 = false) (h5 : x 5 = 
   interval_cases i
   exact h2
 
+/-- A sequence whose only digit `1` sits at an index `n ≥ 2` is a Zeckendorf-adic integer. -/
+private theorem single_mem_zeckAdic {n : ℕ} (hn : 2 ≤ n) :
+    (fun i => decide (i = n)) ∈ zeckAdic :=
+  ⟨decide_eq_false_iff_not.2 (by omega), decide_eq_false_iff_not.2 (by omega),
+    fun i => by simp only [decide_eq_false_iff_not]; omega⟩
+
+-- The hypotheses of `zeckNIZ_leading_zeros` are satisfiable: for the shift `r = 1` the point
+-- whose only digit `1` is `x₃` lies in `NIZ₄`, and the name `x₅x₄x₃x₂ = 0010` of its cylinder of
+-- order `4` starts with `00`.
+example : (fun i => decide (i = 3)) 5 = false ∧ (fun i => decide (i = 3)) 4 = false :=
+  zeckNIZ_leading_zeros (r := 1) (k := 4) le_rfl (by omega) (single_mem_zeckAdic (by omega))
+    (by simp only [zeckNIZ, zeckCST, Set.mem_sdiff, Set.mem_ofPred_eq]; decide)
+
+-- In set form: the Zeckendorf-adic points of `NIZ_k` lie in the cylinder `x_{k+1} = x_k = 0`.
+example {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k) :
+    zeckAdic ∩ zeckNIZ r k ⊆ {x | x (k + 1) = false ∧ x k = false} :=
+  fun _ hx => zeckNIZ_leading_zeros hr hk hx.1 hx.2
+
+-- Whatever the shift `r ≥ 1`, a point whose digit `x₄` is `1` does not lie in `NIZ₄`.
+example {r : ℕ} (hr : 1 ≤ r) : (fun i => decide (i = 4)) ∉ zeckNIZ r 4 := fun h =>
+  absurd (zeckNIZ_leading_zeros hr (by omega) (single_mem_zeckAdic (by omega)) h).2 (by decide)
+
+-- Whatever the shift `r ≥ 1`, a point whose digit `x₅` is `1` does not lie in `NIZ₄`.
+example {r : ℕ} (hr : 1 ≤ r) : (fun i => decide (i = 5)) ∉ zeckNIZ r 4 := fun h =>
+  absurd (zeckNIZ_leading_zeros hr (by omega) (single_mem_zeckAdic (by omega)) h).1 (by decide)
+
+-- The point with digits `x₅ = x₃ = 1` lies neither in `NIZ₄` (its digit `x₅` is `1`) nor in
+-- `NIZ₅` (its digit `x₅` is `1` again, now in the second leading position), for any `r ≥ 1`.
+example {r : ℕ} (hr : 1 ≤ r) :
+    (fun i => decide (i = 3 ∨ i = 5)) ∉ zeckNIZ r 4 ∧
+      (fun i => decide (i = 3 ∨ i = 5)) ∉ zeckNIZ r 5 := by
+  have hx : (fun i => decide (i = 3 ∨ i = 5)) ∈ zeckAdic :=
+    ⟨by decide, by decide, fun i => by simp only [decide_eq_false_iff_not]; omega⟩
+  exact ⟨fun h => absurd (zeckNIZ_leading_zeros hr (by omega) hx h).1 (by decide),
+    fun h => absurd (zeckNIZ_leading_zeros hr (by omega) hx h).2 (by decide)⟩
+
 end ZeckendorfNewInformationZoneTest

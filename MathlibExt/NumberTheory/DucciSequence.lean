@@ -21,7 +21,8 @@ import Mathlib.Data.Nat.Multiplicity
 For prime `p` and positive `k`, Pascal's identity gives the alternating residues of row `p ^ k - 1`
 in `choose_prime_pow_sub_one_mod`. Substituting `X ^ (p ^ (k - 1))` for `X` in `(X + 1) ^ (p - 1)`
 gives `(X + 1) ^ (p ^ k - p ^ (k - 1))` in characteristic `p`. Its coefficients give the binomial
-congruence of Lewis and Tefft for Ducci sequences.
+congruence of Lewis and Tefft for Ducci sequences. For even length, `ducci_pred_iff` characterizes
+the image of the Ducci map by the vanishing of the alternating coordinate sum.
 -/
 
 @[expose] public section
@@ -105,6 +106,52 @@ Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
 INTEGERS 26 (2026), Article A17, Section 1. -/
 def ducciMap (m n : ℕ) [NeZero n] (x : Fin n → ZMod m) : Fin n → ZMod m :=
   fun i => x i + x (i + 1)
+
+open Fin.NatCast in
+/-- **Ducci predecessor criterion for even length.** Let $m \ge 0$ be an integer, let $n \ge 2$ be
+even, and write $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ (so $\mathbb{Z}_0 = \mathbb{Z}$). A tuple
+$x = (x_1, \dots, x_n) \in \mathbb{Z}_m^n$ has a Ducci predecessor, that is, a tuple
+$y \in \mathbb{Z}_m^n$ with $y_i + y_{i+1} = x_i$ for all $i$ (indices taken cyclically, so
+$y_{n+1} = y_1$), if and only if $x_1 - x_2 + x_3 - \cdots + x_{n-1} - x_n = 0$ in $\mathbb{Z}_m$.
+
+Source: Mark L. Lewis and Shannon M. Tefft, "The Maximum
+Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
+Theorem 2. -/
+theorem ducci_pred_iff (m n : ℕ) [NeZero n]
+    (hn : Even n) (x : Fin n → ZMod m) :
+    (∃ y : Fin n → ZMod m, ∀ i : Fin n, y i + y (i + 1) = x i) ↔
+      ∑ i : Fin n, (-1 : ZMod m) ^ i.val * x i = 0 := by
+  -- The alternating sum telescopes to the difference of the endpoint values.
+  have telescope (y : ℕ → ZMod m) (step : ∀ k : ℕ, y k + y (k + 1) = x k) :
+      ∑ i : Fin n, (-1 : ZMod m) ^ i.val * x i = y 0 - y n := by
+    calc
+      _ = ∑ k ∈ Finset.range n, (-1 : ZMod m) ^ k * x k := by
+        simpa using Fin.sum_univ_eq_sum_range (fun k : ℕ => (-1 : ZMod m) ^ k * x k) n
+      _ = ∑ k ∈ Finset.range n, ((-1 : ZMod m) ^ k * y k - (-1) ^ (k + 1) * y (k + 1)) := by
+        apply Finset.sum_congr rfl
+        intro k _
+        rw [← step k]
+        simp [mul_add, pow_succ]
+      _ = y 0 - y n := by
+        simpa [hn.neg_one_pow] using Finset.sum_range_sub' (fun k => (-1 : ZMod m) ^ k * y k) n
+  constructor
+  · rintro ⟨y, hy⟩
+    simpa using telescope (fun k => y k) (fun k => by simpa using hy k)
+  · intro h
+    let y : ℕ → ZMod m := Nat.rec 0 (fun k previous => x k - previous)
+    have step (k : ℕ) : y k + y (k + 1) = x k := by
+      change y k + (x k - y k) = x k
+      exact add_sub_cancel _ _
+    have close : y 0 = y n := sub_eq_zero.mp ((telescope y step).symm.trans h)
+    refine ⟨fun i => y i.val, fun i => ?_⟩
+    have next : y (i + 1).val = y (i.val + 1) := by
+      rcases Nat.lt_or_eq_of_le i.isLt with hi | hi
+      · rw [Fin.val_add_one_of_lt' hi]
+      · have wrap : i + 1 = 0 := by
+          simpa using congrArg (fun k : ℕ => (k : Fin n)) hi
+        rw [wrap, Fin.val_zero, show i.val + 1 = n from hi]
+        exact close
+    simpa only [next, Fin.cast_val_eq_self] using step i.val
 
 /-- The basic tuple `(0, …, 0, 1) ∈ ℤ_m^n`.
 
