@@ -6,6 +6,10 @@ A finite collection of convex sets $o_1, \dots, o_n$ in the plane is a collectio
 
 - [Minkowski sum of two convex polygons](minkowski-sum-of-two-convex-polygons.md)
 
+## Proof depends on
+
+- [Minkowski sum of two convex polygons](minkowski-sum-of-two-convex-polygons.md)
+
 ## Sources
 
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 34, "The Union of Pseudodisks" (the definition by connected set differences, Fig. 181) and Lemma 1 with its proof

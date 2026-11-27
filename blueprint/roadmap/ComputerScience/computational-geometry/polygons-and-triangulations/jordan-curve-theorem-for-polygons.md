@@ -11,6 +11,7 @@ Since $P$ is compact, the complement of a large disk containing $P$ is connected
 
 ## Proof depends on
 
+- [The complement of a simple polygon has at least two components](the-complement-of-a-simple-polygon-has-at-least-two-components.md)
 - [The complement of a simple polygon has at most two components](the-complement-of-a-simple-polygon-has-at-most-two-components.md)
 
 ## Sources

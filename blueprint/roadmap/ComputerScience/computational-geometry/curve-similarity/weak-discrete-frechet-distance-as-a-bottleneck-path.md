@@ -8,6 +8,10 @@ Let $\pi = (p_1, \dots, p_n)$ and $\sigma = (q_1, \dots, q_m)$ be nonempty seque
 - [Minimum spanning trees contain bottleneck paths](minimum-spanning-trees-contain-bottleneck-paths.md)
 
 
+## Proof depends on
+
+- [Minimum spanning trees contain bottleneck paths](minimum-spanning-trees-contain-bottleneck-paths.md)
+
 ## Sources
 
 - S. Har-Peled, *Geometric Approximation Algorithms*, revised online chapter "Fréchet distance: How to walk your dog" (Chapter 33), <https://sarielhp.org/book/chapters/frechet.pdf>: Section 33.1.2.2 (computing the weak discrete Fréchet distance by reduction to the bottleneck edge of the minimum spanning tree)

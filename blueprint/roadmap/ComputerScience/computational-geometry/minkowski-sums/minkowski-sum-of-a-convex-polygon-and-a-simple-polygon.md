@@ -8,6 +8,7 @@ Let $R$ be a convex polygon with $m$ vertices and $P$ a simple polygon with $n$ 
 
 ## Proof depends on
 
+- [Minkowski sum of two convex polygons](minkowski-sum-of-two-convex-polygons.md)
 - [Minkowski sums of disjoint convex sets are pseudodisks](minkowski-sums-of-disjoint-convex-sets-are-pseudodisks.md)
 - [The union of pseudodisks has linear complexity](the-union-of-pseudodisks-has-linear-complexity.md)
 - [Triangulation theorem for simple polygons](../polygons-and-triangulations/triangulation-theorem-for-simple-polygons.md)

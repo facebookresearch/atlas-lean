@@ -9,6 +9,7 @@ The Euclidean minimum spanning tree of $n \ge 3$ points in $\mathbb{R}^2$, not a
 
 ## Proof depends on
 
+- [Euclidean minimum spanning trees lie in the Delaunay triangulation](euclidean-minimum-spanning-trees-lie-in-the-delaunay-triangulation.md)
 - [Number of triangles and edges of a triangulation](number-of-triangles-and-edges-of-a-triangulation.md)
 - [Kruskal's algorithm gives a minimum spanning forest](../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
 
