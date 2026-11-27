@@ -54,3 +54,5 @@
 ## Further topics
 - [Phase variation under mutation and selection](phase-variation-under-mutation-and-selection/README.md)
 - [Rare events in bacterial genotype histograms](rare-events-in-bacterial-genotype-histograms/README.md)
+- [Mutation burden after a population bottleneck](mutation-burden-after-a-population-bottleneck/README.md)
+- [Sheltered load around a balanced polymorphism](sheltered-load-around-a-balanced-polymorphism/README.md)

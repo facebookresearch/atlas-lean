@@ -54,3 +54,4 @@
 - [Feasible instances of UNIFORM SPARSEST CUT](uniform-sparsest-cut-feasible.md)
 - [UNIFORM SPARSEST CUT as a decision problem](uniform-sparsest-cut-dec.md)
 - [UNIFORM SPARSEST CUT is NP-complete](uniform-sparsest-cut-np-complete.md)
+- [Goemans–Linial gap for uniform sparsest cut](uniform-sparsest-cut-goemans-linial-gap.md)

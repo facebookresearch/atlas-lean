@@ -46,3 +46,7 @@
 - [Pairwise coalescence time in the spatial Λ-Fleming–Viot process as a Cox process](pairwise-coalescence-time-in-the-slfv-as-a-cox-process.md)
 ## Further topics
 - [Coalescing Brownian motion genealogies](coalescing-brownian-motion-genealogies/README.md)
+- [Autotetraploid coalescent](autotetraploid-coalescent/README.md)
+- [IBD sharing under migration](ibd-sharing-under-migration/README.md)
+- [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
+- [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)

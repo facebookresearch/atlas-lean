@@ -59,3 +59,4 @@
 - [UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, MAKESPAN is NP-complete](unit-precedence-parallel-batching-makesp-2.md)
 - [UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, TOTAL COMPLETION TIME as a decision problem](unit-precedence-parallel-batching-total.md)
 - [UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, TOTAL COMPLETION TIME is NP-complete](unit-precedence-parallel-batching-total-2.md)
+- [Unit-time precedence scheduling on three identical machines](three-identical-machines-unit-precedence-algorithm.md)

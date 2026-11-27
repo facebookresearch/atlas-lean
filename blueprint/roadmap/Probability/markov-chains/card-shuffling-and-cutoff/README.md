@@ -7,3 +7,5 @@
 - [Total variation distance between Poisson laws](poisson-tvdist.md)
 - [Limit profile of the random transposition shuffle](random-transposition-limit-profile.md)
 - [Limit profile for random transpositions](random-transposition-limit-profile-holds.md)
+
+- [Thorp shuffle and coordinate sweeps](thorp-sweeps/README.md)

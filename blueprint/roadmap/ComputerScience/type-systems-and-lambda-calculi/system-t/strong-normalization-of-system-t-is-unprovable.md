@@ -16,13 +16,14 @@ PA would prove its own consistency, contradicting Gödel's second incompleteness
 
 - [Gödel's Dialectica interpretation of Heyting arithmetic](dialectica-interpretation-of-heyting-arithmetic.md)
 - [Gödel's second incompleteness theorem, abstract Hilbert–Bernays–Löb form](../../../Logic/proof-theory/g-del-s-incompleteness-theorems/hilbert-bernays-lob-second-incompletenes.md)
+- [Kreisel's theorem on provably total functions](../../../Logic/proof-theory/heyting-arithmetic/kreisel-s-theorem-on-provably-total-functions.md)
+- [Strong normalization of System T](strong-normalization-of-system-t.md)
 
 ## Expansion
 
 This page becomes ready once:
 
 - Gödel's second incompleteness theorem for Peano arithmetic with its standard provability predicate, as an instance of the abstract form (proof prerequisite; not yet stated as a page)
-- Kreisel's theorem that PA and Heyting arithmetic prove the same Π⁰₂ sentences, which transfers consistency from Heyting arithmetic to PA (proof prerequisite; not yet stated as a page)
 
 ## Sources
 
