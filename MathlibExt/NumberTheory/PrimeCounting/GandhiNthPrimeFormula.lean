@@ -588,7 +588,7 @@ private theorem gandhi_R_pos (P p q : ℕ) (hpq : p < q) (hqP : Nat.Coprime q P)
 
 /-- Bridge: `⌊1 - logb 2 S⌋ = p` from real bounds. -/
 private theorem gandhi_floor_eq (S : ℝ) (p : ℕ)
-    (hSlo : (1/2:ℝ)^p < S) (hShi : S < 2 * (1/2:ℝ)^p) :
+    (hSlo : (1 / 2 : ℝ) ^ p < S) (hShi : S < 2 * (1 / 2 : ℝ) ^ p) :
     ⌊1 - Real.logb 2 S⌋ = (p : ℤ) := by
   have hA : (0:ℝ) < (1/2)^p := by positivity
   have hSpos : (0:ℝ) < S := lt_trans hA hSlo
