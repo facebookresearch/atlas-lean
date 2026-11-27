@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.Digits.PermutipleStrings
 public import WantedExt.NumberTheory.Digits.PermutipleWanted
 public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero
 public import MathlibExt.NumberTheory.Digits.PermutipleStringsPermutipleEdgeResidueLe
+public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsCarriesOfIsMotherGraphEdge
 
 /-!
 # A multigraph characterization of permutiple strings (Holt)
@@ -42,17 +43,6 @@ public theorem_wanted permutiple_graph_isUnion_motherGraphCycles (n b : ℕ) (hn
     (j : Fin (k + 1)) :
     IsMotherGraphEdge n b (d j) (d (σ j)) ∧
       Relation.ReflTransGen (fun u v => ∃ i, d i = u ∧ d (σ i) = v) (d (σ j)) (d j)
-
-/-- **Every mother-graph edge induces a carry transition.** Let $n$ and $b$ be natural
-numbers. If $(d_1, d_2)$ is an edge of the $(n, b)$-mother graph, then there are natural
-numbers $c_1$ and $c_2$ with $c_1 \le n - 1$ and $c_2 \le n - 1$ such that
-$b c_2 - c_1 = n d_2 - d_1$ as integers.
-
-Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
-INTEGERS 25 (2025), Article A111, Theorem 6 (`integers-2025-A111-thm-6`). -/
-public theorem_wanted exists_carries_of_isMotherGraphEdge (n b d₁ d₂ : ℕ)
-    (h : IsMotherGraphEdge n b d₁ d₂) :
-    ∃ c₁ c₂ : ℕ, c₁ ≤ n - 1 ∧ c₂ ≤ n - 1 ∧ (b : ℤ) * c₂ - c₁ = (n : ℤ) * d₂ - d₁
 
 /-- **$L$-Eulerian criterion for permutiple strings.** Let $1 < n < b$ and let $I$ be a
 multiset of cycles of the $(n, b)$-mother graph, with multiset union of cycle edges $C_I$
