@@ -1398,6 +1398,202 @@ private theorem NumberField.InfinitePlaceTransport.transport_eq_actRingEquiv (E 
       NumberField.InfPlaceDecomp.actRingEquiv σ :=
   rfl
 
+/-! ### The stabilizer-to-orbit equivalence
+
+Both main theorems are instances of one coinduction argument. It uses only the identity and
+composition laws for transport between fibres and the transitivity of the action on the places
+above `v`, never how a completion is built. A group `G` acts on a type `X`, `M` is a family of
+commutative groups over `X`, and `T g h : M x ≃* M y` transports along `h : g • x = y`. When the
+stabilizer `H` of a point `x₀` acts on `M x₀` by transport and `P` cuts out the orbit of `x₀`,
+the module coinduced from `M x₀` is additively the product of the fibres over the orbit, and `g`
+moves the component at `y'` to the component at `g • y'` by `T g`. -/
+
+namespace StabilizerOrbitAux
+
+universe u
+
+variable {G : Type u} [Group G] {X : Type*} {M : X → Type u}
+  [∀ x, CommGroup (M x)] {x₀ : X} {H : Subgroup G} [MulDistribMulAction H (M x₀)] {P : X → Prop}
+
+-- The module coinduced from the action of `H` on `M x₀`.
+variable (M x₀ H) in
+private noncomputable abbrev Coind : Rep ℤ G :=
+  Rep.coind H.subtype (Rep.ofMulDistribMulAction H (M x₀))
+
+-- Evaluation of an element of the coinduced module.
+private noncomputable def eval (f : Coind M x₀ H) (x : G) : M x₀ := Additive.toMul (f.1 x)
+
+private theorem eval_add (f₁ f₂ : Coind M x₀ H) (x : G) :
+    eval (f₁ + f₂) x = eval f₁ x * eval f₂ x := rfl
+
+private theorem eval_mul_left (f : Coind M x₀ H) (d : H) (x : G) :
+    eval f ((d : G) * x) = d • eval f x :=
+  congrArg Additive.toMul ((Representation.mem_coindV _ _ _).1 f.2 d x)
+
+variable [MulAction G X] (T : ∀ (g : G) {x y : X}, g • x = y → M x ≃* M y)
+  (hone : ∀ {x : X} (h : (1 : G) • x = x) (u : M x), T 1 h u = u)
+  (hmul : ∀ (σ τ : G) {x y z : X} (h₁ : τ • x = y) (h₂ : σ • y = z) (h₃ : (σ * τ) • x = z)
+    (u : M x), T σ h₂ (T τ h₁ u) = T (σ * τ) h₃ u)
+  (hact : ∀ (d : H) (h : (d : G) • x₀ = x₀) (u : M x₀), T d h u = d • u)
+  (hstab : MulAction.stabilizer G x₀ = H)
+  (horbit : ∀ y, P y ↔ y ∈ MulAction.orbit G x₀)
+
+private theorem transport_congr {σ τ : G} (e : σ = τ) {x y : X} (h₁ : σ • x = y)
+    (h₂ : τ • x = y) (u : M x) : T σ h₁ u = T τ h₂ u := by
+  subst e; rfl
+
+private theorem transport_congr_idx (u : Π y : {y // P y}, M y.1) {i₁ i₂ : {y // P y}}
+    (e : i₁ = i₂) (σ : G) {t : X} (h₁ : σ • i₁.1 = t) (h₂ : σ • i₂.1 = t) :
+    T σ h₁ (u i₁) = T σ h₂ (u i₂) := by
+  subst e; rfl
+
+include hone in
+private theorem transport_one_idx (u : Π y : {y // P y}, M y.1) {i₁ i₂ : {y // P y}}
+    (e : i₁ = i₂) (h : (1 : G) • i₁.1 = i₂.1) : T 1 h (u i₁) = u i₂ := by
+  subst e
+  exact hone h (u i₁)
+
+include hstab in
+private theorem smul_eq_of_mem (d : H) : (d : G) • x₀ = x₀ := by
+  have hd : (d : G) ∈ MulAction.stabilizer G x₀ := by rw [hstab]; exact d.2
+  exact hd
+
+include hstab in
+private theorem mem_of_smul_eq {g : G} (h : g • x₀ = x₀) : g ∈ H := by
+  rw [← hstab]; exact h
+
+include horbit in
+private theorem mem_of_orbit (g : G) : P (g • x₀) := (horbit _).2 (MulAction.mem_orbit x₀ g)
+
+include horbit in
+private theorem exists_smul_eq_base (y : {y // P y}) : ∃ g : G, g • y.1 = x₀ := by
+  obtain ⟨g, hg⟩ := MulAction.mem_orbit_iff.1 ((horbit y.1).1 y.2)
+  exact ⟨g⁻¹, by rw [← hg, inv_smul_smul]⟩
+
+include hmul hact hstab in
+private theorem indep (f : Coind M x₀ H) (x y : G) (w : X) (hx : x⁻¹ • x₀ = w)
+    (hy : y⁻¹ • x₀ = w) : T y⁻¹ hy (eval f y) = T x⁻¹ hx (eval f x) := by
+  have hd : y * x⁻¹ ∈ H := mem_of_smul_eq hstab (by rw [mul_smul, hx, ← hy, smul_inv_smul])
+  obtain ⟨d, rfl⟩ : ∃ d : H, (d : G) * x = y := ⟨⟨y * x⁻¹, hd⟩, inv_mul_cancel_right y x⟩
+  have hd1 : ((d⁻¹ : H) : G) • x₀ = x₀ := smul_eq_of_mem hstab d⁻¹
+  rw [eval_mul_left, transport_congr T (show ((d : G) * x)⁻¹ = x⁻¹ * ((d⁻¹ : H) : G) by
+        rw [mul_inv_rev]; rfl) hy (by rw [mul_smul]; exact (congrArg (x⁻¹ • ·) hd1).trans hx),
+    ← hmul x⁻¹ ((d⁻¹ : H) : G) hd1 hx, hact, inv_smul_smul]
+
+-- The inverse map: the value at `x` is the fibre at `x⁻¹ • x₀` transported back to `x₀`.
+private noncomputable def bwdFun (u : Π y : {y // P y}, M y.1) : G → Additive (M x₀) :=
+  fun x => Additive.ofMul (T x (smul_inv_smul x x₀) (u ⟨x⁻¹ • x₀, mem_of_orbit horbit x⁻¹⟩))
+
+private theorem bwdFun_apply (u : Π y : {y // P y}, M y.1) (x : G) :
+    Additive.toMul (bwdFun T horbit u x)
+      = T x (smul_inv_smul x x₀) (u ⟨x⁻¹ • x₀, mem_of_orbit horbit x⁻¹⟩) := rfl
+
+include hmul hact hstab in
+private theorem bwdFun_mem (u : Π y : {y // P y}, M y.1) :
+    bwdFun T horbit u ∈
+      Representation.coindV H.subtype (Rep.ofMulDistribMulAction H (M x₀)).ρ := by
+  refine (Representation.mem_coindV _ _ _).2 fun d x => ?_
+  apply Additive.toMul.injective
+  change Additive.toMul (bwdFun T horbit u ((d : G) * x)) = d • Additive.toMul (bwdFun T horbit u x)
+  have hidx : (⟨((d : G) * x)⁻¹ • x₀, mem_of_orbit horbit ((d : G) * x)⁻¹⟩ : {y // P y}) =
+      ⟨x⁻¹ • x₀, mem_of_orbit horbit x⁻¹⟩ := by
+    apply Subtype.ext
+    change ((d : G) * x)⁻¹ • x₀ = x⁻¹ • x₀
+    rw [mul_inv_rev, mul_smul]
+    exact congrArg (x⁻¹ • ·) (smul_eq_of_mem hstab d⁻¹)
+  rw [bwdFun_apply, bwdFun_apply, transport_congr_idx T u hidx ((d : G) * x) _
+      (by rw [mul_smul, smul_inv_smul]; exact smul_eq_of_mem hstab d),
+    ← hmul (d : G) x (smul_inv_smul x _) (smul_eq_of_mem hstab d), hact]
+
+private noncomputable def bwd (u : Π y : {y // P y}, M y.1) : Coind M x₀ H :=
+  ⟨bwdFun (M := M) (x₀ := x₀) T horbit u, bwdFun_mem T hmul hact hstab horbit u⟩
+
+-- A chosen transporter from each point of the orbit to `x₀`.
+private noncomputable def sel (y : {y // P y}) : G := (exists_smul_eq_base horbit y).choose
+
+private theorem sel_smul (y : {y // P y}) : sel horbit y • y.1 = x₀ :=
+  (exists_smul_eq_base horbit y).choose_spec
+
+private theorem inv_sel_smul (y : {y // P y}) : (sel horbit y)⁻¹ • x₀ = y.1 :=
+  inv_smul_eq_iff.2 (sel_smul horbit y).symm
+
+-- The forward map: the component at `y` is the value at the chosen transporter, moved to `y`.
+private noncomputable def fwd (f : Coind M x₀ H) : Π y : {y // P y}, M y.1 :=
+  fun y => T (sel horbit y)⁻¹ (inv_sel_smul horbit y) (eval f (sel horbit y))
+
+include hmul hact hstab in
+private theorem fwd_eq (f : Coind M x₀ H) (y : {y // P y}) (g : G) (hg : g • y.1 = x₀) :
+    fwd T horbit f y = T g⁻¹ (inv_smul_eq_iff.2 hg.symm) (eval f g) :=
+  indep T hmul hact hstab f g (sel horbit y) y.1 _ (inv_sel_smul horbit y)
+
+private theorem fwd_add (f₁ f₂ : Coind M x₀ H) (y : {y // P y}) :
+    fwd T horbit (f₁ + f₂) y = fwd T horbit f₁ y * fwd T horbit f₂ y := by
+  change T _ _ (eval (f₁ + f₂) (sel horbit y)) = _
+  rw [eval_add, map_mul]
+  rfl
+
+include hmul hact hstab in
+private theorem fwd_ρ (g : G) (f : Coind M x₀ H) (y y' : {y // P y}) (h : g • y'.1 = y.1) :
+    fwd T horbit ((Coind M x₀ H).ρ g f) y = T g h (fwd T horbit f y') := by
+  have hy : (sel horbit y * g) • y'.1 = x₀ := by rw [mul_smul, h, sel_smul]
+  rw [fwd_eq T hmul hact hstab horbit f y' (sel horbit y * g) hy,
+    hmul g (sel horbit y * g)⁻¹ (inv_smul_eq_iff.2 hy.symm) h
+      (by rw [mul_inv_rev, mul_inv_cancel_left]; exact inv_sel_smul horbit y),
+    transport_congr T (show g * (sel horbit y * g)⁻¹ = (sel horbit y)⁻¹ by
+      rw [mul_inv_rev, mul_inv_cancel_left]) _ (inv_sel_smul horbit y)]
+  rfl
+
+include hone hmul hact hstab in
+private theorem fwd_bwd (u : Π y : {y // P y}, M y.1) (y : {y // P y}) :
+    fwd T horbit (bwd T hmul hact hstab horbit u) y = u y := by
+  have hidx : (⟨(sel horbit y)⁻¹ • x₀, mem_of_orbit horbit (sel horbit y)⁻¹⟩ : {y // P y}) = y :=
+    Subtype.ext (inv_sel_smul horbit y)
+  change T (sel horbit y)⁻¹ (inv_sel_smul horbit y)
+    (Additive.toMul (bwdFun T horbit u (sel horbit y))) = u y
+  rw [bwdFun_apply, hmul (sel horbit y)⁻¹ (sel horbit y) (smul_inv_smul (sel horbit y) _)
+      (inv_sel_smul horbit y) (by rw [inv_mul_cancel, one_smul]; exact inv_sel_smul horbit y),
+    transport_congr T (inv_mul_cancel (sel horbit y)) _
+      (by rw [one_smul]; exact inv_sel_smul horbit y)]
+  exact transport_one_idx T hone u hidx _
+
+include hone hmul hact hstab in
+private theorem bwd_fwd (f : Coind M x₀ H) : bwd T hmul hact hstab horbit (fwd T horbit f) = f := by
+  apply Subtype.ext
+  funext x
+  apply Additive.toMul.injective
+  change Additive.toMul (bwdFun T horbit (fwd T horbit f) x) = eval f x
+  rw [bwdFun_apply, fwd_eq T hmul hact hstab horbit f ⟨x⁻¹ • x₀, mem_of_orbit horbit x⁻¹⟩ x
+      (smul_inv_smul x _),
+    hmul x x⁻¹ _ (smul_inv_smul x _) (by rw [mul_inv_cancel, one_smul]),
+    transport_congr T (mul_inv_cancel x) _ (one_smul _ _), hone]
+
+-- The stabilizer-to-orbit equivalence.
+private noncomputable def coindEquiv : Coind M x₀ H ≃+ Additive (Π y : {y // P y}, M y.1) where
+  toFun f := Additive.ofMul (fwd T horbit f)
+  invFun a := bwd T hmul hact hstab horbit (Additive.toMul a)
+  left_inv f := bwd_fwd T hone hmul hact hstab horbit f
+  right_inv a := congrArg Additive.ofMul
+    (funext (fwd_bwd T hone hmul hact hstab horbit (Additive.toMul a)))
+  map_add' f₁ f₂ := congrArg Additive.ofMul (funext (fwd_add T horbit f₁ f₂))
+
+include hone hmul hact hstab in
+-- The equivalence moves the component at `y'` to the component at `g • y'` by `T g`.
+private theorem coindEquiv_ρ (g : G) (f : Coind M x₀ H) (y y' : {y // P y})
+    (h : g • y'.1 = y.1) :
+    Additive.toMul (coindEquiv T hone hmul hact hstab horbit ((Coind M x₀ H).ρ g f)) y =
+      T g h (Additive.toMul (coindEquiv T hone hmul hact hstab horbit f) y') :=
+  fwd_ρ T hmul hact hstab horbit g f y y' h
+
+include hone hmul hact hstab horbit in
+-- The two main theorems in abstract form.
+private theorem exists_coindEquiv :
+    ∃ e : Coind M x₀ H ≃+ Additive (Π y : {y // P y}, M y.1),
+      ∀ (g : G) (f : Coind M x₀ H) (y y' : {y // P y}) (h : g • y'.1 = y.1),
+        Additive.toMul (e ((Coind M x₀ H).ρ g f)) y = T g h (Additive.toMul (e f) y') :=
+  ⟨coindEquiv T hone hmul hact hstab horbit, coindEquiv_ρ T hone hmul hact hstab horbit⟩
+
+end StabilizerOrbitAux
+
 namespace FiniteCoindAux
 
 open NumberField NumberField.PlaceTransport IsDedekindDomain
@@ -1406,11 +1602,6 @@ open scoped NumberField.PlaceDecomp NumberField.PlaceTransport
 section general
 
 variable {E K : Type} [Field E] [Field K] [NumberField K] [Algebra E K]
-
-private theorem transportUnits_congr {σ τ : K ≃ₐ[E] K} (e : σ = τ) {w w' : HeightOneSpectrum (𝓞
-  K)} (h₁ : σ • w = w') (h₂ : τ • w = w')
-    (u : (w.adicCompletion K)ˣ) : transportUnits σ h₁ u = transportUnits τ h₂ u := by
-  subst e; rfl
 
 private theorem transportUnits_trans (σ τ : K ≃ₐ[E] K) {w w' w'' : HeightOneSpectrum (𝓞 K)} (h₁ : τ
   • w = w') (h₂ : σ • w' = w'')
@@ -1439,25 +1630,9 @@ private theorem transportUnits_eq_smul {w : HeightOneSpectrum (𝓞 K)} (d : Pla
   rw [NumberField.PlaceTransport.transport_eq_actRingEquiv E K w d h, PlaceDecomp.coe_smul_units,
     PlaceDecomp.smul_def]
 
-private theorem decomp_smul {w : HeightOneSpectrum (𝓞 K)} (d : PlaceDecomp.decomp E K w) : (d
-  : K ≃ₐ[E] K) • w = w := by
-  have hd : (d : K ≃ₐ[E] K) ∈ MulAction.stabilizer (K ≃ₐ[E] K) w := by
-    rw [NumberField.PlaceTransport.stabilizer_eq_decomp E K w]; exact d.2
-  exact hd
-
-private theorem mem_decomp_of_smul_eq {w : HeightOneSpectrum (𝓞 K)} {σ : K ≃ₐ[E] K} (h : σ • w = w)
-  : σ ∈ PlaceDecomp.decomp E K w := by
-  rw [← NumberField.PlaceTransport.stabilizer_eq_decomp E K w]; exact h
-
 end general
 
 variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
-
-private abbrev Idx (v : HeightOneSpectrum (𝓞 E)) : Type := {w : HeightOneSpectrum (𝓞 K) //
-  w.under (𝓞 E) = v}
-
-private noncomputable abbrev Cv (v : HeightOneSpectrum (𝓞 E)) : Rep ℤ (K ≃ₐ[E] K) :=
-  Rep.coind (FiniteSIdele.D E K v).subtype (FiniteSIdele.localUnits E K v)
 
 omit [NumberField K] in
 private theorem under_above (v : HeightOneSpectrum (𝓞 E)) : (PlaceAbove.above E K v).under (𝓞 E) = v
@@ -1465,158 +1640,11 @@ private theorem under_above (v : HeightOneSpectrum (𝓞 E)) : (PlaceAbove.above
   HeightOneSpectrum.ext
     (by rw [HeightOneSpectrum.under_asIdeal]; exact PlaceAbove.comap_above E K v)
 
-variable {E K}
-variable (v : HeightOneSpectrum (𝓞 E))
-
-private noncomputable def fval (f : Cv E K v) (x : K ≃ₐ[E] K) : ((PlaceAbove.above E K
-  v).adicCompletion K)ˣ := Additive.toMul (f.1 x)
-
-private theorem fval_ρ (g : K ≃ₐ[E] K) (f : Cv E K v) (x : K ≃ₐ[E] K) : fval v ((Cv E K v).ρ g f) x
-  = fval v f (x * g) := rfl
-
-private theorem fval_add (f₁ f₂ : Cv E K v) (x : K ≃ₐ[E] K) : fval v (f₁ + f₂) x = fval v f₁ x *
-  fval v f₂ x := rfl
-
-private theorem coind_mem (f : Cv E K v) (d : FiniteSIdele.D E K v) (x : K ≃ₐ[E] K) :
-    fval v f ((d : K ≃ₐ[E] K) * x) = d • fval v f x :=
-  congrArg Additive.toMul ((Representation.mem_coindV _ _ _).1 f.2 d x)
-
-omit [NumberField E] in
-private theorem transportUnits_congr_idx (u : Π w : Idx E K v,
-  (w.1.adicCompletion K)ˣ) {i₁ i₂ : Idx E K v} (e : i₁ = i₂)
-    (σ : K ≃ₐ[E] K) {t : HeightOneSpectrum (𝓞 K)} (h₁ : σ • i₁.1 = t) (h₂ : σ • i₂.1 = t) :
-    transportUnits σ h₁ (u i₁) = transportUnits σ h₂ (u i₂) := by
-  subst e; rfl
-
-omit [NumberField E] in
-private theorem transportUnits_one_idx (u : Π w : Idx E K v,
-  (w.1.adicCompletion K)ˣ) {i₁ i₂ : Idx E K v} (e : i₁ = i₂)
-    (h : (1 : K ≃ₐ[E] K) • i₁.1 = i₂.1) : transportUnits (1 : K ≃ₐ[E] K) h (u i₁) = u i₂ := by
-  subst e
-  exact transportUnits_one h (u i₁)
-
-private theorem indep (f : Cv E K v) (x y : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K))
-    (hx : x⁻¹ • PlaceAbove.above E K v = w) (hy : y⁻¹ • PlaceAbove.above E K v = w) :
-    transportUnits y⁻¹ hy (fval v f y) = transportUnits x⁻¹ hx (fval v f x) := by
-  have hd : y * x⁻¹ ∈ FiniteSIdele.D E K v :=
-    mem_decomp_of_smul_eq (by rw [mul_smul, hx, ← hy, smul_inv_smul])
-  obtain ⟨d, rfl⟩ : ∃ d : FiniteSIdele.D E K v, (d : K ≃ₐ[E] K) * x = y :=
-    ⟨⟨y * x⁻¹, hd⟩, inv_mul_cancel_right y x⟩
-  have hd1 : ((d⁻¹ : FiniteSIdele.D E K v) : K ≃ₐ[E] K) • PlaceAbove.above E K v = PlaceAbove.above
-    E K v :=
-    decomp_smul d⁻¹
-  rw [coind_mem, transportUnits_congr (show ((d : K ≃ₐ[E] K) * x)⁻¹ =
-        x⁻¹ * ((d⁻¹ : FiniteSIdele.D E K v) : K ≃ₐ[E] K) by rw [mul_inv_rev]; rfl) hy
-      (by rw [mul_smul]; exact (congrArg (x⁻¹ • ·) hd1).trans hx),
-    ← transportUnits_trans x⁻¹ ((d⁻¹ : FiniteSIdele.D E K v) : K ≃ₐ[E] K) hd1 hx,
-    transportUnits_eq_smul, inv_smul_smul]
-
-omit [NumberField K] in
-private theorem mem_idx (x : K ≃ₐ[E] K) : (x⁻¹ • PlaceAbove.above E K v).under (𝓞 E) = v :=
-  (NumberField.PlaceTransport.under_smul E K x⁻¹ _).trans (under_above E K v)
-
-private noncomputable def bwdFun (u : Π w : Idx E K v, (w.1.adicCompletion K)ˣ) :
-    (K ≃ₐ[E] K) → Additive ((PlaceAbove.above E K v).adicCompletion K)ˣ :=
-  fun x => Additive.ofMul (transportUnits x (smul_inv_smul x (PlaceAbove.above E K v)) (u ⟨x⁻¹ •
-    PlaceAbove.above E K v, mem_idx v x⟩))
-
-private theorem bwdFun_apply (u : Π w : Idx E K v, (w.1.adicCompletion K)ˣ) (x : K ≃ₐ[E] K) :
-    Additive.toMul (bwdFun v u x)
-      = transportUnits x (smul_inv_smul x (PlaceAbove.above E K v)) (u ⟨x⁻¹ • PlaceAbove.above E K
-        v, mem_idx v x⟩) := rfl
-
-private theorem bwdFun_mem (u : Π w : Idx E K v, (w.1.adicCompletion K)ˣ) :
-    bwdFun v u ∈ Representation.coindV (FiniteSIdele.D E K v).subtype (FiniteSIdele.localUnits E K
-      v).ρ := by
-  refine (Representation.mem_coindV _ _ _).2 fun d x => ?_
-  apply Additive.toMul.injective
-  change Additive.toMul (bwdFun v u ((d : K ≃ₐ[E] K) * x)) = d • Additive.toMul (bwdFun v u x)
-  have hidx : (⟨((d : K ≃ₐ[E] K) * x)⁻¹ • PlaceAbove.above E K v,
-    mem_idx v ((d : K ≃ₐ[E] K) * x)⟩ : Idx E K v) =
-      ⟨x⁻¹ • PlaceAbove.above E K v, mem_idx v x⟩ := by
-    apply Subtype.ext
-    change ((d : K ≃ₐ[E] K) * x)⁻¹ • PlaceAbove.above E K v = x⁻¹ • PlaceAbove.above E K v
-    rw [mul_inv_rev, mul_smul]
-    exact congrArg (x⁻¹ • ·) (decomp_smul d⁻¹)
-  rw [bwdFun_apply, bwdFun_apply, transportUnits_congr_idx v u hidx ((d : K ≃ₐ[E] K) * x) _
-      (by rw [mul_smul, smul_inv_smul]; exact decomp_smul d),
-    ← transportUnits_trans (d : K ≃ₐ[E] K) x (smul_inv_smul x _) (decomp_smul d),
-      transportUnits_eq_smul]
-
-private noncomputable def bwd (u : Π w : Idx E K v,
-  (w.1.adicCompletion K)ˣ) : Cv E K v := ⟨bwdFun v u, bwdFun_mem v u⟩
-
-section
-variable [IsGalois E K]
-
-private theorem exists_smul_eq (w : Idx E K v) : ∃ x : K ≃ₐ[E] K,
-  x • w.1 = PlaceAbove.above E K v := by
-  have hmem : PlaceAbove.above E K v ∈ MulAction.orbit (K ≃ₐ[E] K) w.1 := by
-    rw [NumberField.PlaceTransport.orbit_eq_setOf_under_eq E K w.1]
-    exact (under_above E K v).trans w.2.symm
-  exact MulAction.mem_orbit_iff.1 hmem
-
-private noncomputable def sel (w : Idx E K v) : K ≃ₐ[E] K := (exists_smul_eq v w).choose
-
-private theorem sel_smul (w : Idx E K v) : sel v w • w.1 = PlaceAbove.above E K v := (exists_smul_eq
-  v w).choose_spec
-
-private theorem inv_sel_smul (w : Idx E K v) : (sel v w)⁻¹ • PlaceAbove.above E K v = w.1
-  := inv_smul_eq_of_smul_eq (sel_smul v w)
-
-private noncomputable def fwd (f : Cv E K v) : Π w : Idx E K v, (w.1.adicCompletion K)ˣ :=
-  fun w => transportUnits (sel v w)⁻¹ (inv_sel_smul v w) (fval v f (sel v w))
-
-private theorem fwd_eq (f : Cv E K v) (w : Idx E K v) (y : K ≃ₐ[E] K) (hy : y • w.1 =
-  PlaceAbove.above E K v) :
-    fwd v f w = transportUnits y⁻¹ (inv_smul_eq_of_smul_eq hy) (fval v f y) :=
-  (indep v f y (sel v w) w.1 (inv_smul_eq_of_smul_eq hy) (inv_sel_smul v w))
-
-private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f₂) w = fwd v f₁ w * fwd v
-  f₂ w := by
-  change transportUnits _ _ (fval v (f₁ + f₂) (sel v w)) = _
-  rw [fval_add, map_mul]
-  rfl
-
-private theorem fwd_ρ (g : K ≃ₐ[E] K) (f : Cv E K v) (w w' : Idx E K v) (h : g • w'.1 = w.1) :
-    fwd v ((Cv E K v).ρ g f) w = transportUnits g h (fwd v f w') := by
-  have hy : (sel v w * g) • w'.1 = PlaceAbove.above E K v := by rw [mul_smul, h, sel_smul]
-  rw [fwd_eq v f w' (sel v w * g) hy,
-    transportUnits_trans g (sel v w * g)⁻¹ (inv_smul_eq_of_smul_eq hy) h
-      (by rw [mul_inv_rev, mul_inv_cancel_left]; exact inv_sel_smul v w),
-    transportUnits_congr (show g * (sel v w * g)⁻¹ = (sel v w)⁻¹ by rw [mul_inv_rev,
-      mul_inv_cancel_left]) _ (inv_sel_smul v w)]
-  rfl
-
-private theorem fwd_bwd (u : Π w : Idx E K v,
-  (w.1.adicCompletion K)ˣ) (w : Idx E K v) : fwd v (bwd v u) w = u w := by
-  have hidx : (⟨(sel v w)⁻¹ • PlaceAbove.above E K v,
-    mem_idx v (sel v w)⟩ : Idx E K v) = w := Subtype.ext (inv_sel_smul v w)
-  change transportUnits (sel v w)⁻¹ (inv_sel_smul v w) (Additive.toMul (bwdFun v u (sel v w))) = u w
-  rw [bwdFun_apply,
-    transportUnits_trans (sel v w)⁻¹ (sel v w) (smul_inv_smul (sel v w) _) (inv_sel_smul v w)
-      (by rw [inv_mul_cancel, one_smul]; exact inv_sel_smul v w),
-    transportUnits_congr (inv_mul_cancel (sel v w)) _ (by rw [one_smul]; exact inv_sel_smul v w)]
-  exact transportUnits_one_idx v u hidx _
-
-private theorem bwd_fwd (f : Cv E K v) : bwd v (fwd v f) = f := by
-  apply Subtype.ext
-  funext x
-  apply Additive.toMul.injective
-  change Additive.toMul (bwdFun v (fwd v f) x) = fval v f x
-  rw [bwdFun_apply, fwd_eq v f ⟨x⁻¹ • PlaceAbove.above E K v, mem_idx v x⟩ x (smul_inv_smul x _),
-    transportUnits_trans x x⁻¹ _ (smul_inv_smul x _) (by rw [mul_inv_cancel, one_smul]),
-    transportUnits_congr (mul_inv_cancel x) _ (one_smul _ _), transportUnits_one]
-
-private noncomputable def equiv : Cv E K v ≃+ Additive (Π w : Idx E K v,
-  (w.1.adicCompletion K)ˣ) where
-  toFun f := Additive.ofMul (fwd v f)
-  invFun a := bwd v (Additive.toMul a)
-  left_inv f := bwd_fwd v f
-  right_inv a := congrArg Additive.ofMul (funext (fwd_bwd v (Additive.toMul a)))
-  map_add' f₁ f₂ := congrArg Additive.ofMul (funext (fwd_add v f₁ f₂))
-
-end
+-- The finite places above `v` form the orbit of the chosen place.
+private theorem mem_orbit_iff [IsGalois E K] (v : HeightOneSpectrum (𝓞 E))
+    (w : HeightOneSpectrum (𝓞 K)) :
+    w.under (𝓞 E) = v ↔ w ∈ MulAction.orbit (K ≃ₐ[E] K) (PlaceAbove.above E K v) := by
+  rw [NumberField.PlaceTransport.orbit_eq_setOf_under_eq E K, Set.mem_ofPred_eq, under_above]
 
 end FiniteCoindAux
 
@@ -1648,7 +1676,14 @@ theorem NumberField.FiniteSIdele.exists_addEquiv_coind_localUnits (E K : Type) [
         Additive.toMul (e ((Rep.coind (NumberField.FiniteSIdele.D E K v).subtype
           (NumberField.FiniteSIdele.localUnits E K v)).ρ g f)) w
           = NumberField.PlaceTransport.transportUnits g h (Additive.toMul (e f) w') :=
-  ⟨FiniteCoindAux.equiv v, fun g f w w' h => FiniteCoindAux.fwd_ρ v g f w w' h⟩
+  by
+  have h := StabilizerOrbitAux.exists_coindEquiv (M := fun w => (w.adicCompletion K)ˣ)
+    (x₀ := NumberField.PlaceAbove.above E K v) (H := NumberField.FiniteSIdele.D E K v)
+    (P := fun w => w.under (NumberField.RingOfIntegers E) = v)
+    NumberField.PlaceTransport.transportUnits FiniteCoindAux.transportUnits_one
+    FiniteCoindAux.transportUnits_trans FiniteCoindAux.transportUnits_eq_smul
+    (NumberField.PlaceTransport.stabilizer_eq_decomp E K _) (FiniteCoindAux.mem_orbit_iff E K v)
+  exact h
 
 
 namespace ArchCoindAux
@@ -1665,11 +1700,6 @@ private theorem comap_smul_algebraMap (σ : K ≃ₐ[E] K) (w : InfinitePlace K)
   rw [InfinitePlace.smul_eq_comap, ← InfinitePlace.comap_comp]
   congr 1
   exact RingHom.ext fun x => σ.symm.commutes x
-
-private theorem transportUnits_congr {σ τ : K ≃ₐ[E] K} (e : σ = τ) {w w' : InfinitePlace K} (h₁ : σ
-  • w = w') (h₂ : τ • w = w')
-    (u : (w.Completion)ˣ) : transportUnits σ h₁ u = transportUnits τ h₂ u := by
-  subst e; rfl
 
 private theorem transportUnits_trans (σ τ : K ≃ₐ[E] K) {w w' w'' : InfinitePlace K} (h₁ : τ • w =
   w') (h₂ : σ • w' = w'')
@@ -1702,163 +1732,17 @@ end general
 
 variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
-private abbrev Idx (v : InfinitePlace E) : Type := {w : InfinitePlace K // w.comap (algebraMap E K)
-  = v}
-
-private noncomputable abbrev Cv (v : InfinitePlace E) : Rep ℤ (K ≃ₐ[E] K) :=
-  Rep.coind (InfPlaceDecomp.decomp E K (ArchIdele.above E K v)).subtype (InfPlaceDecomp.localUnits E
-    K (ArchIdele.above E K v))
-
-variable {E K}
-variable (v : InfinitePlace E)
-
-private noncomputable def fval (f : Cv E K v) (x : K ≃ₐ[E] K) : ((ArchIdele.above E K
-  v).Completion)ˣ := Additive.toMul (f.1 x)
-
-private theorem fval_ρ (g : K ≃ₐ[E] K) (f : Cv E K v) (x : K ≃ₐ[E] K) : fval v ((Cv E K v).ρ g f) x
-  = fval v f (x * g) := rfl
-
-private theorem fval_add (f₁ f₂ : Cv E K v) (x : K ≃ₐ[E] K) : fval v (f₁ + f₂) x = fval v f₁ x *
-  fval v f₂ x := rfl
-
-private theorem coind_mem (f : Cv E K v) (d : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) (x
-  : K ≃ₐ[E] K) :
-    fval v f ((d : K ≃ₐ[E] K) * x) = d • fval v f x :=
-  congrArg Additive.toMul ((Representation.mem_coindV _ _ _).1 f.2 d x)
-
-omit [NumberField E] [NumberField K] in
-private theorem transportUnits_congr_idx (u : Π w : Idx E K v,
-  (w.1.Completion)ˣ) {i₁ i₂ : Idx E K v} (e : i₁ = i₂)
-    (σ : K ≃ₐ[E] K) {t : InfinitePlace K} (h₁ : σ • i₁.1 = t) (h₂ : σ • i₂.1 = t) :
-    transportUnits σ h₁ (u i₁) = transportUnits σ h₂ (u i₂) := by
-  subst e; rfl
-
-omit [NumberField E] [NumberField K] in
-private theorem transportUnits_one_idx (u : Π w : Idx E K v,
-  (w.1.Completion)ˣ) {i₁ i₂ : Idx E K v} (e : i₁ = i₂)
-    (h : (1 : K ≃ₐ[E] K) • i₁.1 = i₂.1) : transportUnits (1 : K ≃ₐ[E] K) h (u i₁) = u i₂ := by
-  subst e
-  exact transportUnits_one h (u i₁)
-
-private theorem indep (f : Cv E K v) (x y : K ≃ₐ[E] K) (w : InfinitePlace K)
-    (hx : x⁻¹ • ArchIdele.above E K v = w) (hy : y⁻¹ • ArchIdele.above E K v = w) :
-    transportUnits y⁻¹ hy (fval v f y) = transportUnits x⁻¹ hx (fval v f x) := by
-  have hd : y * x⁻¹ ∈ InfPlaceDecomp.decomp E K (ArchIdele.above E K v) := by
-    rw [MulAction.mem_stabilizer_iff, mul_smul, hx, ← hy, smul_inv_smul]
-  obtain ⟨d, rfl⟩ : ∃ d : InfPlaceDecomp.decomp E K (ArchIdele.above E K v),
-    (d : K ≃ₐ[E] K) * x = y :=
-    ⟨⟨y * x⁻¹, hd⟩, inv_mul_cancel_right y x⟩
-  have hd1 : ((d⁻¹ : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) : K ≃ₐ[E] K) •
-    ArchIdele.above E K v =
-      ArchIdele.above E K v := (d⁻¹).2
-  rw [coind_mem, transportUnits_congr (show ((d : K ≃ₐ[E] K) * x)⁻¹ =
-        x⁻¹ * ((d⁻¹ : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) : K ≃ₐ[E] K) by
-          rw [mul_inv_rev]; rfl) hy
-      (by rw [mul_smul]; exact (congrArg (x⁻¹ • ·) hd1).trans hx),
-    ← transportUnits_trans x⁻¹ ((d⁻¹ : InfPlaceDecomp.decomp E K (ArchIdele.above E K v)) : K ≃ₐ[E]
-      K) hd1 hx,
-    transportUnits_eq_smul, inv_smul_smul]
-
-private theorem mem_idx (x : K ≃ₐ[E] K) : (x⁻¹ • ArchIdele.above E K v).comap (algebraMap E K) = v
-  :=
-  (comap_smul_algebraMap x⁻¹ _).trans (ArchIdele.comap_above E K v)
-
-private noncomputable def bwdFun (u : Π w : Idx E K v,
-  (w.1.Completion)ˣ) : (K ≃ₐ[E] K) → Additive ((ArchIdele.above E K v).Completion)ˣ :=
-  fun x => Additive.ofMul (transportUnits x (smul_inv_smul x (ArchIdele.above E K v)) (u ⟨x⁻¹ •
-    ArchIdele.above E K v, mem_idx v x⟩))
-
-private theorem bwdFun_apply (u : Π w : Idx E K v, (w.1.Completion)ˣ) (x : K ≃ₐ[E] K) :
-    Additive.toMul (bwdFun v u x) = transportUnits x (smul_inv_smul x (ArchIdele.above E K v)) (u
-      ⟨x⁻¹ • ArchIdele.above E K v, mem_idx v x⟩) := rfl
-
-private theorem bwdFun_mem (u : Π w : Idx E K v, (w.1.Completion)ˣ) :
-    bwdFun v u ∈ Representation.coindV (InfPlaceDecomp.decomp E K (ArchIdele.above E K v)).subtype
-      (InfPlaceDecomp.localUnits E K (ArchIdele.above E K v)).ρ := by
-  refine (Representation.mem_coindV _ _ _).2 fun d x => ?_
-  apply Additive.toMul.injective
-  change Additive.toMul (bwdFun v u ((d : K ≃ₐ[E] K) * x)) = d • Additive.toMul (bwdFun v u x)
-  have hidx : (⟨((d : K ≃ₐ[E] K) * x)⁻¹ • ArchIdele.above E K v,
-    mem_idx v ((d : K ≃ₐ[E] K) * x)⟩ : Idx E K v) =
-      ⟨x⁻¹ • ArchIdele.above E K v, mem_idx v x⟩ := by
-    apply Subtype.ext
-    change ((d : K ≃ₐ[E] K) * x)⁻¹ • ArchIdele.above E K v = x⁻¹ • ArchIdele.above E K v
-    rw [mul_inv_rev, mul_smul]
-    exact congrArg (x⁻¹ • ·) (d⁻¹).2
-  rw [bwdFun_apply, bwdFun_apply, transportUnits_congr_idx v u hidx ((d : K ≃ₐ[E] K) * x) _
-      (by rw [mul_smul, smul_inv_smul]; exact d.2),
-    ← transportUnits_trans (d : K ≃ₐ[E] K) x (smul_inv_smul x _) (MulAction.mem_stabilizer_iff.mp
-      d.2), transportUnits_eq_smul]
-
-private noncomputable def bwd (u : Π w : Idx E K v, (w.1.Completion)ˣ) : Cv E K v := ⟨bwdFun v u,
-  bwdFun_mem v u⟩
-
-section
-variable [IsGalois E K]
-
-private theorem exists_smul_eq (w : Idx E K v) : ∃ x : K ≃ₐ[E] K, x • w.1 = ArchIdele.above E K v :=
-  InfinitePlace.exists_smul_eq_of_comap_eq (w.2.trans (ArchIdele.comap_above E K v).symm)
-
-private noncomputable def sel (w : Idx E K v) : K ≃ₐ[E] K := (exists_smul_eq v w).choose
-
-private theorem sel_smul (w : Idx E K v) : sel v w • w.1 = ArchIdele.above E K v := (exists_smul_eq
-  v w).choose_spec
-
-private theorem inv_sel_smul (w : Idx E K v) : (sel v w)⁻¹ • ArchIdele.above E K v = w.1
-  := inv_smul_eq_of_smul_eq (sel_smul v w)
-
-private noncomputable def fwd (f : Cv E K v) : Π w : Idx E K v, (w.1.Completion)ˣ :=
-  fun w => transportUnits (sel v w)⁻¹ (inv_sel_smul v w) (fval v f (sel v w))
-
-private theorem fwd_eq (f : Cv E K v) (w : Idx E K v) (y : K ≃ₐ[E] K) (hy : y • w.1 =
-  ArchIdele.above E K v) :
-    fwd v f w = transportUnits y⁻¹ (inv_smul_eq_of_smul_eq hy) (fval v f y) :=
-  (indep v f y (sel v w) w.1 (inv_smul_eq_of_smul_eq hy) (inv_sel_smul v w))
-
-private theorem fwd_add (f₁ f₂ : Cv E K v) (w : Idx E K v) : fwd v (f₁ + f₂) w = fwd v f₁ w * fwd v
-  f₂ w := by
-  change transportUnits _ _ (fval v (f₁ + f₂) (sel v w)) = _
-  rw [fval_add, map_mul]
-  rfl
-
-private theorem fwd_ρ (g : K ≃ₐ[E] K) (f : Cv E K v) (w w' : Idx E K v) (h : g • w'.1 = w.1) :
-    fwd v ((Cv E K v).ρ g f) w = transportUnits g h (fwd v f w') := by
-  have hy : (sel v w * g) • w'.1 = ArchIdele.above E K v := by rw [mul_smul, h, sel_smul]
-  rw [fwd_eq v f w' (sel v w * g) hy,
-    transportUnits_trans g (sel v w * g)⁻¹ (inv_smul_eq_of_smul_eq hy) h
-      (by rw [mul_inv_rev, mul_inv_cancel_left]; exact inv_sel_smul v w),
-    transportUnits_congr (show g * (sel v w * g)⁻¹ = (sel v w)⁻¹ by rw [mul_inv_rev,
-      mul_inv_cancel_left]) _ (inv_sel_smul v w)]
-  rfl
-
-private theorem fwd_bwd (u : Π w : Idx E K v,
-  (w.1.Completion)ˣ) (w : Idx E K v) : fwd v (bwd v u) w = u w := by
-  have hidx : (⟨(sel v w)⁻¹ • ArchIdele.above E K v,
-    mem_idx v (sel v w)⟩ : Idx E K v) = w := Subtype.ext (inv_sel_smul v w)
-  change transportUnits (sel v w)⁻¹ (inv_sel_smul v w) (Additive.toMul (bwdFun v u (sel v w))) = u w
-  rw [bwdFun_apply,
-    transportUnits_trans (sel v w)⁻¹ (sel v w) (smul_inv_smul (sel v w) _) (inv_sel_smul v w)
-      (by rw [inv_mul_cancel, one_smul]; exact inv_sel_smul v w),
-    transportUnits_congr (inv_mul_cancel (sel v w)) _ (by rw [one_smul]; exact inv_sel_smul v w)]
-  exact transportUnits_one_idx v u hidx _
-
-private theorem bwd_fwd (f : Cv E K v) : bwd v (fwd v f) = f := by
-  apply Subtype.ext
-  funext x
-  apply Additive.toMul.injective
-  change Additive.toMul (bwdFun v (fwd v f) x) = fval v f x
-  rw [bwdFun_apply, fwd_eq v f ⟨x⁻¹ • ArchIdele.above E K v, mem_idx v x⟩ x (smul_inv_smul x _),
-    transportUnits_trans x x⁻¹ _ (smul_inv_smul x _) (by rw [mul_inv_cancel, one_smul]),
-    transportUnits_congr (mul_inv_cancel x) _ (one_smul _ _), transportUnits_one]
-
-private noncomputable def equiv : Cv E K v ≃+ Additive (Π w : Idx E K v, (w.1.Completion)ˣ) where
-  toFun f := Additive.ofMul (fwd v f)
-  invFun a := bwd v (Additive.toMul a)
-  left_inv f := bwd_fwd v f
-  right_inv a := congrArg Additive.ofMul (funext (fwd_bwd v (Additive.toMul a)))
-  map_add' f₁ f₂ := congrArg Additive.ofMul (funext (fwd_add v f₁ f₂))
-
-end
+-- The infinite places above `v` form the orbit of the chosen place.
+private theorem mem_orbit_iff [IsGalois E K] (v : InfinitePlace E) (w : InfinitePlace K) :
+    w.comap (algebraMap E K) = v ↔ w ∈ MulAction.orbit (K ≃ₐ[E] K) (ArchIdele.above E K v) := by
+  constructor
+  · intro h
+    obtain ⟨σ, hσ⟩ := InfinitePlace.exists_smul_eq_of_comap_eq
+      (h.trans (ArchIdele.comap_above E K v).symm)
+    exact MulAction.mem_orbit_iff.2 ⟨σ⁻¹, by rw [← hσ, inv_smul_smul]⟩
+  · intro h
+    obtain ⟨g, rfl⟩ := MulAction.mem_orbit_iff.1 h
+    exact (comap_smul_algebraMap g _).trans (ArchIdele.comap_above E K v)
 
 end ArchCoindAux
 
@@ -1890,4 +1774,13 @@ theorem NumberField.ArchIdele.exists_addEquiv_coind_localUnits (E K : Type) [Fie
           (NumberField.InfPlaceDecomp.localUnits E K (NumberField.ArchIdele.above E K v))).ρ g f)) w
             =
           NumberField.InfinitePlaceTransport.transportUnits g h (Additive.toMul (e f) w') :=
-  ⟨ArchCoindAux.equiv v, fun g f w w' h => ArchCoindAux.fwd_ρ v g f w w' h⟩
+  by
+  open scoped NumberField.InfPlaceDecomp in
+  have h := StabilizerOrbitAux.exists_coindEquiv (M := fun w => (w.Completion)ˣ)
+    (x₀ := NumberField.ArchIdele.above E K v)
+    (H := NumberField.InfPlaceDecomp.decomp E K (NumberField.ArchIdele.above E K v))
+    (P := fun w => w.comap (algebraMap E K) = v)
+    NumberField.InfinitePlaceTransport.transportUnits ArchCoindAux.transportUnits_one
+    ArchCoindAux.transportUnits_trans ArchCoindAux.transportUnits_eq_smul rfl
+    (ArchCoindAux.mem_orbit_iff E K v)
+  exact h
