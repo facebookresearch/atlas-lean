@@ -19,4 +19,4 @@ $M_c$ and data memory $M_d$ with known bounds, the predicate $I_s(M_c, G)$ holds
 
 ## Sources
 
-- M. Abadi, M. Budiu, Ú. Erlingsson and J. Ligatti, "Control-flow integrity: principles, implementations, and applications", *ACM Transactions on Information and System Security* 13(1), 2009; author version of February 2007 at <https://cseweb.ucsd.edu/~dstefan/cse127-winter19/papers/abadi:cfi.pdf>: Section 6.2.4 (the permissive semantics, Figure 15) and Section 6.5.1 (conditions (1)–(5) and the predicate $I_s$).
+- M. Abadi, M. Budiu, Ú. Erlingsson and J. Ligatti, "Control-flow integrity: principles, implementations, and applications", *ACM Transactions on Information and System Security* 13(1), 2009; numbering of the author version of February 2007, <https://cseweb.ucsd.edu/~dstefan/cse127-winter19/papers/abadi:cfi.pdf>: Section 6.2.4 (the permissive semantics, Figure 15) and Section 6.5.1 (conditions (1)–(5) and the predicate $I_s$).

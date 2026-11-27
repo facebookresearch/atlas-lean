@@ -10,4 +10,4 @@ $K$-hypersafety preservation in the same way.
 
 ## Sources
 
-- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6, <https://arxiv.org/abs/1807.04603v6>: Section 3.3 (RHSC) and Appendix C.2.4–C.2.5, Definitions C.27 and C.32 and Theorems C.28 and C.33 (mechanized in Coq).
+- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6 (numbering of this extended version, whose appendices are not in the proceedings), <https://arxiv.org/abs/1807.04603v6>: Section 3.3 (RHSC) and Appendix C.2.4–C.2.5, Definitions C.27 and C.32 and Theorems C.28 and C.33 (mechanized in Coq).

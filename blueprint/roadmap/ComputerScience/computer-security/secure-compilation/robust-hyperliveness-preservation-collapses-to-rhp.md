@@ -12,4 +12,4 @@ $b \ge o$ in $H$. *Robust hyperliveness preservation* (RHLP) is [robust hyperpro
 
 ## Sources
 
-- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6, <https://arxiv.org/abs/1807.04603v6>: Section 3.5 and Appendix C.2.6, Definitions C.35–C.36 and Theorem C.37 (mechanized in Coq).
+- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6 (numbering of this extended version, whose appendices are not in the proceedings), <https://arxiv.org/abs/1807.04603v6>: Section 3.5 and Appendix C.2.6, Definitions C.35–C.36 and Theorem C.37 (mechanized in Coq).

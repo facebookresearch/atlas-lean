@@ -12,4 +12,4 @@ of cardinality at most $K$ always exists. *Robust hypersafety preservation* (RHS
 
 ## Sources
 
-- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6, <https://arxiv.org/abs/1807.04603v6>: Section 3.3 and Appendix C.2.4–C.2.5, Definitions C.24–C.26 and C.29–C.31.
+- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6 (numbering of this extended version, whose appendices are not in the proceedings), <https://arxiv.org/abs/1807.04603v6>: Section 3.3 and Appendix C.2.4–C.2.5, Definitions C.24–C.26 and C.29–C.31.

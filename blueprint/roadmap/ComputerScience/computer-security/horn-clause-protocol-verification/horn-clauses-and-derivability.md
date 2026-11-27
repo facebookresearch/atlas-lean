@@ -8,7 +8,7 @@ $R \sqsupseteq \{f_1, \dots, f_n\} \to f_0$.
 
 The attacker's capabilities are clauses such as $\mathrm{att}(x) \wedge \mathrm{att}(y) \to \mathrm{att}(\langle x, y\rangle)$, $\mathrm{att}(\langle x, y\rangle) \to \mathrm{att}(x)$ and
 $\mathrm{att}(\mathrm{senc}(x, y)) \wedge \mathrm{att}(y) \to \mathrm{att}(x)$, one per [Dolev–Yao inference rule](../symbolic-protocol-analysis/dolev-yao-terms-and-deduction.md), with $\mathrm{att}(t)$ for each term $t$ the
-attacker knows initially; protocol steps become clauses from received to sent messages. A term $t$ is secret when $\mathrm{att}(t)$ is not derivable.
+attacker knows initially, which by convention include at least one name $a[]$, so that the clause $\mathrm{att}(a[])$ is present; protocol steps become clauses from received to sent messages. A term $t$ is secret when $\mathrm{att}(t)$ is not derivable.
 
 ## Depends on
 
@@ -16,4 +16,4 @@ attacker knows initially; protocol steps become clauses from received to sent me
 
 ## Sources
 
-- V. Cortier and S. Kremer, "Formal models and techniques for analyzing security protocols: a tutorial", *Foundations and Trends in Programming Languages* 1(3), 2014, doi:10.1561/2500000001, copy at <https://inria.hal.science/hal-01090874>: Sections 8.2.1–8.2.5, Definitions 8.1 (subsumption) and 8.2 (derivability).
+- V. Cortier and S. Kremer, "Formal models and techniques for analyzing security protocols: a tutorial", *Foundations and Trends in Programming Languages* 1(3), 2014, doi:10.1561/2500000001, copy at <https://inria.hal.science/hal-01090874>: Sections 8.2.1–8.2.5, Definitions 8.1 (subsumption) and 8.2 (derivability), and Section 8.2.2 (the attacker always knows at least one name $a[]$).
