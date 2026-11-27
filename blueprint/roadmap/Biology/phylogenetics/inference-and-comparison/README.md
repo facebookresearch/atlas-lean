@@ -34,12 +34,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 - [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
-- [Algebraic matroid certificates of generic identifiability](algebraic-matroid-certificates-of-generic-identifiability/README.md)
-- [Geometry of tree space](geometry-of-tree-space/README.md)
-- [Sample complexity of tree and ancestral reconstruction](sample-complexity-of-tree-and-ancestral-reconstruction/README.md)
-- [Dollo-$k$ characters](dollo-k-characters/README.md)
-- [Maximum agreement subtrees of balanced trees](maximum-agreement-subtrees-of-balanced-trees/README.md)
-- [Monotonicity of consensus methods](monotonicity-of-consensus-methods/README.md)
-- [Root ancestral configurations of matching gene and species trees](root-ancestral-configurations-of-matching-gene-and-species-trees/README.md)
-- [Uniformization stable Markov models](uniformization-stable-markov-models/README.md)
-- [Weighted SCJ small parsimony for ancestral gene orders](weighted-scj-small-parsimony-for-ancestral-gene-orders/README.md)
+- [Tree-space geometry, consensus, and identifiability](tree-space-consensus-and-identifiability/README.md)
