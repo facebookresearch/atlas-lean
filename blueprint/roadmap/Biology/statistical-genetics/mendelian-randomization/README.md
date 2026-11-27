@@ -90,6 +90,7 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 - [MVMR-Median: least absolute deviations Mendelian randomization](multivariable-mr-median-lad.md)
 - [Multivariable constrained maximum likelihood (MVMR-cML) and its BIC consistency](multivariable-mr-constrained-maximum-likelihood.md)
 - [Within-family Mendelian randomization](within-family-mendelian-randomization.md)
+- [Point identification under a budget of invalid instruments](point-identification-under-a-budget-of-invalid-instruments.md)
 - [Delta-method and Fieller intervals for the instrumental-variable ratio estimate](fieller-and-delta-method-intervals-for-the-ratio-estimate.md)
 - [Generalized summary-data-based Mendelian randomization (GSMR)](gsmr-generalized-summary-data-mendelian-randomization.md)
 - [HEIDI-outlier test for pleiotropic instruments](heidi-outlier-test-for-pleiotropic-instruments.md)
