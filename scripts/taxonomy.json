@@ -13468,6 +13468,7 @@
   "MathlibExt/NumberTheory/LucasNumbersModuloM": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Residues of Lucas numbers"},
   "MathlibExt/NumberTheory/LucasLeonardoPStrideSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LucasPolytopicNumber": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
+  "MathlibExt/NumberTheory/LucasPolytopicNumberHasSumInvLucasBracketMulSucc": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/LucasSequence": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LucasSpecialPrime": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LurothBorelBernstein": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
