@@ -2,7 +2,7 @@
 
 Let $K$ be a number field, $A$ an [abelian variety](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md) over
 $K$ with [dual](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md) $A^\vee$, $\langle\,,\rangle$ the
-[Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md), and $m \ge 1$. Let $a \in \text{Ш}(K, A)$ and
+[Cassels–Tate pairing](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md), and $m \ge 1$. Let $a \in \text{Ш}(K, A)$ and
 $a' \in \text{Ш}(K, A^\vee)[m]$, and suppose that $a = ma_1$ for some $a_1 \in H^1(K, A)$. Choose
 $t' \in H^1(K, A^\vee[m])$ mapping to $a'$ and, for each place $v$, a class $c_v \in H^1(K_v, A[m])$ mapping to
 $a_{1,v} \in H^1(K_v, A)[m]$ under the map induced by $A[m] \subseteq A(\bar K_v)$. Write $c_v \cup t'_v \in \mathrm{Br}(K_v)$
@@ -21,11 +21,13 @@ and $\bar\gamma_v = (\sigma_{1,v} - n\rho_v) \vee_m \tau'_v$. Here $\sigma_{1,v}
 class maps to $a_{1,v}$, since $n\rho_v = d(nQ_v)$ is a coboundary in $A(\bar K_v)$; so it represents a choice of $c_v$.
 
 Milne's first definition in Proposition I.6.9 takes $c_v$ mapping to $b_{v,1} - b_{1,v}$, whose image in $H^1(K_v, A)$ is
-$-a_{1,v}$; it gives $-\langle a, a'\rangle$, and its kernels are the same.
+$-a_{1,v}$, and cups through his $e_m$-pairing $A_m \times A^t_m \to \mathbb{G}_m$. With the same coefficient pairing in both,
+the two formulas are opposite; with $e_m$ here and Milne's pairing there, they also differ by the sign relating the two
+coefficient pairings. Either way the kernels are the same.
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 - [The Weil pairing through a Poincaré divisor](../construction-of-the-cassels-tate-pairing/weil-pairing-through-a-poincare-divisor.md), for the cup product
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for the local groups and the Kummer sequences
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)

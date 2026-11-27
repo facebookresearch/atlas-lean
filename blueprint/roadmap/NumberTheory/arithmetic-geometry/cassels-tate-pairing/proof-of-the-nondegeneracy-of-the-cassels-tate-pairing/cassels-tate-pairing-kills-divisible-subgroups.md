@@ -3,7 +3,7 @@
 Let $K$ be a number field, $A$ an [abelian variety](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md) over
 $K$ with [dual](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md) $A^\vee$, and
 $\langle\,,\rangle \colon \text{Ш}(K, A) \times \text{Ш}(K, A^\vee) \to \mathbb{Q}/\mathbb{Z}$ the
-[Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md). For an abelian group $M$ let $M_{\mathrm{div}}$ be
+[Cassels–Tate pairing](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md). For an abelian group $M$ let $M_{\mathrm{div}}$ be
 its maximal divisible subgroup. Then
 
 $$\langle a, a'\rangle = 0 \quad \text{whenever } a \in \text{Ш}(K, A)_{\mathrm{div}} \text{ or } a' \in \text{Ш}(K, A^\vee)_{\mathrm{div}}.$$
@@ -14,7 +14,7 @@ $\langle a, a'\rangle = n\langle b, a'\rangle = \langle b, na'\rangle = 0$. The 
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 
 ## Proof depends on
 

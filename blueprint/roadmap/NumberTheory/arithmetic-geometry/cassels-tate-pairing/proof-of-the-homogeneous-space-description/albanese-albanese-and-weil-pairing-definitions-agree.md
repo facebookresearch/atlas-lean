@@ -2,13 +2,14 @@
 
 Let $K$, $A$, $A^\vee$ and $\mathcal{P}$ be as in
 [The Albanese–Albanese definition of the Cassels–Tate pairing](albanese-albanese-definition-of-the-cassels-tate-pairing.md), and
-let $\langle\,,\rangle$ be the [Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md) in its Weil pairing
+let $\langle\,,\rangle$ be the [Cassels–Tate pairing](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md) in its Weil pairing
 definition, with $e_m$ computed through the same $\mathcal{P}$. Then for all $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)$,
 
 $$\langle a, a'\rangle_{\mathcal{P}} = \langle a, a'\rangle.$$
 
 Proof (Poonen and Stoll). Let $m$ kill $a$ and $a'$ and take $\tau$, $\tau'$ and $\sigma$ as in the Weil pairing definition.
-Choose $s \in C^1(G_K, Z^0(A_{\bar K}))$ representing $\sigma$; then take $\alpha$ to be the image of $\tau$ in $Z^1(G_K, A(\bar K))$,
+Choose $s \in C^1(G_K, Z^0(A_{\bar K}))$ representing $\sigma$, and below $\mathfrak{a}'$ and $q_v$, so that every value used
+is defined (Poonen and Stoll, §12, p. 1142); then take $\alpha$ to be the image of $\tau$ in $Z^1(G_K, A(\bar K))$,
 $\mathfrak{a} = ms$, $\mathfrak{a}' \in C^1(G_K, Z^0(A^\vee_{\bar K}))$ representing $\tau'$, and $\epsilon$ with $d\epsilon = \eta$. Then
 
 $$d\sigma \vee \tau' - d\epsilon = -ds \cup (m\mathfrak{a}') + s \cup d(m\mathfrak{a}') = -d\bigl(s \cup (m\mathfrak{a}')\bigr),$$
@@ -23,7 +24,7 @@ and $\bar\gamma_v - \gamma_v = d(q_v \cup (m\mathfrak{a}'_v))$ is a coboundary.
 ## Depends on
 
 - [The Albanese–Albanese definition of the Cassels–Tate pairing](albanese-albanese-definition-of-the-cassels-tate-pairing.md)
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 
 ## Proof depends on
 

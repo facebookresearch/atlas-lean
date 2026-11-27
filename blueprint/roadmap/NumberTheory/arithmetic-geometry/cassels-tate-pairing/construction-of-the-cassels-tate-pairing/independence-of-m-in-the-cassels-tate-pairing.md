@@ -3,7 +3,7 @@
 Let $K$, $A$, $A^\vee$, $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)$ be as in
 [The cochains of the Cassels–Tate construction are cocycles](cocycle-conditions-in-the-cassels-tate-construction.md). If $m$
 kills $a$ and $a'$ and $n \ge 1$, the sums $\sum_v \mathrm{inv}_v(\bar c_v)$ for Cassels–Tate data for $(a, a', m)$ and for
-$(a, a', mn)$ agree. So the value of the construction of [the Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md)
+$(a, a', mn)$ agree. So the value of the construction of [the Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md)
 does not depend on $m$.
 
 Proof. Take choices $\tau$, $\tau'$, $\sigma$, $\bar\varepsilon$, $\beta_v$, $Q_v$ for $m$. Regard $\tau$ and $\tau'$ as

@@ -2,7 +2,7 @@
 
 This node covers the first results on the Selmer and Shafarevich–Tate groups of an
 abelian variety over a number field, which the proof of the
-[nondegeneracy of the Cassels–Tate pairing](nondegeneracy-of-the-cassels-tate-pairing.md) uses, following Milne's
+[nondegeneracy of the Cassels–Tate pairing](proof-of-the-nondegeneracy-of-the-cassels-tate-pairing/nondegeneracy-of-the-cassels-tate-pairing.md) uses, following Milne's
 *Arithmetic Duality Theorems*, Chapter I, §6.
 
 Let $K$ be a number field, $\bar K$ an algebraic closure and $A$ an

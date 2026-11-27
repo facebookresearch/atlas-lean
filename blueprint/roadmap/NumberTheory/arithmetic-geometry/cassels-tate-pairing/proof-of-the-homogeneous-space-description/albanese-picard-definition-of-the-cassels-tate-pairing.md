@@ -21,6 +21,9 @@ written additively. For $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)
     cannot be split.
 4. $\langle a, a'\rangle_V = \sum_v \mathrm{inv}_v(c_v)$.
 
+The pairings $\cup$ are only partially defined; the support conditions in 1 and 3 are there so that every value used is
+defined, and such choices exist (Poonen and Stoll, §12, p. 1142).
+
 The value is defined and does not depend on the choices; the independence of $\beta_v$ uses the local triviality of $a'$.
 
 ## Expansion
@@ -50,7 +53,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Sources
 
 - B. Poonen and M. Stoll, *The Cassels-Tate pairing on polarized abelian varieties*, Ann. of Math. (2) 150 (1999),
-  1109–1149, doi:10.2307/121064: §3.2, pp. 1116–1117 (the definition (1) for any variety $V$, with
+  1109–1149, doi:10.2307/121064: §3.2, pp. 1116–1117 (the definition (1) for any geometrically integral, smooth, projective variety $V$, with
   $\text{Ш}(\mathrm{Alb}^0_{V/k}) \times \text{Ш}(\mathrm{Pic}^0_{V/k,\mathrm{red}}) \to \mathbb{Q}/\mathbb{Z}$, and footnote 6; "One checks using
   $d(x \cup y) = dx \cup y + (-1)^{\deg x} x \cup dy$ [AW, p. 106] that this is well-defined and independent of choices. In
   proving independence of the choice of $\beta_v$ one uses the local triviality of $a'$, which has not been used so far").

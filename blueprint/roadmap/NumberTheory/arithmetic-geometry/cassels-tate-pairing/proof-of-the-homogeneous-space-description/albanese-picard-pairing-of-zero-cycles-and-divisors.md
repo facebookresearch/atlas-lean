@@ -20,7 +20,8 @@ $f'$ on $V_{\bar k}$, and the **Albanese–Picard pairing** is
 
 $$[y, D'] = f'(y)\,\mathcal{P}_0(y, z') \in \bar k^\times,$$
 
-defined when the terms are. The second pairing is evaluation, $Z^0(V_{\bar k}) \times \bar k(V)^\times/\bar k^\times \to \bar k^\times$,
+defined when the terms are: $[\,,]$ is a partially defined pairing, and so are the evaluations below; the cycles and
+divisors are always chosen so that the terms used are defined, which is always possible. The second pairing is evaluation, $Z^0(V_{\bar k}) \times \bar k(V)^\times/\bar k^\times \to \bar k^\times$,
 $(z, f) \mapsto f(z)$, which does not depend on the constant in $f$; on $Y^0(V_{\bar k}) \times \bar k(V)^\times/\bar k^\times$ the two
 agree, as $[y, (f)] = f(y)$ with $z' = 0$.
 
@@ -45,6 +46,6 @@ translates $\mathcal{P}_0$ by a point $(a, 0)$, changes $\mathcal{P}_0$ by a div
 ## Sources
 
 - B. Poonen and M. Stoll, *The Cassels-Tate pairing on polarized abelian varieties*, Ann. of Math. (2) 150 (1999),
-  1109–1149, doi:10.2307/121064: §3.2, "The Albanese-Picard definition", pp. 1115–1117 (the pairing (2), defined for any
+  1109–1149, doi:10.2307/121064: §3.2, "The Albanese-Picard definition", pp. 1115–1117 (the partially defined pairing (2), for any geometrically integral, smooth, projective
   variety $V$ with $A = \mathrm{Alb}^0_V$ and $A' = \mathrm{Pic}^0_{V,\mathrm{red}}$, its independence of choices, p. 1116, the exact sequences (3) and the pairings (4), pp. 1116–1117); §2, pp. 1113–1114
   (the identification $\mathrm{Pic}^0_{X/k} = A^\vee$ for a principal homogeneous space).

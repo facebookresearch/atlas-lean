@@ -9,7 +9,8 @@ $\sum_i n_i (P_i - P_0)$, where $P_i - P_0 \in B(\bar k)$ is the point taking $P
 $P_0 \in V(\bar k)$ as $\sum_i n_i = 0$.
 
 Let $D$ be a divisor on $V \times W$. For $x \in V(\bar k)$ let $D(x) \in \operatorname{Div}(W_{\bar k})$ be the pull-back of
-$D$ along $W \to V \times W$, $w \mapsto (x, w)$, when it is defined, and extend linearly to $0$-cycles $\mathfrak{a}$ on
+$D$ along $W \to V \times W$, $w \mapsto (x, w)$, defined when $\{x\} \times W$ is not contained in the support of $D$, and
+extend linearly to $0$-cycles $\mathfrak{a}$ on
 $V_{\bar k}$. For $\mathfrak{a} \in Y^0(V_{\bar k})$ with $D(\mathfrak{a})$ defined, $D(\mathfrak{a})$ is the divisor of a
 function $f$ on $W_{\bar k}$, determined up to a constant; for $\mathfrak{a}' = \sum_j n_j y_j \in Z^0(W_{\bar k})$ avoiding
 the zeros and poles of $f$, put
@@ -24,9 +25,10 @@ ${}^tD(\mathfrak{a}', \mathfrak{a})$ are defined and
 
 $$D(\mathfrak{a}, \mathfrak{a}') = {}^tD(\mathfrak{a}', \mathfrak{a}).$$
 
-This is the case of Lang's law that the Cassels–Tate pairing uses. Poonen and Stoll state it for any two varieties,
-with $Y^0$ the kernel of the map to the Albanese variety; for a curve $C$, $V = W = C$ and $D$ the diagonal, that
-general form is Weil's reciprocity law $f(\operatorname{div} g) = g(\operatorname{div} f)$.
+This is the case of Lang's law that the Cassels–Tate pairing uses. Poonen and Stoll state it for any two varieties in
+their sense, geometrically integral, smooth and projective (§2, p. 1113), with $Y^0$ the kernel of the map to the
+Albanese variety; for such a curve $C$, $V = W = C$ and $D$ the diagonal, that general form is Weil's reciprocity law
+$f(\operatorname{div} g) = g(\operatorname{div} f)$.
 
 ## Expansion
 
@@ -45,13 +47,13 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Proof depends on
 
-- [Theorem of the cube, theorem of the square and the seesaw principle](../../../../AlgebraicGeometry/abelian-varieties/theorem-of-the-cube.md), for the theorem of the square, through which $D(\mathfrak{a})$ is principal for $\mathfrak{a} \in Y^0(V_{\bar k})$
-- [Weil Reciprocity](../../../../AlgebraicGeometry/algebraic-curves/divisors-on-curves/evaluation-at-rational-places/weil-reciprocity.md), for the case of curves
+- [Theorem of the cube, theorem of the square and the seesaw principle](../../../../AlgebraicGeometry/abelian-varieties/theorem-of-the-cube.md), for the theorem of the square (its item 4), through which $D(\mathfrak{a})$ is principal for $\mathfrak{a} \in Y^0(V_{\bar k})$
 
 ## Sources
 
 - B. Poonen and M. Stoll, *The Cassels-Tate pairing on polarized abelian varieties*, Ann. of Math. (2) 150 (1999),
-  1109–1149, doi:10.2307/121064: §2, pp. 1113–1114 (the groups $Z^0$ and $Y^0$, the definitions of $D(\mathfrak{a})$ and
+  1109–1149, doi:10.2307/121064: §2, pp. 1113–1114 (the standing assumption that varieties are geometrically integral,
+  smooth and projective, p. 1113, the groups $Z^0$ and $Y^0$, the definitions of $D(\mathfrak{a})$ and
   $D(\mathfrak{a}, \mathfrak{a}')$, and the statement: "Lang's reciprocity law (p. 171 of [La1] again) states that
   $D(\mathfrak{a}, \mathfrak{a}')$ and ${}^tD(\mathfrak{a}', \mathfrak{a})$ are defined and equal, provided that
   $\mathfrak{a} \times \mathfrak{a}'$ and $D$ have disjoint supports").

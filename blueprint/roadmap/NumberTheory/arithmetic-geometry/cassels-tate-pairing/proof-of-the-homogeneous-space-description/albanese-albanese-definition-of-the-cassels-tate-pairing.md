@@ -7,13 +7,15 @@ Use the exact sequences
 
 $$0 \to Y^0(A_{\bar K}) \to Z^0(A_{\bar K}) \to A(\bar K) \to 0, \qquad 0 \to Y^0(A^\vee_{\bar K}) \to Z^0(A^\vee_{\bar K}) \to A^\vee(\bar K) \to 0,$$
 
-and the pairings $Y^0(A_{\bar K}) \times Z^0(A^\vee_{\bar K}) \to \bar K^\times$, $(\mathfrak{b}, \mathfrak{b}') \mapsto \mathcal{P}(\mathfrak{b}, \mathfrak{b}')$, and
+and the partially defined pairings $Y^0(A_{\bar K}) \times Z^0(A^\vee_{\bar K}) \to \bar K^\times$, $(\mathfrak{b}, \mathfrak{b}') \mapsto \mathcal{P}(\mathfrak{b}, \mathfrak{b}')$, and
 $Z^0(A_{\bar K}) \times Y^0(A^\vee_{\bar K}) \to \bar K^\times$, $(\mathfrak{b}, \mathfrak{b}') \mapsto {}^t\mathcal{P}(\mathfrak{b}', \mathfrak{b})$, which agree on
 $Y^0 \times Y^0$ by [Lang's reciprocity law](../construction-of-the-cassels-tate-pairing/lang-reciprocity-law.md); write $\cup$
 for both, and likewise over each completion $K_v$. For $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)$ the
 **Albanese–Albanese pairing** $\langle a, a'\rangle_{\mathcal{P}} \in \mathbb{Q}/\mathbb{Z}$ is defined by the steps of the
 [Albanese–Picard definition](albanese-picard-definition-of-the-cassels-tate-pairing.md), with $\mathfrak{a}'$ now a lift of a cocycle
-of $a'$ to $C^1(G_K, Z^0(A^\vee_{\bar K}))$: $\eta = d\mathfrak{a} \cup \mathfrak{a}' - \mathfrak{a} \cup d\mathfrak{a}' = d\epsilon$, local lifts $b_v$ of
+of $a'$ to $C^1(G_K, Z^0(A^\vee_{\bar K}))$, all lifts chosen, as there, so that every value used is defined (a value
+$\mathcal{P}(\mathfrak{b}, \mathfrak{b}')$ is defined in particular when the support of $\mathfrak{b} \times \mathfrak{b}'$ misses that of
+$\mathcal{P}$): $\eta = d\mathfrak{a} \cup \mathfrak{a}' - \mathfrak{a} \cup d\mathfrak{a}' = d\epsilon$, local lifts $b_v$ of
 points $\beta_v$ with $\alpha_v = d\beta_v$,
 
 $$\gamma_v = (\mathfrak{a}_v - db_v) \cup \mathfrak{a}'_v - b_v \cup d\mathfrak{a}'_v - \epsilon_v,$$
@@ -21,7 +23,8 @@ $$\gamma_v = (\mathfrak{a}_v - db_v) \cup \mathfrak{a}'_v - b_v \cup d\mathfrak{
 and $\langle a, a'\rangle_{\mathcal{P}} = \sum_v \mathrm{inv}_v(c_v)$ for the classes $c_v$ of the cocycles $\gamma_v$. The value does not depend
 on the choices.
 
-Poonen and Stoll define $\langle\,,\rangle_D$ for any divisor $D$ on a product $V \times W$ of varieties; this is the case
+Poonen and Stoll define $\langle\,,\rangle_D$ for any divisor $D$ on a product $V \times W$ of geometrically integral,
+smooth, projective varieties; this is the case
 $V = A$, $W = A^\vee$ and $D = \mathcal{P}$.
 
 ## Expansion

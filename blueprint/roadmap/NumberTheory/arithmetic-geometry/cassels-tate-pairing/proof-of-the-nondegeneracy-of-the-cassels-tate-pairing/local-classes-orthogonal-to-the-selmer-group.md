@@ -19,10 +19,12 @@ $\bigoplus_{v \in S} H^0(K_v, A) \to \bigoplus_{v \in S} H^1(K_v, A_m)$ and $a_2
 $H^1(G_S, A_m) \to \bigoplus_{v \in S} H^1(K_v, A_m)$.
 
 Milne's proof dualizes the exact sequence $0 \to S_S(K, A^\vee)_m \to H^1(G_S, A^\vee_m) \to \bigoplus_{v \in S} H^1(K_v, A^\vee)$.
-By local duality, the dual of $\bigoplus_{v \in S} H^1(K_v, A^\vee_m)$ is $\bigoplus_{v \in S} H^1(K_v, A_m)$, and that of
-$\bigoplus_{v \in S} H^1(K_v, A^\vee)$ is $\bigoplus_{v \in S} H^0(K_v, A)$, the dual of the map
-$H^1(K_v, A^\vee_m) \to H^1(K_v, A^\vee)$ being the Kummer map of $A$. If $a$ kills $S_S(K, A^\vee)_m$, the image $\gamma^1(a)$
-of $a$ in the dual of $H^1(G_S, A^\vee_m)$ is the image of some $b \in \bigoplus_{v \in S} H^0(K_v, A)$; with $a_1$ the
+By local duality, the dual of the finite group $\bigoplus_{v \in S} H^1(K_v, A^\vee_m)$ is $\bigoplus_{v \in S} H^1(K_v, A_m)$, and
+that of the discrete torsion group $\bigoplus_{v \in S} H^1(K_v, A^\vee)$ is the compact group $\prod_{v \in S} H^0(K_v, A)$, which
+is not finite in general: at a finite place $A(K_v)$ has an open subgroup of finite index isomorphic to
+$\mathcal{O}_{K_v}^{\dim A}$. The dual of the map $H^1(K_v, A^\vee_m) \to H^1(K_v, A^\vee)$ is the Kummer map of $A$, which
+factors through the finite quotient $H^0(K_v, A)/m$, dual to $H^1(K_v, A^\vee)[m]$. If $a$ kills $S_S(K, A^\vee)_m$, the image $\gamma^1(a)$
+of $a$ in the dual of $H^1(G_S, A^\vee_m)$ is the image of some $b \in \prod_{v \in S} H^0(K_v, A)$; with $a_1$ the
 Kummer image of $b$, $a - a_1$ lies in the kernel of $\gamma^1$, which is the image of $H^1(G_S, A_m)$ by the exactness
 of the Poitou–Tate sequence at $P^1$. Conversely, Kummer images of $A$ are orthogonal to the classes whose images in
 $H^1(K_v, A^\vee)$ vanish, and the image of $H^1(G_S, A_m)$ is orthogonal to that of $H^1(G_S, A^\vee_m)$, by the same
@@ -36,8 +38,11 @@ This node is still to be broken down. A good expansion states and links:
   [Tate local duality for abelian varieties](../../../algebraic-number-theory/galois-representations/galois-cohomology-of-local-fields/tate-local-duality-for-abelian-varieties.md)
   (its item 4) with the finite-level pairings of $A[m]$ and $A^\vee[m]$ through the Kummer sequences, the analogue of
   its item 3, from the diagram of Milne's Remark I.3.7;
-- the dualization of the Selmer sequence and the diagram chase above, with the topologies of the groups, all finite here
-  as $S$ is finite.
+- the dualization of the Selmer sequence and the diagram chase above, with the topologies of the groups:
+  $H^1(G_S, A^\vee_m)$, $S_S(K, A^\vee)_m$ and the local groups of $A_m$ and $A^\vee_m$ are finite, while
+  $\bigoplus_{v \in S} H^1(K_v, A^\vee)$ is discrete and its dual $\prod_{v \in S} H^0(K_v, A)$ compact; or the same argument with
+  the finite groups $H^0(K_v, A)/m$ and $H^1(K_v, A^\vee)[m]$, through which the Kummer maps and the maps
+  $H^1(K_v, A^\vee_m) \to H^1(K_v, A^\vee)$ factor.
 
 ## Depends on
 
@@ -57,5 +62,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Sources
 
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
-  Chapter I, Lemma 6.15 and its proof, pp. 86–87; Theorem 4.10 (b) and the exact sequence after it, pp. 56–57, for the Poitou–Tate sequence; Corollary 3.4,
-  p. 43, and Remark 3.7, p. 46, for local duality for abelian varieties.
+  Chapter I, Lemma 6.15 and its proof, pp. 86–87; Theorem 4.10 (b) and the exact sequence after it, pp. 56–57, for the Poitou–Tate sequence; Lemma 3.3,
+  p. 41 (the open subgroup of finite index of $A(K)$ isomorphic to $R^{\dim(A)}$), Corollary 3.4, p. 43 (an isomorphism of
+  compact groups $A^t(K) \to H^1(K, A)^*$ and one of discrete groups $H^1(K, A^t) \to A(K)^*$), and Remark 3.7, p. 46, for
+  local duality for abelian varieties.

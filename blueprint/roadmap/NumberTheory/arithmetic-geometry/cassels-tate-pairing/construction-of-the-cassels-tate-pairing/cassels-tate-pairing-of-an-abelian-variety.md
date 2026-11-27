@@ -1,12 +1,12 @@
 # The Cassels–Tate pairing of an abelian variety
 
 Let $K$ be a number field, $\bar K$ an algebraic closure, $A$ an
-[abelian variety](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md) over $K$ and $A^\vee$ its
-[dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md). Let $\text{Ш}(K, A)$ and
+[abelian variety](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md) over $K$ and $A^\vee$ its
+[dual abelian variety](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md). Let $\text{Ш}(K, A)$ and
 $\text{Ш}(K, A^\vee)$ be the Shafarevich–Tate groups, the classes in $H^1(G_K, A(\bar K))$ and
 $H^1(G_K, A^\vee(\bar K))$ that vanish in $H^1(G_v, A(\bar K_v))$ and $H^1(G_v, A^\vee(\bar K_v))$ at every place
 $v$, the localization being restriction to a decomposition group $G_v$ followed by the extension of coefficients
-$A(\bar K) \subseteq A(\bar K_v)$, as in [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](selmer-groups-of-abelian-varieties.md).
+$A(\bar K) \subseteq A(\bar K_v)$, as in [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md).
 Cochains are continuous inhomogeneous cochains, the group law of $\bar K^\times$ is written additively, and for a
 global cochain $\alpha$ its restriction to $G_v$ is written $\alpha_v$.
 
@@ -16,7 +16,7 @@ $$\langle\,,\rangle \colon \text{Ш}(K, A) \times \text{Ш}(K, A^\vee) \to \math
 
 defined as follows (the Weil pairing definition). Let $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)$, and
 choose $m \ge 1$ killing both. Let $e_m \colon A[m] \times A^\vee[m] \to \bar K^\times$ be the
-[Weil pairing through a Poincaré divisor](construction-of-the-cassels-tate-pairing/weil-pairing-through-a-poincare-divisor.md), as Poonen and
+[Weil pairing through a Poincaré divisor](weil-pairing-through-a-poincare-divisor.md), as Poonen and
 Stoll define it in §12.2, the inverse of Lang's (their footnote 21), and let $\vee$ be the cup product of cochains that
 $e_m$ induces.
 
@@ -48,26 +48,26 @@ takes values among the values of $e_m$, and $\bar\varepsilon_v$ among those of $
 unramified extension, $\bar c_v = 0$.
 
 The value does not depend on the choices made, nor on $m$ (replacing $m$ by a multiple gives the same value). The
-pairing is [biadditive](construction-of-the-cassels-tate-pairing/biadditivity-of-the-cassels-tate-pairing.md). For the
-steps, see [Construction of the Cassels–Tate pairing](construction-of-the-cassels-tate-pairing/README.md).
+pairing is [biadditive](biadditivity-of-the-cassels-tate-pairing.md). For the
+steps, see [Construction of the Cassels–Tate pairing](README.md).
 
 ## Depends on
 
-- [Abelian scheme](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over a field
-- [Dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md), for $A^\vee$
-- [The Weil pairing through a Poincaré divisor](construction-of-the-cassels-tate-pairing/weil-pairing-through-a-poincare-divisor.md), for $e_m$
-- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](selmer-groups-of-abelian-varieties.md), for $\text{Ш}(K, A)$ and the local groups
-- [Vanishing of the third cohomology of the multiplicative group of a number field](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/vanishing-of-h3-of-the-multiplicative-group.md), for the cochain $\bar\varepsilon$ in step 2
-- [Local class field theory: cohomology and the existence theorem](../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)
-- [Cohomology of profinite groups](../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cochains and their cup products
+- [Abelian scheme](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over a field
+- [Dual abelian variety](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md), for $A^\vee$
+- [The Weil pairing through a Poincaré divisor](weil-pairing-through-a-poincare-divisor.md), for $e_m$
+- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for $\text{Ш}(K, A)$ and the local groups
+- [Vanishing of the third cohomology of the multiplicative group of a number field](../../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/vanishing-of-h3-of-the-multiplicative-group.md), for the cochain $\bar\varepsilon$ in step 2
+- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cochains and their cup products
 
 ## Proof depends on
 
-- [The cochains of the Cassels–Tate construction are cocycles](construction-of-the-cassels-tate-pairing/cocycle-conditions-in-the-cassels-tate-construction.md), for steps 2 and 3
-- [The Cassels–Tate pairing does not depend on the choices](construction-of-the-cassels-tate-pairing/independence-of-the-choices-in-the-cassels-tate-pairing.md)
-- [The Cassels–Tate pairing does not depend on m](construction-of-the-cassels-tate-pairing/independence-of-m-in-the-cassels-tate-pairing.md)
-- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](selmer-groups-of-abelian-varieties.md), for its item 5: at a place $v \notin T$, $A[m] \subseteq A(K_v^{\mathrm{un}})$, multiplication by $m$ is onto $A(K_v^{\mathrm{un}})$ and $H^1(G_v/I_v, A(K_v^{\mathrm{un}})) = 0$, so that $\beta_v$ and $Q_v$ can be chosen unramified
-- [Local class field theory: cohomology and the existence theorem](../../p-adic-numbers/local-class-field-theory-cohomology.md), for $\hat H^r(\operatorname{Gal}(L'_w/K_v), U_{L'_w}) = 0$ for a finite unramified extension (its item 1), which kills $\bar c_v$ for $v \notin T$
+- [The cochains of the Cassels–Tate construction are cocycles](cocycle-conditions-in-the-cassels-tate-construction.md), for steps 2 and 3
+- [The Cassels–Tate pairing does not depend on the choices](independence-of-the-choices-in-the-cassels-tate-pairing.md)
+- [The Cassels–Tate pairing does not depend on m](independence-of-m-in-the-cassels-tate-pairing.md)
+- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for its item 5: at a place $v \notin T$, $A[m] \subseteq A(K_v^{\mathrm{un}})$, multiplication by $m$ is onto $A(K_v^{\mathrm{un}})$ and $H^1(G_v/I_v, A(K_v^{\mathrm{un}})) = 0$, so that $\beta_v$ and $Q_v$ can be chosen unramified
+- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for $\hat H^r(\operatorname{Gal}(L'_w/K_v), U_{L'_w}) = 0$ for a finite unramified extension (its item 1), which kills $\bar c_v$ for $v \notin T$
 
 ## Sources
 

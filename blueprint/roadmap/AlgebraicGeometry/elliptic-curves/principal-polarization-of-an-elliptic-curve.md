@@ -2,7 +2,7 @@
 
 This node is still to be broken down. It covers the identification of an elliptic curve with its dual abelian
 variety through the divisor of its origin, which lets the results on abelian varieties and their duals, such as the
-[Cassels–Tate pairing](../../NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md),
+[Cassels–Tate pairing](../../NumberTheory/arithmetic-geometry/cassels-tate-pairing/construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md),
 be applied to an elliptic curve.
 
 Let $E$ be an elliptic curve over a field $K$, given by a nonsingular Weierstrass equation, with origin the point

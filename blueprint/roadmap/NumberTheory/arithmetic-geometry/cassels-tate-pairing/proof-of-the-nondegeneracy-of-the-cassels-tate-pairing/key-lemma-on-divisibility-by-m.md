@@ -2,7 +2,7 @@
 
 Let $K$, $A$, $A^\vee$, $m$, $S$ and $G_S$ be as in
 [Local classes orthogonal to the Selmer group](local-classes-orthogonal-to-the-selmer-group.md), let $\langle\,,\rangle$ be the
-[Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md), and let $\text{Ш}_S(K, A) \supseteq \text{Ш}'(K, A)$ be as
+[Cassels–Tate pairing](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md), and let $\text{Ш}_S(K, A) \supseteq \text{Ш}'(K, A)$ be as
 in [Elements of the Shafarevich–Tate group divisible by m over G_S](elements-divisible-by-m-over-g-s.md), regarded inside
 $\text{Ш}(K, A)$ by inflation. For $a \in \text{Ш}'(K, A)$,
 
@@ -20,7 +20,7 @@ in $\text{Ш}(K, A^\vee)[m]$; and every element of $\text{Ш}(K, A^\vee)[m]$ is 
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 - [Elements of the Shafarevich–Tate group divisible by m over G_S](elements-divisible-by-m-over-g-s.md), for $\text{Ш}_S(K, A)$ and $\text{Ш}'(K, A)$
 
 ## Proof depends on

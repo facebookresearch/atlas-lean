@@ -2,7 +2,7 @@
 
 Let $K$ be a number field, $A$ an [abelian variety](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md) over
 $K$ with [dual](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md) $A^\vee$, $\langle\,,\rangle$ the
-[Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md), and $m \ge 1$. For an abelian group $M$ let $M(m)$ be
+[Cassels–Tate pairing](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md), and $m \ge 1$. For an abelian group $M$ let $M(m)$ be
 its $m$-primary part, the elements killed by a power of $m$. If $a \in \text{Ш}(K, A)(m)$ satisfies $\langle a, a'\rangle = 0$
 for all $a' \in \text{Ш}(K, A^\vee)(m)$, then $a \in \text{Ш}(K, A)(m)_{\mathrm{div}}$, the maximal divisible subgroup of
 $\text{Ш}(K, A)(m)$.
@@ -31,7 +31,7 @@ divisible group, such an element lies in its maximal divisible subgroup.
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 
 ## Proof depends on
 

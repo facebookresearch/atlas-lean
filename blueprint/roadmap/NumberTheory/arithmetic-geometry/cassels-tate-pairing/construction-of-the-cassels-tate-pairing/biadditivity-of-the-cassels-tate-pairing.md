@@ -1,7 +1,7 @@
 # The Cassels–Tate pairing is biadditive
 
 Let $K$, $A$ and $A^\vee$ be as in the construction of
-[the Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md). Then for $a_1, a_2, a \in \text{Ш}(K, A)$ and
+[the Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md). Then for $a_1, a_2, a \in \text{Ш}(K, A)$ and
 $a'_1, a'_2, a' \in \text{Ш}(K, A^\vee)$,
 
 $$\langle a_1 + a_2, a'\rangle = \langle a_1, a'\rangle + \langle a_2, a'\rangle, \qquad \langle a, a'_1 + a'_2\rangle = \langle a, a'_1\rangle + \langle a, a'_2\rangle.$$
@@ -15,7 +15,7 @@ depend on the choices, which gives both identities.
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](cassels-tate-pairing-of-an-abelian-variety.md)
 
 ## Proof depends on
 

@@ -1,10 +1,11 @@
 # Construction of the Cassels–Tate pairing
 
-The steps of the [Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md) in its
-Weil pairing definition, following Poonen and Stoll, §12.2, and Milne's *Arithmetic Duality Theorems*, Chapter I,
+The [Cassels–Tate pairing of an abelian variety](cassels-tate-pairing-of-an-abelian-variety.md) in its Weil pairing
+definition and the steps of its construction, following Poonen and Stoll, §12.2, and Milne's *Arithmetic Duality Theorems*, Chapter I,
 Proposition 6.9: the Weil pairing through a Poincaré divisor, the cocycles of the construction, and the independence of
 the choices.
 
+- [The Cassels–Tate pairing of an abelian variety](cassels-tate-pairing-of-an-abelian-variety.md)
 - [Lang's reciprocity law for divisors on a product](lang-reciprocity-law.md)
 - [The Weil pairing through a Poincaré divisor](weil-pairing-through-a-poincare-divisor.md)
 - [The Weil pairing is biadditive, Galois-equivariant and compatible in m](bilinearity-of-the-weil-pairing.md)

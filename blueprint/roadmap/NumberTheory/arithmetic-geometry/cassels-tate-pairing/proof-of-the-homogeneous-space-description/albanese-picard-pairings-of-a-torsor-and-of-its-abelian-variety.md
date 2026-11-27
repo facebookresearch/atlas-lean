@@ -6,12 +6,13 @@ and $Z^0(X_{\bar K}) \to A(\bar K)$ the summation map. Then for all $a \in \text
 
 $$\langle a, a'\rangle_X = \langle a, a'\rangle_A.$$
 
-Poonen and Stoll prove it for any variety $V$ and its Albanese variety, for the morphisms $\varphi \colon V_{\bar K} \to A_{\bar K}$
+Poonen and Stoll prove it for any geometrically integral, smooth, projective variety $V$ and its Albanese variety, for the morphisms $\varphi \colon V_{\bar K} \to A_{\bar K}$
 given by base points, which induce isomorphisms independent of the base point that descend to $K$. Proof. A morphism
 $\psi$ given by a base point pushes $0$-cycles forward from $X$ to $A$ and pulls divisors back from $A$ to $X$, and the
 resulting trilinear pairings $Y^0(X_{\bar K}) \times \mathrm{AlbMor}(X, A) \times \operatorname{Div}^0(A_{\bar K}) \to \bar K^\times$ and
 $Z^0(X_{\bar K}) \times \mathrm{AlbMor}(X, A) \times \bar K(A)^\times/\bar K^\times \to \bar K^\times$ agree, $\mathrm{AlbMor}(X, A)$ being the free
-group on these morphisms. Take lifts $\mathfrak{a}$ of $\alpha$ to $Z^0(X_{\bar K})$ and $\mathfrak{a}'$ of $\alpha'$ to $\operatorname{Div}^0(A_{\bar K})$, and
+group on these morphisms. Take lifts $\mathfrak{a}$ of $\alpha$ to $Z^0(X_{\bar K})$ and $\mathfrak{a}'$ of $\alpha'$ to $\operatorname{Div}^0(A_{\bar K})$, chosen, with the local lifts below, so that every
+pairing, push-forward and pull-back used is defined (Poonen and Stoll, §12, p. 1142), and
 use $\varphi \cup \mathfrak{a}'$ for $\langle a, a'\rangle_X$ and $\mathfrak{a} \cup \varphi$ for $\langle a, a'\rangle_A$; then the two cocycles
 $\eta$ agree, so one $\epsilon$ serves for both, and with $b_v \cup \varphi$ as the local lift for $A$ the cocycles $\gamma_v$ agree
 formally.

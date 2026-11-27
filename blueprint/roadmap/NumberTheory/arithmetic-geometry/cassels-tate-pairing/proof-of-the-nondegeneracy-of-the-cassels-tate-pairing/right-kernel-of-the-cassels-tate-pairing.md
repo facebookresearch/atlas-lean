@@ -15,7 +15,7 @@ $R = \text{Ш}(K, A^\vee)(m)_{\mathrm{div}}$.
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 
 ## Proof depends on
 

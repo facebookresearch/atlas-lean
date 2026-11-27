@@ -1,10 +1,11 @@
-# Proof of the nondegeneracy of the Cassels–Tate pairing
+# Nondegeneracy of the Cassels–Tate pairing and its proof
 
-The steps of the proof of the [nondegeneracy of the Cassels–Tate pairing](../nondegeneracy-of-the-cassels-tate-pairing.md),
-following Milne's *Arithmetic Duality Theorems*, Chapter I, proof of Theorem 6.13 (a) (restated as Theorem 6.26 (a)):
+The [nondegeneracy of the Cassels–Tate pairing](nondegeneracy-of-the-cassels-tate-pairing.md) and the steps of its
+proof, following Milne's *Arithmetic Duality Theorems*, Chapter I, proof of Theorem 6.13 (a) (restated as Theorem 6.26 (a)):
 the vanishing of the pairing on the divisible subgroups, the formula for the pairing on a class divisible by $m$, the
 three lemmas, which use local duality and the Poitou–Tate sequence, and the two kernels.
 
+- [Nondegeneracy of the Cassels–Tate pairing](nondegeneracy-of-the-cassels-tate-pairing.md)
 - [The Cassels–Tate pairing kills the divisible subgroups](cassels-tate-pairing-kills-divisible-subgroups.md)
 - [The Cassels–Tate pairing on a class divisible by m](cassels-tate-pairing-on-classes-divisible-by-m.md)
 - [Local classes orthogonal to the Selmer group](local-classes-orthogonal-to-the-selmer-group.md)

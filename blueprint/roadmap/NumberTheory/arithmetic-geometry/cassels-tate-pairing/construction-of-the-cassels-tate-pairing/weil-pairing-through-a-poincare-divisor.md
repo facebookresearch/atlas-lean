@@ -6,11 +6,14 @@ $A$ an [abelian variety](../../../../AlgebraicGeometry/abelian-varieties/abelian
 a $k$-rational divisor $\mathcal{P}$ on $A \times A^\vee$ whose line bundle is the Poincaré bundle; one exists, as the
 Poincaré bundle is defined over $k$ and $A \times A^\vee$ is integral, and two of them differ by the divisor of a function.
 
-For $0$-cycles $\mathfrak{b} = \sum_i n_i x_i$ on $A_{\bar k}$ and $\mathfrak{b}' = \sum_j n'_j y_j$ on $A^\vee_{\bar k}$ of degree $0$,
-with $\mathfrak{b}$ summing to $0$ in $A(\bar k)$, the divisor $\mathcal{P}(\mathfrak{b}) = \sum_i n_i \mathcal{P}(x_i)$ on
-$A^\vee_{\bar k}$, where $\mathcal{P}(x)$ is the pull-back of $\mathcal{P}$ along $y \mapsto (x, y)$, is the divisor of a
-function $f$, and $\mathcal{P}(\mathfrak{b}, \mathfrak{b}') = \prod_j f(y_j)^{n'_j}$ when this is defined; it does not depend on
-the constant in $f$. Define ${}^t\mathcal{P}(\mathfrak{b}', \mathfrak{b})$ in the same way with the transpose ${}^t\mathcal{P}$ on
+For $x \in A(\bar k)$, the pull-back $\mathcal{P}(x)$ of $\mathcal{P}$ along $y \mapsto (x, y)$ is defined when
+$\{x\} \times A^\vee$ is not contained in the support of $\mathcal{P}$. Let $\mathfrak{b} = \sum_i n_i x_i$ on $A_{\bar k}$ and
+$\mathfrak{b}' = \sum_j n'_j y_j$ on $A^\vee_{\bar k}$ be $0$-cycles of degree $0$, with $\mathfrak{b}$ summing to $0$ in $A(\bar k)$
+and $\mathcal{P}(x_i)$ defined for every $i$. Then the divisor $\mathcal{P}(\mathfrak{b}) = \sum_i n_i \mathcal{P}(x_i)$ on
+$A^\vee_{\bar k}$ is the divisor of a function $f$, and $\mathcal{P}(\mathfrak{b}, \mathfrak{b}') = \prod_j f(y_j)^{n'_j}$ is defined
+when no $y_j$ is a zero or pole of $f$; it does not depend on the constant in $f$. These values are only partially
+defined: every choice below is made so that the values it uses are defined, which is always possible (Poonen and
+Stoll, §12, p. 1142). Define ${}^t\mathcal{P}(\mathfrak{b}', \mathfrak{b})$ in the same way with the transpose ${}^t\mathcal{P}$ on
 $A^\vee \times A$, for $\mathfrak{b}'$ summing to $0$ in $A^\vee(\bar k)$.
 
 The **Weil pairing** is the map

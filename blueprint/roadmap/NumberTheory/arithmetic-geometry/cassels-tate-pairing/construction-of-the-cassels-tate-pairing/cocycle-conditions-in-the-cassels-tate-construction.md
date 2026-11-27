@@ -5,7 +5,7 @@ over $K$ with [dual](../../../../AlgebraicGeometry/abelian-varieties/dual-abelia
 $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)$ killed by $m$. Let $\vee$ be the cup product of cochains through the
 [Weil pairing](weil-pairing-through-a-poincare-divisor.md) $e_m \colon A[m] \times A^\vee[m] \to \bar K^\times$, the group law of
 $\bar K^\times$ written additively. **Cassels–Tate data** for $(a, a', m)$, as in the construction of
-[the Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md), are: cocycles $\tau \in Z^1(G_K, A[m])$ and
+[the Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md), are: cocycles $\tau \in Z^1(G_K, A[m])$ and
 $\tau' \in Z^1(G_K, A^\vee[m])$ whose classes map to $a$ and $a'$; a cochain $\sigma \in C^1(G_K, A[m^2])$ with $m\sigma = \tau$;
 a cochain $\bar\varepsilon \in C^2(G_K, \bar K^\times)$ with $d\bar\varepsilon = d\sigma \vee \tau'$; and, for each place $v$, points
 $\beta_v, Q_v \in A(\bar K_v)$ with $d\beta_v$ the image of $\tau_v$ and $mQ_v = \beta_v$, and $\rho_v = dQ_v$. They exist, by the

@@ -1,11 +1,11 @@
 # Nondegeneracy of the Cassels–Tate pairing
 
 This is the theorem of Cassels and Tate that the kernels of the
-[Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md) are the maximal divisible subgroups, following
+[Cassels–Tate pairing](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md) are the maximal divisible subgroups, following
 the proof in Milne's *Arithmetic Duality Theorems*, Chapter I, §6.
 
-Let $K$ be a number field, $A$ an [abelian variety](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md)
-over $K$ and $A^\vee$ its [dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md),
+Let $K$ be a number field, $A$ an [abelian variety](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md)
+over $K$ and $A^\vee$ its [dual abelian variety](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md),
 and let $\langle\,,\rangle \colon \text{Ш}(K, A) \times \text{Ш}(K, A^\vee) \to \mathbb{Q}/\mathbb{Z}$ be the Cassels–Tate
 pairing. Then:
 
@@ -27,25 +27,25 @@ the $m$-primary parts is $\text{Ш}(K, A)(m)_{\mathrm{div}}$, by local duality, 
 through a finite set $S$ of places containing the archimedean places, the places of bad reduction and those above the
 primes dividing $m$; and the right kernel is $\text{Ш}(K, A^\vee)(m)_{\mathrm{div}}$, by comparing the finite orders of the
 quotients for $A$, $A^\vee$ and $A^{\vee\vee} \cong A$; see
-[Proof of the nondegeneracy of the Cassels–Tate pairing](proof-of-the-nondegeneracy-of-the-cassels-tate-pairing/README.md).
+[Nondegeneracy of the Cassels–Tate pairing and its proof](README.md).
 
 For elliptic curves and $m$ prime, $\text{Ш}^2_S(K, A_m) = 0$, so every element of $\text{Ш}(K, A)[m]$ becomes divisible by $m$
 over $G_S$ and the argument is shorter (Milne, Remark I.6.18).
 
 Milne builds the pairing from the $e_m$-pairing of the Cartier duality of $A[m]$ and $A^\vee[m]$, while the
-[construction page](cassels-tate-pairing-of-an-abelian-variety.md) uses the Weil pairing as Poonen and Stoll define it; the
-two [agree up to sign](construction-of-the-cassels-tate-pairing/weil-pairing-and-cartier-duality.md), and a change of sign of $e_m$ changes the pairing by a sign, which does not change its kernels.
+[construction page](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md) uses the Weil pairing as Poonen and Stoll define it; the
+two [agree up to sign](../construction-of-the-cassels-tate-pairing/weil-pairing-and-cartier-duality.md), and a change of sign of $e_m$ changes the pairing by a sign, which does not change its kernels.
 
 ## Depends on
 
-- [The Cassels–Tate pairing of an abelian variety](cassels-tate-pairing-of-an-abelian-variety.md)
+- [The Cassels–Tate pairing of an abelian variety](../construction-of-the-cassels-tate-pairing/cassels-tate-pairing-of-an-abelian-variety.md)
 
 ## Proof depends on
 
-- [The Cassels–Tate pairing kills the divisible subgroups](proof-of-the-nondegeneracy-of-the-cassels-tate-pairing/cassels-tate-pairing-kills-divisible-subgroups.md)
-- [The left kernel of the Cassels–Tate pairing is the divisible subgroup](proof-of-the-nondegeneracy-of-the-cassels-tate-pairing/left-kernel-of-the-cassels-tate-pairing.md)
-- [The right kernel of the Cassels–Tate pairing is the divisible subgroup](proof-of-the-nondegeneracy-of-the-cassels-tate-pairing/right-kernel-of-the-cassels-tate-pairing.md)
-- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](selmer-groups-of-abelian-varieties.md), for the finiteness of $\text{Ш}(K, A)(\ell)$ modulo its divisible subgroup (its item 3), used to pass between the primary components and the whole groups
+- [The Cassels–Tate pairing kills the divisible subgroups](cassels-tate-pairing-kills-divisible-subgroups.md)
+- [The left kernel of the Cassels–Tate pairing is the divisible subgroup](left-kernel-of-the-cassels-tate-pairing.md)
+- [The right kernel of the Cassels–Tate pairing is the divisible subgroup](right-kernel-of-the-cassels-tate-pairing.md)
+- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for the finiteness of $\text{Ш}(K, A)(\ell)$ modulo its divisible subgroup (its item 3), used to pass between the primary components and the whole groups
 
 ## Sources
 

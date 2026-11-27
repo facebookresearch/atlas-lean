@@ -10,7 +10,7 @@ Cassels–Tate data for $(a, a', m)$ let $\bar c_v \in \mathrm{Br}(K_v)$ be the 
    $\bar\varepsilon$.
 
 So, for fixed $m$, the value $\sum_v \mathrm{inv}_v(\bar c_v)$ of the construction of
-[the Cassels–Tate pairing](../cassels-tate-pairing-of-an-abelian-variety.md) depends only on $a$ and $a'$.
+[the Cassels–Tate pairing](cassels-tate-pairing-of-an-abelian-variety.md) depends only on $a$ and $a'$.
 
 ## Expansion
 
