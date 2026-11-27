@@ -25,9 +25,10 @@ Let $p_0 \in (0, 1)$ and $p_{n+1} = p_n'$.
    only interior fixed point; $p_n \to 0$ if $p_0 < p_e$, $p_n \to 1$ if $p_0 > p_e$, and $p_n = p_e$
    for all $n$ if $p_0 = p_e$.
 
-Whenever $w_{AA} = 1 - s$, $w_{Aa} = 1$ and $w_{aa} = 1 - t$, as in cases 2 and 3,
-$\bar w - pq(s + t) = p(1 - s) + q(1 - t)$ for every $p$, and, if $s + t \ne 0$ (as in cases 2
-and 3), $p' - p = pq(s + t)(p_e - p)/\bar w$ wherever $\bar w \ne 0$. In case 2, for
+Whenever $w_{AA} = 1 - s$, $w_{Aa} = 1$ and $w_{aa} = 1 - t$ for real $s$ and $t$, as in cases 2
+and 3, $\bar w - pq(s + t) = p(1 - s) + q(1 - t)$ for every real $p$, and, if $s + t \ne 0$ (as in
+cases 2 and 3), $p' - p = pq(s + t)(p_e - p)/\bar w$ for every real $p$ with $\bar w \ne 0$, with
+$p'$ the quotient above; like the change formula, these are algebraic identities. In case 2, for
 $p \in (0, 1)$, $p(1 - s) + q(1 - t) \ge 0$, so the factor $pq(s + t)/\bar w$ lies in $(0, 1]$,
 and it equals $1$ exactly when $s = t = 1$, in which case $p_1 = p_e$; this gives monotone
 convergence without overshooting.
