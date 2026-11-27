@@ -1,27 +1,40 @@
 # Effective population size under fluctuating population size
 
 In a neutral Wright–Fisher population of diploids whose size in generation $i$ is $N_i \ge 1$
-($2N_i$ gene copies), the probability $h_t$ that two distinct gene copies of generation $t$ are not
-identical by descent satisfies $h_{i+1} = (1 - 1/(2N_i))\,h_i$, because two distinct gene copies of
-generation $i + 1$ are copies of the same gene of generation $i$ with probability $1/(2N_i)$ and otherwise
-copies of two distinct genes of generation $i$. Hence
+($2N_i$ gene copies), each gene copy of generation $i + 1$ is a copy of a gene copy of generation $i$
+chosen uniformly at random, independently of the other gene copies. Two gene copies of generation $t$
+are identical by descent if they descend from the same gene copy of generation $0$, or from two gene
+copies of generation $0$ that are identical by descent, as a given relation on the gene copies of
+generation $0$ records. Let $h_t$ be the probability that two distinct gene copies of generation $t$,
+drawn at random, are not identical by descent. Then $h_{i+1} = (1 - 1/(2N_i))\,h_i$ for every $i$,
+because two distinct gene copies of generation $i + 1$ are copies of the same gene of generation $i$
+with probability $1/(2N_i)$ and otherwise copies of two distinct genes of generation $i$. Hence, for
+every $t$,
 
-$$h_t = \Phi_t\, h_0, \qquad \Phi_t = \prod_{i=0}^{t-1} \Bigl(1 - \frac{1}{2N_i}\Bigr) .$$
+$$h_t = \Phi_t\, h_0, \qquad \Phi_t = \prod_{i=0}^{t-1} \Bigl(1 - \frac{1}{2N_i}\Bigr) ,$$
 
-The inbreeding effective size over these $t \ge 1$ generations, the constant size $N_e$ of a
-Wright–Fisher population giving the same factor $\Phi_t$ (equal to $h_t / h_0$ when $h_0 > 0$), is
+so $\Phi_t = h_t / h_0$ when $h_0 > 0$.
 
-$$N_e = \frac{1}{2\Bigl(1 - \prod_{i<t} \bigl(1 - \tfrac{1}{2N_i}\bigr)^{1/t}\Bigr)} .$$
+Let $t \ge 1$. The inbreeding effective size over these $t$ generations,
 
-Let $N_H = t / \sum_{i<t} N_i^{-1}$ be the harmonic mean of the sizes. Then
+$$N_e = \frac{1}{2\Bigl(1 - \Bigl(\prod_{i<t} \bigl(1 - \tfrac{1}{2N_i}\bigr)\Bigr)^{1/t}\Bigr)} ,$$
 
-$$0 \le t \log\Bigl(1 - \frac{1}{2N_H}\Bigr) - \sum_{i<t} \log\Bigl(1 - \frac{1}{2N_i}\Bigr) \le
-\sum_{i<t} \frac{1}{4N_i^2} ,$$
+is greater than $1/2$, and it is the only $M > 1/2$ with $(1 - 1/(2M))^t = \Phi_t$: the constant size
+of a Wright–Fisher population giving the same factor $\Phi_t$.
 
-so $\Phi_t$ equals $(1 - 1/(2N_H))^t$ up to a factor in $[e^{-E}, 1]$ with $E = \sum_{i<t} 1/(4N_i^2)$,
-and $N_H$ is at most the geometric and the arithmetic mean of the $N_i$. The lower bound is concavity of
-$x \mapsto \log(1 - x)$, as $1/(2N_H)$ is the mean of the $1/(2N_i)$; the upper bound uses
-$0 \le -\log(1 - x) - x \le x^2$ for $0 \le x \le 1/2$.
+Let $N_H = t / \sum_{i<t} N_i^{-1}$ be the harmonic mean of the sizes and $E = \sum_{i<t} 1/(4N_i^2)$.
+Then
+
+$$0 \le t \log\Bigl(1 - \frac{1}{2N_H}\Bigr) - \sum_{i<t} \log\Bigl(1 - \frac{1}{2N_i}\Bigr) \le E ,$$
+
+so $\Phi_t / (1 - 1/(2N_H))^t$ lies in $[e^{-E}, 1]$, and
+
+$$N_H \le \Bigl(\prod_{i<t} N_i\Bigr)^{1/t} \le \frac{1}{t} \sum_{i<t} N_i ,$$
+
+that is, the harmonic mean of the sizes is at most their geometric mean, which is at most their
+arithmetic mean. The lower bound on the logarithms is concavity of $x \mapsto \log(1 - x)$, as
+$1/(2N_H)$ is the mean of the $1/(2N_i)$; the upper bound uses $0 \le -\log(1 - x) - x \le x^2$ for
+$0 \le x \le 1/2$.
 
 ## Sources
 

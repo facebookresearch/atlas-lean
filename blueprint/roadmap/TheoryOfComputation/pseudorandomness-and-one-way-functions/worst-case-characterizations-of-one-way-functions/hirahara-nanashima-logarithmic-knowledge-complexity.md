@@ -6,7 +6,7 @@ For every constant $\epsilon\in(0,1/2)$, with $\mathrm{Gap}_\epsilon\mathrm{MCSP
 2. $\mathsf{NP}\not\subseteq\mathsf{i.o.P/poly}$ and $\mathsf{NP}$ has an interactive proof system of computational knowledge complexity $O(\log n)$ with negligible soundness error.
 3. $\mathsf{CZK}\not\subseteq\mathsf{i.o.P/poly}$ and $\mathrm{Gap}_\epsilon\mathrm{MCSP}$ has interactive proof systems of computational knowledge complexity $O(\log n)$ with negligible soundness error.
 
-Complementing this: if an auxiliary-input one-way function secure against $\mathsf{P/poly}$ exists, then for every constant $\epsilon>0$ every language in $\mathsf{NP}$ has an interactive proof of computational knowledge complexity $n^{\epsilon}$ with negligible completeness and soundness errors; and if for some constant $\delta>0$ an auxiliary-input one-way function exponentially secure against $\mathrm{SIZE}[2^{\delta n}]$ exists, then for every increasing $k(n)=\omega(\log n)$, $\mathsf{NP}$ has interactive proofs of computational knowledge complexity $k(n)$.
+Complementing this (using the almost-everywhere-in-length auxiliary-input one-way function definition, Definition 4.6, Theorems 2.4–2.5): if an auxiliary-input one-way function secure against $\mathsf{P/poly}$ exists, then for every constant $\epsilon>0$ every language in $\mathsf{NP}$ has an interactive proof of computational knowledge complexity $n^{\epsilon}$ with negligible completeness and soundness errors; and if for some constant $\delta>0$ an auxiliary-input one-way function exponentially secure against $\mathrm{SIZE}[2^{\delta n}]$ exists, then for every increasing $k(n)=\omega(\log n)$, $\mathsf{NP}$ has interactive proofs of computational knowledge complexity $k(n)$.
 
 ## Proof sketch
 

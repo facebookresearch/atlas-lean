@@ -71,14 +71,14 @@ example (t : ℝ) :
         - resistiveLoss 3 {1} ![0, 2, 0] ![0, 2, 1] :=
   network_storage_deriv_eq_supplied_minus_losses 1 3 !![1, 1, 1]
     {1} ∅ {0} {2} threeBranch_partition ![0, 2, 0] ![0, 0, 0] ![2, 0, 0]
-    (by intro e he; fin_cases e <;> simp_all <;> norm_num) (by intro e h; simp at h)
-    (by intro e he; fin_cases e <;> simp_all <;> norm_num)
+    (by intro e he; fin_cases e <;> simp_all) (by intro e h; simp at h)
+    (by intro e he; fin_cases e <;> simp_all)
     (fun _ => ![4]) (fun _ => ![3]) (fun _ => ![4, 4, 4]) (fun _ => ![0, 2, 1]) t
     (by ext i; fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three])
     (by ext i; fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three])
-    (by intro e he; fin_cases e <;> simp_all <;> norm_num)
+    (by intro e he; fin_cases e <;> simp_all; norm_num)
     (by intro e he; simp only [Finset.mem_singleton] at he; subst he; simp)
     (by intro e h; simp at h)
     (by intro e _; exact differentiableAt_const _)
@@ -90,15 +90,15 @@ example : storedEnergy 3 {0} ∅ ![2, 0, 0] ![0, 0, 0] ![4, 4, 4] ![0, 2, 1]
       - sourceAbsorbedPower 3 {2} ![4, 4, 4] ![0, 2, 1]) :=
   network_energy_sub_le_integral_supplied 1 3 !![1, 1, 1]
     {1} ∅ {0} {2} threeBranch_partition ![0, 2, 0] ![0, 0, 0] ![2, 0, 0]
-    (by intro e he; fin_cases e <;> simp_all <;> norm_num) (by intro e h; simp at h)
-    (by intro e he; fin_cases e <;> simp_all <;> norm_num)
+    (by intro e he; fin_cases e <;> simp_all) (by intro e h; simp at h)
+    (by intro e he; fin_cases e <;> simp_all)
     (fun _ => ![4]) (fun _ => ![3]) (fun _ => ![4, 4, 4]) (fun _ => ![0, 2, 1])
     0 1 (by norm_num)
     (by intro s _; ext i; fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three])
     (by intro s _; ext i; fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three])
-    (by intro s _ e he; fin_cases e <;> simp_all <;> norm_num)
+    (by intro s _ e he; fin_cases e <;> simp_all; norm_num)
     (by intro s _ e he; simp only [Finset.mem_singleton] at he; subst he; simp)
     (by intro s _ e h; simp at h)
     (by intro s _ e _; exact differentiableAt_const _)

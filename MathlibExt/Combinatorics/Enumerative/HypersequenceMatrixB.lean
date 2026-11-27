@@ -11,8 +11,10 @@ module
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.RingTheory.Polynomial.Vieta
 import Mathlib.Tactic.Ring
+import MathlibExt.Combinatorics.Enumerative.HypersequenceElementarySymmetric
 import MathlibExt.Combinatorics.Enumerative.StirlingAscPochhammer
 
 /-!
@@ -20,7 +22,14 @@ import MathlibExt.Combinatorics.Enumerative.StirlingAscPochhammer
 
 The entries of `hyperseqB` are signed elementary symmetric functions. At zero,
 `hyperseqB_zero_recurrence_stirling` gives their recurrence and two closed forms in
-unsigned Stirling numbers of the first kind.
+unsigned Stirling numbers of the first kind. For nonnegative parameters,
+`hyperseqB_recurrence_closed_form_row_sums` transfers the elementary symmetric formulas to the
+matrix entries by reversing degrees and accounting for the signs.
+
+## References
+
+* Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums II*,
+  INTEGERS 26 (2026), Article A36, pp. 1–15, Section 3, Propositions 1 and 2.
 -/
 
 namespace MetaMathlibExt
@@ -131,5 +140,105 @@ public theorem hyperseqB_zero_recurrence_stirling :
     rw [entry, entry, entry, Nat.stirlingFirst_succ_succ (j + 1) (k + 1), pow_succ]
     push_cast
     ring
+
+section
+
+open Finset
+
+private abbrev rowEsymm (n j k : ℕ) : ℕ := ((Icc 1 j).val.map (n + ·)).esymm k
+
+/-- In the lower triangle, an entry is a signed complementary-degree coefficient over `ℕ`,
+cast to `ℤ`. -/
+private theorem hyperseqB_eq_signed_esymm (n j k : ℕ) (hk : k ≤ j) :
+    hyperseqB n j k = (-1) ^ k * (rowEsymm n j (j - k) : ℤ) := by
+  simp only [hyperseqB, ite_eq_left hk, rowEsymm, Multiset.esymm, Multiset.powersetCard_map,
+    Function.comp_def, Multiset.map_map, Nat.cast_multiset_sum, Nat.cast_multiset_prod,
+    Nat.cast_add]
+
+/-- **Recurrence, closed form and row sums of Parisse's $b_{j,k}(n)$.** Let $n \in \mathbb{N}$ and
+let $b_{j,k}(n)$ be the entries of Parisse's matrix $B(n)$. Write $[j, \ell]$ for the unsigned
+Stirling numbers of the first kind and $x^{\overline{j}} = x (x + 1) \cdots (x + j - 1)$ for the
+rising factorial. Then $b_{0,k}(n) = \delta_{0,k}$ for all $k$; for all $j, k \in \mathbb{N}$,
+$b_{j+1,0}(n) = (n + j + 1) \, b_{j,0}(n)$ and
+$b_{j+1,k+1}(n) = (n + j + 1) \, b_{j,k+1}(n) - b_{j,k}(n)$;
+$b_{j,k}(n) = (-1)^k \sum_{\ell=k}^{j} \binom{\ell}{k} [j, \ell] \, (n + 1)^{\ell-k}$ for all
+$j, k$ (an empty sum for $k > j$); and for all $j$,
+$\sum_{k=0}^{j} b_{j,k}(n) = n^{\overline{j}}$ and
+$\sum_{k=0}^{j} (-1)^k b_{j,k}(n) = (n + 2)^{\overline{j}}$.
+
+Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
+Sums II*, INTEGERS 26 (2026), Article A36,
+Proposition 2 (`integers-2026-A36-prop-2`). -/
+public theorem hyperseqB_recurrence_closed_form_row_sums (n : ℕ) :
+    (∀ k : ℕ, hyperseqB n 0 k = if k = 0 then 1 else 0) ∧
+    (∀ j : ℕ, hyperseqB n (j + 1) 0 = (n + (j + 1)) * hyperseqB n j 0) ∧
+    (∀ j k : ℕ, hyperseqB n (j + 1) (k + 1) =
+      (n + (j + 1)) * hyperseqB n j (k + 1) - hyperseqB n j k) ∧
+    (∀ j k : ℕ, hyperseqB n j k = (-1) ^ k * ∑ ℓ ∈ Finset.Icc k j,
+      (ℓ.choose k * Nat.stirlingFirst j ℓ : ℤ) * ((n : ℤ) + 1) ^ (ℓ - k)) ∧
+    (∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), hyperseqB n j k = (n.ascFactorial j : ℤ)) ∧
+    ∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), (-1) ^ k * hyperseqB n j k =
+      ((n + 2).ascFactorial j : ℤ) := by
+  obtain ⟨_, hstep, hclosed, hplain, halt⟩ := hyperseq_esymm_recurrence_closed_form_row_sums n
+  have step (j d : ℕ) : (rowEsymm n (j + 1) (d + 1) : ℤ) =
+      (rowEsymm n j (d + 1) : ℤ) + (n + (j + 1)) * (rowEsymm n j d : ℤ) := by
+    exact_mod_cast hstep j d
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro k
+    cases k <;> simp [hyperseqB]
+  · intro j
+    have hzero : rowEsymm n j (j + 1) = 0 :=
+      Multiset.esymm_of_card_lt (by simp)
+    simp only [hyperseqB_eq_signed_esymm n _ 0 (Nat.zero_le _), Nat.sub_zero, pow_zero, one_mul]
+    rw [step, hzero, Nat.cast_zero, zero_add]
+  · intro j k
+    rcases lt_trichotomy k j with hk | rfl | hk
+    · obtain ⟨d, hd⟩ := Nat.exists_eq_succ_of_ne_zero (show j - k ≠ 0 by omega)
+      rw [hyperseqB_eq_signed_esymm n (j + 1) (k + 1) (by omega),
+        hyperseqB_eq_signed_esymm n j (k + 1) (by omega),
+        hyperseqB_eq_signed_esymm n j k hk.le,
+        show j + 1 - (k + 1) = d + 1 by omega, show j - (k + 1) = d by omega,
+        hd, step, pow_succ]
+      ring
+    · simp [hyperseqB, pow_succ]
+    · simp [hyperseqB, hk.not_ge, show ¬ k + 1 ≤ j by omega,
+        show ¬ k + 1 ≤ j + 1 by omega]
+  · intro j k
+    by_cases hk : k ≤ j
+    · have hinterval : Icc k j = Ico k (j + 1) := by
+        ext ℓ
+        simp only [mem_Icc, mem_Ico]
+        omega
+      -- Shift the Stirling index by `k` and use the complementary binomial coefficient.
+      rw [hyperseqB_eq_signed_esymm n j k hk, rowEsymm, hclosed j (j - k) (Nat.sub_le _ _),
+        Nat.sub_sub_self hk, hinterval, sum_Ico_eq_sum_range, show j + 1 - k = j - k + 1 by omega]
+      push_cast
+      congr 1
+      refine sum_congr rfl fun ℓ _ => ?_
+      rw [Nat.add_sub_cancel_left, Nat.choose_symm_add]
+    · simp [hyperseqB, hk, Icc_eq_empty_of_lt (Nat.lt_of_not_ge hk)]
+  · intro j
+    rw [← sum_range_reflect (hyperseqB n j) (j + 1)]
+    calc
+      _ = ∑ k ∈ range (j + 1), (-1 : ℤ) ^ j * ((-1) ^ k * (rowEsymm n j k : ℤ)) := by
+        refine sum_congr rfl fun k hk => ?_
+        have hkj : k ≤ j := Nat.lt_succ_iff.mp (mem_range.mp hk)
+        rw [Nat.add_sub_cancel, hyperseqB_eq_signed_esymm n j _ (Nat.sub_le _ _),
+          Nat.sub_sub_self hkj, ← mul_assoc, ← pow_add,
+          show j + k = j - k + 2 * k by omega, pow_add, pow_mul, neg_one_sq, one_pow, mul_one]
+      _ = _ := by
+        rw [← mul_sum, halt, ← mul_assoc, ← mul_pow]
+        simp
+  · intro j
+    calc
+      _ = ∑ k ∈ range (j + 1), (rowEsymm n j (j - k) : ℤ) := by
+        refine sum_congr rfl fun k hk => ?_
+        rw [hyperseqB_eq_signed_esymm n j k (Nat.lt_succ_iff.mp (mem_range.mp hk)),
+          ← mul_assoc, ← mul_pow, neg_one_mul, neg_neg, one_pow, one_mul]
+      _ = ∑ k ∈ range (j + 1), (rowEsymm n j k : ℤ) := by
+        simpa using sum_range_reflect (fun k => (rowEsymm n j k : ℤ)) (j + 1)
+      _ = _ := by exact_mod_cast hplain j
+
+end
 
 end MetaMathlibExt

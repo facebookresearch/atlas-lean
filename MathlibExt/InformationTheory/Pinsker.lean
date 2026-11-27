@@ -73,7 +73,7 @@ private lemma log_sum_le {α : Type*} [Fintype α] (x y : α → ℝ) (t : Finse
 
 /-- First derivative of the binary-Pinsker auxiliary function
 `H(t) = t * log t + (1 - t) * log (1 - t) - 2 * t^2` on `(0, 1)`. -/
-private lemma hasDerivAt_H (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1:ℝ) - x ≠ 0) :
+private lemma hasDerivAt_H (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1 : ℝ) - x ≠ 0) :
     HasDerivAt (fun t => t * Real.log t + (1 - t) * Real.log (1 - t) - 2 * t^2)
       (Real.log x - Real.log (1 - x) - 4 * x) x := by
   have hu : HasDerivAt (fun t : ℝ => 1 - t) (-1) x := by
@@ -98,7 +98,7 @@ private lemma hasDerivAt_H (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1:ℝ) - x ≠ 0) :
   exact hfull
 
 /-- Second derivative of the auxiliary function. -/
-private lemma hasDerivAt_H' (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1:ℝ) - x ≠ 0) :
+private lemma hasDerivAt_H' (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1 : ℝ) - x ≠ 0) :
     HasDerivAt (fun t => Real.log t - Real.log (1 - t) - 4 * t)
       (x⁻¹ + (1 - x)⁻¹ - 4) x := by
   have hu : HasDerivAt (fun t : ℝ => 1 - t) (-1) x := by
