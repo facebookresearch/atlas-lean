@@ -13371,6 +13371,7 @@
   "MathlibExt/NumberTheory/DoublyExponentialReciprocalSum": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Reciprocal sums of doubly exponential sequences"},
   "MathlibExt/NumberTheory/DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Reciprocal sums of doubly exponential sequences"},
   "MathlibExt/NumberTheory/DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Reciprocal sums of doubly exponential sequences"},
+  "MathlibExt/NumberTheory/DoublyExponentialReciprocalSumSylvester": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Reciprocal sums of doubly exponential sequences"},
   "MathlibExt/NumberTheory/DowkerHalfSum": {"to": "NumberTheory/exponential-sums", "title": "Watson's cosecant and cosine sums"},
   "MathlibExt/NumberTheory/DucciCoefficientReduction": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Ducci sequences"},
   "MathlibExt/NumberTheory/DucciSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Ducci sequences"},
