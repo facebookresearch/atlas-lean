@@ -10,7 +10,7 @@ with the rates evaluated at intracellular concentrations $X/\tilde\vartheta_c(T,
 1. (Condition 1) the quasi-steady-state equation obtained by setting the right-hand side of the $X$ equation to zero at $\varepsilon = 0$ has a locally unique solution $X = q(T, y, P)$ for all admissible $T, y, P$; and
 2. (Condition 2) this solution is an exponentially stable equilibrium of the fast (boundary-layer) system, uniformly in $(T, y, P)$;
 
-and the reduced model, obtained by substituting $X = q(T,y,P)$, has a unique solution $(y(T,0), P(T,0))$. Then there is $\varepsilon^* > 0$ such that for every $\varepsilon < \varepsilon^*$ the full model has a unique solution $(y(T,\varepsilon), P(T,\varepsilon))$, and it converges to the reduced solution as $\varepsilon \to 0$. This justifies replacing the metabolite dynamics by the flux-balance constraint $S^x_y V_y + S^x_x V_x = \alpha\varepsilon S^x_p V_p$ inside the dynamic optimization.
+and the reduced model, obtained by substituting $X = q(T,y,P)$, has a unique solution $(y(T,0), P(T,0))$. Then there is $\varepsilon^* > 0$ such that for every $\varepsilon < \varepsilon^*$ the full model has a unique solution $(y(T,\varepsilon), P(T,\varepsilon))$ on a finite time interval $0 \le T \le T^*(\varepsilon)$, and on that interval it is $O(\varepsilon)$-close to the reduced solution. This justifies replacing the metabolite dynamics by the flux-balance constraint $S^x_y V_y + S^x_x V_x = \alpha\varepsilon S^x_p V_p$ inside the dynamic optimization.
 
 **Proposition (Monod law).** In the minimal network $Y \to X$ (rate $V_y = P f_y(y)$) and $\alpha X \to P$ (rate $V_p = P f_p(x)$), if uptake is Michaelis–Menten, $V_y = k_{\mathrm{cat}}Py/(K_m + y)$, then the long-timescale approximation is the Monod growth model
 

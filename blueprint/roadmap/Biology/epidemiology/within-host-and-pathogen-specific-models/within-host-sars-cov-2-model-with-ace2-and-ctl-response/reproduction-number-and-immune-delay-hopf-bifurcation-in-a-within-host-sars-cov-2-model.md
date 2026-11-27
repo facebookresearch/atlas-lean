@@ -13,7 +13,9 @@ with positive parameters ($m$ is the burst size per infected-cell lifetime).
 
 **Reproduction number.** For the delay-free system the next-generation method gives
 
-$$R_0 = \frac{m\beta\lambda_1\lambda_2}{d_V d_E d_T}.$$
+$$R_0 = \frac{(1-\epsilon_1)(1-\epsilon_2)\,m\beta\lambda_1\lambda_2}{d_V d_E d_T}.$$
+
+(The source's eq. (R0) of arXiv:2412.12315 is the drug-free value $m\beta\lambda_1\lambda_2/(d_Vd_Ed_T)$, the case $\epsilon_1 = \epsilon_2 = 0$; the drug factors are included here because the model above carries them.)
 
 **Theorem (delay-free stability).**
 1. The infection-free equilibrium $E_0 = (\lambda_1/d_T, 0, 0, \lambda_2/d_E, 0)$ is stable for $R_0 < 1$ and unstable for $R_0 > 1$.
@@ -28,7 +30,7 @@ $$R_0 = \frac{m\beta\lambda_1\lambda_2}{d_V d_E d_T}.$$
 
 ## Proof sketch
 
-Infection requires both target cells and ACE2 receptors, so the bilinear-in-$E$ and $T$ incidence makes $R_0$ proportional to the product $\lambda_1\lambda_2/(d_Td_E)$ of their disease-free levels times the viral yield $m\beta/d_V$. Purely imaginary roots $\lambda = i\omega$ of the delayed characteristic equation exist exactly when $|P(i\omega)| = |Q(i\omega)|$, i.e. at positive roots of $H$; the smallest delay at which such a root appears is $\tau_2^*$, and a nonzero crossing speed gives the Hopf bifurcation.
+Infection requires both target cells and ACE2 receptors, so the bilinear-in-$E$ and $T$ incidence makes $R_0$ proportional to the product $\lambda_1\lambda_2/(d_Td_E)$ of their disease-free levels times the viral yield $m\beta/d_V$. With infected compartments $(I, V)$, new infections $F = \begin{pmatrix}0 & (1-\epsilon_1)\beta\lambda_1\lambda_2/(d_Td_E)\\ 0 & 0\end{pmatrix}$ and transitions $\mathcal V = \begin{pmatrix} d_I & 0\\ -(1-\epsilon_2)md_I & d_V\end{pmatrix}$ at $E_0$, the spectral radius of $F\mathcal V^{-1}$ is the stated $R_0$, and the drug efficacies enter as the factors $1-\epsilon_1$ and $1-\epsilon_2$. Purely imaginary roots $\lambda = i\omega$ of the delayed characteristic equation exist exactly when $|P(i\omega)| = |Q(i\omega)|$, i.e. at positive roots of $H$; the smallest delay at which such a root appears is $\tau_2^*$, and a nonzero crossing speed gives the Hopf bifurcation.
 
 ## Sources
 

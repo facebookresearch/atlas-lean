@@ -15,7 +15,7 @@ with positive constants: recruitment $b$, transmission $\beta$, natural death $\
 **Theorem.**
 1. *Well-posedness.* For every initial value in $\mathbb{R}_+^5$ there is a unique global solution, which stays in $\mathbb{R}_+^5$ almost surely.
 2. *Stochastic permanence.* The solution is stochastically ultimately bounded and stochastically permanent: for every $\epsilon \in (0,1)$ there are $0 < \kappa < \chi$ with $\limsup_t \mathbb{P}(\|X(t)\| > \chi) < \epsilon$ and $\liminf_t \mathbb{P}(\|X(t)\| \ge \kappa) \ge 1 - \epsilon$.
-3. *Extinction.* If $\mu > \frac12\sigma_{\max}^2$ and $\sigma_1^2 \wedge \sigma_3^2 > 4\big(\beta h'(0)\tilde S_0 - \mu\big)$, then almost surely
+3. *Extinction.* If $\mu > \frac12\sigma_{\max}^2$ and $\sigma_2^2 \wedge \sigma_3^2 > 4\big(\beta h'(0)\tilde S_0 - \mu\big)$, then almost surely
 
 $$\limsup_{t\to\infty}\frac{\ln\big(E(t) + I(t)\big)}{t} \le \beta h'(0)\tilde S_0 - \mu - \frac{\sigma_2^2 \wedge \sigma_3^2}{4} < 0,$$
 
@@ -24,7 +24,7 @@ and the time averages $\langle S\rangle_t \to \tilde S_0$, $\langle Q\rangle_t \
 
 ## Proof sketch
 
-Positivity and global existence follow from a Lyapunov function of the form $\sum (x - 1 - \ln x)$ that cannot explode before an exit time. Permanence uses moment bounds from Young's and Chebyshev's inequalities. For extinction, Itô's formula applied to $\ln(E + I)$ and the comparison $S(t) \lesssim \tilde S_0$ (the disease-free level) give a growth rate bounded by the linearized force of infection $\beta h'(0)\tilde S_0$ minus mortality and a noise correction; the strong law for the martingale terms closes the argument. Geometric ergodicity follows from the Meyn–Tweedie criterion: a minorization condition on a compact set together with a drift condition $\mathcal{L}V \le \beta_1 - \beta_2 V$.
+Positivity and global existence follow from a Lyapunov function of the form $\sum (x - 1 - \ln x)$ that cannot explode before an exit time. Permanence uses moment bounds from Young's and Chebyshev's inequalities. For extinction, Itô's formula applied to $\ln(E + I)$ and the comparison $S(t) \lesssim \tilde S_0$ (the disease-free level) give a growth rate bounded by the linearized force of infection $\beta h'(0)\tilde S_0$ minus mortality and a noise correction; the strong law for the martingale terms closes the argument. The source's statement of Theorem 5.1 (arXiv:2412.00405) prints the noise hypothesis as $\sigma_1^2 \wedge \sigma_3^2$; its proof uses $\sigma_2^2 \wedge \sigma_3^2$ throughout, which is the hypothesis that makes the stated rate negative, and is the one stated here. Geometric ergodicity follows from the Meyn–Tweedie criterion: a minorization condition on a compact set together with a drift condition $\mathcal{L}V \le \beta_1 - \beta_2 V$.
 
 ## Sources
 

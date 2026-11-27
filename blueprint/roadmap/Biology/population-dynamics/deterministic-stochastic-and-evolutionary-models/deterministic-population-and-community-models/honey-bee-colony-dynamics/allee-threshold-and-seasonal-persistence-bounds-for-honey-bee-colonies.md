@@ -20,7 +20,7 @@ $$u_-(r_m) < \liminf_{t\to\infty} u(t) \le \limsup_{t\to\infty} u(t) < u_+(r_M).
 
 3. A positive $\gamma$-periodic solution $u^*$ is stable if $\int_0^\gamma \big[\bar r(z) f'(u^*(z)) - \bar d_h\big]dz < 0$ and unstable if this Floquet exponent is positive, where $f(u) = u^2/(\hat K + u^2)$ and $f'(u) = 2\hat K u/(\hat K + u^2)^2$. With a parasite (mite) population $v$ coupled through $-\frac{\omega u}{1+u}v$ in the bee equation and $v' = \frac{\omega u}{1+u}v - \bar d_m v$, the mite-free periodic solution $(u^*, 0)$ is stable if in addition $\int_0^\gamma \big[\frac{\omega u^*}{1+u^*} - \bar d_m\big]dt < 0$.
 
-The critical seasonal intensity $\epsilon_c = 2\bar d_h\sqrt{\hat K}/r_0 - 1$ separates the regime where the colony can always persist from large initial populations ($\epsilon \le \epsilon_c$ with $r_0 > 2\bar d_h \sqrt{\hat K}$, so the trough rate stays above threshold) from the regime where persistence depends on season length and phase.
+In terms of the seasonal intensity: if $r_0 < 2\bar d_h\sqrt{\hat K}$, the critical intensity $\epsilon_c = 2\bar d_h\sqrt{\hat K}/r_0 - 1 > 0$ marks the peak-rate threshold, since $\epsilon \le \epsilon_c$ is equivalent to $r_M \le 2\bar d_h\sqrt{\hat K}$, so for $\epsilon \le \epsilon_c$ the colony collapses from every initial population by item 1. If $r_0 > 2\bar d_h\sqrt{\hat K}$, the trough condition $r_m \ge 2\bar d_h\sqrt{\hat K}$ of item 2 is $\epsilon \le 1 - 2\bar d_h\sqrt{\hat K}/r_0$, and under it the colony persists from large initial populations. Outside these ranges, $r_m < 2\bar d_h\sqrt{\hat K} < r_M$, and neither item 1 nor item 2 applies; persistence then depends on season length and phase.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Maximal thresholded Kendall tau colocalization statistic
 
-**Setting.** A dual-color fluorescence image (or region of interest) gives intensity pairs $(X_i, Y_i)$, $i\in\mathcal{I}$, $n = |\mathcal{I}|$, for two labelled molecules. Pearson's coefficient $r$ measures only linear dependence, and Manders' split coefficients $M_1 = \sum_{i:Y_i>\alpha_Y}X_i/\sum_iX_i$, $M_2 = \sum_{i:X_i>\alpha_X}Y_i/\sum_iY_i$ are linear measures between one channel and a thresholded indicator of the other. Both depend on monotone rescalings of intensity: for $(\log X,\log Y)$ bivariate normal with variance $9$ and correlation $0.9$, the Pearson correlation of $(X,Y)$ is only about $0.56$.
+**Setting.** A dual-color fluorescence image (or region of interest) gives intensity pairs $(X_i, Y_i)$, $i\in\mathcal{I}$, $n = |\mathcal{I}|$, for two labelled molecules. Pearson's coefficient $r$ measures only linear dependence, and Manders' split coefficients $M_1 = \sum_{i:Y_i>\alpha_Y}X_i/\sum_iX_i$, $M_2 = \sum_{i:X_i>\alpha_X}Y_i/\sum_iY_i$ are linear measures between one channel and a thresholded indicator of the other. Both depend on monotone rescalings of intensity: for $(\log X,\log Y)$ bivariate normal with variance $9$ and correlation $0.9$, the Pearson correlation of $(X,Y)$ is only $(e^{8.1}-1)/(e^{9}-1) \approx 0.41$.
 
 **Thresholded Kendall tau.** For thresholds $t_X, t_Y$ let $\mathcal{K}(t_X,t_Y) = \{i : X_i\ge t_X,\ Y_i\ge t_Y\}$, $n_{t} = |\mathcal{K}(t_X,t_Y)|$, and
 

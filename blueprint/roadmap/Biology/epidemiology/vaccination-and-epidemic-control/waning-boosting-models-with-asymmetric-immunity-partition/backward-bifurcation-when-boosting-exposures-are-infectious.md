@@ -15,7 +15,7 @@ $$
 **Statement.** The basic reproduction number is $\mathcal{R}_0 = \beta/(\gamma + \mu)$ (secondary infections cannot occur at the disease-free state, where $W = 0$). Let $\eta = \alpha + \omega$ and
 
 $$
-Q_0 = \alpha\kappa\gamma, \qquad Q_1 = \bigl(\gamma + \mu)(\eta\kappa + \mu) + \eta\kappa^2\bigr, \qquad \Theta = \nu\xi(\gamma + \mu)Q_0 - Q_1 .
+Q_0 = \alpha\kappa\gamma, \qquad Q_1 = \bigl[(\gamma + \mu)(\eta\kappa + \mu) + \eta\kappa^2\bigr](\rho + \mu), \qquad \Theta = \nu\xi(\gamma + \mu)Q_0 - Q_1 .
 $$
 
 1. *Endemic equilibria.* Every non-negative equilibrium is epidemiologically feasible. For $\mathcal{R}_0 > 1$ there is exactly one endemic equilibrium besides the disease-free one.

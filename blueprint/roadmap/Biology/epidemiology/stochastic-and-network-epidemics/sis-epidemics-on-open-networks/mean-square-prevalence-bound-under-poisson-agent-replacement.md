@@ -29,14 +29,14 @@ $$
 4. *Second moment.* Under the same hypotheses, with $D = \mu + 2n_0\bar\delta - 2\bar\beta p(n_0 - 1)$,
 
 $$
-\limsup_{t\to\infty} \mathbb{E}[V^2(x(t))] \le \frac{\mu\,\mathbb{E}[\Theta^4]\,D + \mu^2\,\mathbb{E}[\Theta^2]\bigl(2\mathbb{E}\Theta^2 + 1\bigr)}{2n_0 D^2} .
+\limsup_{t\to\infty} \mathbb{E}[V^2(x(t))] \le \frac{\mu\,\mathbb{E}[\Theta^4]\,D + \mu^2\,\mathbb{E}[\Theta^2]\bigl(2\mathbb{E}[\Theta^2](n_0 - 1) + 1\bigr)}{2n_0 D^2} .
 $$
 
 So a stable epidemic on an open network does not die out: replacement keeps reinjecting infection, and the stationary mean-square prevalence is bounded by a quantity proportional to the second moment of the newcomers' infection probability, decreasing in the closed system's stability margin.
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics on graphs](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
+- [Fast die-out, survival probability](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Proof sketch
 
@@ -46,7 +46,7 @@ $$
 \frac{d}{dt}\mathbb{E}[V] \le 2(\beta\bar\lambda_1 - \delta)\mathbb{E}[V] + \frac{\mu}{n_0}\bigl(\sigma^2 + m^2 - \mathbb{E}[V]\bigr),
 $$
 
-and the comparison lemma bounds $\mathbb{E}[V]$ by the solution of the linear ODE, whose limit is item 3. The second moment follows the same pattern using Itô's formula for Poisson-driven equations applied to $V^2$, together with the jump bound $\mathbb{E}[V^{2+}] - \mathbb{E}[V^{2-}] \le -\frac{2}{n_0}\mathbb{E}[V^{2-}] + \frac{\mathbb{E}[\Theta^4]}{n_0^2} + \frac{2\mathbb{E}[\Theta^2]\,(n_0-1)+1}{n_0^2}\mathbb{E}[V^-]$.
+and the comparison lemma bounds $\mathbb{E}[V]$ by the solution of the linear ODE, whose limit is item 3. The second moment follows the same pattern using Itô's formula for Poisson-driven equations applied to $V^2$, together with the jump bound $\mathbb{E}[V^{2+}] - \mathbb{E}[V^{2-}] \le -\frac{2}{n_0}\mathbb{E}[V^{2-}] + \frac{\mathbb{E}[\Theta^4]}{n_0^2} + \frac{2\mathbb{E}[\Theta^2]\,(n_0-1)+1}{n_0^2}\mathbb{E}[V^-]$. Between jumps $\frac{d}{dt}V^2 \le 4(\beta\bar\lambda_1 - \delta)V^2$, so $\frac{d}{dt}\mathbb{E}[V^2] \le -\frac{2D}{n_0}\mathbb{E}[V^2] + \frac{\mu}{n_0^2}\bigl(\mathbb{E}[\Theta^4] + (2\mathbb{E}[\Theta^2](n_0-1)+1)\,\mathbb{E}[V]\bigr)$, and inserting $\limsup_t\mathbb{E}[V] \le \mu\,\mathbb{E}[\Theta^2]/D$ from item 3 gives item 4.
 
 ## Sources
 

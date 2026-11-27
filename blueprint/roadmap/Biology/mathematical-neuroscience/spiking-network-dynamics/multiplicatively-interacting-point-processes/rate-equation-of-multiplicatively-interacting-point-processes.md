@@ -6,13 +6,15 @@ $$
 \lambda_a(t) = \lambda_a(0)\exp\Bigl(\sum_{a' \in A} N_{a'}(t^-)\log w_{aa'}\Bigr),
 $$
 
-where $N_{a'}(t)$ counts the spikes of neuron $a'$ up to time $t$. Each spike of $a'$ thus multiplies the rate of $a$ by $w_{aa'}$: excitation if $w_{aa'} > 1$, inhibition if $w_{aa'} < 1$, with no positivity constraint on the inhibitory strength (unlike the linear Hawkes process). Writing $\ell_{aa'} = \log w_{aa'}$, the expected rates satisfy
+where $N_{a'}(t)$ counts the spikes of neuron $a'$ up to time $t$. Each spike of $a'$ thus multiplies the rate of $a$ by $w_{aa'}$: excitation if $w_{aa'} > 1$, inhibition if $w_{aa'} < 1$, with no positivity constraint on the inhibitory strength (unlike the linear Hawkes process). Whenever the second moments are finite, the expected rates satisfy exactly
 
 $$
-\frac{d}{dt}\mathbb{E}\lambda_a = \sum_{a'} \ell_{aa'}\bigl(\mathbb{E}\lambda_a\,\mathbb{E}\lambda_{a'} + \operatorname{Cov}(\lambda_a, \lambda_{a'})\bigr).
+\frac{d}{dt}\mathbb{E}\lambda_a = \sum_{a'} (w_{aa'} - 1)\,\mathbb{E}[\lambda_a\lambda_{a'}] = \sum_{a'} (w_{aa'} - 1)\bigl(\mathbb{E}\lambda_a\,\mathbb{E}\lambda_{a'} + \operatorname{Cov}(\lambda_a, \lambda_{a'})\bigr).
 $$
 
-**Rate equation.** Neglecting covariances gives the Lotka–Volterra-type system
+Write $\ell_{aa'} = \log w_{aa'}$. For weak couplings $w_{aa'} - 1 = \ell_{aa'} + O(\ell_{aa'}^2)$. The source's eq. (expectode) (arXiv:0904.1505) arrives at the same identity with $\ell_{aa'}$ in place of $w_{aa'} - 1$ through a heuristic "grid differential" approximation; that form is an approximation, not an identity (one self-coupled neuron with $w = e$ has $\frac{d}{dt}\mathbb{E}\lambda = (e-1)\mathbb{E}[\lambda^2]$, not $\mathbb{E}[\lambda^2]$).
+
+**Rate equation.** Following the source, the rate equation is *defined* by replacing $w_{aa'} - 1$ with $\ell_{aa'}$ and neglecting covariances, which gives the Lotka–Volterra-type system
 
 $$
 \dot y_a = y_a \sum_{a' \in A} \ell_{aa'}\, y_{a'}, \qquad y_a(0) = \mathbb{E}\lambda_a(0).
@@ -27,7 +29,7 @@ Separating constant-rate Poisson inputs $P \subset A$ (with $\ell_{pa'} = 0$, ra
 
 ## Proof sketch
 
-Because rates are exponentials of linear functionals of the spike counts, a spike of $a'$ changes $\lambda_a$ by the factor $w_{aa'}$, i.e. by $(w_{aa'} - 1)\lambda_a$ in absolute terms, and the expected increment per unit time is $\lambda_{a'}(w_{aa'} - 1)\lambda_a \approx \ell_{aa'}\lambda_a\lambda_{a'}$ for weak couplings, which is the quadratic structure of the rate equation. The resulting equation is the replicator / Lotka–Volterra form, so its faces $\{y_a = 0\}$ are invariant and its equilibria are found face by face. Boundedness follows from the energy $z = \sum_a y_a$: $\dot z = \mathcal{L}_R y \cdot y + e \cdot y$ for a vector $e$ built from the inputs, which is negative for large $\|y\|$ when $\mathcal{L}_R$ is negative definite. The model connects to the generalized linear (log-link) models used to fit spike trains, and supports winner-takes-all circuits built from mutual inhibition.
+Because rates are exponentials of linear functionals of the spike counts, a spike of $a'$ changes $\lambda_a$ by the factor $w_{aa'}$, i.e. by $(w_{aa'} - 1)\lambda_a$ in absolute terms, and spikes of $a'$ occur at rate $\lambda_{a'}$, while $\lambda_a$ is constant between spikes; so the expected increment per unit time is exactly $(w_{aa'} - 1)\mathbb{E}[\lambda_a\lambda_{a'}]$, which is $\approx \ell_{aa'}\mathbb{E}[\lambda_a\lambda_{a'}]$ for weak couplings. This quadratic structure motivates the rate equation. The resulting equation is the replicator / Lotka–Volterra form, so its faces $\{y_a = 0\}$ are invariant and its equilibria are found face by face. Boundedness follows from the energy $z = \sum_a y_a$: $\dot z = \mathcal{L}_R y \cdot y + e \cdot y$ for a vector $e$ built from the inputs, which is negative for large $\|y\|$ when $\mathcal{L}_R$ is negative definite. The model connects to the generalized linear (log-link) models used to fit spike trains, and supports winner-takes-all circuits built from mutual inhibition.
 
 ## Related topics
 

@@ -22,7 +22,7 @@ $$
 $$
 
 If both are positive, the three species persist stochastically: for every $\varepsilon > 0$ there is $\delta > 0$ with $\liminf_{t\to\infty}\mathbb{P}_{\mathbf{x}}\{X_i(t) \ge \delta,\ i = 1,2,3\} \ge 1 - \varepsilon$; under a Hörmander-type bracket condition the system is strongly stochastically persistent.
-4. *(Extinction.)* If $\lambda_2(\mu_{13}) < 0$, then for initial conditions with $X_2$ small, with probability close to $1$, $X_2(t) \to 0$ with $\frac{1}{t}\log X_2(t) \to \lambda_2(\mu_{13})$ while $(X_1, X_3)$ converges to $\mu_{13}$; symmetrically for $\lambda_1(\mu_{23}) < 0$.
+4. *(Extinction.)* If $\lambda_2(\mu_{13}) < 0$, then for initial conditions with $X_2$ small, with probability close to $1$, $X_2(t) \to 0$ with $\frac{1}{t}\log X_2(t) \to \lambda_2(\mu_{13})$; symmetrically for $\lambda_1(\mu_{23}) < 0$.
 
 ## Proof sketch
 

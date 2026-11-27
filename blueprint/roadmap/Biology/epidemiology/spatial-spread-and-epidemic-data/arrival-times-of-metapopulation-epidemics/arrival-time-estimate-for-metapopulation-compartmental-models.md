@@ -22,11 +22,13 @@ $$
 
 where $d_m$ is the graph distance and $\rho_m = \boldsymbol{\delta}_m^{\mathsf T}\mathrm{P}^{d_m}\boldsymbol{\delta}_n$. As $\sigma\to\infty$, $\Gamma_\pm\to -\tfrac12\pm\tfrac12$ and the formula reduces to the SIR estimate with $\lambda_+$ replaced by $\alpha-\beta$.
 
-**General compartments.** If $\mathrm{A} = \mathrm{Q}\mathrm{D}\mathrm{Q}^{-1}$ is diagonalizable with leading eigenvalue $\lambda_1$, and $\Xi(\mathrm{A}) = \tilde{\boldsymbol{\delta}}_1^{\mathsf T}\mathrm{Q}\,\mathrm{diag}(\lambda_1,0,\dots,0)\,\mathrm{Q}^{-1}\tilde{\boldsymbol{\delta}}_1$ is the paper's projection constant (infected compartment listed first), the analogous estimate is
+**General compartments.** If $\mathrm{A} = \mathrm{Q}\mathrm{D}\mathrm{Q}^{-1}$ is diagonalizable with simple leading eigenvalue $\lambda_1$, and $\Xi(\mathrm{A}) = \tilde{\boldsymbol{\delta}}_1^{\mathsf T}\mathrm{Q}\,\mathrm{diag}(1,0,\dots,0)\,\mathrm{Q}^{-1}\tilde{\boldsymbol{\delta}}_1 = q_{11}(\mathrm{Q}^{-1})_{11}$ is the projection constant onto the leading eigendirection (infected compartment listed first, $\Xi(\mathrm{A})>0$ assumed), the leading-order arrival equation $\kappa = \chi_0\gamma^{d_m}\rho_m\tau^{d_m}e^{\lambda_1\tau}\,\Xi(\mathrm{A})/d_m!$ gives the analogous estimate
 
 $$
-\tau_{mn} = \frac{d_m}{\lambda_1}\, W\!\left(\frac{1}{\gamma}\frac{\lambda_1}{d_m}\Big(\frac{\kappa\, d_m!\,\Xi(\mathrm{A})}{\chi_0\rho_m}\Big)^{1/d_m}\right) + o(1).
+\tau_{mn} = \frac{d_m}{\lambda_1}\, W\!\left(\frac{1}{\gamma}\frac{\lambda_1}{d_m}\Big(\frac{\kappa\, d_m!}{\chi_0\rho_m\,\Xi(\mathrm{A})}\Big)^{1/d_m}\right) + o(1).
 $$
+
+For $\ell = 1$ (SIR), $\mathrm{Q} = 1$ and $\Xi = 1$, recovering the SIR estimate. This corrects the source's general formula (genATformula) in Remark 3.1 of arXiv:2109.11985, which places $\tilde{\boldsymbol{\delta}}_1^{\mathsf T}\mathrm{Q}\,\mathrm{diag}(\lambda_1,0,\dots,0)\,\mathrm{Q}^{-1}\tilde{\boldsymbol{\delta}}_1$ in the numerator, inconsistently with its own preceding display and with its SEIR formula.
 
 ## Proof sketch
 
