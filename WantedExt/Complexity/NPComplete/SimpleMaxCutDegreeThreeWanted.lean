@@ -25,7 +25,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ integer `K`. QUESTION: is there a partition of `V` into disjoint sets `V₁` and
 at least `K` edges of `E` have one endpoint in `V₁` and one endpoint in `V₂`?
 
 This is the restriction of MAXIMUM CUT with unit weights
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question already counts edges) to
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question already counts edges) to
 graphs of maximum degree 3. The instance, the simple-edge-list conditions, and the question
 are those of that module, reused here; the degree bound uses Mathlib's `SimpleGraph.degree`
 on `Cslib.Complexity.Karp.edgeGraph`.
