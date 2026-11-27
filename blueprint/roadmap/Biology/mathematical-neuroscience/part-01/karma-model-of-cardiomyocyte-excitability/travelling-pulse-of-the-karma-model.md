@@ -1,10 +1,10 @@
 # Travelling pulse of the Karma model
 
-With diffusion coefficient $D = O(1)$ and travelling-wave coordinate $z = x - ct$, travelling waves of the spatially extended Karma model with $I = 0$ solve
+With diffusion coefficient $D = O(1)$ and co-moving coordinate $z = x + ct$, travelling waves of the spatially extended Karma model with $I = 0$ solve
 
 $$E_z = w, \qquad Dw_z = cw + E - 2\left(E^* - n^M\right)\left(E^2 - \delta E^3\right), \qquad c\,n_z = \varepsilon\left(\frac{1}{n_B}\theta(E-1) - n\right),$$
 
-a $(2,1)$ fast–slow system (Gonzalez Herrero, Kuehn and Tsaneva-Atanasova 2021, Eqs. 3.17–3.18). For fixed $n$ with $n^M \le 1$ (so that the square root below is real) the fast subsystem has equilibria $p_0 = (0,0)$ and $p_{1,2} = \left(2 \mp 2\sqrt{1 - \frac{1}{2(E^* - n^M)}},\, 0\right)$, of which $p_0$ and $p_2$ are saddles and $p_1$ is unstable.
+a $(2,1)$ fast–slow system (Gonzalez Herrero, Kuehn and Tsaneva-Atanasova 2021, Eqs. 3.17–3.18), with the rectifier $\theta(x) = \max\{0, x\}$ of the space-clamped model. For fixed $n$ with $n^M \le 1$ (so that the square root below is real) the fast subsystem has equilibria $p_0 = (0,0)$ and $p_{1,2} = \left(2 \mp 2\sqrt{1 - \frac{1}{2(E^* - n^M)}},\, 0\right)$, of which $p_0$ and $p_2$ are saddles and $p_1$ is unstable.
 
 **Lemma (fast fronts).** For every $n \in [0,1]$ there is a speed $c > 0$ with a heteroclinic front of the fast subsystem: from $p_0$ to $p_2$ when $n^M < 15/16$ and from $p_2$ to $p_0$ when $n^M > 15/16$, with a double heteroclinic orbit at $c = 0$ when $n^M = 15/16$. For $n = 1$ there is $c_{\min}$ such that a front from $p_2$ to $p_0$ exists for every $c \ge c_{\min}$ (Lemma 1, established by a numerical shooting computation).
 

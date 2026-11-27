@@ -12,7 +12,7 @@
 
 **Lemma 1 (chain structure).** Ordering $\tilde U$ coordinatewise, the set of actions used by a positive mass of players at a Nash equilibrium is a chain, every maximal chain of $\tilde U$ has length $N+1$, and there are at most $N!$ of them. Hence a Nash equilibrium uses at most $N+1$ distinct actions.
 
-**Reduced-order description.** Writing $\rho_k$ for the fraction of players choosing $u_M$ in period $k$, each $\rho \in [0,1]^N$ determines a unique population state whose actions form a chain and induce those fractions, so equilibria can be searched over $N$ variables instead of $M \cdot 2^N$.
+**Reduced-order description.** Writing $\rho_k$ for the fraction of players choosing $u_M$ in period $k$, each $\rho \in [0,1]^N$ determines a unique population state whose actions satisfy the conclusions of Proposition 2 (a player with a larger type parameter $b$ uses a coordinatewise smaller action, and players with equal $b$ use comparable actions) and induce those fractions (Proposition 4, Corollary 2), so by Proposition 5 equilibria can be searched over $N$ variables instead of $M \cdot 2^N$.
 
 ## Expansion
 
@@ -24,4 +24,4 @@ The NCP and variational-inequality forms are the standard characterizations of e
 
 ## Sources
 
-- I. Kordonis, A.-R. Lagos, G. P. Papavassilopoulos, "Dynamic Games of Social Distancing During an Epidemic: Analysis of Asymmetric Solutions", Dynamic Games and Applications 12 (2022) 214–236, Definition 1, Proposition 3 and Lemma 1, <https://doi.org/10.1007/s13235-021-00403-1>, PMCID PMC8503885.
+- I. Kordonis, A.-R. Lagos, G. P. Papavassilopoulos, "Dynamic Games of Social Distancing During an Epidemic: Analysis of Asymmetric Solutions", Dynamic Games and Applications 12 (2022) 214–236, Definition 1, Propositions 2–5, Lemma 1 and Corollary 2, <https://doi.org/10.1007/s13235-021-00403-1>, PMCID PMC8503885.

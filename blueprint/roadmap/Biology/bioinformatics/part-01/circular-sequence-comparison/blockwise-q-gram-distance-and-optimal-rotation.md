@@ -14,15 +14,15 @@ $\beta = 1$ recovers $D_q$; larger $\beta$ forces $q$-grams to match in roughly 
 
 **Circular sequence comparison (CSC).** Given $x$, $y$ with $m \le n$, $\beta \ge 1$ and $q < m$, find a rotation index $i \in \{0,\dots,m-1\}$ minimizing $D_{\beta,q}(x^{(i)}, y)$.
 
-**Lemma 2.** With $O(|\Sigma|^q)$ space available, $D_{\beta,q}(x,y)$ can be computed in $O(m+n)$ time and $O(m + n/\beta)$ extra space.
+**Lemma 2.** With $O(|\Sigma|^q)$ space available, $D_{\beta,q}(x,y)$ can be computed in $O(m+n)$ time and $O((m+n)/\beta)$ extra space.
 
-**Lemma 3 (naive algorithm).** Evaluating $D_{\beta,q}(x'[i..i+m-1], y)$ for $x' = xx$ and every $0 \le i < m$ solves CSC in $O(m(m+n))$ time and $O(m + n/\beta)$ extra space.
+**Lemma 3 (naive algorithm).** Evaluating $D_{\beta,q}(x'[i..i+m-1], y)$ for $x' = xx$ and every $0 \le i < m$ solves CSC in $O(m(m+n))$ time and $O((m+n)/\beta)$ extra space.
 
 **Theorem 1 (suffix-array algorithm).** CSC can be solved exactly in $O(\beta m + n)$ time and space.
 
 ## Expansion
 
-Lemma 2 applies the linear-time $q$-gram distance computation to each of the $\beta$ block pairs. For Theorem 1, build the suffix array and LCP array of $xxy$ in linear time and use them to replace every $q$-gram of $x' = xx$ and $y$ by its rank among distinct $q$-grams, so each $q$-gram becomes a single integer letter. For $\beta = 1$, keep a difference vector $\mathrm{diff} = P(y) - P(\text{window})$ of rank counts between $y$ and the current length-$m$ window of $x'$, together with the running distance $\delta_i = \sum |\mathrm{diff}|$. Shifting the window by one position removes one rank and adds one rank, so $\mathrm{diff}$ changes in two coordinates and $\delta_{i+1}$ is $\delta_i \pm 1 \pm 1$ according to the signs of those coordinates before the update: $O(1)$ per shift, $O(m+n)$ overall. For general $\beta$, one window per block is maintained and each shift moves one $q$-gram across each of the $\beta$ block boundaries, costing $O(\beta)$ per shift.
+Lemma 2 applies the linear-time $q$-gram distance computation to each of the $\beta$ block pairs in turn, so the extra space is that of one pair of blocks of lengths $m/\beta$ and $n/\beta$. For Theorem 1, build the suffix array and LCP array of $xxy$ in linear time and use them to replace every $q$-gram of $x' = xx$ and $y$ by its rank among distinct $q$-grams, so each $q$-gram becomes a single integer letter. For $\beta = 1$, keep a difference vector $\mathrm{diff} = P(y) - P(\text{window})$ of rank counts between $y$ and the current length-$m$ window of $x'$, together with the running distance $\delta_i = \sum |\mathrm{diff}|$. Shifting the window by one position removes one rank and adds one rank, so $\mathrm{diff}$ changes in two coordinates and $\delta_{i+1}$ is $\delta_i \pm 1 \pm 1$ according to the signs of those coordinates before the update: $O(1)$ per shift, $O(m+n)$ overall. For general $\beta$, one window per block is maintained and each shift moves one $q$-gram across each of the $\beta$ block boundaries, costing $O(\beta)$ per shift.
 
 The blockwise distance is a filter: in experiments on mitochondrial DNA, the rotation it selects, refined by aligning the end blocks, is close to the rotation chosen by exhaustive Needleman–Wunsch alignment of all rotations at a fraction of the cost.
 

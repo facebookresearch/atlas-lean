@@ -13,6 +13,7 @@ $$\mathrm{RF}(T,T')=\mathrm{RF}(T|_R,t)+2m,\qquad m=\#\text{Type II superleaves}
 ## Depends on
 
 - [RF-optimal refinement adds all compatible bipartitions](rf-optimal-refinement-adds-all-compatible-bipartitions.md)
+- [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
 ## Expansion
 

@@ -10,7 +10,7 @@ $$\dot p_{ij}=\frac{\partial A(p,p')}{\partial p_{ij}}\Big|_{p'=p},\qquad i,j\in
 
 $$\dot d=\Phi(p)\,(b-c)\,(1-p_{CD}+p_{DC})\,d\,(p_{CC}-p_{CD}-p_{DC}+p_{DD})$$
 
-for a factor $\Phi(p)$ that is positive in the interior, so $|d|$ decreases exactly where $p_{CC}+p_{DD}>p_{CD}+p_{DC}$; $\mathcal C$ is invariant but not a local attractor. The invariance holds for every symmetric repeated $2\times2$ game, and the analogous set is invariant for memory-$n$ strategies.
+for a factor $\Phi(p)$ that is negative in the interior $(0,1)^4$, namely $-p_{DD}(1-p_{DD}+p_{CC})(1-p_{CC})$ divided by the positive common denominator of the dynamics, so $|d|$ decreases exactly where $p_{CC}+p_{DD}>p_{CD}+p_{DC}$; $\mathcal C$ is invariant but not a local attractor. The invariance holds for every symmetric repeated $2\times2$ game, and the analogous set is invariant for memory-$n$ strategies.
 
 (2) *Time-reversal duality.* If $p(t)$ solves the dynamics on $(a',b')$, then
 
@@ -28,4 +28,4 @@ Using the determinant representation of the payoff, the adaptive dynamics multip
 
 ## Sources
 
-- LaPorte P, Hilbe C, Nowak MA. Adaptive dynamics of memory-one strategies in the repeated donation game. *PLoS Computational Biology* 19 (2023). <https://doi.org/10.1371/journal.pcbi.1010987> (PMCID: PMC10337984). Eq. (6); Propositions 1, 2, 6 and 7 in Methods.
+- LaPorte P, Hilbe C, Nowak MA. Adaptive dynamics of memory-one strategies in the repeated donation game. *PLoS Computational Biology* 19 (2023). <https://doi.org/10.1371/journal.pcbi.1010987> (PMCID: PMC10337984). Eq. (6); Propositions 1, 2, 6 and 7 and Eqs. (17), (18) and (21) in Methods.

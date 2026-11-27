@@ -9,7 +9,7 @@
 
 Impact functions form a closed (under uniform limits) unital functional algebra $\Phi$.
 
-**Statement.** Let $\Lambda_k=\{(x,a)\mapsto\sum_{i=1}^n a_{ik}^p x_i : p\in\{1,2,\dots\}\}$, $\Lambda=\bigcup_{k=1}^m\Lambda_k$, $\Gamma$ the constant functions, and $\Psi$ the smallest closed functional algebra containing $\Lambda\cup\Gamma$. Then $\Psi=\Phi$ on compact domains: every impact function is a uniform limit of polynomial combinations of the basic sums $\sum_i a_{ik}^p x_i$. Equivalently, every impact function can be written as
+**Statement.** For a multi-index $p=(p_1,\dots,p_m)\in\mathbb N^m$ with $|p|=p_1+\dots+p_m\ge1$ write $a_i^p=a_{i1}^{p_1}\cdots a_{im}^{p_m}$. Let $\Lambda=\{(x,a)\mapsto\sum_{i=1}^n a_i^p x_i : p\in\mathbb N^m,\ |p|\ge1\}$ be the mixed power sums, $\Gamma$ the constant functions, and $\Psi$ the smallest closed functional algebra containing $\Lambda\cup\Gamma$. Then $\Psi=\Phi$ on compact domains: every impact function is a uniform limit of polynomial combinations of the basic sums $\sum_i a_i^p x_i$. For scalar parameters ($m=1$) these are the power sums $\sum_i a_i^p x_i$, $p\ge1$, of the source's Theorem 1. Equivalently, every impact function can be written as
 
 $$
 \phi(x,a)=\chi\bigl(\omega_1(x,a),\dots,\omega_l(x,a)\bigr),\qquad \omega_r(x,a)=\sum_{i=1}^n\zeta_r(a_i)\,x_i,\ \ \zeta_r(0)=0,
@@ -19,7 +19,9 @@ with an arbitrary combining function $\chi$, and conversely every such compositi
 
 ## Expansion
 
-The proof applies Bishop's theorem (a Stone-Weierstrass variant): a continuous $\phi$ lies in a closed unital subalgebra $\Psi\subseteq C(Z,\mathbb R)$ whenever $\phi$ is constant on every set on which all of $\Psi$ is constant. Using (I1)-(I4), each argument is put in a canonical form where populations are ordered by parameter value and populations with equal parameters are lumped into one with the summed abundance. If all power sums $\sum_ia_i^px_i$ agree on two arguments, their canonical forms agree (the power sums determine the measure $\sum_i x_i\delta_{a_i}$ on nonzero parameters), and any impact function agrees on equal canonical forms. Hence $\Lambda$ separates exactly the points that impact functions can separate. The practical test: a term like $\sum_i b_{ji}\log x_i$ is not of this form, and splitting a population into two identical halves changes the dynamics.
+The proof applies Bishop's theorem (a Stone-Weierstrass variant): a continuous $\phi$ lies in a closed unital subalgebra $\Psi\subseteq C(Z,\mathbb R)$ whenever $\phi$ is constant on every set on which all of $\Psi$ is constant. Using (I1)-(I4), each argument is put in a canonical form where populations with zero abundance or zero parameter are dropped, populations with equal parameters are lumped into one with the summed abundance, and the rest are sorted by parameter. If all mixed power sums $\sum_ia_i^px_i$ agree on two arguments, their canonical forms agree: these sums are the moments of order at least one of the finite measure $\mu=\sum_i x_i\delta_{a_i}$, so the moments of $|a|^2\mu$ agree, and a finitely supported measure is determined by its moments; hence $\mu$ is determined on nonzero parameters. Any impact function agrees on equal canonical forms, so $\Lambda$ separates exactly the points that impact functions can separate. The practical test: a term like $\sum_i b_{ji}\log x_i$ is not of this form, and splitting a population into two identical halves changes the dynamics.
+
+The source states the theorem with the coordinatewise sums $\Lambda=\bigcup_{k=1}^m\{\sum_ia_{ik}^px_i : p\ge1\}$ and proves it by reducing to scalar parameters; for $m\ge2$ that version is false. With $n=2$ and $x=(1,1)$, the parameters $a=((1,2),(2,1))$ and $a=((1,1),(2,2))$ give every coordinatewise sum the same value $1+2^p$, while the impact function $\sum_ia_{i1}a_{i2}x_i$ takes the values $4$ and $5$; the mixed sum with $p=(1,1)$ separates them.
 
 ## Sources
 

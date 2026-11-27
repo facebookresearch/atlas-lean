@@ -4,7 +4,7 @@ The space-clamped **Karma model** for a membrane potential $E$ and a slow gating
 
 $$E' = -E + 2\left(E^* - n^M\right)\left(E^2 - \delta E^3\right) + I, \qquad n' = \varepsilon\left(\frac{1}{n_B}\,\theta(E - 1) - n\right),$$
 
-with $E^* = 1.5$, $\delta = 0.25$, $M \gg 1$, $0 < n_B < 1$, Heaviside function $\theta$, applied current $I$ and $0 < \varepsilon \ll 1$ (Gonzalez Herrero, Kuehn and Tsaneva-Atanasova 2021, system (3.1)).
+with $E^* = 1.5$, $\delta = 0.25$, $M \gg 1$, $0 < n_B < 1$, the rectifier $\theta(x) = \max\{0, x\}$ (which the source uses in place of Karma's Heaviside step function), applied current $I$ and $0 < \varepsilon \ll 1$ (Gonzalez Herrero, Kuehn and Tsaneva-Atanasova 2021, system (3.1)).
 
 **Theorem ($I = 0$).** In the singular limit $\varepsilon = 0$ the critical manifold is
 
@@ -18,8 +18,8 @@ Unlike FitzHugh–Nagumo, whose cubic critical manifold has a single equilibrium
 
 ## Expansion
 
-Equilibria of the layer problem satisfy $E = 0$ or $1 = 2(E^* - n^M)E(1-\delta E)$, giving the formula for $C_0$. The layer Jacobian $J = -1 + 2(E^* - n^M)(2E - 3\delta E^2)$ is negative on the outer branches, positive on the middle branch and vanishes only at $p_F$. The reduced flow $\dot n = \theta(E-1)/n_B - n$ on $C_0$ is piecewise linear and meets $C_0$ three times. Fenichel theory is applied separately on $E < 1$ and $E > 1$ to handle the discontinuity of $\theta$, and continuity extends orbits across $E = 1$.
+Equilibria of the layer problem satisfy $E = 0$ or $1 = 2(E^* - n^M)E(1-\delta E)$, giving the formula for $C_0$. The layer Jacobian $J = -1 + 2(E^* - n^M)(2E - 3\delta E^2)$ is negative on the outer branches, positive on the middle branch and vanishes only at $p_F$. The reduced flow $\dot n = \theta(E-1)/n_B - n$ on $C_0$ is piecewise linear and meets $C_0$ three times. Fenichel theory is applied separately on $E < 1$ and $E > 1$ to handle the kink of $\theta$ at $0$, and continuity extends orbits across $E = 1$.
 
 ## Sources
 
-- M. E. Gonzalez Herrero, C. Kuehn and K. Tsaneva-Atanasova, *Reduced models of cardiomyocytes excitability: comparing Karma and FitzHugh–Nagumo*, Bulletin of Mathematical Biology 83 (2021), system (3.1), Eqs. (3.4)–(3.11) and Theorems 3–7. <https://doi.org/10.1007/s11538-021-00898-0> (PMCID: PMC8253715)
+- M. E. Gonzalez Herrero, C. Kuehn and K. Tsaneva-Atanasova, *Reduced models of cardiomyocytes excitability: comparing Karma and FitzHugh–Nagumo*, Bulletin of Mathematical Biology 83 (2021), the choice $\theta(x) = \max\{0, x\}$ before Eq. (2.13), system (3.1), Remark 1, Eqs. (3.4)–(3.11) and Theorems 3–7. <https://doi.org/10.1007/s11538-021-00898-0> (PMCID: PMC8253715)

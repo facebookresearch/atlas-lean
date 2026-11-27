@@ -18,6 +18,7 @@ If $G$ is multifurcating and lacks $m$ inner edges relative to a bifurcating tre
 
 - [Compatible splits](../../splits-compatibility-ultrametrics-and-upgma/compatible.md)
 - [Majority splits of a family of trees](../../splits-compatibility-ultrametrics-and-upgma/majority-splits.md)
+- [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
 ## Expansion
 

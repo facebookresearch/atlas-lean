@@ -10,15 +10,15 @@ N'&=r_3N(1-\beta_2N)-c_2TN-a_3(1-e^{-u})N,\qquad u'=v-d_1u,
 \end{aligned}
 $$
 
-where $X_\tau=X(t-\tau)$. Maximize
+where $X_\tau=X(t-\tau)$, with given initial histories $E=\varphi_1$, $T=\varphi_2$, $N=\varphi_3$, $u=\varphi_4$ on $[-\tau,0]$. Maximize
 
 $$
 J(v)=\int_0^{t_f}\Bigl(E(t)-T(t)-\tfrac{B_v}{2}v(t)^2\Bigr)\,dt
 $$
 
-over $V_{ad}=\{v\in L^\infty([0,t_f]):0\le v(t)\le v_{\max}\}$, subject to the state constraint $N(t)\ge 0.75$.
+over $V_{ad}=\{v\in L^\infty([0,t_f]):0\le v(t)\le v_{\max}\}$, subject to the state constraint $N(t)\ge 0.75$ for $t\in[0,t_f]$.
 
-**Existence.** An optimal pair $(x^*,v^*)\in W^{1,\infty}([0,t_f],\mathbb R^4)\times L^\infty([0,t_f])$ exists: the admissible sets are nonempty, $V_{ad}$ is convex and closed, the right-hand side is bounded by a linear function of state and control, the integrand is concave in $v$, and $E-T-\tfrac{B_v}{2}v^2\le h_2-h_3|v|^2$ with $h_3=B_v/2$.
+**Existence.** Suppose the set of admissible states is nonempty: some $v\in V_{ad}$ keeps $N(t)\ge0.75$ on $[0,t_f]$ (this depends on the initial history; for instance none does if $\varphi_3(0)<0.75$). Then an optimal pair $(x^*,v^*)\in W^{1,\infty}([0,t_f],\mathbb R^4)\times L^\infty([0,t_f])$ exists: $V_{ad}$ is nonempty, convex and closed, the right-hand side is bounded by a linear function of state and control, the integrand is concave in $v$, and $E-T-\tfrac{B_v}{2}v^2\le h_2-h_3|v|^2$ with $h_3=B_v/2$.
 
 **Necessary conditions.** With Hamiltonian $H=E-T-\tfrac{B_v}{2}v^2+\lambda_1E'+\lambda_2T'+\lambda_3N'+\lambda_4u'+\gamma(t)(N-0.75)$, the adjoints satisfy the advanced equations
 
@@ -44,4 +44,4 @@ Existence follows from the Fleming-Rishel and Lukes compactness theorems once th
 
 ## Sources
 
-- Rihan FA, Abdelrahman DH, Al-Maskari F, Ibrahim F, Abdeen MA. Delay differential model for tumour-immune response with chemoimmunotherapy and optimal control. *Computational and Mathematical Methods in Medicine* (2014) 982978. <https://doi.org/10.1155/2014/982978>. PMCID: PMC4147205. Eqs. (15a)-(15g), Theorem 5, Theorem 6, Eqs. (26)-(32), Section 7.
+- Rihan FA, Abdelrahman DH, Al-Maskari F, Ibrahim F, Abdeen MA. Delay differential model for tumour-immune response with chemoimmunotherapy and optimal control. *Computational and Mathematical Methods in Medicine* (2014) 982978. <https://doi.org/10.1155/2014/982978>. PMCID: PMC4147205. Eqs. (14c) and (15a)-(15g), Theorem 5 (whose first condition is that the set of admissible states is nonempty), Theorem 6, Eqs. (26)-(32), Section 7.

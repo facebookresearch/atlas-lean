@@ -5,7 +5,7 @@ Players occupy the vertices of a connected $k$-regular graph on $N$ vertices and
 1. Under BD updating, weak selection never favours cooperation, from any configuration on any regular graph.
 2. Under DB updating, for each configuration $\xi$ there is an explicit critical ratio $(b/c)^*(\xi) \in (0, \infty]$ such that weak selection favours cooperation from $\xi$ if and only if $b/c > (b/c)^*(\xi)$. It is a rational function of averaged local frequencies: the fractions $f_1(x,\xi)$ and $f_0(x,\xi)$ of cooperating and defecting neighbours of $x$ and the fraction $f_{10}(x,\xi)$ of length-two paths from $x$ that visit a cooperator and then a defector, averaged over vertices; it can be computed in $O(k^2 N)$ time.
 3. $\xi$ and the configuration obtained by swapping cooperators and defectors have the same critical ratio.
-4. For a single cooperator, and for a uniformly random configuration with any fixed number $n$ of cooperators ($0 < n < N$), the critical ratio does not depend on the configuration and equals $\frac{N-2}{N/k - 2}$.
+4. For a single cooperator, and for a uniformly random configuration with any fixed number $n$ of cooperators ($0 < n < N$), the critical ratio does not depend on the configuration: it equals $\frac{N-2}{N/k - 2}$ if $N > 2k$, and is infinite if $N \le 2k$.
 5. For fixed $k \ge 2$, $(b/c)^*(\xi) \to k$ uniformly in $\xi$ as $N \to \infty$, recovering the rule $b/c > k$.
 
 On small graphs, the placement and number of cooperators matter: there are graphs on which no single-cooperator start is favoured but some multi-cooperator configuration is, and graphs where the reverse happens.

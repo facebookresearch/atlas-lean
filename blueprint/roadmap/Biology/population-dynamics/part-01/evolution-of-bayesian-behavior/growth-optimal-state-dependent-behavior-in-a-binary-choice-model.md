@@ -1,6 +1,6 @@
 # Growth-optimal state-dependent behavior in a binary choice model
 
-**Model.** In each generation $t$ every individual observes information $S$ about the environment and chooses action $a$ with probability $f(S)\in[0,1]$ and action $b$ otherwise, then produces $x_a$ or $x_b$ offspring and dies; offspring inherit the behavior $f(\cdot)$. Conditioned on the state, the pair $(x_a,x_b)$ is i.i.d. over generations and identical for all individuals of a generation (systematic risk), and the state process is stationary. Let $n^f_T$ be the number of type-$f$ individuals at generation $T$.
+**Model.** In each generation $t$ every individual observes information $S$ about the environment and chooses action $a$ with probability $f(S)\in[0,1]$ and action $b$ otherwise, then produces $x_a$ or $x_b$ offspring and dies; offspring inherit the behavior $f(\cdot)$. Conditioned on the state, the pair $(x_a,x_b)$ is i.i.d. over generations and identical for all individuals of a generation (systematic risk); the state process is stationary and ergodic; and the state, $(x_a,x_b)$ and $\log(fx_a+(1-f)x_b)$ for every $f\in[0,1]$ have finite second moments, marginally and conditioned on the state (Assumptions 1–4). Let $n^f_T$ be the number of type-$f$ individuals at generation $T$.
 
 **Growth rate.** Almost surely
 

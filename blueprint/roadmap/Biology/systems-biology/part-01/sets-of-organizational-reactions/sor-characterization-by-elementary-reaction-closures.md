@@ -17,7 +17,7 @@ the reactions switched on once $\hat r$ runs.
 **Lemma 3 (equivalent definition).** $R \subseteq \mathcal{R}$ is a SOR iff there is $\hat v \in \mathbb{R}^m_+$ with
 
 1. self-maintenance: $N\hat v \ge 0$, and
-2. closedness: $R = \bigcup\{\mathrm{ERC}(r_j) : \hat v_j > 0\}$.
+2. closedness with full support: $R = \{r_j : \hat v_j > 0\} = \bigcup\{\mathrm{ERC}(r_j) : \hat v_j > 0\}$.
 
 **Lemma 1.** Each SOR has a unique largest set of species that some flux supported exactly on it overproduces.
 
@@ -25,7 +25,7 @@ the reactions switched on once $\hat r$ runs.
 
 ## Expansion
 
-For Lemma 3, given such $\hat v$ with $R = \{r_1,\dots,r_k\}$, take compartments $S_i = \operatorname{clos}(\operatorname{supp}(r_i))$, which are closed and support exactly $\mathrm{ERC}(r_i)$. Split each reaction's rate evenly over the compartments that support it: with $l(j)$ the number of $S_i \supseteq \operatorname{supp}(r_j)$, set $\hat v^i_j = \hat v_j / l(j)$ if $\operatorname{supp}(r_j) \subseteq S_i$ and $0$ otherwise. Each $\hat v^i$ is feasible for $S_i$, they sum to $\hat v$, and $\bigcup_i S_i$ is a DO through $\hat v$ whose SOR is $R$. The converse reads the two properties off the definition of a DO. Lemma 1 takes the union of the overproduced sets over all fluxes with the same support.
+For Lemma 3, given such $\hat v$ with $R = \{r_1,\dots,r_k\}$, so that $\hat v_j > 0$ exactly for $r_j \in R$, take compartments $S_i = \operatorname{clos}(\operatorname{supp}(r_i))$, which are closed and support exactly $\mathrm{ERC}(r_i)$. Split each reaction's rate evenly over the compartments that support it: with $l(j)$ the number of $S_i \supseteq \operatorname{supp}(r_j)$, set $\hat v^i_j = \hat v_j / l(j)$ if $\operatorname{supp}(r_j) \subseteq S_i$ and $0$ otherwise. Each $\hat v^i$ is feasible for $S_i$, they sum to $\hat v$, and $\bigcup_i S_i$ is a DO through $\hat v$ whose SOR is $R$. The converse reads the two properties off the definition of a DO. The source states Lemma 3 with closedness alone, $R = \bigcup\{\mathrm{ERC}(r_j) : \hat v_j > 0\}$, which is too weak: for $r_1 : a \to b$, $r_2 : b \to a$, $r_3 : a \to \emptyset$, every ERC is $\{r_1,r_2,r_3\}$ and $\hat v = (1,1,0)$ has $N\hat v = 0$, yet no flux positive on all three reactions has $Nv \ge 0$ (row $b$ needs $v_1 \ge v_2$, row $a$ needs $v_2 \ge v_1 + v_3$), so $\{r_1,r_2,r_3\}$ is not a SOR. The even split above needs $\hat v_j > 0$ on every reaction of each $\mathrm{ERC}(r_i)$. Lemma 1 takes the union of the overproduced sets over all fluxes with the same support.
 
 The characterization is what makes enumeration practical: closedness becomes a union of precomputed ERCs, and self-maintenance is a linear feasibility problem. A maximal compartment of a DO–SOR pair is a closed species set supporting no reaction outside the SOR; minimal compartmentalizations are selected among maximal compartments.
 

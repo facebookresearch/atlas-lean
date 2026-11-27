@@ -12,7 +12,7 @@ By inversion, $\tau$ solves $u_1 = F(\tau \mid Y, t)$ for $u_1$ uniform on $[0, 
 
 $$\tau = \frac{-(A_{\mathcal Q_1} + A_{\mathcal Q}) + \sqrt{(A_{\mathcal Q_1} + A_{\mathcal Q})^2 - 2\log(1 - u_1)\,\dot A_{\mathcal Q}}}{\dot A_{\mathcal Q}},$$
 
-which has no real solution when $\dot A_{\mathcal Q} < 0$ and $\log(1 - u_1) < (A_{\mathcal Q_1} + A_{\mathcal Q})^2/(2\dot A_{\mathcal Q})$: the volume grows so fast that, with that probability, no further reaction occurs.
+which has no real solution when $\dot A_{\mathcal Q} < 0$ and $\log(1 - u_1) < (A_{\mathcal Q_1} + A_{\mathcal Q})^2/(2\dot A_{\mathcal Q})$. Then the second-order step is invalid and $\tau$ must be found from $u_1 = F(\tau \mid Y, t)$. No further reaction can occur only if $A_{\mathcal Q_1}(Y) = 0$, and then with probability $\exp\bigl(-\int_t^\infty A_{\mathcal Q}(Y, s)\,ds\bigr)$; if $A_{\mathcal Q_1}(Y) > 0$, then $F(\tau \mid Y, t) \to 1$ as $\tau \to \infty$ and a reaction occurs with probability $1$.
 
 ## Depends on
 
@@ -20,7 +20,7 @@ which has no real solution when $\dot A_{\mathcal Q} < 0$ and $\log(1 - u_1) < (
 
 ## Expansion
 
-The no-reaction probability satisfies $P_{\mathrm{not}}(s + ds) = P_{\mathrm{not}}(s)\bigl(1 - \sum_\mu a_\mu(Y, t+s)\,ds\bigr)$, a linear ODE whose solution is the exponential factor; multiplying by the propensity of channel $\mu$ at the end of the interval gives $P_\mu$, and summing and integrating gives $F$ because the integrand is minus the derivative of the exponential. With constant volume all propensities are constant and the direct method is recovered. Since higher-order propensities scale like $1/V$, growth slows bimolecular chemistry, which is how container growth and internal reactions are coupled.
+The no-reaction probability satisfies $P_{\mathrm{not}}(s + ds) = P_{\mathrm{not}}(s)\bigl(1 - \sum_\mu a_\mu(Y, t+s)\,ds\bigr)$, a linear ODE whose solution is the exponential factor; multiplying by the propensity of channel $\mu$ at the end of the interval gives $P_\mu$, and summing and integrating gives $F$ because the integrand is minus the derivative of the exponential. With constant volume all propensities are constant and the direct method is recovered. Since higher-order propensities scale like $1/V$, growth slows bimolecular chemistry, which is how container growth and internal reactions are coupled. The source's Remark 2 reads the missing real root as the volume growing so fast that no reaction can occur; it is an artefact of the truncation, since the truncated exponent $(A_{\mathcal Q_1} + A_{\mathcal Q})\tau + \dot A_{\mathcal Q}\tau^2/2$ has a maximum when $\dot A_{\mathcal Q} < 0$, while the exact exponent $A_{\mathcal Q_1}(Y)\tau + \int_t^{t+\tau} A_{\mathcal Q}(Y, s)\,ds$ is nondecreasing in $\tau$.
 
 ## Sources
 

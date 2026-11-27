@@ -6,11 +6,15 @@ $$\frac{da_i}{dt}=\alpha_{a_i}-\beta_{a_i}a_i-\frac1{V_i}\sum_{j\sim i}S_{ij}J_{
 
 with production and degradation rates $\alpha_{a_i},\beta_{a_i}$, membrane removal rate $\mu$, and a non-negative increasing response function $h$ with $h(J)=0$ for $J\le0$ (typically linear or quadratic in $J$).
 
-**Reduced system.** For regular cells ($S_{ij}/V_i\equiv W$), with PIN cycling and diffusion slow compared with active transport (rates of order $\varepsilon\to0$), unit transport efficiency and $\Phi(x)=h(x/W)$, the slow system is
+**PIN-cycling model and reduced system.** The PIN-cycling variant of the model adds the cytosolic PIN concentration $P_i$ of cell $i$, produced at rate $\alpha_p$, degraded at rate $\beta_p$ and inserted into membrane $ij$ at rate $\lambda P_ih(J_{i\to j})$:
+
+$$\frac{da_i}{dt}=\alpha_{a_i}-\beta_{a_i}a_i-\frac1{V_i}\sum_{j\sim i}S_{ij}J_{i\to j},\qquad \frac{dP_i}{dt}=\alpha_p-\beta_pP_i+\frac1{V_i}\sum_{j\sim i}S_{ij}\big(\mu p_{ij}-\lambda P_ih(J_{i\to j})\big),\qquad \frac{dp_{ij}}{dt}=\lambda P_ih(J_{i\to j})-\mu p_{ij}.$$
+
+For regular cells ($S_{ij}/V_i\equiv W$) put $D=\gamma_DW$, $T=\gamma_AW$ and $\Phi(x)=h(x/W)$, and take $\alpha_p=\alpha_{p0}/\varepsilon$, $\beta_p=\beta_{p0}/\varepsilon$, $D=D_0\varepsilon$ and $T=1$ for a small $\varepsilon>0$ (fast cytosolic PIN turnover, diffusion negligible against active transport). Then $P_i=\alpha_p/\beta_p$ and the PIN-cycling model reduces to the slow system
 
 $$\frac{da_i}{dt}=\alpha_{a_i}-\beta_{a_i}a_i+\sum_{k\sim i}\big(a_kp_{ki}-a_ip_{ik}\big),\qquad \frac{dp_{ij}}{dt}=\lambda\frac{\alpha_p}{\beta_p}\Phi(J_{i\to j})-\mu p_{ij},$$
 
-with $J_{i\to j}=a_ip_{ij}-a_jp_{ji}$; trajectories of the full system with the same initial data stay close to those of the slow system for small $\varepsilon$ when the latter converge.
+with $J_{i\to j}=a_ip_{ij}-a_jp_{ji}$. If a solution of the slow system converges to an equilibrium, then for small enough $\varepsilon$ the solution of the PIN-cycling model with the same initial condition stays in a small neighbourhood of that slow solution for all $t\ge0$.
 
 **Proposition.** If $\alpha_{a_i},\beta_{a_i},\mu,\lambda,\alpha_p/\beta_p>0$ and $\Phi$ is bounded, the slow system has a unique solution defined for all $t\ge0$. If $\Phi$ is unbounded, the solution either exists for all $t\ge0$ or only on a bounded interval $[0,\delta)$, on which it diverges to $\infty$ as $t\to\delta$; finite-time divergence of PIN concentrations does occur for unbounded $\Phi$ (e.g. quadratic).
 
@@ -20,4 +24,4 @@ Because $h$ vanishes for non-positive flux, at any equilibrium at most one of $p
 
 ## Sources
 
-- C. Feller, E. Farcot, C. Mazza, "Self-organization of plant vascular systems: claims and counter-claims about the flux-based auxin transport model", *PLoS ONE* 10(3):e0118238 (2015), Results: equations (1), (2) and (St0), sections "Model simplification" and "Divergence in finite time" (proofs in S1 Text), <https://doi.org/10.1371/journal.pone.0118238>, PMCID: PMC4348546.
+- C. Feller, E. Farcot, C. Mazza, "Self-organization of plant vascular systems: claims and counter-claims about the flux-based auxin transport model", *PLoS ONE* 10(3):e0118238 (2015), Results: equations (1), (2), (3a)–(3c) and (St0), sections "Model simplification" and "Divergence in finite time" (proofs in S1 Text), <https://doi.org/10.1371/journal.pone.0118238>, PMCID: PMC4348546.

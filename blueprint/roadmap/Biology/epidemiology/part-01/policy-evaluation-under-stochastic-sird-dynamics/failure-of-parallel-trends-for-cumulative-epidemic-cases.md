@@ -8,7 +8,7 @@ Consequently the parallel-trends assumption $E[\Delta C_t(0) \mid D = 1] = E[\De
 
 $$\sum_{s=t^*}^{t}\Bigl\{E\bigl[E[\Delta C_s(0) \mid F_{t^*-1}, D = 1] \bigm| D = 1\bigr] - E\bigl[E[\Delta C_s(0) \mid F_{t^*-1}, D = 0] \bigm| D = 0\bigr]\Bigr\}$$
 
-relative to $\mathrm{ATT}^C_t$. The bias vanishes only when the distribution of the pre-policy epidemic state $F_{t^*-1}$ is the same in treated and untreated locations (or new cases do not depend on it).
+relative to $\mathrm{ATT}^C_t$. The bias is zero when the distribution of the pre-policy epidemic state $F_{t^*-1}$ is the same in treated and untreated locations (or new cases do not depend on it), and non-zero in general otherwise.
 
 ## Depends on
 

@@ -18,11 +18,13 @@ $$(\lambda+u_k)(\lambda+w_k)(\lambda+r)+2dx_0(\lambda+r)+rs\,(\lambda+w_k)\,e^{-
 
 $$a_1>0,\qquad a_2+a_3>0,\qquad a_4+a_5>0,\qquad a_1(a_2+a_3)-(a_4+a_5)>0 .$$
 
-Then the network destabilizes the homogeneous state (network-driven Turing instability) iff for some Laplacian eigenvalue $\Lambda_k$ one of these fails, i.e. one of
+Mode $k$ is linearly stable iff the same four inequalities hold at $\Lambda=\Lambda_k$, and the network destabilizes the homogeneous state (network-driven Turing instability) if for some Laplacian eigenvalue $\Lambda_k$ one of
 
 $$H_1:\ a_2+a_3<0,\qquad H_2:\ a_4+a_5<0,\qquad H_3:\ a_1(a_2+a_3)-(a_4+a_5)<0$$
 
-holds at $\Lambda=\Lambda_k$. Since $a_2+a_3$ and $a_4+a_5$ are quadratic in $\Lambda_k$, $H_1$ or $H_2$ holds for some admissible $\Lambda_k$ exactly when the corresponding quadratic is negative at its vertex (or at $\Lambda=0$ if the vertex is out of range). With delay, instability persists for $\tau$ in an interval $(\tau_0,\tau_c)$ determined by the purely imaginary roots $\lambda=\pm i\omega$ of the delayed equation, at which a Hopf bifurcation occurs.
+holds at $\Lambda=\Lambda_k$. Write $a_2+a_3=b_1\Lambda^2+b_2\Lambda+b_3$ and $a_4+a_5=c_1\Lambda^2+c_2\Lambda+c_3$ as polynomials in $\Lambda=\Lambda_k$, with $b_1=d_1d_2$ and $c_1=rd_1d_2$. Then $H_1$ (resp. $H_2$) holds at $\Lambda_k$ iff $\Lambda_k$ lies in the set where $b_1\Lambda^2+b_2\Lambda+b_3$ (resp. $c_1\Lambda^2+c_2\Lambda+c_3$) is negative; for $d_1d_2>0$ this set is an open interval, nonempty iff the quadratic is negative at its vertex $-b_2/(2b_1)$ (resp. $-c_2/(2c_1)$). Since the $\Lambda_k$ form a discrete set, a nonempty interval need not contain any of them.
+
+**Delay.** For $\tau>0$, substituting $\lambda=i\omega$ into mode $k$'s equation and eliminating $\cos\omega\tau$ and $\sin\omega\tau$ gives a quartic equation in $x=\omega^2$; each positive root $x_i$ gives $\omega_i=\sqrt{x_i}$ and a delay $\tau_i$ at which $\pm i\omega_i$ are roots. Let $\tau_0=\min_i\tau_i$ for the uncoupled system ($d_1=d_2=0$) and $\tau_c=\min_i\tau_i$ for the coupled one ($d_1\ne0$ or $d_2\ne0$), with frequencies $\omega_0$ and $\omega_c$. If the transversality condition $\mathrm{Re}\,\frac{d\lambda}{d\tau}>0$ holds at $\tau=\tau_c$, $\omega=\omega_c$, Turing instability occurs for $\tau_c<\tau<\tau_0$: below $\tau_0$ the uncoupled system is stable, and above $\tau_c$ the network destabilizes it.
 
 ## Proof depends on
 
@@ -34,4 +36,4 @@ Expanding the determinant of $\lambda I-J_k$, with $J_k$ the Jacobian of the rea
 
 ## Sources
 
-- Zheng Q, Shen J, Zhang R, Guan L, Xu Y, "Spatiotemporal Patterns in a General Networked Hindmarsh-Rose Model", Front Physiol 2022 Jun 28;13:936982, Model (1), linearization (3), characteristic equations (5)-(7), conditions H1-H3 and Theorem 1, <https://doi.org/10.3389/fphys.2022.936982>, PMCID PMC9273822.
+- Zheng Q, Shen J, Zhang R, Guan L, Xu Y, "Spatiotemporal Patterns in a General Networked Hindmarsh-Rose Model", Front Physiol 2022 Jun 28;13:936982, Model (1), linearization (3), characteristic equations (5)-(8), conditions H1-H3, the critical delays $\tau_0,\tau_c$ and the transversality condition derived from Eq. (9), and Theorem 1 (whose delay interval, written $(\tau_0,\tau_c)$ there, is $\tau_c<\tau<\tau_0$ in the derivation before it), <https://doi.org/10.3389/fphys.2022.936982>, PMCID PMC9273822.
