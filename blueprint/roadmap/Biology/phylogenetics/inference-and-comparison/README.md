@@ -34,9 +34,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 ## Gene trees, species trees and reconciliation
 
-- [Conditional clade probabilities](conditional-clade-probabilities/README.md)
-- [Event-based cophylogenetic reconciliation](event-based-cophylogenetic-reconciliation/README.md)
-- [Gene tree–species tree reconciliation](gene-tree-species-tree-reconciliation/README.md)
-- [Quartet species trees from multicopy gene trees](quartet-species-trees-from-multicopy-gene-trees/README.md)
-- [Species delimitation](species-delimitation/README.md)
-- [Support- and length-weighted quartet scores](support-and-length-weighted-quartet-scores/README.md)
+- [Gene trees, species trees and reconciliation](gene-trees-species-trees-and-reconciliation/README.md)

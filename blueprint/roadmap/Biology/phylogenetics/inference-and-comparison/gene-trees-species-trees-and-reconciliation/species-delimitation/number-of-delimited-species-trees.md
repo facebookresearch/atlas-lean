@@ -12,7 +12,7 @@ Values: $D(20) \approx 6.03 \times 10^{23}$; splitting a species of $25$ samples
 
 ## Proof depends on
 
-- [Schröder's count of rooted binary phylogenetic trees](../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/nat-card-rooted-binary-tree.md)
+- [Schröder's count of rooted binary phylogenetic trees](../../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/nat-card-rooted-binary-tree.md)
 
 ## Expansion
 

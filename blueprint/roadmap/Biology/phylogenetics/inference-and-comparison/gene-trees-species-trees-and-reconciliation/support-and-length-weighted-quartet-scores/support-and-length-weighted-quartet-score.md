@@ -31,8 +31,8 @@ then the greedy placement algorithm (which inserts taxa one at a time, each at t
 
 ## Depends on
 
-- [Quartet score](../../quartet-support-and-determination-of-trees-by-qu/quartet-score.md)
-- [The species quartet maximizes quartet support](../../../coalescent-theory/multispecies-coalescent/split-01-most-probable.md)
+- [Quartet score](../../../quartet-support-and-determination-of-trees-by-qu/quartet-score.md)
+- [The species quartet maximizes quartet support](../../../../coalescent-theory/multispecies-coalescent/split-01-most-probable.md)
 
 ## Expansion
 

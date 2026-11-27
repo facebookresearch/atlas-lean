@@ -14,7 +14,7 @@ Then:
 
 ## Depends on
 
-- [Consistency of exact quartet-support maximization for the unrooted species tree](../../quartet-support-and-determination-of-trees-by-qu/consistency-of-exact-quartet-support-maximizatio.md)
+- [Consistency of exact quartet-support maximization for the unrooted species tree](../../../quartet-support-and-determination-of-trees-by-qu/consistency-of-exact-quartet-support-maximizatio.md)
 
 ## Expansion
 
