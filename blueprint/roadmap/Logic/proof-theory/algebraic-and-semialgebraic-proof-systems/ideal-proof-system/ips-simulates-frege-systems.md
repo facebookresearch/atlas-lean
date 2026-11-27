@@ -17,7 +17,7 @@ The first simulation goes back to Pitassi's 1996 algebraic system, which is p-eq
 
 ## Proof depends on
 
-None.
+- [Polynomial calculus line count is p-equivalent to Hilbert-like determinantal IPS](pc-line-count-equivalent-to-hilbert-like-determinantal-ips.md)
 
 ## Sources
 

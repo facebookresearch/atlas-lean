@@ -15,11 +15,12 @@ Size is always the size of $C$ in the model at hand. Two results relating these 
 
 ## Proof sketch
 
-The sparse-certificate conversion interpolates the coefficient of each placeholder monomial $\vec{y}^{\vec{e}}$, divides by one placeholder $y_{i_0}$ with $e_{i_0} > 0$, substitutes $F_i$ for the remaining placeholders and multiplies back by $y_{i_0}$. The incompleteness of multilinear-formula-$\mathrm{IPS}_{\mathrm{LIN}}$ is witnessed by $xy + 1, x^2 - x, y^2 - y$: in a refutation $f \cdot (xy + 1) + g \cdot (x^2 - x) + h \cdot (y^2 - y) = 1$ with $f, g, h$ multilinear, $f$ agrees with $1/(xy + 1)$ on the cube, so $f = 1 - \tfrac{1}{2} xy$, and the monomial $x^2 y^2$ of $f \cdot (xy + 1)$ cannot cancel. An $\mathrm{IPS}_{\mathrm{LIN}'}$ refutation avoids this because it may depend non-linearly on the placeholders $\vec{z}$ of the Boolean axioms.
+The sparse-certificate conversion interpolates the coefficient of each placeholder monomial $\vec{y}^{\vec{e}}$, divides by one placeholder $y_{i_0}$ with $e_{i_0} > 0$, substitutes $F_i$ for the remaining placeholders and multiplies back by $y_{i_0}$. The incompleteness of multilinear-formula-$\mathrm{IPS}_{\mathrm{LIN}}$ is witnessed, over a field of characteristic different from $2$ such as $\mathbb{Q}$, by $xy + 1, x^2 - x, y^2 - y$ (in characteristic $2$ the point $x = y = 1$ is a root): in a refutation $f \cdot (xy + 1) + g \cdot (x^2 - x) + h \cdot (y^2 - y) = 1$ with $f, g, h$ multilinear, $f$ agrees with $1/(xy + 1)$ on the cube, so $f = 1 - \tfrac{1}{2} xy$, and the monomial $x^2 y^2$ of $f \cdot (xy + 1)$ cannot cancel. An $\mathrm{IPS}_{\mathrm{LIN}'}$ refutation avoids this because it may depend non-linearly on the placeholders $\vec{z}$ of the Boolean axioms.
 
 ## Depends on
 
 - [Ideal Proof System](ideal-proof-system.md)
+- [Nullstellensatz proof system](../nullstellensatz-proof-system.md)
 
 ## Proof depends on
 

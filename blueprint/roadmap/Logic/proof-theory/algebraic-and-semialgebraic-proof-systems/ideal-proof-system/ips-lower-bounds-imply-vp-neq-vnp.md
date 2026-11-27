@@ -1,15 +1,17 @@
 # IPS lower bounds imply VP ≠ VNP
 
-A super-polynomial lower bound on Hilbert-like IPS proofs of any family of tautologies implies that $\mathrm{VNP} \ne \mathrm{VP}$, because every CNF tautology already has Hilbert-like IPS certificates in $\mathrm{VNP}$; lower bounds on the number of lines of Polynomial Calculus proofs imply the permanent versus determinant conjecture.
+A super-polynomial lower bound on Hilbert-like IPS refutations of any family of unsatisfiable CNFs implies $\mathrm{VNP} \ne \mathrm{VP}$, because every unsatisfiable CNF already has Hilbert-like IPS certificates in $\mathrm{VNP}$; lower bounds on the number of lines of Polynomial Calculus refutations imply the permanent versus determinant conjecture.
+
+Following the source, a family of tautologies here means the negations $\neg\varphi_n$ of a family of unsatisfiable CNFs $\varphi_n$, and an IPS proof of $\neg\varphi_n$ is an IPS refutation of the polynomial translation of $\varphi_n$: its clause polynomials, with the Boolean axioms $x_j^2 - x_j$ among the equations.
 
 **Theorem.** For any ring $R$:
 
-1. a super-polynomial lower bound on (constant-free) Hilbert-like $\mathrm{IPS}_R$ proofs of any family of tautologies implies $\mathrm{VNP}_R \ne \mathrm{VP}_R$ (respectively $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$);
-2. a super-polynomial lower bound on the number of lines in Polynomial Calculus proofs implies the permanent versus determinant conjecture $\mathrm{VNP} \ne \mathrm{VP}_{ws}$.
+1. a super-polynomial lower bound on (constant-free) Hilbert-like $\mathrm{IPS}_R$ refutations of any family of unsatisfiable CNFs, i.e. proofs of the tautologies obtained by negating them, implies $\mathrm{VNP}_R \ne \mathrm{VP}_R$ (respectively $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$);
+2. a super-polynomial lower bound on the number of lines in Polynomial Calculus refutations of unsatisfiable CNFs implies the permanent versus determinant conjecture $\mathrm{VNP} \ne \mathrm{VP}_{ws}$.
 
-**Key lemma.** Every family of CNF tautologies $(\varphi_n)$ has a Hilbert-like family of IPS certificates $(C_n)$ in $\mathrm{VNP}^0_R$.
+**Key lemma.** For every family $(\varphi_n)$ of unsatisfiable CNFs, the translations of $\varphi_n$ have a Hilbert-like family of IPS certificates $(C_n)$ in $\mathrm{VNP}^0_R$. The hypothesis is unsatisfiability: a satisfiable CNF, such as the single clause $x \vee \neg x$ (a tautology read as a formula), has a common $0$-$1$ root of its clause polynomials and Boolean axioms, so it has no certificate.
 
-Together with the fact that polynomial-size constant-free IPS proofs of all tautologies over any field would give $\mathrm{NP} \subseteq \mathrm{coMA}$ (Merlin guesses the proof, Arthur checks both defining identities by randomized PIT), this yields: if $\mathrm{NP} \not\subseteq \mathrm{coMA}$, then $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$ for every ring $R$.
+Together with the fact that polynomial-size constant-free IPS refutations of all unsatisfiable CNFs over any field would give $\mathrm{NP} \subseteq \mathrm{coMA}$ (Merlin guesses the proof, Arthur checks both defining identities by randomized PIT), this yields: if $\mathrm{NP} \not\subseteq \mathrm{coMA}$, then $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$ for every ring $R$.
 
 ## Proof sketch
 
@@ -25,7 +27,7 @@ $$
 \sum_{\vec{e} \in \{0,1\}^n} \sum_{i=1}^{m} y_i \, C_i(\vec{e}) \Big( \prod_{j < i} (1 - C_j(\vec{e})) \Big) \prod_{j \,:\, x_j \notin \kappa_i} b(e_j, x_j),
 $$
 
-whose summand is a polynomial-size constant-depth formula using only the constants $0, 1, -1$, so the certificate lies in $\mathrm{VNP}^0$. If $\mathrm{VP} = \mathrm{VNP}$ these certificates would have polynomial-size circuits, contradicting the assumed lower bound. The Polynomial Calculus statement uses the equivalence between the number of lines and Hilbert-like IPS over weakly skew circuits.
+whose summand is a polynomial-size constant-depth formula using only the constants $0, 1, -1$, so the certificate lies in $\mathrm{VNP}^0$. If $\mathrm{VP} = \mathrm{VNP}$ these certificates would have polynomial-size circuits, contradicting the assumed lower bound. The Boolean axioms are not needed for the certificate, which uses only the clause polynomials. The Polynomial Calculus statement uses the equivalence between the number of lines and Hilbert-like IPS over weakly skew circuits for derivations from the same list of equations, with the Boolean axioms among them.
 
 ## Depends on
 
@@ -42,4 +44,4 @@ whose summand is a polynomial-size constant-depth formula using only the constan
 
 ## Sources
 
-- Joshua A. Grochow, Toniann Pitassi, "Circuit complexity, proof complexity, and polynomial identity testing: the Ideal Proof System", *Journal of the ACM* 65(6), 2018, https://doi.org/10.1145/3230742; numbering of arXiv:1404.3820v1 (Theorem 3.1, Lemma 3.2, Proposition 1.4, Corollary 1.6, Proposition 2.2).
+- Joshua A. Grochow, Toniann Pitassi, "Circuit complexity, proof complexity, and polynomial identity testing: the Ideal Proof System", *Journal of the ACM* 65(6), 2018, https://doi.org/10.1145/3230742; numbering of arXiv:1404.3820v1 (Theorem 3.1, Lemma 3.2, whose proof begins with an unsatisfiable CNF, Section 1.1 for the translation of tautologies, Proposition 1.4, Corollary 1.6, Proposition 2.2).

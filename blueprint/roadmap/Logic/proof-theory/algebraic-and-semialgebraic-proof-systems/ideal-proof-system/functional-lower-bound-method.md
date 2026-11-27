@@ -7,7 +7,7 @@ Let $f \in \mathbb{F}[x_1, \dots, x_n]$ be such that the system $f(\vec{x}), x_1
 1. Let $\mathcal{C} \subseteq \mathbb{F}[\vec{x}]$ be closed under partial evaluation. If every $g \in \mathbb{F}[\vec{x}]$ with $g(\vec{x}) = 1/f(\vec{x})$ for all $\vec{x} \in \{0,1\}^n$ satisfies $g \notin \mathcal{C}$, then $f, \vec{x}^2 - \vec{x}$ has no $\mathcal{C}$-$\mathrm{IPS}_{\mathrm{LIN}}$ refutation.
 2. Let $\mathcal{C}$ be closed under evaluation and let $\mathcal{D} = \{p - q : p, q \in \mathcal{C}\}$. If every such $g$ satisfies $g \notin \mathcal{D}$, then $f, \vec{x}^2 - \vec{x}$ has no $\mathcal{C}$-$\mathrm{IPS}_{\mathrm{LIN}'}$ refutation. If moreover $\mathcal{C}$ consists of multilinear polynomials, then $f, \vec{x}^2 - \vec{x}$ has no $\mathcal{C}$-IPS refutation.
 
-**Degree instance.** Let $n \ge 1$, $\mathrm{char}(\mathbb{F}) > n$ and $\beta \in \mathbb{F} \setminus \{0, \dots, n\}$. If $g \in \mathbb{F}[\vec{x}]$ satisfies $g(\vec{x}) (\sum_i x_i - \beta) = 1 \bmod \vec{x}^2 - \vec{x}$, then $\deg g \ge n$; the earlier bound of Impagliazzo, Pudlák and Sgall was $\lceil n/2 \rceil + 1$, and the tight value $n$ is what the lifted lower bounds need.
+**Degree instance.** Let $n \ge 1$, $\mathrm{char}(\mathbb{F}) > n$ and $\beta \in \mathbb{F} \setminus \{0, \dots, n\}$. If $g \in \mathbb{F}[\vec{x}]$ satisfies $g(\vec{x}) (\sum_i x_i - \beta) = 1 \bmod \vec{x}^2 - \vec{x}$, then $\deg g \ge n$, and this tight value $n$ is what the lifted lower bounds need. This is a bound on the degree of a polynomial agreeing with $1/(\sum_i x_i - \beta)$ on the cube; the earlier bound $\lceil n/2 \rceil + 1$ of Impagliazzo, Pudlák and Sgall is a different measure, the polynomial calculus refutation degree of the same system, for which they also gave a matching upper bound.
 
 ## Proof sketch
 
@@ -23,5 +23,5 @@ None.
 
 ## Sources
 
-- Michael A. Forbes, Amir Shpilka, Iddo Tzameret, Avi Wigderson, "Proof complexity lower bounds from algebraic circuit complexity", *31st Computational Complexity Conference (CCC 2016)*, LIPIcs 50, 2016, https://doi.org/10.4230/LIPIcs.CCC.2016.32; numbering of arXiv:1606.05050v1 (Lemmas 5.1 and 5.2, Corollary 5.4).
+- Michael A. Forbes, Amir Shpilka, Iddo Tzameret, Avi Wigderson, "Proof complexity lower bounds from algebraic circuit complexity", *31st Computational Complexity Conference (CCC 2016)*, LIPIcs 50, 2016, https://doi.org/10.4230/LIPIcs.CCC.2016.32; numbering of arXiv:1606.05050v1 (Lemmas 5.1 and 5.2, Corollary 5.4, Section 5.2 with footnote 7, Theorem A.4).
 - Tuomas Hakoniemi, Nutan Limaye, Iddo Tzameret, "Functional lower bounds in algebraic proofs: symmetry, lifting, and barriers", *56th ACM Symposium on Theory of Computing (STOC 2024)*, 2024, https://doi.org/10.1145/3618260.3649616; numbering of arXiv:2412.20114v1 (Theorem 1, restating the method).

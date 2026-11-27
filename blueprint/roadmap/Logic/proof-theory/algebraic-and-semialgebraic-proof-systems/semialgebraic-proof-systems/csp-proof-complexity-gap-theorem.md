@@ -1,8 +1,8 @@
 # Gap theorem for the proof complexity of constraint satisfaction problems
 
-For every finite constraint language $B$, either all unsatisfiable instances of $\mathrm{CSP}(B)$ have constant-width resolution refutations, or they admit no subexponential bounded-depth Frege, no sublinear-degree real Polynomial Calculus, and no sublinear-degree Sums-of-Squares refutations; the dividing line is bounded width.
+For every finite constraint language $B$, either all unsatisfiable instances of $\mathrm{CSP}(B)$ have constant-width resolution refutations, or no subexponential bounded-depth Frege, sublinear-degree real Polynomial Calculus, or sublinear-degree Sums-of-Squares bound holds for all of them; the dividing line is bounded width.
 
-A finite relational structure $B$ (the constraint language) defines $\mathrm{CSP}(B)$: given a finite structure $A$ over the same vocabulary, decide whether there is a homomorphism $A \to B$. $B$ has **width** $k$ if Spoiler wins the existential $k$-pebble game on $A$ and $B$ whenever there is no homomorphism from $A$ to $B$, and **bounded width** if it has width $k$ for some $k$. A statement that $B$ has efficient refutations in a proof system $P$ means that, for some and hence every local encoding of the instances as CNF formulas or polynomial systems, all unsatisfiable instances of $\mathrm{CSP}(B)$ have efficient $P$-refutations; sublinear means $o(n)$, sublinear-exponential $2^{o(n)}$ and subexponential $2^{n^{o(1)}}$, with $n$ the number of variables.
+A finite relational structure $B$ (the constraint language) defines $\mathrm{CSP}(B)$: given a finite structure $A$ over the same vocabulary, decide whether there is a homomorphism $A \to B$. $B$ has **width** $k$ if Spoiler wins the existential $k$-pebble game on $A$ and $B$ whenever there is no homomorphism from $A$ to $B$, and **bounded width** if it has width $k$ for some $k$. A statement that $B$ has efficient refutations in a proof system $P$ means that, for some and hence every local encoding of the instances as CNF formulas or polynomial systems, all unsatisfiable instances of $\mathrm{CSP}(B)$ have efficient $P$-refutations; sublinear means $o(n)$, sublinear-exponential $2^{o(n)}$ and subexponential $2^{n^{o(1)}}$, with $n$ the number of variables. Case 2 below is the negation of such statements: no bound of the stated kind holds uniformly over all unsatisfiable instances, so some family of instances is hard; it does not assert that every unsatisfiable instance is hard.
 
 **Theorem.** Let $B$ be a finite constraint language. Exactly one of the following holds:
 
@@ -23,6 +23,7 @@ The key ingredient is closure under reductions: the classes of constraint langua
 - [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Width of a derivation](../../../propositional-logic/resolution-size-and-width/derivation-width.md)
+- [Finite relational templates and the homomorphism problem CSP(A)](../../../../TheoryOfComputation/np-completeness/satisfiability/finite-domain-csp-dichotomy/finite-templates-and-csp-of-a.md)
 
 ## Proof depends on
 

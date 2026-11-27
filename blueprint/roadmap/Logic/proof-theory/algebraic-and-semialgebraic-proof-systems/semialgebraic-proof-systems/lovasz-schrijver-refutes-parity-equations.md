@@ -22,7 +22,7 @@ Write $\mathbb{E}$ as $Ax = b$. Unsatisfiability means that $b$ is not in the co
 
 ## Proof depends on
 
-None.
+- [Gap theorem for the proof complexity of constraint satisfaction problems](csp-proof-complexity-gap-theorem.md)
 
 ## Sources
 

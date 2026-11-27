@@ -2,7 +2,7 @@
 
 Over characteristic zero, every multilinear polynomial that agrees with the inverse of the lifted knapsack polynomial $\sum_{i,j,k,\ell} z_{ijk\ell} x_i x_j x_k x_\ell - \beta$ on the Boolean cube needs product-depth-$\Delta$ circuits of size $n^{\Omega((\log n)^{2^{1-2\Delta}}/\Delta)}$, a super-polynomial lower bound for constant-depth multilinear IPS refutations.
 
-**Theorem.** Let $n$ and $\Delta$ be positive integers and $\mathrm{char}(\mathbb{F}) = 0$. Let $g$ be a polynomial of individual degree at most $\delta = 1$ that agrees with
+**Theorem.** Let $n$ and $\Delta$ be positive integers, $\mathrm{char}(\mathbb{F}) = 0$, and $\beta \in \mathbb{F} \setminus \{0, 1, \dots, n^4\}$, so that the denominator below, whose values on the Boolean cube lie in $\{-\beta, 1 - \beta, \dots, n^4 - \beta\}$, has no Boolean zero. Let $g$ be a polynomial of individual degree at most $\delta = 1$ that agrees with
 
 $$
 \frac{1}{\sum_{i,j,k,\ell \in [n]} z_{ijk\ell} \, x_i x_j x_k x_\ell - \beta}
@@ -14,7 +14,7 @@ $$
 n^{\Omega\left( \frac{(\log n)^{2^{1 - 2\Delta}}}{\Delta} \right)} .
 $$
 
-By the functional lower bound method this gives the same lower bound, over the same field, for multilinear constant-depth IPS refutations of $\sum_{i,j,k,\ell} z_{ijk\ell} x_i x_j x_k x_\ell - \beta$ together with the Boolean axioms.
+By the functional lower bound method this gives the same lower bound, over the same field and for the same $\beta$, for multilinear constant-depth IPS refutations of $\sum_{i,j,k,\ell} z_{ijk\ell} x_i x_j x_k x_\ell - \beta$ together with the Boolean axioms.
 
 ## Proof sketch
 
@@ -30,4 +30,4 @@ This improves the exponent of the multilinear lower bound of Govindasamy, Hakoni
 
 ## Sources
 
-- Tuomas Hakoniemi, Nutan Limaye, Iddo Tzameret, "Functional lower bounds in algebraic proofs: symmetry, lifting, and barriers", *56th ACM Symposium on Theory of Computing (STOC 2024)*, 2024, https://doi.org/10.1145/3618260.3649616; numbering of arXiv:2412.20114v1 (Theorem 44 with $\delta = 1$, Lemma 59, Section 6).
+- Tuomas Hakoniemi, Nutan Limaye, Iddo Tzameret, "Functional lower bounds in algebraic proofs: symmetry, lifting, and barriers", *56th ACM Symposium on Theory of Computing (STOC 2024)*, 2024, https://doi.org/10.1145/3618260.3649616; numbering of arXiv:2412.20114v1 (Theorem 44 with $\delta = 1$, Lemma 59, Section 6; the condition on $\beta$ is the source's requirement, after the informal statement in Section 1, that the polynomial be nonzero over the Boolean cube). The theorem is stated directly as Theorem 1.8 of the STOC 2024 version.
