@@ -20,8 +20,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Nilpotent
 # The number of units of a Dedekind domain modulo an ideal
 
 Let `S` be a Dedekind domain that is a finite free `ℤ`-module, such as the ring of integers of a
-number field, so that `Ideal.absNorm I` is the number of elements of `S ⧸ I`. We count the units
-of `S ⧸ I`:
+number field. For a nonzero ideal `I` the ring `S ⧸ I` is finite and `Ideal.absNorm I` is its
+number of elements. We count the units of `S ⧸ I`:
 
 * `Ideal.natCard_units_quotient_pow`: for a nonzero prime `P` and `k ≠ 0`,
   `#(S ⧸ P ^ k)ˣ = N(P) ^ k - N(P) ^ (k - 1)`;
@@ -54,16 +54,16 @@ private theorem absNorm_ne_zero_of_ne_bot {I : Ideal S} (hI : I ≠ ⊥) : absNo
 
 /-- **Number of units modulo a power of a prime ideal.** Let $S$ be a Dedekind domain that is a
 finite free $\mathbb{Z}$-module (for example the ring of integers $\mathcal{O}_K$ of a number
-field $K$), and for an ideal $\mathfrak{b}$ let $N(\mathfrak{b}) = \#(S/\mathfrak{b})$ be its
-absolute norm (`Ideal.absNorm`). If $\mathfrak{p}$ is a nonzero prime ideal of $S$ and $k \ge 1$,
-then the unit group of $S/\mathfrak{p}^k$ has
+field $K$), and for a nonzero ideal $\mathfrak{b}$ let $N(\mathfrak{b}) = \#(S/\mathfrak{b})$
+be its absolute norm (`Ideal.absNorm`). If $\mathfrak{p}$ is a nonzero prime ideal of $S$ and
+$k \ge 1$, then the unit group of $S/\mathfrak{p}^k$ has
 $N(\mathfrak{p})^k - N(\mathfrak{p})^{k-1}$ elements (`Nat.card`; the ring $S/\mathfrak{p}^k$ is
 finite).
 
 Keune states this for $\mathcal{O}_K$ as $N(\mathfrak{p})^k (1 - 1/N(\mathfrak{p}))$ (F. Keune,
 *Number Fields*, 2023, Chapter 6, Exercise 1(ii), p. 141); the two agree as
-$N(\mathfrak{p}) \ge 1$. The ring is any Dedekind domain that is a finite free $\mathbb{Z}$-module,
-the setting of Mathlib's `Ideal.absNorm`. -/
+$N(\mathfrak{p}) \ge 1$. The ring is any Dedekind domain that is a finite free
+$\mathbb{Z}$-module. -/
 theorem natCard_units_quotient_pow {P : Ideal S} [hP : P.IsPrime] (hP0 : P ≠ ⊥) {k : ℕ}
     (hk : k ≠ 0) :
     Nat.card (S ⧸ P ^ k)ˣ = absNorm P ^ k - absNorm P ^ (k - 1) := by
@@ -123,7 +123,8 @@ $I = \prod_{\mathfrak{p}} \mathfrak{p}^{e_{\mathfrak{p}}}$ into prime ideals
 unit group of $S/I$ has
 $$\prod_{\mathfrak{p} \mid I}
 \bigl(N(\mathfrak{p})^{e_{\mathfrak{p}}} - N(\mathfrak{p})^{e_{\mathfrak{p}} - 1}\bigr)$$
-elements, where $N$ is the absolute norm (`Ideal.absNorm`).
+elements, where $N(\mathfrak{p}) = \#(S/\mathfrak{p})$ is the absolute norm (`Ideal.absNorm`)
+of the nonzero prime ideal $\mathfrak{p}$.
 
 This is the Chinese remainder theorem reduction to prime powers of F. Keune, *Number Fields*,
 2023, pp. 135–136, combined with `Ideal.natCard_units_quotient_pow` (Keune, Chapter 6,
@@ -146,9 +147,10 @@ theorem natCard_units_quotient_eq_prod {I : Ideal S} (hI : I ≠ ⊥) :
 open scoped Classical in
 /-- **Number of units of the ring of integers modulo an ideal.** Let $S$ be a Dedekind domain
 that is a finite free $\mathbb{Z}$-module, for example the ring of integers $\mathcal{O}_K$ of a
-number field $K$, and for an ideal $\mathfrak{b}$ let $N(\mathfrak{b}) = \#(S/\mathfrak{b})$ be
-its absolute norm (`Ideal.absNorm`). If $\mathfrak{a} \neq 0$ is an ideal of $S$, then the unit
-group of the finite ring $S/\mathfrak{a}$ has
+number field $K$, and for a nonzero ideal $\mathfrak{b}$ let
+$N(\mathfrak{b}) = \#(S/\mathfrak{b})$ be its absolute norm (`Ideal.absNorm`). If
+$\mathfrak{a} \neq 0$ is an ideal of $S$, then the unit group of the finite ring
+$S/\mathfrak{a}$ has
 $$\#\bigl((S/\mathfrak{a})^\times\bigr) = N(\mathfrak{a}) \prod_{\mathfrak{p} \mid \mathfrak{a}}
 \left(1 - \frac{1}{N(\mathfrak{p})}\right)$$
 elements, as an identity of rational numbers. The product runs over the finite set
@@ -157,8 +159,8 @@ elements, as an identity of rational numbers. The product runs over the finite s
 
 This is F. Keune, *Number Fields*, Radboud University Press (2023), Chapter 6, Exercise 1(iii)
 (p. 142), stated there for $\mathcal{O}_K$; the ring here is any Dedekind domain that is a finite
-free $\mathbb{Z}$-module, the setting of Mathlib's `Ideal.absNorm`. For $S = \mathbb{Z}$ and
-$\mathfrak{a} = n\mathbb{Z}$ it is Euler's product formula for $\varphi(n)$. -/
+free $\mathbb{Z}$-module. For $S = \mathbb{Z}$ and $\mathfrak{a} = n\mathbb{Z}$ it is Euler's
+product formula for $\varphi(n)$. -/
 theorem natCard_units_quotient {I : Ideal S} (hI : I ≠ ⊥) :
     (Nat.card (S ⧸ I)ˣ : ℚ) =
       absNorm I * ∏ P ∈ (normalizedFactors I).toFinset, (1 - 1 / (absNorm P : ℚ)) := by
