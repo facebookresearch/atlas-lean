@@ -1,12 +1,14 @@
 # Total space in resolution is at least width squared
 
-For every unsatisfiable $k$-CNF formula, every resolution refutation must at some point hold clauses with at least $(W - k - 4)^2 / 16$ literal occurrences in total, where $W$ is the minimum refutation width.
+For every unsatisfiable $k$-CNF formula whose minimum refutation width $W$ is at least $k + 4$, every resolution refutation must at some point hold clauses with at least $(W - k - 4)^2 / 16$ literal occurrences in total.
 
-**Theorem.** Let $\varphi$ be a $k$-CNF formula. Then
+**Theorem.** Let $\varphi$ be an unsatisfiable $k$-CNF formula with $\mathit{width}(\varphi \vdash \bot) \ge k + 4$. Then
 
 $$
 \mathit{TotSp}(\varphi \vdash \bot) \ge \frac{1}{16} \bigl(\mathit{width}(\varphi \vdash \bot) - k - 4\bigr)^2 .
 $$
+
+Equivalently, every unsatisfiable $k$-CNF formula satisfies $\mathit{TotSp}(\varphi \vdash \bot) \ge \max\bigl(0, \mathit{width}(\varphi \vdash \bot) - k - 4\bigr)^2 / 16$. The source prints the squared bound without the hypothesis $\mathit{width}(\varphi \vdash \bot) \ge k + 4$, and it fails without it: the clauses $x$, $\neg x$ and $a_1 \lor \dots \lor a_{10}$ form an unsatisfiable $10$-CNF with refutation width $1$ and total space at most $2$, below $(1 - 10 - 4)^2/16$. The last step of the source's proof, with $\mathit{awidth}(\varphi \vdash \bot) = r + 1$ (asymmetric width, defined below), squares $(r - 1)/2 \ge (\mathit{width}(\varphi \vdash \bot) - k - 4)/2$, which needs the right side to be nonnegative.
 
 The proof gives more: every resolution refutation of an unsatisfiable CNF $\varphi$ passes through a memory configuration containing at least $\frac{1}{2}(\mathit{awidth}(\varphi \vdash \bot) - 2)$ clauses, each of width at least $\frac{1}{2}(\mathit{awidth}(\varphi \vdash \bot) - 2)$, where $\mathit{awidth}$ is the asymmetric width.
 

@@ -25,6 +25,7 @@ Upper bound: a tree-like refutation guesses the images of the $k$ pigeons one at
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Tree-like resolution derivation](../../../propositional-logic/resolution-size-and-width/resolution-tree.md)
 - [Variable space and total space of resolution refutations](../space-and-pebbling-tradeoffs/variable-and-total-space.md)
+- [Conflict-driven clause learning as a proof system](cdcl-proof-system.md)
 
 ## Proof depends on
 

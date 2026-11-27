@@ -15,6 +15,7 @@ Induct on $s$. At the root query $(ax \le b, ax \ge b + 1)$ assume the left subp
 ## Depends on
 
 - [The stabbing planes proof system](../../stabbing-planes-and-semi-algebraic-branching/stabbing-planes-system.md)
+- [Cutting planes equal facelike stabbing planes](cutting-planes-equal-facelike-stabbing-planes.md)
 - [Automatable proof systems](../../automatability-of-proof-systems/automatable-proof-system.md)
 - [The complexity class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 - [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)

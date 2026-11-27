@@ -10,7 +10,7 @@ $$
 \mathrm{depth}_{\mathrm{sCP}}(F \circ \mathrm{XOR}_4^n) \ge \tfrac{1}{2}\, \mathrm{depth}_{\mathrm{Res}}(F).
 $$
 
-**Unlifted version.** If $F$ is a system of $\mathbb{F}_2$-linear equations whose constraint-variable graph is an $(r, s+3)$-boundary expander, then $\mathrm{depth}_{\mathrm{sCP}}(F) \ge rs/2$. In particular, for all sufficiently large $n$ there are a graph $G$ on $n$ vertices and a labelling $\ell$ such that the Tseitin formula of $(G, \ell)$ requires depth $\Omega(n)$ in semantic cutting planes, and for every $k \ge 6$ there is $m = O(n)$ such that random $k$-XOR and random $k$-CNF formulas with $m$ constraints on $n$ variables require depth $\Omega(n)$ with high probability.
+**Unlifted version.** If $F$ is a system of $\mathbb{F}_2$-linear equations whose constraint-variable graph is an $(r, s+3)$-boundary expander, then $\mathrm{depth}_{\mathrm{sCP}}(F) \ge rs/2$. Here the constraint-variable graph is bipartite, with an edge between an equation and each variable occurring in it, and it is an **$(r, s')$-boundary expander** if every set $W$ of at most $r$ equations has at least $s' |W|$ boundary variables, those occurring in exactly one equation of $W$. In particular, for all sufficiently large $n$ there are a graph $G$ on $n$ vertices and a labelling $\ell$ such that the Tseitin formula of $(G, \ell)$ requires depth $\Omega(n)$ in semantic cutting planes, and for every $k \ge 6$ there is $m = O(n)$ such that random $k$-XOR and random $k$-CNF formulas with $m$ constraints on $n$ variables require depth $\Omega(n)$ with high probability.
 
 ## Expansion
 
@@ -27,4 +27,4 @@ None.
 
 ## Sources
 
-- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019v2 (version read: Section 5.1, Theorem 5.5, the depth-lifting theorem, and the Prover-Adversary characterization of resolution depth; Section 5.2, Theorem 5.8, the boundary-expander theorem; Section 5.4, Theorem 5.13 for Tseitin formulas and Theorem 5.15 for random formulas).
+- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019v2 (version read: Section 5.1, Theorem 5.5, the depth-lifting theorem, and the Prover-Adversary characterization of resolution depth; Section 5.2, Definition 5.7 of boundary expanders and Theorem 5.8, the boundary-expander theorem; Section 5.4, Theorem 5.13 for Tseitin formulas and Theorem 5.15 for random formulas).

@@ -22,7 +22,8 @@ In level-ordered QCDCL with reduction, every trail for $\mathrm{Trapdoor}_n$ sta
 
 ## Proof depends on
 
-None.
+- [QBF parity formulas are hard for QU-resolution but easy for expansion](parity-formulas-hard-for-qu-resolution.md)
+- [Haken's lower bound for the pigeonhole principle](../../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 
 ## Sources
 

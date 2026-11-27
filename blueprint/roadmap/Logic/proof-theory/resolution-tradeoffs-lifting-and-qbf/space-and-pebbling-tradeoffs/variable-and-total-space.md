@@ -12,7 +12,7 @@ The space of $\pi$ in each measure is the maximum over its configurations, and t
 
 ## Expansion
 
-Total space is at least clause space and at least variable space. For an unsatisfiable CNF in $n$ variables, clause space is at most $n + 1$ (Esteban and Torán), so total space is at most $n(n+1)$, and both bounds are asymptotically attained, for example by random $k$-CNFs. Some papers call total space "variable space"; the terminology here follows Hertel and Urquhart, as adopted in the surveyed papers. Measures are usually studied for $k$-CNF formulas with constant $k$, since width and space can behave artificially for formulas of unbounded width.
+Total space is at least variable space, and at least the number of nonempty clauses; it can be smaller than clause space only through the empty clause, since the configuration $\{\bot\}$ has clause space $1$ and total space $0$. For an unsatisfiable CNF in $n$ variables, clause space is at most $n + 1$ (Esteban and Torán), so total space is at most $n(n+1)$, and both bounds are asymptotically attained, for example by random $k$-CNFs. Some papers call total space "variable space"; the terminology here follows Hertel and Urquhart, as adopted in the surveyed papers. Measures are usually studied for $k$-CNF formulas with constant $k$, since width and space can behave artificially for formulas of unbounded width.
 
 ## Depends on
 

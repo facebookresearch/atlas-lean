@@ -20,6 +20,7 @@ From a proof $\pi$ build a circuit $C_\pi$ on the DAG of $\pi$: leaves from $A$ 
 - [Q-resolution and its long-distance and universal variants](q-resolution-calculi.md)
 - [Expansion-based QBF calculi: universal expansion resolution, IR-calc and IRM-calc](expansion-based-qbf-calculi.md)
 - [Monotone circuits](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-monotone-circuit.md)
+- [The clique function CLIQUE(n, s) on adjacency-matrix bits](../../../../TheoryOfComputation/circuit-complexity/monotone-circuit-lower-bound-for-clique/clique-of-size.md)
 
 ## Proof depends on
 

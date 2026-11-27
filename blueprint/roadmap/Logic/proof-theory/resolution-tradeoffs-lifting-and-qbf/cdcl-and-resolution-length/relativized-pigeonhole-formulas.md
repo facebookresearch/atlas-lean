@@ -14,22 +14,38 @@ $$
 \end{aligned}
 $$
 
-The first two families say that $p$ maps $[k]$ injectively into $[n]$, the third records its range, and the last two force $q$ to be defined and injective on that range, which is impossible by the pigeonhole principle. The **3-CNF version** $F_{n,k}$ breaks the wide clauses of the first and fourth families with extension variables $y_{u,v}$ and $z_{v,w}$, and the 4-clauses of the last family with extension variables $r_{v,v'}$; its clauses are
+The first two families say that $p$ maps $[k]$ injectively into $[n]$, the third records its range, and the last two force $q$ to be defined and injective on that range, which is impossible by the pigeonhole principle. The **3-CNF version** $F_{n,k}$ splits the clauses of the first family when $n \ge 4$ and those of the fourth family when $k \ge 4$ into chains with extension variables $y_{u,v}$ and $z_{v,w}$, keeps them unchanged when their width is at most $3$ (that is, $n \le 3$, respectively $k \le 3$), and splits the 4-clauses of the last family with extension variables $r_{v,v'}$. For $n \ge 4$ the first family is replaced by
 
 $$
 \begin{aligned}
 & p_{u,1} \lor p_{u,2} \lor y_{u,2} && u \in [k], \\
 & \overline{y}_{u,v} \lor p_{u,v+1} \lor y_{u,v+1} && u \in [k],\ v \in [2, n-3], \\
-& \overline{y}_{u,n-2} \lor p_{u,n-1} \lor p_{u,n} && u \in [k], \\
+& \overline{y}_{u,n-2} \lor p_{u,n-1} \lor p_{u,n} && u \in [k],
+\end{aligned}
+$$
+
+for $k \ge 4$ the fourth family is replaced by
+
+$$
+\begin{aligned}
 & \overline{r}_v \lor q_{v,1} \lor z_{v,1} && v \in [n], \\
 & \overline{z}_{v,w} \lor q_{v,w+1} \lor z_{v,w+1} && v \in [n],\ w \in [k-4], \\
-& \overline{z}_{v,k-3} \lor q_{v,k-2} \lor q_{v,k-1} && v \in [n], \\
+& \overline{z}_{v,k-3} \lor q_{v,k-2} \lor q_{v,k-1} && v \in [n],
+\end{aligned}
+$$
+
+and the remaining clauses are
+
+$$
+\begin{aligned}
 & \overline{p}_{u,v} \lor \overline{p}_{u',v} && u \ne u' \in [k],\ v \in [n], \\
 & \overline{p}_{u,v} \lor r_v && u \in [k],\ v \in [n], \\
 & \overline{r}_v \lor \overline{r}_{v'} \lor r_{v,v'} && v \ne v' \in [n], \\
 & \overline{r}_{v,v'} \lor \overline{q}_{v,w} \lor \overline{q}_{v',w} && v \ne v' \in [n],\ w \in [k-1].
 \end{aligned}
 $$
+
+Each chain resolves back to the wide clause it replaces, so $F_{n,k}$ is unsatisfiable. The source splits only the wide clauses; the chains above need $n \ge 4$ and $k \ge 4$ to be well formed, since for smaller values they would use the variables $y_{u,1}$, $z_{v,0}$ or $q_{v,0}$, or leave two different extension variables unlinked.
 
 It has $O(n^2)$ variables and $O(k n^2)$ clauses.
 
