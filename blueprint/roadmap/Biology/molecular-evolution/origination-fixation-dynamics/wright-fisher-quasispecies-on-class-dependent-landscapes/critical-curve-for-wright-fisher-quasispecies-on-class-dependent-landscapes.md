@@ -15,7 +15,7 @@ Equivalently, the stationary mean proportion $\lim_n E[O_n(k)/m]$ tends to $0$ b
 
 ## Depends on
 
-- [Error threshold](../../population-dynamics/eigen-s-quasispecies-error-threshold/master-equilibrium-pos-iff.md)
+- [Error threshold](../../../population-dynamics/eigen-s-quasispecies-error-threshold/master-equilibrium-pos-iff.md)
 
 ## Expansion
 

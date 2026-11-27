@@ -11,7 +11,7 @@ $$\mathcal N_j = \frac12 \int_0^\infty g_j(x)^2\,dx, \qquad g'_{j+1} - \frac{g_j
 
 $$\lim_{j\to\infty} \mathcal N_j^{-1/j} = R, \qquad 2 \le R \le 4.$$
 
-Numerically $R = 3.0438279\ldots$, below the value $R = 4$ of the critical binary Galton–Watson tree. Furthermore (Theorem 21), the combinatorial shape of $T^{(N)}_{\mathrm K}$ has the same law as the level-set tree of a discrete white noise of length $N$, so the white-noise tree obeys the same root-Horton law (Corollary 17).
+Numerically $R = 3.0438279\ldots$, below the value $R = 4$ of the critical binary Galton–Watson tree. Furthermore (Theorem 21), the combinatorial shape of $T^{(N)}_{\mathrm K}$ has the same law as the shape of the level-set tree of the extended white noise $\tilde W^{(N)}$ (Example 15: $2N-1$ values with $N$ local maxima, built from a white noise $W^{(N)}_1,\dots,W^{(N)}_{N-1}$ of length $N-1$); equivalently, one Horton pruning of $\mathrm{shape}(T^{(N)}_{\mathrm K})$ has the law of the level-set tree of a discrete white noise of length $N-1$ ((183)). So the white-noise tree obeys the same root-Horton law (Corollary 17).
 
 ## Depends on
 

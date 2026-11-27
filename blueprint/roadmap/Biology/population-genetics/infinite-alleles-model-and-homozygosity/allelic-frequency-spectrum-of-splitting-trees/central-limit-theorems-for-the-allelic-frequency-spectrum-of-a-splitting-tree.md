@@ -4,13 +4,13 @@
 
 **Theorem (error of the random-limit approximation).** Assume the clonal subcritical regime $\theta > \alpha$ and $\int_{[0,\infty)} e^{(\theta-\alpha)v}\,\mathbb{P}_V(dv) > 1$. Then
 
-$$\Big(e^{\alpha t/2}\big(\psi'(\alpha)A(k,t) - e^{\alpha t}c_k\,\mathcal{E}\big)\Big)_{k\in\mathbb{N}} \xrightarrow[t\to\infty]{(d)} \mathcal{L}(0,K)$$
+$$\Big(e^{-\alpha t/2}\big(\psi'(\alpha)A(k,t) - e^{\alpha t}c_k\,\mathcal{E}\big)\Big)_{k\in\mathbb{N}} \xrightarrow[t\to\infty]{(d)} \mathcal{L}(0,K)$$
 
 for some covariance matrix $K$.
 
 **Theorem (error of the proportional approximation).** Assume only $\theta > \alpha$. Then
 
-$$\psi'(\alpha)\Big(e^{\alpha t/2}\big(A(k,t) - c_k N_t\big)\Big)_{k\in\mathbb{N}} \xrightarrow[t\to\infty]{(d)} \mathcal{L}(0,M),$$
+$$\psi'(\alpha)\Big(e^{-\alpha t/2}\big(A(k,t) - c_k N_t\big)\Big)_{k\in\mathbb{N}} \xrightarrow[t\to\infty]{(d)} \mathcal{L}(0,M),$$
 
 where the covariance $M$ is an explicit integral functional of $\theta$, $W$, $W_\theta$ and the finite-time means $\mathbb{E}_a[A(k,a)]$.
 
@@ -31,4 +31,4 @@ Decompose the population at an intermediate time $u = \beta t$: by the residual-
 ## Sources
 
 - Benoit Henry, "Approximation of the allelic frequency spectrum in general supercritical branching populations", *Stochastic Process. Appl.* 132 (2021), 192-225. <https://doi.org/10.1016/j.spa.2020.10.008>
-- Preprint version (the locators in this item follow its numbering): Benoit Henry, "Approximations of the allelic frequency spectrum in general supercritical branching populations", arXiv:1701.07281 (2017), Theorems 3.1, 3.3 and 3.5, Lemmas 4.1–4.11, <https://doi.org/10.48550/arXiv.1701.07281>.
+- Preprint version (the locators in this item follow its numbering): Benoit Henry, "Approximations of the allelic frequency spectrum in general supercritical branching populations", arXiv:1701.07281 (2017), Theorems 3.1, 3.3 and 3.5, Lemmas 4.1–4.11, <https://doi.org/10.48550/arXiv.1701.07281>. The preprint prints the normalization $e^{\alpha t/2}$ in Theorems 3.1, 3.3 and 3.5; this is a sign misprint, since its Lemma 4.5 gives $\lim_{t\to\infty}e^{-\alpha t}\,\mathbb{E}\big[(\psi'(\alpha)A(k,t)-e^{\alpha t}\mathcal{E}c_k)(\psi'(\alpha)A(l,t)-e^{\alpha t}\mathcal{E}c_l)\big]=\frac{\alpha}{b}a_{k,l}$, so the errors are of order $e^{\alpha t/2}$ and the normalization that converges is $e^{-\alpha t/2}$, used above.
