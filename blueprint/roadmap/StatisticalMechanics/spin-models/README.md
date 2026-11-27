@@ -13,3 +13,4 @@ Spin models on finite graphs: the Ising Hamiltonian, Gibbs distribution and part
   independent Gaussian couplings, the Sherrington–Kirkpatrick model.
 
 - [Exponential decay for the planar classical O(n) model](classical-on-planar-decay.md)
+- [Undecidable ground-state properties](undecidable-ground-state-properties/README.md)
