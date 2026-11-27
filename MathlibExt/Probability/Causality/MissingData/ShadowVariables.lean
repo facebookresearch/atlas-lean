@@ -190,17 +190,31 @@ theorem map_shadowObs_eq_iff [Fintype 𝒴] [Finite 𝒵] {P Q : Measure (Bool �
 /-! ### The shadow assumption -/
 
 /-- **Shadow variable assumption**: the shadow variable `Z` is conditionally independent of the
-response given the outcome, `Z ⊥ R | Y`. -/
+response given the outcome, `Z ⊥ R | Y`, stated by the discrete-fibre test `CondIndepDiscrete`.
+Sufficient conditions for that test to be conditional independence given the outcome are a
+finite measure on a standard Borel space and a countable outcome space with measurable
+singletons: there `missingAtRandomCondIndepFun_iff_condIndepDiscrete` identifies it with
+Mathlib's conditional independence of the response indicator and `Z` given `σ(Y)`. These
+conditions are not necessary. Without them the test can hold vacuously: if the outcome is
+diffuse, every fibre `{Y = y}` has mass zero, so every fibre identity reads `0 = 0` whether or
+not `Z ⊥ R | Y`. -/
 def ShadowVariable (P : Measure (Bool × 𝒴 × 𝒵)) : Prop :=
   CondIndepDiscrete P {ω | ω.1 = true} (fun ω => ω.2.2) (fun ω => ω.2.1)
 
 /-- **Completeness**: the respondents' outcome given the shadow variable is complete. For every
-`g`, if `∑ y, P(R = true, Y = y, Z = z) g(y) = 0` for all `z` (equivalently
-`E[g(Y) | Z = z, R = true] = 0` wherever defined), then `g = 0`. -/
+`g`, if `∑ y, P(R = true, Y = y, Z = z) g(y) = 0` for all `z`, then `g = 0`. The masses are
+`P.real` of singletons: for a finite measure with measurable singletons the condition reads
+`E[g(Y) | Z = z, R = true] = 0` wherever defined, while `P.real` reads an infinite point mass
+as `0`. -/
 def ShadowComplete [Fintype 𝒴] (P : Measure (Bool × 𝒴 × 𝒵)) : Prop :=
   ∀ g : 𝒴 → ℝ, (∀ z, ∑ y, P.real {(true, y, z)} * g y = 0) → g = 0
 
-/-- The nonresponse odds at the outcome value `y`: `P(R = false, Y = y) / P(R = true, Y = y)`. -/
+/-- The nonresponse odds at the outcome value `y`: `P(R = false, Y = y) / P(R = true, Y = y)`,
+each mass a sum of `P.real` of singletons. It is the odds for a finite measure with measurable
+singletons (`P.real` reads an infinite point mass as `0`) and positive respondent mass
+`∑ z, P.real {(true, y, z)}`. When nobody responds at `y` that sum is `0`, and division by zero
+makes the value `0`, not the odds; `ShadowVariable.measureReal_false_eq` assumes the sum is
+nonzero. -/
 noncomputable def shadowOdds [Fintype 𝒵] (P : Measure (Bool × 𝒴 × 𝒵)) (y : 𝒴) : ℝ :=
   (∑ z, P.real {(false, y, z)}) / ∑ z, P.real {(true, y, z)}
 
@@ -281,7 +295,9 @@ theorem shadowVariable_of_odds [Finite 𝒴] [Finite 𝒵] {P : Measure (Bool ×
   ring
 
 omit [MeasurableSingletonClass 𝒴] [MeasurableSingletonClass 𝒵] in
-/-- **Completeness forces respondents at every outcome value**: `P(R = true, Y = y) ≠ 0`. -/
+/-- **Completeness forces respondents at every outcome value**: the singleton masses
+`P.real {(true, y, z)}` do not sum to `0`. When singletons are measurable, the sum is
+`P(R = true, Y = y)`. -/
 theorem ShadowComplete.sum_ne_zero [Fintype 𝒴] [Fintype 𝒵]
     {P : Measure (Bool × 𝒴 × 𝒵)} [IsFiniteMeasure P]
     (hc : ShadowComplete P) (y : 𝒴) : ∑ z, P.real {(true, y, z)} ≠ 0 := by

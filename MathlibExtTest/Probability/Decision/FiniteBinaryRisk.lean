@@ -242,7 +242,7 @@ theorem finiteBinaryRisk_det_constTrue :
     rw [Kernel.lintegral_comp _ _ _ hm]
     simp only [Kernel.lintegral_deterministic measurable_const]
     rw [Kernel.boolKernel_false]
-    simp only [ite_eq_right (show (false:Bool) ≠ true from by decide), if_true]
+    simp only [ite_eq_right (show (false:Bool) ≠ true from by decide), ite_true]
     rw [lintegral_finsetSum_measure]
     simp only [lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
     rw [Fin.sum_univ_two]

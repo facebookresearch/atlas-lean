@@ -377,7 +377,7 @@ theorem decodeOracleCodeFuel_sound : ∀ (fuel : ℕ) (tag payload : ℕ)
         simp [encodeOracleCode, hp]
       · simp [decodeOracleCodeFuel, hp] at h
     · simp only [decodeOracleCodeFuel] at h
-      rw [if_true] at h
+      rw [ite_true] at h
       cases h1 : decodeOracleCodeFuel fuel payload.unpair.1.unpair.1
           payload.unpair.1.unpair.2 with
       | none => rw [h1] at h; simp at h
@@ -397,7 +397,7 @@ theorem decodeOracleCodeFuel_sound : ∀ (fuel : ℕ) (tag payload : ℕ)
           show encodeOracleCode (OracleCode.pair a b) = Nat.pair 4 payload
           simp [encodeOracleCode, e1, e2, Nat.pair_unpair]
     · simp only [decodeOracleCodeFuel] at h
-      rw [if_true] at h
+      rw [ite_true] at h
       cases h1 : decodeOracleCodeFuel fuel payload.unpair.1.unpair.1
           payload.unpair.1.unpair.2 with
       | none => rw [h1] at h; simp at h
@@ -417,7 +417,7 @@ theorem decodeOracleCodeFuel_sound : ∀ (fuel : ℕ) (tag payload : ℕ)
           show encodeOracleCode (OracleCode.comp a b) = Nat.pair 5 payload
           simp [encodeOracleCode, e1, e2, Nat.pair_unpair]
     · simp only [decodeOracleCodeFuel] at h
-      rw [if_true] at h
+      rw [ite_true] at h
       cases h1 : decodeOracleCodeFuel fuel payload.unpair.1.unpair.1
           payload.unpair.1.unpair.2 with
       | none => rw [h1] at h; simp at h
@@ -437,7 +437,7 @@ theorem decodeOracleCodeFuel_sound : ∀ (fuel : ℕ) (tag payload : ℕ)
           show encodeOracleCode (OracleCode.prec a b) = Nat.pair 6 payload
           simp [encodeOracleCode, e1, e2, Nat.pair_unpair]
     · simp only [decodeOracleCodeFuel] at h
-      rw [if_true] at h
+      rw [ite_true] at h
       cases hdec : decodeOracleCodeFuel fuel payload.unpair.1 payload.unpair.2 with
       | none => rw [hdec] at h; simp at h
       | some a =>
