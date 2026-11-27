@@ -233,6 +233,85 @@ Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 2.8. -/
 public theorem bishopColorQuasiCoeff_zero_zero (z : ℂ) : bishopColorQuasiCoeff 0 0 z = 1 := by
   simp [bishopColorQuasiCoeff, twoAssocStirlingSecond, santosBeta_zero]
 
+-- Group the summands by the index left after removing `j`.
+private theorem sum_triangular (q : ℕ) (f : ℕ → ℕ → ℤ) :
+    (∑ p ∈ range (q + 1), ∑ j ∈ range (p + 1), f (p - j) j) =
+      ∑ r ∈ range (q + 1), ∑ j ∈ range (q - r + 1), f r j := by
+  rw [sum_sigma', sum_sigma']
+  refine sum_nbij' (fun x => ⟨x.1 - x.2, x.2⟩) (fun x => ⟨x.1 + x.2, x.2⟩)
+    ?_ ?_ ?_ ?_ (fun _ _ => rfl)
+  · rintro ⟨p, j⟩ hp
+    simp only [mem_sigma, mem_range] at hp ⊢
+    omega
+  · rintro ⟨r, j⟩ hr
+    simp only [mem_sigma, mem_range] at hr ⊢
+    omega
+  · rintro ⟨p, j⟩ hp
+    simp only [mem_sigma, mem_range] at hp
+    congr 1
+    change p - j + j = p
+    omega
+  · rintro ⟨r, j⟩ _
+    simp
+
+/-- **Ward's identity for Stirling numbers of the second kind.** For natural numbers $k \le m$,
+$$S(m, m - k) = \sum_{p=0}^{k} S_2(k + p, p) \binom{m}{k + p},$$
+where $S$ denotes the Stirling numbers of the second kind and $S_2$ the 2-associated Stirling
+numbers of the second kind.
+
+Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
+Journal of Integer Sequences 28 (2025), Article 25.8.6, Lemma 8 (`jis-2025-25.8.6-lem-8`). -/
+public theorem stirlingSecond_sub_eq_sum_associated (m k : ℕ) (hk : k ≤ m) :
+    (Nat.stirlingSecond m (m - k) : ℤ) =
+      ∑ p ∈ range (k + 1), twoAssocStirlingSecond (k + p) p * m.choose (k + p) := by
+  let q := m - k
+  have hm : k + q = m := Nat.add_sub_of_le hk
+  -- Changing the cutoff to `q` only removes or adds zero summands.
+  let g (p : ℕ) : ℤ := twoAssocStirlingSecond (k + p) p * m.choose (k + p)
+  have hcut : ∑ p ∈ range (k + 1), g p = ∑ p ∈ range (q + 1), g p := by
+    rcases le_total k q with h | h
+    · refine sum_subset (range_mono (Nat.succ_le_succ h)) fun p _ hp => ?_
+      simp only [mem_range, not_lt] at hp
+      simp [g, twoAssocStirlingSecond_eq_zero_of_lt_two_mul _ _ (by omega : k + p < 2 * p)]
+    · symm
+      refine sum_subset (range_mono (Nat.succ_le_succ h)) fun p _ hp => ?_
+      simp only [mem_range, not_lt] at hp
+      simp [g, Nat.choose_eq_zero_of_lt (by omega : m < k + p)]
+  -- Expand inclusion–exclusion. The two choices combine by choosing the
+  -- retained elements first, then the excluded singleton elements.
+  let f (r j : ℕ) : ℤ := (m.choose (k + r) : ℤ) * Nat.stirlingSecond (k + r) r *
+    ((-1) ^ j * (q - r).choose j)
+  have hexpand : ∑ p ∈ range (q + 1), g p =
+      ∑ p ∈ range (q + 1), ∑ j ∈ range (p + 1), f (p - j) j := by
+    refine sum_congr rfl fun p _ => ?_
+    simp only [g, twoAssocStirlingSecond, sum_mul]
+    refine sum_congr rfl fun j hj => ?_
+    rw [mem_range] at hj
+    have hindex : k + p - j = k + (p - j) := by omega
+    have hchoose := Nat.choose_mul (n := m) (k := k + p) (s := k + p - j) (by omega)
+    rw [show k + p - (k + p - j) = j by omega, show m - (k + p - j) = q - (p - j) by omega,
+      Nat.choose_symm (by omega : j ≤ k + p), hindex] at hchoose
+    have hcast : (m.choose (k + p) : ℤ) * (k + p).choose j =
+        (m.choose (k + (p - j)) : ℤ) * (q - (p - j)).choose j := by exact_mod_cast hchoose
+    dsimp [f]
+    rw [hindex]
+    calc
+      _ = ((-1 : ℤ) ^ j * Nat.stirlingSecond (k + (p - j)) (p - j)) *
+            ((m.choose (k + p) : ℤ) * (k + p).choose j) := by ring
+      _ = _ := by rw [hcast]; ring
+  -- The alternating binomial sum vanishes except at `r = q`.
+  change (Nat.stirlingSecond m q : ℤ) = ∑ p ∈ range (k + 1), g p
+  rw [hcut, hexpand, sum_triangular]
+  symm
+  rw [sum_eq_single q]
+  · simp [f, ← mul_sum, hm]
+  · intro r hr hrq
+    have hne : q - r ≠ 0 := by
+      rw [mem_range] at hr
+      omega
+    simp [f, ← mul_sum, Int.alternating_sum_range_choose_of_ne hne]
+  · simp
+
 end
 
 namespace bishopsSquare_eq_sum

@@ -45,7 +45,7 @@ def topologicalConeSetoid.{u} (X : Type u) :
           | Or.inr h, Or.inl rfl => Or.inr h
           | Or.inr h, Or.inr h' => Or.inr ⟨h.1, h'.2⟩ }
 
-  /-- Let X be a topological space and give
+/-- Let X be a topological space and give
     [0,1]⊆ℝ the subspace topology. Form
     the cylinder X×[0,1] with the product
     topology. Define an equivalence relation on
@@ -62,7 +62,7 @@ def topologicalConeSetoid.{u} (X : Type u) :
 
 -- Topology 393: Suspension of a Topological Space
 
-def suspensionSetoid.{u} (X : Type u) [TopologicalSpace X]  :
+def suspensionSetoid.{u} (X : Type u) [TopologicalSpace X] :
     Setoid (X × Set.Icc (0 : ℝ) 1) where
   r p q :=
     p = q ∨

@@ -1,0 +1,16 @@
+# Deadlock exposure in packet switching networks
+
+- [Instances of DEADLOCK EXPOSURE IN PACKET SWITCHING NETWORKS](deadlock-exposure-packet-switching-insta.md)
+- [Buffer counts](buffers.md)
+- [Routes as vertex lists](route.md)
+- [Source of a route](source.md)
+- [Destination of a route](dest.md)
+- [Window sizes](window.md)
+- [Well-formed DEADLOCK EXPOSURE IN PACKET SWITCHING NETWORKS instances](well-formed.md)
+- [Location of a packet](location.md)
+- [Occupancy of a vertex](occupancy.md)
+- [Packets in transit between two vertices](in-transit.md)
+- [Deadlock states](is-deadlock-state.md)
+- [Feasible DEADLOCK EXPOSURE IN PACKET SWITCHING NETWORKS instances](deadlock-exposure-packet-switching-feasi.md)
+- [DEADLOCK EXPOSURE IN PACKET SWITCHING NETWORKS as a decision problem](deadlock-exposure-packet-switching-dec.md)
+- [DEADLOCK EXPOSURE IN PACKET SWITCHING NETWORKS is NP-complete](deadlock-exposure-packet-switching-np-co.md)

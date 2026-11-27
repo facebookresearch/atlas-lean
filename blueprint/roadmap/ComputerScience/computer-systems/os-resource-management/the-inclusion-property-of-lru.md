@@ -1,13 +1,22 @@
 # The inclusion property of LRU
 
-Run LRU page replacement with $k$ frames and with $k + 1$ frames on the same reference string, both starting empty. At every time, the set of pages held with $k$ frames is contained in the set held with $k + 1$ frames. Consequently the number of LRU page faults on a reference string is nonincreasing in the number of frames. LRU is a *stack algorithm*, and so does not exhibit Belady's anomaly.
+Run LRU page replacement with capacities $k \le \ell$ on the same reference string, both starting
+empty. After every prefix, the cache with $k$ frames is a prefix of the cache with $\ell$ frames
+when both list their resident pages from most recent to least recent. Thus a hit in the smaller
+cache is also a hit in the larger one, and increasing capacity cannot increase the number of
+faults. This is the *stack property*, which rules out Belady's anomaly for LRU. At capacity zero
+the cache always stays empty.
 
-**Proof.** By induction on time, LRU with $m$ frames holds exactly the $\min(m, d)$ most recently referenced distinct pages, where $d$ is the number of distinct pages referenced so far:
-- a hit only reorders recency;
-- a miss with a free frame adds the referenced page;
-- a miss with all frames full evicts the least recently referenced held page, which is the $(m+1)$-st most recent distinct page once the new reference is counted.
-
-The $k$ most recent distinct pages are among the $k + 1$ most recent, which gives inclusion. A reference that hits with $k$ frames is therefore also a hit with $k + 1$ frames.
+**Proof.** The distinct pages, ordered by their most recent references, are obtained by keeping
+each page's last occurrence in the prefix and reversing the resulting list. LRU with $m$ frames
+holds the first $m$ entries, or the whole list if fewer than $m$ pages have appeared. This holds
+initially. On a request, move the requested page to the front, removing its old occurrence if
+present. For positive $m$, every other page in the new first $m$ entries was already in the old
+first $m$: if the requested page was inside that prefix, the other entries shift at most one
+position; if it was outside, only the old first $m-1$ entries survive in the new prefix. For
+$m=0$ no entries are kept. This proves the cache characterization by induction. Taking prefixes
+of the same list now gives inclusion. Comparing the two hit indicators before each request and
+summing the corresponding miss indicators gives the fault-count inequality.
 
 FIFO does not have this property. With 3 and 4 frames on the reference string $1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5$, FIFO incurs 9 and 10 faults respectively.
 

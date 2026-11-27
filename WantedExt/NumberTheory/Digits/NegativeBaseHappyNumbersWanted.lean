@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Iterate
 public import MathlibExt.NumberTheory.Digits.NegativeBaseDigitSquareCongruence
+public import MathlibExt.NumberTheory.Digits.NegativeBaseHappyNumbers
 
 /-!
 # Negative base happy numbers
@@ -31,14 +32,6 @@ finite set `T` is `(2, b)`-good if for each `u ∈ U_{2,b}` there are `n, k ≥ 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The digit-square sum of zero.** For every integer $b$, the base-$b$ digit-square sum $S_{2,b}$
-satisfies $S_{2,b}(0) = 0$.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-theorem negBaseSqDigitSum_zero (b : ℤ) : negBaseSqDigitSum b 0 = 0 := by
-  simp [negBaseSqDigitSum, negBaseSqDigitSumAux]
 
 /-- **The digit-square sum of a single digit.** Let $b$ and $d$ be integers with $0 < d < -b$, so
 that $b \le -2$ and $d$ is a nonzero base-$b$ digit. Then the base-$b$ digit-square sum $S_{2,b}$
@@ -88,16 +81,6 @@ theorem isNegBaseHappy_one {b : ℤ} (hb : b ≤ -2) : IsNegBaseHappy b 1 :=
   ⟨1, one_pos, by
     simpa using negBaseSqDigitSum_of_digit (b := b) (d := 1) one_pos (by omega)⟩
 
-/-- **Cycles of the negative-base digit-square map.** For an integer $b$, let $S_{2,b}$ be the
-base-$b$ digit-square sum, which for $b \le -2$ sends an integer to the sum of the squares of its
-base-$b$ digits. Then $U_{2,b}$ is the set of positive integers $u$ such that $S_{2,b}^m(u) = u$
-for some $m \ge 1$, that is, the positive integers lying on a cycle of $S_{2,b}$.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def negBaseSqDigitCycles (b : ℤ) : Set ℤ :=
-  {u | 0 < u ∧ ∃ m : ℕ, 0 < m ∧ (negBaseSqDigitSum b)^[m] u = u}
-
 /-- **One lies on a cycle of the negative-base digit-square map.** For every integer $b \le -2$,
 $1 \in U_{2,b}$, where $U_{2,b}$ is the set of positive integers lying on a cycle of the base-$b$
 digit-square sum $S_{2,b}$.
@@ -106,19 +89,6 @@ Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbe
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
 theorem one_mem_negBaseSqDigitCycles {b : ℤ} (hb : b ≤ -2) : (1 : ℤ) ∈ negBaseSqDigitCycles b :=
   ⟨one_pos, isNegBaseHappy_one hb⟩
-
-/-- **Good sets for the digit-square map.** For an integer $b$, let $S_{2,b}$ be the base-$b$
-digit-square map, which for $b \le -2$ sends an integer to the sum of the squares of its base-$b$
-digits; write $S_{2,b}^k$ for its $k$-fold iterate, and let $U_{2,b}$ be the set of positive
-integers $u$ with $S_{2,b}^m(u) = u$ for some $m \ge 1$. A finite set $T$ of integers is
-$(2, b)$-good if for each $u \in U_{2,b}$ there are integers $n \ge 1$ and $k \ge 1$ such that
-$S_{2,b}^k(t + n) = u$ for every $t \in T$.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def IsNegBaseGood (b : ℤ) (T : Finset ℤ) : Prop :=
-  ∀ u ∈ negBaseSqDigitCycles b, ∃ n : ℤ, 0 < n ∧ ∃ k : ℕ, 0 < k ∧
-    ∀ t ∈ T, (negBaseSqDigitSum b)^[k] (t + n) = u
 
 /-- **Happy numbers in base $-2$.** There is an integer $n$ such that $n + 3i$ is $(-2)$-happy for
 every natural number $i$, and an integer $a$ is $(-2)$-happy if and only if $a \equiv 1 \pmod 3$.
@@ -176,33 +146,6 @@ Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.2. -/
 public theorem_wanted isNegBaseHappy_consecutive_runs_even (b : ℤ) (hb : b ≤ -4) (heven : Even b)
     (N : ℕ) :
     ∃ n : ℤ, ∀ i < N, IsNegBaseHappy b (n + i)
-
-/-- **Goodness pulls back along compositions of the digit-square map and the successor map.**
-Let $b \le -2$ be an integer, let $S_{2,b}$ be the map sending an integer to the sum of the
-squares of its base-$b$ digits, and let $I(t) = t + 1$. Let $T$ be a finite set of positive
-integers and let $F$ be a composition $F = f_1 \circ \dots \circ f_m$ with $m \ge 0$ (the empty
-composition being the identity), where each $f_i$ is $S_{2,b}$ or $I$. If the image $F(T)$ is
-$(2, b)$-good, then $T$ is $(2, b)$-good.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.1. -/
-public theorem_wanted isNegBaseGood_of_image_comp (b : ℤ) (hb : b ≤ -2) (T : Finset ℤ)
-    (hT : ∀ t ∈ T, 0 < t) (ops : List Bool)
-    (hgood : IsNegBaseGood b (T.image
-      ((ops.map fun op => if op then negBaseSqDigitSum b else fun t => t + 1).foldr (· ∘ ·) id))) :
-    IsNegBaseGood b T
-
-/-- **A common iterate of the negative-base digit-square map falls below twice the squared base.**
-Let $b \le -7$ be an integer, let $S_{2,b}$ be the map sending an integer to the sum of the
-squares of its base-$b$ digits, and write $S_{2,b}^k$ for its $k$-fold iterate. For every finite
-set $A$ of positive integers there is an integer $k \ge 1$ such that $S_{2,b}^k(a) < 2b^2$ for
-every $a \in A$.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.2. -/
-public theorem_wanted exists_iterate_negBaseSqDigitSum_lt (b : ℤ) (hb : b ≤ -7) (A : Finset ℤ)
-    (hA : ∀ a ∈ A, 0 < a) :
-    ∃ k : ℕ, 0 < k ∧ ∀ a ∈ A, (negBaseSqDigitSum b)^[k] a < 2 * b ^ 2
 
 /-- **Even bases at most $-4$ make every finite set of positive integers good.** Let $b \le -4$
 be an even integer. Then every finite set of positive integers is $(2, b)$-good.
