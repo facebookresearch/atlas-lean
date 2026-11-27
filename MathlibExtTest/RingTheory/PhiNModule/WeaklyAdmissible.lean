@@ -15,7 +15,9 @@ import Mathlib.NumberTheory.Padics.PadicNumbers
 Over `K₀ = K = ℚ_[p] = W(𝔽_p)[1/p]`, whose absolute Frobenius is the identity, with the `p`-adic
 valuation `Padic.addValuation` (so `v(p) = 1`): the one-dimensional filtered `φ`-module
 `ℚ_[p](n)` with `φ = p ^ n` and the filtration jumping at `n` has `t_H = t_N = n` and is weakly
-admissible, while the same `φ` with the filtration jumping at `n + 1` is not.
+admissible, while the same `φ` with the filtration jumping at `n + 1` is not. The results of
+Fontaine–Ouyang, Proposition 8.41, are applied to the zero morphism `ℚ_[p](0) → ℚ_[p](1)` and to
+the identity of `ℚ_[p](0)`.
 -/
 
 open Module TensorProduct FilteredPhiNModule
@@ -80,5 +82,39 @@ example (n : ℕ) (D' : Submodule ℚ_[p] ℚ_[p]) (h : (line (p := p) n n).IsSt
     ((line n n).quotient D' h).newtonNumber Padic.addValuation ≤
       ((line n n).quotient D' h).hodgeNumber :=
   ((isWeaklyAdmissible_iff_quotient _ padic_hv).mp (isWeaklyAdmissible_line n)).2 D' h
+
+/-- The zero morphism `ℚ_[p](0) → ℚ_[p](1)`. -/
+noncomputable def zeroHom : (line (p := p) 0 0).Hom (line 1 1) where
+  toLinearMap := 0
+  map_φ _ := by simp
+  map_N _ := by simp
+  map_fil_le _ := by simp
+
+/-- The identity morphism of `ℚ_[p](0)`. -/
+noncomputable def idHom : (line (p := p) 0 0).Hom (line 0 0) where
+  toLinearMap := LinearMap.id
+  map_φ _ := rfl
+  map_N _ := rfl
+  map_fil_le _ := by simp
+
+example : ((line (p := p) 0 0).restrict (LinearMap.ker (zeroHom (p := p)).toLinearMap)
+    zeroHom.isStable_ker).IsWeaklyAdmissible Padic.addValuation :=
+  IsWeaklyAdmissible.ker padic_hv (isWeaklyAdmissible_line 0) (isWeaklyAdmissible_line 1) zeroHom
+
+example : ((line (p := p) 1 1).quotient (LinearMap.range (zeroHom (p := p)).toLinearMap)
+    zeroHom.isStable_range).IsWeaklyAdmissible Padic.addValuation :=
+  IsWeaklyAdmissible.coker padic_hv (isWeaklyAdmissible_line 0) (isWeaklyAdmissible_line 1)
+    zeroHom
+
+example : ((line (p := p) 0 0).restrict (LinearMap.range (idHom (p := p)).toLinearMap)
+    idHom.isStable_range).IsWeaklyAdmissible Padic.addValuation :=
+  IsWeaklyAdmissible.range padic_hv (isWeaklyAdmissible_line 0) (isWeaklyAdmissible_line 0) idHom
+
+/-- Strictness of the identity of `ℚ_[p](0)` for the filtrations. -/
+example (i : ℤ) : ((line (p := p) 0 0).fil.Fil i).map ((idHom (p := p)).toLinearMap.baseChange
+      ℚ_[p]) = LinearMap.range ((idHom (p := p)).toLinearMap.baseChange ℚ_[p]) ⊓
+      (line (p := p) 0 0).fil.Fil i :=
+  IsWeaklyAdmissible.map_fil_eq_range_inf_fil padic_hv (isWeaklyAdmissible_line 0)
+    (isWeaklyAdmissible_line 0) idHom i
 
 end MathlibExtTest.RingTheory.PhiNModule.WeaklyAdmissible
