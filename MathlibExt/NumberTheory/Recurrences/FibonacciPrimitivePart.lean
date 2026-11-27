@@ -19,7 +19,8 @@ import MathlibExt.NumberTheory.Recurrences.FibonacciPrimeDivisibility
 /-! # Fibonacci entry points, cyclotomic values and primitive parts
 
 This module defines the Fibonacci entry point `z(k)`, the Fibonacci cyclotomic values `Φ_m` and
-the primitive parts `Ψ_m` of the Fibonacci numbers, and proves Lemma 1 of Luca's paper on
+the primitive parts `Ψ_m` of the Fibonacci numbers, and proves Lemma 1 of Luca, Pomerance and
+Wagner (*Fibonacci integers*, J. Number Theory 131 (2011)), as quoted in Luca's paper on
 factorials that are Fibonacci integers: if `∏_{a ∈ I} Φ_a / ∏_{b ∈ J} Φ_b` is a natural number,
 the prime factors of `∏_{b ∈ J} Ψ_b` inject into `I`, each prime `p` going to an element of the
 form `p^k z(p)` (`exists_injection_primeFactors_fibPrimitivePart`).
@@ -142,8 +143,13 @@ private theorem dvd_fib_iff_fibEntryPoint_dvd {k : ℕ} (hk : 0 < fibEntryPoint 
   · intro h
     exact (dvd_fib_fibEntryPoint hk).trans (Nat.fib_dvd _ _ h)
 
-/-- The Fibonacci entry point of `3` is `4`. -/
-private theorem fibEntryPoint_three : fibEntryPoint 3 = 4 := by
+/-- **Fibonacci entry point of $3$.** The least $m > 0$ such that $3$ divides the Fibonacci number
+$F_m$ is $4$, that is, the Fibonacci entry point of $3$ is $z(3) = 4$.
+
+Source: direct computation ($F_1 = F_2 = 1$, $F_3 = 2$, $F_4 = 3$) from the definition of the
+entry point in Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
+F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2. -/
+public theorem fibEntryPoint_three : fibEntryPoint 3 = 4 := by
   apply le_antisymm
   · exact Nat.sInf_le ⟨by norm_num, by decide⟩
   · refine le_csInf ⟨4, by norm_num, by decide⟩ ?_
@@ -623,7 +629,9 @@ of the form $p_l^{k_l} z(p_l)$.
 
 Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
 F_{18} F_{24} F_{30} =
-36!`*, INTEGERS 24 (2024), Article A72, Lemma 1 (`integers-2024-A72-lem-1`). -/
+36!`*, INTEGERS 24 (2024), Article A72, Lemma 1 (`integers-2024-A72-lem-1`), quoting
+Lemma 1 of F. Luca, C. Pomerance and S. Wagner, *Fibonacci integers*, J. Number Theory 131
+(2011), 440–457. -/
 public theorem exists_injection_primeFactors_fibPrimitivePart (I J : Multiset ℕ)
     (hI : ∀ n ∈ I, 3 ≤ n ∧ n ≠ 6 ∧ n ≠ 12) (hJ : ∀ m ∈ J, 3 ≤ m ∧ m ≠ 6 ∧ m ≠ 12)
     (hIJ : ∀ n ∈ I, ∀ m ∈ J, n ≠ m)
