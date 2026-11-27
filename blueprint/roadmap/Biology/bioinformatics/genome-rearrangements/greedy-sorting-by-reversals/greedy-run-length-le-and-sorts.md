@@ -8,3 +8,4 @@ identity.
 ## Sources
 
 - J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Theorem 1.
+- J. Kececioglu and D. Sankoff, author's copy of the same paper (revised 19 February 1993), Theorem 1, p. 8, <https://www.cs.arizona.edu/~kece/Research/papers/KS95.ps>.

@@ -9,4 +9,4 @@
 - [Greedy Run](greedy-run.md)
 - [Apply All](apply-all.md)
 - [The greedy algorithm sorts within `φ(π)` reversals](greedy-run-length-le-and-sorts.md)
-- [The greedy algorithm is a 2-approximation](greedy-run-length-le-two-mul-udist.md)
+- [Greedy sorting uses at most twice the reversal distance](greedy-run-length-le-two-mul-udist.md)

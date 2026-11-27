@@ -5,7 +5,7 @@ observed variables into three nonempty parts, with `κ_t = ∏_{j ∈ S_t} k_j` 
 `min(r, κ_1) + min(r, κ_2) + min(r, κ_3) ≥ 2r + 2`. Then there is a polynomial `Q` in the parameter
 coordinates that is nonzero at some parameter point and such that the parameters are identifiable
 up to label swapping at every parameter point where `Q` does not vanish (Allman–Matias–Rhodes 2009,
-Theorem 4).
+Theorem 4, first assertion).
 
 The source proves it by applying Kruskal's theorem to the three variables obtained by grouping the
 observed variables along the partition.

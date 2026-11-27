@@ -1,8 +1,8 @@
-# The greedy algorithm is a 2-approximation
+# Greedy sorting uses at most twice the reversal distance
 
 For every unsigned permutation `π` of `1, …, n` and every greedy run `rs` from `π`, `|rs| ≤ 2 d(π)`,
 where `d(π)` is the unsigned reversal distance of `π`: the greedy breakpoint algorithm uses at most
-twice the least number of reversals that sort `π` (Kececioglu–Sankoff 1995, Corollary 1).
+twice the least number of reversals that sort `π` (implied by Kececioglu–Sankoff 1995, Corollary 1).
 
 The source derives it from Theorem 1, which bounds every greedy run by the number `φ(π)` of
 breakpoints, and from `φ(π) ≤ 2 d(π)`, since a reversal removes at most two breakpoints.

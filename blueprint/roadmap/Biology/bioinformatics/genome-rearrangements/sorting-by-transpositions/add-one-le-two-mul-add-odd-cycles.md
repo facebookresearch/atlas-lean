@@ -9,3 +9,4 @@ transpositions sort `p` (`SortingByTranspositionsFeasible (p, m)`), then
 ## Sources
 
 - V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240, Theorem 2.4.
+- A. Labarre, *Combinatorial aspects of genome rearrangements and haplotype networks*, PhD thesis, Université libre de Bruxelles, 2008, Theorem 3.1, <https://theses.hal.science/tel-00482196v1>.

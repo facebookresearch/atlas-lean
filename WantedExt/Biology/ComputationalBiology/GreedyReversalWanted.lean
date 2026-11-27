@@ -29,9 +29,9 @@ at most `φ(π)` reversals.
 A greedy run is any sequence of reversals in which each reversal is a greedy choice at a
 permutation other than the identity; every choice the algorithm may make is covered. Theorem 1
 is stated as: every greedy run has at most `φ(π)` reversals, and some greedy run reaches the
-identity. Corollary 1 follows from Theorem 1 and `ub_le_two_mul_udist`, so it is not stated
-here. The `O(n²)` time and `O(n)` space bounds, and the paper's exact branch-and-bound algorithm,
-are not stated.
+identity. The ratio of Corollary 1 follows from Theorem 1 and `ub_le_two_mul_udist`, so it is not
+stated here. The `O(n²)` time and `O(n)` space bounds, and the paper's exact branch-and-bound
+algorithm, are not stated.
 
 Unsigned permutations, block reversals, the framed breakpoint count `φ` and the reversal distance
 are the canonical `UValid`, `revBlock`, `ubreaks` and `udist` of
@@ -67,7 +67,8 @@ the block has at least two elements (a one-element reversal changes nothing). -/
 def IsReversal (n : ℕ) (r : ℕ × ℕ) : Prop :=
   r.1 < r.2 ∧ r.2 < n
 
-/-- The number of breakpoints removed by the reversal `r` (negative if it creates some). -/
+/-- The number of breakpoints removed by the reversal `r` (negative if it creates more breakpoints
+than it removes). -/
 def removal (n : ℕ) (π : List ℤ) (r : ℕ × ℕ) : ℤ :=
   (ubreaks n π : ℤ) - ubreaks n (revBlock π r.1 r.2)
 
@@ -109,7 +110,10 @@ Theorem 1). For every unsigned permutation `π` of `1, …, n` (`UValid n π`), 
 from `π` has at most `ubreaks n π` reversals, and some greedy run from `π` ends at the
 identity.
 
-Source: J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Theorem 1. -/
+Source: J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Theorem 1.
+
+Source: J. Kececioglu and D. Sankoff, author's copy of the same paper (revised 19 February 1993),
+Theorem 1, p. 8, <https://www.cs.arizona.edu/~kece/Research/papers/KS95.ps>. -/
 theorem_wanted greedyRun_length_le_and_sorts (n : ℕ) {π : List ℤ} (hπ : UValid n π) :
     (∀ rs, GreedyRun n π rs → rs.length ≤ ubreaks n π) ∧
       ∃ rs, GreedyRun n π rs ∧ applyAll π rs = identity n

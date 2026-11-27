@@ -7,3 +7,4 @@ delta `dp P T i (j+1) - dp P T i j` with `i ≤ |P|` and `j < |T|`, is `-1`, `0`
 ## Sources
 
 - G. Myers, J. ACM 46 (1999) 395-415, Lemma 1.
+- J. Kärkkäinen, *String Processing Algorithms*, lecture notes, University of Helsinki, Autumn 2016, lecture 7, Lemma 3.15, <https://www.cs.helsinki.fi/u/tpkarkka/teach/16-17/SPA/lecture07.pdf>.

@@ -170,7 +170,11 @@ open Classical in
 `1, …, n` (`SValid n π`), the reversal distance `sdist n π` equals `b(π) - c(π) + h(π) + 1` if `π`
 is a fortress and `b(π) - c(π) + h(π)` otherwise, where `b(π) = sbreaks n π`.
 
-Source: S. Hannenhalli and P. A. Pevzner, J. ACM 46 (1999) 1-27, Theorem 5. -/
+Source: S. Hannenhalli and P. A. Pevzner, J. ACM 46 (1999) 1-27, Theorem 5.
+
+Source: R. Shamir and I. Pe'er, *Algorithms for Molecular Biology*, lecture 11 scribe notes,
+Tel Aviv University, 1998, Theorem 11.12,
+<https://www.cs.tau.ac.il/~rshamir/algmb/98/scribe/html/lec11/node13.html>. -/
 theorem_wanted sdist_eq (n : ℕ) {π : List ℤ} (hπ : SValid n π) :
     (sdist n π hπ : ℤ) = (sbreaks n π : ℤ) - cycles n π + hurdles n π +
       (if IsFortress n π then 1 else 0)

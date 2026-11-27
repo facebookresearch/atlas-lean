@@ -21,3 +21,7 @@ matrix lies in `{-1, 0, 1}`, a column is determined by its vertical deltas, whic
 
 - G. Myers, "A fast bit-vector algorithm for approximate string matching based on dynamic
   programming", J. ACM 46(3) (1999) 395-415, Lemma 1 and the column-update algorithm.
+- J. Kärkkäinen, *String Processing Algorithms*, lecture notes, University of Helsinki, Autumn
+  2016, lecture 7, Algorithm 3.21, with lecture 6, Theorem 3.8,
+  <https://www.cs.helsinki.fi/u/tpkarkka/teach/16-17/SPA/lecture07.pdf>,
+  <https://www.cs.helsinki.fi/u/tpkarkka/teach/16-17/SPA/lecture06.pdf>.

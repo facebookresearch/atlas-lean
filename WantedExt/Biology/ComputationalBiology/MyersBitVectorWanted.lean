@@ -71,7 +71,7 @@ def eqMask (P : List α) (c : α) : ℕ :=
 takes the state `(Pv, Mv, score)` and the match mask `Eq` of the next text character, where
 `Eq`, `Pv` and `Mv` are `m`-bit vectors, that is naturals below `2^m`. The update does not reduce
 these inputs, so wider ones are outside its contract. With `mask = 2^m - 1` and `¬x = mask ⊕ x`:
-`Xv = Eq ∨ Mv`, `Xh = (((Eq ∧ Pv) + Pv) ∧ mask) ⊕ Pv) ∨ Eq`, `Ph = Mv ∨ ¬(Xh ∨ Pv)`,
+`Xv = Eq ∨ Mv`, `Xh = ((((Eq ∧ Pv) + Pv) ∧ mask) ⊕ Pv) ∨ Eq`, `Ph = Mv ∨ ¬(Xh ∨ Pv)`,
 `Mh = Pv ∧ Xh`; the score increases by one if bit `m - 1` of `Ph` is set and otherwise
 decreases by one if bit `m - 1` of `Mh` is set; then `Ph` and `Mh` are shifted left by one
 (without carry-in, since `C[0, j] = 0`) and reduced modulo `2^m`, and the new state is
@@ -107,7 +107,11 @@ def myersMatches (P T : List α) (k : ℤ) : List ℕ :=
 vertical delta `dp P T (i+1) j - dp P T i j` with `i < |P|` and `j ≤ |T|`, and every horizontal
 delta `dp P T i (j+1) - dp P T i j` with `i ≤ |P|` and `j < |T|`, is `-1`, `0` or `1`.
 
-Source: G. Myers, J. ACM 46 (1999) 395-415, Lemma 1. -/
+Source: G. Myers, J. ACM 46 (1999) 395-415, Lemma 1.
+
+Source: J. Kärkkäinen, *String Processing Algorithms*, lecture notes, University of Helsinki,
+Autumn 2016, lecture 7, Lemma 3.15,
+<https://www.cs.helsinki.fi/u/tpkarkka/teach/16-17/SPA/lecture07.pdf>. -/
 theorem_wanted delta_mem (P T : List α) :
     (∀ i j, i < P.length → j ≤ T.length →
       ((dp P T (i + 1) j : ℤ) - dp P T i j) ∈ ({-1, 0, 1} : Set ℤ)) ∧

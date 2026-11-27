@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Sorting by transpositions: the odd-cycle bound and the 1.5 guarantee
+# Sorting by transpositions: the odd-cycle bounds and the transposition diameter
 
 A permutation `π` of `1, …, n` is framed by `π_0 = 0` and `π_{n+1} = n + 1` and written as the
 list `[π_0, π_1, …, π_{n+1}]`. For `1 ≤ i < j < k ≤ n + 1`, the transposition `ρ(i, j, k)`
@@ -76,19 +76,27 @@ of `[0, 1, …, n + 1]` with first entry `0` and last entry `n + 1`. If at most 
 transpositions sort `p` (`SortingByTranspositionsFeasible (p, m)`), then
 `n + 1 ≤ 2m + c_odd(p)`; that is, `d(p) ≥ (n + 1 - c_odd(p))/2`.
 
-Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240, Theorem 2.4. -/
+Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240, Theorem 2.4.
+
+Source: A. Labarre, *Combinatorial aspects of genome rearrangements and haplotype networks*,
+PhD thesis, Université libre de Bruxelles, 2008, Theorem 3.1,
+<https://theses.hal.science/tel-00482196v1>. -/
 theorem_wanted add_one_le_two_mul_add_oddCycles (n : ℕ) {p : List ℕ} (hlen : p.length = n + 2)
     {m : ℕ} (hp : WellFormed (p, m)) (hm : SortingByTranspositionsFeasible (p, m)) :
     n + 1 ≤ 2 * m + oddCycles n p
 
-/-- **The 1.5 guarantee** (Bafna–Pevzner 1998, Corollary 6.10). Let `p` be a framed permutation
-of `1, …, n`: a list of length `n + 2` with `WellFormed (p, 0)` (the bound `0` is not read).
-Then some number `m` of transpositions sorts `p` (`SortingByTranspositionsFeasible (p, m)`) with
-`4m + 3 c_odd(p) ≤ 3(n + 1)`, that is `m ≤ (3/4)(n + 1 - c_odd(p))`; with Theorem 2.4 this is
-within a factor `3/2` of `d(p)`.
+/-- **Odd-cycle upper bound on the transposition distance** (implied by Bafna–Pevzner 1998,
+Corollary 6.10). Let `p` be a framed permutation of `1, …, n`: a list of length `n + 2` with
+`WellFormed (p, 0)` (the bound `0` is not read). Then some number `m` of transpositions sorts `p`
+(`SortingByTranspositionsFeasible (p, m)`) with `4m + 3 c_odd(p) ≤ 3(n + 1)`, that is
+`m ≤ (3/4)(n + 1 - c_odd(p))`; with Theorem 2.4 this is within a factor `3/2` of `d(p)`.
 
 Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240,
-Corollary 6.10. -/
+Corollary 6.10.
+
+Source: A. Labarre, *Combinatorial aspects of genome rearrangements and haplotype networks*,
+PhD thesis, Université libre de Bruxelles, 2008, Theorem 3.4,
+<https://theses.hal.science/tel-00482196v1>. -/
 theorem_wanted exists_sortsWithin_three_quarters (n : ℕ) {p : List ℕ}
     (hlen : p.length = n + 2) (hp : WellFormed (p, 0)) :
     ∃ m, SortingByTranspositionsFeasible (p, m) ∧ 4 * m + 3 * oddCycles n p ≤ 3 * (n + 1)
@@ -99,7 +107,10 @@ read). Then some number `m` of transpositions sorts `p` (`SortingByTransposition
 with `4m ≤ 3n`.
 
 Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240,
-Corollary 6.11. -/
+Corollary 6.11.
+
+Source: D. A. Christie, *Genome rearrangement problems*, PhD thesis, University of Glasgow,
+1998, Section 1.6, p. 11, <https://theses.gla.ac.uk/74685/>. -/
 theorem_wanted exists_sortsWithin_diameter (n : ℕ) {p : List ℕ} (hlen : p.length = n + 2)
     (hp : WellFormed (p, 0)) :
     ∃ m, SortingByTranspositionsFeasible (p, m) ∧ 4 * m ≤ 3 * n
