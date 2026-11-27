@@ -19,15 +19,18 @@ import Mathlib.Tactic.Ring
 An alternative deletion operation for Braun-tree priority queues,
 following the AFP entry `Priority_Queue_Braun2`: `replaceMin` replaces
 the root by a new element and restores the heap invariant with
-`siftDown`, and `delMin2` deletes the minimum by replacing the root
-with the leftmost element and sifting down. `replaceMin` (on a Braun
-tree) is exactly `siftDown` (`replaceMin_siftDown`).
+`siftDown`, and `delMin2` deletes the minimum by dropping the root of
+a node and merging its two children (`delMin2 (Node l _ r) = merge l
+r`). `replaceMin` (on a Braun tree) is exactly `siftDown`
+(`replaceMin_siftDown`).
 
-`merge` merges two heaps by comparing their roots: it drops the
-smaller root and merges the remainder. It does not preserve `Braun`
-in general, but it preserves it when the arguments are the children
-of a single Braun node (`braun_size_merge`), which is all `delMin2`
-needs.
+`merge` merges two heaps into a heap containing both multisets
+(`mset_merge`): it compares the roots, keeps the smaller root as the
+new root, and merges the remainder. It drops no element: merging the
+singleton heaps `1` and `2` retains both values. It does not preserve
+`Braun` in general, but it preserves it when the arguments are the
+children of a single Braun node (`braun_size_merge`), which is all
+`delMin2` needs.
 
 `delMin2` is correct (`braun_delMin2`, `heap_delMin2`,
 `mset_delMin2`), and `pq_spec2` discharges the book's
