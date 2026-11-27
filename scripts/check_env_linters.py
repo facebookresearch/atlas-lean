@@ -61,7 +61,7 @@ ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (
 UNPLACED = re.compile(r"^#check (?P<text>.*)$")
 HEADER = re.compile(r"^/- The `(?P<linter>[^`]+)` linter reports:")
 # A module's name, as Lean prints it (with «» where needed), as `ChangedFile.lean_module` spells it.
-MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")
+MODULE = re.compile(r"^-- (?P<module>(?:«[^«»]*»|[^\s«])+)$")
 # `runLinter` prints one of these when it has linted its module.
 FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
 
@@ -169,6 +169,12 @@ HELPER = re.compile(rf"[ \t]*(?:@\[[^\]]*\][ \t]*)*(?P<name>{NAME})(?=[\s:({{\[�
 # Words that can start a line among `where` helpers without declaring one.
 NOT_HELPERS = frozenset({"termination_by", "decreasing_by", "deriving", "where", "with"})
 LET_REC = re.compile(rf"\blet[ \t]+rec[ \t]+(?P<name>{NAME})")
+NAME_RE = re.compile(NAME)
+# Words that cannot name a declaration of a `let rec`.
+KEYWORDS = frozenset({"let", "have", "show", "from", "fun", "match", "with", "if", "then", "else",
+                      "do", "by", "at", "in", "calc", "suffices", "return", "for", "where", "rec",
+                      "mut", "try", "catch", "finally", "unless", "open", "deriving",
+                      "termination_by", "decreasing_by", "nomatch", "nofun"})
 OPENERS, CLOSERS = "([{⟨⦃", ")]}⟩⦄"
 # What may stand between the start of a declaration's range and its keyword.
 PREFIX = re.compile(rf"\s+|@\[[^\]]*\]|{MODIFIERS}\b|set_option\s+\S+\s+\S+\s+in\b")
@@ -299,12 +305,64 @@ def let_recs(code: str, start: int, stop: int,
     found: list[tuple[str, int]] = []
     pos = start
     while match := LET_REC.search(code, pos, stop):
-        name = (*outer, match.group("name"))
-        value_end = min(let_rec_end(code, match, stop), stop)
-        found.append((".".join(name), match.start("name")))
-        found += let_recs(code, match.end(), value_end, name)
-        pos = max(value_end, match.end())
+        region_end = min(let_rec_end(code, match, stop), stop)
+        # `let rec p ... := v, q ... := w` declares `p` and `q`: each runs to the next.
+        decls = [(match.group("name"), match.start("name"), match.end()),
+                 *let_rec_siblings(code, match.end(), region_end)]
+        for number, (decl, offset, decl_start) in enumerate(decls):
+            decl_end = decls[number + 1][1] if number + 1 < len(decls) else region_end
+            name = (*outer, decl)
+            found.append((".".join(name), offset))
+            found += let_recs(code, decl_start, decl_end, name)
+        pos = max(region_end, match.end())
     return found
+
+
+def let_rec_siblings(code: str, start: int, stop: int) -> list[tuple[str, int, int]]:
+    """The declarations after the first of a `let rec` whose declarations `code[start:stop]`
+    holds after the first's name: each name after a `,` outside brackets in a value, with the
+    offset of the name and of its end, when binders and `:` or `:=` follow it. A comma before
+    a value's `:=`, as in `∀ x, P x`, never separates two."""
+    found = []
+    in_value = False
+    for offset, char in top_level(code, start, stop):
+        if code.startswith(":=", offset):
+            in_value = True
+        elif char == "," and in_value:
+            decl = let_decl_name(code, offset + 1, stop)
+            if decl is not None:
+                found.append(decl)
+                in_value = False
+    return found
+
+
+def let_decl_name(code: str, start: int, stop: int) -> tuple[str, int, int] | None:
+    """The name that starts the declaration of a `let rec` at `start`, if one does: a name that
+    is not a keyword, binders (names or bracketed groups), then `:` or `:=` (not `::`)."""
+    name = NAME_AT.match(code, start, stop)
+    if name is None or name.group("name") in KEYWORDS:
+        return None
+    pos, depth = name.end(), 0
+    while pos < stop:
+        char = code[pos]
+        if char in OPENERS:
+            depth += 1
+        elif char in CLOSERS:
+            depth -= 1
+            if depth < 0:
+                return None
+        elif depth == 0 and not char.isspace():
+            if char == ":":
+                if code.startswith("::", pos):
+                    return None
+                return name.group("name"), name.start("name"), name.end()
+            binder = NAME_RE.match(code, pos, stop)
+            if binder is None or binder.group(0) in KEYWORDS:
+                return None
+            pos = binder.end()
+            continue
+        pos += 1
+    return None
 
 
 def let_rec_end(code: str, match: re.Match[str], stop: int) -> int:

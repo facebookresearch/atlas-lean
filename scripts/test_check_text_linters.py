@@ -166,7 +166,8 @@ class MainTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(linted, ["MathlibExt/First/Second.lean"])
         self.assertIn("MathlibExt/First.Second.lean:1: Module name `MathlibExt.«First.Second»` "
-                      "needs «»", out)
+                      "needs «», which Mathlib's lint-style cannot read; drop the `.` from the "
+                      "file's name", out)
         self.assertNotIn("MathlibExt/First/Second.lean:1:", out)
 
     def test_an_unreadable_base_is_a_failure_to_run(self):
