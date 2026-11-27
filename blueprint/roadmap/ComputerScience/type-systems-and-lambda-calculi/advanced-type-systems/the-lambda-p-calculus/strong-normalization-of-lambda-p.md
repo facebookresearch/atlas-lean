@@ -14,10 +14,14 @@ simply typed λ-calculus.
 
 - [The calculus λP](the-calculus-lambda-p.md)
 
-## Background
+## Related topics
 
 - [Pure type systems and the calculus of constructions](../pure-type-systems-and-the-calculus-of.md): strong normalization for every system of the λ-cube
 - [Beta reduction on pure type system pseudo-terms is confluent](../../calculus-of-constructions/beta-reduction-on-pure-type-system-pseudo-terms.md)
+
+## Proof depends on
+
+- [Translating λP into simple types](translating-lambda-p-into-simple-types.md)
 
 ## Expansion
 
