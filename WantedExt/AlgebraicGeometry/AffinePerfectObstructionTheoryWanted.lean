@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheory
+public import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheoryPolynomialLiftIndependence
 public import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheoryPresentationObstructionEqZeroIff
 
 /-!
@@ -57,14 +58,5 @@ public theorem_wanted vanishing_iff_lift [Algebra.FiniteType k B]
     (Q : Algebra.Extension.{0} k B) (_squareZero : Q.ker ^ 2 = ⊥)
     (L : PolynomialLift R Q) (C : CotangentExtensionCocycle R Q L) :
     obstructionClass T C = 0 ↔ Nonempty (Liftings Q)
-
-/-- The class in the actual derived obstruction group is independent of the
-chosen polynomial lift, with the explicit cocycle normalization retained. -/
-public theorem_wanted polynomial_lift_independence
-    (R : PolynomialResolution k B) (T : PerfectObstructionTheory R)
-    (Q : Algebra.Extension.{0} k B) (_squareZero : Q.ker ^ 2 = ⊥)
-    (L L' : PolynomialLift R Q)
-    (C : CotangentExtensionCocycle R Q L) (C' : CotangentExtensionCocycle R Q L') :
-    obstructionClass T C = obstructionClass T C'
 
 end WantedExt.AlgebraicGeometry.AffinePerfectObstructionTheoryWanted
