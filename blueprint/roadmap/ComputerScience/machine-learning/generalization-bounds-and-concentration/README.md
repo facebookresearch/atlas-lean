@@ -4,7 +4,6 @@ Uniform deviation bounds between the empirical and the expected risk, obtained f
 
 In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounded losses holds with high probability simultaneously for every posterior, through the Donsker–Varadhan change of measure.
 
-- [Dataset swap identity](swap-identity.md)
 - [Expected risk](risk.md)
 - [Empirical risk](empirical-risk.md)
 - [Learning a discrete distribution in total variation](learning-a-discrete-distribution-in-total-variat/README.md)

@@ -13,5 +13,4 @@ Poisson processes on the line and Poisson point processes on general spaces (arr
 - [Cluster spacing in Hegselmann–Krause dynamics](cluster-spacing-in-hegselmann-krause-dynamics.md)
 - [Renewal limits: nonlattice constants versus lattice oscillation](renewal-limits-nonlattice-constants-versus-latti/README.md)
 - [Stationary AR(1) variance](stationary-ar-1-variance/README.md)
-- [Stationary random functions](stationary-random-functions/README.md)
 - [The key renewal theorem for an `Exp(1)` tilted law](the-key-renewal-theorem-for-an-exp-1-tilted-law/README.md)

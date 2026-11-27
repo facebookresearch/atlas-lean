@@ -32,3 +32,4 @@
 - [Detailed balance for cycle weights](cycle-weight-detailed-balance.md)
 - [Kolmogorov's cycle theorem, sufficiency](kolmogorov-cycle-sufficiency.md)
 - [Kolmogorov's cycle theorem](kolmogorov-cycle-theorem.md)
+- [Time reversal of a stationary finite Markov chain](time-reversal-of-a-stationary-finite-markov-chai/README.md)

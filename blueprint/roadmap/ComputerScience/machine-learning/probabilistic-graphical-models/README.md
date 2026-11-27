@@ -9,7 +9,6 @@ Bayesian networks and their Markov properties, structure scores and Markov equiv
 - [Markov equivalence and Bayesian network scores](markov-equivalence-and-bayesian-network-scores/README.md)
 - [Bayesian networks](bayesian-networks/README.md)
 - [Causal Bayesian networks](causal-bayesian-networks/README.md)
-- [Semigraphoid lemmas for finite conditional independence](semigraphoid-lemmas-for-finite-conditional-indep/README.md)
 - [Structural causal models and counterfactuals](structural-causal-models-and-counterfactuals/README.md)
 - [Variable elimination and belief propagation](variable-elimination-and-belief-propagation/README.md)
 - [Additive noise models and causal identifiability](additive-noise-models-and-causal-identifiability/README.md)

@@ -25,11 +25,5 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 
 - [Martingale problems](martingale-problems/README.md)
 - [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
-- [Cheeger's inequality: the easy direction](cheeger-s-inequality-the-easy-direction/README.md)
 - [Drift and hitting bounds for iterated random maps](drift-and-hitting-bounds-for-iterated-random-map/README.md)
-- [Glauber dynamics for proper colorings](glauber-dynamics-for-proper-colorings/README.md)
-- [Iterating a variance contraction](variance-iterate-le.md)
-- [Markov chains: contraction of total variation](markov-chains-contraction-of-total-variation/README.md)
-- [Path coupling](path-coupling/README.md)
-- [Time reversal of a stationary finite Markov chain](time-reversal-of-a-stationary-finite-markov-chai/README.md)
 - [Autoregressive processes](autoregressive-processes/README.md)
