@@ -16,7 +16,7 @@ Introduce the conditions
 $(I_0)$: $\tilde w_4>0$;
 $(I_1)$: $(w_1+\tilde w_4)(w_2+\tilde w_4)(w_3+\tilde w_4)\ge(\tilde w_4-w_1)(\tilde w_4-w_4)(w_1+w_2+w_3+\tilde w_4)$;
 $(I_2)$: $a(w_1+w_4)+b\le(w_1+w_2)(w_2+w_3)(w_1+w_3)$;
-$(I_3)$: $a w_4/\tilde w_4+b/w_1<w_2w_3$, and $(\overline{I_3})$ its negation $a w_4/\tilde w_4+b/w_1\ge w_2w_3$.
+$(I_3)$: $a w_4/\tilde w_4+b/w_1<w_2w_3$, $(\overline{I_3})$ its negation $a w_4/\tilde w_4+b/w_1\ge w_2w_3$, and $(I_3^{>})$ the strict form $a w_4/\tilde w_4+b/w_1>w_2w_3$.
 
 **Local stability.**
 1. Without delays, $(I_0)$, $(I_1)$, $(I_2)$ imply that $E$ is locally asymptotically stable.
@@ -28,7 +28,7 @@ $$
 Q(z)=-\frac{a(z+w_1)(z+w_4)+b(z+\tilde w_4)}{(z+w_1)(z+w_2)(z+w_3)(z+\tilde w_4)} .
 $$
 
-Under $(I_0)$, $\omega\mapsto|Q(i\omega)|$ is strictly decreasing on $[0,\infty)$, the equation $|Q(i\omega)|=1$ has a unique positive root $\omega_0$ exactly when $(\overline{I_3})$ holds, and $\operatorname{Im}\big(Q'(i\omega)/Q(i\omega)\big)>0$ for $\omega>0$. Assume $(I_0)$, $(I_1)$, $(I_2)$ and $(\overline{I_3})$.
+Under $(I_0)$, $\omega\mapsto|Q(i\omega)|$ is strictly decreasing on $[0,\infty)$, the equation $|Q(i\omega)|=1$ has a unique positive root $\omega_0$ exactly when $(I_3^{>})$ holds, and $\operatorname{Im}\big(Q'(i\omega)/Q(i\omega)\big)>0$ for $\omega>0$. The source's Lemma 2b states the root claim under the non-strict $(\overline{I_3})$; at equality $|Q(0)|=(aw_4/\tilde w_4+b/w_1)/(w_2w_3)=1$ and $|Q(i\omega)|<1$ for $\omega>0$, so there is no positive root and no Hopf point, and the page uses the strict form. Assume $(I_0)$, $(I_1)$, $(I_2)$ and $(I_3^{>})$.
 
 - *Discrete delays* (all kernels Dirac, $H(z)=e^{-\tau z}$): with
 $\tau_p=\big(\arccos[\operatorname{Re}Q(i\omega_0)]+2p\pi\big)/\omega_0$, $p\in\mathbb Z_+$, the equilibrium $E$ is asymptotically stable if and only if $\tau\in[0,\tau_0)$, and a Hopf bifurcation occurs at every $\tau=\tau_p$.

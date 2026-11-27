@@ -23,7 +23,7 @@ $$
 y_i=y^*+T\,\xi_i\,\big[\pi'(y^*)-\delta'(y^*)\big]^{-1}\psi(y^*,y^*)+O(T^2),\qquad \xi_i=1-\sum_{j\in\mathcal N_i}\frac1{|\mathcal N_j|} .
 $$
 
-With passive transport, $y_i=y^*+T\eta_i+O(T^2)$ where $\big[J(y^*)+L\otimes D\big]\eta=(\xi_i\psi(y^*,y^*))_i$, $J$ block-diagonal with blocks $\pi'(y^*)-\delta'(y^*)$ and $L$ the graph Laplacian (Neumann).
+With passive transport ($D\ne0$), if moreover $J(y^*)+L\otimes D$ is nonsingular (for instance if $\pi'(y^*)-\delta'(y^*)$ is negative definite), then $y_i=y^*+T\eta_i+O(T^2)$ where $\big[J(y^*)+L\otimes D\big]\eta=(\xi_i\psi(y^*,y^*))_i$, $J$ block-diagonal with blocks $\pi'(y^*)-\delta'(y^*)$ and $L$ the (Neumann) graph Laplacian with $L_{ij}=1$ for $j\in\mathcal N_i$ and $L_{ii}=-|\mathcal N_i|$. The source's Remark 5.4 asks only that $\pi'(y^*)-\delta'(y^*)$ be nonsingular; that does not suffice: for $m=1$, a path of three cells and $\pi'-\delta'=3D$, the matrix $J+L\otimes D$ has kernel $(1,-2,1)$, the right-hand side is a nonzero multiple of it and so lies outside the range of this symmetric matrix, and no $\eta$ exists.
 
 ## Expansion
 

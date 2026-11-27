@@ -33,7 +33,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](part-01/gillespie-direct-method.md)
 - [Exactness of the SSA path law](part-01/exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](part-01/total-variation-error-of-a-finite-precision-ssa-step.md)
-- [Adiabatic reduction of bursty gene expression](part-01/adiabatic-reduction-of-bursty-gene-expression/README.md)
 - [Aggregation of the chemical master equation](part-01/aggregation-of-the-chemical-master-equation/README.md)
 - [Condensation in the generalized Poland–Scheraga model](part-01/condensation-in-the-generalized-poland-scheraga-model/README.md)
 - [Coupled finite-difference sensitivity estimation](part-01/coupled-finite-difference-sensitivity-estimation/README.md)

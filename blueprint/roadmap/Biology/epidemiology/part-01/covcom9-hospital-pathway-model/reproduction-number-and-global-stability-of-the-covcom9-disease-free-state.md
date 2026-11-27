@@ -10,7 +10,7 @@ $$E' = f - \pi_E E,\quad I' = \epsilon_1E - \pi_I I,\quad Q' = \epsilon_2E - \pi
 
 $$H' = \rho_1P + \eta C + \delta_2F - \pi_H H,\quad C' = \rho_2P + \kappa_2H - \pi_C C,\quad F' = \rho_3P + \kappa_3H - \pi_F F .$$
 
-Susceptibles are recruited at rate $\Lambda$ and also receive released quarantined individuals and recovered individuals who lose immunity.
+The source's (2.3f) prints $\delta_2Q$ in the $H$ equation; $\delta_2F$ is the term its (2.3h), $V$ (3.11) and $J_V$ (3.14), from which $\mathcal R_0$ (3.15) is computed, use, so the page writes $\delta_2F$. Susceptibles are recruited at rate $\Lambda$ and also receive released quarantined individuals and recovered individuals who lose immunity.
 
 **Reproduction number.** Let $\Theta = \frac{\epsilon_1\gamma_1}{\pi_E\pi_I} + \frac{\epsilon_2\upsilon_1}{\pi_E\pi_Q}$ be the probability that an exposed individual becomes test-positive, and $\Delta = \pi_H\pi_C\pi_F - \delta_2\kappa_3\pi_C - \eta\kappa_2\pi_F$. Then
 

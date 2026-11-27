@@ -16,7 +16,7 @@ $$
 
 so the combinatorial problem can be solved as a linear program in $\pi$ (effectively $m\times m$ with $m=\sum_aY_a$), alternated with updates of $\beta$.
 
-**Theorem (consistency of one ascent step).** Let the true model have $K^*$ TADs $[s_k,t_k]$ with densities $\alpha_k^*$ and background $\beta^*$, and let $n_k^*=t_k-s_k+1$. Suppose the initial $\beta^{(0)}$ satisfies $\beta^*<\beta^{(0)}<\min_k\alpha_k^*$, and for large $n$ every gap $(s_j-t_i-1)$ between non-adjacent true TADs satisfies
+**Theorem (consistency of one ascent step).** Assume, as in the source's Section 2.3, that every bin may carry a TAD boundary ($Y_a=1$ for all $a$, so $Y$ is omitted), and consider a single level of the hierarchy. Let the true model have a fixed number $K^*$ of TADs $[s_1,t_1],\dots,[s_{K^*},t_{K^*}]$ with densities $\alpha_k^*$ and background $\beta^*$, let $n_k^*=t_k-s_k+1$, $t_0=0$, $s_{K^*+1}=n+1$, and let $G^*$ be the number of inter-TAD regions. As $n\to\infty$ assume $n_k^*/n\to p_k>0$ for every $k$ and $(s_{k+1}-t_k-1)/n\to q_k$ for every $k$. Suppose the initial $\beta^{(0)}$ satisfies $\beta^*<\beta^{(0)}<\min_k\alpha_k^*$, and for large $n$ every gap $(s_j-t_i-1)$ between non-adjacent true TADs ($j>i+1$) satisfies
 
 $$
 \Big((s_j-t_i-1)^2-\sum_{i<k<j}(n_k^*)^2\Big)\,\mathrm{KL}(\beta^*\Vert\beta^{(0)})<\sum_{i<k<j}(n_k^*)^2\,\mathrm{KL}(\alpha_k^*\Vert\beta^{(0)}).

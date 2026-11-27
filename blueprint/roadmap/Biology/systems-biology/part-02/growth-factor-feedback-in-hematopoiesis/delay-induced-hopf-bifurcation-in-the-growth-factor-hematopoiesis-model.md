@@ -22,7 +22,7 @@ $$
 (\mu+k)\left[\mu k+(A-B)(\mu+k+A-B)\right]>GH(D-C).
 $$
 
-**Hopf bifurcation in the cell-cycle duration.** The characteristic equation has the form $P(\lambda,\tau)+Q(\lambda,\tau)e^{-\lambda\tau}=0$ with $P$ a monic cubic and $Q$ a quadratic in $\lambda$, both with $\tau$-dependent coefficients. Purely imaginary roots $i\omega$ require $F(\omega,\tau):=|P(i\omega,\tau)|^2-|Q(i\omega,\tau)|^2=h(\omega^2,\tau)=0$ with $h$ a cubic in $z=\omega^2$. Let $I\subset[0,\tau_{\max})$ be a set on which $h(\cdot,\tau)$ has a positive root $\omega^2(\tau)$, let $\theta(\tau)\in[0,2\pi)$ be the angle with $\cos\theta=\operatorname{Im}(P/Q)$ and $\sin\theta=-\operatorname{Re}(P/Q)$ evaluated at $(i\omega(\tau),\tau)$, and define
+**Hopf bifurcation in the cell-cycle duration.** The characteristic equation has the form $P(\lambda,\tau)+Q(\lambda,\tau)e^{-\lambda\tau}=0$ with $P$ a monic cubic and $Q$ a quadratic in $\lambda$, both with $\tau$-dependent coefficients. Purely imaginary roots $i\omega$ require $F(\omega,\tau):=|P(i\omega,\tau)|^2-|Q(i\omega,\tau)|^2=h(\omega^2,\tau)=0$ with $h$ a cubic in $z=\omega^2$. Let $I\subset[0,\tau_{\max})$ be a set on which $h(\cdot,\tau)$ has a positive root $\omega^2(\tau)$, let $\theta(\tau)\in[0,2\pi)$ be the angle with $\cos\theta=-\operatorname{Re}(P/Q)$ and $\sin\theta=\operatorname{Im}(P/Q)$ evaluated at $(i\omega(\tau),\tau)$ (so that $e^{-i\theta}=-P/Q$, as $e^{-i\omega\tau}=-P/Q$ at a root), and define
 
 $$
 S_n(\tau)=\tau-\frac{\theta(\tau)+2n\pi}{\omega(\tau)},\qquad n\in\mathbb{N}.

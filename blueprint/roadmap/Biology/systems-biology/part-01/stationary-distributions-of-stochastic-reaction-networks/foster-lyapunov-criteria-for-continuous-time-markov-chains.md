@@ -16,7 +16,7 @@ $$1 \le \pi(f) \le d\,\pi(F) \le d, \qquad \pi(\mathcal{S}\setminus F) \le 1 - \
 Conversely, if $Q$ is regular and $\mathcal{S}$ consists of finitely many closed communicating classes with no transient states, then boundedness in probability implies that such $F, d, f, v$ exist.
 3. *(Exponential ergodicity)* If $Qv \le -d_1 v + d_2$ for some $d_1 > 0$, $d_2\in\mathbb{R}$ and norm-like $v \ge 1$, then $Q$ is regular, the chain is bounded in probability, and for every initial law $\lambda$ with $\lambda(v) < \infty$ the time-varying law converges exponentially fast to its stationary limit.
 
-**Tail bounds for truncation.** If $\pi(w) \le c$ for a norm-like $w$, for example from criterion 2 with $f = w$, then the truncation $\mathcal{S}_r = \{w < r\}$ has tail mass
+**Tail bounds for truncation.** If $\pi(w) \le c$ for a nonnegative norm-like $w$, for example from criterion 2 with $f = w$, then the truncation $\mathcal{S}_r = \{w < r\}$ has tail mass
 
 $$m_r = \sum_{x\notin\mathcal{S}_r}\pi(x) \le \frac{c}{r}.$$
 

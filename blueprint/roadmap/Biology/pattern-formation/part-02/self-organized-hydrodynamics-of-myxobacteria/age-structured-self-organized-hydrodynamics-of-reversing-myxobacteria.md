@@ -8,7 +8,15 @@ the generalized von Mises distribution. The reversal rate $\Lambda(\sigma,s)$ va
 
 **Equilibria.** The nematic alignment operator has the equilibria $\bar f(\theta)=\rho_+M_{\bar\theta}(\theta)$ for $\cos(\theta-\bar\theta)>0$ and $\rho_-M_{\bar\theta}(\theta)$ for $\cos(\theta-\bar\theta)<0$: two counter-moving populations of densities $\rho_\pm(s)$ along a common axis $\bar\theta$ (defined modulo $\pi$). Its generalized collision invariants associated with $\bar\theta$ are spanned by the age-weighted indicators of the two half-circles and an explicit function $g(\theta-\bar\theta)$.
 
-**Theorem (formal hydrodynamic limit).** In the diffusive scaling of the kinetic equation, as the scaling parameter tends to $0$ the distribution converges to $\bar f_{\rho_+,\rho_-,\bar\theta}$, where $\rho_\pm(x,s,t)\ge0$ and $\bar\theta(x,t)$ solve
+**Theorem (formal hydrodynamic limit).** In the hydrodynamic scaling of the kinetic equation (the source's (2.9)–(2.10)), with local interactions, the rescaled distribution $f^\varepsilon(x,\theta,s,t)$ solves
+
+$$\varepsilon\,\partial_tf^\varepsilon+\nabla_x\cdot\big(v(\theta)f^\varepsilon\big)+\frac1T\partial_sf^\varepsilon=Q_{\rm al}(f^\varepsilon)+\varepsilon\,Q_{\rm rev}(f^\varepsilon),\qquad Q_{\rm al}(f)=\partial_\theta\Big(\operatorname{Sign}\big(\cos(\theta-\bar\theta_f)\big)\sin(\theta-\bar\theta_f)f+d\cos^2(\theta-\bar\theta_f)\,\partial_\theta f\Big),$$
+
+where $\bar\theta_f$ is the local nematic mean direction of $f$, $\sigma_f^\pm$ the local masses of the two half-circles, $Q_{\rm rev}(f)=-\big(\Lambda(\sigma_f^-,s)\chi_{\{\cos(\theta-\bar\theta_f)>0\}}+\Lambda(\sigma_f^+,s)\chi_{\{\cos(\theta-\bar\theta_f)<0\}}\big)f$, and the age-zero boundary condition is
+
+$$f(x,\theta,0,t)=T\int_0^\infty\Big(\Lambda(\sigma_f^-,s')\chi_{\{\cos(\theta-\bar\theta_f)<0\}}+\Lambda(\sigma_f^+,s')\chi_{\{\cos(\theta-\bar\theta_f)>0\}}\Big)f(x,\theta+\pi,s',t)\,ds'.$$
+
+As $\varepsilon\to0$ (formally) $f^\varepsilon$ converges to $\bar f_{\rho_+,\rho_-,\bar\theta}$, where $\rho_\pm(x,s,t)\ge0$ and $\bar\theta(x,t)$ solve, written back in physical units,
 
 $$\partial_t\rho_+ + d_1v_0\nabla_x\cdot(\rho_+v(\bar\theta))+\frac1T\partial_s\rho_+=-\Lambda(\sigma_-,s)\rho_+,$$
 
@@ -32,4 +40,4 @@ The kinetic equation for $f(x,\theta,s,t)$ combines free transport, ageing at ra
 
 ## Sources
 
-- Pierre Degond, Angelika Manhart, Hui Yu, "An age-structured continuum model for myxobacteria", arXiv:1702.06939 (2017), individual-based model (assumptions M1–M4), Lemmas 3.1–3.2, Proposition 3.3 and the macroscopic continuous-age model in physical units, <https://doi.org/10.48550/arXiv.1702.06939>.
+- Pierre Degond, Angelika Manhart, Hui Yu, "An age-structured continuum model for myxobacteria", arXiv:1702.06939 (2017), individual-based model (assumptions M1–M4), (2.9)–(2.10), Lemmas 2.1–2.2, Proposition 2.3 and the macroscopic continuous-age model in physical units ((2.17)–(2.18)), <https://doi.org/10.48550/arXiv.1702.06939>.

@@ -20,10 +20,10 @@ with continuity of $\phi$ across interfaces, flux continuity on the protein surf
 2. *(Surface transformation.)* Deform the membrane surfaces by a smooth velocity field $V$. The surface Jacobian $J_s$ satisfies $\frac{dJ_s}{dt}\big|_{t=0}=\nabla_s\cdot V$, and $\int_\Gamma\nabla_s\cdot F\,dS=0$ for continuous tangential fields $F$ on a closed surface.
 3. *(Electrostatic force.)* If $f\in H^1(\Omega)$, the shape derivative of $G[\Gamma]$ in direction $V$ is
 
-$$\delta_\Gamma G[\Gamma]=\int_\Gamma\Big(\frac{\varepsilon_s}{2}|\nabla\psi_0^s|^2-\frac{\varepsilon_m}{2}|\nabla\psi_0^m|^2+\varepsilon_m(\nabla\psi_0^m\cdot n)^2-\varepsilon_m(\nabla\psi_0^s\cdot n)(\nabla\psi_0^m\cdot n)+B(\psi_0)+q_l\rho\Gamma\Big)(V\cdot n)\,dS.$$
+$$\delta_\Gamma G[\Gamma]=\int_\Gamma\Big(\frac{\varepsilon_s}{2}|\nabla\psi_0^s|^2-\frac{\varepsilon_m}{2}|\nabla\psi_0^m|^2+\varepsilon_m(\nabla\psi_0^m\cdot n)^2-\varepsilon_m(\nabla\psi_0^s\cdot n)(\nabla\psi_0^m\cdot n)+B(\psi_0)+q_l\rho[\Gamma](\nabla\psi_0^s\cdot n)\Big)(V\cdot n)\,dS.$$
 
-By the Hadamard–Zolésio structure theorem it depends only on the normal component $V\cdot n$. The integrand $F_n$ is the normal electrostatic force density on the charged membrane surface.
-4. *(Consistency.)* $F_n$ equals the jump across the membrane surface of the normal component of the Maxwell stress tensor $M=\varepsilon E\otimes E-\frac\varepsilon2|E|^2I-\chi_sB(\psi)I$, where $E=-\nabla\psi$.
+By the Hadamard–Zolésio structure theorem it depends only on the normal component $V\cdot n$. The normal electrostatic force density $F_n$ on the charged membrane surface is defined by $\delta_\Gamma G[\Gamma]=-\int_\Gamma F_n\,(V\cdot n)\,dS$, so $F_n$ is minus the integrand above (the source's (3.14)–(3.15)).
+4. *(Consistency.)* This $F_n$ equals the jump across the membrane surface of the normal component of the Maxwell stress tensor $M=\varepsilon E\otimes E-\frac\varepsilon2|E|^2I-\chi_sB(\psi)I$, where $E=-\nabla\psi$.
 
 ## Expansion
 

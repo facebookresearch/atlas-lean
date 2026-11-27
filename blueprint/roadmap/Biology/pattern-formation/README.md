@@ -33,7 +33,6 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Lateral-inhibition patterns on stratified bilayers](part-03/lateral-inhibition-patterns-on-stratified-bilayers/README.md)
 - [Morphogen gradients with nonlinear degradation](part-03/morphogen-gradients-with-nonlinear-degradation/README.md)
 - [Nonlocal membrane GTPase Turing model](part-03/nonlocal-membrane-gtpase-turing-model/README.md)
-- [Parameter identification from Turing pattern amplitudes](part-03/parameter-identification-from-turing-pattern-amplitudes/README.md)
 - [Reaction-diffusion waves of blood coagulation](part-03/reaction-diffusion-waves-of-blood-coagulation/README.md)
 - [Reaction-diffusion with line-supported production](part-03/reaction-diffusion-with-line-supported-production/README.md)
 - [Receptor-mediated morphogen transport](part-03/receptor-mediated-morphogen-transport/README.md)

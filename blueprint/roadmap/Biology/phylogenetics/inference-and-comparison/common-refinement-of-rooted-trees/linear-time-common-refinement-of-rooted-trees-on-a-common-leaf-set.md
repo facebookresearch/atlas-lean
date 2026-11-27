@@ -12,7 +12,6 @@ The naive route through BUILD on all displayed triples costs at least $O(k|L|^2)
 
 ## Depends on
 
-- [Splits, compatibility, ultrametrics and UPGMA](../../splits-compatibility-ultrametrics-and-upgma/README.md)
 - [Hierarchy on a finite set](../../splits-compatibility-ultrametrics-and-upgma/is-hierarchy.md)
 - [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
 

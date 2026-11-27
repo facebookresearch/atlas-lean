@@ -6,7 +6,7 @@ $$\gamma\vec V_t=\big(\langle\nu_t,\cos\rangle,\ \langle\nu_t,\sin\rangle\big),\
 
 Filopodia evolve like an adaptive structured population with logistic resource limitation at capacity $\lambda$:
 
-- *creation*: new filopodia appear isotropically, with intensity $c(1-N_t/\lambda)_+\,d\theta$ in direction $\theta$;
+- *creation*: new filopodia appear isotropically, with intensity $\frac{c}{2\pi}(1-N_t/\lambda)_+\,d\theta$ in direction $\theta\in[0,2\pi)$, so at total rate $c(1-N_t/\lambda)_+$. The source's (4)–(5) print the intensity $c(1-N_t/\lambda)_+\,d\theta$, whose total rate $2\pi c(1-N_t/\lambda)_+$ is incompatible with its moment and jump-rate bounds in $c$ (for $N_0=0$, $r\equiv0$, $d=0$ and $\lambda\to\infty$ one gets $\mathbb E N_T\to2\pi cT>cT$); the page normalizes the intensity so that those bounds hold;
 - *reproduction*: each filopodium of direction $\theta_i$ reproduces at rate $r(t,\theta_i;\nu_t)(1-N_t/\lambda)_+$, the offspring keeping the direction with probability $1-\mu$ and otherwise taking a direction drawn from a kernel $g(\cdot;\theta_i)$ around $\theta_i$;
 - *death*: each filopodium disappears at rate $d$.
 
@@ -25,7 +25,7 @@ $$\mathbb E\Big[\sup_{t\le T}N_t\Big]\le\mathbb E[N_0]\,e^{\bar rT}+\frac{c}{\ba
 2. *(Uniqueness.)* Strong (pathwise) uniqueness holds.
 3. *(Markov property.)* The solution is a Markov process with generator
 
-$$L\Phi(\nu)=c\Big(1-\tfrac{N}{\lambda}\Big)_+\int\big[\Phi(\nu+\delta_\theta)-\Phi(\nu)\big]d\theta+\sum_{i=1}^{N}\Big(1-\tfrac{N}{\lambda}\Big)_+r(t,\theta_i;\nu)\Big[(1-\mu)\big(\Phi(\nu+\delta_{\theta_i})-\Phi(\nu)\big)+\mu\int\big(\Phi(\nu+\delta_z)-\Phi(\nu)\big)g(z;\theta_i)\,dz\Big]+d\sum_{i=1}^N\big[\Phi(\nu-\delta_{\theta_i})-\Phi(\nu)\big],$$
+$$L\Phi(\nu)=\frac{c}{2\pi}\Big(1-\tfrac{N}{\lambda}\Big)_+\int_0^{2\pi}\big[\Phi(\nu+\delta_\theta)-\Phi(\nu)\big]d\theta+\sum_{i=1}^{N}\Big(1-\tfrac{N}{\lambda}\Big)_+r(t,\theta_i;\nu)\Big[(1-\mu)\big(\Phi(\nu+\delta_{\theta_i})-\Phi(\nu)\big)+\mu\int\big(\Phi(\nu+\delta_z)-\Phi(\nu)\big)g(z;\theta_i)\,dz\Big]+d\sum_{i=1}^N\big[\Phi(\nu-\delta_{\theta_i})-\Phi(\nu)\big],$$
 
 acting on bounded measurable $\Phi$, with $N=\langle\nu,1\rangle$. In particular the law of $(\nu_t)$ does not depend on the arbitrary ordering used to label filopodia.
 

@@ -18,11 +18,15 @@ $$\Gamma_{\vec v}(\varphi,\sigma)=b_{\vec v}(\varphi)\sigma+f_{\vec v}(\varphi),
 
 with $b_{\vec v},b_\varphi,f_{\vec v},f_\varphi$ bounded and continuous, so the mass sources may depend on the solution.
 
-**Theorem.** Under these hypotheses there exists a weak solution for the Dirichlet and for the Robin closures, with
+**Theorem.** Under these hypotheses there exists a weak solution, in the sense of the source's Definitions 2.1 (Dirichlet) and 2.2 (Robin), for the Dirichlet and for the Robin closures; for the Neumann closure one exists in the sense of Definition 2.3 provided the potential has at most quadratic growth, $|\Psi''|\le C_3$. In every case
 
-$$\varphi\in L^\infty(0,T;H^1)\cap L^2(0,T;H^3)\cap W^{1,8/5}(0,T;(H^1)^*),\qquad \vec v\in L^2(Q),\qquad 0\le\sigma\le1,$$
+$$\varphi\in L^\infty(0,T;H^1)\cap L^2(0,T;H^3),\qquad \vec v\in L^2(Q),\qquad 0\le\sigma\le1,\qquad \sigma-1\in L^2(0,T;H^1_0),$$
 
-$\sigma-1\in L^2(0,T;H^1_0)$, $\mu\in L^2(0,T;H^1)$ and pressure in $L^{8/5}(0,T;H^1)$. For the Neumann closure the same holds provided the potential has at most quadratic growth, $|\Psi''|\le C_3$.
+and, closure by closure (with $H^{-1}$ the dual of $H^1_0$):
+
+- Dirichlet: $\varphi\in W^{1,8/5}(0,T;(H^1)^*)$, $\mu\in L^2(0,T;H^1)$, $q\in L^{8/5}(0,T;H^1_0)$;
+- Robin: $\varphi\in W^{1,8/5}(0,T;H^{-1})$, $\mu\in L^2(0,T;H^1_0)$, $p\in L^{8/5}(0,T;H^1)$ with $p|_\Sigma\in L^2(\Sigma)$;
+- Neumann: $\varphi\in W^{1,8/5}(0,T;(H^1)^*)$, $\mu\in L^2(0,T;H^1)$, $p\in L^{8/5}(0,T;H^1)$ with $p|_\Sigma\in L^2(\Sigma)$.
 
 ## Expansion
 

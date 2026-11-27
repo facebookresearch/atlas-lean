@@ -22,7 +22,7 @@ $$K_{\mathrm{loc}} = \beta\sigma\big(\xi(1-\theta)V_{22}^{-1}V_{11}^{-1} + \thet
 
 $K_{\mathrm{loc}}$ counting infections within cities and $K_{\mathrm{tr}}$ infections acquired while travelling. The spectral radius is taken of the sum: in general $\rho(K_{\mathrm{loc}} + K_{\mathrm{tr}}) \ne \rho(K_{\mathrm{loc}}) + \rho(K_{\mathrm{tr}})$. Without mobility ($M = 0$), $R_0 = \beta\big(\xi(1-\theta)/\gamma_A + \theta/\gamma_I\big)$.
 
-**Theorem.** Under the assumptions above, if the mobility weights are small or $M$ is irreducible, and $R_0 < 1$, then the disease-free equilibrium is globally asymptotically stable for all nonnegative initial data with some initial infection.
+**Theorem.** Under the assumptions above, if the mobility weights are small or $M$ is irreducible, and $R_0 < 1$, then the disease-free equilibrium is globally asymptotically stable for all nonnegative initial data with some initial infection whose initial total population is the equilibrium one, $N(x,0)=N^*(x)$ for every city $x$ (the source's (A1)). Without that condition the statement fails, since the total population is conserved: data with $S(\cdot,0)=2N^*$ cannot approach $(N^*,0,0,0,0)$.
 
 ## Expansion
 

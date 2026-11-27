@@ -21,26 +21,13 @@ This is a fused-lasso logistic regression.
 
 Both are convex programs, solvable by coordinate descent or generic solvers and scalable to thousands of nodes.
 
-**Theorem (sparsistency of smooth).** Assume the following:
-
-1. bounded maximum degree $s$;
-2. incoherence among the relevant covariates and between relevant and irrelevant covariates;
-3. a minimum signal $\theta_{\min}$;
-4. smooth dependence of $\theta^t$ on $t$;
-5. regularity of the kernel.
-
-Take $\lambda_1\ge C\sqrt{\log p}/n^{1/3}$, $h=O(n^{-1/3})$, $s=o(n^{1/3})$, $s^3\log p/n^{2/3}=o(1)$ and $\theta_{\min}=\Omega(\sqrt{s\log p}/n^{1/3})$. Then for every $\tau\in\mathcal T_n$
-
-$$\mathbb P\big[\hat G^\tau\ne G^\tau\big]=O\Big(\exp\Big(-C\frac{n^{2/3}}{s^3}+C'\log p\Big)\Big)\to0 .$$
-
-So the whole time-indexed sequence of graphs is recovered with high probability even when $p\gg n$ and there is only one sample per time point.
-
 ## Expansion
 
-Kernel reweighting borrows strength from neighbouring time points. With $h\asymp n^{-1/3}$ the effective sample size is $nh\asymp n^{2/3}$. The bias from parameter drift within the window is of order $h$. Balancing the two gives the $n^{-1/3}$ rates for $\lambda_1$ and $\theta_{\min}$.The incoherence and minimum-signal assumptions play the same role as in static $\ell_1$ neighbourhood selection: they make the support identifiable and separable from noise. The TV estimator instead encourages piecewise-constant coefficient paths and recovers change points in network structure. Applied to developmental gene-expression time courses of *Drosophila melanogaster*, the methods reveal rewiring of the inferred regulatory network across the life cycle.
+Kernel reweighting borrows strength from neighbouring time points: with bandwidth $h$ the effective sample size at $\tau$ is of order $nh$, at the price of a bias from parameter drift within the window. The TV estimator instead encourages piecewise-constant coefficient paths and recovers change points in network structure. Applied to developmental gene-expression time courses of *Drosophila melanogaster*, the methods reveal rewiring of the inferred regulatory network across the life cycle.
 
-These are the estimators of Section 2 and the sparsistency theorem of Section 5 (quoted there from the companion analysis) of the source.
+These are the estimators of Sections 2–3 of the source. Its Section 5 also quotes a sparsistency theorem for *smooth* from the companion analysis of Kolar and Xing (arXiv:0907.2337), whose proof has no refereed version, so the page does not state it.
 
 ## Sources
 
 - M. Kolar, L. Song, A. Ahmed, E. P. Xing, "Estimating time-varying networks", arXiv:0812.5087 (2008). <https://doi.org/10.48550/arXiv.0812.5087>
+- Published version: M. Kolar, L. Song, A. Ahmed, E. P. Xing, "Estimating time-varying networks", Annals of Applied Statistics 4 (2010), 94–123, Sections 2–3, <https://doi.org/10.1214/09-AOAS308>.

@@ -12,3 +12,5 @@
 - [Forward invariance and global existence for the chemostat](chemostat-invariance-and-global-existence.md)
 - [Unconditional exponential stability of chemostat washout](unconditional-exponential-stability-of-chemostat-washout.md)
 - [Global convergence of the chemostat](global-convergence-of-the-chemostat.md)
+
+- [Vector control, chemostats and microbial populations](vector-control-chemostats-and-microbial-populations/README.md)

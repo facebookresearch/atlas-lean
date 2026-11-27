@@ -30,10 +30,6 @@ so high-frequency mutations follow the skeleton's $1/j^2$ law while, as death ap
 
 A mutation arising in a division at time $s$ is carried at time $t$ by the descendants of one daughter, whose number is distributed as $Z_0(t-s)$ started from one cell; integrating the expected division rate $r_0\,\mathbb E[Z_0(s)]$ against $\mathbb P(Z_0(t-s)=j)$, which is geometric-type for the birth–death process, and changing variables to $y=1-e^{-\lambda_0(t-s)}$-type coordinates gives the integral with kernel $(1-y)y^{j-1}/(1-p_0y)$. The skeleton is itself a Yule process with rate $\lambda_0$ in which mutations accrue at effective rate $w/q_0$, giving the pure $(1-y)y^{j-1}$ kernel. Expanding $(1-p_0y)^{-1}=\sum_kp_0^ky^k$ and integrating termwise gives the series; its $j\to\infty$ and $p_0\to1$ asymptotics follow from comparing the series with integrals.
 
-## Depends on
-
-- [Moran model](../../../population-genetics/moran-model/README.md)
-
 ## Proof depends on
 
 - [Kendall's law of the linear birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/prob.md)

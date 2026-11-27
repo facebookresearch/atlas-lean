@@ -10,9 +10,9 @@ $$\ln\mu_{is|K} = \nu^\mu_{s|K} + \sum_{t\in K\setminus\{s\}}\beta^\mu_{st|K}x_{
 
 Here $\theta_s$ is the inverse dispersion. An edge $s - t$ is absent exactly when $\beta^\mu_{st|K} = \beta^\mu_{ts|K} = \beta^\pi_{st|K} = \beta^\pi_{ts|K} = 0$ for all $K$. Taking $\pi \equiv 0$ gives NB models, and letting $\theta_s\to\infty$ gives Poisson graphical models.
 
-**Theorem.** Let $\mathbf{X}_V = (X_1,\dots,X_p)$ have support $\mathcal{X}_V$, and suppose univariate conditional probability mass functions of the above ZINB form are given. A joint distribution with exactly these conditionals exists if and only if $\theta_s$ is constant for every $s\in V$ and all mean-regression coefficients $\beta^\mu_{st|K}$ are negative, for every $K\subseteq V$.
+**Theorem.** Let $\mathbf{X}_V = (X_1,\dots,X_p)$ have support $\mathcal{X}_V$, and suppose univariate conditional probability mass functions of the above ZINB form are given. A joint distribution with exactly these conditionals exists if and only if $\theta_s$ is constant for every $s\in V$ and all mean-regression coefficients $\beta^\mu_{st|K}$ are non-positive ($\beta^\mu_{st|K}\le 0$), for every $K\subseteq V$. The source's main text prints "negative" here; its supplementary proof of Theorem 3.1 treats $\beta^\mu_{st|K}\le 0$, and "negative" cannot be right: two independent ZINB counts have conditionals of this form with every $\beta^\mu_{st|K}=0$ (a missing edge) and their product as a joint law.
 
-So a proper joint ZINB Markov random field can encode only competitive (negative) dependencies in the means. This is the count-data analogue of Besag's restriction for auto-Poisson models.
+So a proper joint ZINB Markov random field can encode only competitive (non-positive) dependencies in the means. This is the count-data analogue of Besag's restriction for auto-Poisson models.
 
 ## Expansion
 

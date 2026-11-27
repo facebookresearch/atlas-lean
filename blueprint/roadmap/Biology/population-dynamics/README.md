@@ -27,8 +27,3 @@ Differential-equation and matrix models of population growth, structure, species
 - [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
 - [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
 - [Phenotype-structured population models](phenotype-structured-population-models/README.md)
-## [Applied population models](applied-population-models/README.md)
-- [Ecological interactions, harvesting and resilience](applied-population-models/part-01/README.md)
-- [Vector control, chemostats and microbial populations](applied-population-models/part-02/README.md)
-- [Evolutionary games and structured populations](applied-population-models/part-03/README.md)
-- [Tumour growth and cell-population mechanics](applied-population-models/part-04/README.md)

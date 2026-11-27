@@ -23,7 +23,7 @@ $$
 
 With Robin (no-flux) boundary conditions it has a unique, uniformly bounded solution.
 
-**Lemma (receptor-ratio threshold).** Let $S_1$ be increasing and $S_2$ decreasing on $[0,L]$, write the drift as $V(x,\gamma)$, assume $\partial V/\partial x\le0$, and let cells start at $x_0$. Then there is $\gamma^*>0$ with $V(x_0,\gamma^*)=0$ such that cells accumulate to the right of $x_0$ (towards MeAsp) if $\gamma>\gamma^*$ and to the left (towards serine) if $\gamma<\gamma^*$. Explicitly $\gamma^*(x_0)=-\frac{S_2'/S_2}{S_1'/S_1}(x_0)$, the ratio of the two relative gradients.
+**Lemma (receptor-ratio threshold).** Let $S_1$ be increasing and $S_2$ decreasing on $[0,L]$, write the drift as $V(x,\gamma)$, assume $\partial V/\partial x\le0$, and let cells start at $x_0$. Then there is $\gamma^*>0$ with $V(x_0,\gamma^*)=0$ such that cells accumulate to the right of $x_0$ (towards MeAsp) if $\gamma>\gamma^*$ and to the left (towards serine) if $\gamma<\gamma^*$. Explicitly $\gamma^*(x_0)=-\frac{S_2'/S_2}{S_1'/S_1}(x_0)$, the ratio of the two relative gradients. The proof of the source's Lemma 2 prints $\gamma(x)=(S_2'/S_2)/(S_1'/S_1)$ without the minus sign; $\gamma^*=-(S_2'/S_2)/(S_1'/S_1)(x_0)$ follows from $V(x_0,\gamma^*)=0$ with its (17), and is positive because $S_1'>0>S_2'$.
 
 ## Expansion
 

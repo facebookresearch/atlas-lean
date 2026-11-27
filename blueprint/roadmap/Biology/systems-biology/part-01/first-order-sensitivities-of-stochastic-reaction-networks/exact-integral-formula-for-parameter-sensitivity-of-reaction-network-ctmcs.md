@@ -18,10 +18,6 @@ $$
 
 Using Kurtz's random time-change representation, the processes at $\theta$ and $\theta+h$ are coupled through shared unit-rate Poisson processes; to first order in $h$ they differ only when an extra firing of some reaction $k$ occurs, at rate $h\,\partial_\theta\lambda_k$. The first term accounts for the immediate effect $\Delta_{\zeta_k}f$ of such an extra firing, and $R_\theta$ accounts for the subsequent divergence of the perturbed trajectory, discounted by the probability that the unperturbed chain has not yet jumped from state $x$. Each $R_\theta$ is estimated by short auxiliary simulations, giving an unbiased estimator. Unlike the likelihood-ratio (Girsanov) estimator, its variance does not blow up when the sensitive rate constant is small, and it can even give the sensitivity to a reaction whose rate is set to zero.
 
-## Depends on
-
-- [Stochastic reaction networks](../../stochastic-reaction-networks/README.md)
-
 ## Sources
 
 - Ankit Gupta, Mustafa Khammash, "Unbiased estimation of parameter sensitivities for stochastic chemical reaction networks", arXiv:1210.3475: Section 2: Conditions 2.1–2.2 and Theorem 2.3 (main result), Examples 2.4–2.5; Section 3 (estimation algorithm); Section 4 (proof, Lemma 4.1). <https://doi.org/10.48550/arXiv.1210.3475>

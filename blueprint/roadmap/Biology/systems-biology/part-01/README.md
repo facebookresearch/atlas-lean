@@ -6,7 +6,6 @@
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
-- [Adiabatic reduction of bursty gene expression](adiabatic-reduction-of-bursty-gene-expression/README.md)
 - [Aggregation of the chemical master equation](aggregation-of-the-chemical-master-equation/README.md)
 - [Condensation in the generalized Poland–Scheraga model](condensation-in-the-generalized-poland-scheraga-model/README.md)
 - [Coupled finite-difference sensitivity estimation](coupled-finite-difference-sensitivity-estimation/README.md)

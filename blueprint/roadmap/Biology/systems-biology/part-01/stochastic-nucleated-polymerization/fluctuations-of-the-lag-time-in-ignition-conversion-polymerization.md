@@ -30,7 +30,7 @@ This is a density-dependent Markov jump process, so Kurtz's theorems give the fl
 
 ## Depends on
 
-- [Stochastic reaction networks](../../stochastic-reaction-networks/README.md)
+- [Stochastic mass-action propensity](../../stochastic-mass-action-metabolic-control-and-flu/propensity.md)
 
 ## Proof depends on
 

@@ -14,13 +14,13 @@ $$
 g = \frac{xf\,\bigl(1 + 2v + (1+v)vxf\bigr)}{1 - xf - vx^2f^2}.
 $$
 
-**Theorem (asymptotics, Proposition 1).** Fix $p>0$ and give each structure weight $p^{\#\text{links}}$; let $g_p(t)$ be the weighted generating function by sequence length ($g_p(t) = g(t,pt^2) + t/(1-t)$ for G-saturated structures). For all thresholds $\theta,\tau$ there are computable constants $c>0$ and $\gamma>1$ with
+**Theorem (asymptotics, Proposition 1).** Fix $p>0$ and give each structure weight $p^{\#\text{links}}$; let $g_p(t)$ be the weighted generating function by sequence length ($g_p(t) = g(t,pt^2) + t/(1-t)$ for G-saturated structures). For all thresholds $\theta,\tau$ there are computable constants $c>0$ and $\gamma>0$ with
 
 $$
 [t^n]\,g_p(t) \sim c\,\gamma^n\,n^{-3/2}, \qquad n \to \infty .
 $$
 
-The same holds for all secondary structures and for saturated structures. Taking $p=3/8$ makes $[t^n]g_{3/8}(t)$ the expected number of such structures on a uniformly random sequence in $\{A,C,G,U\}^n$ (weight $4$ per free base, $6$ allowed labelings out of $16$ per pair).
+For G-saturated structures $\gamma>1$. The same asymptotic form holds for all secondary structures, again with $\gamma>1$, and for saturated structures with $\gamma>0$ only: for saturated structures $\gamma\le3p^{1/(\theta+3)}$, which is $<1$ once $p<3^{-(\theta+3)}$ (the source's Lemma 1). Taking $p=3/8$ makes $[t^n]g_{3/8}(t)$ the expected number of such structures on a uniformly random sequence in $\{A,C,G,U\}^n$ (weight $4$ per free base, $6$ allowed labelings out of $16$ per pair).
 
 **Theorem (number of links, Proposition 2).** Let $X_n$ be the number of links of a G-saturated (or saturated, or general) structure of length $n$ drawn with probability proportional to $p^{\#\text{links}}$. There are computable $\mu,\sigma>0$ such that $(X_n - \mu n)/(\sigma\sqrt n)$ converges in distribution to a standard normal law.
 

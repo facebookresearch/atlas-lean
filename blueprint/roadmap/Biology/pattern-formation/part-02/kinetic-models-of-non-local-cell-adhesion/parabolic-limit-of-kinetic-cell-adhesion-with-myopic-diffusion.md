@@ -28,7 +28,7 @@ $$
 (a + 1)\,\partial_t u = \frac{1}{2a + 1}\,\frac{d}{d + 2}\,\nabla_x\nabla_x^\top : \big(\mathbb{D}[q]\, u\big) - \nabla_x\cdot\big(u\, \chi\, \mathcal{A}_r u\big), \qquad \mathbb{D}[q] = \int_{S_1}\theta\theta^\top q(\theta)\,\mathrm{d}\theta .
 $$
 
-The first term is a **myopic** (non-Fickian) anisotropic diffusion, equivalently $\nabla\cdot(\mathbb{D}[q]\nabla u) + \nabla\cdot(u\,\nabla\cdot\mathbb{D}[q])$ up to the prefactor, and the second is the non-local adhesion advection. For constant $\chi$ and $q$ this reduces to the Armstrong-Painter-Sherratt adhesion model $u_t = D\Delta u - \nabla\cdot(u\,\chi\,\mathcal{A}_r u)$. Under hyperbolic scaling ($\hat t = \varepsilon t$) the first-order correction $\overline{c^0} + \varepsilon\overline{c^0_1}$ satisfies a drift-dominated equation with drift $\tfrac{d}{d+1}\mathbb{E}[q]$ and the same myopic diffusion and adhesion terms at order $\varepsilon$.
+The first term is a **myopic** (non-Fickian) anisotropic diffusion, equivalently $\nabla\cdot(\mathbb{D}[q]\nabla u) + \nabla\cdot(u\,\nabla\cdot\mathbb{D}[q])$ up to the prefactor, and the second is the non-local adhesion advection. For constant $\chi$ and $q$ this reduces to the Armstrong-Painter-Sherratt adhesion model $u_t = D\Delta u - \nabla\cdot(u\,\chi\,\mathcal{A}_r u)$.
 
 ## Expansion
 

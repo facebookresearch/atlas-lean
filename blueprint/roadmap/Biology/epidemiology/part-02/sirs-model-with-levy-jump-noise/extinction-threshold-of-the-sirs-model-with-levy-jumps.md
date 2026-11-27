@@ -18,7 +18,7 @@ $$\xi = \frac{\beta\Lambda}{\nu}\cdot\frac{1}{\nu+\gamma+\varphi_2}.$$
 
 Without noise, this reduces to the deterministic reproduction number $\xi_0 = \beta\Lambda/(\nu(\nu+\gamma))$.
 
-**Theorem.** For every initial value in $\mathbb{R}^3_+$ there is a unique global nonnegative solution. Assume moreover that, for some $m > 2$, $\nu - \frac{m-1}{2}\max_j\lambda_j^2 - \frac{1}{m}\int_{\mathbb{Y}}\big((1+\max_j\epsilon_j)^m - 1 - m\max_j\epsilon_j\big)\,d\pi > 0$. Then almost surely
+**Theorem.** For every initial value in $\mathbb{R}^3_+$ there is a unique global nonnegative solution. Assume moreover that, for some $m > 2$, $\nu - \frac{m-1}{2}\max_j\lambda_j^2 - \frac{1}{m}\int_{\mathbb{Y}}\big((1+\max_j\epsilon_j(y))^m - 1 - m\min_j\epsilon_j(y)\big)\,\pi(dy) > 0$ (the source's assumption (g), with the maximum of the $\epsilon_j$ in the power and their minimum in the linear term). Then almost surely
 
 $$\limsup_{t\to\infty}\frac{\ln I_t}{t} \le \frac{\beta\Lambda}{\nu}\Big(1 - \frac{1}{\xi}\Big) = (\nu+\gamma+\varphi_2)(\xi - 1).$$
 

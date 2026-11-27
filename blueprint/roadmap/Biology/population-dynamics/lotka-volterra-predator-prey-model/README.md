@@ -1,5 +1,7 @@
 # Lotka–Volterra predator–prey model
 
+- [Ecological interactions, harvesting and resilience](ecological-interactions-harvesting-and-resilience/README.md)
+
 - [First integral of the Lotka–Volterra system](first-integral.md)
 - [Lotka–Volterra first integral](has-deriv-at-first-integral.md)
 - [Positive solutions lie on level curves](first-integral-eq.md)

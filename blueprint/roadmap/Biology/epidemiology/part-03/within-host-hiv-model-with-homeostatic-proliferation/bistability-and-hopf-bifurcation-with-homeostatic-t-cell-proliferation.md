@@ -32,7 +32,7 @@ $$
 \frac{\alpha_1\alpha_2}{1+\beta\overline V_+}\bigl[\beta\overline V_+^2+R_0-1\bigr]<(\alpha_1+\alpha_2)R_0(\alpha_1+\alpha_2+R_0)
 $$
 
-and unstable otherwise. Hence for $R_0<1$ with two infected equilibria, viral clearance $E_u$ and persistent infection $E_i^+$ are both stable (bistability), and the outcome depends on the initial viral load and T-cell count.
+and unstable otherwise. Hence for $R_0<1$ with two infected equilibria and the condition above satisfied, viral clearance $E_u$ and persistent infection $E_i^+$ are both locally asymptotically stable (bistability), and the outcome depends on the initial viral load and T-cell count. Two infected equilibria with $R_0<1$ do not by themselves give bistability: with $\alpha_1=40$, $\alpha_2=240$, $\beta=0.73$, $R_0=0.5$, $R_m=10$ both are positive ($\overline V_+\approx11.77$) but the condition fails, so $E_i^+$ is unstable; the source claims bistability only in the overlap region of its Fig. 3.
 
 **Theorem (Hopf bifurcation, appendix).** For $R_0>1$ there is a critical $R_m^*$ at which two eigenvalues of the Jacobian at $E_i^+$ are purely imaginary and the third is real and negative; as $R_m$ crosses $R_m^*$, $E_i^+$ loses stability and a stable limit cycle branches off.
 

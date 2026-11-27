@@ -13,9 +13,10 @@ $$
 with the hypotheses:
 
 - $\delta\ge 0$ (death of quiescent cells), $\mu>0$ (clearance of mature cells), $k>0$ (degradation of growth factor);
-- the differentiation flux $g$ is $C^1$, nonnegative, $g(0)=0$, and $Q\mapsto g(Q)/Q$ is nondecreasing, so that $0\le g'(0)\le g(Q)/Q\le g'(Q)$ for $Q>0$;
+- the differentiation flux $g$ is $C^1$, nonnegative, $g(0)=0$, and $Q\mapsto g(Q)/Q$ is nondecreasing, so that $0\le g'(0)\le g(Q)/Q\le g'(Q)$ for $Q>0$; moreover $g(Q)\to+\infty$ as $Q\to\infty$ (true, for instance, if $g'(0)>0$). The source derives this limit from the monotonicity of $g(Q)/Q$ alone, which fails for $g\equiv0$ (then no positive steady state exists although the condition of item 2 can hold), so the page assumes it;
 - the feedback $f$ is $C^1$, positive and decreasing, with $f(M)\to 0$ as $M\to\infty$;
-- the reintroduction rate $\beta(Q,E)$ is $C^1$, increasing in $E$ with $\beta(Q,0)=0$, and decreasing in $Q$.
+- the reintroduction rate $\beta(Q,E)$ is $C^1$, increasing in $E$ with $\beta(Q,0)=0$, and decreasing in $Q$;
+- the source's standing assumption (6): $\lim_{Q\to\infty}\beta\big(Q,\tfrac1kf(\tfrac1\mu g(Q))\big)=0$.
 
 **Boundedness.** Solutions with nonnegative initial history stay nonnegative. If moreover $\lim_{Q\to\infty}\beta(Q,E)=0$ for every $E\ge0$ and $\delta+g'(0)>0$, then all solutions are bounded.
 
@@ -28,13 +29,13 @@ $$
 \left(2e^{-\gamma\tau}-1\right)\beta\!\left(Q,\tfrac{1}{k}f\!\left(\tfrac{1}{\mu}g(Q)\right)\right)=\delta+\frac{g(Q)}{Q},
 $$
 
-and $M^*=g(Q^*)/\mu$, $E^*=f(M^*)/k$. Equivalently, the positive steady state exists if and only if $\delta+g'(0)<\beta_0$ and
+and $M^*=g(Q^*)/\mu$, $E^*=f(M^*)/k$. Equivalently, for $\gamma>0$, the positive steady state exists if and only if $\delta+g'(0)<\beta_0$ and
 
 $$
 0\le\tau<\tau_{\max}:=\frac{1}{\gamma}\ln\!\left(\frac{2\beta_0}{\delta+g'(0)+\beta_0}\right).
 $$
 
-In particular, a positive steady state requires $\tau<\ln 2/\gamma$.
+In particular, for $\gamma>0$ a positive steady state requires $\tau<\ln 2/\gamma$. For $\gamma=0$ it exists for every $\tau\ge0$ if and only if $\delta+g'(0)<\beta_0$ (that is, $\tau_{\max}=+\infty$).
 
 **Stability of the trivial state.** Under condition 1 the trivial steady state is locally asymptotically stable for every $\tau\ge0$; under condition 2 it is unstable for every $\tau\ge0$. The system thus undergoes a transcritical bifurcation at $\delta+g'(0)=(2e^{-\gamma\tau}-1)\beta_0$.
 

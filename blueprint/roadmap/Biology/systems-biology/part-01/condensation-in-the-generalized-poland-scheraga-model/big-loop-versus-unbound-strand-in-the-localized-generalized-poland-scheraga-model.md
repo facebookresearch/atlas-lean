@@ -13,7 +13,7 @@ Here $u_N\to\infty$ and $t_N\gg a^+_N,\tilde a^+_N\gg a^{(2)}_N$, $t_N\gg m^+_N\
 
 **Theorem.** Under the free measure $\mathbf P^f_{N,M,h}$:
 
-1. $\mathbf P^f_{N,M,h}(E_{\rm BL}\cup E_{\rm US})\to1$.
+1. Unless $\overline\alpha=1$ and $\sum_jK_f(j)=\infty$, $\mathbf P^f_{N,M,h}(E_{\rm BL}\cup E_{\rm US})\to1$.
 2. If $\overline\alpha<1$, so that $\sum_jK_f(j)=\infty$, then $\mathbf P^f_{N,M,h}(E_{\rm US})\to1$.
 3. If $\sum_jK_f(j)<\infty$, then
 

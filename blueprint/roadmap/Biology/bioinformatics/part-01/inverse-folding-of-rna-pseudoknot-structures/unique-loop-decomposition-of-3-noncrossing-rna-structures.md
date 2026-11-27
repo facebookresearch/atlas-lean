@@ -6,7 +6,7 @@
 
 1. *Hairpin loop:* an arc $(i,j)$ together with the interval $[i+1, j-1]$.
 2. *Interior loop:* $\big((i_1,j_1), [i_1+1, i_2-1], (i_2,j_2), [j_2+1, j_1-1]\big)$ with $(i_2,j_2)$ nested in $(i_1,j_1)$.
-3. *Multi-loop:* an arc $(i_1,j_1)$ together with the intervals between it and a sequence of noncrossing substructures nested directly inside it.
+3. *Multi-loop:* a sequence $\big((i_1,j_1),[i_1+1,\omega_1-1],S_1,[\tau_1+1,\omega_2-1],S_2,\dots,S_k,[\tau_k+1,j_1-1]\big)$, where each $S_h$ is a $3$-noncrossing substructure over $[\omega_h,\tau_h]$ nested in $(i_1,j_1)$, which may itself contain crossing arcs (a pseudoknot structure), and where, if every $S_h$ is a single arc $(\omega_h,\tau_h)$, then $k\ge2$ (the source's Section 2.1, item (3)).
 4. *Pseudoknot:* a set of arcs $P = \{(i_1,j_1),\dots,(i_t,j_t)\}$ with $i_1 = \min i_h$ and $j_t = \max j_h$. Its crossing (dependency) graph must be connected, so the induced diagram is irreducible, and each $(i_h, j_h)$ must be minimal $\beta$-crossing for some arc $\beta$. The pseudoknot also contains every vertex $i_1 < x < j_t$ that does not lie in a hairpin, interior or multi-loop.
 
 **Theorem.** Every $3$-noncrossing RNA pseudoknot structure has a unique decomposition into hairpin loops, interior loops, multi-loops and pseudoknots.

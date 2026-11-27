@@ -25,7 +25,7 @@ $$
 \end{aligned}
 $$
 
-The first excess term is the noise from random mRNA lifetimes and translation bursts; the second is the noise from gene switching, which vanishes when $\delta_+ \in \{0, 1\}$.
+The source's (9) prints $\overline F_3(u)$ in the inner integral of the first excess term, which makes that term infinite; $\overline F_3(-u)$ follows from the conditional mean displayed before its Theorem 2. The first excess term is the noise from random mRNA lifetimes and translation bursts; the second is the noise from gene switching, which vanishes when $\delta_+ \in \{0, 1\}$.
 
 ## Expansion
 

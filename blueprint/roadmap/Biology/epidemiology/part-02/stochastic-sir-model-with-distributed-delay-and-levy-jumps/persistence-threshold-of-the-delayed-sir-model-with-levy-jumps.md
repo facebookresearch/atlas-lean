@@ -12,18 +12,28 @@ $$dI=(\beta S\mathcal D-(\mu_2+\gamma)I)\,dt+\sigma_2I\,dW_2+\int_{\mathcal U}\l
 
 $$d\mathcal D=\eta(I-\mathcal D)\,dt+\sigma_4\mathcal D\,dW_4+\int_{\mathcal U}\lambda_4(u)\mathcal D(t^-)\widetilde N(dt,du).$$
 
-Assume $\int_{\mathcal U}\lambda_i^2\,d\nu<\infty$, $1+\lambda_i>0$ and $\int_{\mathcal U}(\lambda_i-\ln(1+\lambda_i))\,d\nu<\infty$ for $i=1,2,4$, and write
+Assume $(\mathcal H_1)$: $\int_{\mathcal U}\lambda_i^2\,d\nu<\infty$, and $(\mathcal H_2)$: $1+\lambda_i>0$ and $\int_{\mathcal U}(\lambda_i-\ln(1+\lambda_i))\,d\nu<\infty$, for $i=1,2,4$, and write
 
 $$\bar\sigma_i=\tfrac12\sigma_i^2+\int_{\mathcal U}\big(\lambda_i(u)-\ln(1+\lambda_i(u))\big)\,\nu(du).$$
 
+For items 2 and 3 the source also assumes, with $\bar\sigma:=\max\{\sigma_1^2,\sigma_2^2,\sigma_4^2\}$, $\vartheta:=\min\{\mu_1,\mu_2+\gamma-\eta,\eta\}$, $\bar\lambda(u):=\max_i\lambda_i(u)$, $\underline\lambda(u):=\min_i\lambda_i(u)$ ($i=1,2,4$), $\hat\zeta_p:=(1+\bar\lambda)^p-1-p\bar\lambda$, $\check\zeta_p:=(1+\underline\lambda)^p-1-p\underline\lambda$ and $\ell_p:=\int_{\mathcal U}\max\{\hat\zeta_p,\check\zeta_p\}\,d\nu$:
+
+- $(\mathcal H_3)$: $\int_{\mathcal U}\big[\ln(1+\lambda_i(u))\big]^2\nu(du)<\infty$ for $i=1,2,4$;
+- $(\mathcal H_4)$: $\int_{\mathcal U}\big[(1+\bar\lambda(u))^2-1\big]^2\nu(du)<\infty$;
+- $(\mathcal H_5)$: there is $p>2$ with $\chi_{1,p}:=\vartheta-\frac{p-1}2\bar\sigma-\frac1p\ell_p>0$.
+
 **Theorem.**
-1. (Well-posedness) For every initial value in $\mathbb R^3_+$ there is a unique global solution, which stays in $\mathbb R^3_+$ almost surely.
-2. (Persistence in the mean) Let
+1. (Well-posedness) Under $(\mathcal H_1)$–$(\mathcal H_2)$, for every initial value in $\mathbb R^3_+$ there is a unique global solution, which stays in $\mathbb R^3_+$ almost surely.
+2. (Persistence in the mean) Assume $(\mathcal H_1)$–$(\mathcal H_5)$, and let
 
 $$\widetilde{\mathcal T}^\star=\beta\,\frac{A}{\mu_1+\bar\sigma_1}\Big((\mu_2+\gamma+\bar\sigma_2)+\beta\,\frac{A}{\mu_1+\bar\sigma_1}\,\frac{\bar\sigma_4}{\eta}\Big)^{-1}.$$
 
 If $\widetilde{\mathcal T}^\star>1$, then $\liminf_{t\to\infty}\frac1t\int_0^tI(s)\,ds>0$ almost surely.
-3. (Exponential extinction) Under additional moment conditions on the jump coefficients, there is an explicit constant $\Theta$, built from $\mathcal T^\star$, the noise intensities and the jump measure, such that
+3. (Exponential extinction) Assume $(\mathcal H_1)$–$(\mathcal H_5)$. Let $\Upsilon:=\min\{\mu_2+\gamma,\eta\}(\sqrt{\mathcal T^\star}-1)$ if $\mathcal T^\star\le1$ and $\Upsilon:=\max\{\mu_2+\gamma,\eta\}(\sqrt{\mathcal T^\star}-1)$ if $\mathcal T^\star>1$; $\Lambda:=\sigma_1^2+\int_{\mathcal U}\lambda_1^2\,d\nu$; $\chi_2:=2\mu_1-\sigma_1^2-\int_{\mathcal U}\lambda_1^2\,d\nu$ (positive under $(\mathcal H_4)$–$(\mathcal H_5)$); $\Sigma:=\big(2(\sigma_2^{-2}+\sigma_4^{-2})\big)^{-1}$; $\Pi:=\int_{\mathcal U}\aleph\,d\nu$ with $\aleph(u):=\big[\ln(1+m(u))-m(u)\big]\mathbf 1_{\{m(u)>0\}}+\big[\ln(1+M(u))-M(u)\big]\mathbf 1_{\{M(u)\le0\}}$, $m=\lambda_2\wedge\lambda_4$, $M=\lambda_2\vee\lambda_4$; and
+
+$$\Theta:=\Upsilon+\Pi-\Sigma+\eta\Big(\frac{\mathcal T^\star\Lambda}{\chi_2}\Big)^{1/2}.$$
+
+Then
 
 $$\limsup_{t\to\infty}\frac1t\ln\Big(\frac{I(t)}{\mu_2+\gamma}+\frac{\sqrt{\mathcal T^\star}}{\eta}\mathcal D(t)\Big)\le\Theta\quad\text{a.s.};$$
 
@@ -37,4 +47,4 @@ Global positivity uses a logarithmic Lyapunov function and a stopping-time argum
 
 ## Sources
 
-- Driss Kiouach, Yassine Sabbar, "The long-time behaviour of a stochastic SIR epidemic model with distributed delay and multidimensional Lévy jumps", arXiv:2003.08219 (2020), systems (1.1)–(2.1), hypotheses $(\mathcal H_1)$–$(\mathcal H_5)$, Theorem 2.1, Lemmas 3.1–3.2, Theorem 3.4 and Theorem 3.6, <https://doi.org/10.48550/arXiv.2003.08219>.
+- Driss Kiouach, Yassine Sabbar, "The long-time behaviour of a stochastic SIR epidemic model with distributed delay and multidimensional Lévy jumps", arXiv:2003.08219 (2020), systems (1.1)–(2.1), hypotheses $(\mathcal H_1)$–$(\mathcal H_5)$, Theorem 2.1, Lemmas 3.1 and 3.4, Theorem 3.7 (extinction) and Theorem 3.10 (persistence in the mean), <https://doi.org/10.48550/arXiv.2003.08219>.
