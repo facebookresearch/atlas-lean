@@ -358,13 +358,15 @@ private theorem carry {S : Finset ℤ} {i : ℤ} (hi : i ∈ S)
   rw [value_insert (fun h => hn (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h)))]
   linarith [pow_add_prev i]
 
+-- The chain runs from the normalized expansion back to the original support.
 private theorem exists_bergman_above (R : ℤ) (S : Finset ℤ) (hS : ∀ i ∈ S, R ≤ i) :
-    ∃ T, IsBergmanExpansion T ∧ basePhiValue T = basePhiValue S ∧ ∀ i ∈ T, R ≤ i := by
+    ∃ T, IsBergmanExpansion T ∧ basePhiValue T = basePhiValue S ∧
+      (∀ i ∈ T, R ≤ i) ∧ Relation.ReflTransGen IsGoldenMeanFlip T S := by
   classical
   induction hcard : S.card using Nat.strong_induction_on generalizing S with
   | ind n ih =>
     by_cases hB : IsBergmanExpansion S
-    · exact ⟨S, hB, rfl, hS⟩
+    · exact ⟨S, hB, rfl, hS, .refl⟩
     · let A := S.filter (fun i => i - 1 ∈ S)
       have hA : A.Nonempty := by
         unfold IsBergmanExpansion at hB
@@ -381,27 +383,34 @@ private theorem exists_bergman_above (R : ℤ) (S : Finset ℤ) (hS : ∀ i ∈ 
         change i + 1 ≤ i at hle
         omega
       let U := insert (i + 1) ((S.erase i).erase (i - 1))
+      have hfresh : i + 1 ∉ (S.erase i).erase (i - 1) :=
+        fun h => hn (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h))
       have hp' : i - 1 ∈ S.erase i := Finset.mem_erase.mpr ⟨by omega, hp⟩
       have hu : U.card < n := by
         have h₁ := Finset.card_erase_add_one hi
         have h₂ := Finset.card_erase_add_one hp'
-        rw [show U = insert (i + 1) ((S.erase i).erase (i - 1)) by rfl,
-          Finset.card_insert_of_notMem (fun h =>
-            hn (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h)))]
+        simp only [U, Finset.card_insert_of_notMem hfresh]
         omega
-      obtain ⟨T, hT, hval, habove⟩ := ih U.card hu U (by
+      obtain ⟨T, hT, hval, habove, hchain⟩ := ih U.card hu U (by
         intro j hj
         rcases Finset.mem_insert.mp hj with rfl | hj
         · have := hS i hi
           omega
         · exact hS j (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hj))) rfl
-      exact ⟨T, hT, hval.trans (carry hi hp hn), habove⟩
+      have hflip : IsGoldenMeanFlip U S := by
+        refine ⟨i + 1, Finset.mem_insert_self _ _, ?_, ?_, ?_⟩
+        · simp [U, Finset.mem_erase, show i ≠ i + 1 by omega]
+        · simp [U, Finset.mem_erase, show i + 1 - 2 = i - 1 by omega,
+            show i - 1 ≠ i + 1 by omega]
+        · simp only [show i + 1 - 1 = i by omega, show i + 1 - 2 = i - 1 by omega,
+            U, Finset.erase_insert hfresh, Finset.insert_erase hp', Finset.insert_erase hi]
+      exact ⟨T, hT, hval.trans (carry hi hp hn), habove, hchain.tail hflip⟩
 
 private theorem min_mem_of_bergman {S T : Finset ℤ} {R : ℤ}
     (hT : IsBergmanExpansion T) (hR : R ∈ T)
     (hv : basePhiValue S = basePhiValue T) (hS : ∀ i ∈ S, R ≤ i) : R ∈ S := by
   by_contra hn
-  obtain ⟨U, hU, hval, hUmin⟩ := exists_bergman_above (R + 1) S (by
+  obtain ⟨U, hU, hval, hUmin, _⟩ := exists_bergman_above (R + 1) S (by
     intro i hi
     have := hS i hi
     have hne : i ≠ R := fun h => hn (h ▸ hi)
@@ -753,6 +762,24 @@ private theorem value_fibWord (R : ℤ) (odd : Bool) (n : ℕ) :
     rw [← mul_assoc, hc]
 
 end naturalExpansionCount_fib
+
+/-- **Golden mean flips connect all expansions to the Bergman expansion.** Let $N$ be a natural
+number, let $S$ be a Bergman expansion of $N$ and let $T$ be any finite base phi expansion of
+$N$ with digits $0$ and $1$. Then $T$ is obtained from $S$ by finitely many (possibly zero)
+golden mean flips $100 \to 011$.
+
+Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
+Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Theorem 2.1
+(`fq-2024-dekking11102023-thm-2.1`). -/
+public theorem reflTransGen_isGoldenMeanFlip_of_isBergmanExpansion (N : ℕ)
+    {S T : Finset ℤ} (hS : IsBergmanExpansion S) (hSN : basePhiValue S = N)
+    (hTN : basePhiValue T = N) :
+    Relation.ReflTransGen IsGoldenMeanFlip S T := by
+  open naturalExpansionCount_fib in
+  obtain ⟨R, hR⟩ := T.finite_toSet.bddBelow
+  obtain ⟨U, hU, hval, _, hchain⟩ := exists_bergman_above R T (fun _ hi => hR hi)
+  have hUS := bergman_eq_of_value_eq hU hS (hval.trans (hTN.trans hSN.symm))
+  exact hUS ▸ hchain
 
 /-- **Natural expansions of Fibonacci numbers.** Write $\mathrm{Tot}_\nu(N)$ for the number of
 natural base phi expansions of a natural number $N$ and $F_k$ for the $k$-th Fibonacci number.
