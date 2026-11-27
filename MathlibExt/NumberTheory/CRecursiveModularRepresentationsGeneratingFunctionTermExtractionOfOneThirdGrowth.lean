@@ -10,13 +10,6 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
-public import Mathlib.Algebra.Polynomial.Reverse
-public import Mathlib.RingTheory.PowerSeries.Basic
-public import MathlibExt.NumberTheory.Recurrences.CRecursiveIteratedRemainders
-public import MathlibExt.NumberTheory.Recurrences.CRecursiveModModRepresentation
-public import MathlibExt.NumberTheory.Recurrences.CRecursiveModularRepresentations
-public import MathlibExt.NumberTheory.Recurrences.CRecursiveRemainderIncrement
-public import MathlibExt.NumberTheory.Recurrences.SmallProductRemainder
 import Mathlib.Algebra.Order.Floor.Semiring
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.Linarith
@@ -29,9 +22,9 @@ import Mathlib.Topology.Algebra.InfiniteSum.Ring
 # Term extraction from the generating function under cube-root growth
 
 For a sequence of natural numbers whose generating function converges at the reciprocal
-of a base `c ≥ 8`, and whose terms grow slower than `c ^ (n / 3)`, each term `t n` is the
-remainder modulo `c ^ n` of the floor of `c ^ (n ^ 2)` times the generating function
-evaluated at `(c ^ n)⁻¹`.
+of a base `c ≥ 8`, and whose terms grow slower than `c ^ (n / 3)`, each term `t n` with
+`n ≥ 1` is the remainder modulo `c ^ n` of the floor of `c ^ (n ^ 2)` times the generating
+function evaluated at `(c ^ n)⁻¹`.
 
 ## Main results
 
@@ -40,8 +33,12 @@ evaluated at `(c ^ n)⁻¹`.
 
 ## References
 
+* M. Prunescu and L. Sauras-Altuzarra, *On the representation of C-recursive integer sequences
+  by arithmetic terms*, Journal of Difference Equations and Applications 31 (2025), 1263–1285,
+  arXiv:2405.04083, Theorems 1 and 2.
 * M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-  Journal of Integer Sequences 28 (2025), Article 25.5.3, Theorem 2, second part.
+  Journal of Integer Sequences 28 (2025), Article 25.5.3, Theorem 2, second part, which
+  restates the result of the first reference.
 -/
 
 public section
@@ -223,12 +220,17 @@ for every $n \ge 1$. Then for every $n \ge 1$,
 
 $$t_n = \Bigl\lfloor c^{n^2} \sum_{k \ge 0} t_k \, (c^{-n})^k \Bigr\rfloor \bmod c^n.$$
 
-Summability at $c^{-1}$ stands in for the paper's hypothesis that $c^{-1}$ lies inside the
-radius of convergence of the generating function. It is implied by that hypothesis but is
-strictly weaker, so this statement is stronger than the paper's.
+The Lean statement assumes summability at $c^{-1}$ in place of the papers' hypothesis that
+$c^{-1}$ lies inside the radius of convergence of the generating function; summability is the
+condition the proof uses. Neither statement is stronger: under the growth bound the series
+converges absolutely for $|z| < c^{-1/3}$, so its radius of convergence is at least
+$c^{-1/3} > c^{-1}$ and both conditions hold.
 
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Theorem 2, second part.
+Source: M. Prunescu and L. Sauras-Altuzarra, *On the representation of C-recursive integer
+sequences by arithmetic terms*, Journal of Difference Equations and Applications 31 (2025),
+1263–1285, arXiv:2405.04083, Theorems 1 and 2; restated in M. Prunescu and J. M. Shunia,
+*On Modular Representations of C-Recursive Integer Sequences*, Journal of Integer Sequences 28
+(2025), Article 25.5.3, Theorem 2, second part.
 -/
 theorem generating_function_term_extraction_of_one_third_growth
     (t : ℕ → ℕ) (c : ℕ)

@@ -37,4 +37,31 @@ example : (0 : ℕ) = Nat.floor ((8 : ℝ) ^ (1 ^ 2) *
     hconv hbound 1 (by decide)
   exact h
 
+
+-- The nonzero sequence `2, 1, 3, 7, 0, 0, …` at `c = 8` and `n = 1`: the scaled value is
+-- `1119 / 64`, so the floor is `17`, with a nonzero prefix and a nonzero tail, and its
+-- remainder modulo `8` is `t 1 = 1`.
+example : Nat.floor ((8 : ℝ) ^ (1 ^ 2) *
+    (∑' k : ℕ, (([2, 1, 3, 7].getD k 0 : ℕ) : ℝ) * (((8 : ℝ) ^ 1)⁻¹) ^ k)) % 8 ^ 1 = 1 := by
+  have hconv : Summable (fun k : ℕ => (([2, 1, 3, 7].getD k 0 : ℕ) : ℝ) * ((8 : ℝ)⁻¹) ^ k) := by
+    apply summable_of_ne_finset_zero (s := Finset.range 4)
+    intro k hk
+    have hk4 : [2, 1, 3, 7].length ≤ k := by simpa using hk
+    simp [List.getElem?_eq_none hk4]
+  have hbound : ∀ m, 1 ≤ m → (([2, 1, 3, 7].getD m 0 : ℕ) : ℝ) < (8 : ℝ) ^ ((m : ℝ) / 3) := by
+    intro m hm
+    have h8 : (8 : ℝ) ^ ((m : ℝ) / 3) = 2 ^ m := by
+      rw [show (8 : ℝ) = 2 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num),
+        show (3 : ℝ) * ((m : ℝ) / 3) = m by ring, Real.rpow_natCast]
+    rw [h8]
+    rcases m with _ | _ | _ | _ | m
+    · omega
+    · norm_num
+    · norm_num
+    · norm_num
+    · simp
+  have h := generating_function_term_extraction_of_one_third_growth
+    (fun k => [2, 1, 3, 7].getD k 0) 8 (by decide) hconv hbound 1 le_rfl
+  exact h.symm
+
 end MathlibExtTest.NumberTheory.CRecursiveModularRepresentationsGeneratingFunctionTermExtractionOfOneThirdGrowth

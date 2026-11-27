@@ -12877,7 +12877,6 @@
   "MathlibExt/NumberTheory/BridgemanPellPositiveSeries": {"to": "Analysis/special-functions/bernoulli-polylog-clausen", "title": "Dilogarithm identities"},
   "MathlibExt/NumberTheory/BronzeMetallicIdentities": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Numeration by Fibonacci and Pell numbers"},
   "MathlibExt/NumberTheory/CFiniteSequence": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "C-finite sequences"},
-  "MathlibExt/NumberTheory/CRecursiveModularRepresentationsGeneratingFunctionTermExtractionOfOneThirdGrowth": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Mod-mod representations of C-recursive sequences"},
   "MathlibExt/NumberTheory/CarlitzBlockHarmonic": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/CarmichaelIndex": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Carmichael index"},
   "MathlibExt/NumberTheory/CarmichaelIndexProduct": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Carmichael index"},
