@@ -30,5 +30,6 @@
 ## Ranked tree shapes
 
 - [F-matrix distances between ranked tree shapes](f-matrix-distances-between-ranked-tree-shapes/README.md)
+- [Tajima's genealogies](tajima-genealogies/README.md)
 ## Further results
 - [Cherries of the Kingman genealogy](external-branches-and-cherries.md)

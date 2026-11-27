@@ -44,3 +44,7 @@
 - [Wright–Fisher coalescence times converge to exponential laws](tendsto-no-coal-prob-pow-floor.md)
 
 - [Wright–Fisher pair coalescence time against its exponential limit](n-2-wright-fisher-vs-kingman-tmrca-total-variati.md)
+
+## Low-coverage sequencing
+
+- [Watterson's estimator from low-coverage sequencing](watterson-estimator-from-low-coverage-sequencing/README.md)
