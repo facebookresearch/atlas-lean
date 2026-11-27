@@ -18,3 +18,8 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [Local decoding of the Hadamard code](hadamard-code-local-decoding.md)
 
 - [Bit-serial CRC and framing](bit-serial-crc-and-framing/README.md)
+- [Delsarte's Linear Programming Bound and the MRRW Bounds](delsarte-linear-programming-bounds/README.md)
+- [Folded Reed-Solomon and Multiplicity Codes up to List-Decoding Capacity](folded-reed-solomon-and-multiplicity-codes/README.md)
+- [Higher-Order MDS Codes and List-Decoding Capacity of Reed-Solomon Codes](generic-reed-solomon-list-decoding-capacity/README.md)
+- [Left-Right Cayley Complex Codes and c3-LTCs](left-right-cayley-complex-codes/README.md)
+- [Lifted Product Codes](lifted-product-and-quantum-tanner-codes/README.md)
