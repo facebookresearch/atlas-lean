@@ -1,7 +1,8 @@
 # HyperCTL*
 
 *HyperCTL** formulas allow path quantifiers anywhere: $\varphi ::= a_\pi \mid \neg\varphi \mid \varphi \vee \varphi \mid \mathbf X\varphi \mid \varphi\ \mathbf U\ \varphi \mid \exists\pi.\ \varphi$, with $\forall\pi.\varphi = \neg\exists\pi.\neg\varphi$.
-Over a Kripke structure $K = (S, s_0, \delta, AP, L)$ in which every state has a successor, a *path* is a sequence $p = (s_0', L(s_0'))(s_1', L(s_1'))\cdots \in (S \times 2^{AP})^\omega$
+Over a [Kripke structure](kripke-structures-with-initial-states.md) $K = (S, s_0, \delta, AP, L)$ with the single initial state $s_0$, transition relation
+$s' \in \delta(s)$ and total (every state has a successor), a *path* is a sequence $p = (s_0', L(s_0'))(s_1', L(s_1'))\cdots \in (S \times 2^{AP})^\omega$
 with $s_{i+1}' \in \delta(s_i')$ for all $i$, and path variables range over paths. An atom is read from the label of the current state: if $\Pi(\pi)[0] = (s, L(s))$, then $\Pi \models_K a_\pi$ iff
 $a \in L(s)$. The other clauses are those of [HyperLTL](hyperltl.md), with suffixes of paths, except that
 $\Pi \models_K \exists\pi.\varphi$ iff some path $p$ of $K$ starting at the current state of the most recently quantified path (the initial state if $\Pi$ is empty) has
@@ -12,6 +13,7 @@ more alternation.
 ## Depends on
 
 - [HyperLTL](hyperltl.md)
+- [Kripke structures with initial states](kripke-structures-with-initial-states.md)
 
 ## Sources
 

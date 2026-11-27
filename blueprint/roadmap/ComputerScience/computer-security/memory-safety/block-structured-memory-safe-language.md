@@ -18,6 +18,10 @@ This node names a family of definitions. A good expansion adds a page for each o
 - Definition: syntax of expressions and commands and their denotational semantics (Section 2 and Figure 1 of the source); stated, with the notation below, in [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md).
 - Definition: the notation of Figure 2 (union of states, $\mathrm{blocks}$, $\mathrm{ids}$, $\mathrm{vars}$ and renaming by permutations).
 
+## Depends on
+
+- [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md)
+
 ## Sources
 
 - A. Azevedo de Amorim, C. Hriţcu and B. C. Pierce, "The meaning of memory safety", *Principles of Security and Trust (POST 2018)*, arXiv:1705.07354v3, <https://arxiv.org/abs/1705.07354v3>: Section 2 and Figure 1 (the language, values, states, errors, block identifiers as capabilities, freshness and initialization of allocated memory) and Section 3.1, Figure 2 (notation, including the left-biased union of partial functions).

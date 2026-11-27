@@ -6,7 +6,7 @@ whether some run with any number of role instances and nonces, and facts of size
 message depth, message width, the number of distinct roles and role length are bounded.
 
 The problem is recursively enumerable; the lower bound encodes derivability in Horn theories with existential quantification, which is undecidable by
-reduction from the [halting problem for two-counter machines](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md).
+reduction from the halting problem for two-counter machines.
 
 ## Depends on
 

@@ -22,6 +22,12 @@ This node names a family of definitions. A good expansion adds a page for each o
 - Definition: facts, states and multiset rewriting with existential quantification (Section 2 of the source); stated in [Multiset rewriting with existential quantification](multiset-rewriting-with-existential-quantification.md).
 - Definition: protocol theories in restricted form, roles and the standard intruder theory (Section 3); stated in [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md) and [The standard intruder theory in multiset rewriting](the-standard-dolev-yao-intruder-theory.md).
 
+## Depends on
+
+- [Multiset rewriting with existential quantification](multiset-rewriting-with-existential-quantification.md)
+- [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)
+- [The standard intruder theory in multiset rewriting](the-standard-dolev-yao-intruder-theory.md)
+
 ## Sources
 
 - N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Sections 2–3 (multiset rewriting, protocol theories and the intruder theory) and Section 5 (Section 5.1, Definitions 5.1–5.2, restricted roles and restricted form; Section 5.2, the set $\mathrm{PA}$, whose bounds apply to the whole run, and the problems $S_{\mathrm{size}=k}$, $S_{\mathrm{nonce}b}$, $S_{\mathrm{role}b}$ and $S_{\mathrm{nonce}b,\mathrm{size}=k}$).

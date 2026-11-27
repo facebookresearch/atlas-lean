@@ -24,6 +24,10 @@ This node names a family of definitions. A good expansion adds a page for each o
 ## Depends on
 
 - [Equational theories and convergent subterm theories](equational-theories-and-convergent-subterm-theories.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
+- [Structural equivalence in the applied pi calculus](structural-equivalence-in-the-applied-pi-calculus.md)
+- [Internal reduction in the applied pi calculus](internal-reduction-in-the-applied-pi-calculus.md)
+- [Labelled transitions in the applied pi calculus](labelled-transitions-in-the-applied-pi-calculus.md)
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 **Proposition.** In the applied pi model of the [Needham–Schroeder public-key protocol](../symbolic-protocol-analysis/needham-schroeder-public-key-protocol.md) with honest agents $a$ and $b$ and
 an active attacker, the protocol guarantees [aliveness](lowes-hierarchy-of-authentication-properties.md) to both the initiator and the responder and weak agreement to the
-initiator, but not weak agreement to the responder: in [Lowe's man-in-the-middle attack](../symbolic-protocol-analysis/lowes-attack-on-needham-schroeder.md) the responder $b$ accepts a run
+initiator, but not weak agreement to the responder: in Lowe's man-in-the-middle attack the responder $b$ accepts a run
 with $a$ while $a$ started a run with the attacker.
 
 ## Depends on

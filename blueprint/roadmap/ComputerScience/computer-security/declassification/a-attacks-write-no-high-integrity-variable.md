@@ -8,9 +8,6 @@ The typing judgement $\Gamma, (\bot_C, I(A)) \vdash a$ forces $(\bot_C, I(A)) \s
 ## Depends on
 
 - [Typing rules for robust declassification](typing-rules-for-robust-declassification.md)
-
-## Proof depends on
-
 - [Typing without declassification enforces noninterference](typing-without-declassification-enforces-noninterference.md)
 
 ## Sources

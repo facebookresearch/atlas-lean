@@ -1,13 +1,20 @@
 # HyperCTL* satisfiability is undecidable
 
 **Theorem (Clarkson, Finkbeiner, Koleini, Micinski, Rabe and Sánchez).** Finite-state satisfiability of [HyperCTL*](hyperctl-star.md) specifications, whether some finite Kripke structure
-satisfies a given specification, is hard for $\Sigma^0_1$, and general satisfiability is hard for $\Sigma^1_1$. In particular both problems are undecidable.
+satisfies a given specification, is hard for [$\Sigma^0_1$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md), and general satisfiability is hard for $\Sigma^1_1$. In particular both problems are undecidable.
 
 The proof reduces LTL synthesis for distributed systems to satisfiability.
 
 ## Depends on
 
 - [HyperCTL*](hyperctl-star.md)
+- [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- The undecidability of LTL synthesis for distributed architectures (Pnueli and Rosner), to which the proof reduces (proof prerequisite; not yet stated)
 
 ## Sources
 
