@@ -1,5 +1,12 @@
 # Effective population size
 
+- [Wright–Fisher genealogy under fluctuating population size](genealogy.md)
+- [Ancestor in generation zero of a gene copy](ancestor.md)
+- [Identity by descent under a Wright–Fisher genealogy](identical-by-descent.md)
+- [Probability of non-identity by descent under fluctuating population size](non-identity-prob.md)
+- [Factor of non-identity by descent over t generations](non-identity-factor.md)
+- [Inbreeding effective size under fluctuating population size](inbreeding-effective-size.md)
+- [Harmonic mean of the population sizes](harmonic-mean-size.md)
 - [Effective population size under fluctuating population size](effective-size-under-fluctuating-population-size.md)
 - [Effective population size with separate sexes](effective-size-with-separate-sexes.md)
 - [Gamete contributions](gamete-contribution.md)

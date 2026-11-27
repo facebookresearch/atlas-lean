@@ -63,25 +63,6 @@ public theorem_wanted kPellLucas_dominantRoot_bounds (k : ℕ) (hk : 2 ≤ k) (�
         ‖(β - 1) / ((k + 1) * β ^ 2 - 3 * k * β + k - 1)‖ < 1) ∧
     goldenRatio ^ 2 * (1 - (goldenRatio ^ k)⁻¹) < α ∧ α < goldenRatio ^ 2
 
-/-- **Golden-ratio approximations at the dominant root (Lemma 2).** Let $\varphi$ be the golden
-ratio, let $k$ and $n$ be natural numbers with $k \ge 50$ and $1 < n < \varphi^{k/2}$, and let
-$\alpha > 0$ be a real number with $\alpha^k = 2\alpha^{k-1} + \sum_{i=0}^{k-2} \alpha^i$. Write
-$g_k(z) = (z - 1) / ((k + 1) z^2 - 3kz + k - 1)$. Then
-(i) $|(2\alpha - 2)\alpha^n - 2\varphi^{2n+1}| < 4\varphi^{2n} / \varphi^{k/2}$ and
-(ii) $|g_k(\alpha) - g_k(\varphi^2)| < 4k / \varphi^k$.
-
-Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
-a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 2 (`integers-2025-A67-lem-2`). -/
-public theorem_wanted kPellLucas_dominantRoot_golden_approx (k n : ℕ) (hk : 50 ≤ k) (hn : 1 < n)
-    (hnk : (n : ℝ) < goldenRatio ^ ((k : ℝ) / 2)) (α : ℝ) (hα : 0 < α)
-    (hroot : α ^ k = 2 * α ^ (k - 1) + ∑ i ∈ Finset.range (k - 1), α ^ i) :
-    |(2 * α - 2) * α ^ n - 2 * goldenRatio ^ (2 * n + 1)| <
-        4 * goldenRatio ^ (2 * n) / goldenRatio ^ ((k : ℝ) / 2) ∧
-      |(α - 1) / ((k + 1) * α ^ 2 - 3 * k * α + k - 1) -
-          (goldenRatio ^ 2 - 1) /
-            ((k + 1) * (goldenRatio ^ 2) ^ 2 - 3 * k * goldenRatio ^ 2 + k - 1)| <
-        4 * k / goldenRatio ^ k
-
 /-- **Absolute bounds for $k$-Pell–Lucas numbers close to a power of two (Lemma 9).** Let $k$, $n$
 and $m$ be natural numbers with $k \ge 2$, $m \ge 1$ and $n \ge k + 1$, and let $Q^{(k)}_n$ be
 the $n$th $k$-Pell–Lucas number. If $|Q^{(k)}_n - 2^m| < 2^{m/2}$, then

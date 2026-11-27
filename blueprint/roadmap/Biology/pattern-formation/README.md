@@ -18,6 +18,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
+- [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
 - [Fisher–Stefan moving-boundary model](fisher-stefan-moving-boundary-model/README.md)
 - [Hyperbolic leader–follower swarm models](hyperbolic-leader-follower-swarm-models/README.md)
 - [Integrodifference Klausmeier vegetation model](integrodifference-klausmeier-vegetation-model/README.md)
