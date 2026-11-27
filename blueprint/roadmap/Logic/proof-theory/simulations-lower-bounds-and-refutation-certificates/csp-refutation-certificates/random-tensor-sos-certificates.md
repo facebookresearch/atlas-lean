@@ -4,7 +4,7 @@ For a random $\pm1$ tensor of order $d$, degree-$q$ sum-of-squares certifies an 
 
 For an order-$d$ tensor $\mathcal{A}\in(\mathbb{R}^n)^{\otimes d}$ write $\mathcal{A}(x)=\langle\mathcal{A},x^{\otimes d}\rangle$ and $\mathcal{A}_{\max}=\sup_{\|x\|_2=1}\mathcal{A}(x)$. A degree-$q$ pseudo-expectation ($q$ even) is a linear map $\tilde{\mathbb{E}}$ on real polynomials of degree at most $q$ in $x_1,\dots,x_n$ with $\tilde{\mathbb{E}}[1]=1$ and $\tilde{\mathbb{E}}[p^2]\ge0$ for every $p$ of degree at most $q/2$; it respects the constraint $\|x\|_2^q=1$ if $\tilde{\mathbb{E}}[p\cdot(\|x\|_2^q-1)]=0$ for every $p$ with $\deg(p\cdot(\|x\|_2^q-1))\le q$. The **degree-$q$ SoS relaxation** $\mathrm{SoS}_q(\mathcal{A}(x))$ is the maximum of $\tilde{\mathbb{E}}[\mathcal{A}(x)]$ over degree-$q$ pseudo-expectations respecting $\|x\|_2^q=1$; it satisfies $\mathcal{A}_{\max}\le\mathrm{SoS}_q(\mathcal{A}(x))$ and is computable by a semidefinite program of size $n^{O(q)}$. For i.i.d. Rademacher entries, $\mathcal{A}_{\max}\lesssim\sqrt{n\cdot d\cdot\log d}$.
 
-**Theorem (SoS degree equal to tensor order).** For every even $q\le n$, let $\mathcal{A}\in(\mathbb{R}^n)^{\otimes q}$ have independent Rademacher entries. With high probability (failure probability $n^{-\Omega(1)}$),
+**Theorem (SoS degree equal to tensor order).** For every even $q\le n$, let $\mathcal{A}\in(\mathbb{R}^n)^{\otimes q}$ have independent Rademacher entries. With high probability (failure probability $n^{-\Omega(1)}$; Theorems 4.4, 5.7, 5.8 and A.5 print $1-n^{\Omega(1)}$, an evident sign misprint for $1-n^{-\Omega(1)}$),
 
 $$
 2^{-O(q)}\cdot\left(\frac{n}{q}\right)^{q/4-1/2}\le\frac{\mathrm{SoS}_q(\mathcal{A}(x))}{\mathcal{A}_{\max}}\le2^{O(q)}\cdot\left(\frac{n}{q}\right)^{q/4-1/2},

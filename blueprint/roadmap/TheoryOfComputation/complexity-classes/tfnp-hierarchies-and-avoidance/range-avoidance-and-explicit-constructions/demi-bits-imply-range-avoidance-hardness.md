@@ -4,7 +4,7 @@ If a demi-bits generator with linear stretch exists, then range avoidance (given
 
 **Range avoidance.** $\mathrm{Avoid}$ and its restriction $\mathcal C$-$\mathrm{Avoid}$ to a circuit class are as on [the range avoidance problem](range-avoidance-problem.md); "stretch $n\to m$" means circuits $C:\{0,1\}^n\to\{0,1\}^m$ with $m>n$.
 
-**Nondeterministic search.** A search problem with relation $R$ is in $\mathsf{SearchNP}$ if a nondeterministic polynomial-time machine $M$ satisfies, for every input $x$: if $x$ has a solution, then $M(x)$ has an accepting path and every accepting path outputs some $y$ with $R(x,y)$; if $x$ has no solution, then $M(x)$ has no accepting path.
+**Nondeterministic search.** A search problem with relation $R$ is in $\mathsf{SearchNP}$ if a nondeterministic polynomial-time machine $M$ satisfies, for every input $x$: if $x$ has a solution, then $M(x)$ has an accepting path and every accepting path outputs some $y$ with $R(x,y)$; if $x$ has no solution, then $M(x)$ has no accepting path. A nondeterministic polynomial-time machine $\mathcal A$ is an **errorless $\mathsf{SearchNP}$ heuristic** for $R$ if every computational path of $\mathcal A(x)$ either outputs $\bot$ or outputs a valid solution $y$ with $R(x,y)$; $\mathcal A$ *solves* $R$ on $x$ if at least one computational path outputs a valid solution, and *fails* on $x$ (written $\mathcal A(x)=\bot$) if every computational path outputs $\bot$.
 
 **Strong seeded extractors.** A polynomial-time computable $\mathrm{Ext}:\{0,1\}^N\times\{0,1\}^d\to\{0,1\}^m$ is a $(k,\epsilon)$-strong seeded extractor if for every random variable $X$ on $\{0,1\}^N$ with $\Pr[X=x]\le 2^{-k}$ for all $x$, the distributions $(U_d,\mathrm{Ext}(X,U_d))$ and $(U_d,U_m)$ have statistical distance at most $\epsilon$.
 
@@ -35,4 +35,4 @@ None.
 ## Sources
 
 - Hanlin Ren, Yichuan Wang, Yan Zhong, "Hardness of Range Avoidance and Proof Complexity Generators from Demi-Bits", *Innovations in Theoretical Computer Science Conference (ITCS 2026)*, LIPIcs, 2026, doi:10.4230/LIPIcs.ITCS.2026.111; also arXiv:2511.14061v2, https://arxiv.org/abs/2511.14061 (Theorems 1.1, 1.2, 1.5 and 3.1 with its proof, Corollary 3.2, Definitions 2.8 and 2.17, Theorem 2.19, Assumption 2.3, Theorem 4.1; numbering of arXiv v2).
-- Xin Li, Hanlin Ren, Yan Zhong, "Many Proof Complexity Generators Inside One Demi-Bits Generator", *FOCS* 2026, arXiv:2609.23228v1, https://arxiv.org/abs/2609.23228 (Definitions 2.1 and 2.2, Theorems 4.1 and 4.7).
+- Xin Li, Hanlin Ren, Yan Zhong, "Many Proof Complexity Generators Inside One Demi-Bits Generator", *FOCS* 2026, arXiv:2609.23228v1, https://arxiv.org/abs/2609.23228 (Definitions 2.1, 2.2 and 2.7, Theorems 4.1 and 4.7).
