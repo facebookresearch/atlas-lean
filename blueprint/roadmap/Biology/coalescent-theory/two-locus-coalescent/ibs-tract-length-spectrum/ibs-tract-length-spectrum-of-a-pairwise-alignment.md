@@ -22,6 +22,10 @@ $$\log \mathcal{L}(\Theta) = \sum_{m} \bigl(N_{B_m} \log \mathbb{E}_\Theta N_{B_
 
 maximized over demographic parameters $\Theta$ (population sizes, split times, admixture times and fractions).
 
+## Depends on
+
+- [Pairwise sequentially Markov coalescents SMC and SMC′](../sequentially-markov-coalescent-smc-smc-pairwise.md)
+
 ## Proof sketch
 
 The event "polymorphic, then at least $l$ identical sites" is the disjoint union of "polymorphic, then exactly $l$ identical sites, then a polymorphic site" and "polymorphic, then at least $l + 1$ identical sites", which gives the exact-length probability $p_l - p_{l+1}$; summing over the starting site of each tract gives $\mathbb{E} N_l$ up to edge effects at the sequence ends. Without recombination every site of the tract shares the coalescence time $t$; each site differs independently with probability about $2\mu t$, and no recombination in the tract's history over its $2t$ generations of branch length has probability $e^{-2rlt}$, giving the integrand. With the exponential density the integral is $\int_0^\infty \tfrac{2\mu t}{2N} e^{-bt}dt = \tfrac{2\mu}{2N b^2}$ with $b = \tfrac{1}{2N} + 2(\mu + r)l$, which simplifies to the displayed formula. Its $l^{-2}$ tail shows why long tracts carry information about recent times: a tract of length $l$ typically coalesced about $1/(2(\mu + r)l)$ generations ago. Recent gene flow between diverged populations leaves long IBD segments that lengthen the between-population spectrum, so the method dates admixture pulses too old for direct IBD detection. Using Marjoram and Wall's SMC$'$, which allows a recombination to leave the coalescence time unchanged, for the largest term removes a bias of the plain SMC against intermediate-length tracts. Applied to sequenced European and African parents, the fit placed the European–African split near 55 thousand years ago with gene flow until about 13 thousand years ago.

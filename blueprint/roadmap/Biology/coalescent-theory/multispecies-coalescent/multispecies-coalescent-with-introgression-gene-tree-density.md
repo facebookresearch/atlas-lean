@@ -14,6 +14,10 @@ $$f(\tau, \theta, \varphi \mid X) \propto f(\tau, \theta, \varphi) \prod_{i=1}^{
 
 with inverse-gamma priors on $\theta$ and $\tau$ and beta priors on $\varphi$. It is sampled by MCMC over gene trees and parameters, and the gene-tree moves resample the flags whenever a node age or attachment point changes.
 
+## Proof depends on
+
+- [Gene tree density under the multispecies coalescent with branch population functions](gene-tree-density-under-the-multispecies-coalescent-with-branch-population-functions.md)
+
 ## Proof sketch
 
 Given the flags, every gene-tree branch has a definite path through the network. The network then acts as a species tree whose populations are entered by known sets of lineages, so the multispecies-coalescent density applies population by population. During an interval with $k$ lineages in a population of size $\theta$, the waiting time to the next coalescence is exponential with rate $k(k-1)/\theta$. A coalescence contributes the rate $2/\theta$ of the specific pair that merges, and an interval reaching the population's top contributes only the survival factor. The flags are Bernoulli($\varphi_H$) choices, which gives the product of $\varphi_H$ powers. The data inform $\varphi$ only through this factor, so a $\varphi$ update leaves the sequence likelihood unchanged. Without hybridization nodes the density reduces to the Rannala–Yang multispecies coalescent density.
