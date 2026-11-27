@@ -64,3 +64,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Tree Bayesian networks for molecular fingerprints](part-02/tree-bayesian-networks-for-molecular-fingerprints/README.md)
 ## [Sequence indexing, k-mer sampling and alignment](part-01/README.md)
 ## [Molecular networks, omics statistics and protein design](part-02/README.md)
+- [Rare variant discovery probability in population sequencing](rare-variant-discovery-probability-in-population-sequencing/README.md)
+- [IBD sharing HMM with linkage disequilibrium](ibd-sharing-hmm-with-linkage-disequilibrium/README.md)
+- [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
+- [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)

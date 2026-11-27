@@ -109,3 +109,5 @@ Compartmental, renewal and branching-process models of infectious disease transm
 ## [Compartmental models of diseases, vaccination and behaviour](part-02/README.md)
 ## [Network and stochastic epidemic models](part-03/README.md)
 ## [Control, estimation, testing and within-host dynamics](part-04/README.md)
+- [Next-generation operator and basic reproduction number](next-generation-operator-and-basic-reproduction/README.md)
+- [Epidemic coalescent models](epidemic-coalescent-models/README.md)
