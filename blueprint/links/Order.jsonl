@@ -118,3 +118,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Order/fixed-points-domain-theory/embedding-projection-pairs/README.md"}], "id": "af_e028464e17f64f3b833ab6fc"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Order/fixed-points-domain-theory/embedding-projection-pairs/embeddingprojection-pairs.md"}], "id": "af_5894358f038f3b5b54be817b", "extensions": {"org.atlas-wiki": {"kind": "def"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Order/ordered-sets/strict-total-orders/weak-orders-without-ties-are-strict-total-orders.md"}], "id": "af_865fc9ea3d3021df28afcd5c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Order/lattices-boolean-algebras/finite-congruence-lattice-colored-graph-criterion.md"}], "id": "af_3cd591f61eeb1183ac368de7", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}

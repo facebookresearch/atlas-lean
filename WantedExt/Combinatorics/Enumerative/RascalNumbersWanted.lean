@@ -48,6 +48,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.RascalBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.RascalNumberIdentities
 public import MathlibExt.Combinatorics.Enumerative.RascalNumbers
 public import MathlibExt.Combinatorics.Enumerative.RascalWordEnds
@@ -85,34 +86,6 @@ Interpretations of Rascal Numbers", Theorem 17. -/
 theorem_wanted apkCard_succ_eq_rascalZ (n k : ℕ) :
     (apkCard (n + 1) k : ℤ) = rascalZ (n : ℤ) (k : ℤ)
 
-/-- **Generalized Rascal numbers as sums of products of binomial coefficients.** For all natural
-numbers $j$, $n$ and $k$ with $k \le n$, the generalized Rascal number $R^{(j)}_{n,k}$, the
-number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions
-where a $0$ is immediately followed by a $1$), equals
-$\sum_{i=0}^{j} \binom{k}{i} \binom{n-k}{i}$.
-
-The hypothesis $k \le n$ is needed: for $k > n$ the left side is $0$, while the right side,
-with $n - k$ read as $0$, is $1$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 19. -/
-theorem_wanted rascalGen_eq_sum (j n k : ℕ) (hkn : k ≤ n) :
-    (rascalGen j k n : ℤ) =
-      ∑ i ∈ Finset.range (j + 1),
-        (Nat.choose k i : ℤ) * (Nat.choose (n - k) i : ℤ)
-
-/-- **Row sums of generalized Rascal numbers.** Write $R^{(j)}_{n,k}$ for the number of binary
-words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions where a $0$ is
-immediately followed by a $1$). For all natural numbers $j$ and $n$,
-$\sum_{k=0}^{n} R^{(j)}_{n,k} = \sum_{k=0}^{2j+1} \binom{n}{k}$, where $\binom{n}{k} = 0$ for
-$k > n$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 20. -/
-theorem_wanted sum_rascalGen_row (j n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), (rascalGen j k n : ℤ) =
-      ∑ k ∈ Finset.range (2 * j + 2), (Nat.choose n k : ℤ)
-
 /-- **Forward differences of generalized Rascal row sums.** Fix a natural number $j$. For natural
 numbers $n$ and $k$ let $R^{(j)}_{n,k}$ be the number of binary words of length $n$ with exactly
 $k$ ones and at most $j$ ascents, and let $S(n) = \sum_{k=0}^{n} R^{(j)}_{n,k}$. Then
@@ -125,17 +98,6 @@ theorem_wanted iterate_forwardDiff_sum_rascalGen (j n : ℕ) :
     ((fun a : ℕ → ℤ => fun m => a (m + 1) - a m)^[2 * j + 1]
       (fun m => ∑ k ∈ Finset.range (m + 1),
         rascalGenZ j (m : ℤ) (k : ℤ))) n = 1
-
-/-- **Alternating row sums of generalized Rascal numbers vanish on odd rows.** Write
-$R^{(j)}_{n,k}$ for the number of binary words of length $n$ with exactly $k$ ones and at most
-$j$ ascents (positions where a $0$ is immediately followed by a $1$). For all natural numbers
-$j$ and $m$, $\sum_{k=0}^{2m+1} (-1)^k R^{(j)}_{2m+1,k} = 0$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 23. -/
-theorem_wanted sum_rascalGen_alternating_odd (j m : ℕ) :
-    ∑ k ∈ Finset.range (2 * m + 2),
-        (-1 : ℤ) ^ k * (rascalGen j k (2 * m + 1) : ℤ) = 0
 
 /-- **Alternating row sums of generalized Rascal numbers on even rows.** Write $R^{(j)}_{n,k}$ for
 the number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents

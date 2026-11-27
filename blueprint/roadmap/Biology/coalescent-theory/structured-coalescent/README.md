@@ -50,3 +50,4 @@
 - [IBD sharing under migration](ibd-sharing-under-migration/README.md)
 - [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
 - [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)
+- [Coalescing random walks on directed random graphs](coalescing-random-walks-on-directed-random-graphs/README.md)
