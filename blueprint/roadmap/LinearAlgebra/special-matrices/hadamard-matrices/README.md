@@ -13,3 +13,4 @@ A Hadamard matrix has mutually orthogonal rows and columns of $\pm 1$ entries; o
 - [A circulant core is a circulant submatrix](has-circulant-core-iff-circulant.md): circulant cores
 - [Hadamard matrices with circulant core: Paley and twin-prime cases](exists-hadamard-matrix-with-circulant-co.md): the Paley and twin-prime constructions
 - [Circulant-core Hadamard matrices with orthogonal rows and columns](exists-is-hadamard-with-circulant-core.md): the same constructions, with orthogonal rows and columns
+- [Orders of real circulant Hadamard matrices](circulant-hadamard-orders.md)

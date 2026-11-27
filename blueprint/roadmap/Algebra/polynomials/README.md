@@ -25,4 +25,5 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Irreducibility from a cycle on all but one root](irreducible-of-cycle-on-other-roots.md)
 - [Laurent polynomials over a unique factorization domain](unique-factorization-monoid.md)
 - [Symmetric polynomials in the roots are polynomials in the coefficients](symmetric-polynomial-in-esymm.md)
+- [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)
 - [Twisted telescoping for an iterated ring endomorphism](one-sub-prod-iterate-mul-eq-sum-prod-ite.md)
