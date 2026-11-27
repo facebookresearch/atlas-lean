@@ -13848,6 +13848,7 @@
   "MathlibExt/NumberTheory/OresmePellCongruence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
   "MathlibExt/NumberTheory/OrderOfTwoMulCoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
   "MathlibExt/NumberTheory/PQDiophantineTuples": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
+  "MathlibExt/NumberTheory/PQRFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/PadicValuationMinTwice": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
   "MathlibExt/NumberTheory/PRecursiveSequence": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "P-recursive sequences"},
   "MathlibExt/NumberTheory/Padics/CasselsEmbedding": {"to": "NumberTheory/p-adic-numbers", "title": "Cassels' embedding theorem"},
