@@ -4,7 +4,7 @@ In an atomic congestion game with nondecreasing latencies, Rosenthal's potential
 
 ## Proof sketch
 
-Each resource with load $n$ contributes $\sum_{k \le n} \ell_e(k)$ to $\Phi$, which lies between $n \ell_e(n)/2$ and $n \ell_e(n)$ for affine nonnegative latencies. Apply the potential function method with $A = 2$, $B = 1$.
+Each resource with load $n$ contributes $\sum_{k \le n} \ell_e(k)$ to $\Phi$, which lies between $n \ell_e(n)/2$ and $n \ell_e(n)$ for affine nonnegative latencies. Apply the potential function method with $A = 2$, $B = 1$ for the price of stability. For the improvement-path clause, an improving move of a player lowers that player's cost and hence, $\Phi$ being an exact potential, strictly lowers $\Phi$; since there are finitely many profiles, every sequence of improving moves from $s^0$ is finite and ends at a pure Nash equilibrium $s$ with $\Phi(s) \le \Phi(s^0)$, so $C(s) \le 2\Phi(s) \le 2\Phi(s^0) \le 2C(s^0)$.
 
 ## Depends on
 

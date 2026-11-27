@@ -4,7 +4,7 @@ There are deterministic word-RAM programs that, given an $n \times n$ signed int
 
 ## Proof sketch
 
-With the bid count of the correctness argument, at most $n(C + \varepsilon)/\varepsilon$ bids with $C \le 2M$ (scaled by $n + 1$ in the scaled version), the total is $O\big(n^2 + n \cdot \tfrac{n(C+\varepsilon)}{\varepsilon}\big)$ instructions.
+The correctness page gives termination; the number of bids is bounded as follows. The cost differences satisfy $c(i, k) - c(i, j) \le C$ with $C = 2M$. Before every bid but the last, some object other than the one bid for has never received a bid and so still has price $0$; for that object $k$ the second smallest reduced cost satisfies $w \le c(i, k)$, so the new price $w - c(i, j) + \varepsilon$ is at most $c(i, k) - c(i, j) + \varepsilon \le C + \varepsilon$. Prices never decrease, each bid raises the sum of prices by at least $\varepsilon$, and before the last bid that sum is at most $(n - 1)(C + \varepsilon)$, so there are at most $n(C + \varepsilon)/\varepsilon$ bids. In the scaled version the costs are multiplied by $n + 1$ and $\varepsilon = 1$, so $C \le 2M(n+1)$. The total is $O\big(n^2 + n \cdot \tfrac{n(C+\varepsilon)}{\varepsilon}\big)$ instructions.
 
 ## Depends on
 

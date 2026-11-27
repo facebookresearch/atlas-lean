@@ -6,6 +6,8 @@ A rule on ordinal single-peaked preferences over $[a, b]$ with finitely many age
 
 By the peaks-only theorem the rule is a function of peaks, which is a strategy-proof onto facility-location rule on the interval, hence a generalized median voter scheme by Moulin's theorem; the max-min and min-max forms are dual.
 
+For group strategy-proofness write $f(p) = \max_S v_S(p)$ with $v_S(p) = \min(\beta_S, \min_{i \in S} p_i)$, let $a = f(p)$ at the true peaks $p$, and let a coalition $C$ report $p'$ (agents outside $C$ unchanged) and move the outcome to $a' \ne a$. If $a' > a$, some term $v_S(p') > a$; it is not one with $S \cap C = \emptyset$, which is unchanged and at most $a$, so $\beta_S > a$ and $p_i > a$ for $i \in S \setminus C$. If every member of $C$ had $p_i > a$, then $v_S(p) > a = f(p)$, which is impossible; so some member has $p_i \le a < a'$. If $a' < a$, let $v_{S^*}(p) = a$ attain the maximum; if every member had $p_i < a$, then $S^*$ contains no member, so $v_{S^*}(p') = a$ and $a' \ge a$, which is impossible; so some member has $p_i \ge a > a'$. In both cases $a$ lies between that member's peak and $a'$ (or equals the peak), so by single-peakedness the member strictly prefers $a$ to $a'$ and is strictly worse off.
+
 ## Depends on
 
 - [Ordinal single-peaked preferences on an interval](ordinal-single-peaked-preferences-on-an-interval.md)

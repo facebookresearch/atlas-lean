@@ -1,10 +1,10 @@
 # The Microcrypt hierarchy of quantum primitives below one-way functions
 
-The following implications hold among quantum cryptographic primitives (black-box): quantum-secure one-way functions $\Rightarrow$ pseudorandom unitaries $\Rightarrow$ pseudorandom function-like states $\Rightarrow$ pseudorandom states (with long outputs) $\Rightarrow$ one-way state generators $\Rightarrow$ one-way puzzles $\Rightarrow$ EFI pairs $\Leftrightarrow$ quantum commitments $\Leftrightarrow$ quantum oblivious transfer. In the other direction, there are oracle separations: pseudorandom states (single-copy) exist relative to a classical oracle with $\mathsf{P}=\mathsf{NP}$ (so they do not imply one-way functions), and pseudorandom states exist relative to a quantum oracle with $\mathsf{BQP}=\mathsf{QMA}$. Pseudorandom states with superlogarithmic output length $n(\lambda) = \omega(\log \lambda)$ qubits imply that $\mathsf{BQP}\ne\mathsf{PP}$ (Kretschmer, Theorem 27), so these Microcrypt primitives still require some complexity-theoretic hardness.
+The following implications hold among quantum cryptographic primitives (black-box): quantum-secure one-way functions $\Rightarrow$ pseudorandom unitaries $\Rightarrow$ pseudorandom function-like states with perfect state generation (pure outputs) $\Rightarrow$ pseudorandom states (with long outputs) $\Rightarrow$ one-way state generators $\Rightarrow$ one-way puzzles $\Rightarrow$ EFI pairs $\Leftrightarrow$ quantum commitments $\Leftrightarrow$ quantum oblivious transfer. In the other direction, there are oracle separations: single-copy pseudorandom states with output length $n(\lambda) > \lambda$ (any polynomial $n(\lambda) > \lambda$) exist relative to a classical oracle with $\mathsf{P}=\mathsf{NP}$ (so they do not imply one-way functions), and pseudorandom states exist relative to a quantum oracle with $\mathsf{BQP}=\mathsf{QMA}$. Pseudorandom states with superlogarithmic output length $n(\lambda) = \omega(\log \lambda)$ qubits imply that $\mathsf{BQP}\ne\mathsf{PP}$ (Kretschmer, Theorem 27), so these Microcrypt primitives still require some complexity-theoretic hardness.
 
 ## Proof sketch
 
-Each forward implication is one of the constructions above: PFC-based PRUs from one-way functions, PRU applied to inputs yields PRFS, PRS imply OWSG by a rank argument, OWSG imply one-way puzzles by shadow tomography, one-way puzzles imply EFI, and EFI is equivalent to commitments and OT. The separations are the oracle theorems of Kretschmer and of Kretschmer–Qian–Sinha–Tal, and the necessity of $\mathsf{BQP}\ne\mathsf{PP}$ is Kretschmer's breaking algorithm.
+Each forward implication is one of the constructions above: PFC-based PRUs from one-way functions, a PRU applied to the inputs yields PRFS whose outputs are pure, fixing a single input of a PRFS with pure outputs gives a PRS (its $t$-copy security is the case of one selected input), PRS imply OWSG by a rank argument, OWSG imply one-way puzzles by shadow tomography, one-way puzzles imply EFI, and EFI is equivalent to commitments and OT. The separations are the oracle theorems of Kretschmer and of Kretschmer–Qian–Sinha–Tal, and the necessity of $\mathsf{BQP}\ne\mathsf{PP}$ is Kretschmer's breaking algorithm.
 
 ## Depends on
 
@@ -31,6 +31,6 @@ Each forward implication is one of the constructions above: PFC-based PRUs from 
 
 - Tomoyuki Morimae, Takashi Yamakawa, "One-Wayness in Quantum Cryptography", TQC (2024), arXiv:2210.03394.
 - Dakshita Khurana, Kabir Tomer, "Commitments from Quantum One-Wayness", STOC (2024), arXiv:2310.11526.
-- William Kretschmer, Luowen Qian, Makrand Sinha, Avishay Tal, "Quantum Cryptography in Algorithmica", STOC (2023), arXiv:2212.00879.
+- William Kretschmer, Luowen Qian, Makrand Sinha, Avishay Tal, "Quantum Cryptography in Algorithmica", STOC (2023), arXiv:2212.00879 (Theorem 1, Definition 7 and Theorem 22).
 - William Kretschmer, "Quantum Pseudorandomness and Classical Complexity", TQC (2021), arXiv:2103.09320.
 - Zvika Brakerski, Ran Canetti, Luowen Qian, "On the Computational Hardness Needed for Quantum Cryptography", ITCS (2023), arXiv:2209.04101.

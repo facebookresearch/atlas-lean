@@ -4,7 +4,7 @@ Assuming the quantum hardness of the Learning With Errors problem, there is a tw
 
 ## Proof sketch
 
-The prover prepares $\sum_{b, x}|b\rangle|x\rangle|f_{k,b}(x)\rangle$ and measures the image $y$, leaving $|0\rangle|x_0\rangle + |1\rangle|x_1\rangle$. The verifier asks either for a preimage (checked with the trapdoor) or for a Hadamard-basis measurement $(b', d)$ satisfying $b' = d\cdot(x_0\oplus x_1)$. A classical prover answering both challenges could be rewound to produce a preimage and a correct equation, violating the adaptive hardcore bit property, which holds for the LWE-based construction.
+The protocol uses the noisy trapdoor claw-free family built from LWE. The prover prepares $\sum_{b, x, y}\sqrt{(f'_{k,b}(x))(y)}\,|b\rangle|x\rangle|y\rangle$ (normalized), using the efficiently samplable densities $f'_{k,b}(x)$ close to $f_{k,b}(x)$, and measures an image $y$, leaving up to negligible error $|0\rangle|x_0\rangle + |1\rangle|x_1\rangle$ with $(x_0, x_1) \in R_k$. The verifier asks either for a preimage $(b, x_b)$, checked with the trapdoor (it inverts every point of the support of $f_{k,b}(x)$), or for an equation: the prover applies $J$ to the second register and measures in the Hadamard basis, obtaining $(d, c)$ with $c = d\cdot(J(x_0)\oplus J(x_1))$, which the verifier checks with the trapdoor, together with $d \in G_{k,0,x_0} \cap G_{k,1,x_1}$. A classical prover answering both challenges could be rewound to produce a preimage and a valid equation, that is, a tuple in $H_k$ more often than one in $\overline{H}_k$, violating the adaptive hardcore bit property of the noisy family.
 
 ## Depends on
 
@@ -12,4 +12,4 @@ The prover prepares $\sum_{b, x}|b\rangle|x\rangle|f_{k,b}(x)\rangle$ and measur
 
 ## Sources
 
-- Zvika Brakerski, Paul Christiano, Urmila Mahadev, Umesh Vazirani, Thomas Vidick, "A cryptographic test of quantumness and certifiable randomness from a single quantum device", FOCS (2018), Journal of the ACM 68(5) (2021); arXiv:1804.00640.
+- Zvika Brakerski, Paul Christiano, Urmila Mahadev, Umesh Vazirani, Thomas Vidick, "A cryptographic test of quantumness and certifiable randomness from a single quantum device", FOCS (2018), Journal of the ACM 68(5) (2021); arXiv:1804.00640 (Section 1, Figure 1; the honest prover of Protocol 1, Section 5.3).

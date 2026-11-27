@@ -1,6 +1,6 @@
 # Approximating the entangled value of a nonlocal game is undecidable
 
-There is no algorithm that, given a synchronous two-prover one-round game $G$ promised to satisfy $\omega^*(G) = 1$ or $\omega^*(G) \le 1/2$, decides which case holds. Consequently there is no computable function $D(G)$ such that strategies of local dimension at most $D(G)$ approximate $\omega^*(G)$ to within additive error $1/4$ for every game $G$.
+There is no algorithm that, given a two-prover one-round game $G$ promised to satisfy $\omega^*(G) = 1$ or $\omega^*(G) \le 1/2$, decides which case holds. Consequently there is no computable function $D(G)$ such that strategies of local dimension at most $D(G)$ approximate $\omega^*(G)$ to within additive error $1/4$ for every game $G$.
 
 ## Proof sketch
 
@@ -8,7 +8,6 @@ A decision procedure for the promise problem would decide the halting problem th
 
 ## Depends on
 
-- [Synchronous two-prover games](synchronous-two-prover-games.md)
 - [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Proof depends on

@@ -4,7 +4,7 @@ For a public straight-line arithmetic circuit $C$ over $\mathbb{F}$ with public 
 
 ## Proof sketch
 
-Soundness: by IT-MAC binding the openings fix the extracted wire values, and the multiplication polynomial in $\Delta$ has nonzero leading coefficient on a false statement. Zero knowledge follows from the masked-check simulation, with linear openings reconstructed from the public statement.
+Soundness: IT-MAC openings over the field $\mathbb{F}$ are binding with error $1/|\mathbb{F}|$. An opening of a linear combination with value $x$ and MAC $m$, checked by $k = m + x\Delta$ against the verifier's key $k$, accepts a forged $(x', m')$ with $x' \ne x$ only if $(x' - x)\Delta = m - m'$; this linear equation in $\Delta$ has exactly one solution, and the global key $\Delta$ is uniform and independent of the values the prover fixed, so the forgery passes with probability $1/|\mathbb{F}|$. Hence the openings fix the extracted wire values, and the multiplication polynomial in $\Delta$ has nonzero leading coefficient on a false statement. Zero knowledge follows from the masked-check simulation and the uniformity of the VOLE corrections (the hiding part of the IT-MAC page, valid over every finite commutative ring), with linear openings reconstructed from the public statement.
 
 ## Depends on
 
