@@ -48,31 +48,40 @@ not even integrability, and nothing about the sign of `B t`, which the source ta
 ## Encoding
 
 The noise need not be integrable, so (a) and (b) use the conditional Lebesgue expectation
-`μ⁻[· | m]` (`MeasureTheory.condLExp`) of `ℝ≥0∞`-valued functions: `IsCenteredNoise m μ w B`
-asks for `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B` and `μ⁻[ofReal w | m] = μ⁻[ofReal (-w) | m]`, that
-is, equal conditional expectations of the positive and negative parts of `w`. Since
-`ENNReal.ofReal` sends negative numbers to `0`, the first condition bounds the conditional second
-moment by `max B 0`: for a nonnegative envelope it is (b) itself, and where `B < 0` it asks the
-conditional second moment to vanish. Both sides of the centering equality are finite
-(`IsCenteredNoise.condLExp_abs_lt_top`), so, when `m ≤ m0` and `μ.trim` is σ-finite, as for every
-`ℱ t` under a finite measure, it is a genuine centering condition and not an equality `∞ = ∞`.
-Otherwise `μ⁻[· | m]` is `0` and every `w` satisfies the contract. The Bochner conditional
-expectation `μ[· | m]` is `0` for a non-integrable function, and a real `tsum` is `0` for a
-divergent series, so neither is used to state (a), (b), (d) or (e).
+`μ⁻[· | m]` (`MeasureTheory.condLExp`) of `ℝ≥0∞`-valued functions. `IsCenteredNoise m μ w B`
+consists of two statements about `μ⁻[· | m]`, each almost everywhere:
+`μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B` and `μ⁻[ofReal w | m] = μ⁻[ofReal (-w) | m]`. They are (b)
+and (a), a conditional second moment at most `max B 0` and equal conditional expectations of the
+positive and negative parts of `w`, when `w` is a.e.-measurable for the ambient σ-algebra `m0`,
+`m ≤ m0` and `μ.trim` is σ-finite. In `ae_tendsto_zero` all three hold: `w t` is
+`ℱ (t + 1)`-measurable, and every `ℱ t` is a sub-σ-algebra whose trim of a finite measure is
+σ-finite. Since `ENNReal.ofReal` sends negative numbers to `0`, the first condition then bounds the
+conditional second moment by `max B 0`: for a nonnegative envelope it is (b) itself, and where
+`B < 0` it asks the conditional second moment to vanish. Both sides of the centering equality are
+finite (`IsCenteredNoise.condLExp_abs_lt_top`), so in that setting it is a genuine centering
+condition and not an equality `∞ = ∞`. Outside it the two statements need not mean this: if
+`m ≤ m0` fails or `μ.trim` is not σ-finite, `μ⁻[· | m]` is `0` and every `w` satisfies the
+contract, and for a `w` that is not a.e.-measurable the lower integrals behind `μ⁻[· | m]` see only
+the measurable minorants of `ofReal w` and `ofReal (w ^ 2)`, so a nonnegative `w` that is not
+almost everywhere `0` can satisfy it with envelope `0`. The Bochner conditional expectation
+`μ[· | m]` is `0` for a non-integrable function, and a real `tsum` is `0` for a divergent series,
+so neither is used to state (a), (b), (d) or (e).
 
 ## Main definitions
 
-* `IsCenteredNoise m μ w B`: `w` is conditionally centered given `m` and its conditional second
-  moment is at most `max B 0`.
+* `IsCenteredNoise m μ w B`: two conditions on `μ⁻[· | m]`; for an a.e.-measurable `w`, a
+  sub-σ-algebra `m` and a σ-finite `μ.trim`, `w` is conditionally centered given `m` and its
+  conditional second moment is at most `max B 0`.
 * `restart α w t₀ n`: the recursion started from `0` at time `t₀`, at time `t₀ + n` (the source's
   `W(t₀ + n; t₀)`).
 
 ## Main results
 
-* `IsCenteredNoise.condLExp_abs_lt_top`: conditional first moments are finite.
-* `IsCenteredNoise.localize`: on an `m`-measurable event on which `B ≤ k`, the localized noise is
-  square integrable and conditionally centered, with conditional second moment at most `k`, for
-  the Bochner conditional expectation.
+* `IsCenteredNoise.condLExp_abs_lt_top`: `μ⁻[ofReal |w| | m]` is finite almost everywhere.
+* `IsCenteredNoise.localize`: for a measurable `w`, a sub-σ-algebra `m` and a finite measure, on an
+  `m`-measurable event on which `B ≤ k`, the localized noise is square integrable and
+  conditionally centered, with conditional second moment at most `k`, for the Bochner conditional
+  expectation.
 * `IsCenteredNoise.of_memLp`: square-integrable noise with the usual conditional moment
   conditions satisfies the contract.
 * `IsCenteredNoise.div`: dividing by an `m`-measurable `G ≥ G₀ > 0` gives noise with envelope
@@ -117,23 +126,28 @@ namespace Cslib.MachineLearning.StochasticApproximation.NoiseAveraging
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- **Noise contract.** Conditions (a) and (b) of Tsitsiklis (1994), Lemma 1, for one step,
-stated with the conditional Lebesgue expectation `μ⁻[· | m]`, so no integrability of `w` is
-assumed: the conditional second moment of `w` given `m` is at most `max B 0`, and the
-conditional expectations of the positive part `ofReal w` and the negative part `ofReal (-w)`
-agree. The bound is `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B`, and `ENNReal.ofReal` sends a negative
-`B` to `0`: for a nonnegative envelope `B` it is the bound by `B` itself, while where `B < 0` it
-asks the conditional second moment to vanish, not to be at most `B`. The contract is meant for a
-sub-σ-algebra `m ≤ m0` such that `μ.trim` is σ-finite, which holds for every σ-algebra of a
-filtration under a finite measure; otherwise `μ⁻[· | m]` is `0` and every `w` satisfies it.
-Square-integrable noise with the usual conditions `μ[w | m] = 0` and `μ[w ^ 2 | m] ≤ B` satisfies
-it (`IsCenteredNoise.of_memLp`). -/
+/-- **Noise contract.** Two conditions on the conditional Lebesgue expectation `μ⁻[· | m]`,
+which needs no integrability of `w`: `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B` and
+`μ⁻[ofReal w | m] = μ⁻[ofReal (-w) | m]`, each almost everywhere. They are conditions (a) and (b)
+of Tsitsiklis (1994), Lemma 1, for one step, when `w` is a.e.-measurable for the ambient
+σ-algebra `m0`, `m ≤ m0` and `μ.trim` is σ-finite, as for a measurable noise and every σ-algebra
+of a filtration under a finite measure. Then the conditional second moment of `w` given `m` is at
+most `max B 0`, and the positive part `ofReal w` and the negative part `ofReal (-w)` have the same
+conditional expectation. `ENNReal.ofReal` sends a negative `B` to `0`, so for a nonnegative
+envelope `B` the bound is the bound by `B` itself, while where `B < 0` it asks the conditional
+second moment to vanish, not to be at most `B`. Outside that setting the two conditions need not
+mean this: if `m ≤ m0` fails or `μ.trim` is not σ-finite, `μ⁻[· | m]` is `0` and every `w`
+satisfies the contract, and a nonnegative `w` that is not a.e.-measurable can satisfy it with
+envelope `0` without being almost everywhere `0`. Square-integrable noise with the usual
+conditions `μ[w | m] = 0` and `μ[w ^ 2 | m] ≤ B` satisfies it (`IsCenteredNoise.of_memLp`). -/
 structure IsCenteredNoise (m : MeasurableSpace Ω) (μ : Measure[m0] Ω) (w B : Ω → ℝ) : Prop where
-  /-- Condition (b): the conditional second moment of `w` given `m` is at most `ofReal B`, that
-  is, at most `B` where `B ≥ 0` and `0` where `B < 0`. -/
+  /-- `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B` almost everywhere. In the setting above this is
+  condition (b): the conditional second moment of `w` given `m` is at most `B` where `B ≥ 0` and
+  `0` where `B < 0`. -/
   condLExp_sq_le : μ⁻[fun ω => ENNReal.ofReal (w ω ^ 2) | m] ≤ᵐ[μ] fun ω => ENNReal.ofReal (B ω)
-  /-- Condition (a): the positive and negative parts of `w` have the same conditional
-  expectation given `m`. -/
+  /-- `μ⁻[ofReal w | m] = μ⁻[ofReal (-w) | m]` almost everywhere. In the setting above this is
+  condition (a): the positive and negative parts of `w` have the same conditional expectation
+  given `m`. -/
   condLExp_pos_eq_neg :
     μ⁻[fun ω => ENNReal.ofReal (w ω) | m] =ᵐ[μ] μ⁻[fun ω => ENNReal.ofReal (-w ω) | m]
 
@@ -149,11 +163,14 @@ noncomputable def restart (α w : ℕ → Ω → ℝ) (t₀ : ℕ) : ℕ → Ω 
 private theorem abs_le_one_add_sq (x : ℝ) : |x| ≤ 1 + x ^ 2 := by
   nlinarith [sq_nonneg (|x| - 1), abs_nonneg x, sq_abs x]
 
-/-- **Finite conditional first moments.** If `w` satisfies the contract, then
-`μ⁻[ofReal |w| | m] < ∞` almost surely. Hence both sides of
-`IsCenteredNoise.condLExp_pos_eq_neg` are finite almost surely. When `m ≤ m0` and `μ.trim` is
-σ-finite, that equality is therefore a genuine centering condition; otherwise `μ⁻[· | m]` is `0`
-and every `w` satisfies the contract. -/
+/-- **Finite conditional Lebesgue expectation of `|w|`.** If `w` satisfies the contract, then
+`μ⁻[ofReal |w| | m] < ∞` almost surely, for every `m` and `μ`. Hence both sides of
+`IsCenteredNoise.condLExp_pos_eq_neg` are finite almost surely. When `w` is a.e.-measurable,
+`m ≤ m0` and `μ.trim` is σ-finite, `μ⁻[ofReal |w| | m]` is the conditional first moment of `w`,
+and that equality is therefore a genuine centering condition. Outside that setting it need not
+be: if `m ≤ m0` fails or `μ.trim` is not σ-finite, `μ⁻[· | m]` is `0` and every `w` satisfies the
+contract, and a nonnegative `w` that is not a.e.-measurable can satisfy it with envelope `0`
+without being almost everywhere `0`. -/
 theorem IsCenteredNoise.condLExp_abs_lt_top {m : MeasurableSpace Ω} {w B : Ω → ℝ}
     (hw : IsCenteredNoise m μ w B) :
     ∀ᵐ ω ∂μ, μ⁻[fun ω => ENNReal.ofReal |w ω| | m] ω < ∞ := by

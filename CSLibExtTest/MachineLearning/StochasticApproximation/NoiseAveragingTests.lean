@@ -29,9 +29,12 @@ hypothesis cannot be removed even in the source's setting:
 The positive control `ae_tendsto_zero_hypotheses_satisfiable` shows that the hypotheses of
 `ae_tendsto_zero` hold together for noise that is not almost surely zero, and
 `restart_coin_tendsto_zero` applies the lemma to that model. `isCenteredNoise_neg_one_iff` pins
-how the contract reads a negative envelope, and two examples show that every `w` satisfies it
-outside the setting it is meant for. The remaining examples apply the bridges and the lemmas in
-the shapes their consumers use.
+how the contract reads a negative envelope. Three examples show what the contract allows outside
+the setting where its fields are conditional moments: every `w` satisfies it when `m` is not a
+sub-σ-algebra or `μ.trim` is not σ-finite, and, on `Bool` with the trivial σ-algebra, a
+nonnegative `w` that is not a.e.-measurable satisfies it with envelope `0` without being almost
+everywhere `0`. The remaining examples apply the bridges and the lemmas in the shapes their
+consumers use.
 -/
 
 @[expose] public section
@@ -557,7 +560,8 @@ example (ω : Fin 2) : restart nsa_aux_s5_a2 nsa_aux_s5_w1 0 1 ω = nsa_aux_s5_w
   ring
 
 /-- The contract reads a negative envelope as `0`: with envelope `-1` it is the contract with
-envelope `0`, which asks the conditional second moment to vanish. -/
+envelope `0`. Where the fields are conditional moments (an a.e.-measurable `w`, a sub-σ-algebra
+`m` and a σ-finite `μ.trim`), that contract asks the conditional second moment to vanish. -/
 theorem isCenteredNoise_neg_one_iff {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     {m : MeasurableSpace Ω} {w : Ω → ℝ} :
     IsCenteredNoise m μ w (fun _ => -1) ↔ IsCenteredNoise m μ w (fun _ => 0) := by
@@ -584,6 +588,41 @@ example {Ω : Type*} {m0 m : MeasurableSpace Ω} (hm : m ≤ m0) (μ : Measure[m
   rw [condLExp_of_not_sigmaFinite hm hσ]
   filter_upwards with ω
   simp
+
+/-- Under the trivial σ-algebra on `Bool` every simple function is constant, so a function that
+vanishes at `false` has lower integral `0` for every measure, whatever its value at `true`. -/
+private theorem lintegral_bot_bool_eq_zero (μ : Measure[⊥] Bool) {f : Bool → ℝ≥0∞}
+    (hf : f false = 0) : ∫⁻ b, f b ∂μ = 0 := by
+  rw [lintegral_def]
+  refine le_antisymm (iSup₂_le fun g hg => ?_) zero_le
+  have hconst : ∀ b, g b = g false := by
+    intro b
+    rcases MeasurableSpace.measurableSet_bot_iff.mp
+        (@SimpleFunc.measurableSet_fiber Bool ℝ≥0∞ ⊥ g (g false)) with h | h
+    · exact absurd (show false ∈ g ⁻¹' {g false} from rfl) (by rw [h]; exact Set.notMem_empty _)
+    · exact (show b ∈ g ⁻¹' {g false} by rw [h]; trivial)
+  have hg0 : g = 0 := @SimpleFunc.ext Bool ℝ≥0∞ ⊥ g 0 fun b => by
+    rw [hconst b]
+    exact le_antisymm ((hg false).trans hf.le) zero_le
+  rw [hg0, SimpleFunc.zero_lintegral]
+
+/-- The contract alone does not make `w` a random variable, even with `m = m0` and a probability
+measure. On `Bool` with the trivial σ-algebra and the measure `dirac true`, the noise with
+`w false = 0` and `w true = 1` satisfies the contract with envelope `0`, yet it is not almost
+everywhere `0`: the lower integrals behind `μ⁻[· | m]` see only the measurable minorants of
+`ofReal w` and `ofReal (w ^ 2)`, which are constant and vanish at `false`. The convergence
+theorems exclude such noise by their measurability hypothesis on `w t`. -/
+example : IsCenteredNoise ⊥ (@Measure.dirac Bool ⊥ true) (fun b => if b then 1 else 0)
+      (fun _ => 0) ∧
+    ¬ (fun b : Bool => if b then (1 : ℝ) else 0) =ᵐ[@Measure.dirac Bool ⊥ true] 0 := by
+  refine ⟨⟨?_, ?_⟩, fun h => ?_⟩
+  · rw [condLExp_bot, lintegral_bot_bool_eq_zero _ (by simp)]
+    exact Eventually.of_forall fun _ => zero_le
+  · rw [condLExp_bot, condLExp_bot, lintegral_bot_bool_eq_zero _ (by simp),
+      lintegral_bot_bool_eq_zero _ (by simp)]
+  · have h1 := @Measure.dirac_apply_of_mem Bool ⊥
+      {a | ¬ (fun b : Bool => if b then (1 : ℝ) else 0) a = (0 : Bool → ℝ) a} true (by simp)
+    exact one_ne_zero (h1.symm.trans (ae_iff.mp h))
 
 section Interface
 
