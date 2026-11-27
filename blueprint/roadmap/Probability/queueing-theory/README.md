@@ -10,3 +10,4 @@
 - [Deterministic service networks](deterministic-service-networks/README.md)
 - [Product-form queueing networks](product-form-networks/README.md)
 - [Poisson arrivals see time averages](poisson-arrivals-see-time-averages.md)
+- [Stability of reflected fluid models](stability-of-reflected-fluid-models/README.md)
