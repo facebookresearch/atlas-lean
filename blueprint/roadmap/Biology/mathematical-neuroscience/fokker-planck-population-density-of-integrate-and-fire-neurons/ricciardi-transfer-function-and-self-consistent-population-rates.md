@@ -14,6 +14,8 @@ which are exactly the fixed points of the relaxation dynamics $\tau_i \dot Q_i =
 
 ## Depends on
 
+- [Siegert formula](../siegert-mean-first-passage-formula/integral-firing-time.md)
+
 - [Fokker–Planck equation for a population of leaky integrate-and-fire neurons](fokker-planck-equation-for-a-population-of-leaky-integrate-and-fire-neurons.md)
 
 ## Proof sketch
