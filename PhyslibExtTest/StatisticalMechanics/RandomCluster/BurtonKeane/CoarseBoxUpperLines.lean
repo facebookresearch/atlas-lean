@@ -48,12 +48,12 @@ example (L R : ℕ) : bc61_coarseTcount closed2 L R = 0 := by
   exact closed_not_coarseTrif L y (bc61_mem_coarseTrifFinset.mp hy).2
 
 -- The site `(4, 0)` is outside the radius-3 box at the origin.
-example : bc57_pt 4 0 ∉ bc61_boxAround 2 3 0 :=
+example : faceCorner00 4 0 ∉ bc61_boxAround 2 3 0 :=
   bc61_pt_outside_boxAround (by norm_num)
 
 -- The arms at heights `1` and `2` are disconnected once the box is removed.
 example : ¬ Connected 2 (removeSites (bc61_boxAround 2 3 0) bc60_upperLines)
-    (bc57_pt (((3 : ℕ) : ℤ) + 1) 1) (bc57_pt (((3 : ℕ) : ℤ) + 1) 2) :=
+    (faceCorner00 (((3 : ℕ) : ℤ) + 1) 1) (faceCorner00 (((3 : ℕ) : ℤ) + 1) 2) :=
   bc61_upperLines_arm_disconnected (by norm_num)
 
 -- After removing the origin, infinite low clusters of the forced upper lines are connected.

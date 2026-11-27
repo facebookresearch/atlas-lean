@@ -79,14 +79,15 @@ lemma PeriodicPlaneEmbedding.exists_opposite_translated_orbitBox_with_margin
 
 /-! ## B. Arms with a margin -/
 
-/-- For `r ≤ R` there is a finite source in `H_R` whose infinite-cluster connection to `∂H_r`
-within `H_r` has probability above `1 - ε`. Generalizes
+/-- For `r ≤ R` there is a finite source in `H_R` whose infinite-cluster connection to `∂H_r` within
+`H_r` has probability above `1 - ε`. Generalizes
 `exists_finite_infiniteBoundaryConnection_measureReal_gt` (`HalfPlaneInfiniteArm`, the case
-`R = r`). -/
+`R = r`). Assumes positive association (FKG), translation invariance and almost surely exactly one
+infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_margin_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) {epsilon : Real} (hepsilon : 0 < epsilon) :
     ∃ S : Set V, S.Finite ∧ S ⊆ E.rightHalfPlaneVertices R ∧
@@ -123,14 +124,15 @@ lemma PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_margi
   exact ⟨S, (P.orbitBox N).finite_toSet.image _, hdeep,
     hN.trans_le hbound⟩
 
-/-- For `r ≤ R` there are finite sources in `H_R` connected by infinite clusters within `H_r` to
-the lower ray `{y ≤ 0}` and to the upper ray `{y ≥ 1}` of `∂H_r`, each with probability above
-`1 - ε`. Generalizes `exists_finite_opposite_infiniteBoundaryRays_measureReal_gt`
-(`HalfPlaneInfiniteArm`, the case `R = r`). -/
+/-- For `r ≤ R` there are finite sources in `H_R` connected by infinite clusters within `H_r` to the
+lower ray `{y ≤ 0}` and to the upper ray `{y ≥ 1}` of `∂H_r`, each with probability above `1 - ε`.
+Generalizes `exists_finite_opposite_infiniteBoundaryRays_measureReal_gt` (`HalfPlaneInfiniteArm`,
+the case `R = r`). Assumes positive association (FKG), translation invariance and almost surely
+exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_with_margin_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) {epsilon : Real} (hepsilon : 0 < epsilon) :
     ∃ L U : Set V,

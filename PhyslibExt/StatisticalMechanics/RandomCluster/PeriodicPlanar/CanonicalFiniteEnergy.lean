@@ -464,7 +464,7 @@ lemma PeriodicGraph.freeBufferedInfiniteVolume_setClosed_absolutelyContinuous
     (P.freeBufferedInfiniteVolume_singleClosed_fullCylinder_bound hp hp1 hq e) A hA
 
 /-- Inserting a finite edge pattern maps the free buffered infinite-volume FK measure to an
-absolutely continuous measure. -/
+absolutely continuous measure. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)

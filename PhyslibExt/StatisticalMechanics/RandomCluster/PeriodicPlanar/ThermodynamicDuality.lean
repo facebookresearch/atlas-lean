@@ -199,7 +199,7 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 /-- Conditional on the finite-volume exchange `hfinite` for every `n`, the buffered wired
 infinite-volume measure of the dual graph is the image of the buffered free infinite-volume measure
-of the primal graph. -/
+of the primal graph. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.free_wired_bufferedInfiniteVolume_dual
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)
     (edgeDual : Sym2 V ≃ Sym2 W)
@@ -227,7 +227,7 @@ lemma PeriodicGraph.free_wired_bufferedInfiniteVolume_dual
 
 /-- Conditional on the finite-volume exchange `hfinite` for every `n`, the buffered free
 infinite-volume measure of the dual graph is the image of the buffered wired infinite-volume measure
-of the primal graph. -/
+of the primal graph. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.wired_free_bufferedInfiniteVolume_dual
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)
     (edgeDual : Sym2 V ≃ Sym2 W)

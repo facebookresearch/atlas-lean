@@ -28,7 +28,7 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineR
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- The site `(0, 1)` is a weak trifurcation of the upper-lines configuration.
-example : IsTrifurcation 2 bc60_upperLines (bc57_pt 0 1) :=
+example : IsTrifurcation 2 bc60_upperLines (faceCorner00 0 1) :=
   bc88_upperLines_isTrifurcation_general 0
 
 -- No box open forest for the upper-lines configuration in `B_3`.

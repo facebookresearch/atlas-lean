@@ -22,12 +22,12 @@ graph, for any fixed revealment order.
 
 Assembles the chain for `μ = fkMass G p 2`: the tail conditional law (`CrossMonotone`) gives
 `AdaptCondBBB` (`AdaptCondReduction`), hence `AdaptStepCovBound` (`AdaptDisintegration`), hence OSSS
-(`AdaptMConditional`). `oqu_fk_q2_sharp` is unconditional.
+(`AdaptMConditional`). `oqu_fk_q2_sharp` needs only `0 < p < 1` and a monotone `0 ≤ f ≤ 1`.
 
 ## ii. Key results
 
-- `oqu_fk_q2_sharp`: `Var f ≤ ∑ revealAdapt(e) · Cov(f, ω_e)` for monotone `0 ≤ f ≤ 1`
-  (unconditional).
+- `oqu_fk_q2_sharp`: `Var f ≤ ∑ revealAdapt(e) · Cov(f, ω_e)` for `μ = fkMass G p 2` with
+  `0 < p < 1` and monotone `0 ≤ f ≤ 1`.
 
 ## iii. Table of contents
 
@@ -57,7 +57,11 @@ open StatMech.OSSS.MonotonicFK
 
 /-! ## A. The q = 2 OSSS theorem -/
 
-/-- `Var f ≤ ∑ revealAdapt(e) · Cov(f, ω_e)` for monotone `0 ≤ f ≤ 1` (unconditional). -/
+/-- OSSS inequality for the `q = 2` random-cluster model: for a finite graph `G` on `V`,
+  `0 < p < 1`, an enumeration `σ` of `Sym2 V` and a nondecreasing `f` with `0 ≤ f ≤ 1`, under the
+  random-cluster measure `φ = fkMass G p 2`, `Var_φ(f) ≤ ∑ₑ δₑ Cov_φ(f, ω_e)`, where
+  `δₑ = revealAdapt φ σ f e` is the probability that the adaptive exploration of `f` along `σ`
+  reveals `e`. -/
 lemma oqu_fk_q2_sharp {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) {f : ConfigSpace (Sym2 V) → ℝ}

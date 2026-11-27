@@ -39,12 +39,12 @@ Headline fidelity.
   `exists_pairedMixedBoundaryScores` needs only translation invariance of both measures.
 - `exists_pairedCofinalNormalBoundaryBandFamilies_bounded`,
   `exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData` and
-  `exists_pairedUniformConnectorRadii_with_commonHalfWidthData` assume `IsFKG`, translation
-  invariance and almost-sure uniqueness of the infinite cluster for both `mu` and `muDual`. Here
-  `muDual` is an arbitrary measure on the dual graph, so these hypotheses are satisfiable (two
-  unrelated supercritical measures); the statements are not vacuous. They are applied with
-  `muDual = D.dualMeasure mu`, where the hypotheses describe coexistence of primal and dual unique
-  infinite clusters.
+  `exists_pairedUniformConnectorRadii_with_commonHalfWidthData` assume `PositivelyAssociated`,
+  translation invariance and almost-sure uniqueness of the infinite cluster for both `mu` and
+  `muDual`. Here `muDual` is an arbitrary measure on the dual graph, so these hypotheses are
+  satisfiable (two unrelated supercritical measures); the statements are not vacuous. They are
+  applied with `muDual = D.dualMeasure mu`, where the hypotheses describe coexistence of primal and
+  dual unique infinite clusters.
 - `PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common` and
   `exists_canonicalConnectorReadyData_of_common` assume that the free-buffered infinite-volume FK
   measure (`0 < p < 1`, `q ≥ 1`) has, almost surely, a unique primal and a unique dual infinite
@@ -648,9 +648,9 @@ lemma exists_pairedCofinalNormalBoundaryBandFamilies_bounded
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W))) [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1) :
@@ -675,15 +675,16 @@ lemma exists_pairedCofinalNormalBoundaryBandFamilies_bounded
 
 /-- Version of `exists_pairedCofinalNormalBoundaryBandFamilies_bounded` that also places both
 families on common squares `[-M m, M m]²` with the given margins. The families `_family`,
-`_familyDual` are only asserted to exist. -/
+`_familyDual` are only asserted to exist. Assumes positive association (FKG), translation invariance
+and almost surely exactly one infinite cluster for `mu` and for the dual measure `muDual`. -/
 lemma exists_pairedCofinalMatchedCommonSquareNormalBoundaryBandData
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W))) [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -730,9 +731,9 @@ lemma exists_pairedUniformConnectorRadii_with_commonHalfWidthData
     (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W))) [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1) :
@@ -758,7 +759,8 @@ lemma exists_pairedUniformConnectorRadii_with_commonHalfWidthData
 
 /-- Reductio step: if the free-buffered infinite-volume FK measure has a.s. both a unique primal and
 a unique dual infinite cluster (the coexistence that Sheffield's theorem excludes), then matched
-primal and dual band data exist on common squares with scores tending to one. -/
+primal and dual band data exist on common squares with scores tending to one. Also assumes `q ≥
+1`. -/
 lemma PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -801,9 +803,10 @@ lemma PeriodicPlanarDualPair.exists_canonicalMatchedBoundaryBands_of_common
       hdata.2.2.1 hdata.2.2.2.1 hdata.2.2.2.2.2
       margin
 
-/-- Reductio step: under the same coexistence hypothesis for the free-buffered FK measure, there are
-connector radii and connector-ready data for the primal and dual lattice with the same half-widths.
--/
+/-- Reductio step: if, for `q ≥ 1`, the free-buffered infinite-volume FK measure has almost surely
+exactly one primal and exactly one dual infinite cluster (the coexistence that Sheffield's theorem
+excludes), there are connector radii and connector-ready data for the primal and dual lattice with
+the same half-widths. -/
 lemma PeriodicPlanarDualPair.exists_canonicalConnectorReadyData_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

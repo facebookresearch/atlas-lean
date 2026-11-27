@@ -30,7 +30,8 @@ hypercontractivity hypothesis `Hpb : kpb_PBiasedHC (1 - ε / 2)`.
 ## ii. Key results
 
 - `activeInfluence_one_eq_influence`: at `q = 1` active influence is Bernoulli influence.
-- `maxActiveInfluence_half`: KKL lower bound on the maximal influence at `p = 1/2` (unconditional).
+- `maxActiveInfluence_half`: KKL lower bound on the maximal influence at `p = 1/2`, `q = 1`, for
+  increasing `A`.
 - `maxActiveInfluence_qOne_compactWindow_of_bkkkl_u0`: the same bound for `p ∈ [ε, 1 - ε]`,
   conditional on `Hpb`.
 
@@ -185,7 +186,10 @@ lemma maxActiveInfluence_qOne_corrected [Nonempty G.edgeSet]
     activeInfluence_one_eq_influence G hp hp1 A hA e]
   exact he
 
-/-- KKL lower bound on the maximal influence at `p = 1/2` (unconditional). -/
+/-- Kahn–Kalai–Linial at `p = 1/2`: for a finite graph `G` with at least one edge and an increasing
+  event `A` of its edge configurations, under the random-cluster measure with `p = 1/2` and `q = 1`
+  (the uniform product measure on the edges) some edge `e` has influence at least
+  `P(A) (1 - P(A)) log |E(G)| / |E(G)|`. -/
 lemma maxActiveInfluence_half [Nonempty G.edgeSet]
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     ∃ e : G.edgeSet,
@@ -200,7 +204,12 @@ lemma maxActiveInfluence_half [Nonempty G.edgeSet]
     activeInfluence_one_eq_influence G (by norm_num) (by norm_num) A hA e]
   exact he
 
-/-- The same bound for `p ∈ [ε, 1 - ε]`, conditional on `Hpb`. -/
+/-- Kahn–Kalai–Linial on `[ε, 1 - ε]`, conditional on a `p`-biased KKL hypothesis: for a finite
+  graph `H` with at least one edge, `ε > 0`, `p ∈ [ε, 1 - ε]` and an increasing event `A` of its
+  edge configurations, if `Hpb : kpb_PBiasedHC (1 - ε / 2)` (the KKL inequality with constant `2`
+  for every Bernoulli parameter in `(1/2, 1 - ε / 2)`) holds, then under the random-cluster measure
+  with edge parameter `p` and `q = 1` (the Bernoulli(`p`) product measure on the edges) some edge
+  `e` has influence at least `P(A) (1 - P(A)) log |E(H)| / |E(H)|`. -/
 lemma maxActiveInfluence_qOne_compactWindow_of_bkkkl_u0
     {W : Type} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj] [Nonempty H.edgeSet]

@@ -14,8 +14,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Avoiding
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment`
 
-* `ava_origin_no_adj_removeSite` for the all-open configuration of `ℤ²`;
-* `ava_connected_origin_eq` and `ava_avoidingRoutingResidue_of_neighbour` in conditional form;
+* `bkm_origin_no_neighbour`, which this module uses, for the all-open configuration of `ℤ²`;
+* `bkm_reachable_origin_eq` and `ava_avoidingRoutingResidue_of_neighbour` in conditional form;
 * `ava_disjointRouting_of_boxResidue` in conditional form.
 -/
 
@@ -28,12 +28,12 @@ open _root_.StatMech.Percolation
 
 -- After removing the origin it has no open neighbour (all-open configuration).
 example (y : Site 2) : ¬ (openSubgraph 2 (removeSite 0 (fun _ => true))).Adj 0 y :=
-  ava_origin_no_adj_removeSite _ y
+  StatMech.Walls.bkm_origin_no_neighbour _ y
 
 -- After removing the origin, the origin is connected only to itself.
 example {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
     (h : Connected d (removeSite 0 ω) (0 : Site d) x) : x = 0 :=
-  ava_connected_origin_eq ω h
+  StatMech.Walls.bkm_reachable_origin_eq ω h
 
 -- A neighbour of the origin with an infinite cluster satisfies the routing residue.
 example {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)

@@ -29,7 +29,8 @@ namespace FKGIncreasingComparisonNoGo
 open _root_.StatMech _root_.StatMech.FK.PeriodicPlanar MeasureTheory
 
 -- A Dirac mass at the all-open configuration is FKG.
-example : IsFKG (Measure.dirac (fun _ => true : ConfigSpace (Sym2 (Fin 3)))) :=
+example : Universality.PositivelyAssociated
+    (Measure.dirac (fun _ => true : ConfigSpace (Sym2 (Fin 3)))) :=
   isFKG_dirac _
 
 -- The counterexample violates the comparison of the certain and the edge-open events.
@@ -39,7 +40,11 @@ example : ¬ (Measure.dirac fkgComparisonCounterexampleConfig).real fkgCompariso
   norm_num
 
 -- The library refutation, specialized to `A = univ`, `B = {ω | ω s(0, 1)}` is impossible.
-example : ¬ (∀ (mu : Measure (ConfigSpace (Sym2 (Fin 2)))), IsFKG mu →
+example : ¬ (∀ (mu : Measure (ConfigSpace (Sym2 (Fin 2)))),
+      (∀ A B : Set (ConfigSpace (Sym2 (Fin 2))),
+        MeasurableSet A → MeasurableSet B →
+        IsIncreasing A → IsIncreasing B →
+          mu.real A * mu.real B ≤ mu.real (A ∩ B)) →
       ∀ A B : Set (ConfigSpace (Sym2 (Fin 2))),
         MeasurableSet A → MeasurableSet B → IsIncreasing A → IsIncreasing B →
         mu.real A ≤ mu.real B) :=

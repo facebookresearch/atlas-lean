@@ -58,8 +58,8 @@ variable {d : ℕ}
 
 /-! ## A. Definitions -/
 
-/-- Every configuration with three distinct infinite clusters meeting `B_n` has three box sites in
-pairwise distinct infinite clusters. -/
+/-- Every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`) has three box sites in pairwise distinct infinite clusters. -/
 def bc2_ThreeWitnesses (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∃ x₁ x₂ x₃ : Site d, x₁ ∈ box d n ∧ x₂ ∈ box d n ∧ x₃ ∈ box d n ∧

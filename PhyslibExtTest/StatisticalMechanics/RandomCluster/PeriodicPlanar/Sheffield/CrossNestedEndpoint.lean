@@ -40,7 +40,8 @@ example (D : PeriodicPlanarDualPair P Pdual) (mu : Measure (ConfigSpace (Sym2 V)
 
 -- Cross-nested outward endpoint certificates do not exist under the Sheffield hypotheses.
 example (D : PeriodicPlanarDualPair P Pdual) (mu : Measure (ConfigSpace (Sym2 V)))
-    [IsProbabilityMeasure mu] (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    [IsProbabilityMeasure mu] (hFKG : Universality.PositivelyAssociated mu)
+    (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu)) :
     IsEmpty (D.CrossNestedOutwardEndpointCertificate mu) :=

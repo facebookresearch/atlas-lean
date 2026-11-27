@@ -146,7 +146,7 @@ noncomputable def triHexTorusPartitionCorrectionLogDensity
       triHexTorusDualPartitionSum L (BeffaraDC.dualParam p q) q) /
     (L ^ 2 : ℕ)
 
-/-- The partition-function correction per site vanishes as `L → ∞`. -/
+/-- The partition-function correction per site vanishes as `L → ∞`. Assumes `q ≥ 1`. -/
 lemma triHexTorus_partitionCorrection_logDensity_tendsto_zero
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (triHexTorusPartitionCorrectionLogDensity p q)
@@ -209,7 +209,7 @@ noncomputable def triHexTorusPressureDualityResidual
       Real.log (triHexTorusDualPartitionSum L pDual q))) /
     (L ^ 2 : ℕ)
 
-/-- The pressure residual equals the partition-function correction per site. -/
+/-- The pressure residual equals the partition-function correction per site. Assumes `q ≥ 1`. -/
 lemma triHexTorusPressureDualityResidual_eq_partitionCorrection
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -258,7 +258,7 @@ lemma triHexTorusPressureDualityResidual_eq_partitionCorrection
   rw [hres]
 
 /-- Pressure duality: the residual of the triangular–hexagonal duality relation for the free energy
-per site tends to `0` as `L → ∞`. -/
+per site tends to `0` as `L → ∞`. Assumes `q ≥ 1`. -/
 lemma triHexTorusPressureDualityResidual_tendsto_zero
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun n : ℕ => (by

@@ -53,6 +53,9 @@ a trifurcation once finite patterns have positive conditional probability.
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset
 open StatMech.Lattice StatMech.ConfigSpace
 
@@ -90,7 +93,7 @@ lemma three_infinite_clusters_finite_pattern_canonical_trifurcation
     (hclusters : ∀ i j, i ≠ j →
       cluster d omega (x i) ≠ cluster d omega (x j)) :
     ∃ (eta : ConfigSpace ↥(StatMech.Ising.bondFinsetTouch d n)) (hub : Site d),
-      IsCanonicalTrifurcation d
+      IsEncounterPoint d
         (StatMech.FK.setPattern (StatMech.Ising.bondFinsetTouch d n) eta omega) hub := by
   classical
   let K := boxFinsetBK d n
@@ -369,7 +372,7 @@ lemma three_sites_finite_pattern_canonical_trifurcation
     (hac : cluster d omega a ≠ cluster d omega c)
     (hbc : cluster d omega b ≠ cluster d omega c) :
     ∃ (eta : ConfigSpace ↥(StatMech.Ising.bondFinsetTouch d n)) (hub : Site d),
-      IsCanonicalTrifurcation d
+      IsEncounterPoint d
         (StatMech.FK.setPattern (StatMech.Ising.bondFinsetTouch d n) eta omega) hub := by
   let x : Fin 3 → Site d := ![a, b, c]
   apply three_infinite_clusters_finite_pattern_canonical_trifurcation omega n x

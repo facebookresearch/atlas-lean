@@ -193,9 +193,10 @@ lemma bka_region_rhoAdjClosed (ω : ConfigSpace (Sym2 (Site d)))
   · exact homega u v hu hopen
   · exact hG u v hu hg
 
-/-- Cluster-respecting routing: three neighbours of the origin, a forced edge set and three regions
-closed under open and forced edges, with the neighbours routed to infinite clusters inside their
-regions. -/
+/-- Cluster-respecting routing: three distinct neighbours `a_i` of the origin, a forced edge set `G`
+and three pairwise disjoint regions `R_i ∋ a_i` closed under open edges and edges of `G`, such that
+each `a_i` is joined by edges of `G` avoiding the origin to a site whose cluster is infinite after
+`G` is opened and the origin is removed. -/
 def bka_ClusterRespectingRouting (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (G : Finset (Sym2 (Site d))) (w₁ w₂ w₃ : Site d)
     (R₁ R₂ R₃ : Set (Site d)),

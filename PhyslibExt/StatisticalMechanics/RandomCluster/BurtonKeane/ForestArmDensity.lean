@@ -70,9 +70,9 @@ lemma bc95_spanForest_exists {V : Type*} [Fintype V] (G : SimpleGraph V) :
 
 /-! ## B. Almost-sure arm reaching -/
 
-/-- Almost surely, for every box of radius `n ≥ 1`, every trifurcation is genuine and its arms start
-in
-the box. -/
+/-- For every `n ≥ 1`, almost every configuration satisfies, on the box `B_n`: every trifurcation
+of `B_n` is genuine (`bc89_GenuineTrif`), every open neighbour `a` of a trifurcation `x` of `B_n`
+whose cluster is infinite after `x` is removed lies in `B_n`, and `B_n` contains a trifurcation. -/
 def bc95_AeArmReaching (μ : Measure (ConfigSpace (Sym2 (Site d)))) : Prop :=
   ∀ n : ℕ, 1 ≤ n → ∀ᵐ ω ∂μ,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → bc89_GenuineTrif d ω x) ∧

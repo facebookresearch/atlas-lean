@@ -312,7 +312,8 @@ lemma freeDualPercolates_of_exponentialDecay
     H hp hp1 hppc hq hdecay
 
 /-- Conditional dual subcritical coverage: polynomial connection shells and exponential decay of
-primal two-point connections below `pc` give wired dual percolation at `p*` for every `p < pc`. -/
+primal two-point connections below `pc` give wired dual percolation at `p*` for every `p < pc`.
+Assumes `q ≥ 1`. -/
 lemma dualSubcriticalCoverage_of_exponentialDecay
     (D : PeriodicPlanarDualPair P Pdual)
     (H : PolynomialConnectionShells D) {q pc : ℝ} (hq : 1 ≤ q)
@@ -325,7 +326,8 @@ lemma dualSubcriticalCoverage_of_exponentialDecay
     hp.1 hp.2 hppc hq hdecay
 
 /-- Conditional coverage in both directions: polynomial connection shells and subcritical
-exponential decay for the primal and the dual graph give dual subcritical coverage both ways. -/
+exponential decay for the primal and the dual graph give dual subcritical coverage both ways.
+Assumes `q ≥ 1`. -/
 lemma bidirectionalSubcriticalCoverage_of_exponentialDecay
     (D : PeriodicPlanarDualPair P Pdual)
     (H : PolynomialConnectionShells D)

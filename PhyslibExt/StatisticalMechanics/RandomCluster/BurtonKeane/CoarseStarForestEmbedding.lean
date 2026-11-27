@@ -226,9 +226,8 @@ lemma bc64_starForest_deg1_iff {β : Type} [DecidableEq β] [Fintype β] (t : β
 
 /-! ## C. Boundary injections -/
 
-/-- An injection of the leaves of the star forest over the coarse trifurcations into the boundary,
-each
-leaf sent to a site reached by the corresponding arm. -/
+/-- An injection of the leaves of the star forest over the coarse trifurcations of `Λ_R` (the pairs
+`(y, i)` with `i ≠ 0`) into the vertex boundary of `Λ_R`. -/
 def bc64_CoarseBoundaryInjection (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ lam : (↑(bc61_coarseTrifFinset ω L R) : Type) × Fin 4 → Site d,
     (∀ p : (↑(bc61_coarseTrifFinset ω L R) : Type) × Fin 4, p.2 ≠ 0 →
@@ -239,9 +238,8 @@ open Classical in
 lemma bc64_coarseArmEmbedding_of_boundaryInjection (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
     (hzne : z₀ ≠ z₁) (hinj : bc64_CoarseBoundaryInjection ω L R) :
-    bc63_CoarseArmEmbedding ω L R := by
+    bc61_CoarseForestLeafCount ω L R := by
   classical
-  rw [bc63_coarseArmEmbedding_iff_forestLeafCount]
   set Tf := bc61_coarseTrifFinset ω L R with hTf
   rcases Finset.eq_empty_or_nonempty Tf with hemp | hne
   · apply bc63_coarseForestLeafCount_of_noTrif ω L R hz₀ hz₁ hzne
@@ -280,16 +278,16 @@ lemma bc64_coarseTcount_le_boundary_of_boundaryInjection (ω : ConfigSpace (Sym2
     (L R : ℕ) {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
     (hzne : z₀ ≠ z₁) (hinj : bc64_CoarseBoundaryInjection ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc63_coarseTcount_le_boundary_of_armEmbedding ω L R
+  bc61_coarseTcount_le_boundary_of_forest ω L R
     (bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj)
 
 /-! ## D. The upper-lines configuration -/
 
 lemma bc64_disjointBoxes_multiTrif (L : ℕ) :
-    Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1)
+    Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1)
         0)) := by
   refine bc64_boxAround_disjoint_of_farCoord 0 ?_
-  have hcoord : ((0 : Site 2) - bc57_pt (2 * (L : ℤ) + 1) 0) 0 = -(2 * (L : ℤ) + 1) := by
+  have hcoord : ((0 : Site 2) - faceCorner00 (2 * (L : ℤ) + 1) 0) 0 = -(2 * (L : ℤ) + 1) := by
     simp only [Pi.sub_apply]; rw [bc57_pt_fst]; simp
   rw [hcoord, Int.natAbs_neg]
   have hval : (2 * (L : ℤ) + 1).natAbs = 2 * L + 1 := by
@@ -298,10 +296,10 @@ lemma bc64_disjointBoxes_multiTrif (L : ℕ) :
   omega
 
 lemma bc64_disjointBoxes_sublattice (L : ℕ) {m m' : ℤ} (hmm : m ≠ m') :
-    Disjoint (bc61_boxAround 2 L (bc57_pt ((2 * (L : ℤ) + 1) * m) 0))
-      (bc61_boxAround 2 L (bc57_pt ((2 * (L : ℤ) + 1) * m') 0)) := by
+    Disjoint (bc61_boxAround 2 L (faceCorner00 ((2 * (L : ℤ) + 1) * m) 0))
+      (bc61_boxAround 2 L (faceCorner00 ((2 * (L : ℤ) + 1) * m') 0)) := by
   refine bc64_boxAround_disjoint_of_farCoord 0 ?_
-  have hcoord : (bc57_pt ((2 * (L : ℤ) + 1) * m) 0 - bc57_pt ((2 * (L : ℤ) + 1) * m') 0) 0
+  have hcoord : (faceCorner00 ((2 * (L : ℤ) + 1) * m) 0 - faceCorner00 ((2 * (L : ℤ) + 1) * m') 0) 0
       = (2 * (L : ℤ) + 1) * (m - m') := by
     simp only [Pi.sub_apply]; rw [bc57_pt_fst, bc57_pt_fst]; ring
   rw [hcoord]
@@ -315,18 +313,18 @@ lemma bc64_disjointBoxes_sublattice (L : ℕ) {m m' : ℤ} (hmm : m ≠ m') :
   rw [habs]; nlinarith [h1]
 
 lemma bc64_line1_connected_right (a : ℤ) (j : ℕ) :
-    Connected 2 bc60_upperLines (bc57_pt a 1) (bc57_pt (a + (j : ℤ)) 1) := by
+    Connected 2 bc60_upperLines (faceCorner00 a 1) (faceCorner00 (a + (j : ℤ)) 1) := by
   induction j with
-  | zero => simpa using connected_refl _ (bc57_pt a 1)
+  | zero => simpa using connected_refl _ (faceCorner00 a 1)
   | succ i ih =>
-    have hstep : Connected 2 bc60_upperLines (bc57_pt (a + (i : ℤ)) 1) (bc57_pt (a + (i : ℤ) + 1)
-        1) :=
+    have hstep : Connected 2 bc60_upperLines (faceCorner00 (a + (i : ℤ)) 1)
+        (faceCorner00 (a + (i : ℤ) + 1) 1) :=
       IsOpenEdge.connected ⟨bc57_pt_adj (a + (i : ℤ)) 1, bc60_open (a + (i : ℤ)) (by norm_num)⟩
     have hcast : a + ((i + 1 : ℕ) : ℤ) = a + (i : ℤ) + 1 := by push_cast; ring
     rw [hcast]; exact ih.trans hstep
 
 lemma bc64_line1_connected (a b : ℤ) :
-    Connected 2 bc60_upperLines (bc57_pt a 1) (bc57_pt b 1) := by
+    Connected 2 bc60_upperLines (faceCorner00 a 1) (faceCorner00 b 1) := by
   rcases le_total a b with hab | hab
   · have hj : b = a + ((b - a).toNat : ℤ) := by rw [Int.toNat_of_nonneg (by omega)]; ring
     rw [hj]; exact bc64_line1_connected_right a (b - a).toNat
@@ -335,9 +333,9 @@ lemma bc64_line1_connected (a b : ℤ) :
 
 lemma bc64_arms_can_share_boundary (L : ℕ) :
     Disjoint (bc61_boxAround 2 L (0 : Site 2))
-        (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+        (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
       Connected 2 bc60_upperLines
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
+        (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1) :=
   ⟨bc64_disjointBoxes_multiTrif L,
    bc64_line1_connected ((L : ℤ) + 1) (2 * (L : ℤ) + 1 + ((L : ℤ) + 1))⟩
 
@@ -352,7 +350,7 @@ lemma bc64_infiniteClusters_top_null_of_boundaryInjection_route
       ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
         0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 := by
-  refine bc63_infiniteClusters_top_null_of_armEmbedding_route μ hd hinv hfe L (fun ω R => ?_)
+  refine bc62_infiniteClusters_top_null_of_forest_route μ hd hinv hfe L (fun ω R => ?_)
     hcoarseRoute
   obtain ⟨z₀, z₁, hz₀, hz₁, hzne⟩ := hbdvertices R
   exact bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne (hbinj ω R)
@@ -363,12 +361,12 @@ lemma bc64_status :
     (∀ (β : Type), (bc64_starForest β).IsAcyclic) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
-      bc64_CoarseBoundaryInjection ω L R → bc63_CoarseArmEmbedding ω L R) ∧
+      bc64_CoarseBoundaryInjection ω L R → bc61_CoarseForestLeafCount ω L R) ∧
     (∀ (L : ℕ),
       Disjoint (bc61_boxAround 2 L (0 : Site 2))
-          (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+          (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
-          (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) :=
+          (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) :=
   ⟨fun hfar => bc64_boxAround_disjoint_of_far hfar,
    fun β => bc64_starForest_acyclic β,
    fun ω L R _z₀ _z₁ hz₀ hz₁ hzne hinj =>

@@ -29,7 +29,7 @@ convergence of the probabilities. Combined with the half-plane boundary estimate
 buffered translated orbit boxes) whose left-side connection has probability tending to one.
 
 Headline fidelity. The exhaustion statements (A, B) are unconditional (B needs only a finite
-measure). The placement results of section C are conditional on `IsFKG mu`,
+measure). The placement results of section C are conditional on `PositivelyAssociated mu`,
 `P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal infinite cluster; these are
 satisfiable (for example supercritical Bernoulli percolation), so they are not vacuous.
 
@@ -267,7 +267,7 @@ sources and radii whose left-side exhaustion event has probability tending to on
 lemma PeriodicPlaneEmbedding.exists_leftBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ source : Nat → Finset V, ∃ radius : Nat → Nat,
@@ -302,11 +302,12 @@ lemma PeriodicPlaneEmbedding.exists_leftBoundaryPlacement_tendsto_one
       exact measureReal_le_one
 
 /-- Version of `exists_leftBoundaryPlacement_tendsto_one` whose sources are translated orbit boxes
-`P.shift (base N) '' orbitBox N`. -/
+`P.shift (base N) '' orbitBox N`. Assumes positive association (FKG), translation invariance and
+almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_leftBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -367,11 +368,11 @@ lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_leftBoundaryPlacement_ten
 
 /-- Version with a buffer: the orbit box of radius `buffer N ≥ N` fits in the exhausting box, while
 the orbit box of radius `N` has left-side exhaustion event of probability tending to one (FKG,
-translation invariance, a.s. uniqueness). -/
+translation invariance, a.s. existence and uniqueness of the infinite cluster). -/
 lemma PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,

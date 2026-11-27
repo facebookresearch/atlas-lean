@@ -96,8 +96,10 @@ def fcc_ThreeArmCover (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
       (∀ w, Connected d ω y w → y ≠ w →
         ∃ i, Connected d (removeSite y ω) (arms y i) (fsp_armWitness ω y w))
 
-/-- Rooted single-cut separation: infinite arm sites with a rank injective on connected
-trifurcations such that removing a higher trifurcation separates it from lower arms. -/
+/-- Rooted single-cut separation: arm sites `b x ∈ B_n` connected to each trifurcation `x` of `B_n`,
+with clusters infinite after all trifurcations of `B_n` are removed, and a rank injective on
+connected trifurcations, such that for connected `x ≠ y` with `rank x < rank y`, `b x` and `b y` are
+disconnected once `y` is removed. -/
 def fcc_RootedSingleCutSeparation (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -284,8 +286,10 @@ lemma fcc_rootedSpanningForest_iff (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) 
       fcc_rootedSingleCutSeparation_of_rootedSpanningForest ω n h⟩,
     fun ⟨hcov, hsep⟩ => fcc_rootedSpanningForest_of_coverSep ω n hcov hsep⟩
 
-/-- Rooted private arms: infinite arm sites with a rank injective on connected trifurcations such
-that each arm avoids every lower connected trifurcation. -/
+/-- Rooted private arms: arm sites `b x ∈ B_n` connected to each trifurcation `x` of `B_n`, with
+clusters infinite after all trifurcations of `B_n` are removed, and a rank injective on connected
+trifurcations, such that for connected `x ≠ y` with `rank x < rank y`, once `y` is removed `b x` is
+still connected to `x` and `b y` is not. -/
 def fcc_RootedPrivateArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

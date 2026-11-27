@@ -41,16 +41,16 @@ Headline fidelity.
 - Sections A–C are unconditional (`axisSwap_crossingMax_tendsto_one` needs a probability
   measure only).
 - `PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dualLimit` is
-  conditional on `IsFKG`, translation invariance and almost-sure uniqueness for the dual measure
-  `muDual`, plus band scores tending to one.
+  conditional on `PositivelyAssociated`, translation invariance and almost-sure uniqueness for the
+  dual measure `muDual`, plus band scores tending to one.
 - The structure lemmas of sections E and F are unconditional consequences of the structure
   fields.
 - `nonempty_normalRotatedInsetLimitData_of_unique` and
-  `nonempty_normalTwoRotatedEndpointLimitData_of_unique` assume `IsFKG`, translation invariance
-  and almost-sure uniqueness of the infinite cluster for both `mu` and `muDual`. As stated,
-  `muDual` is an arbitrary measure on the dual graph, so the hypotheses are satisfiable and the
-  results are not vacuous; with `muDual = D.dualMeasure mu` they are the coexistence of primal and
-  dual unique infinite clusters that Sheffield's theorem rules out, and these results are
+  `nonempty_normalTwoRotatedEndpointLimitData_of_unique` assume `PositivelyAssociated`, translation
+  invariance and almost-sure uniqueness of the infinite cluster for both `mu` and `muDual`. As
+  stated, `muDual` is an arbitrary measure on the dual graph, so the hypotheses are satisfiable and
+  the results are not vacuous; with `muDual = D.dualMeasure mu` they are the coexistence of primal
+  and dual unique infinite clusters that Sheffield's theorem rules out, and these results are
   reductio steps of that proof. No module currently uses them.
 
 ## ii. Key results
@@ -402,7 +402,7 @@ lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dual
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -745,9 +745,9 @@ lemma nonempty_normalRotatedInsetLimitData_of_unique
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -1055,9 +1055,9 @@ lemma nonempty_normalTwoRotatedEndpointLimitData_of_unique
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1) :

@@ -9,7 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Percolation.TwoDimensional.ZhangRotSymmetry
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SquareLatticeUniqueness
+public import MathlibExt.Probability.Percolation.BurtonKeane
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneZeroOrOne
+public import PhyslibExt.CondensedMatter.IsingModel.InfiniteVolume
+public import Mathlib.Order.CompletePartialOrder
 public import MathlibExt.Probability.Percolation.Universality.BXPAllAspect
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.DartDef
 
@@ -55,12 +59,19 @@ open scoped ENNReal NNReal
 
 namespace StatMech.TwoDim
 
-open StatMech.Lattice StatMech.Universality StatMech.Percolation StatMech.Walls
+open StatMech.Lattice StatMech.Universality StatMech.Percolation
 
 lemma zbd_atLeastTwo_halfMeasure_zero :
     halfMeasure (atLeastTwoInfinite 2) = 0 := by
-  simpa [halfMeasure] using
-    (bins_bk_unconditional (2⁻¹ : ℝ≥0) half_le_one (by norm_num) (by norm_num)).2.1
+  have hae := MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli 2
+    (2⁻¹ : ℝ≥0) half_le_one
+  rw [ae_iff] at hae
+  have hset : {ω : ConfigSpace (Sym2 (Site 2)) | ¬ numInfiniteClusters 2 ω ≤ 1} =
+      atLeastTwoInfinite 2 := by
+    rw [← compl_compl (atLeastTwoInfinite 2), atLeastTwoInfinite_compl]
+    rfl
+  rw [hset] at hae
+  simpa [halfMeasure] using hae
 
 /-! ## A. Boxes hitting the infinite cluster -/
 
@@ -118,8 +129,14 @@ lemma zbd_existsInfinite_halfMeasure_one
     (hpos : 0 < halfMeasure.real (Universality.percolationEvent 2)) :
     halfMeasure {ω : ConfigSpace (Sym2 (Site 2)) | ∃ x : Site 2,
       (cluster 2 ω x).Infinite} = 1 := by
-  have hbk := (bins_bk_unconditional (2⁻¹ : ℝ≥0) half_le_one
-    (by norm_num) (by norm_num)).1
+  have hbk : bernoulliProductMeasure (E := Sym2 (Site 2)) (2⁻¹ : ℝ≥0) half_le_one
+        {omega | numInfiniteClusters 2 omega = 0} = 1 ∨
+      bernoulliProductMeasure (E := Sym2 (Site 2)) (2⁻¹ : ℝ≥0) half_le_one
+        {omega | numInfiniteClusters 2 omega = 1} = 1 :=
+    numInfiniteClusters_zero_or_one _
+      (MathlibExt.Probability.Percolation.BurtonKeaneWanted.bernoulli_lattice_ergodic
+        (by norm_num) (2⁻¹ : ℝ≥0) half_le_one)
+      zbd_atLeastTwo_halfMeasure_zero
   rcases hbk with hzero | hone
   · have hsub : Universality.percolationEvent 2 ⊆
         {ω : ConfigSpace (Sym2 (Site 2)) | numInfiniteClusters 2 ω = 0}ᶜ := by

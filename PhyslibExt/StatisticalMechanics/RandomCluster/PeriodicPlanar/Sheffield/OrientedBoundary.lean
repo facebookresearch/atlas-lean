@@ -28,7 +28,7 @@ box radii such that the probability that the source meets the infinite cluster a
 the bottom (top) side of the box `[-R, R] × [r, r + R]` (`[-R, R] × [-r - R, -r]`) inside the box
 tends to one.
 
-Headline fidelity. Every placement result is proved conditionally on `IsFKG mu`,
+Headline fidelity. Every placement result is proved conditionally on `PositivelyAssociated mu`,
 `P.IsTranslationInvariant mu` and `mu {omega | P.HasUniqueInfiniteCluster omega} = 1`. These
 hypotheses concern the primal measure only and are satisfiable (for example by supercritical
 Bernoulli percolation on a connected periodic graph), so none of the results is vacuous.
@@ -160,7 +160,7 @@ probability tending to one. -/
 lemma PeriodicPlaneEmbedding.exists_bottomBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ source : Nat → Finset V, ∃ radius : Nat → Nat,
@@ -184,12 +184,13 @@ lemma PeriodicPlaneEmbedding.exists_bottomBoundaryPlacement_tendsto_one
     by simpa [PeriodicPlaneEmbedding.leftBoundaryExhaustionEvent,
       E.axisSwap_leftBoundaryEvent] using hlimit⟩
 
-/-- Top-side version of `exists_bottomBoundaryPlacement_tendsto_one`, in the boxes `[-R, R] × [-r -
-R, -r]`. -/
+/-- Top-side version of `exists_bottomBoundaryPlacement_tendsto_one`, in the boxes
+`[-R, R] × [-r - R, -r]`. Assumes positive association (FKG), translation invariance and almost
+surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_topBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ source : Nat → Finset V, ∃ radius : Nat → Nat,
@@ -211,11 +212,11 @@ lemma PeriodicPlaneEmbedding.exists_topBoundaryPlacement_tendsto_one
     by simpa [E.axisSwap_rightBoundaryEvent] using hlimit⟩
 
 /-- Bottom-side placement with translated orbit boxes `P.shift (base N) '' orbitBox N` as sources
-(FKG, translation invariance, a.s. uniqueness). -/
+(FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster). -/
 lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_bottomBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -250,11 +251,11 @@ lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_bottomBoundaryPlacement_t
       E.axisSwap_leftBoundaryEvent] using hlimit
 
 /-- Top-side placement with translated orbit boxes as sources (FKG, translation invariance, a.s.
-uniqueness). -/
+existence and uniqueness of the infinite cluster). -/
 lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_topBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -287,11 +288,12 @@ lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_topBoundaryPlacement_tend
 
 /-- Bottom-side placement where the enlarged orbit box of radius `buffer N ≥ N` still fits in the
 box, while the orbit box of radius `N` is joined to the bottom side with probability tending to one.
--/
+Assumes positive association (FKG), translation invariance and almost surely exactly one infinite
+cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_buffered_bottomBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -326,11 +328,13 @@ lemma PeriodicPlaneEmbedding.exists_buffered_bottomBoundaryPlacement_tendsto_one
       PeriodicPlaneEmbedding.leftBoundaryExhaustionEvent,
       E.axisSwap_leftBoundaryEvent] using hlimit
 
-/-- Top-side version of `exists_buffered_bottomBoundaryPlacement_tendsto_one`. -/
+/-- Top-side version of `exists_buffered_bottomBoundaryPlacement_tendsto_one`. Assumes positive
+association (FKG), translation invariance and almost surely exactly one infinite cluster for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.exists_buffered_topBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,

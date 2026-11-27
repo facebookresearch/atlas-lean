@@ -16,9 +16,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 
 * `PeriodicPlaneEmbedding.axisSwap_verticalCrossingEvent_subset_horizontalCrossingEvent` for
   the unit square `[0, 1]²` and the rectangle `[0, 2] × [1, 3]`.
-* The hypotheses `IsFKG`, translation invariance and almost-sure uniqueness are discharged
-  together by the Dirac mass on the all-open configuration of any connected infinite periodic
-  graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved here).
+* The hypotheses `PositivelyAssociated`, translation invariance and almost-sure uniqueness are
+  discharged together by the Dirac mass on the all-open configuration of any connected infinite
+  periodic graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved here).
 * `PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique` applied to
   that measure with arc bound `1` and `t = 4`.
 * `PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one`
@@ -35,7 +35,9 @@ open _root_.StatMech _root_.StatMech.FK.PeriodicPlanar MeasureTheory
 def allOpen {V : Type*} : ConfigSpace (Sym2 V) := fun _ => true
 
 /-- Every Dirac mass on bond configurations is FKG. -/
-theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) : IsFKG (Measure.dirac ω) := by
+theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) :
+    Universality.PositivelyAssociated (Measure.dirac ω) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _ _
   rw [Measure.real, Measure.real, Measure.real, Measure.dirac_apply' _ hA,
     Measure.dirac_apply' _ hB, Measure.dirac_apply' _ (hA.inter hB)]

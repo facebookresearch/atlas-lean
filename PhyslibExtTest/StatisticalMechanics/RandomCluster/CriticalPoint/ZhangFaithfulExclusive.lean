@@ -14,8 +14,10 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangF
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.ZhangFaithfulExclusive`
 
-* `zfe_percolationProbability_zero`: `θ(1/2) = 0` (unconditional);
-* `zfe_criticalProbability_eq_half`: `p_c(ℤ²) = 1/2` (unconditional);
+* `zfe_percolationProbability_zero`: `θ(1/2) = 0` for Bernoulli bond percolation on the square
+  lattice `ℤ²` (unconditional);
+* `zfe_criticalProbability_eq_half`: `p_c(ℤ²) = 1/2` for Bernoulli bond percolation on the square
+  lattice (unconditional);
 * `zfe_faithfulMatchedExclusive` at `N = 3`;
 * `zfe_primalEmb` and `zfe_faceEmb` at the site `(1, 2)`: `(2, 4)` and `(3, 5)`, distinct.
 -/

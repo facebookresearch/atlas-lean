@@ -36,11 +36,11 @@ the same holds for the dual configuration.
   `PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_axisSwap_finiteStripJoinedBoundaryArms`
   is conditional on the swapped joined-boundary-arm events having probability tending to one.
 - `PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique` : conditional
-  on `IsFKG mu`, translation invariance and almost-sure uniqueness of the primal infinite
-  cluster.
+  on `PositivelyAssociated mu`, translation invariance and almost-sure uniqueness of the primal
+  infinite cluster.
 - `PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one` : the
-  dual statement, conditional on `IsFKG` of the dual measure, translation invariance of `mu` and
-  almost-sure uniqueness of the dual infinite cluster.
+  dual statement, conditional on `PositivelyAssociated` of the dual measure, translation invariance
+  of `mu` and almost-sure uniqueness of the dual infinite cluster.
 
 ## iii. Table of contents
 
@@ -259,12 +259,13 @@ lemma
 
 /-! ## C. Horizontal crossings with probability tending to one -/
 
-/-- Under FKG, translation invariance and almost-sure uniqueness, for every `ε > 0` some arbitrarily
-tall rectangle of fixed width is crossed horizontally with probability above `1 - ε`. -/
+/-- Under FKG, translation invariance and almost-sure existence and uniqueness of the infinite
+cluster, for every `ε > 0` some arbitrarily tall rectangle of fixed width is crossed horizontally
+with probability above `1 - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_horizontalCrossing_measureReal_gt_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r B s : Real) (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),
@@ -292,13 +293,13 @@ lemma PeriodicPlaneEmbedding.exists_horizontalCrossing_measureReal_gt_of_unique
   exact E.axisSwap_verticalCrossingEvent_subset_horizontalCrossingEvent
     r (r + n) ((2 * s + (s + t)) / 3) ((s + 2 * (s + t)) / 3)
 
-/-- Under FKG, translation invariance and almost-sure uniqueness of the infinite cluster, along a
-sequence of heights tending to infinity the horizontal crossing probability of a rectangle of
-fixed width tends to one. -/
+/-- Under FKG, translation invariance and almost-sure existence and uniqueness of the infinite
+cluster, along a sequence of heights tending to infinity the horizontal crossing probability of a
+rectangle of fixed width tends to one. -/
 lemma PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r B s : Real) (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),
@@ -340,15 +341,15 @@ lemma PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_un
   exact measureReal_le_one
 
 /-- Dual version of `exists_cofinal_horizontalCrossing_tendsto_one_of_unique`: under FKG for the
-dual measure, translation invariance and almost-sure uniqueness of the dual infinite cluster,
-dual horizontal crossings of tall rectangles have probability tending to one along a sequence of
-heights. -/
+dual measure, translation invariance and almost-sure existence and uniqueness of the dual infinite
+cluster, dual horizontal crossings of tall rectangles have probability tending to one along a
+sequence of heights. -/
 lemma PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hdualFKG : IsFKG (D.dualMeasure mu))
+    (hdualFKG : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTI : P.IsTranslationInvariant mu)
     (hdualUnique : D.dualMeasure mu
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)

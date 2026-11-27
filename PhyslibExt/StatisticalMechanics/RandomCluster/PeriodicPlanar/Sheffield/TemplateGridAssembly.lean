@@ -73,7 +73,7 @@ error forces the larger crossing probability to tend to `1` (Sheffield, *Random 
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_approxPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>

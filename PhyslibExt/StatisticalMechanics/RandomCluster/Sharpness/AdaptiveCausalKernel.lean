@@ -846,7 +846,8 @@ noncomputable def extendDecisionTree :
       else if known e then extendDecisionTree opened known R
       else extendDecisionTree closed known R
 
-/-- The same causal order with every coordinate resampled independently. -/
+/-- The causal order `S` with its independence flag set at every node: the same coordinates and
+  branches, with every coordinate resampled independently. -/
 def allIndependent : {R : Finset E} → CausalOrder R → CausalOrder R
   | _, .done => .done
   | _, .node e he _ closed opened =>

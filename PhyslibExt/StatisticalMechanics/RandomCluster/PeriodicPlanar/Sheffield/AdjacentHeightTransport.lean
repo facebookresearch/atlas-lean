@@ -64,7 +64,7 @@ vertical crossing probability of the rectangle raised by `step n` tends to one. 
 lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_transport_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Nat -> Real) (step : Nat -> Int)
     (hstep : forall n, 0 <= step n)
     (L R : Nat -> Finset V) (z : Nat -> Site 2)

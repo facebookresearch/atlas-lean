@@ -29,7 +29,9 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 open _root_.StatMech _root_.StatMech.FK _root_.StatMech.FK.PeriodicPlanar MeasureTheory
 
 /-- Every Dirac mass on bond configurations is FKG. -/
-theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) : IsFKG (Measure.dirac ω) := by
+theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) :
+    Universality.PositivelyAssociated (Measure.dirac ω) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _ _
   rw [Measure.real, Measure.real, Measure.real, Measure.dirac_apply' _ hA,
     Measure.dirac_apply' _ hB, Measure.dirac_apply' _ (hA.inter hB)]

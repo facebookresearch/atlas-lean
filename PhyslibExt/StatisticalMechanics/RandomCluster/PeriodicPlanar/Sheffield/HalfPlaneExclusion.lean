@@ -63,7 +63,7 @@ cluster, joined open primal arms in some vertical strip exist almost surely. -/
 lemma PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     mu.real {ω | E.primalHalfPlaneBarrierReady ω} = 1 := by
   obtain ⟨B, hB0, hB⟩ := E.exists_edgeArc_displacement_bound

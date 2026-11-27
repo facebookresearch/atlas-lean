@@ -17,9 +17,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 Module under test: `Sheffield.DeepConnectorRows` in
 `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar`.
 
-* The hypotheses `IsFKG`, translation invariance and almost-sure uniqueness are discharged
-  together by the Dirac mass on the all-open configuration of any connected infinite periodic
-  graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved here).
+* The hypotheses `PositivelyAssociated`, translation invariance and almost-sure uniqueness are
+  discharged together by the Dirac mass on the all-open configuration of any connected infinite
+  periodic graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved here).
 * `PeriodicPlanarDualPair.complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows` and
   `finiteDeepConnectorBandSchedule_of_separatedRows` (with `r = R`) applied to that measure; the
   dual and disjointness hypotheses stay arguments of the specialization.
@@ -39,7 +39,9 @@ open _root_.StatMech _root_.StatMech.FK.PeriodicPlanar MeasureTheory
 def allOpen {V : Type*} : ConfigSpace (Sym2 V) := fun _ => true
 
 /-- Every Dirac mass on bond configurations is FKG. -/
-theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) : IsFKG (Measure.dirac ω) := by
+theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) :
+    Universality.PositivelyAssociated (Measure.dirac ω) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _ _
   rw [Measure.real, Measure.real, Measure.real, Measure.dirac_apply' _ hA,
     Measure.dirac_apply' _ hB, Measure.dirac_apply' _ (hA.inter hB)]

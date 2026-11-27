@@ -67,12 +67,13 @@ namespace PeriodicPlaneEmbedding
 /-! ## A. High-probability deep connectors between separated rows -/
 
 /-- Finite source rows `L` and `U = L + (1 + t)` in the deep half-plane with a finite deep connector
-of probability greater than `1 - 2 √(1 - P(orbit box hits ∞)²) - 3ε`. -/
+of probability greater than `1 - 2 √(1 - P(orbit box hits ∞)²) - 3ε`. Assumes positive association
+(FKG), translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma
     exists_separated_finiteDeepOpenExitedJoinedBoundaryArmEvent_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (s : Real) (t : Int) (N : Nat)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -205,7 +206,7 @@ boxes of radius `n`, given that every such connector is disjoint from the dual b
 noncomputable def finiteDeepConnectorBandSchedule_of_separatedRows
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (rDual : Real) (band : Nat)
     {r R : Real} (hrR : r ≤ R) (s : Real) (t : Int)
@@ -280,11 +281,12 @@ noncomputable def finiteDeepConnectorBandSchedule_of_separatedRows
       (fun n => (hmass n).le) (fun _ => measureReal_le_one)
 
 /-- If the separated-row deep connectors are disjoint from the dual band events for every band, an
-ergodic dual measure with a unique infinite cluster has no infinite cluster in `{x ≥ rDual}`. -/
+ergodic dual measure with a unique infinite cluster has no infinite cluster in `{x ≥ rDual}`. Also
+assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma complementaryDual_rightHalfPlane_measure_eq_zero_of_separatedRows
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hdualErgodic : Pdual.IsErgodic (D.dualMeasure mu))
     (hdualUnique : D.dualMeasure mu

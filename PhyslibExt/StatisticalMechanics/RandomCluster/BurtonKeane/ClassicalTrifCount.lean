@@ -19,6 +19,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Trifurca
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmReachComponent
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifArms
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmFunnelParent
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Counting classical trifurcations
@@ -42,8 +43,8 @@ theorems here are conditional on it for every configuration.
 ## ii. Key results
 
 - `bc48_Tcount_classical_le_boundary_of_residue` : the classical count from the injection.
-- `bc48_burton_keane_bernoulli_of_classicalInjection` : uniqueness from the classical injection for
-  every configuration.
+- `bc48_burton_keane_uniqueness_via_merge_classical` : uniqueness for an ergodic measure, given a
+  classical count bound of vanishing density, the classical trifurcation step and merge witnesses.
 
 ## iii. Table of contents
 
@@ -60,6 +61,9 @@ theorems here are conditional on it for every configuration.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint measurableSet_isEncounterPoint measure_encounter_eq_origin)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -80,10 +84,10 @@ open Classical in
 /-- The classical trifurcations in the box of radius `n`. -/
 noncomputable def bc48_classicalTrifFinset (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     Finset (Site d) :=
-  (boxFinsetBK d n).filter (fun x => bc47_IsClassicalTrifurcation ω x)
+  (boxFinsetBK d n).filter (fun x => IsEncounterPoint d ω x)
 
 lemma bc48_mem_classicalTrifFinset {ω : ConfigSpace (Sym2 (Site d))} {n : ℕ} {x : Site d} :
-    x ∈ bc48_classicalTrifFinset ω n ↔ x ∈ box d n ∧ bc47_IsClassicalTrifurcation ω x := by
+    x ∈ bc48_classicalTrifFinset ω n ↔ x ∈ box d n ∧ IsEncounterPoint d ω x := by
   classical
   rw [bc48_classicalTrifFinset, Finset.mem_filter, boxFinsetBK, Set.Finite.mem_toFinset]
 
@@ -100,7 +104,7 @@ lemma bc48_classicalTrifFinset_subset (ω : ConfigSpace (Sym2 (Site d))) (n : �
   intro x hx
   rw [bc48_mem_classicalTrifFinset] at hx
   rw [tfc_mem_trifFinset]
-  exact ⟨hx.1, bc47_isTrifurcation_of_classical ω x hx.2⟩
+  exact ⟨hx.1, ctc2_isTrifurcation_of_canonical hx.2⟩
 
 lemma bc48_Tcount_classical_le_Tcount (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     bc48_Tcount_classical d ω n ≤ Tcount d ω n := by
@@ -108,7 +112,7 @@ lemma bc48_Tcount_classical_le_Tcount (ω : ConfigSpace (Sym2 (Site d))) (n : �
   exact Finset.card_le_card (bc48_classicalTrifFinset_subset ω n)
 
 lemma bc48_classical_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (x : Site d) (hxbox : x ∈ box d n) (hcl : bc47_IsClassicalTrifurcation ω x) :
+    (x : Site d) (hxbox : x ∈ box d n) (hcl : IsEncounterPoint d ω x) :
     ∃ a₁ a₂ a₃ : Site d,
       (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
       ((openSubgraph d ω).Adj x a₁ ∧ (openSubgraph d ω).Adj x a₂ ∧ (openSubgraph d ω).Adj x a₃) ∧
@@ -139,14 +143,13 @@ lemma bc48_classical_reaches_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : �
 
 /-! ## B. Boundary arm injection -/
 
-/-- An injection of the classical trifurcations of the box into its boundary, each sent to a site it
-is
-connected to. -/
+/-- An injection of the classical trifurcations of the box `Λ_n` into its vertex boundary: a map
+sending each of them to a boundary site, injective on them. -/
 def bc48_ClassicalBoundaryArmInjection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ φ : Site d → Site d,
-    (∀ x, x ∈ box d n → bc47_IsClassicalTrifurcation ω x → φ x ∈ vertexBoundary d n) ∧
-    (∀ x, x ∈ box d n → bc47_IsClassicalTrifurcation ω x → ∀ y, y ∈ box d n →
-      bc47_IsClassicalTrifurcation ω y → φ x = φ y → x = y)
+    (∀ x, x ∈ box d n → IsEncounterPoint d ω x → φ x ∈ vertexBoundary d n) ∧
+    (∀ x, x ∈ box d n → IsEncounterPoint d ω x → ∀ y, y ∈ box d n →
+      IsEncounterPoint d ω y → φ x = φ y → x = y)
 
 lemma bc48_Tcount_classical_le_boundary_of_residue (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : bc48_ClassicalBoundaryArmInjection ω n) :
@@ -179,7 +182,7 @@ lemma bc48_isOpenEdge_shift (g : Multiplicative (Site d)) (ω : ConfigSpace (Sym
 
 lemma bc48_isClassicalTrif_shift (g : Multiplicative (Site d))
     (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
-    bc47_IsClassicalTrifurcation (shift g ω) (g • x) ↔ bc47_IsClassicalTrifurcation ω x := by
+    IsEncounterPoint d (shift g ω) (g • x) ↔ IsEncounterPoint d ω x := by
   constructor
   · rintro ⟨a₁, a₂, a₃, hne, ⟨he1, he2, he3⟩, ⟨hi1, hi2, hi3⟩, ⟨hs12, hs13, hs23⟩⟩
     refine ⟨g⁻¹ • a₁, g⁻¹ • a₂, g⁻¹ • a₃, ?_, ?_, ?_, ?_⟩
@@ -256,102 +259,45 @@ lemma bc48_measurableSet_isOpenEdge (x a : Site d) :
       exact fun hh => h hh.1
     rw [heq]; exact MeasurableSet.empty
 
-lemma bc48_measurableSet_isClassicalTrifurcation (x : Site d) :
-    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | bc47_IsClassicalTrifurcation ω x} := by
-  classical
-  have heq : {ω : ConfigSpace (Sym2 (Site d)) | bc47_IsClassicalTrifurcation ω x}
-      = ⋃ a₁ : Site d, ⋃ a₂ : Site d, ⋃ a₃ : Site d,
-          ((if a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃ then Set.univ else ∅)
-            ∩ ({ω | IsOpenEdge d ω x a₁} ∩ {ω | IsOpenEdge d ω x a₂} ∩ {ω | IsOpenEdge d ω x a₃})
-            ∩ ({ω | (cluster d (removeSite x ω) a₁).Infinite}
-                ∩ {ω | (cluster d (removeSite x ω) a₂).Infinite}
-                ∩ {ω | (cluster d (removeSite x ω) a₃).Infinite})
-            ∩ ({ω | ¬ Connected d (removeSite x ω) a₁ a₂}
-                ∩ {ω | ¬ Connected d (removeSite x ω) a₁ a₃}
-                ∩ {ω | ¬ Connected d (removeSite x ω) a₂ a₃})) := by
-    ext ω
-    simp only [bc47_IsClassicalTrifurcation, Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
-    constructor
-    · rintro ⟨a₁, a₂, a₃, hne, hopen, hinf, hsep⟩
-      refine ⟨a₁, a₂, a₃, ⟨⟨⟨?_, ⟨⟨hopen.1, hopen.2.1⟩, hopen.2.2⟩⟩,
-        ⟨⟨hinf.1, hinf.2.1⟩, hinf.2.2⟩⟩, ⟨⟨hsep.1, hsep.2.1⟩, hsep.2.2⟩⟩⟩
-      rw [ite_eq_left hne]; exact Set.mem_univ _
-    · rintro ⟨a₁, a₂, a₃, ⟨⟨⟨hif, ⟨⟨ho1, ho2⟩, ho3⟩⟩, ⟨⟨hi1, hi2⟩, hi3⟩⟩, ⟨⟨hs1, hs2⟩, hs3⟩⟩⟩
-      by_cases hh : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃
-      · exact ⟨a₁, a₂, a₃, hh, ⟨ho1, ho2, ho3⟩, ⟨hi1, hi2, hi3⟩, ⟨hs1, hs2, hs3⟩⟩
-      · rw [ite_eq_right hh] at hif; exact absurd hif (Set.notMem_empty _)
-  rw [heq]
-  refine MeasurableSet.iUnion fun a₁ => MeasurableSet.iUnion fun a₂ =>
-    MeasurableSet.iUnion fun a₃ => ?_
-  refine MeasurableSet.inter (MeasurableSet.inter (MeasurableSet.inter ?_ ?_) ?_) ?_
-  · by_cases hh : a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃
-    · rw [ite_eq_left hh]; exact MeasurableSet.univ
-    · rw [ite_eq_right hh]; exact MeasurableSet.empty
-  · exact ((bc48_measurableSet_isOpenEdge x a₁).inter (bc48_measurableSet_isOpenEdge x a₂)).inter
-      (bc48_measurableSet_isOpenEdge x a₃)
-  · exact ((StatMech.Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₁).inter
-      (StatMech.Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₂)).inter
-      (StatMech.Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₃)
-  · exact (((measurableSet_connected_removeSite x a₁ a₂).compl).inter
-      ((measurableSet_connected_removeSite x a₁ a₃).compl)).inter
-      ((measurableSet_connected_removeSite x a₂ a₃).compl)
-
-lemma bc48_classicalTrifProb_const (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (x : Site d) :
-    μ {ω | bc47_IsClassicalTrifurcation ω x} = μ {ω | bc47_IsClassicalTrifurcation ω 0} := by
-  set g : Multiplicative (Site d) := Multiplicative.ofAdd x with hg
-  have hgx : g • (0 : Site d) = x := by
-    change Multiplicative.toAdd g + (0 : Site d) = x
-    simp [hg]
-  have hpre : (shift g : ConfigSpace (Sym2 (Site d)) → ConfigSpace (Sym2 (Site d))) ⁻¹'
-      {ω | bc47_IsClassicalTrifurcation ω x} = {ω | bc47_IsClassicalTrifurcation ω 0} := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_ofPred_eq]
-    rw [← hgx, bc48_isClassicalTrif_shift g ω 0]
-  calc μ {ω | bc47_IsClassicalTrifurcation ω x}
-      = μ ((shift g) ⁻¹' {ω | bc47_IsClassicalTrifurcation ω x}) :=
-        (hinv.measure_preimage g (bc48_measurableSet_isClassicalTrifurcation x)).symm
-    _ = μ {ω | bc47_IsClassicalTrifurcation ω 0} := by rw [hpre]
-
 lemma bc48_Tcount_classical_eq_sum_indicator (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     (bc48_Tcount_classical d ω n : ℝ≥0∞) =
       ∑ x ∈ boxFinsetBK d n,
-        ({ω' | bc47_IsClassicalTrifurcation ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω := by
+        ({ω' | IsEncounterPoint d ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω := by
   classical
   rw [bc48_Tcount_classical_eq, bc48_classicalTrifFinset, Finset.card_filter]
   push_cast
   apply Finset.sum_congr rfl
   intro x _
-  by_cases h : bc47_IsClassicalTrifurcation ω x
-  · rw [ite_eq_left h, Set.indicator_of_mem (show ω ∈ {ω' | bc47_IsClassicalTrifurcation ω' x} from
+  by_cases h : IsEncounterPoint d ω x
+  · rw [ite_eq_left h, Set.indicator_of_mem (show ω ∈ {ω' | IsEncounterPoint d ω' x} from
       h)]
-  · rw [ite_eq_right h, Set.indicator_of_notMem (show ω ∉ {ω' | bc47_IsClassicalTrifurcation ω' x}
+  · rw [ite_eq_right h, Set.indicator_of_notMem (show ω ∉ {ω' | IsEncounterPoint d ω' x}
       from
       h)]
 
 lemma bc48_expected_Tcount_classical (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) (n : ℕ) :
     ∫⁻ ω, (bc48_Tcount_classical d ω n : ℝ≥0∞) ∂μ
-      = (boxFinsetBK d n).card • μ {ω | bc47_IsClassicalTrifurcation ω 0} := by
+      = (boxFinsetBK d n).card • μ {ω | IsEncounterPoint d ω 0} := by
   classical
   have hmeas : ∀ x : Site d, Measurable
-      (fun ω => ({ω' | bc47_IsClassicalTrifurcation ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω) :=
-    fun x => Measurable.indicator measurable_const (bc48_measurableSet_isClassicalTrifurcation x)
+      (fun ω => ({ω' | IsEncounterPoint d ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω) :=
+    fun x => Measurable.indicator measurable_const (measurableSet_isEncounterPoint x)
   calc ∫⁻ ω, (bc48_Tcount_classical d ω n : ℝ≥0∞) ∂μ
       = ∫⁻ ω, ∑ x ∈ boxFinsetBK d n,
-          ({ω' | bc47_IsClassicalTrifurcation ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω ∂μ := by
+          ({ω' | IsEncounterPoint d ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω ∂μ := by
         apply lintegral_congr; intro ω; exact bc48_Tcount_classical_eq_sum_indicator ω n
     _ = ∑ x ∈ boxFinsetBK d n,
-          ∫⁻ ω, ({ω' | bc47_IsClassicalTrifurcation ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω ∂μ :=
+          ∫⁻ ω, ({ω' | IsEncounterPoint d ω' x}.indicator (fun _ => (1 : ℝ≥0∞))) ω ∂μ :=
               by
         rw [MeasureTheory.lintegral_finsetSum]
         intro x _; exact hmeas x
-    _ = ∑ x ∈ boxFinsetBK d n, μ {ω | bc47_IsClassicalTrifurcation ω x} := by
+    _ = ∑ x ∈ boxFinsetBK d n, μ {ω | IsEncounterPoint d ω x} := by
         apply Finset.sum_congr rfl; intro x _
-        rw [MeasureTheory.lintegral_indicator (bc48_measurableSet_isClassicalTrifurcation x)]; simp
-    _ = ∑ _x ∈ boxFinsetBK d n, μ {ω | bc47_IsClassicalTrifurcation ω 0} := by
-        apply Finset.sum_congr rfl; intro x _; exact bc48_classicalTrifProb_const μ hinv x
-    _ = (boxFinsetBK d n).card • μ {ω | bc47_IsClassicalTrifurcation ω 0} := by
+        rw [MeasureTheory.lintegral_indicator (measurableSet_isEncounterPoint x)]; simp
+    _ = ∑ _x ∈ boxFinsetBK d n, μ {ω | IsEncounterPoint d ω 0} := by
+        apply Finset.sum_congr rfl; intro x _; exact measure_encounter_eq_origin μ hinv x
+    _ = (boxFinsetBK d n).card • μ {ω | IsEncounterPoint d ω 0} := by
         rw [Finset.sum_const]
 
 /-! ## D. Uniqueness -/
@@ -365,9 +311,9 @@ lemma bc48_classicalTrif_prob_eq_zero (μ : Measure (ConfigSpace (Sym2 (Site d))
     (hdens : Filter.Tendsto
       (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
       Filter.atTop (nhds 0)) :
-    μ {ω | bc47_IsClassicalTrifurcation ω 0} = 0 := by
+    μ {ω | IsEncounterPoint d ω 0} = 0 := by
   classical
-  set p : ℝ≥0∞ := μ {ω | bc47_IsClassicalTrifurcation ω 0} with hp
+  set p : ℝ≥0∞ := μ {ω | IsEncounterPoint d ω 0} with hp
   have hkey : ∀ n, ((boxFinsetBK d n).card : ℝ≥0∞) * p ≤ (bdry n : ℝ≥0∞) := by
     intro n
     have hexp := bc48_expected_Tcount_classical μ hinv n
@@ -410,9 +356,9 @@ lemma bc48_numInfiniteClusters_ae_const_ne_top_classical
       (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
       Filter.atTop (nhds 0))
     (htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | bc47_IsClassicalTrifurcation ω 0}) :
+      0 < μ {ω | IsEncounterPoint d ω 0}) :
     ∃ k : ℕ∞, k ≠ ⊤ ∧ μ {ω | numInfiniteClusters d ω = k} = 1 := by
-  have htri0 : μ {ω | bc47_IsClassicalTrifurcation ω 0} = 0 :=
+  have htri0 : μ {ω | IsEncounterPoint d ω 0} = 0 :=
     bc48_classicalTrif_prob_eq_zero μ herg.isTranslationInvariant bdry hbound hvol hdens
   have htop0 : μ {ω | numInfiniteClusters d ω = ⊤} = 0 := by
     by_contra h
@@ -437,7 +383,7 @@ lemma bc48_kne_top_classical
       (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
       Filter.atTop (nhds 0))
     (htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | bc47_IsClassicalTrifurcation ω 0}) :
+      0 < μ {ω | IsEncounterPoint d ω 0}) :
     ∀ k : ℕ∞, μ {ω | numInfiniteClusters d ω = k} = 1 → k ≠ ⊤ := by
   intro k hk
   obtain ⟨k', hk'top, hk'⟩ :=
@@ -470,7 +416,7 @@ lemma bc48_burton_keane_uniqueness_via_merge_classical
       (fun n => (bdry n : ℝ) / ((boxFinsetBK d n).card : ℝ))
       Filter.atTop (nhds 0))
     (htrif : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | bc47_IsClassicalTrifurcation ω 0})
+      0 < μ {ω | IsEncounterPoint d ω 0})
     (hmergeGeom : ∀ k : ℕ∞, 2 ≤ k → k ≠ ⊤ → μ {ω | numInfiniteClusters d ω = k} = 1 →
       ∃ F : Finset (Sym2 (Site d)), 0 < μ (MergeWitness d F k)) :
     (μ {ω | numInfiniteClusters d ω = 0} = 1 ∨ μ {ω | numInfiniteClusters d ω = 1} = 1)
@@ -482,46 +428,6 @@ lemma bc48_burton_keane_uniqueness_via_merge_classical
     merge_event_null μ herg hfe hkne_top hmergeGeom
   exact ⟨numInfiniteClusters_zero_or_one μ herg hmerge, hmerge,
     infiniteCluster_unique_ae μ herg hmerge⟩
-
-lemma bc48_burton_keane_bernoulli_classical (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hbound : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ),
-      bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | bc47_IsClassicalTrifurcation ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc48_burton_keane_uniqueness_via_merge_classical
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d n) hbound
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bkc_boundary_vol_tendsto d hd) htrif
-    (fun k hk2 hktop hk => hmergeGeom_discharged _ k hk2 hktop hk)
-
-lemma bc48_burton_keane_bernoulli_of_classicalInjection (hd : 1 ≤ d) (p : ℝ≥0)
-    (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hinj : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), bc48_ClassicalBoundaryArmInjection ω n)
-    (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω = ⊤} →
-        0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | bc47_IsClassicalTrifurcation ω 0}) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc48_burton_keane_bernoulli_classical hd p hp1 hp0
-    (bc48_Tcount_classical_le_boundary_of_injection hinj) htrif
 
 /-! ## E. The fake configuration -/
 
@@ -547,9 +453,9 @@ lemma bc48_classicalInjection_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : 
     bc48_ClassicalBoundaryArmInjection ω n := by
   refine ⟨id, ?_, ?_⟩
   · intro x hxbox hcl
-    exact absurd (bc47_isTrifurcation_of_classical ω x hcl) (hno x hxbox)
+    exact absurd (ctc2_isTrifurcation_of_canonical hcl) (hno x hxbox)
   · intro x hxbox hcl
-    exact absurd (bc47_isTrifurcation_of_classical ω x hcl) (hno x hxbox)
+    exact absurd (ctc2_isTrifurcation_of_canonical hcl) (hno x hxbox)
 
 lemma bc48_Tcount_classical_eq_zero_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
@@ -558,6 +464,6 @@ lemma bc48_Tcount_classical_eq_zero_of_noTrif (ω : ConfigSpace (Sym2 (Site d)))
   rw [Finset.eq_empty_iff_forall_notMem]
   intro x hx
   rw [bc48_mem_classicalTrifFinset] at hx
-  exact hno x hx.1 (bc47_isTrifurcation_of_classical ω x hx.2)
+  exact hno x hx.1 (ctc2_isTrifurcation_of_canonical hx.2)
 
 end StatMech.Walls

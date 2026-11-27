@@ -147,8 +147,11 @@ lemma stt_exists_depthRank (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
   have hidxeq : idx x = idx y := by simpa using congrArg (fun p => (ofLex p).2) hrankeq
   exact hxy (hidx hidxeq)
 
-/-- A rooted spanning forest for `B_n`: infinite arm sites, a rank and an arm colouring compatible
-with the depth order on the trifurcation graph. -/
+/-- A rooted spanning forest for `B_n`: arm sites `b x ∈ B_n` connected to each trifurcation `x` of
+`B_n`, with clusters infinite after all trifurcations of `B_n` are removed; an arm colouring `c y`
+of each trifurcation `y` (equal colours exactly for sites in the same arm at `y`); and a rank
+injective on connected trifurcations such that, for connected `x ≠ y` with `rank x < rank y`, `b x`
+and `b y` get different colours at `y`. -/
 def stt_RootedSpanningForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ) (c : Site d → Site d → Fin 3),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

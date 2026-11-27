@@ -275,8 +275,8 @@ lemma PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_measureReal_le
     (E.rectanglePairMergeErrorUnion_subset_pairMergeErrorUnion
       a b c d L R N hbox)
 
-/-- Under almost sure uniqueness of the infinite cluster, rectangles containing growing buffered
-balls have rectangle merge errors tending to zero. -/
+/-- Under almost sure existence and uniqueness of the infinite cluster, rectangles containing
+growing buffered balls have rectangle merge errors tending to zero. -/
 lemma PeriodicPlaneEmbedding.rectanglePairMergeErrorUnion_measureReal_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -365,7 +365,7 @@ lemma PeriodicPlaneEmbedding.translated_rectanglePairMergeErrorUnion_measureReal
       z a b c d L R N hbox)
 
 /-- Translated version of `rectanglePairMergeErrorUnion_measureReal_tendsto_zero`, under translation
-invariance and uniqueness. -/
+invariance and a.s. existence and uniqueness of the infinite cluster. -/
 lemma PeriodicPlaneEmbedding.translated_rectanglePairMergeErrorUnion_measureReal_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -535,7 +535,7 @@ lemma PeriodicPlaneEmbedding.finiteRectangleJoinedHorizontalEvent_subset_horizon
 lemma PeriodicPlaneEmbedding.verticalCrossing_measureReal_ge_side_mul_sub_mergeError
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V) :
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V) :
     mu.real (E.rectSideConnectionEvent a b c d (L : Set V)
         (E.rectBottomBoundaryVertices a b c d)) *
       mu.real (E.rectSideConnectionEvent a b c d (R : Set V)
@@ -548,7 +548,7 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_measureReal_ge_side_mul_sub_mergeE
     (E.rectTopBoundaryVertices a b c d)
   let M := E.rectanglePairMergeErrorUnion a b c d L R
   have hinter : mu.real A * mu.real B ≤ mu.real (A ∩ B) :=
-    hFKG A B
+    hFKG.probability A B
       (E.rectSideConnectionEvent_measurableSet a b c d (L : Set V)
         (E.rectBottomBoundaryVertices a b c d))
       (E.rectSideConnectionEvent_measurableSet a b c d (R : Set V)
@@ -571,7 +571,7 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_measureReal_ge_side_mul_sub_mergeE
 lemma PeriodicPlaneEmbedding.horizontalCrossing_measureReal_ge_side_mul_sub_mergeError
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V) :
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V) :
     mu.real (E.rectSideConnectionEvent a b c d (L : Set V)
         (E.rectLeftBoundaryVertices a b c d)) *
       mu.real (E.rectSideConnectionEvent a b c d (R : Set V)
@@ -584,7 +584,7 @@ lemma PeriodicPlaneEmbedding.horizontalCrossing_measureReal_ge_side_mul_sub_merg
     (E.rectRightBoundaryVertices a b c d)
   let M := E.rectanglePairMergeErrorUnion a b c d L R
   have hinter : mu.real A * mu.real B ≤ mu.real (A ∩ B) :=
-    hFKG A B
+    hFKG.probability A B
       (E.rectSideConnectionEvent_measurableSet a b c d (L : Set V)
         (E.rectLeftBoundaryVertices a b c d))
       (E.rectSideConnectionEvent_measurableSet a b c d (R : Set V)
@@ -642,7 +642,7 @@ error) ≤ μ(R → side)`. -/
 lemma PeriodicPlaneEmbedding.rectSide_measureReal_ge_hits_mul_side_sub_mergeError
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real)
     (L R : Finset V) (side : Set V) :
     mu.real (P.setHitsInfinite (R : Set V)) *
       mu.real (E.rectSideConnectionEvent a b c d (L : Set V) side) -
@@ -652,7 +652,7 @@ lemma PeriodicPlaneEmbedding.rectSide_measureReal_ge_hits_mul_side_sub_mergeErro
   let A := E.rectSideConnectionEvent a b c d (L : Set V) side
   let M := E.rectanglePairMergeErrorUnion a b c d L R
   have hinter : mu.real H * mu.real A ≤ mu.real (H ∩ A) :=
-    hFKG H A (P.setHitsInfinite_measurableSet (R : Set V))
+    hFKG.probability H A (P.setHitsInfinite_measurableSet (R : Set V))
       (E.rectSideConnectionEvent_measurableSet a b c d (L : Set V) side)
       (P.setHitsInfinite_isIncreasing (R : Set V))
       (E.rectSideConnectionEvent_isIncreasing a b c d (L : Set V) side)
@@ -666,13 +666,13 @@ lemma PeriodicPlaneEmbedding.rectSide_measureReal_ge_hits_mul_side_sub_mergeErro
   dsimp only [H, A, M] at hinter hdiff htransfer ⊢
   linarith
 
-/-- Preferred-side transfer: if `R` reaches the top at least as often as the bottom, then `A (H A -
-M) - M ≤ μ(vertical crossing)` with `A = μ(L → bottom)`, `H = μ(R hits ∞)` and `M` the merge error.
--/
+/-- Preferred-side transfer: if `R` reaches the top at least as often as the bottom, then
+`A (H A - M) - M ≤ μ(vertical crossing)` with `A = μ(L → bottom)`, `H = μ(R hits ∞)` and `M` the
+merge error. Assumes positive association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.verticalCrossing_ge_preferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V)
     (hOpposite :
       mu.real (E.rectSideConnectionEvent a b c d (R : Set V)
         (E.rectBottomBoundaryVertices a b c d)) ≤
@@ -703,11 +703,11 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_ge_preferredSide_transfer
   nlinarith
 
 /-- Horizontal version of `verticalCrossing_ge_preferredSide_transfer`, with `A = μ(L → left)` and
-`R` preferring the right side. -/
+`R` preferring the right side. Assumes positive association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_preferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V)
     (hOpposite :
       mu.real (E.rectSideConnectionEvent a b c d (R : Set V)
         (E.rectLeftBoundaryVertices a b c d)) ≤
@@ -746,7 +746,7 @@ bounds the maximum) and `zhg_sqrt_trick_four` (equal probabilities). Reference: 
 *Percolation* (1999). -/
 lemma four_event_sqrt_trick_of_dominant
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) {A B C D : Set (ConfigSpace (Sym2 V))}
+    (hFKG : Universality.PositivelyAssociated mu) {A B C D : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
     (hC : IsIncreasing C) (hD : IsIncreasing D)
     (hAm : MeasurableSet A) (hBm : MeasurableSet B)
@@ -762,12 +762,12 @@ lemma four_event_sqrt_trick_of_dominant
   rw [max_eq_left hBA, max_eq_left hCD] at h
   exact h
 
-/-- If the bottom side is the most likely side reached by `S`, then `μ(S → bottom) ≥ 1 - (1 - μ(S
-hits ∞))^{1/4}`. -/
+/-- If the bottom side is the most likely side reached by `S`, then
+`μ(S → bottom) ≥ 1 - (1 - μ(S hits ∞))^{1/4}`. Assumes positive association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.dominant_bottomSide_measureReal_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (S : Set V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (S : Set V)
     (hS : S ⊆ E.rectVertices a b c d)
     (hTop : mu.real (E.rectSideConnectionEvent a b c d S
         (E.rectTopBoundaryVertices a b c d)) ≤
@@ -823,12 +823,12 @@ lemma PeriodicPlaneEmbedding.dominant_bottomSide_measureReal_ge_fourthRoot
   dsimp only [A, B, C, D] at hdom hsqrt ⊢
   linarith
 
-/-- If the left side is the most likely side reached by `S`, then `μ(S → left) ≥ 1 - (1 - μ(S hits
-∞))^{1/4}`. -/
+/-- If the left side is the most likely side reached by `S`, then
+`μ(S → left) ≥ 1 - (1 - μ(S hits ∞))^{1/4}`. Assumes positive association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.dominant_leftSide_measureReal_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (S : Set V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (S : Set V)
     (hS : S ⊆ E.rectVertices a b c d)
     (hRight : mu.real (E.rectSideConnectionEvent a b c d S
         (E.rectRightBoundaryVertices a b c d)) ≤
@@ -897,11 +897,12 @@ lemma PeriodicPlaneEmbedding.dominant_leftSide_measureReal_ge_fourthRoot
   linarith
 
 /-- If `S` prefers bottom to top and left to right, the larger of its bottom and left connection
-probabilities is at least `1 - (1 - μ(S hits ∞))^{1/4}`. -/
+probabilities is at least `1 - (1 - μ(S hits ∞))^{1/4}`. Assumes positive association (FKG) for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.preference_max_bottom_left_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (S : Set V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (S : Set V)
     (hS : S ⊆ E.rectVertices a b c d)
     (hBottomTop : mu.real (E.rectSideConnectionEvent a b c d S
         (E.rectTopBoundaryVertices a b c d)) ≤
@@ -937,11 +938,12 @@ lemma PeriodicPlaneEmbedding.preference_max_bottom_left_ge_fourthRoot
     exact le_max_right _ _
 
 /-- Fourth-root bound for the translated orbit box when the bottom side is dominant; translation
-invariance replaces the hit probability of the translated box by that of the box. -/
+invariance replaces the hit probability of the translated box by that of the box. Also assumes
+positive association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.dominant_translatedOrbitBox_bottomSide_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (z : Site 2) (N : Nat) (a b c d : Real)
     (hbox : (P.shift z '' (P.orbitBox N : Set V)) ⊆
       E.rectVertices a b c d)
@@ -975,11 +977,12 @@ lemma PeriodicPlaneEmbedding.dominant_translatedOrbitBox_bottomSide_ge_fourthRoo
   exact h
 
 /-- If an infinite cluster exists almost surely and the bottom side is dominant for the translated
-orbit boxes of radius `N`, the bottom connection probability tends to one. -/
+orbit boxes of radius `N`, the bottom connection probability tends to one. Assumes positive
+association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.dominant_translatedOrbitBox_bottomSide_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hexists : mu {omega | P.HasInfiniteCluster omega} = 1)
     (z : Nat → Site 2) (a b c d : Nat → Real)
     (hbox : ∀ N, (P.shift (z N) '' (P.orbitBox N : Set V)) ⊆

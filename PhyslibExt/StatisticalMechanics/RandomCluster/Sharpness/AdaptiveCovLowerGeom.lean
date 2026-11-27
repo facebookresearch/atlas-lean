@@ -233,7 +233,15 @@ lemma hcov_lattice_mass
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
 open Classical in
-/-- The `q = 2` random-cluster case. -/
+/-- Covariance lower bound for box crossings in the `q = 2` random-cluster model: let `G` be a
+  finite graph on `W`, `0 < p < 1` and `φ = fkMass G p 2`; let `edge` send the pairs of `W`
+  injectively to nearest-neighbour edges `s(endU e, endV e)` of `ℤ^d` whose endpoints lie in a
+  nonempty finite set `Λ` and in the box of radius `n ≥ 1`; let the list `l` contain every pair, let
+  `disc₀ k = vertexBoundary d k` for every `k`, and let `o` lie outside every `disc₀ k` and in
+  `box d (k - 1)` for every `k ≥ 1`. Then `θ (1 - θ) / (4 M / n) ≤ ∑ₑ Cov_φ(1_C, ω_e)`, where `C` is
+  the event that `o` is connected to the vertex boundary of the box of radius `n`, `θ` is its
+  probability and `M` is the maximum over `x ∈ Λ` of the sum over `j < n` of the probabilities that
+  `x` is connected to the sites at distance `j` from `x`. -/
 lemma fk_q2_hcov_lattice
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)

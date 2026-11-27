@@ -37,7 +37,8 @@ influence.
 - `activeInfluence`: the influence of an edge on an event.
 - `activeCov_eq_marginal_mul_influence`: covariance with an edge coordinate equals marginal variance
   times influence.
-- `active_deriv_ge_total_influence`: derivative ≥ `(ε ^ 2 / q) ·` total influence (unconditional).
+- `active_deriv_ge_total_influence`: derivative ≥ `(ε ^ 2 / q) ·` total influence, for increasing
+  `A`, `q ≥ 1` and `ε ≤ p ≤ 1 - ε`.
 
 ## iii. Table of contents
 
@@ -172,7 +173,10 @@ lemma activeCov_eq_marginal_mul_influence {p q : ℝ}
   unfold activeInfluence
   field_simp [hm0.ne', (sub_pos.mpr hm1).ne']
 
-/-- Derivative ≥ `(ε ^ 2 / q) ·` total influence (unconditional). -/
+/-- For a finite graph `G`, `q ≥ 1`, `ε > 0`, `ε ≤ p ≤ 1 - ε` and an increasing event `A` of the
+  edge configurations of `G`, the derivative at `p` of the probability of `A` under the
+  random-cluster measure on `G` with edge parameter `p` and cluster weight `q` is at least
+  `ε ^ 2 / q` times the total influence `∑ₑ activeInfluence G p q A e`. -/
 lemma active_deriv_ge_total_influence {p q ε : ℝ} (hε : 0 < ε)
     (hp0 : ε ≤ p) (hp1 : p ≤ 1 - ε) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :

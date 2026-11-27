@@ -24,8 +24,8 @@ integration, and the mean-field lower bound, for the random-cluster model on a f
 
 ## i. Overview
 
-`MonotonicFK.fk_poincare_indicator` (`θ(1 - θ) ≤ ∑ Cov`, `q ≥ 1`, in `PoincareApp`) is
-unconditional. `fk_differential_inequality`
+`MonotonicFK.fk_poincare_indicator` (`θ(1 - θ) ≤ ∑ Cov` for an increasing event, `0 < p < 1`,
+`q ≥ 1`, in `PoincareApp`) needs no further hypothesis. `fk_differential_inequality`
 is conditional on `hbridge`, which says the covariance sum over all pairs equals the sum over edges
 of `G`. `fk_subcritical_decay` integrates a supplied differential inequality `hdi` with `θ ≤ 1 - κ`
 to get exponential decay. `fk_sharpness_both` adds the mean-field bound from supplied limits `hTβ`,
@@ -35,7 +35,7 @@ to get exponential decay. `fk_sharpness_both` adds the mean-field bound from sup
 ## ii. Key results
 
 - `MonotonicFK.fk_poincare_indicator` (in `PoincareApp`): Poincaré inequality for increasing
-  indicators (unconditional), reused here rather than duplicated.
+  indicators, for `0 < p < 1` and `q ≥ 1`, reused here rather than duplicated.
 - `fk_q2_crossing_decay_poincare`: `θ(a) ≤ exp(-4κ(b - a))` at `q = 2`, conditional on `hbridge` and
   `hθub`.
 - `fk_sharpness_both`: decay and mean-field bounds, conditional on the supplied differential

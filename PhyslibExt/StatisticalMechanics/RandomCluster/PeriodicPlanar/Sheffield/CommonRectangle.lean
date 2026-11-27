@@ -28,8 +28,8 @@ the four placements sit in the common square `[-M N, M N]²`. Translation invari
 transports the side-connection probabilities.
 
 Headline fidelity. `exists_commonSquare_fourBoundaryPlacements` is proved conditionally on
-`IsFKG mu`, `P.IsTranslationInvariant mu` and almost sure uniqueness of the infinite cluster;
-these are satisfiable, so the result is not vacuous.
+`PositivelyAssociated mu`, `P.IsTranslationInvariant mu` and almost sure uniqueness of the infinite
+cluster; these are satisfiable, so the result is not vacuous.
 
 ## ii. Key results
 
@@ -90,7 +90,7 @@ connected inside the square to that side with probability tending to `1`. -/
 lemma PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) :
     ∃ (M : Nat → Nat)

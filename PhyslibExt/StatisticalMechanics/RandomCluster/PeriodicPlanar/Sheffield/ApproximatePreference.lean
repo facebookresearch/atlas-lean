@@ -367,7 +367,7 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 lemma PeriodicPlaneEmbedding.preference_max_bottom_left_add_epsilon_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (S : Set V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (S : Set V)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
     (hS : S ⊆ E.rectVertices a b c d)
     (hBottomTop : mu.real (E.rectSideConnectionEvent a b c d S
@@ -437,7 +437,7 @@ lemma PeriodicPlaneEmbedding.preference_max_bottom_left_add_epsilon_ge_fourthRoo
 lemma PeriodicPlaneEmbedding.verticalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V)
     (epsilon : Real)
     (hOpposite :
       mu.real (E.rectSideConnectionEvent a b c d (R : Set V)
@@ -472,7 +472,7 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_ge_approxPreferredSide_transfer
 lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V)
     (epsilon : Real)
     (hOpposite :
       mu.real (E.rectSideConnectionEvent a b c d (R : Set V)
@@ -507,7 +507,7 @@ lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_approxPreferredSide_transfer
 lemma PeriodicPlaneEmbedding.exists_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real)
     {n m : Nat} (hn : 0 < n) (hm : 0 < m)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
     (source : PreferenceGridVertex n m → Finset V)
@@ -598,11 +598,11 @@ lemma PeriodicPlaneEmbedding.exists_approxPreferredSide_crossing_branch
     exact ⟨hroot, htransfer⟩
 
 /-- With `ε` the intrinsic endpoint error, some grid point gives a lower bound on the vertical or on
-the horizontal crossing probability. -/
+the horizontal crossing probability. Assumes positive association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_intrinsicEndpointError_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real)
     {n m : Nat} (hn : 0 < n) (hm : 0 < m)
     (source : PreferenceGridVertex n m → Finset V)
     (bottom top left right : PreferenceGridVertex n m → Real)

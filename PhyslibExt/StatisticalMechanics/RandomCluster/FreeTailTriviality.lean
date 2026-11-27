@@ -151,7 +151,8 @@ lemma freeInner_mul_outside_le_bcProb
 variable {d : ℕ}
 
 /-- Under an FK-DLR measure, the free box probability of an increasing event times the probability
-of an event depending only on edges outside the box is at most the probability of both. -/
+of an event depending only on edges outside the box is at most the probability of both. Assumes
+`q ≥ 1`. -/
 lemma isFKDLR_freeMass_mul_outside_le_generalQ
     {N m : ℕ} (hNm : N < m) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q)
@@ -260,7 +261,7 @@ lemma exteriorCylinder_realise_in_box
   rw [hrestr]
 
 /-- Under an FK-DLR measure, the free box probability of an increasing event times the probability
-of an event measurable outside the box is at most the probability of both. -/
+of an event measurable outside the box is at most the probability of both. Assumes `q ≥ 1`. -/
 lemma isFKDLR_freeMass_mul_exterior_le_generalQ
     (N : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (phi : ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
@@ -521,7 +522,8 @@ theorem freeInfinite_canonical_uniqueness
 
 /-! ## D. The case `q = 2` -/
 
-/-- The `q = 2` case of `freeInfiniteVolume_tail_trivial_generalQ`. -/
+/-- For `0 < p < 1`, every tail event has probability `0` or `1` under the free infinite-volume
+random-cluster measure with `q = 2` on `ℤ^d`. -/
 lemma freeInfiniteVolume_tail_trivial_q2
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (s : Set (ConfigSpace (Sym2 (Site d)))) (hs : FKIsTailEvent d s) :
@@ -530,7 +532,8 @@ lemma freeInfiniteVolume_tail_trivial_q2
   freeInfiniteVolume_tail_trivial_generalQ hp hp1
     (by norm_num : (1 : ℝ) ≤ 2) s hs
 
-/-- The `q = 2` case of `freeInfiniteVolume_isErgodic_generalQ`. -/
+/-- For `d ≥ 1` and `0 < p < 1`, the free infinite-volume random-cluster measure with `q = 2` on
+`ℤ^d` is translation-ergodic. -/
 lemma freeInfiniteVolume_isErgodic_q2
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
@@ -539,7 +542,9 @@ lemma freeInfiniteVolume_isErgodic_q2
   freeInfiniteVolume_isErgodic_generalQ hd hp hp1
     (by norm_num : (1 : ℝ) ≤ 2)
 
-/-- The `q = 2` case of `freeInfinite_canonical_uniqueness`. -/
+/-- For `d ≥ 1` and `0 < p < 1`, the free infinite-volume random-cluster measure with `q = 2` on
+`ℤ^d` has almost surely zero infinite clusters or almost surely one, gives probability zero to two
+or more infinite clusters, and has almost surely at most one infinite cluster. -/
 lemma freeInfinite_q2_canonical_uniqueness
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     ((freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)

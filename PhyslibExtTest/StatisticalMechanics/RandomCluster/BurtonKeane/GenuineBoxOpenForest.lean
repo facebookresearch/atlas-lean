@@ -22,6 +22,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineB
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineBoxOpenForest
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
@@ -38,7 +41,7 @@ theorem not_isTrifurcation_closed {d : ℕ} (x : Site d) :
   exact h (hc ▸ Set.finite_singleton a)
 
 -- Classical and canonical trifurcations agree.
-example : bc89_GenuineTrif 2 bc60_upperLines 0 ↔ IsCanonicalTrifurcation 2 bc60_upperLines 0 :=
+example : bc89_GenuineTrif 2 bc60_upperLines 0 ↔ IsEncounterPoint 2 bc60_upperLines 0 :=
   bc90_genuineTrif_iff_canonical _ _
 
 -- The upper-lines configuration has no classical trifurcation in `B_4`.

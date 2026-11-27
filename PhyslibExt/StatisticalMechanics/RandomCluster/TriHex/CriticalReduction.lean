@@ -314,9 +314,10 @@ def TriHexSubcriticalDecayTransfer (q pcTri pcHex : ℝ) : Prop :=
   SubcriticalTwoPointExponentialDecay triangular q pcTri →
     SubcriticalTwoPointExponentialDecay hexagonal q pcHex
 
-/-- Hexagonal critical cubic at the dual threshold from the triangular phase boundary. Returns
-only the genuinely derived content (the hexagonal cubic; the triangular cubic is already
-entailed by `hphase`); decay statements are neither assumed nor concluded here. -/
+/-- Hexagonal critical cubic at the dual threshold from the triangular phase boundary: for `q > 0`,
+`pcTri ∈ (0, 1)` and `pcHex = dualParam pcTri q`, if `pcTri` is a triangular critical phase boundary
+then the hexagonal critical cubic vanishes at the edge odds of `pcHex`. No decay statement is
+assumed or concluded. -/
 lemma triHexCriticalConclusion_of_exactDualThreshold
     {q pcTri pcHex : ℝ}
     (hq : 0 < q)
@@ -328,10 +329,12 @@ lemma triHexCriticalConclusion_of_exactDualThreshold
     hq hpcTri hdual hphase).2
 
 /-- Critical points of the triangular and hexagonal random-cluster models from phase inputs (`q ≥
-1`): under off-critical sharpness, dual coverage, no coexistence and the triangular phase boundary,
-the hexagonal critical cubic vanishes. Conditional: the triangular critical value is assumed
-(`hphase`), so the triangular cubic is not returned.
-No decay statements are assumed or concluded (Grimmett, *The Random-Cluster Model*, §6.6). -/
+1`): if both critical points lie in `(0, 1)`, both models have off-critical sharpness, the hexagonal
+model has dual subcritical coverage at the triangular critical point, there is no dual coexistence,
+and the triangular critical point is a triangular critical phase boundary (`hphase`), then the
+hexagonal critical cubic vanishes at the edge odds of the hexagonal critical point. The triangular
+critical value enters only through the hypothesis `hphase`. No decay statement is assumed or
+concluded (Grimmett, *The Random-Cluster Model*, §6.6). -/
 lemma triangular_hexagonal_critical_of_phase_inputs
     {q : ℝ}
     (hq : 1 ≤ q)

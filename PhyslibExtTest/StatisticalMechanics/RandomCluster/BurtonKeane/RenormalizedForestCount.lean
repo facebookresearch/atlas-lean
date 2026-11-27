@@ -25,6 +25,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Renormal
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.RenormalizedForestCount
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
@@ -42,7 +45,7 @@ example (ω : ConfigSpace (Sym2 (Site d))) : Tcount d ω 0 ≤ (boxFinsetBK d 0)
   bc25_Tcount_zero_le_box ω
 
 -- The coarse-to-classical chain at scale zero.
-example (ω : ConfigSpace (Sym2 (Site d))) (h : IsCanonicalTrifurcation d ω (0 : Site d)) :
+example (ω : ConfigSpace (Sym2 (Site d))) (h : IsEncounterPoint d ω (0 : Site d)) :
     IsTrifurcation d ω (0 : Site d) :=
   bc25_coarseTrif_zero_chain.2 (bc25_coarseTrif_zero_chain.1 h)
 

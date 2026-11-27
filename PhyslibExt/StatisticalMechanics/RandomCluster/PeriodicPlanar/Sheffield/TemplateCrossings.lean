@@ -428,7 +428,7 @@ lemma PeriodicPlaneEmbedding.rectTopConnection_fourShiftTemplate_le
           zLeft zRight zBottom zTop hy, rfl⟩
 
 /-- Four-shift templates of growing orbit boxes meet the infinite cluster with probability tending
-to `1` when an infinite cluster exists almost surely. -/
+to `1` when an infinite cluster exists almost surely. Assumes translation invariance for `mu`. -/
 lemma PeriodicGraph.fourShiftTemplate_hitsInfinite_tendsto_one
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -462,27 +462,6 @@ lemma PeriodicGraph.fourShiftTemplate_hitsInfinite_tendsto_one
 
 /-! ## C. FKG and the dual measure -/
 
-omit [Countable V] in
-omit [Countable V] [DecidableEq V] in
-/-- FKG inequality for two decreasing events. -/
-lemma IsFKG.inter_decreasing
-    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
-    (hA : IsDecreasing A) (hB : IsDecreasing B)
-    (hAm : MeasurableSet A) (hBm : MeasurableSet B) :
-    mu.real A * mu.real B <= mu.real (A ∩ B) := by
-  have hfkg := hFKG Aᶜ Bᶜ hAm.compl hBm.compl hA.compl hB.compl
-  have hca : mu.real Aᶜ = 1 - mu.real A := by
-    rw [measureReal_compl hAm, probReal_univ]
-  have hcb : mu.real Bᶜ = 1 - mu.real B := by
-    rw [measureReal_compl hBm, probReal_univ]
-  have hcum : mu.real (Aᶜ ∩ Bᶜ) = 1 - mu.real (A ∪ B) := by
-    rw [← Set.compl_union, measureReal_compl (hAm.union hBm), probReal_univ]
-  rw [hca, hcb, hcum] at hfkg
-  have hie : mu.real (A ∪ B) + mu.real (A ∩ B) =
-      mu.real A + mu.real B := measureReal_union_add_inter hBm
-  nlinarith
-
 omit [Countable V] [Countable W] [DecidableEq V] [DecidableEq W] in
 /-- The dual configuration map is order-reversing. -/
 lemma dualConfigEquiv_antitone (edgeDual : Sym2 V ≃ Sym2 W) :
@@ -498,13 +477,15 @@ lemma dualConfigEquiv_antitone (edgeDual : Sym2 V ≃ Sym2 W) :
 lemma PeriodicPlanarDualPair.dualMeasure_isFKG
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) : IsFKG (D.dualMeasure mu) := by
+    (hFKG : Universality.PositivelyAssociated mu) :
+    Universality.PositivelyAssociated (D.dualMeasure mu) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hAm hBm hA hB
   rw [D.dualMeasure_measureReal mu hAm,
     D.dualMeasure_measureReal mu hBm,
     D.dualMeasure_measureReal mu (hAm.inter hBm)]
   rw [Set.preimage_inter]
-  apply IsFKG.inter_decreasing mu hFKG
+  apply Universality.PositivelyAssociated.decreasing mu hFKG
   · intro omega omega' homega hmem
     exact hA (dualConfigEquiv_antitone D.edgeDual homega) hmem
   · intro omega omega' homega hmem
@@ -538,7 +519,8 @@ lemma PeriodicPlanarDualPair.dualUnique_measure_eq_one_of_common
   exact hpre
 
 /-- If primal and dual unique infinite clusters coexist almost surely under the free buffered
-infinite-volume FK measure, all hypotheses of the crossing arguments hold for it and its dual. -/
+infinite-volume FK measure, all hypotheses of the crossing arguments hold for it and its dual. Also
+assumes `q ≥ 1`. -/
 lemma PeriodicPlanarDualPair.freeBufferedInfiniteVolume_sheffieldData_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -547,15 +529,15 @@ lemma PeriodicPlanarDualPair.freeBufferedInfiniteVolume_sheffieldData_of_common
       mu D.commonUniqueInfiniteClusterEvent = 1) :
     let mu : Measure (ConfigSpace (Sym2 V)) :=
       P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-    IsFKG mu ∧
+    Universality.PositivelyAssociated mu ∧
       P.IsTranslationInvariant mu ∧
-      IsFKG (D.dualMeasure mu) ∧
+      Universality.PositivelyAssociated (D.dualMeasure mu) ∧
       Pdual.IsTranslationInvariant (D.dualMeasure mu) ∧
       mu {omega | P.HasUniqueInfiniteCluster omega} = 1 ∧
       D.dualMeasure mu {eta | Pdual.HasUniqueInfiniteCluster eta} = 1 := by
   let mu : Measure (ConfigSpace (Sym2 V)) :=
     P.freeBufferedInfiniteVolume hp hp1 (zero_lt_one.trans_le hq)
-  have hFKG : IsFKG mu := P.freeBufferedInfiniteVolume_isFKG hp hp1 hq
+  have hFKG : Universality.PositivelyAssociated mu := P.freeBufferedInfiniteVolume_isFKG hp hp1 hq
   have hTI : P.IsTranslationInvariant mu :=
     P.freeBufferedInfiniteVolume_isTranslationInvariant hp hp1 hq
   exact ⟨hFKG, hTI, D.dualMeasure_isFKG mu hFKG,
@@ -568,11 +550,13 @@ set_option linter.unusedVariables false in
 /-! ## D. Crossings of large rectangles -/
 
 /-- If translates of a template inside the rectangles connect to the four sides with probabilities
-tending to `1`, the larger of the two crossing probabilities tends to `1`. -/
+tending to `1`, the larger of the two crossing probabilities tends to `1`. Assumes positive
+association (FKG), translation invariance and almost surely exactly one infinite cluster for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -693,7 +677,7 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_max_
 lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (M : Nat → Nat) (zLeft zRight zBottom zTop : Nat → Site 2)
     (hleft : ∀ n,
@@ -882,7 +866,7 @@ lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_o
 lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_crossing_max_tendsto_one_of_coordinateBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (M : Nat → Nat) (zLeft zRight zBottom zTop : Nat → Site 2)
     (hleft : ∀ n,
@@ -958,11 +942,12 @@ namespace PeriodicPlaneEmbedding
 /-- Square sizes `M`, template shifts and buffer radii such that, for every choice of widths and
 heights, if the buffered orbit boxes fit in the squares then the larger crossing probability of the
 `(M + width) × (M + height)` rectangles tends to `1`. The fitting hypothesis is not guaranteed for
-the chosen `M` and radii. -/
+the chosen `M` and radii. Assumes positive association (FKG), translation invariance and almost
+surely exactly one infinite cluster for `mu`. -/
 lemma exists_commonSquare_fourShift_crossing_max_tendsto_one_of_coordinateBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ (M : Nat → Nat) (_zLeft _zRight _zBottom _zTop : Nat → Site 2)
       (radius : Nat → Nat), ∀
@@ -1075,7 +1060,7 @@ end PeriodicPlaneEmbedding
 /-! ## E. Zero-one law for coexistence of unique clusters -/
 
 /-- Zero-one law: under the free buffered infinite-volume FK measure, coexistence of unique primal
-and dual infinite clusters has probability `0` or `1`. -/
+and dual infinite clusters has probability `0` or `1`. Assumes `q ≥ 1`. -/
 lemma PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_zero_or_one
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :

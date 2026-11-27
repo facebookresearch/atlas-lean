@@ -57,6 +57,7 @@ open Set SimpleGraph Finset MeasureTheory
 open scoped BigOperators ENNReal NNReal
 
 open StatMech.Lattice StatMech.ConfigSpace
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted (IsEncounterPoint)
 
 namespace StatMech
 
@@ -67,7 +68,7 @@ variable {d : ℕ}
 /-! ## A. Canonical counts -/
 
 lemma ccf_canon_arm_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (x : Site d) (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x) :
     ∃ (c : Fin 3 → Site d) (zr : Fin 3 → Site d),
       (∀ i, (openSubgraph d ω).Adj x (c i)) ∧
@@ -91,7 +92,7 @@ lemma ccf_canonTcount_le_boundary_of_boxOpenForest (ω : ConfigSpace (Sym2 (Site
       (StatMech.Percolation.bst_Tcount_le_boundary_of_boxOpenForest ω n h)
 
 lemma ccf_truthcheck_canon_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x : Site d} (hxbox : x ∈ box d n) (htri : IsCanonicalTrifurcation d ω x)
+    {x : Site d} (hxbox : x ∈ box d n) (htri : IsEncounterPoint d ω x)
     (hsingle : ∀ y, y ∈ box d n → IsTrifurcation d ω y → y = x)
     (c : Fin 3 → Site d)
     (hadj : ∀ i, (openSubgraph d ω).Adj x (c i))

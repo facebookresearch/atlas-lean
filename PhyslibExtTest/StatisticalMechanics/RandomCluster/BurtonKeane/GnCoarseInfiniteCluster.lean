@@ -48,8 +48,8 @@ example : ∃ a₁ a₂ a₃ : Site 2,
 
 -- In the two-box contracted graph the first and third upper lines stay connected.
 example : ((bc76_twoBoxGn 3).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-    ⟨bc57_pt ((3 : ℕ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-    ⟨bc57_pt ((3 : ℕ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
+    ⟨faceCorner00 ((3 : ℕ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+    ⟨faceCorner00 ((3 : ℕ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
   bc81_status.2.2.2.1 le_rfl
 
 -- With at most one infinite cluster, the arms of a coarse trifurcation are connected.

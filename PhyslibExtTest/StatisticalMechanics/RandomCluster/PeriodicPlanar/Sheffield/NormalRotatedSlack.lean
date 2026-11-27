@@ -17,9 +17,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 Module under test: `Sheffield.NormalRotatedSlack` in
 `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar`.
 
-* The primal and dual hypotheses (`IsFKG`, translation invariance, almost-sure uniqueness) of
-  `nonempty_normalRotatedInsetLimitData_of_unique` are discharged by the Dirac masses on the
-  all-open configurations of two connected infinite periodic graphs (`isFKG_dirac`,
+* The primal and dual hypotheses (`PositivelyAssociated`, translation invariance, almost-sure
+  uniqueness) of `nonempty_normalRotatedInsetLimitData_of_unique` are discharged by the Dirac masses
+  on the all-open configurations of two connected infinite periodic graphs (`isFKG_dirac`,
   `allOpen_translationInvariant`, `allOpen_unique`, proved here), giving limit data with padding
   `0`; `NormalRotatedInsetLimitData.exists_primalDualFixedBranchesSubsequence` is applied to it.
 * `PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_dualLimit` with the dual
@@ -38,7 +38,9 @@ open _root_.StatMech _root_.StatMech.FK.PeriodicPlanar MeasureTheory Filter
 def allOpen {V : Type*} : ConfigSpace (Sym2 V) := fun _ => true
 
 /-- Every Dirac mass on bond configurations is FKG. -/
-theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) : IsFKG (Measure.dirac ω) := by
+theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) :
+    Universality.PositivelyAssociated (Measure.dirac ω) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _ _
   rw [Measure.real, Measure.real, Measure.real, Measure.dirac_apply' _ hA,
     Measure.dirac_apply' _ hB, Measure.dirac_apply' _ (hA.inter hB)]

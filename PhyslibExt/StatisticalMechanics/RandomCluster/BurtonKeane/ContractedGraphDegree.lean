@@ -141,9 +141,11 @@ lemma bc103_arms_distinct_of_deleteVert_cut {V : Type*} {G : SimpleGraph V} {u v
 
 /-! ## B. The contracted trifurcation graph -/
 
-/-- Contracted trifurcation graph for the box of radius `R` at scale `L`: a finite graph on a set
-containing the coarse trifurcations, embedded in the contracted lattice, in which deleting a coarse
-trifurcation separates three of its neighbours, with leaves on the boundary. -/
+/-- Contracted trifurcation graph for the box `Λ_R` at scale `L`: a graph `G` on a nonempty finite
+set of sites, into which the contracted-lattice trifurcations of `Λ_R` (`bc67_IsGnTrifurcation`)
+map injectively, such that the image of each of them has three `G`-neighbours that are pairwise
+disconnected once the edges at that image are deleted, and whose spanning forest
+`osf_spanForest G` has no isolated vertices and has its leaves on the boundary of `Λ_R`. -/
 def bc103_ContractedTrifGraph (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (_ : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (_ : DecidableRel G.Adj)

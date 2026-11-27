@@ -506,15 +506,15 @@ lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_measureReal_gt
   linarith
 
 /-- Joined arms from a vertical translate of `S = L + z₀` to the lower ray `{y ≤ 0}` and from its
-vertical neighbour to the upper ray `{y ≥ 0}`, with probability above `1 - 2√(1 - P(arm of S
-to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure uniqueness). Implied by the case `R
-= r`, `s = 0`, `t = 0` of
+vertical neighbour to the upper ray `{y ≥ 0}`, with probability above
+`1 - 2√(1 - P(arm of S to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure existence and
+uniqueness of the infinite cluster). Implied by the case `R = r`, `s = 0`, `t = 0` of
 `exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt` up to
 rewriting. -/
 lemma PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) (L : Finset V) {epsilon : Real} (hepsilon : 0 < epsilon) :
     ∃ z₀ : Site 2, ∃ z : Int, ∃ n : Nat,
@@ -582,14 +582,15 @@ lemma PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_measureR
     mu r 0 0 n Slo Shi
   linarith
 
-/-- Two-step margin version: translated sources in `H_R` (`R ≥ r`), joined arms to the rays `{y ≤
-0}` and `{y ≥ 1}` from a translate and its vertical translate by two steps. The case `s = 0`,
-`t = 1` of `exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt`
-up to rewriting. -/
+/-- Two-step margin version: translated sources in `H_R` (`R ≥ r`), joined arms to the rays
+`{y ≤ 0}` and `{y ≥ 1}` from a translate and its vertical translate by two steps. The case `s = 0`,
+`t = 1` of `exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt` up to
+rewriting. Assumes positive association (FKG), translation invariance and almost surely exactly one
+infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_inward_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (L : Finset V)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -669,11 +670,12 @@ namespace PeriodicPlaneEmbedding
 
 /-- Separated margin version: joined arms between a translate of `L` in `H_R` and its vertical
 translate by `1 + t` steps, to the rays `{y ≤ s}` and `{y ≥ s + t}`, with probability above
-`1 - 2√(1 - P(arm to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure uniqueness). -/
+`1 - 2√(1 - P(arm to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure existence and uniqueness
+of the infinite cluster). -/
 lemma exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (s : Real) (t : Int) (L : Finset V)
     {epsilon : Real} (hepsilon : 0 < epsilon) :

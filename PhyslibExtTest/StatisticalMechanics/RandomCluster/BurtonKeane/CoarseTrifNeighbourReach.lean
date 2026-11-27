@@ -44,13 +44,13 @@ example : bc57_evenLines ∈ threeMeetBox 2 6 ∧ numInfiniteClusters 2 bc57_eve
 
 -- Distinct even lines give distinct clusters; the line at height `2` misses the origin's
 -- neighbours.
-example : cluster 2 bc57_evenLines (bc57_pt 0 (2 * 0)) ≠
-      cluster 2 bc57_evenLines (bc57_pt 0 (2 * 1)) ∧
-    ¬ bc56_ClusterReachesNbr bc57_evenLines (bc57_pt 0 (2 * 1)) :=
+example : cluster 2 bc57_evenLines (faceCorner00 0 (2 * 0)) ≠
+      cluster 2 bc57_evenLines (faceCorner00 0 (2 * 1)) ∧
+    ¬ bc56_ClusterReachesNbr bc57_evenLines (faceCorner00 0 (2 * 1)) :=
   ⟨bc57_cluster_ne (by norm_num), bc57_no_reachesNbr (by norm_num)⟩
 
 -- Horizontal neighbours are adjacent.
-example : (hypercubicLattice 2).Adj (bc57_pt 0 0) (bc57_pt (0 + 1) 0) :=
+example : (hypercubicLattice 2).Adj (faceCorner00 0 0) (faceCorner00 (0 + 1) 0) :=
   bc57_pt_adj 0 0
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifNeighbourReach

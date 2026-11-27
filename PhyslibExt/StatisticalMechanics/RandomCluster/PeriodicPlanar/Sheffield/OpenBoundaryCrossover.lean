@@ -53,11 +53,12 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-- A vertical shift `z` with the lower exit of `S + z` and the upper exit of `S + z + 1` both of
 probability `≥ 1 - √(1 - P(exit)) - ε`. Special case `t = 0` of
-`exists_separated_infiniteOpenBoundaryRays_measureReal_ge`. -/
+`exists_separated_infiniteOpenBoundaryRays_measureReal_ge`. Assumes positive association (FKG) and
+translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (r s : Real) (S : Set V) {epsilon : Real} (hepsilon : 0 < epsilon) :
     ∃ z : Int,
       1 - Real.sqrt (1 - mu.real
@@ -157,7 +158,7 @@ lemma PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureRea
     let U := E.infiniteOpenBoundaryConnectionTo r
       (P.shift (verticalShift z) '' S)
       (E.upperBoundaryRayVertices r s)
-    have hsqrt := measurable_sqrt_trick mu hFKG (A := L) (B := U)
+    have hsqrt := Universality.rsw_sqrt_trick mu hFKG (A := L) (B := U)
       (by
         dsimp only [L]
         exact E.infiniteOpenBoundaryConnectionTo_isIncreasing r _ _)
@@ -197,7 +198,7 @@ lemma PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureRea
     let U := E.infiniteOpenBoundaryConnectionTo r
       (P.shift (verticalShift (z + 1)) '' S)
       (E.upperBoundaryRayVertices r s)
-    have hsqrt := measurable_sqrt_trick mu hFKG (A := L) (B := U)
+    have hsqrt := Universality.rsw_sqrt_trick mu hFKG (A := L) (B := U)
       (by
         dsimp only [L]
         exact E.infiniteOpenBoundaryConnectionTo_isIncreasing r _ _)
@@ -229,12 +230,13 @@ lemma PeriodicPlaneEmbedding.exists_adjacent_infiniteOpenBoundaryRays_measureRea
       hsqrt.trans hmax
     simpa only [U, upper] using (sub_le_iff_le_add.mpr this)
 
-/-- A vertical shift `z` with the lower exit of `S + z` below `s` and the upper exit of `S + z + 1 +
-t` above `s + t` both of probability `≥ 1 - √(1 - P(exit)) - ε`. -/
+/-- A vertical shift `z` with the lower exit of `S + z` below `s` and the upper exit of
+`S + z + 1 + t` above `s + t` both of probability `≥ 1 - √(1 - P(exit)) - ε`. Assumes positive
+association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_separated_infiniteOpenBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (r s : Real) (t : Int) (S : Set V)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
     ∃ z : Int,

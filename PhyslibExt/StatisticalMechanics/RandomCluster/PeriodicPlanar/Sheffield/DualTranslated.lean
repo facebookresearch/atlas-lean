@@ -156,9 +156,9 @@ lemma PeriodicGraph.translatedFiniteInfinitePairConnectionEvent_graphWalk
       simpa only [shiftHom, PeriodicGraph.shiftGraphHom_apply] using
         heq ▸ heOpen
 
-/-- Under translation invariance and a.s. uniqueness, there is an orbit-box radius `n` such that any
-two translated boxes are joined with probability `> 1 - ε`, uniformly in the translate `z` of the
-event. -/
+/-- Under translation invariance and a.s. existence and uniqueness of the infinite cluster, there is
+an orbit-box radius `n` such that any two translated boxes are joined with probability `> 1 - ε`,
+uniformly in the translate `z` of the event. -/
 lemma PeriodicGraph.exists_uniformRadius_highProbability_translatedFiniteEvent
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

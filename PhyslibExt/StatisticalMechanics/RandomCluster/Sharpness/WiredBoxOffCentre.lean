@@ -30,8 +30,9 @@ domain Markov property dominates the translated shell inside the doubled box
 
 ## ii. Key results
 
-- `wiredOuterInner_strictTranslationComparison`: off-centre ≤ centered (unconditional).
-- `wired_outer_inner_differential_uniform_box`: the sharp differential inequality (unconditional).
+- `wiredOuterInner_strictTranslationComparison`: off-centre ≤ centered, for `q ≥ 1` and `β > 0`.
+- `wired_outer_inner_differential_uniform_box`: the sharp differential inequality, for `n ≥ 1`,
+  `q ≥ 1` and `0 < β ≤ β₀`.
 
 ## iii. Table of contents
 
@@ -1251,7 +1252,11 @@ lemma wired_outer_inner_differential_uniform
   simpa [theta, D, kappa, mu] using hmain
 
 open Classical in
-/-- The sharp differential inequality (unconditional). -/
+/-- Sharp differential inequality in the box with unit couplings: for `n ≥ 1`, `q ≥ 1` and
+  `0 < β ≤ β₀`, `exp(-β₀) ^ (2d) θ / (8 S / n) ≤ ∂θ/∂β`, where `θ` is the probability under the
+  wired random-cluster measure on the box `Λ_{2n}` with edge parameters `1 - exp(-β)` and cluster
+  weight `q` that the origin is connected to `∂Λ_n`, and `S = wiredOuterInnerSig d n q β` is the sum
+  over `k < n` of the centered crossing probabilities `wiredOuterInnerTheta d q β k`. -/
 lemma wired_outer_inner_differential_uniform_box
     (d n : Nat) (hn : 1 <= n) (q beta beta0 : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hbeta0 : beta <= beta0) :

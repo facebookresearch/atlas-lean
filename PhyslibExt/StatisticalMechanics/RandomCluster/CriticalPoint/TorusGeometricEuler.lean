@@ -31,7 +31,7 @@ the torus as a hypothesis.
 
 ## ii. Key results
 
-- `geometric_euler_torus`: `V - E + F = c - defect`.
+- `geometric_euler_torus`: `V - E + F = c + 1 - defect`.
 - `torusGeometricDefect_full`: the full torus has defect `2`.
 
 ## iii. Table of contents
@@ -107,7 +107,9 @@ noncomputable def torusGeometricFaceCount (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) : ℕ :=
   Nat.card (torusDualCutGraph L G).ConnectedComponent
 
-/-- The geometric Euler defect `E + c - V - F` of a spanning subgraph of the torus. -/
+/-- The geometric Euler defect `E - V + c + 1 - F` of a spanning subgraph `G` of the torus, where
+  `E`, `V` and `c` are the numbers of edges, vertices and connected components of `G` and `F` is its
+  geometric face count `torusGeometricFaceCount L G`. -/
 noncomputable def torusGeometricDefect (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) : ℤ :=
   (G.edgeSet.ncard : ℤ) - Nat.card (ZMod L × ZMod L) +

@@ -197,7 +197,7 @@ lemma PeriodicGraph.wiredBufferedInfiniteVolume_fkg_cylinder
     exact P.wiredBufferedMeasure_fkg_cylinder N m hm hp hp1 hq hA hB
 
 /-- The FKG inequality for increasing clopen events under the free buffered infinite-volume FK
-measure. -/
+measure. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_isClopen
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -296,8 +296,9 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_isFKG
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     let mu := (P.freeBufferedInfiniteVolume hp hp1
       (zero_lt_one.trans_le hq) : Measure (ConfigSpace (Sym2 V)))
-    IsFKG mu := by
+    Universality.PositivelyAssociated mu := by
   dsimp only
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hAmeas hBmeas hAinc hBinc
   apply fkg_measurable_of_isClopen _ _ A B hAmeas hBmeas hAinc hBinc
   intro C D hCcl hDcl hCinc hDinc
@@ -310,8 +311,9 @@ theorem PeriodicGraph.wiredBufferedInfiniteVolume_isFKG
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     let mu := (P.wiredBufferedInfiniteVolume hp hp1
       (zero_lt_one.trans_le hq) : Measure (ConfigSpace (Sym2 V)))
-    IsFKG mu := by
+    Universality.PositivelyAssociated mu := by
   dsimp only
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hAmeas hBmeas hAinc hBinc
   apply fkg_measurable_of_isClopen _ _ A B hAmeas hBmeas hAinc hBinc
   intro C D hCcl hDcl hCinc hDinc

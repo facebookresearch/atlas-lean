@@ -32,7 +32,8 @@ together with subcritical exponential decay.
 
 ## ii. Key results
 
-- `weighted_wired_box_differential_inequality`: `c θ / D ≤ ∂θ/∂β` (unconditional).
+- `weighted_wired_box_differential_inequality`: `c θ / D ≤ ∂θ/∂β`, for `d, n ≥ 1`, `J > 0`,
+  `q ≥ 1` and `0 < β ≤ β₀`, with `c > 0` depending on these.
 
 ## iii. Table of contents
 
@@ -99,7 +100,13 @@ lemma weighted_wired_box_hasDerivAt
     (boxGraph d n) (wiredBoxBoundaryGraph d n) hJ hbeta
       (zero_lt_one.trans_le hq) (crossIndG (boxActiveEdge d n) 0 n)
 
-/-- `c θ / D ≤ ∂θ/∂β` (unconditional). -/
+/-- OSSS differential inequality in the box with positive couplings: for `d ≥ 1`, `n ≥ 1`, couplings
+  `J > 0` on the edges of the box `Λ_n`, `q ≥ 1` and `0 < β ≤ β₀`, there is `c > 0` (depending on
+  all of these) with `c θ / D ≤ ∂θ/∂β`, where `θ` is the probability under the wired random-cluster
+  measure on `Λ_n` with edge parameters `1 - exp(-β J_e)` and cluster weight `q` that the origin is
+  connected to `∂Λ_n`, and `D = weightedWiredActiveDenom d n J q β` is four times the maximum over
+  sites `x` of `Λ_n` of the average over `j < n` of the probability that `x` is connected to the
+  sites at distance `j` from `x`. -/
 lemma weighted_wired_box_differential_inequality
     (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n)
     (J : Sym2 (boxVerts d n) → ℝ) (hJ : ∀ e, 0 < J e)

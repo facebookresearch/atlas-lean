@@ -281,7 +281,7 @@ probability of the enclosing rectangle from below. -/
 lemma PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V)
     (aBottom bBottom dBottom aTop bTop cTop : Real)
     (aMerge bMerge cMerge dMerge : Real)
     (hBottomA : a ≤ aBottom) (hBottomB : bBottom ≤ b)
@@ -345,7 +345,7 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents
 lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (L R : Finset V)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (L R : Finset V)
     (bLeft cLeft dLeft aRight cRight dRight : Real)
     (aMerge bMerge cMerge dMerge : Real)
     (hLeftB : bLeft ≤ b) (hLeftC : c ≤ cLeft) (hLeftD : dLeft ≤ d)
@@ -407,7 +407,7 @@ lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents
 lemma PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a b c d a' b' : Real) (bottom top : Finset V) (radius : Nat)
     (ha : a' ≤ a) (hb : b ≤ b')
     (hbox : (P.orbitBox (P.bufferedRadius radius) : Set V) ⊆
@@ -428,7 +428,7 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_ge_carriedComponents_of_connector
 lemma PeriodicPlaneEmbedding.horizontalCrossing_ge_carriedComponents_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a b c d c' d' : Real) (left right : Finset V) (radius : Nat)
     (hc : c' ≤ c) (hd : d ≤ d')
     (hbox : (P.orbitBox (P.bufferedRadius radius) : Set V) ⊆
@@ -452,7 +452,7 @@ their merge error tends to `0`, the vertical crossing probability of the widened
 lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a b c d a' b' : Nat → Real)
     (bottom top : Nat → Finset V) (radius : Nat → Nat)
     (ha : ∀ n, a' n ≤ a n) (hb : ∀ n, b n ≤ b' n)
@@ -494,11 +494,12 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_carriedComponents
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hlimit' tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
-/-- Horizontal analogue of `verticalCrossing_tendsto_one_of_carriedComponents`. -/
+/-- Horizontal analogue of `verticalCrossing_tendsto_one_of_carriedComponents`. Assumes positive
+association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_carriedComponents
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a b c d c' d' : Nat → Real)
     (left right : Nat → Finset V) (radius : Nat → Nat)
     (hc : ∀ n, c' n ≤ c n) (hd : ∀ n, d n ≤ d' n)
@@ -600,7 +601,7 @@ structure PeriodicPlaneEmbedding.CarriedCrossNestedArray
 lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.verticalCrossingLimit
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (data : E.CarriedCrossNestedArray mu) :
+    (hFKG : Universality.PositivelyAssociated mu) (data : E.CarriedCrossNestedArray mu) :
     Tendsto (fun n ↦ mu.real (E.verticalCrossingEvent
       (data.aWide n) (data.bWide n) (data.c n) (data.d n)))
       atTop (nhds 1) :=
@@ -613,7 +614,7 @@ lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.verticalCrossingLimit
 lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.horizontalCrossingLimit
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (data : E.CarriedCrossNestedArray mu) :
+    (hFKG : Universality.PositivelyAssociated mu) (data : E.CarriedCrossNestedArray mu) :
     Tendsto (fun n ↦ mu.real (E.horizontalCrossingEvent
       (data.a n) (data.b n) (data.cTall n) (data.dTall n)))
       atTop (nhds 1) :=
@@ -626,7 +627,7 @@ lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.horizontalCrossingLimit
 lemma PeriodicPlaneEmbedding.CarriedCrossNestedArray.crossingMaxLimit
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (data : E.CarriedCrossNestedArray mu) :
+    (hFKG : Universality.PositivelyAssociated mu) (data : E.CarriedCrossNestedArray mu) :
     Tendsto (fun n ↦ max
       (mu.real (E.horizontalCrossingEvent
         (data.a n) (data.b n) (data.cTall n) (data.dTall n)))
@@ -1772,7 +1773,7 @@ lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.alignedMarginSchedule
 lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ (p : Nat → Real)
       (_family : ∀ m,
@@ -1803,7 +1804,7 @@ lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies
 lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_with_connectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (radius : Nat → Nat) :
     ∃ (p : Nat → Real)
@@ -1929,7 +1930,7 @@ tending to `1`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n ↦
@@ -2024,7 +2025,7 @@ each admitting a margin schedule that contains the connector. -/
 lemma PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_cofinalConnectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ (radius : Nat → Nat) (p : Nat → Real)
       (family : ∀ m,
@@ -2637,7 +2638,7 @@ error tending to `0`, give vertical crossings with probability tending to `1` (F
 lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a b c d : Nat → Real) (bottomSource topSource : Nat → Finset V)
     (hbottom : Tendsto (fun n ↦ mu.real
       (E.rectSideConnectionEvent (a n) (b n) (c n) (d n)
@@ -2680,11 +2681,12 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le
     hbound tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
-/-- Horizontal analogue of `verticalCrossing_tendsto_one_of_boundaryScores`. -/
+/-- Horizontal analogue of `verticalCrossing_tendsto_one_of_boundaryScores`. Assumes positive
+association (FKG) for `mu`. -/
 lemma PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_boundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a b c d : Nat → Real) (leftSource rightSource : Nat → Finset V)
     (hleft : Tendsto (fun n ↦ mu.real
       (E.rectSideConnectionEvent (a n) (b n) (c n) (d n)
@@ -2747,7 +2749,7 @@ lemma PeriodicPlaneEmbedding.preferenceGrid_orbitBox_subset_translated_rect
 lemma PeriodicPlaneEmbedding.exists_fourShiftTemplate_outward_crossing_max_tendsto_one_of_connector
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (M : Nat → Nat) (zLeft zRight zBottom zTop : Nat → Site 2)
     (hleft : ∀ n,
@@ -2921,7 +2923,7 @@ given by coordinate bounds. -/
 lemma fourShift_crossing_tendsto_one_of_coordBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (M : Nat → Nat) (zLeft zRight zBottom zTop : Nat → Site 2)
     (hleft : ∀ n,
@@ -3620,7 +3622,7 @@ structure PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray
 lemma PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) {B : Real}
+    (hFKG : Universality.PositivelyAssociated mu) {B : Real}
     (data : D.TwoLevelBoundaryScoreArray mu B) : False := by
   have hvertical :=
     D.primalEmbedding.verticalCrossing_tendsto_one_of_boundaryScores

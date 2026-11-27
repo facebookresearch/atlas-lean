@@ -84,12 +84,13 @@ example : muFree.real (edgeOpen s(0, ![1, 0])) * muFree.real (edgeOpen s(0, ![0,
     (edgeOpen_isClopen _) (edgeOpen_isIncreasing _) (edgeOpen_isIncreasing _)
 
 -- The free limit on `square` is FKG.
-example : IsFKG muFree := square.freeBufferedInfiniteVolume_isFKG _ _ le_rfl
+example :
+    Universality.PositivelyAssociated muFree := square.freeBufferedInfiniteVolume_isFKG _ _ le_rfl
 
 -- The wired limit on `square` is FKG, applied to the two edge events.
 example : muWired.real (edgeOpen s(0, ![1, 0])) * muWired.real (edgeOpen s(0, ![0, 1])) ≤
     muWired.real (edgeOpen s(0, ![1, 0]) ∩ edgeOpen s(0, ![0, 1])) :=
-  square.wiredBufferedInfiniteVolume_isFKG _ _ le_rfl _ _ (edgeOpen_measurableSet _)
+  (square.wiredBufferedInfiniteVolume_isFKG _ _ le_rfl).probability _ _ (edgeOpen_measurableSet _)
     (edgeOpen_measurableSet _) (edgeOpen_isIncreasing _) (edgeOpen_isIncreasing _)
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFKG

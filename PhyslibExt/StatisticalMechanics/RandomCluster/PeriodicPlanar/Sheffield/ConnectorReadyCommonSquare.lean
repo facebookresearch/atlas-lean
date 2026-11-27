@@ -182,7 +182,7 @@ invariant probability measure with an almost surely unique infinite cluster. -/
 lemma PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (radius : Nat -> Nat) :
     Nonempty (E.ConnectorReadyCommonSquareData mu radius) := by
@@ -265,7 +265,7 @@ unique infinite cluster. -/
 lemma PeriodicPlaneEmbedding.exists_uniformConnectorRadius_with_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     exists radius : Nat -> Nat,
       E.UniformConnectorCrossingRadius mu radius ∧

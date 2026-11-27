@@ -17,9 +17,10 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 Module under test: `Sheffield.TemplateCrossings` in
 `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar`.
 
-* The hypotheses `IsFKG`, translation invariance and almost-sure uniqueness (where present) are
-  discharged together by the Dirac mass on the all-open configuration of any connected infinite
-  periodic graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved here).
+* The hypotheses `PositivelyAssociated`, translation invariance and almost-sure uniqueness (where
+  present) are discharged together by the Dirac mass on the all-open configuration of any connected
+  infinite periodic graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved
+  here).
 * `PeriodicPlanarDualPair.dualMeasure_isFKG`: the dual image of the all-open Dirac mass is FKG.
 * `PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryLimits_crossing_max_tendsto_one` (the
   template-hit limit stays a hypothesis) and
@@ -40,7 +41,9 @@ open _root_.StatMech _root_.StatMech.FK.PeriodicPlanar MeasureTheory Filter
 def allOpen {V : Type*} : ConfigSpace (Sym2 V) := fun _ => true
 
 /-- Every Dirac mass on bond configurations is FKG. -/
-theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) : IsFKG (Measure.dirac ω) := by
+theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) :
+    Universality.PositivelyAssociated (Measure.dirac ω) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _ _
   rw [Measure.real, Measure.real, Measure.real, Measure.dirac_apply' _ hA,
     Measure.dirac_apply' _ hB, Measure.dirac_apply' _ (hA.inter hB)]
@@ -75,7 +78,8 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W] [Countable V] [Countable 
   {P : PeriodicGraph V} {Pdual : PeriodicGraph W}
 
 -- The dual image of an FKG measure is FKG; here for the all-open Dirac mass.
-example (D : PeriodicPlanarDualPair P Pdual) : IsFKG (D.dualMeasure (Measure.dirac allOpen)) :=
+example (D : PeriodicPlanarDualPair P Pdual) :
+    Universality.PositivelyAssociated (D.dualMeasure (Measure.dirac allOpen)) :=
   D.dualMeasure_isFKG _ (isFKG_dirac _)
 
 -- Template boundary limits for the all-open Dirac mass.

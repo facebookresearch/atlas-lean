@@ -32,13 +32,14 @@ example : numInfiniteClusters 2 bc60_upperLines = ⊤ ∧ bc60_upperLines ∈ th
   ⟨bc60_numInfiniteClusters_top, bc60_mem_threeMeetBox⟩
 
 -- Distinct heights give distinct clusters; horizontal edges at height one are open.
-example : cluster 2 bc60_upperLines (bc57_pt 0 1) ≠ cluster 2 bc60_upperLines (bc57_pt 0 2) ∧
-    bc60_upperLines s(bc57_pt 0 1, bc57_pt (0 + 1) 1) = true :=
+example : cluster 2 bc60_upperLines (faceCorner00 0 1) ≠
+      cluster 2 bc60_upperLines (faceCorner00 0 2) ∧
+    bc60_upperLines s(faceCorner00 0 1, faceCorner00 (0 + 1) 1) = true :=
   ⟨bc60_cluster_ne (by decide), bc60_open 0 le_rfl⟩
 
 -- Open paths keep their height.
-example (y : Site 2) (h : Connected 2 bc60_upperLines (bc57_pt 0 1) y) : y 1 = 1 :=
-  bc60_height_invariant (by simp [bc57_pt]) h
+example (y : Site 2) (h : Connected 2 bc60_upperLines (faceCorner00 0 1) y) : y 1 = 1 :=
+  bc60_height_invariant (by simp [faceCorner00]) h
 
 -- No disjoint corridors: the corridor hypothesis fails in `ℤ²`.
 example : ¬ bc59_DisjointCorridors bc60_upperLines ∧ ¬ bc59_HasDisjointCorridors 2 3 :=

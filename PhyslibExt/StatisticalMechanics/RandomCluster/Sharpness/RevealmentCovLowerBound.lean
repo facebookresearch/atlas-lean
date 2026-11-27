@@ -30,7 +30,8 @@ revealment bounds (`avg_reveal_le_of_perScale`) this gives
 
 ## ii. Key results
 
-- `var_le_avg_reveal_mul_sum_cov`: `Var f ≤ (average revealment) ∑ Cov` (unconditional).
+- `var_le_avg_reveal_mul_sum_cov`: `Var f ≤ (average revealment) ∑ Cov`, for positive, normalised,
+  FKG and monotonic `μ` and monotone `0 ≤ f ≤ 1`.
 - `fk_q2_cov_lower_bound_from_perScaleReveal`: `θ(1 - θ) / D ≤ ∑ Cov`, conditional on per-scale
   revealment bounds.
 
@@ -69,7 +70,11 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 
 /-! ## A. Averaged OSSS -/
 
-/-- `Var f ≤ (average revealment) ∑ Cov` (unconditional). -/
+/-- Averaged OSSS inequality: for a finite set `E`, a positive weight `μ` on `{0, 1}^E` with total
+  mass `1` that satisfies the FKG lattice condition and is monotonic (`IsMonotonicMeasure`), a
+  nonempty finite family `σf` of enumerations of `E`, a nondecreasing `f` with `0 ≤ f ≤ 1`, and `D`
+  bounding, for every coordinate `e`, the average over the family of the revealments
+  `revealAdapt μ (σf k) f e`, `Var_μ(f) ≤ D ∑ₑ Cov_μ(f, ω_e)`. -/
 lemma var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (hmono : IsMonotonicMeasure μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))

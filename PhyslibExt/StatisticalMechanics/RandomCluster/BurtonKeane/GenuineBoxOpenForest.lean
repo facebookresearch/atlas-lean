@@ -56,6 +56,9 @@ certificate for every configuration remain conditional on it.
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset MeasureTheory
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
@@ -74,7 +77,7 @@ variable {d : ℕ}
 /-! ## A. Results -/
 
 lemma bc90_genuineTrif_iff_canonical (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
-    bc89_GenuineTrif d ω x ↔ IsCanonicalTrifurcation d ω x := by
+    bc89_GenuineTrif d ω x ↔ IsEncounterPoint d ω x := by
   constructor
   · rintro ⟨a₁, a₂, a₃, hne, _hnx, hadj, hinf, hsep⟩
     exact ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩
@@ -86,7 +89,7 @@ lemma bc90_genuineTrif_iff_canonical (ω : ConfigSpace (Sym2 (Site d))) (x : Sit
       hadj, hinf, hsep⟩
 
 lemma bc90_canonical_of_genuineTrif (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (h : bc89_GenuineTrif d ω x) : IsCanonicalTrifurcation d ω x :=
+    (h : bc89_GenuineTrif d ω x) : IsEncounterPoint d ω x :=
   (bc90_genuineTrif_iff_canonical ω x).mp h
 
 open Classical in
@@ -169,7 +172,7 @@ lemma bc90_boxOpenForest_of_genuine_armsInBox (ω : ConfigSpace (Sym2 (Site d)))
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
     bst_BoxOpenForest ω n := by
-  have hcanon' : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x :=
+  have hcanon' : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x :=
     fun x hx htri => bc90_canonical_of_genuineTrif ω x (hcanon x hx htri)
   have hsfa : sfa_ArmForestReaching ω n :=
     cfc_armForestReaching_of_canonical_armsInBox ω n hn hcanon' harmbox hexists
@@ -181,7 +184,7 @@ lemma bc90_Tcount_le_boundary_of_genuine_armsInBox (ω : ConfigSpace (Sym2 (Site
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n := by
-  have hcanon' : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x :=
+  have hcanon' : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x :=
     fun x hx htri => bc90_canonical_of_genuineTrif ω x (hcanon x hx htri)
   exact cfc_Tcount_le_boundary_of_canonical ω n hn hcanon' harmbox
 

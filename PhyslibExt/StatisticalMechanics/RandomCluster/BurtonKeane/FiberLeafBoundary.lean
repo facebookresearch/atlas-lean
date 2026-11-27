@@ -136,17 +136,9 @@ lemma bc84_upperLines_obstruction_is_cut {L : ℕ} (hL : 3 ≤ L) :
     bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
     Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
     ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-      ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
+      ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
   bc76_buffer_insufficient hL
-
-/-- Same statement as `bc78_upperLines_coarseTrif`; kept because `CoarseMergeDichotomy` is not
-imported
-by all its users. -/
-lemma bc84_upperLines_coarseTrif_and_top {L : ℕ} (hL : 3 ≤ L) :
-    bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2) ∧
-      numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  ⟨bc61_wholeBox_severs_upperLines hL, bc60_numInfiniteClusters_top⟩
 
 lemma bc84_status :
     (∀ (W : Type) (_ : Fintype W) (_ : Nonempty W) (G : SimpleGraph W) (_ : DecidableRel G.Adj)
@@ -164,8 +156,9 @@ lemma bc84_status :
       bc75_FiberGnTrifData ω L R c → (bc73_fiber ω L R c).card ≤ boxSV_boundaryCard 2 R) ∧
     (∀ {L : ℕ}, 3 ≤ L →
       ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-        ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-        ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) := by
+        ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+        ⟨faceCorner00 ((L : ℤ) + 1) 3,
+          by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro W _ _ G _ R lam hacyc hmin hmap hinj
     exact bc84_peeling_forest_le_boundary G R hacyc hmin lam hmap hinj

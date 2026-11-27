@@ -13,6 +13,7 @@ public import Mathlib.Data.Sym.Sym2
 public import Mathlib.Data.Set.Finite.Basic
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorWitnessRemoveSite
 
 /-!
 # Avoiding residues from three clusters at the origin
@@ -23,10 +24,10 @@ avoiding routing residue and an avoiding attachment.
 ## i. Overview
 
 In `removeSite 0 ω` the cluster of the origin is `{0}`, so a site with infinite cluster there is not
-the origin. A neighbour `a` of the origin connected to `x` in `removeSite 0 ω`, with infinite
-cluster, gives the residue `ava_AvoidingRoutingResidue ω x` and an avoiding attachment. Three
-clusters reaching the origin (`mco_ThreeClustersReachOrigin`) give three residues, and the box
-version follows.
+the origin (`bkm_witness_ne_zero`). A neighbour `a` of the origin connected to `x` in
+`removeSite 0 ω`, with infinite cluster, gives the residue `ava_AvoidingRoutingResidue ω x` and an
+avoiding attachment. Three clusters reaching the origin (`mco_ThreeClustersReachOrigin`) give three
+residues, and the box version follows.
 
 ## ii. Key results
 
@@ -34,8 +35,7 @@ version follows.
 
 ## iii. Table of contents
 
-- A. The cluster of the origin
-- B. Residues from reach
+- A. Residues from reach
 
 ## iv. References
 
@@ -55,40 +55,13 @@ namespace Percolation
 
 variable {d : ℕ}
 
-/-! ## A. The cluster of the origin -/
-
-/-- Same statement as `bkm_cluster_removeSite_origin_eq_singleton`; kept because
-`CorridorWitnessRemoveSite` is not imported by all its users. -/
-lemma arr_cluster_removeSite_origin (ω : ConfigSpace (Sym2 (Site d))) :
-    cluster d (removeSite 0 ω) (0 : Site d) = {(0 : Site d)} := by
-  ext y
-  simp only [mem_cluster, Set.mem_singleton_iff]
-  constructor
-  · intro h; exact (ava_connected_origin_eq ω h).symm ▸ rfl
-  · intro h; subst h; exact connected_rfl
-
-/-- Same statement as `bkm_cluster_removeSite_origin_finite`; kept because
-`CorridorWitnessRemoveSite`
-is not imported by all its users. -/
-lemma arr_cluster_removeSite_origin_finite (ω : ConfigSpace (Sym2 (Site d))) :
-    (cluster d (removeSite 0 ω) (0 : Site d)).Finite := by
-  rw [arr_cluster_removeSite_origin]; exact Set.finite_singleton _
-
-/-- Same statement as `bkm_witness_ne_zero`; kept because `CorridorWitnessRemoveSite` is not
-imported by
-all its users. -/
-lemma arr_witness_ne_zero (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
-    (hinf : (cluster d (removeSite 0 ω) x).Infinite) : x ≠ 0 := by
-  rintro rfl
-  exact hinf (arr_cluster_removeSite_origin_finite ω)
-
-/-! ## B. Residues from reach -/
+/-! ## A. Residues from reach -/
 
 lemma arr_routingResidue_of_reach (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (hadj : (hypercubicLattice d).Adj 0 a) (hc : Connected d (removeSite 0 ω) a x)
     (hinf : (cluster d (removeSite 0 ω) x).Infinite) :
     ava_AvoidingRoutingResidue ω x :=
-  ⟨arr_witness_ne_zero ω hinf, hinf, a, hadj, (mem_cluster.mpr hc.symm)⟩
+  ⟨StatMech.Walls.bkm_witness_ne_zero ω hinf, hinf, a, hadj, (mem_cluster.mpr hc.symm)⟩
 
 lemma arr_avoidingAttachment_of_reach (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (hadj : (hypercubicLattice d).Adj 0 a) (hc : Connected d (removeSite 0 ω) a x)

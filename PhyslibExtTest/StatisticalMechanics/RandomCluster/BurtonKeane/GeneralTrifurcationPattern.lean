@@ -23,6 +23,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GeneralT
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GeneralTrifurcationPattern
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation
@@ -60,7 +63,7 @@ example : ∃ (eta : ConfigSpace ↥(StatMech.Ising.bondFinsetTouch 2 2)) (hub :
 
 -- Three rows give a finite pattern with a canonical trifurcation.
 example : ∃ (eta : ConfigSpace ↥(StatMech.Ising.bondFinsetTouch 2 2)) (hub : Site 2),
-    IsCanonicalTrifurcation 2 (StatMech.FK.setPattern (StatMech.Ising.bondFinsetTouch 2 2) eta
+    IsEncounterPoint 2 (StatMech.FK.setPattern (StatMech.Ising.bondFinsetTouch 2 2) eta
       (tfc_lineConfig 0)) hub :=
   three_infinite_clusters_finite_pattern_canonical_trifurcation _ 2
     (fun i => Pi.single 1 (i : ℤ)) (fun i => row_mem_box (by fin_cases i <;> decide))

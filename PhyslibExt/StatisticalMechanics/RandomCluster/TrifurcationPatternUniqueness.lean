@@ -13,6 +13,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvar
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredLimitErgodicity
 public import PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQTranslation
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane
+public import MathlibExt.Probability.Percolation.BurtonKeane.EncounterConstruction
 
 /-!
 # Trifurcations and uniqueness of the infinite cluster for infinite-volume FK limits
@@ -55,6 +56,9 @@ otherwise, under `0 < p < 1` and `1 ≤ q`. The uniqueness headline
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint measure_encounter_pos_of_infinite_count)
 
 open MeasureTheory Set
 open StatMech.Lattice StatMech.ConfigSpace
@@ -112,12 +116,12 @@ lemma wiredInfinite_canonical_trifurcation_pos_of_top_pos
         {omega | numInfiniteClusters d omega = ⊤}) :
     0 < (wiredInfiniteVolume d hp hp1
       (zero_lt_one.trans_le hq) : Measure _)
-        {omega | IsCanonicalTrifurcation d omega 0} := by
-  exact canonical_trifurcation_at_origin_pos_of_patternAC (d := d)
+        {omega | IsEncounterPoint d omega 0} := by
+  exact measure_encounter_pos_of_infinite_count (d := d)
     (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
     (wiredInfiniteVolume_isTranslationInvariant (d := d) hp hp1 hq)
-    (fun I eta => wiredInfinite_setPattern_absolutelyContinuous
-      (d := d) hp hp1 hq I eta)
+    (fun I eta => by
+      exact wiredInfinite_setPattern_absolutelyContinuous (d := d) hp hp1 hq I eta)
     htop
 
 lemma freeInfinite_canonical_trifurcation_pos_of_top_pos
@@ -127,12 +131,12 @@ lemma freeInfinite_canonical_trifurcation_pos_of_top_pos
         {omega | numInfiniteClusters d omega = ⊤}) :
     0 < (freeInfiniteVolume d hp hp1
       (zero_lt_one.trans_le hq) : Measure _)
-        {omega | IsCanonicalTrifurcation d omega 0} := by
-  exact canonical_trifurcation_at_origin_pos_of_patternAC (d := d)
+        {omega | IsEncounterPoint d omega 0} := by
+  exact measure_encounter_pos_of_infinite_count (d := d)
     (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _)
     (freeInfiniteVolume_isTranslationInvariant (d := d) hp hp1 hq)
-    (fun I eta => freeInfinite_setPattern_absolutelyContinuous
-      (d := d) hp hp1 hq I eta)
+    (fun I eta => by
+      exact freeInfinite_setPattern_absolutelyContinuous (d := d) hp hp1 hq I eta)
     htop
 
 /-! ## B. Trifurcations for `q = 2` -/
@@ -168,12 +172,13 @@ lemma wiredInfinite_q2_canonical_trifurcation_pos_of_top_pos
     (htop : 0 < (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
       {omega | numInfiniteClusters d omega = ⊤}) :
     0 < (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
-      {omega | IsCanonicalTrifurcation d omega 0} := by
-  exact canonical_trifurcation_at_origin_pos_of_patternAC (d := d)
+      {omega | IsEncounterPoint d omega 0} := by
+  exact measure_encounter_pos_of_infinite_count (d := d)
     (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
     (flc_wiredIV_isTranslationInvariant (d := d) hp hp1)
-    (fun I eta => wiredInfinite_setPattern_absolutelyContinuous (d := d) hp hp1
-      (by norm_num : (1 : ℝ) ≤ 2) I eta)
+    (fun I eta => by
+      exact wiredInfinite_setPattern_absolutelyContinuous (d := d) hp hp1
+        (by norm_num : (1 : ℝ) ≤ 2) I eta)
     htop
 
 lemma freeInfinite_q2_canonical_trifurcation_pos_of_top_pos
@@ -181,12 +186,13 @@ lemma freeInfinite_q2_canonical_trifurcation_pos_of_top_pos
     (htop : 0 < (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
       {omega | numInfiniteClusters d omega = ⊤}) :
     0 < (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
-      {omega | IsCanonicalTrifurcation d omega 0} := by
-  exact canonical_trifurcation_at_origin_pos_of_patternAC (d := d)
+      {omega | IsEncounterPoint d omega 0} := by
+  exact measure_encounter_pos_of_infinite_count (d := d)
     (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
     (bdp_freeIV_isTranslationInvariant (d := d) hp hp1)
-    (fun I eta => freeInfinite_setPattern_absolutelyContinuous (d := d) hp hp1
-      (by norm_num : (1 : ℝ) ≤ 2) I eta)
+    (fun I eta => by
+      exact freeInfinite_setPattern_absolutelyContinuous (d := d) hp hp1
+        (by norm_num : (1 : ℝ) ≤ 2) I eta)
     htop
 
 /-! ## C. Uniqueness of the infinite cluster -/

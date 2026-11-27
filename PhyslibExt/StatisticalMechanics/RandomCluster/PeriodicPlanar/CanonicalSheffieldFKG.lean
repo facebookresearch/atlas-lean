@@ -155,7 +155,7 @@ lemma PeriodicGraph.iInter_bufferedSetBoundaryCylinder
     exact ⟨⟨x, hxlevel⟩, hxS, y, hybd, hxy⟩
 
 /-- FKG under the free limit for the events that the finite sets `S` and `T` meet an infinite
-cluster. -/
+cluster. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.freeBufferedInfiniteVolume_fkg_setHitsInfinite
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -551,7 +551,8 @@ lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_eq_finiteWitnessInfinite
       (E.mem_rectTargetConnectionEvent_iff a b c d x T omega).1 hxT
     exact ⟨x, hx, hxinf, y, hy, hxy⟩
 
-/-- FKG for rectangle side-connection events under the free buffered infinite-volume FK measure. -/
+/-- FKG for rectangle side-connection events under the free buffered infinite-volume FK measure.
+Assumes `q ≥ 1`. -/
 lemma PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -577,7 +578,8 @@ lemma PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
         a b c d T sideT] at hfkg
   exact hfkg
 
-/-- FKG for rectangle side-connection events under the wired buffered infinite-volume FK measure. -/
+/-- FKG for rectangle side-connection events under the wired buffered infinite-volume FK measure.
+Assumes `q ≥ 1`. -/
 lemma PeriodicPlaneEmbedding.wiredBufferedInfiniteVolume_fkg_rectSideConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)

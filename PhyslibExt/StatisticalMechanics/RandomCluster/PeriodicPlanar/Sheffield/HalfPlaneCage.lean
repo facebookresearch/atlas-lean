@@ -1815,13 +1815,13 @@ lemma PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measureReal_
     hbz (by change ¬ r ≤ E.vertexCoord z 0; exact not_le.mpr hz)
     huw (by change ¬ r ≤ E.vertexCoord w 0; exact not_le.mpr hw)
 
-/-- Joined arms with open exit edges to the rays `{y ≤ 0}` and `{y ≥ 1}` have positive
-probability for suitable finite sources (FKG, translation invariance, almost sure uniqueness,
-finite energy). -/
+/-- Joined arms with open exit edges to the rays `{y ≤ 0}` and `{y ≥ 1}` have positive probability
+for suitable finite sources (FKG, translation invariance, almost sure existence and uniqueness of
+the infinite cluster, finite energy). -/
 lemma PeriodicPlaneEmbedding.exists_positive_finiteOpenExitedJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hfe : HasFiniteEnergy mu) (r : Real) :
     ∃ L U : Finset V, ∃ n : Nat,
@@ -2438,12 +2438,13 @@ lemma PeriodicPlaneEmbedding.unique_two_sides_subset_infiniteOpenBoundaryConnect
   exact ⟨x, hxS, hxInfinite, b, hbBoundary, z, hbzOpen.1,
     hzOutside, hbzOpen.2, hxb⟩
 
-/-- FKG lower bound for open-exit arms, assuming FKG and almost sure uniqueness. Stronger event
-than `infiniteBoundaryConnection_measureReal_ge_mul` (`HalfPlaneInfiniteArm`). -/
+/-- FKG lower bound for open-exit arms, assuming FKG and almost sure existence and uniqueness of the
+infinite cluster. Stronger event than `infiniteBoundaryConnection_measureReal_ge_mul`
+(`HalfPlaneInfiniteArm`). -/
 lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_mul
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) {S T : Set V}
     (hS : S ⊆ E.rightHalfPlaneVertices r)
@@ -2456,7 +2457,7 @@ lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_mul
   let B := P.setHitsInfinite T
   let C := E.infiniteOpenBoundaryConnection r S
   have hAB : mu.real A * mu.real B ≤ mu.real (A ∩ B) :=
-    hFKG A B (P.setHitsInfinite_measurableSet S)
+    hFKG.probability A B (P.setHitsInfinite_measurableSet S)
       (P.setHitsInfinite_measurableSet T)
       (P.setHitsInfinite_isIncreasing S) (P.setHitsInfinite_isIncreasing T)
   have hUC : U ∩ (A ∩ B) ⊆ C := by

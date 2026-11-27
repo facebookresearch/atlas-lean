@@ -268,8 +268,8 @@ lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeErrorUnion_measureReal_verti
 /-! ## C. Placements with small merge error -/
 
 /-- A translate of the sources lies in `H_r` and has strip merge error below `ε` for some width.
-This is the case `R = r` of
-`exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_margin`. -/
+This is the case `R = r` of `exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_margin`.
+Assumes translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_sources
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -311,8 +311,9 @@ lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_l
   obtain ⟨n, hn⟩ := hev.exists
   exact ⟨z, n, hLH, hRH, hn⟩
 
-/-- A translate of the sources lies in `H_R` (`R ≥ r`) and has strip merge error in `H_r` below
-`ε` for some width. -/
+/-- A translate of the sources lies in `H_R` (`R ≥ r`) and has strip merge error in `H_r` below `ε`
+for some width. Assumes translation invariance and almost surely exactly one infinite cluster for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_lt_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -356,8 +357,9 @@ lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeErrorUnion_measureReal_l
   obtain ⟨n, hn⟩ := hev.exists
   exact ⟨z, n, hLH, hRH, hn⟩
 
-/-- A translate `S` of `L` and its vertical neighbour `S + e₂` lie in `H_r` with small strip
-merge error. This is the case `R = r` of `exists_inward_adjacent_stripPlacement_with_margin`. -/
+/-- A translate `S` of `L` and its vertical neighbour `S + e₂` lie in `H_r` with small strip merge
+error. This is the case `R = r` of `exists_inward_adjacent_stripPlacement_with_margin`. Assumes
+translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -389,9 +391,9 @@ lemma PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement
   rw [hcomm] at hR herror
   exact ⟨z, n, hL, hR, herror⟩
 
-/-- A translate `S` of `L` and `S + e₂` lie in `H_R` with small strip merge error in `H_r`. This
-is the case `t = 0` of `exists_inward_separated_stripPlacement_with_margin` up to rewriting
-`1 + 0`. -/
+/-- A translate `S` of `L` and `S + e₂` lie in `H_R` with small strip merge error in `H_r`. This is
+the case `t = 0` of `exists_inward_separated_stripPlacement_with_margin` up to rewriting `1 + 0`.
+Assumes translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -424,9 +426,9 @@ lemma PeriodicPlaneEmbedding.exists_inward_adjacent_stripPlacement_with_margin
   rw [hcomm] at hR herror
   exact ⟨z, n, hL, hR, herror⟩
 
-/-- A translate `S` of `L` and `S + 2e₂` lie in `H_R` with small strip merge error in `H_r`. This
-is the case `t = 1` of `exists_inward_separated_stripPlacement_with_margin` up to rewriting
-`1 + 1`. -/
+/-- A translate `S` of `L` and `S + 2e₂` lie in `H_R` with small strip merge error in `H_r`. This is
+the case `t = 1` of `exists_inward_separated_stripPlacement_with_margin` up to rewriting `1 + 1`.
+Assumes translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_inward_twoStep_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -459,9 +461,9 @@ lemma PeriodicPlaneEmbedding.exists_inward_twoStep_stripPlacement_with_margin
   rw [hcomm] at hR herror
   exact ⟨z, n, hL, hR, herror⟩
 
-/-- A translate `S` of `L` and its vertical translate `S + (1 + t)e₂` lie in `H_R` with strip
-merge error in `H_r` below `ε` for some width (translation invariance, almost sure
-uniqueness). -/
+/-- A translate `S` of `L` and its vertical translate `S + (1 + t)e₂` lie in `H_R` with strip merge
+error in `H_r` below `ε` for some width (translation invariance, almost sure existence and
+uniqueness of the infinite cluster). -/
 lemma PeriodicPlaneEmbedding.exists_inward_separated_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

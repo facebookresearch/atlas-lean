@@ -163,8 +163,9 @@ lemma PeriodicGraph.exists_trifurcation_pos_of_top
 
 /-! ## C. Uniqueness -/
 
-/-- If the finite-pattern maps are absolutely continuous, a translation-invariant probability
-measure gives probability zero to infinitely many infinite clusters. -/
+/-- On a connected periodic graph with a periodic plane embedding, if the finite-pattern maps are
+absolutely continuous, a translation-invariant probability measure gives probability zero to
+infinitely many infinite clusters. -/
 lemma PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected)
@@ -184,8 +185,9 @@ lemma PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero
   rw [hzero] at hhub
   exact (lt_irrefl 0) hhub
 
-/-- Burton–Keane under ergodicity, finite energy, and absolutely continuous pattern maps: the number
-of infinite clusters is almost surely `0` or `1`. -/
+/-- Burton–Keane on a connected periodic graph with a periodic plane embedding, for an ergodic
+probability measure with finite energy and absolutely continuous pattern maps: the number of
+infinite clusters is almost surely constant, equal to `0` or `1`. -/
 theorem PeriodicPlaneEmbedding.numInfiniteClusters_zero_or_one
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected)
@@ -204,8 +206,9 @@ theorem PeriodicPlaneEmbedding.numInfiniteClusters_zero_or_one
     rw [← htop, hk] at htop0
     exact False.elim (one_ne_zero htop0)
 
-/-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure has almost surely `0`
-or `1` infinite clusters. -/
+/-- On a connected periodic graph with a periodic plane embedding, for `0 < p < 1` and `q ≥ 1`, the
+number of infinite clusters under the free buffered infinite-volume FK measure is almost surely
+constant, equal to `0` or `1`. -/
 theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_numInfiniteClusters_zero_or_one
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected) {p q : Real}

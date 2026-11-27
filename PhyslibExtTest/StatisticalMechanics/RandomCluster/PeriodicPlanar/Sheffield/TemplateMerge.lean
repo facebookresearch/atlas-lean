@@ -14,9 +14,10 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheff
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.TemplateMerge`
 
-* The hypotheses `IsFKG`, translation invariance and almost-sure uniqueness (where present) are
-  discharged together by the Dirac mass on the all-open configuration of any connected infinite
-  periodic graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved here).
+* The hypotheses `PositivelyAssociated`, translation invariance and almost-sure uniqueness (where
+  present) are discharged together by the Dirac mass on the all-open configuration of any connected
+  infinite periodic graph (`isFKG_dirac`, `allOpen_translationInvariant`, `allOpen_unique`, proved
+  here).
 * `PeriodicPlaneEmbedding.exists_uniform_translatedTemplate_mergeError_tendsto_zero` applied to that
   measure with two target families (`ι = Fin 2`).
 * The hypothesis set itself, as an explicit non-vacuity example.
@@ -32,7 +33,9 @@ open _root_.StatMech _root_.StatMech.FK.PeriodicPlanar MeasureTheory Filter
 def allOpen {V : Type*} : ConfigSpace (Sym2 V) := fun _ => true
 
 /-- Every Dirac mass on bond configurations is FKG. -/
-theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) : IsFKG (Measure.dirac ω) := by
+theorem isFKG_dirac {V : Type*} (ω : ConfigSpace (Sym2 V)) :
+    Universality.PositivelyAssociated (Measure.dirac ω) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _ _
   rw [Measure.real, Measure.real, Measure.real, Measure.dirac_apply' _ hA,
     Measure.dirac_apply' _ hB, Measure.dirac_apply' _ (hA.inter hB)]
@@ -67,7 +70,8 @@ variable {V : Type*} [DecidableEq V] [Countable V] {P : PeriodicGraph V}
 
 -- The three hypotheses hold together for the all-open Dirac mass (non-vacuity witness).
 example [Infinite V] (hconn : P.graph.Connected) :
-    IsFKG (Measure.dirac (allOpen (V := V))) ∧ P.IsTranslationInvariant (Measure.dirac allOpen) ∧
+    Universality.PositivelyAssociated (Measure.dirac (allOpen (V := V))) ∧
+    P.IsTranslationInvariant (Measure.dirac allOpen) ∧
       Measure.dirac allOpen {ω | P.HasUniqueInfiniteCluster ω} = 1 :=
   ⟨isFKG_dirac _, allOpen_translationInvariant P, allOpen_unique P hconn⟩
 

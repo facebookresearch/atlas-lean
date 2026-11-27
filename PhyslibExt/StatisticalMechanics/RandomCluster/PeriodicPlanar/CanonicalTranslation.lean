@@ -535,7 +535,7 @@ lemma PeriodicGraph.shiftedFreeMultiMass_tendsto_shifted
 /-! ## D. Translation invariance -/
 
 /-- The free limit gives the same mass to the event that all edges of `T` are open and to its
-translate by `z`. -/
+translate by `z`. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.freeBufferedInfiniteVolume_multiOpen_shift
     (P : PeriodicGraph V) (z : Site 2) (T : Finset (Sym2 V))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :

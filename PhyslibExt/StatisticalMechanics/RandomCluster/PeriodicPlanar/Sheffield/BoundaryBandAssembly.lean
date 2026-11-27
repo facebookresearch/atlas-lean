@@ -43,9 +43,9 @@ is contradictory (`TwoLevelRectangleArray.false`), by planar duality
 (`Sheffield.Synchronization`).
 
 Headline fidelity.
-- Results conditional on `IsFKG mu`, `P.IsTranslationInvariant mu` and almost-sure uniqueness of
-  the primal infinite cluster (satisfiable, for example by supercritical Bernoulli percolation,
-  so not vacuous): the `*_centered` and `*_uniform_tangentialPlacement` placements,
+- Results conditional on `PositivelyAssociated mu`, `P.IsTranslationInvariant mu` and almost-sure
+  uniqueness of the primal infinite cluster (satisfiable, for example by supercritical Bernoulli
+  percolation, so not vacuous): the `*_centered` and `*_uniform_tangentialPlacement` placements,
   `exists_orbitBox_boundaryBandSeed`, `exists_orbitBox_normalBoundaryBandSeed`,
   `exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one`,
   `exists_uniformTemplate_mixedBoundaryScores_crossing_max_tendsto_one` and
@@ -54,8 +54,8 @@ Headline fidelity.
 - Results needing only translation invariance: `toCommonSquare`, `*_tangential`,
   `*_translate_to_rect`, `exists_matched_commonSquareBoundaryBandData`.
 - `preference_mixed_max_add_epsilon_ge_fourthRoot` and
-  `exists_mixed_approxPreferredSide_crossing_branch` need only `IsFKG mu`; the remaining lemmas
-  are unconditional.
+  `exists_mixed_approxPreferredSide_crossing_branch` need only `PositivelyAssociated mu`; the
+  remaining lemmas are unconditional.
 - `PeriodicPlanarDualPair.TwoLevelRectangleArray.false` is a genuine no-go lemma: the structure
   `TwoLevelRectangleArray` is empty for every dual pair, measure and bound `B`. It is used in
   `Sheffield.ArrayClosure` to close the duality argument by contradiction.
@@ -105,13 +105,14 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
-half-plane `x ≥ r`, one radius `R` puts each translate in a box of radius `R` centered on its own
-tangential coordinate, with left-side connection probability `> P(S hits ∞)² - ε`. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: for a finite
+family of translates of `S` in the half-plane `x ≥ r`, one radius `R` puts each translate in a box
+of radius `R` centered on its own tangential coordinate, with left-side connection probability
+`> P(S hits ∞)² - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -183,13 +184,14 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_cent
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
-offsets in the half-plane `x ≥ r` and every choice of tangential translations, with left-side
-connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: one radius
+works for a finite family of normal offsets in the half-plane `x ≥ r` and every choice of tangential
+translations, with left-side connection probability `> P(S hits ∞)² - ε` in the box centered on the
+tangential coordinate. -/
 lemma PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (normal : ι → Site 2)
@@ -244,13 +246,14 @@ lemma PeriodicPlaneEmbedding.exists_leftBoundaryExhaustion_uniform_tangentialPla
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
-half-plane `x ≤ -r`, one radius `R` puts each translate in a box of radius `R` centered on its own
-tangential coordinate, with right-side connection probability `> P(S hits ∞)² - ε`. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: for a finite
+family of translates of `S` in the half-plane `x ≤ -r`, one radius `R` puts each translate in a box
+of radius `R` centered on its own tangential coordinate, with right-side connection probability
+`> P(S hits ∞)² - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -318,13 +321,14 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_cen
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
-half-plane `y ≥ r`, one radius `R` puts each translate in a box of radius `R` centered on its own
-tangential coordinate, with bottom-side connection probability `> P(S hits ∞)² - ε`. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: for a finite
+family of translates of `S` in the half-plane `y ≥ r`, one radius `R` puts each translate in a box
+of radius `R` centered on its own tangential coordinate, with bottom-side connection probability
+`> P(S hits ∞)² - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -392,13 +396,14 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_ce
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: for a finite family of translates of `S` in the
-half-plane `y ≤ -r`, one radius `R` puts each translate in a box of radius `R` centered on its own
-tangential coordinate, with top-side connection probability `> P(S hits ∞)² - ε`. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: for a finite
+family of translates of `S` in the half-plane `y ≤ -r`, one radius `R` puts each translate in a box
+of radius `R` centered on its own tangential coordinate, with top-side connection probability
+`> P(S hits ∞)² - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_centered
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -466,13 +471,14 @@ lemma PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_cente
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
-offsets in the half-plane `x ≤ -r` and every choice of tangential translations, with right-side
-connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: one radius
+works for a finite family of normal offsets in the half-plane `x ≤ -r` and every choice of
+tangential translations, with right-side connection probability `> P(S hits ∞)² - ε` in the box
+centered on the tangential coordinate. -/
 lemma PeriodicPlaneEmbedding.exists_rightBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (normal : ι → Site 2)
@@ -521,13 +527,14 @@ lemma PeriodicPlaneEmbedding.exists_rightBoundaryExhaustion_uniform_tangentialPl
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
-offsets in the half-plane `y ≥ r` and every choice of tangential translations, with bottom-side
-connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: one radius
+works for a finite family of normal offsets in the half-plane `y ≥ r` and every choice of tangential
+translations, with bottom-side connection probability `> P(S hits ∞)² - ε` in the box centered on
+the tangential coordinate. -/
 lemma PeriodicPlaneEmbedding.exists_bottomBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (normal : ι → Site 2)
@@ -577,13 +584,14 @@ lemma PeriodicPlaneEmbedding.exists_bottomBoundaryExhaustion_uniform_tangentialP
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- FKG, translation invariance, a.s. uniqueness: one radius works for a finite family of normal
-offsets in the half-plane `y ≤ -r` and every choice of tangential translations, with top-side
-connection probability `> P(S hits ∞)² - ε` in the box centered on the tangential coordinate. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: one radius
+works for a finite family of normal offsets in the half-plane `y ≤ -r` and every choice of
+tangential translations, with top-side connection probability `> P(S hits ∞)² - ε` in the box
+centered on the tangential coordinate. -/
 lemma PeriodicPlaneEmbedding.exists_topBoundaryExhaustion_uniform_tangentialPlacement
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (normal : ι → Site 2)
@@ -683,12 +691,13 @@ structure PeriodicPlaneEmbedding.BoundaryBandSeed
         (E.rectTopBoundaryVertices
           (-(radiusTop : Real)) radiusTop (-(radiusTop : Real)) 0))
 
-/-- FKG, translation invariance, a.s. uniqueness: the orbit box of radius `N` has boundary-band
-seeds for any grid size with score `P(orbit box hits ∞)² - δ`. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: the orbit
+box of radius `N` has boundary-band seeds for any grid size with score `P(orbit box hits ∞)² -
+δ`. -/
 lemma PeriodicPlaneEmbedding.exists_orbitBox_boundaryBandSeed
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (N width height : Nat) {delta : Real} (hdelta : 0 < delta) :
     Nonempty (E.BoundaryBandSeed mu (P.orbitBox N) width height
@@ -1545,12 +1554,13 @@ lemma PeriodicPlaneEmbedding.NormalBoundaryBandSeed.top_translate_to_rect
     exact hp'.trans_le (measureReal_mono
       (E.rectTopConnectionEvent_mono_otherBounds _ ha hb hc))
 
-/-- FKG, translation invariance, a.s. uniqueness: the orbit box of radius `N` has normal
-boundary-band seeds for any margin with score `P(orbit box hits ∞)² - δ`. -/
+/-- FKG, translation invariance, a.s. existence and uniqueness of the infinite cluster: the orbit
+box of radius `N` has normal boundary-band seeds for any margin with score
+`P(orbit box hits ∞)² - δ`. -/
 lemma PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandSeed
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (N margin : Nat) {delta : Real} (hdelta : 0 < delta) :
     Nonempty (E.NormalBoundaryBandSeed mu (P.orbitBox N) margin
@@ -1892,7 +1902,7 @@ score at most the left score plus `ε`, then `max (bottom, left) + ε ≥ 1 - (1
 lemma PeriodicPlaneEmbedding.preference_mixed_max_add_epsilon_ge_fourthRoot
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a0 b0 c0 d0 a1 b1 c1 d1 : Real) (S : Set V)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
     (ha : a1 ≤ a0) (hb : b0 ≤ b1) (hc : c0 ≤ c1) (hd : d1 ≤ d0)
@@ -1968,7 +1978,7 @@ below. -/
 lemma PeriodicPlaneEmbedding.exists_mixed_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (a0 b0 c0 d0 a1 b1 c1 d1 : Real)
     {width height : Nat} (hwidth : 0 < width) (hheight : 0 < height)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
@@ -2061,14 +2071,15 @@ lemma PeriodicPlaneEmbedding.exists_mixed_approxPreferredSide_crossing_branch
 
 set_option linter.unusedVariables false in
 
-/-- Crossing from a mixed preference grid (FKG, translation invariance, a.s. uniqueness, templates
-hitting the infinite cluster with probability tending to one): there are buffer radii such that, for
-placed grids with approximate boundary preferences of error `ε n → 0`, the larger of the horizontal
-crossing of the wide rectangle and the vertical crossing of the tall one tends to one. -/
+/-- Crossing from a mixed preference grid (FKG, translation invariance, a.s. existence and
+uniqueness of the infinite cluster, templates hitting the infinite cluster with probability tending
+to one): there are buffer radii such that, for placed grids with approximate boundary preferences of
+error `ε n → 0`, the larger of the horizontal crossing of the wide rectangle and the vertical
+crossing of the tall one tends to one. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -2264,11 +2275,13 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_mixedGridPreference_crossing
 set_option linter.unusedVariables false in
 
 /-- Version of `exists_uniformTemplate_mixedGridPreference_crossing_max_tendsto_one` with boundary
-scores at least `p n → 1` on the four sides of the grid instead of approximate preferences. -/
+scores at least `p n → 1` on the four sides of the grid instead of approximate preferences. Assumes
+positive association (FKG), translation invariance and almost surely exactly one infinite cluster
+for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_mixedBoundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -2389,15 +2402,15 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_mixedBoundaryScores_crossing
 
 set_option linter.unusedVariables false in
 
-/-- Box crossing from boundary bands (FKG, translation invariance, a.s. uniqueness): there are
-buffer radii such that, for grids of translated orbit boxes in `[a, b] × [c, d]` whose interior
-sites have buffered connectors inside and whose sites within `margin` of a side are joined to that
-side with probability at least `p n → 1`, the larger crossing probability of the box tends to one.
--/
+/-- Box crossing from boundary bands (FKG, translation invariance, a.s. existence and uniqueness of
+the infinite cluster): there are buffer radii such that, for grids of translated orbit boxes in
+`[a, b] × [c, d]` whose interior sites have buffered connectors inside and whose sites within
+`margin` of a side are joined to that side with probability at least `p n → 1`, the larger crossing
+probability of the box tends to one. -/
 lemma PeriodicPlaneEmbedding.exists_uniformRadius_boundaryBandScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ radius : Nat → Nat, ∀
       (width height margin : Nat → Nat)

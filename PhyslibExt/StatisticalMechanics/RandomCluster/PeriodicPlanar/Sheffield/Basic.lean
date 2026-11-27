@@ -35,7 +35,8 @@ cluster and a unique infinite dual cluster at the same time.
   rectangle.
 - Section C defines the translation action on configurations, translation-invariant measures,
   and how clusters transform.
-- Section D contains the FKG property `IsFKG` and the square-root trick, together with the
+- Section D applies the square-root trick for positively associated measures
+  (`StatMech.Universality.rsw_sqrt_trick`) to four increasing events, together with the
   real-analysis lemmas that turn crossing estimates into a contradiction.
 - Section E defines finite-energy measures and the events "connected inside a box", "unique
   infinite cluster", and the merging error of two infinite clusters.
@@ -52,8 +53,8 @@ All results are unconditional unless a hypothesis is named.
   distance `B` of their endpoints (unconditional; uses compactness of finitely many arcs).
 - `PeriodicPlaneEmbedding.horizontalCrossingEvent`, `verticalCrossingEvent` : crossing events,
   increasing and measurable (unconditional).
-- `measurable_sqrt_trick`, `four_event_sqrt_trick`, `four_event_max_tendsto_one` : the
-  square-root trick for increasing events, conditional on `IsFKG mu`.
+- `four_event_sqrt_trick`, `four_event_max_tendsto_one` : the square-root trick for four
+  increasing events, conditional on positive association (`PositivelyAssociated mu`).
 - `PeriodicGraph.pairMergeError_real_tendsto_zero`,
   `PeriodicGraph.pairMergeErrorUnion_real_tendsto_zero` : two vertices both in infinite
   clusters are connected inside a large box with probability tending to one, conditional on
@@ -68,9 +69,9 @@ All results are unconditional unless a hypothesis is named.
 - `PeriodicPlanarDualPair.commonUniqueInfiniteClusterEvent_measure_eq_one`,
   `PeriodicPlanarDualPair.exists_primal_dual_fundamental_clusterInfinite_pos` : conditional on
   almost-sure uniqueness of both the primal and the dual infinite cluster (and translation
-  invariance for the second). Under `IsFKG` and translation invariance these hypotheses are
-  jointly impossible by Sheffield's theorem; that contradiction is what the downstream files
-  derive. Here no FKG assumption is made, and the hypotheses are not refuted.
+  invariance for the second). Under positive association and translation invariance these
+  hypotheses are jointly impossible by Sheffield's theorem; that contradiction is what the
+  downstream files derive. Here no FKG assumption is made, and the hypotheses are not refuted.
 - `balanced_aspect_crossing_contradiction_of_error` : a real-analysis lemma whose conclusion is
   `False`; its hypotheses are jointly unsatisfiable by design (it is used in a proof by
   contradiction).
@@ -994,39 +995,12 @@ lemma PeriodicGraph.cluster_infinite_configTranslate
 
 /-! ## D. FKG and the square-root trick -/
 
-/-- A bond measure has the FKG (Harris) property if `μ(A) μ(B) ≤ μ(A ∩ B)` for all measurable
-increasing events `A`, `B`. See also `StatMech.Universality.PositivelyAssociated`, which drops
-the measurability requirement and so implies `IsFKG`. -/
-def IsFKG (mu : Measure (ConfigSpace (Sym2 V))) : Prop :=
-  forall A B : Set (ConfigSpace (Sym2 V)),
-    MeasurableSet A -> MeasurableSet B ->
-    IsIncreasing A -> IsIncreasing B ->
-      mu.real A * mu.real B <= mu.real (A ∩ B)
-
-omit [DecidableEq V] [Countable V] in
-/-- The **square-root trick**: for increasing events under an FKG probability measure,
-`1 - √(1 - μ(A ∪ B)) ≤ max (μ A) (μ B)` (Grimmett, *The Random-Cluster Model*, 2006). See also
-`StatMech.Universality.rsw_sqrt_trick`, the same bound under the stronger hypothesis
-`PositivelyAssociated`. -/
-lemma measurable_sqrt_trick
-    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
-    (hA : IsIncreasing A) (hB : IsIncreasing B)
-    (hAm : MeasurableSet A) (hBm : MeasurableSet B) :
-    1 - Real.sqrt (1 - mu.real (A ∪ B)) <=
-      max (mu.real A) (mu.real B) := by
-  have hfkg := hFKG A B hAm hBm hA hB
-  have hie : mu.real (A ∪ B) + mu.real (A ∩ B) =
-      mu.real A + mu.real B := measureReal_union_add_inter hBm
-  apply Universality.sqrt_trick_max_real measureReal_le_one measureReal_le_one
-  nlinarith
-
 omit [DecidableEq V] [Countable V] in
 /-- The square-root trick applied twice to four increasing events. See also
 `StatMech.TwoDim.zhg_sqrt_trick_four` (equal probabilities, positive association). -/
 lemma four_event_sqrt_trick
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) {A B C D : Set (ConfigSpace (Sym2 V))}
+    (hFKG : Universality.PositivelyAssociated mu) {A B C D : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
     (hC : IsIncreasing C) (hD : IsIncreasing D)
     (hAm : MeasurableSet A) (hBm : MeasurableSet B)
@@ -1034,11 +1008,11 @@ lemma four_event_sqrt_trick
     1 - Real.sqrt (Real.sqrt (1 - mu.real (A ∪ (B ∪ (C ∪ D))))) ≤
       max (max (mu.real A) (mu.real B))
         (max (mu.real C) (mu.real D)) := by
-  have houter := measurable_sqrt_trick mu hFKG
+  have houter := Universality.rsw_sqrt_trick mu hFKG
     (hA.union hB) (hC.union hD) (hAm.union hBm) (hCm.union hDm)
   simp only [Set.union_assoc] at houter
-  have hAB := measurable_sqrt_trick mu hFKG hA hB hAm hBm
-  have hCD := measurable_sqrt_trick mu hFKG hC hD hCm hDm
+  have hAB := Universality.rsw_sqrt_trick mu hFKG hA hB hAm hBm
+  have hCD := Universality.rsw_sqrt_trick mu hFKG hC hD hCm hDm
   by_cases hle : mu.real (A ∪ B) ≤ mu.real (C ∪ D)
   · rw [max_eq_right hle] at houter
     have hmiss : 1 - mu.real (C ∪ D) ≤
@@ -1063,7 +1037,7 @@ omit [DecidableEq V] [Countable V] in
 does the largest of the four probabilities. -/
 lemma four_event_max_tendsto_one
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (A B C D : ℕ → Set (ConfigSpace (Sym2 V)))
     (hA : ∀ n, IsIncreasing (A n)) (hB : ∀ n, IsIncreasing (B n))
     (hC : ∀ n, IsIncreasing (C n)) (hD : ∀ n, IsIncreasing (D n))
@@ -1542,8 +1516,8 @@ lemma PeriodicGraph.iInter_pairMergeError_subset_not_unique
   obtain ⟨N, hN⟩ := Set.mem_iUnion.mp htwo
   exact (Set.mem_iInter.mp herror N).2 hN
 
-/-- Under almost-sure uniqueness of the infinite cluster, the merging error of two vertices tends to
-zero as the box grows. -/
+/-- Under almost-sure existence and uniqueness of the infinite cluster, the merging error of two
+vertices tends to zero as the box grows. -/
 lemma PeriodicGraph.pairMergeError_real_tendsto_zero
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu]
@@ -1709,6 +1683,14 @@ noncomputable def dualMeasure
     (mu : Measure (ConfigSpace (Sym2 V))) :
     Measure (ConfigSpace (Sym2 W)) :=
   mu.map (dualConfigEquiv D.edgeDual)
+
+/-- The dual measure of a probability measure is a probability measure. -/
+instance isProbabilityMeasure_dualMeasure
+    (D : PeriodicPlanarDualPair P Pdual)
+    (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu] :
+    IsProbabilityMeasure (D.dualMeasure mu) :=
+  (Measure.isProbabilityMeasure_map_iff
+    (continuous_dualConfigEquiv D.edgeDual).measurable.aemeasurable).mpr inferInstance
 
 lemma dualMeasure_isTranslationInvariant
     (D : PeriodicPlanarDualPair P Pdual)
@@ -2108,8 +2090,8 @@ lemma commonUniqueInfiniteClusterEvent_measure_eq_one
   change mu (A ∩ B) = 1
   simpa using MeasureTheory.measure_of_measure_compl_eq_zero hinterc
 
-/-- Under translation invariance and almost-sure uniqueness of both infinite clusters, a primal and
-a dual fundamental-domain vertex each percolate with positive probability. -/
+/-- Under translation invariance and almost-sure existence and uniqueness of both infinite clusters,
+a primal and a dual fundamental-domain vertex each percolate with positive probability. -/
 lemma exists_primal_dual_fundamental_clusterInfinite_pos
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

@@ -37,8 +37,8 @@ Headline fidelity.
 - `exists_common_leftBoundaryExhaustion_measureReal_gt`, the `*_to_commonSquare` lemmas
   (translation invariance only) and the coloring lemmas are unconditional.
 - The four `exists_translatedFamily_*BoundaryExhaustion_measureReal_gt` results are conditional on
-  `IsFKG mu`, `P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal infinite
-  cluster; satisfiable (for example supercritical Bernoulli percolation), so not vacuous.
+  `PositivelyAssociated mu`, `P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal
+  infinite cluster; satisfiable (for example supercritical Bernoulli percolation), so not vacuous.
 - Five results of section A carry `[Fintype ι] [DecidableEq ι]` binders that their statements do
   not use (linters `unusedFintypeInType`, `unusedDecidableInType`); they are kept, since removing
   them would change the statements.
@@ -120,7 +120,7 @@ r + R] × [-R, R]` with left-side connection probability `> P(S hits ∞)² - ε
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_leftBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -182,7 +182,7 @@ of translates of `S` in the half-plane `x ≤ -r`, one radius `R` puts every tra
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_rightBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -256,7 +256,7 @@ R] × [r, r + R]` with bottom-side connection probability `> P(S hits ∞)² - �
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_bottomBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)
@@ -327,7 +327,7 @@ of translates of `S` in the half-plane `y ≤ -r`, one radius `R` puts every tra
 lemma PeriodicPlaneEmbedding.exists_translatedFamily_topBoundaryExhaustion_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (r : Real) (S : Finset V) (shift : ι → Site 2)

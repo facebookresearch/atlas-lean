@@ -165,9 +165,10 @@ lemma bkfl_Tcount_le_boundary_of_coherentSelector (ω : ConfigSpace (Sym2 (Site 
   daepf_Tcount_le_boundary_of_privateArm ω n hn
     (bkfl_privateArm_of_coherentSelector ω n h)
 
-/-- Pointwise private arm at `x` with respect to the set `T`: the arm site `bx` avoids every other
-element of `T` after `x` is removed, and stays connected to `x` after any other element is
-removed. -/
+/-- Pointwise private arm at `x` with respect to the set `T`: the arm site `bx ∈ B_n` is connected
+to `x` and has an infinite cluster after all trifurcations of `B_n` are removed; it avoids every
+other element of `T` after `x` is removed, and stays connected to `x` after any other element of `T`
+is removed. -/
 def bkfl_PointwisePrivateFar (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (T : Finset (Site d)) (x bx : Site d) : Prop :=
   (bx ∈ box d n ∧ Connected d ω x bx ∧
@@ -282,8 +283,10 @@ lemma bkfl_sameArm_occupants_connected (ω : ConfigSpace (Sym2 (Site d)))
     (hy : Connected d (removeSite x ω) a y) (hy' : Connected d (removeSite x ω) a y') :
     Connected d (removeSite x ω) y y' := hy.symm.trans hy'
 
-/-- Forest peeling for `B_n`: every trifurcation has an unoccupied infinite arm that stays connected
-to it after any other trifurcation is removed. -/
+/-- Forest peeling for `B_n`: every trifurcation `x` of `B_n` has an arm site `a ∈ B_n` connected to
+`x`, with cluster infinite after all trifurcations of `B_n` are removed, whose arm at `x` contains
+no other trifurcation (`bkfl_Occupied`) and which stays connected to `x` after any other
+trifurcation of `B_n` is removed. -/
 def bkfl_ForestPeel (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x →
     ∃ a, (a ∈ box d n ∧ Connected d ω x a ∧

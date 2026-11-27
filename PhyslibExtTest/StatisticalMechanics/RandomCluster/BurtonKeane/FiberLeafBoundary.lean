@@ -15,7 +15,6 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberLea
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.FiberLeafBoundary`
 
 In the plane:
-* `bc84_upperLines_coarseTrif_and_top` at `L = 3`;
 * `bc84_upperLines_obstruction_is_cut` at `L = 3`: a `Gn` trifurcation with a disjoint buffer box;
 * `bc84_peeling_forest_le_boundary` and the fibre-bound clause of `bc84_status` in conditional
   form.
@@ -29,10 +28,6 @@ open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
 open _root_.StatMech.Percolation _root_.StatMech.Walls MeasureTheory
 open scoped NNReal
 
--- The upper lines are a coarse trifurcation with `N = ⊤`.
-example : bc61_IsCoarseTrifurcation bc60_upperLines 3 (0 : Site 2) ∧
-    numInfiniteClusters 2 bc60_upperLines = ⊤ :=
-  bc84_upperLines_coarseTrif_and_top le_rfl
 
 -- The `Gn` obstruction: the upper lines are a `Gn` trifurcation at `L = 3` with disjoint buffer.
 example : bc67_IsGnTrifurcation bc60_upperLines 3 (0 : Site 2) ∧

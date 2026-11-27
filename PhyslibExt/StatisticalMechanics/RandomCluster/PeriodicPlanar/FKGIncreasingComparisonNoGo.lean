@@ -50,7 +50,8 @@ namespace StatMech.FK.PeriodicPlanar
 
 /-- A Dirac mass on a configuration is FKG: correlations of events under it are `0` or `1`. -/
 lemma isFKG_dirac {V : Type} (omega : ConfigSpace (Sym2 V)) :
-    IsFKG (Measure.dirac omega) := by
+    Universality.PositivelyAssociated (Measure.dirac omega) := by
+  refine (Universality.positivelyAssociated_iff_of_isProbabilityMeasure _).2 ?_
   intro A B hA hB _hAi _hBi
   rw [Measure.real, Measure.real, Measure.real,
     Measure.dirac_apply' _ hA, Measure.dirac_apply' _ hB,
@@ -102,7 +103,7 @@ lemma aspectOrientationAbsentEvent_increasing :
   exact Bool.eq_true_of_true_le hcoordinate
 
 lemma aspectOrientationCounterexample_isFKG :
-    IsFKG (Measure.dirac fkgComparisonCounterexampleConfig) :=
+    Universality.PositivelyAssociated (Measure.dirac fkgComparisonCounterexampleConfig) :=
   isFKG_dirac fkgComparisonCounterexampleConfig
 
 @[simp] lemma aspectOrientationCertainEvent_measureReal :
@@ -119,10 +120,15 @@ lemma aspectOrientationCounterexample_isFKG :
     aspectOrientationAbsentEvent_measurable]
   simp [fkgComparisonEdgeOpenEvent, fkgComparisonCounterexampleConfig]
 
-/-- No-go: it is false that every FKG measure satisfies `μ.real A ≤ μ.real B` for all measurable
-increasing events `A` and `B`. -/
+/-- No-go: it is false that every measure satisfying the FKG inequality `μ(A) μ(B) ≤ μ(A ∩ B)` for
+all measurable increasing events also satisfies `μ.real A ≤ μ.real B` for all measurable increasing
+events `A` and `B`. -/
 lemma not_fkg_implies_increasing_event_orientation_comparison :
-    ¬ (∀ (mu : Measure (ConfigSpace (Sym2 (Fin 2)))), IsFKG mu →
+    ¬ (∀ (mu : Measure (ConfigSpace (Sym2 (Fin 2)))),
+      (∀ A B : Set (ConfigSpace (Sym2 (Fin 2))),
+        MeasurableSet A → MeasurableSet B →
+        IsIncreasing A → IsIncreasing B →
+          mu.real A * mu.real B ≤ mu.real (A ∩ B)) →
       ∀ A B : Set (ConfigSpace (Sym2 (Fin 2))),
         MeasurableSet A → MeasurableSet B →
         IsIncreasing A → IsIncreasing B →
@@ -130,7 +136,7 @@ lemma not_fkg_implies_increasing_event_orientation_comparison :
   intro hcomparison
   have hle := hcomparison
     (Measure.dirac fkgComparisonCounterexampleConfig)
-    aspectOrientationCounterexample_isFKG
+    aspectOrientationCounterexample_isFKG.probability
     fkgComparisonCertainEvent fkgComparisonEdgeOpenEvent
     aspectOrientationCertainEvent_measurable
     aspectOrientationAbsentEvent_measurable

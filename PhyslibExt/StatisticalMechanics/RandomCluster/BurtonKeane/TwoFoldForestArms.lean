@@ -135,9 +135,10 @@ lemma tfh_twoFold_hall_root {V : Type*} [DecidableEq V] (T : Finset V)
     exact ⟨congrArg Subtype.val this.1, this.2⟩
 
 open Classical in
-/-- Two-fold forest arms for `B_n`: a root and two arm sites per trifurcation in clusters that stay
-infinite after all trifurcations are removed, with boundary arm ends satisfying a two-fold Hall
-condition. -/
+/-- Two-fold forest arms for `B_n`: a root `r ∈ B_n` and two arm sites `b x 0`, `b x 1 ∈ B_n`
+connected to each trifurcation `x` of `B_n`, all with clusters that stay infinite after all
+trifurcations of `B_n` are removed, such that once these trifurcations are removed the root and the
+arm sites lie in pairwise different components. -/
 def tfh_TwoFoldForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (r : Site d) (b : Site d → Fin 2 → Site d),
     (r ∈ box d n ∧ (cluster d (removeSites (tfc_trifFinset ω n) ω) r).Infinite) ∧

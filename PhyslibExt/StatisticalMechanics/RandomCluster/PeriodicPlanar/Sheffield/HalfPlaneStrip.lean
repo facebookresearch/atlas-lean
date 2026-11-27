@@ -242,8 +242,8 @@ lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeError_measureReal_tendsto
   rw [E.iInter_halfPlaneStripPairMergeError r x y] at hmeasure
   exact (ENNReal.tendsto_toReal (measure_ne_top mu _)).comp hmeasure
 
-/-- Under translation invariance and almost sure uniqueness, some translate of a pair of vertices
-has strip merge error below `ε` for some strip width. -/
+/-- Under translation invariance and almost sure existence and uniqueness of the infinite cluster,
+some translate of a pair of vertices has strip merge error below `ε` for some strip width. -/
 lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeError_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

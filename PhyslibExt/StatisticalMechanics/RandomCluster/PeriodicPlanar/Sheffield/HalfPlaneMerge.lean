@@ -131,8 +131,8 @@ lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureRe
   rw [← hreal]
   exact measureReal_mono hsub
 
-/-- Under translation invariance and almost sure uniqueness, a suitable translate of the sources
-has half-plane merge error below `ε`. -/
+/-- Under translation invariance and almost sure existence and uniqueness of the infinite cluster, a
+suitable translate of the sources has half-plane merge error below `ε`. -/
 lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -150,8 +150,9 @@ lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureRe
       mu hTI N r L R
   exact ⟨z, hz.trans_lt hN⟩
 
-/-- Translation bound that also places the translated sources in `H_r`. This is the case `R = r`
-of `exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin`. -/
+/-- Translation bound that also places the translated sources in `H_r`. This is the case `R = r` of
+`exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin`. Assumes translation
+invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_sources
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -225,7 +226,7 @@ lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureRe
     exact measureReal_mono hpre
 
 /-- Translation bound that places the translated sources in `H_R` for a given `R ≥ r` while the
-merge error is measured in `H_r`. -/
+merge error is measured in `H_r`. Assumes translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_le_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

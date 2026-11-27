@@ -304,7 +304,7 @@ lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_finiteStripJoinedBo
 lemma PeriodicPlaneEmbedding.exists_verticalCrossing_measureReal_gt_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r B s : Real) (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),
@@ -329,11 +329,12 @@ lemma PeriodicPlaneEmbedding.exists_verticalCrossing_measureReal_gt_of_unique
   exact ht
 
 /-- Strip widths tending to infinity along which vertical crossings of the middle third have
-probability tending to `1`, under FKG, translation invariance and uniqueness. -/
+probability tending to `1`, under FKG, translation invariance and a.s. existence and uniqueness of
+the infinite cluster. -/
 lemma PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r B s : Real) (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),
@@ -364,13 +365,15 @@ lemma PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_uniq
   intro k
   exact measureReal_le_one
 
-/-- The same for dual vertical crossings, under FKG and uniqueness of the dual measure. -/
+/-- The same for dual vertical crossings, assuming positive association (FKG) and almost surely
+exactly one infinite cluster for the dual measure `D.dualMeasure mu`, and translation invariance of
+`mu`. -/
 lemma PeriodicPlanarDualPair.exists_cofinal_complementaryDual_verticalCrossing_tendsto_one
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hdualFKG : IsFKG (D.dualMeasure mu))
+    (hdualFKG : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTI : P.IsTranslationInvariant mu)
     (hdualUnique : D.dualMeasure mu
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)

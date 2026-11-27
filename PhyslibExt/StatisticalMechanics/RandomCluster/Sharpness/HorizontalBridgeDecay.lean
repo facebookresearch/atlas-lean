@@ -29,7 +29,8 @@ hypotheses `hP1`, `hP2` on `Θ`; `hP2` (the backbone chain rule, P2) is an assum
 
 ## ii. Key results
 
-- `hbg_bridge`: the edge-bridge identity for flip-invariant observables (unconditional).
+- `hbg_bridge`: the edge-bridge identity for flip-invariant observables, for `0 < p < 1` and
+  `q > 0`.
 - `hbg_fk_q2_subcritical_decay_connEvent`: exponential decay of connection events, conditional on
   `hθub`.
 - `hbg_fk_q2_sharpness_connEvent`: sharpness package, conditional on `hθub`, the mean-field limits,

@@ -181,9 +181,11 @@ lemma bc31_globalCut_infinite_of_singleCut_Tfree {T : Finset (Site d)} {x a : Si
   obtain ⟨w⟩ := hyconn
   exact ⟨y, hy, w, fun z hz => hTfree z (bc31_support_connected ω w hz)⟩
 
-/-- Trifurcation-free down-arm data for `B_n`: each trifurcation has an arm site in the box whose
-cluster after removing the trifurcation is infinite and free of trifurcations, with arms ordered
-by `rank`. -/
+/-- Trifurcation-free down-arm data for `B_n` along `rank`: an arm-end map `b` such that every
+trifurcation `x` of `B_n` has `b x ∈ B_n` joined to `x` by an open path, whose cluster after `x` is
+removed is infinite and contains no trifurcation of `B_n`; and for any two distinct connected
+trifurcations `x`, `y` of `B_n` with `rank x < rank y`, removing `y` disconnects `b y` from
+`b x`. -/
 def bc31_TfreeDownArmData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) : Prop :=
   ∃ b : Site d → Site d,

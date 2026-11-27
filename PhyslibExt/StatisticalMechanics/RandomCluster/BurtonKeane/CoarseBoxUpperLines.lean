@@ -142,7 +142,7 @@ lemma bc61_mem_boxAround_zero {L : ℕ} {x : Site 2} :
   rw [bc61_mem_boxAround]; simp
 
 lemma bc61_pt_outside_boxAround {L : ℕ} {k h : ℤ} (hk : (L : ℤ) < k) :
-    bc57_pt k h ∉ bc61_boxAround 2 L 0 := by
+    faceCorner00 k h ∉ bc61_boxAround 2 L 0 := by
   rw [bc61_mem_boxAround_zero, mem_box]
   simp only [not_forall, not_le]
   refine ⟨0, ?_⟩
@@ -150,14 +150,14 @@ lemma bc61_pt_outside_boxAround {L : ℕ} {k h : ℤ} (hk : (L : ℤ) < k) :
 
 lemma bc61_upperLines_rightArm_reach {L : ℕ} {h : ℤ} (hh : 1 ≤ h) (j : ℕ) :
     Connected 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
-      (bc57_pt ((L : ℤ) + 1) h) (bc57_pt ((L : ℤ) + 1 + (j : ℤ)) h) := by
+      (faceCorner00 ((L : ℤ) + 1) h) (faceCorner00 ((L : ℤ) + 1 + (j : ℤ)) h) := by
   induction j with
-  | zero => simpa using connected_refl _ (bc57_pt ((L : ℤ) + 1) h)
+  | zero => simpa using connected_refl _ (faceCorner00 ((L : ℤ) + 1) h)
   | succ i ih =>
     have hcol : (L : ℤ) < (L : ℤ) + 1 + (i : ℤ) := by omega
     have hcol1 : (L : ℤ) < (L : ℤ) + 1 + (i : ℤ) + 1 := by omega
     have hstep : Connected 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
-        (bc57_pt ((L : ℤ) + 1 + (i : ℤ)) h) (bc57_pt ((L : ℤ) + 1 + (i : ℤ) + 1) h) :=
+        (faceCorner00 ((L : ℤ) + 1 + (i : ℤ)) h) (faceCorner00 ((L : ℤ) + 1 + (i : ℤ) + 1) h) :=
       bc61_cut_adj_connected (bc57_pt_adj _ h) (bc60_open _ hh)
         (bc61_pt_outside_boxAround hcol) (bc61_pt_outside_boxAround hcol1)
     have hcast : ((L : ℤ) + 1 + ((i + 1 : ℕ) : ℤ)) = (L : ℤ) + 1 + (i : ℤ) + 1 := by
@@ -166,10 +166,10 @@ lemma bc61_upperLines_rightArm_reach {L : ℕ} {h : ℤ} (hh : 1 ≤ h) (j : ℕ
 
 lemma bc61_upperLines_rightArm_infinite {L : ℕ} {h : ℤ} (hh : 1 ≤ h) :
     (cluster 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
-      (bc57_pt ((L : ℤ) + 1) h)).Infinite := by
+      (faceCorner00 ((L : ℤ) + 1) h)).Infinite := by
   rw [cluster_infinite_iff]
   intro j
-  refine ⟨bc57_pt ((L : ℤ) + 1 + ((L : ℤ) + 1 + (j : ℤ))) h, ?_, ?_⟩
+  refine ⟨faceCorner00 ((L : ℤ) + 1 + ((L : ℤ) + 1 + (j : ℤ))) h, ?_, ?_⟩
   · rw [mem_box]; simp only [not_forall, not_le]; refine ⟨0, ?_⟩
     rw [bc57_pt_fst]
     have : (L : ℤ) + 1 + ((L : ℤ) + 1 + (j : ℤ)) ≥ (j : ℤ) + 1 := by omega
@@ -181,27 +181,29 @@ lemma bc61_upperLines_rightArm_infinite {L : ℕ} {h : ℤ} (hh : 1 ≤ h) :
 
 lemma bc61_upperLines_arm_disconnected {L : ℕ} {h h' : ℤ} (hne : h ≠ h') :
     ¬ Connected 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
-      (bc57_pt ((L : ℤ) + 1) h) (bc57_pt ((L : ℤ) + 1) h') := by
+      (faceCorner00 ((L : ℤ) + 1) h) (faceCorner00 ((L : ℤ) + 1) h') := by
   intro hconn
-  have hω : Connected 2 bc60_upperLines (bc57_pt ((L : ℤ) + 1) h) (bc57_pt ((L : ℤ) + 1) h') :=
+  have hω : Connected 2 bc60_upperLines (faceCorner00 ((L : ℤ) + 1) h)
+      (faceCorner00 ((L : ℤ) + 1) h') :=
     bc61_connected_of_cut hconn
-  have hht : (bc57_pt ((L : ℤ) + 1) h') 1 = h :=
+  have hht : (faceCorner00 ((L : ℤ) + 1) h') 1 = h :=
     bc60_height_invariant (by rw [bc57_pt_snd]) hω
   rw [bc57_pt_snd] at hht
   exact hne hht.symm
 
 lemma bc61_upperLines_arm_boxAdjacent {L : ℕ} {h : ℤ} (hh : 1 ≤ h) (hhL : h ≤ (L : ℤ)) :
-    ∃ b ∈ bc61_boxAround 2 L 0, (openSubgraph 2 bc60_upperLines).Adj b (bc57_pt ((L : ℤ) + 1) h) :=
+    ∃ b ∈ bc61_boxAround 2 L 0,
+      (openSubgraph 2 bc60_upperLines).Adj b (faceCorner00 ((L : ℤ) + 1) h) :=
         by
-  refine ⟨bc57_pt (L : ℤ) h, ?_, ?_⟩
+  refine ⟨faceCorner00 (L : ℤ) h, ?_, ?_⟩
   · rw [bc61_mem_boxAround_zero, mem_box]; intro i; fin_cases i
-    · change ((bc57_pt (L : ℤ) h) 0).natAbs ≤ L; rw [bc57_pt_fst]; simp
-    · change ((bc57_pt (L : ℤ) h) 1).natAbs ≤ L; rw [bc57_pt_snd]; omega
+    · change ((faceCorner00 (L : ℤ) h) 0).natAbs ≤ L; rw [bc57_pt_fst]; simp
+    · change ((faceCorner00 (L : ℤ) h) 1).natAbs ≤ L; rw [bc57_pt_snd]; omega
   · exact ⟨bc57_pt_adj (L : ℤ) h, bc60_open (L : ℤ) hh⟩
 
 lemma bc61_wholeBox_severs_upperLines {L : ℕ} (hL : 3 ≤ L) :
     bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2) := by
-  refine ⟨bc57_pt ((L : ℤ) + 1) 1, bc57_pt ((L : ℤ) + 1) 2, bc57_pt ((L : ℤ) + 1) 3,
+  refine ⟨faceCorner00 ((L : ℤ) + 1) 1, faceCorner00 ((L : ℤ) + 1) 2, faceCorner00 ((L : ℤ) + 1) 3,
     bc61_upperLines_arm_boxAdjacent (by norm_num) (by exact_mod_cast (by omega : (1:ℤ) ≤ L)),
     bc61_upperLines_arm_boxAdjacent (by norm_num) (by exact_mod_cast (by omega : (2:ℤ) ≤ L)),
     bc61_upperLines_arm_boxAdjacent (by norm_num) (by exact_mod_cast (by omega : (3:ℤ) ≤ L)),

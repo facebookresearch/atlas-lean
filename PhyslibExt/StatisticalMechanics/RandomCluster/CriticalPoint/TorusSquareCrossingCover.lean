@@ -32,7 +32,7 @@ hypothesis.
 
 - `torus_concreteSquareCrossing_dual_cover`: the one-sided duality cover.
 - `torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional`: `1 / (1 + q) ≤ P(horizontal
-  crossing)` at `p_sd(q)` (unconditional).
+  crossing)` at `p_sd(q)`, for `q ≥ 1` and `1 ≤ n < L`.
 
 ## iii. Table of contents
 
@@ -538,7 +538,10 @@ lemma torus_concreteSquareCrossing_dual_cover
   exact torusPlanarFaceVerticalCrossing_imp_rotatedTorusHorizontal
     L n hnL omega hsquare
 
-/-- `1 / (1 + q) ≤ P(horizontal crossing)` at `p_sd(q)` (unconditional). -/
+/-- For `L > 2`, `1 ≤ n < L` and `q ≥ 1`, under the random-cluster measure on the `L × L` torus with
+  cluster weight `q` at the self-dual point `p_sd(q) = √q / (1 + √q)`, the square `[0, n]²` has an
+  open horizontal crossing (`torusSquareHorizontalCrossingEvent L n`) with probability at least
+  `1 / (1 + q)`. -/
 lemma torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional
     (L : ℕ) [Fact (2 < L)] (n : ℕ) (hn : 1 ≤ n) (hnL : n < L)
     {q : ℝ} (hq1 : 1 ≤ q) :

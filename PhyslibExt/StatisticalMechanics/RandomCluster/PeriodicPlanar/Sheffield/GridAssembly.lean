@@ -130,7 +130,7 @@ probabilities to tend to `1` (Sheffield, *Random Surfaces*, Ch. 9). See also
 lemma PeriodicPlaneEmbedding.exists_uniformRadius_gridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     exists radius : Nat -> Nat,
       forall (width height : Nat -> Nat)

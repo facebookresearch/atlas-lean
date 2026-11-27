@@ -111,11 +111,12 @@ lemma exists_preferenceKingOffset_of_kingAdj {x y : Site 2}
 /-- For a preference witness `x` (box preferring bottom and left) with neighbours `xVertical`
 (preferring top) and `xHorizontal` (preferring right), the larger `A` of the bottom and left
 connection probabilities of the box at `x` satisfies the fourth-root bound, and the vertical or the
-horizontal crossing probability is at least the corresponding transfer bound `A (H A - M) - M`. -/
+horizontal crossing probability is at least the corresponding transfer bound `A (H A - M) - M`.
+Assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.crossing_branch_of_preference_witness
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (N : Nat) (a b c d : Real) (x xVertical xHorizontal : Site 2)
     (hbox : ((P.orbitBox N).image (P.shift x) : Set V) ⊆
       E.rectVertices a b c d)
@@ -219,9 +220,10 @@ lemma PeriodicPlaneEmbedding.crossing_branch_of_preference_witness
 
 /-! ## C. Uniform merge radii -/
 
-/-- Under uniqueness, radii `radius n ≥ n` making the ball merge errors of `(L n, R₁ n)` and `(L n,
-R₂ n)` both smaller than `1/(n+1)`. See also `PeriodicGraph.exists_uniform_pairMergeRadius`
-(stronger: any finite family of targets; this is its two-target case). -/
+/-- Under a.s. existence and uniqueness of the infinite cluster, radii `radius n ≥ n` making the
+ball merge errors of `(L n, R₁ n)` and `(L n, R₂ n)` both smaller than `1/(n+1)`. See also
+`PeriodicGraph.exists_uniform_pairMergeRadius` (stronger: any finite family of targets; this is its
+two-target case). -/
 lemma PeriodicGraph.exists_common_pairMergeRadius
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -259,8 +261,8 @@ lemma PeriodicGraph.exists_common_pairMergeRadius
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
-/-- Under uniqueness, radii `radius n ≥ n` making the ball merge errors of `(L n, R n i)` smaller
-than `1/(n+1)` for all `i` in a finite index type. -/
+/-- Under a.s. existence and uniqueness of the infinite cluster, radii `radius n ≥ n` making the
+ball merge errors of `(L n, R n i)` smaller than `1/(n+1)` for all `i` in a finite index type. -/
 lemma PeriodicGraph.exists_uniform_pairMergeRadius
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -299,7 +301,8 @@ lemma PeriodicGraph.exists_uniform_pairMergeRadius
   exact ⟨radius, hradius⟩
 
 /-- Translated, rectangle form of `PeriodicGraph.exists_common_pairMergeRadius`: for any rectangles
-containing the translated buffered balls, both rectangle merge errors tend to zero. -/
+containing the translated buffered balls, both rectangle merge errors tend to zero. Assumes
+translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_translated_pairMergeErrors_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -338,7 +341,8 @@ lemma PeriodicPlaneEmbedding.exists_translated_pairMergeErrors_tendsto_zero
       (L n) (R₂ n) (radius n) (hbox n)).trans (hradius n).2.2.le
 
 /-- One radius sequence makes the rectangle merge error between the translated orbit box at `x n`
-and the box at any king neighbour `x n + preferenceKingOffset (ij n)` tend to zero. -/
+and the box at any king neighbour `x n + preferenceKingOffset (ij n)` tend to zero. Assumes
+translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniform_kingOffset_mergeError_tendsto_zero
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -383,13 +387,14 @@ lemma PeriodicPlaneEmbedding.exists_uniform_kingOffset_mergeError_tendsto_zero
 
 /-! ## D. Crossing limits -/
 
-/-- Under FKG, translation invariance and uniqueness, for given witness sites there is a radius
-sequence such that, in rectangles containing the buffered balls and satisfying the
-preference-witness inequalities, the larger crossing probability tends to one. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, for
+given witness sites there is a radius sequence such that, in rectangles containing the buffered
+balls and satisfying the preference-witness inequalities, the larger crossing probability tends to
+one. -/
 lemma PeriodicPlaneEmbedding.exists_connectorRadius_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (x xVertical xHorizontal : Nat -> Site 2) :
     ∃ radius : Nat -> Nat, ∀ (a b c d : Nat -> Real),
@@ -554,11 +559,12 @@ lemma PeriodicPlaneEmbedding.exists_connectorRadius_crossing_max_tendsto_one
       (fun _ => measureReal_le_one)
 
 /-- Uniform version of `exists_connectorRadius_crossing_max_tendsto_one`: one radius sequence works
-for all witness sites and all king-neighbour choices. -/
+for all witness sites and all king-neighbour choices. Assumes positive association (FKG),
+translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniform_connectorRadius_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     ∃ radius : Nat -> Nat, ∀ (x : Nat -> Site 2)
       (ijVertical ijHorizontal : Nat -> Fin 3 × Fin 3)

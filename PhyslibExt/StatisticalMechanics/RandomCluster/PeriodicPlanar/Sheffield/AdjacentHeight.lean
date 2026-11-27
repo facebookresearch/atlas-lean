@@ -323,7 +323,7 @@ lemma PeriodicPlaneEmbedding.finiteAdjacentHeightJoinedVerticalEvent_subset_vert
 lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_side_mul_sub_mergeError
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (a b c d : Real) (t : Int) (ht : 0 ≤ t)
+    (hFKG : Universality.PositivelyAssociated mu) (a b c d : Real) (t : Int) (ht : 0 ≤ t)
     (L U : Finset V) :
     mu.real (E.rectSideConnectionEvent a b c d (L : Set V)
         (E.rectBottomBoundaryVertices a b c d)) *
@@ -337,7 +337,7 @@ lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_side_
     (E.rectTopBoundaryVertices a b (c + t) (d + t))
   let M := E.rectanglePairMergeErrorUnion a b c (d + t) L U
   have hinter : mu.real A * mu.real T ≤ mu.real (A ∩ T) :=
-    hFKG A T
+    hFKG.probability A T
       (E.rectSideConnectionEvent_measurableSet a b c d (L : Set V)
         (E.rectBottomBoundaryVertices a b c d))
       (E.rectSideConnectionEvent_measurableSet a b (c + t) (d + t)
@@ -358,11 +358,11 @@ lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_measureReal_ge_side_
 
 /-- Approximate preferred-side transfer at adjacent heights: if `R` prefers the top side up to `ε`,
 then `A (H A - M_transfer - ε) - M_join ≤ μ(vertical crossing of [a, b] × [c, d + t])`, where `U` is
-`R` raised by `t`. -/
+`R` raised by `t`. Assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Real) (t : Int) (ht : 0 ≤ t)
     (L R : Finset V) (epsilon : Real)
     (hOpposite :
@@ -420,12 +420,13 @@ lemma PeriodicPlaneEmbedding.adjacentHeightVerticalCrossing_ge_approxPreferredSi
 /-! ## D. Outward padding and its crossing limits -/
 
 /-- Approximate preferred-side transfer with outward padding: the bound of
-`adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer` for the vertical crossing of `[a,
-b] × [c - pad, d + pad]`, using sources shifted down and up by `pad`. -/
+`adjacentHeightVerticalCrossing_ge_approxPreferredSide_transfer` for the vertical crossing of
+`[a, b] × [c - pad, d + pad]`, using sources shifted down and up by `pad`. Assumes positive
+association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Real) (pad : Int) (hpad : 0 ≤ pad)
     (L R : Finset V) (epsilon : Real)
     (hOpposite :
@@ -517,12 +518,13 @@ lemma PeriodicPlaneEmbedding.outwardVerticalCrossing_ge_approxPreferredSide_tran
   simp only [Ldown, Rdown, Rup] at hraw
   convert hraw using 1 <;> push_cast <;> ring
 
-/-- Horizontal version of `outwardVerticalCrossing_ge_approxPreferredSide_transfer`, for `[a - pad,
-b + pad] × [c, d]`. -/
+/-- Horizontal version of `outwardVerticalCrossing_ge_approxPreferredSide_transfer`, for
+`[a - pad, b + pad] × [c, d]`. Assumes positive association (FKG) and translation invariance for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.outwardHorizontalCrossing_ge_approxPreferredSide_transfer
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Real) (pad : Int) (hpad : 0 ≤ pad)
     (L R : Finset V) (epsilon : Real)
     (hOpposite :
@@ -589,11 +591,11 @@ lemma PeriodicPlaneEmbedding.outwardHorizontalCrossing_ge_approxPreferredSide_tr
 /-- On a preference grid whose boundary scores prefer the outer sides up to `ε`, some site and king
 neighbours satisfy the fourth-root bound and one of the two outward transfer bounds. See also
 `PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing_branch` (stronger: two
-rectangles). -/
+rectangles). Assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_outward_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Real) (pad : Int) (hpad : 0 ≤ pad)
     {width height : Nat} (hwidth : 0 < width) (hheight : 0 < height)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
@@ -700,15 +702,15 @@ lemma PeriodicPlaneEmbedding.exists_outward_approxPreferredSide_crossing_branch
     rw [← hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-/-- Under FKG, translation invariance and uniqueness, a uniform radius makes the larger of the
-padded vertical and horizontal crossing probabilities tend to one, for all preference grids of
-translated templates with approximate boundary preferences. See also
-`PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_crossing_max_tendsto_one`
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, a
+uniform radius makes the larger of the padded vertical and horizontal crossing probabilities tend to
+one, for all preference grids of translated templates with approximate boundary preferences. See
+also `PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_crossing_max_tendsto_one`
 (stronger: two rectangles, branch selection). -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -1054,11 +1056,13 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardPreference_crossing_m
       (fun _ => measureReal_le_one) (fun _ => measureReal_le_one)
 
 /-- Variant of `exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one` with boundary
-side-connection scores bounded below by `p n → 1` instead of preference inequalities. -/
+side-connection scores bounded below by `p n → 1` instead of preference inequalities. Assumes
+positive association (FKG), translation invariance and almost surely exactly one infinite cluster
+for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n ↦
@@ -1195,11 +1199,11 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardBoundaryScores_crossi
 satisfy the fourth-root bound and either the adjacent-height vertical transfer bound or the
 horizontal transfer bound. See also
 `PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_crossing_branch` (stronger:
-two rectangles). -/
+two rectangles). Assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_adjacentHeight_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Real) (t : Int) (ht : 0 ≤ t) {width height : Nat}
     (hwidth : 0 < width) (hheight : 0 < height)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
@@ -1294,14 +1298,15 @@ lemma PeriodicPlaneEmbedding.exists_adjacentHeight_approxPreferredSide_crossing_
     rw [← hleftScore x] at htransfer
     exact ⟨hroot, htransfer⟩
 
-/-- Under FKG, translation invariance and uniqueness, a uniform radius makes `max (horizontal
-crossing of [a, b] × [c, d]) (vertical crossing of [a, b] × [c, d + step])` tend to one for
-preference grids of translated templates. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, a
+uniform radius makes
+`max (horizontal crossing of [a, b] × [c, d]) (vertical crossing of [a, b] × [c, d + step])` tend to
+one for preference grids of translated templates. -/
 lemma
 PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -1538,12 +1543,13 @@ PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightPreference_crossing_
       (fun _ => measureReal_le_one) (fun _ => measureReal_le_one)
 
 /-- Variant of `exists_uniformTemplate_adjacentHeightPreference_crossing_max_tendsto_one` with
-boundary scores bounded below by `p n → 1`. -/
+boundary scores bounded below by `p n → 1`. Assumes positive association (FKG), translation
+invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma
 PeriodicPlaneEmbedding.exists_uniformTemplate_adjacentHeightBoundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>

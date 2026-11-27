@@ -29,7 +29,7 @@ connection function `μ`.
 
 ## ii. Key results
 
-- `hasDerivAt_crossing_bernoulli`: Russo's formula (unconditional).
+- `hasDerivAt_crossing_bernoulli`: Russo's formula, for increasing `A` and `x ∉ {0, 1}`.
 - `osss_fk_sharpness_final`: exponential decay, conditional on the translation comparison.
 
 ## iii. Table of contents

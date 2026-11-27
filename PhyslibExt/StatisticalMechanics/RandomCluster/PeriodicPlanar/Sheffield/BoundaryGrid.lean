@@ -39,12 +39,12 @@ Headline fidelity.
   `*_tangential_measureReal_le` lemmas are unconditional (the latter need translation invariance
   of a finite measure only).
 - `PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one` and
-  `exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one` are conditional on `IsFKG mu`,
-  `P.IsTranslationInvariant mu`, almost-sure uniqueness of the primal infinite cluster, and
-  templates hitting the infinite cluster with probability tending to one; inside the statement
-  they further assume the placement hypotheses and that the preference error (respectively the
-  weighted boundary defects) tends to zero. The hypotheses are satisfiable on the primal side
-  (for example supercritical Bernoulli percolation), so the results are not vacuous.
+  `exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one` are conditional on
+  `PositivelyAssociated mu`, `P.IsTranslationInvariant mu`, almost-sure uniqueness of the primal
+  infinite cluster, and templates hitting the infinite cluster with probability tending to one;
+  inside the statement they further assume the placement hypotheses and that the preference error
+  (respectively the weighted boundary defects) tends to zero. The hypotheses are satisfiable on the
+  primal side (for example supercritical Bernoulli percolation), so the results are not vacuous.
 
 ## ii. Key results
 
@@ -436,14 +436,15 @@ lemma PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect
 
 set_option linter.unusedVariables false in
 
-/-- Crossing from a preference grid (FKG, translation invariance, a.s. uniqueness, templates hitting
-the infinite cluster with probability tending to one): there are buffer radii such that, for any
-grids of translated templates placed in rectangles with vanishing preference error, the larger of
-the vertical and horizontal crossing probabilities tends to one. -/
+/-- Crossing from a preference grid (FKG, translation invariance, a.s. existence and uniqueness of
+the infinite cluster, templates hitting the infinite cluster with probability tending to one): there
+are buffer radii such that, for any grids of translated templates placed in rectangles with
+vanishing preference error, the larger of the vertical and horizontal crossing probabilities tends
+to one. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -524,11 +525,13 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_intrinsicError_crossing_max_
 set_option linter.unusedVariables false in
 
 /-- Version of `exists_uniformTemplate_intrinsicError_crossing_max_tendsto_one` whose error
-hypothesis is replaced by lower bounds `p` on the side scores with vanishing weighted defects. -/
+hypothesis is replaced by lower bounds `p` on the side scores with vanishing weighted defects.
+Assumes positive association (FKG), translation invariance and almost surely exactly one infinite
+cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_boundaryScores_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat → Finset V)
     (htemplateHit : Tendsto (fun n =>

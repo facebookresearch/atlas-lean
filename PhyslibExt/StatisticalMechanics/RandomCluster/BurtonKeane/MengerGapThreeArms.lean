@@ -84,13 +84,6 @@ lemma bc101_gnTrif_three_incident_arms (ω : ConfigSpace (Sym2 (Site d))) (L : �
   obtain ⟨a₁, a₂, a₃, hincs, hinf, hcuts⟩ := bc67_gnTrif_of_coarseTrif ω L y h
   exact ⟨a₁, a₂, a₃, hincs, hinf, hcuts⟩
 
-lemma bc101_residue_is_boundary_injection (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
-    (hzne : z₀ ≠ z₁) (hinj : bc64_CoarseBoundaryInjection ω L R) :
-    bc61_CoarseForestLeafCount ω L R :=
-  (bc63_coarseArmEmbedding_iff_forestLeafCount ω L R).mp
-    (bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj)
-
 lemma bc101_three_arms_upperLines {L : ℕ} (hL : 3 ≤ L) :
     ∃ a₁ a₂ a₃ : Site 2,
       (bc67_GnIncident bc60_upperLines L 0 a₁ ∧ bc67_GnIncident bc60_upperLines L 0 a₂ ∧

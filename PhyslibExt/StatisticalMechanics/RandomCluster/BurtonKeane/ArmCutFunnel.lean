@@ -33,11 +33,13 @@ with root-side comparability gives parent funnelling and the trifurcation count.
 
 ## i. Overview
 
-The condition `bc39_ArmCutGeometryFixed` requires every arm end except `b t` to reach each
-arm-adjacent `s` after `t` is removed. This forces all sites to reach `s` and fails whenever the
-down-arm map is idempotent. The weaker condition `bc40_ArmCutGeometryFixed'` asks this only of ends
-whose trifurcation already reaches `s`. Together with root-side comparability
-(`bc40_RootSideComparable`) it gives arm realisation, parent funnelling and the count bound.
+The condition `bc39_ArmCutGeometryFixed` requires, for each trifurcation `t` of the box and each
+arm-adjacent `s`, that after `t` is removed the end `b x` of every site `x` other than `s` and `t`
+reaches `s`. This fails whenever the down-arm map is idempotent. The weaker condition
+`bc40_ArmCutGeometryFixed'` keeps the two separation clauses (`b t` reaches neither `b s` nor `s`)
+and asks the reaching clause only of the ends `b x` of sites `x ≠ t` that themselves reach `s` after
+`t` is removed. Together with root-side comparability (`bc40_RootSideComparable`) it gives arm
+realisation, parent funnelling and the count bound.
 Labelled chains on `Fin 6` and `Fin 3` show that the universal funnelling clause is inconsistent and
 the comparable version is consistent.
 
@@ -110,9 +112,11 @@ lemma bc40_armCutGeometryFixed_false_of_idempotentDownArm (ω : ConfigSpace (Sym
 
 /-! ## B. The weakened cut geometry -/
 
-/-- Weakened arm cut geometry: arm ends `b x` with infinite clusters after removing `x`; after
-removing
-`t`, every end whose trifurcation still reaches an arm-adjacent `s` also reaches `s`. -/
+/-- Weakened arm cut geometry: there is an arm-end map `b` such that every trifurcation `x` of the
+box `Λ_n` has `b x ∈ Λ_n` joined to `x` by an open path, with an infinite cluster after every
+trifurcation of `Λ_n` is removed; and for every trifurcation `t` of `Λ_n` and every `s`
+arm-adjacent to `t` (`bc37_ArmAdjacent`), in the configuration with `t` removed, `b t` is connected
+neither to `b s` nor to `s`, and every site `x ≠ t` connected to `s` has `b x` connected to `s`. -/
 def bc40_ArmCutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -124,9 +128,9 @@ def bc40_ArmCutGeometryFixed' (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Pro
       (∀ x, x ≠ t → Connected d (removeSite t ω) x s →
         Connected d (removeSite t ω) (b x) s))
 
-/-- Root-side comparability for `rank` and `par`: for connected trifurcations, the end of the lower
-one
-lies on the root side of the higher one. -/
+/-- Root-side comparability for `rank` and `par`: for any two distinct connected trifurcations `x`,
+`y` of the box `Λ_n` with `rank x < rank y` and `x ≠ par y`, the site `x` itself is still connected
+to `par y` after `y` is removed. -/
 def bc40_RootSideComparable (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →

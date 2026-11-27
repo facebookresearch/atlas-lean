@@ -125,7 +125,7 @@ def PeriodicGraph.HasPercolationCylinderApproximation
           atTop (nhds (P.wiredPercolationProbability p q))
 
 /-- Under a cylinder approximation, the wired percolation probability is monotone in `p` on
-`(0, 1)`. -/
+`(0, 1)`. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.wiredPercolationProbability_monotoneOn_of_cylinderApproximation
     (P : PeriodicGraph V) {q : Real} (hq : 1 <= q)
     (happrox : P.HasPercolationCylinderApproximation q) :
@@ -145,7 +145,7 @@ end Countable
 
 /-- Conditional critical-point duality: cylinder approximations for the primal and dual graphs, dual
 subcritical coverage and no-coexistence give `pc* = (pc)*` and
-`pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
+`pc / (1 - pc) · pc* / (1 - pc*) = q`. Assumes `q ≥ 1`. -/
 lemma PeriodicGraph.dualCritical_relation_of_cylinderApproximation_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)

@@ -155,9 +155,9 @@ lemma bc41_selfDownArm_of_cutGeometryFixed'_arm (ω : ConfigSpace (Sym2 (Site d)
 
 /-! ## C. Root-ward avoiding walks -/
 
-/-- Root-ward avoiding walks: for connected trifurcations, an open walk from the lower one to the
-parent
-of the higher one avoiding the higher one. -/
+/-- Root-ward avoiding walks: for any two distinct connected trifurcations `x`, `y` of the box `Λ_n`
+with `rank x < rank y`, `x ≠ par y` and `par y` arm-adjacent to `y`, there is an open walk from `x`
+to `par y` that avoids `y`. -/
 def bc41_RootWardAvoidingWalk (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →

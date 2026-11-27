@@ -21,7 +21,7 @@ explicit correction term and conditional sharp forms.
 
 ## i. Overview
 
-`maxInfluence_pbiased_corrected` is unconditional; its constant involves the correction
+`maxInfluence_pbiased_corrected` needs only `0 < p < 1`; its constant involves the correction
 `pBiasedCorrection p ≤ 1/16`. The sharp forms are conditional: `maxInfluence_pbiased_of_absorbed`
 assumes the correction is absorbed (`hcorr`), `maxInfluence_pbiased_largeInfl` assumes a large
 maximal influence, `maxInfluence_pbiased_of_hypercontractive` assumes `p`-biased hypercontractivity,
@@ -29,7 +29,7 @@ and `maxInfluence_qOne_compactWindow_of_bkkkl` assumes it on a window around `1/
 
 ## ii. Key results
 
-- `maxInfluence_pbiased_corrected`: corrected KKL bound (unconditional).
+- `maxInfluence_pbiased_corrected`: corrected KKL bound, for `0 < p < 1` and every event.
 - `maxInfluence_pbiased_of_hypercontractive`: sharp bound, conditional on hypercontractivity.
 - `maxInfluence_qOne_compactWindow_of_bkkkl`: bound on `[ε, 1 - ε]`, conditional on `p`-biased
   hypercontractivity at `1 - ε/2`.
@@ -322,7 +322,10 @@ lemma maxInfl_pbiased_corrected [Nonempty E]
         _ ≤ (n * δ) / n := div_le_div_of_nonneg_right hmain hn0
         _ = δ := by field_simp [hn.ne']
 
-/-- Corrected KKL bound (unconditional). -/
+/-- Corrected Kahn–Kalai–Linial bound: for a nonempty finite set `E`, `0 < p < 1` and every event
+  `A ⊆ {0, 1}^E`, some coordinate `e` has influence (pivotal probability) at least
+  `P_p(A) (1 - P_p(A)) log |E| / |E| / (1 + c_p log |E|)` under the `p`-biased product measure
+  `P_p`, where `c_p = pBiasedCorrection p`. -/
 lemma maxInfluence_pbiased_corrected [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (A : Set (ConfigSpace E)) :
     ∃ e : E,

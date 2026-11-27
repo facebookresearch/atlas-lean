@@ -266,8 +266,8 @@ lemma PeriodicGraph.finiteInfinitePairConnectionEvent_measureReal_ge
 
 /-! ## C. High-probability pair connections under uniqueness -/
 
-/-- Under translation invariance and a.s. uniqueness of the infinite cluster, orbit boxes around any
-two translates are joined with probability `> 1 - ε` for large enough radii. -/
+/-- Under translation invariance and a.s. existence and uniqueness of the infinite cluster, orbit
+boxes around any two translates are joined with probability `> 1 - ε` for large enough radii. -/
 lemma PeriodicGraph.exists_highProbability_translatedBoxPairConnection
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -314,7 +314,8 @@ lemma PeriodicGraph.exists_highProbability_translatedBoxPairConnection
   linarith
 
 /-- Uniform version: one orbit-box radius `n` works for all pairs of translates `zL`, `zR`, with a
-connection radius `N` depending on the pair (translation invariance, a.s. uniqueness). -/
+connection radius `N` depending on the pair (translation invariance, a.s. existence and uniqueness
+of the infinite cluster). -/
 lemma PeriodicGraph.exists_uniformRadius_highProbability_translatedBoxPairConnection
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

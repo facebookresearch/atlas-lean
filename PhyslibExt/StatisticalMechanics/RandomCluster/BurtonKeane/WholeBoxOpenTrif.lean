@@ -17,6 +17,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTr
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Opening the whole box does not create a classical trifurcation
@@ -31,8 +32,7 @@ disjoint routing.
 connected around the origin, so the origin is not a classical trifurcation of the opened
 configuration. `bc58_OriginTrifModification d n` asks that every configuration in `threeMeetBox d n`
 become one with a classical trifurcation at the origin after opening finitely many edges; it gives
-disjoint routing and uniqueness for Bernoulli percolation. The even-lines configuration is an
-example.
+disjoint routing. The even-lines configuration is an example.
 
 ## ii. Key results
 
@@ -55,6 +55,9 @@ example.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic exists_mergeWitness_pos)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -199,7 +202,7 @@ lemma bc58_reconnect_around_origin {k : ℕ} (hk : 1 ≤ k) (ω : ConfigSpace (S
 modification with a classical trifurcation at the origin. -/
 def bc58_OriginTrifModification (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n, ∃ G : Finset (Sym2 (Site d)),
-    bc47_IsClassicalTrifurcation (forceOpenFinset G ω) 0
+    IsEncounterPoint d (forceOpenFinset G ω) 0
 
 lemma bc58_disjointRouting_of_originTrifModification {n : ℕ}
     (h : bc58_OriginTrifModification d n) : hrHD_DisjointRouting d n := by
@@ -214,20 +217,6 @@ lemma bc58_hroute_of_originTrifModification
     ∀ n : ℕ, 0 < μ (threeMeetBox d n) →
       ∃ a₁ a₂ a₃ : Site d, 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃) :=
   hrHD_route_of_routing μ hfe (fun n => bc58_disjointRouting_of_originTrifModification (hmod n))
-
-lemma bc58_burton_keane_bernoulli_of_originTrifModification (hd : 1 ≤ d)
-    (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hmod : ∀ n : ℕ, bc58_OriginTrifModification d n) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc54_burton_keane_bernoulli hd p hp1 hp0
-    (bc58_hroute_of_originTrifModification (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-      (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) hmod)
 
 lemma bc58_origin_nbr_cases {a : Site 2} (hadj : (hypercubicLattice 2).Adj 0 a) :
     a = bc58_p 1 0 ∨ a = bc58_p (-1) 0 ∨ a = bc58_p 0 1 ∨ a = bc58_p 0 (-1) := by
@@ -289,17 +278,17 @@ lemma bc58_origin_nbrs_connected {k : ℕ} (hk : 1 ≤ k) (ω : ConfigSpace (Sym
     (bc58_origin_nbr_connected_to_e hk ω hb).symm
 
 lemma bc58_boxOpen_not_classicalTrif {k : ℕ} (hk : 1 ≤ k) (ω : ConfigSpace (Sym2 (Site 2))) :
-    ¬ bc47_IsClassicalTrifurcation (bc58_boxOpen 2 k ω) 0 := by
+    ¬ IsEncounterPoint 2 (bc58_boxOpen 2 k ω) 0 := by
   rintro ⟨a₁, a₂, a₃, ⟨h12, _, _⟩, ⟨he1, he2, _⟩, _, ⟨hsep12, _, _⟩⟩
   exact hsep12 (bc58_origin_nbrs_connected hk ω he1.1 he2.1)
 
 lemma bc58_wholeBoxG_not_witness {k : ℕ} (hk : 1 ≤ k) (ω : ConfigSpace (Sym2 (Site 2))) :
-    ¬ bc47_IsClassicalTrifurcation
+    ¬ IsEncounterPoint 2
         (forceOpenFinset (bc58_boxInternalEdges 2 k) ω) 0 :=
   bc58_boxOpen_not_classicalTrif hk ω
 
 lemma bc58_evenLines_boxOpen_reconnect {k : ℕ} (hk : 1 ≤ k) :
-    ¬ bc47_IsClassicalTrifurcation (bc58_boxOpen 2 k bc57_evenLines) 0 :=
+    ¬ IsEncounterPoint 2 (bc58_boxOpen 2 k bc57_evenLines) 0 :=
   bc58_boxOpen_not_classicalTrif hk bc57_evenLines
 
 /-! ## C. Summary -/
@@ -316,9 +305,22 @@ lemma bc58_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     (∀ {k : ℕ}, 1 ≤ k → ∀ ω : ConfigSpace (Sym2 (Site 2)),
       Connected 2 (removeSite 0 (bc58_boxOpen 2 k ω)) (bc58_p 1 0) (bc58_p (-1) 0)) ∧
     (∀ {k : ℕ}, 1 ≤ k → ∀ ω : ConfigSpace (Sym2 (Site 2)),
-      ¬ bc47_IsClassicalTrifurcation (bc58_boxOpen 2 k ω) 0) ∧
+      ¬ IsEncounterPoint 2 (bc58_boxOpen 2 k ω) 0) ∧
     (bc57_evenLines ∈ threeMeetBox 2 6) :=
-  ⟨fun hmod => bc58_burton_keane_bernoulli_of_originTrifModification hd p hp1 hp0 hmod,
+  ⟨fun hmod => bc48_burton_keane_uniqueness_via_merge_classical
+      (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+      (bernoulli_lattice_ergodic hd p hp1)
+      (bernoulli_finiteEnergyMerge p hp1 hp0)
+      (fun n => boxSV_boundaryCard d (n + 1))
+      (fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n)
+      (fun n => bkc_boxFinsetBK_card_pos d n)
+      (bc54_boundary_succ_vol_tendsto d hd)
+      (bc49_classical_htrif_of_route (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+        (bernoulli_finiteEnergyMerge p hp1 hp0)
+        (bc58_hroute_of_originTrifModification
+          (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+          (bernoulli_finiteEnergyMerge p hp1 hp0) hmod))
+      (fun k hk2 _ hk => exists_mergeWitness_pos _ k hk2 hk),
    fun hk ω => bc58_reconnect_around_origin hk ω,
    fun hk ω => bc58_boxOpen_not_classicalTrif hk ω,
    bc57_mem_threeMeetBox⟩

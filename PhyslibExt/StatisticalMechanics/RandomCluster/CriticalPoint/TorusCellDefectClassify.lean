@@ -17,8 +17,8 @@ import Mathlib.Tactic.NormNum.Parity
 /-!
 # The torus defect takes only the values 0, 1, 2
 
-For every spanning subgraph of the `L × L` torus, the Euler defect `E + c - V - F` is `0`, `1` or
-`2`.
+For every spanning subgraph of the `L × L` torus, the Euler defect `E - V + c + 1 - F` is `0`, `1`
+or `2`.
 
 ## i. Overview
 
@@ -30,7 +30,8 @@ the torus (`onsTorusGraph_connected`) and are unconditional.
 ## ii. Key results
 
 - `torusCellDefect_le_sup_edge`: adding an edge does not lower the defect by more than its bound.
-- `torusCellDefect_classified_unconditional`: the defect is `0`, `1` or `2` (unconditional).
+- `torusCellDefect_classified_unconditional`: for `L > 2`, the defect of every spanning subgraph of
+  the torus is `0`, `1` or `2`.
 
 ## iii. Table of contents
 
@@ -463,7 +464,10 @@ lemma torusCellDefect_le_two_unconditional
     torusCellDefect L G ≤ 2 :=
   torusCellDefect_le_two L G (onsTorusGraph_connected L) hG
 
-/-- The defect is `0`, `1` or `2` (unconditional). -/
+/-- For `L > 2` and every spanning subgraph `G` of the `L × L` square-lattice torus
+  `onsTorusGraph L`, the Euler defect `torusCellDefect L G = E - V + c + 1 - F` is `0`, `1` or `2`,
+  where `E`, `V` and `c` are the numbers of edges, vertices and connected components of `G` and `F`
+  is its face count `torusCellFaceCount L G`. -/
 lemma torusCellDefect_classified_unconditional
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))

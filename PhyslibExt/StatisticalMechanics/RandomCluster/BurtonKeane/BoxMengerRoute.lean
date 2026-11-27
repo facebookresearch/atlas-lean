@@ -14,32 +14,32 @@ public import Mathlib.Order.Filter.Defs
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMergeFreeMenger
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
-# Uniqueness from Menger attachment
+# The route hypothesis from Menger attachment
 
-Disjoint routing or Menger attachment in every box gives the route hypothesis and Burton–Keane
-uniqueness for Bernoulli percolation; Menger attachment forces neighbours of the origin into the
-clusters.
+Disjoint routing or Menger attachment in every box gives the route hypothesis for Bernoulli
+percolation; Menger attachment forces neighbours of the origin into the clusters.
 
 ## i. Overview
 
 Disjoint routing (`hrHD_DisjointRouting`) or box Menger attachment in every box gives the route
-hypothesis for Bernoulli percolation with `p > 0`, and then uniqueness of the infinite cluster.
+hypothesis for Bernoulli percolation with `p > 0`.
 Menger attachment puts a neighbour of the origin in each of the three clusters, so it fails for a
 cluster avoiding all neighbours of the origin.
 
-The uniqueness theorems here assume the attachment or routing condition for every box; the condition
-is not proved in general.
+The route lemmas here assume the attachment or routing condition for every box; the condition is
+not proved in general.
 
 ## ii. Key results
 
-- `bc55_burton_keane_bernoulli_of_boxMenger` : uniqueness from Menger attachment in every box.
-- `bc55_burton_keane_bernoulli_of_routingCover` : uniqueness from disjoint routing in every box.
+- `bc55_hroute_of_boxMengerAttachment` : the route hypothesis from Menger attachment in every box.
+- `bc55_hroute_of_routingCover` : the route hypothesis from disjoint routing in every box.
 
 ## iii. Table of contents
 
-- A. The route and uniqueness
+- A. The route
 - B. Necessary conditions
 
 ## iv. References
@@ -50,6 +50,9 @@ is not proved in general.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic exists_mergeWitness_pos)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -63,7 +66,7 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
-/-! ## A. The route and uniqueness -/
+/-! ## A. The route -/
 
 lemma bc55_hroute_of_routingCover (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hrt : ∀ n : ℕ, hrHD_DisjointRouting d n) :
@@ -73,7 +76,7 @@ lemma bc55_hroute_of_routingCover (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
           0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
             (NeighborTrifPrecursor d a₁ a₂ a₃) :=
   hrHD_route_of_routing (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) hrt
+    (bernoulli_finiteEnergyMerge p hp1 hp0) hrt
 
 lemma bc55_hroute_of_boxMengerAttachment (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
     (hattach : ∀ n : ℕ, bmm_BoxMengerAttachment d n) :
@@ -84,29 +87,6 @@ lemma bc55_hroute_of_boxMengerAttachment (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 
             (NeighborTrifPrecursor d a₁ a₂ a₃) :=
   bc55_hroute_of_routingCover p hp1 hp0
     (fun n => bmm_disjointRouting_of_attachment (hattach n))
-
-lemma bc55_burton_keane_bernoulli_of_boxMenger (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p) (hattach : ∀ n : ℕ, bmm_BoxMengerAttachment d n) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc54_burton_keane_bernoulli hd p hp1 hp0
-    (bc55_hroute_of_boxMengerAttachment p hp1 hp0 hattach)
-
-lemma bc55_burton_keane_bernoulli_of_routingCover (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p) (hrt : ∀ n : ℕ, hrHD_DisjointRouting d n) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc54_burton_keane_bernoulli hd p hp1 hp0 (bc55_hroute_of_routingCover p hp1 hp0 hrt)
 
 /-! ## B. Necessary conditions -/
 
@@ -147,6 +127,17 @@ lemma bc55_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     ((∀ n : ℕ, bmm_BoxMengerAttachment d n) →
       bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0) :=
   ⟨fun hattach => bc55_hroute_of_boxMengerAttachment p hp1 hp0 hattach,
-   fun hattach => (bc55_burton_keane_bernoulli_of_boxMenger hd p hp1 hp0 hattach).2.1⟩
+   fun hattach => (bc48_burton_keane_uniqueness_via_merge_classical
+      (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+      (bernoulli_lattice_ergodic hd p hp1)
+      (bernoulli_finiteEnergyMerge p hp1 hp0)
+      (fun n => boxSV_boundaryCard d (n + 1))
+      (fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n)
+      (fun n => bkc_boxFinsetBK_card_pos d n)
+      (bc54_boundary_succ_vol_tendsto d hd)
+      (bc49_classical_htrif_of_route (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+        (bernoulli_finiteEnergyMerge p hp1 hp0)
+        (bc55_hroute_of_boxMengerAttachment p hp1 hp0 hattach))
+      (fun k hk2 _ hk => exists_mergeWitness_pos _ k hk2 hk)).2.1⟩
 
 end StatMech.Walls

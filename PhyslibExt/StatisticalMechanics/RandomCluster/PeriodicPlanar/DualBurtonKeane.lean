@@ -342,8 +342,9 @@ lemma freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_of_freeDualPercol
     (percolationEvent_measurableSet Pdual)]
   exact hdual
 
-/-- If both the primal and the dual configuration percolate with positive probability under the free
-buffered infinite-volume measure, then almost surely each has exactly one infinite cluster. -/
+/-- For a periodic planar dual pair (whose primal and dual graphs are connected), `0 < p < 1` and
+`q ≥ 1`: if both the primal and the dual configuration percolate with positive probability under the
+free buffered infinite-volume measure, then almost surely each has exactly one infinite cluster. -/
 lemma freeBufferedInfiniteVolume_commonUniqueInfiniteClusterEvent_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconn : P.graph.Connected) (hconnDual : Pdual.graph.Connected)

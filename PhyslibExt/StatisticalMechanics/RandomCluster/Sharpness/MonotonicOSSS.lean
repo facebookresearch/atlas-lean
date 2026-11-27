@@ -31,7 +31,7 @@ given revealment bounds.
 
 ## ii. Key results
 
-- `fkMass_isMonotonic`: the random-cluster mass is monotonic for `q ≥ 1` (unconditional).
+- `fkMass_isMonotonic`: the random-cluster mass is monotonic for `0 < p < 1` and `q ≥ 1`.
 - `monotonicOSSS_to_fkCov`: transfer of the bound to random-cluster covariances, conditional on
   `hMonOSSS`.
 
@@ -89,7 +89,9 @@ lemma fk_volume_codeFibre {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
   Coding.volume_codeFibre (fkMass G p q) (fkMass_pos G hp hp1 hq)
     (fkMass_sum_eq_one G hp hp1 hq) σ x
 
-/-- The random-cluster mass is monotonic for `q ≥ 1` (unconditional). -/
+/-- For a finite graph `G`, `0 < p < 1` and `q ≥ 1`, the random-cluster measure `fkMass G p q` is
+  monotonic: the conditional probability that a coordinate is open, given the states on a set of
+  coordinates, is nondecreasing in those states. -/
 lemma fkMass_isMonotonic {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Monotonic.IsMonotonicMeasure (fkMass G p q) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq

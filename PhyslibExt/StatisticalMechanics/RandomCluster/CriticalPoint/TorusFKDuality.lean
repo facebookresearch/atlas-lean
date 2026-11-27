@@ -28,7 +28,8 @@ there the classification is proved.
 
 ## ii. Key results
 
-- `torus_weight_duality_signed`: signed weight duality (unconditional).
+- `torus_weight_duality_signed`: signed weight duality, for spanning subgraphs of the torus,
+  `0 < p < 1` and `q > 0`.
 - `torus_normalized_event_comparison`: primal and dual event probabilities agree up to `q`,
   conditional on `TorusDefectClassified L`.
 

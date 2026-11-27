@@ -161,7 +161,7 @@ invariance and an almost surely unique infinite cluster. -/
 lemma PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandFamily
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (N : Nat) {delta : Real} (hdelta : 0 < delta) :
     Nonempty (E.NormalBoundaryBandFamily mu (P.orbitBox N)

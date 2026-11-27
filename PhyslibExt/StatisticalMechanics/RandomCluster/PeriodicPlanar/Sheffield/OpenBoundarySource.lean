@@ -57,11 +57,13 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 /-! ## A. Exit probabilities of source sets -/
 
 /-- If `S` lies in the half-plane and a translate of `S` lies outside, the probability that an
-infinite cluster from `S` exits the half-plane is at least `P(S hits ∞)²`. -/
+infinite cluster from `S` exits the half-plane is at least `P(S hits ∞)²`. Assumes positive
+association (FKG), translation invariance and almost surely exactly one infinite cluster for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_sq_of_translate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) (S : Set V) (z : Site 2)
     (hS : S ⊆ E.rightHalfPlaneVertices r)
@@ -76,7 +78,7 @@ lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnection_measureReal_ge_sq_of
 lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_ge_orbitBox_sq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) (N : Nat) :
     ∃ S : Set V, S ⊆ E.rightHalfPlaneVertices r ∧
@@ -95,11 +97,13 @@ lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_ge_orbitBox_s
     rfl
   rwa [hmass] at hsq
 
-/-- Source sets in the half-plane whose exit probability tends to `1`. -/
+/-- For a probability measure `mu` with positive association (FKG), translation invariance and
+almost surely exactly one infinite cluster: source sets in the half-plane whose exit probability
+tends to `1`. -/
 lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryConnection_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ S : Nat → Set V,
@@ -147,11 +151,12 @@ lemma PeriodicPlaneEmbedding.infiniteOpenBoundaryConnectionTo_lower_union_upper
         z, hbz, hz, hbzOpen, hxb⟩
 
 /-- Source sets for which the better of the lower and upper boundary rays (split at heights `s N`)
-has exit probability tending to `1`. -/
+has exit probability tending to `1`. Assumes positive association (FKG), translation invariance and
+almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryRay_max_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) (s : Nat → Real) :
     ∃ S : Nat → Set V,
@@ -178,7 +183,7 @@ lemma PeriodicPlaneEmbedding.exists_infiniteOpenBoundaryRay_max_sequence_tendsto
   have hsqrt (N : Nat) :
       1 - Real.sqrt (1 - mu.real (F N)) ≤
         max (mu.real (L N)) (mu.real (U N)) := by
-    have h := measurable_sqrt_trick mu hFKG
+    have h := Universality.rsw_sqrt_trick mu hFKG
       (E.infiniteOpenBoundaryConnectionTo_isIncreasing r (S N)
         (E.lowerBoundaryRayVertices r (s N)))
       (E.infiniteOpenBoundaryConnectionTo_isIncreasing r (S N)

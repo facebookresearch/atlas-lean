@@ -10,6 +10,7 @@ module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeDichotomy
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeDichotomy`
@@ -21,6 +22,9 @@ In the plane:
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic)
 
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseMergeDichotomy
 
@@ -34,11 +38,11 @@ noncomputable abbrev bern2 : Measure (ConfigSpace (Sym2 (Site 2))) :=
 
 /-- `bern2` has finite energy. -/
 theorem bern2_fe : HasFiniteEnergyMerge bern2 :=
-  bkc_bernoulli_hasFiniteEnergyMerge _ _ (by norm_num)
+  bernoulli_finiteEnergyMerge _ _ (by norm_num)
 
 /-- `bern2` is translation invariant. -/
 theorem bern2_inv : IsTranslationInvariant (G := Multiplicative (Site 2)) bern2 :=
-  (bkc_bernoulli_isErgodic (d := 2) (by norm_num) _ _).isTranslationInvariant
+  (bernoulli_lattice_ergodic (d := 2) (by norm_num) _ _).isTranslationInvariant
 
 -- At `L = 3` the upper lines are a coarse trifurcation with infinitely many infinite clusters.
 example : bc61_IsCoarseTrifurcation bc60_upperLines 3 (0 : Site 2) ∧

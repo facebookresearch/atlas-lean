@@ -103,11 +103,13 @@ def PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady
 
 /-- Joined arms to the rays `{y ≤ 0}` and `{y ≥ 1}` with `L ⊆ H_R` and probability above `1 - ε`.
 Weaker than the case `s = 0`, `t = 1` of
-`exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin` up to rewriting. -/
+`exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin` up to rewriting. Assumes
+positive association (FKG), translation invariance and almost surely exactly one infinite cluster
+for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) {epsilon : Real} (hepsilon : 0 < epsilon) :
     ∃ L U : Finset V, ∃ n : Nat,
@@ -170,13 +172,13 @@ lemma PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent
 
 namespace PeriodicPlaneEmbedding
 
-/-- Joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` between `L ⊆ H_R` and its vertical
-translate by `1 + t` steps, with probability above `1 - ε` (FKG, translation invariance,
-almost sure uniqueness). -/
+/-- Joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` between `L ⊆ H_R` and its vertical translate
+by `1 + t` steps, with probability above `1 - ε` (FKG, translation invariance, almost sure existence
+and uniqueness of the infinite cluster). -/
 lemma exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (s : Real) (t : Int)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -252,13 +254,14 @@ lemma exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin
 
 end PeriodicPlaneEmbedding
 
-/-- Joined arms to the rays `{y ≤ -m}` and `{y ≥ m}` between `L ⊆ H_R` and its vertical translate
-by `1 + 2m` steps, with `m` larger than a given band plus buffer and the two source sets
-separated in height by more than twice that size, with probability above `1 - ε`. -/
+/-- Joined arms to the rays `{y ≤ -m}` and `{y ≥ m}` between `L ⊆ H_R` and its vertical translate by
+`1 + 2m` steps, with `m` larger than a given band plus buffer and the two source sets separated in
+height by more than twice that size, with probability above `1 - ε`. Assumes positive association
+(FKG), translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (band buffer : Nat)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -370,14 +373,14 @@ lemma PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBoundary
 
 /-! ## C. High-probability primal barriers -/
 
-/-- Joined arms to the rays `{y ≤ 0}` and `{y ≥ 1}` with probability above `1 - ε`, contained in
-the joined primal arms event (FKG, translation invariance, almost sure uniqueness). Weaker
-than the case `s = 0`, `t = 1` of
+/-- Joined arms to the rays `{y ≤ 0}` and `{y ≥ 1}` with probability above `1 - ε`, contained in the
+joined primal arms event (FKG, translation invariance, almost sure existence and uniqueness of the
+infinite cluster). Weaker than the case `s = 0`, `t = 1` of
 `exists_highProbability_separated_primalHalfPlaneBarrierReady` up to rewriting. -/
 lemma PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r B : Real) (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -398,12 +401,12 @@ lemma PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierReady
     hB (by norm_num) hL homega
 
 /-- Joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` (`t > 0`) with probability above `1 - ε`,
-contained in the joined primal arms event (FKG, translation invariance, almost sure
-uniqueness). -/
+contained in the joined primal arms event (FKG, translation invariance, almost sure existence and
+uniqueness of the infinite cluster). -/
 lemma PeriodicPlaneEmbedding.exists_highProbability_separated_primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r B s : Real) (t : Int) (ht : 0 < t) (hB0 : 0 ≤ B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),

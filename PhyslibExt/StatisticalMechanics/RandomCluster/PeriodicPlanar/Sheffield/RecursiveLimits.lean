@@ -61,12 +61,13 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-! ## A. Boundary-band families at all scales -/
 
-/-- Under FKG, translation invariance and uniqueness, there are boundary-band families for every
-orbit box `P.orbitBox m` with scores `p m ≤ 1` tending to one. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster,
+there are boundary-band families for every orbit box `P.orbitBox m` with scores `p m ≤ 1` tending to
+one. -/
 lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     exists (p : Nat -> Real)
       (_family : forall m,
@@ -107,11 +108,12 @@ lemma PeriodicPlaneEmbedding.exists_cofinalNormalBoundaryBandFamilies_bounded
 
 /-- Boundary-band families with scores tending to one, together with a uniform boundary-band
 crossing radius and, at every scale, an aligned margin schedule using the connector margin of that
-radius. -/
+radius. Assumes positive association (FKG), translation invariance and almost surely exactly one
+infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_boundedCofinalConnectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     exists (radius : Nat -> Nat) (p : Nat -> Real)
       (family : forall m,
@@ -138,7 +140,8 @@ lemma PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_boundedCofina
 
 /-- Given boundary-band families with scores tending to one, a recursive sequence of aligned
 shared-level steps at accuracy `1/(n+1)` whose scale tends to infinity, whose four side-connection
-probabilities tend to one and whose bottom-top and left-right merge errors tend to zero. -/
+probabilities tend to one and whose bottom-top and left-right merge errors tend to zero. Assumes
+translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps_with_limits
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -258,12 +261,13 @@ lemma PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps_with_limits
     hbottom, htop, hleft, hright, hverticalMerge, hhorizontalMerge⟩
 
 /-- Combination of `exists_uniformBoundaryBandRadius_with_boundedCofinalConnectorSchedule` and
-`exists_recursiveAlignedSharedLevelSteps_with_limits`: under FKG, translation invariance and
-uniqueness, recursive shared-level steps exist for orbit-box families with a uniform radius. -/
+`exists_recursiveAlignedSharedLevelSteps_with_limits`: under FKG, translation invariance and a.s.
+existence and uniqueness of the infinite cluster, recursive shared-level steps exist for orbit-box
+families with a uniform radius. -/
 lemma PeriodicPlaneEmbedding.exists_uniformRadius_recursiveAlignedSharedLevelSteps_with_limits
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     let epsilon : Nat -> Real := fun n => 1 / (n + 1 : Real)
     exists (radius : Nat -> Nat) (p : Nat -> Real)

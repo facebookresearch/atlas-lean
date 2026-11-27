@@ -107,9 +107,9 @@ lemma bc108_status :
       (bc73_fiber ω L R c).card ≤ bc61_coarseTcount ω L R) ∧
     (∀ (L : ℕ),
       Disjoint (bc61_boxAround 2 L (0 : Site 2))
-          (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+          (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
-          (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) ∧
+          (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) ∧
     (∀ {V : Type} {G : SimpleGraph V} (u v₁ v₂ v₃ : V),
       ¬ (G.deleteIncidenceSet u).Reachable v₁ v₂ →
       ¬ (G.deleteIncidenceSet u).Reachable v₁ v₃ →

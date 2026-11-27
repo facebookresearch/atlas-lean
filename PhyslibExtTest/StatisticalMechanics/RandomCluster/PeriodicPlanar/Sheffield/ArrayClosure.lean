@@ -46,7 +46,7 @@ example (D : PeriodicPlanarDualPair P Pdual) (mu : Measure (ConfigSpace (Sym2 V)
 
 -- Two-level boundary-score arrays do not exist under FKG.
 example (D : PeriodicPlanarDualPair P Pdual) (mu : Measure (ConfigSpace (Sym2 V)))
-    [IsProbabilityMeasure mu] (hFKG : IsFKG mu) (B : ℝ) :
+    [IsProbabilityMeasure mu] (hFKG : Universality.PositivelyAssociated mu) (B : ℝ) :
     IsEmpty (D.TwoLevelBoundaryScoreArray mu B) :=
   ⟨PeriodicPlanarDualPair.TwoLevelBoundaryScoreArray.false D mu hFKG⟩
 

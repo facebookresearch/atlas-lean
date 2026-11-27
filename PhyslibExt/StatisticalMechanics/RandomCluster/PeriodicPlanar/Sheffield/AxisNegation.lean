@@ -34,9 +34,9 @@ the rectangle to its right boundary with probability tending to one.
 - `PeriodicPlaneEmbedding.exists_rightBoundaryPlacement_tendsto_one`,
   `PeriodicPlaneEmbedding.exists_translatedOrbitBox_rightBoundaryPlacement_tendsto_one`,
   `PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_tendsto_one` : conditional on
-  `IsFKG mu`, translation invariance of `mu`, and `mu`-almost-sure uniqueness of the infinite
-  cluster. These hypotheses hold, for instance, for the point mass on the all-open configuration
-  when the graph is connected and infinite, so the results are not vacuous.
+  `PositivelyAssociated mu`, translation invariance of `mu`, and `mu`-almost-sure uniqueness of the
+  infinite cluster. These hypotheses hold, for instance, for the point mass on the all-open
+  configuration when the graph is connected and infinite, so the results are not vacuous.
 
 ## iii. Table of contents
 
@@ -174,13 +174,14 @@ lemma PeriodicPlaneEmbedding.axisNeg_leftBoundaryEvent
 
 /-! ## B. Right-boundary placements -/
 
-/-- Right-boundary placement: under FKG, translation invariance and almost-sure uniqueness of the
-infinite cluster, there are finite sources in rectangles `[-(r + R_N), -r] × [-R_N, R_N]` that
-connect inside the rectangle to its right boundary with probability tending to one. -/
+/-- Right-boundary placement: under FKG, translation invariance and almost-sure existence and
+uniqueness of the infinite cluster, there are finite sources in rectangles
+`[-(r + R_N), -r] × [-R_N, R_N]` that connect inside the rectangle to its right boundary with
+probability tending to one. -/
 lemma PeriodicPlaneEmbedding.exists_rightBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ source : Nat → Finset V, ∃ radius : Nat → Nat,
@@ -206,11 +207,12 @@ lemma PeriodicPlaneEmbedding.exists_rightBoundaryPlacement_tendsto_one
       E.axisNeg_leftBoundaryEvent] using hlimit
 
 /-- Right-boundary placement with the source a translated orbit box of radius `N`; same hypotheses
-as `exists_rightBoundaryPlacement_tendsto_one`. -/
+as `exists_rightBoundaryPlacement_tendsto_one`. Assumes positive association (FKG), translation
+invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_rightBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -245,11 +247,13 @@ lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_rightBoundaryPlacement_te
       E.axisNeg_leftBoundaryEvent, neg_neg] using hlimit
 
 /-- Right-boundary placement where the larger orbit box of radius `buffer N` also fits in the
-rectangle; same hypotheses as `exists_rightBoundaryPlacement_tendsto_one`. -/
+rectangle; same hypotheses as `exists_rightBoundaryPlacement_tendsto_one`. Assumes positive
+association (FKG), translation invariance and almost surely exactly one infinite cluster for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,

@@ -26,7 +26,7 @@ Because the side-connection event only grows when the three other sides of the r
 outwards (`Sheffield.RectangleMonotonicity`), the same base points and radii work uniformly for
 every larger rectangle that keeps the chosen side fixed.
 
-Headline fidelity. All four results are proved conditionally on `IsFKG mu`,
+Headline fidelity. All four results are proved conditionally on `PositivelyAssociated mu`,
 `P.IsTranslationInvariant mu` and almost-sure uniqueness of the primal infinite cluster. These
 are satisfiable hypotheses on the primal measure alone (for example supercritical Bernoulli
 percolation), so the results are not vacuous.
@@ -65,7 +65,7 @@ infinite cluster and to the left side inside the rectangle with probability tend
 lemma PeriodicPlaneEmbedding.exists_buffered_leftBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -108,7 +108,7 @@ to the infinite cluster and to the right side inside the rectangle with probabil
 lemma PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -151,7 +151,7 @@ to the infinite cluster and to the bottom side inside the rectangle with probabi
 lemma PeriodicPlaneEmbedding.exists_buffered_bottomBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,
@@ -193,7 +193,7 @@ infinite cluster and to the top side inside the rectangle with probability tendi
 lemma PeriodicPlaneEmbedding.exists_buffered_topBoundaryPlacement_enlargeable
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (buffer : Nat → Nat) (hbuffer : ∀ N, N ≤ buffer N) (r : Real) :
     ∃ base : Nat → Site 2, ∃ radius : Nat → Nat,

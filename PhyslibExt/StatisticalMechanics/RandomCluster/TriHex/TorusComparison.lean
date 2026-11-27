@@ -165,7 +165,7 @@ noncomputable def triHexTorusTopologicalCorrectionLogDensity
   exact |Real.log (q ^ triHexTorusEulerDefect L
     (FK.openSub (triangularTorusGraph L) (omega L)))| / (L ^ 2 : ℕ)
 
-/-- The topological correction per site vanishes in the thermodynamic limit. -/
+/-- The topological correction per site vanishes in the thermodynamic limit. Assumes `q ≥ 1`. -/
 lemma triHexTorus_topologicalCorrection_logDensity_tendsto_zero
     (q : ℝ) (hq : 1 ≤ q)
     (omega : ∀ L : ℕ, ConfigSpace (Sym2 (TorusSite L))) :

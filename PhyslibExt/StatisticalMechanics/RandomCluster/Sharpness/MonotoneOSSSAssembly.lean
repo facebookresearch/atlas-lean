@@ -21,11 +21,13 @@ f ≤ 1`, `Var f ≤ ∑ revealAdapt(e) · Cov(f, ω_e)`.
 Assembles the chain: `cmn_tailCondLaw` gives the tail conditional law,
 `otc_adaptCondBBB_of_tailCondLaw` gives `AdaptCondBBB`, and `adsD_adaptStepCovBound_of_condBBB`
 gives the step bound (`osss_onestep_cov_bound`). Then `tree_osss_sharp_of_adaptStepCovBound` gives
-the inequality. `osss_monotone_sharp` is unconditional.
+the inequality. `osss_monotone_sharp` needs only a positive, normalised, monotonic measure and a
+monotone `0 ≤ f ≤ 1`.
 
 ## ii. Key results
 
-- `osss_monotone_sharp`: OSSS for monotonic measures (unconditional).
+- `osss_monotone_sharp`: OSSS for positive, normalised, monotonic measures and monotone
+  `0 ≤ f ≤ 1`.
 
 ## iii. Table of contents
 
@@ -68,7 +70,11 @@ lemma osss_onestep_cov_bound {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ
   have hBBB : AdaptCondBBB μ σ f := otc_adaptCondBBB_of_tailCondLaw σ hfC hTCL
   exact adsD_adaptStepCovBound_of_condBBB hpos hmono σ hf hfC hBBB
 
-/-- OSSS for monotonic measures (unconditional). -/
+/-- OSSS inequality for monotonic measures: for a finite set `E`, a positive weight `μ` on
+  `{0, 1}^E` with total mass `1` that is monotonic (`IsMonotonicMeasure`), an enumeration `σ` of `E`
+  and a nondecreasing `f` with `0 ≤ f ≤ 1`, `Var_μ(f) ≤ ∑ₑ δₑ Cov_μ(f, ω_e)`, where
+  `δₑ = revealAdapt μ σ f e` is the probability that the adaptive exploration of `f` along `σ`
+  reveals `e`. -/
 lemma osss_monotone_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :

@@ -336,7 +336,7 @@ def FreeDualPercolates
   0 < D.freeDualPercolationProbability p q
 
 /-- The wired dual percolation probability at `p*` equals the free dual percolation probability at
-`p`. -/
+`p`. Assumes `q ≥ 1`. -/
 lemma wiredPercolationProbability_dualParam
     (D : PeriodicPlanarDualPair P Pdual) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
@@ -387,7 +387,7 @@ lemma dualNoCoexistence_iff_freeDual
 
 /-- Conditional critical-point duality for a dual pair: free dual percolation below `pc` and
 no-coexistence of wired primal and free dual percolation give `pc* = (pc)*` and
-`pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
+`pc / (1 - pc) · pc* / (1 - pc*) = q`. Assumes `q ≥ 1`. -/
 lemma dualCritical_relation_of_freeDual
     (D : PeriodicPlanarDualPair P Pdual) {q : ℝ}
     (hpc : P.criticalPoint q ∈ Ioo (0 : ℝ) 1)

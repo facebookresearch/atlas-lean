@@ -338,7 +338,7 @@ lemma freeDualHasInfiniteCluster_of_summable_shell_bound
 
 /-- Conditional dual percolation below `pc`: given polynomial connection shells and exponential
 decay of two-point connections below `pc`, the dual of the free buffered infinite-volume
-configuration has an infinite cluster almost surely. -/
+configuration has an infinite cluster almost surely. Assumes `q ≥ 1`. -/
 lemma freeDualHasInfiniteCluster_of_exponentialDecay
     (D : PeriodicPlanarDualPair P Pdual)
     (H : PolynomialConnectionShells D) {p q pc : ℝ}

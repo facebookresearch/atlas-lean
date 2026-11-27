@@ -262,12 +262,12 @@ lemma PeriodicPlaneEmbedding.unique_two_sides_subset_boundaryConnection
   exact ⟨x, hxS, b, hb, hxb⟩
 
 /-- FKG lower bound `P(S ↔ ∂H_r in H_r) ≥ P(S meets ∞) P(T meets ∞)` for `S ⊆ H_r`, `T ⊆ H_rᶜ`,
-assuming FKG and almost sure uniqueness. See also
+assuming FKG and almost sure existence and uniqueness of the infinite cluster. See also
 `infiniteBoundaryConnection_measureReal_ge_mul` (`HalfPlaneInfiniteArm`, stronger event). -/
 lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : ℝ) {S T : Set V}
     (hS : S ⊆ E.rightHalfPlaneVertices r)
@@ -283,7 +283,7 @@ lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul
     P.setConnectionWithin (E.rightHalfPlaneVertices r) S
     (E.rightHalfPlaneBoundaryVertices r)
   have hprod : mu.real A * mu.real B ≤ mu.real (A ∩ B) :=
-    hFKG A B (P.setHitsInfinite_measurableSet S)
+    hFKG.probability A B (P.setHitsInfinite_measurableSet S)
       (P.setHitsInfinite_measurableSet T)
       (P.setHitsInfinite_isIncreasing S) (P.setHitsInfinite_isIncreasing T)
   have hUae : ∀ᵐ omega ∂mu, omega ∈ U :=
@@ -300,11 +300,12 @@ lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_mul
 
 /-- Square lower bound when a translate of `S` lies outside `H_r`. See also
 `infiniteBoundaryConnection_measureReal_ge_sq_of_translate` (`HalfPlaneInfiniteArm`, stronger
-event). -/
+event). Assumes positive association (FKG), translation invariance and almost surely exactly one
+infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_sq_of_translate
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : ℝ) (S : Set V) (z : Site 2)
     (hS : S ⊆ E.rightHalfPlaneVertices r)
@@ -317,12 +318,14 @@ lemma PeriodicPlaneEmbedding.boundaryConnection_measureReal_ge_sq_of_translate
   rw [P.setHitsInfinite_translate_measureReal_eq mu hTI z S] at hmul
   simpa [pow_two] using hmul
 
-/-- For every orbit box there is a source set in `H_r` whose boundary-connection probability is
-at least the square of the probability that the box meets an infinite cluster. -/
+/-- For every orbit box there is a source set in `H_r` whose boundary-connection probability is at
+least the square of the probability that the box meets an infinite cluster. Assumes positive
+association (FKG), translation invariance and almost surely exactly one infinite cluster for
+`mu`. -/
 lemma PeriodicPlaneEmbedding.exists_boundaryConnection_ge_orbitBox_sq
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : ℝ) (N : ℕ) :
     ∃ S : Set V, S ⊆ E.rightHalfPlaneVertices r ∧
@@ -343,13 +346,13 @@ lemma PeriodicPlaneEmbedding.exists_boundaryConnection_ge_orbitBox_sq
   rwa [hmass] at hsq
 
 /-- Sources in `H_r` whose connection to `∂H_r` within `H_r` has probability tending to one (FKG,
-translation invariance, almost sure uniqueness). See also
-`exists_infiniteBoundaryConnection_sequence_tendsto_one` (`HalfPlaneInfiniteArm`), which is
-stronger (finite sources, infinite-cluster event). -/
+translation invariance, almost sure existence and uniqueness of the infinite cluster). See also
+`exists_infiniteBoundaryConnection_sequence_tendsto_one` (`HalfPlaneInfiniteArm`), which is stronger
+(finite sources, infinite-cluster event). -/
 lemma PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : ℝ) :
     ∃ S : ℕ → Set V,
@@ -375,12 +378,13 @@ lemma PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one
   · intro N
     exact measureReal_le_one
 
-/-- The larger of the lower-ray and upper-ray connection probabilities tends to one along
-suitable sources in `H_r`. -/
+/-- The larger of the lower-ray and upper-ray connection probabilities tends to one along suitable
+sources in `H_r`. Assumes positive association (FKG), translation invariance and almost surely
+exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_boundaryRay_max_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r : ℝ) (s : ℕ → ℝ) :
     ∃ S : ℕ → Set V,
@@ -411,7 +415,7 @@ lemma PeriodicPlaneEmbedding.exists_boundaryRay_max_sequence_tendsto_one
       1 - Real.sqrt (1 - mu.real (F N)) ≤
         max (mu.real (L N)) (mu.real (U N)) := by
     intro N
-    have h := measurable_sqrt_trick mu hFKG
+    have h := Universality.rsw_sqrt_trick mu hFKG
       (P.setConnectionWithin_isIncreasing (E.rightHalfPlaneVertices r) (S N)
         (E.lowerBoundaryRayVertices r (s N)))
       (P.setConnectionWithin_isIncreasing (E.rightHalfPlaneVertices r) (S N)

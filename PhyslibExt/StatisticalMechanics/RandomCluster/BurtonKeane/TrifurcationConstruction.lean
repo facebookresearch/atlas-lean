@@ -13,7 +13,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneZeroOrOne
 
 /-!
 # Trifurcation precursors and the counting route

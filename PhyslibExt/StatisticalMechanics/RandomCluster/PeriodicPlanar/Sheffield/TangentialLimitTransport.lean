@@ -91,7 +91,7 @@ lemma PeriodicPlaneEmbedding.rectLeftConnection_tangential_tendsto_one
 
 /-- Right-side version of `PeriodicPlaneEmbedding.rectLeftConnection_tangential_tendsto_one`:
 vertical translations of the source preserve a right-side connection limit when the left, bottom and
-top bounds are enlarged. -/
+top bounds are enlarged. Assumes translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.rectRightConnection_tangential_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -123,7 +123,7 @@ lemma PeriodicPlaneEmbedding.rectRightConnection_tangential_tendsto_one
 
 /-- Bottom-side version of `PeriodicPlaneEmbedding.rectLeftConnection_tangential_tendsto_one`:
 horizontal translations of the source preserve a bottom-side connection limit when the left, right
-and top bounds are enlarged. -/
+and top bounds are enlarged. Assumes translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.rectBottomConnection_tangential_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -153,7 +153,7 @@ lemma PeriodicPlaneEmbedding.rectBottomConnection_tangential_tendsto_one
 
 /-- Top-side version of `PeriodicPlaneEmbedding.rectLeftConnection_tangential_tendsto_one`:
 horizontal translations of the source preserve a top-side connection limit when the left, right and
-bottom bounds are enlarged. -/
+bottom bounds are enlarged. Assumes translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.rectTopConnection_tangential_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

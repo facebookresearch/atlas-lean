@@ -10,19 +10,23 @@ module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestConnected
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestConnected`
 
 In the plane:
 * the explicit caterpillars: `bc65_caterpillar2_savings` and `bc65_cat3G_leafCount`;
-* `bc65_ConnectedCoarseForest` is satisfiable: the all-closed configuration has one (via
-  `bc65_connectedCoarseForest_iff_armEmbedding`), and
-  `bc65_coarseTcount_le_boundary_of_connectedForest` bounds its coarse count;
-* `bc65_infiniteClusters_top_null_of_connectedForest_route` applied to Bernoulli(1/2).
+* `bc61_CoarseForestLeafCount` is satisfiable: the all-closed configuration has one (via
+  `bc63_coarseForestLeafCount_of_noTrif`), and
+  `bc61_coarseTcount_le_boundary_of_forest` bounds its coarse count;
+* `bc62_infiniteClusters_top_null_of_forest_route` applied to Bernoulli(1/2).
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic)
 
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestConnected
 
@@ -52,11 +56,11 @@ noncomputable abbrev bern2 : Measure (ConfigSpace (Sym2 (Site 2))) :=
 
 /-- `bern2` has finite energy. -/
 theorem bern2_fe : HasFiniteEnergyMerge bern2 :=
-  bkc_bernoulli_hasFiniteEnergyMerge _ _ (by norm_num)
+  bernoulli_finiteEnergyMerge _ _ (by norm_num)
 
 /-- `bern2` is translation invariant. -/
 theorem bern2_inv : IsTranslationInvariant (G := Multiplicative (Site 2)) bern2 :=
-  (bkc_bernoulli_isErgodic (d := 2) (by norm_num) _ _).isTranslationInvariant
+  (bernoulli_lattice_ergodic (d := 2) (by norm_num) _ _).isTranslationInvariant
 
 -- The two-branch caterpillar has fewer than three leaves per branch vertex.
 example : (Finset.univ.filter (fun v => bc65_cat2G.degree v = 1)).card
@@ -69,22 +73,21 @@ example : (Finset.univ.filter (fun v => 3 ≤ bc65_cat3G.degree v)).card = 3 ∧
   bc65_cat3G_leafCount
 
 /-- The all-closed configuration has a connected coarse forest. -/
-theorem closed_connectedForest (L : ℕ) : bc65_ConnectedCoarseForest closed2 L 1 :=
-  (bc65_connectedCoarseForest_iff_armEmbedding _ _ _).mpr
-    (bc63_coarseForestLeafCount_of_noTrif _ L 1 bdry_one.1 bdry_one.2.1 bdry_one.2.2
+theorem closed_connectedForest (L : ℕ) : bc61_CoarseForestLeafCount closed2 L 1 :=
+  (bc63_coarseForestLeafCount_of_noTrif _ L 1 bdry_one.1 bdry_one.2.1 bdry_one.2.2
       (fun y _ => closed_not_coarseTrif L y))
 
 -- The coarse count bound for the all-closed configuration.
 example (L : ℕ) : bc61_coarseTcount closed2 L 1 ≤ boxSV_boundaryCard 2 1 :=
-  bc65_coarseTcount_le_boundary_of_connectedForest _ L 1 (closed_connectedForest L)
+  bc61_coarseTcount_le_boundary_of_forest _ L 1 (closed_connectedForest L)
 
 -- The conditional route applied to Bernoulli(1/2).
 example (L : ℕ)
-    (hconn : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (R : ℕ), bc65_ConnectedCoarseForest ω L R)
+    (hconn : ∀ (ω : ConfigSpace (Sym2 (Site 2))) (R : ℕ), bc61_CoarseForestLeafCount ω L R)
     (hroute : 0 < bern2 {ω | numInfiniteClusters 2 ω = ⊤} →
       ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site 2, 0 < bern2 (bc62_CoarseTrifPrecursor 2 L a₁ a₂ a₃ b₁ b₂ b₃)) :
     bern2 {ω | numInfiniteClusters 2 ω = ⊤} = 0 :=
-  bc65_infiniteClusters_top_null_of_connectedForest_route bern2 (by norm_num) bern2_inv bern2_fe
+  bc62_infiniteClusters_top_null_of_forest_route bern2 (by norm_num) bern2_inv bern2_fe
     L hconn hroute
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseForestConnected

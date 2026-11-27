@@ -37,7 +37,7 @@ error smaller than any `ε > 0`.
 - `PeriodicGraph.connectedWithinSet_measurableSet`, `connectedWithinSet_isIncreasing`,
   `connectedWithinSet_configTranslate` : unconditional.
 - `directional_sqrt_trick`, `PeriodicPlaneEmbedding.lowerBoundaryRay_directional_sqrt_trick` :
-  conditional on `IsFKG mu`.
+  conditional on `PositivelyAssociated mu`.
 - `three_event_intersection_lower_bound` : the Bonferroni bound
   `μ A + μ B + μ C - 2 ≤ μ (A ∩ B ∩ C)` for a probability measure (unconditional).
 - `PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_lt` : conditional on
@@ -234,12 +234,12 @@ measure, then `1 - √(1 - μ(A ∪ B)) ≤ μ A`. See also `StatMech.Universali
 (equal probabilities, positive association). -/
 lemma directional_sqrt_trick
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
+    (hFKG : Universality.PositivelyAssociated mu) {A B : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
     (hAm : MeasurableSet A) (hBm : MeasurableSet B)
     (hBA : mu.real B ≤ mu.real A) :
     1 - Real.sqrt (1 - mu.real (A ∪ B)) ≤ mu.real A := by
-  have h := measurable_sqrt_trick mu hFKG hA hB hAm hBm
+  have h := Universality.rsw_sqrt_trick mu hFKG hA hB hAm hBm
   rwa [max_eq_left hBA] at h
 
 omit [DecidableEq V] [Countable V] in
@@ -319,7 +319,7 @@ ray, the square-root trick bounds the lower-ray probability below by that of the
 lemma PeriodicPlaneEmbedding.lowerBoundaryRay_directional_sqrt_trick
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (r s : ℝ) (S : Set V)
+    (hFKG : Universality.PositivelyAssociated mu) (r s : ℝ) (S : Set V)
     (hcomp : mu.real (P.setConnectionWithin (E.rightHalfPlaneVertices r) S
         (E.upperBoundaryRayVertices r s)) ≤
       mu.real (P.setConnectionWithin (E.rightHalfPlaneVertices r) S
@@ -447,8 +447,8 @@ lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_le
   rw [← hreal]
   exact measureReal_mono hsub
 
-/-- Under translation invariance and almost-sure uniqueness of the infinite cluster, for every
-`ε > 0` some translate of `x`, `y` has half-plane merging error below `ε`. -/
+/-- Under translation invariance and almost-sure existence and uniqueness of the infinite cluster,
+for every `ε > 0` some translate of `x`, `y` has half-plane merging error below `ε`. -/
 lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

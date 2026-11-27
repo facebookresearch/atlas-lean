@@ -1600,7 +1600,7 @@ lemma ExactExtentPairedMixedBoundaryScores.dualVerticalCrossing_ge_translate_ina
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG muDual)
+    (hFKG : Universality.PositivelyAssociated muDual)
     {S : Finset V} {Sdual : Finset W} {p pDual : Real}
     {extentX extentY : Nat}
     (raw : ExactExtentPairedMixedBoundaryScores E Edual mu muDual
@@ -1661,7 +1661,7 @@ lemma ExactExtentPairedMixedBoundaryScores.dualHorizontalCrossing_ge_translate_i
     {mu : Measure (ConfigSpace (Sym2 V))}
     {muDual : Measure (ConfigSpace (Sym2 W))}
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG muDual)
+    (hFKG : Universality.PositivelyAssociated muDual)
     {S : Finset V} {Sdual : Finset W} {p pDual : Real}
     {extentX extentY : Nat}
     (raw : ExactExtentPairedMixedBoundaryScores E Edual mu muDual
@@ -1716,7 +1716,7 @@ lemma dualVerticalCrossing_translate_inactive_tendsto_one
     {mu : Measure (ConfigSpace (Sym2 V))}
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG muDual) (hTI : Pdual.IsTranslationInvariant muDual)
+    (hFKG : Universality.PositivelyAssociated muDual) (hTI : Pdual.IsTranslationInvariant muDual)
     (S : Nat -> Finset V) (Sdual : Nat -> Finset W)
     (p pDual : Nat -> Real) (extentX extentY radius : Nat -> Nat)
     (raw : forall n, ExactExtentPairedMixedBoundaryScores
@@ -1783,7 +1783,7 @@ lemma dualHorizontalCrossing_translate_inactive_tendsto_one
     {mu : Measure (ConfigSpace (Sym2 V))}
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG muDual) (hTI : Pdual.IsTranslationInvariant muDual)
+    (hFKG : Universality.PositivelyAssociated muDual) (hTI : Pdual.IsTranslationInvariant muDual)
     (S : Nat -> Finset V) (Sdual : Nat -> Finset W)
     (p pDual : Nat -> Real) (extentX extentY radius : Nat -> Nat)
     (raw : forall n, ExactExtentPairedMixedBoundaryScores
@@ -2727,7 +2727,7 @@ lemma exists_matched_commonSquareNormalBoundaryBandData_ge
 lemma PeriodicPlaneEmbedding.exists_commonSquareNormalBoundaryBands_outward
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (score : Nat -> Real) (margin M : Nat -> Nat)
     (data : forall n, E.CommonSquareNormalBoundaryBandData
@@ -2819,7 +2819,7 @@ lemma PeriodicPlaneEmbedding.exists_commonSquareNormalBoundaryBands_outward
 lemma PeriodicPlaneEmbedding.exists_pointwise_commonSquareNormalBoundaryBands_outward
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (score : Nat -> Nat -> Real)
     (margin M : Nat -> Nat -> Nat)
@@ -3116,7 +3116,7 @@ lemma exists_alignedCrossNestedPairedSequence_with_primalAdjacent
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (hTI : P.IsTranslationInvariant mu)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -3238,7 +3238,7 @@ lemma exists_alignedCrossNestedPairedSequence_with_primalAdjacent_ge
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu)
+    (hFKG : Universality.PositivelyAssociated mu)
     (hTI : P.IsTranslationInvariant mu)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
@@ -3579,7 +3579,7 @@ lemma endpoint_transitionCoordinates_of_mergeLimits
     {padding : Nat}
     (data : AlignedCrossNestedPairedSequence E Edual mu muDual
       p pDual family familyDual padding)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hp : Tendsto p atTop (nhds 1)) (_hp_le : forall n, p n <= 1)
     (hmergeVertical : Tendsto (fun n => mu.real
       (E.rectanglePairMergeErrorUnion
@@ -3750,7 +3750,7 @@ lemma dual_endpoint_transitionCoordinates_of_mergeLimits
     {padding : Nat}
     (data : AlignedCrossNestedPairedSequence E Edual mu muDual
       p pDual family familyDual padding)
-    (hFKG : IsFKG muDual) (hTI : Pdual.IsTranslationInvariant muDual)
+    (hFKG : Universality.PositivelyAssociated muDual) (hTI : Pdual.IsTranslationInvariant muDual)
     (hp : Tendsto pDual atTop (nhds 1))
     (_hp_le : forall n, pDual n <= 1)
     (hmergeVertical : Tendsto (fun n => muDual.real
@@ -3923,7 +3923,7 @@ lemma exists_endpoint_transitionCoordinates_of_connectorContainment
     {padding : Nat}
     (data : AlignedCrossNestedPairedSequence E Edual mu muDual
       p pDual family familyDual padding)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hp : Tendsto p atTop (nhds 1)) (hp_le : forall n, p n <= 1) :
     exists verticalRadius horizontalRadius : Nat -> Nat,
@@ -4007,7 +4007,7 @@ lemma exists_dual_endpoint_transitionCoordinates_of_connectorContainment
     {padding : Nat}
     (data : AlignedCrossNestedPairedSequence E Edual mu muDual
       p pDual family familyDual padding)
-    (hFKG : IsFKG muDual) (hTI : Pdual.IsTranslationInvariant muDual)
+    (hFKG : Universality.PositivelyAssociated muDual) (hTI : Pdual.IsTranslationInvariant muDual)
     (hunique : muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
     (hp : Tendsto pDual atTop (nhds 1))
     (hp_le : forall n, pDual n <= 1) :
@@ -6302,7 +6302,7 @@ lemma PeriodicPlanarDualPair.finiteStripArmArrays_dualCrossingLimits_false
 lemma PeriodicPlanarDualPair.finiteStripArmArrays_carriedDual_false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (B : Real) (hBpos : 0 < B)
     (hBp : forall {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),
       |D.primalEmbedding.coordinates
@@ -6404,7 +6404,7 @@ lemma PeriodicPlanarDualPair.finiteStripArmArrays_carriedDual_false
 lemma PeriodicPlanarDualPair.finiteStripArmArrays_reframedCarriedDual_false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (B : Real) (hBpos : 0 < B)
     (hBp : forall {x y : V} (hxy : P.graph.Adj x y) (u) (i : Fin 2),
       |D.primalEmbedding.coordinates
@@ -6481,7 +6481,8 @@ mu`. -/
 lemma PeriodicPlanarDualPair.carriedCrossNestedArrays_false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKG : Universality.PositivelyAssociated mu)
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (B : Real) (hBpos : 0 < B)
     (hBp : forall {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |D.primalEmbedding.coordinates
@@ -6580,7 +6581,8 @@ def PeriodicPlaneEmbedding.CarriedCrossNestedArray.tail
 lemma PeriodicPlanarDualPair.carriedCrossNestedArrays_succ_false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKG : Universality.PositivelyAssociated mu)
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (B : Real) (hBpos : 0 < B)
     (hBp : forall {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
       |D.primalEmbedding.coordinates
@@ -6808,7 +6810,7 @@ lemma AlignedCrossNestedPairedSequence.false_of_primalAdjacent_and_dualMergeLimi
     (data : AlignedCrossNestedPairedSequence D.primalEmbedding
       D.dualEmbedding mu (D.dualMeasure mu)
         p pDual family familyDual padding)
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (hpDual : Tendsto pDual atTop (nhds 1))
     (hpDual_le : forall n, pDual n <= 1)
@@ -6898,7 +6900,7 @@ lemma AlignedCrossNestedPairedSequence.exists_mixedEndpointRadii_false_of_primal
     (data : AlignedCrossNestedPairedSequence D.primalEmbedding
       D.dualEmbedding mu (D.dualMeasure mu)
         p pDual family familyDual padding)
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (huniqueDual : (D.dualMeasure mu)
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -6989,7 +6991,7 @@ lemma AlignedCrossNestedPairedSequence.exists_mixedEndpointRadii_false_of_primal
 lemma PeriodicPlaneEmbedding.exists_deep_adjacentHeight_preference_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a b c d : Real) (t : Int) (ht : 0 <= t)
     {width height margin : Nat} (hwidth : 0 < width)
     (epsilon : Real) (hepsilon : 0 <= epsilon)
@@ -7195,7 +7197,7 @@ def PeriodicPlaneEmbedding.UniformTemplateDeepGridAdjacentHeightCrossingRadius
 lemma PeriodicPlaneEmbedding.uniformTemplateDeepGridAdjacentHeightCrossingRadius_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
       mu.real (P.setHitsInfinite (template n : Set V))) atTop (nhds 1))
@@ -7412,7 +7414,7 @@ namespace PeriodicPlaneEmbedding
 lemma exists_uniformTemplate_deepGrid_adjacentHeight_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -7490,7 +7492,7 @@ lemma exists_radiusFirst_adjacentEndpointRow
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -7554,7 +7556,7 @@ lemma exists_radiusFirst_dependentGeometry_adjacentEndpointRow
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -7651,7 +7653,7 @@ lemma nonempty_radiusFirstAdjacentEndpointRow
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -7693,7 +7695,7 @@ lemma exists_recursiveRadiusFirstAdjacentEndpointRows_with_limits
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -8167,7 +8169,7 @@ lemma PeriodicPlaneEmbedding.uniformTemplateAdjacentBoundaryBandCrossingRadius_o
 lemma PeriodicPlaneEmbedding.uniformTemplateAdjacentBoundaryBandCrossingRadius_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
       mu.real (P.setHitsInfinite (template n : Set V))) atTop (nhds 1))
@@ -8188,7 +8190,7 @@ lemma PeriodicPlaneEmbedding.uniformTemplateAdjacentBoundaryBandCrossingRadius_o
 lemma PeriodicPlaneEmbedding.exists_uniformTemplateAdjacentBoundaryBandCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -8207,7 +8209,7 @@ namespace PeriodicPlaneEmbedding
 lemma exists_uniformTemplateAdjacentBoundaryBandCrossingRadius_with_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -8256,7 +8258,7 @@ namespace PeriodicPlaneEmbedding
 lemma exists_uniformAdjacentBoundaryBandRadius_with_cofinalConnectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (step : Nat -> Int) (hstep : forall n, 0 <= step n) :
     exists (radius : Nat -> Nat) (p : Nat -> Real)
@@ -8351,7 +8353,7 @@ def PeriodicPlaneEmbedding.UniformOutwardBoundaryCrossingRadius
 lemma PeriodicPlaneEmbedding.exists_uniformOutwardBoundaryCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (pad : Nat -> Int) (hpad : forall n, 0 <= pad n) :
     exists radius,
@@ -8414,9 +8416,9 @@ lemma exists_pairedAdjacentBoundaryBandScheduleData
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -8522,9 +8524,9 @@ lemma exists_pairedAdjacentOutwardScheduleData
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -9212,7 +9214,7 @@ lemma PeriodicPlaneEmbedding.deepPreferenceGrid_orbitBox_subset_rect
 lemma PeriodicPlaneEmbedding.exists_coupled_endpointCrossings_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r y B s : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -9281,7 +9283,7 @@ lemma PeriodicPlaneEmbedding.exists_coupled_endpointCrossings_tendsto_one_of_uni
 lemma PeriodicPlaneEmbedding.exists_dependentSpan_endpointCrossings_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r y B s : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -9357,7 +9359,7 @@ lemma PeriodicPlaneEmbedding.exists_dependentSpan_endpointCrossings_tendsto_one_
 lemma PeriodicPlaneEmbedding.exists_rowwise_dependentSpan_endpointCrossings_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -9460,7 +9462,7 @@ lemma nonempty_dependentRadiusFirstAdjacentEndpointRow
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -9508,7 +9510,7 @@ lemma exists_recursiveDependentRadiusFirstAdjacentEndpointRows_with_limits
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -9672,7 +9674,7 @@ lemma exists_carriedAsymmetricEndpointCoordinates_with_limits
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -9834,7 +9836,7 @@ lemma PeriodicPlanarDualPair.exists_carriedAsymmetricEndpoints_false_of_primal_l
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (huniqueDual : (D.dualMeasure mu)
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -9939,7 +9941,7 @@ lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_prim
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (p pDual : Nat -> Real)
     (family : forall n,
@@ -10043,7 +10045,7 @@ square and the vertical crossing of the square heightened by `step` tends to one
 lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.primalAdjacent_limit_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (S : Nat -> Finset V) (margin M width height radius : Nat -> Nat)
     (score : Nat -> Real)
     (data : forall n, E.CommonSquareNormalBoundaryBandData

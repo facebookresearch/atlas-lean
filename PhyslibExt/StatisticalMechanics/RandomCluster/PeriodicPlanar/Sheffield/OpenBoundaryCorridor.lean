@@ -233,11 +233,12 @@ lemma PeriodicPlaneEmbedding.shift_up_infiniteOpenUpperBoundary_tendsto_at
 /-! ## C. Finite sources -/
 
 /-- A finite source set in `{x ≥ R}` from which an infinite cluster exits `{x ≥ r}` with probability
-`> 1 - ε`. -/
+`> 1 - ε`. Assumes positive association (FKG), translation invariance and almost surely exactly one
+infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_finite_infiniteOpenBoundaryConnection_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -289,11 +290,12 @@ lemma PeriodicPlaneEmbedding.exists_finite_infiniteOpenBoundaryConnection_gt
     exact hN.trans_le (by simpa only [S, Finset.coe_image] using hbound)
 
 /-- Finite sources `L, U` in `{x ≥ R}` exiting through the lower ray below `c`, resp. the upper ray
-above `d`, each with probability `> 1 - ε`. -/
+above `d`, each with probability `> 1 - ε`. Assumes positive association (FKG), translation
+invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_finite_opposite_infiniteOpenBoundaryRays_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R c d : Real} (hrR : r ≤ R)
     {epsilon : Real} (hepsilon : 0 < epsilon) :

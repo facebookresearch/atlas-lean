@@ -112,17 +112,19 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 
 /-! ## A. Endpoint coordinates with radius requirements -/
 
-/-- Under primal uniqueness and dual FKG, translation invariance and uniqueness, choose radii,
-widths and heights (with width requirements depending on the radius) such that the template merge
-errors at the chosen radii tend to zero and the dual vertical and horizontal crossings of the
-carried endpoint rectangles tend to one, together with the coordinate inequalities needed later. -/
+/-- For `mu` with almost surely exactly one infinite cluster and, for the dual measure `muDual`,
+positive association (FKG), translation invariance and almost surely exactly one infinite cluster:
+choose radii, widths and heights (with width requirements depending on the radius) such that the
+template merge errors at the chosen radii tend to zero and the dual vertical and horizontal
+crossings of the carried endpoint rectangles tend to one, together with the coordinate inequalities
+needed later. -/
 lemma exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -272,14 +274,16 @@ lemma exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements
     linarith
 
 /-- Version of `exists_carriedAsymmetricEndpointCoordinates_with_radius_requirements` with
-radius-independent width and height requirements. -/
+radius-independent width and height requirements. Assumes positive association (FKG), translation
+invariance and almost surely exactly one infinite cluster for the dual measure `muDual` and almost
+surely exactly one infinite cluster for `mu`. -/
 lemma exists_carriedAsymmetricEndpointCoordinates_with_requirements
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -329,13 +333,15 @@ lemma exists_carriedAsymmetricEndpointCoordinates_with_requirements
 
 /-- For a dual pair, coordinates as in
 `exists_carriedAsymmetricEndpointCoordinates_with_requirements` exist for which the primal crossing
-maximum of the carried rectangles cannot tend to one. -/
+maximum of the carried rectangles cannot tend to one. Assumes positive association (FKG),
+translation invariance and almost surely exactly one infinite cluster for the dual measure
+`D.dualMeasure mu` and almost surely exactly one infinite cluster for `mu`. -/
 lemma
 PeriodicPlanarDualPair.exists_carriedAsymmetricEndpoints_false_of_primal_limit_with_requirements
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (huniqueDual : (D.dualMeasure mu)
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -904,9 +910,10 @@ lemma PeriodicPlaneEmbedding.horizontalEndpoint_tendsto_endBridge_of_mono
 
 /-! ## C. Finite-width endpoint merge rows -/
 
-/-- Under uniqueness, for a finite set of vertical steps there is a radius above any cutoff at which
-all king-offset merge errors of the template are below `ε`. See also
-`PeriodicPlaneEmbedding.exists_adjacentHeight_pairMergeRadius_at_error` (weaker: one step). -/
+/-- Under a.s. existence and uniqueness of the infinite cluster, for a finite set of vertical steps
+there is a radius above any cutoff at which all king-offset merge errors of the template are below
+`ε`. See also `PeriodicPlaneEmbedding.exists_adjacentHeight_pairMergeRadius_at_error` (weaker: one
+step). -/
 lemma PeriodicGraph.exists_finiteAdjacentHeights_pairMergeRadius_at_error
     (P : PeriodicGraph V)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -938,12 +945,13 @@ lemma PeriodicGraph.exists_finiteAdjacentHeights_pairMergeRadius_at_error
   exact ((hradius n).2 branch).trans
     (hthreshold n (Nat.le_max_right _ _))
 
-/-- Under FKG, translation invariance and uniqueness, for finitely many widths there is a height at
-which all the horizontal endpoint crossings have probability above `1 - ε`. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, for
+finitely many widths there is a height at which all the horizontal endpoint crossings have
+probability above `1 - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_finiteWidth_horizontalEndpointHeight
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -994,12 +1002,13 @@ lemma PeriodicPlaneEmbedding.exists_finiteWidth_horizontalEndpointHeight
     le_rfl (by gcongr)
   exact (hchosen indexed).2.trans_le (measureReal_mono hmono)
 
-/-- Under FKG, translation invariance and uniqueness, for finitely many heights there is a width at
-which all the vertical endpoint crossings have probability above `1 - ε`. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, for
+finitely many heights there is a width at which all the vertical endpoint crossings have probability
+above `1 - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_finiteHeight_verticalEndpointWidth
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1049,12 +1058,14 @@ lemma PeriodicPlaneEmbedding.exists_finiteHeight_verticalEndpointWidth
     (d := (verticalTop height : Real)) le_rfl (by gcongr)
   exact (hchosen indexed).2.trans_le (measureReal_mono hmono)
 
-/-- A width and a height chosen together so that the vertical endpoint crossings (finitely many
-heights) and the horizontal endpoint crossing have probability above `1 - ε`. -/
+/-- For a probability measure `mu` with positive association (FKG), translation invariance and
+almost surely exactly one infinite cluster: a width and a height chosen together so that the
+vertical endpoint crossings (finitely many heights) and the horizontal endpoint crossing have
+probability above `1 - ε`. -/
 lemma PeriodicPlaneEmbedding.exists_finiteHeight_coupledEndpointWidthHeight
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1092,11 +1103,12 @@ lemma PeriodicPlaneEmbedding.exists_finiteHeight_coupledEndpointWidthHeight
   exact hhorizontal width (Finset.mem_singleton_self width)
 
 /-- A height and a radius such that the horizontal endpoint crossings for finitely many widths are
-likely and the merge errors for all steps up to that height are small. -/
+likely and the merge errors for all steps up to that height are small. Assumes positive association
+(FKG), translation invariance and almost surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_finiteWidth_endpointHeight_pairMergeRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1180,11 +1192,12 @@ structure PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.VerticalEndpointExt
     1 - verticalEndpointEpsilon < mu.real (E.verticalCrossingEvent
       x (x + width) (verticalBottom step) (verticalTop step))
 
-/-- Under FKG, translation invariance and uniqueness, merge rows exist for every precision. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster,
+merge rows exist for every precision. -/
 lemma PeriodicPlaneEmbedding.nonempty_finiteWidthEndpointMergeRow
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1213,12 +1226,12 @@ lemma PeriodicPlaneEmbedding.nonempty_finiteWidthEndpointMergeRow
     horizontalEndpoint := hhorizontal
     merge := hmerge }⟩
 
-/-- Under FKG, translation invariance and uniqueness, every merge row has a vertical endpoint
-extension. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster,
+every merge row has a vertical endpoint extension. -/
 lemma PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.nonempty_verticalEndpointExtension
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1250,11 +1263,12 @@ lemma PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.nonempty_verticalEndpoi
       hvertical step (Finset.mem_range.mpr (Nat.lt_succ_iff.mpr hstep)) }⟩
 
 /-- A recursive sequence of merge rows in which the width set of row `n + 1` contains the connector
-margin of row `n`. -/
+margin of row `n`. Assumes positive association (FKG), translation invariance and almost surely
+exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_recursiveFiniteWidthEndpointMergeRows
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1303,11 +1317,12 @@ lemma PeriodicPlaneEmbedding.exists_recursiveFiniteWidthEndpointMergeRows
       (widths n)
 
 /-- Version of `exists_recursiveFiniteWidthEndpointMergeRows` with an explicit recursion state and
-nondecreasing row heights. -/
+nondecreasing row heights. Assumes positive association (FKG), translation invariance and almost
+surely exactly one infinite cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_recursiveMonotoneFiniteWidthEndpointMergeRows
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (B : Real) (hB0 : 0 <= B)
     (hB : forall {x z : V} (hxz : P.graph.Adj x z) (u) (i : Fin 2),
@@ -1459,11 +1474,11 @@ lemma PeriodicPlaneEmbedding.FiniteWidthEndpointMergeRow.merge_tendsto_zero
 
 /-- From square boundary-band data with scores tending to one, templates hitting infinity and
 vanishing merge errors, the crossing maximum of the rectangle and its raised neighbour tends to one.
--/
+Assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.centeredAdjacent_limit_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (S : Nat -> Finset V) (margin M outerWidth outerHeight radius : Nat -> Nat)
     (score : Nat -> Real)
     (data : forall n, E.CommonSquareNormalBoundaryBandData
@@ -1600,11 +1615,12 @@ lemma PeriodicPlanarDualPair.canonicalAdjacentHeightArray_false
       zero_add] using hdual k hk
 
 /-- Two-rectangle version of `exists_adjacentHeight_approxPreferredSide_crossing_branch`: vertical
-scores are measured in `[a1, b1] × [c1, d1]` and horizontal scores in `[a0, b0] × [c0, d0]`. -/
+scores are measured in `[a1, b1] × [c1, d1]` and horizontal scores in `[a0, b0] × [c0, d0]`. Assumes
+positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a0 b0 c0 d0 a1 b1 c1 d1 : Real)
     (step : Int) (hstep : 0 <= step)
     {width height : Nat} (hwidth : 0 < width) (hheight : 0 < height)
@@ -1709,11 +1725,12 @@ lemma PeriodicPlaneEmbedding.exists_mixedAdjacentHeight_approxPreferredSide_cros
 
 /-- Two-rectangle preference limit: with templates hitting infinity, vanishing merge errors and
 approximate boundary preferences, the maximum of the horizontal crossing of the first rectangle and
-the raised vertical crossing of the second tends to one. -/
+the raised vertical crossing of the second tends to one. Assumes positive association (FKG) and
+translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendsto_one_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
       mu.real (P.setHitsInfinite (template n : Set V))) atTop (nhds 1))
@@ -1983,11 +2000,11 @@ lemma PeriodicPlaneEmbedding.mixedAdjacentHeightPreference_crossing_max_tendsto_
       (fun _ => measureReal_le_one) (fun _ => measureReal_le_one)
 
 /-- Two-rectangle version of `exists_outward_approxPreferredSide_crossing_branch` with outward
-padding. -/
+padding. Assumes positive association (FKG) and translation invariance for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing_branch
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (a0 b0 c0 d0 a1 b1 c1 d1 : Real)
     (pad : Int) (hpad : 0 <= pad)
     {width height : Nat} (hwidth : 0 < width) (hheight : 0 < height)
@@ -2110,11 +2127,13 @@ lemma PeriodicPlaneEmbedding.exists_outward_mixed_approxPreferredSide_crossing_b
     exact ⟨hroot, htransfer⟩
 
 /-- Two-rectangle version of `exists_uniformTemplate_outwardPreference_crossing_max_tendsto_one`,
-also selecting a branch sequence along which the chosen padded crossing tends to one. -/
+also selecting a branch sequence along which the chosen padded crossing tends to one. Assumes
+positive association (FKG), translation invariance and almost surely exactly one infinite cluster
+for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (template : Nat -> Finset V)
     (htemplateHit : Tendsto (fun n =>
@@ -2532,15 +2551,15 @@ lemma PeriodicPlaneEmbedding.exists_uniformTemplate_outwardMixedPreference_cross
 /-! ## E. Aligned exact extents -/
 
 omit [Countable V] in
-/-- Under dual FKG, translation invariance and uniqueness, a radius sequence such that, for exact
-aligned extents with connector slack at that radius, the padded dual crossing maximum tends to one.
--/
+/-- Under dual FKG, translation invariance and a.s. existence and uniqueness of the infinite
+cluster, a radius sequence such that, for exact aligned extents with connector slack at that radius,
+the padded dual crossing maximum tends to one. -/
 lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedExact_dualLimit
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -2827,14 +2846,15 @@ lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxOutwardMixedRadius_alignedExa
     linarith
 
 omit [Countable W] in
-/-- Under FKG, translation invariance and uniqueness, exact aligned extents with connector slack and
-vanishing merge errors give a primal adjacent crossing limit. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster,
+exact aligned extents with connector slack and vanishing merge errors give a primal adjacent
+crossing limit. -/
 lemma PeriodicPlaneEmbedding.alignedExact_primalMixedAdjacent_limit_of_pairMerge
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (p pDual : Nat -> Real)
     (family : forall n,
@@ -3003,7 +3023,8 @@ lemma PeriodicPlaneEmbedding.alignedExact_primalMixedAdjacent_limit_of_pairMerge
 
 omit [Countable W] in
 /-- Primal adjacent crossing limit for exact aligned extents built from paired boundary-band
-schedule data. -/
+schedule data. Assumes positive association (FKG), translation invariance and almost surely exactly
+one infinite cluster for `mu`. -/
 lemma PairedAdjacentBoundaryBandScheduleData.alignedExact_primalAdjacent_limit
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -3012,7 +3033,7 @@ lemma PairedAdjacentBoundaryBandScheduleData.alignedExact_primalAdjacent_limit
     {step : Nat -> Int}
     (scheduleData : PairedAdjacentBoundaryBandScheduleData
       E Edual mu muDual step)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (k extentX extentY : Nat -> Nat)
     (exact : forall n, AlignedExactExtentPairedMixedBoundaryScores
@@ -3052,7 +3073,8 @@ lemma PairedAdjacentBoundaryBandScheduleData.alignedExact_primalAdjacent_limit
 
 omit [Countable V] in
 /-- Dual outward crossing limit for exact aligned extents built from paired boundary-band schedule
-data, at a suitable radius. -/
+data, at a suitable radius. Assumes positive association (FKG), translation invariance and almost
+surely exactly one infinite cluster for the dual measure `muDual`. -/
 lemma PairedAdjacentBoundaryBandScheduleData.exists_alignedExact_dualOutwardRadius
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -3061,7 +3083,7 @@ lemma PairedAdjacentBoundaryBandScheduleData.exists_alignedExact_dualOutwardRadi
     {step : Nat -> Int}
     (scheduleData : PairedAdjacentBoundaryBandScheduleData
       E Edual mu muDual step)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -3138,8 +3160,9 @@ structure PairedAdjacentCrossNestedOutwardData
     (scheduleData.family n) (scheduleData.familyDual n)
     (scheduleData.schedule n) (index n) padding
 
-/-- Under translation invariance and dual FKG, translation invariance and uniqueness, cross-nested
-outward data exist with current extents above given lower bounds. -/
+/-- Under translation invariance and dual FKG, translation invariance and a.s. existence and
+uniqueness of the infinite cluster, cross-nested outward data exist with current extents above given
+lower bounds. -/
 lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardData
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -3149,7 +3172,7 @@ lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardData
     (scheduleData : PairedAdjacentBoundaryBandScheduleData
       E Edual mu muDual step)
     (hTI : P.IsTranslationInvariant mu)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -3197,8 +3220,9 @@ lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardData
     exact (Classical.choose_spec (htriple n)).2.1
 
 omit [Countable W] in
-/-- Under FKG, translation invariance and uniqueness, the current extent has a primal adjacent limit
-and the previous and next extents have padded dual limits. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, the
+current extent has a primal adjacent limit and the previous and next extents have padded dual
+limits. -/
 lemma PairedAdjacentCrossNestedOutwardData.local_limits
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -3210,7 +3234,7 @@ lemma PairedAdjacentCrossNestedOutwardData.local_limits
     {pad : Nat -> Int} {padding : Nat}
     (data : PairedAdjacentCrossNestedOutwardData
       E Edual mu muDual scheduleData pad padding)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     Tendsto (fun n => max
       (mu.real (E.horizontalCrossingEvent 0
@@ -3268,7 +3292,8 @@ lemma PairedAdjacentCrossNestedOutwardData.local_limits
       (fun n => (data.triple n).next) hdualSlack
 
 /-- Planar exclusion for the cross-nested triple: primal crossings of the current extent and dual
-crossings of the neighbouring extents have probabilities summing to at most one. -/
+crossings of the neighbouring extents have probabilities summing to at most one. Assumes translation
+invariance for the dual measure `D.dualMeasure mu`. -/
 lemma PairedAdjacentCrossNestedOutwardData.shifted_matched_inequalities
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -3690,7 +3715,7 @@ lemma AlignedCrossNestedPairedChain.extentY_eq_of_terminal_eq
     second.extentY_eq_terminal_add hj, hterminal]
 
 /-- Chains exist for every large enough initial width and terminal height, with all widths and
-heights above them. -/
+heights above them. Assumes translation invariance for `mu` and for the dual measure `muDual`. -/
 lemma exists_alignedCrossNestedPairedChain_at_endpoints
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -3788,14 +3813,15 @@ lemma exists_alignedCrossNestedPairedChain_at_endpoints
     dsimp only [data, extentY]
     omega
 
-/-- Under FKG, translation invariance and uniqueness, a chain above given lower bounds whose
-terminal rectangle is crossed horizontally with probability above `1 - ε`. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, a
+chain above given lower bounds whose terminal rectangle is crossed horizontally with probability
+above `1 - ε`. Also assumes translation invariance for the dual measure `muDual`. -/
 lemma exists_alignedCrossNestedPairedChain_horizontalEnd_gt
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     {S : Finset V} {Sdual : Finset W} {p pDual : Real}
@@ -3857,14 +3883,15 @@ lemma exists_alignedCrossNestedPairedChain_horizontalEnd_gt
   · rw [← hterminalX, hdataY]
     exact hcrossing'
 
-/-- Under FKG, translation invariance and uniqueness, a chain above given lower bounds whose initial
-rectangle is crossed vertically with probability above `1 - ε`. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, a
+chain above given lower bounds whose initial rectangle is crossed vertically with probability above
+`1 - ε`. Also assumes translation invariance for the dual measure `muDual`. -/
 lemma exists_alignedCrossNestedPairedChain_verticalStart_gt
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
       [IsProbabilityMeasure muDual]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     {S : Finset V} {Sdual : Finset W} {p pDual : Real}
@@ -4051,7 +4078,8 @@ lemma opposedEndpointScores_not_simultaneously_tendsto_one
 
 /-! ### G.2. Chains above lower bounds -/
 
-/-- Chains exist with all widths and heights above given lower bounds. -/
+/-- Chains exist with all widths and heights above given lower bounds. Assumes translation
+invariance for `mu` and for the dual measure `muDual`. -/
 lemma exists_alignedCrossNestedPairedChain_ge
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -4147,7 +4175,8 @@ lemma exists_alignedCrossNestedPairedChain_ge
   · intro j
     exact (Nat.le_max_right _ _).trans (hy j)
 
-/-- Chains of every length exist. -/
+/-- Chains of every length exist. Assumes translation invariance for `mu` and for the dual measure
+`muDual`. -/
 lemma nonempty_alignedCrossNestedPairedChain
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -4209,8 +4238,8 @@ structure PairedAdjacentCrossNestedOutwardArrayData
     (scheduleData.family n) (scheduleData.familyDual n)
     (scheduleData.schedule n) (index n) padding (2 * (K n + 1) + 2)
 
-/-- Under translation invariance and dual FKG, translation invariance and uniqueness, cross-nested
-array data exist above given lower bounds. -/
+/-- Under translation invariance and dual FKG, translation invariance and a.s. existence and
+uniqueness of the infinite cluster, cross-nested array data exist above given lower bounds. -/
 lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardArrayData
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -4220,7 +4249,7 @@ lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardArrayData
     (scheduleData : PairedAdjacentBoundaryBandScheduleData
       E Edual mu muDual step)
     (hTI : P.IsTranslationInvariant mu)
-    (hFKGDual : IsFKG muDual)
+    (hFKGDual : Universality.PositivelyAssociated muDual)
     (hTIDual : Pdual.IsTranslationInvariant muDual)
     (huniqueDual :
       muDual {eta | Pdual.HasUniqueInfiniteCluster eta} = 1)
@@ -4286,8 +4315,8 @@ lemma PairedAdjacentBoundaryBandScheduleData.exists_crossNestedOutwardArrayData
     exact (Classical.choose_spec (hchain n)).2 j
 
 omit [Countable W] in
-/-- Under FKG, translation invariance and uniqueness, the chain has primal adjacent limits at even
-levels and dual limits at odd levels. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster, the
+chain has primal adjacent limits at even levels and dual limits at odd levels. -/
 lemma PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
     {E : PeriodicPlaneEmbedding P} {Edual : PeriodicPlaneEmbedding Pdual}
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
@@ -4299,7 +4328,7 @@ lemma PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
     {padding : Nat} {K : Nat -> Nat}
     (data : PairedAdjacentCrossNestedOutwardArrayData
       E Edual mu muDual scheduleData padding K)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
     (forall k : Nat -> Nat, Tendsto (fun n => max
       (mu.real (E.horizontalCrossingEvent 0
@@ -4346,7 +4375,8 @@ lemma PairedAdjacentCrossNestedOutwardArrayData.even_odd_local_limits
       (fun n => (data.chain n).level (2 * k n + 1)) hdualSlack
 
 /-- Planar exclusion for two consecutive chain levels: the primal crossings of one and the dual
-crossings of the other have probabilities summing to at most one. -/
+crossings of the other have probabilities summing to at most one. Assumes translation invariance for
+the dual measure `D.dualMeasure mu`. -/
 lemma AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -4520,7 +4550,8 @@ lemma AlignedExactExtentPairedMixedBoundaryScores.shifted_matched_pair
 
 /-- Cross-nested array data with a vertical crossing of the first rectangle and a horizontal
 crossing of the last rectangle, both with probability tending to one, are contradictory (under FKG,
-translation invariance, uniqueness and dual translation invariance). -/
+translation invariance, a.s. existence and uniqueness of the infinite cluster and dual translation
+invariance). -/
 lemma PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
@@ -4530,7 +4561,7 @@ lemma PairedAdjacentCrossNestedOutwardArrayData.false_of_endpoints
     (data : PairedAdjacentCrossNestedOutwardArrayData
       D.primalEmbedding D.dualEmbedding mu (D.dualMeasure mu)
       scheduleData padding K)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (B : Real) (hBpos : 0 < B)
@@ -4640,12 +4671,13 @@ structure PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation
   extentY_large : forall n j, 10 * B < (array.chain n).extentY j
 
 /-- A preparation can be rebuilt so that the horizontal crossing of the last rectangle tends to one.
--/
+Assumes positive association (FKG), translation invariance and almost surely exactly one infinite
+cluster for `mu` and translation invariance for the dual measure `D.dualMeasure mu`. -/
 lemma PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_horizontalEndpoint_rebuild
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (preparation : D.CrossNestedOutwardArrayPreparation mu)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu)) :
     exists rebuilt : D.CrossNestedOutwardArrayPreparation mu,
@@ -4726,14 +4758,16 @@ lemma PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_horizonta
   intro n
   exact le_of_lt (Classical.choose_spec (hrow n)).2.2
 
-/-- A preparation can be rebuilt so that the vertical crossing of the first rectangle exceeds `1 - ε
-n` at every `n`, hence tends to one. -/
+/-- A preparation can be rebuilt so that the vertical crossing of the first rectangle exceeds
+`1 - ε n` at every `n`, hence tends to one. Assumes positive association (FKG), translation
+invariance and almost surely exactly one infinite cluster for `mu` and translation invariance for
+the dual measure `D.dualMeasure mu`. -/
 lemma
 PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoint_rebuild_at_error
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (preparation : D.CrossNestedOutwardArrayPreparation mu)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (epsilon : Nat -> Real) (hepsilon : forall n, 0 < epsilon n)
@@ -4821,12 +4855,13 @@ PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoin
         (fun _ => measureReal_le_one)⟩
 
 /-- A preparation can be rebuilt so that the vertical crossing of the first rectangle tends to one.
--/
+Assumes positive association (FKG), translation invariance and almost surely exactly one infinite
+cluster for `mu` and translation invariance for the dual measure `D.dualMeasure mu`. -/
 lemma PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalEndpoint_rebuild
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (preparation : D.CrossNestedOutwardArrayPreparation mu)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu)) :
     exists rebuilt : D.CrossNestedOutwardArrayPreparation mu,
@@ -4845,14 +4880,14 @@ lemma PeriodicPlanarDualPair.CrossNestedOutwardArrayPreparation.exists_verticalE
           (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := Real)))
   exact ⟨rebuilt, hlimit⟩
 
-/-- Under FKG, translation invariance and uniqueness for the primal measure and its dual image, a
-cross-nested array preparation exists. -/
+/-- Under FKG, translation invariance and a.s. existence and uniqueness of the infinite cluster for
+the primal measure and its dual image, a cross-nested array preparation exists. -/
 lemma PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
-    (hFKGDual : IsFKG (D.dualMeasure mu))
+    (hFKGDual : Universality.PositivelyAssociated (D.dualMeasure mu))
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu))
     (huniqueDual : (D.dualMeasure mu)
       {eta | Pdual.HasUniqueInfiniteCluster eta} = 1) :
@@ -4906,8 +4941,9 @@ lemma PeriodicPlanarDualPair.nonempty_crossNestedOutwardArrayPreparation
     extentY_large := fun n j => hlower.trans_le (by
       exact_mod_cast hlargeY n j) }⟩
 
-/-- If the free buffered infinite-volume FK measure gives probability one to common uniqueness, it
-has a cross-nested array preparation. -/
+/-- If the free buffered infinite-volume FK measure gives probability one to common uniqueness
+(almost surely exactly one primal and exactly one dual infinite cluster), it has a cross-nested
+array preparation. Also assumes `q ≥ 1`. -/
 lemma PeriodicPlanarDualPair.exists_canonicalCrossNestedOutwardArrayPreparation_of_common
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
@@ -4955,7 +4991,7 @@ lemma PeriodicPlanarDualPair.CrossNestedOutwardEndpointCertificate.false
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (data : D.CrossNestedOutwardEndpointCertificate mu)
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (hTIDual : Pdual.IsTranslationInvariant (D.dualMeasure mu)) : False := by
   exact data.preparation.array.false_of_endpoints D mu

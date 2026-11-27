@@ -72,9 +72,11 @@ lemma bmm_distinct_neighbours_of_disjoint_regions {a b : Site d} {R S : Set (Sit
 
 /-! ## B. Menger attachment -/
 
-/-- Box Menger attachment: in every configuration of `threeMeetBox d n`, three distinct infinite
-clusters meeting the box can be attached to three distinct neighbours of the origin by forcing a
-finite set of edges avoiding the origin, keeping them separated without the origin. -/
+/-- Box Menger attachment: in every configuration of `threeMeetBox d n`, for any three box sites
+`x_i` in distinct infinite clusters there are neighbours `a_i` of the origin in the clusters of
+`x_i` and a finite set `W` of edges avoiding the origin that keeps each cluster closed, such that
+after opening `W` each `a_i` is connected to `x_i` without the origin, and the cluster of each `x_i`
+without the origin is infinite. -/
 def bmm_BoxMengerAttachment (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →

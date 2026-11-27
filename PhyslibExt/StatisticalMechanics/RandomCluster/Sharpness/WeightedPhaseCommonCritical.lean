@@ -15,7 +15,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPh
 # All phases of a periodic coupling share one critical point
 
 Translation of the selected infinite-volume laws between phases, positivity transport, and the
-common critical point of all phases for `q ≥ 1`.
+common critical point of all phases for `q ≥ 1` and positive phase-covariant couplings with a
+surjective phase map.
 
 ## i. Overview
 
@@ -34,9 +35,10 @@ together with subcritical exponential decay.
 
 ## ii. Key results
 
-- `covariantWeightedPhasePositivityTransport`: positivity transports between phases (unconditional).
-- `covariant_weighted_phase_common_critical`: all phases have the same critical point
-  (unconditional).
+- `covariantWeightedPhasePositivityTransport`: positivity transports between phases, for positive
+  couplings, phase covariant for a surjective phase map, and `q ≥ 1`.
+- `covariant_weighted_phase_common_critical`: all phases have the same critical point, under the
+  same hypotheses.
 
 ## iii. Table of contents
 
@@ -565,7 +567,11 @@ lemma covariantWeightedPhasePositivityTransport
     (covariantWeightedSelectedPhaseLaws
       J phase phaseJ hJ hsurj hcov q hq)
 
-/-- All phases have the same critical point (unconditional). -/
+/-- For a nonempty finite set of phases, couplings `J > 0` on `ℤ^d` that are phase covariant
+  (`PhaseCovariant J phase phaseJ`) for a surjective phase map, and `q ≥ 1`, every phase `a` has the
+  same critical point as the maximum over the phases: the supremum of the `β` at which the
+  infinite-volume percolation probability of `a` vanishes equals the supremum of the `β` at which
+  all of them vanish. -/
 lemma covariant_weighted_phase_common_critical
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)

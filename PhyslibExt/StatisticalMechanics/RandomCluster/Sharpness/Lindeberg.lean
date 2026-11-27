@@ -21,15 +21,16 @@ for FKG measures.
 ## i. Overview
 
 The conditional expectation `cExp μ F g` given the coordinates in `F` and the increment `delta` of
-revealing one more coordinate give a martingale decomposition of the variance. For a measure
-satisfying the FKG lattice condition and a monotone `0 ≤ f ≤ 1`, each increment is bounded by a
-covariance, giving `monotonic_poincare`. The random-cluster version is `fk_monotonic_poincare` (`q ≥
-1`). Both are unconditional.
+revealing one more coordinate give a martingale decomposition of the variance. For a positive,
+normalised measure satisfying the FKG lattice condition and a monotone `0 ≤ f ≤ 1`, each increment
+is bounded by a covariance, giving `monotonic_poincare`. The random-cluster version is
+`fk_monotonic_poincare` (`0 < p < 1`, `q ≥ 1`). Neither needs any further hypothesis.
 
 ## ii. Key results
 
-- `monotonic_poincare`: `Var f ≤ ∑ Cov(f, ω_e)` under the FKG lattice condition (unconditional).
-- `fk_monotonic_poincare`: the random-cluster case (unconditional).
+- `monotonic_poincare`: `Var f ≤ ∑ Cov(f, ω_e)` under the FKG lattice condition, for positive
+  normalised `μ` and monotone `0 ≤ f ≤ 1`.
+- `fk_monotonic_poincare`: the random-cluster case, for `0 < p < 1` and `q ≥ 1`.
 
 ## iii. Table of contents
 
@@ -593,7 +594,9 @@ lemma var_telescope {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ
 
 /-! ## B. Poincaré inequality -/
 
-/-- `Var f ≤ ∑ Cov(f, ω_e)` under the FKG lattice condition (unconditional). -/
+/-- Poincaré inequality under the FKG lattice condition: for a finite set `E`, a positive weight `μ`
+  on `{0, 1}^E` with total mass `1` satisfying the FKG lattice condition and a nondecreasing `f`
+  with `0 ≤ f ≤ 1`, `var μ f ≤ ∑ₑ cov μ f (coord e)`. -/
 lemma monotonic_poincare {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :

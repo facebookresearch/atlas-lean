@@ -114,9 +114,8 @@ lemma arc_connected_removeSite_reaches_boundary
 
 /-! ## B. The residue -/
 
-/-- Every trifurcation of the box has three distinct open neighbours whose clusters are infinite
-after
-the trifurcation is removed. -/
+/-- Every trifurcation `x` of the box has three open neighbours, other than `x`, that are pairwise
+disconnected once `x` is removed and whose clusters are infinite after `x` is removed. -/
 def arc_TrifArmsRemoveSiteInfinite (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x →
     ∃ c : Fin 3 → Site d,

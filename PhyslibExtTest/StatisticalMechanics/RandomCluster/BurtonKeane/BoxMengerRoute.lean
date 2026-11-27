@@ -15,9 +15,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMenge
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerRoute`
 
 * `bc55_naive_collapse_false_of_notNeighbour` at the origin (no site is its own neighbour);
-* `bc55_originNeighbour_avoiding_cluster` in conditional form;
-* `bc55_burton_keane_bernoulli_of_boxMenger` and `bc55_burton_keane_bernoulli_of_routingCover`
-  checked by type.
+* `bc55_originNeighbour_avoiding_cluster` in conditional form.
 -/
 
 @[expose] public section
@@ -38,8 +36,5 @@ example {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     ¬ ∃ a : Site d, (hypercubicLattice d).Adj 0 a ∧ a ∈ cluster d ω x :=
   bc55_originNeighbour_avoiding_cluster ω x hno
 
--- The Bernoulli Burton–Keane routes, by type.
-example := @bc55_burton_keane_bernoulli_of_boxMenger
-example := @bc55_burton_keane_bernoulli_of_routingCover
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerRoute

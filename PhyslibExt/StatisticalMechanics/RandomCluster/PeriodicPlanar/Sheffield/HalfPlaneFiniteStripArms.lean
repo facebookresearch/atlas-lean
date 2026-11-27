@@ -176,14 +176,15 @@ lemma PeriodicPlaneEmbedding.exists_finiteStripJoinedBoundaryArmEvent_measureRea
 
 /-! ## B. High-probability strip joined arms -/
 
-/-- High-probability half-plane joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆
-H_R`. Weaker than `exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin`
-(`HalfPlaneJoinedArmsHighProbability`), which also identifies `U` as a vertical translate of
-`L`. -/
+/-- High-probability half-plane joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆ H_R`.
+Weaker than `exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin`
+(`HalfPlaneJoinedArmsHighProbability`), which also identifies `U` as a vertical translate of `L`.
+Assumes positive association (FKG), translation invariance and almost surely exactly one infinite
+cluster for `mu`. -/
 lemma PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent_with_separation
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (s : Real) (t : Int)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -247,12 +248,12 @@ lemma PeriodicPlaneEmbedding.exists_highProbability_finiteJoinedBoundaryArmEvent
 
 namespace PeriodicPlaneEmbedding
 
-/-- High-probability strip joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆ H_R`
-(FKG, translation invariance, almost sure uniqueness). -/
+/-- High-probability strip joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆ H_R` (FKG,
+translation invariance, almost sure existence and uniqueness of the infinite cluster). -/
 lemma exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     {r R : Real} (hrR : r ≤ R) (s : Real) (t : Int)
     {epsilon : Real} (hepsilon : 0 < epsilon) :
@@ -271,12 +272,12 @@ lemma exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation
 end PeriodicPlaneEmbedding
 
 /-- Along any sequence of parameters there are sources and strip widths, at least any prescribed
-minimum, whose strip joined arm probabilities tend to one (FKG, translation invariance,
-almost sure uniqueness). -/
+minimum, whose strip joined arm probabilities tend to one (FKG, translation invariance, almost sure
+existence and uniqueness of the infinite cluster). -/
 lemma PeriodicPlaneEmbedding.exists_rowwise_finiteStripJoinedBoundaryArms_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
-    (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
+    (hFKG : Universality.PositivelyAssociated mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1)
     (r R s : Nat → Real) (t : Nat → Int)
     (hrR : ∀ n, r n ≤ R n) (minimumWidth : Nat → Nat) :

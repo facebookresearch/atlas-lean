@@ -22,14 +22,17 @@ hexagonal lattices, and their exchange under planar duality `y * y* = q`.
 
 ## i. Overview
 
-For the random-cluster model with cluster weight `q` and edge odds `y = p / (1 - p)`, the critical
-point of the homogeneous triangular lattice is the positive root of `y ^ 3 + 3 y ^ 2 - q = 0`
-(`triangularFKCriticalPolynomial`), and that of the hexagonal lattice is the positive root of
-`y ^ 3 - 3 q y - q ^ 2 = 0` (`hexagonalFKCriticalPolynomial`). This file proves the purely
-algebraic fact that these two cubics are exchanged by the duality relation `y * y* = q`: if `y`
-solves the triangular equation then `y* = q / y` solves the hexagonal one and conversely. All
-statements are unconditional identities over `ℝ` (with the stated nonvanishing hypotheses); they
-do not assert that either root is the critical point of an FK measure.
+For the random-cluster model with cluster weight `q ≥ 1` and edge odds `y = p / (1 - p)`, the
+critical edge odds `p_c / (1 - p_c)` of the homogeneous triangular lattice is the positive root of
+`y ^ 3 + 3 y ^ 2 - q = 0` (`triangularFKCriticalPolynomial`), and that of the hexagonal lattice is
+the positive root of `y ^ 3 - 3 q y - q ^ 2 = 0` (`hexagonalFKCriticalPolynomial`) (Duminil-Copin,
+Li and Manolescu, 2018; the range `q ≥ 4` is due to Beffara, Duminil-Copin and Smirnov, 2015); the
+critical probability is then `p_c = y / (1 + y)`. For every `q > 0` each cubic has exactly one
+positive root. This file proves the purely algebraic fact that these two cubics are exchanged by the
+duality relation `y * y* = q`: if `y` solves the triangular equation then `y* = q / y` solves the
+hexagonal one and conversely. All statements are unconditional identities over `ℝ` (with the stated
+nonvanishing hypotheses); they do not assert that either root is the critical point of an FK
+measure.
 
 ## ii. Key results
 
@@ -48,6 +51,10 @@ do not assert that either root is the critical point of an FK measure.
 - R. J. Baxter, H. N. V. Temperley and S. E. Ashley, *Triangular Potts model at its transition
   temperature, and related models*, Proc. R. Soc. Lond. A 358 (1978) 535–559.
 - G. Grimmett, *The Random-Cluster Model*, Springer (2006), §6.6.
+- V. Beffara, H. Duminil-Copin and S. Smirnov, *On the critical parameters of the q ≥ 4
+  random-cluster model on isoradial graphs*, J. Phys. A 48 (2015) 484003.
+- H. Duminil-Copin, J.-H. Li and I. Manolescu, *Universality for the random-cluster model on
+  isoradial graphs*, Electron. J. Probab. 23 (2018), no. 96.
 -/
 
 @[expose] public section
@@ -56,15 +63,21 @@ namespace StatMech.FK.TriHex
 
 /-! ## A. The critical polynomials -/
 
-/-- The triangular-lattice FK critical polynomial `y ^ 3 + 3 y ^ 2 - q` in the edge odds `y = p / (1
-- p)`; its positive root is the critical odds of the homogeneous triangular random-cluster model
-with cluster weight `q` (Grimmett, §6.6). -/
+/-- The triangular-lattice FK critical polynomial `y ^ 3 + 3 y ^ 2 - q` in the edge odds
+`y = p / (1 - p)`. For `q > 0` it has exactly one positive root `y₀`. For `q ≥ 1`, `y₀` is the
+critical edge odds `p_c / (1 - p_c)` of the homogeneous triangular random-cluster model with cluster
+weight `q`, so its critical probability is `p_c = y₀ / (1 + y₀)` (Duminil-Copin, Li and Manolescu,
+2018; the range `q ≥ 4` is due to Beffara, Duminil-Copin and Smirnov, 2015; see also Grimmett,
+§6.6). Neither fact is proved here. -/
 def triangularFKCriticalPolynomial (q y : ℝ) : ℝ :=
   y ^ 3 + 3 * y ^ 2 - q
 
-/-- The hexagonal-lattice FK critical polynomial `y ^ 3 - 3 q y - q ^ 2` in the edge odds `y = p /
-(1 - p)`; its positive root is the critical odds of the homogeneous hexagonal random-cluster model
-with cluster weight `q` (Grimmett, §6.6). -/
+/-- The hexagonal-lattice FK critical polynomial `y ^ 3 - 3 q y - q ^ 2` in the edge odds
+`y = p / (1 - p)`. For `q > 0` it has exactly one positive root `y₀`. For `q ≥ 1`, `y₀` is the
+critical edge odds `p_c / (1 - p_c)` of the homogeneous hexagonal random-cluster model with cluster
+weight `q`, so its critical probability is `p_c = y₀ / (1 + y₀)` (Duminil-Copin, Li and Manolescu,
+2018; the range `q ≥ 4` is due to Beffara, Duminil-Copin and Smirnov, 2015; see also Grimmett,
+§6.6). Neither fact is proved here. -/
 def hexagonalFKCriticalPolynomial (q y : ℝ) : ℝ :=
   y ^ 3 - 3 * q * y - q ^ 2
 
@@ -108,7 +121,7 @@ lemma triangularFKCritical_of_dual_hexagonal {q y yStar : ℝ}
   rw [← hdual, hStar]
   ring
 
-/-- Triangular–hexagonal duality of the homogeneous FK critical points: when `y * y* = q`, the odds
+/-- Triangular–hexagonal duality of the homogeneous FK critical cubics: when `y * y* = q`, the odds
 `y` solves the triangular critical cubic iff the dual odds `y*` solves the hexagonal one (Grimmett,
 *The Random-Cluster Model*, §6.6). -/
 lemma triangularFKCritical_iff_hexagonal_of_dual {q y yStar : ℝ}
