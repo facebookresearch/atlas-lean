@@ -46,7 +46,8 @@ A good expansion states and links:
 ## Proof depends on
 
 - [Representation by ternary quadratic forms over $\mathbb{Q}_p$ and $\mathbb{R}$](ternary-form-local-representation.md), for the local criteria in three variables
-- [Formula for the $p$-adic Hilbert symbol](../p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for the local Hilbert symbols in the product formula and the existence theorem
+- [Formula for the $p$-adic Hilbert symbol at an odd prime](../p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for the local Hilbert symbols at odd primes in the product formula and the existence theorem
+- [Formula for the $2$-adic Hilbert symbol](../p-adic-numbers/hilbert-symbol/dyadic-hilbert-symbol-formula.md), for the local Hilbert symbol at $2$ in the product formula and the existence theorem
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 

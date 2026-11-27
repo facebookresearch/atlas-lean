@@ -40,7 +40,7 @@ A good expansion states and links:
 
 ## Proof depends on
 
-- [Formula for the $p$-adic Hilbert symbol](../p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for the values of the symbol on $\mathbb{Q}_p^\times / \mathbb{Q}_p^{\times 2}$, from which its bilinearity and nondegeneracy follow
+- [Formula for the $p$-adic Hilbert symbol at an odd prime](../p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md) and [Formula for the $2$-adic Hilbert symbol](../p-adic-numbers/hilbert-symbol/dyadic-hilbert-symbol-formula.md), for the values of the symbol on $\mathbb{Q}_p^\times / \mathbb{Q}_p^{\times 2}$ for odd $p$ and for $p = 2$, from which its bilinearity and nondegeneracy follow
 - [Sign rule for the real Hilbert symbol](../p-adic-numbers/hilbert-symbol/eq-neg-one-iff-both-neg.md), for the real case
 
 The rest of its proof is that of the source below, as the Expansion describes.

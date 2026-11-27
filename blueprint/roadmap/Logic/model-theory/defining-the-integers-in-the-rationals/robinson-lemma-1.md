@@ -37,7 +37,8 @@ is $\equiv 1 \pmod 8$) turns these two conditions into the two forms above.
 
 - [Hasse–Minkowski theorem for representations of rationals](../../../NumberTheory/quadratic-forms-sums-of-squares/hasse-minkowski-representation.md), for the reduction to $\mathbb{R}$ and the fields $\mathbb{Q}_\ell$
 - [Representation by ternary quadratic forms over $\mathbb{Q}_p$ and $\mathbb{R}$](../../../NumberTheory/quadratic-forms-sums-of-squares/ternary-form-local-representation.md), for the local criterion and the isotropy test by a Hilbert symbol
-- [Formula for the $p$-adic Hilbert symbol](../../../NumberTheory/p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for $(-1, p)_p = (-1, p)_2 = -1$
+- [Formula for the $p$-adic Hilbert symbol at an odd prime](../../../NumberTheory/p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for $(-1, p)_p = -1$
+- [Formula for the $2$-adic Hilbert symbol](../../../NumberTheory/p-adic-numbers/hilbert-symbol/dyadic-hilbert-symbol-formula.md), for $(-1, p)_2 = -1$
 - [Euler's criterion](../../../NumberTheory/congruences/power-residues-reciprocity/legendre-symbol-and-euler-s-criterion/euler-criterion.md), for $\left(\frac{-1}{p}\right) = (-1)^{(p-1)/2} = -1$
 - [Unit diagonal forms in at least three variables over $\mathbb{Q}_p$ are isotropic for odd $p$](../../../NumberTheory/p-adic-numbers/hilbert-symbol/diagonal-unit-isotropic.md), for the isotropy of $f$ at the odd primes $\ell \neq p$
 - [Hensel's lemma with a derivative bound](../../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-of-two-mul-add-val-deriva.md), applied to $X^2 - u$ over the complete discrete valuation rings $\mathbb{Z}_p$ and $\mathbb{Z}_2$, for the squares of $\mathbb{Q}_p$ and $\mathbb{Q}_2$
