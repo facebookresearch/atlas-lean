@@ -11800,6 +11800,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/LPRelaxations/FractionalClique": {"to": "GraphTheory/graph-coloring", "title": "Fractional coloring"},
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/LPRelaxations/FractionalColouring": {"to": "GraphTheory/graph-coloring", "title": "Fractional coloring"},
   "MathlibExt/Combinatorics/SimpleGraph/AlgebraicGraphTheory/SArcs": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arc-transitive graphs"},
+  "MathlibExt/Combinatorics/SimpleGraph/AlonBoppana": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/Andrasfai": {"to": "GraphTheory/algebraic-graph-theory", "title": "Andrásfai graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/Balanced": {"to": "GraphTheory/extremal-graph-theory", "title": "Balanced subgraphs"},
   "MathlibExt/Combinatorics/SimpleGraph/BookNumber": {"to": "GraphTheory/extremal-graph-theory", "title": "Books in graphs"},
