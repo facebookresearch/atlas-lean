@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.ProperGeometricModuliRHomModels
+public import MathlibExt.AlgebraicGeometry.ProperGeometricModuliRHomNativeLargeModuleEndomorphismIsomorphism
 
 /-!
 # Source construction and RHom requests for the actual proper DG-moduli point
@@ -65,11 +66,6 @@ universe u
 def_wanted native_large_projective_module_lift (k : Type u) [CommRing k]
     (UL : CochainLiftModel k) (T : DGCat k) (M : RightModule k T)
     (h : IsCofibrantModule M) : LargeProjectiveModuleLift UL T M
-
-/-- Its actual componentwise endomorphism map is a coefficient-universe isomorphism, not a geometric conclusion. -/
-theorem_wanted native_large_module_endomorphism_isomorphism (k : Type u) [CommRing k]
-    (UL : CochainLiftModel k) (T : DGCat k) (M : RightModule k T)
-    (ML : LargeProjectiveModuleLift UL T M) : IsIso ML.endomorphismMap
 
 variable (O : ∀ Z : Scheme.{u}, EtaleStructureSource Z) [SourceTheory.{u}]
   (L : EtalePullbackSystem O)

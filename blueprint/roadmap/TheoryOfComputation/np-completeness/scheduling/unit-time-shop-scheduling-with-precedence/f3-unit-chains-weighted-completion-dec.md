@@ -1,0 +1,3 @@
+# THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem
+
+The decision problem THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(x, A, K)$ (a list of natural numbers, a list of pairs and a natural number), to an instance that is well-formed (the arcs form chains on the jobs (no repeated arcs, both ends in range, no shared tails or heads, no directed cycle)) and feasible for THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME. It rejects every bitstring that does not decode to such an instance.

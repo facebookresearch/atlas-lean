@@ -1,0 +1,3 @@
+# NO-WAIT FLOW-SHOP SCHEDULING WITH m PROCESSORS as a decision problem
+
+Fix a natural number $m_0$. The decision problem NO-WAIT FLOW-SHOP SCHEDULING WITH $m$ PROCESSORS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(m, J, D)$ (a natural number, a list of lists of natural numbers and a natural number), to an instance that is well-formed for NO-WAIT FLOW-SHOP SCHEDULING WITH $m$ PROCESSORS and feasible for NO-WAIT FLOW-SHOP SCHEDULING (a flow-shop schedule meeting the deadline in which each task starts exactly when the job's previous task finishes). It rejects every bitstring that does not decode to such an instance.

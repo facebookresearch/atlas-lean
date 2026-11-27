@@ -1,0 +1,11 @@
+# Accepted dispatch certificate is an ε-optimal LP point
+
+Consider a network with buses $v \in \{1, \dots, n_N\}$, branches $e$ from bus $\mathrm{tail}(e)$ to bus $\mathrm{head}(e)$ with rational susceptances $b_e$, generators $g$ located at buses $\mathrm{bus}(g)$, a reference bus $r$, and rational demands $d_v$, generator limits $p^{\min}_g, p^{\max}_g$, branch flow limits $f^{\min}_e, f^{\max}_e$ and costs $c_g$. Let $B$ be the incidence matrix ($B_{ve} = 1$ if $v = \mathrm{tail}(e)$, minus $1$ if $v = \mathrm{head}(e)$), $L = B \operatorname{diag}(b) B^{\mathsf T}$ the weighted Laplacian, $f(\theta) = \operatorname{diag}(b) B^{\mathsf T}\theta$ the branch flows, and $C$ the generator-to-bus incidence. A real dispatch $(p, \theta) \in \mathbb{R}^{n_G} \times \mathbb{R}^{n_N}$ is feasible when $L\theta = Cp - d$, $\theta_r = 0$, $p^{\min} \le p \le p^{\max}$ and $f^{\min} \le f(\theta) \le f^{\max}$ (all data read as reals); its cost is $c \cdot p$.
+
+The dispatch problem is encoded as the real LP $\max\{\hat c \cdot x : x \ge 0,\ A x \le \hat b\}$ over the positive and negative parts of $(p, \theta)$, where $A$ stacks the constraint rows of $\pm(L\theta - Cp)$, $\pm\theta_r$, $\pm p$, $\pm f(\theta)$, $\hat b$ the corresponding right-hand sides, and $\hat c$ is $-c$ on the positive generation parts, $c$ on the negative generation parts and $0$ elsewhere. A dispatch $(p, \theta)$ is encoded as $x(p, \theta) = (\max(z, 0), \max(-z, 0))$ with $z = (p, \theta)$.
+
+A certificate consists of a rational dispatch $(p, \theta)$, nodal prices $\lambda \in \mathbb{Q}^{n_N}$, a reference multiplier $\rho \in \mathbb{Q}$, generator bound multipliers $\mu^{\mathrm{hi}}, \mu^{\mathrm{lo}} \in \mathbb{Q}^{n_G}$, flow bound multipliers $\eta^{\mathrm{hi}}, \eta^{\mathrm{lo}} \in \mathbb{Q}^{n_E}$ and a budget $\varepsilon \in \mathbb{Q}$. Its certified lower bound is
+
+$$\ell = d \cdot \lambda + p^{\min} \cdot \mu^{\mathrm{lo}} - p^{\max} \cdot \mu^{\mathrm{hi}} + f^{\min} \cdot \eta^{\mathrm{lo}} - f^{\max} \cdot \eta^{\mathrm{hi}}.$$
+
+If the exact certificate checker accepts the certificate, then $x^\star = x(p, \theta)$ (with the rational entries read as reals) satisfies $x^\star \ge 0$ and $A x^\star \le \hat b$, and every real $z \ge 0$ with $A z \le \hat b$ satisfies $\hat c \cdot z \le \hat c \cdot x^\star + \varepsilon$.
