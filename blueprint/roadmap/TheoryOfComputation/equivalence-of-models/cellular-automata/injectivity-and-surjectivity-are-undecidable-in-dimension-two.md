@@ -12,14 +12,10 @@ tile set whose arrows force a path through arbitrarily large squares in any regi
 
 ## Proof depends on
 
+- [The finite tiling problem is undecidable](../../undecidable-problems/wang-tiles/the-finite-tiling-problem-is-undecidable.md)
+- [The tile set SNAKES and its plane-filling property](../../undecidable-problems/wang-tiles/the-tile-set-snakes.md)
 - [The tiling problem is undecidable](../../undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 - [Bijective cellular automata are reversible](bijective-cellular-automata-are-reversible.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- An aperiodic tile set with the plane-filling path property (the tile set SNAKES), and the undecidability of the finite tiling problem used for surjectivity, from J. Kari, "Reversibility and surjectivity problems of cellular automata", *Journal of Computer and System Sciences* 48:149–182, 1994 (proof prerequisites and source check; not yet stated)
 
 ## Sources
 
