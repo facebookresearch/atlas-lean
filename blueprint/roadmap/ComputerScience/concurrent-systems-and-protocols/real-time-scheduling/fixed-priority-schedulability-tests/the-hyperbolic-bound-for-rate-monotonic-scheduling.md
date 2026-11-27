@@ -6,7 +6,7 @@ $$
 \prod_{i=1}^{n} (U_i + 1) \le 2,
 $$
 
-then the task set is schedulable by the rate-monotonic algorithm: no request ever overflows.
+then the task set is schedulable by the rate-monotonic algorithm whatever the phases: for every choice of the phases, no request ever overflows.
 
 The test needs only the utilizations, as the [rate-monotonic utilization bound](../the-rate-monotonic-utilization-bound.md) $\sum_i U_i \le n(2^{1/n} - 1)$ does, and accepts every task set that bound accepts: by the inequality of arithmetic and geometric means, $\prod_i (U_i + 1) \le (1 + \frac{1}{n}\sum_i U_i)^n \le 2$ whenever $\sum_i U_i \le n(2^{1/n} - 1)$.
 

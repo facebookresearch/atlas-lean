@@ -6,7 +6,7 @@ In the setting of [response-time analysis for fixed-priority periodic tasks](res
 2. if $r^{k+1} = r^k$ for some $k \ge 1$, then $r^k$ is the least positive solution of $W_i(r) = r$;
 3. if $\sum_{j \in hp(i)} C_j/T_j < 1$, in particular if $\sum_{j \in hp(i) \cup \{i\}} C_j/T_j \le 1$, a positive solution exists and the sequence becomes constant after finitely many steps.
 
-The iteration may be stopped as soon as some $r^k$ exceeds $T_i$: by 1, every positive solution is at least $r^k$, so there is no solution in $(0, T_i]$, and, if no request of a higher-priority task overflows whatever the phases, $\tau_i$ can overflow. A solution need not exist at all: with one higher-priority task with $C_j = T_j = 1$ and $C_i = 1$, $W_i(r) = 1 + \lceil r \rceil > r$ for every $r$.
+The iteration may be stopped as soon as some $r^k$ exceeds $T_i$: by 1, every positive solution is at least $r^k$, so there is no solution in $(0, T_i]$, and the priority assignment is not feasible whatever the phases. A solution need not exist at all: with one higher-priority task with $C_j = T_j = 1$ and $C_i = 1$, $W_i(r) = 1 + \lceil r \rceil > r$ for every $r$.
 
 **Proof.** $W_i$ is nondecreasing, so $r^0 \le r^1$ propagates to $r^k \le r^{k+1}$, and $r^k \le r^*$ for a fixed point $r^* > 0$ propagates in the same way. If $U = \sum_{j \in hp(i)} C_j/T_j < 1$, then $W_i(r) \le C_i + \sum_{j \in hp(i)} C_j + U r \le r$ for $r \ge R_0 = (C_i + \sum_{j \in hp(i)} C_j)/(1 - U)$, so the iterates stay in $[0, R_0]$, where $W_i$ takes only finitely many values; a nondecreasing sequence with finitely many values is eventually constant.
 
