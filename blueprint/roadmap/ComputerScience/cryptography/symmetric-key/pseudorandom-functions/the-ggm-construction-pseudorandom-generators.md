@@ -1,12 +1,12 @@
 # The GGM construction: pseudorandom generators give pseudorandom functions
 
-Let $S$ and $R$ be finite nonempty sets, let $G : S \to S \times S$ be a length-doubling generator and write $G(s) = (G_0(s), G_1(s))$. For $\ell \ge 1$ define $F : S \times \{0,1\}^\ell \to S$ by $F(k, x_1 \cdots x_\ell) = G_{x_\ell}(\cdots G_{x_2}(G_{x_1}(k)) \cdots)$. Let $Q \ge 1$ and let $A$ be a PRF adversary with coins in $R$: an adaptive oracle algorithm that makes at most $Q$ queries along every path, whatever the answers. Then
+Let $S$ and $R$ be finite nonempty sets, let $G : S \to S \times S$ be a length-doubling generator and write $G(s) = (G_0(s), G_1(s))$. For $\ell \ge 1$ define $F : S \times \{0,1\}^\ell \to S$ by $F(k, x_1 \cdots x_\ell) = G_{x_\ell}(\cdots G_{x_2}(G_{x_1}(k)) \cdots)$. Let $Q \ge 1$ and let $A$ be a PRF adversary: an adaptive oracle algorithm, run on coins drawn uniformly from $R$ independently of the key and of the random function, that makes at most $Q$ queries along every path, whatever the answers. Then
 
 $$\mathrm{Adv}^{\mathrm{PRF}}[A, F] = \ell\, Q \cdot \mathrm{Adv}^{\mathrm{PRG}}[B, G]$$
 
 for the distinguisher $B$ built from $A$ by the hybrid construction. $B$ draws a level $i < \ell$ and a query index $j < Q$ uniformly and runs $A$ once, answering its queries from a lazily filled table of pairs of labels for the children of the nodes at level $i$ of the evaluation tree: a node that enters the table at query $m$ gets a uniform pair if $m < j$, the challenge pair if $m = j$, and $G(s)$ for a uniform seed $s$ if $m > j$.
 
-$B$ is explicit and is an elementary wrapper around $A$ in the sense of Boneh and Shoup (Definition 2.12): it runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most $\ell - i$ times per query. For $Q = 0$ the adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only makes the coin set of $B$ nonempty.
+$B$ runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most $\ell - i$ times per query. The equality is one between advantages for fixed finite sets and states no running time; the running-time requirement on $B$ and the asymptotic statement that $F$ is a secure PRF when $G$ is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions ($S$ efficiently represented and sampleable, $G$ efficient, and $\ell$ and $Q$ polynomially bounded in the security parameter), this $B$ is an elementary wrapper around $A$ (Definition 2.12). For $Q = 0$ the adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only makes the coin set of $B$ nonempty.
 
 ## Sources
 

@@ -34,9 +34,13 @@ down the tree).
   of the nodes `x₁ ⋯ x_i` at level `i`: a node not in the table gets `u m` if `m < j`, the
   challenge if `m = j` and `G (v m)` if `m > j`.
 
-`B` is an elementary wrapper around `A` in the sense of Boneh and Shoup (Definition 2.12): it runs
-`A` once, keeps at most `Q` table entries and evaluates `G` at most `ℓ - i` times per query (once
-for a new node when `m > j`, and `ℓ - i - 1` times to walk down from level `i + 1`). For `Q = 0`
+`B` runs `A` once, keeps at most `Q` table entries and evaluates `G` at most `ℓ - i` times per
+query (once for a new node when `m > j`, and `ℓ - i - 1` times to walk down from level `i + 1`).
+`prfAdvantage_ggm` is an equality of advantages for fixed finite types: it states no running time,
+and the running-time requirement on `B` and the asymptotic statement that `ggm G` is a secure PRF
+when `G` is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions (`S`
+efficiently represented and sampleable, `G` efficient, and `ℓ` and `Q` polynomially bounded in the
+security parameter), this `B` is an elementary wrapper around `A` (Definition 2.12). For `Q = 0`
 the adversary makes no queries and its advantage is `0`; the assumption `Q ≥ 1` only makes the
 coin set of `B` nonempty.
 
@@ -79,22 +83,11 @@ section Uniform
 
 variable {α β γ : Type*} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
 
-private theorem map_prod (f : α × β → γ) :
-    (U (α × β)).map f = (U α).bind fun a => (U β).map fun b => f (a, b) := by
-  simp only [← PMF.bind_pure_comp]
-  exact (uniformOfFintype_bind_bind fun a b => PMF.pure (f (a, b))).symm
-
 private theorem map_equiv (e : α ≃ β) (f : β → γ) : (U α).map (f ∘ e) = (U β).map f := by
   rw [← PMF.map_comp, Cslib.Probability.PMF.uniformOfFintype_map_equiv]
 
-private theorem map_fst (f : α → γ) : (U (α × β)).map (fun p => f p.1) = (U α).map f := by
-  rw [map_prod, ← PMF.bind_pure_comp]
-  congr 1
-  funext a
-  exact PMF.map_const (U β) (f a)
-
 private theorem map_snd (f : β → γ) : (U (α × β)).map (fun p => f p.2) = (U β).map f := by
-  rw [map_prod]
+  rw [uniformOfFintype_map_prod]
   exact PMF.bind_const (U α) ((U β).map f)
 
 /-- Two independent uniform samples can be drawn in either order. -/
@@ -105,7 +98,7 @@ private theorem bind_map_comm (f : α → β → γ) :
 
 private theorem map_prod_comm (f : α × β → γ) :
     (U (α × β)).map f = (U β).bind fun b => (U α).map fun a => f (a, b) := by
-  rw [map_prod, bind_map_comm]
+  rw [uniformOfFintype_map_prod, bind_map_comm]
 
 end Uniform
 
@@ -298,7 +291,7 @@ private theorem lazyHyb_Q (G : S → S × S) (Q : ℕ) (A : R → OracleComp (Fi
     funext m
     simp [tapeL, m.2]
   simp only [lazyHyb, htape]
-  rw [map_prod]
+  rw [uniformOfFintype_map_prod]
   have hin : ∀ u : Fin Q → S × S,
       (U ((Fin Q → S) × R)).map (fun vr => runLazy u false 0 Table.empty
         (levelComp G i (A (u, vr).2.2))) =
@@ -345,8 +338,10 @@ private theorem prgReal_ggmReduction [NeZero ℓ] (G : S → S × S) (Q : ℕ) [
         simp
       · simp [hm, hmj, Fin.lt_def.not.mp hm]
   change ((U S).bind fun s => (U _).map ((ggmReduction G Q A).guess (G s))) = _
-  rw [← map_prod (fun p : S × (Fin ℓ × Fin Q × (Fin Q → S × S) × (Fin Q → S) × R) =>
-      (ggmReduction G Q A).guess (G p.1) p.2), hguess, map_equiv, map_fst, map_prod]
+  rw [← uniformOfFintype_map_prod
+      (fun p : S × (Fin ℓ × Fin Q × (Fin Q → S × S) × (Fin Q → S) × R) =>
+        (ggmReduction G Q A).guess (G p.1) p.2),
+    hguess, map_equiv, uniformOfFintype_map_fst, uniformOfFintype_map_prod]
   rfl
 
 /-- The random world of the PRG experiment against `ggmReduction` averages the lazy hybrids
@@ -385,16 +380,19 @@ private theorem prgRand_ggmReduction [NeZero ℓ] (G : S → S × S) (Q : ℕ) [
           omega
         simp [hm, hmj, hm']
   change ((U (S × S)).bind fun y => (U _).map ((ggmReduction G Q A).guess y)) = _
-  rw [← map_prod (fun p : (S × S) × (Fin ℓ × Fin Q × (Fin Q → S × S) × (Fin Q → S) × R) =>
-      (ggmReduction G Q A).guess p.1 p.2), hguess, map_equiv, map_fst, map_prod]
+  rw [← uniformOfFintype_map_prod
+      (fun p : (S × S) × (Fin ℓ × Fin Q × (Fin Q → S × S) × (Fin Q → S) × R) =>
+        (ggmReduction G Q A).guess p.1 p.2),
+    hguess, map_equiv, uniformOfFintype_map_fst, uniformOfFintype_map_prod]
   rfl
 
 /-- **The GGM construction: pseudorandom generators give pseudorandom functions.** Let $S$ and
 $R$ be finite nonempty sets, let $G : S \to S \times S$ be a length-doubling generator with
 $G(s) = (G_0(s), G_1(s))$, let $\ell \ge 1$ and let $F : S \times \{0,1\}^\ell \to S$,
 $F(k, x_1 \cdots x_\ell) = G_{x_\ell}(\cdots G_{x_2}(G_{x_1}(k)) \cdots)$, be the GGM
-construction. Let $Q \ge 1$ and let $A$ be a PRF adversary with coins in $R$: an adaptive oracle
-algorithm that makes at most $Q$ queries along every path, whatever the answers. Then
+construction. Let $Q \ge 1$ and let $A$ be a PRF adversary: an adaptive oracle algorithm, run on
+coins drawn uniformly from $R$ independently of the key and of the random function, that makes at
+most $Q$ queries along every path, whatever the answers. Then
 $\mathrm{Adv}^{\mathrm{PRF}}[A, F] = \ell\, Q \cdot \mathrm{Adv}^{\mathrm{PRG}}[B, G]$ for the
 distinguisher $B$ built from $A$ by the hybrid construction. $B$ draws a level $i < \ell$ and a
 query index $j < Q$ uniformly and runs $A$ once, answering its queries from a lazily filled table
@@ -402,10 +400,14 @@ of pairs of labels for the children of the nodes at level $i$ of the evaluation 
 enters the table at query $m$ gets a uniform pair if $m < j$, the challenge pair if $m = j$, and
 $G(s)$ for a uniform seed $s$ if $m > j$.
 
-$B$ is explicit and is an elementary wrapper around $A$ in the sense of Boneh and Shoup
-(Definition 2.12): it runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most
-$\ell - i$ times per query. For $Q = 0$ the adversary makes no queries and its advantage is $0$;
-the assumption $Q \ge 1$ only makes the coin set of $B$ nonempty. -/
+$B$ runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most $\ell - i$ times per
+query. The equality is one between advantages for fixed finite sets and states no running time;
+the running-time requirement on $B$ and the asymptotic statement that $F$ is a secure PRF when $G$
+is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions ($S$ efficiently
+represented and sampleable, $G$ efficient, and $\ell$ and $Q$ polynomially bounded in the security
+parameter), this $B$ is an elementary wrapper around $A$ (Definition 2.12). For $Q = 0$ the
+adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only makes the coin
+set of $B$ nonempty. -/
 theorem prfAdvantage_ggm [NeZero ℓ] (G : S → S × S) (Q : ℕ) [NeZero Q]
     (A : R → OracleComp (Fin ℓ → Bool) S Bool) (hA : ∀ r, FreeM.IsQueryBounded Q (A r)) :
     PRF.prfAdvantage (ggm G) A = ℓ * Q * PRG.prgAdvantage G (ggmReduction G Q A) := by

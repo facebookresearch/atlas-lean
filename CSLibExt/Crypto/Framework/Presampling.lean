@@ -13,7 +13,9 @@ public import CSLibExt.Crypto.Framework.LazySampling
 /-!
 # Translating queries, and lazy tables with presampled answers
 
-Two tools for reductions that answer the queries of an adversary themselves.
+Two tools for reductions that answer the queries of an adversary themselves, and the facts about
+uniform pairs and tapes they use (`uniformOfFintype_map_prod`, `uniformOfFintype_map_fst` and
+`uniformOfFintype_map_apply_eq_bind`).
 
 * `OracleComp.reindex f g c` translates the queries of an oracle algorithm `c`: a query `x`
   becomes the query `f x`, and the answer `z` to it is handed to `c` as `g x z`.
@@ -54,13 +56,21 @@ section Tape
 
 variable {α β γ : Type*} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
 
-private theorem map_prod (f : α × β → γ) :
+/-- **A function of a uniform pair is a function of two independent uniform samples.** Let
+$\alpha$ and $\beta$ be finite nonempty sets and $f : \alpha \times \beta \to \gamma$. For a uniform
+pair $p \in \alpha \times \beta$, the distribution of $f(p)$ is that of $f(a, b)$ for independent
+uniform $a \in \alpha$ and $b \in \beta$. -/
+theorem uniformOfFintype_map_prod (f : α × β → γ) :
     (U (α × β)).map f = (U α).bind fun a => (U β).map fun b => f (a, b) := by
   simp only [← PMF.bind_pure_comp]
   exact (uniformOfFintype_bind_bind fun a b => PMF.pure (f (a, b))).symm
 
-private theorem map_fst (f : α → γ) : (U (α × β)).map (fun p => f p.1) = (U α).map f := by
-  rw [map_prod, ← PMF.bind_pure_comp]
+/-- **A function of the first entry of a uniform pair.** Let $\alpha$ and $\beta$ be finite
+nonempty sets and $f : \alpha \to \gamma$. For a uniform pair $(a, b) \in \alpha \times \beta$, the
+distribution of $f(a)$ is that of $f(a)$ for a uniform $a \in \alpha$. -/
+theorem uniformOfFintype_map_fst (f : α → γ) :
+    (U (α × β)).map (fun p => f p.1) = (U α).map f := by
+  rw [uniformOfFintype_map_prod, ← PMF.bind_pure_comp]
   congr 1
   funext a
   exact PMF.map_const (U β) (f a)
@@ -76,8 +86,8 @@ private theorem bind_map_update (j : Fin Q) (f : (Fin Q → α) → γ) :
       invFun := fun q => (q.1 j, Function.update q.1 j q.2)
       left_inv := fun p => by simp
       right_inv := fun q => by simp }
-  rw [← map_fst (β := α) f, ← Cslib.Probability.PMF.uniformOfFintype_map_equiv e, PMF.map_comp,
-    map_prod]
+  rw [← uniformOfFintype_map_fst (β := α) f, ← Cslib.Probability.PMF.uniformOfFintype_map_equiv e,
+    PMF.map_comp, uniformOfFintype_map_prod]
   rfl
 
 /-- **An entry of a uniform tape is independent of the rest of the tape.** Let $\alpha$ be a
