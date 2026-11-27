@@ -17,6 +17,7 @@ Given $f=\sum_e g(x,e)$, take $g$ of polynomial formula size (Valiant's theorem 
 - [The Hamiltonian cycle polynomial is in VNP](hamiltonian-cycle-polynomial-in-vnp.md)
 - [Arithmetic formulas are projections of the permanent](../determinantal-and-permanental-complexity/formulas-are-projections-of-permanents.md)
 - [VP is contained in VNP, and VNP is closed under p-projections](vp-subset-vnp.md)
+- [The determinant is in VP over every commutative ring](determinant-is-in-vp.md)
 
 ## Sources
 

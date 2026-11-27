@@ -11,6 +11,7 @@ The 'hard/easy' argument: a reduction from $\mathsf{coBH}_k$ to $\mathsf{BH}_k$ 
 - [The difference class DP and the Boolean hierarchy over NP](dp-and-boolean-hierarchy.md)
 - [The polynomial hierarchy](../../time-and-space-complexity-classes/ph.md)
 - [The class $\Sigma_k^p$](../../time-and-space-complexity-classes/sigma-k.md)
+- [Bounded-query oracle classes and P^{NP[O(log n)]}](../advice-sparse-and-selective-sets/bounded-query-classes.md)
 
 ## Proof depends on
 

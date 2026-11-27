@@ -9,6 +9,7 @@ Extension axioms give the forth and back steps; Cantor's back-and-forth argument
 ## Depends on
 
 - [Extension axioms and the theory of the random graph](extension-axioms-random-graph.md)
+- [Partial isomorphisms between pointed structures](../ehrenfeucht-fraisse-games/partial-isomorphisms.md)
 
 ## Proof depends on
 

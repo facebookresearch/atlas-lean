@@ -16,6 +16,7 @@ The transfer reverses the rear stack onto the front stack, which restores FIFO o
 
 - [Refinement of a data-structure specification by an abstraction function](../../data-structure-interfaces-and-refinement/refinement-by-abstraction-function.md)
 - [Potential of a two-list queue](../two-list-queue/potential.md)
+- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Proof depends on
 

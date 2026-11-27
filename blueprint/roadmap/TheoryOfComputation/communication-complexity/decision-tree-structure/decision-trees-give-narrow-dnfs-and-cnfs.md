@@ -10,6 +10,7 @@ An input reaches exactly one leaf; it satisfies the term of a $1$-leaf path iff 
 
 - [Binary decision tree](../../../Combinatorics/boolean-functions/osss-inequality-for-decision-trees/decision-tree.md)
 - [Decision-tree depth and degree of a Boolean function](../query-and-communication-measures/decision-tree-depth-and-degree-of-a-boolean.md)
+- [Disjunctive normal form](../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/disjunctive-normal-form.md)
 
 ## Sources
 

@@ -15,6 +15,7 @@ Both sides are multilinear in $z$ and agree on $z\in\{0,1\}^{s_j}$, where the wi
 ## Depends on
 
 - [Multilinear extension of a Boolean function](../../../hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
+- [Low-degree extensions with individual degree |H| - 1](../../../../InformationTheory/error-correcting-codes/reed-muller-codes-and-local-decoding/low-degree-extension-individual-degree.md)
 
 ## Sources
 

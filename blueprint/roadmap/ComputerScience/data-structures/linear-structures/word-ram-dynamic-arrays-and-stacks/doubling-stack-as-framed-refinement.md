@@ -10,6 +10,7 @@ A push into a full array of capacity $c$ allocates $2c$ cells and copies $c$ ite
 
 - [Footprints and framing of data structures sharing one memory](../../data-structure-interfaces-and-refinement/footprints-and-framing.md)
 - [Refinement of a data-structure specification by an abstraction function](../../data-structure-interfaces-and-refinement/refinement-by-abstraction-function.md)
+- [Doubling arrays on the Word RAM](doubling-arrays-on-the-word-ram.md)
 
 ## Proof depends on
 

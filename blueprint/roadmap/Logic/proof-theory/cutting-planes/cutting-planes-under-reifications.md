@@ -10,6 +10,7 @@ Lift every line $D_s$ of the derivation to $\bigwedge \rho \Rightarrow D_s$, wit
 
 - [The cutting planes proof system](cutting-planes-proof-system.md)
 - [Pseudo-Boolean constraints in normalized form](../../propositional-logic/proof-certificates/pseudo-boolean-proof-logging/pseudo-boolean-constraints.md)
+- [Reverse unit propagation for pseudo-Boolean constraints](../../propositional-logic/proof-certificates/pseudo-boolean-proof-logging/pseudo-boolean-reverse-unit-propagation.md)
 
 ## Sources
 

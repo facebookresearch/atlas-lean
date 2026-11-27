@@ -12,6 +12,7 @@ From advice $(\alpha_n)$ build the tally set $T=\{1^{\langle n,i\rangle}: \text{
 - [Polynomial time with an oracle](../../time-and-space-complexity-classes/pwith-oracle.md)
 - [Sparse decision problems](../../mahaney-s-theorem/sparse.md)
 - [Tally languages](tally-languages.md)
+- [Polynomial-time truth-table, bounded and Turing reductions](../reducibilities-and-isomorphism/truth-table-reductions.md)
 
 ## Sources
 

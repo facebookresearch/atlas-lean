@@ -1,6 +1,6 @@
 # Boolean axioms and CNF arithmetization
 
-Over a commutative ring $\mathcal{R}$, a system of polynomials $F \subseteq \mathcal{R}[x_1,\dots,x_n]$ has a *Boolean solution* $a \in \{0,1\}^n$ if every $f \in F$ vanishes at $a$. The *Boolean axioms* are $x_i^2 - x_i$. A clause $C$ with positive variables $P$ and negative variables $N$ is arithmetized by $p_C = \prod_{v\in P}(1 - x_v)\prod_{v\in N} x_v$, which vanishes at a Boolean point exactly when the point satisfies $C$; a CNF formula is satisfiable iff its clause polynomials have a common Boolean zero. In the *twin-variable* (PCR) encoding each literal $\ell$ gets its own variable, with complementarity axioms $x_v + x_{\bar v} - 1$, and clauses become squarefree monomials.
+Over a nontrivial commutative ring $\mathcal{R}$ (one with $1 \ne 0$), a system of polynomials $F \subseteq \mathcal{R}[x_1,\dots,x_n]$ has a *Boolean solution* $a \in \{0,1\}^n$ if every $f \in F$ vanishes at $a$. The *Boolean axioms* are $x_i^2 - x_i$. A clause $C$ with positive variables $P$ and negative variables $N$ is arithmetized by $p_C = \prod_{v\in P}(1 - x_v)\prod_{v\in N} x_v$, which vanishes at a Boolean point exactly when the point satisfies $C$; a CNF formula is satisfiable iff its clause polynomials have a common Boolean zero. In the *twin-variable* (PCR) encoding each literal $\ell$ gets its own variable, with complementarity axioms $x_v + x_{\bar v} - 1$, and clauses become squarefree monomials.
 
 ## Depends on
 

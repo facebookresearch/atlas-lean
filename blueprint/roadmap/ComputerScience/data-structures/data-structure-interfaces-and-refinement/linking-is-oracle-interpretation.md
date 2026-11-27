@@ -1,6 +1,6 @@
 # Linking a client through methods is oracle interpretation
 
-Let $p$ be an adaptive client of a specification $D$, viewed as an oracle program over $D$'s operations, and let a module implement each $D$-operation $o$ by a client $M_o$ of a lower interface $E$. The *linked* client, which replaces every call to $o$ by $M_o$, equals the interpretation of $p$ in the free monad of $E$ that answers each call $o$ with $M_o$. Consequently linking is associative (linking through two module layers equals linking through their composite), and every law of oracle interpretation (sequencing, composition, interpretation into probability or state monads) applies to linked clients.
+Let $p$ be an adaptive client of a specification $D$, viewed as a probabilistic oracle program over $D$'s operations, and let a module implement each $D$-operation $o$ by a client $M_o$ of a lower interface $E$. The *linked* client, which replaces every call to $o$ by $M_o$, equals the interpretation of $p$ in the free monad of $E$ that answers each call $o$ with $M_o$. Consequently linking is associative (linking through two module layers equals linking through their composite), and every law of oracle interpretation (sequencing, composition, interpretation into probability or state monads) applies to linked clients.
 
 ## Proof sketch
 
@@ -9,6 +9,11 @@ Both linking and interpretation are defined by structural recursion on the clien
 ## Depends on
 
 - [Refinement of a data-structure specification by an abstraction function](refinement-by-abstraction-function.md)
+- [Probabilistic oracle program and its semantics against a stateful handler](../../cryptography/security-games/probabilistic-oracle-programs/probabilistic-oracle-program.md)
+
+## Proof depends on
+
+- [Oracle substitution: running a program against a simulated interface](../../cryptography/security-games/probabilistic-oracle-programs/oracle-substitution-semantics.md)
 
 ## Sources
 

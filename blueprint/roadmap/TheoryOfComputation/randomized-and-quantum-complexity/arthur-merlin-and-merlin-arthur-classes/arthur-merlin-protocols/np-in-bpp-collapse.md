@@ -19,6 +19,7 @@
 - [Karp-Lipton theorem: NP in P/poly collapses PH](../../../complexity-classes/karp-lipton.md)
 - [Sipser-Gács-Lautemann: BPP is in $\Sigma_2^p$ and $\Pi_2^p$](../../sipser-gacs-lautemann.md)
 - [If P = NP then the polynomial hierarchy collapses to P](../../../complexity-classes/polynomial-hierarchy/ph-collapses.md)
+- [Self-reducible search problems (Goldreich's PC and PF)](../../../complexity-classes/structural-complexity/search-problems-and-self-reducibility/self-reducible-search-problems.md)
 
 ## Sources
 

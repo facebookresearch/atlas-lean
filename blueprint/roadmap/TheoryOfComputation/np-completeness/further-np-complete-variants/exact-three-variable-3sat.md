@@ -10,6 +10,7 @@ Membership in $\mathsf{NP}$ is clear. Hardness of EU3SAT: reduce from positive 1
 
 - [The 3SAT decision problem](../satisfiability/3-satisfiability/sat3-dec.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
+- [Not-all-equal satisfiability](../satisfiability/exact-one-and-not-all-equal-satisfiability/not-all-equal-satisfiability.md)
 
 ## Proof depends on
 

@@ -9,10 +9,10 @@ Exactly-one and at-most-one constraints make solutions injective maps; the adjac
 ## Depends on
 
 - [Pseudo-Boolean constraints in normalized form](pseudo-boolean-constraints.md)
+- [Soundness of the VeriPB kernel proof format](veripb-kernel-soundness.md)
 
 ## Proof depends on
 
-- [Soundness of the VeriPB kernel proof format](veripb-kernel-soundness.md)
 - [SUBGRAPH ISOMORPHISM is NP-complete](../../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/subgraph-isomorphism/subgraph-isomorphism-np-complete.md)
 
 ## Sources

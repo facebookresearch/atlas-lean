@@ -14,6 +14,7 @@ Membership: if $M$ is not copositive, the minimum of $x^{\top}Mx$ over the stand
 ## Proof depends on
 
 - [CLIQUE is NP-complete](../graph-covering-and-domination/clique-independent-set-and-vertex-cover/part-08/clique-dec-np-complete.md)
+- [Copositivity has polynomial-size integer certificates of failure](../../../LinearAlgebra/matrix-algebra/linear-inequality-systems-over-ordered-fields/copositivity-failure-certificates.md)
 
 ## Sources
 

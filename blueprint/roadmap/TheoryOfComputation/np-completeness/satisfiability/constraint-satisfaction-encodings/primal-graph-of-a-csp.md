@@ -6,6 +6,7 @@ The *primal graph* (Gaifman graph) of a CSP instance $F$ has the variables of $F
 
 - [Finite-domain constraint satisfaction problems](finite-domain-constraint-satisfaction.md)
 - [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
+- [Gaifman graphs, distance and neighborhoods](../../../descriptive-complexity/hanf-and-gaifman-locality/gaifman-graphs-and-neighborhoods.md)
 
 ## Sources
 

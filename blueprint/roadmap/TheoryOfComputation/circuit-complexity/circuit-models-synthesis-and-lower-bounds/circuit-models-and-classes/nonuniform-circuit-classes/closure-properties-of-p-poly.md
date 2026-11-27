@@ -1,6 +1,6 @@
 # Closure properties of P/poly
 
-$\mathsf{P}/\mathsf{poly}$ is closed under complement, finite union and intersection, polynomial-time many-one reductions, and more generally under reductions computed by polynomial-size circuit families: if $L'\in\mathsf{P}/\mathsf{poly}$ and $x\in L\iff g(x)\in L'$ for a length-regular map $g$ whose slices have polynomial-size circuits, then $L\in\mathsf{P}/\mathsf{poly}$. Moreover $\mathsf{P}\subseteq\mathsf{P}/\mathsf{poly}$.
+$\mathsf{P}/\mathsf{poly}$ is closed under complement, finite union and intersection, polynomial-time many-one reductions, and more generally under reductions computed by polynomial-size circuit families: if $L'\in\mathsf{P}/\mathsf{poly}$ and $x\in L\iff g(x)\in L'$ for a length-regular map $g$ with $|g(x)|\le p(|x|)$ for a polynomial $p$, whose slices have polynomial-size circuits, then $L\in\mathsf{P}/\mathsf{poly}$. Moreover $\mathsf{P}\subseteq\mathsf{P}/\mathsf{poly}$.
 
 ## Proof sketch
 

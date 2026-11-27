@@ -12,6 +12,8 @@ Encode CNF formulas as ordered structures (clauses, variables, positive and nega
 - [First-order and quantifier-free projections (Immerman-Landau)](../first-order-projections/first-order-and-quantifier-free-projections.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [Existential second-order definable graph classes](../fagin-s-theorem/fagin-esodefinable.md)
+- [CNF formulas, graphs and sized graphs as finite structures](../first-order-interpretations-and-reductions/cnf-formulas-and-graphs-as-finite-structures.md)
+- [Relational second-order logic on finite structures](../second-order-logic-on-finite-structures/relational-second-order-logic.md)
 
 ## Proof depends on
 

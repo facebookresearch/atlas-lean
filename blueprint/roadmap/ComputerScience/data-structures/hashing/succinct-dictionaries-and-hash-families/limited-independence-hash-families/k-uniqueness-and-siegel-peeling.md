@@ -9,6 +9,7 @@ Induct on $|S|$. Pick $x_0$ and $j$ with a unique character $f(x_0)_j$; the tabl
 ## Depends on
 
 - [k-wise independent hash family](../word-ram-hash-families/k-wise-independent-hash-family.md)
+- [Simple tabulation hashing](../word-ram-hash-families/simple-tabulation-hashing.md)
 
 ## Sources
 

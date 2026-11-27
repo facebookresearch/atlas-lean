@@ -1,7 +1,6 @@
 # RAMs, Word RAMs and Pointer Machines
 
 - [Generic (algebraic) RAMs over arbitrary data](generic-algebraic-rams.md)
-- [Pointer machines (Tarjan)](pointer-machines.md)
 - [Repeated squaring separates unit-cost and logarithmic-cost RAM time](unit-versus-logarithmic-cost.md)
 - [Multi-stack machines and multi-tape Turing machines simulate each other in polynomial time and space](multistack-multitape-equivalence.md)
 - [Hennie–Stearns: a universal multi-tape machine with O(t log t) overhead](universal-simulation-t-log-t.md)

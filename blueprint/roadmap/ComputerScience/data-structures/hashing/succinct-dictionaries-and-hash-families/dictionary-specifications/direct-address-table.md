@@ -1,6 +1,6 @@
 # Direct-address table
 
-A *direct-address table* for keys $[U]$ is an array of $U$ cells, cell $u$ holding the encoding of $s(u) \in \{\bot\} \cup \mathbb{N}$ ($0$ for absent, $v + 1$ for value $v$). It implements the dynamic dictionary with every query, insertion and deletion in one memory read or write and $U$ cells of space, and zeroed memory represents the empty dictionary; it is optimal in time but uses $U$ cells regardless of the number of stored keys.
+A *direct-address table* for keys $[U]$ with values below $V$, where $V < 2^w$ so that every code $v + 1 \le V$ fits in one $w$-bit cell, is an array of $U$ allocated cells of word memory, cell $u$ holding the encoding of $s(u) \in \{\bot\} \cup [V]$ ($0$ for absent, $v + 1$ for value $v$). It implements the dynamic dictionary with every query, insertion and deletion in one memory read or write and $U$ cells of space, and zeroed memory represents the empty dictionary; it is optimal in time but uses $U$ cells regardless of the number of stored keys.
 
 ## Depends on
 

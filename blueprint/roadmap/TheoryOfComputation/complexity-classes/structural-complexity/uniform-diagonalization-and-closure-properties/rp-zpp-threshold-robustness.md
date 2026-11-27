@@ -1,6 +1,6 @@
 # Robustness of the RP and ZPP thresholds
 
-The success threshold $1/2$ in the definitions of $\mathsf{RP}$ and $\mathsf{ZPP}$ (probability of a definite correct answer) can be replaced by any inverse-polynomial $1/q(n)$, and equally by $1-2^{-q(n)}$, without changing the classes; finitely many short instances may be handled by table lookup. The analogous statement for $\mathsf{BPP}$ holds with error $1/2-1/q(n)$.
+The success threshold $1/2$ in the definitions of $\mathsf{RP}$ and $\mathsf{ZPP}$ (probability of a definite correct answer) can be replaced by $1/q(n)$ for any polynomial $q$ with $q(n)\ge2$ for all $n$, and equally by $1-2^{-q(n)}$ for any polynomial $q$ with $q(n)\ge1$ for all $n$, without changing the classes (at $q=1$ the threshold $1/q=1$ forbids errors and gives $\mathsf{P}$); finitely many short instances may be handled by table lookup. The analogous statement for $\mathsf{BPP}$ holds with error $1/2-1/q(n)$ for any polynomial $q$ with $q(n)>2$ for all $n$ (so that the error is positive).
 
 ## Proof sketch
 

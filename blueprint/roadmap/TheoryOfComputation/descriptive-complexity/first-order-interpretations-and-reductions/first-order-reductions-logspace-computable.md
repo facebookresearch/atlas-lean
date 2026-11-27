@@ -15,6 +15,7 @@ Enumerate the candidate tuples of the output universe and the relation tuples wi
 ## Proof depends on
 
 - [Pullback of formulas along interpretations](pullback-along-interpretations.md)
+- [First-order model checking for a fixed sentence is in L](../logical-characterizations-of-l-nl-p-np/first-order-queries-in-logspace.md)
 
 ## Sources
 

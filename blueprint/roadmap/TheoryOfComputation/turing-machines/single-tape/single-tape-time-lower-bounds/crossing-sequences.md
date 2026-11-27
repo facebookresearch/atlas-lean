@@ -1,6 +1,6 @@
 # Crossing sequences of single-tape Turing machines
 
-For a single-tape Turing machine $M$, an input $w$ and a boundary $i$ between tape cells $i$ and $i+1$, the **crossing sequence** $\mathrm{CS}_M(w,i)$ is the finite list of states in which $M$ crosses that boundary (in either direction) during its run on $w$. The running time is at least the total length $\sum_i|\mathrm{CS}_M(w,i)|$. **Cut-and-paste lemma**: if $M$ halts on $uv$ and on $u'v'$ and $\mathrm{CS}_M(uv,|u|)=\mathrm{CS}_M(u'v',|u'|)$, then on $uv'$ the machine behaves to the left of the boundary as on $uv$ and to its right as on $u'v'$ (and symmetrically for $u'v$); in particular, if $M$ accepts both $uv$ and $u'v'$, it accepts $uv'$ and $u'v$.
+For a single-tape Turing machine $M$ whose head starts on cell $1$, an input $w$ on which $M$ halts and a boundary $i$ between tape cells $i$ and $i+1$, the **crossing sequence** $\mathrm{CS}_M(w,i)$ is the finite list of states in which $M$ crosses that boundary (in either direction) during its run on $w$. The running time is at least the total length $\sum_i|\mathrm{CS}_M(w,i)|$. **Cut-and-paste lemma**: if $u$ and $u'$ are nonempty (so both runs start on the left of the boundary), $M$ halts on $uv$ and on $u'v'$, and $\mathrm{CS}_M(uv,|u|)=\mathrm{CS}_M(u'v',|u'|)$, then $M$ halts on $uv'$ and there behaves to the left of the boundary as on $uv$ and to its right as on $u'v'$ (and symmetrically for $u'v$); in particular, if $M$ accepts both $uv$ and $u'v'$, it accepts $uv'$ and $u'v$.
 
 ## Depends on
 

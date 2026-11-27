@@ -11,6 +11,7 @@ A logspace machine's configurations are tuples of elements; its deterministic st
 - [First-order logic with deterministic transitive closure](first-order-logic-deterministic-transitive-closure.md)
 - [Canonically ordered structures with BIT](../ordered-structures-and-arithmetic/canonically-ordered-structures-with-bit.md)
 - [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)
+- [Ordered first-order interpretations and first-order queries](../ordered-structures-and-arithmetic/ordered-first-order-interpretations.md)
 
 ## Proof depends on
 

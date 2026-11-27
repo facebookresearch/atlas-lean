@@ -7,6 +7,10 @@ An *ordered interpretation* of dimension $k$ from canonically ordered $\sigma$-s
 - [Canonically ordered structures with BIT](canonically-ordered-structures-with-bit.md)
 - [First-order interpretations](../first-order-interpretations-and-reductions/first-order-interpretations.md)
 
+## Proof depends on
+
+- [Lexicographic order, successor and BIT on tuples are definable](lexicographic-tuple-numeric-predicates.md)
+
 ## Sources
 
 - N. Immerman, Descriptive Complexity, Springer, 1999.

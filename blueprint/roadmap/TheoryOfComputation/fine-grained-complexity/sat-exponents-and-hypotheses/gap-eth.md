@@ -8,6 +8,10 @@ For $0\le s< c\le1$, $\mathrm{Gap}\text{-}k\text{-SAT}_{c,s}$ is the promise pro
 - [MAXIMUM SATISFIABILITY as a decision problem](../../np-completeness/satisfiability/maximum-satisfiability/max-sat-dec.md)
 - [Promise problems and promise classes](../../randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/promise-and-randomized-classes/promise-problems.md)
 
+## Proof depends on
+
+- [Constraint subsampling preserves the Max-CSP optimum up to $2\delta m$](../../pcp-and-inapproximability/maximum-satisfiability-by-random-assignments/constraint-subsampling-for-max-csp.md)
+
 ## Sources
 
 - Irit Dinur, "Mildly Exponential Reduction from Gap 3SAT to Polynomial-Gap Label-Cover", Electronic Colloquium on Computational Complexity, report TR16-128, 2016, Hypothesis 2.5.

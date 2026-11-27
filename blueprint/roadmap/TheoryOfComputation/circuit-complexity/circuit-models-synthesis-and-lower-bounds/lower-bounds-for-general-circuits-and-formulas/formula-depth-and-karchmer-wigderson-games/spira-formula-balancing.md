@@ -1,6 +1,6 @@
 # Spira's theorem: balancing formulas
 
-Every De Morgan formula with $L\ge 1$ leaves has an equivalent De Morgan formula with at most $4\lceil\log_2 L\rceil$ AND and OR gates on every root-to-leaf path. Consequently the formula depth $D(f)$ and formula leaf size $L(f)$ satisfy $\log_2 L(f)\le D(f)\le 4\log_2 L(f)$.
+Every De Morgan formula with $L\ge 1$ input leaves (leaves labelled by literals; constant leaves are not counted) has an equivalent De Morgan formula with at most $4\lceil\log_2 L\rceil$ AND and OR gates on every root-to-leaf path. Consequently, for every non-constant Boolean function $f$ (so that $L(f)\ge 1$), the formula depth $D(f)$ and formula leaf size $L(f)$ satisfy $\log_2 L(f)\le D(f)\le 4\log_2 L(f)$.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Weighted adversary bounds (Ambainis, Zhang)
 
-Let $f$ be a function on $D \subseteq \{0,1\}^N$ with finite output set, and let $w$ be a nonnegative weight scheme, not identically zero, on pairs $(x, y)$ with $f(x) \ne f(y)$ and $w'$ nonnegative weights on triples $(x, y, i)$ with $x_i \ne y_i$ satisfying $w'(x,y,i)\, w'(y,x,i) \ge w(x,y)^2$ whenever $f(x) \ne f(y)$ and $x_i \ne y_i$ (so the loads in the minimum below are positive). With loads $v_x = \sum_y w(x,y)$ and $v_{x,i} = \sum_y w'(x, y, i)$, every algorithm computing $f$ with error $\varepsilon$ uses
+Let $f$ be a function on $D \subseteq \{0,1\}^N$ with finite output set, and let $w$ be a nonnegative weight scheme, not identically zero, on pairs $(x, y)$ with $f(x) \ne f(y)$ and $w'$ nonnegative weights on triples $(x, y, i)$ with $x_i \ne y_i$ satisfying $w'(x,y,i)\, w'(y,x,i) \ge w(x,y)^2$ whenever $f(x) \ne f(y)$ and $x_i \ne y_i$ (so the loads in the minimum below are positive). With loads $v_x = \sum_y w(x,y)$ and $v_{x,i} = \sum_y w'(x, y, i)$, every algorithm computing $f$ with error at most $\varepsilon$ on every input of $D$, where $0 \le \varepsilon < 1/2$, uses
 
 $$T \ge \frac{1 - 2\sqrt{\varepsilon(1-\varepsilon)}}{2} \min_{\substack{x, y, i\\ w(x,y) > 0,\ x_i \ne y_i}} \sqrt{\frac{v_x\, v_y}{v_{x,i}\, v_{y,i}}}$$
 

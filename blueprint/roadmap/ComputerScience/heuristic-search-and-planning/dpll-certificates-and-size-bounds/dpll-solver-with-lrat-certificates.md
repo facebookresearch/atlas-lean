@@ -15,6 +15,7 @@ On an unsatisfiable formula, the failing search tree yields a tree-like resoluti
 
 - [Failing DPLL search trees give tree-like resolution refutations](../../../Logic/propositional-logic/sat-solving/failing-dpll-search-trees-give-tree-like.md)
 - [LRAT addition steps certify RUP and RAT clauses](../../../Logic/propositional-logic/proof-certificates/lrat-addition-steps-certify-rup-and-rat-clauses.md)
+- [Accepted LRAT certificates translate into resolution refutations](../../../Logic/propositional-logic/proof-certificates/clausal-proof-certificates/lrat-certificates-to-resolution.md)
 
 ## Sources
 

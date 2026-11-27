@@ -20,6 +20,7 @@ A threshold function $[\sum_ia_ix_i\ge t]$ is not forced to a constant exactly w
 ## Proof depends on
 
 - [Counting threshold functions over a feature family](counting-threshold-functions.md)
+- [Sharp Littlewood–Offord bound](../../../../Combinatorics/probabilistic-combinatorics/littlewood-offord-problem/littlewood-offord-sharp-bound.md)
 
 ## Sources
 

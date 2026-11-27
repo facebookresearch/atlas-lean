@@ -1,6 +1,6 @@
 # Word-RAM time–space lower bounds for dynamic succinct dictionaries
 
-Fix $r_{\max}$. Every zero-error Word-RAM implementation of the dynamic dictionary with at most $n$ keys over any instruction basis, with at most $r_{\max}$ persistent registers, word size $w \le c_w(\log_2 U + \log_2 V)$, and memory satisfying $(\mathrm{space} + p)\, w \le \mathrm{OPT}(U, V, n) + R$ (where $p$ is the number of persistent registers), executes in expectation over the insert–query–delete distribution at least
+Fix $r_{\max}$. Every zero-error Word-RAM implementation of the dynamic dictionary with at most $n$ keys over any instruction basis, with at most $r_{\max}$ persistent registers, word size $w \le c_w(\log_2 U + \log_2 V)$, and memory satisfying $(\mathrm{space} + p)\, w \le \mathrm{OPT}(U, V, n) + R$ (where $p$ is the number of persistent registers), executes in expectation over the insert–query–delete distribution (when $V = 1$, the hard distribution of Li, Liang, Yu and Zhou, Distribution 1, Section 3), and for $V \ge 1$ over some admissible history of at most $4n$ operations as in the cell-probe bounds, at least
 
 - $c \cdot n \cdot k$ instructions when $R \le c_R n \max(\log^{(k)} n, 1)$ and $1 \le k \le \log^* n$,
 - $c \cdot n \log_2(n / \max(R,1))$ instructions when $R \le n$,

@@ -10,6 +10,10 @@ The constant functions have circuit complexity at most $1\le S$, so they show th
 
 - [Average-case hardness against circuits](average-case-hardness-against-circuits.md)
 
+## Proof depends on
+
+- [Statistical distance of products and with shared public samples](../../../Probability/foundations/statistical-distance-and-couplings/statistical-distance-products-and-shared-samples.md)
+
 ## Sources
 
 - Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009 (hardness definitions and statistical distance).

@@ -11,6 +11,8 @@ Put $\varphi$ in prenex form, introduce a propositional variable for each ground
 - [First-order and quantifier-free projections (Immerman-Landau)](../first-order-projections/first-order-and-quantifier-free-projections.md)
 - [Existential second-order definable graph classes](../fagin-s-theorem/fagin-esodefinable.md)
 - [Binary encoding of finite relational structures](../finite-structures-and-definability/binary-encoding-of-finite-structures.md)
+- [CNF formulas, graphs and sized graphs as finite structures](../first-order-interpretations-and-reductions/cnf-formulas-and-graphs-as-finite-structures.md)
+- [Relational second-order logic on finite structures](../second-order-logic-on-finite-structures/relational-second-order-logic.md)
 
 ## Proof depends on
 

@@ -11,10 +11,12 @@ Valiant–Vazirani maps a satisfiable formula, with probability $\Omega(1/n)$, t
 - [UniqueSAT with a unary variable count as a decision problem](../../valiant-vazirani-theorem/unique-sat-dec.md)
 - [The class RP](../../../complexity-classes/time-and-space-complexity-classes/rp.md)
 - [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
+- [Promise problems and promise classes](promise-problems.md)
 
 ## Proof depends on
 
 - [Valiant-Vazirani: SAT reduces to UniqueSAT](../../valiant-vazirani-theorem/valiant-vazirani.md)
+- [Self-reducible search problems (Goldreich's PC and PF)](../../../complexity-classes/structural-complexity/search-problems-and-self-reducibility/self-reducible-search-problems.md)
 
 ## Sources
 

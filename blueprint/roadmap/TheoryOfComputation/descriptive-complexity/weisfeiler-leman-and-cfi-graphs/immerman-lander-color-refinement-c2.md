@@ -1,6 +1,6 @@
 # Immerman–Lander: color refinement characterizes two-variable counting logic $C^2$
 
-For finite simple graphs $G, H$ and vertices $v \in V(G)$, $w \in V(H)$: color refinement started from the constant coloring assigns $v$ and $w$ the same stable color (computed jointly on $G \sqcup H$) iff Duplicator wins the infinite bijective 2-pebble game from $(v, w)$ iff $v$ and $w$ satisfy the same $C^2$ formulas. Likewise $G$ and $H$ have the same stable color histogram iff they satisfy the same $C^2$ sentences, iff Duplicator wins the bijective 2-pebble game from the empty position.
+Let $G, H$ be finite simple graphs, and run color refinement from the constant coloring jointly on $G \sqcup H$. If $G$ and $H$ have the same stable color histogram, then for vertices $v \in V(G)$, $w \in V(H)$: $v$ and $w$ receive the same stable color iff Duplicator wins the infinite bijective 2-pebble game from $(v, w)$ iff $v$ and $w$ satisfy the same $C^2$ formulas in one free variable. (Without equal histograms the pointed claim fails: for $G$ a single vertex and $H$ two isolated vertices all three vertices get the same stable color, yet $\exists^{\ge 2} y\, (y = y)$ separates them and no bijection exists.) For arbitrary $G$ and $H$, they have the same stable color histogram iff they satisfy the same $C^2$ sentences, iff Duplicator wins the bijective 2-pebble game from the empty position.
 
 ## Proof sketch
 
@@ -10,6 +10,7 @@ With one pebble resting on $v \mapsto w$, Duplicator must answer with a bijectio
 
 - [Color refinement and the stable coloring](color-refinement-stable-coloring.md)
 - [Finite-variable counting logics $C^k$ and $C^k_{\infty\omega}$](../finite-variable-logics/finite-variable-counting-logics.md)
+- [Hella's bijective $k$-pebble game](../finite-variable-logics/bijective-pebble-game.md)
 
 ## Proof depends on
 

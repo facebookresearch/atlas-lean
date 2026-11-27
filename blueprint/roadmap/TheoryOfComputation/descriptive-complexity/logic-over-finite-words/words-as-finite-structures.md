@@ -1,6 +1,6 @@
 # Words as finite structures; FO[<] and MSO definability
 
-Over a finite alphabet $\Sigma$, a word $w = a_1 \cdots a_\ell$ is the structure with universe $\{1,\dots,\ell\}$, the order $<$ and unary predicates $P_a = \{i : a_i = a\}$ for $a \in \Sigma$ (the empty word is the empty structure). A language $L \subseteq \Sigma^*$ is *FO[<]-definable* if some first-order sentence over $\{<\} \cup \{P_a\}$ holds exactly in the words of $L$, and *MSO-definable* if some monadic second-order sentence (with quantification over sets of positions) does.
+Over a finite alphabet $\Sigma$, words are the finite structures of monadic second-order logic over words (universe the positions, the order $<$ and the unary predicates $P_a$), and a language $L \subseteq \Sigma^*$ is *MSO-definable* if it is $L(\varphi)$ for some monadic second-order sentence $\varphi$ there. The empty word is the structure with empty universe. A language $L$ is *FO[<]-definable* if $L = L(\varphi)$ for some first-order sentence $\varphi$ over $\{<\} \cup \{P_a : a \in \Sigma\}$, that is, an MSO sentence with no set variables.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Formal complexity measures
 
-A *formal complexity measure* on the Boolean functions of $n$ variables is a function $\mu$ from Boolean functions to $\mathbb{R}_{\ge0}$ (or $\mathbb{N}$) such that $\mu(x_i)\le 1$ and $\mu(\neg x_i)\le1$ for every literal, and $\mu(f\wedge g)\le\mu(f)+\mu(g)$ and $\mu(f\vee g)\le\mu(f)+\mu(g)$ for all $f,g$. Complement invariance is not assumed. Formula leaf size is itself a formal complexity measure, and it is the largest one.
+A *formal complexity measure* on the Boolean functions of $n$ variables is a function $\mu$ from Boolean functions to $\mathbb{R}_{\ge0}$ (or $\mathbb{N}$) such that $\mu(x_i)\le 1$ and $\mu(\neg x_i)\le1$ for every literal, and $\mu(f\wedge g)\le\mu(f)+\mu(g)$ and $\mu(f\vee g)\le\mu(f)+\mu(g)$ for all $f,g$. Complement invariance is not assumed. Formula leaf size $L$ (which counts only input leaves, so $L(0)=L(1)=0$) is itself a formal complexity measure, and it is the largest one on non-constant functions: $\mu(f)\le L(f)$ for every formal complexity measure $\mu$ and every non-constant $f$.
 
 ## Depends on
 

@@ -10,6 +10,7 @@ Gates represent statements 'surface configuration $C$ reaches $D$ with the same 
 
 - [Layered semi-unbounded circuits and proof trees](semi-unbounded-circuits-and-proof-trees.md)
 - [The complexity class NL](../../complexity-classes/time-and-space-complexity-classes/nl.md)
+- [Auxiliary pushdown automata and LogCFL](../../complexity-classes/space-and-time-complexity/space-bounded-computation/logarithmic-space-counting-classes/auxiliary-pushdown-logcfl.md)
 
 ## Sources
 

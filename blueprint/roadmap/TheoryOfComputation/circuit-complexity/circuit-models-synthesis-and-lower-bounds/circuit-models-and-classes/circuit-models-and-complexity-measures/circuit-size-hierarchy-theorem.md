@@ -1,6 +1,6 @@
 # The circuit size hierarchy
 
-For every sufficiently large $n$ and every integer $t$ with $1\le t\le 2^n/n$, there is a Boolean function $f$ on $n$ bits whose De Morgan circuit complexity satisfies $t< C(f)\le t+2n+3$. Consequently, if $s,s':\mathbb{N}\to\mathbb{N}$ satisfy $s(n)\ge 1$, $s'(n)\ge s(n)+2n+3$ and $s'(n)\le 2^n/n$ for all large $n$, then $\mathrm{SIZE}(s)\subsetneq\mathrm{SIZE}(s')$: more gates allow strictly more languages.
+For every sufficiently large $n$ and every integer $t$ with $1\le t\le 2^n/n$, there is a Boolean function $f$ on $n$ bits whose De Morgan circuit complexity satisfies $t< C(f)\le t+2n+3$. Consequently, if $s,s':\mathbb{N}\to\mathbb{N}$ satisfy $1\le s(n)\le s'(n)$ for every $n$, and $s'(n)\ge s(n)+2n+3$ and $s'(n)\le 2^n/n$ for all large $n$, then $\mathrm{SIZE}(s)\subsetneq\mathrm{SIZE}(s')$: more gates allow strictly more languages.
 
 ## Proof sketch
 

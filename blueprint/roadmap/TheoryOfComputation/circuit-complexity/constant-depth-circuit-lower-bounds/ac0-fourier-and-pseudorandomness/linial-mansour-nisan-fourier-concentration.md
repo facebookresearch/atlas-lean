@@ -1,6 +1,6 @@
 # Linial–Mansour–Nisan: AC0 functions have concentrated Fourier spectra
 
-Let $f:\{0,1\}^n\to\{0,1\}$ be computed by a circuit over the unbounded fan-in basis of depth $d$ and size $M$, and let $F=(-1)^f$. Then for every integer $t$,
+Let $f:\{0,1\}^n\to\{0,1\}$ be computed by a circuit of depth $d\ge1$ and size $M$ over NOT and unbounded fan-in AND and OR gates (the unbounded fan-in basis without MOD gates), and let $F=(-1)^f$. Then for every integer $t\ge0$,
 
 $$
 \sum_{|S|>t}\widehat{F}(S)^2\le 2M\cdot 2^{-t^{1/d}/20}.
@@ -16,6 +16,7 @@ Let $\rho$ be a random restriction leaving each variable free with probability $
 
 - [Fourier coefficient on the Boolean cube](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/bool-fourier-coeff.md)
 - [Unbounded fan-in signature](../../unbounded-fan-in-circuits/ac-signature.md)
+- [Fourier weight at each degree](../../../../Combinatorics/boolean-functions/fourier-expansion-supplements/fourier-weight-at-each-degree.md)
 
 ## Proof depends on
 

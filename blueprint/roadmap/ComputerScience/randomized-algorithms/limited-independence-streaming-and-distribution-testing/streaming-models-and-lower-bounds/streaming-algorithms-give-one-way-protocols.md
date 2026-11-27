@@ -11,6 +11,7 @@ Simulate the streaming algorithm across the split of the stream, passing the mem
 - [Randomized streaming algorithm with $s$ bits of memory](../../frequency-moments-of-data-streams/streaming-algorithm.md)
 - [Deterministic two-party protocol](../../../../TheoryOfComputation/communication-complexity/deterministic-communication-protocols/protocol.md)
 - [Public-coin randomized protocol](../../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/public-coin-protocol.md)
+- [Rectangle covers and nondeterministic communication complexity](../../../../TheoryOfComputation/communication-complexity/nondeterministic-covers-and-information-cost/rectangle-covers-and-nondeterministic-complexity.md)
 
 ## Sources
 

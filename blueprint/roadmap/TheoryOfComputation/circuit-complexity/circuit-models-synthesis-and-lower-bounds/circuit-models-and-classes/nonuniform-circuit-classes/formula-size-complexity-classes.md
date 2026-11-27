@@ -7,6 +7,10 @@ For $s:\mathbb{N}\to\mathbb{N}$, $\mathsf{Formula}[s]$ is the class of languages
 - [Circuit complexity, binary cost and formula leaf size](../circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
 - [The class NC^k](../../../../complexity-classes/time-and-space-complexity-classes/nck.md)
 
+## Proof depends on
+
+- [Spira's theorem: balancing formulas](../../lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/spira-formula-balancing.md)
+
 ## Sources
 
 - Igor Carboni Oliveira, Rahul Santhanam, "Hardness Magnification for Natural Problems", 59th IEEE Annual Symposium on Foundations of Computer Science (FOCS 2018), 65–76, 2018.

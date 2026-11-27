@@ -4,11 +4,11 @@ Inputs are Boolean circuits on $n$ input bits.
 
 - **LOCALOPT**: given $S:\{0,1\}^n\to\{0,1\}^n$ and $V:\{0,1\}^n\to\mathbb{N}$, find $x$ with $V(S(x))\le V(x)$.
 - **PIGEON**: given $C:\{0,1\}^n\to\{0,1\}^n$, find $x$ with $C(x)=0^n$ or $x\ne y$ with $C(x)=C(y)$.
-- **END-OF-LINE**: given predecessor and successor circuits $P,S$ with $P(0^n)=0^n\ne S(0^n)$ (else $0^n$ is a solution), find $x\ne0^n$ that is a source or a sink of the graph with arcs $x\to S(x)$ whenever $P(S(x))=x$.
-- **SINK-OF-LINE**: the same graph, but only a sink is a solution.
-- **LEAF**: given a circuit listing at most two neighbours of each vertex of an undirected graph in which $0^n$ has degree $1$, find another vertex of degree $1$.
+- **END-OF-LINE**: given predecessor and successor circuits $P,S$, consider the graph with arcs $x\to S(x)$ whenever $P(S(x))=x$; every vertex has in- and out-degree at most $1$, a *source* has in-degree $0$ and out-degree $1$, and a *sink* in-degree $1$ and out-degree $0$. If $0^n$ is not a source, $0^n$ is a solution; otherwise find a sink or a source $x\ne0^n$.
+- **SINK-OF-LINE**: the same graph; $0^n$ is a solution if it is not a source, and otherwise only a sink is.
+- **LEAF**: given a circuit listing at most two neighbours of each vertex of an undirected graph (an edge joins two vertices that list each other), find $0^n$ if it does not have degree $1$, and otherwise another vertex of degree $1$.
 
-Each problem is total by an elementary principle (well-foundedness of a potential, the pigeonhole principle, parity/degree counting), hence lies in $\mathsf{TFNP}$.
+Each problem is total by an elementary principle (well-foundedness of a potential, the pigeonhole principle, parity/degree counting; when $0^n$ is a source, the path leaving it ends in a sink), hence lies in $\mathsf{TFNP}$.
 
 ## Depends on
 

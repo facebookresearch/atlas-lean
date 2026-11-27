@@ -14,6 +14,9 @@ Subtracting one recovers the perfect-matching count, which is $\#\mathsf{P}$-com
 ## Proof depends on
 
 - [The permanent is #P-complete (Valiant)](../complexity-of-the-permanent/permanent-sharp-p-complete.md)
+- [The Cook–Levin reduction is parsimonious](../complete-counting-problems/parsimonious-cook-levin.md)
+- [The integer permanent reduces to the 0/1 permanent](integer-permanent-to-zero-one-permanent.md)
+- [#3SAT reduces to the permanent of small-integer matrices](sharp-three-sat-to-integer-permanent.md)
 
 ## Sources
 

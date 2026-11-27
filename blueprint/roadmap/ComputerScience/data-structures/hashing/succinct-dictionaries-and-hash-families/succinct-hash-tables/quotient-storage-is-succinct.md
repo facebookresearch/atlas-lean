@@ -16,11 +16,11 @@ The quotient length is $\log_2 U - \log_2 n + O(\log \log n)$, and $n(\log_2 U -
 
 - [One-round Feistel quotienting of keys](one-round-feistel-quotienting.md)
 - [Information-theoretic space bound for dictionaries](../dictionary-specifications/information-theoretic-dictionary-space.md)
+- [k-wise independent hash family](../word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Proof depends on
 
 - [Power–binomial inequality](../dictionary-specifications/power-binomial-inequality.md)
-- [k-wise independent hash family](../word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 

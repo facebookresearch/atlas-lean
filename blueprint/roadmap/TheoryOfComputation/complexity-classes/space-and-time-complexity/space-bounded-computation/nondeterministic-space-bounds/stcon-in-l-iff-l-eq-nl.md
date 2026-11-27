@@ -17,6 +17,7 @@ $\mathsf{L}$ is closed under logspace reductions because logspace functions comp
 - [ST-connectivity is NL-complete](../../../../completeness-other-classes/directed-s-t-connectivity/stcon-nl-complete.md)
 - [Log-space many-one reductions](../../../time-and-space-complexity-classes/log-space-red.md)
 - [Log-space computable functions](../../../time-and-space-complexity-classes/log-space-computable.md)
+- [Logarithmic-space computable functions compose](../logspace-composition-and-layered-reachability/logspace-functions-compose.md)
 
 ## Sources
 

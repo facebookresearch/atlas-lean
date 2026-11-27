@@ -9,6 +9,7 @@ Composing the cross-composition with the compression gives an OR-distillation of
 ## Depends on
 
 - [Kernelization and polynomial compression](kernelization.md)
+- [NP/poly](../../structural-complexity/boolean-hierarchy-and-polynomial-hierarchy-collapses/np-with-polynomial-advice.md)
 
 ## Proof depends on
 

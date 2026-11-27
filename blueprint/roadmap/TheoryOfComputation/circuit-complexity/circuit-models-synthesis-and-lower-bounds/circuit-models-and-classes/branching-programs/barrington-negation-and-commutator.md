@@ -9,6 +9,8 @@ Evaluation is a homomorphism, so $P^{-1}$ evaluates to the inverse of $P$'s valu
 ## Depends on
 
 - [Programs over a monoid and bounded-width branching programs](monoid-programs.md)
+- [Straight-line programs and circuits over a basis](../circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
+- [Permutation branching programs of bounded width](../../../parallel-circuit-hierarchies/permutation-branching-programs.md)
 
 ## Sources
 

@@ -15,6 +15,7 @@ Upper bound: Alice sends her element in $\lceil\log_2|X|\rceil$ bits and Bob ann
 
 - [Fooling-set lower bound](../deterministic-communication-protocols/card-le-two-pow-of-is-fooling-set.md)
 - [Deterministic communication complexity of equality](../deterministic-communication-protocols/comm-complexity-eq-fn.md)
+- [The inner-product matrix has full rank](inner-product-matrix-has-full-rank.md)
 
 ## Sources
 

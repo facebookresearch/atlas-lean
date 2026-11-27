@@ -6,6 +6,8 @@ For a CNF formula $\varphi$ with $m \ge 1$ clauses (counted with multiplicity), 
 
 - [CNF formula](../../../Logic/propositional-logic/conjunctive-normal-form/cnf.md)
 - [The MAX-3SAT objective](../approximability-of-max-3sat/max3-satval.md)
+- [Finite-domain constraint satisfaction problems](../../np-completeness/satisfiability/constraint-satisfaction-encodings/finite-domain-constraint-satisfaction.md)
+- [Maximum constraint satisfaction problems](maximum-constraint-satisfaction-problems.md)
 
 ## Sources
 

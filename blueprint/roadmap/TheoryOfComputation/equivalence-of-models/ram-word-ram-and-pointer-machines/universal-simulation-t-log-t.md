@@ -1,12 +1,12 @@
 # Hennie–Stearns: a universal multi-tape machine with O(t log t) overhead
 
-There is a universal multi-tape Turing machine $U$ that, on input a machine description $d$ (with $k$ tapes and alphabet/state sizes bounded by $D$), an input $x$ and a step count $t$ in binary, outputs the result of running $d$ on $x$ for $t$ steps, in time and space
+There is a universal multi-tape Turing machine $U$ that, on input a machine description $d$ (with $k$ tapes), an input $x$ and a step count $t$ in binary, outputs the result of running $d$ on $x$ for $t$ steps, in time and space
 
 $$
-O\bigl(N+\mathrm{poly}(D)\cdot(t+1)\log(t+1)\bigr),
+O\bigl(N+C_d\cdot(t+1)\log(t+1)\bigr),
 $$
 
-where $N$ is the input length. The simulation keeps the simulated tapes in windows centred at the heads, organized in blocks of doubling sizes so that a head move costs amortized $O(\log t)$.
+where $N$ is the input length and the factor $C_d$ depends only on the simulated machine, through its number $k$ of tapes, its alphabet size and its number of states (not on $x$ or $t$). The simulation keeps the simulated tapes in windows centred at the heads, organized in blocks of doubling sizes so that a head move costs amortized $O(\log t)$.
 
 ## Proof sketch
 

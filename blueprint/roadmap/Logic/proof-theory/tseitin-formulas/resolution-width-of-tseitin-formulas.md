@@ -1,6 +1,6 @@
 # Resolution width of Tseitin formulas is at least the expansion
 
-Let $G$ be a connected multigraph with charge $\chi$ of odd total. Every resolution refutation of $T(G,\chi)$ contains a clause of width at least $e(G)$. Consequently, if every vertex has degree at most $k$, every refutation has at least $\exp\big(\Omega((e(G) - k)^2/|E|)\big)$ lines, and if $G$ has edge expansion $h(G) > 0$ the width is at least $h(G)|V|/3$.
+Let $G$ be a connected multigraph with $|V| \ge 2$ and charge $\chi$ of odd total. Every resolution refutation of $T(G,\chi)$ contains a clause of width at least $e(G)$. Consequently, if every vertex has degree at most $k$, every refutation has at least $\exp\big(\Omega(\max(e(G) - k, 0)^2/|E|)\big)$ lines, and if $G$ has edge expansion $h(G) > 0$ the width is at least $h(G)|V|/3$.
 
 ## Proof sketch
 

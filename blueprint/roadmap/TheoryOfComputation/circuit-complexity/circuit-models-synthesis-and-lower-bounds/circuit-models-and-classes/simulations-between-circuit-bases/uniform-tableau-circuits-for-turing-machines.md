@@ -10,9 +10,6 @@ Lay out one block of wires per time step holding the $O(T)$ cells of each tape (
 
 - [Straight-line programs and circuits over a basis](../circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
 - [Deterministic time classes on multi-tape machines](../../../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dtime.md)
-
-## Proof depends on
-
 - [Tseitin encoding of a Boolean circuit](../circuit-models-and-complexity-measures/tseitin-encoding-of-a-circuit.md)
 
 ## Sources

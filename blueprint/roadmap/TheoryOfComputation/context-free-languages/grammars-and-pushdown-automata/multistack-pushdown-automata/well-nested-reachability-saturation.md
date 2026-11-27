@@ -1,6 +1,6 @@
 # Inductive saturation characterizes well-nested reachability
 
-For every MPDA (arbitrary state and alphabet types, finitely many stacks), let $\mathrm{WR}$ be the least relation on control states containing all identity pairs and closed under: (i) $(s,s'')$ whenever $s\xrightarrow{\mathrm{nop}}s'$ and $(s',s'')\in\mathrm{WR}$; (ii) $(s,s''')$ whenever $s\xrightarrow{\mathrm{push}_k(\gamma)}s'$, $(s',s'')\in\mathrm{WR}$, $s''\xrightarrow{\mathrm{pop}_k(\gamma)}s'''$; (iii) composition. Then $(s,s')\in\mathrm{WR}$ iff some well-nested sequence of transitions labels a run of the control from $s$ to $s'$. For finitely many states, $\mathrm{WR}$ is computable by saturation in polynomial time.
+For every MPDA (arbitrary state and alphabet types, finitely many stacks), let $\mathrm{WR}$ be the least relation on control states containing all identity pairs and closed under: (i) $(s,s'')$ whenever $s\xrightarrow{\mathrm{nop}}s'$ and $(s',s'')\in\mathrm{WR}$; (ii) $(s,s''')$ whenever $s\xrightarrow{\mathrm{push}_k(\gamma)}s'$, $(s',s'')\in\mathrm{WR}$, $s''\xrightarrow{\mathrm{pop}_k(\gamma)}s'''$; (iii) composition. Then $(s,s')\in\mathrm{WR}$ iff some well-nested sequence of transitions labels a run of the control from $s$ to $s'$. When the states and the transitions are given as finite tables, $\mathrm{WR}$ is computable by saturation in time polynomial in the size of these tables.
 
 ## Proof sketch
 

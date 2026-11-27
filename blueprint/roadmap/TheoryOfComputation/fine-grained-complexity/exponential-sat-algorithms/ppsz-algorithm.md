@@ -10,6 +10,8 @@ For a unique solution, each variable $x$ has a critical clause tree of height $h
 
 - [Bounded-width implication (s-implication)](../../../ComputerScience/randomized-algorithms/exponential-time-k-sat-algorithms/bounded-width-implication.md)
 - [The exponents s_k of k-SAT and #k-SAT](../sat-exponents-and-hypotheses/k-sat-exponents.md)
+- [The PPSZ round](../../../ComputerScience/randomized-algorithms/exponential-time-k-sat-algorithms/ppsz-round.md)
+- [Forced values and the PPZ round](../../../ComputerScience/randomized-algorithms/exponential-time-k-sat-algorithms/ppz-forced-values-and-round.md)
 
 ## Proof depends on
 

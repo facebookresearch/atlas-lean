@@ -9,10 +9,12 @@ The unary languages $\{1^n: n\in A\}$ for $A\subseteq\mathbb{N}$ are uncountably
 ## Depends on
 
 - [Polynomial time with polynomial advice](../../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [P-selective sets](../../../../complexity-classes/structural-complexity/advice-sparse-and-selective-sets/p-selective-sets.md)
 
 ## Proof depends on
 
 - [Sparse languages have polynomial-size circuits](../../circuit-synthesis-and-upper-bounds/circuit-synthesis-upper-bounds/sparse-languages-have-polynomial-size-circuits.md)
+- [Ko: P-selective sets are in P/poly](../../../../complexity-classes/structural-complexity/advice-sparse-and-selective-sets/ko-p-selective-in-ppoly.md)
 
 ## Sources
 

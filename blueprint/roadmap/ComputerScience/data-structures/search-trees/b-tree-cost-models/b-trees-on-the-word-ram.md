@@ -9,6 +9,7 @@ Each node is a fixed-size record of $2t - 1$ key and value slots, $2t$ child poi
 ## Depends on
 
 - [B-trees of a given minimum degree](../b-tree/is-btree.md)
+- [Proactive top-down splitting in B-tree insertion](proactive-top-down-splitting.md)
 - [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 - [Word-RAM implementation certificate with potential-amortized running time](../../data-structure-interfaces-and-refinement/word-ram-implementation-certificate.md)
 

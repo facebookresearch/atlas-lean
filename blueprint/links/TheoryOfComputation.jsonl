@@ -11991,8 +11991,8 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/communication-complexity/randomized-decision-trees/README.md"}], "id": "af_45c23603a200761a9d8adb33"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/communication-complexity/rectangle-partitions-and-deterministic-bounds/README.md"}], "id": "af_c15f361804d5ed92c540319a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/README.md"}], "id": "af_dff000381e0ca10d6a4eab40"}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/completeness-other-classes/nl-complete-graph-problems/README.md"}], "id": "af_2e7ff5369c3765cccd97e1b1"}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/completeness-other-classes/nondeterministic-constraint-logic/README.md"}], "id": "af_42d297ea2dedd026bcfa24e7"}
+{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/completeness-other-classes/nl-complete-graph-problems/README.md"}], "id": "af_2e7ff5369c3765cccd97e1b1", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/completeness-other-classes/nondeterministic-constraint-logic/README.md"}], "id": "af_42d297ea2dedd026bcfa24e7", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/complexity-classes/blum-complexity-measures/abstract-blum-complexity-theorems/README.md"}], "id": "af_f2592ac36d5c66f2308125d4"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/complexity-classes/structural-complexity/advice-sparse-and-selective-sets/README.md"}], "id": "af_72c09fa268deb0e560696695"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/complexity-classes/space-and-time-complexity/alternating-time-and-space/README.md"}], "id": "af_89aaf4efa500742cb78c7742"}
@@ -12017,7 +12017,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/counting-complexity/permanent-reductions/README.md"}], "id": "af_b8be3f21bedd1795fe8ae9bc"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/counting-complexity/weighted-csp-partition-functions/README.md"}], "id": "af_02481217122adaba9cbd5ba3"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/decision-procedures/existential-theory-of-the-reals/README.md"}], "id": "af_061a96808b8db3db3d75465a"}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/degrees-and-hierarchies/kleene-post-incomparable-degrees/README.md"}], "id": "af_0964fbe0f544140e6bdc98e9"}
+{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/degrees-and-hierarchies/kleene-post-incomparable-degrees/README.md"}], "id": "af_0964fbe0f544140e6bdc98e9", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/descriptive-complexity/ehrenfeucht-fraisse-games/README.md"}], "id": "af_17dd093f64bf4f0474d58cad"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/descriptive-complexity/finite-structures-and-definability/README.md"}], "id": "af_40dfc327e987074a1e514ac1"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/descriptive-complexity/finite-variable-logics/README.md"}], "id": "af_fc88b7dfbd92d8a7084ecd33"}
@@ -12052,8 +12052,8 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/polymorphisms-of-boolean-relations/README.md"}], "id": "af_8a5c86cbdb0b484a11e613e5"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/schaefer-dichotomy/README.md"}], "id": "af_f3be5de23c643dae451af98c"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pcp-and-inapproximability/maximum-satisfiability-by-random-assignments/README.md"}], "id": "af_53cc894b06f0b52163a2851a"}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/polynomial-time-problems/exact-algebraic-and-combinatorial-algorithms/README.md"}], "id": "af_bdf59de367493a3a7d9c5c63"}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/polynomial-time-problems/two-sat-and-xor-sat-algorithms/README.md"}], "id": "af_8c7b0e9cb1fdb864d9de7953"}
+{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/polynomial-time-problems/exact-algebraic-and-combinatorial-algorithms/README.md"}], "id": "af_bdf59de367493a3a7d9c5c63", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/polynomial-time-problems/two-sat-and-xor-sat-algorithms/README.md"}], "id": "af_8c7b0e9cb1fdb864d9de7953", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/weak-sources-and-extractors/affine-and-sumset-extractors/README.md"}], "id": "af_8271827381dad4bd173effce"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/weak-sources-and-extractors/affine-dispersers/README.md"}], "id": "af_8a46468dd425961fc7ce29ec"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/average-case-complexity/README.md"}], "id": "af_84d2a724754e0e46cf4fea62"}
@@ -12069,7 +12069,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/promise-and-randomized-classes/README.md"}], "id": "af_d03ee63872fa3cbe660b2fed"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/quantum-circuit-models/README.md"}], "id": "af_2f493fc58a4f782b087d4adf"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/randomized-logarithmic-space/README.md"}], "id": "af_97a9127a91733cdd723ff445"}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/turing-machines/single-tape/single-tape-time-lower-bounds/README.md"}], "id": "af_fe81b076cb54a6edb7ebcc99"}
+{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/turing-machines/single-tape/single-tape-time-lower-bounds/README.md"}], "id": "af_fe81b076cb54a6edb7ebcc99", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/undecidable-problems/wang-tilings-and-the-domino-problem/README.md"}], "id": "af_2724cf1d4235acd764073019"}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/space-bounded-pseudorandomness/saks-zhou-random-shift-rounding.md"}], "id": "af_62deeafef39ca248cdfaa3ed", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/weak-sources-and-extractors/weak-random-sources.md"}], "id": "af_ad1f164c53f0505569ff6ab3", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
@@ -12090,7 +12090,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/complexity-classes/blum-complexity-measures/abstract-blum-complexity-theorems/borodin-gap-theorem.md"}], "id": "af_f5cfea47761eec9bf996d157", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/turing-machines/single-tape/single-tape-time-lower-bounds/crossing-sequences.md"}], "id": "af_7fb2c9d06c70628604daf6c2", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/equivalence-of-models/ram-word-ram-and-pointer-machines/generic-algebraic-rams.md"}], "id": "af_94fac5017364009a0db438d8", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/equivalence-of-models/ram-word-ram-and-pointer-machines/pointer-machines.md"}], "id": "af_d8452245a52ef231f2609774", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/equivalence-of-models/ram-word-ram-and-pointer-machines/unit-versus-logarithmic-cost.md"}], "id": "af_3db56546c9d9a9a51540bb96", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/equivalence-of-models/ram-word-ram-and-pointer-machines/multistack-multitape-equivalence.md"}], "id": "af_4e00ed92c846bee82062f683", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/complexity-classes/blum-complexity-measures/abstract-blum-complexity-theorems/union-theorem.md"}], "id": "af_9048851b72233e749f71b169", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
@@ -12114,7 +12113,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/interactive-proof-variants/dip-eq-np.md"}], "id": "af_a42f6fe1c3cacca40199ebbb", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/average-case-complexity/distributional-problems.md"}], "id": "af_bfc757f96e30e3f312fdbbbe", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/counting-complexity/permanent-reductions/easy-search-hard-counting.md"}], "id": "af_8e2d2ac9fa747f5bc2d4d300", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/pseudorandomness-and-one-way-functions/hardness-and-generators/exponential-time-designs.md"}], "id": "af_6bbe652f07c223bf0eb6b1e9", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/counting-complexity/approximate-counting-and-sampling/fully-polynomial-almost-uniform-samplers.md"}], "id": "af_c48c062eba85494e98bba175", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/interactive-proof-variants/graph-non-isomorphism-private-coin-proof.md"}], "id": "af_ff261a3c978a942e04070926", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/interactive-proof-variants/optimal-prover-ip-in-pspace.md"}], "id": "af_b6e4166d6ed48db5ff5374d7", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}

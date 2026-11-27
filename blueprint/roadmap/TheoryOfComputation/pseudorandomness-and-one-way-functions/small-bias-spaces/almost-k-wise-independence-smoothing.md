@@ -10,6 +10,7 @@ Let $g=2^{-n}\sum_{0<|S|\le k} \mathrm{bias}_X(S)\chi_S$, so $|g|\le 2^{-n}B$ po
 
 - [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Total variation distance of functions on a finite set](../../../Probability/markov-chains/mixing-times-of-markov-chains/tv-dist.md)
+- [k-wise independent and almost k-wise independent distributions](../../circuit-complexity/constant-depth-circuit-lower-bounds/ac0-fourier-and-pseudorandomness/k-wise-independent-distributions.md)
 
 ## Sources
 

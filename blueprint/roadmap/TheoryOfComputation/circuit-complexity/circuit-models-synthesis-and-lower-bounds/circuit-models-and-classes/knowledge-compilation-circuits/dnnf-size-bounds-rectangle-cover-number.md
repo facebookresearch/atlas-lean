@@ -9,6 +9,7 @@ Each accepted input has a certificate (a sub-DAG choosing one child at each $\ve
 ## Depends on
 
 - [Balanced multi-partition rectangle covers](multi-partition-rectangle-covers.md)
+- [Negation normal form circuits, DNNF and d-DNNF](nnf-dnnf-and-d-dnnf.md)
 
 ## Sources
 

@@ -17,6 +17,7 @@ Partition permutations according to whether $\pi^{-1}(t)$ lies in the first or s
 ## Proof depends on
 
 - [Ambainis: relational adversary bound for non-Boolean input alphabets](ambainis-relational-adversary-for-value-queries.md)
+- [Quantum search with an unknown number of marked items (BBHT)](../quantum-query-bounds-and-algorithms/quantum-search-with-unknown-number-of-solutions.md)
 
 ## Sources
 

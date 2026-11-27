@@ -16,6 +16,10 @@ Holding $u \in U$ and $v \in V$ with witnesses, the players walk from $D_k = \em
 - [Communication cost of a protocol](../../../TheoryOfComputation/communication-complexity/deterministic-communication-protocols/depth.md)
 - [Boolean gates](../../../TheoryOfComputation/circuit-complexity/boolean-circuits/boolean-gate.md)
 
+## Proof depends on
+
+- [Circuits from dag-like Karchmer–Wigderson protocols](../../../TheoryOfComputation/circuit-complexity/circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/circuits-from-dag-like-protocols.md)
+
 ## Sources
 
 - J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997: Definition 4.3, Theorem 2.3 and Theorem 5.1.

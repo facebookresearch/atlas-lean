@@ -9,6 +9,7 @@ The two query unitaries agree on the subspace of addresses where $H=H'$; the dif
 ## Depends on
 
 - [Quantum oracle circuits with coherent XOR queries](quantum-oracle-circuits-with-xor-queries.md)
+- [Trace norm and trace distance](../../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
 
 ## Sources
 

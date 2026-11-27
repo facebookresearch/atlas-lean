@@ -1,6 +1,6 @@
 # Ambainis: relational adversary bound for non-Boolean input alphabets
 
-Let $f : D \to \beta$ with $D \subseteq \Sigma^N$, and let $R \subseteq D \times D$ be a nonempty relation between inputs with $f(x) \ne f(y)$. Suppose every $x$ in the left projection is related to at least $m$ inputs, every $y$ in the right projection to at least $m'$ inputs, and for every related pair $(x, y)$ and index $i$ with $x_i \ne y_i$, the product $\ell_{x,i} \ell'_{y,i}$ is at most $L$, where $\ell_{x,i}$ is the number of partners $y'$ of $x$ with $y'_i \ne x_i$ and $\ell'_{y,i}$ the number of partners $x'$ of $y$ with $x'_i \ne y_i$. Then every $T$-query value-oracle algorithm computing $f$ with error $\varepsilon$ satisfies
+Let $f : D \to \beta$ with $D \subseteq \Sigma^N$, and let $R \subseteq D \times D$ be a nonempty relation between inputs with $f(x) \ne f(y)$. Suppose every $x$ in the left projection is related to at least $m$ inputs, every $y$ in the right projection to at least $m'$ inputs, and for every related pair $(x, y)$ and index $i$ with $x_i \ne y_i$, the product $\ell_{x,i} \ell'_{y,i}$ is at most $L$, where $\ell_{x,i}$ is the number of partners $y'$ of $x$ with $y'_i \ne x_i$ and $\ell'_{y,i}$ the number of partners $x'$ of $y$ with $x'_i \ne y_i$. Then every $T$-query value-oracle algorithm computing $f$ with error at most $\varepsilon$ on every input of $D$, where $0 \le \varepsilon < 1/2$, satisfies
 
 $$\big(1 - 2\sqrt{\varepsilon(1 - \varepsilon)}\big)\sqrt{m m'} \le 2T\sqrt{L}.$$
 

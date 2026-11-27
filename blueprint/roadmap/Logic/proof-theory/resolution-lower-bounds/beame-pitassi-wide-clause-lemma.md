@@ -1,6 +1,6 @@
 # Beame–Pitassi: refutations of the pigeonhole principle contain wide monotone clauses
 
-Every resolution refutation of $\mathrm{PHP}^{n}_{n-1}$ ($n$ pigeons, $n - 1$ holes) contains a clause whose monotonization has at least $2n^2/9$ literals. Combined with a greedy choice of one pigeon–hole pair at a time (restricting $p_{i,j} = 1$ and the rest of row $i$ and column $j$ to $0$), which shrinks the instance by one pigeon and one hole and, at each step, satisfies at least a tenth of the clauses with at least $n^2/10$ literals, this shows that for sufficiently large $n$ every resolution refutation of $\mathrm{PHP}^{n}_{n-1}$ has at least $2^{n/20}$ clauses.
+For every $n \ge 2$, every resolution refutation of $\mathrm{PHP}^{n}_{n-1}$ ($n$ pigeons, $n - 1$ holes) contains a clause whose monotonization has at least $2n^2/9$ literals. Combined with a greedy choice of one pigeon–hole pair at a time (restricting $p_{i,j} = 1$ and the rest of row $i$ and column $j$ to $0$), which shrinks the instance by one pigeon and one hole and, at each step, satisfies at least a tenth of the clauses with at least $n^2/10$ literals, this shows that for sufficiently large $n$ every resolution refutation of $\mathrm{PHP}^{n}_{n-1}$ has at least $2^{n/20}$ clauses.
 
 ## Proof sketch
 

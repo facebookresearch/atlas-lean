@@ -1,6 +1,6 @@
 # Small circuits agree with every function on 1/2 + t/2^n of the inputs
 
-For every $f:\{0,1\}^n\to\{0,1\}$ and every integer $t$ with $2t\le 2^n$, some Boolean function $g$ of De Morgan circuit complexity at most $t(2n+3)+1$ agrees with $f$ on at least a $\tfrac12+t/2^n$ fraction of the inputs. In particular (for $t=1$, $n\ge1$) every function is approximated with advantage $2^{-n}$ by a circuit of size $2n+4$.
+For every $f:\{0,1\}^n\to\{0,1\}$ and every integer $t$ with $0\le t$ and $2t\le 2^n$, some Boolean function $g$ of De Morgan circuit complexity at most $t(2n+3)+1$ agrees with $f$ on at least a $\tfrac12+t/2^n$ fraction of the inputs. In particular (for $t=1$, $n\ge1$) every function is approximated with advantage $2^{-n}$ by a circuit of size $2n+4$.
 
 ## Proof sketch
 

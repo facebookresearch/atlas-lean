@@ -1,6 +1,6 @@
 # Linear-size parsimonious reduction to three occurrences per variable
 
-There is a polynomial-time map $\varphi\mapsto\varphi'$ from $k$-CNF formulas ($k\ge2$) to $k$-CNF formulas in which every variable occurs at most three times, with $\#\varphi'=\#\varphi$ (parsimonious; in particular satisfiability is preserved), and with the number of variables and clauses of $\varphi'$ linear in the number of literal occurrences of $\varphi$. Consequently ETH implies that 3SAT with at most three occurrences per variable has no $2^{o(n)}$ algorithm.
+There is a polynomial-time map $\varphi\mapsto\varphi'$ from $k$-CNF formulas ($k\ge2$) to $k$-CNF formulas in which every variable occurs at most three times, with the same model count, the number of satisfying assignments of the variables occurring in the formula (parsimonious; in particular satisfiability is preserved), and with the number of variables and clauses of $\varphi'$ linear in the number of literal occurrences of $\varphi$. Consequently ETH implies that 3SAT with at most three occurrences per variable has no $2^{o(n)}$ algorithm.
 
 ## Proof sketch
 
@@ -9,12 +9,13 @@ Replace the $d$ occurrences of a variable $x$ by fresh copies $x_1,\dots,x_d$ an
 ## Depends on
 
 - [The 3SAT decision problem](../../np-completeness/satisfiability/3-satisfiability/sat3-dec.md)
-- [Counting satisfying assignments of a CNF formula](../../counting-complexity/counting-satisfiability-sat/count-sat-fun.md)
+- [Model count of a CNF formula](../../../Logic/propositional-logic/model-count-preserving-cnf-transformations/model-count.md)
 - [The exponents s_k of k-SAT and #k-SAT](../sat-exponents-and-hypotheses/k-sat-exponents.md)
 
 ## Proof depends on
 
 - [ETH holds for sparse 3-SAT iff for general 3-SAT](../sparsification-lemma/eth-for-sparse-3sat.md)
+- [Binary implication cycles and chains](../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/binary-implication-cycles.md)
 
 ## Sources
 

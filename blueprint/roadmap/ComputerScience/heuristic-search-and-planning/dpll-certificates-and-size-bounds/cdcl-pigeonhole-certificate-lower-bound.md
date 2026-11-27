@@ -10,6 +10,7 @@ The certificate translates into a resolution refutation with at most $|\mathrm{P
 
 - [A CDCL solver with watched literals returns models or LRAT refutations](../cdcl-sat-solver-components/certified-cdcl-solver-correctness.md)
 - [Haken's lower bound for the pigeonhole principle](../../../Logic/propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
+- [Pigeonhole formulas $\mathrm{PHP}^m_n$](../../../Logic/proof-theory/resolution-lower-bounds/pigeonhole-formulas.md)
 
 ## Proof depends on
 

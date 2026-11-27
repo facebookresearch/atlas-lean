@@ -1,6 +1,6 @@
 # Impagliazzo–Pudlák–Sgall: degree lower bound for subset sum
 
-Over the field $\mathbb{R}$ of real numbers, let $c_1,\dots,c_n$ be nonzero reals and $m$ an arbitrary real. The polynomial $m - \sum_i c_i x_i$ together with the Boolean axioms has no PC refutation (and no Nullstellensatz refutation) of degree at most $\lceil n/2 \rceil$. When $m$ is not a subset sum of the $c_i$ the system is unsatisfiable and refutable in degree $n + 1$.
+Over the field $\mathbb{R}$ of real numbers, let $n \ge 1$, let $c_1,\dots,c_n$ be nonzero reals and $m$ an arbitrary real. The polynomial $m - \sum_i c_i x_i$ together with the Boolean axioms has no PC refutation (and no Nullstellensatz refutation) of degree at most $\lceil n/2 \rceil$. When $m$ is not a subset sum of the $c_i$ the system is unsatisfiable and refutable in degree $n + 1$.
 
 ## Proof sketch
 
@@ -9,11 +9,13 @@ Apply the invariant method to the module of polynomials agreeing on the cube wit
 ## Depends on
 
 - [Polynomial calculus proofs, degree and size](polynomial-calculus-proofs.md)
+- [Nullstellensatz proofs and degree](nullstellensatz-proofs.md)
 
 ## Proof depends on
 
 - [The invariant method for polynomial calculus degree lower bounds](invariant-method-for-pc-degree.md)
 - [Polynomial calculus simulates Nullstellensatz, and conversely without bounds](polynomial-calculus-simulates-nullstellensatz.md)
+- [Completeness of Nullstellensatz and PC over the Boolean cube](algebraic-proof-systems-completeness.md)
 
 ## Sources
 

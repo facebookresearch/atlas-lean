@@ -6,6 +6,8 @@ In the source's fixed-capacity dictionary, a cubby of capacity $K$ stores a stor
 
 - [k-kick tree balls-to-slots scheme](k-kick-tree.md)
 - [Bit-packed array on the Word RAM](../word-ram-hash-families/bit-packed-array.md)
+- [Local query router by binary prefix trie](local-query-router.md)
+- [Mini-array with unary delimiters](mini-array-with-unary-delimiters.md)
 
 ## Sources
 

@@ -1,10 +1,10 @@
 # Reckhow: all Frege systems are polynomially equivalent
 
-Any two Frege systems (over possibly different complete sets of connectives) polynomially simulate each other: there is a polynomial $p$ such that if a tautology has a proof of size $s$ in one system, its translation has a proof of size at most $p(s)$ in the other. Consequently the open problem of superpolynomial Frege lower bounds does not depend on the choice of Frege system.
+Any two Frege systems (over possibly different complete sets of connectives) p-simulate each other: there is a polynomial-time computable function mapping every proof of a tautology $\varphi$ in one system to a proof in the other of the translation of $\varphi$ into the other system's connectives ($\varphi$ itself when the connective sets agree). Consequently the open problem of superpolynomial Frege lower bounds does not depend on the choice of Frege system.
 
 ## Proof sketch
 
-Over a common connective set (Cook–Reckhow): each rule of the first system is a sound implication between schemes, hence has a fixed derivation in the second by implicational completeness, and substituting instances multiplies the number of lines by a constant and the formula size by a constant. Changing connective sets (Reckhow) requires translating every formula into the other basis without exponential blowup, which is the involved part of the proof.
+Over a common connective set (Cook–Reckhow): each rule of the first system is a sound implication between schemes, hence has a fixed derivation in the second by implicational completeness, and substituting instances multiplies the number of lines by a constant and the formula size by a constant, by a translation computable in polynomial time. Changing connective sets (Reckhow) requires translating every formula into the other basis without exponential blowup, which is the involved part of the proof.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Exponential lower bounds for LRAT certificates
 
-There is a family of unsatisfiable $O(1)$-CNF formulas with $O(n)$ variables and clauses (Tseitin formulas on expanders) all of whose accepted LRAT certificates (without extension or RAT steps) have length $2^{\Omega(n)}$; [CDCL certificates of pigeonhole formulas are exponential](../../../../ComputerScience/heuristic-search-and-planning/dpll-certificates-and-size-bounds/cdcl-pigeonhole-certificate-lower-bound.md) gives a second such family, with $\Theta(n^2)$ variables. These bound the certificate, regardless of the solver that produced it.
+There is a family of unsatisfiable $O(1)$-CNF formulas with $O(n)$ variables and clauses (Tseitin formulas on expanders) all of whose accepted LRAT certificates (without extension or RAT steps) have length $2^{\Omega(n)}$; [CDCL certificates of pigeonhole formulas are exponential](../../../../ComputerScience/heuristic-search-and-planning/dpll-certificates-and-size-bounds/cdcl-pigeonhole-certificate-lower-bound.md) gives a second family of unsatisfiable formulas with exponentially long certificates, with $\Theta(n^2)$ variables and clauses of unbounded width. These bound the certificate, regardless of the solver that produced it.
 
 ## Proof sketch
 
@@ -9,6 +9,7 @@ Translate an accepted certificate into a resolution refutation of size at most $
 ## Depends on
 
 - [Accepted LRAT proofs refute CNF formulas](../accepted-lrat-proofs-refute-cnf-formulas.md)
+- [Tseitin formulas of a multigraph](../../../proof-theory/tseitin-formulas/tseitin-formulas-of-a-multigraph.md)
 
 ## Proof depends on
 

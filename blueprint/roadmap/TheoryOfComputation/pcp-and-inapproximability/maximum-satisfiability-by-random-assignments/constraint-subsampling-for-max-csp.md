@@ -1,6 +1,6 @@
 # Constraint subsampling preserves the Max-CSP optimum up to $2\delta m$
 
-Let $F$ be a (weighted) Max-CSP instance with $m$ constraints on $n$ variables over a finite domain $D$. Draw $s$ constraints of $F$ uniformly and independently with replacement to obtain $F'$. If $s \ge 2\delta^{-2}(n \ln|D| + \ln(2/\eta))$, then with probability at least $1 - \eta$, simultaneously for all assignments $\sigma$, $|\tfrac{m}{s}\,\mathrm{score}_{F'}(\sigma) - \mathrm{score}_F(\sigma)| \le \delta m$; in particular an optimal assignment for $F'$ is within $2\delta m$ of the optimum of $F$.
+Let $F$ be a (weighted, with weights in $[0,1]$) Max-CSP instance with $m \ge 1$ constraints on $n$ variables over a finite domain $D$, and let $\delta > 0$ and $0 < \eta < 1$. Draw $s$ constraints of $F$ uniformly and independently with replacement to obtain $F'$. If $s \ge 2\delta^{-2}(n \ln|D| + \ln(2/\eta))$, then with probability at least $1 - \eta$, simultaneously for all assignments $\sigma$, $|\tfrac{m}{s}\,\mathrm{score}_{F'}(\sigma) - \mathrm{score}_F(\sigma)| \le \delta m$; in particular an optimal assignment for $F'$ is within $2\delta m$ of the optimum of $F$.
 
 ## Proof sketch
 
@@ -9,6 +9,10 @@ For a fixed assignment the rescaled sampled score is an average of $s$ independe
 ## Depends on
 
 - [Maximum constraint satisfaction problems](maximum-constraint-satisfaction-problems.md)
+
+## Proof depends on
+
+- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
 
 ## Sources
 

@@ -9,6 +9,7 @@ Translate moves one to one: loading an input or computing a gate is placing a pe
 ## Depends on
 
 - [Straight-line programs and circuits over a basis](straight-line-program-over-a-basis.md)
+- [Black pebble game and black pebbling price](../../../../complexity-classes/space-and-time-complexity/space-bounded-computation/pebble-games/black-pebble-game.md)
 
 ## Sources
 

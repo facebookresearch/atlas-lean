@@ -18,6 +18,10 @@ Parseval gives $\sum_S \mathrm{bias}_X(S)^2 = 2^n \,\mathrm{cp}(X)$ for the coll
 - [Parseval's identity on the Boolean cube](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-parseval.md)
 - [Total variation distance of functions on a finite set](../../../Probability/markov-chains/mixing-times-of-markov-chains/tv-dist.md)
 
+## Proof depends on
+
+- [Guessing probability, min-entropy and collision probability](../../../ComputerScience/cryptography/randomness-extraction/guessing-probability-min-entropy-and-collision.md)
+
 ## Sources
 
 - U. V. Vazirani, "Randomness, Adversaries and Computation", PhD thesis, University of California, Berkeley, 1986.

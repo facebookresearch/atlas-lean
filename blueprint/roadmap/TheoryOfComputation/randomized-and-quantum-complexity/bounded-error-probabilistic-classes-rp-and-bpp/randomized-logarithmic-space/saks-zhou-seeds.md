@@ -9,11 +9,13 @@ Each Nisan-powering step approximates $M^{2^s}$ within $2^{-\Omega(d)}$ for most
 ## Depends on
 
 - [Randomized logarithmic space RL and BPL](rl-and-bpl.md)
+- [Saks–Zhou randomized rounding with a random shift](../../../pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/space-bounded-pseudorandomness/saks-zhou-random-shift-rounding.md)
 
 ## Proof depends on
 
 - [Nisan's generator for read-once branching programs](../../../pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/nisan-generator.md)
 - [Nisan's generator fools space-bounded computation](../../../pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/nisan-generator-fools-space-bounded-computation.md)
+- [The Saks–Zhou iteration with Nisan's generator](../../../pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/space-bounded-pseudorandomness/saks-zhou-iteration-with-nisan-generator.md)
 
 ## Sources
 

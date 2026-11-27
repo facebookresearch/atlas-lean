@@ -10,6 +10,11 @@ Pad to a power of two and add along a balanced binary tree using ripple-carry ad
 
 - [Circuit complexity, binary cost and formula leaf size](../../circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
 - [Ripple-carry adder](../../../ripple-carry-adder/ripple-carry-adder.md)
+- [Threshold gates and the basis of threshold circuits](../../../parallel-circuit-hierarchies/threshold-gates-and-threshold-circuits.md)
+
+## Proof depends on
+
+- [All minterms in linear size](all-minterms-in-linear-size.md)
 
 ## Sources
 

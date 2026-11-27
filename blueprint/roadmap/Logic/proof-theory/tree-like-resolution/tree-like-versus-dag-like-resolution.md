@@ -1,10 +1,10 @@
 # Tree-like derivations versus line-based resolution proofs
 
-Every tree-like resolution derivation with $s$ nodes yields a line-based resolution proof of the same conclusion with at most $s$ lines, and every line-based proof unfolds into a tree-like derivation, possibly exponentially larger since a line used several times is copied. A tree-like refutation of $\varphi$ is the same as a decision tree that queries variables and whose leaves are labelled by clauses of $\varphi$ falsified on the path, of the same size.
+Every tree-like resolution derivation with $s$ nodes yields a line-based resolution proof of the same conclusion with at most $s$ lines, and every line-based proof unfolds into a tree-like derivation, possibly exponentially larger since a line used several times is copied. Tree-like refutations of $\varphi$ and decision trees that query variables and whose leaves are labelled by clauses of $\varphi$ falsified on the path convert into each other without increasing the number of nodes.
 
 ## Proof sketch
 
-List the nodes of the tree in post-order to get a line-based proof; conversely unfold a proof from its last line. A tree-like refutation read from the root queries the resolved variable at each node; a falsified axiom labels each leaf.
+List the nodes of the tree in post-order to get a line-based proof; conversely unfold a proof from its last line. A tree-like refutation read from the root queries the resolved variable at each resolution node, skipping weakening steps; a falsified axiom labels each leaf. Conversely, label the nodes of a decision tree bottom up by clauses falsified on their paths, resolving the two children's clauses on the queried variable, or copying a child's clause and dropping the other subtree when that clause lacks the variable.
 
 ## Depends on
 

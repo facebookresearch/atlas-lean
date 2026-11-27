@@ -1,6 +1,6 @@
 # Context-, round-, phase- and scope-bounded runs
 
-For a sequence of MPDA transitions: a **context** is a maximal factor in which only one stack is accessed (pushes and pops of a single stack); a **round** is a factor visiting the stacks $1,\dots,n$ in order with one context each; a **phase** is a maximal factor in which only one stack is popped. The sequence is $K$-**context-bounded** if it has at most $K$ contexts, $K$-**round-bounded** if it is a concatenation of at most $K$ rounds, $K$-**phase-bounded** if it has at most $K$ phases, and $K$-**scope-bounded** if every matched push and pop are separated by at most $K$ context switches. $K$ rounds give at most $Kn$ contexts, and $K$ contexts imply $K$-scope-boundedness.
+For a sequence of MPDA transitions: a **context** is a maximal factor in which only one stack is accessed (pushes and pops of a single stack); a **round** is a factor $\tau_1\cdots\tau_n$ in which each $\tau_s$, possibly empty, accesses only stack $s$ (so a round has at most $n$ contexts); a **phase** is a maximal factor in which only one stack is popped. The sequence is $K$-**context-bounded** if it has at most $K$ contexts, $K$-**round-bounded** if it is a concatenation of at most $K$ rounds, $K$-**phase-bounded** if it has at most $K$ phases, and $K$-**scope-bounded** if every matched push and pop are separated by at most $K$ context switches. $K$ rounds give at most $Kn$ contexts, and $K$ contexts imply $K$-scope-boundedness.
 
 ## Depends on
 

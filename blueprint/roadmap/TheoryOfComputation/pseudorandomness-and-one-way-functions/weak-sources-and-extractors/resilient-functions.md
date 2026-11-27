@@ -5,6 +5,7 @@ Let $f : \{0,1\}^n \to \{0,1\}$ and $Q \subseteq [n]$ a coalition. $f$ is *undet
 ## Depends on
 
 - [k-wise independent hash family](../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent and almost k-wise independent distributions](../../circuit-complexity/constant-depth-circuit-lower-bounds/ac0-fourier-and-pseudorandomness/k-wise-independent-distributions.md)
 
 ## Sources
 

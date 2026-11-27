@@ -16,6 +16,7 @@ In a graph satisfying the extension axioms with at most $k$ parameters, the part
 
 - [Pebble games characterize $\mathrm{FO}^k$ and $L^k_{\infty\omega}$](../finite-variable-logics/pebble-games-characterize-finite-variable-logic.md)
 - [Extension axioms hold almost surely](extension-axioms-hold-almost-surely.md)
+- [Fixed-point logics embed into finite-variable infinitary logic](../finite-variable-logics/fixed-point-logic-in-finite-variable-infinitary-logic.md)
 
 ## Sources
 

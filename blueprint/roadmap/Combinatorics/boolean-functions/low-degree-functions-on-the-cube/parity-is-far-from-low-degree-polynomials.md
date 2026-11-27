@@ -9,9 +9,6 @@ On the agreement set $A$, every function $g : A \to \mathbb{F}$ is (after the ch
 ## Depends on
 
 - [Boolean degree](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/boolean-degree.md)
-
-## Proof depends on
-
 - [Dimension of the space of low-degree functions](dimension-of-low-degree-functions.md)
 
 ## Sources

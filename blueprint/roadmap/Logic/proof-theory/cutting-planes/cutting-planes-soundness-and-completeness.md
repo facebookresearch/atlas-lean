@@ -10,6 +10,10 @@ Rounding is sound because the left side is an integer at $0/1$ points. Completen
 
 - [The cutting planes proof system](cutting-planes-proof-system.md)
 
+## Proof depends on
+
+- [Cutting planes polynomially simulate resolution](cutting-planes-simulate-resolution.md)
+
 ## Sources
 
 - W. Cook, C. R. Coullard and Gy. Turán, "On the Complexity of Cutting-Plane Proofs", Discrete Applied Mathematics 18(1), 25–38, 1987.

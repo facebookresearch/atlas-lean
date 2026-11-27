@@ -10,6 +10,10 @@ Gate simulation: every gate $v$ is replaced by its set-multilinear parts $v_S$ o
 
 - [Set-multilinear polynomials and formulas](set-multilinear-polynomials-and-formulas.md)
 
+## Proof depends on
+
+- [Rectangular permanents and the Binet–Minc identity](../../../LinearAlgebra/determinants-and-matrix-identities/determinant-identities-for-complexity/rectangular-permanents-binet-minc-identity.md)
+
 ## Sources
 
 - Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), LIPIcs 300, 2024, Lemmas 25 and 26 and Corollary 27.

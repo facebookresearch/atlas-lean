@@ -13,6 +13,7 @@ Write $x=x^{+}-x^{-}$ and add slack variables: $Ax\le b$ has an integer solution
 ## Proof depends on
 
 - [0-1 INTEGER PROGRAMMING FEASIBILITY is NP-complete](../number-and-packing-problems/0-1-integer-programming/zero-one-ilp-np-complete.md)
+- [Small integer solutions of linear systems (Siegel-type bounds)](../../../LinearAlgebra/matrix-algebra/linear-inequality-systems-over-ordered-fields/small-integer-solutions-of-linear-systems.md)
 
 ## Sources
 

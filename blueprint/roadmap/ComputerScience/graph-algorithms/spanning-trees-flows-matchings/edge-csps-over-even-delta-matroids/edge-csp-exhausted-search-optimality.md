@@ -1,6 +1,6 @@
 # An exhausted forest search certifies optimality
 
-If every constraint is an even delta-matroid and the forest search for a valid labeling $f$ stops because every incidence of every variable in the forest has been used, without ever meeting two branches (no augmenting walk and no blossom), then $f$ is optimal: it has the minimum number of defects among all valid labelings.
+If every constraint is an even delta-matroid and the forest search for a valid labeling $f$ (with the meeting rule of Kazda, Kolmogorov and Rolínek: a variable $w$ reached through a new copy of a constraint $C$ meets another branch whenever $w$ is already in the forest, unless its parent is a copy of the same constraint $C$) stops because no variable $v$ in the forest has an incident constraint $C$ with no copy of $C$ as the parent or a child of $v$, without ever meeting two branches (no augmenting walk and no blossom), then $f$ is optimal: it has the minimum number of defects among all valid labelings.
 
 ## Proof sketch
 

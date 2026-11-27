@@ -13,6 +13,7 @@ After changing a set of entries to reach rank $r$, every $(r+1)\times(r+1)$ subm
 ## Depends on
 
 - [Matrix rigidity](matrix-rigidity.md)
+- [Totally regular matrices and Cauchy matrices](../../../LinearAlgebra/special-matrices/structured-matrices-in-complexity/totally-regular-and-cauchy-matrices.md)
 
 ## Sources
 

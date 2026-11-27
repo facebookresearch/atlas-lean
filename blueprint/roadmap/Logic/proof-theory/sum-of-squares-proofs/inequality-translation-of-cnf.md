@@ -6,6 +6,7 @@ A CNF formula is translated into polynomial constraints by sending a clause $C$ 
 
 - [Positivstellensatz (sum-of-squares) refutations](positivstellensatz-refutations.md)
 - [The cutting planes proof system](../cutting-planes/cutting-planes-proof-system.md)
+- [Degree-$d$ pseudo-expectations](pseudo-expectations.md)
 
 ## Sources
 

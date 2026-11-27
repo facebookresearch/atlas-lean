@@ -1,18 +1,15 @@
 # Uniform sampling by rejection on the randomized word RAM
 
-For $1\le m\le 2^{w}$, the loop that draws $b=\lceil\log_2 m\rceil$ uniform bits and repeats until the resulting value is below $m$ terminates with probability $1$, outputs a uniformly distributed value in $\{0,\dots,m-1\}$, and has expected number of iterations $2^{b}/m<2$. More generally, a while loop whose body exits with probability at least $q>0$ independently in each iteration has a geometric exit law with expected iteration count at most $1/q$.
+On the randomized word RAM, the loop that draws $b=\lceil\log_2 m\rceil$ uniform bits and repeats until the resulting value is below $m$, for $1\le m\le 2^{w}$, is the uniform-integer case of fair-bit block rejection sampling, with the blocks drawn by the machine's random instructions. More generally, let $T$ be the number of iterations of a while loop whose body, given any history of earlier iterations, exits with probability at least $q>0$. Then $\Pr[T>t]\le(1-q)^{t}$ for every $t\ge0$, so $T$ is finite with probability $1$, and $\mathbb{E}[T]\le 1/q$.
 
 ## Proof sketch
 
-Each iteration exits with probability $m/2^{b}>1/2$, independently; conditioned on exit the value is uniform on $[0,m)$. The number of iterations is geometric.
+By induction on $t$, $\Pr[T>t+1]=\Pr[T>t]\cdot\Pr[\text{no exit at iteration }t+1\mid T>t]\le(1-q)^{t+1}$. Then $\mathbb{E}[T]=\sum_{t\ge0}\Pr[T>t]\le\sum_{t\ge0}(1-q)^t=1/q$.
 
 ## Depends on
 
 - [Randomized word RAM](../../../ComputerScience/sorting-and-searching/word-ram-integer-algorithms/randomized-word-ram.md)
-
-## Proof depends on
-
-- [Rejection sampling outputs the target law](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/rejection-sampling/tsum-rejections-mul-trial.md)
+- [Fair-bit block rejection sampling: exact law, capped trials and expected cost](../../../ComputerScience/algebraic-and-numerical-algorithms/exact-sampling-from-coin-flips/fair-bit-block-rejection-sampling.md)
 
 ## Sources
 

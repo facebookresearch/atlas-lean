@@ -11,6 +11,10 @@ The majority errs only if at least $r$ of the $2r$ runs err; the probability is 
 - [Public-coin randomized protocol](../randomized-communication-protocols/public-coin-protocol.md)
 - [Randomized communication complexity](../randomized-communication-protocols/rand-complexity.md)
 
+## Proof depends on
+
+- [Majority-vote amplification at any advantage](../../../Probability/concentration-inequalities/majority-vote-amplification/majority-vote-amplification-at-any-advantage.md)
+
 ## Sources
 
 - E. Kushilevitz and N. Nisan, "Communication Complexity", Cambridge University Press, 1997.

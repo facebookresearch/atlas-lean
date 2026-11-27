@@ -1,6 +1,6 @@
 # Every k-source is a mixture of flat k-sources
 
-Let $\Omega$ be finite and $K \ge 1$ an integer. A distribution on $\Omega$ all of whose outcomes have probability at most $1/K$ is a convex combination of uniform distributions on subsets of exactly $K$ outcomes. In particular, for an integer $k$ the $k$-sources on $\Omega$ are exactly the mixtures of flat sources on sets of size $2^k$.
+Let $\Omega$ be finite and $K \ge 1$ an integer. A distribution on $\Omega$ all of whose outcomes have probability at most $1/K$ is a convex combination of uniform distributions on subsets of exactly $K$ outcomes. In particular, for an integer $k \ge 0$ the $k$-sources on $\Omega$ are exactly the mixtures of flat sources on sets of size $2^k$.
 
 ## Proof sketch
 

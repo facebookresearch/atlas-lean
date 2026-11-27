@@ -16,6 +16,7 @@ Tractability uses the normal forms of each class (Horn, dual Horn, 2-CNF, affine
 
 - [Without Schaefer polymorphisms, all polymorphisms are projections or negated projections](without-schaefer-polymorphisms.md)
 - [Pol–Inv Galois connection over finite domains: CSP complexity depends only on the polymorphism clone](../../satisfiability/finite-domain-csp-dichotomy/pol-inv-galois-connection-finite-domains.md)
+- [Primitive-positive definitions and gadgets](../polymorphisms-of-boolean-relations/primitive-positive-definitions.md)
 - [Horn-definable relations are exactly the AND-closed relations](../polymorphisms-of-boolean-relations/horn-definable-iff-and-closed.md)
 - [2-CNF-definable relations are exactly the majority-closed relations](../polymorphisms-of-boolean-relations/two-cnf-definable-iff-majority-closed.md)
 - [Affine relations are exactly the minority-closed relations](../polymorphisms-of-boolean-relations/affine-iff-minority-closed.md)

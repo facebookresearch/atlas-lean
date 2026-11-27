@@ -13,6 +13,7 @@ The *size* of the circuit is $s$, the number of gates (constants included unless
 
 ## Sources
 
+- CSLib, `Cslib.Circuits.Circuit` (module `Cslib.Computability.Circuit.Basic`): circuits over a signature as straight-line programs with designated output wires, their evaluation, size and depth.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
 - Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
 - Peter Bürgisser, Michael Clausen, M. Amin Shokrollahi, "Algebraic Complexity Theory", Springer, 1997.

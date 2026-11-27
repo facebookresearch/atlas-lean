@@ -1,6 +1,6 @@
 # Moment and tail bounds under 2m-wise independence
 
-Let $m \ge 1$ and let $h : \iota \times X \to Y$ be $2m$-wise independent with uniform seed (so each $h_i(x)$ is uniform on the finite set $Y$), $S \subseteq X$ finite, and $Z_x : Y \to [-1, 1]$ functions with $\mathbb{E}_{y}Z_x(y) = 0$. Then
+Let $m \ge 1$ and let $h : \iota \times X \to Y$ be $2m$-wise independent with uniform seed (so each $h_i(x)$ is uniform on the finite set $Y$), $S \subseteq X$ finite, and $Z_x : Y \to [-1, 1]$ functions with $\mathbb{E}_{y}Z_x(y) = 0$, and let $a > 0$. Then
 
 $$
 \mathbb{E}_i\Bigl(\sum_{x \in S} Z_x(h_i(x))\Bigr)^{2m} \le m^{2m}|S|^m, \qquad \Pr_i\Bigl[\Bigl|\sum_{x\in S} Z_x(h_i(x))\Bigr| \ge a\Bigr] \le \Bigl(\frac{m^2|S|}{a^2}\Bigr)^m .

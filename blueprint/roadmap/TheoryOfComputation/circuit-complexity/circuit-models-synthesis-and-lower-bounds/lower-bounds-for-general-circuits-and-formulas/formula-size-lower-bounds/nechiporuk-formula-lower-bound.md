@@ -15,9 +15,6 @@ Apply Nechiporuk's lemma to each block $Y_i$ with $\ell_i$ leaves, where $\sum\e
 ## Depends on
 
 - [Circuit complexity, binary cost and formula leaf size](../../circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
-
-## Proof depends on
-
 - [Nechiporuk's subfunction counting lemma](nechiporuk-subfunction-counting-lemma.md)
 
 ## Sources

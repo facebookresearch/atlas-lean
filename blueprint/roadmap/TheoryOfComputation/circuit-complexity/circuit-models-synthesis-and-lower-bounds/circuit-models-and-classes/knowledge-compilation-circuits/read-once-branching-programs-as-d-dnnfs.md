@@ -9,6 +9,7 @@ Each decision node on $x_i$ becomes $(x_i\wedge\text{high})\vee(\neg x_i\wedge\t
 ## Depends on
 
 - [Negation normal form circuits, DNNF and d-DNNF](nnf-dnnf-and-d-dnnf.md)
+- [Deterministic and nondeterministic branching programs](../branching-programs/branching-programs.md)
 
 ## Sources
 

@@ -11,6 +11,10 @@ Duplicator answers each Spoiler move inside the factor where it was made using t
 - [Words as finite structures; FO[<] and MSO definability](words-as-finite-structures.md)
 - [Duplicator wins the EF game iff there is a back-and-forth system](../ehrenfeucht-fraisse-games/ef-game-back-and-forth.md)
 
+## Proof depends on
+
+- [Finitely many formulas of bounded quantifier rank up to equivalence](../finite-structures-and-definability/finitely-many-formulas-of-bounded-rank.md)
+
 ## Sources
 
 - L. Libkin, Elements of Finite Model Theory, Springer, 2004.

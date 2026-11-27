@@ -13,6 +13,7 @@ $\mathrm{SIZE}(s(n))$ denotes the class of languages whose $n$-th slice $f_n$ ha
 
 - [Straight-line programs and circuits over a basis](straight-line-program-over-a-basis.md)
 - [Circuit complexity of a Boolean function and truth tables](../../../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
+- [The full binary basis B2 and the basis U2](full-binary-basis-b2-and-u2.md)
 
 ## Sources
 

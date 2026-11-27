@@ -10,6 +10,7 @@ One iteration of the main loop rewrites the trail stored as a literal array and 
 
 - [DPLL search with an explicit trail](dpll-explicit-trail-search.md)
 - [The word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
+- [Pigeonhole formulas $\mathrm{PHP}^m_n$](../../../Logic/proof-theory/resolution-lower-bounds/pigeonhole-formulas.md)
 
 ## Proof depends on
 

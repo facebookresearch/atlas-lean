@@ -4,7 +4,7 @@ $\mathsf{GapP}=\{f-g : f,g\in\#\mathsf{P}\}$, equivalently the differences of ac
 
 - $\mathsf{C_{=}P}=\{\{x: f(x)=0\}\}$; $\mathsf{Mod}_k\mathsf{P}=\{\{x : f(x)\not\equiv0\pmod k\}\}$ ($\oplus\mathsf{P}$ for $k=2$);
 - $\mathsf{SPP}$: $f(x)\in\{0,1\}$ with $f(x)=1$ iff $x\in L$;
-- $\mathsf{WPP}$: $f(x)\in\{0,g(x)\}$ for some polynomial-time computable $g>0$; $\mathsf{LWPP}$ when $g$ depends only on $|x|$;
+- $\mathsf{WPP}$: $f(x)=g(x)$ if $x\in L$ and $f(x)=0$ otherwise, for some polynomial-time computable $g>0$; $\mathsf{LWPP}$ when $g$ depends only on $|x|$;
 - $\mathsf{AWPP}$: for every polynomial $q$ there is $f$ and a polynomial $r$ with $f(x)/2^{r(|x|)}\in[1-2^{-q},1]$ on members and $\in[0,2^{-q}]$ on non-members.
 
 One has $\mathsf{UP}\subseteq\mathsf{FewP}\subseteq\mathsf{SPP}\subseteq\mathsf{LWPP}\subseteq\mathsf{WPP}\subseteq\mathsf{C_{=}P}$, $\mathsf{SPP}\subseteq\mathsf{Mod}_k\mathsf{P}$, and $\mathsf{BQP}\subseteq\mathsf{AWPP}\subseteq\mathsf{PP}$.

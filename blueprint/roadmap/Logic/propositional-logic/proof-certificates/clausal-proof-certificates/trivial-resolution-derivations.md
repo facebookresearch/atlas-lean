@@ -6,6 +6,7 @@ A resolution derivation $(C_1, C_2, \dots, C_k)$ from a clause set $F$ is *trivi
 
 - [Resolvent of two clauses](../../resolution/resolvent.md)
 - [RUP and RAT clauses](../rup-and-rat-clauses.md)
+- [LRAT addition steps certify RUP and RAT clauses](../lrat-addition-steps-certify-rup-and-rat-clauses.md)
 
 ## Sources
 

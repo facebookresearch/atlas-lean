@@ -5,6 +5,7 @@ Let $F = t_1 \vee \dots \vee t_s$ be a DNF and $\rho$ a restriction (a partial a
 ## Depends on
 
 - [Binary decision tree](../../../Combinatorics/boolean-functions/osss-inequality-for-decision-trees/decision-tree.md)
+- [Disjunctive normal form](../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/disjunctive-normal-form.md)
 
 ## Sources
 

@@ -8,7 +8,7 @@ Allocate records with a bump pointer; a field access is an indexed load or store
 
 ## Depends on
 
-- [Pointer machines (Tarjan)](pointer-machines.md)
+- [Pointer machine](../../../ComputerScience/data-structures/search-trees/pointer-machine-search-trees/pointer-machine.md)
 - [The word-RAM model](../../fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Sources

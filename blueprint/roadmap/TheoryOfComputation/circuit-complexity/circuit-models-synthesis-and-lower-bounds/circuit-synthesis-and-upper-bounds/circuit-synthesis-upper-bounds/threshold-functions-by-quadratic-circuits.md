@@ -10,6 +10,7 @@ Dynamic programming over $(i,j)$ with one AND and one OR per table entry; a symm
 
 - [Circuit complexity, binary cost and formula leaf size](../../circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
 - [Linear threshold function](../../../../../Combinatorics/boolean-functions/majority-is-least-stable-conjecture/is-linear-threshold-function.md)
+- [Threshold gates and the basis of threshold circuits](../../../parallel-circuit-hierarchies/threshold-gates-and-threshold-circuits.md)
 
 ## Sources
 

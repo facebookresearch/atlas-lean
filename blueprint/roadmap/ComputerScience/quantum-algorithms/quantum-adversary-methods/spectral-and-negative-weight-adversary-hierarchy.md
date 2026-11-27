@@ -1,6 +1,6 @@
 # Spectral and negative-weight adversaries and their hierarchy
 
-For a partial Boolean function $f$ on $D \subseteq \{0,1\}^N$, the *spectral adversary* is $\mathrm{ADV}(f) = \max_\Gamma \|\Gamma\| / \max_i \|\Gamma \circ D_i\|$ over nonzero symmetric entrywise nonnegative matrices $\Gamma$ indexed by $D$ vanishing on pairs with $f(x) = f(y)$, and the *negative-weight adversary* $\mathrm{ADV}^\pm(f)$ is the same maximum over all real symmetric such $\Gamma$. Then:
+For a partial Boolean function $f$ on $D \subseteq \{0,1\}^N$, the *spectral adversary* is $\mathrm{ADV}(f) = \max_\Gamma \|\Gamma\| / \max_i \|\Gamma \circ D_i\|$ over nonzero symmetric entrywise nonnegative matrices $\Gamma$ indexed by $D$ vanishing on pairs with $f(x) = f(y)$, and the *negative-weight adversary* $\mathrm{ADV}^\pm(f)$ is the same maximum over all real symmetric such $\Gamma$. Then, for every $0 \le \varepsilon < 1/2$:
 
 $$\lambda(f) \le \mathrm{ADV}(f) \le \mathrm{ADV}^\pm(f), \qquad \big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\mathrm{ADV}^\pm(f) \le 2 Q_\varepsilon(f)$$
 
@@ -15,9 +15,6 @@ The lower bounds on $Q$ follow the progress method with the principal eigenvecto
 - [Quantum query algorithms with phase and value oracles](quantum-query-algorithms.md)
 - [Generalized adversary lower bound](../quantum-query-lower-bounds/generalized-adversary-lower-bound.md)
 - [Sensitivity graph and spectral sensitivity](../../../TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/spectral-sensitivity.md)
-
-## Proof depends on
-
 - [Weighted adversary bounds (Ambainis, Zhang)](weighted-quantum-adversary-bounds.md)
 
 ## Sources

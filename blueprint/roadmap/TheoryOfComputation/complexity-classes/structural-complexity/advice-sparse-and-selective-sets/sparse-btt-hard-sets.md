@@ -11,6 +11,7 @@ Use the left set of SAT (partial assignments lexicographically left of the large
 - [Sparse decision problems](../../mahaney-s-theorem/sparse.md)
 - [The complexity class NP](../../the-classes-p-np-and-conp/np.md)
 - [The complexity class P](../../the-classes-p-np-and-conp/p.md)
+- [Polynomial-time truth-table, bounded and Turing reductions](../reducibilities-and-isomorphism/truth-table-reductions.md)
 
 ## Proof depends on
 

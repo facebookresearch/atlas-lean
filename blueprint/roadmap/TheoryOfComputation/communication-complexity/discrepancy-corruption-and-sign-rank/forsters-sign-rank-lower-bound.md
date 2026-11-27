@@ -13,6 +13,7 @@ Take a representation $S_{xy} = \mathrm{sign}\langle u_x, v_y\rangle$ in dimensi
 ## Depends on
 
 - [Sign-rank of a Boolean matrix](sign-rank-of-a-boolean-matrix.md)
+- [Unbounded-error communication complexity](unbounded-error-communication-complexity.md)
 
 ## Proof depends on
 

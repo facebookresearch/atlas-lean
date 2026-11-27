@@ -1,6 +1,6 @@
 # Dual-rail translation of De Morgan circuits into monotone circuits
 
-Every De Morgan circuit $C$ with $s$ gates on inputs $x_1,\dots,x_n$ is simulated by a monotone circuit $C^{\pm}$ with at most $2s$ AND/OR gates on the $2n+1$ inputs $1,x_1,\neg x_1,\dots,x_n,\neg x_n$ that computes, for every wire $w$ of $C$, both $w$ and $\neg w$: an AND gate becomes the AND of the positive rails and the OR of the negative rails, an OR gate dually, and a NOT gate swaps rails at no cost. In particular monotone circuit size with free negative literals is at most twice De Morgan size.
+Every De Morgan circuit $C$ with $s$ gates on inputs $x_1,\dots,x_n$ is simulated by a monotone circuit $C^{\pm}$ with at most $2s$ AND/OR gates on the $2n+2$ inputs $0,1,x_1,\neg x_1,\dots,x_n,\neg x_n$ that computes, for every wire $w$ of $C$, both $w$ and $\neg w$: an AND gate becomes the AND of the positive rails and the OR of the negative rails, an OR gate dually, a NOT gate swaps rails at no cost, and a constant gate becomes the constant inputs $c$ and $\neg c$ at no cost. In particular monotone circuit size with free negative literals and constants is at most twice De Morgan size.
 
 ## Proof sketch
 

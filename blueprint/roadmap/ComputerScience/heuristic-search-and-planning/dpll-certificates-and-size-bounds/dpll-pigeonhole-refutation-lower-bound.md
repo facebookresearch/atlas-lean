@@ -10,10 +10,12 @@ A tree-like refutation is a decision tree that finds a falsified clause on every
 
 - [A DPLL solver that emits LRAT certificates](dpll-solver-with-lrat-certificates.md)
 - [Tree-like resolution derivation](../../../Logic/propositional-logic/resolution-size-and-width/resolution-tree.md)
+- [Pigeonhole formulas $\mathrm{PHP}^m_n$](../../../Logic/proof-theory/resolution-lower-bounds/pigeonhole-formulas.md)
 
 ## Proof depends on
 
 - [Failing DPLL search trees give tree-like resolution refutations](../../../Logic/propositional-logic/sat-solving/failing-dpll-search-trees-give-tree-like.md)
+- [Tree-like resolution of the pigeonhole principle needs $2^{\Omega(n \log n)}$ size](../../../Logic/proof-theory/tree-like-resolution/tree-like-pigeonhole-lower-bound.md)
 
 ## Sources
 

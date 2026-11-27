@@ -1,6 +1,6 @@
 # Barrington's theorem: width-5 programs capture NC1
 
-Every De Morgan formula of depth $d$ (negations free) is $\sigma$-computed, for every $5$-cycle $\sigma\in S_5$, by an $S_5$-program of length at most $4^d$. Consequently a language is in nonuniform $\mathsf{NC}^1$ if and only if its slices are computed by polynomial-length permutation branching programs of width $5$.
+Every De Morgan formula of depth $d$ over $n\ge1$ variables (negations free) is $\sigma$-computed, for every $5$-cycle $\sigma\in S_5$, by an $S_5$-program of length at most $4^d$. Consequently a language is in nonuniform $\mathsf{NC}^1$ if and only if its slices are computed by polynomial-length permutation branching programs of width $5$.
 
 ## Proof sketch
 

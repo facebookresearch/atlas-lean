@@ -14,6 +14,7 @@ $(-1)^{\mathrm{IP}_n}$ has all Fourier coefficients of absolute value $2^{-n}$, 
 ## Proof depends on
 
 - [Fourier norm is at most 2^m for circuits with m nonlinear gates](../circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/gate-elimination-and-explicit-lower-bounds/fourier-norm-bounded-by-nonlinear-gates.md)
+- [Fourier spectrum of the inner product mod 2](../../../Combinatorics/boolean-functions/fourier-expansion-supplements/fourier-spectrum-of-inner-product-mod-2.md)
 
 ## Sources
 

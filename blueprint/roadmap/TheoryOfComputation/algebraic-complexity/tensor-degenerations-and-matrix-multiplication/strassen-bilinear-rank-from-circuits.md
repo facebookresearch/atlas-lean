@@ -1,6 +1,6 @@
 # Strassen: arithmetic circuits for matrix multiplication yield bilinear algorithms
 
-Over every field $K$, if a division-free arithmetic circuit computes the $n^2$ entries of the product of two generic $n\times n$ matrices with $\mu$ multiplication gates whose two inputs are both non-constant (in particular with at most $\mu$ gates), then the tensor rank of $\langle n,n,n\rangle$ is at most $2\mu$. (With divisions the same bound holds over infinite fields, by Strassen's division elimination.)
+Over every field $K$, if a division-free arithmetic circuit computes the $n^2$ entries of the product of two generic $n\times n$ matrices with $\mu$ multiplication gates whose two inputs are both non-constant (in particular with at most $\mu$ gates), then the tensor rank of $\langle n,n,n\rangle$ is at most $2\mu$. (With divisions the same bound holds over infinite fields, by Strassen's division elimination, when $\mu$ counts every multiplication and every division gate except multiplications by a constant and divisions by a constant.)
 
 ## Proof sketch
 

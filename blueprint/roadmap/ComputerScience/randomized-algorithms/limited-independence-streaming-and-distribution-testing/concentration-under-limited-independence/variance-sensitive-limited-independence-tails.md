@@ -1,6 +1,6 @@
 # Variance-sensitive tail bounds for [0,1] sums under limited independence
 
-Let $m \ge 1$ and let $h : \iota \times X \to Y$ be $2m$-wise independent with uniform seed, $R \subseteq X$ finite, and $g_z : Y \to [0,1]$ with total mean $\sum_{z \in R}\mathbb{E}_y g_z(y) \le \mu$ and $2m \le 3\mu$. Then
+Let $m \ge 1$ and let $h : \iota \times X \to Y$ be $2m$-wise independent with uniform seed, $R \subseteq X$ finite, and $g_z : Y \to [0,1]$ with total mean $\sum_{z \in R}\mathbb{E}_y g_z(y) \le \mu$ and $2m \le 3\mu$, and let $a > 0$. Then
 
 $$
 \mathbb{E}_i\Bigl(\sum_{z\in R}\bigl(g_z(h_i(z)) - \mathbb{E}_y g_z(y)\bigr)\Bigr)^{2m} \le 2(3m\mu)^m, \qquad \Pr_i\bigl[|\textstyle\sum_z (\cdots)| \ge a\bigr] \le 2\Bigl(\frac{3m\mu}{a^2}\Bigr)^m ,

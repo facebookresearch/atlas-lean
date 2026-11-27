@@ -1,6 +1,6 @@
 # Raz–Wigderson: monotone formulas for perfect matching need linear depth
 
-Every monotone formula computing bipartite perfect matching on $K_{n,n}$ has depth $\Omega(n)$; the same holds for deciding whether a graph on $n$ vertices has a matching of size $n/3$, and for perfect matching in general graphs. Equivalently, the monotone Karchmer–Wigderson game of $\mathrm{PM}_n$ has communication complexity $\Omega(n)$.
+Every monotone formula computing bipartite perfect matching on $K_{n,n}$ has depth $\Omega(n)$; the same holds for deciding whether a graph on $n$ vertices has a matching of size $\lfloor n/3\rfloor$, and for perfect matching in general graphs on an even number $n$ of vertices. Equivalently, the monotone Karchmer–Wigderson game of $\mathrm{PM}_n$ has communication complexity $\Omega(n)$.
 
 ## Proof sketch
 

@@ -14,6 +14,7 @@ Take $A$ the odd-weight and $B$ the even-weight inputs: $|A|=|B|=2^{n-1}$ and ev
 ## Proof depends on
 
 - [Khrapchenko's formula lower bound](khrapchenko-formula-lower-bound.md)
+- [Yablonskii's formula upper bound for parity](../../circuit-synthesis-and-upper-bounds/circuit-synthesis-upper-bounds/yablonskii-formula-upper-bound-for-parity.md)
 
 ## Sources
 

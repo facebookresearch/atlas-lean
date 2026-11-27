@@ -1,6 +1,6 @@
 # DNF and CNF size lower bounds from isolated inputs; parity needs $2^{n-1}$ terms
 
-If $g : \{0,1\}^n \to \{0,1\}$ has $t$ isolated true inputs, then every DNF formula computing $g$ has at least $t$ terms, and each term true at an isolated true input mentions all $n$ variables. Dually a CNF formula computing $g$ has at least as many clauses as $g$ has isolated false inputs. In particular every DNF and every CNF formula for the parity of $n$ variables has at least $2^{n-1}$ terms (clauses), each of width $n$.
+If $g : \{0,1\}^n \to \{0,1\}$ has $t$ isolated true inputs, then every DNF formula computing $g$ has at least $t$ terms, and each term true at an isolated true input mentions all $n$ variables. Dually a CNF formula computing $g$ has at least as many clauses as $g$ has isolated false inputs. In particular, for $n\ge1$, every DNF formula for the parity of $n$ variables has at least $2^{n-1}$ satisfiable terms, each mentioning all $n$ variables, and every CNF formula for it has at least $2^{n-1}$ falsifiable clauses, each mentioning all $n$ variables.
 
 ## Proof sketch
 

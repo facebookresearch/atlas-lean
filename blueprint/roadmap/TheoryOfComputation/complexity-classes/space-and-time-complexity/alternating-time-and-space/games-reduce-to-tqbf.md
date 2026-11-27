@@ -1,6 +1,6 @@
 # Polynomial-length games reduce to TQBF
 
-For every game verifier as in the characterization of $\mathsf{AP}$ (polynomial number $p(n)$ of one-bit moves with a polynomial-time final predicate $V$), there is a polynomial-time map $x\mapsto\Phi_x$ to closed quantified Boolean formulas in prenex conjunctive normal form, with quantifier prefix following the move owners and auxiliary existential variables for the Cook–Levin tableau of $V$, such that $x$ is a win for the existential player iff $\Phi_x$ is true. Consequently every language in $\mathsf{AP}$ polynomial-time many-one reduces to $\mathrm{TQBF}$, and $\mathrm{TQBF}$ restricted to alternating prenex CNF formulas is $\mathsf{PSPACE}$-complete.
+For every game verifier as in the characterization of $\mathsf{AP}$ (polynomial number $p(n)$ of one-bit moves, move owners computable in polynomial time from $(|x|, i)$, and a polynomial-time final predicate $V$), there is a polynomial-time map $x\mapsto\Phi_x$ to closed quantified Boolean formulas in prenex conjunctive normal form, with quantifier prefix following the move owners and auxiliary existential variables for the Cook–Levin tableau of $V$, such that $x$ is a win for the existential player iff $\Phi_x$ is true. Consequently every language in $\mathsf{AP}$ polynomial-time many-one reduces to $\mathrm{TQBF}$, and $\mathrm{TQBF}$ restricted to alternating prenex CNF formulas is $\mathsf{PSPACE}$-complete.
 
 ## Proof sketch
 

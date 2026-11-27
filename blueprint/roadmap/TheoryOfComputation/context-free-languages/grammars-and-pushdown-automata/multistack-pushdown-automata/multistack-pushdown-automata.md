@@ -7,6 +7,10 @@ A **multistack pushdown automaton** (MPDA) with $n$ stacks over an input alphabe
 - [Pushdown automaton](../pushdown-automata/pda.md)
 - [Language accepted by a pushdown automaton](../pushdown-automata/accepts.md)
 
+## Proof depends on
+
+- [Multi-stack machines and multi-tape Turing machines simulate each other in polynomial time and space](../../../equivalence-of-models/ram-word-ram-and-pointer-machines/multistack-multitape-equivalence.md)
+
 ## Sources
 
 - S. Akshay, Paul Gastin, S. Krishna and Sparsa Roychowdhury, "Revisiting Underapproximate Reachability for Multipushdown Systems", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), arXiv:2002.05950, 2020.

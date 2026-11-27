@@ -11,6 +11,10 @@ Character orthogonality gives $\sum_y (-1)^{\langle w, y\rangle} = 2^n [w = 0]$,
 - [Communication matrix](../deterministic-communication-protocols/comm-matrix.md)
 - [Fourier character on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/cube-chi.md)
 
+## Proof depends on
+
+- [The rank of the communication matrix bounds the tiling number](rank-bounds-the-tiling-number.md)
+
 ## Sources
 
 - E. Kushilevitz and N. Nisan, "Communication Complexity", Cambridge University Press, 1997.

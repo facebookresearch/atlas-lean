@@ -10,6 +10,7 @@ For an NL machine, the configurations of logarithmic size are $k$-tuples of univ
 
 - [First-order and quantifier-free reductions](../first-order-interpretations-and-reductions/first-order-reductions.md)
 - [The complexity class NL](../../complexity-classes/time-and-space-complexity-classes/nl.md)
+- [First-order reductions between queries on ordered structures](../first-order-projections/first-order-reductions-on-ordered-structures.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ Each point query reads one page per level and descends into at most one child; t
 ## Depends on
 
 - [Node-access (page-read) model for B-trees](node-access-model.md)
+- [Order queries in classic B-trees](order-queries-in-b-trees.md)
 
 ## Proof depends on
 

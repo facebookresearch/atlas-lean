@@ -9,6 +9,8 @@ Urquhart's original proof counts clauses through a bottleneck argument. Ben-Sass
 ## Depends on
 
 - [Tseitin formulas of a multigraph](tseitin-formulas-of-a-multigraph.md)
+- [Constant-degree expanders exist on every finite vertex set](../../../GraphTheory/graph-families-and-operations/explicit-and-random-expander-constructions/constant-degree-expanders-exist.md)
+- [Ben-Sasson–Wigderson expansion of a multigraph](balanced-cut-expansion.md)
 
 ## Proof depends on
 

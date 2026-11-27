@@ -15,6 +15,7 @@ Reingold's theorem places $\mathrm{USTCON}$ in $\mathsf{L}$, and $\mathsf{L}$ is
 
 - [Undirected ST-connectivity is in L (Reingold)](../../../../polynomial-time-problems/undirected-s-t-connectivity/ustcon-in-l.md)
 - [Log-space computable functions](../../../time-and-space-complexity-classes/log-space-computable.md)
+- [Logarithmic-space computable functions compose](../logspace-composition-and-layered-reachability/logspace-functions-compose.md)
 
 ## Sources
 

@@ -1,18 +1,6 @@
 # Bird's division-free determinant algorithm
 
-For an $n\times n$ matrix $A$ ($n \ge 1$) over a commutative ring define $X_1=A$ and $X_{t+1}=\mu(X_t)\,A$, where $\mu(X)$ is the matrix obtained from $X$ by zeroing the entries below the diagonal and replacing each diagonal entry $x_{ii}$ by $-\sum_{j>i}x_{jj}$. Then $\det A=(-1)^{n-1}(X_n)_{11}$. The algorithm computes $n - 1$ matrix products, hence uses $O(n^4)$ ring operations and no divisions, so it runs over any commutative ring.
-
-## Proof sketch
-
-The construction mirrors the Faddeev–LeVerrier/Samuelson–Berkowitz recursion for the characteristic polynomial: the diagonal replacement accumulates traces of partial products, and an induction on $t$ shows that the upper-left entry after $n$ rounds equals the signed determinant (Bird's proof via the action on characteristic coefficients).
-
-## Depends on
-
-- [Leibniz formula for the determinant](../determinants-of-matrices/leibniz-formula/det-apply.md)
-
-## Proof depends on
-
-- [Newton's trace identities for the characteristic polynomial](../../eigenvalues-and-canonical-forms/newton-s-identities-for-traces-of-matrix-powers/newton-s-identities/trace-cayley-hamilton-newton.md)
+For a commutative ring $R$, every $n \times n$ matrix $A$ over $R$, given by its entries in row-major order, satisfies $\det A = \mathrm{birdDet}(n, A)$, where $\mathrm{birdDet}(0, A) = 1$ and, for $n = k + 1$, $\mathrm{birdDet}(n, A) = (-1)^{k} (F_k)_{0,0}$ with $F_0 = A$ and $F_{t+1} = \mu(F_t)\,A$. Here, with rows and columns indexed from $0$, $\mu(F)$ is the matrix obtained from $F$ by zeroing the entries below the diagonal and replacing each diagonal entry $F_{ii}$ by $-\sum_{j>i} F_{jj}$. The recursion uses only additions, negations and multiplications of ring elements, and no divisions.
 
 ## Sources
 

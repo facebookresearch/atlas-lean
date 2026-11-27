@@ -15,6 +15,7 @@ Definability is the single closure $[\mathrm{tc}\, E](0, \max)$. Conversely a po
 
 - [Immerman: FO + transitive closure is NL on ordered structures](../transitive-closure-logic-and-nl/fo-tc-eq-nl.md)
 - [Full-tuple interpretations pull back FO(LFP), FO(TC) and SO∃-Horn sentences](../ordered-structures-and-arithmetic/full-tuple-interpretations-preserve-logics.md)
+- [Immerman: FO(TC) collapses to positive transitive closure](../logical-characterizations-of-l-nl-p-np/fo-tc-positive-normal-form.md)
 
 ## Sources
 

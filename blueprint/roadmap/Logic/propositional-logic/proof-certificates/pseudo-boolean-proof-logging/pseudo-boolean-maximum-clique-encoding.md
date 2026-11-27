@@ -9,10 +9,10 @@ A 0/1 vector satisfies all non-edge constraints iff its support contains no non-
 ## Depends on
 
 - [Pseudo-Boolean constraints in normalized form](pseudo-boolean-constraints.md)
+- [Soundness of the VeriPB kernel proof format](veripb-kernel-soundness.md)
 
 ## Proof depends on
 
-- [Soundness of the VeriPB kernel proof format](veripb-kernel-soundness.md)
 - [CLIQUE is NP-complete](../../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/clique-independent-set-and-vertex-cover/part-08/clique-dec-np-complete.md)
 
 ## Sources

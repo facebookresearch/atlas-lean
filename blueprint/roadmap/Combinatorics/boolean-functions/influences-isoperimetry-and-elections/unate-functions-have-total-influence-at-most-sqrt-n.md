@@ -17,9 +17,9 @@ By unateness $\mathbf{I}[f] = \sum_i |\hat f(\{i\})|$; Cauchy–Schwarz gives $\
 ## Proof depends on
 
 - [Linear threshold functions are unate](linear-threshold-functions-are-unate.md)
-
 - [A direction is unate exactly when its influence equals the absolute value of its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
 - [Parseval's identity on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/expect-sq-eq-sum-bool-fourier-coeff-sq.md)
+- [Majority maximizes the sum of degree-one Fourier coefficients](majority-maximizes-sum-of-degree-one-coefficients.md)
 
 ## Sources
 

@@ -7,7 +7,7 @@ Bender, Farach-Colton, J. Kuszmaul and W. Kuszmaul (Lemma 4.2) implement the que
 ## Depends on
 
 - [B+-tree of minimum degree t](../../../search-trees/b-plus-trees/b-plus-tree.md)
-- [Word-parallel rank of packed fingerprints](../succinct-hash-tables/word-parallel-rank-of-packed-fingerprints.md)
+- [Parallel comparison of packed sketches](../../../tries-and-integer-dictionaries/fusion-trees/parallel-comparison-of-packed-sketches.md)
 
 ## Sources
 

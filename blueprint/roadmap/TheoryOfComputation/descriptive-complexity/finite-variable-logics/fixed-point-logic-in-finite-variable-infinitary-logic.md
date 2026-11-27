@@ -1,6 +1,6 @@
 # Fixed-point logics embed into finite-variable infinitary logic
 
-Every formula of FO(LFP) (and of FO(TC)) whose fixed points and closures range over relations of arity at most $r$ and which uses $v$ distinct first-order variables (counting those bound by the fixed-point and closure operators) is equivalent, on all finite structures, to a formula of $L^{k}_{\infty\omega}$ for some $k$ depending only on $r$ and $v$. Hence queries definable in these logics are invariant under $k$-pebble game equivalence for some fixed $k$.
+Every formula of FO(LFP) (and of FO(TC)) whose fixed points and closures range over relations of arity at most $r$ and which uses $v$ distinct first-order variables (counting those bound by the fixed-point and closure operators) is equivalent, on all finite structures, to a formula of $L^{k}_{\infty\omega}$ for some $k$ depending on the formula. Hence queries definable in these logics are invariant under $k$-pebble game equivalence for some fixed $k$.
 
 ## Proof sketch
 

@@ -11,6 +11,10 @@ Let $c(S)$ be the number of AND gates reading exactly $S$. The number of gates s
 - [SYM ∘ AND circuits](sym-and-circuits.md)
 - [Deterministic time classes on multi-tape machines](../../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dtime.md)
 
+## Proof depends on
+
+- [Yates's algorithm computes zeta and Möbius transforms in n 2^n operations](../../../../ComputerScience/algebraic-and-numerical-algorithms/fast-zeta-transform-and-subset-convolution/yates-algorithm.md)
+
 ## Sources
 
 - Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM 61(1), Article 2, 2014 (Lemma 4.2, Proof 1).

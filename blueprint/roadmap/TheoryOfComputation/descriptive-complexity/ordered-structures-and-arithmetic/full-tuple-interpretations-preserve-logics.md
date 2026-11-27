@@ -11,6 +11,8 @@ Replace each target variable by a block of $k$ coordinates, using the definable 
 - [Ordered first-order interpretations and first-order queries](ordered-first-order-interpretations.md)
 - [Formulas of first-order logic with least fixed points](../immerman-vardi-theorem/ogfo.md)
 - [Formulas of first-order logic with transitive closure](../transitive-closure-logic-and-nl/tcfo.md)
+- [First-order logic with deterministic transitive closure](../fixed-point-and-closure-logics/first-order-logic-deterministic-transitive-closure.md)
+- [Existential second-order Horn logic](../second-order-horn-logic/existential-second-order-horn-logic.md)
 
 ## Proof depends on
 

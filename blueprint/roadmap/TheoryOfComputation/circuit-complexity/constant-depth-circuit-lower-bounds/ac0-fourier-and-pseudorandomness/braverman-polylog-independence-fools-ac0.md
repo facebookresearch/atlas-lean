@@ -1,6 +1,6 @@
 # Braverman: polylogarithmic independence fools AC0
 
-For every $d$ there is a polynomial $p_d$ such that every $k$-wise independent distribution on $\{0,1\}^n$ $\varepsilon$-fools every circuit over the unbounded fan-in basis of depth $d$ and size $m$, provided $k\ge p_d(\log(m/\varepsilon))$. Explicitly (Braverman's main theorem): for every $s\ge\log m$, if $\mu$ is $r$-wise independent with
+For every $d$ there is a polynomial $p_d$ such that every $k$-wise independent distribution on $\{0,1\}^n$ $\varepsilon$-fools every circuit of depth $d$ and size $m$ over NOT and unbounded fan-in AND and OR gates (the unbounded fan-in basis without MOD gates), provided $k\ge p_d(\log(m/\varepsilon))$. Explicitly (Braverman's main theorem): for every $s\ge\log m$, if $\mu$ is $r$-wise independent with
 
 $$
 r\ge 3\cdot 60^{d+3}\cdot(\log m)^{(d+1)(d+3)}\cdot s^{d(d+3)},

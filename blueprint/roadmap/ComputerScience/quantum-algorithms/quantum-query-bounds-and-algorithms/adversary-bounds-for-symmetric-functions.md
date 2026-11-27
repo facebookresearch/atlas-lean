@@ -1,6 +1,6 @@
 # Adversary lower bounds for parity, threshold functions and majority
 
-For $N$-bit inputs and error $\varepsilon \le 1/2$, writing $\theta = 1 - 2\sqrt{\varepsilon(1-\varepsilon)}$: computing $\mathrm{PARITY}_N$ requires $\theta N \le 2T$ queries (so $N \le 36\,T$ at $\varepsilon = 1/3$), computing $\mathrm{MAJ}_N$ (for either threshold $\lceil N/2 \rceil$ or $\lfloor N/2 \rfloor + 1$) requires $\theta N \le 4T$, and distinguishing inputs of Hamming weight $a$ from inputs of weight $b$, $0 \le a < b \le N$, requires
+For $N$-bit inputs and algorithms with error at most $\varepsilon$ on every input, where $0 \le \varepsilon < 1/2$, writing $\theta = 1 - 2\sqrt{\varepsilon(1-\varepsilon)}$: computing $\mathrm{PARITY}_N$ requires $\theta N \le 2T$ queries (so $N \le 36\,T$ at $\varepsilon = 1/3$), computing $\mathrm{MAJ}_N$ (for either threshold $\lceil N/2 \rceil$ or $\lfloor N/2 \rfloor + 1$) requires $\theta N \le 4T$, and distinguishing inputs of Hamming weight $a$ from inputs of weight $b$, $0 \le a < b \le N$, requires
 
 $$\theta\,\sqrt{(N - a)\, b} \le 2T\,(b - a).$$
 

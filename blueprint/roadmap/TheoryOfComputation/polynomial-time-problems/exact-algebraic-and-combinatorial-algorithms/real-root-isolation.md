@@ -1,6 +1,6 @@
 # Polynomial-time real-root isolation by Sturm sequences
 
-Given a univariate polynomial with rational coefficients (in binary), its Sturm sequence, the number of sign variations at rational points, and a list of disjoint rational intervals each containing exactly one real root and together containing all real roots, are computable in time polynomial in the coefficient bit length.
+Given a nonzero univariate polynomial with rational coefficients (in binary), its Sturm sequence and a list of disjoint rational intervals, each containing exactly one real root and together containing all real roots, are computable in time polynomial in the coefficient bit length; the number of sign variations of the Sturm sequence at a rational point is computable in time polynomial in the coefficient bit length plus the bit length of the point.
 
 ## Proof sketch
 
@@ -13,6 +13,8 @@ Sturm's theorem counts distinct real roots in an interval by the difference of s
 ## Proof depends on
 
 - [Polynomial-time rational Gaussian elimination (Bareiss)](bareiss-rational-gaussian-elimination.md)
+- [Mahler–Mignotte root separation bound](../../algebraic-complexity/real-root-counting-and-separation/mahler-mignotte-root-separation.md)
+- [Sturm's theorem for arbitrary nonzero real polynomials via reduced Sturm sequences](../../algebraic-complexity/real-root-counting-and-separation/sturm-theorem-via-reduced-sturm-sequences.md)
 
 ## Sources
 

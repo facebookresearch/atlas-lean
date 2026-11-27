@@ -11,10 +11,12 @@ Characters are multiplicative under XOR and $A, B$ are independent. Expand the b
 - [Affine sources, affine extractors and sumset extractors](affine-sources-and-sumset-extractors.md)
 - [Small-bias distribution and generator](../../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Parseval's identity on the Boolean cube](../../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-parseval.md)
+- [Every k-source is a mixture of flat k-sources](../k-sources-are-mixtures-of-flat-sources.md)
 
 ## Proof depends on
 
 - [Inner-product extraction above half entropy and the half-entropy barrier](../../non-malleable-extraction-and-explicit-ramsey-graphs/chor-goldreich-inner-product-extractor-and-half-entropy-barrier.md)
+- [Fourier spectrum of the inner product mod 2](../../../../Combinatorics/boolean-functions/fourier-expansion-supplements/fourier-spectrum-of-inner-product-mod-2.md)
 
 ## Sources
 

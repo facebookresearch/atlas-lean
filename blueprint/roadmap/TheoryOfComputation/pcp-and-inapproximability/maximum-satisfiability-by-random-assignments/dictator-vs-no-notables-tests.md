@@ -5,6 +5,7 @@ Let $\Psi$ be a finite set of predicates over $\{-1,1\}$, let $0<\alpha<\beta\le
 ## Depends on
 
 - [Maximum constraint satisfaction problems](maximum-constraint-satisfaction-problems.md)
+- [Stable influence and total stable influence](../../../Combinatorics/boolean-functions/noise-sensitivity-and-stable-influence/stable-influence.md)
 
 ## Sources
 

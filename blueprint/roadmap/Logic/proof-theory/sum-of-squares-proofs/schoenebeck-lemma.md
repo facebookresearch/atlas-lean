@@ -1,6 +1,6 @@
 # Schoenebeck's lemma: width lower bounds give SOS pseudo-expectations for parity
 
-Let $P$ be a parity system and suppose $0 = 1$ has no width-$w$ derivation from $P$. Then round $\lfloor w/4 \rfloor$ of the Lasserre hierarchy for $P$ is feasible; in the language of pseudo-expectations, the $\pm 1$ encoding of $P$ has a pseudo-expectation of degree $d = 2\lfloor w/4 \rfloor$, given on monomials of degree at most $d$ by $\tilde{\mathbb{E}}[\prod_{i\in S} x_i] = (-1)^b$ if $\bigoplus_{i \in S} x_i = b$ is derivable in width $w$, and $0$ otherwise. Consequently $P$ has no SOS refutation of degree at most $d$.
+Let $P$ be a parity system and suppose $0 = 1$ has no width-$w$ derivation from $P$. Then round $\lfloor w/4 \rfloor$ of the Lasserre hierarchy for $P$ is feasible; in the language of pseudo-expectations, the $\pm 1$ encoding of $P$ has a pseudo-expectation of degree $d = 2\lfloor w/4 \rfloor$, given by $\tilde{\mathbb{E}}[1] = 1$ and, on monomials with nonempty $S$ and $|S| \le d$, by $\tilde{\mathbb{E}}[\prod_{i\in S} x_i] = (-1)^b$ if $\bigoplus_{i \in S} x_i = b$ is derivable in width $w$, and $0$ otherwise. Consequently $P$ has no SOS refutation of degree at most $d$.
 
 ## Proof sketch
 

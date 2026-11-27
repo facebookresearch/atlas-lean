@@ -6,6 +6,10 @@ Let $\delta(x, y)$ be a first-order formula over a vocabulary $\sigma$. In every
 
 - [First-order interpretations](../first-order-interpretations-and-reductions/first-order-interpretations.md)
 
+## Proof depends on
+
+- [Pullback of formulas along interpretations](../first-order-interpretations-and-reductions/pullback-along-interpretations.md)
+
 ## Sources
 
 - L. Libkin, Elements of Finite Model Theory, Springer, 2004.

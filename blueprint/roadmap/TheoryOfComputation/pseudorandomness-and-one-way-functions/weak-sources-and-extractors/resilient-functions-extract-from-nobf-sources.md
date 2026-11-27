@@ -11,6 +11,10 @@ Couple $Z$ with $D$ on the good coordinates up to their distance; where $f$ is d
 - [Coalition influence and resilient functions](resilient-functions.md)
 - [k-wise small bias is close to exact k-wise independence](../small-bias-spaces/almost-k-wise-independence-smoothing.md)
 
+## Proof depends on
+
+- [Maximal couplings realize statistical distance](../../../Probability/foundations/statistical-distance-and-couplings/maximal-coupling-theorem.md)
+
 ## Sources
 
 - E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics 189(3), 653–705, 2019 (numbering of ECCC TR15-119), Definitions 1.8–1.12 and Lemma 2.11 (stated there for $(t,\gamma)$-wise independent good coordinates).

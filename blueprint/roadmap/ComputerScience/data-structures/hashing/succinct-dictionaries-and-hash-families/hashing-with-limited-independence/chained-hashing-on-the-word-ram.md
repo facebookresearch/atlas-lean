@@ -1,6 +1,6 @@
 # Chained hashing with multiply-shift on the Word RAM
 
-For keys in $[U]$ and capacity $n$, let $2^M$ be the least power of two with $2^M \ge \max(n, 2)$ and let $w_0 = \max(M, \lceil \log_2 \max(U, 2) \rceil)$, with word size $w \ge 2 w_0$. A chained hash table with $2^M$ bucket heads, a pool of $n$ nodes and a multiply-shift hash function uses $O(n)$ words and implements the insert-only bounded dictionary. Against any operation sequence fixed independently of the seed, each query and insertion runs in expected $O(1)$ Word-RAM instructions, and initialization takes $O(1)$ instructions on zeroed memory.
+For keys in $[U]$ and capacity $n$, let $2^M$ be the least power of two with $2^M \ge \max(n, 2)$ and let $w_0 = \max(M, \lceil \log_2 \max(U, 2) \rceil)$, with word size $w \ge 2 w_0$. For values below $V$, where $V < 2^w$ so that every stored value fits in one $w$-bit word, a chained hash table with $2^M$ bucket heads, a pool of $n$ nodes and a multiply-shift hash function uses $O(n)$ words and implements the insert-only bounded dictionary. Against any operation sequence fixed independently of the seed, each query and insertion runs in expected $O(1)$ Word-RAM instructions, and initialization takes $O(1)$ instructions on zeroed memory.
 
 ## Proof sketch
 

@@ -9,6 +9,7 @@ Hamiltonian Path OR-cross-composes into $k$-Path (instances are grouped by their
 ## Depends on
 
 - [Kernelization and polynomial compression](kernelization.md)
+- [NP/poly](../../structural-complexity/boolean-hierarchy-and-polynomial-hierarchy-collapses/np-with-polynomial-advice.md)
 
 ## Proof depends on
 

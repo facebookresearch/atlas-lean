@@ -1,6 +1,6 @@
 # Affine relations are exactly the minority-closed relations
 
-A Boolean relation $R \subseteq \{0,1\}^I$ on a finite coordinate set $I$ is the solution set of a system of linear equations $\bigoplus_{i \in S} x_i = b$ over $\mathbb{F}_2$ (empty systems and the inconsistent equation $0 = 1$ allowed) if and only if the ternary minority operation $x \oplus y \oplus z$ is a polymorphism of $R$. Consequently $\mathrm{CSP}(\Gamma)$ for affine $\Gamma$ is solvable in polynomial time by Gaussian elimination, after instantiating fixed affine templates of the relations in the constraint scopes.
+A Boolean relation $R \subseteq \{0,1\}^I$ on a finite coordinate set $I$ is the solution set of a system of linear equations $\bigoplus_{i \in S} x_i = b$ over $\mathbb{F}_2$ (empty systems and the inconsistent equation $0 = 1$ allowed) if and only if the ternary minority operation $x \oplus y \oplus z$ is a polymorphism of $R$. Consequently, for each fixed finite affine language $\Gamma$, $\mathrm{CSP}(\Gamma)$ is solvable in polynomial time by Gaussian elimination, after instantiating fixed affine templates of the relations in the constraint scopes.
 
 ## Proof sketch
 
@@ -10,6 +10,10 @@ Solution sets of linear systems are cosets, closed under $x \oplus y \oplus z$. 
 
 - [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](../../satisfiability/finite-domain-csp-dichotomy/polymorphism-clone-of-a-finite-structure.md)
 - [Boolean constraint languages and CSP(Γ)](boolean-constraint-languages.md)
+
+## Proof depends on
+
+- [XOR-SAT is solvable by Gaussian elimination over GF(2)](../../../polynomial-time-problems/two-sat-and-xor-sat-algorithms/xor-sat-gaussian-elimination.md)
 
 ## Sources
 

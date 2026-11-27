@@ -4,7 +4,7 @@ For every $\eta > 0$ there is $c = O\big(\eta^{-2} \log(1/\eta)\big)$ such that 
 
 $$D^{cc}(R \circ g^n) = \Omega\big(D^{dt}(R) \cdot b\big),$$
 
-with an absolute constant in $\Omega$; with the trivial simulation, $D^{cc}(R \circ g^n) = \Theta(D^{dt}(R) \cdot b)$ when $D^{cc}(g) = O(b)$. This applies to the inner product gadget on $b$-bit strings, whose uniform discrepancy is at most $2^{-b/2}$ (so $\eta = 1/2$); for $b = 1$ it is exactly $1/2$, since the largest absolute rectangle sum of the sign matrix with rows $(1,1)$ and $(1,-1)$ is $2$. The same paper proves the analogous randomized lifting theorem.
+with a constant in $\Omega$ that depends only on $\eta$ (it cannot be absolute: the inner product of the first $\lceil 2\eta b\rceil$ bits of each $b$-bit block has uniform discrepancy at most $2^{-\eta b}$ but communication complexity $O(D^{dt}(R)\,\eta b)$ for large $b$); with the trivial simulation, $D^{cc}(R \circ g^n) = \Theta(D^{dt}(R) \cdot b)$ when $D^{cc}(g) = O(b)$. This applies to the inner product gadget on $b$-bit strings, whose uniform discrepancy is at most $2^{-b/2}$ (so $\eta = 1/2$); for $b = 1$ it is exactly $1/2$, since the largest absolute rectangle sum of the sign matrix with rows $(1,1)$ and $(1,-1)$ is $2$. The same paper proves the analogous randomized lifting theorem.
 
 ## Proof sketch
 

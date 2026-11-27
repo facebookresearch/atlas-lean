@@ -6,7 +6,7 @@ $$
 c \cdot n \cdot \log_2 \frac{n}{\max(R, 1)}
 $$
 
-expected probes on the insert–query–delete distribution. Combined with the iterated-log bound, for every $c_R \ge 0$ and all $R \le c_R n$ the expected probe count is at least $c \cdot n \left(\log^* n + \max\left(0, \log_2 \frac{n}{\max(R,1)}\right)\right)$.
+expected probes on the insert–query–delete distribution ($4n$ operations) when $V = 1$, where that distribution is the hard distribution (Distribution 1, Section 3) of Li, Liang, Yu and Zhou; for $V \ge 1$ it makes at least that many expected probes on some admissible history of at most $4n$ operations, the one the source's key-value reduction (Section 7) feeds to the scheme. Combined with the iterated-log bound, for every $c_R \ge 0$ and all $R \le c_R n$ the expected probe count, in the same sense, is at least $c \cdot n \left(\log^* n + \max\left(0, \log_2 \frac{n}{\max(R,1)}\right)\right)$.
 
 ## Proof sketch
 

@@ -5,6 +5,7 @@ Let $W$ be a set of truth assignments and $\mathcal{I}$ a family of *initial set
 ## Depends on
 
 - [Cook–Reckhow propositional proof systems](../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
+- [Line-based (dag-like) derivations](../frege-systems-and-simulations/line-based-derivations.md)
 
 ## Sources
 

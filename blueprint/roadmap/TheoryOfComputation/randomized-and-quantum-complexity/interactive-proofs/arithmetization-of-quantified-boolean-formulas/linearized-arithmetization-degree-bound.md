@@ -1,10 +1,10 @@
 # Linearized arithmetization has low degree
 
-Let $\varphi = Q_1 x_1 \cdots Q_n x_n\, \psi$ be a closed prenex quantified Boolean formula with a matrix $\psi$ of size $m$. Inserting a linearization operator $L_{x_j}$ for every free variable $x_j$ after each quantifier yields an arithmetic expression whose intermediate polynomials all have degree at most $2$ in each variable after a quantifier and at most $m$ initially, and whose value is $1$ if $\varphi$ is true and $0$ otherwise. This degree bound is what makes the sum-check style interactive proof of $\mathrm{IP} = \mathrm{PSPACE}$ run with polynomially many rounds over a field of polynomial size.
+Let $\varphi = Q_1 x_1 \cdots Q_n x_n\, \psi$ be a closed prenex quantified Boolean formula whose matrix $\psi$ has size $m$, and let $P_\psi$ be the arithmetization of $\psi$, of total degree at most $m$. Following Shen, first linearize every variable of the matrix and then, after each quantifier, linearize the variables still free: evaluate $Q_1 x_1\, L_{x_1}\, Q_2 x_2\, L_{x_1} L_{x_2} \cdots Q_n x_n\, L_{x_1} \cdots L_{x_n}\, P_\psi$, applying the operators from right to left. Every polynomial produced after the initial block $L_{x_1} \cdots L_{x_n}$ has degree at most $2$ in each variable (those inside that block have total degree at most $m$), and the value is $1$ if $\varphi$ is true and $0$ otherwise. Linearizing the matrix first is necessary: for $\exists y\, \forall x\, (y \wedge y \wedge y)$ the matrix arithmetizes to $y^3$, and applying $\forall x$ directly gives $y^6$. This degree bound is what makes the sum-check style interactive proof of $\mathrm{IP} = \mathrm{PSPACE}$ run with polynomially many rounds over a field of polynomial size.
 
 ## Proof sketch
 
-Linearization keeps each variable at degree one; a following quantifier or connective at most doubles the degree in the remaining variables, so degrees stay bounded by $2$ per variable between consecutive linearizations. Agreement on Boolean points preserves the value.
+After $L_{x_1} \cdots L_{x_i}$ the polynomial is multilinear in $x_1, \dots, x_i$, the only variables still free; the quantifier $Q_i x_i$ multiplies its two restrictions to $x_i \in \{0,1\}$ (or their complements), so each remaining variable has degree at most $2$, and a linearization lowers one variable to degree $1$ without raising the others. Every operator agrees with the plain arithmetization on Boolean points, which preserves the value.
 
 ## Depends on
 

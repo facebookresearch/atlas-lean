@@ -9,6 +9,7 @@ A clause with $j$ distinct literals is falsified exactly when $j$ specified vari
 ## Depends on
 
 - [Unsatisfiability value of a CNF formula or CSP instance](unsatisfiability-value.md)
+- [k-wise independent and almost k-wise independent distributions](../../circuit-complexity/constant-depth-circuit-lower-bounds/ac0-fourier-and-pseudorandomness/k-wise-independent-distributions.md)
 
 ## Proof depends on
 

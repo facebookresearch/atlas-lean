@@ -1,10 +1,10 @@
 # Threshold and majority are in NC1
 
-For all $k$ and $j$, the threshold function $\mathrm{Th}^k_{\ge j}$ has a fan-in-two De Morgan circuit of size $O(k\log(k+2))$ and depth $O(\log(k+2))$. Consequently every family of threshold functions, in particular majority, belongs to (nonuniform) $\mathsf{NC}^1$, and $\mathsf{TC}^0\subseteq\mathsf{NC}^1$.
+For all $k$ and $j$, the threshold function $\mathrm{Th}^k_{\ge j}$ has a fan-in-two De Morgan circuit of size $O(k\log(k+2))$ and depth $O(\log(k+2))$. Consequently every family of threshold functions, in particular majority, belongs to (nonuniform) $\mathsf{NC}^1$, and $\mathsf{TC}^0\subseteq\mathsf{NC}^1$; more generally $\mathsf{TC}^i\subseteq\mathsf{NC}^{i+1}$ for every $i\ge0$.
 
 ## Proof sketch
 
-Compute the Hamming weight in logarithmic depth with carry-save trees and compare it with the constant $j$ by a logarithmic-depth comparator. Replacing every majority gate of a constant-depth threshold circuit by such a subcircuit multiplies the depth by $O(\log n)$.
+Compute the Hamming weight in logarithmic depth with carry-save trees and compare it with the constant $j$ by a logarithmic-depth comparator. Replacing every majority gate of a polynomial-size threshold circuit of depth $O(\log^i n)$ by such a subcircuit, and every unbounded fan-in AND or OR gate by a balanced fan-in-two tree, multiplies the depth by $O(\log n)$ and keeps the size polynomial.
 
 ## Depends on
 

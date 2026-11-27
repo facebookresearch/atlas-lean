@@ -13,6 +13,7 @@ Clear denominators row by row and run fraction-free (Bareiss) elimination, in wh
 ## Proof depends on
 
 - [Fraction-free (Bareiss-Jordan) elimination](../../../ComputerScience/algebraic-and-numerical-algorithms/exact-rational-linear-algebra/bareiss-fraction-free-elimination.md)
+- [Polynomial bit-length bounds for exact rational elimination](../../../ComputerScience/algebraic-and-numerical-algorithms/exact-rational-linear-algebra/exact-elimination-bit-bounds.md)
 
 ## Sources
 

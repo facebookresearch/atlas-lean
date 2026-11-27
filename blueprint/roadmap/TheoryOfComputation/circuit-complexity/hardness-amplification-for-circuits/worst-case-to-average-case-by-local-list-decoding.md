@@ -17,6 +17,8 @@ Goldreich–Levin decoding turns a predictor for $\hat f$ into a list of candida
 
 - [Goldreich-Levin: hardcore predicate from one-way permutations](../../pseudorandomness-and-one-way-functions/goldreich-levin-theorem/goldreich-levin.md)
 - [Worst-case to average-case encodings stay in E](../../pseudorandomness-and-one-way-functions/average-case-complexity/distributional-reductions/worst-case-to-average-case-encoding-in-e.md)
+- [Local list decoding of Reed-Muller codes along lines with advice](../../../InformationTheory/error-correcting-codes/reed-muller-codes-and-local-decoding/local-list-decoding-of-reed-muller-codes.md)
+- [Goldreich–Levin list decoding of the Hadamard code with oracle access](../../pseudorandomness-and-one-way-functions/hard-core-predicates-and-stretch/goldreich-levin-list-decoding.md)
 
 ## Sources
 

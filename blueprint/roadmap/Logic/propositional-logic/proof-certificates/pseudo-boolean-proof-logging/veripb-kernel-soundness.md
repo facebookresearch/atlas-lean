@@ -1,6 +1,6 @@
 # Soundness of the VeriPB kernel proof format
 
-Consider a VeriPB kernel proof for a pseudo-Boolean instance (constraints and an optional linear objective) built from the rules: cutting planes derivations, RUP steps, redundance-based and dominance-based strengthening with witnesses, solution logging and objective-improving steps, and deletions within the core set. If a sound checker accepts the proof with conclusion UNSAT then the instance has no solution; with conclusion SAT a solution exists; with conclusion BOUNDS $(\mathit{lb}, \mathit{ub})$ the optimum lies between them, every logged solution certifying an upper bound.
+Consider a VeriPB kernel proof for a pseudo-Boolean instance (constraints and an optional linear objective) built from the rules: cutting planes derivations, RUP steps, redundance-based and dominance-based strengthening with witnesses, solution logging and objective-improving steps, and deletions within the core set. The rules are sound: if every step of the proof meets the side conditions of its rule, as the VeriPB kernel checks them, then with conclusion UNSAT the instance has no solution; with conclusion SAT a solution exists; with conclusion BOUNDS $(\mathit{lb}, \mathit{ub})$ the optimum lies between them, every logged solution certifying an upper bound.
 
 ## Proof sketch
 
@@ -10,10 +10,10 @@ Each rule preserves the validity invariant of Bogaerts et al.: the core constrai
 
 - [Pseudo-Boolean cutting planes with saturation and weakening](pseudo-boolean-cutting-planes-rules.md)
 - [Reverse unit propagation for pseudo-Boolean constraints](pseudo-boolean-reverse-unit-propagation.md)
+- [Soundness of redundance-based strengthening with witnesses](redundance-based-strengthening-soundness.md)
 
 ## Proof depends on
 
-- [Soundness of redundance-based strengthening with witnesses](redundance-based-strengthening-soundness.md)
 - [Soundness and refutation completeness of cutting planes](../../../proof-theory/cutting-planes/cutting-planes-soundness-and-completeness.md)
 
 ## Sources

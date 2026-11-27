@@ -11,6 +11,7 @@ Each of the six failed Schaefer polymorphisms has a witnessing relation; minors 
 - [Planar Boolean CSP](planar-boolean-csp.md)
 - [Schaefer's six tractable classes](../../boolean-constraint-satisfaction/schaefer-dichotomy/schaefers-six-tractable-classes.md)
 - [Delta-matroids and even delta-matroids](delta-matroids-and-even-delta-matroids.md)
+- [Primitive-positive definitions and gadgets](../polymorphisms-of-boolean-relations/primitive-positive-definitions.md)
 
 ## Proof depends on
 
