@@ -46,8 +46,10 @@ public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Data.Fintype.Pi
+public import MathlibExt.Combinatorics.SimpleGraph.CompatibleOppositionProducts
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
+public import MathlibExt.GameTheory.SnortOppositionStrategy
 public import MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins
 
 namespace MetaMathlibExt
@@ -82,20 +84,6 @@ pair). -/
 def IsSnortResponsePair [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (u v : V) : Prop :=
   u ≠ v ∧ ¬ G.Adj u v ∧ snortMoverWins G (Fintype.card V - 2) {u} {v} = false
-
-/-- **Compatibly almost opposable graphs.** A graph $G$ is compatibly almost opposable if there
-are a vertex $u$, a set $S$ of vertices with $u \in S \subseteq N[u]$ (the closed neighbourhood
-of $u$), an automorphism $\alpha$ of $G$ with $\alpha(\alpha(v)) = v$ for every vertex $v$, and
-an opposition $f$ of the subgraph $G - S$ induced on the vertices outside $S$, such that
-$\alpha(x) = f(x)$ for every vertex $x \notin S$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 4 (compatibly almost opposable
-graphs). -/
-def IsCompatiblyAlmostOpposable (G : SimpleGraph V) : Prop :=
-  ∃ u : V, ∃ S : Set V, u ∈ S ∧ S ⊆ insert u (G.neighborSet u) ∧
-    ∃ α : G ≃g G, (∀ v, α (α v) = v) ∧
-      ∃ f : G.induce Sᶜ ≃g G.induce Sᶜ, IsOpposition _ f ∧ ∀ x : ↥Sᶜ, α x = (f x : V)
 
 /-- **Strong grid.** For $k \in \mathbb{N}$ and natural numbers $n_0, \dots, n_{k-1}$, the
 $k$-dimensional strong grid $P_{n_0} \boxtimes \cdots \boxtimes P_{n_{k-1}}$ is the simple
@@ -209,35 +197,6 @@ theorem snort_two_by_two :
     SnortFirstPlayerWins (queenGraph 2 2) ∧ SnortSecondPlayerWins (SimpleGraph.rookGraph 2 2) := by
   unfold SnortFirstPlayerWins SnortSecondPlayerWins; decide
 
-/-- **The second player wins Snort on opposable graphs.** If a finite simple graph $G$ is
-opposable, then the second player wins Snort on $G$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Lemma 1 (Kakihara,
-Proposition 3.6). -/
-public theorem_wanted snortSecondPlayerWins_of_isOpposable [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsOpposable G) : SnortSecondPlayerWins G
-
-/-- **Gluing oppositions of blocks.** Let $G$ be a graph, let $p$ be a map from its vertices to
-an index set, with blocks $B_i = \{v : p(v) = i\}$, and let $f$ be a map from the vertices of $G$
-to themselves. Suppose that for every index $i$ there is an opposition of the subgraph of $G$
-induced on $B_i$ that agrees with $f$ on $B_i$, and that for all vertices $u, w$ with
-$p(u) \neq p(w)$ we have $uw \in E(G) \iff f(u)f(w) \in E(G)$ and
-$uf(w) \in E(G) \iff f(u)w \in E(G)$. Then $G$ is opposable.
-
-Since $uf(u)$ and $wf(w)$ are non-edges, the second condition says that the four vertices
-$u, f(u), w, f(w)$ induce $C_4$, $2K_2$ or $4K_1$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 2. -/
-public theorem_wanted isOpposable_of_blocks {ι : Type*} (G : SimpleGraph V) (p : V → ι)
-    (f : V → V)
-    (hf : ∀ i, ∃ φ : G.induce {v | p v = i} ≃g G.induce {v | p v = i},
-      IsOpposition _ φ ∧ ∀ x, (φ x : V) = f x)
-    (hpair : ∀ u w, p u ≠ p w →
-      (G.Adj u w ↔ G.Adj (f u) (f w)) ∧ (G.Adj u (f w) ↔ G.Adj (f u) w)) :
-    IsOpposable G
-
 /-- **Fireworks preserve second-player wins in Snort.** Let $G$ be a finite simple graph and let
 $(u, v)$ be a response pair of $G$ whose distance in $G$ is at least $3$ (infinite distance,
 when $u$ and $v$ lie in different components, is allowed). If the second player wins Snort on
@@ -259,17 +218,6 @@ Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
 Related to SNORT*, INTEGERS 26 (2026), Article G2, Lemma 3. -/
 public theorem_wanted snortFirstPlayerWins_of_isAlmostOpposable [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsAlmostOpposable G) : SnortFirstPlayerWins G
-
-/-- **Strong products of compatibly almost opposable graphs.** If $G$ and $H$ are compatibly
-almost opposable graphs, then their strong product $G \boxtimes H$ is compatibly almost
-opposable.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 5. -/
-public theorem_wanted isCompatiblyAlmostOpposable_strongProd [DecidableEq V] [DecidableEq W]
-    (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
-    (hG : IsCompatiblyAlmostOpposable G) (hH : IsCompatiblyAlmostOpposable H) :
-    IsCompatiblyAlmostOpposable (strongProd G H)
 
 /-- **Cartesian products of compatibly almost opposable graphs.** Let $G$ and $H$ be compatibly
 almost opposable graphs. Suppose that for some vertex $u$ of $G$ there are an involutive

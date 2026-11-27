@@ -11,12 +11,12 @@ Consequently, for arbitrary terms $v$ and $v'$ there are terms $t_1, \dots, t_k$
 
 - [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [η-reduction and βη-conversion](../beta-reduction-and-confluence/eta-reduction-and-beta-eta-conversion.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- βη-conversion $\simeq_{\beta\eta}$ of untyped λ-terms and its Church–Rosser property (statement prerequisite; not yet stated as a page)
+- [Böhm separation with applicators](bohm-separation-with-applicators.md)
+- [Church–Rosser theorem for βη-reduction](../beta-reduction-and-confluence/church-rosser-theorem-for-beta-eta-reduction.md)
 
 ## Sources
 

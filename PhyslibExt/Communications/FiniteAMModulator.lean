@@ -323,14 +323,14 @@ lemma not_disjoint_shifted_supports_tone_four :
     rw [messageSpectrum_carrierCos]
     have e1 : ((0 : ZMod 4) - 1) ≠ 1 := by decide
     have e2 : ((0 : ZMod 4) - 1) = -1 := by decide
-    rw [Pi.single_apply, Pi.single_apply, if_neg e1, if_pos e2]
+    rw [Pi.single_apply, Pi.single_apply, ite_eq_right e1, ite_eq_left e2]
     norm_num
   have h0l : (0 : ZMod 4) ∈ negativeShiftSupport 4 (carrierCos 4 1) 1 := by
     show messageSpectrum 4 (carrierCos 4 1) (0 + 1) ≠ 0
     rw [messageSpectrum_carrierCos]
     have e1 : ((0 : ZMod 4) + 1) = 1 := by decide
     have e2 : ((0 : ZMod 4) + 1) ≠ -1 := by decide
-    rw [Pi.single_apply, Pi.single_apply, if_pos e1, if_neg e2]
+    rw [Pi.single_apply, Pi.single_apply, ite_eq_left e1, ite_eq_right e2]
     norm_num
   exact (Set.disjoint_left.mp hdisj h0u) h0l
 

@@ -1,6 +1,6 @@
 # Tamo: improved list sizes and generalized Singleton for list size two
 
-Folded Reed-Solomon and multiplicity codes of rate $R$ are list decodable up to radius $1 - R - \varepsilon$ with list size $(1/\varepsilon)^{O(1/\varepsilon)}$ via a streamlined argument, with an improved randomized algorithm, and folded Reed-Solomon codes asymptotically attain the generalized Singleton bound $\frac{2}{3}(1 - R)$ for list size $2$ over relatively small alphabets, the first explicit codes with this property.
+Let $0 < \varepsilon < 1$. A folded Reed-Solomon code of rate $R$ with folding parameter $s \ge 16/\varepsilon^2$ is list decodable up to radius $1 - R - \varepsilon$ with list size at most $(1/\varepsilon)^{4/\varepsilon}$. A univariate multiplicity code of rate $R$ over $\mathbb{F}_p$ with order $s \ge 16/\varepsilon^2$ and characteristic $p \ge \max(k, 4/\varepsilon)$ (the definition page already assumes $p \ge k$) is list decodable up to radius $1 - R - \varepsilon$ with list size at most $(1/\varepsilon)^{\frac{4}{\varepsilon}(1 + k/p)} \le (1/\varepsilon)^{8/\varepsilon}$. In both cases a randomized algorithm outputs the list in time polynomial in the code parameters and the list-size bound. Moreover, for every $\varepsilon > 0$ the folded Reed-Solomon code of rate $R$ and length $n$ with folding parameter $s = 1 + \lceil 2R/(3\varepsilon) \rceil$, over an alphabet of size $n^{O(1/\varepsilon)}$, is $\big(\frac{2}{3}(1 - R) - \varepsilon, 2\big)$-list decodable. So folded Reed-Solomon codes asymptotically attain the generalized Singleton bound $\frac{2}{3}(1 - R)$ for list size $2$ over polynomial-size alphabets, the first explicit codes with this property.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ Bound the number of codewords in an affine subspace of dimension $r$ close to th
 
 ## Sources
 
-- Itzhak Tamo, "Tighter list-size bounds for list-decoding and recovery of folded Reed-Solomon and multiplicity codes", IEEE Transactions on Information Theory (2024); arXiv:2312.17097.
+- Itzhak Tamo, "Tighter list-size bounds for list-decoding and recovery of folded Reed-Solomon and multiplicity codes", IEEE Transactions on Information Theory (2024); arXiv:2312.17097 (Theorems 1.1, 1.3 and 5.5, Corollaries 3.6 and 3.9).

@@ -16,12 +16,15 @@ public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
 public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
+public import MathlibExt.NumberTheory.GeneralizedMarkovModuloFour
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
+public import MathlibExt.NumberTheory.GeneralizedMarkovEvenParameter
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessPairwiseCoprime
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessStep
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessParent
 
@@ -123,25 +126,6 @@ public theorem_wanted card_maxGenMarkovTriples_le {k b : ℕ}
     ((range (b + 1) ×ˢ range (b + 1)).filter fun q =>
         q.1 ≤ q.2 ∧ IsGenMarkovTriple k q.1 b q.2).card ≤
       2 ^ ((b.primeFactors.filter (· ≠ 2)).card - 1)
-
-/-- **An even generalized Markov number forces $k$ to be even.** Let $k$ be a natural number. If
-some $k$-generalized Markov number $b$ is even, then $k$ is even.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.13. -/
-public theorem_wanted even_of_even_genMarkovNumber {k b : ℕ} (hb : IsGenMarkovNumber k b)
-    (he : Even b) : Even k
-
-/-- **Generalized Markov numbers divisible by $4$.** Let $k$ be a natural number. If some
-$k$-generalized Markov number is divisible by $4$, then $k \equiv 2 \pmod{4}$.
-
-Source: Only the first claim of Proposition 4.14 is stated; its "in particular" parity
-consequence is omitted because its displayed fraction is garbled in the record.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.14. -/
-public theorem_wanted mod_four_eq_two_of_four_dvd_genMarkovNumber {k b : ℕ}
-    (hb : IsGenMarkovNumber k b) (h4 : 4 ∣ b) : k % 4 = 2
 
 /-- **Discriminant condition for prime-power generalized Markov numbers.** Let $p$ be an odd
 prime and $m \ge 2$, and suppose that some $k$-generalized Markov number $b$ equals $p^m$ or
@@ -378,19 +362,6 @@ public theorem_wanted isGenCohnTriple_one_iff (k : ℕ) :
     (∀ ℓ, IsGenCohnTriple k (genCohnP1 k ℓ) (genCohnQ1 k ℓ) (genCohnR1 k ℓ) 1 1 1) ∧
     ∀ P Q R, IsGenCohnTriple k P Q R 1 1 1 →
       ∃ ℓ, P = genCohnP1 k ℓ ∧ Q = genCohnQ1 k ℓ ∧ R = genCohnR1 k ℓ
-
-/-- **Children of a generalized Cohn triple.** Let $k$ be a natural number, let $S$ be the integer
-matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$, and let $(P, Q, R)$ be a $k$-generalized Cohn
-triple associated with $(a, b, c)$. Then $(P, PQ - S, Q)$ is a $k$-generalized Cohn triple
-associated with $(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$, and $(Q, QR - S, R)$ is a
-$k$-generalized Cohn triple associated with $(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 3.5. -/
-public theorem_wanted IsGenCohnTriple.step {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P (P * Q - genCohnS k) Q a ((a ^ 2 + k * a * b + b ^ 2) / c) b ∧
-      IsGenCohnTriple k Q (Q * R - genCohnS k) R b ((b ^ 2 + k * b * c + c ^ 2) / a) c
 
 /-- **Vertices of the wide generalized Cohn tree are generalized Cohn triples.** Let $k$ be a
 natural number. For every integer $\ell$ and every path $w$, the vertex of the wide

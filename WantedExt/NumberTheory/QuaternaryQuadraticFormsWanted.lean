@@ -13,6 +13,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.PhiSqMulPhiSqTenEisenstein
 
 /-!
 # Quaternary forms `x² + y² + 10z² + 10w²`, `x² + y² + 15z² + 15w²`, …: wishlist
@@ -195,27 +196,6 @@ public theorem_wanted phi_sq_phi_sq_ten_add_five_phi_sq_two_phi_sq_five
       (φ (q ^ 2)) ^ 4 + 5 * (φ (q ^ 10)) ^ 4 + 4 * q * (ψ (q ^ 2)) ^ 4
         + 20 * q ^ 5 * (ψ (q ^ 10)) ^ 4 + 16 * q ^ 2 * (𝔣 (q ^ 4)) ^ 2 * (𝔣 (q ^ 20)) ^ 2
         - 16 * q ^ 3 * ((𝔣 (q ^ 4)) ^ 5 * 𝔣 (q ^ 10) * (𝔣 (q ^ 40)) ^ 2
-          / (𝔣 (q ^ 2) * (𝔣 (q ^ 8)) ^ 2 * 𝔣 (q ^ 20)))
-
-/-- **Eisenstein-series formula for $\varphi(q)^2\varphi(q^{10})^2$.** Let $q$ be
-a complex number with $|q| < 1$. Write $\varphi(x) = \sum_{n \in \mathbb{Z}} x^{n^2}$ for
-Ramanujan's theta function, $f_k = \prod_{m \ge 1} (1 - q^{km})$, and $P_k = P(q^k)$, where
-$P(x) = 1 - 24 \sum_{m \ge 1} m x^m / (1 - x^m)$ is the weight-two Eisenstein series. Then
-$$
-\varphi(q)^2\varphi(q^{10})^2 = -\tfrac{1}{36}(P_1 - P_2 + 2P_4 + 5P_5 - 8P_8 - 5P_{10} + 10P_{20} -
-40P_{40}) + \tfrac{10}{3} q f_2^2 f_{10}^2 + \tfrac{8}{3} q^2 f_4^2 f_{20}^2 +
-4q^3 \frac{f_4^5 f_{10} f_{40}^2}{f_2 f_8^2 f_{20}}.
-$$
-
-Source: K. R. Vasuki and P. Nagendra, *On Certain Quaternary Quadratic Forms*, INTEGERS 25
-(2025), Article A24, Lemma 3.3, Equation (3.13). -/
-public theorem_wanted phi_sq_mul_phi_sq_ten_eisenstein (q : ℂ) (hq : ‖q‖ < 1) :
-    (φ q) ^ 2 * (φ (q ^ 10)) ^ 2 =
-      -(1 / 36) * (𝐏 q - 𝐏 (q ^ 2) + 2 * 𝐏 (q ^ 4) + 5 * 𝐏 (q ^ 5) - 8 * 𝐏 (q ^ 8)
-          - 5 * 𝐏 (q ^ 10) + 10 * 𝐏 (q ^ 20) - 40 * 𝐏 (q ^ 40))
-        + 10 / 3 * q * (𝔣 (q ^ 2)) ^ 2 * (𝔣 (q ^ 10)) ^ 2
-        + 8 / 3 * q ^ 2 * (𝔣 (q ^ 4)) ^ 2 * (𝔣 (q ^ 20)) ^ 2
-        + 4 * q ^ 3 * ((𝔣 (q ^ 4)) ^ 5 * 𝔣 (q ^ 10) * (𝔣 (q ^ 40)) ^ 2
           / (𝔣 (q ^ 2) * (𝔣 (q ^ 8)) ^ 2 * 𝔣 (q ^ 20)))
 
 /-- **Eisenstein-series formula for $\varphi(q^2)^2\varphi(q^5)^2$.** Let $q$ be

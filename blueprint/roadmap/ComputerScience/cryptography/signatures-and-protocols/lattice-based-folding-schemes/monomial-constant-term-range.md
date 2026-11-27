@@ -6,11 +6,11 @@ $$
 \psi=\sum_{1\le i<d'}i\cdot\bigl(X^{-i}+X^{i}\bigr)\in\mathcal{R}_q .
 $$
 
-For every $a\in\mathbb{Z}_q$: if $a\in(-d',d')$, then $\mathrm{ct}(b\cdot\psi)=a$ for every $b\in\mathrm{EXP}(a)$; conversely, if some $b\in\mathcal{M}$ satisfies $\mathrm{ct}(b\cdot\psi)=a$, then $a\in(-d',d')$ and $b\in\mathrm{EXP}(a)$. Hence a range claim $a\in(-d',d')$ is certified by exhibiting $b$ with both $b\in\mathcal{M}$ and $\mathrm{ct}(b\psi)=a$; monomiality of a committed $b$ alone says nothing about a separately claimed $a$.
+For every $a\in\mathbb{Z}_q$: if $a\in(-d',d')$, then $\mathrm{ct}(b\cdot\psi)=a$ for every $b\in\mathrm{EXP}(a)$. Conversely, assume $q\ge d-1$, so that the $d-1$ integers in $(-d',d')$ are distinct modulo $q$; then if some $b\in\mathcal{M}$ satisfies $\mathrm{ct}(b\cdot\psi)=a$, then $a\in(-d',d')$ and $b\in\mathrm{EXP}(a)$. Hence a range claim $a\in(-d',d')$ is certified by exhibiting $b$ with both $b\in\mathcal{M}$ and $\mathrm{ct}(b\psi)=a$; monomiality of a committed $b$ alone says nothing about a separately claimed $a$.
 
 ## Proof sketch
 
-Multiplying by $b\in\mathcal{M}\setminus\{0\}$ rotates the coefficients of $\psi$ and flips the signs of those that wrap around, so $\mathrm{ct}(b\psi)$ is, up to sign, one coefficient of $\psi$ and lies in $(-d',d')$; for $b=0$ it is $0$. For $a\ne0$ in that range, the only monomial term of $\psi$ that $\exp(a)$ moves to the constant position contributes exactly $a$. The constant term vanishes exactly for $b=0$, $b=1$ and $b=X^{d'}$, which gives $\mathrm{EXP}(0)$, and inspecting which rotation produces each nonzero value gives $b=\exp(a)$.
+Multiplying by $b\in\mathcal{M}\setminus\{0\}$ rotates the coefficients of $\psi$ and flips the signs of those that wrap around, so $\mathrm{ct}(b\psi)$ is, up to sign, one coefficient of $\psi$ and lies in $(-d',d')$; for $b=0$ it is $0$. For $a\ne0$ in that range, the only monomial term of $\psi$ that $\exp(a)$ moves to the constant position contributes exactly $a$. The constant term vanishes exactly for $b=0$, $b=1$ and $b=X^{d'}$, which gives $\mathrm{EXP}(0)$, and inspecting which rotation produces each nonzero value gives $b=\exp(a)$. The converse uses $q\ge d-1$: over $\mathbb{Z}$, $\mathrm{ct}(X^{k}\psi)$ is $k$ for $0\le k<d'$, $0$ for $k=d'$ and $k-d$ for $d'<k<d$, so for $q=3$ and $d=8$ the monomial $X^{3}$ has constant term $3\equiv0$ but $X^{3}\notin\mathrm{EXP}(0)$. The source states the lemma with only $q>2$ prime in force.
 
 ## Depends on
 
