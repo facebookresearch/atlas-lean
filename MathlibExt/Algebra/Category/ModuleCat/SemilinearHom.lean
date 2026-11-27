@@ -148,7 +148,17 @@ SemimoduleCat.{vM} R`. The functor `SemimoduleCat.{vN} S → SemimoduleCat.{max 
 def semilinearHomCoeffFunctor (σ : R →+* S) (M : SemimoduleCat.{vM} R) :
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
-  map {N N'} f := ofHom (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' f.hom)
+  map {N N'} f := ofHom
+    (show (M →ₛₗ[σ] N) →ₗ[S] (M →ₛₗ[σ] N') from
+      { toFun := fun g => f.hom.comp (σ₁₂ := σ) (σ₁₃ := σ) g
+        map_add' := fun g h => by
+          apply LinearMap.ext
+          intro x
+          exact f.hom.map_add (g x) (h x)
+        map_smul' := fun s g => by
+          apply LinearMap.ext
+          intro x
+          exact f.hom.map_smul s (g x) })
   map_id N := by
     apply SemimoduleCat.hom_ext
     apply LinearMap.ext
@@ -355,7 +365,17 @@ postcomposition `f ↦ b ∘ f`. -/
 def semilinearHomCoeffFunctor (σ : R →+* S) (M : ModuleCat.{vM} R) :
     ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
-  map {N N'} f := ofHom (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' f.hom)
+  map {N N'} f := ofHom
+    (show (M →ₛₗ[σ] N) →ₗ[S] (M →ₛₗ[σ] N') from
+      { toFun := fun g => f.hom.comp (σ₁₂ := σ) (σ₁₃ := σ) g
+        map_add' := fun g h => by
+          apply LinearMap.ext
+          intro x
+          exact f.hom.map_add (g x) (h x)
+        map_smul' := fun s g => by
+          apply LinearMap.ext
+          intro x
+          exact f.hom.map_smul s (g x) })
   map_id N := by
     apply ModuleCat.hom_ext
     apply LinearMap.ext

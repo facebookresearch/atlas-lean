@@ -10,6 +10,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.CyclicHomologyOne
+public import MathlibExt.Algebra.Homology.Hochschild.AdjacentBarCoefficientComparison
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialDifferentialFormComplexComparison
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Tactic.Ring
@@ -233,6 +234,32 @@ example : hhXY ≠ 0 := by
       ((congrArg (symmetricHochschildDifferentialFormEquiv ℚ (Fin 2) A 1) h).trans
         (map_zero _))
   have hf : formXY = 0 := hkr_xy.symm.trans hz
+  have hX : X = 0 := form_xy_coordinate.symm.trans
+    ((congrArg (KaehlerDifferential.mvPolynomialCoefficientFormCoordinate
+      ℚ (Fin 2) A 1 yColumn) hf).trans (map_zero _))
+  exact MvPolynomial.X_ne_zero (0 : Fin 2) hX
+
+/-- The enveloping-algebra derived comparison carries the nonzero class of `X ⊗ Y`
+to a nonzero degree-one derived tensor class. -/
+example :
+    letI := Symmetric.opModule A A
+    letI := Symmetric.actionsComm A A
+    letI := Symmetric.kOpComm ℚ A A
+    letI := Symmetric.kOpTower ℚ A A
+    ((AdjacentBar.coefficientHochschildHomologyIsoDerived ℚ A A 1).hom).hom hhXY ≠ 0 := by
+  letI := Symmetric.opModule A A
+  letI := Symmetric.actionsComm A A
+  letI := Symmetric.kOpComm ℚ A A
+  letI := Symmetric.kOpTower ℚ A A
+  let e := AdjacentBar.coefficientHochschildHomologyIsoDerived ℚ A A 1
+  intro hz
+  have hxy : hhXY = 0 := e.toLinearEquiv.injective
+    (hz.trans (map_zero e.hom.hom).symm)
+  have hzForm : (((polynomialDifferentialFormHomologyIso ℚ (Fin 2) A 1).hom).hom hhXY).down = 0 :=
+    (polynomialDifferentialFormHomologyIso_hom_down ℚ (Fin 2) A 1 hhXY).trans
+      ((congrArg (symmetricHochschildDifferentialFormEquiv ℚ (Fin 2) A 1) hxy).trans
+        (map_zero _))
+  have hf : formXY = 0 := hkr_xy.symm.trans hzForm
   have hX : X = 0 := form_xy_coordinate.symm.trans
     ((congrArg (KaehlerDifferential.mvPolynomialCoefficientFormCoordinate
       ℚ (Fin 2) A 1 yColumn) hf).trans (map_zero _))
