@@ -2,7 +2,7 @@
 
 Question (O. V. Belegradek, Kourovka Notebook 18.18). Let $T_{\mathrm{cof}}$ be the set of first-order sentences of the language of groups, coded in prenex conjunctive normal form, that hold in every finite group of sufficiently large order (equivalently, in all but finitely many finite groups up to isomorphism).
 
-Statement: neither $T_{\mathrm{cof}}$ nor its complement in the set of all coded sentences is computably enumerable. It holds; the resolution is [Kourovka 18.18: the theory of almost all finite groups is not c.e.](almost-all-finite-groups-theory-not-ce-h.md).
+Statement: neither $T_{\mathrm{cof}}$ nor its complement in the set of all coded sentences is computably enumerable.
 
 ## Sources
 

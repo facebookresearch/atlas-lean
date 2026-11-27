@@ -4,4 +4,4 @@ Question (Koenigsmann). Let $\mathbb{Q}^*$ and $\mathbb{Q}^{**}$ be fields, each
 
 ## Sources
 
-- P. Dittmann, "Irreducibility of polynomials over global fields is diophantine", arXiv:1601.07829, https://arxiv.org/abs/1601.07829
+- P. Dittmann, "Irreducibility of polynomials over global fields is diophantine", arXiv:1601.07829, https://arxiv.org/abs/1601.07829; published in Compositio Mathematica 154 (2018), https://doi.org/10.1112/S0010437X17007977

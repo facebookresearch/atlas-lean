@@ -4,4 +4,4 @@ This result proves the proposition stated as [Koenigsmann's question on fields e
 
 ## Sources
 
-- P. Dittmann, "Irreducibility of polynomials over global fields is diophantine", arXiv:1601.07829, Corollary 5.3, https://arxiv.org/abs/1601.07829
+- P. Dittmann, "Irreducibility of polynomials over global fields is diophantine", arXiv:1601.07829, Corollary 5.3, https://arxiv.org/abs/1601.07829; published in Compositio Mathematica 154 (2018), https://doi.org/10.1112/S0010437X17007977

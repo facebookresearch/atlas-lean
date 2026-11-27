@@ -4,7 +4,7 @@ Question (O. V. Belegradek, Kourovka Notebook 18.16). Statement: let $G$ be an o
 
 $$n\, f(x) = m\, x \quad\text{for all } x \in G.$$
 
-Since ordered abelian groups are torsion-free, this says $f(x) = \tfrac{m}{n} x$. It holds; the resolution is [Kourovka 18.16: definable endomorphisms are rational multiples](definable-endomorphism-is-rational-multi-2.md).
+Since ordered abelian groups are torsion-free, this says $f(x) = \tfrac{m}{n} x$.
 
 ## Sources
 

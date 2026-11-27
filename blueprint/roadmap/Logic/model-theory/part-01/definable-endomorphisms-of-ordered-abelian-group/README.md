@@ -5,4 +5,3 @@
 - [The pure language of ordered abelian groups](ordered-add-group-language.md)
 - [The canonical structure on an ordered abelian group](ordered-add-group-structure.md)
 - [Kourovka 18.16: definable endomorphisms of ordered abelian groups](definable-endomorphism-is-rational-multi.md)
-- [Kourovka 18.16: definable endomorphisms are rational multiples](definable-endomorphism-is-rational-multi-2.md)

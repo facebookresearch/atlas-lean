@@ -4,4 +4,3 @@ Group words and their values are the [signed-index words](../../../../GroupTheor
 
 - [Sentences true in almost all finite groups](holds-in-almost-all-finite-groups.md)
 - [Kourovka 18.18: the theory of almost all finite groups](almost-all-finite-groups-theory-not-ce.md)
-- [Kourovka 18.18: the theory of almost all finite groups is not c.e.](almost-all-finite-groups-theory-not-ce-h.md)

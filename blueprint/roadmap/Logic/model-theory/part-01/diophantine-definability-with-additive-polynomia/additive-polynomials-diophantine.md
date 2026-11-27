@@ -10,4 +10,4 @@ Since the coefficients range over $\mathbb{F}_p[Z]$, the constant $Z$ may be use
 
 ## Sources
 
-- B. Poonen and T. Scanlon (moderators), J. Demeyer (notes), AIM workshop "Extensions of Hilbert's tenth problem", problem list, Question 5 (T. Pheidas), https://aimath.org/WWN/hilberts10th/hilberts10th.pdf
+- B. Poonen and T. Scanlon (moderators), J. Demeyer (notes), AIM workshop "Extensions of Hilbert's tenth problem", problem list, Question 5 (T. Pheidas), https://web.archive.org/web/20250808061106/https://aimath.org/WWN/hilberts10th/hilberts10th.pdf

@@ -4,5 +4,5 @@ This result proves the proposition stated as [Pheidas' question: additive polyno
 
 ## Sources
 
-- B. Poonen and T. Scanlon (moderators), J. Demeyer (notes), AIM workshop "Extensions of Hilbert's tenth problem", problem list, Question 5 (T. Pheidas), https://aimath.org/WWN/hilberts10th/hilberts10th.pdf
+- B. Poonen and T. Scanlon (moderators), J. Demeyer (notes), AIM workshop "Extensions of Hilbert's tenth problem", problem list, Question 5 (T. Pheidas), https://web.archive.org/web/20250808061106/https://aimath.org/WWN/hilberts10th/hilberts10th.pdf
 - J. Demeyer, "Recursively enumerable sets of polynomials over a finite field are Diophantine", Invent. Math. 170 (2007), 655-670, https://doi.org/10.1007/s00222-007-0078-6

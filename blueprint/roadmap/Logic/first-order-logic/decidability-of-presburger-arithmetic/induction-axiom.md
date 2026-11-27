@@ -8,4 +8,4 @@ obtained by universally closing over the parameters. This is the induction schem
 
 ## Sources
 
-- H. Enderton, *A Mathematical Introduction to Logic*, 2nd ed., Academic Press, 2001, §3.2.
+- H. Enderton, *A Mathematical Introduction to Logic*, 2nd ed., Academic Press, 2001, §3.7, p. 269, which gives the universal closures of the induction formulas as axioms of Peano arithmetic; the schema here is the same schema restricted to formulas of the Presburger language.

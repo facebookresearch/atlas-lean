@@ -4,7 +4,7 @@ Statement (Kourovka Notebook Problem 9.66(a), A. D. Taimanov; B. Jónsson's conj
 
 $$G_1 * H_1 \equiv G_2 * H_2,$$
 
-where $\equiv$ is elementary equivalence in the first-order language of groups (multiplication, inversion and the identity) and $*$ is the free product. It holds; the resolution is [Free products preserve elementary equivalence of groups](free-product-preserves-elementary-equiva-2.md).
+where $\equiv$ is elementary equivalence in the first-order language of groups (multiplication, inversion and the identity) and $*$ is the free product.
 
 ## Sources
 

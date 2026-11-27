@@ -2,7 +2,7 @@
 
 Statement (Kourovka Notebook Problem 2.81(a), L. N. Shevrin): some axiomatizable class of lattices recognizes free groups by their subsemigroup lattices. Precisely, there is a first-order theory $T$ in the language of orders such that for every nonempty semigroup $S$, the lattice of all subsemigroups of $S$ satisfies $T$ if and only if $S$ is a free group (isomorphic as a semigroup to a free group of some rank, $0$ included).
 
-The lattice of subsemigroups of $S$ consists of all subsemigroups of $S$, the empty one included, ordered by inclusion. An axiomatizable class of lattices is the class of models of a first-order theory $T$ in the language of orders $\{\le\}$ (the lattice operations are definable from $\le$), so the lattice of subsemigroups is isomorphic to a lattice in the class exactly when it satisfies $T$. It holds; the resolution is [Free groups are recognized by an elementary class of subsemigroup lattices](axiomatizable-class-detects-free-groups-2.md).
+The lattice of subsemigroups of $S$ consists of all subsemigroups of $S$, the empty one included, ordered by inclusion. An axiomatizable class of lattices is the class of models of a first-order theory $T$ in the language of orders $\{\le\}$ (the lattice operations are definable from $\le$), so the lattice of subsemigroups is isomorphic to a lattice in the class exactly when it satisfies $T$.
 
 ## Sources
 

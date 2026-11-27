@@ -4,4 +4,4 @@ This result proves the proposition stated as [Decidability of zeros of integer p
 
 ## Sources
 
-- B. Poonen and T. Scanlon (moderators), notes by J. Demeyer, AIM workshop Extensions of Hilbert's tenth problem, problem list, Question 8 (T. Pheidas), https://aimath.org/WWN/hilberts10th/hilberts10th.pdf.
+- B. Poonen and T. Scanlon (moderators), notes by J. Demeyer, AIM workshop Extensions of Hilbert's tenth problem, problem list, Question 8 (T. Pheidas), https://web.archive.org/web/20250808061106/https://aimath.org/WWN/hilberts10th/hilberts10th.pdf.
