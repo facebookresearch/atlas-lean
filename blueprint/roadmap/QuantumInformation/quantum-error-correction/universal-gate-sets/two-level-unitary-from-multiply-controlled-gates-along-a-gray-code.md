@@ -10,7 +10,7 @@ the controls that must be $0$. The first $m - 2$ gates are such controlled NOTs,
 $|g_2\rangle$, then $|g_2\rangle$ with $|g_3\rangle$, up to $|g_{m-2}\rangle$ with $|g_{m-1}\rangle$; the next applies
 the $2 \times 2$ block of $T$ to $|g_{m-1}\rangle$ and $|g_m\rangle$ (in the right order of the two states); the last
 $m - 2$ undo the swaps in reverse order. With [multiply controlled gates](multiply-controlled-unitary-from-cnot-and-single-qubit-gates.md)
-of $\Theta(n^2)$ gates each, $T$ costs $O(n^3)$ single-qubit gates and CNOTs.
+of $O(n^2)$ gates each, $T$ costs $O(n^3)$ single-qubit gates and CNOTs.
 
 ## Depends on
 

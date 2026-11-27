@@ -21,8 +21,6 @@ A sound expansion has separate pages for:
 
 The pure-state unitary case of item 2 for two states is a separate page (see Related topics); it is a special case, not a proof input for mixed states.
 
-- Statement prerequisite: the Stinespring dilation of a quantum channel.
-
 ## Depends on
 
 - [Quantum channel](../quantum-operations/quantum-channel.md)
