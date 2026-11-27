@@ -4,7 +4,7 @@
 
 **Theorem.**
 
-1. (Finiteness) A shadow of genus $g \ge 1$ over two backbones has between $2g+1$ and $6(g+1) - 2$ arcs, and one of genus $0$ has between $2$ and $4$ arcs; every intermediate arc count is attained, also by irreducible shadows. In particular there are finitely many (irreducible) shadows of each genus, and exactly seven non-trivial shadows over two backbones have genus $0$.
+1. (Finiteness) A shadow of genus $g \ge 1$ over two backbones has between $2g+1$ and $6(g+1) - 2$ arcs, and one of genus $0$ has between $2$ and $4$ arcs; every intermediate arc count is attained. An irreducible shadow over two backbones has between $2$ and $4$ arcs, each count attained, if $g = 0$, and between $2g+1$ and $6(g+1)-2$ arcs if $g \ge 1$, with every count from $2g+1$ to $6g-2$ attained. In particular there are finitely many (irreducible) shadows of each genus, and exactly seven non-trivial shadows over two backbones have genus $0$.
 2. (Genus additivity) If $E$ is a $\gamma$-structure over two backbones, then
 
 $$g(E) = \begin{cases} \displaystyle\sum_{S' \in \mathbb{I}_1(E)} g(S') + \sum_{S' \in \mathbb{I}_2^0(E)} g(S') + \sum_{S' \in \mathbb{I}_2^1(E)} \big(g(S') + 1\big), & \mathbb{I}_2^0(E) \ne \emptyset,\\[2ex] \displaystyle\sum_{S' \in \mathbb{I}_1(E)} g(S') + \sum_{S' \in \mathbb{I}_2^1(E)} \big(g(S') + 1\big) - 1, & \mathbb{I}_2^0(E) = \emptyset. \end{cases}$$

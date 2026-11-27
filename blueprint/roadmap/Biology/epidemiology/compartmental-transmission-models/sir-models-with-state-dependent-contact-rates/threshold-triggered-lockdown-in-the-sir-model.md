@@ -16,7 +16,7 @@ $$m(\epsilon,\rho,\bar\rho) = \begin{cases} 1 - \bar\rho + \rho\ln\dfrac{\bar\rh
 
 $$y^{\max} = M(\epsilon,\bar\rho) + (\bar\rho - \rho)\ln\frac{1-\epsilon}{x(k)},$$
 
-where $x(k)$, the susceptible fraction at which the orbit first crosses $y = k$, solves $x(k) + \rho\ln x(k) - \rho\ln(1-\epsilon) + k - 1 = 0$.
+where $x(k)$, the susceptible fraction at which the orbit first crosses $y = k$, is the root in $(\rho, 1-\epsilon)$ of $x(k) - \rho\ln x(k) + \rho\ln(1-\epsilon) + k - 1 = 0$, obtained from the first integral $x + y - \rho\ln x$ of the uncontrolled orbit. (The source\'s equation (10) has the signs of the two logarithmic terms reversed.)
 
 So a threshold policy can cap the epidemic peak at exactly $k$ only in the intermediate regime; for low thresholds the lockdown is triggered while $x > \bar\rho$ and the reduced epidemic still grows past $k$.
 

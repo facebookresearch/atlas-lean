@@ -6,7 +6,7 @@ $$
 \mathcal{J}(S,I,R,u) = \|I(\cdot,\mathcal{T})\|_{L^2(\Omega)}^2 + \|I\|_{L^2(\Omega_{\mathcal{T}})}^2 + \eta\, \|u\|_{L^2(\Omega_{\mathcal{T}})}^2, \qquad \eta > 0,
 $$
 
-over the admissible set $U_{ad} = \{ v \in L^\infty(\Omega_{\mathcal{T}}) : 0 < v,\ \|v\|_{L^\infty} < 1 \}$.
+over the closed convex admissible set $U_{ad} = \{ v \in L^\infty(\Omega_{\mathcal{T}}) : 0 \le v \le 1 \text{ a.e.} \}$. (The source uses $\{0 < v,\ \|v\|_{L^\infty} < 1\}$, which is not closed and excludes the values $0$ and $1$ taken by the projection formula below; its existence proof treats the set as weakly closed, which holds for the set used here.)
 
 **Theorem.**
 
@@ -23,7 +23,7 @@ $$
 
 ## Expansion
 
-A minimizing sequence of controls is bounded in $L^\infty$, so it has a weak-* limit. The states are bounded uniformly, and a time-derivative estimate involving the Mittag-Leffler function $E_\alpha(-\gamma \mathcal{T}^\alpha)$ yields enough compactness to pass to the limit in the bilinear term $\mu S I$. Lower semicontinuity of $\mathcal{J}$ then gives an optimal pair. For the characterization, the Gâteaux derivative of the control-to-state map is computed, and the fractional integration-by-parts formula moves ${}^{C}D^{\alpha}_t$ onto the adjoint as the backward Caputo derivative. The variational inequality for the convex control set then reduces pointwise to the projection formula above.
+A minimizing sequence of controls is bounded in $L^\infty$, so it has a weak-* limit, which lies in $U_{ad}$ because $U_{ad}$ is convex and closed, hence weak-* closed. The states are bounded uniformly, and a time-derivative estimate involving the Mittag-Leffler function $E_\alpha(-\gamma \mathcal{T}^\alpha)$ yields enough compactness to pass to the limit in the bilinear term $\mu S I$. Lower semicontinuity of $\mathcal{J}$ then gives an optimal pair. For the characterization, the Gâteaux derivative of the control-to-state map is computed, and the fractional integration-by-parts formula moves ${}^{C}D^{\alpha}_t$ onto the adjoint as the backward Caputo derivative. The variational inequality for the convex control set then reduces pointwise to the projection formula above.
 
 ## Sources
 

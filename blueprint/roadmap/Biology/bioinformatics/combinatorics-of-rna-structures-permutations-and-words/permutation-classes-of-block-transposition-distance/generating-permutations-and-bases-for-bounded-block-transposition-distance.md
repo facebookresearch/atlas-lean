@@ -16,7 +16,9 @@ These sets are permutation classes (closed under taking patterns). A permutation
 
 1. the generating permutations of $B_k^{(ptd)}$ are exactly the plus irreducible permutations of length $2k+1$ at prefix block transposition distance $k$, and there are $(2k)!/2^k$ of them;
 2. every basis element of $B_k^{(ptd)}$ has length at most $2k+1$;
-3. the basis of $B_1^{(ptd)}$ is $\{132, 321\}$, and the basis of $B_2^{(ptd)}$ consists of $1432, 2143, 4321$ together with fifteen permutations of length $5$.
+3. the basis of $B_1^{(ptd)}$ is $\{132, 321\}$, and the basis of $B_2^{(ptd)}$ consists of $1432, 2143, 4321$ together with the fourteen permutations $13524, 14253, 24351, 25314, 35142, 35214, 35241, 41352, 42513, 42531, 43152, 51324, 52413, 53142$ of length $5$.
+
+The list in the source's Proposition 3.5 has fifteen permutations of length $5$; its extra entry $25413$ contains $1432$ (entries $2,5,4,3$), which already lies outside $B_2^{(ptd)}$, so $25413$ is not a minimal excluded permutation and does not belong to the basis.
 
 ## Expansion
 
@@ -24,5 +26,5 @@ A single block transposition is determined by three cut positions, so a monotone
 
 ## Sources
 
-- Giulio Cerbai, Luca Ferrari, "Permutation patterns in genome rearrangement problems: The reversal model", Discrete Applied Mathematics 279 (2020), 34–48, <https://doi.org/10.1016/j.dam.2019.10.012>. Published version of arXiv:1808.02653, cited next; locators there refer to the arXiv version.
+- Giulio Cerbai, Luca Ferrari, "Permutation patterns in genome rearrangement problems", in Proceedings of the 11th International Conference on Random and Exhaustive Generation of Combinatorial Structures (GASCom 2018), CEUR Workshop Proceedings 2113 (2018), 124–131, <https://ceur-ws.org/Vol-2113/paper12.pdf>. Published version of arXiv:1808.02653, cited next; locators there refer to the arXiv version.
 - Giulio Cerbai, Luca Ferrari, "Permutation patterns in genome rearrangement problems", arXiv (2018). Proposition 2.1, Proposition 2.3, Theorems 2.4–2.5, Proposition 2.6, Theorems 3.2–3.4, Proposition 3.5. <https://doi.org/10.48550/arXiv.1808.02653>

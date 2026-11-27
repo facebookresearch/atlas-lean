@@ -29,7 +29,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
-- [Phylogenetic invariants](phylogenetic-invariants/README.md)
 - [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
 - [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 ## [Random trees and phylogenetic networks](random-trees-and-phylogenetic-networks/README.md)

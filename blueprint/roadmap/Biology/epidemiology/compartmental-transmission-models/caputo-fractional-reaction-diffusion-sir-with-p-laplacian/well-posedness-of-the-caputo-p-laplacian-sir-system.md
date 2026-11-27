@@ -6,7 +6,7 @@ $$
 {}^{C}D^{\alpha}_t f(t) = \frac{1}{\Gamma(1-\alpha)} \int_0^t (t-y)^{-\alpha} f'(y)\, dy .
 $$
 
-For diffusion coefficients $\lambda_1, \lambda_2, \lambda_3 > 0$, recruitment $\beta N$, transmission rate $\mu$, natural death rate $\xi$, recovery rate $\kappa$ and a vaccination control $u(x,t) \in [0,1)$, consider on $\Omega_{\mathcal{T}} = \Omega \times [0,\mathcal{T}]$
+For diffusion coefficients $\lambda_1, \lambda_2, \lambda_3 > 0$, recruitment $\beta N$, transmission rate $\mu$, natural death rate $\xi$, recovery rate $\kappa$ and a vaccination control $u(x,t) \in [0,1]$, consider on $\Omega_{\mathcal{T}} = \Omega \times [0,\mathcal{T}]$
 
 $$
 \begin{aligned}
@@ -16,17 +16,13 @@ $$
 \end{aligned}
 $$
 
-where $\Delta_p v = \nabla \cdot (|\nabla v|^{p-2} \nabla v)$, with homogeneous Neumann conditions $\nabla S \cdot \vec n = \nabla I \cdot \vec n = \nabla R \cdot \vec n = 0$ on $\partial\Omega \times [0,\mathcal{T}]$ and initial data $(S_0, I_0, R_0)$. Write $\nu = (S,I,R)$, $\mathcal{H} = (L^2(\Omega))^3$ and $\mathcal{W} = (W^{1,p}_0(\Omega))^3$; a weak solution satisfies $\langle {}^{C}D^{\alpha}_t \nu, \varphi\rangle + \langle \mathcal{L}\nu, \varphi\rangle - \langle \Psi(\nu), \varphi\rangle = 0$ for all $\varphi \in L^p(0,\mathcal{T};\mathcal{W})$, where $\mathcal{L}\nu = -\lambda \Delta_p \nu$ and $\Psi$ collects the reaction terms.
+where $\Delta_p v = \nabla \cdot (|\nabla v|^{p-2} \nabla v)$, with homogeneous Neumann conditions $\nabla S \cdot \vec n = \nabla I \cdot \vec n = \nabla R \cdot \vec n = 0$ on $\partial\Omega \times [0,\mathcal{T}]$ and initial data $(S_0, I_0, R_0)$. Write $\nu = (S,I,R)$, $\mathcal{H} = (L^2(\Omega))^3$ and $\mathcal{W} = (W^{1,p}(\Omega))^3$ (no boundary values are imposed, matching the Neumann problem); a weak solution satisfies $\langle {}^{C}D^{\alpha}_t \nu, \varphi\rangle + \langle \mathcal{L}\nu, \varphi\rangle - \langle \Psi(\nu), \varphi\rangle = 0$ for all $\varphi \in L^p(0,\mathcal{T};\mathcal{W})$, where $\mathcal{L}\nu = -\lambda \Delta_p \nu$ and $\Psi$ collects the reaction terms. The source writes $W^{1,p}_0(\Omega)$ here, which would impose zero boundary values, i.e. a Dirichlet problem, inconsistent with its Neumann conditions; the page states the Neumann problem throughout.
 
 **Theorem.**
 
 1. For $\nu^0 \in L^2(\Omega)^3$ there exists a weak solution in $L^\infty(0,\mathcal{T};\mathcal{H}) \cap L^p(0,\mathcal{T};\mathcal{W})$.
 2. The weak solution is unique.
 3. For positive initial data the solution is positive.
-
-## Depends on
-
-- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
 
 ## Expansion
 

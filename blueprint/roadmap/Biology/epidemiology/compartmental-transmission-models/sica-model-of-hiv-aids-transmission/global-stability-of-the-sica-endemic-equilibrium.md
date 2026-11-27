@@ -1,6 +1,6 @@
 # Global stability of the endemic equilibrium of the SICA HIV/AIDS model
 
-The SICA model divides a population into susceptible $S$, HIV-infected without clinical AIDS symptoms $I$, chronic HIV infection under antiretroviral treatment $C$, and AIDS $A$. For proportions it reads
+The SICA model divides a population into susceptible $S$, HIV-infected without clinical AIDS symptoms $I$, chronic HIV infection under antiretroviral treatment $C$, and AIDS $A$. With recruitment $\Lambda$ and mass-action incidence it reads
 
 $$
 \begin{aligned}
@@ -14,8 +14,10 @@ $$
 where $\phi$ is the treatment rate, $\omega$ the treatment-failure rate, $\rho$ the progression rate to AIDS, $\alpha$ the rate at which AIDS patients start treatment and return to the $I$ class, and $d$ the AIDS-induced death rate. With $\xi_1 = \alpha + \mu + d$ and $\xi_2 = \omega + \mu$, the basic reproduction number is
 
 $$
-R_0 = \frac{\beta\, \xi_1 \xi_2}{\mu\big[\xi_2(\rho + \xi_1) + \xi_1\phi + \rho d\big] + \rho\omega d}.
+R_0 = \frac{\Lambda}{\mu}\cdot\frac{\beta\, \xi_1 \xi_2}{\mathcal D}, \qquad \mathcal D = \mu\big[\xi_2(\rho + \xi_1) + \xi_1\phi + \rho d\big] + \rho\omega d.
 $$
+
+The factor $\Lambda/\mu$ is the disease-free susceptible level $S^0$. The source's formula (2), $\beta\xi_1\xi_2/\mathcal D$, is the reproduction number of its model (1) with standard incidence $\beta IS/N$; for the mass-action system above it is correct only when $\Lambda = \mu$.
 
 **Theorem.** The disease-free equilibrium $(\Lambda/\mu, 0, 0, 0)$ is globally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$. For $R_0 > 1$ there is a unique endemic equilibrium $\Sigma^*$, with steady-state force of infection $\lambda^* = \mu(R_0 - 1)$, and it is globally asymptotically stable on the feasible region minus the disease-free face $\{I = C = A = 0\}$. Moreover, $R_0$ increases with $\beta$, $\alpha$ and $\omega$ and decreases with $\phi$ and $\rho$, and its normalized sensitivity index with respect to $\beta$ is $\Upsilon^{R_0}_\beta = 1$.
 

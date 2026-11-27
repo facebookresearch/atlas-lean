@@ -1,6 +1,6 @@
 # Global stability of the SIRS model with density-dependent mortality
 
-**Model.** Susceptible, infective and removed numbers $X, Y, Z$, with $N = X + Y + Z$, birth rate $b$, a fraction $p \in [0,1)$ of infected newborns (vertical transmission), density-dependent death rate $\mu(N)$, transmission rate $\beta$, recovery rate $\nu$, loss-of-immunity rate $\alpha$ and disease-induced death rate $\delta$:
+**Model.** Susceptible, infective and removed numbers $X, Y, Z$, with $N = X + Y + Z$, birth rate $b$, a fraction $p \in [0,1)$ of infected newborns (vertical transmission), density-dependent death rate $\mu(N)$, strictly increasing in $N$ with $b > \mu(0)$, transmission rate $\beta$, recovery rate $\nu$, loss-of-immunity rate $\alpha$ and disease-induced death rate $\delta$:
 
 $$X' = b(N - pY) - \mu(N) X - \beta X\frac{Y}{N} + \alpha Z, \qquad Y' = bpY + \beta X\frac{Y}{N} - (\mu(N) + \nu + \delta)Y, \qquad Z' = \nu Y - (\alpha + \mu(N))Z,$$
 
