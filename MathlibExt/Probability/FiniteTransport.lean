@@ -92,17 +92,18 @@ theorem isDist_vecMul {V O : Type*} [Fintype V] [Fintype O]
           refine Finset.sum_congr rfl fun x _ => by rw [(hrows x).2, mul_one]
       _ = 1 := hS_sum
 
-/-- **Coupling of two weight vectors.** A matrix `π : V → V → ℝ` is a coupling of
-`S T : V → ℝ` when its entries are nonnegative, its row sums are `S` and its column sums
-are `T`: `0 ≤ π x y`, `∑ y, π x y = S x` and `∑ x, π x y = T y` for all `x, y`. The
-weight vectors `S` and `T` need not be probability vectors. -/
+/-- **Coupling of two weight vectors.** A matrix `π : V → V → ℝ` on a finite type `V` is a
+coupling of `S T : V → ℝ` when its entries are nonnegative, its row sums are `S` and its column
+sums are `T`: `0 ≤ π x y`, `∑ y, π x y = S x` and `∑ x, π x y = T y` for all `x, y`. The weight
+vectors `S` and `T` need not be probability vectors. -/
 def IsCoupling {V : Type*} [Fintype V] (S T : V → ℝ) (π : V → V → ℝ) :
     Prop :=
   (∀ x y, 0 ≤ π x y) ∧ (∀ x, ∑ y, π x y = S x) ∧ (∀ y, ∑ x, π x y = T y)
 
 /-- **Transport cost of a plan.** For a ground cost `d : V → V → ℝ` and a matrix
 `π : V → V → ℝ` on a finite type, the cost of the single plan `π` is
-`∑ x, ∑ y, π x y * d x y`; the infimum of these costs over couplings is `earthmover`. -/
+`∑ x, ∑ y, π x y * d x y`. For fixed probability vectors `S` and `T`, the infimum of
+`transportCost d π` over couplings `π` of `S` and `T` is `earthmover d S T`. -/
 def transportCost {V : Type*} [Fintype V] (d : V → V → ℝ) (π : V → V → ℝ) :
     ℝ :=
   ∑ x, ∑ y, π x y * d x y

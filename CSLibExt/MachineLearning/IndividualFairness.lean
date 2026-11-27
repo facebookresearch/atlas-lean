@@ -31,7 +31,8 @@ Correspondence with the paper:
   `(D, d)`-Lipschitz condition of Definition 2.1 with the outcome
   distance `D` taken to be total variation distance
   (`MathlibExt.Probability.MarkovMixing.tvDist`); in particular every
-  classifier row must be a probability distribution.
+  classifier row must be a probability distribution on a finite outcome
+  set.
 * `isLipschitzFair_convexCombo` is the convexity of the set of
   classifiers that are Lipschitz for one task metric `d`, the set behind
   the paper's linear program (Figure 1 and Lemma 2.1); the
@@ -48,9 +49,10 @@ Correspondence with the paper:
   the value `-1` for one), and for a nonnegative cost it is the paper's
   earthmover distance.
 * `tvDist_vecMul_le_earthmover` is the per-classifier form of the
-  paper's earthmover bound: for one classifier that is Lipschitz-fair
-  with respect to a task metric `d`, the total variation distance between
-  the induced outcome distributions on two populations (its
+  paper's earthmover bound: for one classifier on a finite outcome set
+  that is Lipschitz-fair with respect to a task metric `d`, the total
+  variation distance between the induced outcome distributions on two
+  populations over a finite set of individuals (its
   statistical-parity gap in the sense of Definition 3.1) is at most their
   earthmover distance for the same `d`. In the paper
   this bound for a fixed classifier follows by combining Lemma 3.1 with
@@ -98,7 +100,7 @@ def IsLipschitzFair {V O : Type*} [Fintype O] (d : V → V → ℝ)
     ∀ x y, tvDist (M x) (M y) ≤ d x y
 
 /-- **Constant classifiers are individually fair.** For a task metric `d` with
-`0 ≤ d x y` for all `x, y` and a probability distribution `r` on the outcomes
+`0 ≤ d x y` for all `x, y` and a probability distribution `r` on a finite outcome set
 (nonnegative entries summing to `1`), the classifier giving every individual the outcome
 distribution `r` is individually fair with respect to `d`. -/
 theorem isLipschitzFair_const {V O : Type*} [Fintype O] {d : V → V → ℝ}
@@ -110,10 +112,10 @@ theorem isLipschitzFair_const {V O : Type*} [Fintype O] {d : V → V → ℝ}
   rw [MathlibExt.Probability.MarkovMixing.tvDist_self]
   exact hd x y
 
-/-- **Fair classifiers are close outcome by outcome.** For a classifier `M` that is
-individually fair with respect to a task metric `d` (every row a probability distribution
-and `tvDist (M x) (M y) ≤ d x y`), the probabilities of each outcome `o` satisfy
-`|M x o - M y o| ≤ d x y`. -/
+/-- **Fair classifiers are close outcome by outcome.** For a classifier `M` on a finite
+outcome set that is individually fair with respect to a task metric `d` (every row a
+probability distribution and `tvDist (M x) (M y) ≤ d x y`), the probabilities of each
+outcome `o` satisfy `|M x o - M y o| ≤ d x y`. -/
 theorem abs_outcome_sub_le_of_fair {V O : Type*} [Fintype O]
     {d : V → V → ℝ} {M : V → O → ℝ} (hM : IsLipschitzFair d M)
     (x y : V) (o : O) :
@@ -125,10 +127,10 @@ theorem abs_outcome_sub_le_of_fair {V O : Type*} [Fintype O]
   rw [Finset.sum_singleton, Finset.sum_singleton] at h
   exact h.trans (hM.2 x y)
 
-/-- **Lipschitz randomized classifiers form a convex set.** For classifiers `M` and `M'`
-that are individually fair with respect to the same task metric `d` and a weight `a` with
-`0 ≤ a ≤ 1`, the mixture with outcome probabilities `a * M x o + (1 - a) * M' x o` is
-individually fair with respect to `d`. -/
+/-- **Lipschitz randomized classifiers form a convex set.** For classifiers `M` and `M'` on a
+finite outcome set that are individually fair with respect to the same task metric `d` and a
+weight `a` with `0 ≤ a ≤ 1`, the mixture with outcome probabilities
+`a * M x o + (1 - a) * M' x o` is individually fair with respect to `d`. -/
 theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
     {d : V → V → ℝ} {M M' : V → O → ℝ} (hM : IsLipschitzFair d M)
     (hM' : IsLipschitzFair d M') {a : ℝ} (ha : 0 ≤ a) (ha' : a ≤ 1) :
@@ -195,13 +197,13 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
     _ ≤ a * d x y + (1 - a) * d x y := add_le_add hle1 hle2
     _ = d x y := hfin
 
-/-- **Classifier-level transport bound.** Let `M` be a classifier that is individually fair
-with respect to a task metric `d`, `S T : V → ℝ` weight vectors on a finite set of
-individuals, not necessarily probability distributions, and `π` a coupling of them
-(nonnegative entries, row sums `S`, column sums `T`). Then the total variation distance
+/-- **Classifier-level transport bound.** Let `M` be a classifier on a finite outcome set that
+is individually fair with respect to a task metric `d`, `S T : V → ℝ` weight vectors on a
+finite set of individuals, not necessarily probability distributions, and `π` a coupling of
+them (nonnegative entries, row sums `S`, column sums `T`). Then the total variation distance
 between the outcome vectors `S ᵥ* Matrix.of M` and `T ᵥ* Matrix.of M`, with entries
-`∑ x, S x * M x o` and `∑ x, T x * M x o`, is at most `transportCost d π`, the cost of
-`π` for the same `d`. -/
+`∑ x, S x * M x o` and `∑ x, T x * M x o`, is at most `transportCost d π`, the cost of `π` for
+the same `d`. -/
 theorem tvDist_vecMul_le_transportCost {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     {π : V → V → ℝ} (hM : IsLipschitzFair d M) (hπ : IsCoupling S T π) :
@@ -261,12 +263,12 @@ theorem tvDist_vecMul_le_transportCost {V O : Type*} [Fintype V]
         refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
         exact mul_le_mul_of_nonneg_left (hM.2 x y) (hπ_nonneg x y)
 
-/-- **Classifier-level earthmover bound.** For a classifier `M` that is individually fair
-with respect to a task metric `d` and probability distributions `S` and `T` on a finite set
-of individuals (nonnegative entries summing to `1`), the total variation distance between
-the induced outcome distributions `S ᵥ* Matrix.of M` and `T ᵥ* Matrix.of M`, with entries
-`∑ x, S x * M x o` and `∑ x, T x * M x o`, is at most `earthmover d S T`, the earthmover
-value of `S` and `T` for the same `d`. -/
+/-- **Classifier-level earthmover bound.** For a classifier `M` on a finite outcome set that is
+individually fair with respect to a task metric `d` and probability distributions `S` and `T`
+on a finite set of individuals (nonnegative entries summing to `1`), the total variation
+distance between the induced outcome distributions `S ᵥ* Matrix.of M` and `T ᵥ* Matrix.of M`,
+with entries `∑ x, S x * M x o` and `∑ x, T x * M x o`, is at most `earthmover d S T`, the
+earthmover value of `S` and `T` for the same `d`. -/
 theorem tvDist_vecMul_le_earthmover {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     (hM : IsLipschitzFair d M) (hS : IsDist S) (hT : IsDist T) :
