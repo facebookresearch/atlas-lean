@@ -45,3 +45,9 @@
 ## Related topics
 
 - [Bounded-error probabilistic classes RP and BPP](../bounded-error-probabilistic-classes-rp-and-bpp/README.md): the classical counterpart, contained in BQP.
+- [Block tensor products and product eigenbases](block-tensor-products-and-product-eigenbases/README.md)
+- [Exact Gaussian-rational quantum gates](exact-gaussian-rational-quantum-gates/README.md)
+- [Gate relabeling at the encoding level](gate-relabeling-at-the-encoding-level/README.md)
+- [Matrix-level Pauli basis changes for exact gates](matrix-level-pauli-basis-changes-for-exact-gates/README.md)
+- [Threshold operator: spectral identities](threshold-operator-spectral-identities/README.md)
+- [Well-formed gates are those with ordered qubits and a unitary matrix](q-gate-well-formed-iff.md)

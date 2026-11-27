@@ -34,3 +34,4 @@
 - [Single-locus model as Cockerham components](to-components.md)
 - [Single-locus covariance between relatives in Cockerham form](rel-cov-eq-cov.md)
 - [One-locus phantom heritability](falconer-eq-of-locus.md)
+- [Infinitesimal model with dominance](infinitesimal-model-with-dominance/README.md)

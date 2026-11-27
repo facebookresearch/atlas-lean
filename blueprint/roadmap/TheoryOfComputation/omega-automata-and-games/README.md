@@ -12,6 +12,7 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Parity games](parity-games/README.md)
 - [Parity game algorithms](parity-game-algorithms/README.md)
 - [Muller, Rabin and Streett games](muller-rabin-and-streett-games/README.md)
+- [Quantitative games](quantitative-games/README.md)
 - [Rabin and Streett automata](rabin-and-streett-automata/README.md)
 - [Logic and tree automata](logic-and-tree-automata/README.md)
 - [Monadic logic on infinite words](monadic-logic-on-infinite-words/README.md)
