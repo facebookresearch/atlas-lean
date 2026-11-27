@@ -8,19 +8,22 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.IsPrimePow
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.PowerFree
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Data.Nat.Factorization.Basic
+import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Order.Filter.AtTopBot.Finite
+import Mathlib.Tactic.IntervalCases
 import MathlibExt.NumberTheory.FactorialDivisor
 
 /-!
-# Brocard–Ramanujan solutions with a power-free neighbour
+# Brocard–Ramanujan solutions with a power-free or prime-power neighbour
 
-Statement from Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with
-7-Free Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(i).
+Statements from Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with
+7-Free Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(i) and (ii).
 
 If `n! + 1 = x ^ 2`, then `x - 1` and `x + 1` both divide `n! = (x - 1) (x + 1)`. When one of
 them is `k`-free, every exponent in its prime factorization is below `k`, so Lemma 1 of the
@@ -91,6 +94,68 @@ private theorem factorial_lt {n x k : ℕ} (hn : 0 < n) (hsol : n ! + 1 = x ^ 2)
     linarith
   exact_mod_cast hlt
 
+private theorem four_pow_le_factorial {n : ℕ} (hn : 7 ≤ n) : 4 ^ (n - 1) ≤ n ! := by
+  induction n, hn using Nat.le_induction with
+  | base => decide
+  | succ n hn ih =>
+    rw [show n + 1 - 1 = (n - 1) + 1 by omega, pow_succ, Nat.factorial_succ]
+    calc
+      _ ≤ n ! * 4 := Nat.mul_le_mul_right 4 ih
+      _ ≤ n ! * (n + 1) := Nat.mul_le_mul_left _ (by omega)
+      _ = _ := Nat.mul_comm _ _
+
+private theorem le_two_pow_of_primePow_mul_eq_factorial {n a b : ℕ} (hn : n ≠ 0)
+    (ha : IsPrimePow a) (ha₂ : 2 ∣ a) (hb₂ : 2 ∣ b) (hab : a * b = n !) :
+    a ≤ 2 ^ (n - 2) := by
+  obtain ⟨q, e, hq, -, rfl⟩ := (isPrimePow_nat_iff a).mp ha
+  obtain rfl : 2 = q := Nat.prime_eq_prime_of_dvd_pow Nat.prime_two hq ha₂
+  -- Only evenness of the other factor is needed: it contributes at least one more two.
+  have hdvd : 2 ^ (e + 1) ∣ n ! := by
+    rw [pow_succ, ← hab]
+    exact Nat.mul_dvd_mul (dvd_refl _) hb₂
+  have he := (Nat.pow_dvd_iff_le_multiplicity Nat.prime_two.ne_one
+    (Nat.factorial_ne_zero n)).mp hdvd
+  let _ : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  have hval := multiplicity_factorial_lt_of_ne_zero (p := 2) hn
+  exact Nat.pow_le_pow_right (by decide) (by omega)
+
+private theorem not_primePow_of_seven_le {n x : ℕ} (hn : 7 ≤ n) (hsol : n ! + 1 = x ^ 2)
+    (hprime : IsPrimePow (x - 1) ∨ IsPrimePow (x + 1)) : False := by
+  have hx : x ≠ 0 := by
+    rintro rfl
+    simp at hsol
+  obtain ⟨m, rfl⟩ : ∃ m, x = m + 1 := ⟨x - 1, by omega⟩
+  have hfac : n ! = m * (m + 2) := by
+    have : n ! + 1 = m * (m + 2) + 1 := by rw [hsol]; ring
+    omega
+  have hdiv : 2 ∣ n ! := Nat.dvd_factorial (by decide) (by omega)
+  rw [hfac, Nat.prime_two.dvd_mul] at hdiv
+  have hm₂ : 2 ∣ m := by omega
+  have hm₂' : 2 ∣ m + 2 := by omega
+  have hm : m ≤ 2 ^ (n - 2) := by
+    rcases hprime with h | h
+    · rw [Nat.add_sub_cancel] at h
+      exact le_two_pow_of_primePow_mul_eq_factorial (by omega) h hm₂ hm₂' hfac.symm
+    · have hfac' := (Nat.mul_comm (m + 2) m).trans hfac.symm
+      have := le_two_pow_of_primePow_mul_eq_factorial (by omega) h hm₂' hm₂ hfac'
+      omega
+  have hxle : m + 1 ≤ 2 ^ (n - 1) := by
+    have hpos : 0 < (2 : ℕ) ^ (n - 2) := pow_pos (by decide) _
+    rw [show n - 1 = (n - 2) + 1 by omega, pow_succ]
+    omega
+  have hle : (m + 1) ^ 2 ≤ n ! := calc
+    _ ≤ (2 ^ (n - 1)) ^ 2 := Nat.pow_le_pow_left hxle 2
+    _ = 4 ^ (n - 1) := by rw [pow_two, ← mul_pow, show (2 : ℕ) * 2 = 4 by decide]
+    _ ≤ _ := four_pow_le_factorial hn
+  omega
+
+private theorem sq_ne_of_between {m x : ℕ} (a : ℕ) (hlo : a ^ 2 < m)
+    (hhi : m < (a + 1) ^ 2) : x ^ 2 ≠ m := by
+  intro h
+  rcases le_or_gt x a with hxa | hax
+  · exact (not_le_of_gt hlo) (h ▸ Nat.pow_le_pow_left hxa 2)
+  · exact (not_le_of_gt hhi) (h ▸ Nat.pow_le_pow_left hax 2)
+
 end BrocardRamanujanPowerFree
 
 -- `2 ≤ k` is already part of `IsPowerFree`, so the statement's `hk` is not needed.
@@ -122,5 +187,33 @@ public theorem brocardRamanujan_powerFree_finite (k : ℕ) (hk : 2 ≤ k) :
   calc x ≤ x ^ 2 := Nat.le_self_pow (by norm_num) x
     _ = n ! + 1 := hsol.symm
     _ ≤ (N + 1)! + 1 := by gcongr
+
+open BrocardRamanujanPowerFree in
+/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ a prime power.** If natural numbers
+$n$ and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is a prime power, then
+$(n, x) = (4, 5)$.
+
+Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
+Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii),
+second sentence (`integers-2025-A71-thm-1`). -/
+public theorem brocardRamanujan_primePow_subset :
+    {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧ (IsPrimePow (p.2 - 1) ∨ IsPrimePow (p.2 + 1))} ⊆
+      {(4, 5)} := by
+  rintro ⟨n, x⟩ ⟨hsol, hprime⟩
+  dsimp only at hsol hprime
+  by_cases hn : 7 ≤ n
+  · exact (not_primePow_of_seven_le hn hsol hprime).elim
+  · interval_cases n <;> norm_num [Nat.factorial] at hsol
+    · exact (sq_ne_of_between 1 (by decide) (by decide) hsol.symm).elim
+    · exact (sq_ne_of_between 1 (by decide) (by decide) hsol.symm).elim
+    · exact (sq_ne_of_between 1 (by decide) (by decide) hsol.symm).elim
+    · exact (sq_ne_of_between 2 (by decide) (by decide) hsol.symm).elim
+    · have hx : x = 5 := Nat.pow_left_injective (by decide : 2 ≠ 0) hsol.symm
+      subst x
+      exact Set.mem_singleton _
+    · have hx : x = 11 := Nat.pow_left_injective (by decide : 2 ≠ 0) hsol.symm
+      subst x
+      exact (show ¬ (IsPrimePow (11 - 1 : ℕ) ∨ IsPrimePow (11 + 1 : ℕ)) by decide) hprime |>.elim
+    · exact (sq_ne_of_between 26 (by decide) (by decide) hsol.symm).elim
 
 end MetaMathlibExt
