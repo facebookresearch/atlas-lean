@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.EulerPolynomialBinomialAverage
+public import MathlibExt.NumberTheory.EulerPolynomialStirling
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Basic.Complex.Basic
@@ -31,7 +32,8 @@ import Mathlib.NumberTheory.ZetaValues
 
 `eulerPoly_half_eq_sum` expresses the scaled Euler polynomial `2^n E_n((x + 1)/2)` as a
 finite sum of generalized Stirling polynomials `genStirlingPoly n k`, weighted by factorials
-and the Taylor coefficients `eulerAlpha` of `(2 + 2z)/(2 + 2z + z^2)`. The proof applies the
+and the Taylor coefficients `eulerAlpha` of `(2 + 2z)/(2 + 2z + z^2)`, both defined in
+`MathlibExt.NumberTheory.EulerPolynomialStirling`. The proof applies the
 operator `T₂ + 1` to both sides and telescopes the resulting sums with the recurrence
 defining `eulerAlpha`.
 
@@ -49,32 +51,6 @@ set_option autoImplicit false
 open Polynomial Finset
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Generalized Stirling polynomial.** For natural numbers $n$ and $k$, the generalized
-Stirling polynomial $S(n, k, x)$ is the polynomial in $x$ with rational coefficients
-$$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n.$$
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Proposition 3.1 (definition). -/
-noncomputable def genStirlingPoly (n k : ℕ) : ℚ[X] :=
-  (1 / (Nat.factorial k : ℚ)) •
-    ∑ j ∈ Finset.range (k + 1),
-      ((Nat.choose k j : ℚ) * (-1) ^ (k - j)) •
-        (X + C (j : ℚ)) ^ n
-
-/-- **Taylor coefficients of (2 + 2z)/(2 + 2z + z²).** The rational numbers $\alpha_k$,
-$k \ge 0$, are defined by $\alpha_0 = 1$, $\alpha_1 = 0$ and
-$2\alpha_{k+2} + 2\alpha_{k+1} + \alpha_k = 0$ for every $k \ge 0$. They are the Taylor
-coefficients of $(2 + 2z)/(2 + 2z + z^2)$ at $z = 0$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Lemma 2.2 (generating function). -/
-def eulerAlpha : ℕ → ℚ
-  | 0 => 1
-  | 1 => 0
-  | k + 2 => -eulerAlpha (k + 1) - eulerAlpha k / 2
 
 -- equation lemmas for eulerAlpha
 private theorem eulerAlpha_zero : eulerAlpha 0 = 1 := rfl
