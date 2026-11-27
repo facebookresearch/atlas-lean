@@ -8,4 +8,4 @@ $$
 
 where the CPA advantage is $|\Pr[\mathrm{PrivK}^{\mathrm{cpa}} = 1] - 1/2|$ and $\mathrm{ctrReduction}_q$ is the [PRF distinguisher](ctr-reduction.md) built from the adversary.
 
-This is a concrete estimate for a single adversary. Katz and Lindell, 2nd ed., Theorem 3.32 (p. 93) states the asymptotic implication that counter mode is CPA-secure when $F$ is a pseudorandom function; the numerical error term above is a concrete estimate that its proof does not state.
+This is a concrete estimate for a single adversary. Katz and Lindell, 2nd ed., Theorem 3.32 (p. 93) states the asymptotic implication that counter mode is CPA-secure when $F$ is a pseudorandom function; the numerical error term above is a concrete estimate for this construction, not part of that statement.
