@@ -5,7 +5,7 @@ For coherent DBMs $m^+$ and $n^+$, in the notation of [difference-bound matrices
 $$[m^+ \mathbin{\nabla} n^+]_{ij} = \begin{cases} m^+_{ij} & \text{if } n^+_{ij} \le m^+_{ij},\\ +\infty & \text{otherwise.}\end{cases}$$
 
 1. $D^+(m^+ \mathbin{\nabla} n^+) \supseteq D^+(m^+) \cup D^+(n^+)$.
-2. For every sequence $(n^+_i)_{i \in \mathbb{N}}$ of coherent DBMs, the sequence $m^+_0 = (n^+_0)^\bullet$, $m^+_i = m^+_{i-1} \mathbin{\nabla} (n^+_i)^\bullet$ for $i > 0$, with the [strong closure](strong-closure-is-a-normal-form-for-octagons.md) $\bullet$, is eventually constant.
+2. For every sequence $(n^+_i)_{i \in \mathbb{N}}$ of coherent DBMs, the sequence $m^+_0 = (n^+_0)^\bullet$, $m^+_i = m^+_{i-1} \mathbin{\nabla} (n^+_i)^\bullet$ for $i > 0$, with the [strong closure](strong-closure-is-a-normal-form-for-octagons.md) $\bullet$, which is defined for bounds in $\mathbb{Q}$ or $\mathbb{R}$, is eventually constant.
 
 So $\nabla$ is a widening on octagons. Strongly closing the left argument as well, $m^+_i = (m^+_{i-1} \mathbin{\nabla} (n^+_i)^\bullet)^\bullet$, breaks part 2: there are strictly increasing infinite sequences of this form.
 
