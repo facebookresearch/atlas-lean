@@ -6,4 +6,6 @@ Normalization by evaluation sends $t \in \mathrm{Tm}(\Gamma, A)$ to its normal f
 
 Write $\mathrm{Tm}(\Gamma, A)/{\simeq}$ for the quotient of $\mathrm{Tm}(\Gamma, A)$ by the setoid of NbE equality and $\langle t \rangle$ for the class of $t$. The observation of a class is $\mathrm{obs}(\langle t \rangle) = \mathrm{nf}(t)$, and normal forms embed by $\iota(n) = \langle \lfloor n \rfloor \rangle$.
 
-For $t, u \in \mathrm{Tm}(\Gamma, A)$, $\langle t \rangle = \langle u \rangle$ if and only if $\mathrm{nf}(t) = \mathrm{nf}(u)$.
+Beta-eta conversion $t =_{\beta\eta} u$ is the relation generated inductively by reflexivity, symmetry, transitivity, the congruences for application and abstraction, the beta axiom $(\lambda t)\,a =_{\beta\eta} t[a]$ and the eta axiom $\lambda(f^{\uparrow}\,0) =_{\beta\eta} f$. Write $[t]$ for the class of $t$ in the quotient $\mathrm{Tm}(\Gamma, A)/{=_{\beta\eta}}$ by beta-eta conversion. The canonical map $\kappa : \mathrm{Tm}(\Gamma, A)/{=_{\beta\eta}} \to \mathrm{Tm}(\Gamma, A)/{\simeq}$ sends $[t]$ to $\langle t \rangle$; it is well defined because beta-eta convertible terms have the same normal form. On representatives, $\kappa([t]) = \langle t \rangle$ holds by definition.
+
+For $t, u \in \mathrm{Tm}(\Gamma, A)$, $\langle t \rangle = \langle u \rangle$ if and only if $\mathrm{nf}(t) = \mathrm{nf}(u)$. Equivalently, $\kappa([t]) = \kappa([u])$ if and only if $\mathrm{nf}(t) = \mathrm{nf}(u)$.

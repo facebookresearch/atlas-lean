@@ -84,7 +84,6 @@
 - [A normalized term has the NbE class of the original term](of-tm-normalize-tm.md)
 - [Every NbE class is the class of a term](of-tm-surjective.md)
 - [Beta-eta classes with the same image in NbE classes](beta-eta-to-nbe-eq-iff.md)
-- [Terms whose beta-eta classes have the same image in NbE classes](beta-eta-to-nbe-of-tm-eq-iff.md)
 - [Convertible terms have the same image in NbE classes](beta-eta-to-nbe-eq-of-beta-eta-eq.md)
 - [The canonical map from beta-eta classes commutes with renaming](beta-eta-to-nbe-rename.md)
 - [Completeness of beta-eta conversion for NbE equality](beta-eta-complete-2.md)
