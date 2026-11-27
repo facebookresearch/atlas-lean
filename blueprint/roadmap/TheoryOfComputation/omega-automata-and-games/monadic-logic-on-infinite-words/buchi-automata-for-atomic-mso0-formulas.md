@@ -1,7 +1,7 @@
 # Büchi automata for the atomic MSO₀ formulas
 
 For each atomic [MSO₀-formula](mso0-logic.md) $X_j \subseteq X_k$, $\mathrm{Sing}(X_j)$, $\mathrm{Suc}(X_j, X_k)$ and $X_j \subseteq Q_a$ over the alphabet $A \times \{0,1\}^n$, there is a
-deterministic [Büchi automaton](../emptiness-of-b-chi-automata/mem-language-iff.md) accepting exactly the infinite words that satisfy it. For example, for
+[Büchi automaton](../emptiness-of-b-chi-automata/mem-language-iff.md) accepting exactly the infinite words that satisfy it. For example, for
 $X_j \subseteq X_k$ the automaton checks at every position that a $1$ in the $j$-th extra component comes with a $1$ in the $k$-th; for
 $\mathrm{Sing}(X_j)$ it checks that the $j$-th component contains exactly one $1$.
 
