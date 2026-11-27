@@ -24,9 +24,14 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
-
+- [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
+- [Collinear block detection](collinear-block-detection/README.md)
+- [Count splitting for latent variable inference](count-splitting-for-latent-variable-inference/README.md)
+- [DNA sample contamination](dna-sample-contamination/README.md)
+- [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
+- [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
+- [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
 ## [RNA structure, sequence models and network motifs](part-01/README.md)
-
 - [Affix-array search for RNA sequence-structure patterns](part-01/affix-array-search-for-rna-sequence-structure-patterns/README.md)
 - [Algebraic dynamic programming](part-01/algebraic-dynamic-programming/README.md)
 - [Algebraic trees for pseudoknotted RNA structures](part-01/algebraic-trees-for-pseudoknotted-rna-structures/README.md)
@@ -50,9 +55,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Sparse minimum free energy RNA folding](part-01/sparse-minimum-free-energy-rna-folding/README.md)
 - [Sparsified pseudoknot structure prediction](part-01/sparsified-pseudoknot-structure-prediction/README.md)
 - [Stack-based RNA 3D structural alignment](part-01/stack-based-rna-3d-structural-alignment/README.md)
-
 ## [De Bruijn graphs, k-mer indexes and assembly](part-02/README.md)
-
 - [Assembly complexity of de Bruijn graphs](part-02/assembly-complexity-of-de-bruijn-graphs/README.md)
 - [Cascading Bloom filter de Bruijn graphs](part-02/cascading-bloom-filter-de-bruijn-graphs/README.md)
 - [Complexity of read mapping on de Bruijn graphs](part-02/complexity-of-read-mapping-on-de-bruijn-graphs/README.md)
@@ -77,9 +80,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [String-centric maximal unitig construction](part-02/string-centric-maximal-unitig-construction/README.md)
 - [Unitig safety and bidirected de Bruijn graphs](part-02/unitig-safety-and-bidirected-de-bruijn-graphs/README.md)
 - [Universal hitting sets and local schemes](part-02/universal-hitting-sets-and-local-schemes/README.md)
-
 ## [Read mapping, string indexes and sequence comparison](part-03/README.md)
-
 - [Average-case analysis of seed-chain-extend alignment](part-03/average-case-analysis-of-seed-chain-extend-alignment/README.md)
 - [Bit-parallel read verification](part-03/bit-parallel-read-verification/README.md)
 - [Burrows–Wheeler transform of repetitive collections](part-03/burrows-wheeler-transform-of-repetitive-collections/README.md)
@@ -101,9 +102,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Seed processing for read alignment](part-03/seed-processing-for-read-alignment/README.md)
 - [Strain-level quantification from unique and doubly-unique substrings](part-03/strain-level-quantification-from-unique-and-doubly-unique-substrings/README.md)
 - [UMI deduplication by monochromatic arborescences](part-03/umi-deduplication-by-monochromatic-arborescences/README.md)
-
 ## [Genome rearrangements, haplotypes and expression statistics](part-04/README.md)
-
 - [Batch-effect identifiability in single-cell designs](part-04/batch-effect-identifiability-in-single-cell-designs/README.md)
 - [Binomial thinning of RNA-seq counts](part-04/binomial-thinning-of-rna-seq-counts/README.md)
 - [Change-point testing of Hi-C domains](part-04/change-point-testing-of-hi-c-domains/README.md)

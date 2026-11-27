@@ -30,9 +30,9 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
-
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 ## [Reconciliation, gene duplication and orthology](part-01/README.md)
-
 - [Consensus reconciliation under optimal gene tree rootings](part-01/consensus-reconciliation-under-optimal-gene-tree-rootings/README.md)
 - [Deep coalescence consensus trees](part-01/deep-coalescence-consensus-trees/README.md)
 - [Duplication-optimal reconciliation space](part-01/duplication-optimal-reconciliation-space/README.md)
@@ -52,9 +52,7 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Species-consistent orthology relations](part-01/species-consistent-orthology-relations/README.md)
 - [Temporal feasibility of DTL reconciliations](part-01/temporal-feasibility-of-dtl-reconciliations/README.md)
 - [Unrooted gene tree reconciliation](part-01/unrooted-gene-tree-reconciliation/README.md)
-
 ## [Tree comparison, consensus and balance](part-02/README.md)
-
 - [Colless-like balance indices](part-02/colless-like-balance-indices/README.md)
 - [Cophenetic metrics for phylogenetic trees](part-02/cophenetic-metrics-for-phylogenetic-trees/README.md)
 - [Counting serially sampled ranked trees](part-02/counting-serially-sampled-ranked-trees/README.md)
@@ -73,9 +71,7 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Rooted triplet consistency optimization](part-02/rooted-triplet-consistency-optimization/README.md)
 - [UniFrac distances](part-02/unifrac-distances/README.md)
 - [Variance of leaf depths as a balance index](part-02/variance-of-leaf-depths-as-a-balance-index/README.md)
-
 ## [Species-tree estimation, networks and inference](part-03/README.md)
-
 - [Alignment-free distance from k-mismatch common substrings](part-03/alignment-free-distance-from-k-mismatch-common-substrings/README.md)
 - [Ancestral genome linearization](part-03/ancestral-genome-linearization/README.md)
 - [Circular split networks](part-03/circular-split-networks/README.md)

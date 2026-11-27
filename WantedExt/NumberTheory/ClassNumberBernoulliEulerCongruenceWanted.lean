@@ -23,6 +23,7 @@ public import Mathlib.NumberTheory.JacobiSum.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 public import Mathlib.RingTheory.Trace.Defs
 public import MathlibExt.NumberTheory.SlHurwitzNumbers
+public import MathlibExt.NumberTheory.ClassNumberBernoulliEulerCongruenceEisensteinRealPeriodEqBetaGamma
 
 namespace MetaMathlibExt
 
@@ -51,22 +52,6 @@ public theorem_wanted classNumber_sqrt_neg_prime_congr_bernoulli_euler (p : ℕ)
       (p : ℤ) ∣ ((NumberField.classNumber K : ℚ) + 2 * bernoulli ((p + 1) / 2)).num) ∧
     (p % 4 = 1 →
       (p : ℤ) ∣ 2 * (NumberField.classNumber K : ℤ) - chapter5EulerEven ((p - 1) / 4))
-
-/-- **Beta and Gamma values of the real Eisenstein period.** The real number
-$\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$ satisfies
-$\varpi_1 = \frac13 B(\frac13, \frac13) = \frac{\Gamma(1/3)^3}{2\pi\sqrt3}
-= \frac{2^{1/3}}{3\sqrt3} B(\frac16, \frac12)$, where $B$ is the Beta function.
-
-Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
-Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
-(2026), Article A112, Lemma 1
-(`integers-2026-A112-lem-1`). -/
-public theorem_wanted eisensteinRealPeriod_eq_beta_gamma :
-    let ϖ : ℝ := ∫ t in (0 : ℝ)..1, (1 - t ^ 3) ^ (-(2 / 3) : ℝ)
-    (ϖ : ℂ) = Complex.betaIntegral (1 / 3) (1 / 3) / 3 ∧
-      ϖ = Real.Gamma (1 / 3) ^ 3 / (2 * Real.pi * Real.sqrt 3) ∧
-      (ϖ : ℂ) = (((2 : ℝ) ^ (1 / 3 : ℝ) / (3 * Real.sqrt 3) : ℝ) : ℂ) *
-        Complex.betaIntegral (1 / 6) (1 / 2)
 
 /-- **The Weierstrass function of the Eisenstein lattice.** Let $\rho = e^{2\pi i/3}$, let
 $\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, and let $\wp$ be the Weierstrass function of the

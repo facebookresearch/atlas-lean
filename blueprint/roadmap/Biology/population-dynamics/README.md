@@ -24,9 +24,10 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
-
+- [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
+- [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
+- [Phenotype-structured population models](phenotype-structured-population-models/README.md)
 ## [Evolutionary games, structured populations and life histories](part-01/README.md)
-
 - [Allee effects in random environments](part-01/allee-effects-in-random-environments/README.md)
 - [Backward bifurcation and strong Allee effects in matrix models](part-01/backward-bifurcation-and-strong-allee-effects-in-matrix-models/README.md)
 - [Best responses among memory-one strategies](part-01/best-responses-among-memory-one-strategies/README.md)
