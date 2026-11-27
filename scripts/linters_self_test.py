@@ -26,10 +26,24 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
 PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
-# The exceptions file of scripts/lint_declarations.lean (and runLinter). The probe commit adds an
-# entry, and the self-test puts the file back as it was.
+# A `module` file whose undecorated theorem is private, under a name that PROBE declares publicly.
+PRIVATE_PROBE = Path("MathlibExt/LintersSelfTestPrivateProbe.lean")
+PRIVATE_PROBE_TEXT = """\
+module
+
+/-! Probe module of scripts/linters_self_test.py, which deletes it again. -/
+
+theorem lintersProbeCollision : 7 = 7 := rfl
+"""
+PROBES = (PROBE, PRIVATE_PROBE)
+# The exceptions file of scripts/lint_declarations.lean (and runLinter). The probe commit adds
+# entries, and the self-test puts the file back as it was. An entry names one declaration, so
+# each of the two `lintersProbeCollision`s keeps the finding listed for the other.
 NOLINTS = Path("scripts/nolints.json")
-PROBE_NOLINTS = [["rootNamespace", "lintersProbeListed"]]
+PROBE_NOLINTS = [["rootNamespace", "lintersProbeListed"],
+                 ["synTaut", "lintersProbeCollision"],
+                 ["duplicateStatement",
+                  "_private.MathlibExt.LintersSelfTestPrivateProbe.0.lintersProbeCollision"]]
 
 LONG = "a + b = b + a ∧ a * b = b * a ∧ a + 0 = a ∧ b + 0 = b ∧ a * 1 = a ∧ b * 1 = b"
 PROBE_TEXT = f"""\
@@ -82,6 +96,13 @@ theorem lintersProbeFact : LintersProbeFact (2 = 2) := ⟨rfl⟩
 theorem lintersProbeNoDocOk : 3 = 3 := rfl
 
 theorem lintersProbeListed : 4 = 4 := rfl
+
+-- The universe of `=` comes before the arguments of `Prod` that tell `u` from `v`.
+theorem lintersProbeProdUV : @Prod.{{u, v}} = @Prod.{{u, v}} := rfl
+
+theorem lintersProbeProdVU : @Prod.{{v, u}} = @Prod.{{v, u}} := lintersProbeProdUV.{{v, u}}
+
+theorem lintersProbeCollision : 7 = 7 := rfl
 """
 # Only documents an existing declaration, whose unused argument stays.
 DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
@@ -114,7 +135,13 @@ EXPECTED = {
                               # `@[nolint docBlameThm]` and the exceptions file each drop exactly
                               # one finding.
                               r"rootNamespace: lintersProbeNoDocOk is in the root namespace",
-                              r"docBlameThm: lintersProbeListed theorem missing documentation"],
+                              r"docBlameThm: lintersProbeListed theorem missing documentation",
+                              r"duplicateStatement: lintersProbeProdUV has the same statement as "
+                              r"`lintersProbeProdVU`",
+                              r"LintersSelfTestPrivateProbe\.lean:\d+:\d+: synTaut: "
+                              r"lintersProbeCollision ",
+                              r"LintersSelfTestProbe\.lean:\d+:\d+: duplicateStatement: "
+                              r"lintersProbeCollision has the same statement"],
                              [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
                               r"keeps", r"No environment-linter finding on the added declarations"]),
 }
@@ -125,7 +152,10 @@ ABSENT = {
                               r"same statement as [^\n]*`lintersProbeAddCommAlias`",
                               r"duplicateStatement: lintersProbeInst ",
                               r"docBlameThm: lintersProbeNoDocOk ",
-                              r"rootNamespace: lintersProbeListed "], []),
+                              r"rootNamespace: lintersProbeListed ",
+                              r"LintersSelfTestProbe\.lean:\d+:\d+: synTaut: lintersProbeCollision ",
+                              r"LintersSelfTestPrivateProbe\.lean:\d+:\d+: duplicateStatement: "
+                              r"lintersProbeCollision "], []),
 }
 # Exit codes after the first and the second commit.
 EXIT_CODES = (1, 0)
@@ -138,10 +168,13 @@ def git(*args: str) -> str:
 
 
 def commit(text: str, message: str, nolints: list | None = None) -> str:
-    """Commit the probe module, and `nolints` as the exceptions file if given."""
+    """Commit the probe module, and the private probe and `nolints` as the exceptions file if
+    `nolints` is given."""
     (ROOT / PROBE).write_text(text, encoding="utf-8")
     paths = [str(PROBE)]
     if nolints is not None:
+        (ROOT / PRIVATE_PROBE).write_text(PRIVATE_PROBE_TEXT, encoding="utf-8")
+        paths.append(str(PRIVATE_PROBE))
         (ROOT / NOLINTS).write_text(json.dumps(nolints, indent=2) + "\n", encoding="utf-8")
         paths.append(str(NOLINTS))
     git("add", "--", *paths)
@@ -184,9 +217,10 @@ def main() -> int:
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
         parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
-    if (ROOT / PROBE).exists() or git("diff", "--cached", "--name-only") or \
+    if any((ROOT / probe).exists() for probe in PROBES) or \
+            git("diff", "--cached", "--name-only") or \
             git("status", "--porcelain", "--", str(NOLINTS)):
-        print(f"{PROBE} exists, changes are staged or {NOLINTS} has local changes; "
+        print(f"A probe module exists, changes are staged or {NOLINTS} has local changes; "
               "not running.", file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
@@ -199,8 +233,9 @@ def main() -> int:
         ok = run_checks(first, 1) and ok
     finally:
         git("reset", "-q", "--soft", start)
-        git("rm", "-q", "--cached", "--ignore-unmatch", "--", str(PROBE))
-        (ROOT / PROBE).unlink(missing_ok=True)
+        git("rm", "-q", "--cached", "--ignore-unmatch", "--", *map(str, PROBES))
+        for probe in PROBES:
+            (ROOT / probe).unlink(missing_ok=True)
         if had_nolints:
             git("checkout", start, "--", str(NOLINTS))
         else:

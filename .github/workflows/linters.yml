@@ -32,6 +32,7 @@ on:
       - "scripts/lean_changes.py"
       - "scripts/check_*_linters.py"
       - "scripts/lint_declarations.lean"
+      - "scripts/nolints.json"
       - "scripts/linters_self_test.py"
       - "scripts/test_lean_changes.py"
       - "scripts/test_check_*_linters.py"
@@ -65,6 +66,11 @@ jobs:
               test_check_env_linters.py test_check_text_linters.py; do
             python3 -m unittest discover -s scripts -p "$tests"
           done
+
+      # A malformed exceptions file stops the declaration linters on every later pull
+      # request, so it fails the job even when nothing else runs.
+      - name: Check the exceptions file
+        run: python3 scripts/check_env_linters.py --check-nolints
 
       # A pull request that changes the toolchain or the manifest has no build
       # to restore, so its Lean files are linted by the pull requests after it.

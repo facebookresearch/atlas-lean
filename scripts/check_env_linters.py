@@ -37,6 +37,11 @@ the same rule. Like `runLinter`, the linters see the private declarations of the
 modules too.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
+    python3 scripts/check_env_linters.py --check-nolints
+
+The second form only checks that scripts/nolints.json, if there is one, is the
+JSON array of `[linter, declaration]` pairs of names that the driver reads: it
+exits 1 if it is not, since the driver then cannot run.
 
 Exit 1 if a finding is kept (0 with --report-only), 0 if none, 2 if the files do
 not build or the linter does not run. In GitHub Actions each kept finding also
@@ -47,6 +52,7 @@ from __future__ import annotations
 
 import argparse
 import bisect
+import json
 import re
 import subprocess
 import sys
@@ -506,8 +512,44 @@ def read_source(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
 
+# The exceptions file that the driver reads, as runLinter does.
+NOLINTS = ROOT / "scripts" / "nolints.json"
+
+
+def nolints_problem(text: str) -> str | None:
+    """Why `text` is not a JSON array of `[linter, declaration]` pairs of names, if it is not."""
+    try:
+        value = json.loads(text)
+    except json.JSONDecodeError as error:
+        return f"not JSON: {error}"
+    if not isinstance(value, list):
+        return "not a JSON array"
+    for number, entry in enumerate(value):
+        if not (isinstance(entry, list) and len(entry) == 2
+                and all(isinstance(item, str) and item.strip() for item in entry)):
+            return (f"entry {number} is {json.dumps(entry)}, not a [linter, declaration] pair "
+                    f"of names")
+    return None
+
+
+def check_nolints(path: Path = NOLINTS) -> int:
+    """Exit code of `--check-nolints`: 1 if `path` exists and is not in the driver's format."""
+    shown = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
+    if not path.exists():
+        print(f"There is no {shown}.")
+        return 0
+    problem = nolints_problem(path.read_text(encoding="utf-8"))
+    if problem:
+        print(f"{shown}: {problem}", file=sys.stderr)
+        return 1
+    print(f"{shown} is a list of [linter, declaration] pairs.")
+    return 0
+
+
 @guarded
 def main() -> int:
+    if sys.argv[1:] == ["--check-nolints"]:
+        return check_nolints()
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     add_common_arguments(parser)

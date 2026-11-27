@@ -42,8 +42,9 @@ reports on.
 `duplicateStatement` and `rootNamespace` are this script's own, so Lean does not know them when it
 builds a file, and `@[nolint]` cannot name them. For them, and for any linter, an entry
 `["X", "Declaration.name"]` in `scripts/nolints.json`, the list of exceptions that `runLinter`
-reads too, keeps linter `X` off that declaration (a private one by its name without the private
-prefix).
+reads too, keeps linter `X` off that one declaration: a private one is named by its private name,
+such as `_private.MathlibExt.Foo.0.bar`, so that an entry never matches a declaration of another
+module. `python3 scripts/check_env_linters.py --check-nolints` checks the file's format.
 -/
 
 open Lean Core Meta Batteries.Tactic.Lint
@@ -70,29 +71,46 @@ def readNolints : IO (Array (Name × Name)) := do
   | .ok nolints => return nolints
   | .error error => throw <| IO.userError s!"{nolintsFile}: {error}"
 
-/-- `results` without the findings that `nolints` lists. -/
+/-- `results` without the findings that `nolints` lists. As for `runLinter`, an entry names one
+declaration by its full name, a private one by its private name, such as
+`_private.MathlibExt.Foo.0.bar`, so that it never matches a declaration of another module. -/
 def dropNolints (nolints : Array (Name × Name))
     (results : Array (NamedLinter × Std.HashMap Name MessageData)) :
     Array (NamedLinter × Std.HashMap Name MessageData) :=
   results.map fun (linter, found) =>
     let listed := nolints.filterMap fun (name, decl) =>
       if name == linter.name then some decl else none
-    (linter, found.filter fun decl _ =>
-      !listed.contains decl && !listed.contains (privateToUserName decl))
+    (linter, found.filter fun decl _ => !listed.contains decl)
+
+/-- The orders of `names`. -/
+partial def orders (names : List Name) : List (List Name) :=
+  if names.isEmpty then [[]]
+  else names.flatMap fun name => (orders (names.erase name)).map (name :: ·)
+
+/-- Up to this many universe parameters, `canonicalStatement` tries every renaming. -/
+def maxPermutedParams : Nat := 4
 
 /--
-The statement of a theorem, with its universe parameters renamed `u_1`, `u_2`, … in the order in
-which they first occur in it, so that statements that differ only in the names of their universes,
-or in the order in which they were declared, get one key.
+The statement of a theorem, with its universe parameters renamed `u_1`, `u_2`, … and its levels
+normalized after (Lean orders the arguments of a `max` by universe name), so that statements that
+differ only by a renaming of their universes get one key. With at most `maxPermutedParams`
+parameters, it is the least (`Expr.lt`) such statement over every order of them, so any bijection
+between two theorems' universes is found; with more, the order in which they first occur.
 -/
 def canonicalStatement (info : ConstantInfo) : Expr :=
-  let occurring := (collectLevelParams {} info.type).params.toList
-  let params := occurring ++ info.levelParams.filter (!occurring.contains ·)
-  let canonical := (List.range params.length).map fun i => Name.mkSimple s!"u_{i + 1}"
-  let renamed := if params == canonical then info.type
-    else info.type.instantiateLevelParams params (canonical.map Level.param)
-  -- Lean orders the arguments of a `max` by universe name, so order them again after renaming.
-  renamed.replaceLevel fun level => some level.normalize
+  let params := info.levelParams
+  if params.isEmpty then info.type else
+  let canonical := (List.range params.length).map fun i => Level.param (.mkSimple s!"u_{i + 1}")
+  let rename (order : List Name) : Expr :=
+    (info.type.instantiateLevelParams order canonical).replaceLevel fun level =>
+      some level.normalize
+  if params.length ≤ maxPermutedParams then
+    (orders params).foldl (init := rename params) fun least order =>
+      let renamed := rename order
+      if renamed.lt least then renamed else least
+  else
+    let occurring := (collectLevelParams {} info.type).params.toList
+    rename (occurring ++ params.filter (!occurring.contains ·))
 
 /--
 A theorem's statement with every universe parameter replaced by `0`, which leaves only explicit

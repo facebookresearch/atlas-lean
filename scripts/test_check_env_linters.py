@@ -705,6 +705,36 @@ def run_main(outputs: list[tuple[int, str]], files=FILES, build_code: int = 0, e
     return code, out.getvalue(), err.getvalue()
 
 
+class NolintsTests(unittest.TestCase):
+    def test_accepts_pairs_of_names(self):
+        self.assertIsNone(check.nolints_problem("[]"))
+        self.assertIsNone(check.nolints_problem('[["rootNamespace", "Foo.bar"], '
+                                                '["duplicateStatement", "_private.M.A.0.baz"]]'))
+
+    def test_rejects_every_other_shape(self):
+        for text in ('["rootNamespace"]', '[["rootNamespace"]]', '[["a", 1]]', '{}',
+                     '[["a", " "]]', '[["a", "b", "c"]]', "not JSON"):
+            self.assertIsNotNone(check.nolints_problem(text), text)
+
+    def test_a_change_to_the_file_alone_is_checked(self):
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            path = Path(tmp, "nolints.json")
+            self.assertEqual(check.check_nolints(path), 0)  # no file
+            path.write_text('[["rootNamespace", "Foo.bar"]]\n')
+            self.assertEqual(check.check_nolints(path), 0)
+            path.write_text('["rootNamespace"]\n')
+            self.assertEqual(check.check_nolints(path), 1)
+
+    def test_check_nolints_needs_no_base(self):
+        with patch.object(sys, "argv", ["check_env_linters.py", "--check-nolints"]), \
+                patch.object(check, "check_nolints", return_value=1) as checker, \
+                patch.object(check, "changed_files") as changed:
+            self.assertEqual(check.main(), 1)
+        checker.assert_called_once()
+        changed.assert_not_called()
+
+
 class MainTests(unittest.TestCase):
     def test_keeps_findings_on_added_declarations_only(self):
         code, out, _ = run_main([(1, OUTPUT)])
