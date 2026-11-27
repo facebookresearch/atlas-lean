@@ -11,18 +11,21 @@ module
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
+import Mathlib.Algebra.BigOperators.Intervals
+import MathlibExt.LinearAlgebra.PowerSumMatrixPairTrace
 
 /-!
 # Traces for sums of powers with an odd endpoint
 
-After setting aside the last power, pair the remaining indices by reflection.
-Each pair contributes the trace of a power of a diagonal matrix.
+For `n = 2s + 1`, set aside the last term and apply `sum_pow_eq_sum_trace_of_even`
+to the first `2s` terms.
 
 ## References
 
 * Peiran Ding, Yanjun Zhu and Lei Wang, *A New Formula for the Sum of Integer Powers Based on
-  Elementary Matrix Theory*, INTEGERS 25 (2025), Article A98, pp. 1–15, §2.3, Lemma 2
-  (pp. 4–5), using the pairing from Lemma 1 (p. 4).
+  Elementary Matrix Theory*, INTEGERS 25 (2025), Article A98, pp. 1–15, Lemma 2 (§2.3, pp. 4–5).
+  The even-endpoint decomposition is Lemma 1 (§2.3, p. 4).
+  <https://math.colgate.edu/~integers/z98/z98.pdf>
 -/
 
 namespace MathlibExt.LinearAlgebra.PowerSumMatrixWanted
@@ -46,48 +49,9 @@ public theorem sum_pow_eq_sum_trace_add_of_odd (n k : ℕ)
           Matrix.trace
             (Matrix.diagonal ![(i : ℝ), 2 * (n / 2 : ℕ) + 1 - i] ^ k) +
         (n : ℝ) ^ k := by
-  let s := n / 2
-  have hn' : n = 2 * s + 1 := by
-    have h := Nat.odd_iff.mp hn
-    dsimp [s]
-    omega
-  change ∑ i ∈ Icc 1 n, (i : ℝ) ^ k =
-    ∑ i ∈ Icc 1 s, Matrix.trace (Matrix.diagonal ![(i : ℝ), 2 * (s : ℝ) + 1 - i] ^ k) +
-      (n : ℝ) ^ k
-  have hend : Icc 1 n = insert n (Icc 1 (2 * s)) := by
-    ext i
-    simp only [mem_Icc, mem_insert]
-    omega
-  have hnot : n ∉ Icc 1 (2 * s) := by simp only [mem_Icc]; omega
-  rw [hend, sum_insert hnot, add_comm ((n : ℝ) ^ k)]
-  congr 1
-  have hsplit : Icc 1 (2 * s) = Icc 1 s ∪ Icc (s + 1) (2 * s) := by
-    ext i
-    simp only [mem_union, mem_Icc]
-    omega
-  have hdisj : Disjoint (Icc 1 s) (Icc (s + 1) (2 * s)) := by
-    rw [disjoint_left]
-    simp only [mem_Icc]
-    omega
-  -- Reflection sends the lower half bijectively onto the upper half.
-  have hreflect : (∑ i ∈ Icc 1 s, ((2 * s + 1 - i : ℕ) : ℝ) ^ k) =
-      ∑ i ∈ Icc (s + 1) (2 * s), (i : ℝ) ^ k := by
-    refine sum_bij (fun i _ ↦ 2 * s + 1 - i) ?_ ?_ ?_ (fun _ _ ↦ rfl)
-    · intro i hi
-      simp only [mem_Icc] at hi ⊢
-      omega
-    · intro i hi j hj hij
-      simp only [mem_Icc] at hi hj
-      omega
-    · intro j hj
-      simp only [mem_Icc] at hj
-      exact ⟨2 * s + 1 - j, mem_Icc.mpr ⟨by omega, by omega⟩, by omega⟩
-  rw [hsplit, sum_union hdisj, ← hreflect, ← sum_add_distrib]
-  apply sum_congr rfl
-  intro i hi
-  have hi' : i ≤ 2 * s + 1 := by have := (mem_Icc.mp hi).2; omega
-  rw [Nat.cast_sub hi', Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one,
-    Matrix.diagonal_pow, Matrix.trace_diagonal]
-  simp [Fin.sum_univ_two]
+  obtain ⟨s, rfl⟩ := hn
+  rw [sum_Icc_succ_top (a := 1) (b := 2 * s) (by omega) (fun i ↦ (i : ℝ) ^ k),
+    sum_pow_eq_sum_trace_of_even (2 * s) k (even_two_mul s),
+    show 2 * s / 2 = s by omega, show (2 * s + 1) / 2 = s by omega]
 
 end MathlibExt.LinearAlgebra.PowerSumMatrixWanted
