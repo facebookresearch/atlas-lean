@@ -5,6 +5,7 @@
 - [Weir–Cockerham variance components of allele frequencies](weir-cockerham-variance-components.md)
 - [Spectral theory of Wright's $F_{ST}$](spectral-theory-of-wright-s-fst/README.md)
 - [Tree-structured F_ST and coancestry](tree-structured-fst-and-coancestry/README.md)
+- [$F_{ST}$ constraints from the most frequent allele](fst-constraints-from-the-most-frequent-allele/README.md)
 - [Large-sample limits of two-population $F_{ST}$ estimators under population-specific drift](large-sample-limits-of-two-population-fst-estimators.md)
 - [Ratio of averages versus average of ratios for genome-wide $F_{ST}$](ratio-of-averages-versus-average-of-ratios-for-fst.md)
 - [X-to-autosome genetic drift](x-to-autosome-genetic-drift/README.md)

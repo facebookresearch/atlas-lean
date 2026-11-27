@@ -1,6 +1,6 @@
 # Constant-Depth Algebraic Algorithms
 
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
+- [Arithmetic AC0: constant-depth arithmetic circuits with division and piecewise computation](constant-depth-arithmetic-formula.md)
 - [Ben-Or: depth-three formulas for elementary symmetric polynomials](benor-elementary-symmetric.md)
 - [Constant-depth formulas for power sums of roots](power-sums-from-coefficients.md)
 - [Interpolation adds constant depth to arithmetic formulas](interpolation-depth-overhead.md)

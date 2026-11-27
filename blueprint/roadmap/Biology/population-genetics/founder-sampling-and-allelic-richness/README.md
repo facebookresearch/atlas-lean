@@ -10,5 +10,9 @@
 - [Expected richness of a founder sample of size zero is zero](expected-richness-zero.md)
 - [Expected allelic richness is nonnegative for nonnegative frequencies](expected-richness-nonneg.md)
 - [Expected allelic richness does not decrease with founder sample size](expected-richness-mono.md)
+
+## Estimating diversity from samples
+
+- [Estimators of Shannon genetic diversity](estimators-of-shannon-genetic-diversity/README.md)
 - [Founder events in endogamous groups](founder-events-in-endogamous-groups/README.md)
 - [IBD score for founder events](ibd-score-for-founder-events/README.md)
