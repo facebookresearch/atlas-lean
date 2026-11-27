@@ -13,8 +13,8 @@ import MathlibExt.MeasureTheory.Function.ConditionalExpectation.LebesguePullOut
 /-!
 # Tests for the pull-out property of the conditional Lebesgue expectation
 
-* A factor that is `∞` where the input vanishes: with `g = ∞` on an `m`-measurable set `s` and
-  `X = 0` on `s`, the product `g * X` vanishes, and `condLExp_mul_of_measurable_left` then forces
+* A factor that is `∞` on a set where the input vanishes: with `g = ∞` on an `m`-measurable set
+  `s` and `X = 0` on `s`, the product `g * X` vanishes, and `condLExp_mul_of_measurable_left` forces
   `μ⁻[X | m] = 0` almost everywhere on `s`. The factor takes the value `∞`, and nothing is
   assumed about `m`, `μ` or σ-finiteness, so a finiteness or σ-finiteness hypothesis on the
   lemma would break this test.
@@ -26,7 +26,7 @@ namespace MathlibExtTest.LebesguePullOut
 open MeasureTheory
 open scoped ENNReal
 
-/-- Pull out the factor `s.indicator ∞`, which is `∞` exactly where the input vanishes: the
+/-- Pull out the factor `s.indicator ∞`, which is `∞` on `s`, where the input vanishes: the
 conditional Lebesgue expectation of an input that vanishes on an `m`-measurable set `s` vanishes
 almost everywhere on `s`. -/
 example {Ω : Type*} {m m0 : MeasurableSpace Ω} (μ : Measure[m0] Ω) {s : Set Ω}

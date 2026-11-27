@@ -79,9 +79,9 @@ so neither is used to state (a), (b), (d) or (e).
 
 * `IsCenteredNoise.condLExp_abs_lt_top`: `μ⁻[ofReal |w| | m]` is finite almost everywhere.
 * `IsCenteredNoise.localize`: for a measurable `w`, a sub-σ-algebra `m` and a finite measure, on an
-  `m`-measurable event on which `B ≤ k`, the localized noise is square integrable and
-  conditionally centered, with conditional second moment at most `k`, for the Bochner conditional
-  expectation.
+  `m`-measurable event on which `B ≤ k`, for a constant `k ≥ 0`, the localized noise is square
+  integrable and conditionally centered, with conditional second moment at most `k`, for the
+  Bochner conditional expectation.
 * `IsCenteredNoise.of_memLp`: square-integrable noise with the usual conditional moment
   conditions satisfies the contract.
 * `IsCenteredNoise.div`: dividing by an `m`-measurable `G ≥ G₀ > 0` gives noise with envelope
@@ -93,7 +93,8 @@ so neither is used to state (a), (b), (d) or (e).
 
 ## Implementation notes
 
-Fix a level `k`. The cutoff is applied at each step: the localized noise at time `t` is
+Fix a level `k : ℕ`, so `k ≥ 0` as `IsCenteredNoise.localize` requires. The cutoff is applied at
+each step: the localized noise at time `t` is
 `{B t ≤ k}.indicator (w t)`, and on this `ℱ t`-measurable event `IsCenteredNoise.localize` turns
 the contract into Bochner moment bounds. So the partial sums of `α t * {B t ≤ k}.indicator (w t)`
 form a square-integrable martingale whose predictable quadratic variation is at most `k * C`. It
@@ -166,11 +167,11 @@ private theorem abs_le_one_add_sq (x : ℝ) : |x| ≤ 1 + x ^ 2 := by
 /-- **Finite conditional Lebesgue expectation of `|w|`.** If `w` satisfies the contract, then
 `μ⁻[ofReal |w| | m] < ∞` almost surely, for every `m` and `μ`. Hence both sides of
 `IsCenteredNoise.condLExp_pos_eq_neg` are finite almost surely. When `w` is a.e.-measurable,
-`m ≤ m0` and `μ.trim` is σ-finite, `μ⁻[ofReal |w| | m]` is the conditional first moment of `w`,
-and that equality is therefore a genuine centering condition. Outside that setting it need not
-be: if `m ≤ m0` fails or `μ.trim` is not σ-finite, `μ⁻[· | m]` is `0` and every `w` satisfies the
-contract, and a nonnegative `w` that is not a.e.-measurable can satisfy it with envelope `0`
-without being almost everywhere `0`. -/
+`m ≤ m0` and `μ.trim` is σ-finite, `μ⁻[ofReal |w| | m]` is the conditional first absolute moment
+of `w`, and that equality is therefore a genuine centering condition. Outside that setting it
+need not be: if `m ≤ m0` fails or `μ.trim` is not σ-finite, `μ⁻[· | m]` is `0` and every `w`
+satisfies the contract, and a nonnegative `w` that is not a.e.-measurable can satisfy it with
+envelope `0` without being almost everywhere `0`. -/
 theorem IsCenteredNoise.condLExp_abs_lt_top {m : MeasurableSpace Ω} {w B : Ω → ℝ}
     (hw : IsCenteredNoise m μ w B) :
     ∀ᵐ ω ∂μ, μ⁻[fun ω => ENNReal.ofReal |w ω| | m] ω < ∞ := by

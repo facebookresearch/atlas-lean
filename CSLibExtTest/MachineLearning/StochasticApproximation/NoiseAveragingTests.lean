@@ -638,7 +638,8 @@ example [IsFiniteMeasure μ] {m : MeasurableSpace Ω} {w B G : Ω → ℝ} {G₀
     IsCenteredNoise m μ (fun ω => w ω / G ω) (fun ω => B ω / G ω ^ 2) :=
   (IsCenteredNoise.of_memLp hw2 hmean hsq).div hwm hGm hG₀ hG
 
-/-- The localized moment bridge gives the Bochner centering of the localized noise. -/
+/-- The localized moment bridge, on an `m`-measurable event on which `B ≤ k`, for a constant
+`k ≥ 0`, gives the Bochner centering of the localized noise. -/
 example [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ m0) {w B : Ω → ℝ}
     (hwm : Measurable[m0] w) (hw : IsCenteredNoise m μ w B) {A : Set Ω}
     (hA : MeasurableSet[m] A) {k : ℝ} (hk : 0 ≤ k) (hBk : ∀ ω ∈ A, B ω ≤ k) :
