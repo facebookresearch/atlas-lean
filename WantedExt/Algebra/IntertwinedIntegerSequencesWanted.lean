@@ -22,6 +22,7 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.Algebra.MonoidAlgebra.Defs
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSum
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSumLaurent
+public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSumTopCoeffs
 public import MathlibExt.Algebra.Polynomial.ChebyshevCPositivity
 public import MathlibExt.Algebra.Polynomial.ChebyshevCTrace
 public import MathlibExt.Algebra.Polynomial.KasselReutenauerTopCoefficient
@@ -208,25 +209,6 @@ public theorem_wanted kasselReutenauerPoly_abs_eval_multiplicative_iff (N : ℤ)
         |(kasselReutenauerPoly (m * n)).eval N| =
           |(kasselReutenauerPoly m).eval N| * |(kasselReutenauerPoly n).eval N|) ↔
       N = -2 ∨ N = -1 ∨ N = 0 ∨ N = 2
-
-/-- **Leading coefficients of the partial sums of Chebyshev polynomials.** Let
-$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
-polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
-For every $n \ge 5$, the polynomial
-$$F_n - \Big(X^n + X^{n-1} - (n-1) X^{n-2} - (n-2) X^{n-3} + \binom{n-2}{2} X^{n-4} +
-\binom{n-3}{2} X^{n-5}\Big)$$
-is either zero or has degree less than $n - 5$.
-
-Here $\binom{n-2}{2} = (n-2)(n-3)/2$ and $\binom{n-3}{2} = (n-3)(n-4)/2$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 3.5
-(`jis-2026-26.4.4-cor-10`). -/
-public theorem_wanted chebyshevCPartialSum_top_coeffs (n : ℕ) (hn : 5 ≤ n) :
-    (chebyshevCPartialSum n -
-        (X ^ n + X ^ (n - 1) - ((n - 1 : ℕ) : ℤ[X]) * X ^ (n - 2) - ((n - 2 : ℕ) : ℤ[X]) * X ^ (n - 3) +
-          ((n - 2).choose 2 : ℤ[X]) * X ^ (n - 4) + ((n - 3).choose 2 : ℤ[X]) * X ^ (n - 5))).degree <
-      ((n - 5 : ℕ) : WithBot ℕ)
 
 /-- **Approximation of $\bar P_n$ by $F_{n-1}$.** Let $\bar P_n$ be the Kassel–Reutenauer
 polynomials, and for $r \ge 0$ let $F_r(X) = 1 + \sum_{j=1}^{r} \bar T_j(X)$ be the partial sum
