@@ -85,3 +85,26 @@ example : restrictedCombinationTotal {1, 4} 7 = 25 := by
   rw [h0, h1, h2, h3, h4, h6] at h
   change a 7 = 25
   omega
+
+-- At length five the gap five cannot occur. At length six it excludes three subsets:
+-- {1, 6}, {1, 3, 6}, and {1, 4, 6}.
+example : restrictedCombinationTotal {1, 5} 5 = 13 := by decide
+example : ({1, 6} : Finset ℕ) ∉ restrictedCombinations {1, 5} 6 2 := by decide
+example : restrictedCombinationTotal {1, 5} 6 = 18 := by decide
+
+-- Degree ten is the first coefficient beyond the numerator and uses the constant count.
+set_option maxRecDepth 2048 in
+example : restrictedCombinationTotal {1, 5} 10 = 91 := by
+  let a := restrictedCombinationTotal {1, 5}
+  let f : PowerSeries ℤ := mk fun n => (a n : ℤ)
+  have h := congrArg (coeff (R := ℤ) 10) restrictedCombinationTotal_one_five_genFun
+  change coeff 10 (f * _) = _ at h
+  simp only [mul_sub, mul_add, mul_one, map_sub, map_add, coeff_mul_X_pow',
+    coeff_one, coeff_X, coeff_X_pow, coeff_mk, f, coeff_ofNat_mul] at h
+  change (a 10 : ℤ) - a 8 - a 7 - a 6 + a 5 - a 4 - a 3 - a 2 - a 0 = 0 at h
+  have hinit : a 0 = 1 ∧ a 2 = 3 ∧ a 3 = 5 ∧ a 4 = 8 ∧ a 5 = 13 ∧ a 6 = 18 ∧
+      a 7 = 28 ∧ a 8 = 41 := by decide
+  obtain ⟨h0, h2, h3, h4, h5, h6, h7, h8⟩ := hinit
+  rw [h0, h2, h3, h4, h5, h6, h7, h8] at h
+  change a 10 = 91
+  omega
