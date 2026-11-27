@@ -35,6 +35,7 @@ module
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.GammaSpecAdjunction
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+public import MathlibExt.AlgebraicGeometry.SchemeModuleLinear
 
 /-!
 # Endomorphisms of invertible sheaves are base scalars
@@ -44,11 +45,13 @@ structure sheaf (`CoherentCurveLinearSeries.IsLineBundle`). Every endomorphism
 of an invertible sheaf is, on each open, multiplication by the restriction of a
 unique global section. When the global sections of `X` are exactly the base
 ring (the map from the base ring to them is bijective), that section comes from
-a unique base scalar.
+a unique base scalar, and the endomorphism is that scalar's action
+`SchemeModuleLinear.baseScalar`.
 -/
 
 open CategoryTheory CategoryTheory.Limits TopologicalSpace Opposite
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle structureModule)
+open MathlibExt.AlgebraicGeometry.SchemeModuleLinear (baseScalar)
 
 universe u
 
@@ -225,44 +228,40 @@ namespace AlgebraicGeometry.Scheme.Modules
 
 variable {X : Scheme.{u}} {R : Type u} [CommRing R]
 
-/-- **Section of a base scalar.** Given a morphism of schemes `f : X ⟶ Spec R`, a scalar `c : R`
-and an open `U` of `X`, this is the image of `c` under the map from `R` to the global sections
-of the structure sheaf of `X` that `f` induces, restricted to `U`. -/
-@[expose] public noncomputable def baseSection (f : X ⟶ Spec (CommRingCat.of R)) (c : R)
-    (U : X.Opens) : Γ(X, U) :=
-  X.presheaf.map (homOfLE (le_top (a := U))).op
-    (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c))
-
-/-- **Endomorphism acting by a base scalar.** Given a morphism of schemes `f : X ⟶ Spec R`, an
-endomorphism `σ` of a sheaf of modules `M` on `X` acts by the scalar `c : R` when, on every
-open `U` of `X`, it multiplies each section of `M` over `U` by `baseSection f c U`. -/
-@[expose] public noncomputable def IsBaseScalar (f : X ⟶ Spec (CommRingCat.of R))
-    {M : X.Modules} (σ : M ⟶ M) (c : R) : Prop :=
-  ∀ (U : X.Opens) (s : Γ(M, U)), σ.app U s = baseSection f c U • s
+/-- `baseScalar R (Over.mk f) c` multiplies each section over an open `U` by the restriction to
+`U` of the global function that `f` gives `c`. -/
+private lemma baseScalar_app_eq_iff (f : X ⟶ Spec (CommRingCat.of R)) {M : X.Modules}
+    (σ : M ⟶ M) (c : R) :
+    (baseScalar R (Over.mk f) c).asHom.app M = σ ↔ ∀ (U : X.Opens) (s : Γ(M, U)),
+      σ.app U s = X.presheaf.map (homOfLE (le_top (a := U))).op
+        (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c)) • s := by
+  constructor
+  · rintro rfl U s
+    rfl
+  · intro h
+    ext U x
+    exact (h U.unop x).symm
 
 /-- **Endomorphisms of invertible sheaves are base scalars.** Let `f : X ⟶ Spec R` be a morphism
 of schemes for which the map from `R` to the global sections of the structure sheaf of `X` that
-`f` induces is bijective. Then every endomorphism `σ` of an invertible sheaf `M` on `X` acts by a
-unique scalar `c : R`, in the sense of `IsBaseScalar`. -/
+`f` induces is bijective. Then every endomorphism `σ` of an invertible sheaf `M` on `X` is the
+action of a unique scalar `c : R`: the component at `M` of `SchemeModuleLinear.baseScalar` for
+the `R`-scheme `Over.mk f`, which multiplies each section over an open `U` by the restriction to
+`U` of the global function that `f` gives `c`. -/
 public theorem existsUnique_isBaseScalar_of_isLineBundle_of_bijective
     (f : X ⟶ Spec (CommRingCat.of R))
     (hH0 : Function.Bijective fun c : R =>
       f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c))
     {M : X.Modules} (hM : IsLineBundle M) (σ : M ⟶ M) :
-    ∃! c : R, IsBaseScalar f σ c := by
+    ∃! c : R, (baseScalar R (Over.mk f) c).asHom.app M = σ := by
   obtain ⟨s, hs, huniq⟩ := hM.existsUnique_app_eq_smul σ
   obtain ⟨c, hc⟩ := hH0.2 s
   simp only at hc
-  refine ⟨c, ?_, ?_⟩
-  · intro U x
-    rw [hs U x]
-    change _ = X.presheaf.map (homOfLE (le_top (a := U))).op
-      (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c)) • x
-    rw [hc]
-  · intro c' hc'
-    have h1 : f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c') = s :=
+  refine ⟨c, (baseScalar_app_eq_iff f σ c).2 fun U x => ?_, fun c' hc' => ?_⟩
+  · rw [hs U x, hc]
+  · have h1 : f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c') = s :=
       huniq (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c'))
-        (fun U x => hc' U x)
+        ((baseScalar_app_eq_iff f σ c').1 hc')
     apply hH0.1
     change f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c') =
       f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c)
