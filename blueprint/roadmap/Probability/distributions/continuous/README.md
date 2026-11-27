@@ -12,6 +12,7 @@ Laws with densities, with their moments and tails: beta, gamma, exponential, chi
 - [Dirichlet distribution](dirichlet-distribution/README.md)
 - [Distance between Student t and normal laws](distance-between-student-t-and-normal-laws/README.md)
 - [Moments of the exponential distribution](exponential-distribution/README.md)
+- [Exponential clock race and characteristic function](exponential-clock-race-and-characteristic-function/README.md)
 - [Gamma distribution](gamma-distribution/README.md)
 - [Conditioning of Gaussian vectors](gaussian-conditioning/README.md)
 - [Half-line mass of a centered Gaussian](gaussian-real-ioi-zero.md)

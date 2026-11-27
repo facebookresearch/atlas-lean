@@ -4,7 +4,7 @@ Let $k$ be a finite index set, $\lambda \in \mathbb{R}^k$, and let $Q = \sum_j \
 
 $$\frac12 + \frac{1}{\pi} \int_0^T \frac{\operatorname{Im}\bigl(e^{-i t q} \varphi(t)\bigr)}{t} \, dt \;\longrightarrow\; P(Q > q).$$
 
-A nonzero weight makes the law of $Q$ atom-free, so the [midpoint form of the inversion](tendsto-davies.md) reduces to the upper tail. This is the p-value that Davies' algorithm computes.
+A nonzero weight makes the law of $Q$ atom-free, so the [midpoint form of the inversion](tendsto-davies.md) reduces to the upper tail. Davies' algorithm computes the distribution function $P(Q < q)$; in this atom-free case the upper-tail p-value is its complement.
 
 ## Sources
 

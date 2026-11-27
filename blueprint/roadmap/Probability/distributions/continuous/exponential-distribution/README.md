@@ -23,6 +23,3 @@ The exponential law is the law of a waiting time without memory, and the gamma l
 - [Variance of an exponentially distributed random variable](variance-eq-of-exp-measure.md): random-variable form of the variance
 - [Competing exponential clocks](competing-exponential-clocks.md)
 - [The memoryless property characterizes the exponential law](memoryless-property-characterizes-the-exponential-law.md)
-- [Characteristic function of the exponential distribution](char-fun-exp-measure.md): basic property: characteristic function
-- [Two competing exponential clocks](prod-exp-measure-real-lt.md): the case of two clocks, under the product law
-- [Probability that one exponential variable is smaller than an independent one](measure-real-lt-of-has-law-exp-measure.md): random-variable form of the two-clock case
