@@ -9,7 +9,7 @@
 - [The threshold block operator](threshold-block-op.md)
 - [A block operator acts blockwise on a product state](block-op-mul-vec-block-prod.md)
 - [The inner product of product states factors](star-block-prod-dot-product-block-prod.md)
-- [The expectation of a block operator in a product state factors](block-expectation-block-prod.md)
+- [The quadratic form of a block operator factors on product vectors](block-expectation-block-prod.md)
 - [Squared norm as the real part of a dot product](sq-norm-eq-re-star-dot-product.md)
 - [The squared norm of a product state](sq-norm-block-prod.md)
 - [A product of unit vectors is a unit vector](sq-norm-block-prod-eq-one.md)

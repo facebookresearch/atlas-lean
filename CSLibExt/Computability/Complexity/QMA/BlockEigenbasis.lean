@@ -130,7 +130,8 @@ theorem star_blockProd_dotProduct_blockProd {k m : ℕ}
   rw [(Equiv.sum_comp (blockEquiv k m) _).symm]
   simp only [hdigit, Fintype.prod_sum]
 
-/-- The expectation of a block operator in a product state factors. -/
+/-- The quadratic form of a block operator factors on product vectors: for arbitrary matrices
+`A i` and vectors `ψ i`, `⟪Ψ, A Ψ⟫ = ∏ i, ⟪ψ i, A i ψ i⟫`; an expectation only for unit vectors. -/
 theorem blockExpectation_blockProd {k m : ℕ}
     (A : Fin k → Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ)
     (ψ : Fin k → Fin (2 ^ m) → ℂ) :

@@ -19739,7 +19739,7 @@
 "Cslib.Complexity.Classes.QMA.blockDigit": "35d9af5a1d789cb8",
 "Cslib.Complexity.Classes.QMA.blockEquiv": "f9d24a31b0267ff9",
 "Cslib.Complexity.Classes.QMA.blockEquiv_symm_apply": "483d4c77747dc2c7",
-"Cslib.Complexity.Classes.QMA.blockExpectation_blockProd": "bddcd39c0e253a60",
+"Cslib.Complexity.Classes.QMA.blockExpectation_blockProd": "f8d1a2f2054983f2",
 "Cslib.Complexity.Classes.QMA.blockOp": "22f719a89b0084fa",
 "Cslib.Complexity.Classes.QMA.blockOp_mulVec_blockProd": "ef0317bd89cb70cb",
 "Cslib.Complexity.Classes.QMA.blockProd": "a7f306aa3b03c10c",

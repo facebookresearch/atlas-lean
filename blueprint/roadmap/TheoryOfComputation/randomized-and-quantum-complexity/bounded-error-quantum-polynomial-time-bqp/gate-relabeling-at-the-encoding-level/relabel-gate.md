@@ -6,5 +6,5 @@ entries; $M(e)$ is the matrix whose entry at $(p, q)$ is the entry of $e$ at pos
 $4 \cdot \mathrm{idx}(p) + \mathrm{idx}(q)$, read as $0$ when the list is too short. The gate is
 well-formed on $N$ qubits when $i < j < N$ and $M(e)^\dagger M(e) = I$. For a map $\pi$ on qubit
 positions and a gate $(i, j, e)$, the relabelled gate is $(\pi(i), \pi(j), e)$ when
-$\pi(i) < \pi(j)$, and otherwise $(\pi(j), \pi(i), e')$, where $e'$ encodes $M(e)$ with its two
-qubits exchanged.
+$\pi(i) < \pi(j)$, and otherwise $(\pi(j), \pi(i), e')$, where $e'$ is the [swap-conjugated entry list](swap-conj-entries.md) of $e$, a particular list
+encoding $M(e)$ with its two qubits exchanged.
