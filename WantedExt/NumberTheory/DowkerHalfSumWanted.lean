@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.WatsonAlternatingBounds
 public import MathlibExt.NumberTheory.WatsonCoshIntegral
 public import MathlibExt.NumberTheory.WatsonCotangentDerivatives
+public import MathlibExt.NumberTheory.DowkerHalfSumWatsonCosSumSixthLimits
 
 namespace MetaMathlibExt
 
@@ -72,40 +73,6 @@ public theorem_wanted watson_alternating_complete_asymptotic (N : ℕ) (hN : 2 �
     ∃ K : ℝ, 0 ≤ K ∧ ∀ n : ℕ, Even n → 2 ≤ n →
       |watsonAlternatingCosecantSum n - watsonAlternatingMain N n| ≤
         K / (n : ℝ) ^ (2 * N - 1)
-
-/--
-**Two-sided bounds for Watson's alternating cosecant sum.** For every even natural number
-$n \ge 2$, the alternating cosecant sum $C_n = \sum_{l=1}^{n-1} (-1)^{l+1} / \sin(\pi l / n)$
-satisfies the strict inequalities
-$$
-\frac{2 n \log 2}{\pi} + \frac{\pi}{12 n} - \frac{7 \pi^3}{1440 n^3} < C_n <
-\frac{2 n \log 2}{\pi} + \frac{\pi}{12 n}.
-$$
-The lower bound consists of the first three terms of the asymptotic expansion of $C_n$ and the
-upper bound of the first two.
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 6 and Corollary 3.
--/
-public theorem_wanted watson_alternating_sharp_bounds
-    (n : ℕ) (heven : Even n) (hn : 2 ≤ n) :
-    2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ)) -
-          7 * Real.pi ^ 3 / (1440 * (n : ℝ) ^ 3) <
-        watsonAlternatingCosecantSum n ∧
-      watsonAlternatingCosecantSum n <
-        2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ))
-
-/--
-**Vanishing limits of Watson's cosine sum at one sixth and five sixths.** For natural numbers
-$n$ and $\nu$ let $C_n(\nu) = \sum_{l=1}^{n-1} \cos(2 \pi \nu l / n) / \sin(\pi l / n)$. As
-$m \to \infty$ through the natural numbers, $C_{6m}(m) \to 0$ and $C_{6m}(5m) \to 0$.
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 4.
--/
-public theorem_wanted watson_cos_sum_sixth_limits :
-    Tendsto (fun m : ℕ => watsonCosSum (6 * m) m) atTop (𝓝 0) ∧
-      Tendsto (fun m : ℕ => watsonCosSum (6 * m) (5 * m)) atTop (𝓝 0)
 
 end
 
