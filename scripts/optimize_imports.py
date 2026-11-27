@@ -635,6 +635,16 @@ class Tools:
     validated_snapshot_groups: dict[str, dict[str, list[ValidatedSnapshotGroup]]] = field(
         default_factory=dict, compare=False, repr=False)
     prepared_inputs: dict[str, PreparedInputs] = field(default_factory=dict, compare=False, repr=False)
+    # Root-package artifacts pinned by this process: the receipt and the full
+    # file identity at their first pin. Written once, so a later re-hash of a
+    # changed file cannot replace the expectation (see `record_root_custody`).
+    root_custody: dict[str, tuple[dict[str, object], SourceIdentity]] = field(
+        default_factory=dict, compare=False, repr=False)
+    # The first rejected Lake preparation; every later preparation is refused.
+    lake_custody_failure: list[str] = field(default_factory=list, compare=False, repr=False)
+    # The root artifact root's top-level listing after the last accepted preparation.
+    root_listing: dict[str, tuple[frozenset[Path], frozenset[Path]]] = field(
+        default_factory=dict, compare=False, repr=False)
     # Lake-manifest bytes pinned before Lake's environment is
     # captured (production `main` passes them in explicitly; other
     # callers pin at first derivation in `__post_init__`).
@@ -1003,6 +1013,589 @@ def cached_empty_inventory_directories(tools: Tools) -> set[Path]:
     return directories
 
 
+INVENTORY_SUFFIXES = (".olean.private", ".olean.server", ".olean", ".ir.sig", ".ir", ".so", ".dylib")
+LAKE_GROWTH_DIRECTORY = "lake-growth"
+# Lake custody that must outlive one invocation of a run: the first rejected
+# preparation and the root artifact root's listing after the last accepted one.
+LAKE_CUSTODY_DIRECTORY = "lake-custody"
+# Written before each Lake preparation starts its child and removed only after every custody
+# record of that preparation is saved. Its presence means a preparation's effects were never
+# checked or recorded, so the output directory may not run another one.
+PENDING_PREPARATION = "pending.json"
+
+
+def refuse_interrupted_preparation(output: Path) -> None:
+    pending = output / LAKE_CUSTODY_DIRECTORY / PENDING_PREPARATION
+    if os.path.lexists(pending):
+        raise ValueError(f"A Lake preparation was interrupted before its custody records were saved ({pending}); "
+                         "start a new output directory")
+
+# Root-package artifacts this run's own Lake preparations added (path to file
+# pin), consulted only while saved rows are validated on resume.
+_recorded_lake_growth: ContextVar[dict[str, dict[str, object]] | None] = ContextVar(
+    "recorded_lake_growth", default=None)
+
+
+def artifact_stem(path: str) -> str:
+    for suffix in INVENTORY_SUFFIXES:
+        if path.endswith(suffix):
+            return path.removesuffix(suffix)
+    return path
+
+
+def build_artifact_module(tools: Tools, path: str) -> str | None:
+    """Module named by an artifact inside the root package's artifact root."""
+    build_root = resolve_inventory_path(tools.root / ".lake/build/lib/lean")
+    resolved = resolve_inventory_path(Path(path))
+    if not resolved.is_relative_to(build_root) or artifact_stem(str(resolved)) == str(resolved):
+        return None
+    return ".".join(Path(artifact_stem(str(resolved.relative_to(build_root)))).parts)
+
+
+def provider_modules(tools: Tools, paths: Iterable[str]) -> set[str]:
+    """Modules the given artifacts provide under any root Lean searches.
+
+    Each artifact is matched under both its own spelling and its resolved
+    path, so a symlinked search root cannot hide a provider.
+    """
+    build_root = tools.root / ".lake/build/lib/lean"
+    roots = {build_root, resolve_inventory_path(build_root), *private_search_roots(tools)}
+    library = standard_library_root(tools)
+    if library is not None:
+        roots.update((library, resolve_inventory_path(library)))
+    parents: dict[Path, Path] = {}
+    modules = set()
+    for path in paths:
+        if artifact_stem(path) == path:
+            continue
+        candidate = Path(path)
+        try:
+            if candidate.is_symlink():
+                resolved = resolve_inventory_path(candidate)
+            else:
+                if candidate.parent not in parents:
+                    parents[candidate.parent] = resolve_inventory_path(candidate.parent)
+                resolved = parents[candidate.parent] / candidate.name
+        except (OSError, RuntimeError):
+            resolved = candidate
+        for spelling in (path, str(resolved)):
+            stem = Path(artifact_stem(spelling))
+            if str(stem) == spelling:
+                continue
+            for root in roots:
+                if stem.is_relative_to(root):
+                    modules.add(".".join(stem.relative_to(root).parts))
+    return modules
+
+
+def shadowed_provider(tools: Tools, added: Iterable[str], existing: Iterable[str]) -> str | None:
+    """An added artifact for a module some existing artifact already provides.
+
+    A new artifact may only belong to a new module. One for a module that an
+    existing artifact provides, in this root or another searched root, could
+    add parts to or shadow a provider that was already resolved.
+    """
+    modules = provider_modules(tools, existing)
+    for path in sorted(added):
+        module = build_artifact_module(tools, path)
+        if module is None or module in modules:
+            return path
+    return None
+
+
+def searched_roots(tools: Tools) -> list[Path]:
+    """Every root Lean searches for modules, under each spelling.
+
+    The captured `LEAN_PATH` entries (absolute, as written and resolved,
+    including entries that do not exist yet), the root package's artifact
+    root and the compiler's standard library.
+    """
+    candidates = [tools.root / ".lake/build/lib/lean"]
+    for entry in tools.environment.get("LEAN_PATH", "").split(os.pathsep):
+        if entry.strip():
+            path = Path(entry.strip())
+            candidates.append(path if path.is_absolute() else tools.root / path)
+    library = standard_library_root(tools)
+    if library is not None:
+        candidates.append(library)
+    roots: list[Path] = []
+    for path in candidates:
+        for spelling in (path, resolve_inventory_path(path)):
+            if spelling not in roots:
+                roots.append(spelling)
+    return roots
+
+
+def module_artifact_paths(root: Path, module: str) -> list[Path]:
+    relative = Path(*module.split("."))
+    return [root / (str(relative) + suffix) for suffix in INVENTORY_SUFFIXES]
+
+
+def path_state(path: Path) -> PathState | None:
+    """The `lstat` identity of a path and of the file it resolves to, or None when it does not exist.
+
+    A write through a symlink, or a change of where its target path leads,
+    leaves the link's own identity unchanged, so a symlink's state also holds
+    the full identity of the file it resolves to (None when it resolves to
+    nothing). Retargeting or replacing the link changes its own identity.
+    """
+    try:
+        own = path_component_identity(path, strict=True)
+    except (FileNotFoundError, NotADirectoryError):
+        return None
+    if not stat.S_ISLNK(own[5]):
+        return own, own
+    try:
+        return own, source_identity(path)
+    except (FileNotFoundError, NotADirectoryError):
+        return own, None
+
+
+def provider_probes(tools: Tools, modules: Iterable[str], roots: list[Path]
+                    ) -> dict[Path, PathState | None]:
+    """The state of each artifact path under every searched root for each of `modules`.
+
+    The lookup is targeted: only names a preparation may add are probed,
+    so no dependency or compiler inventory is enumerated.
+    """
+    probes: dict[Path, PathState | None] = {}
+    for module in sorted(modules):
+        for root in roots:
+            for path in module_artifact_paths(root, module):
+                if path not in probes:
+                    probes[path] = path_state(path)
+    return probes
+
+
+def nearest_existing(path: Path) -> tuple[Path, Path]:
+    """The resolved nearest existing ancestor of a path and the rest of the path below it."""
+    parent = path.parent
+    while not os.path.lexists(parent) and parent != parent.parent:
+        parent = parent.parent
+    return resolve_inventory_path(parent), path.relative_to(parent)
+
+
+def outside_build_root(path: Path, build_root: Path) -> bool:
+    """Whether a path, resolved through its existing parents, lies outside the root artifact root."""
+    parent, rest = nearest_existing(path)
+    return not (parent / rest).is_relative_to(build_root)
+
+
+def artifact_module_names(path: str, roots: list[Path]) -> dict[str, Path]:
+    """Every module name an artifact provides, with a searched root that gives it."""
+    names: dict[str, Path] = {}
+    candidate = Path(path)
+    spellings = [candidate]
+    try:
+        spellings.append(resolve_inventory_path(candidate))
+    except (OSError, RuntimeError):
+        pass
+    for spelling in spellings:
+        stem = Path(artifact_stem(str(spelling)))
+        if str(stem) == str(spelling):
+            continue
+        for root in roots:
+            if stem.is_relative_to(root) and stem != root:
+                names.setdefault(".".join(stem.relative_to(root).parts), root)
+    return names
+
+
+def addition_conflict(tools: Tools, path: str, build_root: Path, roots: list[Path],
+                      probes: dict[Path, PathState | None] | None = None) -> str | None:
+    """Why an added root artifact shadows or aliases another provider, or None.
+
+    It must provide exactly one module name across every searched root (no
+    nested or aliased root may give it another), and no searched root may
+    provide that module elsewhere. With `probes` (a preparation), every
+    artifact path of the module under every root, the root artifact root
+    included, must have been absent before the build. Without (a resume),
+    no artifact path of the module outside the root artifact root may exist
+    now; saved inputs decide inside it.
+    """
+    own = build_artifact_module(tools, path)
+    names = artifact_module_names(path, roots)
+    aliases = sorted(set(names) - {own})
+    if own is None or aliases:
+        alias = aliases[0] if aliases else str(path)
+        return f"visible as module {alias} under searched root {names.get(alias, build_root)}"
+    for root in roots:
+        for candidate in module_artifact_paths(root, own):
+            if probes is not None:
+                if candidate not in probes:
+                    return f"module {own} was not probed under {root}"
+                if probes[candidate] is not None:
+                    return f"module {own} was already provided by {candidate}"
+            elif outside_build_root(candidate, build_root) and path_state(candidate) is not None:
+                return f"module {own} is provided by {candidate}"
+    return None
+
+
+IDENTITY_FIELDS = ("dev", "ino", "ctime", "mtime", "size", "mode")
+
+
+def root_artifact_prefixes(root: Path) -> tuple[str, ...]:
+    build = root / ".lake/build/lib/lean"
+    return tuple(dict.fromkeys((str(build) + os.sep, str(resolve_inventory_path(build)) + os.sep)))
+
+
+def is_root_artifact_path(path: object, prefixes: tuple[str, ...]) -> bool:
+    return isinstance(path, str) and path.startswith(prefixes) and artifact_stem(path) != path
+
+
+def record_root_custody(tools: Tools, receipts: Iterable[object]) -> None:
+    """Remember the identity of root-package artifacts at their first pin.
+
+    Called where receipts are made or checked, right after `file_pin` filled
+    the cache with the identity it hashed. An existing record is kept, so the
+    expectation is the one from the first pin.
+    """
+    prefixes = root_artifact_prefixes(tools.root)
+    for receipt in receipts:
+        path = receipt.get("path") if isinstance(receipt, dict) else None
+        if not is_root_artifact_path(path, prefixes) or path in tools.root_custody:
+            continue
+        cached = tools.file_cache.get(cast(str, path))
+        if cached is not None and cached[0] == receipt.get("sha256"):
+            tools.root_custody[cast(str, path)] = (dict(receipt), cached[1])
+
+
+SAVED_INPUT_MANIFEST = re.compile(r"[0-9a-f]{64}\.json")
+
+
+def saved_root_receipts(root: Path, output: Path, growth: dict[str, dict[str, object]],
+                        rewrites: dict[str, dict[str, object]] | None = None) -> dict[str, dict[str, object]]:
+    """Every root-package artifact receipt an earlier invocation of this run saved.
+
+    These are the additions and rewrites its accepted Lake preparations
+    recorded (`lake-growth/`) and the root-package entries of every compilation input
+    manifest it pinned (`inputs/`), whether or not a successful row refers
+    to them. Each path must have one receipt.
+    """
+    prefixes = root_artifact_prefixes(root)
+    receipts: dict[str, dict[str, object]] = {}
+
+    def add(receipt: object, source: Path) -> None:
+        if (not isinstance(receipt, dict) or not isinstance(receipt.get("path"), str) or
+                type(receipt.get("bytes")) is not int or not isinstance(receipt.get("sha256"), str)):
+            raise ValueError(f"Invalid saved artifact receipt in {source}")
+        if receipts.setdefault(receipt["path"], receipt) != receipt:
+            raise ValueError(f"Saved receipts disagree on a root-package artifact: {receipt['path']}")
+
+    for path, receipt in [*growth.items(), *(rewrites or {}).items()]:
+        if not is_root_artifact_path(path, prefixes) or not Path(path).is_absolute():
+            raise ValueError(f"Recorded Lake growth is outside the root artifact root: {path}")
+        add(receipt, output / LAKE_GROWTH_DIRECTORY)
+    inputs = output / "inputs"
+    for manifest in sorted(inputs.iterdir()) if inputs.is_dir() else ():
+        if not SAVED_INPUT_MANIFEST.fullmatch(manifest.name):
+            continue
+        files = read_json(manifest).get("files")
+        if not isinstance(files, list):
+            raise ValueError(f"Invalid saved compilation input manifest: {manifest}")
+        for receipt in files:
+            if isinstance(receipt, dict) and is_root_artifact_path(receipt.get("path"), prefixes):
+                add(receipt, manifest)
+    return receipts
+
+
+def verify_saved_root_receipts(receipts: dict[str, dict[str, object]], cache: SourceCache) -> None:
+    """Each saved root-package receipt still describes its file, before any Lake command."""
+    for path, receipt in receipts.items():
+        try:
+            unchanged = file_pin(Path(path), cache) == receipt
+        except (OSError, ValueError):
+            unchanged = False
+        if not unchanged:
+            raise ValueError(f"Saved root-package artifact is missing or changed since it was pinned: {path}")
+
+
+def verify_root_custody(tools: Tools, custody: dict[str, tuple[dict[str, object], SourceIdentity]]) -> None:
+    """Each pinned root-package artifact keeps the identity and bytes of its first pin."""
+    for path, (receipt, identity) in custody.items():
+        try:
+            current = source_identity(Path(path))
+        except OSError as error:
+            raise ValueError(f"Pinned root-package artifact was removed: {path}") from error
+        changed = [name for name, before, after in zip(IDENTITY_FIELDS, identity, current) if before != after]
+        if not changed and file_pin(Path(path), tools.file_cache) != receipt:
+            changed = ["sha256"]
+        if changed:
+            raise ValueError(f"Pinned root-package artifact changed ({', '.join(changed)}): {path}")
+
+
+def namespace_topology(paths: Iterable[Path]) -> dict[Path, tuple[SourceIdentity, Path]]:
+    """Each directory's own node (lstat device, inode and mode) and resolved path.
+
+    Additions may change a directory's timestamps, never its node or where
+    its path leads.
+    """
+    topology = {}
+    for path in paths:
+        try:
+            topology[path] = (path_component_identity(path, mutable=True), resolve_inventory_path(path))
+        except OSError:
+            topology[path] = ((0, 0, 0, 0, 0, 0), path)
+    return topology
+
+
+def build_root_listing(tools: Tools, build_root: Path) -> tuple[set[Path], set[Path]]:
+    """Top-level namespace directories and module artifacts of the root artifact root."""
+    output_parts = resolve_inventory_path(tools.output).parts
+    directories: set[Path] = set()
+    files: set[Path] = set()
+    for child in sorted(build_root.iterdir()) if build_root.is_dir() else ():
+        if not inventory_path_outside_output(child, output_parts):
+            continue
+        if child.is_dir():
+            directories.add(child)
+        elif child.is_file() and artifact_stem(str(child)) != str(child):
+            files.add(child)
+    return directories, files
+
+
+def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
+                         modules: frozenset[str]) -> dict[str, object]:
+    """Run a Lake build that may add root-package artifacts, then renew their custody.
+
+    A batch's Lake preparation legitimately adds artifacts to the root
+    package's build tree, so an inventory an earlier batch cached there no
+    longer describes it. Before the build, every cached inventory is
+    verified, every root-package artifact pinned so far must still have the
+    full identity and bytes of its first pin (`root_custody`), and the root
+    artifact root's top-level listing must match the one left by the last
+    accepted preparation. Every top-level namespace is then inventoried.
+    During the build, the root namespaces and the artifact root's ancestors
+    are watched for moves and attribute changes where the platform allows;
+    after it, each keeps its directory node and resolved path, pinned
+    artifacts are checked again, nothing may be removed, and only artifacts
+    of new modules among `modules` (the requested targets and their frozen
+    local dependencies) may be added. Every existing root artifact is stated
+    before the build, a symlink with the file it resolves to; one whose state
+    changed was rewritten, which only a module among `modules` may be, and
+    never a pinned one. Root inventories
+    are then taken again with new directory custody, and the additions and
+    rewrites are taken into custody and recorded under the output directory
+    for resume. Compiler and dependency inventories stay
+    cached. Independently of any cache, every artifact path of each module
+    in `modules` under every searched root (`LEAN_PATH` entries under both
+    spellings, the root artifact root and the compiler library) is probed
+    before the build: those outside the root artifact root must keep their
+    state through it (watched on Linux), and an addition must have been
+    absent everywhere and may not be visible as another module under a
+    nested or enclosing root. The first rejection is kept on `tools`, and
+    every later preparation is refused.
+    """
+    custody_directory = tools.output / LAKE_CUSTODY_DIRECTORY
+    refuse_interrupted_preparation(tools.output)
+    if not tools.lake_custody_failure and (custody_directory / "rejected.json").exists():
+        recorded = read_json(custody_directory / "rejected.json").get("error")
+        tools.lake_custody_failure.append(recorded if isinstance(recorded, str) else "unreadable rejection record")
+    if tools.lake_custody_failure:
+        raise ValueError(f"An earlier Lake preparation was rejected: {tools.lake_custody_failure[0]}")
+    cached_before = dict(tools.library_inventories)
+    released: dict[Path, tuple[tuple[str, ...], dict[Path, SourceIdentity]]] = {}
+    rewritten: dict[str, dict[str, object]] = {}
+    try:
+        for paths, directories in tools.library_inventories.values():
+            verify_library_directories(directories, paths)
+        custody = dict(tools.root_custody)
+        verify_root_custody(tools, custody)
+        build_root = resolve_inventory_path(tools.root / ".lake/build/lib/lean")
+        namespaces_before, files_before = build_root_listing(tools, build_root)
+        if "after" not in tools.root_listing and (custody_directory / "listing.json").exists():
+            # A resumed invocation starts from the listing the previous one accepted.
+            listing = read_json(custody_directory / "listing.json")
+            names = [listing.get(key) for key in ("namespaces", "files")]
+            if any(not isinstance(group, list) or any(not isinstance(name, str) for name in group)
+                   for group in names):
+                raise ValueError("Recorded root artifact listing is invalid")
+            tools.root_listing["after"] = tuple(frozenset(build_root / name for name in group)
+                                                for group in names)
+        expected = tools.root_listing.get("after")
+        if expected is not None and (frozenset(namespaces_before), frozenset(files_before)) != expected:
+            changed = sorted(set(namespaces_before) ^ set(expected[0]) | set(files_before) ^ set(expected[1]))
+            raise ValueError(f"Root artifact root changed since the last Lake preparation: {changed[0]}")
+        for namespace in sorted(namespaces_before):
+            standard_library_paths(namespace, tools)
+        released = {library: entry for library, entry in tools.library_inventories.items()
+                    if all(resolve_inventory_path(path).is_relative_to(build_root)
+                           for path in (library, *entry[1]))}
+        existing = [*(path for paths, _ in tools.library_inventories.values() for path in paths),
+                    *map(str, files_before)]
+        ancestors = [tools.root / ".lake/build/lib/lean", *(tools.root / ".lake/build/lib/lean").parents]
+        ancestors = ancestors[:ancestors.index(tools.root)]
+        watched = {path for path in (*(path for library, (_, directories) in released.items()
+                                       for path in (library, *directories)), *ancestors)
+                   if path.exists() or path.is_symlink()}
+        topology = namespace_topology(watched)
+        identities = path_component_identities(set(watched))
+        # Every searched root's artifact paths for the modules this build may
+        # add, taken now whatever is cached. Those outside the root artifact
+        # root belong to other writers: they must keep their state through the
+        # build, and on Linux their nearest existing directory is watched for
+        # those names.
+        roots = searched_roots(tools)
+        probes = provider_probes(tools, modules, roots)
+        external: dict[Path, PathState | None] = {}
+        absent_names: dict[Path, set[str]] = {}
+        located: dict[Path, tuple[Path, Path]] = {}
+        for path, state in probes.items():
+            if path.parent not in located:
+                ancestor, rest = nearest_existing(path.parent / path.name)
+                located[path.parent] = (ancestor, rest.parent)
+            ancestor, rest = located[path.parent]
+            if (ancestor / rest / path.name).is_relative_to(build_root):
+                continue
+            external[path] = state
+            if ancestor.is_dir():
+                absent_names.setdefault(ancestor, set()).add((rest / path.name).parts[0])
+        for parent in absent_names:
+            identities.setdefault(parent, path_component_identity(parent))
+        # Every existing root artifact, stated (not hashed): an identity that
+        # changes through the build is a rewrite. A symlink's state includes the
+        # file it resolves to, which a write through the link changes.
+        states = {path: path_state(Path(path)) for paths, _ in released.values() for path in paths}
+        states.update((str(path), path_state(path)) for path in files_before)
+        # From here until every record below is saved, an interruption leaves this marker.
+        write_json(custody_directory / PENDING_PREPARATION, {"preparation": str(label), "modules": sorted(modules)})
+        with guard_path_component_moves(identities, mutable_roots=(*watched, build_root, tools.output),
+                                        child_names=absent_names):
+            result = tools.run(argv, label)
+        for path, before in external.items():
+            if path_state(path) != before:
+                raise ValueError(f"Lake preparation changed a module artifact outside the root package: {path}")
+        for path, before in topology.items():
+            after = namespace_topology([path])[path]
+            if after != before:
+                raise ValueError(f"Lake preparation moved or replaced a root namespace: {path}")
+        verify_root_custody(tools, custody)
+        for library, (paths, directories) in tools.library_inventories.items():
+            if library not in released:
+                verify_library_directories(directories, paths)
+        added: dict[str, dict[str, object]] = {}
+        for library, (paths, _) in released.items():
+            del tools.library_inventories[library]
+            current = set(standard_library_paths(library, tools))
+            removed = sorted(set(paths) - current)
+            if removed:
+                raise ValueError(f"Lake preparation removed a root-package artifact: {removed[0]}")
+            for path in current - set(paths):
+                added[path] = file_pin(Path(path), tools.file_cache)
+        namespaces_after, files_after = build_root_listing(tools, build_root)
+        removed_files = sorted(files_before - files_after)
+        if removed_files:
+            raise ValueError(f"Lake preparation removed a root-package artifact: {removed_files[0]}")
+        for namespace in sorted(namespaces_after - namespaces_before):
+            for path in standard_library_paths(namespace, tools):
+                added[path] = file_pin(Path(path), tools.file_cache)
+        for path in sorted(files_after - files_before):
+            added[str(path)] = file_pin(path, tools.file_cache)
+        for path in sorted(added):
+            if build_artifact_module(tools, path) not in modules:
+                raise ValueError(f"Lake preparation added an artifact outside its requested modules: {path}")
+        for path, before in states.items():
+            if path not in custody and path_state(Path(path)) != before:
+                rewritten[path] = file_pin(Path(path), tools.file_cache)
+        for path in sorted(rewritten):
+            own = build_artifact_module(tools, path)
+            if own not in modules:
+                raise ValueError(f"Lake preparation rewrote an artifact outside its requested modules: {path}")
+            aliases = sorted(set(artifact_module_names(path, roots)) - {own})
+            if aliases:
+                raise ValueError(f"Lake preparation rewrote an artifact visible as module {aliases[0]}: {path}")
+        shadow = shadowed_provider(tools, added, existing)
+        if shadow is not None:
+            raise ValueError(f"Lake preparation added an artifact for an existing module: {shadow}")
+        for path in sorted(added):
+            conflict = addition_conflict(tools, path, build_root, roots, probes)
+            if conflict is not None:
+                raise ValueError(f"Lake preparation added a shadowing artifact: {path} ({conflict})")
+    except (OSError, ValueError) as error:
+        # Nothing taken during a rejected attempt becomes trusted, and every
+        # later preparation is refused.
+        tools.library_inventories.clear()
+        tools.library_inventories.update(cached_before)
+        tools.lake_custody_failure.append(str(error))
+        if not (custody_directory / "rejected.json").exists():
+            write_json(custody_directory / "rejected.json", {"preparation": str(label), "error": str(error)})
+        # The rejection record now keeps the output directory closed.
+        (custody_directory / PENDING_PREPARATION).unlink(missing_ok=True)
+        raise
+    tools.root_listing["after"] = (frozenset(namespaces_after), frozenset(files_after))
+    write_json(custody_directory / "listing.json",
+               {"namespaces": sorted(path.name for path in namespaces_after),
+                "files": sorted(path.name for path in files_after)})
+    if added or rewritten:
+        # Accepted growth and rewrites are under custody from now on, as if pinned.
+        record_root_custody(tools, [*added.values(), *rewritten.values()])
+        write_json(tools.output / LAKE_GROWTH_DIRECTORY / f"{time.time_ns()}.json",
+                   {"preparation": str(label), "added": [added[path] for path in sorted(added)],
+                    "rewritten": [rewritten[path] for path in sorted(rewritten)]})
+    (custody_directory / PENDING_PREPARATION).unlink()
+    return result
+
+
+def local_dependency_closure(inventory: list[dict[str, object]], targets: set[str]) -> frozenset[str]:
+    """Requested modules and their frozen local dependencies: what Lake may build."""
+    dependencies = {str(row["module"]): row.get("direct_local_dependencies") for row in inventory}
+    closure: set[str] = set()
+    pending = list(targets)
+    while pending:
+        module = pending.pop()
+        if module in closure:
+            continue
+        closure.add(module)
+        direct = dependencies.get(module)
+        if isinstance(direct, list):
+            pending.extend(str(name) for name in direct)
+    return frozenset(closure)
+
+
+def read_lake_growth(output: Path, key: str = "added") -> dict[str, dict[str, object]]:
+    """Recorded additions (`added`) or rewrites of existing artifacts (`rewritten`), by path."""
+    growth: dict[str, dict[str, object]] = {}
+    directory = output / LAKE_GROWTH_DIRECTORY
+    for record in sorted(directory.glob("*.json")) if directory.is_dir() else ():
+        added = read_json(record).get(key, [] if key == "rewritten" else None)
+        if not isinstance(added, list):
+            raise ValueError(f"Invalid recorded Lake growth: {record}")
+        for pin in added:
+            if (not isinstance(pin, dict) or not isinstance(pin.get("path"), str) or
+                    growth.setdefault(pin["path"], pin) != pin):
+                raise ValueError(f"Invalid recorded Lake growth: {record}")
+    return growth
+
+
+def verify_recorded_growth(tools: Tools | None, saved: tuple[str, ...], current: tuple[str, ...]) -> None:
+    """Accept a saved row's input set that later recorded Lake preparations grew.
+
+    Only while saved rows are validated on resume. Every saved input must
+    remain; each new one must be a root-package artifact a recorded Lake
+    preparation added, with its recorded bytes, for a module none of the
+    saved inputs provides. The saved pins are verified by the caller.
+    """
+    growth = _recorded_lake_growth.get()
+    added = set(current) - set(saved)
+    if tools is None or growth is None or not added or not set(saved) <= set(current):
+        raise ValueError("Saved compilation input manifest has a different setup path set")
+    for path in sorted(added):
+        try:
+            recorded = path in growth and file_pin(Path(path), tools.file_cache) == growth[path]
+        except (OSError, ValueError):
+            recorded = False
+        if not recorded or build_artifact_module(tools, path) is None:
+            raise ValueError(f"Saved compilation inputs gained an unrecorded artifact: {path}")
+    shadow = shadowed_provider(tools, added, saved)
+    if shadow is not None:
+        raise ValueError(f"Saved compilation inputs gained a provider for a consumed module: {shadow}")
+    build_root = resolve_inventory_path(tools.root / ".lake/build/lib/lean")
+    roots = searched_roots(tools)
+    for path in sorted(added):
+        conflict = addition_conflict(tools, path, build_root, roots)
+        if conflict is not None:
+            raise ValueError(f"Saved compilation inputs gained a shadowing artifact: {path} ({conflict})")
+
+
 def full_import_artifacts(metadata: dict[str, object], root: Path) -> dict[str, list[list[str]]]:
     setup_input_paths(metadata, root)
     result = {}
@@ -1220,7 +1813,9 @@ def computation_paths_without_output(tools: Tools) -> Tools:
         library_inventories=tools.library_inventories,
         validated_analysis_inputs=tools.validated_analysis_inputs,
         validated_snapshot_groups=tools.validated_snapshot_groups,
-        prepared_inputs=tools.prepared_inputs, lake_manifest_bytes=tools.lake_manifest_bytes)
+        prepared_inputs=tools.prepared_inputs, root_custody=tools.root_custody,
+        lake_custody_failure=tools.lake_custody_failure, root_listing=tools.root_listing,
+        lake_manifest_bytes=tools.lake_manifest_bytes)
 
 
 def prepared_derivation(kind: str, metadata: dict[str, object], root: Path, library: Path | None,
@@ -1286,15 +1881,19 @@ def verify_input_manifest(record: object, paths: tuple[str, ...], output: Path,
                           tools: Tools | None = None) -> list[dict[str, object]]:
     cache = tools.file_cache if tools is not None else None
     path = verify_file_pin(record, output, cache)
+    grown = False
     cached = tools.input_manifests.get(paths) if tools is not None else None
     if cached is not None and cached[0] == record:
         files = cached[1]
     else:
         files = read_json(path).get("files")
         if (not isinstance(files, list) or
-                any(not isinstance(row, dict) or not isinstance(row.get("path"), str) for row in files) or
-                tuple(row["path"] for row in files) != paths):
+                any(not isinstance(row, dict) or not isinstance(row.get("path"), str) for row in files)):
             raise ValueError("Saved compilation input manifest has a different setup path set")
+        saved_paths = tuple(row["path"] for row in files)
+        if saved_paths != paths:
+            verify_recorded_growth(tools, saved_paths, paths)
+            grown = True
     prepared = active_prepared_inputs(tools)
     for receipt in files:
         if prepared is None:
@@ -1302,12 +1901,14 @@ def verify_input_manifest(record: object, paths: tuple[str, ...], output: Path,
         else:
             prepared.verify_pin(receipt)
     if tools is not None:
+        record_root_custody(tools, files)
         for inventory_paths, directories in tools.library_inventories.values():
             if prepared is None:
                 verify_library_directories(directories, inventory_paths)
             else:
                 prepared.verify_directories(directories)
-        tools.input_manifests[paths] = (cast(dict[str, object], record), files)
+        if not grown:
+            tools.input_manifests[paths] = (cast(dict[str, object], record), files)
     return files
 
 
@@ -1319,6 +1920,7 @@ def pin_input_paths(tools: Tools, paths: tuple[str, ...]) -> dict[str, object]:
         verify_input_manifest(cached[0], paths, tools.output, tools)
         return cached[0]
     files = [file_pin(Path(path), tools.file_cache) for path in paths]
+    record_root_custody(tools, files)
     for inventory_paths, directories in tools.library_inventories.values():
         verify_library_directories(directories, inventory_paths)
     value = {"files": files}
@@ -2747,7 +3349,8 @@ def path_component_identities(paths: set[Path],
 @contextmanager
 def guard_path_component_moves(identities: dict[Path, SourceIdentity],
                                mutable_roots: Iterable[Path] = (),
-                               inventory_roots: Iterable[Path] = ()) -> Iterator[None]:
+                               inventory_roots: Iterable[Path] = (),
+                               child_names: dict[Path, set[str]] | None = None) -> Iterator[None]:
     """Reject transient directory changes, using strict stamps for unreadable directories.
 
     Child create/delete/move events are monitored only for immutable
@@ -2760,8 +3363,10 @@ def guard_path_component_moves(identities: dict[Path, SourceIdentity],
     `inventory_roots` -- directories whose complete contents
     constitute a pinned inventory and where every child event
     rejects -- a child event rejects only when its name is the next
-    component of a guarded path, so unrelated sibling activity beside
-    the project or input tree does not abort compilation/snapshots.
+    component of a guarded path, or one `child_names` lists for that
+    directory (a path that must stay absent), so unrelated sibling
+    activity beside the project or input tree does not abort
+    compilation/snapshots.
     """
     if sys.platform != "linux":
         yield
@@ -2799,6 +3404,8 @@ def guard_path_component_moves(identities: dict[Path, SourceIdentity],
             if parent in identities:
                 relevant_children.setdefault(parent, set()).add(child.name)
             child = parent
+    for directory, names in (child_names or {}).items():
+        relevant_children.setdefault(directory, set()).update(names)
     libc = ctypes.CDLL(None, use_errno=True)
     try:
         initialize, add_watch = libc.inotify_init1, libc.inotify_add_watch
@@ -3733,7 +4340,9 @@ def _verify_saved_candidate(result: dict[str, object], output: Path,
             raise ValueError("Saved single snapshot has a shared loaded-module scope")
 
 
-def analysis_inputs(tools: Tools, rows: list[dict[str, object]]) -> dict[str, object]:
+def analysis_inputs(tools: Tools, rows: list[dict[str, object]],
+                    recorded: object = None) -> dict[str, object]:
+    """Current Shake inputs; on resume, a recorded input manifest is checked, not repinned."""
     run = tools.output / "run.json"
     compiled_inputs = {}
     for row in rows:
@@ -3744,12 +4353,23 @@ def analysis_inputs(tools: Tools, rows: list[dict[str, object]]) -> dict[str, ob
         if metadata.get("name") != row["module"] or metadata.get("imports") is not None:
             raise ValueError("Shake compilation setup changes the module or source imports")
         library = standard_library_root(tools)
+        saved_manifest = (cast(dict[str, dict[str, object]], recorded["compiled_inputs"]).get(str(relative), {})
+                          .get("input_manifest") if isinstance(recorded, dict) and
+                          isinstance(recorded.get("compiled_inputs"), dict) else None)
+        if _recorded_lake_growth.get() is not None and isinstance(saved_manifest, dict):
+            verify_input_manifest(saved_manifest,
+                                  compilation_input_paths(metadata, tools.root, library, tools),
+                                  tools.output, tools)
+            input_manifest = saved_manifest
+        else:
+            input_manifest = pin_setup_inputs(tools, metadata)
+        artifacts = artifact_receipt(tools.root / ".lake/build/lib/lean", relative, cache=tools.file_cache)
+        record_root_custody(tools, artifacts)
         compiled_inputs[str(relative)] = {
             "setup": setup_receipt,
-            "artifacts": artifact_receipt(tools.root / ".lake/build/lib/lean", relative,
-                                          cache=tools.file_cache),
+            "artifacts": artifacts,
             "standard_library_root": str(library) if library is not None else None,
-            "input_manifest": pin_setup_inputs(tools, metadata),
+            "input_manifest": input_manifest,
         }
         if file_pin(setup, tools.file_cache) != setup_receipt:
             raise ValueError("Shake compilation setup changed while capturing inputs")
@@ -3806,7 +4426,7 @@ def check_shake_inputs(tools: Tools, inputs: object) -> list[dict[str, object]]:
         raise ValueError("Saved Shake inputs contain duplicate module identities")
     validate_inventory_sources(tools.root, rows, tools.file_cache)
     with using_prepared_inputs(tools):
-        current = analysis_inputs(tools, rows)
+        current = analysis_inputs(tools, rows, inputs)
     if current != inputs:
         raise ValueError("Saved Shake proposal inputs changed")
     return rows
@@ -4205,10 +4825,11 @@ def optimize_one(tools: Tools, row: dict[str, object], native: dict[str, object]
     try:
         recover_source_edit(tools.root, tools.output / "transaction.json")
         header = decode_header(native, original)
-        build = prepared_build or tools.run(
-            tools.lake_command("build", "+" + module),
-            directory / "baseline-build",
-        )
+        # Without the batch's frozen dependency graph, only the target's own
+        # artifacts may be added.
+        build = prepared_build or run_lake_preparation(
+            tools, tools.lake_command("build", "+" + module), directory / "baseline-build",
+            frozenset({module}))
         result["baseline_build"] = build
         require_success(build)
         artifact_receipt(tools.root / ".lake/build/lib/lean", relative)
@@ -4422,6 +5043,8 @@ def optimize_batch(tools: Tools, rows: list[dict[str, object]],
 
 SourceIdentity = tuple[int, int, int, int, int, int]
 SourceCache = dict[str, tuple[str, SourceIdentity]]
+# A path's own `lstat` identity and that of the file it resolves to (see `path_state`).
+PathState = tuple[SourceIdentity, SourceIdentity | None]
 
 
 def source_identity(path: Path) -> SourceIdentity:
@@ -4712,7 +5335,8 @@ def main() -> int:
             (options.max_batches is not None and options.max_batches <= 0)):
         parser.error("A pinned Lake executable and a positive timeout are required")
     output.mkdir(parents=True, exist_ok=True)
-    if ((output / "run.json").exists() or (output / "results.jsonl").exists()) and not options.resume:
+    if (any((output / name).exists() for name in ("run.json", "results.jsonl", "inputs", LAKE_GROWTH_DIRECTORY,
+                                                   LAKE_CUSTODY_DIRECTORY)) and not options.resume):
         parser.error("Output already contains a run; use --resume or a new directory")
     def interrupted(signum: int, frame: object) -> None:
         raise KeyboardInterrupt(f"Received signal {signum}")
@@ -4724,6 +5348,8 @@ def main() -> int:
         recover_source_edit(root, output / "transaction.json")
         if (output / "results.jsonl").exists() and not (output / "run.json").exists():
             raise ValueError("Refusing a result journal without its original run identity")
+        # Before any child process: an interrupted preparation's effects were never checked.
+        refuse_interrupted_preparation(output)
         source_cache: SourceCache = {}
         inventory = load_inventory(root, options.manifest, [], source_cache)
         rows = select_inventory(inventory, options.files)
@@ -4732,6 +5358,14 @@ def main() -> int:
         time_binary = options.time.absolute()
         verify_resume_executables(output / "run.json", lake, lean, time_binary)
         verify_resume_thread_settings(output / "run.json", options.lean_threads, options.lake_jobs)
+        # Before any child process, and whatever the journal holds: every root-package artifact an
+        # earlier invocation recorded as Lake growth or pinned as a compilation input must still have
+        # its receipt. The identities hashed here become this process's custody below.
+        recorded_growth = read_lake_growth(output)
+        saved_receipts = saved_root_receipts(root, output, recorded_growth, read_lake_growth(output, "rewritten"))
+        if saved_receipts and not (output / "run.json").exists():
+            raise ValueError("Refusing saved artifact receipts without their original run identity")
+        verify_saved_root_receipts(saved_receipts, source_cache)
         try:
             version = subprocess.check_output([str(time_binary), "--version"], stderr=subprocess.STDOUT)
         except (OSError, subprocess.CalledProcessError) as error:
@@ -4772,6 +5406,11 @@ def main() -> int:
         # graph (covers a manifest rename/restore during `lake env`,
         # which before/after byte checks cannot observe).
         validate_captured_environment(tools)
+        record_root_custody(tools, saved_receipts.values())
+        unheld = sorted(set(saved_receipts) - set(tools.root_custody))
+        if unheld:
+            raise ValueError(f"Saved root-package artifact changed before custody was taken: {unheld[0]}")
+        verify_root_custody(tools, {path: tools.root_custody[path] for path in saved_receipts})
         compiler_binary = (Path(environment.get("LEAN_SYSROOT", str(lean.parent.parent))) /
                            "bin/lean").resolve()
         lake_launcher = lake.resolve()
@@ -4816,14 +5455,18 @@ def main() -> int:
         if options.resume and journal_path.exists():
             completed = read_journal(journal_path, cast(dict[str, object], identity["sources"]))
             modules_by_path = {str(row["path"]): row["module"] for row in rows}
-            with analysis_validation_phase(tools):
-                for name, result in completed.items():
-                    if result.get("module") != modules_by_path[name]:
-                        raise ValueError("Result journal module identity differs from the frozen manifest")
-                    if result["status"] == "verified":
-                        verify_saved_candidate(result, output, tools)
-                    elif result["status"] == "no_change":
-                        verify_saved_no_change(result, tools)
+            growth = _recorded_lake_growth.set(recorded_growth)
+            try:
+                with analysis_validation_phase(tools):
+                    for name, result in completed.items():
+                        if result.get("module") != modules_by_path[name]:
+                            raise ValueError("Result journal module identity differs from the frozen manifest")
+                        if result["status"] == "verified":
+                            verify_saved_candidate(result, output, tools)
+                        elif result["status"] == "no_change":
+                            verify_saved_no_change(result, tools)
+            finally:
+                _recorded_lake_growth.reset(growth)
         readonly = READONLY_STATUSES
         with journal_path.open("a", encoding="utf-8") as journal:
             processed_batches = 0
@@ -4856,8 +5499,14 @@ def main() -> int:
                 if eligible:
                     preparation = directory / "preparations" / str(time.time_ns())
                     preparation.mkdir(parents=True, exist_ok=False)
-                    build = tools.run(tools.lake_command(
-                        "build", *("+" + str(row["module"]) for row in eligible)), preparation / "prepare")
+                    try:
+                        build = run_lake_preparation(tools, tools.lake_command(
+                            "build", *("+" + str(row["module"]) for row in eligible)), preparation / "prepare",
+                            local_dependency_closure(inventory, {str(row["module"]) for row in eligible}))
+                    except ValueError as error:
+                        for row in eligible:
+                            failures[str(row["path"])] = str(error)
+                        eligible = []
                     for row in eligible:
                         name = str(row["path"])
                         try:

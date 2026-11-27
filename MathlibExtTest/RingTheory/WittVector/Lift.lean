@@ -16,7 +16,7 @@ universe u
 
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_constantCoeff
+private theorem exactSource_constantCoeff
     (p : ℕ) [Fact p.Prime] (k : Type u) [Field k] [CharP k p] [PerfectRing k p]
     (B : Type u) [CommRing B] (ρ : B →+* k) (hρ : Function.Surjective ρ)
     (hnil : IsNilpotent (RingHom.ker ρ)) :
@@ -24,7 +24,7 @@ theorem exactSource_constantCoeff
   WittVector.existsUnique_ringHom_comp_eq_constantCoeff_of_isNilpotent_ker p k B ρ hρ hnil
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_surjective
+private theorem exactSource_surjective
     (p : ℕ) [Fact p.Prime] (k : Type u) [Field k] [CharP k p] [PerfectRing k p]
     (B B₀ : Type u) [CommRing B] [CommRing B₀] (q : B →+* B₀) (hq : Function.Surjective q)
     (hsq : ∀ s t : B, q s = 0 → q t = 0 → s * t = 0) (hpB : IsNilpotent (p : B))
@@ -34,7 +34,7 @@ theorem exactSource_surjective
     p k B B₀ q hq hsq hpB ψ₀
 
 /-- Higher-universe consumer in `Type 1`. -/
-theorem exactSource_constantCoeff_type1
+private theorem exactSource_constantCoeff_type1
     (p : ℕ) [Fact p.Prime] (k : Type 1) [Field k] [CharP k p] [PerfectRing k p]
     (B : Type 1) [CommRing B] (ρ : B →+* k) (hρ : Function.Surjective ρ)
     (hnil : IsNilpotent (RingHom.ker ρ)) :

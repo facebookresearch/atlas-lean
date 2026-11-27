@@ -23,7 +23,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Fintype.Pi
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.LevelFiveEulerDissection
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProduct
 
 open PowerSeries
@@ -140,39 +140,6 @@ public theorem_wanted frobeniusPartitionRepCount_four_two_dissection :
     𝔣 1 ^ 6 * 𝔣 4 ^ 2 * 𝔣 5 ^ 2 *
         PowerSeries.mk (fun n => (frobeniusPartitionRepCount 4 (2 * n + 1) : ℤ)) =
       𝔣 2 ^ 7 * 𝔣 10 ^ 2
-
-/-- **A 2-dissection of the reciprocal Euler product of levels 1 and 5.** Let
-$f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring of integer power series in $q$. Then
-$$f_2^{10} f_8^2 f_{10}^3 f_{20} = f_1^3 f_2^3 f_4^4 f_5 f_8^2 f_{10}^2 f_{20} -
-2q f_1^3 f_2 f_4^6 f_5 f_8^2 f_{20}^3 + 5q f_1^3 f_2^2 f_4^3 f_5 f_8^2 f_{10}^3 f_{20}^2 +
-2q^2 f_1^3 f_4^9 f_5 f_{10} f_{40}^2.$$
-
-Dividing both sides by $f_1^3 f_5 f_2^{10} f_8^2 f_{10}^3 f_{20}$ gives the form in the source,
-$1/(f_1^3 f_5) = f_4^4/(f_2^7 f_{10}) - 2q f_4^6 f_{20}^2/(f_2^9 f_{10}^3) +
-5q f_4^3 f_{20}/f_2^8 + 2q^2 f_4^9 f_{40}^2/(f_2^{10} f_8^2 f_{10}^2 f_{20})$.
-
-Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17, Lemma 4, eq. (15)
-(`integers-2025-A17-lem-4`). -/
-public theorem_wanted one_div_f1_cube_f5_two_dissection :
-    𝔣 2 ^ 10 * 𝔣 8 ^ 2 * 𝔣 10 ^ 3 * 𝔣 20 =
-      𝔣 1 ^ 3 * 𝔣 2 ^ 3 * 𝔣 4 ^ 4 * 𝔣 5 * 𝔣 8 ^ 2 * 𝔣 10 ^ 2 * 𝔣 20
-        - 2 * X * 𝔣 1 ^ 3 * 𝔣 2 * 𝔣 4 ^ 6 * 𝔣 5 * 𝔣 8 ^ 2 * 𝔣 20 ^ 3
-        + 5 * X * 𝔣 1 ^ 3 * 𝔣 2 ^ 2 * 𝔣 4 ^ 3 * 𝔣 5 * 𝔣 8 ^ 2 * 𝔣 10 ^ 3 * 𝔣 20 ^ 2
-        + 2 * X ^ 2 * 𝔣 1 ^ 3 * 𝔣 4 ^ 9 * 𝔣 5 * 𝔣 10 * 𝔣 40 ^ 2
-
-/-- **A level-10 Euler-product identity.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring of
-integer power series in $q$. Then
-$f_2^5 f_5^2 = f_1^5 f_5 f_{10} + 5q f_1^2 f_2 f_{10}^4$.
-
-Dividing both sides by $f_1^5 f_2^2 f_{10}^2$ gives the form in the source,
-$f_2^3 f_5^2/(f_1^5 f_{10}^2) = f_5/(f_2^2 f_{10}) + 5q f_{10}^2/(f_1^3 f_2)$.
-
-Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17, Lemma 5, eq. (17)
-(`integers-2025-A17-lem-5`). -/
-public theorem_wanted f2_cube_f5_sq_quotient_identity :
-    𝔣 2 ^ 5 * 𝔣 5 ^ 2 = 𝔣 1 ^ 5 * 𝔣 5 * 𝔣 10 + 5 * X * 𝔣 1 ^ 2 * 𝔣 2 * 𝔣 10 ^ 4
 
 end
 
