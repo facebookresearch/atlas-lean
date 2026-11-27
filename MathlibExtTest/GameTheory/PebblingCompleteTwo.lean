@@ -30,3 +30,14 @@ example : IsP (pebblingGame (⊤ : SimpleGraph (Fin 2)) 1) ![2, 1] := by
   by_contra hn
   exact (by decide : ¬ 2 ≡ 1 [MOD 3])
     (((pebbling_completeTwo_isN_iff ![2, 1]).2 (by decide)).1 hn)
+
+-- Equal nonterminal piles witness failure of the all-N condition at total six.
+example : IsP (pebblingGame (⊤ : SimpleGraph (Fin 2)) 1) ![3, 3] := by
+  by_contra hn
+  exact ((pebbling_completeTwo_isN_iff ![3, 3]).1 (by decide)).1 hn (by decide)
+
+-- The public threshold theorem excludes zero and both parities of positive totals.
+example : 0 ∉ pebblingAllNTotals (⊤ : SimpleGraph (Fin 2)) 1 ∧
+    6 ∉ pebblingAllNTotals (⊤ : SimpleGraph (Fin 2)) 1 ∧
+    3 ∉ pebblingAllNTotals (⊤ : SimpleGraph (Fin 2)) 1 := by
+  simp [pebblingAllNTotals_completeTwo_eq_empty]

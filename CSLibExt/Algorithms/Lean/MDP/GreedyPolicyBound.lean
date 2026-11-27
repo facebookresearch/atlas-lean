@@ -26,6 +26,9 @@ acted on by one-step lookahead the constant is `2 γ / (1 - γ)`:
 * `optimalValue_sub_policyValue_greedy_valueIteration_le`: after `n` steps of value iteration
   from `V`, the greedy policy is within `2 γ / (1 - γ) * dist V (T V) * γ ^ n / (1 - γ)` of
   optimal in every state (compare AJKS Theorem 1.12, stated for Q-value iteration).
+* `dist_optimalValue_policyValue_le_of_greedy`: any deterministic policy `π` with `T_π W = T W`,
+  whatever its choice among tied maximizing actions, satisfies
+  `‖V* - V^π‖∞ ≤ 2 γ / (1 - γ) * ‖V* - W‖∞` (Munos 2007, equation (2.3)).
 -/
 
 @[expose] public section
@@ -85,5 +88,35 @@ theorem optimalValue_sub_policyValue_greedy_valueIteration_le (V : S → ℝ) (n
   refine (optimalValue_sub_policyValue_greedy_le hM hγ0 hγ1 (fun s' => ?_) s).2
   rw [← Real.dist_eq]
   exact (dist_le_pi_dist _ _ s').trans hd
+
+/-- **Sup-norm loss for any greedy policy** (Munos 2007, equation (2.3)). For a stochastic MDP
+with finite nonempty state and action sets, real rewards and `0 ≤ γ < 1`, let `W` be a value
+estimate and `π` a deterministic stationary policy such that `T_π W = T W`. Then the sup-norm
+loss `‖V* - V^π‖∞` is at most `2 γ / (1 - γ) * ‖V* - W‖∞`. The equality permits any choice
+among tied maximizing actions. -/
+lemma dist_optimalValue_policyValue_le_of_greedy [Nonempty S] (W : S → ℝ) (π : S → A)
+    (hgreedy : policyBellman M γ π W = bellman M γ W) :
+    dist (optimalValue M γ hM hγ0 hγ1) (policyValue M γ hM hγ0 hγ1 π) ≤
+      2 * γ / (1 - γ) * dist (optimalValue M γ hM hγ0 hγ1) W := by
+  let Vstar := optimalValue M γ hM hγ0 hγ1
+  let Vπ := policyValue M γ hM hγ0 hγ1 π
+  have hT := (bellman_contracting hM hγ0 hγ1).dist_le_mul Vstar W
+  have hπ := (policyBellman_contracting hM hγ0 hγ1 π).dist_le_mul W Vπ
+  rw [Real.coe_toNNReal γ hγ0] at hT hπ
+  have hW : dist W Vπ ≤ dist Vstar W + dist Vstar Vπ := by
+    simpa only [dist_comm W Vstar] using dist_triangle W Vstar Vπ
+  have h : dist Vstar Vπ ≤ γ * dist Vstar W + γ * (dist Vstar W + dist Vstar Vπ) := calc
+    dist Vstar Vπ = dist (bellman M γ Vstar) (policyBellman M γ π Vπ) := by
+      rw [show bellman M γ Vstar = Vstar from bellman_optimalValue hM hγ0 hγ1,
+        show policyBellman M γ π Vπ = Vπ from policyBellman_policyValue hM hγ0 hγ1 π]
+    _ ≤ dist (bellman M γ Vstar) (bellman M γ W) +
+        dist (policyBellman M γ π W) (policyBellman M γ π Vπ) := by
+      rw [hgreedy]
+      exact dist_triangle _ _ _
+    _ ≤ γ * dist Vstar W + γ * dist W Vπ := add_le_add hT hπ
+    _ ≤ _ := add_le_add (le_refl _) (mul_le_mul_of_nonneg_left hW hγ0)
+  change dist Vstar Vπ ≤ 2 * γ / (1 - γ) * dist Vstar W
+  rw [div_mul_eq_mul_div, le_div_iff₀ (sub_pos.mpr hγ1)]
+  linarith only [h]
 
 end Cslib.Algorithms.Lean.MarkovDecision

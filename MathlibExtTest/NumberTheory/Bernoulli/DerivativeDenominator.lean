@@ -21,3 +21,8 @@ example : bernoulliDiffDenominatorLargePart 1 = 1 ∧ bernoulliDiffDenominatorCo
 example : bernoulliDiffDenominatorLargePart 21 = 55 ∧
     bernoulliDiffDenominatorCoprimePart 21 = 110 := by
   decide
+
+-- Since `B₁'(x) = 1` is integral, the denominator of `B₀(x)` divides `1`.
+example : polynomialDenominator (Polynomial.bernoulli 0) ∣ 0 + 1 :=
+  (succ_mem_bernoulliIntegralDerivativeIndices_one_iff 0).mp
+    one_mem_bernoulliIntegralDerivativeIndices_one
