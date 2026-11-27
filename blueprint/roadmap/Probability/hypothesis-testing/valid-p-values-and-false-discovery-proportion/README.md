@@ -8,6 +8,8 @@
 - [False discovery proportion](false-discovery-proportion.md)
 - [False discovery proportion is nonnegative](false-discovery-proportion-nonneg.md)
 - [False discovery proportion is at most one](false-discovery-proportion-le-one.md)
+- [The step-up index is a qualifying index](step-up-index-mem.md)
+- [The step-up index as a finite supremum](step-up-index-eq-sup.md)
 - [Upper tail of a measure on the natural numbers](upper-tail.md)
 - [Exact upper-tail p-value](upper-tail-pvalue.md)
 - [Upper tails decrease with the cutoff](upper-tail-antitone.md)

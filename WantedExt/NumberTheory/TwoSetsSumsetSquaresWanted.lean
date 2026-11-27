@@ -31,50 +31,27 @@ sums in the paper's proof.  The forward part for quintuples,
 `exists_isSemiMagicRoots_f_of_pairwiseSumsSquares_quintuple`, is
 proved in
 `MathlibExt.NumberTheory.TwoSetsSumsetSquaresExistsIsSemiMagicRootsFOfPairwiseSumsSquaresQuintuple`.
+The statement
+`exists_isSemiMagicRoots_gh_of_pairwiseSumsSquares_quadruple` is
+proved in
+`MathlibExt.NumberTheory.TwoSetsSumsetSquaresExistsIsSemiMagicRootsGhOfPairwiseSumsSquaresQuadruple`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresExistsIsSemiMagicRootsFOfPairwiseSumsSquaresQuintuple
+public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresExistsIsSemiMagicRootsGhOfPairwiseSumsSquaresQuadruple
+public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresPairwiseSumsSquaresTripleFamily31
 public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresQuadruple
 public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresQuintuple
 public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresTriple
-public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresPairwiseSumsSquaresTripleFamily31
-public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresExistsIsSemiMagicRootsFOfPairwiseSumsSquaresQuintuple
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
-
-/-- **Quadruple extensions come from two further semi-magic squares.** Let $E = (e_{ij})$ be a
-$3 \times 3$ integer matrix whose squared entries $e_{ij}^2$ have all three row sums and all three
-column sums equal to one common integer. Put $(a_1, a_2, a_3) = (e_{13}^2, e_{31}^2, e_{22}^2)$ and
-$(b_1, b_2, b_3) = (0, e_{21}^2 - e_{13}^2, e_{11}^2 - e_{22}^2)$, and let $a_4, b_4$ be integers
-such that every sum $a_i + b_j$ with $1 \le i, j \le 4$ is the square of an integer. Then there
-are $3 \times 3$ integer matrices $G = (g_{ij})$ and $H = (h_{ij})$, each of whose squared entries
-have all row sums and all column sums equal to one common integer, such that
-$g_{12}^2 = e_{12}^2$, $g_{13}^2 = e_{13}^2$, $g_{21}^2 = e_{21}^2$, $g_{31}^2 = e_{31}^2$,
-$h_{11}^2 = e_{11}^2$, $h_{22}^2 = e_{22}^2$, $h_{12}^2 = g_{11}^2$, $h_{31}^2 = g_{22}^2$,
-$a_4 = g_{22}^2$ and $b_4 = g_{11}^2 - g_{22}^2$.
-
-Source: Ajai Choudhry, "Two Sets of Integers Such That All
-Elements of the Sumset of the Two Sets Are Perfect Squares",
-Lemma 2. -/
-theorem_wanted exists_isSemiMagicRoots_gh_of_pairwiseSumsSquares_quadruple
-    (e : Fin 3 → Fin 3 → ℤ) (he : IsSemiMagicRoots e)
-    (a4 b4 : ℤ)
-    (h : PairwiseSumsSquares
-      ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2, a4]
-      ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2, b4]) :
-    ∃ g h : Fin 3 → Fin 3 → ℤ,
-      IsSemiMagicRoots g ∧ IsSemiMagicRoots h ∧
-        e 0 1 ^ 2 = g 0 1 ^ 2 ∧ e 0 2 ^ 2 = g 0 2 ^ 2 ∧
-          e 1 0 ^ 2 = g 1 0 ^ 2 ∧ e 2 0 ^ 2 = g 2 0 ^ 2 ∧
-          e 0 0 ^ 2 = h 0 0 ^ 2 ∧ e 1 1 ^ 2 = h 1 1 ^ 2 ∧
-          g 0 0 ^ 2 = h 0 1 ^ 2 ∧ g 1 1 ^ 2 = h 2 0 ^ 2 ∧
-          a4 = g 1 1 ^ 2 ∧ b4 = g 0 0 ^ 2 - g 1 1 ^ 2
 
 /-- **A seven-parameter family of five and three rationals with square pairwise sums.** For
 rational numbers $f, g, m, u_1, u_2, v_1, v_2$, put
