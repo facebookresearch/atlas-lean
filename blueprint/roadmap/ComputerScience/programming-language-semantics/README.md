@@ -13,6 +13,7 @@ Operational and denotational semantics of programming languages and correctness 
 - [Liveness and dead-assignment elimination for IMP](liveness-and-dead-assignment-elimination-for-imp/README.md)
 - [Nominal sets](nominal-sets/README.md)
 - [Operational semantics of IMP](operational-semantics-of-imp/README.md)
+- [Coinductive big-step semantics](coinductive-big-step-semantics/README.md)
 - [Compiling IMP to a stack machine](compiling-imp-to-a-stack-machine/README.md)
 - [Constant folding for IMP](constant-folding-for-imp/README.md)
 - [Denotational semantics of IMP](denotational-semantics-of-imp/README.md)
