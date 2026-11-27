@@ -289,6 +289,15 @@ $p_1^k + \cdots + p_m^k \le x$. Then $M(x, k)^2 / 2 \le s_k(x)$ for every $x$, a
 real $\varepsilon > 0$, for all sufficiently large $x$,
 $(1 - \varepsilon) (k + 1)^2 x^{2/(k+1)} / \bigl(2 (\log x)^{2k/(k+1)}\bigr) \le M(x, k)^2 / 2$.
 
+The finite bound strengthens the bound $\binom{M(x, k)}{2} \le s_k(x)$ printed in Theorem 2 of the
+source: $s_k(x)$ counts all $\binom{M(x, k) + 1}{2}$ blocks $p_i^k + \cdots + p_j^k$ with
+$1 \le i \le j \le M(x, k)$, singletons included, and
+$\binom{M(x, k)}{2} \le M(x, k)^2 / 2 \le \binom{M(x, k) + 1}{2}$. The asymptotic bound is
+one-sided. It amounts to saying that for every $\delta > 0$, for all sufficiently large $x$,
+$M(x, k) \ge (1 - \delta) (k + 1) x^{1/(k+1)} / (\log x)^{k/(k+1)}$: one direction of the
+asymptotic equivalence $M(x, k) \sim (k + 1) x^{1/(k+1)} / (\log x)^{k/(k+1)}$ of Lemma 2 of the
+source, without the matching upper bound on $M(x, k)$.
+
 Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
 Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Theorem 2
 (`integers-2024-A4-thm-2`). -/

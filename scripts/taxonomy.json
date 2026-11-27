@@ -12808,7 +12808,6 @@
   "MathlibExt/NumberTheory/ConsecutivePolynomial": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Largest prime factors of consecutive integers"},
   "MathlibExt/NumberTheory/ConsecutivePrime": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Prime gaps"},
   "MathlibExt/NumberTheory/ConsecutivePrimePowerSums": {"to": "NumberTheory/additive-number-theory", "title": "Sums of powers of consecutive primes"},
-  "MathlibExt/NumberTheory/ConsecutivePrimePowerSumsLowerBound": {"to": "NumberTheory/additive-number-theory", "title": "Sums of powers of consecutive primes"},
   "MathlibExt/NumberTheory/ConsecutiveSquares": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Sums of consecutive squares"},
   "MathlibExt/NumberTheory/ConstantTermLinearRepresentation": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Constant terms of powers of Laurent polynomials"},
   "MathlibExt/NumberTheory/ContinuedFractionFolding": {"to": "NumberTheory/continued-fractions-expansions", "title": "Folding lemma and paperfolding continued fractions"},
