@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.Fin
@@ -310,5 +311,104 @@ theorem sum_rascalGen_four_mul_add_three (j : ℕ) :
   have half : (words.filter (wordAscents · ≤ j)).card = 2 ^ (4 * j + 2) := by omega
   rw [← Nat.cast_sum]
   exact_mod_cast (sum_rascalGen_eq_card j (4 * j + 3)).trans half
+
+-- Reverse the order of the letters and exchange 0 and 1.
+private def reverseComplement (w : List ℕ) : List ℕ :=
+  (w.map (Equiv.swap 0 1)).reverse
+
+private theorem reverseComplement_involutive : Function.Involutive reverseComplement := by
+  intro w
+  simp [reverseComplement, List.map_map, Function.comp_def]
+
+private theorem wordAscents_append_pair (w : List ℕ) (a b : ℕ) :
+    wordAscents (w ++ [a, b]) = wordAscents (w ++ [a]) + (if a < b then 1 else 0) := by
+  induction w using wordAscents.induct <;> simp_all [wordAscents, Nat.add_assoc]
+
+private theorem reverseComplement_cons (a : ℕ) (w : List ℕ) :
+    reverseComplement (a :: w) = reverseComplement w ++ [Equiv.swap 0 1 a] := by
+  simp only [reverseComplement, List.map_cons, List.reverse_cons]
+
+-- Reversing an adjacent pair and swapping its bits sends 01 to 01.
+private theorem wordAscents_reverseComplement (w : List ℕ) (hw : ∀ x ∈ w, x = 0 ∨ x = 1) :
+    wordAscents (reverseComplement w) = wordAscents w := by
+  induction w using wordAscents.induct with
+  | case1 => rfl
+  | case2 => rfl
+  | case3 a b t ih =>
+    rw [reverseComplement_cons a, reverseComplement_cons b, List.append_assoc,
+      List.singleton_append, wordAscents_append_pair, ← reverseComplement_cons,
+      ih (fun x hx => hw x (List.mem_cons_of_mem _ hx)), wordAscents]
+    obtain rfl | rfl := hw a (by simp)
+    all_goals obtain rfl | rfl := hw b (by simp)
+    all_goals simp [Nat.add_comm]
+
+private theorem count_reverseComplement (w : List ℕ) (hw : ∀ x ∈ w, x = 0 ∨ x = 1) :
+    (reverseComplement w).count 1 = w.length - w.count 1 := by
+  have hcount : (w.map (Equiv.swap 0 1)).count 1 = w.count 0 := by
+    simpa only [Equiv.swap_apply_left] using
+      List.count_map_of_injective w (Equiv.swap 0 1) (Equiv.swap 0 1).injective 0
+  have hzero : w.count 0 = w.countP (fun x => ¬ (x == 1)) := by
+    rw [List.count_eq_countP]
+    apply List.countP_congr
+    intro x hx
+    obtain rfl | rfl := hw x hx <;> decide
+  have hsum := List.length_eq_countP_add_countP (· == 1) (l := w)
+  rw [← List.count_eq_countP, ← hzero] at hsum
+  rw [reverseComplement, List.count_reverse, hcount]
+  omega
+
+private def reverseComplementWord {j k n k' : ℕ} (w : RascalWord j k n) (h : k' = n - k) :
+    RascalWord j k' n := by
+  obtain ⟨w, hlen, hbinary, hcount, hasc⟩ := w
+  refine ⟨reverseComplement w, ?_, ?_, ?_, ?_⟩
+  · simpa [reverseComplement] using hlen
+  · intro x hx
+    rw [reverseComplement, List.mem_reverse, List.mem_map] at hx
+    obtain ⟨a, ha, rfl⟩ := hx
+    obtain rfl | rfl := hbinary a ha <;> simp
+  · rw [count_reverseComplement w hbinary, hlen, hcount, h]
+  · rwa [wordAscents_reverseComplement w hbinary]
+
+private theorem rascalGen_reflect (j k n : ℕ) (hk : k ≤ n) :
+    rascalGen j (n - k) n = rascalGen j k n := by
+  apply Eq.symm
+  exact Nat.card_congr
+    { toFun := fun w => reverseComplementWord w rfl
+      invFun := fun w => reverseComplementWord w (by omega)
+      left_inv := fun w => Subtype.ext (reverseComplement_involutive w.1)
+      right_inv := fun w => Subtype.ext (reverseComplement_involutive w.1) }
+
+/-- **Alternating row sums of generalized Rascal numbers vanish on odd rows.** Write
+$R^{(j)}_{n,k}$ for the number of binary words of length $n$ with exactly $k$ ones and at most
+$j$ ascents (positions where a $0$ is immediately followed by a $1$). For all natural numbers
+$j$ and $m$, $\sum_{k=0}^{2m+1} (-1)^k R^{(j)}_{2m+1,k} = 0$.
+
+Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
+Interpretations of Rascal Numbers", Theorem 23. -/
+theorem sum_rascalGen_alternating_odd (j m : ℕ) :
+    ∑ k ∈ Finset.range (2 * m + 2),
+        (-1 : ℤ) ^ k * (rascalGen j k (2 * m + 1) : ℤ) = 0 := by
+  let n := 2 * m + 1
+  let f (k : ℕ) : ℤ := (-1 : ℤ) ^ k * (rascalGen j k n : ℤ)
+  have hodd : (-1 : ℤ) ^ n = -1 := by
+    simp [n, pow_succ, pow_mul]
+  have hpair (k : ℕ) (hk : k ≤ n) : f (n - k) = -f k := by
+    have hsign : (-1 : ℤ) ^ (n - k) = -((-1 : ℤ) ^ k) := by
+      calc
+        (-1 : ℤ) ^ (n - k) = (-1) ^ n * (-1) ^ k := by
+          rw [← pow_add, show n + k = n - k + 2 * k by omega, pow_add, pow_mul,
+            neg_one_sq, one_pow, mul_one]
+        _ = _ := by rw [hodd, neg_one_mul]
+    simp only [f, rascalGen_reflect j k n hk, hsign, neg_mul]
+  change (∑ k ∈ Finset.range (n + 1), f k) = 0
+  have hcancel : (∑ k ∈ Finset.range (n + 1), f k) = -(∑ k ∈ Finset.range (n + 1), f k) :=
+    calc
+      _ = ∑ k ∈ Finset.range (n + 1), f (n - k) := by
+        simpa only [Nat.add_sub_cancel] using (Finset.sum_range_reflect f (n + 1)).symm
+      _ = ∑ k ∈ Finset.range (n + 1), -f k := by
+        refine Finset.sum_congr rfl fun k hk => hpair k ?_
+        exact Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
+      _ = _ := Finset.sum_neg_distrib f
+  omega
 
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted

@@ -12,6 +12,7 @@ Relational algebra, functional dependencies, normal forms and lossless decomposi
 - [Join processing](join-processing/README.md)
 - [Bags and nulls](bags-and-nulls/README.md)
 - [Probabilistic databases](probabilistic-databases/README.md)
+- [Explaining query answers](explaining-query-answers/README.md)
 - [Relational calculus](relational-calculus/README.md)
 - [Datalog](datalog/README.md)
 - [Provenance and incremental maintenance](provenance-and-incremental-maintenance/README.md)

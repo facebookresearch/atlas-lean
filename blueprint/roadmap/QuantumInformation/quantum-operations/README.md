@@ -7,6 +7,7 @@ Quantum operations and channels covers the physically allowed transformations of
 - [No-cloning theorem for two states](no-cloning-two-state.md)
 - [No-cloning theorem (linear form)](no-cloning-linear.md)
 
+- [Quantum channel](quantum-channel.md)
 - [Converse bounds for the capacities of a quantum channel](converse-bounds-for-the-capacities-of-a-quantum-channel.md)
 - [Monotonicity of fidelity under channels](monotonicity-of-fidelity-under-channels.md)
 - [Holevo–Helstrom theorem](holevohelstrom-theorem.md)
