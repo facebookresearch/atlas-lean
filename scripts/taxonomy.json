@@ -14293,6 +14293,7 @@
   "MathlibExt/NumberTheory/SophieGermainChainFermatCongruence": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Fermat congruence criteria for twin and Sophie Germain primes"},
   "MathlibExt/NumberTheory/SophieGermainChainLength": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Fermat congruence criteria for twin and Sophie Germain primes"},
   "MathlibExt/NumberTheory/SophieGermainPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
+  "MathlibExt/NumberTheory/SophieGermainPrimeFermatCongruence": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Fermat congruence criteria for twin and Sophie Germain primes"},
   "MathlibExt/NumberTheory/SophieGermainPrimeWilson": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
   "MathlibExt/NumberTheory/SmoothConsecutiveIntegers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Consecutive smooth numbers"},
   "MathlibExt/NumberTheory/SmoothPrimeGaps": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Smooth gaps between primes"},
