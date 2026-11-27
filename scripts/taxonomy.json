@@ -15436,7 +15436,7 @@
   "PhyslibExt/HeatTransfer/EnergySourceRemoval": {"to": "Physics/thermodynamics-and-heat-transfer", "title": "Energy source removal: steady slab, heated cylinder and coolant channel"},
   "PhyslibExt/HeatTransfer/HeatExchangers": {"to": "Physics/thermodynamics-and-heat-transfer", "title": "Heat exchangers"},
   "PhyslibExt/Mechanics/TrussCompatibility": {"to": "Physics/elasticity-and-structures", "title": "Pin-jointed trusses"},
-  "PhyslibExt/Numerical/PhysicalGalerkinError": {"to": "Physics/elasticity-and-structures", "title": "Galerkin error of a two-cell bar"},
+  "PhyslibExt/Numerical/PhysicalGalerkinError": {"to": "Physics/elasticity-and-structures", "title": "Stiffness method for beams and frames"},
   "PhyslibExt/Quantum/FiniteState": {"to": "Physics/quantum-mechanics", "title": "Postulates of finite-dimensional quantum mechanics"},
   "PhyslibExt/QuantumInfo/CircuitBridge": {"to": "QuantumInformation/quantum-operations", "title": "Quantum circuits as unitary channels"},
   "PhyslibExt/QuantumInfo/LiebConcavity": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Lieb's concavity theorem"},

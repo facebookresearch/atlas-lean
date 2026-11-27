@@ -5,7 +5,6 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
 - [Euler–Bernoulli beam under uniform load](euler-bernoulli-beam-under-uniform-load/README.md)
 - [Column buckling](column-buckling/README.md)
-- [Galerkin error of a two-cell bar](galerkin-error-of-a-two-cell-bar/README.md)
 - [Hertzian contact](hertzian-contact/README.md)
 - [Isotropic elastic energy](isotropic-elastic-energy/README.md)
 - [Linear elastostatics](linear-elastostatics/README.md)
