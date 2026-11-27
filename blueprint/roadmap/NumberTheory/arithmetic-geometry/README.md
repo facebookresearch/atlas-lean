@@ -10,6 +10,7 @@ Rational points of varieties over number fields: torsion and rank of elliptic cu
 - [Ranks of the elliptic curves $y^2 = x^3 - 2pqx$](ranks-of-the-elliptic-curves-y-x-2pqx/README.md)
 - [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md)
 - [Gross–Zagier formula for the Heegner point](gross-zagier-formula.md)
+- [Gross–Zagier–Zhang formula: when the Heegner point has infinite order](gross-zagier-zhang-formula.md)
 - [Complex conjugation on the Heegner point](complex-conjugation-on-the-heegner-point.md)
 - [Kolyvagin's theorem on Heegner points](kolyvagin-s-theorem-on-heegner-points.md)
 - [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)

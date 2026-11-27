@@ -1,6 +1,6 @@
 # Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$
 
-This node is still to be broken down. Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, with
+Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, with
 $L$-function $L(E, s) = \sum_{n \ge 1} a_n n^{-s}$, the Euler product of
 [modularity of elliptic curves over $\mathbb{Q}$](../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md),
 which converges for $\operatorname{Re}(s) > 3/2$. Let $f$ be the newform of weight $2$ and level $N$ with
@@ -20,11 +20,15 @@ $L(f, s) = L(E, s)$ that the modularity theorem provides.
 
 ## Expansion
 
-A good expansion has pages for Hecke's theorem for a newform $f$ of weight $2$ on $\Gamma_0(N)$: the integral
-representation $\Lambda(f, s) = N^{s/2} \int_0^\infty f(it) t^{s-1} \, dt$ (Darmon (2.11)), the action of $w_N$ on
-newforms (Darmon (2.12)–(2.13)), and the resulting continuation and functional equation
-$\Lambda(f, s) = -\varepsilon \Lambda(f, 2 - s)$ (Darmon (2.14)); item 1 and item 2 then follow from
-$L(E, s) = L(f, s)$, and item 3 from item 1, since $\Lambda(E, s)$ is not identically zero.
+This node is still to be broken down. A good expansion states and links:
+
+- Hecke's theorem for a newform $f$ of weight $2$ on $\Gamma_0(N)$: the integral representation
+  $\Lambda(f, s) = (2\pi)^{-s}\Gamma(s)N^{s/2}L(f, s) = N^{s/2} \int_0^\infty f(it) t^{s-1} \, dt$ (Darmon (2.11)), the
+  action of $w_N$ on newforms (Darmon (2.12)–(2.13)), and the resulting continuation and functional equation
+  $\Lambda(f, s) = -\varepsilon \Lambda(f, 2 - s)$ (Darmon (2.14)), with $\varepsilon$ the eigenvalue of $w_N$ normalised
+  as in item 2;
+- the deduction of items 1 and 2 from $L(E, s) = L(f, s)$, and of item 3 from item 1, as $\Lambda(E, s)$ is not
+  identically zero.
 
 ## Depends on
 

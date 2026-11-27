@@ -1,6 +1,6 @@
 # Complex conjugation on the Heegner point
 
-This node is still to be broken down. Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $K$ be an
+Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $K$ be an
 imaginary quadratic field of discriminant $D_K \ne -3, -4$ in which every prime factor of $N$ splits, and let
 $y_K \in E(K)$ be [the Heegner point](heegner-point-of-an-elliptic-curve.md). Let $\tau$ be complex conjugation, the
 nontrivial automorphism of $K$, and let $w(E) \in \{1, -1\}$ be the root number of $E$, the sign in the functional
@@ -14,16 +14,17 @@ torsion point, so $E(\mathbb{Q})$ has a point of infinite order when $y_K$ has i
 
 ## Expansion
 
-Gross (Proposition 5.3) proves, for the Heegner points $y_n \in E(K_n)$ of conductor $n$, that
-$y_n^\tau = \varepsilon \cdot y_n^{\sigma'} + (\text{torsion})$ for some $\sigma' \in \operatorname{Gal}(K_n/K)$, where
-$\varepsilon$ is the eigenvalue of the Fricke involution $w_N$ on the newform of $E$, from the identity
-$x_n^\tau = w_N(x_n^{\sigma'})$ on $X_0(N)$ (from complex multiplication; Gross cites his *Heegner points on $X_0(N)$*,
-§5) and the fact that the divisor class of $(0) - (\infty)$ has finite order. For $n = 1$, summing over
-$\operatorname{Gal}(K_1/K)$ and using $\tau \sigma \tau = \sigma^{-1}$ gives $\tau(y_K) = \varepsilon y_K + t$, and
-$\varepsilon = -w(E)$ by item 2 of the functional equation page. (This summation is worked out here; Darmon states the
-conclusion, in terms of $\operatorname{sign}(E, \mathbb{Q}) = w(E)$, in the proof of his Theorem 3.22.) A good
-expansion has a page for the identity $x_n^\tau = w_N(x_n^{\sigma'})$ and one for the finiteness of the class of
-$(0) - (\infty)$ in the Jacobian of $X_0(N)$.
+This node is still to be broken down. A good expansion states and links:
+
+- the identity $x_n^\tau = w_N(x_n^{\sigma'})$ on $X_0(N)$ for the Heegner points $x_n$ of conductor $n$ and some
+  $\sigma' \in \operatorname{Gal}(K_n/K)$, from complex multiplication (Gross cites his *Heegner points on $X_0(N)$*, §5);
+- the finiteness of the class of $(0) - (\infty)$ in the Jacobian of $X_0(N)$;
+- Gross's Proposition 5.3, which follows from these: $y_n^\tau = \varepsilon \cdot y_n^{\sigma'} + (\text{torsion})$
+  in $E(K_n)$, with $\varepsilon$ the eigenvalue of the Fricke involution $w_N$ on the newform of $E$;
+- the case $n = 1$: summing over $\operatorname{Gal}(K_1/K)$ and using $\tau \sigma \tau = \sigma^{-1}$ gives
+  $\tau(y_K) = \varepsilon y_K + t$, and $\varepsilon = -w(E)$ by item 2 of the functional equation page. This summation
+  is worked out here; Darmon states the conclusion, in terms of $\operatorname{sign}(E, \mathbb{Q}) = w(E)$, in the proof
+  of his Theorem 3.22.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # The Heegner point of an elliptic curve over an imaginary quadratic field
 
-This node is still to be broken down. Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$ and fix a
+Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$ and fix a
 [modular parametrization](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md)
 $\varphi \colon X_0(N) \to E$, defined over $\mathbb{Q}$, that maps the cusp $\infty$ to the origin. Let
 $K \subset \mathbb{C}$ be an imaginary quadratic field of discriminant $D_K \ne -3, -4$, so that its ring of integers
@@ -25,12 +25,16 @@ depends on $\mathcal{N}$ only up to sign and torsion.
 
 ## Expansion
 
-A good expansion has pages for the modular curve $X_0(N)$ over $\mathbb{Q}$ as the moduli space of cyclic
-$N$-isogenies, with its cusps and the involution $w_N$; for the theorem of complex multiplication that makes $x_1$
-rational over $K_1$, with $\operatorname{Gal}(K_1/K)$ acting through the class group; and for the independence of the
-choice of $\mathcal{N}$, as the other choices are the images of $x_1$ under the Atkin–Lehner involutions and
-$\operatorname{Gal}(K_1/K)$ (Gross and Zagier, Chapter I, §3). Darmon, §§3.1–3.4, gives the same construction with
-$X_0(N)$ uniformised by the upper half-plane.
+This node is still to be broken down. A good expansion states and links:
+
+- the modular curve $X_0(N)$ over $\mathbb{Q}$ as the moduli space of cyclic $N$-isogenies, with its cusps and the
+  involution $w_N$;
+- the theorem of complex multiplication that makes $x_1$ rational over $K_1$, with $\operatorname{Gal}(K_1/K)$ acting
+  through the class group;
+- the independence of the choice of $\mathcal{N}$ up to sign and torsion, as the other choices are the images of $x_1$
+  under the Atkin–Lehner involutions and $\operatorname{Gal}(K_1/K)$ (Gross and Zagier, Chapter I, §3).
+
+Darmon, §§3.1–3.4, gives the same construction with $X_0(N)$ uniformised by the upper half-plane.
 
 ## Depends on
 

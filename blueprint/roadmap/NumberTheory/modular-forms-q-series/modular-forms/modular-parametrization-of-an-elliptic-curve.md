@@ -1,6 +1,6 @@
 # Modular parametrization of an elliptic curve over $\mathbb{Q}$
 
-This node is still to be broken down. Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $f$ be the
+Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $f$ be the
 newform of weight $2$ and level $N$ with $L(f, s) = L(E, s)$ given by
 [modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md),
 and let $X_0(N)$ be the modular curve over $\mathbb{Q}$ classifying elliptic curves with a cyclic $N$-isogeny, with
@@ -14,14 +14,19 @@ $\omega_f = 2\pi i f(z) \, dz = \sum_{n \ge 1} a_n(f) q^n \, dq/q$ is the differ
 
 ## Expansion
 
-A good expansion follows Gross and Zagier's derivation (their Chapter V, §2, p. 310): the Eichler–Shimura
-construction gives the strong Weil curve $E_0$, a quotient of the Jacobian of $X_0(N)$ over $\mathbb{Q}$ with
-$L(E_0, s) = L(f, s)$, and so a morphism $X_0(N) \to E_0$ sending $\infty$ to the origin; Faltings' isogeny theorem
-gives an isogeny $E_0 \to E$ over $\mathbb{Q}$, as $L(E, s) = L(E_0, s)$, and the composite is $\pi$. The pullback
-$\pi^*(\omega)$ lies in the $f$-isotypic part of the differentials of $X_0(N)$, which is spanned by $\omega_f$, so it
-is $c\,\omega_f$ with $c \ne 0$ as $\pi$ is nonconstant; that $c$ is an integer is a further statement, recorded by
-the sources below, which an expansion either proves or cites with its source. Darmon (p. 21) gives the same map as a
-complex uniformisation $\Phi_N$ of $E(\mathbb{C})$ by the upper half-plane.
+This node is still to be broken down. A good expansion states and links, following Gross and Zagier's derivation
+(their Chapter V, §2, p. 310):
+
+- the strong Weil curve $E_0$ that the Eichler–Shimura construction attaches to $f$, a quotient of the Jacobian of
+  $X_0(N)$ over $\mathbb{Q}$ with $L(E_0, s) = L(f, s)$, and the resulting morphism $X_0(N) \to E_0$ sending $\infty$
+  to the origin;
+- Faltings' isogeny theorem, which gives an isogeny $E_0 \to E$ over $\mathbb{Q}$, as $L(E, s) = L(E_0, s)$; the
+  composite is $\pi$;
+- the pullback $\pi^*(\omega)$, which lies in the $f$-isotypic part of the differentials of $X_0(N)$, spanned by
+  $\omega_f$, so is $c\,\omega_f$ with $c \ne 0$ as $\pi$ is nonconstant; and the integrality of $c$, recorded by the
+  sources below, proved or cited with its source.
+
+Darmon (p. 21) gives the same map as a complex uniformisation $\Phi_N$ of $E(\mathbb{C})$ by the upper half-plane.
 
 ## Depends on
 

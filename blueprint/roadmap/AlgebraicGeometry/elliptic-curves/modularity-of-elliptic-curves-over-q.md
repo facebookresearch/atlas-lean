@@ -1,7 +1,6 @@
 # Modularity of elliptic curves over $\mathbb{Q}$
 
-This node is still to be broken down. It is the modularity theorem of Wiles, Taylor–Wiles and Breuil–Conrad–Diamond–Taylor,
-in the form Darmon states it.
+The modularity theorem of Wiles, Taylor–Wiles and Breuil–Conrad–Diamond–Taylor, in the form Darmon states it.
 
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, and let
 
@@ -11,8 +10,8 @@ be its $L$-function, where $a_p = p + 1 - \#\tilde E(\mathbb{F}_p)$ for the redu
 Weierstrass model of $E$ at $p$, all of whose points over $\mathbb{F}_p$ are counted, so that $a_p \in \{0, \pm 1\}$
 when $p \mid N$; the product converges for $\operatorname{Re}(s) > 3/2$. Then
 there is a newform $f = \sum_{n \ge 1} a_n(f) q^n$ of weight $2$ and level $N$, that is, a cusp form of weight $2$ on
-$\Gamma_0(N)$ in the new subspace that is an eigenvector of all the Hecke operators, normalised by $a_1(f) = 1$, such
-that
+$\Gamma_0(N)$ in the new subspace that is an eigenvector of the Hecke operators $T_p$ for the primes $p \nmid N$ and
+$U_p$ for the primes $p \mid N$, normalised by $a_1(f) = 1$, such that
 
 $$L(E, s) = L(f, s) = \sum_{n \ge 1} a_n(f) n^{-s},$$
 
@@ -21,17 +20,25 @@ $E_f$ over $\mathbb{Q}$ that the Eichler–Shimura construction attaches to $f$,
 
 ## Expansion
 
-A good expansion follows the proof as Darmon outlines it (Remark 2.13 and the paragraph after Remark 2.14): pages for
-newforms and Atkin–Lehner theory and for the Eichler–Shimura construction (Darmon, §§2.3 and 2.5); the
-$\ell$-adic representations attached to $E$ and to $f$; the modularity lifting theorems of Wiles and Taylor–Wiles for
-semistable curves and their extensions by Diamond, Conrad–Diamond–Taylor and Breuil–Conrad–Diamond–Taylor, which give
-$f$ with $L(E, s) = L(f, s)$; and Faltings' isogeny theorem, which turns the equality of $L$-functions into the isogeny
-$E \to E_f$. The [Taylor–Wiles patching](../../NumberTheory/modular-forms-q-series/modular-forms/taylor-wiles-patching/README.md)
-pages record definitions such an expansion uses.
+This node is still to be broken down. A good expansion states and links:
+
+- newforms and Atkin–Lehner theory, and the Eichler–Shimura construction of $E_f$ (Darmon, §§2.3 and 2.5);
+- the $\ell$-adic representations attached to $E$ and to $f$;
+- the modularity lifting theorems of Wiles and Taylor–Wiles for semistable curves, proved with Taylor–Wiles patching,
+  and their extensions by Diamond, Conrad–Diamond–Taylor and Breuil–Conrad–Diamond–Taylor, which give $f$ with
+  $L(E, s) = L(f, s)$ (Darmon, Remark 2.13 and the paragraph after Remark 2.14);
+- Faltings' isogeny theorem, which turns the equality of $L$-functions into the isogeny $E \to E_f$.
+
+## Depends on
+
+- [Hecke TLin](../../NumberTheory/not-yet-classified/hecke-operator/hecke-tlin-2.md), for the Hecke operators $T_p$, $p \nmid N$, on cusp forms of weight $2$ for $\Gamma_0(N)$, of which $f$ is an eigenvector
+- [Hecke ULin](../../NumberTheory/not-yet-classified/hecke-operator/hecke-ulin-2.md), for the Hecke operators $U_p$, $p \mid N$, on the same space, of which $f$ is an eigenvector
 
 ## Proof depends on
 
-Its proof is that of the sources below, as the Expansion describes.
+- [Taylor–Wiles patching datum](../../NumberTheory/modular-forms-q-series/modular-forms/taylor-wiles-patching/patching-datum.md), for the patching data through which the modularity lifting theorems are proved
+
+The rest of its proof is that of the sources below, as the Expansion describes.
 
 ## Sources
 
