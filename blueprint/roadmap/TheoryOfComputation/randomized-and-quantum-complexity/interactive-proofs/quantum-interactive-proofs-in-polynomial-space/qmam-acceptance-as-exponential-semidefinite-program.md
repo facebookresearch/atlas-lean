@@ -25,3 +25,4 @@ Merlin's first message fixes the reduced state of $\mathsf{X}$; by Uhlmann's the
 
 - Rahul Jain, Zhengfeng Ji, Sarvagya Upadhyay, John Watrous, "QIP = PSPACE", Journal of the ACM 58(6) (2011), STOC (2010); arXiv:0907.4737.
 - Rahul Jain, Sarvagya Upadhyay, John Watrous, "Two-message quantum interactive proofs are in PSPACE", FOCS (2009); arXiv:0905.1300.
+- Chris Marriott and John Watrous, "Quantum Arthur-Merlin Games", Computational Complexity 14(2), 122-152, 2005; arXiv:cs/0506068 (Theorem 5.4).

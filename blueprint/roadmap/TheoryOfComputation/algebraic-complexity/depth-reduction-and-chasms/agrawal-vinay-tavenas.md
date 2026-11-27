@@ -1,6 +1,6 @@
 # Agrawal–Vinay–Koiran–Tavenas reduction to depth four
 
-Let $f \in \mathbb{F}[x_1, \dots, x_n]$ be homogeneous of degree $d$ and computed by an arithmetic circuit of size $s$ with $s \ge n$. Then $f$ is computed by a homogeneous $\Sigma\Pi^{[O(\sqrt{d})]}\Sigma\Pi^{[\sqrt{d}]}$ circuit of size $s^{O(\sqrt{d})}$. Over every field, the same conclusion holds for formulas of size $s$ and for algebraic branching programs.
+Let $f \in \mathbb{F}[x_1, \dots, x_n]$ be homogeneous of degree $d$ and computed by an arithmetic circuit of size $s$ with $s \ge n$. Then $f$ is computed by a homogeneous $\Sigma\Pi^{[O(\sqrt{d})]}\Sigma\Pi^{[\sqrt{d}]}$ circuit of size $s^{O(\sqrt{d})}$. Over every field, the same conclusion holds for formulas of size $s$ and for algebraic branching programs. More generally (Tavenas, arXiv:1304.5777, Lemma 3), if $f$ is computed by a homogeneous $\times$-balanced $\{\times, +, \odot\}$-circuit of size $\sigma$, then for every positive constant $a < d$, $f$ is computed by a homogeneous $\Sigma\Pi^{[15a]}\Sigma\Pi^{[d/a]}$ circuit of size $1 + \binom{\sigma+15a}{15a} + \sigma + \sigma\binom{n+d/a}{d/a} + n$ (so from any homogeneous circuit of size $s \ge n$ and every cut parameter $b \in [1, d]$, $f$ has a homogeneous $\Sigma^{[T]}\Pi^{[O(d/b)]}\Sigma\Pi^{[b]}$ circuit with $T = s^{O(d/b)}$ and bottom subcircuits of size $n^{O(b)}$).
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ Apply depth reduction to obtain a circuit of depth $O(\log d)$ in which each mul
 
 - M. Agrawal, V. Vinay, "Arithmetic circuits: a chasm at depth four", FOCS (2008).
 - P. Koiran, "Arithmetic circuits: the chasm at depth four gets wider", Theoretical Computer Science 448 (2012) 56-65.
-- S. Tavenas, "Improved bounds for reduction to depth 4 and depth 3", Information and Computation 240 (2015) 2-11; MFCS (2013).
+- S. Tavenas, "Improved bounds for reduction to depth 4 and depth 3", Information and Computation 240 (2015) 2-11; MFCS (2013); arXiv:1304.5777 (Lemma 3 and Theorem 1).

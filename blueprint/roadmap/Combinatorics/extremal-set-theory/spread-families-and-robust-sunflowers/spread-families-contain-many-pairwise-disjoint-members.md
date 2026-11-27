@@ -1,10 +1,10 @@
 # Spread families contain many pairwise disjoint members
 
-There is an absolute constant $C$ such that for all integers $k \ge 1$ and $r \ge 2$ and every $\kappa \ge C\, r \log(kr)$, every family (sequence, repetitions allowed) $\mathcal{F}$ of at least $\kappa^{k}$ sets of size $k$ that is $\kappa$-spread in the absolute sense (every nonempty $Z$ lies in at most $\kappa^{k-|Z|}$ members) contains $r$ pairwise disjoint members (which are then distinct).
+There is an absolute constant $C$ such that for all integers $k \ge 1$ and $r \ge 2$, with $\kappa = C\, r \log(kr)$, every family (sequence, repetitions allowed) $\mathcal{F}$ of at least $\kappa^{k}$ sets of size $k$ that is $\kappa$-spread in the absolute sense (every nonempty $Z$ lies in at most $\kappa^{k-|Z|}$ members) contains $r$ pairwise disjoint members (which are then distinct).
 
 ## Proof sketch
 
-Summing the spread condition over singletons gives $k|\mathcal{F}| \le |X|\,\kappa^{k-1}$, so $|X| \ge k\kappa \ge r$. Split $X$ by a uniformly random partition into $r$ classes of sizes $\lfloor |X|/r \rfloor$ or $\lceil |X|/r \rceil$; each class is a uniformly random set of size at least $|X|/(2r)$. By the uniform form of the spread lemma (Rao, Lemma 4), applied with $\gamma = 1/(2r)$ and $\varepsilon = 1/(r+1)$, which needs $\kappa \ge 2\beta r\log(k(r+1))$, true for $C$ large, each class contains a member with probability greater than $1 - 1/(r+1)$. A union bound over the $r$ classes gives, with positive probability, a member inside each class; members in different classes are disjoint, and being nonempty they are distinct (Rao, Lemma 2).
+Summing the spread condition over singletons gives $k|\mathcal{F}| \le |X|\,\kappa^{k-1}$, so $|X| \ge k\kappa \ge r$. Split $X$ by a uniformly random partition into $r$ classes of sizes $\lfloor |X|/r \rfloor$ or $\lceil |X|/r \rceil$; each class is a uniformly random set of size at least $|X|/(2r)$. By the uniform form of the spread lemma (Rao, Lemma 4), applied with $\varepsilon = 1/(r+1)$ and $\gamma = \beta \log(k(r+1))/\kappa \le 1/(2r)$ (so its spread parameter equals $\kappa$, true for $C$ large; the same choice handles any larger $\kappa$), each class contains a member with probability greater than $1 - 1/(r+1)$. A union bound over the $r$ classes gives, with positive probability, a member inside each class; members in different classes are disjoint, and being nonempty they are distinct (Rao, Lemma 2).
 
 ## Depends on
 

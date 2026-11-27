@@ -21,6 +21,7 @@ Items 2, 3, 4 are successively weaker, and item 1 implies item 2 because a one-w
 
 ## Proof depends on
 
+- [Goldreich–Micali–Wigderson: zero-knowledge proofs for NP from one-way functions](../../../ComputerScience/cryptography/signatures-and-protocols/commitment-schemes/commitments-and-zero-knowledge-for-np/gmw-zero-knowledge-for-np.md)
 - [Computational knowledge complexity k(n) of an interactive proof](computational-knowledge-complexity.md)
 - [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
 - [Ilango–Ren–Santhanam: one-way functions exist iff GapMCSP is average-case hard on some locally samplable distribution](irs-owf-iff-gapmcsp-hard-on-local-distribution.md)
