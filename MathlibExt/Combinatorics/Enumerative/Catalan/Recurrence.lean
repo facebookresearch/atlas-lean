@@ -18,7 +18,8 @@ import Mathlib.Tactic.LinearCombination
 
 namespace MetaMathlibExt
 
-/-- Consecutive Catalan numbers satisfy $(n+2)C_{n+1}=2(2n+1)C_n$. -/
+/-- **Catalan recurrence without division.** For every natural number $n$, the Catalan numbers
+$C_n$ satisfy $(n+2)C_{n+1}=2(2n+1)C_n$. -/
 public theorem add_two_mul_catalan_succ (n : ℕ) :
     (n + 2) * catalan (n + 1) = 2 * (2 * n + 1) * catalan n := by
   have h := Nat.succ_mul_centralBinom_succ n
@@ -26,9 +27,11 @@ public theorem add_two_mul_catalan_succ (n : ℕ) :
   apply mul_left_cancel₀ (by omega : n + 1 ≠ 0)
   simpa only [Nat.succ_eq_add_one, mul_assoc, mul_left_comm, mul_comm] using h
 
-/-- The Catalan recurrence in ratio form in a field of characteristic zero. -/
+/-- **Catalan ratio recurrence.** For every natural number $n$ and every field $K$ of
+characteristic zero, the Catalan numbers cast to $K$ satisfy
+$C_{n+1}=\frac{2(2n+1)}{n+2}C_n$. -/
 public theorem cast_catalan_succ_eq {K : Type*} [Field K] [CharZero K] (n : ℕ) :
-    (catalan (n + 1) : K) = (2 * (n : K) + 1) / (n + 2) * 2 * catalan n := by
+    (catalan (n + 1) : K) = 2 * (2 * (n : K) + 1) / (n + 2) * catalan n := by
   have h : ((n : K) + 2) * (catalan (n + 1) : K) = 2 * (2 * (n : K) + 1) * catalan n := by
     exact_mod_cast add_two_mul_catalan_succ n
   have hn : (n : K) + 2 ≠ 0 := by exact_mod_cast (show n + 2 ≠ 0 by omega)

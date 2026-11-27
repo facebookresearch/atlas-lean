@@ -176,7 +176,7 @@ public theorem sum_neg_one_pow_choose_two_pow_catalan (n : ℕ) :
     rw [hn, two_mul, pow_add, mul_div_mul_right _ _ (pow_ne_zero k (two_ne_zero : (2 : ℂ) ≠ 0))]
   calc
     _ = (-1 : ℂ) ^ k * (n.choose k : ℂ) * (2 ^ n / 2 ^ (2 * k)) *
-          ((2 * (k : ℂ) + 1) / (k + 2) * 2 * catalan k) := by rw [pow_succ]; ring
+          (2 * (2 * (k : ℂ) + 1) / (k + 2) * catalan k) := by rw [pow_succ]; ring
     _ = _ := by rw [hpow, ← cast_catalan_succ_eq (K := ℂ)]; ring
 
 end MetaMathlibExt
