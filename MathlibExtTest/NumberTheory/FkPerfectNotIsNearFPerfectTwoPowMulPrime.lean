@@ -22,4 +22,8 @@ example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 6 := by
     MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime 3 1 (by decide)
   simpa using h
 
+-- The prime `2`, which Theorem 10's odd-prime statement does not cover.
+example (a : ℕ) : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect (2 ^ a * 2) :=
+  MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime 2 a Nat.prime_two
+
 end MathlibExtTest.NumberTheory.FkPerfect
