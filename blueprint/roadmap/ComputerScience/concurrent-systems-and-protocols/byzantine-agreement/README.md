@@ -19,6 +19,8 @@ Byzantine agreement (consensus with Byzantine faults) in the sense of Fischer, L
 - [Later rounds of the commander protocol](to-oral-recv-succ.md)
 - [The commander protocol simulates the agreement protocol](state-to-oral.md)
 - [Byzantine agreement yields the Byzantine generals problem](solves-to-oral.md)
+- [Bounds for Synchronous Byzantine Agreement](byzantine-agreement-bounds/README.md)
+- [Byzantine Broadcast and Quorum Systems](byzantine-broadcast-and-quorum-systems/README.md)
 
 ## Related topics
 

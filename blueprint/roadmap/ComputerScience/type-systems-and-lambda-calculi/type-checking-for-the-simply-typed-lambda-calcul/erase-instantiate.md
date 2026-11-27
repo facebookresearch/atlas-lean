@@ -1,0 +1,5 @@
+# Erasing an instantiation is raw single-variable substitution
+
+The erasure of an intrinsically typed term (a term of type $A$ in a context $\Gamma$, a list of simple types) is the raw term obtained by replacing each variable by its de Bruijn index (its position in $\Gamma$, counting from $0$ at the front), keeping applications, and keeping each lambda's parameter type as annotation. Raw simultaneous substitution applies a map $\sigma : \mathbb{N} \to$ raw terms by $\mathrm{var}\,n \mapsto \sigma(n)$, homomorphically on applications, and $\mathrm{lam}\,A\,t \mapsto \mathrm{lam}\,A\,(t[\sigma^{\uparrow}])$, where $\sigma^{\uparrow}$ sends $0$ to $\mathrm{var}\,0$ and $n+1$ to $\sigma(n)$ renamed by the successor map.
+
+For a term $b$ of type $B$ in $A :: \Gamma$ and a term $a$ of type $A$ in $\Gamma$, the erasure of the instantiation $b[a]$ (the newest variable of $b$ replaced by $a$) equals the raw substitution into the erasure of $b$ of the map sending $0$ to the erasure of $a$ and $n + 1$ to $\mathrm{var}\,n$.
