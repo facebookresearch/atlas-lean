@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.List.Destutter
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
+public import MathlibExt.NumberTheory.Digits.BasePhiLucasFib
 public import WantedExt.NumberTheory.Digits.BasePhiRepresentationsWanted
 
 /-!
@@ -304,15 +305,6 @@ public theorem_wanted basePhi_end_block_one_iff_pred (u : List ℕ) (hu : u ≠ 
     (hz : List.IsChain (fun a b => ¬ (a = 1 ∧ b = 1)) (u ++ [1])) (N : ℕ) (hN : 1 ≤ N) :
     N ∈ basePhiOccurrences u.length (u ++ [1, 0]) ↔
       N - 1 ∈ basePhiOccurrences u.length (u ++ [0, 0])
-
-/-- **Lucas numbers from Fibonacci numbers.** For every natural number $n$,
-$F_n + 3F_{n+1} = L_{n+2}$, where $F_j$ is the $j$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$) and
-$L_j$ is the $j$-th Lucas number ($L_0 = 2$, $L_1 = 1$).
-
-Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
-(2024), Article A24, Lemma 9 (`integers-2024-A24-lem-9`). -/
-public theorem_wanted fib_add_three_mul_fib_succ_eq_lucasNumber (n : ℕ) :
-    Nat.fib n + 3 * Nat.fib (n + 1) = lucasNumber (n + 2)
 
 /-- **Border words and codes of Lucas numbers.** Let $n \ge 1$, and write $F_k$ for the Fibonacci
 numbers and $L_k$ for the Lucas numbers. Let $S_1, S_2, S_3, S_4$ be base phi expansions (sets

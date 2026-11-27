@@ -31,21 +31,6 @@ namespace MetaMathlibExt
 
 namespace fib_mem_lucasIntervals
 
-/-- Lucas numbers in terms of Fibonacci numbers: $L_{m+1} = F_m + F_{m+2}$. -/
-private theorem lucasNumber_add_one_eq_fib_add_fib (m : ℕ) :
-    lucasNumber (m + 1) = Nat.fib m + Nat.fib (m + 2) := by
-  induction m using Nat.twoStepInduction with
-  | zero => rfl
-  | one => rfl
-  | more m ih1 ih2 =>
-    have l3 : lucasNumber (m + 3) = lucasNumber (m + 2) + lucasNumber (m + 1) := rfl
-    have l2 : lucasNumber (m + 2) = Nat.fib (m + 1) + Nat.fib (m + 3) := ih2
-    have f2 : Nat.fib (m + 2) = Nat.fib m + Nat.fib (m + 1) := Nat.fib_add_two
-    have f3 : Nat.fib (m + 3) = Nat.fib (m + 1) + Nat.fib (m + 2) := Nat.fib_add_two
-    have f4 : Nat.fib (m + 4) = Nat.fib (m + 2) + Nat.fib (m + 3) := Nat.fib_add_two
-    change lucasNumber (m + 3) = Nat.fib (m + 2) + Nat.fib (m + 4)
-    omega
-
 /-- The four bounds of the lemma at the even index `m + 2`:
 $L_{m+2} \le F_{m+4} \le L_{m+3}$ and $L_{m+3} + 1 \le F_{m+5} < L_{m+4}$. -/
 private theorem bounds (m : ℕ) :

@@ -6,6 +6,7 @@
 - [Companion Lucas sequence $V(P, Q)$](lucas-v.md)
 - [Fibonacci parameters for Lucas sequences](fibonacci-lucas-params.md)
 - [Lucas numbers](lucas-number.md)
+- [Lucas numbers from neighboring Fibonacci numbers](lucas-number-add-one-eq-fib-add-fib.md)
 - [The Lucas sequence $U(1, -1)$ is the Fibonacci sequence](lucas-u-fibonacci-lucas-params.md)
 - [Recurrence for the Lucas sequence $U(P, Q)$](lucas-u-add-two.md)
 - [Cassini's identity for Lucas sequences](lucas-u-cassini.md)
