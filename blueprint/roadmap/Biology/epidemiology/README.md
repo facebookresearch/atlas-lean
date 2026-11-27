@@ -33,7 +33,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
-## [Epidemic models, behaviour and policy](part-01/README.md)
+- [Epidemic coalescent models](epidemic-coalescent-models/README.md)
 - [Activity-network social distancing game](part-01/activity-network-social-distancing-game/README.md)
 - [Caputo fractional SIS model](part-01/caputo-fractional-sis-model/README.md)
 - [Density-dependent two-strain coinfection](part-01/density-dependent-two-strain-coinfection/README.md)
