@@ -22,5 +22,6 @@
 - [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
 - [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
+- [Two-state intron gain and loss model](two-state-intron-gain-and-loss-model/README.md)
 - [Quasispecies with time lags and periodic replication](quasispecies-with-time-lags-and-periodic-replication/README.md)
 - [Toroidal diffusions for protein evolution](toroidal-diffusions-for-protein-evolution/README.md)
