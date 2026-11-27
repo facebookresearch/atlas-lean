@@ -10,6 +10,8 @@ By contrast, boundedness is decidable in polynomial time for Gaussian Hamiltonia
 
 - [Polynomial bosonic Hamiltonians and their ground-energy problems](polynomial-bosonic-hamiltonians.md)
 - [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Polynomial-time reduction between promise problems](../../../../TheoryOfComputation/randomized-and-quantum-complexity/local-hamiltonian-problem/promise-reduces.md)
 - [The class coNP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/co-np.md)
 
 ## Proof depends on
@@ -24,8 +26,8 @@ $$
 H'=N\otimes(H-c),
 $$
 
-of degree $2+8=10$. If $\lambda_{\min}(H)\le a$, then $H-c$ has spectrum below $0$ and, since $N$ takes every value in $\mathbb Z_+$, $H'$ is unbounded below; if $\lambda_{\min}(H)\ge b$, then $H-c\ge(b-a)/2>0$ and $H'\ge0$ is bounded below. Thus a decision procedure for boundedness would decide the ground-energy problem.
+of degree $2+8=10$ in the position and momentum operators, since $N$ has degree $2$ and $H$ degree $8$. When $H$ is one of the Hamiltonians $Q(N_1,\dots,N_n)$ of the degree-8 reduction, $H'$ is diagonal in the Fock basis, hence essentially self-adjoint on the Schwartz space, which is all the reduction needs. If $\lambda_{\min}(H)\le a$, then $H-c$ has spectrum below $0$ and, since $N$ takes every value in $\mathbb Z_+$, $H'$ is unbounded below; if $\lambda_{\min}(H)\ge b$, then $H-c\ge(b-a)/2>0$ and $H'\ge0$ is bounded below. Thus a decision procedure for boundedness would decide the ground-energy problem. The step that $N$ takes every value in $\mathbb Z_+$ is the spectrum of the number operator, and a good expansion links a page for it.
 
 ## Sources
 
-- U. Chabaud, M. Joseph, S. Mehraban and A. Motamedi, "Bosonic quantum computational complexity", *Quantum* 10, 2110, 2026, doi:[10.22331/q-2026-05-20-2110](https://doi.org/10.22331/q-2026-05-20-2110); read in arXiv:2410.04274v3 ([arXiv](https://arxiv.org/abs/2410.04274v3)), whose numbering is used: Corollary 5.2 with its proof, Theorem 5.2 (co-NP-hardness for degree 4), Theorem 5.1 (Gaussian case), and the open questions listed at the end of Section 1.
+- U. Chabaud, M. Joseph, S. Mehraban and A. Motamedi, "Bosonic quantum computational complexity", *Quantum* 10, 2110, 2026, doi:[10.22331/q-2026-05-20-2110](https://doi.org/10.22331/q-2026-05-20-2110); read in arXiv:2410.04274v3 ([arXiv](https://arxiv.org/abs/2410.04274v3)), whose numbering is used: Corollary 5.2 with its proof, Theorem 5.2 (co-NP-hardness for degree 4), Theorem 5.1 (Gaussian case), and the open questions of Section 1.2.2.

@@ -20,6 +20,7 @@ Each individual step of the flow is computable; what cannot be computed is its l
 - [The spectral gap of two-dimensional translation-invariant Hamiltonians is undecidable](the-spectral-gap-of-two-dimensional-hamiltonians.md)
 - [Gapped and gapless families of lattice Hamiltonians](gapped-and-gapless-families-of-hamiltonians.md)
 - [Halting of a code on an input](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/halts.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -27,7 +28,7 @@ Each individual step of the flow is computable; what cannot be computed is its l
 
 ## Expansion
 
-The renormalization map combines a renormalization of the classical Robinson tiling part, which maps the tiling to a coarser copy of itself by grouping blocks of tiles, with a renormalization of the quantum part that keeps track of the history-state computations placed along the tiling segments; exact formulas for the renormalized interactions keep them in the family $\mathcal F$. Since $\mathcal R$ preserves gapped and gapless behavior and the gapped and gapless cases flow to different fixed points, deciding the fixed point would decide the spectral gap of $H(\varphi)$, which is undecidable. The divergence statement follows by tracking, through the explicit renormalized family, the coefficient $\tau_2$ of the projector term in the renormalized on-site interaction; in the halting case its departure from $-2^k$ starts at a step $k_h(\varphi)$ tied to the halting computation, which cannot be computed. A good expansion links pages for the Robinson tiling and its block renormalization and for the structure of the history-state Hamiltonian under renormalization; neither has a page yet.
+The renormalization map combines a renormalization of the classical Robinson tiling part, which maps the tiling to a coarser copy of itself by grouping blocks of tiles, with a renormalization of the quantum part that keeps track of the history-state computations placed along the tiling segments; exact formulas for the renormalized interactions keep them in the family $\mathcal F$. Since $\mathcal R$ preserves gapped and gapless behavior and the gapped and gapless cases flow to different fixed points, deciding the fixed point would decide the spectral gap of $H(\varphi)$, which is undecidable. The divergence statement follows by tracking, through the explicit renormalized family, the coefficient $\tau_2$ of the projector term in the renormalized on-site interaction; in the halting case its departure from $-2^k$ starts at a step $k_h(\varphi)$ tied to the halting computation, which cannot be computed. A good expansion links pages for the Robinson tiling and its block renormalization and for the structure of the history-state Hamiltonian under renormalization.
 
 ## Sources
 
