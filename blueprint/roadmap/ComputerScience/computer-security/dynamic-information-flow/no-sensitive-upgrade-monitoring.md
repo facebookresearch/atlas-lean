@@ -3,7 +3,8 @@
 Let labels form a lattice with order $\sqsubseteq$, join $\sqcup$ and bottom $\bot$. The language $\lambda^{\mathrm{info}}$ has variables, constants, abstractions, application, reference
 allocation $\mathbf{ref}\ e$, dereference $!e$, assignment $e := e$ and labelling $\langle k\rangle e$. Under *universal labelling*, every runtime value carries a label, and the
 big-step judgement $\sigma, \theta, e \Downarrow_{pc} \sigma', v$ evaluates $e$ in store $\sigma$ and environment $\theta$ under a program-counter label $pc$: results computed under $pc$ get a label above
-$pc$, a branch on a value labelled $k$ evaluates under $pc \sqcup k$, and dereferencing an address labelled $k$ joins $k$ into the result. An assignment $e_1 := e_2$ first evaluates
+$pc$, applying a closure labelled $k$ evaluates its body under $pc \sqcup k$, allocation $\mathbf{ref}\ e$ (rule U-Ref) evaluates $e$ to $v$ with store $\sigma'$ and returns a
+fresh address $a \notin \mathrm{dom}(\sigma')$ labelled $pc$, written $a^{pc}$, with store $\sigma'[a := v]$, and dereferencing an address labelled $k$ joins $k$ into the result. An assignment $e_1 := e_2$ first evaluates
 $\sigma, \theta, e_1 \Downarrow_{pc} \sigma_1, a^k$ to an address $a$ labelled $k$ (so $pc \sqsubseteq k$), then $\sigma_1, \theta, e_2 \Downarrow_{pc} \sigma_2, v$; it is allowed only if $k \sqsubseteq \mathrm{label}(\sigma_2(a))$, the
 label of the cell in the store after both operands, and then returns $v$ with store $\sigma_2[a := v \sqcup k]$, the value $v$ with $k$ joined into its label; otherwise evaluation
 stops with an error. This *no-sensitive-upgrade* check forbids writing to a public cell under a secret program counter, which would otherwise leak through

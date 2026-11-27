@@ -8,8 +8,8 @@ the ranked signature of messages, through the [curried encoding](../../../Logic/
 the form $\mathrm{att}(x)$ with $x$ a variable, and otherwise selects one hypothesis not of that form. The clause collections are sets, and subsumption is the multiset subsumption of the linked page: $\mathrm{add}(R, \mathcal R)$ returns $\mathcal R$ if some clause of $\mathcal R$ subsumes $R$, and otherwise
 $\{R\}$ together with the clauses of $\mathcal R$ not subsumed by $R$. $\mathrm{saturate}(\mathcal R_0)$ adds the clauses of $\mathcal R_0$ one by one with $\mathrm{add}$; then, until a fixed point, adds
 $R \circ_{F'} R'$ for every clause $R$ with no selected hypothesis and every clause $R'$ with a selected hypothesis $F'$; and returns the clauses with no selected hypothesis. The backward
-search $\mathrm{derivable}(F, \mathcal R_1)$ explores goals $H \to C$, starting from $F \to F$, by resolving a selected hypothesis with clauses of $\mathcal R_1$, renamed apart from the goal, discarding goals subsumed by earlier
-ones, and returns the goals with no selected hypothesis.
+search $\mathrm{derivable}(F, \mathcal R_1)$ explores goals $H \to C$, starting from $F \to F$, by resolving a selected hypothesis with clauses of $\mathcal R_1$, renamed apart from the goal, discarding a goal subsumed by an earlier goal on the current
+search path, and returns the goals with no selected hypothesis.
 
 ## Depends on
 

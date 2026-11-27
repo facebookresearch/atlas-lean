@@ -14,7 +14,7 @@ The proof reduces LTL synthesis for distributed systems to satisfiability.
 
 This page becomes ready once:
 
-- The undecidability of LTL synthesis for distributed architectures (Pnueli and Rosner), to which the proof reduces (proof prerequisite; not yet stated)
+- The undecidability of LTL synthesis for distributed architectures (Pnueli and Rosner), the source problem of the reduction (proof prerequisite; not yet stated)
 
 ## Sources
 

@@ -4,7 +4,7 @@ Let $\ell = (C(A), \top_I)$, with the relations of [robust declassification](rob
 
 **Proposition.** If $\Gamma, pc \vdash c[\vec\bullet]$ and $\langle M_1, c[\vec a]\rangle \cong_\ell \langle M_2, c[\vec a]\rangle$ for an $A$-attack $\vec a$, then for every $A$-attack $\vec a'$, values
 $\mathit{val}_1, \dots, \mathit{val}_n$ and variables $v_1, \dots, v_n$ of low integrity ($I(A) \sqsubseteq I(\Gamma(v_i))$), the memories $M'_j = M_j[v_1 \mapsto \mathit{val}_1, \dots, v_n \mapsto \mathit{val}_n]$
-satisfy $\langle M'_1, c[\vec a']\rangle \approx_\ell \langle M'_2, c[\vec a']\rangle$. Robustness is the special case $n = 0$.
+satisfy $\langle M'_1, c[\vec a']\rangle \approx_\ell \langle M'_2, c[\vec a']\rangle$. Robustness against fair attacks is the special case $n = 0$ together with the fact that fair attacks are $A$-attacks (Proposition 3).
 
 ## Depends on
 

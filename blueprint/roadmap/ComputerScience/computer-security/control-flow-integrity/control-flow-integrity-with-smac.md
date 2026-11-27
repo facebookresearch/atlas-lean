@@ -5,7 +5,7 @@
 $S_{i+1}.pc \in \mathrm{succ}(S_0.M_c, G, S_i.pc)$. Inline store checks replace the assumption that code is not writable, and inline jump checks the assumption that data is not
 executable; the two mechanisms protect each other.
 
-The proof shows by induction an invariant like that for [instrumented code](execution-invariant-for-instrumented-code.md), with an extra conjunct forbidding jumps into or
+The proof shows by induction an invariant like that for instrumented code without memory access control, with an extra conjunct forbidding jumps into or
 past the checks before a store.
 
 ## Depends on
@@ -15,7 +15,6 @@ past the checks before a store.
 ## Proof depends on
 
 - [Stores checked by software memory access control stay in data memory](stores-checked-by-smac-stay-in-data-memory.md)
-- [Execution invariant for instrumented code](execution-invariant-for-instrumented-code.md)
 
 ## Sources
 

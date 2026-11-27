@@ -7,7 +7,8 @@ $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$, $\mathrm{ids}(s_1) \# \mathrm{b
 2. $[\![c]\!](s_1 \cup s_{21}) = [\![c]\!](s_1 \cup s_{22}) = \mathrm{error}$;
 3. there are a state $s'_1$ and permutations $\pi_1, \pi_2$ with $[\![c]\!](s_1 \cup s_{2i}) = \pi_i \cdot s'_1 \cup s_{2i}$ and $\mathrm{ids}(\pi_i \cdot s'_1) \# \mathrm{blocks}(s_{2i})$ for $i = 1, 2$.
 
-Memory unreachable from $s_1$ is neither modified nor observed: its contents do not influence the outcome.
+Memory unreachable from $s_1$ is neither modified nor observed: its contents influence neither the kind of outcome nor, up to renaming, the part of the result
+reachable from $s_1$.
 
 ## Depends on
 

@@ -14,4 +14,4 @@ number $r$ of role instances and the fact size $k$ are given in unary while the 
 
 ## Sources
 
-- N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 5, Theorem 3, Proposition 5.3 (upper bound, Section 5.4.3, whose witness has at most $rR$ protocol steps and $B = krR$ relevant values, polynomial when $r$ and $k$ are given in unary) and Proposition 5.7 (lower bound, Section 5.5.4).
+- N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 5, Theorem 3, Proposition 5.3 (upper bound, Section 5.4.3, whose witness has at most $rR$ protocol steps and $B = krR$ relevant values, polynomial when $r$ and $k$ are given in unary; its proof uses Lemma 3.13, which is stated for atomic keys) and Proposition 5.7 (lower bound, Section 5.5.4).

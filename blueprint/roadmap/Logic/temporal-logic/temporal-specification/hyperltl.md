@@ -9,7 +9,7 @@ partial assignment $\Pi$ of traces to variables: $\Pi \models_T \exists\pi.\psi$
 $\Pi \models_T \mathbf X\varphi$ iff $\Pi[1, \infty] \models_T \varphi$; and $\Pi \models_T \varphi_1 \mathbf U \varphi_2$ iff some $i \ge 0$ has $\Pi[i, \infty] \models_T \varphi_2$ and $\Pi[j, \infty] \models_T \varphi_1$ for all $j < i$,
 where $\Pi[i, \infty]$ takes the suffix of every assigned trace. $T$ *satisfies* a closed $\psi$ if the empty assignment does, and a [Kripke structure](kripke-structures-with-initial-states.md) $K = (S, s_0, \delta, AP, L)$, with the single initial state $s_0$ (initial set $\{s_0\}$),
 transition relation $s' \in \delta(s)$ and total (every state has at least one $\delta$-successor), satisfies $\psi$ if its set of traces $\mathrm{Traces}(K)$ does, the label sequences $L(s_0) L(s_1) L(s_2) \cdots$ of the infinite paths $s_0 s_1 s_2 \cdots$ from the initial state
-with $s_{i+1} \in \delta(s_i)$. A closed HyperLTL formula therefore denotes a [hyperproperty](hyperproperties-hypersafety-and-k-safety.md). For example, writing $\pi =_L \pi'$ for $\mathbf G \bigwedge_{a \in L} (a_\pi \leftrightarrow a_{\pi'})$ over a set $L$ of low
+with $s_{i+1} \in \delta(s_i)$. A closed HyperLTL formula therefore denotes a [hyperproperty](hyperproperties-hypersafety-and-k-safety.md). For example, writing $\pi =_L \pi'$ for $\mathbf G \bigwedge_{a \in L} (a_\pi \leftrightarrow a_{\pi'})$ over a finite set $L$ of low
 propositions, observational determinism is $\forall\pi.\forall\pi'.\ \pi[0] =_{L_{\mathrm{in}}} \pi'[0] \to \pi =_{L_{\mathrm{out}}} \pi'$.
 
 ## Depends on

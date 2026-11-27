@@ -1,16 +1,19 @@
 # Complexity of HyperCTL* model checking
 
-Let $g_c(0, y) = y$ and $g_c(x, y) = c^{g_c(x - 1, y)}$ be towers of exponentials, with $\mathrm{NSPACE}(g_c(-1, y))$ read as $\mathrm{NLOGSPACE}$, and let
+Let $g_c(0, y) = y$ and $g_c(x, y) = c^{g_c(x - 1, y)}$ be towers of exponentials, with $\mathrm{NSPACE}(g_c(-1, y))$ read as $\mathrm{NLOGSPACE}$, the class [NL](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nl.md), and let
 [nondeterministic space classes](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nspace.md) be as usual.
 
 **Theorem (Clarkson, Finkbeiner, Koleini, Micinski, Rabe and Sánchez).** The model checking problem for [HyperCTL*](hyperctl-star.md) specifications $\varphi$ of alternation depth $k$ on
-Kripke structures $K$ is complete for $\mathrm{NSPACE}(g_c(k, |\varphi|))$ and lies in $\mathrm{NSPACE}(g_c(k - 1, |K|))$, for some constant $c > 0$. In particular it is decidable.
+finite, explicitly given Kripke structures $K$, measured in the size of the formula, is complete for $\mathrm{NSPACE}(g_c(k, |\varphi|))$; and for a fixed specification of alternation depth $k$,
+measured in the size of the structure, it lies in $\mathrm{NSPACE}(g_c(k - 1, |K|))$, for some constant $c > 0$. In particular it is decidable.
 
-Both bounds reduce to and from satisfiability of quantified propositional temporal logic in prenex form with alternation depth $k$.
+Both bounds go through satisfiability of quantified propositional temporal logic in prenex form; the quantifier alternations of that logic are not the same
+measure as the alternation depth of the translated HyperCTL* formula, which also counts $\mathbf U$ and $\mathbf R$.
 
 ## Depends on
 
 - [HyperCTL*](hyperctl-star.md)
+- [The complexity class NL](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nl.md)
 - [Nondeterministic space classes](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nspace.md)
 
 ## Sources

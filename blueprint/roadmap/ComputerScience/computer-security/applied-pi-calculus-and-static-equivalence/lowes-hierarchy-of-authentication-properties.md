@@ -1,6 +1,6 @@
 # Lowe's hierarchy of authentication properties
 
-Whenever an honest agent $A$ completes a run of a protocol, apparently with an honest agent $B$, a protocol guarantees to $A$:
+Whenever an honest agent $A$ completes a run of a protocol, apparently with another honest agent $B$, a protocol guarantees to $A$:
 
 - *aliveness* if $B$ has previously run the protocol;
 - *weak agreement* if $B$ has previously been running the protocol, apparently with $A$;

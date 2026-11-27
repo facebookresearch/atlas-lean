@@ -1,7 +1,7 @@
 # Integrity-only noninterference when pointers can be cast to integers
 
-Extend the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md) with an operation that converts a pointer to an integer, so that identifiers become
-observable. The frame theorems and the secrecy part of noninterference then fail, but integrity survives.
+Extend the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md) with an expression $\mathrm{cast}(e)$ that converts a pointer to an integer: for an arbitrary
+fixed function $f : I \times \mathbb Z \to \mathbb Z$, it evaluates to $f([\![e]\!](s))$ when $[\![e]\!](s)$ is a pointer, so that identifiers become observable. The frame theorems and the secrecy part of noninterference then fail, but integrity survives.
 
 **Theorem.** Let $s_1, s_2, s'$ be states and $c$ a command of the extended language with $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$, $\mathrm{ids}(s_1) \# \mathrm{blocks}(s_2)$ and
 $[\![c]\!](s_1 \cup s_2) = s'$. Then $s' = s'_1 \cup s_2$ for some state $s'_1$ with $\mathrm{ids}(s'_1) \# \mathrm{blocks}(s_2)$: an unreachable region is left unchanged by any

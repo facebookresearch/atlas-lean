@@ -1,9 +1,9 @@
 # Terms and processes of the applied pi calculus
 
-Fix a *signature* $\Sigma$, a finite set of function symbols each with an arity (constants have arity $0$), a set of *names* $a, b, c, \dots, k, n, s$
+Fix a *signature* $\Sigma$, a finite set of function symbols $f$, each with an arity $l$ (constants have arity $0$) and a sort $f : \tau_1 \times \dots \times \tau_l \to \tau$, a set of *names* $a, b, c, \dots, k, n, s$
 and a set of *variables* $x, y, z$, each name and variable having a sort (among them a sort $\mathrm{Channel}$), with infinitely many names and infinitely many variables of
 each sort. *Terms* $M, N$ are names, variables
-and applications $f(M_1, \dots, M_l)$ with $l$ the arity of $f$, well sorted; a term is *ground* if it has no variables. *Plain processes* are
+and applications $f(M_1, \dots, M_l)$ with $l$ the arity of $f$, well sorted: each $M_j$ has sort $\tau_j$ and the application has sort $\tau$; a term is *ground* if it has no variables. *Plain processes* are
 
 $$P, Q ::= 0 \mid P \mid Q \mid\ !P \mid \nu n.P \mid \mathbf{if}\ M = N\ \mathbf{then}\ P\ \mathbf{else}\ Q \mid N(x).P \mid \overline{N}\langle M\rangle.P,$$
 
