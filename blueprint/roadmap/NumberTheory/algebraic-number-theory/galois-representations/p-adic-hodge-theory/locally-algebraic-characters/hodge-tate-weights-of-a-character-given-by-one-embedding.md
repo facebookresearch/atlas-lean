@@ -48,10 +48,23 @@ $\mathcal{O}_F$-equivariant Hodge–Tate sequence.
   $g \in \operatorname{Gal}(F'/\mathbb{Q}_p)$, and by [S6, III, A.5, Thm. 2] (especially Lemma 2 in its proof) the $g$th
   line has Hodge–Tate weight $0$ except for $g = \tau^{-1}$, which has weight $1$ (due to our arithmetic
   normalization of the local Artin map)"; the arithmetic normalization is fixed on p. 32.
-- J.-P. Serre, *Abelian l-adic representations and elliptic curves*, 2nd edition, A. K. Peters (1998),
-  Chapter III, Appendix, A.5, Theorem 2 and Lemma 2 in its proof, as cited by Conrad in the proof of
-  Proposition B.3; not read here.
+- J.-P. Serre, *Abelian l-adic representations and elliptic curves*, Advanced Book Classics, Addison-Wesley
+  (1989), a reprint of the 1968 edition: Chapter III, Appendix, for a ground field $K$ and a finite extension $E$ of
+  $\mathbb{Q}_p$ such that $K$ contains all $\mathbb{Q}_p$-conjugates of $E$ (A3, p. III-38): A4, pp. III-40–42 (the
+  character $\chi_E$; Proposition 4, the Galois action on the Tate module of the Lubin–Tate group of $E$ is given by
+  $\chi_E$; its Corollary; and the Remark that for $K$ locally compact the restriction of $\chi_E$ to the inertia
+  subgroup $U_K$ is $x \mapsto N_{K/E}(x^{-1})$); A5, pp. III-42–47 (Lemma 1, the decomposition of $C \otimes_{\mathbb{Q}_p} V$
+  into the lines $W_\sigma$ on which $E$ acts through $\sigma$, with $W_\sigma \cong C(\sigma \circ \rho)$; Theorem 2, p. III-44:
+  $\rho$ coincides on an open subgroup of inertia with $\prod_\sigma \sigma^{-1} \circ \chi_{\sigma E}^{n_\sigma}$ exactly when each
+  $W_\sigma$ is isomorphic to $C(\chi^{n_\sigma})$; and Lemma 2 with its proof, pp. III-45–46, which applies Tate's
+  decomposition to the Lubin–Tate group and uses that it commutes with the action of $E$, which acts on the tangent
+  space through the inclusion, so that the line of the inclusion is the part of weight $1$). The page's statement is
+  the case $K = E = F$ of Theorem 2, with $n_\sigma = 1$ for $\sigma = \tau^{-1}$ and $n_\sigma = 0$ otherwise. Serre's
+  reciprocity map is that of Cassels–Fröhlich, Chapter VI, §2 (Chapter III, §1.1, p. III-2), under which the
+  cyclotomic character is $x \mapsto x^{-1}$ near $1$ (Example 1, p. III-2), as under the arithmetic normalization.
 - J. Tate, "p-divisible groups", in *Proceedings of a Conference on Local Fields* (Driebergen, 1966), Springer
-  (1967), for the Hodge–Tate decomposition of $p$-divisible groups over $\mathcal{O}_F$, as cited by Brinon and Conrad,
-  *CMI summer school notes on p-adic Hodge theory* (preliminary version), §7.2, p. 94 (reference [49], with
-  Theorem 7.2.8, Tate's theorem on homomorphisms of $p$-divisible groups); not read here.
+  (1967), 158–183: §4, Theorem 3, p. 179, and Corollary 2, p. 180 (for a $p$-divisible group $G$ over a complete
+  discrete valuation ring of mixed characteristic with perfect residue field, a canonical isomorphism of Galois
+  modules between $\operatorname{Hom}(T(G), C)$ and the direct sum of the tangent space of the dual group tensored with $C$
+  and the cotangent space of $G$ tensored with $\operatorname{Hom}(H, C)$, where $H$ is the Tate module of the roots of unity),
+  the decomposition Serre applies to the Lubin–Tate group.

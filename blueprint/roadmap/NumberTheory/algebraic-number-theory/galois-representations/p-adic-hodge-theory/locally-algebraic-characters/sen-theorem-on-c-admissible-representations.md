@@ -33,3 +33,6 @@ $1$, for $V = \mathbb{Q}_p(\eta)$, the statement is Tate's, the case of the
   $V$ is $\overline{P}$-admissible"), deduced there from Proposition 4.43 and Corollary 4.41, with Corollary 4.45, the case
   of dimension $1$; Theorem 4.40 and Corollary 4.41 (the Sen operator), and §4.4 (Theorem 4.47, from which
   Proposition 4.43 follows).
+- S. Sen, "Continuous cohomology and p-adic Galois representations", Invent. Math. 62 (1980), 89–116,
+  doi:10.1007/BF01391665, listed in Fontaine–Ouyang's bibliography as [Sen80], for Sen's theorem; paywalled, not read
+  here.
