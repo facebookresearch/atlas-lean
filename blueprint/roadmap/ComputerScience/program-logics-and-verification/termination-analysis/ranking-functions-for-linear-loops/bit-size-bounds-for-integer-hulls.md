@@ -1,6 +1,6 @@
 # Bit-size bounds for integer hulls
 
-Let $P$ be a rational polyhedron in $\mathbb{Q}^n$, with [facet size and vertex size](integer-hulls-and-bit-sizes-of-polyhedra.md) $\|P\|_f$ and $\|P\|_v$. Then
+Let $P$ be a rational polyhedron in $\mathbb{Q}^n$, $n \ge 1$, with [facet size and vertex size](integer-hulls-and-bit-sizes-of-polyhedra.md) $\|P\|_f$ and $\|P\|_v$. Then
 
 $$\|P\|_v \le 4n^2 \|P\|_f, \qquad \|P\|_f \le 4n^2 \|P\|_v,$$
 

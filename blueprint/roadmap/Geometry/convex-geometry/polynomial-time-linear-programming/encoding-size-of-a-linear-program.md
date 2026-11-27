@@ -1,6 +1,6 @@
 # Encoding size of a linear program
 
-Consider a linear program in standard equality form, $\min\{c^\top x : A x = b,\ x \ge 0\}$, with an integer $m \times n$ matrix $A$ and integer vectors $b \in \mathbb{Z}^m$, $c \in \mathbb{Z}^n$ (rational data reduce to this case by clearing denominators). The *size* of an integer is $\mathrm{size}(k) = 1 + \lceil \log_2(|k| + 1) \rceil$, the size of a vector or matrix is the sum of the sizes of its entries, and the size of the linear program is
+Consider a linear program in standard equality form, $\min\{c^\top x : A x = b,\ x \ge 0\}$, with an integer $m \times n$ matrix $A$, $m, n \ge 1$, and integer vectors $b \in \mathbb{Z}^m$, $c \in \mathbb{Z}^n$ (rational data reduce to this case by clearing denominators). The *size* of an integer is $\mathrm{size}(k) = 1 + \lceil \log_2(|k| + 1) \rceil$, the size of a vector or matrix is the sum of the sizes of its entries, and the size of the linear program is
 
 $$\mathrm{size}(LP) = \mathrm{size}(A) + \mathrm{size}(b) + \mathrm{size}(c).$$
 

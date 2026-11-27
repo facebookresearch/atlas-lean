@@ -1,6 +1,6 @@
 # The measure L exceeds the encoding size by at most a constant
 
-For every linear program $\min\{c^\top x : A x = b,\ x \ge 0\}$ with an integer $m \times n$ matrix $A$ and integer vectors $b$, $c$, the measure $L$ of [the encoding size page](encoding-size-of-a-linear-program.md) satisfies
+For every linear program $\min\{c^\top x : A x = b,\ x \ge 0\}$ with an integer $m \times n$ matrix $A$, $m, n \ge 1$, and integer vectors $b$, $c$, the measure $L$ of [the encoding size page](encoding-size-of-a-linear-program.md) satisfies
 
 $$L \le \mathrm{size}(LP) + 4 - mn \le \mathrm{size}(LP) + 3 .$$
 
