@@ -1,0 +1,27 @@
+# Every function field of positive characteristic has undecidable first-order theory
+
+For every prime $p$, every function field of characteristic $p$, in any number of variables and over any field of constants, has an undecidable first-order theory in the language of rings without parameters. This completes the earlier result by adding the case of characteristic $2$ and transcendence degree at least $2$ over $\mathbb{F}_2$.
+
+A *function field in $n$ variables* over a field $F$, for $n \ge 1$, is a field $K$ containing $F$ and elements $x_1, \dots, x_n$ algebraically independent over $F$ such that $K$ is a finite algebraic extension of $F(x_1, \dots, x_n)$. Let $\mathcal{L}_{\mathrm{ring}} = \{+, \cdot, 0, 1\}$, with equality.
+
+**Theorem (Eisenträger–Shlapentokh).** Let $K$ be a function field of positive characteristic. Then the first-order theory of $K$ in $\mathcal{L}_{\mathrm{ring}}$ without parameters, the set of parameter-free $\mathcal{L}_{\mathrm{ring}}$-sentences true in $K$, is undecidable.
+
+Conventions: the field of constants is arbitrary, possibly algebraically closed and possibly uncountable; for a one-variable function field over an algebraically closed field the first-order theory is undecidable by this theorem even though the corresponding existential question (Hilbert's tenth problem) is open.
+
+## Depends on
+
+- [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
+
+## Proof depends on
+
+- [Function fields of characteristic greater than 2 have undecidable first-order theory](function-fields-of-odd-characteristic-undecidable.md)
+- [Robinson's arithmetic Q](../../../Logic/first-order-logic/peano-arithmetic-and-robinson-s-q/qtheory.md)
+
+## Expansion
+
+The earlier paper reduces first-order undecidability of a function field $K$ of characteristic $p$ to the first-order definability of the set $P(K, t) = \{t^{p^s} : s \ge 0\}$ for an element $t \in K$ with simple zeros and poles: definability of $P(K, t)$ gives a model of $(\mathbb{Z}, \mid, +)$ in $K$ with finitely many parameters, and the parameters are then removed using Robinson's arithmetic Q, a step that does not depend on the field. That paper covered every function field except those of characteristic $2$ and transcendence degree at least $2$ over $\mathbb{F}_2$. The new paper defines $p$-th powers existentially over every function field of positive characteristic, so the same argument covers every such $K$.
+
+## Sources
+
+- Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Hilbert's tenth problem over function fields of positive characteristic not containing the algebraic closure of a finite field*, J. Eur. Math. Soc. 19 (2017), no. 7, 2103–2138, https://doi.org/10.4171/JEMS/714; Theorem 1.3 of arXiv:1306.2669v1, with the proof in its final section.
+- Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Undecidability in function fields of positive characteristic*, Int. Math. Res. Not. IMRN 2009, 4051–4086, https://doi.org/10.1093/imrn/rnp079, for the reduction to definability of $p$-th powers and the removal of parameters.
