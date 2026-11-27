@@ -65,12 +65,19 @@ def conjecture : Prop :=
         HasBookEmbedding G' k → HasBookEmbedding G (f k)
 
 /--
-Resolved false: The exact-once specialization is refuted: the
-Dujmovic-Eppstein-Hickingbotham-Morin-Wood family (arXiv:2011.04195) has uniformly bounded
-once-subdivided book thickness but unbounded book thickness. The broader bounded-subdivisions
-conjecture was likewise refuted. Source: V. Dujmovic, D. Eppstein, R. Hickingbotham, P. Morin,
-D. R. Wood, arXiv:2011.04195, https://arxiv.org/abs/2011.04195. Moved from
-`OpenConjectures/GraphTheory/BookThicknessOfSubdivisions`.
+Not settled by the cited source: arXiv:2011.04195 refutes the bounded-subdivisions conjecture of
+Blankenship and Oporowski, not this exact-once specialization. That conjecture (Conjecture 1
+there) asks for `f` with `sn(G) ≤ f(sn(G'), k)` for every subdivision `G'` of `G` with at most `k`
+division vertices per edge, where the stack-number `sn` is the book thickness. By Dujmović and
+Wood's lemma every graph `G` has a 3-stack subdivision with `1 + 2⌈log₂ qn(G)⌉` division vertices
+per edge, so the 5-subdivision of each graph `S_b □ H_n` of Theorem 1 (queue-number at most 4,
+stack-number unbounded) has a 3-stack layout. That argument uses five division vertices per edge
+and gives no bound on the book thickness of once-subdivided graphs, so it does not decide
+`conjecture`: this statement records a wanted answer, not a known one. Source: V. Dujmović,
+D. Eppstein, R. Hickingbotham, P. Morin and D. R. Wood, Stack-number is not bounded by
+queue-number, Combinatorica 42 (2022), 151-164, https://doi.org/10.1007/s00493-021-4585-7,
+arXiv:2011.04195, https://arxiv.org/abs/2011.04195 (Theorem 1 and the paragraph 'Subdivisions'
+of the introduction). Moved from `OpenConjectures/GraphTheory/BookThicknessOfSubdivisions`.
 -/
 public theorem_wanted conjecture_refuted : ¬ conjecture
 
