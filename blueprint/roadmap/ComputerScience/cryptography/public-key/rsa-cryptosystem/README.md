@@ -6,6 +6,7 @@
 - [Fermat's little theorem for congruent exponents](pow-eq-pow-of-mod-eq.md)
 - [Positivity of the reduced RSA exponent](one-le-mod.md)
 - [RSA key](key.md)
+- [RSA Attacks and Reductions](rsa-attacks-and-reductions/README.md)
 
 ## Key
 
