@@ -169,6 +169,34 @@ theorem one_mem_bernoulliIntegralDerivativeIndices_one :
     derivative_C, sub_zero, Polynomial.coeff_one]
   split_ifs <;> rfl
 
+private theorem natCast_mul_den_eq_one_iff (q : ℚ) (n : ℕ) :
+    ((n : ℚ) * q).den = 1 ↔ q.den ∣ n := by
+  have h := Rat.den_mul_den_eq_den_mul_gcd (n : ℚ) q
+  simp only [Rat.den_natCast, one_mul, Rat.num_natCast, Int.natAbs_mul, Int.natAbs_natCast,
+    Nat.gcd_comm (n * _) _, q.reduced.gcd_mul_right_cancel_right] at h
+  constructor
+  · intro h₁
+    rw [h₁, one_mul] at h
+    exact (dvd_of_eq h).trans (Nat.gcd_dvd_right _ _)
+  · intro hd
+    rw [Nat.gcd_eq_left hd] at h
+    exact Nat.eq_of_mul_eq_mul_right q.den_pos (by simpa using h.symm)
+
+/-- **Integral derivative criterion via the predecessor's denominator.** For every
+$m \in \mathbb{N}$, the derivative $B_{m+1}'(x)$ of the Bernoulli polynomial $B_{m+1}(x)$ has only
+integer coefficients, that is, $m + 1 \in \overline{\mathcal{S}}$, if and only if the denominator
+of $B_m(x)$ divides $m + 1$. This follows from $B_{m+1}'(x) = (m + 1) B_m(x)$. -/
+theorem succ_mem_bernoulliIntegralDerivativeIndices_one_iff (m : ℕ) :
+    m + 1 ∈ bernoulliIntegralDerivativeIndices 1 ↔
+      polynomialDenominator (Polynomial.bernoulli m) ∣ m + 1 := by
+  simp only [bernoulliIntegralDerivativeIndices, Set.mem_ofPred_eq, Nat.le_add_left,
+    true_and, Function.iterate_one, polynomialDenominator_eq_one_iff,
+    derivative_bernoulli_add_one, ← Nat.cast_add_one, coeff_natCast_mul,
+    natCast_mul_den_eq_one_iff]
+  constructor
+  · exact fun h => Finset.lcm_dvd fun i _ => h i
+  · exact fun h i => (coeff_den_dvd_polynomialDenominator _ i).trans h
+
 /-- **Kellner's large-part conjecture.** For a natural number $n$, let $\mathbb{D}^+_n$ be the
 product of the primes $p > \sqrt{n}$ with $s_p(n) \ge p$, where $s_p(n)$ is the sum of the
 base-$p$ digits of $n$. This definition is the proposition that $\mathbb{D}^+_n > 1$ for every
