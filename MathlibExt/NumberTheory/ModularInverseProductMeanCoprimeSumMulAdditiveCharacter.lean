@@ -33,23 +33,9 @@ open Complex Finset
 private theorem sum_moebius_divisors (n : ℕ) :
     ∑ d ∈ n.divisors, ((ArithmeticFunction.moebius d : ℤ) : ℂ) =
       if n = 1 then 1 else 0 := by
-  have h : ((↑ArithmeticFunction.moebius * ↑ArithmeticFunction.zeta :
-    ArithmeticFunction ℂ) n) = (1 : ArithmeticFunction ℂ) n := by
-    rw [ArithmeticFunction.coe_moebius_mul_coe_zeta]
-  rw [ArithmeticFunction.mul_apply] at h
-  have hz : ∀ x ∈ n.divisorsAntidiagonal,
-      ((↑ArithmeticFunction.moebius : ArithmeticFunction ℂ) x.1 *
-        (↑ArithmeticFunction.zeta : ArithmeticFunction ℂ) x.2) =
-        ((ArithmeticFunction.moebius x.1 : ℤ) : ℂ) := by
-    intro x hx
-    have hx2 : x.2 ≠ 0 := Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx
-    simp [hx2]
-  rw [Finset.sum_congr rfl hz] at h
-  rw [Nat.sum_divisorsAntidiagonal (fun i _ => ((ArithmeticFunction.moebius i : ℤ) : ℂ))] at h
-  have h1 : (1 : ArithmeticFunction ℂ) n = (if n = 1 then (1 : ℂ) else 0) := by
-    simp [ArithmeticFunction.one_apply]
-  rw [h1] at h
-  exact h
+  change (∑ d ∈ n.divisors, (↑ArithmeticFunction.moebius : ArithmeticFunction ℂ) d) = _
+  rw [← ArithmeticFunction.coe_mul_zeta_apply, ArithmeticFunction.coe_moebius_mul_coe_zeta,
+    ArithmeticFunction.one_apply]
 
 private theorem sum_moebius_coprime (b n : ℕ) :
     ∑ d ∈ (Nat.gcd b n).divisors, ((ArithmeticFunction.moebius d : ℤ) : ℂ) =

@@ -43,4 +43,29 @@ example : ∑ b ∈ Icc (1 : ℕ) 2 with Nat.Coprime b 2,
   rw [show (2 : ℕ) / 1 = 2 by decide, ArithmeticFunction.moebius_apply_one]
   norm_num only [Nat.cast_one, Nat.cast_ofNat, Int.cast_one]
 
+-- At modulus four and frequency one the terms `b = 1, 3` give `-I + 3 * I = 2 * I`; the sign of
+-- the exponent is visible here, since the opposite sign would give `-2 * I`.
+example : ∑ b ∈ Icc (1 : ℕ) 4 with Nat.Coprime b 4,
+    (b : ℂ) * exp (2 * Real.pi * I * (-((1 : ℕ) * b : ℂ)) / (4 : ℕ)) = 2 * I := by
+  have h := coprime_sum_mul_additive_character (n := 4) (k := 1) (by decide) (by decide)
+  rw [h]
+  rw [show Nat.divisors 4 = ({1, 2, 4} : Finset ℕ) by decide]
+  rw [show Finset.filter (fun d => ¬ (4 / d) ∣ 1) ({1, 2, 4} : Finset ℕ) = {1, 2} by decide]
+  rw [show Finset.filter (fun d => d < 4 ∧ (4 / d) ∣ 1) ({1, 2, 4} : Finset ℕ) = ∅ by decide]
+  rw [Finset.sum_pair (by decide), Finset.sum_empty]
+  rw [show (4 : ℕ) / 1 = 4 by decide, show (4 : ℕ) / 2 = 2 by decide,
+    ArithmeticFunction.moebius_apply_one, ArithmeticFunction.moebius_apply_prime Nat.prime_two]
+  push_cast
+  rw [show 2 * (Real.pi : ℂ) * I * (-1) / 4 = -Real.pi / 2 * I by ring,
+    show 2 * (Real.pi : ℂ) * I * (-1) / 2 = -(Real.pi * I) by ring,
+    Complex.exp_neg_pi_div_two_mul_I, Complex.exp_neg_pi_mul_I]
+  have h1 : (1 : ℂ) - -I ≠ 0 := by
+    intro h0
+    have := congrArg Complex.re h0
+    simp at this
+  field_simp
+  ring_nf
+  simp [Complex.I_sq]
+  ring
+
 end MathlibExtTest.NumberTheory.ModularInverseProductMeanCoprimeSumMulAdditiveCharacter
