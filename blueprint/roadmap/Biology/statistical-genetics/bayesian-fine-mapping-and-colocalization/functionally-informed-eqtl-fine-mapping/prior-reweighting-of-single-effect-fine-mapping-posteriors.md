@@ -6,6 +6,10 @@ $$\hat\alpha_l(v) = \frac{w_v\,\alpha_l(v)}{\sum_{u=1}^{m} w_u\,\alpha_l(u)}$$
 
 if effect $l$ has a pure credible set, and $\hat\alpha_l = \alpha_l$ otherwise. Updated posterior inclusion probabilities and credible sets follow from the $\hat\alpha_l$ as in the original method, $\mathrm{PIP}(v) = 1 - \prod_{l}\bigl(1 - \hat\alpha_l(v)\bigr)$. The prior may be tempered by capping the ratio of its largest to smallest value (for example at 100).
 
+## Depends on
+
+- [Sum of Single Effects (SuSiE) model and factored variational family](../../sum-of-single-effects-susie/sum-of-single-effects-model.md)
+
 ## Expansion
 
 For a single-effect regression with residual data held fixed, the posterior under prior $\pi$ is $\alpha(v) \propto \pi_v\,\mathrm{BF}_v$, where $\mathrm{BF}_v$ is the Bayes factor for variant $v$. Under the uniform prior $\alpha(v) \propto \mathrm{BF}_v$, so multiplying by $w_v$ and renormalizing gives exactly the posterior under the prior $\pi \propto w$. The procedure is approximate only because the full model's coordinate ascent would also refit the other effects' residuals under the new prior; reweighting skips that refit, which keeps the cost negligible at the scale of all genes in 49 tissues. When variants are in perfect LD their Bayes factors are equal and the uniform-prior posterior splits evenly; the prior then decides, which is how functionally informed reweighting resolved 20,913 additional eQTLs to $\mathrm{PIP} > 0.9$.
