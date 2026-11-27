@@ -173,7 +173,12 @@ def override (ct : ClassTable) (m : MName) (D : CName)
     (sig : List CName × CName) : Prop :=
   ∀ sig', mtype ct m D = some sig' → sig' = sig
 
-/-- Well-formedness: IPW sanity (distinct, declared, acyclic), nodup, override. -/
+/-- Well-formedness of a class table: no declared class is named `Object`; class names are
+distinct; every class a declaration refers to is `Object` or declared; the superclass chain of
+each declared class repeats no class; method names are distinct within each class; the field
+names that `fields` returns are distinct; each method has the signature of the method of the
+same name found from its superclass, if there is one; and method parameters are distinct and
+differ from `this`. -/
 structure WellFormed (ct : ClassTable) : Prop where
   objectUndeclared : ∀ cd ∈ ct, cd.name ≠ Object
   namesNodup : (ct.map ClassDecl.name).Nodup
@@ -293,11 +298,11 @@ def ClassOk (ct : ClassTable) (cd : ClassDecl) : Prop :=
     cd.ctorParams = fs ++ cd.fields) ∧
   ∀ p ∈ cd.methods, MethodOk ct cd p
 
-/-- All classes ok (CLASS-OK); table validity is ValidTable. -/
+/-- Every class declaration of the table satisfies `ClassOk` (CLASS-OK). -/
 def TableOk (ct : ClassTable) : Prop :=
   ∀ cd ∈ ct, ClassOk ct cd
 
-/-- Valid class table: sanity plus every class ok (Lecture #30 program check). -/
+/-- Valid class table: `WellFormed` and `TableOk` (Lecture #30 program check). -/
 def ValidTable (ct : ClassTable) : Prop :=
   WellFormed ct ∧ TableOk ct
 

@@ -16,3 +16,5 @@ Ordered dictionaries: binary search trees and their balanced variants (AVL, red-
 - [Weight-balanced tree](weight-balanced-tree/README.md)
 - [Dynamic optimality](dynamic-optimality/README.md)
 - [Randomized search trees](randomized-search-trees/README.md)
+- [Locality Theorems for Splay Trees](splay-tree-locality-theorems/README.md)
+- [Search Trees on the Pointer Machine](pointer-machine-search-trees/README.md)

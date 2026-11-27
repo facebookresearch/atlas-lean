@@ -46,6 +46,21 @@ sum in `exp (2X)`, expanded in powers of `exp X + exp (-X) - 2` after factoring 
 
 The even power-sum formula in Theorem 1 follows by centering the geometric sum at zero
 and taking its coefficient of degree `2k`. Opposite exponents contribute equally.
+
+The proof of Knuth's formula (Proposition 3) takes first differences and expands the
+resulting even power in the central factorial basis.
+
+## References
+
+* José L. Cereceda, *Sums of Powers of Integers and the Sequence A304330*,
+  Journal of Integer Sequences 28 (2025), Article 25.1.3, especially Proposition 3,
+  equation (5), and Section 2.2.
+* Donald E. Knuth, *Johann Faulhaber and Sums of Powers*, Mathematics of Computation
+  61 (1993), 277–294, pp. 284–286.
+* P. L. Butzer, M. Schmidt, E. L. Stark, and L. Vogt,
+  *Central factorial numbers; their main properties and some applications*,
+  Numerical Functional Analysis and Optimization 10 (1989), 419–488,
+  Propositions 2.3 and 2.4(xiii).
 -/
 
 public section
@@ -620,6 +635,124 @@ theorem powerSum_even_div_iff_odd (k : ℕ) (hk : 1 ≤ k)
       have hs := powerSum_step n
       rw [h (n + 1), h n] at hs
       linear_combination hs - expansion_step n + ih
+
+section Knuth
+
+-- The factorial-scaled binomial is the central-factorial product at a positive integer.
+private theorem central_factorial_choose (n m : ℕ) :
+    (∏ i ∈ Finset.range (m + 1), (((n : ℝ) + 1) ^ 2 - (i : ℝ) ^ 2)) =
+      ((n : ℝ) + 1) * ((2 * m + 1).factorial : ℝ) *
+        ((n + m + 1).choose (2 * m + 1) : ℝ) := by
+  induction m with
+  | zero => simp [Nat.choose_one_right]; ring
+  | succ m ih =>
+    rw [Finset.prod_range_succ, ih]
+    by_cases h : m < n
+    · rw [Nat.cast_choose ℝ (by omega), Nat.cast_choose ℝ (by omega)]
+      rw [show n + (m + 1) + 1 = n + m + 1 + 1 by omega,
+        Nat.factorial_succ (n + m + 1),
+        show n + m + 1 - (2 * m + 1) = n - m by omega,
+        show n + m + 1 + 1 - (2 * (m + 1) + 1) = n - m - 1 by omega]
+      rw [show n - m = n - m - 1 + 1 by omega, Nat.factorial_succ (n - m - 1)]
+      push_cast [Nat.cast_sub (show m ≤ n by omega), Nat.cast_sub (show 1 ≤ n - m by omega)]
+      have hnm : (m : ℝ) < n := by exact_mod_cast h
+      field_simp [sub_ne_zero.mpr hnm.ne']
+      ring
+    · rw [Nat.choose_eq_zero_of_lt (show n + (m + 1) + 1 < 2 * (m + 1) + 1 by omega)]
+      rcases eq_or_lt_of_le (show n ≤ m by omega) with rfl | hlt
+      · simp
+      · simp [Nat.choose_eq_zero_of_lt (show n + m + 1 < 2 * m + 1 by omega)]
+
+-- Multiplication by x² shifts the product basis by one column, with a diagonal correction.
+private theorem even_pow_eq_central_factorial (x : ℝ) (k : ℕ) (hk : 1 ≤ k) :
+    x ^ (2 * k) = transform secondEntry
+      (fun m ↦ ∏ i ∈ Finset.range m, (x ^ 2 - (i : ℝ) ^ 2)) k := by
+  let b (m : ℕ) := ∏ i ∈ Finset.range m, (x ^ 2 - (i : ℝ) ^ 2)
+  change _ = transform secondEntry b k
+  induction k, hk using Nat.le_induction with
+  | base =>
+    simp [transform, secondEntry, b,
+      show arrayU 1 1 = 1 by norm_num [arrayU, Finset.sum_range_succ, Nat.factorial]]
+  | succ k hk ih =>
+    rw [secondTransform_succ _ k hk, show 2 * (k + 1) = 2 * k + 2 by omega, pow_add, ih]
+    simp only [transform, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun m _ ↦ ?_
+    dsimp only [b]
+    rw [Finset.prod_range_succ]
+    ring
+
+private theorem even_pow_eq_choose_step (k n : ℕ) (hk : 1 ≤ k) :
+    ((n : ℝ) + 1) ^ (2 * k) =
+      ∑ m ∈ Finset.Icc 1 k,
+        (arrayR k m : ℝ) * (((n : ℝ) + 1) / m) * ((n + m).choose (2 * m - 1) : ℝ) := by
+  rw [even_pow_eq_central_factorial _ k hk]
+  refine Finset.sum_congr rfl fun m hm ↦ ?_
+  have hm₁ := (Finset.mem_Icc.mp hm).1
+  obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : m ≠ 0)
+  change (arrayU k (j + 1) : ℝ) *
+    (∏ i ∈ Finset.range (j + 1), (((n : ℝ) + 1) ^ 2 - (i : ℝ) ^ 2)) =
+    (arrayR k (j + 1) : ℝ) * (((n : ℝ) + 1) / ↑(j + 1 : ℕ)) *
+      ((n + j + 1).choose (2 * (j + 1) - 1) : ℝ)
+  rw [arrayU_eq_scaled_arrayR, central_factorial_choose n j,
+    show 2 * (j + 1) - 1 = 2 * j + 1 by omega,
+    show 2 * (j + 1) = 2 * j + 1 + 1 by omega, Nat.factorial_succ]
+  push_cast
+  field_simp
+  ring
+
+/-- **Knuth's formula for even power sums.** For natural numbers $k \ge 1$ and $n$, write
+$S_{2k}(n) = 1^{2k} + 2^{2k} + \dots + n^{2k}$ and
+$R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
+$S_{2k}(n) = \sum_{m=1}^{k} R(k, m)\, \frac{2n+1}{2m+1} \binom{n+m}{2m}$.
+
+Source: José L. Cereceda, "Sums of Powers of Integers and the
+Sequence A304330", Proposition 3. -/
+theorem powerSum_even_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
+    powerSum (2 * k) n =
+      ∑ m ∈ Finset.Icc 1 k,
+        (arrayR k m : ℚ) * ((2 * (n : ℚ) + 1) / (2 * (m : ℚ) + 1)) *
+          (Nat.choose (n + m) (2 * m) : ℚ) := by
+  let F (j : ℕ) : ℝ := ∑ m ∈ Finset.Icc 1 k,
+    (arrayR k m : ℝ) * ((2 * (j : ℝ) + 1) / (2 * (m : ℝ) + 1)) *
+      ((j + m).choose (2 * m) : ℝ)
+  have step (j : ℕ) : F (j + 1) - F j = ((j : ℝ) + 1) ^ (2 * k) := by
+    rw [even_pow_eq_choose_step k j hk]
+    simp only [F, ← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun m hm ↦ ?_
+    have hm₁ := (Finset.mem_Icc.mp hm).1
+    have h := weighted_choose_sub m j hm₁
+    have pascal := Nat.choose_succ_succ' (j + m) (2 * m - 1)
+    rw [show 2 * m - 1 + 1 = 2 * m by omega, show j + m + 1 = j + 1 + m by omega] at pascal
+    have hd : ((j + 1 + m).choose (2 * m) : ℝ) - ((j + m).choose (2 * m) : ℝ) =
+        ((j + m).choose (2 * m - 1) : ℝ) := by rw [pascal, Nat.cast_add, add_sub_cancel_right]
+    rw [hd, Nat.cast_succ] at h
+    push_cast
+    calc
+      _ = ((arrayR k m : ℝ) / (2 * (m : ℝ) + 1)) *
+          ((2 * ((j : ℝ) + 1) + 1) * ((j + 1 + m).choose (2 * m) : ℝ) -
+            (2 * (j : ℝ) + 1) * ((j + m).choose (2 * m) : ℝ)) := by ring
+      _ = _ := by
+        rw [h]
+        field_simp
+  have eq (j : ℕ) : (powerSum (2 * k) j : ℝ) = F j := by
+    induction j with
+    | zero =>
+      simp only [powerSum, Finset.Icc_eq_empty_of_lt (show (0 : ℕ) < 1 by omega),
+        Finset.sum_empty, Rat.cast_zero, F]
+      symm
+      refine Finset.sum_eq_zero fun m hm ↦ ?_
+      have hm₁ := (Finset.mem_Icc.mp hm).1
+      simp [Nat.choose_eq_zero_of_lt (show m < 2 * m by omega)]
+    | succ j ih =>
+      have hsum : powerSum (2 * k) (j + 1) = powerSum (2 * k) j + ((j + 1 : ℕ) : ℚ) ^ (2 * k) := by
+        simp only [powerSum, Finset.sum_Icc_succ_top (Nat.succ_pos j)]
+      rw [hsum, Rat.cast_add, Rat.cast_pow, Rat.cast_natCast, Nat.cast_succ, ih]
+      linear_combination -(step j)
+  apply Rat.cast_injective (α := ℝ)
+  push_cast
+  exact eq n
+
+end Knuth
 
 /-- **The polynomials $Q_{k,m}$ of Theorem 10.** For natural numbers $k$, $m$ and $n$, write
 $R(a, b) = \sum_{i=0}^{b} (-1)^i \binom{2b}{i} (b - i)^{2a}$ for the array of OEIS A304330.
