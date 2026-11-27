@@ -91,12 +91,14 @@ the code range `[kmin, kmax]`. -/
 def IsClipped (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) : Prop :=
   round (x / Δ) < kmin ∨ kmax < round (x / Δ)
 
-/-- The least signed `w`-bit code, `-(2 ^ (w - 1))`. Meaningful for
-`1 <= w`; the theorems below carry that hypothesis. -/
+/-- The integer `-(2 ^ (w - 1))`. For `1 ≤ w` it is the least signed `w`-bit code. At `w = 0`
+the definition returns the convention value `-1`, because truncated natural subtraction gives
+`w - 1 = 0`. -/
 def signedMinCode (w : ℕ) : ℤ := -(2 : ℤ) ^ (w - 1)
 
-/-- The greatest signed `w`-bit code, `2 ^ (w - 1) - 1`. Meaningful for
-`1 <= w`; the theorems below carry that hypothesis. -/
+/-- The integer `2 ^ (w - 1) - 1`. For `1 ≤ w` it is the greatest signed `w`-bit code. At
+`w = 0` the definition returns the convention value `0`, because truncated natural subtraction
+gives `w - 1 = 0`. -/
 def signedMaxCode (w : ℕ) : ℤ := (2 : ℤ) ^ (w - 1) - 1
 
 /-- The endpoints of the full-scale interval are ordered, as required
@@ -105,7 +107,8 @@ theorem fullScale_le {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} (hk : kmin ≤ 
     Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) := by
   exact mul_le_mul_of_nonneg_left (Int.cast_le.mpr hk) hΔ.le
 
-/-- The code in floor form: `round y = ⌊y + 1 / 2⌋`. -/
+/-- The saturating code in floor form: for real `Δ`, `x` and integers `kmin`, `kmax`,
+`code Δ kmin kmax x = max kmin (min kmax ⌊x / Δ + 1 / 2⌋)`, since `round y = ⌊y + 1 / 2⌋`. -/
 theorem code_eq_floor_add_half (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) :
     code Δ kmin kmax x = max kmin (min kmax ⌊x / Δ + 1 / 2⌋) := by
   unfold code
