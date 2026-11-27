@@ -1,10 +1,10 @@
 # Chattopadhyay-Zuckerman: explicit two-source extractors for polylogarithmic min-entropy
 
-There is a constant $C$ such that for all $n$ there is an explicit function $\mathrm{Ext} : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ which is a two-source extractor for independent sources of min-entropy $\log^{C} n$ with constant error. Consequently there are explicit $K$-Ramsey graphs on $N$ vertices with $K = 2^{(\log\log N)^{O(1)}}$.
+There is a constant $C$ such that for all $n$ there is an explicit function $\mathrm{Ext} : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ which is a two-source extractor for independent sources of min-entropy $\log^{C} n$ with error $n^{-\Omega(1)}$; moreover, the extractor is strong in the second source. Consequently there are explicit $K$-Ramsey graphs on $N$ vertices with $K = 2^{(\log\log N)^{O(1)}}$.
 
 ## Proof sketch
 
-Use a $t$-non-malleable extractor with seed length $O(\log n)$ applied to the first source with every possible seed, producing a table of $D = \mathrm{poly}(n)$ bits in which, conditioned on the second source being used to choose seeds, all but a few bits are $t$-wise nearly independent and uniform. Applying a resilient function (a derandomized Ajtai-Linial function) tolerant to the few bad coordinates yields a nearly unbiased bit.
+Apply a seeded extractor with seed length $O(\log n)$ to the second source under each of its $D = \mathrm{poly}(n)$ seeds, and use the $D$ outputs as seeds of a $t$-non-malleable extractor (seed length $O(t^2\log^2(n/\varepsilon))$) applied to the first source. This produces a table of $D$ bits in which, for most fixings of the second source, all but a few bits are $t$-wise nearly independent and uniform. Applying a resilient function (a derandomized Ajtai-Linial function) tolerant to the few bad coordinates yields a nearly unbiased bit.
 
 ## Depends on
 

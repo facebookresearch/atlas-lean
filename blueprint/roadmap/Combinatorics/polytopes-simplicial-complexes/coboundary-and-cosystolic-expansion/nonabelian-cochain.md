@@ -8,7 +8,7 @@ $$
 \Pr_{\{u,v,w\} \sim \Pi_2}\bigl[(\delta f)(u,v,w) \ne 1\bigr] \ge \beta \cdot \min_{h} \Pr_{\{u,v\} \sim \Pi_1}\bigl[f(u,v) \ne h(u)h(v)^{-1}\bigr].
 $$
 
-**Unique-games coboundary expansion** asks for this simultaneously for all symmetric groups $\Gamma = S_m$, $m \ge 1$, with $\beta$ independent of $m$.
+In Bafna–Minzer's higher-level formulation on the $t$-face graphs $G_t[X]$ (with edges $E_t[X]$ sampled from $\mu_{2t}$ and triangles from $\mu_{3t}$), a $d$-dimensional simplicial complex $X$ is an **$(m, r, \xi, c)$ unique-games (UG) coboundary expander** (Definition 1.4) if for every $t \le r$ and every $(1-\xi)$-triangle-consistent function $\pi \colon E_t[X] \to S_m$, there exists $g \colon X(t) \to S_m$ such that $\Pr_{u \cup v \sim \mu_{2t}}[\pi(u,v) = g(u)g(v)^{-1}] \ge 1 - c$ (Remark 1.6 notes that the edge-level $\beta$-coboundary definition above coincides with this only at $t = 1$). It is a **weak $(m, r, \xi, c)$ UG coboundary expander** (Definitions 1.7–1.8) if the same conclusion holds for every $(1-\xi)$-*strongly* triangle-consistent $\pi \colon E_t[X] \to S_m$, meaning there exist lists $L \colon X(t) \to (\{0,1\}^t)^m$ and $L' \colon X(3t) \to (\{0,1\}^{3t})^m$ such that $\Pr_{T=u\cup v\cup w \sim \mu_{3t}}[L'(T) = L(u)\circ \pi(u,v)L(v)\circ \pi(u,w)L(w)] \ge 1 - \xi$. Bafna and Minzer note that non-weak UG coboundary expansion may not be necessary for low-soundness direct product testing, whereas weak UG coboundary expansion is both necessary and sufficient.
 
 ## Depends on
 

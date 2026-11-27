@@ -16,3 +16,4 @@
 - [Suffix-tree search finds exactly the infixes](has-prefix-suffix-tree-iff-is-infix.md)
 - [Suffix tree from the suffix array and the LCP array](suffix-tree-from-suffix-and-lcp-arrays.md)
 - [Suffix trees in linear time through suffix arrays](linear-time-suffix-tree-construction.md)
+- [Ukkonen's online linear-time suffix tree construction](online-linear-time-suffix-tree-construction.md)

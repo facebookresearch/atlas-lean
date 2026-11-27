@@ -10,16 +10,43 @@ module
 public import MathlibExt.NumberTheory.TwoSetsSumsetSquares
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
 
 /-!
-# Triples with square pairwise sums come from semi-magic squares
+# Triples with square pairwise sums and semi-magic squares
 
-Given integers whose pairwise sums are all squares, the chosen square roots of those sums,
-arranged in a suitable order, form a semi-magic square of squares. The main result is
-`exists_isSemiMagicRoots_of_pairwiseSumsSquares_triple`.
+Given a semi-magic square of integer squares, `pairwiseSumsSquares_triple_of_isSemiMagicRoots`
+constructs two triples whose nine pairwise sums are the nine squares in the matrix.
+Conversely, `exists_isSemiMagicRoots_of_pairwiseSumsSquares_triple` arranges the square roots of
+nine square pairwise sums into a semi-magic square of squares.
 -/
 
 namespace MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
+
+/-- **Triples with square pairwise sums from a semi-magic square of squares.** Let $e_{ij}$,
+$1 \le i, j \le 3$, be integers such that the matrix of squares $(e_{ij}^2)$ is semi-magic, that
+is, all its row sums and all its column sums are equal. Put $a_1 = e_{13}^2$, $a_2 = e_{31}^2$,
+$a_3 = e_{22}^2$ and $b_1 = 0$, $b_2 = e_{21}^2 - e_{13}^2$, $b_3 = e_{11}^2 - e_{22}^2$. Then
+$a_i + b_j$ is a perfect square for all $i, j \in \{1, 2, 3\}$.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Lemma 2. -/
+public theorem pairwiseSumsSquares_triple_of_isSemiMagicRoots
+    (e : Fin 3 → Fin 3 → ℤ) (he : IsSemiMagicRoots e) :
+    PairwiseSumsSquares
+      ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2]
+      ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2] := by
+  obtain ⟨S, hrow, hcol⟩ := he
+  simp only [Fin.sum_univ_three] at hrow hcol
+  -- The sums are a rearrangement of the squared entries of `e`.
+  let roots : Fin 3 → Fin 3 → ℤ :=
+    ![![e 0 2, e 1 0, e 2 1], ![e 2 0, e 0 1, e 1 2], ![e 1 1, e 2 2, e 0 0]]
+  intro i j
+  refine ⟨roots i j, ?_⟩
+  fin_cases i <;> dsimp [roots, Matrix.cons_val] <;>
+    fin_cases j <;> dsimp [Matrix.cons_val] <;> rw [← pow_two] <;>
+    linarith only [hrow 0, hrow 1, hrow 2, hcol 0, hcol 1, hcol 2]
 
 /-- **Triples with square pairwise sums come from semi-magic squares.** Let $a_1, a_2, a_3$ and
 $b_1, b_2, b_3$ be integers such that every sum $a_i + b_j$ is the square of an integer. Then

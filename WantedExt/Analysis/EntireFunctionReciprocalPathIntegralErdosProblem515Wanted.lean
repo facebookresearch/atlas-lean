@@ -47,13 +47,17 @@ def pathWithFiniteReciprocalIntegrals : Prop :=
         MeasureTheory.IntegrableOn (fun t => ‖f (γ t)‖ ^ (-lam)) (Set.Ici 0)
 
 /--
-Resolved true: Lewis, Rossi and Weitsman proved it (for `e ^ u` with `u` subharmonic, so for `|f| =
-e ^ (log |f|)`); Huber had a path `C_λ` for each single `λ`, and Zhang the finite-order case.
+Resolved true: Lewis, Rossi and Weitsman proved it as a case of their Theorem 1, for `e ^ u` with
+`u` subharmonic in the plane and `max_{|z| = r} u(z) / log r → ∞`. Take `u = log |f|`, so that
+`e ^ (-λ u) = |f| ^ (-λ)` off the zeros of `f`; since `f` is not a polynomial,
+`log M(r) / log r → ∞`, where `M(r)` is the maximum of `|f|` on `|z| = r`. The growth condition
+cannot be dropped: for `u = 0` the integrand is `1`, whose integral along every path to `∞` is
+infinite. Huber had a path `C_λ` for each single `λ`, and Zhang the finite-order case.
 Source: T. F. Bloom, Erdős Problems, Problem #515, https://www.erdosproblems.com/515 (status
 PROVED); resolution: J. Lewis, J. Rossi and A. Weitsman, On the growth of subharmonic functions
 along paths, Ark. Mat. (1984), 109-119, erdosproblems.com/515: true; finite order by Zhang (1977),
-general case by Lewis, Rossi and Weitsman (for e^u, u subharmonic),
-https://www.erdosproblems.com/515.
+general case by Lewis, Rossi and Weitsman (for e^u with u subharmonic and
+max_{|z|=r} u / log r → ∞), https://www.erdosproblems.com/515.
 -/
 public theorem_wanted pathWithFiniteReciprocalIntegrals_holds : pathWithFiniteReciprocalIntegrals
 

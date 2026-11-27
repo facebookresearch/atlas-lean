@@ -10,6 +10,7 @@
 - [Torsion points of non-prime-power order are integral](weierstrass-torsion-not-prime-pow-integr.md)
 - [Nagell–Lutz integrality](short-weierstrass-torsion-integral.md)
 - [The Weierstrass curve $E_\alpha$ of the generalized fruit equation](fruit-weierstrass-curve.md)
+- [No rational affine points of $E_\alpha$ with even $x$-numerator](fruit-weierstrass-curve-rat-not-equation.md)
 - [Discriminant of the curve $E_\alpha$](fruit-weierstrass-curve-2.md)
 - [Torsion points of $E_\alpha$ with even integral $x$-coordinate have prime-power order](fruit-weierstrass-curve-not-is-of-fin-or.md)
 - [Points of $E_\alpha(\mathbb{Q})$ with even numerator have infinite order](fruit-weierstrass-curve-rat-not-is-of-fi.md)
