@@ -15,6 +15,7 @@
 - [No prime power is deficient $F$-perfect or near $F$-perfect](prime-pow-not-f-perfect.md)
 - [Prime powers that are $(2,\ell)$-near-perfect](kl-near-perfect-with-prime-pow-two-iff.md)
 - [$(2,\ell)$-deficient-perfect prime powers (corrected)](is-kldeficient-perfect-prime-pow-two-imp.md)
+- [$(2,\ell)$-deficient-perfect prime powers, classified](is-kldeficient-perfect-prime-pow-two-iff.md)
 - [Prime powers that are $(k,\ell)$-near-perfect](kl-near-perfect-with-prime-pow-iff.md)
 - [$(k,\ell)$-deficient-perfect prime powers for $k \ge 2$](is-kldeficient-perfect-prime-pow-imp.md)
 - [Prime powers that are $(1,\ell)$-deficient-perfect with a given divisor](kl-deficient-perfect-with-one-prime-pow.md)

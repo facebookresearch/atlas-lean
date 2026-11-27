@@ -27,6 +27,19 @@ index $(2n + 1) 2^j$ reaches every positive integer $p$ exactly once, with $j = 
 even index $(2n + 2) 2^j$ reaches $p$ once for each $j < \nu_2(p)$. So the weight that lands on
 $b_{p,q}$ factors as $(2^v - \sum_{i < v} 2^i)(2^w - \sum_{i < w} 2^i) = 1$, where
 $v = \nu_2(p)$ and $w = \nu_2(q)$.
+
+`tsum_twoAdic_parametric_multisection` is an absolutely summable formulation of Vignat and
+Milgram's equation (30). It assumes absolute summability of each weighted family; convergence of
+the unweighted series alone does not ensure this. The proof uses the same index maps for a single
+series, with a complex weight parameter. The even-index contribution is subtracted, and its finite
+geometric sum reduces the net weight to one without dividing by the parameter minus one.
+
+## References
+
+* Christophe Vignat and Michael Milgram, *Curious Multisection Identities by Index Factorization*,
+  Journal of Integer Sequences 27 (2024), Article 24.5.5, pp. 1–37. Proposition 1, equation (30),
+  gives the parametric series identity; Proposition 8, equation (49) and its proof in Section 4
+  give the weighted regrouping. Proposition 15, equation (102), gives the double-series identity.
 -/
 
 namespace MetaMathlibExt
@@ -176,5 +189,59 @@ public theorem tsum_twoAdic_double_multisection (b : ℕ → ℕ → ℂ)
     ring
   · rw [← h₁.tsum_add h₂, ← (h₁.add h₂).tsum_sub h₃, ← ((h₁.add h₂).sub h₃).tsum_sub h₄]
     exact tsum_congr fun x => by ring
+
+/-- Regroup a weighted family along an index map with finite fibres. The resulting `HasSum`
+records summability of the outer series as well as its sum. -/
+private theorem hasSum_multisection_fibers {α : ℕ → Type} [∀ m, Fintype (α m)]
+    (e : ℕ × ℕ ≃ Σ m, α m) (f : ℕ → ℕ → ℕ)
+    (hf : ∀ j n, (e (j, n)).1 + 1 = f j n) (w b : ℕ → ℂ)
+    (hs : Summable fun x : ℕ × ℕ => w x.1 * b (f x.1 x.2)) :
+    HasSum (fun m => (∑ a : α m, w (e.symm ⟨m, a⟩).1) * b (m + 1))
+      (∑' x : ℕ × ℕ, w x.1 * b (f x.1 x.2)) := by
+  have hreindexed := e.symm.hasSum_iff.mpr hs.hasSum
+  refine (hreindexed.sigma fun m => hasSum_fintype _).congr_fun fun m => ?_
+  rw [Finset.sum_mul]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  change _ = w (e.symm ⟨m, a⟩).1 * b (f (e.symm ⟨m, a⟩).1 (e.symm ⟨m, a⟩).2)
+  rw [← hf, Prod.mk.eta, Equiv.apply_symm_apply]
+
+/-- The sum of the odd and signed even weights is one, including at `q = 1`. -/
+private theorem parametric_multisection_weight (q : ℂ) (v : ℕ) :
+    q ^ v - (∑ j : Fin v, q ^ (j : ℕ) * (q - 1)) = 1 := by
+  rw [Fin.sum_univ_eq_sum_range (fun j => q ^ j * (q - 1)) v, ← Finset.sum_mul,
+    geom_sum_mul, sub_sub_cancel]
+
+open tsum_twoAdic_double_multisection in
+/-- **Parametric two-adic multisection.** Let $q \in \mathbb{C}$ and let $b : \mathbb{N} \to
+\mathbb{C}$ be a sequence (its value at $0$ is not used). Suppose that the families
+$(q^j b_{(2n-1) 2^j})$ and $(q^j (q - 1) b_{2n \cdot 2^j})$, indexed by the pairs $(j, n)$ of
+natural numbers with $n \ge 1$, are summable. Then
+$$\sum_{j \ge 0,\ n \ge 1} \left(q^j b_{(2n-1) 2^j} - q^j (q - 1) b_{2n \cdot 2^j}\right)
+= \sum_{m \ge 1} b_m.$$
+
+The two summability hypotheses imply that $(b_m)_{m \ge 1}$ is summable.
+
+Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
+Proposition 1, series version (`jis-2024-24.5.5-prop-1`). -/
+public theorem tsum_twoAdic_parametric_multisection (q : ℂ) (b : ℕ → ℂ)
+    (hodd : Summable fun x : ℕ × ℕ => q ^ x.1 * b ((2 * x.2 + 1) * 2 ^ x.1))
+    (heven : Summable fun x : ℕ × ℕ => q ^ x.1 * (q - 1) * b ((2 * x.2 + 2) * 2 ^ x.1)) :
+    ∑' x : ℕ × ℕ, (q ^ x.1 * b ((2 * x.2 + 1) * 2 ^ x.1)
+        - q ^ x.1 * (q - 1) * b ((2 * x.2 + 2) * 2 ^ x.1))
+      = ∑' m : ℕ, b (m + 1) := by
+  have hoddIndex (j n : ℕ) : (oddEquiv (j, n)).1 + 1 = (2 * n + 1) * 2 ^ j :=
+    Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr (by positivity))
+  have hevenIndex (j n : ℕ) : (evenEquiv (j, n)).1 + 1 = (2 * n + 2) * 2 ^ j :=
+    Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr (by positivity))
+  have hoddGrouped := hasSum_multisection_fibers oddEquiv _ hoddIndex (q ^ ·) b hodd
+  have hevenGrouped :=
+    hasSum_multisection_fibers evenEquiv _ hevenIndex (fun j => q ^ j * (q - 1)) b heven
+  rw [hodd.tsum_sub heven]
+  refine ((hoddGrouped.sub hevenGrouped).congr_fun fun m => ?_).tsum_eq.symm
+  simp only [Fintype.sum_unique]
+  change b (m + 1) = q ^ padicValNat 2 (m + 1) * b (m + 1) -
+    (∑ j : Fin (padicValNat 2 (m + 1)), q ^ (j : ℕ) * (q - 1)) * b (m + 1)
+  rw [← sub_mul, parametric_multisection_weight, one_mul]
 
 end MetaMathlibExt
