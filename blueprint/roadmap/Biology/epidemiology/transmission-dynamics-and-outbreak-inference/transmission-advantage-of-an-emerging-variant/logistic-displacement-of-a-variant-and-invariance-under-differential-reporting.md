@@ -20,6 +20,14 @@ This is a ratio of expectations, not in general the expected value of the observ
 
 Dividing numerator and denominator by $a_1 e^{r_1 t}$ gives $p = 1/(1 + (a_1/a_2) e^{-\Delta r\, t})$, from which the logit form is immediate; reporting multiplies each variant's incidence by a constant, i.e. multiplies $a_v$ by $x_v$. In practice $\Delta r$ is estimated by binomial or multinomial logistic regression of sequence counts (or of a proxy such as S-gene target failure, corrected for false positives) on sampling date, with region effects and overdispersion; the slope is the estimated growth advantage. Applied to UK sequence data for lineage B.1.1.7 this gave $\Delta r \approx 0.104$ per day relative to the previously dominant lineage.
 
+## Depends on
+
+- [Logistic growth curve](../../../population-dynamics/logistic-growth-equation/logistic.md)
+
+## Proof depends on
+
+- [Logit of the logistic curve](../../../population-dynamics/logistic-growth-equation/logit-logistic.md)
+
 ## Sources
 
 - N. G. Davies, S. Abbott, R. C. Barnard, et al., "Estimated transmissibility and impact of SARS-CoV-2 lineage B.1.1.7 in England", Science 372 (2021) eabg3055, Materials and methods, "Competitive advantage and increased growth rate" and "Apparent growth of VOC 202012/01 not a result of testing artifacts", <https://doi.org/10.1126/science.abg3055> (PMC8128288).
