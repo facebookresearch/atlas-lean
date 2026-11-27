@@ -111,6 +111,7 @@ class Site:
     def __init__(self, tasks: dict | None = None, open_pages=(OPEN_PULLS,), merged: dict | None = None, unindexed=(),
                  moves: dict | None = None) -> None:
         self.pages = {next_task.TASKS: json.dumps(tasks or TASKS).encode()}
+        self.open_pages = open_pages
         for number, rows in enumerate(open_pages, 1):
             self.pages[f"{OPEN}{number}"] = json.dumps(rows).encode()
         self.merged = dict(MERGED_PULLS if merged is None else merged)
@@ -121,12 +122,30 @@ class Site:
         self.searched: list[tuple[str, int, int]] = []
         self.asked: list[list[int]] = []
         self.listings: list[str | None] = []
+        self.open_listings: list[str | None] = []
+
+    @classmethod
+    def pull_page(cls, rows: list[dict], more: bool, cursor: str | None) -> bytes:
+        return json.dumps({"data": {"repository": {"pullRequests": {
+            "pageInfo": {"endCursor": cursor, "hasNextPage": more}, "nodes": [cls.graphql(row) for row in rows],
+        }}}}).encode()
+
+    def open_listing(self, sent: dict) -> bytes:
+        variables, query = sent["variables"], sent["query"]
+        assert (variables["owner"], variables["name"]) == ("facebookresearch", "atlas-lean")
+        assert "orderBy: {field: CREATED_AT, direction: ASC}" in query and "baseRefName:" not in query
+        after = variables["after"]
+        self.open_listings.append(after)
+        at = int(after) if after is not None else 0
+        return self.pull_page(self.open_pages[at], at + 1 < len(self.open_pages), str(at + 1))
 
     def __call__(self, url: str, token: str | None = None, media: str | None = None,
                  data: bytes | None = None) -> bytes:
         self.read.append((url, token))
         if url == next_task.GRAPHQL:
             sent = json.loads(data)
+            if "pullRequests(states: [OPEN]" in sent["query"]:
+                return self.open_listing(sent)
             return self.listing(sent) if "pullRequests(states: [MERGED]" in sent["query"] else self.graphql_answer(sent)
         if url.startswith(next_task.API):
             self.media.append(media)
@@ -219,13 +238,12 @@ class Picking(unittest.TestCase):
                                               {"node_id": "Algebra/t8", "pull_requests": [3]}])
         self.assertEqual((result["ready"], result["taken"], result["free"]), (8, 4, 4))
         self.assertEqual((result["commit"], result["autoform_ref"]), ("c" * 40, "a" * 40))
-        # One page of open pull requests, one of those merged into main by their last update, and one of the search,
-        # as each holds fewer than a full page, then the merged pull request found: open and merged pull requests come
-        # with their bodies as GitHub renders them.
+        # Read open PRs, the recent merged tail, the merge search, and then the matching merged PR.
         read = [(SEARCH if url.startswith(SEARCH) else url, token) for url, token in site.read]
-        self.assertEqual(read, [(next_task.TASKS, None), (OPEN + "1", "secret"), (next_task.GRAPHQL, "secret"),
+        self.assertEqual(read, [(next_task.TASKS, None), (next_task.GRAPHQL, "secret"), (next_task.GRAPHQL, "secret"),
                                 (SEARCH, "secret"), (next_task.GRAPHQL, "secret")])
-        self.assertEqual(site.media, [next_task.RENDERED, None])
+        self.assertEqual(site.media, [None])
+        self.assertEqual(site.open_listings, [None])
         self.assertEqual(site.listings, [None])
         self.assertEqual(site.asked, [[4]])
 
@@ -259,7 +277,38 @@ class Picking(unittest.TestCase):
         site = Site(open_pages=(filler, [pull(7, body=ITEMS[0]["article_id"].upper())]))
         _, out, _ = run(site, "--json", env=TOKEN)
         self.assertIn({"node_id": "Algebra/t1", "pull_requests": [7]}, json.loads(out)["taken_by"])
-        self.assertEqual([url for url, _ in site.read if url.startswith(OPEN)], [OPEN + "1", OPEN + "2"])
+        self.assertEqual(site.open_listings, [None, "1"])
+
+    def test_closing_an_earlier_pull_request_does_not_hide_a_later_claim(self) -> None:
+        first = [pull(number) for number in range(1, 101)]
+        claim = pull(101, body=ITEMS[0]["article_id"])
+
+        class ClosingSite(Site):
+            opened = first + [claim]
+
+            def __call__(self, url, token=None, media=None, data=None):
+                if url.startswith(OPEN):
+                    # REST uses offsets into the remaining open PRs.
+                    page = int(url.removeprefix(OPEN))
+                    rows = self.opened[(page - 1) * 100:page * 100]
+                    self.close_earlier_pull()
+                    return json.dumps(rows).encode()
+                return super().__call__(url, token, media, data)
+
+            def close_earlier_pull(self):
+                self.opened = [row for row in self.opened if row["number"] != 100]
+
+            def open_listing(self, sent):
+                variables = sent["variables"]
+                after = variables["after"]
+                current = [row for row in self.opened if after is None or row["number"] > int(after)]
+                page = current[:100]
+                self.close_earlier_pull()
+                return self.pull_page(page, len(current) > 100, str(page[-1]["number"]))
+
+        code, out, err = run(ClosingSite(merged={}), "--json", env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        self.assertIn({"node_id": "Algebra/t1", "pull_requests": [101]}, json.loads(out)["taken_by"])
 
     def test_merged_pull_requests_are_searched_by_merge_time_up_to_now(self) -> None:
         # However they were merged, by the queue, a squash, a rebase or as part of another pull request, and however
@@ -790,12 +839,11 @@ class Requests(unittest.TestCase):
     def test_the_token_goes_to_the_github_api_only(self) -> None:
         sent = self.requests({"GH_TOKEN": "secret"})
         self.assertEqual([request.full_url.partition("?")[0] + "?" for request in sent],
-                         [next_task.TASKS + "?", OPEN.partition("?")[0] + "?", next_task.GRAPHQL + "?", SEARCH])
+                         [next_task.TASKS + "?", next_task.GRAPHQL + "?", next_task.GRAPHQL + "?", SEARCH])
         self.assertIsNone(sent[0].get_header("Authorization"))
         for request in sent[1:]:
             self.assertEqual(request.get_header("Authorization"), "Bearer secret")
-        self.assertEqual([request.get_header("Accept") for request in sent[1:]],
-                         [next_task.RENDERED, "application/vnd.github+json", "application/vnd.github+json"])
+        self.assertEqual([request.get_header("Accept") for request in sent[1:]], ["application/vnd.github+json"] * 3)
         self.assertEqual(self.requests({"GITHUB_TOKEN": "other"})[1].get_header("Authorization"), "Bearer other")
 
     def test_merged_pull_requests_are_asked_of_graphql_with_the_token(self) -> None:

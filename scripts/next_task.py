@@ -37,10 +37,10 @@ a default for the others. --priorities reads another such file, or a URL; withou
 outside the repository, all tasks have the same priority. --json prints the tasks for agents, with Autoform's
 fields, and their priorities.
 
-Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one
-address, but reading those merged since tasks.json's commit does, as they come from GitHub's GraphQL API: set
-GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
-token. Only the Python standard library is used.
+Reading the open pull requests uses GitHub GraphQL when GH_TOKEN (or GITHUB_TOKEN) is set, so a pull request
+closing on an earlier page does not shift the remaining pages. Without a token the open list still uses REST
+pagination, and only a task list without a commit date can be used. Every request to the API sends the token when
+set, and a redirect away from it drops the token. Only the Python standard library is used.
 """
 
 from __future__ import annotations
@@ -280,18 +280,56 @@ def listed(url: str, token: str | None, media: str = "application/vnd.github+jso
     return rows
 
 
+def open_pulls(repository: str, token: str | None) -> list[dict]:
+    """Read open PRs on all branches. With a token, use a creation-ordered cursor, not an offset
+    into a shrinking list: closing an earlier PR must not make us skip a still-open claim."""
+    if not token:
+        found: list[dict] = []
+        for number in range(1, OPEN_PAGES + 1):
+            rows = listed(f"{API}/repos/{repository}/pulls?state=open&per_page={PER_PAGE}&page={number}", None, RENDERED)
+            found += rows
+            if len(rows) < PER_PAGE:
+                return found
+    else:
+        owner, _, name = repository.partition("/")
+        query = ("query($owner: String!, $name: String!, $after: String) { repository(owner: $owner, name: $name) { "
+                 "pullRequests(states: [OPEN], orderBy: {field: CREATED_AT, direction: ASC}, "
+                 f"first: {PER_PAGE}, after: $after) {{ pageInfo {{ endCursor hasNextPage }} "
+                 "nodes { number title body bodyHTML headRefName baseRefName mergedAt } } } }")
+        found_by_number: dict[int, dict] = {}
+        cursor = None
+        seen: set[str] = set()
+        for _ in range(OPEN_PAGES):
+            page = graphql(query, {"owner": owner, "name": name, "after": cursor}, token).get("pullRequests")
+            try:
+                rows = page["nodes"]
+                more, cursor = page["pageInfo"]["hasNextPage"], page["pageInfo"]["endCursor"]
+                if not isinstance(more, bool) or not isinstance(rows, list):
+                    raise TypeError
+                for row in rows:
+                    if not isinstance(row["number"], int):
+                        raise TypeError
+                    found_by_number[row["number"]] = pull_row(row)
+                if more and (not rows or not isinstance(cursor, str) or not cursor or cursor in seen):
+                    raise ValueError
+            except (KeyError, TypeError, ValueError):
+                raise Failure("GitHub's GraphQL API did not list the open pull requests") from None
+            if not more:
+                return list(found_by_number.values())
+            seen.add(cursor)
+    raise Failure(f"{repository} has more than {OPEN_PAGES * PER_PAGE} open pull requests, more than this script reads")
+
+
+def pull_row(node: dict) -> dict:
+    """Translate a GraphQL pull request to the fields used by the task matcher."""
+    return {"number": node["number"], "title": node["title"], "body": node["body"], "body_html": node["bodyHTML"],
+            "head": {"ref": node["headRefName"]}, "base": {"ref": node["baseRefName"]}, "merged_at": node["mergedAt"]}
+
+
 def pull_requests(repository: str, since: str | None, token: str | None) -> list[dict]:
     """The repository's open pull requests, whatever their base, and, when *since* is a time, those merged into MAIN
     after it."""
-    found: list[dict] = []
-    for number in range(1, OPEN_PAGES + 1):
-        rows = listed(f"{API}/repos/{repository}/pulls?state=open&per_page={PER_PAGE}&page={number}", token, RENDERED)
-        found += rows
-        if len(rows) < PER_PAGE:
-            break
-    else:
-        raise Failure(f"{repository} has more than {OPEN_PAGES * PER_PAGE} open pull requests, more than this script "
-                      "reads")
+    found = open_pulls(repository, token)
     if since:
         if not token:
             raise Failure("reading the pull requests merged into main since tasks.json was computed needs a token, as "
@@ -434,9 +472,7 @@ def merged_pulls(repository: str, numbers: list[int], token: str | None) -> list
         pull = found.get(f"p{number}")
         if not isinstance(pull, dict) or pull.get("number") != number:
             raise Failure(f"GitHub's GraphQL API gave no pull request #{number}, which it found merged")
-        rows.append({"number": number, "title": pull.get("title"), "body": pull.get("body"),
-                     "body_html": pull.get("bodyHTML"), "head": {"ref": pull.get("headRefName")},
-                     "base": {"ref": pull.get("baseRefName")}, "merged_at": pull.get("mergedAt")})
+        rows.append(pull_row(pull))
     return rows
 
 
