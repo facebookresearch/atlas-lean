@@ -68,7 +68,6 @@ Topics added since this subject's fields were last revised.
 - [Simulated Annealing](simulated-annealing/README.md)
 - [Soundness](soundness/README.md)
 - [Summation](summation/README.md)
-- [Surface Mesh](surface-mesh/README.md)
 - [Term List Collection](term-list-collection/README.md)
 - [Termination](termination/README.md)
 - [Test Collection](test-collection/README.md)
