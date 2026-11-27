@@ -28,8 +28,8 @@ latter, see `Cslib.Circuits.Circuit.comp` in `Cslib.Computability.Circuit.Compos
   most `D`, substitution adds at most `D` to the depth.
 * `Cslib.Complexity.BooleanFormula.size_subst_le_tight`: if every substituted formula has size at
   most `D`, then `(g.subst wiring).size ≤ g.size * (D + 1) + D`, that is,
-  `g.size + (g.size + 1) * D`: the gates of `g`, plus at most `g.size + 1` leaves, each replaced
-  by at most `D` gates.
+  `g.size + (g.size + 1) * D`: the gates of `g`, plus at most `g.size + 1` input leaves, each
+  replaced by at most `D` gates; constant leaves stay unchanged.
 * `Cslib.Complexity.BooleanFormula.size_subst_le`: the weaker bound
   `g.size * (D + 1) + (D + 1)`.
 -/
@@ -47,7 +47,8 @@ inductive BooleanFormula (n : ℕ)
   | or (g h : BooleanFormula n) : BooleanFormula n
   | not (g : BooleanFormula n) : BooleanFormula n
 
-/-- Evaluation of a formula on an input assignment. -/
+/-- Evaluation under `σ`: an input leaf `i` takes `σ i`, a constant its value, and AND, OR and
+NOT gates the conjunction, disjunction and negation of their children's values. -/
 def BooleanFormula.eval {n : ℕ} (σ : Fin n → Bool) : BooleanFormula n → Bool
   | .input i => σ i
   | .const b => b
@@ -81,8 +82,8 @@ def BooleanFormula.subst {n m : ℕ} (wiring : Fin n → BooleanFormula m) :
   | .or g h => .or (g.subst wiring) (h.subst wiring)
   | .not g => .not (g.subst wiring)
 
-/-- Substitution evaluates pointwise: evaluating `g.subst wiring` is evaluating `g` on the values
-of the substituted formulas. -/
+/-- Under an assignment `τ` of the `m` inputs, the substituted formula takes the value `g` takes
+under `i ↦` (the value of `wiring i` under `τ`). -/
 theorem BooleanFormula.eval_subst {n m : ℕ} (wiring : Fin n → BooleanFormula m)
     (g : BooleanFormula n) (τ : Fin m → Bool) :
     (g.subst wiring).eval τ = g.eval (fun i => (wiring i).eval τ) := by
@@ -93,8 +94,8 @@ theorem BooleanFormula.eval_subst {n m : ℕ} (wiring : Fin n → BooleanFormula
   | or g h ihg ihh => simp [BooleanFormula.subst, BooleanFormula.eval, ihg, ihh]
   | not g ih => simp [BooleanFormula.subst, BooleanFormula.eval, ih]
 
-/-- Depth of a substitution is at most the depth of the outer formula plus the maximal depth `D`
-of the substituted formulas: substitution adds depth, it does not multiply it. -/
+/-- Depth of a substitution is at most the depth of the outer formula plus any common bound `D`
+on the depths of the substituted formulas: substitution adds depth, it does not multiply it. -/
 theorem BooleanFormula.depth_subst_le {n m : ℕ} (wiring : Fin n → BooleanFormula m)
     (g : BooleanFormula n) (D : ℕ) (hD : ∀ i, (wiring i).depth ≤ D) :
     (g.subst wiring).depth ≤ g.depth + D := by
@@ -117,7 +118,8 @@ theorem BooleanFormula.depth_subst_le {n m : ℕ} (wiring : Fin n → BooleanFor
 
 /-- Size of a substitution, tight form: if every substituted formula has at most `D` gates, then
 `(g.subst wiring).size ≤ g.size * (D + 1) + D = g.size + (g.size + 1) * D`. The gates of `g`
-remain, and `g` has at most `g.size + 1` leaves, each replaced by at most `D` gates. -/
+remain, and at most `g.size + 1` input leaves are replaced, each by at most `D` gates; constant
+leaves stay unchanged. -/
 theorem BooleanFormula.size_subst_le_tight {n m : ℕ} (wiring : Fin n → BooleanFormula m)
     (g : BooleanFormula n) (D : ℕ) (hD : ∀ i, (wiring i).size ≤ D) :
     (g.subst wiring).size ≤ g.size * (D + 1) + D := by

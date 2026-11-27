@@ -21,7 +21,7 @@ States with these properties are exactly the
 
 - [Canonical form of Clifford circuits](canonical-form-of-clifford-circuits.md)
 - [Stabilizer measurement rule](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-measurement-rule.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

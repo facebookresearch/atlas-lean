@@ -19,7 +19,7 @@ $\bar Z = Z^{\otimes n}$ (the number $n$ of qubits is odd).
 
 ## Proof depends on
 
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md): the number of encoded qubits
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md): the number of encoded qubits
 
 ## Sources
 

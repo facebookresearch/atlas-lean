@@ -8,17 +8,17 @@ $2^{2L^2 - (2L^2 - 2)} = 4$: it encodes two qubits.
 Proof: a product $\prod_{s \in V'} A_s$ is the identity only if every edge meets $V'$ in an even number of endpoints;
 since the lattice is connected this forces $V' = \emptyset$ or all vertices. The same argument on the dual lattice
 applies to faces, and products of $X$'s and of $Z$'s are independent of each other. The
-[dimension formula](../finrank-stabilizer-code.md) then gives $4$.
+[dimension formula](../stabilizer-codes/finrank-stabilizer-code.md) then gives $4$.
 
 ## Depends on
 
 - [Toric code](toric-code.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Proof depends on
 
 - [The toric code check operators commute](toric-code-check-operators-commute.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

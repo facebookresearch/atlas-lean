@@ -10,7 +10,7 @@ The topics follow the order of Preskill's lecture notes (Chapter 7): the Knillâ€
 - [Distance of a quantum code](distance-of-a-quantum-code/README.md)
 - [Bounds on quantum codes](bounds-on-quantum-codes/README.md)
 - [CSS codes](css-codes/README.md)
-- [Dimension of a stabilizer code](finrank-stabilizer-code.md)
+- [Stabilizer codes](stabilizer-codes/README.md)
 - [Stabilizer formalism](stabilizer-formalism/README.md)
 - [Clifford group](clifford-group/README.md)
 - [Topological codes](topological-codes/README.md)

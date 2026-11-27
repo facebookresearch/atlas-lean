@@ -31,3 +31,8 @@
 - [No codeword is closer than the Hamming decoder's output](hamming-dist-decode-le.md)
 - [Hamming bound for the Hamming (7,4) code](pow-finrank-mul-sum-le.md)
 - [The Hamming bound is attained](pow-finrank-mul-sum-eq.md)
+
+## Codec instances and channel decoding
+
+- [Hamming, CRC and Reed-Solomon codec instances](hamming-crc-and-reed-solomon-codec-instances/README.md)
+- [Bounded-distance decoding over a binary symmetric channel](bounded-distance-decoding-over-a-binary-symmetri/README.md)

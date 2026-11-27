@@ -39,5 +39,4 @@ Topics added since this subject's fields were last revised.
 - [Split Decomposition](split-decomposition/README.md)
 - [Stability Composition](stability-composition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
-- [String Overlap](string-overlap/README.md)
 - [Case-control sampling shifts only the logistic intercept](case-control-logistic.md)

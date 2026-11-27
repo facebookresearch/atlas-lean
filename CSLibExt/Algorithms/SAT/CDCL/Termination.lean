@@ -52,10 +52,9 @@ def ImpliedBy (F : CNF) (C : CNFClause) : Prop :=
 /-- A CDCL state: the trail (newest literal first) and the learned clauses. -/
 abbrev CDCLState := List (Nat × Bool) × Finset CNFClause
 
-/-- CDCL steps without restart or clause deletion: decide a
-literal whose variable is not yet decided (neither polarity
-present), or learn a new clause implied by `F` and backjump to a
-suffix of the trail. -/
+/-- CDCL steps for `F` without restart or clause deletion: decide a literal `ℓ` when neither
+`ℓ` nor its complement is on the trail, or learn a clause `C ∉ L` implied by `F` (possibly a
+clause of `F`) and move to any suffix of the trail. -/
 inductive CDCLStep (F : CNF) :
     CDCLState → CDCLState → Prop
   | decide (t : List (Nat × Bool)) (L : Finset CNFClause) (l : Nat × Bool)
@@ -65,7 +64,7 @@ inductive CDCLStep (F : CNF) :
       (h : ImpliedBy F C) (hnew : C ∉ L) (hback : t' <:+ t) :
       CDCLStep F (t, L) (t', insert C L)
 
-/-- Reachability: the reflexive-transitive closure of `CDCLStep F`. -/
+/-- Reachability for `F`: finitely many, possibly zero, steps `CDCLStep F`. -/
 def CDCLReach (F : CNF) : CDCLState → CDCLState → Prop :=
   Relation.ReflTransGen (CDCLStep F)
 

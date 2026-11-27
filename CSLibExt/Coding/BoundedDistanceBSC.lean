@@ -222,8 +222,8 @@ theorem weight_gt_t_of_decode_ne (n k t : ℕ)
   have hle : hammingNorm e ≤ t := by omega
   exact hbad (hcorrect m e hle)
 
-/-- The BSC product law gives the weight upper tail as the binomial
-tail polynomial. -/
+/-- For `0 ≤ δ ≤ 1`, the BSC law on `𝔽₂^n` gives the error words of weight at least `k`
+probability `∑_{i=k}^{n} C(n, i) δ^i (1 - δ)^(n - i)`. -/
 theorem bsc_real_weight_ge_eq_binomTail (n k : ℕ) (delta : ℝ)
     (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
     (bscMeasure n delta hdelta0 hdelta1).real

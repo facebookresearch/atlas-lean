@@ -21,7 +21,7 @@ distance $3$, the least weight of a Hamming codeword outside $L_2$.
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Linear code](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md)
 - [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 - [CSS codeword](../css-codes/codeword.md)
 - [Logical Pauli operators of a stabilizer code](../stabilizer-formalism/logical-pauli-operators-of-a-stabilizer-code.md)
 
@@ -29,7 +29,7 @@ distance $3$, the least weight of a Hamming codeword outside $L_2$.
 
 - [Distance of a CSS code](../css-codes/distance-of-a-css-code.md)
 - [Weights in the shortened Reed–Muller codes of the fifteen-qubit code](weights-in-the-shortened-reed-muller-codes-of-the-fifteen-qubit-code.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md): the number of encoded qubits
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md): the number of encoded qubits
 
 ## Background
 

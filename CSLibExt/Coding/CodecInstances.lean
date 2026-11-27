@@ -51,7 +51,8 @@ theorem Hamming74.encoding_encode_length (m : Fin 4 → ZMod 2) : (Hamming74.enc
   show (List.ofFn (Hamming74.encode m)).length = 7
   exact List.length_ofFn
 
-/-- Decoding any 7-bit vector returns its corrected message. -/
+/-- Decoding any 7-bit vector returns the data bits of its syndrome-decoded word (the sent message
+only when at most one bit was flipped). -/
 theorem Hamming74.encoding_decode_ofFn (y : Fin 7 → ZMod 2) : Hamming74.encoding.decode (List.ofFn y) = some (Hamming74.message (Hamming74.decode y)) := by
   show (if h : (List.ofFn y).length = 7 then _ else none) = _
   rw [dite_eq_left List.length_ofFn]
@@ -87,7 +88,7 @@ theorem CRC.encoding_decode_encode_add_eq_none_iff {F : Type*} [Field F] {g : F[
   rw [ofCoeffList_reverse_coeffList, CRC.dvd_encode_add_iff]
   by_cases h : g ∣ e <;> simp [h]
 
-/-- Burst errors within the degree bound are always detected. -/
+/-- Burst errors of length at most `deg g` are always detected when `X` does not divide `g`. -/
 theorem CRC.encoding_decode_eq_none_of_isBurstLE {F : Type*} [Field F] {g : F[X]} (hg : g ≠ 0) (hX : ¬ X ∣ g) (m : F[X]) {e : F[X]} (he : CRC.IsBurstLE e g.natDegree) : (CRC.encoding g hg).decode (CRC.encode g m + e).coeffList.reverse = none := by
   exact (CRC.encoding_decode_encode_add_eq_none_iff hg m e).2
     (CRC.not_dvd_of_isBurstLE hX he le_rfl)
