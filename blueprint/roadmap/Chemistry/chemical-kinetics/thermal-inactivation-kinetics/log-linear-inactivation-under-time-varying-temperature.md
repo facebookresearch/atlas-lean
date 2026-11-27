@@ -3,9 +3,11 @@
 Let $D_{\mathrm{ref}}$, $T_{\mathrm{ref}}$ and $z$ be real numbers and take the [log-linear inactivation rate](rate.md)
 $k(\theta) = \frac{\ln 10}{D_{\mathrm{ref}}}\,10^{(\theta - T_{\mathrm{ref}})/z}$. Let the temperature history $T$ be continuous
 on $[0, t_f]$ and let $N_0 > 0$. Then $N(t) = N_0 \exp\bigl(-\int_0^t k(T(s))\,ds\bigr)$ satisfies $N(0) = N_0$ and
-$N'(t) = -k(T(t))\,N(t)$ for $t \in [0, t_f]$, the derivative being taken within $[0, t_f]$, so one-sided at its endpoints.
-It is the only such function: every $M$ with $M(0) = N_0$ and derivative $-k(T(t))\,M(t)$ within $[0, t_f]$ at each
-$t \in [0, t_f]$ equals $N$ on $[0, t_f]$. Moreover, for $t \in [0, t_f]$, $N(t) > 0$ and the decimal reduction is
+$N'(t) = -k(T(t))\,N(t)$ for $t \in [0, t_f]$, the derivative being taken within $[0, t_f]$. It is the only such function:
+every $M$ with $M(0) = N_0$ and derivative $-k(T(t))\,M(t)$ within $[0, t_f]$ at each $t \in [0, t_f]$ equals $N$ on
+$[0, t_f]$. For $t_f > 0$ these derivatives are one-sided at the endpoints. For $t_f = 0$ every number is a derivative within
+$\{0\}$, so the equation imposes no condition and uniqueness rests on $M(0) = N_0$ alone; for $t_f < 0$ the interval is empty
+and only $N(0) = N_0$ remains. Moreover, for $t \in [0, t_f]$, $N(t) > 0$ and the decimal reduction is
 
 $$\log_{10}\frac{N_0}{N(t)} = \frac{F(t)}{D_{\mathrm{ref}}},$$
 

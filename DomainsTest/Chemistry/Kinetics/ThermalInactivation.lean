@@ -54,7 +54,7 @@ example (Dref Tref z N₀ t : ℝ) (hN₀ : 0 < N₀) (ht : 0 ≤ t) :
     (T := fun _ => Tref) continuousOn_const hN₀).2.2.2 t ⟨ht, le_rfl⟩
   simpa [fValue] using h
 
-/-- One degree of `z` above `T_ref` for one time unit, with `D_ref = 1`, reduces the
+/-- One `z`-value above `T_ref` for one time unit, with `D_ref = 1`, reduces the
 concentration ten-fold ten times: `log₁₀(N₀ / N(1)) = 10`. -/
 example (Tref z N₀ : ℝ) (hz : z ≠ 0) (hN₀ : 0 < N₀) :
     logb 10 (N₀ / (N₀ * exp (-∫ _ in (0 : ℝ)..1, rate 1 Tref z (Tref + z)))) = 10 := by

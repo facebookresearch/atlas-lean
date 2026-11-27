@@ -31,7 +31,9 @@ effect.
 For a temperature history continuous on `[0, t_f]` and `N₀ > 0`, the function
 `N(t) = N₀ exp(-∫₀ᵗ k(T(s)) ds)` is the unique solution on `[0, t_f]` of `N' = -k(T(t)) N` with
 `N(0) = N₀`, it is positive, and `log₁₀(N₀ / N(t)) = F(t) / D_ref`. Derivatives on `[0, t_f]` are
-taken within the interval, so they are one-sided at its endpoints.
+taken within the interval, so they are one-sided at its endpoints when `0 < t_f`. When `t_f = 0`,
+every value is a derivative within `{0}`, so the equation imposes no condition and uniqueness rests
+on the initial value alone; when `t_f < 0` the interval is empty and only `N(0) = N₀` remains.
 
 ## Main definitions
 
@@ -101,13 +103,16 @@ temperature history $T$ be continuous on $[0, t_f]$ and let $N_0 > 0$. Then the 
 $N(t) = N_0 \exp\bigl(-\int_0^t k(T(s))\,ds\bigr)$
 
 * satisfies $N(0) = N_0$ and $N'(t) = -k(T(t))\,N(t)$ for $t \in [0, t_f]$, the derivative being
-  taken within $[0, t_f]$, so one-sided at its endpoints;
+  taken within $[0, t_f]$;
 * is the only such function on $[0, t_f]$: every $M$ with $M(0) = N_0$ and derivative
   $-k(T(t))\,M(t)$ within $[0, t_f]$ at each $t \in [0, t_f]$ equals $N$ on $[0, t_f]$;
 * is positive on $[0, t_f]$;
 * satisfies $\log_{10}(N_0 / N(t)) = F(t) / D_{\mathrm{ref}}$ for $t \in [0, t_f]$, where
   $F(t) = \int_0^t 10^{(T(s) - T_{\mathrm{ref}})/z}\,ds$ is the F-value (`fValue`).
 
+For $t_f > 0$ the derivatives within $[0, t_f]$ are one-sided at the endpoints. For $t_f = 0$
+every number is a derivative within $\{0\}$, so the equation imposes no condition and uniqueness
+rests on $M(0) = N_0$ alone; for $t_f < 0$ the interval is empty and only $N(0) = N_0$ remains.
 No sign condition on $D_{\mathrm{ref}}$ or $z$ is needed, reading a division by zero as $0$; in
 the model both are positive. -/
 theorem log_linear_inactivation (Dref Tref z : ℝ) {N₀ tf : ℝ} {T : ℝ → ℝ}
