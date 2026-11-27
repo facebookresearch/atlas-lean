@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
 public import MathlibExt.Combinatorics.Coding.PolakSchrijver
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsLovasz1979UpperBound
 
 /-!
@@ -23,7 +24,9 @@ The actual modular code and capacity model comes from `CycleGraphCode`. The pape
 integer profiles below perform only arithmetic, using `BPZProfile`, `BPZProfile.star` and
 `bpzProfileSquareIter`, which are now defined in
 `MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction`; they do
-not supply independent sets or prove that a profile comes from a valid tuple.
+not supply independent sets or prove that a profile comes from a valid tuple. The
+twenty-one-cycle lower bound `bpz2026CycleTwentyOneLowerBound` is proved in
+`MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound`.
 
 Source: Optimization Problems, constant 9a, pinned at
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`; Gao arXiv:2607.27869;
@@ -445,15 +448,6 @@ inequality in $[0, \infty]$.
 Source: BPZ, arXiv:2607.29681, exact nineteen-cycle root rate. -/
 theorem_wanted bpz2026CycleNineteenLowerBound :
   ENNReal.rpow (bpzC19Pi4096.code.toNat : ENNReal) ((16384 : ℝ)⁻¹) ≤ shannonCapacityCycle 19
-
-/-- **Buys–Polak–Zuiddam lower bound for the capacity of the 21-cycle.** Let $c$ be the code
-coordinate of BPZ's final twenty-one-cycle profile after ten squarings, and let
-$M = \max(c, 0)$. Then $M^{1/4096}$ is at most the Shannon capacity of the $21$-cycle, as an
-inequality in $[0, \infty]$.
-
-Source: BPZ, arXiv:2607.29681, exact twenty-one-cycle root rate. -/
-theorem_wanted bpz2026CycleTwentyOneLowerBound :
-  ENNReal.rpow (bpzC21Pi1024.code.toNat : ENNReal) ((4096 : ℝ)⁻¹) ≤ shannonCapacityCycle 21
 
 /-- **Buys–Polak–Zuiddam lower bound for the capacity of the 23-cycle.** Let $c$ be the code
 coordinate of BPZ's final twenty-three-cycle profile after nine squarings, and let
