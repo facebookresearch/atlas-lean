@@ -1048,6 +1048,7 @@
   "CSLibExt/Algorithms/Lean/DynamicProgramming/AlignmentBridges": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Pairwise sequence alignment"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/BandLemma": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Banded sequence alignment"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/BandedAlignment": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Banded sequence alignment"},
+  "CSLibExt/Algorithms/Lean/DynamicProgramming/DeterministicFiniteHorizon": {"to": "ComputerScience/dynamic-programming", "title": "Dynamic programming"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/EditDistance/Algorithm": {"to": "ComputerScience/string-algorithms", "title": "Edit distance"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/EditDistance/Metric": {"to": "ComputerScience/string-algorithms", "title": "Edit distance"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/EditDistance/Script": {"to": "ComputerScience/string-algorithms", "title": "Edit distance"},
