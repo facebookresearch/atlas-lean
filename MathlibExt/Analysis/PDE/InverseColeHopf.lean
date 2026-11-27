@@ -116,7 +116,7 @@ noncomputable def normalizationRate (ν : ℝ) (u : ℝ → ℝ → ℝ) (x₀ t
   u t x₀ ^ 2 / (4 * ν) - deriv (u t) x₀ / 2
 
 /-- The normalized inverse Cole–Hopf potential with base point `(t₀, x₀)`:
-`ψ t x = ∫ s in t₀..t, r s - (∫ y in x₀..x, u t y) / (2 * ν)`, where
+`inversePotential ν u t₀ x₀ t x = (∫ s in t₀..t, r s) - (∫ y in x₀..x, u t y) / (2 * ν)`, where
 `r s = normalizationRate ν u x₀ s = u s x₀ ^ 2 / (4 * ν) - deriv (u s) x₀ / 2`, with oriented
 interval integrals and real division. -/
 noncomputable def inversePotential (ν : ℝ) (u : ℝ → ℝ → ℝ) (t₀ x₀ t x : ℝ) : ℝ :=

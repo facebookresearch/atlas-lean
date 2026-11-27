@@ -117,9 +117,10 @@ noncomputable def forcedNormalizationRate (ν : ℝ) (u F : ℝ → ℝ → ℝ)
   normalizationRate ν u x₀ t + F t x₀
 
 /-- The forced normalized inverse Cole–Hopf potential with potential `F` and base point
-`(t₀, x₀)`: `ψ t x = ∫ s in t₀..t, r s - (∫ y in x₀..x, u t y) / (2 * ν)`, where
-`r s = u s x₀ ^ 2 / (4 * ν) - deriv (u s) x₀ / 2 + F s x₀`, with oriented interval integrals and
-real division. -/
+`(t₀, x₀)`:
+`forcedInversePotential ν u F t₀ x₀ t x = (∫ s in t₀..t, r s) - (∫ y in x₀..x, u t y) / (2 * ν)`,
+where `r s = u s x₀ ^ 2 / (4 * ν) - deriv (u s) x₀ / 2 + F s x₀`, with oriented interval
+integrals and real division. -/
 noncomputable def forcedInversePotential (ν : ℝ) (u F : ℝ → ℝ → ℝ)
     (t₀ x₀ t x : ℝ) : ℝ :=
   (∫ s in t₀..t, forcedNormalizationRate ν u F x₀ s) - (∫ y in x₀..x, u t y) / (2 * ν)
