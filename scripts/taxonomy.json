@@ -13468,6 +13468,7 @@
   "MathlibExt/NumberTheory/LucasNumbersModuloM": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Residues of Lucas numbers"},
   "MathlibExt/NumberTheory/LucasLeonardoPStrideSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LucasPolytopicNumber": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
+  "MathlibExt/NumberTheory/LucasPolytopicNumberHasSumInvLucasBracketMulSucc": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/LucasSequence": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LucasSpecialPrime": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LurothBorelBernstein": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
@@ -18443,7 +18444,9 @@
   "WantedExt/NumberTheory/SidonAsymptoticBasisErdosProblem157Wanted": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
   "WantedExt/NumberTheory/SidonSubsetBoundedRepresentationsErdosProblem772Wanted": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
   "WantedExt/Probability/AngularSynchronizationShared": {"to": "Probability/high-dimensional-probability", "title": "Angular synchronization"},
-  "MathlibExt/Combinatorics/SimpleGraph/MulticolorTriangleRamsey": {"to": "GraphTheory/graph-ramsey-theory", "title": "Multicolor triangle Ramsey numbers"}
+  "MathlibExt/Combinatorics/SimpleGraph/MulticolorTriangleRamsey": {"to": "GraphTheory/graph-ramsey-theory", "title": "Multicolor triangle Ramsey numbers"},
+  "MathlibExt/NumberTheory/LSeries/MontgomeryTaylorWindow": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Zeros of the Riemann zeta function"},
+  "MathlibExt/NumberTheory/LSeries/ZeroCounts": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Zeros of the Riemann zeta function"}
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",
