@@ -11,6 +11,7 @@ module
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.NumberTheory.BinomialProductAsymptotics
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry1Powersum
+import MathlibExt.NumberTheory.CentralBinomLog
 import Mathlib.Analysis.SpecialFunctions.Log.Sum
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
@@ -20,12 +21,23 @@ import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 # Products of central binomial coefficients and Catalan numbers
 
 The theorem `tendsto_prod_centralBinom_catalan_div` gives the limits of the normalized products
-of central binomial coefficients and of Catalan numbers.
+of central binomial coefficients and of Catalan numbers. The theorem `tendsto_prod_choose_row_div`
+gives the limit of the normalized product of a row of Pascal’s triangle.
 
 Differentiating the Euler–Maclaurin expansion for the sum of `k ^ r` at `r = 0` and `r = 1`
 gives expansions for the sums of `log k` and `k * log k`. Regrouping the factorials expresses
 the central binomial product in terms of these sums. Dividing by `(n + 1)!` gives the Catalan
-product.
+product. The same log sums handle the Pascal-row product via the factorial identity in
+Kellner’s proof of Theorem 10, equation (8).
+
+The namespace `LogFactorialExpansion` exposes the error terms of these expansions for
+`log n!` and for the sum of `k * log k`, their limits and their recurrences, for reuse by
+other product asymptotics.
+
+## References
+
+* Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients Revisited*,
+  INTEGERS 24 (2024), Article A59, pp. 1–10, Corollary 7 and Theorem 10.
 -/
 
 namespace MetaMathlibExt
@@ -34,7 +46,7 @@ open Filter Topology
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.Entry1Powersum
 open MeasureTheory
 
-namespace tendsto_prod_centralBinom_catalan_div
+namespace LogFactorialExpansion
 
 private theorem integrand_bound {C x : ℝ} {r : ℂ} {b : ℝ}
     (hC : ‖bernoulliKernel 3 x‖ ≤ C) (hx : 1 ≤ x) (hr : r.re ≤ b) :
@@ -137,13 +149,18 @@ private theorem power_sum_derivative (n : ℕ) (hn : 1 < n) (a : ℂ) (ha : a = 
   rw [he]
   ring
 
-private noncomputable def weightedLog (n : ℕ) : ℝ :=
+/-- The weighted logarithmic sum $\sum_{k=1}^{n} k \log k$. -/
+@[expose] public noncomputable def weightedLog (n : ℕ) : ℝ :=
   ∑ k ∈ Finset.Icc 1 n, (k : ℝ) * Real.log k
 
-private noncomputable def factorialMain (x : ℝ) : ℝ :=
+/-- The main term $(x + 1/2) \log x - x + \log(2\pi)/2 + 1/(12x)$ of the expansion of
+$\log x!$. -/
+@[expose] public noncomputable def factorialMain (x : ℝ) : ℝ :=
   (x + 1 / 2) * Real.log x - x + Real.log (2 * Real.pi) / 2 + 1 / (12 * x)
 
-private noncomputable def weightedMain (x : ℝ) : ℝ :=
+/-- The main term $(x^2/2 + x/2 + 1/12) \log x - x^2/4 + \log A$ of the expansion of
+`weightedLog`, where $A$ is the Glaisher–Kinkelin constant. -/
+@[expose] public noncomputable def weightedMain (x : ℝ) : ℝ :=
   (x ^ 2 / 2 + x / 2 + 1 / 12) * Real.log x - x ^ 2 / 4 + Real.log glaisherKinkelinConstant
 
 private theorem factorial_expansion {n : ℕ} (hn : 1 < n) :
@@ -178,13 +195,16 @@ private theorem weighted_expansion {n : ℕ} (hn : 1 < n) :
   rw [log_glaisherKinkelinConstant]
   linear_combination hre
 
-private noncomputable def factorialError (n : ℕ) : ℝ :=
+/-- The error `Real.log n.factorial - factorialMain n` of the expansion of $\log n!$. -/
+@[expose] public noncomputable def factorialError (n : ℕ) : ℝ :=
   Real.log n.factorial - factorialMain n
 
-private noncomputable def weightedError (n : ℕ) : ℝ :=
+/-- The error `weightedLog n - weightedMain n` of the expansion of `weightedLog`. -/
+@[expose] public noncomputable def weightedError (n : ℕ) : ℝ :=
   weightedLog n - weightedMain n
 
-private theorem error_limits :
+/-- As $n \to \infty$, both `n * factorialError n` and `weightedError n` tend to $0$. -/
+public theorem error_limits :
     Tendsto (fun n : ℕ => n * factorialError n) atTop (𝓝 0) ∧
     Tendsto weightedError atTop (𝓝 0) := by
   obtain ⟨C, hC⟩ := bernoulliKernel_norm_le 1 (by decide)
@@ -209,25 +229,31 @@ private theorem error_limits :
     field_simp [hn0.ne'] at hb ⊢
     linarith
 
-private theorem log_factorial_succ (n : ℕ) :
+/-- For every natural number $n$, $\log (n + 1)! = \log n! + \log (n + 1)$. -/
+public theorem log_factorial_succ (n : ℕ) :
     Real.log ((n + 1).factorial : ℝ) = Real.log n.factorial + Real.log (n + 1 : ℝ) := by
   rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add_one, Real.log_mul (by positivity)
     (by positivity), add_comm]
 
-private theorem weightedLog_succ (n : ℕ) :
+/-- For every natural number $n$,
+`weightedLog (n + 1) = weightedLog n + (n + 1) * log (n + 1)`. -/
+public theorem weightedLog_succ (n : ℕ) :
     weightedLog (n + 1) = weightedLog n + (n + 1 : ℝ) * Real.log (n + 1 : ℝ) := by
   simp [weightedLog, Finset.sum_Icc_succ_top (show 1 ≤ n + 1 by omega)]
 
-private theorem log_centralBinom (n : ℕ) :
-    Real.log n.centralBinom = Real.log (2 * n).factorial - 2 * Real.log n.factorial := by
-  have h : (n.centralBinom : ℝ) * n.factorial * n.factorial = (2 * n).factorial := by
-    exact_mod_cast (by simpa [Nat.centralBinom_eq_two_mul_choose, two_mul] using
-      Nat.add_choose_mul_factorial_mul_factorial n n :
-        n.centralBinom * n.factorial * n.factorial = (2 * n).factorial)
-  have hb : (0 : ℝ) < n.centralBinom := by exact_mod_cast n.centralBinom_pos
-  rw [← h, Real.log_mul (by positivity) (by positivity),
-    Real.log_mul hb.ne' (by positivity)]
-  ring
+/-- As $n \to \infty$, `factorialError n` tends to $0$. -/
+public theorem factorialError_limit : Tendsto factorialError atTop (𝓝 0) := by
+  have h := (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).mul error_limits.1
+  refine (show Tendsto _ _ (𝓝 (0 : ℝ)) by simpa only [zero_mul] using h).congr' ?_
+  filter_upwards [eventually_gt_atTop 0] with n hn
+  change (n : ℝ)⁻¹ * (n * factorialError n) = _
+  field_simp
+
+end LogFactorialExpansion
+
+open LogFactorialExpansion
+
+namespace tendsto_prod_centralBinom_catalan_div
 
 private noncomputable def centralProduct (n : ℕ) : ℝ :=
   ∏ k ∈ Finset.Icc 1 n, (k.centralBinom : ℝ)
@@ -287,13 +313,6 @@ private theorem central_log_error (n : ℕ) (hn : 0 < n) :
     log_four]
   field_simp
   ring
-
-private theorem factorialError_limit : Tendsto factorialError atTop (𝓝 0) := by
-  have h := (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).mul error_limits.1
-  refine (show Tendsto _ _ (𝓝 (0 : ℝ)) by simpa only [zero_mul] using h).congr' ?_
-  filter_upwards [eventually_gt_atTop 0] with n hn
-  change (n : ℝ)⁻¹ * (n * factorialError n) = _
-  field_simp
 
 private theorem central_log_limit :
     Tendsto (fun n : ℕ => Real.log (centralProduct n) - Real.log (centralScale n) -
@@ -392,5 +411,122 @@ public theorem tendsto_prod_centralBinom_catalan_div :
     have hp := centralProduct_pos n
     rw [← catalanProduct_mul] at hp
     exact ⟨pos_of_mul_pos_left hp (by positivity), by unfold catalanScale; positivity⟩
+
+
+namespace tendsto_prod_choose_row_div
+
+private noncomputable def rowProduct (n : ℕ) : ℝ :=
+  ∏ k ∈ Finset.range (n + 1), (n.choose k : ℝ)
+
+private theorem rowProduct_pos (n : ℕ) : 0 < rowProduct n :=
+  Finset.prod_pos fun k hk => by
+    exact_mod_cast Nat.choose_pos (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
+
+-- Summing the factorial logs counts the summand `log k` exactly `n + 1 - k` times.
+private theorem sum_log_factorial (n : ℕ) :
+    (∑ k ∈ Finset.range (n + 1), Real.log (k.factorial : ℝ)) =
+      (n + 1 : ℝ) * Real.log n.factorial - weightedLog n := by
+  induction n with
+  | zero => simp [weightedLog]
+  | succ n ih =>
+    rw [Finset.sum_range_succ, ih, weightedLog_succ, log_factorial_succ]
+    push_cast
+    ring
+
+private theorem log_rowProduct (n : ℕ) :
+    Real.log (rowProduct n) = 2 * weightedLog n - (n + 1 : ℝ) * Real.log n.factorial := by
+  have hchoose (k : ℕ) (hk : k ∈ Finset.range (n + 1)) :
+      Real.log (n.choose k : ℝ) =
+        Real.log n.factorial - Real.log k.factorial - Real.log (n - k).factorial := by
+    have hkn := Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
+    have h : (n.choose k : ℝ) * k.factorial * (n - k).factorial = n.factorial := by
+      exact_mod_cast Nat.choose_mul_factorial_mul_factorial hkn
+    have hkpos : (0 : ℝ) < n.choose k := by exact_mod_cast Nat.choose_pos hkn
+    rw [← h, Real.log_mul (by positivity) (by positivity), Real.log_mul hkpos.ne' (by positivity)]
+    ring
+  have hreflect : (∑ k ∈ Finset.range (n + 1), Real.log ((n - k).factorial : ℝ)) =
+      ∑ k ∈ Finset.range (n + 1), Real.log (k.factorial : ℝ) := by
+    simpa only [Nat.add_sub_cancel] using
+      Finset.sum_range_reflect (fun k => Real.log (k.factorial : ℝ)) (n + 1)
+  unfold rowProduct
+  rw [Real.log_prod (fun k hk => by
+    exact_mod_cast (Nat.choose_pos (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))).ne'),
+    Finset.sum_congr rfl hchoose]
+  simp_rw [Finset.sum_sub_distrib]
+  rw [hreflect, sum_log_factorial]
+  simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_add, Nat.cast_one]
+  ring
+
+private noncomputable def rowScale (x : ℝ) : ℝ :=
+  Real.exp (x ^ 2 / 2 + x) / ((2 * Real.pi) ^ (x / 2) * x ^ (x / 2 + 1 / 3))
+
+private noncomputable def rowConstant : ℝ :=
+  (factorialProductConstant 1 * (2 * Real.pi) ^ ((1 : ℝ) / 4))⁻¹
+
+private theorem rowConstant_pos : 0 < rowConstant := by
+  unfold rowConstant
+  have hF := factorialProductConstant_pos 1
+  positivity
+
+private theorem log_rowConstant :
+    Real.log rowConstant =
+      2 * Real.log glaisherKinkelinConstant - Real.log (2 * Real.pi) / 2 - 1 / 12 := by
+  unfold rowConstant
+  rw [Real.log_inv, Real.log_mul (factorialProductConstant_pos 1).ne' (by positivity),
+    Real.log_rpow (by positivity), log_factorialProductConstant_one]
+  ring
+
+private theorem row_log_error (n : ℕ) (hn : 0 < n) :
+    Real.log (rowProduct n) - Real.log (rowScale n) - Real.log rowConstant =
+      2 * weightedError n - n * factorialError n - factorialError n - (1 / 12) * (n : ℝ)⁻¹ := by
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  rw [log_rowProduct, log_rowConstant]
+  unfold rowScale weightedError factorialError weightedMain factorialMain
+  simp (disch := positivity) only [Real.log_div, Real.log_mul, Real.log_rpow, Real.log_exp]
+  field_simp
+  ring
+
+private theorem row_log_limit :
+    Tendsto (fun n : ℕ => Real.log (rowProduct n) - Real.log (rowScale n) -
+      Real.log rowConstant) atTop (𝓝 0) := by
+  have hi : Tendsto (fun n : ℕ => (n : ℝ)⁻¹) atTop (𝓝 0) :=
+    tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
+  obtain ⟨hF, hW⟩ := error_limits
+  have h := (((hW.const_mul 2).sub hF).sub factorialError_limit).sub (hi.const_mul (1 / 12))
+  refine (show Tendsto _ _ (𝓝 (0 : ℝ)) by simpa only [mul_zero, sub_zero] using h).congr' ?_
+  filter_upwards [eventually_gt_atTop 0] with n hn
+  exact (row_log_error n hn).symm
+
+end tendsto_prod_choose_row_div
+
+open tendsto_prod_choose_row_div
+
+/-- **Asymptotics of the product of a row of Pascal's triangle.** Let $F_1$ be the first factorial
+product constant and $A$ the Glaisher–Kinkelin constant, and put
+$C_{\mathrm{row}} = \left(F_1 (2\pi)^{1/4}\right)^{-1}$. As $n \to \infty$, the ratio of
+$\prod_{\nu=0}^{n} \binom{n}{\nu}$ to $e^{n^2/2 + n} / \left((2\pi)^{n/2} n^{n/2 + 1/3}\right)$
+tends to $C_{\mathrm{row}}$, and $C_{\mathrm{row}} = A^2 / \left((2\pi)^{1/2} e^{1/12}\right)$.
+
+Source: Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients
+Revisited*, INTEGERS 24 (2024), Article A59, Theorem 10. -/
+public theorem tendsto_prod_choose_row_div :
+    Tendsto (fun n : ℕ => (∏ ν ∈ Finset.range (n + 1), (n.choose ν : ℝ)) /
+        (Real.exp ((n : ℝ) ^ 2 / 2 + n) /
+          ((2 * Real.pi) ^ ((n : ℝ) / 2) * (n : ℝ) ^ ((n : ℝ) / 2 + 1 / 3))))
+      atTop (𝓝 ((factorialProductConstant 1 * (2 * Real.pi) ^ ((1 : ℝ) / 4))⁻¹)) ∧
+    (factorialProductConstant 1 * (2 * Real.pi) ^ ((1 : ℝ) / 4))⁻¹ =
+      glaisherKinkelinConstant ^ 2 / ((2 * Real.pi) ^ ((1 : ℝ) / 2) * Real.exp (1 / 12)) := by
+  constructor
+  · apply tendsto_ratio_of_log rowConstant_pos _ row_log_limit
+    filter_upwards [eventually_gt_atTop 0] with n hn
+    exact ⟨rowProduct_pos n, by unfold rowScale; positivity⟩
+  · change rowConstant = _
+    have hA : 0 < glaisherKinkelinConstant := Real.exp_pos _
+    apply Real.log_injOn_pos (show rowConstant ∈ Set.Ioi 0 from rowConstant_pos)
+      (show _ ∈ Set.Ioi (0 : ℝ) by apply Set.mem_Ioi.mpr; positivity)
+    rw [log_rowConstant]
+    simp (disch := positivity) only [Real.log_div, Real.log_mul, Real.log_pow, Real.log_rpow,
+      Real.log_exp, Nat.cast_ofNat]
+    ring
 
 end MetaMathlibExt

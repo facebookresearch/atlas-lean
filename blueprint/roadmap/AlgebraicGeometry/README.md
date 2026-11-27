@@ -16,7 +16,7 @@ uniform bound of Dimitrov, Gao and Habegger on the rational points of curves of 
 [Faltings's theorem](arithmetic-geometry/faltings-s-theorem/README.md) and the Weil conjectures over finite fields.
 
 - [Schemes and morphisms](schemes-and-morphisms/README.md)
-- [Grothendieck topologies on schemes](grothendieck-topologies/README.md)
+- [Grothendieck topologies and étale cohomology](grothendieck-topologies/README.md)
 - [Varieties and projective geometry](varieties-and-projective-geometry/README.md)
 - [Birational geometry and vanishing theorems](birational-geometry/README.md)
 - [Algebraic curves](algebraic-curves/README.md)
