@@ -31,6 +31,7 @@ $\lambda_\ell$ at $F_{\rho_\ell,p}$, which is the congruence above.
 ## Depends on
 
 - [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(1, \varepsilon)$ and the operators $T_p$
+- [Integral closure of ℤ in a field and the ring of integers of a number field](../../number-fields-embeddings/ring-of-integers.md), for the ring of integers $\mathcal{O}_K$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on

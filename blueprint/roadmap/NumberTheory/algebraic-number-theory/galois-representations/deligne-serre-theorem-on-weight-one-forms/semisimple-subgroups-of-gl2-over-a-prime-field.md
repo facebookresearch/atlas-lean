@@ -19,6 +19,11 @@ elliptic curves for the proof of
 [the bound on such subgroups with few characteristic polynomials](bounded-semisimple-subgroups-of-gl2-with-few-characteristic-polynomials.md).
 The definition of a Cartan subgroup above is the usual one, which their statement leaves to that reference.
 
+## Depends on
+
+- [Alternating group on a finite set](../../../../GroupTheory/permutation-groups/symmetric-groups/alternating-group.md), for $A_4$ and $A_5$
+- [Symmetric group: the group of permutations of a set](../../../../GroupTheory/automorphisms/automorphism-groups/symmetric-group.md), for $S_4$
+
 ## Proof depends on
 
 - [Dickson's classification, tame case](../../../../GroupTheory/linear-groups/dickson-s-classification-of-finite-subgroups-of/classification-tame.md), for the image in $\mathrm{PGL}_2$ of a subgroup of order prime to an odd $\ell$

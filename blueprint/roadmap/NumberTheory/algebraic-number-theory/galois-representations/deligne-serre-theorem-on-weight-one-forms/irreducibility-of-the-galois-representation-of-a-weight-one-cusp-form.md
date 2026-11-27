@@ -35,6 +35,7 @@ which contradicts (5.1.1) of [Rankin's bound](rankin-bound-for-the-mean-square-o
 - [Maschke's theorem](../../../../RepresentationTheory/finite-group-representations/maschke-decomposition.md), applied to the finite image of $\rho$, for the decomposition of a reducible $\rho$ into two characters
 - [Rankin's bound for the mean square of Hecke eigenvalues](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md), for the contradiction
 - [Non-vanishing of Hecke L-functions on the line Re s = 1](../../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-nonvanishing-on-re-one.md), for $L(1, \chi) \neq 0$ for the nontrivial character $\chi = \chi_1 \overline{\chi}_2$ of finite order
+- [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the action of $G$ on the roots of unity through which a Dirichlet character is a character of $G$: complex conjugation $c$ acts on them by inversion, so $\varepsilon(c) = \varepsilon(-1)$ (Remarques 4.4 and 4.5)
 
 ## Expansion
 

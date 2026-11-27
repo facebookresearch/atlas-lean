@@ -24,6 +24,11 @@ $K \otimes M$, so some nonzero $f'' \in K \otimes M$ has $h f'' = \chi'(h) f''$ 
 nonzero multiple of $f''$ in $M$. A variant puts the $T$ in upper triangular form on an
 $\mathcal{T}$-indecomposable $M$ and takes $f' = e_1$.
 
+## Depends on
+
+- [Free module](../../../../LinearAlgebra/bases-and-dimension/free-module.md), for the free $\mathcal{O}$-module $M$ of finite type
+- [Eigenvector of a linear map](../../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-eigenspaces/eigenvalues-and-eigenvectors/has-eigenvector.md), for common eigenvectors, which are nonzero
+
 ## Proof depends on
 
 Its proof uses the inputs listed under Expansion.

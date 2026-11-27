@@ -19,8 +19,9 @@ Proof (Deligne–Serre, p. 520). By the
 [integral lattice of cusp forms](integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md) (parts 3
 and 4) the $a_p$ are algebraic integers of a number field $K$, of degree $r$ over $\mathbb{Q}$, and for every embedding
 $\sigma$ of $K$ into $\mathbb{C}$, extended to an automorphism of $\mathbb{C}$, the numbers $\sigma(a_p)$ are the eigenvalues
-of the $T_p$ on the cusp form $\sigma(f) \ne 0$ of type $(1, \sigma \circ \varepsilon)$. For $c \ge 0$ let $Y(c)$ be the set
-of algebraic integers $a$ of $K$ with $|\sigma(a)|^2 \le c$ for every embedding $\sigma$; it is finite, since the minimal
+of the $T_p$ on the cusp form $\sigma(f) \ne 0$ of type $(1, \sigma \circ \varepsilon)$. For a real number $c > 0$ (Deligne
+and Serre allow $c \ge 0$, but the division by $c$ below needs $c > 0$) let $Y(c)$ be the set of algebraic integers $a$
+of $K$ with $|\sigma(a)|^2 \le c$ for every embedding $\sigma$; it is finite, since the minimal
 polynomials of its elements are monic of degree at most $r$ with integer coefficients bounded in terms of $c$ and $r$.
 Let $X(c)$ be the set of primes $p \nmid N$ with $a_p \notin Y(c)$. Summing (5.1.1) of
 [Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md) over the $r$ forms $\sigma(f)$ gives

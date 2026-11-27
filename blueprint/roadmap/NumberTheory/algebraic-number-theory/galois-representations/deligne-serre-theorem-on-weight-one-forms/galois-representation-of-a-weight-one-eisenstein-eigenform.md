@@ -21,6 +21,7 @@ Hecke.
 ## Depends on
 
 - [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for forms of type $(1, \varepsilon)$ and the operators $T_p$
+- [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the homomorphism $G \to (\mathbb{Z}/N\mathbb{Z})^*$ given by the action of $G$ on the $N$-th roots of unity, the cyclotomic character modulo $N$, through which the $\chi_i$ are characters of $G$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on
