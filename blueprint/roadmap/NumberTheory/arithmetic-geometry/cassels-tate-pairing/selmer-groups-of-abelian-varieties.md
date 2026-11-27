@@ -45,7 +45,7 @@ $H^1(K', A) \to H^1(\hat K', A)$ to the completion is an isomorphism.
 
 ## Expansion
 
-A good expansion has pages for:
+This node is still to be broken down. A good expansion states and links:
 
 - the reduction lemma: if $A$ has good reduction outside $S$ and $m$ is a unit outside $S$, then $A[m]$ is unramified
   outside $S$ and $m \colon A(K_S) \to A(K_S)$ is onto, because $A$ extends to an abelian scheme over the ring of
