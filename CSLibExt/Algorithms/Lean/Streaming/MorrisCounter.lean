@@ -117,8 +117,9 @@ theorem integral_sq (n : ℕ) :
       integral_value, Nat.cast_succ]
     ring
 
-/-- Exact variance of the Morris doubling observable. All its moments exist because the
-state space at a fixed time is finite. -/
+/-- If `X` is the Morris register after `n` updates, the doubling observable `2 ^ X` has
+variance `n * (n - 1) / 2` under the register law. In particular, the variance is zero
+both before any updates and after the certain first increment. -/
 theorem variance_value (n : ℕ) : Var[value; law n] = n * ((n : ℝ) - 1) / 2 := by
   rw [variance_eq_sub ((memLp_two_iff_integrable_sq (measurable_of_finite _).aestronglyMeasurable).2
     Integrable.of_finite)]

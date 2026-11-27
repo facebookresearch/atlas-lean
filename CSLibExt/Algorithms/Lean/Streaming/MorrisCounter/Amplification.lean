@@ -174,9 +174,12 @@ noncomputable def width (ε : ℝ) : ℕ := ⌈4 / ε ^ 2⌉₊
 /-- Number of independent blocks. Ceilings allow arbitrary `0 < δ < 1`. -/
 noncomputable def groups (δ : ℝ) : ℕ := ⌈32 / 9 * Real.log δ⁻¹⌉₊
 
-/-- For a fixed stream length `n ≤ m`, the median of the specified number of independent
-means of bounded Morris counters is outside the multiplicative interval with probability
-at most `δ`. The law here is on the *bounded* registers themselves. -/
+/-- Fix a stream length `n ≤ m`, a relative error `0 < ε ≤ 1`, and `0 < δ`. Use
+`k = ⌈4 / ε²⌉₊` counters per block and `s = ⌈(32/9) ln(1/δ)⌉₊` blocks, where `⌈·⌉₊` rounds
+up to a nonnegative integer. Each register saturates at `h = 1 + ⌈log₂ k⌉ + ⌈log₂ (m + 1)⌉`.
+Under the product law of `s` independent blocks, each with `k` independent registers of law
+`boundedLaw h n`, the probability that the median of the block means of `2 ^ x - 1` lies
+outside the closed interval `[(1 - ε)n, (1 + ε)n]` is at most `δ`. -/
 theorem median_failure {m n : ℕ} (hn : n ≤ m) {ε δ : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1)
     (hδ : 0 < δ) :
     (Measure.pi fun _ : Fin (groups δ) => Measure.pi fun _ : Fin (width ε) =>
@@ -196,8 +199,9 @@ theorem median_failure {m n : ℕ} (hn : n ≤ m) {ε δ : ℝ} (hε : 0 < ε) (
   rw [Real.log_inv] at hg
   linarith
 
-/-- Both repetition counts are positive and their real-valued prescriptions lose less
-than one counter or block to rounding. -/
+/-- For `0 < ε` and `0 < δ < 1`, both the block width `k = ⌈4 / ε²⌉₊` and the number of
+blocks `s = ⌈(32/9) ln(1/δ)⌉₊` are positive. Rounding up adds less than one in each case:
+`k < 4 / ε² + 1` and `s < (32/9) ln(1/δ) + 1`. -/
 theorem repetition_counts {ε δ : ℝ} (hε : 0 < ε) (hδ : 0 < δ) (hδ' : δ < 1) :
     0 < width ε ∧ (width ε : ℝ) < 4 / ε ^ 2 + 1 ∧
     0 < groups δ ∧ (groups δ : ℝ) < 32 / 9 * Real.log δ⁻¹ + 1 := by
