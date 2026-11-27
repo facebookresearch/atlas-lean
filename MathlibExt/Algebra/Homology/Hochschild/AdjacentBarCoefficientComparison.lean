@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- Actual balanced tensor of the original enveloping bar. -/
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.EnvelopingCoefficient
