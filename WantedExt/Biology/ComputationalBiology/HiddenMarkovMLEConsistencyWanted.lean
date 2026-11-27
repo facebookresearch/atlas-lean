@@ -14,8 +14,13 @@ observations take values in finite sets, the maximum likelihood estimator is con
 parameter identified only up to the equivalence of parameters that induce the same law of the
 observations (for example, relabelling the hidden states). Douc, Moulines and Rydén (2004,
 Theorem 1) prove strong consistency in a general setting under assumptions (A1)–(A5), where (A5)
-is identifiability; in the finite positive model below their assumptions reduce to positivity,
-continuity and compactness.
+is identifiability. In the finite positive model below their regularity assumptions reduce to
+positivity, continuity and compactness, but these do not imply (A5): two distinct parameters with
+the same weights give the same observation law. Without (A5) the estimator converges only to the
+equivalence class of the true parameter (`tendsto_infDist_equivClass`); convergence to the
+parameter itself needs (A5) as the separate hypothesis `hid` of `tendsto_mle_of_identifiable`.
+Their Theorem 1 is stated for a conditional likelihood; their Section 4 compares it with the
+stationary likelihood used here.
 
 The model here: hidden states `Fin r`, symbols `Fin K`, a parameter set `Θ` that is a nonempty
 compact subset of `ℝ^p`, and maps `θ ↦ (P_θ, e_θ, π_θ)` continuous on `Θ`, where `P_θ` is a
@@ -30,8 +35,9 @@ and emissions `e_θ`, and its `likelihood` of the observations `y_0, …, y_n` i
 The observations `Y_0, Y_1, …` form the stationary observation process of `θ*`: their law `Q` on
 `ℕ → Fin K` has these cylinder probabilities at `θ = θ*`. The log-likelihood of the first
 `n + 1` observations is `𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` (the full stationary joint likelihood),
-and an estimator is any sequence of measurable maps choosing a maximizer of `𝓛_n` over `Θ`. Two
-parameters are equivalent when they give the same observation law.
+and an estimator is any sequence of measurable maps, the `n`-th a function of `Y_0, …, Y_n` only,
+choosing a maximizer of `𝓛_n` over `Θ`. Two parameters are equivalent when they give the same
+observation law.
 
 Not recorded here: asymptotic normality (Douc, Moulines and Rydén 2004, Theorem 4), whose
 statement for the full parameter set needs a characterization of the equivalence classes beyond
@@ -138,12 +144,14 @@ noncomputable def HMMFamily.logLik {p r K : ℕ} (M : HMMFamily p r K)
     (θ : EuclideanSpace ℝ (Fin p)) (n : ℕ) (ω : ℕ → Fin K) : ℝ :=
   Real.log (likelihood (M.toHMM θ) ω n)
 
-/-- `θhat` is a **maximum likelihood estimator**: each `θhat n` is measurable, takes values in
-`Θ`, and maximizes `𝓛_n` over `Θ`. -/
+/-- **Maximum likelihood estimator.** Each `θhat n` depends only on the first `n + 1`
+observations (two observation sequences that agree up to index `n` get the same estimate), is
+measurable, takes values in `Θ`, and maximizes `𝓛_n` over `Θ`. -/
 def HMMFamily.IsMLE {p r K : ℕ} (M : HMMFamily p r K)
     (θhat : ℕ → (ℕ → Fin K) → EuclideanSpace ℝ (Fin p)) : Prop :=
-  ∀ n, Measurable (θhat n) ∧ ∀ ω, θhat n ω ∈ M.Θ ∧
-    ∀ θ ∈ M.Θ, M.logLik θ n ω ≤ M.logLik (θhat n ω) n ω
+  ∀ n, (∀ ω ω' : ℕ → Fin K, (∀ i ≤ n, ω i = ω' i) → θhat n ω = θhat n ω') ∧
+    Measurable (θhat n) ∧ ∀ ω, θhat n ω ∈ M.Θ ∧
+      ∀ θ ∈ M.Θ, M.logLik θ n ω ≤ M.logLik (θhat n ω) n ω
 
 /-- **Consistency up to equivalence** (Baum and Petrie 1966): for a regular finite hidden Markov
 family (nonempty compact `Θ`; continuous `P_θ`, `e_θ`, `π_θ` on `Θ`; positive transition and

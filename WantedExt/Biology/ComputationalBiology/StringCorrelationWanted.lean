@@ -20,7 +20,7 @@ the `r ≤ min(|A|, |B|)` for which the length-`r` suffix of `A` equals the leng
   `F(z) = z AA_z / (1 + (z - q) AA_z)`.
 
 Here the identity is stated for formal power series in `x = z⁻¹`: multiplying numerator and
-denominator by `z^k` gives `F · (x^k + (1 - q x) c(x)) = c(x)` with
+denominator by `x^k = z^{-k}` gives `F · (x^k + (1 - q x) c(x)) = c(x)` with
 `c(x) = x^{k-1} AA_{1/x} = ∑_{r border} x^{k-r}`, a polynomial. Consequences for i.i.d. uniform
 letters: the expected waiting time until `A` first appears is `F(q) = q AA_q = ∑_{r border} q^r`;
 and for two words `A`, `B` over a two-letter alphabet, neither a factor of the other, Conway's

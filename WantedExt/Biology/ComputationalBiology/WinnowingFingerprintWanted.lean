@@ -14,8 +14,8 @@ hashes of its `k`-grams; with guarantee threshold `t` the window size is `w = t 
 window of `w` consecutive hashes must contribute a selected hash. A fingerprinting algorithm is
 local (Definition 2) with selection function `S`, which maps a `w`-tuple of hashes to an offset in
 `{0, …, w - 1}`, if for every window `h_i, …, h_{i+w-1}` the hash at position `i + S(window)` is
-selected; other positions may be selected too. Winnowing (Definition 1) selects the minimum hash of
-each window, the rightmost one on ties, and saves exactly the selected positions.
+selected; other positions of the input may be selected too. Winnowing (Definition 1) selects the
+minimum hash of each window, the rightmost one on ties, and saves exactly the selected positions.
 
 * Lemma 1: any matching pair of substrings of length at least `t` is found by any local algorithm.
 * Section 3.1: for independent uniformly distributed hashes, ignoring ties (the source assumes
@@ -71,22 +71,25 @@ noncomputable def localSel {n w : ℕ} (S : (Fin w → H) → Fin w) (h : Fin n 
   (Finset.range (n + 1 - w)).attach.image fun i =>
     if hi : i.1 + w ≤ n then i.1 + S (window w h i.1 hi) else 0
 
-/-- The positions selected by **winnowing** (Definition 1): the rightmost minimum of every window
-of size `w`. -/
+/-- **Winnowing** (Definition 1): the positions of the rightmost minimum of every window of size
+`w ≥ 1`, all of them positions of the input; no position for `w = 0`, which has no windows. -/
 noncomputable def winnow {n : ℕ} (w : ℕ) (h : Fin n → H) : Finset ℕ :=
-  (Finset.range (n + 1 - w)).attach.image fun i =>
-    if hi : i.1 + w ≤ n then i.1 + rightmostArgmin (window w h i.1 hi) else 0
+  if w = 0 then ∅ else
+    (Finset.range (n + 1 - w)).attach.image fun i =>
+      if hi : i.1 + w ≤ n then i.1 + rightmostArgmin (window w h i.1 hi) else 0
 
-/-- Window `i` of winnowing is **charged**: it selects a position that no window to its left
-selects (`C(p)` is the leftmost window selecting `p`). -/
+/-- **Charged window.** Window `i` of winnowing, of size `w ≥ 1`, is charged when it selects a
+position that no window to its left selects (`C(p)` is the leftmost window selecting `p`); no
+window is charged for `w = 0`. -/
 def Charged {n : ℕ} (w : ℕ) (h : Fin n → H) (i : ℕ) : Prop :=
-  ∃ hi : i + w ≤ n, ∀ i' (hi' : i' + w ≤ n), i' < i →
+  0 < w ∧ ∃ hi : i + w ≤ n, ∀ i' (hi' : i' + w ≤ n), i' < i →
     i' + rightmostArgmin (window w h i' hi') ≠ i + rightmostArgmin (window w h i hi)
 
-/-- An output map `F` is a **local algorithm** with selection function `S` (Definition 2): on every
-input of every length it selects at least the positions `i + S(window i)`. -/
+/-- **Local algorithm** (Definition 2). The output map `F` is local with selection function `S`
+when, on every input `h` of every length `n`, it selects at least the positions `i + S(window i)`
+and only positions of the input (`F n h ⊆ {0, …, n - 1}`). -/
 def IsLocal {w : ℕ} (S : (Fin w → H) → Fin w) (F : ∀ n, (Fin n → H) → Finset ℕ) : Prop :=
-  ∀ n (h : Fin n → H), localSel S h ⊆ F n h
+  ∀ n (h : Fin n → H), localSel S h ⊆ F n h ∧ F n h ⊆ Finset.range n
 
 /-- The hashes of the `k`-grams of a document `u`: `g` applied to the `k`-gram starting at each
 position `i ≤ |u| - k`. -/

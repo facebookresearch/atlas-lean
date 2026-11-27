@@ -30,7 +30,8 @@ for `q ≤ 1`: for `q > 1`, `P(S_k ≥ q k) = 0` and `r(q) = ∞`, which contrib
 `0 ≤ q ≤ 1` the probability is at least `P(A₁ = B₁) ^ k > 0`. Not recorded here: Lemma 1 (the set
 `{a = 0}` "defines a line" separating `{a < 0}` from `{a > 0}`), whose notion of line the paper
 does not make precise, and the extensions to general scoring and Markov letters. Logarithms are
-natural.
+natural. As in `LongestMatchShiftsWanted`, letters are indexed from `1`, and the shared
+`SequenceComparisonShared.IIDLetters` assumes nothing about the unused letters at index `0`.
 
 Sources: R. Arratia and M. S. Waterman, "A phase transition for the score in matching random
 sequences allowing deletions", Annals of Applied Probability 4 (1994) 200–225,
@@ -40,8 +41,7 @@ doi:10.1214/aoap/1177005208, pp. 201–210, equations (7)–(9), (14), Lemmas 2 
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.Basic
+public import WantedExt.Biology.ComputationalBiology.SequenceComparisonShared
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
@@ -51,6 +51,7 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 namespace WantedExt.Biology.ComputationalBiology.AlignmentScorePhaseTransitionWanted
 
 open MeasureTheory ProbabilityTheory Filter Topology
+open WantedExt.Biology.ComputationalBiology.SequenceComparisonShared (IIDLetters)
 
 section Score
 
@@ -93,16 +94,6 @@ noncomputable def localScore (μ δ : ℝ) (X Y : ℕ → α) (n : ℕ) : ℝ :=
 end Score
 
 variable {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
-
-/-- The letters are **i.i.d.**: the family `Z`, which carries `A_i` at `Sum.inl i` and `B_j` at
-`Sum.inr j`, is independent and every letter has the law of `A₁`. -/
-structure IIDLetters (P : Measure Ω) (Z : ℕ ⊕ ℕ → Ω → α) : Prop where
-  /-- Every letter is measurable. -/
-  measurable : ∀ a, Measurable (Z a)
-  /-- The letters are independent. -/
-  indep : iIndepFun Z P
-  /-- Every letter has the law of `A₁`. -/
-  identDistrib : ∀ a, IdentDistrib (Z a) (Z (Sum.inl 1)) P P
 
 /-- The global score `S_t(ω) = S(A₁ … A_t, B₁ … B_t)`. -/
 noncomputable def globalScore (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (t : ℕ) (ω : Ω) : ℝ :=

@@ -37,8 +37,8 @@ Theorems 8, 10, 11 and 12.
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Bioinformatics.Assembly.StringOverlap
 public import Mathlib.Data.List.Infix
-public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Mathlib.Order.Lattice.Nat
 
@@ -50,12 +50,12 @@ variable {α : Type*} [DecidableEq α]
 
 /-- **Overlap.** `ov(s, t)` is the largest `k` with `k < |s|`, `k < |t|` and the last `k` letters of
 `s` equal to the first `k` letters of `t` (so `s = u v`, `t = v w` with `|v| = k` and `u`, `w`
-nonempty). Unlike `Cslib.Bioinformatics.Assembly.StringOverlap.overlap`, which allows
+nonempty): main's `Cslib.Bioinformatics.Assembly.StringOverlap.overlapAux` searching the lengths
+below `min (|s|, |t|)`, and `0` when there is none. Unlike that module's `overlap`, which allows
 `k = min (|s|, |t|)`, it is a proper overlap, as in the source; MGREEDY's self-overlap `ov(s, s)`
 needs this. -/
 def overlap (s t : List α) : ℕ :=
-  ((Finset.range (min s.length t.length)).filter
-    (fun k => s.drop (s.length - k) = t.take k)).sup id
+  Cslib.Bioinformatics.Assembly.StringOverlap.overlapAux s t (min s.length t.length - 1)
 
 /-- **Merge.** The merge of `s` and `t` is `pref(s, t) t`, where `pref(s, t)` is `s` without its
 last `ov(s, t)` letters; `Cslib.Bioinformatics.Assembly.StringOverlap.merge` splices along that

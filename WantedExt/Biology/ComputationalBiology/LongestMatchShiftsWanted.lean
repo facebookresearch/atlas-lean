@@ -19,7 +19,8 @@ every `ε > 0`, almost surely, eventually in `n`,
 `-4 - ε < (M_n - 2 log n) / log log n < 1 + ε`. Hence `M_n / log n → 2` almost surely
 (equation (3)).
 
-Indices start at `1` as in the source; the letters at index `0` are not used. Not recorded here:
+Indices start at `1` as in the source; the letters at index `0` are not used, and the shared
+`SequenceComparisonShared.IIDLetters` assumes nothing about them. Not recorded here:
 Theorem 3 (independent irreducible aperiodic Markov chains, with `p` the largest eigenvalue of the
 matrix of squared transition probabilities), and the extension (12) to sequences of different
 lengths, whose proof the paper omits.
@@ -30,8 +31,7 @@ Sources: R. Arratia and M. S. Waterman, "An Erdős–Rényi law with shifts", Ad
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.Basic
+public import WantedExt.Biology.ComputationalBiology.SequenceComparisonShared
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Order.Lattice.Nat
@@ -41,6 +41,7 @@ public import Mathlib.Order.Lattice.Nat
 namespace WantedExt.Biology.ComputationalBiology.LongestMatchShiftsWanted
 
 open MeasureTheory ProbabilityTheory Filter
+open WantedExt.Biology.ComputationalBiology.SequenceComparisonShared (IIDLetters)
 
 variable {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
 
@@ -53,16 +54,6 @@ def MatchAt (X Y : ℕ → α) (i j m : ℕ) : Prop :=
 `j + m ≤ n` (equation (2)). -/
 noncomputable def longestMatch (X Y : ℕ → α) (n : ℕ) : ℕ :=
   sSup {m | ∃ i j, i + m ≤ n ∧ j + m ≤ n ∧ MatchAt X Y i j m}
-
-/-- The letters are **i.i.d.**: the family `Z`, which carries `X_i` at `Sum.inl i` and `Y_j` at
-`Sum.inr j`, is independent and every letter has the law of `X₁`. -/
-structure IIDLetters (P : Measure Ω) (Z : ℕ ⊕ ℕ → Ω → α) : Prop where
-  /-- Every letter is measurable. -/
-  measurable : ∀ a, Measurable (Z a)
-  /-- The letters are independent. -/
-  indep : iIndepFun Z P
-  /-- Every letter has the law of `X₁`. -/
-  identDistrib : ∀ a, IdentDistrib (Z a) (Z (Sum.inl 1)) P P
 
 /-- **Match probability.** `p = P(X₁ = Y₁)`, the measure `P.real` of the event that the first
 letters agree: a probability when `P` is a probability measure, as in the theorems below. -/
