@@ -32,4 +32,6 @@
 
 - [Germline clonal expansion and de novo mutation hotspots](germline-clonal-expansion-and-de-novo-hotspots/README.md)
 - [Unseen-variant frequency estimation](unseen-variant-frequency-estimation/README.md)
+- [Residual variation intolerance score](residual-variation-intolerance-score.md)
+- [Sequence-context de novo mutation model and the Poisson excess test](sequence-context-de-novo-mutation-model-and-poisson-excess-test.md)
 - [Maximum credible population allele frequency for a Mendelian variant](maximum-credible-population-allele-frequency.md)
