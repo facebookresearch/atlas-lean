@@ -1,6 +1,6 @@
 # Convolution theorem for zero-extended rectangular arrays
 
-Let $M$, $K$, $P$, $Q$ and $N_1, N_2 \ge 1$ be natural numbers, $x$ an $M \times K$ array and $y$ a $P \times Q$ array, with [zero extensions](zero-extend2.md) $x^{(N_1, N_2)}$ and $y^{(N_1, N_2)}$. Then
+Let $M$, $K$, $P$ and $Q$ be natural numbers and $N_1 \ge 1$, $N_2 \ge 1$ natural numbers, $x$ an $M \times K$ array and $y$ a $P \times Q$ array, with [zero extensions](zero-extend2.md) $x^{(N_1, N_2)}$ and $y^{(N_1, N_2)}$. Then
 
 $$x^{(N_1, N_2)} \circledast y^{(N_1, N_2)} = \mathcal{F}^{-1}\bigl(\mathcal{F} x^{(N_1, N_2)} \cdot \mathcal{F} y^{(N_1, N_2)}\bigr),$$
 

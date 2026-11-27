@@ -1,6 +1,6 @@
 # Convolution theorem for zero-extended signals
 
-Let $M$, $K$ and $N \ge 1$ be natural numbers, and let $x$ and $y$ be signals of lengths $M$ and $K$, with [zero extensions](zero-extend.md) $x^{(N)}$ and $y^{(N)}$ to length $N$. Then
+Let $M$ and $K$ be natural numbers and $N \ge 1$ a natural number, and let $x$ and $y$ be signals of lengths $M$ and $K$, with [zero extensions](zero-extend.md) $x^{(N)}$ and $y^{(N)}$ to length $N$. Then
 
 $$x^{(N)} \circledast y^{(N)} = \mathcal{F}_N^{-1}\bigl(\mathcal{F}_N x^{(N)} \cdot \mathcal{F}_N y^{(N)}\bigr),$$
 

@@ -8,7 +8,7 @@
 - [The last overlap-add block starts inside the signal](block-count-sub-one-mul-lt.md)
 - [A block holds the signal inside the signal](block-apply-of-lt.md)
 - [A block is zero past the end of the signal](block-apply-eq-zero-of-le.md)
-- [Every sample lies in exactly one block](extend-nat-eq-block-div-mod.md)
+- [Sample $n$ is entry $n \bmod L$ of block $\lfloor n/L \rfloor$](extend-nat-eq-block-div-mod.md)
 
 ## Block frames and overlap-add
 

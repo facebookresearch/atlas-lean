@@ -1,6 +1,6 @@
-# Every sample lies in exactly one block
+# Sample $n$ is entry $n \bmod L$ of block $\lfloor n/L \rfloor$
 
-Let $N$ and $L \ge 1$ be natural numbers and $x$ a signal of length $N$. For every $n \in \mathbb{N}$,
+Let $N$ be a natural number, $L \ge 1$ a natural number, and $x$ a signal of length $N$. For every $n \in \mathbb{N}$,
 
 $$\bar x(n) = x^{[\lfloor n / L \rfloor]}_{n \bmod L},$$
 
