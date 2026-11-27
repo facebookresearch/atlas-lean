@@ -15,6 +15,7 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
 - [Copy number, purity and structural variants](copy-number-purity-and-structural-variants/README.md)
 - [Tumour evolution and clonal dynamics](tumour-evolution-and-clonal-dynamics/README.md)
 - [Evolution of drug resistance in tumours](evolution-of-drug-resistance/README.md)
