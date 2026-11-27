@@ -40,8 +40,12 @@ function is equivalent to infinite length. -/
 noncomputable def radial (f : ℂ → ℂ) (θ : ℝ) : ℝ → ℂ :=
   fun r => f ((r : ℂ) * Complex.exp ((θ : ℂ) * Complex.I))
 
-/-- The image of the radius at angle `θ` has infinite length, i.e. the speed
-is not integrable on `(0, 1)`. -/
+/-- The speed `r ↦ ‖d/dr f(r e^{iθ})‖` of the radial curve at angle `θ` is not integrable on
+`(0, 1)`. The derivative is total (`deriv` is `0` where the radial curve is not differentiable),
+so for an arbitrary `f` this is a condition on that speed function, not the length of a possibly
+nonsmooth path. For `f` holomorphic on the open unit disc the radial curve is smooth on `(0, 1)`
+and the integral of its speed is its length, so the condition says that the image of the radius at
+angle `θ` has infinite length. -/
 def HasInfiniteRadialLength (f : ℂ → ℂ) (θ : ℝ) : Prop :=
   ¬IntegrableOn (fun r => ‖deriv (radial f θ) r‖) (Set.Ioo (0 : ℝ) 1) volume
 

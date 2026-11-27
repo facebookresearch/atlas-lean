@@ -204,7 +204,6 @@ private theorem obsWeight_snoc (h : HMM S O ℝ) (t : ℕ)
   simp only [obsWeight]
   rw [Fin.prod_univ_castSucc]
   simp only [snoc_castSucc_apply, snoc_last_apply]
-  try ring
 
 /-- `pathWeight` is nonnegative. -/
 private theorem pathWeight_nonneg (h : HMM S O ℝ) (hN : Normalized h) (t : ℕ)

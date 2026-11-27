@@ -61,17 +61,28 @@ vanishing outside the square `[0, N) × [0, N)`. -/
 structure Bounded (R : Type u) [CommRing R] where
   /-- The term in bidegree `(p, q)`. -/
   C : ℕ → ℕ → Type u
+  /-- The additive group structure on each term. -/
   [abGrp : ∀ p q, AddCommGroup (C p q)]
+  /-- The `R`-module structure on each term. -/
   [modR : ∀ p q, Module R (C p q)]
   /-- The horizontal differential. -/
   dH : ∀ p q, C p q →ₗ[R] C (p + 1) q
   /-- The vertical differential. -/
   dV : ∀ p q, C p q →ₗ[R] C p (q + 1)
+  /-- The horizontal differential squares to zero: `dH (p + 1) q ∘ₗ dH p q = 0` for all `p`
+  and `q`. -/
   dH_sq : ∀ p q, dH (p + 1) q ∘ₗ dH p q = 0
+  /-- The vertical differential squares to zero: `dV p (q + 1) ∘ₗ dV p q = 0` for all `p`
+  and `q`. -/
   dV_sq : ∀ p q, dV p (q + 1) ∘ₗ dV p q = 0
+  /-- The two differentials commute, with no sign:
+  `dV (p + 1) q ∘ₗ dH p q = dH p (q + 1) ∘ₗ dV p q` for all `p` and `q`. The sign that makes
+  the total differential square to zero is the factor `(-1)^p` in `dTot`. -/
   dHV_comm : ∀ p q, dV (p + 1) q ∘ₗ dH p q = dH p (q + 1) ∘ₗ dV p q
   /-- A bound on the support. -/
   N : ℕ
+  /-- The complex vanishes outside the square `[0, N) × [0, N)`: if `N ≤ p` or `N ≤ q`, then
+  `C p q` is a subsingleton, that is, the zero module. -/
   hBound : ∀ p q, N ≤ p ∨ N ≤ q → Subsingleton (C p q)
 
 attribute [instance] Bounded.abGrp Bounded.modR

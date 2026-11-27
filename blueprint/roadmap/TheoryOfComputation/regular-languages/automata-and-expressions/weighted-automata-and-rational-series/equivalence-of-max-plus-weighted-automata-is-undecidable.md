@@ -10,11 +10,9 @@ $(\mathbb{N} \cup \{\infty\}, \min, +, \infty, 0)$. Krob reduced Hilbert's tenth
 
 - [Weighted automata over a semiring](weighted-automata-over-a-semiring.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- Undecidability of the halting problem for two-counter machines started with empty counters (proof prerequisite; not yet stated)
+- [Two-counter machines are universal](../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
 ## Sources
 
