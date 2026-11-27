@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/MajorArcIntegral.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.MajorArc
@@ -58,8 +68,8 @@ namespace MetaMathlibExt.ColoredPartitionsJensen
 
 noncomputable section
 
-/-- Integrability of `u^b e^{-c u}` on `(0, ∞)` (`b > −1`, `c > 0`). -/
-theorem integrableOn_rpow_exp {b c : ℝ} (hb : -1 < b) (hc : 0 < c) :
+/- Integrability of `u^b e^{-c u}` on `(0, ∞)` (`b > −1`, `c > 0`). -/
+private theorem integrableOn_rpow_exp {b c : ℝ} (hb : -1 < b) (hc : 0 < c) :
     IntegrableOn (fun u : ℝ => u ^ b * Real.exp (-(c * u))) (Ioi 0) := by
   have := integrableOn_rpow_mul_exp_neg_mul_rpow hb one_pos hc
   refine this.congr_fun (fun u hu => ?_) measurableSet_Ioi
@@ -84,8 +94,8 @@ theorem integrable_laplace {a τ : ℂ} (ha : 0 < a.re) (hτ : 0 < τ.re) :
   refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun u hu => ?_)
   rw [norm_laplace_integrand a τ hu]
 
-/-- The Laplace integral is complex-differentiable in the rate on `Re τ > 0`. -/
-theorem hasDerivAt_laplace_cpow {a : ℂ} (ha : 0 < a.re) {τ₀ : ℂ} (hτ₀ : 0 < τ₀.re) :
+/- The Laplace integral is complex-differentiable in the rate on `Re τ > 0`. -/
+private theorem hasDerivAt_laplace_cpow {a : ℂ} (ha : 0 < a.re) {τ₀ : ℂ} (hτ₀ : 0 < τ₀.re) :
     HasDerivAt (fun τ : ℂ => ∫ u in Ioi (0 : ℝ), (u : ℂ) ^ (a - 1) * cexp (-(τ * u)))
       (∫ u in Ioi (0 : ℝ), (u : ℂ) ^ (a - 1) * (cexp (-(τ₀ * u)) * -(u : ℂ))) τ₀ := by
   set c := τ₀.re / 2 with hc
@@ -124,11 +134,11 @@ theorem hasDerivAt_laplace_cpow {a : ℂ} (ha : 0 < a.re) {τ₀ : ℂ} (hτ₀ 
     have h2 := h1.cexp.const_mul ((u : ℂ) ^ (a - 1))
     simpa using h2
 
-/-- **Complex Laplace transform of a power**: `∫_0^∞ u^{a−1} e^{−τu} du = Γ(a) τ^{−a}` for
+/- **Complex Laplace transform of a power**: `∫_0^∞ u^{a−1} e^{−τu} du = Γ(a) τ^{−a}` for
 `Re a > 0`,
 `Re τ > 0` (principal power). Mathlib has the real-rate case; the complex rate follows by the
     identity theorem. -/
-theorem laplace_cpow {a : ℂ} (ha : 0 < a.re) {τ : ℂ} (hτ : 0 < τ.re) :
+private theorem laplace_cpow {a : ℂ} (ha : 0 < a.re) {τ : ℂ} (hτ : 0 < τ.re) :
     ∫ u in Ioi (0 : ℝ), (u : ℂ) ^ (a - 1) * cexp (-(τ * u)) = Gamma a * τ ^ (-a) := by
   set U : Set ℂ := {z | 0 < z.re} with hU
   have hUo : IsOpen U := isOpen_lt continuous_const Complex.continuous_re
@@ -202,8 +212,8 @@ theorem continuous_tauL_cpow {y : ℝ} (hy : 0 < y) (c : ℂ) : Continuous fun �
 theorem norm_tauL_cpow (y θ s : ℝ) : ‖tauL y θ ^ (-(s : ℂ))‖ = ‖tauL y θ‖ ^ (-s) := by
   rw [show -(s : ℂ) = ((-s : ℝ) : ℂ) by push_cast; ring]; exact norm_cpow_real _ _
 
-/-- `θ ↦ |y + iθ|^{−s}` is integrable on `ℝ` for `s > 1`. -/
-theorem integrable_norm_tauL_rpow {y s : ℝ} (hy : 0 < y) (hs : 1 < s) :
+/- `θ ↦ |y + iθ|^{−s}` is integrable on `ℝ` for `s > 1`. -/
+private theorem integrable_norm_tauL_rpow {y s : ℝ} (hy : 0 < y) (hs : 1 < s) :
     Integrable fun θ => ‖tauL y θ‖ ^ (-s) := by
   set c := min y 1 / 2 with hc
   have hc0 : 0 < c := by positivity
@@ -269,10 +279,10 @@ theorem continuousAt_gL (s y : ℝ) {m : ℝ} (hm : 0 < m) : ContinuousAt (gL s 
   exact h.congr (Filter.eventually_of_mem (Ioi_mem_nhds hm) fun u hu => by simp only [gL,
       indicator_of_mem hu])
 
-/-- **Hankel's formula on a vertical line**: `(2π)⁻¹ ∫_ℝ τ^{−s} e^{mτ} dθ = m^{s−1}/Γ(s)`,
+/- **Hankel's formula on a vertical line**: `(2π)⁻¹ ∫_ℝ τ^{−s} e^{mτ} dθ = m^{s−1}/Γ(s)`,
 `τ = y + iθ`,
 `y > 0`, `m > 0`, `s > 1` (Fourier inversion of `1_{u>0} u^{s−1} e^{−yu}`). -/
-theorem integral_line_cpow_exp {s y m : ℝ} (hs : 1 < s) (hy : 0 < y) (hm : 0 < m) :
+private theorem integral_line_cpow_exp {s y m : ℝ} (hs : 1 < s) (hy : 0 < y) (hm : 0 < m) :
     (2 * Real.pi : ℂ)⁻¹ * ∫ θ, tauL y θ ^ (-(s : ℂ)) * cexp (m * tauL y θ) =
       ((m ^ (s - 1) * (Real.Gamma s)⁻¹ : ℝ) : ℂ) := by
   have hs0 : 0 < s := by linarith
@@ -331,8 +341,8 @@ theorem re_div_tauL_le (A : ℝ) {y : ℝ} (hy : 0 < y) (θ : ℝ) : ((A : ℂ) 
     _ ≤ |A| / y := div_le_div_of_nonneg_left (abs_nonneg _) hy
         (by simpa [abs_of_pos hy] using le_norm_tauL y θ)
 
-/-- Off the central arc, `Re(A/τ) = Ay/(y²+θ²) ≤ A/(2y)`. -/
-theorem re_div_tauL_le_half {A y θ : ℝ} (hA : 0 ≤ A) (hy : 0 < y) (hθ : y ^ 2 ≤ θ ^ 2) :
+/- Off the central arc, `Re(A/τ) = Ay/(y²+θ²) ≤ A/(2y)`. -/
+private theorem re_div_tauL_le_half {A y θ : ℝ} (hA : 0 ≤ A) (hy : 0 < y) (hθ : y ^ 2 ≤ θ ^ 2) :
     ((A : ℂ) / tauL y θ).re ≤ A / (2 * y) := by
   rw [Complex.div_re, Complex.normSq_apply]
   simp only [ofReal_re, ofReal_im, tauL_re, tauL_im, zero_mul, zero_div, add_zero]
@@ -356,9 +366,9 @@ theorem integrable_vInt (A m : ℝ) {y s : ℝ} (hy : 0 < y) (hs : 1 < s) : Inte
       s).aestronglyMeasurable
     (Eventually.of_forall fun θ => norm_vInt_le A m hy s θ)
 
-/-- **The full-line integral is the series** for `s > 1`:
+/- **The full-line integral is the series** for `s > 1`:
 `(2π)⁻¹ ∫_ℝ τ^{−s} e^{A/τ + mτ} dθ = m^{s−1} bT(s, Am)` (expand `e^{A/τ}`, Hankel termwise). -/
-theorem integral_vInt_line (A : ℝ) {m y s : ℝ} (hs : 1 < s) (hy : 0 < y) (hm : 0 < m) :
+private theorem integral_vInt_line (A : ℝ) {m y s : ℝ} (hs : 1 < s) (hy : 0 < y) (hm : 0 < m) :
     (2 * Real.pi : ℂ)⁻¹ * ∫ θ, vInt A m y s θ = (sSer A m s : ℂ) := by
   set F : ℕ → ℝ → ℂ := fun j θ =>
     ((A ^ j / j ! : ℝ) : ℂ) * (tauL y θ ^ (-((s + j : ℝ) : ℂ)) * cexp (m * tauL y θ)) with hF
@@ -438,8 +448,8 @@ theorem norm_vInt_le_off {A y : ℝ} (m : ℝ) (hA : 0 ≤ A) (hy : 0 < y) (s : 
   gcongr
   exact re_div_tauL_le_half hA hy hθ
 
-/-- One tail: `‖∫_{θ>y} f‖ ≤ E y^{1−s}/(s−1)` when `‖f θ‖ ≤ ‖τ‖^{−s} E` there. -/
-theorem norm_integral_Ioi_le {f : ℝ → ℂ} {y s E : ℝ} (hy : 0 < y) (hs : 1 < s) (hE : 0 ≤ E)
+/- One tail: `‖∫_{θ>y} f‖ ≤ E y^{1−s}/(s−1)` when `‖f θ‖ ≤ ‖τ‖^{−s} E` there. -/
+private theorem norm_integral_Ioi_le {f : ℝ → ℂ} {y s E : ℝ} (hy : 0 < y) (hs : 1 < s) (hE : 0 ≤ E)
     (hf : ∀ θ, y < θ → ‖f θ‖ ≤ ‖tauL y θ‖ ^ (-s) * E) :
     ‖∫ θ in Ioi y, f θ‖ ≤ E * (y ^ (1 - s) / (s - 1)) := by
   have hint : IntegrableOn (fun θ : ℝ => E * θ ^ (-s)) (Ioi y) :=
@@ -460,8 +470,9 @@ theorem norm_integral_Ioi_le {f : ℝ → ℂ} {y s E : ℝ} (hy : 0 < y) (hs : 
         rw [show -s + 1 = 1 - s by ring, show (1 : ℝ) - s = -(s - 1) by ring, div_neg, neg_div,
             neg_neg]
 
-/-- **Tails**: `‖S(s, m) − I_y(s)‖ ≤ e^{A/(2y) + my} y^{1−s} / (π (s−1))` for `s > 1`, `A ≥ 0`. -/
-theorem norm_sSer_sub_iArc_le {A m y s : ℝ} (hA : 0 ≤ A) (hs : 1 < s) (hy : 0 < y) (hm : 0 < m) :
+/- **Tails**: `‖S(s, m) − I_y(s)‖ ≤ e^{A/(2y) + my} y^{1−s} / (π (s−1))` for `s > 1`, `A ≥ 0`. -/
+private theorem norm_sSer_sub_iArc_le {A m y s : ℝ} (hA : 0 ≤ A) (hs : 1 < s) (hy : 0 < y)
+    (hm : 0 < m) :
     ‖(sSer A m s : ℂ) - iArc A m y s‖ ≤
       Real.exp (A / (2 * y) + m * y) * y ^ (1 - s) / (Real.pi * (s - 1)) := by
   set E := Real.exp (A / (2 * y) + m * y) with hE
@@ -501,8 +512,8 @@ theorem hasDerivAt_tauL (y θ : ℝ) : HasDerivAt (tauL y) I θ := by
   have e : tauL y = fun x : ℝ => (y : ℂ) + ((id x : ℝ) : ℂ) * I := by funext x; simp [tauL]
   rw [e]; convert h using 1; simp
 
-/-- `d/dθ [τ^{−s} e^{A/τ+mτ}] = i (m v(s) − s v(s+1) − A v(s+2))`, `v(s) = τ^{−s} e^{A/τ+mτ}`. -/
-theorem hasDerivAt_vInt (A m : ℝ) {y : ℝ} (hy : 0 < y) (s θ : ℝ) :
+/- `d/dθ [τ^{−s} e^{A/τ+mτ}] = i (m v(s) − s v(s+1) − A v(s+2))`, `v(s) = τ^{−s} e^{A/τ+mτ}`. -/
+private theorem hasDerivAt_vInt (A m : ℝ) {y : ℝ} (hy : 0 < y) (s θ : ℝ) :
     HasDerivAt (vInt A m y s)
       (I * (m * vInt A m y s θ - s * vInt A m y (s + 1) θ - A * vInt A m y (s + 2) θ)) θ := by
   have hτ := hasDerivAt_tauL y θ
@@ -535,8 +546,8 @@ theorem intervalIntegrable_vInt (A m : ℝ) {y : ℝ} (hy : 0 < y) (s a b : ℝ)
 /-- The boundary term `B_y(s) = (2π)⁻¹ (v_s(y) − v_s(−y)) / i`. -/
 def bArc (A m y s : ℝ) : ℂ := (2 * Real.pi : ℂ)⁻¹ * (vInt A m y s y - vInt A m y s (-y)) / I
 
-/-- **Finite-arc recurrence**: `m I_y(s) = s I_y(s+1) + A I_y(s+2) + B_y(s)` for every real `s`. -/
-theorem iArc_rec (A m : ℝ) {y : ℝ} (hy : 0 < y) (s : ℝ) :
+/- **Finite-arc recurrence**: `m I_y(s) = s I_y(s+1) + A I_y(s+2) + B_y(s)` for every real `s`. -/
+private theorem iArc_rec (A m : ℝ) {y : ℝ} (hy : 0 < y) (s : ℝ) :
     (m : ℂ) * iArc A m y s = s * iArc A m y (s + 1) + A * iArc A m y (s + 2) + bArc A m y s := by
   have c0 := continuous_vInt A m hy s
   have c1 := continuous_vInt A m hy (s + 1)
@@ -565,8 +576,8 @@ theorem norm_vInt_edge {A y : ℝ} (m : ℝ) (hA : 0 ≤ A) (hy : 0 < y) (s : �
       rw [mul_pow, Real.sq_sqrt (by norm_num)]; ring, Real.sqrt_sq (by positivity)]
   rwa [hn] at h
 
-/-- `‖B_y(s)‖ ≤ π⁻¹ (√2 y)^{−s} e^{A/(2y) + my}`. -/
-theorem norm_bArc_le {A y : ℝ} (m : ℝ) (hA : 0 ≤ A) (hy : 0 < y) (s : ℝ) :
+/- `‖B_y(s)‖ ≤ π⁻¹ (√2 y)^{−s} e^{A/(2y) + my}`. -/
+private theorem norm_bArc_le {A y : ℝ} (m : ℝ) (hA : 0 ≤ A) (hy : 0 < y) (s : ℝ) :
     ‖bArc A m y s‖ ≤ (√2 * y) ^ (-s) * Real.exp (A / (2 * y) + m * y) / Real.pi := by
   have h1 := norm_vInt_edge m hA hy s (θ := y) rfl
   have h2 := norm_vInt_edge m hA hy s (θ := -y) (neg_sq y)
@@ -580,8 +591,8 @@ theorem norm_bArc_le {A y : ℝ} (m : ℝ) (hA : 0 ≤ A) (hy : 0 < y) (s : ℝ)
         gcongr; exact (norm_sub_le _ _).trans (add_le_add h1 h2)
     _ = _ := by field_simp; ring
 
-/-- The series obeys the same recurrence: `m S(s) = s S(s+1) + A S(s+2)` (from `bT_rec`). -/
-theorem sSer_rec (A : ℝ) {m : ℝ} (hm : 0 < m) (s : ℝ) :
+/- The series obeys the same recurrence: `m S(s) = s S(s+1) + A S(s+2)` (from `bT_rec`). -/
+private theorem sSer_rec (A : ℝ) {m : ℝ} (hm : 0 < m) (s : ℝ) :
     m * sSer A m s = s * sSer A m (s + 1) + A * sSer A m (s + 2) := by
   have e1 : m ^ (s + 1 - 1) = m ^ (s - 1) * m := by
     rw [show s + 1 - 1 = (s - 1) + 1 by ring, Real.rpow_add_one hm.ne']
@@ -594,10 +605,10 @@ theorem sSer_rec (A : ℝ) {m : ℝ} (hm : 0 < m) (s : ℝ) :
 
 /-! ### Descent from `s₀ > 1` to `s₀ − k` -/
 
-/-- Abstract descent: if `m D(t) = t D(t+1) + A D(t+2) + B(t)`, `|t| + A ≤ m`, `‖B(t)‖ ≤ β` along
+/- Abstract descent: if `m D(t) = t D(t+1) + A D(t+2) + B(t)`, `|t| + A ≤ m`, `‖B(t)‖ ≤ β` along
 the
 `k` steps, and `‖D(s₀)‖, ‖D(s₀+1)‖ ≤ δ`, then `‖D(s₀ − k)‖ ≤ δ + kβ` (`m ≥ 1`). -/
-theorem descent_bound {D B : ℝ → ℂ} {m A s₀ δ β : ℝ} (hm : 1 ≤ m) (hA : 0 ≤ A) (hβ : 0 ≤ β)
+private theorem descent_bound {D B : ℝ → ℂ} {m A s₀ δ β : ℝ} (hm : 1 ≤ m) (hA : 0 ≤ A) (hβ : 0 ≤ β)
     (hrec : ∀ t, (m : ℂ) * D t = t * D (t + 1) + A * D (t + 2) + B t)
     (h0 : ‖D s₀‖ ≤ δ) (h1 : ‖D (s₀ + 1)‖ ≤ δ) (k : ℕ)
     (hsize : ∀ j : ℕ, j < k → |s₀ - (j + 1)| + A ≤ m)
@@ -633,8 +644,8 @@ theorem descent_bound {D B : ℝ → ℂ} {m A s₀ δ β : ℝ} (hm : 1 ≤ m) 
 
 /-! ### Assembly: `‖I_y(s₀ − k) − S(s₀ − k)‖` -/
 
-/-- `x^{−t} ≤ x^{−b} + x^{−a}` for `a ≤ t ≤ b`, `x > 0`. -/
-theorem rpow_neg_le_add {x a b t : ℝ} (hx : 0 < x) (hat : a ≤ t) (htb : t ≤ b) :
+/- `x^{−t} ≤ x^{−b} + x^{−a}` for `a ≤ t ≤ b`, `x > 0`. -/
+private theorem rpow_neg_le_add {x a b t : ℝ} (hx : 0 < x) (hat : a ≤ t) (htb : t ≤ b) :
     x ^ (-t) ≤ x ^ (-b) + x ^ (-a) := by
   rcases le_total x 1 with h | h
   · have : x ^ (-t) ≤ x ^ (-b) := Real.rpow_le_rpow_of_exponent_ge hx h (by linarith)
@@ -642,10 +653,10 @@ theorem rpow_neg_le_add {x a b t : ℝ} (hx : 0 < x) (hat : a ≤ t) (htb : t �
   · have : x ^ (-t) ≤ x ^ (-a) := Real.rpow_le_rpow_of_exponent_le h (by linarith)
     linarith [Real.rpow_nonneg hx.le (-b)]
 
-/-- **Major arc, integral side, from `s₀ > 1` down `k` steps**: with `E = e^{A/(2y) + my}`,
+/- **Major arc, integral side, from `s₀ > 1` down `k` steps**: with `E = e^{A/(2y) + my}`,
 `‖I_y(s₀−k) − S(s₀−k)‖ ≤ (E/π)(y^{1−s₀}/(s₀−1) + y^{−s₀}/s₀ + k((√2y)^{−s₀} + (√2y)^{−(s₀−k)}))`,
 provided `|t| + A ≤ m` on `[s₀ − k, s₀]` and `m ≥ 1`. -/
-theorem norm_iArc_sub_sSer_le {A m y s₀ : ℝ} (k : ℕ) (hA : 0 ≤ A) (hy : 0 < y) (hm : 1 ≤ m)
+private theorem norm_iArc_sub_sSer_le {A m y s₀ : ℝ} (k : ℕ) (hA : 0 ≤ A) (hy : 0 < y) (hm : 1 ≤ m)
     (hs₀ : 1 < s₀) (hsize : ∀ t, s₀ - k ≤ t → t ≤ s₀ → |t| + A ≤ m) :
     ‖iArc A m y (s₀ - k) - sSer A m (s₀ - k)‖ ≤ Real.exp (A / (2 * y) + m * y) / Real.pi *
       (y ^ (1 - s₀) / (s₀ - 1) + y ^ (-s₀) / s₀ + k * ((√2 * y) ^ (-s₀) + (√2 * y) ^ (-(s₀ - k))))
@@ -701,10 +712,10 @@ theorem norm_iArc_sub_sSer_le {A m y s₀ : ℝ} (k : ℕ) (hA : 0 ≤ A) (hy : 
   refine this.trans (le_of_eq ?_)
   rw [hδ, hβdef]; ring
 
-/-- `y^{1−s₀}/(s₀−1) + y^{−s₀}/s₀ + k((√2y)^{−s₀} + (√2y)^{−(s₀−k)})` at
+/- `y^{1−s₀}/(s₀−1) + y^{−s₀}/s₀ + k((√2y)^{−s₀} + (√2y)^{−(s₀−k)})` at
 `s₀ = ⌊r/2⌋ + 2 − r/2 ∈ [3/2, 2]`,
 `k = ⌊r/2⌋ + 2`, bounded free of parity. -/
-theorem poly_neg_half_le (r : ℕ) {y : ℝ} (hy : 0 < y) :
+private theorem poly_neg_half_le (r : ℕ) {y : ℝ} (hy : 0 < y) :
     let k : ℕ := r / 2 + 2
     let s₀ : ℝ := k - r / 2
     y ^ (1 - s₀) / (s₀ - 1) + y ^ (-s₀) / s₀ + k * ((√2 * y) ^ (-s₀) + (√2 * y) ^ (-(s₀ - k))) ≤
@@ -745,11 +756,11 @@ theorem poly_neg_half_le (r : ℕ) {y : ℝ} (hy : 0 < y) :
         gcongr
     _ ≤ _ := by gcongr
 
-/-- **The major arc at `s = −r/2`**: for `A ≥ 0`, `y > 0`, `m ≥ A + r/2 + 2`,
+/- **The major arc at `s = −r/2`**: for `A ≥ 0`, `y > 0`, `m ≥ A + r/2 + 2`,
 `‖I_y(−r/2) − S(−r/2, m)‖ ≤ (e^{A/(2y)+my}/π) · P_r(y)` with the explicit
 `P_r(y) = 2(y^{−1} + y^{−1/2}) + y^{−2} + y^{−3/2} + (r/2 + 2)((√2y)^{−2} + (√2y)^{−3/2} +
     (√2y)^{r/2})`. -/
-theorem norm_iArc_sub_sSer_neg_half (r : ℕ) {A m y : ℝ} (hA : 0 ≤ A) (hy : 0 < y)
+private theorem norm_iArc_sub_sSer_neg_half (r : ℕ) {A m y : ℝ} (hA : 0 ≤ A) (hy : 0 < y)
     (hm : A + (r : ℝ) / 2 + 2 ≤ m) :
     ‖iArc A m y (-((r : ℝ) / 2)) - sSer A m (-((r : ℝ) / 2))‖ ≤
       Real.exp (A / (2 * y) + m * y) / Real.pi *
@@ -780,8 +791,8 @@ theorem norm_iArc_sub_sSer_neg_half (r : ℕ) {A m y : ℝ} (hA : 0 ≤ A) (hy :
     _ ≤ _ := main
     _ ≤ _ := mul_le_mul_of_nonneg_left (poly_neg_half_le r hy) (by positivity)
 
-/-- At the saddle `y = √(A/m)` the exponential is `e^{(3/2)√(Am)}`. -/
-theorem saddle_exp {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
+/- At the saddle `y = √(A/m)` the exponential is `e^{(3/2)√(Am)}`. -/
+private theorem saddle_exp {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
     A / (2 * √(A / m)) + m * √(A / m) = 3 / 2 * √(A * m) := by
   obtain ⟨a, ha, rfl⟩ : ∃ a, 0 < a ∧ A = a ^ 2 := ⟨√A, Real.sqrt_pos.2 hA, (Real.sq_sqrt
       hA.le).symm⟩
@@ -792,9 +803,8 @@ theorem saddle_exp {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
   field_simp
   ring
 
-/-- **At the saddle** `y = √(A/m)`: `‖I_y(−r/2) − S(−r/2, m)‖ ≤ e^{(3/2)√(Am)} P_r(√(A/m)) / π`
-(`A > 0`, `m ≥ A + r/2 + 2`); the main term `S(−r/2, m)` is of size `e^{2√(Am)}` times a power of
-`m`. -/
+/-- **At the saddle** `y = √(A/m)`, for `A > 0` and `m ≥ A + r/2 + 2`: `‖I_y(−r/2) − S(−r/2, m)‖` is
+at most `e^{(3/2)√(Am)} / π` times the explicit sum of powers of `y` and `√2 y` in the statement. -/
 theorem norm_iArc_sub_sSer_saddle (r : ℕ) {A m : ℝ} (hA : 0 < A) (hm : A + (r : ℝ) / 2 + 2 ≤ m) :
     ‖iArc A m (√(A / m)) (-((r : ℝ) / 2)) - sSer A m (-((r : ℝ) / 2))‖ ≤
       Real.exp (3 / 2 * √(A * m)) / Real.pi *

@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/EtaTransform.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import Mathlib.NumberTheory.ModularForms.Discriminant
@@ -64,13 +74,14 @@ lemma eulerP_ne_zero {q : ℂ} (hq : ‖q‖ < 1) : eulerP q ≠ 0 := by
 
 lemma partGen_ne_zero {q : ℂ} (hq : ‖q‖ < 1) : partGen q ≠ 0 := inv_ne_zero (eulerP_ne_zero hq)
 
-/-- `η z = e^{2πiz/24} · eulerP (e^{2πiz})`. -/
-lemma eta_eq_eulerP (z : ℂ) : η z = cexp (2 * π * I * z / 24) * eulerP (cexp (2 * π * I * z)) := by
+/- `η z = e^{2πiz/24} · eulerP (e^{2πiz})`. -/
+private lemma eta_eq_eulerP (z : ℂ) : η z = cexp (2 * π * I * z / 24) * eulerP
+    (cexp (2 * π * I * z)) := by
   simp only [ModularForm.eta, eulerP, Function.Periodic.qParam, eta_q_eq_pow]
   norm_num
 
-/-- `√(I w) = √I · √w` for `Re w > 0` (principal powers). -/
-lemma cpow_half_I_mul {w : ℂ} (hw : 0 < w.re) :
+/- `√(I w) = √I · √w` for `Re w > 0` (principal powers). -/
+private lemma cpow_half_I_mul {w : ℂ} (hw : 0 < w.re) :
     (I * w) ^ (2⁻¹ : ℂ) = I ^ (2⁻¹ : ℂ) * w ^ (2⁻¹ : ℂ) := by
   have hw0 : w ≠ 0 := fun h ↦ by simp [h] at hw
   have harg : |arg w| < π / 2 := abs_arg_lt_pi_div_two_iff.2 (Or.inl hw)
@@ -82,9 +93,9 @@ lemma cpow_half_I_mul {w : ℂ} (hw : 0 < w.re) :
     have := abs_lt.1 harg
     constructor <;> linarith [Real.pi_pos]
 
-/-- **The transformation.** For `Re τ > 0`,
+/- **The transformation.** For `Re τ > 0`,
 `F(e^{−τ}) = (τ/2π)^{1/2} e^{π²/(6τ) − τ/24} F(e^{−4π²/τ})`. -/
-theorem partGen_transform {τ : ℂ} (hτ : 0 < τ.re) :
+private theorem partGen_transform {τ : ℂ} (hτ : 0 < τ.re) :
     partGen (cexp (-τ)) =
       (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * partGen (cexp (-(4 * π ^ 2 /
           τ))) := by
@@ -178,8 +189,8 @@ lemma norm_eulerP_sub_one_le {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) :
         gcongr
         exact (hs.sum_le_tsum _ (fun _ _ ↦ norm_nonneg _)).trans hsum
 
-/-- **Tail bound.** `‖F(q) − 1‖ ≤ 4‖q‖` for `‖q‖ ≤ 1/8`. -/
-theorem norm_partGen_sub_one_le {q : ℂ} (hq : ‖q‖ ≤ 1 / 8) : ‖partGen q - 1‖ ≤ 4 * ‖q‖ := by
+/- **Tail bound.** `‖F(q) − 1‖ ≤ 4‖q‖` for `‖q‖ ≤ 1/8`. -/
+private theorem norm_partGen_sub_one_le {q : ℂ} (hq : ‖q‖ ≤ 1 / 8) : ‖partGen q - 1‖ ≤ 4 * ‖q‖ := by
   have hr := norm_nonneg q
   set D := eulerP q - 1 with hD
   have hD1 : ‖D‖ ≤ 8 / 3 * ‖q‖ := by
@@ -203,8 +214,9 @@ theorem norm_partGen_sub_one_le {q : ℂ} (hq : ‖q‖ ≤ 1 / 8) : ‖partGen 
   rw [this, norm_div, norm_neg, div_le_iff₀ (by linarith)]
   nlinarith
 
-/-- **Main term with error, any `τ` with `Re τ > 0` and `Re(4π²/τ) ≥ 3`.** -/
-theorem partGen_main {τ : ℂ} (hτ : 0 < τ.re) (hd : 3 ≤ (4 * π ^ 2 / τ).re) :
+/- For `Re τ > 0` and `Re(4π²/τ) ≥ 3`: `F(e^{−τ}) = (τ/2π)^{1/2} e^{π²/(6τ) − τ/24} (1 + E)` with
+`‖E‖ ≤ 4 e^{−Re(4π²/τ)}`. -/
+private theorem partGen_main {τ : ℂ} (hτ : 0 < τ.re) (hd : 3 ≤ (4 * π ^ 2 / τ).re) :
     ∃ E : ℂ, ‖E‖ ≤ 4 * Real.exp (-(4 * π ^ 2 / τ).re) ∧
       partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * (1 + E)
           := by
@@ -225,8 +237,8 @@ theorem partGen_main {τ : ℂ} (hτ : 0 < τ.re) (hd : 3 ≤ (4 * π ^ 2 / τ).
     linarith
   · rw [partGen_transform hτ]; ring
 
-/-- `Re(4π²/τ) ≥ 4π²/((1+M²) Re τ)` in the cone `|Im τ| ≤ M Re τ`. -/
-lemma re_dual_ge {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤ M * τ.re) :
+/- `Re(4π²/τ) ≥ 4π²/((1+M²) Re τ)` in the cone `|Im τ| ≤ M Re τ`. -/
+private lemma re_dual_ge {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤ M * τ.re) :
     4 * π ^ 2 / ((1 + M ^ 2) * τ.re) ≤ (4 * π ^ 2 / τ).re := by
   have hτ0 : τ ≠ 0 := fun h ↦ by simp [h] at hτ
   have hN : 0 < normSq τ := normSq_pos.2 hτ0
@@ -242,7 +254,7 @@ lemma re_dual_ge {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤ M *
   rw [mul_div_assoc', div_le_div_iff₀ (by positivity) hpos]
   nlinarith [sq_nonneg τ.re, mul_pos (mul_pos (by norm_num : (0:ℝ) < 4) (pow_pos hπ 2)) hτ]
 
-/-- **Cone bound** (major arc of the circle method): in `|Im τ| ≤ M Re τ` with
+/-- **Cone bound** (major arc of the circle method): for `Re τ > 0`, `|Im τ| ≤ M Re τ` and
 `Re τ ≤ 4π²/(3(1+M²))`,
 `F(e^{−τ}) = (τ/2π)^{1/2} e^{π²/(6τ) − τ/24}(1 + E)`, `‖E‖ ≤ 4 e^{−4π²/((1+M²) Re τ)}`. -/
 theorem partGen_cone {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤ M * τ.re)
@@ -260,7 +272,8 @@ theorem partGen_cone {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤
   refine ⟨E, hE.trans ?_, hF⟩
   gcongr
 
-/-- The `r`-th power form: `F(e^{−τ})^r = (τ/2π)^{r/2} e^{r(π²/(6τ) − τ/24)} (1 + E)^r`. -/
+/-- If `F(e^{−τ}) = (τ/2π)^{1/2} e^{π²/(6τ) − τ/24} (1 + E)`, then
+`F(e^{−τ})^r = (τ/2π)^{r/2} e^{r(π²/(6τ) − τ/24)} (1 + E)^r`. -/
 theorem partGen_pow_eq (r : ℕ) {τ E : ℂ}
     (hF : partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * (1 +
         E)) :
@@ -270,8 +283,9 @@ theorem partGen_pow_eq (r : ℕ) {τ E : ℂ}
 
 /-! ### Real argument -/
 
-/-- On `[0, 1)`, `F` is a positive real number. -/
-lemma partGen_ofReal {x : ℝ} (h0 : 0 ≤ x) (h1 : x < 1) : ∃ p : ℝ, 0 < p ∧ partGen (x : ℂ) = p := by
+/- On `[0, 1)`, `F` is a positive real number. -/
+private lemma partGen_ofReal {x : ℝ} (h0 : 0 ≤ x) (h1 : x < 1) : ∃ p : ℝ, 0 < p ∧ partGen
+    (x : ℂ) = p := by
   have hs : Summable fun n : ℕ ↦ ‖-x ^ (n + 1)‖ := by
     simpa [norm_pow, Real.norm_eq_abs, abs_of_nonneg h0] using
       (summable_nat_add_iff 1).mpr (summable_geometric_of_lt_one h0 h1)

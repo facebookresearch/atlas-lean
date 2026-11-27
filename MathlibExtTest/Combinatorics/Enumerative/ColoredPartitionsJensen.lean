@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen
+import Mathlib.Analysis.Complex.ExponentialBounds
 
 open Filter Polynomial MetaMathlibExt MetaMathlibExt.ColoredPartitionsJensen
 

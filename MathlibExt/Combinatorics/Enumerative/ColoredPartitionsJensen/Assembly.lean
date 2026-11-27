@@ -6,9 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/Assembly.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.MajorArcIntegral
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
 # The circle-method assembly for `C_r(n)`
@@ -71,8 +82,8 @@ theorem cpow_mul_ofReal_pos {c : ℝ} (hc : 0 < c) {τ : ℂ} (hτ : τ ≠ 0) (
     cpow_def_of_ne_zero hτ, ← Complex.exp_add, ofReal_log hc.le]
   ring_nf
 
-/-- `(τ/2π)^{r/2} = (2π)^{−r/2} τ^{−(−r/2)}` (principal powers, `τ ≠ 0`). -/
-theorem tau_div_cpow {τ : ℂ} (hτ : τ ≠ 0) (r : ℕ) :
+/- `(τ/2π)^{r/2} = (2π)^{−r/2} τ^{−(−r/2)}` (principal powers, `τ ≠ 0`). -/
+private theorem tau_div_cpow {τ : ℂ} (hτ : τ ≠ 0) (r : ℕ) :
     (τ / (2 * Real.pi)) ^ ((r : ℂ) / 2) =
       (((2 * Real.pi) ^ (-((r : ℝ) / 2)) : ℝ) : ℂ) * τ ^ (-(((-((r : ℝ) / 2)) : ℝ) : ℂ)) := by
   have h2π : (0 : ℝ) < (2 * Real.pi)⁻¹ := by have := Real.pi_pos; positivity
@@ -89,10 +100,10 @@ theorem tauL_re' (y θ : ℝ) : (tauL y θ).re = y := by simp [tauL]
 
 theorem tauL_im' (y θ : ℝ) : (tauL y θ).im = θ := by simp [tauL]
 
-/-- **Major arc, pointwise.** For `0 < y ≤ 1`, `|θ| ≤ y`:
+/- **Major arc, pointwise.** For `0 < y ≤ 1`, `|θ| ≤ y`:
 `F(e^{−τ})^r e^{nτ} = (2π)^{−r/2} v_{−r/2}(θ) (1 + E)^r`, `‖E‖ ≤ 4e^{−2π²/y}`, with `A = rπ²/6`,
 `m = n − r/24`. -/
-theorem major_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ : |θ| ≤ y) :
+private theorem major_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ : |θ| ≤ y) :
     ∃ E : ℂ, ‖E‖ ≤ 4 * Real.exp (-(2 * Real.pi ^ 2 / y)) ∧
       partGen (cexp (-tauL y θ)) ^ r * cexp (n * tauL y θ) =
         (((2 * Real.pi) ^ (-((r : ℝ) / 2)) : ℝ) : ℂ) *
@@ -122,8 +133,8 @@ theorem major_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ : |�
     rw [← hexp]
     ring
 
-/-- `‖(1+E)^r − 1‖ ≤ r 2^r ‖E‖` for `‖E‖ ≤ 1`. -/
-theorem norm_one_add_pow_sub_one_le {E : ℂ} (hE : ‖E‖ ≤ 1) (r : ℕ) :
+/- `‖(1+E)^r − 1‖ ≤ r 2^r ‖E‖` for `‖E‖ ≤ 1`. -/
+private theorem norm_one_add_pow_sub_one_le {E : ℂ} (hE : ‖E‖ ≤ 1) (r : ℕ) :
     ‖(1 + E) ^ r - 1‖ ≤ r * 2 ^ r * ‖E‖ := by
   have h := geom_sum_mul (1 + E) r
   rw [add_sub_cancel_left] at h
@@ -156,9 +167,9 @@ theorem norm_tauL_le {y θ : ℝ} (hy : 0 < y) (hθ : |θ| ≤ y) : ‖tauL y θ
     rw [← sq_abs θ]; exact pow_le_pow_left₀ (abs_nonneg θ) hθ 2
   linarith
 
-/-- **Major arc error, pointwise**:
+/- **Major arc error, pointwise**:
 `‖integrand − (2π)^{−r/2} v‖ ≤ (2π)^{−r/2} (√2y)^{r/2} e^{A/y + my} r 2^r 4e^{−2π²/y}`. -/
-theorem major_err_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ : |θ| ≤ y) :
+private theorem major_err_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ : |θ| ≤ y) :
     ‖partGen (cexp (-tauL y θ)) ^ r * cexp (n * tauL y θ) -
         (((2 * Real.pi) ^ (-((r : ℝ) / 2)) : ℝ) : ℂ) * vInt (cA r) ((n : ℝ) - r / 24) y (-((r : ℝ)
             / 2)) θ‖ ≤
@@ -182,9 +193,10 @@ theorem major_err_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ 
   gcongr
   exact (norm_one_add_pow_sub_one_le hE1 r).trans (by gcongr)
 
-/-- **Minor arcs, pointwise**: for `0 < y ≤ 1/2`, `y ≤ |θ| ≤ π`,
+/- **Minor arcs, pointwise**: for `0 < y ≤ 1/2`, `y ≤ |θ| ≤ π`,
 `‖F(e^{−τ})^r e^{nτ}‖ ≤ e^{A/y + my + r − r/(8y)}`. -/
-theorem minor_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|) (hθ2 : |θ| ≤
+private theorem minor_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|)
+    (hθ2 : |θ| ≤
     Real.pi) :
     ‖partGen (cexp (-tauL y θ)) ^ r * cexp (n * tauL y θ)‖ ≤
       Real.exp (cA r / y + ((n : ℝ) - r / 24) * y + r - r / (8 * y)) := by
@@ -247,8 +259,9 @@ def Pr (r : ℕ) (y : ℝ) : ℝ :=
     ((r : ℝ) / 2 + 2) * ((√2 * y) ^ (-(2 : ℝ)) + (√2 * y) ^ (-(3 / 2 : ℝ)) + (√2 * y) ^ ((r : ℝ) /
         2))
 
-/-- `P_r(y) ≤ (2r + 12) y^{−2}` for `0 < y ≤ 1/2`. -/
-theorem Pr_le (r : ℕ) {y : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) : Pr r y ≤ (2 * r + 12) * y ^ (-(2 :
+/- `P_r(y) ≤ (2r + 12) y^{−2}` for `0 < y ≤ 1/2`. -/
+private theorem Pr_le (r : ℕ) {y : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) : Pr r y ≤ (2 * r + 12) * y ^
+    (-(2 :
     ℝ)) := by
   have hy1 : y ≤ 1 := by linarith
   have hs2 : √2 ≤ 2 := by
@@ -272,8 +285,8 @@ theorem Pr_le (r : ℕ) {y : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) : Pr r y ≤ 
   nlinarith [mul_le_mul_of_nonneg_left (add_le_add (add_le_add b1 b2) b3)
       (by positivity : (0 : ℝ) ≤ (r : ℝ) / 2 + 2)]
 
-/-- At the saddle, `A/y + my = 2√(Am)`. -/
-theorem saddle_exp_two {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
+/- At the saddle, `A/y + my = 2√(Am)`. -/
+private theorem saddle_exp_two {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
     A / √(A / m) + m * √(A / m) = 2 * √(A * m) := by
   obtain ⟨a, ha, rfl⟩ : ∃ a, 0 < a ∧ A = a ^ 2 := ⟨√A, Real.sqrt_pos.2 hA, (Real.sq_sqrt
       hA.le).symm⟩
@@ -284,10 +297,10 @@ theorem saddle_exp_two {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
   field_simp
   ring
 
-/-- The series at `s = −r/2` is the main term plus the reflection defect:
+/- The series at `s = −r/2` is the main term plus the reflection defect:
 `(2π)^{−r/2} S(−r/2, m) = c'_r besselInt((r+1)/2, 2√(Am)) + (2π)^{−r/2} m^{−r/2−1} bH(r/2+1, Am)`.
 -/
-theorem sSer_neg_half_eq (r : ℕ) (hr : 1 ≤ r) {m : ℝ} (hm : 0 < m) :
+private theorem sSer_neg_half_eq (r : ℕ) (hr : 1 ≤ r) {m : ℝ} (hm : 0 < m) :
     (2 * Real.pi) ^ (-((r : ℝ) / 2)) * sSer (cA r) m (-((r : ℝ) / 2)) =
       cPrime r * besselInt (((r : ℝ) + 1) / 2) (2 * √(cA r * m)) +
         (2 * Real.pi) ^ (-((r : ℝ) / 2)) * (m ^ (-((r : ℝ) / 2) - 1) * bH ((r : ℝ) / 2 + 1) (cA r *
@@ -309,13 +322,13 @@ theorem sSer_neg_half_eq (r : ℕ) (hr : 1 ≤ r) {m : ℝ} (hm : 0 < m) :
   unfold cPrime
   ring
 
-/-- **The assembly, absolute form.** For `r ≥ 1`, `m = n − r/24` with `m ≥ A + r/2 + 2`, `m ≥ 4A`,
+/- **The assembly, absolute form.** For `r ≥ 1`, `m = n − r/24` with `m ≥ A + r/2 + 2`, `m ≥ 4A`,
 `Am ≥ 1`
 (`A = rπ²/6`, `y = √(A/m)`, `K = (2π)^{−r/2}`):
 `‖C_r(n) − c'_r besselInt((r+1)/2,
     2√(Am))‖ ≤ K e^{(3/2)√(Am)} P_r(y)/π + K m^{−r/2−1}(r+2)!(Am+1)^{r+1}e^{−2√(Am)}
   + (2π)⁻¹ K (√2y)^{r/2} e^{2√(Am)} r 2^r 4e^{−2π²/y} · 2y + e^{2√(Am) + r − r/(8y)}`. -/
-theorem coef_sub_main_le (r n : ℕ) (hr : 1 ≤ r) (hm : cA r + r / 2 + 2 ≤ (n : ℝ) - r / 24)
+private theorem coef_sub_main_le (r n : ℕ) (hr : 1 ≤ r) (hm : cA r + r / 2 + 2 ≤ (n : ℝ) - r / 24)
     (hm4 : 4 * cA r ≤ (n : ℝ) - r / 24) (hAm : 1 ≤ cA r * ((n : ℝ) - r / 24)) :
     ‖coef r n - ((cPrime r * besselInt (((r : ℝ) + 1) / 2) (2 * √(cA r * ((n : ℝ) - r / 24))) : ℝ)
         : ℂ)‖ ≤
@@ -454,8 +467,8 @@ theorem coef_sub_main_le (r n : ℕ) (hr : 1 ≤ r) (hm : cA r + r / 2 + 2 ≤ (
 
 /-! ### The eventual relative form -/
 
-/-- `C tᵏ e^{−c₀t} ≤ e^{−ct}/4` eventually, for `c ≤ c₀/2`. -/
-theorem ev_poly_exp (C : ℝ) (k : ℕ) {c₀ c : ℝ} (hc₀ : 0 < c₀) (hc : c ≤ c₀ / 2) :
+/- For `c₀ > 0` and `c ≤ c₀/2`: `C tᵏ e^{−c₀t} ≤ e^{−ct}/4` eventually. -/
+private theorem ev_poly_exp (C : ℝ) (k : ℕ) {c₀ c : ℝ} (hc₀ : 0 < c₀) (hc : c ≤ c₀ / 2) :
     ∀ᶠ t : ℝ in atTop, C * t ^ k * Real.exp (-(c₀ * t)) ≤ Real.exp (-(c * t)) / 4 := by
   have ho := isLittleO_pow_exp_pos_mul_atTop k (half_pos hc₀)
   have hε : (0 : ℝ) < 1 / (4 * (|C| + 1)) := by positivity
@@ -475,8 +488,9 @@ theorem ev_poly_exp (C : ℝ) (k : ℕ) {c₀ c : ℝ} (hc₀ : 0 < c₀) (hc : 
     _ ≤ (1 / 4) * Real.exp (-(c * t)) := mul_le_mul h3 h4 (by positivity) (by norm_num)
     _ = Real.exp (-(c * t)) / 4 := by ring
 
-/-- `κ_r √m = 2√(Am)`. -/
-theorem coloredKappa_mul_sqrt (r : ℕ) {m : ℝ} (hm : 0 ≤ m) : coloredKappa r * √m = 2 * √(cA r *
+/- `κ_r √m = 2√(Am)`. -/
+private theorem coloredKappa_mul_sqrt (r : ℕ) {m : ℝ} (hm : 0 ≤ m)
+    : coloredKappa r * √m = 2 * √(cA r *
     m) := by
   have hπ := Real.pi_pos
   rw [Real.sqrt_mul' _ hm]
@@ -490,9 +504,9 @@ theorem coloredKappa_mul_sqrt (r : ℕ) {m : ℝ} (hm : 0 ≤ m) : coloredKappa 
       Real.sqrt_sq (by norm_num)]
   rw [h1, h2]; ring
 
-/-- Lower bound for the main term:
+/- Lower bound for the main term:
 `c'_r besselInt((r+1)/2, z) ≥ c'_r e^{z−1} z^{−(r+2)}/((r+1)/2 + 1)`, `z ≥ 1`. -/
-theorem main_lower (r : ℕ) (hr : 1 ≤ r) {z : ℝ} (hz : 1 ≤ z) :
+private theorem main_lower (r : ℕ) (hr : 1 ≤ r) {z : ℝ} (hz : 1 ≤ z) :
     cPrime r * (Real.exp z / Real.exp 1 * ((z ^ (r + 2))⁻¹ / (((r : ℝ) + 1) / 2 + 1))) ≤
       cPrime r * besselInt (((r : ℝ) + 1) / 2) z := by
   have hz0 : 0 < z := by linarith
@@ -577,9 +591,9 @@ theorem sqrt_n_le {n : ℕ} {r : ℕ} (hn : (r : ℝ) ≤ n) : √(n : ℝ) / 2 
         (by norm_num)]]
   exact Real.sqrt_le_sqrt (by linarith)
 
-/-- **Absolute-relative form.** For `r ≥ 1` there is `c > 0` with, for all large `n`,
+/- **Absolute-relative form.** For `r ≥ 1` there is `c > 0` with, for all large `n`,
 `‖C_r(n) − c'_r besselInt((r+1)/2, κ_r √(n − r/24))‖ ≤ c'_r besselInt(…) · e^{−c√n}`. -/
-theorem coef_asymp_abs (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop,
+private theorem coef_asymp_abs (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop,
     ‖coef r n - ((cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r / 24)) :
         ℝ) : ℂ)‖ ≤
       cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r /
@@ -731,10 +745,10 @@ theorem coef_asymp_abs (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in a
           _ = _ := by ring
     _ ≤ _ := by gcongr
 
-/-- **Asymptotic formula.** For `r ≥ 1` there is `c > 0` such that for all large `n`,
+/- **Asymptotic formula.** For `r ≥ 1` there is `c > 0` such that for all large `n`,
 `C_r(n) = c'_r · besselInt((r+1)/2, κ_r √(n − r/24)) · (1 + ρ(n))` with `‖ρ(n)‖ ≤ e^{−c√n}`
 (`c'_r > 0`: `cPrime_pos`). -/
-theorem coef_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℂ,
+private theorem coef_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℂ,
     ‖ρ‖ ≤ Real.exp (-(c * √n)) ∧
       coef r n = ((cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r / 24))
           : ℝ) : ℂ) * (1 + ρ) := by
@@ -747,7 +761,8 @@ theorem coef_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop
   rw [norm_div, norm_real, Real.norm_of_nonneg hM.le, div_le_iff₀ hM]
   linarith
 
-/-- The real part: `Re C_r(n) = c'_r besselInt(…) (1 + Re ρ(n))`, `|Re ρ(n)| ≤ e^{−c√n}`. -/
+/-- For `r ≥ 1` there is `c > 0` such that, eventually,
+`Re C_r(n) = c'_r · besselInt ((r + 1)/2) (κ_r √(n − r/24)) · (1 + ρ)` for some `|ρ| ≤ e^{−c√n}`. -/
 theorem coef_re_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℝ,
     |ρ| ≤ Real.exp (-(c * √n)) ∧
       (coef r n).re = cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r /

@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/Target.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.Count
@@ -42,8 +52,9 @@ namespace ColoredPartitionsJensen
 
 @[expose] public section
 
-/-- The asymptotic formula of `coef_re_asymp`, for the count. -/
-theorem cnt_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℝ,
+/- For `r ≥ 1` there is `c > 0` such that, eventually,
+`C_r(n) = c'_r · I((r + 1)/2, κ_r √(n − r/24)) · (1 + ρ)` for some `|ρ| ≤ e^{−c√n}`. -/
+private theorem cnt_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℝ,
     |ρ| ≤ Real.exp (-(c * √n)) ∧
       (cnt r n : ℝ) = cPrime r * besselInt (((r : ℝ) + 1) / 2)
         (coloredKappa r * √((n : ℝ) - r / 24)) * (1 + ρ) := by
@@ -56,8 +67,9 @@ lemma tendsto_mul_sqrt_atTop {c : ℝ} (hc : 0 < c) :
     Tendsto (fun n : ℕ => c * √(n : ℝ)) atTop atTop :=
   (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop).const_mul_atTop hc
 
-/-- `log C_r(n) = log c'_r + coloredModel r n + O(e^{−c√n})`, and `C_r(n) > 0`, eventually. -/
-theorem log_cnt_bound {r : ℕ} (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, 0 < (cnt r n : ℝ) ∧
+/- For `r ≥ 1` there is `c > 0` such that, eventually, `C_r(n) > 0` and
+`|log C_r(n) − (log c'_r + coloredModel r n)| ≤ 2 e^{−c√n}`. -/
+private theorem log_cnt_bound {r : ℕ} (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, 0 < (cnt r n : ℝ) ∧
     |Real.log (cnt r n : ℝ) - (Real.log (cPrime r) + coloredModel r n)| ≤
       2 * Real.exp (-(c * √n)) := by
   obtain ⟨c, hc, h⟩ := cnt_asymp r hr
@@ -84,8 +96,8 @@ theorem log_cnt_bound {r : ℕ} (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in at
     _ ≤ 2 * |ρ| := this
     _ ≤ 2 * Real.exp (-(c * √n)) := by linarith
 
-/-- `e^{−c√n} = o(n^e)` for every real `e`. -/
-theorem exp_neg_sqrt_isLittleO {c : ℝ} (hc : 0 < c) (e : ℝ) :
+/- For `c > 0`: `e^{−c√n} = o(n^e)` for every real `e`. -/
+private theorem exp_neg_sqrt_isLittleO {c : ℝ} (hc : 0 < c) (e : ℝ) :
     (fun n : ℕ => Real.exp (-(c * √(n : ℝ)))) =o[atTop] fun n : ℕ => (n : ℝ) ^ e := by
   have h := (isLittleO_exp_neg_mul_rpow_atTop hc (2 * e)).comp_tendsto
     (Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop)

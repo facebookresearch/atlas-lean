@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/CircleMethod.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.EtaTransform
@@ -70,8 +80,8 @@ lemma cauchyPowerSeries_partGen_pow (r : ℕ) {R : ℝ} (hR0 : 0 < R) (hR1 : R <
 /-- `C_r(n)`: the `n`-th Taylor coefficient of `F(q)^r` at `q = 0`. -/
 def coef (r n : ℕ) : ℂ := (cauchyPowerSeries (fun q ↦ partGen q ^ r) 0 (1 / 2)).coeff n
 
-/-- **Power series.** `F(q)^r = ∑ₙ C_r(n) qⁿ` for `‖q‖ < 1`. -/
-theorem hasSum_coef (r : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
+/- **Power series.** `F(q)^r = ∑ₙ C_r(n) qⁿ` for `‖q‖ < 1`. -/
+private theorem hasSum_coef (r : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
     HasSum (fun n ↦ coef r n * q ^ n) (partGen q ^ r) := by
   obtain ⟨R, hqR, hR1⟩ := exists_between hq
   have hR0 : 0 < R := (norm_nonneg q).trans_lt hqR
@@ -147,9 +157,9 @@ theorem coef_eq_integral (r n : ℕ) {y : ℝ} (hy : 0 < y) :
 
 /-! ### The minor arc -/
 
-/-- Per factor: `1 − ‖x‖ ≤ ‖1 − x‖ e^{−(‖x‖ − Re x)}` for `‖x‖ < 1`
+/- Per factor: `1 − ‖x‖ ≤ ‖1 − x‖ e^{−(‖x‖ − Re x)}` for `‖x‖ < 1`
 (the first term of `−log(1−|x|) + log|1−x| = ∑ₖ (|x|ᵏ − Re xᵏ)/k`, all terms `≥ 0`). -/
-lemma one_sub_norm_le {x : ℂ} (hx : ‖x‖ < 1) :
+private lemma one_sub_norm_le {x : ℂ} (hx : ‖x‖ < 1) :
     1 - ‖x‖ ≤ ‖1 - x‖ * Real.exp (-(‖x‖ - x.re)) := by
   have h1x : 1 - x ≠ 0 := by
     intro h
@@ -178,9 +188,9 @@ lemma one_sub_norm_le {x : ℂ} (hx : ‖x‖ < 1) :
     _ = ‖1 - x‖ * Real.exp (-(‖x‖ - x.re)) := by
         rw [Real.exp_add, Real.exp_log (norm_pos_iff.2 h1x)]
 
-/-- **Lambert saving.** For `‖q‖ < 1`,
+/- **Lambert saving.** For `‖q‖ < 1`,
 `‖F(q)‖ ≤ ‖F(‖q‖)‖ · exp(−(‖q‖/(1−‖q‖) − Re(q/(1−q))))`. -/
-theorem norm_partGen_le {q : ℂ} (hq : ‖q‖ < 1) :
+private theorem norm_partGen_le {q : ℂ} (hq : ‖q‖ < 1) :
     ‖partGen q‖ ≤ ‖partGen (‖q‖ : ℂ)‖ * Real.exp (-(‖q‖ / (1 - ‖q‖) - (q / (1 - q)).re)) := by
   set ρ := ‖q‖ with hρ
   have hρ0 : 0 ≤ ρ := norm_nonneg q
@@ -230,9 +240,9 @@ theorem norm_partGen_le {q : ℂ} (hq : ‖q‖ < 1) :
     _ ≤ Real.exp (-S) * ‖eulerP (ρ : ℂ)‖⁻¹ := by gcongr
     _ = ‖eulerP (ρ : ℂ)‖⁻¹ * Real.exp (-S) := mul_comm _ _
 
-/-- The saving in closed form: for `q = e^{−(y+iθ)}`, `ρ = e^{−y}`, `c = cos θ`,
+/- The saving in closed form: for `q = e^{−(y+iθ)}`, `ρ = e^{−y}`, `c = cos θ`,
 `ρ/(1−ρ) − Re(q/(1−q)) = ρ(1+ρ)(1−c) / ((1−ρ)((1−ρ)² + 2ρ(1−c)))`. -/
-lemma saving_eq {y θ : ℝ} (hy : 0 < y) :
+private lemma saving_eq {y θ : ℝ} (hy : 0 < y) :
     Real.exp (-y) / (1 - Real.exp (-y)) - (cexp (-(y + θ * I)) / (1 - cexp (-(y + θ * I)))).re =
       Real.exp (-y) * (1 + Real.exp (-y)) * (1 - Real.cos θ) /
         ((1 - Real.exp (-y)) * ((1 - Real.exp (-y)) ^ 2 + 2 * Real.exp (-y) * (1 - Real.cos θ)))
@@ -266,9 +276,10 @@ lemma saving_eq {y θ : ℝ} (hy : 0 < y) :
   field_simp
   linear_combination (ρ ^ 2 - ρ ^ 3) * hsc
 
-/-- **Minor-arc saving.** For `0 < y ≤ 1/2` and `y ≤ |θ| ≤ π`, with `q = e^{−(y+iθ)}`,
+/- **Minor-arc saving.** For `0 < y ≤ 1/2` and `y ≤ |θ| ≤ π`, with `q = e^{−(y+iθ)}`,
 `ρ/(1−ρ) − Re(q/(1−q)) ≥ 1/(8y)`. -/
-theorem minorArc_saving {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|) (hθ2 : |θ| ≤ π) :
+private theorem minorArc_saving {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|)
+    (hθ2 : |θ| ≤ π) :
     1 / (8 * y) ≤
       Real.exp (-y) / (1 - Real.exp (-y)) - (cexp (-(y + θ * I)) / (1 - cexp (-(y + θ * I)))).re
           := by
@@ -310,9 +321,9 @@ theorem minorArc_saving {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y 
 lemma norm_exp_neg_y_add (y θ : ℝ) : ‖cexp (-((y : ℂ) + (θ : ℂ) * I))‖ = Real.exp (-y) := by
   rw [norm_exp]; simp
 
-/-- **Minor arc.** For `0 < y ≤ 1/2`, `y ≤ |θ| ≤ π`: `‖F(e^{−(y+iθ)})‖ ≤ ‖F(e^{−y})‖ e^{−1/(8y)}`.
+/- **Minor arc.** For `0 < y ≤ 1/2`, `y ≤ |θ| ≤ π`: `‖F(e^{−(y+iθ)})‖ ≤ ‖F(e^{−y})‖ e^{−1/(8y)}`.
 -/
-theorem minorArc {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|) (hθ2 : |θ| ≤ π) :
+private theorem minorArc {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|) (hθ2 : |θ| ≤ π) :
     ‖partGen (cexp (-(y + θ * I)))‖ ≤ ‖partGen (cexp (-(y : ℂ)))‖ * Real.exp (-(1 / (8 * y))) := by
   have hn := norm_exp_neg_y_add y θ
   have hq : ‖cexp (-((y : ℂ) + (θ : ℂ) * I))‖ < 1 := by
@@ -323,7 +334,7 @@ theorem minorArc {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ
   gcongr
   exact minorArc_saving hy hy2 hθ1 hθ2
 
-/-- `r`-th power form, as used by the circle method. -/
+/-- For `0 < y ≤ 1/2` and `y ≤ |θ| ≤ π`: `‖F(e^{−(y+iθ)})^r‖ ≤ ‖F(e^{−y})‖^r e^{−r/(8y)}`. -/
 theorem minorArc_pow (r : ℕ) {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|)
     (hθ2 : |θ| ≤ π) :
     ‖partGen (cexp (-(y + θ * I))) ^ r‖ ≤

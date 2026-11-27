@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/Reduction.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.Bridge
@@ -59,8 +69,8 @@ theorem Icc_one_eq_map (d : ℕ) : Icc 1 d = (range d).map ⟨(· + 1), add_left
   · intro h; exact ⟨k - 1, by omega, by omega⟩
   · rintro ⟨a, ha, rfl⟩; omega
 
-/-- Gregory–Newton: for `j ≤ d`, `L(n+j) − L(n)` is the Newton interpolant at `j`. -/
-theorem eval_newtonPoly (L : ℕ → ℝ) {d j : ℕ} (hj : j ≤ d) (n : ℕ) :
+/- Gregory–Newton: for `j ≤ d`, `L(n+j) − L(n)` is the Newton interpolant at `j`. -/
+private theorem eval_newtonPoly (L : ℕ → ℝ) {d j : ℕ} (hj : j ≤ d) (n : ℕ) :
     (newtonPoly L d n).eval (j : ℝ) = L (n + j) - L n := by
   have hN := shift_eq_sum_fwdDiff_iter (1 : ℕ) L j n
   simp only [smul_eq_mul, mul_one, nsmul_eq_mul] at hN
@@ -97,8 +107,9 @@ theorem coeff_newtonPoly (L : ℕ → ℝ) (d n i : ℕ) :
 theorem coeff_descPochhammer_of_lt {k i : ℕ} (h : k < i) : (descPochhammer ℝ k).coeff i = 0 :=
   coeff_eq_zero_of_natDegree_lt (by rw [descPochhammer_natDegree]; exact h)
 
-/-- `δ^k = O(δ^i)` for `i ≤ k` when `δ → 0`. -/
-theorem isBigO_pow_pow_of_le {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0)) {i k : ℕ} (h : i ≤ k) :
+/- `δ^k = O(δ^i)` for `i ≤ k` when `δ → 0`. -/
+private theorem isBigO_pow_pow_of_le {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0)) {i k : ℕ} (h : i ≤ k)
+    :
     (fun n => δ n ^ k) =O[atTop] (fun n => δ n ^ i) := by
   have h1 : (fun n => δ n ^ (k - i)) =O[atTop] (fun _ => (1 : ℝ)) := by
     have : Tendsto (fun n => δ n ^ (k - i)) atTop (𝓝 (0 ^ (k - i))) := hδ.pow _
@@ -108,11 +119,11 @@ theorem isBigO_pow_pow_of_le {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0)
       simp only; rw [← pow_add, Nat.sub_add_cancel h]
   · exact Eventually.of_forall fun n => one_mul _
 
-/-- **Interpolation step.** Finite-difference bounds on `L = log α` give the GORZ
+/- **Interpolation step.** Finite-difference bounds on `L = log α` give the GORZ
 log-ratio expansion. The second difference fixes `δ` (`Δ²L ≈ −2δ²`), the higher ones are
 `o(δ^k)`, and
 the Newton interpolant on `0, …, d` matches `log(α(n+j)/α(n))` exactly. -/
-theorem hasLogRatioExpansion_of_fwdDiff {α : ℕ → ℝ} {d : ℕ} (hd : 2 ≤ d)
+private theorem hasLogRatioExpansion_of_fwdDiff {α : ℕ → ℝ} {d : ℕ} (hd : 2 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n) {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0))
     (hδpos : ∀ᶠ n in atTop, 0 < δ n)
     (h2 : (fun n => (fwdDiff 1)^[2] (fun m => Real.log (α m)) n + 2 * δ n ^ 2) =o[atTop]
@@ -264,8 +275,8 @@ theorem natCast_rpow_le_of_le {a b : ℝ} (h : a ≤ b) {n : ℕ} (hn : 1 ≤ n)
     (n : ℝ) ^ a ≤ (n : ℝ) ^ b :=
   Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hn) h
 
-/-- `n^a = O(n^b)` for `a ≤ b`. -/
-theorem isBigO_natCast_rpow {a b : ℝ} (h : a ≤ b) :
+/- `n^a = O(n^b)` for `a ≤ b`. -/
+private theorem isBigO_natCast_rpow {a b : ℝ} (h : a ≤ b) :
     (fun n : ℕ => (n : ℝ) ^ a) =O[atTop] (fun n : ℕ => (n : ℝ) ^ b) := by
   refine IsBigO.of_bound 1 ?_
   filter_upwards [eventually_ge_atTop 1] with n hn
@@ -273,8 +284,8 @@ theorem isBigO_natCast_rpow {a b : ℝ} (h : a ≤ b) :
     abs_of_nonneg (Real.rpow_nonneg (Nat.cast_nonneg _) _), one_mul]
   exact natCast_rpow_le_of_le h hn
 
-/-- `n^a = o(n^b)` for `a < b`. -/
-theorem isLittleO_natCast_rpow {a b : ℝ} (h : a < b) :
+/- `n^a = o(n^b)` for `a < b`. -/
+private theorem isLittleO_natCast_rpow {a b : ℝ} (h : a < b) :
     (fun n : ℕ => (n : ℝ) ^ a) =o[atTop] (fun n : ℕ => (n : ℝ) ^ b) := by
   have ht : Tendsto (fun n : ℕ => (n : ℝ) ^ (a - b)) atTop (𝓝 0) := by
     have := (tendsto_rpow_neg_atTop (by linarith : 0 < b - a)).comp tendsto_natCast_atTop_atTop
@@ -286,8 +297,8 @@ theorem isLittleO_natCast_rpow {a b : ℝ} (h : a < b) :
     rw [← Real.rpow_add (by exact_mod_cast hn), sub_add_cancel]
   · exact Eventually.of_forall fun _ => one_mul _
 
-/-- `a² ≤ K b²` eventually gives `a^i = O(b^i)`. -/
-theorem isBigO_pow_of_sq_le_mul {a b : ℕ → ℝ} {K : ℝ}
+/- `a² ≤ K b²` eventually gives `a^i = O(b^i)`. -/
+private theorem isBigO_pow_of_sq_le_mul {a b : ℕ → ℝ} {K : ℝ}
     (h : ∀ᶠ n in atTop, a n ^ 2 ≤ K * b n ^ 2) (i : ℕ) :
     (fun n => a n ^ i) =O[atTop] (fun n => b n ^ i) := by
   have h1 : a =O[atTop] b := by
@@ -298,8 +309,8 @@ theorem isBigO_pow_of_sq_le_mul {a b : ℕ → ℝ} {K : ℝ}
     exact Real.sqrt_le_sqrt hn
   exact h1.pow i
 
-/-- Finite differences of a sequence that is `o(n^γ)`, `γ ≤ 0`, are `o(n^γ)`. -/
-theorem fwdDiff_iter_isLittleO {ε : ℕ → ℝ} {γ : ℝ} (hγ : γ ≤ 0)
+/- Finite differences of a sequence that is `o(n^γ)`, `γ ≤ 0`, are `o(n^γ)`. -/
+private theorem fwdDiff_iter_isLittleO {ε : ℕ → ℝ} {γ : ℝ} (hγ : γ ≤ 0)
     (hε : ε =o[atTop] (fun n : ℕ => (n : ℝ) ^ γ)) (k : ℕ) :
     (fun n => (fwdDiff 1)^[k] ε n) =o[atTop] (fun n : ℕ => (n : ℝ) ^ γ) := by
   simp only [fwdDiff_iter_eq_sum_shift, smul_eq_mul, mul_one, zsmul_eq_mul]
@@ -316,8 +327,8 @@ theorem fwdDiff_iter_isLittleO {ε : ℕ → ℝ} {γ : ℝ} (hγ : γ ≤ 0)
   exact Real.rpow_le_rpow_of_nonpos hn'
     (by push_cast; linarith [(Nat.cast_nonneg i : (0:ℝ) ≤ i)]) hγ
 
-/-- The `k`-th difference of `log α` splits into the model's and the error's. -/
-theorem fwdDiff_iter_log_split (α : ℕ → ℝ) (Λ : ℝ → ℝ) (k n : ℕ) :
+/- The `k`-th difference of `log α` splits into the model's and the error's. -/
+private theorem fwdDiff_iter_log_split (α : ℕ → ℝ) (Λ : ℝ → ℝ) (k n : ℕ) :
     (fwdDiff 1)^[k] (fun m => Real.log (α m)) n =
       (fwdDiff (1 : ℝ))^[k] Λ n + (fwdDiff 1)^[k] (fun m : ℕ => Real.log (α m) - Λ m) n := by
   simp only [fwdDiff_iter_eq_sum_shift, ← sum_add_distrib, zsmul_eq_mul, smul_eq_mul, mul_one,
@@ -328,10 +339,10 @@ theorem fwdDiff_iter_log_split (α : ℕ → ℝ) (Λ : ℝ → ℝ) (k n : ℕ)
 
 /-! ### From a smooth model -/
 
-/-- **Smooth-model form.** Let `log α(n) = Λ(n) + ε(n)` where `Λ` is `C^d` on `ℝ`,
-`|Λ^{(k)}(x)| ≤ C x^{β−k}` for `2 ≤ k ≤ d` and `Λ''(x) ≤ −c x^{β−2}` for large `x`, with
-`0 < β < 2`, `c > 0`, and `ε(n) = o(n^{(β−2)d/2})`. Then `α` has the log-ratio expansion in
-degree `d`, with `δ(n)² = −Δ²Λ(n)/2 ≍ n^{β−2}`. -/
+/-- **Smooth-model form.** Let `d ≥ 2`, let `α(n) > 0` eventually, and let `Λ` be `C^d` on `ℝ` with
+`|Λ^{(k)}(x)| ≤ C x^{β−k}` for `2 ≤ k ≤ d` and `Λ''(x) ≤ −c x^{β−2}` for large `x`, where
+`0 < β < 2` and `c > 0`. If `log α(n) − Λ(n) = o(n^{(β−2)d/2})`, then `α` has the log-ratio
+expansion in degree `d`. -/
 theorem hasLogRatioExpansion_of_smooth_model {α : ℕ → ℝ} {d : ℕ} (hd : 2 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n) {Λ : ℝ → ℝ} (hΛ : ContDiff ℝ d Λ)
     {β c C : ℝ} (hβ0 : 0 < β) (hβ2 : β < 2) (hc : 0 < c)
@@ -464,11 +475,11 @@ theorem hasLogRatioExpansion_of_smooth_model {α : ℕ → ℝ} {d : ℕ} (hd : 
     refine (hΛk.add (hεk k hkd)).congr' (Eventually.of_forall fun n => ?_) EventuallyEq.rfl
     exact (fwdDiff_iter_log_split α Λ k n).symm
 
-/-- **Smooth model, assembled.** Under the hypotheses of `hasLogRatioExpansion_of_smooth_model`
+/- **Smooth model, assembled.** Under the hypotheses of `hasLogRatioExpansion_of_smooth_model`
 (for `d ≥ 2`; every sequence has the expansion when `d = 1`), if `α` is eventually positive and
 `log (α (n + 1) / α n)` is eventually bounded below, then for all large `n` the Jensen polynomial
 of degree `d` and shift `n` of `α` has as many real roots, with multiplicity, as its degree. -/
-theorem eventually_card_roots_of_smooth_model {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
+private theorem eventually_card_roots_of_smooth_model {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n)
     (hlow : ∃ c, ∀ᶠ n in atTop, -c ≤ Real.log (α (n + 1) / α n))
     {Λ : ℝ → ℝ} (hΛ : ContDiff ℝ d Λ)

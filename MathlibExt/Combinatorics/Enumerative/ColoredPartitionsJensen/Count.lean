@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/Count.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.CircleMethod
@@ -59,7 +69,8 @@ lemma PSum.congr {c c' : ℕ → ℝ} {q G : 𝕜} (h : PSum c q G) (hc : ∀ n,
   have : c = c' := funext hc
   exact this ▸ h
 
-/-- Cauchy product. -/
+/- If `∑ c n qⁿ = G` and `∑ d n qⁿ = H` absolutely, then the Cauchy product of `c` and `d` sums
+to `G · H` absolutely. -/
 lemma PSum.mul {c d : ℕ → ℝ} {q G H : 𝕜} (hc : PSum c q G) (hd : PSum d q H) :
     PSum (fun n => ∑ kl ∈ antidiagonal n, c kl.1 * d kl.2) q (G * H) := by
   have he : ∀ n, ((∑ kl ∈ antidiagonal n, c kl.1 * d kl.2 : ℝ) : 𝕜) * q ^ n =
@@ -133,8 +144,8 @@ lemma psum_fac {𝕜 : Type*} [RCLike 𝕜] (i : ℕ) {q : 𝕜} (hq : ‖q‖ <
   · exact psum_geom i hq
   · exact PSum.delta q
 
-/-- The `i`-th factor as a formal power series is Mathlib's. -/
-lemma mk_facCoef (i : ℕ) :
+/- The `i`-th factor as a formal power series is Mathlib's. -/
+private lemma mk_facCoef (i : ℕ) :
     PowerSeries.mk (facCoef P i) = if P (i + 1) then ∑' j : ℕ, (X : ℝ⟦X⟧) ^ ((i + 1) * j) else 1
         := by
   unfold facCoef
@@ -196,8 +207,8 @@ lemma tendsto_coeff_Phi (n : ℕ) :
 lemma coeff_Phi_le (N n : ℕ) : coeff n (Phi P N) ≤ #(Nat.Partition.restricted n P) :=
   (coeff_Phi_mono P n).ge_of_tendsto (tendsto_coeff_Phi P n) N
 
-/-- A crude bound on the real partial products. -/
-lemma prod_facVal_le {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t < 1) (N : ℕ) :
+/- A crude bound on the real partial products. -/
+private lemma prod_facVal_le {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t < 1) (N : ℕ) :
     ∏ i ∈ range N, facVal P i t ≤ Real.exp ((∑' i : ℕ, t ^ (i + 1)) / (1 - t)) := by
   have hs : Summable fun i : ℕ => t ^ (i + 1) := by
     simpa [pow_succ] using (summable_geometric_of_lt_one ht0 ht1).mul_right t
@@ -240,8 +251,9 @@ lemma summable_card_restricted {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t < 1) :
   exact (sum_le_hasSum _ (fun n _ => mul_nonneg (coeff_Phi_nonneg P _ _) (pow_nonneg ht0 _))
     hN.1).trans (prod_facVal_le P ht0 ht1 N)
 
-/-- **Generating function of restricted partitions, analytically.** -/
-theorem hasSum_card_restricted {q : ℂ} (hq : ‖q‖ < 1) {G : ℂ}
+/- For `‖q‖ < 1`: if the partial products `∏_{i<N} facVal P i q` tend to `G`, then
+`∑ₙ #(partitions of n with parts in P) qⁿ = G`, absolutely. -/
+private theorem hasSum_card_restricted {q : ℂ} (hq : ‖q‖ < 1) {G : ℂ}
     (hG : Tendsto (fun N => ∏ i ∈ range N, facVal P i q) atTop (𝓝 G)) :
     HasSum (fun n => (#(Nat.Partition.restricted n P) : ℂ) * q ^ n) G ∧
       Summable fun n => ‖(#(Nat.Partition.restricted n P) : ℂ) * q ^ n‖ := by
@@ -271,8 +283,8 @@ end Factor
 
 /-! ### The partition function and colored partitions -/
 
-/-- **`∑ₙ p(n) qⁿ = F(q)`** on `‖q‖ < 1`, absolutely. -/
-theorem hasSum_card_partition {q : ℂ} (hq : ‖q‖ < 1) :
+/- **`∑ₙ p(n) qⁿ = F(q)`** on `‖q‖ < 1`, absolutely. -/
+private theorem hasSum_card_partition {q : ℂ} (hq : ‖q‖ < 1) :
     PSum (fun n => (Fintype.card (Nat.Partition n) : ℝ)) q (partGen q) := by
   have hG : Tendsto (fun N => ∏ i ∈ range N, facVal (fun _ => True) i q) atTop (𝓝 (partGen q)) := by
     have h := (tendsto_eulerP hq).inv₀ (eulerP_ne_zero hq)
@@ -289,8 +301,8 @@ theorem hasSum_card_partition {q : ℂ} (hq : ‖q‖ < 1) :
 def cnt (r n : ℕ) : ℕ :=
   ∑ x ∈ Finset.Nat.antidiagonalTuple r n, ∏ i, Fintype.card (Nat.Partition (x i))
 
-/-- Split off the first coordinate of a tuple in `antidiagonalTuple (k + 1) n`. -/
-lemma sum_antidiagonalTuple_succ {M : Type*} [AddCommMonoid M] (k n : ℕ)
+/- Split off the first coordinate of a tuple in `antidiagonalTuple (k + 1) n`. -/
+private lemma sum_antidiagonalTuple_succ {M : Type*} [AddCommMonoid M] (k n : ℕ)
     (f : (Fin (k + 1) → ℕ) → M) :
     ∑ x ∈ Finset.Nat.antidiagonalTuple (k + 1) n, f x =
       ∑ p ∈ antidiagonal n, ∑ y ∈ Finset.Nat.antidiagonalTuple k p.2, f (Fin.cons p.1 y) := by
@@ -329,8 +341,8 @@ lemma cnt_zero (n : ℕ) : cnt 0 n = if n = 0 then 1 else 0 := by
   · simp [cnt, Finset.Nat.antidiagonalTuple_zero_zero]
   · simp [cnt, Finset.Nat.antidiagonalTuple_zero_succ]
 
-/-- **`∑ₙ C_r(n) qⁿ = F(q)^r`** on `‖q‖ < 1`, absolutely. -/
-theorem psum_cnt (r : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
+/- **`∑ₙ C_r(n) qⁿ = F(q)^r`** on `‖q‖ < 1`, absolutely. -/
+private theorem psum_cnt (r : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
     PSum (fun n => (cnt r n : ℝ)) q (partGen q ^ r) := by
   induction r with
   | zero => exact (PSum.delta q).congr fun n => by rw [cnt_zero]; split_ifs <;> simp
@@ -342,9 +354,9 @@ theorem psum_cnt (r : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
     rw [← Finset.Nat.sum_antidiagonal_swap]
     simp [mul_comm]
 
-/-- Uniqueness of Taylor coefficients: any absolutely convergent expansion of `F(q)^r` on the unit
+/- Uniqueness of Taylor coefficients: any absolutely convergent expansion of `F(q)^r` on the unit
 disc has the coefficients `coef r n`. -/
-lemma coef_eq_of_psum (r : ℕ) (a : ℕ → ℝ) (h : ∀ q : ℂ, ‖q‖ < 1 → PSum a q (partGen q ^ r))
+private lemma coef_eq_of_psum (r : ℕ) (a : ℕ → ℝ) (h : ∀ q : ℂ, ‖q‖ < 1 → PSum a q (partGen q ^ r))
     (n : ℕ) : coef r n = (a n : ℂ) := by
   set R : NNReal := ⟨1 / 2, by norm_num⟩
   have hR0 : (0 : NNReal) < R := by change (0 : ℝ) < 1 / 2; norm_num

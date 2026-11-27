@@ -156,8 +156,8 @@ public theorem HasLogRatioExpansion.shift {α : ℕ → ℝ} {d : ℕ} (h : HasL
     EventuallyEq.rfl
   simp only [Function.comp_apply, add_right_comm]
 
-/-- Multiplying `α n` by `e^{c n}` adds `c` to `A` in the log-ratio expansion. -/
-lemma HasLogRatioExpansion.twist_of_pos {α A δ : ℕ → ℝ} {g : ℕ → ℕ → ℝ} {d : ℕ}
+/- Multiplying `α n` by `e^{c n}` adds `c` to `A` in the log-ratio expansion. -/
+private lemma HasLogRatioExpansion.twist_of_pos {α A δ : ℕ → ℝ} {g : ℕ → ℕ → ℝ} {d : ℕ}
     (hα : ∀ n, 0 < α n) (c : ℝ)
     (hexp : ∀ k ≤ d, (fun n => Real.log (α (n + k) / α n) -
       (A n * k - δ n ^ 2 * k ^ 2 + ∑ j ∈ Icc 3 d, g j n * (k : ℝ) ^ j)) =o[atTop]
@@ -178,9 +178,9 @@ lemma HasLogRatioExpansion.twist_of_pos {α A δ : ℕ → ℝ} {g : ℕ → ℕ
   rw [key, Real.log_mul (div_pos h2 h1).ne' (Real.exp_pos _).ne', Real.log_exp]
   ring
 
-/-- Rescaling the variable and the polynomial by nonzero constants preserves both the number of
+/- Rescaling the variable and the polynomial by nonzero constants preserves both the number of
 roots and the degree. -/
-lemma card_roots_comp_C_mul_X {p : ℝ[X]} {a b : ℝ} (ha : a ≠ 0) (hb : b ≠ 0) :
+private lemma card_roots_comp_C_mul_X {p : ℝ[X]} {a b : ℝ} (ha : a ≠ 0) (hb : b ≠ 0) :
     (C b * p.comp (C a * X)).roots.card = p.roots.card ∧
       (C b * p.comp (C a * X)).natDegree = p.natDegree := by
   have hlin : C a * X = C a * X + C 0 := by simp

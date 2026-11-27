@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/SmoothClass.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.Reduction
@@ -44,8 +54,9 @@ namespace MetaMathlibExt.ColoredPartitionsJensen
 
 /-! ### Gluing a half-line `C^n` function to a global one -/
 
-/-- A function `C^n` on `(x₀, ∞)` agrees on `[x₁, ∞)` (`x₀ < x₁`) with a function `C^n` on `ℝ`. -/
-theorem exists_contDiff_eqOn {f : ℝ → ℝ} {x₀ x₁ : ℝ} {n : ℕ} (hf : ContDiffOn ℝ n f (Ioi x₀))
+/- A function `C^n` on `(x₀, ∞)` agrees on `[x₁, ∞)` (`x₀ < x₁`) with a function `C^n` on `ℝ`. -/
+private theorem exists_contDiff_eqOn {f : ℝ → ℝ} {x₀ x₁ : ℝ} {n : ℕ}
+    (hf : ContDiffOn ℝ n f (Ioi x₀))
     (h01 : x₀ < x₁) : ∃ g : ℝ → ℝ, ContDiff ℝ n g ∧ EqOn g f (Ici x₁) := by
   set m := (x₀ + x₁) / 2 with hm
   have hm0 : x₀ < m := by rw [hm]; linarith
@@ -71,14 +82,14 @@ theorem exists_contDiff_eqOn {f : ℝ → ℝ} {x₀ x₁ : ℝ} {n : ℕ} (hf :
       rw [le_div_iff₀ (by linarith)]; linarith [hx.out]
     simp only [hcut, Real.smoothTransition.one_of_one_le hx', one_mul]
 
-/-- Iterated derivatives of two functions equal on `[x₁, ∞)` agree on `(x₁, ∞)`. -/
-theorem iteratedDeriv_eq_of_eqOn_Ici {f g : ℝ → ℝ} {x₁ : ℝ} (h : EqOn g f (Ici x₁)) (k : ℕ)
+/- Iterated derivatives of two functions equal on `[x₁, ∞)` agree on `(x₁, ∞)`. -/
+private theorem iteratedDeriv_eq_of_eqOn_Ici {f g : ℝ → ℝ} {x₁ : ℝ} (h : EqOn g f (Ici x₁)) (k : ℕ)
     {x : ℝ} (hx : x₁ < x) : iteratedDeriv k g x = iteratedDeriv k f x :=
   (h.mono Ioi_subset_Ici_self).iteratedDeriv_of_isOpen isOpen_Ioi k hx
 
-/-- Mean value form of the `k`-th difference for `f` of class `C^k` on a half-line `(x₀, ∞)`:
+/- Mean value form of the `k`-th difference for `f` of class `C^k` on a half-line `(x₀, ∞)`:
 `Δ^k f(x) = f^{(k)}(ξ)` with `ξ ∈ [x, x + k]`, for every `x > x₀`. -/
-theorem exists_fwdDiff_iter_eq_iteratedDeriv_of_contDiffOn {k : ℕ} {f : ℝ → ℝ} {x₀ : ℝ}
+private theorem exists_fwdDiff_iter_eq_iteratedDeriv_of_contDiffOn {k : ℕ} {f : ℝ → ℝ} {x₀ : ℝ}
     (hf : ContDiffOn ℝ k f (Ioi x₀)) {x : ℝ} (hx : x₀ < x) :
     ∃ ξ ∈ Icc x (x + k), (fwdDiff (1 : ℝ))^[k] f x = iteratedDeriv k f ξ := by
   obtain ⟨g, hg, hgf⟩ := exists_contDiff_eqOn hf (show x₀ < (x₀ + x) / 2 by linarith)
@@ -91,9 +102,9 @@ theorem exists_fwdDiff_iter_eq_iteratedDeriv_of_contDiffOn {k : ℕ} {f : ℝ �
       simp only [nsmul_eq_mul, mul_one, Set.mem_Ici]; linarith [(Nat.cast_nonneg i : (0 : ℝ) ≤ i)])]
   rw [hdiff, heq, iteratedDeriv_eq_of_eqOn_Ici hgf k (by linarith [hξ.1])]
 
-/-- **Half-line model.** As `hasLogRatioExpansion_of_smooth_model`, but `Λ` only needs to be
+/- **Half-line model.** As `hasLogRatioExpansion_of_smooth_model`, but `Λ` only needs to be
 `C^d` on some `(x₀, ∞)`. -/
-theorem hasLogRatioExpansion_of_smooth_model' {α : ℕ → ℝ} {d : ℕ} (hd : 2 ≤ d)
+private theorem hasLogRatioExpansion_of_smooth_model' {α : ℕ → ℝ} {d : ℕ} (hd : 2 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n) {Λ : ℝ → ℝ} {x₀ : ℝ} (hΛ : ContDiffOn ℝ d Λ (Ioi x₀))
     {β c C : ℝ} (hβ0 : 0 < β) (hβ2 : β < 2) (hc : 0 < c)
     (hupper : ∀ k ∈ Finset.Icc 2 d, ∀ᶠ x in atTop, |iteratedDeriv k Λ x| ≤ C * x ^ (β - k))
@@ -113,8 +124,8 @@ theorem hasLogRatioExpansion_of_smooth_model' {α : ℕ → ℝ} {d : ℕ} (hd :
     filter_upwards [tendsto_natCast_atTop_atTop.eventually_ge_atTop (x₀ + 1)] with n hn
     rw [hgf (show (n : ℝ) ∈ Ici (x₀ + 1) from hn)]
 
-/-- The half-line model gives eventual real-rootedness, any degree `d ≥ 1`. -/
-theorem eventually_card_roots_of_smooth_model' {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
+/- The half-line model gives eventual real-rootedness, any degree `d ≥ 1`. -/
+private theorem eventually_card_roots_of_smooth_model' {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n)
     (hlow : ∃ c, ∀ᶠ n in atTop, -c ≤ Real.log (α (n + 1) / α n))
     {Λ : ℝ → ℝ} {x₀ : ℝ} (hΛ : ContDiffOn ℝ d Λ (Ioi x₀))
@@ -141,7 +152,7 @@ def InS (β : ℝ) (d : ℕ) (Λ : ℝ → ℝ) : Prop :=
   ∃ x₀ C : ℝ, 0 < x₀ ∧ ContDiffOn ℝ d Λ (Ioi x₀) ∧
     ∀ k ≤ d, ∀ x, x₀ < x → |iteratedDeriv k Λ x| ≤ C * x ^ (β - k)
 
-/-- The threshold can be pushed past any `x₁`, and the constant made nonnegative. -/
+/- The threshold can be pushed past any `x₁`, and the constant made nonnegative. -/
 theorem InS.exists_ge {β : ℝ} {d : ℕ} {Λ : ℝ → ℝ} (h : InS β d Λ) (x₁ : ℝ) :
     ∃ x₀ C : ℝ, x₁ ≤ x₀ ∧ 0 < x₀ ∧ 0 ≤ C ∧ ContDiffOn ℝ d Λ (Ioi x₀) ∧
       ∀ k ≤ d, ∀ x, x₀ < x → |iteratedDeriv k Λ x| ≤ C * x ^ (β - k) := by
@@ -152,7 +163,8 @@ theorem InS.exists_ge {β : ℝ} {d : ℕ} {Λ : ℝ → ℝ} (h : InS β d Λ) 
   exact (hb k hk x hax).trans (mul_le_mul_of_nonneg_right (le_max_left _ _)
     (Real.rpow_nonneg (by linarith) _))
 
-/-- Build `InS` from data on `(x₀, ∞)`. -/
+/-- If `x₀ > 0`, `Λ` is `C^d` on `(x₀, ∞)` and `|Λ^{(k)}(x)| ≤ C x^{β−k}` there for all `k ≤ d`,
+then `Λ ∈ S_β` to order `d`. -/
 theorem InS.intro {β : ℝ} {d : ℕ} {Λ : ℝ → ℝ} {x₀ C : ℝ} (h0 : 0 < x₀)
     (hs : ContDiffOn ℝ d Λ (Ioi x₀))
     (hb : ∀ k ≤ d, ∀ x, x₀ < x → |iteratedDeriv k Λ x| ≤ C * x ^ (β - k)) : InS β d Λ :=
@@ -180,8 +192,8 @@ theorem InS.mono {β β' : ℝ} {d : ℕ} {f : ℝ → ℝ} (h : InS β d f) (hb
   exact mul_le_mul_of_nonneg_left
     (Real.rpow_le_rpow_of_exponent_le (by linarith) (by linarith)) hC
 
-/-- Two members can be put on one half-line with nonnegative constants. -/
-theorem InS.exists_common {β γ : ℝ} {d : ℕ} {f g : ℝ → ℝ} (hf : InS β d f) (hg : InS γ d g)
+/- Two members can be put on one half-line with nonnegative constants. -/
+private theorem InS.exists_common {β γ : ℝ} {d : ℕ} {f g : ℝ → ℝ} (hf : InS β d f) (hg : InS γ d g)
     (x₁ : ℝ) :
     ∃ x₀ C₁ C₂ : ℝ, x₁ ≤ x₀ ∧ 0 < x₀ ∧ 0 ≤ C₁ ∧ 0 ≤ C₂ ∧
       ContDiffOn ℝ d f (Ioi x₀) ∧ ContDiffOn ℝ d g (Ioi x₀) ∧
@@ -216,7 +228,7 @@ theorem InS.sub {β : ℝ} {d : ℕ} {f g : ℝ → ℝ} (hf : InS β d f) (hg :
     InS β d (fun x => f x - g x) :=
   (hf.add (hg.const_mul (-1))).congr (a := 0) fun x _ => by simp only; ring
 
-/-- Leibniz: `S_β · S_γ ⊆ S_{β+γ}`. -/
+/- Leibniz: `S_β · S_γ ⊆ S_{β+γ}`. -/
 theorem InS.mul {β γ : ℝ} {d : ℕ} {f g : ℝ → ℝ} (hf : InS β d f) (hg : InS γ d g) :
     InS (β + γ) d (fun x => f x * g x) := by
   obtain ⟨x₀, C₁, C₂, -, h0, hC₁, hC₂, hfs, hgs, hfb, hgb⟩ := hf.exists_common hg 0
@@ -253,7 +265,7 @@ theorem InS.mul {β γ : ℝ} {d : ℕ} {f g : ℝ → ℝ} (hf : InS β d f) (h
   exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
     (pow_le_pow_right₀ (by norm_num) hk) (mul_nonneg hC₁ hC₂)) (Real.rpow_nonneg hxpos.le _)
 
-/-- Derivative: `S_β` to order `d + 1` maps into `S_{β−1}` to order `d`. -/
+/- Derivative: `S_β` to order `d + 1` maps into `S_{β−1}` to order `d`. -/
 theorem InS.deriv_mem {β : ℝ} {d : ℕ} {f : ℝ → ℝ} (hf : InS β (d + 1) f) :
     InS (β - 1) d (deriv f) := by
   obtain ⟨x₀, C, h0, hs, hb⟩ := hf
@@ -264,7 +276,7 @@ theorem InS.deriv_mem {β : ℝ} {d : ℕ} {f : ℝ → ℝ} (hf : InS β (d + 1
   refine (hb (k + 1) (by omega) x hx).trans_eq ?_
   congr 2; push_cast; ring
 
-/-- Antiderivative direction: a bound on `f` itself plus `f' ∈ S_{β−1}` (order `d`) gives
+/- Antiderivative direction: a bound on `f` itself plus `f' ∈ S_{β−1}` (order `d`) gives
 `f ∈ S_β` to order `d + 1`. -/
 theorem InS.of_deriv {β : ℝ} {d : ℕ} {f : ℝ → ℝ} {a C₀ : ℝ}
     (hdf : DifferentiableOn ℝ f (Ioi a)) (h0 : ∀ x, a < x → |f x| ≤ C₀ * x ^ β)
@@ -304,12 +316,12 @@ theorem inS_rpow_self (γ : ℝ) (d : ℕ) : InS γ d (fun x => x ^ γ) := by
 theorem inS_rpow {γ β : ℝ} (hγ : γ ≤ β) (d : ℕ) : InS β d (fun x => x ^ γ) :=
   (inS_rpow_self γ d).mono hγ
 
-/-- `√x ∈ S_{1/2}`, to every order. -/
-theorem inS_sqrt (d : ℕ) : InS (1 / 2) d Real.sqrt :=
+/- `√x ∈ S_{1/2}`, to every order. -/
+private theorem inS_sqrt (d : ℕ) : InS (1 / 2) d Real.sqrt :=
   (inS_rpow_self (1 / 2) d).congr (a := 0) fun x _ => (Real.sqrt_eq_rpow x).symm
 
-/-- `log x ∈ S_ε` for every `ε > 0`, to every order. -/
-theorem inS_log {ε : ℝ} (hε : 0 < ε) (d : ℕ) : InS ε d Real.log := by
+/- `log x ∈ S_ε` for every `ε > 0`, to every order. -/
+private theorem inS_log {ε : ℝ} (hε : 0 < ε) (d : ℕ) : InS ε d Real.log := by
   have h1 : InS ε (d + 1) Real.log := by
     refine InS.of_deriv (a := 1) (C₀ := 1 / ε)
       (fun x hx =>
@@ -326,8 +338,8 @@ theorem inS_log {ε : ℝ} (hε : 0 < ε) (d : ℕ) : InS ε d Real.log := by
 
 /-! ### Shift, inverse, `log (1 + h)` -/
 
-/-- `x^e` at `x + a` against `x`: within the factor `2^{|β| + d}` once `x ≥ 2|a|`. -/
-theorem rpow_add_le {x a e B : ℝ} (hx : 0 < x) (ha : 2 * |a| ≤ x) (he : |e| ≤ B) :
+/- For `x > 0`, `2|a| ≤ x` and `|e| ≤ B`: `(x + a)^e ≤ 2^B · x^e`. -/
+private theorem rpow_add_le {x a e B : ℝ} (hx : 0 < x) (ha : 2 * |a| ≤ x) (he : |e| ≤ B) :
     (x + a) ^ e ≤ 2 ^ B * x ^ e := by
   have hlo : x / 2 ≤ x + a := by linarith [neg_abs_le a]
   have hhi : x + a ≤ 2 * x := by linarith [le_abs_self a]
@@ -346,7 +358,7 @@ theorem rpow_add_le {x a e B : ℝ} (hx : 0 < x) (ha : 2 * |a| ≤ x) (he : |e| 
           (Real.rpow_le_rpow_of_exponent_le (by norm_num) (by rw [abs_of_neg he0] at he; exact he))
           (Real.rpow_nonneg hx.le _)
 
-/-- Composition with a shift `x ↦ x + a`. -/
+/- Composition with a shift `x ↦ x + a`. -/
 theorem InS.comp_add {β : ℝ} {d : ℕ} {f : ℝ → ℝ} (hf : InS β d f) (a : ℝ) :
     InS β d (fun x => f (x + a)) := by
   obtain ⟨x₀, C, -, h0, hC, hs, hb⟩ := hf.exists_ge 0
@@ -366,7 +378,7 @@ theorem InS.comp_add {β : ℝ} {d : ℕ} {f : ℝ → ℝ} (hf : InS β d f) (a
     have hk0 : (0 : ℝ) ≤ k := Nat.cast_nonneg k
     rw [abs_le]; constructor <;> linarith [abs_nonneg β, le_abs_self β, neg_abs_le β]
 
-/-- Inverse: `g ∈ S_0` with `g ≥ c > 0` eventually gives `1/g ∈ S_0`. -/
+/- Inverse: `g ∈ S_0` with `g ≥ c > 0` eventually gives `1/g ∈ S_0`. -/
 theorem InS.inv {d : ℕ} : ∀ {g : ℝ → ℝ}, InS 0 d g → ∀ {c : ℝ}, 0 < c →
     (∀ᶠ x in atTop, c ≤ g x) → InS 0 d (fun x => (g x)⁻¹) := by
   induction d with
@@ -405,8 +417,8 @@ theorem InS.inv {d : ℕ} : ∀ {g : ℝ → ℝ}, InS 0 d g → ∀ {c : ℝ}, 
       have := (hgpos x hx).ne'
       field_simp
 
-/-- `|log (1 + t)| ≤ 2|t|` for `|t| ≤ 1/2`. -/
-theorem abs_log_one_add_le {t : ℝ} (ht : |t| ≤ 1 / 2) : |Real.log (1 + t)| ≤ 2 * |t| := by
+/- `|log (1 + t)| ≤ 2|t|` for `|t| ≤ 1/2`. -/
+private theorem abs_log_one_add_le {t : ℝ} (ht : |t| ≤ 1 / 2) : |Real.log (1 + t)| ≤ 2 * |t| := by
   have hy : 1 / 2 ≤ 1 + t := by linarith [neg_abs_le t]
   have hypos : 0 < 1 + t := by linarith
   have h1 := Real.one_sub_inv_le_log_of_pos hypos
@@ -421,8 +433,8 @@ theorem abs_log_one_add_le {t : ℝ} (ht : |t| ≤ 1 / 2) : |Real.log (1 + t)| �
       mul_nonneg (abs_nonneg t) (by linarith : 0 ≤ 2 - (1 + t)⁻¹)]
   · linarith [le_abs_self t, abs_nonneg t]
 
-/-- `log (1 + h) ∈ S_{−η}` for `h ∈ S_{−η}`, `η > 0`. -/
-theorem InS.log_one_add {η : ℝ} (hη : 0 < η) {d : ℕ} {h : ℝ → ℝ} (hh : InS (-η) d h) :
+/- `log (1 + h) ∈ S_{−η}` for `h ∈ S_{−η}`, `η > 0`. -/
+private theorem InS.log_one_add {η : ℝ} (hη : 0 < η) {d : ℕ} {h : ℝ → ℝ} (hh : InS (-η) d h) :
     InS (-η) d (fun x => Real.log (1 + h x)) := by
   -- `|h| ≤ 1/2` far out
   obtain ⟨x₀, C, -, h0, hC, hs, hb⟩ := hh.exists_ge 0
@@ -468,9 +480,9 @@ theorem InS.log_one_add {η : ℝ} (hη : 0 < η) {d : ℕ} {h : ℝ → ℝ} (h
 
 /-! ### Real-rootedness from a model in `S_β` -/
 
-/-- A model in `S_β`, `β ≤ 1`, with `log α(n) − Λ(n) → 0` bounds `log (α (n + 1) / α n)` below:
+/- A model in `S_β`, `β ≤ 1`, with `log α(n) − Λ(n) → 0` bounds `log (α (n + 1) / α n)` below:
 `Λ(n + 1) − Λ(n) = Λ'(ξ)` and `|Λ'(ξ)| ≤ C ξ^{β−1} ≤ C`. -/
-theorem exists_lower_log_ratio_of_InS {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
+private theorem exists_lower_log_ratio_of_InS {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n) {Λ : ℝ → ℝ} {β : ℝ} (hΛ : InS β d Λ) (hβ1 : β ≤ 1)
     (hε : Tendsto (fun n : ℕ => Real.log (α n) - Λ n) atTop (𝓝 0)) :
     ∃ c, ∀ᶠ n in atTop, -c ≤ Real.log (α (n + 1) / α n) := by
@@ -497,9 +509,10 @@ theorem exists_lower_log_ratio_of_InS {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d
   push_cast at e1 hbd
   linarith [abs_lt.1 e0, abs_lt.1 e1, abs_le.1 hbd]
 
-/-- **Real-rootedness from a model in `S_β`.** A model `Λ ∈ S_β` (order `d ≥ 1`), `0 < β ≤ 1`,
-with `Λ'' ≤ −c x^{β−2}` far out and `log α(n) − Λ(n) = o(n^{(β−2)d/2})` gives: eventually the
-degree-`d` Jensen polynomials of `α` have as many real roots, with multiplicity, as their degree. -/
+/-- **Real-rootedness from a model in `S_β`.** Let `d ≥ 1`, `0 < β ≤ 1`, `c > 0`, `α(n) > 0`
+eventually, and `Λ ∈ S_β` to order `d` with `Λ''(x) ≤ −c x^{β−2}` for large `x`. If
+`log α(n) − Λ(n) = o(n^{(β−2)d/2})`, then eventually the degree-`d` Jensen polynomials of `α` have
+as many real roots, with multiplicity, as their degree. -/
 theorem eventually_card_roots_of_InS {α : ℕ → ℝ} {d : ℕ} (hd : 1 ≤ d)
     (hα : ∀ᶠ n in atTop, 0 < α n)
     {Λ : ℝ → ℝ} {β c : ℝ} (hΛ : InS β d Λ) (hβ0 : 0 < β) (hβ1 : β ≤ 1) (hc : 0 < c)

@@ -6,10 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/BesselMain.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.SmoothClass
-public import Mathlib
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Tactic.Monotonicity.Lemmas
+import Mathlib.Tactic.Polynomial.Basic
 
 /-!
 # The Bessel-type main term is in `S_{1/2}`
@@ -46,8 +61,8 @@ namespace MetaMathlibExt.ColoredPartitionsJensen
 
 /-! ### Composition with `x ↦ κ √x` -/
 
-/-- Chain rule for `x ↦ h (κ √x)`. -/
-theorem hasDerivAt_comp_sqrt {h : ℝ → ℝ} {h' κ x : ℝ} (hx : 0 < x)
+/- Chain rule for `x ↦ h (κ √x)`. -/
+private theorem hasDerivAt_comp_sqrt {h : ℝ → ℝ} {h' κ x : ℝ} (hx : 0 < x)
     (hh : HasDerivAt h h' (κ * Real.sqrt x)) :
     HasDerivAt (fun y => h (κ * Real.sqrt y)) (h' * (κ / 2 * x ^ (-(1 / 2) : ℝ))) x := by
   have hs : HasDerivAt (fun y => κ * Real.sqrt y) (κ * (1 / (2 * Real.sqrt x))) x :=
@@ -58,8 +73,8 @@ theorem hasDerivAt_comp_sqrt {h : ℝ → ℝ} {h' κ x : ℝ} (hx : 0 < x)
   rw [Real.rpow_neg hx.le, ← Real.sqrt_eq_rpow]
   field_simp
 
-/-- Threshold for `κ √x > z₀`. -/
-theorem lt_mul_sqrt_of_gt {κ z₀ x : ℝ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀) (hx : (z₀ / κ) ^ 2 < x) :
+/- Threshold for `κ √x > z₀`. -/
+private theorem lt_mul_sqrt_of_gt {κ z₀ x : ℝ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀) (hx : (z₀ / κ) ^ 2 < x) :
     z₀ < κ * Real.sqrt x := by
   have h1 : z₀ / κ < Real.sqrt x := by
     have := Real.sqrt_lt_sqrt (sq_nonneg _) hx
@@ -67,8 +82,9 @@ theorem lt_mul_sqrt_of_gt {κ z₀ x : ℝ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀) 
   rw [div_lt_iff₀ hκ] at h1
   linarith
 
-/-- The order-`0` bound transported through `κ √x`. -/
-theorem abs_comp_sqrt_le {h : ℝ → ℝ} {γ κ z₀ C x : ℝ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀) (_hC : 0 ≤ C)
+/- The order-`0` bound transported through `κ √x`. -/
+private theorem abs_comp_sqrt_le {h : ℝ → ℝ} {γ κ z₀ C x : ℝ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀)
+    (_hC : 0 ≤ C)
     (hb : ∀ z, z₀ < z → |h z| ≤ C * z ^ γ) (hx : (z₀ / κ) ^ 2 + 1 < x) :
     |h (κ * Real.sqrt x)| ≤ C * κ ^ γ * x ^ (γ / 2) := by
   have hxpos : 0 < x := by nlinarith [sq_nonneg (z₀ / κ)]
@@ -76,8 +92,8 @@ theorem abs_comp_sqrt_le {h : ℝ → ℝ} {γ κ z₀ C x : ℝ} (hκ : 0 < κ)
   rw [Real.mul_rpow hκ.le (Real.sqrt_nonneg x), Real.sqrt_eq_rpow, ← Real.rpow_mul hxpos.le]
   ring_nf
 
-/-- Smoothness transported through `κ √x`. -/
-theorem contDiffOn_comp_sqrt {h : ℝ → ℝ} {κ z₀ : ℝ} {n : ℕ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀)
+/- Smoothness transported through `κ √x`. -/
+private theorem contDiffOn_comp_sqrt {h : ℝ → ℝ} {κ z₀ : ℝ} {n : ℕ} (hκ : 0 < κ) (hz₀ : 0 ≤ z₀)
     (hs : ContDiffOn ℝ n h (Ioi z₀)) :
     ContDiffOn ℝ n (fun x => h (κ * Real.sqrt x)) (Ioi ((z₀ / κ) ^ 2 + 1)) := by
   have hin : ContDiffOn ℝ n (fun y => κ * Real.sqrt y) (Ioi ((z₀ / κ) ^ 2 + 1)) := fun x hx => by
@@ -85,9 +101,9 @@ theorem contDiffOn_comp_sqrt {h : ℝ → ℝ} {κ z₀ : ℝ} {n : ℕ} (hκ : 
     exact (contDiffAt_const.mul (Real.contDiffAt_sqrt hxpos.ne')).contDiffWithinAt
   exact hs.comp hin fun x hx => lt_mul_sqrt_of_gt hκ hz₀ (by linarith [hx.out])
 
-/-- **Composition with `κ √x`.** `h ∈ S_γ` (in `z`, order `d`) gives `x ↦ h (κ √x) ∈ S_{γ/2}` (order
+/- **Composition with `κ √x`.** `h ∈ S_γ` (in `z`, order `d`) gives `x ↦ h (κ √x) ∈ S_{γ/2}` (order
 `d`). -/
-theorem InS.comp_sqrt {κ : ℝ} (hκ : 0 < κ) {d : ℕ} :
+private theorem InS.comp_sqrt {κ : ℝ} (hκ : 0 < κ) {d : ℕ} :
     ∀ {γ : ℝ} {h : ℝ → ℝ}, InS γ d h → InS (γ / 2) d (fun x => h (κ * Real.sqrt x)) := by
   induction d with
   | zero =>
@@ -122,15 +138,15 @@ theorem InS.comp_sqrt {κ : ℝ} (hκ : 0 < κ) {d : ℕ} :
 
 /-! ### A concavity criterion for `a √x + R` -/
 
-/-- `(x^{1/2})'' = −(1/4) x^{−3/2}`. -/
-theorem iteratedDeriv_two_sqrt_rpow {x : ℝ} :
+/- `(x^{1/2})'' = −(1/4) x^{−3/2}`. -/
+private theorem iteratedDeriv_two_sqrt_rpow {x : ℝ} :
     iteratedDeriv 2 (fun x : ℝ => x ^ (1 / 2 : ℝ)) x = -(1 / 4) * x ^ ((1 / 2 : ℝ) - 2) := by
   rw [iteratedDeriv_eq_iterate, Real.iter_deriv_rpow_const]
   norm_num [descPochhammer_succ_right]
 
-/-- **Concavity from a `√x` main term.** If `Λ = a x^{1/2} + R` on a half-line, `a > 0`, and
+/- **Concavity from a `√x` main term.** If `Λ = a x^{1/2} + R` on a half-line, `a > 0`, and
 `|R''(x)| ≤ C x^{γ−2}` there with `γ < 1/2`, then `Λ''(x) ≤ −(a/8) x^{−3/2}` far out. -/
-theorem concave_of_sqrt_main {a γ C x₀ : ℝ} (ha : 0 < a) (hγ : γ < 1 / 2) {Λ R : ℝ → ℝ}
+private theorem concave_of_sqrt_main {a γ C x₀ : ℝ} (ha : 0 < a) (hγ : γ < 1 / 2) {Λ R : ℝ → ℝ}
     (hR : ContDiffOn ℝ 2 R (Ioi x₀))
     (hRb : ∀ x, x₀ < x → |iteratedDeriv 2 R x| ≤ C * x ^ (γ - 2))
     (heq : EqOn Λ (fun x => a * x ^ (1 / 2 : ℝ) + R x) (Ioi x₀)) :
@@ -155,8 +171,8 @@ theorem concave_of_sqrt_main {a γ C x₀ : ℝ} (ha : 0 < a) (hγ : γ < 1 / 2)
   have := mul_le_mul_of_nonneg_right hsmall.le hP.le
   nlinarith
 
-/-- Concavity survives the shift `x ↦ x − s`, `s ≥ 0`. -/
-theorem concave_comp_sub {Λ : ℝ → ℝ} {c s : ℝ} (hc : 0 ≤ c) (hs : 0 ≤ s)
+/- Concavity survives the shift `x ↦ x − s`, `s ≥ 0`. -/
+private theorem concave_comp_sub {Λ : ℝ → ℝ} {c s : ℝ} (hc : 0 ≤ c) (hs : 0 ≤ s)
     (h : ∀ᶠ x in atTop, iteratedDeriv 2 Λ x ≤ -c * x ^ ((1 / 2 : ℝ) - 2)) :
     ∀ᶠ x in atTop, iteratedDeriv 2 (fun x => Λ (x - s)) x ≤ -c * x ^ ((1 / 2 : ℝ) - 2) := by
   obtain ⟨b, hb⟩ := eventually_atTop.1 h
@@ -201,8 +217,8 @@ theorem bW_le (ha : 0 ≤ a) {s : ℝ} (hs : s ∈ Icc (0 : ℝ) 2) : bW a s ≤
     (Real.rpow_le_rpow (by linarith [hs.2]) (by linarith [hs.1]) ha)
     (Real.rpow_nonneg (by linarith [hs.2]) _) (Real.rpow_nonneg (by norm_num) _)
 
-/-- Differentiation under the integral sign for `z ↦ ∫_0^2 g(s) e^{−zs} ds`. -/
-theorem hasDerivAt_laplace {g : ℝ → ℝ} (hg : Continuous g) {G : ℝ}
+/- Differentiation under the integral sign for `z ↦ ∫_0^2 g(s) e^{−zs} ds`. -/
+private theorem hasDerivAt_laplace {g : ℝ → ℝ} (hg : Continuous g) {G : ℝ}
     (hG : ∀ s ∈ Icc (0 : ℝ) 2, |g s| ≤ G) (z₀ : ℝ) :
     HasDerivAt (fun z => ∫ s in (0 : ℝ)..2, g s * Real.exp (-(z * s)))
       (∫ s in (0 : ℝ)..2, -(s * g s * Real.exp (-(z₀ * s)))) z₀ := by
@@ -272,8 +288,8 @@ theorem hasDerivAt_bM (ha : 0 ≤ a) (j : ℕ) (z : ℝ) :
   field_simp
   ring
 
-/-- `s^j e^{−zs} (z/2)^j ≤ j! e^{−(z/2)s}` for `s, z ≥ 0`. -/
-theorem pow_mul_exp_le {j : ℕ} {s z : ℝ} (hs : 0 ≤ s) (hz : 0 ≤ z) :
+/- `s^j e^{−zs} (z/2)^j ≤ j! e^{−(z/2)s}` for `s, z ≥ 0`. -/
+private theorem pow_mul_exp_le {j : ℕ} {s z : ℝ} (hs : 0 ≤ s) (hz : 0 ≤ z) :
     (z / 2) ^ j * (s ^ j * Real.exp (-(z * s))) ≤ j ! * Real.exp (-(z / 2 * s)) := by
   have h := Real.pow_div_factorial_le_exp (z / 2 * s) (by positivity) j
   have hf : (0 : ℝ) < j ! := by exact_mod_cast Nat.factorial_pos j
@@ -288,8 +304,8 @@ theorem pow_mul_exp_le {j : ℕ} {s z : ℝ} (hs : 0 ≤ s) (hz : 0 ≤ z) :
     _ = j ! * Real.exp (-(z / 2 * s)) := by
         rw [mul_comm (Real.exp _) (j ! : ℝ), mul_assoc (j ! : ℝ), ← Real.exp_add]; simp
 
-/-- Step A of the moment bound: `(z/2)^j N_j(z) ≤ j! N_0(z/2)`. -/
-theorem bN_le_bN_half (ha : 0 ≤ a) (j : ℕ) {z : ℝ} (hz : 0 ≤ z) :
+/- Step A of the moment bound: `(z/2)^j N_j(z) ≤ j! N_0(z/2)`. -/
+private theorem bN_le_bN_half (ha : 0 ≤ a) (j : ℕ) {z : ℝ} (hz : 0 ≤ z) :
     (z / 2) ^ j * bN a j z ≤ j ! * bN a 0 (z / 2) := by
   unfold bN
   rw [← intervalIntegral.integral_const_mul, ← intervalIntegral.integral_const_mul]
@@ -303,8 +319,8 @@ theorem bN_le_bN_half (ha : 0 ≤ a) (j : ℕ) {z : ℝ} (hz : 0 ≤ z) :
     _ ≤ j ! * Real.exp (-(z / 2 * s)) * bW a s := this
     _ = j ! * ((s ^ 0 * bW a s) * Real.exp (-(z / 2 * s))) := by ring
 
-/-- `bW(2u) ≤ 4^a bW(u)` on `[0, 1]`. -/
-theorem bW_two_mul_le (ha : 0 ≤ a) {u : ℝ} (hu : u ∈ Icc (0 : ℝ) 1) :
+/- `bW(2u) ≤ 4^a bW(u)` on `[0, 1]`. -/
+private theorem bW_two_mul_le (ha : 0 ≤ a) {u : ℝ} (hu : u ∈ Icc (0 : ℝ) 1) :
     bW a (2 * u) ≤ 2 ^ a * 2 ^ a * bW a u := by
   unfold bW
   rw [Real.mul_rpow (by norm_num) hu.1, show 2 - 2 * u = 2 * (1 - u) by ring,
@@ -318,8 +334,8 @@ theorem bW_two_mul_le (ha : 0 ≤ a) {u : ℝ} (hu : u ∈ Icc (0 : ℝ) 1) :
     _ ≤ 2 ^ a * 2 ^ a * u ^ a * (2 - u) ^ a := mul_le_mul_of_nonneg_left h1 h2
     _ = 2 ^ a * 2 ^ a * (u ^ a * (2 - u) ^ a) := by ring
 
-/-- Step B, the doubling bound: `N_0(z/2) ≤ 2·4^a N_0(z)` for `z ≥ 0`. -/
-theorem bN_half_le (ha : 0 ≤ a) {z : ℝ} (_hz : 0 ≤ z) :
+/- Step B, the doubling bound: `N_0(z/2) ≤ 2·4^a N_0(z)` for `z ≥ 0`. -/
+private theorem bN_half_le (ha : 0 ≤ a) {z : ℝ} (_hz : 0 ≤ z) :
     bN a 0 (z / 2) ≤ 2 * (2 ^ a * 2 ^ a) * bN a 0 z := by
   set D : ℝ := 2 ^ a * 2 ^ a with hD
   have hD0 : 0 ≤ D := mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.rpow_nonneg (by
@@ -353,8 +369,9 @@ noncomputable def bK (a : ℝ) (j : ℕ) : ℝ := j ! * 2 ^ j * (2 * (2 ^ a * 2 
 
 theorem bM_nonneg (j : ℕ) (z : ℝ) : 0 ≤ bM a j z := div_nonneg (bN_nonneg j z) (bN_nonneg 0 z)
 
-/-- **The moment bound** `M_j(z) ≤ K_j z^{−j}`, `z > 0`. -/
-theorem bM_le (ha : 0 ≤ a) (j : ℕ) {z : ℝ} (hz : 0 < z) : bM a j z ≤ bK a j * z ^ (-(j : ℝ)) := by
+/- **The moment bound** `M_j(z) ≤ K_j z^{−j}`, `z > 0`. -/
+private theorem bM_le (ha : 0 ≤ a) (j : ℕ) {z : ℝ} (hz : 0 < z) : bM a j z ≤ bK a j * z ^
+    (-(j : ℝ)) := by
   have h0 := bN_zero_pos ha z
   have hD0 : 0 ≤ (2 : ℝ) ^ a * 2 ^ a :=
     mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.rpow_nonneg (by norm_num) _)
@@ -375,9 +392,9 @@ theorem bM_le (ha : 0 ≤ a) (j : ℕ) {z : ℝ} (hz : 0 < z) : bM a j z ≤ bK 
         mul_le_mul_of_nonneg_right key (inv_nonneg.2 hzj.le)
     _ = _ := by ring
 
-/-- **`M_j ∈ S_{−j}`, to every order.** By induction on the order, from `M_j' = M_j M_1 − M_{j+1}`.
+/- **`M_j ∈ S_{−j}`, to every order.** By induction on the order, from `M_j' = M_j M_1 − M_{j+1}`.
 -/
-theorem inS_bM (ha : 0 ≤ a) : ∀ (d j : ℕ), InS (-(j : ℝ)) d (bM a j) := by
+private theorem inS_bM (ha : 0 ≤ a) : ∀ (d j : ℕ), InS (-(j : ℝ)) d (bM a j) := by
   intro d
   induction d with
   | zero =>
@@ -400,7 +417,7 @@ theorem inS_bM (ha : 0 ≤ a) : ∀ (d j : ℕ), InS (-(j : ℝ)) d (bM a j) := 
       (fun x hx => by rw [abs_of_nonneg (bM_nonneg j x)]; exact bM_le ha j hx) ?_
     exact (hprod.sub hnext).congr (a := 0) fun x _ => (hasDerivAt_bM ha j x).deriv.symm
 
-/-- `besselInt a z = e^z N_0(z)` (substitute `t = 1 − s`). -/
+/-- For `a ≥ 0`: `besselInt a z = e^z N_0(z)` (substitute `t = 1 − s`). -/
 theorem besselInt_eq (_ha : 0 ≤ a) (z : ℝ) : besselInt a z = Real.exp z * bN a 0 z := by
   unfold besselInt bN
   have h := intervalIntegral.integral_comp_sub_left
@@ -440,8 +457,9 @@ theorem le_bN_zero (ha : 0 ≤ a) {z : ℝ} (hz : 0 ≤ z) :
   simp only [zero_mul, neg_zero, Real.exp_zero, mul_one]
   nlinarith
 
-/-- **`log besselInt ∈ S_1` in `z`**, to every order. -/
-theorem inS_logBesselInt (ha : 0 ≤ a) (d : ℕ) : InS 1 d (fun z => Real.log (besselInt a z)) := by
+/- **`log besselInt ∈ S_1` in `z`**, to every order. -/
+private theorem inS_logBesselInt (ha : 0 ≤ a) (d : ℕ) : InS 1 d (fun z => Real.log (besselInt a z))
+    := by
   set L := Real.log (bN a 0 0) with hL
   have hder : ∀ z, HasDerivAt (fun z => z + Real.log (bN a 0 z)) (1 - bM a 1 z) z := fun z =>
     ((hasDerivAt_id' z).add ((hasDerivAt_bN ha 0 z).log (bN_zero_pos ha z).ne')).congr_deriv
@@ -471,13 +489,13 @@ end Moments
 /-- The main-term model `x ↦ log ∫_{−1}^{1} (1 − t²)^a e^{κ √x t} dt`. -/
 noncomputable def besselModel (a κ x : ℝ) : ℝ := Real.log (besselInt a (κ * Real.sqrt x))
 
-/-- **`besselModel ∈ S_{1/2}`**, to every order. -/
-theorem inS_besselModel {a κ : ℝ} (ha : 0 ≤ a) (hκ : 0 < κ) (d : ℕ) :
+/- **`besselModel ∈ S_{1/2}`**, to every order. -/
+private theorem inS_besselModel {a κ : ℝ} (ha : 0 ≤ a) (hκ : 0 < κ) (d : ℕ) :
     InS (1 / 2) d (besselModel a κ) :=
   ((inS_logBesselInt ha d).comp_sqrt hκ).congr (a := 0) fun _ _ => rfl
 
-/-- **Concavity:** `besselModel'' ≤ −(κ/8) x^{−3/2}` far out. -/
-theorem besselModel_concave {a κ : ℝ} (ha : 0 ≤ a) (hκ : 0 < κ) :
+/- **Concavity:** `besselModel'' ≤ −(κ/8) x^{−3/2}` far out. -/
+private theorem besselModel_concave {a κ : ℝ} (ha : 0 ≤ a) (hκ : 0 < κ) :
     ∀ᶠ x in atTop, iteratedDeriv 2 (besselModel a κ) x ≤ -(κ / 8) * x ^ ((1 / 2 : ℝ) - 2) := by
   set R : ℝ → ℝ := fun x => Real.log (bN a 0 (κ * Real.sqrt x)) with hR
   have hL0 : ∀ z, HasDerivAt (fun z => Real.log (bN a 0 z)) (-1 * bM a 1 z) z := fun z =>
@@ -530,9 +548,9 @@ theorem coloredModel_concave {r : ℕ} (hr : 1 ≤ r) :
   concave_comp_sub (by linarith [coloredKappa_pos hr]) (by positivity)
     (besselModel_concave (a := ((r : ℝ) + 1) / 2) (by positivity) (coloredKappa_pos hr))
 
-/-- If `log α(n) = c + coloredModel r n + o(n^{−3d/4})` and `α > 0` eventually, then eventually
-the degree-`d` Jensen polynomials of `α` have as many real roots, with multiplicity, as their
-degree (`d ≥ 1`). -/
+/-- Let `r ≥ 1` and `d ≥ 1`. If `α > 0` eventually and
+`log α(n) = c + coloredModel r n + o(n^{−3d/4})`, then eventually the degree-`d` Jensen polynomials
+of `α` have as many real roots, with multiplicity, as their degree. -/
 theorem eventually_card_roots_of_coloredModel {r : ℕ} (hr : 1 ≤ r) {α : ℕ → ℝ} {d : ℕ}
     (hd : 1 ≤ d) {c : ℝ} (hα : ∀ᶠ n in atTop, 0 < α n)
     (hε : (fun n : ℕ => Real.log (α n) - (c + coloredModel r n)) =o[atTop]

@@ -6,10 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/MajorArc.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.CircleMethod
 public import MathlibExt.Combinatorics.Enumerative.ColoredPartitionsJensen.BesselMain
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 
 /-!
 # The Bessel series behind the major arc
@@ -61,8 +72,8 @@ def bTt (s w : ℝ) (k : ℕ) : ℝ := w ^ k / k ! * (Real.Gamma (s + k))⁻¹
 /-- `bT s w = ∑_k w^k / (k! Γ(s+k))`. -/
 def bT (s w : ℝ) : ℝ := ∑' k, bTt s w k
 
-/-- `x / Γ(x+1) = 1/Γ(x)` for every real `x` (both sides vanish at the poles). -/
-theorem div_Gamma_add_one (x : ℝ) : x * (Real.Gamma (x + 1))⁻¹ = (Real.Gamma x)⁻¹ := by
+/- `x / Γ(x+1) = 1/Γ(x)` for every real `x` (both sides vanish at the poles). -/
+private theorem div_Gamma_add_one (x : ℝ) : x * (Real.Gamma (x + 1))⁻¹ = (Real.Gamma x)⁻¹ := by
   rcases eq_or_ne x 0 with rfl | hx
   · simp [Real.Gamma_zero]
   · rw [Real.Gamma_add_one hx, ← div_eq_mul_inv, div_mul_cancel_left₀ hx]
@@ -165,9 +176,9 @@ theorem intervalIntegrable_bMom (ha : 0 ≤ a) (n : ℕ) :
     IntervalIntegrable (fun t : ℝ => (1 - t ^ 2) ^ a * t ^ n) volume (-1) 1 :=
   ((continuous_bWt ha).mul (continuous_pow n)).intervalIntegrable _ _
 
-/-- **Moment recurrence** `M_{k+1}(a) (2a + 2k + 3) = (2k + 1) M_k(a)` (one integration by parts).
+/- **Moment recurrence** `M_{k+1}(a) (2a + 2k + 3) = (2k + 1) M_k(a)` (one integration by parts).
 -/
-theorem bMom_succ (ha : 0 ≤ a) (k : ℕ) :
+private theorem bMom_succ (ha : 0 ≤ a) (k : ℕ) :
     bMom a (k + 1) * (2 * a + 2 * k + 3) = (2 * k + 1) * bMom a k := by
   have ha1 : 0 < a + 1 := by linarith
   have hsplit : ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ (a + 1) * t ^ (2 * k) = bMom a k - bMom a (k +
@@ -222,8 +233,8 @@ theorem bMom_zero_pos (ha : 0 ≤ a) : 0 < bMom a 0 := by
   simp only [mul_zero, pow_zero, mul_one]
   exact Real.rpow_pos_of_pos (by nlinarith [ht.1, ht.2]) _
 
-/-- Closed form `M_k(a) · 4^k k! Γ(a+3/2+k) = M₀(a) Γ(a+3/2) (2k)!`. -/
-theorem bMom_closed (ha : 0 ≤ a) (k : ℕ) :
+/- Closed form `M_k(a) · 4^k k! Γ(a+3/2+k) = M₀(a) Γ(a+3/2) (2k)!`. -/
+private theorem bMom_closed (ha : 0 ≤ a) (k : ℕ) :
     bMom a k * (4 ^ k * k ! * Real.Gamma (a + 3 / 2 + k)) = bMom a 0 * Real.Gamma (a + 3 / 2) * (2
         * k) ! := by
   induction k with
@@ -240,8 +251,8 @@ theorem bMom_closed (ha : 0 ≤ a) (k : ℕ) :
     linear_combination (2 * 4 ^ k * (k + 1) * k ! * Real.Gamma (a + 3 / 2 + k)) * hs +
       (2 * (k + 1) * (2 * k + 1)) * ih
 
-/-- Termwise expansion of `e^{zt}`: `besselInt a z = ∑_n z^n/n! ∫ (1−t²)^a t^n`. -/
-theorem hasSum_besselInt_all (ha : 0 ≤ a) (z : ℝ) :
+/- Termwise expansion of `e^{zt}`: `besselInt a z = ∑_n z^n/n! ∫ (1−t²)^a t^n`. -/
+private theorem hasSum_besselInt_all (ha : 0 ≤ a) (z : ℝ) :
     HasSum (fun n : ℕ => z ^ n / n ! * ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ a * t ^ n) (besselInt a
         z) := by
   have key := intervalIntegral.hasSum_integral_of_dominated_convergence (μ := volume) (a := -1) (b
@@ -281,8 +292,8 @@ theorem bMom_odd (k : ℕ) : ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ a * t ^ (2 * 
   simp only [hf, neg_neg, intervalIntegral.integral_neg] at h
   linarith
 
-/-- **Positive representation**: `besselInt a z = M₀(a) Γ(a+3/2) bT (a+3/2) (z²/4)`. -/
-theorem besselInt_eq_bT (ha : 0 ≤ a) (z : ℝ) :
+/- **Positive representation**: `besselInt a z = M₀(a) Γ(a+3/2) bT (a+3/2) (z²/4)`. -/
+private theorem besselInt_eq_bT (ha : 0 ≤ a) (z : ℝ) :
     besselInt a z = bMom a 0 * Real.Gamma (a + 3 / 2) * bT (a + 3 / 2) (z ^ 2 / 4) := by
   have h := hasSum_besselInt_all ha z
   have h2 : HasSum (fun k : ℕ => z ^ (2 * k) / (2 * k) ! * bMom a k) (besselInt a z) := by
@@ -419,9 +430,8 @@ theorem abs_bH_half_le {w : ℝ} (hw : 1 ≤ w) (n : ℕ) :
       calc |bH (n + 1 / 2) w| ≤ (n + 1)! * (w + 1) ^ n * E := ih.1
         _ ≤ (n + 1)! * (w + 1) ^ (n + 1) * E := by gcongr
 
-/-- **Reflection bound** at the order the major arc needs:
-`|bH (r/2 + 1) w| ≤ (r+2)! (w+1)^{r+1} e^{−2√w}`
-(`= 0` for even `r`). -/
+/-- **Reflection bound** at the order the major arc needs: for `w ≥ 1`,
+`|bH (r/2 + 1) w| ≤ (r+2)! (w+1)^{r+1} e^{−2√w}`. -/
 theorem abs_bH_le (r : ℕ) {w : ℝ} (hw : 1 ≤ w) :
     |bH ((r : ℝ) / 2 + 1) w| ≤ (r + 2)! * (w + 1) ^ (r + 1) * Real.exp (-(2 * √w)) := by
   have hw0 : 0 < w := by linarith
@@ -436,7 +446,8 @@ theorem abs_bH_le (r : ℕ) {w : ℝ} (hw : 1 ≤ w) :
     have hp : (w + 1) ^ (k + 1) ≤ (w + 1) ^ (2 * k + 1 + 1) := pow_le_pow_right₀ hw1 (by omega)
     gcongr
 
-/-- **The major-arc series at `s = −r/2`** is the `BesselMain` model plus the reflection defect:
+/-- **The major-arc series at `s = −r/2`** is the `BesselMain` model plus the reflection defect: for
+`w > 0`,
 `bT (−r/2) w = w^{r/2+1} besselInt ((r+1)/2) (2√w) / (M₀ Γ(r/2+2)) + bH (r/2+1) w`. -/
 theorem bT_neg_half_eq (r : ℕ) {w : ℝ} (hw : 0 < w) :
     bT (-((r : ℝ) / 2)) w = w ^ ((r : ℝ) / 2 + 1) * besselInt (((r : ℝ) + 1) / 2) (2 * √w) /
@@ -452,7 +463,7 @@ theorem bT_neg_half_eq (r : ℕ) {w : ℝ} (hw : 0 < w) :
   field_simp
   ring
 
-/-- Lower bound `besselInt a z ≥ e^{z−1} z^{−(a+1)} / (a+1)` for `z ≥ 1`. -/
+/-- Lower bound `besselInt a z ≥ e^{z−1} z^{−(a+1)} / (a+1)` for `a ≥ 0` and `z ≥ 1`. -/
 theorem le_besselInt {a z : ℝ} (ha : 0 ≤ a) (hz : 1 ≤ z) :
     Real.exp (z - 1) * (z⁻¹ ^ (a + 1) / (a + 1)) ≤ besselInt a z := by
   have hz0 : 0 < z := by linarith
