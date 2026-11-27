@@ -1403,12 +1403,12 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
     `Code/Walls/bptpartitioncount.lean`, `Code/Walls/briraysintree.lean`,
     `Code/Walls/bscsupercut.lean`, `Code/Walls/bsdsepdegree.lean`, `Code/Walls/bsgspantreegn.lean`,
     `Code/Walls/bskspanningtree.lean`, `Code/Walls/btrtrifnotion.lean`, `Code/Walls/bxpxpos.lean`.
-  Eighty ported declarations were retired inside their modules in favour of declarations already in
-  the root libraries or in Mathlib, or in another ported module; their users call the replacement
-  instead (except where an entry says otherwise), and statements that mentioned a retired definition
-  now mention its replacement. Unlike other declarations deleted inside surviving modules (last item
-  below), they are listed here, grouped by how the replacement relates to the original; the
-  pull-request description lists them too (original → replacement):
+  Eighty-five ported declarations were retired inside their modules in favour of declarations
+  already in the root libraries or in Mathlib, or in another ported module; their users call the
+  replacement instead (except where an entry says otherwise), and statements that mentioned a
+  retired definition now mention its replacement. Unlike other declarations deleted inside surviving
+  modules (last item below), they are listed here, grouped by how the replacement relates to the
+  original; the pull-request description lists them too (original → replacement):
   - Same full type up to definitional equality (for definitions and instances, also a definitionally
     equal value):
     - `StatMech.FK.feu_wiredIV_isErgodic` (from `Code/FK/FKLimitsErgodicUncond.lean`, in
@@ -1682,7 +1682,26 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
       `SimpleGraph.deleteIncidenceSet` (in `Mathlib.Combinatorics.SimpleGraph.DeleteEdges`), the
       same graph: its adjacency is `G.Adj x y ∧ x ≠ v ∧ y ≠ v` by
       `SimpleGraph.deleteIncidenceSet_adj`; `kwg_minimalEven_nonOuter_reachable` and
-      `kwg_minimalEvenFinset_nonOuter_reachable` are now stated with it.
+      `kwg_minimalEvenFinset_nonOuter_reachable` are now stated with it;
+    - `StatMech.Walls.bc89_GenuineTrif` (from `Code/Walls/bc89genuinetrifae.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure`) →
+      `MathlibExt.Probability.Percolation.BurtonKeaneWanted.IsEncounterPoint` (in
+      `MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount`), equal to it as a predicate
+      (by function and propositional extensionality) but not definitionally: its extra clause, that
+      each of the three neighbours differs from `x`, follows from adjacency; the lemmas
+      `StatMech.Walls.bc90_genuineTrif_iff_canonical` and
+      `StatMech.Walls.bc90_canonical_of_genuineTrif` (from `Code/Walls/bc90boxopenforest.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineBoxOpenForest`) were removed
+      with it and have no replacement: once it is replaced they state `A ↔ A` and `A → A`, and the
+      two uses of the second now pass the hypothesis directly;
+    - `StatMech.Walls.bc89_genuineTrifFinset` and `StatMech.Walls.bc89_genuineTcount` (from
+      `Code/Walls/bc89genuinetrifae.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure`) →
+      `StatMech.Walls.bc48_classicalTrifFinset` and `StatMech.Walls.bc48_Tcount_classical` (from
+      `Code/Walls/bc48classical.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifCount`), the same
+      finset, by `Finset.filter_congr` from that equality, and the same count, by congruence of
+      `card`; neither is definitionally equal, and `bc48_Tcount_classical` takes `d` explicitly.
 - `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` (second round). The ported
   capstone's hypothesis unfolded to its advertised box-crossing conclusion, so it proved nothing
   beyond assuming the result; the module was removed during cleanup. The underlying RSW
