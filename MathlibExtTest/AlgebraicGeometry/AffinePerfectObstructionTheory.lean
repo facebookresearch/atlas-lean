@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.DualNumber
+import Mathlib.Algebra.TrivSqZeroExt.Ideal
 import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheory
+import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheoryPolynomialLiftIndependence
 
 set_option autoImplicit false
 
@@ -189,6 +192,71 @@ example : (affineComplex (polyResolution k)).d (-((1 + 1 : ℕ) : ℤ)) (-((1 : 
       (polyModule k).δ 0 - (polyModule k).δ 1 + (polyModule k).δ 2 := by
     simp [AlternatingFaceMapComplex.objD, Fin.sum_univ_three, sub_eq_add_neg]
   erw [h, poly_δ_eq k 1 2 1, sub_add_cancel]
+
+/-! Independence of the obstruction class from the polynomial lift, on the dual numbers over
+`k[X]`. -/
+
+open WantedExt.AlgebraicGeometry.AffinePerfectObstructionTheoryWanted
+
+/-- The dual numbers over `k[X]` as a square-zero extension of `k[X]`. -/
+noncomputable abbrev dualExtension : Algebra.Extension.{0} k (MvPolynomial (Fin 1) k) :=
+  Algebra.Extension.ofSurjective
+    (TrivSqZeroExt.fstHom k (MvPolynomial (Fin 1) k) (MvPolynomial (Fin 1) k))
+    TrivSqZeroExt.fst_surjective
+
+theorem dualExtension_ker_sq : (dualExtension k).ker ^ 2 = ⊥ :=
+  TrivSqZeroExt.kerIdeal_sq _ _
+
+/-- The algebra map `k[X] → k[X][ε]` sending `X` to `X + c ε`. -/
+noncomputable def dualHom (c : MvPolynomial (Fin 1) k) :
+    MvPolynomial (Fin 1) k →ₐ[k] DualNumber (MvPolynomial (Fin 1) k) :=
+  MvPolynomial.aeval fun _ => TrivSqZeroExt.inl (MvPolynomial.X 0) + c • DualNumber.eps
+
+theorem dualHom_X (c : MvPolynomial (Fin 1) k) :
+    dualHom k c (MvPolynomial.X 0) = TrivSqZeroExt.inl (MvPolynomial.X 0) + c • DualNumber.eps :=
+  MvPolynomial.aeval_X _ _
+
+/-- The lift of `polyResolution` sending `X` to `X + c ε`. -/
+noncomputable def dualLift (c : MvPolynomial (Fin 1) k) :
+    PolynomialLift (polyResolution k) (dualExtension k) where
+  hom := dualHom k c
+  over := MvPolynomial.algHom_ext fun i => by
+    obtain rfl := Subsingleton.elim i 0
+    change TrivSqZeroExt.fst (dualHom k c (MvPolynomial.X 0)) = MvPolynomial.X 0
+    simp [dualHom_X]
+
+/-- The lifts `X ↦ X` and `X ↦ X + ε` are distinct. -/
+theorem dualLift_ne : dualLift k 0 ≠ dualLift k 1 := by
+  intro h
+  have hX : TrivSqZeroExt.snd (dualHom k 0 (MvPolynomial.X 0)) =
+      TrivSqZeroExt.snd (dualHom k 1 (MvPolynomial.X 0)) :=
+    congrArg (fun L : PolynomialLift (polyResolution k) (dualExtension k) =>
+      TrivSqZeroExt.snd (L.hom (MvPolynomial.X 0))) h
+  simp [dualHom_X] at hX
+
+/-- The witness `ε ≠ 0` lies in the kernel, so the extension is not trivial. -/
+example : (dualExtension k).ker ≠ ⊥ := by
+  intro h
+  have hε : (DualNumber.eps : DualNumber (MvPolynomial (Fin 1) k)) ∈ (dualExtension k).ker :=
+    RingHom.mem_ker.mpr DualNumber.fst_eps
+  rw [h] at hε
+  have h0 : (DualNumber.eps : DualNumber (MvPolynomial (Fin 1) k)) = 0 := Ideal.mem_bot.mp hε
+  exact one_ne_zero (α := MvPolynomial (Fin 1) k) (by simpa using congrArg TrivSqZeroExt.snd h0)
+
+/-- The obstruction class is independent of the lift on dual numbers over `k[X]`. -/
+example (T : PerfectObstructionTheory (polyResolution k))
+    (C : CotangentExtensionCocycle (polyResolution k) (dualExtension k) (dualLift k 0))
+    (C' : CotangentExtensionCocycle (polyResolution k) (dualExtension k) (dualLift k 1)) :
+    obstructionClass T C = obstructionClass T C' :=
+  polynomial_lift_independence _ T _ (dualExtension_ker_sq k) _ _ C C'
+
+/-- Vanishing of the obstruction class transfers across polynomial lifts. -/
+theorem vanishing_transfer (T : PerfectObstructionTheory (polyResolution k))
+    (C : CotangentExtensionCocycle (polyResolution k) (dualExtension k) (dualLift k 0))
+    (C' : CotangentExtensionCocycle (polyResolution k) (dualExtension k) (dualLift k 1))
+    (h : obstructionClass T C = 0) : obstructionClass T C' = 0 := by
+  rw [← polynomial_lift_independence _ T _ (dualExtension_ker_sq k) _ _ C C']
+  exact h
 
 end Polynomial
 

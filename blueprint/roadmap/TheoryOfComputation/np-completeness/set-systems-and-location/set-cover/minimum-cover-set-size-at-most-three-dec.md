@@ -1,0 +1,3 @@
+# The decision problem MINIMUM COVER with sets of size at most 3
+
+MINIMUM COVER with sets of size at most 3 as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for MINIMUM COVER with sets of size at most 3](well-formed-2.md) (a well-formed SET COVER instance in which every listed set has at most three elements and $0 < K \le$ the number of listed sets) and feasible for SET COVER. The feasibility test is the unrestricted problem's; the restriction to MINIMUM COVER with sets of size at most 3 comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.
