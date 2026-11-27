@@ -19,7 +19,7 @@ The same law describes $M_n$, the total size of the blocks not containing $1$ th
 ## Depends on
 
 - [Merger rates of the Bolthausen–Sznitman coalescent](../../coalescents/merger-rate-volume.md)
-- [Ewens sampling formula and the Chinese restaurant process](../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/README.md)
+- [The allelic partition of the Chinese restaurant process follows the Ewens sampling formula](../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/crp-map-block-sizes.md)
 
 ## Expansion
 

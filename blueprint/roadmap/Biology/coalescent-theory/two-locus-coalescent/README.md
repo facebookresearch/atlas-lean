@@ -73,3 +73,5 @@
 - [Asymptotic sampling distributions under strong recombination](asymptotic-sampling-distributions-under-strong-recombination/README.md)
 - [Gaussian diffusion and coalescent for weakly linked loci](gaussian-diffusion-and-coalescent-for-weakly-linked-loci/README.md)
 - [Moment duality of the two-locus Wright–Fisher diffusion](moment-duality-of-the-two-locus-wright-fisher-diffusion/README.md)
+## Identity by descent along the genome
+- [Central limit theorems for detectable IBD rates](central-limit-theorems-for-detectable-ibd-rates/README.md)

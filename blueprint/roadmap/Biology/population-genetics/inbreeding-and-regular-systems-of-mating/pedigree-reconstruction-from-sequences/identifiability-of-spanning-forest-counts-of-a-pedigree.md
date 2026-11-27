@@ -16,10 +16,6 @@ the sum running over isomorphism classes of undirected $X$-forests of $P$; in pa
 
 In particular, the non-reconstructible pedigree pairs constructed in Thatte (2008), *SIAM Journal on Discrete Mathematics* 22, that are not distinguished by their collections of extant subpedigrees are distinguished from the alignment distribution under RM (Thatte Corollary 5.15), although equal $X$-forest counts alone do not distinguish all pedigree pairs.
 
-## Depends on
-
-- [Pedigree kinship and inbreeding](../../../quantitative-genetics/pedigree-kinship-and-inbreeding/README.md)
-
 ## Expansion
 
 Along the sequence, the vector of parental choices at all non-founder vertices is a Markov chain on spanning forests, each vertex switching parent with probability $p$ between adjacent sites; given the spanning forest at a site, the extant column is distributed as Model M on its $X$-forest. Hence the alignment is a hidden Markov model with hidden states the spanning forests, and item 1 is its stationary one-site marginal, every spanning forest having probability $2^{-e}$. Item 2 is a phylogenetic identifiability statement for the symmetric mutation model on forests. For item 3, when $p$ is small long runs of sites share one spanning forest; concatenations of long blocks, each typical for a given forest $T_i$, have probabilities whose leading term in $p$ is $n(\mathbf G > \mathbf T : P)$ times a factor depending only on $\mathbf T$, $\mu$ and block lengths, and the consistency of forest classification from block frequencies separates these terms.

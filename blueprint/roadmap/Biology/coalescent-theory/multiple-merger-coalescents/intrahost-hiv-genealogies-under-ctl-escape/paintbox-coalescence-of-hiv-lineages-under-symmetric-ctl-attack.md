@@ -14,10 +14,6 @@ $$\lim_{\mathrm{SPL}}\mathbb P\big(\Pi(0) = \Delta\big) = \mathbb P\Big(\Big(\pr
 
 where $\Pi(T_{\mathrm{sample}})$ is the partition into singletons and the product denotes successive application of independent paintboxes (blocks painted the same color are merged): going backwards in time, lineages are merged by one paintbox per escape sweep (the color of a lineage being the escape mutation event founding its subclone). An analogous statement, with modified paintboxes $\Xi_{A,i}$ that account for interactions between the variants within a class, holds for the full escape graph.
 
-## Depends on
-
-- [Luria–Delbrück distribution](../../../population-genetics/luria-delbr-ck-distribution/README.md)
-
 ## Expansion
 
 In the SPL the dynamics are a sequence of sweeps: while class $\mathcal E_{i-2}$ dominates, class $\mathcal E_{i-1}$ grows at relative rate $\Delta k$ and spawns $\mathcal E_i$ variants by rare mutations, which grow at relative rate $2\Delta k$ (they escape one more epitope). This is a generalized Luria–Delbrück phase. The mutations founding the next class arrive as a Poisson process, each one survives initial stochastic loss with probability about $2\Delta k/k_i$ (the Bernoulli factor), and its descendant number at the end of the phase is proportional to $e^{2W_1}W_2$ from the random arrival time and branching-process growth; $\mu^3\mathbb E^2\to0$ prevents a spawned variant from itself spawning within the same phase. Sampled cells of the next class pick their founding mutation with probability proportional to its share of descendants, which is the paintbox, and concatenating phases gives the product formula; the $O(1/A)$ term controls the contribution of mutation events beyond a large typical number.
