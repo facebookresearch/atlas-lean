@@ -10,3 +10,4 @@ Absolute heights of algebraic numbers, Mahler measure, Lehmer's problem, Dobrowo
 - [Pisot numbers](pisot-numbers/README.md)
 - [Schur–Siegel–Smyth trace problem](schur-siegel-smyth-trace-problem/README.md)
 - [Dimitrov's lower bound for the house of an algebraic integer](dimitrov.md)
+- [ℓ²-height of a point of projective space](l2-height-of-projective-points.md)
