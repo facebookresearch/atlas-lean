@@ -10,6 +10,7 @@ The same authors proved earlier (LICS 2015) that the unrestricted version, with 
 
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -7,6 +7,9 @@ No algorithm semi-decides whether one core spanner representation defines a span
 ## Depends on
 
 - [Core spanners](core-spanners.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

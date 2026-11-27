@@ -9,6 +9,7 @@ The source states the theorem for a level $i$ without a lower bound; its proof u
 ## Depends on
 
 - [Regular expressions with binding and nesting levels](regular-expressions-with-binding-and-levels.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

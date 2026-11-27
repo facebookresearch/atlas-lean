@@ -12,6 +12,9 @@ All of this holds already for inputs from $\mathrm{RGX}^{\{\pi, \zeta^{=}, \cup\
 ## Depends on
 
 - [Core spanners](core-spanners.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

@@ -11,6 +11,7 @@ Base inclusion dependencies, whose body atom is a base relation, would make the 
 - [Syntax of an inclusion dependency](../dependencies-and-the-chase/ind.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Query answering with transitive relations, transitive closure and linear orders](query-answering-over-transitive-and-ordered-data.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

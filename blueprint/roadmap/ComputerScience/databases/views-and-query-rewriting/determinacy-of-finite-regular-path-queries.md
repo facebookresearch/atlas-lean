@@ -17,7 +17,8 @@ The reduction produces only acyclic structures, so the result holds under the si
 ## Depends on
 
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
-- [Graph databases and regular path queries](../datalog/graph-databases-and-regular-path-queries.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Proof depends on
 

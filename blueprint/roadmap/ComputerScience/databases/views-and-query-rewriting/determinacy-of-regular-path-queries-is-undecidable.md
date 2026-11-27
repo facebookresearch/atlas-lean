@@ -13,6 +13,9 @@ Undecidability had previously been known only when $Q_0$ may be context-free. De
 - [Graph databases and regular path queries](../datalog/graph-databases-and-regular-path-queries.md)
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
 - [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +27,4 @@ The reduction starts from a grid tiling problem: given a set of shades (includin
 
 ## Sources
 
-- Grzegorz Głuch, Jerzy Marcinkowski and Piotr Ostropolski-Nalewaja, "Can One Escape Red Chains? Regular Path Queries Determinacy is Undecidable", Proceedings of the 33rd Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2018), pp. 492–501, 2018, <https://doi.org/10.1145/3209108.3209120>; Theorem 1 with the remark that follows it (co-r.e.-hardness of both versions), Section 2 (structures and regular path queries) and Section 4 (the tiling problem and the reduction) of arXiv:1802.01554v1, read at <https://arxiv.org/abs/1802.01554v1>.
+- Grzegorz Głuch, Jerzy Marcinkowski and Piotr Ostropolski-Nalewaja, "Can One Escape Red Chains? Regular Path Queries Determinacy is Undecidable", Proceedings of the 33rd Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2018), pp. 492–501, 2018, <https://doi.org/10.1145/3209108.3209120>; Theorem I.1 with the remark that follows it (co-r.e.-hardness of both versions), Section II, "Preliminaries" (structures and regular path queries), and Section IV, "The Reduction" (the tiling problem and the reduction), whose correctness is proved in Sections V to X of arXiv:1802.01554v1, read at <https://arxiv.org/abs/1802.01554v1>.

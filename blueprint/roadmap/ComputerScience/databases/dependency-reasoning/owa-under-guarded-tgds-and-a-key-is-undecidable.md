@@ -10,10 +10,11 @@ Here a *guarded TGD* is a sentence $\forall \bar x, \bar y\, (\phi(\bar x, \bar 
 
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-None.
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -23,4 +24,4 @@ Without the key constraint the problem is in polynomial time for every conjuncti
 
 ## Sources
 
-- Vince Bárány, Balder ten Cate and Martin Otto, "Queries with guarded negation", *Proceedings of the VLDB Endowment* 5(11), 2012, pp. 1328–1339, <https://doi.org/10.14778/2350229.2350250>; read as the full version arXiv:1203.0077v1, <https://arxiv.org/abs/1203.0077v1>: item (i) of Theorem 7.7 in Section 7.2 (open-world query answering) and its proof in Appendix A (Missing proofs), as numbered in that version.
+- Vince Bárány, Balder ten Cate and Martin Otto, "Queries with guarded negation", *Proceedings of the VLDB Endowment* 5(11), 2012, pp. 1328–1339, <https://doi.org/10.14778/2350229.2350250>; read as the full version arXiv:1203.0077v1, <https://arxiv.org/abs/1203.0077v1>: item (i) of Theorem 7.8 in Section 7.2 ("Open-World Query Answering") and its proof in Appendix A.8, as numbered in that version.

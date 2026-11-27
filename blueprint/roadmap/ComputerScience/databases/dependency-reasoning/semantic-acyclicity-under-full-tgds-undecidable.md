@@ -13,6 +13,7 @@ The reduction produces Boolean queries and full tgds over a fixed signature of f
 - [Join tree](../join-processing/has-join-tree.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +25,4 @@ The reduction is from the Post correspondence problem over $\{a, b\}$. For lists
 
 ## Sources
 
-- Pablo Barceló, Georg Gottlob and Andreas Pieris, "Semantic Acyclicity Under Constraints", Proceedings of the 35th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems (PODS 2016), pp. 343–354, 2016, <https://doi.org/10.1145/2902251.2902302>; the problem $\mathrm{SA}(\mathcal{C})$, the reduction from restricted containment and the undecidability theorem for full tgds in the section "Semantic Acyclicity with TGDs", and the definitions of the preliminaries, of arXiv:1602.01366v2, read at <https://arxiv.org/abs/1602.01366v2>.
+- Pablo Barceló, Georg Gottlob and Andreas Pieris, "Semantic Acyclicity Under Constraints", Proceedings of the 35th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems (PODS 2016), pp. 343–354, 2016, <https://doi.org/10.1145/2902251.2902302>; the problem $\mathrm{SA}(\mathcal{C})$ (written $\mathrm{SemAc}(\mathcal{C})$ there), Corollary 6 (the reduction from restricted containment) and Theorem 7 (full tgds) in Section 3, "Semantic Acyclicity with TGDs", the decidability results of Section 4 such as Theorem 11 (guarded tgds), and the definitions of Section 2, "Preliminaries", of arXiv:1602.01366v2, read at <https://arxiv.org/abs/1602.01366v2>.

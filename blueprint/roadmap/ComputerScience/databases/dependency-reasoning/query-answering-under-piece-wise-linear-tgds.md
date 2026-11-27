@@ -12,6 +12,7 @@ By contrast, for sets that are both warded and piece-wise linear the problem is 
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Data, expression and combined complexity of query evaluation](../query-language-expressiveness/data-expression-and-combined-complexity-of-query-evaluation.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -8,6 +8,7 @@ No algorithm decides, given finitely many conjunctive views and a conjunctive qu
 
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -19,4 +20,4 @@ Determinacy is reformulated through the chase: with a green and a red copy of th
 
 ## Sources
 
-- Tomasz Gogacz and Jerzy Marcinkowski, "The hunt for a red spider: conjunctive query determinacy is undecidable", *Proceedings of the 30th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2015)*, 281–292, 2015, <https://doi.org/10.1109/LICS.2015.35>; read as arXiv:1501.01817v2, <https://arxiv.org/abs/1501.01817v2>: Theorem 1, the definitions of Section 1 and Section 2.1, and the outline of the proof (green-red TGDs, spiders and friendly Thue systems) of that version.
+- Tomasz Gogacz and Jerzy Marcinkowski, "The hunt for a red spider: conjunctive query determinacy is undecidable", *Proceedings of the 30th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2015)*, 281–292, 2015, <https://doi.org/10.1109/LICS.2015.35>; read as arXiv:1501.01817v2, <https://arxiv.org/abs/1501.01817v2>: Theorem 1, the definitions of Section I and Section II.A (sections numbered I, II, ... in that version), and the outline of the proof (green-red TGDs, spiders and friendly Thue systems) of that version.

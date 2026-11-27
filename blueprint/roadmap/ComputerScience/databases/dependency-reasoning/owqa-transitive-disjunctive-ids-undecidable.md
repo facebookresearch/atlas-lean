@@ -9,6 +9,7 @@ When a distinguished binary relation is only required to be transitive, open-wor
 - [Disjunctive inclusion dependencies](disjunctive-inclusion-dependencies.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Query answering with transitive relations, transitive closure and linear orders](query-answering-over-transitive-and-ordered-data.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

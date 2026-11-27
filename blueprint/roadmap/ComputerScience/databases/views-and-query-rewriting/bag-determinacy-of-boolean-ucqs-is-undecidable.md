@@ -17,6 +17,7 @@ In contrast, the same paper proves that bag determinacy is decidable when $V$ an
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Bag semantics of CQs: bag containment and bag equivalence](../conjunctive-queries/bag-semantics-of-cqs-bag-containment-and-bag-equivalence.md)
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

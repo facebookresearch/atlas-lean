@@ -14,7 +14,7 @@ Emptiness of $\mathrm{DynFO}(2, 0)$-programs is undecidable already by the undec
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -26,4 +26,4 @@ All three cases reduce from the emptiness problem for semi-deterministic two-cou
 
 ## Sources
 
-- Thomas Schwentick, Nils Vortmeier and Thomas Zeume, "Static Analysis for Logic-Based Dynamic Programs", 24th EACSL Annual Conference on Computer Science Logic (CSL 2015), LIPIcs 41, pp. 308–324, 2015, <https://doi.org/10.4230/LIPIcs.CSL.2015.308>; Section 3 (the dynamic complexity setting) and the two undecidability theorems of Section 4 ("The Emptiness Problem"), the second giving the main statement, of arXiv:1507.04537v1, read at <https://arxiv.org/abs/1507.04537v1>.
+- Thomas Schwentick, Nils Vortmeier and Thomas Zeume, "Static Analysis for Logic-Based Dynamic Programs", 24th EACSL Annual Conference on Computer Science Logic (CSL 2015), LIPIcs 41, pp. 308–324, 2015, <https://doi.org/10.4230/LIPIcs.CSL.2015.308>; Section 3 (the dynamic complexity setting, Definitions 3.1 to 3.3), and Theorem 4.1 ($\mathrm{DynFO}(2, 0)$), Theorem 4.2 (the main statement) and Theorem 4.3 ($\mathrm{DynProp}(1, 1)$) of Section 4 ("The Emptiness Problem"), of arXiv:1507.04537v1, read at <https://arxiv.org/abs/1507.04537v1>.
