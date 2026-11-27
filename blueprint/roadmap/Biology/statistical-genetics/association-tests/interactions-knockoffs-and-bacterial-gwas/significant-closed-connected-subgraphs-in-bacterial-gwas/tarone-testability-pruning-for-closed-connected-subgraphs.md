@@ -20,7 +20,7 @@ where $n_j = n_{1,j} + n_{2,j}$. The envelope is therefore computable, and usabl
 
 ## Depends on
 
-- [De Bruijn multigraph of a string](../../../bioinformatics/de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
+- [De Bruijn multigraph of a string](../../../../bioinformatics/de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
 ## Expansion
 

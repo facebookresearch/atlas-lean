@@ -32,8 +32,8 @@ For $X, Y$ independent uniform bits and $Z = X \oplus Y$, both $II$ and $ID$ equ
 
 ## Depends on
 
-- [Mutual information of a finite joint law](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
-- [Conditional mutual information of a finite joint law](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md)
+- [Mutual information of a finite joint law](../../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
+- [Conditional mutual information of a finite joint law](../../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md)
 
 ## Expansion
 
