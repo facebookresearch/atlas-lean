@@ -413,3 +413,16 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+Compact-open homotopy-pullback source notices
+-------------------------------------------
+
+The following original source author credits accompany these modules and clients.
+Copyright and third-party license notices remain in their source files.
+
+Files:
+  MathlibExt/Topology/Category/TopCat/HomotopyPullback.lean
+  MathlibExtTest/Topology/Category/TopCat/HomotopyPullbackCompositionTests.lean
+  MathlibExtTest/Topology/Category/TopCat/HomotopyPullbackTests.lean
+
+Authors: Avocado, Tsutomu Okano
