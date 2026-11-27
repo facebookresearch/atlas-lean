@@ -20,7 +20,7 @@ A mutation of trait effect $z$ at frequency $x$ contributes $2x(1-x)z^2$ to the 
 
 ## Depends on
 
-- [Sojourn density of the Wright–Fisher diffusion with selection](../../../../population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/selection-green.md)
+- [Sojourn density of the Wright–Fisher diffusion with selection](../../../../../population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/selection-green.md)
 
 ## Sources
 

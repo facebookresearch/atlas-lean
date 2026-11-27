@@ -12,7 +12,7 @@ For costless resistance ($s_R = 0$) this reduces to
 
 $$p_R' = p_R - \frac{s_A}{\bar w}\, D^*, \qquad \bar w = 1 - p_A^* s_A .$$
 
-**Consequences.** (i) Distortion never changes the frequency of resistance directly; it acts on resistance only by creating negative disequilibrium, through the term $-p_R H_{rr}/2$ in $D^*$, which recombination halves every generation. (ii) Costless resistance increases exactly when $D^* < 0$, that is, when it is associated with the drive-susceptible allele $a$, which enjoys the fitness advantage $s_A$ over $A$: nonallelic resistance spreads only by genetic hitchhiking with $a$. (iii) The same holds for a recessive lethal drive (zygotes $AA$ die before meiosis, $\bar w = 1 - p_A^2$): the survivors have $p_R^{\#} = p_R - D p_A / \bar w$, and with perfect dominant resistance transmission leaves this unchanged, $p_R^* = p_R^{\#}$.
+**Consequences.** (i) Distortion never changes the frequency of resistance directly; it acts on resistance only by creating negative disequilibrium, through the term $-p_R H_{rr}/2$ in $D^*$, which recombination halves every generation. (ii) For $s_A > 0$, costless resistance increases exactly when $D^* < 0$ (if $s_A = 0$ its frequency does not change), that is, when it is associated with the drive-susceptible allele $a$, which enjoys the fitness advantage $s_A$ over $A$: nonallelic resistance spreads only by genetic hitchhiking with $a$. (iii) The same holds for a recessive lethal drive (zygotes $AA$ die before meiosis, $\bar w = 1 - p_A^2$): the survivors have $p_R^{\#} = p_R - D p_A / \bar w$, and with perfect dominant resistance transmission leaves this unchanged, $p_R^* = p_R^{\#}$.
 
 ## Proof sketch
 

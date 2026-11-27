@@ -8,7 +8,7 @@ In the model of [lineage trajectories under linked deleterious mutations](lineag
 
 $$p(f) \approx \begin{cases}
 \dfrac{2 N U_n}{f}, & f \ll \dfrac{1}{N\sigma},\\[2ex]
-\dfrac{N U_n}{N s f^2 \lambda \,\log_\lambda\!\left(\dfrac{e^{\lambda}}{N s f}\right)}, & \dfrac{1}{N\sigma} \ll f \ll \dfrac{e^{\lambda}}{N s},\\[2ex]
+\dfrac{N U_n}{N s f^2 \sqrt{\lambda \,\log_\lambda\!\left(\dfrac{e^{\lambda}}{N s f}\right)}}, & \dfrac{1}{N\sigma} \ll f \ll \dfrac{e^{\lambda}}{N s},\\[2ex]
 \dfrac{2 N U_n e^{-\lambda}}{f}, & \dfrac{e^{\lambda}}{N s} \ll f \ll 1 - \dfrac{e^{\lambda}}{N s},\\[2ex]
 \dfrac{N U_n}{N s (1-f) \,\log_\lambda\!\left(\dfrac{e^{\lambda}}{N s (1-f)}\right)}, & \dfrac{1}{N\sigma} \ll 1-f \ll \dfrac{e^{\lambda}}{N s},\\[2ex]
 \dfrac{2 N U_n}{f}, & 1 - f \ll \dfrac{1}{N\sigma},
@@ -34,4 +34,4 @@ As for an isolated locus (Ewens 1963), $p(f)$ is proportional to the rate at whi
 
 ## Sources
 
-- I. Cvijović, B. H. Good and M. M. Desai, "The effect of strong purifying selection on genetic diversity", Genetics 209 (2018), 1235–1278, Model and Results (Equations 1–2), the site-frequency-spectrum analysis (Equations 30, 36–37) and Figures 1–3, <https://doi.org/10.1534/genetics.118.301058> (PMC6063222).
+- I. Cvijović, B. H. Good and M. M. Desai, "The effect of strong purifying selection on genetic diversity", Genetics 209 (2018), 1235–1278, Model and Results (Equations 1–2), the site-frequency-spectrum analysis (Equations 30, 36–37, 41) and Figures 1–3, <https://doi.org/10.1534/genetics.118.301058> (PMC6063222). The second regime (Equation 2, second line, and Equation 41) and $\sigma = \sqrt{U_d s}$ are cited from the journal version; the PMC rendering drops their square roots.

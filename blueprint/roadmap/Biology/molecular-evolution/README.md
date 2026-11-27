@@ -23,4 +23,3 @@
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
 - [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
 - [Two-state intron gain and loss model](two-state-intron-gain-and-loss-model/README.md)
-- [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)

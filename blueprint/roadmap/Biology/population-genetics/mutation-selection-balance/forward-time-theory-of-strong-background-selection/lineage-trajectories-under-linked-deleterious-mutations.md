@@ -26,13 +26,13 @@ $$g_k(t) = \exp\!\left(-kst + \lambda\left(1 - e^{-st}\right)\right);$$
 
 $$t_d(k) = \frac{\ln(\lambda / k)}{s},$$
 
-where it peaks at $n_k(0)\, \tilde g_k$ with $\tilde g_k = g_k(t_d(k)) = e^{\lambda} \left(\dfrac{k}{e\lambda}\right)^{k}$, stays within a constant factor of the peak for a time of order $\Delta t(k) = 1/(ks)$, and then declines at rate $ks$; a lineage founded in class $k \ge \lambda$ declines from the start.
+where it peaks at $n_k(0)\, \tilde g_k$ with $\tilde g_k = g_k(t_d(k)) = e^{\lambda} \left(\dfrac{k}{e\lambda}\right)^{k}$, stays within a constant factor of the peak for a time of order $\Delta t(k) = 1/(s\sqrt{k})$, and then declines at rate $ks$; a lineage founded in class $k \ge \lambda$ declines from the start.
 
 In particular the founding genotype itself always feels selection $-ks$: a lineage that increases does so by spawning less fit descendants, so it loses fitness while it grows.
 
 ## Proof sketch
 
-Substituting $n_{k+j} = A(t)\, \mu(t)^j / j!$ and using $\lambda s = U_d$, the $\lambda s$ and $-U_d$ terms cancel and matching coefficients of $\mu^j/j!$ and $\mu^{j-1}/(j-1)!$ gives $A' = -ks A$ and $\mu' = U_d - s\mu$ with $\mu(0) = 0$, whose solutions are $A = n_k(0) e^{-kst}$ and $\mu = \lambda(1 - e^{-st})$. Summing over $j$ gives $n(t) = A e^{\mu}$, i.e. item 2, and $\frac{d}{dt} \ln g_k = U_d e^{-st} - ks = x(t)$ is item 1. For $k \ge 1$ the derivative vanishes when $e^{-st} = k/\lambda$, giving $t_d(k)$, and substituting gives $\tilde g_k = (k/\lambda)^k e^{\lambda - k}$. Near the peak $\ln g_k$ has second derivative $-s U_d e^{-st_d(k)} = -ks^2$, so it stays within $O(1)$ of its maximum for a time of order $1/(ks)$. The Poisson description of the added load is due to Etheridge, Pfaffelhuber and Wakolbinger (2009); these deterministic trajectories, combined with drift in the most-fit class, drive the site frequency spectrum of linked neutral sites.
+Substituting $n_{k+j} = A(t)\, \mu(t)^j / j!$ and using $\lambda s = U_d$, the $\lambda s$ and $-U_d$ terms cancel and matching coefficients of $\mu^j/j!$ and $\mu^{j-1}/(j-1)!$ gives $A' = -ks A$ and $\mu' = U_d - s\mu$ with $\mu(0) = 0$, whose solutions are $A = n_k(0) e^{-kst}$ and $\mu = \lambda(1 - e^{-st})$. Summing over $j$ gives $n(t) = A e^{\mu}$, i.e. item 2, and $\frac{d}{dt} \ln g_k = U_d e^{-st} - ks = x(t)$ is item 1. For $k \ge 1$ the derivative vanishes when $e^{-st} = k/\lambda$, giving $t_d(k)$, and substituting gives $\tilde g_k = (k/\lambda)^k e^{\lambda - k}$. Near the peak $\ln g_k$ has second derivative $-s U_d e^{-st_d(k)} = -ks^2$, so $\ln g_k(t_d(k)) - \ln g_k(t) \approx ks^2 (t - t_d(k))^2/2$ and it stays within $O(1)$ of its maximum for a time of order $1/(s\sqrt{k})$. The Poisson description of the added load is due to Etheridge, Pfaffelhuber and Wakolbinger (2009); these deterministic trajectories, combined with drift in the most-fit class, drive the site frequency spectrum of linked neutral sites.
 
 ## Depends on
 
@@ -40,4 +40,4 @@ Substituting $n_{k+j} = A(t)\, \mu(t)^j / j!$ and using $\lambda s = U_d$, the $
 
 ## Sources
 
-- I. Cvijović, B. H. Good and M. M. Desai, "The effect of strong purifying selection on genetic diversity", Genetics 209 (2018), 1235–1278, Model and Results and "Key features of lineage trajectories" (Equations 8, 10–15), <https://doi.org/10.1534/genetics.118.301058> (PMC6063222).
+- I. Cvijović, B. H. Good and M. M. Desai, "The effect of strong purifying selection on genetic diversity", Genetics 209 (2018), 1235–1278, Model and Results and "Key features of lineage trajectories" (Equations 8, 10–15), <https://doi.org/10.1534/genetics.118.301058> (PMC6063222). Equation 15, $\Delta t(k) = 1/(\sqrt{k}\, s)$, is cited from the journal version; the PMC rendering drops its square root.

@@ -10,7 +10,9 @@ $$\mathbb{E}[P_{\mathrm{neut}}(i)] = \frac{\theta}{i}, \qquad \mathbb{E}[P_{\mat
 
 and $\mathbb{E}[P_{\mathrm{sel}}(i) \mid \varphi] = \int \mathbb{E}[P_{\mathrm{sel}}(i) \mid S]\, \varphi(S)\, dS$. Departures from equilibrium that affect neutral and selected sites alike (demography, sampling, linkage) are absorbed by nuisance factors $r_i > 0$, $\mathbb{E}[P_z(i) \mid \theta, r_i, \varphi] = r_i\, \mathbb{E}[P_z(i) \mid \theta, \varphi]$, and misidentified ancestral states (probability $\epsilon$) by the mixture
 
-$$(1 - \epsilon)\, \mathbb{E}[P_z(i) \mid \theta, r_i, \varphi] + \epsilon\, \mathbb{E}[P_z(n - i) \mid \theta, r_{n-i}, \varphi].$$
+$$(1 - \epsilon)\, \mathbb{E}[P_z(i) \mid \theta, r_i, \varphi] + \epsilon\, \mathbb{E}[P_z(n - i) \mid \theta, r_i, \varphi] = r_i \big[(1 - \epsilon)\, \mathbb{E}[P_z(i) \mid \theta, \varphi] + \epsilon\, \mathbb{E}[P_z(n - i) \mid \theta, \varphi]\big],$$
+
+with the same factor $r_i$ in both terms.
 
 **Divergence counts.** With composite divergence parameter $\lambda = T\theta$,
 

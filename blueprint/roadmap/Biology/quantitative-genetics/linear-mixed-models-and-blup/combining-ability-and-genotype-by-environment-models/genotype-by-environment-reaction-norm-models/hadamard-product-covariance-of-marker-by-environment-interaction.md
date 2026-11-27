@@ -20,7 +20,7 @@ Since both scores have mean zero and are independent, $\mathbb{E}[\tilde g_j\til
 
 ## Depends on
 
-- [Genetic relationship matrix entry](../../genomic-relationship-matrices/grm.md)
+- [Genetic relationship matrix entry](../../../genomic-relationship-matrices/grm.md)
 
 ## Sources
 

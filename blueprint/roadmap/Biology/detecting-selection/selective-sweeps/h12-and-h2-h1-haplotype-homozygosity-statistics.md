@@ -10,7 +10,7 @@ Elementary properties:
 
 1. $0 < H_1 \le H_{12} \le 1$ and $0 \le H_2/H_1 < 1$; $H_2/H_1 = 0$ exactly when one haplotype is fixed in the sample.
 2. If the sample consists of $m \ge 2$ equally frequent haplotypes, then $H_1 = 1/m$, $H_{12} = (m+2)/m^2$ and $H_2/H_1 = (m-1)/m$.
-3. If one haplotype has frequency $p_1 = 1 - \varepsilon$ and the remaining $\varepsilon n$ haplotypes are singletons, then $H_1 = (1-\varepsilon)^2 + \varepsilon/n$, $H_{12} - H_1 = 2(1-\varepsilon)/n$ and $H_2/H_1 = (\varepsilon/n)/H_1$, so for a hard sweep pooling barely changes homozygosity and $H_2/H_1$ is near $0$ in large samples.
+3. If one haplotype has frequency $p_1 = 1 - \varepsilon$ and the remaining $\varepsilon n$ haplotypes are singletons, with $\varepsilon n \ge 1$ (that is, $\varepsilon \ge 1/n$), then $H_1 = (1-\varepsilon)^2 + \varepsilon/n$, $H_{12} - H_1 = 2(1-\varepsilon)/n$ and $H_2/H_1 = (\varepsilon/n)/H_1$, so for a hard sweep pooling barely changes homozygosity and $H_2/H_1$ is near $0$ in large samples.
 
 The window must be long enough that neutral demography rarely creates long shared haplotypes, yet shorter than the sweep footprint, which for a hard sweep extends over roughly $s / \big(\rho \log(N_e s)\big)$ base pairs for selection coefficient $s$, effective size $N_e$ and per-base recombination rate $\rho$.
 

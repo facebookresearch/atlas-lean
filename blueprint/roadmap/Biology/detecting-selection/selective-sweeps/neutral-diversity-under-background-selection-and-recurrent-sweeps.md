@@ -4,7 +4,7 @@ Consider an autosomal neutral site at position $x$ with local mutation rate $u(x
 
 $$\pi(x) = \frac{2u(x)}{2u(x) + \dfrac{1}{2N_eB(x)} + S(x)} .$$
 
-With purifying selection at annotated sites $a_B(i_B)$, deleterious mutation rate $u_d(i_B)$ and a density $f(t \mid i_B)$ of heterozygous selection coefficients $t$, the background-selection factor is
+With purifying selection at annotated sites $a_B(i_B)$, deleterious mutation rate $u_d(i_B)$ and a density $f(t \mid i_B)$ of heterozygous selection coefficients $t$, the background-selection factor is the [background selection reduction with recombination and a distribution of selection strengths](../../population-genetics/mutation-selection-balance/background-selection-with-recombination-and-a-distribution-of-effects.md), summed over the selected sites $y$:
 
 $$B(x) = \exp\!\left(-\sum_{i_B}\sum_{y\in a_B(i_B)} \int \frac{u_d(i_B)\, t}{\bigl(t + r(x,y)(1-t)\bigr)^2}\, f(t\mid i_B)\, dt\right),$$
 
@@ -18,6 +18,7 @@ Trace two lineages back in time. Three competing exponential clocks act on them:
 
 - [Background selection reduces the effective size to the mutation-free class](../../population-genetics/mutation-selection-balance/background-selection-deterministic-reduction-fac.md)
 - [Coalescence rate from recurrent selective sweeps](coalescence-rate-from-recurrent-selective-sweeps.md)
+- [Background selection with recombination and a distribution of selection strengths](../../population-genetics/mutation-selection-balance/background-selection-with-recombination-and-a-distribution-of-effects.md)
 
 ## Sources
 
