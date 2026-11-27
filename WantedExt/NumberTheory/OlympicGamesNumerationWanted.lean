@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.PellSilverRatio
 public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsPellHalfCompanionRepresentation
+public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsTwoPellHalfCompanionRepresentation
 
 /-!
 # Fibonacci and Pell numeration identities from the Olympic games
@@ -50,27 +51,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Finset
-
-/-- **Numeration by doubled Pell and half-companion Pell numbers.** Let $P_n$ be the Pell numbers
-($P_0 = 0$, $P_1 = 1$, $P_{n+2} = 2P_{n+1} + P_n$) and $H_n$ the half-companion Pell numbers
-($H_0 = H_1 = 1$, $H_{n+2} = 2H_{n+1} + H_n$), and let $R_k = 2P_k$ for odd $k$ and
-$R_k = H_k$ for even $k$. Then for every positive integer $t$ there are a natural number $n$ and
-natural numbers $a_0, a_1, a_2, \dots$ such that $R_n \le t < R_{n+1}$,
-$t = \sum_{k=0}^{n} a_k R_k$, $a_0 \le 1$, $a_0 = 0$ if $a_1 = 1$, $a_{2k} \le 3$ and
-$a_{2k+1} \le 1$ for every $k \ge 0$, $a_{2k+2} < 3$ whenever $a_{2k} = 3$ ($k \ge 0$), and
-$a_{2k-1} = a_{2k+1} = 0$ and $a_{2k-2} < 3$ whenever $a_{2k} = 3$ with $k \ge 1$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 4. -/
-theorem_wanted exists_two_pell_halfCompanion_representation (R : ℕ → ℕ)
-    (hR : ∀ k, R k = if k % 2 = 1 then 2 * pellNumber k else pellLucasSequence k)
-    {t : ℕ} (ht : 0 < t) :
-    ∃ (n : ℕ) (a : ℕ → ℕ), R n ≤ t ∧ t < R (n + 1) ∧
-      t = ∑ k ∈ range (n + 1), a k * R k ∧
-      a 0 ≤ 1 ∧ (a 1 = 1 → a 0 = 0) ∧ (∀ k, a (2 * k) ≤ 3 ∧ a (2 * k + 1) ≤ 1) ∧
-      (∀ k, 1 ≤ k → a (2 * k) = 3 → a (2 * k - 1) = 0 ∧ a (2 * k + 1) = 0) ∧
-      (∀ k, 1 ≤ k → a (2 * k) = 3 → a (2 * k - 2) < 3) ∧
-      (∀ k, a (2 * k) = 3 → a (2 * k + 2) < 3)
 
 /-- **Moves of the Beatty octal game.** Let $\alpha$ and $\beta$ be real numbers. In the Beatty
 octal game for $\alpha$ and $\beta$, a move takes a heap of $n$ tokens to a heap of $m$ tokens
