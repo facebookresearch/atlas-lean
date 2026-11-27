@@ -2,17 +2,12 @@
 
 Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear systems and fundamental matrices, stability and Lyapunov's indirect method, Sturm–Liouville and boundary value problems with their Green's operators and eigenfunctions, oscillation and comparison theorems.
 
-- [Averaging of pulse-width modulated systems](averaging-of-pulse-width-modulated-systems/README.md)
-- [Differential inequalities and comparison](differential-inequalities-and-comparison/README.md)
-- [Duhamel's formula](duhamel-s-formula/README.md)
 - [Green's operator of the Dirichlet Laplacian on \[0, 1\]](green-s-operator-of-the-dirichlet-laplacian-on-0/README.md)
 - [Mechanical and engineering models](mechanical-and-engineering-models/README.md)
 - [Hyperbolic motions in the N-body problem](hyperbolic-motions-in-the-n-body-problem/README.md)
-- [Invariant regions of autonomous systems](invariant-regions-of-autonomous-systems/README.md)
 - [Lyapunov's indirect method](lyapunov-s-indirect-method/README.md)
 - [Maximal solutions and global existence](maximal-solutions-and-global-existence/README.md)
 - [Linear systems and fundamental matrices](linear-systems-and-fundamental-matrices/README.md)
-- [Lyapunov sublevel sets and global existence](lyapunov-sublevel-sets-and-global-existence/README.md)
 - [One-parameter groups of matrices](one-parameter-groups-of-matrices/README.md)
 - [Picard iteration](picard-iteration/README.md)
 - [Sturm–Liouville Dirichlet problem](sturm-liouville-dirichlet-problem/README.md)
@@ -39,4 +34,3 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 
 ## Asymptotics of linear second-order equations
 
-- [Power bound near zero for solutions of a Whittaker-type equation](exists-rpow-bound-near-zero-of-whittaker.md)

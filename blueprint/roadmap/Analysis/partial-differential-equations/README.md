@@ -19,7 +19,6 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Riemann problem for hyperbolic systems](riemann-problem-for-hyperbolic-systems/README.md)
 - [Singularity formation for the Euler equations](singularity-formation-for-the-euler-equations/README.md)
 - [Viscosity solutions of Hamilton–Jacobi equations](viscosity-solutions-of-hamilton-jacobi-equations/README.md)
-- [Viscous Burgers equation and the Cole–Hopf transform](viscous-burgers-equation-and-the-cole-hopf-trans/README.md)
 - [Weak solutions of elliptic equations](weak-solutions-of-elliptic-equations/README.md)
 - [Weak solutions of parabolic equations](weak-solutions-of-parabolic-equations/README.md)
 - [Conservation laws with concave flux](conservation-laws-with-concave-flux/README.md)

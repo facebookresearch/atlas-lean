@@ -67,3 +67,5 @@
 - [Relaxation from above the steady state is decreasing](amount-antitone.md)
 - [Relaxation from below stays below the steady state](amount-le-steady-amount.md)
 - [Relaxation from above stays above the steady state](steady-amount-le-amount.md)
+- [Duhamel's formula](duhamel-s-formula/README.md)
+- [Power bound near zero for solutions of a Whittaker-type equation](exists-rpow-bound-near-zero-of-whittaker.md)
