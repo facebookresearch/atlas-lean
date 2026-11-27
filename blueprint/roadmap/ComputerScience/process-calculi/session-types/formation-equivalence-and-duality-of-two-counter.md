@@ -13,6 +13,7 @@ The boundary is sharp in the source's hierarchy. Contractiveness of recursive, o
 ## Depends on
 
 - [Two-counter session types](two-counter-session-types.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

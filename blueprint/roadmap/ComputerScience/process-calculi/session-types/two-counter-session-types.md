@@ -18,7 +18,7 @@ A finite type, and every one-counter or pushdown session type, is a 2-counter ty
 
 ## Depends on
 
-- [Binary session types and type safety](binary-session-types-and-type-safety.md)
+None.
 
 ## Proof depends on
 

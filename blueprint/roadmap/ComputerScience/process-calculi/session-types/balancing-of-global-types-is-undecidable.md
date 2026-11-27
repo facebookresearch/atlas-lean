@@ -9,6 +9,7 @@ The paper states that the proof adapts to weak balancing by deleting the readabi
 ## Depends on
 
 - [Balanced type configurations of deconfined global types](balanced-global-type-configurations.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

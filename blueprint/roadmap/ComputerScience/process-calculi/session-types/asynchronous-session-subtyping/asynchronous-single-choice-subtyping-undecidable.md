@@ -15,6 +15,7 @@ where $\le$ is [asynchronous subtyping](asynchronous-subtyping-of-binary-session
 ## Depends on
 
 - [Asynchronous subtyping of binary session types](asynchronous-subtyping-of-binary-session-types.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

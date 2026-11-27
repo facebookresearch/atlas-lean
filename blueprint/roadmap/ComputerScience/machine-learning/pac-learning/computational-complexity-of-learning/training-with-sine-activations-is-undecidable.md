@@ -10,6 +10,7 @@ Instances are finite objects: the architecture, the active edges and neurons, ra
 
 - [The neural network training problem](neural-network-training-problem.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

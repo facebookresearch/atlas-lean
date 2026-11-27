@@ -15,8 +15,7 @@ where $V[\bar{e}]$ is a type name from a finite set of (possibly recursive) type
 The authors note that the fragment containing only type definitions, internal choice and assertions suffices, and that the proof still applies when types are treated isorecursively. Because type checking uses type equality (for forwarding and channel passing), type checking is undecidable as well; the paper therefore gives a sound but incomplete coinductive algorithm.
 
 ## Depends on
-
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +27,4 @@ The reduction is from the non-halting problem of two-counter machines. Type name
 
 ## Sources
 
-- Ankush Das and Frank Pfenning, "Session Types with Arithmetic Refinements", 31st International Conference on Concurrency Theory (CONCUR 2020), LIPIcs 171, Article 13, 2020, <https://doi.org/10.4230/LIPIcs.CONCUR.2020.13>; the definitions and the undecidability theorem of Section 4 ("Type Equality") of the extended version arXiv:2001.04439v3, <https://arxiv.org/abs/2001.04439v3>, with the construction in its appendix on type equality.
+- Ankush Das and Frank Pfenning, "Session Types with Arithmetic Refinements", 31st International Conference on Concurrency Theory (CONCUR 2020), LIPIcs 171, Article 13, 2020, <https://doi.org/10.4230/LIPIcs.CONCUR.2020.13>; read in the extended version arXiv:2001.04439v3, <https://arxiv.org/abs/2001.04439v3>: the definitions and Theorem 2 in Section 4 ("Type Equality"), with Appendix B ("Type Equality"), in the numbering of that version.

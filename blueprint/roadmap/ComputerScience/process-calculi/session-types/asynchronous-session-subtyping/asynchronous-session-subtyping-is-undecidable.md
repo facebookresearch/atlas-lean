@@ -7,6 +7,7 @@ No algorithm decides, given two binary session types $T$ and $S$, whether $T$ is
 ## Depends on
 
 - [Asynchronous subtyping of binary session types](asynchronous-subtyping-of-binary-session-types.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -36,4 +36,4 @@ Readability is decidable because global types are regular and the queue only shr
 
 ## Sources
 
-- Francesco Dagnino, Paola Giannini and Mariangiola Dezani-Ciancaglini, "Deconfined Global Types for Asynchronous Sessions", Logical Methods in Computer Science 19(1), Article 3, 2023, <https://doi.org/10.46298/lmcs-19(1:3)2023>; Section 2 (message queues and $\equiv$), Section 3 (global types, weak balancing and the figure "Balancing of type configurations") of arXiv:2111.11984v6, <https://arxiv.org/abs/2111.11984v6>.
+- Francesco Dagnino, Paola Giannini and Mariangiola Dezani-Ciancaglini, "Deconfined Global Types for Asynchronous Sessions", Logical Methods in Computer Science 19(1), Article 3, 2023, <https://doi.org/10.46298/lmcs-19(1:3)2023>; Section 2 (message queues and $\equiv$), Section 3.1 (global types) and Section 4.2 (weak balancing, Figure 9, and balancing, Figure 11 "Balancing of type configurations") of arXiv:2111.11984v6, <https://arxiv.org/abs/2111.11984v6>.

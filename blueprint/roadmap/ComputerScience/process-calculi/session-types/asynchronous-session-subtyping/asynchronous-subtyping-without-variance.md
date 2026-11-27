@@ -9,6 +9,7 @@ Let $\le$ now denote the asynchronous subtyping of the second source: the relati
 ## Depends on
 
 - [Asynchronous subtyping of binary session types](asynchronous-subtyping-of-binary-session-types.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

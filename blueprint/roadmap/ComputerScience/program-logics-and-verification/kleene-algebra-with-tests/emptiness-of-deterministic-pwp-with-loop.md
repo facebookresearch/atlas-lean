@@ -10,6 +10,8 @@ The proof adapts a reduction of Goldblatt and Jackson (ACM TOCL 2012), as the so
 
 - [Propositional while programs with graph loop](propositional-while-programs-with-graph-loop.md)
 - [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 
@@ -23,6 +25,8 @@ None.
 
 Without the graph loop the problem is decidable: emptiness is an equation of guarded Kleene algebra with tests, whose equational theory on deterministic models coincides with that on all relational models and is decidable.
 
+A good expansion links the $\Sigma^0_1$-completeness of the periodic domino problem (Berger; Gurevich and Koryakov) and the source's hypothesis elimination using graph loops, which have no pages on main yet.
+
 ## Sources
 
-- Yoshiki Nakamura, "Undecidability of the Positive Calculus of Relations with Transitive Closure and Difference: Hypothesis Elimination Using Graph Loops", in *Relational and Algebraic Methods in Computer Science (RAMiCS 2024)*, Lecture Notes in Computer Science, Springer, 2024, pp. 207–224, <https://doi.org/10.1007/978-3-031-68279-7_13>, which proves this theorem and the result on the positive calculus of relations; read as the extended version arXiv:2504.20415v2, "Undecidability of the Emptiness Problem of Deterministic Propositional While Programs with Graph Loop: Hypothesis Elimination Using Loops", <https://arxiv.org/abs/2504.20415v2>: the main theorem of Section 6 and its proof, and the section "Differences from the Conference Version" in Section 1 of that version, which says the conference version already proved both results.
+- Yoshiki Nakamura, "Undecidability of the Positive Calculus of Relations with Transitive Closure and Difference: Hypothesis Elimination Using Graph Loops", in *Relational and Algebraic Methods in Computer Science (RAMiCS 2024)*, Lecture Notes in Computer Science, Springer, 2024, pp. 207–224, <https://doi.org/10.1007/978-3-031-68279-7_13>, which proves this theorem and the result on the positive calculus of relations; read as the extended version arXiv:2504.20415v2, "Undecidability of the Emptiness Problem of Deterministic Propositional While Programs with Graph Loop: Hypothesis Elimination Using Loops", <https://arxiv.org/abs/2504.20415v2>: Theorem 6.2 in Section 6 with its proof, in the numbering of that version, and the paragraph "Differences from the Conference Version" in Section 1 of that version, which says the conference version already proved both results.

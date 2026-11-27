@@ -11,6 +11,7 @@ By contrast, the same paper proves satisfiability decidable for TE working in a 
 ## Depends on
 
 - [Transformer layers, numeric regimes and decoding conventions](transformer-layers-numeric-regimes-and-decoding-conventions.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
