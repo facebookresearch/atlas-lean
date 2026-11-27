@@ -15,13 +15,16 @@ $$
 
 hold for every graph $G$?
 
-Since products of homomorphism densities are densities of disjoint unions, the same holds for polynomial inequalities in homomorphism densities, and, as the source notes, the analogous problem for linear inequalities in the homomorphism numbers $\hom(H_i; G)$ (observed earlier by Rossman, following Ioannidis and Ramakrishnan) is also undecidable. In contrast, positivity of a polynomial with rational coefficients on real arguments is decidable by Tarski's theorem.
+(Theorem 2.12 of the source.)
+
+Since products of homomorphism densities are densities of disjoint unions, the same holds for polynomial inequalities in homomorphism densities, and, as the source notes, the analogous problem for linear inequalities in the homomorphism numbers $\hom(H_i; G)$ (observed earlier by Kopparty and Rossman, following Ioannidis and Ramakrishnan) is also undecidable. In contrast, positivity of a polynomial with rational coefficients on real arguments is decidable by Tarski's theorem.
 
 ## Depends on
 
 - [Finite simple graph](../../../planar-graphs-and-minors/graph-minors/fin-graph.md)
 - [Homomorphism density](../../../random-graphs/graph-limits/hom-density.md)
 - [Homomorphism density counts homomorphisms](../../../random-graphs/graph-limits/hom-density-adj-weight.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

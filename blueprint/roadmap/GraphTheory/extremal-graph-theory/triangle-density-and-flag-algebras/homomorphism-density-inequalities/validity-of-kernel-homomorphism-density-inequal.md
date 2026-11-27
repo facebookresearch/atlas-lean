@@ -22,6 +22,7 @@ The case $\mathcal{W}^* = \mathcal{W}_0$ is the graphon form of the [theorem of 
 - [Finite simple graph](../../../planar-graphs-and-minors/graph-minors/fin-graph.md)
 - [Graphon](../../../random-graphs/finitely-forcible-graphons/is-graphon.md)
 - [Homomorphism density in a graphon](../../../random-graphs/graph-limits/graphon-hom-density.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

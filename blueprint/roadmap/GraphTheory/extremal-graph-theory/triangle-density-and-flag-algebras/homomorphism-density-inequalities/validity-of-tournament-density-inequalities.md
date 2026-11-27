@@ -20,6 +20,7 @@ As an algorithmic input the coefficients are given exactly; the reduction in the
 ## Depends on
 
 - [Tournament](../../../directed-graphs/tournaments-and-score-sequences/is-tournament.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
