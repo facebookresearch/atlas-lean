@@ -27,4 +27,4 @@ Duality is checked on monomials: applying $A$ to $x^ny^m$ in the $(x,y)$ variabl
 
 ## Sources
 
-- Jochen Blath, Adrián González Casanova, Noemi Kurt and Maite Wilke-Berenguer, *The seed bank coalescent with simultaneous switching*, Electron. J. Probab. 25 (2020), 1–21. <https://doi.org/10.1214/19-EJP401> Model A (Section 1.1), Theorem 1.4 (limiting generator), Definition 1.7, Theorem 1.12 (duality), Proposition 1.14 and Corollary 1.15 (moment limits and fixation in law). Locators use the numbering of the preprint arXiv:1812.03783.
+- Jochen Blath, Adrián González Casanova, Noemi Kurt and Maite Wilke-Berenguer, *The seed bank coalescent with simultaneous switching*, Electron. J. Probab. 25 (2020), 1–21. <https://doi.org/10.1214/19-EJP401> Model A (Section 1.1), Theorem 1.4 (limiting generator), Definition 1.9 (seed bank diffusion with fixed-size jumps), Definition 1.11 (block-counting process), Theorem 1.12 (duality), Proposition 1.14 and Corollary 1.15 (moment limits and fixation in law). Locators use the numbering of the preprint arXiv:1812.03783.
