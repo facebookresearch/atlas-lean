@@ -929,10 +929,11 @@ say exactly what is proved.
 
 The third round ports the physics remainder in parts: the random-cluster (FK), Ising, sharpness,
 Onsager, Beffara–Duminil-Copin, percolation, OSSS and wall modules that the physics results need.
-This table lists the sources ported so far (209 of 635); the others are listed under "Physics
-remainder, not yet ported" below. Duplicate and vacuous declarations were removed during the port.
-Several ported modules state conditional results or record refutations; their module docs say
-exactly what is proved.
+This table lists the sources accounted for so far (209 of 635): 207 rows name new modules and 2 name
+existing modules of the root libraries that already cover their sources (see "Ported, then deleted"
+below). The others are listed under "Physics remainder, not yet ported" below. Duplicate and vacuous
+declarations were removed during the port. Several ported modules state conditional results or
+record refutations; their module docs say exactly what is proved.
 
 | Source file | Module |
 | --- | --- |
@@ -990,10 +991,10 @@ exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment` |
 | `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy` |
 | `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneClose2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndsDistinct` |
-| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneMergeGeom.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneMergeGeom.lean` | `MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification` |
 | `Atlas/StatisticalMechanics/Code/Percolation/CanonBurtonKeane.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane` |
 | `Atlas/StatisticalMechanics/Code/Percolation/CanonForestCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount` |
-| `Atlas/StatisticalMechanics/Code/Percolation/CanonTrifProb.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonTrifProb` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonTrifProb.lean` | `MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount` |
 | `Atlas/StatisticalMechanics/Code/Percolation/CanonicalCountFinal.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCountBound` |
 | `Atlas/StatisticalMechanics/Code/Percolation/CanonicalTrifCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount` |
 | `Atlas/StatisticalMechanics/Code/Percolation/ClusterAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachment` |
@@ -1149,13 +1150,14 @@ exactly what is proved.
 ## Not ported
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
-modules (`.lean` files) and lines (`wc -l`) with 209 of the 635 third-round sources ported. Each
-module is counted once, under the first category that applies in the order below. All 6,970 `.lean`
-files under `Code/` are accounted for: 655 first-round rows (654 map to a module; the
+modules (`.lean` files) and lines (`wc -l`) with 209 of the 635 third-round sources accounted for.
+Each module is counted once, under the first category that applies in the order below. All 6,970
+`.lean` files under `Code/` are accounted for: 655 first-round rows (654 map to a module; the
 `Code/Percolation/ClusterDualContour.lean` row records its removal), 235 second-round rows (199
-MathlibExt and 36 CSLibExt), 209 third-round rows, 4 ported-then-deleted modules, and 5,868 modules
-in the categories below. `Code/Percolation/ClusterDualContour.lean` occurs in both the first- and
-second-round tables (removed in the first round, its definition ported in the second):
+MathlibExt and 36 CSLibExt), 209 third-round rows (207 map to a new module and 2 to an existing
+one), 4 ported-then-deleted modules, and 5,868 modules in the categories below.
+`Code/Percolation/ClusterDualContour.lean` occurs in both the first- and second-round tables
+(removed in the first round, its definition ported in the second):
 655 + 235 + 209 - 1 + 4 + 5,868 = 6,970. The root import file `Atlas/StatisticalMechanics/Code.lean`
 is not a counted source.
 
@@ -1163,9 +1165,9 @@ is not a counted source.
 
 These are the modules that the physics results (random-cluster/FK, Ising, sharpness, Onsager,
 Beffara–Duminil-Copin, and the physics-facing percolation, OSSS and wall modules) need, minus
-everything ported. The remaining parts of the third round port them. Every module they import is
-either ported (first, second or third round) or in this group, so those parts need nothing from the
-categories further down.
+everything accounted for above. The remaining parts of the third round port them. Every module they
+import is accounted for above or is in this group, so those parts need nothing from the categories
+further down.
 
 | Area | Modules | Lines |
 | --- | ---: | ---: |
@@ -1240,13 +1242,41 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   in its ported copy was a wrapper around Mathlib's `MeasureTheory.Measure.infinitePi` API with no
   users, so the declarations were deleted and the empty module was removed. Use Mathlib's
   `Measure.infinitePi` instead.
-- Third round (209 of 635 sources ported so far): no ported module was deleted or merged; each
-  ported source has its own module.
-  Twenty-one ported declarations were retired inside their modules in favour of declarations already
-  in the root libraries or in Mathlib; their users call the replacement instead, and statements that
-  mentioned a retired definition now mention its replacement. Unlike other declarations deleted
-  inside surviving modules (last item below), they are listed here, grouped by how the replacement
-  relates to the original; the pull-request description lists them too (original → replacement):
+- Third round (209 of 635 sources accounted for so far): 2 sources are covered by existing modules
+  of the root libraries; each of the other 207 has its own module.
+  Sources covered by existing modules of the root libraries (their rows above name these modules):
+  - `Code/Percolation/BurtonKeaneMergeGeom.lean` →
+    `MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification`, whose module doc names this
+    source. Its ported module
+    `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom` was removed:
+    `StatMech.Percolation.hmergeGeom_discharged` is a special case of
+    `MathlibExt.Probability.Percolation.BurtonKeaneWanted.exists_mergeWitness_pos`, which drops the
+    hypothesis `k ≠ ⊤`; `StatMech.Percolation.twoMeetBox`,
+    `StatMech.Percolation.twoMeetBox_subset_mergeWitness`,
+    `StatMech.Percolation.iEqLevel_subset_iUnion_twoMeetBox` and
+    `StatMech.Percolation.exists_twoMeetBox_pos` were intermediate steps with no remaining use,
+    whose counterparts in main are private to their module.
+  - `Code/Percolation/CanonTrifProb.lean` →
+    `MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount`, whose module doc names this
+    source among those it adapts. Its ported module
+    `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonTrifProb` was removed:
+    `StatMech.Percolation.ctp_measurableSet_isCanonicalTrifurcation` and
+    `StatMech.Percolation.ctp_canonicalTrifurcationProb_const` have the same full types as
+    `MathlibExt.Probability.Percolation.BurtonKeaneWanted.measurableSet_isEncounterPoint` and
+    `MathlibExt.Probability.Percolation.BurtonKeaneWanted.measure_encounter_eq_origin`;
+    `StatMech.Percolation.ctp_canonical_trifurcation_prob_eq_zero` follows from
+    `MathlibExt.Probability.Percolation.BurtonKeaneWanted.measure_encounter_eq_zero` (for `d ≥ 1`;
+    there is no encounter point at `d = 0`);
+    `StatMech.Percolation.ctp_isCanonicalTrifurcation_shift`,
+    `StatMech.Percolation.ctp_canonTcount_eq_sum_indicator` and
+    `StatMech.Percolation.ctp_expected_canonTcount` were intermediate steps with no remaining use,
+    whose counterparts in main are private to their module.
+  Forty ported declarations were retired inside their modules in favour of declarations already in
+  the root libraries or in Mathlib, or in another ported module; their users call the replacement
+  instead, and statements that mentioned a retired definition now mention its replacement. Unlike
+  other declarations deleted inside surviving modules (last item below), they are listed here,
+  grouped by how the replacement relates to the original; the pull-request description lists them
+  too (original → replacement):
   - Same full type up to definitional equality (for definitions and instances, also a definitionally
     equal value):
     - `StatMech.FK.feu_wiredIV_isErgodic` (from `Code/FK/FKLimitsErgodicUncond.lean`, in
@@ -1289,6 +1319,50 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
       `Code/FK/BulkDeviationProof.lean`, in
       `PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance`), the same predicate
       `fun _ => False`, with definitionally equal instances;
+    - `StatMech.Percolation.IsCanonicalTrifurcation` (from
+      `Code/Percolation/CanonicalTrifCount.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount`) →
+      `MathlibExt.Probability.Percolation.BurtonKeaneWanted.IsEncounterPoint` (in
+      `MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount`), the same predicate;
+    - `StatMech.Percolation.cbk_canonical_trif_prob_eq_zero` (from
+      `Code/Percolation/CanonBurtonKeane.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane`) →
+      `MathlibExt.Probability.Percolation.BurtonKeaneWanted.measure_encounter_eq_zero` (in
+      `MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount`); its helper lemma
+      `StatMech.Percolation.cbk_boundary_succ_vol_tendsto` was removed with it and has no
+      replacement: it had no other use;
+    - `StatMech.Percolation.bkc_bernoulli_hasFiniteEnergyMerge` and
+      `StatMech.Percolation.bkc_bernoulli_isErgodic` (from `Code/Percolation/BurtonKeaneClose.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy`) →
+      `MathlibExt.Probability.Percolation.BurtonKeaneWanted.bernoulli_finiteEnergyMerge` and
+      `MathlibExt.Probability.Percolation.BurtonKeaneWanted.bernoulli_lattice_ergodic` (in
+      `MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification`); their helper lemmas
+      `StatMech.Percolation.bkc_infinitePi_disjoint_cylinder`,
+      `StatMech.Percolation.bkc_projP_preimage_cylinder`,
+      `StatMech.Percolation.bkc_infinitePi_map_piEquivPiSubtypeProd`,
+      `StatMech.Percolation.bkc_pi_absolutelyContinuous_fin`,
+      `StatMech.Percolation.bkc_pi_absolutelyContinuous_fintype`,
+      `StatMech.Percolation.bkc_infinitePi_ac_of_finite_diff`, `StatMech.Percolation.bkc_factor_ac`
+      and `StatMech.Percolation.bkc_smul_sym2_injective` were removed with them and have no
+      replacement: they served only those two proofs (main's copies are private to their module);
+      the instance `StatMech.Percolation.bkc_isProbMeasure_factor` was removed as a duplicate:
+      type-class search finds the same instance without it;
+    - `StatMech.Percolation.ava_origin_no_adj_removeSite` and
+      `StatMech.Percolation.ava_connected_origin_eq` (from
+      `Code/Percolation/AvoidingAttachment.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment`) →
+      `StatMech.Walls.bkm_origin_no_neighbour` and `StatMech.Walls.bkm_reachable_origin_eq` (from
+      `Code/Walls/bkm_dccwitnessnezero.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorWitnessRemoveSite`);
+    - `StatMech.Percolation.arr_cluster_removeSite_origin`,
+      `StatMech.Percolation.arr_cluster_removeSite_origin_finite` and
+      `StatMech.Percolation.arr_witness_ne_zero` (from
+      `Code/Percolation/AvoidingRoutingResidue.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginAvoidingResidues`) →
+      `StatMech.Walls.bkm_cluster_removeSite_origin_eq_singleton`,
+      `StatMech.Walls.bkm_cluster_removeSite_origin_finite` and `StatMech.Walls.bkm_witness_ne_zero`
+      (from `Code/Walls/bkm_dccwitnessnezero.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorWitnessRemoveSite`);
   - Special cases of a more general declaration (the original statement is an instance of it):
     - `StatMech.Sharpness.BackboneP2CoordinateReindex.edgeFinset_subset` (from
       `Code/Sharpness/BackboneP2CoordinateReindex.lean`, in
