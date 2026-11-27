@@ -34,17 +34,17 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
-public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.IncompleteLeonardoP
 public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
 public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
+public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoPTilings
-public import MathlibExt.NumberTheory.LeonardoPTilingsCardLeonardoPTilings
 public import MathlibExt.NumberTheory.LucasLeonardoPFromLucas
 public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
 public import MathlibExt.NumberTheory.LucasLeonardoPPrefixSum
 public import MathlibExt.NumberTheory.LucasLeonardoPStrideSum
 public import WantedExt.NumberTheory.LeonardoPWanted
+public import MathlibExt.NumberTheory.LeonardoPTilingsCardLeonardoPTilings
 
 namespace MetaMathlibExt
 
