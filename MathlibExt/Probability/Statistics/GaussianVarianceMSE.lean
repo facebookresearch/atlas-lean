@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Statistics.LinearModel.Inference
+public import MathlibExt.Probability.Statistics.ANOVA.OneWay
 public import MathlibExt.Probability.Statistics.EstimationRisk
 public import MathlibExt.Probability.Distributions.GammaMoments
 
@@ -17,52 +17,32 @@ import Mathlib.Tactic.Linarith
 import Lean.Elab.Tactic.Omega
 import Mathlib.Tactic.Ring
 
-/-! # Mean squared error of two Gaussian variance estimators -/
+/-!
+# Mean squared error of two Gaussian variance estimators
 
-open MeasureTheory Matrix
+`ProbabilityTheory.gaussian_variance_estimators_mse` compares the estimators for an i.i.d.
+`N(μ, v)` sample of size `n ≥ 2` with `v > 0`. The one-group ANOVA chi-square law gives
+the distribution of the scaled sum of squared deviations. Gamma moments and the bias–variance
+decomposition then give the exact risks and their strict ordering.
+-/
+
+open MeasureTheory
 open scoped NNReal
 
 namespace ProbabilityTheory
 
-open MathlibExt.Probability.Statistics.LinearModel
 open MathlibExt.Probability.Statistics.EstimationRisk
 
 private theorem sample_rss_law {n : ℕ} (hn : 2 ≤ n) (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) :
     HasLaw (fun x : Fin n → ℝ =>
       (∑ i, (x i - (∑ j, x j) / (n : ℝ)) ^ 2) / (v : ℝ))
       (chiSquareMeasure (n - 1)) (Measure.pi fun _ : Fin n => gaussianReal μ v) := by
-  let X : Matrix (Fin n) (Fin 1) ℝ := Matrix.of fun _ _ => 1
-  have hn0 : n ≠ 0 := by omega
-  have hgram : Xᵀ * X = Matrix.of (fun _ _ : Fin 1 => (n : ℝ)) := by
-    ext i j
-    simp [X, Matrix.mul_apply]
-  have hunit : IsUnit (Xᵀ * X) := by
-    rw [Matrix.isUnit_iff_isUnit_det, hgram, Matrix.det_unique]
-    simpa using hn0
-  have hinv : (Xᵀ * X)⁻¹ = Matrix.of (fun _ _ : Fin 1 => (n : ℝ)⁻¹) := by
-    rw [hgram]
-    refine Matrix.inv_eq_right_inv ?_
-    ext i j
-    obtain rfl : i = j := Subsingleton.elim i j
-    simp [Matrix.mul_apply, hn0]
-  have hmeans (x : Fin n → ℝ) : X *ᵥ olsEstimator X x = fun _ => (∑ i, x i) / n := by
-    rw [olsEstimator, olsMatrix_eq, hinv]
-    ext i
-    simp [X, Matrix.mulVec, dotProduct, Matrix.mul_apply, Finset.mul_sum, div_eq_inv_mul]
-  have hxμ : X *ᵥ (fun _ => μ) = fun _ => μ := by
-    ext i
-    simp [X, Matrix.mulVec, dotProduct]
-  have hvpos : 0 < (v : ℝ) := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
-  have h := hasLaw_rss_div_sq (X := X) hunit
-    (by simp only [Fintype.card_fin]; omega) (fun _ => μ)
-    (Real.sqrt (v : ℝ)) (Real.sqrt_pos.mpr hvpos) (hasLaw_pi_gaussianReal_standardize μ hv)
-  simp only [Fintype.card_fin, Real.sq_sqrt hvpos.le] at h
-  refine h.congr (Filter.Eventually.of_forall fun x => ?_)
-  have hsample : (fun _ : Fin n => μ) + (x - fun _ => μ) = x := by
-    ext i
-    simp only [Pi.add_apply, Pi.sub_apply]
-    ring
-  simp only [hxμ, hsample, hmeans, dotProduct, Pi.sub_apply, sq]
+  have hgm (x : Fin n → ℝ) : groupMean (fun _ : Fin n => ()) x () = (∑ i, x i) / n := by
+    simp [groupMean]
+  have h := hasLaw_sumSqWithin_div (fun _ : Fin n => ()) (fun _ => ⟨⟨0, by omega⟩, rfl⟩)
+    (by simp only [Fintype.card_unit, Fintype.card_fin]; omega) (m0 := μ) hv
+    (HasLaw.id (μ := Measure.pi fun _ : Fin n => gaussianReal μ v))
+  simpa [sumSqWithin, hgm, id] using h
 
 @[expose] public section
 
