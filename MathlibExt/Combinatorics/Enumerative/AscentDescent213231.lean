@@ -24,6 +24,11 @@ least two these two prefixes add one ascent or one descent, respectively, to the
 * Tian Han, *Joint Distributions of 10 Classical Statistics over Permutations Avoiding Two
   Patterns of Length 3*, INTEGERS 26 (2026), Article A18, pp. 1–22, §2.4 and Corollary 4,
   equation (30).
+* Michael Bukata, Ryan Kulwicki, Nicholas Lewandowski, Lara Pudwell, Jacob Roth, and Teresa
+  Wheeland, *Distributions of Statistics Over Pattern-Avoiding Permutations*, Journal of
+  Integer Sequences 22 (2019), Article 19.2.6, pp. 1–22, §4.2 and Proposition 10
+  (<https://cs.uwaterloo.ca/journals/JIS/VOL22/Pudwell/pudwell6.pdf>). The first-entry
+  minimum/maximum argument and its correspondence with ascents and descents are used here.
 * Tian Han and Sergey Kitaev, *Joint distributions of statistics over permutations avoiding
   two patterns of length 3*, Discrete Mathematics and Theoretical Computer Science 26(1)
   (2024), Article 4, pp. 1–25, §2.4, Theorem 2.22 (the earlier joint distribution).
