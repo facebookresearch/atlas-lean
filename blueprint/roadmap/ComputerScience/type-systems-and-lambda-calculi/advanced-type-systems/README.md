@@ -7,3 +7,8 @@
 - [Subtyping in full F-sub is undecidable](subtyping-in-full-f-sub-is-undecidable.md)
 - [Iso-recursive types: safety without normalization](iso-recursive-types-safety-without-normalization.md)
 - [Soundness of algorithmic conversion for dependent type theory](soundness-of-algorithmic-conversion-for.md)
+- [The λP calculus](the-lambda-p-calculus/README.md)
+- [Recursive types and subtyping](recursive-types-and-subtyping/README.md)
+- [Gradual typing](gradual-typing/README.md)
+- [Classical logic and control in λΔ](classical-logic-and-control-in-lambda-delta/README.md)
+- [Martin-Löf type theory with one universe](martin-lof-type-theory-with-one-universe/README.md)

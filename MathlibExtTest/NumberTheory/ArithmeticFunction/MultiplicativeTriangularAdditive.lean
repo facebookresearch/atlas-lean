@@ -11,10 +11,11 @@ module
 import MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditive
 
 /-!
-# Tests for Park's vanishing lemmas
+# Tests for Park's identity and vanishing lemmas
 
 The indicators of the divisors of 3 and 5 realize the two possible nonzero exceptional values.
-The indicator of the divisors of 1 realizes vanishing throughout the interval.
+The indicator of the divisors of 1 realizes vanishing throughout the interval. The identity
+arithmetic function realizes the case with nonzero value at 2.
 -/
 
 namespace MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted
@@ -73,5 +74,25 @@ example (n : ℕ) (hlo : 2 ≤ n) (hhi : n ≤ 21) : divisorIndicator 1 n = 0 :=
   have ha' := small_triangular_sums ha
   have hb' := small_triangular_sums hb
   rw [vanish a (by omega), vanish b (by omega), vanish (a + b) (by omega), add_zero]
+
+private noncomputable def natIdentity : ArithmeticFunction ℂ :=
+  ⟨fun n ↦ (n : ℂ), Nat.cast_zero⟩
+
+-- The identity satisfies all the hypotheses, including nonvanishing at 2.
+example : natIdentity 2 = 2 := by
+  have hmul : natIdentity.IsMultiplicative :=
+    ⟨Nat.cast_one, fun {a b} _ ↦ Nat.cast_mul a b⟩
+  have hadd (a b : ℕ) (_ha : IsSumTwoPositiveTriangular a) (_hb : IsSumTwoPositiveTriangular b) :
+      natIdentity (a + b) = natIdentity a + natIdentity b := Nat.cast_add a b
+  exact multiplicative_additive_on_sum_two_triangular_eq_id_le_21 natIdentity hmul hadd
+    two_ne_zero 2 (by decide)
+
+-- Both endpoints are included for an arbitrary function satisfying the hypotheses.
+example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
+      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
+    (hf2 : f 2 ≠ 0) : f 0 = 0 ∧ f 21 = 21 :=
+  let hid := multiplicative_additive_on_sum_two_triangular_eq_id_le_21 f hf hadd hf2
+  ⟨by simpa only [Nat.cast_zero] using hid 0 (by decide), hid 21 (by decide)⟩
 
 end MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted

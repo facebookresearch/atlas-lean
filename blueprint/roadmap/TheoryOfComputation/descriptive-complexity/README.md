@@ -8,3 +8,4 @@ Logical characterizations of complexity classes on finite structures: Fagin's th
 - [Finite model theory](finite-model-theory/README.md)
 
 - [Pebble games with counting and the Sherali–Adams hierarchy](pebble-games-with-counting.md)
+- [First-order projections](first-order-projections/README.md)
