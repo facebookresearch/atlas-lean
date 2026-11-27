@@ -10,7 +10,7 @@ Suppose that no request of a task in $hp(i)$ overflows, whatever the phases of t
 
 The hypothesis on the tasks in $hp(i)$ is needed because a request that is not fulfilled by its deadline is dropped: with $(C, T) = (2, 5), (1, 2), (1, 6)$ in decreasing priority, no request of the third task overflows, whatever the phases, although $W_3(5) = 6$ and $W_3(6) = 8$, so that $W_3$ has no fixed point in $(0, 6]$; the requests of the second task can overflow.
 
-The fixed-point equation describes a request of $\tau_i$ made at a critical instant: in a window of length $r$ starting at that instant, each higher-priority task $\tau_j$ makes $\lceil r/T_j \rceil$ requests, each of which preempts $\tau_i$ for $C_j$, and the request of $\tau_i$ completes at the first time $r$ by which all this work, together with its own $C_i$, has been done.
+The fixed-point equation describes a request of $\tau_i$ made at a critical instant: in a window of length $r$ starting at that instant, each higher-priority task $\tau_j$ makes $\lceil r/T_j \rceil$ requests, each of which preempts $\tau_i$ for $C_j$. When the least positive fixed point $r$ is at most $T_i$, the request of $\tau_i$ completes at time $r$ after it, the first time by which all this work, together with its own $C_i$, has been done. When it exceeds $T_i$, the request is not fulfilled by its deadline and is dropped: with the tasks $(C, T) = (2, 3), (2, 4)$ in decreasing priority, first requested together, the first task never overflows, the least fixed point of $W_2$ is $6$, and the first request of the second task is dropped at time $4$ with no response time.
 
 ## Depends on
 
@@ -21,7 +21,7 @@ The fixed-point equation describes a request of $\tau_i$ made at a critical inst
 
 ## Proof depends on
 
-- [The critical instant theorem](../the-critical-instant-theorem.md): when no request of a higher-priority task overflows, the largest response time of $\tau_i$ occurs for a request made together with requests of all higher-priority tasks.
+- [The critical instant theorem](../the-critical-instant-theorem.md): when no request of a higher-priority task overflows, whatever the phases, the largest response time of $\tau_i$ occurs for a request made together with requests of all higher-priority tasks.
 
 ## Sources
 
