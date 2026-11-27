@@ -18,9 +18,21 @@ import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.Normed.Group.Basic
 
 /-!
-# Phase estimation analytic bound
+# Phase-estimation coefficient bound
 
-The success probability of phase estimation is at least `4 / π ^ 2`.
+For `0 < N` and a real offset `δ`, `peAmp N δ` is the normalized geometric sum
+`(1 / N) * ∑ y < N, exp (2 * π * i * δ * y)`. With `N = 2 ^ m` it is the coefficient in equation
+(5.3) of §5 of R. Cleve, A. Ekert, C. Macchiavello and M. Mosca, "Quantum algorithms revisited"
+(arXiv:quant-ph/9708016). There `δ` is the offset of the phase from its best `m`-bit estimate,
+and the coefficient is the amplitude of that estimate after the inverse quantum Fourier
+transform.
+
+This module proves the analytic step of that argument: when `|δ| ≤ 1 / (2 * N)`, the squared
+norm of `peAmp N δ` is at least `4 / π ^ 2` (equation (5.4) for `N = 2 ^ m`). The proof uses the
+closed form of the geometric sum (equation (5.3)) and a chord bound from Jordan's inequality.
+The results bound a scalar coefficient for a given offset. They do not choose the nearest
+outcome, relate the coefficient to the inverse quantum Fourier transform or model measurement,
+so they do not state the success probability of phase estimation.
 -/
 
 @[expose] public section
@@ -29,11 +41,14 @@ open BigOperators Real
 
 namespace MathlibExt.Quantum.PhaseEstimationAnalytic
 
-/-- Amplitude of the best estimate: the geometric sum from the source. -/
+/-- **Phase-estimation coefficient.** For `N : ℕ` and a real offset `δ`,
+`peAmp N δ = (1 / N) * ∑ y ∈ Finset.range N, exp (2 * π * i * δ * y)`. For `N = 2 ^ m` this is
+the normalized geometric sum of Cleve et al., equation (5.3). -/
 noncomputable def peAmp (N : ℕ) (δ : ℝ) : ℂ :=
   (1 / N : ℂ) * ∑ y ∈ Finset.range N, Complex.exp (2 * π * Complex.I * δ * y)
 
-/-- Jordan step: lower bound on `‖1 - exp (I * θ)‖`. -/
+/-- **Chord bound from Jordan's inequality.** For a real `θ` with `|θ| ≤ π`,
+`2 / π * |θ| ≤ ‖1 - exp (i * θ)‖`. -/
 theorem norm_one_sub_exp_ge (θ : ℝ) (hθ : |θ| ≤ π) :
     2 / π * |θ| ≤ ‖1 - Complex.exp (Complex.I * θ)‖ := by
   obtain ⟨hlo, hhi⟩ := abs_le.mp hθ
@@ -61,7 +76,10 @@ theorem norm_one_sub_exp_ge (θ : ℝ) (hθ : |θ| ≤ π) :
     have hj := Real.mul_le_sin h2nn h2le
     linarith [hj, Real.pi_pos]
 
-/-- Closed form of the amplitude via the geometric sum. -/
+/-- **Closed form of the coefficient.** For `0 < N` and an offset `δ` with
+`exp (2 * π * i * δ) ≠ 1`, summing the geometric series gives
+`peAmp N δ = (1 / N) * (1 - exp (2 * π * i * δ) ^ N) / (1 - exp (2 * π * i * δ))`
+(Cleve et al., equation (5.3)). -/
 theorem peAmp_eq_div (N : ℕ) (δ : ℝ) (hN : 0 < N)
     (hω : Complex.exp (2 * π * Complex.I * δ) ≠ 1) :
     peAmp N δ =
@@ -85,7 +103,7 @@ theorem peAmp_eq_div (N : ℕ) (δ : ℝ) (hN : 0 < N)
   field_simp
   ring
 
-/-- Nonvacuity: exact phases give amplitude one. -/
+/-- **Coefficient at offset zero.** For `0 < N`, `peAmp N 0 = 1`. -/
 theorem peAmp_zero (N : ℕ) (hN : 0 < N) : peAmp N 0 = 1 := by
   have hexp : ∀ y ∈ Finset.range N,
       Complex.exp (2 * π * Complex.I * (0 : ℝ) * y) = 1 := by
@@ -98,7 +116,8 @@ theorem peAmp_zero (N : ℕ) (hN : 0 < N) : peAmp N 0 = 1 := by
     mul_one]
   exact one_div_mul_cancel hNℂ
 
-/-- Generalized helper: the bound for any `N ≥ 1`, with `δ = 0` allowed. -/
+/-- **Coefficient bound.** For `0 < N` and a real offset `δ` with `|δ| ≤ 1 / (2 * N)`, `δ = 0`
+included, `4 / π ^ 2 ≤ ‖peAmp N δ‖ ^ 2`. -/
 theorem four_div_pi_sq_le_normSq_peAmp (N : ℕ) (hN : 0 < N) (δ : ℝ)
     (hδ : |δ| ≤ 1 / (2 * N)) : 4 / π ^ 2 ≤ ‖peAmp N δ‖ ^ 2 := by
   have hpi : (0 : ℝ) < π := Real.pi_pos
@@ -225,7 +244,10 @@ theorem four_div_pi_sq_le_normSq_peAmp (N : ℕ) (hN : 0 < N) (δ : ℝ)
     rw [heq] at hsq
     exact hsq
 
-/-- Source-facing bound with `N = 2 ^ m`, from the generalized helper. -/
+/-- **Coefficient bound for `N = 2 ^ m`.** For an offset `δ` with `0 < |δ|` and
+`|δ| ≤ 1 / 2 ^ (m + 1)`, `4 / π ^ 2 ≤ ‖peAmp (2 ^ m) δ‖ ^ 2`. This is the inequality of
+Cleve et al., equation (5.4), under the source's hypotheses on `δ`. The bound itself does not
+need `0 < |δ|`: `four_div_pi_sq_le_normSq_peAmp` allows `δ = 0`. -/
 theorem four_div_pi_sq_le_normSq_peAmp_two_pow (m : ℕ) (δ : ℝ) (_hδ : 0 < |δ|)
     (hδm : |δ| ≤ 1 / 2 ^ (m + 1)) : 4 / π ^ 2 ≤ ‖peAmp (2 ^ m) δ‖ ^ 2 := by
   have h2m : 0 < 2 ^ m := by positivity

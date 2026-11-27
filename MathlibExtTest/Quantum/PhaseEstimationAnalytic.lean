@@ -69,12 +69,16 @@ theorem normSq_peAmp_two_quarter : ‖peAmp 2 (1 / 4)‖ ^ 2 = 1 / 2 := by
   rw [hval, e, Complex.sq_norm, Complex.normSq_add_mul_I]
   norm_num
 
-/-- The analytic bound is nontrivial at `N = 2`, `δ = 1 / 4`. -/
+/-- The bound for `N = 2 ^ m` at `m = 1`, `δ = 1 / 4`, rewritten with the exact value `1 / 2`
+of `normSq_peAmp_two_quarter`. -/
 theorem four_div_pi_sq_le_half : 4 / π ^ 2 ≤ 1 / 2 := by
-  have hπ2 : (8 : ℝ) ≤ π ^ 2 := by
-    nlinarith [Real.pi_gt_three, sq_nonneg (π - 3), Real.pi_pos]
-  rw [div_le_iff₀ (by positivity : (0 : ℝ) < π ^ 2)]
-  linarith
+  have h := four_div_pi_sq_le_normSq_peAmp_two_pow 1 (1 / 4) (by norm_num) (by norm_num)
+  rwa [pow_one, normSq_peAmp_two_quarter] at h
+
+/-- The general bound at `δ = 0`, rewritten with `peAmp_zero`: `4 / π ^ 2 ≤ 1`. -/
+theorem four_div_pi_sq_le_one_of_offset_zero (N : ℕ) (hN : 0 < N) : 4 / π ^ 2 ≤ 1 := by
+  have h := four_div_pi_sq_le_normSq_peAmp N hN 0 (by rw [abs_zero]; positivity)
+  rwa [peAmp_zero N hN, norm_one, one_pow] at h
 
 #print axioms norm_one_sub_exp_ge
 #print axioms peAmp_eq_div
