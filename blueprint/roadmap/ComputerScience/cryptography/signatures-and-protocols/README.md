@@ -11,7 +11,6 @@ Lamport one-time signatures, Schnorr identification and Sigma protocols, and zer
 - [Zero-knowledge proofs](zero-knowledge-proofs/README.md)
 - [Sigma Protocols and the Fiat–Shamir Transform](sigma-protocols-and-fiat-shamir/README.md)
 - [Post-Quantum Signatures](post-quantum-signatures/README.md)
-
 - [Protocol analysis](protocol-analysis/README.md)
 - [Interactive arguments and arguments of knowledge](zero-knowledge-and-arguments/README.md)
 - [Secure multiparty computation](secure-multiparty-computation/README.md)
@@ -26,3 +25,4 @@ Lamport one-time signatures, Schnorr identification and Sigma protocols, and zer
 - [Plonkish Arithmetization and Polynomial IOPs](plonkish-polynomial-iops/README.md)
 - [Rate-Shifting Reed–Solomon Proximity Tests](rate-shifting-reed-solomon-proximity-tests/README.md)
 - [Relaxed R1CS and Folding Schemes](relaxed-r1cs-folding-schemes/README.md)
+- [Sigma Protocols under Language Reductions](sigma-protocol-language-reductions/README.md)

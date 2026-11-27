@@ -25,7 +25,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 public import WantedExt.Complexity.NPComplete.TwoProcessorUnitNoWaitJobShopChainsWanted
 
 @[expose] public section
@@ -46,7 +46,7 @@ the overall deadline (makespan `C_max ≤ D`) in which, whenever `j` precedes `j
 of `j'` starts no earlier than the last task of `j` finishes?
 
 This is Brucker and Knust's `J2|chains; pᵢⱼ = 1|C_max`, which they classify as NP-hard in the
-strong sense, citing Timkovsky (1985). It is JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`)
+strong sense, citing Timkovsky (1985). It is JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`)
 with `m = 2`, unit task lengths and chain precedence constraints between jobs, and it is the
 no-wait problem `J2|chains; pᵢⱼ = 1; no-wait|C_max` (`TwoProcessorUnitNoWaitJobShopChainsWanted`)
 without the no-wait condition. The instance type (the [SS18] instance and the chain arcs `(j, j')`,
@@ -72,7 +72,7 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the [SS18] instance of `JobShopSchedulingWanted` (the number of processors, the
+/-- An instance: the [SS18] instance of `JobShopSchedulingDefs` (the number of processors, the
 jobs as lists of `(l(t), p(t))` pairs, and the deadline `D`), and the arcs `(j, j')` of the
 chains, `j` the immediate predecessor of `j'` (the instance type of
 `TwoProcessorUnitNoWaitJobShopChainsWanted`). -/
