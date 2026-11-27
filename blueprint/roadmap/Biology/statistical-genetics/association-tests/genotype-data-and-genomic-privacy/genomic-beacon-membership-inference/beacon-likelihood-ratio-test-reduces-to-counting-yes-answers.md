@@ -20,7 +20,7 @@ Its statement uses only the notions recalled above.
 
 ## Proof depends on
 
-- [De Moivre–Laplace limit theorem, convergence in distribution](../../../../Probability/central-limit-theorems/de-moivre-laplace-theorem/de-moivre-laplace-tendsto-in-distributio.md)
+- [De Moivre–Laplace limit theorem, convergence in distribution](../../../../../Probability/central-limit-theorems/de-moivre-laplace-theorem/de-moivre-laplace-tendsto-in-distributio.md)
 
 ## Expansion
 

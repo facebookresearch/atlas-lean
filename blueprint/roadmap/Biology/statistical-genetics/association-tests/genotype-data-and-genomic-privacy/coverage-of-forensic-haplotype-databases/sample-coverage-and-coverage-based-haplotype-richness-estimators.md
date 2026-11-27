@@ -16,7 +16,7 @@ which reduces to $\hat N_0$ when frequencies are homogeneous.
 
 ## Depends on
 
-- [The Good–Turing identity for the missing mass](../../../not-yet-classified/good-turing/expect-missing-mass.md)
+- [The Good–Turing identity for the missing mass](../../../../not-yet-classified/good-turing/expect-missing-mass.md)
 
 ## Proof depends on
 

@@ -18,13 +18,13 @@ Hence releasing $K$ SNPs by the exponential mechanism, sampling SNP $i$ with pro
 
 ## Depends on
 
-- [Differential privacy](../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
-- [Exponential mechanism](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism.md)
-- [Pearson's chi-squared statistic of a 2 × 2 table](../../genomic-prediction-from-summary-statistics/pearson2x2.md)
+- [Differential privacy](../../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
+- [Exponential mechanism](../../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism.md)
+- [Pearson's chi-squared statistic of a 2 × 2 table](../../../genomic-prediction-from-summary-statistics/pearson2x2.md)
 
 ## Proof depends on
 
-- [The exponential mechanism is differentially private](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
+- [The exponential mechanism is differentially private](../../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
 
 ## Expansion
 

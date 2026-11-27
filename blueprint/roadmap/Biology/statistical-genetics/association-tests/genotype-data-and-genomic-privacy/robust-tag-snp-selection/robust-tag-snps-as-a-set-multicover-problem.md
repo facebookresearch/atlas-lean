@@ -21,8 +21,8 @@ Its statement uses only the notions recalled above.
 
 ## Proof depends on
 
-- [MINIMUM TEST SET is NP-complete](../../../../TheoryOfComputation/np-completeness/set-systems-and-location/minimum-test-set/minimum-test-set-np-complete.md)
-- [Harmonic bound in the largest set size for greedy set cover](../../../../ComputerScience/approximation-algorithms/greedy-set-cover/greedy-set-cover-approx.md)
+- [MINIMUM TEST SET is NP-complete](../../../../../TheoryOfComputation/np-completeness/set-systems-and-location/minimum-test-set/minimum-test-set-np-complete.md)
+- [Harmonic bound in the largest set size for greedy set cover](../../../../../ComputerScience/approximation-algorithms/greedy-set-cover/greedy-set-cover-approx.md)
 
 ## Expansion
 

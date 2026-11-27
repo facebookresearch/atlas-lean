@@ -14,7 +14,7 @@ A pair weight $w : M\times M \to \mathbb{R}$ is **semi-linear** if $w(i,j) \le w
 
 ## Depends on
 
-- [Prim's algorithm returns a minimum spanning tree](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/prim-s-algorithm/prim-minimum-spanning-tree.md)
+- [Prim's algorithm returns a minimum spanning tree](../../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/prim-s-algorithm/prim-minimum-spanning-tree.md)
 
 ## Proof depends on
 

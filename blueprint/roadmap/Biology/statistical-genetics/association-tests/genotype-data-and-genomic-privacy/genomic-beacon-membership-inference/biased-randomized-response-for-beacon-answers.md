@@ -13,7 +13,7 @@ Applying the device once to the stored data, rather than independently at each q
 
 ## Depends on
 
-- [Differential privacy](../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
+- [Differential privacy](../../../../../ComputerScience/cryptography/differential-privacy/differentially-private.md)
 - [Beacon likelihood-ratio test reduces to counting yes answers](beacon-likelihood-ratio-test-reduces-to-counting-yes-answers.md)
 
 ## Proof depends on

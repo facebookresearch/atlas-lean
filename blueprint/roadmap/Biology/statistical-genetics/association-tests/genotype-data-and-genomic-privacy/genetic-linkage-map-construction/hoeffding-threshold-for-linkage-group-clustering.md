@@ -20,7 +20,7 @@ Its statement uses only the notions recalled above.
 
 ## Proof depends on
 
-- [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Hoeffding's inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Expansion
 

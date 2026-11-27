@@ -8,11 +8,11 @@ $$g^* = \arg\max_{g\in\{0,1,2\}^n} P(g \mid r, M, M').$$
 
 ## Depends on
 
-- [Hidden Markov model](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/hmm.md)
+- [Hidden Markov model](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/hmm.md)
 
 ## Proof depends on
 
-- [The likelihood from the forward and backward variables](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood-eq-sum-forward-mul-backward.md)
+- [The likelihood from the forward and backward variables](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood-eq-sum-forward-mul-backward.md)
 
 ## Expansion
 
