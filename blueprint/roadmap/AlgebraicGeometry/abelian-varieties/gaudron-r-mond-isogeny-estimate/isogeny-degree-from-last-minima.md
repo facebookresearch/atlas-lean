@@ -40,18 +40,23 @@ smaller than the final bound of their §6, $(10g)^{5g} (\Lambda \Lambda')^{4g} \
 
 ## Expansion
 
-A good expansion has pages for: the volumes $\operatorname{vol}(\operatorname{Hom}_K(A, B))$ and
-their independence of the polarizations (Proposition 2.9 and Corollaire 2.10, pp. 2067–2068); the
-bound $\deg \varphi \le \frac{|\varphi|^{2g}}{(2g)^g} \frac{h^0(A, L)}{h^0(B, M)}$ (Proposition 2.11,
-after Masser and Wüstholz); Minkowski's first and second theorems in the weak form of Lemme 3.1 (after Martinet's *Perfect
-lattices in Euclidean spaces*, Theorem 2.6.8);
-the avoidance lemma 3.2, which gives an isogeny of degree at most $(2g)^g \frac{h^0(A, L)}{h^0(B,
-M)} \Lambda(\operatorname{Hom}_K(A, B))^{2g}$ from the Siegel avoidance lemma of Gaudron and Rémond
-(*Lemmes de Siegel d'évitement*, Théorème 1.1); the isogeny theorem for simple abelian varieties
-(Proposition 4.1 (1)); the class index lemma and the isogenies between an abelian subvariety of
-$A^N$ and a power of $A$ (Lemmes 4.8 and 5.3, Proposition 5.4, after Masser and Wüstholz,
-*Factorization estimates*, and Reiner's *Maximal orders*); and Lemme 6.1, with the Hadamard
-inequality $\operatorname{vol}(\Gamma) \le \Lambda(\Gamma)^n$ for a lattice of rank $n$.
+This node is still to be broken down. A good expansion states and links:
+
+- the volumes $\operatorname{vol}(\operatorname{Hom}_K(A, B))$ and their independence of the
+  polarizations (Proposition 2.9 and Corollaire 2.10, pp. 2067–2068);
+- the bound $\deg \varphi \le \frac{|\varphi|^{2g}}{(2g)^g} \frac{h^0(A, L)}{h^0(B, M)}$
+  (Proposition 2.11, pp. 2068–2069, after Masser and Wüstholz);
+- Minkowski's first and second theorems in the weak form of Lemme 3.1 (pp. 2069–2070, after
+  Martinet's *Perfect lattices in Euclidean spaces*, Theorem 2.6.8);
+- the avoidance lemma 3.2 (p. 2070), which gives an isogeny of degree at most $(2g)^g \frac{h^0(A,
+  L)}{h^0(B, M)} \Lambda(\operatorname{Hom}_K(A, B))^{2g}$ from the Siegel avoidance lemma of
+  Gaudron and Rémond (*Lemmes de Siegel d'évitement*, Théorème 1.1);
+- the isogeny theorem for simple abelian varieties (Proposition 4.1 (1), pp. 2072–2073);
+- the class index lemma and the isogenies between an abelian subvariety of $A^N$ and a power of $A$
+  (Lemmes 4.8 and 5.3, Proposition 5.4, pp. 2079–2083, after Masser and Wüstholz, *Factorization
+  estimates*, and Reiner's *Maximal orders*);
+- Lemme 6.1 (p. 2084), with the Hadamard inequality $\operatorname{vol}(\Gamma) \le
+  \Lambda(\Gamma)^n$ for a lattice of rank $n$.
 
 ## Depends on
 
@@ -79,7 +84,8 @@ inequality $\operatorname{vol}(\Gamma) \le \Lambda(\Gamma)^n$ for a lattice of r
   6.1 and Proposition 6.2, p. 2084, with the proof of Proposition 6.2, pp. 2084–2085; Proposition
   6.3 (3), p. 2086, with its proof, p. 2087; the final bound of §6, p. 2089); §§2–5 for the lemmas
   of the expansion: Propositions 2.9 and 2.11 and Corollaire 2.10, pp. 2067–2069, Lemmes 3.1 and 3.2,
-  pp. 2069–2070, Proposition 4.1, pp. 2072–2073, Proposition 5.4, p. 2083; and Lemme 9.4, p. 2100.
+  pp. 2069–2070, Proposition 4.1, pp. 2072–2073, Lemme 4.8, p. 2079, Lemme 5.3, p. 2082, Proposition 5.4,
+  p. 2083; and Lemme 9.4, p. 2100.
 - É. Gaudron and G. Rémond, *Lemmes de Siegel d'évitement*, Acta Arith. 154 (2012), 125–136,
   <https://doi.org/10.4064/aa154-2-2>: Théorème 1.1, as cited by Gaudron and Rémond, *Polarisations
   et isogénies*, p. 2070 (not read).

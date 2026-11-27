@@ -21,9 +21,11 @@ subvariety given by the period theorem (*Polarisations et isogénies*, p. 2096).
 
 ## Expansion
 
-A good expansion has a page for the orthogonal abelian subvariety: that the addition map $B \times
-B^\perp \to A$ is an isogeny of degree at most $h^0(B, L)\, h^0(B^\perp, L) / h^0(A, L) \le h^0(B,
-L)^2$ (*Théorème des périodes*, §2.2, p. 351, which cites Bertrand, Théorème 3).
+This node is still to be broken down. A good expansion states and links:
+
+- the orthogonal abelian subvariety, with the bound $h^0(B, L)\, h^0(B^\perp, L) / h^0(A, L) \le
+  h^0(B, L)^2$ for the degree of the addition isogeny $B \times B^\perp \to A$ (*Théorème des
+  périodes*, §2.2, p. 351, which cites Bertrand, Théorème 3).
 
 ## Depends on
 

@@ -16,6 +16,13 @@ the heights of $A'$, $A''$ and $A'''$ through $M$; the last step of the
 
 ## Expansion
 
+This node is still to be broken down. A good expansion states and links:
+
+- the endomorphism algebra of a simple abelian variety, a division algebra, and of a power of one
+  (Milne, *Abelian Varieties*, Chapter I, §10, p. 43), for $d_i \le d_i \nu(A_i) \le 2 g_i^2$;
+- the bounds on $\nu$, $\nu(A) \le 2 g^2$ among them (*Polarisations et isogénies*, p. 2091);
+- the computation of Lemme 9.3 (pp. 2099–2100) described below.
+
 The proof inserts the bounds for $\Lambda \Lambda'$ and $\Lambda_i$ of the [bounds for the last
 minima](last-minimum-bounds.md) into item 2 of [isogeny degrees from last
 minima](isogeny-degree-from-last-minima.md), which is at most $(10g)^{5g} (\Lambda \Lambda')^{4g}
@@ -23,10 +30,7 @@ minima](isogeny-degree-from-last-minima.md), which is at most $(10g)^{5g} (\Lamb
 d_i} P^{256 (g \nu(A) + \sum_i n_i^2 g_i d_i \nu(A_i))}$. It then uses $d_i \le d_i \nu(A_i) \le 2
 g_i^2$, from the injection of $\operatorname{End}_K(A_i) \otimes \mathbb{Q}$, a division algebra since
 $A_i$ is simple over $K$, into each $\operatorname{End}_{k_1}(C_{i,j}^{m_{i,j}}) \otimes
-\mathbb{Q}$, together with $\nu(A) \le 2 g^2$ and $g^{5g} \le (9g)^{32 g^2 (g^2 - 1)}$. A good
-expansion has pages for the endomorphism algebra of a simple abelian variety and of a power of one
-(Milne, *Abelian Varieties*, Chapter I, §10, p. 43), and for the bounds on $\nu$ (*Polarisations et
-isogénies*, p. 2091).
+\mathbb{Q}$, together with $\nu(A) \le 2 g^2$ and $g^{5g} \le (9g)^{32 g^2 (g^2 - 1)}$.
 
 ## Depends on
 

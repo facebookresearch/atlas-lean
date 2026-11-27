@@ -1,9 +1,10 @@
 # Last minimum of a lattice of homomorphisms from an abelian subvariety
 
 Let $K$ be a field of characteristic zero, $A$ and $B$ [abelian varieties](../abelian-scheme.md)
-over $K$ with polarizations given by ample invertible sheaves $L$ on $A$ and $M$ on $B$, and $n \ge 1$
-an integer. Let $p \colon A \times B^n \to A$ and $q_j \colon A \times B^n \to B$, $1 \le j \le n$, be
-the projections. Let $H$ be an abelian subvariety of $A \times B^n$ defined over $K$ such that
+over $K$ with [polarizations](../polarization.md) $\lambda_A$ and $\lambda_B$ defined over $K$, and
+$n \ge 1$ an integer. Let $p \colon A \times B^n \to A$ and $q_j \colon A \times B^n \to B$, $1 \le j
+\le n$, be the projections. Let $H$ be an abelian subvariety of $A \times B^n$ defined over $K$ such
+that
 
 1. $p(H) = A$, and
 2. for every $f \in \operatorname{Hom}_K(A, B)$ there are integers $\ell \in \mathbb{N} \setminus
@@ -15,20 +16,32 @@ Then
 $$\Lambda(\operatorname{Hom}_K(A, B)) \le \Bigl( \frac{\deg H}{\deg A} \Bigr)^2,$$
 
 where $\Lambda$ is the last minimum for the [Rosati metric](rosati-metric-on-homomorphisms.md) of
-$L$ and $M$, $\deg A = \deg_L A$, and $\deg H$ is the degree of $H$ for the product polarization $L
-\boxtimes M^{\boxtimes n}$ on $A \times B^n$.
+$\lambda_A$ and $\lambda_B$, and the degrees are taken for $\lambda_A$ and for the product
+polarization of $A \times B^n$: over an algebraic closure $\bar K$, with ample invertible sheaves
+$L$ on $A_{\bar K}$ and $M$ on $B_{\bar K}$ such that $\lambda_A = \phi_L$ and $\lambda_B = \phi_M$,
+$\deg A = (L^{\dim A})$ and $\deg H$ is the degree of $H_{\bar K}$ for $L \boxtimes M^{\boxtimes n}$.
 
 ## Expansion
 
-The proof (*Polarisations et isogénies*, §7) replaces $H$ by an abelian subvariety $H' \subset H$
-with $p(H') = A$, $\dim H' = \dim A$ and $\deg H' \le (\deg H)^2 / \deg A$ (Lemme 7.2: the
-orthogonal in $H$ of the kernel of $p|_H$, with the degree bound for orthogonal abelian subvarieties
-of *Théorème des périodes*, §2.2), and bounds the norms of the homomorphisms $q_j \circ \psi$, where
-$\psi \colon A \to H'$ is the isogeny with $p \circ \psi = [s]$, $s = \deg(p|_{H'})$:
-$\frac{s+1}{2s} \sum_{j=1}^n |q_j \circ \psi|^2 \le \deg H' / \deg A$ (Lemme 7.3). A good expansion has pages for: the expression of the Rosati norm by
-intersection numbers, $|\varphi|^2 = \frac{2g}{(L^g)} (L^{g-1} \cdot \varphi^* M)$ (Proposition 2.8,
-after Mumford, Theorem 1, p. 192); the projection formula and the binomial expansion of intersection
-numbers on products used in Lemmes 7.2 and 7.3; and the orthogonal abelian subvariety and its degree.
+This node is still to be broken down. A good expansion states and links:
+
+- Lemme 7.2 (*Polarisations et isogénies*, pp. 2089–2090): for polarized abelian varieties $A$ and
+  $C$ and an abelian subvariety $H$ of $A \times C$ with $p(H) = A$, there is an abelian subvariety
+  $H' \subset H$ with $p(H') = A$, $\dim H' = \dim A$ and $\deg H' \le (\deg H)^2 / \deg A$; $H'$ is
+  the orthogonal in $H$ of the kernel of $p|_H$, and the bound uses the degree of orthogonal abelian
+  subvarieties (*Théorème des périodes*, §2.2);
+- Lemme 7.3 (p. 2090): for such an $H' \subset A \times B^n$, with $s = \deg(p|_{H'})$ and
+  $\psi \colon A \to H'$ the isogeny with $p|_{H'} \circ \psi = [s]$,
+
+    $$s + \frac{1}{2s} \sum_{j=1}^n |q_j \circ \psi|^2 \le \frac{\deg H'}{\deg A};$$
+
+- the expression of the Rosati norm by intersection numbers, $|\varphi|^2 = \frac{2g}{(L^{g})}
+  (L^{g-1} \cdot \varphi^* M)$ for $\varphi \in \operatorname{Hom}_K(A, B)$, $g = \dim A$
+  (Proposition 2.8, p. 2066, after Mumford, Theorem 1, p. 192), with the projection formula and the
+  binomial expansion of intersection numbers on products used in Lemmes 7.2 and 7.3;
+- the conclusion (p. 2091): with $x = \max_j |q_j \circ \psi|$, $x \le s + x^2/(2s) \le (\deg H /
+  \deg A)^2$, and the $q_j \circ \psi$ span $\operatorname{Hom}_K(A, B) \otimes \mathbb{Q}$ by
+  hypothesis 2.
 
 ## Depends on
 

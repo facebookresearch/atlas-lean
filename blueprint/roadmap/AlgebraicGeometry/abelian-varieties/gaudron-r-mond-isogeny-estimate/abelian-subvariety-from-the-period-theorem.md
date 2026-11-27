@@ -36,19 +36,25 @@ $\operatorname{Hom}_k(Z(A), Z(B))$.
 
 ## Expansion
 
+This node is still to be broken down. A good expansion states and links:
+
+- Lemme 8.1 (pp. 2091–2092): for a complex abelian variety $H$ and a finite set $S \subset \Omega_H$
+  of periods with $S \not\subset \Omega_{H'}$ for every strict abelian subvariety $H'$ of $H$, $\dim
+  H \le \operatorname{Card}(S)\, \nu(H)$; with the properties of $\nu$ listed on p. 2091;
+- Lemme 8.3 (p. 2093): eight of the short periods of $Z(A)_{\sigma_0}$ already determine
+  $Z(A)_{\sigma_0}$;
+- the transference bound $1 \le \lambda(\Omega_A) \Lambda(\Omega_A) \le 2g\, h^0(A, L)$ for the
+  lattice of periods (Corollaire 3.6, p. 2072, after Banaszczyk);
+- Lemme 8.4 (p. 2094): the bound $\lVert \varpi_i \rVert^2_{\sigma_0} \le e^{12.5} b^4 \max(1,
+  h_F(A), h_F(B))$ for the eight periods, through [Autissier's matrix
+  lemma](autissier-matrix-lemma.md) and the choice of $\sigma_0$;
+- the elementary Lemme 8.5 (p. 2096) and the final numerical estimates (pp. 2096–2097).
+
 If $\operatorname{Hom}_k(A, B) = \{0\}$, then $H = Z(A) \times \{0\}$ works. Otherwise $H$ is the
 smallest abelian subvariety of $Z$ whose tangent space at one embedding $\sigma_0$ contains eight
 periods built from short periods of $Z(A)_{\sigma_0}$ and $Z(B)_{\sigma_0}$, and the
 [period theorem](period-theorem.md), kept at $\sigma_0$ only, bounds its degree (*Polarisations et
-isogénies*, pp. 2095–2097). A good expansion has pages for: Lemme 8.1 (for a complex abelian variety
-$H$ and a finite set $S \subset \Omega_H$ of periods with $S \not\subset \Omega_{H'}$ for every
-strict abelian subvariety $H'$ of $H$, $\dim H \le \operatorname{Card}(S)\, \nu(H)$), with the properties of $\nu$ listed on p. 2091;
-Lemme 8.3 (eight of the short periods of $Z(A)_{\sigma_0}$ already determine $Z(A)_{\sigma_0}$);
-the transference bound $1 \le \lambda(\Omega_A) \Lambda(\Omega_A) \le 2g\, h^0(A, L)$ for the lattice
-of periods (Corollaire 3.6, after Banaszczyk); Lemme 8.4 (the bound $\lVert \varpi_i
-\rVert^2_{\sigma_0} \le e^{12.5} b^4 \max(1, h_F(A), h_F(B))$ for the eight periods, through
-[Autissier's matrix lemma](autissier-matrix-lemma.md) and the choice of $\sigma_0$); and the
-elementary Lemme 8.5 with the final numerical estimates.
+isogénies*, pp. 2095–2097).
 
 ## Depends on
 

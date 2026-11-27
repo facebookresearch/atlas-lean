@@ -34,23 +34,27 @@ polarizations.
 
 ## Expansion
 
-Item 1 is the [bound for the last minimum from an abelian
-subvariety](last-minimum-from-an-abelian-subvariety.md) applied to the abelian subvariety $H \subset
-Z(C) \times Z(C')^{128 \dim C'}$ of the [period theorem
-construction](abelian-subvariety-from-the-period-theorem.md) over $k_1$, with $\deg Z(C) = (\dim
-Z(C))! \ge 2^{15}$, $[k_1 : \mathbb{Q}] \le 4(9g)^{4g} [k : \mathbb{Q}]$, and the heights $h_F(C),
-h_F(C') \le M + \frac{3}{2} g$, obtained from $h_F(C_{i,j}) \ge -\frac{3}{2} \dim C_{i,j}$ and the
-additivity of $h_F$ on $A'''$ and $A''$. Item 2 follows from item 1 by the Galois trace argument
-$\Lambda(\operatorname{Hom}_K(A, B)) \le [K_1 : K]\, \Lambda(\operatorname{Hom}_{K_1}(A, B))$ for a
-finite Galois extension $K_1/K$ (Lemme 3.3), the submultiplicativity $\Lambda(\operatorname{Hom}_K(A,
-B)) \le \Lambda(\operatorname{Hom}_K(A, C))\, \Lambda(\operatorname{Hom}_K(C, B))$ when $A$ or $B$ is
-isogenous to an abelian subvariety of $C$ (Lemme 3.4, from $|\psi \circ \varphi| \le |\psi|
-|\varphi|$, Proposition 2.7), the isometry given by the Rosati involution between
-$\operatorname{Hom}_{k_1}(Z(A''), Z(A'''))$ and $\operatorname{Hom}_{k_1}(Z(A'''), Z(A''))$ for
-principal polarizations (p. 2066), and the orthogonal decomposition of
-$\operatorname{Hom}_{k_1}(Z(A'''), Z(A))$ into copies of the lattices
-$\operatorname{Hom}_{k_1}(Z(C_{i,j}), Z(A))$. A good expansion has pages for Lemmes 3.3 and 3.4 and
-Proposition 2.7, and states item 1 and item 2 as separate pages if the bookkeeping warrants it.
+This node is still to be broken down. A good expansion states and links:
+
+- for item 1, the [bound for the last minimum from an abelian
+  subvariety](last-minimum-from-an-abelian-subvariety.md) applied to the abelian subvariety $H
+  \subset Z(C) \times Z(C')^{128 \dim C'}$ of the [period theorem
+  construction](abelian-subvariety-from-the-period-theorem.md) over $k_1$, with $\deg Z(C) = (\dim
+  Z(C))! \ge 2^{15}$, $[k_1 : \mathbb{Q}] \le 4(9g)^{4g} [k : \mathbb{Q}]$, and the heights
+  $h_F(C), h_F(C') \le M + \frac{3}{2} g$, obtained from $h_F(C_{i,j}) \ge -\frac{3}{2} \dim
+  C_{i,j}$ and the additivity of $h_F$ on $A'''$ and $A''$ (p. 2098);
+- the Galois trace argument $\Lambda(\operatorname{Hom}_K(A, B)) \le [K_1 : K]\,
+  \Lambda(\operatorname{Hom}_{K_1}(A, B))$ for a finite Galois extension $K_1/K$ (Lemme 3.3,
+  pp. 2070–2071);
+- the submultiplicativity $\Lambda(\operatorname{Hom}_K(A, B)) \le \Lambda(\operatorname{Hom}_K(A,
+  C))\, \Lambda(\operatorname{Hom}_K(C, B))$ when $A$ or $B$ is isogenous to an abelian subvariety
+  of $C$ (Lemme 3.4, p. 2071), from $|\psi \circ \varphi| \le |\psi| |\varphi|$ (Proposition 2.7,
+  p. 2066);
+- for item 2, these two lemmas with the isometry given by the Rosati involution between
+  $\operatorname{Hom}_{k_1}(Z(A''), Z(A'''))$ and $\operatorname{Hom}_{k_1}(Z(A'''), Z(A''))$ for
+  principal polarizations (p. 2066), and the orthogonal decomposition of
+  $\operatorname{Hom}_{k_1}(Z(A'''), Z(A))$ into copies of the lattices
+  $\operatorname{Hom}_{k_1}(Z(C_{i,j}), Z(A))$ (p. 2099).
 
 ## Depends on
 

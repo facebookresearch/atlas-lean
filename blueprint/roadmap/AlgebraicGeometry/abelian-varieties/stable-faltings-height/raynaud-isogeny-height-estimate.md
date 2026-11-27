@@ -21,10 +21,12 @@ isogeny $A \to A'$ of degree at most $Q$ exists.
 
 ## Expansion
 
-A good expansion follows Raynaud's proofs of his Corollaire 2.1.4 (for 1) and Corollaire 2.1.3 (for
-2 and 3), as cited by Gaudron and Rémond, after reading *Hauteurs et isogénies*, which could not be
-read here. It needs pages for the semi-abelian models of abelian varieties over number fields that
-define the stable height, and for their behaviour under isogenies, products and duality.
+This node is still to be broken down. A good expansion states and links:
+
+- Raynaud's Corollaire 2.1.4 (for 1) and Corollaire 2.1.3 (for 2 and 3), as cited by Gaudron and
+  Rémond, with their proofs, read in *Hauteurs et isogénies*, which could not be read here;
+- the semi-abelian models of abelian varieties over number fields that define the stable height, and
+  their behaviour under isogenies, products and duality.
 
 ## Depends on
 

@@ -17,10 +17,13 @@ definition (p. 2099). The bound enters through the factor $4(9g)^{4g}$ of the co
 
 ## Expansion
 
-A good expansion reads Silverberg's paper, which could not be read here, states her theorem with its
-exact hypotheses and locator, and derives from it the form above: the inclusion of $k_1$ in the field
-of the $3$-torsion points and the bound for $[k_1 : k]$, with the Galois property of $k_1$, which
-follows from its minimality.
+This node is still to be broken down. A good expansion states and links:
+
+- Silverberg's theorem with its exact hypotheses and locator, read in her paper, which could not be
+  read here;
+- the derivation from it of the form above: the inclusion of $k_1$ in the field of the $3$-torsion
+  points and the bound for $[k_1 : k]$;
+- the Galois property of $k_1$, which follows from its minimality.
 
 ## Depends on
 

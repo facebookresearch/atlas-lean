@@ -33,17 +33,23 @@ isogénies*, p. 2095).
 
 ## Expansion
 
+This node is still to be broken down. A good expansion states and links:
+
+- the complex uniformization of abelian varieties and the Riemann form of a polarization
+  (*Théorème des périodes*, §2.4, pp. 352–353, after Mumford and Birkenhake–Lange);
+- the key Théorème 4.5 (p. 362), stated with an avoidance minimum at each embedding, and its
+  consequence Corollaire 4.6 (p. 363), from which the theorem follows (§6.10.1, p. 381);
+- the matrix lemma, in the case $g = 1$ (§4.3.1, p. 363) and through Proposition 3.6 (p. 357);
+- the bound for the maximal slope of the cotangent space (Proposition 3.10, p. 359, after
+  Graftieaux);
+- the analytic interpolation lemma (§5, Proposition 5.1, p. 365);
+- the multiplicity lemma of Nakamaye (used in Proposition 6.1, p. 369) and the Siegel lemma of
+  Bombieri–Vaaler (§6.5, p. 373);
+- the slope estimates of §§6.3–6.8 (pp. 370–380) for the auxiliary section.
+
 The proof is a transcendence argument in the periodic case of linear forms in logarithms, after the
 Gel'fond–Baker method in the variant of Philippon and Waldschmidt that extrapolates on derivations,
-with an auxiliary section in place of an auxiliary function (*Théorème des périodes*, §4.4,
-p. 364). The theorem follows from their key Théorème 4.5 (p. 362), stated with an avoidance minimum
-at each embedding, through Corollaire 4.6 (p. 363) and §6.10.1 (p. 381). A good expansion has pages
-for: the complex uniformization of abelian varieties and the Riemann form of a polarization (§2.4,
-after Mumford and Birkenhake–Lange); the matrix lemma, in the case $g = 1$ and through Proposition 3.6
-(p. 357); the bound for the maximal slope of the cotangent space (Proposition 3.10, after
-Graftieaux); the analytic interpolation lemma (§5, Proposition 5.1, p. 365); the multiplicity lemma
-of Nakamaye (used in Proposition 6.1, p. 369); the Siegel lemma of Bombieri–Vaaler (§6.5, p. 373);
-and the slope estimates of §§6.3–6.8 (pp. 370–380).
+with an auxiliary section in place of an auxiliary function (§4.4, p. 364).
 
 ## Depends on
 
