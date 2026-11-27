@@ -275,18 +275,44 @@ class Describe(unittest.TestCase):
                       f"af_{'2' * 24}\n#9: af_{'1' * 24}\n```\n", short)
         self.assertNotIn(pointer, short)
         # Else how many, with what the other ids are, the pull requests aside, and where to read them in full.
+        # The reasons say which pages a page's own dependency sections link, and which declaration a page holds back:
+        # the short form counts the pages by the kind of reason.
+        gaps = [(f"af_{number:024x}", [8 + number % 2], f"its own dependency sections link {1 + number % 3} page(s), "
+                 f"such as `../p{number}.md`, and the batch cannot tell whether the declaration's Lean records them: "
+                 f"linking it is an editor's call; #{8 + number % 2} adds no candidate the batch would give a page")
+                for number in range(3000, 3100)]
+        held = [(f"af_{number:024x}", [10], f"it holds `Ext.held_{number}` back: relinking it is an editor's call; #10 "
+                 "adds no candidate the batch would give a page") for number in range(3100, 3105)]
         links = batch.LinkPlan(linked={f"af_{number:024x}": [7] for number in range(3000)},
-                               unchanged=[(f"af_{number:024x}", [8 + number % 2], f"#{8 + number % 2} names a `folder` page")
-                                          for number in range(3000, 3100)] + [("af_" + "f" * 24, [9], "no row has this "
-                                                                               "article id")])
+                               unchanged=gaps + held + [("af_" + "f" * 24, [9], "no row has this article id")])
         long = self.describe(links=links)
-        self.assertIn("### Pages named on `Graph:` lines, left as they are\n\n3000 ids name pages linked already; 100 ids: "
-                      f"#N names a folder page; 1 ids: no row has this article id, too many to list here: {pointer}\n",
+        self.assertIn("### Pages named on `Graph:` lines, left as they are\n\n3000 ids name pages linked already; 5 ids: "
+                      "it holds … back: relinking it is an editor's call; #N adds no candidate the batch would give a "
+                      "page; 100 ids: its own dependency sections link other pages, and the batch cannot tell whether "
+                      "the declaration's Lean records them: linking it is an editor's call; #N adds no candidate the "
+                      f"batch would give a page; 1 ids: no row has this article id, too many to list here: {pointer}\n",
                       long)
         self.assertLess(len(long), batch.BODY_LIMIT)
         whole = self.describe(links=links, full=True)
         self.assertIn(f"af_{'f' * 24} (#9): no row has this article id", whole)
+        self.assertIn("such as ../p3000.md, and the batch", whole)
         self.assertGreater(len(whole), batch.BODY_LIMIT)
+
+    def test_the_kind_of_a_reason(self) -> None:
+        self.assertEqual(batch.reason_kind("its own dependency sections link 3 page(s), such as `../a b.md`, and the "
+                                           "batch cannot tell whether the declaration's Lean records them: linking it is "
+                                           "an editor's call; #9102 adds no candidate the batch would give a page"),
+                         "its own dependency sections link other pages, and the batch cannot tell whether the "
+                         "declaration's Lean records them: linking it is an editor's call; #N adds no candidate the "
+                         "batch would give a page")
+        # A fixed word in code stays, without its backticks, as in the full form.
+        self.assertEqual(batch.reason_kind("#7 adds one documented declaration in its topic that could state it, "
+                                           "`Ext.a`, which `main` had before this batch's base"),
+                         "#N adds one documented declaration in its topic that could state it, …, which main had before "
+                         "this batch's base")
+        self.assertEqual(batch.reason_kind("#9937, #10600 name it, and the batch does not choose between them"),
+                         "#N name it, and the batch does not choose between them")
+        self.assertEqual(batch.reason_kind("no row has this article id"), "no row has this article id")
 
     def test_the_longest_list_gives_way_first(self) -> None:
         pointer = f"`python3 scripts/graph_batch.py verify {'c' * 40}`, run from a checkout of `main`, prints them all."
