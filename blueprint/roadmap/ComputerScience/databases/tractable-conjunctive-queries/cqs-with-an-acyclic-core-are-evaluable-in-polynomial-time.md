@@ -1,8 +1,10 @@
 # Conjunctive queries with an acyclic core are evaluable in polynomial time
 
 A core of a conjunctive query $q(\bar x)$ is a query $q'(\bar x)$ whose atoms form a subset of those of $q$, such
-that some homomorphism maps $q$ to $q'$ fixing $\bar x$ and no query on a proper subset of the atoms of $q'$ receives
-such a homomorphism from $q'$; a core of $q$ is equivalent to $q$ and unique up to renaming of variables.
+that some homomorphism that is the identity on constants maps $q$ to $q'$ fixing $\bar x$ and no query on a proper
+subset of the atoms of $q'$ receives such a homomorphism from $q'$; a core of $q$ is equivalent to $q$ and unique up
+to renaming of variables. Constants must stay fixed: otherwise $R(a), R(b)$ with constants $a \ne b$ would have the
+inequivalent core $R(a)$.
 
 Let ACoreCQ be the class of conjunctive queries that have an acyclic core (a core whose hypergraph has a join tree).
 ACoreCQ-Evaluation, the problem of deciding for $q \in$ ACoreCQ, a database $D$ and a tuple $\bar a$ whether

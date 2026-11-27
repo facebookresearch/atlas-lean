@@ -3,8 +3,8 @@
 In a data exchange setting $(\mathbf S, \mathbf T, \Sigma_{st}, \Sigma_t)$, a solution for a source instance $I$ is
 a target instance $J$ such that $I$ and $J$ together satisfy the source-to-target dependencies $\Sigma_{st}$ and $J$
 satisfies the target dependencies $\Sigma_t$; a universal solution is a solution with a homomorphism (fixing
-constants) to every solution. A core of an instance $J$ is a subinstance $C$ of $J$ such that some homomorphism maps
-$J$ to $C$ and none maps $J$ to a proper subinstance of $C$; all cores of $J$ are isomorphic.
+constants) to every solution. A core of an instance $J$ is a subinstance $C$ of $J$ such that some homomorphism (the
+identity on constants) maps $J$ to $C$ and none maps $J$ to a proper subinstance of $C$; all cores of $J$ are isomorphic.
 
 For every fixed data exchange setting in which $\Sigma_{st}$ is a set of tuple-generating dependencies and $\Sigma_t$
 is a set of equality-generating dependencies, there is a polynomial-time algorithm that, given a source instance $I$,
