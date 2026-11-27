@@ -52,6 +52,7 @@ public import Mathlib.Data.Nat.GCD.Basic
 public import MathlibExt.NumberTheory.ModInverseSwitching
 public import MathlibExt.NumberTheory.ModInverseSwitchingAbsEqHalvesIffSubEqTwoOfOdd
 public import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsAbsLe
+public import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsSqAddLe
 
 set_option autoImplicit false
 
@@ -69,36 +70,5 @@ theorem_wanted isLeastAbsInverse_all
     (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N) :
     ∀ i : ℕ, 1 ≤ i → i ≤ N + 1 →
       IsLeastAbsInverse (s i) (r i : ℤ) (r (i - 1))
-
-/-- **The Euclidean Bézout coefficients are least absolute inverses.** Let $m > n > 1$ be
-integers, write $g = \gcd(m, n)$, and let $(r_i)$, $(s_i)$ and $N$ be Euclidean switching data
-with $r_0 = m/g$ and $r_1 = n/g$. Then $s_2 m + s_1 n = g$, $s_2$ is the least absolute inverse
-of $m/g$ modulo $n/g$, and $s_1$ is the least absolute inverse of $n/g$ modulo $m/g$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Lemma 4. -/
-theorem_wanted euclid_bezout_coeffs_leastAbsInverse
-    (m n : ℕ) (h : n < m) (hn : 1 < n)
-    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
-    (hr0 : r 0 = m / Nat.gcd m n) (hr1 : r 1 = n / Nat.gcd m n) :
-    s 2 * (m : ℤ) + s 1 * (n : ℤ) = (Nat.gcd m n : ℤ) ∧
-      IsLeastAbsInverse (s 2) ((m / Nat.gcd m n : ℕ) : ℤ)
-        (n / Nat.gcd m n) ∧
-      IsLeastAbsInverse (s 1) ((n / Nat.gcd m n : ℕ) : ℤ)
-        (m / Nat.gcd m n)
-
-/-- **Rankin's minimality of the Euclidean Bézout pair.** Let $m > n > 1$ be integers, write
-$g = \gcd(m, n)$, and let $(r_i)$, $(s_i)$ and $N$ be Euclidean switching data with
-$r_0 = m/g$ and $r_1 = n/g$. Then for all integers $x$ and $y$ with $xm + yn = g$, we have
-$s_2^2 + s_1^2 \le x^2 + y^2$.
-
-Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
-Sequence of Modular Inverse Switching Formulas", Corollary 2. -/
-theorem_wanted euclid_bezout_coeffs_sq_add_le
-    (m n : ℕ) (h : n < m) (hn : 1 < n)
-    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
-    (hr0 : r 0 = m / Nat.gcd m n) (hr1 : r 1 = n / Nat.gcd m n)
-    (x y : ℤ) (hxy : x * (m : ℤ) + y * (n : ℤ) = (Nat.gcd m n : ℤ)) :
-    s 2 ^ 2 + s 1 ^ 2 ≤ x ^ 2 + y ^ 2
 
 end MathlibExt.NumberTheory.ModInverseSwitchingWanted
