@@ -27,8 +27,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, guarded, in_actions, inert, lean_unescaped, relative,
-                          write_summary)
+                          changed_files, guarded, in_actions, inert, lean_unescaped, printable,
+                          relative, write_summary)
 
 LINE_ERROR = re.compile(r"^error: (?P<file>\S.*?\.lean):(?P<line>\d+): (?P<message>.*)$")
 # Module-name errors quote the name in one of two ways, and a name can hold an apostrophe:
@@ -104,8 +104,8 @@ def main() -> int:
               for file in unreadable]
     for file in unreadable:
         if file.status not in "AR":
-            print(f"{file.path}: lint-style cannot read this file, so its added lines are not "
-                  f"checked.", file=sys.stderr)
+            print(inert(f"{printable(file.path)}: lint-style cannot read this file, so its added "
+                        f"lines are not checked."), file=sys.stderr)
     files = [file for file in files if file not in unreadable]
     print(f"Checking {len(files)} changed Lean file(s) with Mathlib's lint-style.")
     try:
@@ -115,7 +115,7 @@ def main() -> int:
                 result = subprocess.run(["lake", "exe", "lint-style", *targets], cwd=ROOT,
                                         capture_output=True, text=True)
     except AggregatorError as error:
-        print(error, file=sys.stderr)
+        print(inert(str(error)), file=sys.stderr)
         return 2
     if result is not None:
         output = result.stdout + result.stderr

@@ -155,20 +155,47 @@ class ParseTests(unittest.TestCase):
     def test_lean_name_quotes_the_components_that_are_not_identifiers(self):
         self.assertEqual(lean_changes.lean_name("MathlibExt.X.Basic'"), "MathlibExt.X.Basic'")
         self.assertEqual(lean_changes.lean_name("MathlibExt.New-Name"), "MathlibExt.«New-Name»")
-        self.assertEqual(lean_changes.lean_name("MathlibExt.Système"), "MathlibExt.«Système»")
         self.assertEqual(lean_changes.lean_name("MathlibExt.2D"), "MathlibExt.«2D»")
-        self.assertIsNone(lean_changes.lean_name("MathlibExt.A«B"))
+        self.assertEqual(lean_changes.lean_name("MathlibExt.Sum×Prod"), "MathlibExt.«Sum×Prod»")
+        # Lean's identifiers take Latin-1 and Latin Extended-A letters, Greek but λ, Π and Σ,
+        # letter-like symbols and subscripts, as `Name.toString` prints them.
+        for bare in ("MathlibExt.Système", "MathlibExt.Łukasiewicz", "MathlibExt.αβ",
+                     "MathlibExt.ℕSum", "MathlibExt.X₁"):
+            self.assertEqual(lean_changes.lean_name(bare), bare)
+        self.assertEqual(lean_changes.lean_name("MathlibExt.λCalc"), "MathlibExt.«λCalc»")
+        self.assertEqual(lean_changes.lean_name("MathlibExt.₁X"), "MathlibExt.«₁X»")
+        for unnameable in ("MathlibExt.A«B", "MathlibExt.A»B", "MathlibExt.A\nB"):
+            self.assertIsNone(lean_changes.lean_name(unnameable))
         self.assertEqual(lean_changes.lean_unescaped("MathlibExt.«New-Name»"),
                          "MathlibExt.New-Name")
 
     def test_inert_breaks_up_workflow_commands_in_github_actions(self):
-        text = "fine\n::error file=A.lean::forged\n  ::add-mask::x\nnot :: a command"
+        text = ("fine\n::error file=A.lean::forged\n  ::add-mask::x\nnot :: a command\n"
+                "a deprecation ##[error file=A.lean;line=1]forged, ##[stop-commands]tok and "
+                "###[warning]x\rafter a return\r::error::forged\r\n::warning::forged")
         with patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}):
-            self.assertEqual(lean_changes.inert(text),
-                             "fine\n: :error file=A.lean::forged\n  : :add-mask::x\n"
-                             "not :: a command")
+            inert = lean_changes.inert(text)
+        self.assertEqual(inert, "fine\n: :error file=A.lean::forged\n  : :add-mask::x\n"
+                                "not :: a command\n"
+                                "a deprecation ## [error file=A.lean;line=1]forged, "
+                                "## [stop-commands]tok and ### [warning]x\nafter a return\n"
+                                ": :error::forged\n: :warning::forged")
+        self.assertNotIn("##[", inert)
+        self.assertFalse(any(line.lstrip().startswith("::") for line in inert.splitlines()))
         with patch.dict("os.environ", {"GITHUB_ACTIONS": "false"}):
             self.assertEqual(lean_changes.inert(text), text)
+
+    def test_a_skipped_path_prints_on_one_inert_line(self):
+        files = [ChangedFile("MathlibExt/A\n::error file=B.lean::forged ##[warning]x.lean", "A",
+                             frozenset({1}))]
+        err = io.StringIO()
+        with patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}), redirect_stderr(err), \
+                redirect_stdout(io.StringIO()):
+            self.assertEqual(lean_changes.unnameable(files, annotate=True), files)
+        printed = err.getvalue()
+        self.assertEqual(printed.count("\n"), 1)
+        self.assertIn("MathlibExt/A\\n::error file=B.lean::forged ## [warning]x.lean: Lean "
+                      "cannot name the module", printed)
 
     def test_relative_accepts_absolute_and_relative_paths(self):
         root = Path("/repo")

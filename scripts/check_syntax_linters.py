@@ -177,7 +177,7 @@ def main() -> int:
             result = subprocess.run(["lake", "lint", "--builtin-only", *targets], cwd=ROOT,
                                     capture_output=True, text=True)
     except AggregatorError as error:
-        print(error, file=sys.stderr)
+        print(inert(str(error)), file=sys.stderr)
         return 2
     output = result.stdout + result.stderr
     if result.returncode not in (0, 1) or len(
