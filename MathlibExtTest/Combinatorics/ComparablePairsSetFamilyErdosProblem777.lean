@@ -30,3 +30,17 @@ example : ∃ δ : ℝ, 0 < δ ∧ 5 ≤ (4 : ℝ) ^ (2 - δ) := by
   specialize h 2 (Finset.univ : Finset (Finset (Fin 2)))
   norm_num [square_pairs] at h
   exact h
+
+-- At n = 4 the two stacked squares satisfy the size bound for ε = 1/4 with equality,
+-- yet have more than 2^4 comparable pairs. The eventual quantifier matters.
+private def stackedSquares : Finset (Finset (Fin 4)) :=
+  Finset.univ.filter fun s ↦ s ⊆ {0, 1} ∨ {0, 1} ⊆ s
+
+example : stackedSquares.card = 7 ∧ comparablePairs stackedSquares = 19 := by
+  unfold comparablePairs stackedSquares
+  decide
+
+example : ∀ᶠ n : ℕ in Filter.atTop, ∀ F : Finset (Finset (Fin n)),
+    (F.card : ℝ) ≤ (7 / 4) * 2 ^ ((n : ℝ) / 2) → comparablePairs F < 2 ^ n := by
+  convert fewComparablePairsBelowTwoHalfPower_holds (1 / 4) (by norm_num) using 1
+  norm_num

@@ -14,6 +14,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.GameTheory.SlowANim
 public import MathlibExt.GameTheory.SlowANimGeneralReduction
 public import MathlibExt.GameTheory.SlowANimParity
+public import MathlibExt.GameTheory.SlowANimReducedMin
 public import MathlibExt.GameTheory.SlowANimThreeStacks
 public import MathlibExt.Combinatorics.SlowANimIsPPositionSetExtend
 
@@ -34,19 +35,6 @@ only where a statement refers to it (Theorem 3).
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Partial structure of the P-positions of Slow $A$-Nim.** Let $A \subseteq \{1, \dots, n\}$
-and let $p$ be a position of Slow $A$-Nim on $n$ stacks. If every stack height of $p$ is even,
-then $p$ is a P-position. If the number of stacks of $p$ with odd height lies in $A$, then $p$
-is not a P-position.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Proposition 1. -/
-public theorem_wanted slowANim_partialStructure (n : ℕ) (A : Finset ℕ)
-    (hA : A ⊆ Finset.Icc 1 n) (p : Fin n → ℕ) :
-    ((∀ i, Even (p i)) → SpragueGrundy.IsP (slowANimGame n A) p) ∧
-      ((Finset.univ.filter fun i => Odd (p i)).card ∈ A →
-        ¬ SpragueGrundy.IsP (slowANimGame n A) p)
 
 /-- **P-positions of Slow A-Nim with A = {1, n}, n even.** Let $n \ge 1$ be even and let
 $A = \{1, n\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a P-position
@@ -120,17 +108,6 @@ public theorem_wanted slowANim_isP_iff_of_reduction_eq (n : ℕ) (A : Finset ℕ
     (hA : A ⊆ Finset.Icc 1 n) (p q : Fin n → ℕ)
     (h : slowANimReduction A p = slowANimReduction A q) :
     SpragueGrundy.IsP (slowANimGame n A) p ↔ SpragueGrundy.IsP (slowANimGame n A) q
-
-/-- **Chopping a reduced position keeps it reduced.** Let $A \subseteq \{1, \dots, n\}$ and let
-$p$ be a reduced position of Slow $A$-Nim on $n$ stacks. Then for every $m \in \mathbb{N}$ the
-position $\mathrm{ctt}(p, m)$ with stack heights $\mathrm{ctt}(p, m)_i = \min(p_i, m)$ is
-reduced.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 2. -/
-public theorem_wanted slowANimReduced_min (n : ℕ) (A : Finset ℕ) (hA : A ⊆ Finset.Icc 1 n)
-    (p : Fin n → ℕ) (hp : SlowANimReduced A p) (m : ℕ) :
-    SlowANimReduced A fun i => min (p i) m
 
 /-- **The reduction chops at the largest reduced height.** Let $A \subseteq \{1, \dots, n\}$ and
 let $p$ be a position of Slow$A$-Nim on $n$ stacks, with largest stack height $M = \max_i p_i$
