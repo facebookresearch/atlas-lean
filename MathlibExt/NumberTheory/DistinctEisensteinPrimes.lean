@@ -9,9 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.NumberTheory.Chebyshev
+import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 import Mathlib.Tactic.NormNum.Prime
 import MathlibExt.NumberTheory.PrimeInterval.Breusch.Theta
 
@@ -21,21 +24,43 @@ import MathlibExt.NumberTheory.PrimeInterval.Breusch.Theta
 Makowski's theorem gives a representation of each natural number above 161.
 We estimate the sum of the available primes using the nonprincipal character modulo three,
 then extend an interval of subset sums one prime at a time.
+
+The character `CharModThree.chi` and its multiplicativity, partial-sum and log-weighted
+partial-sum lemmas are public for reuse by other estimates over primes modulo three.
 -/
 
-namespace MathlibExt.NumberTheory.DistinctEisensteinPrimesWanted
+namespace MathlibExt.NumberTheory.CharModThree
 
-open Finset ArithmeticFunction
+open Finset
 
-private def chi (n : ℕ) : ℝ := if n % 3 = 1 then 1 else if n % 3 = 2 then -1 else 0
+/-- The nonprincipal Dirichlet character modulo three as a real-valued function on the natural
+numbers: `chi n` is `1` when `n % 3 = 1`, `-1` when `n % 3 = 2`, and `0` when `3` divides `n`. -/
+@[expose] public def chi (n : ℕ) : ℝ := if n % 3 = 1 then 1 else if n % 3 = 2 then -1 else 0
 
-private lemma chi_mul (m n : ℕ) : chi (m * n) = chi m * chi n := by
+/-- `chi` is completely multiplicative: `chi (m * n) = chi m * chi n` for all natural numbers
+`m` and `n`. -/
+public lemma chi_mul (m n : ℕ) : chi (m * n) = chi m * chi n := by
   simp only [chi, Nat.mul_mod m n]
   have hm := Nat.mod_lt m (by decide : 0 < 3)
   have hn := Nat.mod_lt n (by decide : 0 < 3)
   interval_cases m % 3 <;> interval_cases n % 3 <;> norm_num
 
-private lemma sum_chi (n : ℕ) :
+/-- `chi` is the Legendre symbol modulo three: `chi n = (n / 3)`, the Legendre symbol
+`legendreSym 3 n` cast to the reals, for every natural number `n`. -/
+public lemma chi_eq_legendreSym (n : ℕ) : chi n = (legendreSym 3 (n : ℤ) : ℝ) := by
+  rw [legendreSym.mod 3 (n : ℤ), ← Int.natCast_mod]
+  have hn := Nat.mod_lt n (by decide : 0 < 3)
+  simp only [chi]
+  interval_cases h : n % 3
+  · simp [legendreSym.at_zero]
+  · simp [legendreSym.at_one]
+  · simp only [Nat.cast_ofNat]
+    rw [legendreSym.at_two (by decide)]
+    norm_num [ZMod.χ₈_nat_eq_if_mod_eight]
+
+/-- For every natural number `n`, the partial sum `∑_{0 < i ≤ n} chi i` equals `1` when
+`n % 3 = 1` and `0` otherwise. -/
+public lemma sum_chi (n : ℕ) :
     ∑ i ∈ Ioc 0 n, chi i = if n % 3 = 1 then 1 else 0 := by
   induction n with
   | zero => simp
@@ -44,7 +69,9 @@ private lemma sum_chi (n : ℕ) :
     simp only [chi]
     split_ifs <;> first | omega | norm_num
 
-private lemma sum_chi_log (n : ℕ) :
+/-- For every natural number `n`, the log-weighted partial sum `∑_{0 < i ≤ n} chi i * log i` is at
+most `log n` when `n % 3 = 1` and at most `0` otherwise. -/
+public lemma sum_chi_log (n : ℕ) :
     ∑ i ∈ Ioc 0 n, chi i * Real.log i ≤ if n % 3 = 1 then Real.log n else 0 := by
   induction n with
   | zero => simp
@@ -58,6 +85,12 @@ private lemma sum_chi_log (n : ℕ) :
         exact_mod_cast Nat.le_succ _
     simp only [chi]
     split_ifs <;> first | omega | simp_all
+
+end MathlibExt.NumberTheory.CharModThree
+
+namespace MathlibExt.NumberTheory.DistinctEisensteinPrimesWanted
+
+open Finset ArithmeticFunction MathlibExt.NumberTheory.CharModThree
 
 -- Twist the divisor identity for log by χ and reverse the order of summation.
 private lemma twist_sum (N : ℕ) :

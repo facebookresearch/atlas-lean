@@ -68,3 +68,6 @@
 - [Asymptotic rank test for qpWave and qpAdm](rank-test-for-qp-wave-qp-adm.md)
 - [The f-branch statistic](f-branch-statistic.md)
 - [Frequency-based ABBA–BABA counts and the minimum D statistic of a trio](frequency-based-abba-baba-counts-and-dmin.md)
+## Asymptotic normality of the D-statistic
+- [Asymptotic normality of the D-statistic](asymptotic-normality-of-the-d-statistic/README.md)
+- [Archaic introgression detection](archaic-introgression-detection/README.md)

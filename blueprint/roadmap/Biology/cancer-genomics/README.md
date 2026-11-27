@@ -15,14 +15,17 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
+- [Age-structured microlesion model of tumour growth](age-structured-microlesion-model-of-tumour-growth/README.md)
+- [Consecutive seeding of metastases](consecutive-seeding-of-metastases/README.md)
+- [Driver mutations in a two-type branching process](driver-mutations-in-a-two-type-branching-process/README.md)
+- [Excess-mutation tests for regulatory elements](excess-mutation-tests-for-regulatory-elements/README.md)
+- [Recurrent mutation in regulatory elements](recurrent-mutation-in-regulatory-elements/README.md)
+- [Regional somatic mutation burden](regional-somatic-mutation-burden/README.md)
 ## [Statistical and evolutionary models of tumour genomes](part-01/README.md)
-
 - [Cyclic shift permutation testing](part-01/cyclic-shift-permutation-testing/README.md)
 - [Exact site frequency spectrum of birth–death tumors](part-01/exact-site-frequency-spectrum-of-birth-death-tumors/README.md)
-
 ## [Continuum and structured models of tumour growth and therapy](part-02/README.md)
-
 - [Avascular tumor growth with oxygen thresholds](part-02/avascular-tumor-growth-with-oxygen-thresholds/README.md)
 - [Cahn–Hilliard–Darcy models of tumour growth](part-02/cahn-hilliard-darcy-models-of-tumour-growth/README.md)
 - [Drift–division model of tumor cells under therapy](part-02/drift-division-model-of-tumor-cells-under-therapy/README.md)

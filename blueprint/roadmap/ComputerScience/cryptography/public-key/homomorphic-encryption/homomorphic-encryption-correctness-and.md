@@ -1,25 +1,19 @@
 # Homomorphic encryption: correctness and compactness
 
-A homomorphic encryption scheme $\mathcal{E}$ consists of key generation, encryption, decryption and an evaluation algorithm $\mathrm{Evaluate}(pk, C, \Psi)$ for
-circuits $C$ in a class $\mathcal{C}_\mathcal{E}$, where $\lambda$ is the security parameter.
+A homomorphic encryption scheme **compactly evaluates** a class of circuits if it is both correct for that class and compact. Let $\lambda$ be the security parameter. In addition to [key generation, encryption and decryption](../../security-games/generic-security-games/pkescheme.md), the scheme has a public algorithm $\mathrm{Evaluate}(pk,C,\Psi)$. The gate set and its interpretation on messages specify what the single-output circuit $C$ computes. The class may specify the permitted circuits separately at each parameter and input arity. Fresh ciphertexts decrypt correctly.
 
-- $\mathcal{E}$ is *correct* for circuits in $\mathcal{C}_\mathcal{E}$ if for every key pair $(sk, pk)$ output by key generation, every $C \in \mathcal{C}_\mathcal{E}$ with $t$ inputs, all
-  plaintexts $\pi_1, \dots, \pi_t$ and all ciphertexts $\Psi = (\psi_1, \dots, \psi_t)$ with $\psi_i \leftarrow \mathrm{Encrypt}(pk, \pi_i)$, the ciphertext $\psi \leftarrow \mathrm{Evaluate}(pk, C, \Psi)$
-  decrypts to $C(\pi_1, \dots, \pi_t)$, except with negligible probability over the coins of $\mathrm{Evaluate}$.
-- $\mathcal{E}$ is *compact* if there is a polynomial $f$ such that for every $\lambda$ its decryption algorithm is computed by a circuit $D_\mathcal{E}$ of size at most $f(\lambda)$.
-- $\mathcal{E}$ *compactly evaluates* the circuits in $\mathcal{C}_\mathcal{E}$ if it is compact and correct for them, and it is *fully homomorphic* if it compactly evaluates all
-  circuits.
-- A family $\{\mathcal{E}^{(d)} : d \in \mathbb{Z}^+\}$ is *leveled fully homomorphic* if all $\mathcal{E}^{(d)}$ use the same decryption circuit, $\mathcal{E}^{(d)}$ compactly evaluates all
-  circuits of depth at most $d$ over a specified set of gates, and the algorithms of $\mathcal{E}^{(d)}$ run in time polynomial in $\lambda$, $d$ and, for
-  $\mathrm{Evaluate}$, the size of the circuit.
+- **[Uniform correctness](correct.md).** There is one negligible function $\varepsilon$ of $\lambda$ such that, for each $\lambda$, the bound holds for every input arity $t$ and every admitted $t$-input circuit $C$. Fix any generated pair $(pk,sk)$, any messages $m_1,\ldots,m_t$, and **any** ciphertexts $x_i$ in the support of $\mathrm{Encrypt}(pk,m_i)$. The probability that decryption of $\mathrm{Evaluate}(pk,C,(x_i))$ rejects or differs from $C(m_1,\ldots,m_t)$ is at most $\varepsilon(\lambda)$. Only the evaluator's coins are sampled; a rare but supported input ciphertext is not discounted.
 
-Compactness bounds the decryption circuit, and hence the length of evaluated ciphertexts, independently of the evaluated circuit; without it the
-trivial scheme whose evaluation outputs $(C, \Psi)$ would be correct.
+  Definition 2.1.1 lists all these inputs but does not explicitly quantify the negligible bound. Compact evaluation here uses the uniform convention so that the choice of circuit may vary with $\lambda$. In the weaker [fixed-circuit property](fixed-circuit-correct.md), each $C$ has its own negligible $\varepsilon_C$. A depth limit that grows with the parameter can eventually cover each fixed circuit without covering all circuits at any one parameter. Likewise, failure at arity $\lambda+1$ can persist along a sequence of projections while each fixed circuit eventually succeeds. Definition 5.2.4 (printed p. 60, PDF p. 70) identifies arity as a function of the circuit; it does not choose between the error bounds.
 
-## Depends on
+- **Compactness.** There is one polynomial $p$ such that, at every $\lambda$, a Boolean circuit of size at most $p(\lambda)$ computes decryption on every secret key and ciphertext in the declared spaces. Its input and output representations are fixed. Count input and output ports as well as gates: projection from an arbitrarily long ciphertext is not a constant-size decryption interface. Neither the circuit nor its size bound depends on the circuit being evaluated. Without this condition, evaluation could simply return $(C,\Psi)$ and leave the work to decryption.
 
-- [Public-key encryption scheme](../../security-games/generic-security-games/pkescheme.md)
+[Full homomorphism](fully-homomorphic.md) requires more than [basis-relative functionality](evaluates-basis.md). The scheme compactly evaluates all circuits without a depth limit, its four algorithms have uniform polynomial-time realizations, and its finite gate basis is functionally complete on messages at every parameter: every single-output function at each arity, including zero, has a circuit. Merely evaluating all circuits whose gates always return false does not meet this definition.
+
+Definition 2.1.5 specifies a gate set without requiring it to be finite. The [leveled runtime model here](leveled-over-basis.md) specializes to a fixed finite gate set, not necessarily universal. One polynomially bounded decryption circuit at each $\lambda$ serves every positive level $d$; level $d$ is correct for circuits through depth $d$ inclusive. Theorem 4.2.1 distinguishes evaluating a specified basis from [leveled full homomorphism](leveled-fully-homomorphic.md) for a universal basis. For ordinary full homomorphism the time budget is polynomial in $\lambda$; for the leveled family it is polynomial in $\lambda+d$. Only evaluation adds the input arity and gate count. On the finite basis both the encoded length of a gate name and its fan-in are bounded independently of the circuit. This is not a wire count for arbitrary gate sets: one gate alone could read arbitrarily many wires. Gentry explicitly counts wires in Theorem 4.2.2 (printed p. 49, PDF p. 59). Neither full notion asserts secrecy.
+
+**Scope of the spaces.** Gentry allows the public key to determine the plaintext and ciphertext spaces. Here, as in the typed public-key scheme, the declared spaces and their encodings are common to all keys at a fixed security parameter; the public key still determines the distribution of fresh ciphertexts for each message. The definitions cover this common-space case, not arbitrary key-dependent validity domains.
 
 ## Sources
 
-- C. Gentry, *A fully homomorphic encryption scheme*, PhD thesis, Stanford University, 2009, <https://crypto.stanford.edu/craig/craig-thesis.pdf>: Section 2.1, Definitions 2.1.1–2.1.5 and the remark on trivial schemes before Definition 2.1.2.
+- C. Gentry, [*A Fully Homomorphic Encryption Scheme*](https://crypto.stanford.edu/craig/craig-thesis.pdf), Stanford PhD thesis (2009), §2.1. The setup is on printed p. 27 (PDF p. 37); Definitions 2.1.1–2.1.4 and the observation about forwarding the circuit are on printed p. 28 (PDF p. 38); the leveled definition, 2.1.5, is on printed p. 29 (PDF p. 39). Theorem 4.2.1, printed p. 49 (PDF p. 59), makes the universal-gate qualification explicit.

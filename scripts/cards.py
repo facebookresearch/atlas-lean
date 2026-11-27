@@ -2,10 +2,10 @@
 """Cards: the wiki's reading level, above its statement pages.
 
     python scripts/cards.py check [--dependencies FILE [--registry FILE]]
-           [--base-ledger FILE --base-links DIR --renames FILE]     validate the cards and the move ledger
+           [--base-ledger DIR --base-links DIR --renames FILE]      validate the cards and the move ledger
     python scripts/cards.py rollup OUTPUT.json --dependencies FILE [--registry FILE]
-           [--base-ledger FILE --base-links DIR --renames FILE]     check, then write the derived card data
-    python scripts/cards.py moves OUTPUT.json                        check the move ledger alone, then write its receipt
+           [--base-ledger DIR --base-links DIR --renames FILE]      check, then write the derived card data
+    python scripts/cards.py moves OUTPUT.json [--base REVISION]      check the move ledger alone, then write its receipt
 
 A card is one idea a reader navigates by: a concept card (a definition that a textbook would give its own
 paragraph) or a result card (a theorem worth naming or citing). It is a folder below blueprint/roadmap/ whose
@@ -32,25 +32,31 @@ whose bridges and Mathlib edges those edges must then equal, while the registry 
 committed rows' credited names and find exactly the declarations the build's pages credit to Mathlib, one page each
 with the registry's kind and the declaration its committed row credits, and a Mathlib main heads a result card
 exactly when its type is a proposition; so every derived edge is `compiled`, `bridge` or `mathlib` (checked) or, from a page-only
-page, `planned`. With --base-ledger, the ledger the base commit published
-must stay the first rows of the ledger; with --base-links (the base commit's blueprint/links/) and --renames (`git
-diff --name-status -M BASE HEAD -- blueprint/roadmap`), every change since the base commit is checked against the
-rows added since. Run
-with a Python that has Autoform and the site's Markdown extensions installed (see blueprint-pages.yml).
+page, `planned`. With --base-ledger (a folder holding the base commit's card-moves.jsonl and card-moves.d/, as
+scripts/ does), --base-links (the base commit's blueprint/links/) and --renames (`git diff --name-status -M BASE HEAD
+-- blueprint/roadmap`), the ledger is held to the base's (base_problems, guard) and every change since the base commit
+is checked against the rows of the fragments the base does not have. Run with a Python that has Autoform and the
+site's Markdown extensions installed (see blueprint-pages.yml).
 
 The wiki job runs rollup the same way before render, for the card data the site shows (hooks/card_pages.py):
 rollup removes its output first and writes it, whole, only once the check passed, so an error leaves no card data.
 
-moves checks scripts/card-moves.jsonl on its own, with check_moves and no base: against the annotations and the
-roadmap as checked out, with no card or dependency check, so the site's redirects do not wait for the cards. Without
-a base it certifies the present snapshot only; that the ledger only grows, and the moves since the base commit, stay
-the strict check's. A missing ledger is an error, an empty one has no row. It reads each input file once, removes
-its output first, and on success writes, whole, the receipt hooks/card_pages.py keeps the moved addresses with: the
-commit, the sha256 of the ledger's bytes and a digest of the links folder's (links_digest), which bind the receipt to
-the very inputs checked; the cards, by id, with their folders (`cards_complete` says whether that lists them all: a
-card is listed only with an article id no other article has and a folder the site can serve); and the replacements,
-the live article each retirement, of a card or of a statement, ends at, by id, with its kind and node, each at an
-address the site can serve. It refuses outside a Git checkout.
+The move ledger is the frozen scripts/card-moves.jsonl, then the fragments of scripts/card-moves.d/, one per change,
+read as one logical ledger (scripts/card_moves.py, docs/cards.md#move-ledger). moves checks it on its own, with
+check_moves: the rules among its rows that need no other file, card_moves.check's, which the required check of every
+change runs alone (`python scripts/card_moves.py check`), then each chain against the annotations and the roadmap as
+checked out, with no card or dependency check, so the site's redirects do not wait for the cards. Without --base it
+certifies the present snapshot only. With --base, the commit the checkout is compared with (the merge queue's base,
+a pull request's merge parent), it also holds the ledger to that commit's ledger (base_problems, guard), and no
+more: whether every change since that commit has its row is the strict check's, with --base-ledger, --base-links and
+--renames. The receipt is the same either way. A missing frozen file is an error, an empty one has no row. It reads
+each input file once, removes its output first, and on success writes, whole, the receipt hooks/card_pages.py keeps
+the moved addresses with: the commit, the digest of the ledger's files (card_moves.digest) and of the links folder's
+(links_digest), which bind the receipt to the very inputs checked; the cards, by id, with their folders
+(`cards_complete` says whether that lists them all: a card is listed only with an article id no other article has
+and a folder the site can serve); and the replacements, the live article each retirement, of a card or of a
+statement, ends at, by id, with its kind and node, each at an address the site can serve. It refuses outside a Git
+checkout. The helpers that write the ledger's fragments are scripts/card_moves.py's (`new-moves`).
 
 A planned statement page may record its counterparts under `extensions["org.atlas-wiki"]["counterpart"]`
 (docs/cards.md#counterparts): check verifies their form and their place, a live statement page Autoform reads whose
@@ -67,15 +73,18 @@ import stat
 import subprocess
 import sys
 from collections import Counter, defaultdict
+from collections.abc import Callable
 from urllib.parse import unquote, urlsplit
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 
 if __package__:
+    from . import card_moves
     from . import extract_v2_lean_dependencies as extract
     from . import generate_wiki as wiki
     from . import sync_wiki as sync
 else:
+    import card_moves
     import extract_v2_lean_dependencies as extract
     import generate_wiki as wiki
     import sync_wiki as sync
@@ -85,9 +94,10 @@ AUTOFORM = "org.autoform"
 SCHEMA = "atlas-cards/v1"
 # The receipt of the moves command, which hooks/card_pages.py reads; and the links folder's defaults file (Autoform's
 # annotations._DEFAULTS), which the receipt's digest of the annotations covers.
-MOVES_SCHEMA = "atlas-card-moves/v2"
+MOVES_SCHEMA = "atlas-card-moves/v3"
 LINKS_DEFAULTS = "_defaults.json"
-ARTICLE_ID = re.compile(r"af_[0-9a-f]{24}")
+# An article id, as the move ledger's rows have them.
+ARTICLE_ID = card_moves.ARTICLE_ID
 COMMIT = re.compile(r"[0-9a-f]{40}")
 KINDS = ("concept", "result")
 IMPORTANCE = ("landmark", "key", "supporting")
@@ -116,6 +126,9 @@ MATHLIB_SOURCE = re.compile(r"/leanprover-community/mathlib4/blob/([0-9a-f]{40})
 LEAN_PART = r"(?:[^\W\d][\w'!?\u2080-\u209c\u1d62-\u1d6a]*|«[^»]+»)"
 LEAN_NAME = re.compile(rf"{LEAN_PART}(?:\.{LEAN_PART})*")
 MOVES = "card-moves.jsonl"
+# The move ledger's two parts, by path in the repository: the frozen file and the folder of fragments, one per change,
+# read after it (scripts/card_moves.py).
+FROZEN, FRAGMENTS = card_moves.FROZEN, card_moves.FRAGMENTS
 # A planned page's counterparts (docs/cards.md#counterparts): each record names one declaration, of Mathlib or of
 # the project, says how it compares with the page's statement, and may list the other declarations a combination
 # takes.
@@ -715,15 +728,16 @@ def check_record(card: Card, by_id: dict[str, Path], annotations: dict[Path, dic
 
 
 def check(annotations: dict[Path, dict] | None = None, graph=None, committed: dict[Path, dict] | None = None,
-          dependencies: dict | None = None, base_ledger: str | None = None,
+          dependencies: dict | None = None, base_ledger: card_moves.BaseLedger | None = None,
           base_annotations: dict[Path, dict] | None = None, renames: list[tuple[str, str]] | None = None,
           registry: dict | None = None) -> tuple[list[str], list[str]]:
     """The errors and the warnings about every card and the move ledger. ``graph`` is Autoform's graph of the
     checkout (loaded here when None and there are cards or ``dependencies``); ``committed`` the committed
     annotations (the checkout's when None); ``dependencies`` an extraction every credited page's dependencies must
-    come from (the strict check, which also needs the ledger); ``base_ledger`` the ledger the base commit published,
-    which must stay a prefix; ``base_annotations`` the base commit's rows, against which every changed address needs
-    its ledger row; ``registry`` the build's Mathlib registry."""
+    come from (the strict check, which also needs the ledger); ``base_ledger`` the base commit's move ledger
+    (BaseLedger), whose files stay as they are; ``base_annotations`` the base commit's rows, against which every
+    changed address needs its row in a fragment the base does not have (check_moves); ``registry`` the build's
+    Mathlib registry."""
     # A registry is read only once its form is the extractor's: a table of another type would otherwise stop the
     # check with a traceback rather than an error.
     if registry is not None and (problems := sync.registry_form_problems(registry)):
@@ -976,13 +990,6 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
     return errors, warnings
 
 
-def valid_address(value: str) -> bool:
-    """A page's or folder's node id: a relative path below roadmap/, without `.md`, `.` or `..` parts."""
-    parts = value.split("/")
-    return (not value.endswith(".md") and all(part and part not in (".", "..") for part in parts)
-            and not value.startswith("/"))
-
-
 def read_renames(path: Path) -> list[tuple[str, str]]:
     """The renamed roadmap files `git diff --name-status -M` lists, `R<score>\t<old>\t<new>` per line, as paths
     below roadmap/; other lines and files are ignored."""
@@ -1001,125 +1008,84 @@ def read_links(folder: Path) -> dict[Path, dict]:
     return by_page({path.name: parse_rows(path.read_text()) for path in sorted(folder.glob("*.jsonl"))})
 
 
-def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: str | None = None,
+class LiveFolders:
+    """The folders of the checked-out roadmap that have a folder page, asked one at a time: the live folders the guard
+    stops at (card_moves.stable_folders), as the moves and strict checks see them in the tree they check. As in Git's
+    tree (card_moves.live_folders), each folder on the way is a real folder and the folder page a regular file: a link
+    or anything else makes no folder live."""
+
+    def __contains__(self, folder: object) -> bool:
+        if not isinstance(folder, str):
+            return False
+        path = wiki.ROADMAP
+        try:
+            for part in folder.split("/"):
+                path = path / part
+                if not stat.S_ISDIR(os.lstat(path).st_mode):
+                    return False
+            return stat.S_ISREG(os.lstat(path / "README.md").st_mode)
+        except OSError:
+            return False
+
+
+def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: card_moves.BaseLedger | None = None,
                 required: bool = False, base_annotations: dict[Path, dict] | None = None,
-                renames: list[tuple[str, str]] | None = None, text: str | None = None) -> list[str]:
-    """The errors of scripts/card-moves.jsonl. The ledger only grows: given ``base``, the ledger the base commit
-    published, its rows must stay, unchanged and first. Each chain is followed to its final live destination: a
-    moved page or folder is no longer at its old path; every hop keeps the article id it started with, so an old
-    address always leads to its own article; a page ends at a live statement page and a folder at a live folder
-    page with that id, or at a card a retirement row then replaces; a retired card is no card any more, its id no
-    page's, and what replaces it is one; a page ends at the address a statement's retirement row records for it, its
-    id no page's or folder's any more, and its replacements end at a live statement page or folder page, through
-    any retirement on the way; nothing goes round. An address has one owner: it moves once, as a page or as a folder,
-    or is the last address of retired cards or of retired statements, each replaced in place by the next, and no
-    live page or folder of another article takes it (a page or folder page with no id is another article's), but for
-    the final replacement. ``required`` (the strict check): the file
-    must exist. ``base_annotations``, the base commit's rows, and ``renames``, the roadmap files Git finds renamed
-    since (old and new path below roadmap/): see `history`. ``text``: the ledger as its caller read it (the moves
-    command reads it once, to check and hash the same bytes), instead of the file."""
-    path = moves_file()
-    published = [line for line in (base or "").splitlines() if line.strip()]
-    if text is None:
-        if not path.is_file():
-            if required or published:
+                renames: list[tuple[str, str]] | None = None, files: card_moves.Files | None = None) -> list[str]:
+    """The errors of the move ledger: the frozen scripts/card-moves.jsonl and the fragments of scripts/card-moves.d/,
+    read as one logical ledger (scripts/card_moves.py), each row named by its file and line. First the rules among
+    the rows that need no other file, card_moves.check's, which the required check of every change runs on its own
+    (`python scripts/card_moves.py check`): with ``base``, the base commit's ledger, they hold the ledger to it
+    (base_problems, stamp_problems, guard, the guard's live folders being this checkout's, LiveFolders). Then each
+    chain against the tree: a moved page or folder is no longer at its old path, and no page or folder of another
+    article holds that address; a page ends at a live statement page and a folder at a live folder page with that id,
+    or at a card a retirement row then replaces; a retired card is no card any more, its id no page's, and what
+    replaces it is one; a page ends at the address a statement's retirement row records for it, its id no page's or
+    folder's any more, and its replacements end at a live statement page or folder page, through any retirement on
+    the way; and no live page or folder of another article holds a retired address (a page or folder page with no id
+    is another article's), but for the final replacement. ``required`` (the strict check): the frozen file must
+    exist. With ``base_annotations``, the base commit's rows, and ``renames``, the roadmap files Git finds renamed
+    since (old and new path below roadmap/), the rows of the fragments the base does not have, in the ledger's order,
+    account for every change since the base (reconcile), the base's rows being published history. ``files``: the
+    ledger's files as the caller read them (the moves command reads them once, to check and hash the same bytes),
+    instead of the checkout's."""
+    errors: list[str] = []
+    if files is None:
+        try:
+            files, problems = card_moves.read_ledger(wiki.ROOT / "scripts")
+        except FileNotFoundError:
+            if required or base is not None:
                 return [f"{MOVES}: missing; it records every address a card change retired"]
             return []
-        text = path.read_text()
-    errors = []
-    if base is not None:
-        published = [line for line in base.splitlines() if line.strip()]
-        if [line for line in text.splitlines() if line.strip()][:len(published)] != published:
-            errors.append(f"{MOVES}: a row the base commit published was removed or changed; the ledger only grows")
-    chains: dict[str, dict[str, tuple[str, str]]] = {"page": {}, "folder": {}}
-    retired: dict[str, tuple[str, str]] = {}
-    # A retired statement page, by id: what replaces it, and its last address.
-    statements: dict[str, tuple[str, str]] = {}
-    # The retirements at each address, of cards and of statements apart, in the ledger's order: line, id, replacement.
-    claims: dict[str, dict[str, list[tuple[int, str, str]]]] = {"card": defaultdict(list),
-                                                                 "statement": defaultdict(list)}
+        errors += problems
+    current = dict(files)
+    found, ledger = card_moves.check(files, base, LiveFolders())
+    errors += found
+    rows, chains, retired, statements = ledger.rows, ledger.chains, ledger.retired, ledger.statements
     card_ids = {card.id for card in cards.values() if isinstance(card.id, str)}
     by_id = {annotation["id"]: page for page, annotation in annotations.items() if isinstance(annotation.get("id"), str)}
-    fresh: list[tuple[int, dict]] = []
-    seen_rows = 0
-    for number, line in enumerate(text.splitlines(), 1):
-        if not line.strip():
-            continue
-        seen_rows += 1
-        try:
-            row = json.loads(line)
-        except json.JSONDecodeError:
-            errors.append(f"{MOVES}:{number}: not JSON")
-            continue
-        if not isinstance(row, dict) or not all(isinstance(value, str) and value for value in row.values()):
-            errors.append(f"{MOVES}:{number}: a row is an object of non-empty strings")
-            continue
-        if seen_rows > len(published):
-            fresh.append((number, row))
-        for kind in ("page", "folder"):
-            if set(row) == {kind, "to", "article_id"}:
-                if not ARTICLE_ID.fullmatch(row["article_id"]):
-                    errors.append(f"{MOVES}:{number}: `article_id` is not an article id")
-                if not (valid_address(row[kind]) and valid_address(row["to"])):
-                    errors.append(f"{MOVES}:{number}: an address is a path below roadmap/ without `.md`")
-                if row[kind] in chains[kind]:
-                    errors.append(f"{MOVES}:{number}: {row[kind]} already moved")
-                chains[kind][row[kind]] = (row["to"], row["article_id"])
-                break
-        else:
-            if set(row) == {"card", "folder", "replaced_by"}:
-                if not (ARTICLE_ID.fullmatch(row["card"]) and ARTICLE_ID.fullmatch(row["replaced_by"])):
-                    errors.append(f"{MOVES}:{number}: `card` and `replaced_by` are article ids")
-                if not valid_address(row["folder"]):
-                    errors.append(f"{MOVES}:{number}: an address is a path below roadmap/ without `.md`")
-                if row["card"] in retired:
-                    errors.append(f"{MOVES}:{number}: the card {row['card']} is already retired")
-                retired.setdefault(row["card"], (row["replaced_by"], row["folder"]))
-                claims["card"][row["folder"]].append((number, row["card"], row["replaced_by"]))
-            elif set(row) == {"statement", "page", "replaced_by"}:
-                if not (ARTICLE_ID.fullmatch(row["statement"]) and ARTICLE_ID.fullmatch(row["replaced_by"])):
-                    errors.append(f"{MOVES}:{number}: `statement` and `replaced_by` are article ids")
-                if not valid_address(row["page"]):
-                    errors.append(f"{MOVES}:{number}: an address is a path below roadmap/ without `.md`")
-                if row["statement"] in statements:
-                    errors.append(f"{MOVES}:{number}: the statement {row['statement']} is already retired")
-                statements.setdefault(row["statement"], (row["replaced_by"], row["page"]))
-                claims["statement"][row["page"]].append((number, row["statement"], row["replaced_by"]))
-            else:
-                errors.append(f"{MOVES}:{number}: expected {{page, to, article_id}}, {{folder, to, article_id}}, "
-                              "{card, folder, replaced_by} or {statement, page, replaced_by}")
-
-    # An address has one owner: the retirements at one address are one history, each replaced in place by the next,
-    # in the ledger's order; two that are not would be two articles claiming it, and no order may choose between them.
-    for kind, at_address in claims.items():
-        for address, found in sorted(at_address.items()):
-            for (_, one, successor), (number, two, _) in zip(found, found[1:]):
-                if successor != two:
-                    errors.append(f"{MOVES}:{number}: {address} is the last address of the retired {kind} {one}, "
-                                  f"replaced by {successor}, and of {two}; an address has one owner, so each "
-                                  "retirement there is replaced in place by the next")
 
     def replacement(card_id: str) -> str | None:
-        """The live card a retired card's replacements end at, or None (an error said why)."""
+        """The live card a retired card's replacements end at, or None: an error says why (card_moves.check, for
+        replacements that go round)."""
         seen, at = {card_id}, retired[card_id][0]
         while at in retired:
             if at in seen:
-                errors.append(f"{MOVES}: the replacements of {card_id} go round")
                 return None
             seen.add(at)
             at = retired[at][0]
         if at not in card_ids:
-            errors.append(f"{MOVES}: the retired card {card_id} is replaced by {at}, which is no card")
+            # A retired statement or an article moved as a page is no card, whatever the tree: card_moves.check says so.
+            if at not in statements and at not in ledger.living["page"]:
+                errors.append(f"{MOVES}: the retired card {card_id} is replaced by {at}, which is no card")
             return None
         return at
 
     def successor(statement: str) -> str | None:
         """The live statement page or folder page a retired statement's replacements end at, through every statement
-        or card retired on the way, or None (an error said why)."""
+        or card retired on the way, or None: an error says why (card_moves.check, for replacements that go round)."""
         seen, at = {statement}, statements[statement][0]
         while at in statements or at in retired:
             if at in seen:
-                errors.append(f"{MOVES}: the replacements of {statement} go round")
                 return None
             seen.add(at)
             at = (statements if at in statements else retired)[at][0]
@@ -1130,8 +1096,6 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             return None
         return at
 
-    for old in sorted(set(chains["page"]) & set(chains["folder"])):
-        errors.append(f"{MOVES}: {old} moved both as a page and as a folder; an address has one owner")
     ids_at = {node_id(page): annotation.get("id") for page, annotation in annotations.items() if page.is_file()}
     for kind, chain in chains.items():
         for old in sorted(chain):
@@ -1142,33 +1106,23 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             elif other.is_file() and ids_at.get(old) != chain[old][1]:
                 errors.append(f"{MOVES}: {old} moved as a {kind}, and another article's "
                               f"{'page' if kind == 'folder' else 'folder'} now holds the address")
+            # Followed to its end, the article it ends as, unless the moves go round (card_moves.check).
             seen, at, article_id = {old}, *chain[old]
             while at in chain:
                 if at in seen:
-                    errors.append(f"{MOVES}: the moves of {old} go round")
                     break
                 seen.add(at)
-                if chain[at][1] != article_id:
-                    errors.append(f"{MOVES}: {old} moved as {article_id} to {at}, which moved on as {chain[at][1]}; "
-                                  "an old address must keep leading to its own article")
                 at, article_id = chain[at]
             else:
+                # A retired article whose page is gone ends where it was retired: card_moves.check holds that.
                 page = by_id.get(article_id)
                 live = None if page is None or not page.is_file() else node_id(page)
-                if kind == "page":
-                    if article_id in statements and page is None:
-                        if statements[article_id][1] != at:
-                            errors.append(f"{MOVES}: the page {old} ends at {at}, but its statement {article_id} was "
-                                          f"retired at {statements[article_id][1]}")
-                    elif live is None or page.name == "README.md" or live != at:
+                if kind == "page" and not (article_id in statements and page is None):
+                    if live is None or page.name == "README.md" or live != at:
                         errors.append(f"{MOVES}: {old} ends at {at}, but {article_id} is "
                                       f"{live or 'no statement page'}")
-                if kind == "folder":
-                    if article_id in retired and page is None:
-                        if retired[article_id][1] != at:
-                            errors.append(f"{MOVES}: the folder {old} ends at {at}, but its card {article_id} was "
-                                          f"retired at {retired[article_id][1]}")
-                    elif live is None or page.name != "README.md" or live != at:
+                if kind == "folder" and not (article_id in retired and page is None):
+                    if live is None or page.name != "README.md" or live != at:
                         errors.append(f"{MOVES}: the folder {old} ends at {at}, but {article_id} is "
                                       f"{live or 'no folder page'}")
     finals: dict[str, str | None] = {}
@@ -1180,9 +1134,6 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             errors.append(f"{MOVES}: the retired card {old} is still the id of {node_id(page)}")
         finals[old] = replacement(old)
     for card_id, (_, folder) in sorted(retired.items()):
-        if folder in chains["page"] or folder in chains["folder"]:
-            errors.append(f"{MOVES}: {folder} is the last address of the retired card {card_id} and moved too; an "
-                          "address has one owner")
         # An address a page or folder page holds is taken, with an id or without: only the card itself, a folder
         # keeping its id once declassified, or its final replacement may hold it.
         occupant = ids_at.get(folder)
@@ -1192,17 +1143,11 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
         elif occupant is not None and occupant not in (card_id, finals[card_id]):
             errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by another article")
     successors: dict[str, str | None] = {}
-    folders = {folder for _, folder in retired.values()}
     for statement, (_, address) in sorted(statements.items()):
         page = by_id.get(statement)
         if page is not None:
             errors.append(f"{MOVES}: the retired statement {statement} is still the id of {node_id(page)}")
-        if statement in retired:
-            errors.append(f"{MOVES}: {statement} is retired both as a card and as a statement")
         successors[statement] = successor(statement)
-        if address in chains["page"] or address in chains["folder"] or address in folders:
-            errors.append(f"{MOVES}: {address} is the last address of the retired statement {statement} and moved or "
-                          "was a retired card's too; an address has one owner")
         # As for a card: the address is taken by any page or folder page, with an id or without, but the final
         # replacement, which may live there.
         occupant = ids_at.get(address)
@@ -1213,10 +1158,31 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
         elif occupant is not None and occupant != successors[statement]:
             errors.append(f"{MOVES}: the retired statement {statement}'s address {address} is held by another article")
     if base_annotations is not None:
-        published_rows = [json.loads(line) for line in published]
-        errors += reconcile(base_annotations, annotations, cards, fresh, published_rows, retired, finals,
-                            renames or [], statements, successors)
+        # The base's rows are published history: the ids they name were articles' (reconcile's `used`). A file the
+        # base has that the checkout lacks or changed is an error above; the checkout's identical copy stands for one
+        # read from Git. With no base ledger, every row is new.
+        published_rows: list[dict] = []
+        for path in (base.blobs if base is not None else ()):
+            data = base.data.get(path, current.get(path))
+            if data is not None:
+                published_rows += [row for row in parse_ledger_rows(data) if isinstance(row, dict)]
+        errors += reconcile(base_annotations, annotations, cards,
+                            [row for row in rows if ledger.fresh is None or row.path in ledger.fresh], published_rows,
+                            retired, finals, renames or [], statements, successors, ledger.hint)
     return errors
+
+
+def parse_ledger_rows(data: bytes) -> list[object]:
+    """The JSON values of a ledger file's lines, blank lines and lines that are no JSON left out (check_moves reports
+    those)."""
+    found = []
+    for line in data.decode("utf-8", "replace").splitlines():
+        if line.strip():
+            try:
+                found.append(json.loads(line))
+            except ValueError:
+                continue
+    return found
 
 
 @dataclass
@@ -1245,11 +1211,13 @@ def articles(annotations: dict[Path, dict], live: bool) -> list[Article]:
 
 
 def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict], cards: dict[Path, Card],
-              fresh: list[tuple[int, dict]], published_rows: list[dict], retired: dict[str, tuple[str, str]],
+              fresh: list[card_moves.LedgerRow], published_rows: list[dict], retired: dict[str, tuple[str, str]],
               finals: dict[str, str | None], renames: list[tuple[str, str]],
               statements: dict[str, tuple[str, str]] | None = None,
-              successors: dict[str, str | None] | None = None) -> list[str]:
-    """Every change of address or identity since the base commit, against the rows added since, with one map of
+              successors: dict[str, str | None] | None = None,
+              hint: Callable[[card_moves.LedgerRow], str] = lambda row: "") -> list[str]:
+    """Every change of address or identity since the base commit, against the rows added since (``fresh``: the rows
+    of the fragments the base does not have, in the ledger's order; ``published_rows``, the base's), with one map of
     who owns what. An article of the base is found in the checkout by its `id`; one without an `id` by its
     address (an `id` minted in place), else by its declaration when exactly one page credits it on each side,
     else by Git's rename of its file (``renames``), which never overrides a known `id` or declaration. Two
@@ -1261,7 +1229,7 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     ``successors``, the live article each one's replacements end at). Afterwards every article stands where the rows
     leave it and keeps its `id`, or is a statement page the rows retire; an address that changed hands is a retired
     card's or statement's, held by its final replacement; and every card of the base that is no card any more has
-    its retirement."""
+    its retirement. A failing row of a fragment ends with what ``hint`` says of it (check_moves)."""
     statements, successors = statements or {}, successors or {}
     errors: list[str] = []
     base, head = articles(base_annotations, live=False), articles(annotations, live=True)
@@ -1333,52 +1301,51 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
         row["article_id"] for row in published_rows if isinstance(row, dict) and "article_id" in row}
     retiring: set[int] = set()
     by_base_id = {old.id: old for old in base if old.id}
-    for number, row in fresh:
-        if set(row) in ({"page", "to", "article_id"}, {"folder", "to", "article_id"}):
-            kind = "page" if "page" in row else "folder"
+    for entry in fresh:
+        row, at, more = entry.fields, entry.where, hint(entry)
+        if entry.kind in ("page", "folder"):
+            kind = entry.kind
             old_address, new_address, article_id = row[kind], row["to"], row["article_id"]
             moving = owner.get((kind, old_address))
             if moving is None:
-                errors.append(f"{MOVES}:{number}: no {kind} is at {old_address} when this row moves it")
+                errors.append(f"{at}: no {kind} is at {old_address} when this row moves it{more}")
                 continue
             current = moving.id or assigned.get(id(moving))
             if current is None:
                 if article_id in used:
-                    errors.append(f"{MOVES}:{number}: {old_address} had no id, and {article_id} is another "
-                                  "article's")
+                    errors.append(f"{at}: {old_address} had no id, and {article_id} is another article's{more}")
                     continue
                 assigned[id(moving)] = article_id
                 used.add(article_id)
             elif current != article_id:
-                errors.append(f"{MOVES}:{number}: {old_address} is {current}, not {article_id}")
+                errors.append(f"{at}: {old_address} is {current}, not {article_id}{more}")
                 continue
             # A folder row moves the folder alone, its folder page and its address: each page and folder inside it
             # that moves has its own row, so the history never depends on what the folder holds later.
             del owner[(kind, old_address)]
             if ("page", new_address) in owner or ("folder", new_address) in owner:
-                errors.append(f"{MOVES}:{number}: {new_address} already holds another article")
+                errors.append(f"{at}: {new_address} already holds another article{more}")
             owner[(kind, new_address)] = moving
             where[id(moving)] = (kind, new_address)
-        elif set(row) == {"card", "folder", "replaced_by"}:
+        elif entry.kind == "card":
             card = by_base_id.get(row["card"])
             if card is None or not card.card:
-                errors.append(f"{MOVES}:{number}: {row['card']} was no card at the base commit")
+                errors.append(f"{at}: {row['card']} was no card at the base commit{more}")
                 continue
             if where[id(card)] != ("folder", row["folder"]):
-                errors.append(f"{MOVES}:{number}: the card {row['card']} is at {where[id(card)][1]}, not "
-                              f"{row['folder']}")
+                errors.append(f"{at}: the card {row['card']} is at {where[id(card)][1]}, not {row['folder']}{more}")
             retiring.add(id(card))
             # Retired, the card leaves its address free: its replacement may move in by a later row, never before.
             if owner.get(("folder", row["folder"])) is card:
                 del owner[("folder", row["folder"])]
-        elif set(row) == {"statement", "page", "replaced_by"}:
+        else:
             statement = by_base_id.get(row["statement"])
             if statement is None or statement.kind != "page":
-                errors.append(f"{MOVES}:{number}: {row['statement']} was no statement page at the base commit")
+                errors.append(f"{at}: {row['statement']} was no statement page at the base commit{more}")
                 continue
             if where[id(statement)] != ("page", row["page"]):
-                errors.append(f"{MOVES}:{number}: the statement {row['statement']} is at {where[id(statement)][1]}, "
-                              f"not {row['page']}")
+                errors.append(f"{at}: the statement {row['statement']} is at {where[id(statement)][1]}, not "
+                              f"{row['page']}{more}")
             retiring.add(id(statement))
             # As for a card: its address is free once it is retired, for its replacement to move in by a later row.
             if owner.get(("page", row["page"])) is statement:
@@ -1994,28 +1961,23 @@ def snapshot_annotations(files: dict[str, bytes | None]) -> dict[Path, dict]:
     return rows
 
 
-def ledger_ids(text: str) -> set[str]:
+def ledger_ids(rows: list[object]) -> set[str]:
     """The article ids the ledger's rows name: each page or folder row's `article_id`, and each retirement's `card` or
-    `statement` and `replaced_by`; a line that is no JSON object names none (check_moves reports it)."""
+    `statement` and `replaced_by`; a row that is no JSON object names none (check_moves reports it)."""
     found: set[str] = set()
-    for line in text.splitlines():
-        try:
-            row = json.loads(line) if line.strip() else None
-        except ValueError:
-            continue
+    for row in rows:
         if isinstance(row, dict):
             found.update(row[key] for key in ("article_id", "card", "statement", "replaced_by")
                          if isinstance(row.get(key), str))
     return found
 
 
-def final_replacements(text: str) -> dict[tuple[str, str], str]:
-    """Each card or statement a retirement row of the ledger ``text`` retires, by kind and id, with the article its
+def final_replacements(rows: list[object]) -> dict[tuple[str, str], str]:
+    """Each card or statement a retirement row of the ledger's ``rows`` retires, by kind and id, with the article its
     replacements end at, as check_moves follows them (which has found that they do: at a live card for a card,
     through card retirements; at a live statement page or folder page for a statement, through any retirement)."""
     retired: dict[str, dict[str, str]] = {"card": {}, "statement": {}}
-    for line in text.splitlines():
-        row = json.loads(line) if line.strip() else None
+    for row in rows:
         for kind, address in (("card", "folder"), ("statement", "page")):
             if isinstance(row, dict) and set(row) == {kind, address, "replaced_by"}:
                 retired[kind][row[kind]] = row["replaced_by"]
@@ -2031,18 +1993,21 @@ def final_replacements(text: str) -> dict[tuple[str, str], str]:
     return finals
 
 
-def moves(output: Path) -> int:
-    """The moves command: check the move ledger, from one read of it and of the links folder, and on success write
-    the receipt to ``output`` (see the module's docstring). An id the ledger names that two articles have is an error
-    of its own, which check_moves, reading the last of them, would not see; a malformed or repeated id the ledger does
-    not name only leaves its card out of the receipt's `cards`."""
+def moves(output: Path, base: str | None = None) -> int:
+    """The moves command: check the move ledger, from one read of its files and of the links folder, and on success
+    write the receipt to ``output`` (see the module's docstring). With ``base``, a revision, the ledger is also held to
+    that commit's ledger, read from Git's trees (check_moves: base_problems and guard); a base whose ledger cannot be
+    read is an error. The changes since that commit are not replayed against the new fragments' rows: that is the
+    strict check's. An id the ledger names that two articles have is an error of its own, which check_moves, reading
+    the last of them, would not see; a malformed or repeated id the ledger does not name only leaves its card out of
+    the receipt's `cards`."""
     try:
-        ledger = moves_file().read_bytes()
+        ledger, problems = card_moves.read_ledger(wiki.ROOT / "scripts")
     except FileNotFoundError:
         print(f"error: {MOVES}: missing; the moves check certifies a ledger that exists", file=sys.stderr)
         return 1
     try:
-        text = ledger.decode("utf-8")
+        rows = [row for _, data in ledger for row in parse_ledger_rows(data)]
         files = links_snapshot()
         annotations = snapshot_annotations(files)
     except (OSError, ValueError) as error:
@@ -2055,24 +2020,29 @@ def moves(output: Path) -> int:
     for page, row in annotations.items():
         if isinstance(row.get("id"), str):
             holders[row["id"]].append(Path(os.path.relpath(page, wiki.ROADMAP)).as_posix())
-    errors = [f"{MOVES}: {article}, which the ledger names, is the id of {len(holders[article])} articles, "
-              f"{', '.join(sorted(holders[article]))}; an id names one article"
-              for article in sorted(ledger_ids(text)) if len(holders[article]) > 1]
-    errors += check_moves(annotations, cards, text=text)
+    errors = list(problems)
+    errors += [f"{MOVES}: {article}, which the ledger names, is the id of {len(holders[article])} articles, "
+               f"{', '.join(sorted(holders[article]))}; an id names one article"
+               for article in sorted(ledger_ids(rows)) if len(holders[article]) > 1]
+    known = None
+    if base is not None:
+        known, found = card_moves.base_at(base, wiki.ROOT)
+        errors += found
+    errors += check_moves(annotations, cards, base=known, files=ledger)
     # The cards the receipt can list: a well-formed id no other article has, and a folder the site can serve, by the
     # predicate hooks/card_pages.py checks the receipt with (valid_address, the same there).
     listed = {card.id: card.node for card in cards.values()
               if isinstance(card.id, str) and ARTICLE_ID.fullmatch(card.id) and len(holders[card.id]) == 1
-              and valid_address(card.node)}
+              and card_moves.valid_address(card.node)}
     # The live article each retirement ends at, by id, with its kind and node: the hook leads the retired address
     # there, so its address must be one the site can serve, or there is no receipt.
     replacements: dict[str, dict[str, str]] = {}
     if not errors:
         pages = {row["id"]: page for page, row in annotations.items() if isinstance(row.get("id"), str)}
-        for (kind, article), final in sorted(final_replacements(text).items()):
+        for (kind, article), final in sorted(final_replacements(rows).items()):
             page = pages[final]
             node, what = node_id(page), "folder" if page.name == "README.md" else "page"
-            if not valid_address(node):
+            if not card_moves.valid_address(node):
                 errors.append(f"{MOVES}: the retired {kind} {article} is replaced by {final}, whose {what} {node} is "
                               "no address the site serves")
             replacements[final] = {"kind": what, "node": node}
@@ -2083,12 +2053,11 @@ def moves(output: Path) -> int:
         print(f"error: {error}", file=sys.stderr)
     if errors:
         return 1
-    receipt = {"schema": MOVES_SCHEMA, "commit": commit, "ledger_sha256": hashlib.sha256(ledger).hexdigest(),
+    receipt = {"schema": MOVES_SCHEMA, "commit": commit, "ledger_sha256": card_moves.digest(ledger),
                "annotations_sha256": links_digest(files), "cards": listed, "cards_complete": len(listed) == len(cards),
                "replacements": replacements}
     extract.write_whole({output: json.dumps(receipt, ensure_ascii=False, indent=1, sort_keys=True) + "\n"})
-    rows = sum(1 for line in text.splitlines() if line.strip())
-    print(f"{rows} ledger rows checked; {len(listed)} of {len(cards)} cards listed -> {output}")
+    print(f"{len(rows)} ledger rows checked; {len(listed)} of {len(cards)} cards listed -> {output}")
     return 0
 
 
@@ -2102,23 +2071,33 @@ def option(argv: list[str], name: str) -> tuple[list[str], str | None]:
     return argv[:at] + argv[at + 2:], argv[at + 1]
 
 
+def ledger_inputs() -> dict[str, Path]:
+    """The move ledger's files, by label, as inputs no output may be: the frozen file and every entry of the folder of
+    fragments."""
+    folder = wiki.ROOT / FRAGMENTS
+    entries = sorted(folder.iterdir()) if folder.is_dir() and not folder.is_symlink() else []
+    return {"the move ledger": moves_file(), **{f"the fragment {path.name}": path for path in entries}}
+
+
 def run(argv: list[str]) -> int:
     if argv[:1] == ["moves"]:
+        argv, base = option(argv, "--base")
         if len(argv) != 2 or argv[1].startswith("-"):
             print(__doc__, file=sys.stderr)
             return 2
         output = Path(argv[1])
         # Refused as rollup refuses its output, before anything is touched; then an earlier receipt never outlives a
         # failure of this check.
-        files = {"OUTPUT": output, "the move ledger": moves_file(),
+        files = {"OUTPUT": output, **ledger_inputs(),
                  **{f"the links file {path.name}": path for path in sorted(links_dir().glob("*.jsonl"))}}
         if os.path.lexists(links_dir() / LINKS_DEFAULTS):
             files[f"the links file {LINKS_DEFAULTS}"] = links_dir() / LINKS_DEFAULTS
-        if problem := extract.file_problem(files, ("OUTPUT",), {"blueprint/": wiki.VAULT}):
+        folders = {"blueprint/": wiki.VAULT, f"{FRAGMENTS}/": wiki.ROOT / FRAGMENTS}
+        if problem := extract.file_problem(files, ("OUTPUT",), folders):
             print(f"error: {problem}", file=sys.stderr)
             return 2
         output.unlink(missing_ok=True)
-        return moves(output)
+        return moves(output, base)
     argv, dependency_file = option(argv, "--dependencies")
     argv, base_file = option(argv, "--base-ledger")
     argv, base_links = option(argv, "--base-links")
@@ -2129,11 +2108,13 @@ def run(argv: list[str]) -> int:
         # The output is a file of its own: one inside blueprint/ or the --base-links folder, one that is an input (by
         # its path, a symbolic link or a hard link), a symbolic link itself or no regular file is refused before
         # anything is touched.
-        inputs = {"--dependencies": dependency_file, "--registry": registry_file, "--base-ledger": base_file,
-                  "--base-links": base_links, "--renames": renames_file}
+        inputs = {"--dependencies": dependency_file, "--registry": registry_file, "--renames": renames_file}
         files = {"OUTPUT": output, **{flag: Path(given) for flag, given in inputs.items() if given is not None},
+                 **ledger_inputs(),
                  **{f"the links file {path.name}": path for path in sorted(links_dir().glob("*.jsonl"))}}
-        folders = {"blueprint/": wiki.VAULT, **({"--base-links": Path(base_links)} if base_links is not None else {})}
+        folders = {"blueprint/": wiki.VAULT, f"{FRAGMENTS}/": wiki.ROOT / FRAGMENTS,
+                   **{flag: Path(given) for flag, given in (("--base-links", base_links), ("--base-ledger", base_file))
+                      if given is not None}}
         problem = extract.file_problem(files, ("OUTPUT",), folders)
         if problem:
             print(f"error: {problem}", file=sys.stderr)
@@ -2174,7 +2155,14 @@ def run(argv: list[str]) -> int:
         for problem in problems:
             print(f"error: {problem}", file=sys.stderr)
         return 1
-    base = None if base_file is None else Path(base_file).read_text()
+    base = None
+    if base_file is not None:
+        # A base whose ledger cannot be read is no empty one: the check stops.
+        base, problems = card_moves.base_from_folder(Path(base_file))
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
+        if problems or base is None:
+            return 1
     base_annotations = None if base_links is None else read_links(Path(base_links))
     renames = None if renames_file is None else read_renames(Path(renames_file))
     # Rows Autoform would read otherwise, or not at all, which rows by page cannot show, are refused first, as

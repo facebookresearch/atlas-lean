@@ -16,7 +16,9 @@ public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
 public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
+public import MathlibExt.NumberTheory.GeneralizedMarkovModuloFour
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
+public import MathlibExt.NumberTheory.GeneralizedMarkovEvenParameter
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
@@ -124,25 +126,6 @@ public theorem_wanted card_maxGenMarkovTriples_le {k b : ℕ}
     ((range (b + 1) ×ˢ range (b + 1)).filter fun q =>
         q.1 ≤ q.2 ∧ IsGenMarkovTriple k q.1 b q.2).card ≤
       2 ^ ((b.primeFactors.filter (· ≠ 2)).card - 1)
-
-/-- **An even generalized Markov number forces $k$ to be even.** Let $k$ be a natural number. If
-some $k$-generalized Markov number $b$ is even, then $k$ is even.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.13. -/
-public theorem_wanted even_of_even_genMarkovNumber {k b : ℕ} (hb : IsGenMarkovNumber k b)
-    (he : Even b) : Even k
-
-/-- **Generalized Markov numbers divisible by $4$.** Let $k$ be a natural number. If some
-$k$-generalized Markov number is divisible by $4$, then $k \equiv 2 \pmod{4}$.
-
-Source: Only the first claim of Proposition 4.14 is stated; its "in particular" parity
-consequence is omitted because its displayed fraction is garbled in the record.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.14. -/
-public theorem_wanted mod_four_eq_two_of_four_dvd_genMarkovNumber {k b : ℕ}
-    (hb : IsGenMarkovNumber k b) (h4 : 4 ∣ b) : k % 4 = 2
 
 /-- **Discriminant condition for prime-power generalized Markov numbers.** Let $p$ be an odd
 prime and $m \ge 2$, and suppose that some $k$-generalized Markov number $b$ equals $p^m$ or
