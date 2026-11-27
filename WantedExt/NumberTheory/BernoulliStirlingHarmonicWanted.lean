@@ -18,6 +18,8 @@ public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.BernoulliStirlingHarmonicPrimeMulSumBernoulliDivModPrime
+public import MathlibExt.NumberTheory.BernoulliStirlingHarmonicSumBernoulliHarmonicPowerIdentity
 
 /-
 Statements of the same source proved in modules this file imports:
@@ -33,24 +35,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/--
-**A Bernoulli–harmonic power-sum identity.** Let $B_j$ denote the Bernoulli numbers with
-$B_1 = -\tfrac12$, and let $H_m = \sum_{i=1}^{m} 1/i$ denote the harmonic numbers. For all
-positive integers $n$ and $m$,
-$$\sum_{j=1}^{n} \left(\binom{n}{j} - 1\right) \frac{B_j}{j} m^{n-j} =
-m^n (H_m - H_n) - \sum_{j=1}^{m} \frac{(m-j)^n}{j}.$$
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 1,
-equation (11).
--/
-public theorem_wanted sum_bernoulli_harmonic_power_identity (n m : ℕ)
-    (hn : 0 < n) (hm : 0 < m) :
-    (∑ j ∈ Finset.Icc 1 n,
-      ((n.choose j : ℚ) - 1) * (bernoulli j / (j : ℚ)) * (m : ℚ) ^ (n - j)) =
-      (m : ℚ) ^ n * (harmonic m - harmonic n) -
-        ∑ j ∈ Finset.Icc 1 m, ((m - j : ℕ) : ℚ) ^ n / (j : ℚ)
 
 /--
 **The congruence $\sum_{j=0}^{p} E_j(0) \equiv 3/2 \pmod p$.** Let $E_j(x)$ denote the Euler
@@ -70,24 +54,6 @@ public theorem_wanted sum_euler_eval_zero_mod_prime (p : ℕ)
     ¬p ∣ (∑ j ∈ Finset.range (p + 1), (eulerPoly j).eval 0).den ∧
       ratResidue p (∑ j ∈ Finset.range (p + 1), (eulerPoly j).eval 0) =
         ratResidue p (3 / 2)
-
-/--
-**The congruence $p\sum_{j=0}^{p} B_j/(p-j+1) \equiv -1 \pmod p$.** Let $B_j$ denote the
-Bernoulli numbers with $B_1 = -\tfrac12$. For every odd prime $p$, the rational number
-$$S = p \sum_{j=0}^{p} \frac{B_j}{p-j+1}$$
-has denominator not divisible by $p$, and its residue modulo $p$ (its numerator times the
-inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
-equation (26).
--/
-public theorem_wanted prime_mul_sum_bernoulli_div_mod_prime (p : ℕ)
-    (hp : p.Prime) (hp2 : p ≠ 2) :
-    ¬p ∣ ((p : ℚ) * ∑ j ∈ Finset.range (p + 1),
-      bernoulli j / ((p - j + 1 : ℕ) : ℚ)).den ∧
-      ratResidue p ((p : ℚ) * ∑ j ∈ Finset.range (p + 1),
-        bernoulli j / ((p - j + 1 : ℕ) : ℚ)) = ratResidue p (-1)
 
 end
 
