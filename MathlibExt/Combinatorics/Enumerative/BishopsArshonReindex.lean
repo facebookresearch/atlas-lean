@@ -14,8 +14,9 @@ import Mathlib.Algebra.BigOperators.Intervals
 /-!
 # Arshon's formula for nonattacking bishops
 
-We obtain Kotěšovec's form of Arshon's count by reindexing the two color sums in
-`bishopsSquare_eq_sum` and using the support of the extended Stirling numbers.
+We prove Santos's formula (Theorem 3) for arbitrary board size $m$ and bishop count $k$ by
+reindexing the two color sums in `bishopsSquare_eq_sum` and using the support of the extended
+Stirling numbers. The specialization $k = m$ recovers Kotěšovec's refinement of Arshon's count.
 
 ## References
 
@@ -25,7 +26,8 @@ We obtain Kotěšovec's form of Arshon's count by reindexing the two color sums 
 * S. E. Arshon, *Reshenie odnoĭ kombinatornoĭ zadachi*, Matematicheskoe Prosveshchenie
   8 (1936), pp. 24–29, <https://www.mathnet.ru/eng/mp694>. This is the original count.
 * Václav Kotěšovec, *Non-Attacking Chess Pieces (Chess and Mathematics)*, 6th edition
-  (2013), pp. 242–248. The formula here is the refinement on p. 248.
+  (2013), pp. 242–248. Page 248 gives the $k = m$ case, counting $m$ bishops on an $m \times m$
+  board.
 -/
 
 namespace MetaMathlibExt
