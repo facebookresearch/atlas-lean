@@ -1,0 +1,3 @@
+# The inside value at depth zero
+
+Consider a context-free grammar whose terminals and nonterminals have decidable equality. Given real rule weights $q$, the inside value $I_d(A, w)$ is defined by recursion on $d$: $I_0(A, w) = 0$, and $I_{d+1}(A, w)$ is the leaf weight of $A$ on $w$ (which is $q(A \to a)$ if $w$ is a single terminal $a$ and $A \to a$ is a rule, and $0$ otherwise) plus the sum, over all rules $A \to B\,C$ of the grammar and all split points $0 \le k \le |w|$ for which the prefix $w_{<k}$ and the suffix $w_{\ge k}$ are both nonempty, of $q(A \to B\,C)\, I_d(B, w_{<k})\, I_d(C, w_{\ge k})$. Rules of other shapes contribute nothing. For every nonterminal $A$ and word $w$, $I_0(A, w) = 0$.
