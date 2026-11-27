@@ -4,6 +4,8 @@ Let $J$, $\mathfrak{T}$, $f$, $K$, $\mathfrak{U}$, the abelian subvariety $C$ an
 [Shimura's abelian subvariety $C$ and the quotient](abelian-subvariety-c-and-the-quotient.md). Then $J \neq C$. Hence
 $\dim A > 0$, and $\theta \colon K \to \mathrm{End}(A) \otimes \mathbb{Q}$ is injective.
 
+## Proof sketch
+
 Shimura's proof: if $J = C$, then $\{x \in D_J \mid \delta\alpha(x) = 0 \text{ for all } \alpha \in \mathfrak{U}\} = \{0\}$, and the
 [$\mathfrak{T}_{\mathbb{C}}$-isomorphism between $D_J$ and $\mathfrak{T}_{\mathbb{C}}$](cusp-forms-free-of-rank-one-over-the-hecke-algebra.md)
 turns this into

@@ -8,6 +8,8 @@ with $\mathbb{Q}$ of that quotient, with $\nu \circ \xi_n = \theta(a_n) \circ \n
 all $n$. Then $\mathrm{Ker}(\nu) = \mathrm{Ker}(\nu')$, and there is an isomorphism $\varphi \colon A \to A'$ over $\mathbb{Q}$ with
 $\varphi \circ \nu = \nu'$ and $\theta'(a) \circ \varphi = \varphi \circ \theta(a)$ for all $a \in K$.
 
+## Proof sketch
+
 Shimura's proof: by [multiplicity one](multiplicity-one-and-the-dimension.md),
 $\delta\nu(D_A) = \delta\nu'(D_{A'}) = \mu(\sum_{\sigma \in I} \mathbb{C} f_\sigma)$, so by
 [(1.2)](tangent-space-of-the-kernel-of-a-quotient.md) the tangent spaces at the origin of $\mathrm{Ker}(\nu)$ and
