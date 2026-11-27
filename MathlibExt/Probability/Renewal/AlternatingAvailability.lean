@@ -30,9 +30,10 @@ namespace Reliability.AlternatingRenewal
 def cycleEnd (U D : ℕ → ℝ) (n : ℕ) : ℝ :=
   ∑ i ∈ Finset.range n, (U i + D i)
 
-/-- The length of time spent up through `t`, summing the lengths of the up intervals clipped
-at `t`. For nonnegative durations and divergent cycle endpoints, only finitely many terms
-can contribute at a finite `t`. -/
+/-- The sum of the lengths of the up intervals clipped at time `t`, taken as `0` if the
+series is not summable. If the up and down durations are nonnegative and the cycle ends
+tend to infinity, only finitely many terms contribute at each `t`, and the sum equals
+elapsed uptime in `[0, t)`. -/
 noncomputable def upTime (U D : ℕ → ℝ) (t : ℝ) : ℝ :=
   ∑' i, max (min t (cycleEnd U D i + U i) - cycleEnd U D i) 0
 
@@ -61,8 +62,9 @@ private theorem upTime_eq_sum {U D : ℕ → ℝ} (hU : ∀ i, 0 ≤ U i) (hD : 
   exact max_eq_right (sub_nonpos.mpr ((min_le_left _ _).trans
     (ht.trans (cycleEnd_mono hU hD hni))))
 
-/-- The clipped sum is the Lebesgue length of the intersection of `[0,t)` with the union of the
-up intervals. Zero-length cycles and coincident endpoints cause no overlap. -/
+/-- For nonnegative up and down durations whose cycle ends tend to infinity, the clipped
+sum equals the Lebesgue length of the union of the up intervals intersected with `[0, t)`.
+Zero-length intervals contribute no length, and coincident endpoints do not cause overlap. -/
 theorem upTime_eq_volume {U D : ℕ → ℝ} (hU : ∀ i, 0 ≤ U i) (hD : ∀ i, 0 ≤ D i)
     (hT : Tendsto (cycleEnd U D) atTop atTop) (t : ℝ) :
     upTime U D t = volume.real (Ico 0 t ∩ ⋃ i, Ico (cycleEnd U D i) (cycleEnd U D i + U i)) := by
@@ -157,8 +159,9 @@ private theorem tendsto_average_succ {f : ℕ → ℝ} {m : ℝ}
   push_cast
   field_simp [hp.ne', show (n : ℝ) + 1 ≠ 0 by positivity]
 
-/-- If the average up-duration and average cycle duration converge, with positive limiting cycle
-length, the actual elapsed up-time fraction tends to the ratio of these limits. -/
+/-- For nonnegative up and down durations, suppose the average up duration tends to `mu`
+and the average full cycle duration tends to `mc > 0`. Then the elapsed uptime fraction
+`upTime U D t / t` tends to `mu / mc` as `t` tends to infinity. -/
 theorem tendsto_upTime_div {U D : ℕ → ℝ} (hU : ∀ i, 0 ≤ U i) (hD : ∀ i, 0 ≤ D i)
     {mu mc : ℝ} (hmc : 0 < mc)
     (havgU : Tendsto (fun n : ℕ => (∑ i ∈ Finset.range n, U i) / n) atTop (𝓝 mu))
@@ -237,9 +240,10 @@ private theorem ae_nonneg_of_hasLaw_exp {Ω : Type*} [MeasurableSpace Ω] {P : M
     {X : Ω → ℝ} {r : ℝ} (hX : HasLaw X (expMeasure r) P) : ∀ᵐ ω ∂P, 0 ≤ X ω :=
   (hX.ae_iff (measurableSet_setOfPred.mp measurableSet_Ici)).mpr (ae_nonneg_gammaMeasure 1 r)
 
-/-- For positive failure and repair rates, i.i.d. cycles with exponential holding times have
-long-run uptime fraction `μ / (λ + μ)`. The holding-time laws are hypotheses, not a result about
-constructing a continuous-time Markov chain. -/
+/-- Let the cycles be independent and identically distributed, with up durations exponential
+at failure rate `λ > 0` and down durations exponential at repair rate `μ > 0`. The up and
+down durations within a cycle may be dependent. As `t` tends to infinity, the uptime fraction
+tends almost surely to `μ / (λ + μ)`. -/
 theorem ae_tendsto_upTime_div_exp {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] (U D : ℕ → Ω → ℝ) {fail repair : ℝ}
     (hfail : 0 < fail) (hrepair : 0 < repair)
