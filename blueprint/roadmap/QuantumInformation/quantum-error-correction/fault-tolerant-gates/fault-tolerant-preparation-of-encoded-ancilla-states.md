@@ -25,6 +25,11 @@ the circuit and the proof of properties Prep A and Prep B for $t = 1$.
 - [Fault-tolerant preparation gadget](../fault-tolerance-and-threshold/fault-tolerant-preparation-gadget.md)
 - [Steane's seven-qubit code](../small-stabilizer-codes/steane-seven-qubit-code.md)
 - [Error syndrome of a stabilizer code](../stabilizer-formalism/error-syndrome.md)
+- [Magic states](magic-state.md)
+
+## Proof depends on
+
+- [Transversal CNOT and CSS codes](transversal-cnot-and-css-codes.md): bitwise CNOT acts as the logical CNOT on two Steane blocks
 
 ## Sources
 

@@ -17,4 +17,5 @@ $4 \cdot 3^{\ell - 1}$ needs no prerequisite and already gives a threshold with 
 
 ## Sources
 
+- H. Duminil-Copin, S. Ganguly, A. Hammond and I. Manolescu, *Bounding the number of self-avoiding walks: Hammersley–Welsh with polygon insertion*, arXiv:1809.00760, Theorem 1.1 (the Hammersley–Welsh bound $|\mathrm{SAW}_n| \le e^{C n^{1/2}} \mu^n$ for open walks).
 - E. Dennis, A. Kitaev, A. Landahl and J. Preskill, *Topological quantum memory*, J. Math. Phys. 43 (2002), 4452–4505, arXiv:quant-ph/0110143, Section V.C, equations (56)–(58), which state these bounds for self-avoiding polygons, and Section VI (the count $n_{\mathrm{SAW}}(\ell)$ of self-avoiding walks).

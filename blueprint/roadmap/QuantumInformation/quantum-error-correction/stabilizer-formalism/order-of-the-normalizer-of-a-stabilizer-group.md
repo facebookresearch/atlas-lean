@@ -26,6 +26,7 @@ $2^{n-k}$ elements since no nonempty product of generators is a scalar.
 
 - [Pauli operators commute exactly when their symplectic product vanishes](pauli-operators-commute-iff-symplectic-product-vanishes.md)
 - [The normalizer of a stabilizer group is its centralizer](normalizer-of-a-stabilizer-group-equals-its-centralizer.md): the normalizer is the centralizer
+- [Symplectic product of Pauli operators](symplectic-product-of-pauli-operators.md): nondegeneracy gives the dimension of the complement
 
 ## Sources
 

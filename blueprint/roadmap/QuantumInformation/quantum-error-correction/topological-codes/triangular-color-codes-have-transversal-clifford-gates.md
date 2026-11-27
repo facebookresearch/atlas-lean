@@ -27,4 +27,5 @@ without addressing individual qubits.
 
 ## Sources
 
-- H. Bombin and M. A. Martin-Delgado, *Topological quantum distillation*, Phys. Rev. Lett. 97 (2006), 180501, arXiv:quant-ph/0605138, equations (9)–(12), the discussion of $\hat K$ and Figure 4(b).
+- H. Bombin and M. A. Martin-Delgado, *Topological quantum distillation*, Phys. Rev. Lett. 97 (2006), 180501, arXiv:quant-ph/0605138, equations (9)–(12), the discussion of $\hat K$ and Figure 4(b) (the face condition).
+- A. J. Landahl, J. T. Anderson and P. R. Rice, *Fault-tolerant quantum computing with color codes*, arXiv:1108.5738, Section III and Fig. 1 (the 4.8.8 triangular color codes and their transversal Clifford gates) and Section IV (the codes of distance $1$, $3$ and $5$ on $1$, $7$ and $17$ qubits).

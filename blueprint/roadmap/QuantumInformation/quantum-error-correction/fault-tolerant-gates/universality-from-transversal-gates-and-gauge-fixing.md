@@ -24,6 +24,7 @@ tolerance. Each needs its statement checked against the paper.
 
 - [Subsystem code](../subsystem-codes/subsystem-code.md)
 - [Transversal gate](transversal-gate.md)
+- [The fifteen-qubit quantum Reed–Muller code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md)
 
 ## Related topics
 
