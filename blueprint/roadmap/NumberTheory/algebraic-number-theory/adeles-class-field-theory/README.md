@@ -3,12 +3,14 @@
 Places, adeles and ideles, ray class groups, Artin map, Hilbert class fields, Neukirch–Uchida-type Galois characterization.
 
 - [Adeles and ideles](adeles-and-ideles/README.md)
+- [Artin conductors](artin-conductors/README.md)
 - [Hilbert class field](hilbert-class-field/README.md)
 - [Places and completions of the rationals](places-and-completions-of-the-rationals/README.md)
 - [Places of a number field](places-of-a-number-field/README.md)
 - [Ray class groups](ray-class-groups/README.md)
 - [Artin map](artin-map/README.md)
 - [Congruence subgroups for a modulus](congruence-subgroups-for-a-modulus/README.md)
+- [Hecke characters](hecke-characters/README.md)
 - [Ray class characters](ray-class-characters/README.md)
 - [Additive duality of adeles and the volume of A/K](additive-duality-of-adeles.md)
 - [Poisson summation formula for adeles](adelic-poisson-summation.md)

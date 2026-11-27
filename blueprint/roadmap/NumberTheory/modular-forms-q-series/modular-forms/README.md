@@ -2,10 +2,17 @@
 
 Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruences, Ramanujan–Petersson conjecture, spectral gaps.
 
+- [Atkin–Lehner involutions](atkin-lehner-involutions/README.md)
+- [Automorphic forms on adelic GL₂](automorphic-forms-on-adelic-gl/README.md)
 - [Congruences between Eisenstein series and cusp forms](congruences-between-eisenstein-series-and-cusp-f/README.md)
+- [Eichler integrals](eichler-integrals/README.md)
+- [Fourier expansions of modular forms](fourier-expansions-of-modular-forms/README.md)
+- [Fundamental domains for subgroups of the modular group](fundamental-domains-for-subgroups-of-the-modular/README.md)
 - [Hecke operators](hecke-operators/README.md)
 - [Modular functions](modular-functions/README.md)
 - [Modular group and congruence subgroups](modular-group-and-congruence-subgroups/README.md)
+- [Oldforms and level raising](oldforms-and-level-raising/README.md)
+- [Petersson inner product](petersson-inner-product/README.md)
 - [Ramanujan tau function](ramanujan-tau-function/README.md)
 - [Rankin–Selberg coefficients in arithmetic progressions](rankin-selberg-coefficients-in-arithmetic-progre/README.md)
 - [Selberg's eigenvalue conjecture](selberg-s-eigenvalue-conjecture/README.md)
@@ -27,3 +34,7 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](hecke-operators-of-level-n.md)
 - [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md)
 - [Shimura's abelian variety attached to a weight-two eigenform](shimura-abelian-variety-of-an-eigenform.md)
+- [Modular forms for cocompact groups](modular-form-eq-const-and-eq-zero-of-is.md)
+- [p-integrality of Eisenstein series coefficients](eisenstein-q-coeff-p-integral-dvd.md)
+- [Exponential of the logarithm series of the Dedekind eta function](exp-log-eta.md)
+- [Sturm bound for Γ₀(N)](sturm-bound-gamma0.md)

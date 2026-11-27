@@ -124,9 +124,9 @@ def IsUnramifiedAt (ψ : (M ≃ₐ[K] M) →* ℂˣ) (v : HeightOneSpectrum (�
     Prop :=
   ∀ σ ∈ inertiaGroup (K := K) (M := M) v, ψ σ = 1
 
-/-- The Swan conductor of `ψ` at `v`: the sum over higher ramification
-groups of the proportion of the inertia group on which `ψ` is nontrivial
-outside the higher group. -/
+/-- The Swan conductor of `ψ` at `v`: the sum over the higher ramification
+groups `G_j` (`j ≥ 1`) of the whole size ratio `|G_j| / |G_0|` when `ψ` is
+nontrivial on `G_j`, and zero otherwise. -/
 noncomputable def swanConductor (ψ : (M ≃ₐ[K] M) →* ℂˣ)
     (v : HeightOneSpectrum (𝓞 K)) : ℚ :=
   ∑ᶠ i : ℕ,

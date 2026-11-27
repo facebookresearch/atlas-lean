@@ -94,13 +94,8 @@ so S is the constant term in the asymptotic expansion of
 
 ∑ₖ₌₁ˢ kⁿ.
 
-In particular,
-
-S₋₁=γ,
-
-and, for n≤-2, one has
-
-Sₙ=ζ(-n).
+The constants are evaluated by Muñoz and Pérez-Marco (Stirling–Ramanujan constants are exponential
+periods, 2024), e.g. S₋₁=γ and Sₙ=ζ(-n) for n≤-2; this definition does not state those values.
 -/
 def IsStirlingRamanujanConstant
     (n : ℤ)

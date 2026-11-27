@@ -41,9 +41,9 @@ open UpperHalfPlane
 namespace ModularCurve
 
 /-- Pointwise realization of a Laurent series as a quotient of two modular
-forms of the same weight for `Γ₀ N`: if some pair of same-weight forms has
-`q`-expansions whose quotient is the given Laurent series, the value at `τ`
-is that quotient, and `0` when no such pair exists. -/
+forms of the same weight for `Γ₀ N`: if some pair of same-weight forms `g, h`
+has `x * h̃ = g̃` for their `q`-expansions and also `h τ ≠ 0`, the value at `τ`
+is `g τ / h τ` for such a pair, and `0` when no pair satisfies both. -/
 noncomputable def realize (N : ℕ) (x : LaurentSeries ℂ) (τ : ℍ) : ℂ := by
   classical
   exact

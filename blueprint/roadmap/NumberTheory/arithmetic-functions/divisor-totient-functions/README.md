@@ -31,3 +31,4 @@
 
 - [Gronwall's theorem](part-02/gronwall-sigma-limsup.md)
 - [Relatively prime subset counts](part-02/mobius-formula-relatively-prime-subset-c.md)
+- [Elementary lower bound for Euler's totient](part-02/totient-mul-one-add-log-ge.md)

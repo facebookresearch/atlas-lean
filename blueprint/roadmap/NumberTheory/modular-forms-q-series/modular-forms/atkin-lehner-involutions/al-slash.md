@@ -1,0 +1,3 @@
+# Atkin–Lehner slash operator
+
+For $M \ne 0$, an Atkin–Lehner datum for $M$ and $q$ and an integer $k$, the operator $f \mapsto f|_k W$ on functions on the upper half-plane, where the Atkin–Lehner matrix of the datum is $W = \left(\begin{smallmatrix} qa & b \\ qR & q \end{smallmatrix}\right)$, of determinant $q$ and $f|_k\gamma(\tau) = |\det\gamma|^{k-1}(c_\gamma\tau + d_\gamma)^{-k}\,\sigma_\gamma\bigl(f(\gamma\tau)\bigr)$ is the weight-$k$ slash action of $\gamma \in \mathrm{GL}_2(\mathbb{R})$ with bottom row $(c_\gamma, d_\gamma)$, with $\sigma_\gamma$ the identity when $\det\gamma > 0$ and complex conjugation when $\det\gamma < 0$; since $\det W = q > 0$, here $f|_k W(\tau) = q^{k-1}(qR\tau + q)^{-k} f(W\tau)$.

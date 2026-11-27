@@ -13,6 +13,7 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Ramification in extensions of number fields](ramification-in-extensions-of-number-fields/README.md)
 - [Residue maps of singly generated algebras](residue-maps-of-singly-generated-algebras/README.md)
 - [Van der Waerden's conjecture on Galois groups](van-der-waerden-s-conjecture-on-galois-groups/README.md)
+- [Elements with prescribed valuations at finitely many primes](exists-ne-zero-valuation-eq-exp-neg.md)
 - [Martinet's totally real towers](exists-totally-real-discr-le.md)
 - [Odlyzko's root discriminant bound in degree at least 18](odlyzko-root-discr-ge.md)
 - [Order of the inertia group](card-inertia-eq-ramification-idx-in-mul.md)
