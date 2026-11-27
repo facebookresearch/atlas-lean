@@ -36,4 +36,5 @@ linkage-disequilibrium tests, two-stage designs and differentially private relea
 - [Stability selection for SNP-SNP interactions](stability-selection-for-snp-snp-interactions/README.md)
 - [Transfer learning for knockoff GWAS](transfer-learning-for-knockoff-gwas/README.md)
 - [Two-stage genome-wide association designs](two-stage-genome-wide-association-designs/README.md)
+- [Hierarchical error control for multitrait association](hierarchical-error-control-for-multitrait-association/README.md)
 - [Admixture, interaction and expression scans](admixture-interaction-and-expression-scans/README.md)
