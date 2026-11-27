@@ -8,11 +8,11 @@
 
 ## Depends on
 
-- [Expected differences of a pair are θ times its mean coalescence time](../../coalescent-theory/pairwise-differences-under-poisson-mutation/integral-pair-diff-of-mutation.md)
-- [Pairwise sequentially Markov coalescents SMC and SMC′](../../coalescent-theory/two-locus-coalescent/sequentially-markov-coalescent-smc-smc-pairwise.md)
-- [Haldane's map function](../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
-- [Coalescent with recombination: ancestral-material state space and generator](../../coalescent-theory/two-locus-coalescent/coalescent-with-recombination-ancestral-material.md)
-- [Stationary-kernel discretization for pairwise SMC hidden Markov models](../../../ComputerScience/machine-learning/probabilistic-graphical-models/baum-welch-algorithm/pairwise-smc-hmm-psmc-discretized-tmrca-hidden-s.md)
+- [Expected differences of a pair are θ times its mean coalescence time](../../../coalescent-theory/pairwise-differences-under-poisson-mutation/integral-pair-diff-of-mutation.md)
+- [Pairwise sequentially Markov coalescents SMC and SMC′](../../../coalescent-theory/two-locus-coalescent/sequentially-markov-coalescent-smc-smc-pairwise.md)
+- [Haldane's map function](../../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
+- [Coalescent with recombination: ancestral-material state space and generator](../../../coalescent-theory/two-locus-coalescent/coalescent-with-recombination-ancestral-material.md)
+- [Stationary-kernel discretization for pairwise SMC hidden Markov models](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/baum-welch-algorithm/pairwise-smc-hmm-psmc-discretized-tmrca-hidden-s.md)
 
 ## Expansion
 

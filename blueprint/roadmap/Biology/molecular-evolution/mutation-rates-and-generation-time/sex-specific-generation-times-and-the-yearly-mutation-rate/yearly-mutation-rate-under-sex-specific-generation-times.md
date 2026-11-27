@@ -18,7 +18,7 @@ $$\mu_y = \frac{\alpha_M + \alpha_F}{S} + \beta_M \rho + \beta_F (1 - \rho).$$
 
 ## Depends on
 
-- [Long-run expected calendar-time rate of neutral substitution](../long-run-neutral-substitution-rate-law-of-large.md)
+- [Long-run expected calendar-time rate of neutral substitution](../../long-run-neutral-substitution-rate-law-of-large.md)
 
 ## Expansion
 

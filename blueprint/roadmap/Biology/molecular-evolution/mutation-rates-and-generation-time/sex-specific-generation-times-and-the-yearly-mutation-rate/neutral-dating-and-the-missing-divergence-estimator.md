@@ -19,7 +19,7 @@ estimates the average yearly mutation rate over the last $T_a$ years, with no re
 ## Depends on
 
 - [Yearly mutation rate under sex-specific generation times](yearly-mutation-rate-under-sex-specific-generation-times.md)
-- [Infinite-sites mutation on a finite genealogy](../../coalescent-theory/poisson-mutation-on-the-kingman-genealogy/branch-mutation-kernel.md)
+- [Infinite-sites mutation on a finite genealogy](../../../coalescent-theory/poisson-mutation-on-the-kingman-genealogy/branch-mutation-kernel.md)
 
 ## Expansion
 

@@ -20,13 +20,13 @@ with $\alpha=1$ (the lasso) and $\lambda$ the largest value within one cross-val
 
 ## Depends on
 
-- [Reciprocal sign epistasis, multiple peaks and the small-face limitation](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/epistasis-and-landscape-structure.md)
-- [Lasso objective](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/lasso.md)
+- [Reciprocal sign epistasis, multiple peaks and the small-face limitation](../../../population-genetics/selection-migration-and-transmission/fitness-landscapes/epistasis-and-landscape-structure.md)
+- [Lasso objective](../../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/lasso.md)
 
 ## Proof depends on
 
-- [Möbius inversion formula](../../../Order/ordered-sets/incidence-algebras-and-the-m-bius-function/moebius-inversion-iff.md)
-- [Closed-form solution of the normal equations](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/normal-inv.md)
+- [Möbius inversion formula](../../../../Order/ordered-sets/incidence-algebras-and-the-m-bius-function/moebius-inversion-iff.md)
+- [Closed-form solution of the normal equations](../../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/normal-inv.md)
 
 ## Expansion
 

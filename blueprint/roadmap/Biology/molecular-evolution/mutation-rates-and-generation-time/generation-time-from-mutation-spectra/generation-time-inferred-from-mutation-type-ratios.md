@@ -16,7 +16,7 @@ whenever the denominator is nonzero. A change in generation time alone moves all
 
 ## Depends on
 
-- [Mean of the Poisson distribution](../../population-genetics/haldane-s-survival-probability-of-a-beneficial-m/mean-poisson-measure.md)
+- [Mean of the Poisson distribution](../../../population-genetics/haldane-s-survival-probability-of-a-beneficial-m/mean-poisson-measure.md)
 
 ## Expansion
 

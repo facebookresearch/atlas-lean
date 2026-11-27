@@ -8,8 +8,8 @@ so a simulation of $N_e/m$ individuals with mutation rate $\mu m$ has the same e
 
 ## Depends on
 
-- [Wright–Fisher diffusion limit, generator form](../../population-genetics/diffusion-theory/diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md)
-- [Generator of the Wright–Fisher diffusion with selection and mutation](../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/selection-mutation-generator.md)
+- [Wright–Fisher diffusion limit, generator form](../../../population-genetics/diffusion-theory/diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md)
+- [Generator of the Wright–Fisher diffusion with selection and mutation](../../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/selection-mutation-generator.md)
 
 ## Expansion
 

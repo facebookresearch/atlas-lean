@@ -4,4 +4,3 @@ How long does an evolving population need to discover a sequence with a new func
 
 - [Polynomial–exponential dichotomy for discovering a broad peak](polynomial-exponential-dichotomy-for-discovering-a-broad-peak.md)
 - [Exponential barrier for parallel searches and randomly placed peaks](exponential-barrier-for-parallel-searches-and-random-peaks.md)
-- [Walsh decomposition of fitness landscapes](walsh-decomposition-of-fitness-landscapes/README.md)

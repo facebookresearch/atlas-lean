@@ -14,8 +14,8 @@ evaluated on each of the $2^{L-1}$ backgrounds, and the degree of epistasis for 
 
 ## Depends on
 
-- [Fitness landscapes as mathematical objects](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/fitness-landscapes-as-explicit-mathematical-obje.md)
-- [Accessible mutational paths in the House-of-Cards landscape](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
+- [Fitness landscapes as mathematical objects](../../../population-genetics/selection-migration-and-transmission/fitness-landscapes/fitness-landscapes-as-explicit-mathematical-obje.md)
+- [Accessible mutational paths in the House-of-Cards landscape](../../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
 
 ## Expansion
 
