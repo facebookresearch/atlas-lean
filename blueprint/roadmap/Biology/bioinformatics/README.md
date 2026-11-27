@@ -33,3 +33,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
 - [Rare variant discovery probability in population sequencing](rare-variant-discovery-probability-in-population-sequencing/README.md)
 - [Duplication–mutation–complementarity network growth](duplication-mutation-complementarity-network-growth/README.md)
+- [IBD sharing HMM with linkage disequilibrium](ibd-sharing-hmm-with-linkage-disequilibrium/README.md)
+- [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
+- [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)

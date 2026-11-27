@@ -33,25 +33,13 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import MathlibExt.Probability.Distributions.PoissonBinomial
+public import MathlibExt.Probability.Statistics.RosenbaumSensitivity
 
 @[expose] public section
 
 namespace WantedExt.Probability.Statistics.RosenbaumSensitivityWanted
 
 open ProbabilityTheory
-
-/-- **Treatment probabilities under bounded hidden bias.** For `γ ≥ 0` and unobserved covariates
-`u₁, u₂ ∈ [0, 1]`, the probability `exp(γ u₁) / (exp(γ u₁) + exp(γ u₂))` that the first unit of a
-pair is treated lies in `[1 / (1 + Γ), Γ / (1 + Γ)]` with `Γ = exp γ`.
-
-Sources: P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched
-observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observational Studies*, 2nd
-ed., Springer (2002). -/
-public theorem_wanted treatmentProb_mem {γ u₁ u₂ : ℝ} (hγ : 0 ≤ γ) (hu₁ : 0 ≤ u₁) (hu₁' : u₁ ≤ 1)
-    (hu₂ : 0 ≤ u₂) (hu₂' : u₂ ≤ 1) :
-    1 / (1 + Real.exp γ) ≤ Real.exp (γ * u₁) / (Real.exp (γ * u₁) + Real.exp (γ * u₂)) ∧
-      Real.exp (γ * u₁) / (Real.exp (γ * u₁) + Real.exp (γ * u₂)) ≤
-        Real.exp γ / (1 + Real.exp γ)
 
 /-- **Binomial bounds on the sign-test tail.** Let `Γ ≥ 1`, and let the success probabilities
 `π_i`, `i < n`, of independent Bernoulli variables `B_i` satisfy
