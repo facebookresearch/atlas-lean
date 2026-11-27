@@ -17775,6 +17775,7 @@
 "Cslib.Algorithms.SAT.UnitPropagation.UPConflict": "803f12e7a4bac6a7",
 "Cslib.Algorithms.SAT.UnitPropagation.not_cnfSat_of_upConflict": "631bf880d0d01cca",
 "Cslib.Algorithms.SAT.UnitPropagation.upConflict_unsat": "476d65f4fcf6b974",
+"Cslib.Algorithms.Simulation.SelectBest.measureReal_sup'_abs_avg_sub_ge_le_and_sub_inf'_lt": "8cd91a5df53106a9",
 "Cslib.Automata.DA.FinAcc.isMinimalAutomaton_ofDFA_iff": "952abe22b1c65851",
 "Cslib.Automata.DA.FinAcc.isMinimalAutomaton_ofDFA_of_separated": "7e431762f064c48d",
 "Cslib.Automata.DA.FinAcc.language_toDFA": "235b9f7e5560504b",
