@@ -19,12 +19,7 @@ arithmetic.
 ## Depends on
 
 - [Gödel's System T](godel-s-system-t.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Heyting arithmetic: intuitionistic first-order arithmetic with the Peano axioms and induction (statement prerequisite; not yet stated)
+- [Heyting arithmetic](../../../Logic/proof-theory/heyting-arithmetic/heyting-arithmetic.md)
 
 ## Sources
 

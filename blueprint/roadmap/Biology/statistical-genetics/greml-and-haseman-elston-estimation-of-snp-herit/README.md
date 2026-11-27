@@ -77,3 +77,17 @@
 ## Further topics
 
 - [Sparse two-stage SNP heritability estimation](sparse-two-stage-snp-heritability-estimation/README.md)
+- [ARG-based variance-component analysis](arg-based-variance-component-analysis/README.md)
+- [Pleiotropic shared heritability](pleiotropic-shared-heritability/README.md)
+- [GREML converges to a negative heritability when genetic similarity lowers phenotypic variance](negative-limiting-greml-heritability-under-phenotypic-repulsion.md)
+- [Bias from truncating or discarding negative heritability estimates](truncation-bias-of-nonnegative-heritability-estimates.md)
+- [Partitioned GREML with several relationship matrices](partitioned-greml-with-several-relationship-matrices.md)
+- [Regression-calibrated relationship matrix for imperfect LD with causal variants](regression-calibrated-grm-for-imperfect-ld.md)
+- [Sib-pair Haseman–Elston heritability from realized genome-wide IBD](sib-pair-haseman-elston-heritability-from-realized-ibd.md)
+- [Sampling variance of single-SNP genetic relationships](single-snp-relationship-sampling-variance.md)
+- [Variance of genome-wide IBD sharing between full siblings](variance-of-genome-wide-ibd-sharing-between-full-sibs.md)
+- [X-chromosome relationship matrix and dosage compensation](x-chromosome-relationship-matrix-and-dosage-compensation.md)
+- [Hutchinson's randomized trace estimator](hutchinson-randomized-trace-estimator.md)
+- [MINQUE variance components from summary statistics](minque-variance-components-from-summary-statistics.md)
+- [RHE-reg: randomized Haseman–Elston regression](rhe-reg-randomized-haseman-elston-regression.md)
+- [Local SNP heritability from summary statistics](local-snp-heritability-from-summary-statistics/README.md)

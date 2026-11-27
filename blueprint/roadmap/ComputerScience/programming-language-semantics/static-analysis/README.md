@@ -1,6 +1,8 @@
 # Static analysis
 
+- [One iteration of the simple work-list algorithm](step.md)
 - [Monotone frameworks and the work-list algorithm](monotone-frameworks-and-the-worklist-algorithm.md)
+- [Running time of the simple work-list algorithm](running-time-of-the-simple-work-list-algorithm.md)
 - [Live-variables analysis](live-variables-analysis.md)
 - [Classical dataflow analyses](classical-dataflow-analyses/README.md)
 - [Interprocedural dataflow analysis](interprocedural-dataflow-analysis/README.md)

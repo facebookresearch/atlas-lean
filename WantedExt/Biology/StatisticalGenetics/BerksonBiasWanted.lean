@@ -33,6 +33,7 @@ data", Biometrics Bull. 2 (1946) 47–53; reprinted Int. J. Epidemiol. 43 (2014)
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.BerksonBias
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Filter.Basic
@@ -93,23 +94,6 @@ public theorem_wanted hospitalFrequency_lt (p t : ι → ℝ) (t₀ : ℝ) (hp0 
     (hp1 : ∀ i, p i < 1) (ht0 : ∀ i, 0 ≤ t i) (ht1 : ∀ i, t i ≤ 1) (ht₀ : 0 < t₀)
     (ht₀' : t₀ ≤ 1) (a b : ι) (hab : a ≠ b) (ha : t a < 1) (hb : t b < 1) :
     hospitalFrequency p t₀ t (fun S => b ∈ S) a < hospitalFrequency p t₀ t (fun S => b ∉ S) a
-
-/-- **The odds ratio among admitted persons, two diseases** (Berkson 1946). For two independent
-diseases in the population with incidences `p_a, p_b ∈ (0, 1)`, probabilities `t_a, t_b ∈ [0, 1)`
-of not triggering admission and `t₀ ∈ (0, 1]`, the admitted masses are `p_a p_b f_{ab}`,
-`p_a (1 - p_b) f_a`, `(1 - p_a) p_b f_b` and `(1 - p_a)(1 - p_b) f_∅`, with
-`f_{ab} = 1 - t₀ t_a t_b`, `f_a = 1 - t₀ t_a`, `f_b = 1 - t₀ t_b` and `f_∅ = 1 - t₀`. The odds
-ratio between the diseases among admitted persons is `f_{ab} f_∅ / (f_a f_b)`, and it is strictly
-less than `1`.
-
-Source: Berkson (1946); derived from his selection model. -/
-public theorem_wanted hospitalOddsRatio (pa pb ta tb t₀ : ℝ) (hpa0 : 0 < pa) (hpa1 : pa < 1)
-    (hpb0 : 0 < pb) (hpb1 : pb < 1) (hta0 : 0 ≤ ta) (hta1 : ta < 1) (htb0 : 0 ≤ tb)
-    (htb1 : tb < 1) (ht₀ : 0 < t₀) (ht₀' : t₀ ≤ 1) :
-    (pa * pb * (1 - t₀ * ta * tb)) * ((1 - pa) * (1 - pb) * (1 - t₀)) /
-          ((pa * (1 - pb) * (1 - t₀ * ta)) * ((1 - pa) * pb * (1 - t₀ * tb))) =
-        (1 - t₀ * ta * tb) * (1 - t₀) / ((1 - t₀ * ta) * (1 - t₀ * tb)) ∧
-      (1 - t₀ * ta * tb) * (1 - t₀) / ((1 - t₀ * ta) * (1 - t₀ * tb)) < 1
 
 /-- **The spurious difference can have either sign** (Berkson 1946, Tables 7 and 9). Take three
 diseases, cholecystitis `0`, diabetes `1` and refractive errors `2`, with incidences

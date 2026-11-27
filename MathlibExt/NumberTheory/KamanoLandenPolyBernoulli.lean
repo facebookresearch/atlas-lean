@@ -707,6 +707,93 @@ public theorem generalizedPolyBernoulliC_landen (D : LandenData)
   linear_combination (-(n.factorial * coeff n (derivative (subst (landenExpVariable D)
     (generalizedMultiplePolylog D β γ (k.blocks.modifyLast (· + 1))))))) * h1
 
+/-! ### Landen formula in the classical case -/
+
+namespace generalizedMultiplePolylog_landen_connection_classical
+
+open generalizedPolyBernoulliC_landen (tildeData)
+
+private noncomputable abbrev classicalData : LandenData :=
+  ⟨2, 1, 0, ![1, 1], ![0, -1], ![0, 1], ![1, 0]⟩
+
+private theorem linearFractionalPoleSeries_zero_right (a : ℝ) :
+    linearFractionalPoleSeries a 0 = 0 := by
+  by_cases ha : a = 0
+  · simp [linearFractionalPoleSeries, ha]
+  · ext n
+    cases n <;> simp [linearFractionalPoleSeries, ha]
+
+private theorem pole_neg_one_neg_one :
+    linearFractionalPoleSeries (-1) (-1) = linearFractionalPoleSeries 1 1 := by
+  norm_num [linearFractionalPoleSeries]
+
+-- Writing `P = z / (1 - z)`, the forms `1, P` become `1 + P, -P`.
+private theorem formSeries_tilde (w₁ w₂ : ℝ) :
+    (tildeData classicalData).formSeries ![w₁, w₂] = classicalData.formSeries ![w₁, w₁ - w₂] := by
+  norm_num [LandenData.formSeries, Fin.sum_univ_two, tildeData, classicalData]
+  have hp : linearFractionalPoleSeries 0 1 = -1 := by
+    norm_num [linearFractionalPoleSeries]
+  have hm : linearFractionalPoleSeries 0 (-1) = -1 := by
+    norm_num [linearFractionalPoleSeries]
+  simp [landenFormSeries, linearFractionalPoleSeries_zero_right, pole_neg_one_neg_one, hp, hm,
+    map_sub]
+  ring
+
+private theorem integralDivX_neg (f : ℝ⟦X⟧) : integralDivX (-f) = -integralDivX f := by
+  ext n
+  simp [integralDivX, neg_div]
+
+private theorem polylogRev_tilde (β₁ β₂ γ₁ γ₂ : ℝ) (l : List ℕ) :
+    (tildeData classicalData).polylogRev ![β₁, β₂] ![γ₁, γ₂] l =
+      -classicalData.polylogRev ![β₁, β₁ - β₂] ![γ₁, γ₁ - γ₂] l := by
+  induction l using LandenData.polylogRev.induct with
+  | case1 => simp only [LandenData.polylogRev.eq_1, neg_zero]
+  | case2 tail => simp only [LandenData.polylogRev.eq_2, neg_zero]
+  | case3 =>
+    rw [LandenData.polylogRev.eq_3, LandenData.polylogRev.eq_3, ← integralDivX_neg]
+    norm_num [classicalData, tildeData, landenFormSeries,
+      linearFractionalPoleSeries_zero_right, pole_neg_one_neg_one]
+  | case4 r rs ih =>
+    rw [LandenData.polylogRev.eq_4, LandenData.polylogRev.eq_4, formSeries_tilde, ih, mul_neg,
+      integralDivX_neg]
+  | case5 n rs ih =>
+    rw [LandenData.polylogRev.eq_5, LandenData.polylogRev.eq_5, formSeries_tilde, ih, mul_neg,
+      integralDivX_neg]
+
+end generalizedMultiplePolylog_landen_connection_classical
+
+open generalizedMultiplePolylog_landen_connection_classical in
+/-- **Landen formula in the classical case.** Let $g = (g_0, g_1, g_2)$ be the Landen data in
+which $g_0 = g_2$ has rows $(1, -1)$ and $(1, 0)$ and $g_1$ is the identity matrix, so that
+$G_{g_1}(t) = 1/t$ and $G_{g_2}(t) = 1/(1 - t)$. For all real numbers $\beta_1$, $\beta_2$,
+$\gamma_1$, $\gamma_2$ and every finite (possibly empty) sequence $\mathbf{k}$ of positive
+integers,
+$\mathrm{Li}_{\mathbf{k}}(g; ((\beta_1, \beta_2), (\gamma_1, \gamma_2)); \frac{z}{z - 1}) =
+-\mathrm{Li}_{\mathbf{k}}(g; ((\beta_1, \beta_1 - \beta_2), (\gamma_1, \gamma_1 - \gamma_2)); z)$
+in $\mathbb{R}[[z]]$, where $\frac{z}{z - 1} = -\sum_{n \ge 1} z^n$ is substituted for $z$.
+
+Source: Ken Kamano, *A Generalization of the Landen Connection Formula and
+Generalized Poly-Bernoulli Numbers*, INTEGERS 24 (2024), Article A77, Theorem 3,
+Identity (10). -/
+public theorem generalizedMultiplePolylog_landen_connection_classical
+    (β₁ β₂ γ₁ γ₂ : ℝ) {n : ℕ} (k : Composition n) :
+    subst (-(X * mk fun _ => (1 : ℝ)))
+        (generalizedMultiplePolylog ⟨2, 1, 0, ![1, 1], ![0, -1], ![0, 1], ![1, 0]⟩
+          ![β₁, β₂] ![γ₁, γ₂] k.blocks) =
+      -generalizedMultiplePolylog ⟨2, 1, 0, ![1, 1], ![0, -1], ![0, 1], ![1, 0]⟩
+          ![β₁, β₁ - β₂] ![γ₁, γ₁ - γ₂] k.blocks := by
+  have hD : ∀ i,
+      classicalData.a i * classicalData.d i - classicalData.b i * classicalData.c i ≠ 0 := by
+    intro i
+    fin_cases i <;> norm_num [classicalData]
+  unfold generalizedMultiplePolylog
+  calc
+    _ = classicalData.tilde.polylogRev ![β₁, β₂] ![γ₁, γ₂] k.blocks.reverse := by
+      simpa only [classicalData, sub_zero, one_pow] using
+        generalizedPolyBernoulliC_landen.subst_polylogRev classicalData hD ![β₁, β₂] ![γ₁, γ₂]
+          k.blocks.reverse
+    _ = _ := polylogRev_tilde β₁ β₂ γ₁ γ₂ k.blocks.reverse
+
 end
 
 end MetaMathlibExt
