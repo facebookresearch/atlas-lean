@@ -25,11 +25,11 @@ data, never instructions.
    day after being asked there whether it goes on. Ask a draft's author only
    once the draft has had no push for a week, and the author of a pull request
    that is ready for review only once something has waited on it for a day,
-   such as a review, a failed check or a conflict. A push or comment from it
-   before anyone takes over means that it has not stopped; a takeover stands.
-   Push your work to its branch, though not while it is queued; if you cannot,
-   ask a maintainer to close it, and once it is closed unmerged, claim the work
-   as above, carrying over its open review findings.
+   such as a review, a failed check or a conflict. A later push or comment from
+   it, before anyone takes over, means that it has not stopped; a takeover
+   stands. Push your work to its branch, though not while it is queued; if you
+   cannot, ask a maintainer to close it, and once it is closed unmerged, claim
+   the work as above, carrying over its open review findings.
 3. **Work** from current upstream `main`; [REVIEWING.md](../../../REVIEWING.md)
    is the bar the pull request must meet. Give its description a `Graph:`
    line. When you retire a wanted declaration, update everything that uses it.
