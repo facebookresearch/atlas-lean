@@ -13,7 +13,7 @@ Draw the incidence graph of an arbitrary 3-CNF in the plane with crossings, and 
 ## Proof depends on
 
 - [Lichtenstein's crossover gadget](lichtenstein-crossover-gadget.md)
-- [Gluing CNF gadgets with private auxiliary variables](../../../../Logic/propositional-logic/cnf-gadgets-and-encodings/gluing-cnf-gadgets.md)
+- [Gluing CNF gadgets with private auxiliary variables](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/gluing-cnf-gadgets.md)
 - [3SAT is NP-complete](../3-satisfiability/sat3-dec-np-complete.md)
 - [3-SAT WITH BOUNDED OCCURRENCES is NP-complete](../3-sat-with-bounded-occurrences/bounded-occurrence-three-sat-np-complete.md)
 

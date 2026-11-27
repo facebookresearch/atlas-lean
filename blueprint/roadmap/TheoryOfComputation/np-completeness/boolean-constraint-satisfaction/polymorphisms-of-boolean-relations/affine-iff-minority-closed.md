@@ -8,7 +8,7 @@ Solution sets of linear systems are cosets, closed under $x \oplus y \oplus z$. 
 
 ## Depends on
 
-- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
+- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
 - [Boolean constraint languages and CSP(Γ)](boolean-constraint-languages.md)
 
 ## Sources

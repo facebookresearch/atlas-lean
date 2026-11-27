@@ -5,7 +5,7 @@ A Boolean constraint language $\Gamma$ satisfies *Schaefer's criterion* if at le
 ## Depends on
 
 - [Boolean constraint languages and CSP(Γ)](../polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
-- [Essentially unary operations](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/essentially-unary-operations.md)
+- [Essentially unary operations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/essentially-unary-operations.md)
 
 ## Sources
 

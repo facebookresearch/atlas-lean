@@ -9,7 +9,7 @@ The at-least-one clause forbids zero true occurrences, and the pairwise clauses 
 ## Depends on
 
 - [Exact-one satisfiability of a clause formula](exact-one-satisfiability.md)
-- [Exactly-one (one-hot) constraint in CNF](../../../../Logic/propositional-logic/cnf-gadgets-and-encodings/exactly-one-cnf-constraint.md)
+- [Exactly-one (one-hot) constraint in CNF](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/exactly-one-cnf-constraint.md)
 
 ## Sources
 

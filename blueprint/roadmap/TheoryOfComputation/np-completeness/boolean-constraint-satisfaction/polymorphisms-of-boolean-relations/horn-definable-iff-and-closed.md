@@ -8,7 +8,7 @@ Models of a Horn clause are closed under AND since a Horn clause is satisfied by
 
 ## Depends on
 
-- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
+- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
 - [Horn formula](../../../../Logic/propositional-logic/horn-satisfiability/is-horn.md)
 
 ## Sources

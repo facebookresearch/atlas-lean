@@ -8,7 +8,7 @@ The median of three assignments satisfying a clause of width at most two satisfi
 
 ## Depends on
 
-- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
+- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
 - [2-CNF formulas](../../../../Logic/propositional-logic/2-satisfiability/is-two-cnf.md)
 
 ## Sources

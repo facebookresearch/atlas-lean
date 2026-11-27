@@ -12,8 +12,8 @@ $\mathrm{Pol}(\Gamma)$ is a clone; by the four-generator classification, if it c
 
 ## Proof depends on
 
-- [Every Boolean clone is essentially unary or contains AND, OR, majority or minority](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/boolean-clone-four-generator-classification.md)
-- [Closure properties of polymorphisms](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/closure-properties-of-polymorphisms.md)
+- [Every Boolean clone is essentially unary or contains AND, OR, majority or minority](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/boolean-clone-four-generator-classification.md)
+- [Closure properties of polymorphisms](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/closure-properties-of-polymorphisms.md)
 
 ## Sources
 

@@ -9,11 +9,11 @@ Polymorphisms preserve pp-definable relations. For the converse take the canonic
 ## Depends on
 
 - [Primitive-positive definitions and gadgets](primitive-positive-definitions.md)
-- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
+- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
 
 ## Proof depends on
 
-- [Closure properties of polymorphisms](../../../../Logic/propositional-logic/boolean-clones-and-post-lattice/closure-properties-of-polymorphisms.md)
+- [Closure properties of polymorphisms](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/closure-properties-of-polymorphisms.md)
 
 ## Sources
 

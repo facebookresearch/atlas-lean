@@ -9,7 +9,7 @@ Verification of a fixed truth table: the gadget realizes $a' = a$ and $b' = b$ t
 ## Depends on
 
 - [Planar CNF formulas](planar-cnf-formulas.md)
-- [Binary implication cycles and chains](../../../../Logic/propositional-logic/cnf-gadgets-and-encodings/binary-implication-cycles.md)
+- [Binary implication cycles and chains](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/binary-implication-cycles.md)
 
 ## Sources
 

@@ -8,7 +8,7 @@ Block-diagonal sum of representations for $f+g$; for the product, a block upper-
 
 ## Depends on
 
-- [Linear representations and rational series of bounded dimension](rational-series-linear-representations.md)
+- [Rational series of bounded dimension](rational-series-linear-representations.md)
 
 ## Sources
 

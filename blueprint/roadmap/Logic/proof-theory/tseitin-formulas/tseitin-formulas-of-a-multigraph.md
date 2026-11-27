@@ -4,7 +4,7 @@ Let $G = (V, E)$ be a finite multigraph (parallel edges allowed; self-loops are 
 
 ## Depends on
 
-- [CNF encoding of a parity constraint](../../propositional-logic/cnf-gadgets-and-encodings/cnf-encoding-of-a-parity-constraint.md)
+- [CNF encoding of a parity constraint](../../propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/cnf-encoding-of-a-parity-constraint.md)
 
 ## Sources
 

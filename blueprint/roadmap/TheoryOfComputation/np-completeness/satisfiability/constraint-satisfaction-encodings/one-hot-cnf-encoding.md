@@ -9,7 +9,7 @@ Exactly-one constraints make a model encode an assignment $\sigma$; the forbiddi
 ## Depends on
 
 - [Finite-domain constraint satisfaction problems](finite-domain-constraint-satisfaction.md)
-- [Exactly-one (one-hot) constraint in CNF](../../../../Logic/propositional-logic/cnf-gadgets-and-encodings/exactly-one-cnf-constraint.md)
+- [Exactly-one (one-hot) constraint in CNF](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/exactly-one-cnf-constraint.md)
 
 ## Sources
 

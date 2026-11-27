@@ -14,6 +14,8 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
 - [Monte Carlo estimation and variance reduction](monte-carlo-estimation/README.md)
 - [Probabilistic analysis tools](probabilistic-analysis-tools/README.md)
+- [Property Testing of Graphs and Boolean Functions](property-testing-of-graphs-and-functions/README.md)
+- [Sampling from Fair Coins and Stability of Oracle Programs](sampling-from-fair-coins-and-oracle-stability/README.md)
 - [Concentration and Sampling under Limited Independence](concentration-under-limited-independence/README.md)
 - [Fooling Tests with Bounded Independence](fooling-with-bounded-independence/README.md)
 - [Streaming Models, Sketches and Lower Bounds](streaming-models-and-lower-bounds/README.md)

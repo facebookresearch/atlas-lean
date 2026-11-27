@@ -9,7 +9,7 @@ A term true at an isolated true input $x$ cannot omit a variable, since flipping
 ## Depends on
 
 - [Isolated true inputs of a Boolean function](isolated-true-inputs.md)
-- [Disjunctive normal form](../../../../Logic/propositional-logic/cnf-gadgets-and-encodings/disjunctive-normal-form.md)
+- [Disjunctive normal form](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/cnf-gadgets-and-encodings/disjunctive-normal-form.md)
 - [CNF formula](../../../../Logic/propositional-logic/conjunctive-normal-form/cnf.md)
 
 ## Sources
